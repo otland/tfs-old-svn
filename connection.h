@@ -97,7 +97,7 @@ class Connection : boost::noncopyable
 			CLOSE_STATE_REQUESTED = 1,
 			CLOSE_STATE_CLOSING = 2
 		};
-	
+
 	private:
 		Connection(boost::asio::io_service& io_service) : m_socket(io_service)
 		{

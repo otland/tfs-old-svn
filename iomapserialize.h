@@ -31,12 +31,12 @@ class IOMapSerialize
 	public:
 		IOMapSerialize(){}
 		~IOMapSerialize(){}
-	
+
 		bool loadMap(Map* map);
 		bool saveMap(Map* map);
 		bool loadHouseInfo(Map* map);
 		bool saveHouseInfo(Map* map);
-	
+
 	protected:
 		bool saveTile(Database* db, uint32_t tileId, const Tile* tile);
 		bool loadTile(Database& db, Tile* tile);

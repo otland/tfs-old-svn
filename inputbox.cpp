@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -52,7 +52,7 @@ CInputBox::CInputBox(HWND hWndParent)
 		wcex.lpszClassName	= "InputBox";
 		wcex.hIconSm		= NULL;
 		if(RegisterClassEx(&wcex) == 0)
-			MessageBox(NULL, "Can't create CInputBox!", "Error", MB_OK);
+			MessageBoxA(NULL, "Can't create CInputBox!", "Error", MB_OK);
 	}
 	m_hWndParent = hWndParent;
 	Text = NULL;
@@ -126,14 +126,14 @@ BOOL CInputBox::DoModal(LPCTSTR szCaption, LPCTSTR szPrompt)
 	SetWindowText(m_hWndPrompt, szPrompt);
 	SetForegroundWindow(m_hWndInputBox);
 	EnableWindow(m_hWndParent, FALSE);
-	ShowWindow(m_hWndInputBox, SW_SHOW); 
+	ShowWindow(m_hWndInputBox, SW_SHOW);
 	UpdateWindow(m_hWndInputBox);
 	BOOL ret = 0;
 	MSG msg;
 	HWND hWndFocused;
-	while(GetMessage(&msg, NULL, 0, 0)) 
+	while(GetMessage(&msg, NULL, 0, 0))
 	{
-		if(msg.message == WM_KEYDOWN) 
+		if(msg.message == WM_KEYDOWN)
 		{
 			if(msg.wParam == VK_ESCAPE)
 			{
@@ -144,7 +144,7 @@ BOOL CInputBox::DoModal(LPCTSTR szCaption, LPCTSTR szPrompt)
 			{
 				int nCount = GetWindowTextLength(m_hWndEdit);
 				nCount++;
-				if(Text) 
+				if(Text)
 				{
 					delete[] Text;
 					Text = NULL;

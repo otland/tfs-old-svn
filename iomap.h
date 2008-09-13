@@ -68,7 +68,7 @@ enum OTBM_NodeTypes_t
 	OTBM_MONSTER = 11,
 	OTBM_TOWNS = 12,
 	OTBM_TOWN = 13,
-	OTBM_HOUSETILE = 14,
+	OTBM_HOUSETILE = 14
 };
 
 #pragma pack(1)
@@ -157,6 +157,19 @@ class IOMap
 			}
 			return Houses::getInstance().loadHousesXML(map->housefile);
 		}
+
+		const std::string& getLastErrorString() const
+		{
+			return errorString;
+		}
+
+		void setLastErrorString(const std::string& _errorString)
+		{
+			errorString = _errorString;
+		}
+
+	protected:
+		std::string errorString;
 };
 
 #endif

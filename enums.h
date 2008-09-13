@@ -262,15 +262,17 @@ struct ShopInfo
 	uint32_t subType;
 	uint32_t buyPrice;
 	uint32_t sellPrice;
-	
+
 	ShopInfo()
 	{
 		itemId = 0;
-		subType = 0;
+		subType = 1;
 		buyPrice = 0;
 		sellPrice = 0;
 	};
-	ShopInfo(uint32_t _itemId, uint32_t _subType = 0, uint32_t _buyPrice = 0, uint32_t _sellPrice = 0)
+
+	ShopInfo(uint32_t _itemId, int32_t _subType = 0,
+		uint32_t _buyPrice = 0, uint32_t _sellPrice = 0)
 	{
 		itemId = _itemId;
 		subType = _subType;

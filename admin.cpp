@@ -38,6 +38,7 @@ extern Game g_game;
 extern ConfigManager g_config;
 
 AdminProtocolConfig* g_adminConfig = NULL;
+
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t ProtocolAdmin::protocolAdminCount = 0;
 #endif
@@ -49,9 +50,15 @@ Protocol(connection)
 	m_loginTries = 0;
 	m_lastCommand = 0;
 	m_startTime = time(NULL);
-
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	protocolAdminCount++;
+#endif
+}
+
+ProtocolAdmin::~ProtocolAdmin()
+{
+#ifdef __ENABLE_SERVER_DIAGNOSTIC__
+	protocolAdminCount--;
 #endif
 }
 

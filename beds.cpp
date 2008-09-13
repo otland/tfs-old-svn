@@ -192,7 +192,7 @@ void BedItem::wakeUp(Player* player)
 
 	if(sleeperGUID != 0)
 	{
-		if((player == NULL))
+		if(player == NULL)
 		{
 			std::string name;
 			if(IOLoginData::getInstance()->getNameByGuid(sleeperGUID, name))

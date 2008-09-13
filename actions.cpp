@@ -1,13 +1,13 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-// 
+//
 //////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -19,7 +19,6 @@
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 
-#include "definitions.h"
 #include "const.h"
 #include "player.h"
 #include "monster.h"
@@ -28,7 +27,6 @@
 #include "item.h"
 #include "container.h"
 #include "combat.h"
-#include "depot.h"
 #include "house.h"
 #include "tasks.h"
 #include "tools.h"
@@ -37,7 +35,7 @@
 #include "beds.h"
 
 #include <libxml/xmlmemory.h>
-#include <libxml/parser.h> 
+#include <libxml/parser.h>
 
 #include "actions.h"
 
@@ -104,7 +102,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 	int32_t id, endId;
 	if(readXMLInteger(p, "itemid", id))
 		useItemMap[id] = action;
-	else if(readXMLInteger(p, "fromid", id) && readXMLInteger(p, "toid", endId))
+	else if(readXMLInteger(p, "fromid", id) && readXMLInteger(p, "toid", id2))
 	{
 		useItemMap[id] = action;
 		while(id < endId)
@@ -112,7 +110,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 	}
 	else if(readXMLInteger(p, "uniqueid", id))
 		uniqueItemMap[id] = action;
-	else if(readXMLInteger(p, "fromuid", id) && readXMLInteger(p, "touid", endId))
+	else if(readXMLInteger(p, "fromuid", id) && readXMLInteger(p, "touid", id2))
 	{
 		uniqueItemMap[id] = action;
 		while(id < endId)
@@ -120,7 +118,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 	}
 	else if(readXMLInteger(p, "actionid", id))
 		actionItemMap[id] = action;
-	else if(readXMLInteger(p, "fromaid", id) && readXMLInteger(p, "toaid", endId))
+	else if(readXMLInteger(p, "fromaid", id) && readXMLInteger(p, "toaid", id2))
 	{
 		actionItemMap[id] = action;
 		while(id < endId)
@@ -205,7 +203,7 @@ ReturnValue Actions::canUseFar(const Creature* creature, const Position& toPos, 
 		return RET_FIRSTGODOWNSTAIRS;
 	else if(!Position::areInRange<7,5,0>(toPos, creaturePos))
 		return RET_TOOFARAWAY;
-	
+
 	if(checkLineOfSight && !g_game.canThrowObjectTo(creaturePos, toPos))
 		return RET_CANNOTTHROW;
 
@@ -376,10 +374,11 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 	if(!player->canDoAction())
 		return false;
 
+	player->setNextActionTask(NULL);
 	player->stopWalk();
 
-	int32_t itemId;
-	uint32_t itemCount;
+	int32_t itemId = 0;
+	uint32_t itemCount = 0;
 
 	if(isHotkey)
 	{
@@ -479,6 +478,7 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 	if(!player->canDoAction())
 		return false;
 
+	player->setNextActionTask(NULL);
 	player->stopWalk();
 
 	Action* action = getAction(item);
@@ -488,8 +488,8 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 		return false;
 	}
 
-	int32_t itemId;
-	uint32_t itemCount;
+	int32_t itemId = 0;
+	uint32_t itemCount = 0;
 
 	if(isHotkey)
 	{
@@ -690,21 +690,21 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
-	
+
 		#ifdef __DEBUG_LUASCRIPTS__
 		std::stringstream desc;
 		desc << player->getName() << " - " << item->getID() << " " << fromPos << "|" << toPos;
 		env->setEventDesc(desc.str());
 		#endif
-	
+
 		env->setScriptId(m_scriptId, m_scriptInterface);
 		env->setRealPos(player->getPosition());
-	
+
 		uint32_t cid = env->addThing(player);
 		uint32_t itemid1 = env->addThing(item);
-	
+
 		lua_State* L = m_scriptInterface->getLuaState();
-	
+
 		m_scriptInterface->pushFunction(m_scriptId);
 		lua_pushnumber(L, cid);
 		LuaScriptInterface::pushThing(L, item, itemid1);
@@ -723,7 +723,7 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 			Position posEx;
 			LuaScriptInterface::pushPosition(L, posEx, 0);
 		}
-	
+
 		int32_t result = m_scriptInterface->callFunction(5);
 		m_scriptInterface->releaseScriptEnv();
 		return (result != LUA_FALSE);

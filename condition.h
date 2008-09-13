@@ -1,13 +1,13 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-// 
+//
 //////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,11 +21,11 @@
 #ifndef __OTSERV_CONDITION_H__
 #define __OTSERV_CONDITION_H__
 
-#include "definitions.h"
 #include "fileloader.h"
 #include "enums.h"
 
 #include <list>
+#include <vector>
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 
@@ -35,30 +35,30 @@ class PropStream;
 
 enum ConditionType_t
 {
-	CONDITION_NONE		= 0,
-	CONDITION_POISON	= 1,
-	CONDITION_FIRE		= 2,
-	CONDITION_ENERGY	= 4,
-	CONDITION_LIFEDRAIN	= 8,
-	CONDITION_HASTE		= 16,
-	CONDITION_PARALYZE	= 32,
-	CONDITION_OUTFIT	= 64,
-	CONDITION_INVISIBLE	= 128,
-	CONDITION_LIGHT		= 256,
-	CONDITION_MANASHIELD	= 512,
-	CONDITION_INFIGHT	= 1024,
-	CONDITION_DRUNK		= 2048,
+	CONDITION_NONE = 0,
+	CONDITION_POISON = 1,
+	CONDITION_FIRE = 2,
+	CONDITION_ENERGY = 4,
+	CONDITION_LIFEDRAIN = 8,
+	CONDITION_HASTE = 16,
+	CONDITION_PARALYZE = 32,
+	CONDITION_OUTFIT = 64,
+	CONDITION_INVISIBLE = 128,
+	CONDITION_LIGHT = 256,
+	CONDITION_MANASHIELD = 512,
+	CONDITION_INFIGHT = 1024,
+	CONDITION_DRUNK = 2048,
 	CONDITION_EXHAUST_WEAPON = 4096,
-	CONDITION_REGENERATION	= 8192,
-	CONDITION_SOUL          = 16384,
-	CONDITION_DROWN         = 32768,
-	CONDITION_MUTED         = 65536,
-	CONDITION_TRADETICKS	= 131072,
+	CONDITION_REGENERATION = 8192,
+	CONDITION_SOUL = 16384,
+	CONDITION_DROWN = 32768,
+	CONDITION_MUTED = 65536,
+	CONDITION_TRADETICKS = 131072,
 	CONDITION_YELLTICKS	= 262144,
-	CONDITION_ATTRIBUTES	= 524288,
-	CONDITION_FREEZING	= 1048576,
-	CONDITION_DAZZLED	= 2097152,
-	CONDITION_CURSED	= 4194304,
+	CONDITION_ATTRIBUTES = 524288,
+	CONDITION_FREEZING = 1048576,
+	CONDITION_DAZZLED = 2097152,
+	CONDITION_CURSED = 4194304,
 	CONDITION_EXHAUST_COMBAT = 8388608,
 	CONDITION_EXHAUST_HEAL = 16777216
 };

@@ -29,6 +29,11 @@ ConfigManager::ConfigManager()
 	m_isLoaded = false;
 }
 
+ConfigManager::~ConfigManager()
+{
+	//
+}
+
 bool ConfigManager::loadFile(const std::string& _filename)
 {
 	lua_State* L = lua_open();
@@ -41,8 +46,8 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		return false;
 	}
 
-	// parse config
-	if(!m_isLoaded) // info that must be loaded one time (unless we reset the modules involved)
+	//parse config
+	if(!m_isLoaded) //info that must be loaded one time (unless we reset the modules involved)
 	{
 		m_confString[CONFIG_FILE] = _filename;
 		m_confString[IP] = getGlobalString(L, "ip", "127.0.0.1");
@@ -90,8 +95,8 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confNumber[SPAWNPOS_Z] = getGlobalNumber(L, "newPlayerSpawnPosZ", 7);
 	m_confNumber[SPAWNTOWN_ID] = getGlobalNumber(L, "newPlayerTownId", 1);
 	m_confString[WORLD_TYPE] = getGlobalString(L, "worldType", "pvp");
-	m_confString[ACCOUNT_MANAGER] = getGlobalString(L, "accountManager", "yes");
-	m_confString[NAMELOCK_MANAGER] = getGlobalString(L, "namelockManager", "no");
+	m_confBool[ACCOUNT_MANAGER] = getGlobalBool(L, "accountManager", "yes");
+	m_confBool[NAMELOCK_MANAGER] = getGlobalBool(L, "namelockManager", "no");
 	m_confNumber[START_LEVEL] = getGlobalNumber(L, "newPlayerLevel", 1);
 	m_confNumber[START_MAGICLEVEL] = getGlobalNumber(L, "newPlayerMagicLevel", 0);
 	m_confBool[START_CHOOSEVOC] = getGlobalBool(L, "newPlayerChooseVoc", "no");
@@ -102,10 +107,10 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confNumber[HIGHSCORES_TOP] = getGlobalNumber(L, "highscoreDisplayPlayers", 10);
 	m_confNumber[HIGHSCORES_UPDATETIME] = getGlobalNumber(L, "updateHighscoresAfterMinutes", 60);
 	m_confBool[ON_OR_OFF_CHARLIST] = getGlobalBool(L, "displayOnOrOffAtCharlist", "no");
-	m_confString[ALLOW_CHANGEOUTFIT] = getGlobalString(L, "allowChangeOutfit", "yes");
+	m_confBool[ALLOW_CHANGEOUTFIT] = getGlobalBool(L, "allowChangeOutfit", "yes");
 	m_confBool[ONE_PLAYER_ON_ACCOUNT] = getGlobalBool(L, "onePlayerOnlinePerAccount", "yes");
-	m_confString[CANNOT_ATTACK_SAME_LOOKFEET] = getGlobalString(L, "noDamageToSameLookfeet", "no");
-	m_confString[AIMBOT_HOTKEY_ENABLED] = getGlobalString(L, "hotkeyAimbotEnabled", "yes");
+	m_confBool[CANNOT_ATTACK_SAME_LOOKFEET] = getGlobalBool(L, "noDamageToSameLookfeet", "no");
+	m_confBool[AIMBOT_HOTKEY_ENABLED] = getGlobalBool(L, "hotkeyAimbotEnabled", "yes");
 	m_confNumber[ACTIONS_DELAY_INTERVAL] = getGlobalNumber(L, "timeBetweenActions", 200);
 	m_confNumber[EX_ACTIONS_DELAY_INTERVAL] = getGlobalNumber(L, "timeBetweenExActions", 1000);
 	m_confNumber[MAX_MESSAGEBUFFER] = getGlobalNumber(L, "maxMessageBuffer", 4);
@@ -122,18 +127,20 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confNumber[PROTECTION_LEVEL] = getGlobalNumber(L, "protectionLevel", 1);
 	m_confBool[ADMIN_LOGS_ENABLED] = getGlobalBool(L, "adminLogsEnabled", "no");
 	m_confNumber[STATUSQUERY_TIMEOUT] = getGlobalNumber(L, "statusTimeout", 5 * 60 * 1000);
-	m_confString[BROADCAST_BANISHMENTS] = getGlobalString(L, "broadcastBanishments", "yes");
+	m_confBool[BROADCAST_BANISHMENTS] = getGlobalBool(L, "broadcastBanishments", "yes");
 	m_confBool[GENERATE_ACCOUNT_NUMBER] = getGlobalBool(L, "generateAccountNumber", "yes");
-	m_confString[INGAME_GUILD_MANAGEMENT] = getGlobalString(L, "ingameGuildManagement", "yes");
+	m_confBool[INGAME_GUILD_MANAGEMENT] = getGlobalBool(L, "ingameGuildManagement", "yes");
 	m_confNumber[LEVEL_TO_FORM_GUILD] = getGlobalNumber(L, "levelToFormGuild", 8);
 	m_confNumber[MIN_GUILDNAME] = getGlobalNumber(L, "guildNameMinLength", 4);
 	m_confNumber[MAX_GUILDNAME] = getGlobalNumber(L, "guildNameMaxLength", 20);
+	m_confNumber[AUTO_SAVE_EACH_MINUTES] = getGlobalNumber(L, "autoSaveEachMinutes", 0);
 	m_confNumber[LEVEL_TO_BUY_HOUSE] = getGlobalNumber(L, "levelToBuyHouse", 1);
 	m_confNumber[HOUSES_PER_ACCOUNT] = getGlobalNumber(L, "housesPerAccount", 0);
-	m_confString[HOUSE_BUY_AND_SELL] = getGlobalString(L, "buyableAndSellableHouses", "yes");
-	m_confString[HOUSE_NEED_PREMIUM] = getGlobalString(L, "houseNeedPremiumAccount", "yes");
-	m_confString[HOUSE_RENTASPRICE] = getGlobalString(L, "houseRentAsPrice", "no");
-	m_confString[HOUSE_PRICEASRENT] = getGlobalString(L, "housePriceAsRent", "no");
+	m_confBool[HOUSE_BUY_AND_SELL] = getGlobalBool(L, "buyableAndSellableHouses", "yes");
+	m_confBool[REPLACE_KICK_ON_LOGIN] = getGlobalBool(L, "replaceKickOnLogin", "yes");
+	m_confBool[HOUSE_NEED_PREMIUM] = getGlobalBool(L, "houseNeedPremiumAccount", "yes");
+	m_confBool[HOUSE_RENTASPRICE] = getGlobalBool(L, "houseRentAsPrice", "no");
+	m_confBool[HOUSE_PRICEASRENT] = getGlobalBool(L, "housePriceAsRent", "no");
 	m_confNumber[FRAG_TIME] = getGlobalNumber(L, "timeToDecreaseFrags", 24 * 60 * 60 * 1000);
 	m_confNumber[MAX_VIOLATIONCOMMENT_SIZE] = getGlobalNumber(L, "maxViolationCommentSize", 60);
 	m_confNumber[NOTATIONS_TO_BAN] = getGlobalNumber(L, "notationsToBan", 3);
@@ -143,9 +150,9 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confNumber[FINALBAN_LENGTH] = getGlobalNumber(L, "finalBanLength", 30 * 24 * 60 * 60);
 	m_confNumber[IPBANISHMENT_LENGTH] = getGlobalNumber(L, "ipBanishmentLength", 1 * 24 * 60 * 60);
 	m_confBool[BANK_SYSTEM] = getGlobalBool(L, "bankSystem", "yes");
-	m_confString[PREMIUM_FOR_PROMOTION] = getGlobalString(L, "premiumForPromotion", "yes");
+	m_confBool[PREMIUM_FOR_PROMOTION] = getGlobalBool(L, "premiumForPromotion", "yes");
 	m_confBool[REMOVE_PREMIUM_ON_INIT] = getGlobalBool(L, "removePremiumOnInit", "yes");
-	m_confString[SHOW_HEALING_DAMAGE] = getGlobalString(L, "showHealingDamage", "no");
+	m_confBool[SHOW_HEALING_DAMAGE] = getGlobalBool(L, "showHealingDamage", "no");
 	//m_confBool[TELEPORT_SUMMONS] = getGlobalString(L, "teleportAllSummons", "no");
 	//m_confBool[TELEPORT_PLAYER_SUMMONS] = getGlobalBool(L, "teleportPlayerSummons", "no");
 	m_confBool[PVP_TILE_IGNORE_PROTECTION] = getGlobalBool(L, "pvpTileIgnoreLevelAndVocationProtection", "yes");
@@ -154,6 +161,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBool[CLEAN_PROTECTED_ZONES] = getGlobalBool(L, "cleanProtectedZones", "yes");
 	//m_confBool[SPELL_NAME_INSTEAD_WORDS] = getGlobalBool(L, "spellNameInsteadOfWordsOnCast", "no");
 	m_confNumber[MAX_PLAYER_SUMMONS] = getGlobalNumber(L, "maxPlayerSummons", 2);
+	m_confBool[SAVE_GLOBAL_STORAGE] = getGlobalBool(L, "saveGlobalStorage", "no");
 	m_isLoaded = true;
 
 	lua_close(L);

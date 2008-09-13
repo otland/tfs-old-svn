@@ -94,7 +94,10 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 					{
 						max = (int32_t)(weapon->getWeaponDamage(player, target, tool, true) * maxa + maxb);
 						if(params.useCharges && tool->hasCharges())
-							g_game.transformItem(tool, tool->getID(), std::max((int32_t)0, (int32_t)tool->getCharges() - 1));
+						{
+							int32_t newCharge = std::max((int32_t)0, ((int32_t)tool->getCharges()) - 1);
+							g_game.transformItem(tool, tool->getID(), newCharge);
+						}
 					}
 					else
 						max = (int32_t)maxb;
@@ -138,12 +141,11 @@ void Combat::getCombatArea(const Position& centerPos, const Position& targetPos,
 	else
 	{
 		Tile* tile = g_game.getTile(targetPos.x, targetPos.y, targetPos.z);
-		if(tile)
+		if(!tile)
 		{
 			tile = new Tile(targetPos.x, targetPos.y, targetPos.z);
 			g_game.setTile(tile);
 		}
-
 		list.push_back(tile);
 	}
 }
@@ -268,15 +270,17 @@ ReturnValue Combat::canTargetCreature(const Player* player, const Creature* targ
 			return RET_YOUMAYNOTATTACKTHISCREATURE;
 	}
 
-	if(target->getPlayer() && isProtected(player, target->getPlayer()))
-		return RET_YOUMAYNOTATTACKTHISPLAYER;
-
-	if(player->getSecureMode() == SECUREMODE_ON && target->getPlayer() &&
-		target->getPlayer()->getSkullClient(player) == SKULL_NONE && !Combat::isInPvpZone(player, target))
+	if(target->getPlayer())
 	{
-		return RET_TURNSECUREMODETOATTACKUNMARKEDPLAYERS;
-	}
+		if(isProtected(player, target->getPlayer()))
+			return RET_YOUMAYNOTATTACKTHISPLAYER;
 
+		if(player->getSecureMode() == SECUREMODE_ON && !Combat::isInPvpZone(player, target) &&
+			player->getSkullClient(target->getPlayer()) == SKULL_NONE)
+		{
+			return RET_TURNSECUREMODETOATTACKUNMARKEDPLAYERS;
+		}
+	}
 	return Combat::canDoCombat(player, target);
 }
 
@@ -369,11 +373,14 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 			{
 				if(const Player* masterAttackerPlayer = attacker->getMaster()->getPlayer())
 				{
-					if(masterAttackerPlayer->hasFlag(PlayerFlag_CannotAttackPlayer) || isProtected(masterAttackerPlayer, targetPlayer))
+					if(masterAttackerPlayer->hasFlag(PlayerFlag_CannotAttackPlayer))
 						return RET_YOUMAYNOTATTACKTHISPLAYER;
 
 					if(targetPlayer->getTile()->hasFlag(TILESTATE_NOPVPZONE))
 						return RET_ACTIONNOTPERMITTEDINANOPVPZONE;
+
+					if(isProtected(masterAttackerPlayer, targetPlayer))
+						return RET_YOUMAYNOTATTACKTHISPLAYER;
 				}
 			}
 		}
@@ -701,15 +708,19 @@ void Combat::addDistanceEffect(Creature* caster, const Position& fromPos, const 
 			case WEAPON_AXE:
 				distanceEffect = NM_SHOOT_WHIRLWINDAXE;
 				break;
+
 			case WEAPON_SWORD:
 				distanceEffect = NM_SHOOT_WHIRLWINDSWORD;
 				break;
+
 			case WEAPON_CLUB:
 				distanceEffect = NM_SHOOT_WHIRLWINDCLUB;
 				break;
+
 			case WEAPON_FIST:
 				distanceEffect = NM_SHOOT_LARGEROCK;
 				break;
+
 			default:
 				distanceEffect = NM_ME_NONE;
 				break;
@@ -978,10 +989,13 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 				{
 					attackValue = tool->getAttack();
 					if(useCharges && tool->hasCharges())
-						g_game.transformItem(tool, tool->getID(), std::max((int32_t)0, (int32_t)tool->getCharges() - 1));
+					{
+						int32_t newCharge = std::max(0, tool->getCharges() - 1);
+						g_game.transformItem(tool, tool->getID(), newCharge);
+					}
 				}
 				float attackFactor = player->getAttackFactor();
-				
+
 				lua_pushnumber(L, attackSkill);
 				lua_pushnumber(L, attackValue);
 				lua_pushnumber(L, attackFactor);
@@ -1136,19 +1150,16 @@ bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, s
 				if(g_game.isSightClear(targetPos, tmpPos, true))
 				{
 					tile = g_game.getTile(tmpPos.x, tmpPos.y, tmpPos.z);
-					if(tile)
+					if(!tile)
 					{
 						tile = new Tile(tmpPos.x, tmpPos.y, tmpPos.z);
 						g_game.setTile(tile);
 					}
-
 					list.push_back(tile);
 				}
 			}
-
 			tmpPos.x++;
 		}
-
 		tmpPos.x -= cols;
 		tmpPos.y++;
 	}

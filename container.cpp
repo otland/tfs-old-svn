@@ -65,7 +65,7 @@ bool Container::unserialize(xmlNodePtr nodeItem)
 		xmlNodePtr nodeContainer = nodeItem->children;
 		if(nodeContainer == NULL)
 			return true; //container is empty
-	  
+
 		int32_t intValue;
 
 		while(nodeContainer)
@@ -90,14 +90,12 @@ bool Container::unserialize(xmlNodePtr nodeItem)
 
 						if(!item->unserialize(nodeContainerItem))
 							return false;
-						
+
 						addItem(item);
 					}
-
 					nodeContainerItem = nodeContainerItem->next;
 				}
 			}
-
 			nodeContainer = nodeContainer->next;
 		}
 		return true;
@@ -137,14 +135,14 @@ bool Container::unserializeItemNode(FileLoader& f, NODE node, PropStream& propSt
 			{
 				PropStream itemPropStream;
 				f.getProps(nodeItem, itemPropStream);
-				
+
 				Item* item = Item::CreateItem(itemPropStream);
 				if(!item)
 					return false;
 
 				if(!item->unserializeItemNode(f, nodeItem, itemPropStream))
 					return false;
-				
+
 				addItem(item);
 			}
 			else /*unknown type*/
@@ -234,15 +232,13 @@ bool Container::isHoldingItem(const Item* item) const
 
 		for(cit = container->getItems(); cit != container->getEnd(); ++cit)
 		{
-			if(*cit == item){
+			if(*cit == item)
 				return true;
-			}
 
 			if((tmpContainer = (*cit)->getContainer()))
 				listContainer.push_back(tmpContainer);
 		}
 	}
-
 	return false;
 }
 
@@ -323,7 +319,8 @@ ReturnValue Container::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 	uint32_t flags) const
 {
 	bool childIsOwner = ((flags & FLAG_CHILDISOWNER) == FLAG_CHILDISOWNER);
-	if(childIsOwner){
+	if(childIsOwner)
+	{
 		//a child container is querying, since we are the top container (not carried by a player)
 		//just return with no error.
 		return RET_NOERROR;
@@ -347,9 +344,8 @@ ReturnValue Container::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 
 		cylinder = cylinder->getParent();
 	}
-	
-	bool skipLimit = ((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT);
 
+	bool skipLimit = ((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT);
 	if(index == INDEX_WHEREEVER && !skipLimit)
 	{
 		if(size() >= capacity())
@@ -373,7 +369,7 @@ ReturnValue Container::__queryMaxCount(int32_t index, const Thing* thing, uint32
 		return RET_NOTPOSSIBLE;
 	}
 
-	if((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT)
+	if(((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT))
 	{
 		maxQueryCount = std::max((uint32_t)1, count);
 		return RET_NOERROR;
@@ -384,8 +380,9 @@ ReturnValue Container::__queryMaxCount(int32_t index, const Thing* thing, uint32
 	if(item->isStackable())
 	{
 		uint32_t n = 0;
-		
-		if(index != INDEX_WHEREEVER){
+
+		if(index != INDEX_WHEREEVER)
+		{
 			const Thing* destThing = __getThing(index);
 			const Item* destItem = NULL;
 			if(destThing)
@@ -396,14 +393,12 @@ ReturnValue Container::__queryMaxCount(int32_t index, const Thing* thing, uint32
 		}
 
 		maxQueryCount = freeSlots * 100 + n;
-
 		if(maxQueryCount < count)
 			return RET_CONTAINERNOTENOUGHROOM;
 	}
 	else
 	{
 		maxQueryCount = freeSlots;
-
 		if(maxQueryCount == 0)
 			return RET_CONTAINERNOTENOUGHROOM;
 	}
@@ -414,7 +409,6 @@ ReturnValue Container::__queryMaxCount(int32_t index, const Thing* thing, uint32
 ReturnValue Container::__queryRemove(const Thing* thing, uint32_t count) const
 {
 	int32_t index = __getIndexOfThing(thing);
-
 	if(index == -1)
 		return RET_NOTPOSSIBLE;
 
@@ -434,23 +428,27 @@ ReturnValue Container::__queryRemove(const Thing* thing, uint32_t count) const
 Cylinder* Container::__queryDestination(int32_t& index, const Thing* thing, Item** destItem,
 	uint32_t& flags)
 {
-	if(index == 254 /*move up*/){
+	if(index == 254 /*move up*/)
+	{
 		index = INDEX_WHEREEVER;
 		*destItem = NULL;
-		
+
 		Container* parentContainer = dynamic_cast<Container*>(getParent());
 		if(parentContainer)
 			return parentContainer;
 		else
 			return this;
 	}
-	else if(index == 255 /*add wherever*/){
+	else if(index == 255 /*add wherever*/)
+	{
 		index = INDEX_WHEREEVER;
 		*destItem = NULL;
 		return this;
 	}
-	else{
-		if(index >= (int32_t)capacity()){
+	else
+	{
+		if(index >= (int32_t)capacity())
+		{
 			/*
 			if you have a container, maximize it to show all 20 slots
 			then you open a bag that is inside the container you will have a bag with 8 slots
@@ -469,7 +467,6 @@ Cylinder* Container::__queryDestination(int32_t& index, const Thing* thing, Item
 				*destItem = destThing->getItem();
 
 			Cylinder* subCylinder = dynamic_cast<Cylinder*>(*destItem);
-
 			if(subCylinder)
 			{
 				index = INDEX_WHEREEVER;
@@ -478,7 +475,6 @@ Cylinder* Container::__queryDestination(int32_t& index, const Thing* thing, Item
 			}
 		}
 	}
-	
 	return this;
 }
 
@@ -497,8 +493,8 @@ void Container::__addThing(int32_t index, Thing* thing)
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}
+
 	Item* item = thing->getItem();
-	
 	if(item == NULL)
 	{
 #ifdef __DEBUG__MOVESYS__
@@ -564,7 +560,8 @@ void Container::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
 void Container::__replaceThing(uint32_t index, Thing* thing)
 {
 	Item* item = thing->getItem();
-	if(item == NULL){
+	if(item == NULL)
+	{
 #ifdef __DEBUG__MOVESYS__
 		std::cout << "Failure: [Container::__replaceThing] item == NULL" << std::endl;
 		DEBUG_REPORT
@@ -671,7 +668,6 @@ int32_t Container::__getIndexOfThing(const Thing* thing) const
 		else
 			++index;
 	}
-
 	return -1;
 }
 
@@ -695,10 +691,10 @@ uint32_t Container::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/
 		item = (*it);
 		if(item->getID() == itemId && (subType == -1 || subType == item->getSubType()))
 		{
-
 			if(itemCount)
 				count += item->getItemCount();
 			else{
+			{
 				if(item->isRune())
 					count += item->getCharges();
 				else
@@ -706,7 +702,6 @@ uint32_t Container::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/
 			}
 		}
 	}
-
 	return count;
 }
 
@@ -723,7 +718,6 @@ Thing* Container::__getThing(uint32_t index) const
 		else
 			++count;
 	}
-
 	return NULL;
 }
 
@@ -777,7 +771,8 @@ void Container::__internalAddThing(uint32_t index, Thing* thing)
 #endif
 
 	Item* item = thing->getItem();
-	if(item == NULL){
+	if(item == NULL)
+	{
 #ifdef __DEBUG__MOVESYS__
 		std::cout << "Failure: [Container::__internalAddThing] item == NULL" << std::endl;
 #endif
@@ -785,7 +780,8 @@ void Container::__internalAddThing(uint32_t index, Thing* thing)
 	}
 
 	/*
-	if(index < 0 || index >= capacity()){
+	if(index < 0 || index >= capacity())
+	{
 #ifdef __DEBUG__
 		std::cout << "Failure: [Container::__internalAddThing] - index is out of range" << std::endl;
 #endif

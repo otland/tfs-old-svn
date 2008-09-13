@@ -23,7 +23,6 @@
 
 #include "luascript.h"
 #include "baseevents.h"
-#include "tools.h"
 
 enum CreatureEventType_t
 {

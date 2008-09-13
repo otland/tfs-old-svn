@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -53,7 +53,7 @@ enum ItemTypes_t
 	ITEM_TYPE_MAGICFIELD,
 	ITEM_TYPE_TELEPORT,
 	ITEM_TYPE_BED,
-	ITEM_TYPE_LEVELDOOR,
+	ITEM_TYPE_KEY,
 	ITEM_TYPE_LAST
 };
 
@@ -150,20 +150,20 @@ class ItemType
 
 		bool isGroundTile() const {return (group == ITEM_GROUP_GROUND);}
 		bool isContainer() const {return (group == ITEM_GROUP_CONTAINER);}
-		bool isDoor() const {return (group == ITEM_GROUP_DOOR);}
-		bool isTeleport() const {return (group == ITEM_GROUP_TELEPORT);}
-		bool isMagicField() const {return (group == ITEM_GROUP_MAGICFIELD);}
 		bool isSplash() const {return (group == ITEM_GROUP_SPLASH);}
 		bool isFluidContainer() const {return (group == ITEM_GROUP_FLUID);}
 
-		bool isKey() const {return (group == ITEM_GROUP_KEY);}
-		bool isRune() const {return (group == ITEM_GROUP_RUNE);}
+		bool isDoor() const {return (type == ITEM_TYPE_DOOR);}
+		bool isMagicField() const {return (type == ITEM_TYPE_MAGICFIELD);}
+		bool isTeleport() const {return (type == ITEM_TYPE_TELEPORT);}
+		bool isKey() const {return (type == ITEM_TYPE_KEY);}
 		bool isDepot() const {return (type == ITEM_TYPE_DEPOT);}
 		bool isMailbox() const {return (type == ITEM_TYPE_MAILBOX);}
 		bool isTrashHolder() const {return (type == ITEM_TYPE_TRASHHOLDER);}
 		bool isBed() const {return (type == ITEM_TYPE_BED);}
-		bool isLevelDoor() const {return (type == ITEM_TYPE_LEVELDOOR);}
+		bool isLevelDoor() const {return id == 1227 || id == 1229 || id == 1245 || id == 1247 || id == 1259 || id == 1261 || id == 3540 || id == 3549 || id == 5103 || id == 5112 || id == 5121 || id == 5130 || id == 5292 || id == 5294 || id == 6206 || id == 6208 || id == 6263 || id == 6265 || id == 6896 || id == 6905 || id == 7038 || id == 7047 || id == 8555 || id == 8557;}
 		bool hasSubType() const {return (isFluidContainer() || isSplash() || stackable || charges != 0);}
+		bool isRune() const {return clientCharges;}
 
 		Direction bedPartnerDir;
 		uint16_t transformToOnUse[2];
@@ -194,6 +194,7 @@ class ItemType
 		bool isHorizontal;
 		bool isHangable;
 		bool allowDistRead;
+		bool clientCharges;
 		uint16_t speed;
 		int32_t decayTo;
 		uint32_t decayTime;
@@ -212,10 +213,10 @@ class ItemType
 		int32_t alwaysOnTopOrder;
 		bool pickupable;
 		bool rotable;
-		int rotateTo;
+		int32_t rotateTo;
 
-		int32_t runeLevel;
 		int32_t runeMagLevel;
+		int32_t runeLevel;
 		std::string runeSpellName;
 
 		uint32_t wieldInfo;

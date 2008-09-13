@@ -22,7 +22,7 @@
 #define __OTSERV_DEFINITIONS_H__
 
 #undef MULTI_SQL_DRIVERS
-#define SQL_DRIVERS __USE_SQLITE__+__USE_MYSQL__
+#define SQL_DRIVERS __USE_SQLITE__+__USE_MYSQL__+__USE_ODBC__+__USE_PGSQL__
 #if SQL_DRIVERS>1
 #define MULTI_SQL_DRIVERS
 #endif
@@ -73,13 +73,7 @@ enum passwordType_t
 	#define	__FUNCTION__ __func__
 #endif
 
-#define OTSYS_THREAD_RETURN  void
-#ifndef WSAEWOULDBLOCK
-#include <winsock2.h>
-#endif
-#ifndef EWOULDBLOCK
-#define EWOULDBLOCK WSAEWOULDBLOCK
-#endif
+#define OTSYS_THREAD_RETURN void
 
 #ifdef _WIN32_WINNT
 #undef _WIN32_WINNT
@@ -92,15 +86,22 @@ enum passwordType_t
 #define _WIN32_WINNT 0x0501
 
 #ifdef __GNUC__
-	#include <ext/hash_map>
-	#include <ext/hash_set>
+	#if __GNUC__ >= 4
+		#include <tr1/unordered_map>
+		#include <tr1/unordered_set>
+		#define OTSERV_HASH_MAP std::tr1::unordered_map
+		#define OTSERV_HASH_SET std::tr1::unordered_set
+	#else
+		#include <ext/hash_map>
+		#include <ext/hash_set>
+		#define OTSERV_HASH_MAP __gnu_cxx::hash_map
+		#define OTSERV_HASH_SET __gnu_cxx::hash_set
+	#endif
 	#include <assert.h>
-	#define OTSERV_HASH_MAP __gnu_cxx::hash_map
-	#define OTSERV_HASH_SET __gnu_cxx::hash_set
 	#define ATOI64 atoll
 #else
 	typedef unsigned long long uint64_t;
-	
+
 	#define _WIN32_WINNT 0x0500
 
 	#ifndef NOMINMAX
@@ -131,7 +132,7 @@ enum passwordType_t
 	typedef unsigned short uint16_t;
 	typedef signed short int16_t;
 	typedef unsigned char uint8_t;
-	
+
 	#define ATOI64 _atoi64
 
 	#pragma warning(disable:4786) // msvc too long debug names in stl
@@ -148,16 +149,22 @@ enum passwordType_t
 
 	#include <stdint.h>
 	#include <string.h>
-	#include <ext/hash_map>
-	#include <ext/hash_set>
+	#if __GNUC__ >= 4
+		#include <tr1/unordered_map>
+		#include <tr1/unordered_set>
+		#define OTSERV_HASH_MAP std::tr1::unordered_map
+		#define OTSERV_HASH_SET std::tr1::unordered_set
+	#else
+		#include <ext/hash_map>
+		#include <ext/hash_set>
+		#define OTSERV_HASH_MAP __gnu_cxx::hash_map
+		#define OTSERV_HASH_SET __gnu_cxx::hash_set
+	#endif
 	#include <assert.h>
 	#include <time.h>
 
-	#define OTSERV_HASH_MAP __gnu_cxx::hash_map
-	#define OTSERV_HASH_SET __gnu_cxx::hash_set
-	
 	#define ATOI64 atoll
-	
+
 #endif
 
 #endif

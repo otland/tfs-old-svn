@@ -76,7 +76,6 @@
 //		message(string)
 //
 
-#include "otsystem.h"
 #include "player.h"
 #include "logger.h"
 #include <string>
@@ -183,14 +182,8 @@ class ProtocolAdmin : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolAdminCount;
 #endif
-
 		ProtocolAdmin(Connection* connection);
-		virtual ~ProtocolAdmin()
-		{
-#ifdef __ENABLE_SERVER_DIAGNOSTIC__
-			protocolAdminCount--;
-#endif
-		}
+		virtual ~ProtocolAdmin();
 		
 		virtual void parsePacket(NetworkMessage& msg);
 		

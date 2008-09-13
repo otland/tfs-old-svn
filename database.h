@@ -166,6 +166,13 @@ class _Database
 		*/
 		DATABASE_VIRTUAL void freeResult(DBResult *res) {}
 
+		/**
+		* Get case insensitive string comparison operator
+		* 
+		* @return the case insensitive operator
+		*/
+		DATABASE_VIRTUAL std::string getStringComparisonOperator() { return "="; }
+
 	protected:
 		_Database() {}
 		DATABASE_VIRTUAL ~_Database() {}

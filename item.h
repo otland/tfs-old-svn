@@ -126,7 +126,7 @@ class ItemAttributes
 			m_attributes = 0;
 			m_firstAttr = NULL;
 		}
-		
+
 		virtual ~ItemAttributes()
 		{
 			if(m_firstAttr)
@@ -156,10 +156,10 @@ class ItemAttributes
 		void resetWriter() {removeAttribute(ATTR_ITEM_WRITTENBY);}
 		const std::string& getWriter() const {return getStrAttr(ATTR_ITEM_WRITTENBY);}
 
-		void setActionId(uint16_t n) {setIntAttr(ATTR_ITEM_ACTIONID, (n < 100 ? 100 : n));}
+		void setActionId(uint16_t n) {if(n < 100) n = 100; setIntAttr(ATTR_ITEM_ACTIONID, n);}
 		uint16_t getActionId() const {return getIntAttr(ATTR_ITEM_ACTIONID);}
 
-		void setUniqueId(uint16_t n) {setIntAttr(ATTR_ITEM_UNIQUEID, (n < 1000 ? 1000 : n));}
+		void setUniqueId(uint16_t n) {if(n < 1000) n = 1000; setIntAttr(ATTR_ITEM_UNIQUEID, n);}
 		uint16_t getUniqueId() const {return getIntAttr(ATTR_ITEM_UNIQUEID);}
 
 		void setCharges(uint16_t n) {setIntAttr(ATTR_ITEM_CHARGES, n);}
@@ -168,10 +168,10 @@ class ItemAttributes
 		void setFluidType(uint16_t n) {setIntAttr(ATTR_ITEM_FLUIDTYPE, n);}
 		uint16_t getFluidType() const {return getIntAttr(ATTR_ITEM_FLUIDTYPE);}
 
-		void setOwner(uint32_t owner) {setIntAttr(ATTR_ITEM_OWNER, owner);}
+		void setOwner(uint32_t _owner) {setIntAttr(ATTR_ITEM_OWNER, _owner);}
 		uint32_t getOwner() const {return getIntAttr(ATTR_ITEM_OWNER);}
 
-		void setCorpseOwner(uint32_t corpseOwner) {setIntAttr(ATTR_ITEM_CORPSEOWNER, corpseOwner);}
+		void setCorpseOwner(uint32_t _corpseOwner) {setIntAttr(ATTR_ITEM_CORPSEOWNER, _corpseOwner);}
 		uint32_t getCorpseOwner() {return getIntAttr(ATTR_ITEM_CORPSEOWNER);}
 
 		void setDuration(int32_t time) {setIntAttr(ATTR_ITEM_DURATION, time);}
@@ -207,7 +207,8 @@ class ItemAttributes
 			ATTR_ITEM_DECAYING = 262144,
 			ATTR_ITEM_CORPSEOWNER = 524288,
 			ATTR_ITEM_CHARGES = 1048576,
-			ATTR_ITEM_FLUIDTYPE = 2097152
+			ATTR_ITEM_FLUIDTYPE = 2097152,
+			ATTR_ITEM_DOORID = 4194304
 		};
 
 		bool hasAttribute(itemAttrTypes type) const;
@@ -264,7 +265,7 @@ class ItemAttributes
 
 		void deleteAttrs(Attribute* attr);
 };
-	
+
 class Item : virtual public Thing, public ItemAttributes
 {
 	public:
@@ -298,6 +299,10 @@ class Item : virtual public Thing, public ItemAttributes
 		virtual BedItem* getBed() {return NULL;}
 		virtual const BedItem* getBed() const {return NULL;}
 
+		static std::string getDescription(const ItemType& it, int32_t lookDistance,
+			const Item* item = NULL, int32_t subType = -1);
+		static std::string getWeightDescription(const ItemType& it, double weight, uint32_t count = 1);
+
 		//serialization
 		virtual bool unserialize(xmlNodePtr p);
 		virtual xmlNodePtr serialize();
@@ -305,6 +310,7 @@ class Item : virtual public Thing, public ItemAttributes
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool unserializeAttr(PropStream& propStream);
 		virtual bool unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream);
+		//virtual bool serializeItemNode();
 
 		virtual bool serializeAttr(PropWriteStream& propWriteStream);
 
@@ -312,11 +318,7 @@ class Item : virtual public Thing, public ItemAttributes
 		virtual int32_t getThrowRange() const {return (isPickupable() ? 15 : 2);}
 
 		virtual std::string getDescription(int32_t lookDistance) const;
-		static std::string getDescription(const ItemType& it, int32_t lookDistance,
-			const Item* item = NULL, int32_t subType = -1);
-
 		std::string getWeightDescription() const;
-		static std::string getWeightDescription(const ItemType& it, double weight, uint32_t count = 1);
 
 		uint16_t getID() const {return id;}
 		uint16_t getClientID() const {return items[id].clientId;}
@@ -357,7 +359,12 @@ class Item : virtual public Thing, public ItemAttributes
 		void setHitChance(int32_t hitchance) {setIntAttr(ATTR_ITEM_HITCHANCE, hitchance);}
 
 		virtual double getWeight() const;
+		int32_t getAttack() const {return items[id].attack;}
+		int32_t getArmor() const {return items[id].armor;}
+		int32_t getDefense() const {return items[id].defense;}
+		int32_t getExtraDefense() const {return items[id].extraDefense;}
 		int32_t getSlotPosition() const {return items[id].slot_position;}
+		int32_t getHitChance() const {return items[id].hitChance;}
 
 		bool isReadable() const {return items[id].canReadText;}
 		bool canWriteText() const {return items[id].canWriteText;}
@@ -392,6 +399,9 @@ class Item : virtual public Thing, public ItemAttributes
 		bool floorChangeEast() const {return items[id].floorChangeEast;}
 		bool floorChangeWest() const {return items[id].floorChangeWest;}
 
+		const std::string& getName() const {return items[id].name;}
+		const std::string& getPluralName() const {return items[id].pluralName;}
+
 		// get the number of items
 		uint16_t getItemCount() const {return count;}
 		void setItemCount(uint16_t n) {count = n;}
@@ -414,6 +424,7 @@ class Item : virtual public Thing, public ItemAttributes
 
 		virtual bool canRemove() const {return true;}
 		virtual bool canTransform() const {return true;}
+		virtual void onRemoved() {}
 		virtual bool onTradeEvent(TradeEvents_t event, Player* owner){return true;}
 
 		virtual void __startDecaying();
@@ -423,10 +434,12 @@ class Item : virtual public Thing, public ItemAttributes
 
 	protected:
 		std::string getWeightDescription(double weight) const;
-
 		uint16_t id;  // the same id as in ItemType
 		uint8_t count; // number of stacked items
+
 		bool loadedFromMap;
+
+		//Don't add variables here, use the ItemAttribute class.
 };
-	
+
 #endif

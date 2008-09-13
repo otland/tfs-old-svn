@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -24,25 +24,21 @@
 
 #include <iostream>
 #include <fstream>
-#include <string>
 #include <iomanip>
 #include <ctime>
-#include <stdlib.h> 
+#include <stdlib.h>
 #include <map>
 
 #include "otsystem.h"
 #include "exception.h"
-
-#include <map>
-#include <string>
 
 #include "game.h"
 
 typedef std::map<uint32_t, char*> FunctionMap;
 
 #ifdef WIN32
-#include "excpt.h"
-#include "tlhelp32.h"
+#include <excpt.h>
+#include <tlhelp32.h>
 #endif
 
 extern Game g_game;
@@ -55,13 +51,12 @@ OTSYS_THREAD_LOCKVAR maploadlock;
 
 #ifdef WIN32
 EXCEPTION_DISPOSITION
- __cdecl _SEHHandler
-	(
-		struct _EXCEPTION_RECORD *ExceptionRecord,
-		void * EstablisherFrame,
-		struct _CONTEXT *ContextRecord,
-		void * DispatcherContext
-	);
+ __cdecl _SEHHandler(
+	struct _EXCEPTION_RECORD *ExceptionRecord,
+	void * EstablisherFrame,
+	struct _CONTEXT *ContextRecord,
+	void * DispatcherContext
+);
 void printPointer(std::ostream* output,uint32_t p);
 #endif
 
@@ -82,7 +77,7 @@ ExceptionHandler::ExceptionHandler()
 
 ExceptionHandler::~ExceptionHandler()
 {
-	if(installed ==true)
+	if(installed == true)
 		RemoveHandler();
 }
 
@@ -92,8 +87,10 @@ bool ExceptionHandler::InstallHandler()
 	OTSYS_THREAD_LOCK_CLASS lockObj(maploadlock);
 	if(maploaded == false)
 		LoadMap();
-	if( installed == true)
+
+	if(installed == true)
 		return false;
+
 	/*
 		mov eax,fs:[0]
 		mov [prevSEH],eax
@@ -102,6 +99,7 @@ bool ExceptionHandler::InstallHandler()
 		lea eax,[chain]
 		mov fs:[0],eax
 	*/
+
 	#ifdef __GNUC__
 	SEHChain *prevSEH;
 	__asm__ ("movl %%fs:0,%%eax;movl %%eax,%0;":"=r"(prevSEH)::"%eax" );
@@ -119,11 +117,13 @@ bool ExceptionHandler::RemoveHandler()
 {
 	if(installed == false)
 		return false;
+
 	#ifdef WIN32
 	#ifdef __GNUC__
 	__asm__ ("movl %0,%%eax;movl %%eax,%%fs:0;"::"r"(chain.prev):"%eax" );
 	#endif
 	#endif
+
 	installed = false;
 	return true;
 }
@@ -149,14 +149,12 @@ char* getFunctionName(unsigned long addr, unsigned long& start)
 
 #ifdef WIN32
 EXCEPTION_DISPOSITION
- __cdecl _SEHHandler
-	(
-		struct _EXCEPTION_RECORD *ExceptionRecord,
-		void * EstablisherFrame,
-		struct _CONTEXT *ContextRecord,
-		void * DispatcherContext
-	)
-{
+ __cdecl _SEHHandler(
+	 struct _EXCEPTION_RECORD *ExceptionRecord,
+	 void * EstablisherFrame,
+	 struct _CONTEXT *ContextRecord,
+	 void * DispatcherContext
+	 ){
 	//
 	uint32_t *esp;
 	uint32_t *next_ret;
@@ -182,20 +180,20 @@ EXCEPTION_DISPOSITION
 		file = true;
 		outdriver = &output;
 	}
-	
+
 	time_t rawtime;
 	time(&rawtime);
 	*outdriver << "*****************************************************" << std::endl;
 	*outdriver << "Error report - " << std::ctime(&rawtime) << std::endl;
 	*outdriver << "Compiler info - " << COMPILER_STRING << std::endl;
 	*outdriver << "Compilation Date - " << COMPILATION_DATE << std::endl << std::endl;
-	
+
 	//system and process info
 	//- global memory information
 	MEMORYSTATUS mstate;
 	GlobalMemoryStatus(&mstate);
 	*outdriver << "Memory load: " << mstate.dwMemoryLoad << std::endl <<
-		"Total phys: " << mstate.dwTotalPhys/1024 << " K available phys: " << 
+		"Total phys: " << mstate.dwTotalPhys/1024 << " K available phys: " <<
 		mstate.dwAvailPhys/1024 << " K" << std::endl;
 	//-process info
 	FILETIME FTcreation,FTexit,FTkernel,FTuser;
@@ -203,9 +201,9 @@ EXCEPTION_DISPOSITION
 	GetProcessTimes(GetCurrentProcess(),&FTcreation,&FTexit,&FTkernel,&FTuser);
 	// creation time
 	FileTimeToSystemTime(&FTcreation,&systemtime);
-	*outdriver << "Start time: " << systemtime.wDay << "-" << 
+	*outdriver << "Start time: " << systemtime.wDay << "-" <<
 		systemtime.wMonth << "-" << systemtime.wYear << "  " <<
-		systemtime.wHour << ":" << systemtime.wMinute << ":" << 
+		systemtime.wHour << ":" << systemtime.wMinute << ":" <<
 		systemtime.wSecond << std::endl;
 	// kernel time
 	uint32_t miliseconds;
@@ -226,8 +224,7 @@ EXCEPTION_DISPOSITION
 	*outdriver << ":" << miliseconds/1000;
 	miliseconds = miliseconds - (miliseconds/1000)*1000;
 	*outdriver << "." << miliseconds << std::endl;
-	
-	
+
 	// n threads
 	PROCESSENTRY32 uProcess;
 	HANDLE lSnapShot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS,0);
@@ -247,7 +244,7 @@ EXCEPTION_DISPOSITION
 		}
 		CloseHandle (lSnapShot);
 	}
-	
+
 	*outdriver << std::endl;
 	//exception header type and eip
 	outdriver->flags(std::ios::hex | std::ios::showbase);
@@ -259,7 +256,7 @@ EXCEPTION_DISPOSITION
 	if(functionName)
 		*outdriver << "(" << functionName << " - " << functionAddr << ")";
 	*outdriver << std::endl ;
-	
+
 	//registers
 	*outdriver << "eax = ";printPointer(outdriver,ContextRecord->Eax);*outdriver << std::endl;
 	*outdriver << "ebx = ";printPointer(outdriver,ContextRecord->Ebx);*outdriver << std::endl;
@@ -271,16 +268,16 @@ EXCEPTION_DISPOSITION
 	*outdriver << "esp = ";printPointer(outdriver,ContextRecord->Esp);*outdriver << std::endl;
 	*outdriver << "efl = " << ContextRecord->EFlags << std::endl;
 	*outdriver << std::endl;
-	
+
 	//stack dump
 	esp = (uint32_t *)(ContextRecord->Esp);
 	VirtualQuery(esp, &mbi, sizeof(mbi));
 	stacklimit = (uint32_t*)((uint32_t)(mbi.BaseAddress) + mbi.RegionSize);
-	
+
 	*outdriver << "---Stack Trace---" << std::endl;
 	*outdriver << "From: " << (uint32_t)esp <<
 		" to: " << (uint32_t)stacklimit << std::endl;
-	
+
 	stackstart = esp;
 	next_ret = (uint32_t*)(ContextRecord->Ebp);
 	uint32_t frame_param_counter;
@@ -290,7 +287,7 @@ EXCEPTION_DISPOSITION
 		stack_val = *esp;
 		if(foundRetAddress)
 			nparameters++;
-		
+
 		if(esp - stackstart < 20 || nparameters < 10 || std::abs(esp - next_ret) < 10 || frame_param_counter < 8)
 		{
 			*outdriver  << (uint32_t)esp << " | ";
@@ -304,7 +301,6 @@ EXCEPTION_DISPOSITION
 				next_ret = (uint32_t*)*(esp - 2);
 				frame_param_counter = 0;
 			}
-
 			frame_param_counter++;
 			*outdriver<< std::endl;
 		}
@@ -323,8 +319,8 @@ EXCEPTION_DISPOSITION
 	*outdriver << "*****************************************************" << std::endl;
 	if(file)
 		((std::ofstream*)outdriver)->close();
-	MessageBox(NULL,"Please send the file report.txt to support service, thanks ;)","Error",MB_OK |MB_ICONERROR);
-	std::cout << "Error report generated. Killing server." <<std::endl;
+	MessageBoxA(NULL, "Please send the file report.txt to support service ;). Thanks", "Error", MB_OK | MB_ICONERROR);
+	std::cout << "Error report generated. Killing server." << std::endl;
 	exit(1); //force exit
 	return ExceptionContinueSearch;
 }
@@ -357,7 +353,7 @@ bool ExceptionHandler::LoadMap()
 		exit(1);
 		return false;
 	}
-
+	
 	//read until found .text		   0x00401000
 	while(fgets(line, 1024, input))
 	{
@@ -365,8 +361,9 @@ bool ExceptionHandler::LoadMap()
 			break;
 	}
 	
-	if(feof(input))
+	if(feof(input)){
 		return false;
+	}
 	
 	char tofind[] = "0x";
 	char lib[] = ".a(";
@@ -463,31 +460,28 @@ void ExceptionHandler::dumpStack()
 	#endif
 	uint32_t frame_param_counter;
 	frame_param_counter = 0;
-	while(esp < stacklimit)
-	{
+	while(esp < stacklimit){
 		stack_val = *esp;
 		if(foundRetAddress)
 			nparameters++;
 		
-		if(esp - stackstart < 20 || nparameters < 10 || std::abs(esp - next_ret) < 10 || frame_param_counter < 8)
-		{
+		if(esp - stackstart < 20 || nparameters < 10 || std::abs(esp - next_ret) < 10 || frame_param_counter < 8){
 			output  << (uint32_t)esp << " | ";
 			printPointer(&output, stack_val);
-			if(esp == next_ret)
+			if(esp == next_ret){
 				output << " \\\\\\\\\\\\ stack frame //////";
-			else if(esp - next_ret == 1)
+			}
+			else if(esp - next_ret == 1){
 				output << " <-- ret" ;
-			else if(esp - next_ret == 2)
-			{
+			}
+			else if(esp - next_ret == 2){
 				next_ret = (uint32_t*)*(esp - 2);
 				frame_param_counter = 0;
 			}
 			frame_param_counter++;
 			output << std::endl;
 		}
-
-		if(stack_val >= min_off && stack_val <= max_off)
-		{
+		if(stack_val >= min_off && stack_val <= max_off){
 			foundRetAddress++;
 			//
 			unsigned long functionAddr;

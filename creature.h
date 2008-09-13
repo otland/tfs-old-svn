@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -17,7 +17,6 @@
 // along with this program; if not, write to the Free Software Foundation,
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
-
 
 #ifndef __OTSERV_CREATURE_H__
 #define __OTSERV_CREATURE_H__
@@ -67,8 +66,8 @@ struct FindPathParams
 
 	FindPathParams()
 	{
-		clearSight = true;
 		fullPathSearch = true;
+		clearSight = true;
 		allowDiagonal = true;
 		keepDistance = false;
 		maxSearchDist = -1;
@@ -96,17 +95,18 @@ class Item;
 class Tile;
 
 #define EVENT_CREATURECOUNT 10
-#define EVENT_CREATURE_THINK_INTERVAL 500
+#define EVENT_CREATURE_THINK_INTERVAL 1000
 #define EVENT_CHECK_CREATURE_INTERVAL (EVENT_CREATURE_THINK_INTERVAL / EVENT_CREATURECOUNT)
 
 class FrozenPathingConditionCall
 {
 	public:
 		FrozenPathingConditionCall(const Position& _targetPos);
-		virtual ~FrozenPathingConditionCall(){}
+		virtual ~FrozenPathingConditionCall() {}
 
 		virtual bool operator()(const Position& startPos, const Position& testPos,
 			const FindPathParams& fpp, int32_t& bestMatchDist) const;
+
 		bool isInRange(const Position& startPos, const Position& testPos,
 			const FindPathParams& fpp) const;
 
@@ -144,34 +144,34 @@ class Creature : public AutoID, virtual public Thing
 		void setID()
 		{
 			/*
-			  * 0x20000000 - Player
-			  * 0x30000000 - NPC
-			  * 0x40000000 - Monster
-			  */
+			 * 0x20000000 - Player
+			 * 0x30000000 - NPC
+			 * 0x40000000 - Monster
+			 */
 			this->id = auto_id | this->idRange();
 		}
-		void setRemoved() {isInternalRemoved = true;}
+		void setRemoved(){isInternalRemoved = true;}
 
 		virtual uint32_t idRange() = 0;
-		uint32_t getID() const {return id;}
+		uint32_t getID() const { return id; }
 		virtual void removeList() = 0;
 		virtual void addList() = 0;
 
 		virtual bool canSee(const Position& pos) const;
 		virtual bool canSeeCreature(const Creature* creature) const;
-		virtual bool isInGhostMode() const {return false;}
 
 		virtual RaceType_t getRace() const {return RACE_NONE;}
-		Direction getDirection() const {return direction;}
+		Direction getDirection() const { return direction;}
 		void setDirection(Direction dir) {direction = dir;}
 
-		const Position& getMasterPos() const {return masterPos;}
-		void setMasterPos(const Position& pos, uint32_t radius = 1) {masterPos = pos; masterRadius = radius;}
+		const Position& getMasterPos() const { return masterPos;}
+		void setMasterPos(const Position& pos, uint32_t radius = 1) { masterPos = pos; masterRadius = radius;}
 
 		virtual int32_t getThrowRange() const {return 1;}
 		virtual bool isPushable() const {return (getSleepTicks() <= 0);}
 		virtual bool isRemoved() const {return isInternalRemoved;}
 		virtual bool canSeeInvisibility() const {return false;}
+		virtual bool isInGhostMode() const {return false;}
 
 		int64_t getSleepTicks() const;
 		int32_t getWalkDelay(Direction dir) const;
@@ -236,7 +236,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual void onFollowCreatureComplete(const Creature* creature) {}
 
 		//combat functions
-		Creature* getAttackedCreature() {return attackedCreature;}
+		Creature* getAttackedCreature() { return attackedCreature; }
 		virtual bool setAttackedCreature(Creature* creature);
 		virtual BlockType_t blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
 			bool checkDefense = false, bool checkArmor = false);
@@ -250,7 +250,6 @@ class Creature : public AutoID, virtual public Thing
 		virtual void removeSummon(const Creature* creature);
 		const std::list<Creature*>& getSummons() {return summons;}
 
-
 		virtual int32_t getArmor() const {return 0;}
 		virtual int32_t getDefense() const {return 0;}
 		virtual float getAttackFactor() const {return 1.0f;}
@@ -263,6 +262,7 @@ class Creature : public AutoID, virtual public Thing
 		void removeCondition(Condition* condition);
 		void removeCondition(const Creature* attacker, ConditionType_t type);
 		Condition* getCondition(ConditionType_t type, ConditionId_t id) const;
+		Condition* getCondition(ConditionType_t type) const;
 		void executeConditions(uint32_t interval);
 		bool hasCondition(ConditionType_t type) const;
 		virtual bool isImmune(ConditionType_t type) const;
@@ -430,6 +430,7 @@ class Creature : public AutoID, virtual public Thing
 		};
 		typedef std::map<uint32_t, CountBlock_t> CountMap;
 
+		typedef std::map<uint32_t, CountBlock_t> CountMap;
 		CountMap damageMap;
 		CountMap healMap;
 		uint32_t lastHitCreature;
@@ -438,7 +439,10 @@ class Creature : public AutoID, virtual public Thing
 
 		//creature script events
 		uint32_t scriptEventsBitField;
-		bool hasEventRegistered(CreatureEventType_t event) {return (0 != (scriptEventsBitField & ((uint32_t)1 << event)));}
+		bool hasEventRegistered(CreatureEventType_t event)
+		{
+			return (0 != (scriptEventsBitField & ((uint32_t)1 << event)));
+		}
 		typedef std::list<CreatureEvent*> CreatureEventList;
 		CreatureEventList eventsList;
 		CreatureEventList::iterator findEvent(CreatureEventType_t type);
@@ -454,12 +458,12 @@ class Creature : public AutoID, virtual public Thing
 		virtual void doAttacking(uint32_t interval) {}
 		virtual bool hasExtraSwing() {return false;}
 
-		virtual uint64_t getLostExperience() const {return 0;}
+		virtual uint64_t getLostExperience() const { return 0; }
 		virtual double getDamageRatio(Creature* attacker) const;
 		uint32_t getStaminaRatio(Creature* attacker) const;
 		bool getKillers(Creature** lastHitCreature, Creature** mostDamageCreature);
 		virtual void dropLoot(Container* corpse) {}
-		virtual uint16_t getLookCorpse() const {return 0;}
+		virtual uint16_t getLookCorpse() const { return 0; }
 		virtual void getPathSearchParams(const Creature* creature, FindPathParams& fpp) const;
 		virtual void death() {}
 		virtual void dropCorpse();

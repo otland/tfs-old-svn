@@ -65,21 +65,20 @@ ItemType::ItemType()
 	minReqLevel = 0;
 	minReqMagicLevel = 0;
 
-	runeLevel = 0;
 	runeMagLevel = 0;
-	
+	runeLevel = 0;
+
 	speed = 0;
 	id = 0;
 	clientId = 100;
-	maxItems = 8;  //maximum size if this is a container
-	weight = 0;  //weight of the item, e.g. throwing distance depends on it
+	maxItems = 8;  // maximum size if this is a container
+	weight = 0;  // weight of the item, e.g. throwing distance depends on it
 	showCount = true;
 	weaponType = WEAPON_NONE;
 	slot_position = SLOTP_RIGHT | SLOTP_LEFT | SLOTP_AMMO;
 	ammoType = AMMO_NONE;
 	ammoAction = AMMOACTION_NONE;
 	shootType = (ShootType_t)0;
-	shootRange = 1;
 	magicEffect = NM_ME_NONE;
 	attack = 0;
 	extraAttack = 0;
@@ -91,7 +90,8 @@ ItemType::ItemType()
 	decayTime = 0;
 	stopTime = false;
 	corpseType = RACE_NONE;
-	fluidSource  = FLUID_NONE;
+	fluidSource = FLUID_NONE;
+	clientCharges = false;
 	allowDistRead = false;
 
 	isVertical = false;
@@ -114,6 +114,7 @@ ItemType::ItemType()
 	hitChance = -1;
 	maxHitChance = -1;
 	breakChance = -1;
+	shootRange = 1;
 
 	condition = NULL;
 	combatType = COMBAT_NONE;
@@ -194,17 +195,17 @@ int32_t Items::loadFromOtb(std::string file)
 			Items::dwBuildNumber = vi->dwBuildNumber; //revision
 		}
 	}
-	
-	if(Items::dwMajorVersion != 2)
-	{
-		std::cout << "Not supported items.otb version." << std::endl;
-		return ERROR_INVALID_FORMAT;
-	}
+
 	if(Items::dwMajorVersion == 0xFFFFFFFF)
 		std::cout << "[Warning] Items::loadFromOtb items.otb using generic client version." << std::endl;
+	else if(Items::dwMajorVersion != 3)
+	{
+		std::cout << "Old version detected, a newer version of items.otb is required." << std::endl;
+		return ERROR_INVALID_FORMAT;
+	}
 	else if(Items::dwMinorVersion < CLIENT_VERSION_820)
 	{
-		std::cout << "Not supported items.otb client version." << std::endl;
+		std::cout << "A newer version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
 	}
 	node = f.getChildNode(node, type);
@@ -214,7 +215,6 @@ int32_t Items::loadFromOtb(std::string file)
 		PropStream props;
 		if(!f.getProps(node,props))
 			return f.getError();
-
 		flags_t flags;
 		ItemType* iType = new ItemType();
 		iType->group = (itemgroup_t)type;
@@ -224,19 +224,22 @@ int32_t Items::loadFromOtb(std::string file)
 				iType->type = ITEM_TYPE_CONTAINER;
 				break;
 			case ITEM_GROUP_DOOR:
+				//not used
 				iType->type = ITEM_TYPE_DOOR;
 				break;
 			case ITEM_GROUP_MAGICFIELD:
+				//not used
 				iType->type = ITEM_TYPE_MAGICFIELD;
 				break;
 			case ITEM_GROUP_TELEPORT:
+				//not used
 				iType->type = ITEM_TYPE_TELEPORT;
 				break;
 			case ITEM_GROUP_NONE:
 			case ITEM_GROUP_GROUND:
 			case ITEM_GROUP_SPLASH:
 			case ITEM_GROUP_FLUID:
-			case ITEM_GROUP_RUNE:
+			case ITEM_GROUP_CHARGES:
 			case ITEM_GROUP_DEPRECATED:
 				break;
 			default:
@@ -255,11 +258,14 @@ int32_t Items::loadFromOtb(std::string file)
 		iType->pickupable = hasBitSet(FLAG_PICKUPABLE, flags);
 		iType->moveable = hasBitSet(FLAG_MOVEABLE, flags);
 		iType->stackable = hasBitSet(FLAG_STACKABLE, flags);
+
+		//not longer saved in otb_version >= 3
 		iType->floorChangeDown = hasBitSet(FLAG_FLOORCHANGEDOWN, flags);
 		iType->floorChangeNorth = hasBitSet(FLAG_FLOORCHANGENORTH, flags);
 		iType->floorChangeEast = hasBitSet(FLAG_FLOORCHANGEEAST, flags);
 		iType->floorChangeSouth = hasBitSet(FLAG_FLOORCHANGESOUTH, flags);
 		iType->floorChangeWest = hasBitSet(FLAG_FLOORCHANGEWEST, flags);
+
 		iType->alwaysOnTop = hasBitSet(FLAG_ALWAYSONTOP, flags);
 		iType->isVertical = hasBitSet(FLAG_VERTICAL, flags);
 		iType->isHorizontal = hasBitSet(FLAG_HORIZONTAL, flags);
@@ -267,6 +273,7 @@ int32_t Items::loadFromOtb(std::string file)
 		iType->allowDistRead = hasBitSet(FLAG_ALLOWDISTREAD, flags);
 		iType->rotable = hasBitSet(FLAG_ROTABLE, flags);
 		iType->canReadText = hasBitSet(FLAG_READABLE, flags);
+		iType->clientCharges = hasBitSet(FLAG_CLIENTCHARGES, flags);
 
 		attribute_t attrib;
 		datasize_t datalen = 0;
@@ -284,14 +291,14 @@ int32_t Items::loadFromOtb(std::string file)
 				{
 					if(datalen != sizeof(uint16_t))
 						return ERROR_INVALID_FORMAT;
-					
+
 					uint16_t serverid;
 					if(!props.GET_USHORT(serverid))
 						return ERROR_INVALID_FORMAT;
-					
+
 					if(serverid > 20000 && serverid < 20100)
 						serverid = serverid - 20000;
-							
+
 					iType->id = serverid;
 					break;
 				}
@@ -303,7 +310,7 @@ int32_t Items::loadFromOtb(std::string file)
 					uint16_t clientid;
 					if(!props.GET_USHORT(clientid))
 						return ERROR_INVALID_FORMAT;
-					
+
 					iType->clientId = clientid;
 					break;
 				}
@@ -311,13 +318,12 @@ int32_t Items::loadFromOtb(std::string file)
 				{
 					if(datalen != sizeof(uint16_t))
 						return ERROR_INVALID_FORMAT;
-					
+
 					uint16_t speed;
 					if(!props.GET_USHORT(speed))
 						return ERROR_INVALID_FORMAT;
-					
-					iType->speed = speed;
 
+					iType->speed = speed;
 					break;
 				}
 				case ITEM_ATTR_LIGHT2:
@@ -328,7 +334,7 @@ int32_t Items::loadFromOtb(std::string file)
 					lightBlock2* lb2;
 					if(!props.GET_STRUCT(lb2))
 						return ERROR_INVALID_FORMAT;
-				
+
 					iType->lightLevel = lb2->lightLevel;
 					iType->lightColor = lb2->lightColor;
 					break;
@@ -337,11 +343,11 @@ int32_t Items::loadFromOtb(std::string file)
 				{
 					if(datalen != sizeof(uint8_t))
 						return ERROR_INVALID_FORMAT;
-					
+
 					uint8_t v;
 					if(!props.GET_UCHAR(v))
 						return ERROR_INVALID_FORMAT;
-						
+
 					iType->alwaysOnTopOrder = v;
 					break;
 				}
@@ -354,28 +360,29 @@ int32_t Items::loadFromOtb(std::string file)
 				}
 			}
 		}
-		
+
 		reverseItemMap[iType->clientId] = iType->id;
-		
+
 		// store the found item
 		items.addElement(iType, iType->id);
 		node = f.getNextNode(node, type);
 	}
-	
 	return ERROR_NONE;
 }
 
 bool Items::loadFromXml()
 {
 	std::string filename = "data/items/items.xml";
+
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
+	int32_t intValue;
+	std::string strValue;
+	uint32_t id = 0;
+
 	if(doc)
 	{
-		int32_t intValue;
-		std::string strValue, tmpStrValue;
-		uint32_t id = 0;
-
 		xmlNodePtr root = xmlDocGetRootElement(doc);
+		
 		if(xmlStrcmp(root->name,(const xmlChar*)"items") != 0)
 		{
 			xmlFreeDoc(doc);
@@ -385,10 +392,9 @@ bool Items::loadFromXml()
 		xmlNodePtr itemNode = root->children;
 		while(itemNode)
 		{
-			if(xmlStrcmp(itemNode->name, (const xmlChar*)"item") == 0)
+			if(xmlStrcmp(itemNode->name,(const xmlChar*)"item") == 0)
 			{
-				if(readXMLInteger(itemNode, "id", intValue))
-				{
+				if(readXMLInteger(itemNode, "id", intValue)){
 					id = intValue;
 
 					if(id > 20000 && id < 20100)
@@ -412,35 +418,33 @@ bool Items::loadFromXml()
 						it.pluralName = strValue;
 
 					xmlNodePtr itemAttributesNode = itemNode->children;
+
 					while(itemAttributesNode)
 					{
 						if(readXMLString(itemAttributesNode, "key", strValue))
 						{
-							tmpStrValue = asLowerCaseString(strValue);
+							std::string tmpStrValue = asLowerCaseString(strValue);
 							if(tmpStrValue == "type")
 							{
 								if(readXMLString(itemAttributesNode, "value", strValue))
 								{
 									tmpStrValue = asLowerCaseString(strValue);
 									if(tmpStrValue == "key")
-										it.group = ITEM_GROUP_KEY;
+										it.type = ITEM_TYPE_KEY;
 									else if(tmpStrValue == "magicfield")
-									{
-										it.group = ITEM_GROUP_MAGICFIELD;
 										it.type = ITEM_TYPE_MAGICFIELD;
-									}
 									else if(tmpStrValue == "depot")
 										it.type = ITEM_TYPE_DEPOT;
 									else if(tmpStrValue == "mailbox")
 										it.type = ITEM_TYPE_MAILBOX;
 									else if(tmpStrValue == "trashholder")
 										it.type = ITEM_TYPE_TRASHHOLDER;
-									else if(tmpStrValue == "bed")
-										it.type = ITEM_TYPE_BED;
 									else if(tmpStrValue == "teleport")
 										it.type = ITEM_TYPE_TELEPORT;
-									else if(tmpStrValue == "leveldoor" || tmpStrValue == "leveldoors")
-										it.type = ITEM_TYPE_LEVELDOOR;
+									else if(tmpStrValue == "door")
+										it.type = ITEM_TYPE_DOOR;
+									else if(tmpStrValue == "bed")
+										it.type = ITEM_TYPE_BED;
 									else
 										std::cout << "Warning: [Items::loadFromXml] " << "Unknown type " << strValue << std::endl;
 								}
@@ -515,13 +519,37 @@ bool Items::loadFromXml()
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.rotateTo = intValue;
 							}
-							else if(tmpStrValue == "moveable" || tmpStrValue == "movable")
+							else if(tmpStrValue == "moveable"
+								|| tmpStrValue == "movable")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.moveable = (intValue != 0);
+									it.moveable = (intValue == 1);
+							}
+							else if(tmpStrValue == "blockprojectile")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+									it.blockProjectile = (intValue == 1);
+							}
+							else if(tmpStrValue == "floorchange")
+							{
+								if(readXMLString(itemAttributesNode, "value", strValue))
+								{
+									tmpStrValue = asLowerCaseString(strValue);
+									if(tmpStrValue == "down")
+										it.floorChangeDown = true;
+									else if(tmpStrValue == "north")
+										it.floorChangeNorth = true;
+									else if(tmpStrValue == "south")
+										it.floorChangeSouth = true;
+									else if(tmpStrValue == "west")
+										it.floorChangeWest = true;
+									else if(tmpStrValue == "east")
+										it.floorChangeEast = true;
+								}
 							}
 							else if(tmpStrValue == "corpsetype")
 							{
+								tmpStrValue = asLowerCaseString(strValue);
 								if(readXMLString(itemAttributesNode, "value", strValue))
 								{
 									tmpStrValue = asLowerCaseString(strValue);
@@ -546,7 +574,7 @@ bool Items::loadFromXml()
 							{
 								if(readXMLString(itemAttributesNode, "value", strValue))
 								{
-									FluidTypes_t fluid = getFluidType(strValue);
+									FluidTypes_t fluid = getFluidType(tmpStrValue);
 									if(fluid != FLUID_NONE)
 										it.fluidSource = fluid;
 									else
@@ -594,7 +622,7 @@ bool Items::loadFromXml()
 										it.weaponType = WEAPON_FIST;
 									else
 										std::cout << "Warning: [Items::loadFromXml] " << "Unknown weaponType " << strValue << std::endl;
-									}
+								}
 							}
 							else if(tmpStrValue == "slottype")
 							{
@@ -625,10 +653,8 @@ bool Items::loadFromXml()
 							{
 								if(readXMLString(itemAttributesNode, "value", strValue))
 								{
-									Ammo_t ammo = getAmmoType(strValue);
-									if(ammo != AMMO_NONE)
-										it.ammoType = ammo;
-									else
+									it.ammoType = getAmmoType(strValue);
+									if(it.ammoType == AMMO_NONE)
 										std::cout << "Warning: [Items::loadFromXml] " << "Unknown ammoType " << strValue << std::endl;
 								}
 							}
@@ -651,7 +677,7 @@ bool Items::loadFromXml()
 									if(effect != NM_ME_UNK)
 										it.magicEffect = effect;
 									else
-										std::cout << "Warning: [Items::loadFromXml] " << "Unknown magicEffect " << strValue << std::endl;
+										std::cout << "Warning: [Items::loadFromXml] " << "Unknown effect " << strValue << std::endl;
 								}
 							}
 							else if(tmpStrValue == "range")
@@ -812,12 +838,12 @@ bool Items::loadFromXml()
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.skills[SKILL_FIST] = intValue;
 							}
-							else if(tmpStrValue == "maxhealthpoints")
+							else if(tmpStrValue == "maxhitpoints" || tmpStrValue == "maxhealthpoints"))
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.stats[STAT_MAXHEALTH] = intValue;
 							}
-							else if(tmpStrValue == "maxhealthpercent")
+							else if(tmpStrValue == "maxhitpointspercent" || tmpStrValue == "maxhealthpercent")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.statsPercent[STAT_MAXHEALTH] = intValue;
@@ -827,7 +853,7 @@ bool Items::loadFromXml()
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.stats[STAT_MAXMANA] = intValue;
 							}
-							else if(tmpStrValue == "maxmanapercent")
+							else if(tmpStrValue == "maxmanapointspercent" || tmpStrValue == "maxmanapercent")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.statsPercent[STAT_MAXMANA] = intValue;
@@ -837,17 +863,17 @@ bool Items::loadFromXml()
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.stats[STAT_SOUL] = intValue;
 							}
-							else if(tmpStrValue == "soulpercent")
+							else if(tmpStrValue == "soulpointspercent" || tmpStrValue == "soulpercent")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.statsPercent[STAT_SOUL] = intValue;
 							}
-							else if(tmpStrValue == "magiclevelpoints")
+							else if(tmpStrValue == "magicpoints" || tmpStrValue == "magiclevelpoints")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.stats[STAT_MAGICLEVEL] = intValue;
 							}
-							else if(tmpStrValue == "magiclevelpercent")
+							else if(tmpStrValue == "magicpointspercent" || tmpStrValue == "magiclevelpercent")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.statsPercent[STAT_MAGICLEVEL] = intValue;
@@ -879,7 +905,8 @@ bool Items::loadFromXml()
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.absorbPercentFire = intValue;
 							}
-							else if(tmpStrValue == "absorbpercentpoison" ||	tmpStrValue == "absorbpercentearth")
+							else if(tmpStrValue == "absorbpercentpoison" ||
+								tmpStrValue == "absorbpercentearth")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.absorbPercentEarth = intValue;
@@ -995,7 +1022,7 @@ bool Items::loadFromXml()
 										combatType = COMBAT_DROWNDAMAGE;
 									}
 									/*
-									else if(strcasecmp(strValue.c_str(), "physical")
+									else if(tmpStrValue == "physical")
 									{
 										damageCondition = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_PHYSICAL);
 										combatType = COMBAT_PHYSICALDAMAGE;
@@ -1161,39 +1188,7 @@ bool Items::loadFromXml()
 		//check bed items
 		if((it->transformToFree != 0 || it->transformToOnUse[PLAYERSEX_FEMALE] != 0 || it->transformToOnUse[PLAYERSEX_MALE] != 0) && it->type != ITEM_TYPE_BED)
 			std::cout << "Warning: [Items::loadFromXml] Item " << it->id << " is not set as a bed-type." << std::endl;
-
-		//check looping decaying items
-		/*
-		if(it->decayTo <= 0 || !it->moveable)
-			continue;
-
-		std::vector<int32_t> decayList;
-		decayList.push_back(it->id);
-		int32_t decayTo = it->decayTo;
-		while(decayTo > 0)
-		{
-			if(decayList.size() >= 10)
-				std::cout << "Warning: [Items::loadFromXml] Item " << *decayList.begin() << " an unsual long decay-chain" << std::endl;
-
-			if(std::find(decayList.begin(), decayList.end(), decayTo) == decayList.end())
-			{
-				decayList.push_back(decayTo);
-
-				const ItemType& it = Item::items.getItemType(decayTo);
-				if(it.id == 0)
-					break;
-
-				decayTo = it.decayTo;
-			}
-			else
-			{
-				std::cout << "Warning: [Items::loadFromXml] Item " << it->id << " has an infinite decay-chain" << std::endl;
-				break;
-			}
-		}
-		*/
 	}
-
 	return true;
 }
 
@@ -1219,9 +1214,6 @@ const ItemType& Items::getItemType(int32_t id) const
 		return *iType;
 	else
 	{
-		#ifdef __DEBUG__
-		std::cout << "WARNING! unknown itemtypeid " << id << ". using defaults." << std::endl;
-		#endif
 		static ItemType dummyItemType; // use this for invalid ids
 		return dummyItemType;
 	}
@@ -1240,9 +1232,6 @@ const ItemType& Items::getItemIdByClientId(int32_t spriteId) const
 	}
 	while(iType);
 
-	#ifdef __DEBUG__
-	std::cout << "WARNING! unknown sprite id " << spriteId << ". using defaults." << std::endl;
-	#endif
 	static ItemType dummyItemType; // use this for invalid ids
 	return dummyItemType;
 }

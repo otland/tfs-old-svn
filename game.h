@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -61,12 +61,13 @@ enum WorldType_t
 
 enum GameState_t
 {
-	GAME_STATE_INIT,
 	GAME_STATE_STARTUP,
+	GAME_STATE_INIT,
 	GAME_STATE_NORMAL,
 	GAME_STATE_MAINTAIN,
 	GAME_STATE_CLOSED,
-	GAME_STATE_SHUTDOWN
+	GAME_STATE_SHUTDOWN,
+	GAME_STATE_CLOSING
 };
 
 enum LightState_t
@@ -80,7 +81,13 @@ enum LightState_t
 struct RuleViolation
 {
 	RuleViolation(Player* _reporter, const std::string& _text, uint32_t _time) :
-		text(_text), time(_time), reporter(_reporter), gamemaster(NULL), isOpen(true) {}
+		reporter(_reporter),
+		gamemaster(NULL),
+		text(_text),
+		time(_time),
+		isOpen(true)
+	{
+	}
 
 	Player* reporter;
 	Player* gamemaster;
@@ -98,7 +105,6 @@ typedef std::map< uint32_t, shared_ptr<RuleViolation> > RuleViolationsMap;
 #define EVENT_DECAYINTERVAL 10000
 
 typedef std::vector< std::pair<std::string, uint32_t> > Highscore;
-typedef std::vector< Player* > PlayerVector;
 
 /**
   * Main Game class.
@@ -116,6 +122,7 @@ class Game
 		bool reloadHighscores();
 		std::string getHighscoreString(uint16_t skill);
 
+		void autoSave();
 		void prepareServerSave();
 		void serverSave();
 
@@ -150,20 +157,20 @@ class Game
 		std::string getTradeErrorDescription(ReturnValue ret, Item* item);
 
 		/**
-		  * Set a single tile of the map, position is read from this tile
-		  */
-		void setTile(Tile* newTile);
-
-		/**
 		  * Get a single tile of the map.
 		  * \returns A pointer to the tile
-		  */
+		*/
 		Tile* getTile(uint32_t x, uint32_t y, uint32_t z);
+
+		/**
+		  * Set a single tile of the map, position is read from this tile
+		*/
+		void setTile(Tile* newTile);
 
 		/**
 		  * Get a leaf of the map.
 		  * \returns A pointer to a leaf
-		  */
+		*/
 		QTreeLeafNode* getLeaf(uint32_t x, uint32_t y);
 
 		/**
@@ -195,11 +202,19 @@ class Game
 		Player* getPlayerByName(const std::string& s);
 
 		/**
+		  * Returns a player based on a string name identifier, with support for the "~" wildcard.
+		  * \param s is the name identifier, with or without wildcard
+		  * \param player will point to the found player (if any)
+		  * \return "RET_PLAYERWITHTHISNAMEISNOTONLINE" or "RET_NAMEISTOOAMBIGIOUS"
+		  */
+		ReturnValue getPlayerByNameWildcard(const std::string& s, Player*& player);
+
+		/**
 		  * Returns a player based on an account number identifier
 		  * \param acc is the account identifier
 		  * \returns A Pointer to the player
 		  */
-		Player* getPlayerByAccount(uint32_t account);
+		Player* getPlayerByAccount(uint32_t acc);
 
 		/**
 		  * Returns all players based on their account number identifier
@@ -309,7 +324,7 @@ class Game
 		uint32_t getMoney(const Cylinder* cylinder);
 
 		/**
-		  * Remove item(s) with a monetary value
+		  * Remove/Add item(s) with a monetary value
 		  * \param cylinder to remove the money from
 		  * \param money is the amount to remove
 		  * \param flags optional flags to modifiy the default behaviour
@@ -387,7 +402,7 @@ class Game
 		bool playerRequestChannels(uint32_t playerId);
 		bool playerOpenChannel(uint32_t playerId, uint16_t channelId);
 		bool playerCloseChannel(uint32_t playerId, uint16_t channelId);
-		bool playerOpenPrivateChannel(uint32_t playerId, std::string receiver);
+		bool playerOpenPrivateChannel(uint32_t playerId, std::string& receiver);
 		bool playerCloseNpcChannel(uint32_t playerId);
 		bool playerProcessRuleViolation(uint32_t playerId, const std::string& name);
 		bool playerCloseRuleViolation(uint32_t playerId, const std::string& name);
@@ -412,11 +427,13 @@ class Game
 			uint32_t tradePlayerId, uint16_t spriteId);
 		bool playerAcceptTrade(uint32_t playerId);
 		bool playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int index);
-		bool playerCloseTrade(uint32_t playerId);
-		bool playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t count, uint8_t amount);
-		bool playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count, uint8_t amount);
+		bool playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t count,
+			uint8_t amount);
+		bool playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count,
+			uint8_t amount);
 		bool playerCloseShop(uint32_t playerId);
 		bool playerLookInShop(uint32_t playerId, uint16_t spriteId, uint8_t count);
+		bool playerCloseTrade(uint32_t playerId);
 		bool playerSetAttackedCreature(uint32_t playerId, uint32_t creatureId);
 		bool playerFollowCreature(uint32_t playerId, uint32_t creatureId);
 		bool playerCancelAttackAndFollow(uint32_t playerId);
@@ -544,10 +561,6 @@ class Game
 
 		size_t checkCreatureLastIndex;
 		std::vector<Creature*> checkCreatureVectors[EVENT_CREATURECOUNT];
-
-		#ifdef __DEBUG_CRITICALSECTION__
-		static OTSYS_THREAD_RETURN monitorThread(void *p);
-		#endif
 
 		struct GameEvent
 		{

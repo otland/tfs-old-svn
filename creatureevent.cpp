@@ -21,8 +21,10 @@
 
 #include "creatureevent.h"
 #include "tools.h"
-#include "enums.h"
 #include "player.h"
+#ifdef __DEBUG_LUASCRIPTS__
+#include <sstream>
+#endif
 
 CreatureEvents::CreatureEvents() :
 m_scriptInterface("CreatureScript Interface")
@@ -144,37 +146,37 @@ Event(_interface)
 
 bool CreatureEvent::configureEvent(xmlNodePtr p)
 {
-	std::string strValue;
+	std::string str;
 	//Name that will be used in monster xml files and
-	//lua function to register events to reference this event
-	if(readXMLString(p, "name", strValue))
-		m_eventName = strValue;
+	// lua function to register events to reference this event
+	if(readXMLString(p, "name", str))
+		m_eventName = str;
 	else
 	{
 		std::cout << "Error: [CreatureEvent::configureEvent] No name for creature event." << std::endl;
 		return false;
 	}
 	
-	if(readXMLString(p, "type", strValue))
+	if(readXMLString(p, "type", str))
 	{
-		std::string tmpValue = asLowerCaseString(strValue);
-		if(tmpValue == "login")
+		std::string tmpStr = asLowerCaseString(str);
+		if(tmpStr == "login")
 			m_type = CREATURE_EVENT_LOGIN;
-		else if(tmpValue == "logout")
+		else if(tmpStr == "logout")
 			m_type = CREATURE_EVENT_LOGOUT;
-		else if(tmpValue == "think")
+		else if(tmpStr == "think")
 			m_type = CREATURE_EVENT_THINK;
-		else if(tmpValue == "advance")
+		else if(tmpStr == "advance")
 			m_type = CREATURE_EVENT_ADVANCE;
-		else if(tmpValue == "look")
+		else if(tmpStr == "look")
 			m_type = CREATURE_EVENT_LOOK;
-		else if(tmpValue == "death")
+		else if(tmpStr == "death")
 			m_type = CREATURE_EVENT_DEATH;
-		else if(tmpValue == "kill")
+		else if(tmpStr == "kill")
 			m_type = CREATURE_EVENT_KILL;
 		else
 		{
-			std::cout << "Error: [CreatureEvent::configureEvent] No valid type for creature event." << strValue << std::endl;
+			std::cout << "Error: [CreatureEvent::configureEvent] No valid type for creature event." << str << std::endl;
 			return false;
 		}
 	}
@@ -243,7 +245,7 @@ uint32_t CreatureEvent::executeOnLogin(Player* player)
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[30];
+		char desc[35];
 		sprintf(desc, "%s", player->getName().c_str());
 		env->setEventDesc(desc);
 		#endif
@@ -278,7 +280,7 @@ uint32_t CreatureEvent::executeOnLogout(Player* player)
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[30];
+		char desc[35];
 		sprintf(desc, "%s", player->getName().c_str());
 		env->setEventDesc(desc);
 		#endif
@@ -313,7 +315,7 @@ uint32_t CreatureEvent::executeOnThink(Creature* creature, uint32_t interval)
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[30];
+		char desc[35];
 		sprintf(desc, "%s", creature->getName().c_str());
 		env->setEventDesc(desc);
 		#endif
@@ -349,7 +351,7 @@ uint32_t CreatureEvent::executeOnAdvance(Player* player, skills_t skill, uint32_
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[30];
+		char desc[35];
 		sprintf(desc, "%s", player->getName().c_str());
 		env->setEventDesc(desc);
 		#endif
@@ -423,7 +425,7 @@ uint32_t CreatureEvent::executeOnDeath(Creature* creature, Item* corpse, Creatur
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[30];
+		char desc[35];
 		sprintf(desc, "%s", creature->getName().c_str());
 		env->setEventDesc(desc);
 		#endif

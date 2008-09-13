@@ -85,7 +85,6 @@ enum MagicEffectClasses
 	NM_ME_TUTORIALARROW	= 0x37, //55
 	NM_ME_TUTORIALSQUARE	= 0x38, //56
 
-
 	//for internal use, dont send to client
 	NM_ME_NONE             = 0xFF,
 	NM_ME_UNK              = 0xFFFF
@@ -167,7 +166,6 @@ enum SpeakClasses
 	SPEAK_CLASS_LAST 	= SPEAK_MONSTER_YELL
 };
 
-
 enum MessageClasses
 {
 	MSG_CLASS_FIRST			= 0x11,
@@ -182,7 +180,6 @@ enum MessageClasses
 	MSG_STATUS_CONSOLE_BLUE		= 0x1A, /*Blue message in the console*/
 	MSG_CLASS_LAST			= MSG_STATUS_CONSOLE_BLUE
 };
-
 
 enum FluidColors_t
 {
@@ -272,7 +269,6 @@ enum TextColor_t
 	TEXTCOLOR_BLUE		= 5,
 	TEXTCOLOR_LIGHTBLUE	= 35,
 	TEXTCOLOR_LIGHTGREEN = 30,
-	TEXTCOLOR_GREEN		= 54,
 	TEXTCOLOR_PURPLE	= 83,
 	TEXTCOLOR_LIGHTGREY	= 129,
 	TEXTCOLOR_DARKRED	= 144,
@@ -379,13 +375,13 @@ enum item_t
 	ITEM_COINS_GOLD		= 2148,
 	ITEM_COINS_PLATINUM	= 2152,
 	ITEM_COINS_CRYSTAL	= 2160,
-	
+
 	ITEM_DEPOT		= 2594,
 	ITEM_LOCKER1		= 2589,
-	
+
 	ITEM_MALE_CORPSE	= 6080,
 	ITEM_FEMALE_CORPSE	= 6081,
-	
+
 	ITEM_MEAT		= 2666,
 	ITEM_HAM		= 2671,
 	ITEM_GRAPE		= 2681,
@@ -396,14 +392,14 @@ enum item_t
 
 	ITEM_FULLSPLASH		= 2016,
 	ITEM_SMALLSPLASH	= 2019,
-	
+
 	ITEM_PARCEL		= 2595,
 	ITEM_PARCEL_STAMPED	= 2596,
 	ITEM_LETTER		= 2597,
 	ITEM_LETTER_STAMPED	= 2598,
 	ITEM_LABEL		= 2599,
-	
-	ITEM_HOUSE_TRANSFER	= 1968, //read-only
+
+	ITEM_HOUSE_TRANSFER	= 1968 //read-only
 };
 
 enum PlayerBlessings
@@ -517,19 +513,13 @@ const int32_t violationReasons[4] =
 	//ignore this
 	0,
 
-	/*
-	 * all name reasons
-	 */
+	// all name reasons
 	4,
 
-	/*
-	 * all name, statement & cheating reasons
-	 */
+	// all name, statement & cheating reasons
 	18,
 
-	/*
-	 * all reasons
-	 */
+	// all reasons
 	22
 };
 
@@ -540,7 +530,7 @@ const int32_t violationReasons[4] =
 //[1000 - 1500]
 #define PSTRG_OUTFITS_RANGE_START   (PSTRG_RESERVED_RANGE_START + 1000)
 #define PSTRG_OUTFITS_RANGE_SIZE    500
-	
+
 #define IS_IN_KEYRANGE(key, range) (key >= PSTRG_##range##_START && ((key - PSTRG_##range##_START) < PSTRG_##range##_SIZE))
 
 #endif

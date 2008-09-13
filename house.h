@@ -67,7 +67,7 @@ class AccessList
 {
 	public:
 		AccessList();
-		virtual ~AccessList() {}
+		~AccessList();
 
 		bool parseList(const std::string& _list);
 		bool addPlayer(std::string& name);
@@ -90,43 +90,42 @@ class AccessList
 		ExpressionList expressionList;
 		RegExList regExList;
 };
-	
+
 class Door : public Item
 {
 	public:
 		Door(uint16_t _type);
 		virtual ~Door();
-	
+
 		virtual Door* getDoor() {return this;}
 		virtual const Door* getDoor() const {return this;}
-		
+
 		House* getHouse() {return house;}
-		
+
 		//serialization
 		virtual bool unserialize(xmlNodePtr p);
 		virtual xmlNodePtr serialize();
-	
+
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool serializeAttr(PropWriteStream& propWriteStream);
-	
+
 		void setDoorId(uint32_t _doorId) {doorId = _doorId;}
 		uint32_t getDoorId() const {return doorId;}
-		
+
 		bool canUse(const Player* player);
-		
+
 		void setAccessList(const std::string& textlist);
 		bool getAccessList(std::string& list) const;
-	
+
 		//overrides
 		virtual bool canRemove() const {return (house == NULL);}
 		virtual void onRemoved();
 		void copyAttributes(Item* item);
-	
+
 	protected:
 		void setHouse(House* _house);
-		
+
 	private:
-		uint32_t doorId;
 		House* house;
 		AccessList* accessList;
 		friend class House;
@@ -153,7 +152,7 @@ class House
 {
 	public:
 		House(uint32_t _houseid);
-		virtual ~House() {}
+		~House();
 
 		void addTile(HouseTile* tile);
 
@@ -220,11 +219,13 @@ class House
 		HouseBedItemList::iterator getHouseBedsEnd() {return bedsList.end();}
 
 	private:
+		void updateDoorDescription();
 		bool transferToDepot();
 
 		bool isLoaded;
 		uint32_t houseid;
 		uint32_t houseOwner;
+		std::string houseOwnerName;
 		HouseTileList houseTiles;
 		HouseDoorList doorList;
 		HouseBedItemList bedsList;
@@ -246,7 +247,7 @@ class House
 class Houses
 {
 	Houses();
-	virtual ~Houses() {}
+	~Houses();
 
 	public:
 		static Houses& getInstance()

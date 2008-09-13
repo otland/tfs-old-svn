@@ -43,8 +43,8 @@
 	-- Connection Config
 	ip = "127.0.0.1"
 	port = 7171
-	loginTries = 5
-	retryTimeout = 30 * 1000
+	loginTries = 10
+	retryTimeout = 5 * 1000
 	loginTimeout = 60 * 1000
 	maxPlayers = "1000"
 	motd = "Welcome to the Forgotten Server!"
@@ -55,6 +55,21 @@
 	loginMessage = "Welcome to the Forgotten Server!"
 	adminLogsEnabled = "no"
 	statusTimeout = 5 * 60 * 1000
+	replaceKickOnLogin = "yes"
+
+	-- Database
+	sqlType = "sqlite"
+	passwordType = "plain"
+	mysqlHost = "localhost"
+	mysqlUser = "root"
+	mysqlPass = ""
+	mysqlDatabase = "theforgottenserver"
+	mysqlPort = 3306
+	sqliteDatabase = "forgottenserver.s3db"
+
+	-- Deathlist
+	deathListEnabled = "yes"
+	maxDeathRecords = 5
 
 	-- Guilds
 	inGameGuildManagement = "yes"
@@ -62,11 +77,9 @@
 	guildNameMinLength = 4
 	guildNameMaxLength = 20
 
-	-- Highscores and Deathlist
+	-- Highscores
 	highscoreDisplayPlayers = 15
 	updateHighscoresAfterMinutes = 60
-	deathListEnabled = "yes"
-	maxDeathRecords = 5
 
 	-- Houses
 	buyableAndSellableHouses = "yes"
@@ -78,15 +91,15 @@
 	houseRentPeriod = "never"
 	houseNeedPremiumAccount = "yes"	
 
-	-- Premium
-	freePremium = "no"
-	premiumForPromotion = "yes"
-	removePremiumOnInit = "yes"
+	-- Item Usage
+	timeBetweenActions = 200
+	timeBetweenExActions = 1000
 
-	-- Summons
-	maxPlayerSummons = 2
-	teleportAllSummons = "no" --FIXME: doesn't work
-	teleportPlayerSummons = "no" --FIXME: doesn't work
+	-- Map
+	mapName = "forgotten"
+	mapAuthor = "Komic"
+	randomizeTiles = "yes"
+	cleanProtectedZones = "yes"
 
 	-- Miscellaneous
 	allowChangeOutfit = "yes"
@@ -97,25 +110,16 @@
 	bankSystem = "yes"
 	displaySkillLevelOnAdvance = "no" --FIXME: causes crash in some cases
 
-	-- Item Usage
-	timeBetweenActions = 200
-	timeBetweenExActions = 1000
+	-- Premium Account
+	freePremium = "no"
+	premiumForPromotion = "yes"
+	removePremiumOnInit = "yes"
 
-	-- Map
-	mapName = "forgotten"
-	mapAuthor = "Komic"
-	randomizeTiles = "yes"
-	cleanProtectedZones = "yes"
-	
-	-- Database
-	passwordType = "plain"
-	sqlType = "sqlite"
-	sqliteDatabase = "forgottenserver.s3db"
-	mysqlHost = "localhost"
-	mysqlUser = "root"
-	mysqlPass = ""
-	mysqlDatabase = "theforgottenserver"
-	mysqlPort = 3306
+	-- PVP Server
+	displayOnOrOffAtCharlist = "no"
+	allowChangeOutfit = "yes"
+	noDamageToSameLookfeet = "no"
+	experienceByKillingPlayers = "no"
 
 	-- Rates
 	rateExp = 5
@@ -124,15 +128,30 @@
 	rateMagic = 3
 	rateSpawn = 1
 
-	-- Server Save
-	serverSaveEnabled = "yes"
+	-- Real Server Save
+	-- note: serverSaveHour means like 03:00, not that it will save every 3 hours,
+	-- if you want such a system use autoSaveEachMinutes. this serversave method
+	-- may be unstable, we recommend using otadmin if you want real serversaves.
+	serverSaveEnabled = "no"
 	serverSaveHour = 3
 	shutdownAtServerSave = "yes"
 	cleanMapAtServerSave = "yes"
 
+	-- Server saving
+	autoSaveEachMinutes = 15
+	saveGlobalStorage = "no"
+
 	-- Spawns
 	deSpawnRange = 2
 	deSpawnRadius = 50
+
+	-- Summons
+	maxPlayerSummons = 2
+	teleportAllSummons = "no" --FIXME: doesn't work
+	teleportPlayerSummons = "no" --FIXME: doesn't work
+
+	-- Startup
+	defaultPriority = "high"
 
 	-- Status
 	ownerName = ""

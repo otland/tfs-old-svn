@@ -1,13 +1,13 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-// 
+//
 //////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -66,7 +66,7 @@ xmlNodePtr Condition::serialize()
 {
 	xmlNodePtr nodeCondition = xmlNewNode(NULL,(const xmlChar*)"condition");
 
-	char buffer[15];
+	char buffer[20];
 	sprintf(buffer, "%d", conditionType);
 	xmlSetProp(nodeCondition, (const xmlChar*)"type", (const xmlChar*)buffer);
 
@@ -252,7 +252,7 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 Condition* Condition::createCondition(PropStream& propStream)
 {
 	uint8_t attr;
-	
+
 	if(!propStream.GET_UCHAR(attr) || attr != CONDITIONATTR_TYPE)
 		return NULL;
 
@@ -392,7 +392,7 @@ xmlNodePtr ConditionAttributes::serialize()
 {
 	xmlNodePtr nodeCondition = Condition::serialize();
 
-	char buffer[15], buffer2[15];
+	char buffer[20], buffer2[20];
 	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 	{
 		sprintf(buffer, "%d", skills[i]);
@@ -414,7 +414,7 @@ bool ConditionAttributes::unserialize(xmlNodePtr p)
 	if(!Condition::unserialize(p))
 		return false;
 
-	char buffer[15];
+	char buffer[20];
 	int intValue;
 
 	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
@@ -764,7 +764,7 @@ xmlNodePtr ConditionRegeneration::serialize()
 {
 	xmlNodePtr nodeCondition = Condition::serialize();
 
-	char buffer[15];
+	char buffer[20];
 	sprintf(buffer, "%d", healthTicks);
 	xmlSetProp(nodeCondition, (const xmlChar*)"healthticks", (const xmlChar*)buffer);
 	sprintf(buffer, "%d", healthGain);
@@ -948,7 +948,7 @@ xmlNodePtr ConditionSoul::serialize()
 {
 	xmlNodePtr nodeCondition = Condition::serialize();
 
-	char buffer[15];
+	char buffer[20];
 	sprintf(buffer, "%d", soulGain);
 	xmlSetProp(nodeCondition, (const xmlChar*)"soulgain", (const xmlChar*)buffer);
 	sprintf(buffer, "%d", soulTicks);
@@ -1082,14 +1082,14 @@ bool ConditionDamage::setParam(ConditionParam_t param, int32_t value)
 			return true;
 			break;
 		}
-		
+
 		case CONDITIONPARAM_FORCEUPDATE:
 		{
 			forceUpdate = (value != 0);
 			return true;
 			break;
 		}
-		
+
 		case CONDITIONPARAM_DELAYED:
 		{
 			delayed = (value != 0);
@@ -1140,7 +1140,7 @@ xmlNodePtr ConditionDamage::serialize()
 {
 	xmlNodePtr nodeCondition = Condition::serialize();
 
-	char buffer[15];
+	char buffer[20];
 	sprintf(buffer, "%d", delayed);
 	xmlSetProp(nodeCondition, (const xmlChar*)"delayed", (const xmlChar*)buffer);
 	sprintf(buffer, "%d", periodDamage);
@@ -1313,7 +1313,7 @@ bool ConditionDamage::addDamage(int32_t rounds, int32_t time, int32_t value)
 		damageInfo.interval = time;
 		damageInfo.timeLeft = time;
 		damageInfo.value = value;
-		
+
 		damageList.push_back(damageInfo);
 		if(getTicks() != -1)
 			setTicks(getTicks() + damageInfo.interval);
@@ -1392,7 +1392,7 @@ bool ConditionDamage::executeCondition(Creature* creature, int32_t interval)
 
 			doDamage(creature, damage);
 		}
-		
+
 		if(!bRemove)
 			interval = 0;
 	}
@@ -1464,7 +1464,7 @@ void ConditionDamage::addCondition(Creature* creature, const Condition* addCondi
 			}
 
 			damageList = conditionDamage.damageList;
-			
+
 			if(init())
 			{
 				if(!damageList.empty())
@@ -1588,7 +1588,7 @@ void ConditionSpeed::getFormulaValues(int32_t var, int32_t& min, int32_t& max) c
 bool ConditionSpeed::setParam(ConditionParam_t param, int32_t value)
 {
 	bool ret = Condition::setParam(param, value);
-	
+
 	if(param == CONDITIONPARAM_SPEED)
 	{
 		speedDelta = value;
@@ -1608,7 +1608,7 @@ xmlNodePtr ConditionSpeed::serialize()
 {
 	xmlNodePtr nodeCondition = Condition::serialize();
 
-	char buffer[15];
+	char buffer[20];
 	sprintf(buffer, "%d", speedDelta);
 	xmlSetProp(nodeCondition, (const xmlChar*)"delta", (const xmlChar*)buffer);
 	sprintf(buffer, "%f", mina);
@@ -1766,7 +1766,7 @@ void ConditionSpeed::addCondition(Creature* creature, const Condition* addCondit
 			getFormulaValues(creature->getBaseSpeed(), min, max);
 			speedDelta = random_range(min, max);
 		}
-		
+
 		int32_t newSpeedChange = (speedDelta - oldSpeedDelta);
 		if(newSpeedChange != 0)
 			g_game.changeSpeed(creature, newSpeedChange);
@@ -1825,7 +1825,7 @@ void ConditionOutfit::addOutfit(Outfit_t outfit)
 xmlNodePtr ConditionOutfit::serialize()
 {
 	xmlNodePtr nodeCondition = Condition::serialize();
-	char buffer[15];
+	char buffer[20];
 	for(std::vector<Outfit_t>::const_iterator it = outfits.begin(); it != outfits.end(); ++it)
 	{
 		xmlNodePtr nodeValueListNode = xmlNewNode(NULL, (const xmlChar*)"outfit");
@@ -1902,7 +1902,7 @@ bool ConditionOutfit::serialize(PropWriteStream& propWriteStream)
 {
 	if(!Condition::serialize(propWriteStream))
 		return false;
-	
+
 	for(std::vector<Outfit_t>::const_iterator it = outfits.begin(); it != outfits.end(); ++it)
 	{
 		propWriteStream.ADD_UCHAR(CONDITIONATTR_OUTFIT);
@@ -1965,7 +1965,7 @@ Condition(_id, _type, _ticks)
 	internalLightTicks = 0;
 	lightChangeInterval = 0;
 }
-	
+
 bool ConditionLight::startCondition(Creature* creature)
 {
 	internalLightTicks = 0;
@@ -2050,7 +2050,7 @@ xmlNodePtr ConditionLight::serialize()
 {
 	xmlNodePtr nodeCondition = Condition::serialize();
 
-	char buffer[15];
+	char buffer[20];
 	sprintf(buffer, "%d", lightInfo.color);
 	xmlSetProp(nodeCondition, (const xmlChar*)"lightcolor", (const xmlChar*)buffer);
 	sprintf(buffer, "%d", lightInfo.level);

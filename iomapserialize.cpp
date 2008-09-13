@@ -40,7 +40,6 @@ bool IOMapSerialize::loadMap(Map* map)
 		for(HouseTileList::iterator it = house->getHouseTileBegin(); it != house->getHouseTileEnd(); ++it)
 			loadTile(*db, *it);
 	}
-
 	return true;
 }
 
@@ -62,6 +61,7 @@ bool IOMapSerialize::saveMap(Map* map)
 	query << "DELETE FROM `tiles`;";
 	if(!db->executeQuery(query.str()))
 		return false;
+
 	uint32_t tileId = 0;
 	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
 	{
@@ -133,12 +133,12 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 
 		streamitems << tileId << ", " << runningID << ", " << parentid << ", " << item->getID() << ", "
 			<< (int32_t)item->getSubType() << ", " << db->escapeBlob(attributes, attributesSize);
-		
+
 		if(!query_insert.addRow(streamitems.str()))
 			return false;
 
 		streamitems.str("");
-		
+
 		if(item->getContainer())
 			containerStackList.push_back(ContainerStackList_Pair(item->getContainer(), runningID));
 	}
@@ -150,7 +150,8 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 		parentid = csPair.second;
 		containerStackList.pop_front();
 
-		for(ItemList::const_iterator it = container->getItems(); it != container->getEnd(); ++it){
+		for(ItemList::const_iterator it = container->getItems(); it != container->getEnd(); ++it)
+		{
 			item = (*it);
 			++runningID;
 			if(item->getContainer())
@@ -164,17 +165,16 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 
 			streamitems << tileId << ", " << runningID << ", " << parentid << ", " << item->getID() << ", "
 				<< (int32_t)item->getSubType() << ", " << db->escapeBlob(attributes, attributesSize);
-				
+
 			if(!query_insert.addRow(streamitems.str()))
 				return false;
 
 			streamitems.str("");
 		}
 	}
-	
 	if(!query_insert.execute())
 		return false;
-	
+
 	return true;
 }
 
@@ -206,6 +206,7 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 			int32_t pid = result->getDataInt("pid");
 			int32_t type = result->getDataInt("itemtype");
 			int32_t count = result->getDataInt("count");
+
 			item = NULL;
 
 			unsigned long attrSize = 0;
@@ -218,7 +219,6 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 			{
 				//create a new item
 				item = Item::CreateItem(type, count);
-
 				if(item)
 				{
 					if(!item->unserializeAttr(propStream))
@@ -235,41 +235,34 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 			}
 			else
 			{
-				bool isDoor = iType.isDoor();
-				bool isBed = iType.isBed();
-
 				//find this type in the tile
 				for(uint32_t i = 0; i < tile->getThingCount(); ++i)
 				{
 					Item* findItem = tile->__getThing(i)->getItem();
-
 					if(!findItem)
 						continue;
 
-					if(findItem->getID() == type)
+					if(findItem->getID() == type || (iType.isDoor() && findItem->getDoor()) ||
+						(iType.isBed() && findItem->getBed()))
 					{
 						item = findItem;
-						if(!item->unserializeAttr(propStream))
-							std::cout << "WARNING: Serialize error in IOMapSerialize::loadTile() [X:" << tilePos.x << " Y: " << tilePos.y << " Z: " << tilePos.z << "]" << std::endl;
 						break;
-					}
-					else if(isDoor && findItem->getDoor() || isBed && findItem->getBed())
-					{
-						item = findItem;
-						item->setID(type);
-						if(isBed)
-							item->unserializeAttr(propStream);
 					}
 				}
 			}
 
 			if(item)
 			{
+				if(!item->unserializeAttr(propStream))
+					std::cout << "WARNING: Serialize error in IOMapSerialize::loadTile() [0]" << std::endl;
+
+				item = g_game.transformItem(item, type);
+
 				std::pair<Item*, int32_t> myPair(item, pid);
 				itemMap[sid] = myPair;
 			}
 			else
-				std::cout << "WARNING: IOMapSerialize::loadTile(). NULL item at " << tile->getPosition() << ". type = " << type << ", sid = " << sid << ", pid = " << pid << std::endl;
+				std::cout << "WARNING: IOMapSerialize::loadTile() - NULL item at " << tile->getPosition() << " (type = " << type << ", sid = " << sid << ", pid = " << pid << ")." << std::endl;
 		}
 		while(result->next());
 		db.freeResult(result);
@@ -353,7 +346,7 @@ bool IOMapSerialize::saveHouseInfo(Map* map)
 	DBTransaction trans(db);
 	if(!trans.begin())
 		return false;
-	
+
 	DBQuery query;
 	query << "DELETE FROM `houses`;";
 	if(!db->executeQuery(query.str()))
@@ -378,7 +371,7 @@ bool IOMapSerialize::saveHouseInfo(Map* map)
 
 		housestream.str("");
 	}
-	
+
 	if(!query_insert.execute())
 		return false;
 
@@ -396,7 +389,7 @@ bool IOMapSerialize::saveHouseInfo(Map* map)
 
 			if(!query_insert.addRow(housestream.str()))
 				return false;
-			
+
 			housestream.str("");
 		}
 
@@ -404,10 +397,10 @@ bool IOMapSerialize::saveHouseInfo(Map* map)
 		{
 			housestream << house->getHouseId() << ", " << SUBOWNER_LIST << ", " << db->escapeString(listText);
 			save_lists = true;
-			
+
 			if(!query_insert.addRow(housestream.str()))
 				return false;
-			
+
 			housestream.str("");
 		}
 
@@ -418,14 +411,14 @@ bool IOMapSerialize::saveHouseInfo(Map* map)
 			{
 				housestream << house->getHouseId() << ", " << door->getDoorId() << ", " << db->escapeString(listText);
 				save_lists = true;
-				
+
 				if(!query_insert.addRow(housestream.str()))
 					return false;
-			
+
 				housestream.str("");
 			}
 		}
-		
+
 		if(save_lists)
 		{
 			if(!query_insert.execute())

@@ -535,7 +535,7 @@ int32_t FileLoader::loadCacheBlock(uint32_t pos)
 	{
 		for(i = 0; i < CACHE_BLOCKS; i++)
 		{
-			if((long)(std::abs((long)m_cached_data[i].base - base_pos)) > (long)(2*m_cache_size))
+			if((long)(abs((long)m_cached_data[i].base - base_pos)) > (long)(2*m_cache_size))
 			{
 				loading_cache = i;
 				break;
@@ -545,7 +545,7 @@ int32_t FileLoader::loadCacheBlock(uint32_t pos)
 		if(loading_cache == -1)
 			loading_cache = 0;
 	}
-			
+
 	if(m_cached_data[loading_cache].data == NULL)
 		m_cached_data[loading_cache].data = new unsigned char[m_cache_size];
 

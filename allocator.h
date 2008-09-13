@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -79,7 +79,7 @@ class dummyallocator
 			p->~T();
 		}
 };
-	
+
 void* operator new(size_t bytes, int32_t dummy);
 void* operator new(size_t bytes);
 void* operator new[](size_t bytes);
@@ -164,7 +164,7 @@ class PoolManager
 			}
 			OTSYS_THREAD_UNLOCK(poolLock, NULL);
 		}
-	
+
 		#ifdef __OTSERV_ALLOCATOR_STATS__
 		void dumpStats()
 		{
@@ -208,7 +208,7 @@ class PoolManager
 		{
 			pools[size] = new(0) boost::pool<boost::default_user_allocator_malloc_free>(size, next_size); 
 			#ifdef __OTSERV_ALLOCATOR_STATS__
-			t_PoolStats* tmp = new(0) t_PoolStats;
+			t_PoolStats * tmp = new(0) t_PoolStats;
 			tmp->unused = 0;
 			tmp->allocations = 0;
 			tmp->deallocations = 0;
@@ -228,7 +228,7 @@ class PoolManager
 			addPool(8192, 128);
 			addPool(16384, 128);
 			#ifdef __OTSERV_ALLOCATOR_STATS__
-			t_PoolStats* tmp = new(0) t_PoolStats;
+			t_PoolStats * tmp = new(0) t_PoolStats;
 			tmp->unused = 0;
 			tmp->allocations = 0;
 			tmp->deallocations = 0;

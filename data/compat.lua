@@ -70,8 +70,12 @@ function getPlayerMasterPos(cid)
 	return getTemplePositionById(getPlayerTown(cid))
 end
 
-function isMovable(uid)
-	return isMoveable(uid)
+function isMoveable(uid)
+	return isMovable(uid)
+end
+
+function isItemMoveable(id)
+	return isItemMovable(id)
 end
 
 function getDataDir()

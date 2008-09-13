@@ -78,7 +78,7 @@ class BedItem : public Item
 class Beds
 {
 	public:
-		~Beds() {}
+		virtual ~Beds() {}
 
 		static Beds& getInstance()
 		{

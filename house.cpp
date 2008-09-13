@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -36,7 +36,7 @@ House::House(uint32_t _houseid) :
 transfer_container(ITEM_LOCKER1)
 {
 	isLoaded = false;
-	houseName = "Forgotten headquater (Flat 1, Area 42)";
+	houseName = "Forgotten headquarter (Flat 1, Area 42)";
 	houseOwner = 0;
 	posEntry.x = 0;
 	posEntry.y = 0;
@@ -51,6 +51,11 @@ transfer_container(ITEM_LOCKER1)
 	transferItem = NULL;
 }
 
+House::~House()
+{
+	//
+}
+
 void House::addTile(HouseTile* tile)
 {
 	tile->setFlag(TILESTATE_PROTECTIONZONE);
@@ -61,7 +66,7 @@ void House::setHouseOwner(uint32_t guid)
 {
 	if(isLoaded && houseOwner == guid)
 		return;
-	
+
 	isLoaded = true;
 
 	if(houseOwner)
@@ -89,37 +94,44 @@ void House::setHouseOwner(uint32_t guid)
 		paidUntil = 0;
 		rentWarnings = 0;
 	}
-	
-	char houseDescription[165];
+
 	std::string name;
 	if(guid != 0 && IOLoginData::getInstance()->getNameByGuid(guid, name))
+	{
 		houseOwner = guid;
-	if(getHouseOwner())
-		sprintf(houseDescription, "It belongs to house '%s'. %s owns this house.", houseName.c_str(), name.c_str());
+		houseOwnerName = name;
+	}
+	updateDoorDescription();
+	setLastWarning(time(NULL)); //So the new owner has one day before he start the payement
+}
+
+void House::updateDoorDescription()
+{
+	char houseDescription[200];
+	if(houseOwner != 0)
+		sprintf(houseDescription, "It belongs to house '%s'. %s owns this house.", houseName.c_str(), houseOwnerName.c_str());
 	else
 		sprintf(houseDescription, "It belongs to house '%s'. Nobody owns this house. It costs %d gold coins.", houseName.c_str(), price);
-	
+
 	HouseDoorList::iterator it;
 	for(it = doorList.begin(); it != doorList.end(); ++it)
 		(*it)->setSpecialDescription(houseDescription);
-
-	setLastWarning(time(NULL)); //So the new owner has one day before he start the payement
 }
 
 AccessHouseLevel_t House::getHouseAccessLevel(const Player* player)
 {
 	if(player->hasFlag(PlayerFlag_CanEditHouses))
 		return HOUSE_OWNER;
-	
+
 	if(player->getGUID() == houseOwner)
 		return HOUSE_OWNER;
-	
+
 	if(subOwnerList.isInList(player))
 		return HOUSE_SUBOWNER;
-	
+
 	if(guestList.isInList(player))
 		return HOUSE_GUEST;
-	
+
 	return HOUSE_NO_INVITED;
 }
 
@@ -151,14 +163,7 @@ void House::setPrice(uint32_t _price, bool update /*= false*/)
 {
 	price = _price;
 	if(update && !getHouseOwner())
-	{
-		char houseDescription[165];
-		sprintf(houseDescription, "It belongs to house '%s'. Nobody owns this house. It costs %d gold coins.", houseName.c_str(), price);
-
-		HouseDoorList::iterator it;
-		for(it = doorList.begin(); it != doorList.end(); ++it)
-			(*it)->setSpecialDescription(houseDescription);
-	}
+		updateDoorDescription();
 }
 
 void House::setAccessList(uint32_t listId, const std::string& textlist)
@@ -181,7 +186,7 @@ void House::setAccessList(uint32_t listId, const std::string& textlist)
 		//We dont have kick anyone
 		return;
 	}
-	
+
 	//kick uninvited players
 	typedef std::list<Player*> KickPlayerList;
 	KickPlayerList kickList;
@@ -216,7 +221,6 @@ bool House::transferToDepot()
 		return false;
 
 	Player* player = g_game.getPlayerByName(ownerName);
-	
 	if(!player)
 	{
 		player = new Player(ownerName, NULL);
@@ -256,15 +260,16 @@ bool House::transferToDepot()
 	}
 
 	for(std::list<Item*>::iterator it = moveItemList.begin(); it != moveItemList.end(); ++it)
+	{
 		g_game.internalMoveItem((*it)->getParent(), depot, INDEX_WHEREEVER,
 			(*it), (*it)->getItemCount(), NULL, FLAG_NOLIMIT);
+	}
 
 	if(!player->isOnline())
 	{
 		IOLoginData::getInstance()->savePlayer(player, true);
 		delete player;
 	}
-
 	return true;
 }
 
@@ -298,10 +303,7 @@ bool House::getAccessList(uint32_t listId, std::string& list) const
 
 bool House::isInvited(const Player* player)
 {
-	if(getHouseAccessLevel(player) != HOUSE_NO_INVITED)
-		return true;
-	else
-		return false;
+	return getHouseAccessLevel(player) != HOUSE_NO_INVITED;
 }
 
 void House::addDoor(Door* door)
@@ -309,6 +311,7 @@ void House::addDoor(Door* door)
 	door->useThing2();
 	doorList.push_back(door);
 	door->setHouse(this);
+	updateDoorDescription();
 }
 
 void House::removeDoor(Door* door)
@@ -354,7 +357,6 @@ Door* House::getDoorByPosition(const Position& pos)
 		if((*it)->getPosition() == pos)
 			return *it;
 	}
-
 	return NULL;
 }
 
@@ -378,7 +380,7 @@ HouseTransferItem* House::getTransferItem()
 {
 	if(transferItem != NULL)
 		return NULL;
-	
+
 	transfer_container.setParent(NULL);
 	transferItem =  HouseTransferItem::createHouseTransferItem(this);
 	transfer_container.__addThing(transferItem);
@@ -404,7 +406,7 @@ HouseTransferItem* HouseTransferItem::createHouseTransferItem(House* house)
 	transferItem->useThing2();
 	transferItem->setID(ITEM_HOUSE_TRANSFER);
 	transferItem->setSubType(1);
-	char buffer[100];
+	char buffer[150];
 	sprintf(buffer, "It is a house transfer document for '%s'.", house->getName().c_str());
 	transferItem->setSpecialDescription(buffer);
 	return transferItem;
@@ -430,7 +432,7 @@ bool HouseTransferItem::onTradeEvent(TradeEvents_t event, Player* owner)
 			house = getHouse();
 			if(house)
 				house->resetTransferItem();
-			
+
 			break;
 		}
 
@@ -456,6 +458,11 @@ AccessList::AccessList()
 	//
 }
 
+AccessList::~AccessList()
+{
+	//
+}
+
 bool AccessList::parseList(const std::string& _list)
 {
 	playerList.clear();
@@ -463,10 +470,9 @@ bool AccessList::parseList(const std::string& _list)
 	expressionList.clear();
 	regExList.clear();
 	list = _list;
-	
 	if(_list == "")
 		return true;
-	
+
 	std::stringstream listStream(_list);
 	std::string line;
 	while(getline(listStream, line))
@@ -475,11 +481,11 @@ bool AccessList::parseList(const std::string& _list)
 		trim_left(line, "\t");
 		trim_right(line, "\t");
 		trimString(line);
-		
+
 		std::transform(line.begin(), line.end(), line.begin(), tolower);
 		if(line.substr(0, 1) == "#" || line.length() > 100)
 			continue;
-		
+
 		if(line.find("@") != std::string::npos)
 		{
 			std::string::size_type pos = line.find("@");
@@ -533,7 +539,6 @@ bool AccessList::addGuild(const std::string& guildName, const std::string& rank)
 			return true;
 		}
 	}
-
 	return false;
 }
 
@@ -545,7 +550,7 @@ bool AccessList::addExpression(const std::string& expression)
 		if((*it) == expression)
 			return false;
 	}
-	
+
 	std::string outExp;
 	std::string metachars = ".[{}()\\+|^$";
 	for(std::string::const_iterator it = expression.begin(); it != expression.end(); ++it)
@@ -574,7 +579,6 @@ bool AccessList::addExpression(const std::string& expression)
 		}
 	}
 	catch(...){}
-
 	return true;
 }
 
@@ -599,10 +603,9 @@ bool AccessList::isInList(const Player* player)
 		if(git->first == player->getGuildId() && (git->second == -1 || git->second == player->getGuildRankId()))
 			return true;
 	}
-
 	return false;
 }
-	
+
 void AccessList::getList(std::string& _list) const
 {
 	_list = list;
@@ -613,7 +616,6 @@ Item(_type)
 {
 	house = NULL;
 	accessList = NULL;
-	doorId = 0;
 }
 
 Door::~Door()
@@ -629,14 +631,14 @@ bool Door::unserialize(xmlNodePtr nodeItem)
 	int32_t intValue;
 	if(readXMLInteger(nodeItem, "doorId", intValue))
 		setDoorId(intValue);
-	
+
 	return ret;
 }
 
 xmlNodePtr Door::serialize()
 {
 	xmlNodePtr xmlptr = xmlNewNode(NULL,(const xmlChar*)"item");
-	char buffer[10];
+	char buffer[20];
 	sprintf(buffer, "%d", getID());
 	xmlSetProp(xmlptr, (const xmlChar*)"id", (const xmlChar*)buffer);
 	return xmlptr;
@@ -671,8 +673,8 @@ void Door::setHouse(House* _house)
 		#endif
 		return;
 	}
-
 	house = _house;
+
 	if(!accessList)
 		accessList = new AccessList();
 }
@@ -681,12 +683,13 @@ bool Door::canUse(const Player* player)
 {
 	if(!house)
 		return true;
+
 	if(house->getHouseAccessLevel(player) >= HOUSE_SUBOWNER)
 		return true;
-	
+
 	return accessList->isInList(player);
 }
-	
+
 void Door::setAccessList(const std::string& textlist)
 {
 	if(!accessList)
@@ -731,7 +734,6 @@ Houses::Houses()
 {
 	rentPeriod = RENTPERIOD_NEVER;
 	std::string strRentPeriod = asLowerCaseString(g_config.getString(ConfigManager::HOUSE_RENT_PERIOD));
-
 	if(strRentPeriod == "yearly")
 		rentPeriod = RENTPERIOD_YEARLY;
 	else if(strRentPeriod == "monthly")
@@ -740,6 +742,11 @@ Houses::Houses()
 		rentPeriod = RENTPERIOD_WEEKLY;
 	else if(strRentPeriod == "daily")
 		rentPeriod = RENTPERIOD_DAILY;
+}
+
+Houses::~Houses()
+{
+	//
 }
 
 House* Houses::getHouse(uint32_t houseid, bool add /*= false*/)
@@ -754,8 +761,7 @@ House* Houses::getHouse(uint32_t houseid, bool add /*= false*/)
 		houseMap[houseid] = house;
 		return house;
 	}
-	else
-		return NULL;
+	return NULL;
 }
 
 House* Houses::getHouseByPlayerId(uint32_t playerId)
@@ -776,7 +782,7 @@ bool Houses::loadHousesXML(std::string filename)
 	{
 		xmlNodePtr root, houseNode;
 		root = xmlDocGetRootElement(doc);
-		
+
 		if(xmlStrcmp(root->name,(const xmlChar*)"houses") != 0)
 		{
 			xmlFreeDoc(doc);
@@ -825,9 +831,9 @@ bool Houses::loadHousesXML(std::string filename)
 				{
 					std::cout << "Warning: [Houses::loadHousesXML] House entry not set"
 						<< " - Name: " << house->getName()
-						<< " - HouseID: " << _houseid << std::endl;
+						<< " - House id: " << _houseid << std::endl;
 				}
-				
+
 				house->setEntryPos(entryPos);
 
 				if(readXMLInteger(houseNode, "rent", intValue))
@@ -836,7 +842,7 @@ bool Houses::loadHousesXML(std::string filename)
 				if(readXMLInteger(houseNode, "townid", intValue))
 					house->setTownId(intValue);
 
-				if(g_config.getString(ConfigManager::HOUSE_RENTASPRICE) == "yes" && house->getRent())
+				if(g_config.getBool(ConfigManager::HOUSE_RENTASPRICE) && house->getRent())
 					house->setPrice(house->getRent());
 				else
 				{
@@ -850,10 +856,8 @@ bool Houses::loadHousesXML(std::string filename)
 
 				house->setHouseOwner(0);
 			}
-
 			houseNode = houseNode->next;
 		}
-
 		xmlFreeDoc(doc);
 		return true;
 	}
@@ -864,7 +868,7 @@ bool Houses::reloadPrices()
 {
 	for(HouseMap::iterator it = houseMap.begin(); it != houseMap.end(); ++it)
 	{
-		if(g_config.getString(ConfigManager::HOUSE_RENTASPRICE) == "yes" && it->second->getRent())
+		if(g_config.getBool(ConfigManager::HOUSE_RENTASPRICE) && it->second->getRent())
 			continue;
 
 		uint32_t _price = 0;
@@ -901,7 +905,6 @@ bool Houses::payHouses()
 			std::string name;
 			if(!IOLoginData::getInstance()->getNameByGuid(ownerid, name))
 			{
-				//player doesnt exist, remove it as house owner?
 				house->setHouseOwner(0);
 				continue;
 			}
@@ -924,13 +927,13 @@ bool Houses::payHouses()
 			bool savePlayerHere = true;
 			if(depot)
 			{
-				if(g_config.getString(ConfigManager::HOUSE_NEED_PREMIUM) != "yes" || player->isPremium())
+				if(g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM) || player->isPremium())
 				{
 					//get money from depot then from bank
 					bool paid = false;
 					if(g_game.removeMoney(depot, house->getRent(), FLAG_NOLIMIT))
 						paid = true;
-					else if(g_config.getString(ConfigManager::BANK_SYSTEM) == "yes" && player->balance >= house->getRent())
+					else if(g_config.getBool(ConfigManager::BANK_SYSTEM) && player->balance >= house->getRent())
 					{
 						player->balance -= house->getRent();
 						paid = true;
@@ -988,7 +991,7 @@ bool Houses::payHouses()
 									break;
 
 								case RENTPERIOD_YEARLY:
-									period = "yearly";
+									period = "annual";
 									break;
 
 								default:
@@ -1019,7 +1022,6 @@ bool Houses::payHouses()
 			}
 		}
 	}
-
 	return true;
 }
 
