@@ -4,21 +4,24 @@ NpcSystem.parseParameters(npcHandler)
 
 function onCreatureAppear(cid)				npcHandler:onCreatureAppear(cid)			end
 function onCreatureDisappear(cid)			npcHandler:onCreatureDisappear(cid)			end
-function onCreatureSay(cid, type, msg)		npcHandler:onCreatureSay(cid, type, msg)	end
-function onThink()							npcHandler:onThink()						end
+function onCreatureSay(cid, type, msg)			npcHandler:onCreatureSay(cid, type, msg)		end
+function onThink()					npcHandler:onThink()					end
 
 function creatureSayCallback(cid, type, msg)
 	if(not npcHandler:isFocused(cid)) then
 		return false
 	end
 
-	if msgcontains(msg, 'soft') or msgcontains(msg, 'boots') then
+	local talkState = {}
+	local talkUser = NPCHANDLER_CONVBEHAVIOR == CONVERSATION_DEFAULT and 0 or cid
+
+	if(msgcontains(msg, 'soft') or msgcontains(msg, 'boots')) then
 		selfSay('Do you want to repair your worn soft boots for 10000 gold coins?', cid)
-		talkState = 1
-	elseif msgcontains(msg, 'yes') then
-		if talkState == 1 then
-			if getPlayerItemCount(cid, 6530) >= 1 then
-				if doPlayerRemoveMoney(cid, 10000) == TRUE then
+		talkState[talkUser] = 1
+	elseif(msgcontains(msg, 'yes')) then
+		if(talkState[talkUser] == 1) then
+			if(getPlayerItemCount(cid, 6530) >= 1) then
+				if(doPlayerRemoveMoney(cid, 10000) == TRUE) then
 					local item = getPlayerItemById(cid, TRUE, 6530)
 					doTransformItem(item.uid, 2640)	
 					selfSay('Here you are.', cid)
@@ -29,9 +32,9 @@ function creatureSayCallback(cid, type, msg)
 				selfSay('Sorry, you don\'t have the item.', cid)
 			end
 		end
-		talkState = 0
-	elseif msgcontains(msg, 'no') and isInArray({1}, talkState) == TRUE then
-		talkState = 0
+		talkState[talkUser] = 0
+	elseif(msgcontains(msg, 'no') and isInArray({1}, talkState[talkUser]) == TRUE) then
+		talkState[talkUser] = 0
 		selfSay('Ok then.', cid)
 	end
 

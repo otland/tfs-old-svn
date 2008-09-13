@@ -3,9 +3,9 @@ local npcHandler = NpcHandler:new(keywordHandler)
 NpcSystem.parseParameters(npcHandler)
 
 function onCreatureAppear(cid)				npcHandler:onCreatureAppear(cid) 			end
-function onCreatureDisappear(cid) 			npcHandler:onCreatureDisappear(cid) 		end
-function onCreatureSay(cid, type, msg) 		npcHandler:onCreatureSay(cid, type, msg) 	end
-function onThink() 							npcHandler:onThink() 						end
+function onCreatureDisappear(cid) 			npcHandler:onCreatureDisappear(cid) 			end
+function onCreatureSay(cid, type, msg) 			npcHandler:onCreatureSay(cid, type, msg) 		end
+function onThink() 					npcHandler:onThink() 					end
 
 -- Don't forget npcHandler = npcHandler in the parameters. It is required for all StdModule functions!
 keywordHandler:addKeyword({'helmets'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'I buy royal (40k), warrior (6k), crusader (9k), crown (5k), devil (4k), chain (35gp) and iron helmets (30gp), also mystic turbans (500gp).'})
@@ -17,5 +17,4 @@ keywordHandler:addKeyword({'swords'}, StdModule.say, {npcHandler = npcHandler, o
 keywordHandler:addKeyword({'axes'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'I buy fire (10k), guardian halberds (7,5k) knight (2k), double (200gp) and battle axes (100gp), also dragon lances (10k), stonecutters axes (90k), halberds (200gp) and hatchets (20gp).'})
 keywordHandler:addKeyword({'clubs'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'I buy thunder hammers (90k), war (6k), dragon (2k) and battle hammers (60gp), also skull staffs (10k) and clerical maces (200gp).'})
 
--- Makes sure the npc reacts when you say hi, bye etc.
 npcHandler:addModule(FocusModule:new())

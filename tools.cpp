@@ -270,6 +270,16 @@ std::vector<int32_t> vectorAtoi(std::vector<std::string> stringVector)
 	return returnVector;
 }
 
+/*void sortItems(ShopInfo& itemList)
+{
+	bool operator<(const ShopInfo& left, const ShopInfo& right)
+	{
+		return left.itemName < right.itemName;
+	}
+
+	itemList.sort();
+}*/
+
 bool hasBitSet(uint32_t flag, uint32_t flags)
 {
 	return ((flags & flag) == flag);

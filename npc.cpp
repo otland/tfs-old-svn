@@ -2441,9 +2441,9 @@ int32_t NpcScriptInterface::luaActionMoveTo(lua_State* L)
 {
 	//selfMoveTo(x,y,z)
 	Position target;
-	target.z = (int)popNumber(L);
-	target.y = (int)popNumber(L);
-	target.x = (int)popNumber(L);
+	target.z = (int32_t)popNumber(L);
+	target.y = (int32_t)popNumber(L);
+	target.x = (int32_t)popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
 	Npc* npc = env->getNpc();
@@ -2754,12 +2754,14 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 	{
 		ShopInfo item;
 		item.itemId = getField(L, "id");
-		item.subType = getField(L, "subtype");
+		item.subType = getField(L, "subType");
 		item.buyPrice = getField(L, "buy");
 		item.sellPrice = getField(L, "sell");
+		item.itemName = getField(L, "name");
 		items.push_back(item);
 		lua_pop(L, 1);
 	}
+	//sortItems(items);
 	lua_pop(L, 1);
 
 	player = env->getPlayerByUID(popNumber(L));

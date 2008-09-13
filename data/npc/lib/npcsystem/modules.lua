@@ -734,10 +734,11 @@ if(Modules == nil) then
 	function ShopModule:addBuyableItem(names, itemid, cost, subType, realName)
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
 			if(self.npcHandler.shopItems[itemid] == nil) then
-				self.npcHandler.shopItems[itemid] = {buyPrice = 0, sellPrice = 0, subType = 0, realName = realName or getItemNameById(itemid)}
+				self.npcHandler.shopItems[itemid] = {buyPrice = 0, sellPrice = 0, subType = 0, realName = ""}
 			end
 
 			self.npcHandler.shopItems[itemid].buyPrice = cost
+			self.npcHandler.shopItems[itemid].realName = realName or getItemNameById(itemid)
 			self.npcHandler.shopItems[itemid].subType = subType or 0
 		end
 
@@ -800,10 +801,11 @@ if(Modules == nil) then
 	function ShopModule:addSellableItem(names, itemid, cost, realName)
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
 			if(self.npcHandler.shopItems[itemid] == nil) then
-				self.npcHandler.shopItems[itemid] = {buyPrice = 0, sellPrice = 0, subType = 0, realName = realName or getItemNameById(itemid)}
+				self.npcHandler.shopItems[itemid] = {buyPrice = 0, sellPrice = 0, subType = 0, realName = ""}
 			end
 
 			self.npcHandler.shopItems[itemid].sellPrice = cost
+			self.npcHandler.shopItems[itemid].realName = realName or getItemNameById(itemid)
 		end
 
 		if(names ~= nil and SHOPMODULE_MODE ~= SHOPMODULE_MODE_TRADE) then
@@ -966,8 +968,8 @@ if(Modules == nil) then
 		end
 
 		local itemWindow = {}
-		for itemid, attr in pairs(module.npcHandler.shopItems) do
-			local item = {id = itemid, buy = attr.buyPrice, sell = attr.sellPrice, subtype = attr.subType}
+		for item, attr in pairs(module.npcHandler.shopItems) do
+			local item = {id = item, buy = attr.buyPrice, sell = attr.sellPrice, subType = attr.subType, name = attr.realName}
 			table.insert(itemWindow, item)
 		end
 
