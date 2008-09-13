@@ -156,10 +156,10 @@ class ItemAttributes
 		void resetWriter() {removeAttribute(ATTR_ITEM_WRITTENBY);}
 		const std::string& getWriter() const {return getStrAttr(ATTR_ITEM_WRITTENBY);}
 
-		void setActionId(uint16_t n) {if(n < 100) n = 100; setIntAttr(ATTR_ITEM_ACTIONID, n);}
+		void setActionId(uint16_t n) {setIntAttr(ATTR_ITEM_ACTIONID, (uint16_t)std::max((uint16_t)100, n));}
 		uint16_t getActionId() const {return getIntAttr(ATTR_ITEM_ACTIONID);}
 
-		void setUniqueId(uint16_t n) {if(n < 1000) n = 1000; setIntAttr(ATTR_ITEM_UNIQUEID, n);}
+		void setUniqueId(uint16_t n) {setIntAttr(ATTR_ITEM_UNIQUEID, (uint16_t)std::max((uint16_t)1000, n));}
 		uint16_t getUniqueId() const {return getIntAttr(ATTR_ITEM_UNIQUEID);}
 
 		void setCharges(uint16_t n) {setIntAttr(ATTR_ITEM_CHARGES, n);}
@@ -310,7 +310,6 @@ class Item : virtual public Thing, public ItemAttributes
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool unserializeAttr(PropStream& propStream);
 		virtual bool unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream);
-		//virtual bool serializeItemNode();
 
 		virtual bool serializeAttr(PropWriteStream& propWriteStream);
 

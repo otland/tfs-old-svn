@@ -445,6 +445,8 @@ bool Items::loadFromXml()
 										it.type = ITEM_TYPE_DOOR;
 									else if(tmpStrValue == "bed")
 										it.type = ITEM_TYPE_BED;
+									else if(tmpStrValue == "leveldoor" || tmpStrValue == "leveldoors")
+										it.type = ITEM_TYPE_LEVELDOOR;
 									else
 										std::cout << "Warning: [Items::loadFromXml] " << "Unknown type " << strValue << std::endl;
 								}
@@ -519,8 +521,7 @@ bool Items::loadFromXml()
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.rotateTo = intValue;
 							}
-							else if(tmpStrValue == "moveable"
-								|| tmpStrValue == "movable")
+							else if(tmpStrValue == "moveable" || tmpStrValue == "movable")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.moveable = (intValue == 1);
@@ -905,8 +906,7 @@ bool Items::loadFromXml()
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.absorbPercentFire = intValue;
 							}
-							else if(tmpStrValue == "absorbpercentpoison" ||
-								tmpStrValue == "absorbpercentearth")
+							else if(tmpStrValue == "absorbpercentpoison" ||	tmpStrValue == "absorbpercentearth")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.absorbPercentEarth = intValue;

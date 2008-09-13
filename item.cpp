@@ -377,20 +377,26 @@ xmlNodePtr Item::serialize()
 		xmlSetProp(nodeItem, (const xmlChar*)"writer", (const xmlChar*)writerBuffer);
 	}
 
-	if(!isNotMoveable() /*moveable*/)
+	if(!isNotMoveable())
 	{
 		if(getActionId() != 0)
 		{
 			sprintf(buffer, "%d", getActionId());
 			xmlSetProp(nodeItem, (const xmlChar*)"actionId", (const xmlChar*)buffer);
 		}
+
+		if(getUniqueId() != 0)
+		{
+			sprintf(buffer, "%d", getUniqueId());
+			xmlSetProp(nodeItem, (const xmlChar*)"uniqueId", (const xmlChar*)buffer);
+		}
 	}
 
-	if(hasAttribute(ATTR_ITEM_DURATION))
+	uint32_t duration = getDuration();
+	if(hasAttribute(ATTR_ITEM_DURATION) && duration > 0)
 	{
-		uint32_t duration = getDuration();
 		sprintf(buffer, "%d", duration);
-		xmlSetProp(nodeItem, (const xmlChar*)"duration", (const xmlChar*)ss.str().c_str());
+		xmlSetProp(nodeItem, (const xmlChar*)"duration", (const xmlChar*)buffer);
 	}
 
 	uint32_t decayState = getDecaying();
@@ -916,7 +922,7 @@ double Item::getWeight() const
 std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 	const Item* item /*= NULL*/, int32_t subType /*= -1*/)
 {
-	if(item)
+	/*if(item)
 	{
 		subType = item->getSubType();
 
@@ -930,7 +936,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		it.extraDefense = item->getExtraDefense();
 		it.armor = item->getArmor();
 		it.hitChance = item->getHitChance();
-	}
+	}*/
 
 	std::stringstream s;
 	if(it.name.length())
@@ -978,7 +984,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		{
 			s << " (Range:" << it.shootRange;
 			if(it.attack != 0)
-				s << ", Atk" << std::showpos << it.attack << std::noshowpos;
+				s << ", Atk:" << std::showpos << it.attack << std::noshowpos;
 
 			if(it.hitChance != 0)
 				s << ", Hit%" << std::showpos << it.hitChance << std::noshowpos;
@@ -1255,11 +1261,8 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 
 std::string Item::getDescription(int32_t lookDistance) const
 {
-	std::stringstream s;
 	const ItemType& it = items[id];
-
-	s << getDescription(it, lookDistance, this);
-	return s.str();
+	return getDescription(it, lookDistance, this);
 }
 
 std::string Item::getWeightDescription() const
