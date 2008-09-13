@@ -61,7 +61,7 @@ if(Modules == nil) then
 		end
 		return true
 	end
-
+	
 	--Usage:
 		-- local node1 = keywordHandler:addKeyword({'promot'}, StdModule.say, {npcHandler = npcHandler, text = 'I can promote you for 20000 gold coins. Do you want me to promote you?'})
 		-- 		node1:addChildKeyword({'yes'}, StdModule.promotePlayer, {npcHandler = npcHandler, cost = 20000, level = 20}, text = 'Congratulations! You are now promoted.')
@@ -114,7 +114,7 @@ if(Modules == nil) then
 				npcHandler:say('You do not have enough money, this spell costs ' .. parameters.price .. ' gold.', cid)
 			else
 				npcHandler:say('You have learned ' .. parameters.spellName .. '.', cid)
-				playerLearnInstantSpell(cid, parameters.spellName)
+				playerLearnInstantSpell(cid, parameters.spellName)	
 			end
 		else
 			npcHandler:say('You need a premium account in order to buy ' .. parameters.spellName .. '.', cid)
@@ -200,7 +200,7 @@ if(Modules == nil) then
 			obj.callback = FOCUS_FAREWELLWORDS.callback or FocusModule.messageMatcher
 			handler.keywordHandler:addKeyword(obj, FocusModule.onFarewell, {module = self})
 		end
-
+		
 		return true
 	end
 
@@ -225,11 +225,11 @@ if(Modules == nil) then
 		for i, word in pairs(keywords) do
 			if(type(word) == 'string') then
 				if string.find(message, word) and not string.find(message, '[%w+]' .. word) and not string.find(message, word .. '[%w+]') then
-					return true
-				end
-			end
-		end
-		return false
+	        			return true
+	    			end
+	    		end
+    		end
+    		return false
 	end
 
 	KeywordModule = {
@@ -262,14 +262,14 @@ if(Modules == nil) then
 		local n = 1
 		for keys in string.gmatch(data, '[^;]+') do
 			local i = 1
-
+			
 			local keywords = {}
-
+			
 			for temp in string.gmatch(keys, '[^,]+') do
 				table.insert(keywords, temp)
 				i = i+1
 			end
-
+			
 			if(i ~= 1) then
 				local reply = NpcSystem.getParameter('keyword_reply' .. n)
 				if(reply ~= nil) then
@@ -321,6 +321,7 @@ if(Modules == nil) then
 			self.npcHandler.keywordHandler:addKeyword({'destination'}, TravelModule.listDestinations, {module = self})
 			self.npcHandler.keywordHandler:addKeyword({'where'}, TravelModule.listDestinations, {module = self})
 			self.npcHandler.keywordHandler:addKeyword({'travel'}, TravelModule.listDestinations, {module = self})
+			
 		end
 	end
 
@@ -396,8 +397,9 @@ if(Modules == nil) then
 
 		module.npcHandler:say('Do you want to travel to ' .. keywords[1] .. ' for ' .. cost .. ' gold coins?', cid)
 		return true
+		
 	end
-
+	
 	function TravelModule.onConfirm(cid, message, keywords, parameters, node)
 		local module = parameters.module
 		if(not module.npcHandler:isFocused(cid)) then
@@ -693,11 +695,12 @@ if(Modules == nil) then
 		for i, word in pairs(keywords) do
 			if(type(word) == 'string') then
 				if string.find(message, word) and not string.find(message, '[%w+]' .. word) and not string.find(message, word .. '[%w+]') then
-					return true
-				end
-			end
-		end
-		return false
+	        		return true
+	    		end
+	    	end
+    	end
+
+    	return false
 	end
 
 	-- Resets the module-specific variables.
@@ -722,16 +725,16 @@ if(Modules == nil) then
 		return ret
 	end
 
-	-- Adds a new buyable item.
+	-- Adds a new buyable item. 
 	--	names = A table containing one or more strings of alternative names to this item. Used only for old buy/sell system.
 	--	itemid = The itemid of the buyable item
 	--	cost = The price of one single item
 	--	subType - The subType of each rune or fluidcontainer item. Can be left out if it is not a rune/fluidcontainer. Default value is 0.
-	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemName will be used)
+	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemNameById will be used)
 	function ShopModule:addBuyableItem(names, itemid, cost, subType, realName)
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
 			if(self.npcHandler.shopItems[itemid] == nil) then
-				self.npcHandler.shopItems[itemid] = {buyPrice = 0, sellPrice = 0, subType = 0, realName = realName or getItemName(itemid)}
+				self.npcHandler.shopItems[itemid] = {buyPrice = 0, sellPrice = 0, subType = 0, realName = realName or getItemNameById(itemid)}
 			end
 
 			self.npcHandler.shopItems[itemid].buyPrice = cost
@@ -745,7 +748,7 @@ if(Modules == nil) then
 						cost = cost,
 						eventType = SHOPMODULE_BUY_ITEM,
 						module = self,
-						realName = realName or getItemName(itemid),
+						realName = realName or getItemNameById(itemid),
 						subType = subType or 1
 					}
 
@@ -759,13 +762,13 @@ if(Modules == nil) then
 		end
 	end
 
-	-- Adds a new buyable item.
+	-- Adds a new buyable item. 
 	--	names = A table containing one or more strings of alternative names to this item.
 	--	container = Backpack, bag or any other itemid of container where bought items will be stored
 	--	itemid = The itemid of the buyable item
 	--	cost = The price of one single item
 	--	subType - The subType of each rune or fluidcontainer item. Can be left out if it is not a rune/fluidcontainer. Default value is 0.
-	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemName will be used)
+	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemNameById will be used)
 	function ShopModule:addBuyableItemContainer(names, container, itemid, cost, subType, realName)
 		if(names ~= nil) then
 			for i, name in pairs(names) do
@@ -775,7 +778,7 @@ if(Modules == nil) then
 						cost = cost,
 						eventType = SHOPMODULE_BUY_ITEM_CONTAINER,
 						module = self,
-						realName = realName or getItemName(itemid),
+						realName = realName or getItemNameById(itemid),
 						subType = subType or 1
 					}
 
@@ -789,15 +792,15 @@ if(Modules == nil) then
 		end
 	end
 
-	-- Adds a new sellable item.
+	-- Adds a new sellable item. 
 	--	names = A table containing one or more strings of alternative names to this item. Used only by old buy/sell system.
 	--	itemid = The itemid of the sellable item
 	--	cost = The price of one single item
-	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemName will be used)
+	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemNameById will be used)
 	function ShopModule:addSellableItem(names, itemid, cost, realName)
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
 			if(self.npcHandler.shopItems[itemid] == nil) then
-				self.npcHandler.shopItems[itemid] = {buyPrice = 0, sellPrice = 0, subType = 0, realName = realName or getItemName(itemid)}
+				self.npcHandler.shopItems[itemid] = {buyPrice = 0, sellPrice = 0, subType = 0, realName = realName or getItemNameById(itemid)}
 			end
 
 			self.npcHandler.shopItems[itemid].sellPrice = cost
@@ -810,7 +813,7 @@ if(Modules == nil) then
 						cost = cost,
 						eventType = SHOPMODULE_SELL_ITEM,
 						module = self,
-						realName = realName or getItemName(itemid)
+						realName = realName or getItemNameById(itemid)
 					}
 
 				keywords = {}
@@ -964,7 +967,7 @@ if(Modules == nil) then
 
 		local itemWindow = {}
 		for itemid, attr in pairs(module.npcHandler.shopItems) do
-			local item = {id = itemid, buy = attr.buyPrice, sell = attr.sellPrice, subType = attr.subType}
+			local item = {id = itemid, buy = attr.buyPrice, sell = attr.sellPrice, subtype = attr.subType}
 			table.insert(itemWindow, item)
 		end
 
@@ -998,7 +1001,7 @@ if(Modules == nil) then
 			[TAG_TOTALCOST] = parentParameters.cost * module.amount,
 			[TAG_ITEMNAME] = parentParameters.realName
 		}
-
+		
 		if(parentParameters.eventType == SHOPMODULE_SELL_ITEM) then
 			local ret = doPlayerSellItem(cid, parentParameters.itemid, module.amount, parentParameters.cost * module.amount)
 			if(ret == LUA_NO_ERROR) then
@@ -1036,12 +1039,12 @@ if(Modules == nil) then
 				module.npcHandler:say(msg, cid)
 			end
 		end
-
+		
 		module.npcHandler:resetNpc()
 		return true
 	end
-
-	-- onDecliune keyword callback function. Generally called when the player sais 'no' after wanting to buy an item.
+	
+	-- onDecliune keyword callback function. Generally called when the player sais 'no' after wanting to buy an item. 
 	function ShopModule.onDecline(cid, message, keywords, parameters, node)
 		local module = parameters.module
 		if(not module.npcHandler:isFocused(cid)) then
@@ -1077,7 +1080,7 @@ if(Modules == nil) then
 			[TAG_TOTALCOST] = parameters.cost * module.amount,
 			[TAG_ITEMNAME] = parameters.realName
 		}
-
+		
 		if(parameters.eventType == SHOPMODULE_SELL_ITEM) then
 			local msg = module.npcHandler:getMessage(MESSAGE_SELL)
 			msg = module.npcHandler:parseMessage(msg, parseInfo)

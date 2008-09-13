@@ -67,7 +67,7 @@ if(NpcHandler == nil) then
 		focuses = nil,
 		talkStart = nil,
 		idleTime = 90,
-		talkRadius = 5,
+		talkRadius = 4,
 		talkDelayTime = 1, -- Seconds to delay outgoing messages.
 		queue = nil,
 		talkDelay = nil,
@@ -195,6 +195,7 @@ if(NpcHandler == nil) then
 			closeShopWindow(focus) --Even if it can not exist, we need to prevent it.
 			self:updateFocus()
 		else
+			closeShopWindow(focus)
 			self:changeFocus(0)
 		end
 	end
@@ -453,7 +454,7 @@ if(NpcHandler == nil) then
 						if(focus ~= nil) then
 							if(not self:isInRange(focus)) then
 								self:onWalkAway(focus)
-							elseif(os.time()-self.talkStart[focus] > self.idleTime) then
+							elseif((os.time() - self.talkStart[focus]) > self.idleTime) then
 								self:unGreet(focus)
 							else
 								self:updateFocus()
@@ -464,7 +465,7 @@ if(NpcHandler == nil) then
 					if(not self:isInRange(self.focuses)) then
 						self:onWalkAway(self.focuses)
 					elseif(os.time()-self.talkStart > self.idleTime) then
-						self:unGreet()
+						self:unGreet(self.focuses)
 					else
 						self:updateFocus()
 					end
@@ -476,12 +477,15 @@ if(NpcHandler == nil) then
 	-- Tries to greet the player with the given cid.
 	function NpcHandler:onGreet(cid)
 		if(self:isInRange(cid)) then
-			if(not self:isFocused(cid)) then
-				self:greet(cid)
-				return
-			end
-			if(NPCHANDLER_CONVBEHAVIOR == CONVERSATION_DEFAULT) then
-				if(self.focuses == cid) then
+			if(NPCHANDLER_CONVBEHAVIOR == CONVERSATION_PRIVATE) then
+				if(not self:isFocused(cid)) then
+					self:greet(cid)
+					return
+				end
+			elseif(NPCHANDLER_CONVBEHAVIOR == CONVERSATION_DEFAULT) then
+				if(self.focuses == 0) then
+					self:greet(cid)
+				elseif(self.focuses == cid) then
 					local msg = self:getMessage(MESSAGE_ALREADYFOCUSED)
 					local parseInfo = { [TAG_PLAYERNAME] = getCreatureName(cid) }
 					msg = self:parseMessage(msg, parseInfo)
