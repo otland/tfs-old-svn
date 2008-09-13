@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Giant Spider" nameDescription="a giant spider" race="venom" experience="900" speed="240" manacost="0">
+	<health now="1300" max="1300"/>
+	<look type="38" head="0" body="0" legs="0" feet="0" corpse="2857"/>
+	<targetchange interval="2000" chance="10"/>
+	<strategy attack="70" defense="20"/>
+	<flags>
+		<flag summonable="0"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="0"/>
+		<flag convinceable="0"/>
+		<flag pushable="0"/>
+		<flag canpushitems="1"/>
+		<flag canpushcreatures="1"/>
+		<flag targetdistance="1"/>
+		<flag runonhealth="0"/>
+	</flags>
+	<attacks>
+		<attack name="melee" interval="2000" skill="80" attack="65" poison="150"/>
+		<attack name="poisonfield" interval="1000" chance="17" range="7" radius="1" target="1">
+			<attribute key="shootEffect" value="poison"/>
+		</attack>
+	</attacks>
+	<defenses armor="30" defense="40">
+		<defense name="speed" interval="1000" chance="6" speedchange="1300" duration="20000">
+			<attribute key="areaEffect" value="redshimmer"/>
+		</defense>
+	</defenses>
+	<immunities>
+		<immunity physical="0"/>
+		<immunity energy="0"/>
+		<immunity fire="1"/>
+		<immunity poison="1"/>
+		<immunity lifedrain="1"/>
+		<immunity paralyze="0"/>
+		<immunity outfit="1"/>
+		<immunity drunk="1"/>
+		<immunity invisible="1"/>
+	</immunities>
+	<summons maxSummons="2">
+		<summon name="poison spider" interval="1000" chance="10" max="2"/>
+	</summons>
+	<loot capacity="500">
+		<item id="2478" countmax="1" chance="8000"/>
+		<item id="2148" countmax="55" chance="33300"/>
+		<item id="2148" countmax="33" chance="66600"/>
+		<item id="2148" countmax="11" chance="99900"/>
+		<item id="2476" countmax="1" chance="300"/>
+		<item id="2477" countmax="1" chance="300"/>
+		<item id="2463" countmax="1" chance="10000"/>
+		<item id="2171" countmax="1" chance="100"/>
+		<item id="2457" countmax="1" chance="5000"/>
+		<item id="2169" countmax="1" chance="700"/>
+	</loot>
+</monster>

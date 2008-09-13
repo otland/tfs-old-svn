@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Dworc Venomsniper" nameDescription="a dworc venomsniper" race="blood" experience="30" speed="152" manacost="300">
+	<health now="80" max="80"/>
+	<look type="216" head="0" body="0" legs="0" feet="0" corpse="4310"/>
+	<targetchange interval="2000" chance="0"/>
+	<strategy attack="100" defense="0"/>
+	<flags>
+		<flag summonable="0"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="1"/>
+		<flag convinceable="1"/>
+		<flag pushable="1"/>
+		<flag canpushitems="0"/>
+		<flag canpushcreatures="0"/>
+		<flag targetdistance="4"/>
+		<flag runonhealth="15"/>
+	</flags>
+	<attacks>
+		<attack name="melee" interval="2000" skill="20" attack="10"/>
+		<attack name="poisoncondition" interval="1000" chance="25" range="5" min="-14" max="-26">
+			<attribute key="shootEffect" value="poison"/>
+		</attack>
+	</attacks>
+	<defenses armor="3" defense="15"/>
+	<immunities>
+		<immunity physical="0"/>
+		<immunity energy="0"/>
+		<immunity fire="0"/>
+		<immunity poison="1"/>
+		<immunity lifedrain="0"/>
+		<immunity paralyze="0"/>
+		<immunity outfit="0"/>
+		<immunity drunk="0"/>
+		<immunity invisible="0"/>
+	</immunities>
+	<voices interval="5000" chance="10">
+		<voice sentence="Grak brrretz!"/>
+		<voice sentence="Grow truk grrrrr."/>
+		<voice sentence="Prek tars, dekklep zurk."/>
+	</voices>
+	<loot capacity="400">
+		<item id="3983" countmax="1" chance="100"/>
+		<item id="2172" countmax="1" chance="100"/>
+		<item id="2148" countmax="10" chance="80000"/>
+		<item id="2467" countmax="1" chance="10000"/>
+		<item id="2545" countmax="3" chance="5000"/>
+		<item id="2411" countmax="1" chance="1500"/>
+		<item id="2229" countmax="2" chance="1000"/>
+		<item id="2410" countmax="2" chance="8000"/>
+		<item id="2050" countmax="1" chance="5500"/>
+		<item id="3967" countmax="1" chance="500"/>
+	</loot>
+</monster>

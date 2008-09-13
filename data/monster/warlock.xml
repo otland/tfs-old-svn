@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Warlock" nameDescription="a warlock" race="blood" experience="4000" speed="230" manacost="0">
+	<health now="3200" max="3200"/>
+	<look type="130" head="0" body="52" legs="128" feet="95" corpse="3058"/>
+	<targetchange interval="2000" chance="50"/>
+	<strategy attack="100" defense="0"/>
+	<flags>
+		<flag summonable="0"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="0"/>
+		<flag convinceable="0"/>
+		<flag pushable="0"/>
+		<flag canpushitems="1"/>
+		<flag canpushcreatures="1"/>
+		<flag targetdistance="4"/>
+		<flag runonhealth="1000"/>
+	</flags>
+	<attacks>
+		<attack name="melee" interval="2000" skill="50" attack="40"/>
+		<attack name="physical" interval="1000" chance="50" range="7" min="-45" max="-105">
+			<attribute key="shootEffect" value="energy"/>
+		</attack>
+		<attack name="manadrain" interval="1000" chance="17" range="7" min="-35" max="-75"/>
+		<attack name="speed" interval="1000" chance="12" range="7" speedchange="-400" duration="40000">
+			<attribute key="areaEffect" value="redshimmer"/>
+		</attack>
+		<attack name="fire" interval="1000" chance="34" range="7" radius="3" target="1" min="-90" max="-170">
+			<attribute key="shootEffect" value="fire"/>
+			<attribute key="areaEffect" value="firearea"/>
+		</attack>
+		<attack name="firefield" interval="1000" chance="15" range="7" radius="1" target="1">
+			<attribute key="shootEffect" value="fire"/>
+		</attack>
+		<attack name="firefield" interval="1000" chance="20" range="7" radius="2" target="1">
+			<attribute key="shootEffect" value="fire"/>
+		</attack>
+		<attack name="energy" interval="1000" chance="13" length="8" spread="0" min="-145" max="-205">
+			<attribute key="areaEffect" value="energy"/>
+		</attack>
+	</attacks>
+	<defenses armor="32" defense="50">
+		<defense name="healing" interval="1000" chance="25" min="60" max="100">
+			<attribute key="areaEffect" value="blueshimmer"/>
+		</defense>
+		<defense name="invisible" interval="1000" chance="10" duration="20000">
+			<attribute key="areaEffect" value="blueshimmer"/>
+		</defense>
+	</defenses>
+	<immunities>
+		<immunity physical="0"/>
+		<immunity energy="1"/>
+		<immunity fire="1"/>
+		<immunity poison="1"/>
+		<immunity lifedrain="0"/>
+		<immunity paralyze="1"/>
+		<immunity outfit="1"/>
+		<immunity drunk="1"/>
+		<immunity invisible="1"/>
+	</immunities>
+	<summons maxSummons="1">
+		<summon name="stone golem" interval="1000" chance="10" max="1"/>
+	</summons>
+	<voices interval="5000" chance="10">
+		<voice sentence="Learn the secret of our magic! YOUR death!"/>
+		<voice sentence="Even a rat is a better mage than you."/>
+		<voice sentence="We don't like intruders!"/>
+	</voices>
+	<loot capacity="900">
+		<item id="2656" countmax="1" chance="2000"/>
+		<item id="2689" countmax="1" chance="11000"/>
+		<item id="2047" countmax="1" chance="15000"/>
+		<item id="2679" countmax="4" chance="20000"/>
+		<item id="2124" countmax="1" chance="1000"/>
+		<item id="2792" countmax="1" chance="3000"/>
+		<item id="2167" countmax="1" chance="3000"/>
+		<item id="2148" countmax="80" chance="30000"/>
+		<item id="2466" countmax="1" chance="300"/>
+		<item id="2600" countmax="1" chance="13000"/>
+		<item id="2178" countmax="1" chance="2500"/>
+		<item id="2411" countmax="1" chance="10000"/>
+		<item id="1986" countmax="1" chance="400"/>
+		<item id="2123" countmax="1" chance="200"/>
+		<item id="2436" countmax="1" chance="7000"/>
+		<item id="2146" countmax="1" chance="1400"/>
+		<item id="2197" countmax="1" chance="500"/>
+		<item id="2151" countmax="1" chance="1100"/>
+	</loot>
+</monster>

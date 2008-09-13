@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Troll" nameDescription="a troll" race="blood" experience="20" speed="126" manacost="290">
+	<health now="50" max="50"/>
+	<look type="15" head="0" body="0" legs="0" feet="0" corpse="3067"/>
+	<targetchange interval="2000" chance="0"/>
+	<strategy attack="100" defense="0"/>
+	<flags>
+		<flag summonable="1"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="1"/>
+		<flag convinceable="1"/>
+		<flag pushable="1"/>
+		<flag canpushitems="0"/>
+		<flag canpushcreatures="0"/>
+		<flag targetdistance="1"/>
+		<flag runonhealth="15"/>
+	</flags>
+	<attacks>
+		<attack name="melee" interval="2000" skill="15" attack="10"/>
+	</attacks>
+	<defenses armor="6" defense="8"/>
+	<immunities>
+		<immunity physical="0"/>
+		<immunity energy="0"/>
+		<immunity fire="0"/>
+		<immunity poison="0"/>
+		<immunity lifedrain="0"/>
+		<immunity paralyze="0"/>
+		<immunity outfit="0"/>
+		<immunity drunk="0"/>
+		<immunity invisible="0"/>
+	</immunities>
+	<voices interval="5000" chance="10">
+		<voice sentence="Grrrr"/>
+		<voice sentence="Groar"/>
+		<voice sentence="Gruntz!"/>
+		<voice sentence="Hmmm, bugs."/>
+		<voice sentence="Hmmm, dogs."/>
+	</voices>
+	<loot capacity="200">
+		<item id="2148" countmax="10" chance="60000"/>
+		<item id="2380" countmax="1" chance="18000"/>
+		<item id="2643" countmax="1" chance="10000"/>
+		<item id="2461" countmax="1" chance="10000"/>
+		<item id="2666" countmax="1" chance="15000"/>
+		<item id="2120" countmax="1" chance="8000"/>
+		<item id="2170" countmax="1" chance="100"/>
+		<item id="2389" countmax="1" chance="20000"/>
+		<item id="2448" countmax="1" chance="5000"/>
+		<item id="2512" countmax="1" chance="15000"/>
+	</loot>
+</monster>

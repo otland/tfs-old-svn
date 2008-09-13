@@ -1,0 +1,132 @@
+[ MYSQL HELP
+	Project Name
+		The Forgotten Server
+
+	Version
+		0.2
+
+	Codenamed
+		"Mystic Spirit"
+
+	License
+		GNU GPLv3
+
+	Forum
+		http://otland.net/
+]
+
+[ GUIDE
+	Linux
+		Introduction
+			In this guide you will learn how to setup a MySQL server
+			and TheForgottenServer database on it, on linux this is
+			a simple task.
+
+		#1
+			Launch a terminal if you're running Desktop mode.
+
+		#2
+			To complete this step you need to know what repository
+			package downloader you are using, in Debian or any
+			debian based distribution (Ubuntu for example), the
+			available repository package downloaders are:
+				apt-get
+				aptitude
+
+			In CentOS, hopefully in Red Hat too, it is:
+				yum
+
+			Now type this command, and remember to replace rpd with
+			your repository package downloader.
+				rpd install mysql-server-5.0
+
+		#3
+			You should now have a MySQL Server installed, it is time
+			to create a database, for this, we first have to get to
+			the MySQL commandline.
+				mysql -uroot -p
+
+			It should ask you for a password, if you can not remember
+			that you have any password for MySQL set, then leave the
+			password field empty.
+
+		#4
+			We will now create the database, to do this type:
+				CREATE DATABASE theforgottenserver;
+
+			If you want another databasename then replace
+			theforgottenserver with another name you prefer.
+
+		#5
+			Now that we have a database created it is time to import
+			all tables and triggers, closedown the MySQL commandline
+			cd (change directory) to TheForgottenServer one, and type:
+				mysql -uroot -p theforgottenserver < forgottenserver.sql
+
+			If you changed database name then also remember to change
+			'theforgottenserver' to your database name there.
+
+		#6
+			Now you should have a MySQL server with TheForgottenServer
+			database imported, it is time to open config.lua with your
+			favourite text editor and go to the '-- MySQL' part. Edit
+			the settings there for the server to be able to create a
+			successful MySQL connection.
+
+		#7
+			Don't close config.lua yet, if you already did, open it
+			again find the '-- SQL' part and change sqlType to "mysql".
+			You may now save and close config.lua.
+
+		#8
+			Last step, you can now launch your server ;).
+			If you're new to Linux you just have to type:
+				./TheForgottenServer
+
+	Windows
+		Introduction
+			In this guide you will learn how to setup a MySQL server
+			and TheForgottenServer database on it, you will also get
+			some other things with this, such as Apache2 and PHP5
+			because we're going to use XAMPP to make this an easy
+			task, Apache2 and PHP5 are quite useful anyway if you
+			plan on launching a website for your project.
+
+		#1
+			Download XAMPP from:
+				http://heanet.dl.sourceforge.net/sourceforge/xampp/xampp-win32-1.6.7-installer.exe
+
+		#2
+			Go to http://localhost/security/xamppsecurity.php and change your root password.
+
+		#3
+			Go to http://localhost/phpmyadmin/ and login as root and with your new password.
+
+		#4
+			Create a database, name it whatever you want.
+
+		#5
+			Enter your database and press on 'Import'.
+
+		#6
+			Use the 'File to import' part, select forgottenserver.sql and press on 'Go'.
+
+		#7
+			Now you should have a MySQL server with TheForgottenServer
+			database imported, it is time to open config.lua with your
+			favourite text editor and go to the '-- MySQL' part. Edit
+			the settings there for the server to be able to create a
+			successful MySQL connection.
+
+		#8
+			Don't close config.lua yet, if you already did, open it
+			again find the '-- SQL' part and change sqlType to "mysql".
+			You may now save and close config.lua.
+
+	Trouble
+		Did you find a part confusing, or just failed somewhere?
+		Explain your troubles to us at http://otland.net/, and
+		you should receive support within some hours, remember
+		to tell us if you followed Windows or Linux part and which
+		paragraph you couldn't complete.
+]

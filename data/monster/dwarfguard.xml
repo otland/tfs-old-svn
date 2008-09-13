@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Dwarf Guard" nameDescription="a dwarf guard" race="blood" experience="165" speed="206" manacost="650">
+	<health now="245" max="245"/>
+	<look type="70" head="0" body="0" legs="0" feet="0" corpse="2983"/>
+	<targetchange interval="2000" chance="5"/>
+	<strategy attack="70" defense="0"/>
+	<flags>
+		<flag summonable="1"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="1"/>
+		<flag convinceable="1"/>
+		<flag pushable="0"/>
+		<flag canpushitems="1"/>
+		<flag canpushcreatures="1"/>
+		<flag targetdistance="1"/>
+		<flag runonhealth="0"/>
+	</flags>
+	<attacks>
+		<attack name="melee" interval="2000" skill="55" attack="39"/>
+	</attacks>
+	<defenses armor="15" defense="37"/>
+	<immunities>
+		<immunity physical="0"/>
+		<immunity energy="0"/>
+		<immunity fire="0"/>
+		<immunity poison="1"/>
+		<immunity lifedrain="0"/>
+		<immunity paralyze="0"/>
+		<immunity outfit="1"/>
+		<immunity drunk="1"/>
+		<immunity invisible="1"/>
+	</immunities>
+	<voices interval="5000" chance="10">
+		<voice sentence="Hail Durin!"/>
+	</voices>
+	<loot capacity="800">
+		<item id="2208" countmax="1" chance="200"/>
+		<item id="2417" countmax="1" chance="4000"/>
+		<item id="2513" countmax="1" chance="7500"/>
+		<item id="2387" countmax="1" chance="600"/>
+		<item id="2148" countmax="30" chance="50000"/>
+		<item id="2643" countmax="1" chance="40000"/>
+		<item id="2483" countmax="1" chance="10000"/>
+		<item id="2150" countmax="1" chance="100"/>
+		<item id="2457" countmax="1" chance="2000"/>
+		<item id="2787" countmax="2" chance="55000"/>
+	</loot>
+</monster>

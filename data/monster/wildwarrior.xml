@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Wild Warrior" nameDescription="a wild warrior" race="blood" experience="60" speed="190" manacost="420">
+	<health now="135" max="135"/>
+	<look type="131" head="38" body="38" legs="38" feet="38" corpse="3058"/>
+	<targetchange interval="2000" chance="0"/>
+	<strategy attack="100" defense="0"/>
+	<flags>
+		<flag summonable="1"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="1"/>
+		<flag convinceable="1"/>
+		<flag pushable="1"/>
+		<flag canpushitems="0"/>
+		<flag canpushcreatures="0"/>
+		<flag targetdistance="1"/>
+		<flag runonhealth="10"/>
+	</flags>
+	<attacks>
+		<attack name="melee" interval="2000" skill="46" attack="16"/>
+	</attacks>
+	<defenses armor="9" defense="18">
+		<defense name="speed" interval="1000" chance="6" speedchange="200" duration="2000">
+			<attribute key="areaEffect" value="redshimmer"/>
+		</defense>
+	</defenses>
+	<immunities>
+		<immunity physical="0"/>
+		<immunity energy="0"/>
+		<immunity fire="0"/>
+		<immunity poison="0"/>
+		<immunity lifedrain="0"/>
+		<immunity paralyze="0"/>
+		<immunity outfit="0"/>
+		<immunity drunk="0"/>
+		<immunity invisible="0"/>
+	</immunities>
+	<voices interval="5000" chance="10">
+		<voice sentence="An enemy!"/>
+		<voice sentence="Gimme your money!"/>
+	</voices>
+	<loot capacity="900">
+		<item id="2386" countmax="1" chance="30000"/>
+		<item id="2465" countmax="1" chance="2500"/>
+		<item id="2511" countmax="1" chance="17000"/>
+		<item id="2458" countmax="1" chance="5000"/>
+		<item id="2110" countmax="1" chance="500"/>
+		<item id="2148" countmax="20" chance="40000"/>
+		<item id="2148" countmax="10" chance="15000"/>
+		<item id="2459" countmax="1" chance="500"/>
+		<item id="2649" countmax="1" chance="15000"/>
+		<item id="2398" countmax="1" chance="10000"/>
+		<item id="2666" countmax="1" chance="40000"/>
+		<item id="2509" countmax="1" chance="1000"/>
+		<item id="2391" countmax="1" chance="100"/>
+	</loot>
+</monster>

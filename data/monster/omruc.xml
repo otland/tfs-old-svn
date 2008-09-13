@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Omruc" nameDescription="Omruc" race="undead" experience="2950" speed="310" manacost="0">
+	<health now="4300" max="4300"/>
+	<look type="90" head="0" body="0" legs="0" feet="0" corpse="3016"/>
+	<targetchange interval="2000" chance="7"/>
+	<strategy attack="70" defense="10"/>
+	<flags>
+		<flag summonable="0"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="0"/>
+		<flag convinceable="0"/>
+		<flag pushable="0"/>
+		<flag canpushitems="1"/>
+		<flag canpushcreatures="1"/>
+		<flag targetdistance="4"/>
+		<flag runonhealth="0"/>
+	</flags>
+	<attacks>
+		<attack name="melee" interval="2000" skill="75" attack="65" poison="65"/>
+		<attack name="lifedrain" interval="1000" chance="5" range="1" min="-50" max="-350"/>
+		<attack name="poison" interval="1000" chance="20" range="7" min="-200" max="-500">
+			<attribute key="shootEffect" value="poisonarrow"/>
+			<attribute key="areaEffect" value="greenbubble"/>
+		</attack>
+		<attack name="fire" interval="1000" chance="13" range="7" min="-50" max="-450">
+			<attribute key="shootEffect" value="burstarrow"/>
+			<attribute key="areaEffect" value="explosionarea"/>
+		</attack>
+		<attack name="physical" interval="1000" chance="20" range="7" min="-200" max="-400">
+			<attribute key="shootEffect" value="arrow"/>
+			<attribute key="areaEffect" value="explosionarea"/>
+		</attack>
+		<attack name="speed" interval="1000" chance="25" range="7" speedchange="-1000" duration="50000">
+			<attribute key="areaEffect" value="redshimmer"/>
+		</attack>
+	</attacks>
+	<defenses armor="60" defense="65">
+		<defense name="healing" interval="1000" chance="17" min="100" max="200">
+			<attribute key="areaEffect" value="blueshimmer"/>
+		</defense>
+		<defense name="invisible" interval="1000" chance="34" duration="20000">
+			<attribute key="areaEffect" value="blueshimmer"/>
+		</defense>
+	</defenses>
+	<immunities>
+		<immunity physical="0"/>
+		<immunity energy="0"/>
+		<immunity fire="0"/>
+		<immunity poison="1"/>
+		<immunity lifedrain="1"/>
+		<immunity paralyze="1"/>
+		<immunity outfit="1"/>
+		<immunity drunk="1"/>
+		<immunity invisible="1"/>
+	</immunities>
+	<summons maxSummons="4">
+		<summon name="stalker" interval="1000" chance="15" max="4"/>
+	</summons>
+	<voices interval="5000" chance="10">
+		<voice sentence="Psssst, I am over chhhere."/>
+		<voice sentence="Now chhhou shhhee me ... Now chhhou don't."/>
+		<voice sentence="Chhhhou are marked ashhh my prey."/>
+		<voice sentence="Catchhhh me if chhhou can."/>
+		<voice sentence="Bullshhheye."/>
+		<voice sentence="Die!"/>
+	</voices>
+	<loot capacity="900">
+		<item id="2544" countmax="25" chance="20000"/>
+		<item id="2195" countmax="1" chance="100"/>
+		<item id="2546" countmax="15" chance="40000"/>
+		<item id="2352" countmax="1" chance="100000"/>
+		<item id="2148" countmax="80" chance="70000"/>
+		<item id="2148" countmax="85" chance="50000"/>
+		<item id="2148" countmax="95" chance="35000"/>
+		<item id="2545" countmax="20" chance="60000"/>
+		<item id="2547" countmax="5" chance="10000"/>
+		<item id="2674" countmax="2" chance="80000"/>
+		<item id="2145" countmax="3" chance="10000"/>
+		<item id="2165" countmax="1" chance="5000"/>
+		<item id="2154" countmax="1" chance="1000"/>
+	</loot>
+</monster>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Minotaur Archer" nameDescription="a minotaur archer" race="blood" experience="65" speed="160" manacost="390">
+	<health now="100" max="100"/>
+	<look type="24" head="0" body="0" legs="0" feet="0" corpse="2871"/>
+	<targetchange interval="2000" chance="50"/>
+	<strategy attack="100" defense="0"/>
+	<flags>
+		<flag summonable="1"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="1"/>
+		<flag convinceable="1"/>
+		<flag pushable="0"/>
+		<flag canpushitems="0"/>
+		<flag canpushcreatures="0"/>
+		<flag targetdistance="4"/>
+		<flag runonhealth="10"/>
+	</flags>
+	<attacks>
+		<attack name="melee" interval="2000" skill="20" attack="15"/>
+		<attack name="physical" interval="1000" chance="34" range="7" min="-45" max="-85">
+			<attribute key="shootEffect" value="bolt"/>
+		</attack>
+	</attacks>
+	<defenses armor="7" defense="8"/>
+	<immunities>
+		<immunity physical="0"/>
+		<immunity energy="0"/>
+		<immunity fire="0"/>
+		<immunity poison="0"/>
+		<immunity lifedrain="0"/>
+		<immunity paralyze="0"/>
+		<immunity outfit="0"/>
+		<immunity drunk="0"/>
+		<immunity invisible="0"/>
+	</immunities>
+	<voices interval="5000" chance="10">
+		<voice sentence="Ruan Wihmpy!"/>
+		<voice sentence="Kaplar!"/>
+	</voices>
+	<loot capacity="800">
+		<item id="2543" countmax="15" chance="50000"/>
+		<item id="2543" countmax="5" chance="80000"/>
+		<item id="2465" countmax="1" chance="2000"/>
+		<item id="2455" countmax="1" chance="10000"/>
+		<item id="2148" countmax="10" chance="70000"/>
+		<item id="2148" countmax="20" chance="15000"/>
+		<item id="2461" countmax="1" chance="5000"/>
+		<item id="2649" countmax="1" chance="5000"/>
+		<item id="2666" countmax="1" chance="10000"/>
+		<item id="2483" countmax="1" chance="1000"/>
+		<item id="2481" countmax="1" chance="2000"/>
+	</loot>
+</monster>

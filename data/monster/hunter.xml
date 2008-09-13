@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Hunter" nameDescription="a hunter" race="blood" experience="150" speed="210" manacost="530">
+	<health now="150" max="150"/>
+	<look type="129" head="95" body="116" legs="120" feet="115" corpse="3058"/>
+	<targetchange interval="2000" chance="50"/>
+	<strategy attack="100" defense="0"/>
+	<flags>
+		<flag summonable="0"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="1"/>
+		<flag convinceable="1"/>
+		<flag pushable="0"/>
+		<flag canpushitems="1"/>
+		<flag canpushcreatures="0"/>
+		<flag targetdistance="4"/>
+		<flag runonhealth="10"/>
+	</flags>
+	<attacks>
+		<attack name="melee" interval="2000" skill="18" attack="13"/>
+		<attack name="physical" interval="1000" chance="50" range="7" min="-50" max="-100">
+			<attribute key="shootEffect" value="arrow"/>
+		</attack>
+	</attacks>
+	<defenses armor="8" defense="10"/>
+	<immunities>
+		<immunity physical="0"/>
+		<immunity energy="0"/>
+		<immunity fire="0"/>
+		<immunity poison="0"/>
+		<immunity lifedrain="0"/>
+		<immunity paralyze="0"/>
+		<immunity outfit="0"/>
+		<immunity drunk="0"/>
+		<immunity invisible="0"/>
+	</immunities>
+	<voices interval="5000" chance="10">
+		<voice sentence="Guess who we are hunting, hahaha!"/>
+	</voices>
+	<loot capacity="200">
+		<item id="2544" countmax="10" chance="70000"/>
+		<item id="2544" countmax="12" chance="40000"/>
+		<item id="2456" countmax="1" chance="30000"/>
+		<item id="2465" countmax="1" chance="5000"/>
+		<item id="2460" countmax="1" chance="5000"/>
+		<item id="2546" countmax="3" chance="5000"/>
+		<item id="2201" countmax="1" chance="3000"/>
+		<item id="2461" countmax="1" chance="10000"/>
+		<item id="2649" countmax="1" chance="14000"/>
+		<item id="2675" countmax="2" chance="20000"/>
+		<item id="2690" countmax="2" chance="11000"/>
+		<item id="2147" countmax="1" chance="200"/>
+		<item id="2050" countmax="1" chance="5000"/>
+	</loot>
+</monster>

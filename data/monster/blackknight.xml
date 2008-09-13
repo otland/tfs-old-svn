@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Black Knight" nameDescription="a black knight" race="blood" experience="1600" speed="390" manacost="0">
+	<health now="1800" max="1800"/>
+	<look type="131" head="95" body="95" legs="95" feet="95" corpse="3058"/>
+	<targetchange interval="2000" chance="3"/>
+	<strategy attack="80" defense="10"/>
+	<flags>
+		<flag summonable="0"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="0"/>
+		<flag convinceable="0"/>
+		<flag pushable="0"/>
+		<flag canpushitems="1"/>
+		<flag canpushcreatures="1"/>
+		<flag targetdistance="1"/>
+		<flag runonhealth="0"/>
+	</flags>
+	<attacks>
+		<attack name="melee" interval="2000" skill="88" attack="60"/>
+		<attack name="physical" interval="1000" chance="15" range="7" min="-145" max="-185">
+			<attribute key="shootEffect" value="spear"/>
+		</attack>
+	</attacks>
+	<defenses armor="42" defense="60"/>
+	<immunities>
+		<immunity physical="0"/>
+		<immunity energy="1"/>
+		<immunity fire="1"/>
+		<immunity poison="1"/>
+		<immunity lifedrain="0"/>
+		<immunity paralyze="1"/>
+		<immunity outfit="1"/>
+		<immunity drunk="1"/>
+		<immunity invisible="1"/>
+	</immunities>
+	<voices interval="5000" chance="10">
+		<voice sentence="MINE!" yell="1"/>
+		<voice sentence="NO PRISONERS!" yell="1"/>
+		<voice sentence="NO MERCY!" yell="1"/>
+		<voice sentence="By Bolg's Blood!"/>
+		<voice sentence="You're no match for me!"/>
+	</voices>
+	<loot capacity="900">
+		<item id="2417" countmax="1" chance="7000"/>
+		<item id="2195" countmax="1" chance="500"/>
+		<item id="2478" countmax="1" chance="13000"/>
+		<item id="2691" countmax="2" chance="20000"/>
+		<item id="2489" countmax="1" chance="2000"/>
+		<item id="2490" countmax="1" chance="2000"/>
+		<item id="2414" countmax="1" chance="300"/>
+		<item id="2148" countmax="60" chance="33300"/>
+		<item id="2148" countmax="90" chance="22200"/>
+		<item id="2381" countmax="1" chance="13000"/>
+		<item id="2476" countmax="1" chance="1000"/>
+		<item id="2430" countmax="1" chance="2500"/>
+		<item id="2477" countmax="1" chance="1000"/>
+		<item id="2463" countmax="1" chance="10000"/>
+		<item id="2120" countmax="1" chance="15000"/>
+		<item id="2133" countmax="1" chance="800"/>
+		<item id="2389" countmax="3" chance="30000"/>
+		<item id="2457" countmax="1" chance="10000"/>
+		<item id="2377" countmax="1" chance="10000"/>
+		<item id="2475" countmax="1" chance="5000"/>
+	</loot>
+</monster>

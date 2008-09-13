@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Elf Arcanist" nameDescription="an elf arcanist" race="blood" experience="175" speed="220" manacost="0">
+	<health now="220" max="220"/>
+	<look type="63" head="0" body="0" legs="0" feet="0" corpse="2979"/>
+	<targetchange interval="2000" chance="50"/>
+	<strategy attack="100" defense="0"/>
+	<flags>
+		<flag summonable="0"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="0"/>
+		<flag convinceable="0"/>
+		<flag pushable="0"/>
+		<flag canpushitems="1"/>
+		<flag canpushcreatures="0"/>
+		<flag targetdistance="4"/>
+		<flag runonhealth="0"/>
+	</flags>
+	<attacks>
+		<attack name="melee" interval="2000" skill="25" attack="20"/>
+		<attack name="physical" interval="1000" chance="10" range="7" min="-15" max="-45">
+			<attribute key="shootEffect" value="arrow"/>
+		</attack>
+		<attack name="energy" interval="1000" chance="9" range="7" min="-30" max="-50">
+			<attribute key="shootEffect" value="energy"/>
+			<attribute key="areaEffect" value="energy"/>
+		</attack>
+		<attack name="physical" interval="1000" chance="12" range="7" min="-60" max="-80">
+			<attribute key="shootEffect" value="suddendeath"/>
+		</attack>
+	</attacks>
+	<defenses armor="15" defense="20">
+		<defense name="healing" interval="1000" chance="20" min="42" max="68">
+			<attribute key="areaEffect" value="blueshimmer"/>
+		</defense>
+	</defenses>
+	<immunities>
+		<immunity physical="0"/>
+		<immunity energy="1"/>
+		<immunity fire="1"/>
+		<immunity poison="1"/>
+		<immunity lifedrain="0"/>
+		<immunity paralyze="0"/>
+		<immunity outfit="1"/>
+		<immunity drunk="1"/>
+		<immunity invisible="1"/>
+	</immunities>
+	<voices interval="5000" chance="10">
+		<voice sentence="Feel my wrath!"/>
+		<voice sentence="For the Daughter of the Stars!"/>
+		<voice sentence="I'll bring balance upon you!"/>
+		<voice sentence="Tha'shi Cenath!"/>
+		<voice sentence="Vihil Ealuel!"/>
+	</voices>
+	<loot capacity="800">
+		<item id="2544" countmax="3" chance="6000"/>
+		<item id="2260" countmax="1" chance="18000"/>
+		<item id="2032" countmax="1" chance="5500"/>
+		<item id="2689" countmax="1" chance="14000"/>
+		<item id="2047" countmax="1" chance="22000"/>
+		<item id="2198" countmax="1" chance="2000"/>
+		<item id="2747" countmax="1" chance="7000"/>
+		<item id="2652" countmax="1" chance="7000"/>
+		<item id="2600" countmax="1" chance="9000"/>
+		<item id="2177" countmax="1" chance="1000"/>
+		<item id="2682" countmax="1" chance="22000"/>
+		<item id="2642" countmax="1" chance="13000"/>
+		<item id="1949" countmax="1" chance="30000"/>
+		<item id="2802" countmax="1" chance="5000"/>
+		<item id="2401" countmax="1" chance="11000"/>
+		<item id="2189" countmax="1" chance="1000"/>
+		<item id="2154" countmax="1" chance="200"/>
+	</loot>
+</monster>

@@ -1,0 +1,27 @@
+[ ACTION IDS
+	Project Name
+		The Forgotten Server
+
+	Version
+		0.2
+
+	Codenamed
+		"Mystic Spirit"
+
+	License
+		GNU GPLv3
+
+	Forum
+		http://otland.net/
+]
+
+[ IDS
+	Depottile
+		100 + DepotID
+
+	Leveltile
+		1000 + Required Level
+
+	Leveldoor
+		1000 + Required Level
+]

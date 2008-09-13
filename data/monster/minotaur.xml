@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Minotaur" nameDescription="a minotaur" race="blood" experience="50" speed="168" manacost="330">
+	<health now="100" max="100"/>
+	<look type="25" head="0" body="0" legs="0" feet="0" corpse="2830"/>
+	<targetchange interval="2000" chance="0"/>
+	<strategy attack="100" defense="0"/>
+	<flags>
+		<flag summonable="1"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="1"/>
+		<flag convinceable="1"/>
+		<flag pushable="1"/>
+		<flag canpushitems="0"/>
+		<flag canpushcreatures="0"/>
+		<flag targetdistance="1"/>
+		<flag runonhealth="0"/>
+	</flags>
+	<attacks>
+		<attack name="melee" interval="2000" skill="25" attack="15"/>
+	</attacks>
+	<defenses armor="11" defense="11"/>
+	<immunities>
+		<immunity physical="0"/>
+		<immunity energy="0"/>
+		<immunity fire="0"/>
+		<immunity poison="0"/>
+		<immunity lifedrain="0"/>
+		<immunity paralyze="0"/>
+		<immunity outfit="0"/>
+		<immunity drunk="0"/>
+		<immunity invisible="0"/>
+	</immunities>
+	<voices interval="5000" chance="10">
+		<voice sentence="Kaplar!"/>
+	</voices>
+	<loot capacity="800">
+		<item id="2386" countmax="1" chance="4000"/>
+		<item id="2460" countmax="1" chance="8000"/>
+		<item id="2172" countmax="1" chance="100"/>
+		<item id="2464" countmax="1" chance="10000"/>
+		<item id="2458" countmax="1" chance="5000"/>
+		<item id="2148" countmax="10" chance="55000"/>
+		<item id="2148" countmax="15" chance="25000"/>
+		<item id="2649" countmax="1" chance="15000"/>
+		<item id="2398" countmax="1" chance="13000"/>
+		<item id="2666" countmax="1" chance="10000"/>
+		<item id="2510" countmax="1" chance="20000"/>
+		<item id="2554" countmax="1" chance="3000"/>
+		<item id="2376" countmax="1" chance="10000"/>
+	</loot>
+</monster>

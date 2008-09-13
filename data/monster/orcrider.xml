@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Orc Rider" nameDescription="an orc rider" race="blood" experience="110" speed="260" manacost="490">
+	<health now="180" max="180"/>
+	<look type="4" head="0" body="0" legs="0" feet="0" corpse="2972"/>
+	<targetchange interval="2000" chance="5"/>
+	<strategy attack="70" defense="30"/>
+	<flags>
+		<flag summonable="0"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="0"/>
+		<flag convinceable="1"/>
+		<flag pushable="0"/>
+		<flag canpushitems="1"/>
+		<flag canpushcreatures="1"/>
+		<flag targetdistance="1"/>
+		<flag runonhealth="0"/>
+	</flags>
+	<attacks>
+		<attack name="melee" interval="2000" skill="48" attack="41"/>
+	</attacks>
+	<defenses armor="9" defense="20">
+		<defense name="speed" interval="1000" chance="7" speedchange="900" duration="6000">
+			<attribute key="areaEffect" value="redshimmer"/>
+		</defense>
+	</defenses>
+	<immunities>
+		<immunity physical="0"/>
+		<immunity energy="0"/>
+		<immunity fire="0"/>
+		<immunity poison="0"/>
+		<immunity lifedrain="0"/>
+		<immunity paralyze="0"/>
+		<immunity outfit="0"/>
+		<immunity drunk="0"/>
+		<immunity invisible="0"/>
+	</immunities>
+	<voices interval="5000" chance="10">
+		<voice sentence="Grrrrrrr"/>
+		<voice sentence="Orc arga Huummmak!"/>
+	</voices>
+	<loot capacity="500">
+		<item id="1988" countmax="1" chance="30000"/>
+		<item id="2513" countmax="1" chance="1000"/>
+		<item id="2148" countmax="10" chance="50000"/>
+		<item id="2148" countmax="80" chance="100"/>
+		<item id="2666" countmax="3" chance="30000"/>
+		<item id="2425" countmax="1" chance="1000"/>
+		<item id="2428" countmax="1" chance="15000"/>
+		<item id="2483" countmax="1" chance="600"/>
+		<item id="2482" countmax="1" chance="15000"/>
+		<item id="2050" countmax="1" chance="8000"/>
+		<item id="2129" countmax="1" chance="10000"/>
+	</loot>
+</monster>

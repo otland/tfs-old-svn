@@ -1,0 +1,102 @@
+[ CHANGELOG
+	Project Name
+		The Forgotten Server
+
+	Version
+		0.2
+
+	Codenamed
+		"Mystic Spirit"
+
+	License
+		GNU GPLv3
+
+	Forum
+		http://otland.net/
+]
+
+[ File changes
+	D = Deleted.
+	M = Modified.
+	A = Added.
+
+	M...
+		config.lua
+		data/
+			global.lua
+			actions/
+				actions.xml
+				scripts/
+					other/
+						doors.lua
+						potions.lua
+					quests/
+						quests.lua
+
+			items/
+				items.otb
+				items.xml
+
+			movements/
+				movements.xml
+				scripts/
+					closingdoor.lua
+
+			npc/
+				*.xml
+				lib/
+					npc.lua
+					npcsystem/
+						*.lua
+				scripts/
+					runes.lua
+
+			spells/
+				spells.xml
+				scripts/
+					support/
+						desintegrate rune.lua
+
+			weapons/
+				weapons.xml
+				scripts/
+					viper_star.lua
+
+			world/
+				forgotten.otbm
+				forgotten-spawn.xml
+				forgotten-house.xml
+
+			XML/
+				commands.xml
+				outfits.xml
+				stages.xml
+]
+			
+[ Milestone
+	Ghost mode.
+	Party experience share.
+	Protocol 8.21 support.
+	More lua functions.
+	More configurable things.
+	Cleanups & code optimizations.
+]
+
+[ Deprecated 
+	NPC XML attribute autowalk.
+		If autowalk used to be 1, walkinterval should be set to 1500.
+		If autowalk used to be 0, walkinterval should be set to 0.
+
+		Linux command (make sure you are in data/npc/):
+			sed -i 's/autowalk="1"/walkinterval="1500"/g' *.xml && sed -i 's/autowalk="0"/walkinterval="0"/g' *.xml
+]
+
+[ MySQL Update Queries ]
+
+[ SqLite Update Queries ]
+
+[ Fixed issues...
+	all reported bugs that we could reproduce
+	except the SqLite attributes issue. It will
+	be fixed in 0.3.
+]

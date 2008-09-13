@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Ancient Scarab" nameDescription="an ancient scarab" race="venom" experience="720" speed="218" manacost="0">
+	<health now="1000" max="1000"/>
+	<look type="79" head="0" body="0" legs="0" feet="0" corpse="3004"/>
+	<targetchange interval="2000" chance="10"/>
+	<strategy attack="70" defense="20"/>
+	<flags>
+		<flag summonable="0"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="0"/>
+		<flag convinceable="0"/>
+		<flag pushable="0"/>
+		<flag canpushitems="1"/>
+		<flag canpushcreatures="1"/>
+		<flag targetdistance="1"/>
+		<flag runonhealth="0"/>
+	</flags>
+	<attacks>
+		<attack name="melee" interval="2000" skill="80" attack="50" poison="100"/>
+		<attack name="poison" interval="1000" chance="12" range="7" min="-15" max="-135">
+			<attribute key="shootEffect" value="poison"/>
+			<attribute key="areaEffect" value="poison"/>
+		</attack>
+		<attack name="speed" interval="1000" chance="13" range="7" speedchange="-900" duration="25000">
+			<attribute key="shootEffect" value="poison"/>
+			<attribute key="areaEffect" value="poison"/>
+		</attack>
+		<attack name="poisoncondition" interval="1000" chance="17" radius="5" target="0" min="-400" max="-500">
+			<attribute key="areaEffect" value="poison"/>
+		</attack>
+		<attack name="poisoncondition" interval="1000" chance="17" radius="5" target="0" min="-400" max="-500">
+			<attribute key="areaEffect" value="poison"/>
+		</attack>
+		<attack name="speed" interval="1000" chance="25" radius="5" target="0" speedchange="-400" duration="20000">
+			<attribute key="areaEffect" value="poison"/>
+		</attack>
+	</attacks>
+	<defenses armor="36" defense="33">
+		<defense name="speed" interval="1000" chance="8" speedchange="1701" duration="9000">
+			<attribute key="areaEffect" value="redshimmer"/>
+		</defense>
+	</defenses>
+	<immunities>
+		<immunity physical="0"/>
+		<immunity energy="0"/>
+		<immunity fire="0"/>
+		<immunity poison="1"/>
+		<immunity lifedrain="1"/>
+		<immunity paralyze="1"/>
+		<immunity outfit="1"/>
+		<immunity drunk="1"/>
+		<immunity invisible="1"/>
+	</immunities>
+	<summons maxSummons="3">
+		<summon name="larva" interval="1000" chance="15" max="3"/>
+	</summons>
+	<loot capacity="500">
+		<item id="2142" countmax="1" chance="1000"/>
+		<item id="2440" countmax="1" chance="300"/>
+		<item id="2148" countmax="100" chance="44400"/>
+		<item id="2148" countmax="66" chance="75700"/>
+		<item id="2148" countmax="22" chance="99900"/>
+		<item id="2162" countmax="1" chance="10900"/>
+		<item id="2463" countmax="1" chance="10000"/>
+		<item id="2135" countmax="1" chance="500"/>
+		<item id="2159" countmax="2" chance="5000"/>
+		<item id="2159" countmax="1" chance="1000"/>
+		<item id="2540" countmax="1" chance="500"/>
+		<item id="2150" countmax="4" chance="1200"/>
+		<item id="2149" countmax="3" chance="600"/>
+	</loot>
+</monster>

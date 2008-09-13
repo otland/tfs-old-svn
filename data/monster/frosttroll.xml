@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Frost Troll" nameDescription="a frost troll" race="blood" experience="23" speed="140" manacost="300">
+	<health now="55" max="55"/>
+	<look type="53" head="0" body="0" legs="0" feet="0" corpse="2928"/>
+	<targetchange interval="2000" chance="0"/>
+	<strategy attack="100" defense="0"/>
+	<flags>
+		<flag summonable="1"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="1"/>
+		<flag convinceable="1"/>
+		<flag pushable="1"/>
+		<flag canpushitems="0"/>
+		<flag canpushcreatures="0"/>
+		<flag targetdistance="1"/>
+		<flag runonhealth="10"/>
+	</flags>
+	<attacks>
+		<attack name="melee" interval="2000" skill="19" attack="11"/>
+	</attacks>
+	<defenses armor="7" defense="9"/>
+	<immunities>
+		<immunity physical="0"/>
+		<immunity energy="0"/>
+		<immunity fire="0"/>
+		<immunity poison="0"/>
+		<immunity lifedrain="0"/>
+		<immunity paralyze="0"/>
+		<immunity outfit="0"/>
+		<immunity drunk="0"/>
+		<immunity invisible="0"/>
+	</immunities>
+	<voices interval="5000" chance="10">
+		<voice sentence="Brrrr"/>
+		<voice sentence="Broar!"/>
+	</voices>
+	<loot capacity="300">
+		<item id="2382" countmax="1" chance="9000"/>
+		<item id="2651" countmax="1" chance="12000"/>
+		<item id="2667" countmax="1" chance="18000"/>
+		<item id="2148" countmax="12" chance="50000"/>
+		<item id="2384" countmax="1" chance="15000"/>
+		<item id="2389" countmax="1" chance="20000"/>
+		<item id="2245" countmax="1" chance="8000"/>
+		<item id="2512" countmax="1" chance="15000"/>
+	</loot>
+</monster>

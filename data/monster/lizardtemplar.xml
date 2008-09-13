@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Lizard Templar" nameDescription="a lizard templar" race="blood" experience="145" speed="174" manacost="0">
+	<health now="410" max="410"/>
+	<look type="113" head="0" body="0" legs="0" feet="0" corpse="4256"/>
+	<targetchange interval="2000" chance="0"/>
+	<strategy attack="100" defense="0"/>
+	<flags>
+		<flag summonable="0"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="1"/>
+		<flag convinceable="0"/>
+		<flag pushable="0"/>
+		<flag canpushitems="1"/>
+		<flag canpushcreatures="0"/>
+		<flag targetdistance="1"/>
+		<flag runonhealth="0"/>
+	</flags>
+	<attacks>
+		<attack name="melee" interval="2000" skill="44" attack="30"/>
+	</attacks>
+	<defenses armor="26" defense="20"/>
+	<immunities>
+		<immunity physical="0"/>
+		<immunity energy="0"/>
+		<immunity fire="0"/>
+		<immunity poison="1"/>
+		<immunity lifedrain="0"/>
+		<immunity paralyze="0"/>
+		<immunity outfit="0"/>
+		<immunity drunk="0"/>
+		<immunity invisible="0"/>
+	</immunities>
+	<voices interval="5000" chance="10">
+		<voice sentence="Hissss!"/>
+	</voices>
+	<loot capacity="500">
+		<item id="2148" countmax="20" chance="80000"/>
+		<item id="2394" countmax="1" chance="700"/>
+		<item id="2463" countmax="1" chance="1000"/>
+		<item id="3975" countmax="1" chance="100"/>
+		<item id="2406" countmax="1" chance="10000"/>
+		<item id="2149" countmax="1" chance="300"/>
+		<item id="2457" countmax="1" chance="2000"/>
+		<item id="2376" countmax="1" chance="5000"/>
+		<item id="3963" countmax="1" chance="500"/>
+	</loot>
+</monster>

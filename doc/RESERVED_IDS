@@ -1,0 +1,81 @@
+[ RESERVED IDS
+	Project Name
+		The Forgotten Server
+
+	Version
+		0.2
+
+	Codenamed
+		"Mystic Spirit"
+
+	License
+		GNU GPLv3
+
+	Forum
+		http://otland.net/
+]
+
+[ RESERVED
+	All ActionID's, UniqueID's and StorageKeys from 30001 to 30100
+	are reserved, to avoid conflicts do not use them.
+]
+
+[ ACTION IDS
+	ActionID's are ID's that you can place on things using a MapEditor or a LUA
+	script, ActionID's can be set on more than one item, it is not unique.
+
+	30021 - 30030
+		.../data/movements/scripts/citizen.lua
+			ActionID on teleport which will change the players town id
+			(player will appear in the temple of this town on death),
+			normally this ActionID is set on teleports which lead to
+			the temple.
+
+			30020 - TownID, is how it works, if you want to set players
+			TownID to 1 when the player walks in a teleport then you set
+			the ActionID of the teleport to 30021.
+]
+
+[ UNIQUE IDS
+	UniqueID's are ID's that you can place on things using a MapEditor, UniqueID's
+	can only be at one item at a time because it is unique, items with UniqueID will
+	not decay, are not moveable or pickupable.
+
+	30015
+		...data/actions/quests/annihilator.lua
+			Annihilator Switch, when this is switched four players will be
+			teleported into a room with four demons, this quest can only be
+			done once after every server restart.
+]
+
+[ STORAGE KEYS
+	StorageKeys are keys stored for each player together with a value.
+
+	-1 is the value of the key when it does not exist for the player.
+	* means that all values are reserved in this key.
+
+	30001
+		-1
+			Player has not received the first items.
+
+		1
+			Player has received the first items.
+
+	30015
+		-1
+			Annihilator Quest reward is not taken.
+
+		1
+			Annihilator Quest reward is taken.
+
+	30018
+		-1
+			Player is not promoted.
+
+		1
+			Player is promoted.
+
+	30031
+		-1, 0, 1, 2, 3, 4, 5, 6
+			Example quest.
+]

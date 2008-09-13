@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Dworc Voodoomaster" nameDescription="a dworc voodoomaster" race="blood" experience="50" speed="150" manacost="300">
+	<health now="80" max="80"/>
+	<look type="214" head="0" body="0" legs="0" feet="0" corpse="4304"/>
+	<targetchange interval="2000" chance="0"/>
+	<strategy attack="100" defense="0"/>
+	<flags>
+		<flag summonable="0"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="1"/>
+		<flag convinceable="1"/>
+		<flag pushable="1"/>
+		<flag canpushitems="0"/>
+		<flag canpushcreatures="0"/>
+		<flag targetdistance="4"/>
+		<flag runonhealth="15"/>
+	</flags>
+	<attacks>
+		<attack name="melee" interval="2000" skill="22" attack="13"/>
+		<attack name="lifedrain" interval="1000" chance="6" range="1" min="-1" max="-39"/>
+		<attack name="speed" interval="1000" chance="8" range="7" speedchange="-450" duration="5000">
+			<attribute key="areaEffect" value="redshimmer"/>
+		</attack>
+		<attack name="drunk" interval="1000" chance="10" range="7">
+			<attribute key="shootEffect" value="energy"/>
+			<attribute key="areaEffect" value="energyarea"/>
+		</attack>
+		<attack name="outfit" interval="1000" chance="9" range="7" monster="chicken" duration="5000">
+			<attribute key="areaEffect" value="blueshimmer"/>
+		</attack>
+		<attack name="poison" interval="1000" chance="20" radius="6" target="0" min="-6" max="-18">
+			<attribute key="areaEffect" value="greenbubble"/>
+		</attack>
+		<attack name="poisonfield" interval="1000" chance="13" range="7" radius="1" target="1">
+			<attribute key="shootEffect" value="poison"/>
+		</attack>
+	</attacks>
+	<defenses armor="3" defense="8">
+		<defense name="healing" interval="1000" chance="10" min="3" max="9">
+			<attribute key="areaEffect" value="blueshimmer"/>
+		</defense>
+		<defense name="speed" interval="1000" chance="8" speedchange="1234" duration="4000">
+			<attribute key="areaEffect" value="redshimmer"/>
+		</defense>
+		<defense name="invisible" interval="1000" chance="5" duration="3000">
+			<attribute key="areaEffect" value="blueshimmer"/>
+		</defense>
+	</defenses>
+	<immunities>
+		<immunity physical="0"/>
+		<immunity energy="0"/>
+		<immunity fire="0"/>
+		<immunity poison="1"/>
+		<immunity lifedrain="0"/>
+		<immunity paralyze="0"/>
+		<immunity outfit="0"/>
+		<immunity drunk="0"/>
+		<immunity invisible="0"/>
+	</immunities>
+	<voices interval="5000" chance="10">
+		<voice sentence="Grak brrretz!"/>
+		<voice sentence="Grow truk grrrrr."/>
+		<voice sentence="Prek tars, dekklep zurk."/>
+	</voices>
+	<loot capacity="400">
+		<item id="2231" countmax="1" chance="7000"/>
+		<item id="2230" countmax="1" chance="10000"/>
+		<item id="2148" countmax="10" chance="80000"/>
+		<item id="2467" countmax="1" chance="10000"/>
+		<item id="2411" countmax="1" chance="1000"/>
+		<item id="2229" countmax="3" chance="3000"/>
+		<item id="2174" countmax="1" chance="500"/>
+		<item id="2050" countmax="1" chance="5500"/>
+		<item id="3967" countmax="1" chance="500"/>
+		<item id="3955" countmax="1" chance="100"/>
+	</loot>
+</monster>

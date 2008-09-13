@@ -1,0 +1,148 @@
+[ README
+	Project Name
+		The Forgotten Server
+
+	Version
+		0.2
+
+	Codenamed
+		"Mystic Spirit"
+
+	License
+		GNU GPLv3
+
+	Forum
+		http://otland.net/
+]
+
+[ CREDITS
+	First of all, credits to the developers of this project, found in the
+	DEVELOPERS part of this file.
+
+	This server is based on the OpenTibia project, credits for our server
+	base to the OpenTibia developers listed here:
+		http://sourceforge.net/project/memberlist.php?group_id=32523
+]
+
+[ LICENSE
+	This project is licensed under GPLv3, you should have received a copy
+	of this license with this project.
+]
+
+[ DEVELOPERS
+	Talaturen
+		Founder
+		Project Manager
+		C++ Programmer
+		Lua Scripter
+		Data Directory Manager
+
+	Kiper
+		Founder
+		C++ Programmer
+
+	Kornholijo
+		C++ Programmer
+		PHP Programmer
+
+	Elf
+		C++ Programmer
+		Lua Scripter
+
+	Lithium
+		Data Directory Manager
+
+	Jonern
+		Lua Scripter
+]
+
+[ FORUM
+	Mainly english; with native chatboards for some other languages:
+		http://otland.net/
+]
+
+[ SUPPORT
+	Having trouble with any of the instructions, or is there
+	anything you just want to ask?
+		Create a new thread and ask here:
+			http://otland.net/forumdisplay.php?f=55
+]
+
+[ DONATIONS
+	We are not really accepting donations to the project,
+	but feel free to donate to the forum we're hosted at
+	for higher priority support and other benefits:
+		http://otland.net/payments.php
+]
+
+[ BUGS & FEATURE REQUESTS
+	http://otland.net/project.php?projectid=2
+]
+
+[ COMPILING
+	Linux
+		Download required packages
+			Debian \ Ubuntu
+				Launch a terminal, and paste in this command:
+					sudo apt-get install subversion autoconf automake make g++ libxml2 libxml2-dev libxml++2.6-dev lua5.1 liblua5.1-0 liblua5.1-0-dev libboost-dev libboost-date-time-dev libboost-regex-dev libboost-thread-dev libmysql++-dev libgmp3-dev liblua5.1-sql-mysql2 liblua5.1-sql-sqlite2 liblua5.1-sql-mysql-dev liblua5.1-sql-sqlite-dev libsqlite3-dev
+					wget http://heanet.dl.sourceforge.net/sourceforge/asio/boost_asio_1_0_0.tar.gz
+					tar -xf boost_asio_1_0_0.tar.gz
+					sudo cp -ar boost_asio_1_0_0/boost/* /usr/include/boost/
+					sudo g++ boost_asio_1_0_0/libs/system/src/error_code.cpp -c -o /usr/lib/libboost_system.a
+
+			sudo: command not found
+				If you're running Debian it's possible that you don't have sudo,
+				if that's the case then you can run 'su' and you will have root
+				access. Then execute the commands without 'sudo' in the beginning.
+
+		Download sourcecode
+			Launch a terminal, and paste in this command:
+				svn co https://forgottenserver.svn.sourceforge.net/svnroot/forgottenserver/forgottenserver/tags/0.2/
+
+		Compiling
+			Launch a terminal, and type this command:
+				cd 0.2/ && make
+
+		Linker error
+			If you receive a linker error which name 'libboost', paste in this command and try to compile again:
+				ln /usr/lib/libboost_regex-mt.so /usr/lib/libboost_regex.so && ln /usr/lib/libboost_regex-mt.a /usr/lib/libboost_regex.a && ln /usr/lib/libboost_thread-mt.so /usr/lib/libboost_thread.so && ln /usr/lib/libboost_thread-mt.a /usr/lib/libboost_thread.a
+
+	Windows
+		Dev-Cpp
+			Download TheForgottenDev-Cpp and the sources from:
+				http://otland.net/showthread.php?t=1024
+
+			Extract them anywhere and then run devcpp.exe, press on the menuitem
+			"File -> Open Project or File" and choose C:\path\to\sources\dev-cpp\TheForgottenServer.dev.
+
+			At this point Dev-Cpp should be running with the project, now you can press
+			"Execute -> Rebuild All", if there is any error, then report it here:
+				http://otland.net/showthread.php?t=379
+
+			After it get compiled, copy TheForgottenServer.exe from C:\path\to\sources\dev-cpp to directory above (C:\path\to\sources)
+]
+
+[ CONFIGURING
+	Launch config.lua with your favorite text editor and start configuring it,
+	incase there are other things you would like to configure then go over to the data directory.
+]
+
+[ EXECUTING
+	Linux
+		MySQL
+			Read mysql-help.txt, and then launch a terminal, and paste in this command:
+				cd ~/forgottenserver/forgottenserver/ && ./TheForgottenServer
+
+		SqLite
+			Launch a terminal, and paste in this command:
+				cd ~/forgottenserver/forgottenserver/ && ./TheForgottenServer
+
+	Windows
+		MySQL
+			Read MYSQL_HELP and then move the exe file to the directory where you have
+			config.lua and data directory and execute it.
+
+		SqLite
+			Move the exe file to the directory where you have config.lua and data directory
+			and execute it.
+]

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="Skeleton" nameDescription="a skeleton" race="undead" experience="35" speed="154" manacost="300">
+	<health now="50" max="50"/>
+	<look type="33" head="0" body="0" legs="0" feet="0" corpse="2843"/>
+	<targetchange interval="2000" chance="0"/>
+	<strategy attack="100" defense="0"/>
+	<flags>
+		<flag summonable="1"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="1"/>
+		<flag convinceable="1"/>
+		<flag pushable="1"/>
+		<flag canpushitems="0"/>
+		<flag canpushcreatures="0"/>
+		<flag targetdistance="1"/>
+		<flag runonhealth="0"/>
+	</flags>
+	<attacks>
+		<attack name="melee" interval="2000" skill="18" attack="14"/>
+		<attack name="lifedrain" interval="1000" chance="9" range="1" min="-7" max="-13"/>
+	</attacks>
+	<defenses armor="2" defense="9"/>
+	<immunities>
+		<immunity physical="0"/>
+		<immunity energy="0"/>
+		<immunity fire="0"/>
+		<immunity poison="1"/>
+		<immunity lifedrain="1"/>
+		<immunity paralyze="0"/>
+		<immunity outfit="0"/>
+		<immunity drunk="0"/>
+		<immunity invisible="0"/>
+	</immunities>
+	<loot capacity="400">
+		<item id="2230" countmax="1" chance="50000"/>
+		<item id="2511" countmax="1" chance="12000"/>
+		<item id="2148" countmax="10" chance="45000"/>
+		<item id="2388" countmax="1" chance="25000"/>
+		<item id="2398" countmax="1" chance="20000"/>
+		<item id="2376" countmax="1" chance="2000"/>
+		<item id="2050" countmax="1" chance="50000"/>
+		<item id="2473" countmax="1" chance="8000"/>
+	</loot>
+</monster>
