@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -109,8 +109,8 @@ class Door : public Item
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool serializeAttr(PropWriteStream& propWriteStream);
 
-		void setDoorId(uint32_t _doorId) {doorId = _doorId;}
-		uint32_t getDoorId() const {return doorId;}
+		void setDoorId(uint32_t _doorId){ setIntAttr(ATTR_ITEM_DOORID, (uint32_t)_doorId); }
+		uint32_t getDoorId() const{ return getIntAttr(ATTR_ITEM_DOORID); }
 
 		bool canUse(const Player* player);
 
@@ -130,7 +130,7 @@ class Door : public Item
 		AccessList* accessList;
 		friend class House;
 };
-	
+
 class HouseTransferItem : public Item
 {
 	public:

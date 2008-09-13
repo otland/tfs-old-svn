@@ -1,4 +1,4 @@
-//////////////////////////////////////////////////////////////////////
+_//////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
 // base class for every creature
@@ -430,7 +430,6 @@ class Creature : public AutoID, virtual public Thing
 		};
 		typedef std::map<uint32_t, CountBlock_t> CountMap;
 
-		typedef std::map<uint32_t, CountBlock_t> CountMap;
 		CountMap damageMap;
 		CountMap healMap;
 		uint32_t lastHitCreature;

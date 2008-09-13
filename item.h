@@ -359,12 +359,7 @@ class Item : virtual public Thing, public ItemAttributes
 		void setHitChance(int32_t hitchance) {setIntAttr(ATTR_ITEM_HITCHANCE, hitchance);}
 
 		virtual double getWeight() const;
-		int32_t getAttack() const {return items[id].attack;}
-		int32_t getArmor() const {return items[id].armor;}
-		int32_t getDefense() const {return items[id].defense;}
-		int32_t getExtraDefense() const {return items[id].extraDefense;}
 		int32_t getSlotPosition() const {return items[id].slot_position;}
-		int32_t getHitChance() const {return items[id].hitChance;}
 
 		bool isReadable() const {return items[id].canReadText;}
 		bool canWriteText() const {return items[id].canWriteText;}
@@ -398,9 +393,6 @@ class Item : virtual public Thing, public ItemAttributes
 		bool floorChangeSouth() const {return items[id].floorChangeSouth;}
 		bool floorChangeEast() const {return items[id].floorChangeEast;}
 		bool floorChangeWest() const {return items[id].floorChangeWest;}
-
-		const std::string& getName() const {return items[id].name;}
-		const std::string& getPluralName() const {return items[id].pluralName;}
 
 		// get the number of items
 		uint16_t getItemCount() const {return count;}

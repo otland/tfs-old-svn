@@ -222,7 +222,7 @@ Action* Actions::getAction(const Item* item, ActionType_t type /* = ACTION_ANY *
 	if(item->getActionId() != 0 && (type == ACTION_ANY || type == ACTION_ACTIONID))
 	{
 		ActionUseMap::iterator it = actionItemMap.find(item->getActionId());
-		if (it != actionItemMap.end())
+		if(it != actionItemMap.end())
 			return it->second;
 	}
 
