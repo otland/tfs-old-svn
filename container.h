@@ -25,6 +25,8 @@
 #include "cylinder.h"
 #include "item.h"
 
+#define PARENT_CONTAINER_LIMIT 5000
+
 typedef std::list<Item *> ItemList;
 
 class Depot;
