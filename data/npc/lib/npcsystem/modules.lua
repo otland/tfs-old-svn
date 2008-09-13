@@ -968,8 +968,8 @@ if(Modules == nil) then
 		end
 
 		local itemWindow = {}
-		for item, attr in pairs(module.npcHandler.shopItems) do
-			local item = {id = item, buy = attr.buyPrice, sell = attr.sellPrice, subType = attr.subType, name = attr.realName}
+		for itemid, attr in pairs(module.npcHandler.shopItems) do
+			local item = {id = itemid, buy = attr.buyPrice, sell = attr.sellPrice, subType = attr.subType, name = attr.realName}
 			table.insert(itemWindow, item)
 		end
 
