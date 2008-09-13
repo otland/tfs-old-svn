@@ -355,7 +355,7 @@ ReturnValue Container::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 	const Cylinder* topParent = getTopParent();
 	if(topParent != this)
 	{
-		if(Container* parentContainer = topParent->getContainer())
+		if(const Container* parentContainer = dynamic_cast<const Container*>(topParent))
 		{
 			if(parentContainer->getItemHoldingCount() > PARENT_CONTAINER_LIMIT)
 				return RET_CONTAINERNOTENOUGHROOM;
