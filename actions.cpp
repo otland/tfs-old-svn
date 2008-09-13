@@ -102,7 +102,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 	int32_t id, endId;
 	if(readXMLInteger(p, "itemid", id))
 		useItemMap[id] = action;
-	else if(readXMLInteger(p, "fromid", id) && readXMLInteger(p, "toid", id2))
+	else if(readXMLInteger(p, "fromid", id) && readXMLInteger(p, "toid", endId))
 	{
 		useItemMap[id] = action;
 		while(id < endId)
@@ -110,7 +110,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 	}
 	else if(readXMLInteger(p, "uniqueid", id))
 		uniqueItemMap[id] = action;
-	else if(readXMLInteger(p, "fromuid", id) && readXMLInteger(p, "touid", id2))
+	else if(readXMLInteger(p, "fromuid", id) && readXMLInteger(p, "touid", endId))
 	{
 		uniqueItemMap[id] = action;
 		while(id < endId)
@@ -118,7 +118,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 	}
 	else if(readXMLInteger(p, "actionid", id))
 		actionItemMap[id] = action;
-	else if(readXMLInteger(p, "fromaid", id) && readXMLInteger(p, "toaid", id2))
+	else if(readXMLInteger(p, "fromaid", id) && readXMLInteger(p, "toaid", endId))
 	{
 		actionItemMap[id] = action;
 		while(id < endId)
