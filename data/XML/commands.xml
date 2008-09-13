@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<commands>
+	<!-- Gods -->
+	<command cmd="/openserver" log="yes" access="5"/>
+	<command cmd="/closeserver" log="yes" access="5"/>
+	<command cmd="/addskill" log="yes" access="5"/>
+	<command cmd="/owner" log="yes" access="5"/>
+	<command cmd="/serverdiag" log="yes" access="5"/>
+	
+	<!-- Community Managers -->
+	<command cmd="/r" log="yes" access="4"/>
+	<command cmd="/i" log="yes" access="4"/>
+	<command cmd="/n" log="yes" access="4"/>
+	<command cmd="/attr" log="yes" access="4"/>
+	<command cmd="/s" log="yes" access="4"/>
+	<command cmd="/m" log="yes" access="4"/>
+	<command cmd="/summon" log="yes" access="4"/>
+	<command cmd="/raid" log="yes" access="4"/>
+	<command cmd="/reload" log="yes" access="4"/>
+	<command cmd="/newtype" log="yes" access="4"/>
+	
+	<!-- Game Masters -->
+	<command cmd="/kick" log="yes" access="3"/>
+	<command cmd="/unban" log="yes" access="3"/>
+	<command cmd="/a" log="yes" access="3"/>
+	<command cmd="/goto" log="yes" access="3"/>
+	<command cmd="/send" log="yes" access="3"/>
+	<command cmd="/town" log="yes" access="3"/>
+	<command cmd="/c" log="yes" access="3"/>
+	<command cmd="/t" log="yes" access="3"/>
+	<command cmd="/up" log="yes" access="3"/>
+	<command cmd="/down" log="yes" access="3"/>
+	<command cmd="/ghost" log="yes" access="3"/>
+	<command cmd="/squelch" log="yes" access="3"/>
+
+	<!-- Senior Tutors -->
+	<command cmd="/gethouse" log="yes" access="2"/>
+	<command cmd="/info" log="yes" access="2"/>
+
+	<!-- Tutors  -->
+	<command cmd="/baninfo" log="no" access="2"/>
+	
+	<!-- Players -->
+	<command cmd="!buyhouse" log="no" access="0"/>
+	<command cmd="!sellhouse" log="no" access="0"/>
+	<command cmd="!frags" log="no" access="0"/>
+	<command cmd="!createguild" log="no" access="0"/>
+	<command cmd="!joinguild" log="no" access="0"/>	
+</commands>

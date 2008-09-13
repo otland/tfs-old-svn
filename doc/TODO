@@ -1,0 +1,26 @@
+[ TODO
+	Project Name
+		The Forgotten Server
+
+	Version
+		0.3 Beta 1
+
+	Codenamed
+		\
+
+	License
+		GNU GPLv3
+
+	Forum
+		http://otland.net/
+]
+
+[ LIST
+	Stop using storage values for promotion, and also make it an int instead of a boolean,
+	should be 'promotion level', add optional parameter to "isPromoted" functions which is
+	promotion level, default: 1.
+		Assigned to: Talaturen
+
+	Make more constant values configurable
+		Assigned to: Talaturen, FightingElf
+]
