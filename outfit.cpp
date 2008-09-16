@@ -1,13 +1,13 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-// 
+//
 //////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -51,7 +51,7 @@ void OutfitList::addOutfit(const Outfit& outfit)
 			return;
 		}
 	}
-	
+
 	//adding a new outfit
 	Outfit* new_outfit = new Outfit;
 	new_outfit->looktype = outfit.looktype;
@@ -95,7 +95,7 @@ bool OutfitList::isInList(uint32_t looktype, uint32_t addons, bool playerPremium
 				{
 					if(((*it_)->addons & addons) == addons)
 					{
-						if((*it)->premium && playerPremium || !(*it)->premium)
+						if(((*it)->premium && playerPremium) || !(*it)->premium)
 							return true;
 					}
 					return false;
@@ -113,25 +113,26 @@ Outfits::Outfits()
 	//build default outfit lists
 	outfit.addons = 0;
 	outfit.premium = false;
-	for(int32_t i = PLAYER_FEMALE_1; i <= PLAYER_FEMALE_7; i++){
+	for(int32_t i = PLAYER_FEMALE_1; i <= PLAYER_FEMALE_7; i++)
+	{
 		outfit.looktype = i;
 		m_female_list.addOutfit(outfit);
 	}
-		
-	for(int32_t i = PLAYER_MALE_1; i <= PLAYER_MALE_7; i++){
+
+	for(int32_t i = PLAYER_MALE_1; i <= PLAYER_MALE_7; i++)
+	{
 		outfit.looktype = i;
 		m_male_list.addOutfit(outfit);
 	}
-	
+
 	m_list.resize(10, NULL);
 }
 
 Outfits::~Outfits()
 {
 	OutfitsListVector::iterator it;
-	for(it = m_list.begin(); it != m_list.end(); it++){
+	for(it = m_list.begin(); it != m_list.end(); it++)
 		delete *it;
-	}
 	m_list.clear();
 }
 
@@ -144,16 +145,16 @@ bool Outfits::loadFromXml()
 	{
 		xmlNodePtr root, p;
 		root = xmlDocGetRootElement(doc);
-		
+
 		if(xmlStrcmp(root->name,(const xmlChar*)"outfits") != 0)
 		{
 			xmlFreeDoc(doc);
 			std::cout << "[Warning] outfits.xml not found, using defaults." << std::endl;
 			return true;
 		}
-		
+
 		p = root->children;
-		
+
 		while(p)
 		{
 			std::string str;
@@ -174,7 +175,7 @@ bool Outfits::loadFromXml()
 							list = new OutfitList;
 							m_list[intVal] = list;
 						}
-						
+
 						Outfit outfit;
 						std::string outfitName;
 						bool outfitEnabled = true;

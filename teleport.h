@@ -27,7 +27,7 @@ class Teleport : public Item, public Cylinder
 {
 	public:
 		Teleport(uint16_t _type);
-		~Teleport();
+		virtual ~Teleport();
 		
 		virtual Teleport* getTeleport() {return this;}
 		virtual const Teleport* getTeleport() const {return this;}

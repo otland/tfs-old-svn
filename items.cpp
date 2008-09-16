@@ -445,8 +445,6 @@ bool Items::loadFromXml()
 										it.type = ITEM_TYPE_DOOR;
 									else if(tmpStrValue == "bed")
 										it.type = ITEM_TYPE_BED;
-									else if(tmpStrValue == "leveldoor" || tmpStrValue == "leveldoors")
-										it.type = ITEM_TYPE_LEVELDOOR;
 									else
 										std::cout << "Warning: [Items::loadFromXml] " << "Unknown type " << strValue << std::endl;
 								}

@@ -48,7 +48,6 @@ class Monster : public Creature
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t monsterCount;
 #endif
-
 		static Monster* createMonster(MonsterType* mType);
 		static Monster* createMonster(const std::string& name);
 		static int32_t despawnRange;
@@ -92,7 +91,6 @@ class Monster : public Creature
 
 		virtual void drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage);
 		virtual void changeHealth(int32_t healthChange);
-		virtual BlockType_t blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage, bool checkDefense = false, bool checkArmor = false);
 		virtual void onWalk();
 		virtual bool getNextStep(Direction& dir);
 		virtual void onFollowCreatureComplete(const Creature* creature);
@@ -116,6 +114,9 @@ class Monster : public Creature
 
 		bool isTarget(Creature* creature);
 		bool isFleeing() const {return getHealth() <= mType->runAwayHealth;}
+
+		BlockType_t blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
+			bool checkDefense = false, bool checkArmor = false);
 
 	private:
 		CreatureList targetList;

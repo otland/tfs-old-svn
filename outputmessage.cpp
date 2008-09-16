@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -28,7 +28,7 @@ OutputMessage::OutputMessage()
 	freeMessage();
 }
 
-//*********** OutputMessagePool ****************
+//*********** OutputMessagePool ****************//
 
 OutputMessagePool::OutputMessagePool()
 {
@@ -65,12 +65,13 @@ void OutputMessagePool::send(OutputMessage* msg)
 	OTSYS_THREAD_LOCK(m_outputPoolLock, "");
 	OutputMessage::OutputMessageState state = msg->getState();
 	OTSYS_THREAD_UNLOCK(m_outputPoolLock, "");
-	
+
 	if(state == OutputMessage::STATE_ALLOCATED_NO_AUTOSEND)
 	{
 		#ifdef __DEBUG_NET_DETAIL__
 		std::cout << "Sending message - SINGLE" << std::endl;
 		#endif
+
 		if(msg->getConnection())
 		{
 			if(msg->getConnection()->send(msg))
@@ -116,6 +117,7 @@ void OutputMessagePool::sendAll()
 			#ifdef __DEBUG_NET_DETAIL__
 			std::cout << "Sending message - ALL" << std::endl;
 			#endif
+
 			if((*it)->getConnection())
 			{
 				if((*it)->getConnection()->send(*it))
@@ -155,7 +157,7 @@ void OutputMessagePool::releaseMessage(OutputMessage* msg, bool sent /*= false*/
 	{
 		case OutputMessage::STATE_ALLOCATED:
 		{
-			OutputMessageVector::iterator it = 
+			OutputMessageVector::iterator it =
 				std::find(m_autoSendOutputMessages.begin(), m_autoSendOutputMessages.end(), msg);
 			if(it != m_autoSendOutputMessages.end())
 				m_autoSendOutputMessages.erase(it);
@@ -194,7 +196,7 @@ OutputMessage* OutputMessagePool::getOutputMessage(Protocol* protocol, bool auto
 	#ifdef __DEBUG_NET_DETAIL__
 	std::cout << "request output message - auto = " << autosend << std::endl;
 	#endif
-	
+
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_outputPoolLock);
 	OutputMessage* outputmessage;
 	if(m_outputMessages.empty())
@@ -241,6 +243,7 @@ void OutputMessagePool::configureOutputMessage(OutputMessage* msg, Protocol* pro
 	}
 	else
 		msg->setState(OutputMessage::STATE_ALLOCATED_NO_AUTOSEND);
+
 	msg->setProtocol(protocol);
 	msg->setConnection(protocol->getConnection());
 	msg->setFrame(m_frameTime);

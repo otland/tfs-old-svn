@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -30,20 +30,29 @@
 template<class T> class AutoList
 {
 	public:
-		AutoList(){}
+		AutoList() {}
 
-		~AutoList() {list.clear();}
+		virtual ~AutoList()
+		{
+			list.clear();
+		}
 
-		void addList(T* t) {list[t->getID()] = t;}
+		void addList(T* t)
+		{
+			list[t->getID()] = t;
+		}
 
-		void removeList(uint32_t _id) {list.erase(_id);}
+		void removeList(uint32_t _id)
+		{
+			list.erase(_id);
+		}
 
 		typedef std::map<uint32_t, T*> list_type;
 		list_type list;
 
 		typedef typename list_type::iterator listiterator;
 };
-	
+
 class AutoID
 {
 	public:

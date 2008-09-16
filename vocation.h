@@ -29,7 +29,7 @@
 class Vocation
 {
 	public:
-		~Vocation();
+		virtual ~Vocation();
 		const std::string& getVocName() const {return name;}
 		const std::string& getVocDescription() const {return description;}
 		uint32_t getReqSkillTries(int32_t skill, int32_t level);

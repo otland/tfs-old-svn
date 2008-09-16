@@ -291,11 +291,11 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 	sb.combatSpell = false;
 	sb.isMelee = false;
 
-	bool isScripted = false;
 	std::string name = "", scriptName = "";
+	bool isScripted = false;
 
 	if(readXMLString(node, "script", scriptName))
-	 	isScripted = true;
+		isScripted = true;
 	else if(!readXMLString(node, "name", name))
 		return false;
 
@@ -686,7 +686,8 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			{
 				if(readXMLString(attributeNode, "key", strValue))
 				{
-					if(strcasecmp(strValue.c_str(), "shootEffect") == 0)
+					std::string tmpStrValue = asLowerCaseString(strValue);
+					if(tmpStrValue == "shooteffect")
 					{
 						if(readXMLString(attributeNode, "value", strValue))
 						{
@@ -697,7 +698,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 								std::cout << "Warning: [Monsters::deserializeSpell] - "  << description << " - Unknown shootEffect: " << strValue << std::endl;
 						}
 					}
-					else if(strcasecmp(strValue.c_str(), "areaEffect") == 0)
+					else if(tmpStrValue == "areaeffect")
 					{
 						if(readXMLString(attributeNode, "value", strValue))
 						{
@@ -708,6 +709,8 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 								std::cout << "Warning: [Monsters::deserializeSpell] - "  << description << " - Unknown areaEffect: " << strValue << std::endl;
 						}
 					}
+					else
+						std::cout << "[Warning - Monsters::deserializeSpells] Effect type \"" << strValue << "\" does not exist." << std::endl;
 				}
 			}
 			attributeNode = attributeNode->next;
@@ -755,7 +758,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 			std::cerr << "Malformed XML: " << file << std::endl;
 
 		int32_t intValue;
-		std::string strValue, tmpStrValue;
+		std::string strValue;
 
 		p = root->children;
 
@@ -774,7 +777,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 
 		if(readXMLString(root, "race", strValue))
 		{
-			tmpStrValue = asLowerCaseString(strValue);
+			std::string tmpStrValue = asLowerCaseString(strValue);
 			if(tmpStrValue == "venom" || atoi(strValue.c_str()) == 1)
 				mType->race = RACE_VENOM;
 			else if(tmpStrValue == "blood" || atoi(strValue.c_str()) == 2)
@@ -879,6 +882,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 						{
 							/*if(intValue > 6)
 								SHOW_XML_WARNING("targetdistance greater than 6");*/
+
 							mType->targetDistance = std::max(1, intValue);
 						}
 
@@ -987,7 +991,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 					{
 						if(readXMLString(tmpNode, "name", strValue))
 						{
-							tmpStrValue = asLowerCaseString(strValue);
+							std::string tmpStrValue = asLowerCaseString(strValue);
 							if(tmpStrValue == "physical")
 							{
 								mType->damageImmunities |= COMBAT_PHYSICALDAMAGE;
@@ -1049,7 +1053,10 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 						else if(readXMLInteger(tmpNode, "physical", intValue))
 						{
 							if(intValue != 0)
+							{
 								mType->damageImmunities |= COMBAT_PHYSICALDAMAGE;
+								//mType->conditionImmunities |= CONDITION_PHYSICAL;
+							}
 						}
 						else if(readXMLInteger(tmpNode, "energy", intValue))
 						{
@@ -1186,7 +1193,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 						tmpNode = tmpNode->next;
 						continue;
 					}
-					
+
 					LootBlock lootBlock;
 					if(loadLootItem(tmpNode, lootBlock))
 						mType->lootItems.push_back(lootBlock);
@@ -1211,12 +1218,14 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 							type = COMBAT_PHYSICALDAMAGE;
 							percent = intValue;
 						}
+
 						if(readXMLInteger(tmpNode, "icePercent", intValue))
 						{
 							type = COMBAT_ICEDAMAGE;
 							percent = intValue;
 						}
-						else if(readXMLInteger(tmpNode, "poisonPercent", intValue) || readXMLInteger(tmpNode, "earthPercent", intValue))
+						else if(readXMLInteger(tmpNode, "poisonPercent", intValue) ||
+							readXMLInteger(tmpNode, "earthPercent", intValue))
 						{
 							type = COMBAT_EARTHDAMAGE;
 							percent = intValue;
@@ -1241,7 +1250,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 							type = COMBAT_DEATHDAMAGE;
 							percent = intValue;
 						}
-						
+
 						if(percent != 0 && type != COMBAT_NONE)
 							mType->elementMap[type] = percent;
 					}
@@ -1262,7 +1271,6 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 					{
 						uint32_t chance = 100;
 						uint32_t interval = 1000;
-						uint32_t amount = 0;
 
 						if(readXMLInteger(tmpNode, "speed", intValue) || readXMLInteger(tmpNode, "interval", intValue))
 							interval = intValue;
@@ -1344,10 +1352,10 @@ bool Monsters::loadLootItem(xmlNodePtr node, LootBlock& lootBlock)
 
 	if(readXMLInteger(node, "id", intValue))
 		lootBlock.id = intValue;
-	
+
 	if(lootBlock.id == 0)
 		return false;
-	
+
 	if(readXMLInteger(node, "countmax", intValue))
 	{
 		lootBlock.countmax = intValue;
@@ -1386,7 +1394,7 @@ bool Monsters::loadLootContainer(xmlNodePtr node, LootBlock& lBlock)
 {
 	if(node == NULL)
 		return false;
-	
+
 	xmlNodePtr tmpNode = node->children;
 	xmlNodePtr p;
 

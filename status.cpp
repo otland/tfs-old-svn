@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -36,12 +36,12 @@
 	#define INVALID_SOCKET -1
 #endif
 
+extern ConfigManager g_config;
+extern Game g_game;
+
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t ProtocolStatus::protocolStatusCount = 0;
 #endif
-
-extern ConfigManager g_config;
-extern Game g_game;
 
 enum RequestedInfo_t
 {
@@ -133,7 +133,7 @@ void Status::removePlayer()
 std::string Status::getStatusString() const
 {
 	std::string xml;
-	char buffer[65];
+	char buffer[90];
 
 	xmlDocPtr doc;
 	xmlNodePtr p, root;
@@ -143,7 +143,7 @@ std::string Status::getStatusString() const
 	root = doc->children;
 
 	xmlSetProp(root, (const xmlChar*)"version", (const xmlChar*)"1.0");
-	
+
 	p = xmlNewNode(NULL,(const xmlChar*)"serverinfo");
 	sprintf(buffer, "%u", (uint32_t)getUptime());
 	xmlSetProp(p, (const xmlChar*)"uptime", (const xmlChar*)buffer);
@@ -171,7 +171,7 @@ std::string Status::getStatusString() const
 	sprintf(buffer, "%d", g_game.getLastPlayersRecord());
 	xmlSetProp(p, (const xmlChar*)"peak", (const xmlChar*)buffer);
 	xmlAddChild(root, p);
-	
+
 	p = xmlNewNode(NULL,(const xmlChar*)"monsters");
 	sprintf(buffer, "%d", g_game.getMonstersOnline());
 	xmlSetProp(p, (const xmlChar*)"total", (const xmlChar*)buffer);
@@ -193,12 +193,12 @@ std::string Status::getStatusString() const
 	xmlChar* s = NULL;
 	int32_t len = 0;
 	xmlDocDumpMemory(doc, (xmlChar**)&s, &len);
-	
+
 	if(s)
 		xml = std::string((char*)s, len);
 	else
 		xml = "";
-	
+
 	xmlFreeOTSERV(s);
 	xmlFreeDoc(doc);
 	return xml;
@@ -211,7 +211,7 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage* output, NetworkMessa
 		output->AddByte(0x10);
 		output->AddString(g_config.getString(ConfigManager::SERVER_NAME).c_str());
 		output->AddString(g_config.getString(ConfigManager::IP).c_str());
-		char buffer[7];
+		char buffer[10];
 		sprintf(buffer, "%d", g_config.getNumber(ConfigManager::PORT));
 		output->AddString(buffer);
   	}

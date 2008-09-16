@@ -43,11 +43,11 @@ DatabaseSQLite::DatabaseSQLite()
 
 	// test for existence of database file;
 	// sqlite3_open will create a new one if it isn't there (what we don't want)
-	if(!fileExists(g_config.getString(ConfigManager::SQLITE_DB).c_str()))
+	if(!fileExists(g_config.getString(ConfigManager::SQL_FILE).c_str()))
 		return;
 
 	// Initialize sqlite
-	if(sqlite3_open(g_config.getString(ConfigManager::SQLITE_DB).c_str(), &m_handle) != SQLITE_OK)
+	if(sqlite3_open(g_config.getString(ConfigManager::SQL_FILE).c_str(), &m_handle) != SQLITE_OK)
 	{
 		std::cout << "Failed to initialize SQLite connection." << std::endl;
 		sqlite3_close(m_handle);

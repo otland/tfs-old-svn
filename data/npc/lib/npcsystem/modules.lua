@@ -879,23 +879,23 @@ if(Modules == nil) then
 		}
 
 		if(getPlayerMoney(cid) < amount * self.npcHandler.shopItems[itemid].buyPrice) then
-			local msg = self.npcHandler:getMessage(MESSAGE_NEEDMOREMONEY)
+			local msg = self.npcHandler:getMessage(MESSAGE_NOTHAVEMONEY)
 			msg = self.npcHandler:parseMessage(msg, parseInfo)
-			self.npcHandler:say(msg, cid)
+			doPlayerSendCancel(cid, msg)
 			return false
 		end
 
 		local boughtItems, i = ShopModule.doPlayerAddItem(cid, itemid, subType, amount)
 		if(i < amount) then
-			local msgId = MESSAGE_ONBUYNEEDSPACE
+			local msgId = MESSAGE_NOMORESPACE
 			if(i == 0) then
-				msgId = MESSAGE_NEEDMORESPACE
+				msgId = MESSAGE_NOSPACE
 			end
 
 			local msg = self.npcHandler:getMessage(msgId)
 			parseInfo[TAG_ITEMCOUNT] = i
 			msg = self.npcHandler:parseMessage(msg, parseInfo)
-			self.npcHandler:say(msg, cid)
+			doPlayerSendCancel(cid, msg)
 			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 				self.npcHandler.talkStart[cid] = os.time()
 			else
@@ -907,9 +907,9 @@ if(Modules == nil) then
 			end
 			return false
 		else
-			local msg = self.npcHandler:getMessage(MESSAGE_ONBUY)
+			local msg = self.npcHandler:getMessage(MESSAGE_BOUGHT)
 			msg = self.npcHandler:parseMessage(msg, parseInfo)
-			self.npcHandler:say(msg, cid)
+			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, msg)
 			doPlayerRemoveMoney(cid, amount * self.npcHandler.shopItems[itemid].buyPrice)
 			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 				self.npcHandler.talkStart[cid] = os.time()
@@ -937,9 +937,9 @@ if(Modules == nil) then
 			subType = -1
 		end
 		if(doPlayerRemoveItem(cid, itemid, amount, subType) == TRUE) then
-			local msg = self.npcHandler:getMessage(MESSAGE_ONSELL)
+			local msg = self.npcHandler:getMessage(MESSAGE_SOLD)
 			msg = self.npcHandler:parseMessage(msg, parseInfo)
-			self.npcHandler:say(msg, cid)
+			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, msg)
 			doPlayerAddMoney(cid, amount * self.npcHandler.shopItems[itemid].sellPrice)
 			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 				self.npcHandler.talkStart[cid] = os.time()
@@ -948,9 +948,9 @@ if(Modules == nil) then
 			end
 			return true
 		else
-			local msg = self.npcHandler:getMessage(MESSAGE_NOTHAVEITEM)
+			local msg = self.npcHandler:getMessage(MESSAGE_NOTHAVEOBJECT)
 			msg = self.npcHandler:parseMessage(msg, parseInfo)
-			self.npcHandler:say(msg, cid)
+			doPlayerSendCancel(cid, msg)
 			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 				self.npcHandler.talkStart[cid] = os.time()
 			else

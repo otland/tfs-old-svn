@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -19,7 +19,6 @@
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 
-#include "otsystem.h"
 #include "server.h"
 #include "connection.h"
 
@@ -95,11 +94,11 @@ void Server::onAccept(Connection* connection, const boost::system::error_code& e
 			m_listenErrors++;
 			PRINT_ASIO_ERROR("Accepting");
 			closeListenSocket();
-			#ifndef __IGNORE_LISTEN_ERROR__
+			#ifdef __ENABLE_LISTEN_ERROR__
 			if(m_listenErrors < 100)
 			#endif
 				openListenSocket();
-			#ifndef __IGNORE_LISTEN_ERROR__
+			#ifdef __ENABLE_LISTEN_ERROR__
 			else
 				std::cout << "Error: [Server::onAccept] More than 100 listen errors." << std::endl;
 			#else

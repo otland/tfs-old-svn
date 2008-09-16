@@ -24,8 +24,8 @@
 
 #include "outputmessage.h"
 #include "connection.h"
-
 #include "rsa.h"
+
 #include "configmanager.h"
 #include "tools.h"
 #include "iologindata.h"
@@ -41,16 +41,16 @@ extern ConfigManager g_config;
 extern IPList serverIPs;
 extern Game g_game;
 
+#ifdef __ENABLE_SERVER_DIAGNOSTIC__
+uint32_t ProtocolLogin::protocolLoginCount = 0;
+#endif
+
 #ifdef __DEBUG_NET_DETAIL__
 void ProtocolLogin::deleteProtocolTask()
 {
 	std::cout << "Deleting ProtocolLogin" << std::endl;
 	Protocol::deleteProtocolTask();
 }
-#endif
-
-#ifdef __ENABLE_SERVER_DIAGNOSTIC__
-uint32_t ProtocolLogin::protocolLoginCount = 0;
 #endif
 
 void ProtocolLogin::disconnectClient(uint8_t error, const char* message)
@@ -69,8 +69,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 #ifndef __CONSOLE__
 		!GUI::getInstance()->m_connections ||
 #endif
-		g_game.getGameState() == GAME_STATE_SHUTDOWN
-	)
+		g_game.getGameState() == GAME_STATE_SHUTDOWN)
 	{
 		getConnection()->closeConnection();
 		return false;
@@ -104,7 +103,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	if(!accnumber)
 	{
-		if(g_config.getString(ConfigManager::ACCOUNT_MANAGER) == "yes")
+		if(g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
 		{
 			accnumber = 1;
 			password = "1";
@@ -144,7 +143,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	{
 		disconnectClient(0x0A, "Your IP is banished!");
 		return false;
-	}
+	}	
 
 	uint32_t serverip = serverIPs[0].first;
 	for(uint32_t i = 0; i < serverIPs.size(); i++)
@@ -174,13 +173,13 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	//Add MOTD
 	output->AddByte(0x14);
-	char motd[750];
+	char motd[1300];
 	sprintf(motd, "%d\n%s", g_game.getMotdNum(), g_config.getString(ConfigManager::MOTD).c_str());
 	output->AddString(motd);
 
 	//Add char list
 	output->AddByte(0x64);
-	if(accnumber != 1 && g_config.getString(ConfigManager::ACCOUNT_MANAGER) == "yes")
+	if(accnumber != 1 && g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
 	{
 		output->AddByte((uint8_t)account.charList.size() + 1);
 		output->AddString("Account Manager");
@@ -206,12 +205,13 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		output->AddU32(serverip);
 		output->AddU16(g_config.getNumber(ConfigManager::PORT));
 	}
+
 	//Add premium days
 	if(g_config.getBool(ConfigManager::FREE_PREMIUM))
 		output->AddU16(65535); //client displays free premium
 	else
 		output->AddU16(account.premiumDays);
-	
+
 	OutputMessagePool::getInstance()->send(output);
 	getConnection()->closeConnection();
 	return true;

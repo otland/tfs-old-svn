@@ -232,7 +232,8 @@ enum PlayerInfo_t
 	PlayerInfoGhostStatus,
 	PlayerInfoExtraExpRate,
 	PlayerInfoLossSkill,
-	PlayerInfoNoMove
+	PlayerInfoNoMove,
+	PlayerInfoMarriage
 };
 
 #define reportErrorFunc(a)  reportError(__FUNCTION__, a)
@@ -393,6 +394,7 @@ class LuaScriptInterface
 		static int32_t luaDoPlayerRemoveItem(lua_State* L);
 		static int32_t luaDoPlayerAddSoul(lua_State* L);
 		static int32_t luaDoPlayerAddStamina(lua_State* L);
+		static int32_t luaSetPlayerStamina(lua_State* L);
 		static int32_t luaDoPlayerAddExp(lua_State* L);
 		static int32_t luaDoPlayerSetGuildId(lua_State* L);
 		static int32_t luaDoPlayerSetGuildRank(lua_State* L);
@@ -504,6 +506,8 @@ class LuaScriptInterface
 		static int32_t luaGetInstantSpellInfoByName(lua_State* L);
 		static int32_t luaGetInstantSpellWords(lua_State* L);
 
+		static int32_t luaGetPlayerMarriage(lua_State* L);
+		static int32_t luaSetPlayerMarriage(lua_State* L);
 		static int32_t luaGetPlayerStorageValue(lua_State* L);
 		static int32_t luaSetPlayerStorageValue(lua_State* L);
 		static int32_t luaDoPlayerAddBlessing(lua_State* L);
@@ -523,6 +527,7 @@ class LuaScriptInterface
 		static int32_t luaGetWorldCreatures(lua_State* L);
 		static int32_t luaGetWorldUpTime(lua_State* L);
 		static int32_t luaDoBroadcastMessage(lua_State* L);
+		static int32_t luaDoPlayerBroadcastMessage(lua_State* L);
 		static int32_t luaGetGuildId(lua_State* L);
 
 		//type validation
@@ -602,6 +607,7 @@ class LuaScriptInterface
 		static int32_t luaGetItemNameById(lua_State* L);
 		static int32_t luaGetItemPluralNameById(lua_State* L);
 		static int32_t luaGetItemArticleById(lua_State* L);
+		static int32_t luaGetItemWeightById(lua_State* L);
 		static int32_t luaGetItemIdByName(lua_State* L);
 		static int32_t luaIsSightClear(lua_State* L);
 
@@ -617,7 +623,6 @@ class LuaScriptInterface
 		static int32_t luaDoPlayerSendTutorial(lua_State* L);
 		static int32_t luaDoPlayerAddMapMark(lua_State* L);
 		static int32_t luaDoPlayerAddPremiumDays(lua_State* L);
-		static int32_t luaDoPlayerRemovePremiumDays(lua_State* L);
 		static int32_t luaGetPlayerPremiumDays(lua_State* L);
 		static int32_t luaDoPlayerSetNoMove(lua_State* L);
 		static int32_t luaGetPlayerNoMove(lua_State* L);

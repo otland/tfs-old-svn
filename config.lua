@@ -1,6 +1,6 @@
 -- The Forgotten Server Config
 
-	-- Account Manager
+	-- Account manager
 	accountManager = "yes"
 	namelockManager = "yes"
 	newPlayerChooseVoc = "no"
@@ -40,7 +40,7 @@
 	experienceByKillingPlayers = "no"
 	showHealingDamage = "no"
 
-	-- Connection Config
+	-- Connection config
 	ip = "127.0.0.1"
 	port = 7171
 	loginTries = 10
@@ -59,13 +59,14 @@
 
 	-- Database
 	sqlType = "sqlite"
+	sqlHost = "localhost"
+	sqlPort = 3306
+	sqlUser = "root"
+	sqlPass = ""
+	sqlDatabase = "theforgottenserver"
+	sqlFile "forgottenserver.s3db"
+	-- NOTE: sqlFile is used only by sqlite database
 	passwordType = "plain"
-	mysqlHost = "localhost"
-	mysqlUser = "root"
-	mysqlPass = ""
-	mysqlDatabase = "theforgottenserver"
-	mysqlPort = 3306
-	sqliteDatabase = "forgottenserver.s3db"
 
 	-- Deathlist
 	deathListEnabled = "yes"
@@ -91,7 +92,7 @@
 	houseRentPeriod = "never"
 	houseNeedPremiumAccount = "yes"	
 
-	-- Item Usage
+	-- Item usage
 	timeBetweenActions = 200
 	timeBetweenExActions = 1000
 
@@ -102,24 +103,19 @@
 	cleanProtectedZones = "yes"
 
 	-- Miscellaneous
-	allowChangeOutfit = "yes"
 	kickIdlePlayerAfterMinutes = 15
 	maxMessageBuffer = 4
 	displayGamemastersWithOnlineCommand = "no"
 	defaultPriority = "high"
 	bankSystem = "yes"
-	displaySkillLevelOnAdvance = "no" --FIXME: causes crash in some cases
+	displaySkillLevelOnAdvance = "no" --FIXME: Causes crash in some cases
+	spellNameInsteadOfWordsOnCast = "no" --FIXME: Causes crashes
+	saveGlobalStorage = "yes"
 
-	-- Premium Account
+	-- Premium account
 	freePremium = "no"
 	premiumForPromotion = "yes"
 	removePremiumOnInit = "yes"
-
-	-- PVP Server
-	displayOnOrOffAtCharlist = "no"
-	allowChangeOutfit = "yes"
-	noDamageToSameLookfeet = "no"
-	experienceByKillingPlayers = "no"
 
 	-- Rates
 	rateExp = 5
@@ -128,16 +124,16 @@
 	rateMagic = 3
 	rateSpawn = 1
 
-	-- Real Server Save
-	-- note: serverSaveHour means like 03:00, not that it will save every 3 hours,
+	-- Global save
+	-- NOTE: serverSaveHour means like 03:00, not that it will save every 3 hours,
 	-- if you want such a system use autoSaveEachMinutes. this serversave method
 	-- may be unstable, we recommend using otadmin if you want real serversaves.
-	serverSaveEnabled = "no"
-	serverSaveHour = 3
-	shutdownAtServerSave = "yes"
-	cleanMapAtServerSave = "yes"
+	globalSaveEnabled = "no"
+	globalSaveHour = 3
+	shutdownAtGlobalSave = "yes"
+	cleanMapAtGlobalSave = "yes"
 
-	-- Server saving
+	-- Server save
 	autoSaveEachMinutes = 15
 	saveGlobalStorage = "no"
 
@@ -151,6 +147,7 @@
 	teleportPlayerSummons = "no" --FIXME: doesn't work
 
 	-- Startup
+	-- NOTE: This works only in Windows
 	defaultPriority = "high"
 
 	-- Status

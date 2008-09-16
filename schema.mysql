@@ -147,6 +147,7 @@ CREATE TABLE `players`
 	`loss_items` INT NOT NULL DEFAULT 10,
 	`premend` INT NOT NULL DEFAULT 0 COMMENT 'NOT IN USE BY THE SERVER',
 	`online` TINYINT NOT NULL DEFAULT 0,
+	`marriage` INT NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`),
 	KEY (`name`),
 	FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE,

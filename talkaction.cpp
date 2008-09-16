@@ -180,13 +180,13 @@ bool TalkAction::configureEvent(xmlNodePtr p)
 	if(readXMLString(p, "log", strValue))
 	{
 		strValue = asLowerCaseString(strValue);
-		m_sensitive = (strValue == "yes" || strValue == "true" || atoi(strValue.c_str()) > 0);
+		m_sensitive = booleanString(strValue);
 	}
 
 	if(readXMLString(p, "case-sensitive", strValue))
 	{
 		strValue = asLowerCaseString(strValue);
-		m_sensitive = (strValue == "yes" || strValue == "true" || atoi(strValue.c_str()) > 0);
+		m_sensitive = booleanString(strValue);
 	}
 
 	return true;
@@ -205,7 +205,7 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, con
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[100];
+		char desc[125];
 		sprintf(desc, "%s - %s- %s", creature->getName().c_str(), words.c_str(), param.c_str());
 		env->setEventDesc(desc);
 		#endif

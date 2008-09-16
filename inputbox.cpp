@@ -52,7 +52,7 @@ CInputBox::CInputBox(HWND hWndParent)
 		wcex.lpszClassName	= "InputBox";
 		wcex.hIconSm		= NULL;
 		if(RegisterClassEx(&wcex) == 0)
-			MessageBoxA(NULL, "Can't create CInputBox!", "Error", MB_OK);
+			MessageBoxA(NULL, "Cannot create InputBox!", "Error", MB_OK);
 	}
 	m_hWndParent = hWndParent;
 	Text = NULL;

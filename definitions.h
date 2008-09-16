@@ -74,6 +74,12 @@ enum passwordType_t
 #endif
 
 #define OTSYS_THREAD_RETURN void
+#ifndef WSAEWOULDBLOCK 	 
+#include <winsock2.h> 	 
+#endif 	 
+#ifndef EWOULDBLOCK 	 
+#define EWOULDBLOCK WSAEWOULDBLOCK 	 
+#endif
 
 #ifdef _WIN32_WINNT
 #undef _WIN32_WINNT

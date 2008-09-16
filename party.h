@@ -20,22 +20,19 @@
 
 #ifndef __PARTY_H__
 #define __PARTY_H__
-#include "definitions.h"
-#include "const.h"
+
 #include "player.h"
 
-#include <list>
+typedef std::vector<Player*> PlayerVector;
 
 class Player;
 class Party;
-
-typedef std::vector<Player*> PlayerVector;
 
 class Party
 {
 	public:
 		Party(Player* _leader);
-		~Party() {}
+		virtual ~Party();
 
 		Player* getLeader() const {return leader;}
 		void setLeader(Player* _leader) {leader = _leader;}
@@ -43,7 +40,7 @@ class Party
 		void disband();
 		bool invitePlayer(Player* player);
 		bool joinParty(Player* player);
-		bool revokeInvitation(Player* player);
+		void revokeInvitation(Player* player);
 		bool passPartyLeadership(Player* player);
 		bool leaveParty(Player* player);
 

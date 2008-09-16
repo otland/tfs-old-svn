@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -36,19 +36,20 @@ Scheduler::Scheduler()
 	OTSYS_CREATE_THREAD(Scheduler::schedulerThread, NULL);
 }
 
-OTSYS_THREAD_RETURN Scheduler::schedulerThread(void *p)
+OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 {
 	#if defined __EXCEPTION_TRACER__
 	ExceptionHandler schedulerExceptionHandler;
 	schedulerExceptionHandler.InstallHandler();
 	#endif
 	srand((unsigned int)OTSYS_TIME());
+
 	while(!Scheduler::m_shutdown)
 	{
 		SchedulerTask* task = NULL;
 		bool runTask = false;
 		int ret;
-		
+
 		// check if there are events waiting...
 		OTSYS_THREAD_LOCK(getScheduler().m_eventLock, "eventThread()")
 
@@ -62,7 +63,7 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void *p)
 			// unlock mutex and wait for signal or timeout
 			ret = OTSYS_THREAD_WAITSIGNAL_TIMED(getScheduler().m_eventSignal, getScheduler().m_eventLock, getScheduler().m_eventList.top()->getCycle());
 		}
-		
+
 		// the mutex is locked again now...
 		if(ret == OTSYS_THREAD_TIMEOUT && !Scheduler::m_shutdown)
 		{
@@ -79,8 +80,9 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void *p)
 				getScheduler().m_eventIds.erase(it);
 			}
 		}
+
 		OTSYS_THREAD_UNLOCK(getScheduler().m_eventLock, "eventThread()");
-		
+
 		// add task to dispatcher
 		if(task)
 		{
@@ -105,7 +107,7 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void *p)
 uint32_t Scheduler::addEvent(SchedulerTask* task)
 {
 	OTSYS_THREAD_LOCK(m_eventLock, "");
-	
+
 	bool do_signal = false;
 	if(!Scheduler::m_shutdown)
 	{
@@ -128,6 +130,7 @@ uint32_t Scheduler::addEvent(SchedulerTask* task)
 		// if the list was empty or this event is the top in the list
 		// we have to signal it
 		do_signal = (task == m_eventList.top());
+
 	}
 #ifdef _DEBUG
 	else
@@ -148,6 +151,7 @@ bool Scheduler::stopEvent(uint32_t eventid)
 		return false;
 
 	OTSYS_THREAD_LOCK(m_eventLock, "")
+
 	// search the event id..
 	EventIdSet::iterator it = m_eventIds.find(eventid);
 	if(it != m_eventIds.end())

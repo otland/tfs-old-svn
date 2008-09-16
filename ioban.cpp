@@ -209,7 +209,7 @@ bool IOBan::removeIpBanishment(uint32_t ip)
 	if(db->executeQuery(query.str()))
 		return true;
 
-	return true;
+	return false;
 }
 
 bool IOBan::removeNamelock(uint32_t guid)
@@ -222,7 +222,7 @@ bool IOBan::removeNamelock(uint32_t guid)
 	if(db->executeQuery(query.str()))
 		return true;
 
-	return true;
+	return false;
 }
 
 bool IOBan::removeNamelock(std::string name)
@@ -244,7 +244,7 @@ bool IOBan::removeBanishment(uint32_t account)
 	if(db->executeQuery(query.str()))
 		return true;
 
-	return true;
+	return false;
 }
 
 bool IOBan::removeDeletion(uint32_t account)
@@ -257,7 +257,7 @@ bool IOBan::removeDeletion(uint32_t account)
 	if(db->executeQuery(query.str()))
 		return true;
 
-	return true;
+	return false;
 }
 
 void IOBan::removeNotations(uint32_t account)
@@ -396,7 +396,52 @@ uint32_t IOBan::getNotationsCount(uint32_t account)
 	return count;
 }
 
-std::vector<Ban> IOBan::banManager(BanType_t type) const
+Ban IOBan::getBanishmentData(uint32_t account, Ban& output)
+{
+	Database* db = Database::getInstance();
+	DBQuery query;
+	DBResult* result;
+
+	uint32_t currentTime = time(NULL);
+	query << 
+		"SELECT "
+			"`id`, "
+			"`type`, "
+			"`param`, "
+			"`expires`, "
+			"`added`, "
+			"`admin_id`, "
+			"`comment`, "
+			"`reason`, "
+			"`action` "
+		"FROM "
+			"`bans` "
+		"WHERE "
+			"`value` = " << account << " AND "
+			"`active` = 1 AND " <<
+			"(`expires` >= " << currentTime << " OR `expires` = 0)";
+
+	if(result = db->storeQuery(query.str()))
+	{
+		ban.value = account;
+		ban.id = result->getDataInt("id");
+		ban.type = (BanType_t)result->getDataInt("type");
+		ban.param = result->getDataString("param");
+		ban.expires = (uint32_t)result->getDataLong("expires");
+		ban.added = (uint32_t)result->getDataLong("id");
+		ban.adminid = result->getDataInt("admin_id");
+		ban.reason = result->getDataInt("reason");
+		ban.action = result->getDataInt("action");
+		ban.comment = result->getDataString("comment");
+
+		db->freeResult(result);
+		return true;
+	}
+
+	return false;
+}
+
+std::vector<Ban> IOBan::bansManager(BanType_t type) const
 {
 	assert(type == BANTYPE_IP_BANISHMENT ||
 		type == BANTYPE_NAMELOCK || type == BANTYPE_BANISHMENT ||
@@ -428,19 +473,19 @@ std::vector<Ban> IOBan::banManager(BanType_t type) const
 	std::vector<Ban> vec;
 	if(result = db->storeQuery(query.str()))
 	{
+		Ban tmpBan;
 		do {
-			Ban ban;
-			ban.type = type;
-			ban.id = result->getDataInt("id");
-			ban.value = result->getDataString("value");
-			ban.param = result->getDataString("param");
-			ban.expires = (uint32_t)result->getDataLong("expires");
-			ban.added = (uint32_t)result->getDataLong("id");
-			ban.adminid = result->getDataInt("admin_id");
-			ban.reason = result->getDataInt("reason");
-			ban.action = result->getDataInt("action");
-			ban.comment = result->getDataString("comment");
-			vec.push_back(ban);
+			tmpBan.type = type;
+			tmpBan.id = result->getDataInt("id");
+			tmpBan.value = result->getDataString("value");
+			tmpBan.param = result->getDataString("param");
+			tmpBan.expires = (uint32_t)result->getDataLong("expires");
+			tmpBan.added = (uint32_t)result->getDataLong("id");
+			tmpBan.adminid = result->getDataInt("admin_id");
+			tmpBan.reason = result->getDataInt("reason");
+			tmpBan.action = result->getDataInt("action");
+			tmpBan.comment = result->getDataString("comment");
+			vec.push_back(tmpBan);
 		}
 		while(result->next());
 

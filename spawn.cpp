@@ -52,16 +52,16 @@ bool Spawns::loadFromXml(const std::string& _filename)
 {
 	if(isLoaded())
 		return true;
-	
+
 	filename = _filename;
-	
+
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 
 	if(doc)
 	{
 		xmlNodePtr root, spawnNode;
 		root = xmlDocGetRootElement(doc);
-		
+
 		if(xmlStrcmp(root->name,(const xmlChar*)"spawns") != 0)
 		{
 			xmlFreeDoc(doc);
@@ -119,7 +119,6 @@ bool Spawns::loadFromXml(const std::string& _filename)
 				{
 					if(xmlStrcmp(tmpNode->name, (const xmlChar*)"monster") == 0)
 					{
-
 						std::string name = "";
 						Position pos = centerPos;
 						Direction dir = NORTH;
@@ -175,7 +174,6 @@ bool Spawns::loadFromXml(const std::string& _filename)
 					}
 					else if(xmlStrcmp(tmpNode->name, (const xmlChar*)"npc") == 0)
 					{
-
 						Direction direction = NORTH;
 						std::string name = "";
 						Position placePos = centerPos;
@@ -187,7 +185,7 @@ bool Spawns::loadFromXml(const std::string& _filename)
 							tmpNode = tmpNode->next;
 							continue;
 						}
-						
+
 						if(readXMLInteger(tmpNode, "direction", intValue))
 						{
 							switch(intValue)
@@ -226,25 +224,21 @@ bool Spawns::loadFromXml(const std::string& _filename)
 						npc->setMasterPos(placePos, radius);
 						npcList.push_back(npc);
 					}
-
 					tmpNode = tmpNode->next;
 				}
 			}
-
 			spawnNode = spawnNode->next;
 		}
-
 		xmlFreeDoc(doc);
 		loaded = true;
 		return true;
 	}
-	
 	return false;
 }
 
 void Spawns::startup()
 {
-	if(!isLoaded() || isStarted() || spawnList.empty())
+	if(!isLoaded() || isStarted())
 		return;
 
 	for(NpcList::iterator it = npcList.begin(); it != npcList.end(); ++it)
@@ -323,7 +317,6 @@ bool Spawn::findPlayer(const Position& pos)
 		if((tmpPlayer = (*it)->getPlayer()) && !tmpPlayer->hasFlag(PlayerFlag_IgnoredByMonsters))
 			return true;
 	}
-
 	return false;
 }
 
@@ -408,7 +401,7 @@ void Spawn::checkSpawn()
 		else
 			++it;
 	}
-	
+
 	uint32_t spawnCount = 0;
 	for(SpawnMap::iterator it = spawnMap.begin(); it != spawnMap.end(); ++it)
 	{
@@ -419,7 +412,6 @@ void Spawn::checkSpawn()
 		{
 			if(OTSYS_TIME() >= sb.lastSpawn + sb.interval)
 			{
-
 				if(findPlayer(sb.pos))
 				{
 					sb.lastSpawn = OTSYS_TIME();
@@ -451,7 +443,7 @@ bool Spawn::addMonster(const std::string& _name, const Position& _pos, Direction
 		std::cout << "[Spawn::addMonster] Can not find " << _name << std::endl;
 		return false;
 	}
-	
+
 	if(_interval < interval)
 		interval = _interval;
 
@@ -464,7 +456,6 @@ bool Spawn::addMonster(const std::string& _name, const Position& _pos, Direction
 
 	uint32_t spawnId = (int32_t)spawnMap.size() + 1;
 	spawnMap[spawnId] = sb;
-
 	return true;
 }
 

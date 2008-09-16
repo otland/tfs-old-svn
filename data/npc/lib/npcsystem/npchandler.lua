@@ -75,25 +75,29 @@ if(NpcHandler == nil) then
 		modules = nil,
 		shopItems = nil, -- They must be here since ShopModule uses "static" functions
 		messages = {
-				-- These are the default replies of all npcs. They can/should be changed individually for each npc.
-			[MESSAGE_GREET] 		= 'Welcome, |PLAYERNAME|! I have been expecting you.',
-			[MESSAGE_FAREWELL] 		= 'Good bye, |PLAYERNAME|!',
-			[MESSAGE_ONBUY] 		= 'It was a pleasure doing business with you.',
-			[MESSAGE_ONSELL] 		= 'Thank you for this |ITEMNAME|, |PLAYERNAME|.',
-			[MESSAGE_NEEDMOREMONEY] = 'You do not have enough money, |PLAYERNAME|.',
-			[MESSAGE_NOTHAVEITEM] 	= 'You don\'t even have that item!',
-			[MESSAGE_IDLETIMEOUT] 	= 'Next, please!',
-			[MESSAGE_WALKAWAY] 		= 'How rude!',
-			[MESSAGE_DECLINE]		= 'Not good enough, is it... ?',
-			[MESSAGE_NEEDMORESPACE]	= 'You don\'t have enough space to carry these items.',
-			[MESSAGE_ONBUYNEEDSPACE]= 'Here you are some of them, though you don\'t got space to carry the rest.',
-			[MESSAGE_SENDTRADE]		= 'Here\'s my offer, |PLAYERNAME|. Don\'t you like it?',
-			[MESSAGE_NOSHOP]		= 'Sorry, I\'m not offering anything.',
-			[MESSAGE_ONCLOSESHOP]	= 'Thank you, come back when you want something more.',
-			[MESSAGE_ALREADYFOCUSED]= '|PLAYERNAME|, I am already talking to you.',
-			[MESSAGE_PLACEDINQUEUE] = '|PLAYERNAME|, please wait for your turn. There are |QUEUESIZE| customers before you.',
-			[MESSAGE_BUY] 			= 'Do you want to buy |ITEMCOUNT| |ITEMNAME| for |TOTALCOST| gold coins?',
-			[MESSAGE_SELL] 			= 'Do you want to sell |ITEMCOUNT| |ITEMNAME| for |TOTALCOST| gold coins?'
+			-- These are the default replies of all npcs. They can/should be changed individually for each npc.
+			[MESSAGE_GREET] 			= 'Welcome, |PLAYERNAME|! I have been expecting you.',
+			[MESSAGE_FAREWELL] 			= 'Good bye, |PLAYERNAME|!',
+			[MESSAGE_BUY] 				= 'Do you want to buy |ITEMCOUNT| |ITEMNAME| for |TOTALCOST| gold coins?',
+			[MESSAGE_ONBUY] 			= 'It was a pleasure doing business with you.',
+			[MESSAGE_BOUGHT] 			= 'Bought |ITEMCOUNT|x |ITEMNAME| for |TOTALCOST|.',
+			[MESSAGE_SELL] 				= 'Do you want to sell |ITEMCOUNT| |ITEMNAME| for |TOTALCOST| gold coins?',
+			[MESSAGE_ONSELL] 			= 'Thank you for this |ITEMNAME|, |PLAYERNAME|.',
+			[MESSAGE_SOLD]	 			= 'Sold |ITEMCOUNT|x |ITEMNAME| for |TOTALCOST|.',
+			[MESSAGE_NEEDMOREMONEY]		= 'You do not have enough money, |PLAYERNAME|.',
+			[MESSAGE_NOTHAVEMONEY] 		= 'You do not have enough money',
+			[MESSAGE_NOTHAVEITEM] 		= 'You don\'t even have that item!',
+			[MESSAGE_NOTHAVEOBJECT] 	= 'You do not have this object',
+			[MESSAGE_NOSPACE]			= 'You do not have enough capacity',
+			[MESSAGE_NOMORESPACE]		= 'You do not have enough capacity for all items',
+			[MESSAGE_DECLINE]			= 'Not good enough, is it... ?',
+			[MESSAGE_IDLETIMEOUT] 		= 'Next, please!',
+			[MESSAGE_WALKAWAY] 			= 'How rude!',
+			[MESSAGE_SENDTRADE]			= 'Here\'s my offer, |PLAYERNAME|. Don\'t you like it?',
+			[MESSAGE_NOSHOP]			= 'Sorry, I\'m not offering anything.',
+			[MESSAGE_ONCLOSESHOP]		= 'Thank you, come back when you want something more.',
+			[MESSAGE_ALREADYFOCUSED]	= '|PLAYERNAME|, I am already talking to you.',
+			[MESSAGE_PLACEDINQUEUE] 	= '|PLAYERNAME|, please wait for your turn. There are |QUEUESIZE| customers before you.'
 		}
 	}
 

@@ -44,18 +44,18 @@ class Spawns
 			static Spawns instance;
 			return &instance;
 		}
-		
+
 		bool isInZone(const Position& centerPos, int32_t radius, const Position& pos);
-		
-		~Spawns();
-		
+
+		virtual ~Spawns();
+
 		bool loadFromXml(const std::string& _filename);
 		void startup();
 		void clear();
 
-		bool isLoaded() { return loaded; }
-		bool isStarted() { return started; }
-		
+		bool isLoaded() {return loaded;}
+		bool isStarted() {return started;}
+
 	private:
 		typedef std::list<Npc*> NpcList;
 		NpcList npcList;
@@ -78,7 +78,7 @@ class Spawn
 	public:
 		Spawn(const Position& _pos, int32_t _radius);
 		~Spawn();
-		
+
 		bool addMonster(const std::string& _name, const Position& _pos, Direction _dir, uint32_t _interval);
 		void removeMonster(Monster* monster);
 
@@ -87,7 +87,7 @@ class Spawn
 
 		void startSpawnCheck();
 		void stopEvent();
-		
+
 		bool isInSpawnZone(const Position& pos);
 
 	private:

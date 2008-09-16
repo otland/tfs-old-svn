@@ -27,8 +27,6 @@
 #define MAX_LOOTCHANCE 100000
 #define MAX_STATICWALK 100
 
-class BaseSpell;
-
 struct LootBlock
 {
 	uint16_t id;
@@ -61,6 +59,8 @@ struct summonBlock_t
 	uint32_t interval;
 	uint32_t amount;
 };
+
+class BaseSpell;
 
 struct spellBlock_t
 {
@@ -130,9 +130,9 @@ class MonsterType
 		uint32_t manaCost;
 		SummonList summonList;
 		LootItems lootItems;
+		ElementMap elementMap;
 		SpellList spellAttackList;
 		SpellList spellDefenseList;
-		ElementMap elementMap;
 
 		uint32_t yellChance;
 		uint32_t yellSpeedTicks;
@@ -170,6 +170,7 @@ class Monsters
 		bool deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::string& description = "");
 
 		bool loadMonster(const std::string& file, const std::string& monster_name, bool reloading = false);
+
 		bool loadLootContainer(xmlNodePtr, LootBlock&);
 		bool loadLootItem(xmlNodePtr, LootBlock&);
 
@@ -178,7 +179,7 @@ class Monsters
 		
 		typedef std::map<uint32_t, MonsterType*> MonsterMap;
 		MonsterMap monsters;
-
+		
 		bool loaded;
 };
 

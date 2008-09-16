@@ -184,7 +184,7 @@ bool IOLoginData::setNewPassword(uint32_t accountId, std::string newPassword)
 		newPassword = transformToSHA1(newPassword);
 
 	DBQuery query;
-	query << "UPDATE `accounts` SET `password` " << db->getStringComparisonOperator() << " " << db->escapeString(newPassword) << " WHERE `id` = " << accountId;
+	query << "UPDATE `accounts` SET `password` = " << db->escapeString(newPassword) << " WHERE `id` = " << accountId;
 	return db->executeQuery(query.str());
 }
 
@@ -194,7 +194,7 @@ bool IOLoginData::validRecoveryKey(uint32_t accountNumber, const std::string rec
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `id` FROM `accounts` WHERE `key` " << db->getStringComparisonOperator() << " " << db->escapeString(recoveryKey) << " AND `id` = " << accountNumber;
+	query << "SELECT `id` FROM `accounts` WHERE `key` = " << db->escapeString(recoveryKey) << " AND `id` = " << accountNumber;
 	if((result = db->storeQuery(query.str())))
 	{
 		db->freeResult(result);
@@ -207,7 +207,7 @@ bool IOLoginData::setRecoveryKey(uint32_t accountNumber, std::string recoveryKey
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `accounts` SET `key` " << db->getStringComparisonOperator() << " " << db->escapeString(recoveryKey) << " WHERE `id` = " << accountNumber;
+	query << "UPDATE `accounts` SET `key` = " << db->escapeString(recoveryKey) << " WHERE `id` = " << accountNumber;
 	return db->executeQuery(query.str());
 }
 
@@ -265,13 +265,11 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	}
 
 	Account acc = loadAccount(accno);
-
-	player->setGUID(result->getDataInt("id"));
 	player->accountNumber = accno;
 
-	player->premiumDays = acc.premiumDays;
-
+	player->setGUID(result->getDataInt("id"));
 	player->setGroupId(result->getDataInt("group_id"));
+	player->premiumDays = acc.premiumDays;
 
 	if(preload)
 	{
@@ -296,6 +294,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	player->setStamina(result->getDataLong("stamina"));
 	player->blessings = result->getDataInt("blessings");
 	player->balance = result->getDataLong("balance");
+	player->marriage = result->getDataInt("marriage");
 
 	unsigned long conditionsSize = 0;
 	const char* conditions = result->getDataStream("conditions", conditionsSize);
@@ -687,7 +686,8 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		query << "`redskull` = " << redSkull << ", ";
 	}
 	query << "`lastlogout` = " << player->getLastLogout() << ", ";
-	query << "`blessings` = " << player->blessings;
+	query << "`blessings` = " << player->blessings << ", ";
+	query << "`marriage` = " << player->marriage;
 	if(g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
 	{
 		query << ", `guildnick` " << db->getStringComparisonOperator() << " " << db->escapeString(player->guildNick) << ", ";
@@ -1168,7 +1168,7 @@ bool IOLoginData::changeName(uint32_t guid, std::string newName, std::string old
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `players` SET `name` " << db->getStringComparisonOperator() << " " << db->escapeString(newName) << " WHERE `id` = " << guid;
+	query << "UPDATE `players` SET `name` = " << db->escapeString(newName) << " WHERE `id` = " << guid;
 	if(db->executeQuery(query.str()))
 	{
 		GuidCacheMap::iterator it = guidCacheMap.find(oldName);
@@ -1314,6 +1314,21 @@ uint32_t IOLoginData::getLastIP(uint32_t guid) const
 	return lastip;
 }
 
+uint32_t IOLoginData::getLastIPByName(std::string name)
+{
+	Database* db = Database::getInstance();
+	DBQuery query;
+	DBResult* result;
+
+	query << "SELECT `lastip` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name);
+	if(!(result = db->storeQuery(query.str())))
+		return 0;
+
+	uint32_t lastip = result->getDataInt("lastip");
+	db->freeResult(result);
+	return lastip;
+}
+
 bool IOLoginData::updatePremiumDays()
 {
 	Database* db = Database::getInstance();
@@ -1336,21 +1351,6 @@ bool IOLoginData::updatePremiumDays()
 	}
 	//End the transaction
 	return trans.commit();
-}
-
-uint32_t IOLoginData::getLastIPByName(std::string name)
-{
-	Database* db = Database::getInstance();
-	DBQuery query;
-	DBResult* result;
-
-	query << "SELECT `lastip` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name);
-	if(!(result = db->storeQuery(query.str())))
-		return 0;
-
-	uint32_t lastip = result->getDataInt("lastip");
-	db->freeResult(result);
-	return lastip;
 }
 
 bool IOLoginData::resetOnlineStatus()

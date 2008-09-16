@@ -46,6 +46,7 @@
 #include "configmanager.h"
 
 #include "tools.h"
+#include "ioban.h"
 #include "rsa.h"
 
 #ifndef __CONSOLE__
@@ -58,22 +59,18 @@
 #include "spells.h"
 #include "movement.h"
 #include "talkaction.h"
-#include "house.h"
 #include "raids.h"
+#include "quests.h"
+#include "house.h"
 #endif
 #else
 #include "resources.h"
 #endif
 
-#include "quests.h"
 #include "admin.h"
 
 #ifdef __OTSERV_ALLOCATOR__
 #include "allocator.h"
-#endif
-
-#ifdef __DEBUG_CRITICALSECTION__
-OTSYS_THREAD_LOCK_CLASS::LogList OTSYS_THREAD_LOCK_CLASS::loglist;
 #endif
 
 #ifdef BOOST_NO_EXCEPTIONS
@@ -89,8 +86,8 @@ IPList serverIPs;
 extern AdminProtocolConfig* g_adminConfig;
 Game g_game;
 Commands commands;
-ConfigManager g_config;
 Npcs g_npcs;
+ConfigManager g_config;
 Monsters g_monsters;
 Vocations g_vocations;
 
@@ -117,6 +114,21 @@ OTSYS_THREAD_SIGNALVAR g_loaderSignal;
 #endif
 #include "networkmessage.h"
 
+void startupErrorMessage(std::string errorStr)
+{
+	if(errorStr.length() > 0)
+		std::cout << "> ERROR: " << errorStr << std::endl;
+
+	#ifdef WIN32
+	#ifndef __CONSOLE__
+	system("pause");
+	#endif
+	#else
+	getchar();
+	#endif
+	exit(-1);
+}
+
 void mainLoader(
 #ifdef __CONSOLE__
 	int argc, char *argv[]
@@ -124,7 +136,7 @@ void mainLoader(
 );
 
 #ifndef __CONSOLE__
-void serverMain(void *param)
+void serverMain(void* param)
 #else
 int main(int argc, char *argv[])
 #endif
@@ -167,7 +179,6 @@ int main(int argc, char *argv[])
 	OTSYS_THREAD_WAITSIGNAL(g_loaderSignal, g_loaderLock);
 
 	Server server(INADDR_ANY, g_config.getNumber(ConfigManager::PORT));
-
 	std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " Server Online!" << std::endl << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
@@ -200,8 +211,8 @@ void mainLoader()
 	SetConsoleTitle(STATUS_SERVER_NAME);
 	#endif
 	#endif
-	std::cout << STATUS_SERVER_NAME << " - Version " << STATUS_SERVER_VERSION << "rc" << STATUS_SERVER_RELEASE_CANDIDATE << " (" << STATUS_SERVER_CODENAME << ")." << std::endl;
-	std::cout << "A server developed by Talaturen, Kiper, Kornholijo, Jonern, Lithium, slawkens & Elf." << std::endl;
+	std::cout << STATUS_SERVER_NAME << " - Version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")." << std::endl;
+	std::cout << "A server developed by Talaturen, Kiper, Kornholijo, Jonern, Lithium & Elf." << std::endl;
 	std::cout << "Visit our forum for updates, support and resources: http://otland.net/." << std::endl;
 
 	#if defined __DEBUG__MOVESYS__ || defined __DEBUG_HOUSES__ || defined __DEBUG_MAILBOX__ || defined __DEBUG_LUASCRIPTS__ || defined __DEBUG_RAID__ || defined __DEBUG_NET__
@@ -227,6 +238,10 @@ void mainLoader()
 	std::cout << std::endl;
 	#endif
 
+	#ifndef __CONSOLE__
+	GUI::getInstance()->m_connections = false;
+	#endif
+
 	#if !defined(WIN32) && !defined(__ROOT_PERMISSION__)
 	if(getuid() == 0 || geteuid() == 0)
 		std::cout << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user, it is recommended to execute is as a normal user." << std::endl;
@@ -247,17 +262,7 @@ void mainLoader()
 	#else
 	if(!g_config.loadFile("config.lua"))
 	#endif
-	{
-		std::cout << "> ERROR: Unable to load config.lua!" << std::endl;
-		#ifndef __CONSOLE__
-		GUI::getInstance()->m_connections = false;
-		#else
-		#ifdef WIN32
-		getchar();
-		#endif
-		#endif
-		exit(-1);
-	}
+		startupErrorMessage("Unable to load config.lua!");
 
 	#ifdef WIN32
 	std::string defaultPriority = asLowerCaseString(g_config.getString(ConfigManager::DEFAULT_PRIORITY));
@@ -280,23 +285,13 @@ void mainLoader()
 	g_otservRSA = new RSA();
 	g_otservRSA->setKey(p, q, d);
 
-	std::cout << ">> Testing SQL connection" << std::endl;
+	std::cout << ">> Testing SQL connection..." << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Testing SQL connection");
 	#endif
 	Database* db = Database::getInstance();
 	if(db == NULL || !db->isConnected())
-	{
-		std::cout << "> ERROR: Couldn't estabilish connection to SQL database!" << std::endl;
-		#ifndef __CONSOLE__
-		GUI::getInstance()->m_connections = false;
-		#else
-		#ifdef WIN32
-		getchar();
-		#endif
-		#endif
-		exit(-1);
-	}
+		startupErrorMessage("Couldn't estabilish connection to SQL database!");
 
 	//load vocations
 	std::cout << ">> Loading vocations" << std::endl;
@@ -304,17 +299,7 @@ void mainLoader()
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading vocations");
 	#endif
 	if(!g_vocations.loadFromXml())
-	{
-		std::cout << "> ERROR: Unable to load vocations!" << std::endl;
-		#ifndef __CONSOLE__
-		GUI::getInstance()->m_connections = false;
-		#else
-		#ifdef WIN32
-		getchar();
-		#endif
-		#endif
-		exit(-1);
-	}
+		startupErrorMessage("Unable to load vocations!");
 
 	//load commands
 	std::cout << ">> Loading commands" << std::endl;
@@ -322,17 +307,7 @@ void mainLoader()
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading commands");
 	#endif
 	if(!commands.loadFromXml())
-	{
-		std::cout << "> ERROR: Unable to load commands!" << std::endl;
-		#ifndef __CONSOLE__
-		GUI::getInstance()->m_connections = false;
-		#else
-		#ifdef WIN32
-		getchar();
-		#endif
-		#endif
-		exit(-1);
-	}
+		startupErrorMessage("Unable to load commands!");
 
 	// load item data
 	std::cout << ">> Loading items" << std::endl;
@@ -340,58 +315,22 @@ void mainLoader()
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading items");
 	#endif
 	if(Item::items.loadFromOtb("data/items/items.otb"))
-	{
-		#ifndef __CONSOLE__
-		if(MessageBox(GUI::getInstance()->m_mainWindow, "Unable to load items (OTB)! Continue?", "Items (OTB)", MB_YESNO) == IDNO)
-		{
-		#endif
-			std::cout << "> ERROR: Unable to load items (OTB)!" << std::endl;
-		#ifdef __CONSOLE__
-			#ifdef WIN32
-			getchar();
-			#endif
-			exit(-1);
-		#else
-			GUI::getInstance()->m_connections = false;
-			exit(-1);
-		}
-		#endif
-	}
-	
+		startupErrorMessage("Unable to load items (OTB)!");
+
 	if(!Item::items.loadFromXml())
 	{
 		#ifndef __CONSOLE__
 		if(MessageBox(GUI::getInstance()->m_mainWindow, "Unable to load items (XML)! Continue?", "Items (XML)", MB_YESNO) == IDNO)
-		{
 		#endif
-			std::cout << "> ERROR: Unable to load items (XML)!" << std::endl;
-		#ifdef __CONSOLE__
-			#ifdef WIN32
-			getchar();
-			#endif
-			exit(-1);
-		#else
-			GUI::getInstance()->m_connections = false;
-			exit(-1);
-		}
-		#endif
+			startupErrorMessage("Unable to load items (XML)!");
 	}
-	
+
 	std::cout << ">> Loading script systems" << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading script systems");
 	#endif
 	if(!ScriptingManager::getInstance()->loadScriptSystems())
-	{
-		#ifndef __CONSOLE__
-		GUI::getInstance()->m_connections = false;
-		#else
-		#ifdef WIN32
-		getchar();
-		#endif
-		#endif
-		exit(-1);
-	}
+		startupErrorMessage("");
 
 	std::cout << ">> Loading monsters" << std::endl;
 	#ifndef __CONSOLE__
@@ -401,61 +340,17 @@ void mainLoader()
 	{
 		#ifndef __CONSOLE__
 		if(MessageBox(GUI::getInstance()->m_mainWindow, "Unable to load monsters! Continue?", "Monsters", MB_YESNO) == IDNO)
-		{
 		#endif
-			std::cout << "> ERROR: Unable to load monsters!" << std::endl;
-		#ifdef __CONSOLE__
-			#ifdef WIN32
-			getchar();
-			#endif
-			exit(-1);
-		#else
-			GUI::getInstance()->m_connections = false;
-			exit(-1);
-		}
-		#endif
+			startupErrorMessage("Unable to load monsters!");
 	}
 
-	std::cout << ">> Loading quests" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading quests");
-	#endif
-	if(!Quests::getInstance()->loadFromXml())
-	{
-		#ifndef __CONSOLE__
-		if(MessageBox(GUI::getInstance()->m_mainWindow, "Unable to load quests! Continue?", "Quests", MB_YESNO) == IDNO)
-		{
-		#endif
-			std::cout << "> ERROR: Unable to load quests!" << std::endl;
-		#ifdef __CONSOLE__
-			#ifdef WIN32
-			getchar();
-			#endif
-			exit(-1);
-		#else
-			GUI::getInstance()->m_connections = false;
-			exit(-1);
-		}
-		#endif
-	}
-	
 	std::cout << ">> Loading outfits" << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading outfits");
 	#endif
 	Outfits* outfits = Outfits::getInstance();
 	if(!outfits->loadFromXml())
-	{
-		std::cout << "> ERROR: Unable to load outfits!" << std::endl;
-		#ifndef __CONSOLE__
-		GUI::getInstance()->m_connections = false;
-		#else
-		#ifdef WIN32
-		getchar();
-		#endif
-		#endif
-		exit(-1);
-	}
+		startupErrorMessage("Unable to load outfits!");
 
 	g_adminConfig = new AdminProtocolConfig();
 	std::cout << ">> Loading admin protocol config" << std::endl;
@@ -463,122 +358,46 @@ void mainLoader()
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading admin protocol config");
 	#endif
 	if(!g_adminConfig->loadXMLConfig())
-	{
-		std::cout << "> ERROR: Unable to load admin protocol config!" << std::endl;
-		#ifndef __CONSOLE__
-		GUI::getInstance()->m_connections = false;
-		#else
-		#ifdef WIN32
-		getchar();
-		#endif
-		#endif
-		exit(-1);
-	}
+		startupErrorMessage("Unable to load admin protocol config!");
 
 	std::cout << ">> Loading experience stages" << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading experience stages");
 	#endif
 	if(!g_game.loadExperienceStages())
-	{
-		std::cout << "> ERROR: Unable to load experience stages!" << std::endl;
-		#ifndef __CONSOLE__
-		GUI::getInstance()->m_connections = false;
-		#else
-		#ifdef WIN32
-		getchar();
-		#endif
-		#endif
-		exit(-1);
-	}
+		startupErrorMessage("Unable to load experience stages!");
 
-	g_game.timedHighscoreUpdate();
-
-	if(g_config.getBool(ConfigManager::SERVERSAVE_ENABLED) && g_config.getNumber(ConfigManager::SERVERSAVE_H) >= 0 && g_config.getNumber(ConfigManager::SERVERSAVE_H) <= 24)
-	{
-		int32_t prepareServerSaveHour = g_config.getNumber(ConfigManager::SERVERSAVE_H) - 1;
-		int32_t hoursLeft = 0, minutesLeft = 0, minutesToRemove = 0;
-		bool ignoreEvent = false;
-		time_t timeNow = time(NULL);
-		const tm* theTime = localtime(&timeNow);
-		if(theTime->tm_hour > prepareServerSaveHour)
-		{
-			hoursLeft = 24 - (theTime->tm_hour - prepareServerSaveHour);
-			if(theTime->tm_min > 55 && theTime->tm_min <= 59)
-				minutesToRemove = theTime->tm_min - 55;
-			else
-				minutesLeft = 55 - theTime->tm_min;
-		}
-		else if(theTime->tm_hour == prepareServerSaveHour)
-		{
-			if(theTime->tm_min >= 55 && theTime->tm_min <= 59)
-			{
-				if(theTime->tm_min >= 57)
-					g_game.setServerSaveMessage(0, true);
-
-				if(theTime->tm_min == 59)
-					g_game.setServerSaveMessage(1, true);
-
-				g_game.prepareServerSave();
-				ignoreEvent = true;
-			}
-			else
-				minutesLeft = 55 - theTime->tm_min;
-		}
-		else
-		{
-			hoursLeft = prepareServerSaveHour - theTime->tm_hour;
-			if(theTime->tm_min > 55 && theTime->tm_min <= 59)
-				minutesToRemove = theTime->tm_min - 55;
-			else
-				minutesLeft = 55 - theTime->tm_min;
-		}
-
-		int32_t hoursLeftInMS = 60000 * 60 * hoursLeft;
-		uint32_t minutesLeftInMS = 60000 * (minutesLeft - minutesToRemove);
-		if(!ignoreEvent && (hoursLeftInMS + minutesLeftInMS) > 0)
-			Scheduler::getScheduler().addEvent(createSchedulerTask(hoursLeftInMS + minutesLeftInMS, boost::bind(&Game::prepareServerSave, &g_game)));
-	}
-
-	std::string passwordType = asLowerCaseString(g_config.getString(ConfigManager::PASSWORD_TYPE));
+	std::string passwordType = asLowerCaseString(g_config.getString(ConfigManager::PASSWORDTYPE));
 	if(passwordType == "md5")
 	{
-		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_MD5);
+		g_config.setNumber(ConfigManager::PASSWORD_TYPE, PASSWORD_TYPE_MD5);
 		std::cout << ">> Using MD5 passwords" << std::endl;
 	}
 	else if(passwordType == "sha1")
 	{
-		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_SHA1);
+		g_config.setNumber(ConfigManager::PASSWORD_TYPE, PASSWORD_TYPE_SHA1);
 		std::cout << ">> Using SHA1 passwords" << std::endl;
 	}
 	else
 	{
 		g_config.setNumber(ConfigManager::PASSWORD_TYPE, PASSWORD_TYPE_PLAIN);
-		std::cout << ">> Using PLAIN-TEXT passwords" << std::endl;
+		std::cout << ">> Using plaintext passwords" << std::endl;
 	}
 
 	std::cout << ">> Checking world type... ";
 	std::string worldType = asLowerCaseString(g_config.getString(ConfigManager::WORLD_TYPE));
 	if(worldType == "pvp")
 		g_game.setWorldType(WORLD_TYPE_PVP);
-	else if(worldType == "no-pvp" || worldType == "non-pvp")
+	else if(worldType == "no-pvp")
 		g_game.setWorldType(WORLD_TYPE_NO_PVP);
 	else if(worldType == "pvp-enforced")
 		g_game.setWorldType(WORLD_TYPE_PVP_ENFORCED);
 	else
 	{
 		std::cout << std::endl << "> ERROR: Unknown world type: " << g_config.getString(ConfigManager::WORLD_TYPE) << std::endl;
-		#ifndef __CONSOLE__
-		GUI::getInstance()->m_connections = false;
-		#else
-		#ifdef WIN32
-		getchar();
-		#endif
-		#endif
-		exit(-1);
+		startupErrorMessage("");
 	}
-	std::transform(worldType.begin(), worldType.end(), worldType.begin(), upchar);
-	std::cout << worldType << std::endl;
+	std::cout << asUpperCaseString(worldType) << std::endl;
 
 	Status* status = Status::getInstance();
 	status->setMaxPlayersOnline(g_config.getNumber(ConfigManager::MAX_PLAYERS));
@@ -590,16 +409,7 @@ void mainLoader()
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading map");
 	#endif
 	if(!g_game.loadMap(g_config.getString(ConfigManager::MAP_NAME)))
-	{
-		#ifndef __CONSOLE__
-		GUI::getInstance()->m_connections = false;
-		#else
-		#ifdef WIN32
-		getchar();
-		#endif
-		#endif
-		exit(-1);
-	}
+		startupErrorMessage("");
 
 	std::cout << ">> Setting initialization gamestate modules." << std::endl;
 	#ifndef __CONSOLE__
@@ -607,10 +417,59 @@ void mainLoader()
 	#endif
 	g_game.setGameState(GAME_STATE_INIT);
 
+	int32_t autoSaveEachMinutes = g_config.getNumber(ConfigManager::AUTO_SAVE_EACH_MINUTES);
+	if(autoSaveEachMinutes > 0)
+		Scheduler::getScheduler().addEvent(createSchedulerTask(autoSaveEachMinutes * 60 * 1000, boost::bind(&Game::serverSave, &g_game)));
+
+	if(g_config.getBool(ConfigManager::GLOBALSAVE_ENABLED) && g_config.getNumber(ConfigManager::GLOBALSAVE_H) >= 0 && g_config.getNumber(ConfigManager::GLOBALSAVE_H) <= 24)
+	{
+		int32_t prepareGlobalSaveHour = g_config.getNumber(ConfigManager::GLOBALSAVE_H) - 1;
+		int32_t hoursLeft = 0, minutesLeft = 0, minutesToRemove = 0;
+		bool ignoreEvent = false;
+		time_t timeNow = time(NULL);
+		const tm* theTime = localtime(&timeNow);
+		if(theTime->tm_hour > prepareGlobalSaveHour)
+		{
+			hoursLeft = 24 - (theTime->tm_hour - prepareGlobalSaveHour);
+			if(theTime->tm_min > 55 && theTime->tm_min <= 59)
+				minutesToRemove = theTime->tm_min - 55;
+			else
+				minutesLeft = 55 - theTime->tm_min;
+		}
+		else if(theTime->tm_hour == prepareGlobalSaveHour)
+		{
+			if(theTime->tm_min >= 55 && theTime->tm_min <= 59)
+			{
+				if(theTime->tm_min >= 57)
+					g_game.setGlobalSaveMessage(0, true);
+
+				if(theTime->tm_min == 59)
+					g_game.setGlobalSaveMessage(1, true);
+
+				g_game.prepareGlobalSave();
+				ignoreEvent = true;
+			}
+			else
+				minutesLeft = 55 - theTime->tm_min;
+		}
+		else
+		{
+			hoursLeft = prepareGlobalSaveHour - theTime->tm_hour;
+			if(theTime->tm_min > 55 && theTime->tm_min <= 59)
+				minutesToRemove = theTime->tm_min - 55;
+			else
+				minutesLeft = 55 - theTime->tm_min;
+		}
+
+		int32_t hoursLeftInMS = 60000 * 60 * hoursLeft;
+		uint32_t minutesLeftInMS = 60000 * (minutesLeft - minutesToRemove);
+		if(!ignoreEvent && (hoursLeftInMS + minutesLeftInMS) > 0)
+			Scheduler::getScheduler().addEvent(createSchedulerTask(hoursLeftInMS + minutesLeftInMS, boost::bind(&Game::prepareGlobalSave, &g_game)));
+	}
+
 	std::cout << ">> All modules has been loaded, server starting up..." << std::endl;
 
 	std::pair<uint32_t, uint32_t> IpNetMask;
-
 	IpNetMask.first  = inet_addr("127.0.0.1");
 	IpNetMask.second = 0xFFFFFFFF;
 	serverIPs.push_back(IpNetMask);
@@ -633,7 +492,6 @@ void mainLoader()
 	}
 
 	std::string ip = g_config.getString(ConfigManager::IP);
-
 	uint32_t resolvedIp = inet_addr(ip.c_str());
 	if(resolvedIp == INADDR_NONE)
 	{
@@ -643,14 +501,7 @@ void mainLoader()
 		else
 		{
 			std::cout << "ERROR: Cannot resolve " << ip << "!" << std::endl;
-			#ifndef __CONSOLE__
-			GUI::getInstance()->m_connections = false;
-			#else
-			#ifdef WIN32
-			getchar();
-			#endif
-			#endif
-			exit(-1);
+			startupErrorMessage("");
 		}
 	}
 
@@ -691,7 +542,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 			NID.uFlags = NIF_TIP | NIF_ICON | NIF_MESSAGE;
 			strcpy(NID.szTip, STATUS_SERVER_NAME);
 			Shell_NotifyIcon(NIM_ADD, &NID);
-			_beginthread(serverMain, 0, hwnd);
+			OTSYS_CREATE_THREAD(serverMain, hwnd);
 			break;
 		}
 		case WM_SIZE:
@@ -723,6 +574,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 			switch(LOWORD(wParam))
 			{
 				case ID_TRAY_HIDE:
+				{
 					if(GUI::getInstance()->m_minimized)
 					{
 						ShowWindow(hwnd, SW_SHOW);
@@ -737,14 +589,139 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						GUI::getInstance()->m_minimized = true;
 					}
 					break;
-				case ID_MENU_GAME_BROADCAST:
+				}
+				case ID_MENU_MAIN_ACCEPT:
+				{
+					if(g_game.getGameState() != GAME_STATE_STARTUP && !GUI::getInstance()->m_connections)
+					{
+						GUI::getInstance()->m_connections = true;
+						ModifyMenu(GetMenu(hwnd), ID_MENU_MAIN_ACCEPT, MF_STRING, ID_MENU_MAIN_REJECT, "&Reject connections");
+					}
+					break;
+				}
+				case ID_MENU_MAIN_REJECT:
+				{
+					if(g_game.getGameState() != GAME_STATE_STARTUP && GUI::getInstance()->m_connections)
+					{
+						GUI::getInstance()->m_connections = false;
+						ModifyMenu(GetMenu(hwnd), ID_MENU_MAIN_REJECT, MF_STRING, ID_MENU_MAIN_ACCEPT, "&Accept connections");
+					}
+					break;
+				}
+				case ID_MENU_MAIN_CLEARLOG:
+				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(iBox.DoModal("Broadcast Message", "What would you like to broadcast?")) 
+						GUI::getInstance()->m_logText = "";
+						GUI::getInstance()->m_lineCount = 0;
+						std::cout << STATUS_SERVER_NAME << " - Version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")." << std::endl;
+						std::cout << "A server developed by Talaturen, Kiper, Kornholijo, Jonern, Lithium & Elf." << std::endl;
+						std::cout << "Visit our forum for updates, support and resources: http://otland.net/." << std::endl << std::endl;
+					}
+					break;
+				}
+				case ID_TRAY_SHUTDOWN:
+				case ID_MENU_MAIN_SHUTDOWN:
+				{
+					if(MessageBox(hwnd, "Are you sure you want to shutdown the server?", "Shutdown", MB_YESNO) == IDYES)
+					{
+						Dispatcher::getDispatcher().addTask(
+							createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
+						Shell_NotifyIcon(NIM_DELETE, &NID);
+					}
+					break;
+				}
+				case ID_MENU_SERVER_WORLDTYPE_PVP:
+				{
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						g_game.setWorldType(WORLD_TYPE_PVP);
+						std::cout << "WorldType set to 'PVP'." << std::endl;
+					}
+					break;
+				}
+				case ID_MENU_SERVER_WORLDTYPE_NONPVP:
+				{
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						g_game.setWorldType(WORLD_TYPE_NO_PVP);
+						std::cout << "WorldType set to 'Non-PVP'." << std::endl;
+					}
+					break;
+				}
+				case ID_MENU_SERVER_WORLDTYPE_PVPENFORCED:
+				{
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						g_game.setWorldType(WORLD_TYPE_PVP_ENFORCED);
+						std::cout << "WorldType set to 'PVP-Enforced'." << std::endl;
+					}
+					break;
+				}
+				case ID_MENU_SERVER_BROADCAST:
+				{
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(iBox.DoModal("Broadcast message", "What would you like to broadcast?")) 
 							g_game.broadcastMessage(iBox.Text, MSG_STATUS_WARNING);
 					}
 					break;
-				case ID_MENU_GAME_RELOAD_ACTIONS:
+				}
+				case ID_MENU_SERVER_SAVE:
+				{
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						g_game.setGameState(GAME_STATE_MAINTAIN);
+						g_game.saveGameState(true);
+						g_game.setGameState(GAME_STATE_NORMAL);
+						MessageBox(NULL, "Server has been saved.", "Save server", MB_OK);
+					}
+					break;
+				}
+				case ID_MENU_SERVER_CLEAN:
+				{
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						g_game.setGameState(GAME_STATE_MAINTAIN);
+						char buffer[100];
+						sprintf(buffer, "Map has been cleaned, collected %u items.", g_game.getMap()->clean());
+						g_game.setGameState(GAME_STATE_NORMAL);
+						MessageBox(NULL, buffer, "Clean map", MB_OK);
+					}
+					break;
+				}
+				case ID_MENU_SERVER_OPEN:
+				{
+					if(g_game.getGameState() != GAME_STATE_STARTUP && !GUI::getInstance()->m_connections)
+					{
+						Dispatcher::getDispatcher().addTask(
+							createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_NORMAL)));
+						ModifyMenu(GetMenu(hwnd), ID_MENU_SERVER_OPEN, MF_STRING, ID_MENU_SERVER_CLOSE, "&Close server");
+					}
+					break;
+				}
+				case ID_MENU_SERVER_CLOSE:
+				{
+					if(g_game.getGameState() != GAME_STATE_STARTUP && GUI::getInstance()->m_connections)
+					{
+						Dispatcher::getDispatcher().addTask(
+							createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
+						ModifyMenu(GetMenu(hwnd), ID_MENU_SERVER_CLOSE, MF_STRING, ID_MENU_SERVER_OPEN, "&Open server");
+					}
+					break;
+				}
+				case ID_MENU_SERVER_PLAYERBOX:
+				{
+					if(g_game.getGameState() != GAME_STATE_STARTUP && GUI::getInstance()->m_connections)
+					{
+						if(g_game.getPlayersOnline() == 0)
+							MessageBox(NULL, "No players online.", "Player management", MB_OK);
+						else
+							GUI::getInstance()->m_pBox.popUp("Player management");
+					}
+					break;
+				}
+				case ID_MENU_RELOAD_ACTIONS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
 						if(g_actions->reload())
@@ -753,16 +730,16 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload actions." << std::endl;
 					}
 					break;
-				case ID_MENU_GAME_RELOAD_CREATURESCRIPTS:
+				case ID_MENU_RELOAD_CREATUREEVENTS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
 						if(g_creatureEvents->reload())
-							std::cout << "Reloaded creaturescripts." << std::endl;
+							std::cout << "Reloaded creature events." << std::endl;
 						else
-							std::cout << "Failed to reload creaturescripts." << std::endl;
+							std::cout << "Failed to reload creature events." << std::endl;
 					}
 					break;
-				case ID_MENU_GAME_RELOAD_COMMANDS:
+				case ID_MENU_RELOAD_COMMANDS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
 						if(commands.reload())
@@ -771,7 +748,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload commands." << std::endl;
 					}
 					break;
-				case ID_MENU_GAME_RELOAD_CONFIG:
+				case ID_MENU_RELOAD_CONFIG:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
 						if(g_config.reload())
@@ -780,7 +757,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload config." << std::endl;
 					}
 					break;
-				case ID_MENU_GAME_RELOAD_HIGHSCORES:
+				case ID_MENU_RELOAD_HIGHSCORES:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
 						if(g_game.reloadHighscores())
@@ -789,68 +766,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload highscores." << std::endl;
 					}
 					break;
-				case ID_MENU_GAME_RELOAD_MONSTERS:
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_monsters.reload())
-							std::cout << "Reloaded monsters." << std::endl;
-						else
-							std::cout << "Failed to reload monsters." << std::endl;
-					}
-					break;
-				case ID_MENU_GAME_RELOAD_MOVEMENTS:
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_moveEvents->reload())
-							std::cout << "Reloaded movements." << std::endl;
-						else
-							std::cout << "Failed to reload movements." << std::endl;
-					}
-					break;
-				case ID_MENU_GAME_RELOAD_NPCS:
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						g_npcs.reload();
-						std::cout << "Reloaded npcs." << std::endl;
-					}
-					break;
-				case ID_MENU_GAME_RELOAD_QUESTS:
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(Quests::getInstance()->reload())
-							std::cout << "Reloaded quests." << std::endl;
-						else
-							std::cout << "Failed to reload quests." << std::endl;
-					}
-					break;
-				case ID_MENU_GAME_RELOAD_RAIDS:
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(Raids::getInstance()->reload() && Raids::getInstance()->startup())
-							std::cout << "Reloaded raids." << std::endl;
-						else
-							std::cout << "Failed to reload raids." << std::endl;
-					}
-					break;
-				case ID_MENU_GAME_RELOAD_SPELLS:
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_spells->reload() && g_monsters.reload())
-							std::cout << "Reloaded spells." << std::endl;
-						else
-							std::cout << "Failed to reload spells." << std::endl;
-					}
-					break;
-				case ID_MENU_GAME_RELOAD_TALKACTIONS:
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_talkActions->reload())
-							std::cout << "Reloaded talkactions." << std::endl;
-						else
-							std::cout << "Failed to reload talkactions." << std::endl;
-					}
-					break;
-				case ID_MENU_GAME_RELOAD_HOUSEPRICES:
+				case ID_MENU_RELOAD_HOUSEPRICES:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
 						if(Houses::getInstance().reloadPrices())
@@ -859,7 +775,69 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload house prices." << std::endl;
 					}
 					break;
-				case ID_MENU_GAME_RELOAD_RELOADALL:
+				case ID_MENU_RELOAD_MONSTERS:
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(g_monsters.reload())
+							std::cout << "Reloaded monsters." << std::endl;
+						else
+							std::cout << "Failed to reload monsters." << std::endl;
+					}
+					break;
+				case ID_MENU_RELOAD_MOVEMENTS:
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(g_moveEvents->reload())
+							std::cout << "Reloaded movements." << std::endl;
+						else
+							std::cout << "Failed to reload movements." << std::endl;
+					}
+					break;
+				case ID_MENU_RELOAD_NPCS:
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						g_npcs.reload();
+						std::cout << "Reloaded npcs." << std::endl;
+					}
+					break;
+				case ID_MENU_RELOAD_QUESTS:
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(Quests::getInstance()->reload())
+							std::cout << "Reloaded quests." << std::endl;
+						else
+							std::cout << "Failed to reload quests." << std::endl;
+					}
+					break;
+				case ID_MENU_RELOAD_RAIDS:
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(Raids::getInstance()->reload() && Raids::getInstance()->startup())
+							std::cout << "Reloaded raids." << std::endl;
+						else
+							std::cout << "Failed to reload raids." << std::endl;
+					}
+					break;
+				case ID_MENU_RELOAD_SPELLS:
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(g_spells->reload() && g_monsters.reload())
+							std::cout << "Reloaded spells." << std::endl;
+						else
+							std::cout << "Failed to reload spells." << std::endl;
+					}
+					break;
+				case ID_MENU_RELOAD_TALKACTIONS:
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(g_talkActions->reload())
+							std::cout << "Reloaded talkactions." << std::endl;
+						else
+							std::cout << "Failed to reload talkactions." << std::endl;
+					}
+					break;
+				case ID_MENU_RELOAD_ALL:
+				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
 						if(g_monsters.reload())
@@ -880,23 +858,23 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 													{
 														if(g_spells->reload())
 														{
-															if(Houses::getInstance().reloadPrices())
+															if(g_creatureEvents->reload())
 															{
-																if(g_creatureEvents->reload())
+																if(Raids::getInstance()->reload() && Raids::getInstance()->startup())
 																{
-																	if(Raids::getInstance()->reload() && Raids::getInstance()->startup())
+																	if(Houses::getInstance().reloadPrices())
 																	{
 																		g_npcs.reload();
 																		std::cout << "Reloaded all." << std::endl;
 																	}
 																	else
-																		std::cout << "Failed to reload raids." << std::endl;
+																		std::cout << "Failed to reload house prices." << std::endl;
 																}
 																else
-																	std::cout << "Failed to reload creaturescripts." << std::endl;
+																	std::cout << "Failed to reload raids." << std::endl;
 															}
 															else
-																std::cout << "Failed to reload house prices." << std::endl;
+																std::cout << "Failed to reload creature events." << std::endl;
 														}
 														else
 															std::cout << "Failed to reload spells." << std::endl;
@@ -926,83 +904,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload monsters." << std::endl;
 					}
 					break;
-				case ID_MENU_GAME_WORLDTYPE_PVP:
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						g_game.setWorldType(WORLD_TYPE_PVP);
-						std::cout << "WorldType set to 'PVP'." << std::endl;
-					}
-					break;
-				case ID_MENU_GAME_WORLDTYPE_NOPVP:
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						g_game.setWorldType(WORLD_TYPE_NO_PVP);
-						std::cout << "WorldType set to 'NoN PVP'." << std::endl;
-					}
-					break;
-				case ID_MENU_GAME_WORLDTYPE_PVPENFORCED:
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						g_game.setWorldType(WORLD_TYPE_PVP_ENFORCED);
-						std::cout << "WorldType set to 'PVP Enforced'." << std::endl;
-					}
-					break;
-				case ID_MENU_FILE_CLEARLOG:
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						GUI::getInstance()->m_logText = "";
-						GUI::getInstance()->m_lineCount = 0;
-						std::cout << STATUS_SERVER_NAME << " - Version " << STATUS_SERVER_VERSION << "rc" << STATUS_SERVER_RELEASE_CANDIDATE << " (" << STATUS_SERVER_CODENAME << ")." << std::endl;
-						std::cout << "A server developed by Talaturen, Kiper, Kornholijo, Jonern, Lithium, slawkens & Elf." << std::endl;
-						std::cout << "Visit our forum for updates, support and resources: http://otland.net/." << std::endl << std::endl;
-					}
-					break;
-				case ID_MENU_GAME_ACCEPT:
-					if(g_game.getGameState() != GAME_STATE_STARTUP && !GUI::getInstance()->m_connections)
-					{
-						GUI::getInstance()->m_connections = true;
-						ModifyMenu(GetMenu(hwnd), ID_MENU_GAME_ACCEPT, MF_STRING, ID_MENU_GAME_REJECT, "&Reject Connections");
-					}
-					break;
-				case ID_MENU_GAME_REJECT:
-					if(g_game.getGameState() != GAME_STATE_STARTUP && GUI::getInstance()->m_connections)
-					{
-						GUI::getInstance()->m_connections = false;
-						ModifyMenu(GetMenu(hwnd), ID_MENU_GAME_REJECT, MF_STRING, ID_MENU_GAME_ACCEPT, "&Accept Connections");
-					}
-					break;
-				case ID_TRAY_SHUTDOWN:
-				case ID_MENU_FILE_SHUTDOWN:
-					if(MessageBox(hwnd, "Are you sure you want to shutdown the server?", "Shutdown", MB_YESNO) == IDYES)
-					{
-						Dispatcher::getDispatcher().addTask(
-							createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
-						Shell_NotifyIcon(NIM_DELETE, &NID);
-					}
-					break;
-				case ID_MENU_GAME_PLAYERS_LIST:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP && GUI::getInstance()->m_connections)
-					{
-						int32_t playersOnline = g_game.getPlayersOnline();
-						if(playersOnline == 0)
-							MessageBox(NULL, "No players online.", "Player List", MB_OK);
-						else
-							GUI::getInstance()->m_pBox.popUp("Player List");
-					}
 				}
-				break;
-				case ID_MENU_GAME_PLAYERS_SAVE:
-				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						g_game.setGameState(GAME_STATE_MAINTAIN);
-						g_game.saveGameState(true);
-						g_game.setGameState(GAME_STATE_NORMAL);
-						MessageBox(NULL, "The players online has been saved.", "Save players", MB_OK);
-					}
-				}
-				break;
 			}
 		break;
 		case WM_CLOSE:
@@ -1067,6 +969,7 @@ int32_t WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 	wincl.hbrBackground = (HBRUSH)COLOR_BACKGROUND;
 	if(!RegisterClassEx(&wincl))
 		return 0;
+
 	GUI::getInstance()->m_mainWindow = CreateWindowEx(0, "forgottenserver_gui", STATUS_SERVER_NAME, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 707, 453, HWND_DESKTOP, NULL, hInstance, NULL);
 	ShowWindow(GUI::getInstance()->m_mainWindow, 1);
 	while(GetMessage(&messages, NULL, 0, 0))

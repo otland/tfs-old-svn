@@ -1086,6 +1086,12 @@ uint32_t Creature::getStaminaRatio(Creature* attacker) const
 			totalHits += it->second.hits;
 	}
 
+	for(CountMap::const_iterator it = healMap.begin(); it != healMap.end(); ++it)
+	{
+		if(it->first == attacker->getID())
+			totalHits += it->second.hits;
+	}
+
 	return totalHits;
 }
 
@@ -1150,12 +1156,14 @@ void Creature::addHealPoints(Creature* caster, int32_t healthPoints)
 			CountBlock_t cb;
 			cb.ticks = OTSYS_TIME();
 			cb.total = healthPoints;
+			cb.hits = 1;
 			healMap[casterId] = cb;
 		}
 		else
 		{
 			it->second.total += healthPoints;
 			it->second.ticks = OTSYS_TIME();
+			it->second.hits++;
 		}
 	}
 }

@@ -28,7 +28,6 @@
 #include <boost/shared_ptr.hpp>
 using boost::shared_ptr;
 
-#include "definitions.h"
 #include "position.h"
 #include "item.h"
 //#include "creature.h"
@@ -46,19 +45,6 @@ struct FindPathParams;
 
 class Tile;
 class Map;
-
-enum MapError_t
-{
-	LOADMAPERROR_NONE,
-	LOADMAPERROR_CANNOTOPENFILE,
-	LOADMAPERROR_GETPROPFAILED,
-	LOADMAPERROR_OUTDATEDHEADER,
-	LOADMAPERROR_GETROOTHEADERFAILED,
-	LOADMAPERROR_FAILEDTOCREATEITEM,
-	LOADMAPERROR_FAILEDUNSERIALIZEITEM,
-	LOADMAPERROR_FAILEDTOREADCHILD,
-	LOADMAPERROR_UNKNOWNNODETYPE
-};
 
 struct AStarNode
 {
@@ -102,7 +88,7 @@ class AStarNodes
 template<class T> class lessPointer : public std::binary_function<T*, T*, bool>
 {
 	public:
-		bool operator()(T*& t1, T*& t2)	{ return *t1 < *t2;	}
+		bool operator()(T*& t1, T*& t2) { return *t1 < *t2; }
 };
 
 typedef std::list<Creature*> SpectatorVec;
@@ -146,10 +132,10 @@ class QTreeLeafNode : public QTreeNode
 	public:
 		QTreeLeafNode();
 		virtual ~QTreeLeafNode();
-	
+
 		Floor* createFloor(uint32_t z);
 		Floor* getFloor(uint32_t z){return m_array[z];}
-	
+
 		QTreeLeafNode* stepSouth(){return m_leafS;}
 		QTreeLeafNode* stepEast(){return m_leafE;}
 
@@ -162,7 +148,7 @@ class QTreeLeafNode : public QTreeNode
 		QTreeLeafNode* m_leafE;
 		Floor* m_array[MAP_MAX_LAYERS];
 		CreatureVector creature_list;
-	
+
 		friend class Map;
 		friend class QTreeNode;
 };
@@ -216,7 +202,7 @@ class Map
 		{
 			setTile(pos.x, pos.y, pos.z, newTile);
 		}
-	
+
 		/**
 		* Place a creature on the map
 		* \param pos The position to place the creature
@@ -269,22 +255,8 @@ class Map
 		bool getPathMatching(const Creature* creature, std::list<Direction>& dirList,
 			const FrozenPathingConditionCall& pathCondition, const FindPathParams& fpp);
 
-		MapError_t getLastError() {return lasterrortype;}
-		int32_t getErrorCode() {return lasterrorcode;}
-
-		void setLastError(MapError_t errtype, NODE _code = 0)
-		{
-			if(_code)
-				lasterrorcode = _code->start;
-			else
-				lasterrorcode = 0;
-			lasterrortype = errtype;
-		}
-
 	protected:
 		uint32_t mapWidth, mapHeight;
-		MapError_t lasterrortype;
-		uint32_t lasterrorcode;
 		std::string spawnfile;
 		std::string housefile;
 		SpectatorCache spectatorCache;

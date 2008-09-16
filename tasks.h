@@ -8,7 +8,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -28,14 +28,16 @@
 class Task
 {
 	public:
-		~Task() {}
+		virtual ~Task() {}
 
-		void operator()(){
+		void operator()()
+		{
 			m_f();
 		}
 
 	protected:
-		Task(boost::function<void (void)> f){
+		Task(boost::function<void (void)> f)
+		{
 			m_f = f;
 		}
 
@@ -51,7 +53,7 @@ inline Task* createTask(boost::function<void (void)> f){
 class Dispatcher
 {
 	public:
-		~Dispatcher() {}
+		virtual ~Dispatcher() {}
 
 		static Dispatcher& getDispatcher()
 		{
@@ -62,7 +64,7 @@ class Dispatcher
 		void addTask(Task* task);
 		void stop();
 
-		static OTSYS_THREAD_RETURN dispatcherThread(void *p);
+		static OTSYS_THREAD_RETURN dispatcherThread(void* p);
 
 	protected:
 		Dispatcher();

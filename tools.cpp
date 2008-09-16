@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -128,11 +128,29 @@ void toLowerCaseString(std::string& source)
 	std::transform(source.begin(), source.end(), source.begin(), tolower);
 }
 
+void toUpperCaseString(std::string& source)
+{
+	std::transform(source.begin(), source.end(), source.begin(), upchar);
+}
+
 std::string asLowerCaseString(const std::string& source)
 {
 	std::string s = source;
 	toLowerCaseString(s);
 	return s;
+}
+
+std::string asUpperCaseString(const std::string& source)
+{
+	std::string s = source;
+	toUpperCaseString(s);
+	return s;
+}
+
+bool booleanString(std::string source)
+{
+	toLowerCaseString(source);
+	return (source == "yes" || source == "true" || atoi(source.c_str()) > 0);
 }
 
 bool readXMLInteger(xmlNodePtr node, const char* tag, int& value)
@@ -270,7 +288,7 @@ std::vector<int32_t> vectorAtoi(std::vector<std::string> stringVector)
 	return returnVector;
 }
 
-/*void sortItems(ShopInfo& itemList)
+void sortItems(ShopInfo& itemList)
 {
 	bool operator<(const ShopInfo& left, const ShopInfo& right)
 	{
@@ -278,11 +296,11 @@ std::vector<int32_t> vectorAtoi(std::vector<std::string> stringVector)
 	}
 
 	itemList.sort();
-}*/
+}
 
 bool hasBitSet(uint32_t flag, uint32_t flags)
 {
-	return ((flags & flag) == flag);
+	return (rand() << 12) ^ (rand()) & (0xFFFFFF);
 }
 
 #define RAND_MAX24 16777216
@@ -293,8 +311,8 @@ uint32_t rand24b()
 
 float box_muller(float m, float s)
 {
-	// normal random variate generator 
-	// mean m, standard deviation s 
+	// normal random variate generator
+	// mean m, standard deviation s
 
 	float x1, x2, w, y1;
 	static float y2;
@@ -387,8 +405,10 @@ bool isPasswordCharacter(char character)
 
 bool isValidPassword(std::string text)
 {
-	std::transform(text.begin(), text.end(), text.begin(), (int32_t(*)(int32_t))tolower);
-	for(uint32_t size = 0; size <= text.length() - 1; size++)
+	toLowerCaseString(text);
+
+	uint32_t textLength = text.length();
+	for(uint32_t size = 0; size < textLength; size++)
 	{
 		if(isLowercaseLetter(text[size]) || isNumber(text[size]) || isPasswordCharacter(text[size]))
 			continue;
@@ -400,7 +420,8 @@ bool isValidPassword(std::string text)
 
 bool isNumbers(std::string text)
 {
-	for(uint32_t size = 0; size <= text.length() - 1; size++)
+	uint32_t textLength = text.length();
+	for(uint32_t size = 0; size < textLength; size++)
 	{
 		if(!isNumber(text[size]))
 			return false;
@@ -410,8 +431,10 @@ bool isNumbers(std::string text)
 
 bool isValidName(std::string text)
 {
-	std::transform(text.begin(), text.end(), text.begin(), (int32_t(*)(int32_t))tolower);
-	for(uint32_t size = 0; size <= text.length() - 1; size++)
+	toLowerCaseString(text);
+
+	uint32_t textLength = text.length();
+	for(uint32_t size = 0; size < textLength; size++)
 	{
 		if(isLowercaseLetter(text[size]) || text[size] == 32 || text[size] == 39 || text[size] == 45)
 			continue;
@@ -423,17 +446,8 @@ bool isValidName(std::string text)
 
 bool checkText(std::string text, std::string str)
 {
-	std::transform(text.begin(),text.end(), text.begin(), (int32_t(*)(int32_t))tolower);
-	std::transform(str.begin(), str.end(), str.begin(), (int32_t(*)(int32_t))tolower);
-	if(text == str)
-		return true;
-
-	for(uint32_t strlength = 0; strlength <= str.length(); strlength++)
-	{
-		if(text[strlength] == str[strlength] && text[str.length()] == ' ' && text[str.length()+1] == '"') 
-			return true;
-	}
-	return false;
+	trimString(text);
+	return asLowerCaseString(text) == str;
 }
 
 std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLenght)
@@ -476,9 +490,11 @@ std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLenght)
 				}
 			}
 		}
+
 		while((!madeCharacter && !madeNumber) ? true : ++j && j < fieldLenght);
 		if(i < fieldCount - 1)
 			key << "-";
+
 		character = 0;
 		lastCharacter = 0;
 		lastNumber = 99;
@@ -486,6 +502,7 @@ std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLenght)
 		j = 0;
 	}
 	while(++i && i < fieldCount);
+
 	return key.str();
 }
 
@@ -506,7 +523,7 @@ std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end)
 		++it;
 		if(tmp[0] == '"')
 		{
-			tmp.erase(0,1);
+			tmp.erase(0, 1);
 			while(it != end && tmp[tmp.length() - 1] != '"')
 			{
 				tmp += " " + *it;
@@ -783,6 +800,7 @@ ShootTypeNames shootTypeNames[] =
 	{"holy",		NM_SHOOT_HOLY},
 	{"suddendeath",		NM_SHOOT_SUDDENDEATH},
 	{"flasharrow",		NM_SHOOT_FLASHARROW},
+	{"flammingarrow",	NM_SHOOT_FLAMMINGARROW},
 	{"flamingarrow",	NM_SHOOT_FLAMMINGARROW},
 	{"shiverarrow",		NM_SHOOT_SHIVERARROW},
 	{"energyball",		NM_SHOOT_ENERGYBALL},
@@ -832,6 +850,7 @@ AmmoTypeNames ammoTypeNames[] =
 	{"piercingbolt",	AMMO_BOLT},
 	{"etherealspear",	AMMO_SPEAR},
 	{"flasharrow",		AMMO_ARROW},
+	{"flammingarrow",	AMMO_ARROW},
 	{"flamingarrow",	AMMO_ARROW},
 	{"shiverarrow",		AMMO_ARROW},
 	{"eartharrow",		AMMO_ARROW}

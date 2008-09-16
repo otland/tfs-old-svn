@@ -51,7 +51,10 @@ void replaceString(std::string& str, const std::string sought, const std::string
 void trim_right(std::string& source, const std::string& t);
 void trim_left(std::string& source, const std::string& t);
 void toLowerCaseString(std::string& source);
+void toUpperCaseString(std::string& source);
 std::string asLowerCaseString(const std::string& source);
+std::string asUpperCaseString(const std::string& source);
+bool booleanString(std::string source);
 
 bool utf8ToLatin1(char* intext, std::string& outtext);
 bool readXMLInteger(xmlNodePtr node, const char* tag, int& value);
@@ -66,7 +69,7 @@ bool readXMLContentString(xmlNodePtr node, std::string& value);
 std::vector<std::string> explodeString(const std::string& inString, const std::string& separator);
 std::vector<int32_t> vectorAtoi(std::vector<std::string> stringVector);
 bool hasBitSet(uint32_t flag, uint32_t flags);
-//void sortItems(ShopInfo& itemList);
+void sortItems(ShopInfo& itemList);
 
 std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLength);
 

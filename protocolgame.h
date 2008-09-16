@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,7 +21,6 @@
 #ifndef __OTSERV_PROTOCOLGAME_H__
 #define __OTSERV_PROTOCOLGAME_H__
 
-#include "definitions.h"
 #include <string>
 #include "protocol.h"
 #include "enums.h"
@@ -49,13 +48,12 @@ class ProtocolGame : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolGameCount;
 #endif
-
 		ProtocolGame(Connection* connection);
 		virtual ~ProtocolGame();
-		
+
 		bool login(const std::string& name, uint32_t accnumber, const std::string& password, uint16_t operatingSystem, uint8_t gamemasterLogin);
 		bool logout(bool displayEffect, bool forced);
-			
+
 		void setPlayer(Player* p);
 
 	private:
@@ -64,11 +62,11 @@ class ProtocolGame : public Protocol
 		bool connect(uint32_t playerId);
 		void disconnect();
 		void disconnectClient(uint8_t error, const char* message);
-		
+
 		virtual void deleteProtocolTask();
-	
+
 		void checkCreatureAsKnown(uint32_t id, bool &known, uint32_t &removedKnown);
-		
+
 		bool canSee(int32_t x, int32_t y, int32_t z) const;
 		bool canSee(const Creature*) const;
 		bool canSee(const Position& pos) const;
@@ -77,16 +75,16 @@ class ProtocolGame : public Protocol
 		virtual void parsePacket(NetworkMessage& msg);
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
 		bool parseFirstPacket(NetworkMessage& msg);
-		
+
 		//Parse methods
 		void parseLogout(NetworkMessage& msg);
 		void parseCancelMove(NetworkMessage& msg);
-	
+
 		void parseReceivePing(NetworkMessage& msg);
 		void parseAutoWalk(NetworkMessage& msg);
 		void parseMove(NetworkMessage& msg, Direction dir);
 		void parseTurn(NetworkMessage& msg, Direction dir);
-		
+
 		void parseRequestOutfit(NetworkMessage& msg);
 		void parseSetOutfit(NetworkMessage& msg);
 		void parseSay(NetworkMessage& msg);
@@ -94,10 +92,10 @@ class ProtocolGame : public Protocol
 		void parseFightModes(NetworkMessage& msg);
 		void parseAttack(NetworkMessage& msg);
 		void parseFollow(NetworkMessage& msg);
-	
+
 		void parseBugReport(NetworkMessage& msg);
 		void parseDebugAssert(NetworkMessage& msg);
-		
+
 		void parseThrow(NetworkMessage& msg);
 		void parseUseItemEx(NetworkMessage& msg);
 		void parseBattleWindow(NetworkMessage& msg);
@@ -109,7 +107,6 @@ class ProtocolGame : public Protocol
 		void parseTextWindow(NetworkMessage& msg);
 		void parseHouseWindow(NetworkMessage& msg);
 
-		//shop methods
 		void parseLookInShop(NetworkMessage& msg);
 		void parsePlayerPurchase(NetworkMessage& msg);
 		void parsePlayerSale(NetworkMessage& msg);
@@ -124,19 +121,19 @@ class ProtocolGame : public Protocol
 		void parsePassPartyLeadership(NetworkMessage& msg);
 		void parseLeaveParty(NetworkMessage& msg);
 		void parseEnableSharedPartyExperience(NetworkMessage& msg);
-		
+
 		//trade methods
 		void parseRequestTrade(NetworkMessage& msg);
 		void parseLookInTrade(NetworkMessage& msg);
 		void parseAcceptTrade(NetworkMessage& msg);
 		void parseCloseTrade();
-		
+
 		//VIP methods
 		void parseAddVip(NetworkMessage& msg);
 		void parseRemoveVip(NetworkMessage& msg);
-	
+
 		void parseRotateItem(NetworkMessage& msg);
-			
+
 		//Channel tabs
 		void parseCreatePrivateChannel(NetworkMessage& msg);
 		void parseChannelInvite(NetworkMessage& msg);
@@ -145,10 +142,10 @@ class ProtocolGame : public Protocol
 		void parseOpenChannel(NetworkMessage& msg);
 		void parseOpenPriv(NetworkMessage& msg);
 		void parseCloseChannel(NetworkMessage& msg);
+		void parseCloseNpc(NetworkMessage& msg);
 		void parseProcessRuleViolation(NetworkMessage& msg);
 		void parseCloseRuleViolation(NetworkMessage& msg);
 		void parseCancelRuleViolation(NetworkMessage& msg);
-		void parseCloseNpc(NetworkMessage& msg);
 
 		//Send functions
 		void sendChannelMessage(std::string author, std::string text, SpeakClasses type, uint8_t channel);
@@ -185,6 +182,9 @@ class ProtocolGame : public Protocol
 		void sendTextMessage(MessageClasses mclass, const std::string& message);
 		void sendReLoginWindow();
 
+		void sendTutorial(uint8_t tutorialId);
+		void sendAddMarker(const Position& pos, uint8_t markType, const std::string& desc);
+
 		void sendCreatureSkull(const Creature* creature);
 		void sendCreatureShield(const Creature* creature);
 
@@ -206,8 +206,6 @@ class ProtocolGame : public Protocol
 		void sendCreatureLight(const Creature* creature);
 		void sendWorldLight(const LightInfo& lightInfo);
 
-		void sendTutorial(uint8_t tutorialId);
-		void sendAddMarker(const Position& pos, uint8_t markType, const std::string& desc);
 		void sendCreatureSquare(const Creature* creature, SquareColor_t color);
 
 		//tiles
@@ -262,9 +260,6 @@ class ProtocolGame : public Protocol
 		void AddWorldLight(NetworkMessage* msg, const LightInfo& lightInfo);
 		void AddCreatureLight(NetworkMessage* msg, const Creature* creature);
 
-		//shop
-		void AddShopItem(NetworkMessage* msg, const ShopInfo item);
-
 		//tiles
 		void AddTileItem(NetworkMessage* msg, const Position& pos, const Item* item);
 		void AddTileCreature(NetworkMessage* msg, const Position& pos, const Creature* creature);
@@ -288,6 +283,9 @@ class ProtocolGame : public Protocol
 
 		//rule violation window
 		void parseViolationWindow(NetworkMessage& msg);
+
+		//shop
+		void AddShopItem(NetworkMessage* msg, const ShopInfo item);
 
 		friend class Player;
 

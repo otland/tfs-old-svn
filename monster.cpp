@@ -39,6 +39,7 @@ AutoList<Monster>Monster::listMonster;
 
 int32_t Monster::despawnRange;
 int32_t Monster::despawnRadius;
+
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t Monster::monsterCount = 0;
 #endif
@@ -67,8 +68,8 @@ Creature()
 	defaultOutfit = mType->outfit;
 	currentOutfit = mType->outfit;
 
-	health     = mType->health;
-	healthMax  = mType->health_max;
+	health = mType->health;
+	healthMax = mType->health_max;
 	baseSpeed = mType->base_speed;
 	internalLight.level = mType->lightLevel;
 	internalLight.color = mType->lightColor;
@@ -78,6 +79,7 @@ Creature()
 
 	targetTicks = 0;
 	targetChangeTicks = 0;
+	targetChangeCooldown = 0;
 	attackTicks = 0;
 	defenseTicks = 0;
 	yellTicks = 0;
@@ -93,7 +95,6 @@ Creature()
 		if(!registerCreatureEvent(*it))
 			std::cout << "Warning: [Monster::Monster]. Unknown event name - " << *it << std::endl;
 	}
-
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	monsterCount++;
 #endif
@@ -103,7 +104,6 @@ Monster::~Monster()
 {
 	clearTargetList();
 	clearFriendList();
-
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	monsterCount--;
 #endif
@@ -198,13 +198,13 @@ void Monster::onCreatureMove(const Creature* creature, const Tile* newTile, cons
 				activate();
 			}
 		}
-	}
 
-	if(!followCreature && !isSummon())
-	{
-		//we have no target lets try pick this one
-		if(isOpponent(creature))
-			selectTarget(const_cast<Creature*>(creature));
+		if(!followCreature && !isSummon())
+		{
+			//we have no target lets try pick this one
+			if(isOpponent(creature))
+				selectTarget(const_cast<Creature*>(creature));
+		}
 	}
 }
 
@@ -567,7 +567,6 @@ bool Monster::deactivate(bool forced /*= false*/)
 		onIdleStatus();
 		g_game.removeCreatureCheck(this);
 	}
-
 	return !isActivated;
 }
 
@@ -600,7 +599,7 @@ void Monster::onThink(uint32_t interval)
 			{
 				if(getMaster() && getMaster()->getAttackedCreature())
 				{
-					//This happens if the monster is summoned during combat
+					///This happens if the monster is summoned during combat
 					selectTarget(getMaster()->getAttackedCreature());
 				}
 				else if(getMaster() != followCreature)
@@ -608,13 +607,13 @@ void Monster::onThink(uint32_t interval)
 					//Our master has not ordered us to attack anything, lets follow him around instead.
 					setFollowCreature(getMaster());
 				}
-				else if(attackedCreature == this)
-					setFollowCreature(NULL);
-				else if(followCreature != attackedCreature)
-				{
-					//This happens just after a master orders an attack, so lets follow it aswell.
-					setFollowCreature(attackedCreature);
-				}
+			}
+			else if(attackedCreature == this)
+				setFollowCreature(NULL);
+			else if(followCreature != attackedCreature)
+			{
+				//This happens just after a master orders an attack, so lets follow it aswell.
+				setFollowCreature(attackedCreature);
 			}
 		}
 		else if(!targetList.empty())
@@ -1004,7 +1003,10 @@ bool Monster::getNextStep(Direction& dir)
 	if((!followCreature || !hasFollowPath) && !isSummon())
 	{
 		if(followCreature || getTimeSinceLastMove() > 1000)
-			result = getRandomStep(getPosition(), dir); //choose a random direction
+		{
+			//choose a random direction
+			result = getRandomStep(getPosition(), dir);
+		}
 	}
 	else if(isSummon() || followCreature)
 	{
@@ -1124,8 +1126,8 @@ bool Monster::getDanceStep(const Position& creaturePos, Direction& dir,
 		{
 			bool result = true;
 			if(keepAttack)
-				result = (!canDoAttackNow || canUseAttack(Position(creaturePos.x + 1, creaturePos.y, creaturePos.z), attackedCreature));
-	
+				result = (!canDoAttackNow || canUseAttack(Position(creaturePos.x - 1, creaturePos.y, creaturePos.z), attackedCreature));
+
 			if(result)
 				dirList.push_back(WEST);
 		}
@@ -1142,6 +1144,9 @@ bool Monster::getDanceStep(const Position& creaturePos, Direction& dir,
 
 bool Monster::isInSpawnRange(const Position& toPos)
 {
+	if(masterRadius == -1)
+		return true;
+
 	return !inDespawnRange(toPos);
 }
 
@@ -1199,14 +1204,14 @@ Item* Monster::getCorpse()
 	if(corpse)
 	{
 		Creature* lastHitCreature_ = NULL;
-		Creature* mostDamageCreature_ = NULL;
-		if(getKillers(&lastHitCreature_, &mostDamageCreature_) && mostDamageCreature_)
+		Creature* mostDamageCreature = NULL;
+		if(getKillers(&lastHitCreature_, &mostDamageCreature) && mostDamageCreature)
 		{
 			uint32_t corpseOwner = 0;
-			if(mostDamageCreature_->getPlayer())
-				corpseOwner = mostDamageCreature_->getID();
-			else if(mostDamageCreature_->getMaster() && mostDamageCreature_->getMaster()->getPlayer())
-				corpseOwner = mostDamageCreature_->getMaster()->getID();
+			if(mostDamageCreature->getPlayer())
+				corpseOwner = mostDamageCreature->getID();
+			else if(mostDamageCreature->getMaster() && mostDamageCreature->getMaster()->getPlayer())
+				corpseOwner = mostDamageCreature->getMaster()->getID();
 
 			if(corpseOwner != 0)
 				corpse->setCorpseOwner(corpseOwner);

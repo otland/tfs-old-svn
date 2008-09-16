@@ -182,7 +182,8 @@ bool Mailbox::getReceiver(Item* item, std::string& name, uint32_t& dp)
 	if(item->getID() == ITEM_PARCEL) /**We need to get the text from the label incase its a parcel**/
 	{
 		Container* parcel = item->getContainer();
-		for(ItemList::const_iterator cit = parcel->getItems(); cit != parcel->getEnd(); cit++){
+		for(ItemList::const_iterator cit = parcel->getItems(); cit != parcel->getEnd(); cit++)
+		{
 			if((*cit)->getID() == ITEM_LABEL)
 			{
 				item = (*cit);
@@ -196,7 +197,7 @@ bool Mailbox::getReceiver(Item* item, std::string& name, uint32_t& dp)
 		std::cout << "Mailbox::getReciver error, trying to get reciecer from unkown item! ID:: " << item->getID() << "." << std::endl;
 		return false;
 	}
-
+	 
 	if(!item || item->getText() == "") /**No label/letter found or its empty.**/
 		return false;
 

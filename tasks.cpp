@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -38,13 +38,14 @@ Dispatcher::Dispatcher()
 	OTSYS_CREATE_THREAD(Dispatcher::dispatcherThread, NULL);
 }
 
-OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void *p)
+OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 {
 	#if defined __EXCEPTION_TRACER__
 	ExceptionHandler dispatcherExceptionHandler;
 	dispatcherExceptionHandler.InstallHandler();
 	#endif
 	srand((unsigned int)OTSYS_TIME());
+
 	while(!Dispatcher::m_shutdown)
 	{
 		Task* task = NULL;

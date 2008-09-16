@@ -208,6 +208,7 @@ class InstantSpell : public TalkAction, public Spell
 		bool checkLineOfSight;
 		bool casterTargetOrDirection;
 		uint8_t limitRange;
+
 		InstantSpellFunction* function;
 };
 
@@ -228,7 +229,6 @@ class ConjureSpell : public InstantSpell
 		uint32_t getConjureId() const {return conjureId;}
 		uint32_t getConjureCount() const {return conjureCount;}
 		uint32_t getReagentId() const {return conjureReagentId;}
-		bool reagentTransform() const {return conjureReagentTransform;}
 
 	protected:	
 		virtual std::string getScriptEventName();
@@ -247,7 +247,6 @@ class ConjureSpell : public InstantSpell
 		uint32_t conjureId;
 		uint32_t conjureCount;
 		uint32_t conjureReagentId;
-		bool conjureReagentTransform;
 };
 
 class RuneSpell : public Action, public Spell

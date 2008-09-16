@@ -61,7 +61,7 @@ class MoveEvents : public BaseEvents
 		uint32_t onItemMove(Item* item, Tile* tile, bool isAdd);
 
 		MoveEvent* getEvent(Item* item, MoveEvent_t eventType);
-	
+
 	protected:
 		typedef std::map<int32_t , MoveEventList> MoveListMap;
 		typedef std::map<Position, MoveEventList> MovePosListMap;
@@ -103,7 +103,7 @@ class MoveEvent : public Event
 
 		MoveEvent_t getEventType() const;
 		void setEventType(MoveEvent_t type);
-		
+
 		virtual bool configureEvent(xmlNodePtr p);
 		virtual bool loadFunction(const std::string& functionName);
 
@@ -112,17 +112,19 @@ class MoveEvent : public Event
 		uint32_t fireEquip(Player* player, Item* item, slots_t slot, bool isRemoval);
 
 		slots_t getSlot() const {return slot;}
+
+		//scripting
+		uint32_t executeStep(Creature* creature, Item* item, const Position& pos);
+		uint32_t executeEquip(Player* player, Item* item, slots_t slot);
+		uint32_t executeAddRemItem(Item* item, Item* tileItem, const Position& pos);
+
+		//onEquip information
 		int32_t getReqLevel() const {return reqLevel;}
 		int32_t getReqMagLv() const {return reqMagLevel;}
 		bool isPremium() const {return premium;}
 		const std::string& getVocationString() const {return vocationString;}
 		uint32_t getWieldInfo() const {return wieldInfo;}
 		const VocEquipMap& getVocEquipMap() const {return vocEquipMap;}
-
-		//scripting
-		uint32_t executeStep(Creature* creature, Item* item, const Position& pos);
-		uint32_t executeEquip(Player* player, Item* item, slots_t slot);
-		uint32_t executeAddRemItem(Item* item, Item* tileItem, const Position& pos);
 
 	protected:
 		virtual std::string getScriptEventName();
@@ -139,8 +141,9 @@ class MoveEvent : public Event
 		StepFunction* stepFunction;
 		MoveFunction* moveFunction;
 		EquipFunction* equipFunction;
-
 		slots_t slot;
+
+		//onEquip information
 		int32_t reqLevel;
 		int32_t reqMagLevel;
 		bool premium;

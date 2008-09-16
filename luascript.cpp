@@ -1811,9 +1811,6 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerAddPremiumDays(cid, days)
 	lua_register(m_luaState, "doPlayerAddPremiumDays", LuaScriptInterface::luaDoPlayerAddPremiumDays);
 
-	//doPlayerRemovePremiumDays(cid, days)
-	lua_register(m_luaState, "doPlayerRemovePremiumDays", LuaScriptInterface::luaDoPlayerRemovePremiumDays);
-
 	//getPlayerPremiumDays(cid)
 	lua_register(m_luaState, "getPlayerPremiumDays", LuaScriptInterface::luaGetPlayerPremiumDays);
 
@@ -2057,6 +2054,9 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 			case PlayerInfoNoMove:
 				value = player->getNoMove();
 				break;
+			case PlayerInfoMarriage:
+				value = player->marriage;
+				break;
 			default:
 				std::string error_str = "Unknown player info. info = " + info;
 				reportErrorFunc(error_str);
@@ -2204,6 +2204,11 @@ int32_t LuaScriptInterface::luaGetPlayerLossSkill(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerNoMove(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoNoMove);
+}
+
+int32_t LuaScriptInterface::luaGetPlayerMarriage(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoMarriage);
 }
 //
 
@@ -7093,39 +7098,14 @@ int32_t LuaScriptInterface::luaDoPlayerAddPremiumDays(lua_State* L)
 		{
 			if(days >= 0)
 			{
-				account.premiumDays = std::min((uint32_t)65535, uint32_t(account.premiumDays + (uint32_t)days));
-				player->premiumDays = std::min((uint32_t)65535, uint32_t(player->premiumDays + (uint32_t)days));
+				account.premiumDays = std::min((uint32_t)65534, uint32_t(account.premiumDays + (uint32_t)days));
+				player->premiumDays = std::min((uint32_t)65534, uint32_t(player->premiumDays + (uint32_t)days));
 			}
 			else
 			{
 				account.premiumDays = std::max((uint32_t)0, uint32_t(account.premiumDays + (int32_t)days));
 				player->premiumDays = std::max((uint32_t)0, uint32_t(player->premiumDays + (int32_t)days));
 			}
-			IOLoginData::getInstance()->saveAccount(account);
-		}
-		lua_pushnumber(L, LUA_NO_ERROR);
-	}
-	else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushnumber(L, LUA_ERROR);
-	}
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaDoPlayerRemovePremiumDays(lua_State* L)
-{
-	//doPlayerRemovePremiumDays(cid, days)
-	int32_t days = popNumber(L);
-	uint32_t cid = popNumber(L);
-	ScriptEnviroment* env = getScriptEnv();
-	if(Player* player = env->getPlayerByUID(cid))
-	{
-		Account account = IOLoginData::getInstance()->loadAccount(player->getAccount());
-		if(player->premiumDays >= days && player->premiumDays < 65535)
-		{
-			account.premiumDays -= days;
-			player->premiumDays -= days;
 			IOLoginData::getInstance()->saveAccount(account);
 		}
 		lua_pushnumber(L, LUA_NO_ERROR);
@@ -7704,6 +7684,26 @@ int32_t LuaScriptInterface::luaDoPlayerAddStamina(lua_State* L)
 	if(player)
 	{
 		player->setStaminaMinutes(player->getStaminaMinutes() + minutes);
+		lua_pushnumber(L, LUA_NO_ERROR);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaSetPlayerMarriage(lua_State* L)
+{
+	//setPlayerMarriage(cid, guid)
+	uint32_t guid = popNumber(L);
+	uint32_t cid = popNumber(L);
+	ScriptEnviroment* env = getScriptEnv();
+	Player* player = env->getPlayerByUID(cid);
+	if(player)
+	{
+		player->marriage = guid;
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else

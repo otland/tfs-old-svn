@@ -1,13 +1,13 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-// 
+//
 //////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -206,6 +206,7 @@ enum NpcEvent_t
 	EVENT_NONE,
 	EVENT_BUSY,
 	EVENT_THINK,
+	EVENT_IDLE,
 	EVENT_PLAYER_ENTER,
 	EVENT_PLAYER_MOVE,
 	EVENT_PLAYER_LEAVE,
@@ -502,9 +503,12 @@ class Npc : public Creature
 		const NpcResponse* getResponse(const ResponseList& list, const Player* player,
 			NpcState* npcState, const std::string& text, bool exactMatch = false);
 		const NpcResponse* getResponse(const Player* player, NpcState* npcState, const std::string& text);
+		const NpcResponse* getResponse(const Player* player, NpcEvent_t eventType);
 		const NpcResponse* getResponse(const Player* player, NpcState* npcState, NpcEvent_t eventType);
+		std::string getEventResponseName(NpcEvent_t eventType);
+
 		uint32_t getMatchCount(NpcResponse* response, std::vector<std::string> wordList,
-		bool exactMatch, int32_t& matchAllCount, int32_t& totalKeywordCount);
+			bool exactMatch, int32_t& matchAllCount, int32_t& totalKeywordCount);
 
 		void executeResponse(Player* player, NpcState* npcState, const NpcResponse* response);
 
@@ -536,6 +540,8 @@ class Npc : public Creature
 		bool hasScriptedFocus;
 		int32_t talkRadius;
 		int32_t idleTime;
+		int32_t idleInterval;
+		bool defaultPublic;
 		int32_t focusCreature;
 
 		typedef std::list<Player*> ShopPlayerList;

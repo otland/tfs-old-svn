@@ -35,9 +35,9 @@ class Town
 		{
 			townid = _townid;
 		}
-		
-		~Town(){}
-		
+
+		virtual ~Town(){}
+
 		const Position& getTemplePosition() const {return posTemple;}
 		const std::string& getName() const {return townName;}
 
@@ -65,14 +65,13 @@ class Towns
 		bool addTown(uint32_t _townid, Town* town)
 		{
 			TownMap::iterator it = townMap.find(_townid);
-			
 			if(it != townMap.end())
 				return false;
 
 			townMap[_townid] = town;
 			return true;
 		}
-		
+
 		Town* getTown(std::string& townname)
 		{
 			for(TownMap::iterator it = townMap.begin(); it != townMap.end(); ++it)
@@ -80,22 +79,20 @@ class Towns
 				if(strcasecmp(it->second->getName().c_str(), townname.c_str()) == 0)
 					return it->second;
 			}
-
 			return NULL;
 		}
 
 		Town* getTown(uint32_t _townid)
 		{
 			TownMap::iterator it = townMap.find(_townid);
-			
 			if(it != townMap.end())
 				return it->second;
 
 			return NULL;
 		}
 
-		TownMap::const_iterator getFirstTown() const {return townMap.begin();}
-		TownMap::const_iterator getLastTown() const {return townMap.end();}
+		TownMap::const_iterator getFirstTown() const{return townMap.begin();}
+		TownMap::const_iterator getLastTown() const{return townMap.end();}
 
 	private:
 		TownMap townMap;

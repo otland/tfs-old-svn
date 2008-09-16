@@ -32,7 +32,7 @@
 #include "house.h"
 #include "iologindata.h"
 #include "tools.h"
-#include "ban.h"
+#include "ioban.h"
 #include "configmanager.h"
 #include "town.h"
 #include "spells.h"
@@ -42,6 +42,7 @@
 #include "weapons.h"
 #include "raids.h"
 #include "chat.h"
+#include "teleport.h"
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 #include "outputmessage.h"
 #include "connection.h"
@@ -86,6 +87,7 @@ s_defcommands Commands::defined_commands[] =
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	{"/serverdiag",&Commands::serverDiag},
 #endif
+	{"!frags", &Commands::playerFrags},
 
 	//TODO: Make them talkactions
 	{"/summon", &Commands::placeSummon},
@@ -107,8 +109,7 @@ s_defcommands Commands::defined_commands[] =
 	{"!buyhouse", &Commands::buyHouse},
  	{"!sellhouse", &Commands::sellHouse},
  	{"!createguild", &Commands::createGuild},
- 	{"!joinguild", &Commands::joinGuild},
- 	{"!frags", &Commands::playerFrags}
+ 	{"!joinguild", &Commands::joinGuild}
 };
 
 Commands::Commands()
@@ -176,7 +177,7 @@ bool Commands::loadFromXml()
 						{
 							if(!it->second->loadedLogging)
 							{
-								it->second->logged = (asLowerCaseString(strValue) == "yes");
+								it->second->logged = booleanString(strValue);
 								it->second->loadedLogging = true;
 							}
 							else
@@ -769,7 +770,7 @@ bool Commands::getInfo(Creature* creature, const std::string& cmd, const std::st
 			"maglvl:    " << paramPlayer->magLevel << std::endl <<
 			"speed:     " << paramPlayer->getSpeed() <<std::endl <<
 			"position:  " << paramPlayer->getPosition() << std::endl <<
-			"notations: " << g_bans.getNotationsCount(paramPlayer->getAccount()) << std::endl <<
+			"notations: " << IOBan::getInstance()->getNotationsCount(paramPlayer->getAccount()) << std::endl <<
 			"ip:        " << ipText(ip);
 		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, info.str().c_str());
 	}
@@ -893,7 +894,7 @@ bool Commands::sellHouse(Creature* creature, const std::string& cmd, const std::
 	Player* player = creature->getPlayer();
 	if(player)
 	{
-		if(g_config.getString(ConfigManager::HOUSE_BUY_AND_SELL) != "yes")
+		if(!g_config.getBool(ConfigManager::HOUSE_BUY_AND_SELL))
 		{
 			player->sendCancel("House selling has been disabled by gamemaster.");
 			return false;
@@ -1044,7 +1045,7 @@ bool Commands::buyHouse(Creature* creature, const std::string& cmd, const std::s
 	Player* player = creature->getPlayer();
 	if(player)
 	{
-		if(g_config.getString(ConfigManager::HOUSE_BUY_AND_SELL) != "yes")
+		if(!g_config.getString(ConfigManager::HOUSE_BUY_AND_SELL))
 		{
 			player->sendCancel("House buying has been disabled by gamemaster.");
 			return false;
@@ -1077,7 +1078,7 @@ bool Commands::buyHouse(Creature* creature, const std::string& cmd, const std::s
 					{
 						if(!house->getHouseOwner())
 						{
-							if(g_config.getString(ConfigManager::HOUSE_NEED_PREMIUM) != "yes" || player->isPremium())
+							if(!g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM) || player->isPremium())
 							{
 								uint32_t levelToBuyHouse = g_config.getNumber(ConfigManager::LEVEL_TO_BUY_HOUSE);
 								if(player->getLevel() >= levelToBuyHouse)
@@ -1226,7 +1227,7 @@ bool Commands::forceRaid(Creature* creature, const std::string& cmd, const std::
 	Raid* raid = Raids::getInstance()->getRaidByName(param);
 	if(!raid || !raid->isLoaded())
 	{
-		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "No such raid exists.");
+		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Such raid does not exists.");
 		return false;
 	}
 
@@ -1291,7 +1292,7 @@ bool Commands::addSkill(Creature* creature, const std::string& cmd, const std::s
 
 bool Commands::joinGuild(Creature* creature, const std::string& cmd, const std::string& param)
 {
-	if(g_config.getString(ConfigManager::INGAME_GUILD_MANAGEMENT) != "yes")
+	if(!g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
 		return false;
 
 	Player* player = creature->getPlayer();
@@ -1331,7 +1332,7 @@ bool Commands::joinGuild(Creature* creature, const std::string& cmd, const std::
 
 bool Commands::createGuild(Creature* creature, const std::string& cmd, const std::string& param)
 {
-	if(g_config.getString(ConfigManager::INGAME_GUILD_MANAGEMENT) != "yes")
+	if(!g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
 		return false;
 
 	Player* player = creature->getPlayer();
@@ -1393,14 +1394,14 @@ bool Commands::unban(Creature* creature, const std::string& cmd, const std::stri
 	if(player)
 	{
 		uint32_t accountNumber = atoi(param.c_str());
-		bool removedIPBan = false;
-		if(IOBan::getInstance()->playerExists(param))
+		bool removedIpBan = false;
+		if(accountNumber == 0 && IOLoginData::getInstance()->playerExists(param))
 		{
 			accountNumber = IOLoginData::getInstance()->getAccountNumberByName(param);
 
-			uint32_t lastIP = IOLoginData::getInstance()->getLastIPByName(param);
-			if(lastIP != 0)
-				removedIPBan = IOBan::getInstance()->removeIPBan(lastIP);
+			uint32_t lastip = IOLoginData::getInstance()->getLastIPByName(param);
+			if(lastip != 0)
+				removedIpBan = IOBan::getInstance()->removeIpBanishment(lastip);
 		}
 
 		if(IOBan::getInstance()->isBanished(accountNumber))
@@ -1419,16 +1420,17 @@ bool Commands::unban(Creature* creature, const std::string& cmd, const std::stri
 			sprintf(buffer, "%s has been undeleted.", param.c_str());
 			player->sendTextMessage(MSG_INFO_DESCR, buffer);
 		}
-		else if(removedIPBan)
-		{
-			char buffer[80];
-			sprintf(buffer, "IPBan on %s has been lifted.", param.c_str());
-			player->sendTextMessage(MSG_INFO_DESCR, buffer);
-		}
 		else
 		{
 			player->sendCancel("That player or account is not banished or deleted.");
 			return false;
+		}
+
+		if(removedIpBan)
+		{
+			char buffer[80];
+			sprintf(buffer, "IPBan on %s has been lifted.", param.c_str());
+			player->sendTextMessage(MSG_INFO_DESCR, buffer);
 		}
 	}
 	
@@ -1655,7 +1657,6 @@ bool Commands::changeThingProporties(Creature* creature, const std::string& cmd,
 
 bool Commands::showBanishmentInfo(Creature* creature, const std::string& cmd, const std::string& param)
 {
-	//TODO: Patch optimizations from 0.2.
 	Player* player = creature->getPlayer();
 	if(player)
 	{
@@ -1663,37 +1664,25 @@ bool Commands::showBanishmentInfo(Creature* creature, const std::string& cmd, co
 		if(IOLoginData::getInstance()->playerExists(param))
 			accountNumber = IOLoginData::getInstance()->getAccountNumberByName(param);
 
-		if(IOBan::getInstance()->isBanished(accountNumber))
+		Ban ban;
+		if(IOBan::getInstance()->getBanishmentData(accnumber, ban))
 		{
-			std::string _name;
-			if(IOBan::getInstance()->getAdminGUID(accountNumber) == 0)
-				_name = "Automatic banishment";
+			bool deletion = (ban.type == BANTYPE_DELETION);
+
+			std::string name_;
+			if(ban.adminid == 0)
+				name_ = (deletion ? "Automatic deletion" : "Automatic banishment");
 			else
-				IOLoginData::getInstance()->getNameByGuid(IOBan::getInstance()->getAdminGUID(accountNumber), _name);
+				IOLoginData::getInstance()->getNameByGuid(adminid, name_);
 
-			char addedDate[16];
-			formatDate2(IOBan::getInstance()->getAddedTime(accountNumber), addedDate);
-			char expireDate[16];
-			formatDate2(IOBan::getInstance()->getExpireTime(accountNumber), expireDate);
-			char buffer[500];
-			sprintf(buffer, "Account has been banished at:\n%s by: %s,\n for the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s\nBanishment will be lifted at:\n%s.",
-			addedDate, _name.c_str(), getReason(IOBan::getInstance()->getReason(accountNumber)).c_str(), getAction(IOBan::getInstance()->getAction(accountNumber), false).c_str(), IOBan::getInstance()->getComment(accountNumber).c_str(), expireDate);
+			char date[16], date2[16];
+			formatDate2(ban.added, date);
+			formatDate2(ban.expires, date2);
 
-			player->sendFYIBox(buffer);
-		}
-		else if(IOBan::getInstance()->isDeleted(accountNumber))
-		{
-			std::string _name;
-			if(IOBan::getInstance()->getAdminGUID(accountNumber) == 0)
-				_name = "Automatic deletion";
-			else
-				IOLoginData::getInstance()->getNameByGuid(IOBan::getInstance()->getAdminGUID(accountNumber), _name);
-
-			char date[16];
-			formatDate2(IOBan::getInstance()->getAddedTime(accountNumber), date);
-			char buffer[500];
-			sprintf(buffer, "Account has been deleted at:\n%s by: %s,\n for the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.",
-			date, _name.c_str(), getReason(IOBan::getInstance()->getReason(accountNumber)).c_str(), getAction(IOBan::getInstance()->getAction(accountNumber), false).c_str(), IOBan::getInstance()->getComment(accountNumber).c_str());
+			char buffer[500 + ban.comment.length()];
+			sprintf(buffer, "Your account has been %s at:\n%s by: %s,\nfor the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.\nYour %s%s.",
+				(deletion ? "deleted" : "banished"), date, name_.c_str(), getReason(ban.reason).c_str(), getAction(ban.action, false).c_str(),
+				ban.comment.c_str(), (deletion ? "account won't be undeleted" : "banishment will be lifted at:\n"),	(deletion ? "." : date));
 
 			player->sendFYIBox(buffer);
 		}

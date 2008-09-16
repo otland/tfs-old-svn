@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -42,7 +42,7 @@ PlayerBox::PlayerBox()
 	WNDCLASSEX wcex;
 	if(!GetClassInfoEx(hInst, "PlayerBox", &wcex))
 	{
-		wcex.cbSize = sizeof(WNDCLASSEX); 
+		wcex.cbSize = sizeof(WNDCLASSEX);
 		wcex.style = CS_HREDRAW | CS_VREDRAW;
 		wcex.lpfnWndProc = (WNDPROC)WndProc;
 		wcex.cbClsExtra = 0;
@@ -55,7 +55,7 @@ PlayerBox::PlayerBox()
 		wcex.lpszClassName = "PlayerBox";
 		wcex.hIconSm = NULL;
 		if(RegisterClassEx(&wcex) == 0)
-			MessageBox(NULL, "Can't create PlayerBox!", "Error", MB_OK);
+			MessageBox(NULL, "Cannot create PlayerBox!", "Error", MB_OK);
 	}
 }
 
@@ -67,7 +67,7 @@ PlayerBox::~PlayerBox()
 void PlayerBox::updatePlayersOnline()
 {
 	int32_t playersOnline = SendMessage(list, CB_GETCOUNT, 0, 0);
-	char playersOnlineBuffer[30];
+	char playersOnlineBuffer[50];
 	sprintf(playersOnlineBuffer, "%d player%s online", playersOnline, (playersOnline != 1 ? "s" : ""));
 	SendMessage(online, WM_SETTEXT, 0, (LPARAM)playersOnlineBuffer);
 }
@@ -88,15 +88,15 @@ void PlayerBox::removePlayer(Player* player)
 
 LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	switch(message) 
+	switch(message)
 	{
 		case WM_CREATE:
 		{
 			int32_t playersOnline = g_game.getPlayersOnline();
-			char playersOnlineBuffer[30];
+			char playersOnlineBuffer[50];
 			sprintf(playersOnlineBuffer, "%d player%s online", playersOnline, (playersOnline != 1 ? "s" : ""));
 			m_hInst = GetModuleHandle(NULL);
-			permBan = CreateWindowEx(0, "button", "Permanently Ban", WS_VISIBLE | WS_CHILD | WS_TABSTOP, 5, 35, 115, 25, hWnd, NULL, m_hInst, NULL);
+			permBan = CreateWindowEx(0, "button", "Ban permamently", WS_VISIBLE | WS_CHILD | WS_TABSTOP, 5, 35, 115, 25, hWnd, NULL, m_hInst, NULL);
 			kick = CreateWindowEx(0, "button", "Kick", WS_VISIBLE | WS_CHILD | WS_TABSTOP, 125, 35, 90, 25, hWnd, NULL, m_hInst, NULL);
 			list = CreateWindowEx(0, "combobox", "", WS_CHILD | WS_VISIBLE | WS_VSCROLL/* | CBS_DROPDOWNLIST*/ | CBS_SORT, 5, 5, 210, 25, hWnd, NULL, m_hInst, NULL);
 			online = CreateWindowEx(WS_EX_STATICEDGE, "static", playersOnlineBuffer, WS_VISIBLE | WS_CHILD | WS_TABSTOP, 5, 65, 210, 20, hWnd, NULL, m_hInst, NULL);
@@ -120,21 +120,22 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 					Player* player = g_game.getPlayerByName(name);
 					if(player)
 					{
-						char buffer[100];
-						sprintf(buffer, "Are you sure you want to %s %s?", ((HWND)lParam == kick ? "kick" : "permanently ban"), player->getName().c_str());
-						if(MessageBox(hWnd, buffer, "Player List", MB_YESNO) == IDYES)
+						char buffer[150];
+						sprintf(buffer, "Are you sure you want to %s %s?", ((HWND)lParam == kick ? "kick" : "ban permamently"), player->getName().c_str());
+						if(MessageBox(hWnd, buffer, "Player management", MB_YESNO) == IDYES)
 						{
 							player = g_game.getPlayerByName(name);
 							if(player)
 							{
 								if((HWND)lParam == permBan)
 									IOBan::getInstance()->addDeletion(player->getAccount(), 33, 2, "Permament banishment.", 0);
+
 								player->kickPlayer(true);
 							}
 						}
 					}
 					else
-						MessageBox(hWnd, "A player with this name is not online", "Player List", MB_OK);
+						MessageBox(hWnd, "A player with this name is not online", "Player management", MB_OK);
 				}
 				break;
 			}

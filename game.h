@@ -86,8 +86,7 @@ struct RuleViolation
 		text(_text),
 		time(_time),
 		isOpen(true)
-	{
-	}
+	{}
 
 	Player* reporter;
 	Player* gamemaster;
@@ -122,9 +121,9 @@ class Game
 		bool reloadHighscores();
 		std::string getHighscoreString(uint16_t skill);
 
-		void autoSave();
-		void prepareServerSave();
 		void serverSave();
+		void prepareGlobalSave();
+		void globalSave();
 
 		/**
 		  * Load a map.
@@ -427,10 +426,8 @@ class Game
 			uint32_t tradePlayerId, uint16_t spriteId);
 		bool playerAcceptTrade(uint32_t playerId);
 		bool playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int index);
-		bool playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t count,
-			uint8_t amount);
-		bool playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count,
-			uint8_t amount);
+		bool playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t count, uint8_t amount);
+		bool playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count, uint8_t amount);
 		bool playerCloseShop(uint32_t playerId);
 		bool playerLookInShop(uint32_t playerId, uint16_t spriteId, uint8_t count);
 		bool playerCloseTrade(uint32_t playerId);
@@ -529,8 +526,8 @@ class Game
 		bool loadExperienceStages();
 		uint64_t getExperienceStage(uint32_t level);
 
-		void setServerSaveMessage(int16_t key, bool value) {serverSaveMessage[key] = value;}
-		bool getServerSaveMessage(int16_t key) const {return serverSaveMessage[key];}
+		void setGlobalSaveMessage(int16_t key, bool value) {globalSaveMessage[key] = value;}
+		bool getGlobalSaveMessage(int16_t key) const {return globalSaveMessage[key];}
 
 	protected:
 		bool playerSayCommand(Player* player, SpeakClasses type, const std::string& text);
@@ -547,7 +544,7 @@ class Game
 		Highscore highscoreStorage[9];
 		time_t lastHSUpdate;
 
-		bool serverSaveMessage[2];
+		bool globalSaveMessage[2];
 
 		std::vector<Thing*> ToReleaseThings;
 

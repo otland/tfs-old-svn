@@ -114,7 +114,7 @@ bool Vocations::loadFromXml()
 						voc->gainSoulTicks = intVal;
 
 					if(readXMLString(p, "attackable", str))
-						voc->attackable = str == "yes";
+						voc->attackable = booleanString(str);
 
 					if(readXMLInteger(p, "fromvoc", intVal))
 						voc->fromVocation = intVal;

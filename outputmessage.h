@@ -160,6 +160,7 @@ class OutputMessagePool
 
 		OutputMessageVector m_outputMessages;
 		OutputMessageVector m_autoSendOutputMessages;
+
 		OutputMessageVector m_allOutputMessages;
 
 		OTSYS_THREAD_LOCKVAR m_outputPoolLock;

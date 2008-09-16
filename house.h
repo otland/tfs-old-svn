@@ -67,7 +67,7 @@ class AccessList
 {
 	public:
 		AccessList();
-		~AccessList();
+		virtual ~AccessList();
 
 		bool parseList(const std::string& _list);
 		bool addPlayer(std::string& name);
@@ -152,14 +152,11 @@ class House
 {
 	public:
 		House(uint32_t _houseid);
-		~House();
+		virtual ~House();
 
 		void addTile(HouseTile* tile);
 
 		bool canEditAccessList(uint32_t listId, const Player* player);
-		// listId special values:
-		//	GUEST_LIST	 guest list
-		//  SUBOWNER_LIST subowner list
 		void setAccessList(uint32_t listId, const std::string& textlist);
 		bool getAccessList(uint32_t listId, std::string& list) const;
 
@@ -247,7 +244,7 @@ class House
 class Houses
 {
 	Houses();
-	~Houses();
+	virtual ~Houses();
 
 	public:
 		static Houses& getInstance()

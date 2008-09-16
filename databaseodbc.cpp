@@ -48,9 +48,9 @@ DatabaseODBC::DatabaseODBC()
 	char* user = new char[32];
 	char* pass = new char[32];
 
-	strcpy((char*)dns, g_config.getString(ConfigManager::MYSQL_DB).c_str());
-	strcpy((char*)user, g_config.getString(ConfigManager::MYSQL_USER).c_str());
-	strcpy((char*)pass, g_config.getString(ConfigManager::MYSQL_PASS).c_str());
+	strcpy((char*)dns, g_config.getString(ConfigManager::SQL_DB).c_str());
+	strcpy((char*)user, g_config.getString(ConfigManager::SQL_USER).c_str());
+	strcpy((char*)pass, g_config.getString(ConfigManager::SQL_PASS).c_str());
 
 	SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &m_env);
 	if(!RETURN_SUCCESS(ret)){

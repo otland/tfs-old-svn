@@ -1,13 +1,13 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-// 
+//
 //////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -110,9 +110,10 @@ bool Weapons::loadDefaults()
 					weapons[it->id] = weapon;
 					break;
 				}
-
 				default:
+				{
 					break;
+				}
 			}
 		}
 	}
@@ -190,7 +191,7 @@ void Weapon::setCombatParam(const CombatParams& _params)
 bool Weapon::configureEvent(xmlNodePtr p)
 {
 	int32_t intValue, wieldInfo = 0;
-	std::string strValue, vocationString;
+	std::string strValue;
 
 	if(readXMLInteger(p, "id", intValue))
 	 	id = intValue;
@@ -273,12 +274,12 @@ bool Weapon::configureEvent(xmlNodePtr p)
 				}
 			}
 		}
-
 		vocationNode = vocationNode->next;
 	}
 
 	if(!vocStringList.empty())
 	{
+		std::string vocationString;
 		for(STRING_LIST::iterator it = vocStringList.begin(); it != vocStringList.end(); ++it)
 		{
 			if(*it != vocStringList.front())
@@ -288,7 +289,6 @@ bool Weapon::configureEvent(xmlNodePtr p)
 				else
 					vocationString += " and ";
 			}
-
 			vocationString += *it;
 			vocationString += "s";
 		}
@@ -376,10 +376,8 @@ int32_t Weapon::playerWeaponCheck(Player* player, Creature* target) const
 			damageModifier = (isWieldedUnproperly() ? damageModifier / 2 : 0);
 		if(player->getMagicLevel() < getReqMagLv())
 			damageModifier = (isWieldedUnproperly() ? damageModifier / 2 : 0);
-
 		return damageModifier;
 	}
-
 	return 100;
 }
 
@@ -388,7 +386,6 @@ bool Weapon::useWeapon(Player* player, Item* item, Creature* target) const
 	int32_t damageModifier = playerWeaponCheck(player, target);
 	if(damageModifier == 0)
 		return false;
-
 	return internalUseWeapon(player, item, target, damageModifier);
 }
 
@@ -409,13 +406,14 @@ bool Weapon::useFist(Player* player, Creature* target)
 			player->sendCriticalHit();
 		}
 
-		int32_t damage = -random_range(0, maxDamage, DISTRO_NORMAL);
 		CombatParams fist;
 		fist.blockedByArmor = true;
 		fist.blockedByShield = true;
 		fist.combatType = COMBAT_PHYSICALDAMAGE;
 
+		int32_t damage = -random_range(0, maxDamage, DISTRO_NORMAL);
 		Combat::doCombatHealth(player, target, damage, damage, fist);
+
 		if(!player->hasFlag(PlayerFlag_NotGainSkill) && player->getAddAttackSkill())
 			player->addSkillAdvance(SKILL_FIST, 1);
 
@@ -494,25 +492,15 @@ void Weapon::onUsedAmmo(Player* player, Item* item, Tile* destTile) const
 	if(g_config.getBool(ConfigManager::REMOVE_AMMO))
 	{
 		if(ammoAction == AMMOACTION_REMOVECOUNT)
-		{
-			int32_t newCount = std::max((int32_t)0, ((int32_t)item->getItemCount()) - 1);
-			g_game.transformItem(item, item->getID(), newCount);
-		}
+			g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getCount()) - 1));
 		else if(ammoAction == AMMOACTION_REMOVECHARGE)
-		{
-			int32_t newCharge = std::max((int32_t)0, ((int32_t)item->getCharges()) - 1);
-			g_game.transformItem(item, item->getID(), newCharge);
-		}
+			g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getCharges()) - 1));
 		else if(ammoAction == AMMOACTION_MOVE)
 			g_game.internalMoveItem(item->getParent(), destTile, INDEX_WHEREEVER, item, 1, NULL, FLAG_NOLIMIT);
 		else if(ammoAction == AMMOACTION_MOVEBACK)
 			{ /* do nothing */ }
 		else if(item->hasCharges())
-		{
-			const ItemType& newType = Item::items[item->getID()];
-			int32_t newCharge = std::max((int32_t)0, ((int32_t)item->getCharges()) - 1);
-			g_game.transformItem(item, item->getID(), newCharge);
-		}
+			g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getCharges()) - 1));
 	}
 }
 
@@ -538,16 +526,16 @@ bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[45];
+		char desc[60];
 		sprintf(desc, "onUseWeapon - %s", player->getName().c_str());
 		env->setEventDesc(desc);
 		#endif
-	
+
 		env->setScriptId(m_scriptId, m_scriptInterface);
 		env->setRealPos(player->getPosition());
-	
+
 		lua_State* L = m_scriptInterface->getLuaState();
-	
+
 		uint32_t cid = env->addThing(player);
 
 		m_scriptInterface->pushFunction(m_scriptId);
@@ -556,7 +544,7 @@ bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
 
 		int32_t result = m_scriptInterface->callFunction(2);
 		m_scriptInterface->releaseScriptEnv();
-		
+
 		return (result == LUA_NO_ERROR);
 	}
 	else
@@ -596,13 +584,12 @@ bool WeaponMelee::useWeapon(Player* player, Item* item, Creature* target) const
 
 	if(elementDamage != 0 && elementType != COMBAT_NONE)
 	{
-		int32_t damage = getElementDamage(player, item);
 		CombatParams element;
 		element.combatType = elementType;
 
+		int32_t damage = getElementDamage(player, item);
 		Combat::doCombatHealth(player, target, damage, damage, element);
 	}
-
 	return true;
 }
 
@@ -740,13 +727,13 @@ bool WeaponDistance::configureEvent(xmlNodePtr p)
 		maxHitChance = 75;
 	}
 
-	if(it.hitChance > 0)
+	if(it.hitChance != -1)
 		hitChance = it.hitChance;
 
-	if(it.maxHitChance > 0)
+	if(it.maxHitChance != -1)
 		maxHitChance = it.maxHitChance;
 
-	if(it.breakChance > 0)
+	if(it.breakChance != -1)
 		breakChance = it.breakChance;
 
 	if(it.ammoAction != AMMOACTION_NONE)
@@ -809,7 +796,6 @@ int32_t WeaponDistance::playerWeaponCheck(Player* player, Creature* target) cons
 				return boWeap->playerWeaponCheck(player, target);
 		}
 	}
-
 	return Weapon::playerWeaponCheck(player, target);
 }
 
@@ -831,7 +817,6 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 		if(maxHitChance == 75)
 		{
 			//chance for one-handed weapons
-			switch(distance)
 			{
 				case 1:
 					chance = (uint32_t)((float)std::min(skill, (uint32_t)74)) + 1;
@@ -932,7 +917,7 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 		if(bow && bow->getHitChance() > 0)
 			chance += bow->getHitChance();
 	}
-	
+
 	if(chance >= random_range(1, 100))
 		Weapon::internalUseWeapon(player, item, target, damageModifier);
 	else
@@ -993,7 +978,7 @@ int32_t WeaponDistance::getWeaponDamage(const Player* player, const Creature* ta
 	if(item->getWeaponType() == WEAPON_AMMO)
 	{
 		Item* bow = const_cast<Player*>(player)->getWeapon(true);
-		if(bow && bow->getAttack() > 0)
+		if(bow)
 			attackValue += bow->getAttack();
 	}
 
@@ -1050,7 +1035,6 @@ bool WeaponDistance::getSkillType(const Player* player, const Item* item,
 				break;
 		}
 	}
-	
 	return true;
 }
 

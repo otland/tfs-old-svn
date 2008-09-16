@@ -1,4 +1,4 @@
-local ArrayRopeSpot = {384, 418}
+local ArrayRopeSpot = {384, 418, 8278}
 
 function onCastSpell(cid, var)
 	local pos = getPlayerPosition(cid)

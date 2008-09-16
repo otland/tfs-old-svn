@@ -75,16 +75,17 @@ class Weapon : public Event
 		virtual int32_t playerWeaponCheck(Player* player, Creature* target) const;
 		static bool useFist(Player* player, Creature* target);
 		virtual bool useWeapon(Player* player, Item* item, Creature* target) const;
-		virtual int32_t getElementDamage(const Player* player, const Creature* target) const {return 0;}
 
-		CombatParams getCombatParam() const {return params;}
 		void setCombatParam(const CombatParams& _params);
+		CombatParams getCombatParam() const {return params;}
 
 		uint16_t getID() const {return id;}
 		virtual int32_t getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage = false) const = 0;
+		virtual int32_t getElementDamage(const Player* player, const Creature* target) const {return 0;}
 
 		const uint32_t getReqLevel() const {return level;}
 		const uint32_t getReqMagLv() const {return magLevel;}
+		const bool hasExhaustion() const {return exhaustion;}
 		const bool isPremium() const {return premium;}
 		const bool isWieldedUnproperly() const {return wieldUnproperly;}
 

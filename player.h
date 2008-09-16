@@ -1,13 +1,13 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-// 
+//
 //////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,7 +21,7 @@
 #ifndef __OTSERV_PLAYER_H__
 #define __OTSERV_PLAYER_H__
 
-#include "definitions.h"
+#include "otsystem.h"
 #include "creature.h"
 #include "container.h"
 #include "depot.h"
@@ -41,9 +41,9 @@ class House;
 class NetworkMessage;
 class Weapon;
 class ProtocolGame;
-class SchedulerTask;
-class Party;
 class Npc;
+class Party;
+class SchedulerTask;
 
 enum skillsid_t
 {
@@ -88,7 +88,7 @@ enum fightMode_t
 enum secureMode_t
 {
 	SECUREMODE_ON,
-	SECUREMODE_OFF 
+	SECUREMODE_OFF
 };
 
 enum tradestate_t
@@ -119,10 +119,9 @@ class Player : public Creature, public Cylinder
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t playerCount;
 #endif
-
 		Player(const std::string& name, ProtocolGame* p);
 		virtual ~Player();
-		
+
 		virtual Player* getPlayer() {return this;}
 		virtual const Player* getPlayer() const {return this;}
 
@@ -164,6 +163,16 @@ class Player : public Creature, public Cylinder
 
 		Vocation* getVocation() const {return vocation;}
 		int32_t getPlayerInfo(playerinfo_t playerinfo) const;
+
+		void setParty(Party* _party) {party = _party;}
+		Party* getParty() const {return party;}
+		PartyShields_t getPartyShield(const Player* player) const;
+		bool isInviting(const Player* player) const;
+		bool isPartner(const Player* player) const;
+		void sendPlayerPartyIcons(Player* player);
+		bool addPartyInvitation(Party* party);
+		bool removePartyInvitation(Party* party);
+		void clearPartyInvitations();
 
 		uint32_t getGuildId() const {return guildId;}
 		void setGuildId(uint32_t newGuildId) {guildId = newGuildId;}
@@ -215,7 +224,6 @@ class Player : public Creature, public Cylinder
 		int32_t getGroupId() const {return groupId;}
 
 		void resetIdleTime() {idleTime = 0;}
-
 		int32_t getExtraExpRate() const {return extraExpRate;}
 		void setExtraExpRate(int32_t value) {extraExpRate = value;}
 
@@ -233,6 +241,7 @@ class Player : public Creature, public Cylinder
 		bool isPremium() const;
 
 		uint32_t getLevel() const {return level;}
+		uint64_t getExperience() const {return experience;}
 		uint32_t getMagicLevel() const {return getPlayerInfo(PLAYERINFO_MAGICLEVEL);}
 		uint64_t getSpentMana() const {return manaSpent;}
 
@@ -240,7 +249,8 @@ class Player : public Creature, public Cylinder
 		uint32_t getVocationId() const {return vocation_id;}
 		PlayerSex_t getSex() const {return sex;}
 		void setSex(PlayerSex_t);
-		uint64_t getExperience() const {return experience;}
+
+		virtual int32_t getSoul() const {return getPlayerInfo(PLAYERINFO_SOUL);}
 
 		uint64_t getStamina() const {return stamina;}
 		void setStamina(uint64_t _stamina) {stamina = _stamina;}
@@ -282,7 +292,6 @@ class Player : public Creature, public Cylinder
 		virtual int32_t getMaxHealth() const {return getPlayerInfo(PLAYERINFO_MAXHEALTH);}
 		virtual int32_t getMaxMana() const {return getPlayerInfo(PLAYERINFO_MAXMANA);}
 		int32_t getSoulMax() const {return soulMax;}
-		virtual int32_t getSoul() const {return getPlayerInfo(PLAYERINFO_SOUL);}
 
 		Item* getInventoryItem(slots_t slot) const;
 
@@ -321,12 +330,14 @@ class Player : public Creature, public Cylinder
 			purchaseCallback = onBuy;
 			saleCallback = onSell;
 		}
+
 		Npc* getShopOwner(int32_t& onBuy, int32_t& onSell)
 		{
 			onBuy = purchaseCallback;
 			onSell = saleCallback;
 			return shopOwner;
 		}
+
 		const Npc* getShopOwner(int32_t& onBuy, int32_t& onSell) const
 		{
 			onBuy = purchaseCallback;
@@ -430,16 +441,6 @@ class Player : public Creature, public Cylinder
 		Skulls_t getSkull() const;
 		Skulls_t getSkullClient(const Player* player) const;
 
-		void setParty(Party* _party) {party = _party;}
-		Party* getParty() const {return party;}
-		PartyShields_t getPartyShield(const Player* player) const;
-		bool isInviting(const Player* player) const;
-		bool isPartner(const Player* player) const;
-		void sendPlayerPartyIcons(Player* player);
-		bool addPartyInvitation(Party* party);
-		bool removePartyInvitation(Party* party);
-		void clearPartyInvitations();
-
 		bool hasAttacked(const Player* attacked) const;
 		void addAttacked(const Player* attacked);
 		void clearAttacked();
@@ -498,7 +499,7 @@ class Player : public Creature, public Cylinder
 		void sendCreatureLight(const Creature* creature)
 			{if(client) client->sendCreatureLight(creature);}
 		void sendCreatureShield(const Creature* creature)
-		    {if(client) client->sendCreatureShield(creature);}
+			{if(client) client->sendCreatureShield(creature);}
 
 		//container
 		void sendAddContainerItem(const Container* container, const Item* item);
@@ -593,7 +594,7 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendCloseShop();}
 		void sendTradeItemRequest(const Player* player, const Item* item, bool ack) const
 			{if(client) client->sendTradeItemRequest(player, item, ack);}
-		void sendTradeClose() const 
+		void sendTradeClose() const
 			{if(client) client->sendCloseTrade();}
 		void sendWorldLight(LightInfo& lightInfo)
 			{if(client) client->sendWorldLight(lightInfo);}
@@ -635,7 +636,7 @@ class Player : public Creature, public Cylinder
 
 		Item* getWriteItem(uint32_t& _windowTextId, uint16_t& _maxWriteLen);
 		void setWriteItem(Item* item, uint16_t _maxWriteLen = 0);
-		
+
 		House* getEditHouse(uint32_t& _windowTextId, uint32_t& _listId);
 		void setEditHouse(House* house, uint32_t listId = 0);
 
@@ -643,6 +644,7 @@ class Player : public Creature, public Cylinder
 		bool hasLearnedInstantSpell(const std::string& name) const;
 
 		uint64_t balance;
+		uint32_t marriage;
 
 		VIPListSet VIPList;
 		uint32_t maxVipLimit;
@@ -747,7 +749,7 @@ class Player : public Creature, public Cylinder
 		int32_t newVocation;
 		PlayerSex_t _newSex;
 		uint32_t realAccount, newAccount;
-		char newAccountNumber[7];
+		char newAccountNumber[10];
 		std::string newPassword, newCharacterName, removeChar, accountNumberAttempt, recoveryKeyAttempt, namelockedPlayer, recoveryKey;
 
 		bool mayNotMove;
@@ -805,8 +807,6 @@ class Player : public Creature, public Cylinder
 		Player* tradePartner;
 		tradestate_t tradeState;
 		Item* tradeItem;
-
-		//shop variables
 		Npc* shopOwner;
 		int32_t purchaseCallback;
 		int32_t saleCallback;
@@ -852,7 +852,13 @@ class Player : public Creature, public Cylinder
 
 			return getSpeed();
 		}
-		void updateBaseSpeed() {baseSpeed = hasFlag(PlayerFlag_SetMaxSpeed) ? 900 : vocation->getBaseSpeed() + (2 * (level - 1));}
+		void updateBaseSpeed()
+		{
+			if(!hasFlag(PlayerFlag_SetMaxSpeed))
+				baseSpeed = 220 + (2* (level - 1));
+			else
+				baseSpeed = 900;
+		}
 
 		bool isPromoted();
 
@@ -861,7 +867,7 @@ class Player : public Creature, public Cylinder
 
 		static uint32_t getPercentLevel(uint64_t count, uint64_t nextLevelCount);
 		double getLostPercent(lossTypes_t lossType);
-		virtual uint64_t getLostExperience() {return (skillLoss ? uint64_t(experience * getLostPercent(LOSS_EXPERIENCE)) : 0);}
+		virtual uint64_t getLostExperience() {return skillLoss ? uint64_t(experience * getLostPercent(LOSS_EXPERIENCE)) : 0;}
 		virtual void dropLoot(Container* corpse);
 		virtual uint32_t getDamageImmunities() const {return damageImmunities;}
 		virtual uint32_t getConditionImmunities() const {return conditionImmunities;}
@@ -870,13 +876,13 @@ class Player : public Creature, public Cylinder
 		virtual void getPathSearchParams(const Creature* creature, FindPathParams& fpp) const;
 
 		friend class Game;
+		friend class Npc;
 		friend class LuaScriptInterface;
 		friend class Commands;
 		friend class Map;
 		friend class Actions;
 		friend class IOLoginData;
 		friend class ProtocolGame;
-		friend class Npc;
 };
 
 #endif

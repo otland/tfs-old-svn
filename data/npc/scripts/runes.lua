@@ -1,6 +1,7 @@
 local keywordHandler = KeywordHandler:new()
 local npcHandler = NpcHandler:new(keywordHandler)
 NpcSystem.parseParameters(npcHandler)
+local talkState = {}
 
 function onCreatureAppear(cid)				npcHandler:onCreatureAppear(cid)			end
 function onCreatureDisappear(cid) 			npcHandler:onCreatureDisappear(cid)			end
@@ -97,7 +98,6 @@ function creatureSayCallback(cid, type, msg)
 		return false
 	end
 
-	local talkState = {}
 	local talkUser = NPCHANDLER_CONVBEHAVIOR == CONVERSATION_DEFAULT and 0 or cid
 
 	local items = {[1] = 2190, [2] = 2182, [5] = 2190, [6] = 2182}

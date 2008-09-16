@@ -1,13 +1,13 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-// 
+//
 //////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -23,7 +23,7 @@
 #include "luascript.h"
 
 #include <libxml/xmlmemory.h>
-#include <libxml/parser.h> 
+#include <libxml/parser.h>
 
 #include "actions.h"
 #include "talkaction.h"
@@ -31,6 +31,10 @@
 #include "movement.h"
 #include "weapons.h"
 #include "creatureevent.h"
+
+#ifndef __CONSOLE__
+#include "gui.h"
+#endif
 
 Actions* g_actions = NULL;
 CreatureEvents* g_creatureEvents = NULL;
@@ -81,14 +85,14 @@ bool ScriptingManager::loadScriptSystems()
 		std::cout << "> ERROR: Unable to load Actions!" << std::endl;
 		return false;
 	}
-	
+
 	g_talkActions = new TalkActions();
 	if(!g_talkActions->loadFromXml())
 	{
 		std::cout << "> ERROR: Unable to load TalkActions!" << std::endl;
 		return false;
 	}
-	
+
 	g_moveEvents = new MoveEvents();
 	if(!g_moveEvents->loadFromXml())
 	{
@@ -102,6 +106,5 @@ bool ScriptingManager::loadScriptSystems()
 		std::cout << "> ERROR: Unable to load CreatureEvents!" << std::endl;
 		return false;
 	}
-
 	return true;
 }

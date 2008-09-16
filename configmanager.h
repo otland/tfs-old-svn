@@ -52,15 +52,15 @@ class ConfigManager
 			IP,
 			MOTD,
 			WORLD_TYPE,
-			MYSQL_HOST,
-			MYSQL_USER,
-			MYSQL_PASS,
-			MYSQL_DB,
+			SQL_HOST,
+			SQL_USER,
+			SQL_PASS,
+			SQL_DB,
 			DEFAULT_PRIORITY,
 			#ifdef MULTI_SQL_DRIVERS
 			SQL_TYPE,
 			#endif
-			SQLITE_DB,
+			SQLITE_FILE,
 			PASSWORD_TYPE,
 			MAP_AUTHOR,
 			LAST_STRING_CONFIG /* this must be the last one */
@@ -129,7 +129,7 @@ class ConfigManager
 
 		enum bool_config_t 
 		{
-			SERVERSAVE_ENABLED,
+			GLOBALSAVE_ENABLED,
 			START_CHOOSEVOC,
 			ON_OR_OFF_CHARLIST,
 			ONE_PLAYER_ON_ACCOUNT,

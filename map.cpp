@@ -64,44 +64,12 @@ Map::~Map()
 bool Map::loadMap(const std::string& identifier)
 {
 	IOMap* loader = new IOMap();
-
-	bool loadMapSuccess = loader->loadMap(this, identifier);
-	if(!loadMapSuccess)
+	if(!loader->loadMap(this, identifier))
 	{
-		switch(getLastError())
-		{
-			case LOADMAPERROR_CANNOTOPENFILE:
-				std::cout << "> FATAL: Could not open the map stream." << std::endl;
-				break;
-			case LOADMAPERROR_GETPROPFAILED:
-				std::cout << "> FATAL: Failed to read stream properties. Code: " << getErrorCode() << std::endl;
-				break;
-			case LOADMAPERROR_OUTDATEDHEADER:
-				std::cout << "> FATAL: Header information is outdated. Code: " << getErrorCode() << std::endl;
-				break;
-			case LOADMAPERROR_GETROOTHEADERFAILED:
-				std::cout << "> FATAL: Failed to read header information. Code: " << getErrorCode() << std::endl;
-				break;
-			case LOADMAPERROR_FAILEDTOCREATEITEM:
-				std::cout << "> FATAL: Failed to create an object. Code: " << getErrorCode() << std::endl;
-				break;
-			case LOADMAPERROR_FAILEDUNSERIALIZEITEM:
-				std::cout << "> FATAL: Failed to unserialize an object. Code: " << getErrorCode() << std::endl;
-				break;
-			case LOADMAPERROR_FAILEDTOREADCHILD:
-				std::cout << "> FATAL: Failed to read child stream. Code: " << getErrorCode() << std::endl;
-				break;
-			case LOADMAPERROR_UNKNOWNNODETYPE:
-				std::cout << "> FATAL: Unknown stream node found. Code: " << getErrorCode() << std::endl;
-				break;
-			default:
-				std::cout << "> FATAL: Unknown error!" << std::endl;
-				break;
-		}
-		getchar();
+		std::cout << "FATAL: [OTBM loader] " << loader->getLastErrorString() << std::endl;
 		return false;
 	}
-	
+
 	if(!loader->loadSpawns(this))
 		std::cout << "WARNING: could not load spawn data." << std::endl;
 
@@ -109,7 +77,7 @@ bool Map::loadMap(const std::string& identifier)
 		std::cout << "WARNING: could not load house data." << std::endl;
 
 	delete loader;
-	
+
 	IOMapSerialize.loadHouseInfo(this);
 	IOMapSerialize.loadMap(this);
 	return true;
@@ -302,11 +270,13 @@ bool Map::removeCreature(Creature* creature)
 		tile->__removeThing(creature, 0);
 		return true;
 	}
-
 	return false;
 }
 
-void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, bool checkforduplicate, int32_t minRangeX, int32_t maxRangeX, int32_t minRangeY, int32_t maxRangeY, int32_t minRangeZ, int32_t maxRangeZ)
+void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, bool checkforduplicate,
+	int32_t minRangeX, int32_t maxRangeX,
+	int32_t minRangeY, int32_t maxRangeY,
+	int32_t minRangeZ, int32_t maxRangeZ)
 {
 	int32_t minoffset = centerPos.z - maxRangeZ;
 	int32_t x1 = std::min((int32_t)0xFFFF, std::max((int32_t)0, (centerPos.x + minRangeX + minoffset)));
@@ -344,13 +314,14 @@ void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, b
 					{
 						Creature* creature = *node_iter;
 						const Position& cpos = creature->getPosition();
+						int32_t offsetZ = centerPos.z - cpos.z;
 						if(cpos.z < minRangeZ || cpos.z > maxRangeZ)
 							continue;
 
-						if(cpos.y < centerPos.y + minRangeY || cpos.y > centerPos.y + maxRangeY)
+						if(cpos.y < (centerPos.y + minRangeY + offsetZ) || cpos.y > (centerPos.y + maxRangeY + offsetZ))
 							continue;
 
-						if(cpos.x < centerPos.x + minRangeX || cpos.x > centerPos.x + maxRangeX)
+						if(cpos.x < (centerPos.x + minRangeX + offsetZ) || cpos.x > (centerPos.x + maxRangeX + offsetZ))
 							continue;
 
 						if(checkforduplicate)
@@ -725,7 +696,7 @@ bool Map::getPathTo(const Creature* creature, const Position& destPos,
 		}
 		else
 		{
-			for(int32_t i = 0; i < 8; ++i)
+			for(uint8_t i = 0; i < 8; ++i)
 			{
 				pos.x = n->x + neighbourOrderList[i][0];
 				pos.y = n->y + neighbourOrderList[i][1];
@@ -733,7 +704,9 @@ bool Map::getPathTo(const Creature* creature, const Position& destPos,
 				bool outOfRange = false;
 				if(maxSearchDist != -1 && (std::abs(endPos.x - pos.x) > maxSearchDist ||
 					std::abs(endPos.y - pos.y) > maxSearchDist))
+				{
 					outOfRange = true;
+				}
 
 				if(!outOfRange && (tile = canWalkTo(creature, pos)))
 				{
@@ -891,7 +864,9 @@ bool Map::getPathMatching(const Creature* creature, std::list<Direction>& dirLis
 			bool inRange = true;
 			if(fpp.maxSearchDist != -1 && (std::abs(startPos.x - pos.x) > fpp.maxSearchDist ||
 				std::abs(startPos.y - pos.y) > fpp.maxSearchDist))
+			{
 				inRange = false;
+			}
 
 			if(fpp.keepDistance)
 			{
@@ -986,71 +961,6 @@ bool Map::getPathMatching(const Creature* creature, std::list<Direction>& dirLis
 		found = found->parent;
 	}
 	return true;
-}
-
-uint32_t Map::clean()
-{
-	uint64_t start = OTSYS_TIME();
-	uint64_t count = 0;
-	Tile* tile = NULL;
-	Item *item = NULL;
-
-	QTreeLeafNode* startLeaf;
-	QTreeLeafNode* leafE;
-	QTreeLeafNode* leafS;
-	Floor* floor;
-
-	startLeaf = getLeaf(0, 0);
-	leafS = startLeaf;
-
-	for(int32_t ny = 0; ny <= 0xFFFF; ny += FLOOR_SIZE)
-	{
-		leafE = leafS;
-		for(int32_t nx = 0; nx <= 0xFFFF; nx += FLOOR_SIZE)
-		{
-			if(leafE)
-			{
-				for(int32_t nz = 0; nz < MAP_MAX_LAYERS; ++nz)
-				{
-					if(leafE && (floor = leafE->getFloor(nz)))
-					{
-						for(int32_t ly = 0; ly < FLOOR_SIZE; ++ly)
-						{
-							for(int32_t lx = 0; lx < FLOOR_SIZE; ++lx)
-							{
-								if(floor && (tile = floor->tiles[(nx + lx) & FLOOR_MASK][(ny + ly) & FLOOR_MASK]))
-								{
-									if((g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES) && !tile->hasFlag(TILESTATE_HOUSE)) || !tile->hasFlag(TILESTATE_PROTECTIONZONE))
-									{
-										for(uint32_t i = 0; i < tile->getThingCount(); ++i)
-										{
-											item = tile->__getThing(i)->getItem();
-											if(item && !item->isLoadedFromMap() && !item->isNotMoveable())
-											{
-												g_game.internalRemoveItem(item);
-												i--;
-												count++;
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-				leafE = leafE->stepEast();
-			}
-			else
-				leafE = getLeaf(nx + FLOOR_SIZE, ny);
-		}
-		if(leafS)
-			leafS = leafS->stepSouth();
-		else
-			leafS = getLeaf(0, ny + FLOOR_SIZE);
-	}
-
-	std::cout << "> Cleaning time: " << (OTSYS_TIME() - start) / (1000.) << " seconds, collected " << count << " item" << (count != 1 ? "s" : "") << "." << std::endl;
-	return count;
 }
 
 //*********** AStarNodes *************
@@ -1319,4 +1229,68 @@ Floor* QTreeLeafNode::createFloor(uint32_t z)
 		m_array[z] = new Floor();
 
 	return m_array[z];
+}
+
+uint32_t Map::clean()
+{
+	uint64_t start = OTSYS_TIME();
+	uint64_t count = 0;
+	Tile* tile = NULL;
+	Item *item = NULL;
+
+	QTreeLeafNode* startLeaf;
+	QTreeLeafNode* leafE;
+	QTreeLeafNode* leafS;
+	Floor* floor;
+
+	startLeaf = getLeaf(0, 0);
+	leafS = startLeaf;
+
+	for(int32_t ny = 0; ny <= 0xFFFF; ny += FLOOR_SIZE)
+	{
+		leafE = leafS;
+		for(int32_t nx = 0; nx <= 0xFFFF; nx += FLOOR_SIZE)
+		{
+			if(leafE)
+			{
+				for(int32_t nz = 0; nz < MAP_MAX_LAYERS; ++nz)
+				{
+					if(leafE && (floor = leafE->getFloor(nz)))
+					{
+						for(int32_t ly = 0; ly < FLOOR_SIZE; ++ly)
+						{
+							for(int32_t lx = 0; lx < FLOOR_SIZE; ++lx)
+							{
+								if(floor && (tile = floor->tiles[(nx + lx) & FLOOR_MASK][(ny + ly) & FLOOR_MASK]))
+								{
+									if((g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES) && !tile->hasFlag(TILESTATE_HOUSE)) || !tile->hasFlag(TILESTATE_PROTECTIONZONE))
+									{
+										for(uint32_t i = 0; i < tile->getThingCount(); ++i)
+										{
+											item = tile->__getThing(i)->getItem();
+											if(item && !item->isLoadedFromMap() && !item->isNotMoveable())
+											{
+												g_game.internalRemoveItem(item);
+												i--;
+												count++;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				leafE = leafE->stepEast();
+			}
+			else
+				leafE = getLeaf(nx + FLOOR_SIZE, ny);
+		}
+		if(leafS)
+			leafS = leafS->stepSouth();
+		else
+			leafS = getLeaf(0, ny + FLOOR_SIZE);
+	}
+	std::cout << "> Cleaning time: " << (OTSYS_TIME() - start) / (1000.) << " seconds, collected " << count << " item" << (count != 1 ? "s" : "") << "." << std::endl;
+	return count;
 }

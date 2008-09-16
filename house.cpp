@@ -525,9 +525,11 @@ bool AccessList::addGuild(const std::string& guildName, const std::string& rank)
 		if(!IOGuild::getInstance()->getRankIdByGuildIdAndName((uint32_t&)rankId, rankName, guildId) &&
 			rankName.find("?") == std::string::npos || rankName.find("!") == std::string::npos ||
 			rankName.find("*") == std::string::npos)
+		{
 			rankId = -1;
+		}
 
-		if(rankId != 0 && guildId != 0)
+		if(rankId != 0)
 		{
 			for(GuildList::iterator git = guildList.begin(); git != guildList.end(); ++git)
 			{
@@ -600,7 +602,7 @@ bool AccessList::isInList(const Player* player)
 
 	for(GuildList::iterator git = guildList.begin(); git != guildList.end(); ++git)
 	{
-		if(git->first == player->getGuildId() && (git->second == -1 || git->second == player->getGuildRankId()))
+		if(git->first == player->getGuildId() && (git->second == player->getGuildRankId() || git->second == -1))
 			return true;
 	}
 	return false;
@@ -849,7 +851,7 @@ bool Houses::loadHousesXML(std::string filename)
 					for(HouseTileList::iterator it = house->getHouseTileBegin(); it != house->getHouseTileEnd(); it++)
 						_price += g_config.getNumber(ConfigManager::HOUSE_PRICE);
 
-					if(g_config.getString(ConfigManager::HOUSE_PRICEASRENT) == "yes")
+					if(g_config.getBool(ConfigManager::HOUSE_PRICEASRENT))
 						house->setRent(_price);
 					house->setPrice(_price);
 				}

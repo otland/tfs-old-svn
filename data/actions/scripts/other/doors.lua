@@ -38,10 +38,13 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 				doPlayerSendCancel(cid, "Sorry, not possible.")
 			else
 				doTeleportThing(doorCreature.uid, newPosition, TRUE)
+				if isInArray(openSpecialDoors, item.itemid) ~= TRUE then
+					doTransformItem(item.uid, item.itemid - 1)
+				end
 			end
-		else
-			doTransformItem(item.uid, item.itemid - 1)
+			return TRUE
 		end
+		doTransformItem(item.uid, item.itemid - 1)
 		return TRUE
 	elseif isInArray(verticalOpenDoors, item.itemid) == TRUE then
 		local newPosition = toPosition
@@ -54,10 +57,13 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 				doPlayerSendCancel(cid, "Sorry, not possible.")
 			else
 				doTeleportThing(doorCreature.uid, newPosition, TRUE)
+				if isInArray(openSpecialDoors, item.itemid) ~= TRUE then
+					doTransformItem(item.uid, item.itemid - 1)
+				end
 			end
-		else
-			doTransformItem(item.uid, item.itemid - 1)
+			return TRUE
 		end
+		doTransformItem(item.uid, item.itemid - 1)
 		return TRUE
 	elseif doors[item.itemid] ~= nil then
 		if item.actionid == 0 then

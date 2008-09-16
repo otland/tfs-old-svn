@@ -52,22 +52,22 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confString[CONFIG_FILE] = _filename;
 		m_confString[IP] = getGlobalString(L, "ip", "127.0.0.1");
 		m_confNumber[PORT] = getGlobalNumber(L, "port", 7171);
-		m_confNumber[SQL_PORT] = getGlobalNumber(L, "mysqlPort", 3306);
-		m_confString[MAP_NAME] = getGlobalString(L, "mapName", "forgotten");
-		m_confString[MAP_AUTHOR] = getGlobalString(L, "mapAuthor", "Unknown");
-		m_confString[HOUSE_RENT_PERIOD] = getGlobalString(L, "houseRentPeriod", "monthly");
-		m_confString[MYSQL_HOST] = getGlobalString(L, "mysqlHost", "localhost");
-		m_confString[MYSQL_USER] = getGlobalString(L, "mysqlUser", "root");
-		m_confString[MYSQL_PASS] = getGlobalString(L, "mysqlPass", "");
-		m_confString[MYSQL_DB] = getGlobalString(L, "mysqlDatabase", "theforgottenserver");
-		m_confString[SQLITE_DB] = getGlobalString(L, "sqliteDatabase", "forgottenserver.s3db");
 		#ifdef MULTI_SQL_DRIVERS
 		m_confString[SQL_TYPE] = getGlobalString(L, "sqlType", "sqlite");
 		#endif
+		m_confString[SQL_HOST] = getGlobalString(L, "sqlHost", "localhost");
+		m_confNumber[SQL_PORT] = getGlobalNumber(L, "sqlPort", 3306);
+		m_confString[SQL_DB] = getGlobalString(L, "sqlDatabase", "theforgottenserver");
+		m_confString[SQL_USER] = getGlobalString(L, "sqlUser", "root");
+		m_confString[SQL_PASS] = getGlobalString(L, "sqlPass", "");
+		m_confString[SQL_FILE] = getGlobalString(L, "sqlFile", "forgottenserver.s3db");
 		m_confString[PASSWORD_TYPE] = getGlobalString(L, "passwordType", "plain");
 		m_confNumber[PASSWORDTYPE] = PASSWORD_TYPE_PLAIN;
-		m_confBool[SERVERSAVE_ENABLED] = getGlobalBool(L, "serverSaveEnabled", "yes");
-		m_confNumber[SERVERSAVE_H] = getGlobalNumber(L, "serverSaveHour", 3);
+		m_confString[MAP_NAME] = getGlobalString(L, "mapName", "forgotten");
+		m_confString[MAP_AUTHOR] = getGlobalString(L, "mapAuthor", "Unknown");
+		m_confBool[GLOBALSAVE_ENABLED] = getGlobalBool(L, "serverSaveEnabled", "yes");
+		m_confNumber[GLOBALSAVE_H] = getGlobalNumber(L, "serverSaveHour", 3);
+		m_confString[HOUSE_RENT_PERIOD] = getGlobalString(L, "houseRentPeriod", "monthly");
 	}
 
 	m_confString[LOGIN_MSG] = getGlobalString(L, "loginMessage", "Welcome to the Forgotten Server!");
@@ -121,8 +121,8 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBool[RANDOMIZE_TILES] = getGlobalBool(L, "randomizeTiles", "yes");
 	m_confString[DEFAULT_PRIORITY] = getGlobalString(L, "defaultPriority", "high");
 	m_confBool[EXPERIENCE_FROM_PLAYERS] = getGlobalBool(L, "experienceByKillingPlayers", "no");
-	m_confBool[SHUTDOWN_AT_SERVERSAVE] = getGlobalBool(L, "shutdownAtServerSave", "no");
-	m_confBool[CLEAN_MAP_AT_SERVERSAVE] = getGlobalBool(L, "cleanMapAtServerSave", "yes");
+	m_confBool[SHUTDOWN_AT_GLOBALSAVE] = getGlobalBool(L, "shutdownAtServerSave", "no");
+	m_confBool[CLEAN_MAP_AT_GLOBALSAVE] = getGlobalBool(L, "cleanMapAtServerSave", "yes");
 	m_confBool[FREE_PREMIUM] = getGlobalBool(L, "freePremium", "no");
 	m_confNumber[PROTECTION_LEVEL] = getGlobalNumber(L, "protectionLevel", 1);
 	m_confBool[ADMIN_LOGS_ENABLED] = getGlobalBool(L, "adminLogsEnabled", "no");
@@ -161,7 +161,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBool[CLEAN_PROTECTED_ZONES] = getGlobalBool(L, "cleanProtectedZones", "yes");
 	//m_confBool[SPELL_NAME_INSTEAD_WORDS] = getGlobalBool(L, "spellNameInsteadOfWordsOnCast", "no");
 	m_confNumber[MAX_PLAYER_SUMMONS] = getGlobalNumber(L, "maxPlayerSummons", 2);
-	m_confBool[SAVE_GLOBAL_STORAGE] = getGlobalBool(L, "saveGlobalStorage", "no");
+	m_confBool[SAVE_GLOBAL_STORAGE] = getGlobalBool(L, "saveGlobalStorage", "yes");
 	m_isLoaded = true;
 
 	lua_close(L);
@@ -250,8 +250,7 @@ std::string ConfigManager::getGlobalString(lua_State* _L, const std::string& _id
 
 bool ConfigManager::getGlobalBool(lua_State* _L, const std::string& _identifier, const std::string& _default /*= "no"*/)
 {
-	std::string str = asLowerCaseString(getGlobalString(_L, _identifier, _default));
-	return (str == "yes" || str == "true" || atoi(str.c_str()) > 0);
+	return booleanString(getGlobalString(_L, _identifier, _default));
 }
 
 int32_t ConfigManager::getGlobalNumber(lua_State* _L, const std::string& _identifier, const int32_t _default /*= 0*/)

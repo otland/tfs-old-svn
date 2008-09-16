@@ -1,13 +1,13 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-// 
+//
 //////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -21,7 +21,6 @@
 #ifndef __THING_H__
 #define __THING_H__
 
-#include "definitions.h"
 #include "position.h"
 
 /*Notice: remember to add new error codes to global.lua*/
@@ -85,7 +84,8 @@ enum ReturnValue
 	RET_YOUCANNOTLOGOUTHERE = 56,
 	RET_YOUNEEDAMAGICITEMTOCASTSPELL = 57,
 	RET_CANNOTCONJUREITEMHERE = 58,
-	RET_YOUNEEDTOSPLITYOURSPEARS = 59
+	RET_YOUNEEDTOSPLITYOURSPEARS = 59,
+	RET_NAMEISTOOAMBIGIOUS = 60
 };
 
 class Tile;

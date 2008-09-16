@@ -1,13 +1,13 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-// 
+//
 //////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -17,7 +17,6 @@
 // along with this program; if not, write to the Free Software Foundation,
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
-
 
 #ifndef __OTSERV_OTTHREAD_H__
 #define __OTSERV_OTTHREAD_H__
@@ -34,47 +33,25 @@ typedef std::vector< std::pair<uint32_t, uint32_t> > IPList;
 #ifdef __WIN_LOW_FRAG_HEAP__
 #define _WIN32_WINNT 0x0501
 #endif
-#include <winsock2.h>
-#include <process.h>
 #include <stddef.h>
 #include <stdlib.h>
-#include <conio.h>
 #include <sys/timeb.h>
+#include <process.h>
+#include <windows.h>
 
 #define OTSYS_CREATE_THREAD(a, b) _beginthread(a, 0, b)
 
-#ifndef __DEBUG_CRITICALSECTION__
-	#define OTSYS_THREAD_LOCKVAR CRITICAL_SECTION
+#define OTSYS_THREAD_LOCKVAR		CRITICAL_SECTION
 
-	#define OTSYS_THREAD_LOCKVARINIT(a) InitializeCriticalSection(&a);
-	#define OTSYS_THREAD_LOCKVARRELEASE(a) DeleteCriticalSection(&a);
-	#define OTSYS_THREAD_LOCK(a, b)        EnterCriticalSection(&a);
-	#define OTSYS_THREAD_UNLOCK(a, b)      LeaveCriticalSection(&a);
-	#define OTSYS_THREAD_UNLOCK_PTR(a, b)  LeaveCriticalSection(a);
-#else
-	#define OTSYS_THREAD_LOCKVAR HANDLE
-	
-	static void addLockLog(OTSYS_THREAD_LOCKVAR* a, const char* s, bool lock);
+#define OTSYS_THREAD_LOCKVARINIT(a)	InitializeCriticalSection(&a);
+#define OTSYS_THREAD_LOCKVARRELEASE(a)	DeleteCriticalSection(&a);
+#define OTSYS_THREAD_LOCK(a, b)		EnterCriticalSection(&a);
+#define OTSYS_THREAD_UNLOCK(a, b)	LeaveCriticalSection(&a);
+#define OTSYS_THREAD_UNLOCK_PTR(a, b)	LeaveCriticalSection(a);
 
-	struct logBlock {
-		bool lock;
-		unsigned long mutexaddr;
-		std::string str;
-		uint64_t time;
-		int threadid;
-	};
-
-	#define OTSYS_THREAD_LOCKVARINIT(a)    a = CreateMutex(NULL, FALSE, NULL);
-	#define OTSYS_THREAD_LOCKVARRELEASE(a) CloseHandle(a);
-	#define OTSYS_THREAD_LOCK(a, b) { WaitForSingleObject(a,INFINITE); addLockLog(&a, b, true);}
-	inline int OTSYS_THREAD_LOCKEX(HANDLE a, int b)   {return WaitForSingleObject(a, b);}
-	#define OTSYS_THREAD_UNLOCK(a, b)         {addLockLog(&a, b, false); ReleaseMutex(a);}
-	#define OTSYS_THREAD_UNLOCK_PTR(a, b)     {addLockLog(a, b, false); ReleaseMutex(*a);}
-#endif
-
-	#define OTSYS_THREAD_TIMEOUT			  WAIT_TIMEOUT
-	#define OTSYS_THREAD_SIGNALVARINIT(a) a = CreateEvent(NULL, FALSE, FALSE, NULL)
-	#define OTSYS_THREAD_SIGNAL_SEND(a)   SetEvent(a);
+#define OTSYS_THREAD_TIMEOUT WAIT_TIMEOUT
+#define OTSYS_THREAD_SIGNALVARINIT(a) a = CreateEvent(NULL, FALSE, FALSE, NULL)
+#define OTSYS_THREAD_SIGNAL_SEND(a) SetEvent(a);
 
 typedef HANDLE OTSYS_THREAD_SIGNALVAR;
 
@@ -104,15 +81,13 @@ inline void OTSYS_SLEEP(uint32_t t)
 inline int OTSYS_THREAD_WAITSIGNAL_TIMED(OTSYS_THREAD_SIGNALVAR& signal, OTSYS_THREAD_LOCKVAR& lock, int64_t cycle)
 {
 	int64_t tout64 = (cycle - OTSYS_TIME());
-  
+
 	DWORD tout = 0;
 	if(tout64 > 0)
 		tout = (DWORD)(tout64);
 
-	//LeaveCriticalSection(&lock);
 	OTSYS_THREAD_UNLOCK(lock, "OTSYS_THREAD_WAITSIGNAL_TIMED");
 	int ret = WaitForSingleObject(signal, tout);
-	//EnterCriticalSection(&lock);
 	OTSYS_THREAD_LOCK(lock, "OTSYS_THREAD_WAITSIGNAL_TIMED");
 
 	return ret;
@@ -133,7 +108,6 @@ inline int OTSYS_THREAD_WAITSIGNAL_TIMED(OTSYS_THREAD_SIGNALVAR& signal, OTSYS_T
 #include <errno.h>
 
 #define PTHREAD_MUTEX_RECURSIVE_NP PTHREAD_MUTEX_RECURSIVE
-
 
 inline void OTSYS_CREATE_THREAD(void *(*a)(void*), void *b)
 {
@@ -196,64 +170,6 @@ inline int OTSYS_THREAD_WAITSIGNAL_TIMED(OTSYS_THREAD_SIGNALVAR& signal, OTSYS_T
 
 #endif
 
-#ifdef __DEBUG_CRITICALSECTION__
-
-class OTSYS_THREAD_LOCK_CLASS{
-public:
-	inline OTSYS_THREAD_LOCK_CLASS(OTSYS_THREAD_LOCKVAR &a)
-	{
-		logmsg = NULL;
-		mutex = &a;
-		OTSYS_THREAD_LOCK(a, NULL)
-	};
-
-	inline OTSYS_THREAD_LOCK_CLASS(OTSYS_THREAD_LOCKVAR &a, const char* s)
-	{
-		mutex = &a;
-		OTSYS_THREAD_LOCK(a, NULL)
-
-		logmsg = s;
-
-		OTSYS_THREAD_LOCK_CLASS::addLog(mutex, s, true);
-	}
-
-	static void addLog(OTSYS_THREAD_LOCKVAR* a, const char *s, bool lock)
-	{
-		if(s == NULL)
-			return;
-
-		logBlock lb;
-		lb.mutexaddr = (unsigned long)(a);
-		lb.lock = lock;
-		lb.str = s;
-		lb.time = OTSYS_TIME();
-		lb.threadid = GetCurrentThreadId();
-
-		OTSYS_THREAD_LOCK_CLASS::loglist.push_back(lb);
-
-		if(OTSYS_THREAD_LOCK_CLASS::loglist.size() > 1000) {
-			OTSYS_THREAD_LOCK_CLASS::loglist.pop_front();
-		}
-	}
-
-	inline ~OTSYS_THREAD_LOCK_CLASS(){
-		OTSYS_THREAD_LOCK_CLASS::addLog(mutex, logmsg, false);
-		OTSYS_THREAD_UNLOCK_PTR(mutex, NULL)
-	};
-		
-	OTSYS_THREAD_LOCKVAR *mutex;
-	const char* logmsg;
-	typedef std::list< logBlock > LogList;
-	static LogList loglist;
-};
-
-static void addLockLog(OTSYS_THREAD_LOCKVAR* a, const char* s, bool lock)
-{
-	OTSYS_THREAD_LOCK_CLASS::addLog(a, s, lock);
-}
-
-#else
-
 class OTSYS_THREAD_LOCK_CLASS
 {
 	public:
@@ -261,21 +177,20 @@ class OTSYS_THREAD_LOCK_CLASS
 		{
 			mutex = &a;
 			OTSYS_THREAD_LOCK(a, NULL)
-		};
-	
+		}
+
 		inline OTSYS_THREAD_LOCK_CLASS(OTSYS_THREAD_LOCKVAR &a, const char* s)
 		{
 			mutex = &a;
 			OTSYS_THREAD_LOCK(a, NULL)
 		}
-	
-		inline ~OTSYS_THREAD_LOCK_CLASS(){
+
+		inline ~OTSYS_THREAD_LOCK_CLASS()
+		{
 			OTSYS_THREAD_UNLOCK_PTR(mutex, NULL)
-		};
-			
+		}
+
 		OTSYS_THREAD_LOCKVAR *mutex;
 };
-
-#endif //__DEBUG_CRITICALSECTION__
 
 #endif // #ifndef __OTSYSTEM_H__

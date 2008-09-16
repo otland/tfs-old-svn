@@ -122,7 +122,7 @@ bool IOGuild::changeRankName(std::string oldRankName, std::string newRankName, u
 
 	db->freeResult(result);
 	query.str("");
-	query << "UPDATE `guild_ranks` SET `name` " << db->getStringComparisonOperator() << " " << db->escapeString(newRankName) << " WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(oldRankName) << " AND `guild_id` = " << guildId;
+	query << "UPDATE `guild_ranks` SET `name` = " << db->escapeString(newRankName) << " WHERE `name` = " << db->escapeString(oldRankName) << " AND `guild_id` = " << guildId;
 	if(!db->executeQuery(query.str()))
 		return false;
 
@@ -320,7 +320,7 @@ bool IOGuild::setGuildNick(uint32_t guid, std::string guildNick)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `players` SET `guildnick` " << db->getStringComparisonOperator() << " " << db->escapeString(guildNick) << " WHERE `id` = " << guid;
+	query << "UPDATE `players` SET `guildnick` = " << db->escapeString(guildNick) << " WHERE `id` = " << guid;
 	return db->executeQuery(query.str());
 }
 
@@ -328,7 +328,7 @@ bool IOGuild::setMotd(uint32_t guildId, std::string newMotd)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `guilds` SET `motd` " << db->getStringComparisonOperator() << " " << db->escapeString(newMotd) << " WHERE `id` = " << guildId;
+	query << "UPDATE `guilds` SET `motd` = " << db->escapeString(newMotd) << " WHERE `id` = " << guildId;
 	return db->executeQuery(query.str());
 }
 

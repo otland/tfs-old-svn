@@ -81,8 +81,7 @@ class TalkAction : public Event
 		
 		//scripting
 		int32_t executeSay(Creature* creature, const std::string& words, const std::string& param);
-		//
-		
+
 	protected:
 		virtual std::string getScriptEventName();
 		
