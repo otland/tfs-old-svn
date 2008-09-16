@@ -15,28 +15,34 @@ if(NpcHandler == nil) then
 	CONVERSATION_PRIVATE = 1 -- Conversation through NPCs chat window, as of 8.2 update. (Default)
 		--Small Note: Private conversations also means the NPC will use multi-focus system.
 
-	-- Currently applied conversation behavior.
+	-- Currently applied conversation behavior. CONVERSATION_DEFAULT is default.
 	NPCHANDLER_CONVBEHAVIOR = CONVERSATION_DEFAULT
 
 	-- Constant indexes for defining default messages.
-	MESSAGE_GREET 		= 1 -- When the player greets the npc.
-	MESSAGE_FAREWELL 	= 2 -- When the player unGreets the npc.
-	MESSAGE_ONBUY 		= 3 -- When the player successfully buys something
-	MESSAGE_ONSELL 		= 4 -- When the player successfully sells something
-	MESSAGE_NEEDMOREMONEY = 5 -- When the player does not have enough money
-	MESSAGE_NOTHAVEITEM = 6 -- When the player is trying to sell an item he does not have.
-	MESSAGE_IDLETIMEOUT = 7 -- When the player has been idle for longer then idleTime allows.
-	MESSAGE_WALKAWAY 	= 8 -- When the player walks out of the talkRadius of the npc.
-	MESSAGE_DECLINE 	= 9 -- When the player says no to something.
-	MESSAGE_NEEDMORESPACE = 10 -- When the player don't have any space to buy an item
-	MESSAGE_ONBUYNEEDSPACE = 11 -- When the player has some space to buy an item, but not enough space
-	MESSAGE_SENDTRADE   = 12 -- When the npc sends the trade window to the player
-	MESSAGE_NOSHOP		= 13 -- When the npc's shop is requested but he doesn't have any
-	MESSAGE_ONCLOSESHOP	= 14 -- When the player closes the npc's shop window
-	MESSAGE_ALREADYFOCUSED = 15 -- When the player already has the focus of this npc.
-	MESSAGE_PLACEDINQUEUE = 16 -- When the player has been placed in the costumer queue.
-	MESSAGE_BUY 		= 17 -- When the npc asks the player if he wants to buy something.
-	MESSAGE_SELL 		= 18 -- When the npc asks the player if he wants to sell something.
+	MESSAGE_GREET 			= 1 -- When the player greets the npc.
+	MESSAGE_FAREWELL 		= 2 -- When the player unGreets the npc.
+	MESSAGE_BUY 			= 3 -- When the npc asks the player if he wants to buy something.
+	MESSAGE_ONBUY 			= 4 -- When the player successfully buys something via talk.
+	MESSAGE_BOUGHT			= 5 -- When the player bought something through the shop window.
+	MESSAGE_SELL 			= 6 -- When the npc asks the player if he wants to sell something.
+	MESSAGE_ONSELL 			= 7 -- When the player successfully sells something via talk.
+	MESSAGE_SOLD			= 8 -- When the player sold something through the shop window.
+	MESSAGE_MISSINGMONEY	= 9 -- When the player does not have enough money.
+	MESSAGE_NEEDMONEY		= 10 -- Same as above, used for shop window.
+	MESSAGE_MISSINGITEM		= 11 -- When the player is trying to sell an item he does not have.
+	MESSAGE_NEEDITEM		= 12 -- Same as above, used for shop window.
+	MESSAGE_NEEDSPACE 		= 13 -- When the player don't have any space to buy an item
+	MESSAGE_NEEDMORESPACE	= 14 -- When the player has some space to buy an item, but not enough space
+	MESSAGE_IDLETIMEOUT		= 15 -- When the player has been idle for longer then idleTime allows.
+	MESSAGE_WALKAWAY		= 16 -- When the player walks out of the talkRadius of the npc.
+	MESSAGE_DECLINE			= 17 -- When the player says no to something.
+	MESSAGE_SENDTRADE		= 18 -- When the npc sends the trade window to the player
+	MESSAGE_NOSHOP			= 19 -- When the npc's shop is requested but he doesn't have any
+	MESSAGE_ONCLOSESHOP		= 20 -- When the player closes the npc's shop window
+	MESSAGE_ALREADYFOCUSED	= 21 -- When the player already has the focus of this npc.
+	MESSAGE_PLACEDINQUEUE	= 22 -- When the player has been placed in the costumer queue.
+	
+	
 
 	-- Constant indexes for callback functions. These are also used for module callback ids.
 	CALLBACK_CREATURE_APPEAR 	= 1
@@ -75,25 +81,29 @@ if(NpcHandler == nil) then
 		modules = nil,
 		shopItems = nil, -- They must be here since ShopModule uses "static" functions
 		messages = {
-				-- These are the default replies of all npcs. They can/should be changed individually for each npc.
-			[MESSAGE_GREET] 		= 'Welcome, |PLAYERNAME|! I have been expecting you.',
-			[MESSAGE_FAREWELL] 		= 'Good bye, |PLAYERNAME|!',
-			[MESSAGE_ONBUY] 		= 'It was a pleasure doing business with you.',
-			[MESSAGE_ONSELL] 		= 'Thank you for this |ITEMNAME|, |PLAYERNAME|.',
-			[MESSAGE_NEEDMOREMONEY] = 'You do not have enough money, |PLAYERNAME|.',
-			[MESSAGE_NOTHAVEITEM] 	= 'You don\'t even have that item!',
-			[MESSAGE_IDLETIMEOUT] 	= 'Next, please!',
-			[MESSAGE_WALKAWAY] 		= 'How rude!',
-			[MESSAGE_DECLINE]		= 'Not good enough, is it... ?',
-			[MESSAGE_NEEDMORESPACE]	= 'You don\'t have enough space to carry these items.',
-			[MESSAGE_ONBUYNEEDSPACE]= 'Here you are some of them, though you don\'t got space to carry the rest.',
-			[MESSAGE_SENDTRADE]		= 'Here\'s my offer, |PLAYERNAME|. Don\'t you like it?',
-			[MESSAGE_NOSHOP]		= 'Sorry, I\'m not offering anything.',
-			[MESSAGE_ONCLOSESHOP]	= 'Thank you, come back when you want something more.',
-			[MESSAGE_ALREADYFOCUSED]= '|PLAYERNAME|, I am already talking to you.',
-			[MESSAGE_PLACEDINQUEUE] = '|PLAYERNAME|, please wait for your turn. There are |QUEUESIZE| customers before you.',
-			[MESSAGE_BUY] 			= 'Do you want to buy |ITEMCOUNT| |ITEMNAME| for |TOTALCOST| gold coins?',
-			[MESSAGE_SELL] 			= 'Do you want to sell |ITEMCOUNT| |ITEMNAME| for |TOTALCOST| gold coins?'
+			-- These are the default replies of all npcs. They can/should be changed individually for each npc.
+			[MESSAGE_GREET] 			= 'Welcome, |PLAYERNAME|! I have been expecting you.',
+			[MESSAGE_FAREWELL] 			= 'Good bye, |PLAYERNAME|!',
+			[MESSAGE_BUY] 				= 'Do you want to buy |ITEMCOUNT| |ITEMNAME| for |TOTALCOST| gold coins?',
+			[MESSAGE_ONBUY] 			= 'It was a pleasure doing business with you.',
+			[MESSAGE_BOUGHT] 			= 'Bought |ITEMCOUNT|x |ITEMNAME| for |TOTALCOST|.',
+			[MESSAGE_SELL] 				= 'Do you want to sell |ITEMCOUNT| |ITEMNAME| for |TOTALCOST| gold coins?',
+			[MESSAGE_ONSELL] 			= 'Thank you for this |ITEMNAME|, |PLAYERNAME|.',
+			[MESSAGE_SOLD]	 			= 'Sold |ITEMCOUNT|x |ITEMNAME| for |TOTALCOST|.',
+			[MESSAGE_MISSINGMONEY]		= 'You don\'t have enough money, |PLAYERNAME|.',
+			[MESSAGE_NEEDMONEY] 		= 'You do not have enough money',
+			[MESSAGE_MISSINGITEM] 		= 'You don\'t even have that item!',
+			[MESSAGE_NEEDITEM]	 		= 'You do not have this object',
+			[MESSAGE_NEEDSPACE]			= 'You do not have enough capacity',
+			[MESSAGE_NEEDMORESPACE]		= 'You do not have enough capacity for all items',
+			[MESSAGE_IDLETIMEOUT] 		= 'Next, please!',
+			[MESSAGE_WALKAWAY] 			= 'How rude!',
+			[MESSAGE_DECLINE]			= 'Not good enough, is it... ?',
+			[MESSAGE_SENDTRADE]			= 'Here\'s my offer, |PLAYERNAME|. Don\'t you like it?',
+			[MESSAGE_NOSHOP]			= 'Sorry, I\'m not offering anything.',
+			[MESSAGE_ONCLOSESHOP]		= 'Thank you, come back when you want something more.',
+			[MESSAGE_ALREADYFOCUSED]	= '|PLAYERNAME|, I am already talking to you.',
+			[MESSAGE_PLACEDINQUEUE] 	= '|PLAYERNAME|, please wait for your turn. There are |QUEUESIZE| customers before you.'
 		}
 	}
 
@@ -117,7 +127,7 @@ if(NpcHandler == nil) then
 
 		setmetatable(obj.messages, self.messages)
 		self.messages.__index = self.messages
-
+		
 		setmetatable(obj, self)
 		self.__index = self
 		return obj
@@ -454,7 +464,7 @@ if(NpcHandler == nil) then
 						if(focus ~= nil) then
 							if(not self:isInRange(focus)) then
 								self:onWalkAway(focus)
-							elseif(os.time()-self.talkStart[focus] > self.idleTime) then
+							elseif((os.time() - self.talkStart[focus]) > self.idleTime) then
 								self:unGreet(focus)
 							else
 								self:updateFocus()
@@ -532,6 +542,7 @@ if(NpcHandler == nil) then
 		if distance == -1 then
 			return false
 		end
+		
 		return (distance <= self.talkRadius)
 	end
 

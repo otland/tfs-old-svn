@@ -108,4 +108,7 @@ std::string getReason(int32_t reasonId);
 std::string getAction(int32_t actionId, bool IPBanishment);
 
 bool fileExists(const char* filename);
+
+bool operator<(const ShopInfo& left, const ShopInfo& right);
+void sortItems(std::list<ShopInfo>& itemList);
 #endif
