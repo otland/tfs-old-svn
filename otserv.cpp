@@ -367,7 +367,7 @@ void mainLoader()
 	if(!g_game.loadExperienceStages())
 		startupErrorMessage("Unable to load experience stages!");
 
-	std::string passwordType = asLowerCaseString(g_config.getString(ConfigManager::PASSWORDTYPE));
+	std::string passwordType = asLowerCaseString(g_config.getString(ConfigManager::PASSWORD_TYPE));
 	if(passwordType == "md5")
 	{
 		g_config.setNumber(ConfigManager::PASSWORD_TYPE, PASSWORD_TYPE_MD5);
