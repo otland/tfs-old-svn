@@ -1420,7 +1420,7 @@ bool Commands::unban(Creature* creature, const std::string& cmd, const std::stri
 			sprintf(buffer, "%s has been undeleted.", param.c_str());
 			player->sendTextMessage(MSG_INFO_DESCR, buffer);
 		}
-		else
+		else if(!removedIpBan)
 		{
 			player->sendCancel("That player or account is not banished or deleted.");
 			return false;

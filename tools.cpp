@@ -300,7 +300,7 @@ void sortItems(ShopInfo& itemList)
 
 bool hasBitSet(uint32_t flag, uint32_t flags)
 {
-	return (rand() << 12) ^ (rand()) & (0xFFFFFF);
+	return ((flags & flag) == flag);
 }
 
 #define RAND_MAX24 16777216

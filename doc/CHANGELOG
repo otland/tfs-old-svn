@@ -196,19 +196,23 @@
 ]
 
 [ Milestone 
+	[ Note 
+		Some of the features were added to Mystic Spirit (0.2) due popularity of them.
+	]
+
 	White skull time configurable on config.lua (Talaturen)
 	Time to decrease frags on config.lua (Talaturen)
-	Added all monsters of protocol 8.1 (Lithium, OpenTibiaSVN)
+	Added all monsters of protocol 8.22 (Lithium, OpenTibia SVN)
 	Attackspeed for items in items.xml (Talaturen)
 	Basespeed in vocations.xml (Talaturen)
 	onLook(cid, pos) creaturescript event (Talaturen)
 	/pvp command to change worldtype (Talaturen)
 	/goto command (/goto x y z) (Talaturen)
 	Configurable level to form guild (Talaturen)
-	Replaced party system with the party system from OpenTibias avesta branch (Talaturen) 
-	Added more NPC's and placed in the map (Lithium)	
-	Swimming system (Lithium, OpenTibiaSVN)
-	Global Storage values saving in database (Elf, OpenTibiaSVN)
+	Replaced party system with the party system from OpenTibias avesta branch (Talaturen)
+	Added more NPC's and placed in the map (Lithium, Elf)
+	Swimming system (Lithium, OpenTibia SVN)
+	Global Storage values saving in database (Elf, OpenTibia SVN)
 	Configurable level to buy and sell house (Elf)
 	Configurable amount (0 to disable) of houses per each account (Elf)
 	/send command (/send player, x y z) (Elf)
@@ -232,6 +236,7 @@
 	Stamina system (Elf, Cayan's Code)
 	Moved players record and motd to database (Elf)
 	Moved CTRL + Z bug reports to database, written /reports command (Elf)
+	Marriage system (Elf)
 ]
 
 [ Deprecated
@@ -317,6 +322,7 @@
 	ALTER TABLE `players` CHANGE `loss_mana` `loss_mana` INT NOT NULL DEFAULT 10;
 	ALTER TABLE `players` CHANGE `loss_skills` `loss_skills` INT NOT NULL DEFAULT 10;
 	ALTER TABLE `players` ADD `loss_items` INT NOT NULL DEFAULT 10 AFTER `loss_skills`;
+	ALTER TABLE `players` ADD `marriage` INT UNSIGNED NOT NULL DEFAULT 0;
 	UPDATE `players` SET `loss_experience` = 10, `loss_mana` = 10, `loss_skills` = 10, `loss_items` = 10;
 
 	ALTER TABLE `accounts` DROP `type`;
@@ -355,10 +361,9 @@
 ]
 
 [ Fixed issues with...
-	Last house warnings (OpenTibiaSVN)
-	High CPU usage (OpenTibiaSVN)
-	PVP Zones skill loss and item drop (Talaturen, Elf, OpenTibiaSVN)
-	Old Enchant Spear spell issue [transforming any amount would always return 1] (Elf)
+	Last house warnings (OpenTibia SVN)
+	High CPU usage (OpenTibia SVN)
+	PVP Zones skill loss and item drop (Talaturen, Elf, OpenTibia SVN)
 	Bed sleepers not loading (Elf)
 	Items with 0 charges not being removed (Elf, Kiper)
 ]
