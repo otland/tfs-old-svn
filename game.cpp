@@ -4528,10 +4528,20 @@ void Game::updateCreatureSkull(Player* player)
 	}
 }
 
-void Game::serverSave()
+void Game::autoSave()
 {
 	saveGameState(true);
-	Scheduler::getScheduler().addEvent(createSchedulerTask(g_config.getNumber(ConfigManager::AUTO_SAVE_EACH_MINUTES) * 60 * 1000, boost::bind(&Game::serverSave, this)));
+	if(g_config.getNumber(ConfigManager::AUTOSAVE_EACH_MINUTES) > 0)
+		Scheduler::getScheduler().addEvent(createSchedulerTask(g_config.getNumber(ConfigManager::AUTOSAVE_EACH_MINUTES) * 60 * 1000,
+			boost::bind(&Game::autoSave, this)));
+}
+
+void Game::autoClean()
+{
+	getMap()->clean();
+	if(g_config.getNumber(ConfigManager::AUTOCLEAN_EACH_MINUTES) > 0)
+		Scheduler::getScheduler().addEvent(createSchedulerTask(g_config.getNumber(ConfigManager::AUTOCLEAN_EACH_MINUTES) * 60 * 1000,
+			boost::bind(&Game::autoClean, this)));
 }
 
 void Game::prepareGlobalSave()

@@ -184,14 +184,12 @@ bool ChatChannel::talk(Player* fromPlayer, SpeakClasses type, const std::string&
 	}
 
 	bool success = false;
-	UsersMap::iterator it;
-
-	for(it = m_users.begin(); it != m_users.end(); ++it)
+	Player* tmpPlayer = NULL;
+	for(UsersMap::iterator it = m_users.begin(); it != m_users.end(); ++it)
 	{
-		Player* toPlayer = it->second->getPlayer();
-		if(toPlayer)
+		if(tmpPlayer = it->second->getPlayer())
 		{
-			toPlayer->sendToChannel(fromPlayer, type, text, m_id, time);
+			tmpPlayer->sendToChannel(fromPlayer, type, text, m_id, time);
 			success = true;
 		}
 	}

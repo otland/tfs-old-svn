@@ -417,9 +417,13 @@ void mainLoader()
 	#endif
 	g_game.setGameState(GAME_STATE_INIT);
 
-	int32_t autoSaveEachMinutes = g_config.getNumber(ConfigManager::AUTO_SAVE_EACH_MINUTES);
-	if(autoSaveEachMinutes > 0)
-		Scheduler::getScheduler().addEvent(createSchedulerTask(autoSaveEachMinutes * 60 * 1000, boost::bind(&Game::serverSave, &g_game)));
+	if(g_config.getNumber(ConfigManager::AUTOSAVE_EACH_MINUTES) > 0)
+		Scheduler::getScheduler().addEvent(createSchedulerTask(g_config.getNumber(ConfigManager::AUTOSAVE_EACH_MINUTES) * 60 * 1000,
+			boost::bind(&Game::autoSave, &g_game)));
+
+	if(g_config.getNumber(ConfigManager::AUTOCLEAN_EACH_MINUTES) > 0)
+		Scheduler::getScheduler().addEvent(createSchedulerTask(g_config.getNumber(ConfigManager::AUTOCLEAN_EACH_MINUTES) * 60 * 1000,
+			boost::bind(&Game::autoClean, &g_game)));
 
 	if(g_config.getBool(ConfigManager::GLOBALSAVE_ENABLED) && g_config.getNumber(ConfigManager::GLOBALSAVE_H) >= 0 && g_config.getNumber(ConfigManager::GLOBALSAVE_H) <= 24)
 	{

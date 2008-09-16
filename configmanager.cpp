@@ -133,7 +133,8 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confNumber[LEVEL_TO_FORM_GUILD] = getGlobalNumber(L, "levelToFormGuild", 8);
 	m_confNumber[MIN_GUILDNAME] = getGlobalNumber(L, "guildNameMinLength", 4);
 	m_confNumber[MAX_GUILDNAME] = getGlobalNumber(L, "guildNameMaxLength", 20);
-	m_confNumber[AUTO_SAVE_EACH_MINUTES] = getGlobalNumber(L, "autoSaveEachMinutes", 0);
+	m_confNumber[AUTOSAVE_EACH_MINUTES] = getGlobalNumber(L, "autoSaveEachMinutes", 0);
+	m_confNumber[AUTOCLEAN_EACH_MINUTES] = getGlobalNumber(L, "autoCleanEachMinutes", 0);
 	m_confNumber[LEVEL_TO_BUY_HOUSE] = getGlobalNumber(L, "levelToBuyHouse", 1);
 	m_confNumber[HOUSES_PER_ACCOUNT] = getGlobalNumber(L, "housesPerAccount", 0);
 	m_confBool[HOUSE_BUY_AND_SELL] = getGlobalBool(L, "buyableAndSellableHouses", "yes");

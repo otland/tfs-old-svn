@@ -30,7 +30,7 @@ class Account
 {
 	public:
 		Account();
-		~Account();
+		virtual ~Account();
 
 		uint32_t accnumber, lastDay, premiumDays;
 		int32_t warnings;

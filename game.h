@@ -121,7 +121,8 @@ class Game
 		bool reloadHighscores();
 		std::string getHighscoreString(uint16_t skill);
 
-		void serverSave();
+		void autoSave();
+		void autoClean();
 		void prepareGlobalSave();
 		void globalSave();
 
@@ -509,8 +510,8 @@ class Game
 
 		void startDecay(Item* item);
 
-		Map* getMap() { return map;}
-		const Map* getMap() const { return map;}
+		Map* getMap() {return map;}
+		const Map* getMap() const {return map;}
 
 		int getLightHour() {return light_hour;}
 

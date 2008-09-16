@@ -58,14 +58,14 @@
 	replaceKickOnLogin = "yes"
 
 	-- Database
+	-- NOTE: sqlFile is used only by sqlite database
 	sqlType = "sqlite"
 	sqlHost = "localhost"
 	sqlPort = 3306
 	sqlUser = "root"
 	sqlPass = ""
 	sqlDatabase = "theforgottenserver"
-	sqlFile "forgottenserver.s3db"
-	-- NOTE: sqlFile is used only by sqlite database
+	sqlFile = "forgottenserver.s3db"
 	passwordType = "plain"
 
 	-- Deathlist
@@ -125,16 +125,18 @@
 	rateSpawn = 1
 
 	-- Global save
-	-- NOTE: serverSaveHour means like 03:00, not that it will save every 3 hours,
-	-- if you want such a system use autoSaveEachMinutes. this serversave method
-	-- may be unstable, we recommend using otadmin if you want real serversaves.
+	-- NOTE: globalSaveHour means like 03:00, not that it will save every 3 hours,
+	-- if you want such a system use autoSaveEachMinutes. This save method
+	-- may be unstable, we recommend using OTAdmin if you want real saves.
 	globalSaveEnabled = "no"
 	globalSaveHour = 3
 	shutdownAtGlobalSave = "yes"
 	cleanMapAtGlobalSave = "yes"
 
-	-- Server save
+	-- Server events
+	-- NOTE: Put '0' to disable auto*.
 	autoSaveEachMinutes = 15
+	autoCleanEachMinutes = 0
 	saveGlobalStorage = "no"
 
 	-- Spawns

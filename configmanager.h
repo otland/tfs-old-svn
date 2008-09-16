@@ -34,7 +34,7 @@ class ConfigManager
 {
 	public:
 		ConfigManager();
-		~ConfigManager();
+		virtual ~ConfigManager();
 
 		enum string_config_t
 		{
@@ -118,7 +118,8 @@ class ConfigManager
 			FINALBAN_LENGTH,
 			IPBANISHMENT_LENGTH,
 			MAX_PLAYER_SUMMONS,
-			AUTO_SAVE_EACH_MINUTES,
+			AUTOSAVE_EACH_MINUTES,
+			AUTOCLEAN_EACH_MINUTES,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 
