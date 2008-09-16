@@ -41,8 +41,6 @@ if(NpcHandler == nil) then
 	MESSAGE_ONCLOSESHOP		= 20 -- When the player closes the npc's shop window
 	MESSAGE_ALREADYFOCUSED	= 21 -- When the player already has the focus of this npc.
 	MESSAGE_PLACEDINQUEUE	= 22 -- When the player has been placed in the costumer queue.
-	
-	
 
 	-- Constant indexes for callback functions. These are also used for module callback ids.
 	CALLBACK_CREATURE_APPEAR 	= 1
@@ -86,9 +84,9 @@ if(NpcHandler == nil) then
 			[MESSAGE_FAREWELL] 			= 'Good bye, |PLAYERNAME|!',
 			[MESSAGE_BUY] 				= 'Do you want to buy |ITEMCOUNT| |ITEMNAME| for |TOTALCOST| gold coins?',
 			[MESSAGE_ONBUY] 			= 'It was a pleasure doing business with you.',
-			[MESSAGE_BOUGHT] 			= 'Bought |ITEMCOUNT|x |ITEMNAME| for |TOTALCOST|.',
+			[MESSAGE_BOUGHT] 			= 'Bought |ITEMCOUNT|x |ITEMNAME| for |TOTALCOST| gold.',
 			[MESSAGE_SELL] 				= 'Do you want to sell |ITEMCOUNT| |ITEMNAME| for |TOTALCOST| gold coins?',
-			[MESSAGE_ONSELL] 			= 'Thank you for this |ITEMNAME|, |PLAYERNAME|.',
+			[MESSAGE_ONSELL] 			= 'Thank you for this |ITEMNAME|, |PLAYERNAME| gold.',
 			[MESSAGE_SOLD]	 			= 'Sold |ITEMCOUNT|x |ITEMNAME| for |TOTALCOST|.',
 			[MESSAGE_MISSINGMONEY]		= 'You don\'t have enough money, |PLAYERNAME|.',
 			[MESSAGE_NEEDMONEY] 		= 'You do not have enough money',
