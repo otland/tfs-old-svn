@@ -506,8 +506,11 @@ class LuaScriptInterface
 		static int32_t luaGetInstantSpellInfoByName(lua_State* L);
 		static int32_t luaGetInstantSpellWords(lua_State* L);
 
-		static int32_t luaGetPlayerMarriage(lua_State* L);
-		static int32_t luaSetPlayerMarriage(lua_State* L);
+		static int32_t luaGetPlayerPartner(lua_State* L);
+		static int32_t luaSetPlayerPartner(lua_State* L);
+		static int32_t luaGetPlayerParty(lua_State* L);
+		static int32_t luaGetPartyMembers(lua_State* L);
+
 		static int32_t luaGetPlayerStorageValue(lua_State* L);
 		static int32_t luaSetPlayerStorageValue(lua_State* L);
 		static int32_t luaDoPlayerAddBlessing(lua_State* L);

@@ -922,11 +922,10 @@ double Item::getWeight() const
 std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 	const Item* item /*= NULL*/, int32_t subType /*= -1*/)
 {
-	/*if(item)
+	if(item)
 	{
 		subType = item->getSubType();
-
-		ItemType& it = Item::items.getItemType(it.id);
+		/*ItemType& it = Item::items.getItemType(it.id);
 		it.name = item->getName();
 		it.article = item->getArticle();
 		it.pluralName = item->getPluralName();
@@ -935,8 +934,8 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		it.defense = item->getDefense();
 		it.extraDefense = item->getExtraDefense();
 		it.armor = item->getArmor();
-		it.hitChance = item->getHitChance();
-	}*/
+		it.hitChance = item->getHitChance();*/
+	}
 
 	std::stringstream s;
 	if(it.name.length())

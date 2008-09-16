@@ -417,13 +417,19 @@ void mainLoader()
 	#endif
 	g_game.setGameState(GAME_STATE_INIT);
 
-	if(g_config.getNumber(ConfigManager::AUTOSAVE_EACH_MINUTES) > 0)
-		Scheduler::getScheduler().addEvent(createSchedulerTask(g_config.getNumber(ConfigManager::AUTOSAVE_EACH_MINUTES) * 60 * 1000,
-			boost::bind(&Game::autoSave, &g_game)));
+	uint32_t autoTime = g_config.getNumber(ConfigManager::AUTOSAVE_EACH_MINUTES);
+	if(autoTime > 0)
+	{
+		std::cout << ">> Automatic saving enabled (" << autoTime << " minutes)." << std::endl;
+		Scheduler::getScheduler().addEvent(createSchedulerTask(autoTime * 60 * 1000, boost::bind(&Game::autoSave, &g_game)));
+	}
 
-	if(g_config.getNumber(ConfigManager::AUTOCLEAN_EACH_MINUTES) > 0)
-		Scheduler::getScheduler().addEvent(createSchedulerTask(g_config.getNumber(ConfigManager::AUTOCLEAN_EACH_MINUTES) * 60 * 1000,
-			boost::bind(&Game::autoClean, &g_game)));
+	autoTime = g_config.getNumber(ConfigManager::AUTOCLEAN_EACH_MINUTES);
+	if(autoTime > 0)
+	{
+		std::cout << ">> Automatic cleaning enabled (" << autoTime << " minutes)." << std::endl;
+		Scheduler::getScheduler().addEvent(createSchedulerTask(autoTime * 60 * 1000, boost::bind(&Game::autoClean, &g_game)));
+	}
 
 	if(g_config.getBool(ConfigManager::GLOBALSAVE_ENABLED) && g_config.getNumber(ConfigManager::GLOBALSAVE_H) >= 0 && g_config.getNumber(ConfigManager::GLOBALSAVE_H) <= 24)
 	{

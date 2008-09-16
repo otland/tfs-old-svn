@@ -93,7 +93,7 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 	std::string itemsstring;
 
 	DBInsert query_insert(db);
-	query_insert.setQuery("INSERT INTO `tile_items` (`tile_id`, `sid` , `pid` , `itemtype` , `count`, `attributes` ) VALUES ");
+	query_insert.setQuery("INSERT INTO `tile_items` (`tile_id`, `sid`, `pid`, `itemtype`, `count`, `attributes`) VALUES ");
 	for(uint32_t i = 0; i < tile->getThingCount(); ++i)
 	{
 		item = tile->__getThing(i)->getItem();
@@ -115,7 +115,7 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 		{
 			DBQuery tileListQuery;
 			const Position& tilePos = tile->getPosition();
-			tileListQuery << "INSERT INTO `tiles` (`id`, `x` , `y` , `z` ) VALUES";
+			tileListQuery << "INSERT INTO `tiles` (`id`, `x`, `y`, `z`) VALUES";
 			tileListQuery << "(" << tileId << ", " << tilePos.x << ", " << tilePos.y << ", " << tilePos.z << ")";
 			
 			if(!db->executeQuery(tileListQuery.str()))
@@ -180,7 +180,7 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 
 bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 {
-	typedef std::map<int,std::pair<Item*,int> > ItemMap;
+	typedef std::map<int32_t, std::pair<Item*, int32_t> > ItemMap;
 	ItemMap itemMap;
 
 	const Position& tilePos = tile->getPosition();
@@ -196,7 +196,7 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 	int32_t tileId = result->getDataInt("id");
 	db.freeResult(result);
 	query.str("");
-	query << "SELECT * FROM `tile_items` WHERE `tile_id` = " << tileId << " ORDER BY `sid` DESC";
+	query << "SELECT * FROM `tile_items` WHERE `tile_id` = " << tileId << " ORDER BY `sid` DESC;";
 	if((result = db.storeQuery(query.str())))
 	{
 		Item* item = NULL;

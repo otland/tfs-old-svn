@@ -259,13 +259,6 @@ std::string Player::getDescription(int32_t lookDistance) const
 			s << " You are " << vocation->getVocDescription();
 		else
 			s << " You have no vocation";
-
-		if(marriage != 0)
-		{
-			std::string partner;
-			IOLoginData::getInstance()->getNameByGuid(marriage, partner);
-			s << " and you are married with " << partner;
-		}
 	}
 	else
 	{
@@ -285,13 +278,24 @@ std::string Player::getDescription(int32_t lookDistance) const
 			s << " is " << vocation->getVocDescription();
 		else
 			s << " has no vocation";
+	}
 
-		if(marriage != 0)
+	if(IOLoginData::getInstance()->getNameByGuid(marriage, str))
+	{
+		s << ", ";
+		if(vocation_id == 0)
 		{
-			std::string partner;
-			IOLoginData::getInstance()->getNameByGuid(marriage, partner);
-			s << ", married with " << partner;
+			if(lookDistance == -1)
+				s << "and you are";
+			else
+				s << "and is";
 		}
+
+		if(sex == PLAYERSEX_FEMALE)
+			s << " wife";
+		else
+			s << " husband";
+		s << " of " << str;
 	}
 	s << ".";
 

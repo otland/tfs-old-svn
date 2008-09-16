@@ -197,6 +197,8 @@ void Game::setGameState(GameState_t newState)
 
 void Game::saveGameState(bool savePlayers)
 {
+	std::cout << "> Saving server..." << std::endl;
+
 	if(savePlayers)
 	{
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
@@ -3319,7 +3321,7 @@ bool Game::playerSaySpell(Player* player, SpeakClasses type, const std::string& 
 	result = g_spells->playerSaySpell(player, type, text);
 	if(result == TALKACTION_BREAK)
 	{
-		//std::string _text = g_config.getBool(ConfigManager::SPELL_NAME_INSTEAD_WORDS) ? g_spells->getInstantSpell(text)->getName() : text;
+		//std::string _text = (g_config.getBool(ConfigManager::SPELL_NAME_INSTEAD_WORDS) ? g_spells->getInstantSpell(text)->getName() : text);
 		return internalCreatureSay(player, SPEAK_SAY, text);
 	}
 	else if(result == TALKACTION_FAILED)
@@ -4536,12 +4538,20 @@ void Game::autoSave()
 			boost::bind(&Game::autoSave, this)));
 }
 
-void Game::autoClean()
+void Game::autoClean(bool warning /*= true*/)
 {
-	getMap()->clean();
-	if(g_config.getNumber(ConfigManager::AUTOCLEAN_EACH_MINUTES) > 0)
-		Scheduler::getScheduler().addEvent(createSchedulerTask(g_config.getNumber(ConfigManager::AUTOCLEAN_EACH_MINUTES) * 60 * 1000,
-			boost::bind(&Game::autoClean, this)));
+	if(warning)
+	{
+		broadcastMessage("Game map cleaning withing 60 seconds, please pick up your items!", MSG_STATUS_WARNING);
+		Scheduler::getScheduler().addEvent(createSchedulerTask(60 * 1000, boost::bind(&Game::autoClean, this, true)));
+	}
+	else
+	{
+		getMap()->clean();
+		if(g_config.getNumber(ConfigManager::AUTOCLEAN_EACH_MINUTES) > 0)
+			Scheduler::getScheduler().addEvent(createSchedulerTask(g_config.getNumber(ConfigManager::AUTOCLEAN_EACH_MINUTES) * 60 * 1000,
+				boost::bind(&Game::autoClean, this)));
+	}
 }
 
 void Game::prepareGlobalSave()
@@ -4870,7 +4880,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 	if(!notation)
 		IOBan::getInstance()->removeNotations(account.accnumber);
 
-	char buffer[600 + banComment.length()];
+	char buffer[800 + banComment.length()];
 	if(g_config.getBool(ConfigManager::BROADCAST_BANISHMENTS))
 	{
 		if(action == 6)

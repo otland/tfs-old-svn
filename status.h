@@ -57,6 +57,7 @@ class ProtocolStatus : public Protocol
 class Status
 {
 	public:
+		virtual ~Status() {}
 		static Status* getInstance()
 		{
 			static Status status;

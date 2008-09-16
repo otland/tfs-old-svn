@@ -187,7 +187,7 @@ bool ChatChannel::talk(Player* fromPlayer, SpeakClasses type, const std::string&
 	Player* tmpPlayer = NULL;
 	for(UsersMap::iterator it = m_users.begin(); it != m_users.end(); ++it)
 	{
-		if(tmpPlayer = it->second->getPlayer())
+		if((tmpPlayer = it->second->getPlayer()))
 		{
 			tmpPlayer->sendToChannel(fromPlayer, type, text, m_id, time);
 			success = true;

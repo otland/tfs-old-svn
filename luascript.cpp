@@ -1853,6 +1853,18 @@ void LuaScriptInterface::registerFunctions()
 	//setPlayerExtraExpRate(cid, value)
 	lua_register(m_luaState, "setPlayerExtraExpRate", LuaScriptInterface::luaSetPlayerExtraExpRate);
 
+	//getPlayerPartner(cid)
+	lua_register(m_luaState, "getPlayerPartner", LuaScriptInterface::luaGetPlayerPartner);
+
+	//setPlayerPartner(cid, guid)
+	lua_register(m_luaState, "setPlayerPartner", LuaScriptInterface::luaSetPlayerPartner);
+
+	//getPlayerParty(cid)
+	lua_register(m_luaState, "getPlayerParty", LuaScriptInterface::luaGetPlayerParty);
+
+	//getPartyMembers(lid)
+	lua_register(m_luaState, "getPartyMembers", LuaScriptInterface::luaGetPartyMembers);  
+
 	//getCreatureMaster(cid)
 	lua_register(m_luaState, "getCreatureMaster", LuaScriptInterface::luaGetCreatureMaster);
 
@@ -2204,7 +2216,7 @@ int32_t LuaScriptInterface::luaGetPlayerNoMove(lua_State* L)
 	return internalGetPlayerInfo(L, PlayerInfoNoMove);
 }
 
-int32_t LuaScriptInterface::luaGetPlayerMarriage(lua_State* L)
+int32_t LuaScriptInterface::luaGetPlayerPartner(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoMarriage);
 }
@@ -6540,18 +6552,16 @@ int32_t LuaScriptInterface::luaGetPlayerByName(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerGUIDByName(lua_State* L)
 {
 	//getPlayerGUIDByName(name)
-	const char* name = popString(L);
-	
-	Player* player = g_game.getPlayerByName(name);
+	std::string name = popString(L);
 	uint32_t value = LUA_NULL;
 
+	Player* player = g_game.getPlayerByName(name.c_str());
 	if(player)
 		value = player->getGUID();
 	else
 	{
 		uint32_t guid;
-		std::string strName(name);
-		if(IOLoginData::getInstance()->getGuidByName(guid, strName))
+		if(IOLoginData::getInstance()->getGuidByName(guid, name))
 			value = guid;
 	}
 
@@ -7733,24 +7743,82 @@ int32_t LuaScriptInterface::luaDoPlayerAddStamina(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaSetPlayerMarriage(lua_State* L)
+int32_t LuaScriptInterface::luaSetPlayerPartner(lua_State* L)
 {
-	//setPlayerMarriage(cid, guid)
+	//setPlayerPartner(cid, guid)
 	uint32_t guid = popNumber(L);
 	uint32_t cid = popNumber(L);
+	
 	ScriptEnviroment* env = getScriptEnv();
 	Player* player = env->getPlayerByUID(cid);
-	if(player)
-	{
-		player->marriage = guid;
-		lua_pushnumber(L, LUA_NO_ERROR);
-	}
-	else
+	if(!player)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
 	}
+	player->marriage = guid;
+	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetPlayerParty(lua_State* L)
+{
+	//getPlayerParty(cid)
+	uint32_t cid = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	Player* player = env->getPlayerByUID(cid);
+	if(player)
+	{
+		Party* party = player->getParty();
+		if(party)
+		{
+			uint32_t cid = env->addThing(party->getLeader());
+			lua_pushnumber(L, cid);
+		}
+		else
+			lua_pushnumber(L, LUA_FALSE);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnumber(L, LUA_FALSE);
+	}
+
+    return 1;
+}
+
+int32_t LuaScriptInterface::luaGetPartyMembers(lua_State* L)
+{
+    //getPartyMembers(lid) // lid = leaderId (= partyId)
+	uint32_t lid = popNumber(L);
+
+    ScriptEnviroment* env = getScriptEnv();
+    Player* player = env->getPlayerByUID(lid);
+    if(player)
+    {
+		Party* party = player->getParty();
+		if(party)
+		{
+			PlayerVector memberList = party->getMembers();
+			if(!memberList.empty())
+			{
+				lua_newtable(L);
+				for(uint16_t i = 0; i < memberList.size(); ++i)
+				{
+					uint32_t cid = env->addThing(memberList[i]);
+
+					lua_pushnumber(L, ++i);
+					lua_pushnumber(L, cid);
+					lua_settable(L, -3);
+				}
+				return 1;
+			}
+		}
+	}
+
+	lua_pushnumber(L, LUA_FALSE);
+	return 0;
 }
 
 int32_t LuaScriptInterface::luaGetOnlinePlayers(lua_State* L)

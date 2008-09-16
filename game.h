@@ -122,7 +122,7 @@ class Game
 		std::string getHighscoreString(uint16_t skill);
 
 		void autoSave();
-		void autoClean();
+		void autoClean(bool warning = true);
 		void prepareGlobalSave();
 		void globalSave();
 

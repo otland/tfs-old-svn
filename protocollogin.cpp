@@ -189,8 +189,8 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	}
 	else
 		output->AddByte((uint8_t)account.charList.size());
-	std::list<std::string>::iterator it;
-	for(it = account.charList.begin(); it != account.charList.end(); it++)
+
+	for(std::list<std::string>::iterator it = account.charList.begin(); it != account.charList.end(); it++)
 	{
 		output->AddString((*it));
 		if(g_config.getBool(ConfigManager::ON_OR_OFF_CHARLIST))
