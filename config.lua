@@ -103,6 +103,7 @@
 	cleanProtectedZones = "yes"
 
 	-- Miscellaneous
+	-- NOTE: defaultPriority works only on Windows
 	kickIdlePlayerAfterMinutes = 15
 	maxMessageBuffer = 4
 	displayGamemastersWithOnlineCommand = "no"
@@ -129,15 +130,15 @@
 	-- if you want such a system use autoSaveEachMinutes. This save method
 	-- may be unstable, we recommend using OTAdmin if you want real saves.
 	globalSaveEnabled = "no"
-	globalSaveHour = 3
+	globalSaveHour = 8
 	shutdownAtGlobalSave = "yes"
-	cleanMapAtGlobalSave = "yes"
+	cleanMapAtGlobalSave = "no"
 
 	-- Server events
 	-- NOTE: Put '0' to disable auto*.
 	autoSaveEachMinutes = 15
 	autoCleanEachMinutes = 0
-	saveGlobalStorage = "no"
+	saveGlobalStorage = "yes"
 
 	-- Spawns
 	deSpawnRange = 2
@@ -147,10 +148,6 @@
 	maxPlayerSummons = 2
 	teleportAllSummons = "no" --FIXME: doesn't work
 	teleportPlayerSummons = "no" --FIXME: doesn't work
-
-	-- Startup
-	-- NOTE: This works only in Windows
-	defaultPriority = "high"
 
 	-- Status
 	ownerName = ""

@@ -573,6 +573,7 @@ bool Items::loadFromXml()
 							{
 								if(readXMLString(itemAttributesNode, "value", strValue))
 								{
+									tmpStrValue = asLowerCaseString(strValue);
 									FluidTypes_t fluid = getFluidType(tmpStrValue);
 									if(fluid != FLUID_NONE)
 										it.fluidSource = fluid;

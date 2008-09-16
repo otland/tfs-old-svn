@@ -66,7 +66,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confString[MAP_NAME] = getGlobalString(L, "mapName", "forgotten");
 		m_confString[MAP_AUTHOR] = getGlobalString(L, "mapAuthor", "Unknown");
 		m_confBool[GLOBALSAVE_ENABLED] = getGlobalBool(L, "serverSaveEnabled", "yes");
-		m_confNumber[GLOBALSAVE_H] = getGlobalNumber(L, "serverSaveHour", 3);
+		m_confNumber[GLOBALSAVE_H] = getGlobalNumber(L, "serverSaveHour", 8);
 		m_confString[HOUSE_RENT_PERIOD] = getGlobalString(L, "houseRentPeriod", "monthly");
 	}
 
@@ -133,7 +133,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confNumber[LEVEL_TO_FORM_GUILD] = getGlobalNumber(L, "levelToFormGuild", 8);
 	m_confNumber[MIN_GUILDNAME] = getGlobalNumber(L, "guildNameMinLength", 4);
 	m_confNumber[MAX_GUILDNAME] = getGlobalNumber(L, "guildNameMaxLength", 20);
-	m_confNumber[AUTOSAVE_EACH_MINUTES] = getGlobalNumber(L, "autoSaveEachMinutes", 0);
+	m_confNumber[AUTOSAVE_EACH_MINUTES] = getGlobalNumber(L, "autoSaveEachMinutes", 15);
 	m_confNumber[AUTOCLEAN_EACH_MINUTES] = getGlobalNumber(L, "autoCleanEachMinutes", 0);
 	m_confNumber[LEVEL_TO_BUY_HOUSE] = getGlobalNumber(L, "levelToBuyHouse", 1);
 	m_confNumber[HOUSES_PER_ACCOUNT] = getGlobalNumber(L, "housesPerAccount", 0);
