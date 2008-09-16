@@ -428,7 +428,7 @@ void mainLoader()
 	if(autoTime > 0)
 	{
 		std::cout << ">> Automatic cleaning enabled (" << autoTime << " minutes)." << std::endl;
-		Scheduler::getScheduler().addEvent(createSchedulerTask(autoTime * 60 * 1000, boost::bind(&Game::autoClean, &g_game)));
+		Scheduler::getScheduler().addEvent(createSchedulerTask(autoTime * 60 * 1000, boost::bind(&Game::autoClean, &g_game, true)));
 	}
 
 	if(g_config.getBool(ConfigManager::GLOBALSAVE_ENABLED) && g_config.getNumber(ConfigManager::GLOBALSAVE_H) >= 0 && g_config.getNumber(ConfigManager::GLOBALSAVE_H) <= 24)

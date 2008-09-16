@@ -4542,7 +4542,7 @@ void Game::autoClean(bool warning /*= true*/)
 {
 	if(warning)
 	{
-		broadcastMessage("Game map cleaning withing 60 seconds, please pick up your items!", MSG_STATUS_WARNING);
+		broadcastMessage("Game map cleaning within 60 seconds, please pick up your items!", MSG_STATUS_WARNING);
 		Scheduler::getScheduler().addEvent(createSchedulerTask(60 * 1000, boost::bind(&Game::autoClean, this, false)));
 	}
 	else
@@ -4550,7 +4550,7 @@ void Game::autoClean(bool warning /*= true*/)
 		getMap()->clean();
 		uint32_t autoTime = g_config.getNumber(ConfigManager::AUTOCLEAN_EACH_MINUTES);
 		if(autoTime > 0)
-			Scheduler::getScheduler().addEvent(createSchedulerTask(autoTime * 60 * 1000, boost::bind(&Game::autoClean, this)));
+			Scheduler::getScheduler().addEvent(createSchedulerTask(autoTime * 60 * 1000, boost::bind(&Game::autoClean, this, true)));
 	}
 }
 
