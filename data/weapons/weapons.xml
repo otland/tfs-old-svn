@@ -10,7 +10,7 @@
 	<wand id="2185" level="19" mana="5" min="27" max="33" type="death" function="default"> <!-- Necrotic Rod -->
 		<vocation name="Druid"/>
 	</wand>
-	<wand id="8817" level="22" mana="5" min="27" max="33" type="ice" function="default"> <!-- Northwind Rod -->
+	<wand id="8911" level="22" mana="5" min="27" max="33" type="ice" function="default"> <!-- Northwind Rod -->
 		<vocation name="Druid"/>
 	</wand>	
 	<wand id="2181" level="26" mana="8" min="42" max="48" type="earth" function="default"> <!-- Terra Rod -->
@@ -19,10 +19,10 @@
 	<wand id="2183" level="33" mana="13" min="55" max="75" type="ice" function="default"> <!-- Hailstorm Rod -->
 		<vocation name="Druid"/>
 	</wand>
-	<wand id="8818" level="37" mana="13" min="55" max="75" type="earth" function="default"> <!-- Springsprout Rod -->
+	<wand id="8912" level="37" mana="13" min="55" max="75" type="earth" function="default"> <!-- Springsprout Rod -->
 		<vocation name="Druid"/>
 	</wand>
-	<wand id="8816" level="42" mana="13" min="55" max="75" type="death" function="default"> <!-- Underworld Rod -->
+	<wand id="8910" level="42" mana="13" min="55" max="75" type="death" function="default"> <!-- Underworld Rod -->
 		<vocation name="Druid"/>
 	</wand>	
 
@@ -36,7 +36,7 @@
 	<wand id="2188" level="19" mana="5" min="27" max="33" type="death" function="default"> <!-- Wand of Decay -->
 		<vocation name="Sorcerer"/>
 	</wand>
-	<wand id="8827" level="22" mana="5" min="27" max="33" type="fire" function="default"> <!-- Wand of Draconia -->
+	<wand id="8921" level="22" mana="5" min="27" max="33" type="fire" function="default"> <!-- Wand of Draconia -->
 		<vocation name="Sorcerer"/>
 	</wand>	
 	<wand id="2189" level="26" mana="8" min="42" max="48" type="energy" function="default"> <!-- Wand of Cosmic Energy -->
@@ -45,10 +45,10 @@
 	<wand id="2187" level="33" mana="13" min="55" max="75" type="fire" function="default"> <!-- Wand of Inferno -->
 		<vocation name="Sorcerer"/>
 	</wand>
-	<wand id="8826" level="37" mana="13" min="55" max="75" type="energy" function="default"> <!-- Wand of Starmstorm -->
+	<wand id="8920" level="37" mana="13" min="55" max="75" type="energy" function="default"> <!-- Wand of Starmstorm -->
 		<vocation name="Sorcerer"/>
 	</wand>
-	<wand id="8828" level="42" mana="13" min="55" max="75" type="death" function="default"> <!-- Wand of Voodoo -->
+	<wand id="8922" level="42" mana="13" min="55" max="75" type="death" function="default"> <!-- Wand of Voodoo -->
 		<vocation name="Sorcerer"/>
 	</wand>	
 

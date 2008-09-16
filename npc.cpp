@@ -2816,9 +2816,9 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 		return 1;
 	}
 
-	lua_pushnil(L);
-
 	ShopInfo item;
+	// first key
+	lua_pushnil(L);
 	while(lua_next(L, -2) != 0)
 	{
 		item.itemId = getField(L, "id");
@@ -2830,8 +2830,8 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 
 		lua_pop(L, 1);
 	}
-
 	lua_pop(L, 1);
+
 	player = env->getPlayerByUID(popNumber(L));
 	if(!player)
 	{

@@ -40,7 +40,7 @@ if(NpcHandler == nil) then
 	MESSAGE_NOSHOP			= 19 -- When the npc's shop is requested but he doesn't have any
 	MESSAGE_ONCLOSESHOP		= 20 -- When the player closes the npc's shop window
 	MESSAGE_ALREADYFOCUSED	= 21 -- When the player already has the focus of this npc.
-	MESSAGE_PLACEDINQUEUE	= 22 -- When the player has been placed in the costumer queue. 
+	MESSAGE_PLACEDINQUEUE	= 22 -- When the player has been placed in the costumer queue.
 	
 	
 
@@ -107,7 +107,7 @@ if(NpcHandler == nil) then
 		}
 	}
 
-	-- Creates a new NpcHandler with an empty callbackFunction stack. 
+	-- Creates a new NpcHandler with an empty callbackFunction stack.
 	function NpcHandler:new(keywordHandler)
 		local obj = {}
 		obj.callbackFunctions = {}
@@ -143,7 +143,7 @@ if(NpcHandler == nil) then
 		self.keywordHandler = newHandler
 	end
 
-	-- Function used to change the focus of this npc. 
+	-- Function used to change the focus of this npc.
 	function NpcHandler:addFocus(newFocus)
 		if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 			if(self:isFocused(newFocus)) then
@@ -187,7 +187,7 @@ if(NpcHandler == nil) then
 		end
 	end
 
-	-- Used when the npc should un-focus the player. 
+	-- Used when the npc should un-focus the player.
 	function NpcHandler:releaseFocus(focus)
 		if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 			if(not self:isFocused(focus)) then
@@ -317,7 +317,7 @@ if(NpcHandler == nil) then
 		end
 	end
 
-	-- Greets a new player. 
+	-- Greets a new player.
 	function NpcHandler:greet(cid)
 		if(cid ~= 0) then
 			local callback = self:getCallback(CALLBACK_GREET)
@@ -513,7 +513,7 @@ if(NpcHandler == nil) then
 		end
 	end
 
-	-- Simply calls the underlying unGreet function. 
+	-- Simply calls the underlying unGreet function.
 	function NpcHandler:onFarewell(cid)
 		self:unGreet(cid)
 	end
@@ -546,7 +546,7 @@ if(NpcHandler == nil) then
 		return (distance <= self.talkRadius)
 	end
 
-	-- Resets the npc into it's initial state (in regard of the keyrodhandler). 
+	-- Resets the npc into it's initial state (in regard of the keyrodhandler).
 	--	All modules are also receiving a reset call through their callbackOnModuleReset function.
 	function NpcHandler:resetNpc()
 		if(self:processModuleCallback(CALLBACK_MODULE_RESET)) then
@@ -554,7 +554,7 @@ if(NpcHandler == nil) then
 		end
 	end
 
-	-- Makes the npc represented by this instance of NpcHandler say something. 
+	-- Makes the npc represented by this instance of NpcHandler say something.
 	--	This implements the currently set type of talkdelay.
 	--	shallDelay is a boolean value. If it is false, the message is not delayed. Default value is true.
 	function NpcHandler:say(message, focus, publicize, shallDelay)

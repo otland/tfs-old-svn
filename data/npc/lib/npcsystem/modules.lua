@@ -114,7 +114,7 @@ if(Modules == nil) then
 				npcHandler:say('You do not have enough money, this spell costs ' .. parameters.price .. ' gold.', cid)
 			else
 				npcHandler:say('You have learned ' .. parameters.spellName .. '.', cid)
-				playerLearnInstantSpell(cid, parameters.spellName)	
+				playerLearnInstantSpell(cid, parameters.spellName)
 			end
 		else
 			npcHandler:say('You need a premium account in order to buy ' .. parameters.spellName .. '.', cid)
@@ -225,11 +225,11 @@ if(Modules == nil) then
 		for i, word in pairs(keywords) do
 			if(type(word) == 'string') then
 				if string.find(message, word) and not string.find(message, '[%w+]' .. word) and not string.find(message, word .. '[%w+]') then
-	        			return true
-	    			end
-	    		end
-    		end
-    		return false
+					return true
+				end
+			end
+		end
+		return false
 	end
 
 	KeywordModule = {
@@ -695,12 +695,11 @@ if(Modules == nil) then
 		for i, word in pairs(keywords) do
 			if(type(word) == 'string') then
 				if string.find(message, word) and not string.find(message, '[%w+]' .. word) and not string.find(message, word .. '[%w+]') then
-	        		return true
-	    		end
-	    	end
-    	end
-
-    	return false
+					return true
+				end
+			end
+		end
+		return false
 	end
 
 	-- Resets the module-specific variables.
@@ -725,7 +724,7 @@ if(Modules == nil) then
 		return ret
 	end
 
-	-- Adds a new buyable item. 
+	-- Adds a new buyable item.
 	--	names = A table containing one or more strings of alternative names to this item. Used only for old buy/sell system.
 	--	itemid = The itemid of the buyable item
 	--	cost = The price of one single item
@@ -738,7 +737,7 @@ if(Modules == nil) then
 			end
 
 			self.npcHandler.shopItems[itemid].buyPrice = cost
-			self.npcHandler.shopItems[itemid].realName = realName or getItemNameById(itemid)
+			self.npcHandler.shopItems[itemid].realName = realName or getItemName(itemid)
 			self.npcHandler.shopItems[itemid].subType = subType or 0
 		end
 
@@ -749,7 +748,7 @@ if(Modules == nil) then
 						cost = cost,
 						eventType = SHOPMODULE_BUY_ITEM,
 						module = self,
-						realName = realName or getItemNameById(itemid),
+						realName = realName or getItemName(itemid),
 						subType = subType or 1
 					}
 
@@ -763,7 +762,7 @@ if(Modules == nil) then
 		end
 	end
 
-	-- Adds a new buyable item. 
+	-- Adds a new buyable container of items.
 	--	names = A table containing one or more strings of alternative names to this item.
 	--	container = Backpack, bag or any other itemid of container where bought items will be stored
 	--	itemid = The itemid of the buyable item
@@ -779,7 +778,7 @@ if(Modules == nil) then
 						cost = cost,
 						eventType = SHOPMODULE_BUY_ITEM_CONTAINER,
 						module = self,
-						realName = realName or getItemNameById(itemid),
+						realName = realName or getItemName(itemid),
 						subType = subType or 1
 					}
 
@@ -793,7 +792,7 @@ if(Modules == nil) then
 		end
 	end
 
-	-- Adds a new sellable item. 
+	-- Adds a new sellable item.
 	--	names = A table containing one or more strings of alternative names to this item. Used only by old buy/sell system.
 	--	itemid = The itemid of the sellable item
 	--	cost = The price of one single item
@@ -805,7 +804,7 @@ if(Modules == nil) then
 			end
 
 			self.npcHandler.shopItems[itemid].sellPrice = cost
-			self.npcHandler.shopItems[itemid].realName = realName or getItemNameById(itemid)
+			self.npcHandler.shopItems[itemid].realName = realName or getItemName(itemid)
 		end
 
 		if(names ~= nil and SHOPMODULE_MODE ~= SHOPMODULE_MODE_TRADE) then
@@ -815,7 +814,7 @@ if(Modules == nil) then
 						cost = cost,
 						eventType = SHOPMODULE_SELL_ITEM,
 						module = self,
-						realName = realName or getItemNameById(itemid)
+						realName = realName or getItemName(itemid)
 					}
 
 				keywords = {}
@@ -835,7 +834,7 @@ if(Modules == nil) then
 	end
 
 	-- doPlayerAddItem function variation. Used specifically for NPCs.
-	ShopModule.doPlayerAddItem = function(cid, itemid, subType, amount)
+	ShopModule.doPlayerAddItem = function(cid, itemid, amount, subType)
 		local amount = amount or 1
 		local subType = subType or 0
 
@@ -885,7 +884,7 @@ if(Modules == nil) then
 			return false
 		end
 
-		local boughtItems, i = ShopModule.doPlayerAddItem(cid, itemid, subType, amount)
+		local boughtItems, i = ShopModule.doPlayerAddItem(cid, itemid, amount, subType)
 		if(i < amount) then
 			local msgId = MESSAGE_NEEDMORESPACE
 			if(i == 0) then
