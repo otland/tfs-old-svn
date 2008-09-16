@@ -390,7 +390,7 @@ bool isLowercaseLetter(char character)
 
 bool isPasswordCharacter(char character)
 {
-	return (character >= 33 && (character <= 47 || character >= 58) && (character <= 64 || character >= 91) && (character <= 96 || character >= 123) && character <= 126);
+	return ((character >= 33 && character <= 47) || (character >= 58 && character <= 64) || (character >= 91 && character <= 96) || (character >= 123 && character <= 126));
 }
 
 bool isValidPassword(std::string text)
