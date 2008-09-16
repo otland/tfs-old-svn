@@ -334,7 +334,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			if(ban.adminid == 0)
 				name_ = (deletion ? "Automatic deletion" : "Automatic banishment");
 			else
-				IOLoginData::getInstance()->getNameByGuid(adminid, name_);
+				IOLoginData::getInstance()->getNameByGuid(ban.adminid, name_);
 
 			char date[16], date2[16];
 			formatDate2(ban.added, date);
@@ -348,7 +348,6 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			disconnectClient(0x14, buffer);
 			return false;
 		}
-		delete ban;
 
 		if(isNamelocked)
 		{

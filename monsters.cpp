@@ -1271,6 +1271,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 					{
 						uint32_t chance = 100;
 						uint32_t interval = 1000;
+						uint32_t amount = 1;
 
 						if(readXMLInteger(tmpNode, "speed", intValue) || readXMLInteger(tmpNode, "interval", intValue))
 							interval = intValue;

@@ -536,7 +536,7 @@ class LuaScriptInterface
 		static int32_t luaIsCreature(lua_State* L);
 		static int32_t luaIsContainer(lua_State* L);
 		static int32_t luaIsCorpse(lua_State* L);
-		static int32_t luaIsMoveable(lua_State* L);
+		static int32_t luaIsMovable(lua_State* L);
 
 		//container
 		static int32_t luaGetContainerSize(lua_State* L);
@@ -602,7 +602,7 @@ class LuaScriptInterface
 		static int32_t luaIsItemLevelDoor(lua_State* L);
 		static int32_t luaIsItemContainer(lua_State* L);
 		static int32_t luaIsItemFluidContainer(lua_State* L);
-		static int32_t luaIsItemMoveable(lua_State* L);
+		static int32_t luaIsItemMovable(lua_State* L);
 		static int32_t luaGetItemDescriptionsById(lua_State* L);
 		static int32_t luaGetItemNameById(lua_State* L);
 		static int32_t luaGetItemPluralNameById(lua_State* L);

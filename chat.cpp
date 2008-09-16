@@ -598,7 +598,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 													if(paramPlayer->getGuildLevel() == GUILDLEVEL_VICE)
 													{
 														const uint32_t levelToFormGuild = g_config.getNumber(ConfigManager::LEVEL_TO_FORM_GUILD);
-														if((int32_t)paramPlayer->getLevel() >= levelToFormGuild)
+														if(paramPlayer->getLevel() >= levelToFormGuild)
 														{
 															paramPlayer->setGuildLevel(GUILDLEVEL_LEADER);
 															player->setGuildLevel(GUILDLEVEL_VICE);

@@ -202,8 +202,8 @@ bool Commands::loadFromXml()
 		if(!it->second->loadedAccess)
 			std::cout << "Warning: Missing access for command " << it->first << std::endl;
 
-		if(!it->second->loadedAccountType)
-			std::cout << "Warning: Missing acctype level for command " << it->first << std::endl;
+		if(!it->second->loadedLogging)
+			std::cout << "Warning: Missing log command " << it->first << std::endl;
 
 		g_game.addCommandTag(it->first.substr(0, 1));
 	}
@@ -1045,7 +1045,7 @@ bool Commands::buyHouse(Creature* creature, const std::string& cmd, const std::s
 	Player* player = creature->getPlayer();
 	if(player)
 	{
-		if(!g_config.getString(ConfigManager::HOUSE_BUY_AND_SELL))
+		if(!g_config.getBool(ConfigManager::HOUSE_BUY_AND_SELL))
 		{
 			player->sendCancel("House buying has been disabled by gamemaster.");
 			return false;
@@ -1398,7 +1398,6 @@ bool Commands::unban(Creature* creature, const std::string& cmd, const std::stri
 		if(accountNumber == 0 && IOLoginData::getInstance()->playerExists(param))
 		{
 			accountNumber = IOLoginData::getInstance()->getAccountNumberByName(param);
-
 			uint32_t lastip = IOLoginData::getInstance()->getLastIPByName(param);
 			if(lastip != 0)
 				removedIpBan = IOBan::getInstance()->removeIpBanishment(lastip);
@@ -1433,7 +1432,6 @@ bool Commands::unban(Creature* creature, const std::string& cmd, const std::stri
 			player->sendTextMessage(MSG_INFO_DESCR, buffer);
 		}
 	}
-	
 	return true;
 }
 
@@ -1610,16 +1608,20 @@ bool Commands::changeThingProporties(Creature* creature, const std::string& cmd,
 							return false;
 						}
 					}
-					else if(Creature *creat = thing->getCreature())
+					else if(thing->getCreature())
+						break;
+					/*
+					else if(Creature* creat = thing->getCreature())
 					{
-						if(Player *player = creat->getPlayer())
+						if(Player* player = creat->getPlayer())
 						{}
-						else if(Npc *npc = creat->getNpc())
+						else if(Npc* npc = creat->getNpc())
 						{}
-						else if(Monster *monster = creat->getMonster())
+						else if(Monster* monster = creat->getMonster())
 						{}
 						break;
 					}
+					*/
 				}
 			}
 			else
@@ -1665,7 +1667,7 @@ bool Commands::showBanishmentInfo(Creature* creature, const std::string& cmd, co
 			accountNumber = IOLoginData::getInstance()->getAccountNumberByName(param);
 
 		Ban ban;
-		if(IOBan::getInstance()->getBanishmentData(accnumber, ban))
+		if(IOBan::getInstance()->getBanishmentData(accountNumber, ban))
 		{
 			bool deletion = (ban.type == BANTYPE_DELETION);
 
@@ -1673,7 +1675,7 @@ bool Commands::showBanishmentInfo(Creature* creature, const std::string& cmd, co
 			if(ban.adminid == 0)
 				name_ = (deletion ? "Automatic deletion" : "Automatic banishment");
 			else
-				IOLoginData::getInstance()->getNameByGuid(adminid, name_);
+				IOLoginData::getInstance()->getNameByGuid(ban.adminid, name_);
 
 			char date[16], date2[16];
 			formatDate2(ban.added, date);

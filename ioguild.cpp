@@ -223,14 +223,13 @@ bool IOGuild::hasGuild(uint32_t guid)
 	DBQuery query;
 	DBResult* result;
 	query << "SELECT `rank_id` FROM `players` WHERE `id` = " << guid;
-	if(result = db->storeQuery(query.str()))
+	if((result = db->storeQuery(query.str())))
 	{
 		const uint32_t rankId = result->getDataInt("rank_id");
 		db->freeResult(result);
 		if(rankId != 0)
 			return true;
 	}
-
 	return false;
 }
 

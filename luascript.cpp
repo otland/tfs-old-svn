@@ -149,7 +149,7 @@ bool ScriptEnviroment::loadGameState()
 	Database* db = Database::getInstance();
 
 	DBResult* result;
-	if(result = db->storeQuery("SELECT `key`, `value` FROM `global_storage`"))
+	if((result = db->storeQuery("SELECT `key`, `value` FROM `global_storage`")))
 	{
 		do
 		{
@@ -1792,7 +1792,7 @@ void LuaScriptInterface::registerFunctions()
 
 	//getAccountNumberByName(name)
 	lua_register(m_luaState, "getAccountNumberByName", LuaScriptInterface::luaGetAccountNumberByName);
-	
+
 	//getIPByName(name)
 	lua_register(m_luaState, "getIPByName", LuaScriptInterface::luaGetIPByName);
 
@@ -1959,13 +1959,11 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 	uint32_t cid = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 	int32_t value;
-	
+
 	const Player* player = env->getPlayerByUID(cid);
 	if(player)
 	{
-		const Tile *tile;
 		Position pos;
-		uint32_t stackpos;
 		switch(info)
 		{
 			case PlayerInfoAccess:
@@ -6743,6 +6741,47 @@ int32_t LuaScriptInterface::luaGetContainerItem(lua_State* L)
 	
 }
 
+int32_t LuaScriptInterface::luaDoAddContainerItemEx(lua_State* L)
+{
+	//doAddContainerItemEx(uid, virtuid)
+	uint32_t virtuid = popNumber(L);
+	uint32_t uid = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	Container* container = env->getContainerByUID(uid);
+	if(container)
+	{
+		Item* item = env->getItemByUID(virtuid);
+		if(!item)
+		{
+			reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
+			lua_pushnumber(L, LUA_ERROR);
+			return 1;
+		}
+
+		if(item->getParent() != VirtualCylinder::virtualCylinder)
+		{
+			reportErrorFunc("Item already has a parent");
+			lua_pushnumber(L, LUA_ERROR);
+			return 1;
+		}
+
+		ReturnValue ret = RET_NOERROR;
+		ret = g_game.internalAddItem(container, item);
+		if(ret == RET_NOERROR)
+			env->removeTempItem(item);
+
+		lua_pushnumber(L, ret);
+		return 1;
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CONTAINER_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+		return 1;
+	}
+}
+
 int32_t LuaScriptInterface::luaDoAddContainerItem(lua_State* L)
 {
 	//doAddContainerItem(uid, itemid, <optional> count/subtype)
@@ -7928,8 +7967,6 @@ int32_t LuaScriptInterface::luaGetSpectators(lua_State *L)
 
 	PositionEx centerPos;
 	popPosition(L, centerPos);
-
-	ScriptEnviroment* env = getScriptEnv();
 
 	SpectatorVec list;
 	g_game.getSpectators(list, centerPos, false, multifloor, rangex, rangex, rangey, rangey);

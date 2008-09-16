@@ -811,7 +811,7 @@ void Monster::onThinkDefense(uint32_t interval)
 			if(defenseTicks % it->interval >= interval)
 				continue;
 
-			uint32_t typeCount;
+			uint32_t typeCount = 0;
 			for(CreatureList::iterator cit = summons.begin(); cit != summons.end(); ++cit)
 			{
 				if((*cit)->getMonster() && (*cit)->getMonster()->getName() == it->name)

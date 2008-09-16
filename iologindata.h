@@ -69,7 +69,7 @@ class IOLoginData
 		bool setRecoveryKey(uint32_t accountNumber, std::string recoveryKey);
 
 		bool createAccount(uint32_t accountNumber, std::string newPassword);
-		bool removePremium(Account account);
+		void removePremium(Account account);
 
 		bool loadPlayer(Player* player, const std::string& name, bool preload = false);
 		bool savePlayer(Player* player, bool preSave);

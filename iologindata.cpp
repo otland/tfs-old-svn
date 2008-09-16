@@ -224,7 +224,7 @@ bool IOLoginData::createAccount(uint32_t accountNumber, std::string newPassword)
 	return db->executeQuery(query.str());
 }
 
-bool IOLoginData::removePremium(Account account)
+void IOLoginData::removePremium(Account account)
 {
 	uint64_t timeNow = time(NULL);
 	if(account.premiumDays > 0 && account.premiumDays < 65535)
@@ -1155,7 +1155,7 @@ uint32_t IOLoginData::getAccountNumberByName(std::string name)
 
 	uint32_t accountId = 0;
 	query << "SELECT `account_id` FROM `players` WHERE `name`=" << db->escapeString(name);
-	if(result = db->storeQuery(query.str()))
+	if((result = db->storeQuery(query.str())))
 	{
 		accountId = result->getDataInt("account_id");
 		db->freeResult(result);
@@ -1341,7 +1341,7 @@ bool IOLoginData::updatePremiumDays()
 	DBQuery query;
 
 	query << "SELECT `id` FROM `accounts` WHERE `lastday` <= " << time(NULL) - 86400;
-	if(result = db->storeQuery(query.str()))
+	if((result = db->storeQuery(query.str())))
 	{
 		do
 			removePremium(loadAccount(result->getDataInt("id"), true));

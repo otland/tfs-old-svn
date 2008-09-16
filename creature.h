@@ -425,7 +425,7 @@ class Creature : public AutoID, virtual public Thing
 		struct CountBlock_t
 		{
 			int32_t total;
-			uint64_t ticks;
+			int64_t ticks;
 			uint32_t hits;
 		};
 		typedef std::map<uint32_t, CountBlock_t> CountMap;

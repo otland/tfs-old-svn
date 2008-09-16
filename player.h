@@ -630,7 +630,7 @@ class Player : public Creature, public Cylinder
 		virtual void postAddNotification(Thing* thing, int32_t index, cylinderlink_t link = LINK_OWNER);
 		virtual void postRemoveNotification(Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
 
-		void setNextAction(uint64_t time) {if(time > nextAction) {nextAction = time;}}
+		void setNextAction(int64_t time) {if(time > nextAction) {nextAction = time;}}
 		bool canDoAction() const {return nextAction <= OTSYS_TIME();}
 		uint32_t getNextActionTime() const;
 

@@ -75,7 +75,7 @@ Game::Game()
 	lastPlayersRecord = 0;
 	useLastStageLevel = false;
 	for(int16_t i = 0; i < 3; i++)
-		serverSaveMessage[i] = false;
+		globalSaveMessage[i] = false;
 
 	OTSYS_THREAD_LOCKVARINIT(AutoID::autoIDLock);
 
@@ -86,9 +86,6 @@ Game::Game()
 	int32_t daycycle = 3600;
 	//(1440 minutes/day)/(3600 seconds/day)*10 seconds event interval
 	light_hour_delta = 1440 * 10 / daycycle;
-	/*light_hour = 0;
-	lightlevel = LIGHT_LEVEL_NIGHT;
-	light_state = LIGHT_STATE_NIGHT;*/
 	light_hour = SUNRISE + (SUNSET - SUNRISE) / 2;
 	lightlevel = LIGHT_LEVEL_DAY;
 	light_state = LIGHT_STATE_DAY;
@@ -141,6 +138,7 @@ void Game::setGameState(GameState_t newState)
 				Quests::getInstance()->loadFromXml();
 
 				loadGameState();
+				timedHighscoreUpdate();
 
 				if(g_config.getBool(ConfigManager::REMOVE_PREMIUM_ON_INIT))
 					IOLoginData::getInstance()->updatePremiumDays();
@@ -182,6 +180,7 @@ void Game::setGameState(GameState_t newState)
 				}
 
 				Houses::getInstance().payHouses();
+				IOBan::getInstance()->clearTemporials();
 				saveGameState(false);
 				break;
 			}
@@ -207,10 +206,9 @@ void Game::saveGameState(bool savePlayers)
 		}
 	}
 
-	g_bans.saveBans();
 	map->saveMap();
-
-	ScriptEnviroment::saveGameState();
+	if(g_config.getBool(ConfigManager::SAVE_GLOBAL_STORAGE))
+		ScriptEnviroment::saveGameState();
 }
 
 void Game::loadGameState()
@@ -681,7 +679,7 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool forced /*
 		}
 
 		if(player->isPromoted() && g_vocations.getPromotedVocation(player->getVocationId()) != 0)
-			player->setVocation(((player->isPremium() || g_config.getString(ConfigManager::PREMIUM_FOR_PROMOTION) != "yes") ? g_vocations.getPromotedVocation(player->vocation->getFromVocation()) : player->vocation->getFromVocation()));
+			player->setVocation(((player->isPremium() || g_config.getBool(ConfigManager::PREMIUM_FOR_PROMOTION)) ? g_vocations.getPromotedVocation(player->vocation->getFromVocation()) : player->vocation->getFromVocation()));
 	}
 
 	addCreatureCheck(creature);
@@ -867,7 +865,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 		}
 		else if((movingCreature->getZone() == ZONE_PROTECTION || movingCreature->getZone() == ZONE_NOPVP)
 			&& !toTile->hasFlag(TILESTATE_NOPVPZONE) && !toTile->hasFlag(TILESTATE_PROTECTIONZONE) &&
-			!player->hasFlag(PlayerFlag_CanPushAllCreatures))
+			!player->hasFlag(PlayerFlag_CanPushAllCreatures) && !player->hasFlag(PlayerFlag_IgnoreProtectionZone))
 		{
 			player->sendCancelMessage(RET_NOTPOSSIBLE);
 			return false;
@@ -2139,7 +2137,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 	if(!player || player->isRemoved())
 		return false;
 
-	if(isHotkey && g_config.getString(ConfigManager::AIMBOT_HOTKEY_ENABLED) == "no")
+	if(isHotkey && !g_config.getBool(ConfigManager::AIMBOT_HOTKEY_ENABLED))
 		return false;
 
 	Thing* thing = internalGetThing(player, fromPos, fromStackPos, fromSpriteId);
@@ -2232,7 +2230,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 	if(!player || player->isRemoved())
 		return false;
 
-	if(isHotkey && g_config.getString(ConfigManager::AIMBOT_HOTKEY_ENABLED) == "no")
+	if(isHotkey && !g_config.getBool(ConfigManager::AIMBOT_HOTKEY_ENABLED))
 		return false;
 
 	Thing* thing = internalGetThing(player, pos, stackPos, spriteId);
@@ -2301,7 +2299,7 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, uin
 	if(!Position::areInRange<7,5,0>(creature->getPosition(), player->getPosition()))
 		return false;
 
-	if(g_config.getString(ConfigManager::AIMBOT_HOTKEY_ENABLED) == "no")
+	if(!g_config.getBool(ConfigManager::AIMBOT_HOTKEY_ENABLED))
 	{
 		if(creature->getPlayer() || isHotkey)
 		{
@@ -2899,8 +2897,7 @@ bool Game::internalCloseTrade(Player* player)
 	return true;
 }
 
-bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t count,
-	uint8_t amount)
+bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t count, uint8_t amount)
 {
 	Player* player = getPlayerByID(playerId);
 	if(player == NULL || player->isRemoved())
@@ -2931,8 +2928,7 @@ bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t coun
 	return true;
 }
 
-bool Game::playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count,
-	uint8_t amount)
+bool Game::playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count, uint8_t amount)
 {
 	Player* player = getPlayerByID(playerId);
 	if(player == NULL || player->isRemoved())
@@ -3345,7 +3341,7 @@ bool Game::playerWhisper(Player* player, const std::string& text)
 		if((tmpPlayer = (*it)->getPlayer()))
 		{
 			if(!Position::areInRange<1,1,0>(player->getPosition(), (*it)->getPosition()))
-				tmpPlayer->sendCreatureSay(player, SPEAK_WHISPER, "pspsps");
+				tmpPlayer->sendCreatureSay(player, SPEAK_WHISPER, "Pssst");
 			else
 				tmpPlayer->sendCreatureSay(player, SPEAK_WHISPER, text);
 		}
@@ -3904,12 +3900,12 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 		if(target->getHealth() <= 0)
 			return false;
 
-		if(attacker && target && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getString(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) == "yes" && combatType != COMBAT_HEALING)
+		if(attacker && target && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getBool(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && combatType != COMBAT_HEALING)
 			return false;
 
 		target->gainHealth(attacker, healthChange);
 
-		if(g_config.getString(ConfigManager::SHOW_HEALING_DAMAGE) == "yes")
+		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE))
 		{
 			const SpectatorVec& list = getSpectators(targetPos);
 			char buffer[10];
@@ -3928,7 +3924,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			return true;
 		}
 
-		if(attacker && target && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getString(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) == "yes" && combatType != COMBAT_HEALING)
+		if(attacker && target && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getBool(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && combatType != COMBAT_HEALING)
 			return false;
 
 		int32_t damage = -healthChange;
@@ -4077,7 +4073,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 
 	if(manaChange > 0)
 	{
-		if(attacker && target && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getString(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) == "yes")
+		if(attacker && target && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getBool(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET))
 			return false;
 		target->changeMana(manaChange);
 	}
@@ -4089,7 +4085,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			return false;
 		}
 
-		if(attacker && target && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getString(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) == "yes")
+		if(attacker && target && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getBool(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET))
 			return false;
 
 		int32_t manaLoss = std::min(target->getMana(), -manaChange);
@@ -4433,14 +4429,14 @@ void Game::timedHighscoreUpdate()
 {
 	reloadHighscores();
 
-	int highscoreUpdateTime = g_config.getNumber(ConfigManager::HIGHSCORES_UPDATETIME) * 1000 * 60;
+	int32_t highscoreUpdateTime = g_config.getNumber(ConfigManager::HIGHSCORES_UPDATETIME) * 1000 * 60;
 	if(highscoreUpdateTime <= 0)
 		return;
 
 	Scheduler::getScheduler().addEvent(createSchedulerTask(highscoreUpdateTime, boost::bind(&Game::timedHighscoreUpdate, this)));
 }
 
-std::string Game::getHighscoreString(unsigned short skill)
+std::string Game::getHighscoreString(uint16_t skill)
 {
 	Highscore hs = highscoreStorage[skill];
 	std::stringstream ss;
@@ -4508,7 +4504,6 @@ Highscore Game::getHighscore(uint16_t skill)
 				std::string name = result->getDataString("name");
 				if(name.length() > 0)
 					hs.push_back(make_pair(name, level));
-					
 			}
 			while(result->next());
 			db->freeResult(result);
@@ -4533,39 +4528,39 @@ void Game::updateCreatureSkull(Player* player)
 	}
 }
 
-void Game::autoSave()
-{
-	saveGameState(true);
-	Scheduler::getScheduler().addEvent(createSchedulerTask(g_config.getNumber(ConfigManager::AUTO_SAVE_EACH_MINUTES)  * 1000 * 60, boost::bind(&Game::autoSave, this)));
-}
-
-void Game::prepareServerSave()
-{
-	if(!serverSaveMessage[0])
-	{
-		serverSaveMessage[0] = true;
-		broadcastMessage("Server is saving game in 5 minutes. Please logout.", MSG_STATUS_WARNING);
-		Scheduler::getScheduler().addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareServerSave, this)));
-	}
-	else if(!serverSaveMessage[1])
-	{
-		serverSaveMessage[1] = true;
-		broadcastMessage("Server is saving game in 3 minutes. Please logout.", MSG_STATUS_WARNING);
-		Scheduler::getScheduler().addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareServerSave, this)));
-	}
-	else if(!serverSaveMessage[2])
-	{
-		serverSaveMessage[2] = true;
-		broadcastMessage("Server is saving game in one minute. Please logout.", MSG_STATUS_WARNING);
-		Scheduler::getScheduler().addEvent(createSchedulerTask(60000, boost::bind(&Game::prepareServerSave, this)));
-	}
-	else
-		serverSave();
-}
-
 void Game::serverSave()
 {
-	if(g_config.getBool(ConfigManager::SHUTDOWN_AT_SERVERSAVE))
+	saveGameState(true);
+	Scheduler::getScheduler().addEvent(createSchedulerTask(g_config.getNumber(ConfigManager::AUTO_SAVE_EACH_MINUTES) * 60 * 1000, boost::bind(&Game::serverSave, this)));
+}
+
+void Game::prepareGlobalSave()
+{
+	if(!globalSaveMessage[0])
+	{
+		globalSaveMessage[0] = true;
+		broadcastMessage("Server is saving game in 5 minutes. Please logout.", MSG_STATUS_WARNING);
+		Scheduler::getScheduler().addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareGlobalSave, this)));
+	}
+	else if(!globalSaveMessage[1])
+	{
+		globalSaveMessage[1] = true;
+		broadcastMessage("Server is saving game in 3 minutes. Please logout.", MSG_STATUS_WARNING);
+		Scheduler::getScheduler().addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareGlobalSave, this)));
+	}
+	else if(!globalSaveMessage[2])
+	{
+		globalSaveMessage[2] = true;
+		broadcastMessage("Server is saving game in one minute. Please logout.", MSG_STATUS_WARNING);
+		Scheduler::getScheduler().addEvent(createSchedulerTask(60000, boost::bind(&Game::prepareGlobalSave, this)));
+	}
+	else
+		globalSave();
+}
+
+void Game::globalSave()
+{
+	if(g_config.getBool(ConfigManager::SHUTDOWN_AT_GLOBALSAVE))
 	{
 		//shutdown server
 		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_SHUTDOWN)));
@@ -4576,7 +4571,7 @@ void Game::serverSave()
 		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_CLOSED)));
 
 		//clean map if configured to
-		if(g_config.getBool(ConfigManager::CLEAN_MAP_AT_SERVERSAVE))
+		if(g_config.getBool(ConfigManager::CLEAN_MAP_AT_GLOBALSAVE))
 			map->clean();
 
 		//remove premium days from accounts
@@ -4588,10 +4583,10 @@ void Game::serverSave()
 
 		//reset variables
 		for(int16_t i = 0; i < 3; i++)
-			setServerSaveMessage(i, false);
+			setGlobalSaveMessage(i, false);
 
-		//prepare for next serversave after 24 hours
-		Scheduler::getScheduler().addEvent(createSchedulerTask(86100000, boost::bind(&Game::prepareServerSave, this)));
+		//prepare for next global save after 24 hours
+		Scheduler::getScheduler().addEvent(createSchedulerTask(86100000, boost::bind(&Game::prepareGlobalSave, this)));
 
 		//open server
 		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_NORMAL)));
@@ -4667,7 +4662,6 @@ void Game::checkPlayersRecord()
 {
 	if(getPlayersOnline() > lastPlayersRecord)
 	{
-		
 		Database* db = Database::getInstance();
 		DBQuery query;
 
@@ -4766,7 +4760,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 		case 0:
 		{
 			IOBan::getInstance()->addNotation(account.accnumber, reason, action, banComment, player->getGUID());
-			if(IOBan::getInstance()->getNotationsCount(account.accnumber) >= g_config.getNumber(ConfigManager::NOTATIONS_TO_BAN))
+			if(IOBan::getInstance()->getNotationsCount(account.accnumber) >= (uint32_t)g_config.getNumber(ConfigManager::NOTATIONS_TO_BAN))
 			{
 				account.warnings++;
 				if(account.warnings >= (g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION)))
@@ -4855,19 +4849,19 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 					IOBan::getInstance()->addBanishment(account.accnumber, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), reason, action, banComment, player->getGUID());
 				else
 					IOBan::getInstance()->addBanishment(account.accnumber, (time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH)), reason, action, banComment, player->getGUID());
-			}	
+			}
 			break;
 		}
 	}
 
-	if(IPBanishment)
+	if(IPBanishment && ip > 0)
 		IOBan::getInstance()->addIpBanishment(ip, (time(NULL) + g_config.getNumber(ConfigManager::IPBANISHMENT_LENGTH)), banComment, player->getGUID());
 
 	if(!notation)
 		IOBan::getInstance()->removeNotations(account.accnumber);
 
-	char buffer[800];
-	if(g_config.getString(ConfigManager::BROADCAST_BANISHMENTS) == "yes")
+	char buffer[600 + banComment.length()];
+	if(g_config.getBool(ConfigManager::BROADCAST_BANISHMENTS))
 	{
 		if(action == 6)
 			sprintf(buffer, "%s has taken the action \"%s\" for the statement: \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".", player->getName().c_str(), getAction(action, IPBanishment).c_str(), statement.c_str(), targetPlayerName.c_str(), account.warnings, getReason(reason).c_str(), banComment.c_str());
@@ -4886,24 +4880,12 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, buffer);
 	}
 
-	if(IPBanishment)
+	if(targetPlayer && !notation)
 	{
-		if(ip > 0)
-			IOBan::getInstance()->addIpBanishment(ip, (time(NULL) + g_config.getNumber(ConfigManager::IPBANISHMENT_LENGTH)), banComment, player->getGUID());
-	}
+		addMagicEffect(targetPlayer->getPosition(), NM_ME_MAGIC_POISON);
 
-	if(!notation)
-		IOBan::getInstance()->removeNotations(account.accnumber);
-
-	if(targetPlayer)
-	{
-		if(!notation)
-		{
-			addMagicEffect(targetPlayer->getPosition(), NM_ME_MAGIC_POISON);
-
-			uint32_t playerId = targetPlayer->getID();
-			Scheduler::getScheduler().addEvent(createSchedulerTask(1000, boost::bind(&Game::kickPlayer, this, playerId, false)));
-		}
+		uint32_t playerId = targetPlayer->getID();
+		Scheduler::getScheduler().addEvent(createSchedulerTask(1000, boost::bind(&Game::kickPlayer, this, playerId, false)));
 	}
 
 	IOLoginData::getInstance()->saveAccount(account);

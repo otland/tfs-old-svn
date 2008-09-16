@@ -517,7 +517,7 @@ class Game
 		void addCommandTag(std::string tag);
 		void resetCommandTag();
 
-		bool npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, bool publicize);
+		void npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, bool publicize);
 
 		const RuleViolationsMap& getRuleViolations() const {return ruleViolations;}
 		bool cancelRuleViolation(Player* player);

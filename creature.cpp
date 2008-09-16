@@ -1125,9 +1125,7 @@ void Creature::addDamagePoints(Creature* attacker, int32_t damagePoints)
 	{
 		CountBlock_t cb;
 		cb.ticks = OTSYS_TIME();
-		if(damagePoints > 0)
-			cb.total = damagePoints;
-
+		cb.total = damagePoints;
 		cb.hits = 1;
 		damageMap[attackerId] = cb;
 	}
@@ -1156,7 +1154,7 @@ void Creature::addHealPoints(Creature* caster, int32_t healthPoints)
 			CountBlock_t cb;
 			cb.ticks = OTSYS_TIME();
 			cb.total = healthPoints;
-			cb.hits = 1;
+			cb.hits = 0;
 			healMap[casterId] = cb;
 		}
 		else

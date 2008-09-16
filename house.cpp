@@ -602,7 +602,7 @@ bool AccessList::isInList(const Player* player)
 
 	for(GuildList::iterator git = guildList.begin(); git != guildList.end(); ++git)
 	{
-		if(git->first == player->getGuildId() && (git->second == player->getGuildRankId() || git->second == -1))
+		if(git->first == player->getGuildId() && ((uint32_t)git->second == player->getGuildRankId() || git->second == -1))
 			return true;
 	}
 	return false;

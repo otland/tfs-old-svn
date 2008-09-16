@@ -88,7 +88,7 @@ class IOBan
 		uint32_t getAdminGUID(uint32_t id, bool player = false);
 
 		uint32_t getNotationsCount(uint32_t account);
-		bool getBanishmentData(uint32_t account, Ban& output);
+		bool getBanishmentData(uint32_t account, Ban& ban);
 		std::vector<Ban> bansManager(BanType_t type) const;
 		bool clearTemporials();
 

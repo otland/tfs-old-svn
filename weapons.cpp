@@ -277,9 +277,9 @@ bool Weapon::configureEvent(xmlNodePtr p)
 		vocationNode = vocationNode->next;
 	}
 
+	std::string vocationString;
 	if(!vocStringList.empty())
 	{
-		std::string vocationString;
 		for(STRING_LIST::iterator it = vocStringList.begin(); it != vocStringList.end(); ++it)
 		{
 			if(*it != vocStringList.front())
@@ -492,7 +492,7 @@ void Weapon::onUsedAmmo(Player* player, Item* item, Tile* destTile) const
 	if(g_config.getBool(ConfigManager::REMOVE_AMMO))
 	{
 		if(ammoAction == AMMOACTION_REMOVECOUNT)
-			g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getCount()) - 1));
+			g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getItemCount()) - 1));
 		else if(ammoAction == AMMOACTION_REMOVECHARGE)
 			g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getCharges()) - 1));
 		else if(ammoAction == AMMOACTION_MOVE)
@@ -817,6 +817,7 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 		if(maxHitChance == 75)
 		{
 			//chance for one-handed weapons
+			switch(distance)
 			{
 				case 1:
 					chance = (uint32_t)((float)std::min(skill, (uint32_t)74)) + 1;

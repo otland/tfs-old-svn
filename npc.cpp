@@ -2851,7 +2851,7 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 
 	npc->addShopPlayer(player);
 	player->setShopOwner(npc, buyCallback, sellCallback);
-	sortItems(items);
+	//sortItems(items);
 	player->sendShop(items);
 	player->sendCash(g_game.getMoney(player));
 

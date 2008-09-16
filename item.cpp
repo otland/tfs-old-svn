@@ -366,7 +366,7 @@ xmlNodePtr Item::serialize()
 
 	if(getDate() != 0)
 	{
-		sprintf(buffer, "%d", getDate());
+		sprintf(buffer, "%u", (uint32_t)getDate());
 		xmlSetProp(nodeItem, (const xmlChar*)"written_date", (const xmlChar*)buffer);
 	}
 

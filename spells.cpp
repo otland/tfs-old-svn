@@ -781,7 +781,7 @@ bool Spell::playerRuneSpellCheck(Player* player, const Position& toPos)
 
 void Spell::postCastSpell(Player* player, bool finishedCast /*= true*/, bool payCost /*= true*/) const
 {
-	if(isFinished)
+	if(finishedCast)
 	{
 		if(!player->hasFlag(PlayerFlag_HasNoExhaustion))
 		{
@@ -1003,13 +1003,13 @@ bool InstantSpell::playerCastInstant(Player* player, const std::string& param)
 			ReturnValue ret = g_game.getPlayerByNameWildcard(param, playerTarget);
 			target = playerTarget;
 			if(limitRange && target && limitRange < std::max(std::abs(target->getPosition().x - player->getPosition().x), std::abs(target->getPosition().y - player->getPosition().y)))
-    			useDirection = true;			
+	    			useDirection = true;
 
 			if((!target || target->getHealth() <= 0) && !useDirection)
 			{
 				if(!casterTargetOrDirection)
 				{
-					player->sendCancelMessage(RET_PLAYERWITHTHISNAMEISNOTONLINE);
+					player->sendCancelMessage(ret);
 					g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 					return false;
 				}
@@ -1020,8 +1020,8 @@ bool InstantSpell::playerCastInstant(Player* player, const std::string& param)
 		{
 			target = player->getAttackedCreature();
 			if(limitRange && target && limitRange < std::max(std::abs(target->getPosition().x - player->getPosition().x), std::abs(target->getPosition().y - player->getPosition().y)))
-    			useDirection = true;
-    			
+	    			useDirection = true;
+
 			if((!target || target->getHealth() <= 0) && !useDirection)
 			{
 				if(!casterTargetOrDirection)
@@ -1513,7 +1513,7 @@ bool InstantSpell::SummonMonster(const InstantSpell* spell, Creature* creature, 
 			return false;
 		}
 
-		if(player->getSummonCount() >= g_config.getNumber(ConfigManager::MAX_PLAYER_SUMMONS))
+		if((int32_t)player->getSummonCount() >= g_config.getNumber(ConfigManager::MAX_PLAYER_SUMMONS))
 		{
 			player->sendCancel("You cannot summon more creatures.");
 			g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);

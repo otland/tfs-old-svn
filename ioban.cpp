@@ -36,7 +36,7 @@ bool IOBan::isIpBanished(uint32_t ip, uint32_t mask /*= 0xFFFFFFFF*/)
 
 		DBQuery query;
 		query << "SELECT `expires` FROM `bans` WHERE ((" << ip << " & " << mask << " & `param`) = (`value` & `param` & " << mask << ")) AND `type` = " << (BanType_t)BANTYPE_IP_BANISHMENT << " AND `active` = 1";
-		if(result = db->storeQuery(query.str()))
+		if((result = db->storeQuery(query.str())))
 		{
 			uint64_t expires = result->getDataInt("expires");
 			db->freeResult(result);
@@ -61,7 +61,7 @@ bool IOBan::isNamelocked(uint32_t guid)
 
 	DBQuery query;
 	query << "SELECT `id` FROM `bans` WHERE `value` = " << guid << " AND `type` = " << (BanType_t)BANTYPE_NAMELOCK << " AND `active` = 1";
-	if(result = db->storeQuery(query.str()))
+	if((result = db->storeQuery(query.str())))
 	{
 		db->freeResult(result);
 		return true;
@@ -86,7 +86,7 @@ bool IOBan::isBanished(uint32_t account)
 
 	DBQuery query;
 	query << "SELECT `expires` FROM `bans` WHERE `value` = " << account << " AND `type` = " << (BanType_t)BANTYPE_BANISHMENT << " AND `active` = 1";
-	if(result = db->storeQuery(query.str()))
+	if((result = db->storeQuery(query.str())))
 	{
 		uint64_t expires = result->getDataInt("expires");
 		db->freeResult(result);
@@ -110,7 +110,7 @@ bool IOBan::isDeleted(uint32_t account)
 
 	DBQuery query;
 	query << "SELECT `id` FROM `bans` WHERE `value` = " << account << " AND `type` = " << (BanType_t)BANTYPE_DELETION << " AND `active` = 1";
-	if(result = db->storeQuery(query.str()))
+	if((result = db->storeQuery(query.str())))
 	{
 		db->freeResult(result);
 		return true;
@@ -279,7 +279,7 @@ uint32_t IOBan::getReason(uint32_t id, bool player /* = false */)
 	uint32_t value = 0;
 	DBQuery query;
 	query << "SELECT `reason` FROM `bans` WHERE `value` = " << id << " AND `type` = " << (player ? (BanType_t)BANTYPE_NAMELOCK : (BanType_t)BANTYPE_BANISHMENT)  << " AND `active` = 1";
-	if(result = db->storeQuery(query.str()))
+	if((result = db->storeQuery(query.str())))
 	{
 		value = result->getDataInt("reason");
 		db->freeResult(result);
@@ -297,7 +297,7 @@ uint32_t IOBan::getAction(uint32_t id, bool player /* = false */)
 	uint32_t value = 0;
 	DBQuery query;
 	query << "SELECT `action` FROM `bans` WHERE `value` = " << id << " AND `type` = " << (player ? (BanType_t)BANTYPE_NAMELOCK : (BanType_t)BANTYPE_BANISHMENT)  << " AND `active` = 1";
-	if(result = db->storeQuery(query.str()))
+	if((result = db->storeQuery(query.str())))
 	{
 		value = result->getDataInt("action");
 		db->freeResult(result);
@@ -315,7 +315,7 @@ uint64_t IOBan::getExpireTime(uint32_t id, bool player /* = false */)
 	uint64_t value = 0;
 	DBQuery query;
 	query << "SELECT `expires` FROM `bans` WHERE `value` = " << id << " AND `type` = " << (player ? (BanType_t)BANTYPE_NAMELOCK : (BanType_t)BANTYPE_BANISHMENT)  << " AND `active` = 1";
-	if(result = db->storeQuery(query.str()))
+	if((result = db->storeQuery(query.str())))
 	{
 		value = result->getDataInt("expires");
 		db->freeResult(result);
@@ -333,7 +333,7 @@ uint64_t IOBan::getAddedTime(uint32_t id, bool player /* = false */)
 	uint64_t value = 0;
 	DBQuery query;
 	query << "SELECT `added` FROM `bans` WHERE `value` = " << id << " AND `type` = " << (player ? (BanType_t)BANTYPE_NAMELOCK : (BanType_t)BANTYPE_BANISHMENT)  << " AND `active` = 1";
-	if(result = db->storeQuery(query.str()))
+	if((result = db->storeQuery(query.str())))
 	{
 		value = result->getDataInt("added");
 		db->freeResult(result);
@@ -351,7 +351,7 @@ std::string IOBan::getComment(uint32_t id, bool player /* = false */)
 	std::string value = "";
 	DBQuery query;
 	query << "SELECT `comment` FROM `bans` WHERE `value` = " << id << " AND `type` = " << (player ? (BanType_t)BANTYPE_NAMELOCK : (BanType_t)BANTYPE_BANISHMENT)  << " AND `active` = 1";
-	if(result = db->storeQuery(query.str()))
+	if((result = db->storeQuery(query.str())))
 	{
 		value = result->getDataString("comment");
 		db->freeResult(result);
@@ -369,7 +369,7 @@ uint32_t IOBan::getAdminGUID(uint32_t id, bool player /* = false */)
 	uint32_t value = 0;
 	DBQuery query;
 	query << "SELECT `admin_id` FROM `bans` WHERE `value` = " << id << " AND `type` = " << (player ? (BanType_t)BANTYPE_NAMELOCK : (BanType_t)BANTYPE_BANISHMENT)  << " AND `active` = 1";
-	if(result = db->storeQuery(query.str()))
+	if((result = db->storeQuery(query.str())))
 	{
 		value = result->getDataInt("admin_id");
 		db->freeResult(result);
@@ -387,7 +387,7 @@ uint32_t IOBan::getNotationsCount(uint32_t account)
 	uint32_t count = 0;
 	DBQuery query;
 	query << "SELECT COUNT(`id`) AS `count` FROM `bans` WHERE `value` = " << account << " AND `type` = " << (BanType_t)BANTYPE_NOTATION << " AND `active` = 1";
-	if(result = db->storeQuery(query.str()))
+	if((result = db->storeQuery(query.str())))
 	{
 		count = result->getDataInt("count");
 		db->freeResult(result);
@@ -396,14 +396,14 @@ uint32_t IOBan::getNotationsCount(uint32_t account)
 	return count;
 }
 
-Ban IOBan::getBanishmentData(uint32_t account, Ban& output)
+bool IOBan::getBanishmentData(uint32_t account, Ban& ban)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
 	DBResult* result;
 
 	uint32_t currentTime = time(NULL);
-	query << 
+	query <<
 		"SELECT "
 			"`id`, "
 			"`type`, "
@@ -421,7 +421,7 @@ Ban IOBan::getBanishmentData(uint32_t account, Ban& output)
 			"`active` = 1 AND " <<
 			"(`expires` >= " << currentTime << " OR `expires` = 0)";
 
-	if(result = db->storeQuery(query.str()))
+	if((result = db->storeQuery(query.str())))
 	{
 		ban.value = account;
 		ban.id = result->getDataInt("id");
@@ -443,16 +443,12 @@ Ban IOBan::getBanishmentData(uint32_t account, Ban& output)
 
 std::vector<Ban> IOBan::bansManager(BanType_t type) const
 {
-	assert(type == BANTYPE_IP_BANISHMENT ||
-		type == BANTYPE_NAMELOCK || type == BANTYPE_BANISHMENT ||
-		type == BANTYPE_NOTATION || type == BANTYPE_DELETION);
-
 	Database* db = Database::getInstance();
 	DBQuery query;
 	DBResult* result;
 
 	uint32_t currentTime = time(NULL);
-	query << 
+	query <<
 		"SELECT "
 			"`id`, "
 			"`value`, "
@@ -469,9 +465,9 @@ std::vector<Ban> IOBan::bansManager(BanType_t type) const
 			"`type` = " << type << " AND "
 			"`active` = 1 AND " <<
 			"(`expires` >= " << currentTime << " OR `expires` = 0)";
-	
+
 	std::vector<Ban> vec;
-	if(result = db->storeQuery(query.str()))
+	if((result = db->storeQuery(query.str())))
 	{
 		Ban tmpBan;
 		do {

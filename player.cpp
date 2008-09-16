@@ -686,7 +686,7 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count)
 		if(g_config.getBool(ConfigManager::ADVANCING_SKILL_LEVEL))
 			sprintf(advMsgLvl, " [%u]", skills[skill][SKILL_LEVEL]);
 		else
-			sprintf(advMsgLvl, "");
+			sprintf(advMsgLvl, "%s", "");
 
 		char advMsg[45];
 		sprintf(advMsg, "You advanced in %s%s.", getSkillName(skill).c_str(), advMsgLvl);
@@ -3792,7 +3792,7 @@ void Player::clearAttacked()
 
 void Player::addUnjustifiedDead(const Player* attacked)
 {
-	if(g_game.getWorldType() == WORLD_TYPE_PVP_ENFORCED || attacked == this || hasFlag(PlayerFlag_NotGainInFight) || player->hasCustomFlag(PlayerCustomFlag_NotGainSkull))
+	if(g_game.getWorldType() == WORLD_TYPE_PVP_ENFORCED || attacked == this || hasFlag(PlayerFlag_NotGainInFight) || hasCustomFlag(PlayerCustomFlag_NotGainSkull))
 		return;
 
 	if(client)

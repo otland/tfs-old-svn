@@ -20,6 +20,8 @@
 
 #include <iostream>
 
+#include <boost/regex.hpp>
+
 #include "database.h"
 #include "databasesqlite.h"
 
@@ -187,6 +189,10 @@ std::string DatabaseSQLite::escapeString(const std::string &s)
 	sqlite3_snprintf(s.length() * 2 + 1, output, "%Q", s.c_str());
 	std::string r(output);
 	delete[] output;
+
+	//escape % and _ because we are using LIKE operator.
+	r = boost::regex_replace(r, boost::regex("%"), "\\%");
+	r = boost::regex_replace(r, boost::regex("_"), "\\_");
 	return r;
 }
 

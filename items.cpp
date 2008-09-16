@@ -837,7 +837,7 @@ bool Items::loadFromXml()
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.skills[SKILL_FIST] = intValue;
 							}
-							else if(tmpStrValue == "maxhitpoints" || tmpStrValue == "maxhealthpoints"))
+							else if(tmpStrValue == "maxhitpoints" || tmpStrValue == "maxhealthpoints")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.stats[STAT_MAXHEALTH] = intValue;

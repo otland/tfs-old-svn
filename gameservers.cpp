@@ -38,7 +38,7 @@ void GameServers::clear()
 bool GameServers::reload(bool showResult /*= true*/)
 {
 	clear();
-	loadFromXml(showResult);
+	return loadFromXml(showResult);
 }
 
 bool GameServers::loadFromXml(bool showResult /*= true*/)
@@ -54,7 +54,7 @@ bool GameServers::loadFromXml(bool showResult /*= true*/)
 		root = xmlDocGetRootElement(doc);
 		if(xmlStrcmp(root->name,(const xmlChar*)"servers") != 0)
 		{
-			xmlFreeDoc(doc);			
+			xmlFreeDoc(doc);
 			return false;
 		}
 
@@ -67,22 +67,34 @@ bool GameServers::loadFromXml(bool showResult /*= true*/)
 				if(readXMLInteger(p, "id", intValue))
 					id = intValue;
 				else
+				{
 					std::cout << "[Error - GameServers::load] Missing server id" << std::endl;
+					continue;
+				}
 
 				if(readXMLString(p, "name", strValue))
 					name = strValue;
 				else
+				{
 					std::cout << "[Error - GameServers::load] Missing server name" << std::endl;
+					continue;
+				}
 
 				if(readXMLString(p, "ip", strValue))
 					ip = strValue;
 				else
+				{
 					std::cout << "[Error - GameServers::load] Missing server ip" << std::endl;
+					continue;
+				}
 
 				if(readXMLInteger(p, "port", intValue))
 					port = intValue;
 				else
+				{
 					std::cout << "[Error - GameServers::load] Missing server port" << std::endl;
+					continue;
+				}
 
 				GameServer* server = new GameServer(name, ip, port);
 				if(server && !addServer(id, server))
@@ -93,7 +105,7 @@ bool GameServers::loadFromXml(bool showResult /*= true*/)
 		}
 
 		xmlFreeDoc(doc);
-	}	
+	}
 
 	if(showResult)
 	{
@@ -148,7 +160,6 @@ GameServer* GameServers::getServerByName(std::string name) const
 		if(it->second->getName() == name)
 			return it->second;
 	}
-
 	return NULL;
 }
 
@@ -159,7 +170,6 @@ GameServer* GameServers::getServerByAddress(std::string address) const
 		if(it->second->getAddress() == address)
 			return it->second;
 	}
-
 	return NULL;
 }
 
@@ -170,6 +180,5 @@ GameServer* GameServers::getServerByPort(uint32_t port) const
 		if(it->second->getPort() == port)
 			return it->second;
 	}
-
 	return NULL;
 }
