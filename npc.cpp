@@ -2816,20 +2816,22 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 		return 1;
 	}
 
-	ShopInfo item;
 	lua_pushnil(L);
+
+	ShopInfo item;
 	while(lua_next(L, -2) != 0)
 	{
 		item.itemId = getField(L, "id");
 		item.subType = getField(L, "subType");
 		item.buyPrice = getField(L, "buy");
 		item.sellPrice = getField(L, "sell");
-		item.itemName = getField(L, "name");
+		item.itemName = getFieldString(L, "name");
 		items.push_back(item);
+
 		lua_pop(L, 1);
 	}
-	lua_pop(L, 1);
 
+	lua_pop(L, 1);
 	player = env->getPlayerByUID(popNumber(L));
 	if(!player)
 	{
