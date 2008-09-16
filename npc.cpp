@@ -2816,11 +2816,10 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 		return 1;
 	}
 
-	// first key
+	ShopInfo item;
 	lua_pushnil(L);
 	while(lua_next(L, -2) != 0)
 	{
-		ShopInfo item;
 		item.itemId = getField(L, "id");
 		item.subType = getField(L, "subType");
 		item.buyPrice = getField(L, "buy");
@@ -2851,7 +2850,7 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 
 	npc->addShopPlayer(player);
 	player->setShopOwner(npc, buyCallback, sellCallback);
-	//sortItems(items);
+	sortItems(items);
 	player->sendShop(items);
 	player->sendCash(g_game.getMoney(player));
 

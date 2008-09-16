@@ -247,7 +247,7 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 		return false;
 
 	Player* player = creature->getPlayer();
-	if(player && it->second->accessLevel > player->getAccessLevel() || player->name == "Account Manager")
+	if(player && (it->second->accessLevel > player->getAccessLevel() || player->name == "Account Manager"))
 	{
 		if(player->getAccessLevel() > 0)
 			player->sendTextMessage(MSG_STATUS_SMALL, "You can not execute this command.");

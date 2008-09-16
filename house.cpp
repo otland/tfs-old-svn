@@ -523,8 +523,8 @@ bool AccessList::addGuild(const std::string& guildName, const std::string& rank)
 	{
 		int32_t rankId;
 		if(!IOGuild::getInstance()->getRankIdByGuildIdAndName((uint32_t&)rankId, rankName, guildId) &&
-			rankName.find("?") == std::string::npos || rankName.find("!") == std::string::npos ||
-			rankName.find("*") == std::string::npos)
+			(rankName.find("?") == std::string::npos || rankName.find("!") == std::string::npos ||
+			rankName.find("*") == std::string::npos))
 		{
 			rankId = -1;
 		}

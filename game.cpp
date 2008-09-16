@@ -1023,7 +1023,7 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 		return false;
 	}
 
-	if(!item->isPushable() || item->getUniqueId() != 0 && !player->hasCustomFlag(PlayerCustomFlag_CanPushAllItems))
+	if(!item->isPushable() || (item->getUniqueId() != 0 && !player->hasCustomFlag(PlayerCustomFlag_CanPushAllItems)))
 	{
 		player->sendCancelMessage(RET_NOTMOVEABLE);
 		return false;
@@ -4700,7 +4700,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 
 	if((0 == (violationActions[player->getViolationAccess()] & (1 << action)))
 		|| reason > violationReasons[player->getViolationAccess()]
-		|| IPBanishment && (violationActions[player->getViolationAccess()] & Action_IpBan) != Action_IpBan)
+		|| (IPBanishment && (violationActions[player->getViolationAccess()] & Action_IpBan) != Action_IpBan))
 	{
 		player->sendCancel("You do not have authorization for this action.");
 		return false;

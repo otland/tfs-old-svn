@@ -20,6 +20,7 @@
 
 #ifndef __OTSERV_ENUMS_H__
 #define __OTSERV_ENUMS_H__
+#include <string>
 
 enum StorageValues_t
 {
@@ -248,7 +249,7 @@ struct LightInfo
 	{
 		level = 0;
 		color = 0;
-	};
+	}
 	LightInfo(uint32_t _level, uint32_t _color)
 	{
 		level = _level;
@@ -271,17 +272,11 @@ struct ShopInfo
 		buyPrice = 0;
 		sellPrice = 0;
 		itemName = "";
-	};
+	}
 
-	ShopInfo(uint32_t _itemId, int32_t _subType = 0, uint32_t _buyPrice = 0,
-		uint32_t _sellPrice = 0, std::string _itemName = "")
-	{
-		itemId = _itemId;
-		subType = _subType;
-		buyPrice = _buyPrice;
-		sellPrice = _sellPrice;
-		itemName = _itemName;
-	};
+	ShopInfo(uint32_t _itemId, int32_t _subType = 0, uint32_t _buyPrice = 0, uint32_t _sellPrice = 0,
+		const std::string& _itemName = "") : itemId(_itemId), subType(_subType), buyPrice(_buyPrice),
+		sellPrice(_sellPrice), itemName(_itemName) {}
 };
 
 #endif

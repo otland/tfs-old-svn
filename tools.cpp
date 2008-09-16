@@ -288,18 +288,6 @@ std::vector<int32_t> vectorAtoi(std::vector<std::string> stringVector)
 	return returnVector;
 }
 
-/*
-void sortItems(ShopInfo& itemList)
-{
-	bool operator<(const ShopInfo& left, const ShopInfo& right)
-	{
-		return left.itemName < right.itemName;
-	}
-
-	itemList.sort();
-}
-*/
-
 bool hasBitSet(uint32_t flag, uint32_t flags)
 {
 	return ((flags & flag) == flag);
@@ -308,7 +296,7 @@ bool hasBitSet(uint32_t flag, uint32_t flags)
 #define RAND_MAX24 16777216
 uint32_t rand24b()
 {
-	return (rand() << 12) ^ (rand()) & (0xFFFFFF);
+	return ((rand() << 12) ^ (rand())) & (0xFFFFFF);
 }
 
 float box_muller(float m, float s)
@@ -402,7 +390,7 @@ bool isLowercaseLetter(char character)
 
 bool isPasswordCharacter(char character)
 {
-	return (character >= 33 && character <= 47 || character >= 58 && character <= 64 || character >= 91 && character <= 96 || character >= 123 && character <= 126);
+	return (character >= 33 && (character <= 47 || character >= 58) && (character <= 64 || character >= 91) && (character <= 96 || character >= 123) && character <= 126);
 }
 
 bool isValidPassword(std::string text)
@@ -1141,3 +1129,12 @@ bool fileExists(const char* filename)
 	return exists;
 }
 
+bool operator<(const ShopInfo& left, const ShopInfo& right)
+{
+	return left.itemName < right.itemName;
+}
+
+void sortItems(std::list<ShopInfo>& itemList)
+{
+	itemList.sort();
+}

@@ -69,7 +69,6 @@ bool readXMLContentString(xmlNodePtr node, std::string& value);
 std::vector<std::string> explodeString(const std::string& inString, const std::string& separator);
 std::vector<int32_t> vectorAtoi(std::vector<std::string> stringVector);
 bool hasBitSet(uint32_t flag, uint32_t flags);
-//void sortItems(ShopInfo& itemList);
 
 std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLength);
 
@@ -115,4 +114,7 @@ std::string getReason(int32_t reasonId);
 std::string getAction(int32_t actionId, bool IPBanishment);
 
 bool fileExists(const char* filename);
+
+bool operator<(const ShopInfo& left, const ShopInfo& right);
+void sortItems(std::list<ShopInfo>& itemList);
 #endif
