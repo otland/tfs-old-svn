@@ -1663,7 +1663,7 @@ bool Commands::showBanishmentInfo(Creature* creature, const std::string& cmd, co
 	if(player)
 	{
 		uint32_t accountNumber = atoi(param.c_str());
-		if(IOLoginData::getInstance()->playerExists(param))
+		if(accountNumber == 0 && IOLoginData::getInstance()->playerExists(param))
 			accountNumber = IOLoginData::getInstance()->getAccountNumberByName(param);
 
 		Ban ban;

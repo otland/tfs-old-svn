@@ -370,17 +370,17 @@ void mainLoader()
 	std::string passwordType = asLowerCaseString(g_config.getString(ConfigManager::PASSWORD_TYPE));
 	if(passwordType == "md5")
 	{
-		g_config.setNumber(ConfigManager::PASSWORD_TYPE, PASSWORD_TYPE_MD5);
+		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_MD5);
 		std::cout << ">> Using MD5 passwords" << std::endl;
 	}
 	else if(passwordType == "sha1")
 	{
-		g_config.setNumber(ConfigManager::PASSWORD_TYPE, PASSWORD_TYPE_SHA1);
+		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_SHA1);
 		std::cout << ">> Using SHA1 passwords" << std::endl;
 	}
 	else
 	{
-		g_config.setNumber(ConfigManager::PASSWORD_TYPE, PASSWORD_TYPE_PLAIN);
+		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_PLAIN);
 		std::cout << ">> Using plaintext passwords" << std::endl;
 	}
 
