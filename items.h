@@ -263,7 +263,7 @@ class Array
 {
 	public:
 		Array(uint32_t n);
-		~Array();
+		virtual ~Array();
 		
 		A getElement(uint32_t id);
 		const A getElement(uint32_t id) const;
@@ -280,7 +280,7 @@ class Items
 {
 	public:
 		Items();
-		~Items();
+		virtual ~Items();
 
 		bool reload();
 		void clear();

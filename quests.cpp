@@ -239,13 +239,17 @@ bool Quests::loadFromXml()
 							{
 								if(xmlStrcmp(tmpNode2->name, (const xmlChar*)"missionstate") == 0)
 								{
-									std::string description;
-									uint32_t missionID;
+									uint32_t missionId;
 									if(readXMLInteger(tmpNode2, "id", intValue))
-										missionID = intValue;
+										missionId = intValue;
+									else
+										continue;
+
+									std::string description;
 									if(readXMLString(tmpNode2, "description", strValue))
 										description = strValue;
-									mission->state[missionID] = new MissionState(description, missionID);
+
+									mission->state[missionId] = new MissionState(description, missionId);
 								}
 								tmpNode2 = tmpNode2->next;
 							}

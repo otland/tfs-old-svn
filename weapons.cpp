@@ -24,6 +24,7 @@
 #include "combat.h"
 #include "tools.h"
 #include "configmanager.h"
+#include "items.h"
 
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
