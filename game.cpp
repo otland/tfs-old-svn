@@ -4533,9 +4533,9 @@ void Game::updateCreatureSkull(Player* player)
 void Game::autoSave()
 {
 	saveGameState(true);
-	if(g_config.getNumber(ConfigManager::AUTOSAVE_EACH_MINUTES) > 0)
-		Scheduler::getScheduler().addEvent(createSchedulerTask(g_config.getNumber(ConfigManager::AUTOSAVE_EACH_MINUTES) * 60 * 1000,
-			boost::bind(&Game::autoSave, this)));
+	uint32_t autoTime = g_config.getNumber(ConfigManager::AUTOSAVE_EACH_MINUTES);
+	if(autoTime > 0)
+		Scheduler::getScheduler().addEvent(createSchedulerTask(autoTime * 60 * 1000, boost::bind(&Game::autoSave, this)));
 }
 
 void Game::autoClean(bool warning /*= true*/)
@@ -4543,14 +4543,14 @@ void Game::autoClean(bool warning /*= true*/)
 	if(warning)
 	{
 		broadcastMessage("Game map cleaning withing 60 seconds, please pick up your items!", MSG_STATUS_WARNING);
-		Scheduler::getScheduler().addEvent(createSchedulerTask(60 * 1000, boost::bind(&Game::autoClean, this, true)));
+		Scheduler::getScheduler().addEvent(createSchedulerTask(60 * 1000, boost::bind(&Game::autoClean, this, false)));
 	}
 	else
 	{
 		getMap()->clean();
-		if(g_config.getNumber(ConfigManager::AUTOCLEAN_EACH_MINUTES) > 0)
-			Scheduler::getScheduler().addEvent(createSchedulerTask(g_config.getNumber(ConfigManager::AUTOCLEAN_EACH_MINUTES) * 60 * 1000,
-				boost::bind(&Game::autoClean, this)));
+		uint32_t autoTime = g_config.getNumber(ConfigManager::AUTOCLEAN_EACH_MINUTES);
+		if(autoTime > 0)
+			Scheduler::getScheduler().addEvent(createSchedulerTask(autoTime * 60 * 1000, boost::bind(&Game::autoClean, this)));
 	}
 }
 
