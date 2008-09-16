@@ -2824,7 +2824,7 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 		item.subType = getField(L, "subType");
 		item.buyPrice = getField(L, "buy");
 		item.sellPrice = getField(L, "sell");
-		item.itemName = getField(L, "realName");
+		item.itemName = getField(L, "name");
 		items.push_back(item);
 		lua_pop(L, 1);
 	}
