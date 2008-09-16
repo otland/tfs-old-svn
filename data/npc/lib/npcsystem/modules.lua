@@ -430,7 +430,7 @@ if(Modules == nil) then
 		return true
 	end
 
-	-- onDecliune keyword callback function. Generally called when the player sais 'no' after wanting to buy an item. 
+	-- onDecline keyword callback function. Generally called when the player sais 'no' after wanting to buy an item. 
 	function TravelModule.onDecline(cid, message, keywords, parameters, node)
 		local module = parameters.module
 		if(not module.npcHandler:isFocused(cid)) then
@@ -476,7 +476,7 @@ if(Modules == nil) then
 		local maxn = table.maxn(module.destinations)
 		for i, destination in pairs(module.destinations) do
 			msg = msg .. destination
-			if(i == maxn -1 ) then
+			if(i == maxn -1) then
 				msg = msg .. ' and '
 			elseif(i == maxn) then
 				msg = msg .. '.'
@@ -879,7 +879,7 @@ if(Modules == nil) then
 		}
 
 		if(getPlayerMoney(cid) < amount * self.npcHandler.shopItems[itemid].buyPrice) then
-			local msg = self.npcHandler:getMessage(MESSAGE_NOTHAVEMONEY)
+			local msg = self.npcHandler:getMessage(MESSAGE_NEEDMONEY)
 			msg = self.npcHandler:parseMessage(msg, parseInfo)
 			doPlayerSendCancel(cid, msg)
 			return false
@@ -887,9 +887,9 @@ if(Modules == nil) then
 
 		local boughtItems, i = ShopModule.doPlayerAddItem(cid, itemid, subType, amount)
 		if(i < amount) then
-			local msgId = MESSAGE_NOMORESPACE
+			local msgId = MESSAGE_NEEDMORESPACE
 			if(i == 0) then
-				msgId = MESSAGE_NOSPACE
+				msgId = MESSAGE_NEEDSPACE
 			end
 
 			local msg = self.npcHandler:getMessage(msgId)
@@ -948,7 +948,7 @@ if(Modules == nil) then
 			end
 			return true
 		else
-			local msg = self.npcHandler:getMessage(MESSAGE_NOTHAVEOBJECT)
+			local msg = self.npcHandler:getMessage(MESSAGE_NEEDITEM)
 			msg = self.npcHandler:parseMessage(msg, parseInfo)
 			doPlayerSendCancel(cid, msg)
 			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
@@ -1011,7 +1011,7 @@ if(Modules == nil) then
 				msg = module.npcHandler:parseMessage(msg, parseInfo)
 				module.npcHandler:say(msg, cid)
 			else
-				local msg = module.npcHandler:getMessage(MESSAGE_NOTHAVEITEM)
+				local msg = module.npcHandler:getMessage(MESSAGE_MISSINGITEM)
 				msg = module.npcHandler:parseMessage(msg, parseInfo)
 				module.npcHandler:say(msg, cid)
 			end
@@ -1025,7 +1025,7 @@ if(Modules == nil) then
 				msg = module.npcHandler:parseMessage(msg, parseInfo)
 				module.npcHandler:say(msg, cid)
 			else
-				local msg = module.npcHandler:getMessage(MESSAGE_NEEDMOREMONEY)
+				local msg = module.npcHandler:getMessage(MESSAGE_MISSINGMONEY)
 				msg = module.npcHandler:parseMessage(msg, parseInfo)
 				module.npcHandler:say(msg, cid)
 			end
@@ -1036,7 +1036,7 @@ if(Modules == nil) then
 				msg = module.npcHandler:parseMessage(msg, parseInfo)
 				module.npcHandler:say(msg, cid)
 			else
-				local msg = module.npcHandler:getMessage(MESSAGE_NEEDMOREMONEY)
+				local msg = module.npcHandler:getMessage(MESSAGE_MISSINGMONEY)
 				msg = module.npcHandler:parseMessage(msg, parseInfo)
 				module.npcHandler:say(msg, cid)
 			end
