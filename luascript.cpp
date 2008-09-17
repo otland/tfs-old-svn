@@ -121,15 +121,17 @@ bool ScriptEnviroment::saveGameState()
 
 	Database* db = Database::getInstance();
 
-	if(!db->executeQuery("DELETE FROM `global_storage`"))
+	DBQuery query;
+	query << "DELETE FROM `global_storage` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	if(!db->executeQuery(query.str()))
 		return false;
 
 	DBInsert query_insert(db);
-	query_insert.setQuery("INSERT INTO `global_storage` (`key`, `value`) VALUES ");
-	DBQuery query;
+	query_insert.setQuery("INSERT INTO `global_storage` (`key`, `world_id`, `value`) VALUES ");
+	query.str("");
 	for(StorageMap::const_iterator it = m_globalStorageMap.begin(); it != m_globalStorageMap.end(); ++it)
 	{
-		query << it->first << ", " << it->second;
+		query << it->first << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << it->second;
 		if(!query_insert.addRow(query.str()))
 			return false;
 
@@ -148,8 +150,10 @@ bool ScriptEnviroment::loadGameState()
 
 	Database* db = Database::getInstance();
 
+	DBQuery query;
+	query << "SELECT `key`, `value` FROM `global_storage` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 	DBResult* result;
-	if((result = db->storeQuery("SELECT `key`, `value` FROM `global_storage`")))
+	if((result = db->storeQuery(query.str())))
 	{
 		do
 		{
@@ -161,6 +165,8 @@ bool ScriptEnviroment::loadGameState()
 		while(result->next());
 		db->freeResult(result);
 	}
+	query.str("");
+
 	return true;
 }
 
@@ -6552,6 +6558,12 @@ int32_t LuaScriptInterface::luaGetPlayerByName(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerGUIDByName(lua_State* L)
 {
 	//getPlayerGUIDByName(name)
+	int32_t parameters = lua_gettop(L);
+
+	bool multiworld = false;
+	if(parameters > 1)
+		multiworld = (popNumber(L) == LUA_TRUE);
+
 	std::string name = popString(L);
 	uint32_t value = LUA_NULL;
 
@@ -6561,7 +6573,7 @@ int32_t LuaScriptInterface::luaGetPlayerGUIDByName(lua_State* L)
 	else
 	{
 		uint32_t guid;
-		if(IOLoginData::getInstance()->getGuidByName(guid, name))
+		if(IOLoginData::getInstance()->getGuidByName(guid, name, multiworld))
 			value = guid;
 	}
 
@@ -6572,10 +6584,15 @@ int32_t LuaScriptInterface::luaGetPlayerGUIDByName(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerNameByGUID(lua_State* L)
 {
 	//getPlayerNameByGUID(guid)
+	int32_t parameters = lua_gettop(L);
+
+	bool multiworld = false;
+	if(parameters > 1)
+		multiworld = (popNumber(L) == LUA_TRUE);
+
 	uint32_t guid = popNumber(L);
-	
 	std::string name;
-	if(!IOLoginData::getInstance()->getNameByGuid(guid, name))
+	if(!IOLoginData::getInstance()->getNameByGuid(guid, name, multiworld))
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushnumber(L, LUA_NULL);

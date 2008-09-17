@@ -68,6 +68,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confBool[GLOBALSAVE_ENABLED] = getGlobalBool(L, "serverSaveEnabled", "yes");
 		m_confNumber[GLOBALSAVE_H] = getGlobalNumber(L, "serverSaveHour", 8);
 		m_confString[HOUSE_RENT_PERIOD] = getGlobalString(L, "houseRentPeriod", "monthly");
+		m_confNumber[WORLD_ID] = getGlobalNumber(L, "worldId", 0); //__LOGIN_SERVER__
 	}
 
 	m_confString[LOGIN_MSG] = getGlobalString(L, "loginMessage", "Welcome to the Forgotten Server!");
@@ -163,6 +164,11 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	//m_confBool[SPELL_NAME_INSTEAD_WORDS] = getGlobalBool(L, "spellNameInsteadOfWordsOnCast", "no");
 	m_confNumber[MAX_PLAYER_SUMMONS] = getGlobalNumber(L, "maxPlayerSummons", 2);
 	m_confBool[SAVE_GLOBAL_STORAGE] = getGlobalBool(L, "saveGlobalStorage", "yes");
+	#ifdef __LOGIN_SERVER__
+	m_confBool[LOGIN_ONLY_LOGINSERVER] = false;
+	#elseif
+	m_confBool[LOGIN_ONLY_LOGINSERVER] = getGlobalBool(L, "loginOnlyWithLoginServer", "no");
+	#endif //__LOGIN_SERVER__
 	m_isLoaded = true;
 
 	lua_close(L);

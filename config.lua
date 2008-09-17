@@ -41,6 +41,10 @@
 	showHealingDamage = "no"
 
 	-- Connection config
+	-- NOTE: loginOnlyWithLoginServer is used only with game servers.
+	-- It disconnects players that are trying to login to the server not using
+	-- the login server.
+	worldId = 0
 	ip = "127.0.0.1"
 	port = 7171
 	loginTries = 10
@@ -56,6 +60,7 @@
 	adminLogsEnabled = "no"
 	statusTimeout = 5 * 60 * 1000
 	replaceKickOnLogin = "yes"
+	loginOnlyWithLoginServer = "no"
 
 	-- Database
 	-- NOTE: sqlFile is used only by sqlite database

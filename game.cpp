@@ -4654,7 +4654,7 @@ int32_t Game::getMotdNum()
 
 		lastMotdNum++;
 		lastMotdText = g_config.getString(ConfigManager::MOTD);
-		query << "INSERT INTO `server_motd` (`id`, `text`) VALUES (" << lastMotdNum << ", " << db->escapeString(lastMotdText) << ");";
+		query << "INSERT INTO `server_motd` (`id`, `world_id`, `text`) VALUES (" << lastMotdNum << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << db->escapeString(lastMotdText) << ");";
 		db->executeQuery(query.str());
 		query.str("");
 	}
@@ -4665,13 +4665,17 @@ void Game::loadMotd()
 {
 	Database* db = Database::getInstance();
 	DBResult* result;
+	DBQuery query;
 
-	if(!(result = db->storeQuery("SELECT `id`, `text` FROM `server_motd` ORDER BY `id` DESC LIMIT 1")))
+	query << "SELECT `id`, `text` FROM `server_motd` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " ORDER BY `id` DESC LIMIT 1";
+	if(!(result = db->storeQuery(query.str())))
 	{
 		std::cout << "> ERROR: Failed to load motd!" << std::endl;
+		query.str("");
 		lastMotdNum = random_range(5, 500);
 		return;
 	}
+	query.str("");
 
 	lastMotdNum = result->getDataInt("id");
 	lastMotdText = result->getDataString("text");
@@ -4682,15 +4686,16 @@ void Game::checkPlayersRecord()
 {
 	if(getPlayersOnline() > lastPlayersRecord)
 	{
+		
 		Database* db = Database::getInstance();
 		DBQuery query;
 
 		lastPlayersRecord = getPlayersOnline();
-		query << "INSERT INTO `server_record` (`record`, `timestamp`) VALUES (" << lastPlayersRecord << ", " << time(NULL) << ");";
+		query << "INSERT INTO `server_record` (`record`, `timestamp`, `world_id`) VALUES (" << lastPlayersRecord << ", " << time(NULL) << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ");";
 		db->executeQuery(query.str());
 		query.str("");
 
-		char buffer[60];
+		char buffer[50];
 		sprintf(buffer, "New record: %d players are logged in.", lastPlayersRecord);
 		broadcastMessage(buffer, MSG_STATUS_DEFAULT);
 	}
@@ -4700,13 +4705,17 @@ void Game::loadPlayersRecord()
 {
 	Database* db = Database::getInstance();
 	DBResult* result;
+	DBQuery query;
 
-	if(!(result = db->storeQuery("SELECT `record` FROM `server_record` ORDER BY `timestamp` DESC LIMIT 1")))
+	query << "SELECT `record` FROM `server_record` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " ORDER BY `timestamp` DESC LIMIT 1";	
+	if(!(result = db->storeQuery(query.str())))
 	{
-		std::cout << "> ERROR: Failed to load online record!" << std::endl;
 		lastPlayersRecord = 0;
+		std::cout << "> ERROR: Failed to load online record!" << std::endl;
+		query.str("");
 		return;
 	}
+	query.str("");
 
 	lastPlayersRecord = result->getDataInt("record");
 	db->freeResult(result);

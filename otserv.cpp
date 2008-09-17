@@ -68,6 +68,9 @@
 #endif
 
 #include "admin.h"
+#ifdef __LOGIN_SERVER__
+#include "gameservers.h"
+#endif //__LOGIN_SERVER__
 
 #ifdef __OTSERV_ALLOCATOR__
 #include "allocator.h"
@@ -407,6 +410,15 @@ void mainLoader()
 	#endif
 	if(!g_game.loadMap(g_config.getString(ConfigManager::MAP_NAME)))
 		startupErrorMessage("");
+
+	#ifdef __LOGIN_SERVER__
+	std::cout << ">> Loading game servers" << std::endl;
+	#ifndef __CONSOLE__
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading game servers");
+	#endif
+	if(!GameServers::getInstance()->loadFromXml(true))
+		startupErrorMessage("Couldn't load game servers!");
+	#endif //__LOGIN_SERVER__
 
 	std::cout << ">> Setting initialization gamestate modules." << std::endl;
 	#ifndef __CONSOLE__
@@ -764,6 +776,17 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload creature events." << std::endl;
 					}
 					break;
+				#ifdef __LOGIN_SERVER__
+				case ID_MENU_RELOAD_GAMESERVERS:
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(GameServers::getInstance()->reload())
+							std::cout << "Reloaded game servers." << std::endl;
+						else
+							std::cout << "Failed to reload game servers." << std::endl;
+					}
+					break;
+				#endif //__LOGIN_SERVER__
 				case ID_MENU_RELOAD_HIGHSCORES:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
