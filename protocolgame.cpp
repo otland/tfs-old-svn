@@ -658,7 +658,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 
 			default:
 				sendCancelWalk();
-				break; 
+				break;
 		}
 	}
 	else

@@ -78,7 +78,7 @@ class SHA1
 
 		bool Computed; // Is the digest computed?
 		bool Corrupted; // Is the message digest corruped?
-	
+
 };
 
 #endif

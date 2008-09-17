@@ -170,7 +170,7 @@ class OutputMessagePool
 #ifdef __TRACK_NETWORK__
 	#define TRACK_MESSAGE(omsg) if(dynamic_cast<OutputMessage*>(omsg)) dynamic_cast<OutputMessage*>(omsg)->Track(__FILE__, __LINE__, __FUNCTION__)
 #else
-	#define TRACK_MESSAGE(omsg) 
+	#define TRACK_MESSAGE(omsg)
 #endif
 
 #endif

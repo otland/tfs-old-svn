@@ -184,7 +184,7 @@ bool ConfigManager::reload()
 }
 
 const std::string& ConfigManager::getString(uint32_t _what) const
-{ 
+{
 	if(m_isLoaded && _what < LAST_STRING_CONFIG)
 		return m_confString[_what];
 	else

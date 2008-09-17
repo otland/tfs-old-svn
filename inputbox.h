@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -28,7 +28,7 @@
 #define INPUTBOX_WIDTH 400
 #define INPUTBOX_HEIGHT 125
 
-class CInputBox  
+class CInputBox
 {
 	static HFONT m_hFont;
 	static HWND  m_hWndInputBox;
@@ -41,7 +41,7 @@ class CInputBox
 	static HINSTANCE m_hInst;
 
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-	
+
 public:
 	LPTSTR Text;
 	BOOL DoModal(LPCTSTR szCaption, LPCTSTR szPrompt);

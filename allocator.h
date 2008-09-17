@@ -206,7 +206,7 @@ class PoolManager
 	private:
 		void addPool(size_t size, size_t next_size)
 		{
-			pools[size] = new(0) boost::pool<boost::default_user_allocator_malloc_free>(size, next_size); 
+			pools[size] = new(0) boost::pool<boost::default_user_allocator_malloc_free>(size, next_size);
 			#ifdef __OTSERV_ALLOCATOR_STATS__
 			t_PoolStats * tmp = new(0) t_PoolStats;
 			tmp->unused = 0;
@@ -239,7 +239,7 @@ class PoolManager
 		PoolManager(const PoolManager&);
 		const PoolManager& operator=(const PoolManager&);
 
-		typedef std::map<size_t, boost::pool<boost::default_user_allocator_malloc_free >*, std::less<size_t >, 
+		typedef std::map<size_t, boost::pool<boost::default_user_allocator_malloc_free >*, std::less<size_t >,
 			dummyallocator<std::pair<const size_t, boost::pool<boost::default_user_allocator_malloc_free>* > > > Pools;
 
 		Pools pools;

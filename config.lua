@@ -95,7 +95,7 @@
 	housePriceAsRent = "no"
 	housePriceEachSQM = 1000
 	houseRentPeriod = "never"
-	houseNeedPremiumAccount = "yes"	
+	houseNeedPremiumAccount = "yes"
 
 	-- Item usage
 	timeBetweenActions = 200

@@ -168,7 +168,7 @@ class _Database
 
 		/**
 		* Get case insensitive string comparison operator
-		* 
+		*
 		* @return the case insensitive operator
 		*/
 		DATABASE_VIRTUAL std::string getStringComparisonOperator() { return "="; }

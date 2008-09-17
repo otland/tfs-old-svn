@@ -1055,7 +1055,7 @@ bool IOLoginData::playerExists(uint32_t guid, bool multiworld /*= false*/)
 
 	if(!(result = db->storeQuery(query.str())))
 		return false;
-	
+
 	db->freeResult(result);
 	return true;
 }
@@ -1073,7 +1073,7 @@ bool IOLoginData::playerExists(std::string name, bool multiworld /*= false*/)
 
 	if(!(result = db->storeQuery(query.str())))
 		return false;
-	
+
 	db->freeResult(result);
 	return true;
 }

@@ -2850,8 +2850,8 @@ bool Game::internalCloseTrade(Player* player)
 	Player* tradePartner = player->tradePartner;
 	if((tradePartner && tradePartner->getTradeState() == TRADE_TRANSFER) || player->getTradeState() == TRADE_TRANSFER)
 	{
-		std::cout << "Warning: [Game::playerCloseTrade] TradeState == TRADE_TRANSFER. " << 
-			player->getName() << " " << player->getTradeState() << " , " << 
+		std::cout << "Warning: [Game::playerCloseTrade] TradeState == TRADE_TRANSFER. " <<
+			player->getName() << " " << player->getTradeState() << " , " <<
 			tradePartner->getName() << " " << tradePartner->getTradeState() << std::endl;
 		return true;
 	}
@@ -4686,7 +4686,7 @@ void Game::checkPlayersRecord()
 {
 	if(getPlayersOnline() > lastPlayersRecord)
 	{
-		
+
 		Database* db = Database::getInstance();
 		DBQuery query;
 
@@ -4707,7 +4707,7 @@ void Game::loadPlayersRecord()
 	DBResult* result;
 	DBQuery query;
 
-	query << "SELECT `record` FROM `server_record` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " ORDER BY `timestamp` DESC LIMIT 1";	
+	query << "SELECT `record` FROM `server_record` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " ORDER BY `timestamp` DESC LIMIT 1";
 	if(!(result = db->storeQuery(query.str())))
 	{
 		lastPlayersRecord = 0;
@@ -4739,7 +4739,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 	if(banComment.size() > commentSize)
 	{
 		char buffer[90];
-		sprintf(buffer, "The comment may not exceed limit of %d characters.", commentSize); 
+		sprintf(buffer, "The comment may not exceed limit of %d characters.", commentSize);
 		player->sendCancel(buffer);
 		return false;
 	}

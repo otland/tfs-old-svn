@@ -67,7 +67,7 @@ CInputBox::~CInputBox()
 LRESULT CALLBACK CInputBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	LOGFONT lfont;
-	switch(message) 
+	switch(message)
 	{
 		case WM_CREATE:
 			memset(&lfont, 0, sizeof(lfont));
@@ -82,13 +82,13 @@ LRESULT CALLBACK CInputBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			lfont.lfPitchAndFamily = DEFAULT_PITCH;
 			m_hFont = CreateFontIndirect(&lfont);
 			m_hInst = GetModuleHandle(NULL);
-			m_hWndEdit = CreateWindowEx(WS_EX_STATICEDGE, "edit", "", WS_VISIBLE | WS_CHILD  | WS_TABSTOP | ES_AUTOHSCROLL, 5, INPUTBOX_HEIGHT - 50, INPUTBOX_WIDTH - 16, 20, hWnd, NULL, m_hInst, NULL); 
+			m_hWndEdit = CreateWindowEx(WS_EX_STATICEDGE, "edit", "", WS_VISIBLE | WS_CHILD  | WS_TABSTOP | ES_AUTOHSCROLL, 5, INPUTBOX_HEIGHT - 50, INPUTBOX_WIDTH - 16, 20, hWnd, NULL, m_hInst, NULL);
 			SendMessage(m_hWndEdit, WM_SETFONT, (WPARAM)m_hFont, 0);
-			m_hWndOK = CreateWindowEx(0, "button", "OK", WS_VISIBLE | WS_CHILD | WS_TABSTOP, INPUTBOX_WIDTH - 100, 10, 90, 25, hWnd, NULL, m_hInst, NULL); 
+			m_hWndOK = CreateWindowEx(0, "button", "OK", WS_VISIBLE | WS_CHILD | WS_TABSTOP, INPUTBOX_WIDTH - 100, 10, 90, 25, hWnd, NULL, m_hInst, NULL);
 			SendMessage(m_hWndOK, WM_SETFONT, (WPARAM)m_hFont, 0);
-			m_hWndCancel = CreateWindowEx(0, "button", "Cancel", WS_VISIBLE | WS_CHILD | WS_TABSTOP, INPUTBOX_WIDTH - 100, 40, 90, 25, hWnd, NULL, m_hInst, NULL); 
+			m_hWndCancel = CreateWindowEx(0, "button", "Cancel", WS_VISIBLE | WS_CHILD | WS_TABSTOP, INPUTBOX_WIDTH - 100, 40, 90, 25, hWnd, NULL, m_hInst, NULL);
 			SendMessage(m_hWndCancel, WM_SETFONT, (WPARAM)m_hFont, 0);
-			m_hWndPrompt = CreateWindowEx(WS_EX_STATICEDGE, "static", "", WS_VISIBLE | WS_CHILD, 5, 10, INPUTBOX_WIDTH - 110, INPUTBOX_HEIGHT - 70, hWnd, NULL, m_hInst, NULL); 
+			m_hWndPrompt = CreateWindowEx(WS_EX_STATICEDGE, "static", "", WS_VISIBLE | WS_CHILD, 5, 10, INPUTBOX_WIDTH - 110, INPUTBOX_HEIGHT - 70, hWnd, NULL, m_hInst, NULL);
 			SendMessage(m_hWndPrompt, WM_SETFONT, (WPARAM)m_hFont, 0);
 			SetFocus(m_hWndEdit);
 			break;

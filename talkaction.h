@@ -1,13 +1,13 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-// 
+//
 //////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -49,7 +49,7 @@ class TalkActions : public BaseEvents
 	public:
 		TalkActions();
 		virtual ~TalkActions();
-		
+
 		TalkActionResult_t onPlayerSpeak(Player* player, SpeakClasses type, const std::string& words);
 
 	protected:
@@ -58,7 +58,7 @@ class TalkActions : public BaseEvents
 		virtual Event* getEvent(const std::string& nodeName);
 		virtual bool registerEvent(Event* event, xmlNodePtr p);
 		virtual void clear();
-		
+
 		typedef std::list< std::pair<std::string, TalkAction* > > TalkActionList;
 		TalkActionList wordsMap;
 
@@ -70,7 +70,7 @@ class TalkAction : public Event
 	public:
 		TalkAction(LuaScriptInterface* _interface);
 		virtual ~TalkAction() {}
-		
+
 		virtual bool configureEvent(xmlNodePtr p);
 
 		std::string getWords() const {return m_words;}
@@ -78,13 +78,13 @@ class TalkAction : public Event
 		uint32_t getAccess() const {return m_access;}
 		bool isLogged() const {return m_logged;}
 		bool isSensitive() const {return m_sensitive;}
-		
+
 		//scripting
 		int32_t executeSay(Creature* creature, const std::string& words, const std::string& param);
 
 	protected:
 		virtual std::string getScriptEventName();
-		
+
 		std::string m_words;
 		TalkActionFilter m_filter;
 		uint32_t m_group;
