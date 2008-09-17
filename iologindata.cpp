@@ -207,7 +207,7 @@ bool IOLoginData::setRecoveryKey(uint32_t accountNumber, std::string recoveryKey
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `accounts` SET `key` " << db->getStringComparisonOperator() << " " << db->escapeString(recoveryKey) << " WHERE `id` = " << accountNumber;
+	query << "UPDATE `accounts` SET `key` = " << db->escapeString(recoveryKey) << " WHERE `id` = " << accountNumber;
 	return db->executeQuery(query.str());
 }
 

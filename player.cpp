@@ -3235,7 +3235,7 @@ void Player::doAttacking(uint32_t interval)
 					&g_game, getID()));
 				setNextActionTask(task);
 			}
-			else if(!hasCondition(CONDITION_EXHAUST_COMBAT) || !weapon->hasExhaustion())
+			else if(!hasCondition(CONDITION_EXHAUST_WEAPON) || !weapon->hasExhaustion())
 				result = weapon->useWeapon(this, tool, attackedCreature);
 		}
 		else
