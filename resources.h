@@ -4,11 +4,11 @@
 	#define ID_ABOUT 104
 	#define ID_LOG 105
 	#define ID_ICON 106
-		
+
 	#define ID_TRAY_HIDE 118
 	#define ID_TRAY_SHUTDOWN 119
 	#define ID_STATUS_BAR 120
-	
+
 	#define ID_MENU 200
 
 	#define ID_MENU_MAIN_REJECT 201

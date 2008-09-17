@@ -248,7 +248,7 @@ EXCEPTION_DISPOSITION
 	*outdriver << std::endl;
 	//exception header type and eip
 	outdriver->flags(std::ios::hex | std::ios::showbase);
-	*outdriver << "Exception: " << (uint32_t)ExceptionRecord->ExceptionCode << 
+	*outdriver << "Exception: " << (uint32_t)ExceptionRecord->ExceptionCode <<
 		" at eip = " << (uint32_t)ExceptionRecord->ExceptionAddress;
 	FunctionMap::iterator functions;
 	unsigned long functionAddr;
@@ -353,18 +353,18 @@ bool ExceptionHandler::LoadMap()
 		exit(1);
 		return false;
 	}
-	
+
 	//read until found .text		   0x00401000
 	while(fgets(line, 1024, input))
 	{
 		if(memcmp(line,".text",5) == 0)
 			break;
 	}
-	
+
 	if(feof(input)){
 		return false;
 	}
-	
+
 	char tofind[] = "0x";
 	char lib[] = ".a(";
 	while(fgets(line, 1024, input))
@@ -393,7 +393,7 @@ bool ExceptionHandler::LoadMap()
 				}
 				if(*pos2 == 0 || (*pos2 == '0' && *(pos2+1) == 'x'))
 					continue;
-				
+
 				char* name = new char[strlen(pos2)+1];
 				strcpy(name, pos2);
 				name[strlen(pos2) - 1] = 0;
@@ -419,7 +419,7 @@ void ExceptionHandler::dumpStack()
 	#ifndef __GNUC__
 	return;
 	#endif
-	
+
 	uint32_t *esp;
 	uint32_t *next_ret;
 	uint32_t stack_val;
@@ -428,7 +428,7 @@ void ExceptionHandler::dumpStack()
 	uint32_t nparameters = 0;
 	uint32_t foundRetAddress = 0;
 	_MEMORY_BASIC_INFORMATION mbi;
-	
+
 	std::cout << "Error: generating report file..." << std::endl;
 	std::ofstream output("report.txt",std::ios_base::app);
 	output.flags(std::ios::hex | std::ios::showbase);
@@ -444,14 +444,14 @@ void ExceptionHandler::dumpStack()
 	#else
 	//
 	#endif
-	
+
 	VirtualQuery(esp, &mbi, sizeof(mbi));
 	stacklimit = (uint32_t*)((uint32_t)(mbi.BaseAddress) + mbi.RegionSize);
-	
+
 	output << "---Stack Trace---" << std::endl;
 	output << "From: " << (uint32_t)esp <<
 		" to: " << (uint32_t)stacklimit << std::endl;
-	
+
 	stackstart = esp;
 	#ifdef __GNUC__
 	__asm__ ("movl %%ebp, %0;":"=r"(next_ret)::);
@@ -464,7 +464,7 @@ void ExceptionHandler::dumpStack()
 		stack_val = *esp;
 		if(foundRetAddress)
 			nparameters++;
-		
+
 		if(esp - stackstart < 20 || nparameters < 10 || std::abs(esp - next_ret) < 10 || frame_param_counter < 8){
 			output  << (uint32_t)esp << " | ";
 			printPointer(&output, stack_val);

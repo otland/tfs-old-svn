@@ -94,7 +94,7 @@ class IOLoginData
 		bool changeName(uint32_t guid, std::string newName, std::string oldName);
 		bool createCharacter(uint32_t accountNumber, std::string characterName, int32_t vocationId, PlayerSex_t sex);
 		int16_t deleteCharacter(uint32_t accountNumber, const std::string characterName);
-		
+
 		uint32_t getLevel(uint32_t guid) const;
 		uint32_t getLastIP(uint32_t guid) const;
 

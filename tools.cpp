@@ -338,14 +338,14 @@ int32_t random_range(int32_t lowest_number, int32_t highest_number, Distribution
 {
 	if(highest_number == lowest_number)
 		return lowest_number;
-	
+
 	if(lowest_number > highest_number)
 	{
 		int32_t nTmp = highest_number;
 		highest_number = lowest_number;
 		lowest_number = nTmp;
 	}
-	
+
 	int32_t range = highest_number - lowest_number;
 	if(type == DISTRO_UNIFORM)
 	{
@@ -951,7 +951,7 @@ std::string getSkillName(uint16_t skillid)
 	switch(skillid)
 	{
 		case SKILL_FIST:
-			return "fist fighting"; 
+			return "fist fighting";
 			break;
 		case SKILL_CLUB:
 			return "club fighting";

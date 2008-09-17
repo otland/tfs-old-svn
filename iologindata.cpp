@@ -1033,7 +1033,7 @@ bool IOLoginData::playerExists(uint32_t guid)
 	query << "SELECT `id` FROM `players` WHERE `id` = " << guid;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
-	
+
 	db->freeResult(result);
 	return true;
 }
@@ -1047,7 +1047,7 @@ bool IOLoginData::playerExists(std::string name)
 	query << "SELECT `id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name);
 	if(!(result = db->storeQuery(query.str())))
 		return false;
-	
+
 	db->freeResult(result);
 	return true;
 }

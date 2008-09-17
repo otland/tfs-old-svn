@@ -123,12 +123,12 @@ class ConfigManager
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 
-		enum double_config_t 
+		enum double_config_t
 		{
 			LAST_DOUBLE_CONFIG /* this must be the last one */
 		};
 
-		enum bool_config_t 
+		enum bool_config_t
 		{
 			GLOBALSAVE_ENABLED,
 			START_CHOOSEVOC,

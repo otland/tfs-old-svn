@@ -64,7 +64,7 @@ class AStarNodes
 	public:
 		AStarNodes();
 		~AStarNodes(){}
-	
+
 		AStarNode* createOpenNode();
 		AStarNode* getBestNode();
 		void closeNode(AStarNode* node);
@@ -113,16 +113,16 @@ class QTreeNode
 	public:
 		QTreeNode();
 		virtual ~QTreeNode();
-	
+
 		bool isLeaf(){return m_isLeaf;}
 		QTreeLeafNode* getLeaf(uint32_t x, uint32_t y);
 		static QTreeLeafNode* getLeafStatic(QTreeNode* root, uint32_t x, uint32_t y);
 		QTreeLeafNode* createLeaf(uint32_t x, uint32_t y, uint32_t level);
-		
+
 	protected:
 		bool m_isLeaf;
 		QTreeNode* m_child[4];
-	
+
 		friend class Map;
 };
 
@@ -174,14 +174,14 @@ class Map
 		* \returns true if the map was loaded successfully
 		*/
 		bool loadMap(const std::string& identifier);
-	
+
 		/**
 		* Save a map.
 		* \param identifier file/database to save to
 		* \returns true if the map was saved successfully
 		*/
 		bool saveMap();
-	
+
 		/**
 		* Get a single tile.
 		* \returns A pointer to that tile.
@@ -190,9 +190,9 @@ class Map
 		Tile* getTile(const Position& pos);
 
 		uint32_t clean();
-		
+
 		QTreeLeafNode* getLeaf(uint16_t x, uint16_t y){ return root.getLeaf(x, y);}
-		
+
 		/**
 		* Set a single tile.
 		* \param a tile to set for the position
@@ -210,7 +210,7 @@ class Map
 		* \param forceLogin If true, placing the creature will not fail becase of obstacles (creatures/chests)
 		*/
 		bool placeCreature(const Position& centerPos, Creature* creature, bool forceLogin = false);
-	
+
 		/**
 		* Remove a creature from the map.
 		* \param c Creature pointer to the creature to remove

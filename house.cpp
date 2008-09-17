@@ -897,7 +897,7 @@ bool Houses::payHouses()
 			if(!town)
 			{
 				#ifdef __DEBUG_HOUSES__
-				std::cout << "Warning: [Houses::payHouses] town = NULL, townid = " << 
+				std::cout << "Warning: [Houses::payHouses] town = NULL, townid = " <<
 					house->getTownId() << ", houseid = " << house->getHouseId() << std::endl;
 				#endif
 				continue;
@@ -1013,7 +1013,7 @@ bool Houses::payHouses()
 				{
 					house->setHouseOwner(0);
 					savePlayerHere = false;
-				}	
+				}
 			}
 
 			if(!player->isOnline())

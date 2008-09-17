@@ -143,7 +143,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	{
 		disconnectClient(0x0A, "Your IP is banished!");
 		return false;
-	}	
+	}
 
 	uint32_t serverip = serverIPs[0].first;
 	for(uint32_t i = 0; i < serverIPs.size(); i++)

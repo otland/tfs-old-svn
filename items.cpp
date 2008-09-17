@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -164,10 +164,10 @@ int32_t Items::loadFromOtb(std::string file)
 	FileLoader f;
 	if(!f.openFile(file.c_str(), false, true))
 		return f.getError();
-	
+
 	uint32_t type;
 	NODE node = f.getChildNode(NO_NODE, type);
-	
+
 	PropStream props;
 	if(f.getProps(node,props))
 	{
@@ -382,7 +382,7 @@ bool Items::loadFromXml()
 	if(doc)
 	{
 		xmlNodePtr root = xmlDocGetRootElement(doc);
-		
+
 		if(xmlStrcmp(root->name,(const xmlChar*)"items") != 0)
 		{
 			xmlFreeDoc(doc);
@@ -1256,7 +1256,7 @@ int32_t Items::getItemIdByName(const std::string& name)
 	return -1;
 }
 
-template<typename A> 
+template<typename A>
 Array<A>::Array(uint32_t n)
 {
 	m_data = (A*)malloc(sizeof(A)*n);
@@ -1264,7 +1264,7 @@ Array<A>::Array(uint32_t n)
 	m_size = n;
 }
 
-template<typename A> 
+template<typename A>
 Array<A>::~Array()
 {
 	free(m_data);

@@ -194,7 +194,7 @@ bool IOGuild::disbandGuild(uint32_t guildId)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	
+
 	query << "UPDATE `players` SET `rank_id` = '' AND `guildnick` = '' WHERE `rank_id` = " << getRankIdByGuildIdAndLevel(guildId, 3) << " OR rank_id = " << getRankIdByGuildIdAndLevel(guildId, 2) << " OR rank_id = " << getRankIdByGuildIdAndLevel(guildId, 1);
 	db->executeQuery(query.str());
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
@@ -282,7 +282,7 @@ int8_t IOGuild::getGuildLevel(uint32_t guid)
 	Database* db = Database::getInstance();
 	DBQuery query;
 	DBResult* result;
-	
+
 	query << "SELECT `guild_ranks`.`level` FROM `players`, `guild_ranks` WHERE `guild_ranks`.`id`=`players`.`rank_id` AND `players`.`id` = " << guid;
 	if(!(result = db->storeQuery(query.str())))
 		return 0;

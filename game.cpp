@@ -2850,8 +2850,8 @@ bool Game::internalCloseTrade(Player* player)
 	Player* tradePartner = player->tradePartner;
 	if((tradePartner && tradePartner->getTradeState() == TRADE_TRANSFER) || player->getTradeState() == TRADE_TRANSFER)
 	{
-		std::cout << "Warning: [Game::playerCloseTrade] TradeState == TRADE_TRANSFER. " << 
-			player->getName() << " " << player->getTradeState() << " , " << 
+		std::cout << "Warning: [Game::playerCloseTrade] TradeState == TRADE_TRANSFER. " <<
+			player->getName() << " " << player->getTradeState() << " , " <<
 			tradePartner->getName() << " " << tradePartner->getTradeState() << std::endl;
 		return true;
 	}
@@ -4730,7 +4730,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 	if(banComment.size() > commentSize)
 	{
 		char buffer[90];
-		sprintf(buffer, "The comment may not exceed limit of %d characters.", commentSize); 
+		sprintf(buffer, "The comment may not exceed limit of %d characters.", commentSize);
 		player->sendCancel(buffer);
 		return false;
 	}

@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -103,7 +103,7 @@ Cylinder* HouseTile::__queryDestination(int32_t& index, const Thing* thing, Item
 						<< " - Name: " << house->getName()
 						<< " - House id: " << house->getHouseId()
 						<< " - Tile not found: " << entryPos << std::endl;
-					
+
 					const Position& templePos = player->getTemplePosition();
 					destTile = g_game.getTile(templePos.x, templePos.y, templePos.z);
 					if(!destTile)

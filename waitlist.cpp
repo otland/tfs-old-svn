@@ -71,7 +71,7 @@ int32_t WaitingList::getTimeOut(int32_t slot)
 }
 
 bool WaitingList::clientLogin(const Player* player)
-{		
+{
 	if(player->hasFlag(PlayerFlag_CanAlwaysLogin) || player->getName() == "Account Manager")
 		return true;
 

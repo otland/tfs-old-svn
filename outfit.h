@@ -1,13 +1,13 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-// 
+//
 //////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -46,7 +46,7 @@ public:
 	bool remOutfit(const Outfit& outfit);
 	const OutfitListType& getOutfits() const {return m_list;}
 	bool isInList(uint32_t looktype, uint32_t addons, bool playerPremium, int32_t playerSex) const;
-	
+
 private:
 	OutfitListType m_list;
 };
@@ -55,17 +55,17 @@ class Outfits
 {
 public:
 	~Outfits();
-	
+
 	static Outfits* getInstance(){
 		static Outfits instance;
 		return &instance;
 	}
-	
+
 	bool loadFromXml();
 	const OutfitListType& getOutfits(uint32_t type){
 		return getOutfitList(type).getOutfits();
 	}
-	
+
 	const OutfitList& getOutfitList(uint32_t type){
 		if(type < m_list.size()){
 			return *m_list[type];
@@ -89,14 +89,14 @@ public:
 			return d;
 		}
 	}
-	
+
 private:
 	Outfits();
 	typedef std::vector<OutfitList*> OutfitsListVector;
 	OutfitsListVector m_list;
-	
+
 	std::map<uint32_t, std::string> outfitNamesMap;
-	
+
 	OutfitList m_female_list;
 	OutfitList m_male_list;
 };

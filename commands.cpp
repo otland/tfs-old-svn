@@ -1634,14 +1634,14 @@ bool Commands::changeThingProporties(Creature* creature, const std::string& cmd,
 			const Position& cylinderMapPos = tileInFront->getPosition();
 			const SpectatorVec& list = g_game.getSpectators(cylinderMapPos);
 			SpectatorVec::const_iterator it;
-		
+
 			Player* tmpPlayer = NULL;
 			for(it = list.begin(); it != list.end(); ++it)
 			{
 				if((tmpPlayer = (*it)->getPlayer()))
 					tmpPlayer->sendUpdateTile(tileInFront, cylinderMapPos);
 			}
-		
+
 			for(it = list.begin(); it != list.end(); ++it)
 				(*it)->onUpdateTile(tileInFront, cylinderMapPos);
 
