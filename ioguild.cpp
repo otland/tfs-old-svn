@@ -21,10 +21,8 @@
 #include "ioguild.h"
 #include "database.h"
 #include "game.h"
-#include "configmanager.h"
 
 extern Game g_game;
-extern ConfigManager g_config;
 
 bool IOGuild::getGuildIdByName(uint32_t& guildId, const std::string& guildName)
 {
@@ -32,7 +30,7 @@ bool IOGuild::getGuildIdByName(uint32_t& guildId, const std::string& guildName)
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `id` FROM `guilds` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(guildName) << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	query << "SELECT `id` FROM `guilds` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(guildName);
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -47,7 +45,7 @@ bool IOGuild::guildExists(uint32_t guildId)
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `id` FROM `guilds` WHERE `id` = " << guildId << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	query << "SELECT `id` FROM `guilds` WHERE `id` = " << guildId;
 	if((result = db->storeQuery(query.str())))
 	{
 		db->freeResult(result);
@@ -142,7 +140,7 @@ bool IOGuild::createGuild(Player* player)
 	DBQuery query;
 	DBResult* result;
 
-	query << "INSERT INTO `guilds` (`id`, `world_id`, `name`, `ownerid`, `creationdata`, `motd`) VALUES (NULL , " << db->escapeString(player->getGuildName()) << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << player->getGUID() << ", " << time(NULL) << ", 'Your guild has successfully been created, to view all available commands use: <!commands>. If you would like to remove this message use <!cleanmotd>, if you would like to edit it, use <!setmotd newMotd>.');";
+	query << "INSERT INTO `guilds` (`id`, `name`, `ownerid`, `creationdata`, `motd`) VALUES (NULL , " << db->escapeString(player->getGuildName()) << ", " << player->getGUID() << ", " << time(NULL) << ", 'Your guild has successfully been created, to view all available commands use: <!commands>. If you would like to remove this message use <!cleanmotd>, if you would like to edit it, use <!setmotd newMotd>.');";
 	if(!db->executeQuery(query.str()))
 		return false;
 

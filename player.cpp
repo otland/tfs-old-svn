@@ -3946,7 +3946,7 @@ void Player::manageAccount(const std::string &text)
 		}
 		else if(checkText(text, "yes") && talkState[2])
 		{
-			if(!IOLoginData::getInstance()->playerExists(newCharacterName, true))
+			if(!IOLoginData::getInstance()->playerExists(newCharacterName))
 			{
 				uint32_t _guid;
 				IOLoginData::getInstance()->getGuidByName(_guid, namelockedPlayer);

@@ -6552,12 +6552,6 @@ int32_t LuaScriptInterface::luaGetPlayerByName(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerGUIDByName(lua_State* L)
 {
 	//getPlayerGUIDByName(name)
-	int32_t parameters = lua_gettop(L);
-
-	bool multiworld = false;
-	if(parameters > 1)
-		multiworld = (popNumber(L) == LUA_TRUE);
-
 	std::string name = popString(L);
 	uint32_t value = LUA_NULL;
 
@@ -6567,7 +6561,7 @@ int32_t LuaScriptInterface::luaGetPlayerGUIDByName(lua_State* L)
 	else
 	{
 		uint32_t guid;
-		if(IOLoginData::getInstance()->getGuidByName(guid, name, multiworld))
+		if(IOLoginData::getInstance()->getGuidByName(guid, name))
 			value = guid;
 	}
 
@@ -6578,15 +6572,10 @@ int32_t LuaScriptInterface::luaGetPlayerGUIDByName(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerNameByGUID(lua_State* L)
 {
 	//getPlayerNameByGUID(guid)
-	int32_t parameters = lua_gettop(L);
-
-	bool multiworld = false;
-	if(parameters > 1)
-		multiworld = (popNumber(L) == LUA_TRUE);
-
 	uint32_t guid = popNumber(L);
+	
 	std::string name;
-	if(!IOLoginData::getInstance()->getNameByGuid(guid, name, multiworld))
+	if(!IOLoginData::getInstance()->getNameByGuid(guid, name))
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushnumber(L, LUA_NULL);

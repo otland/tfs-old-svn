@@ -1032,19 +1032,10 @@ uint16_t Houses::getHousesCount(uint32_t accno) const
 	Account account = IOLoginData::getInstance()->loadAccount(accno);
 	uint32_t _guid;
 	uint16_t count = 0;
-#ifdef __LOGIN_SERVER__
-	std::string name;
-
-	for(CharactersMap::iterator it = account.charList.begin(); it != account.charList.end(); ++it)
-	{
-		name = it->first;
-		if(IOLoginData::getInstance()->getGuidByName(_guid, name) && getInstance().getHouseByPlayerId(_guid))
-#else
 
 	for(std::list<std::string>::iterator it = account.charList.begin(); it != account.charList.end(); ++it)
 	{
 		if(IOLoginData::getInstance()->getGuidByName(_guid, (*it)) && getInstance().getHouseByPlayerId(_guid))
-#endif //__LOGIN_SERVER__
 			count++;
 	}
 	return count;

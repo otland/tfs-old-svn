@@ -84,10 +84,10 @@ class IOLoginData
 
 		bool isPremium(uint32_t guid);
 
-		bool playerExists(std::string name, bool multiworld = false);
-		bool playerExists(uint32_t guid, bool multiworld = false);
-		bool getNameByGuid(uint32_t guid, std::string& name, bool multiworld = false);
-		bool getGuidByName(uint32_t& guid, std::string& name, bool multiworld = false);
+		bool playerExists(std::string name);
+		bool playerExists(uint32_t guid);
+		bool getNameByGuid(uint32_t guid, std::string& name);
+		bool getGuidByName(uint32_t& guid, std::string& name);
 		bool getGuidByNameEx(uint32_t &guid, bool& specialVip, std::string& name);
 		uint32_t getAccountNumberByName(std::string name);
 

@@ -98,14 +98,6 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	enableXTEAEncryption();
 	setXTEAKey(key);
 
-	#ifndef __LOGIN_SERVER__
-	if(g_config.getBool(ConfigManager::LOGIN_ONLY_LOGINSERVER))
-	{
-		disconnectClient(0x0A, "Please re-connect using port 7171.");
-		return false;
-	}
-	#endif
-
 	uint32_t accnumber = msg.GetU32();
 	std::string password = msg.GetString();
 
@@ -198,15 +190,6 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	else
 		output->AddByte((uint8_t)account.charList.size());
 
-	#ifdef __LOGIN_SERVER__
-	for(CharactersMap::iterator it = account.charList.begin(); it != account.charList.end(); it++)
-	{
-		output->AddString(it->first);
-		output->AddString(it->second->getName());
-		output->AddU32(inet_addr(it->second->getAddress().c_str()));
-		output->AddU16(it->second->getPort());
-	}
-	#else
 	for(std::list<std::string>::iterator it = account.charList.begin(); it != account.charList.end(); it++)
 	{
 		output->AddString((*it));
@@ -222,7 +205,6 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		output->AddU32(serverip);
 		output->AddU16(g_config.getNumber(ConfigManager::PORT));
 	}
-	#endif //__LOGIN_SERVER__
 
 	//Add premium days
 	if(g_config.getBool(ConfigManager::FREE_PREMIUM))

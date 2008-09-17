@@ -43,9 +43,6 @@
 #include "raids.h"
 #include "chat.h"
 #include "teleport.h"
-#ifdef __LOGIN_SERVER__
-#include "gameservers.h"
-#endif //__LOGIN_SERVER__
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 #include "outputmessage.h"
 #include "connection.h"
@@ -561,14 +558,6 @@ bool Commands::reloadInfo(Creature* creature, const std::string& cmd, const std:
 			g_creatureEvents->reload();
 			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded creature scripts.");
 		}
-		#ifdef __LOGIN_SERVER__
-		else if(tmpParam == "gameservers" || tmpParam == "servers")
-		{
-			GameServers::getInstance()->reload();
-			if(player)
-				player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded game servers.");
-		}
-		#endif //__LOGIN_SERVER__
 		else if(tmpParam == "highscore" || tmpParam == "highscores")
 		{
 			g_game.reloadHighscores();
@@ -1674,7 +1663,7 @@ bool Commands::showBanishmentInfo(Creature* creature, const std::string& cmd, co
 	if(player)
 	{
 		uint32_t accountNumber = atoi(param.c_str());
-		if(accountNumber == 0 && IOLoginData::getInstance()->playerExists(param, true))
+		if(accountNumber == 0 && IOLoginData::getInstance()->playerExists(param))
 			accountNumber = IOLoginData::getInstance()->getAccountNumberByName(param);
 
 		Ban ban;
@@ -1686,7 +1675,7 @@ bool Commands::showBanishmentInfo(Creature* creature, const std::string& cmd, co
 			if(ban.adminid == 0)
 				name_ = (deletion ? "Automatic deletion" : "Automatic banishment");
 			else
-				IOLoginData::getInstance()->getNameByGuid(ban.adminid, name_, true);
+				IOLoginData::getInstance()->getNameByGuid(ban.adminid, name_);
 
 			char date[16], date2[16];
 			formatDate2(ban.added, date);
