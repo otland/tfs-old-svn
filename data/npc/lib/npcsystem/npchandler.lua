@@ -125,7 +125,7 @@ if(NpcHandler == nil) then
 
 		setmetatable(obj.messages, self.messages)
 		self.messages.__index = self.messages
-		
+
 		setmetatable(obj, self)
 		self.__index = self
 		return obj
@@ -540,7 +540,7 @@ if(NpcHandler == nil) then
 		if distance == -1 then
 			return false
 		end
-		
+
 		return (distance <= self.talkRadius)
 	end
 

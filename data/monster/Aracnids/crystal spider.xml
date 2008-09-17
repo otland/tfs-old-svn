@@ -53,16 +53,16 @@
     <item id="2148" countmax="95" chance1="100000" chancemax="0"/>
     <item id="2463" chance="3333"/>
     <item id="2476" chance="1428"/>
-    <item id="2457" chance="3555"/> 
-    <item id="2445" chance="1111"/> 
+    <item id="2457" chance="3555"/>
+    <item id="2445" chance="1111"/>
     <item id="2171" chance="1222"/>
     <item id="7437" chance="1777"/>
     <item id="1987" chance="100000">
       <inside>
-        <item id="7449" chance="1555"/> 
+        <item id="7449" chance="1555"/>
         <item id="2477" chance="1000"/>
-        <item id="7364" countmax="7" chance1="1777" chancemax="0"/> 
-        <item id="7290" chance="1333"/> 
+        <item id="7364" countmax="7" chance1="1777" chancemax="0"/>
+        <item id="7290" chance="1333"/>
       </inside>
     </item>
   </loot>

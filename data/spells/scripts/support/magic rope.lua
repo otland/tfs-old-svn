@@ -16,5 +16,5 @@ function onCastSpell(cid, var)
 		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 		doSendMagicEffect(pos, CONST_ME_POFF)
 		return LUA_ERROR
-	end	
+	end
 end

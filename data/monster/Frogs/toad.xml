@@ -32,7 +32,7 @@
 	<element firePercent="-10"/>
   </elements>
 
-  <voices interval="5000" chance="30"> 
+  <voices interval="5000" chance="30">
     <voice sentence="Ribbit, ribbit!"/>
 	<voice sentence="Ribbit!"/>
   </voices>

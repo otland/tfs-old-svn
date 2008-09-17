@@ -2,15 +2,15 @@
 <npc name="Merchant Glut" floorchange="0" walkinterval="4000" speed="220">
 	<health now="150" max="150"/>
 	<look type="100" head="0" body="0" legs="0" feet="0"/>
-  
+
   <interaction range="3" idletime="0" defaultpublic="0">
     <!--This will include the bankman interaction, in this way several npc can use the same interaction-->
     <include file="merchant.xml"/>
-    
+
     <interact keywords="hi" focus="1">
       <!--These are the alternative keywords-->
       <keywords>hello</keywords>
-      
+
       <response text="Hello. How may I help you |NAME|?"/>
     </interact>
 
@@ -32,7 +32,7 @@
     <interact event="onPlayerLeave" focus="0">
       <response text="It was a pleasure to help you |NAME|."/>
     </interact>
-    
+
     <interact keywords="name">
       <response text="My name is |NPCNAME|."/>
     </interact>
@@ -69,7 +69,7 @@
         </action>
       </response>
     </interact>
-    
+
     <interact event="onPlayerShopBuy">
       <response>
         <action name="price" value="|BUYPRICE|"/>
@@ -105,7 +105,7 @@
     <interact event="onPlayerShopClose">
       <response text="It was a pleasure to help you."/>
     </interact>
-    
+
     <interact keywords="sell;|AMOUNT|;|LIST|">
       <!-- See merchant.xml to add more items/lists-->
       <list>armor</list>
@@ -133,7 +133,7 @@
             <action name="sell" value="|PRICE|"/>
           </response>
         </interact>
-        
+
       </response>
     </interact>
 
@@ -169,5 +169,5 @@
       </response>
     </interact>
   </interaction>
-  
+
 </npc>

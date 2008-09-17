@@ -21,7 +21,7 @@
 	<attack name="melee" interval="2000" min="-0" max="-600"/>
       <attack name="physical" interval="3000" chance="17" range="7" min="-60" max="-600">
 		<attribute key="shootEffect" value="throwingknife"/>
-      </attack> 
+      </attack>
 	<attack name="physical" interval="3000" chance="17" length="4" spread="3" min="-0" max="-0">
 		<attribute key="areaEffect" value="purplenote"/>
 	</attack>
@@ -47,19 +47,19 @@
     <voice sentence="IahaEhheAie!"/>
   </voices>
   <loot>
-	<item id="2148" countmax="76" chance1="100000" chancemax="0"/> 
-	<item id="2671" countmax="5" chance1="33333" chancemax="0"/> 
-	<item id="2470" chance="2000"/> 
-	<item id="6300" chance="2066"/> 
-	<item id="1987" chance="100000"> 
+	<item id="2148" countmax="76" chance1="100000" chancemax="0"/>
+	<item id="2671" countmax="5" chance1="33333" chancemax="0"/>
+	<item id="2470" chance="2000"/>
+	<item id="6300" chance="2066"/>
+	<item id="1987" chance="100000">
 		<inside>
 			<item id="2513" chance="9999"/>
-			<item id="6500" countmax="3" chance1="4555" chancemax="0"/> 
-			<item id="2557" chance="12000"/> 
-			<item id="2558" chance="11000"/> 
-			<item id="5944" chance="5555"/> 
-			<item id="5801" chance="1800"/> 
-			<item id="5480" chance="1666"/> 
+			<item id="6500" countmax="3" chance1="4555" chancemax="0"/>
+			<item id="2557" chance="12000"/>
+			<item id="2558" chance="11000"/>
+			<item id="5944" chance="5555"/>
+			<item id="5801" chance="1800"/>
+			<item id="5480" chance="1666"/>
 		</inside>
 	</item>
   </loot>

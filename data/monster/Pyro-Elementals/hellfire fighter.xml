@@ -46,7 +46,7 @@
   </voices>
   <loot>
    <item id="2148" countmax="100" chance1="100000" chancemax="0"/> --Gold Coin
-   <item id="2147" countmax="4" chance1="8888" chancemax="0"/> --Small Ruby 
+   <item id="2147" countmax="4" chance1="8888" chancemax="0"/> --Small Ruby
    <item id="5944" chance="2222"/> --Soul Orb
    <item id="2239" chance="20000"/> --Burnt Scroll
    <item id="2136" chance="1666"/> --Demonbone Amulet

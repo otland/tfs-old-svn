@@ -11,14 +11,14 @@ function oracle(cid, message, keywords, parameters, node)
 	if(not npcHandler:isFocused(cid)) then
 		return false
 	end
-	
+
 	local cityNode = node:getParent():getParent()
 	local vocNode = node:getParent()
-	
+
 	local destination = cityNode:getParameters().destination
 	local town = cityNode:getParameters().town
 	local vocation = vocNode:getParameters().vocation
-	
+
 	if(destination ~= nil and vocation ~= nil and town ~= nil) then
 		if(getPlayerLevel(cid) < parameters.level) then
 			npcHandler:say('You must first reach level ' .. parameters.level .. '!', cid)

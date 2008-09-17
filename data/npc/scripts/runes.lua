@@ -57,7 +57,7 @@ shopModule:addBuyableItemContainer({'bp gsp'}, 1999, 8376, 3800, 1, 'backpack of
 shopModule:addBuyableItemContainer({'bp uhp'}, 2000, 8377, 6200, 1, 'backpack of ultimate health potions')
 
 shopModule:addBuyableItem({'wand of vortex', 'vortex'}, 2190, 500, 'wand of vortex')
-shopModule:addBuyableItem({'wand of dragonbreath', 'dragonbreath'}, 2191, 1000, 'wand of dragonbreath') 
+shopModule:addBuyableItem({'wand of dragonbreath', 'dragonbreath'}, 2191, 1000, 'wand of dragonbreath')
 shopModule:addBuyableItem({'wand of decay', 'decay'}, 2188, 5000, 'wand of decay')
 shopModule:addBuyableItem({'wand of draconia', 'draconia'}, 8921, 7500, 'wand of draconia')
 shopModule:addBuyableItem({'wand of cosmic energy', 'cosmic energy'}, 2189, 10000, 'wand of cosmic energy')
@@ -75,7 +75,7 @@ shopModule:addBuyableItem({'springsprout rod', 'springsprout'}, 8912, 18000, 'sp
 shopModule:addBuyableItem({'underworld rod', 'underworld'}, 8910, 22000,  'underworld rod')
 
 shopModule:addSellableItem({'wand of vortex', 'vortex'}, 2190, 250, 'wand of vortex')
-shopModule:addSellableItem({'wand of dragonbreath', 'dragonbreath'}, 2191, 500, 'wand of dragonbreath') 
+shopModule:addSellableItem({'wand of dragonbreath', 'dragonbreath'}, 2191, 500, 'wand of dragonbreath')
 shopModule:addSellableItem({'wand of decay', 'decay'}, 2188, 2500, 'wand of decay')
 shopModule:addSellableItem({'wand of draconia', 'draconia'}, 8921, 3750, 'wand of draconia')
 shopModule:addSellableItem({'wand of cosmic energy', 'cosmic energy'}, 2189, 5000, 'wand of cosmic energy')

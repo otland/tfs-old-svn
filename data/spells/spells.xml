@@ -49,7 +49,7 @@
 
 	<!-- Attack Spells -->
 	<instant name="Death Strike" words="exori mort" lvl="16" mana="20" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" needlearn="1" script="attack/death strike.lua">
-		<vocation name="Sorcerer" /> 
+		<vocation name="Sorcerer" />
 		<vocation name="Master Sorcerer" />
 		<vocation name="Druid" />
 		<vocation name="Elder Druid" />
@@ -107,43 +107,43 @@
 		<vocation name="Elite Knight" />
 	</instant>
 		<instant name="Hells Core" words="exevo gran mas flam" lvl="60" mana="1200" prem="1" exhaustion="2000" selftarget="1" needlearn="1" script="attack/hells core.lua">
-		<vocation name="Sorcerer"/> 
+		<vocation name="Sorcerer"/>
 		<vocation name="Master Sorcerer"/>
 	</instant>
 	<instant name="Divine Missile" words="exori san" lvl="40" mana="20" prem="1" casterTargetOrDirection="1" needlearn="1" lockwalls="1" exhaustion="2000" script="attack/divine missile.lua">
-		<vocation name="Paladin"/>  
+		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin"/>
-	</instant>	
+	</instant>
 	<instant name="Divine Caldera" words="exevo mas san" lvl="50" mana="160" prem="1" selftarget="1" exhaustion="2000" needlearn="1" script="attack/divine caldera.lua">
-		<vocation name="Paladin"/>  
+		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin"/>
 	</instant>
 	<instant name="Eternal Winter" words="exevo gran mas frigo" lvl="60" mana="1200" prem="1" selftarget="1" exhaustion="2000" needlearn="1" script="attack/eternal winter.lua">
-		<vocation name="Druid"/>    
+		<vocation name="Druid"/>
 		<vocation name="Elder Druid"/>
-	</instant>	
+	</instant>
 	<instant name="Ice Strike" words="exori frigo" lvl="15" mana="20" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" needlearn="1" script="attack/ice strike.lua">
-		<vocation name="Sorcerer"/> 
+		<vocation name="Sorcerer"/>
 		<vocation name="Master Sorcerer"/>
-		<vocation name="Druid"/>    
+		<vocation name="Druid"/>
 		<vocation name="Elder Druid"/>
-	</instant>	
+	</instant>
 	<instant name="Ice Wave" words="exevo frigo hur" lvl="18" mana="25" direction="1" exhaustion="2000" needlearn="1" script="attack/ice wave.lua">
 		<vocation name="Druid"/>
 		<vocation name="Elder Druid"/>
 	</instant>
 	<instant name="Terra Strike" words="exori tera" lvl="13" mana="20" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" needlearn="1" script="attack/terra strike.lua">
-		<vocation name="Sorcerer"/> 
+		<vocation name="Sorcerer"/>
 		<vocation name="Master Sorcerer"/>
-		<vocation name="Druid"/>    
+		<vocation name="Druid"/>
 		<vocation name="Elder Druid"/>
 	</instant>
 	<instant name="Terra Wave" words="exevo tera hur" lvl="38" mana="210" direction="1" exhaustion="2000" needlearn="1" script="attack/terra wave.lua">
 		<vocation name="Druid"/>
 		<vocation name="Elder Druid"/>
-	</instant>	
+	</instant>
 	<instant name="Wrath of Nature" words="exevo gran mas tera" lvl="55" mana="770" prem="1" selftarget="1" exhaustion="2000" needlearn="1" script="attack/wrath of nature.lua">
-		<vocation name="Druid"/>    
+		<vocation name="Druid"/>
 		<vocation name="Elder Druid"/>
 	</instant>
 
@@ -193,11 +193,11 @@
 		<vocation name="Elder Druid" />
 	</instant>
 	<instant name="Divine Healing" words="exura san" lvl="35" mana="210" prem="1" selftarget="1" aggressive="0" exhaustion="1000" needlearn="1" script="healing/divine healing.lua">
-		<vocation name="Paladin" />  
+		<vocation name="Paladin" />
 		<vocation name="Royal Paladin" />
 	</instant>
 	<instant name="Wound Cleansing" words="exana mort" lvl="30" mana="65" prem="1" selftarget="1" aggressive="0" exhaustion="1000" needlearn="1" script="healing/wound cleasing.lua">
-		<vocation name="Knight" />   
+		<vocation name="Knight" />
 		<vocation name="Elite Knight" />
 	</instant>
 
@@ -306,7 +306,7 @@
 		<vocation name="Elder Druid" />
 		<vocation name="Royal Paladin" />
 	</instant>
-	
+
 	<!-- Summon Spells -->
 	<instant name="Summon Creature" words="utevo res" lvl="25" params="1" exhaustion="2000" needlearn="1" function="summonMonster">
 		<vocation name="Sorcerer"/>
@@ -499,28 +499,28 @@
 		<vocation name="Elder Druid" />
 	</conjure>
 	<conjure name="Icicle" words="adori frigo" lvl="28" mana="460" soul="3" prem="1" reagentId="2260" conjureId="2271" conjureCount="5" exhaustion="1000" needlearn="1" function="conjureRune">
-		<vocation name="Druid"/>    
+		<vocation name="Druid"/>
 		<vocation name="Elder Druid"/>
 	</conjure>
 	<conjure name="Avalanche" words="adori mas frigo" lvl="30" mana="530" soul="3" reagentId="2260" conjureId="2274" conjureCount="4" exhaustion="1000" needlearn="1" function="conjureRune">
-		<vocation name="Druid"/>    
+		<vocation name="Druid"/>
 		<vocation name="Elder Druid"/>
-	</conjure>	
+	</conjure>
 	<conjure name="Stone Shower" words="adori mas tera" lvl="28" mana="430" soul="3" prem="1" reagentId="2260" conjureId="2288" conjureCount="4" exhaustion="1000" needlearn="1" function="conjureRune">
-		<vocation name="Druid"/>    
+		<vocation name="Druid"/>
 		<vocation name="Elder Druid"/>
 	</conjure>
 	<conjure name="Thunderstorm" words="adori mas vis" lvl="28" mana="430" soul="3" prem="1" reagentId="2260" conjureId="2315" conjureCount="4" exhaustion="1000" needlearn="1" function="conjureRune">
-		<vocation name="Sorcerer"/> 
+		<vocation name="Sorcerer"/>
 		<vocation name="Master Sorcerer"/>
 	</conjure>
-	
+
 	<!-- Custom Spells -->
 	<instant name="Apocalypse" words="exevo mas lux" lvl="40" manapercent="60" exhaustion="2000" needlearn="1" script="custom/apocalypse.lua">
 		<vocation name="Sorcerer"/>
 		<vocation name="Master Sorcerer"/>
 	</instant>
-	
+
 	<!-- House Spells -->
 	<instant name="House Guest List" words="aleta sio" selftarget="1" function="editHouseGuest"/>
 	<instant name="House Subowner List" words="aleta som" selftarget="1" function="editHouseSubOwner"/>

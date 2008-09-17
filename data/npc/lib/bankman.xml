@@ -13,7 +13,7 @@
     <keywords>change</keywords>
     <keywords>buy</keywords>
     <keywords>exchange</keywords>
-    
+
     <response text="We exchange gold, platinum and crystal coins."/>
   </interact>
 
@@ -43,19 +43,19 @@
           <interact keywords="|*|">
             <response text="Well, can I help you with something else?"/>
           </interact>
-          
+
         </response>
       </interact>
-      
+
     </response>
   </interact>
 
   <interact keywords="change;platinum">
     <response text="Do you want to change your platinum coins to gold or crystal?">
-      
+
       <interact keywords="gold">
         <response text="How many platinum coins do you want to change to gold?">
-          
+
           <interact keywords="|AMOUNT|">
             <response text="So I should change |AMOUNT| of your platinum coins to |N1| gold coins for you?">
               <action name="script" value="_state.n1 = _state.amount*100"/>
@@ -85,7 +85,7 @@
 
         </response>
       </interact>
-      
+
       <interact keywords="crystal">
 
         <response text="How many crystal coins do you want to get?">
@@ -157,5 +157,5 @@
 
     </response>
   </interact>
-    
+
 </interaction>

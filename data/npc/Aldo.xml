@@ -4,5 +4,5 @@
 	<look type="128" head="17" body="54" legs="114" feet="0" addons="2"/>
 	<parameters>
 		<parameter key="message_greet" value="Hello |PLAYERNAME|, I am a bootmaker." />
-	</parameters>	
+	</parameters>
 </npc>

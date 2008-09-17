@@ -41,12 +41,12 @@
     </summons>
     <loot>
       <item id="2148" countmax="16" chance1="100000" chancemax="0"/>
-      <item id="2696" chance="50000"/> 
+      <item id="2696" chance="50000"/>
 	  <item id="1987" chance="100000">
         <inside>
-		  <item id="2687" countmax="1" chance1="5000" chancemax="0"/> 
+		  <item id="2687" countmax="1" chance1="5000" chancemax="0"/>
 		  <item id="2650" chance="50000"/>
-		  <item id="2449" chance="5000"/> 
+		  <item id="2449" chance="5000"/>
         </inside>
 	  </item>
 	</loot>

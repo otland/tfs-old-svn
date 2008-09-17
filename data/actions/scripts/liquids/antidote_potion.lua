@@ -25,7 +25,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	doAddCondition(cid, exhaust)
-	doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1) 
+	doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1)
 	doTransformItem(item.uid, EMPTY_POTION)
 	return TRUE
 end

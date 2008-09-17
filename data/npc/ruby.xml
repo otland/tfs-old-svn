@@ -2,9 +2,9 @@
 <npc name="Ruby" floorchange="0" walkinterval="4000"  script="ruby.lua">
 	<health now="150" max="150"/>
 	<look type="133" head="20" body="120" legs="75" feet="13"/>
-  
+
   <interaction range="3" idletime="30">
-    
+
     <interact keywords="hi" focus="1">
       <!--These are the keywords will trigger this interaction-->
       <keywords>hello</keywords>
@@ -20,7 +20,7 @@
         ]]>
         </action>
       </response>
-      
+
     </interact>
 
     <interact keywords="bye" focus="0">
@@ -33,7 +33,7 @@
         -->
       </response>
     </interact>
-    
+
     <!--
     If the event onBusy exists, the npc will make a queue like Tibia, if the event is removed
     the npc will be able to talk to all customers at the same time without problems.
@@ -80,14 +80,14 @@
         <action name="scriptparam" value="|TEXT|"/>
       </response>
     </interact>
-    
+
     <interact keywords="edron">
       <response text="Do you want a passage to Edron for |PRICE| gold?">
         <action name="topic" value="1"/>
         <action name="price" value="200"/>
       </response>
     </interact>
-    
+
     <interact keywords="yes" topic="1">
       <response param="pzblock" text="First get rid of those blood stains! You are not going to ruin my vehicle!"/>
       <response param="lowmoney" text="You don't have enough money."/>
@@ -147,7 +147,7 @@
     <!-- Sell item(s) interaction, see merchant glut with an example of an npc with list items-->
     <interact keywords="sell;|AMOUNT|;brass;helmet">
       <keywords>sell;brass;helmet</keywords>
-      
+
       <response text="Do you want to sell |AMOUNT| brass helmet for |PRICE| gold?">
         <action name="topic" value="2"/>
         <action name="item" value="2460"/>
@@ -155,10 +155,10 @@
         <action name="amount" value="|AMOUNT|"/>
       </response>
     </interact>
-    
+
     <interact keywords="sell;|AMOUNT|;brass;legs">
       <keywords>sell;brass;legs</keywords>
-      
+
       <response text="Do you want to sell |AMOUNT| brass legs for |PRICE| gold?">
         <action name="topic" value="2"/>
         <action name="item" value="2468"/>
@@ -179,7 +179,7 @@
     <!-- Buy item(s) interaction, see merchant glut for a real seller/buyer npc-->
     <interact keywords="buy;|AMOUNT|;brass;helmet">
       <keywords>buy;brass;legs</keywords>
-      
+
       <response text="Do you want to buy |AMOUNT| brass helmet for |PRICE| gold?">
         <action name="topic" value="3"/>
         <action name="item" value="2460"/>
@@ -195,7 +195,7 @@
       </response>
     </interact>
     <!-- End of buy item(s) interaction-->
-    
+
   </interaction>
-  
+
 </npc>

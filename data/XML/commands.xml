@@ -6,7 +6,7 @@
 	<command cmd="/addskill" log="yes" access="5"/>
 	<command cmd="/owner" log="yes" access="5"/>
 	<command cmd="/serverdiag" log="yes" access="5"/>
-	
+
 	<!-- Community Managers -->
 	<command cmd="/r" log="yes" access="4"/>
 	<command cmd="/i" log="yes" access="4"/>
@@ -18,7 +18,7 @@
 	<command cmd="/raid" log="yes" access="4"/>
 	<command cmd="/reload" log="yes" access="4"/>
 	<command cmd="/newtype" log="yes" access="4"/>
-	
+
 	<!-- Game Masters -->
 	<command cmd="/kick" log="yes" access="3"/>
 	<command cmd="/unban" log="yes" access="3"/>
@@ -39,11 +39,11 @@
 
 	<!-- Tutors  -->
 	<command cmd="/baninfo" log="no" access="2"/>
-	
+
 	<!-- Players -->
 	<command cmd="!buyhouse" log="no" access="0"/>
 	<command cmd="!sellhouse" log="no" access="0"/>
 	<command cmd="!frags" log="no" access="0"/>
 	<command cmd="!createguild" log="no" access="0"/>
-	<command cmd="!joinguild" log="no" access="0"/>	
+	<command cmd="!joinguild" log="no" access="0"/>
 </commands>

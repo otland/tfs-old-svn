@@ -62,24 +62,24 @@
  	<item id="2148" countmax="100" chance1="100000" chancemax="0"/>
  	<item id="2148" countmax="25" chance1="100000" chancemax="0"/>
  	<item id="2393" chance="660"/>
- 	<item id="2514" chance="150"/> 
- 	<item id="2432" chance="600"/> 
- 	<item id="2472" chance="130"/> 
- 	<item id="5906" countmax="1" chance1="1000" chancemax="0"/> 
-	<item id="5954" countmax="1" chance1="1000" chancemax="0"/> 
+ 	<item id="2514" chance="150"/>
+ 	<item id="2432" chance="600"/>
+ 	<item id="2472" chance="130"/>
+ 	<item id="5906" countmax="1" chance1="1000" chancemax="0"/>
+	<item id="5954" countmax="1" chance1="1000" chancemax="0"/>
  	<item id="1987" chance="100000">
  	  <inside>
 		<item id="2678" countmax="3" chance1="10000" chancemax="0"/>
 		<item id="2148" countmax="100" chance1="100000" chancemax="0"/>
 		<item id="2151" countmax="4" chance1="4000" chancemax="0"/>
-		<item id="2462" chance="555"/> 
+		<item id="2462" chance="555"/>
 		<item id="2149" countmax="3" chance1="1428" chancemax="0"/>
-		<item id="2171" chance="800"/> 
+		<item id="2171" chance="800"/>
 		<item id="2387" chance="6666"/>
-		<item id="2470" chance="180"/> 
-		<item id="2520" chance="200"/> 
-		<item id="2418" chance="833"/> 
-		<item id="2377" chance="3333"/> 
+		<item id="2470" chance="180"/>
+		<item id="2520" chance="200"/>
+		<item id="2418" chance="833"/>
+		<item id="2377" chance="3333"/>
 	  </inside>
  	</item>
   </loot>

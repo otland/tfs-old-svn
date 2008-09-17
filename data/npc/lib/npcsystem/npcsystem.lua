@@ -7,23 +7,23 @@ if(NpcSystem == nil) then
 	dofile('data/npc/lib/npcsystem/queue.lua')
 	dofile('data/npc/lib/npcsystem/npchandler.lua')
 	dofile('data/npc/lib/npcsystem/modules.lua')
-	
+
 	-- Global npc constants:
-	
+
 	-- Keyword nestling behavior. For more information look at the top of keywordhandler.lua
 	KEYWORD_BEHAVIOR = BEHAVIOR_NORMAL_EXTENDED
-	
+
 	-- Greeting and unGreeting keywords. For more information look at the top of modules.lua
 	FOCUS_GREETWORDS = {'hi', 'hello', 'hey'}
 	FOCUS_FAREWELLWORDS = {'bye', 'farewell', 'cya'}
 
 	-- The word for requesting trade window. For more information look at the top of modules.lua
 	SHOP_TRADEREQUEST = {'offer', 'trade'}
-	
+
 	-- The word for accepting/declining an offer. CAN ONLY CONTAIN ONE FIELD! For more information look at the top of modules.lua
 	SHOP_YESWORD = {'yes'}
 	SHOP_NOWORD = {'no'}
-	
+
 	-- Pattern used to get the amount of an item a player wants to buy/sell.
 	PATTERN_COUNT = '%d+'
 
@@ -40,9 +40,9 @@ if(NpcSystem == nil) then
 	TAG_TOTALCOST = '|TOTALCOST|'
 	TAG_ITEMNAME = '|ITEMNAME|'
 	TAG_QUEUESIZE = '|QUEUESIZE|'
-	
+
 	NpcSystem = {}
-	
+
 	-- Gets an npcparameter with the specified key. Returns nil if no such parameter is found.
 	function NpcSystem.getParameter(key)
 		local ret = getNpcParameter(tostring(key))
@@ -52,7 +52,7 @@ if(NpcSystem == nil) then
 			return ret
 		end
 	end
-	
+
 	-- Parses all known parameters for the npc. Also parses parseable modules.
 	function NpcSystem.parseParameters(npcHandler)
 		local ret = NpcSystem.getParameter('idletime')
@@ -135,7 +135,7 @@ if(NpcSystem == nil) then
 		if(ret ~= nil) then
 			npcHandler:setMessage(MESSAGE_SELL, ret)
 		end
-		
+
 		-- Parse modules.
 		for parameter, module in pairs(Modules.parseableModules) do
 			local ret = NpcSystem.getParameter(parameter)

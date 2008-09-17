@@ -19,14 +19,14 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		doCreatureSay(itemEx.uid, "Only knights and paladins of level 50 or above may drink this fluid.", TALKTYPE_ORANGE_1)
 		return TRUE
 	end
-	
+
 	if doCreatureAddHealth(itemEx.uid, math.random(MIN, MAX)) == LUA_ERROR then
 		return FALSE
 	end
 
 	doAddCondition(cid, exhaust)
 	doSendMagicEffect(getThingPos(itemEx.uid), CONST_ME_MAGIC_BLUE)
-	doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1) 
+	doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1)
 	doTransformItem(item.uid, EMPTY_POTION)
 	return TRUE
 end

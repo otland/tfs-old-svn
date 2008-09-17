@@ -56,7 +56,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			if doPlayerAddMana(cid, math.random(80, 160)) == LUA_ERROR then
 				return FALSE
 			end
-			doCreatureSay(cid, "Aaaah...", TALKTYPE_ORANGE_1) 
+			doCreatureSay(cid, "Aaaah...", TALKTYPE_ORANGE_1)
 			doSendMagicEffect(toPosition, CONST_ME_MAGIC_BLUE)
 		elseif item.type == TYPE_LIFE_FLUID then
 			if doCreatureAddHealth(cid, math.random(40, 75)) == LUA_ERROR then
@@ -92,7 +92,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 					doPlayerSendCancel(cid, "You have to process the bunch into the distillery to get rum.")
 				end
 				return TRUE
-			end			
+			end
 
 			if isItemFluidContainer(itemEx.itemid) == TRUE and itemEx.type ~= TYPE_EMPTY then
 				doChangeTypeItem(item.uid, itemEx.type)

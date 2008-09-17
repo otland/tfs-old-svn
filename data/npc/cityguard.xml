@@ -15,9 +15,9 @@
 
     <interact keywords="bye" focus="0">
       <keywords>farewell</keywords>
-      
+
       <response text="Good bye."/>
     </interact>
   </interaction>
-  
+
 </npc>

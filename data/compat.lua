@@ -57,7 +57,7 @@ end
 function creatureGetPosition(cid)
 	return getCreaturePosition(cid)
 end
-	
+
 function getPlayerMana(cid)
 	return getCreatureMana(cid)
 end

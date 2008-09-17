@@ -30,12 +30,12 @@
 			<attribute key="areaEffect" value="greenshimmer"/>
 		</attack>
 	</attacks>
-	<defenses armor="30" defense="40"/> 
+	<defenses armor="30" defense="40"/>
 	<elements>
 		<element energyPercent="55"/>
 		<element deathPercent="-11"/>
 	</elements>
-	<immunities>  
+	<immunities>
 		<immunity invisible="1"/>
 	</immunities>
 	<summons maxSummons="2">

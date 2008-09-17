@@ -44,8 +44,8 @@ for _, item in ipairs(itemWindow) do
 end
 
 local function getPlayerMoney(cid)
-	return ((getPlayerItemCount(cid, 2160) * 10000) + 
-	(getPlayerItemCount(cid, 2152) * 100) + 
+	return ((getPlayerItemCount(cid, 2160) * 10000) +
+	(getPlayerItemCount(cid, 2152) * 100) +
 	getPlayerItemCount(cid, 2148))
 end
 

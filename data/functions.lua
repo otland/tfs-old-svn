@@ -302,11 +302,11 @@ function getExperienceForLevel(level)
 	return (50 * level * level * level) / 3 - 100 * level * level + (850 * level) / 3 - 200
 end
 
-exhaustion = 
+exhaustion =
 {
 
 	check = function (cid, storage)
-		local exhaust = getPlayerStorageValue(cid, storage)  
+		local exhaust = getPlayerStorageValue(cid, storage)
 		if (os.time(t) >= exhaust) then
 			return FALSE
 		else
@@ -315,7 +315,7 @@ exhaustion =
 	end,
 
 	get = function (cid, storage)
-		local exhaust = getPlayerStorageValue(cid, storage) 
+		local exhaust = getPlayerStorageValue(cid, storage)
 		local left = exhaust - os.time(t)
 		if (left >= 0) then
 			return left
@@ -323,9 +323,9 @@ exhaustion =
 			return FALSE
 		end
 	end,
-	
+
 	set = function (cid, storage, time)
-		setPlayerStorageValue(cid, storage, os.time(t) + time)  
+		setPlayerStorageValue(cid, storage, os.time(t) + time)
 	end,
 
 	make = function (cid, storage, time)
@@ -352,7 +352,7 @@ exhaustion =
 
 	table.isStrIn = function (txt, str)
 		local result = false
-		for i, v in pairs(str) do          
+		for i, v in pairs(str) do
 			result = (string.find(txt, v) and not string.find(txt, '(%w+)' .. v) and not string.find(txt, v .. '(%w+)'))
 			if (result) then
 				break
@@ -368,7 +368,7 @@ exhaustion =
 		end
 		return count
 	end
-	
+
 	table.getCombinations = function (table, num)
 		local a, number, select, newlist = {}, #table, num, {}
 		for i = 1, select do
@@ -399,18 +399,18 @@ exhaustion =
 		local function helper(word) table.insert(t, word) return "" end
 		if (not str:gsub("%w+", helper):find"%S") then return t end
 	end
-	
+
 	string.separate = function(separator, string)
 		local a, b = {}, 0
 		if (#string == 1) then return string end
 	    while (true) do
 			local nextSeparator = string.find(string, separator, b + 1, true)
 			if (nextSeparator ~= nil) then
-				table.insert(a, string.sub(string,b,nextSeparator-1)) 
-				b = nextSeparator + 1 
+				table.insert(a, string.sub(string,b,nextSeparator-1))
+				b = nextSeparator + 1
 			else
 				table.insert(a, string.sub(string, b))
-				break 
+				break
 			end
 	    end
 		return a

@@ -52,7 +52,7 @@
   </immunities>
 
 <summons maxSummons="3">
-  <summon name="War Wolf" interval="2000" chance="40"/> 
+  <summon name="War Wolf" interval="2000" chance="40"/>
   </summons>
 
     <voices interval="2000" chance="5">

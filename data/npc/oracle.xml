@@ -2,9 +2,9 @@
 <npc name="The Oracle" floorchange="0" walkinterval="0">
 	<health now="150" max="150"/>
 	<look typeex="1448"/>
-  
+
   <interaction range="3" idletime="30">
-    
+
     <interact keywords="hi" focus="1">
       <!--These are the keywords will trigger this interaction-->
       <keywords>hello</keywords>
@@ -19,7 +19,7 @@
             return
           end
           -->
-          
+
           if(getPlayerLevel(cid)) >= 8 then
             selfSay(getCreatureName(cid) .. ", ARE YOU PREPARED O FACE YOUR DESTINY?")
             _state.b1 = (isPremium(cid) == TRUE)
@@ -30,7 +30,7 @@
           end
         </action>
       </response>
-      
+
       </interact>
 
     <interact keywords="yes" topic="1">
@@ -38,7 +38,7 @@
       <response b1="1" text="IN WHICH TOWN DO YOU WANT TO LIVE: CARLIN, EDRON, THAIS, OR VENORE?">
         <action name="topic" value="2"/>
       </response>
-      
+
       <!--Normal account-->
       <response text="IN WHICH TOWN DO YOU WANT TO LIVE: CARLIN, THAIS, OR VENORE?">
         <action name="topic" value="2"/>
@@ -89,7 +89,7 @@
         </action>
       </response>
     </interact>
-    
+
     <!--If the player does not say any city, repeat our question-->
     <interact keywords="|*|" topic="2">
       <response b1="1" text="CARLIN, EDRON, THAIS, OR VENORE?"/>
@@ -125,7 +125,7 @@
         </action>
       </response>
     </interact>
-    
+
     <interact keywords="knight" topic="3">
       <response text="A KNIGHT! ARE YOU SURE? THIS DECISION IS IRREVERSIBLE!">
         <!--n2: 1 = sorcerer, 2 = druid, 3 = paladin, 4 = knight-->
@@ -140,7 +140,7 @@
     <interact keywords="|*|" topic="3">
       <response text="KNIGHT, PALADIN, SORCERER, OR DRUID?"/>
     </interact>
-    
+
     <interact keywords="yes" topic="4">
       <response>
         <!--n1: 1 = carlin, 2 = edron, 3 = thais, 4 = venore-->
@@ -159,20 +159,20 @@
             selfSay("I DO NOT KNOW WHAT PROFESSION THAT IS, ASK THE GODS FOR GUIDANCE!")
             return
           end
-          
+
           selfSay("SO BE IT!")
           doSendMagicEffect(getCreaturePosition(cid), CONST_ME_TELEPORT)
 
           if(doTeleportThing(cid, pos) == 0) then
             doPlayerSetVocation(cid, _state.n2)
             doSendMagicEffect(getCreaturePosition(cid), CONST_ME_TELEPORT)
-          end                  
+          end
 
         </action>
         <action name="idle" value="1"/>
       </response>
     </interact>
-    
+
     <interact keywords="bye" focus="0">
       <keywords>farewell</keywords>
       <response text="Good bye. Recommend us, if you were satisfied with our service."/>
@@ -182,7 +182,7 @@
     If the event onBusy exists, the npc will make a queue like Tibia, if the event is removed
     the npc will be able to talk to all customers at the same time without problems.
     -->
- 
+
     <interact event="onBusy">
       <response text="WAIT UNTIL IT IS YOUR TURN!">
         <action name="addqueue" value="|PLAYER|"/>
@@ -193,7 +193,7 @@
     <interact event="onPlayerLeave" focus="0">
       <response text="COME BACK WHEN YOU ARE PREPARED TO FACE YOUR DESTINY!"/>
     </interact>
-    
+
   </interaction>
-  
+
 </npc>

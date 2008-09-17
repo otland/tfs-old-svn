@@ -165,7 +165,7 @@
 				*.xml
 				forgotten.otbm
 					* Placed some NPC's on the map
-	
+
 			XML/
 				commands.xml
 					* Replaced old tags of acctype="" and group="" to new access system access=""
@@ -195,8 +195,8 @@
 					explosive_arrow.lua
 ]
 
-[ Milestone 
-	[ Note 
+[ Milestone
+	[ Note
 		Some of the features were added to Mystic Spirit (0.2) due popularity of them.
 	]
 

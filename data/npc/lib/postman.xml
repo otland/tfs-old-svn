@@ -20,7 +20,7 @@
       <interact keywords="|*|">
         <response text="Is there anything else I can do for you?"/>
       </interact>
-      
+
     </response>
   </interact>
 
@@ -62,8 +62,8 @@
       <interact keywords="|*|">
         <response text="Ok."/>
       </interact>
-      
+
     </response>
   </interact>
-  
+
 </interaction>

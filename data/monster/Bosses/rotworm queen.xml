@@ -23,7 +23,7 @@
 	</defenses>
     <loot>
       <item id="2148" countmax="47" chance1="100000" chancemax="0"/>
-      <item id="8971" chance="3333"/> 
+      <item id="8971" chance="3333"/>
       <item id="3976" countmax="45" chance1="20000" chancemax="0"/>
     </loot>
 </monster>

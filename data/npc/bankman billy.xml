@@ -6,18 +6,18 @@
   <interaction range="3" idletime="30" idleinterval="300" defaultpublic="0">
     <!--This will include the bankman interaction, in this way several npc can use the same interaction-->
     <include file="bankman.xml"/>
-    
+
     <interact keywords="hi" focus="1">
       <!--These are the alternative keywords-->
       <keywords>hello</keywords>
-      
+
       <response text="Hello. How may I help you |NAME|?"/>
     </interact>
 
     <interact keywords="bye" focus="0">
       <!--These are the alternative keywords-->
       <keywords>farewell</keywords>
-      
+
       <response text="It was a pleasure to help you."/>
     </interact>
 
@@ -43,12 +43,12 @@
           local p = math.random(0, 10000000)
           local r = (10000000 * idleinterval) / interval
           --selfSay("r: " .. r .. ", p: " .. p)
-          
+
           if(r >= p) then
             selfSay("Hey " .. name .. " can you help me?")
             _state.topic = 999
           end
-        ]]>  
+        ]]>
         </action>
 
         <interact keywords="yes" topic="999">
@@ -70,15 +70,15 @@
                 </action>
               </response>
             </interact>
-            
+
           </response>
 
           <interact keywords="|*|">
             <response text="Hmpf."/>
           </interact>
-          
+
         </interact>
-        
+
       </response>
     </interact>
 
@@ -86,7 +86,7 @@
       <response text="It was a pleasure to help you |NAME|."/>
       <response b1="1" text="Hey hey give back my gold nuggets! POLICE HELP!"/>
     </interact>
-    
+
     <interact keywords="name">
       <response text="My name is |NPCNAME|."/>
     </interact>
@@ -94,7 +94,7 @@
     <interact keywords="job">
       <response text="I am a banker, my job is to exchange coins."/>
     </interact>
-   
+
   </interaction>
-  
+
 </npc>

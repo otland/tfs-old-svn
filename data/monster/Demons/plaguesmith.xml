@@ -55,18 +55,18 @@
     <voice sentence="Cough Cough!"/>
   </voices>
   <loot>
-	<item id="2148" chance="100000" countmax="100"/> 
-	<item id="2235" chance="20000"/> 
-	<item id="2237" chance="10000"/> 
-	<item id="2416" chance="3333"/> 
-	<item id="2444" chance="666"/> 
-	<item id="1987" chance="100000"> 
+	<item id="2148" chance="100000" countmax="100"/>
+	<item id="2235" chance="20000"/>
+	<item id="2237" chance="10000"/>
+	<item id="2416" chance="3333"/>
+	<item id="2444" chance="666"/>
+	<item id="1987" chance="100000">
 		<inside>
 			<item id="2492" chance="2333"/>
-			<item id="2645" chance="788"/> 
-			<item id="2417" chance="6667"/> 
-			<item id="2509" chance="10000"/> 
-			<item id="5944" chance="1538" countmax="1"/> 
+			<item id="2645" chance="788"/>
+			<item id="2417" chance="6667"/>
+			<item id="2509" chance="10000"/>
+			<item id="5944" chance="1538" countmax="1"/>
 			<item id="2079" chance="2000"/>
 			<item id="2209" chance="2222"/>
 		</inside>
