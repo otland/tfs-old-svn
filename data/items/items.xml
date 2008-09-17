@@ -3856,6 +3856,7 @@
 	<item id="2173" article="an" name="amulet of loss">
 		<attribute key="weight" value="420"/>
 		<attribute key="slotType" value="necklace"/>
+		<attribute key="preventLoss" value="1"/>
 	</item>
 	<item id="2174" article="a" name="strange symbol">
 		<attribute key="weight" value="200"/>
@@ -10159,59 +10160,59 @@
 	<item id="3900" article="a" name="strange carving">
 	</item>
 	<item id="3901" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a square table."/>
-		<attribute key="weight" value="2500"/>
-	</item>
-	<item id="3902" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a small round table."/>
-		<attribute key="weight" value="2500"/>
-	</item>
-	<item id="3903" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a small table."/>
-		<attribute key="weight" value="2500"/>
-	</item>
-	<item id="3904" article="a" name="furniture package">
 		<attribute key="description" value="It is a kit for a wooden chair."/>
 		<attribute key="weight" value="2500"/>
 	</item>
-	<item id="3905" article="a" name="furniture package">
+	<item id="3902" article="a" name="furniture package">
 		<attribute key="description" value="It is a kit for a sofa chair."/>
 		<attribute key="weight" value="2500"/>
 	</item>
-	<item id="3906" article="a" name="furniture package">
+	<item id="3903" article="a" name="furniture package">
 		<attribute key="description" value="It is a kit for a red cushioned chair."/>
 		<attribute key="weight" value="2500"/>
 	</item>
-	<item id="3907" article="a" name="furniture package">
+	<item id="3904" article="a" name="furniture package">
 		<attribute key="description" value="It is a kit for a green cushioned chair."/>
 		<attribute key="weight" value="2500"/>
 	</item>
+	<item id="3905" article="a" name="furniture package">
+		<attribute key="description" value="It is a kit for a tusk chair."/>
+		<attribute key="weight" value="2500"/>
+	</item>
+	<item id="3906" article="a" name="furniture package">
+		<attribute key="description" value="It is a kit for an ivory chair."/>
+		<attribute key="weight" value="2500"/>
+	</item>
+	<item id="3907" article="a" name="furniture package">
+		<attribute key="description" value="It is a kit for a small trunk."/>
+		<attribute key="weight" value="2500"/>
+	</item>
 	<item id="3908" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a rocking chair."/>
+		<attribute key="description" value="It is a kit for a coal basin."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3909" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for drawers."/>
+		<attribute key="description" value="It is a kit for a big table."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3910" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a bookcase."/>
+		<attribute key="description" value="It is a kit for a square table."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3911" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a pendulum clock."/>
+		<attribute key="description" value="It is a kit for a round table."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3912" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a locker."/>
+		<attribute key="description" value="It is a kit for a small table."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3913" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a piano."/>
+		<attribute key="description" value="It is a kit for a stone table."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3914" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a harp."/>
+		<attribute key="description" value="It is a kit for a tusk table."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3915" article="a" name="furniture package">
@@ -10219,51 +10220,51 @@
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3916" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a dresser."/>
+		<attribute key="description" value="It is empty."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3917" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a rocking horse."/>
+		<attribute key="description" value="It is a kit for a harp."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3918" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a telescope."/>
-		<attribute key="weight" value="2500"/>
-	</item>
-	<item id="3919" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a stone table."/>
-		<attribute key="weight" value="2500"/>
-	</item>
-	<item id="3920" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a tusk table."/>
-		<attribute key="weight" value="2500"/>
-	</item>
-	<item id="3921" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a bamboo table."/>
-		<attribute key="weight" value="2500"/>
-	</item>
-	<item id="3922" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a water-pipe."/>
-		<attribute key="weight" value="2500"/>
-	</item>
-	<item id="3923" article="a" name="furniture package">
 		<attribute key="description" value="It is a kit for a bird cage."/>
 		<attribute key="weight" value="2500"/>
 	</item>
+	<item id="3919" article="a" name="furniture package">
+		<attribute key="description" value="It is a kit for a bamboo table."/>
+		<attribute key="weight" value="2500"/>
+	</item>
+	<item id="3920" article="a" name="furniture package">
+		<attribute key="description" value="It is a kit for a thick trunk."/>
+		<attribute key="weight" value="2500"/>
+	</item>
+	<item id="3921" article="a" name="furniture package">
+		<attribute key="description" value="It is a kit for a drawer."/>
+		<attribute key="weight" value="2500"/>
+	</item>
+	<item id="3922" article="a" name="furniture package">
+		<attribute key="description" value="It is empty."/>
+		<attribute key="weight" value="2500"/>
+	</item>
+	<item id="3923" article="a" name="furniture package">
+		<attribute key="description" value="It is a kit for a barrel."/>
+		<attribute key="weight" value="2500"/>
+	</item>
 	<item id="3924" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a globe."/>
+		<attribute key="description" value="It is empty."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3925" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for an indoor plant."/>
+		<attribute key="description" value="It is empty."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3926" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a bookcase."/>
+		<attribute key="description" value="It is a kit for a piano."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3927" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a wooden telescope."/>
+		<attribute key="description" value="It is a kit for a globe."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3928" article="a" name="furniture package">
@@ -10271,41 +10272,43 @@
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3929" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a christmas tree."/>
+		<attribute key="description" value="It is a kit for a indoor plant."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3930" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a tusk chair."/>
+		<attribute key="description" value="It is empty."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3931" article="a" name="furniture package">
+		<attribute key="description" value="It is a kit for a christmas tree."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3932" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a bookcase."/>
+		<attribute key="description" value="It is a kit for a dresser."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3933" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a bookcase."/>
+		<attribute key="description" value="It is a kit for a pendelum clock."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3934" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a bamboo drawer."/>
+		<attribute key="description" value="It is a kit for a locker."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3935" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for an ivory chair."/>
+		<attribute key="description" value="It is a kit for a trough."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3936" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a bookcase."/>
+		<attribute key="description" value="It is a kit for a bamboo drawer."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3937" article="a" name="furniture package">
+		<attribute key="description" value="It is a kit for a table lamp."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3938" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a big table."/>
+		<attribute key="description" value="It is a kit for a large trunk."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3939" article="a" name="camouflage bag">
@@ -11966,7 +11969,6 @@
 		<attribute key="fluidSource" value="water"/>
 	</item>
 	<item id="4644" name="shallow water">
-		<attribute key="fluidSource" value="water"/>
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
@@ -22052,7 +22054,7 @@
 		<attribute key="absorbPercentFire" value="-10"/>
 	</item>
 	<item id="7888" article="a" name="glacier amulet">
-		<attribute key="description" value="It has 20% ice protection, but increases damage taken from energy by 10%."/>
+		<attribute key="description" value="It has 20% ice protection, but also increases damage taken from energy by 10%."/>
 		<attribute key="weight" value="500"/>
 		<attribute key="slotType" value="necklace"/>
 		<attribute key="absorbPercentIce" value="20"/>
@@ -22222,6 +22224,7 @@
 	<item id="7918" article="a" name="machine">
 	</item>
 	<item id="7919" article="a" name="globe">
+		<attribute key="description" value="It's a globe of WypasOTS."/>
 	</item>
 	<item id="7920" article="a" name="picture">
 	</item>
