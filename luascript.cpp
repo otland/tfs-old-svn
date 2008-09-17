@@ -1889,6 +1889,9 @@ void LuaScriptInterface::registerFunctions()
 	//debugPrint(text)
 	lua_register(m_luaState, "debugPrint", LuaScriptInterface::luaDebugPrint);
 
+	//getConfigFile()
+	lua_register(m_luaState, "getConfigFile", LuaScriptInterface::luaGetConfigFile);
+
 	//saveServer()
 	lua_register(m_luaState, "saveServer", LuaScriptInterface::luaSaveServer);
 
@@ -1921,6 +1924,9 @@ const luaL_Reg LuaScriptInterface::luaDatabaseReg[] =
 
 	//db.escapeBlob(s, length)
 	{"escapeBlob", LuaScriptInterface::luaDatabaseEscapeBlob},
+
+	//db.stringComparisonOperator()
+	{"stringComparisonOperator", LuaScriptInterface::luaDatabaseStringComparisonOperator},
 
 	{NULL,NULL}
 };
@@ -8460,6 +8466,17 @@ int32_t LuaScriptInterface::luaSetItemHitChance(lua_State* L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaGetConfigFile(lua_State* L)
+{
+	//getConfigFile()
+	#if !defined(WIN32) && !defined(__NO_HOMEDIR_CONF__)
+	lua_pushstring(L, getenv("HOME")."/.otserv/config.lua");
+	#else
+	lua_pushstring(L, "config.lua");
+	#endif
+	return 1;
+}
+
 int32_t LuaScriptInterface::luaDatabaseExecute(lua_State *L)
 {
 	//db.executeQuery(query)
@@ -8516,6 +8533,13 @@ int32_t LuaScriptInterface::luaDatabaseEscapeBlob(lua_State *L)
 	std::string s = popString(L);
 
 	lua_pushstring(L, Database::getInstance()->escapeBlob(s.c_str(), length).c_str());
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDatabaseStringComparisonOperator(lua_State *L)
+{
+	//db.stringComparisonOperator()
+	lua_pushstring(L, Database::getInstance()->getStringComparisonOperator().c_str());
 	return 1;
 }
 
