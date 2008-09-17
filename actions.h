@@ -36,7 +36,7 @@ class Actions : public BaseEvents
 	public:
 		Actions();
 		virtual ~Actions();
-	
+
 		bool useItem(Player* player, const Position& pos, uint8_t index, Item* item, bool isHotkey);
 		bool useItemEx(Player* player, const Position& fromPos, const Position& toPos,
 			uint8_t toStackPos, Item* item, bool isHotkey, uint32_t creatureId = 0);
@@ -103,11 +103,11 @@ class Action : public Event
 
 	protected:
 		virtual std::string getScriptEventName();
-	
+
 		static ActionFunction highscoreBook;
 		static ActionFunction increaseItemId;
 		static ActionFunction decreaseItemId;
-	
+
 		bool allowFarUse;
 		bool checkLineOfSight;
 };

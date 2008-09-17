@@ -154,7 +154,7 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 		std::cout << "Error: [CreatureEvent::configureEvent] No name for creature event." << std::endl;
 		return false;
 	}
-	
+
 	if(readXMLString(p, "type", str))
 	{
 		std::string tmpStr = asLowerCaseString(str);

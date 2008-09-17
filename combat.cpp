@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -87,7 +87,7 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 				{
 					Item* tool = player->getWeapon();
 					const Weapon* weapon = g_weapons->getWeapon(tool);
-					
+
 					min = (int32_t)minb;
 
 					if(weapon)
@@ -483,7 +483,7 @@ bool Combat::setParam(CombatParam_t param, uint32_t value)
 			return true;
 			break;
 		}
-		
+
 		case COMBATPARAM_DISPEL:
 		{
 			params.dispelType = (ConditionType_t)value;
@@ -728,22 +728,22 @@ void Combat::CombatFunc(Creature* caster, const Position& pos,
 	uint32_t maxX = 0;
 	uint32_t maxY = 0;
 	uint32_t diff;
-	
+
 	//calculate the max viewable range
 	for(std::list<Tile*>::iterator it = tileList.begin(); it != tileList.end(); ++it)
 	{
 		diff = std::abs((*it)->getPosition().x - pos.x);
 		if(diff > maxX)
 			maxX = diff;
-		
+
 		diff = std::abs((*it)->getPosition().y - pos.y);
 		if(diff > maxY)
 			maxY = diff;
 	}
-	
+
 	g_game.getSpectators(list, pos, false, true, maxX + Map::maxViewportX, maxX + Map::maxViewportX,
 		maxY + Map::maxViewportY, maxY + Map::maxViewportY);
-	
+
 	for(std::list<Tile*>::iterator it = tileList.begin(); it != tileList.end(); ++it)
 	{
 		bool bContinue = true;
@@ -760,11 +760,11 @@ void Combat::CombatFunc(Creature* caster, const Position& pos,
 					}
 					else if(*cit == (*it)->getTopCreature())
 						bContinue = false;
-					
+
 					if(bContinue)
 						continue;
 				}
-				
+
 				if(!params.isAggressive || (caster != *cit && Combat::canDoCombat(caster, *cit) == RET_NOERROR))
 				{
 					func(caster, *cit, params, data);
@@ -941,10 +941,10 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 		lua_State* L = m_scriptInterface->getLuaState();
-	
+
 		if(!env->setCallbackId(m_scriptId, m_scriptInterface))
 			return;
-		
+
 		uint32_t cid = env->addThing(player);
 
 		m_scriptInterface->pushFunction(m_scriptId);
@@ -1026,10 +1026,10 @@ void TileCallback::onTileCombat(Creature* creature, Tile* tile) const
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 		lua_State* L = m_scriptInterface->getLuaState();
-	
+
 		if(!env->setCallbackId(m_scriptId, m_scriptInterface))
 			return;
-		
+
 		uint32_t cid = 0;
 		if(creature)
 			cid = env->addThing(creature);
@@ -1059,10 +1059,10 @@ void TargetCallback::onTargetCombat(Creature* creature, Creature* target) const
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 		lua_State* L = m_scriptInterface->getLuaState();
-	
+
 		if(!env->setCallbackId(m_scriptId, m_scriptInterface))
 			return;
-		
+
 		uint32_t cid = 0;
 		if(creature)
 			cid = env->addThing(creature);
@@ -1226,7 +1226,7 @@ void AreaCombat::copyArea(const MatrixArea* input, MatrixArea* output, MatrixOpe
 		float b = -std::sin(angleRad);
 		float c = std::sin(angleRad);
 		float d = std::cos(angleRad);
-		
+
 		for(int32_t x = 0; x < (long)input->getCols(); ++x)
 		{
 			for(int32_t y = 0; y < (long)input->getRows(); ++y)
@@ -1259,7 +1259,7 @@ MatrixArea* AreaCombat::createArea(const std::list<uint32_t>& list, uint32_t row
 	{
 		if(*it == 1 || *it == 3)
 			area->setValue(y, x, true);
-		
+
 		if(*it == 2 || *it == 3)
 			area->setCenter(y, x);
 

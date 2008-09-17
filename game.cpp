@@ -2841,8 +2841,8 @@ bool Game::internalCloseTrade(Player* player)
 	Player* tradePartner = player->tradePartner;
 	if((tradePartner && tradePartner->getTradeState() == TRADE_TRANSFER) || player->getTradeState() == TRADE_TRANSFER)
 	{
-		std::cout << "Warning: [Game::playerCloseTrade] TradeState == TRADE_TRANSFER. " << 
-			player->getName() << " " << player->getTradeState() << " , " << 
+		std::cout << "Warning: [Game::playerCloseTrade] TradeState == TRADE_TRANSFER. " <<
+			player->getName() << " " << player->getTradeState() << " , " <<
 			tradePartner->getName() << " " << tradePartner->getTradeState() << std::endl;
 		return true;
 	}
@@ -4678,7 +4678,7 @@ void Game::checkPlayersRecord()
 
 void Game::savePlayersRecord()
 {
-	FILE* file = fopen("playersRecord.txt", "w"); 
+	FILE* file = fopen("playersRecord.txt", "w");
 	if(file == NULL)
 	{
 		std::cout << "> ERROR: Failed to save playersRecord.txt" << std::endl;

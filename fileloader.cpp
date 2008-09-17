@@ -1,13 +1,13 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-// 
+//
 //////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -393,7 +393,7 @@ inline bool FileLoader::readBytes(unsigned char* buffer, int32_t size, int32_t p
 
 			m_cache_index = i;
 			m_cache_offset = pos - m_cached_data[i].base;
-			
+
 			//get maximum read block size and calculate remaining bytes
 			reading = std::min(remain, m_cached_data[i].size - m_cache_offset);
 			remain = remain - reading;

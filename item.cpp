@@ -841,7 +841,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 	{
 		s << " (Arm:" << it.armor;
 
-		if(it.abilities.absorbPercentAll != 0 || it.abilities.absorbPercentDeath != 0 || 
+		if(it.abilities.absorbPercentAll != 0 || it.abilities.absorbPercentDeath != 0 ||
 			it.abilities.absorbPercentDrown != 0 || it.abilities.absorbPercentEarth != 0 ||
 			it.abilities.absorbPercentEnergy != 0 || it.abilities.absorbPercentFire != 0 ||
 			it.abilities.absorbPercentHoly != 0 || it.abilities.absorbPercentIce != 0 ||

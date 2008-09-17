@@ -260,13 +260,13 @@ class Array
 	public:
 		Array(uint32_t n);
 		~Array();
-		
+
 		A getElement(uint32_t id);
 		const A getElement(uint32_t id) const;
 		void addElement(A a, uint32_t pos);
-		
+
 		uint32_t size() {return m_size;}
-	
+
 	private:
 		A* m_data;
 		uint32_t m_size;

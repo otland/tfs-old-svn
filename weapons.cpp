@@ -652,7 +652,7 @@ bool WeaponMelee::getSkillType(const Player* player, const Item* item,
 			return true;
 			break;
 		}
-		
+
 		default:
 			return false;
 			break;

@@ -1,13 +1,13 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-// 
+//
 //////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -33,7 +33,7 @@ BaseEvents::~BaseEvents()
 {
 	//
 }
-	
+
 bool BaseEvents::loadFromXml()
 {
 	if(m_loaded)
@@ -45,7 +45,7 @@ bool BaseEvents::loadFromXml()
 	std::string scriptsName = getScriptBaseName();
 	if(getScriptInterface().loadFile(std::string("data/" + scriptsName + "/lib/" + scriptsName + ".lua")) == -1)
 		std::cout << "Warning: [BaseEvents::loadFromXml] Can not load " << scriptsName << " lib/" << scriptsName << ".lua" << std::endl;
-	
+
 	std::string filename = "data/" + scriptsName + "/" + scriptsName + ".xml";
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 	if(doc)
@@ -110,7 +110,7 @@ bool BaseEvents::loadFromXml()
 	}
 	else
 		std::cout << "Warning: [BaseEvents::loadFromXml] Can not open " << scriptsName << ".xml" << std::endl;
-	
+
 	return m_loaded;
 }
 
@@ -139,7 +139,7 @@ Event::~Event()
 {
 	//
 }
-	
+
 bool Event::loadScript(const std::string& scriptFile)
 {
 	if(!m_scriptInterface || m_scriptId != 0)
@@ -183,7 +183,7 @@ CallBack::~CallBack()
 {
 	//
 }
-	
+
 bool CallBack::loadCallBack(LuaScriptInterface* _interface, std::string name)
 {
 	if(!_interface)
@@ -191,16 +191,16 @@ bool CallBack::loadCallBack(LuaScriptInterface* _interface, std::string name)
 		std::cout << "Failure: [CallBack::loadCallBack] m_scriptInterface == NULL" << std::endl;
 		return false;
 	}
-	
+
 	m_scriptInterface = _interface;
-	
+
 	int32_t id = m_scriptInterface->getEvent(name);
 	if(id == -1)
 	{
 		std::cout << "Warning: [CallBack::loadCallBack] Event " << name << " not found." << std::endl;
 		return false;
 	}
-	
+
 	m_callbackName = name;
 	m_scriptId = id;
 	m_loaded = true;

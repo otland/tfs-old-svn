@@ -1783,7 +1783,7 @@ bool ConjureSpell::ConjureItem(const ConjureSpell* spell, Creature* creature, co
 		}
 
 		result = result1;
-		if((result == RET_NOERROR && result2 != RET_NOERROR) || 
+		if((result == RET_NOERROR && result2 != RET_NOERROR) ||
 			(result == RET_YOUNEEDAMAGICITEMTOCASTSPELL && result2 == RET_YOUNEEDTOSPLITYOURSPEARS))
 		{
 			result = result2;

@@ -631,7 +631,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				case ID_MENU_GAME_BROADCAST:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(iBox.DoModal("Broadcast Message", "What would you like to broadcast?")) 
+						if(iBox.DoModal("Broadcast Message", "What would you like to broadcast?"))
 							g_game.broadcastMessage(iBox.Text, MSG_STATUS_WARNING);
 					}
 					break;

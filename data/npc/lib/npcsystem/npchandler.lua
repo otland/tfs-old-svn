@@ -40,7 +40,7 @@ if(NpcHandler == nil) then
 	MESSAGE_NOSHOP			= 19 -- When the npc's shop is requested but he doesn't have any
 	MESSAGE_ONCLOSESHOP		= 20 -- When the player closes the npc's shop window
 	MESSAGE_ALREADYFOCUSED	= 21 -- When the player already has the focus of this npc.
-	MESSAGE_PLACEDINQUEUE	= 22 -- When the player has been placed in the costumer queue.	
+	MESSAGE_PLACEDINQUEUE	= 22 -- When the player has been placed in the costumer queue.
 
 	-- Constant indexes for callback functions. These are also used for module callback ids.
 	CALLBACK_CREATURE_APPEAR 	= 1
@@ -125,7 +125,7 @@ if(NpcHandler == nil) then
 
 		setmetatable(obj.messages, self.messages)
 		self.messages.__index = self.messages
-		
+
 		setmetatable(obj, self)
 		self.__index = self
 		return obj
@@ -540,7 +540,7 @@ if(NpcHandler == nil) then
 		if distance == -1 then
 			return false
 		end
-		
+
 		return (distance <= self.talkRadius)
 	end
 

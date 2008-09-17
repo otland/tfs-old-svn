@@ -7,9 +7,9 @@ if(KeywordHandler == nil) then
 	BEHAVIOR_NORMAL_EXTENDED = 3 -- Same as BEHAVIOR_NORMAL but it also searches through the last node's parent.
 	BEHAVIOR_COMPLEX = 4 -- Extended behavior. It a sub-keyword is not found, then the entire keyword hierarchy is searched upwards intil root is reached.
 
-	-- BEHAVIOR_NORMAL_EXTENDED is recommended as it (probably) mimics the behavior of real Tibia's NPCs the most. 
+	-- BEHAVIOR_NORMAL_EXTENDED is recommended as it (probably) mimics the behavior of real Tibia's NPCs the most.
 	--		However, you are strongly recommended to test some (or all) other settings as well as it might suit you better.
-	--		Also note that not much difference can be seen with the different settings unless you have a npc with a quite heavy 
+	--		Also note that not much difference can be seen with the different settings unless you have a npc with a quite heavy
 	--		nestled keyword hierarchy.
 	-- Note: BEHAVIOR_SIMPLE should not be used unless you have any special reason to do so as it forces you to keep track of talkStates etc.
 	--		This was pretty much the method used in the 2.0x versions of this system. It is here mainly for compability issues.

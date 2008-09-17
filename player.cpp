@@ -2496,13 +2496,13 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 							//check if weapon, can only carry one weapon
 							if(item == leftItem && count == item->getItemCount())
 								ret = RET_NOERROR;
-							else if(!item->isWeapon() || 
+							else if(!item->isWeapon() ||
 								item->getWeaponType() == WEAPON_SHIELD ||
 								item->getWeaponType() == WEAPON_AMMO)
 							{
 									ret = RET_NOERROR;
 							}
-							else if(!leftItem->isWeapon() || 
+							else if(!leftItem->isWeapon() ||
 								leftItem->getWeaponType() == WEAPON_AMMO ||
 								leftItem->getWeaponType() == WEAPON_SHIELD)
 							{
@@ -2541,13 +2541,13 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 							//check if weapon, can only carry one weapon
 							if(item == rightItem && count == item->getItemCount())
 								ret = RET_NOERROR;
-							else if(!item->isWeapon() || 
+							else if(!item->isWeapon() ||
 								item->getWeaponType() == WEAPON_SHIELD ||
 								item->getWeaponType() == WEAPON_AMMO)
 							{
 									ret = RET_NOERROR;
 							}
-							else if(!rightItem->isWeapon() || 
+							else if(!rightItem->isWeapon() ||
 								rightItem->getWeaponType() == WEAPON_AMMO ||
 								rightItem->getWeaponType() == WEAPON_SHIELD)
 							{

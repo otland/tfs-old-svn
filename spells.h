@@ -228,7 +228,7 @@ class ConjureSpell : public InstantSpell
 		uint32_t getConjureCount() const {return conjureCount;}
 		uint32_t getReagentId() const {return conjureReagentId;}
 
-	protected:	
+	protected:
 		virtual std::string getScriptEventName();
 
 		static ReturnValue internalConjureItem(Player* player, uint32_t conjureId, uint32_t conjureCount);

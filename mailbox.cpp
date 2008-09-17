@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -197,7 +197,7 @@ bool Mailbox::getReceiver(Item* item, std::string& name, uint32_t& dp)
 		std::cout << "Mailbox::getReciver error, trying to get reciecer from unkown item! ID:: " << item->getID() << "." << std::endl;
 		return false;
 	}
-	 
+
 	if(!item || item->getText() == "") /**No label/letter found or its empty.**/
 		return false;
 
@@ -223,7 +223,7 @@ bool Mailbox::getReceiver(Item* item, std::string& name, uint32_t& dp)
 		dp = town->getTownID();
 	else
 		return false;
-	
+
 	return true;
 }
 
@@ -231,6 +231,6 @@ bool Mailbox::canSend(const Item* item) const
 {
 	if(item->getID() == ITEM_PARCEL || item->getID() == ITEM_LETTER)
 		return true;
-	
+
 	return false;
 }

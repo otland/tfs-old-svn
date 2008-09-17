@@ -1,13 +1,13 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-// 
+//
 //////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -24,7 +24,7 @@
 #include "tools.h"
 
 #include <libxml/xmlmemory.h>
-#include <libxml/parser.h> 
+#include <libxml/parser.h>
 
 #include "talkaction.h"
 
@@ -49,7 +49,7 @@ void TalkActions::clear()
 		wordsMap.erase(it);
 		it = wordsMap.begin();
 	}
-	
+
 	m_scriptInterface.reInitState();
 }
 
@@ -85,7 +85,7 @@ TalkActionResult_t TalkActions::playerSaySpell(Player* player, SpeakClasses type
 {
 	if(type != SPEAK_SAY)
 		return TALKACTION_CONTINUE;
-	
+
 	std::string str_words;
 	std::string str_param;
 	size_t loc = words.find( '"', 0 );
@@ -97,9 +97,9 @@ TalkActionResult_t TalkActions::playerSaySpell(Player* player, SpeakClasses type
 	else
 	{
 		str_words = words;
-		str_param = std::string(""); 
+		str_param = std::string("");
 	}
-	
+
 	trim_left(str_words, " ");
 	trim_right(str_words, " ");
 

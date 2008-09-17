@@ -462,7 +462,7 @@ const SpectatorVec& Map::getSpectators(const Position& centerPos)
 			minRangeZ = 0;
 			maxRangeZ = 7;
 		}
-		
+
 		getSpectatorsInternal(list, centerPos, false,
 			minRangeX, maxRangeX,
 			minRangeY, maxRangeY,

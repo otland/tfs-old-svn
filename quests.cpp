@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -205,13 +205,13 @@ bool Quests::loadFromXml()
 					uint32_t startStorageID = 0, startStorageValue = 0;
 					if(readXMLString(p, "name", strValue))
 						name = strValue;
-						
+
 					if(readXMLInteger(p, "startstorageid", intValue))
 						startStorageID = intValue;
 
 					if(readXMLInteger(p, "startstoragevalue", intValue))
 						startStorageValue = intValue;
-					
+
 					Quest *quest = new Quest(name, id, startStorageID, startStorageValue);
 					xmlNodePtr tmpNode = p->children;
 					while(tmpNode)
@@ -228,10 +228,10 @@ bool Quests::loadFromXml()
 
 							if(readXMLInteger(tmpNode, "startvalue", intValue))
 								startValue = intValue;
-							
+
 							if(readXMLInteger(tmpNode, "endvalue", intValue))
 								endValue = intValue;
-							
+
 							xmlNodePtr tmpNode2 = tmpNode->children;
 
 							Mission *mission = new Mission(missionName, storageID, startValue, endValue);

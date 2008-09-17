@@ -336,7 +336,7 @@ bool IOGuild::setGuildLevel(uint32_t guid, GuildLevel_t level)
 	Database* db = Database::getInstance();
 	if(!db->connect())
 		return false;
-	
+
 	DBQuery query;
 	DBResult result;
 	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << getGuildId(guid) << " AND `level` = " << level;
@@ -385,12 +385,12 @@ std::string IOGuild::getMotd(uint32_t guildId)
 	Database* db = Database::getInstance();
 	if(!db->connect())
 		return "";
-	
+
 	DBQuery query;
 	DBResult result;
 	query << "SELECT `motd` FROM `guilds` WHERE `id` = " << guildId;
 	if(!db->storeQuery(query, result))
 		return "";
-	
+
 	return result.getDataString("motd");
 }

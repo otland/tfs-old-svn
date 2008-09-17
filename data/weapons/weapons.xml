@@ -12,7 +12,7 @@
 	</wand>
 	<wand id="8911" level="22" mana="5" min="27" max="33" type="ice" function="default"> <!-- Northwind Rod -->
 		<vocation name="Druid"/>
-	</wand>	
+	</wand>
 	<wand id="2181" level="26" mana="8" min="42" max="48" type="earth" function="default"> <!-- Terra Rod -->
 		<vocation name="Druid"/>
 	</wand>
@@ -24,7 +24,7 @@
 	</wand>
 	<wand id="8910" level="42" mana="13" min="55" max="75" type="death" function="default"> <!-- Underworld Rod -->
 		<vocation name="Druid"/>
-	</wand>	
+	</wand>
 
 	<!-- Wands -->
 	<wand id="2190" level="7" mana="2" min="8" max="18" type="energy" function="default"> <!-- Wand of Vortex -->
@@ -38,7 +38,7 @@
 	</wand>
 	<wand id="8921" level="22" mana="5" min="27" max="33" type="fire" function="default"> <!-- Wand of Draconia -->
 		<vocation name="Sorcerer"/>
-	</wand>	
+	</wand>
 	<wand id="2189" level="26" mana="8" min="42" max="48" type="energy" function="default"> <!-- Wand of Cosmic Energy -->
 		<vocation name="Sorcerer"/>
 	</wand>
@@ -50,7 +50,7 @@
 	</wand>
 	<wand id="8922" level="42" mana="13" min="55" max="75" type="death" function="default"> <!-- Wand of Voodoo -->
 		<vocation name="Sorcerer"/>
-	</wand>	
+	</wand>
 
 	<!-- Swords -->
 	<melee id="2413" unproperly="1" function="default">

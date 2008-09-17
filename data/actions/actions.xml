@@ -4,7 +4,7 @@
 	<action itemid="1740" script="quests/quests.lua"/>
 	<action fromid="1747" toid="1749" script="quests/quests.lua"/>
 	<action uniqueid="30015" script="quests/annihilator.lua"/>
-	
+
 	<!-- Tools -->
 	<action itemid="2420" script="tools/machete.lua"/>
 	<action itemid="2550" script="tools/scythe.lua"/>
@@ -12,7 +12,7 @@
 	<action itemid="2554" script="tools/shovel.lua"/>
 	<action itemid="2120" script="tools/rope.lua"/>
 	<action itemid="2553" script="tools/pick.lua"/>
-	
+
 	<!-- Increase/Decrease ItemId -->
 	<action itemid="1873" function="increaseItemId"/>
 	<action itemid="1874" function="decreaseItemId"/>
@@ -81,13 +81,13 @@
 	<action itemid="7158" script="other/food.lua"/>
 	<action itemid="7159" script="other/food.lua"/>
 	<action fromid="7372" toid="7377" script="other/food.lua"/>
-	
+
 	<!-- Spellbooks -->
 	<action itemid="2175" script="other/spellbook.lua"/>
 	<action itemid="6120" script="other/spellbook.lua"/>
 	<action fromid="8900" toid="8904" script="other/spellbook.lua"/>
 	<action itemid="8918" script="other/spellbook.lua"/>
-	
+
 	<!-- Other -->
 	<action itemid="6578" script="other/partyhat.lua"/>
 	<action itemid="2114" script="other/piggybank.lua"/>

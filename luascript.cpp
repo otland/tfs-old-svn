@@ -6461,7 +6461,7 @@ int32_t LuaScriptInterface::luaDoSetCreatureLight(lua_State* L)
 	Creature* creature = env->getCreatureByUID(cid);
 	if(creature)
 	{
-		Condition* condition = Condition::createCondition(CONDITIONID_COMBAT, CONDITION_LIGHT, time, level | (color << 8));	
+		Condition* condition = Condition::createCondition(CONDITIONID_COMBAT, CONDITION_LIGHT, time, level | (color << 8));
 		creature->addCondition(condition);
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}

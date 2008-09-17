@@ -125,14 +125,14 @@
 			Example
 				if getPlayerSkill(cid, 2) >= 20 then --Checking for sword skill value
 					doPlayerAddItem(cid, 2376, 1) --give sword, when skill >= 20
-				else	
+				else
 					doPlayerSendCancel(cid, "Sorry, your sword skill is not high enough.")
-				end	
+				end
 
 		getPlayerTown(cid)
 			Info
 				This function will check player actually Town ID.
-	
+
 			Returns
 				Player Town ID.
 					For Example:
@@ -150,7 +150,7 @@
 		getPlayerVocation(cid)
 			Info
 				This function will check player Vocation ID.
-	
+
 			Returns
 				Player Vocation ID.
 					For Example:
@@ -173,7 +173,7 @@
 		getPlayerItemCount(cid,itemid)
 			Info
 				This function will check how much items with == itemid player actually have.
-	
+
 			Returns
 				Count of itemid.
 					For Example:
@@ -190,7 +190,7 @@
 		getPlayerSoul(cid)
 			Info
 				This function will check how much soul points player actually have.
-	
+
 			Returns
 				Player actually soul points.
 					For Example:
@@ -203,7 +203,7 @@
 		getPlayerFreeCap(cid)
 			Info
 				This function will check how much free cap points player actually have.
-	
+
 			Returns
 				Player actually cap points.
 					For Example:
@@ -246,7 +246,7 @@
 
 			Returns
 				Array with item which is actually in slot. When slot is empty, then return = 0 (FALSE)
-					For Example: 
+					For Example:
 						{itemid = 2493, uid = 70001, actionid = 0} (demon helmet, slot = 1)
 
 			Example
@@ -278,8 +278,8 @@
 					doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "Your depot contains 1 item.")
 				else
 					doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "Your depot contains " ..depotItems.. " items.")
-				end				
-				
+				end
+
 
 		getPlayerSex(cid)
 			Info
@@ -297,9 +297,9 @@
 				elseif getPlayerSex(cid) then --male
 					doSendAnimatedText(playerPos, 'Wtf? I aM BoY.', TEXTCOLOR_GOLD)
 				else -- dont know how it is in english, but in polish = obojniak - something between boy and girl :P
-					doSendAnimatedText(playerPos, 'Wtf? I aM BoY.', TEXTCOLOR_GOLD)	
+					doSendAnimatedText(playerPos, 'Wtf? I aM BoY.', TEXTCOLOR_GOLD)
 				end
-					
+
 		getPlayerLookDir(cid)
 			Info
 				This function will check player direction.
@@ -336,7 +336,7 @@
 
 			Example
 				doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are player with id: "..getPlayerGUID(cid))
-	
+
 		getPlayerFlagValue(cid, flag)
 			Info
 				This function will check player flag value.
@@ -451,7 +451,7 @@
 					doPlayerSendCancel(cid, "Sorry, your level isnt enought to summon this monster."
 				end
 ]
-				
+
 [ TODO - Info, example use
 	setPlayerGroupId(cid, newGroupId)
 	playerLearnInstantSpell(cid, name)
@@ -476,11 +476,11 @@
 
 	doPlayerSendDefaultCancel(cid, ReturnValue)
 	doTeleportThing(cid, newpos, <optional> pushmove)
-	doTransformItem(uid, toitemid, <optional> count/subtype)	
+	doTransformItem(uid, toitemid, <optional> count/subtype)
 	doCreatureSay(cid, text, type)
 	doSendMagicEffect(pos, type)
 	doSendDistanceShoot(frompos, topos, type)
-	doChangeTypeItem(uid, newtype)	
+	doChangeTypeItem(uid, newtype)
 	doSetItemActionId(uid, actionid)
 	doSetItemText(uid, text)
 	doSetItemSpecialDescription(uid, desc)

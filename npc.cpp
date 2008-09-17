@@ -363,7 +363,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 					if(xmlStrcmp(root->name,(const xmlChar*)"interaction") == 0)
 					{
 						ResponseList includeResponseList = loadInteraction(root->children);
-						_responseList.insert(_responseList.end(), includeResponseList.begin(), includeResponseList.end()); 
+						_responseList.insert(_responseList.end(), includeResponseList.begin(), includeResponseList.end());
 					}
 					else
 						std::cerr << "Malformed XML" << std::endl;

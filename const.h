@@ -7,7 +7,7 @@
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -221,7 +221,7 @@ const uint32_t reverseFluidMap[] =
 	FLUID_EMPTY,
 	FLUID_WATER,
 	FLUID_MANA,
-	FLUID_BEER, 
+	FLUID_BEER,
 	FLUID_EMPTY,
 	FLUID_BLOOD,
 	FLUID_SLIME,
@@ -249,7 +249,7 @@ const uint32_t fluidMap[] =
 	CLIENTFLUID_EMPTY,
 	CLIENTFLUID_BLUE,
 	CLIENTFLUID_RED,
-	CLIENTFLUID_BROWN_1, 
+	CLIENTFLUID_BROWN_1,
 	CLIENTFLUID_GREEN,
 	CLIENTFLUID_YELLOW,
 	CLIENTFLUID_WHITE,
@@ -280,12 +280,12 @@ enum TextColor_t
 enum Icons_t
 {
 	ICON_POISON = 1,
-	ICON_BURN = 2, 
-	ICON_ENERGY =  4, 
-	ICON_DRUNK = 8, 
-	ICON_MANASHIELD = 16, 
-	ICON_PARALYZE = 32, 
-	ICON_HASTE = 64, 
+	ICON_BURN = 2,
+	ICON_ENERGY =  4,
+	ICON_DRUNK = 8,
+	ICON_MANASHIELD = 16,
+	ICON_PARALYZE = 32,
+	ICON_HASTE = 64,
 	ICON_SWORDS = 128,
 	ICON_DROWNING = 256,
 	ICON_FREEZING = 512,

@@ -285,7 +285,7 @@ MoveEvent* MoveEvents::getEvent(Item* item, MoveEvent_t eventType)
 				return *moveEventList.begin();
 		}
 	}
-	
+
 	it = m_itemIdMap.find(item->getID());
 	if(it != m_itemIdMap.end())
 	{

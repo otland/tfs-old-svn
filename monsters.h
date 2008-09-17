@@ -1,13 +1,13 @@
 //////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
 //////////////////////////////////////////////////////////////////////
-// 
+//
 //////////////////////////////////////////////////////////////////////
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
 // of the License, or (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -91,9 +91,9 @@ class MonsterType
 	public:
 		MonsterType();
 		~MonsterType();
-		
+
 		void reset();
-		
+
 		std::string name;
 		std::string nameDescription;
 		uint64_t experience;
@@ -111,7 +111,7 @@ class MonsterType
 		int32_t base_speed;
 		int32_t health;
 		int32_t health_max;
-		
+
 		Outfit_t outfit;
 		int32_t lookcorpse;
 		int32_t conditionImmunities;
@@ -122,10 +122,10 @@ class MonsterType
 		bool isConvinceable;
 		bool isAttackable;
 		bool isHostile;
-		
+
 		int32_t lightLevel;
 		int32_t lightColor;
-			
+
 		uint32_t manaCost;
 		SummonList summonList;
 		LootItems lootItems;
@@ -152,17 +152,17 @@ class Monsters
 	public:
 		Monsters();
 		~Monsters();
-		
+
 		bool loadFromXml(bool reloading = false);
 		bool isLoaded(){return loaded;}
 		bool reload();
-		
+
 		MonsterType* getMonsterType(const std::string& name);
 		MonsterType* getMonsterType(uint32_t mid);
 		uint32_t getIdByName(const std::string& name);
 
 		static uint32_t getLootRandom();
-		
+
 	private:
 		ConditionDamage* getDamageCondition(ConditionType_t conditionType,
 			int32_t maxDamage, int32_t minDamage, int32_t startDamage, uint32_t tickInterval);
@@ -175,10 +175,10 @@ class Monsters
 
 		typedef std::map<std::string, uint32_t> MonsterNameMap;
 		MonsterNameMap monsterNames;
-		
+
 		typedef std::map<uint32_t, MonsterType*> MonsterMap;
 		MonsterMap monsters;
-		
+
 		bool loaded;
 };
 

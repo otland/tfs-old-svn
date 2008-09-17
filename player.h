@@ -538,7 +538,7 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendCancelTarget();}
 		void sendCancelWalk() const
 			{if(client) client->sendCancelWalk();}
-		void sendChangeSpeed(const Creature* creature, uint32_t newSpeed) const 
+		void sendChangeSpeed(const Creature* creature, uint32_t newSpeed) const
 			{if(client) client->sendChangeSpeed(creature, newSpeed);}
 		void sendCreatureHealth(const Creature* creature) const
 			{if(client) client->sendCreatureHealth(creature);}
@@ -550,7 +550,7 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendCreatePrivateChannel(channelId, channelName);}
 		void sendClosePrivate(uint16_t channelId) const
 			{if(client) client->sendClosePrivate(channelId);}
-		void sendIcons() const; 
+		void sendIcons() const;
 		void sendMagicEffect(const Position& pos, unsigned char type) const
 			{if(client) client->sendMagicEffect(pos, type);}
 		void sendPing(uint32_t interval);

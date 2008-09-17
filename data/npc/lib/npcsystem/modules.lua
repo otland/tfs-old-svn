@@ -61,7 +61,7 @@ if(Modules == nil) then
 		end
 		return true
 	end
-	
+
 	--Usage:
 		-- local node1 = keywordHandler:addKeyword({'promot'}, StdModule.say, {npcHandler = npcHandler, text = 'I can promote you for 20000 gold coins. Do you want me to promote you?'})
 		-- 		node1:addChildKeyword({'yes'}, StdModule.promotePlayer, {npcHandler = npcHandler, cost = 20000, level = 20}, text = 'Congratulations! You are now promoted.')
@@ -200,7 +200,7 @@ if(Modules == nil) then
 			obj.callback = FOCUS_FAREWELLWORDS.callback or FocusModule.messageMatcher
 			handler.keywordHandler:addKeyword(obj, FocusModule.onFarewell, {module = self})
 		end
-		
+
 		return true
 	end
 
@@ -262,14 +262,14 @@ if(Modules == nil) then
 		local n = 1
 		for keys in string.gmatch(data, '[^;]+') do
 			local i = 1
-			
+
 			local keywords = {}
-			
+
 			for temp in string.gmatch(keys, '[^,]+') do
 				table.insert(keywords, temp)
 				i = i+1
 			end
-			
+
 			if(i ~= 1) then
 				local reply = NpcSystem.getParameter('keyword_reply' .. n)
 				if(reply ~= nil) then
@@ -321,7 +321,7 @@ if(Modules == nil) then
 			self.npcHandler.keywordHandler:addKeyword({'destination'}, TravelModule.listDestinations, {module = self})
 			self.npcHandler.keywordHandler:addKeyword({'where'}, TravelModule.listDestinations, {module = self})
 			self.npcHandler.keywordHandler:addKeyword({'travel'}, TravelModule.listDestinations, {module = self})
-			
+
 		end
 	end
 
@@ -397,9 +397,9 @@ if(Modules == nil) then
 
 		module.npcHandler:say('Do you want to travel to ' .. keywords[1] .. ' for ' .. cost .. ' gold coins?', cid)
 		return true
-		
+
 	end
-	
+
 	function TravelModule.onConfirm(cid, message, keywords, parameters, node)
 		local module = parameters.module
 		if(not module.npcHandler:isFocused(cid)) then
@@ -430,7 +430,7 @@ if(Modules == nil) then
 		return true
 	end
 
-	-- onDecline keyword callback function. Generally called when the player sais 'no' after wanting to buy an item. 
+	-- onDecline keyword callback function. Generally called when the player sais 'no' after wanting to buy an item.
 	function TravelModule.onDecline(cid, message, keywords, parameters, node)
 		local module = parameters.module
 		if(not module.npcHandler:isFocused(cid)) then
@@ -1002,7 +1002,7 @@ if(Modules == nil) then
 			[TAG_TOTALCOST] = parentParameters.cost * module.amount,
 			[TAG_ITEMNAME] = parentParameters.realName
 		}
-		
+
 		if(parentParameters.eventType == SHOPMODULE_SELL_ITEM) then
 			local ret = doPlayerSellItem(cid, parentParameters.itemid, module.amount, parentParameters.cost * module.amount)
 			if(ret == LUA_NO_ERROR) then
@@ -1040,12 +1040,12 @@ if(Modules == nil) then
 				module.npcHandler:say(msg, cid)
 			end
 		end
-		
+
 		module.npcHandler:resetNpc()
 		return true
 	end
-	
-	-- onDecliune keyword callback function. Generally called when the player sais 'no' after wanting to buy an item. 
+
+	-- onDecliune keyword callback function. Generally called when the player sais 'no' after wanting to buy an item.
 	function ShopModule.onDecline(cid, message, keywords, parameters, node)
 		local module = parameters.module
 		if(not module.npcHandler:isFocused(cid)) then
@@ -1081,7 +1081,7 @@ if(Modules == nil) then
 			[TAG_TOTALCOST] = parameters.cost * module.amount,
 			[TAG_ITEMNAME] = parameters.realName
 		}
-		
+
 		if(parameters.eventType == SHOPMODULE_SELL_ITEM) then
 			local msg = module.npcHandler:getMessage(MESSAGE_SELL)
 			msg = module.npcHandler:parseMessage(msg, parseInfo)
