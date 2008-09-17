@@ -737,7 +737,7 @@ if(Modules == nil) then
 			end
 
 			self.npcHandler.shopItems[itemid].buyPrice = cost
-			self.npcHandler.shopItems[itemid].realName = realName or getItemName(itemid)
+			self.npcHandler.shopItems[itemid].realName = realName or getItemNameById(itemid)
 			self.npcHandler.shopItems[itemid].subType = subType or 0
 		end
 
@@ -748,7 +748,7 @@ if(Modules == nil) then
 						cost = cost,
 						eventType = SHOPMODULE_BUY_ITEM,
 						module = self,
-						realName = realName or getItemName(itemid),
+						realName = realName or getItemNameById(itemid),
 						subType = subType or 1
 					}
 
@@ -778,7 +778,7 @@ if(Modules == nil) then
 						cost = cost,
 						eventType = SHOPMODULE_BUY_ITEM_CONTAINER,
 						module = self,
-						realName = realName or getItemName(itemid),
+						realName = realName or getItemNameById(itemid),
 						subType = subType or 1
 					}
 
@@ -804,7 +804,7 @@ if(Modules == nil) then
 			end
 
 			self.npcHandler.shopItems[itemid].sellPrice = cost
-			self.npcHandler.shopItems[itemid].realName = realName or getItemName(itemid)
+			self.npcHandler.shopItems[itemid].realName = realName or getItemNameById(itemid)
 		end
 
 		if(names ~= nil and SHOPMODULE_MODE ~= SHOPMODULE_MODE_TRADE) then
@@ -814,7 +814,7 @@ if(Modules == nil) then
 						cost = cost,
 						eventType = SHOPMODULE_SELL_ITEM,
 						module = self,
-						realName = realName or getItemName(itemid)
+						realName = realName or getItemNameById(itemid)
 					}
 
 				keywords = {}
