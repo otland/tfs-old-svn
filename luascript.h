@@ -660,15 +660,18 @@ class LuaScriptInterface
 		static int32_t luaSetItemAttackSpeed(lua_State* L);
 		static int32_t luaGetItemHitChance(lua_State* L);
 		static int32_t luaSetItemHitChance(lua_State* L);
+
+		static int32_t luaGetConfigFile(lua_State* L);
 		//
 
 		static int32_t internalGetPlayerInfo(lua_State* L, PlayerInfo_t info);
 
-		static const luaL_Reg luaDatabaseReg[5];
+		static const luaL_Reg luaDatabaseReg[6];
 		static int32_t luaDatabaseExecute(lua_State *L);
 		static int32_t luaDatabaseStoreQuery(lua_State *L);
 		static int32_t luaDatabaseEscapeString(lua_State *L);
 		static int32_t luaDatabaseEscapeBlob(lua_State *L);
+		static int32_t luaDatabaseStringComparisonOperator(lua_State *L);
 
 		static const luaL_Reg luaDBResultReg[7];
 		static int32_t luaDBResultGetDataInt(lua_State *L);

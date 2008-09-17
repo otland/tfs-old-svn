@@ -186,7 +186,7 @@ end
 function getConfigInfo(info)
 	if (type(info) ~= 'string') then return nil end
 
-	dofile('config.lua')
+	dofile(getConfigFile())
 	return _G[info]
 end
 
