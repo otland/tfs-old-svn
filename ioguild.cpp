@@ -124,7 +124,7 @@ bool IOGuild::changeRankName(std::string oldRankName, std::string newRankName, u
 
 	db->freeResult(result);
 	query.str("");
-	query << "UPDATE `guild_ranks` SET `name` = " << db->escapeString(newRankName) << " WHERE `name` = " << db->escapeString(oldRankName) << " AND `guild_id` = " << guildId;
+	query << "UPDATE `guild_ranks` SET `name` = " << db->escapeString(newRankName) << " WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(oldRankName) << " AND `guild_id` = " << guildId;
 	if(!db->executeQuery(query.str()))
 		return false;
 
