@@ -120,6 +120,7 @@ class ConfigManager
 			MAX_PLAYER_SUMMONS,
 			AUTOSAVE_EACH_MINUTES,
 			AUTOCLEAN_EACH_MINUTES,
+			WORLD_ID, //__LOGIN_SERVER__
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 
@@ -167,6 +168,7 @@ class ConfigManager
 			ALLOW_CHANGEOUTFIT,
 			CANNOT_ATTACK_SAME_LOOKFEET,
 			AIMBOT_HOTKEY_ENABLED,
+			LOGIN_ONLY_LOGINSERVER, //__LOGIN_SERVER__
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

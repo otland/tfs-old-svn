@@ -21,10 +21,19 @@
 #ifndef __OTSERV_ACCOUNT_H__
 #define __OTSERV_ACCOUNT_H__
 
+#ifndef __LOGIN_SERVER__
 #include <list>
+#else
+#include <map>
+#include "gameservers.h"
+#endif //__LOGIN_SERVER__
 #include <string>
 #include "definitions.h"
 #include "enums.h"
+
+#ifdef __LOGIN_SERVER__
+typedef std::map<std::string, GameServer*> CharactersMap;
+#endif //__LOGIN_SERVER__
 
 class Account
 {
@@ -35,7 +44,11 @@ class Account
 		uint32_t accnumber, lastDay, premiumDays;
 		int32_t warnings;
 		std::string recoveryKey, password;
+#ifndef __LOGIN_SERVER__
 		std::list<std::string> charList;
+#else
+		CharactersMap charList;
+#endif
 };
 
 #endif

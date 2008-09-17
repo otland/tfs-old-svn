@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <servers>
-	<server id="1" name="Example" ip="127.0.0.1" port="7171"/>
+	<server id="0" name="Testera" ip="127.0.0.1" port="7171"/>
+	<server id="1" name="Example" ip="127.0.0.1" port="7172"/>
 </servers>
