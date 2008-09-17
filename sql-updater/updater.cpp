@@ -93,7 +93,7 @@ const char* mysqlQueries[] =
 	"DROP TRIGGER IF EXISTS `ondelete_accounts`;",
 	"DROP TRIGGER IF EXISTS `ondelete_players`;",
 	"DELIMITER | ",
-	"CREATE TRIGGER `ondelete_accounts`	BEFORE DELETE ON `accounts`	FOR EACH ROW BEGIN DELETE FROM `bans` WHERE `type` != 1 AND `type` != 2 AND `value` = OLD.`id`;	END|",
+	"CREATE TRIGGER `ondelete_accounts` BEFORE DELETE ON `accounts` FOR EACH ROW BEGIN DELETE FROM `bans` WHERE `type` != 1 AND `type` != 2 AND `value` = OLD.`id`; END|",
 	"CREATE TRIGGER `ondelete_players` BEFORE DELETE ON `players` FOR EACH ROW BEGIN DELETE FROM `bans` WHERE `type` = 2 AND `value` = OLD.`id`; UPDATE `houses` SET `owner` = 0 WHERE `owner` = OLD.`id`; END|",
 	"DELIMITER ;"
 };
