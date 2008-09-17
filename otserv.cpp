@@ -740,15 +740,6 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload actions." << std::endl;
 					}
 					break;
-				case ID_MENU_RELOAD_CREATUREEVENTS:
-					if(g_game.getGameState() != GAME_STATE_STARTUP)
-					{
-						if(g_creatureEvents->reload())
-							std::cout << "Reloaded creature events." << std::endl;
-						else
-							std::cout << "Failed to reload creature events." << std::endl;
-					}
-					break;
 				case ID_MENU_RELOAD_COMMANDS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -765,6 +756,15 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Reloaded config." << std::endl;
 						else
 							std::cout << "Failed to reload config." << std::endl;
+					}
+					break;
+				case ID_MENU_RELOAD_CREATUREEVENTS:
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(g_creatureEvents->reload())
+							std::cout << "Reloaded creature events." << std::endl;
+						else
+							std::cout << "Failed to reload creature events." << std::endl;
 					}
 					break;
 				case ID_MENU_RELOAD_HIGHSCORES:

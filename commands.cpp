@@ -556,7 +556,7 @@ bool Commands::reloadInfo(Creature* creature, const std::string& cmd, const std:
 		else if(tmpParam == "creaturescript" || tmpParam == "creaturescripts")
 		{
 			g_creatureEvents->reload();
-			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded creaturescripts.");
+			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded creature scripts.");
 		}
 		else if(tmpParam == "highscore" || tmpParam == "highscores")
 		{
@@ -567,7 +567,7 @@ bool Commands::reloadInfo(Creature* creature, const std::string& cmd, const std:
 		{
 			Houses::getInstance().reloadPrices();
 			if(player)
-				player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded houseprices.");
+				player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded house prices.");
 		}
 		else if(tmpParam == "monster" || tmpParam == "monsters")
 		{
@@ -600,7 +600,7 @@ bool Commands::reloadInfo(Creature* creature, const std::string& cmd, const std:
 		else if(tmpParam == "talk" || tmpParam == "talkaction" || tmpParam == "talkactions")
 		{
 			g_talkActions->reload();
-			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded talkactions.");
+			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded talk actions.");
 		}
 		else
 			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reload type not found.");
