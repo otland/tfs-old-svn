@@ -99,7 +99,7 @@ bool IOLoginData::hasFlag(uint32_t accno, PlayerFlags value)
 		return false;
 
 	query.str("");
-	query << "SELECT `flags` FROM `groups` WHERE `id` =" << result->getDataInt("group_id");
+	query << "SELECT `flags` FROM `groups` WHERE `id` = " << result->getDataInt("group_id");
 	db->freeResult(result);
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -120,7 +120,7 @@ bool IOLoginData::hasCustomFlag(uint32_t accno, PlayerCustomFlags value)
 		return false;
 
 	query.str("");
-	query << "SELECT `customflags` FROM `groups` WHERE `id` =" << result->getDataInt("group_id");
+	query << "SELECT `customflags` FROM `groups` WHERE `id` = " << result->getDataInt("group_id");
 	db->freeResult(result);
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -194,7 +194,7 @@ bool IOLoginData::validRecoveryKey(uint32_t accountNumber, const std::string rec
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `id` FROM `accounts` WHERE `key` = " << db->escapeString(recoveryKey) << " AND `id` = " << accountNumber;
+	query << "SELECT `id` FROM `accounts` WHERE `key` " << db->getStringComparisonOperator() << " " << db->escapeString(recoveryKey) << " AND `id` = " << accountNumber;
 	if((result = db->storeQuery(query.str())))
 	{
 		db->freeResult(result);
@@ -207,7 +207,7 @@ bool IOLoginData::setRecoveryKey(uint32_t accountNumber, std::string recoveryKey
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `accounts` SET `key` = " << db->escapeString(recoveryKey) << " WHERE `id` = " << accountNumber;
+	query << "UPDATE `accounts` SET `key` " << db->getStringComparisonOperator() << " " << db->escapeString(recoveryKey) << " WHERE `id` = " << accountNumber;
 	return db->executeQuery(query.str());
 }
 
@@ -253,7 +253,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `redskulltime`, `redskull`, `guildnick`, `rank_id`, `town_id`, `balance`, `stamina`, `loss_experience`, `loss_mana`, `loss_skills`, `loss_items`, `marriage` FROM `players` WHERE `name`=" << db->escapeString(name);
+	query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `redskulltime`, `redskull`, `guildnick`, `rank_id`, `town_id`, `balance`, `stamina`, `loss_experience`, `loss_mana`, `loss_skills`, `loss_items`, `marriage` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name);
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -666,7 +666,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	if(player->lastIP != 0)
 		query << "`lastip` = " << player->lastIP << ", ";
 
-	query << "`conditions` " << db->getStringComparisonOperator() << " " << db->escapeBlob(conditions, conditionsSize) << ", ";
+	query << "`conditions` = " << db->escapeBlob(conditions, conditionsSize) << ", ";
 	query << "`loss_experience` = " << (uint32_t)player->getLossPercent(LOSS_EXPERIENCE) << ", ";
 	query << "`loss_mana` = " << (uint32_t)player->getLossPercent(LOSS_MANASPENT) << ", ";
 	query << "`loss_skills` = " << (uint32_t)player->getLossPercent(LOSS_SKILLTRIES) << ", ";
@@ -690,7 +690,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	query << "`marriage` = " << player->marriage;
 	if(g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
 	{
-		query << ", `guildnick` " << db->getStringComparisonOperator() << " " << db->escapeString(player->guildNick) << ", ";
+		query << ", `guildnick` = " << db->escapeString(player->guildNick) << ", ";
 		query << "`rank_id` = " << IOGuild::getInstance()->getRankIdByGuildIdAndLevel(player->getGuildId(), player->getGuildLevel());
 	}
 	query << " WHERE `id` = " << player->getGUID();
@@ -971,7 +971,7 @@ bool IOLoginData::hasFlag(std::string name, PlayerFlags value)
 		return false;
 
 	query.str("");
-	query << "SELECT `flags` FROM `groups` WHERE `id` =" << result->getDataInt("group_id");
+	query << "SELECT `flags` FROM `groups` WHERE `id` = " << result->getDataInt("group_id");
 	db->freeResult(result);
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -992,7 +992,7 @@ bool IOLoginData::hasCustomFlag(std::string name, PlayerCustomFlags value)
 		return false;
 
 	query.str("");
-	query << "SELECT `customflags` FROM `groups` WHERE `id` =" << result->getDataInt("group_id");
+	query << "SELECT `customflags` FROM `groups` WHERE `id` = " << result->getDataInt("group_id");
 	db->freeResult(result);
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -1154,7 +1154,7 @@ uint32_t IOLoginData::getAccountNumberByName(std::string name)
 	DBQuery query;
 
 	uint32_t accountId = 0;
-	query << "SELECT `account_id` FROM `players` WHERE `name`=" << db->escapeString(name);
+	query << "SELECT `account_id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name);
 	if((result = db->storeQuery(query.str())))
 	{
 		accountId = result->getDataInt("account_id");

@@ -117,7 +117,7 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 			const Position& tilePos = tile->getPosition();
 			tileListQuery << "INSERT INTO `tiles` (`id`, `x`, `y`, `z`) VALUES";
 			tileListQuery << "(" << tileId << ", " << tilePos.x << ", " << tilePos.y << ", " << tilePos.z << ")";
-			
+
 			if(!db->executeQuery(tileListQuery.str()))
 				return false;
 
