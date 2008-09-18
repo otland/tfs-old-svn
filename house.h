@@ -118,7 +118,6 @@ class Door : public Item
 		bool getAccessList(std::string& list) const;
 
 		//overrides
-		virtual bool canRemove() const {return (house == NULL);}
 		virtual void onRemoved();
 		void copyAttributes(Item* item);
 

@@ -29,7 +29,7 @@ class HouseTile : public Tile
 {
 	public:
 		HouseTile(int32_t x, int32_t y, int32_t z, House* _house);
-		~HouseTile();
+		virtual ~HouseTile();
 
 		//cylinder implementations
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
