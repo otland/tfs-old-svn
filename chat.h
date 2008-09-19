@@ -36,18 +36,30 @@ class ChatChannel
 {
 	public:
 		ChatChannel(uint16_t channelId, std::string channelName);
-		virtual ~ChatChannel(){}
+		virtual ~ChatChannel() {}
 
 		bool addUser(Player* player);
 		bool removeUser(Player* player);
 
 		bool talk(Player* fromPlayer, SpeakClasses type, const std::string& text, uint32_t time = 0);
 
-		const std::string& getName() {return m_name;}
-		const uint16_t getId() {return m_id;}
-		const UsersMap& getUsers() {return m_users;}
+		const std::string& getName()
+		{
+			return m_name;
+		}
+		const uint16_t getId()
+		{
+			return m_id;
+		}
+		const UsersMap& getUsers()
+		{
+			return m_users;
+		}
 
-		virtual const uint32_t getOwner() {return 0;}
+		virtual const uint32_t getOwner()
+		{
+			return 0;
+		}
 
 	protected:
 		UsersMap m_users;
@@ -59,10 +71,16 @@ class PrivateChatChannel : public ChatChannel
 {
 	public:
 		PrivateChatChannel(uint16_t channelId, std::string channelName);
-		virtual ~PrivateChatChannel(){}
+		virtual ~PrivateChatChannel() {}
 
-		virtual const uint32_t getOwner() {return m_owner;}
-		void setOwner(uint32_t id) {m_owner = id;}
+		virtual const uint32_t getOwner()
+		{
+			return m_owner;
+		}
+		void setOwner(uint32_t id)
+		{
+			m_owner = id;
+		}
 
 		bool isInvited(const Player* player);
 

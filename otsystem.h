@@ -83,7 +83,7 @@ inline int OTSYS_THREAD_WAITSIGNAL_TIMED(OTSYS_THREAD_SIGNALVAR& signal, OTSYS_T
 	int64_t tout64 = (cycle - OTSYS_TIME());
 
 	DWORD tout = 0;
-	if(tout64 > 0)
+	if (tout64 > 0)
 		tout = (DWORD)(tout64);
 
 	OTSYS_THREAD_UNLOCK(lock, "OTSYS_THREAD_WAITSIGNAL_TIMED");
@@ -114,7 +114,7 @@ inline void OTSYS_CREATE_THREAD(void *(*a)(void*), void *b)
 	pthread_attr_t attr;
 	pthread_t id;
 	pthread_attr_init(&attr);
-	pthread_attr_setdetachstate(&attr,PTHREAD_CREATE_DETACHED);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 	pthread_create(&id, &attr, a, b);
 }
 
@@ -143,7 +143,7 @@ inline void OTSYS_SLEEP(int t)
 {
 	timespec tv;
 	tv.tv_sec  = t / 1000;
-	tv.tv_nsec = (t % 1000)*1000000;
+	tv.tv_nsec = (t % 1000) * 1000000;
 	nanosleep(&tv, NULL);
 }
 

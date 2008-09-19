@@ -43,16 +43,16 @@ void Ban::init()
 
 bool Ban::isIpBanished(uint32_t clientip)
 {
-	if(clientip != 0)
+	if (clientip != 0)
 	{
 		OTSYS_THREAD_LOCK(banLock, "");
 
-		for(IpBanList::iterator it = ipBanList.begin(); it != ipBanList.end(); ++it)
+		for (IpBanList::iterator it = ipBanList.begin(); it != ipBanList.end(); ++it)
 		{
-			if((it->ip & it->mask) == (clientip & it->mask))
+			if ((it->ip & it->mask) == (clientip & it->mask))
 			{
 				uint32_t currentTime = time(NULL);
-				if(it->time == 0 || currentTime < it->time)
+				if (it->time == 0 || currentTime < it->time)
 				{
 					OTSYS_THREAD_UNLOCK(banLock, "");
 					return true;
@@ -66,18 +66,18 @@ bool Ban::isIpBanished(uint32_t clientip)
 
 bool Ban::isIpDisabled(uint32_t clientip)
 {
-	if(maxLoginTries == 0)
+	if (maxLoginTries == 0)
 		return false;
 
-	if(clientip != 0)
+	if (clientip != 0)
 	{
 		OTSYS_THREAD_LOCK(banLock, "");
 
 		uint32_t currentTime = time(NULL);
 		IpLoginMap::const_iterator it = ipLoginMap.find(clientip);
-		if(it != ipLoginMap.end())
+		if (it != ipLoginMap.end())
 		{
-			if((it->second.numberOfLogins >= maxLoginTries) && (currentTime < it->second.lastLoginTime + loginTimeout))
+			if ((it->second.numberOfLogins >= maxLoginTries) && (currentTime < it->second.lastLoginTime + loginTimeout))
 			{
 				OTSYS_THREAD_UNLOCK(banLock, "");
 				return true;
@@ -90,14 +90,14 @@ bool Ban::isIpDisabled(uint32_t clientip)
 
 void Ban::addLoginAttempt(uint32_t clientip, bool isSuccess)
 {
-	if(clientip != 0)
+	if (clientip != 0)
 	{
 		OTSYS_THREAD_LOCK(banLock, "");
 
 		uint32_t currentTime = time(NULL);
 
 		IpLoginMap::iterator it = ipLoginMap.find(clientip);
-		if(it == ipLoginMap.end())
+		if (it == ipLoginMap.end())
 		{
 			LoginBlock lb;
 			lb.lastLoginTime = 0;
@@ -107,10 +107,10 @@ void Ban::addLoginAttempt(uint32_t clientip, bool isSuccess)
 			it = ipLoginMap.find(clientip);
 		}
 
-		if(it->second.numberOfLogins >= maxLoginTries)
+		if (it->second.numberOfLogins >= maxLoginTries)
 			it->second.numberOfLogins = 0;
 
-		if(!isSuccess || (currentTime < it->second.lastLoginTime + retryTimeout))
+		if (!isSuccess || (currentTime < it->second.lastLoginTime + retryTimeout))
 			++it->second.numberOfLogins;
 		else
 			it->second.numberOfLogins = 0;
@@ -125,14 +125,14 @@ bool Ban::isPlayerNamelocked(const std::string& name)
 {
 	uint32_t playerId;
 	std::string playerName = name;
-	if(!IOLoginData::getInstance()->getGuidByName(playerId, playerName))
+	if (!IOLoginData::getInstance()->getGuidByName(playerId, playerName))
 		return false;
 
 	OTSYS_THREAD_LOCK(banLock, "");
 
-	for(PlayerNamelockList::iterator it = playerNamelockList.begin(); it != playerNamelockList.end(); ++it)
+	for (PlayerNamelockList::iterator it = playerNamelockList.begin(); it != playerNamelockList.end(); ++it)
 	{
- 		if(it->id == playerId)
+		if (it->id == playerId)
 		{
 			OTSYS_THREAD_UNLOCK(banLock, "");
 			return true;
@@ -146,9 +146,9 @@ bool Ban::isPlayerNamelocked(const std::string& name)
 bool Ban::getBanInformation(uint32_t account, uint32_t& bannedBy, uint32_t& banTime, int32_t& reason, int32_t& action, std::string& comment, bool& deletion)
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(banLock);
-	for(AccountBanList::iterator it = accountBanList.begin(); it != accountBanList.end(); ++it)
+	for (AccountBanList::iterator it = accountBanList.begin(); it != accountBanList.end(); ++it)
 	{
-		if(it->id == account)
+		if (it->id == account)
 		{
 			bannedBy = it->bannedBy;
 			banTime = it->time;
@@ -160,9 +160,9 @@ bool Ban::getBanInformation(uint32_t account, uint32_t& bannedBy, uint32_t& banT
 		}
 	}
 
-	for(AccountDeletionList::iterator it = accountDeletionList.begin(); it != accountDeletionList.end(); ++it)
+	for (AccountDeletionList::iterator it = accountDeletionList.begin(); it != accountDeletionList.end(); ++it)
 	{
-		if(it->id == account)
+		if (it->id == account)
 		{
 			bannedBy = it->bannedBy;
 			banTime = it->time;
@@ -181,9 +181,9 @@ int32_t Ban::getNotationsCount(uint32_t account)
 	OTSYS_THREAD_LOCK_CLASS lockClass(banLock);
 
 	int32_t notations = 0;
-	for(AccountNotationList::iterator it = accountNotationList.begin(); it != accountNotationList.end(); ++it)
+	for (AccountNotationList::iterator it = accountNotationList.begin(); it != accountNotationList.end(); ++it)
 	{
-		if(it->id == account)
+		if (it->id == account)
 			notations++;
 	}
 	return notations;
@@ -193,9 +193,9 @@ void Ban::addIpBan(uint32_t ip, uint32_t mask, uint64_t time)
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(banLock);
 
-	for(IpBanList::iterator it = ipBanList.begin(); it != ipBanList.end(); ++it)
+	for (IpBanList::iterator it = ipBanList.begin(); it != ipBanList.end(); ++it)
 	{
-		if(it->ip == ip && it->mask == mask)
+		if (it->ip == ip && it->mask == mask)
 		{
 			it->time = time;
 			return;
@@ -209,9 +209,9 @@ void Ban::addIpBan(uint32_t ip, uint32_t mask, uint64_t time)
 void Ban::addPlayerNamelock(uint32_t playerId)
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(banLock);
-	for(PlayerNamelockList::iterator it = playerNamelockList.begin(); it != playerNamelockList.end(); ++it)
+	for (PlayerNamelockList::iterator it = playerNamelockList.begin(); it != playerNamelockList.end(); ++it)
 	{
-		if(it->id == playerId)
+		if (it->id == playerId)
 			return;
 	}
 
@@ -222,9 +222,9 @@ void Ban::addPlayerNamelock(uint32_t playerId)
 void Ban::addAccountNotation(uint32_t account, uint64_t time, std::string comment, uint32_t bannedBy)
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(banLock);
-	for(AccountNotationList::iterator it = accountNotationList.begin(); it != accountNotationList.end(); ++it)
+	for (AccountNotationList::iterator it = accountNotationList.begin(); it != accountNotationList.end(); ++it)
 	{
-		if(it->id == account)
+		if (it->id == account)
 			return;
 	}
 
@@ -235,9 +235,9 @@ void Ban::addAccountNotation(uint32_t account, uint64_t time, std::string commen
 void Ban::addAccountDeletion(uint32_t account, uint64_t time, int32_t reasonId, int32_t actionId, std::string comment, uint32_t bannedBy)
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(banLock);
-	for(AccountDeletionList::iterator it = accountDeletionList.begin(); it != accountDeletionList.end(); ++it)
+	for (AccountDeletionList::iterator it = accountDeletionList.begin(); it != accountDeletionList.end(); ++it)
 	{
-		if(it->id == account)
+		if (it->id == account)
 			return;
 	}
 
@@ -248,9 +248,9 @@ void Ban::addAccountDeletion(uint32_t account, uint64_t time, int32_t reasonId, 
 void Ban::addAccountBan(uint32_t account, uint64_t time, int32_t reasonId, int32_t actionId, std::string comment, uint32_t bannedBy)
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(banLock);
-	for(AccountBanList::iterator it = accountBanList.begin(); it != accountBanList.end(); ++it)
+	for (AccountBanList::iterator it = accountBanList.begin(); it != accountBanList.end(); ++it)
 	{
-		if(it->id == account)
+		if (it->id == account)
 		{
 			it->time = time;
 			return;
@@ -266,9 +266,9 @@ bool Ban::removePlayerNamelock(uint32_t guid)
 	OTSYS_THREAD_LOCK_CLASS lockClass(banLock);
 
 	PlayerNamelockList::iterator it = playerNamelockList.begin();
-	while(it != playerNamelockList.end())
+	while (it != playerNamelockList.end())
 	{
-		if(it->id == guid)
+		if (it->id == guid)
 		{
 			playerNamelockList.erase(it);
 			return true;
@@ -285,12 +285,12 @@ bool Ban::removeAccountNotations(uint32_t account)
 	bool removed = false;
 	AccountNotationList::iterator it = accountNotationList.begin();
 	AccountNotationList::iterator itNext;
-	while(it != accountNotationList.end())
+	while (it != accountNotationList.end())
 	{
 		itNext = it;
 		itNext++;
 
-		if(it->id == account)
+		if (it->id == account)
 		{
 			accountNotationList.erase(it);
 			removed = true;
@@ -306,9 +306,9 @@ bool Ban::removeIPBan(uint32_t ip)
 	OTSYS_THREAD_LOCK_CLASS lockClass(banLock);
 
 	IpBanList::iterator it = ipBanList.begin();
-	while(it != ipBanList.end())
+	while (it != ipBanList.end())
 	{
-		if(it->ip == ip)
+		if (it->ip == ip)
 		{
 			ipBanList.erase(it);
 			return true;
@@ -325,12 +325,12 @@ bool Ban::removeAccountBan(uint32_t account)
 	bool removed = false;
 	AccountBanList::iterator it = accountBanList.begin();
 	AccountBanList::iterator itNext;
-	while(it != accountBanList.end())
+	while (it != accountBanList.end())
 	{
 		itNext = it;
 		itNext++;
 
-		if(it->id == account)
+		if (it->id == account)
 		{
 			accountBanList.erase(it);
 			removed = true;
@@ -348,12 +348,12 @@ bool Ban::removeAccountDeletion(uint32_t account)
 	bool removed = false;
 	AccountDeletionList::iterator it = accountDeletionList.begin();
 	AccountDeletionList::iterator itNext;
-	while(it != accountDeletionList.end())
+	while (it != accountDeletionList.end())
 	{
 		itNext = it;
 		itNext++;
 
-		if(it->id == account)
+		if (it->id == account)
 		{
 			accountDeletionList.erase(it);
 			removed = true;
@@ -392,27 +392,27 @@ bool Ban::saveBans()
 bool IOBan::loadBans(Ban& banclass)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
 	DBResult result;
 	query << "SELECT * FROM `bans`";
-	if(!db->storeQuery(query, result))
+	if (!db->storeQuery(query, result))
 		return true;
 
 	uint64_t currentTime = time(NULL);
-	for(uint32_t i=0; i < result.getNumRows(); ++i)
+	for (uint32_t i = 0; i < result.getNumRows(); ++i)
 	{
 		int32_t banType = result.getDataInt("type", i);
-		switch(banType)
+		switch (banType)
 		{
 			case BAN_IPADDRESS:
 			{
 				uint64_t time = result.getDataInt("time", i);
 				int32_t ip = result.getDataInt("ip", i);
 				uint32_t mask = result.getDataInt("mask", i);
-				if(time > currentTime)
+				if (time > currentTime)
 					banclass.addIpBan(ip, mask, time);
 				break;
 			}
@@ -432,7 +432,7 @@ bool IOBan::loadBans(Ban& banclass)
 				int32_t actionId = result.getDataInt("action_id", i);
 				std::string comment = result.getDataString("comment", i);
 				uint32_t bannedBy = result.getDataInt("banned_by", i);
-				if(time > currentTime)
+				if (time > currentTime)
 					banclass.addAccountBan(account, time, reasonId, actionId, comment, bannedBy);
 				break;
 			}
@@ -468,15 +468,15 @@ bool IOBan::saveBans(const Ban& banclass)
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBTransaction trans(db);
-	if(!trans.start())
+	if (!trans.start())
 		return false;
 
 	query << "DELETE FROM `bans`;";
-	if(!db->executeQuery(query))
+	if (!db->executeQuery(query))
 		return false;
 
 	uint32_t currentTime = time(NULL);
@@ -486,89 +486,89 @@ bool IOBan::saveBans(const Ban& banclass)
 	char bans[150];
 	DBSplitInsert query_insert(db);
 	query_insert.setQuery("INSERT INTO `bans` (`type` , `ip` , `mask`, `time`) VALUES ");
-	for(IpBanList::const_iterator it = banclass.ipBanList.begin(); it != banclass.ipBanList.end(); ++it)
+	for (IpBanList::const_iterator it = banclass.ipBanList.begin(); it != banclass.ipBanList.end(); ++it)
 	{
-		if(it->time > currentTime)
+		if (it->time > currentTime)
 		{
 			executeQuery = true;
 			sprintf(bans, "(1, %d, %u, %u)", it->ip, it->mask, it->time);
-			if(!query_insert.addRow(bans))
+			if (!query_insert.addRow(bans))
 				return false;
 		}
 	}
-	if(executeQuery)
+	if (executeQuery)
 	{
-		if(!query_insert.executeQuery())
+		if (!query_insert.executeQuery())
 			return false;
 	}
 
 	//save player namelocks
 	executeQuery = false;
 	query_insert.setQuery("INSERT INTO `bans` (`type` , `player`) VALUES ");
-	for(PlayerNamelockList::const_iterator it = banclass.playerNamelockList.begin(); it != banclass.playerNamelockList.end(); ++it)
+	for (PlayerNamelockList::const_iterator it = banclass.playerNamelockList.begin(); it != banclass.playerNamelockList.end(); ++it)
 	{
 		executeQuery = true;
 		sprintf(bans, "(2, %u)", it->id);
-		if(!query_insert.addRow(bans))
+		if (!query_insert.addRow(bans))
 			return false;
 	}
-	if(executeQuery)
+	if (executeQuery)
 	{
-		if(!query_insert.executeQuery())
+		if (!query_insert.executeQuery())
 			return false;
 	}
 
 	//save account bans
 	executeQuery = false;
 	query_insert.setQuery("INSERT INTO `bans` (`type` , `account` , `time` , `reason_id` , `action_id` , `comment` , `banned_by`) VALUES ");
-	for(AccountBanList::const_iterator it = banclass.accountBanList.begin(); it != banclass.accountBanList.end(); ++it)
+	for (AccountBanList::const_iterator it = banclass.accountBanList.begin(); it != banclass.accountBanList.end(); ++it)
 	{
-		if(it->time > currentTime)
+		if (it->time > currentTime)
 		{
 			executeQuery = true;
 			sprintf(bans, "(3, %u, %u, %d, %d, '%s', %u)", it->id, it->time, it->reasonId, it->actionId, Database::escapeString(it->comment).c_str(), it->bannedBy);
-			if(!query_insert.addRow(bans))
+			if (!query_insert.addRow(bans))
 				return false;
 		}
 	}
-	if(executeQuery)
+	if (executeQuery)
 	{
-		if(!query_insert.executeQuery())
+		if (!query_insert.executeQuery())
 			return false;
 	}
 
 	//save account notations
 	executeQuery = false;
 	query_insert.setQuery("INSERT INTO `bans` (`type` , `account` , `time` , `comment` , `banned_by`) VALUES ");
-	for(AccountNotationList::const_iterator it = banclass.accountNotationList.begin(); it != banclass.accountNotationList.end(); ++it)
+	for (AccountNotationList::const_iterator it = banclass.accountNotationList.begin(); it != banclass.accountNotationList.end(); ++it)
 	{
-		if(it->time > currentTime)
+		if (it->time > currentTime)
 		{
 			executeQuery = true;
 			sprintf(bans, "(4, %u, %u, '%s', %u)", it->id, it->time, Database::escapeString(it->comment).c_str(), it->bannedBy);
-			if(!query_insert.addRow(bans))
+			if (!query_insert.addRow(bans))
 				return false;
 		}
 	}
-	if(executeQuery)
+	if (executeQuery)
 	{
-		if(!query_insert.executeQuery())
+		if (!query_insert.executeQuery())
 			return false;
 	}
 
 	//save account deletions
 	executeQuery = false;
 	query_insert.setQuery("INSERT INTO `bans` (`type` , `account` , `time` , `reason_id` , `action_id` , `comment` , `banned_by`) VALUES ");
-	for(AccountDeletionList::const_iterator it = banclass.accountDeletionList.begin(); it != banclass.accountDeletionList.end(); ++it)
+	for (AccountDeletionList::const_iterator it = banclass.accountDeletionList.begin(); it != banclass.accountDeletionList.end(); ++it)
 	{
 		executeQuery = true;
 		sprintf(bans, "(5, %u, %u, %d, %d, '%s', %u)", it->id, it->time, it->reasonId, it->actionId, Database::escapeString(it->comment).c_str(), it->bannedBy);
-		if(!query_insert.addRow(bans))
+		if (!query_insert.addRow(bans))
 			return false;
 	}
-	if(executeQuery)
+	if (executeQuery)
 	{
-		if(!query_insert.executeQuery())
+		if (!query_insert.executeQuery())
 			return false;
 	}
 	return trans.success();

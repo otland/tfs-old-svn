@@ -49,7 +49,7 @@ bool RSA::setKey(const std::string& file)
 {
 	//loads p,q and d from a file
 	FILE* f = fopen(file.c_str(), "r");
-	if(!f)
+	if (!f)
 		return false;
 
 	char p[512];
@@ -70,7 +70,7 @@ void RSA::setKey(const char* p, const char* q, const char* d)
 	mpz_set_str(m_q, q, 10);
 	mpz_set_str(m_d, d, 10);
 
-	mpz_t pm1,qm1;
+	mpz_t pm1, qm1;
 	mpz_init2(pm1, 520);
 	mpz_init2(qm1, 520);
 
@@ -90,7 +90,7 @@ void RSA::decrypt(char* msg, int32_t size)
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(rsaLock);
 
-	mpz_t c,v1,v2,u2,tmp;
+	mpz_t c, v1, v2, u2, tmp;
 	mpz_init2(c, 1024);
 	mpz_init2(v1, 1024);
 	mpz_init2(v2, 1024);
@@ -106,7 +106,7 @@ void RSA::decrypt(char* msg, int32_t size)
 	mpz_sub(u2, v2, v1);
 	mpz_mul(tmp, u2, m_u);
 	mpz_mod(u2, tmp, m_q);
-	if(mpz_cmp_si(u2, 0) < 0)
+	if (mpz_cmp_si(u2, 0) < 0)
 	{
 		mpz_add(tmp, u2, m_q);
 		mpz_set(u2, tmp);
@@ -115,7 +115,7 @@ void RSA::decrypt(char* msg, int32_t size)
 	mpz_set_ui(c, 0);
 	mpz_add(c, v1, tmp);
 
-	size_t count = (mpz_sizeinbase(c, 2) + 7)/8;
+	size_t count = (mpz_sizeinbase(c, 2) + 7) / 8;
 	memset(msg, 0, 128 - count);
 	mpz_export(&msg[128 - count], NULL, 1, 1, 0, 0, c);
 

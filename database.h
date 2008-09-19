@@ -57,17 +57,26 @@ class DBQuery : public std::stringstream
 		~DBQuery();
 
 		/** Reset the actual query */
-		void reset(){this->str("");}
+		void reset()
+		{
+			this->str("");
+		}
 
 		/** Get the text of the query
 		*\returns The text of the actual query
 		*/
-		const char *getText(){return this->str().c_str();}
+		const char *getText()
+		{
+			return this->str().c_str();
+		}
 
 		/** Get size of the query text
 		*\returns The size of the query text
 		*/
-		int getSize(){return (int)this->str().length();}
+		int getSize()
+		{
+			return (int)this->str().length();
+		}
 
 	protected:
 		static OTSYS_THREAD_LOCKVAR database_lock;
@@ -99,35 +108,41 @@ class DBResult
 		*\param s The name of the field
 		*\param nrow The number of the row
 		*/
-		std::string getDataString(const std::string &s, unsigned int nrow=0);
+		std::string getDataString(const std::string &s, unsigned int nrow = 0);
 
 		/** Get the blob of a field in database
 		*\returns a PropStream that is initiated with the blob data field, if not exist it returns NULL.
 		*\param s The name of the field
 		*\param nrow The number of the row
 		*/
-		const char* getDataBlob(const std::string &s, unsigned long& size, unsigned int nrow=0);
+		const char* getDataBlob(const std::string &s, unsigned long& size, unsigned int nrow = 0);
 
 		/** Get the number of rows
 		*\returns The number of rows
 		*/
-		unsigned int getNumRows() {return m_numRows;}
+		unsigned int getNumRows()
+		{
+			return m_numRows;
+		}
 
 		/** Get the number of fields
 		*\returns The number of fields
 		*/
-		unsigned int getNumFields() {return m_numFields;}
+		unsigned int getNumFields()
+		{
+			return m_numFields;
+		}
 
 	private:
 		//friend class Database;
-		#ifdef __USE_MYSQL__
+#ifdef __USE_MYSQL__
 		friend class DatabaseMySQL;
 		void addRow(MYSQL_ROW r, unsigned long* lengths, unsigned int num_fields);
-		#endif
-		#ifdef __USE_SQLITE__
+#endif
+#ifdef __USE_SQLITE__
 		friend class DatabaseSqLite;
 		void addRow(char **results, unsigned int num_fields);
-		#endif
+#endif
 		void clear();
 		void setFieldName(const std::string &s, unsigned int n)
 		{
@@ -164,21 +179,30 @@ class _Database
 		* 	TRUE if the connection is ok
 		* 	FALSE if the connection fails
 		*/
-		virtual bool connect(){return false;}
+		virtual bool connect()
+		{
+			return false;
+		}
 
 		/** Disconnects from the connected database
 		*\returns
 		* 	TRUE if the database was disconnected
 		* 	FALSE if the database was not disconnected or no database selected
 		*/
-		virtual bool disconnect(){return false;}
+		virtual bool disconnect()
+		{
+			return false;
+		}
 
 		/** Check is connection to database was estabilished
 		*\returns
 		*	TRUE if connection exists
 		*	FALSE if there's no connection
 		*/
-		virtual bool isConnected(){return m_connected;}
+		virtual bool isConnected()
+		{
+			return m_connected;
+		}
 
 		/** Execute a query which don't get any information of the database (for ex.: INSERT, UPDATE, etc)
 		*\returns
@@ -186,7 +210,10 @@ class _Database
 		* 	FALSE if the query fails
 		*\ref q The query object
 		*/
-		virtual bool executeQuery(DBQuery &q ){return false;}
+		virtual bool executeQuery(DBQuery &q )
+		{
+			return false;
+		}
 
 		/** Store a query which get information of the database (for ex.: SELECT)
 		*\returns
@@ -195,17 +222,29 @@ class _Database
 		*\ref q The query object
 		*\ref res The DBResult object where to insert the results of the query
 		*/
-		virtual bool storeQuery(DBQuery &q, DBResult &res){return false;}
+		virtual bool storeQuery(DBQuery &q, DBResult &res)
+		{
+			return false;
+		}
 
 		/** Transaciont related functions
 		*\returns
 		* 	TRUE
 		* 	FALSE
 		*/
-		virtual bool rollback(){return false;}
-		virtual bool commit(){return false;}
+		virtual bool rollback()
+		{
+			return false;
+		}
+		virtual bool commit()
+		{
+			return false;
+		}
 
-		virtual std::string escapeBlob(const char* s, uint32_t length){return "";}
+		virtual std::string escapeBlob(const char* s, uint32_t length)
+		{
+			return "";
+		}
 
 		/** Escape the special characters in a string for no problems with the query
 		*\returns The string modified
@@ -219,8 +258,8 @@ class _Database
 		*/
 		static std::string escapeString(const char* s, unsigned long size);
 
-		_Database(){}
-		virtual ~_Database(){}
+		_Database() {}
+		virtual ~_Database() {}
 
 	protected:
 		static Database* _instance;

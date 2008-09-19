@@ -35,7 +35,7 @@ OutfitList::OutfitList()
 OutfitList::~OutfitList()
 {
 	OutfitListType::iterator it;
-	for(it = m_list.begin(); it != m_list.end(); it++)
+	for (it = m_list.begin(); it != m_list.end(); it++)
 		delete *it;
 	m_list.clear();
 }
@@ -43,9 +43,9 @@ OutfitList::~OutfitList()
 void OutfitList::addOutfit(const Outfit& outfit)
 {
 	OutfitListType::iterator it;
-	for(it = m_list.begin(); it != m_list.end(); ++it)
+	for (it = m_list.begin(); it != m_list.end(); ++it)
 	{
-		if((*it)->looktype == outfit.looktype)
+		if ((*it)->looktype == outfit.looktype)
 		{
 			(*it)->addons = (*it)->addons | outfit.addons;
 			return;
@@ -63,11 +63,11 @@ void OutfitList::addOutfit(const Outfit& outfit)
 bool OutfitList::remOutfit(const Outfit& outfit)
 {
 	OutfitListType::iterator it;
-	for(it = m_list.begin(); it != m_list.end(); ++it)
+	for (it = m_list.begin(); it != m_list.end(); ++it)
 	{
-		if((*it)->looktype == outfit.looktype)
+		if ((*it)->looktype == outfit.looktype)
 		{
-			if(outfit.addons == 0xFF)
+			if (outfit.addons == 0xFF)
 			{
 				delete *it;
 				m_list.erase(it);
@@ -85,17 +85,17 @@ bool OutfitList::isInList(uint32_t looktype, uint32_t addons, bool playerPremium
 {
 	OutfitListType::const_iterator it, it_;
 	const OutfitListType& global_outfits = Outfits::getInstance()->getOutfits(playerSex);
-	for(it = global_outfits.begin(); it != global_outfits.end(); ++it)
+	for (it = global_outfits.begin(); it != global_outfits.end(); ++it)
 	{
-		if((*it)->looktype == looktype)
+		if ((*it)->looktype == looktype)
 		{
-			for(it_ = m_list.begin(); it_ != m_list.end(); ++it_)
+			for (it_ = m_list.begin(); it_ != m_list.end(); ++it_)
 			{
-				if((*it_)->looktype == looktype)
+				if ((*it_)->looktype == looktype)
 				{
-					if(((*it_)->addons & addons) == addons)
+					if (((*it_)->addons & addons) == addons)
 					{
-						if(((*it)->premium && playerPremium) || !(*it)->premium)
+						if (((*it)->premium && playerPremium) || !(*it)->premium)
 							return true;
 					}
 					return false;
@@ -113,13 +113,13 @@ Outfits::Outfits()
 	//build default outfit lists
 	outfit.addons = 0;
 	outfit.premium = false;
-	for(int32_t i = PLAYER_FEMALE_1; i <= PLAYER_FEMALE_7; i++)
+	for (int32_t i = PLAYER_FEMALE_1; i <= PLAYER_FEMALE_7; i++)
 	{
 		outfit.looktype = i;
 		m_female_list.addOutfit(outfit);
 	}
 
-	for(int32_t i = PLAYER_MALE_1; i <= PLAYER_MALE_7; i++)
+	for (int32_t i = PLAYER_MALE_1; i <= PLAYER_MALE_7; i++)
 	{
 		outfit.looktype = i;
 		m_male_list.addOutfit(outfit);
@@ -131,7 +131,7 @@ Outfits::Outfits()
 Outfits::~Outfits()
 {
 	OutfitsListVector::iterator it;
-	for(it = m_list.begin(); it != m_list.end(); it++)
+	for (it = m_list.begin(); it != m_list.end(); it++)
 		delete *it;
 	m_list.clear();
 }
@@ -141,12 +141,12 @@ bool Outfits::loadFromXml()
 	std::string filename = "data/XML/outfits.xml";
 
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
-	if(doc)
+	if (doc)
 	{
 		xmlNodePtr root, p;
 		root = xmlDocGetRootElement(doc);
 
-		if(xmlStrcmp(root->name,(const xmlChar*)"outfits") != 0)
+		if (xmlStrcmp(root->name, (const xmlChar*)"outfits") != 0)
 		{
 			xmlFreeDoc(doc);
 			std::cout << "Warning: outfits.xml not found, using defaults." << std::endl;
@@ -155,20 +155,20 @@ bool Outfits::loadFromXml()
 
 		p = root->children;
 
-		while(p)
+		while (p)
 		{
 			std::string str;
 			int32_t intVal;
-			if(xmlStrcmp(p->name, (const xmlChar*)"outfit") == 0)
+			if (xmlStrcmp(p->name, (const xmlChar*)"outfit") == 0)
 			{
-				if(readXMLInteger(p, "type", intVal))
+				if (readXMLInteger(p, "type", intVal))
 				{
-					if(intVal > 9 || intVal < 0)
+					if (intVal > 9 || intVal < 0)
 						std::cout << "Warning: No valid outfit type " << intVal << std::endl;
 					else
 					{
 						OutfitList* list;
-						if(m_list[intVal] != NULL)
+						if (m_list[intVal] != NULL)
 							list = m_list[intVal];
 						else
 						{
@@ -181,24 +181,24 @@ bool Outfits::loadFromXml()
 						bool outfitEnabled = true;
 
 						readXMLString(p, "name", outfitName);
-						if(readXMLInteger(p, "looktype", intVal))
+						if (readXMLInteger(p, "looktype", intVal))
 							outfit.looktype = intVal;
 						else
 							std::cout << "[Warning] Missing looktype on outfit: " << outfitName << std::endl;
 
-						if(readXMLInteger(p, "addons", intVal))
+						if (readXMLInteger(p, "addons", intVal))
 							outfit.addons = intVal;
 						else
 							outfit.addons = 0;
 
-						if(readXMLInteger(p, "premium", intVal))
+						if (readXMLInteger(p, "premium", intVal))
 							outfit.premium = (intVal == 1);
 
-						if(readXMLInteger(p, "enabled", intVal))
+						if (readXMLInteger(p, "enabled", intVal))
 							outfitEnabled = (intVal == 1);
 
 						outfitNamesMap[outfit.looktype] = outfitName;
-						if(outfitEnabled)
+						if (outfitEnabled)
 						{
 							//This way you can add names for outfits without adding them to default list
 							list->addOutfit(outfit);

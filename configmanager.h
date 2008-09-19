@@ -25,9 +25,9 @@
 
 extern "C"
 {
-	#include <lua.h>
-	#include <lauxlib.h>
-	#include <lualib.h>
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
 }
 
 class ConfigManager
@@ -74,9 +74,9 @@ class ConfigManager
 			SERVERSAVE_ENABLED,
 			FREE_PREMIUM,
 			SQLITE_DB,
-			#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 			SQL_TYPE,
-			#endif
+#endif
 			PASSWORDTYPE,
 			ADMIN_LOGS_ENABLED,
 			MAP_AUTHOR,
@@ -125,9 +125,9 @@ class ConfigManager
 			PROTECTION_LEVEL,
 			DEATH_LOSE_PERCENT,
 			PASSWORD_TYPE,
-			#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 			SQLTYPE,
-			#endif
+#endif
 			STATUSQUERY_TIMEOUT,
 			FRAG_TIME,
 			WHITE_SKULL_TIME,
@@ -143,9 +143,9 @@ class ConfigManager
 		bool setNumber(uint32_t _what, int32_t _value);
 
 	private:
-		std::string getGlobalString(lua_State* _L, const std::string& _identifier, const std::string& _default="");
-		int32_t getGlobalNumber(lua_State* _L, const std::string& _identifier, const int32_t _default=0);
-		std::string getGlobalStringField(lua_State* _L, const std::string& _identifier, const int32_t _key, const std::string& _default="");
+		std::string getGlobalString(lua_State* _L, const std::string& _identifier, const std::string& _default = "");
+		int32_t getGlobalNumber(lua_State* _L, const std::string& _identifier, const int32_t _default = 0);
+		std::string getGlobalStringField(lua_State* _L, const std::string& _identifier, const int32_t _key, const std::string& _default = "");
 
 		bool m_isLoaded;
 		std::string m_confString[LAST_STRING_CONFIG];

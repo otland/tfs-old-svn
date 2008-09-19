@@ -96,7 +96,7 @@ class IOLoginData
 			}
 		};
 
-		typedef std::map<int32_t ,std::pair<Item*, int32_t> > ItemMap;
+		typedef std::map<int32_t , std::pair<Item*, int32_t> > ItemMap;
 
 		void loadItems(ItemMap& itemMap, DBResult& result);
 		bool saveItems(const Player* player, const ItemBlockList& itemList, DBSplitInsert& query_insert);

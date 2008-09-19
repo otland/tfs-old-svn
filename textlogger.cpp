@@ -42,7 +42,7 @@ TextLogger::~TextLogger()
 
 int32_t TextLogger::overflow(int32_t c)
 {
-	if(c == '\n')
+	if (c == '\n')
 	{
 		gui.m_logText += "\r\n";
 		SendMessage(GetDlgItem(gui.m_mainWindow, ID_LOG), WM_SETTEXT, 0, (LPARAM)gui.m_logText.c_str());
@@ -52,7 +52,7 @@ int32_t TextLogger::overflow(int32_t c)
 	}
 	else
 	{
-		if(displayDate)
+		if (displayDate)
 		{
 			char date[21];
 			formatDate(time(NULL), date);
@@ -64,14 +64,14 @@ int32_t TextLogger::overflow(int32_t c)
 		gui.m_logText += (char)c;
 	}
 
-	#ifdef __GUI_LOGS__
+#ifdef __GUI_LOGS__
 	FILE* file = fopen("logs.txt", "a");
-	if(file)
+	if (file)
 	{
 		fprintf(file, "%c", c);
 		fclose(file);
 	}
-	#endif
+#endif
 
 	return(c);
 }

@@ -217,7 +217,7 @@ class ProtocolGame : public Protocol
 		void sendAddCreature(const Creature* creature, bool isLogin);
 		void sendRemoveCreature(const Creature* creature, const Position& pos, uint32_t stackpos, bool isLogout);
 		void sendMoveCreature(const Creature* creature, const Tile* newTile, const Position& newPos,
-			const Tile* oldTile, const Position& oldPos, uint32_t oldStackPos, bool teleport);
+													const Tile* oldTile, const Position& oldPos, uint32_t oldStackPos, bool teleport);
 
 		//containers
 		void sendAddContainerItem(uint8_t cid, const Item* item);
@@ -239,14 +239,14 @@ class ProtocolGame : public Protocol
 
 		// translate a floor to clientreadable format
 		void GetFloorDescription(NetworkMessage* msg, int x, int y, int z,
-			int width, int height, int offset, int& skip);
+														 int width, int height, int offset, int& skip);
 
 		// translate a map area to clientreadable format
 		void GetMapDescription(uint16_t x, uint16_t y, uint8_t z,
-			uint16_t width, uint16_t height, NetworkMessage* msg);
+													 uint16_t width, uint16_t height, NetworkMessage* msg);
 
 		void AddMapDescription(NetworkMessage* msg, const Position& pos);
-		void AddTextMessage(NetworkMessage* msg,MessageClasses mclass, const std::string& message);
+		void AddTextMessage(NetworkMessage* msg, MessageClasses mclass, const std::string& message);
 		void AddAnimatedText(NetworkMessage* msg, const Position& pos, uint8_t color, const std::string& text);
 		void AddMagicEffect(NetworkMessage* msg, const Position& pos, uint8_t type);
 		void AddDistanceShoot(NetworkMessage* msg, const Position& from, const Position& to, uint8_t type);
@@ -267,9 +267,9 @@ class ProtocolGame : public Protocol
 		void RemoveTileItem(NetworkMessage* msg, const Position& pos, uint32_t stackpos);
 
 		void MoveUpCreature(NetworkMessage* msg, const Creature* creature,
-			const Position& newPos, const Position& oldPos, uint32_t oldStackPos);
+												const Position& newPos, const Position& oldPos, uint32_t oldStackPos);
 		void MoveDownCreature(NetworkMessage* msg, const Creature* creature,
-			const Position& newPos, const Position& oldPos, uint32_t oldStackPos);
+													const Position& newPos, const Position& oldPos, uint32_t oldStackPos);
 
 		//container
 		void AddContainerItem(NetworkMessage* msg, uint8_t cid, const Item* item);
@@ -295,30 +295,30 @@ class ProtocolGame : public Protocol
 		template<class T1, class T2, class f1, class f2, class r>
 		void addGameTask(r (Game::*f)(f1, f2), T1 p1, T2 p2);
 
-		template<class T1, class T2, class T3, class f1, class f2, class f3,
-		class r>
+		template < class T1, class T2, class T3, class f1, class f2, class f3,
+		class r >
 		void addGameTask(r (Game::*f)(f1, f2, f3), T1 p1, T2 p2, T3 p3);
 
-		template<class T1, class T2, class T3, class T4, class f1, class f2,
-		class f3, class f4, class r>
+		template < class T1, class T2, class T3, class T4, class f1, class f2,
+		class f3, class f4, class r >
 		void addGameTask(r (Game::*f)(f1, f2, f3, f4), T1 p1, T2 p2, T3 p3, T4 p4);
 
-		template<class T1, class T2, class T3, class T4, class T5, class f1,
-		class f2, class f3, class f4, class f5, class r>
+		template < class T1, class T2, class T3, class T4, class T5, class f1,
+		class f2, class f3, class f4, class f5, class r >
 		void addGameTask(r (Game::*f)(f1, f2, f3, f4, f5), T1 p1, T2 p2, T3 p3, T4 p4, T5 p5);
 
-		template<class T1, class T2, class T3, class T4, class T5, class T6,
-		class f1, class f2, class f3, class f4, class f5, class f6, class r>
+		template < class T1, class T2, class T3, class T4, class T5, class T6,
+		class f1, class f2, class f3, class f4, class f5, class f6, class r >
 		void addGameTask(r (Game::*f)(f1, f2, f3, f4, f5, f6), T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6);
 
-		template<class T1, class T2, class T3, class T4, class T5, class T6,
+		template < class T1, class T2, class T3, class T4, class T5, class T6,
 		class T7, class f1, class f2, class f3, class f4, class f5, class f6,
-		class f7, class r>
+		class f7, class r >
 		void addGameTask(r (Game::*f)(f1, f2, f3, f4, f5, f6, f7), T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7);
 
-		template<class T1, class T2, class T3, class T4, class T5, class T6,
+		template < class T1, class T2, class T3, class T4, class T5, class T6,
 		class T7, class T8, class f1, class f2, class f3, class f4, class f5,
-		class f6, class f7, class f8, class r>
+		class f6, class f7, class f8, class r >
 		void addGameTask(r (Game::*f)(f1, f2, f3, f4, f5, f6, f7, f8), T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8);
 
 		Player* player;

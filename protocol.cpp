@@ -32,37 +32,37 @@
 
 void Protocol::onSendMessage(OutputMessage* msg)
 {
-	#ifdef __DEBUG_NET_DETAIL__
+#ifdef __DEBUG_NET_DETAIL__
 	std::cout << "Protocol::onSendMessage" << std::endl;
-	#endif
+#endif
 
-	if(!m_rawMessages)
+	if (!m_rawMessages)
 	{
 		msg->writeMessageLength();
-		if(m_encryptionEnabled)
+		if (m_encryptionEnabled)
 		{
-			#ifdef __DEBUG_NET_DETAIL__
+#ifdef __DEBUG_NET_DETAIL__
 			std::cout << "Protocol::onSendMessage - encrypt" << std::endl;
-			#endif
+#endif
 			XTEA_encrypt(*msg);
 		}
 	}
 
-	if(msg == m_outputBuffer)
+	if (msg == m_outputBuffer)
 		m_outputBuffer = NULL;
 }
 
 void Protocol::onRecvMessage(NetworkMessage& msg)
 {
-	#ifdef __DEBUG_NET_DETAIL__
+#ifdef __DEBUG_NET_DETAIL__
 	std::cout << "Protocol::onRecvMessage" << std::endl;
-	#endif
+#endif
 
-	if(m_encryptionEnabled)
+	if (m_encryptionEnabled)
 	{
-		#ifdef __DEBUG_NET_DETAIL__
+#ifdef __DEBUG_NET_DETAIL__
 		std::cout << "Protocol::onRecvMessage - decrypt" << std::endl;
-		#endif
+#endif
 
 		XTEA_decrypt(msg);
 	}
@@ -71,9 +71,9 @@ void Protocol::onRecvMessage(NetworkMessage& msg)
 
 OutputMessage* Protocol::getOutputBuffer()
 {
-	if(m_outputBuffer)
+	if (m_outputBuffer)
 		return m_outputBuffer;
-	else if(m_connection)
+	else if (m_connection)
 	{
 		m_outputBuffer = OutputMessagePool::getInstance()->getOutputMessage(this);
 		return m_outputBuffer;
@@ -85,7 +85,7 @@ OutputMessage* Protocol::getOutputBuffer()
 void Protocol::deleteProtocolTask()
 {
 	//dispather thread
-	if(m_outputBuffer)
+	if (m_outputBuffer)
 		OutputMessagePool::getInstance()->releaseMessage(m_outputBuffer);
 
 	delete this;
@@ -103,7 +103,7 @@ void Protocol::XTEA_encrypt(OutputMessage& msg)
 
 	//add bytes until reach 8 multiple
 	uint32_t n;
-	if((messageLength % 8) != 0)
+	if ((messageLength % 8) != 0)
 	{
 		n = 8 - (messageLength % 8);
 		msg.AddPaddingBytes(n);
@@ -112,19 +112,20 @@ void Protocol::XTEA_encrypt(OutputMessage& msg)
 
 	int read_pos = 0;
 	uint32_t* buffer = (uint32_t*)msg.getBodyBuffer();
-	while(read_pos < messageLength / 4)
+	while (read_pos < messageLength / 4)
 	{
 		uint32_t v0 = buffer[read_pos], v1 = buffer[read_pos + 1];
 		uint32_t delta = 0x61C88647;
 		uint32_t sum = 0;
 
-		for(int32_t i = 0; i < 32; i++)
+		for (int32_t i = 0; i < 32; i++)
 		{
 			v0 += ((v1 << 4 ^ v1 >> 5) + v1) ^ (sum + k[sum & 3]);
 			sum -= delta;
 			v1 += ((v0 << 4 ^ v0 >> 5) + v0) ^ (sum + k[sum>>11 & 3]);
 		}
-		buffer[read_pos] = v0; buffer[read_pos + 1] = v1;
+		buffer[read_pos] = v0;
+		buffer[read_pos + 1] = v1;
 		read_pos = read_pos + 2;
 	}
 	msg.addCryptoHeader();
@@ -132,7 +133,7 @@ void Protocol::XTEA_encrypt(OutputMessage& msg)
 
 bool Protocol::XTEA_decrypt(NetworkMessage& msg)
 {
-	if((msg.getMessageLength() - 2) % 8 != 0)
+	if ((msg.getMessageLength() - 2) % 8 != 0)
 	{
 		std::cout << "Failure: [Protocol::XTEA_decrypt]. Not valid encrypted message size" << std::endl;
 		return false;
@@ -148,25 +149,26 @@ bool Protocol::XTEA_decrypt(NetworkMessage& msg)
 	uint32_t* buffer = (uint32_t*)msg.getBodyBuffer();
 	int read_pos = 0;
 	int32_t messageLength = msg.getMessageLength();
-	while(read_pos < messageLength / 4)
+	while (read_pos < messageLength / 4)
 	{
 		uint32_t v0 = buffer[read_pos], v1 = buffer[read_pos + 1];
 		uint32_t delta = 0x61C88647;
 		uint32_t sum = 0xC6EF3720;
 
-		for(int32_t i = 0; i < 32; i++)
+		for (int32_t i = 0; i < 32; i++)
 		{
 			v1 -= ((v0 << 4 ^ v0 >> 5) + v0) ^ (sum + k[sum>>11 & 3]);
 			sum += delta;
 			v0 -= ((v1 << 4 ^ v1 >> 5) + v1) ^ (sum + k[sum & 3]);
 		}
-		buffer[read_pos] = v0; buffer[read_pos + 1] = v1;
+		buffer[read_pos] = v0;
+		buffer[read_pos + 1] = v1;
 		read_pos = read_pos + 2;
 	}
 	//
 
 	int tmp = msg.GetU16();
-	if(tmp > msg.getMessageLength() - 4)
+	if (tmp > msg.getMessageLength() - 4)
 	{
 		std::cout << "Failure: [Protocol::XTEA_decrypt]. Not valid unencrypted message size" << std::endl;
 		return false;
@@ -178,7 +180,7 @@ bool Protocol::XTEA_decrypt(NetworkMessage& msg)
 
 bool Protocol::RSA_decrypt(RSA* rsa, NetworkMessage& msg)
 {
-	if(msg.getMessageLength() - msg.getReadPos() != 128)
+	if (msg.getMessageLength() - msg.getReadPos() != 128)
 	{
 		std::cout << "Warning: [Protocol::RSA_decrypt]. Not valid packet size" << std::endl;
 		return false;
@@ -186,7 +188,7 @@ bool Protocol::RSA_decrypt(RSA* rsa, NetworkMessage& msg)
 
 	rsa->decrypt((char*)(msg.getBuffer() + msg.getReadPos()), 128);
 
-	if(msg.GetByte() != 0)
+	if (msg.GetByte() != 0)
 	{
 		std::cout << "Warning: [Protocol::RSA_decrypt]. First byte != 0" << std::endl;
 		return false;
@@ -197,7 +199,7 @@ bool Protocol::RSA_decrypt(RSA* rsa, NetworkMessage& msg)
 
 uint32_t Protocol::getIP() const
 {
-	if(getConnection())
+	if (getConnection())
 		return getConnection()->getIP();
 
 	return 0;

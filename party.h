@@ -34,8 +34,14 @@ class Party
 		Party(Player* _leader);
 		~Party();
 
-		Player* getLeader() const {return leader;}
-		void setLeader(Player* _leader) {leader = _leader;}
+		Player* getLeader() const
+		{
+			return leader;
+		}
+		void setLeader(Player* _leader)
+		{
+			leader = _leader;
+		}
 
 		void disband();
 		bool invitePlayer(Player* player);
@@ -51,13 +57,22 @@ class Party
 		void updateAllPartyIcons();
 		void updatePartyIcons(Player* player);
 		void broadcastPartyMessage(MessageClasses msgClass, const std::string& msg, bool sendToInvitations = false);
-		bool disbandParty() {return (memberList.empty() && inviteList.empty());}
+		bool disbandParty()
+		{
+			return (memberList.empty() && inviteList.empty());
+		}
 		bool canOpenCorpse(uint32_t ownerId);
 
 		void shareExperience(uint64_t experience);
 		bool setSharedExperience(Player* player, bool _sharedExpActive);
-		bool isSharedExperienceActive() const {return sharedExpActive;}
-		bool isSharedExperienceEnabled() const {return sharedExpEnabled;}
+		bool isSharedExperienceActive() const
+		{
+			return sharedExpActive;
+		}
+		bool isSharedExperienceEnabled() const
+		{
+			return sharedExpEnabled;
+		}
 		bool canUseSharedExperience(const Player* player) const;
 		void updateSharedExperience();
 

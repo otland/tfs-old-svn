@@ -53,36 +53,36 @@ struct NodeStruct
 
 	static void clearNet(NodeStruct* root)
 	{
-		if(root)
+		if (root)
 			clearChild(root);
 	}
 
-	private:
-		static void clearNext(NodeStruct* node)
+private:
+	static void clearNext(NodeStruct* node)
+	{
+		NodeStruct* deleteNode = node;
+		NodeStruct* nextNode;
+		while (deleteNode)
 		{
-			NodeStruct* deleteNode = node;
-			NodeStruct* nextNode;
-			while(deleteNode)
-			{
-				if(deleteNode->child)
-					clearChild(deleteNode->child);
+			if (deleteNode->child)
+				clearChild(deleteNode->child);
 
-				nextNode = deleteNode->next;
-				delete deleteNode;
-				deleteNode = nextNode;
-			}
+			nextNode = deleteNode->next;
+			delete deleteNode;
+			deleteNode = nextNode;
 		}
+	}
 
-		static void clearChild(NodeStruct* node)
-		{
-			if(node->child)
-				clearChild(node->child);
+	static void clearChild(NodeStruct* node)
+	{
+		if (node->child)
+			clearChild(node->child);
 
-			if(node->next)
-				clearNext(node->next);
+		if (node->next)
+			clearNext(node->next);
 
-			delete node;
-		}
+		delete node;
+	}
 };
 
 #define NO_NODE 0
@@ -121,8 +121,14 @@ class FileLoader
 		void endNode();
 		int32_t setProps(void* data, unsigned short size);
 
-		int32_t getError() {return m_lastError;}
-		void clearError() {m_lastError = ERROR_NONE;}
+		int32_t getError()
+		{
+			return m_lastError;
+		}
+		void clearError()
+		{
+			m_lastError = ERROR_NONE;
+		}
 
 	protected:
 		enum SPECIAL_BYTES
@@ -143,14 +149,14 @@ class FileLoader
 	public:
 		inline bool writeData(const void* data, int32_t size, bool unescape)
 		{
-			for(int32_t i = 0; i < size; ++i)
+			for (int32_t i = 0; i < size; ++i)
 			{
 				unsigned char c = *(((unsigned char*)data) + i);
-				if(unescape && (c == NODE_START || c == NODE_END || c == ESCAPE_CHAR))
+				if (unescape && (c == NODE_START || c == NODE_END || c == ESCAPE_CHAR))
 				{
 					unsigned char escape = ESCAPE_CHAR;
 					size_t value = fwrite(&escape, 1, 1, m_file);
-					if(value != 1)
+					if (value != 1)
 					{
 						m_lastError = ERROR_COULDNOTWRITE;
 						return false;
@@ -158,7 +164,7 @@ class FileLoader
 				}
 
 				size_t value = fwrite(&c, 1, 1, m_file);
-				if(value != 1)
+				if (value != 1)
 				{
 					m_lastError = ERROR_COULDNOTWRITE;
 					return false;
@@ -183,10 +189,10 @@ class FileLoader
 			unsigned char* data;
 		};
 
-		#define CACHE_BLOCKS 3
+#define CACHE_BLOCKS 3
 		uint32_t m_cache_size;
 		_cache m_cached_data[CACHE_BLOCKS];
-		#define NO_VALID_CACHE 0xFFFFFFFF
+#define NO_VALID_CACHE 0xFFFFFFFF
 		uint32_t m_cache_index;
 		uint32_t m_cache_offset;
 		inline uint32_t getCacheBlock(uint32_t pos);
@@ -196,7 +202,11 @@ class FileLoader
 class PropStream
 {
 	public:
-		PropStream() {end = NULL; p = NULL;}
+		PropStream()
+		{
+			end = NULL;
+			p = NULL;
+		}
 		~PropStream() {}
 
 		void init(const char* a, uint32_t size)
@@ -208,7 +218,7 @@ class PropStream
 		template <typename T>
 		inline bool GET_STRUCT(T* &ret)
 		{
-			if(size() < (long)sizeof(T))
+			if (size() < (long)sizeof(T))
 			{
 				ret = NULL;
 				return false;
@@ -222,7 +232,7 @@ class PropStream
 		template <typename T>
 		inline bool GET_VALUE(T &ret)
 		{
-			if(size() < (long)sizeof(T))
+			if (size() < (long)sizeof(T))
 				return false;
 
 			ret = *((T*)p);
@@ -230,23 +240,35 @@ class PropStream
 			return true;
 		}
 
-		inline bool GET_TIME(time_t &ret) {return GET_VALUE(ret);}
+		inline bool GET_TIME(time_t &ret)
+		{
+			return GET_VALUE(ret);
+		}
 
-		inline bool GET_ULONG(uint32_t &ret) {return GET_VALUE(ret);}
+		inline bool GET_ULONG(uint32_t &ret)
+		{
+			return GET_VALUE(ret);
+		}
 
-		inline bool GET_USHORT(uint16_t &ret) {return GET_VALUE(ret);}
+		inline bool GET_USHORT(uint16_t &ret)
+		{
+			return GET_VALUE(ret);
+		}
 
-		inline bool GET_UCHAR(uint8_t &ret) {return GET_VALUE(ret);}
+		inline bool GET_UCHAR(uint8_t &ret)
+		{
+			return GET_VALUE(ret);
+		}
 
 		inline bool GET_STRING(std::string& ret)
 		{
 			char* str;
 			uint16_t str_len;
 
-			if(!GET_USHORT(str_len))
+			if (!GET_USHORT(str_len))
 				return false;
 
-			if(size() < str_len)
+			if (size() < str_len)
 				return false;
 
 			str = new char[str_len + 1];
@@ -260,7 +282,7 @@ class PropStream
 
 		inline bool GET_NSTRING(unsigned short str_len, std::string& ret)
 		{
-			if(size() < str_len)
+			if (size() < str_len)
 				return false;
 
 			char* str = new char[str_len + 1];
@@ -274,7 +296,7 @@ class PropStream
 
 		inline bool SKIP_N(unsigned short n)
 		{
-			if(size() < n)
+			if (size() < n)
 				return false;
 
 			p += n;
@@ -282,7 +304,10 @@ class PropStream
 		}
 
 	protected:
-		int32_t size() {return end - p;}
+		int32_t size()
+		{
+			return end - p;
+		}
 		const char* p;
 		const char* end;
 };
@@ -292,13 +317,16 @@ class PropWriteStream
 	public:
 		PropWriteStream()
 		{
-			buffer = (char*)malloc(32*sizeof(char));
+			buffer = (char*)malloc(32 * sizeof(char));
 			buffer_size = 32;
 			size = 0;
 			memset(buffer, 0, 32*sizeof(char));
 		}
 
-		~PropWriteStream() {free(buffer);}
+		~PropWriteStream()
+		{
+			free(buffer);
+		}
 
 		const char* getStream(uint32_t& _size) const
 		{
@@ -310,7 +338,7 @@ class PropWriteStream
 		template <typename T>
 		inline void ADD_TYPE(T* add)
 		{
-			if((buffer_size - size) < sizeof(T))
+			if ((buffer_size - size) < sizeof(T))
 			{
 				buffer_size = buffer_size + ((sizeof(T) + 0x1F) & 0xFFFFFFE0);
 				buffer = (char*)realloc(buffer, buffer_size);
@@ -323,27 +351,36 @@ class PropWriteStream
 		template <typename T>
 		inline void ADD_VALUE(T add)
 		{
-			if((buffer_size - size) < sizeof(T))
+			if ((buffer_size - size) < sizeof(T))
 			{
 				buffer_size = buffer_size + ((sizeof(T) + 0x1F) & 0xFFFFFFE0);
-				buffer = (char*)realloc(buffer,buffer_size);
+				buffer = (char*)realloc(buffer, buffer_size);
 			}
 
 			memcpy(&buffer[size], &add, sizeof(T));
 			size = size + sizeof(T);
 		}
 
-		inline void ADD_ULONG(uint32_t ret) {ADD_VALUE(ret);}
+		inline void ADD_ULONG(uint32_t ret)
+		{
+			ADD_VALUE(ret);
+		}
 
-		inline void ADD_USHORT(uint16_t ret) {ADD_VALUE(ret);}
+		inline void ADD_USHORT(uint16_t ret)
+		{
+			ADD_VALUE(ret);
+		}
 
-		inline void ADD_UCHAR(uint8_t ret) {ADD_VALUE(ret);}
+		inline void ADD_UCHAR(uint8_t ret)
+		{
+			ADD_VALUE(ret);
+		}
 
 		inline void ADD_STRING(const std::string& add)
 		{
 			uint16_t str_len = add.size();
 			ADD_USHORT(str_len);
-			if((buffer_size - size) < str_len)
+			if ((buffer_size - size) < str_len)
 			{
 				buffer_size += ((str_len + 0x1F) & 0xFFFFFFE0);
 				buffer = (char*)realloc(buffer, buffer_size);

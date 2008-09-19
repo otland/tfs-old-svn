@@ -36,10 +36,22 @@ class Container : public Item, public Cylinder
 		virtual ~Container();
 		virtual Item* clone() const;
 
-		virtual Container* getContainer() {return this;}
-		virtual const Container* getContainer() const {return this;}
-		virtual Depot* getDepot() {return NULL;}
-		virtual const Depot* getDepot() const {return NULL;}
+		virtual Container* getContainer()
+		{
+			return this;
+		}
+		virtual const Container* getContainer() const
+		{
+			return this;
+		}
+		virtual Depot* getDepot()
+		{
+			return NULL;
+		}
+		virtual const Depot* getDepot() const
+		{
+			return NULL;
+		}
 
 		//serialization
 		virtual bool unserialize(xmlNodePtr p);
@@ -47,11 +59,23 @@ class Container : public Item, public Cylinder
 
 		bool unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream);
 
-		uint32_t size() const {return (uint32_t)itemlist.size();}
-		uint32_t capacity() const {return maxSize;}
+		uint32_t size() const
+		{
+			return (uint32_t)itemlist.size();
+		}
+		uint32_t capacity() const
+		{
+			return maxSize;
+		}
 
-		ItemList::const_iterator getItems() const {return itemlist.begin();}
-		ItemList::const_iterator getEnd() const {return itemlist.end();}
+		ItemList::const_iterator getItems() const
+		{
+			return itemlist.begin();
+		}
+		ItemList::const_iterator getEnd() const
+		{
+			return itemlist.end();
+		}
 
 		void addItem(Item* item);
 		Item* getItem(uint32_t index);
@@ -62,12 +86,12 @@ class Container : public Item, public Cylinder
 
 		//cylinder implementations
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
-			uint32_t flags) const;
+																	 uint32_t flags) const;
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count, uint32_t& maxQueryCount,
-			uint32_t flags) const;
+																				uint32_t flags) const;
 		virtual ReturnValue __queryRemove(const Thing* thing, uint32_t count) const;
 		virtual Cylinder* __queryDestination(int32_t& index, const Thing* thing, Item** destItem,
-			uint32_t& flags);
+																				 uint32_t& flags);
 
 		virtual void __addThing(Thing* thing);
 		virtual void __addThing(int32_t index, Thing* thing);
@@ -93,7 +117,7 @@ class Container : public Item, public Cylinder
 	private:
 		void onAddContainerItem(Item* item);
 		void onUpdateContainerItem(uint32_t index, Item* oldItem, const ItemType& oldType,
-			Item* newItem, const ItemType& newType);
+															 Item* newItem, const ItemType& newType);
 		void onRemoveContainerItem(uint32_t index, Item* item);
 
 	protected:

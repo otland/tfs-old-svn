@@ -51,7 +51,7 @@ Account IOLoginData::loadAccount(uint32_t accno)
 	DBResult result;
 
 	query << "SELECT `id`, `password`, `type`, `premdays`, `lastday`, `key`, `warnings` FROM `accounts` WHERE `id` = " << accno;
-	if(db->connect() && db->storeQuery(query, result))
+	if (db->connect() && db->storeQuery(query, result))
 	{
 		acc.accnumber = result.getDataInt("id");
 		acc.password = result.getDataString("password");
@@ -62,9 +62,9 @@ Account IOLoginData::loadAccount(uint32_t accno)
 		acc.warnings = result.getDataInt("warnings");
 
 		query << "SELECT `name` FROM `players` WHERE `account_id` = " << accno;
-		if(db->storeQuery(query, result))
+		if (db->storeQuery(query, result))
 		{
-			for(uint32_t i = 0; i < result.getNumRows(); ++i)
+			for (uint32_t i = 0; i < result.getNumRows(); ++i)
 			{
 				std::string ss = result.getDataString("name", i);
 				acc.charList.push_back(ss.c_str());
@@ -78,7 +78,7 @@ Account IOLoginData::loadAccount(uint32_t accno)
 bool IOLoginData::saveAccount(Account acc)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
@@ -89,12 +89,12 @@ bool IOLoginData::saveAccount(Account acc)
 bool IOLoginData::createAccount(uint32_t accountNumber, std::string newPassword)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
-	if(g_config.getNumber(ConfigManager::PASSWORD_TYPE) == PASSWORD_TYPE_MD5)
+	if (g_config.getNumber(ConfigManager::PASSWORD_TYPE) == PASSWORD_TYPE_MD5)
 		newPassword = transformToMD5(newPassword);
-	else if(g_config.getNumber(ConfigManager::PASSWORD_TYPE) == PASSWORD_TYPE_SHA1)
+	else if (g_config.getNumber(ConfigManager::PASSWORD_TYPE) == PASSWORD_TYPE_SHA1)
 		newPassword = transformToSHA1(newPassword);
 
 	DBQuery query;
@@ -105,24 +105,24 @@ bool IOLoginData::createAccount(uint32_t accountNumber, std::string newPassword)
 bool IOLoginData::getPassword(uint32_t accno, const std::string& name, std::string& password)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
 	DBResult result;
 
 	query << "SELECT `password` FROM `accounts` WHERE `id` = " << accno;
-	if(!db->storeQuery(query, result) || result.getNumRows() != 1)
+	if (!db->storeQuery(query, result) || result.getNumRows() != 1)
 		return false;
 
 	std::string accountPassword = result.getDataString("password");
 	query << "SELECT `name` FROM `players` WHERE `account_id` = " << accno;
-	if(!db->storeQuery(query, result))
+	if (!db->storeQuery(query, result))
 		return false;
 
-	for(uint32_t i = 0; i < result.getNumRows(); ++i)
+	for (uint32_t i = 0; i < result.getNumRows(); ++i)
 	{
-		if(result.getDataString("name", i) == name)
+		if (result.getDataString("name", i) == name)
 		{
 			password = accountPassword;
 			return true;
@@ -134,14 +134,14 @@ bool IOLoginData::getPassword(uint32_t accno, const std::string& name, std::stri
 bool IOLoginData::accountExists(uint32_t accno)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
 	DBResult result;
 
 	query << "SELECT `id` FROM `accounts` WHERE `id` = " << accno;
-	if(!db->storeQuery(query, result) || result.getNumRows() == 0)
+	if (!db->storeQuery(query, result) || result.getNumRows() == 0)
 		return false;
 
 	return true;
@@ -150,7 +150,7 @@ bool IOLoginData::accountExists(uint32_t accno)
 bool IOLoginData::setRecoveryKey(uint32_t accountNumber, std::string recoveryKey)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
@@ -161,34 +161,34 @@ bool IOLoginData::setRecoveryKey(uint32_t accountNumber, std::string recoveryKey
 bool IOLoginData::validRecoveryKey(uint32_t accountNumber, const std::string recoveryKey)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
 	DBResult result;
 
-	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
+#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+	if (g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
 		query << "SELECT `id` FROM `accounts` WHERE `key` LIKE '" << Database::escapeString(recoveryKey) << "' AND `id` = " << accountNumber;
 	else
 		query << "SELECT `id` FROM `accounts` WHERE `key` = '" << Database::escapeString(recoveryKey) << "' AND `id` = " << accountNumber;
-	#elif defined __USE_SQLITE__
+#elif defined __USE_SQLITE__
 	query << "SELECT `id` FROM `accounts` WHERE `key` LIKE '" << Database::escapeString(recoveryKey) << "' AND `id` = " << accountNumber;
-	#elif defined __USE_MYSQL__
+#elif defined __USE_MYSQL__
 	query << "SELECT `id` FROM `accounts` WHERE `key` = '" << Database::escapeString(recoveryKey) << "' AND `id` = " << accountNumber;
-	#endif
+#endif
 	return db->storeQuery(query, result);
 }
 
 bool IOLoginData::setNewPassword(uint32_t accountId, std::string newPassword)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
-	if(g_config.getNumber(ConfigManager::PASSWORD_TYPE) == PASSWORD_TYPE_MD5)
+	if (g_config.getNumber(ConfigManager::PASSWORD_TYPE) == PASSWORD_TYPE_MD5)
 		newPassword = transformToMD5(newPassword);
-	else if(g_config.getNumber(ConfigManager::PASSWORD_TYPE) == PASSWORD_TYPE_SHA1)
+	else if (g_config.getNumber(ConfigManager::PASSWORD_TYPE) == PASSWORD_TYPE_SHA1)
 		newPassword = transformToSHA1(newPassword);
 
 	DBQuery query;
@@ -199,26 +199,26 @@ bool IOLoginData::setNewPassword(uint32_t accountId, std::string newPassword)
 AccountType_t IOLoginData::getAccountType(std::string name)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return ACCOUNT_TYPE_NORMAL;
 
 	DBQuery query;
 	DBResult result;
-	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
+#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+	if (g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
 		query << "SELECT `account_id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "'";
 	else
 		query << "SELECT `account_id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "'";
-	#elif defined __USE_SQLITE__
+#elif defined __USE_SQLITE__
 	query << "SELECT `account_id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "'";
-	#elif defined __USE_MYSQL__
+#elif defined __USE_MYSQL__
 	query << "SELECT `account_id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "'";
-	#endif
-	if(!db->storeQuery(query, result))
+#endif
+	if (!db->storeQuery(query, result))
 		return ACCOUNT_TYPE_NORMAL;
 
 	query << "SELECT `type` FROM `accounts` WHERE `id` = " << result.getDataInt("account_id");
-	if(!db->storeQuery(query, result))
+	if (!db->storeQuery(query, result))
 		return ACCOUNT_TYPE_NORMAL;
 
 	return (AccountType_t)result.getDataInt("type");
@@ -227,22 +227,22 @@ AccountType_t IOLoginData::getAccountType(std::string name)
 uint32_t IOLoginData::getLastIPByName(std::string name)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return 0;
 
 	DBQuery query;
 	DBResult result;
-	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
+#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+	if (g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
 		query << "SELECT `lastip` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "'";
 	else
 		query << "SELECT `lastip` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "'";
-	#elif defined __USE_SQLITE__
+#elif defined __USE_SQLITE__
 	query << "SELECT `lastip` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "'";
-	#elif defined __USE_MYSQL__
+#elif defined __USE_MYSQL__
 	query << "SELECT `lastip` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "'";
-	#endif
-	if(!db->storeQuery(query, result))
+#endif
+	if (!db->storeQuery(query, result))
 		return 0;
 
 	return result.getDataInt("lastip");
@@ -251,7 +251,7 @@ uint32_t IOLoginData::getLastIPByName(std::string name)
 bool IOLoginData::resetOnlineStatus()
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
@@ -262,22 +262,22 @@ bool IOLoginData::resetOnlineStatus()
 bool IOLoginData::updateOnlineStatus(uint32_t guid, bool login)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
 	DBResult result;
 
 	query << "SELECT `online` FROM `players` WHERE `id` = " << guid;
-	if(!db->storeQuery(query, result))
+	if (!db->storeQuery(query, result))
 		return false;
 
 	uint16_t onlineValue = result.getDataInt("online");
-	if(login)
+	if (login)
 		onlineValue++;
-	else if(!g_config.getNumber(ConfigManager::ALLOW_CLONES))
+	else if (!g_config.getNumber(ConfigManager::ALLOW_CLONES))
 		onlineValue = 0;
-	else if(onlineValue > 0)
+	else if (onlineValue > 0)
 		onlineValue--;
 
 	query << "UPDATE `players` SET `online` = " << onlineValue << " WHERE `id` = " << guid;
@@ -287,27 +287,27 @@ bool IOLoginData::updateOnlineStatus(uint32_t guid, bool login)
 bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preload /*= false*/)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
 	DBResult result;
 
-	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
+#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+	if (g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
 		query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `redskulltime`, `redskull`, `guildnick`, `rank_id`, `town_id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "'";
 	else
 		query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `redskulltime`, `redskull`, `guildnick`, `rank_id`, `town_id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "'";
-	#elif defined __USE_SQLITE__
+#elif defined __USE_SQLITE__
 	query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `redskulltime`, `redskull`, `guildnick`, `rank_id`, `town_id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "'";
-	#elif defined __USE_MYSQL__
+#elif defined __USE_MYSQL__
 	query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `redskulltime`, `redskull`, `guildnick`, `rank_id`, `town_id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "'";
-	#endif
-	if(!db->storeQuery(query, result) || result.getNumRows() != 1)
+#endif
+	if (!db->storeQuery(query, result) || result.getNumRows() != 1)
 		return false;
 
 	uint32_t accno = result.getDataInt("account_id");
-	if(accno < 1)
+	if (accno < 1)
 		return false;
 
 	Account acc = loadAccount(accno);
@@ -320,7 +320,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 
 	player->setGroupId(result.getDataInt("group_id"));
 
-	if(preload)
+	if (preload)
 	{
 		//only loading basic info
 		return true;
@@ -332,7 +332,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	uint64_t currExpCount = Player::getExpForLevel(player->level);
 	uint64_t nextExpCount = Player::getExpForLevel(player->level + 1);
 	uint64_t experience = (uint64_t)result.getDataLong("experience");
-	if(experience < currExpCount || experience > nextExpCount)
+	if (experience < currExpCount || experience > nextExpCount)
 		experience = currExpCount;
 
 	player->experience = experience;
@@ -347,9 +347,9 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	propStream.init(conditions, conditionsSize);
 
 	Condition* condition;
-	while((condition = Condition::createCondition(propStream)))
+	while ((condition = Condition::createCondition(propStream)))
 	{
-		if(condition->unserialize(propStream))
+		if (condition->unserialize(propStream))
 			player->storedConditionList.push_back(condition);
 		else
 			delete condition;
@@ -362,19 +362,19 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 
 	uint64_t nextManaCount = player->vocation->getReqMana(player->magLevel + 1);
 	uint64_t manaSpent = result.getDataLong("manaspent");
-	if(manaSpent > nextManaCount)
+	if (manaSpent > nextManaCount)
 		manaSpent = 0;
 
 	player->manaSpent = manaSpent;
 	player->magLevelPercent = Player::getPercentLevel(player->manaSpent,
-		nextManaCount);
+														nextManaCount);
 
 	player->health = result.getDataInt("health");
 	player->healthMax = result.getDataInt("healthmax");
 
-	if(player->accessLevel > 0)
+	if (player->accessLevel > 0)
 	{
-		if(acc.accountType > 4)
+		if (acc.accountType > 4)
 			player->defaultOutfit.lookType = 266;
 		else
 			player->defaultOutfit.lookType = 75;
@@ -389,14 +389,14 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	player->defaultOutfit.lookAddons = result.getDataInt("lookaddons");
 	player->currentOutfit = player->defaultOutfit;
 
-	if(g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
+	if (g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
 	{
 		int32_t redSkullSeconds = result.getDataInt("redskulltime") - time(NULL);
-		if(redSkullSeconds > 0)
+		if (redSkullSeconds > 0)
 		{
 			//ensure that we round up the number of ticks
 			player->redSkullTicks = (redSkullSeconds + 2) * 1000;
-			if(result.getDataInt("redskull") == 1)
+			if (result.getDataInt("redskull") == 1)
 				player->skull = SKULL_RED;
 		}
 	}
@@ -410,18 +410,18 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 
 	player->town = result.getDataInt("town_id");
 	Town* town = Towns::getInstance().getTown(player->town);
-	if(town)
+	if (town)
 		player->masterPos = town->getTemplePosition();
 	Position loginPos = player->loginPosition;
-	if(loginPos.x == 0 && loginPos.y == 0 && loginPos.z == 0)
+	if (loginPos.x == 0 && loginPos.y == 0 && loginPos.z == 0)
 		player->loginPosition = player->masterPos;
 
 	uint32_t rankid = result.getDataInt("rank_id");
-	if(rankid)
+	if (rankid)
 	{
 		player->guildNick = result.getDataString("guildnick");
 		query << "SELECT `guild_ranks`.`name` AS `rank`, `guild_ranks`.`guild_id` AS `guildid`, `guild_ranks`.`level` AS `level`, `guilds`.`name` AS `guildname` FROM `guild_ranks`, `guilds` WHERE `guild_ranks`.`id` = " << rankid << " AND `guild_ranks`.`guild_id` = `guilds`.`id`";
-		if(db->storeQuery(query, result))
+		if (db->storeQuery(query, result))
 		{
 			player->guildName = result.getDataString("guildname");
 			player->guildLevel = result.getDataInt("level");
@@ -429,12 +429,12 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 			player->guildRank = result.getDataString("rank");
 		}
 	}
-	else if(g_config.getString(ConfigManager::INGAME_GUILD_SYSTEM) == "yes")
+	else if (g_config.getString(ConfigManager::INGAME_GUILD_SYSTEM) == "yes")
 	{
 		query << "SELECT `guild_id` FROM `guild_invites` WHERE `player_id` = " << player->getGUID();
-		if(db->storeQuery(query, result))
+		if (db->storeQuery(query, result))
 		{
-			for(uint32_t i = 0; i < result.getNumRows(); ++i)
+			for (uint32_t i = 0; i < result.getNumRows(); ++i)
 			{
 				uint32_t guild_id = result.getDataInt("guild_id", i);
 				player->invitedToGuildsList.push_back(guild_id);
@@ -446,7 +446,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 
 	//get password
 	query << "SELECT `password` FROM `accounts` WHERE `id` = " << accno;
-	if(!db->storeQuery(query, result) || result.getNumRows() != 1)
+	if (!db->storeQuery(query, result) || result.getNumRows() != 1)
 		return false;
 
 	player->password = result.getDataString("password");
@@ -454,19 +454,19 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	// we need to find out our skills
 	// so we query the skill table
 	query << "SELECT `skillid`, `value`, `count` FROM `player_skills` WHERE `player_id` = " << player->getGUID();
-	if(db->storeQuery(query, result))
+	if (db->storeQuery(query, result))
 	{
 		//now iterate over the skills
-		for(uint32_t i = 0; i < result.getNumRows(); ++i)
+		for (uint32_t i = 0; i < result.getNumRows(); ++i)
 		{
 			int32_t skillid = result.getDataInt("skillid", i);
-			if(skillid >= SKILL_FIRST && skillid <= SKILL_LAST)
+			if (skillid >= SKILL_FIRST && skillid <= SKILL_LAST)
 			{
 				uint32_t skillLevel = result.getDataInt("value", i);
 				uint64_t skillCount = result.getDataLong("count", i);
 
 				uint64_t nextSkillCount = player->vocation->getReqSkillTries(skillid, skillLevel + 1);
-				if(skillCount > nextSkillCount)
+				if (skillCount > nextSkillCount)
 					skillCount = 0;
 
 				player->skills[skillid][SKILL_LEVEL] = skillLevel;
@@ -476,10 +476,10 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 		}
 	}
 
- 	query << "SELECT `player_id`, `name` FROM `player_spells` WHERE `player_id` = " << player->getGUID();
-	if(db->storeQuery(query, result))
+	query << "SELECT `player_id`, `name` FROM `player_spells` WHERE `player_id` = " << player->getGUID();
+	if (db->storeQuery(query, result))
 	{
-		for(uint32_t i = 0; i < result.getNumRows(); ++i)
+		for (uint32_t i = 0; i < result.getNumRows(); ++i)
 		{
 			std::string spellName = result.getDataString("name", i);
 			player->learnedInstantSpellList.push_back(spellName);
@@ -492,25 +492,25 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	ItemMap itemMap;
 
 	query << "SELECT `pid`, `sid`, `itemtype`, `count`, `attributes` FROM `player_items` WHERE `player_id` = " << player->getGUID() << " ORDER BY `sid` DESC";
-	if(db->storeQuery(query, result) && (result.getNumRows() > 0))
+	if (db->storeQuery(query, result) && (result.getNumRows() > 0))
 	{
 		loadItems(itemMap, result);
 
 		ItemMap::reverse_iterator it;
 		ItemMap::iterator it2;
 
-		for(it = itemMap.rbegin(); it != itemMap.rend(); ++it)
+		for (it = itemMap.rbegin(); it != itemMap.rend(); ++it)
 		{
 			Item* item = it->second.first;
 			int32_t pid = it->second.second;
-			if(pid >= 1 && pid <= 10)
+			if (pid >= 1 && pid <= 10)
 				player->__internalAddThing(pid, item);
 			else
 			{
 				it2 = itemMap.find(pid);
-				if(it2 != itemMap.end())
+				if (it2 != itemMap.end())
 				{
-					if(Container* container = it2->second.first->getContainer())
+					if (Container* container = it2->second.first->getContainer())
 						container->__internalAddThing(item);
 				}
 			}
@@ -523,20 +523,20 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	itemMap.clear();
 
 	query << "SELECT `pid`, `sid`, `itemtype`, `count`, `attributes` FROM `player_depotitems` WHERE `player_id` = " << player->getGUID() << " ORDER BY `sid` DESC";
-	if(db->storeQuery(query, result) && (result.getNumRows() > 0))
+	if (db->storeQuery(query, result) && (result.getNumRows() > 0))
 	{
 		loadItems(itemMap, result);
 		ItemMap::reverse_iterator it;
 		ItemMap::iterator it2;
-		for(it = itemMap.rbegin(); it != itemMap.rend(); ++it)
+		for (it = itemMap.rbegin(); it != itemMap.rend(); ++it)
 		{
 			Item* item = it->second.first;
 			int32_t pid = it->second.second;
-			if(pid >= 0 && pid < 100)
+			if (pid >= 0 && pid < 100)
 			{
-				if(Container* c = item->getContainer())
+				if (Container* c = item->getContainer())
 				{
-					if(Depot* depot = c->getDepot())
+					if (Depot* depot = c->getDepot())
 						player->addDepot(depot, pid);
 					else
 						std::cout << "Error loading depot " << pid << " for player " << player->getGUID() << std::endl;
@@ -547,9 +547,9 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 			else
 			{
 				it2 = itemMap.find(pid);
-				if(it2 != itemMap.end())
+				if (it2 != itemMap.end())
 				{
-					if(Container* container = it2->second.first->getContainer())
+					if (Container* container = it2->second.first->getContainer())
 						container->__internalAddThing(item);
 				}
 			}
@@ -560,9 +560,9 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 
 	//load storage map
 	query << "SELECT `key`, `value` FROM `player_storage` WHERE `player_id` = " << player->getGUID();
-	if(db->storeQuery(query,result))
+	if (db->storeQuery(query, result))
 	{
-		for(uint32_t i = 0; i < result.getNumRows(); ++i)
+		for (uint32_t i = 0; i < result.getNumRows(); ++i)
 		{
 			uint32_t key = result.getDataInt("key", i);
 			int32_t value = result.getDataLong("value", i);
@@ -574,13 +574,13 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 
 	//load vip
 	query << "SELECT `vip_id` FROM `player_viplist` WHERE `player_id` = " << player->getGUID();
-	if(db->storeQuery(query,result))
+	if (db->storeQuery(query, result))
 	{
-		for(uint32_t i = 0; i < result.getNumRows(); ++i)
+		for (uint32_t i = 0; i < result.getNumRows(); ++i)
 		{
-			uint32_t vip_id = result.getDataInt("vip_id",i);
+			uint32_t vip_id = result.getDataInt("vip_id", i);
 			std::string dummy_str;
-			if(storeNameByGuid(*db, vip_id))
+			if (storeNameByGuid(*db, vip_id))
 				player->addVIP(vip_id, dummy_str, false, true);
 		}
 	}
@@ -607,7 +607,7 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 	Item* item;
 	int32_t pid;
 
-	for(ItemBlockList::const_iterator it = itemList.begin(); it != itemList.end(); ++it)
+	for (ItemBlockList::const_iterator it = itemList.begin(); it != itemList.end(); ++it)
 	{
 		pid = it->first;
 		item = it->second;
@@ -621,25 +621,25 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 
 		char buffer[attributesSize * 3 + 100];
 		sprintf(buffer, "(%d, %d, %d, %d, %d, %s)", player->getGUID(), pid, runningId, item->getID(), (int32_t)item->getSubType(), db->escapeBlob(attributes, attributesSize).c_str());
-		if(!query_insert.addRow(buffer))
+		if (!query_insert.addRow(buffer))
 			return false;
 
-		if(Container* container = item->getContainer())
+		if (Container* container = item->getContainer())
 			stack.push_back(containerBlock(container, runningId));
 	}
 
-	while(stack.size() > 0)
+	while (stack.size() > 0)
 	{
 		const containerBlock& cb = stack.front();
 		Container* container = cb.first;
 		parentId = cb.second;
 		stack.pop_front();
-		for(uint32_t i = 0; i < container->size(); ++i)
+		for (uint32_t i = 0; i < container->size(); ++i)
 		{
 			++runningId;
 			item = container->getItem(i);
 			Container* container = item->getContainer();
-			if(container)
+			if (container)
 				stack.push_back(containerBlock(container, runningId));
 
 			uint32_t attributesSize;
@@ -649,11 +649,11 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 
 			char buffer[attributesSize * 3 + 100];
 			sprintf(buffer, "(%d, %d, %d, %d, %d, %s)", player->getGUID(), parentId, runningId, item->getID(), (int32_t)item->getSubType(), db->escapeBlob(attributes, attributesSize).c_str());
-			if(!query_insert.addRow(buffer))
+			if (!query_insert.addRow(buffer))
 				return false;
 		}
 	}
-	if(!query_insert.executeQuery())
+	if (!query_insert.executeQuery())
 		return false;
 
 	return true;
@@ -661,34 +661,34 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 
 bool IOLoginData::savePlayer(Player* player, bool preSave)
 {
-	if(preSave)
+	if (preSave)
 		player->preSave();
 
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
 	DBResult result;
 
 	query << "SELECT `save` FROM `players` WHERE `id` = " << player->getGUID();
-	if(!db->storeQuery(query,result) || result.getNumRows() != 1)
+	if (!db->storeQuery(query, result) || result.getNumRows() != 1)
 		return false;
 
-	if(result.getDataInt("save") == 0)
+	if (result.getDataInt("save") == 0)
 		return true;
 
 	DBTransaction trans(db);
-	if(!trans.start())
+	if (!trans.start())
 		return false;
 
 	//serialize conditions
 	PropWriteStream propWriteStream;
-	for(ConditionList::const_iterator it = player->conditions.begin(); it != player->conditions.end(); ++it)
+	for (ConditionList::const_iterator it = player->conditions.begin(); it != player->conditions.end(); ++it)
 	{
-		if((*it)->isPersistent())
+		if ((*it)->isPersistent())
 		{
-			if(!(*it)->serialize(propWriteStream))
+			if (!(*it)->serialize(propWriteStream))
 				return false;
 			propWriteStream.ADD_UCHAR(CONDITIONATTR_END);
 		}
@@ -723,45 +723,45 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	query << "`cap` = " << player->getCapacity() << ", ";
 	query << "`sex` = " << player->sex << ", ";
 
-	if(player->lastLoginSaved != 0)
+	if (player->lastLoginSaved != 0)
 		query << "`lastlogin` = " << player->lastLoginSaved << ", ";
 
-	if(player->lastIP != 0)
+	if (player->lastIP != 0)
 		query << "`lastip` = " << player->lastIP << ", ";
 
 	query << "`conditions` = " << db->escapeBlob(conditions, conditionsSize) << ", ";
 
-	if(g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
+	if (g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
 	{
 		int32_t redSkullTime = 0;
-		if(player->redSkullTicks > 0)
-			redSkullTime = time(NULL) + player->redSkullTicks/1000;
+		if (player->redSkullTicks > 0)
+			redSkullTime = time(NULL) + player->redSkullTicks / 1000;
 
 		query << "`redskulltime` = " << redSkullTime << ", ";
 		int32_t redSkull = 0;
-		if(player->skull == SKULL_RED)
+		if (player->skull == SKULL_RED)
 			redSkull = 1;
 
 		query << "`redskull` = " << redSkull << ", ";
 	}
 	query << "`lastlogout` = " << player->getLastLogout() << ", ";
 	query << "`blessings` = " << player->blessings;
-	if(g_config.getString(ConfigManager::INGAME_GUILD_SYSTEM) == "yes")
+	if (g_config.getString(ConfigManager::INGAME_GUILD_SYSTEM) == "yes")
 	{
 		query << ", `guildnick` = '" << Database::escapeString(player->guildNick) << "', ";
 		query << "`rank_id` = " << IOGuild::getInstance()->getRankIdByGuildIdAndLevel(player->getGuildId(), player->getGuildLevel()) << " ";
 	}
 	query << " WHERE `id` = " << player->getGUID();
 
-	if(!db->executeQuery(query))
+	if (!db->executeQuery(query))
 		return false;
 	query.str("");
 
 	// skills
-	for(int32_t i = 0; i <= 6; i++)
+	for (int32_t i = 0; i <= 6; i++)
 	{
 		query << "UPDATE `player_skills` SET `value` = " << player->skills[i][SKILL_LEVEL] << ", `count` = " << player->skills[i][SKILL_TRIES] << " WHERE `player_id` = " << player->getGUID() << " AND `skillid` = " << i;
-		if(!db->executeQuery(query))
+		if (!db->executeQuery(query))
 			return false;
 		query.str("");
 	}
@@ -769,109 +769,109 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	// learned spells
 	query << "DELETE FROM `player_spells` WHERE `player_id` = " << player->getGUID();
 
-	if(!db->executeQuery(query))
+	if (!db->executeQuery(query))
 		return false;
 
 	char buffer[150];
 	DBSplitInsert query_insert(db);
 	query_insert.setQuery("INSERT INTO `player_spells` (`player_id`, `name` ) VALUES ");
-	for(LearnedInstantSpellList::const_iterator it = player->learnedInstantSpellList.begin();
-			it != player->learnedInstantSpellList.end(); ++it)
+	for (LearnedInstantSpellList::const_iterator it = player->learnedInstantSpellList.begin();
+			 it != player->learnedInstantSpellList.end(); ++it)
 	{
 		sprintf(buffer, "(%d, '%s')", player->getGUID(), Database::escapeString(*it).c_str());
-		if(!query_insert.addRow(buffer))
+		if (!query_insert.addRow(buffer))
 			return false;
 	}
 
-	if(!query_insert.executeQuery())
+	if (!query_insert.executeQuery())
 		return false;
 
 	//item saving
 	query << "DELETE FROM `player_items` WHERE `player_id` = " << player->getGUID();
-	if(!db->executeQuery(query))
+	if (!db->executeQuery(query))
 		return false;
 
 	query_insert.setQuery("INSERT INTO `player_items` (`player_id`, `pid`, `sid`, `itemtype`, `count`, `attributes`) VALUES ");
 
 	ItemBlockList itemList;
 	Item* item;
-	for(int32_t slotId = 1; slotId <= 10; ++slotId)
+	for (int32_t slotId = 1; slotId <= 10; ++slotId)
 	{
-		if((item = player->inventory[slotId]))
+		if ((item = player->inventory[slotId]))
 			itemList.push_back(itemBlock(slotId, item));
 	}
 
-	if(!saveItems(player, itemList, query_insert))
+	if (!saveItems(player, itemList, query_insert))
 		return false;
 
 	//save depot items
 	query << "DELETE FROM `player_depotitems` WHERE `player_id` = " << player->getGUID();
-	if(!db->executeQuery(query))
+	if (!db->executeQuery(query))
 		return false;
 
 	query_insert.setQuery("INSERT INTO `player_depotitems` (`player_id`, `pid`, `sid`, `itemtype`, `count`, `attributes`) VALUES ");
 	itemList.clear();
-	for(DepotMap::iterator it = player->depots.begin(); it !=player->depots.end() ;++it)
+	for (DepotMap::iterator it = player->depots.begin(); it != player->depots.end() ;++it)
 		itemList.push_back(itemBlock(it->first, it->second));
 
-	if(!saveItems(player, itemList, query_insert))
+	if (!saveItems(player, itemList, query_insert))
 		return false;
 
 	query.reset();
 	query << "DELETE FROM `player_storage` WHERE `player_id` = " << player->getGUID();
 
-	if(!db->executeQuery(query))
+	if (!db->executeQuery(query))
 		return false;
 
 	query_insert.setQuery("INSERT INTO `player_storage` (`player_id`, `key`, `value`) VALUES ");
 	player->genReservedStorageRange();
-	for(StorageMap::const_iterator cit = player->getStorageIteratorBegin(); cit != player->getStorageIteratorEnd();cit++)
+	for (StorageMap::const_iterator cit = player->getStorageIteratorBegin(); cit != player->getStorageIteratorEnd();cit++)
 	{
 		sprintf(buffer, "(%d, %d, %u)", player->getGUID(), cit->first, (uint32_t)cit->second);
-		if(!query_insert.addRow(buffer))
+		if (!query_insert.addRow(buffer))
 			return false;
 	}
 
-	if(!query_insert.executeQuery())
+	if (!query_insert.executeQuery())
 		return false;
 
-	if(g_config.getString(ConfigManager::INGAME_GUILD_SYSTEM) == "yes")
+	if (g_config.getString(ConfigManager::INGAME_GUILD_SYSTEM) == "yes")
 	{
 		//save guild invites
 		query.reset();
 		query << "DELETE FROM `guild_invites` WHERE `player_id` = " << player->getGUID();
 
-		if(!db->executeQuery(query))
+		if (!db->executeQuery(query))
 			return false;
 
 		query_insert.setQuery("INSERT INTO `guild_invites` (`player_id`, `guild_id`) VALUES ");
-		for(InvitedToGuildsList::const_iterator it = player->invitedToGuildsList.begin(); it != player->invitedToGuildsList.end(); ++it)
+		for (InvitedToGuildsList::const_iterator it = player->invitedToGuildsList.begin(); it != player->invitedToGuildsList.end(); ++it)
 		{
 			sprintf(buffer, "(%d, %d)", player->getGUID(), *it);
-			if(!query_insert.addRow(buffer))
+			if (!query_insert.addRow(buffer))
 				return false;
 		}
-		if(!query_insert.executeQuery())
+		if (!query_insert.executeQuery())
 			return false;
 	}
 
 	//save vip list
 	query.reset();
 	query << "DELETE FROM `player_viplist` WHERE `player_id` = " << player->getGUID();
-	if(!db->executeQuery(query))
+	if (!db->executeQuery(query))
 		return false;
 
 	query_insert.setQuery("INSERT INTO `player_viplist` (`player_id`, `vip_id`) VALUES ");
-	for(VIPListSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); it++)
+	for (VIPListSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); it++)
 	{
-		if(playerExists(*it))
+		if (playerExists(*it))
 		{
 			sprintf(buffer, "(%d, %d)", player->getGUID(), *it);
-			if(!query_insert.addRow(buffer))
+			if (!query_insert.addRow(buffer))
 				return false;
 		}
 	}
-	if(!query_insert.executeQuery())
+	if (!query_insert.executeQuery())
 		return false;
 
 	//End the transaction
@@ -884,11 +884,11 @@ bool IOLoginData::storeNameByGuid(Database &db, uint32_t guid)
 	DBResult result;
 
 	NameCacheMap::iterator it = nameCacheMap.find(guid);
-	if(it != nameCacheMap.end())
+	if (it != nameCacheMap.end())
 		return true;
 
 	query << "SELECT `name` FROM `players` WHERE `id` = " << guid;
-	if(!db.storeQuery(query, result) || result.getNumRows() != 1)
+	if (!db.storeQuery(query, result) || result.getNumRows() != 1)
 		return false;
 
 	nameCacheMap[guid] = result.getDataString("name");
@@ -898,21 +898,21 @@ bool IOLoginData::storeNameByGuid(Database &db, uint32_t guid)
 bool IOLoginData::getNameByGuid(uint32_t guid, std::string& name)
 {
 	NameCacheMap::iterator it = nameCacheMap.find(guid);
-	if(it != nameCacheMap.end())
+	if (it != nameCacheMap.end())
 	{
 		name = it->second;
 		return true;
 	}
 
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
 	DBResult result;
 
 	query << "SELECT `name` FROM `players` WHERE `id` = " << guid;
-	if(!db->storeQuery(query, result) || result.getNumRows() != 1)
+	if (!db->storeQuery(query, result) || result.getNumRows() != 1)
 		return false;
 
 	name = result.getDataString("name");
@@ -923,7 +923,7 @@ bool IOLoginData::getNameByGuid(uint32_t guid, std::string& name)
 bool IOLoginData::getGuidByName(uint32_t &guid, std::string& name)
 {
 	GuidCacheMap::iterator it = guidCacheMap.find(name);
-	if(it != guidCacheMap.end())
+	if (it != guidCacheMap.end())
 	{
 		name = it->first;
 		guid = it->second;
@@ -931,23 +931,23 @@ bool IOLoginData::getGuidByName(uint32_t &guid, std::string& name)
 	}
 
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
 	DBResult result;
 
-	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
+#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+	if (g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
 		query << "SELECT `id`, `name` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "';";
 	else
 		query << "SELECT `id`, `name` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "';";
-	#elif defined __USE_SQLITE__
+#elif defined __USE_SQLITE__
 	query << "SELECT `id`, `name` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "';";
-	#elif defined __USE_MYSQL__
+#elif defined __USE_MYSQL__
 	query << "SELECT `id`, `name` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "';";
-	#endif
-	if(!db->storeQuery(query, result) || result.getNumRows() != 1)
+#endif
+	if (!db->storeQuery(query, result) || result.getNumRows() != 1)
 		return false;
 
 	name = result.getDataString("name");
@@ -960,23 +960,23 @@ bool IOLoginData::getGuidByName(uint32_t &guid, std::string& name)
 bool IOLoginData::getGuidByNameEx(uint32_t &guid, bool &specialVip, std::string& name)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
 	DBResult result;
 
-	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
+#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+	if (g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
 		query << "SELECT `name`, `id`, `group_id`, `account_id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "'";
 	else
 		query << "SELECT `name`, `id`, `group_id`, `account_id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "'";
-	#elif defined __USE_SQLITE__
+#elif defined __USE_SQLITE__
 	query << "SELECT `name`, `id`, `group_id`, `account_id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "'";
-	#elif defined __USE_MYSQL__
+#elif defined __USE_MYSQL__
 	query << "SELECT `name`, `id`, `group_id`, `account_id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "'";
-	#endif
-	if(!db->storeQuery(query, result) || result.getNumRows() != 1)
+#endif
+	if (!db->storeQuery(query, result) || result.getNumRows() != 1)
 		return false;
 
 	name = result.getDataString("name");
@@ -984,10 +984,10 @@ bool IOLoginData::getGuidByNameEx(uint32_t &guid, bool &specialVip, std::string&
 	const PlayerGroup* accountGroup = getPlayerGroupByAccount(result.getDataInt("account_id"));
 	const PlayerGroup* playerGroup = getPlayerGroup(result.getDataInt("group_id"));
 	uint64_t flags = 0;
-	if(playerGroup)
+	if (playerGroup)
 		flags |= playerGroup->m_flags;
 
-	if(accountGroup)
+	if (accountGroup)
 		flags |= accountGroup->m_flags;
 
 	specialVip = (0 != (flags & ((uint64_t)1 << PlayerFlag_SpecialVIP)));
@@ -997,29 +997,29 @@ bool IOLoginData::getGuidByNameEx(uint32_t &guid, bool &specialVip, std::string&
 bool IOLoginData::playerExists(std::string name)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
 	DBResult result;
 
-	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
+#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+	if (g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
 		query << "SELECT `id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "';";
 	else
 		query << "SELECT `id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "';";
-	#elif defined __USE_SQLITE__
+#elif defined __USE_SQLITE__
 	query << "SELECT `id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "';";
-	#elif defined __USE_MYSQL__
+#elif defined __USE_MYSQL__
 	query << "SELECT `id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "';";
-	#endif
+#endif
 	return db->storeQuery(query, result);
 }
 
 bool IOLoginData::playerExists(uint32_t guid)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
@@ -1032,19 +1032,19 @@ bool IOLoginData::playerExists(uint32_t guid)
 const PlayerGroup* IOLoginData::getPlayerGroup(uint32_t groupid)
 {
 	PlayerGroupMap::const_iterator it = playerGroupMap.find(groupid);
-	if(it != playerGroupMap.end())
+	if (it != playerGroupMap.end())
 		return it->second;
 	else
 	{
 		Database* db = Database::getInstance();
-		if(!db->connect())
+		if (!db->connect())
 			return NULL;
 
 		DBQuery query;
 		DBResult result;
 
 		query << "SELECT `name`, `flags`, `access`, `maxdepotitems`, `maxviplist` FROM `groups` WHERE `id` = " << groupid;
-		if(!db->storeQuery(query, result) && result.getNumRows() != 1)
+		if (!db->storeQuery(query, result) && result.getNumRows() != 1)
 			return NULL;
 
 		PlayerGroup* group = new PlayerGroup;
@@ -1067,7 +1067,7 @@ const PlayerGroup* IOLoginData::getPlayerGroupByAccount(uint32_t accno)
 	DBResult result;
 
 	query << "SELECT `group_id` FROM `accounts` WHERE `id` = " << accno;
-	if(db->connect() && db->storeQuery(query, result) && result.getNumRows() == 1)
+	if (db->connect() && db->storeQuery(query, result) && result.getNumRows() == 1)
 		return getPlayerGroup(result.getDataInt("group_id"));
 
 	return NULL;
@@ -1075,7 +1075,7 @@ const PlayerGroup* IOLoginData::getPlayerGroupByAccount(uint32_t accno)
 
 void IOLoginData::loadItems(ItemMap& itemMap, DBResult& result)
 {
-	for(uint32_t i = 0; i < result.getNumRows(); ++i)
+	for (uint32_t i = 0; i < result.getNumRows(); ++i)
 	{
 		int32_t sid = result.getDataInt("sid", i);
 		int32_t pid = result.getDataInt("pid", i);
@@ -1089,9 +1089,9 @@ void IOLoginData::loadItems(ItemMap& itemMap, DBResult& result)
 		propStream.init(attr, attrSize);
 
 		Item* item = Item::CreateItem(type, count);
-		if(item)
+		if (item)
 		{
-			if(!item->unserializeAttr(propStream))
+			if (!item->unserializeAttr(propStream))
 				std::cout << "WARNING: Serialize error in IOLoginData::loadItems" << std::endl;
 			std::pair<Item*, int32_t> pair(item, pid);
 			itemMap[sid] = pair;
@@ -1102,14 +1102,14 @@ void IOLoginData::loadItems(ItemMap& itemMap, DBResult& result)
 int32_t IOLoginData::getLevel(uint32_t guid)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return 0;
 
 	DBQuery query;
 	DBResult result;
 
 	query << "SELECT `level` FROM `players` WHERE `id` = " << guid;
-	if(!db->storeQuery(query, result))
+	if (!db->storeQuery(query, result))
 		return 0;
 
 	return result.getDataInt("level");
@@ -1118,18 +1118,18 @@ int32_t IOLoginData::getLevel(uint32_t guid)
 bool IOLoginData::isPremium(uint32_t guid)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
 	DBResult result;
 
 	query << "SELECT `account_id` FROM `players` WHERE `id` = " << guid;
-	if(!db->storeQuery(query, result))
+	if (!db->storeQuery(query, result))
 		return false;
 
 	query << "SELECT `premdays` FROM `accounts` WHERE `id` = " << result.getDataInt("account_id");
-	if(!db->storeQuery(query, result))
+	if (!db->storeQuery(query, result))
 		return false;
 
 	return result.getDataInt("premdays") > 0;
@@ -1138,7 +1138,7 @@ bool IOLoginData::isPremium(uint32_t guid)
 bool IOLoginData::resetGuildInformation(uint32_t guid)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
@@ -1149,12 +1149,12 @@ bool IOLoginData::resetGuildInformation(uint32_t guid)
 bool IOLoginData::changeName(uint32_t guid, std::string newName)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
 	query << "UPDATE `players` SET `name` = '" << Database::escapeString(newName) << "' WHERE `id` = " << guid;
-	if(db->executeQuery(query))
+	if (db->executeQuery(query))
 	{
 		nameCacheMap[guid] = newName;
 		return true;
@@ -1165,22 +1165,22 @@ bool IOLoginData::changeName(uint32_t guid, std::string newName)
 uint32_t IOLoginData::getAccountNumberByName(std::string name)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return 0;
 
 	DBQuery query;
 	DBResult result;
-	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
+#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+	if (g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
 		query << "SELECT `account_id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "';";
 	else
 		query << "SELECT `account_id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "';";
-	#elif defined __USE_SQLITE__
+#elif defined __USE_SQLITE__
 	query << "SELECT `account_id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "';";
-	#elif defined __USE_MYSQL__
+#elif defined __USE_MYSQL__
 	query << "SELECT `account_id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "';";
-	#endif
-	if(!db->storeQuery(query, result))
+#endif
+	if (!db->storeQuery(query, result))
 		return 0;
 
 	return result.getDataLong("account_id");
@@ -1189,29 +1189,29 @@ uint32_t IOLoginData::getAccountNumberByName(std::string name)
 bool IOLoginData::createCharacter(uint32_t accountNumber, std::string characterName, int32_t vocationId, PlayerSex_t sex)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
 	DBResult result;
 
-	if(playerExists(characterName))
+	if (playerExists(characterName))
 		return false;
 
 	Vocation* vocation = g_vocations.getVocation(vocationId);
 	Vocation* rookVoc = g_vocations.getVocation(0);
 	uint16_t healthMax = 150, manaMax = 0, capMax = 400, lookType = 136, hpGain = vocation->getHPGain(), manaGain = vocation->getManaGain(), capGain = vocation->getCapGain(), rookHpGain = rookVoc->getHPGain(), rookManaGain = rookVoc->getManaGain(), rookCapGain = rookVoc->getCapGain();
-	if(sex == PLAYERSEX_MALE)
+	if (sex == PLAYERSEX_MALE)
 		lookType = 128;
 	uint32_t level = g_config.getNumber(ConfigManager::START_LEVEL);
 
 	uint64_t exp = 0;
-	if(level > 1)
+	if (level > 1)
 		exp = Player::getExpForLevel(level);
 
-	for(uint32_t i = 1; i < level; i++)
+	for (uint32_t i = 1; i < level; i++)
 	{
-		if(i < 8)
+		if (i < 8)
 		{
 			healthMax += rookHpGain;
 			manaMax += rookManaGain;
@@ -1232,38 +1232,38 @@ bool IOLoginData::createCharacter(uint32_t accountNumber, std::string characterN
 int16_t IOLoginData::deleteCharacter(uint32_t accountNumber, const std::string characterName)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return 0;
 
 	DBQuery query;
 	DBResult result;
 
 	Player* _player = g_game.getPlayerByName(characterName);
-	if(!_player)
+	if (!_player)
 	{
-		#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-		if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
+#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+		if (g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
 			query << "SELECT `id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(characterName) << "' AND `account_id` = " << accountNumber;
 		else
 			query << "SELECT `id` FROM `players` WHERE `name` = '" << Database::escapeString(characterName) << "' AND `account_id` = " << accountNumber;
-		#elif defined __USE_SQLITE__
+#elif defined __USE_SQLITE__
 		query << "SELECT `id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(characterName) << "' AND `account_id` = " << accountNumber;
-		#elif defined __USE_MYSQL__
+#elif defined __USE_MYSQL__
 		query << "SELECT `id` FROM `players` WHERE `name` = '" << Database::escapeString(characterName) << "' AND `account_id` = " << accountNumber;
-		#endif
-		if(!db->storeQuery(query, result))
+#endif
+		if (!db->storeQuery(query, result))
 			return 0;
 
 		uint32_t id = result.getDataInt("id");
-		if(IOGuild::getInstance()->getGuildLevel(id) == 3)
+		if (IOGuild::getInstance()->getGuildLevel(id) == 3)
 			return 3;
 
 		House* house = Houses::getInstance().getHouseByPlayerId(id);
-		if(house)
+		if (house)
 			return 2;
 
 		query << "DELETE FROM `players` WHERE `id` = " << id;
-		if(!db->executeQuery(query))
+		if (!db->executeQuery(query))
 			return 0;
 
 		query << "DELETE FROM `player_items` WHERE `player_id` = " << id;
@@ -1287,10 +1287,10 @@ int16_t IOLoginData::deleteCharacter(uint32_t accountNumber, const std::string c
 		query << "DELETE FROM `guild_invites` WHERE `player_id` = " << id;
 		db->executeQuery(query);
 
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		for (AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 		{
 			VIPListSet::iterator it_ = it->second->VIPList.find(id);
-			if(it_ != it->second->VIPList.end())
+			if (it_ != it->second->VIPList.end())
 				it->second->VIPList.erase(it_);
 		}
 		return 1;
@@ -1302,14 +1302,14 @@ int16_t IOLoginData::deleteCharacter(uint32_t accountNumber, const std::string c
 bool IOLoginData::addStorageValue(uint32_t guid, uint32_t storageKey, uint32_t storageValue)
 {
 	Database* db = Database::getInstance();
-	if(!db->connect())
+	if (!db->connect())
 		return false;
 
 	DBQuery query;
 	DBResult result;
 
 	query << "SELECT `key` FROM `player_storage` WHERE `player_id` = " << guid << " AND `key` = " << storageKey;
-	if(db->storeQuery(query, result))
+	if (db->storeQuery(query, result))
 		query << "UPDATE `player_storage` SET `value` = " << storageValue << " WHERE `player_id` = " << guid << " AND `key` = " << storageKey;
 	else
 	{

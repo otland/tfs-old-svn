@@ -273,8 +273,8 @@ struct ShopInfo
 	}
 
 	ShopInfo(uint32_t _itemId, int32_t _subType = 0, uint32_t _buyPrice = 0, uint32_t _sellPrice = 0,
-		const std::string& _itemName = "") : itemId(_itemId), subType(_subType), buyPrice(_buyPrice),
-		sellPrice(_sellPrice), itemName(_itemName) {}
+					 const std::string& _itemName = "") : itemId(_itemId), subType(_subType), buyPrice(_buyPrice),
+			sellPrice(_sellPrice), itemName(_itemName) {}
 };
 
 #endif

@@ -27,7 +27,7 @@
 #endif
 
 CreatureEvents::CreatureEvents() :
-m_scriptInterface("CreatureScript Interface")
+		m_scriptInterface("CreatureScript Interface")
 {
 	m_scriptInterface.initState();
 }
@@ -35,14 +35,14 @@ m_scriptInterface("CreatureScript Interface")
 CreatureEvents::~CreatureEvents()
 {
 	CreatureEventList::iterator it;
-	for(it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
+	for (it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 		delete it->second;
 }
 
 void CreatureEvents::clear()
 {
 	//clear creature events
-	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
+	for (CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 		it->second->clearEvent();
 	//clear lua state
 	m_scriptInterface.reInitState();
@@ -60,7 +60,7 @@ std::string CreatureEvents::getScriptBaseName()
 
 Event* CreatureEvents::getEvent(const std::string& nodeName)
 {
-	if(asLowerCaseString(nodeName) == "event")
+	if (asLowerCaseString(nodeName) == "event")
 		return new CreatureEvent(&m_scriptInterface);
 	return NULL;
 }
@@ -68,21 +68,21 @@ Event* CreatureEvents::getEvent(const std::string& nodeName)
 bool CreatureEvents::registerEvent(Event* event, xmlNodePtr p)
 {
 	CreatureEvent* creatureEvent = dynamic_cast<CreatureEvent*>(event);
-	if(!creatureEvent)
+	if (!creatureEvent)
 		return false;
 
-	if(creatureEvent->getEventType() == CREATURE_EVENT_NONE)
+	if (creatureEvent->getEventType() == CREATURE_EVENT_NONE)
 	{
 		std::cout << "Error: [CreatureEvents::registerEvent] Trying to register event without type!." << std::endl;
 		return false;
 	}
 
 	CreatureEvent* oldEvent = getEventByName(creatureEvent->getName(), false);
-	if(oldEvent)
+	if (oldEvent)
 	{
 		//if there was an event with the same that is not loaded
 		//(happens when realoading), it is reused
-		if(oldEvent->isLoaded() == false && oldEvent->getEventType() == creatureEvent->getEventType())
+		if (oldEvent->isLoaded() == false && oldEvent->getEventType() == creatureEvent->getEventType())
 			oldEvent->copyEvent(creatureEvent);
 		return false;
 	}
@@ -97,9 +97,9 @@ bool CreatureEvents::registerEvent(Event* event, xmlNodePtr p)
 CreatureEvent* CreatureEvents::getEventByName(const std::string& name, bool forceLoaded /*= true*/)
 {
 	CreatureEventList::iterator it = m_creatureEvents.find(name);
-	if(it != m_creatureEvents.end())
+	if (it != m_creatureEvents.end())
 	{
-		if(!forceLoaded || it->second->isLoaded())
+		if (!forceLoaded || it->second->isLoaded())
 			return it->second;
 	}
 	return NULL;
@@ -108,11 +108,11 @@ CreatureEvent* CreatureEvents::getEventByName(const std::string& name, bool forc
 uint32_t CreatureEvents::playerLogin(Player* player)
 {
 	//fire global event if is registered
-	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
+	for (CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 	{
-		if(it->second->getEventType() == CREATURE_EVENT_LOGIN)
+		if (it->second->getEventType() == CREATURE_EVENT_LOGIN)
 		{
-			if(!it->second->executeOnLogin(player))
+			if (!it->second->executeOnLogin(player))
 				return 0;
 		}
 	}
@@ -122,11 +122,11 @@ uint32_t CreatureEvents::playerLogin(Player* player)
 uint32_t CreatureEvents::playerLogout(Player* player)
 {
 	//fire global event if is registered
-	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
+	for (CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 	{
-		if(it->second->getEventType() == CREATURE_EVENT_LOGOUT)
+		if (it->second->getEventType() == CREATURE_EVENT_LOGOUT)
 		{
-			if(!it->second->executeOnLogout(player))
+			if (!it->second->executeOnLogout(player))
 				return 0;
 		}
 	}
@@ -136,7 +136,7 @@ uint32_t CreatureEvents::playerLogout(Player* player)
 /////////////////////////////////////
 
 CreatureEvent::CreatureEvent(LuaScriptInterface* _interface) :
-Event(_interface)
+		Event(_interface)
 {
 	m_type = CREATURE_EVENT_NONE;
 	m_isLoaded = false;
@@ -147,7 +147,7 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 	std::string str;
 	//Name that will be used in monster xml files and
 	// lua function to register events to reference this event
-	if(readXMLString(p, "name", str))
+	if (readXMLString(p, "name", str))
 		m_eventName = str;
 	else
 	{
@@ -155,20 +155,20 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 		return false;
 	}
 
-	if(readXMLString(p, "type", str))
+	if (readXMLString(p, "type", str))
 	{
 		std::string tmpStr = asLowerCaseString(str);
-		if(tmpStr == "login")
+		if (tmpStr == "login")
 			m_type = CREATURE_EVENT_LOGIN;
-		else if(tmpStr == "logout")
+		else if (tmpStr == "logout")
 			m_type = CREATURE_EVENT_LOGOUT;
-		else if(tmpStr == "think")
+		else if (tmpStr == "think")
 			m_type = CREATURE_EVENT_THINK;
-		else if(tmpStr == "preparedeath")
+		else if (tmpStr == "preparedeath")
 			m_type = CREATURE_EVENT_PREPAREDEATH;
-		else if(tmpStr == "death")
+		else if (tmpStr == "death")
 			m_type = CREATURE_EVENT_DEATH;
-		else if(tmpStr == "kill")
+		else if (tmpStr == "kill")
 			m_type = CREATURE_EVENT_KILL;
 		else
 		{
@@ -188,7 +188,7 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 std::string CreatureEvent::getScriptEventName()
 {
 	//Depending on the type script event name is different
-	switch(m_type)
+	switch (m_type)
 	{
 		case CREATURE_EVENT_LOGIN:
 			return "onLogin";
@@ -233,15 +233,15 @@ void CreatureEvent::clearEvent()
 uint32_t CreatureEvent::executeOnLogin(Player* player)
 {
 	//onLogin(cid)
-	if(m_scriptInterface->reserveScriptEnv())
+	if (m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 
-		#ifdef __DEBUG_LUASCRIPTS__
+#ifdef __DEBUG_LUASCRIPTS__
 		char desc[35];
 		sprintf(desc, "%s", player->getName().c_str());
 		env->setEventDesc(desc);
-		#endif
+#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);
 		env->setRealPos(player->getPosition());
@@ -268,15 +268,15 @@ uint32_t CreatureEvent::executeOnLogin(Player* player)
 uint32_t CreatureEvent::executeOnLogout(Player* player)
 {
 	//onLogout(cid)
-	if(m_scriptInterface->reserveScriptEnv())
+	if (m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 
-		#ifdef __DEBUG_LUASCRIPTS__
+#ifdef __DEBUG_LUASCRIPTS__
 		char desc[35];
 		sprintf(desc, "%s", player->getName().c_str());
 		env->setEventDesc(desc);
-		#endif
+#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);
 		env->setRealPos(player->getPosition());
@@ -303,15 +303,15 @@ uint32_t CreatureEvent::executeOnLogout(Player* player)
 uint32_t CreatureEvent::executeOnThink(Creature* creature, uint32_t interval)
 {
 	//onThink(cid, interval)
-	if(m_scriptInterface->reserveScriptEnv())
+	if (m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 
-		#ifdef __DEBUG_LUASCRIPTS__
+#ifdef __DEBUG_LUASCRIPTS__
 		char desc[35];
 		sprintf(desc, "%s", creature->getName().c_str());
 		env->setEventDesc(desc);
-		#endif
+#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);
 		env->setRealPos(creature->getPosition());
@@ -339,15 +339,15 @@ uint32_t CreatureEvent::executeOnThink(Creature* creature, uint32_t interval)
 uint32_t CreatureEvent::executeOnPrepareDeath(Player* player, Creature* killer)
 {
 	//onPrepareDeath(cid, killer)
-	if(m_scriptInterface->reserveScriptEnv())
+	if (m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 
-		#ifdef __DEBUG_LUASCRIPTS__
+#ifdef __DEBUG_LUASCRIPTS__
 		char desc[35];
 		sprintf(desc, "%s", player->getName().c_str());
 		env->setEventDesc(desc);
-		#endif
+#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);
 		env->setRealPos(player->getPosition());
@@ -376,15 +376,15 @@ uint32_t CreatureEvent::executeOnPrepareDeath(Player* player, Creature* killer)
 uint32_t CreatureEvent::executeOnDeath(Creature* creature, Item* corpse, Creature* killer)
 {
 	//onDeath(cid, corpse, killer)
-	if(m_scriptInterface->reserveScriptEnv())
+	if (m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 
-		#ifdef __DEBUG_LUASCRIPTS__
+#ifdef __DEBUG_LUASCRIPTS__
 		char desc[35];
 		sprintf(desc, "%s", creature->getName().c_str());
 		env->setEventDesc(desc);
-		#endif
+#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);
 		env->setRealPos(creature->getPosition());
@@ -415,15 +415,15 @@ uint32_t CreatureEvent::executeOnDeath(Creature* creature, Item* corpse, Creatur
 uint32_t CreatureEvent::executeOnKill(Creature* creature, Creature* target)
 {
 	//onKill(cid, target)
-	if(m_scriptInterface->reserveScriptEnv())
+	if (m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 
-		#ifdef __DEBUG_LUASCRIPTS__
+#ifdef __DEBUG_LUASCRIPTS__
 		std::stringstream desc;
 		desc << creature->getName();
 		env->setEventDesc(desc.str());
-		#endif
+#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);
 		env->setRealPos(creature->getPosition());
