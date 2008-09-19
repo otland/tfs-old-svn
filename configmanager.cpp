@@ -163,6 +163,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	//m_confBool[SPELL_NAME_INSTEAD_WORDS] = getGlobalBool(L, "spellNameInsteadOfWordsOnCast", "no");
 	m_confNumber[MAX_PLAYER_SUMMONS] = getGlobalNumber(L, "maxPlayerSummons", 2);
 	m_confBool[SAVE_GLOBAL_STORAGE] = getGlobalBool(L, "saveGlobalStorage", "yes");
+	m_confBool[FORCE_CLOSE_SLOW_CONNECTION] = getGlobalBool(L, "forceSlowConnectionsToDisconnect", "no");
 	m_isLoaded = true;
 
 	lua_close(L);

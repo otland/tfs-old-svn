@@ -130,7 +130,7 @@ class ConfigManager
 
 		enum bool_config_t
 		{
-			GLOBALSAVE_ENABLED,
+			GLOBALSAVE_ENABLED = 0,
 			START_CHOOSEVOC,
 			ON_OR_OFF_CHARLIST,
 			ONE_PLAYER_ON_ACCOUNT,
@@ -167,6 +167,7 @@ class ConfigManager
 			ALLOW_CHANGEOUTFIT,
 			CANNOT_ATTACK_SAME_LOOKFEET,
 			AIMBOT_HOTKEY_ENABLED,
+			FORCE_CLOSE_SLOW_CONNECTION,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

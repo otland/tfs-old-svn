@@ -56,6 +56,7 @@
 	adminLogsEnabled = "no"
 	statusTimeout = 5 * 60 * 1000
 	replaceKickOnLogin = "yes"
+	forceSlowConnectionsToDisconnect = "no"
 
 	-- Database
 	-- NOTE: sqlFile is used only by sqlite database

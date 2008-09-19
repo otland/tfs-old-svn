@@ -336,6 +336,11 @@ bool Connection::send(OutputMessage* msg)
 		#endif
 		m_outputQueue.push_back(msg);
 		m_pendingWrite++;
+		if(m_pendingWrite > 500 && g_config.getBool(ConfigManager::FORCE_CLOSE_SLOW_CONNECTION))
+		{
+			std::cout << "[Notice] Forcing slow connection to disconnect" << std::endl;
+			closeConnection();
+		}
 	}
 	OTSYS_THREAD_UNLOCK(m_connectionLock, "");
 	return true;
