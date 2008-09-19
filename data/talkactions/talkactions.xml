@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <talkactions>
 	<!-- Gods -->
-	<talkaction filter="word" log="yes" access="5" words="/shutdown" script="shutdown.lua" />
-	<talkaction filter="word" log="yes" access="5" words="/pvp" script="pvp.lua" />
+	<talkaction filter="word" log="yes" access="5" words="/shutdown" script="shutdown.lua"/>
+	<talkaction filter="word" log="yes" access="5" words="/pvp" script="pvp.lua"/>
 
 	<!-- Community Managers -->
-	<talkaction filter="word" access="4" words="!z" script="magiceffect.lua" />
-	<talkaction filter="word" access="4" words="!x" script="animationeffect.lua" />
-	<talkaction filter="word" access="4" words="!y" script="animatedtext.lua" />
-	<talkaction filter="word" log="yes" access="4" words="/bc" script="broadcastclass.lua" />
+	<talkaction filter="word" access="4" words="!z" script="magiceffect.lua"/>
+	<talkaction filter="word" access="4" words="!x" script="animationeffect.lua"/>
+	<talkaction filter="word" access="4" words="!y" script="animatedtext.lua"/>
+	<talkaction filter="word" log="yes" access="4" words="/bc" script="broadcastclass.lua"/>
 
 	<!-- Game Masters -->
-	<talkaction filter="word" log="yes" access="3" words="/save" script="save.lua" />
-	<talkaction filter="word" log="yes" access="3" words="/clean" script="clean.lua" />
-	<talkaction filter="word" log="yes" access="3" words="/reports" script="reports.lua" />
+	<talkaction filter="word" log="yes" access="3" words="/save" script="save.lua"/>
+	<talkaction filter="word" log="yes" access="3" words="/clean" script="clean.lua"/>
+	<talkaction filter="word" log="yes" access="3" words="/reports" script="reports.lua"/>
 
 	<!-- Senior Tutors -->
-	<talkaction filter="word" log="yes" access="2" words="/b" script="broadcast.lua" />
+	<talkaction filter="word" log="yes" access="2" words="/b" script="broadcast.lua"/>
 
 	<!-- Tutors -->
-	<talkaction log="yes" access="1" words="!pos" script="position.lua" />
+	<talkaction log="yes" access="1" words="!pos" script="position.lua"/>
 
 	<!-- Players -->
-	<talkaction words="!buypremium" script="buyprem.lua" />
-	<talkaction words="!leavehouse" script="leavehouse.lua" />
-	<talkaction words="/online" script="online.lua" />
-	<talkaction words="!changender" script="changender.lua" />
-	<talkaction words="/uptime" script="uptime.lua" />
-	<talkaction filter="word" words="/deathlist" script="deathlist.lua" />
-	<talkaction words="/mode" script="mode.lua" />
-	<talkaction words="!q" script="money.lua" />
-	<talkaction words="/serverinfo" script="serverinfo.lua" />
+	<talkaction words="!buypremium" script="buyprem.lua"/>
+	<talkaction words="!leavehouse" script="leavehouse.lua"/>
+	<talkaction words="/online" script="online.lua"/>
+	<talkaction words="!changender" script="changender.lua"/>
+	<talkaction words="/uptime" script="uptime.lua"/>
+	<talkaction filter="word" words="/deathlist" script="deathlist.lua"/>
+	<talkaction words="/mode" script="mode.lua"/>
+	<talkaction words="!q" script="money.lua"/>
+	<talkaction words="/serverinfo" script="serverinfo.lua"/>
 </talkactions>

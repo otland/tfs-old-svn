@@ -11969,6 +11969,7 @@
 		<attribute key="fluidSource" value="water"/>
 	</item>
 	<item id="4644" name="shallow water">
+		<attribute key="fluidSource" value="water"/>
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
