@@ -419,7 +419,7 @@ bool IOBan::getBanishmentData(uint32_t account, Ban& ban)
 		"WHERE "
 			"`value` = " << account << " AND "
 			"`active` = 1 AND " <<
-			"(`expires` >= " << currentTime << " OR `expires` = 0)";
+			"(`expires` > " << currentTime << " OR `expires` <= 0)";
 
 	if((result = db->storeQuery(query.str())))
 	{
@@ -428,11 +428,11 @@ bool IOBan::getBanishmentData(uint32_t account, Ban& ban)
 		ban.type = (BanType_t)result->getDataInt("type");
 		ban.param = result->getDataString("param");
 		ban.expires = (uint32_t)result->getDataLong("expires");
-		ban.added = (uint32_t)result->getDataLong("id");
+		ban.added = (uint32_t)result->getDataLong("added");
 		ban.adminid = result->getDataInt("admin_id");
+		ban.comment = result->getDataString("comment");
 		ban.reason = result->getDataInt("reason");
 		ban.action = result->getDataInt("action");
-		ban.comment = result->getDataString("comment");
 
 		db->freeResult(result);
 		return true;
@@ -464,7 +464,7 @@ std::vector<Ban> IOBan::bansManager(BanType_t type) const
 		"WHERE "
 			"`type` = " << type << " AND "
 			"`active` = 1 AND " <<
-			"(`expires` >= " << currentTime << " OR `expires` = 0)";
+			"(`expires` > " << currentTime << " OR `expires` <= 0)";
 
 	std::vector<Ban> vec;
 	if((result = db->storeQuery(query.str())))
@@ -476,11 +476,11 @@ std::vector<Ban> IOBan::bansManager(BanType_t type) const
 			tmpBan.value = result->getDataString("value");
 			tmpBan.param = result->getDataString("param");
 			tmpBan.expires = (uint32_t)result->getDataLong("expires");
-			tmpBan.added = (uint32_t)result->getDataLong("id");
+			tmpBan.added = (uint32_t)result->getDataLong("added");
 			tmpBan.adminid = result->getDataInt("admin_id");
+			tmpBan.comment = result->getDataString("comment");
 			tmpBan.reason = result->getDataInt("reason");
 			tmpBan.action = result->getDataInt("action");
-			tmpBan.comment = result->getDataString("comment");
 			vec.push_back(tmpBan);
 		}
 		while(result->next());
