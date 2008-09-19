@@ -4532,7 +4532,10 @@ void Game::updateCreatureSkull(Player* player)
 
 void Game::autoSave()
 {
+	setGameState(GAME_STATE_MAINTAIN);
 	saveGameState(true);
+	setGameState(GAME_STATE_NORMAL);
+
 	uint32_t autoTime = g_config.getNumber(ConfigManager::AUTOSAVE_EACH_MINUTES);
 	if(autoTime > 0)
 		Scheduler::getScheduler().addEvent(createSchedulerTask(autoTime * 60 * 1000, boost::bind(&Game::autoSave, this)));
@@ -4547,7 +4550,10 @@ void Game::autoClean(bool warning /*= true*/)
 	}
 	else
 	{
+		setGameState(GAME_STATE_MAINTAIN);
 		getMap()->clean();
+		setGameState(GAME_STATE_NORMAL);
+
 		uint32_t autoTime = g_config.getNumber(ConfigManager::AUTOCLEAN_EACH_MINUTES);
 		if(autoTime > 0)
 			Scheduler::getScheduler().addEvent(createSchedulerTask(autoTime * 60 * 1000, boost::bind(&Game::autoClean, this, true)));
