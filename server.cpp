@@ -23,7 +23,7 @@
 #include "connection.h"
 
 Server::Server(uint32_t serverip, uint16_t port)
-: m_io_service()
+		: m_io_service()
 {
 	m_acceptor = NULL;
 	m_listenErrors = 0;
@@ -39,29 +39,29 @@ Server::~Server()
 
 void Server::accept()
 {
-	if(!m_acceptor)
+	if (!m_acceptor)
 	{
-		#ifdef __DEBUG_NET__
+#ifdef __DEBUG_NET__
 		std::cout << "Error: [Server::accept] NULL m_acceptor." << std::endl;
-		#endif
+#endif
 		return;
 	}
 
 	Connection* connection = ConnectionManager::getInstance()->createConnection(m_io_service);
 	m_acceptor->async_accept(connection->getHandle(),
-		boost::bind(&Server::onAccept, this, connection,
-		boost::asio::placeholders::error));
+													 boost::bind(&Server::onAccept, this, connection,
+																			 boost::asio::placeholders::error));
 }
 
 void Server::closeListenSocket()
 {
-	if(m_acceptor)
+	if (m_acceptor)
 	{
-		if(m_acceptor->is_open())
+		if (m_acceptor->is_open())
 		{
 			boost::system::error_code error;
 			m_acceptor->close(error);
-			if(error)
+			if (error)
 				PRINT_ASIO_ERROR("Closing listen socket");
 		}
 		delete m_acceptor;
@@ -72,44 +72,44 @@ void Server::closeListenSocket()
 void Server::openListenSocket()
 {
 	m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service,
-		boost::asio::ip::tcp::endpoint(boost::asio::ip::address(
-		boost::asio::ip::address_v4(m_serverIp)), m_serverPort));
+			boost::asio::ip::tcp::endpoint(boost::asio::ip::address(
+																			 boost::asio::ip::address_v4(m_serverIp)), m_serverPort));
 	accept();
 }
 
 void Server::onAccept(Connection* connection, const boost::system::error_code& error)
 {
-	if(!error)
+	if (!error)
 	{
 		connection->acceptConnection();
-		#ifdef __DEBUG_NET_DETAIL__
+#ifdef __DEBUG_NET_DETAIL__
 		std::cout << "accept - OK" << std::endl;
-		#endif
+#endif
 		accept();
 	}
 	else
 	{
-		if(error != boost::asio::error::operation_aborted)
+		if (error != boost::asio::error::operation_aborted)
 		{
 			m_listenErrors++;
 			PRINT_ASIO_ERROR("Accepting");
 			closeListenSocket();
-			#ifdef __ENABLE_LISTEN_ERROR__
-			if(m_listenErrors < 100)
-			#endif
+#ifdef __ENABLE_LISTEN_ERROR__
+			if (m_listenErrors < 100)
+#endif
 				openListenSocket();
-			#ifdef __ENABLE_LISTEN_ERROR__
+#ifdef __ENABLE_LISTEN_ERROR__
 			else
 				std::cout << "Error: [Server::onAccept] More than 100 listen errors." << std::endl;
-			#else
+#else
 			std::cout << "Warning: [Server::onAccept] More than 100 listen errors." << std::endl;
-			#endif
+#endif
 		}
 		else
 		{
-			#ifdef __DEBUG_NET__
+#ifdef __DEBUG_NET__
 			std::cout << "Error: [Server::onAccept] Operation aborted." << std::endl;
-			#endif
+#endif
 		}
 	}
 }

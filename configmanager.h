@@ -25,9 +25,9 @@
 
 extern "C"
 {
-	#include <lua.h>
-	#include <lauxlib.h>
-	#include <lualib.h>
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
 }
 
 class ConfigManager
@@ -57,9 +57,9 @@ class ConfigManager
 			SQL_PASS,
 			SQL_DB,
 			DEFAULT_PRIORITY,
-			#ifdef MULTI_SQL_DRIVERS
+#ifdef MULTI_SQL_DRIVERS
 			SQL_TYPE,
-			#endif
+#endif
 			SQL_FILE,
 			PASSWORD_TYPE,
 			MAP_AUTHOR,

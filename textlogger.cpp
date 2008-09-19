@@ -40,7 +40,7 @@ TextLogger::~TextLogger()
 
 int32_t TextLogger::overflow(int32_t c)
 {
-	if(c == '\n')
+	if (c == '\n')
 	{
 		GUI::getInstance()->m_logText += "\r\n";
 		SendMessage(GetDlgItem(GUI::getInstance()->m_mainWindow, ID_LOG), WM_SETTEXT, 0, (LPARAM)GUI::getInstance()->m_logText.c_str());
@@ -50,7 +50,7 @@ int32_t TextLogger::overflow(int32_t c)
 	}
 	else
 	{
-		if(displayDate)
+		if (displayDate)
 		{
 			char date[21];
 			formatDate(time(NULL), date);
@@ -62,18 +62,18 @@ int32_t TextLogger::overflow(int32_t c)
 		GUI::getInstance()->m_logText += (char)c;
 	}
 
-	#ifdef __GUI_LOGS__
+#ifdef __GUI_LOGS__
 	char buf[21], buffer[85];
 	formatDate2(time(NULL), buf);
 	sprintf(buffer, "data/logs/server/%s.log", buf);
 
 	FILE* file = fopen(buffer, "a");
-	if(file)
+	if (file)
 	{
 		fprintf(file, "%c", c);
 		fclose(file);
 	}
-	#endif
+#endif
 
 	return(c);
 }

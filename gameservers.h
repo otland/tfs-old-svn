@@ -30,12 +30,27 @@ class GameServer
 		GameServer(std::string, std::string, uint32_t);
 		virtual ~GameServer() {}
 
-		std::string getName() const {return name;}
-		std::string getAddress() const {return ip;}
-		uint32_t getPort() const {return port;}
+		std::string getName() const
+		{
+			return name;
+		}
+		std::string getAddress() const
+		{
+			return ip;
+		}
+		uint32_t getPort() const
+		{
+			return port;
+		}
 
-		std::string getError() const {return error;}
-		void setError(std::string _error) {error = _error;}
+		std::string getError() const
+		{
+			return error;
+		}
+		void setError(std::string _error)
+		{
+			error = _error;
+		}
 
 	protected:
 		std::string name;
@@ -68,7 +83,10 @@ class GameServers
 		GameServer* getServerByPort(uint32_t port) const;
 
 	protected:
-		virtual ~GameServers() {clear();}
+		virtual ~GameServers()
+		{
+			clear();
+		}
 		void clear();
 
 		GameServersMap serverList;

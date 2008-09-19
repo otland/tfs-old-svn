@@ -58,7 +58,7 @@ class DatabaseMySQL : public _Database
 
 class MySQLResult : public _DBResult
 {
-	friend class DatabaseMySQL;
+		friend class DatabaseMySQL;
 
 	public:
 		DATABASE_VIRTUAL int32_t getDataInt(const std::string &s);

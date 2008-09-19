@@ -36,17 +36,18 @@ class Task
 		}
 
 	protected:
-		Task(boost::function<void (void)> f)
+		Task(boost::function < void (void) > f)
 		{
 			m_f = f;
 		}
 
-		boost::function<void (void)> m_f;
+		boost::function < void (void) > m_f;
 
-		friend Task* createTask(boost::function<void (void)>);
+		friend Task* createTask(boost::function < void (void) > );
 };
 
-inline Task* createTask(boost::function<void (void)> f){
+inline Task* createTask(boost::function < void (void) > f)
+{
 	return new Task(f);
 }
 

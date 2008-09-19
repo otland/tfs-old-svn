@@ -35,13 +35,13 @@ TrashHolder::~TrashHolder()
 }
 
 ReturnValue TrashHolder::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
-	uint32_t flags) const
+																		uint32_t flags) const
 {
 	return RET_NOERROR;
 }
 
 ReturnValue TrashHolder::__queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
-	uint32_t& maxQueryCount, uint32_t flags) const
+		uint32_t& maxQueryCount, uint32_t flags) const
 {
 	maxQueryCount = std::max((uint32_t)1, count);
 	return RET_NOERROR;
@@ -53,7 +53,7 @@ ReturnValue TrashHolder::__queryRemove(const Thing* thing, uint32_t count) const
 }
 
 Cylinder* TrashHolder::__queryDestination(int32_t& index, const Thing* thing, Item** destItem,
-	uint32_t& flags)
+		uint32_t& flags)
 {
 	return this;
 }
@@ -65,10 +65,13 @@ void TrashHolder::__addThing(Thing* thing)
 
 void TrashHolder::__addThing(int32_t index, Thing* thing)
 {
-	if(Item* item = thing->getItem()){
-		if(item != this && item->hasProperty(MOVEABLE)){
+	if (Item* item = thing->getItem())
+	{
+		if (item != this && item->hasProperty(MOVEABLE))
+		{
 			g_game.internalRemoveItem(item);
-			if(effect != NM_ME_NONE){
+			if (effect != NM_ME_NONE)
+			{
 				g_game.addMagicEffect(getPosition(), effect);
 			}
 		}

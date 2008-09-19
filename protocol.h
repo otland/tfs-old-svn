@@ -45,31 +45,52 @@ class Protocol : boost::noncopyable
 
 		virtual ~Protocol() {}
 
-		virtual void parsePacket(NetworkMessage& msg){}
+		virtual void parsePacket(NetworkMessage& msg) {}
 
 		void onSendMessage(OutputMessage* msg);
 		void onRecvMessage(NetworkMessage& msg);
 		virtual void onRecvFirstMessage(NetworkMessage& msg) = 0;
 
-		Connection* getConnection() { return m_connection;}
-		const Connection* getConnection() const { return m_connection;}
-		void setConnection(Connection* connection) { m_connection = connection;}
+		Connection* getConnection()
+		{
+			return m_connection;
+		}
+		const Connection* getConnection() const
+		{
+			return m_connection;
+		}
+		void setConnection(Connection* connection)
+		{
+			m_connection = connection;
+		}
 
-	uint32_t getIP() const;
+		uint32_t getIP() const;
 
 	protected:
 		//Use this function for autosend messages only
 		OutputMessage* getOutputBuffer();
 
-		void enableXTEAEncryption() { m_encryptionEnabled = true; }
-		void disableXTEAEncryption() { m_encryptionEnabled = false; }
-		void setXTEAKey(const uint32_t* key) { memcpy(m_key, key, sizeof(uint32_t)*4); }
+		void enableXTEAEncryption()
+		{
+			m_encryptionEnabled = true;
+		}
+		void disableXTEAEncryption()
+		{
+			m_encryptionEnabled = false;
+		}
+		void setXTEAKey(const uint32_t* key)
+		{
+			memcpy(m_key, key, sizeof(uint32_t)*4);
+		}
 
 		void XTEA_encrypt(OutputMessage& msg);
 		bool XTEA_decrypt(NetworkMessage& msg);
 		bool RSA_decrypt(RSA* rsa, NetworkMessage& msg);
 
-		void setRawMessages(bool value) { m_rawMessages = value; }
+		void setRawMessages(bool value)
+		{
+			m_rawMessages = value;
+		}
 
 		virtual void deleteProtocolTask();
 		friend class Connection;

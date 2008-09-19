@@ -28,13 +28,13 @@
 
 class PlayerBox
 {
-	static HWND playerBox;
-	static HWND parent;
-	static HWND kick;
-	static HWND permBan;
-	static HWND online;
-	static HINSTANCE m_hInst;
-	static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+		static HWND playerBox;
+		static HWND parent;
+		static HWND kick;
+		static HWND permBan;
+		static HWND online;
+		static HINSTANCE m_hInst;
+		static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	public:
 		bool popUp(LPCTSTR szCaption);
 		PlayerBox();
@@ -43,7 +43,10 @@ class PlayerBox
 		void updatePlayersOnline();
 		void addPlayer(Player* player);
 		void removePlayer(Player* player);
-		void setParent(HWND hWndParent){ parent = hWndParent; }
+		void setParent(HWND hWndParent)
+		{
+			parent = hWndParent;
+		}
 };
 
 #endif

@@ -37,7 +37,7 @@ class Connection;
 #ifdef __DEBUG_NET__
 #define PRINT_ASIO_ERROR(desc) \
 	std::cout << "Error: [" << __FUNCTION__ << "] " << desc << " - Error: " <<  \
-		error.value() << " Desc: " << error.message() << std::endl;
+						error.value() << " Desc: " << error.message() << std::endl;
 #else
 #define PRINT_ASIO_ERROR(desc)
 #endif
@@ -127,7 +127,10 @@ class Connection : boost::noncopyable
 #endif
 		}
 
-		boost::asio::ip::tcp::socket& getHandle() { return m_socket; }
+		boost::asio::ip::tcp::socket& getHandle()
+		{
+			return m_socket;
+		}
 
 		void closeConnection();
 		void acceptConnection();

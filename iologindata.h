@@ -29,8 +29,8 @@
 class PlayerGroup
 {
 	public:
-		PlayerGroup(){}
-		virtual ~PlayerGroup(){}
+		PlayerGroup() {}
+		virtual ~PlayerGroup() {}
 
 		std::string m_name;
 		uint64_t m_flags;
@@ -47,8 +47,8 @@ typedef std::list<itemBlock> ItemBlockList;
 class IOLoginData
 {
 	public:
-		IOLoginData(){}
-		virtual ~IOLoginData(){}
+		IOLoginData() {}
+		virtual ~IOLoginData() {}
 
 		static IOLoginData* getInstance()
 		{
@@ -111,7 +111,7 @@ class IOLoginData
 			}
 		};
 
-		typedef std::map<int,std::pair<Item*,int> > ItemMap;
+		typedef std::map<int, std::pair<Item*, int> > ItemMap;
 		typedef std::map<uint32_t, std::string> NameCacheMap;
 		typedef std::map<std::string, uint32_t, StringCompareCase> GuidCacheMap;
 		typedef std::map<uint32_t, PlayerGroup*> PlayerGroupMap;

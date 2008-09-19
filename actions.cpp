@@ -45,7 +45,7 @@ extern Actions* g_actions;
 extern ConfigManager g_config;
 
 Actions::Actions() :
-m_scriptInterface("Action Interface")
+		m_scriptInterface("Action Interface")
 {
 	m_scriptInterface.initState();
 }
@@ -58,7 +58,7 @@ Actions::~Actions()
 inline void Actions::clearMap(ActionUseMap& map)
 {
 	ActionUseMap::iterator it = map.begin();
-	while(it != map.end())
+	while (it != map.end())
 	{
 		delete it->second;
 		map.erase(it);
@@ -87,7 +87,7 @@ std::string Actions::getScriptBaseName()
 
 Event* Actions::getEvent(const std::string& nodeName)
 {
-	if(asLowerCaseString(nodeName) == "action")
+	if (asLowerCaseString(nodeName) == "action")
 		return new Action(&m_scriptInterface);
 	else
 		return NULL;
@@ -96,32 +96,32 @@ Event* Actions::getEvent(const std::string& nodeName)
 bool Actions::registerEvent(Event* event, xmlNodePtr p)
 {
 	Action* action = dynamic_cast<Action*>(event);
-	if(!action)
+	if (!action)
 		return false;
 
 	int32_t id, endId;
-	if(readXMLInteger(p, "itemid", id))
+	if (readXMLInteger(p, "itemid", id))
 		useItemMap[id] = action;
-	else if(readXMLInteger(p, "fromid", id) && readXMLInteger(p, "toid", endId))
+	else if (readXMLInteger(p, "fromid", id) && readXMLInteger(p, "toid", endId))
 	{
 		useItemMap[id] = action;
-		while(id < endId)
+		while (id < endId)
 			useItemMap[++id] = new Action(action);
 	}
-	else if(readXMLInteger(p, "uniqueid", id))
+	else if (readXMLInteger(p, "uniqueid", id))
 		uniqueItemMap[id] = action;
-	else if(readXMLInteger(p, "fromuid", id) && readXMLInteger(p, "touid", endId))
+	else if (readXMLInteger(p, "fromuid", id) && readXMLInteger(p, "touid", endId))
 	{
 		uniqueItemMap[id] = action;
-		while(id < endId)
+		while (id < endId)
 			uniqueItemMap[++id] = new Action(action);
 	}
-	else if(readXMLInteger(p, "actionid", id))
+	else if (readXMLInteger(p, "actionid", id))
 		actionItemMap[id] = action;
-	else if(readXMLInteger(p, "fromaid", id) && readXMLInteger(p, "toaid", endId))
+	else if (readXMLInteger(p, "fromaid", id) && readXMLInteger(p, "toaid", endId))
 	{
 		actionItemMap[id] = action;
-		while(id < endId)
+		while (id < endId)
 			actionItemMap[++id] = new Action(action);
 	}
 	else
@@ -133,13 +133,13 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 ReturnValue Actions::canUse(const Player* player, const Position& pos)
 {
 	const Position& playerPos = player->getPosition();
-	if(pos.x != 0xFFFF)
+	if (pos.x != 0xFFFF)
 	{
-		if(playerPos.z > pos.z)
+		if (playerPos.z > pos.z)
 			return RET_FIRSTGOUPSTAIRS;
-		else if(playerPos.z < pos.z)
+		else if (playerPos.z < pos.z)
 			return RET_FIRSTGODOWNSTAIRS;
-		else if(!Position::areInRange<1,1,0>(playerPos, pos))
+		else if (!Position::areInRange<1, 1, 0>(playerPos, pos))
 			return RET_TOOFARAWAY;
 	}
 	return RET_NOERROR;
@@ -148,40 +148,40 @@ ReturnValue Actions::canUse(const Player* player, const Position& pos)
 ReturnValue Actions::canUse(const Player* player, const Position& pos, const Item* item)
 {
 	Action* action = getAction(item, ACTION_UNIQUEID);
-	if(action)
+	if (action)
 	{
 		ReturnValue ret = action->canExecuteAction(player, pos);
-		if(ret != RET_NOERROR)
+		if (ret != RET_NOERROR)
 			return ret;
 
 		return RET_NOERROR;
 	}
 
 	action = getAction(item, ACTION_ACTIONID);
-	if(action)
+	if (action)
 	{
 		ReturnValue ret = action->canExecuteAction(player, pos);
-		if(ret != RET_NOERROR)
+		if (ret != RET_NOERROR)
 			return ret;
 
 		return RET_NOERROR;
 	}
 
 	action = getAction(item, ACTION_ITEMID);
-	if(action)
+	if (action)
 	{
 		ReturnValue ret = action->canExecuteAction(player, pos);
-		if(ret != RET_NOERROR)
+		if (ret != RET_NOERROR)
 			return ret;
 
 		return RET_NOERROR;
 	}
 
 	action = getAction(item, ACTION_RUNEID);
-	if(action)
+	if (action)
 	{
 		ReturnValue ret = action->canExecuteAction(player, pos);
-		if(ret != RET_NOERROR)
+		if (ret != RET_NOERROR)
 			return ret;
 
 		return RET_NOERROR;
@@ -192,19 +192,19 @@ ReturnValue Actions::canUse(const Player* player, const Position& pos, const Ite
 
 ReturnValue Actions::canUseFar(const Creature* creature, const Position& toPos, bool checkLineOfSight)
 {
-	if(toPos.x == 0xFFFF)
+	if (toPos.x == 0xFFFF)
 		return RET_NOERROR;
 
 	const Position& creaturePos = creature->getPosition();
 
-	if(creaturePos.z > toPos.z)
+	if (creaturePos.z > toPos.z)
 		return RET_FIRSTGOUPSTAIRS;
-	else if(creaturePos.z < toPos.z)
+	else if (creaturePos.z < toPos.z)
 		return RET_FIRSTGODOWNSTAIRS;
-	else if(!Position::areInRange<7,5,0>(toPos, creaturePos))
+	else if (!Position::areInRange<7, 5, 0>(toPos, creaturePos))
 		return RET_TOOFARAWAY;
 
-	if(checkLineOfSight && !g_game.canThrowObjectTo(creaturePos, toPos))
+	if (checkLineOfSight && !g_game.canThrowObjectTo(creaturePos, toPos))
 		return RET_CANNOTTHROW;
 
 	return RET_NOERROR;
@@ -212,32 +212,32 @@ ReturnValue Actions::canUseFar(const Creature* creature, const Position& toPos, 
 
 Action* Actions::getAction(const Item* item, ActionType_t type /* = ACTION_ANY */)
 {
-	if(item->getUniqueId() != 0 && (type == ACTION_ANY || type == ACTION_UNIQUEID))
+	if (item->getUniqueId() != 0 && (type == ACTION_ANY || type == ACTION_UNIQUEID))
 	{
 		ActionUseMap::iterator it = uniqueItemMap.find(item->getUniqueId());
-		if(it != uniqueItemMap.end())
+		if (it != uniqueItemMap.end())
 			return it->second;
 	}
 
-	if(item->getActionId() != 0 && (type == ACTION_ANY || type == ACTION_ACTIONID))
+	if (item->getActionId() != 0 && (type == ACTION_ANY || type == ACTION_ACTIONID))
 	{
 		ActionUseMap::iterator it = actionItemMap.find(item->getActionId());
-		if(it != actionItemMap.end())
+		if (it != actionItemMap.end())
 			return it->second;
 	}
 
-	if(type == ACTION_ANY || type == ACTION_ITEMID)
+	if (type == ACTION_ANY || type == ACTION_ITEMID)
 	{
 		ActionUseMap::iterator it = useItemMap.find(item->getID());
-		if(it != useItemMap.end())
-	   		return it->second;
+		if (it != useItemMap.end())
+			return it->second;
 	}
 
-	if(type == ACTION_ANY || type == ACTION_RUNEID)
+	if (type == ACTION_ANY || type == ACTION_RUNEID)
 	{
 		//rune items
 		Action* runeSpell = g_spells->getRuneSpell(item->getID());
-		if(runeSpell)
+		if (runeSpell)
 			return runeSpell;
 	}
 
@@ -245,29 +245,29 @@ Action* Actions::getAction(const Item* item, ActionType_t type /* = ACTION_ANY *
 }
 
 bool Actions::executeUse(Action* action, Player* player, Item* item,
-	const PositionEx& posEx, uint32_t creatureId)
+												 const PositionEx& posEx, uint32_t creatureId)
 {
-	if(!action->executeUse(player, item, posEx, posEx, false, creatureId))
+	if (!action->executeUse(player, item, posEx, posEx, false, creatureId))
 		return false;
 
 	return true;
 }
 
 ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
-	uint8_t index, Item* item, uint32_t creatureId)
+																		 uint8_t index, Item* item, uint32_t creatureId)
 {
 	bool foundAction = (getAction(item) != NULL);
 
 	//check if it is a house door
-	if(Door* door = item->getDoor())
+	if (Door* door = item->getDoor())
 	{
-		if(!door->canUse(player))
+		if (!door->canUse(player))
 			return RET_CANNOTUSETHISOBJECT;
 	}
 
-	if(BedItem* bed = item->getBed())
+	if (BedItem* bed = item->getBed())
 	{
-		if(!bed->canUse(player))
+		if (!bed->canUse(player))
 			return RET_CANNOTUSETHISOBJECT;
 
 		bed->sleep(player);
@@ -278,72 +278,72 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
 	PositionEx posEx(pos, stack);
 
 	Action* action = getAction(item, ACTION_UNIQUEID);
-	if(action)
+	if (action)
 	{
 		//only continue with next action in the list if the previous returns false
-		if(action->isScripted())
+		if (action->isScripted())
 		{
-			if(executeUse(action, player, item, posEx, creatureId))
+			if (executeUse(action, player, item, posEx, creatureId))
 				return RET_NOERROR;
 		}
-		else if(action->function)
+		else if (action->function)
 		{
-			if(action->function(player, item, posEx, posEx, false, creatureId))
+			if (action->function(player, item, posEx, posEx, false, creatureId))
 				return RET_NOERROR;
 		}
 	}
 
 	action = getAction(item, ACTION_ACTIONID);
-	if(action)
+	if (action)
 	{
 		//only continue with next action in the list if the previous returns false
-		if(action->isScripted())
+		if (action->isScripted())
 		{
-			if(executeUse(action, player, item, posEx, creatureId))
+			if (executeUse(action, player, item, posEx, creatureId))
 				return RET_NOERROR;
 		}
-		else if(action->function)
+		else if (action->function)
 		{
-			if(action->function(player, item, posEx, posEx, false, creatureId))
+			if (action->function(player, item, posEx, posEx, false, creatureId))
 				return RET_NOERROR;
 		}
 	}
 
 	action = getAction(item, ACTION_ITEMID);
-	if(action)
+	if (action)
 	{
 		//only continue with next action in the list if the previous returns false
-		if(action->isScripted())
+		if (action->isScripted())
 		{
-			if(executeUse(action, player, item, posEx, creatureId))
+			if (executeUse(action, player, item, posEx, creatureId))
 				return RET_NOERROR;
 		}
-		else if(action->function)
+		else if (action->function)
 		{
-			if(action->function(player, item, posEx, posEx, false, creatureId))
+			if (action->function(player, item, posEx, posEx, false, creatureId))
 				return RET_NOERROR;
 		}
 	}
 
 	action = getAction(item, ACTION_RUNEID);
-	if(action)
+	if (action)
 	{
 		//only continue with next action in the list if the previous returns false
-		if(action->isScripted())
+		if (action->isScripted())
 		{
-			if(executeUse(action, player, item, posEx, creatureId))
+			if (executeUse(action, player, item, posEx, creatureId))
 				return RET_NOERROR;
 		}
-		else if(action->function)
+		else if (action->function)
 		{
-			if(action->function(player, item, posEx, posEx, false, creatureId))
+			if (action->function(player, item, posEx, posEx, false, creatureId))
 				return RET_NOERROR;
 		}
 	}
 
-	if(item->isReadable())
+	if (item->isReadable())
 	{
-		if(item->canWriteText())
+		if (item->canWriteText())
 		{
 			player->setWriteItem(item, item->getMaxWriteLength());
 			player->sendTextWindow(item, item->getMaxWriteLength(), true);
@@ -357,13 +357,13 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
 	}
 
 	//if it is a container try to open it
-	if(Container* container = item->getContainer())
+	if (Container* container = item->getContainer())
 	{
-		if(openContainer(player, container, index))
+		if (openContainer(player, container, index))
 			return RET_NOERROR;
 	}
 
-	if(!foundAction)
+	if (!foundAction)
 		return RET_CANNOTUSETHISOBJECT;
 
 	return RET_NOERROR;
@@ -371,7 +371,7 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
 
 bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* item, bool isHotkey)
 {
-	if(!player->canDoAction())
+	if (!player->canDoAction())
 		return false;
 
 	player->setNextActionTask(NULL);
@@ -380,10 +380,10 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 	int32_t itemId = 0;
 	uint32_t itemCount = 0;
 
-	if(isHotkey)
+	if (isHotkey)
 	{
 		int32_t subType = -1;
-		if(item->hasSubType() && !item->hasCharges())
+		if (item->hasSubType() && !item->hasCharges())
 			subType = item->getSubType();
 
 		itemCount = player->__getItemTypeCount(item->getID(), subType, false);
@@ -391,13 +391,13 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 	}
 
 	ReturnValue ret = internalUseItem(player, pos, index, item, 0);
-	if(ret != RET_NOERROR)
+	if (ret != RET_NOERROR)
 	{
 		player->sendCancelMessage(ret);
 		return false;
 	}
 
-	if(isHotkey)
+	if (isHotkey)
 		showUseHotkeyMessage(player, itemId, itemCount);
 
 	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::ACTIONS_DELAY_INTERVAL));
@@ -405,11 +405,11 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 }
 
 bool Actions::executeUseEx(Action* action, Player* player, Item* item, const PositionEx& fromPosEx,
-	const PositionEx& toPosEx, bool isHotkey, uint32_t creatureId)
+													 const PositionEx& toPosEx, bool isHotkey, uint32_t creatureId)
 {
-	if(!action->executeUse(player, item, fromPosEx, toPosEx, isHotkey, creatureId))
+	if (!action->executeUse(player, item, fromPosEx, toPosEx, isHotkey, creatureId))
 	{
-		if(action->hasOwnErrorHandler()) //The error message has already been handled by action itself
+		if (action->hasOwnErrorHandler()) //The error message has already been handled by action itself
 			return true;
 
 		return false;
@@ -419,53 +419,53 @@ bool Actions::executeUseEx(Action* action, Player* player, Item* item, const Pos
 }
 
 ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPosEx, const PositionEx& toPosEx,
-	Item* item, bool isHotkey, uint32_t creatureId)
+																			 Item* item, bool isHotkey, uint32_t creatureId)
 {
 	Action* action = getAction(item, ACTION_UNIQUEID);
-	if(action)
+	if (action)
 	{
 		ReturnValue ret = action->canExecuteAction(player, toPosEx);
-		if(ret != RET_NOERROR)
+		if (ret != RET_NOERROR)
 			return ret;
 
 		//only continue with next action in the list if the previous returns false
-		if(executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
+		if (executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
 			return RET_NOERROR;
 	}
 
 	action = getAction(item, ACTION_ACTIONID);
-	if(action)
+	if (action)
 	{
 		ReturnValue ret = action->canExecuteAction(player, toPosEx);
-		if(ret != RET_NOERROR)
+		if (ret != RET_NOERROR)
 			return ret;
 
 		//only continue with next action in the list if the previous returns false
-		if(executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
+		if (executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
 			return RET_NOERROR;
 	}
 
 	action = getAction(item, ACTION_ITEMID);
-	if(action)
+	if (action)
 	{
 		ReturnValue ret = action->canExecuteAction(player, toPosEx);
-		if(ret != RET_NOERROR)
+		if (ret != RET_NOERROR)
 			return ret;
 
 		//only continue with next action in the list if the previous returns false
-		if(executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
+		if (executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
 			return RET_NOERROR;
 	}
 
 	action = getAction(item, ACTION_RUNEID);
-	if(action)
+	if (action)
 	{
 		ReturnValue ret = action->canExecuteAction(player, toPosEx);
-		if(ret != RET_NOERROR)
+		if (ret != RET_NOERROR)
 			return ret;
 
 		//only continue with next action in the list if the previous returns false
-		if(executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
+		if (executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
 			return RET_NOERROR;
 	}
 
@@ -473,16 +473,16 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 }
 
 bool Actions::useItemEx(Player* player, const Position& fromPos, const Position& toPos,
-	uint8_t toStackPos, Item* item, bool isHotkey, uint32_t creatureId /* = 0*/)
+												uint8_t toStackPos, Item* item, bool isHotkey, uint32_t creatureId /* = 0*/)
 {
-	if(!player->canDoAction())
+	if (!player->canDoAction())
 		return false;
 
 	player->setNextActionTask(NULL);
 	player->stopWalk();
 
 	Action* action = getAction(item);
-	if(!action)
+	if (!action)
 	{
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
 		return false;
@@ -491,10 +491,10 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 	int32_t itemId = 0;
 	uint32_t itemCount = 0;
 
-	if(isHotkey)
+	if (isHotkey)
 	{
 		int32_t subType = -1;
-		if(item->hasSubType() && !item->hasCharges())
+		if (item->hasSubType() && !item->hasCharges())
 			subType = item->getSubType();
 
 		itemCount = player->__getItemTypeCount(item->getID(), subType, false);
@@ -506,13 +506,13 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 	PositionEx toPosEx(toPos, toStackPos);
 
 	ReturnValue ret = internalUseItemEx(player, fromPosEx, toPosEx, item, isHotkey, creatureId);
-	if(ret != RET_NOERROR)
+	if (ret != RET_NOERROR)
 	{
 		player->sendCancelMessage(ret);
 		return false;
 	}
 
-	if(isHotkey)
+	if (isHotkey)
 		showUseHotkeyMessage(player, itemId, itemCount);
 
 	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::EX_ACTIONS_DELAY_INTERVAL));
@@ -524,7 +524,7 @@ void Actions::showUseHotkeyMessage(Player* player, int32_t id, uint32_t count)
 	const ItemType& it = Item::items[id];
 	char buffer[40 + it.name.size()];
 
-	if(count == 1)
+	if (count == 1)
 		sprintf(buffer, "Using the last %s...", it.name.c_str());
 	else
 		sprintf(buffer, "Using one of %d %s...", count, it.pluralName.c_str());
@@ -536,7 +536,7 @@ bool Actions::openContainer(Player* player, Container* container, const uint8_t 
 	Container* openContainer = NULL;
 
 	//depot container
-	if(Depot* depot = container->getDepot())
+	if (Depot* depot = container->getDepot())
 	{
 		Depot* myDepot = player->getDepot(depot->getDepotId(), true);
 		myDepot->setParent(depot->getParent());
@@ -545,9 +545,9 @@ bool Actions::openContainer(Player* player, Container* container, const uint8_t 
 	else
 		openContainer = container;
 
-	if(container->getCorpseOwner() != 0)
+	if (container->getCorpseOwner() != 0)
 	{
-		if(!player->canOpenCorpse(container->getCorpseOwner()))
+		if (!player->canOpenCorpse(container->getCorpseOwner()))
 		{
 			player->sendCancel("You are not the owner.");
 			return false;
@@ -556,7 +556,7 @@ bool Actions::openContainer(Player* player, Container* container, const uint8_t 
 
 	//open/close container
 	int32_t oldcid = player->getContainerID(openContainer);
-	if(oldcid != -1)
+	if (oldcid != -1)
 	{
 		player->onCloseContainer(openContainer);
 		player->closeContainer(oldcid);
@@ -571,14 +571,14 @@ bool Actions::openContainer(Player* player, Container* container, const uint8_t 
 }
 
 Action::Action(LuaScriptInterface* _interface) :
-	Event(_interface)
+		Event(_interface)
 {
 	allowFarUse = false;
 	checkLineOfSight = true;
 }
 
 Action::Action(const Action* copy) :
-	Event(copy)
+		Event(copy)
 {
 	allowFarUse = copy->allowFarUse;
 	checkLineOfSight = copy->checkLineOfSight;
@@ -592,15 +592,15 @@ Action::~Action()
 bool Action::configureEvent(xmlNodePtr p)
 {
 	int32_t intValue;
-	if(readXMLInteger(p, "allowfaruse", intValue))
+	if (readXMLInteger(p, "allowfaruse", intValue))
 	{
-		if(intValue != 0)
+		if (intValue != 0)
 			setAllowFarUse(true);
 	}
 
-	if(readXMLInteger(p, "blockwalls", intValue))
+	if (readXMLInteger(p, "blockwalls", intValue))
 	{
-		if(intValue == 0)
+		if (intValue == 0)
 			setCheckLineOfSight(false);
 	}
 	return true;
@@ -609,11 +609,11 @@ bool Action::configureEvent(xmlNodePtr p)
 bool Action::loadFunction(const std::string& functionName)
 {
 	std::string tmpFunctionName = asLowerCaseString(functionName);
-	if(tmpFunctionName == "increaseitemid")
+	if (tmpFunctionName == "increaseitemid")
 		function = increaseItemId;
-	else if(tmpFunctionName == "decreaseitemid")
+	else if (tmpFunctionName == "decreaseitemid")
 		function = decreaseItemId;
-	else if(tmpFunctionName == "highscorebook")
+	else if (tmpFunctionName == "highscorebook")
 		function = highscoreBook;
 	else
 	{
@@ -627,11 +627,11 @@ bool Action::loadFunction(const std::string& functionName)
 
 bool Action::highscoreBook(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
 {
-	if(player)
+	if (player)
 	{
-		if(item)
+		if (item)
 		{
-			if(item->getActionId() >= 150 && item->getActionId() <= 158)
+			if (item->getActionId() >= 150 && item->getActionId() <= 158)
 			{
 				std::string highscoreString = g_game.getHighscoreString(item->getActionId() - 150);
 				item->setText(highscoreString);
@@ -645,9 +645,9 @@ bool Action::highscoreBook(Player* player, Item* item, const PositionEx& posFrom
 
 bool Action::increaseItemId(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
 {
-	if(player)
+	if (player)
 	{
-		if(item)
+		if (item)
 		{
 			g_game.transformItem(item, item->getID() + 1);
 			return true;
@@ -658,9 +658,9 @@ bool Action::increaseItemId(Player* player, Item* item, const PositionEx& posFro
 
 bool Action::decreaseItemId(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
 {
-	if(player)
+	if (player)
 	{
-		if(item)
+		if (item)
 		{
 			g_game.transformItem(item, item->getID() - 1);
 			return true;
@@ -677,7 +677,7 @@ std::string Action::getScriptEventName()
 ReturnValue Action::canExecuteAction(const Player* player, const Position& toPos)
 {
 	ReturnValue ret = RET_NOERROR;
-	if(!getAllowFarUse())
+	if (!getAllowFarUse())
 		ret = g_actions->canUse(player, toPos);
 	else
 		ret = g_actions->canUseFar(player, toPos, getCheckLineOfSight());
@@ -687,15 +687,15 @@ ReturnValue Action::canExecuteAction(const Player* player, const Position& toPos
 bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, const PositionEx& toPos, bool extendedUse, uint32_t creatureId)
 {
 	//onUse(cid, item, fromPosition, itemEx, toPosition)
-	if(m_scriptInterface->reserveScriptEnv())
+	if (m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 
-		#ifdef __DEBUG_LUASCRIPTS__
+#ifdef __DEBUG_LUASCRIPTS__
 		std::stringstream desc;
 		desc << player->getName() << " - " << item->getID() << " " << fromPos << "|" << toPos;
 		env->setEventDesc(desc.str());
-		#endif
+#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);
 		env->setRealPos(player->getPosition());
@@ -711,7 +711,7 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 		LuaScriptInterface::pushPosition(L, fromPos, fromPos.stackpos);
 		//std::cout << "posTo" <<  (Position)posTo << " stack" << (int32_t)posTo.stackpos <<std::endl;
 		Thing* thing = g_game.internalGetThing(player, toPos, toPos.stackpos);
-		if(thing && (!extendedUse || thing != item))
+		if (thing && (!extendedUse || thing != item))
 		{
 			uint32_t thingId2 = env->addThing(thing);
 			LuaScriptInterface::pushThing(L, thing, thingId2);

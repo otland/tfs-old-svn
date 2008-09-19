@@ -29,8 +29,14 @@ class Teleport : public Item, public Cylinder
 		Teleport(uint16_t _type);
 		virtual ~Teleport();
 
-		virtual Teleport* getTeleport() {return this;}
-		virtual const Teleport* getTeleport() const {return this;}
+		virtual Teleport* getTeleport()
+		{
+			return this;
+		}
+		virtual const Teleport* getTeleport() const
+		{
+			return this;
+		}
 
 		//serialization
 		virtual bool unserialize(xmlNodePtr p);
@@ -39,17 +45,23 @@ class Teleport : public Item, public Cylinder
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool serializeAttr(PropWriteStream& propWriteStream);
 
-		void setDestPos(const Position& pos) {destPos = pos;}
-		const Position& getDestPos() const {return destPos;}
+		void setDestPos(const Position& pos)
+		{
+			destPos = pos;
+		}
+		const Position& getDestPos() const
+		{
+			return destPos;
+		}
 
 		//cylinder implementations
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
-			uint32_t flags) const;
+																	 uint32_t flags) const;
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
-			uint32_t& maxQueryCount, uint32_t flags) const;
+																				uint32_t& maxQueryCount, uint32_t flags) const;
 		virtual ReturnValue __queryRemove(const Thing* thing, uint32_t count) const;
 		virtual Cylinder* __queryDestination(int32_t& index, const Thing* thing, Item** destItem,
-			uint32_t& flags);
+																				 uint32_t& flags);
 
 		virtual void __addThing(Thing* thing);
 		virtual void __addThing(int32_t index, Thing* thing);
