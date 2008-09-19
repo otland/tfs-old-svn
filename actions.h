@@ -48,9 +48,9 @@ class Actions : public BaseEvents
 
 		bool useItem(Player* player, const Position& pos, uint8_t index, Item* item, bool isHotkey);
 		bool useItemEx(Player* player, const Position& fromPos, const Position& toPos,
-			uint8_t toStackPos, Item* item, bool isHotkey, uint32_t creatureId = 0);
+									 uint8_t toStackPos, Item* item, bool isHotkey, uint32_t creatureId = 0);
 
-		bool openContainer(Player* player,Container* container, const uint8_t index);
+		bool openContainer(Player* player, Container* container, const uint8_t index);
 
 		ReturnValue canUse(const Player* player, const Position& pos);
 		ReturnValue canUse(const Player* player, const Position& pos, const Item* item);
@@ -59,11 +59,11 @@ class Actions : public BaseEvents
 	protected:
 		bool executeUse(Action* action, Player* player, Item* item, const PositionEx& posEx, uint32_t creatureId);
 		ReturnValue internalUseItem(Player* player, const Position& pos,
-			uint8_t index, Item* item, uint32_t creatureId);
+																uint8_t index, Item* item, uint32_t creatureId);
 		bool executeUseEx(Action* action, Player* player, Item* item, const PositionEx& fromPosEx,
-			const PositionEx& toPosEx, bool isHotkey, uint32_t creatureId);
+											const PositionEx& toPosEx, bool isHotkey, uint32_t creatureId);
 		ReturnValue internalUseItemEx(Player* player, const PositionEx& fromPosEx, const PositionEx& toPosEx,
-			Item* item, bool isHotkey, uint32_t creatureId);
+																	Item* item, bool isHotkey, uint32_t creatureId);
 		void showUseHotkeyMessage(Player* player, int32_t id, uint32_t count);
 
 		virtual void clear();
@@ -101,17 +101,32 @@ class Action : public Event
 
 		//scripting
 		virtual bool executeUse(Player* player, Item* item, const PositionEx& posFrom,
-			const PositionEx& posTo, bool extendedUse, uint32_t creatureId);
+														const PositionEx& posTo, bool extendedUse, uint32_t creatureId);
 		//
 
-		bool getAllowFarUse() const {return allowFarUse;}
-		void setAllowFarUse(bool v){allowFarUse = v;}
+		bool getAllowFarUse() const
+		{
+			return allowFarUse;
+		}
+		void setAllowFarUse(bool v)
+		{
+			allowFarUse = v;
+		}
 
-		bool getCheckLineOfSight() const {return checkLineOfSight;}
-		void setCheckLineOfSight(bool v){checkLineOfSight = v;}
+		bool getCheckLineOfSight() const
+		{
+			return checkLineOfSight;
+		}
+		void setCheckLineOfSight(bool v)
+		{
+			checkLineOfSight = v;
+		}
 
 		virtual ReturnValue canExecuteAction(const Player* player, const Position& toPos);
-		virtual bool hasOwnErrorHandler() {return false;}
+		virtual bool hasOwnErrorHandler()
+		{
+			return false;
+		}
 
 		ActionFunction* function;
 

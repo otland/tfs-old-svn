@@ -27,9 +27,9 @@
 
 extern "C"
 {
-	#include <lua.h>
-	#include <lauxlib.h>
-	#include <lualib.h>
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
 }
 
 #include "position.h"
@@ -94,23 +94,50 @@ class ScriptEnviroment
 		~ScriptEnviroment();
 
 		void resetEnv();
-		void resetCallback() {m_callbackId = 0;}
+		void resetCallback()
+		{
+			m_callbackId = 0;
+		}
 
 		static bool saveGameState();
 		static bool loadGameState();
 
 		void setScriptId(int32_t scriptId, LuaScriptInterface* scriptInterface)
-			{m_scriptId = scriptId; m_interface = scriptInterface;}
+		{
+			m_scriptId = scriptId;
+			m_interface = scriptInterface;
+		}
 		bool setCallbackId(int32_t callbackId, LuaScriptInterface* scriptInterface);
-		void setEventDesc(const std::string& desc) {m_eventdesc = desc;}
+		void setEventDesc(const std::string& desc)
+		{
+			m_eventdesc = desc;
+		}
 
-		std::string getEventDesc() {return m_eventdesc;}
-		int32_t getScriptId() {return m_scriptId;}
-		int32_t getCallbackId() {return m_callbackId;}
-		LuaScriptInterface* getScriptInterface() {return m_interface;}
+		std::string getEventDesc()
+		{
+			return m_eventdesc;
+		}
+		int32_t getScriptId()
+		{
+			return m_scriptId;
+		}
+		int32_t getCallbackId()
+		{
+			return m_callbackId;
+		}
+		LuaScriptInterface* getScriptInterface()
+		{
+			return m_interface;
+		}
 
-		void setTimerEvent() {m_timerEvent = true;}
-		void resetTimerEvent() {m_timerEvent = false;}
+		void setTimerEvent()
+		{
+			m_timerEvent = true;
+		}
+		void resetTimerEvent()
+		{
+			m_timerEvent = false;
+		}
 
 		void getEventInfo(int32_t& scriptId, std::string& desc, LuaScriptInterface*& scriptInterface, int32_t& callbackId, bool& timerEvent);
 
@@ -128,11 +155,23 @@ class ScriptEnviroment
 		void addGlobalStorageValue(const uint32_t key, const int32_t value);
 		bool getGlobalStorageValue(const uint32_t key, int32_t& value) const;
 
-		void setRealPos(const Position& realPos) {m_realPos = realPos;}
-		Position getRealPos() {return m_realPos;}
+		void setRealPos(const Position& realPos)
+		{
+			m_realPos = realPos;
+		}
+		Position getRealPos()
+		{
+			return m_realPos;
+		}
 
-		void setNpc(Npc* npc) {m_curNpc = npc;}
-		Npc* getNpc() const {return m_curNpc;}
+		void setNpc(Npc* npc)
+		{
+			m_curNpc = npc;
+		}
+		Npc* getNpc() const
+		{
+			return m_curNpc;
+		}
 
 		Thing* getThingByUID(uint32_t uid);
 		Item* getItemByUID(uint32_t uid);
@@ -150,7 +189,10 @@ class ScriptEnviroment
 		static uint32_t addConditionObject(Condition* condition);
 		static Condition* getConditionObject(uint32_t conditionId);
 
-		static uint32_t getLastCombatId() {return m_lastCombatId;}
+		static uint32_t getLastCombatId()
+		{
+			return m_lastCombatId;
+		}
 
 	private:
 		typedef std::map<uint64_t, Thing*> ThingMap;
@@ -279,7 +321,7 @@ class LuaScriptInterface
 		static bool reserveScriptEnv()
 		{
 			++m_scriptEnvIndex;
-			if(m_scriptEnvIndex < 15)
+			if (m_scriptEnvIndex < 15)
 				return true;
 			else
 			{
@@ -290,7 +332,7 @@ class LuaScriptInterface
 
 		static void releaseScriptEnv()
 		{
-			if(m_scriptEnvIndex >= 0)
+			if (m_scriptEnvIndex >= 0)
 			{
 				m_scriptEnv[m_scriptEnvIndex].resetEnv();
 				--m_scriptEnvIndex;
@@ -299,11 +341,20 @@ class LuaScriptInterface
 
 		static void reportError(const char* function, const std::string& error_desc);
 
-		std::string getInterfaceName() {return m_interfaceName;}
-		const std::string& getLastLuaError() const {return m_lastLuaError;}
+		std::string getInterfaceName()
+		{
+			return m_interfaceName;
+		}
+		const std::string& getLastLuaError() const
+		{
+			return m_lastLuaError;
+		}
 		void dumpLuaStack();
 
-		lua_State* getLuaState() {return m_luaState;}
+		lua_State* getLuaState()
+		{
+			return m_luaState;
+		}
 
 		bool pushFunction(int32_t functionId);
 
@@ -375,8 +426,8 @@ class LuaScriptInterface
 		static int32_t luaDoPlayerAddSkillTry(lua_State* L);
 		static int32_t luaDoCreatureAddHealth(lua_State* L);
 		static int32_t luaDoCreatureAddMana(lua_State* L);
-        static int32_t luaSetCreatureMaxHealth(lua_State* L);
-	    static int32_t luaSetCreatureMaxMana(lua_State* L);
+		static int32_t luaSetCreatureMaxHealth(lua_State* L);
+		static int32_t luaSetCreatureMaxMana(lua_State* L);
 		static int32_t luaDoPlayerAddManaSpent(lua_State* L);
 		static int32_t luaDoPlayerAddItem(lua_State* L);
 		static int32_t luaDoPlayerAddItemEx(lua_State* L);

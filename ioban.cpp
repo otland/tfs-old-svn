@@ -28,7 +28,7 @@
 
 bool IOBan::isIpBanished(uint32_t ip, uint32_t mask /*= 0xFFFFFFFF*/)
 {
-	if(ip != 0)
+	if (ip != 0)
 	{
 		OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 		Database* db = Database::getInstance();
@@ -36,12 +36,12 @@ bool IOBan::isIpBanished(uint32_t ip, uint32_t mask /*= 0xFFFFFFFF*/)
 
 		DBQuery query;
 		query << "SELECT `expires` FROM `bans` WHERE ((" << ip << " & " << mask << " & `param`) = (`value` & `param` & " << mask << ")) AND `type` = " << (BanType_t)BANTYPE_IP_BANISHMENT << " AND `active` = 1";
-		if((result = db->storeQuery(query.str())))
+		if ((result = db->storeQuery(query.str())))
 		{
 			uint64_t expires = result->getDataInt("expires");
 			db->freeResult(result);
 
-			if(expires != 0 && time(NULL) >= (time_t)expires)
+			if (expires != 0 && time(NULL) >= (time_t)expires)
 			{
 				removeIpBanishment(ip);
 				return false;
@@ -61,7 +61,7 @@ bool IOBan::isNamelocked(uint32_t guid)
 
 	DBQuery query;
 	query << "SELECT `id` FROM `bans` WHERE `value` = " << guid << " AND `type` = " << (BanType_t)BANTYPE_NAMELOCK << " AND `active` = 1";
-	if((result = db->storeQuery(query.str())))
+	if ((result = db->storeQuery(query.str())))
 	{
 		db->freeResult(result);
 		return true;
@@ -72,7 +72,7 @@ bool IOBan::isNamelocked(uint32_t guid)
 bool IOBan::isNamelocked(std::string name)
 {
 	uint32_t _guid;
-	if(!IOLoginData::getInstance()->getGuidByName(_guid, name))
+	if (!IOLoginData::getInstance()->getGuidByName(_guid, name))
 		return false;
 
 	return isNamelocked(_guid);
@@ -86,12 +86,12 @@ bool IOBan::isBanished(uint32_t account)
 
 	DBQuery query;
 	query << "SELECT `expires` FROM `bans` WHERE `value` = " << account << " AND `type` = " << (BanType_t)BANTYPE_BANISHMENT << " AND `active` = 1";
-	if((result = db->storeQuery(query.str())))
+	if ((result = db->storeQuery(query.str())))
 	{
 		uint64_t expires = result->getDataInt("expires");
 		db->freeResult(result);
 
-		if(expires != 0 && time(NULL) >= (time_t)expires)
+		if (expires != 0 && time(NULL) >= (time_t)expires)
 		{
 			removeBanishment(account);
 			return false;
@@ -110,7 +110,7 @@ bool IOBan::isDeleted(uint32_t account)
 
 	DBQuery query;
 	query << "SELECT `id` FROM `bans` WHERE `value` = " << account << " AND `type` = " << (BanType_t)BANTYPE_DELETION << " AND `active` = 1";
-	if((result = db->storeQuery(query.str())))
+	if ((result = db->storeQuery(query.str())))
 	{
 		db->freeResult(result);
 		return true;
@@ -121,7 +121,7 @@ bool IOBan::isDeleted(uint32_t account)
 bool IOBan::addIpBanishment(uint32_t ip, time_t banTime, std::string comment, uint32_t gamemaster)
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
-	if(isIpBanished(ip))
+	if (isIpBanished(ip))
 		return false;
 
 	Database* db = Database::getInstance();
@@ -135,7 +135,7 @@ bool IOBan::addIpBanishment(uint32_t ip, time_t banTime, std::string comment, ui
 bool IOBan::addNamelock(uint32_t playerId, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster)
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
-	if(isNamelocked(playerId))
+	if (isNamelocked(playerId))
 		return false;
 
 	Database* db = Database::getInstance();
@@ -149,7 +149,7 @@ bool IOBan::addNamelock(uint32_t playerId, uint32_t reasonId, uint32_t actionId,
 bool IOBan::addNamelock(std::string name, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster)
 {
 	uint32_t _guid;
-	if(!IOLoginData::getInstance()->getGuidByName(_guid, name))
+	if (!IOLoginData::getInstance()->getGuidByName(_guid, name))
 		return false;
 
 	return addNamelock(_guid, reasonId, actionId, comment, gamemaster);
@@ -158,7 +158,7 @@ bool IOBan::addNamelock(std::string name, uint32_t reasonId, uint32_t actionId, 
 bool IOBan::addBanishment(uint32_t account, time_t banTime, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster)
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
-	if(isBanished(account) || isDeleted(account))
+	if (isBanished(account) || isDeleted(account))
 		return false;
 
 	Database* db = Database::getInstance();
@@ -172,10 +172,10 @@ bool IOBan::addBanishment(uint32_t account, time_t banTime, uint32_t reasonId, u
 bool IOBan::addDeletion(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster)
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
-	if(isDeleted(account))
+	if (isDeleted(account))
 		return false;
 
-	if(!removeBanishment(account))
+	if (!removeBanishment(account))
 	{
 		std::cout << "ERROR: IOBan::addDeletion - Couldn't remove banishments" << std::endl;
 		return false;
@@ -206,7 +206,7 @@ bool IOBan::removeIpBanishment(uint32_t ip)
 
 	DBQuery query;
 	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << ip << " AND `type` = " << (BanType_t)BANTYPE_IP_BANISHMENT;
-	if(db->executeQuery(query.str()))
+	if (db->executeQuery(query.str()))
 		return true;
 
 	return false;
@@ -219,7 +219,7 @@ bool IOBan::removeNamelock(uint32_t guid)
 
 	DBQuery query;
 	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << guid << " AND `type` = " << (BanType_t)BANTYPE_NAMELOCK;
-	if(db->executeQuery(query.str()))
+	if (db->executeQuery(query.str()))
 		return true;
 
 	return false;
@@ -228,7 +228,7 @@ bool IOBan::removeNamelock(uint32_t guid)
 bool IOBan::removeNamelock(std::string name)
 {
 	uint32_t _guid;
-	if(!IOLoginData::getInstance()->getGuidByName(_guid, name))
+	if (!IOLoginData::getInstance()->getGuidByName(_guid, name))
 		return false;
 
 	return removeNamelock(_guid);
@@ -241,7 +241,7 @@ bool IOBan::removeBanishment(uint32_t account)
 
 	DBQuery query;
 	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << account << " AND `type` = " << (BanType_t)BANTYPE_BANISHMENT;
-	if(db->executeQuery(query.str()))
+	if (db->executeQuery(query.str()))
 		return true;
 
 	return false;
@@ -254,7 +254,7 @@ bool IOBan::removeDeletion(uint32_t account)
 
 	DBQuery query;
 	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << account << " AND `type` = " << (BanType_t)BANTYPE_DELETION;
-	if(db->executeQuery(query.str()))
+	if (db->executeQuery(query.str()))
 		return true;
 
 	return false;
@@ -279,7 +279,7 @@ uint32_t IOBan::getReason(uint32_t id, bool player /* = false */)
 	uint32_t value = 0;
 	DBQuery query;
 	query << "SELECT `reason` FROM `bans` WHERE `value` = " << id << " AND `type` = " << (player ? (BanType_t)BANTYPE_NAMELOCK : (BanType_t)BANTYPE_BANISHMENT)  << " AND `active` = 1";
-	if((result = db->storeQuery(query.str())))
+	if ((result = db->storeQuery(query.str())))
 	{
 		value = result->getDataInt("reason");
 		db->freeResult(result);
@@ -297,7 +297,7 @@ uint32_t IOBan::getAction(uint32_t id, bool player /* = false */)
 	uint32_t value = 0;
 	DBQuery query;
 	query << "SELECT `action` FROM `bans` WHERE `value` = " << id << " AND `type` = " << (player ? (BanType_t)BANTYPE_NAMELOCK : (BanType_t)BANTYPE_BANISHMENT)  << " AND `active` = 1";
-	if((result = db->storeQuery(query.str())))
+	if ((result = db->storeQuery(query.str())))
 	{
 		value = result->getDataInt("action");
 		db->freeResult(result);
@@ -315,7 +315,7 @@ uint64_t IOBan::getExpireTime(uint32_t id, bool player /* = false */)
 	uint64_t value = 0;
 	DBQuery query;
 	query << "SELECT `expires` FROM `bans` WHERE `value` = " << id << " AND `type` = " << (player ? (BanType_t)BANTYPE_NAMELOCK : (BanType_t)BANTYPE_BANISHMENT)  << " AND `active` = 1";
-	if((result = db->storeQuery(query.str())))
+	if ((result = db->storeQuery(query.str())))
 	{
 		value = result->getDataInt("expires");
 		db->freeResult(result);
@@ -333,7 +333,7 @@ uint64_t IOBan::getAddedTime(uint32_t id, bool player /* = false */)
 	uint64_t value = 0;
 	DBQuery query;
 	query << "SELECT `added` FROM `bans` WHERE `value` = " << id << " AND `type` = " << (player ? (BanType_t)BANTYPE_NAMELOCK : (BanType_t)BANTYPE_BANISHMENT)  << " AND `active` = 1";
-	if((result = db->storeQuery(query.str())))
+	if ((result = db->storeQuery(query.str())))
 	{
 		value = result->getDataInt("added");
 		db->freeResult(result);
@@ -351,7 +351,7 @@ std::string IOBan::getComment(uint32_t id, bool player /* = false */)
 	std::string value = "";
 	DBQuery query;
 	query << "SELECT `comment` FROM `bans` WHERE `value` = " << id << " AND `type` = " << (player ? (BanType_t)BANTYPE_NAMELOCK : (BanType_t)BANTYPE_BANISHMENT)  << " AND `active` = 1";
-	if((result = db->storeQuery(query.str())))
+	if ((result = db->storeQuery(query.str())))
 	{
 		value = result->getDataString("comment");
 		db->freeResult(result);
@@ -369,7 +369,7 @@ uint32_t IOBan::getAdminGUID(uint32_t id, bool player /* = false */)
 	uint32_t value = 0;
 	DBQuery query;
 	query << "SELECT `admin_id` FROM `bans` WHERE `value` = " << id << " AND `type` = " << (player ? (BanType_t)BANTYPE_NAMELOCK : (BanType_t)BANTYPE_BANISHMENT)  << " AND `active` = 1";
-	if((result = db->storeQuery(query.str())))
+	if ((result = db->storeQuery(query.str())))
 	{
 		value = result->getDataInt("admin_id");
 		db->freeResult(result);
@@ -387,7 +387,7 @@ uint32_t IOBan::getNotationsCount(uint32_t account)
 	uint32_t count = 0;
 	DBQuery query;
 	query << "SELECT COUNT(`id`) AS `count` FROM `bans` WHERE `value` = " << account << " AND `type` = " << (BanType_t)BANTYPE_NOTATION << " AND `active` = 1";
-	if((result = db->storeQuery(query.str())))
+	if ((result = db->storeQuery(query.str())))
 	{
 		count = result->getDataInt("count");
 		db->freeResult(result);
@@ -404,24 +404,24 @@ bool IOBan::getBanishmentData(uint32_t account, Ban& ban)
 
 	uint32_t currentTime = time(NULL);
 	query <<
-		"SELECT "
-			"`id`, "
-			"`type`, "
-			"`param`, "
-			"`expires`, "
-			"`added`, "
-			"`admin_id`, "
-			"`comment`, "
-			"`reason`, "
-			"`action` "
-		"FROM "
-			"`bans` "
-		"WHERE "
-			"`value` = " << account << " AND "
-			"`active` = 1 AND " <<
-			"(`expires` > " << currentTime << " OR `expires` <= 0)";
+	"SELECT "
+	"`id`, "
+	"`type`, "
+	"`param`, "
+	"`expires`, "
+	"`added`, "
+	"`admin_id`, "
+	"`comment`, "
+	"`reason`, "
+	"`action` "
+	"FROM "
+	"`bans` "
+	"WHERE "
+	"`value` = " << account << " AND "
+	"`active` = 1 AND " <<
+	"(`expires` > " << currentTime << " OR `expires` <= 0)";
 
-	if((result = db->storeQuery(query.str())))
+	if ((result = db->storeQuery(query.str())))
 	{
 		ban.value = account;
 		ban.id = result->getDataInt("id");
@@ -449,28 +449,29 @@ std::vector<Ban> IOBan::bansManager(BanType_t type) const
 
 	uint32_t currentTime = time(NULL);
 	query <<
-		"SELECT "
-			"`id`, "
-			"`value`, "
-			"`param`, "
-			"`expires`, "
-			"`added`, "
-			"`admin_id`, "
-			"`comment`, "
-			"`reason`, "
-			"`action` "
-		"FROM "
-			"`bans` "
-		"WHERE "
-			"`type` = " << type << " AND "
-			"`active` = 1 AND " <<
-			"(`expires` > " << currentTime << " OR `expires` <= 0)";
+	"SELECT "
+	"`id`, "
+	"`value`, "
+	"`param`, "
+	"`expires`, "
+	"`added`, "
+	"`admin_id`, "
+	"`comment`, "
+	"`reason`, "
+	"`action` "
+	"FROM "
+	"`bans` "
+	"WHERE "
+	"`type` = " << type << " AND "
+	"`active` = 1 AND " <<
+	"(`expires` > " << currentTime << " OR `expires` <= 0)";
 
 	std::vector<Ban> vec;
-	if((result = db->storeQuery(query.str())))
+	if ((result = db->storeQuery(query.str())))
 	{
 		Ban tmpBan;
-		do {
+		do
+		{
 			tmpBan.type = type;
 			tmpBan.id = result->getDataInt("id");
 			tmpBan.value = result->getDataString("value");
@@ -483,7 +484,7 @@ std::vector<Ban> IOBan::bansManager(BanType_t type) const
 			tmpBan.action = result->getDataInt("action");
 			vec.push_back(tmpBan);
 		}
-		while(result->next());
+		while (result->next());
 
 		db->freeResult(result);
 	}

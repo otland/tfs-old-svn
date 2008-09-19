@@ -45,7 +45,10 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 	public:
 		~OutputMessage() {}
 
-		char* getOutputBuffer() { return (char*)&m_MsgBuf[m_outputBufferStart];}
+		char* getOutputBuffer()
+		{
+			return (char*)&m_MsgBuf[m_outputBufferStart];
+		}
 
 		void writeMessageLength()
 		{
@@ -70,13 +73,19 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 			STATE_WAITING
 		};
 
-		Protocol* getProtocol() { return m_protocol;}
-		Connection* getConnection() { return m_connection;}
+		Protocol* getProtocol()
+		{
+			return m_protocol;
+		}
+		Connection* getConnection()
+		{
+			return m_connection;
+		}
 
 #ifdef __TRACK_NETWORK__
 		void Track(std::string file, int64_t line, std::string func)
 		{
-			if(last_uses.size() >= 25)
+			if (last_uses.size() >= 25)
 				last_uses.pop_front();
 
 			std::ostringstream os;
@@ -86,7 +95,7 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		void PrintTrace()
 		{
 			uint32_t n = 1;
-			for(std::list<std::string>::const_reverse_iterator iter = last_uses.rbegin(); iter != last_uses.rend(); ++iter, ++n)
+			for (std::list<std::string>::const_reverse_iterator iter = last_uses.rbegin(); iter != last_uses.rend(); ++iter, ++n)
 				std::cout << "\t" << n << ".\t" << *iter << std::endl;
 		}
 #endif
@@ -108,14 +117,32 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 
 		friend class OutputMessagePool;
 
-		void setProtocol(Protocol* protocol){ m_protocol = protocol;}
-		void setConnection(Connection* connection){ m_connection = connection;}
+		void setProtocol(Protocol* protocol)
+		{
+			m_protocol = protocol;
+		}
+		void setConnection(Connection* connection)
+		{
+			m_connection = connection;
+		}
 
-		void setState(OutputMessageState state) { m_state = state;}
-		OutputMessageState getState() const { return m_state;}
+		void setState(OutputMessageState state)
+		{
+			m_state = state;
+		}
+		OutputMessageState getState() const
+		{
+			return m_state;
+		}
 
-		void setFrame(uint64_t frame) { m_frame = frame;}
-		uint64_t getFrame() const { return m_frame;}
+		void setFrame(uint64_t frame)
+		{
+			m_frame = frame;
+		}
+		uint64_t getFrame() const
+		{
+			return m_frame;
+		}
 
 		Protocol* m_protocol;
 		Connection* m_connection;
@@ -147,9 +174,18 @@ class OutputMessagePool
 
 		void releaseMessage(OutputMessage* msg, bool sent = false);
 
-		size_t getTotalMessageCount() const {return m_allOutputMessages.size();}
-		size_t getAvailableMessageCount() const {return m_outputMessages.size();}
-		size_t getAutoMessageCount() const {return m_autoSendOutputMessages.size();}
+		size_t getTotalMessageCount() const
+		{
+			return m_allOutputMessages.size();
+		}
+		size_t getAvailableMessageCount() const
+		{
+			return m_outputMessages.size();
+		}
+		size_t getAutoMessageCount() const
+		{
+			return m_autoSendOutputMessages.size();
+		}
 
 	protected:
 		void configureOutputMessage(OutputMessage* msg, Protocol* protocol, bool autosend);
@@ -168,9 +204,9 @@ class OutputMessagePool
 };
 
 #ifdef __TRACK_NETWORK__
-	#define TRACK_MESSAGE(omsg) if(dynamic_cast<OutputMessage*>(omsg)) dynamic_cast<OutputMessage*>(omsg)->Track(__FILE__, __LINE__, __FUNCTION__)
+#define TRACK_MESSAGE(omsg) if(dynamic_cast<OutputMessage*>(omsg)) dynamic_cast<OutputMessage*>(omsg)->Track(__FILE__, __LINE__, __FUNCTION__)
 #else
-	#define TRACK_MESSAGE(omsg)
+#define TRACK_MESSAGE(omsg)
 #endif
 
 #endif

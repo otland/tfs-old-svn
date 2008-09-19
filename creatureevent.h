@@ -73,9 +73,18 @@ class CreatureEvent : public Event
 
 		virtual bool configureEvent(xmlNodePtr p);
 
-		CreatureEventType_t getEventType() const {return m_type;}
-		const std::string& getName() const {return m_eventName;}
-		bool isLoaded() const {return m_isLoaded;}
+		CreatureEventType_t getEventType() const
+		{
+			return m_type;
+		}
+		const std::string& getName() const
+		{
+			return m_eventName;
+		}
+		bool isLoaded() const
+		{
+			return m_isLoaded;
+		}
 
 		void clearEvent();
 		void copyEvent(CreatureEvent* creatureEvent);

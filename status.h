@@ -49,9 +49,9 @@ class ProtocolStatus : public Protocol
 	protected:
 		static std::map<uint32_t, int64_t> ipConnectMap;
 
-		#ifdef __DEBUG_NET_DETAIL__
+#ifdef __DEBUG_NET_DETAIL__
 		virtual void deleteProtocolTask();
-		#endif
+#endif
 };
 
 class Status
@@ -71,13 +71,31 @@ class Status
 		std::string getStatusString() const;
 		void getInfo(uint32_t requestedInfo, OutputMessage* output, NetworkMessage& msg) const;
 
-		uint32_t getPlayersOnline() const {return m_playersOnline;}
-		uint32_t getMaxPlayersOnline() const {return m_playersMax;}
-		void setMaxPlayersOnline(uint32_t max) {m_playersMax = max;}
+		uint32_t getPlayersOnline() const
+		{
+			return m_playersOnline;
+		}
+		uint32_t getMaxPlayersOnline() const
+		{
+			return m_playersMax;
+		}
+		void setMaxPlayersOnline(uint32_t max)
+		{
+			m_playersMax = max;
+		}
 
-		const std::string& getMapName() const {return m_mapName;}
-		void setMapName(std::string mapName) {m_mapName = mapName;}
-		void setMapAuthor(std::string mapAuthor) {m_mapAuthor = mapAuthor;}
+		const std::string& getMapName() const
+		{
+			return m_mapName;
+		}
+		void setMapName(std::string mapName)
+		{
+			m_mapName = mapName;
+		}
+		void setMapAuthor(std::string mapAuthor)
+		{
+			m_mapAuthor = mapAuthor;
+		}
 
 		uint64_t getUptime() const;
 

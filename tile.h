@@ -83,22 +83,28 @@ class Tile : public Cylinder
 
 		~Tile()
 		{
-			#ifdef _DEBUG
+#ifdef _DEBUG
 			delete ground;
 
 			ItemVector::iterator it;
-			for(it = topItems.begin(); it != topItems.end(); ++it)
+			for (it = topItems.begin(); it != topItems.end(); ++it)
 				delete *it;
 			topItems.clear();
 
-			for(it = downItems.begin(); it != downItems.end(); ++it)
+			for (it = downItems.begin(); it != downItems.end(); ++it)
 				delete *it;
 			downItems.clear();
-			#endif // _DEBUG
+#endif // _DEBUG
 		}
 
-		virtual int32_t getThrowRange() const {return 0;}
-		virtual bool isPushable() const {return false;}
+		virtual int32_t getThrowRange() const
+		{
+			return 0;
+		}
+		virtual bool isPushable() const
+		{
+			return false;
+		}
 
 		Item* ground;
 		ItemVector topItems;
@@ -118,21 +124,42 @@ class Tile : public Cylinder
 		bool isMoveableBlocking() const;
 		Thing* getTopThing();
 
-		uint32_t getThingCount() const {return thingCount;}
+		uint32_t getThingCount() const
+		{
+			return thingCount;
+		}
 
 		bool hasProperty(enum ITEMPROPERTY prop) const;
 		bool hasProperty(Item* exclude, enum ITEMPROPERTY prop) const;
 
-		bool hasFlag(tileflags_t flag) const {return ((m_flags & (uint32_t)flag) == (uint32_t)flag);}
-		void setFlag(tileflags_t flag) {m_flags |= (uint32_t)flag;}
-		void resetFlag(tileflags_t flag) {m_flags &= ~(uint32_t)flag;}
+		bool hasFlag(tileflags_t flag) const
+		{
+			return ((m_flags & (uint32_t)flag) == (uint32_t)flag);
+		}
+		void setFlag(tileflags_t flag)
+		{
+			m_flags |= (uint32_t)flag;
+		}
+		void resetFlag(tileflags_t flag)
+		{
+			m_flags &= ~(uint32_t)flag;
+		}
 
-		bool positionChange() const {return hasFlag(TILESTATE_POSITIONCHANGE);}
-		bool floorChange() const {return hasFlag(TILESTATE_FLOORCHANGE);}
-		bool floorChangeDown() const {return hasFlag(TILESTATE_FLOORCHANGE_DOWN);}
+		bool positionChange() const
+		{
+			return hasFlag(TILESTATE_POSITIONCHANGE);
+		}
+		bool floorChange() const
+		{
+			return hasFlag(TILESTATE_FLOORCHANGE);
+		}
+		bool floorChangeDown() const
+		{
+			return hasFlag(TILESTATE_FLOORCHANGE_DOWN);
+		}
 		bool floorChange(Direction direction) const
 		{
-			switch(direction)
+			switch (direction)
 			{
 				case NORTH:
 					return hasFlag(TILESTATE_FLOORCHANGE_NORTH);
@@ -160,12 +187,12 @@ class Tile : public Cylinder
 
 		//cylinder implementations
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
-			uint32_t flags) const;
+																	 uint32_t flags) const;
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
-			uint32_t& maxQueryCount, uint32_t flags) const;
+																				uint32_t& maxQueryCount, uint32_t flags) const;
 		virtual ReturnValue __queryRemove(const Thing* thing, uint32_t count) const;
 		virtual Cylinder* __queryDestination(int32_t& index, const Thing* thing, Item** destItem,
-			uint32_t& flags);
+																				 uint32_t& flags);
 
 		virtual void __addThing(Thing* thing);
 		virtual void __addThing(int32_t index, Thing* thing);
@@ -187,15 +214,24 @@ class Tile : public Cylinder
 		virtual void __internalAddThing(Thing* thing);
 		virtual void __internalAddThing(uint32_t index, Thing* thing);
 
-		virtual const Position& getPosition() const {return tilePos;}
-		const Position& getTilePosition() const {return tilePos;}
+		virtual const Position& getPosition() const
+		{
+			return tilePos;
+		}
+		const Position& getTilePosition() const
+		{
+			return tilePos;
+		}
 
-		virtual bool isRemoved() const {return false;}
+		virtual bool isRemoved() const
+		{
+			return false;
+		}
 
 	private:
 		void onAddTileItem(Item* item);
 		void onUpdateTileItem(uint32_t index, Item* oldItem,
-			const ItemType& oldType, Item* newItem, const ItemType& newType);
+													const ItemType& oldType, Item* newItem, const ItemType& newType);
 		void onRemoveTileItem(uint32_t index, Item* item);
 		void onUpdateTile();
 

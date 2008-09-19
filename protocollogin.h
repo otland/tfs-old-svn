@@ -52,9 +52,9 @@ class ProtocolLogin : public Protocol
 
 		bool parseFirstPacket(NetworkMessage& msg);
 
-		#ifdef __DEBUG_NET_DETAIL__
+#ifdef __DEBUG_NET_DETAIL__
 		virtual void deleteProtocolTask();
-		#endif
+#endif
 };
 
 #endif

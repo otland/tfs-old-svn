@@ -40,7 +40,7 @@ int32_t NetworkMessage::decodeHeader()
 std::string NetworkMessage::GetString()
 {
 	uint16_t stringlen = GetU16();
-	if(stringlen >= (16384 - m_ReadPos))
+	if (stringlen >= (16384 - m_ReadPos))
 		return std::string();
 
 	char* v = (char*)(m_MsgBuf + m_ReadPos);
@@ -50,8 +50,8 @@ std::string NetworkMessage::GetString()
 
 std::string NetworkMessage::GetRaw()
 {
-	uint16_t stringlen = m_MsgSize- m_ReadPos;
-	if(stringlen >= (16384 - m_ReadPos))
+	uint16_t stringlen = m_MsgSize - m_ReadPos;
+	if (stringlen >= (16384 - m_ReadPos))
 		return std::string();
 
 	char* v = (char*)(m_MsgBuf + m_ReadPos);
@@ -72,7 +72,7 @@ Position NetworkMessage::GetPosition()
 void NetworkMessage::AddString(const char* value)
 {
 	uint32_t stringlen = (uint32_t)strlen(value);
-	if(!canAdd(stringlen+2) || stringlen > 8192)
+	if (!canAdd(stringlen + 2) || stringlen > 8192)
 		return;
 
 	AddU16(stringlen);
@@ -83,7 +83,7 @@ void NetworkMessage::AddString(const char* value)
 
 void NetworkMessage::AddBytes(const char* bytes, uint32_t size)
 {
-	if(!canAdd(size) || size > 8192)
+	if (!canAdd(size) || size > 8192)
 		return;
 
 	memcpy(m_MsgBuf + m_ReadPos, bytes, size);
@@ -93,7 +93,7 @@ void NetworkMessage::AddBytes(const char* bytes, uint32_t size)
 
 void NetworkMessage::AddPaddingBytes(uint32_t n)
 {
-	if(!canAdd(n))
+	if (!canAdd(n))
 		return;
 
 	memset((void*)&m_MsgBuf[m_ReadPos], 0x33, n);
@@ -113,9 +113,9 @@ void NetworkMessage::AddItem(uint16_t id, uint8_t count)
 
 	AddU16(it.clientId);
 
-	if(it.stackable || it.isRune())
+	if (it.stackable || it.isRune())
 		AddByte(count);
-	else if(it.isSplash() || it.isFluidContainer())
+	else if (it.isSplash() || it.isFluidContainer())
 	{
 		uint32_t fluidIndex = count % 8;
 		AddByte(fluidMap[fluidIndex]);
@@ -127,9 +127,9 @@ void NetworkMessage::AddItem(const Item* item)
 	const ItemType &it = Item::items[item->getID()];
 	AddU16(it.clientId);
 
-	if(it.stackable || it.isRune())
+	if (it.stackable || it.isRune())
 		AddByte(item->getSubType());
-	else if(it.isSplash() || it.isFluidContainer())
+	else if (it.isSplash() || it.isFluidContainer())
 	{
 		uint32_t fluidIndex = item->getSubType() % 8;
 		AddByte(fluidMap[fluidIndex]);

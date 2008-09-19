@@ -48,7 +48,10 @@ class DatabaseSQLite : public _Database
 
 		DATABASE_VIRTUAL void freeResult(DBResult *res);
 
-		DATABASE_VIRTUAL std::string getStringComparisonOperator() { return "LIKE"; }
+		DATABASE_VIRTUAL std::string getStringComparisonOperator()
+		{
+			return "LIKE";
+		}
 
 	protected:
 		std::string _parse(const std::string &s);
@@ -59,7 +62,7 @@ class DatabaseSQLite : public _Database
 
 class SQLiteResult : public _DBResult
 {
-	friend class DatabaseSQLite;
+		friend class DatabaseSQLite;
 
 	public:
 		DATABASE_VIRTUAL int32_t getDataInt(const std::string &s);
