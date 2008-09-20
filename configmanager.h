@@ -118,8 +118,6 @@ class ConfigManager
 			FINALBAN_LENGTH,
 			IPBANISHMENT_LENGTH,
 			MAX_PLAYER_SUMMONS,
-			AUTOSAVE_EACH_MINUTES,
-			AUTOCLEAN_EACH_MINUTES,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 

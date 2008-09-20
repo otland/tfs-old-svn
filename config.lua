@@ -106,13 +106,14 @@
 	-- Miscellaneous
 	-- NOTE: defaultPriority works only on Windows
 	kickIdlePlayerAfterMinutes = 15
+	allowChangeOutfit = "yes"
 	maxMessageBuffer = 4
 	displayGamemastersWithOnlineCommand = "no"
 	defaultPriority = "high"
+	saveGlobalStorage = "yes"
 	bankSystem = "yes"
 	displaySkillLevelOnAdvance = "no" --FIXME: Causes crash in some cases
 	spellNameInsteadOfWordsOnCast = "no" --FIXME: Causes crashes
-	saveGlobalStorage = "yes"
 
 	-- Premium account
 	freePremium = "no"
@@ -134,12 +135,6 @@
 	globalSaveHour = 8
 	shutdownAtGlobalSave = "yes"
 	cleanMapAtGlobalSave = "no"
-
-	-- Server events
-	-- NOTE: Put '0' to disable auto*.
-	autoSaveEachMinutes = 15
-	autoCleanEachMinutes = 0
-	saveGlobalStorage = "yes"
 
 	-- Spawns
 	deSpawnRange = 2

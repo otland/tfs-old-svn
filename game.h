@@ -121,8 +121,6 @@ class Game
 		bool reloadHighscores();
 		std::string getHighscoreString(uint16_t skill);
 
-		void autoSave();
-		void autoClean(bool warning = true);
 		void prepareGlobalSave();
 		void globalSave();
 

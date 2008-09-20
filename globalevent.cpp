@@ -92,7 +92,8 @@ void GlobalEvents::onThink(uint32_t interval)
 		}
 	}
 
-	onThink(interval);
+	Scheduler::getScheduler().addEvent(createSchedulerTask(interval,
+		boost::bind(&GlobalEvents::onThink, this, interval)));
 }
 
 GlobalEvent::GlobalEvent(LuaScriptInterface* _interface) :
@@ -150,7 +151,7 @@ int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution)
 		lua_pushnumber(L, interval);
 		lua_pushnumber(L, lastExecution);
 
-		int32_t result = m_scriptInterface->callFunction(3);
+		int32_t result = m_scriptInterface->callFunction(2);
 		m_scriptInterface->releaseScriptEnv();
 
 		return (result == LUA_TRUE);

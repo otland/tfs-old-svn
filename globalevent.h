@@ -28,6 +28,7 @@
 #include "luascript.h"
 #include "baseevents.h"
 #include "const.h"
+#include "scheduler.h"
 
 class GlobalEvent;
 
