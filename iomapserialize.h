@@ -29,8 +29,8 @@
 class IOMapSerialize
 {
 	public:
-		IOMapSerialize() {}
-		~IOMapSerialize() {}
+		IOMapSerialize(){}
+		~IOMapSerialize(){}
 
 		bool loadMap(Map* map);
 		bool saveMap(Map* map);

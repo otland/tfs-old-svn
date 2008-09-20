@@ -24,7 +24,7 @@
 MissionState::MissionState(std::string _description, uint32_t _missionID)
 {
 	description = _description;
-	missionID = _missionID;
+ 	missionID = _missionID;
 }
 
 Mission::Mission(std::string _missionName, uint32_t _storageID, uint32_t _startValue, int32_t _endValue)
@@ -37,7 +37,7 @@ Mission::Mission(std::string _missionName, uint32_t _storageID, uint32_t _startV
 
 Mission::~Mission()
 {
-	for (uint32_t it = 0; it != state.size(); it++)
+	for(uint32_t it = 0; it != state.size(); it++)
 		delete state[it];
 	state.clear();
 }
@@ -46,14 +46,14 @@ std::string Mission::getDescription(Player* player)
 {
 	uint32_t current = endValue;
 	uint32_t value;
-	while (current >= startValue)
+	while(current >= startValue)
 	{
 		player->getStorageValue(storageID, (int32_t&)value);
-		if (value == current)
+		if(value == current)
 		{
 			StateList::const_iterator it2;
 			it2 = state.find(current);
-			if (it2 != state.end())
+			if(it2 != state.end())
 				return it2->second->getMissionDescription();
 		}
 		current--;
@@ -64,10 +64,10 @@ std::string Mission::getDescription(Player* player)
 bool Mission::isStarted(Player* player) const
 {
 	uint32_t value;
-	if (player)
+	if(player)
 	{
 		player->getStorageValue(storageID, (int32_t&)value);
-		if (value >= startValue && value <= endValue)
+		if(value >= startValue && value <= endValue)
 			return true;
 	}
 	return false;
@@ -76,10 +76,10 @@ bool Mission::isStarted(Player* player) const
 bool Mission::isCompleted(Player* player) const
 {
 	uint32_t value;
-	if (player)
+	if(player)
 	{
 		player->getStorageValue(storageID, (int32_t&)value);
-		if (value == endValue)
+		if(value == endValue)
 			return true;
 	}
 	return false;
@@ -87,7 +87,7 @@ bool Mission::isCompleted(Player* player) const
 
 std::string Mission::getName(Player* player)
 {
-	if (isCompleted(player))
+	if(isCompleted(player))
 		return missionName + " (completed)";
 	else
 		return missionName;
@@ -104,7 +104,7 @@ Quest::Quest(std::string _name, uint16_t _id, uint32_t _startStorageID, uint32_t
 Quest::~Quest()
 {
 	MissionsList::iterator it;
-	for (it = missions.begin(); it != missions.end(); it++)
+	for(it = missions.begin(); it != missions.end(); it++)
 		delete (*it);
 	missions.clear();
 }
@@ -113,9 +113,9 @@ uint16_t Quest::getMissionsCount(Player* player)
 {
 	uint16_t count = 0;
 	MissionsList::iterator it;
-	for (it = missions.begin(); it != missions.end(); it++)
+	for(it = missions.begin(); it != missions.end(); it++)
 	{
-		if ((*it)->isStarted(player))
+		if((*it)->isStarted(player))
 			count++;
 	}
 	return count;
@@ -124,9 +124,9 @@ uint16_t Quest::getMissionsCount(Player* player)
 bool Quest::isCompleted(Player* player)
 {
 	MissionsList::iterator it;
-	for (it = missions.begin(); it != missions.end(); it++)
+	for(it = missions.begin(); it != missions.end(); it++)
 	{
-		if (!(*it)->isCompleted(player))
+		if(!(*it)->isCompleted(player))
 			return false;
 	}
 	return true;
@@ -135,10 +135,10 @@ bool Quest::isCompleted(Player* player)
 bool Quest::isStarted(Player* player) const
 {
 	uint32_t value;
-	if (player)
+	if(player)
 	{
 		player->getStorageValue(startStorageID, (int32_t&)value);
-		if (value >= startStorageValue)
+		if(value >= startStorageValue)
 			return true;
 	}
 	return false;
@@ -150,9 +150,9 @@ void Quest::getMissionList(Player* player, NetworkMessage* msg)
 	msg->AddU16(id);
 	msg->AddByte(getMissionsCount(player));
 	MissionsList::iterator it;
-	for (it = missions.begin(); it != missions.end(); it++)
+	for(it = missions.begin(); it != missions.end(); it++)
 	{
-		if ((*it)->isStarted(player))
+		if((*it)->isStarted(player))
 		{
 			msg->AddString((*it)->getName(player));
 			msg->AddString((*it)->getDescription(player));
@@ -168,7 +168,7 @@ Quests::Quests()
 Quests::~Quests()
 {
 	QuestsList::iterator it;
-	for (it = quests.begin(); it != quests.end(); it++)
+	for(it = quests.begin(); it != quests.end(); it++)
 		delete (*it);
 	quests.clear();
 }
@@ -176,7 +176,7 @@ Quests::~Quests()
 bool Quests::reload()
 {
 	QuestsList::iterator it;
-	for (it = quests.begin(); it != quests.end(); it++)
+	for(it = quests.begin(); it != quests.end(); it++)
 		delete (*it);
 	quests.clear();
 
@@ -187,66 +187,66 @@ bool Quests::loadFromXml()
 {
 	std::string filename = "data/XML/quests.xml";
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
-	if (doc)
+	if(doc)
 	{
 		xmlNodePtr root, p;
 		root = xmlDocGetRootElement(doc);
-		if (xmlStrcmp(root->name, (const xmlChar*)"quests") == 0)
+		if(xmlStrcmp(root->name,(const xmlChar*)"quests") == 0)
 		{
 			int32_t intValue;
 			std::string strValue;
 			uint16_t id = 0;
 			p = root->children;
-			while (p)
+			while(p)
 			{
-				if (xmlStrcmp(p->name, (const xmlChar*)"quest") == 0)
+				if(xmlStrcmp(p->name, (const xmlChar*)"quest") == 0)
 				{
 					std::string name;
 					uint32_t startStorageID = 0, startStorageValue = 0;
-					if (readXMLString(p, "name", strValue))
+					if(readXMLString(p, "name", strValue))
 						name = strValue;
 
-					if (readXMLInteger(p, "startstorageid", intValue))
+					if(readXMLInteger(p, "startstorageid", intValue))
 						startStorageID = intValue;
 
-					if (readXMLInteger(p, "startstoragevalue", intValue))
+					if(readXMLInteger(p, "startstoragevalue", intValue))
 						startStorageValue = intValue;
 
 					Quest *quest = new Quest(name, id, startStorageID, startStorageValue);
 					xmlNodePtr tmpNode = p->children;
-					while (tmpNode)
+					while(tmpNode)
 					{
-						if (xmlStrcmp(tmpNode->name, (const xmlChar*)"mission") == 0)
+						if(xmlStrcmp(tmpNode->name, (const xmlChar*)"mission") == 0)
 						{
 							std::string missionName;
 							uint32_t storageID = 0, startValue = 0, endValue = 0;
-							if (readXMLString(tmpNode, "name", strValue))
+							if(readXMLString(tmpNode, "name", strValue))
 								missionName = strValue;
 
-							if (readXMLInteger(tmpNode, "storageid", intValue))
+							if(readXMLInteger(tmpNode, "storageid", intValue))
 								storageID = intValue;
 
-							if (readXMLInteger(tmpNode, "startvalue", intValue))
+							if(readXMLInteger(tmpNode, "startvalue", intValue))
 								startValue = intValue;
 
-							if (readXMLInteger(tmpNode, "endvalue", intValue))
+							if(readXMLInteger(tmpNode, "endvalue", intValue))
 								endValue = intValue;
 
 							xmlNodePtr tmpNode2 = tmpNode->children;
 
 							Mission *mission = new Mission(missionName, storageID, startValue, endValue);
-							while (tmpNode2)
+							while(tmpNode2)
 							{
-								if (xmlStrcmp(tmpNode2->name, (const xmlChar*)"missionstate") == 0)
+								if(xmlStrcmp(tmpNode2->name, (const xmlChar*)"missionstate") == 0)
 								{
 									uint32_t missionId;
-									if (readXMLInteger(tmpNode2, "id", intValue))
+									if(readXMLInteger(tmpNode2, "id", intValue))
 										missionId = intValue;
 									else
 										continue;
 
 									std::string description;
-									if (readXMLString(tmpNode2, "description", strValue))
+									if(readXMLString(tmpNode2, "description", strValue))
 										description = strValue;
 
 									mission->state[missionId] = new MissionState(description, missionId);
@@ -272,9 +272,9 @@ bool Quests::loadFromXml()
 Quest *Quests::getQuestByID(uint16_t id)
 {
 	QuestsList::iterator it;
-	for (it = quests.begin(); it != quests.end(); it++)
+	for(it = quests.begin(); it != quests.end(); it++)
 	{
-		if ((*it)->getID() == id)
+		if((*it)->getID() == id)
 			return (*it);
 	}
 	return NULL;
@@ -284,9 +284,9 @@ uint16_t Quests::getQuestsCount(Player* player)
 {
 	uint16_t count = 0;
 	QuestsList::iterator it;
-	for (it = quests.begin(); it != quests.end(); it++)
+	for(it = quests.begin(); it != quests.end(); it++)
 	{
-		if ((*it)->isStarted(player))
+		if((*it)->isStarted(player))
 			count++;
 	}
 	return count;
@@ -297,9 +297,9 @@ void Quests::getQuestsList(Player* player, NetworkMessage* msg)
 	msg->AddByte(0xF0);
 	msg->AddU16(getQuestsCount(player));
 	QuestsList::iterator it;
-	for (it = quests.begin(); it != quests.end(); it++)
+	for(it = quests.begin(); it != quests.end(); it++)
 	{
-		if ((*it)->isStarted(player))
+		if((*it)->isStarted(player))
 		{
 			msg->AddU16((*it)->getID());
 			msg->AddString((*it)->getName());

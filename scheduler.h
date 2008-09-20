@@ -37,19 +37,10 @@ class SchedulerTask : public Task
 	public:
 		~SchedulerTask() {}
 
-		void setEventId(uint32_t eventid)
-		{
-			m_eventid = eventid;
-		}
-		uint32_t getEventId() const
-		{
-			return m_eventid;
-		}
+		void setEventId(uint32_t eventid) {m_eventid = eventid;}
+		uint32_t getEventId() const {return m_eventid;}
 
-		uint64_t getCycle() const
-		{
-			return m_cycle;
-		}
+		uint64_t getCycle() const {return m_cycle;}
 
 		bool operator<(const SchedulerTask& other) const
 		{
@@ -57,7 +48,7 @@ class SchedulerTask : public Task
 		}
 
 	protected:
-		SchedulerTask(uint32_t delay, boost::function < void (void) > f) : Task(f)
+		SchedulerTask(uint32_t delay, boost::function<void (void)> f) : Task(f)
 		{
 			m_cycle = OTSYS_TIME() + delay;
 			m_eventid = 0;
@@ -66,13 +57,13 @@ class SchedulerTask : public Task
 		uint64_t m_cycle;
 		uint32_t m_eventid;
 
-		friend SchedulerTask* createSchedulerTask(uint32_t, boost::function < void (void) > );
+		friend SchedulerTask* createSchedulerTask(uint32_t, boost::function<void (void)>);
 };
 
-inline SchedulerTask* createSchedulerTask(uint32_t delay, boost::function < void (void) > f)
+inline SchedulerTask* createSchedulerTask(uint32_t delay, boost::function<void (void)> f)
 {
 	assert(delay != 0);
-	if (delay < SCHEDULER_MINTICKS)
+	if(delay < SCHEDULER_MINTICKS)
 		delay = SCHEDULER_MINTICKS;
 	return new SchedulerTask(delay, f);
 }

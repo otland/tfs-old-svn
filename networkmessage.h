@@ -43,22 +43,18 @@ class NetworkMessage
 		{
 			Reset();
 		}
-		virtual ~NetworkMessage() {}
+		virtual ~NetworkMessage(){}
 
 	protected:
 		// resets the internal buffer to an empty message
-		void Reset()
-		{
+		void Reset(){
 			m_MsgSize = 0;
 			m_ReadPos = 4;
 		}
 
 	public:
 		// simply read functions for incoming message
-		uint8_t  GetByte()
-		{
-			return m_MsgBuf[m_ReadPos++];
-		}
+		uint8_t  GetByte(){return m_MsgBuf[m_ReadPos++];}
 		uint16_t GetU16()
 		{
 			uint16_t v = *(uint16_t*)(m_MsgBuf + m_ReadPos);
@@ -80,42 +76,34 @@ class NetworkMessage
 		Position GetPosition();
 
 		// skips count unknown/unused bytes in an incoming message
-		void SkipBytes(int count)
-		{
-			m_ReadPos += count;
-		}
+		void SkipBytes(int count){m_ReadPos += count;}
 
 		// simply write functions for outgoing message
 		void AddByte(uint8_t  value)
 		{
-			if (!canAdd(1))
+			if(!canAdd(1))
 				return;
 			m_MsgBuf[m_ReadPos++] = value;
 			m_MsgSize++;
 		}
 		void AddU16(uint16_t value)
 		{
-			if (!canAdd(2))
+			if(!canAdd(2))
 				return;
 			*(uint16_t*)(m_MsgBuf + m_ReadPos) = value;
-			m_ReadPos += 2;
-			m_MsgSize += 2;
+			m_ReadPos += 2; m_MsgSize += 2;
 		}
 		void AddU32(uint32_t value)
 		{
-			if (!canAdd(4))
+			if(!canAdd(4))
 				return;
 			*(uint32_t*)(m_MsgBuf + m_ReadPos) = value;
-			m_ReadPos += 4;
-			m_MsgSize += 4;
+			m_ReadPos += 4; m_MsgSize += 4;
 		}
 		void AddBytes(const char* bytes, uint32_t size);
 		void AddPaddingBytes(uint32_t n);
 
-		void AddString(const std::string &value)
-		{
-			AddString(value.c_str());
-		}
+		void AddString(const std::string &value){AddString(value.c_str());}
 		void AddString(const char* value);
 
 		// write functions for complex types
@@ -126,30 +114,14 @@ class NetworkMessage
 		void AddItemId(uint16_t itemId);
 		void AddCreature(const Creature *creature, bool known, unsigned int remove);
 
-		int32_t getMessageLength() const
-		{
-			return m_MsgSize;
-		}
-		void setMessageLength(int32_t newSize)
-		{
-			m_MsgSize = newSize;
-		}
-		int32_t getReadPos() const
-		{
-			return m_ReadPos;
-		}
+		int32_t getMessageLength() const { return m_MsgSize; }
+		void setMessageLength(int32_t newSize) { m_MsgSize = newSize; }
+		int32_t getReadPos() const { return m_ReadPos; }
 
 		int32_t decodeHeader();
 
-		char* getBuffer()
-		{
-			return (char*)&m_MsgBuf[0];
-		}
-		char* getBodyBuffer()
-		{
-			m_ReadPos = 2;
-			return (char*)&m_MsgBuf[header_length];
-		}
+		char* getBuffer() { return (char*)&m_MsgBuf[0]; }
+		char* getBodyBuffer() { m_ReadPos = 2; return (char*)&m_MsgBuf[header_length]; }
 
 	protected:
 		inline bool canAdd(int size)

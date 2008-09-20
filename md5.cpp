@@ -245,12 +245,12 @@ void MD5Final (MD5_CTX *mdContext)
 	MD5Update (mdContext, MD5_PADDING, padLen);
 
 	/* Append length in bits and transform */
-	for (i = 0, ii = 0; i < 14; i++, ii += 4)
+	for(i = 0, ii = 0; i < 14; i++, ii += 4)
 		in[i] = (((UINT4)mdContext->in[ii+3]) << 24) | (((UINT4)mdContext->in[ii+2]) << 16) | (((UINT4)mdContext->in[ii+1]) << 8) | ((UINT4)mdContext->in[ii]);
 	MD5_Transform (mdContext->buf, in);
 
 	/* Store buffer in digest */
-	for (i = 0, ii = 0; i < 4; i++, ii += 4)
+	for(i = 0, ii = 0; i < 4; i++, ii += 4)
 	{
 		mdContext->digest[ii]   = (unsigned char)( mdContext->buf[i]        & 0xFF);
 		mdContext->digest[ii+1] = (unsigned char)((mdContext->buf[i] >>  8) & 0xFF);

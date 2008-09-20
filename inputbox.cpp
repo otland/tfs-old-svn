@@ -51,7 +51,7 @@ CInputBox::CInputBox(HWND hWndParent)
 		wcex.lpszMenuName	= NULL;
 		wcex.lpszClassName	= "InputBox";
 		wcex.hIconSm		= NULL;
-		if (RegisterClassEx(&wcex) == 0)
+		if(RegisterClassEx(&wcex) == 0)
 			MessageBoxA(NULL, "Cannot create InputBox!", "Error", MB_OK);
 	}
 	m_hWndParent = hWndParent;
@@ -60,14 +60,14 @@ CInputBox::CInputBox(HWND hWndParent)
 
 CInputBox::~CInputBox()
 {
-	if (Text)
+	if(Text)
 		delete[] Text;
 }
 
 LRESULT CALLBACK CInputBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	LOGFONT lfont;
-	switch (message)
+	switch(message)
 	{
 		case WM_CREATE:
 			memset(&lfont, 0, sizeof(lfont));
@@ -100,12 +100,12 @@ LRESULT CALLBACK CInputBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			PostQuitMessage(0);
 			break;
 		case WM_COMMAND:
-			switch (HIWORD(wParam))
+			switch(HIWORD(wParam))
 			{
 				case BN_CLICKED:
-					if ((HWND)lParam == m_hWndOK)
+					if((HWND)lParam == m_hWndOK)
 						PostMessage(m_hWndInputBox, WM_KEYDOWN, VK_RETURN, 0);
-					if ((HWND)lParam == m_hWndCancel)
+					if((HWND)lParam == m_hWndCancel)
 						PostMessage(m_hWndInputBox, WM_KEYDOWN, VK_ESCAPE, 0);
 					break;
 			}
@@ -121,7 +121,7 @@ BOOL CInputBox::DoModal(LPCTSTR szCaption, LPCTSTR szPrompt)
 	RECT r;
 	GetWindowRect(GetDesktopWindow(), &r);
 	m_hWndInputBox = CreateWindowEx(WS_EX_TOOLWINDOW, "InputBox", szCaption, WS_POPUPWINDOW | WS_CAPTION | WS_TABSTOP, (r.right - INPUTBOX_WIDTH) / 2, (r.bottom - INPUTBOX_HEIGHT) / 2, INPUTBOX_WIDTH, INPUTBOX_HEIGHT, m_hWndParent, NULL, m_hInst, NULL);
-	if (m_hWndInputBox == NULL)
+	if(m_hWndInputBox == NULL)
 		return FALSE;
 	SetWindowText(m_hWndPrompt, szPrompt);
 	SetForegroundWindow(m_hWndInputBox);
@@ -131,20 +131,20 @@ BOOL CInputBox::DoModal(LPCTSTR szCaption, LPCTSTR szPrompt)
 	BOOL ret = 0;
 	MSG msg;
 	HWND hWndFocused;
-	while (GetMessage(&msg, NULL, 0, 0))
+	while(GetMessage(&msg, NULL, 0, 0))
 	{
-		if (msg.message == WM_KEYDOWN)
+		if(msg.message == WM_KEYDOWN)
 		{
-			if (msg.wParam == VK_ESCAPE)
+			if(msg.wParam == VK_ESCAPE)
 			{
 				SendMessage(m_hWndInputBox, WM_DESTROY, 0, 0);
 				ret = 0;
 			}
-			if (msg.wParam == VK_RETURN)
+			if(msg.wParam == VK_RETURN)
 			{
 				int nCount = GetWindowTextLength(m_hWndEdit);
 				nCount++;
-				if (Text)
+				if(Text)
 				{
 					delete[] Text;
 					Text = NULL;
@@ -154,14 +154,14 @@ BOOL CInputBox::DoModal(LPCTSTR szCaption, LPCTSTR szPrompt)
 				SendMessage(m_hWndInputBox, WM_DESTROY, 0, 0);
 				ret = 1;
 			}
-			if (msg.wParam == VK_TAB)
+			if(msg.wParam == VK_TAB)
 			{
 				hWndFocused = GetFocus();
-				if (hWndFocused == m_hWndEdit)
+				if(hWndFocused == m_hWndEdit)
 					SetFocus(m_hWndOK);
-				if (hWndFocused == m_hWndOK)
+				if(hWndFocused == m_hWndOK)
 					SetFocus(m_hWndCancel);
-				if (hWndFocused == m_hWndCancel)
+				if(hWndFocused == m_hWndCancel)
 					SetFocus(m_hWndEdit);
 			}
 		}

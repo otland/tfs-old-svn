@@ -63,7 +63,7 @@ class AStarNodes
 {
 	public:
 		AStarNodes();
-		~AStarNodes() {}
+		~AStarNodes(){}
 
 		AStarNode* createOpenNode();
 		AStarNode* getBestNode();
@@ -75,7 +75,7 @@ class AStarNodes
 		AStarNode* getNodeInList(int32_t x, int32_t y);
 
 		int32_t getMapWalkCost(const Creature* creature, AStarNode* node,
-													 const Tile* neighbourTile, const Position& neighbourPos);
+			const Tile* neighbourTile, const Position& neighbourPos);
 		static int32_t getTileWalkCost(const Creature* creature, const Tile* tile);
 		int getEstimatedDistance(int32_t x, int32_t y, int32_t xGoal, int32_t yGoal);
 
@@ -88,10 +88,7 @@ class AStarNodes
 template<class T> class lessPointer : public std::binary_function<T*, T*, bool>
 {
 	public:
-		bool operator()(T*& t1, T*& t2)
-		{
-			return *t1 < *t2;
-		}
+		bool operator()(T*& t1, T*& t2) { return *t1 < *t2; }
 };
 
 typedef std::list<Creature*> SpectatorVec;
@@ -117,10 +114,7 @@ class QTreeNode
 		QTreeNode();
 		virtual ~QTreeNode();
 
-		bool isLeaf()
-		{
-			return m_isLeaf;
-		}
+		bool isLeaf(){return m_isLeaf;}
 		QTreeLeafNode* getLeaf(uint32_t x, uint32_t y);
 		static QTreeLeafNode* getLeafStatic(QTreeNode* root, uint32_t x, uint32_t y);
 		QTreeLeafNode* createLeaf(uint32_t x, uint32_t y, uint32_t level);
@@ -140,19 +134,10 @@ class QTreeLeafNode : public QTreeNode
 		virtual ~QTreeLeafNode();
 
 		Floor* createFloor(uint32_t z);
-		Floor* getFloor(uint32_t z)
-		{
-			return m_array[z];
-		}
+		Floor* getFloor(uint32_t z){return m_array[z];}
 
-		QTreeLeafNode* stepSouth()
-		{
-			return m_leafS;
-		}
-		QTreeLeafNode* stepEast()
-		{
-			return m_leafE;
-		}
+		QTreeLeafNode* stepSouth(){return m_leafS;}
+		QTreeLeafNode* stepEast(){return m_leafE;}
 
 		void addCreature(Creature* c);
 		void removeCreature(Creature* c);
@@ -206,10 +191,7 @@ class Map
 
 		uint32_t clean();
 
-		QTreeLeafNode* getLeaf(uint16_t x, uint16_t y)
-		{
-			return root.getLeaf(x, y);
-		}
+		QTreeLeafNode* getLeaf(uint16_t x, uint16_t y){ return root.getLeaf(x, y);}
 
 		/**
 		* Set a single tile.
@@ -245,7 +227,7 @@ class Map
 		*	\returns The result if you can throw there or not
 		*/
 		bool canThrowObjectTo(const Position& fromPos, const Position& toPos, bool checkLineOfSight = true,
-													int32_t rangex = Map::maxClientViewportX, int32_t rangey = Map::maxClientViewportY);
+			int32_t rangex = Map::maxClientViewportX, int32_t rangey = Map::maxClientViewportY);
 
 		/**
 		* Checks if path is clear from fromPos to toPos
@@ -268,10 +250,10 @@ class Map
 		* \returns returns true if a path was found
 		*/
 		bool getPathTo(const Creature* creature, const Position& destPos,
-									 std::list<Direction>& listDir, int32_t maxDist = -1);
+			std::list<Direction>& listDir, int32_t maxDist = -1);
 
 		bool getPathMatching(const Creature* creature, std::list<Direction>& dirList,
-												 const FrozenPathingConditionCall& pathCondition, const FindPathParams& fpp);
+			const FrozenPathingConditionCall& pathCondition, const FindPathParams& fpp);
 
 	protected:
 		uint32_t mapWidth, mapHeight;
@@ -281,15 +263,15 @@ class Map
 
 		// Actually scans the map for spectators
 		void getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, bool checkforduplicate,
-															 int32_t minRangeX, int32_t maxRangeX,
-															 int32_t minRangeY, int32_t maxRangeY,
-															 int32_t minRangeZ, int32_t maxRangeZ);
+			int32_t minRangeX, int32_t maxRangeX,
+			int32_t minRangeY, int32_t maxRangeY,
+			int32_t minRangeZ, int32_t maxRangeZ);
 
 		// Use this when a custom spectator vector is needed, this support many
 		// more parameters than the heavily cached version below.
 		void getSpectators(SpectatorVec& list, const Position& centerPos, bool checkforduplicate = false, bool multifloor = false,
-											 int32_t minRangeX = 0, int32_t maxRangeX = 0,
-											 int32_t minRangeY = 0, int32_t maxRangeY = 0);
+			int32_t minRangeX = 0, int32_t maxRangeX = 0,
+			int32_t minRangeY = 0, int32_t maxRangeY = 0);
 		// The returned SpectatorVec is a temporary and should not be kept around
 		// Take special heed in that the vector will be destroyed if any function
 		// that calls clearSpectatorCache is called.

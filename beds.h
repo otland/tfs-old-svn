@@ -37,58 +37,25 @@ class BedItem : public Item
 		BedItem(uint16_t id);
 		virtual ~BedItem() {};
 
-		virtual BedItem* getBed()
-		{
-			return this;
-		}
-		virtual const BedItem* getBed() const
-		{
-			return this;
-		}
+		virtual BedItem* getBed() {return this;}
+		virtual const BedItem* getBed() const {return this;}
 
-		virtual bool unserialize(xmlNodePtr p)
-		{
-			return true;
-		}
-		virtual xmlNodePtr serialize()
-		{
-			return xmlNewNode(NULL, (const xmlChar*)"item");
-		}
+		virtual bool unserialize(xmlNodePtr p) {return true;}
+		virtual xmlNodePtr serialize(){ return xmlNewNode(NULL,(const xmlChar*)"item");}
 
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool serializeAttr(PropWriteStream& propWriteStream);
 
-		virtual bool canRemove() const
-		{
-			return (house == NULL);
-		}
+		virtual bool canRemove() const {return (house == NULL);}
 
-		uint32_t getSleeper() const
-		{
-			return sleeperGUID;
-		}
-		void setSleeper(uint32_t guid)
-		{
-			sleeperGUID = guid;
-		}
+		uint32_t getSleeper() const {return sleeperGUID;}
+		void setSleeper(uint32_t guid) {sleeperGUID = guid;}
 
-		uint64_t getSleepStart() const
-		{
-			return sleepStart;
-		}
-		void setSleepStart(uint64_t now)
-		{
-			sleepStart = now;
-		}
+		uint64_t getSleepStart() const {return sleepStart;}
+		void setSleepStart(uint64_t now) {sleepStart = now;}
 
-		House* getHouse() const
-		{
-			return house;
-		}
-		void setHouse(House* h)
-		{
-			house = h;
-		}
+		House* getHouse() const {return house;}
+		void setHouse(House* h) {house = h;}
 
 		bool canUse(Player* player);
 
@@ -123,10 +90,7 @@ class Beds
 		void setBedSleeper(BedItem* bed, uint32_t guid);
 
 	protected:
-		Beds()
-		{
-			BedSleepersMap.clear();
-		}
+		Beds() {BedSleepersMap.clear();}
 
 		std::map<uint32_t, BedItem*> BedSleepersMap;
 };

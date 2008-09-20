@@ -38,14 +38,8 @@ class MissionState
 {
 	public:
 		MissionState(std::string _description, uint32_t _missionID);
-		uint32_t getMissionID()
-		{
-			return missionID;
-		}
-		std::string getMissionDescription()
-		{
-			return description;
-		}
+		uint32_t getMissionID() { return missionID; }
+		std::string getMissionDescription() { return description; }
 
 	private:
 		std::string description;
@@ -77,14 +71,8 @@ class Quest
 		bool isCompleted(Player* player);
 		bool isStarted(Player* player) const;
 		void getMissionList(Player* player, NetworkMessage* msg);
-		uint16_t getID()
-		{
-			return id;
-		}
-		std::string getName()
-		{
-			return name;
-		}
+		uint16_t getID() {return id;}
+		std::string getName() {return name;}
 		uint16_t getMissionsCount(Player* player);
 		MissionsList missions;
 

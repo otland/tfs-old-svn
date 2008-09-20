@@ -51,7 +51,7 @@ struct Ban
 class IOBan
 {
 	public:
-		virtual ~IOBan() {}
+		virtual ~IOBan(){}
 
 		static IOBan* getInstance()
 		{

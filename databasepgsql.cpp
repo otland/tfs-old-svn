@@ -37,7 +37,7 @@ DatabasePgSQL::DatabasePgSQL()
 	m_handle = PQconnectdb(dns.str().c_str());
 	m_connected = PQstatus(m_handle) == CONNECTION_OK;
 
-	if (!m_connected)
+	if(!m_connected)
 		std::cout << "Failed to connected to PostgreSQL database: " << PQerrorMessage(m_handle) << std::endl;
 }
 
@@ -48,7 +48,7 @@ DatabasePgSQL::~DatabasePgSQL()
 
 bool DatabasePgSQL::getParam(DBParam_t param)
 {
-	switch (param)
+	switch(param)
 	{
 		case DBPARAM_MULTIINSERT:
 			return true;
@@ -76,18 +76,18 @@ bool DatabasePgSQL::commit()
 
 bool DatabasePgSQL::executeQuery(const std::string& query)
 {
-	if (!m_connected)
+	if(!m_connected)
 		return false;
 
-#ifdef __SQL_QUERY_DEBUG__
+	#ifdef __SQL_QUERY_DEBUG__
 	std::cout << "PGSQL QUERY: " << query << std::endl;
-#endif
+	#endif
 
 	// executes query
 	PGresult* res = PQexec(m_handle, _parse(query).c_str());
 	ExecStatusType stat = PQresultStatus(res);
 
-	if (stat != PGRES_COMMAND_OK && stat != PGRES_TUPLES_OK)
+	if(stat != PGRES_COMMAND_OK && stat != PGRES_TUPLES_OK)
 	{
 		std::cout << "PQexec(): " << query << ": " << PQresultErrorMessage(res) << std::endl;
 		PQclear(res);
@@ -101,18 +101,18 @@ bool DatabasePgSQL::executeQuery(const std::string& query)
 
 DBResult* DatabasePgSQL::storeQuery(const std::string& query)
 {
-	if (!m_connected)
+	if(!m_connected)
 		return NULL;
 
-#ifdef __SQL_QUERY_DEBUG__
+	#ifdef __SQL_QUERY_DEBUG__
 	std::cout << "PGSQL QUERY: " << query << std::endl;
-#endif
+	#endif
 
 	// executes query
 	PGresult* res = PQexec(m_handle, _parse(query).c_str());
 	ExecStatusType stat = PQresultStatus(res);
 
-	if (stat != PGRES_COMMAND_OK && stat != PGRES_TUPLES_OK)
+	if(stat != PGRES_COMMAND_OK && stat != PGRES_TUPLES_OK)
 	{
 		std::cout << "PQexec(): " << query << ": " << PQresultErrorMessage(res) << std::endl;
 		PQclear(res);
@@ -127,7 +127,7 @@ DBResult* DatabasePgSQL::storeQuery(const std::string& query)
 std::string DatabasePgSQL::escapeString(const std::string& s)
 {
 	// remember to quote even empty string!
-	if (!s.size())
+	if(!s.size())
 		return std::string("''");
 
 	// the worst case is 2n + 1
@@ -146,7 +146,7 @@ std::string DatabasePgSQL::escapeString(const std::string& s)
 std::string DatabasePgSQL::escapeBlob(const char *s, uint32_t length)
 {
 	// remember to quote even empty stream!
-	if (!s)
+	if(!s)
 		return std::string("''");
 
 	// quotes escaped string and frees temporary buffer
@@ -165,19 +165,19 @@ std::string DatabasePgSQL::_parse(const std::string& s)
 
 	bool inString = false;
 	uint8_t ch;
-	for (uint32_t a = 0; a < s.length(); a++)
+	for(uint32_t a = 0; a < s.length(); a++)
 	{
 		ch = s[a];
 
-		if (ch == '\'')
+		if(ch == '\'')
 		{
-			if (inString && s[a + 1] != '\'')
+			if(inString && s[a + 1] != '\'')
 				inString = false;
 			else
 				inString = true;
 		}
 
-		if (ch == '`' && !inString)
+		if(ch == '`' && !inString)
 			ch = '"';
 
 		query += ch;
@@ -211,7 +211,7 @@ std::string PgSQLResult::getDataString(const std::string& s)
 const char* PgSQLResult::getDataStream(const std::string& s, uint64_t& size)
 {
 	std::string buf = PQgetvalue(m_handle, m_cursor, PQfnumber(m_handle, s.c_str()));
-	unsigned char* temp = PQunescapeBytea( (const unsigned char*)buf.c_str(), (size_t*) & size);
+	unsigned char* temp = PQunescapeBytea( (const unsigned char*)buf.c_str(), (size_t*)&size);
 	char* value = new char[buf.size()];
 	strcpy(value, (char*)temp);
 	PQfreemem(temp);
@@ -220,7 +220,7 @@ const char* PgSQLResult::getDataStream(const std::string& s, uint64_t& size)
 
 bool PgSQLResult::next()
 {
-	if (m_cursor >= m_rows)
+	if(m_cursor >= m_rows)
 		return false;
 
 	m_cursor++;

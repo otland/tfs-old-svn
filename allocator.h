@@ -50,16 +50,10 @@ class dummyallocator
 		dummyallocator() throw() {}
 		dummyallocator(const dummyallocator&) throw() {}
 		template <class U>
-		dummyallocator(const dummyallocator<U>&) throw() {}
+			dummyallocator(const dummyallocator<U>&) throw() {}
 		~dummyallocator() throw() {}
-		pointer address(reference x) const
-		{
-			return &x;
-		}
-		const_pointer address(const_reference x) const
-		{
-			return &x;
-		}
+		pointer address(reference x) const {return &x;}
+		const_pointer address(const_reference x) const {return &x;}
 		pointer allocate(size_type n, void* hint32_t = 0)
 		{
 			return static_cast<T*>(std::malloc(n * sizeof(T)));
@@ -119,26 +113,26 @@ class PoolManager
 		{
 			Pools::iterator it;
 			OTSYS_THREAD_LOCK(poolLock, NULL);
-			for (it = pools.begin(); it != pools.end(); ++it)
+			for(it = pools.begin(); it != pools.end(); ++it)
 			{
-				if (it->first >= size + sizeof(poolTag))
+				if(it->first >= size + sizeof(poolTag))
 				{
 					//poolTag* tag = reinterpret_cast<poolTag*>(it->second->ordered_malloc());
 					poolTag* tag = reinterpret_cast<poolTag*>(it->second->malloc());
 					tag->poolbytes = it->first;
-#ifdef __OTSERV_ALLOCATOR_STATS__
+					#ifdef __OTSERV_ALLOCATOR_STATS__
 					poolsStats[it->first]->allocations++;
-					poolsStats[it->first]->unused += it->first - (size + sizeof(poolTag));
-#endif
+					poolsStats[it->first]->unused+= it->first - (size + sizeof(poolTag));
+					#endif
 					OTSYS_THREAD_UNLOCK(poolLock, NULL);
 					return tag + 1;
 				}
 			}
 			poolTag* tag = reinterpret_cast<poolTag*>(std::malloc(size + sizeof(poolTag)));
-#ifdef __OTSERV_ALLOCATOR_STATS__
+			#ifdef __OTSERV_ALLOCATOR_STATS__
 			poolsStats[0]->allocations++;
 			poolsStats[0]->unused += size;
-#endif
+			#endif
 			tag->poolbytes = 0;
 			OTSYS_THREAD_UNLOCK(poolLock, NULL);
 			return tag + 1;
@@ -146,80 +140,80 @@ class PoolManager
 
 		void deallocate(void* deletable)
 		{
-			if (deletable == NULL)
+			if(deletable == NULL)
 				return;
 
 			poolTag* const tag = reinterpret_cast<poolTag*>(deletable) - 1U;
 			OTSYS_THREAD_LOCK(poolLock, NULL);
-			if (tag->poolbytes)
+			if(tag->poolbytes)
 			{
 				Pools::iterator it;
 				it = pools.find(tag->poolbytes);
 				//it->second->ordered_free(tag);
 				it->second->free(tag);
-#ifdef __OTSERV_ALLOCATOR_STATS__
+				#ifdef __OTSERV_ALLOCATOR_STATS__
 				poolsStats[it->first]->deallocations++;
-#endif
+				#endif
 			}
 			else
 			{
 				std::free(tag);
-#ifdef __OTSERV_ALLOCATOR_STATS__
+				#ifdef __OTSERV_ALLOCATOR_STATS__
 				poolsStats[0]->deallocations++;
-#endif
+				#endif
 			}
 			OTSYS_THREAD_UNLOCK(poolLock, NULL);
 		}
 
-#ifdef __OTSERV_ALLOCATOR_STATS__
+		#ifdef __OTSERV_ALLOCATOR_STATS__
 		void dumpStats()
 		{
 			time_t rawtime;
 			time(&rawtime);
-			std::ofstream output("mem_dump.txt", std::ios_base::app);
+			std::ofstream output("mem_dump.txt",std::ios_base::app);
 			output << "Otserv Allocator Stats: " << std::ctime(&rawtime);
 			PoolsStats::iterator it;
-			for (it = poolsStats.begin(); it != poolsStats.end(); ++it)
+			for(it = poolsStats.begin(); it != poolsStats.end(); ++it)
 			{
 				output << (int32_t)(it->first) << " alloc: " << (int32_t)(it->second->allocations) << " dealloc: " << (int32_t)(it->second->deallocations) << " unused: " << (int32_t)(it->second->unused);
-				if (it->second->allocations != 0 && it->first != 0)
-					output << " avg: " << (int32_t)((it->first) - (it->second->unused) / (it->second->allocations)) << " %unused: " << (int32_t)((it->second->unused)*100 / (it->second->allocations) / (it->first));
+				if(it->second->allocations != 0 && it->first != 0)
+					output << " avg: " << (int32_t)((it->first) - (it->second->unused)/(it->second->allocations)) << " %unused: " << (int32_t)((it->second->unused)*100/(it->second->allocations)/(it->first));
 				output << " N: " << ((int32_t)(it->second->allocations) - (int32_t)(it->second->deallocations)) << std::endl;
 			}
 			output << std::endl;
 			output.close();
 		}
-#endif
+		#endif
 
 		~PoolManager()
 		{
 			Pools::iterator it = pools.begin();
-			while (it != pools.end())
+			while(it != pools.end())
 			{
 				std::free(it->second);
 				pools.erase(it++);
 			}
-#ifdef __OTSERV_ALLOCATOR_STATS__
+			#ifdef __OTSERV_ALLOCATOR_STATS__
 			PoolsStats::iterator it2;
-			for (it2 = poolsStats.begin(); it2 != poolsStats.end(); ++it2)
+			for(it2 = poolsStats.begin(); it2 != poolsStats.end(); ++it2)
 			{
 				std::free(it2->second);
 				poolsStats.erase(it2++);
 			}
-#endif
+			#endif
 		}
 
 	private:
 		void addPool(size_t size, size_t next_size)
 		{
 			pools[size] = new(0) boost::pool<boost::default_user_allocator_malloc_free>(size, next_size);
-#ifdef __OTSERV_ALLOCATOR_STATS__
+			#ifdef __OTSERV_ALLOCATOR_STATS__
 			t_PoolStats * tmp = new(0) t_PoolStats;
 			tmp->unused = 0;
 			tmp->allocations = 0;
 			tmp->deallocations = 0;
 			poolsStats[size] = tmp;
-#endif
+			#endif
 		}
 
 		PoolManager()
@@ -233,23 +227,23 @@ class PoolManager
 			addPool(1024, 128);
 			addPool(8192, 128);
 			addPool(16384, 128);
-#ifdef __OTSERV_ALLOCATOR_STATS__
+			#ifdef __OTSERV_ALLOCATOR_STATS__
 			t_PoolStats * tmp = new(0) t_PoolStats;
 			tmp->unused = 0;
 			tmp->allocations = 0;
 			tmp->deallocations = 0;
 			poolsStats[0] = tmp;
-#endif
+			#endif
 		}
 
 		PoolManager(const PoolManager&);
 		const PoolManager& operator=(const PoolManager&);
 
-		typedef std::map < size_t, boost::pool<boost::default_user_allocator_malloc_free >*, std::less<size_t >,
-		dummyallocator<std::pair<const size_t, boost::pool<boost::default_user_allocator_malloc_free>* > > > Pools;
+		typedef std::map<size_t, boost::pool<boost::default_user_allocator_malloc_free >*, std::less<size_t >,
+			dummyallocator<std::pair<const size_t, boost::pool<boost::default_user_allocator_malloc_free>* > > > Pools;
 
 		Pools pools;
-#ifdef __OTSERV_ALLOCATOR_STATS__
+		#ifdef __OTSERV_ALLOCATOR_STATS__
 		struct t_PoolStats
 		{
 			int32_t allocations;
@@ -258,7 +252,7 @@ class PoolManager
 		};
 		typedef std::map<size_t, t_PoolStats*, std::less<size_t >, dummyallocator<std::pair<const size_t, t_PoolStats* > > > PoolsStats;
 		PoolsStats poolsStats;
-#endif
+		#endif
 		OTSYS_THREAD_LOCKVAR poolLock;
 };
 

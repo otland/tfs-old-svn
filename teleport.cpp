@@ -45,22 +45,19 @@ bool Teleport::unserialize(xmlNodePtr nodeItem)
 
 	char* nodeValue;
 	nodeValue = (char*)xmlGetProp(nodeItem, (const xmlChar *) "destx");
-	if (nodeValue)
-	{
+	if(nodeValue){
 		destPos.x = atoi(nodeValue);
 		xmlFreeOTSERV(nodeValue);
 	}
 
 	nodeValue = (char*)xmlGetProp(nodeItem, (const xmlChar *) "desty");
-	if (nodeValue)
-	{
+	if(nodeValue){
 		destPos.y = atoi(nodeValue);
 		xmlFreeOTSERV(nodeValue);
 	}
 
 	nodeValue = (char*)xmlGetProp(nodeItem, (const xmlChar *) "destz");
-	if (nodeValue)
-	{
+	if(nodeValue){
 		destPos.z = atoi(nodeValue);
 		xmlFreeOTSERV(nodeValue);
 	}
@@ -91,11 +88,9 @@ xmlNodePtr Teleport::serialize()
 
 bool Teleport::readAttr(AttrTypes_t attr, PropStream& propStream)
 {
-	if (ATTR_TELE_DEST == attr)
-	{
+	if(ATTR_TELE_DEST == attr){
 		TeleportDest* tele_dest;
-		if (!propStream.GET_STRUCT(tele_dest))
-		{
+		if(!propStream.GET_STRUCT(tele_dest)){
 			return false;
 		}
 
@@ -124,13 +119,13 @@ bool Teleport::serializeAttr(PropWriteStream& propWriteStream)
 }
 
 ReturnValue Teleport::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
-																 uint32_t flags) const
+	uint32_t flags) const
 {
 	return RET_NOTPOSSIBLE;
 }
 
 ReturnValue Teleport::__queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
-																			uint32_t& maxQueryCount, uint32_t flags) const
+	uint32_t& maxQueryCount, uint32_t flags) const
 {
 	return RET_NOTPOSSIBLE;
 }
@@ -141,7 +136,7 @@ ReturnValue Teleport::__queryRemove(const Thing* thing, uint32_t count) const
 }
 
 Cylinder* Teleport::__queryDestination(int32_t& index, const Thing* thing, Item** destItem,
-																			 uint32_t& flags)
+	uint32_t& flags)
 {
 	return this;
 }
@@ -154,14 +149,14 @@ void Teleport::__addThing(Thing* thing)
 void Teleport::__addThing(int32_t index, Thing* thing)
 {
 	Tile* destTile = g_game.getTile(getDestPos().x, getDestPos().y, getDestPos().z);
-	if (destTile)
+	if(destTile)
 	{
-		if (Creature* creature = thing->getCreature())
+		if(Creature* creature = thing->getCreature())
 		{
 			getTile()->moveCreature(creature, destTile, true);
 			g_game.addMagicEffect(destTile->getPosition(), NM_ME_TELEPORT);
 		}
-		else if (Item* item = thing->getItem())
+		else if(Item* item = thing->getItem())
 			g_game.internalMoveItem(getTile(), destTile, INDEX_WHEREEVER, item, item->getItemCount(), NULL);
 	}
 }
