@@ -65,8 +65,8 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confNumber[PASSWORDTYPE] = PASSWORD_TYPE_PLAIN;
 		m_confString[MAP_NAME] = getGlobalString(L, "mapName", "forgotten");
 		m_confString[MAP_AUTHOR] = getGlobalString(L, "mapAuthor", "Unknown");
-		m_confBool[GLOBALSAVE_ENABLED] = getGlobalBool(L, "serverSaveEnabled", "yes");
-		m_confNumber[GLOBALSAVE_H] = getGlobalNumber(L, "serverSaveHour", 8);
+		m_confBool[GLOBALSAVE_ENABLED] = getGlobalBool(L, "globalSaveEnabled", "yes");
+		m_confNumber[GLOBALSAVE_H] = getGlobalNumber(L, "globalSaveHour", 8);
 		m_confString[HOUSE_RENT_PERIOD] = getGlobalString(L, "houseRentPeriod", "monthly");
 		m_confNumber[WORLD_ID] = getGlobalNumber(L, "worldId", 0); //__LOGIN_SERVER__
 	}
@@ -122,8 +122,8 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBool[RANDOMIZE_TILES] = getGlobalBool(L, "randomizeTiles", "yes");
 	m_confString[DEFAULT_PRIORITY] = getGlobalString(L, "defaultPriority", "high");
 	m_confBool[EXPERIENCE_FROM_PLAYERS] = getGlobalBool(L, "experienceByKillingPlayers", "no");
-	m_confBool[SHUTDOWN_AT_GLOBALSAVE] = getGlobalBool(L, "shutdownAtServerSave", "no");
-	m_confBool[CLEAN_MAP_AT_GLOBALSAVE] = getGlobalBool(L, "cleanMapAtServerSave", "yes");
+	m_confBool[SHUTDOWN_AT_GLOBALSAVE] = getGlobalBool(L, "shutdownAtGlobalSave", "no");
+	m_confBool[CLEAN_MAP_AT_GLOBALSAVE] = getGlobalBool(L, "cleanMapAtGlobalSave", "yes");
 	m_confBool[FREE_PREMIUM] = getGlobalBool(L, "freePremium", "no");
 	m_confNumber[PROTECTION_LEVEL] = getGlobalNumber(L, "protectionLevel", 1);
 	m_confBool[ADMIN_LOGS_ENABLED] = getGlobalBool(L, "adminLogsEnabled", "no");
