@@ -31,7 +31,7 @@ Logger::Logger()
 
 Logger::~Logger()
 {
-	if (m_file)
+	if(m_file)
 		fclose(m_file);
 }
 
@@ -42,11 +42,11 @@ void Logger::logMessage(const char* channel, eLogType type, int32_t level, std::
 	formatDate(tmp, buffer);
 	fprintf(m_file, "%s", buffer);
 
-	if (channel)
+	if(channel)
 		fprintf(m_file, " [%s] ", channel);
 
 	std::string type_str;
-	switch (type)
+	switch(type)
 	{
 		case LOGTYPE_EVENT:
 			type_str = "event";

@@ -37,24 +37,24 @@ ConfigManager::~ConfigManager()
 bool ConfigManager::loadFile(const std::string& _filename)
 {
 	lua_State* L = lua_open();
-	if (!L)
+	if(!L)
 		return false;
 
-	if (luaL_dofile(L, _filename.c_str()))
+	if(luaL_dofile(L, _filename.c_str()))
 	{
 		lua_close(L);
 		return false;
 	}
 
 	//parse config
-	if (!m_isLoaded) //info that must be loaded one time (unless we reset the modules involved)
+	if(!m_isLoaded) //info that must be loaded one time (unless we reset the modules involved)
 	{
 		m_confString[CONFIG_FILE] = _filename;
 		m_confString[IP] = getGlobalString(L, "ip", "127.0.0.1");
 		m_confNumber[PORT] = getGlobalNumber(L, "port", 7171);
-#ifdef MULTI_SQL_DRIVERS
+		#ifdef MULTI_SQL_DRIVERS
 		m_confString[SQL_TYPE] = getGlobalString(L, "sqlType", "sqlite");
-#endif
+		#endif
 		m_confString[SQL_HOST] = getGlobalString(L, "sqlHost", "localhost");
 		m_confNumber[SQL_PORT] = getGlobalNumber(L, "sqlPort", 3306);
 		m_confString[SQL_DB] = getGlobalString(L, "sqlDatabase", "theforgottenserver");
@@ -164,11 +164,11 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	//m_confBool[SPELL_NAME_INSTEAD_WORDS] = getGlobalBool(L, "spellNameInsteadOfWordsOnCast", "no");
 	m_confNumber[MAX_PLAYER_SUMMONS] = getGlobalNumber(L, "maxPlayerSummons", 2);
 	m_confBool[SAVE_GLOBAL_STORAGE] = getGlobalBool(L, "saveGlobalStorage", "yes");
-#ifdef __LOGIN_SERVER__
+	#ifdef __LOGIN_SERVER__
 	m_confBool[LOGIN_ONLY_LOGINSERVER] = false;
-#elseif
+	#elseif
 	m_confBool[LOGIN_ONLY_LOGINSERVER] = getGlobalBool(L, "loginOnlyWithLoginServer", "no");
-#endif //__LOGIN_SERVER__
+	#endif //__LOGIN_SERVER__
 	m_isLoaded = true;
 
 	lua_close(L);
@@ -177,7 +177,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 
 bool ConfigManager::reload()
 {
-	if (!m_isLoaded)
+	if(!m_isLoaded)
 		return false;
 
 	return loadFile(m_confString[CONFIG_FILE]);
@@ -185,7 +185,7 @@ bool ConfigManager::reload()
 
 const std::string& ConfigManager::getString(uint32_t _what) const
 {
-	if (m_isLoaded && _what < LAST_STRING_CONFIG)
+	if(m_isLoaded && _what < LAST_STRING_CONFIG)
 		return m_confString[_what];
 	else
 	{
@@ -196,7 +196,7 @@ const std::string& ConfigManager::getString(uint32_t _what) const
 
 bool ConfigManager::getBool(uint32_t _what) const
 {
-	if (m_isLoaded && _what < LAST_BOOL_CONFIG)
+	if(m_isLoaded && _what < LAST_BOOL_CONFIG)
 		return m_confBool[_what];
 	else
 	{
@@ -207,7 +207,7 @@ bool ConfigManager::getBool(uint32_t _what) const
 
 int32_t ConfigManager::getNumber(uint32_t _what) const
 {
-	if (m_isLoaded && _what < LAST_NUMBER_CONFIG)
+	if(m_isLoaded && _what < LAST_NUMBER_CONFIG)
 		return m_confNumber[_what];
 	else
 	{
@@ -218,7 +218,7 @@ int32_t ConfigManager::getNumber(uint32_t _what) const
 
 double ConfigManager::getDouble(uint32_t _what) const
 {
-	if (m_isLoaded && _what < LAST_DOUBLE_CONFIG)
+	if(m_isLoaded && _what < LAST_DOUBLE_CONFIG)
 		return m_confDouble[_what];
 	else
 	{
@@ -229,7 +229,7 @@ double ConfigManager::getDouble(uint32_t _what) const
 
 bool ConfigManager::setNumber(uint32_t _what, int32_t _value)
 {
-	if (m_isLoaded && _what < LAST_NUMBER_CONFIG)
+	if(m_isLoaded && _what < LAST_NUMBER_CONFIG)
 	{
 		m_confNumber[_what] = _value;
 		return true;
@@ -245,7 +245,7 @@ std::string ConfigManager::getGlobalString(lua_State* _L, const std::string& _id
 {
 	lua_getglobal(_L, _identifier.c_str());
 
-	if (!lua_isstring(_L, -1))
+	if(!lua_isstring(_L, -1))
 		return _default;
 
 	int32_t len = (int32_t)lua_strlen(_L, -1);
@@ -264,7 +264,7 @@ int32_t ConfigManager::getGlobalNumber(lua_State* _L, const std::string& _identi
 {
 	lua_getglobal(_L, _identifier.c_str());
 
-	if (!lua_isnumber(_L, -1))
+	if(!lua_isnumber(_L, -1))
 		return _default;
 
 	int32_t val = (int32_t)lua_tonumber(_L, -1);
@@ -277,7 +277,7 @@ double ConfigManager::getGlobalDouble(lua_State* _L, const std::string& _identif
 {
 	lua_getglobal(_L, _identifier.c_str());
 
-	if (!lua_isnumber(_L, -1))
+	if(!lua_isnumber(_L, -1))
 		return _default;
 
 	double val = (double)lua_tonumber(_L, -1);
@@ -292,7 +292,7 @@ std::string ConfigManager::getGlobalStringField(lua_State* _L, const std::string
 
 	lua_pushnumber(_L, _key);
 	lua_gettable(_L, -2);  /* get table[key] */
-	if (!lua_isstring(_L, -1))
+	if(!lua_isstring(_L, -1))
 		return _default;
 
 	std::string result = lua_tostring(_L, -1);

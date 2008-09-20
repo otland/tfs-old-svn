@@ -75,7 +75,7 @@ class DatabaseODBC : public _Database
 
 class ODBCResult : public _DBResult
 {
-		friend class DatabaseODBC;
+	friend class DatabaseODBC;
 
 	public:
 		DATABASE_VIRTUAL int32_t getDataInt(const std::string& s);

@@ -40,26 +40,26 @@ Dispatcher::Dispatcher()
 
 OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 {
-#if defined __EXCEPTION_TRACER__
+	#if defined __EXCEPTION_TRACER__
 	ExceptionHandler dispatcherExceptionHandler;
 	dispatcherExceptionHandler.InstallHandler();
-#endif
+	#endif
 	srand((unsigned int)OTSYS_TIME());
 
-	while (!Dispatcher::m_shutdown)
+	while(!Dispatcher::m_shutdown)
 	{
 		Task* task = NULL;
 
 		// check if there are tasks waiting
 		OTSYS_THREAD_LOCK(getDispatcher().m_taskLock, "")
 
-		if (getDispatcher().m_taskList.empty())
+		if(getDispatcher().m_taskList.empty())
 		{
 			//if the list is empty wait for signal
 			OTSYS_THREAD_WAITSIGNAL(getDispatcher().m_taskSignal, getDispatcher().m_taskLock);
 		}
 
-		if (!getDispatcher().m_taskList.empty() && !Dispatcher::m_shutdown)
+		if(!getDispatcher().m_taskList.empty() && !Dispatcher::m_shutdown)
 		{
 			// take the first task
 			task = getDispatcher().m_taskList.front();
@@ -69,7 +69,7 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 		OTSYS_THREAD_UNLOCK(getDispatcher().m_taskLock, "");
 
 		// finally execute the task...
-		if (task)
+		if(task)
 		{
 			OutputMessagePool::getInstance()->startExecutionFrame();
 			(*task)();
@@ -78,12 +78,12 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 			g_game.clearSpectatorCache();
 		}
 	}
-#if defined __EXCEPTION_TRACER__
+	#if defined __EXCEPTION_TRACER__
 	dispatcherExceptionHandler.RemoveHandler();
-#endif
-#ifndef WIN32
+	#endif
+	#ifndef WIN32
 	return NULL;
-#endif
+	#endif
 }
 
 void Dispatcher::addTask(Task* task)
@@ -91,27 +91,27 @@ void Dispatcher::addTask(Task* task)
 	OTSYS_THREAD_LOCK(m_taskLock, "");
 
 	bool do_signal = false;
-	if (!Dispatcher::m_shutdown)
+	if(!Dispatcher::m_shutdown)
 	{
 		do_signal = m_taskList.empty();
 		m_taskList.push_back(task);
 	}
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	else
 		std::cout << "Error: [Dispatcher::addTask] Dispatcher thread is terminated." << std::endl;
-#endif
+	#endif
 
 	OTSYS_THREAD_UNLOCK(m_taskLock, "");
 
 	// send a signal if the list was empty
-	if (do_signal)
+	if(do_signal)
 		OTSYS_THREAD_SIGNAL_SEND(m_taskSignal);
 }
 
 void Dispatcher::flush()
 {
 	Task* task = NULL;
-	while (!m_taskList.empty())
+	while(!m_taskList.empty())
 	{
 		task = getDispatcher().m_taskList.front();
 		m_taskList.pop_front();

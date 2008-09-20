@@ -73,26 +73,11 @@ class TalkAction : public Event
 
 		virtual bool configureEvent(xmlNodePtr p);
 
-		std::string getWords() const
-		{
-			return m_words;
-		}
-		TalkActionFilter getFilter() const
-		{
-			return m_filter;
-		}
-		uint32_t getAccess() const
-		{
-			return m_access;
-		}
-		bool isLogged() const
-		{
-			return m_logged;
-		}
-		bool isSensitive() const
-		{
-			return m_sensitive;
-		}
+		std::string getWords() const {return m_words;}
+		TalkActionFilter getFilter() const {return m_filter;}
+		uint32_t getAccess() const {return m_access;}
+		bool isLogged() const {return m_logged;}
+		bool isSensitive() const {return m_sensitive;}
 
 		//scripting
 		int32_t executeSay(Creature* creature, const std::string& words, const std::string& param);

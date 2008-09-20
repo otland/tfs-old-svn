@@ -129,144 +129,57 @@ class ItemAttributes
 
 		virtual ~ItemAttributes()
 		{
-			if (m_firstAttr)
+			if(m_firstAttr)
 				deleteAttrs(m_firstAttr);
 		}
 
 		ItemAttributes(const ItemAttributes &i)
 		{
 			m_attributes = i.m_attributes;
-			if (i.m_firstAttr)
+			if(i.m_firstAttr)
 				m_firstAttr = new Attribute(*i.m_firstAttr);
 		}
 
-		void setSpecialDescription(const std::string& desc)
-		{
-			setStrAttr(ATTR_ITEM_DESC, desc);
-		}
-		void resetSpecialDescription()
-		{
-			removeAttribute(ATTR_ITEM_DESC);
-		}
-		const std::string& getSpecialDescription() const
-		{
-			return getStrAttr(ATTR_ITEM_DESC);
-		}
+		void setSpecialDescription(const std::string& desc) {setStrAttr(ATTR_ITEM_DESC, desc);}
+		void resetSpecialDescription() {removeAttribute(ATTR_ITEM_DESC);}
+		const std::string& getSpecialDescription() const {return getStrAttr(ATTR_ITEM_DESC);}
 
-		void setText(const std::string& text)
-		{
-			setStrAttr(ATTR_ITEM_TEXT, text);
-		}
-		void resetText()
-		{
-			removeAttribute(ATTR_ITEM_TEXT);
-		}
-		const std::string& getText() const
-		{
-			return getStrAttr(ATTR_ITEM_TEXT);
-		}
+		void setText(const std::string& text) {setStrAttr(ATTR_ITEM_TEXT, text);}
+		void resetText() {removeAttribute(ATTR_ITEM_TEXT);}
+		const std::string& getText() const {return getStrAttr(ATTR_ITEM_TEXT);}
 
-		void setDate(uint64_t n)
-		{
-			setIntAttr(ATTR_ITEM_WRITTENDATE, n);
-		}
-		void resetDate()
-		{
-			removeAttribute(ATTR_ITEM_WRITTENDATE);
-		}
-		time_t getDate() const
-		{
-			return (time_t)getIntAttr(ATTR_ITEM_WRITTENDATE);
-		}
+		void setDate(uint64_t n) {setIntAttr(ATTR_ITEM_WRITTENDATE, n);}
+		void resetDate() {removeAttribute(ATTR_ITEM_WRITTENDATE);}
+		time_t getDate() const {return (time_t)getIntAttr(ATTR_ITEM_WRITTENDATE);}
 
-		void setWriter(std::string _writer)
-		{
-			setStrAttr(ATTR_ITEM_WRITTENBY, _writer);
-		}
-		void resetWriter()
-		{
-			removeAttribute(ATTR_ITEM_WRITTENBY);
-		}
-		const std::string& getWriter() const
-		{
-			return getStrAttr(ATTR_ITEM_WRITTENBY);
-		}
+		void setWriter(std::string _writer) {setStrAttr(ATTR_ITEM_WRITTENBY, _writer);}
+		void resetWriter() {removeAttribute(ATTR_ITEM_WRITTENBY);}
+		const std::string& getWriter() const {return getStrAttr(ATTR_ITEM_WRITTENBY);}
 
-		void setActionId(uint16_t n)
-		{
-			setIntAttr(ATTR_ITEM_ACTIONID, (uint16_t)std::max((uint16_t)100, n));
-		}
-		uint16_t getActionId() const
-		{
-			return getIntAttr(ATTR_ITEM_ACTIONID);
-		}
+		void setActionId(uint16_t n) {setIntAttr(ATTR_ITEM_ACTIONID, (uint16_t)std::max((uint16_t)100, n));}
+		uint16_t getActionId() const {return getIntAttr(ATTR_ITEM_ACTIONID);}
 
-		void setUniqueId(uint16_t n)
-		{
-			setIntAttr(ATTR_ITEM_UNIQUEID, (uint16_t)std::max((uint16_t)1000, n));
-		}
-		uint16_t getUniqueId() const
-		{
-			return getIntAttr(ATTR_ITEM_UNIQUEID);
-		}
+		void setUniqueId(uint16_t n) {setIntAttr(ATTR_ITEM_UNIQUEID, (uint16_t)std::max((uint16_t)1000, n));}
+		uint16_t getUniqueId() const {return getIntAttr(ATTR_ITEM_UNIQUEID);}
 
-		void setCharges(uint16_t n)
-		{
-			setIntAttr(ATTR_ITEM_CHARGES, n);
-		}
-		uint16_t getCharges() const
-		{
-			return getIntAttr(ATTR_ITEM_CHARGES);
-		}
+		void setCharges(uint16_t n) {setIntAttr(ATTR_ITEM_CHARGES, n);}
+		uint16_t getCharges() const {return getIntAttr(ATTR_ITEM_CHARGES);}
 
-		void setFluidType(uint16_t n)
-		{
-			setIntAttr(ATTR_ITEM_FLUIDTYPE, n);
-		}
-		uint16_t getFluidType() const
-		{
-			return getIntAttr(ATTR_ITEM_FLUIDTYPE);
-		}
+		void setFluidType(uint16_t n) {setIntAttr(ATTR_ITEM_FLUIDTYPE, n);}
+		uint16_t getFluidType() const {return getIntAttr(ATTR_ITEM_FLUIDTYPE);}
 
-		void setOwner(uint32_t _owner)
-		{
-			setIntAttr(ATTR_ITEM_OWNER, _owner);
-		}
-		uint32_t getOwner() const
-		{
-			return getIntAttr(ATTR_ITEM_OWNER);
-		}
+		void setOwner(uint32_t _owner) {setIntAttr(ATTR_ITEM_OWNER, _owner);}
+		uint32_t getOwner() const {return getIntAttr(ATTR_ITEM_OWNER);}
 
-		void setCorpseOwner(uint32_t _corpseOwner)
-		{
-			setIntAttr(ATTR_ITEM_CORPSEOWNER, _corpseOwner);
-		}
-		uint32_t getCorpseOwner()
-		{
-			return getIntAttr(ATTR_ITEM_CORPSEOWNER);
-		}
+		void setCorpseOwner(uint32_t _corpseOwner) {setIntAttr(ATTR_ITEM_CORPSEOWNER, _corpseOwner);}
+		uint32_t getCorpseOwner() {return getIntAttr(ATTR_ITEM_CORPSEOWNER);}
 
-		void setDuration(int32_t time)
-		{
-			setIntAttr(ATTR_ITEM_DURATION, time);
-		}
-		void decreaseDuration(int32_t time)
-		{
-			increaseIntAttr(ATTR_ITEM_DURATION, -time);
-		}
-		int32_t getDuration() const
-		{
-			return getIntAttr(ATTR_ITEM_DURATION);
-		}
+		void setDuration(int32_t time) {setIntAttr(ATTR_ITEM_DURATION, time);}
+		void decreaseDuration(int32_t time) {increaseIntAttr(ATTR_ITEM_DURATION, -time);}
+		int32_t getDuration() const {return getIntAttr(ATTR_ITEM_DURATION);}
 
-		void setDecaying(ItemDecayState_t decayState)
-		{
-			setIntAttr(ATTR_ITEM_DECAYING, decayState);
-		}
-		uint32_t getDecaying() const
-		{
-			return getIntAttr(ATTR_ITEM_DECAYING);
-		}
+		void setDecaying(ItemDecayState_t decayState) {setIntAttr(ATTR_ITEM_DECAYING, decayState);}
+		uint32_t getDecaying() const {return getIntAttr(ATTR_ITEM_DECAYING);}
 
 	protected:
 		enum itemAttrTypes
@@ -320,15 +233,15 @@ class ItemAttributes
 				Attribute(const Attribute &i)
 				{
 					type = i.type;
-					if (ItemAttributes::validateIntAttrType(type))
+					if(ItemAttributes::validateIntAttrType(type))
 						value = i.value;
-					else if (ItemAttributes::validateStrAttrType(type))
+					else if(ItemAttributes::validateStrAttrType(type))
 						value = (void*)new std::string( *((std::string*)i.value) );
 					else
 						value = NULL;
 
 					next = NULL;
-					if (i.next)
+					if(i.next)
 						next = new Attribute(*i.next);
 				}
 		};
@@ -369,73 +282,25 @@ class Item : virtual public Thing, public ItemAttributes
 
 		virtual ~Item();
 
-		virtual Item* getItem()
-		{
-			return this;
-		}
-		virtual const Item* getItem() const
-		{
-			return this;
-		}
-		virtual Container* getContainer()
-		{
-			return NULL;
-		}
-		virtual const Container* getContainer() const
-		{
-			return NULL;
-		}
-		virtual Teleport* getTeleport()
-		{
-			return NULL;
-		}
-		virtual const Teleport* getTeleport() const
-		{
-			return NULL;
-		}
-		virtual TrashHolder* getTrashHolder()
-		{
-			return NULL;
-		}
-		virtual const TrashHolder* getTrashHolder() const
-		{
-			return NULL;
-		}
-		virtual Mailbox* getMailbox()
-		{
-			return NULL;
-		}
-		virtual const Mailbox* getMailbox() const
-		{
-			return NULL;
-		}
-		virtual Door* getDoor()
-		{
-			return NULL;
-		}
-		virtual const Door* getDoor() const
-		{
-			return NULL;
-		}
-		virtual MagicField* getMagicField()
-		{
-			return NULL;
-		}
-		virtual const MagicField* getMagicField() const
-		{
-			return NULL;
-		}
-		virtual BedItem* getBed()
-		{
-			return NULL;
-		}
-		virtual const BedItem* getBed() const
-		{
-			return NULL;
-		}
+		virtual Item* getItem() {return this;}
+		virtual const Item* getItem() const {return this;}
+		virtual Container* getContainer() {return NULL;}
+		virtual const Container* getContainer() const {return NULL;}
+		virtual Teleport* getTeleport() {return NULL;}
+		virtual const Teleport* getTeleport() const {return NULL;}
+		virtual TrashHolder* getTrashHolder() {return NULL;}
+		virtual const TrashHolder* getTrashHolder() const {return NULL;}
+		virtual Mailbox* getMailbox() {return NULL;}
+		virtual const Mailbox* getMailbox() const {return NULL;}
+		virtual Door* getDoor() {return NULL;}
+		virtual const Door* getDoor() const {return NULL;}
+		virtual MagicField* getMagicField() {return NULL;}
+		virtual const MagicField* getMagicField() const {return NULL;}
+		virtual BedItem* getBed() {return NULL;}
+		virtual const BedItem* getBed() const {return NULL;}
 
 		static std::string getDescription(const ItemType& it, int32_t lookDistance,
-																			const Item* item = NULL, int32_t subType = -1);
+			const Item* item = NULL, int32_t subType = -1);
 		static std::string getWeightDescription(const ItemType& it, double weight, uint32_t count = 1);
 
 		//serialization
@@ -448,258 +313,89 @@ class Item : virtual public Thing, public ItemAttributes
 
 		virtual bool serializeAttr(PropWriteStream& propWriteStream);
 
-		virtual bool isPushable() const
-		{
-			return !isNotMoveable();
-		}
-		virtual int32_t getThrowRange() const
-		{
-			return (isPickupable() ? 15 : 2);
-		}
+		virtual bool isPushable() const {return !isNotMoveable();}
+		virtual int32_t getThrowRange() const {return (isPickupable() ? 15 : 2);}
 
 		virtual std::string getDescription(int32_t lookDistance) const;
 		std::string getWeightDescription() const;
 
-		uint16_t getID() const
-		{
-			return id;
-		}
-		uint16_t getClientID() const
-		{
-			return items[id].clientId;
-		}
+		uint16_t getID() const {return id;}
+		uint16_t getClientID() const {return items[id].clientId;}
 		void setID(uint16_t newid);
 
-		WeaponType_t getWeaponType() const
-		{
-			return items[id].weaponType;
-		}
-		Ammo_t	getAmmoType() const
-		{
-			return items[id].ammoType;
-		}
-		int32_t getShootRange() const
-		{
-			return items[id].shootRange;
-		}
+		WeaponType_t getWeaponType() const {return items[id].weaponType;}
+		Ammo_t	getAmmoType() const {return items[id].ammoType;}
+		int32_t getShootRange() const {return items[id].shootRange;}
 
-		const std::string& getName() const
-		{
-			return getStrAttr(ATTR_ITEM_NAME) != "" ? getStrAttr(ATTR_ITEM_NAME) : items[id].name;
-		}
-		void setName(std::string name)
-		{
-			setStrAttr(ATTR_ITEM_NAME, name);
-		}
+		const std::string& getName() const {return getStrAttr(ATTR_ITEM_NAME) != "" ? getStrAttr(ATTR_ITEM_NAME) : items[id].name;}
+		void setName(std::string name) {setStrAttr(ATTR_ITEM_NAME, name);}
 
-		const std::string& getArticle() const
-		{
-			return getStrAttr(ATTR_ITEM_ARTICLE) != "" ? getStrAttr(ATTR_ITEM_ARTICLE) : items[id].article;
-		}
-		void setArticle(std::string article)
-		{
-			setStrAttr(ATTR_ITEM_ARTICLE, article);
-		}
+		const std::string& getArticle() const {return getStrAttr(ATTR_ITEM_ARTICLE) != "" ? getStrAttr(ATTR_ITEM_ARTICLE) : items[id].article;}
+		void setArticle(std::string article) {setStrAttr(ATTR_ITEM_ARTICLE, article);}
 
-		const std::string& getPluralName() const
-		{
-			return getStrAttr(ATTR_ITEM_PLURALNAME) != "" ? getStrAttr(ATTR_ITEM_PLURALNAME) : items[id].pluralName;
-		}
-		void setPluralName(std::string pluralname)
-		{
-			setStrAttr(ATTR_ITEM_PLURALNAME, pluralname);
-		}
+		const std::string& getPluralName() const {return getStrAttr(ATTR_ITEM_PLURALNAME) != "" ? getStrAttr(ATTR_ITEM_PLURALNAME) : items[id].pluralName;}
+		void setPluralName(std::string pluralname) {setStrAttr(ATTR_ITEM_PLURALNAME, pluralname);}
 
-		int32_t getAttack() const
-		{
-			return hasAttribute(ATTR_ITEM_ATTACK) ? getIntAttr(ATTR_ITEM_ATTACK) : items[id].attack;
-		}
-		void setAttack(int32_t attack)
-		{
-			setIntAttr(ATTR_ITEM_ATTACK, attack);
-		}
+		int32_t getAttack() const {return hasAttribute(ATTR_ITEM_ATTACK) ? getIntAttr(ATTR_ITEM_ATTACK) : items[id].attack;}
+		void setAttack(int32_t attack) {setIntAttr(ATTR_ITEM_ATTACK, attack);}
 
-		int32_t getExtraAttack() const
-		{
-			return hasAttribute(ATTR_ITEM_EXTRAATTACK) ? getIntAttr(ATTR_ITEM_EXTRAATTACK) : items[id].extraAttack;
-		}
-		void setExtraAttack(int32_t extraattack)
-		{
-			setIntAttr(ATTR_ITEM_EXTRAATTACK, extraattack);
-		}
+		int32_t getExtraAttack() const {return hasAttribute(ATTR_ITEM_EXTRAATTACK) ? getIntAttr(ATTR_ITEM_EXTRAATTACK) : items[id].extraAttack;}
+		void setExtraAttack(int32_t extraattack) {setIntAttr(ATTR_ITEM_EXTRAATTACK, extraattack);}
 
-		int32_t getDefense() const
-		{
-			return hasAttribute(ATTR_ITEM_DEFENSE) ? getIntAttr(ATTR_ITEM_DEFENSE) : items[id].defense;
-		}
-		void setDefense(int32_t defense)
-		{
-			setIntAttr(ATTR_ITEM_DEFENSE, defense);
-		}
+		int32_t getDefense() const {return hasAttribute(ATTR_ITEM_DEFENSE) ? getIntAttr(ATTR_ITEM_DEFENSE) : items[id].defense;}
+		void setDefense(int32_t defense) {setIntAttr(ATTR_ITEM_DEFENSE, defense);}
 
-		int32_t getExtraDefense() const
-		{
-			return hasAttribute(ATTR_ITEM_EXTRADEFENSE) ? getIntAttr(ATTR_ITEM_EXTRADEFENSE) : items[id].extraDefense;
-		}
-		void setExtraDefense(int32_t extradefense)
-		{
-			setIntAttr(ATTR_ITEM_EXTRADEFENSE, extradefense);
-		}
+		int32_t getExtraDefense() const {return hasAttribute(ATTR_ITEM_EXTRADEFENSE) ? getIntAttr(ATTR_ITEM_EXTRADEFENSE) : items[id].extraDefense;}
+		void setExtraDefense(int32_t extradefense) { setIntAttr(ATTR_ITEM_EXTRADEFENSE, extradefense);}
 
-		int32_t getArmor() const
-		{
-			return hasAttribute(ATTR_ITEM_ARMOR) ? getIntAttr(ATTR_ITEM_ARMOR) : items[id].armor;
-		}
-		void setArmor(int32_t armor)
-		{
-			setIntAttr(ATTR_ITEM_ARMOR, armor);
-		}
+		int32_t getArmor() const {return hasAttribute(ATTR_ITEM_ARMOR) ? getIntAttr(ATTR_ITEM_ARMOR) : items[id].armor;}
+		void setArmor(int32_t armor) {setIntAttr(ATTR_ITEM_ARMOR, armor);}
 
-		uint32_t getAttackSpeed() const
-		{
-			return hasAttribute(ATTR_ITEM_ATTACKSPEED) ? getIntAttr(ATTR_ITEM_ATTACKSPEED) : items[id].attackSpeed;
-		}
-		void setAttackSpeed(int32_t attackspeed)
-		{
-			setIntAttr(ATTR_ITEM_ATTACKSPEED, attackspeed);
-		}
+		uint32_t getAttackSpeed() const {return hasAttribute(ATTR_ITEM_ATTACKSPEED) ? getIntAttr(ATTR_ITEM_ATTACKSPEED) : items[id].attackSpeed;}
+		void setAttackSpeed(int32_t attackspeed) {setIntAttr(ATTR_ITEM_ATTACKSPEED, attackspeed);}
 
-		int32_t getHitChance() const
-		{
-			return hasAttribute(ATTR_ITEM_HITCHANCE) ? getIntAttr(ATTR_ITEM_HITCHANCE) : items[id].hitChance;
-		}
-		void setHitChance(int32_t hitchance)
-		{
-			setIntAttr(ATTR_ITEM_HITCHANCE, hitchance);
-		}
+		int32_t getHitChance() const {return hasAttribute(ATTR_ITEM_HITCHANCE) ? getIntAttr(ATTR_ITEM_HITCHANCE) : items[id].hitChance;}
+		void setHitChance(int32_t hitchance) {setIntAttr(ATTR_ITEM_HITCHANCE, hitchance);}
 
 		virtual double getWeight() const;
-		int32_t getSlotPosition() const
-		{
-			return items[id].slot_position;
-		}
+		int32_t getSlotPosition() const {return items[id].slot_position;}
 
-		bool isReadable() const
-		{
-			return items[id].canReadText;
-		}
-		bool canWriteText() const
-		{
-			return items[id].canWriteText;
-		}
-		int32_t getMaxWriteLength() const
-		{
-			return items[id].maxTextLen;
-		}
+		bool isReadable() const {return items[id].canReadText;}
+		bool canWriteText() const {return items[id].canWriteText;}
+		int32_t getMaxWriteLength() const {return items[id].maxTextLen;}
 
 		int32_t getWorth() const;
 		void getLight(LightInfo& lightInfo);
 
 		bool hasProperty(enum ITEMPROPERTY prop) const;
-		bool isBlocking() const
-		{
-			return items[id].blockSolid;
-		}
-		bool isStackable() const
-		{
-			return items[id].stackable;
-		}
-		bool isRune() const
-		{
-			return items[id].isRune();
-		}
-		bool isFluidContainer() const
-		{
-			return (items[id].isFluidContainer());
-		}
-		bool isAlwaysOnTop() const
-		{
-			return items[id].alwaysOnTop;
-		}
-		bool isGroundTile() const
-		{
-			return items[id].isGroundTile();
-		}
-		bool isSplash() const
-		{
-			return items[id].isSplash();
-		}
-		bool isMagicField() const
-		{
-			return items[id].isMagicField();
-		}
-		bool isNotMoveable() const
-		{
-			return !items[id].moveable;
-		}
-		bool isPickupable() const
-		{
-			return items[id].pickupable;
-		}
-		bool isWeapon() const
-		{
-			return (items[id].weaponType != WEAPON_NONE);
-		}
-		bool isUseable() const
-		{
-			return items[id].useable;
-		}
-		bool isHangable() const
-		{
-			return items[id].isHangable;
-		}
-		bool isRoteable() const
-		{
-			const ItemType& it = items[id];
-			return it.rotable && it.rotateTo;
-		}
-		bool isDoor() const
-		{
-			return items[id].isDoor();
-		}
-		bool isBed() const
-		{
-			return items[id].isBed();
-		}
-		bool isLevelDoor() const
-		{
-			return items[id].isLevelDoor();
-		}
-		bool hasCharges() const
-		{
-			return items[id].charges != 0;
-		}
+		bool isBlocking() const {return items[id].blockSolid;}
+		bool isStackable() const {return items[id].stackable;}
+		bool isRune() const {return items[id].isRune();}
+		bool isFluidContainer() const {return (items[id].isFluidContainer());}
+		bool isAlwaysOnTop() const {return items[id].alwaysOnTop;}
+		bool isGroundTile() const {return items[id].isGroundTile();}
+		bool isSplash() const {return items[id].isSplash();}
+		bool isMagicField() const {return items[id].isMagicField();}
+		bool isNotMoveable() const {return !items[id].moveable;}
+		bool isPickupable() const {return items[id].pickupable;}
+		bool isWeapon() const {return (items[id].weaponType != WEAPON_NONE);}
+		bool isUseable() const {return items[id].useable;}
+		bool isHangable() const {return items[id].isHangable;}
+		bool isRoteable() const {const ItemType& it = items[id]; return it.rotable && it.rotateTo;}
+		bool isDoor() const {return items[id].isDoor();}
+		bool isBed() const {return items[id].isBed();}
+		bool isLevelDoor() const {return items[id].isLevelDoor();}
+		bool hasCharges() const {return items[id].charges != 0;}
 
-		bool floorChangeDown() const
-		{
-			return items[id].floorChangeDown;
-		}
-		bool floorChangeNorth() const
-		{
-			return items[id].floorChangeNorth;
-		}
-		bool floorChangeSouth() const
-		{
-			return items[id].floorChangeSouth;
-		}
-		bool floorChangeEast() const
-		{
-			return items[id].floorChangeEast;
-		}
-		bool floorChangeWest() const
-		{
-			return items[id].floorChangeWest;
-		}
+		bool floorChangeDown() const {return items[id].floorChangeDown;}
+		bool floorChangeNorth() const {return items[id].floorChangeNorth;}
+		bool floorChangeSouth() const {return items[id].floorChangeSouth;}
+		bool floorChangeEast() const {return items[id].floorChangeEast;}
+		bool floorChangeWest() const {return items[id].floorChangeWest;}
 
 		// get the number of items
-		uint16_t getItemCount() const
-		{
-			return count;
-		}
-		void setItemCount(uint16_t n)
-		{
-			count = n;
-		}
+		uint16_t getItemCount() const {return count;}
+		void setItemCount(uint16_t n) {count = n;}
 
 		void setDefaultSubtype();
 		bool hasSubType() const;
@@ -711,39 +407,21 @@ class Item : virtual public Thing, public ItemAttributes
 		void setDefaultDuration()
 		{
 			uint32_t duration = getDefaultDuration();
-			if (duration != 0)
+			if(duration != 0)
 				setDuration(duration);
 		}
-		uint32_t getDefaultDuration() const
-		{
-			return items[id].decayTime * 1000;
-		}
+		uint32_t getDefaultDuration() const {return items[id].decayTime * 1000;}
 		bool canDecay();
 
-		virtual bool canRemove() const
-		{
-			return true;
-		}
-		virtual bool canTransform() const
-		{
-			return true;
-		}
+		virtual bool canRemove() const {return true;}
+		virtual bool canTransform() const {return true;}
 		virtual void onRemoved() {}
-		virtual bool onTradeEvent(TradeEvents_t event, Player* owner)
-		{
-			return true;
-		}
+		virtual bool onTradeEvent(TradeEvents_t event, Player* owner){return true;}
 
 		virtual void __startDecaying();
 
-		bool isLoadedFromMap()
-		{
-			return loadedFromMap;
-		}
-		void setLoadedFromMap(bool value)
-		{
-			loadedFromMap = value;
-		}
+		bool isLoadedFromMap() {return loadedFromMap;}
+		void setLoadedFromMap(bool value) {loadedFromMap = value;}
 
 	protected:
 		std::string getWeightDescription(double weight) const;

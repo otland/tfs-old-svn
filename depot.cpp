@@ -23,7 +23,7 @@
 #include "tools.h"
 
 Depot::Depot(uint16_t _type) :
-		Container(_type)
+Container(_type)
 {
 	depotId = 0;
 	maxSize = 30;
@@ -49,10 +49,10 @@ xmlNodePtr Depot::serialize()
 
 bool Depot::readAttr(AttrTypes_t attr, PropStream& propStream)
 {
-	if (ATTR_DEPOT_ID == attr)
+	if(ATTR_DEPOT_ID == attr)
 	{
 		uint16_t _depotId;
-		if (!propStream.GET_USHORT(_depotId))
+		if(!propStream.GET_USHORT(_depotId))
 			return false;
 
 		setDepotId(_depotId);
@@ -63,47 +63,47 @@ bool Depot::readAttr(AttrTypes_t attr, PropStream& propStream)
 }
 
 ReturnValue Depot::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
-															uint32_t flags) const
+	uint32_t flags) const
 {
 	const Item* item = thing->getItem();
-	if (item == NULL)
+	if(item == NULL)
 		return RET_NOTPOSSIBLE;
 
 	bool skipLimit = ((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT);
-	if (!skipLimit)
+	if(!skipLimit)
 	{
 		int32_t addCount = 0;
-		if ((item->isStackable() && item->getItemCount() != count))
+		if((item->isStackable() && item->getItemCount() != count))
 			addCount = 1;
 
-		if (item->getTopParent() != this)
+		if(item->getTopParent() != this)
 		{
-			if (const Container* container = item->getContainer())
+			if(const Container* container = item->getContainer())
 				addCount = container->getItemHoldingCount() + 1;
 			else
 				addCount = 1;
 		}
 
-		if (getItemHoldingCount() + addCount > maxDepotLimit)
+		if(getItemHoldingCount() + addCount > maxDepotLimit)
 			return RET_DEPOTISFULL;
 	}
 	return Container::__queryAdd(index, thing, count, flags);
 }
 
 ReturnValue Depot::__queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
-																	 uint32_t& maxQueryCount, uint32_t flags) const
+	uint32_t& maxQueryCount, uint32_t flags) const
 {
 	return Container::__queryMaxCount(index, thing, count, maxQueryCount, flags);
 }
 
 void Depot::postAddNotification(Thing* thing, int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
 {
-	if (getParent() != NULL)
+	if(getParent() != NULL)
 		getParent()->postAddNotification(thing, index, LINK_PARENT);
 }
 
 void Depot::postRemoveNotification(Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
 {
-	if (getParent() != NULL)
+	if(getParent() != NULL)
 		getParent()->postRemoveNotification(thing, index, isCompleteRemoval, LINK_PARENT);
 }

@@ -111,10 +111,7 @@ class MoveEvent : public Event
 		uint32_t fireAddRemItem(Item* item, Item* tileItem, const Position& pos);
 		uint32_t fireEquip(Player* player, Item* item, slots_t slot, bool isRemoval);
 
-		slots_t getSlot() const
-		{
-			return slot;
-		}
+		slots_t getSlot() const {return slot;}
 
 		//scripting
 		uint32_t executeStep(Creature* creature, Item* item, const Position& pos);
@@ -122,30 +119,12 @@ class MoveEvent : public Event
 		uint32_t executeAddRemItem(Item* item, Item* tileItem, const Position& pos);
 
 		//onEquip information
-		int32_t getReqLevel() const
-		{
-			return reqLevel;
-		}
-		int32_t getReqMagLv() const
-		{
-			return reqMagLevel;
-		}
-		bool isPremium() const
-		{
-			return premium;
-		}
-		const std::string& getVocationString() const
-		{
-			return vocationString;
-		}
-		uint32_t getWieldInfo() const
-		{
-			return wieldInfo;
-		}
-		const VocEquipMap& getVocEquipMap() const
-		{
-			return vocEquipMap;
-		}
+		int32_t getReqLevel() const {return reqLevel;}
+		int32_t getReqMagLv() const {return reqMagLevel;}
+		bool isPremium() const {return premium;}
+		const std::string& getVocationString() const {return vocationString;}
+		uint32_t getWieldInfo() const {return wieldInfo;}
+		const VocEquipMap& getVocEquipMap() const {return vocEquipMap;}
 
 	protected:
 		virtual std::string getScriptEventName();

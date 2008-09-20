@@ -31,7 +31,7 @@
 extern Game g_game;
 
 TalkActions::TalkActions() :
-		m_scriptInterface("TalkAction Interface")
+m_scriptInterface("TalkAction Interface")
 {
 	m_scriptInterface.initState();
 }
@@ -44,8 +44,7 @@ TalkActions::~TalkActions()
 void TalkActions::clear()
 {
 	TalkActionList::iterator it = wordsMap.begin();
-	while (it != wordsMap.end())
-	{
+	while(it != wordsMap.end()){
 		delete it->second;
 		wordsMap.erase(it);
 		it = wordsMap.begin();
@@ -66,7 +65,7 @@ std::string TalkActions::getScriptBaseName()
 
 Event* TalkActions::getEvent(const std::string& nodeName)
 {
-	if (asLowerCaseString(nodeName) == "talkaction")
+	if(asLowerCaseString(nodeName) == "talkaction")
 		return new TalkAction(&m_scriptInterface);
 	else
 		return NULL;
@@ -75,7 +74,7 @@ Event* TalkActions::getEvent(const std::string& nodeName)
 bool TalkActions::registerEvent(Event* event, xmlNodePtr p)
 {
 	TalkAction* talkAction = dynamic_cast<TalkAction*>(event);
-	if (!talkAction)
+	if(!talkAction)
 		return false;
 
 	wordsMap.push_back(std::make_pair(talkAction->getWords(), talkAction));
@@ -84,14 +83,14 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p)
 
 TalkActionResult_t TalkActions::onPlayerSpeak(Player* player, SpeakClasses type, const std::string& words)
 {
-	if (type != SPEAK_SAY)
+	if(type != SPEAK_SAY)
 		return TALKACTION_CONTINUE;
 
 	std::string cmdstring[TALKFILTER_LAST] = words, paramstring[TALKFILTER_LAST] = "";
 	size_t loc;
 
 	loc = words.find('"', 0 );
-	if (loc != std::string::npos && loc >= 0)
+	if(loc != std::string::npos && loc >= 0)
 	{
 		cmdstring[TALKFILTER_QUOTATION] = std::string(words, 0, loc);
 		paramstring[TALKFILTER_QUOTATION] = std::string(words, (loc + 1), (words.size() - loc - 1));
@@ -100,30 +99,30 @@ TalkActionResult_t TalkActions::onPlayerSpeak(Player* player, SpeakClasses type,
 	}
 
 	loc = words.find(' ', 0 );
-	if (loc != std::string::npos && loc >= 0)
+	if(loc != std::string::npos && loc >= 0)
 	{
 		cmdstring[TALKFILTER_WORD] = std::string(words, 0, loc);
 		paramstring[TALKFILTER_WORD] = std::string(words, (loc + 1), (words.size() - loc - 1));
 	}
 
-	for (TalkActionList::iterator it = wordsMap.begin(); it != wordsMap.end(); ++it)
+	for(TalkActionList::iterator it = wordsMap.begin(); it != wordsMap.end(); ++it)
 	{
-		if (it->first == cmdstring[it->second->getFilter()] || (!it->second->isSensitive() &&
-				strcasecmp(it->first.c_str(), cmdstring[it->second->getFilter()].c_str()) == 0))
+		if(it->first == cmdstring[it->second->getFilter()] || (!it->second->isSensitive() &&
+			strcasecmp(it->first.c_str(), cmdstring[it->second->getFilter()].c_str()) == 0))
 		{
 			TalkAction* talkAction = it->second;
-			if (talkAction->getAccess() > player->getAccessLevel() || player->getName() == "Account Manager")
+			if(talkAction->getAccess() > player->getAccessLevel() || player->getName() == "Account Manager")
 			{
-				if (player->getAccessLevel() > 0)
+				if(player->getAccessLevel() > 0)
 					player->sendTextMessage(MSG_STATUS_SMALL, "You can not execute this talkaction.");
 
 				return TALKACTION_FAILED;
 			}
 
 			uint32_t ret = talkAction->executeSay(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]);
-			if (ret == 1)
+			if(ret == 1)
 			{
-				if (player && talkAction->isLogged())
+				if(player && talkAction->isLogged())
 				{
 					player->sendTextMessage(MSG_STATUS_CONSOLE_RED, words.c_str());
 
@@ -132,7 +131,7 @@ TalkActionResult_t TalkActions::onPlayerSpeak(Player* player, SpeakClasses type,
 					sprintf(buffer, "data/logs/%s talkactions.log", player->getName().c_str());
 
 					FILE* file = fopen(buffer, "a");
-					if (file)
+					if(file)
 					{
 						fprintf(file, "[%s] %s\n", buf, words.c_str());
 						fclose(file);
@@ -148,7 +147,7 @@ TalkActionResult_t TalkActions::onPlayerSpeak(Player* player, SpeakClasses type,
 }
 
 TalkAction::TalkAction(LuaScriptInterface* _interface) :
-		Event(_interface), m_filter(TALKFILTER_QUOTATION), m_access(0), m_logged(false), m_sensitive(true)
+Event(_interface), m_filter(TALKFILTER_QUOTATION), m_access(0), m_logged(false), m_sensitive(true)
 {
 	//
 }
@@ -158,7 +157,7 @@ bool TalkAction::configureEvent(xmlNodePtr p)
 	int32_t intValue;
 	std::string strValue;
 
-	if (readXMLString(p, "words", strValue))
+	if(readXMLString(p, "words", strValue))
 		m_words = strValue;
 	else
 	{
@@ -166,25 +165,25 @@ bool TalkAction::configureEvent(xmlNodePtr p)
 		return false;
 	}
 
-	if (readXMLString(p, "filter", strValue))
+	if(readXMLString(p, "filter", strValue))
 	{
 		strValue = asLowerCaseString(strValue);
-		if (strValue == "quotation")
+		if(strValue == "quotation")
 			m_filter = TALKFILTER_QUOTATION;
-		else if (strValue == "word")
+		else if(strValue == "word")
 			m_filter = TALKFILTER_WORD;
 	}
 
-	if (readXMLInteger(p, "access", intValue))
+	if(readXMLInteger(p, "access", intValue))
 		m_access = intValue;
 
-	if (readXMLString(p, "log", strValue))
+	if(readXMLString(p, "log", strValue))
 	{
 		strValue = asLowerCaseString(strValue);
 		m_sensitive = booleanString(strValue);
 	}
 
-	if (readXMLString(p, "case-sensitive", strValue))
+	if(readXMLString(p, "case-sensitive", strValue))
 	{
 		strValue = asLowerCaseString(strValue);
 		m_sensitive = booleanString(strValue);
@@ -201,15 +200,15 @@ std::string TalkAction::getScriptEventName()
 int32_t TalkAction::executeSay(Creature* creature, const std::string& words, const std::string& param)
 {
 	//onSay(cid, words, param)
-	if (m_scriptInterface->reserveScriptEnv())
+	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 
-#ifdef __DEBUG_LUASCRIPTS__
+		#ifdef __DEBUG_LUASCRIPTS__
 		char desc[125];
 		sprintf(desc, "%s - %s- %s", creature->getName().c_str(), words.c_str(), param.c_str());
 		env->setEventDesc(desc);
-#endif
+		#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);
 		env->setRealPos(creature->getPosition());

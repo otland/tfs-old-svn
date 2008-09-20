@@ -132,7 +132,7 @@ class IOMap
 		 */
 		bool loadSpawns(Map* map)
 		{
-			if (map->spawnfile.empty())
+			if(map->spawnfile.empty())
 			{
 				//OTBM file doesn't tell us about the spawnfile,
 				//lets guess it is mapname-spawn.xml.
@@ -148,7 +148,7 @@ class IOMap
 		 */
 		bool loadHouses(Map* map)
 		{
-			if (map->housefile.empty())
+			if(map->housefile.empty())
 			{
 				//OTBM file doesn't tell us about the housefile,
 				//lets guess it is mapname-house.xml.

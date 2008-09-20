@@ -55,7 +55,7 @@ class DatabasePgSQL : public _Database
 
 class PgSQLResult : public _DBResult
 {
-		friend class DatabasePgSQL;
+	friend class DatabasePgSQL;
 
 	public:
 		DATABASE_VIRTUAL int32_t getDataInt(const std::string& s);
