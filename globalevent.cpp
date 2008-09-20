@@ -70,11 +70,11 @@ Event* GlobalEvents::getEvent(const std::string& nodeName)
 
 bool GlobalEvents::registerEvent(Event* event, xmlNodePtr p)
 {
-	GlobalEvent* GlobalEvent = dynamic_cast<GlobalEvent*>(event);
-	if(!GlobalEvent)
+	GlobalEvent* globalEvent = dynamic_cast<GlobalEvent*>(event);
+	if(!globalEvent)
 		return false;
 
-	eventsMap.push_back(std::make_pair(GlobalEvent->getName(), GlobalEvent));
+	eventsMap.push_back(std::make_pair(globalEvent->getName(), globalEvent));
 	return true;
 }
 
@@ -83,13 +83,13 @@ void GlobalEvents::onThink(uint32_t interval)
 	uint32_t timeNow = time(NULL);
 	for(GlobalEventList::iterator it = eventsMap.begin(); it != eventsMap.end(); ++it)
 	{
-		GlobalEvent* globalEvent;
+		GlobalEvent* globalEvent = it->second;
 		if(timeNow > (globalEvent->getLastExecution() + globalEvent->getInterval()))
 		{
 			globalEvent->setLastExecution(timeNow);
-			uint32_t ret = globalEvent->executeThink(interval, timeNow)
-			if(ret != 1)
+			if(globalEvent->executeThink(interval, timeNow) != 1)
 				std::cout << "[Error - GlobalEvents::onThink] Couldn't execute event: " << globalEvent->getName() << std::endl;
+		}
 	}
 
 	onThink(interval);

@@ -67,7 +67,7 @@ class GlobalEvent : public Event
 		void setLastExecution(uint32_t time) {m_lastExecution = time;}
 
 		//scripting
-		int32_t executeThink(Creature* creature, const std::string& words, const std::string& param);
+		int32_t executeThink(uint32_t interval, uint32_t lastExecution);
 
 	protected:
 		virtual std::string getScriptEventName();
