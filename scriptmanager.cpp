@@ -31,6 +31,7 @@
 #include "movement.h"
 #include "weapons.h"
 #include "creatureevent.h"
+#include "globalevent.h"
 
 #ifndef __CONSOLE__
 #include "gui.h"
@@ -42,6 +43,7 @@ Spells* g_spells = NULL;
 TalkActions* g_talkActions = NULL;
 MoveEvents* g_moveEvents = NULL;
 Weapons* g_weapons = NULL;
+GlobalEvents* g_globalEvents = NULL;
 
 ScriptingManager* ScriptingManager::_instance = NULL;
 
@@ -104,6 +106,13 @@ bool ScriptingManager::loadScriptSystems()
 	if(!g_creatureEvents->loadFromXml())
 	{
 		std::cout << "> ERROR: Unable to load CreatureEvents!" << std::endl;
+		return false;
+	}
+
+	g_globalEvents = new GlobalEvents();
+	if(!g_globalEvents->loadFromXml())
+	{
+		std::cout << "> ERROR: Unable to load GlobalEvents!" << std::endl;
 		return false;
 	}
 	return true;

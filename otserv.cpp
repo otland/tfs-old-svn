@@ -44,6 +44,7 @@
 #include "vocation.h"
 #include "scriptmanager.h"
 #include "configmanager.h"
+#include "globalevent.h"
 
 #include "tools.h"
 #include "ioban.h"
@@ -90,6 +91,7 @@ Npcs g_npcs;
 ConfigManager g_config;
 Monsters g_monsters;
 Vocations g_vocations;
+extern GlobalEvents* g_globalEvents;
 
 #ifndef __CONSOLE__
 #ifdef WIN32
@@ -523,6 +525,7 @@ void mainLoader()
 
 	IOLoginData::getInstance()->resetOnlineStatus();
 	g_game.setGameState(GAME_STATE_NORMAL);
+	g_globalEvents->onThink(1000);
 	OTSYS_THREAD_SIGNAL_SEND(g_loaderSignal);
 }
 
@@ -764,6 +767,15 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload creature events." << std::endl;
 					}
 					break;
+				case ID_MENU_RELOAD_GLOBALEVENTS:
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(g_globalEvents->reload())
+							std::cout << "Reloaded global events." << std::endl;
+						else
+							std::cout << "Failed to reload global events." << std::endl;
+					}
+					break;
 				case ID_MENU_RELOAD_HIGHSCORES:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -838,9 +850,9 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
 						if(g_talkActions->reload())
-							std::cout << "Reloaded talkactions." << std::endl;
+							std::cout << "Reloaded talk actions." << std::endl;
 						else
-							std::cout << "Failed to reload talkactions." << std::endl;
+							std::cout << "Failed to reload talk actions." << std::endl;
 					}
 					break;
 				case ID_MENU_RELOAD_ALL:
@@ -867,18 +879,23 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 														{
 															if(g_creatureEvents->reload())
 															{
-																if(Raids::getInstance()->reload() && Raids::getInstance()->startup())
+																if(g_globalEvents->reload())
 																{
-																	if(Houses::getInstance().reloadPrices())
+																	if(Raids::getInstance()->reload() && Raids::getInstance()->startup())
 																	{
-																		g_npcs.reload();
-																		std::cout << "Reloaded all." << std::endl;
+																		if(Houses::getInstance().reloadPrices())
+																		{
+																			g_npcs.reload();
+																			std::cout << "Reloaded all." << std::endl;
+																		}
+																		else
+																			std::cout << "Failed to reload house prices." << std::endl;
 																	}
 																	else
-																		std::cout << "Failed to reload house prices." << std::endl;
+																		std::cout << "Failed to reload raids." << std::endl;
 																}
 																else
-																	std::cout << "Failed to reload raids." << std::endl;
+																	std::cout << "Failed to reload global events." << std::endl;
 															}
 															else
 																std::cout << "Failed to reload creature events." << std::endl;
@@ -887,7 +904,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 															std::cout << "Failed to reload spells." << std::endl;
 													}
 													else
-														std::cout << "Failed to reload talkactions." << std::endl;
+														std::cout << "Failed to reload talk actions." << std::endl;
 												}
 												else
 													std::cout << "Failed to reload movements." << std::endl;
