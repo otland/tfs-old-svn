@@ -928,7 +928,7 @@ if(Modules == nil) then
 		local parseInfo = {
 			[TAG_PLAYERNAME] = getPlayerName(cid),
 			[TAG_ITEMCOUNT] = amount,
-			[TAG_TOTALCOST] = amount * self.npcHandler.shopItems[itemid].buyPrice,
+			[TAG_TOTALCOST] = amount * self.npcHandler.shopItems[itemid].sellPrice,
 			[TAG_ITEMNAME] = self.npcHandler.shopItems[itemid].realName
 		}
 
