@@ -41,6 +41,7 @@
 #include "spells.h"
 #include "weapons.h"
 #include "raids.h"
+#include "globalevent.h"
 #include "chat.h"
 #include "teleport.h"
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -64,6 +65,7 @@ extern Weapons* g_weapons;
 extern Game g_game;
 extern Chat g_chat;
 extern CreatureEvents* g_creatureEvents;
+extern GlobalEvents* g_globalEvents;
 
 extern bool readXMLInteger(xmlNodePtr p, const char* tag, int32_t &value);
 
@@ -558,6 +560,11 @@ bool Commands::reloadInfo(Creature* creature, const std::string& cmd, const std:
 			g_creatureEvents->reload();
 			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded creature scripts.");
 		}
+		else if(tmpParam == "globalevent" || tmpParam == "globalevents")
+		{
+			g_globalEvents->reload();
+			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded global events.");
+		}
 		else if(tmpParam == "highscore" || tmpParam == "highscores")
 		{
 			g_game.reloadHighscores();
@@ -566,8 +573,7 @@ bool Commands::reloadInfo(Creature* creature, const std::string& cmd, const std:
 		else if(tmpParam == "houseprices" || tmpParam == "houseprice")
 		{
 			Houses::getInstance().reloadPrices();
-			if(player)
-				player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded house prices.");
+			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded house prices.");
 		}
 		else if(tmpParam == "monster" || tmpParam == "monsters")
 		{
