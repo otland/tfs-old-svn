@@ -69,19 +69,10 @@ class Door : public Item
 		Door(uint16_t _type);
 		virtual ~Door();
 
-		virtual Door* getDoor()
-		{
-			return this;
-		}
-		virtual const Door* getDoor() const
-		{
-			return this;
-		}
+		virtual Door* getDoor() {return this;}
+		virtual const Door* getDoor() const {return this;}
 
-		House* getHouse()
-		{
-			return house;
-		}
+		House* getHouse(){return house;}
 
 		//serialization
 		virtual bool unserialize(xmlNodePtr p);
@@ -90,14 +81,8 @@ class Door : public Item
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool serializeAttr(PropWriteStream& propWriteStream);
 
-		void setDoorId(uint32_t _doorId)
-		{
-			setIntAttr(ATTR_ITEM_DOORID, (uint32_t)_doorId);
-		}
-		uint32_t getDoorId() const
-		{
-			return getIntAttr(ATTR_ITEM_DOORID);
-		}
+		void setDoorId(uint32_t _doorId){ setIntAttr(ATTR_ITEM_DOORID, (uint32_t)_doorId); }
+		uint32_t getDoorId() const{ return getIntAttr(ATTR_ITEM_DOORID); }
 
 		bool canUse(const Player* player);
 
@@ -140,22 +125,13 @@ class HouseTransferItem : public Item
 	public:
 		static HouseTransferItem* createHouseTransferItem(House* house);
 
-		HouseTransferItem(House* _house) : Item(0)
-		{
-			house = _house;
-		}
-		virtual ~HouseTransferItem() {}
+		HouseTransferItem(House* _house) : Item(0) {house = _house;}
+		virtual ~HouseTransferItem(){}
 
 		virtual bool onTradeEvent(TradeEvents_t event, Player* owner);
 
-		House* getHouse()
-		{
-			return house;
-		}
-		virtual bool canTransform() const
-		{
-			return false;
-		}
+		House* getHouse() {return house;}
+		virtual bool canTransform() const {return false;}
 
 	protected:
 		House* house;
@@ -181,70 +157,28 @@ class House
 		AccessHouseLevel_t getHouseAccessLevel(const Player* player);
 		bool kickPlayer(Player* player, const std::string& name);
 
-		void setEntryPos(const Position& pos)
-		{
-			posEntry = pos;
-		}
-		const Position& getEntryPosition() const
-		{
-			return posEntry;
-		}
+		void setEntryPos(const Position& pos) {posEntry = pos;}
+		const Position& getEntryPosition() const {return posEntry;}
 
-		void setName(const std::string& _houseName)
-		{
-			houseName = _houseName;
-		}
-		const std::string& getName() const
-		{
-			return houseName;
-		}
+		void setName(const std::string& _houseName) {houseName = _houseName;}
+		const std::string& getName() const {return houseName;}
 
 		void setHouseOwner(uint32_t guid);
-		uint32_t getHouseOwner() const
-		{
-			return houseOwner;
-		}
+		uint32_t getHouseOwner() const {return houseOwner;}
 
-		void setPaidUntil(uint32_t paid)
-		{
-			paidUntil = paid;
-		}
-		uint32_t getPaidUntil() const
-		{
-			return paidUntil;
-		}
+		void setPaidUntil(uint32_t paid){paidUntil = paid;}
+		uint32_t getPaidUntil() const {return paidUntil;}
 
-		void setRent(uint32_t _rent)
-		{
-			rent = _rent;
-		}
-		uint32_t getRent() const
-		{
-			return rent;
-		}
+		void setRent(uint32_t _rent){rent = _rent;}
+		uint32_t getRent() const {return rent;}
 
-		void setPayRentWarnings(uint32_t warnings)
-		{
-			rentWarnings = warnings;
-		}
-		uint32_t getPayRentWarnings() const
-		{
-			return rentWarnings;
-		}
+		void setPayRentWarnings(uint32_t warnings) {rentWarnings = warnings;}
+		uint32_t getPayRentWarnings() const {return rentWarnings;}
 
-		void setTownId(uint32_t _town)
-		{
-			townid = _town;
-		}
-		uint32_t getTownId() const
-		{
-			return townid;
-		}
+		void setTownId(uint32_t _town){townid = _town;}
+		uint32_t getTownId() const {return townid;}
 
-		uint32_t getHouseId() const
-		{
-			return houseid;
-		}
+		uint32_t getHouseId() const {return houseid;}
 
 		void addDoor(Door* door);
 		void removeDoor(Door* door);
@@ -256,37 +190,16 @@ class House
 		void resetTransferItem();
 		bool executeTransfer(HouseTransferItem* item, Player* player);
 
-		HouseTileList::iterator getHouseTileBegin()
-		{
-			return houseTiles.begin();
-		}
-		HouseTileList::iterator getHouseTileEnd()
-		{
-			return houseTiles.end();
-		}
-		uint32_t getHouseTileSize()
-		{
-			return houseTiles.size();
-		}
+		HouseTileList::iterator getHouseTileBegin() {return houseTiles.begin();}
+		HouseTileList::iterator getHouseTileEnd() {return houseTiles.end();}
+		uint32_t getHouseTileSize() {return houseTiles.size();}
 
-		HouseDoorList::iterator getHouseDoorBegin()
-		{
-			return doorList.begin();
-		}
-		HouseDoorList::iterator getHouseDoorEnd()
-		{
-			return doorList.end();
-		}
+		HouseDoorList::iterator getHouseDoorBegin() {return doorList.begin();}
+		HouseDoorList::iterator getHouseDoorEnd() {return doorList.end();}
 
 		void addBed(BedItem* bed);
-		HouseBedItemList::iterator getHouseBedsBegin()
-		{
-			return bedsList.begin();
-		}
-		HouseBedItemList::iterator getHouseBedsEnd()
-		{
-			return bedsList.end();
-		}
+		HouseBedItemList::iterator getHouseBedsBegin() {return bedsList.begin();}
+		HouseBedItemList::iterator getHouseBedsEnd() {return bedsList.end();}
 
 	private:
 		void updateDoorDescription();
@@ -325,8 +238,8 @@ enum RentPeriod_t
 
 class Houses
 {
-		Houses();
-		~Houses();
+	Houses();
+	~Houses();
 
 	public:
 		static Houses& getInstance()
@@ -338,10 +251,10 @@ class Houses
 		House* getHouse(uint32_t houseid, bool add = false)
 		{
 			HouseMap::iterator it = houseMap.find(houseid);
-			if (it != houseMap.end())
+			if(it != houseMap.end())
 				return it->second;
 
-			if (add)
+			if(add)
 			{
 				House* house = new House(houseid);
 				houseMap[houseid] = house;
@@ -357,14 +270,8 @@ class Houses
 
 		bool payHouses();
 
-		HouseMap::iterator getHouseBegin()
-		{
-			return houseMap.begin();
-		}
-		HouseMap::iterator getHouseEnd()
-		{
-			return houseMap.end();
-		}
+		HouseMap::iterator getHouseBegin() {return houseMap.begin();}
+		HouseMap::iterator getHouseEnd() {return houseMap.end();}
 
 	private:
 		RentPeriod_t rentPeriod;

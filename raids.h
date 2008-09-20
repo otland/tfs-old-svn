@@ -72,34 +72,16 @@ class Raids
 		void clear();
 		bool reload();
 
-		bool isLoaded()
-		{
-			return loaded;
-		}
-		bool isStarted()
-		{
-			return started;
-		}
+		bool isLoaded() {return loaded;}
+		bool isStarted() {return started;}
 
-		Raid* getRunning()
-		{
-			return running;
-		}
-		void setRunning(Raid* newRunning)
-		{
-			running = newRunning;
-		}
+		Raid* getRunning() {return running;}
+		void setRunning(Raid* newRunning) {running = newRunning;}
 
 		Raid* getRaidByName(const std::string& name);
 
-		uint64_t getLastRaidEnd()
-		{
-			return lastRaidEnd;
-		}
-		void setLastRaidEnd(uint64_t newLastRaidEnd)
-		{
-			lastRaidEnd = newLastRaidEnd;
-		}
+		uint64_t getLastRaidEnd() {return lastRaidEnd;}
+		void setLastRaidEnd(uint64_t newLastRaidEnd) {lastRaidEnd = newLastRaidEnd;}
 
 		void checkRaids();
 
@@ -126,29 +108,14 @@ class Raid
 		void resetRaid();
 
 		RaidEvent* getNextRaidEvent();
-		void setState(RaidState_t newState)
-		{
-			state = newState;
-		}
-		std::string getName() const
-		{
-			return name;
-		}
+		void setState(RaidState_t newState) {state = newState;}
+		std::string getName() const {return name;}
 
 		void addEvent(RaidEvent* event);
 
-		bool isLoaded()
-		{
-			return loaded;
-		}
-		uint64_t getMargin()
-		{
-			return margin;
-		}
-		uint32_t getInterval()
-		{
-			return interval;
-		}
+		bool isLoaded() {return loaded;}
+		uint64_t getMargin() {return margin;}
+		uint32_t getInterval() {return interval;}
 
 		void stopEvents();
 
@@ -171,18 +138,9 @@ class RaidEvent
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
 
-		virtual bool executeEvent()
-		{
-			return false;
-		}
-		uint32_t getDelay() const
-		{
-			return m_delay;
-		}
-		void setDelay(uint32_t newDelay)
-		{
-			m_delay = newDelay;
-		}
+		virtual bool executeEvent() {return false;}
+		uint32_t getDelay() const {return m_delay;}
+		void setDelay(uint32_t newDelay) {m_delay = newDelay;}
 
 		static bool compareEvents(const RaidEvent* lhs, const RaidEvent* rhs)
 		{
@@ -248,10 +206,7 @@ class ScriptEvent : public RaidEvent, public Event
 		~ScriptEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
-		virtual bool configureEvent(xmlNodePtr p)
-		{
-			return false;
-		}
+		virtual bool configureEvent(xmlNodePtr p) {return false;}
 
 		bool executeEvent();
 

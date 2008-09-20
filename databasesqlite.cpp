@@ -45,11 +45,11 @@ bool DatabaseSqLite::init()
 
 	// test for existence of database file;
 	// sqlite3_open will create a new one if it isn't there (what we don't want)
-	if (!fileExists(g_config.getString(ConfigManager::SQLITE_DB).c_str()))
+	if(!fileExists(g_config.getString(ConfigManager::SQLITE_DB).c_str()))
 		return m_initialized;
 
 	// Initialize sqlite
-	if (sqlite3_open(g_config.getString(ConfigManager::SQLITE_DB).c_str(), &m_handle) != SQLITE_OK)
+	if(sqlite3_open(g_config.getString(ConfigManager::SQLITE_DB).c_str(), &m_handle) != SQLITE_OK)
 	{
 		std::cout << "SQLITE ERROR sqlite_init" << std::endl;
 		sqlite3_close(m_handle);
@@ -69,7 +69,7 @@ bool DatabaseSqLite::connect()
 
 bool DatabaseSqLite::disconnect()
 {
-	if (m_initialized)
+	if(m_initialized)
 	{
 		sqlite3_close(m_handle);
 		m_initialized = false;
@@ -80,13 +80,13 @@ bool DatabaseSqLite::disconnect()
 
 bool DatabaseSqLite::executeQuery(DBQuery &q)
 {
-	if (!m_initialized || !m_connected)
+	if(!m_initialized || !m_connected)
 		return false;
 
 	std::string s = q.str();
 	const char* querytext = s.c_str();
 	// Execute the query
-	if (sqlite3_exec(m_handle, querytext, 0, 0, &zErrMsg) != SQLITE_OK)
+	if(sqlite3_exec(m_handle, querytext, 0, 0, &zErrMsg) != SQLITE_OK)
 	{
 		std::cout << "SQLITE ERROR sqlite_exec: " << q.str() << " " << zErrMsg << std::endl;
 		sqlite3_free(zErrMsg);
@@ -104,7 +104,7 @@ std::string DatabaseSqLite::escapeBlob(const char* s, uint32_t length)
 
 	char* hex = new char[2 + 1]; //need one extra byte for null-character
 
-	for (uint32_t i = 0; i < length; i++)
+	for(uint32_t i = 0; i < length; i++)
 	{
 		sprintf(hex, "%02x", ((unsigned char)s[i]));
 		buf += hex;
@@ -118,7 +118,7 @@ std::string DatabaseSqLite::escapeBlob(const char* s, uint32_t length)
 
 bool DatabaseSqLite::storeQuery(DBQuery &q, DBResult &dbres)
 {
-	if (!m_initialized || !m_connected)
+	if(!m_initialized || !m_connected)
 		return false;
 
 	std::string s = q.str();
@@ -127,7 +127,7 @@ bool DatabaseSqLite::storeQuery(DBQuery &q, DBResult &dbres)
 	q.reset();
 	dbres.clear();
 	// Execute the query
-	if (sqlite3_exec(m_handle, querytext, DatabaseSqLite::callback, &dbres, &zErrMsg) != SQLITE_OK)
+	if(sqlite3_exec(m_handle, querytext, DatabaseSqLite::callback, &dbres, &zErrMsg) != SQLITE_OK)
 	{
 		std::cout << "SQLITE ERROR sqlite_exec: " << q.str() << " " << zErrMsg << std::endl;
 		sqlite3_free(zErrMsg);
@@ -156,9 +156,9 @@ bool DatabaseSqLite::commit()
 int DatabaseSqLite::callback(void *db, int num_fields, char **results, char **columnNames)
 {
 	DBResult* dbres = (DBResult*)db;
-	if (!DatabaseSqLite::m_fieldnames)
+	if(!DatabaseSqLite::m_fieldnames)
 	{
-		for (int i = 0; i < num_fields; i++)
+		for(int i = 0; i < num_fields; i++)
 			dbres->setFieldName(std::string(columnNames[i]), i);
 		DatabaseSqLite::m_fieldnames = true;
 	}

@@ -35,10 +35,7 @@ class BaseEvents
 
 		bool loadFromXml();
 		bool reload();
-		bool isLoaded()
-		{
-			return m_loaded;
-		}
+		bool isLoaded(){return m_loaded;}
 
 	protected:
 		virtual LuaScriptInterface& getScriptInterface() = 0;
@@ -62,10 +59,7 @@ class Event
 		bool loadScript(const std::string& scriptFile);
 		virtual bool loadFunction(const std::string& functionName);
 
-		virtual bool isScripted()
-		{
-			return m_scripted;
-		}
+		virtual bool isScripted() {return m_scripted;}
 
 	protected:
 		virtual std::string getScriptEventName() = 0;

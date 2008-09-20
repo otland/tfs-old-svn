@@ -180,7 +180,7 @@ class ProtocolAdmin : public Protocol
 {
 	public:
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
-		static uint32_t protocolAdminCount;
+	static uint32_t protocolAdminCount;
 #endif
 		ProtocolAdmin(Connection* connection);
 		virtual ~ProtocolAdmin();

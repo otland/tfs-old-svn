@@ -36,17 +36,17 @@ ConfigManager::~ConfigManager()
 bool ConfigManager::loadFile(const std::string& _filename)
 {
 	lua_State* L = lua_open();
-	if (!L)
+	if(!L)
 		return false;
 
-	if (luaL_dofile(L, _filename.c_str()))
+	if(luaL_dofile(L, _filename.c_str()))
 	{
 		lua_close(L);
 		return false;
 	}
 
 	//parse config
-	if (!m_isLoaded) //info that must be loaded one time (unless we reset the modules involved)
+	if(!m_isLoaded) //info that must be loaded one time (unless we reset the modules involved)
 	{
 		m_confString[CONFIG_FILE] = _filename;
 		m_confString[IP] = getGlobalString(L, "ip", "127.0.0.1");
@@ -60,13 +60,13 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confString[MYSQL_PASS] = getGlobalString(L, "mysqlPass", "");
 		m_confString[MYSQL_DB] = getGlobalString(L, "mysqlDatabase", "theforgottenserver");
 		m_confString[SQLITE_DB] = getGlobalString(L, "sqliteDatabase");
-#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+		#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 		m_confString[SQL_TYPE] = getGlobalString(L, "sqlType");
-#endif
+		#endif
 		m_confString[PASSWORDTYPE] = getGlobalString(L, "passwordType", "plain");
-#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+		#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 		m_confInteger[SQLTYPE] = SQL_TYPE_NONE;
-#endif
+		#endif
 		m_confInteger[PASSWORD_TYPE] = PASSWORD_TYPE_PLAIN;
 		m_confString[SERVERSAVE_ENABLED] = getGlobalString(L, "serverSaveEnabled", "yes");
 		m_confInteger[SERVERSAVE_H] = getGlobalNumber(L, "serverSaveHour", 3);
@@ -145,7 +145,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 
 bool ConfigManager::reload()
 {
-	if (!m_isLoaded)
+	if(!m_isLoaded)
 		return false;
 
 	return loadFile(m_confString[CONFIG_FILE]);
@@ -153,7 +153,7 @@ bool ConfigManager::reload()
 
 const std::string& ConfigManager::getString(uint32_t _what) const
 {
-	if (m_isLoaded && _what < LAST_STRING_CONFIG)
+	if(m_isLoaded && _what < LAST_STRING_CONFIG)
 		return m_confString[_what];
 	else
 	{
@@ -164,7 +164,7 @@ const std::string& ConfigManager::getString(uint32_t _what) const
 
 int32_t ConfigManager::getNumber(uint32_t _what) const
 {
-	if (m_isLoaded && _what < LAST_INTEGER_CONFIG)
+	if(m_isLoaded && _what < LAST_INTEGER_CONFIG)
 		return m_confInteger[_what];
 	else
 	{
@@ -174,7 +174,7 @@ int32_t ConfigManager::getNumber(uint32_t _what) const
 }
 bool ConfigManager::setNumber(uint32_t _what, int32_t _value)
 {
-	if (m_isLoaded && _what < LAST_INTEGER_CONFIG)
+	if(m_isLoaded && _what < LAST_INTEGER_CONFIG)
 	{
 		m_confInteger[_what] = _value;
 		return true;
@@ -190,12 +190,12 @@ std::string ConfigManager::getGlobalString(lua_State* _L, const std::string& _id
 {
 	lua_getglobal(_L, _identifier.c_str());
 
-	if (!lua_isstring(_L, -1))
+	if(!lua_isstring(_L, -1))
 		return _default;
 
 	int32_t len = (int32_t)lua_strlen(_L, -1);
 	std::string ret(lua_tostring(_L, -1), len);
-	lua_pop(_L, 1);
+	lua_pop(_L,1);
 
 	return ret;
 }
@@ -204,22 +204,21 @@ int32_t ConfigManager::getGlobalNumber(lua_State* _L, const std::string& _identi
 {
 	lua_getglobal(_L, _identifier.c_str());
 
-	if (!lua_isnumber(_L, -1))
+	if(!lua_isnumber(_L, -1))
 		return _default;
 
 	int32_t val = (int32_t)lua_tonumber(_L, -1);
-	lua_pop(_L, 1);
+	lua_pop(_L,1);
 
 	return val;
 }
 
-std::string ConfigManager::getGlobalStringField (lua_State* _L, const std::string& _identifier, const int32_t _key, const std::string& _default)
-{
+std::string ConfigManager::getGlobalStringField (lua_State* _L, const std::string& _identifier, const int32_t _key, const std::string& _default) {
 	lua_getglobal(_L, _identifier.c_str());
 
 	lua_pushnumber(_L, _key);
 	lua_gettable(_L, -2);  /* get table[key] */
-	if (!lua_isstring(_L, -1))
+	if(!lua_isstring(_L, -1))
 		return _default;
 	std::string result = lua_tostring(_L, -1);
 	lua_pop(_L, 2);  /* remove number and key*/

@@ -26,7 +26,7 @@
 extern Game g_game;
 
 HouseTile::HouseTile(int32_t x, int32_t y, int32_t z, House* _house) :
-		Tile(x, y, z)
+	Tile(x, y, z)
 {
 	house = _house;
 	setFlag(TILESTATE_HOUSE);
@@ -41,7 +41,7 @@ void HouseTile::__addThing(int32_t index, Thing* thing)
 {
 	Tile::__addThing(index, thing);
 
-	if (Item* item = thing->getItem())
+	if(Item* item = thing->getItem())
 		updateHouse(item);
 }
 
@@ -49,22 +49,22 @@ void HouseTile::__internalAddThing(uint32_t index, Thing* thing)
 {
 	Tile::__internalAddThing(index, thing);
 
-	if (Item* item = thing->getItem())
+	if(Item* item = thing->getItem())
 		updateHouse(item);
 }
 
 void HouseTile::updateHouse(Item* item)
 {
-	if (item->getTile() == this)
+	if(item->getTile() == this)
 	{
 		Door* door = item->getDoor();
-		if (door && door->getDoorId() != 0)
+		if(door && door->getDoorId() != 0)
 			house->addDoor(door);
 
-		if (!door)
+		if(!door)
 		{
 			BedItem* bed = item->getBed();
-			if (bed)
+			if(bed)
 				house->addBed(bed);
 		}
 	}
@@ -72,11 +72,11 @@ void HouseTile::updateHouse(Item* item)
 
 ReturnValue HouseTile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, uint32_t flags) const
 {
-	if (const Creature* creature = thing->getCreature())
+	if(const Creature* creature = thing->getCreature())
 	{
-		if (const Player* player = creature->getPlayer())
+		if(const Player* player = creature->getPlayer())
 		{
-			if (!house->isInvited(player) && !player->hasFlag(PlayerFlag_CanEditHouses))
+			if(!house->isInvited(player) && !player->hasFlag(PlayerFlag_CanEditHouses))
 				return RET_PLAYERISNOTINVITED;
 		}
 	}
@@ -86,27 +86,27 @@ ReturnValue HouseTile::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 
 Cylinder* HouseTile::__queryDestination(int32_t& index, const Thing* thing, Item** destItem, uint32_t& flags)
 {
-	if (const Creature* creature = thing->getCreature())
+	if(const Creature* creature = thing->getCreature())
 	{
-		if (const Player* player = creature->getPlayer())
+		if(const Player* player = creature->getPlayer())
 		{
-			if (!house->isInvited(player))
+			if(!house->isInvited(player))
 			{
 				const Position& entryPos = house->getEntryPosition();
 				Tile* destTile = g_game.getTile(entryPos.x, entryPos.y, entryPos.z);
-				if (!destTile)
+				if(!destTile)
 				{
-#ifdef __DEBUG__
+					#ifdef __DEBUG__
 					assert(destTile != NULL);
-#endif
+					#endif
 					std::cout << "Error: [HouseTile::__queryDestination] House entry not correct"
-										<< " - Name: " << house->getName()
-										<< " - House id: " << house->getHouseId()
-										<< " - Tile not found: " << entryPos << std::endl;
+						<< " - Name: " << house->getName()
+						<< " - House id: " << house->getHouseId()
+						<< " - Tile not found: " << entryPos << std::endl;
 
 					const Position& templePos = player->getTemplePosition();
 					destTile = g_game.getTile(templePos.x, templePos.y, templePos.z);
-					if (!destTile)
+					if(!destTile)
 						destTile = &(Tile::null_tile);
 				}
 

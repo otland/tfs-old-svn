@@ -53,14 +53,8 @@ class Spawns
 		void startup();
 		void clear();
 
-		bool isLoaded()
-		{
-			return loaded;
-		}
-		bool isStarted()
-		{
-			return started;
-		}
+		bool isLoaded() {return loaded;}
+		bool isStarted() {return started;}
 
 	private:
 		typedef std::list<Npc*> NpcList;
@@ -88,10 +82,7 @@ class Spawn
 		bool addMonster(const std::string& _name, const Position& _pos, Direction _dir, uint32_t _interval);
 		void removeMonster(Monster* monster);
 
-		uint32_t getInterval()
-		{
-			return interval;
-		}
+		uint32_t getInterval() {return interval;}
 		void startup();
 
 		void startSpawnCheck();

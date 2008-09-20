@@ -43,11 +43,11 @@ std::string transformToSHA1(std::string plainText, bool upperCase /*= false*/)
 	sha1.Result(sha1Hash);
 
 	hexStream.flags(std::ios::hex | std::ios::uppercase);
-	for (uint32_t i = 0; i < 5; ++i)
+	for(uint32_t i = 0; i < 5; ++i)
 		hexStream << std::setw(8) << std::setfill('0') << (uint32_t)sha1Hash[i];
 
 	std::string hexStr = hexStream.str();
-	if (!upperCase)
+	if(!upperCase)
 		toLowerCaseString(hexStr);
 
 	return hexStr;
@@ -63,11 +63,11 @@ std::string transformToMD5(std::string plainText, bool upperCase /*= false*/)
 	MD5Final(&m_md5);
 
 	hexStream.flags(std::ios::hex | std::ios::uppercase);
-	for (uint32_t i = 0; i < 16; ++i)
+	for(uint32_t i = 0; i < 16; ++i)
 		hexStream << std::setw(2) << std::setfill('0') << (uint32_t)m_md5.digest[i];
 
 	std::string hexStr = hexStream.str();
-	if (!upperCase)
+	if(!upperCase)
 		toLowerCaseString(hexStr);
 
 	return hexStr;
@@ -75,7 +75,7 @@ std::string transformToMD5(std::string plainText, bool upperCase /*= false*/)
 
 bool passwordTest(const std::string &plain, std::string &hash)
 {
-	switch (g_config.getNumber(ConfigManager::PASSWORD_TYPE))
+	switch(g_config.getNumber(ConfigManager::PASSWORD_TYPE))
 	{
 		case PASSWORD_TYPE_MD5:
 		{
@@ -106,7 +106,7 @@ void replaceString(std::string& str, const std::string sought, const std::string
 	size_t start = 0;
 	size_t soughtLen = sought.length();
 	size_t replaceLen = replacement.length();
-	while ((pos = str.find(sought, start)) != std::string::npos)
+	while((pos = str.find(sought, start)) != std::string::npos)
 	{
 		str = str.substr(0, pos) + replacement + str.substr(pos + soughtLen);
 		start = pos + replaceLen;
@@ -115,7 +115,7 @@ void replaceString(std::string& str, const std::string sought, const std::string
 
 void trim_right(std::string& source, const std::string& t)
 {
-	source.erase(source.find_last_not_of(t) + 1);
+	source.erase(source.find_last_not_of(t)+1);
 }
 
 void trim_left(std::string& source, const std::string& t)
@@ -150,7 +150,7 @@ std::string asUpperCaseString(const std::string& source)
 bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
-	if (nodeValue)
+	if(nodeValue)
 	{
 		value = atoi(nodeValue);
 		xmlFreeOTSERV(nodeValue);
@@ -164,7 +164,7 @@ bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value)
 bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
-	if (nodeValue)
+	if(nodeValue)
 	{
 		value = atoi(nodeValue);
 		xmlFreeOTSERV(nodeValue);
@@ -178,7 +178,7 @@ bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value)
 bool readXMLInteger64(xmlNodePtr node, const char* tag, uint64_t& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
-	if (nodeValue)
+	if(nodeValue)
 	{
 		value = ATOI64(nodeValue);
 		xmlFreeOTSERV(nodeValue);
@@ -191,7 +191,7 @@ bool readXMLInteger64(xmlNodePtr node, const char* tag, uint64_t& value)
 bool readXMLFloat(xmlNodePtr node, const char* tag, float& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
-	if (nodeValue)
+	if(nodeValue)
 	{
 		value = atof(nodeValue);
 		xmlFreeOTSERV(nodeValue);
@@ -205,17 +205,17 @@ bool utf8ToLatin1(char* intext, std::string& outtext)
 {
 	outtext = "";
 
-	if (intext == NULL)
+	if(intext == NULL)
 		return false;
 
 	int32_t inlen  = strlen(intext);
-	if (inlen == 0)
+	if(inlen == 0)
 		return false;
 
 	int32_t outlen = inlen * 2;
 	unsigned char* outbuf = new uint8_t[outlen];
 	int32_t res = UTF8Toisolat1(outbuf, &outlen, (unsigned char*)intext, &inlen);
-	if (res < 0)
+	if(res < 0)
 	{
 		delete[] outbuf;
 		return false;
@@ -230,9 +230,9 @@ bool utf8ToLatin1(char* intext, std::string& outtext)
 bool readXMLString(xmlNodePtr node, const char* tag, std::string& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
-	if (nodeValue)
+	if(nodeValue)
 	{
-		if (!utf8ToLatin1(nodeValue, value))
+		if(!utf8ToLatin1(nodeValue, value))
 			value = nodeValue;
 
 		xmlFreeOTSERV(nodeValue);
@@ -245,9 +245,9 @@ bool readXMLString(xmlNodePtr node, const char* tag, std::string& value)
 bool readXMLContentString(xmlNodePtr node, std::string& value)
 {
 	char* nodeValue = (char*)xmlNodeGetContent(node);
-	if (nodeValue)
+	if(nodeValue)
 	{
-		if (!utf8ToLatin1(nodeValue, value))
+		if(!utf8ToLatin1(nodeValue, value))
 			value = nodeValue;
 
 		xmlFreeOTSERV(nodeValue);
@@ -263,7 +263,7 @@ std::vector<std::string> explodeString(const std::string& inString, const std::s
 	std::string::size_type start = 0;
 	std::string::size_type end = 0;
 
-	while ((end = inString.find(separator, start)) != std::string::npos)
+	while((end = inString.find(separator, start)) != std::string::npos)
 	{
 		returnVector.push_back(inString.substr(start, end - start));
 		start = end + separator.size();
@@ -276,7 +276,7 @@ std::vector<std::string> explodeString(const std::string& inString, const std::s
 std::vector<int32_t> vectorAtoi(std::vector<std::string> stringVector)
 {
 	std::vector<int32_t> returnVector;
-	for (std::vector<std::string>::iterator it = stringVector.begin(); it != stringVector.end(); ++it)
+	for(std::vector<std::string>::iterator it = stringVector.begin(); it != stringVector.end(); ++it)
 		returnVector.push_back(atoi((*it).c_str()));
 
 	return returnVector;
@@ -302,7 +302,7 @@ float box_muller(float m, float s)
 	static float y2;
 	static int use_last = 0;
 
-	if (use_last) // use value from previous call
+	if(use_last) // use value from previous call
 	{
 		y1 = y2;
 		use_last = 0;
@@ -318,7 +318,7 @@ float box_muller(float m, float s)
 			x2 = 2.0 * r2 - 1.0;
 			w = x1 * x1 + x2 * x2;
 		}
-		while (w >= 1.0);
+		while(w >= 1.0);
 
 		w = sqrt((-2.0 * log(w)) / w);
 		y1 = x1 * w;
@@ -330,10 +330,10 @@ float box_muller(float m, float s)
 
 int32_t random_range(int32_t lowest_number, int32_t highest_number, DistributionType_t type /*= DISTRO_UNIFORM*/)
 {
-	if (highest_number == lowest_number)
+	if(highest_number == lowest_number)
 		return lowest_number;
 
-	if (lowest_number > highest_number)
+	if(lowest_number > highest_number)
 	{
 		int32_t nTmp = highest_number;
 		highest_number = lowest_number;
@@ -341,25 +341,25 @@ int32_t random_range(int32_t lowest_number, int32_t highest_number, Distribution
 	}
 
 	int32_t range = highest_number - lowest_number;
-	if (type == DISTRO_UNIFORM)
+	if(type == DISTRO_UNIFORM)
 	{
 		int32_t r = rand24b() % (range + 1);
 		return lowest_number + r;
 	}
-	else if (type == DISTRO_NORMAL)
+	else if(type == DISTRO_NORMAL)
 	{
 		float value = box_muller(0.5, 0.25);
 
-		if (value < 0)
+		if(value < 0)
 			value = 0;
-		else if (value > 1)
+		else if(value > 1)
 			value = 1;
 
 		return lowest_number + (int32_t)((float)range * value);
 	}
 	else
 	{
-		float r = 1.f - sqrt((1.f * rand24b()) / RAND_MAX24);
+		float r = 1.f -sqrt((1.f*rand24b())/RAND_MAX24);
 		return lowest_number + (int32_t)((float)range * r);
 	}
 }
@@ -367,7 +367,7 @@ int32_t random_range(int32_t lowest_number, int32_t highest_number, Distribution
 // Upcase a char.
 char upchar(char c)
 {
-	if ((c >= 97 && c <= 122) || (c <= -1 && c >= -32 ))
+	if((c >= 97 && c <= 122) || (c <= -1 && c >= -32 ))
 		c -= 32;
 	return c;
 }
@@ -392,9 +392,9 @@ bool isValidPassword(std::string text)
 	toLowerCaseString(text);
 
 	uint32_t textLength = text.length();
-	for (uint32_t size = 0; size < textLength; size++)
+	for(uint32_t size = 0; size < textLength; size++)
 	{
-		if (isLowercaseLetter(text[size]) || isNumber(text[size]) || isPasswordCharacter(text[size]))
+		if(isLowercaseLetter(text[size]) || isNumber(text[size]) || isPasswordCharacter(text[size]))
 			continue;
 		else
 			return false;
@@ -405,9 +405,9 @@ bool isValidPassword(std::string text)
 bool isNumbers(std::string text)
 {
 	uint32_t textLength = text.length();
-	for (uint32_t size = 0; size < textLength; size++)
+	for(uint32_t size = 0; size < textLength; size++)
 	{
-		if (!isNumber(text[size]))
+		if(!isNumber(text[size]))
 			return false;
 	}
 	return true;
@@ -418,9 +418,9 @@ bool isValidName(std::string text)
 	toLowerCaseString(text);
 
 	uint32_t textLength = text.length();
-	for (uint32_t size = 0; size < textLength; size++)
+	for(uint32_t size = 0; size < textLength; size++)
 	{
-		if (isLowercaseLetter(text[size]) || text[size] == 32 || text[size] == 39 || text[size] == 45)
+		if(isLowercaseLetter(text[size]) || text[size] == 32 || text[size] == 39 || text[size] == 45)
 			continue;
 		else
 			return false;
@@ -453,10 +453,10 @@ std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLenght)
 			madeNumber = false;
 			madeCharacter = false;
 			doNumber = (bool)random_range(0, 1);
-			if (doNumber)
+			if(doNumber)
 			{
 				number = random_range(2, 9);
-				if (number != lastNumber)
+				if(number != lastNumber)
 				{
 					key << number;
 					lastNumber = number;
@@ -466,7 +466,7 @@ std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLenght)
 			else
 			{
 				character = (char)random_range(65, 90);
-				if (character != lastCharacter)
+				if(character != lastCharacter)
 				{
 					key << character;
 					lastCharacter = character;
@@ -474,8 +474,8 @@ std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLenght)
 				}
 			}
 		}
-		while ((!madeCharacter && !madeNumber) ? true : ++j && j < fieldLenght);
-		if (i < fieldCount - 1)
+		while((!madeCharacter && !madeNumber) ? true : ++j && j < fieldLenght);
+		if(i < fieldCount - 1)
 			key << "-";
 		character = 0;
 		lastCharacter = 0;
@@ -483,7 +483,7 @@ std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLenght)
 		number = 0;
 		j = 0;
 	}
-	while (++i && i < fieldCount);
+	while(++i && i < fieldCount);
 	return key.str();
 }
 
@@ -496,22 +496,22 @@ std::string trimString(std::string& str)
 std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end)
 {
 	std::string tmp;
-	if (it == end)
+	if(it == end)
 		return "";
 	else
 	{
 		tmp = *it;
 		++it;
-		if (tmp[0] == '"')
+		if(tmp[0] == '"')
 		{
 			tmp.erase(0, 1);
-			while (it != end && tmp[tmp.length() - 1] != '"')
+			while(it != end && tmp[tmp.length() - 1] != '"')
 			{
 				tmp += " " + *it;
 				++it;
 			}
 
-			if (tmp.length() > 0 && tmp[tmp.length() - 1] == '"')
+			if(tmp.length() > 0 && tmp[tmp.length() - 1] == '"')
 				tmp.erase(tmp.length() - 1);
 		}
 		return tmp;
@@ -526,7 +526,7 @@ void formatIP(uint32_t ip, char* buffer/* atleast 17 */)
 void formatDate(time_t time, char* buffer/* atleast 21 */)
 {
 	const tm* tms = localtime(&time);
-	if (tms)
+	if(tms)
 		sprintf(buffer, "%02d/%02d/%04d  %02d:%02d:%02d", tms->tm_mday, tms->tm_mon + 1, tms->tm_year + 1900, tms->tm_hour, tms->tm_min, tms->tm_sec);
 	else
 		sprintf(buffer, "UNIX Time : %d", (int)time);
@@ -535,7 +535,7 @@ void formatDate(time_t time, char* buffer/* atleast 21 */)
 void formatDate2(time_t time, char* buffer/* atleast 16 */)
 {
 	const tm* tms = localtime(&time);
-	if (tms)
+	if(tms)
 		strftime(buffer, 12, "%d %b %Y", tms);
 	else
 		sprintf(buffer, "UNIX Time : %d", (int)time);
@@ -545,21 +545,21 @@ Direction getDirection(std::string string)
 {
 	Direction direction = NORTH;
 
-	if (string == "north" || string == "n" || string == "0")
+	if(string == "north" || string == "n" || string == "0")
 		direction = NORTH;
-	else if (string == "east" || string == "e" || string == "1")
+	else if(string == "east" || string == "e" || string == "1")
 		direction = EAST;
-	else if (string == "south" || string == "s" || string == "2")
+	else if(string == "south" || string == "s" || string == "2")
 		direction = SOUTH;
-	else if (string == "west" || string == "w" || string == "3")
+	else if(string == "west" || string == "w" || string == "3")
 		direction = WEST;
-	else if (string == "southwest" || string == "south west" || string == "south-west" || string == "sw" || string == "4")
+	else if(string == "southwest" || string == "south west" || string == "south-west" || string == "sw" || string == "4")
 		direction = SOUTHWEST;
-	else if (string == "southeast" || string == "south east" || string == "south-east" || string == "se" || string == "5")
+	else if(string == "southeast" || string == "south east" || string == "south-east" || string == "se" || string == "5")
 		direction = SOUTHEAST;
-	else if (string == "northwest" || string == "north west" || string == "north-west" || string == "nw" || string == "6")
+	else if(string == "northwest" || string == "north west" || string == "north-west" || string == "nw" || string == "6")
 		direction = NORTHWEST;
-	else if (string == "northeast" || string == "north east" || string == "north-east" || string == "ne" || string == "7")
+	else if(string == "northeast" || string == "north east" || string == "north-east" || string == "ne" || string == "7")
 		direction = NORTHEAST;
 
 	return direction;
@@ -568,7 +568,7 @@ Direction getDirection(std::string string)
 Direction getReverseDirection(Direction dir)
 {
 	Direction _dir = NORTH;
-	switch (dir)
+	switch(dir)
 	{
 		case NORTH:
 			_dir = SOUTH;
@@ -602,7 +602,7 @@ Direction getReverseDirection(Direction dir)
 
 Position getNextPosition(Direction direction, Position pos)
 {
-	switch (direction)
+	switch(direction)
 	{
 		case NORTH:
 			pos.y--;
@@ -641,10 +641,10 @@ Position getNextPosition(Direction direction, Position pos)
 std::string formatTime(int32_t hours, int32_t minutes)
 {
 	std::stringstream time("");
-	if (hours)
+	if(hours)
 		time << hours << " " << (hours > 1 ? "hours" : "hour") << (minutes ? " and " : "");
 
-	if (minutes)
+	if(minutes)
 		time << minutes << " " << (minutes > 1 ? "minutes" : "minute");
 
 	return time.str();
@@ -818,9 +818,9 @@ AmmoActionNames ammoActionNames[] =
 
 MagicEffectClasses getMagicEffect(const std::string& strValue)
 {
-	for (uint32_t i = 0; i < sizeof(magicEffectNames) / sizeof(MagicEffectNames); ++i)
+	for(uint32_t i = 0; i < sizeof(magicEffectNames) / sizeof(MagicEffectNames); ++i)
 	{
-		if (strcasecmp(strValue.c_str(), magicEffectNames[i].name) == 0)
+		if(strcasecmp(strValue.c_str(), magicEffectNames[i].name) == 0)
 			return magicEffectNames[i].effect;
 	}
 	return NM_ME_UNK;
@@ -828,9 +828,9 @@ MagicEffectClasses getMagicEffect(const std::string& strValue)
 
 ShootType_t getShootType(const std::string& strValue)
 {
-	for (uint32_t i = 0; i < sizeof(shootTypeNames) / sizeof(ShootTypeNames); ++i)
+	for(uint32_t i = 0; i < sizeof(shootTypeNames) / sizeof(ShootTypeNames); ++i)
 	{
-		if (strcasecmp(strValue.c_str(), shootTypeNames[i].name) == 0)
+		if(strcasecmp(strValue.c_str(), shootTypeNames[i].name) == 0)
 			return shootTypeNames[i].shoot;
 	}
 	return NM_SHOOT_UNK;
@@ -838,9 +838,9 @@ ShootType_t getShootType(const std::string& strValue)
 
 Ammo_t getAmmoType(const std::string& strValue)
 {
-	for (uint32_t i = 0; i < sizeof(ammoTypeNames) / sizeof(AmmoTypeNames); ++i)
+	for(uint32_t i = 0; i < sizeof(ammoTypeNames) / sizeof(AmmoTypeNames); ++i)
 	{
-		if (strcasecmp(strValue.c_str(), ammoTypeNames[i].name) == 0)
+		if(strcasecmp(strValue.c_str(), ammoTypeNames[i].name) == 0)
 			return ammoTypeNames[i].ammoType;
 	}
 	return AMMO_NONE;
@@ -848,9 +848,9 @@ Ammo_t getAmmoType(const std::string& strValue)
 
 AmmoAction_t getAmmoAction(const std::string& strValue)
 {
-	for (uint32_t i = 0; i < sizeof(ammoActionNames) / sizeof(AmmoActionNames); ++i)
+	for(uint32_t i = 0; i < sizeof(ammoActionNames) / sizeof(AmmoActionNames); ++i)
 	{
-		if (strcasecmp(strValue.c_str(), ammoActionNames[i].name) == 0)
+		if(strcasecmp(strValue.c_str(), ammoActionNames[i].name) == 0)
 			return ammoActionNames[i].ammoAction;
 	}
 	return AMMOACTION_NONE;
@@ -858,7 +858,7 @@ AmmoAction_t getAmmoAction(const std::string& strValue)
 
 std::string getSkillName(uint16_t skillid)
 {
-	switch (skillid)
+	switch(skillid)
 	{
 		case SKILL_FIST:
 			return "fist fighting";
@@ -895,19 +895,19 @@ std::string getSkillName(uint16_t skillid)
 
 skills_t getSkillId(std::string param)
 {
-	if (param == "fist")
+	if(param == "fist")
 		return SKILL_FIST;
-	else if (param == "club")
+	else if(param == "club")
 		return SKILL_CLUB;
-	else if (param == "sword")
+	else if(param == "sword")
 		return SKILL_SWORD;
-	else if (param == "axe")
+	else if(param == "axe")
 		return SKILL_AXE;
-	else if (param == "distance" || param == "dist")
+	else if(param == "distance" || param == "dist")
 		return SKILL_DIST;
-	else if (param == "shielding" || param == "shield")
+	else if(param == "shielding" || param == "shield")
 		return SKILL_SHIELD;
-	else if (param == "fishing" || param == "fish")
+	else if(param == "fishing" || param == "fish")
 		return SKILL_FISH;
 	else
 		return SKILL_FIST;
@@ -915,115 +915,51 @@ skills_t getSkillId(std::string param)
 
 std::string getReason(int32_t reasonId)
 {
-	switch (reasonId)
+	switch(reasonId)
 	{
-		case 0:
-			return "Offensive Name";
-			break;
-		case 1:
-			return "Invalid Name Format";
-			break;
-		case 2:
-			return "Unsuitable Name";
-			break;
-		case 3:
-			return "Name Inciting Rule Violation";
-			break;
-		case 4:
-			return "Offensive Statement";
-			break;
-		case 5:
-			return "Spamming";
-			break;
-		case 6:
-			return "Illegal Advertising";
-			break;
-		case 7:
-			return "Off-Topic Public Statement";
-			break;
-		case 8:
-			return "Non-English Public Statement";
-			break;
-		case 9:
-			return "Inciting Rule Violation";
-			break;
-		case 10:
-			return "Bug Abuse";
-			break;
-		case 11:
-			return "Game Weakness Abuse";
-			break;
-		case 12:
-			return "Using Unofficial Software to Play";
-			break;
-		case 13:
-			return "Hacking";
-			break;
-		case 14:
-			return "Multi-Clienting";
-			break;
-		case 15:
-			return "Account Trading or Sharing";
-			break;
-		case 16:
-			return "Threatening Gamemaster";
-			break;
-		case 17:
-			return "Pretending to Have Influence on Rule Enforcement";
-			break;
-		case 18:
-			return "False Report to Gamemaster";
-			break;
-		case 19:
-			return "Destructive Behaviour";
-			break;
-		case 20:
-			return "Excessive Unjustified Player Killing";
-			break;
-		case 21:
-			return "Invalid Payment";
-			break;
-		case 22:
-			return "Spoiling Auction";
-			break;
-		default:
-			return "Unknown Reason";
-			break;
+		case 0: return "Offensive Name"; break;
+		case 1: return "Invalid Name Format"; break;
+		case 2: return "Unsuitable Name"; break;
+		case 3: return "Name Inciting Rule Violation"; break;
+		case 4: return "Offensive Statement"; break;
+		case 5: return "Spamming"; break;
+		case 6: return "Illegal Advertising"; break;
+		case 7: return "Off-Topic Public Statement"; break;
+		case 8: return "Non-English Public Statement"; break;
+		case 9: return "Inciting Rule Violation"; break;
+		case 10: return "Bug Abuse"; break;
+		case 11: return "Game Weakness Abuse"; break;
+		case 12: return "Using Unofficial Software to Play"; break;
+		case 13: return "Hacking"; break;
+		case 14: return "Multi-Clienting"; break;
+		case 15: return "Account Trading or Sharing"; break;
+		case 16: return "Threatening Gamemaster"; break;
+		case 17: return "Pretending to Have Influence on Rule Enforcement"; break;
+		case 18: return "False Report to Gamemaster"; break;
+		case 19: return "Destructive Behaviour"; break;
+		case 20: return "Excessive Unjustified Player Killing"; break;
+		case 21: return "Invalid Payment"; break;
+		case 22: return "Spoiling Auction"; break;
+		default: return "Unknown Reason"; break;
 	}
 }
 
 std::string getAction(int32_t actionId, bool IPBanishment)
 {
 	std::string action;
-	switch (actionId)
+	switch(actionId)
 	{
-		case 0:
-			action = "Notation";
-			break;
-		case 1:
-			action = "Name Report";
-			break;
-		case 2:
-			action = "Banishment";
-			break;
-		case 3:
-			action = "Name Report + Banishment";
-			break;
-		case 4:
-			action = "Banishment + Final Warning";
-			break;
-		case 5:
-			action = "Name Report + Banishment + Final Warning";
-			break;
-		case 6:
-			action = "Statement Report";
-			break;
-		default:
-			action = "Deletion";
-			break;
+		case 0: action = "Notation"; break;
+		case 1: action = "Name Report"; break;
+		case 2: action = "Banishment"; break;
+		case 3: action = "Name Report + Banishment"; break;
+		case 4: action = "Banishment + Final Warning"; break;
+		case 5: action = "Name Report + Banishment + Final Warning"; break;
+		case 6: action = "Statement Report"; break;
+		default: action = "Deletion"; break;
 	}
 
-	if (IPBanishment)
+	if(IPBanishment)
 		action += " + IP Banishment";
 
 	return action;
@@ -1033,7 +969,7 @@ bool fileExists(const char* filename)
 {
 	FILE* f = fopen(filename, "rb");
 	bool exists = (f != NULL);
-	if (f != NULL)
+	if(f != NULL)
 		fclose(f);
 
 	return exists;

@@ -29,14 +29,8 @@ class Depot : public Container
 		Depot(uint16_t _type);
 		~Depot();
 
-		virtual Depot* getDepot()
-		{
-			return this;
-		}
-		virtual const Depot* getDepot() const
-		{
-			return this;
-		}
+		virtual Depot* getDepot() {return this;}
+		virtual const Depot* getDepot() const {return this;}
 
 		//serialization
 		virtual bool unserialize(xmlNodePtr p);
@@ -44,34 +38,22 @@ class Depot : public Container
 
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
 
-		uint32_t getDepotId()
-		{
-			return depotId;
-		}
-		void setMaxDepotLimit(uint32_t maxitems)
-		{
-			maxDepotLimit = maxitems;
-		}
-		void setDepotId(uint32_t id)
-		{
-			depotId = id;
-		}
+		uint32_t getDepotId() {return depotId;}
+		void setMaxDepotLimit(uint32_t maxitems) {maxDepotLimit = maxitems;}
+		void setDepotId(uint32_t id) {depotId = id;}
 
 		//cylinder implementations
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
-																	 uint32_t flags) const;
+			uint32_t flags) const;
 
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
-																				uint32_t& maxQueryCount, uint32_t flags) const;
+			uint32_t& maxQueryCount, uint32_t flags) const;
 
 		virtual void postAddNotification(Thing* thing, int32_t index, cylinderlink_t link = LINK_OWNER);
 		virtual void postRemoveNotification(Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
 
 		//overrides
-		virtual bool canRemove() const
-		{
-			return false;
-		}
+		virtual bool canRemove() const {return false;}
 
 	private:
 		uint32_t maxDepotLimit;

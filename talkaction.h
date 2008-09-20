@@ -66,10 +66,7 @@ class TalkAction : public Event
 
 		virtual bool configureEvent(xmlNodePtr p);
 
-		std::string getWords() const
-		{
-			return m_words;
-		}
+		std::string getWords() const {return m_words;}
 
 		//scripting
 		int32_t executeSay(Creature* creature, const std::string& words, const std::string& param);

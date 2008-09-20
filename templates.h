@@ -60,12 +60,12 @@ class AutoID
 		{
 			OTSYS_THREAD_LOCK_CLASS lockClass(autoIDLock);
 			count++;
-			if (count >= 0xFFFFFF)
+			if(count >= 0xFFFFFF)
 				count = 1000;
 
-			while (list.find(count) != list.end())
+			while(list.find(count) != list.end())
 			{
-				if (count >= 0xFFFFFF)
+				if(count >= 0xFFFFFF)
 					count = 1000;
 				else
 					count++;
@@ -78,7 +78,7 @@ class AutoID
 		virtual ~AutoID()
 		{
 			list_type::iterator it = list.find(auto_id);
-			if (it != list.end())
+			if(it != list.end())
 				list.erase(it);
 		}
 

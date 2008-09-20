@@ -38,13 +38,13 @@ Scheduler::Scheduler()
 
 OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 {
-#if defined __EXCEPTION_TRACER__
+	#if defined __EXCEPTION_TRACER__
 	ExceptionHandler schedulerExceptionHandler;
 	schedulerExceptionHandler.InstallHandler();
-#endif
+	#endif
 	srand((unsigned int)OTSYS_TIME());
 
-	while (!Scheduler::m_shutdown)
+	while(!Scheduler::m_shutdown)
 	{
 		SchedulerTask* task = NULL;
 		bool runTask = false;
@@ -53,7 +53,7 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 		// check if there are events waiting...
 		OTSYS_THREAD_LOCK(getScheduler().m_eventLock, "eventThread()")
 
-		if (getScheduler().m_eventList.empty())
+		if(getScheduler().m_eventList.empty())
 		{
 			// unlock mutex and wait for signal
 			ret = OTSYS_THREAD_WAITSIGNAL(getScheduler().m_eventSignal, getScheduler().m_eventLock);
@@ -65,7 +65,7 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 		}
 
 		// the mutex is locked again now...
-		if (ret == OTSYS_THREAD_TIMEOUT && !Scheduler::m_shutdown)
+		if(ret == OTSYS_THREAD_TIMEOUT && !Scheduler::m_shutdown)
 		{
 			// ok we had a timeout, so there has to be an event we have to execute...
 			task = getScheduler().m_eventList.top();
@@ -73,7 +73,7 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 
 			// check if the event was stopped
 			EventIdSet::iterator it = getScheduler().m_eventIds.find(task->getEventId());
-			if (it != getScheduler().m_eventIds.end())
+			if(it != getScheduler().m_eventIds.end())
 			{
 				// was not stopped so we should run it
 				runTask = true;
@@ -84,10 +84,10 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 		OTSYS_THREAD_UNLOCK(getScheduler().m_eventLock, "eventThread()");
 
 		// add task to dispatcher
-		if (task)
+		if(task)
 		{
 			// if it was not stopped
-			if (runTask)
+			if(runTask)
 				Dispatcher::getDispatcher().addTask(task);
 			else
 			{
@@ -96,12 +96,12 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 			}
 		}
 	}
-#if defined __EXCEPTION_TRACER__
+	#if defined __EXCEPTION_TRACER__
 	schedulerExceptionHandler.RemoveHandler();
-#endif
-#ifndef WIN32
+	#endif
+	#ifndef WIN32
 	return NULL;
-#endif
+	#endif
 }
 
 uint32_t Scheduler::addEvent(SchedulerTask* task)
@@ -109,13 +109,13 @@ uint32_t Scheduler::addEvent(SchedulerTask* task)
 	OTSYS_THREAD_LOCK(m_eventLock, "");
 
 	bool do_signal = false;
-	if (!Scheduler::m_shutdown)
+	if(!Scheduler::m_shutdown)
 	{
 		// check if the event has a valid id
-		if (task->getEventId() == 0)
+		if(task->getEventId() == 0)
 		{
 			// if not generate one
-			if (m_lastEventId >= 0xFFFFFFFF)
+			if(m_lastEventId >= 0xFFFFFFFF)
 				m_lastEventId = 0;
 
 			++m_lastEventId;
@@ -139,7 +139,7 @@ uint32_t Scheduler::addEvent(SchedulerTask* task)
 
 	OTSYS_THREAD_UNLOCK(m_eventLock, "");
 
-	if (do_signal)
+	if(do_signal)
 		OTSYS_THREAD_SIGNAL_SEND(m_eventSignal);
 
 	return task->getEventId();
@@ -147,14 +147,14 @@ uint32_t Scheduler::addEvent(SchedulerTask* task)
 
 bool Scheduler::stopEvent(uint32_t eventid)
 {
-	if (eventid == 0)
+	if(eventid == 0)
 		return false;
 
 	OTSYS_THREAD_LOCK(m_eventLock, "")
 
 	// search the event id..
 	EventIdSet::iterator it = m_eventIds.find(eventid);
-	if (it != m_eventIds.end())
+	if(it != m_eventIds.end())
 	{
 		// if it is found erase from the list
 		m_eventIds.erase(it);
@@ -175,7 +175,7 @@ void Scheduler::stop()
 	m_shutdown = true;
 
 	//this list should already be empty
-	while (!m_eventList.empty())
+	while(!m_eventList.empty())
 		m_eventList.pop();
 
 	m_eventIds.clear();

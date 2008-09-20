@@ -31,7 +31,7 @@
 extern Game g_game;
 
 TalkActions::TalkActions() :
-		m_scriptInterface("TalkAction Interface")
+m_scriptInterface("TalkAction Interface")
 {
 	m_scriptInterface.initState();
 }
@@ -44,8 +44,7 @@ TalkActions::~TalkActions()
 void TalkActions::clear()
 {
 	TalkActionList::iterator it = wordsMap.begin();
-	while (it != wordsMap.end())
-	{
+	while(it != wordsMap.end()){
 		delete it->second;
 		wordsMap.erase(it);
 		it = wordsMap.begin();
@@ -66,7 +65,7 @@ std::string TalkActions::getScriptBaseName()
 
 Event* TalkActions::getEvent(const std::string& nodeName)
 {
-	if (asLowerCaseString(nodeName) == "talkaction")
+	if(asLowerCaseString(nodeName) == "talkaction")
 		return new TalkAction(&m_scriptInterface);
 	else
 		return NULL;
@@ -75,7 +74,7 @@ Event* TalkActions::getEvent(const std::string& nodeName)
 bool TalkActions::registerEvent(Event* event, xmlNodePtr p)
 {
 	TalkAction* talkAction = dynamic_cast<TalkAction*>(event);
-	if (!talkAction)
+	if(!talkAction)
 		return false;
 
 	wordsMap.push_back(std::make_pair(talkAction->getWords(), talkAction));
@@ -84,16 +83,16 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p)
 
 TalkActionResult_t TalkActions::playerSaySpell(Player* player, SpeakClasses type, const std::string& words)
 {
-	if (type != SPEAK_SAY)
+	if(type != SPEAK_SAY)
 		return TALKACTION_CONTINUE;
 
 	std::string str_words;
 	std::string str_param;
 	size_t loc = words.find( '"', 0 );
-	if (loc != std::string::npos && loc >= 0)
+	if(loc != std::string::npos && loc >= 0)
 	{
 		str_words = std::string(words, 0, loc);
-		str_param = std::string(words, (loc + 1), words.size() - loc - 1);
+		str_param = std::string(words, (loc+1), words.size()-loc-1);
 	}
 	else
 	{
@@ -105,13 +104,13 @@ TalkActionResult_t TalkActions::playerSaySpell(Player* player, SpeakClasses type
 	trim_right(str_words, " ");
 
 	TalkActionList::iterator it;
-	for (it = wordsMap.begin(); it != wordsMap.end(); ++it)
+	for(it = wordsMap.begin(); it != wordsMap.end(); ++it)
 	{
-		if (it->first == str_words)
+		if(it->first == str_words)
 		{
 			TalkAction* talkAction = it->second;
 			int32_t ret =  talkAction->executeSay(player, str_words, str_param);
-			if (ret == 1)
+			if(ret == 1)
 				return TALKACTION_CONTINUE;
 			else
 				return TALKACTION_BREAK;
@@ -121,7 +120,7 @@ TalkActionResult_t TalkActions::playerSaySpell(Player* player, SpeakClasses type
 }
 
 TalkAction::TalkAction(LuaScriptInterface* _interface) :
-		Event(_interface)
+Event(_interface)
 {
 	//
 }
@@ -135,7 +134,7 @@ bool TalkAction::configureEvent(xmlNodePtr p)
 {
 	std::string strValue;
 
-	if (readXMLString(p, "words", strValue))
+	if(readXMLString(p, "words", strValue))
 		m_words = strValue;
 	else
 	{
@@ -153,15 +152,15 @@ std::string TalkAction::getScriptEventName()
 int32_t TalkAction::executeSay(Creature* creature, const std::string& words, const std::string& param)
 {
 	//onSay(cid, words, param)
-	if (m_scriptInterface->reserveScriptEnv())
+	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 
-#ifdef __DEBUG_LUASCRIPTS__
+		#ifdef __DEBUG_LUASCRIPTS__
 		char desc[125];
 		sprintf(desc, "%s - %s- %s", creature->getName().c_str(), words.c_str(), param.c_str());
 		env->setEventDesc(desc);
-#endif
+		#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);
 		env->setRealPos(creature->getPosition());

@@ -33,7 +33,7 @@ OutputMessage::OutputMessage()
 OutputMessagePool::OutputMessagePool()
 {
 	OTSYS_THREAD_LOCKVARINIT(m_outputPoolLock);
-	for (uint32_t i = 0; i < OUTPUT_POOL_SIZE; ++i)
+	for(uint32_t i = 0; i < OUTPUT_POOL_SIZE; ++i)
 	{
 		OutputMessage* msg = new OutputMessage();
 		m_outputMessages.push_back(msg);
@@ -53,7 +53,7 @@ void OutputMessagePool::startExecutionFrame()
 OutputMessagePool::~OutputMessagePool()
 {
 	OutputMessageVector::iterator it;
-	for (it = m_outputMessages.begin(); it != m_outputMessages.end(); ++it)
+	for(it = m_outputMessages.begin(); it != m_outputMessages.end(); ++it)
 		delete *it;
 
 	m_outputMessages.clear();
@@ -66,19 +66,19 @@ void OutputMessagePool::send(OutputMessage* msg)
 	OutputMessage::OutputMessageState state = msg->getState();
 	OTSYS_THREAD_UNLOCK(m_outputPoolLock, "");
 
-	if (state == OutputMessage::STATE_ALLOCATED_NO_AUTOSEND)
+	if(state == OutputMessage::STATE_ALLOCATED_NO_AUTOSEND)
 	{
-#ifdef __DEBUG_NET_DETAIL__
+		#ifdef __DEBUG_NET_DETAIL__
 		std::cout << "Sending message - SINGLE" << std::endl;
-#endif
+		#endif
 
-		if (msg->getConnection())
+		if(msg->getConnection())
 		{
-			if (msg->getConnection()->send(msg))
+			if(msg->getConnection()->send(msg))
 			{
 				//Note: if we ever decide to change how the pool works this will have to change
 				OTSYS_THREAD_LOCK(m_outputPoolLock, "");
-				if (msg->getState() != OutputMessage::STATE_FREE)
+				if(msg->getState() != OutputMessage::STATE_FREE)
 					msg->setState(OutputMessage::STATE_WAITING);
 				OTSYS_THREAD_UNLOCK(m_outputPoolLock, "");
 			}
@@ -87,16 +87,16 @@ void OutputMessagePool::send(OutputMessage* msg)
 		}
 		else
 		{
-#ifdef __DEBUG_NET__
+			#ifdef __DEBUG_NET__
 			std::cout << "Error: [OutputMessagePool::send] NULL connection." << std::endl;
-#endif
+			#endif
 		}
 	}
 	else
 	{
-#ifdef __DEBUG_NET__
+		#ifdef __DEBUG_NET__
 		std::cout << "Warning: [OutputMessagePool::send] State != STATE_ALLOCATED_NO_AUTOSEND" << std::endl;
-#endif
+		#endif
 	}
 }
 
@@ -104,27 +104,27 @@ void OutputMessagePool::sendAll()
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_outputPoolLock);
 	OutputMessageVector::iterator it;
-	for (it = m_autoSendOutputMessages.begin(); it != m_autoSendOutputMessages.end(); )
+	for(it = m_autoSendOutputMessages.begin(); it != m_autoSendOutputMessages.end(); )
 	{
-#ifdef __NO_PLAYER_SENDBUFFER__
+		#ifdef __NO_PLAYER_SENDBUFFER__
 		//use this define only for debugging
 		bool v = 1;
-#else
+		#else
 		//It will send only messages bigger then 1 kb or with a lifetime greater than 10 ms
 		bool v = (*it)->getMessageLength() > 1024 || (m_frameTime - (*it)->getFrame() > 10);
-#endif
-		if (v)
+		#endif
+		if(v)
 		{
-#ifdef __DEBUG_NET_DETAIL__
+			#ifdef __DEBUG_NET_DETAIL__
 			std::cout << "Sending message - ALL" << std::endl;
-#endif
+			#endif
 
-			if ((*it)->getConnection())
+			if((*it)->getConnection())
 			{
-				if ((*it)->getConnection()->send(*it))
+				if((*it)->getConnection()->send(*it))
 				{
 					// Note: if we ever decide to change how the pool works this will have to change
-					if ((*it)->getState() != OutputMessage::STATE_FREE)
+					if((*it)->getState() != OutputMessage::STATE_FREE)
 						(*it)->setState(OutputMessage::STATE_WAITING);
 				}
 				else
@@ -132,9 +132,9 @@ void OutputMessagePool::sendAll()
 			}
 			else
 			{
-#ifdef __DEBUG_NET__
+				#ifdef __DEBUG_NET__
 				std::cout << "Error: [OutputMessagePool::send] NULL connection." << std::endl;
-#endif
+				#endif
 			}
 			m_autoSendOutputMessages.erase(it++);
 		}
@@ -154,13 +154,13 @@ void OutputMessagePool::internalReleaseMessage(OutputMessage* msg)
 void OutputMessagePool::releaseMessage(OutputMessage* msg, bool sent /*= false*/)
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_outputPoolLock);
-	switch (msg->getState())
+	switch(msg->getState())
 	{
 		case OutputMessage::STATE_ALLOCATED:
 		{
 			OutputMessageVector::iterator it =
 				std::find(m_autoSendOutputMessages.begin(), m_autoSendOutputMessages.end(), msg);
-			if (it != m_autoSendOutputMessages.end())
+			if(it != m_autoSendOutputMessages.end())
 				m_autoSendOutputMessages.erase(it);
 			msg->freeMessage();
 			m_outputMessages.push_back(msg);
@@ -171,7 +171,7 @@ void OutputMessagePool::releaseMessage(OutputMessage* msg, bool sent /*= false*/
 			m_outputMessages.push_back(msg);
 			break;
 		case OutputMessage::STATE_WAITING:
-			if (!sent)
+			if(!sent)
 				std::cout << "Error: [OutputMessagePool::releaseMessage] Releasing STATE_WAITING OutputMessage." << std::endl;
 			else
 			{
@@ -183,27 +183,27 @@ void OutputMessagePool::releaseMessage(OutputMessage* msg, bool sent /*= false*/
 			std::cout << "Error: [OutputMessagePool::releaseMessage] Releasing STATE_FREE OutputMessage." << std::endl;
 			break;
 		default:
-			std::cout << "Error: [OutputMessagePool::releaseMessage] Releasing STATE_?(" << msg->getState() << ") OutputMessage." << std::endl;
+			std::cout << "Error: [OutputMessagePool::releaseMessage] Releasing STATE_?(" << msg->getState() <<") OutputMessage." << std::endl;
 			break;
 	}
 }
 
 OutputMessage* OutputMessagePool::getOutputMessage(Protocol* protocol, bool autosend /*= true*/)
 {
-#ifdef __DEBUG_NET__
-	if (protocol->getConnection() == NULL)
+	#ifdef __DEBUG_NET__
+	if(protocol->getConnection() == NULL)
 		std::cout << "Warning: [OutputMessagePool::getOutputMessage] NULL connection." << std::endl;
-#endif
-#ifdef __DEBUG_NET_DETAIL__
+	#endif
+	#ifdef __DEBUG_NET_DETAIL__
 	std::cout << "request output message - auto = " << autosend << std::endl;
-#endif
+	#endif
 
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_outputPoolLock);
 	OutputMessage* outputmessage;
-	if (m_outputMessages.empty())
+	if(m_outputMessages.empty())
 	{
 #ifdef __TRACK_NETWORK__
-		if (m_allOutputMessages.size() >= 5000)
+		if(m_allOutputMessages.size() >= 5000)
 		{
 			std::cout << "High usage of outputmessages: " << std::endl;
 			m_allOutputMessages.back()->PrintTrace();
@@ -219,7 +219,7 @@ OutputMessage* OutputMessagePool::getOutputMessage(Protocol* protocol, bool auto
 		outputmessage = m_outputMessages.back();
 #ifdef __TRACK_NETWORK__
 		// Print message trace
-		if (outputmessage->getState() != OutputMessage::STATE_FREE)
+		if(outputmessage->getState() != OutputMessage::STATE_FREE)
 		{
 			std::cout << "Using allocated message, message trace:" << std::endl;
 			outputmessage->PrintTrace();
@@ -237,7 +237,7 @@ OutputMessage* OutputMessagePool::getOutputMessage(Protocol* protocol, bool auto
 void OutputMessagePool::configureOutputMessage(OutputMessage* msg, Protocol* protocol, bool autosend)
 {
 	msg->Reset();
-	if (autosend)
+	if(autosend)
 	{
 		msg->setState(OutputMessage::STATE_ALLOCATED);
 		m_autoSendOutputMessages.push_back(msg);

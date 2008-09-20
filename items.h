@@ -137,7 +137,7 @@ class Condition;
 class ItemType
 {
 	private:
-		ItemType(const ItemType& it) {}
+		ItemType(const ItemType& it){}
 
 	public:
 		ItemType();
@@ -146,67 +146,22 @@ class ItemType
 		itemgroup_t group;
 		ItemTypes_t type;
 
-		bool isGroundTile() const
-		{
-			return (group == ITEM_GROUP_GROUND);
-		}
-		bool isContainer() const
-		{
-			return (group == ITEM_GROUP_CONTAINER);
-		}
-		bool isSplash() const
-		{
-			return (group == ITEM_GROUP_SPLASH);
-		}
-		bool isFluidContainer() const
-		{
-			return (group == ITEM_GROUP_FLUID);
-		}
+		bool isGroundTile() const {return (group == ITEM_GROUP_GROUND);}
+		bool isContainer() const {return (group == ITEM_GROUP_CONTAINER);}
+		bool isSplash() const {return (group == ITEM_GROUP_SPLASH);}
+		bool isFluidContainer() const {return (group == ITEM_GROUP_FLUID);}
 
-		bool isDoor() const
-		{
-			return (type == ITEM_TYPE_DOOR);
-		}
-		bool isMagicField() const
-		{
-			return (type == ITEM_TYPE_MAGICFIELD);
-		}
-		bool isTeleport() const
-		{
-			return (type == ITEM_TYPE_TELEPORT);
-		}
-		bool isKey() const
-		{
-			return (type == ITEM_TYPE_KEY);
-		}
-		bool isDepot() const
-		{
-			return (type == ITEM_TYPE_DEPOT);
-		}
-		bool isMailbox() const
-		{
-			return (type == ITEM_TYPE_MAILBOX);
-		}
-		bool isTrashHolder() const
-		{
-			return (type == ITEM_TYPE_TRASHHOLDER);
-		}
-		bool isBed() const
-		{
-			return (type == ITEM_TYPE_BED);
-		}
-		bool isLevelDoor() const
-		{
-			return id == 1227 || id == 1229 || id == 1245 || id == 1247 || id == 1259 || id == 1261 || id == 3540 || id == 3549 || id == 5103 || id == 5112 || id == 5121 || id == 5130 || id == 5292 || id == 5294 || id == 6206 || id == 6208 || id == 6263 || id == 6265 || id == 6896 || id == 6905 || id == 7038 || id == 7047 || id == 8555 || id == 8557;
-		}
-		bool hasSubType() const
-		{
-			return (isFluidContainer() || isSplash() || stackable || charges != 0);
-		}
-		bool isRune() const
-		{
-			return clientCharges;
-		}
+		bool isDoor() const {return (type == ITEM_TYPE_DOOR);}
+		bool isMagicField() const {return (type == ITEM_TYPE_MAGICFIELD);}
+		bool isTeleport() const {return (type == ITEM_TYPE_TELEPORT);}
+		bool isKey() const {return (type == ITEM_TYPE_KEY);}
+		bool isDepot() const {return (type == ITEM_TYPE_DEPOT);}
+		bool isMailbox() const {return (type == ITEM_TYPE_MAILBOX);}
+		bool isTrashHolder() const {return (type == ITEM_TYPE_TRASHHOLDER);}
+		bool isBed() const {return (type == ITEM_TYPE_BED);}
+		bool isLevelDoor() const {return id == 1227 || id == 1229 || id == 1245 || id == 1247 || id == 1259 || id == 1261 || id == 3540 || id == 3549 || id == 5103 || id == 5112 || id == 5121 || id == 5130 || id == 5292 || id == 5294 || id == 6206 || id == 6208 || id == 6263 || id == 6265 || id == 6896 || id == 6905 || id == 7038 || id == 7047 || id == 8555 || id == 8557;}
+		bool hasSubType() const {return (isFluidContainer() || isSplash() || stackable || charges != 0);}
+		bool isRune() const {return clientCharges;}
 
 		Direction bedPartnerDir;
 		uint16_t transformToOnUse[2];
@@ -310,10 +265,7 @@ class Array
 		const A getElement(uint32_t id) const;
 		void addElement(A a, uint32_t pos);
 
-		uint32_t size()
-		{
-			return m_size;
-		}
+		uint32_t size() {return m_size;}
 
 	private:
 		A* m_data;
@@ -331,10 +283,7 @@ class Items
 
 		int32_t loadFromOtb(std::string);
 
-		const ItemType& operator[](int32_t id) const
-		{
-			return getItemType(id);
-		}
+		const ItemType& operator[](int32_t id) const {return getItemType(id);}
 		const ItemType& getItemType(int32_t id) const;
 		ItemType& getItemType(int32_t id);
 		const ItemType& getItemIdByClientId(int32_t spriteId) const;
@@ -349,14 +298,8 @@ class Items
 
 		void addItemType(ItemType* iType);
 
-		const ItemType* getElement(uint32_t id) const
-		{
-			return items.getElement(id);
-		}
-		uint32_t size()
-		{
-			return items.size();
-		}
+		const ItemType* getElement(uint32_t id) const {return items.getElement(id);}
+		uint32_t size() {return items.size();}
 
 	protected:
 		typedef std::map<int32_t, int32_t> ReverseItemMap;

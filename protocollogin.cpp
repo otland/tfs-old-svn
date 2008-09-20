@@ -67,7 +67,7 @@ void ProtocolLogin::disconnectClient(uint8_t error, const char* message)
 
 bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 {
-	if (
+	if(
 #ifndef __CONSOLE__
 		!gui.m_connections ||
 #endif
@@ -79,15 +79,14 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	uint32_t clientip = getConnection()->getIP();
 
-	/*uint16_t clientos =*/
-	msg.GetU16();
+	/*uint16_t clientos =*/ msg.GetU16();
 	uint16_t version  = msg.GetU16();
 	msg.SkipBytes(12);
 
-	if (version <= 760)
+	if(version <= 760)
 		disconnectClient(0x0A, "Only clients with protocol 8.2 allowed!");
 
-	if (!RSA_decrypt(g_otservRSA, msg))
+	if(!RSA_decrypt(g_otservRSA, msg))
 	{
 		getConnection()->closeConnection();
 		return false;
@@ -104,9 +103,9 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	uint32_t accnumber = msg.GetU32();
 	std::string password = msg.GetString();
 
-	if (!accnumber)
+	if(!accnumber)
 	{
-		if (g_config.getString(ConfigManager::ACCOUNT_MANAGER) == "yes")
+		if(g_config.getString(ConfigManager::ACCOUNT_MANAGER) == "yes")
 		{
 			accnumber = 1;
 			password = "1";
@@ -118,34 +117,34 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		}
 	}
 
-	if (version < 820)
+	if(version < 820)
 	{
 		disconnectClient(0x0A, "Only clients with protocol 8.2 allowed!");
 		return false;
 	}
 
-	if (g_game.getGameState() == GAME_STATE_STARTUP)
+	if(g_game.getGameState() == GAME_STATE_STARTUP)
 	{
 		disconnectClient(0x0A, "Gameworld is starting up. Please wait.");
 		return false;
 	}
 
-	if (g_bans.isIpDisabled(clientip))
+	if(g_bans.isIpDisabled(clientip))
 	{
 		disconnectClient(0x0A, "Too many connections attempts from this IP. Try again later.");
 		return false;
 	}
 
-	if (g_bans.isIpBanished(clientip))
+	if(g_bans.isIpBanished(clientip))
 	{
 		disconnectClient(0x0A, "Your IP is banished!");
 		return false;
 	}
 
 	uint32_t serverip = serverIPs[0].first;
-	for (uint32_t i = 0; i < serverIPs.size(); i++)
+	for(uint32_t i = 0; i < serverIPs.size(); i++)
 	{
-		if ((serverIPs[i].first & serverIPs[i].second) == (clientip & serverIPs[i].second))
+		if((serverIPs[i].first & serverIPs[i].second) == (clientip & serverIPs[i].second))
 		{
 			serverip = serverIPs[i].first;
 			break;
@@ -153,8 +152,8 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	Account account = IOLoginData::getInstance()->loadAccount(accnumber);
-	if (!(accnumber != 0 && account.accnumber == accnumber &&
-				passwordTest(password, account.password)))
+	if(!(accnumber != 0 && account.accnumber == accnumber &&
+			passwordTest(password, account.password)))
 	{
 		g_bans.addLoginAttempt(clientip, false);
 		disconnectClient(0x0A, "Account number or password is not correct.");
@@ -177,7 +176,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	//Add char list
 	output->AddByte(0x64);
-	if (accnumber != 1 && g_config.getString(ConfigManager::ACCOUNT_MANAGER) == "yes")
+	if(accnumber != 1 && g_config.getString(ConfigManager::ACCOUNT_MANAGER) == "yes")
 	{
 		output->AddByte((uint8_t)account.charList.size() + 1);
 		output->AddString("Account Manager");
@@ -188,12 +187,12 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	else
 		output->AddByte((uint8_t)account.charList.size());
 	std::list<std::string>::iterator it;
-	for (it = account.charList.begin(); it != account.charList.end(); it++)
+	for(it = account.charList.begin(); it != account.charList.end(); it++)
 	{
 		output->AddString((*it));
-		if (g_config.getString(ConfigManager::ON_OR_OFF_CHARLIST) == "yes")
+		if(g_config.getString(ConfigManager::ON_OR_OFF_CHARLIST) == "yes")
 		{
-			if (g_game.getPlayerByName((*it)))
+			if(g_game.getPlayerByName((*it)))
 				output->AddString("Online");
 			else
 				output->AddString("Offline");
@@ -205,7 +204,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	//Add premium days
-	if (g_config.getString(ConfigManager::FREE_PREMIUM) == "yes")
+	if(g_config.getString(ConfigManager::FREE_PREMIUM) == "yes")
 		output->AddU16(65535); //client displays free premium
 	else
 		output->AddU16(account.premiumDays);

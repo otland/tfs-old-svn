@@ -42,7 +42,7 @@ PlayerBox::PlayerBox()
 {
 	HINSTANCE hInst = GetModuleHandle(NULL);
 	WNDCLASSEX wcex;
-	if (!GetClassInfoEx(hInst, "PlayerBox", &wcex))
+	if(!GetClassInfoEx(hInst, "PlayerBox", &wcex))
 	{
 		wcex.cbSize = sizeof(WNDCLASSEX);
 		wcex.style = CS_HREDRAW | CS_VREDRAW;
@@ -56,7 +56,7 @@ PlayerBox::PlayerBox()
 		wcex.lpszMenuName = NULL;
 		wcex.lpszClassName = "PlayerBox";
 		wcex.hIconSm = NULL;
-		if (RegisterClassEx(&wcex) == 0)
+		if(RegisterClassEx(&wcex) == 0)
 			MessageBoxA(NULL, "Can't create PlayerBox!", "Error", MB_OK);
 	}
 }
@@ -82,15 +82,15 @@ void PlayerBox::addPlayer(Player* player)
 
 void PlayerBox::removePlayer(Player* player)
 {
-	DWORD index = SendMessage(list, CB_FINDSTRING, 0, (LPARAM)player->getName().c_str());
-	if ((signed)index != CB_ERR)
+	DWORD index = SendMessage(list, CB_FINDSTRING, 0,(LPARAM)player->getName().c_str());
+	if((signed)index != CB_ERR)
 		SendMessage(list, CB_DELETESTRING, index, 0);
 	updatePlayersOnline();
 }
 
 LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	switch (message)
+	switch(message)
 	{
 		case WM_CREATE:
 		{
@@ -107,29 +107,29 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			SendMessage(list, WM_SETFONT, (WPARAM)gui.m_font, 0);
 			SendMessage(online, WM_SETFONT, (WPARAM)gui.m_font, 0);
 			AutoList<Player>::listiterator it;
-			for (it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+			for(it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 				SendMessage(list, CB_ADDSTRING, 0, (LPARAM)(*it).second->getName().c_str());
 		}
 		break;
 		case WM_COMMAND:
 		{
-			switch (HIWORD(wParam))
+			switch(HIWORD(wParam))
 			{
 				case BN_CLICKED:
 				{
 					char name[30];
 					GetWindowText(list, name, sizeof(name));
 					Player* player = g_game.getPlayerByName(name);
-					if (player)
+					if(player)
 					{
 						char buffer[150];
 						sprintf(buffer, "Are you sure you want to %s %s?", ((HWND)lParam == kick ? "kick" : "permanently ban"), player->getName().c_str());
-						if (MessageBoxA(hWnd, buffer, "Player List", MB_YESNO) == IDYES)
+						if(MessageBoxA(hWnd, buffer, "Player List", MB_YESNO) == IDYES)
 						{
 							player = g_game.getPlayerByName(name);
-							if (player)
+							if(player)
 							{
-								if ((HWND)lParam == permBan)
+								if((HWND)lParam == permBan)
 									g_bans.addAccountBan(player->getAccount(), 0xFFFFFFFF, 33, 2, "Permanent banishment", 0);
 								player->kickPlayer(true);
 							}
@@ -161,8 +161,8 @@ bool PlayerBox::popUp(LPCTSTR szCaption)
 	RECT r;
 	GetWindowRect(GetDesktopWindow(), &r);
 
-	playerBox = CreateWindowEx(WS_EX_TOOLWINDOW, "PlayerBox", szCaption, WS_POPUPWINDOW | WS_CAPTION | WS_TABSTOP, (r.right - 200) / 2, (r.bottom - 115) / 2, 225, 115, parent, NULL, m_hInst, NULL);
-	if (playerBox == NULL)
+	playerBox = CreateWindowEx(WS_EX_TOOLWINDOW, "PlayerBox", szCaption, WS_POPUPWINDOW|WS_CAPTION|WS_TABSTOP, (r.right-200)/2, (r.bottom-115)/2, 225, 115, parent, NULL, m_hInst, NULL);
+	if(playerBox == NULL)
 		return FALSE;
 
 	SetForegroundWindow(playerBox);
@@ -173,11 +173,11 @@ bool PlayerBox::popUp(LPCTSTR szCaption)
 	BOOL ret = 0;
 	MSG msg;
 	SendMessage(list, WM_KEYDOWN, VK_DOWN, 0);
-	while (GetMessage(&msg, NULL, 0, 0))
+	while(GetMessage(&msg, NULL, 0, 0))
 	{
-		if (msg.message == WM_KEYDOWN)
+		if(msg.message == WM_KEYDOWN)
 		{
-			if (msg.wParam == VK_ESCAPE)
+			if(msg.wParam == VK_ESCAPE)
 			{
 				SendMessage(playerBox, WM_DESTROY, 0, 0);
 				ret = 0;

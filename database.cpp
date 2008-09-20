@@ -67,9 +67,9 @@ void DBResult::addRow(MYSQL_ROW r, unsigned long* lengths, unsigned int num_fiel
 	rd->row = new char*[num_fields];
 	rd->length = new unsigned long*[num_fields];
 
-	for (unsigned int i = 0; i < num_fields; ++i)
+	for(unsigned int i=0; i < num_fields; ++i)
 	{
-		if (r[i] == NULL)
+		if(r[i] == NULL)
 		{
 			rd->row[i] = NULL;
 			rd->length[i] = NULL;
@@ -96,9 +96,9 @@ void DBResult::addRow(char **results, unsigned int num_fields)
 	rd->row = new char*[num_fields];
 	rd->length = new unsigned long*[num_fields];
 
-	for (unsigned int i = 0; i < num_fields; ++i)
+	for(unsigned int i=0; i < num_fields; ++i)
 	{
-		if (results[i] == NULL)
+		if(results[i] == NULL)
 		{
 			rd->row[i] = NULL;
 			rd->length[i] = NULL;
@@ -109,7 +109,7 @@ void DBResult::addRow(char **results, unsigned int num_fields)
 		rd->row[i] = new char[colLen+1];
 		rd->length[i] = new unsigned long;
 		/*std::cout << "'" << colLen << "' : '" << results[i] << "'\n";*/
-		memcpy(rd->row[i], results[i], colLen + 1);
+		memcpy(rd->row[i], results[i], colLen+1);
 		*(rd->length[i]) = colLen;
 	}
 
@@ -121,14 +121,14 @@ void DBResult::addRow(char **results, unsigned int num_fields)
 void DBResult::clear()
 {
 	RowDataMap::iterator it;
-	for (it = m_listRows.begin(); it != m_listRows.end();)
+	for(it = m_listRows.begin(); it != m_listRows.end();)
 	{
-		for (unsigned int i = 0; i < m_numFields; ++i)
+		for(unsigned int i = 0; i < m_numFields; ++i)
 		{
-			if (it->second->row[i] != NULL)
+			if(it->second->row[i] != NULL)
 				delete[] it->second->row[i];
 
-			if (it->second->length[i] != NULL)
+			if(it->second->length[i] != NULL)
 				delete it->second->length[i];
 		}
 		delete[] it->second->row;
@@ -144,26 +144,26 @@ void DBResult::clear()
 
 int32_t DBResult::getDataInt(const std::string &s, unsigned int nrow)
 {
-	listNames_type::iterator it = m_listNames.find(s);
-	if (it != m_listNames.end())
+	listNames_type::iterator it=m_listNames.find(s);
+	if(it != m_listNames.end())
 	{
-		RowDataMap::iterator it2 = m_listRows.find(nrow);
-		if (it2 != m_listRows.end())
+		RowDataMap::iterator it2=m_listRows.find(nrow);
+		if(it2 != m_listRows.end())
 		{
-			if (it2->second->row[it->second] == NULL)
+			if(it2->second->row[it->second] == NULL)
 				return 0;
 			else
 			{
-#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-				if (g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
+				#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+				if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
 				{
-					if (std::string("TRUE").compare(it2->second->row[it->second]) == 0) //SqLite returns a string
+					if(std::string("TRUE").compare(it2->second->row[it->second]) == 0) //SqLite returns a string
 						return 1;
 				}
-#elif defined __USE_SQLITE__
-				if (std::string("TRUE").compare(it2->second->row[it->second]) == 0) //SqLite returns a string
+				#elif defined __USE_SQLITE__
+				if(std::string("TRUE").compare(it2->second->row[it->second]) == 0) //SqLite returns a string
 					return 1;
-#endif
+				#endif
 				return atoi(it2->second->row[it->second]);
 			}
 		}
@@ -175,13 +175,13 @@ int32_t DBResult::getDataInt(const std::string &s, unsigned int nrow)
 
 int64_t DBResult::getDataLong(const std::string &s, unsigned int nrow)
 {
-	listNames_type::iterator it = m_listNames.find(s);
-	if (it != m_listNames.end())
+	listNames_type::iterator it=m_listNames.find(s);
+	if(it != m_listNames.end())
 	{
-		RowDataMap::iterator it2 = m_listRows.find(nrow);
-		if (it2 != m_listRows.end())
+		RowDataMap::iterator it2=m_listRows.find(nrow);
+		if(it2 != m_listRows.end())
 		{
-			if (it2->second->row[it->second] == NULL)
+			if(it2->second->row[it->second] == NULL)
 				return 0;
 			else
 				return ATOI64(it2->second->row[it->second]);
@@ -194,13 +194,13 @@ int64_t DBResult::getDataLong(const std::string &s, unsigned int nrow)
 
 std::string DBResult::getDataString(const std::string &s, unsigned int nrow)
 {
-	listNames_type::iterator it = m_listNames.find(s);
-	if (it != m_listNames.end())
+	listNames_type::iterator it=m_listNames.find(s);
+	if(it != m_listNames.end())
 	{
-		RowDataMap::iterator it2 = m_listRows.find(nrow);
-		if (it2 != m_listRows.end())
+		RowDataMap::iterator it2=m_listRows.find(nrow);
+		if(it2 != m_listRows.end())
 		{
-			if (it2->second->row[it->second] == NULL)
+			if(it2->second->row[it->second] == NULL)
 				return std::string("");
 			else
 				return std::string(it2->second->row[it->second]);
@@ -213,24 +213,24 @@ std::string DBResult::getDataString(const std::string &s, unsigned int nrow)
 
 const char* DBResult::getDataBlob(const std::string &s, unsigned long& size, unsigned int nrow)
 {
-#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-	if (g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
+	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
 	{
 		size = 0;
 		return NULL;
 	}
-#elif defined __USE_SQLITE__
+	#elif defined __USE_SQLITE__
 	size = 0;
 	return NULL;
-#endif
+	#endif
 
 	listNames_type::iterator it = m_listNames.find(s);
-	if (it != m_listNames.end())
+	if(it != m_listNames.end())
 	{
 		RowDataMap::iterator it2 = m_listRows.find(nrow);
-		if (it2 != m_listRows.end())
+		if(it2 != m_listRows.end())
 		{
-			if (it2->second->row[it->second] == NULL)
+			if(it2->second->row[it->second] == NULL)
 			{
 				size = 0;
 				return NULL;
@@ -252,18 +252,18 @@ Database* _Database::_instance = NULL;
 
 Database* _Database::getInstance()
 {
-	if (!_instance)
+	if(!_instance)
 	{
-#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-		if (g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
+		#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+			if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
+				_instance = new DatabaseMySQL;
+			else
+				_instance = new DatabaseSqLite;
+		#elif defined __USE_MYSQL__
 			_instance = new DatabaseMySQL;
-		else
+		#elif defined __USE_SQLITE__
 			_instance = new DatabaseSqLite;
-#elif defined __USE_MYSQL__
-		_instance = new DatabaseMySQL;
-#elif defined __USE_SQLITE__
-		_instance = new DatabaseSqLite;
-#endif
+		#endif
 		OTSYS_THREAD_LOCKVARINIT(DBQuery::database_lock);
 	}
 	return _instance;
@@ -272,12 +272,12 @@ Database* _Database::getInstance()
 #ifdef __USE_SQLITE__
 void escape_string(std::string & s)
 {
-	if (!s.size())
+	if(!s.size())
 		return;
 
-	for (unsigned int i = 0; i < s.size(); i++)
+	for(unsigned int i = 0; i < s.size(); i++)
 	{
-		switch (s[i])
+		switch(s[i])
 		{
 			case '\0': // Must be escaped for "mysql"
 				s[i] = '\\';
@@ -323,54 +323,54 @@ void escape_string(std::string & s)
 
 std::string _Database::escapeString(const std::string &s)
 {
-#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-	if (g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
+	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+		if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
+			return escapeString(s.c_str(), s.size());
+		else
+		{
+			std::string r = std::string(s);
+			escape_string(r);
+			return r;
+		}
+	#elif defined __USE_MYSQL__
 		return escapeString(s.c_str(), s.size());
-	else
-	{
+	#elif defined __USE_SQLITE__
 		std::string r = std::string(s);
 		escape_string(r);
 		return r;
-	}
-#elif defined __USE_MYSQL__
-	return escapeString(s.c_str(), s.size());
-#elif defined __USE_SQLITE__
-	std::string r = std::string(s);
-	escape_string(r);
-	return r;
-#endif
+	#endif
 }
 
 // probably the mysql_escape_string version should be dropped as it's less generic
 // but i'm keeping it atm
 std::string _Database::escapeString(const char* s, unsigned long size)
 {
-	if (s == NULL)
+	if(s == NULL)
 		return std::string("");
 
 	std::string r;
-#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-	if (g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
-	{
+	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+		if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
+		{
+			char* output = new char[size * 2 + 1];
+			mysql_escape_string(output, s, size);
+			r = std::string(output);
+			delete[] output;
+		}
+		else
+		{
+			r = std::string(s);
+			escape_string(r);
+		}
+	#elif defined __USE_MYSQL__
 		char* output = new char[size * 2 + 1];
 		mysql_escape_string(output, s, size);
 		r = std::string(output);
 		delete[] output;
-	}
-	else
-	{
+	#elif defined __USE_SQLITE__
 		r = std::string(s);
 		escape_string(r);
-	}
-#elif defined __USE_MYSQL__
-	char* output = new char[size * 2 + 1];
-	mysql_escape_string(output, s, size);
-	r = std::string(output);
-	delete[] output;
-#elif defined __USE_SQLITE__
-	r = std::string(s);
-	escape_string(r);
-#endif
+	#endif
 	return r;
 }
 
@@ -382,9 +382,9 @@ DBTransaction::DBTransaction(Database* database)
 
 DBTransaction::~DBTransaction()
 {
-	if (m_state == STATE_START)
+	if(m_state == STATE_START)
 	{
-		if (!m_database->rollback())
+		if(!m_database->rollback())
 		{
 			//TODO: What to do here?
 		}
@@ -394,17 +394,17 @@ DBTransaction::~DBTransaction()
 bool DBTransaction::start()
 {
 	DBQuery query;
-#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-	if (g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
+	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
 		query << "START TRANSACTION;";
 	else
 		query << "BEGIN;";
-#elif defined __USE_MYSQL__
+	#elif defined __USE_MYSQL__
 	query << "START TRANSACTION;";
-#elif defined __USE_SQLITE__
+	#elif defined __USE_SQLITE__
 	query << "BEGIN;";
-#endif
-	if (m_database->executeQuery(query))
+	#endif
+	if(m_database->executeQuery(query))
 	{
 		m_state = STATE_START;
 		return true;
@@ -414,7 +414,7 @@ bool DBTransaction::start()
 
 bool DBTransaction::success()
 {
-	if (m_state == STATE_START)
+	if(m_state == STATE_START)
 	{
 		m_state = STEATE_COMMIT;
 		return m_database->commit();
@@ -448,48 +448,48 @@ void DBSplitInsert::setQuery(const std::string& query)
 
 bool DBSplitInsert::addRow(const std::string& row)
 {
-#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-	if (g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
-	{
-		int size = m_buffer.size();
-		if (size == 0)
-			m_buffer = row;
-		else if (size > 8192)
+	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+		if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
 		{
-			if (!internalExecuteQuery())
+			int size = m_buffer.size();
+			if(size == 0)
+				m_buffer = row;
+			else if(size > 8192)
+			{
+				if(!internalExecuteQuery())
+					return false;
+				m_buffer = row;
+			}
+			else
+				m_buffer += "," + row;
+			return true;
+		}
+		else
+		{
+			m_buffer = row;
+			bool ret = internalExecuteQuery();
+			m_buffer = "";
+			return ret;
+		}
+	#elif defined __USE_MYSQL__
+		int size = m_buffer.size();
+		if(size == 0)
+			m_buffer = row;
+		else if(size > 8192)
+		{
+			if(!internalExecuteQuery())
 				return false;
 			m_buffer = row;
 		}
 		else
 			m_buffer += "," + row;
 		return true;
-	}
-	else
-	{
+	#elif defined __USE_SQLITE__
 		m_buffer = row;
 		bool ret = internalExecuteQuery();
 		m_buffer = "";
 		return ret;
-	}
-#elif defined __USE_MYSQL__
-	int size = m_buffer.size();
-	if (size == 0)
-		m_buffer = row;
-	else if (size > 8192)
-	{
-		if (!internalExecuteQuery())
-			return false;
-		m_buffer = row;
-	}
-	else
-		m_buffer += "," + row;
-	return true;
-#elif defined __USE_SQLITE__
-	m_buffer = row;
-	bool ret = internalExecuteQuery();
-	m_buffer = "";
-	return ret;
-#endif
+	#endif
 }
 
 bool DBSplitInsert::internalExecuteQuery()
@@ -503,7 +503,7 @@ bool DBSplitInsert::internalExecuteQuery()
 
 bool DBSplitInsert::executeQuery()
 {
-	if (m_buffer.size() != 0)
+	if(m_buffer.size() != 0)
 		return internalExecuteQuery();
 	return true;
 }
