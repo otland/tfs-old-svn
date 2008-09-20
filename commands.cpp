@@ -565,8 +565,7 @@ bool Commands::reloadInfo(Creature* creature, const std::string& cmd, const std:
 		else if(tmpParam == "gameservers" || tmpParam == "servers")
 		{
 			GameServers::getInstance()->reload();
-			if(player)
-				player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded game servers.");
+			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded game servers.");
 		}
 		#endif //__LOGIN_SERVER__
 		else if(tmpParam == "highscore" || tmpParam == "highscores")
