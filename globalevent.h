@@ -21,6 +21,7 @@
 
 #ifndef __GLOBALEVENT_H__
 #define __GLOBALEVENT_H__
+#endif
 
 #include <list>
 #include <string>
