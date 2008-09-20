@@ -87,7 +87,7 @@ if(NpcHandler == nil) then
 			[MESSAGE_BOUGHT] 			= 'Bought |ITEMCOUNT|x |ITEMNAME| for |TOTALCOST| gold.',
 			[MESSAGE_SELL] 				= 'Do you want to sell |ITEMCOUNT| |ITEMNAME| for |TOTALCOST| gold coins?',
 			[MESSAGE_ONSELL] 			= 'Thank you for this |ITEMNAME|, |PLAYERNAME| gold.',
-			[MESSAGE_SOLD]	 			= 'Sold |ITEMCOUNT|x |ITEMNAME| for |TOTALCOST|.',
+			[MESSAGE_SOLD]	 			= 'Sold |ITEMCOUNT|x |ITEMNAME| for |TOTALCOST| gold.',
 			[MESSAGE_MISSINGMONEY]		= 'Sorry, you don\'t have enough money.',
 			[MESSAGE_NEEDMONEY] 		= 'You do not have enough money.',
 			[MESSAGE_MISSINGITEM] 		= 'You don\'t even have that item, |PLAYERNAME|!',

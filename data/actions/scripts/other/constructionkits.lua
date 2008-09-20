@@ -4,8 +4,8 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		doPlayerSendCancel(cid,"You may only construct this inside a house.")
 	elseif fromPosition.x == CONTAINER_POSITION then
 		doPlayerSendCancel(cid, "Put the construction kit on the floor first.")
-	elseif constructionKits[item.itemid] ~= nil then
-		doTransformItem(item.uid, constructionKits[item.itemid])
+	elseif CONSTRUCTIONS[item.itemid] ~= nil then
+		doTransformItem(item.uid, CONSTRUCTIONS[item.itemid])
 		doSendMagicEffect(fromPosition, CONST_ME_POFF)
 	else
 		return FALSE
