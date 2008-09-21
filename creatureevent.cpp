@@ -86,6 +86,7 @@ bool CreatureEvents::registerEvent(Event* event, xmlNodePtr p)
 		//(happens when realoading), it is reused
 		if(oldEvent->isLoaded() == false && oldEvent->getEventType() == creatureEvent->getEventType())
 			oldEvent->copyEvent(creatureEvent);
+
 		return false;
 	}
 	else
@@ -170,10 +171,12 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 			m_type = CREATURE_EVENT_ADVANCE;
 		else if(tmpStr == "look")
 			m_type = CREATURE_EVENT_LOOK;
-		else if(tmpStr == "death")
-			m_type = CREATURE_EVENT_DEATH;
+		else if(tmpStr == "attack")
+			m_type = CREATURE_EVENT_ATTACK;
 		else if(tmpStr == "kill")
 			m_type = CREATURE_EVENT_KILL;
+		else if(tmpStr == "death")
+			m_type = CREATURE_EVENT_DEATH;
 		else
 		{
 			std::cout << "Error: [CreatureEvent::configureEvent] No valid type for creature event." << str << std::endl;
@@ -209,11 +212,14 @@ std::string CreatureEvent::getScriptEventName()
 		case CREATURE_EVENT_LOOK:
 			return "onLook";
 			break;
-		case CREATURE_EVENT_DEATH:
-			return "onDeath";
+		case CREATURE_EVENT_ATTACK:
+			return "onAttack";
 			break;
 		case CREATURE_EVENT_KILL:
 			return "onKill";
+			break;
+		case CREATURE_EVENT_DEATH:
+			return "onDeath";
 			break;
 		case CREATURE_EVENT_NONE:
 		default:
@@ -343,7 +349,7 @@ uint32_t CreatureEvent::executeOnThink(Creature* creature, uint32_t interval)
 	}
 }
 
-uint32_t CreatureEvent::executeOnAdvance(Player* player, skills_t skill, uint32_t oldlevel, uint32_t newlevel)
+uint32_t CreatureEvent::executeOnAdvance(Player* player, skills_t skill, uint32_t oldLevel, uint32_t newLevel)
 {
 	//onAdvance(cid, skill, oldlevel, newlevel)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -366,8 +372,8 @@ uint32_t CreatureEvent::executeOnAdvance(Player* player, skills_t skill, uint32_
 		m_scriptInterface->pushFunction(m_scriptId);
 		lua_pushnumber(L, cid);
 		lua_pushnumber(L, (uint32_t)skill);
-		lua_pushnumber(L, oldlevel);
-		lua_pushnumber(L, newlevel);
+		lua_pushnumber(L, oldLevel);
+		lua_pushnumber(L, newLevel);
 
 		int32_t result = m_scriptInterface->callFunction(4);
 		m_scriptInterface->releaseScriptEnv();
@@ -417,41 +423,39 @@ uint32_t CreatureEvent::executeOnLook(Player* player, const Position& position, 
 	}
 }
 
-uint32_t CreatureEvent::executeOnDeath(Creature* creature, Item* corpse, Creature* killer)
+uint32_t CreatureEvent::executeOnAttack(Creature* creature, Creature* target)
 {
-	//onDeath(cid, corpse, killer)
+	//onAttack(cid, target)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 
 		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[35];
-		sprintf(desc, "%s", creature->getName().c_str());
-		env->setEventDesc(desc);
+		std::stringstream desc;
+		desc << creature->getName();
+		env->setEventDesc(desc.str());
 		#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);
 		env->setRealPos(creature->getPosition());
 
 		uint32_t cid = env->addThing(creature);
-		uint32_t corpseid = env->addThing(corpse);
-		uint32_t killercid = env->addThing(killer);
+		uint32_t targetId = env->addThing(target);
 
 		lua_State* L = m_scriptInterface->getLuaState();
 
 		m_scriptInterface->pushFunction(m_scriptId);
 		lua_pushnumber(L, cid);
-		lua_pushnumber(L, corpseid);
-		lua_pushnumber(L, killercid);
+		lua_pushnumber(L, targetId);
 
-		int32_t result = m_scriptInterface->callFunction(3);
+		int32_t result = m_scriptInterface->callFunction(2);
 		m_scriptInterface->releaseScriptEnv();
 
 		return (result == LUA_TRUE);
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. CreatureEvent::executeOnDeath" << std::endl;
+		std::cout << "[Error] Call stack overflow. CreatureEvent::executeOnAttack" << std::endl;
 		return 0;
 	}
 }
@@ -489,6 +493,45 @@ uint32_t CreatureEvent::executeOnKill(Creature* creature, Creature* target)
 	else
 	{
 		std::cout << "[Error] Call stack overflow. CreatureEvent::executeOnKill" << std::endl;
+		return 0;
+	}
+}
+
+uint32_t CreatureEvent::executeOnDeath(Creature* creature, Item* corpse, Creature* killer)
+{
+	//onDeath(cid, corpse, killer)
+	if(m_scriptInterface->reserveScriptEnv())
+	{
+		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+
+		#ifdef __DEBUG_LUASCRIPTS__
+		char desc[35];
+		sprintf(desc, "%s", creature->getName().c_str());
+		env->setEventDesc(desc);
+		#endif
+
+		env->setScriptId(m_scriptId, m_scriptInterface);
+		env->setRealPos(creature->getPosition());
+
+		uint32_t cid = env->addThing(creature);
+		uint32_t corpseid = env->addThing(corpse);
+		uint32_t killercid = env->addThing(killer);
+
+		lua_State* L = m_scriptInterface->getLuaState();
+
+		m_scriptInterface->pushFunction(m_scriptId);
+		lua_pushnumber(L, cid);
+		lua_pushnumber(L, corpseid);
+		lua_pushnumber(L, killercid);
+
+		int32_t result = m_scriptInterface->callFunction(3);
+		m_scriptInterface->releaseScriptEnv();
+
+		return (result == LUA_TRUE);
+	}
+	else
+	{
+		std::cout << "[Error] Call stack overflow. CreatureEvent::executeOnDeath" << std::endl;
 		return 0;
 	}
 }

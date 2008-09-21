@@ -282,6 +282,7 @@
 	Construction kits (Elf)
 	Global events (Elf)
 	Thing attribute changing (Kiper)
+	onAttack creaturescript (Elf)
 ]
 
 [ Deprecated

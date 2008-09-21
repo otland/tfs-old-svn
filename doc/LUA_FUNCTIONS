@@ -18,7 +18,7 @@
 [ NOTE
 	This file is outdated and needs to be rewriten.
 	Some of these functions doesn't exist anymore although
-	they were added to compat.lua, but there are alot of
+	they were added to compat.lua. Anyway there are many
 	missing functions!
 ]
 

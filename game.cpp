@@ -2769,7 +2769,7 @@ std::string Game::getTradeErrorDescription(ReturnValue ret, Item* item)
 	return ss.str().c_str();
 }
 
-bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int index)
+bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int32_t index)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
@@ -2792,10 +2792,20 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int ind
 	int32_t lookDistance = std::max(std::abs(player->getPosition().x - tradeItem->getPosition().x),
 		std::abs(player->getPosition().y - tradeItem->getPosition().y));
 
-	char buffer[600];
+	std::stringstream ss;
+	ss << "You see ";
 	if(index == 0)
 	{
-		sprintf(buffer, "You see %s", tradeItem->getDescription(lookDistance).c_str());
+		ss << tradeItem->getDescription(lookDistance);
+		if(player->hasCustomFlag(PlayerCustomFlag_CanSeeItemDetails))
+		{
+			ss << std::endl << "ItemID: [" << tradeItem->getID() << "].";
+			if(tradeItem->getActionId() > 0)
+				ss << std::endl << "ActionID: [" << tradeItem->getActionId() << "].";
+			if(tradeItem->getUniqueId() > 0)
+				ss << std::endl << "UniqueID: [" << tradeItem->getUniqueId() << "].";
+		}
+
 		player->sendTextMessage(MSG_INFO_DESCR, buffer);
 		return false;
 	}
@@ -2818,6 +2828,7 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int ind
 		{
 			if((tmpContainer = (*it)->getContainer()))
 				listContainer.push_back(tmpContainer);
+
 			--index;
 			if(index == 0)
 			{
@@ -2830,7 +2841,16 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int ind
 
 	if(foundItem)
 	{
-		sprintf(buffer, "You see %s", tradeItem->getDescription(lookDistance).c_str());
+		ss << tradeItem->getDescription(lookDistance);
+		if(player->hasCustomFlag(PlayerCustomFlag_CanSeeItemDetails))
+		{
+			ss << std::endl << "ItemID: [" << tradeItem->getID() << "].";
+			if(tradeItem->getActionId() > 0)
+				ss << std::endl << "ActionID: [" << tradeItem->getActionId() << "].";
+			if(tradeItem->getUniqueId() > 0)
+				ss << std::endl << "UniqueID: [" << tradeItem->getUniqueId() << "].";
+		}
+
 		player->sendTextMessage(MSG_INFO_DESCR, buffer);
 	}
 	return foundItem;
@@ -2993,6 +3013,9 @@ bool Game::playerLookInShop(uint32_t playerId, uint16_t spriteId, uint8_t count)
 
 	std::stringstream ss;
 	ss << "You see " << Item::getDescription(it, 1, NULL, subType);
+	if(player->hasCustomFlag(PlayerCustomFlag_CanSeeItemDetails))
+		ss << std::endl << "ItemID: [" << it.id << "].";
+
 	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 	return true;
 }
@@ -3030,18 +3053,17 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 	}
 
 	std::stringstream ss;
-	ss << "You see " << thing->getDescription(lookDistance) << std::endl;
+	ss << "You see " << thing->getDescription(lookDistance);
 	if(player->hasCustomFlag(PlayerCustomFlag_CanSeeItemDetails))
 	{
 		Item* item = thing->getItem();
 		if(item)
 		{
-			ss << "ItemID: [" << item->getID() << "].";
+			ss << std::endl << "ItemID: [" << item->getID() << "].";
 			if(item->getActionId() > 0)
 				ss << std::endl << "ActionID: [" << item->getActionId() << "].";
 			if(item->getUniqueId() > 0)
 				ss << std::endl << "UniqueID: [" << item->getUniqueId() << "].";
-			ss << std::endl;
 		}
 	}
 
@@ -3049,13 +3071,13 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 	{
 		if(Creature* creature = thing->getCreature())
 		{
-			ss << "Health: [" << creature->getHealth() << " / " << creature->getMaxHealth() << "]." << std::endl;
-			ss << "Mana: [" << creature->getMana() << " / " << creature->getMaxMana() << "]." << std::endl;
+			ss << std::endl << "Health: [" << creature->getHealth() << " / " << creature->getMaxHealth() << "].";
+			ss << std::endl << "Mana: [" << creature->getMana() << " / " << creature->getMaxMana() << "].";
 		}
 	}
 
 	if(player->hasCustomFlag(PlayerCustomFlag_CanSeePosition))
-		ss << "Position: [X: " << thingPos.x << "] [Y: " << thingPos.y << "] [Z: " << thingPos.z << "].";
+		ss << std::endl << "Position: [X: " << thingPos.x << "] [Y: " << thingPos.y << "] [Z: " << thingPos.z << "].";
 
 	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 

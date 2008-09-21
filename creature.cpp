@@ -237,6 +237,11 @@ void Creature::onAttacking(uint32_t interval)
 
 		if(g_game.isSightClear(getPosition(), attackedCreature->getPosition(), true))
 			doAttacking(interval);
+
+		//scripting event - onAttack
+		CreatureEvent* eventAttack = getCreatureEvent(CREATURE_EVENT_ATTACK);
+		if(eventAttack)
+			eventAttack->executeOnAttack(this, attackedCreature);
 	}
 }
 
