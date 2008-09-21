@@ -681,7 +681,7 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool forced /*
 		}
 
 		if(player->isPromoted() && g_vocations.getPromotedVocation(player->getVocationId()) != 0)
-			player->setVocation(((player->isPremium() || g_config.getBool(ConfigManager::PREMIUM_FOR_PROMOTION)) ? g_vocations.getPromotedVocation(player->vocation->getFromVocation()) : player->vocation->getFromVocation()));
+			player->setVocation(((player->isPremium() || !g_config.getBool(ConfigManager::PREMIUM_FOR_PROMOTION)) ? g_vocations.getPromotedVocation(player->vocation->getFromVocation()) : player->vocation->getFromVocation()));
 	}
 
 	addCreatureCheck(creature);
@@ -2806,7 +2806,7 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int32_t
 				ss << std::endl << "UniqueID: [" << tradeItem->getUniqueId() << "].";
 		}
 
-		player->sendTextMessage(MSG_INFO_DESCR, buffer);
+		player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 		return false;
 	}
 
@@ -2851,7 +2851,7 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int32_t
 				ss << std::endl << "UniqueID: [" << tradeItem->getUniqueId() << "].";
 		}
 
-		player->sendTextMessage(MSG_INFO_DESCR, buffer);
+		player->sendTextMessage(MSG_INFO_DESCR, ss.str());
 	}
 	return foundItem;
 }
@@ -3763,7 +3763,8 @@ void Game::checkCreatures()
 		if(creature->getHealth() > 0)
 		{
 			creature->onThink(EVENT_CREATURE_THINK_INTERVAL);
-			creature->onAttacking(EVENT_CREATURE_THINK_INTERVAL);
+			//creature->onAttacking(EVENT_CREATURE_THINK_INTERVAL);
+			//TODO: find out why does it cause crash in some cases
 			creature->executeConditions(EVENT_CREATURE_THINK_INTERVAL);
 		}
 		else

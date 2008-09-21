@@ -1,4 +1,4 @@
-CFLAGS = -I. -I/usr/include/libxml2 -I/usr/include/lua5.1
+CFLAGS = -I. -I/usr/include/libxml2 -I/usr/include/lua5.1 -Werror -Wall -O1
 
 LIBLINK = -L/usr/lib -lxml2 -lpthread -llua5.1 -lboost_thread -lgmp -lmysqlclient -lboost_regex -lsqlite3 -ldl -lboost_system
 
@@ -14,7 +14,7 @@ clean:
 	rm -rf *.o
 
 theforgottenserver: $(OBJ)
-	g++ $(CFLAGS) $(FLAGS) -Werror -Wall -O1 -o ./TheForgottenServer $(OBJ) $(LIBLINK)
+	g++ $(CFLAGS) $(FLAGS) -o ./TheForgottenServer $(OBJ) $(LIBLINK)
 
     %.o:%.cpp
-	g++ $(CFLAGS) $(FLAGS) -Werror -Wall -O1 -c $+
+	g++ $(CFLAGS) $(FLAGS) -O1 -c $+

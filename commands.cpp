@@ -1041,7 +1041,6 @@ bool Commands::serverDiag(Creature* creature, const std::string& cmd, const std:
 	text << "Lua: " << LUA_VERSION << "\n";
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
 
-	//TODO: more information that could be useful
 	return true;
 }
 #endif

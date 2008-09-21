@@ -222,6 +222,8 @@ void Creature::onThink(uint32_t interval)
 		getPathToFollowCreature();
 	}
 
+	onAttacking(interval);
+
 	//scripting event - onThink
 	CreatureEvent* eventThink = getCreatureEvent(CREATURE_EVENT_THINK);
 	if(eventThink)

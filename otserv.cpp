@@ -636,7 +636,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					}
 					break;
 				}
-				case ID_MENU_SERVER_WORLDTYPE_NONPVP:
+				case ID_MENU_SERVER_WORLDTYPE_NOPVP:
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{

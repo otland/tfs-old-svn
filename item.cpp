@@ -925,6 +925,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 	if(item)
 	{
 		subType = item->getSubType();
+		//TODO: displaying custom attributes
 		/*ItemType& it = Item::items.getItemType(it.id);
 		it.name = item->getName();
 		it.article = item->getArticle();
