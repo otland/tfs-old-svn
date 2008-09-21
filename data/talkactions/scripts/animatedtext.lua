@@ -4,7 +4,7 @@ function onSay(cid, words, param)
 		if seperator ~= nil then
 			local text = string.sub(param, 1, seperator - 1)
 			local color = string.sub(param, seperator + 2, string.len(param))
-			if(color > 0 and color < 255)
+			if(color > 0 and color < 255) then
 				doSendAnimatedText(getCreaturePosition(cid), text, color)
 			else
 				doPlayerSendCancel(cid, "Typed color has to be between 0 and 255")

@@ -94,11 +94,11 @@
 
 		Download sources
 			Launch a terminal, and paste in this command:
-				svn co https://forgottenserver.svn.sourceforge.net/svnroot/forgottenserver/forgottenserver/trunk/
+				svn co http://public.otland.net/svn/forgottenserver
 
 		Compiling
 			Launch a terminal, and type this:
-				cd trunk/ && make
+				cd tags/0.3a1 && make
 
 		Linker error
 			If you receive a linker error saying something with 'libboost', paste this command to terminal and try to compile again:
