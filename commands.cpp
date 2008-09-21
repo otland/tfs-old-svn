@@ -594,7 +594,7 @@ bool Commands::reloadInfo(Creature* creature, const std::string& cmd, const std:
 		else if(tmpParam == "creaturescript" || tmpParam == "creaturescripts")
 		{
 			g_creatureEvents->reload();
-			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded creaturescripts.");
+			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded creature scripts.");
 		}
 		else if(tmpParam == "highscore" || tmpParam == "highscores")
 		{
@@ -632,7 +632,7 @@ bool Commands::reloadInfo(Creature* creature, const std::string& cmd, const std:
 		else if(tmpParam == "talk" || tmpParam == "talkaction" || tmpParam == "talkactions")
 		{
 			g_talkActions->reload();
-			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded talkactions.");
+			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded talk actions.");
 		}
 		else
 			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reload type not found.");
@@ -1005,33 +1005,51 @@ bool Commands::whoIsOnline(Creature* creature, const std::string &cmd, const std
 	Player* player = creature->getPlayer();
 	if(player)
 	{
-		AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
 		std::stringstream ss;
 		ss << "Players online:" << std::endl;
-		bool first = true;
-		if(g_config.getString(ConfigManager::SHOW_GAMEMASTERS_ONLINE) == "no")
+
+		uint32_t i = 0;
+		AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
+		if(g_config.getString(ConfigManager::SHOW_GAMEMASTERS_ONLINE) != "yes")
 		{
-			while (it != Player::listPlayer.list.end())
+			while(it != Player::listPlayer.list.end())
 			{
-				if(!(*it).second->accessLevel || player->accessLevel)
+				if(!(*it).second->isAccessPlayer() || player->isAccessPlayer())
 				{
-					ss << (first ? "" : ", ") << (*it).second->name << " [" << (*it).second->level << "]";
-					first = false;
+					ss << (i > 0 ? ", " : "") << (*it).second->name << " [" << (*it).second->level << "]";
+					++i;
 				}
 				++it;
+
+				if(i == 10)
+				{
+					ss << (it != Player::listPlayer.list.end() ? "," : ".");
+					player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, ss.str());
+					ss.str("");	i = 0;
+				}
 			}
 		}
 		else
 		{
-			while (it != Player::listPlayer.list.end())
+			while(it != Player::listPlayer.list.end())
 			{
-				ss << (first ? "" : ", ") << (*it).second->name << " [" << (*it).second->level << "]";
-				first = false;
-				++it;
+				ss << (i > 0 ? ", " : "") << (*it).second->name << " [" << (*it).second->level << "]";
+				++it; ++i;
+
+				if(i == 10)
+				{
+					ss << (it != Player::listPlayer.list.end() ? "," : ".");
+					player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, ss.str());
+					ss.str("");	i = 0;
+				}
 			}
 		}
-		ss << ".";
-		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, ss.str());
+
+		if(i > 0)
+		{
+			ss << ".";
+			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, ss.str());
+		}
 	}
 	return true;
 }
