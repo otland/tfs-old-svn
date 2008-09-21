@@ -94,4 +94,3 @@ local node1 = keywordHandler:addKeyword({'yes'}, StdModule.say, {npcHandler = np
 keywordHandler:addKeyword({'no'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'Then come back when you are ready.'})
 
 npcHandler:addModule(FocusModule:new())
-

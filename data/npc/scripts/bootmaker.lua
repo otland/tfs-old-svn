@@ -18,19 +18,17 @@ function creatureSayCallback(cid, type, msg)
 	if(msgcontains(msg, 'soft') or msgcontains(msg, 'boots')) then
 		selfSay('Do you want to repair your worn soft boots for 10000 gold coins?', cid)
 		talkState[talkUser] = 1
-	elseif(msgcontains(msg, 'yes')) then
-		if(talkState[talkUser] == 1) then
-			if(getPlayerItemCount(cid, 6530) >= 1) then
-				if(doPlayerRemoveMoney(cid, 10000) == TRUE) then
-					local item = getPlayerItemById(cid, TRUE, 6530)
-					doTransformItem(item.uid, 2640)
-					selfSay('Here you are.', cid)
-				else
-					selfSay('Sorry, you don\'t have enough gold.', cid)
-				end
+	elseif(msgcontains(msg, 'yes') and talkState[talkUser] == 1) then
+		if(getPlayerItemCount(cid, 6530) >= 1) then
+			if(doPlayerRemoveMoney(cid, 10000) == TRUE) then
+				local item = getPlayerItemById(cid, TRUE, 6530)
+				doTransformItem(item.uid, 2640)
+				selfSay('Here you are.', cid)
 			else
-				selfSay('Sorry, you don\'t have the item.', cid)
+				selfSay('Sorry, you don\'t have enough gold.', cid)
 			end
+		else
+			selfSay('Sorry, you don\'t have the item.', cid)
 		end
 		talkState[talkUser] = 0
 	elseif(msgcontains(msg, 'no') and isInArray({1}, talkState[talkUser]) == TRUE) then
@@ -38,7 +36,7 @@ function creatureSayCallback(cid, type, msg)
 		selfSay('Ok then.', cid)
 	end
 
-	return TRUE
+	return true
 end
 
 npcHandler:setCallback(CALLBACK_MESSAGE_DEFAULT, creatureSayCallback)

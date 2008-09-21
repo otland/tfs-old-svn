@@ -406,12 +406,12 @@
 ]
 
 [ Fixed issues with...
-	Last house warnings (OpenTibia SVN)
-	High CPU usage (OpenTibia SVN)
-	PVP Zones skill loss and item drop (Talaturen, Elf, OpenTibia SVN)
-	Bed sleepers not loading (Elf)
+	Last house warnings (OpenTibia SVN, Elf)
+	High CPU usage (Everyone, OpenTibia SVN)
+	Zones skill loss and item drop (Talaturen, Elf, OpenTibia SVN)
+	Not unserialized bed sleepers (Elf)
 	Items with 0 charges not being removed (Elf, Kiper)
-	Blessing (Talaturen)
-	VIP List (Elf)
-	Huge letters (Elf)
+	Blessings (Talaturen)
+	Crash on VIP List saving (Elf)
+	Huge writables (Elf)
 ]

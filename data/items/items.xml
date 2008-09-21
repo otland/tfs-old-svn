@@ -24013,7 +24013,13 @@
 		<attribute key="absorbPercentHoly" value="-8"/>
 		<attribute key="slotType" value="body"/>
 	</item>
-	<item id="8866">
+	<item id="8866" article="a" name="serpent coat">
+		<attribute key="description" value="It has 12% ice protection, but also increases damage taken from energy by 12%."/>
+		<attribute key="weight" value="2850"/>
+		<attribute key="armor" value="12"/>
+		<attribute key="absorbPercentIce" value="12"/>
+		<attribute key="absorbPercentEnergy" value="-12"/>
+		<attribute key="slotType" value="body"/>
 	</item>
 	<item id="8867" article="a" name="dragon robe">
 		<attribute key="description" value="It has 12% fire protection, but also increases damage taken from ice by 12%."/>
