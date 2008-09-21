@@ -20,6 +20,7 @@
 
 #ifndef __OTSERV_ENUMS_H__
 #define __OTSERV_ENUMS_H__
+#include <string>
 
 enum StorageValues_t
 {
