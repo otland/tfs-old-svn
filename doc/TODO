@@ -17,13 +17,19 @@
 
 [ LIST
 	Stop using storage values for promotion, and also make it an int instead of a boolean,
-	should be 'promotion level', add optional parameter to "isPromoted" functions which is
+	should be 'promotion level', add optional parameter to "isPromoted" function which is
 	promotion level, default: 1.
 		Assigned to: Talaturen
 
 	Make more constant values configurable
 		Assigned to: Talaturen, Elf
 
-	Server Events
+	Fix issue with displaying thing attributes
+		Assigned to: Elf
+
+	Multiworld system - partially* patch it from revmultisys
+		Assigned to: Elf, Talaturen
+
+	House list guilds
 		Assigned to: Elf
 ]

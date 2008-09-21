@@ -29,49 +29,66 @@
 				* Contains all lua-made functions from global.lua
 
 			actions/
-				actions.xml
 				scripts/
 					liquids/
 						*.lua
 							* Added liquids files
-							* Added potions of 8.11 protocol
-
+							* Added potions of 8.2 protocol
 					tools/
 						blessed_wooden_stake.lua
 						obsidian_knife.lua
 							* Added
-						fishing.lua
-							* Fixed worms usage
+
+			classes/
+				*.*
+					* Added all _needed_ class files
 
 			creaturescripts/
 				scripts/
 					firstitems.lua
 						* Moved first items script to creature events instead of move events
 
+			globalevents/
+				globalevents.xml
+				lib/
+				scripts/
+					* Introduced global events
+				scripts/
+					*.lua
+						* Added basic scripts
+
+			logs/
+				server/
+					* Created directory for GUI logs
+
+			monsters/
+				*/*.xml
+					* Added most of 8.1 protocol monsters
+					* Added missing monsters and bosses
+					* Added few monsters of procotol 8.2
+
 			npc/
 				*.xml
+				lib/
+					*.xml
+						* Lightweight npc examples
 				scripts/
 					*.lua
 						* Added more NPC's examples
 
 			talkactions/
 				scripts/
-					online.lua
-						* Talkaction based on new LUA function, deprecated from commands
 					shutdown.lua
+					pvp.lua
 						* Talkaction based on new LUA function
-					clean.lua
-						* Talkaction based on new LUA function, deprecated from commands
 					position.lua
-						* Talkaction deprecated from commands
 					money.lua
 						* Talkaction deprecated from commands
+					online.lua
+					clean.lua
 					broadcast.lua
 						* Talkaction based on new LUA function, deprecated from commands
 					broadcastclass.lua
-						* Added (...)
-					pvp.lua
-						* Talkaction based on new LUA function, added (...)
 					mode.lua
 						* Added (...)
 
@@ -79,21 +96,26 @@
 				scripts/
 					burst_arrow.lua
 						* Moved explosive_arrow.lua
-					earth/
-						*.lua
-							* Enchanted weapons scripts
-					energy/
-						*.lua
-							* Enchanted weapons scripts
-					fire/
-						*.lua
-							* Enchanted weapons scripts
-					ice/
-						*.lua
-							* Enchanted weapons scripts
+
+			XML/
+				servers.xml
+					* GameServers class usage example
 
 	M...
 		data/
+			actions/
+				scripts/
+					tools/
+						fishing.lua
+							* Fixed worms usage
+						rope.lua
+							* Protocol 8.2 rope spots
+					other/
+						constructionkits.lua
+							* Fixed construction kits
+						doors.lua
+							* Fixed special doors
+
 			creaturescripts/
 				creaturescripts.xml
 					* Moved first items script to creature events instead of move events
@@ -106,27 +128,43 @@
 					* Fixed formatting
 					* Corrected alot of attribute values
 					* Corrected alot of item names
-					* Added protocol 8.11 potions
-					* Compatibility with protocol 8.11
+					* Compatibility with protocol 8.22
+					* Compatibility with OTBv3
+					* Fixed construction kits
 				items.otb
-					* Compatibility with protocol 8.11
+					* Compatibility with protocol 8.22
+					* Compatibility with OTBv3
 
 			monster/
 				monsters.xml
-					*/*.xml
-						* Added all monsters of protocol 8.1
-						* Updated few to protocol 8.11
-						* Added missing monsters and bosses
+					* Added most 8.1 monsters
+					* Added some 8.2 monsters
+				*/*.xml
+					* Fixed loots, voices, formating and introduced elemental weakness
 
 			movements/
+				movements.xml
+					* Added swimming system
+					* Moved first items script to creature events instead of move events
+					* Added protocol 8.1 elemental armory with limitations
+					* Added protocol 8.2 elemental armory with limitations
+					* Fixed protocol 8.2 elemental armory due to OTBv3 update
 				scripts/
 					swimming/
 						*.lua
 							* Added swimming system
 
-				movements.xml
-					* Added swimming system
-					* Moved first items script to creature events instead of move events
+			npc/
+				*.xml
+					* Lightweight npc compatibility
+				lib/
+					npc.lua
+						* Protocol 8.22 npcsystem compatibility
+					npcsystem/
+						* Full protocol 8.22 npcsystem
+				scripts/
+					*.lua
+						* 8.22 npcsystem compatibility
 
 			spells/
 				lib/
@@ -136,25 +174,22 @@
 				scripts/
 					*.lua
 						* Fixes
+					support/
+						magic rope.lua
+							* Protocol 8.2 rope spots
 				spells.xml
 					* Added "exhaustion=" back to spells.xml
 					* Charges and names fixed
+					* Fixed spell range
 
 			talkactions/
 				talkactions.xml
-					* Added clean.lua and shutdown.lua
-					* Added money.lua and position.lua
+					* Added all the new talkactions
 					* Added new access system tags (access="")
 					* Added log="" tags responsible for talkaction logging
-				lib/
-					talkactions.lua
-						* Added talkactionLogger(cid, words, param) function using doWriteLogFile(file, text) from global.lua
-						* Removed the logger - new access system handles that
 				scripts/
 					*.lua
-						* Added logger callbacks to few files
 						* Removed permission checking from access needing talkactions
-						* Removed logger callbacks from files
 					changesex.lua
 						* Updated due to deprecated LUA function
 						* Added a check for gratis premium account
@@ -165,11 +200,13 @@
 				*.xml
 				forgotten.otbm
 					* Placed some NPC's on the map
+					* Updated to OTBv3
 
 			XML/
 				commands.xml
 					* Replaced old tags of acctype="" and group="" to new access system access=""
 					* Added log="" tags responsible for commands logging
+					* Re-grouped for new groups
 
 			global.lua
 				* Added getConfigInfo(info), doWriteLogFile(file, text), getPosByDir(basePos, dir) and hasCondition(cid, condition) functions
@@ -177,6 +214,7 @@
 				* Split to functions.lua and compat.lua
 				* Added guild levels
 				* Re-grouped global.lua
+				* Updated to protocol 8.2
 
 	D...
 		data/
@@ -202,7 +240,7 @@
 
 	White skull time configurable on config.lua (Talaturen)
 	Time to decrease frags on config.lua (Talaturen)
-	Added all monsters of protocol 8.22 (Lithium, OpenTibia SVN)
+	Added most of monsters of protocol 8.1 and some of 8.2 (OpenTibia SVN, Lithium)
 	Attackspeed for items in items.xml (Talaturen)
 	Basespeed in vocations.xml (Talaturen)
 	onLook(cid, pos) creaturescript event (Talaturen)
@@ -220,6 +258,7 @@
 	Ingame guild management 'switch' on config.lua (Elf)
 	House buying and selling disabling on config.lua (Elf)
 	Namelock Manager while Account Manager is disabled configurable in config.lua (Elf)
+	Dropped LuaSQL and replaced with LuaDatabase (Elf, OpenLua-Distro)
 	onKill(cid, target) creaturescript event (Elf)
 	onAdvance(cid, skill, oldlevel, newlevel) creaturescript event (Elf)
 	onThink creaturescript event for creatures (Elf)
@@ -227,16 +266,22 @@
 	/squelch command to disable private messages receiving (Elf)
 	Dropped account types and replaced it with access levels (Elf, Talaturen)
 	Custom flags system (Elf, Talaturen)
-	Possibility to move items from far, push not pushable items and throw items anywhere (Elf, Nate's code)
+	Possibility to move items from far, push not pushable items and throw items anywhere (nfries88, Elf)
 	Configurable commands and talkactions logging (Elf)
-	Ghost Mode (Elf, Pedro B's code)
-	Patched cascading actions (Elf, OpenTibiaSVN)
-	Rewritten ban class (Elf, Talaturen)
-	Bank system (Elf, OpenTibiaSVN)
-	Stamina system (Elf, Cayan's Code)
+	Ghost Mode [with disabled effects] (Pedro B, Elf)
+	Cascading actions (Elf, OpenTibia SVN)
+	Rewritten ban class (Elf, Talaturen, OpenTibia SVN)
+	/baninfo command (Elf)
+	Bank system (OpenTibia SVN, Elf)
+	Stamina system (Elf)
 	Moved players record and motd to database (Elf)
 	Moved CTRL + Z bug reports to database, written /reports command (Elf)
-	Marriage system (Elf)
+	OTBv3 (OpenTibia SVN, Talaturen, Elf)
+	Monsters with elemental weaknesses (Marcinek Paladinek, Lithium)
+	Marriage 'system' (Elf)
+	Construction kits (Elf)
+	Global events (Elf)
+	Thing attribute changing (Kiper)
 ]
 
 [ Deprecated
@@ -366,4 +411,7 @@
 	PVP Zones skill loss and item drop (Talaturen, Elf, OpenTibia SVN)
 	Bed sleepers not loading (Elf)
 	Items with 0 charges not being removed (Elf, Kiper)
+	Blessing (Talaturen)
+	VIP List (Elf)
+	Huge letters (Elf)
 ]

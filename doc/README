@@ -24,7 +24,7 @@
 
 	.. also a thanks to the following people who has helped this
 	project by contributing something:
-		TheMask, Casa, Winghawk, Nexoz,
+		TheMask, Casa, Winghawk, Nexoz, slawkens,
 		Godely, buzzbuzz2, Kiwi Dan, Cayan.
 ]
 
@@ -43,20 +43,21 @@
 
 	C++ Programmer(s)
 		Talaturen
-		Kiper
 		Elf
+		Kiper
 
 	LUA Scripter(s)
 		Talaturen
-		Jonern
 		Elf
+		Jonern
 
 	PHP Programmer(s)
+		Talaturen
 		Kornholijo
 
 	DATA Directory Manager(s)
 		Lithium
-		slawkens
+		Elf
 ]
 
 [ FORUM
@@ -67,12 +68,12 @@
 [ SUPPORT
 	Having trouble with any of the instructions, or is there
 	anything you just want to ask?
-		Create a new thread and ask here:
-			http://otland.net/forumdisplay.php?f=55
+	Create a new thread and ask here:
+		http://otland.net/forumdisplay.php?f=55
 ]
 
 [ BUGS / PATCHES / FEATURE REQUESTS
-	http://sourceforge.net/tracker/?group_id=190078
+	http://otland.net/project.php?projectid=2
 ]
 
 [ COMPILING
@@ -80,7 +81,7 @@
 		Download required packages
 			Debian \ Ubuntu
 				Launch a terminal, and paste in the following commands:
-					sudo apt-get install libboost-date-time-dev libboost-date-time1.34.1 libboost-dev libboost-regex-dev libboost-regex1.34.1 libboost-signals-dev libboost-signals1.34.1 libboost-thread-dev libboost-thread1.34.1 liblua5.1-0 liblua5.1-0-dev liblua50 liblua50-dev liblualib50 liblualib50-dev lua50 libsqlite0 libsqlite0-dev libsqlite3-0 libsqlite3-dev sqlite3 lua5.1 libmysql++-dev libgmp3-dev subversion make g++ libxml2 libxml2-dev libxml++2.6-dev libmysqlclient15-dev mysql-client-5.0 mysql-common mysql-server-5.0 gcc cpp
+					sudo apt-get install libboost-date-time-dev libboost-date-time1.35.1 libboost-dev libboost-regex-dev libboost-regex1.35.1 libboost-signals-dev libboost-signals1.35.1 libboost-thread-dev libboost-thread1.35.1 liblua5.1-0 liblua5.1-0-dev liblua50 liblua50-dev liblualib50 liblualib50-dev lua50 libsqlite0 libsqlite0-dev libsqlite3-0 libsqlite3-dev sqlite3 lua5.1 libmysql++-dev libgmp3-dev subversion make g++ libxml2 libxml2-dev libxml++2.6-dev libmysqlclient15-dev mysql-client-5.0 mysql-common mysql-server-5.0 gcc cpp
 					wget http://heanet.dl.sourceforge.net/sourceforge/asio/boost_asio_1_0_0.tar.gz
 					tar -xf boost_asio_1_0_0.tar.gz
 					sudo cp -ar boost_asio_1_0_0/boost/* /usr/include/boost/

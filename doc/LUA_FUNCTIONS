@@ -15,9 +15,16 @@
 		http://otland.net/
 ]
 
+[ NOTE
+	This file is outdated and needs to be rewriten.
+	Some of these functions doesn't exist anymore although
+	they were added to compat.lua, but there are alot of
+	missing functions!
+]
+
 [ ABOUT
 	List with all Lua functions available.
-	You can read the short instructions for all the functions;
+	You can read a short instructions for all the functions;
 		how to use, what it returns and an usage example.
 ]
 
