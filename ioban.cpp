@@ -419,6 +419,7 @@ bool IOBan::getBanishmentData(uint32_t account, Ban& ban)
 		"WHERE "
 			"`value` = " << account << " AND "
 			"`active` = 1 AND " <<
+			"(`type` = 3 OR `type` = 5) AND " <<
 			"(`expires` > " << currentTime << " OR `expires` <= 0)";
 
 	if((result = db->storeQuery(query.str())))
