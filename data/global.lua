@@ -590,7 +590,7 @@ function doPlayerBuyItemContainer(cid, container, itemid, count, cost, charges)
 	if doPlayerRemoveMoney(cid, cost) == TRUE then
 		for i = 1, count do
 			local containerItem = doPlayerAddItem(cid, container, 1)
-			for x = 1, 20 do
+			for x = 1, getContainerSize(containerItem[1]) do
 				doAddContainerItem(containerItem[1], itemid, charges)
 			end
 		end
