@@ -70,6 +70,10 @@ function getPlayerMasterPos(cid)
 	return getTemplePositionById(getPlayerTown(cid))
 end
 
+function hasCondition(cid, condition)
+	return getCreatureCondition(cid, condition)
+end
+
 function isMoveable(uid)
 	return isMovable(uid)
 end

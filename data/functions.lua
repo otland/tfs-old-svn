@@ -33,13 +33,13 @@ function doPlayerTakeItem(cid, itemid, count)
 		while count > 0 do
 			local tempcount = 0
 			if(isItemStackable(itemid) == TRUE) then
-				tempcount = math.min (100, count)
+				tempcount = math.min(100, count)
 			else
 				tempcount = 1
 			end
 			local ret = doPlayerRemoveItem(cid, itemid, tempcount)
 			if(ret ~= LUA_ERROR) then
-				count = count-tempcount
+				count = count - tempcount
 			else
 				return LUA_ERROR
 			end
@@ -63,7 +63,7 @@ function doPlayerBuyItemContainer(cid, container, itemid, count, cost, charges)
 	if doPlayerRemoveMoney(cid, cost) == TRUE then
 		for i = 1, count do
 			local containerItem = doPlayerAddItem(cid, container, 1)
-			for x = 1, 20 do
+			for x = 1, getContainerCap(containerItem[1]) do
 				doAddContainerItem(containerItem[1], itemid, charges)
 			end
 		end
@@ -75,7 +75,7 @@ end
 function doPlayerSellItem(cid, itemid, count, cost)
 	if(doPlayerTakeItem(cid, itemid, count) == LUA_NO_ERROR) then
 		if(doPlayerAddMoney(cid, cost) ~= TRUE) then
-			error('Could not add money to ' .. getPlayerName(cid) .. '(' .. cost .. 'gp)')
+			error('Could not add money to ' .. getPlayerName(cid) .. ' (' .. cost .. 'gp)')
 		end
 		return LUA_NO_ERROR
 	end
@@ -83,10 +83,7 @@ function doPlayerSellItem(cid, itemid, count, cost)
 end
 
 function isInRange(pos, fromPos, toPos)
-	if pos.x >= fromPos.x and pos.y >= fromPos.y and pos.z >= fromPos.z and pos.x <= toPos.x and pos.y <= toPos.y and pos.z <= toPos.z then
-		return TRUE
-	end
-	return FALSE
+	return (pos.x >= fromPos.x and pos.y >= fromPos.y and pos.z >= fromPos.z and pos.x <= toPos.x and pos.y <= toPos.y and pos.z <= toPos.z) and TRUE or FALSE
 end
 
 function isPremium(cid)
@@ -190,10 +187,6 @@ function getConfigInfo(info)
 	return _G[info]
 end
 
-function hasCondition(cid, condition)
-	return getCreatureCondition(cid, condition)
-end
-
 function getDirectionTo(pos1, pos2)
 	local dir = NORTH
 	if(pos1.x > pos2.x) then
@@ -224,29 +217,32 @@ function getPlayerLookPos(cid)
 	return getPosByDir(getThingPos(cid), getPlayerLookDir(cid))
 end
 
-function getPosByDir(basePos, dir)
-	local pos = basePos
-	if(dir == NORTH) then
-		pos.y = pos.y-1
-	elseif(dir == SOUTH) then
-		pos.y = pos.y + 1
-	elseif(dir == WEST) then
-		pos.x = pos.x-1
-	elseif(dir == EAST) then
-		pos.x = pos.x+1
-	elseif(dir == NORTHWEST) then
-		pos.y = pos.y-1
-		pos.x = pos.x-1
-	elseif(dir == NORTHEAST) then
-		pos.y = pos.y-1
-		pos.x = pos.x+1
-	elseif(dir == SOUTHWEST) then
-		pos.y = pos.y+1
-		pos.x = pos.x-1
-	elseif(dir == SOUTHEAST) then
-		pos.y = pos.y+1
-		pos.x = pos.x+1
+function getPosByDir(fromPosition, direction, size)
+	local n = size or 1
+
+	local pos = fromPosition
+	if(direction == NORTH) then
+		pos.y = pos.y - n
+	elseif(direction == SOUTH) then
+		pos.y = pos.y + n
+	elseif(direction == WEST) then
+		pos.x = pos.x - n
+	elseif(direction == EAST) then
+		pos.x = pos.x + n
+	elseif(direction == NORTHWEST) then
+		pos.y = pos.y - n
+		pos.x = pos.x - n
+	elseif(direction == NORTHEAST) then
+		pos.y = pos.y - n
+		pos.x = pos.x + n
+	elseif(direction == SOUTHWEST) then
+		pos.y = pos.y + n
+		pos.x = pos.x - n
+	elseif(direction == SOUTHEAST) then
+		pos.y = pos.y + n
+		pos.x = pos.x + n
 	end
+
 	return pos
 end
 
@@ -341,7 +337,7 @@ exhaustion =
 
 	table.find = function (table, value)
 		for i, v in pairs(table) do
-			if (v == value) then
+			if(v == value) then
 				return i
 			end
 		end
@@ -354,7 +350,7 @@ exhaustion =
 		local result = false
 		for i, v in pairs(str) do
 			result = (string.find(txt, v) and not string.find(txt, '(%w+)' .. v) and not string.find(txt, v .. '(%w+)'))
-			if (result) then
+			if(result) then
 				break
 			end
 		end
@@ -364,7 +360,9 @@ exhaustion =
 	table.countElements = function (table, item)
 		local count = 0
 		for i, n in pairs(table) do
-			if (item == n) then count = count + 1 end
+			if(item == n) then
+				count = count + 1
+			end
 		end
 		return count
 	end
@@ -374,44 +372,59 @@ exhaustion =
 		for i = 1, select do
 			a[#a + 1] = i
 		end
+
 		local newthing = {}
-		while (1) do
+		while(TRUE) do
 			local newrow = {}
 			for i = 1, select do
 				newrow[#newrow + 1] = table[a[i]]
 			end
+
 			newlist[#newlist + 1] = newrow
 			i = select
-			while (a[i] == (number - select + i)) do
+			while(a[i] == (number - select + i)) do
 				i = i - 1
 			end
-			if (i < 1) then break end
-				a[i] = a[i] + 1
-				for j = i, select do
-					a[j] = a[i] + j - i
-				end
+
+			if(i < 1) then
+				break
 			end
+
+			a[i] = a[i] + 1
+			for j = i, select do
+				a[j] = a[i] + j - i
+			end
+		end
 		return newlist
 	end
 
 	string.split = function (str)
 		local t = {}
-		local function helper(word) table.insert(t, word) return "" end
-		if (not str:gsub("%w+", helper):find"%S") then return t end
+		local function helper(word)
+			table.insert(t, word)
+			return ""
+		end
+
+		if(not str:gsub("%w+", helper):find"%S") then
+			return t
+		end
 	end
 
-	string.separate = function(separator, string)
-		local a, b = {}, 0
-		if (#string == 1) then return string end
-	    while (true) do
-			local nextSeparator = string.find(string, separator, b + 1, true)
-			if (nextSeparator ~= nil) then
-				table.insert(a, string.sub(string,b,nextSeparator-1))
-				b = nextSeparator + 1
-			else
-				table.insert(a, string.sub(string, b))
-				break
-			end
-	    end
-		return a
+	string.trim = function (str)
+		return (string.gsub(str, "^%s*(.-)%s*$", "%1"))
+	end
+
+	string.explode = function (str, sep)
+		local pos, t = 1, {}
+		if #sep == 0 or #str == 0 then
+			return
+		end
+
+		for s, e in function() return string.find(str, sep, pos) end do
+			table.insert(t, string.trim(string.sub(str, pos, s - 1)))
+			pos = e + 1
+		end
+
+		table.insert(t, string.trim(string.sub(str, pos)))
+		return t
 	end
