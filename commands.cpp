@@ -1404,7 +1404,7 @@ bool Commands::unban(Creature* creature, const std::string& cmd, const std::stri
 		{
 			accountNumber = IOLoginData::getInstance()->getAccountNumberByName(param);
 			uint32_t lastip = IOLoginData::getInstance()->getLastIPByName(param);
-			if(lastip != 0)
+			if(lastip != 0 && IOBan::getInstance()->isIpBanished(lastip))
 				removedIpBan = IOBan::getInstance()->removeIpBanishment(lastip);
 		}
 
