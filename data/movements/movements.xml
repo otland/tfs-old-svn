@@ -77,6 +77,10 @@
 	<movevent event="StepOut" itemid="7041" script="closingdoor.lua"/>
 	<movevent event="StepOut" itemid="7048" script="closingdoor.lua"/>
 	<movevent event="StepOut" itemid="7050" script="closingdoor.lua"/>
+	<movevent event="StepOut" itemid="8552" script="closingdoor.lua"/>
+	<movevent event="StepOut" itemid="8554" script="closingdoor.lua"/>
+	<movevent event="StepOut" itemid="8556" script="closingdoor.lua"/>
+	<movevent event="StepOut" itemid="8558" script="closingdoor.lua"/>
 
 	<!-- Snow footprint tiles -->
 	<movevent event="StepOut" itemid="670" script="snow.lua"/>
