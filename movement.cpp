@@ -177,7 +177,18 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 
 		addEvent(moveEvent, id, m_itemIdMap);
 		while(id < endId)
+		{
+			if(moveEvent->getEventType() == MOVE_EVENT_EQUIP)
+			{
+				ItemType& it = Item::items.getItemType(id);
+				it.wieldInfo = moveEvent->getWieldInfo();
+				it.minReqLevel = moveEvent->getReqLevel();
+				it.minReqMagicLevel = moveEvent->getReqMagLv();
+				it.vocationString = moveEvent->getVocationString();
+			}
+
 			addEvent(new MoveEvent(moveEvent), ++id, m_itemIdMap);
+		}
 	}
 	else if(readXMLInteger(p, "uniqueid", id))
 		addEvent(moveEvent, id, m_uniqueIdMap);
