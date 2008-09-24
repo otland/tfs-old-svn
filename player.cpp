@@ -2002,7 +2002,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 
 	if(damage != 0)
 	{
-		bool absorbedDamage;
+		//bool absorbedDamage;
 
 		//reduce damage against inventory items
 		Item* item = NULL;
@@ -2015,12 +2015,12 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 				continue;
 
 			const ItemType& it = Item::items[item->getID()];
-			absorbedDamage = false;
+			//absorbedDamage = false;
 
 			if(it.abilities.absorbPercentAll != 0)
 			{
 				damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentAll) / 100));
-				absorbedDamage = (it.abilities.absorbPercentAll > 0);
+				//absorbedDamage = (it.abilities.absorbPercentAll != 0);
 			}
 
 			switch(combatType)
@@ -2030,7 +2030,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 					if(it.abilities.absorbPercentPhysical != 0)
 					{
 						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentPhysical) / 100));
-						absorbedDamage = (it.abilities.absorbPercentPhysical > 0);
+						//absorbedDamage = (it.abilities.absorbPercentPhysical != 0);
 					}
 					break;
 				}
@@ -2040,7 +2040,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 					if(it.abilities.absorbPercentFire != 0)
 					{
 						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentFire) / 100));
-						absorbedDamage = (it.abilities.absorbPercentFire > 0);
+						//absorbedDamage = (it.abilities.absorbPercentFire != 0);
 					}
 					break;
 				}
@@ -2050,7 +2050,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 					if(it.abilities.absorbPercentEnergy != 0)
 					{
 						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentEnergy) / 100));
-						absorbedDamage = (it.abilities.absorbPercentEnergy > 0);
+						//absorbedDamage = (it.abilities.absorbPercentEnergy != 0);
 					}
 					break;
 				}
@@ -2060,7 +2060,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 					if(it.abilities.absorbPercentEarth != 0)
 					{
 						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentEarth) / 100));
-						absorbedDamage = (it.abilities.absorbPercentEarth > 0);
+						//absorbedDamage = (it.abilities.absorbPercentEarth != 0);
 					}
 					break;
 				}
@@ -2070,7 +2070,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 					if(it.abilities.absorbPercentLifeDrain != 0)
 					{
 						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentLifeDrain) / 100));
-						absorbedDamage = (it.abilities.absorbPercentLifeDrain > 0);
+						//absorbedDamage = (it.abilities.absorbPercentLifeDrain != 0);
 					}
 					break;
 				}
@@ -2080,7 +2080,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 					if(it.abilities.absorbPercentManaDrain != 0)
 					{
 						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentManaDrain) / 100));
-						absorbedDamage = (it.abilities.absorbPercentManaDrain > 0);
+						//absorbedDamage = (it.abilities.absorbPercentManaDrain != 0);
 					}
 					break;
 				}
@@ -2090,7 +2090,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 					if(it.abilities.absorbPercentDrown != 0)
 					{
 						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentDrown) / 100));
-						absorbedDamage = (it.abilities.absorbPercentDrown > 0);
+						//absorbedDamage = (it.abilities.absorbPercentDrown != 0);
 					}
 					break;
 				}
@@ -2100,7 +2100,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 					if(it.abilities.absorbPercentIce != 0)
 					{
 						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentIce) / 100));
-						absorbedDamage = (it.abilities.absorbPercentIce > 0);
+						//absorbedDamage = (it.abilities.absorbPercentIce != 0);
 					}
 					break;
 				}
@@ -2110,7 +2110,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 					if(it.abilities.absorbPercentHoly != 0)
 					{
 						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentHoly) / 100));
-						absorbedDamage = (it.abilities.absorbPercentHoly > 0);
+						//absorbedDamage = (it.abilities.absorbPercentHoly != 0);
 					}
 					break;
 				}
@@ -2120,7 +2120,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 					if(it.abilities.absorbPercentDeath != 0)
 					{
 						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentDeath) / 100));
-						absorbedDamage = (it.abilities.absorbPercentDeath > 0);
+						//absorbedDamage = (it.abilities.absorbPercentDeath != 0);
 					}
 					break;
 				}
@@ -2129,7 +2129,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 					break;
 			}
 
-			if(absorbedDamage && item->hasCharges())
+			if(/*absorbedDamage &&*/ item->hasCharges())
 				g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
 		}
 

@@ -24246,41 +24246,42 @@
 		<attribute key="weight" value="6900"/>
 		<attribute key="defense" value="36"/>
 		<attribute key="weaponType" value="shield"/>
+		<attribute key="duration" value="1200"/>
+		<attribute key="showduration" value="1"/>
+		<attribute key="decayTo" value="8905"/>
 		<attribute key="skillShield" value="2"/>
-		<attribute key="charges" value="1000"/>
-		<attribute key="decayTo" value="8811"/>
-		<attribute key="showcharges" value="1"/>
 	</item>
 	<item id="8907" article="an" name="icy rainbow shield">
 		<attribute key="description" value="It has been temporarily imbued with ice magic and has a greatly increased shielding value."/>
 		<attribute key="weight" value="6900"/>
 		<attribute key="defense" value="39"/>
 		<attribute key="weaponType" value="shield"/>
-		<attribute key="charges" value="1000"/>
-		<attribute key="decayTo" value="8811"/>
-		<attribute key="showcharges" value="1"/>
+		<attribute key="duration" value="1200"/>
+		<attribute key="showduration" value="1"/>
+		<attribute key="decayTo" value="8905"/>
 	</item>
 	<item id="8908" article="a" name="sparking rainbow shield">
 		<attribute key="description" value="It has been temporarily imbued with energy magic and increases your speed."/>
 		<attribute key="weight" value="6900"/>
 		<attribute key="defense" value="36"/>
 		<attribute key="weaponType" value="shield"/>
+		<attribute key="duration" value="1200"/>
+		<attribute key="showduration" value="1"/>
+		<attribute key="decayTo" value="8905"/>
 		<attribute key="speed" value="10"/>
-		<attribute key="charges" value="1000"/>
-		<attribute key="decayTo" value="8811"/>
-		<attribute key="showcharges" value="1"/>
 	</item>
 	<item id="8909" article="a" name="terran rainbow shield">
 		<attribute key="description" value="It has been temporarily imbued with earth magic and boosts your regeneration."/>
 		<attribute key="weight" value="6900"/>
 		<attribute key="defense" value="37"/>
 		<attribute key="weaponType" value="shield"/>
-		<attribute key="duration" value="2400"/>
+		<attribute key="duration" value="1200"/>
+		<attribute key="showduration" value="1"/>
+		<attribute key="decayTo" value="8905"/>
 		<attribute key="healthGain" value="1"/>
 		<attribute key="healthTicks" value="3000"/>
 		<attribute key="manaGain" value="4"/>
 		<attribute key="manaTicks" value="3000"/>
-		<attribute key="decayTo" value="8811"/>
 	</item>
 	<item id="8910" article="an" name="underworld rod">
 		<attribute key="weight" value="2900"/>
