@@ -923,37 +923,26 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 	const Item* item /*= NULL*/, int32_t subType /*= -1*/)
 {
 	if(item)
-	{
 		subType = item->getSubType();
-		//TODO: displaying custom attributes
-		/*ItemType& it = Item::items.getItemType(it.id);
-		it.name = item->getName();
-		it.article = item->getArticle();
-		it.pluralName = item->getPluralName();
-		it.attack = item->getAttack();
-		it.extraAttack = item->getExtraAttack();
-		it.defense = item->getDefense();
-		it.extraDefense = item->getExtraDefense();
-		it.armor = item->getArmor();
-		it.hitChance = item->getHitChance();*/
-	}
 
 	std::stringstream s;
-	if(it.name.length())
+	if(it.name.length() || (item && item->getName().length()))
 	{
 		if(it.stackable && subType > 1)
 		{
 			if(it.showCount)
 				s << subType << " ";
 
-			s << it.pluralName;
+			s << (item ? item->getPluralName() : it.pluralName);
 		}
 		else
 		{
-			if(!it.article.empty())
+			if(item && !item->getArticle().empty())
+				s << item->getArticle() << " ";
+			else if(!it.article.empty())
 				s << it.article << " ";
 
-			s << it.name;
+			s << (item ? item->getName() : it.name);
 		}
 	}
 	else
@@ -983,37 +972,38 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		if(it.weaponType == WEAPON_DIST && it.ammoType != AMMO_NONE)
 		{
 			s << " (Range:" << it.shootRange;
-			if(it.attack != 0)
-				s << ", Atk:" << std::showpos << it.attack << std::noshowpos;
+			if(it.attack != 0 || (item && item->getAttack() != 0))
+				s << ", Atk:" << std::showpos << (item ? item->getAttack() : it.attack) << std::noshowpos;
 
-			if(it.hitChance != 0)
-				s << ", Hit%" << std::showpos << it.hitChance << std::noshowpos;
+			if(it.hitChance != 0 || (item && item->getHitChance() != 0))
+				s << ", Hit%" << std::showpos << (item ? item->getHitChance() : it.hitChance) << std::noshowpos;
 
 			s << ")";
 		}
 		else if(it.weaponType != WEAPON_AMMO && it.weaponType != WEAPON_WAND)
 		{
 			s << " (";
-			if(it.attack != 0 || it.extraAttack != 0)
+			if(it.attack != 0 || it.extraAttack != 0 || (item && (item->getAttack() != 0 || item->getExtraAttack() != 0)))
 			{
-				s << "Atk:" << (int32_t)it.attack;
-				if(it.extraAttack != 0)
-					s << " " << std::showpos << (int32_t)it.extraAttack << std::noshowpos;
+				s << "Atk:" << int32_t(item ? item->getAttack() : it.attack);
+				if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
+					s << " " << std::showpos << int32_t(item ? item->getExtraAttack() : it.extraAttack) << std::noshowpos;
 			}
 
-			if(it.defense != 0 || it.extraDefense != 0)
+			if(it.defense != 0 || it.extraDefense != 0 || (item && (item->getDefense() != 0 || item->getExtraDefense() != 0)))
 			{
-				if(it.attack != 0 || it.extraAttack != 0)
+				if(it.attack != 0 || it.extraAttack != 0 || (item && (item->getAttack() != 0 || item->getExtraAttack() != 0)))
 					s << " ";
 
-				s << "Def:" << (int32_t)it.defense;
-				if(it.extraDefense != 0)
-					s << " " << std::showpos << (int32_t)it.extraDefense << std::noshowpos;
+				s << "Def:" << int32_t(item ? item->getDefense() : it.defense);
+				if(it.extraDefense != 0 || (item && item->getExtraDefense() != 0))
+					s << " " << std::showpos << int32_t(item ? item->getExtraDefense() : it.extraDefense) << std::noshowpos;
 			}
 
 			if(it.abilities.stats[STAT_MAGICLEVEL] != 0)
 			{
-				if(it.attack != 0 || it.extraAttack != 0 || it.defense != 0 || it.extraDefense != 0)
+				if(it.attack != 0 || it.extraAttack != 0 || it.defense != 0 || it.extraDefense != 0 || (item &&
+					(item->getAttack() != 0 || item->getExtraAttack() != 0 || item->getDefense() != 0 || item->getExtraDefense() != 0)))
 					s << ", ";
 
 				s << "magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICLEVEL] << std::noshowpos;
@@ -1026,9 +1016,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 
 		s << ".";
 	}
-	else if(it.armor != 0)
+	else if(it.armor != 0 || (item && item->getArmor() != 0))
 	{
-		s << " (Arm:" << it.armor;
+		s << " (Arm:" << (item ? item->getArmor() : it.armor);
 
 		if(it.abilities.absorbPercentAll != 0 || it.abilities.absorbPercentDeath != 0 ||
 			it.abilities.absorbPercentDrown != 0 || it.abilities.absorbPercentEarth != 0 ||
@@ -1167,12 +1157,12 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 				{
 					s << item->getWriter() << " wrote";
 
-					time_t wDate = item->getDate();
-					if(wDate > 0)
+					time_t date = item->getDate();
+					if(date > 0)
 					{
-						char date[16];
-						formatDate2(wDate, date);
-						s << " on " << date;
+						char buf[16];
+						formatDate2(date, buf);
+						s << " on " << buf;
 					}
 					s << ": ";
 				}
@@ -1246,14 +1236,18 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 	if(it.abilities.elementType != COMBAT_NONE && it.charges != 0)
 	{
 		s << " It is temporarily enchanted with " << getCombatName(it.abilities.elementType) << " (";
-		s << (it.extraAttack > 0 ? (it.attack + it.extraAttack) : it.attack) - it.abilities.elementDamage;
+		if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
+			s << ((item ? item->getAttack() : it.attack) + (item ? item->getExtraAttack() : it.extraAttack)) - it.abilities.elementDamage;
+		else
+			s << it.attack - it.abilities.elementDamage;
+
 		s << " physical + " << it.abilities.elementDamage << " " << getCombatName(it.abilities.elementType);
 		s << " damage).";
 	}
 
-	if(item && item->getSpecialDescription() != "")
+	if(item && !item->getSpecialDescription().empty())
 		s << std::endl << item->getSpecialDescription().c_str();
-	else if(it.description.length() && lookDistance <= 1)
+	else if(!it.description.empty() && lookDistance <= 1)
 		s << std::endl << it.description;
 
 	return s.str();

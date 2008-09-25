@@ -1563,11 +1563,11 @@ bool Commands::changeThingProporties(Creature* creature, const std::string& cmd,
 						param = parseParams(cmdit, cmdtokens.end());
 						if(strcasecmp(param.c_str(), "description") == 0)
 								item->setSpecialDescription(parseParams(cmdit, cmdtokens.end()));
-						else if((strcasecmp(param.c_str(), "count") == 0) || (strcasecmp(param.c_str(), "fluidtype") == 0) || (strcasecmp(param.c_str(), "charges") == 0))
+						else if(strcasecmp(param.c_str(), "count") == 0 || strcasecmp(param.c_str(), "fluidtype") == 0 || strcasecmp(param.c_str(), "charges") == 0)
 								item->setSubType(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-						else if((strcasecmp(param.c_str(), "action") == 0) || (strcasecmp(param.c_str(), "actionid") == 0) || (strcasecmp(param.c_str(), "aid") == 0))
+						else if(strcasecmp(param.c_str(), "action") == 0 || strcasecmp(param.c_str(), "actionid") == 0 || strcasecmp(param.c_str(), "aid") == 0)
 								item->setActionId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-						else if((strcasecmp(param.c_str(), "unique") == 0) || (strcasecmp(param.c_str(), "uniqueid") == 0) || (strcasecmp(param.c_str(), "uid") == 0))
+						else if(strcasecmp(param.c_str(), "unique") == 0 || strcasecmp(param.c_str(), "uniqueid") == 0 || strcasecmp(param.c_str(), "uid") == 0)
 								item->setUniqueId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 						else if(strcasecmp(param.c_str(), "duration") == 0)
 								item->setDuration(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
@@ -1595,13 +1595,13 @@ bool Commands::changeThingProporties(Creature* creature, const std::string& cmd,
 								item->setAttackSpeed(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 						else if(strcasecmp(param.c_str(), "hitchance") == 0)
 								item->setHitChance(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-						else if(strcasecmp(param.c_str(), "depotid") == 0)
+						else if(strcasecmp(param.c_str(), "depot") == 0 || strcasecmp(param.c_str(), "depotid") == 0)
 						{
 							if(item->getContainer())
 								if(item->getContainer()->getDepot())
-								item->getContainer()->getDepot()->setDepotId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+									item->getContainer()->getDepot()->setDepotId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 						}
-						else if(strcasecmp(param.c_str(), "destpos") == 0)
+						else if(strcasecmp(param.c_str(), "destination") == 0 || strcasecmp(param.c_str(), "position") == 0 || strcasecmp(param.c_str(), "pos") == 0)
 						{
 							if(item->getTeleport())
 								item->getTeleport()->setDestPos(Position(atoi(parseParams(cmdit, cmdtokens.end()).c_str()), atoi(parseParams(cmdit, cmdtokens.end()).c_str()), atoi(parseParams(cmdit, cmdtokens.end()).c_str())));
@@ -1613,20 +1613,62 @@ bool Commands::changeThingProporties(Creature* creature, const std::string& cmd,
 							return false;
 						}
 					}
-					else if(thing->getCreature())
-						break;
-					/*
-					else if(Creature* creat = thing->getCreature())
+					else if(Creature* creature = thing->getCreature())
 					{
-						if(Player* player = creat->getPlayer())
-						{}
-						else if(Npc* npc = creat->getNpc())
-						{}
-						else if(Monster* monster = creat->getMonster())
-						{}
+						param = parseParams(cmdit, cmdtokens.end());
+						if(strcasecmp(param.c_str(), "health") == 0)
+							creature->changeHealth(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						else if(strcasecmp(param.c_str(), "maxhealth") == 0)
+							creature->changeMaxHealth(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						else if(strcasecmp(param.c_str(), "mana") == 0)
+							creature->changeMana(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						else if(strcasecmp(param.c_str(), "maxmana") == 0)
+							creature->changeMaxMana(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						else if(strcasecmp(param.c_str(), "basespeed") == 0)
+							creature->setBaseSpeed(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						else if(strcasecmp(param.c_str(), "droploot") == 0)
+							creature->setDropLoot(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()));
+						else if(strcasecmp(param.c_str(), "lossskill") == 0)
+							creature->setLossSkill(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()));
+						else if(Player* player = creature->getPlayer())
+						{
+							if(strcasecmp(param.c_str(), "fyi") == 0)
+								player->sendFYIBox(parseParams(cmdit, cmdtokens.end()).c_str());
+							else if(strcasecmp(param.c_str(), "guildrank") == 0)
+								player->setGuildRankId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+							else if(strcasecmp(param.c_str(), "guildnick") == 0)
+								player->setGuildNick(parseParams(cmdit, cmdtokens.end()).c_str());
+							else if(strcasecmp(param.c_str(), "group") == 0)
+								player->setGroupId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+							else if(strcasecmp(param.c_str(), "extrarate") == 0)
+								player->setExtraExpRate(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+							else if(strcasecmp(param.c_str(), "vocation") == 0)
+								player->setVocation(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+							else if(strcasecmp(param.c_str(), "sex") == 0)
+								player->setSex((PlayerSex_t)atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+							else if(strcasecmp(param.c_str(), "stamina") == 0)
+								player->setStaminaMinutes(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+							else if(strcasecmp(param.c_str(), "town") == 0)
+								player->setTown(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+							else if(strcasecmp(param.c_str(), "skull") == 0)
+								player->setSkull((Skulls_t)atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+							else if(strcasecmp(param.c_str(), "balance") == 0)
+								player->balance = atoi(parseParams(cmdit, cmdtokens.end()).c_str());
+							else if(strcasecmp(param.c_str(), "marriage") == 0)
+								player->marriage = atoi(parseParams(cmdit, cmdtokens.end()).c_str());
+							else if(strcasecmp(param.c_str(), "resetidle") == 0)
+								player->resetIdleTime();
+							else if(strcasecmp(param.c_str(), "ghost") == 0)
+								player->switchGhostMode();
+							else if(strcasecmp(param.c_str(), "squelch") == 0)
+								player->switchPrivMsgIgnore();
+						}
+						/*else if(Npc* npc = creature->getNpc())
+							//
+						else if(Monster* monster = creature->getMonster())
+							//*/
 						break;
 					}
-					*/
 				}
 			}
 			else

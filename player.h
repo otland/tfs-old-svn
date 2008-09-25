@@ -189,13 +189,13 @@ class Player : public Creature, public Cylinder
 		bool isInvitedToGuild(uint32_t guild_id) const;
 		void resetGuildInformation();
 
-		void setFlags(uint64_t flags){groupFlags = flags;}
+		void setFlags(uint64_t flags) {groupFlags = flags;}
 		bool hasFlag(PlayerFlags value) const {return (0 != (groupFlags & ((uint64_t)1 << value)));}
 		void setCustomFlags(uint64_t flags){groupCustomFlags = flags;}
 		bool hasCustomFlag(PlayerCustomFlags value) const {return (0 != (groupCustomFlags & ((uint64_t)1 << value)));}
 
 		void addBlessing(uint64_t blessings_){blessings = blessings_;}
-		bool hasBlessing(int value) const {return (0 != (blessings & ((short)1 << value)));}
+		bool hasBlessing(uint16_t value) const {return (0 != (blessings & ((uint16_t)1 << value)));}
 
 		OperatingSystem_t getOperatingSystem() const {return operatingSystem;}
 		void setOperatingSystem(OperatingSystem_t clientos) {operatingSystem = clientos;}
@@ -277,16 +277,16 @@ class Player : public Creature, public Cylinder
 		{
 			if(!hasFlag(PlayerFlag_HasInfiniteCapacity))
 				return capacity;
-			else
-				return 5000.00;
+
+			return 5000.00;
 		}
 
 		double getFreeCapacity() const
 		{
 			if(!hasFlag(PlayerFlag_HasInfiniteCapacity))
 				return std::max(0.00, capacity - inventoryWeight);
-			else
-				return 5000.00;
+
+			return 5000.00;
 		}
 
 		virtual int32_t getMaxHealth() const {return getPlayerInfo(PLAYERINFO_MAXHEALTH);}
@@ -847,7 +847,8 @@ class Player : public Creature, public Cylinder
 		{
 			if(getSpeed() > PLAYER_MAX_SPEED)
 				return PLAYER_MAX_SPEED;
-			else if(getSpeed() < PLAYER_MIN_SPEED)
+
+			if(getSpeed() < PLAYER_MIN_SPEED)
 				return PLAYER_MIN_SPEED;
 
 			return getSpeed();

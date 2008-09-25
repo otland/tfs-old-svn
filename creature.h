@@ -165,7 +165,7 @@ class Creature : public AutoID, virtual public Thing
 		void setDirection(Direction dir) {direction = dir;}
 
 		const Position& getMasterPos() const { return masterPos;}
-		void setMasterPos(const Position& pos, uint32_t radius = 1) { masterPos = pos; masterRadius = radius;}
+		void setMasterPos(const Position& pos, uint32_t radius = 1) {masterPos = pos; masterRadius = radius;}
 
 		virtual int32_t getThrowRange() const {return 1;}
 		virtual bool isPushable() const {return (getSleepTicks() <= 0);}
@@ -236,7 +236,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual void onFollowCreatureComplete(const Creature* creature) {}
 
 		//combat functions
-		Creature* getAttackedCreature() { return attackedCreature; }
+		Creature* getAttackedCreature() {return attackedCreature;}
 		virtual bool setAttackedCreature(Creature* creature);
 		virtual BlockType_t blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
 			bool checkDefense = false, bool checkArmor = false);
