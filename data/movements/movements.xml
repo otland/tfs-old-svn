@@ -497,7 +497,7 @@
 		<vocation name="Elite Knight" showInDescription="0"/>
 	</movevent>
 	<movevent event="DeEquip" fromid="8905" toid="8909" slot="left-hand" function="onDeEquipItem"/>
-	<movevent event="Equip" fromid="8905" toid="8909" slot="right-hand" level="100" function="onEquipItem"/>
+	<movevent event="Equip" fromid="8905" toid="8909" slot="right-hand" level="100" function="onEquipItem">
 		<vocation name="Knight"/>
 		<vocation name="Elite Knight" showInDescription="0"/>
 	</movevent>
