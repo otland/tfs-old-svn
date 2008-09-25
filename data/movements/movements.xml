@@ -501,7 +501,7 @@
 		<vocation name="Knight"/>
 		<vocation name="Elite Knight" showInDescription="0"/>
 	</movevent>
-	<movevent event="DeEquip" fromid="8905" toid="8909" slot="right-hand" function="onDeEquipItem">
+	<movevent event="DeEquip" fromid="8905" toid="8909" slot="right-hand" function="onDeEquipItem"/>
 
 	<!-- Swimming -->
 	<movevent event="StepIn" itemid="4828" script="swimming/north.lua"/>
