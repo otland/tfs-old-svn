@@ -984,4 +984,3 @@ void sortItems(std::list<ShopInfo>& itemList)
 {
 	itemList.sort();
 }
-
