@@ -1601,7 +1601,7 @@ bool Commands::changeThingProporties(Creature* creature, const std::string& cmd,
 								if(item->getContainer()->getDepot())
 									item->getContainer()->getDepot()->setDepotId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 						}
-						else if(strcasecmp(param.c_str(), "destination") == 0 || strcasecmp(param.c_str(), "position") == 0 || strcasecmp(param.c_str(), "pos") == 0)
+						else if(strcasecmp(param.c_str(), "destination") == 0 || strcasecmp(param.c_str(), "position") == 0 || strcasecmp(param.c_str(), "pos") == 0) //FIXME
 						{
 							if(item->getTeleport())
 								item->getTeleport()->setDestPos(Position(atoi(parseParams(cmdit, cmdtokens.end()).c_str()), atoi(parseParams(cmdit, cmdtokens.end()).c_str()), atoi(parseParams(cmdit, cmdtokens.end()).c_str())));
@@ -1648,7 +1648,7 @@ bool Commands::changeThingProporties(Creature* creature, const std::string& cmd,
 								player->setSex((PlayerSex_t)atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 							else if(strcasecmp(param.c_str(), "stamina") == 0)
 								player->setStaminaMinutes(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-							else if(strcasecmp(param.c_str(), "town") == 0)
+							else if(strcasecmp(param.c_str(), "town") == 0) //FIXME
 								player->setTown(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 							else if(strcasecmp(param.c_str(), "skull") == 0)
 								player->setSkull((Skulls_t)atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
@@ -1662,12 +1662,23 @@ bool Commands::changeThingProporties(Creature* creature, const std::string& cmd,
 								player->switchGhostMode();
 							else if(strcasecmp(param.c_str(), "squelch") == 0)
 								player->switchPrivMsgIgnore();
+							else
+							{
+								player->sendTextMessage(MSG_STATUS_SMALL, "No valid action.");
+								g_game.addMagicEffect(playerPos, NM_ME_POFF);
+								return false;
+							}
 						}
 						/*else if(Npc* npc = creature->getNpc())
 							//
 						else if(Monster* monster = creature->getMonster())
 							//*/
-						break;
+						else
+						{
+							player->sendTextMessage(MSG_STATUS_SMALL, "No valid action.");
+							g_game.addMagicEffect(playerPos, NM_ME_POFF);
+							return false;
+						}
 					}
 				}
 			}
