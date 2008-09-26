@@ -4957,7 +4957,7 @@
 	<item id="2409" article="a" name="serpent sword">
 		<attribute key="weight" value="4100"/>
 		<attribute key="defense" value="15"/>
-		<attribute key="attack" value="18"/>
+		<attribute key="attack" value="26"/>
 		<attribute key="weaponType" value="sword"/>
 		<attribute key="extradef" value="1"/>
 		<attribute key="elementEarth" value="8"/>

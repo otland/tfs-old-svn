@@ -1233,7 +1233,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			s << std::endl << getWeightDescription(it, weight);
 	}
 
-	if(it.abilities.elementType != COMBAT_NONE && it.charges != 0)
+	if(it.abilities.elementType != COMBAT_NONE)
 	{
 		s << " It is temporarily enchanted with " << getCombatName(it.abilities.elementType) << " (";
 		if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
