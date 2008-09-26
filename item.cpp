@@ -950,7 +950,11 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 
 	if(it.isRune())
 	{
-		s << "(\"" << it.runeSpellName << "\", Charges: " << subType <<").";
+		s << "("
+		if(!it.runeSpellName.empty())
+			s << "\"" << it.runeSpellName << "\", ";
+
+		s << "Charges:" << subType <<").";
 		if(it.runeLevel > 0 || it.runeMagLevel > 0)
 		{
 			s << std::endl << "It can only be used with";
@@ -975,7 +979,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			if(it.attack != 0 || (item && item->getAttack() != 0))
 				s << ", Atk:" << std::showpos << (item ? item->getAttack() : it.attack) << std::noshowpos;
 
-			if(it.hitChance != 0 || (item && item->getHitChance() != 0))
+			if(it.hitChance > 0 || (item && item->getHitChance() > 0))
 				s << ", Hit%" << std::showpos << (item ? item->getHitChance() : it.hitChance) << std::noshowpos;
 
 			s << ")";

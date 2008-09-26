@@ -304,43 +304,43 @@
 	</melee>
 
 	<!-- Bows and Crossbows -->
-	<distance id="8755" level="45" unproperly="1" function="default"> <!-- Modified Crossbow -->
+	<distance id="8849" level="45" unproperly="1" function="default"> <!-- Modified Crossbow -->
 		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin" showInDescription="0"/>
 	</distance>
-	<distance id="8756" level="60" unproperly="1" function="default"> <!-- Chain Bolter -->
+	<distance id="8850" level="60" unproperly="1" function="default"> <!-- Chain Bolter -->
 		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin" showInDescription="0"/>
 	</distance>
-	<distance id="8759" level="80" unproperly="1" function="default"> <!-- Ironworker -->
+	<distance id="8853" level="80" unproperly="1" function="default"> <!-- Ironworker -->
 		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin" showInDescription="0"/>
 	</distance>
-	<distance id="8758" level="100" unproperly="1" function="default"> <!-- Devileye -->
+	<distance id="8852" level="100" unproperly="1" function="default"> <!-- Devileye -->
 		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin" showInDescription="0"/>
 	</distance>
-	<distance id="8757" level="130" unproperly="1" function="default"> <!-- Royal Crossbow -->
+	<distance id="8851" level="130" unproperly="1" function="default"> <!-- Royal Crossbow -->
 		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin" showInDescription="0"/>
 	</distance>
-	<distance id="8760" level="80" unproperly="1" function="default"> <!-- Warsinger Bow -->
+	<distance id="8857" level="40" unproperly="1" function="default"> <!-- Silkweaver Bow -->
 		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin" showInDescription="0"/>
 	</distance>
-	<distance id="8761" level="50" unproperly="1" function="default"> <!-- Composite Hornbow -->
+	<distance id="8855" level="50" unproperly="1" function="default"> <!-- Composite Hornbow -->
 		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin" showInDescription="0"/>
 	</distance>
-	<distance id="8762" level="60" unproperly="1" function="default"> <!-- Yol's Bow -->
+	<distance id="8856" level="60" unproperly="1" function="default"> <!-- Yol's Bow -->
 		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin" showInDescription="0"/>
 	</distance>
-	<distance id="8763" level="40" unproperly="1" function="default"> <!-- Silkweaver Bow -->
+	<distance id="8858" level="70" unproperly="1" function="default"> <!-- Elethriel's Elemental Bow -->
 		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin" showInDescription="0"/>
 	</distance>
-	<distance id="8764" level="70" unproperly="1" function="default"> <!-- Elethriel's Elemental Bow -->
+	<distance id="8854" level="80" unproperly="1" function="default"> <!-- Warsinger Bow -->
 		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin" showInDescription="0"/>
 	</distance>

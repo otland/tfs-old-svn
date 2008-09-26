@@ -4975,6 +4975,7 @@
 		<attribute key="weight" value="880"/>
 		<attribute key="defense" value="8"/>
 		<attribute key="attack" value="18"/>
+		<attribute key="elementEarth" value="2"/>
 		<attribute key="weaponType" value="sword"/>
 	</item>
 	<item id="2412" article="a" name="katana">
@@ -23952,7 +23953,7 @@
 		<attribute key="hitChance" value="-20"/>
 		<attribute key="attack" value="20"/>
 	</item>
-	<item id="8853" article="the" name="iron worker">
+	<item id="8853" article="the" name="ironworker">
 		<attribute key="weight" value="5500"/>
 		<attribute key="slotType" value="two-handed"/>
 		<attribute key="weaponType" value="distance"/>
