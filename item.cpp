@@ -771,7 +771,11 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 
 	if(it.isRune())
 	{
-		s << "(\"" << it.runeSpellName << "\", Charges:" << subType <<").";
+		s << "("
+		if(!it.runeSpellName.empty())
+			s << "\"" << it.runeSpellName << "\", ";
+
+		s << "Charges:" << subType <<").";
 		if(it.runeLevel > 0 || it.runeMagLevel > 0)
 		{
 			s << std::endl << "It can only be used with";
@@ -796,7 +800,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			if(it.attack != 0)
 				s << ", Atk" << std::showpos << it.attack << std::noshowpos;
 
-			if(it.hitChance != 0)
+			if(it.hitChance > 0)
 				s << ", Hit%" << std::showpos << it.hitChance << std::noshowpos;
 
 			s << ")";
@@ -1064,7 +1068,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			s << std::endl << getWeightDescription(it, weight);
 	}
 
-	if(it.abilities.elementType != COMBAT_NONE && it.charges != 0)
+	if(it.abilities.elementType != COMBAT_NONE)
 	{
 		s << " It is temporarily enchanted with ";
 		std::string strElement = "";

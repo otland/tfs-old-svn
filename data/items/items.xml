@@ -4839,6 +4839,7 @@
 		<attribute key="weight" value="2300"/>
 		<attribute key="defense" value="20"/>
 		<attribute key="attack" value="35"/>
+		<attribute key="elementFire" value="11"/>
 		<attribute key="weaponType" value="sword"/>
 		<attribute key="extradef" value="1"/>
 	</item>
@@ -4955,10 +4956,10 @@
 	<item id="2409" article="a" name="serpent sword">
 		<attribute key="weight" value="4100"/>
 		<attribute key="defense" value="15"/>
-		<attribute key="attack" value="18"/>
+		<attribute key="attack" value="26"/>
+		<attribute key="elementEarth" value="8"/>
 		<attribute key="weaponType" value="sword"/>
 		<attribute key="extradef" value="1"/>
-		<attribute key="elementEarth" value="8"/>
 	</item>
 	<item id="2410" article="a" name="throwing knife" plural="throwing knives">
 		<attribute key="weight" value="500"/>
@@ -4973,6 +4974,7 @@
 		<attribute key="weight" value="880"/>
 		<attribute key="defense" value="8"/>
 		<attribute key="attack" value="18"/>
+		<attribute key="elementEarth" value="2"/>
 		<attribute key="weaponType" value="sword"/>
 	</item>
 	<item id="2412" article="a" name="katana">
@@ -5116,6 +5118,7 @@
 		<attribute key="weight" value="4000"/>
 		<attribute key="defense" value="16"/>
 		<attribute key="attack" value="38"/>
+		<attribute key="elementFire" value="11"/>
 		<attribute key="weaponType" value="axe"/>
 		<attribute key="extradef" value="1"/>
 	</item>
@@ -19862,8 +19865,11 @@
 		<attribute key="weaponType" value="sword"/>
 		<attribute key="extradef" value="3"/>
 	</item>
-	<item id="7391" name="">
-		<attribute key="weight" value="0"/>
+	<item id="7391" article="an" name="thaian sword">
+		<attribute key="weight" value="6100"/>
+		<attribute key="defense" value="29"/>
+		<attribute key="attack" value="46"/>
+		<attribute key="weaponType" value="sword"/>
 	</item>
 	<item id="7392" article="an" name="orcish maul">
 		<attribute key="weight" value="5400"/>
@@ -19953,8 +19959,12 @@
 		<attribute key="attack" value="43"/>
 		<attribute key="weaponType" value="club"/>
 	</item>
-	<item id="7411" name="">
-		<attribute key="weight" value="0"/>
+	<item id="7411" article="an" name="ornamented axe">
+		<attribute key="weight" value="6150"/>
+		<attribute key="defense" value="22"/>
+		<attribute key="attack" value="42"/>
+		<attribute key="weaponType" value="axe"/>
+		<attribute key="extradef" value="2"/>
 	</item>
 	<item id="7412" article="a" name="butcher's axe">
 		<attribute key="weight" value="6800"/>
@@ -23941,7 +23951,7 @@
 		<attribute key="hitChance" value="-20"/>
 		<attribute key="attack" value="20"/>
 	</item>
-	<item id="8853" article="the" name="iron worker">
+	<item id="8853" article="the" name="ironworker">
 		<attribute key="weight" value="5500"/>
 		<attribute key="slotType" value="two-handed"/>
 		<attribute key="weaponType" value="distance"/>
@@ -24238,41 +24248,42 @@
 		<attribute key="weight" value="6900"/>
 		<attribute key="defense" value="36"/>
 		<attribute key="weaponType" value="shield"/>
+		<attribute key="duration" value="1200"/>
+		<attribute key="showduration" value="1"/>
+		<attribute key="decayTo" value="8905"/>
 		<attribute key="skillShield" value="2"/>
-		<attribute key="charges" value="1000"/>
-		<attribute key="decayTo" value="8811"/>
-		<attribute key="showcharges" value="1"/>
 	</item>
 	<item id="8907" article="an" name="icy rainbow shield">
 		<attribute key="description" value="It has been temporarily imbued with ice magic and has a greatly increased shielding value."/>
 		<attribute key="weight" value="6900"/>
 		<attribute key="defense" value="39"/>
 		<attribute key="weaponType" value="shield"/>
-		<attribute key="charges" value="1000"/>
-		<attribute key="decayTo" value="8811"/>
-		<attribute key="showcharges" value="1"/>
+		<attribute key="duration" value="1200"/>
+		<attribute key="showduration" value="1"/>
+		<attribute key="decayTo" value="8905"/>
 	</item>
 	<item id="8908" article="a" name="sparking rainbow shield">
 		<attribute key="description" value="It has been temporarily imbued with energy magic and increases your speed."/>
 		<attribute key="weight" value="6900"/>
 		<attribute key="defense" value="36"/>
 		<attribute key="weaponType" value="shield"/>
-		<attribute key="speed" value="10"/>
-		<attribute key="charges" value="1000"/>
-		<attribute key="decayTo" value="8811"/>
-		<attribute key="showcharges" value="1"/>
+		<attribute key="duration" value="1200"/>
+		<attribute key="showduration" value="1"/>
+		<attribute key="decayTo" value="8905"/>
+		<attribute key="speed" value="20"/>
 	</item>
 	<item id="8909" article="a" name="terran rainbow shield">
 		<attribute key="description" value="It has been temporarily imbued with earth magic and boosts your regeneration."/>
 		<attribute key="weight" value="6900"/>
 		<attribute key="defense" value="37"/>
 		<attribute key="weaponType" value="shield"/>
-		<attribute key="duration" value="2400"/>
+		<attribute key="duration" value="1200"/>
+		<attribute key="showduration" value="1"/>
+		<attribute key="decayTo" value="8905"/>
 		<attribute key="healthGain" value="1"/>
 		<attribute key="healthTicks" value="3000"/>
 		<attribute key="manaGain" value="4"/>
 		<attribute key="manaTicks" value="3000"/>
-		<attribute key="decayTo" value="8811"/>
 	</item>
 	<item id="8910" article="an" name="underworld rod">
 		<attribute key="weight" value="2900"/>

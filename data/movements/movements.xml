@@ -77,6 +77,10 @@
 	<movevent event="StepOut" itemid="7041" script="closingdoor.lua"/>
 	<movevent event="StepOut" itemid="7048" script="closingdoor.lua"/>
 	<movevent event="StepOut" itemid="7050" script="closingdoor.lua"/>
+	<movevent event="StepOut" itemid="8552" script="closingdoor.lua"/>
+	<movevent event="StepOut" itemid="8554" script="closingdoor.lua"/>
+	<movevent event="StepOut" itemid="8556" script="closingdoor.lua"/>
+	<movevent event="StepOut" itemid="8558" script="closingdoor.lua"/>
 
 	<!-- Snow footprint tiles -->
 	<movevent event="StepOut" itemid="670" script="snow.lua"/>
@@ -349,6 +353,16 @@
 		<vocation name="Master Sorcerer" showInDescription="0"/>
 	</movevent>
 	<movevent event="DeEquip" itemid="8865" slot="armor" function="onDeEquipItem"/>
+	<movevent event="Equip" itemid="8866" slot="armor" function="onEquipItem">
+		<vocation name="Druid"/>
+		<vocation name="Elder Druid" showInDescription="0"/>
+	</movevent>
+	<movevent event="DeEquip" itemid="8866" slot="armor" function="onDeEquipItem"/>
+	<movevent event="Equip" itemid="8867" slot="armor" function="onEquipItem">
+		<vocation name="Sorcerer"/>
+		<vocation name="Master Sorcerer" showInDescription="0"/>
+	</movevent>
+	<movevent event="DeEquip" itemid="8867" slot="armor" function="onDeEquipItem"/>
 	<movevent event="Equip" itemid="8869" slot="armor" level="75" function="onEquipItem">
 		<vocation name="Druid"/>
 		<vocation name="Elder Druid" showInDescription="0"/>
@@ -476,6 +490,18 @@
 		<vocation name="Elder Druid" showInDescription="0"/>
 	</movevent>
 	<movevent event="DeEquip" itemid="7896" slot="legs" function="onDeEquipItem"/>
+
+	<!-- Shields -->
+	<movevent event="Equip" fromid="8905" toid="8909" slot="left-hand" level="100" function="onEquipItem">
+		<vocation name="Knight"/>
+		<vocation name="Elite Knight" showInDescription="0"/>
+	</movevent>
+	<movevent event="DeEquip" fromid="8905" toid="8909" slot="left-hand" function="onDeEquipItem"/>
+	<movevent event="Equip" fromid="8905" toid="8909" slot="right-hand" level="100" function="onEquipItem">
+		<vocation name="Knight"/>
+		<vocation name="Elite Knight" showInDescription="0"/>
+	</movevent>
+	<movevent event="DeEquip" fromid="8905" toid="8909" slot="right-hand" function="onDeEquipItem"/>
 
 	<!-- Swimming -->
 	<movevent event="StepIn" fromid="4620" toid="4625" script="swimming.lua"/>

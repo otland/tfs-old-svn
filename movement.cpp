@@ -431,6 +431,15 @@ MoveEvent::MoveEvent(const MoveEvent* copy) :
 	moveFunction = copy->moveFunction;
 	equipFunction = copy->equipFunction;
 	slot = copy->slot;
+	if(copy->m_eventType == MOVE_EVENT_EQUIP)
+	{
+		wieldInfo = copy->wieldInfo;
+		reqLevel = copy->reqLevel;
+		reqMagLevel = copy->reqMagLevel;
+		vocationString = copy->vocationString;
+		premium = copy->premium;
+		vocEquipMap = copy->vocEquipMap;
+	}
 }
 
 MoveEvent::~MoveEvent()
