@@ -80,6 +80,7 @@
 		<vocation name="Knight"/>
 	</melee>
 	<melee id="7383" level="50" unproperly="1" function="default"/>
+	<melee id="7391" level="50" unproperly="1" function="default"/>
 	<melee id="7416" level="55" unproperly="1" function="default"/>
 	<melee id="2393" level="55" unproperly="1" function="default">
 		<vocation name="Knight"/>
@@ -95,8 +96,8 @@
 	</melee>
 	<melee id="7405" level="80" unproperly="1" function="default"/>
 	<melee id="2400" level="80" unproperly="1" function="default"/>
-	<melee id="8836" level="100" unproperly="1" function="default"/>
-	<melee id="8838" level="100" unproperly="1" function="default"/>
+	<melee id="8930" level="100" unproperly="1" function="default"/>
+	<melee id="8932" level="100" unproperly="1" function="default"/>
 	<melee id="2408" level="110" unproperly="1" function="default">
 		<vocation name="Knight"/>
 	</melee>
@@ -165,6 +166,7 @@
 		<vocation name="Knight"/>
 	</melee>
 	<melee id="7412" level="45" unproperly="1" function="default"/>
+	<melee id="7411" level="50" unproperly="1" function="default"/>
 	<melee id="2447" level="50" unproperly="1" function="default"/>
 	<melee id="7388" level="55" unproperly="1" function="default"/>
 	<melee id="2427" level="55" unproperly="1" function="default"/>
@@ -181,8 +183,8 @@
 	<melee id="2415" level="95" unproperly="1" function="default">
 		<vocation name="Knight"/>
 	</melee>
-	<melee id="8830" level="110" unproperly="1" function="default"/>
-	<melee id="8831" level="130" unproperly="1" function="default"/>
+	<melee id="8924" level="110" unproperly="1" function="default"/>
+	<melee id="8925" level="130" unproperly="1" function="default"/>
 		<!-- Fire -->
 	<melee id="7749" level="20" function="default"/>
 	<melee id="7750" level="25" unproperly="1" function="default"/>
@@ -262,8 +264,8 @@
 	<melee id="2437" level="80" unproperly="1" function="default"/>
 	<melee id="7431" level="80" unproperly="1" function="default"/>
 	<melee id="2421" level="85" unproperly="1" function="default"/>
-	<melee id="8834" level="100" unproperly="1" function="default"/>
-	<melee id="8833" level="120" unproperly="1" function="default"/>
+	<melee id="8928" level="100" unproperly="1" function="default"/>
+	<melee id="8927" level="120" unproperly="1" function="default"/>
 		<!-- Fire -->
 	<melee id="7754" level="20" unproperly="1" function="default"/>
 	<melee id="7755" level="35" unproperly="1" function="default"/>

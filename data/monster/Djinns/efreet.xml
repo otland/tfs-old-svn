@@ -76,6 +76,7 @@
     <item id="2063" chance="20000"/>
       <inside>
         <item id="2149" countmax="2" chance="7000"/>
+		<item id="5910" countmax="2" chance1="5000" chancemax="0"/>
   	    <item id="7900" chance="500"/> --magma monocle
         <item id="2663" chance="200"/>
         <item id="1860" countmax="1" chance="2500"/>

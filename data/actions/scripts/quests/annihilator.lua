@@ -23,11 +23,13 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if item.itemid == 1945 then
 		for i = 1, 4 do
 			player[i] = getThingfromPos(playerPosition[i])
-			if isPlayer(player[i].uid) == TRUE then
-				if getPlayerStorageValue(player[i].uid, 30015) == -1 then
-					if getPlayerLevel(player[i].uid) >= 100 then
-						failed = FALSE
-						count = count + 1
+			if player[i].itemid > 0 then
+				if isPlayer(player[i].uid) == TRUE then
+					if getPlayerStorageValue(player[i].uid, 30015) == -1 then
+						if getPlayerLevel(player[i].uid) >= 100 then
+							failed = FALSE
+							count = count + 1
+						end
 					end
 				end
 			end
