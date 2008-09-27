@@ -68,7 +68,7 @@ bool DatabaseManager::tableExists(std::string table)
 	DBQuery query;
 	DBResult* result;
 	if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
-		query << "SELECT `name` FROM `sqlite_master` WHERE `name` = " << db->escapeString(table) << ";";
+		query << "SELECT `name` FROM `sqlite_master` WHERE `type` = 'table' AND `name` = " << db->escapeString(table) << ";";
 	else
 		query << "SELECT `TABLE_NAME` FROM `information_schema`.`tables` WHERE `TABLE_SCHEMA` = " << db->escapeString(g_config.getString(ConfigManager::SQL_DB)) << " AND `TABLE_NAME` = " << db->escapeString(table) << ";";
 
@@ -161,10 +161,7 @@ int DatabaseManager::updateDatabase()
 			query << "INSERT INTO `server_config` VALUES ('db_version', 1);";
 			db->executeQuery(query.str());
 
-			query.str("");
-			query << "SELECT `TABLE_SCHEMA` FROM `information_schema`.`tables` WHERE `TABLE_SCHEMA` = " << db->escapeString(g_config.getString(ConfigManager::SQL_DB)) << " AND `TABLE_NAME` = 'server_motd';";
-
-			if(!(result = db->storeQuery(query.str())))
+			if(tableExists("server_motd"))
 			{
 				//Create server_record table
 				query.str("");
@@ -418,9 +415,6 @@ int DatabaseManager::updateDatabase()
 				query << "CREATE TRIGGER `ondelete_players` BEFORE DELETE ON `players` FOR EACH ROW BEGIN DELETE FROM `bans` WHERE `type` = 2 AND `value` = OLD.`id`; UPDATE `houses` SET `owner` = 0 WHERE `owner` = OLD.`id`; END;";
 				db->executeQuery(query.str());
 			}
-			else
-				db->freeResult(result);
-
 			return 1;
 			break;
 		}
