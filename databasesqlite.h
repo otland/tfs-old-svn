@@ -50,6 +50,8 @@ class DatabaseSQLite : public _Database
 
 		DATABASE_VIRTUAL std::string getStringComparisonOperator() { return "LIKE"; }
 
+		DATABASE_VIRTUAL DatabaseEngine_t getDatabaseEngine() { return DATABASE_ENGINE_SQLITE; }
+
 	protected:
 		std::string _parse(const std::string &s);
 

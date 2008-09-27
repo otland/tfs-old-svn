@@ -23,6 +23,7 @@
 
 #include "definitions.h"
 #include "otsystem.h"
+#include "enums.h"
 
 #include <sstream>
 
@@ -172,6 +173,13 @@ class _Database
 		* @return the case insensitive operator
 		*/
 		DATABASE_VIRTUAL std::string getStringComparisonOperator() { return "="; }
+
+		/**
+		* Get database engine
+		*
+		* @return the database engine type
+		*/
+		DATABASE_VIRTUAL DatabaseEngine_t getDatabaseEngine() { return DATABASE_ENGINE_NONE; }
 
 	protected:
 		_Database() {}

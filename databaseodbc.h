@@ -66,6 +66,8 @@ class DatabaseODBC : public _Database
 
 		DATABASE_VIRTUAL void freeResult(DBResult *res);
 
+		DATABASE_VIRTUAL DatabaseEngine_t getDatabaseEngine() { return DATABASE_ENGINE_ODBC; }
+
 	protected:
 		std::string _parse(const std::string& s);
 

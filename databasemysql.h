@@ -52,6 +52,8 @@ class DatabaseMySQL : public _Database
 
 		DATABASE_VIRTUAL void freeResult(DBResult *res);
 
+		DATABASE_VIRTUAL DatabaseEngine_t getDatabaseEngine() { return DATABASE_ENGINE_MYSQL; }
+
 	protected:
 		MYSQL m_handle;
 };
