@@ -26,6 +26,7 @@ DROP TABLE IF EXISTS `groups`;
 DROP TABLE IF EXISTS `server_record`;
 DROP TABLE IF EXISTS `server_motd`;
 DROP TABLE IF EXISTS `server_reports`;
+DROP TABLE IF EXISTS `server_config`;
 
 CREATE TABLE `server_config`
 (

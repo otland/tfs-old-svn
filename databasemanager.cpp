@@ -142,8 +142,12 @@ int32_t DatabaseManager::updateDatabase()
 		return -2;
 	}
 
-	//Until we can be sure PostgreSQL works fine with this
-	//it will remain disabled.
+	Database* db = Database::getInstance();
+	/**
+	 * Until we are sure that PostgreSQL and the ODBC layer
+	 * works fine in this update process they will remain
+	 * disabled.
+	 */
 	if(db->getDatabaseEngine() == DATABASE_ENGINE_POSTGRESQL)
 		return -1;
 
@@ -155,13 +159,23 @@ int32_t DatabaseManager::updateDatabase()
 			DBResult* result;
 
 			std::cout << "> Updating database to version: 1..." << std::endl;
+
 			query.str("");
-			query << "CREATE TABLE IF NOT EXISTS `server_config` ( `config` VARCHAR(35) NOT NULL DEFAULT '', `value` INT NOT NULL ) ENGINE = InnoDB;";
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
+				query << "CREATE TABLE IF NOT EXISTS `server_config` ( `config` VARCHAR(35) NOT NULL DEFAULT '', `value` INTEGER NOT NULL );";
+			else
+				query << "CREATE TABLE IF NOT EXISTS `server_config` ( `config` VARCHAR(35) NOT NULL DEFAULT '', `value` INT NOT NULL ) ENGINE = InnoDB;";
 			db->executeQuery(query.str());
 
 			query.str("");
 			query << "INSERT INTO `server_config` VALUES ('db_version', 1);";
 			db->executeQuery(query.str());
+
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
+			{
+				//Updating from 0.2 with SQLite is not supported yet, so we'll stop here.
+				return -1;
+			}
 
 			if(!tableExists("server_motd"))
 			{
@@ -502,7 +516,7 @@ void DatabaseManager::checkPasswordType()
 							db->freeResult(result);
 						}
 					}
-					std::cout << "> All passwords are now MD5 hashed.";
+					std::cout << "> All passwords are now MD5 hashed." << std::endl;
 					break;
 				}
 
@@ -539,7 +553,7 @@ void DatabaseManager::checkPasswordType()
 							db->freeResult(result);
 						}
 					}
-					std::cout << "> All passwords are now SHA1 hashed.";
+					std::cout << "> All passwords are now SHA1 hashed." << std::endl;
 					break;
 				}
 
