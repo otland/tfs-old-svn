@@ -148,8 +148,11 @@ int32_t DatabaseManager::updateDatabase()
 	 * works fine in this update process they will remain
 	 * disabled.
 	 */
-	if(db->getDatabaseEngine() == DATABASE_ENGINE_POSTGRESQL)
+	if(db->getDatabaseEngine() == DATABASE_ENGINE_POSTGRESQL
+		|| db->getDatabaseEngine() == DATABASE_ENGINE_ODBC)
+	{
 		return -1;
+	}
 
 	switch(getDatabaseVersion())
 	{
