@@ -142,10 +142,9 @@ int32_t DatabaseManager::updateDatabase()
 		return -2;
 	}
 
-	Database* db = Database::getInstance();
-
-	//TODO: Support for SQLite (was working on it until I saw the process to alter/drop field from a table...).
-	if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
+	//Until we can be sure PostgreSQL works fine with this
+	//it will remain disabled.
+	if(db->getDatabaseEngine() == DATABASE_ENGINE_POSTGRESQL)
 		return -1;
 
 	switch(getDatabaseVersion())
@@ -423,9 +422,7 @@ int32_t DatabaseManager::updateDatabase()
 		}
 
 		default:
-		{
 			break;
-		}
 	}
 	return -1;
 }

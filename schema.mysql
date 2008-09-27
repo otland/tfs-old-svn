@@ -27,6 +27,14 @@ DROP TABLE IF EXISTS `server_record`;
 DROP TABLE IF EXISTS `server_motd`;
 DROP TABLE IF EXISTS `server_reports`;
 
+CREATE TABLE `server_config`
+(
+	`config` VARCHAR(35) NOT NULL DEFAULT '',
+	`value` INT NOT NULL
+) ENGINE = InnoDB;
+
+INSERT INTO `server_config` VALUES ('db_version', 1);
+
 CREATE TABLE `server_motd`
 (
 	`id` INT NOT NULL AUTO_INCREMENT,
