@@ -34,8 +34,10 @@ class DatabaseManager
 
 		bool optimizeTables();
 		bool tableExists(std::string table);
-		int getDatabaseVersion();
+		int32_t getDatabaseVersion();
 		bool isDatabaseSetup();
-		int updateDatabase();
-		bool getDatabaseConfig(std::string config, int &value);
+		int32_t updateDatabase();
+		bool getDatabaseConfig(std::string config, int32_t &value);
+		void registerDatabaseConfig(std::string config, int32_t value);
+		void checkPasswordType();
 };

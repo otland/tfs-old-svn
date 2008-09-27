@@ -274,6 +274,23 @@ void mainLoader()
   		SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
   	#endif
 
+	std::string passwordType = asLowerCaseString(g_config.getString(ConfigManager::PASSWORD_TYPE));
+	if(passwordType == "md5")
+	{
+		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_MD5);
+		std::cout << ">> Using MD5 passwords" << std::endl;
+	}
+	else if(passwordType == "sha1")
+	{
+		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_SHA1);
+		std::cout << ">> Using SHA1 passwords" << std::endl;
+	}
+	else
+	{
+		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_PLAIN);
+		std::cout << ">> Using plaintext passwords" << std::endl;
+	}
+
 	//load RSA key
 	std::cout << ">> Loading RSA key" << std::endl;
 	#ifndef __CONSOLE__
@@ -300,6 +317,8 @@ void mainLoader()
 			startupErrorMessage("The database you specified in config.lua is empty, please import schema.mysql to the database (read doc/MYSL_HELP for more information).");
 		else if(version != -1)
 			std::cout << "> Database has been updated to version: " << version << "." << std::endl;
+
+		DatabaseManager::getInstance()->checkPasswordType();
 
 		if(!DatabaseManager::getInstance()->optimizeTables())
 			std::cout << "> No tables were optimized." << std::endl;
@@ -378,23 +397,6 @@ void mainLoader()
 	#endif
 	if(!g_game.loadExperienceStages())
 		startupErrorMessage("Unable to load experience stages!");
-
-	std::string passwordType = asLowerCaseString(g_config.getString(ConfigManager::PASSWORD_TYPE));
-	if(passwordType == "md5")
-	{
-		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_MD5);
-		std::cout << ">> Using MD5 passwords" << std::endl;
-	}
-	else if(passwordType == "sha1")
-	{
-		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_SHA1);
-		std::cout << ">> Using SHA1 passwords" << std::endl;
-	}
-	else
-	{
-		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_PLAIN);
-		std::cout << ">> Using plaintext passwords" << std::endl;
-	}
 
 	std::cout << ">> Checking world type... ";
 	std::string worldType = asLowerCaseString(g_config.getString(ConfigManager::WORLD_TYPE));

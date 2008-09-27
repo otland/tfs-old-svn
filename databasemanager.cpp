@@ -20,6 +20,9 @@
 
 #include "databasemanager.h"
 #include "configmanager.h"
+#include "enums.h"
+#include "tools.h"
+
 #include <iostream>
 
 extern ConfigManager g_config;
@@ -103,11 +106,11 @@ bool DatabaseManager::isDatabaseSetup()
 	return false;
 }
 
-int DatabaseManager::getDatabaseVersion()
+int32_t DatabaseManager::getDatabaseVersion()
 {
 	if(tableExists("server_config"))
 	{
-		int value = 0;
+		int32_t value = 0;
 		if(getDatabaseConfig("db_version", value))
 			return value;
 
@@ -116,7 +119,7 @@ int DatabaseManager::getDatabaseVersion()
 	return 0;
 }
 
-int DatabaseManager::updateDatabase()
+int32_t DatabaseManager::updateDatabase()
 {
 	if(!isDatabaseSetup())
 	{
@@ -212,7 +215,7 @@ int DatabaseManager::updateDatabase()
 				{
 					do
 					{
-						int type = result->getDataInt("id");
+						int32_t type = result->getDataInt("id");
 						if(type >= 1 && type <= 6)
 							imported[type - 1] = true;
 						else if(!groupWarn)
@@ -427,7 +430,7 @@ int DatabaseManager::updateDatabase()
 	return -1;
 }
 
-bool DatabaseManager::getDatabaseConfig(std::string config, int &value)
+bool DatabaseManager::getDatabaseConfig(std::string config, int32_t &value)
 {
 	value = 0;
 
@@ -443,4 +446,142 @@ bool DatabaseManager::getDatabaseConfig(std::string config, int &value)
 		return true;
 	}
 	return false;
+}
+
+void DatabaseManager::registerDatabaseConfig(std::string config, int32_t value)
+{
+	Database* db = Database::getInstance();
+	DBQuery query;
+
+	int32_t v = 0;
+	if(!getDatabaseConfig(config, v))
+		query << "INSERT INTO `server_config` VALUES (" << db->escapeString(config) << ", " << value << ");";
+	else
+		query << "UPDATE `server_config` SET `value` = " << value << " WHERE `config` = " << db->escapeString(config) << ";";
+
+	db->executeQuery(query.str());
+}
+
+void DatabaseManager::checkPasswordType()
+{
+	PasswordType_t value = PASSWORD_TYPE_PLAIN;
+	PasswordType_t newValue = (PasswordType_t)g_config.getNumber(ConfigManager::PASSWORDTYPE);
+	if(getDatabaseConfig("password_type", (int32_t&)value))
+	{
+		if(value != newValue)
+		{
+			switch(newValue)
+			{
+				case PASSWORD_TYPE_MD5:
+				{
+					if(value != PASSWORD_TYPE_PLAIN)
+					{
+						std::cout << "> WARNING: You can not change the passwordType to MD5, change it back in config.lua to \"sha1\"." << std::endl;
+						return;
+					}
+
+					registerDatabaseConfig("password_type", (int32_t)newValue);
+
+					Database* db = Database::getInstance();
+					DBQuery query;
+					if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL
+						|| db->getDatabaseEngine() == DATABASE_ENGINE_POSTGRESQL)
+					{
+						query << "UPDATE `accounts` SET `password` = md5(`password`);";
+						db->executeQuery(query.str());
+					}
+					else
+					{
+						DBResult* result;
+						query << "SELECT `id`, `password` FROM `accounts`;";
+						if((result = db->storeQuery(query.str())))
+						{
+							do
+							{
+								query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToMD5(result->getDataString("password"))) << " WHERE `id` = " << result->getDataInt("id") << ";";
+								db->executeQuery(query.str());
+							}
+							while(result->next());
+							db->freeResult(result);
+						}
+					}
+					std::cout << "> All passwords are now MD5 hashed.";
+					break;
+				}
+
+				case PASSWORD_TYPE_SHA1:
+				{
+					if(value != PASSWORD_TYPE_PLAIN)
+					{
+						std::cout << "> WARNING: You can not change the passwordType to SHA1, change it back in config.lua to \"md5\"." << std::endl;
+						return;
+					}
+
+					registerDatabaseConfig("password_type", (int32_t)newValue);
+
+					Database* db = Database::getInstance();
+					DBQuery query;
+					if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL
+						|| db->getDatabaseEngine() == DATABASE_ENGINE_POSTGRESQL)
+					{
+						query << "UPDATE `accounts` SET `password` = sha1(`password`);";
+						db->executeQuery(query.str());
+					}
+					else
+					{
+						DBResult* result;
+						query << "SELECT `id`, `password` FROM `accounts`;";
+						if((result = db->storeQuery(query.str())))
+						{
+							do
+							{
+								query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToSHA1(result->getDataString("password"))) << " WHERE `id` = " << result->getDataInt("id") << ";";
+								db->executeQuery(query.str());
+							}
+							while(result->next());
+							db->freeResult(result);
+						}
+					}
+					std::cout << "> All passwords are now SHA1 hashed.";
+					break;
+				}
+
+				default:
+				{
+					std::cout << "> WARNING: You can not switch from hashed passwords to plain text, change back the passwordType in config.lua to the passwordType you were previously using." << std::endl;
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		registerDatabaseConfig("password_type", (int32_t)newValue);
+		if(g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
+		{
+			switch(newValue)
+			{
+				case PASSWORD_TYPE_MD5:
+				{
+					Database* db = Database::getInstance();
+					DBQuery query;
+					query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToMD5("1")) << " WHERE `id` = 1 AND `password` = '1';";
+					db->executeQuery(query.str());
+					break;
+				}
+
+				case PASSWORD_TYPE_SHA1:
+				{
+					Database* db = Database::getInstance();
+					DBQuery query;
+					query << "UPDATE `accounts` SET `password` = " << db->escapeString(transformToSHA1("1")) << " WHERE `id` = 1 AND `password` = '1';";
+					db->executeQuery(query.str());
+					break;
+				}
+
+				default:
+					break;
+			}
+		}
+	}
 }
