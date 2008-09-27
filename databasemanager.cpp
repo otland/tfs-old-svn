@@ -161,7 +161,7 @@ int DatabaseManager::updateDatabase()
 			query << "INSERT INTO `server_config` VALUES ('db_version', 1);";
 			db->executeQuery(query.str());
 
-			if(tableExists("server_motd"))
+			if(!tableExists("server_motd"))
 			{
 				//Create server_record table
 				query.str("");
