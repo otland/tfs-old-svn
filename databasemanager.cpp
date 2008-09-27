@@ -61,16 +61,16 @@ bool DatabaseManager::optimizeTables()
 	return false;
 }
 
-bool DatabaseManager::serverConfigTableExists()
+bool DatabaseManager::tableExists(std::string table)
 {
 	Database* db = Database::getInstance();
 
 	DBQuery query;
 	DBResult* result;
 	if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
-		query << "SELECT `name` FROM `sqlite_master` WHERE `name` = 'server_config';";
+		query << "SELECT `name` FROM `sqlite_master` WHERE `name` = " << db->escapeString(table) << ";";
 	else
-		query << "SELECT `TABLE_NAME` FROM `information_schema`.`tables` WHERE `TABLE_SCHEMA` = " << db->escapeString(g_config.getString(ConfigManager::SQL_DB)) << " AND `TABLE_NAME` = 'server_config';";
+		query << "SELECT `TABLE_NAME` FROM `information_schema`.`tables` WHERE `TABLE_SCHEMA` = " << db->escapeString(g_config.getString(ConfigManager::SQL_DB)) << " AND `TABLE_NAME` = " << db->escapeString(table) << ";";
 
 	if((result = db->storeQuery(query.str())))
 	{
@@ -105,7 +105,7 @@ bool DatabaseManager::isDatabaseSetup()
 
 int DatabaseManager::getDatabaseVersion()
 {
-	if(serverConfigTableExists())
+	if(tableExists("server_config"))
 	{
 		int value = 0;
 		if(getDatabaseConfig("db_version", value))
@@ -140,6 +140,8 @@ int DatabaseManager::updateDatabase()
 	}
 
 	Database* db = Database::getInstance();
+
+	//TODO: Support for SQLite (was working on it until I saw the process to alter/drop field from a table...).
 	if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
 		return -1;
 

@@ -33,7 +33,7 @@ class DatabaseManager
 		}
 
 		bool optimizeTables();
-		bool serverConfigTableExists();
+		bool tableExists(std::string table);
 		int getDatabaseVersion();
 		bool isDatabaseSetup();
 		int updateDatabase();

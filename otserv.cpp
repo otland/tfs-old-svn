@@ -294,7 +294,6 @@ void mainLoader()
 		startupErrorMessage("Couldn't estabilish connection to SQL database!");
 	else
 	{
-		//FIXME: The databasemanager doesn't support SQLite yet...
 		std::cout << ">> Running Database Manager" << std::endl;
 		int version = DatabaseManager::getInstance()->updateDatabase();
 		if(version == -2)
