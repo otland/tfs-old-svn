@@ -1243,7 +1243,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		if(it.charges != 0)
 			s << " temporarily";
 
-		s << "enchanted with " << getCombatName(it.abilities.elementType) << " (";
+		s << " enchanted with " << getCombatName(it.abilities.elementType) << " (";
 		if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
 			s << ((item ? item->getAttack() : it.attack) + (item ? item->getExtraAttack() : it.extraAttack)) - it.abilities.elementDamage;
 		else
