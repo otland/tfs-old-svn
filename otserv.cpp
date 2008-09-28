@@ -304,7 +304,7 @@ void mainLoader()
 
 	std::cout << ">> Starting SQL connection" << std::endl;
 	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Testing SQL connection");
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Starting SQL connection");
 	#endif
 	Database* db = Database::getInstance();
 	if(db == NULL || !db->isConnected())
@@ -312,7 +312,7 @@ void mainLoader()
 	else
 	{
 		std::cout << ">> Running Database Manager" << std::endl;
-		int version = DatabaseManager::getInstance()->updateDatabase();
+		int32_t version = DatabaseManager::getInstance()->updateDatabase();
 		if(version == -2)
 			startupErrorMessage("The database you specified in config.lua is empty, please import schema.<dbengine> to the database (if you are using MySQL, please read doc/MYSQL_HELP for more information).");
 		else if(version != -1)
