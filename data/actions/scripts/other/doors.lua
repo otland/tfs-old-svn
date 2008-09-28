@@ -10,15 +10,6 @@ function checkStackpos(item, position)
 end
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	local position = fromPosition
-	position.stackpos = STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE
-	local thing = getThingfromPos(position)
-	position.stackpos = STACKPOS_TOP_FIELD
-	local field = getThingfromPos(position)
-	if item.uid ~= thing.uid and thing.itemid >= 100 or field.itemid ~= 0 then
-		return FALSE
-	end
-
 	if isInArray(questDoors, item.itemid) == TRUE then
 		if getPlayerStorageValue(cid, item.actionid) ~= -1 then
 			doTransformItem(item.uid, item.itemid + 1)
