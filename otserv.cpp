@@ -278,17 +278,17 @@ void mainLoader()
 	if(passwordType == "md5")
 	{
 		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_MD5);
-		std::cout << ">> Using MD5 passwords" << std::endl;
+		std::cout << "> Using MD5 passwords" << std::endl;
 	}
 	else if(passwordType == "sha1")
 	{
 		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_SHA1);
-		std::cout << ">> Using SHA1 passwords" << std::endl;
+		std::cout << "> Using SHA1 passwords" << std::endl;
 	}
 	else
 	{
 		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_PLAIN);
-		std::cout << ">> Using plaintext passwords" << std::endl;
+		std::cout << "> Using plaintext passwords" << std::endl;
 	}
 
 	//load RSA key
@@ -314,10 +314,11 @@ void mainLoader()
 		std::cout << ">> Running Database Manager" << std::endl;
 		int version = DatabaseManager::getInstance()->updateDatabase();
 		if(version == -2)
-			startupErrorMessage("The database you specified in config.lua is empty, please import schema.mysql to the database (read doc/MYSL_HELP for more information).");
+			startupErrorMessage("The database you specified in config.lua is empty, please import schema.<dbengine> to the database (if you are using MySQL, please read doc/MYSQL_HELP for more information).");
 		else if(version != -1)
 			std::cout << "> Database has been updated to version: " << version << "." << std::endl;
 
+		DatabaseManager::getInstance()->checkTriggers();
 		DatabaseManager::getInstance()->checkPasswordType();
 
 		if(!DatabaseManager::getInstance()->optimizeTables())
