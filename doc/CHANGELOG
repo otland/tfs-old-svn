@@ -115,6 +115,7 @@
 							* Fixed construction kits
 						doors.lua
 							* Fixed special doors
+							* Fixed disappearing doors
 
 			creaturescripts/
 				creaturescripts.xml
@@ -177,6 +178,8 @@
 					support/
 						magic rope.lua
 							* Protocol 8.2 rope spots
+						desintegrade rune.lua
+							* Fixed issue with possibility of removing items from depots when standing outside depot
 				spells.xml
 					* Added "exhaustion=" back to spells.xml
 					* Charges and names fixed
@@ -209,7 +212,6 @@
 					* Re-grouped for new groups
 
 			global.lua
-				* Added getConfigInfo(info), doWriteLogFile(file, text), getPosByDir(basePos, dir) and hasCondition(cid, condition) functions
 				* Fixed conditions values
 				* Split to functions.lua and compat.lua
 				* Added guild levels
@@ -283,6 +285,7 @@
 	Global events (Elf)
 	Thing attribute changing (Kiper)
 	onAttack creaturescript (Elf)
+	Database Manager - http://otland.net/f123/built-database-manager-12642/ (Talaturen)
 ]
 
 [ Deprecated
@@ -309,103 +312,6 @@
 	LuaFunction: doSetCreatureDropLoot(cid, doDrop), use: doCreatureSetDropLoot(cid, doDrop)
 ]
 
-[ MySQL Update Queries
-	CREATE TABLE `server_motd`
-	(
-		`id` INT NOT NULL AUTO_INCREMENT,
-		`text` TEXT NOT NULL,
-		PRIMARY KEY (`id`)
-	) ENGINE = InnoDB;
-
-	CREATE TABLE `server_record`
-	(
-		`record` INT NOT NULL,
-		`timestamp` BIGINT NOT NULL,
-		PRIMARY KEY (`timestamp`)
-	) ENGINE = InnoDB;
-
-	CREATE TABLE `global_storage`
-	(
-		`key` INT UNSIGNED NOT NULL,
-		`value` INT NOT NULL,
-		PRIMARY KEY  (`key`)
-	) ENGINE = InnoDB;
-
-	INSERT INTO `server_record` VALUES (0, 0);
-	INSERT INTO `server_motd` VALUES (1, 'Welcome to The Forgotten Server!');
-
-	DROP TABLE `bans`;
-	CREATE TABLE `bans`
-	(
-		`id` INT UNSIGNED NOT NULL auto_increment,
-		`type` TINYINT(1) NOT NULL COMMENT 'this field defines if its ip, account, player, or any else ban',
-		`value` INT UNSIGNED NOT NULL COMMENT 'ip, player guid, account number',
-		`param` INT UNSIGNED NOT NULL DEFAULT 4294967295 COMMENT 'mask',
-		`active` TINYINT(1) NOT NULL DEFAULT TRUE,
-		`expires` INT UNSIGNED NOT NULL,
-		`added` INT UNSIGNED NOT NULL,
-		`admin_id` INT UNSIGNED NOT NULL DEFAULT 0,
-		`comment` TEXT NOT NULL DEFAULT '',
-		`reason` INT UNSIGNED NOT NULL DEFAULT 0,
-		`action` INT UNSIGNED NOT NULL DEFAULT 0,
-		PRIMARY KEY  (`id`),
-		KEY `type` (`type`, `value`)
-	) ENGINE = InnoDB;
-
-	TRUNCATE TABLE `groups`;
-	ALTER TABLE `groups` ADD `customflags` BIGINT UNSIGNED NOT NULL DEFAULT 0 AFTER `flags`;
-	ALTER TABLE `groups` ADD `violationaccess` INT NOT NULL AFTER `access`;
-	INSERT INTO `groups` VALUES (1, 'Player', 0, 0, 0, 0, 0, 0);
-	INSERT INTO `groups` VALUES (2, 'Tutor', 16809984, 1, 1, 0, 0, 0);
-	INSERT INTO `groups` VALUES (3, 'Senior Tutor', 68736352256, 3, 2, 1, 0, 0);
-	INSERT INTO `groups` VALUES (4, 'Game Master', 492842123151, 63, 3, 2, 4000, 200);
-	INSERT INTO `groups` VALUES (5, 'Community Manager', 542239465466, 1279, 4, 3, 6000, 300);
-	INSERT INTO `groups` VALUES (6, 'God', 546534563834, 2047, 5, 3, 8000, 400);
-
-	ALTER TABLE `players` ADD `balance` BIGINT UNSIGNED NOT NULL DEFAULT 0 AFTER `blessings`;
-	ALTER TABLE `players` ADD `stamina` BIGINT UNSIGNED NOT NULL DEFAULT 201660000 AFTER `balance`;
-	ALTER TABLE `players` CHANGE `loss_experience` `loss_experience` INT NOT NULL DEFAULT 10;
-	ALTER TABLE `players` CHANGE `loss_mana` `loss_mana` INT NOT NULL DEFAULT 10;
-	ALTER TABLE `players` CHANGE `loss_skills` `loss_skills` INT NOT NULL DEFAULT 10;
-	ALTER TABLE `players` ADD `loss_items` INT NOT NULL DEFAULT 10 AFTER `loss_skills`;
-	ALTER TABLE `players` ADD `marriage` INT UNSIGNED NOT NULL DEFAULT 0;
-	UPDATE `players` SET `loss_experience` = 10, `loss_mana` = 10, `loss_skills` = 10, `loss_items` = 10;
-
-	ALTER TABLE `accounts` DROP `type`;
-	ALTER TABLE `player_deaths` DROP `is_player`;
-
-	ALTER TABLE `houses` CHANGE `warnings` `warnings` INT NOT NULL DEFAULT 0;
-	ALTER TABLE `houses` ADD `lastwarning` INT UNSIGNED NOT NULL DEFAULT 0;
-]
-
-[ MySQL Update Triggers
-	DROP TRIGGER IF EXISTS `ondelete_accounts`;
-	DROP TRIGGER IF EXISTS `ondelete_players`;
-
-	DELIMITER |
-	CREATE TRIGGER `ondelete_accounts`
-	BEFORE DELETE
-	ON `accounts`
-	FOR EACH ROW
-	BEGIN
-	    DELETE FROM `bans` WHERE `type` != 1 AND `type` != 2 AND `value` = OLD.`id`;
-	END|
-
-	CREATE TRIGGER `ondelete_players`
-	BEFORE DELETE
-	ON `players`
-	FOR EACH ROW
-	BEGIN
-	    DELETE FROM `bans` WHERE `type` = 2 AND `value` = OLD.`id`;
-	    UPDATE `houses` SET `owner` = 0 WHERE `owner` = OLD.`id`;
-	END|
-	DELIMITER ;
-]
-
-[ SqLite Update Queries and Triggers
-	Please use newest forgottenserver.s3b file.
-]
-
 [ Fixed issues with...
 	Last house warnings (OpenTibia SVN, Elf)
 	High CPU usage (Everyone, OpenTibia SVN)
@@ -415,4 +321,5 @@
 	Blessings (Talaturen)
 	Crash on VIP List saving (Elf)
 	Huge writables (Elf)
+	Custom item attributes not displayed or crashing server (Elf)
 ]
