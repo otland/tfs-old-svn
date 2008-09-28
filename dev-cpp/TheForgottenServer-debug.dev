@@ -1,7 +1,7 @@
 [Project]
 FileName=TheForgottenServer-debug.dev
 Name=TheForgottenServer
-UnitCount=163
+UnitCount=165
 Type=0
 Ver=1
 ObjFiles=
@@ -1659,15 +1659,35 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit164]
+FileName=..\databasemanager.cpp
+CompileCpp=1
+Folder=TheForgottenServer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit165]
+FileName=..\databasemanager.h
+CompileCpp=1
+Folder=TheForgottenServer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [VersionInfo]
 Major=0
 Minor=3
-Release=1
+Release=0
 Build=0
 LanguageID=1033
 CharsetID=1252
 CompanyName=
-FileVersion=0.3a1
+FileVersion=0.3a2
 FileDescription=The Forgotten Server
 InternalName=
 LegalCopyright=
