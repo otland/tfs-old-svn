@@ -1074,7 +1074,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		if(it.charges != 0)
 			s << " temporarily";
 
-		s << "enchanted with ";
+		s << " enchanted with ";
 		std::string strElement = "";
 		switch(it.abilities.elementDamage)
 		{
