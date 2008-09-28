@@ -1,3 +1,14 @@
+function checkStackpos(position)
+	position.stackpos = STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE
+	local thing = getThingfromPos(position)
+	position.stackpos = STACKPOS_TOP_FIELD
+	local field = getThingfromPos(position)
+	if item.uid ~= thing.uid and thing.itemid >= 100 or field.itemid ~= 0 then
+		return FALSE
+	end
+	return TRUE
+end
+
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	local position = fromPosition
 	position.stackpos = STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE
@@ -36,7 +47,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			return TRUE
 		end
 		return FALSE
-	elseif isInArray(horizontalOpenDoors, item.itemid) == TRUE then
+	elseif isInArray(horizontalOpenDoors, item.itemid) == TRUE and checkStackpos(fromPosition) == TRUE then
 		local newPosition = toPosition
 		newPosition.y = newPosition.y + 1
 		local doorPosition = fromPosition
@@ -55,7 +66,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 		doTransformItem(item.uid, item.itemid - 1)
 		return TRUE
-	elseif isInArray(verticalOpenDoors, item.itemid) == TRUE then
+	elseif isInArray(verticalOpenDoors, item.itemid) == TRUE and checkStackpos(fromPosition) == TRUE then
 		local newPosition = toPosition
 		newPosition.x = newPosition.x + 1
 		local doorPosition = fromPosition
@@ -74,7 +85,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 		doTransformItem(item.uid, item.itemid - 1)
 		return TRUE
-	elseif doors[item.itemid] ~= nil then
+	elseif doors[item.itemid] ~= nil and checkStackpos(fromPosition) == TRUE then
 		if item.actionid == 0 then
 			doTransformItem(item.uid, doors[item.itemid])
 		else
