@@ -471,6 +471,8 @@ uint32_t DatabaseManager::updateDatabase()
 				while(result->next());
 				db->freeResult(result);
 			}
+
+			query.str("");
 			query << "DELETE FROM `player_storage` WHERE `key` = 30018;";
 			db->executeQuery(query.str());
 			registerDatabaseConfig("db_version", 2);
