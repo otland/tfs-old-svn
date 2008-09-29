@@ -59,17 +59,14 @@ bool DatabaseManager::optimizeTables()
 
 		case DATABASE_ENGINE_MYSQL:
 		{
-			query << "SELECT `TABLE_NAME`, `DATA_FREE` FROM `information_schema`.`tables` WHERE `TABLE_SCHEMA` = " << db->escapeString(g_config.getString(ConfigManager::SQL_DB)) << " AND `DATA_FREE` > 0;";
+			query << "SELECT `TABLE_NAME` FROM `information_schema`.`tables` WHERE `TABLE_SCHEMA` = " << db->escapeString(g_config.getString(ConfigManager::SQL_DB)) << " AND `DATA_FREE` > 0;";
 			if((result = db->storeQuery(query.str())))
 			{
 				do
 				{
-					if(result->getDataInt("DATA_FREE") > 0)
-					{
-						query.str("");
-						std::cout << "> Optimizing table: " << result->getDataString("TABLE_NAME") << std::endl;
-						query << "OPTIMIZE TABLE `" << result->getDataString("TABLE_NAME") << "`;";
-					}
+					query.str("");
+					std::cout << "> Optimizing table: " << result->getDataString("TABLE_NAME") << std::endl;
+					query << "OPTIMIZE TABLE `" << result->getDataString("TABLE_NAME") << "`;";
 				}
 				while(result->next());
 				db->freeResult(result);
