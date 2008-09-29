@@ -682,7 +682,7 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool forced /*
 
 		if(player->isPremium() || !g_config.getBool(ConfigManager::PREMIUM_FOR_PROMOTION))
 		{
-			int32_t promotedVocation = g_vocations.getPromotedVocation(player->getVocationId());
+			uint32_t promotedVocation = g_vocations.getPromotedVocation(player->getVocationId());
 			if(promotedVocation == 0 && player->getVocationId() != promotedVocation)
 			{
 				if(!player->isPromoted())
