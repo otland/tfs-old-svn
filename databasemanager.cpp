@@ -155,45 +155,14 @@ int32_t DatabaseManager::getDatabaseVersion()
 	return 0;
 }
 
-int32_t DatabaseManager::updateDatabase()
+uint32_t DatabaseManager::updateDatabase()
 {
-	if(!isDatabaseSetup())
-	{
-		/**
-		 * TODO: Setup database tables.
-		 * Using SOURCE schema.mysql; won't work (only a CLI command), and obviously
-		 * parsing the file and executing the lines one by one won't work (possibly if
-		 * we use a multi_query function), and executing the whole whole file content
-		 * as a query doesn't work either.
-		 *
-		 * std::cout << "> Database is empty, creating default tables...";
-		 * Database* db = Database::getInstance();
-		 * DBQuery query;
-		 * query << "SOURCE schema.mysql;";
-		 * if(db->executeQuery(query.str()))
-		 * 	std::cout << " success." << std::endl;
-		 * else
-		 * 	std::cout << " failed, make sure schema.mysql is in the same directory as the server." << std::endl;
-		*/
-		return -2;
-	}
-
-	Database* db = Database::getInstance();
-	/**
-	 * Until we are sure that PostgreSQL and the ODBC layer
-	 * works fine in this update process they will remain
-	 * disabled.
-	 */
-	if(db->getDatabaseEngine() == DATABASE_ENGINE_POSTGRESQL
-		|| db->getDatabaseEngine() == DATABASE_ENGINE_ODBC)
-	{
-		return -1;
-	}
-
 	switch(getDatabaseVersion())
 	{
 		case 0:
 		{
+			Database* db = Database::getInstance();
+
 			DBQuery query;
 			DBResult* result;
 
@@ -471,6 +440,41 @@ int32_t DatabaseManager::updateDatabase()
 				db->executeQuery(query.str());
 			}
 			return 1;
+			break;
+		}
+
+		case 1:
+		{
+			Database* db = Database::getInstance();
+
+			DBQuery query;
+			DBResult* result;
+
+			std::cout << "> Updating database to version: 2..." << std::endl;
+
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
+				query << "ALTER TABLE `players` ADD `promotion` INTEGER NOT NULL DEFAULT 0;";
+			else
+				query << "ALTER TABLE `players` ADD `promotion` INT NOT NULL DEFAULT 0;";
+			db->executeQuery(query.str());
+
+			query.str("");
+			query << "SELECT `player_id`, `value` FROM `player_storage` WHERE `key` = 30018 AND `value` > 0";
+			if((result = db->storeQuery(query.str())))
+			{
+				do
+				{
+					query.str("");
+					query << "UPDATE `players` SET `promotion` = " << result->getDataLong("value") << " WHERE `id` = " << result->getDataInt("player_id") << ";";
+					db->executeQuery(query.str());
+				}
+				while(result->next());
+				db->freeResult(result);
+			}
+			query << "DELETE FROM `player_storage` WHERE `key` = 30018;";
+			db->executeQuery(query.str());
+			registerDatabaseConfig("db_version", 2);
+			return 2;
 			break;
 		}
 

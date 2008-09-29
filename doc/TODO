@@ -16,11 +16,6 @@
 ]
 
 [ LIST
-	Stop using storage values for promotion, and also make it an int instead of a boolean,
-	should be 'promotion level', add optional parameter to "isPromoted" function which is
-	promotion level, default: 1.
-		Assigned to: Talaturen
-
 	Make more constant values configurable
 		Assigned to: Talaturen, Elf
 

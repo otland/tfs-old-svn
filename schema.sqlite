@@ -3,7 +3,7 @@ CREATE TABLE "server_config" (
     "value" INTEGER NOT NULL
 );
 
-INSERT INTO "server_config" VALUES ('db_version', 1);
+INSERT INTO "server_config" VALUES ('db_version', 2);
 
 CREATE TABLE "server_motd" (
     "id" INTEGER PRIMARY KEY,
@@ -112,12 +112,13 @@ CREATE TABLE "players" (
     "premend" INTEGER NOT NULL DEFAULT 0,
     "online" TINYINT NOT NULL DEFAULT 0,
     "marriage" INTEGER NOT NULL DEFAULT 0,
+    "promotion" INTEGER NOT NULL DEFAULT 0,
     UNIQUE ("name"),
     FOREIGN KEY ("account_id") REFERENCES "accounts" ("id"),
     FOREIGN KEY ("group_id") REFERENCES "groups" ("id")
 );
 
-INSERT INTO `players` VALUES (1, 'Account Manager', 1, 1, 1, 0, 150, 150, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 50, 50, 7, '', 400, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 201660000, 0, 10, 10, 10, 10, 0, 0, 0);
+INSERT INTO `players` VALUES (1, 'Account Manager', 1, 1, 1, 0, 150, 150, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 50, 50, 7, '', 400, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 201660000, 0, 10, 10, 10, 10, 0, 0, 0, 0);
 
 CREATE TABLE "global_storage" (
     "key" INTEGER NOT NULL,

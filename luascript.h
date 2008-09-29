@@ -214,6 +214,7 @@ enum PlayerInfo_t
 	PlayerInfoMagLevel,
 	PlayerInfoVocation,
 	PlayerInfoTown,
+	PlayerInfoPromotionLevel,
 	PlayerInfoSoul,
 	PlayerInfoFreeCap,
 	PlayerInfoGuildId,
@@ -457,6 +458,7 @@ class LuaScriptInterface
 		static int32_t luaSetHouseAccessList(lua_State* L);
 
 		//get creature info functions
+		static int32_t luaGetPlayerPromotionLevel(lua_State* L);
 		static int32_t luaGetPlayerFood(lua_State* L);
 		static int32_t luaGetPlayerAccess(lua_State* L);
 		static int32_t luaGetPlayerLevel(lua_State* L);

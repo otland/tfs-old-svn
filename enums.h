@@ -38,11 +38,6 @@ enum PasswordType_t
 	PASSWORD_TYPE_SHA1 = 2
 };
 
-enum StorageValues_t
-{
-	STORAGEVALUE_PROMOTION = 30018
-};
-
 enum GuildLevel_t
 {
 	GUILDLEVEL_MEMBER = 1,

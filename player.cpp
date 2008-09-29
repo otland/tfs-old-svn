@@ -3846,11 +3846,9 @@ void Player::checkRedSkullTicks(int32_t ticks)
 	}
 }
 
-bool Player::isPromoted()
+bool Player::isPromoted(uint32_t pLevel/* = 1*/)
 {
-	int32_t value;
-	getStorageValue(STORAGEVALUE_PROMOTION, value);
-	return (value == 1);
+	return promotionLevel == pLevel;
 }
 
 double Player::getLostPercent(lossTypes_t lossType)

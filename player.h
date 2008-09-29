@@ -158,6 +158,8 @@ class Player : public Creature, public Cylinder
 			return ((50ULL * level * level * level) - (150ULL * level * level) + (400ULL * level))/3ULL;
 		}
 
+		void setPromotionLevel(uint32_t pLevel) {promotionLevel = pLevel;}
+
 		bool hasRequestedOutfit() const {return requestedOutfit;}
 		void hasRequestedOutfit(bool newValue) {requestedOutfit = newValue;}
 
@@ -824,6 +826,7 @@ class Player : public Creature, public Cylinder
 		uint32_t guildRankId;
 		std::string guildNick;
 		int8_t guildLevel;
+		uint32_t promotionLevel;
 
 		StorageMap storageMap;
 		LightInfo itemsLight;
@@ -861,7 +864,7 @@ class Player : public Creature, public Cylinder
 				baseSpeed = 900;
 		}
 
-		bool isPromoted();
+		bool isPromoted(uint32_t pLevel = 1);
 
 		uint32_t getVocAttackSpeed() const {return vocation->getAttackSpeed();}
 		uint32_t getAttackSpeed();

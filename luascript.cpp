@@ -1160,6 +1160,9 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerCustomFlagValue(cid, flag)
 	lua_register(m_luaState, "getPlayerCustomFlagValue", LuaScriptInterface::luaGetPlayerCustomFlagValue);
 
+	//getPlayerPromotionLevel(cid)
+	lua_register(m_luaState, "getPlayerPromotionLevel", LuaScriptInterface::luaGetPlayerPromotionLevel);
+
 	//getPlayerGroupId(cid)
 	lua_register(m_luaState, "getPlayerGroupId", LuaScriptInterface::luaGetPlayerGroupId);
 
@@ -2002,6 +2005,9 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 			case PlayerInfoTown:
 				value = player->getTown();
 				break;
+			case PlayerInfoPromotionLevel:
+				value = player->promotionLevel;
+				break;
 			case PlayerInfoGUID:
 				value = player->guid;
 				break;
@@ -2009,7 +2015,7 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 				value = player->premiumDays;
 				break;
 			case PlayerInfoSkullType:
-				value = (uint32_t)player->getSkull();
+				value = (int32_t)player->getSkull();
 				break;
 			case PlayerInfoFood:
 			{
@@ -2170,6 +2176,11 @@ int32_t LuaScriptInterface::luaGetPlayerLookDir(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerTown(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoTown);
+}
+
+int32_t LuaScriptInterface::luaGetPlayerPromotionLevel(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoPromotionLevel);
 }
 
 int32_t LuaScriptInterface::luaGetPlayerGroupId(lua_State* L)
@@ -4192,7 +4203,7 @@ int32_t LuaScriptInterface::luaDoPlayerSetVocation(lua_State* L)
 		player->setVocation(voc);
 		uint32_t promotedVocation = g_vocations.getPromotedVocation(player->getVocationId());
 		if(promotedVocation == 0 && player->getVocationId() != promotedVocation)
-			player->addStorageValue(STORAGEVALUE_PROMOTION, 1);
+			player->setPromotionLevel(1);
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else

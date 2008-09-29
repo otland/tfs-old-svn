@@ -295,6 +295,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	player->blessings = result->getDataInt("blessings");
 	player->balance = result->getDataLong("balance");
 	player->marriage = result->getDataInt("marriage");
+	player->promotionLevel = result->getDataInt("promotion");
 
 	unsigned long conditionsSize = 0;
 	const char* conditions = result->getDataStream("conditions", conditionsSize);
@@ -659,6 +660,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	query << "`sex` = " << player->sex << ", ";
 	query << "`balance` = " << player->balance << ", ";
 	query << "`stamina` = " << player->getStamina() << ", ";
+	query << "`promotion` = " << player->promotionLevel << ", ";
 
 	if(player->lastLoginSaved != 0)
 		query << "`lastlogin` = " << player->lastLoginSaved << ", ";
