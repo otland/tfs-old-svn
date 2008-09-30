@@ -50,6 +50,6 @@
 #define STATUS_SERVER_CODENAME "Alpha 2"
 #define STATUS_SERVER_PROTOCOL "8.2"
 #define CLIENT_VERSION_MIN 820
-#define CLIENT_VERSION_MAX 822
+#define CLIENT_VERSION_MAX 830
 #define CLIENT_VERSION_STRING "Only clients with protocol 8.2 allowed!"
 #define LATEST_DB_VERSION 2

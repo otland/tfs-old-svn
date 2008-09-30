@@ -39,7 +39,7 @@ class DatabaseManager
 
 		int32_t getDatabaseVersion();
 		bool isDatabaseSetup();
-		uint32_t updateDatabase();
+		int32_t updateDatabase();
 		bool getDatabaseConfig(std::string config, int32_t &value);
 		void registerDatabaseConfig(std::string config, int32_t value);
 		void checkPasswordType();

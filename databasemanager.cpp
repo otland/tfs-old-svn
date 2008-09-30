@@ -155,7 +155,7 @@ int32_t DatabaseManager::getDatabaseVersion()
 	return 0;
 }
 
-uint32_t DatabaseManager::updateDatabase()
+int32_t DatabaseManager::updateDatabase()
 {
 	switch(getDatabaseVersion())
 	{
