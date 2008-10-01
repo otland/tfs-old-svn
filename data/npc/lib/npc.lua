@@ -4,7 +4,7 @@ dofile('data/npc/lib/npcsystem/npcsystem.lua')
 do
 	doPlayerAddStackable = doPlayerAddItem
 	--Returns table with UIDs of added items
-	doPlayerAddItem = function(cid, itemid, subType, amount)
+	doPlayerAddItem = function(cid, itemid, amount, subType)
 		local amount = amount or 1
 		local subAmount = 0
 		local subType = subType or 0
@@ -18,7 +18,7 @@ do
 		local a = 0
 		for i = 1, amount do
 			items[i] = doCreateItemEx(itemid, subType)
-			ret = doPlayerAddItemEx(cid, items[i])
+			ret = doPlayerAddItemEx(cid, items[i], 1)
 			if(ret ~= RETURNVALUE_NOERROR) then
 				break
 			end
