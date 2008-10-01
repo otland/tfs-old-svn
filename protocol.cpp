@@ -45,6 +45,15 @@ void Protocol::onSendMessage(OutputMessage* msg)
 			std::cout << "Protocol::onSendMessage - encrypt" << std::endl;
 			#endif
 			XTEA_encrypt(*msg);
+
+			addChecksum(*msg);
+
+			int32_t messageLength = msg->getMessageLength();
+			if((messageLength % 8) != 0)
+				msg->AddPaddingBytes(8 - (messageLength % 8));
+
+			uint16_t *size = (uint16_t*)msg->getBuffer();
+			*size = *((uint16_t*)msg->getBuffer())+4;
 		}
 	}
 
@@ -201,4 +210,73 @@ uint32_t Protocol::getIP() const
 		return getConnection()->getIP();
 
 	return 0;
+}
+
+uint32_t Protocol::getChecksum(uint8_t *data, size_t len) /* data: Pointer to the data to be summed; len is in bytes */
+{
+    uint32_t a = 1, b = 0;
+	const uint16_t MOD_ADLER=65521;
+    while (len > 0) 
+    {
+        size_t tlen = len > 5552 ? 5552 : len;
+        len -= tlen;
+        do 
+        {
+            a += *data++;
+            b += a;
+        } while (--tlen);
+ 
+        a %= MOD_ADLER;
+        b %= MOD_ADLER;
+    }
+ 
+    return (b << 16) | a;
+}
+/*
+uint32_t Protocol::getChecksum(NetworkMessage& msg)
+{
+    // for 8.3+
+    // implementation of adler algorithm as per wikipedia
+    // this will just calculate checksum, it still needs to be added
+    // preparation
+    const uint16_t MOD_ADLER=65521;
+    uint8_t* data = ((uint8_t*)msg.getBodyBuffer());
+    size_t len = msg.getMessageLength();
+
+    // algo
+    uint32_t a = 1, b = 0;
+
+    while (len > 0)
+    {
+        size_t tlen = len > 5552 ? 5552 : len;
+        len -= tlen;
+        do
+        {
+            a += *data++;
+            b += a;
+        } while (--tlen);
+
+        a %= MOD_ADLER;
+        b %= MOD_ADLER;
+    }
+
+    return (b << 16) | a;
+
+}
+*/
+void Protocol::addChecksum(NetworkMessage& msg)
+{
+    // for 8.3+
+    // adds 32-bit adler checksum to bytes 2-6 and shifts remaining onwards
+    // only call after size header has been added!
+	unsigned char *buffer = (unsigned char *)msg.getBuffer();
+	int32_t size = msg.getSize();
+	
+    uint32_t sum = getChecksum(buffer+4, size-4);
+	std::cout << "Checksum: " << sum << std::endl;
+ 	memmove(buffer + 6, buffer + 2, size-2);
+	*((uint32_t*)(buffer+2)) = sum;/*
+	memmove(msg.getBodyBuffer() + 6, msg.getBodyBuffer()+2, msg.getMessageLength()+2);
+    *((uint32_t*)(msg.getBodyBuffer())) = sum;*/
+
 }

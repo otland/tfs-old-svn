@@ -51,6 +51,8 @@ class Protocol : boost::noncopyable
 		void onRecvMessage(NetworkMessage& msg);
 		virtual void onRecvFirstMessage(NetworkMessage& msg) = 0;
 
+		
+
 		Connection* getConnection() { return m_connection;}
 		const Connection* getConnection() const { return m_connection;}
 		void setConnection(Connection* connection) { m_connection = connection;}
@@ -68,6 +70,9 @@ class Protocol : boost::noncopyable
 		void XTEA_encrypt(OutputMessage& msg);
 		bool XTEA_decrypt(NetworkMessage& msg);
 		bool RSA_decrypt(RSA* rsa, NetworkMessage& msg);
+
+		void addChecksum(NetworkMessage& msg);
+		uint32_t getChecksum(uint8_t *data, size_t len);
 
 		void setRawMessages(bool value) { m_rawMessages = value; }
 

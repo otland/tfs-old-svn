@@ -479,6 +479,34 @@ int32_t DatabaseManager::updateDatabase()
 			return 2;
 			break;
 		}
+		case 2:
+		{
+			Database* db = Database::getInstance();
+
+			DBQuery query;
+			DBResult* result;
+
+			query << "ALTER TABLE `accounts` ADD `name` VARCHAR(32) DEFAULT '';";
+			db->executeQuery(query.str());
+
+			query.str("");
+			query << "SELECT `id` FROM `accounts`;";
+			if((result = db->storeQuery(query.str())))
+			{
+				do
+				{
+					query.str("");
+					query << "UPDATE `accounts` SET `name` = '" << result->getDataInt("id") << "' WHERE `id` = " << result->getDataInt("id") << ";";
+					db->executeQuery(query.str());
+				}
+				while(result->next());
+				db->freeResult(result);
+			}
+
+			registerDatabaseConfig("db_version", 3);
+			return 3;
+			break;
+		}
 
 		default:
 			break;
