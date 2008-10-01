@@ -1146,7 +1146,7 @@ bool Commands::newType(Creature* creature, const std::string& cmd, const std::st
 	int32_t lookType = atoi(param.c_str());
 	if(player)
 	{
-		if(lookType < 0 || lookType == 1 || lookType == 135 || (lookType > 160 && lookType < 192) || lookType > 301)
+		if(lookType < 0 || lookType == 1 || lookType == 135 || (lookType > 160 && lookType < 192) || lookType > 302)
 			player->sendTextMessage(MSG_STATUS_SMALL, "This looktype does not exist.");
 		else
 		{

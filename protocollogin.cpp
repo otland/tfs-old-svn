@@ -100,7 +100,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	enableXTEAEncryption();
 	setXTEAKey(key);
 
-	uint32_t accnumber = msg.GetU32();
+	uint32_t accnumber = atoi(msg.GetString().c_str());
 	std::string password = msg.GetString();
 
 	if(!accnumber)
@@ -117,7 +117,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		}
 	}
 
-	if(version < 820)
+	if(version < 830)
 	{
 		disconnectClient(0x0A, "Only clients with protocol 8.2 allowed!");
 		return false;

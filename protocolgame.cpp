@@ -537,13 +537,13 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	setXTEAKey(key);
 
 	uint8_t isSetGM = msg.GetByte();
-	uint32_t accnumber = msg.GetU32();
+	uint32_t accnumber = atoi(msg.GetString().c_str());
 	const std::string name = msg.GetString();
 	std::string password = msg.GetString();
 
-	if(version < 820)
+	if(version < 830)
 	{
-		disconnectClient(0x0A, "Only clients with protocol 8.2 allowed!");
+		disconnectClient(0x0A, "Only clients with protocol 8.3 allowed!");
 		return false;
 	}
 
