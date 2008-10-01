@@ -57,7 +57,7 @@ bool IOLoginData::getAccountId(const std::string& name, uint32_t& number)
 	return true;
 }
 
-Account IOLoginData::loadAccount(uint32_t accno, bool preLoad /*= false*/)
+Account IOLoginData::loadAccount(uint32_t accId, bool preLoad /*= false*/)
 {
 	Account acc;
 
@@ -65,7 +65,7 @@ Account IOLoginData::loadAccount(uint32_t accno, bool preLoad /*= false*/)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id`, `name`, `password`, `premdays`, `lastday`, `key`, `warnings` FROM `accounts` WHERE `id` = " << accno;
+	query << "SELECT `id`, `name`, `password`, `premdays`, `lastday`, `key`, `warnings` FROM `accounts` WHERE `id` = " << accId;
 	if((result = db->storeQuery(query.str())))
 	{
 		acc.number = result->getDataInt("id");
@@ -80,7 +80,7 @@ Account IOLoginData::loadAccount(uint32_t accno, bool preLoad /*= false*/)
 		if(preLoad)
 			return acc;
 
-		query << "SELECT `name` FROM `players` WHERE `account_id` = " << accno;
+		query << "SELECT `name` FROM `players` WHERE `account_id` = " << accId;
 		if((result = db->storeQuery(query.str())))
 		{
 			do
@@ -104,13 +104,13 @@ bool IOLoginData::saveAccount(Account acc)
 	return db->executeQuery(query.str());
 }
 
-bool IOLoginData::hasFlag(uint32_t accno, PlayerFlags value)
+bool IOLoginData::hasFlag(uint32_t accId, PlayerFlags value)
 {
 	Database* db = Database::getInstance();
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `group_id` FROM `accounts` WHERE `id` = " << accno;
+	query << "SELECT `group_id` FROM `accounts` WHERE `id` = " << accId;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -125,13 +125,13 @@ bool IOLoginData::hasFlag(uint32_t accno, PlayerFlags value)
 	return (0 != (flags & ((uint64_t)1 << value)));
 }
 
-bool IOLoginData::hasCustomFlag(uint32_t accno, PlayerCustomFlags value)
+bool IOLoginData::hasCustomFlag(uint32_t accId, PlayerCustomFlags value)
 {
 	Database* db = Database::getInstance();
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `group_id` FROM `accounts` WHERE `id` = " << accno;
+	query << "SELECT `group_id` FROM `accounts` WHERE `id` = " << accId;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -146,13 +146,13 @@ bool IOLoginData::hasCustomFlag(uint32_t accno, PlayerCustomFlags value)
 	return (0 != (flags & ((uint64_t)1 << value)));
 }
 
-bool IOLoginData::accountExists(uint32_t accno)
+bool IOLoginData::accountExists(uint32_t accId)
 {
 	Database* db = Database::getInstance();
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `accounts` WHERE `id` = " << accno;
+	query << "SELECT `id` FROM `accounts` WHERE `id` = " << accId;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -160,20 +160,20 @@ bool IOLoginData::accountExists(uint32_t accno)
 	return true;
 }
 
-bool IOLoginData::getPassword(uint32_t accno, const std::string& name, std::string& password)
+bool IOLoginData::getPassword(uint32_t accId, const std::string& name, std::string& password)
 {
 	Database* db = Database::getInstance();
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `password` FROM `accounts` WHERE `id` = " << accno;
+	query << "SELECT `password` FROM `accounts` WHERE `id` = " << accId;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
 	std::string accountPassword = result->getDataString("password");
 	db->freeResult(result);
 	query.str("");
-	query << "SELECT `name` FROM `players` WHERE `account_id` = " << accno;
+	query << "SELECT `name` FROM `players` WHERE `account_id` = " << accId;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -280,7 +280,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 		return false;
 	}
 
-	Account acc = loadAccount(accno);
+	Account acc = loadAccount(accId);
 	player->accountId = accId;
 
 	player->setGUID(result->getDataInt("id"));
@@ -422,7 +422,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	query.str("");
 
 	//get password
-	query << "SELECT `password` FROM `accounts` WHERE `id` = " << accno;
+	query << "SELECT `password` FROM `accounts` WHERE `id` = " << accId;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -962,13 +962,13 @@ const PlayerGroup* IOLoginData::getPlayerGroup(uint32_t groupid)
 	return NULL;
 }
 
-const PlayerGroup* IOLoginData::getPlayerGroupByAccount(uint32_t accno)
+const PlayerGroup* IOLoginData::getPlayerGroupByAccount(uint32_t accId)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `group_id` FROM `accounts` WHERE `id` = " << accno;
+	query << "SELECT `group_id` FROM `accounts` WHERE `id` = " << accId;
 	if((result = db->storeQuery(query.str())))
 	{
 		const uint32_t groupId = result->getDataInt("group_id");

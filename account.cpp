@@ -23,7 +23,7 @@
 
 Account::Account()
 {
-	accnumber = 0;
+	number = 0;
 }
 
 Account::~Account()
