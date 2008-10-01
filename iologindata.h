@@ -65,12 +65,14 @@ class IOLoginData
 		bool hasCustomFlag(uint32_t accno, PlayerCustomFlags value);
 
 		bool accountExists(uint32_t accno);
+		bool accountNameExists(const std::string& name);
+
 		bool getPassword(uint32_t accno, const std::string& name, std::string& password);
 		bool setNewPassword(uint32_t accountId, std::string newPassword);
 		bool validRecoveryKey(uint32_t accountNumber, const std::string recoveryKey);
 		bool setRecoveryKey(uint32_t accountNumber, std::string recoveryKey);
 
-		bool createAccount(uint32_t accountNumber, std::string newPassword);
+		bool createAccount(std::string name, std::string password);
 		void removePremium(Account account);
 
 		bool loadPlayer(Player* player, const std::string& name, bool preload = false);

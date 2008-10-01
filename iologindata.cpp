@@ -160,6 +160,20 @@ bool IOLoginData::accountExists(uint32_t accId)
 	return true;
 }
 
+bool IOLoginData::accountNameExists(const std::string& name)
+{
+	Database* db = Database::getInstance();
+	DBResult* result;
+
+	DBQuery query;
+	query << "SELECT `id` FROM `accounts` WHERE `name` " << db->getStringComparisonOperator() << " " << name;
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	db->freeResult(result);
+	return true;
+}
+
 bool IOLoginData::getPassword(uint32_t accId, const std::string& name, std::string& password)
 {
 	Database* db = Database::getInstance();
@@ -227,16 +241,16 @@ bool IOLoginData::setRecoveryKey(uint32_t accountId, std::string recoveryKey)
 	return db->executeQuery(query.str());
 }
 
-bool IOLoginData::createAccount(uint32_t accountId, std::string newPassword)
+bool IOLoginData::createAccount(std::string name, std::string password)
 {
 	Database* db = Database::getInstance();
 	if(g_config.getNumber(ConfigManager::PASSWORDTYPE) == PASSWORD_TYPE_MD5)
-		newPassword = transformToMD5(newPassword);
+		password = transformToMD5(password);
 	else if(g_config.getNumber(ConfigManager::PASSWORDTYPE) == PASSWORD_TYPE_SHA1)
-		newPassword = transformToSHA1(newPassword);
+		password = transformToSHA1(password);
 
 	DBQuery query;
-	query << "INSERT INTO `accounts` (`id`, `name`, `password`, `premdays`, `lastday`, `key`, `warnings`, `group_id`) VALUES (" << accountId << ", '" << accountId << "', " << db->escapeString(newPassword) << ", 0, 0, 0, 0, 1)";
+	query << "INSERT INTO `accounts` (`name`, `password`, `premdays`, `lastday`, `key`, `warnings`, `group_id`) VALUES (" << db->escapeString(name) << ", " << db->escapeString(password) << ", 0, 0, 0, 0, 1)";
 	return db->executeQuery(query.str());
 }
 

@@ -4298,12 +4298,9 @@ void Player::manageAccount(const std::string &text)
 			if(g_config.getBool(ConfigManager::GENERATE_ACCOUNT_NUMBER))
 			{
 				do
-				{
-					sprintf(newAccountNumber, "%d%d%d%d%d%d%d", random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9));
-					newAccount = atoi(newAccountNumber);
-				}
-				while(IOLoginData::getInstance()->accountExists(newAccount));
-				msg << "Your account has been created, you login with account number '" << newAccount << "' and password '" << newPassword << "', if the account number is hard to remember please write it down!";
+					sprintf(newAccount, "%d%d%d%d%d%d%d", random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9));
+				while(IOLoginData::getInstance()->accountNameExists(newAccount));
+				msg << "Your account has been created, you login with account name '" << newAccount << "' and password '" << newPassword << "', if the account name is hard to remember please write it down!";
 
 				IOLoginData::getInstance()->createAccount(newAccount, newPassword);
 				for(int8_t i = 2; i <= 8; i++)
@@ -4311,7 +4308,7 @@ void Player::manageAccount(const std::string &text)
 			}
 			else
 			{
-				msg << "What would you like your account number to be?";
+				msg << "What would you like your account name to be?";
 				talkState[3] = false;
 				talkState[4] = true;
 			}
@@ -4326,36 +4323,36 @@ void Player::manageAccount(const std::string &text)
 		{
 			std::string tmpStr = text;
 			trimString(tmpStr);
-			if(isNumbers(tmpStr))
+			if(isValidPassword(tmpStr))
 			{
-				if(tmpStr.length() >= 6)
+				if(tmpStr.length() >= 3)
 				{
-					if(tmpStr.length() <= 8)
+					if(tmpStr.length() <= 25)
 					{
-						newAccount = atoi(tmpStr.c_str());
+						newAccount = tmpStr;
 						msg << newAccount << ", are you sure?";
 						talkState[4] = false;
 						talkState[5] = true;
 					}
 					else
-						msg << "That account number is too long.. an account number has to be atleast 6 numbers and not more than 8 numbers, please pick another account number.";
+						msg << "That account name is too long... an account name has to be at least 3 digits and not more than 25 digits, please pick another account name.";
 				}
 				else
-					msg << "That account number is too short.. an account number has to be atleast 6 numbers and not more than 8 numbers, please pick another account number.";
+					msg << "That account name is too short... an account name has to be at least 3 digits and not more than 25 digits, please pick another account name.";
 			}
 			else
-				msg << "Your account number may only contain numbers, please pick another account number.";
+				msg << "Your account name contains invalid characters, please pick another account name.";
 		}
 		else if(checkText(text, "yes") && talkState[5])
 		{
-			if(!IOLoginData::getInstance()->accountExists(newAccount))
+			if(!IOLoginData::getInstance()->accountNameExists(newAccount))
 			{
 				IOLoginData::getInstance()->createAccount(newAccount, newPassword);
-				msg << "Your account has been created, you can login with account number: '" << newAccount << "' and password: '" << newPassword << "'!";
+				msg << "Your account has been created, you can login with account name: '" << newAccount << "' and password: '" << newPassword << "'!";
 			}
 			else
 			{
-				msg << "An account with that number combination already exists, please try another account number.";
+				msg << "An account with that name already exists, please try another account name.";
 				talkState[4] = true;
 				talkState[5] = false;
 			}
@@ -4364,7 +4361,7 @@ void Player::manageAccount(const std::string &text)
 		{
 			talkState[5] = false;
 			talkState[4] = true;
-			msg << "What else would you like as your account number?";
+			msg << "What else would you like as your account name?";
 		}
 		else if(checkText(text, "recover") && !talkState[6])
 		{
