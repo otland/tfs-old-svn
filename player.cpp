@@ -4298,11 +4298,14 @@ void Player::manageAccount(const std::string &text)
 			if(g_config.getBool(ConfigManager::GENERATE_ACCOUNT_NUMBER))
 			{
 				do
-					sprintf(newAccount, "%d%d%d%d%d%d%d", random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9));
-				while(IOLoginData::getInstance()->accountNameExists(newAccount));
+				{
+					sprintf(newAccountNumber, "%d%d%d%d%d%d%d", random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9));
+					newAccount = atoi(newAccountNumber);
+				}
+				while(IOLoginData::getInstance()->accountNameExists(newAccountNumber));
 				msg << "Your account has been created, you login with account name '" << newAccount << "' and password '" << newPassword << "', if the account name is hard to remember please write it down!";
 
-				IOLoginData::getInstance()->createAccount(newAccount, newPassword);
+				IOLoginData::getInstance()->createAccount(newAccountNumber, newPassword);
 				for(int8_t i = 2; i <= 8; i++)
 					talkState[i] = false;
 			}
@@ -4321,6 +4324,8 @@ void Player::manageAccount(const std::string &text)
 		}
 		else if(talkState[4])
 		{
+			/*
+			 * FIXME
 			std::string tmpStr = text;
 			trimString(tmpStr);
 			if(isValidPassword(tmpStr))
@@ -4329,7 +4334,7 @@ void Player::manageAccount(const std::string &text)
 				{
 					if(tmpStr.length() <= 25)
 					{
-						newAccount = tmpStr;
+						newAccountNumber = tmpStr;
 						msg << newAccount << ", are you sure?";
 						talkState[4] = false;
 						talkState[5] = true;
@@ -4342,12 +4347,13 @@ void Player::manageAccount(const std::string &text)
 			}
 			else
 				msg << "Your account name contains invalid characters, please pick another account name.";
+			 */
 		}
 		else if(checkText(text, "yes") && talkState[5])
 		{
-			if(!IOLoginData::getInstance()->accountNameExists(newAccount))
+			if(!IOLoginData::getInstance()->accountNameExists(newAccountNumber))
 			{
-				IOLoginData::getInstance()->createAccount(newAccount, newPassword);
+				IOLoginData::getInstance()->createAccount(newAccountNumber, newPassword);
 				msg << "Your account has been created, you can login with account name: '" << newAccount << "' and password: '" << newPassword << "'!";
 			}
 			else

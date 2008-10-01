@@ -751,7 +751,7 @@ class Player : public Creature, public Cylinder
 		int32_t newVocation;
 		PlayerSex_t _newSex;
 		uint32_t realAccount, newAccount;
-		char newAccountNumber[10];
+		char newAccountNumber[35];
 		std::string newPassword, newCharacterName, removeChar, accountNumberAttempt, recoveryKeyAttempt, namelockedPlayer, recoveryKey;
 
 		bool mayNotMove;

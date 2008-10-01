@@ -53,7 +53,7 @@ void Protocol::onSendMessage(OutputMessage* msg)
 				msg->AddPaddingBytes(8 - (messageLength % 8));
 
 			uint16_t *size = (uint16_t*)msg->getBuffer();
-			*size = *((uint16_t*)msg->getBuffer())+4;
+			*size = *((uint16_t*)msg->getBuffer()) + 4;
 		}
 	}
 
@@ -82,6 +82,7 @@ OutputMessage* Protocol::getOutputBuffer()
 {
 	if(m_outputBuffer)
 		return m_outputBuffer;
+
 	else if(m_connection)
 	{
 		m_outputBuffer = OutputMessagePool::getInstance()->getOutputMessage(this);
@@ -214,24 +215,24 @@ uint32_t Protocol::getIP() const
 
 uint32_t Protocol::getChecksum(uint8_t *data, size_t len) /* data: Pointer to the data to be summed; len is in bytes */
 {
-    uint32_t a = 1, b = 0;
+	uint32_t a = 1, b = 0;
 	const uint16_t MOD_ADLER=65521;
-    while (len > 0) 
-    {
-        size_t tlen = len > 5552 ? 5552 : len;
-        len -= tlen;
-        do 
-        {
-            a += *data++;
-            b += a;
-        } while (--tlen);
- 
-        a %= MOD_ADLER;
-        b %= MOD_ADLER;
-    }
- 
-    return (b << 16) | a;
+	while(len > 0)
+	{
+		size_t tlen = len > 5552 ? 5552 : len;
+		len -= tlen;
+		do
+		{
+			a += *data++;
+			b += a;
+		}
+		while(--tlen);
+		a %= MOD_ADLER;
+		b %= MOD_ADLER;
+	}
+	return (b << 16) | a;
 }
+
 /*
 uint32_t Protocol::getChecksum(NetworkMessage& msg)
 {
@@ -271,11 +272,11 @@ void Protocol::addChecksum(NetworkMessage& msg)
     // only call after size header has been added!
 	unsigned char *buffer = (unsigned char *)msg.getBuffer();
 	int32_t size = msg.getSize();
-	
-    uint32_t sum = getChecksum(buffer+4, size-4);
+
+	uint32_t sum = getChecksum(buffer + 2, size - 2);
 	std::cout << "Checksum: " << sum << std::endl;
  	memmove(buffer + 6, buffer + 2, size-2);
-	*((uint32_t*)(buffer+2)) = sum;/*
+	*((uint32_t*)(buffer + 2)) = sum;/*
 	memmove(msg.getBodyBuffer() + 6, msg.getBodyBuffer()+2, msg.getMessageLength()+2);
     *((uint32_t*)(msg.getBodyBuffer())) = sum;*/
 

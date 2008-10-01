@@ -155,7 +155,7 @@ int32_t DatabaseManager::getDatabaseVersion()
 	return 0;
 }
 
-int32_t DatabaseManager::updateDatabase()
+uint32_t DatabaseManager::updateDatabase()
 {
 	switch(getDatabaseVersion())
 	{
@@ -182,7 +182,7 @@ int32_t DatabaseManager::updateDatabase()
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
 			{
 				//Updating from 0.2 with SQLite is not supported yet, so we'll stop here.
-				return -1;
+				return 1;
 			}
 
 			if(!tableExists("server_motd"))
@@ -511,7 +511,7 @@ int32_t DatabaseManager::updateDatabase()
 		default:
 			break;
 	}
-	return -1;
+	return 0;
 }
 
 bool DatabaseManager::getDatabaseConfig(std::string config, int32_t &value)
