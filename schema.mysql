@@ -93,6 +93,7 @@ INSERT INTO `groups` VALUES (6, 'God', 546534563834, 2047, 5, 3, 8000, 400);
 CREATE TABLE `accounts`
 (
 	`id` INT NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(255) NOT NULL COMMENT 'Tibia 8.30 and later identify via name rather than id',
 	`password` VARCHAR(255) NOT NULL/* VARCHAR(32) NOT NULL COMMENT 'MD5'*//* VARCHAR(40) NOT NULL COMMENT 'SHA1'*/,
 	`premdays` INT NOT NULL DEFAULT 0,
 	`lastday` INT UNSIGNED NOT NULL DEFAULT 0,

@@ -75,9 +75,9 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	uint32_t clientip = getConnection()->getIP();
+	uint32_t clientIP = getConnection()->getIP();
 
-	/*uint16_t clientos =*/ msg.GetU16();
+	/*uint16_t operatingSystem = */msg.GetU16();
 	uint16_t version  = msg.GetU16();
 	msg.SkipBytes(12);
 
@@ -98,19 +98,17 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	enableXTEAEncryption();
 	setXTEAKey(key);
 
-	uint32_t accnumber = msg.GetU32();
+	std::string name = msg.GetString();
 	std::string password = msg.GetString();
+	uint32_t id = 1;
 
-	if(!accnumber)
+	if(!name.length())
 	{
 		if(g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
-		{
-			accnumber = 1;
 			password = "1";
-		}
 		else
 		{
-			disconnectClient(0x0A, "You must enter your account number.");
+			disconnectClient(0x0A, "You must enter your account name.");
 			return false;
 		}
 	}
@@ -133,38 +131,44 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	if(ConnectionManager::getInstance()->isDisabled(clientip))
+	if(ConnectionManager::getInstance()->isDisabled(clientIP))
 	{
 		disconnectClient(0x0A, "Too many connections attempts from this IP. Please try again later.");
 		return false;
 	}
 
-	if(IOBan::getInstance()->isIpBanished(clientip))
+	if(IOBan::getInstance()->isIpBanished(clientIP))
 	{
 		disconnectClient(0x0A, "Your IP is banished!");
 		return false;
 	}
 
-	uint32_t serverip = serverIPs[0].first;
+	uint32_t serverIP = serverIPs[0].first;
 	for(uint32_t i = 0; i < serverIPs.size(); i++)
 	{
-		if((serverIPs[i].first & serverIPs[i].second) == (clientip & serverIPs[i].second))
+		if((serverIPs[i].first & serverIPs[i].second) == (clientIP & serverIPs[i].second))
 		{
-			serverip = serverIPs[i].first;
+			serverIP = serverIPs[i].first;
 			break;
 		}
 	}
 
-	Account account = IOLoginData::getInstance()->loadAccount(accnumber);
-	if(!(accnumber != 0 && account.accnumber == accnumber &&
-			passwordTest(password, account.password)))
+	bool correct = false;
+	if(IOLoginData::getInstance()->getAccountId(name, id))
 	{
-		ConnectionManager::getInstance()->addLoginAttempt(clientip, false);
-		disconnectClient(0x0A, "Account number or password is not correct.");
+		Account account = IOLoginData::getInstance()->loadAccount(id);
+		if(id < 1 || id != account.number || passwordTest(password, account.password)))
+			correct = true;
+	}
+
+	if(!correct)
+	{
+		ConnectionManager::getInstance()->addLoginAttempt(clientIP, false);
+		disconnectClient(0x0A, "Account name or password is not correct.");
 		return false;
 	}
 
-	ConnectionManager::getInstance()->addLoginAttempt(clientip, true);
+	ConnectionManager::getInstance()->addLoginAttempt(clientIP, true);
 	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	TRACK_MESSAGE(output);
 
@@ -184,7 +188,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		output->AddByte((uint8_t)account.charList.size() + 1);
 		output->AddString("Account Manager");
 		output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
-		output->AddU32(serverip);
+		output->AddU32(serverIP);
 		output->AddU16(g_config.getNumber(ConfigManager::PORT));
 	}
 	else
@@ -202,7 +206,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		}
 		else
 			output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
-		output->AddU32(serverip);
+		output->AddU32(serverIP);
 		output->AddU16(g_config.getNumber(ConfigManager::PORT));
 	}
 

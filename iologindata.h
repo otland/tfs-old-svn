@@ -56,6 +56,8 @@ class IOLoginData
 			return &instance;
 		}
 
+		bool getAccountId(const std::string& name, uint32_t& number);
+
 		Account loadAccount(uint32_t accno, bool preLoad = false);
 		bool saveAccount(Account acc);
 
@@ -88,7 +90,7 @@ class IOLoginData
 		bool playerExists(uint32_t guid);
 		bool getNameByGuid(uint32_t guid, std::string& name);
 		bool getGuidByName(uint32_t& guid, std::string& name);
-		bool getGuidByNameEx(uint32_t &guid, bool& specialVip, std::string& name);
+		bool getGuidByNameEx(uint32_t& guid, bool& specialVip, std::string& name);
 		uint32_t getAccountNumberByName(std::string name);
 
 		bool changeName(uint32_t guid, std::string newName, std::string oldName);

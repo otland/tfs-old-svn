@@ -4789,19 +4789,19 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 	{
 		case 0:
 		{
-			IOBan::getInstance()->addNotation(account.accnumber, reason, action, banComment, player->getGUID());
-			if(IOBan::getInstance()->getNotationsCount(account.accnumber) >= (uint32_t)g_config.getNumber(ConfigManager::NOTATIONS_TO_BAN))
+			IOBan::getInstance()->addNotation(account.number, reason, action, banComment, player->getGUID());
+			if(IOBan::getInstance()->getNotationsCount(account.number) >= (uint32_t)g_config.getNumber(ConfigManager::NOTATIONS_TO_BAN))
 			{
 				account.warnings++;
 				if(account.warnings >= (g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION)))
 				{
 					action = 7;
-					IOBan::getInstance()->addDeletion(account.accnumber, reason, action, banComment, player->getGUID());
+					IOBan::getInstance()->addDeletion(account.number, reason, action, banComment, player->getGUID());
 				}
 				else if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
-					IOBan::getInstance()->addBanishment(account.accnumber, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), reason, action, banComment, player->getGUID());
+					IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), reason, action, banComment, player->getGUID());
 				else
-					IOBan::getInstance()->addBanishment(account.accnumber, (time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH)), reason, action, banComment, player->getGUID());
+					IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH)), reason, action, banComment, player->getGUID());
 			}
 			else
 				notation = true;
@@ -4819,15 +4819,15 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 			if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
 			{
 				action = 7;
-				IOBan::getInstance()->addDeletion(account.accnumber, reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addDeletion(account.number, reason, action, banComment, player->getGUID());
 			}
 			else
 			{
 				account.warnings++;
 				if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
-					IOBan::getInstance()->addBanishment(account.accnumber, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), reason, action, banComment, player->getGUID());
+					IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), reason, action, banComment, player->getGUID());
 				else
-					IOBan::getInstance()->addBanishment(account.accnumber, (time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH)), reason, action, banComment, player->getGUID());
+					IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH)), reason, action, banComment, player->getGUID());
 
 				IOBan::getInstance()->addNamelock(guid, reason, action, banComment, player->getGUID());
 			}
@@ -4839,12 +4839,12 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 			if(account.warnings < g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
 			{
 				account.warnings = g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION);
-				IOBan::getInstance()->addBanishment(account.accnumber, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), reason, action, banComment, player->getGUID());
 			}
 			else
 			{
 				action = 7;
-				IOBan::getInstance()->addDeletion(account.accnumber, reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addDeletion(account.number, reason, action, banComment, player->getGUID());
 			}
 			break;
 		}
@@ -4854,13 +4854,13 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 			if(account.warnings < g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
 			{
 				account.warnings = g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION);
-				IOBan::getInstance()->addBanishment(account.accnumber, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), reason, action, banComment, player->getGUID());
 				IOBan::getInstance()->addNamelock(guid, reason, action, banComment, player->getGUID());
 			}
 			else
 			{
 				action = 7;
-				IOBan::getInstance()->addDeletion(account.accnumber, reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addDeletion(account.number, reason, action, banComment, player->getGUID());
 			}
 			break;
 		}
@@ -4871,14 +4871,14 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 			if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
 			{
 				action = 7;
-				IOBan::getInstance()->addDeletion(account.accnumber, reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addDeletion(account.number, reason, action, banComment, player->getGUID());
 			}
 			else
 			{
 				if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
-					IOBan::getInstance()->addBanishment(account.accnumber, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), reason, action, banComment, player->getGUID());
+					IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), reason, action, banComment, player->getGUID());
 				else
-					IOBan::getInstance()->addBanishment(account.accnumber, (time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH)), reason, action, banComment, player->getGUID());
+					IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH)), reason, action, banComment, player->getGUID());
 			}
 			break;
 		}
@@ -4888,7 +4888,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 		IOBan::getInstance()->addIpBanishment(ip, (time(NULL) + g_config.getNumber(ConfigManager::IPBANISHMENT_LENGTH)), banComment, player->getGUID());
 
 	if(!notation)
-		IOBan::getInstance()->removeNotations(account.accnumber);
+		IOBan::getInstance()->removeNotations(account.number);
 
 	char buffer[800 + banComment.length()];
 	if(g_config.getBool(ConfigManager::BROADCAST_BANISHMENTS))

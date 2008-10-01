@@ -513,7 +513,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	uint16_t clientos = msg.GetU16();
+	uint16_t operatingSystem = msg.GetU16();
 	uint16_t version = msg.GetU16();
 
 	if(!RSA_decrypt(g_otservRSA, msg))
@@ -530,10 +530,11 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	enableXTEAEncryption();
 	setXTEAKey(key);
 
-	uint8_t isSetGM = msg.GetByte();
-	uint32_t accnumber = msg.GetU32();
+	uint8_t gamemasterLogin = msg.GetByte();
+	std::string accName = msg.GetString();
 	const std::string name = msg.GetString();
 	std::string password = msg.GetString();
+	uint32_t accId = 1;
 
 	if(version < CLIENT_VERSION_MIN || version > CLIENT_VERSION_MAX)
 	{
@@ -541,13 +542,10 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	if(!accnumber)
+	if(!accName.length())
 	{
 		if(g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
-		{
-			accnumber = 1;
 			password = "1";
-		}
 		else
 		{
 			disconnectClient(0x14, "You must enter your account number.");
@@ -579,8 +577,9 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	std::string acc_pass;
-	if(!(IOLoginData::getInstance()->getPassword(accnumber, name, acc_pass) && passwordTest(password, acc_pass)) && name != "Account Manager")
+	std::string accPass;
+	if((!IOLoginData::getInstance()->getAccountId(accName, accId) || !(IOLoginData::getInstance()->getAccountId(accName, accId)
+		&& passwordTest(password, accPass))) && name != "Account Manager")
 	{
 		ConnectionManager::getInstance()->addLoginAttempt(getIP(), false);
 		getConnection()->closeConnection();
@@ -590,7 +589,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	ConnectionManager::getInstance()->addLoginAttempt(getIP(), true);
 
 	Dispatcher::getDispatcher().addTask(
-		createTask(boost::bind(&ProtocolGame::login, this, name, accnumber, password, clientos, isSetGM)));
+		createTask(boost::bind(&ProtocolGame::login, this, name, accId, password, operatingSystem, gamemasterLogin)));
 
 	return true;
 }
