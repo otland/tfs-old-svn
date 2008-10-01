@@ -153,15 +153,15 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		}
 	}
 
-	bool correct = false;
+	Account account;
 	if(IOLoginData::getInstance()->getAccountId(name, id))
 	{
-		Account account = IOLoginData::getInstance()->loadAccount(id);
-		if(id < 1 || id != account.number || passwordTest(password, account.password)))
-			correct = true;
+		account = IOLoginData::getInstance()->loadAccount(id);
+		if(id < 1 || id != account.number || passwordTest(password, account.password))
+			account.number = 0;
 	}
 
-	if(!correct)
+	if(account.number == 0)
 	{
 		ConnectionManager::getInstance()->addLoginAttempt(clientIP, false);
 		disconnectClient(0x0A, "Account name or password is not correct.");
@@ -183,7 +183,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	//Add char list
 	output->AddByte(0x64);
-	if(accnumber != 1 && g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
+	if(id != 1 && g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
 	{
 		output->AddByte((uint8_t)account.charList.size() + 1);
 		output->AddString("Account Manager");

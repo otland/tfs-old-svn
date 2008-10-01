@@ -281,7 +281,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	}
 
 	Account acc = loadAccount(accId);
-	player->accountId = accId;
+	player->accountNumber = accId;
 
 	player->setGUID(result->getDataInt("id"));
 	player->setGroupId(result->getDataInt("group_id"));
@@ -1165,7 +1165,7 @@ bool IOLoginData::getGuidByNameEx(uint32_t& guid, bool &specialVip, std::string&
 	return true;
 }
 
-uint32_t IOLoginData::getaccountIdByName(std::string name)
+uint32_t IOLoginData::getAccountNumberByName(std::string name)
 {
 	Database* db = Database::getInstance();
 	DBResult* result;

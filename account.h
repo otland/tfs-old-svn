@@ -32,7 +32,8 @@ class Account
 		Account();
 		virtual ~Account();
 
-		uint32_t number, premiumDays, lastDay, warnings;
+		uint32_t number, premiumDays, lastDay;
+		int32_t warnings;
 		std::string name, password, recoveryKey;
 		std::list<std::string> charList;
 };
