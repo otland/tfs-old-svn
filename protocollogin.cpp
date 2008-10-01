@@ -82,7 +82,10 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	msg.SkipBytes(12);
 
 	if(version <= 760)
+	{
 		disconnectClient(0x0A, CLIENT_VERSION_STRING);
+		return false;
+	}
 
 	if(!RSA_decrypt(g_otservRSA, msg))
 	{
@@ -157,7 +160,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	if(IOLoginData::getInstance()->getAccountId(name, id))
 	{
 		account = IOLoginData::getInstance()->loadAccount(id);
-		if(id < 1 || id != account.number || passwordTest(password, account.password))
+		if(id < 1 || id != account.number || !passwordTest(password, account.password))
 			account.number = 0;
 	}
 
