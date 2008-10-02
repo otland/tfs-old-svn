@@ -62,11 +62,21 @@ local food =
 	[7374] = {7, "Yum."},
 	[7375] = {7, "Yum."},
 	[7376] = {7, "Yum."},
-	[7377] = {7, "Yum."}
+	[7377] = {7, "Yum."},
+	[8838] = {7, "Gulp."},
+	[8839] = {5, "Yum."},
+	[8840] = {2, "Yum."},
+	[8841] = {3, "Urgh."},
+	[8842] = {3, "Munch."},
+	[8843] = {3, "Crunch."},
+	[8844] = {3, "Gulp."},
+	[8845] = {2, "Munch."},
+	[8847] = {11, "Yum."}
 }
-function onUse(cid, item, frompos, item2, topos)
+
+function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(food[item.itemid] ~= nil) then
-		if (getPlayerFood(cid) + food[item.itemid][1]) >= 400 then
+		if(getPlayerFood(cid) + food[item.itemid][1]) >= 400 then
 			doPlayerSendCancel(cid, "You are full.")
 		else
 			doPlayerFeed(cid, food[item.itemid][1] * 4)
