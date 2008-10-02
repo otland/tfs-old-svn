@@ -479,6 +479,7 @@ uint32_t DatabaseManager::updateDatabase()
 			return 2;
 			break;
 		}
+
 		case 2:
 		{
 			Database* db = Database::getInstance();

@@ -4149,7 +4149,7 @@ void Player::manageAccount(const std::string &text)
 		{
 			talkState[8] = true;
 			talkState[9] = false;
-			msg << "Tell me.. would you like to be a 'male' or a 'female'?";
+			msg << "Tell me... would you like to be a 'male' or a 'female'?";
 		}
 		else if(checkText(text, "yes") && talkState[9])
 		{
@@ -4264,7 +4264,7 @@ void Player::manageAccount(const std::string &text)
 				talkState[i] = false;
 		}
 		else
-			msg << "Please read the latest message that I have specified, I dont understand the current requested action.";
+			msg << "Please read the latest message that I have specified, I don't understand the current requested action.";
 	}
 	else
 	{
@@ -4298,14 +4298,11 @@ void Player::manageAccount(const std::string &text)
 			if(g_config.getBool(ConfigManager::GENERATE_ACCOUNT_NUMBER))
 			{
 				do
-				{
-					sprintf(newAccountNumber, "%d%d%d%d%d%d%d", random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9));
-					newAccount = atoi(newAccountNumber);
-				}
-				while(IOLoginData::getInstance()->accountNameExists(newAccountNumber));
-				msg << "Your account has been created, you login with account name '" << newAccount << "' and password '" << newPassword << "', if the account name is hard to remember please write it down!";
+					sprintf(newAccount, "%d%d%d%d%d%d%d", random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9));
+				while(IOLoginData::getInstance()->accountNameExists(newAccount));
+				msg << "Your account has been created, you can login now with account name: '" << newAccount << "', and password: '" << newPassword << "'! If the account name is too hard to remember, please note it somewhere.";
 
-				IOLoginData::getInstance()->createAccount(newAccountNumber, newPassword);
+				IOLoginData::getInstance()->createAccount(newAccount, newPassword);
 				for(int8_t i = 2; i <= 8; i++)
 					talkState[i] = false;
 			}
@@ -4324,17 +4321,15 @@ void Player::manageAccount(const std::string &text)
 		}
 		else if(talkState[4])
 		{
-			/*
-			 * FIXME
 			std::string tmpStr = text;
 			trimString(tmpStr);
-			if(isValidPassword(tmpStr))
+			if(isValidAccountName(tmpStr))
 			{
 				if(tmpStr.length() >= 3)
 				{
 					if(tmpStr.length() <= 25)
 					{
-						newAccountNumber = tmpStr;
+						newAccount = tmpStr;
 						msg << newAccount << ", are you sure?";
 						talkState[4] = false;
 						talkState[5] = true;
@@ -4347,14 +4342,13 @@ void Player::manageAccount(const std::string &text)
 			}
 			else
 				msg << "Your account name contains invalid characters, please pick another account name.";
-			 */
 		}
 		else if(checkText(text, "yes") && talkState[5])
 		{
-			if(!IOLoginData::getInstance()->accountNameExists(newAccountNumber))
+			if(!IOLoginData::getInstance()->accountNameExists(newAccount))
 			{
-				IOLoginData::getInstance()->createAccount(newAccountNumber, newPassword);
-				msg << "Your account has been created, you can login with account name: '" << newAccount << "' and password: '" << newPassword << "'!";
+				IOLoginData::getInstance()->createAccount(newAccount, newPassword);
+				msg << "Your account has been created, you can login now with account name: '" << newAccount << "', and password: '" << newPassword << "'!";
 			}
 			else
 			{
@@ -4394,7 +4388,7 @@ void Player::manageAccount(const std::string &text)
 				msg << "Correct! Your new password is: " << buffer << ".";
 			}
 			else
-				msg << "Sorry, but that information you gave me did not match to any account :(.";
+				msg << "Sorry, but information you gave me did not match to any account :(.";
 
 			for(int8_t i = 2; i <= 8; i++)
 				talkState[i] = false;

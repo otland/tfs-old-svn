@@ -70,34 +70,32 @@ std::vector<std::string> explodeString(const std::string& inString, const std::s
 std::vector<int32_t> vectorAtoi(std::vector<std::string> stringVector);
 bool hasBitSet(uint32_t flag, uint32_t flags);
 
-std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLength);
-
 bool isNumber(char character);
 bool isLowercaseLetter(char character);
+bool isUppercaseLetter(char character);
 bool isPasswordCharacter(char character);
 
-bool isValidName(std::string text);
+bool isValidAccountName(std::string text);
 bool isValidPassword(std::string text);
+bool isValidName(std::string text);
 bool isNumbers(std::string text);
 
+char upchar(char character);
 bool checkText(std::string text, std::string str);
+std::string trimString(std::string& str);
+std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end);
 
+std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLength);
 int32_t random_range(int32_t lowest_number, int32_t highest_number, DistributionType_t type = DISTRO_UNIFORM);
 
 Direction getDirection(std::string string);
 Direction getReverseDirection(Direction dir);
 Position getNextPosition(Direction direction, Position pos);
 
-char upchar(char c);
-
-std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end);
-
 void formatDate(time_t time, char* buffer);
 void formatDate2(time_t time, char* buffer);
 void formatIP(uint32_t ip, char* buffer);
 std::string formatTime(int32_t hours, int32_t minutes);
-
-std::string trimString(std::string& str);
 
 MagicEffectClasses getMagicEffect(const std::string& strValue);
 ShootType_t getShootType(const std::string& strValue);

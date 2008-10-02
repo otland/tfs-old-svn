@@ -370,12 +370,12 @@ int32_t random_range(int32_t lowest_number, int32_t highest_number, Distribution
 	}
 }
 
-// Upcase a char.
-char upchar(char c)
+char upchar(char character)
 {
-	if((c >= 97 && c <= 122) || (c <= -1 && c >= -32 ))
-		c -= 32;
-	return c;
+	if((character >= 97 && character <= 122) || (character <= -1 && character >= -32))
+		character -= 32;
+
+	return character;
 }
 
 bool isNumber(char character)
@@ -388,9 +388,29 @@ bool isLowercaseLetter(char character)
 	return (character >= 97 && character <= 122);
 }
 
+bool isUppercaseLetter(char character)
+{
+	return (character >= 65 && character <= 90);
+}
+
 bool isPasswordCharacter(char character)
 {
 	return ((character >= 33 && character <= 47) || (character >= 58 && character <= 64) || (character >= 91 && character <= 96) || (character >= 123 && character <= 126));
+}
+
+bool isValidAccountName(std::string text)
+{
+	toLowerCaseString(text);
+
+	uint32_t textLength = text.length();
+	for(uint32_t size = 0; size < textLength; size++)
+	{
+		if(isLowercaseLetter(text[size]) || isNumber(text[size]))
+			continue;
+		else
+			return false;
+	}
+	return true;
 }
 
 bool isValidPassword(std::string text)
@@ -408,17 +428,6 @@ bool isValidPassword(std::string text)
 	return true;
 }
 
-bool isNumbers(std::string text)
-{
-	uint32_t textLength = text.length();
-	for(uint32_t size = 0; size < textLength; size++)
-	{
-		if(!isNumber(text[size]))
-			return false;
-	}
-	return true;
-}
-
 bool isValidName(std::string text)
 {
 	toLowerCaseString(text);
@@ -429,6 +438,17 @@ bool isValidName(std::string text)
 		if(isLowercaseLetter(text[size]) || text[size] == 32 || text[size] == 39 || text[size] == 45)
 			continue;
 		else
+			return false;
+	}
+	return true;
+}
+
+bool isNumbers(std::string text)
+{
+	uint32_t textLength = text.length();
+	for(uint32_t size = 0; size < textLength; size++)
+	{
+		if(!isNumber(text[size]))
 			return false;
 	}
 	return true;

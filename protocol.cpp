@@ -233,8 +233,7 @@ uint32_t Protocol::getChecksum(uint8_t *data, size_t len) /* data: Pointer to th
 	return (b << 16) | a;
 }
 
-/*
-uint32_t Protocol::getChecksum(NetworkMessage& msg)
+/*uint32_t Protocol::getChecksum(NetworkMessage& msg)
 {
     // for 8.3+
     // implementation of adler algorithm as per wikipedia
@@ -263,8 +262,8 @@ uint32_t Protocol::getChecksum(NetworkMessage& msg)
 
     return (b << 16) | a;
 
-}
-*/
+}*/
+
 void Protocol::addChecksum(NetworkMessage& msg)
 {
     // for 8.3+
@@ -276,8 +275,8 @@ void Protocol::addChecksum(NetworkMessage& msg)
 	uint32_t sum = getChecksum(buffer + 2, size - 2);
 	std::cout << "Checksum: " << sum << std::endl;
  	memmove(buffer + 6, buffer + 2, size-2);
-	*((uint32_t*)(buffer + 2)) = sum;/*
-	memmove(msg.getBodyBuffer() + 6, msg.getBodyBuffer()+2, msg.getMessageLength()+2);
-    *((uint32_t*)(msg.getBodyBuffer())) = sum;*/
+	*((uint32_t*)(buffer + 2)) = sum;
+	/*memmove(msg.getBodyBuffer() + 6, msg.getBodyBuffer()+2, msg.getMessageLength()+2);
+	*((uint32_t*)(msg.getBodyBuffer())) = sum;*/
 
 }

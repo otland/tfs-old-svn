@@ -79,9 +79,9 @@ if(NpcSystem == nil) then
 		if(ret ~= nil) then
 			npcHandler:setMessage(MESSAGE_NEEDMORESPACE, ret)
 		end
-		local ret = NpcSystem.getParameter('message_onbuy_needspace')
+		local ret = NpcSystem.getParameter('message_needspace')
 		if(ret ~= nil) then
-			npcHandler:setMessage(MESSAGE_ONBUYNEEDSPACE, ret)
+			npcHandler:setMessage(MESSAGE_NEEDSPACE, ret)
 		end
 		local ret = NpcSystem.getParameter('message_sendtrade')
 		if(ret ~= nil) then
@@ -103,13 +103,21 @@ if(NpcSystem == nil) then
 		if(ret ~= nil) then
 			npcHandler:setMessage(MESSAGE_ONSELL, ret)
 		end
-		local ret = NpcSystem.getParameter('message_needmoremoney')
+		local ret = NpcSystem.getParameter('message_missingmoney')
 		if(ret ~= nil) then
-			npcHandler:setMessage(MESSAGE_NEEDMOREMONEY, ret)
+			npcHandler:setMessage(MESSAGE_MISSINGMONEY, ret)
 		end
-		local ret = NpcSystem.getParameter('message_nothaveitem')
+		local ret = NpcSystem.getParameter('message_needmoney')
 		if(ret ~= nil) then
-			npcHandler:setMessage(MESSAGE_NOTHAVEITEM, ret)
+			npcHandler:setMessage(MESSAGE_NEEDMONEY, ret)
+		end
+		local ret = NpcSystem.getParameter('message_missingitem')
+		if(ret ~= nil) then
+			npcHandler:setMessage(MESSAGE_MISSINGITEM, ret)
+		end
+		local ret = NpcSystem.getParameter('message_needitem')
+		if(ret ~= nil) then
+			npcHandler:setMessage(MESSAGE_NEEDITEM, ret)
 		end
 		local ret = NpcSystem.getParameter('message_idletimeout')
 		if(ret ~= nil) then
@@ -134,6 +142,14 @@ if(NpcSystem == nil) then
 		local ret = NpcSystem.getParameter('message_sell')
 		if(ret ~= nil) then
 			npcHandler:setMessage(MESSAGE_SELL, ret)
+		end
+		local ret = NpcSystem.getParameter('message_bought')
+		if(ret ~= nil) then
+			npcHandler:setMessage(MESSAGE_BOUGHT, ret)
+		end
+		local ret = NpcSystem.getParameter('message_sold')
+		if(ret ~= nil) then
+			npcHandler:setMessage(MESSAGE_SOLD, ret)
 		end
 
 		-- Parse modules.

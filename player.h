@@ -750,8 +750,8 @@ class Player : public Creature, public Cylinder
 		bool talkState[13], accountManager;
 		int32_t newVocation;
 		PlayerSex_t _newSex;
-		uint32_t realAccount, newAccount;
-		char newAccountNumber[35];
+		uint32_t realAccount;
+		char newAccount[35];
 		std::string newPassword, newCharacterName, removeChar, accountNumberAttempt, recoveryKeyAttempt, namelockedPlayer, recoveryKey;
 
 		bool mayNotMove;
