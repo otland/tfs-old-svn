@@ -58,19 +58,19 @@ class IOLoginData
 
 		bool getAccountId(const std::string& name, uint32_t& number);
 
-		Account loadAccount(uint32_t accno, bool preLoad = false);
+		Account loadAccount(uint32_t accId, bool preLoad = false);
 		bool saveAccount(Account acc);
 
-		bool hasFlag(uint32_t accno, PlayerFlags value);
-		bool hasCustomFlag(uint32_t accno, PlayerCustomFlags value);
+		bool hasFlag(uint32_t accId, PlayerFlags value);
+		bool hasCustomFlag(uint32_t accId, PlayerCustomFlags value);
 
-		bool accountExists(uint32_t accno);
+		bool accountExists(uint32_t accId);
 		bool accountNameExists(const std::string& name);
 
 		bool getPassword(uint32_t accno, const std::string& name, std::string& password);
 		bool setNewPassword(uint32_t accountId, std::string newPassword);
-		bool validRecoveryKey(uint32_t accountNumber, const std::string recoveryKey);
-		bool setRecoveryKey(uint32_t accountNumber, std::string recoveryKey);
+		bool validRecoveryKey(uint32_t accountId, const std::string recoveryKey);
+		bool setRecoveryKey(uint32_t accountId, std::string recoveryKey);
 
 		bool createAccount(std::string name, std::string password);
 		void removePremium(Account account);
@@ -79,8 +79,8 @@ class IOLoginData
 		bool savePlayer(Player* player, bool preSave);
 		bool updateOnlineStatus(uint32_t guid, bool login);
 
-		const PlayerGroup* getPlayerGroup(uint32_t groupid);
-		const PlayerGroup* getPlayerGroupByAccount(uint32_t accno);
+		const PlayerGroup* getPlayerGroup(uint32_t groupId);
+		const PlayerGroup* getPlayerGroupByAccount(uint32_t accId);
 		uint32_t getLastIPByName(std::string name);
 
 		bool hasFlag(std::string name, PlayerFlags value);
@@ -96,7 +96,7 @@ class IOLoginData
 		uint32_t getAccountNumberByName(std::string name);
 
 		bool changeName(uint32_t guid, std::string newName, std::string oldName);
-		bool createCharacter(uint32_t accountNumber, std::string characterName, int32_t vocationId, PlayerSex_t sex);
+		bool createCharacter(uint32_t accountId, std::string characterName, int32_t vocationId, PlayerSex_t sex);
 		int16_t deleteCharacter(uint32_t accountNumber, const std::string characterName);
 
 		uint32_t getLevel(uint32_t guid) const;

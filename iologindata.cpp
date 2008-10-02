@@ -944,9 +944,9 @@ bool IOLoginData::updateOnlineStatus(uint32_t guid, bool login)
 	return db->executeQuery(query.str());
 }
 
-const PlayerGroup* IOLoginData::getPlayerGroup(uint32_t groupid)
+const PlayerGroup* IOLoginData::getPlayerGroup(uint32_t groupId)
 {
-	PlayerGroupMap::const_iterator it = playerGroupMap.find(groupid);
+	PlayerGroupMap::const_iterator it = playerGroupMap.find(groupId);
 	if(it != playerGroupMap.end())
 		return it->second;
 	else
@@ -956,7 +956,7 @@ const PlayerGroup* IOLoginData::getPlayerGroup(uint32_t groupid)
 		DBQuery query;
 		DBResult* result;
 
-		query << "SELECT `name`, `flags`, `customflags`, `access`, `violationaccess`, `maxdepotitems`, `maxviplist` FROM `groups` WHERE `id` = " << groupid;
+		query << "SELECT `name`, `flags`, `customflags`, `access`, `violationaccess`, `maxdepotitems`, `maxviplist` FROM `groups` WHERE `id` = " << groupId;
 		if(!(result = db->storeQuery(query.str())))
 			return NULL;
 
@@ -969,7 +969,7 @@ const PlayerGroup* IOLoginData::getPlayerGroup(uint32_t groupid)
 		group->m_maxdepotitems = result->getDataInt("maxdepotitems");
 		group->m_maxviplist = result->getDataInt("maxviplist");
 
-		playerGroupMap[groupid] = group;
+		playerGroupMap[groupId] = group;
 		db->freeResult(result);
 		return group;
 	}

@@ -4329,7 +4329,7 @@ void Player::manageAccount(const std::string &text)
 				{
 					if(tmpStr.length() <= 25)
 					{
-						newAccount = tmpStr;
+						sprintf(newAccount, "%s", tmpStr.c_str());
 						msg << newAccount << ", are you sure?";
 						talkState[4] = false;
 						talkState[5] = true;

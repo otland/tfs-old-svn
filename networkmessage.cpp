@@ -72,7 +72,7 @@ Position NetworkMessage::GetPosition()
 void NetworkMessage::AddString(const char* value)
 {
 	uint32_t stringlen = (uint32_t)strlen(value);
-	if(!canAdd(stringlen+2) || stringlen > 8192)
+	if(!canAdd(stringlen + 2) || stringlen > 8192)
 		return;
 
 	AddU16(stringlen);
@@ -146,4 +146,37 @@ void NetworkMessage::AddItemId(uint16_t itemId)
 {
 	const ItemType &it = Item::items[itemId];
 	AddU16(it.clientId);
+}
+
+uint32_t NetworkMessage::getChecksum()
+{
+	const uint16_t adler = 65521;
+	uint8_t* data = ((uint8_t*)m_MsgBuf) + 2;
+	size_t len = m_MsgSize - 2;
+
+	uint32_t a = 1, b = 0;
+	while(len > 0)
+	{
+		size_t tlen = len > 5552 ? 5552 : len;
+		len -= tlen;
+		do
+		{
+			a += *data++;
+			b += a;
+		}
+		while(--tlen);
+
+		a %= adler;
+		b %= adler;
+	}
+	return (b << 16) | a;
+}
+
+void NetworkMessage::addChecksum()
+{
+	uint32_t sum = getChecksum();
+	std::cout << "Checksum: " << sum << std::endl;
+ 	memmove(m_MsgBuf + 6, m_MsgBuf + 2, m_MsgSize - 2);
+	*((uint32_t*)(m_MsgBuf + 2)) = sum;
+	*((uint16_t*)m_MsgBuf) += 4;
 }
