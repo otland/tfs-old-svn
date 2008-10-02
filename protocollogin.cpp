@@ -79,12 +79,12 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	uint32_t clientip = getConnection()->getIP();
 
-	/*uint16_t clientos =*/ msg.GetU16();
+	/*uint16_t clientos = */msg.GetU16();
 	uint16_t version  = msg.GetU16();
 	msg.SkipBytes(12);
 
 	if(version <= 760)
-		disconnectClient(0x0A, "Only clients with protocol 8.2 allowed!");
+		disconnectClient(0x0A, "Only clients with protocol 8.3 allowed!");
 
 	if(!RSA_decrypt(g_otservRSA, msg))
 	{
