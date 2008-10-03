@@ -236,7 +236,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 		if(!m_protocol)
 		{
 			//Checksum
-			m_msg.GetU32();
+			m_msg.SkipBytes(4);
 
 			// Protocol depends on the first byte of the packet
 			uint8_t protocolId = m_msg.GetByte();
