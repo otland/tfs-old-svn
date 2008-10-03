@@ -153,7 +153,7 @@ std::string Status::getStatusString() const
 	xmlSetProp(p, (const xmlChar*)"port", (const xmlChar*)buffer);
 	xmlSetProp(p, (const xmlChar*)"location", (const xmlChar*)g_config.getString(ConfigManager::LOCATION).c_str());
 	xmlSetProp(p, (const xmlChar*)"url", (const xmlChar*)g_config.getString(ConfigManager::URL).c_str());
-	xmlSetProp(p, (const xmlChar*) "server", (const xmlChar*)STATUS_SERVER_NAME);
+	xmlSetProp(p, (const xmlChar*)"server", (const xmlChar*)send_);
 	xmlSetProp(p, (const xmlChar*)"version", (const xmlChar*)STATUS_SERVER_VERSION);
 	xmlSetProp(p, (const xmlChar*)"client", (const xmlChar*)STATUS_SERVER_PROTOCOL);
 	xmlAddChild(root, p);
