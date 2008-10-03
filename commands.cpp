@@ -767,8 +767,7 @@ bool Commands::getInfo(Creature* creature, const std::string& cmd, const std::st
 			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "You can not get info about this player.");
 			return true;
 		}
-		uint8_t ip[4];
-		*(uint32_t*)&ip = paramPlayer->lastIP;
+		uint8_t ip[4]; *(uint32_t*)&ip = paramPlayer->lastIP;
 		std::stringstream info;
 		info << "name:      " << paramPlayer->name << std::endl <<
 			"access:    " << paramPlayer->accessLevel << std::endl <<

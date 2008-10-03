@@ -381,7 +381,12 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			std::stringstream ss;
 
 			ss << "Too many players online.\n" << "You are at "
-				<< (currentSlot > 0 ? currentSlot : "unknown") << " place on the waiting list.";
+			if(currentSlot > 0)
+				ss << currentSlot;
+			else
+				ss << "unknown";
+
+			ss << " place on the waiting list.";
 
 			OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 			TRACK_MESSAGE(output);

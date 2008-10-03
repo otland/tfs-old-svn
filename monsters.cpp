@@ -137,7 +137,7 @@ void MonsterType::createLoot(Container* corpse)
 			//check containers
 			if(Container* container = tmpItem->getContainer())
 			{
-				if(!createLootContainer(container, *it))
+				if(createLootContainer(container, *it))
 					delete container;
 				else
 					corpse->__internalAddThing(tmpItem);
