@@ -207,7 +207,7 @@ Player::~Player()
 	}
 
 	DepotMap::iterator it;
-	for(it = depots.begin();it != depots.end(); it++)
+	for(it = depots.begin(); it != depots.end(); it++)
 		it->second->releaseThing2();
 
 	//std::cout << "Player destructor " << this << std::endl;

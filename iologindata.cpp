@@ -749,7 +749,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 
 	char buffer[150];
 	DBInsert query_insert(db);
-	query_insert.setQuery("INSERT INTO `player_spells` (`player_id`, `name` ) VALUES ");
+	query_insert.setQuery("INSERT INTO `player_spells` (`player_id`, `name`) VALUES ");
 	for(LearnedInstantSpellList::const_iterator it = player->learnedInstantSpellList.begin();
 			it != player->learnedInstantSpellList.end(); ++it)
 	{
@@ -767,7 +767,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	if(!db->executeQuery(query.str()))
 		return false;
 
-	query_insert.setQuery("INSERT INTO `player_items` (`player_id`, `pid`, `sid`, `itemtype`, `count`, `attributes` ) VALUES ");
+	query_insert.setQuery("INSERT INTO `player_items` (`player_id`, `pid`, `sid`, `itemtype`, `count`, `attributes`) VALUES ");
 
 	ItemBlockList itemList;
 	Item* item;
@@ -786,7 +786,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	if(!db->executeQuery(query.str()))
 		return false;
 
-	query_insert.setQuery("INSERT INTO `player_depotitems` (`player_id`, `pid`, `sid`, `itemtype`, `count`, `attributes` ) VALUES ");
+	query_insert.setQuery("INSERT INTO `player_depotitems` (`player_id`, `pid`, `sid`, `itemtype`, `count`, `attributes`) VALUES ");
 	itemList.clear();
 	for(DepotMap::iterator it = player->depots.begin(); it !=player->depots.end() ;++it)
 		itemList.push_back(itemBlock(it->first, it->second));
@@ -800,7 +800,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	if(!db->executeQuery(query.str()))
 		return false;
 
-	query_insert.setQuery("INSERT INTO `player_storage` (`player_id`, `key`, `value` ) VALUES ");
+	query_insert.setQuery("INSERT INTO `player_storage` (`player_id`, `key`, `value`) VALUES ");
 	player->genReservedStorageRange();
 	for(StorageMap::const_iterator cit = player->getStorageIteratorBegin(); cit != player->getStorageIteratorEnd();cit++)
 	{
@@ -838,7 +838,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	if(!db->executeQuery(query.str()))
 		return false;
 
-	query_insert.setQuery("INSERT INTO `player_viplist` (`player_id`, `vip_id` ) VALUES ");
+	query_insert.setQuery("INSERT INTO `player_viplist` (`player_id`, `vip_id`) VALUES ");
 	for(VIPListSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); it++)
 	{
 		if(playerExists(*it))
