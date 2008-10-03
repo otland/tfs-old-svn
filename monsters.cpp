@@ -138,9 +138,9 @@ void MonsterType::createLoot(Container* corpse)
 			if(Container* container = tmpItem->getContainer())
 			{
 				if(createLootContainer(container, *it))
-					delete container;
-				else
 					corpse->__internalAddThing(tmpItem);
+				else
+					delete container;
 			}
 			else
 				corpse->__internalAddThing(tmpItem);
@@ -190,7 +190,7 @@ bool MonsterType::createLootContainer(Container* parent, const LootBlock& lootbl
 	{
 		LootItems::const_iterator it;
 		if(it == lootblock.childLoot.end())
-			return false;
+			return true;
 
 		for(it = lootblock.childLoot.begin(); it != lootblock.childLoot.end(); it++)
 		{
@@ -200,15 +200,19 @@ bool MonsterType::createLootContainer(Container* parent, const LootBlock& lootbl
 				if(Container* container = tmpItem->getContainer())
 				{
 					if(createLootContainer(container, *it))
-						delete container;
-					else
 						parent->__internalAddThing(container);
+					else
+						delete container;
 				}
 				else
 					parent->__internalAddThing(tmpItem);
 			}
 		}
 	}
+
+	if(parent->size() == 0)
+		return false;
+
 	return true;
 }
 
