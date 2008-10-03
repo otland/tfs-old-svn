@@ -234,7 +234,8 @@ enum PlayerInfo_t
 	PlayerInfoExtraExpRate,
 	PlayerInfoLossSkill,
 	PlayerInfoNoMove,
-	PlayerInfoMarriage
+	PlayerInfoMarriage,
+	PlayerInfoPzLock
 };
 
 #define reportErrorFunc(a)  reportError(__FUNCTION__, a)
@@ -537,6 +538,7 @@ class LuaScriptInterface
 
 		//type validation
 		static int32_t luaIsPlayer(lua_State* L);
+		static int32_t luaIsPlayerPzLocked(lua_State* L);
 		static int32_t luaIsPlayerGhost(lua_State* L);
 		static int32_t luaIsCreature(lua_State* L);
 		static int32_t luaIsContainer(lua_State* L);

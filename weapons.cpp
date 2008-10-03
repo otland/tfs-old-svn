@@ -613,21 +613,19 @@ bool WeaponMelee::getSkillType(const Player* player, const Item* item,
 	{
 		switch(player->getLastAttackBlockType())
 		{
-			case BLOCK_DEFENSE:
 			case BLOCK_ARMOR:
 			case BLOCK_NONE:
 				skillpoint = 1;
 				break;
 
+			case BLOCK_DEFENSE:
 			default:
 				skillpoint = 0;
 				break;
 		}
 	}
 
-	WeaponType_t weaponType = item->getWeaponType();
-
-	switch(weaponType)
+	switch(item->getWeaponType())
 	{
 		case WEAPON_SWORD:
 		{
@@ -1027,11 +1025,11 @@ bool WeaponDistance::getSkillType(const Player* player, const Item* item,
 				skillpoint = 2;
 				break;
 
-			case BLOCK_DEFENSE:
 			case BLOCK_ARMOR:
 				skillpoint = 1;
 				break;
 
+			case BLOCK_DEFENSE:
 			default:
 				skillpoint = 0;
 				break;

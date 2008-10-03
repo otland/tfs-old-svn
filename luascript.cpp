@@ -1441,6 +1441,9 @@ void LuaScriptInterface::registerFunctions()
 	//isPlayer(cid)
 	lua_register(m_luaState, "isPlayer", LuaScriptInterface::luaIsPlayer);
 
+	//isPlayerPzLocked(cid)
+	lua_register(m_luaState, "isPlayerPzLocked", LuaScriptInterface::luaIsPlayerPzLocked);
+
 	//isPlayerGhost(cid)
 	lua_register(m_luaState, "isPlayerGhost", LuaScriptInterface::luaIsPlayerGhost);
 
@@ -2079,6 +2082,9 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 			case PlayerInfoMarriage:
 				value = player->marriage;
 				break;
+			case PlayerInfoPzLock:
+				value = player->isPzLocked();
+				break;
 			default:
 				std::string error_str = "Unknown player info. info = " + info;
 				reportErrorFunc(error_str);
@@ -2236,6 +2242,11 @@ int32_t LuaScriptInterface::luaGetPlayerNoMove(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerPartner(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoMarriage);
+}
+
+int32_t LuaScriptInterface::luaIsPlayerPzLocked(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoPzLock);
 }
 //
 

@@ -458,7 +458,7 @@ bool Commands::createItemById(Creature* creature, const std::string& cmd, const 
 	if(pos < tmp.size())
 	{
 		tmp.erase(0, pos + 1);
-		count = std::max(1, std::min(atoi(tmp.c_str()), 100));
+		count = std::max(1, std::min(atoi(tmp.c_str()), 1000));
 	}
 
 	Item* newItem = Item::CreateItem(type, count);
@@ -504,7 +504,7 @@ bool Commands::createItemByName(Creature* creature, const std::string& cmd, cons
 	if(pos2 < param.size())
 	{
 		std::string itemCount = param.substr(pos2 + 1, param.size() - (pos2 + 1));
-		count = std::min(atoi(itemCount.c_str()), 100);
+		count = std::min(atoi(itemCount.c_str()), 1000);
 	}
 
 	int32_t itemId = Item::items.getItemIdByName(itemName);

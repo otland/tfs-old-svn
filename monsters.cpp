@@ -124,7 +124,7 @@ MonsterType::~MonsterType()
 
 uint32_t Monsters::getLootRandom()
 {
-	return random_range(0, MAX_LOOTCHANCE)/g_config.getNumber(ConfigManager::RATE_LOOT);
+	return random_range(0, MAX_LOOTCHANCE) / g_config.getNumber(ConfigManager::RATE_LOOT);
 }
 
 void MonsterType::createLoot(Container* corpse)
@@ -137,8 +137,7 @@ void MonsterType::createLoot(Container* corpse)
 			//check containers
 			if(Container* container = tmpItem->getContainer())
 			{
-				createLootContainer(container, *it);
-				if(container->size() == 0)
+				if(createLootContainer(container, *it))
 					delete container;
 				else
 					corpse->__internalAddThing(tmpItem);
@@ -185,11 +184,14 @@ Item* MonsterType::createLootItem(const LootBlock& lootBlock)
 	return NULL;
 }
 
-void MonsterType::createLootContainer(Container* parent, const LootBlock& lootblock)
+bool MonsterType::createLootContainer(Container* parent, const LootBlock& lootblock)
 {
 	if(parent->size() < parent->capacity())
 	{
 		LootItems::const_iterator it;
+		if(it == lootblock.childLoot.end())
+			return false;
+
 		for(it = lootblock.childLoot.begin(); it != lootblock.childLoot.end(); it++)
 		{
 			Item* tmpItem = createLootItem(*it);
@@ -197,8 +199,7 @@ void MonsterType::createLootContainer(Container* parent, const LootBlock& lootbl
 			{
 				if(Container* container = tmpItem->getContainer())
 				{
-					createLootContainer(container, *it);
-					if(container->size() == 0)
+					if(createLootContainer(container, *it))
 						delete container;
 					else
 						parent->__internalAddThing(container);
@@ -208,6 +209,7 @@ void MonsterType::createLootContainer(Container* parent, const LootBlock& lootbl
 			}
 		}
 	}
+	return true;
 }
 
 Monsters::Monsters()
