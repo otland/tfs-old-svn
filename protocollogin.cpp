@@ -83,6 +83,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	if(version <= 760)
 	{
+		std::cout << "fails here.." << std::endl;
 		disconnectClient(0x0A, CLIENT_VERSION_STRING);
 		return false;
 	}
@@ -118,6 +119,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	if(version < CLIENT_VERSION_MIN || version > CLIENT_VERSION_MAX)
 	{
+		std::cout << "no... it fails here.." << std::endl;
 		disconnectClient(0x0A, CLIENT_VERSION_STRING);
 		return false;
 	}

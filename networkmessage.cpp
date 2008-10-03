@@ -174,24 +174,10 @@ uint32_t NetworkMessage::getChecksum()
 
 void NetworkMessage::addChecksum()
 {
-	std::cout << "Sending (no checksum):";
-	int i;
-	for(i = 0; i < m_MsgSize; i++)
-	{
-		std::cout << " 0x" << std::hex << (int32_t)m_MsgBuf[i] << std::dec;
-	}
-	std::cout << std::endl;
-
+	*((uint16_t*)m_MsgBuf) += 4;
 	uint32_t sum = getChecksum();
 	std::cout << "Checksum: " << sum << std::endl;
- 	memmove(m_MsgBuf + 6, m_MsgBuf + 2, m_MsgSize);
+ 	memmove(m_MsgBuf + 6, m_MsgBuf + 2, m_MsgSize - 2);
 	*((uint32_t*)(m_MsgBuf + 2)) = sum;
 	m_MsgSize += 4;
-
-	std::cout << "Sending (w/ checksum):";
-	for(i = 0; i < m_MsgSize; i++)
-	{
-		std::cout << " 0x" << std::hex << (int32_t)m_MsgBuf[i] << std::dec;
-	}
-	std::cout << std::endl;
 }

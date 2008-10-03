@@ -47,12 +47,6 @@ void Protocol::onSendMessage(OutputMessage* msg)
 			XTEA_encrypt(*msg);
 
 			msg->addChecksum();
-
-/*
-			int32_t messageLength = msg->getMessageLength();
-			if((messageLength % 8) != 0)
-				msg->AddPaddingBytes(8 - (messageLength % 8));
-*/
 		}
 	}
 

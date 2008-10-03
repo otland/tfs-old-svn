@@ -193,6 +193,9 @@ std::string DatabaseSQLite::escapeString(const std::string &s)
 	//escape % and _ because we are using LIKE operator.
 	r = boost::regex_replace(r, boost::regex("%"), "\\%");
 	r = boost::regex_replace(r, boost::regex("_"), "\\_");
+
+	if(r[r.length() - 1] != '\'')
+		r += "'";
 	return r;
 }
 
