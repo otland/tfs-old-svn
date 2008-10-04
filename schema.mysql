@@ -89,7 +89,6 @@ INSERT INTO `groups` VALUES (4, 'Game Master', 492842123151, 63, 3, 2, 4000, 200
 INSERT INTO `groups` VALUES (5, 'Community Manager', 542239465466, 1279, 4, 3, 6000, 300);
 INSERT INTO `groups` VALUES (6, 'God', 546534563834, 2047, 5, 3, 8000, 400);
 
-
 CREATE TABLE `accounts`
 (
 	`id` INT NOT NULL AUTO_INCREMENT,
@@ -105,6 +104,7 @@ CREATE TABLE `accounts`
 	`deleted` TINYINT(1) NOT NULL DEFAULT FALSE,
 	`warned` TINYINT(1) NOT NULL DEFAULT FALSE,
 	PRIMARY KEY (`id`),
+	KEY (`name`),
 	FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`)
 ) ENGINE = InnoDB;
 

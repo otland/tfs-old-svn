@@ -51,6 +51,8 @@ class ProtocolGame : public Protocol
 		ProtocolGame(Connection* connection);
 		virtual ~ProtocolGame();
 
+		virtual int32_t getProtocolId() {return 0x0A;}
+
 		bool login(const std::string& name, uint32_t accnumber, const std::string& password, uint16_t operatingSystem, uint8_t gamemasterLogin);
 		bool logout(bool displayEffect, bool forced);
 

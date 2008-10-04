@@ -122,7 +122,7 @@ class NetworkMessage
 		void addChecksum();
 
 		char* getBuffer() {return (char*)&m_MsgBuf[0];}
-		char* getBodyBuffer(uint32_t readPos = 2) {m_ReadPos = readPos; return (char*)&m_MsgBuf[header_length];}
+		char* getBodyBuffer(int32_t headerLen = header_length) {m_ReadPos = 2; return (char*)&m_MsgBuf[headerLen];}
 
 		int32_t getSize() {return m_MsgSize;}
 

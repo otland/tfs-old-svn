@@ -61,6 +61,7 @@ CREATE TABLE "accounts" (
     "group_id" INTEGER NOT NULL DEFAULT 1,
     "deleted" BOOLEAN NOT NULL DEFAULT 0,
     "warned" BOOLEAN NOT NULL DEFAULT 0,
+    UNIQUE ("name"),
     FOREIGN KEY ("group_id") REFERENCES "groups" ("id")
 );
 

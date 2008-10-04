@@ -45,6 +45,8 @@ class Protocol : boost::noncopyable
 
 		virtual ~Protocol() {}
 
+		virtual int32_t getProtocolId() {return 0x00;}
+
 		virtual void parsePacket(NetworkMessage& msg){}
 
 		void onSendMessage(OutputMessage* msg);

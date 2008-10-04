@@ -44,6 +44,9 @@ class ProtocolStatus : public Protocol
 			protocolStatusCount--;
 #endif
 		}
+
+		virtual int32_t getProtocolId() {return 0xFF;}
+
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
 
 	protected:

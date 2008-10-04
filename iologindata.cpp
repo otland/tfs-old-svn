@@ -166,7 +166,7 @@ bool IOLoginData::accountNameExists(const std::string& name)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `accounts` WHERE `name` " << db->getStringComparisonOperator() << " " << name;
+	query << "SELECT `id` FROM `accounts` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name);
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
