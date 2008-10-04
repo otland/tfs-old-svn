@@ -117,11 +117,14 @@ class NetworkMessage
 		int32_t getMessageLength() const { return m_MsgSize; }
 		void setMessageLength(int32_t newSize) { m_MsgSize = newSize; }
 		int32_t getReadPos() const { return m_ReadPos; }
+		void setReadPos(int32_t newPos) { m_ReadPos = newPos; }
 
 		int32_t decodeHeader();
+		uint32_t getChecksum();
+		void addChecksum();
 
 		char* getBuffer() { return (char*)&m_MsgBuf[0]; }
-		char* getBodyBuffer() { m_ReadPos = 2; return (char*)&m_MsgBuf[header_length]; }
+		char* getBodyBuffer(int32_t headerLen = header_length) { m_ReadPos = 2; return (char*)&m_MsgBuf[headerLen]; }
 
 	protected:
 		inline bool canAdd(int size)

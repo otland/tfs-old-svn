@@ -185,6 +185,8 @@ class ProtocolAdmin : public Protocol
 		ProtocolAdmin(Connection* connection);
 		virtual ~ProtocolAdmin();
 
+		virtual int32_t getProtocolId() {return 0xFE;}
+
 		virtual void parsePacket(NetworkMessage& msg);
 
 		virtual void onRecvFirstMessage(NetworkMessage& msg);

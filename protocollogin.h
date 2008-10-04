@@ -45,6 +45,8 @@ class ProtocolLogin : public Protocol
 #endif
 		}
 
+		virtual int32_t getProtocolId() {return 0x01;}
+
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
 
 	protected:

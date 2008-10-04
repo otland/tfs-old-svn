@@ -1971,6 +1971,7 @@ void ProtocolGame::sendPlayerCash(uint32_t amount)
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0x7B);
 		msg->AddU32(amount);
+		msg->AddByte(0x00);
 	}
 }
 
@@ -2784,7 +2785,7 @@ void ProtocolGame::AddPlayerStats(NetworkMessage* msg)
 
 	msg->AddU16(player->getHealth());
 	msg->AddU16(player->getPlayerInfo(PLAYERINFO_MAXHEALTH));
-	msg->AddU16((int32_t)player->getFreeCapacity());
+	msg->AddU32(uint32_t(player->getFreeCapacity() * 100));
 	uint64_t experience = player->getExperience();
 	if(experience > 0x7FFFFFFF && player->getOperatingSystem() == CLIENTOS_WINDOWS) //Windows client debugs after 2,147,483,647 exp
 		msg->AddU32(0x7FFFFFFF);
@@ -3146,4 +3147,5 @@ void ProtocolGame::AddShopItem(NetworkMessage* msg, const ShopInfo item)
 	msg->AddString(item.itemName);
 	msg->AddU32(item.buyPrice);
 	msg->AddU32(item.sellPrice);
+	msg->AddU32(0x00);
 }
