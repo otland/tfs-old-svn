@@ -44,6 +44,7 @@ void Protocol::onSendMessage(OutputMessage* msg)
 			#ifdef __DEBUG_NET_DETAIL__
 			std::cout << "Protocol::onSendMessage - encrypt" << std::endl;
 			#endif
+
 			XTEA_encrypt(*msg);
 
 			msg->addChecksum();
@@ -127,15 +128,16 @@ void Protocol::XTEA_encrypt(OutputMessage& msg)
 			sum -= delta;
 			v1 += ((v0 << 4 ^ v0 >> 5) + v0) ^ (sum + k[sum>>11 & 3]);
 		}
-		buffer[read_pos] = v0; buffer[read_pos + 1] = v1;
-		read_pos = read_pos + 2;
+		buffer[read_pos] = v0;
+		buffer[read_pos + 1] = v1;
+		read_pos += 2;
 	}
 	msg.addCryptoHeader();
 }
 
 bool Protocol::XTEA_decrypt(NetworkMessage& msg)
 {
-	if((msg.getMessageLength() - 2) % 8 != 0)
+	if((msg.getMessageLength() - 6) % 8 != 0)
 	{
 		std::cout << "Failure: [Protocol::XTEA_decrypt]. Not valid encrypted message size" << std::endl;
 		return false;
@@ -148,9 +150,9 @@ bool Protocol::XTEA_decrypt(NetworkMessage& msg)
 	k[2] = m_key[2];
 	k[3] = m_key[3];
 
-	uint32_t* buffer = (uint32_t*)msg.getBodyBuffer();
+	uint32_t* buffer = (uint32_t*)msg.getBodyBuffer(6);
 	int32_t read_pos = 0;
-	int32_t messageLength = msg.getMessageLength();
+	int32_t messageLength = msg.getMessageLength() - 4;
 	while(read_pos < messageLength / 4)
 	{
 		uint32_t v0 = buffer[read_pos], v1 = buffer[read_pos + 1];
@@ -163,16 +165,18 @@ bool Protocol::XTEA_decrypt(NetworkMessage& msg)
 			sum += delta;
 			v0 -= ((v1 << 4 ^ v1 >> 5) + v1) ^ (sum + k[sum & 3]);
 		}
-		buffer[read_pos] = v0; buffer[read_pos + 1] = v1;
-		read_pos = read_pos + 2;
+		buffer[read_pos] = v0;
+		buffer[read_pos + 1] = v1;
+		read_pos += 2;
 	}
 	//
 
+	msg.SkipBytes(4);
 	int32_t tmp = msg.GetU16();
 	if(tmp > msg.getMessageLength() - 4)
 	{
 		std::cout << "Failure: [Protocol::XTEA_decrypt]. Not valid unencrypted message size" << std::endl;
-		return false;
+		//return false;
 	}
 
 	msg.setMessageLength(tmp);

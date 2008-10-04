@@ -51,14 +51,14 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		{
 			*(uint16_t*)(m_MsgBuf + 2) = m_MsgSize;
 			//added header size to the message size
-			m_MsgSize = m_MsgSize + 2;
+			m_MsgSize += 2;
 			m_outputBufferStart = 2;
 		}
 
 		void addCryptoHeader()
 		{
 			*(uint16_t*)(m_MsgBuf) = m_MsgSize;
-			m_MsgSize = m_MsgSize + 2;
+			m_MsgSize += 2;
 			m_outputBufferStart = 0;
 		}
 

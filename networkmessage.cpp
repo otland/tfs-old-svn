@@ -176,7 +176,6 @@ void NetworkMessage::addChecksum()
 {
 	*((uint16_t*)m_MsgBuf) += 4;
 	uint32_t sum = getChecksum();
-	std::cout << "Checksum: " << sum << std::endl;
  	memmove(m_MsgBuf + 6, m_MsgBuf + 2, m_MsgSize);
 	*((uint32_t*)(m_MsgBuf + 2)) = sum;
 	m_MsgSize += 4;

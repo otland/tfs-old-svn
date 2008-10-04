@@ -240,6 +240,13 @@ void Connection::parsePacket(const boost::system::error_code& error)
 
 			// Protocol depends on the first byte of the packet
 			uint8_t protocolId = m_msg.GetByte();
+
+			if(protocolId != 0x01 && protocolId != 0x0A)
+			{
+				m_msg.setReadPos(m_msg.getReadPos() - 5);
+				protocolId = m_msg.GetByte();
+			}
+
 			switch(protocolId)
 			{
 				case 0x01: // Login server protocol
