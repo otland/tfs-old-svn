@@ -127,7 +127,7 @@ bool IOBan::addIpBanishment(uint32_t ip, time_t banTime, std::string comment, ui
 	Database* db = Database::getInstance();
 
 	DBQuery query;
-	query << "INSERT INTO `bans` (`type`, `value`, `param`, `expires`, `added`, `admin_id`, `comment`, `param`) VALUES (" << (BanType_t)BANTYPE_IP_BANISHMENT << ", " << ip << ", 4294967295, " << banTime << ", " << time(NULL) << ", " << gamemaster << ", " << db->escapeString(comment.c_str()) << ")";
+	query << "INSERT INTO `bans` (`type`, `value`, `param`, `expires`, `added`, `admin_id`, `comment`) VALUES (" << (BanType_t)BANTYPE_IP_BANISHMENT << ", " << ip << ", 4294967295, " << banTime << ", " << time(NULL) << ", " << gamemaster << ", " << db->escapeString(comment.c_str()) << ")";
 	db->executeQuery(query.str());
 	return true;
 }

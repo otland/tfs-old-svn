@@ -192,7 +192,7 @@ class ProtocolGame : public Protocol
 
 		void sendShop(const std::list<ShopInfo>& shop);
 		void sendCloseShop();
-		void sendPlayerGoods(uint32_t money, uint8_t itemCount);
+		void sendPlayerGoods(uint32_t money, std::map<uint16_t, uint8_t> itemMap);
 		void sendTradeItemRequest(const Player* player, const Item* item, bool ack);
 		void sendCloseTrade();
 

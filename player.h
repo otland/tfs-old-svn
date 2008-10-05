@@ -325,6 +325,8 @@ class Player : public Creature, public Cylinder
 		tradestate_t getTradeState() {return tradeState;}
 		Item* getTradeItem() {return tradeItem;}
 
+		std::map<uint16_t, uint8_t> parseGoods(const std::list<ShopInfo>& shop);
+
 		//shop functions
 		void setShopOwner(Npc* owner, int32_t onBuy, int32_t onSell)
 		{
@@ -590,8 +592,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendToChannel(creature, type, text, channelId, time);}
 		void sendShop(const std::list<ShopInfo>& shop) const
 			{if(client) client->sendShop(shop);}
-		void sendGoods(uint32_t money, uint8_t itemCount = 0) const
-			{if(client) client->sendPlayerGoods(money, itemCount);}
+		void sendGoods(uint32_t money, std::map<uint16_t, uint8_t> itemMap) const
+			{if(client) client->sendPlayerGoods(money, itemMap);}
 		void sendCloseShop() const
 			{if(client) client->sendCloseShop();}
 		void sendTradeItemRequest(const Player* player, const Item* item, bool ack) const

@@ -1967,7 +1967,7 @@ void ProtocolGame::sendCloseShop()
 	}
 }
 
-void ProtocolGame::sendPlayerGoods(uint32_t money, uint8_t itemCount)
+void ProtocolGame::sendPlayerGoods(uint32_t money, std::map<uint16_t, uint8_t> itemMap)
 {
 	NetworkMessage* msg = getOutputBuffer();
 	if(msg)
@@ -1975,7 +1975,14 @@ void ProtocolGame::sendPlayerGoods(uint32_t money, uint8_t itemCount)
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0x7B);
 		msg->AddU32(money);
-		msg->AddByte(itemCount);
+		msg->AddByte(std::min((size_t)255, itemMap.size()));
+
+		uint32_t i = 0;
+		for(std::map<uint16_t, uint8_t>::iterator it = itemMap.begin(); it != itemMap.end() && i < 255; ++it, ++i)
+		{
+			msg->AddItemId(it->first);
+			msg->AddByte(it->second);
+		}
 	}
 }
 

@@ -36,7 +36,7 @@ class Npcs
 {
 	public:
 		Npcs() {}
-		~Npcs() {}
+		virtual ~Npcs() {}
 
 		void reload();
 };
@@ -458,18 +458,21 @@ class Npc : public Creature
 		void doMoveTo(Position pos);
 		bool isLoaded() {return loaded;}
 
-		void onPlayerCloseChannel(const Player* player);
 		void onPlayerTrade(Player* player, ShopEvent_t type, int32_t callback, uint16_t itemId,
 			uint8_t count, uint8_t amount);
 		void onPlayerEndTrade(Player* player, int32_t buyCallback,
 			int32_t sellCallback);
 
+		void onPlayerCloseChannel(const Player* player);
 		void setCreatureFocus(Creature* creature);
 
 		NpcScriptInterface* getScriptInterface();
 
+		std::list<ShopInfo> shopItemList;
+
 	protected:
 		Npc(const std::string& _name);
+		bool loaded;
 
 		virtual void onAddTileItem(const Tile* tile, const Position& pos, const Item* item);
 		virtual void onUpdateTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
@@ -555,12 +558,11 @@ class Npc : public Creature
 
 		typedef std::list<NpcState*> StateList;
 		StateList stateList;
-		NpcEventsHandler* m_npcEventHandler;
 
 		typedef std::list<uint32_t> QueueList;
 		QueueList queueList;
-		bool loaded;
 
+		NpcEventsHandler* m_npcEventHandler;
 		static NpcScriptInterface* m_scriptInterface;
 
 		friend class Npcs;
