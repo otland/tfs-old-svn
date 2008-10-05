@@ -1468,8 +1468,6 @@ void ProtocolGame::parsePlayerSale(NetworkMessage &msg)
 	uint16_t id = msg.GetU16();
 	uint16_t count = msg.GetByte();
 	uint16_t amount = msg.GetByte();
-	//TODO: sellEquipped support
-	/*bool sellEquipped = */msg.GetByte();
 	addGameTask(&Game::playerSellItem, player->getID(), id, count, amount);
 }
 
@@ -1953,10 +1951,7 @@ void ProtocolGame::sendShop(const std::list<ShopInfo>& shop)
 
 		uint32_t i = 0;
 		for(std::list<ShopInfo>::const_iterator it = shop.begin(); it != shop.end() && i < 255; ++it, ++i)
-		{
-			std::cout << "Sending shop item.." << std::endl;
 			AddShopItem(msg, (*it));
-		}
 	}
 }
 
@@ -1979,12 +1974,10 @@ void ProtocolGame::sendPlayerGoods(uint32_t money, std::map<uint16_t, uint8_t> i
 		msg->AddByte(0x7B);
 		msg->AddU32(money);
 		msg->AddByte(std::min((size_t)255, itemMap.size()));
-		std::cout << std::min((size_t)255, itemMap.size()) << std::endl;
 
 		uint32_t i = 0;
 		for(std::map<uint16_t, uint8_t>::iterator it = itemMap.begin(); it != itemMap.end() && i < 255; ++it, ++i)
 		{
-			std::cout << "Sending goods..." << std::endl;
 			msg->AddItemId(it->first);
 			msg->AddByte(it->second);
 		}
