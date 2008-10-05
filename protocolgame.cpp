@@ -1457,6 +1457,9 @@ void ProtocolGame::parsePlayerPurchase(NetworkMessage &msg)
 	uint16_t id = msg.GetU16();
 	uint16_t count = msg.GetByte();
 	uint16_t amount = msg.GetByte();
+	//TODO: ignoreCapacity & withBackpacks support
+	/*bool ignoreCapacity = */msg.GetByte();
+	/*bool withBackpacks = */msg.GetByte();
 	addGameTask(&Game::playerPurchaseItem, player->getID(), id, count, amount);
 }
 
@@ -1970,14 +1973,7 @@ void ProtocolGame::sendPlayerCash(uint32_t amount)
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0x7B);
 		msg->AddU32(amount);
-
-		/*
-		 * we need to send a packet whether player can afford
-		 * the item or not? (we'll need shop as parameter)
-                uint32_t i = 0;
-                for(std::list<ShopInfo>::const_iterator it = shop.begin(); it != shop.end() && i < 255; ++it, ++i)
-			msg->AddByte(0x01);
-		*/
+		msg->AddByte(0x00); //unknown
 	}
 }
 
@@ -3153,5 +3149,5 @@ void ProtocolGame::AddShopItem(NetworkMessage* msg, const ShopInfo item)
 	msg->AddString(item.itemName);
 	msg->AddU32(item.buyPrice);
 	msg->AddU32(item.sellPrice);
-	msg->AddU32((uint32_t)it.weight);
+	msg->AddU32(0x00); //unknown
 }

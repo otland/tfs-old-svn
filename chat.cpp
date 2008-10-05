@@ -352,7 +352,6 @@ void Chat::removeUserFromAllChannels(Player* player)
 		return;
 
 	ChannelList list = getChannelList(player);
-
 	while(list.size())
 	{
 		ChatChannel* channel = list.front();

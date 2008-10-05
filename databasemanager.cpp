@@ -487,6 +487,8 @@ uint32_t DatabaseManager::updateDatabase()
 			DBQuery query;
 			DBResult* result;
 
+			std::cout << "> Updating database to version: 3..." << std::endl;
+
 			query << "ALTER TABLE `accounts` ADD `name` VARCHAR(32) DEFAULT '';";
 			db->executeQuery(query.str());
 
