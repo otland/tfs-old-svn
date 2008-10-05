@@ -44,7 +44,7 @@
 	<monster name="Spirit of Fire" file="Arena/scrapper/spirit of fire.xml"/>
 	<monster name="Spirit of Water" file="Arena/scrapper/spirit of water.xml"/>
 	<monster name="The Dark Dancer" file="Arena/scrapper/the dark dancer.xml"/>
-	<monster name="Dhe Hag" file="Arena/scrapper/the hag.xml"/>
+	<monster name="The Hag" file="Arena/scrapper/the hag.xml"/>
 
 		<!-- Warlord -->
 	<monster name="Darakan the Executioner" file="Arena/warlord/darakan the executioner.xml"/>
@@ -208,11 +208,11 @@
 	<monster name="Stone Golem" file="Geo-Elementals/stone golem.xml"/>
 
 	<!-- Ghosts -->
-	<monster name="ghost" file="Ghosts/ghost.xml"/>
-	<monster name="phantasm summon" file="Ghosts/phantasm summon.xml"/>
-	<monster name="phantasm" file="Ghosts/phantasm.xml"/>
-	<monster name="pirate ghost" file="Ghosts/pirate ghost.xml"/>
-	<monster name="spectre" file="Ghosts/spectre.xml"/>
+	<monster name="Ghost" file="Ghosts/ghost.xml"/>
+	<monster name="Phantasm Summon" file="Ghosts/phantasm summon.xml"/>
+	<monster name="Phantasm" file="Ghosts/phantasm.xml"/>
+	<monster name="Pirate Ghost" file="Ghosts/pirate ghost.xml"/>
+	<monster name="Spectre" file="Ghosts/spectre.xml"/>
 	<monster name="Wisp" file="Ghosts/wisp.xml"/>
 
 	<!-- Giants -->
@@ -244,10 +244,10 @@
 	<monster name="Lizard Templar" file="Lizards/lizard templar.xml"/>
 
 	<!-- Minotaurs -->
-	<monster name="minotaur archer" file="Minotaurs/minotaur archer.xml"/>
-	<monster name="minotaur guard" file="Minotaurs/minotaur guard.xml"/>
-	<monster name="minotaur mage" file="Minotaurs/minotaur mage.xml"/>
-	<monster name="minotaur" file="Minotaurs/minotaur.xml"/>
+	<monster name="Minotaur Archer" file="Minotaurs/minotaur archer.xml"/>
+	<monster name="Minotaur Guard" file="Minotaurs/minotaur guard.xml"/>
+	<monster name="Minotaur Mage" file="Minotaurs/minotaur mage.xml"/>
+	<monster name="Minotaur" file="Minotaurs/minotaur.xml"/>
 
 	<!-- Misc -->
 	<monster name="Badger" file="Misc/badger.xml"/>
@@ -283,7 +283,7 @@
 	<monster name="Orc" file="Orcs/orc.xml"/>
 
 	<!-- Outlaws -->
-	<monster name="Assasin" file="Outlaws/assasin.xml"/>
+	<monster name="Assassin" file="Outlaws/assasin.xml"/>
 	<monster name="Bandit" file="Outlaws/bandit.xml"/>
 	<monster name="Black Knight" file="Outlaws/black knight.xml"/>
 	<monster name="Hero" file="Outlaws/hero.xml"/>
