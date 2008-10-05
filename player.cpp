@@ -920,7 +920,7 @@ bool Player::canSee(const Position& pos) const
 
 bool Player::canSeeCreature(const Creature* creature) const
 {
-	if(creature->isInvisible() && !creature->getPlayer() && !hasFlag(PlayerFlag_CanSenseInvisibility) && !canSeeInvisibility())
+	if(creature->isInvisible() && !creature->getPlayer() && !canSeeInvisibility())
 		return false;
 	return true;
 }
