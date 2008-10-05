@@ -108,7 +108,7 @@ CREATE TABLE `accounts`
 	FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `accounts` VALUES (1, '1', 65535, 0, '', '0', 0, 0, 1, 0, 0);
+INSERT INTO `accounts` VALUES (1, '1', '1', 65535, 0, '', '0', 0, 0, 1, 0, 0);
 
 CREATE TABLE `players`
 (
