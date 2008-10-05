@@ -1183,7 +1183,17 @@ ReturnValue Game::internalMoveItem(Cylinder* fromCylinder, Cylinder* toCylinder,
 		return RET_NOTPOSSIBLE;
 
 	Item* toItem = NULL;
-	toCylinder = toCylinder->__queryDestination(index, item, &toItem, flags);
+	Cylinder* subCylinder;
+	int32_t floor = 0;
+	while((subCylinder = toCylinder->__queryDestination(index, item, &toItem, flags)) != toCylinder)
+	{
+		toCylinder = subCylinder;
+		flags = 0;
+
+		//to prevent infinite loop
+		if(++floor >= MAP_MAX_LAYERS)
+			break;
+	}
 
 	//destination is the same as the source?
 	if(item == toItem)
