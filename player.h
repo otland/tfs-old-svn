@@ -590,8 +590,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendToChannel(creature, type, text, channelId, time);}
 		void sendShop(const std::list<ShopInfo>& shop) const
 			{if(client) client->sendShop(shop);}
-		void sendCash(uint32_t amount) const
-			{if(client) client->sendPlayerCash(amount);}
+		void sendGoods(uint32_t money, uint8_t itemCount = 0) const
+			{if(client) client->sendPlayerGoods(money, itemCount);}
 		void sendCloseShop() const
 			{if(client) client->sendCloseShop();}
 		void sendTradeItemRequest(const Player* player, const Item* item, bool ack) const

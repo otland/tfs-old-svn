@@ -1468,6 +1468,8 @@ void ProtocolGame::parsePlayerSale(NetworkMessage &msg)
 	uint16_t id = msg.GetU16();
 	uint16_t count = msg.GetByte();
 	uint16_t amount = msg.GetByte();
+	//TODO: sellEquipped support
+	/*bool sellEquipped = */msg.GetByte();
 	addGameTask(&Game::playerSellItem, player->getID(), id, count, amount);
 }
 
@@ -1965,15 +1967,15 @@ void ProtocolGame::sendCloseShop()
 	}
 }
 
-void ProtocolGame::sendPlayerCash(uint32_t amount)
+void ProtocolGame::sendPlayerGoods(uint32_t money, uint8_t itemCount)
 {
 	NetworkMessage* msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0x7B);
-		msg->AddU32(amount);
-		msg->AddByte(0x00); //number of player goods (?)
+		msg->AddU32(money);
+		msg->AddByte(itemCount);
 	}
 }
 
