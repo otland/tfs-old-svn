@@ -1973,7 +1973,7 @@ void ProtocolGame::sendPlayerCash(uint32_t amount)
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0x7B);
 		msg->AddU32(amount);
-		msg->AddByte(0x00); //unknown
+		msg->AddByte(0x00); //number of player goods (?)
 	}
 }
 
@@ -3147,7 +3147,7 @@ void ProtocolGame::AddShopItem(NetworkMessage* msg, const ShopInfo item)
 	msg->AddU16(it.clientId);
 	msg->AddByte(item.subType);
 	msg->AddString(item.itemName);
+	msg->AddU32(uint32_t(it.weight * 100));
 	msg->AddU32(item.buyPrice);
 	msg->AddU32(item.sellPrice);
-	msg->AddU32(0x00); //unknown
 }
