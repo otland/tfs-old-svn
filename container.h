@@ -96,9 +96,15 @@ class Container : public Item, public Cylinder
 			Item* newItem, const ItemType& newType);
 		void onRemoveContainerItem(uint32_t index, Item* item);
 
+		Container* getParentContainer();
+		void updateItemWeight(double diff);
+
 	protected:
 		uint32_t maxSize;
+		double totalWeight;
 		ItemList itemlist;
+
+		//friend void Item::setParent(Cylinder* cylinder);
 };
 
 #endif

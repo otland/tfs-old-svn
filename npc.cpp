@@ -147,6 +147,7 @@ void Npc::reset()
 	itemListMap.clear();
 	responseScriptMap.clear();
 	shopPlayerList.clear();
+	shopItemList.clear();
 }
 
 void Npc::reload()
@@ -1754,7 +1755,10 @@ void Npc::onPlayerTrade(Player* player, ShopEvent_t type, int32_t callback, uint
 	if(m_npcEventHandler)
 		m_npcEventHandler->onPlayerTrade(player, callback, itemId, count, amount);
 
-	player->sendCash(g_game.getMoney(const_cast<Player*>(player)));
+	if(shopItemList.empty())
+		player->closeShopWindow();
+
+	player->sendGoods(g_game.getMoney(player), player->parseGoods(shopItemList));
 }
 
 void Npc::onPlayerEndTrade(Player* player, int32_t buyCallback,
@@ -2791,58 +2795,8 @@ void NpcScriptInterface::popState(lua_State* L, NpcState* &state)
 int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 {
 	//openShopWindow(cid, items, onBuy callback, onSell callback)
-	int32_t buyCallback = -1;
-	int32_t sellCallback = -1;
-	std::list<ShopInfo> items;
-	Player* player = NULL;
-
 	ScriptEnviroment* env = getScriptEnv();
 	Npc* npc = env->getNpc();
-
-	if(lua_isfunction(L, -1) == 0)
-		lua_pop(L, 1); // skip it - use default value
-	else
-		sellCallback = popCallback(L);
-
-	if(lua_isfunction(L, -1) == 0)
-		lua_pop(L, 1);
-	else
-		buyCallback = popCallback(L);
-
-	if(lua_istable(L, -1) == 0)
-	{
-		reportError(__FUNCTION__, "item list is not a table.");
-		lua_pushnumber(L, LUA_ERROR);
-		return 1;
-	}
-
-	ShopInfo item;
-	// first key
-	lua_pushnil(L);
-	while(lua_next(L, -2) != 0)
-	{
-		item.itemId = getField(L, "id");
-		item.subType = getField(L, "subType");
-		item.buyPrice = getField(L, "buy");
-		item.sellPrice = getField(L, "sell");
-		item.itemName = getFieldString(L, "name");
-		items.push_back(item);
-
-		lua_pop(L, 1);
-	}
-	lua_pop(L, 1);
-
-	player = env->getPlayerByUID(popNumber(L));
-	if(!player)
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushnumber(L, LUA_ERROR);
-		return 1;
-	}
-
-	//Close any eventual other shop window currently open.
-	player->closeShopWindow();
-
 	if(!npc)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -2850,11 +2804,59 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 		return 1;
 	}
 
+	int32_t sellCallback = -1;
+	if(lua_isfunction(L, -1) == 0)
+		lua_pop(L, 1); // skip it - use default value
+	else
+		sellCallback = popCallback(L);
+
+	int32_t buyCallback = -1;
+	if(lua_isfunction(L, -1) == 0)
+		lua_pop(L, 1);
+	else
+		buyCallback = popCallback(L);
+
+	if(npc->shopItemList.empty())
+	{
+		if(lua_istable(L, -1) == 0)
+		{
+			reportError(__FUNCTION__, "item list is not a table.");
+			lua_pushnumber(L, LUA_ERROR);
+			return 1;
+		}
+
+		ShopInfo item;
+		// first key
+		lua_pushnil(L);
+		while(lua_next(L, -2) != 0)
+		{
+			item.itemId = getField(L, "id");
+			item.subType = getField(L, "subType");
+			item.buyPrice = getField(L, "buy");
+			item.sellPrice = getField(L, "sell");
+			item.itemName = getFieldString(L, "name");
+			npc->shopItemList.push_back(item);
+
+			lua_pop(L, 1);
+		}
+		sortItems(npc->shopItemList);
+	}
+	lua_pop(L, 1);
+
+	Player* player = env->getPlayerByUID(popNumber(L));
+	if(!player)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+		return 1;
+	}
+
+	player->closeShopWindow();
+
 	npc->addShopPlayer(player);
 	player->setShopOwner(npc, buyCallback, sellCallback);
-	sortItems(items);
-	player->sendShop(items);
-	player->sendCash(g_game.getMoney(player));
+	player->sendShop(npc->shopItemList);
+	player->sendGoods(g_game.getMoney(player), player->parseGoods(npc->shopItemList));
 
 	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;

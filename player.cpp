@@ -1485,6 +1485,18 @@ void Player::closeShopWindow()
 	}
 }
 
+std::map<uint16_t, uint8_t> Player::parseGoods(const std::list<ShopInfo>& shop)
+{
+	std::map<uint16_t, uint8_t> itemMap;
+	for(std::list<ShopInfo>::const_iterator it = shop.begin(); it != shop.end(); ++it)
+	{
+		uint32_t itemCount = __getItemTypeCount((*it).itemId);
+		if(itemCount > 0)
+			itemMap[(*it).itemId] = itemCount;
+	}
+	return itemMap;
+}
+
 void Player::onWalk(Direction& dir)
 {
 	Creature::onWalk(dir);

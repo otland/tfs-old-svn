@@ -328,6 +328,8 @@ class Player : public Creature, public Cylinder
 			return shopOwner;
 		}
 
+		std::map<uint16_t, uint8_t> parseGoods(const std::list<ShopInfo>& shop);
+
 		//V.I.P. functions
 		void notifyLogIn(Player* player);
 		void notifyLogOut(Player* player);
@@ -569,8 +571,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendToChannel(creature, type, text, channelId, time);}
 		void sendShop(const std::list<ShopInfo>& shop) const
 			{if(client) client->sendShop(shop);}
-		void sendCash(uint32_t amount) const
-			{if(client) client->sendPlayerCash(amount);}
+		void sendGoods(uint32_t money, std::map<uint16_t, uint8_t> itemMap) const
+			{if(client) client->sendPlayerGoods(money, itemMap);}
 		void sendCloseShop() const
 			{if(client) client->sendCloseShop();}
 		void sendTradeItemRequest(const Player* player, const Item* item, bool ack) const

@@ -1454,6 +1454,8 @@ void ProtocolGame::parsePlayerPurchase(NetworkMessage &msg)
 	uint16_t id = msg.GetU16();
 	uint16_t count = msg.GetByte();
 	uint16_t amount = msg.GetByte();
+	/*bool ignoreCapacity = */msg.GetByte();
+	/*bool withBackpacks = */msg.GetByte();
 	addGameTask(&Game::playerPurchaseItem, player->getID(), id, count, amount);
 }
 
@@ -1963,15 +1965,22 @@ void ProtocolGame::sendCloseShop()
 	}
 }
 
-void ProtocolGame::sendPlayerCash(uint32_t amount)
+void ProtocolGame::sendPlayerGoods(uint32_t money, std::map<uint16_t, uint8_t> itemMap)
 {
 	NetworkMessage* msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0x7B);
-		msg->AddU32(amount);
-		msg->AddByte(0x00);
+		msg->AddU32(money);
+		msg->AddByte(std::min((size_t)255, itemMap.size()));
+
+		uint32_t i = 0;
+		for(std::map<uint16_t, uint8_t>::iterator it = itemMap.begin(); it != itemMap.end() && i < 255; ++it, ++i)
+		{
+			msg->AddItemId(it->first);
+			msg->AddByte(it->second);
+		}
 	}
 }
 
@@ -2890,8 +2899,13 @@ void ProtocolGame::AddCreatureHealth(NetworkMessage* msg,const Creature* creatur
 
 void ProtocolGame::AddCreatureInvisible(NetworkMessage* msg, const Creature* creature)
 {
-	msg->AddU16(0x00);
-	msg->AddU16(0x00);
+	if(player->canSeeInvisibility())
+		AddCreatureOutfit(msg, creature, creature->getCurrentOutfit());
+	else
+	{
+		msg->AddU16(0x00);
+		msg->AddU16(0x00);
+	}
 }
 
 void ProtocolGame::AddCreatureOutfit(NetworkMessage* msg, const Creature* creature, const Outfit_t& outfit)
@@ -3145,7 +3159,7 @@ void ProtocolGame::AddShopItem(NetworkMessage* msg, const ShopInfo item)
 	msg->AddU16(it.clientId);
 	msg->AddByte(item.subType);
 	msg->AddString(item.itemName);
+	msg->AddU32(uint32_t(it.weight * 100));
 	msg->AddU32(item.buyPrice);
 	msg->AddU32(item.sellPrice);
-	msg->AddU32(0x00);
 }

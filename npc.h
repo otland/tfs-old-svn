@@ -36,7 +36,7 @@ class Npcs
 {
 	public:
 		Npcs() {}
-		~Npcs() {}
+		virtual ~Npcs() {}
 
 		void reload();
 };
@@ -467,6 +467,8 @@ class Npc : public Creature
 		void setCreatureFocus(Creature* creature);
 
 		NpcScriptInterface* getScriptInterface();
+
+		std::list<ShopInfo> shopItemList;
 
 	protected:
 		Npc(const std::string& _name);
