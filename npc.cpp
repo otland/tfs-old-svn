@@ -2816,6 +2816,14 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 	else
 		buyCallback = popCallback(L);
 
+	Player* player = env->getPlayerByUID(popNumber(L));
+	if(!player)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+		return 1;
+	}
+
 	if(npc->shopItemList.empty())
 	{
 		if(lua_istable(L, -1) == 0)
@@ -2845,18 +2853,11 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 	else
 		lua_pop(L, 1);
 
-	Player* player = env->getPlayerByUID(popNumber(L));
-	if(!player)
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushnumber(L, LUA_ERROR);
-		return 1;
-	}
-
 	player->closeShopWindow();
 
 	npc->addShopPlayer(player);
 	player->setShopOwner(npc, buyCallback, sellCallback);
+
 	player->sendShop(npc->shopItemList);
 	player->sendGoods(g_game.getMoney(player), player->parseGoods(npc->shopItemList));
 
