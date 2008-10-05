@@ -119,7 +119,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	if(version < 830)
 	{
-		disconnectClient(0x0A, "Only clients with protocol 8.2 allowed!");
+		disconnectClient(0x0A, "Only clients with protocol 8.3 allowed!");
 		return false;
 	}
 
