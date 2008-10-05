@@ -1557,7 +1557,7 @@ void Player::closeShopWindow()
 	}
 }
 
-std::map<uint16_t, uint8_t> Player::parseGoods(const std::list<ShopInfo>& shop);
+std::map<uint16_t, uint8_t> Player::parseGoods(const std::list<ShopInfo>& shop)
 {
 	std::map<uint16_t, uint8_t> itemMap;
 	for(std::list<ShopInfo>::const_iterator it = shop.begin(); it != shop.end(); ++it)
