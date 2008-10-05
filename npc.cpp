@@ -2842,6 +2842,8 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 
 		sortItems(npc->shopItemList);
 	}
+	else
+		lua_pop(L, 1);
 
 	Player* player = env->getPlayerByUID(popNumber(L));
 	if(!player)
