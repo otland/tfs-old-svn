@@ -5,17 +5,16 @@
   <targetchange interval="2000" chance="5"/>
   <strategy attack="100" defense="0"/>
   <flags>
-    <flag summonable="1"/>
+    <flag summonable="0"/>
     <flag attackable="1"/>
     <flag hostile="1"/>
     <flag illusionable="1"/>
-    <flag convinceable="1"/>
+    <flag convinceable="0"/>
     <flag pushable="0"/>
     <flag canpushitems="1"/>
-    <flag staticattack="78"/>
-    <flag lightlevel="0"/>
-    <flag lightcolor="0"/>
+    <flag canpushcreatures="1"/>
     <flag targetdistance="1"/>
+    <flag staticattack="78"/>
     <flag runonhealth="0"/>
   </flags>
   <attacks>
