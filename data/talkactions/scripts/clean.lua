@@ -16,7 +16,7 @@ function prepareClean(minutes, cid)
 		local count = cleanMap()
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Cleaned " .. count .. " items.")
 		doBroadcastMessage("Game map cleaned.")
-	else
+	elseif minutes > 0 then
 		local message = ""
 		if minutes == 1 then
 			message = "Game map cleaning in " .. minutes .. " minute, please pick up all your items."
