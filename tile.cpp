@@ -665,7 +665,7 @@ ReturnValue Tile::__queryRemove(const Thing* thing, uint32_t count) const
 Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** destItem,
 	uint32_t& flags)
 {
-	Tile* destTile = this;
+	Tile* destTile = NULL;
 	*destItem = NULL;
 
 	if(floorChangeDown())
