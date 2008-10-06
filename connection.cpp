@@ -238,8 +238,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 		{
 			// Checksum
 			uint32_t recvChecksum = m_msg.PeekU32();
-			uint32_t checksum = adlerChecksum((uint8_t*)(m_msg.getBuffer() + m_msg.getReadPos() + 4)
-				m_msg.getMessageLength() - m_msg.getReadPos() - 4);
+			uint32_t checksum = adlerChecksum((uint8_t*)(m_msg.getBuffer() + m_msg.getReadPos() + 4), m_msg.getMessageLength() - m_msg.getReadPos() - 4);
 
 			// if they key match, we can skip 4 bytes
 			if(recvChecksum == checksum)
