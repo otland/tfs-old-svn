@@ -1,6 +1,6 @@
 local condition = createConditionObject(CONDITION_ATTRIBUTES)
 setConditionParam(condition, CONDITION_PARAM_TICKS, 10 * 60 * 1000) -- 10 minutes
-setConditionParam(condition, CONDITION_PARAM_STAT_MAGICPOINTS, 3)
+setConditionParam(condition, CONDITION_PARAM_STAT_MAGICLEVEL, 3)
 setConditionParam(condition, CONDITION_PARAM_SKILL_SHIELD, -10)
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
