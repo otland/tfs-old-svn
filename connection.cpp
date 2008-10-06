@@ -243,7 +243,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 
 			// if they key match, we can skip 4 bytes
 			if(recvChecksum == checksum)
-				msg.SkipBytes(4);
+				m_msg.SkipBytes(4);
 
 			uint8_t protocolId = m_msg.GetByte();
 			switch(protocolId)
