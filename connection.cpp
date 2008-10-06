@@ -184,6 +184,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 		// Protocol selection
 		if(!m_protocol)
 		{
+			uint8_t protocolId = m_msg.GetByte();
 			switch(protocolId)
 			{
 				case 0x01: // Login server protocol

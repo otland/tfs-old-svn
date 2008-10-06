@@ -670,6 +670,8 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 
 	if(floorChangeDown())
 	{
+		destTile = this;
+
 		int dx = getTilePosition().x;
 		int dy = getTilePosition().y;
 		int dz = getTilePosition().z + 1;
@@ -695,6 +697,8 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 	}
 	else if(floorChange())
 	{
+		destTile = this;
+
 		int dx = getTilePosition().x;
 		int dy = getTilePosition().y;
 		int dz = getTilePosition().z - 1;
