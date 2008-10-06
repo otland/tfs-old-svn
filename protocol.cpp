@@ -45,8 +45,6 @@ void Protocol::onSendMessage(OutputMessage* msg)
 			std::cout << "Protocol::onSendMessage - encrypt" << std::endl;
 			#endif
 			XTEA_encrypt(*msg);
-
-			msg->addChecksum();
 		}
 	}
 
@@ -60,15 +58,11 @@ void Protocol::onRecvMessage(NetworkMessage& msg)
 	std::cout << "Protocol::onRecvMessage" << std::endl;
 	#endif
 
-	if(getProtocolId() == 0x0A)
-		msg.SkipBytes(4);
-
 	if(m_encryptionEnabled)
 	{
 		#ifdef __DEBUG_NET_DETAIL__
 		std::cout << "Protocol::onRecvMessage - decrypt" << std::endl;
 		#endif
-
 		XTEA_decrypt(msg);
 	}
 	parsePacket(msg);
@@ -115,8 +109,8 @@ void Protocol::XTEA_encrypt(OutputMessage& msg)
 		messageLength = messageLength + n;
 	}
 
-	int read_pos = 0;
-	uint32_t* buffer = (uint32_t*)msg.getBodyBuffer();
+	int32_t read_pos = 0;
+	uint32_t* buffer = (uint32_t*)msg.getOutputBuffer();
 	while(read_pos < messageLength / 4)
 	{
 		uint32_t v0 = buffer[read_pos], v1 = buffer[read_pos + 1];

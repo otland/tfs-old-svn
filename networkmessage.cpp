@@ -33,7 +33,9 @@
 
 int32_t NetworkMessage::decodeHeader()
 {
-	return (int32_t)(m_MsgBuf[0] | m_MsgBuf[1] << 8);
+	int32_t size = (int32_t)(m_MsgBuf[0] | m_MsgBuf[1] << 8);
+	m_MsgSize = size;
+	return size;
 }
 
 /******************************************************************************/
@@ -146,37 +148,4 @@ void NetworkMessage::AddItemId(uint16_t itemId)
 {
 	const ItemType &it = Item::items[itemId];
 	AddU16(it.clientId);
-}
-
-uint32_t NetworkMessage::getChecksum()
-{
-	const uint16_t adler = 65521;
-	uint8_t* data = ((uint8_t*)m_MsgBuf) + 2;
-	size_t len = m_MsgSize - 2;
-
-	uint32_t a = 1, b = 0;
-	while(len > 0)
-	{
-		size_t tlen = len > 5552 ? 5552 : len;
-		len -= tlen;
-		do
-		{
-			a += *data++;
-			b += a;
-		}
-		while(--tlen);
-
-		a %= adler;
-		b %= adler;
-	}
-	return (b << 16) | a;
-}
-
-void NetworkMessage::addChecksum()
-{
-	*((uint16_t*)m_MsgBuf) += 4;
-	uint32_t sum = getChecksum();
-	memmove(m_MsgBuf + 6, m_MsgBuf + 2, m_MsgSize);
-	*((uint32_t*)(m_MsgBuf + 2)) = sum;
-	m_MsgSize += 4;
 }

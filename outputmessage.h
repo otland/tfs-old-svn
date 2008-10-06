@@ -23,6 +23,7 @@
 
 #include "networkmessage.h"
 #include "otsystem.h"
+#include "tools.h"
 #include <list>
 
 #ifdef __TRACK_NETWORK__
@@ -43,20 +44,22 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		OutputMessage();
 
 	public:
-		~OutputMessage() {}
+		virtual ~OutputMessage() {}
 
 		char* getOutputBuffer() { return (char*)&m_MsgBuf[m_outputBufferStart];}
 
 		void writeMessageLength()
 		{
-			*(uint16_t*)(m_MsgBuf + 2) = m_MsgSize;
+			*(uint16_t*)(m_MsgBuf + 6) = m_MsgSize;
 			//added header size to the message size
 			m_MsgSize += 2;
-			m_outputBufferStart = 2;
+			m_outputBufferStart = 6;
 		}
 
 		void addCryptoHeader()
 		{
+			*(uint32_t*)(m_MsgBuf + 2) = adlerChecksum((uint8_t*)(m_MsgBuf + 6), m_MsgSize);
+			m_MsgSize += 4;
 			*(uint16_t*)(m_MsgBuf) = m_MsgSize;
 			m_MsgSize += 2;
 			m_outputBufferStart = 0;
@@ -101,7 +104,7 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 			setConnection(NULL);
 			setProtocol(NULL);
 			m_frame = 0;
-			m_outputBufferStart = 4;
+			m_outputBufferStart = 8;
 			//setState have to be the last one
 			setState(OutputMessage::STATE_FREE);
 		}
