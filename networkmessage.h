@@ -125,7 +125,7 @@ class NetworkMessage
 		int32_t decodeHeader();
 
 		char* getBuffer() {return (char*)&m_MsgBuf[0];}
-		char* getBodyBuffer() {m_ReadPos = 2; return (char*)&m_MsgBuf[header_length];}
+		char* getBodyBuffer(int32_t header = header_length) {m_ReadPos = 2; return (char*)&m_MsgBuf[header];}
 
 	protected:
 		inline bool canAdd(int32_t size)
