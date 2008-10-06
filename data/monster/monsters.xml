@@ -283,7 +283,7 @@
 	<monster name="Orc" file="Orcs/orc.xml"/>
 
 	<!-- Outlaws -->
-	<monster name="Assassin" file="Outlaws/assasin.xml"/>
+	<monster name="Assassin" file="Outlaws/assassin.xml"/>
 	<monster name="Bandit" file="Outlaws/bandit.xml"/>
 	<monster name="Black Knight" file="Outlaws/black knight.xml"/>
 	<monster name="Hero" file="Outlaws/hero.xml"/>
