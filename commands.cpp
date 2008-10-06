@@ -228,7 +228,6 @@ bool Commands::reload()
 
 bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 {
-
 	boost::char_separator<char> sep("&&");
 	tokenizer cmdtokens(cmd, sep);
 	tokenizer::iterator cmdit = cmdtokens.begin();
@@ -236,25 +235,25 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 	while(cmdit != cmdtokens.end())
 	{
 		
-		std::string str_command;
-		std::string str_param;
-		std::string cmd1 = parseParams(cmdit, cmdtokens.end());
-		trimString(cmd1);
-		g_game.internalCreatureSay(creature, SPEAK_MONSTER_SAY, cmd1);
-		std::string::size_type loc = cmd1.find(' ', 0 );
+		std::string strCommand;
+		std::string strParam;
+		std::string cmdThis = parseParams(cmdit, cmdtokens.end());
+		trimString(cmdThis);
+
+		std::string::size_type loc = cmdThis.find(' ', 0 );
 		if(loc != std::string::npos && loc >= 0)
 		{
-			str_command = std::string(cmd1, 0, loc);
-			str_param = std::string(cmd1, (loc + 1), cmd1.size() - loc - 1);
+			strCommand = std::string(cmdThis, 0, loc);
+			strParam = std::string(cmdThis, (loc + 1), cmdThis.size() - loc - 1);
 		}
 		else
 		{
-			str_command = cmd1;
-			str_param = std::string("");
+			strCommand = cmdThis;
+			strParam = std::string("");
 		}
 	
 		//find command
-		CommandMap::iterator it = commandMap.find(str_command);
+		CommandMap::iterator it = commandMap.find(strCommand);
 		if(it == commandMap.end())
 			return false;
 	
@@ -269,7 +268,7 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 	
 		//execute command
 		CommandFunc cfunc = it->second->f;
-		(this->*cfunc)(creature, str_command, str_param);
+		(this->*cfunc)(creature, strCommand, strParam);
 		if(player && it->second->logged)
 		{
 			player->sendTextMessage(MSG_STATUS_CONSOLE_RED, cmd.c_str());
