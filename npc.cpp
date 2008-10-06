@@ -1722,8 +1722,8 @@ uint32_t Npc::getListItemPrice(uint16_t itemId, ShopEvent_t type)
 	return 0;
 }
 
-void Npc::onPlayerTrade(Player* player, ShopEvent_t type, int32_t callback, uint16_t itemId,
-	uint8_t count, uint8_t amount)
+void Npc::onPlayerTrade(Player* player, ShopEvent_t type, int32_t callback, uint16_t itemId, uint8_t count,
+	uint8_t amount, bool ignoreCap/* = false*/, bool inBackpacks/* = false*/)
 {
 	if(type == SHOPEVENT_BUY)
 	{
@@ -1753,7 +1753,7 @@ void Npc::onPlayerTrade(Player* player, ShopEvent_t type, int32_t callback, uint
 	}
 
 	if(m_npcEventHandler)
-		m_npcEventHandler->onPlayerTrade(player, callback, itemId, count, amount);
+		m_npcEventHandler->onPlayerTrade(player, callback, itemId, count, amount, ignoreCap, inBackpacks);
 
 	if(shopItemList.empty())
 		player->closeShopWindow();
@@ -3086,12 +3086,12 @@ void NpcScript::onCreatureSay(const Creature* creature, SpeakClasses type, const
 }
 
 void NpcScript::onPlayerTrade(const Player* player, int32_t callback, uint16_t itemid,
-	uint8_t count, uint8_t amount)
+	uint8_t count, uint8_t amount, bool ignoreCap, bool inBackpacks)
 {
 	if(callback == -1)
 		return;
 
-	//"onBuy"(cid, itemid, count, amount)
+	//on"Buy/Sell"(cid, itemid, count, amount, ignoreCap, inBackpacks)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
@@ -3106,7 +3106,9 @@ void NpcScript::onPlayerTrade(const Player* player, int32_t callback, uint16_t i
 		lua_pushnumber(L, itemid);
 		lua_pushnumber(L, count);
 		lua_pushnumber(L, amount);
-		m_scriptInterface->callFunction(4);
+		lua_pushboolean(L, ignoreCap);
+		lua_pushboolean(L, inBackpacks);
+		m_scriptInterface->callFunction(6);
 		m_scriptInterface->releaseScriptEnv();
 	}
 	else

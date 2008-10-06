@@ -834,13 +834,14 @@ if(Modules == nil) then
 	end
 
 	-- doPlayerAddItem function variation. Used specifically for NPCs.
-	ShopModule.doPlayerAddItem = function(cid, itemid, amount, subType)
+	ShopModule.doPlayerAddItem = function(cid, itemid, amount, subType, ignoreCap, inBackpacks)
 		local amount = amount or 1
 		local subType = subType or 0
+		local ignoreCap = ignoreCap and TRUE or FALSE
 
 		if(isItemStackable(itemid) == TRUE) then
 			local item = doCreateItemEx(itemid, amount)
-			local ret = doPlayerAddItemEx(cid, item)
+			local ret = doPlayerAddItemEx(cid, item, ignoreCap)
 			if(ret ~= RETURNVALUE_NOERROR) then
 				return {}, 0
 			end
@@ -853,7 +854,7 @@ if(Modules == nil) then
 		local a = 0
 		for i = 1, amount do
 			items[i] = doCreateItemEx(itemid, subType)
-			ret = doPlayerAddItemEx(cid, items[i])
+			ret = doPlayerAddItemEx(cid, items[i], ignoreCap)
 			if(ret ~= RETURNVALUE_NOERROR) then
 				break
 			end
@@ -865,7 +866,7 @@ if(Modules == nil) then
 	end
 
 	-- Callback onBuy() function. If you wish, you can change certain Npc to use your onBuy().
-	function ShopModule:callbackOnBuy(cid, itemid, subType, amount)
+	function ShopModule:callbackOnBuy(cid, itemid, subType, amount, ignoreCap, inBackpacks)
 		if(self.npcHandler.shopItems[itemid] == nil) then
 			error("[ShopModule.onBuy]", "items[itemid] == nil")
 		end
@@ -884,7 +885,7 @@ if(Modules == nil) then
 			return false
 		end
 
-		local boughtItems, i = ShopModule.doPlayerAddItem(cid, itemid, amount, subType)
+		local boughtItems, i = ShopModule.doPlayerAddItem(cid, itemid, amount, subType, ignoreCap, inBackpacks)
 		if(i < amount) then
 			local msgId = MESSAGE_NEEDMORESPACE
 			if(i == 0) then
@@ -920,7 +921,7 @@ if(Modules == nil) then
 	end
 
 	-- Callback onSell() function. If you wish, you can change certain Npc to use your onSell().
-	function ShopModule:callbackOnSell(cid, itemid, subType, amount)
+	function ShopModule:callbackOnSell(cid, itemid, subType, amount, ignoreCap, inBackpacks)
 		if(self.npcHandler.shopItems[itemid] == nil) then
 			error("[ShopModule.onSell]", "items[itemid] == nil")
 		end

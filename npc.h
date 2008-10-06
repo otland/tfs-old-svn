@@ -93,7 +93,7 @@ class NpcEventsHandler
 		virtual void onCreatureMove(const Creature* creature, const Position& oldPos, const Position& newPos) {}
 		virtual void onCreatureSay(const Creature* creature, SpeakClasses, const std::string& text) {}
 		virtual void onPlayerTrade(const Player* player, int32_t callback, uint16_t itemid,
-			uint8_t count, uint8_t amount) {}
+			uint8_t count, uint8_t amount, bool ignoreCap, bool inBackpacks) {}
 		virtual void onPlayerCloseChannel(const Player* player) {}
 		virtual void onPlayerEndTrade(const Player* player) {}
 		virtual void onThink() {}
@@ -116,7 +116,7 @@ class NpcScript : public NpcEventsHandler
 		virtual void onCreatureMove(const Creature* creature, const Position& oldPos, const Position& newPos);
 		virtual void onCreatureSay(const Creature* creature, SpeakClasses, const std::string& text);
 		virtual void onPlayerTrade(const Player* player, int32_t callback, uint16_t itemid,
-			uint8_t count, uint8_t amount);
+			uint8_t count, uint8_t amount, bool ignoreCap, bool inBackpacks);
 		virtual void onPlayerCloseChannel(const Player* player);
 		virtual void onPlayerEndTrade(const Player* player);
 		virtual void onThink();
@@ -458,8 +458,8 @@ class Npc : public Creature
 		void doMoveTo(Position pos);
 		bool isLoaded() {return loaded;}
 
-		void onPlayerTrade(Player* player, ShopEvent_t type, int32_t callback, uint16_t itemId,
-			uint8_t count, uint8_t amount);
+		void onPlayerTrade(Player* player, ShopEvent_t type, int32_t callback, uint16_t itemId, uint8_t count,
+			uint8_t amount, bool ignoreCap = false, bool inBackpacks = false);
 		void onPlayerEndTrade(Player* player, int32_t buyCallback,
 			int32_t sellCallback);
 

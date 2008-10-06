@@ -49,14 +49,14 @@ local function getPlayerMoney(cid)
 	getPlayerItemCount(cid, 2148))
 end
 
-local onBuy = function(cid, item, subType, amount)
+local onBuy = function(cid, item, subType, amount, ignoreCap, inBackpacks)
 	if(items[item] == nil) then
 		selfSay("Ehm.. sorry... this shouldn't be there, I'm not selling it.", cid)
 		return
 	end
 
 	if(getPlayerMoney(cid) >= amount * items[item].buyPrice) then
-		local itemz, i = doPlayerAddItem(cid, item, amount, subType)
+		local itemz, i = doPlayerAddItem(cid, item, amount, subType, ignoreCap, inBackpacks)
 		if(i < amount) then
 			if(i == 0) then
 				selfSay("Sorry, but you don't have space to take it.", cid)
@@ -73,7 +73,7 @@ local onBuy = function(cid, item, subType, amount)
 	end
 end
 
-local onSell = function(cid, item, subType, amount)
+local onSell = function(cid, item, subType, amount, ignoreCap, inBackpacks)
 	if(items[item] == nil) then
 		selfSay("Ehm.. sorry... this shouldn't be there, I'm not buying it.", cid)
 	end

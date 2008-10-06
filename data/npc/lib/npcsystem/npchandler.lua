@@ -418,20 +418,20 @@ if(NpcHandler == nil) then
 	end
 
 	-- Handles onBuy events. If you wish to handle this yourself, use the CALLBACK_ONBUY callback.
-	function NpcHandler:onBuy(cid, itemid, subType, amount)
+	function NpcHandler:onBuy(cid, itemid, subType, amount, ignoreCap, inBackpacks)
 		local callback = self:getCallback(CALLBACK_ONBUY)
-		if(callback == nil or callback(cid, itemid, subType, amount)) then
-			if(self:processModuleCallback(CALLBACK_ONBUY, cid, itemid, subType, amount)) then
+		if(callback == nil or callback(cid, itemid, subType, amount, ignoreCap, inBackpacks)) then
+			if(self:processModuleCallback(CALLBACK_ONBUY, cid, itemid, subType, amount, ignoreCap, inBackpacks)) then
 				--
 			end
 		end
 	end
 
 	-- Handles onSell events. If you wish to handle this yourself, use the CALLBACK_ONSELL callback.
-	function NpcHandler:onSell(cid, itemid, subType, amount)
+	function NpcHandler:onSell(cid, itemid, subType, amount, ignoreCap, inBackpacks)
 		local callback = self:getCallback(CALLBACK_ONSELL)
-		if(callback == nil or callback(cid, itemid, subType, amount)) then
-			if(self:processModuleCallback(CALLBACK_ONSELL, cid, itemid, subType, amount)) then
+		if(callback == nil or callback(cid, itemid, subType, amount, ignoreCap, inBackpacks)) then
+			if(self:processModuleCallback(CALLBACK_ONSELL, cid, itemid, subType, amount, ignoreCap, inBackpacks)) then
 				--
 			end
 		end

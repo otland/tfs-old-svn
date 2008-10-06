@@ -1457,10 +1457,9 @@ void ProtocolGame::parsePlayerPurchase(NetworkMessage &msg)
 	uint16_t id = msg.GetU16();
 	uint16_t count = msg.GetByte();
 	uint16_t amount = msg.GetByte();
-	//TODO: ignoreCapacity & withBackpacks support
-	/*bool ignoreCapacity = */msg.GetByte();
-	/*bool withBackpacks = */msg.GetByte();
-	addGameTask(&Game::playerPurchaseItem, player->getID(), id, count, amount);
+	bool inBackpacks = msg.GetByte();
+	bool ignoreCap = msg.GetByte();
+	addGameTask(&Game::playerPurchaseItem, player->getID(), id, count, amount, ignoreCap, inBackpacks);
 }
 
 void ProtocolGame::parsePlayerSale(NetworkMessage &msg)

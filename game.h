@@ -425,7 +425,8 @@ class Game
 			uint32_t tradePlayerId, uint16_t spriteId);
 		bool playerAcceptTrade(uint32_t playerId);
 		bool playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int index);
-		bool playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t count, uint8_t amount);
+		bool playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t count, uint8_t amount,
+			bool ignoreCap = false, bool inBackpacks = false);
 		bool playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count, uint8_t amount);
 		bool playerCloseShop(uint32_t playerId);
 		bool playerLookInShop(uint32_t playerId, uint16_t spriteId, uint8_t count);
