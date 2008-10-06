@@ -834,35 +834,50 @@ if(Modules == nil) then
 	end
 
 	-- doPlayerAddItem function variation. Used specifically for NPCs.
-	ShopModule.doPlayerAddItem = function(cid, itemid, amount, subType, ignoreCap, inBackpacks)
+	ShopModule.doPlayerAddItem = function(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)
 		local amount = amount or 1
 		local subType = subType or 0
 		local ignoreCap = ignoreCap and TRUE or FALSE
+		local backpack = backpack or 1988
 
+		local item = 0
 		if(isItemStackable(itemid) == TRUE) then
-			local item = doCreateItemEx(itemid, amount)
-			local ret = doPlayerAddItemEx(cid, item, ignoreCap)
-			if(ret ~= RETURNVALUE_NOERROR) then
-				return {}, 0
+			item = doCreateItemEx(itemid, amount)
+			if(doPlayerAddItemEx(cid, item, ignoreCap) ~= RETURNVALUE_NOERROR) then
+				return 0, 0
 			end
 
-			return {item}, amount
+			return amount, 0
 		end
 
-		local items = {}
-		local ret = 0
 		local a = 0
+		if(inBackpacks) then
+			item = doCreateItemEx(backpack, 1)
+			for i = 1, amount do
+				doAddContainerItem(item, itemid, subType)
+				if(isInArray({20, amount}, i) == TRUE) then
+					if(doPlayerAddItemEx(cid, item, ignoreCap) ~= RETURNVALUE_NOERROR) then
+						break
+					end
+
+					a = a + i
+					if(amount > i) then
+						item = doCreateItemEx(backpack, 1)
+					end
+				end
+			end
+			return a, b
+		end
+
 		for i = 1, amount do
-			items[i] = doCreateItemEx(itemid, subType)
-			ret = doPlayerAddItemEx(cid, items[i], ignoreCap)
-			if(ret ~= RETURNVALUE_NOERROR) then
+			item = doCreateItemEx(itemid, subType)
+			if(doPlayerAddItemEx(cid, item, ignoreCap) ~= RETURNVALUE_NOERROR) then
 				break
 			end
 
 			a = a + 1
 		end
-
-		return items, a
+		return a, 0
 	end
 
 	-- Callback onBuy() function. If you wish, you can change certain Npc to use your onBuy().
@@ -871,29 +886,34 @@ if(Modules == nil) then
 			error("[ShopModule.onBuy]", "items[itemid] == nil")
 		end
 
+		local totalCost = amount * self.npcHandler.shopItems[itemid].buyPrice
+		if(inBackpacks) then
+			totalCost = totalCost + (math.max(1, math.floor(amount / 20)) * 20)
+		end
+
 		local parseInfo = {
 			[TAG_PLAYERNAME] = getPlayerName(cid),
 			[TAG_ITEMCOUNT] = amount,
-			[TAG_TOTALCOST] = amount * self.npcHandler.shopItems[itemid].buyPrice,
+			[TAG_TOTALCOST] = totalCost,
 			[TAG_ITEMNAME] = self.npcHandler.shopItems[itemid].realName
 		}
 
-		if(getPlayerMoney(cid) < amount * self.npcHandler.shopItems[itemid].buyPrice) then
+		if(getPlayerMoney(cid) < totalCost) then
 			local msg = self.npcHandler:getMessage(MESSAGE_NEEDMONEY)
 			msg = self.npcHandler:parseMessage(msg, parseInfo)
 			doPlayerSendCancel(cid, msg)
 			return false
 		end
 
-		local boughtItems, i = ShopModule.doPlayerAddItem(cid, itemid, amount, subType, ignoreCap, inBackpacks)
-		if(i < amount) then
+		local a, b = ShopModule.doPlayerAddItem(cid, itemid, amount, subType, ignoreCap, inBackpacks)
+		if(a < amount) then
 			local msgId = MESSAGE_NEEDMORESPACE
-			if(i == 0) then
+			if(a == 0) then
 				msgId = MESSAGE_NEEDSPACE
 			end
 
 			local msg = self.npcHandler:getMessage(msgId)
-			parseInfo[TAG_ITEMCOUNT] = i
+			parseInfo[TAG_ITEMCOUNT] = a
 			msg = self.npcHandler:parseMessage(msg, parseInfo)
 			doPlayerSendCancel(cid, msg)
 			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
@@ -901,8 +921,8 @@ if(Modules == nil) then
 			else
 				self.npcHandler.talkStart = os.time()
 			end
-			if(i > 0) then
-				doPlayerRemoveMoney(cid, i * self.npcHandler.shopItems[itemid].buyPrice)
+			if(a > 0) then
+				doPlayerRemoveMoney(cid, ((a * self.npcHandler.shopItems[itemid].buyPrice) + b * 20))
 				return true
 			end
 			return false
@@ -910,7 +930,7 @@ if(Modules == nil) then
 			local msg = self.npcHandler:getMessage(MESSAGE_BOUGHT)
 			msg = self.npcHandler:parseMessage(msg, parseInfo)
 			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, msg)
-			doPlayerRemoveMoney(cid, amount * self.npcHandler.shopItems[itemid].buyPrice)
+			doPlayerRemoveMoney(cid, totalCost)
 			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 				self.npcHandler.talkStart[cid] = os.time()
 			else
@@ -983,8 +1003,8 @@ if(Modules == nil) then
 		local parseInfo = { [TAG_PLAYERNAME] = getPlayerName(cid) }
 		local msg = module.npcHandler:parseMessage(module.npcHandler:getMessage(MESSAGE_SENDTRADE), parseInfo)
 		openShopWindow(cid, itemWindow,
-			function(cid, itemid, subType, amount) module.npcHandler:onBuy(cid, itemid, subType, amount) end,
-			function(cid, itemid, subType, amount) module.npcHandler:onSell(cid, itemid, subType, amount) end)
+			function(cid, itemid, subType, amount, ignoreCap, inBackpacks) module.npcHandler:onBuy(cid, itemid, subType, amount, ignoreCap, inBackpacks) end,
+			function(cid, itemid, subType, amount, ignoreCap, inBackpacks) module.npcHandler:onSell(cid, itemid, subType, amount, ignoreCap, inBackpacks) end)
 		module.npcHandler:say(msg, cid)
 		return true
 	end
