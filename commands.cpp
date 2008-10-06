@@ -228,51 +228,62 @@ bool Commands::reload()
 
 bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 {
-	std::string str_command;
-	std::string str_param;
 
-	std::string::size_type loc = cmd.find(' ', 0 );
-	if(loc != std::string::npos && loc >= 0)
+	boost::char_separator<char> sep("&&");
+	tokenizer cmdtokens(cmd, sep);
+	tokenizer::iterator cmdit = cmdtokens.begin();
+
+	while(cmdit != cmdtokens.end())
 	{
-		str_command = std::string(cmd, 0, loc);
-		str_param = std::string(cmd, (loc + 1), cmd.size() - loc - 1);
-	}
-	else
-	{
-		str_command = cmd;
-		str_param = std::string("");
-	}
-
-	//find command
-	CommandMap::iterator it = commandMap.find(str_command);
-	if(it == commandMap.end())
-		return false;
-
-	Player* player = creature->getPlayer();
-	if(player && (it->second->accessLevel > player->getAccessLevel() || player->name == "Account Manager"))
-	{
-		if(player->getAccessLevel() > 0)
-			player->sendTextMessage(MSG_STATUS_SMALL, "You can not execute this command.");
-
-		return false;
-	}
-
-	//execute command
-	CommandFunc cfunc = it->second->f;
-	(this->*cfunc)(creature, str_command, str_param);
-	if(player && it->second->logged)
-	{
-		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, cmd.c_str());
-
-		char buf[21], buffer[100];
-		formatDate(time(NULL), buf);
-		sprintf(buffer, "data/logs/%s commands.log", player->name.c_str());
-
-		FILE* file = fopen(buffer, "a");
-		if(file)
+		
+		std::string str_command;
+		std::string str_param;
+		std::string cmd1 = parseParams(cmdit, cmdtokens.end());
+		trimString(cmd1);
+		g_game.internalCreatureSay(creature, SPEAK_MONSTER_SAY, cmd1);
+		std::string::size_type loc = cmd1.find(' ', 0 );
+		if(loc != std::string::npos && loc >= 0)
 		{
-			fprintf(file, "[%s] %s\n", buf, cmd.c_str());
-			fclose(file);
+			str_command = std::string(cmd1, 0, loc);
+			str_param = std::string(cmd1, (loc + 1), cmd1.size() - loc - 1);
+		}
+		else
+		{
+			str_command = cmd1;
+			str_param = std::string("");
+		}
+	
+		//find command
+		CommandMap::iterator it = commandMap.find(str_command);
+		if(it == commandMap.end())
+			return false;
+	
+		Player* player = creature->getPlayer();
+		if(player && (it->second->accessLevel > player->getAccessLevel() || player->name == "Account Manager"))
+		{
+			if(player->getAccessLevel() > 0)
+				player->sendTextMessage(MSG_STATUS_SMALL, "You can not execute this command.");
+	
+			return false;
+		}
+	
+		//execute command
+		CommandFunc cfunc = it->second->f;
+		(this->*cfunc)(creature, str_command, str_param);
+		if(player && it->second->logged)
+		{
+			player->sendTextMessage(MSG_STATUS_CONSOLE_RED, cmd.c_str());
+	
+			char buf[21], buffer[100];
+			formatDate(time(NULL), buf);
+			sprintf(buffer, "data/logs/%s commands.log", player->name.c_str());
+	
+			FILE* file = fopen(buffer, "a");
+			if(file)
+			{
+				fprintf(file, "[%s] %s\n", buf, cmd.c_str());
+				fclose(file);
+			}
 		}
 	}
 	return true;
