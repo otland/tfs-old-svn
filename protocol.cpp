@@ -59,9 +59,6 @@ void Protocol::onRecvMessage(NetworkMessage& msg)
 	std::cout << "Protocol::onRecvMessage" << std::endl;
 	#endif
 
-	if(getProtocolId() == 0x0A) 	 
-		msg.SkipBytes(4);
-
 	if(m_encryptionEnabled)
 	{
 		#ifdef __DEBUG_NET_DETAIL__
