@@ -47,7 +47,7 @@ class NetworkMessage
 		void Reset()
 		{
 			m_MsgSize = 0;
-			m_ReadPos = 4;
+			m_ReadPos = 8;
 		}
 
 	public:
@@ -64,6 +64,11 @@ class NetworkMessage
 		{
 			uint32_t v = *(uint32_t*)(m_MsgBuf + m_ReadPos);
 			m_ReadPos += 4;
+			return v;
+		}
+		uint32_t PeekU32()
+		{
+			uint32_t v = *(uint32_t*)(m_MsgBuf + m_ReadPos);
 			return v;
 		}
 		std::string GetString();
@@ -118,13 +123,9 @@ class NetworkMessage
 		void setReadPos(int32_t newPos) {m_ReadPos = newPos;}
 
 		int32_t decodeHeader();
-		uint32_t getChecksum();
-		void addChecksum();
 
 		char* getBuffer() {return (char*)&m_MsgBuf[0];}
-		char* getBodyBuffer(int32_t headerLen = header_length) {m_ReadPos = 2; return (char*)&m_MsgBuf[headerLen];}
-
-		int32_t getSize() {return m_MsgSize;}
+		char* getBodyBuffer() {m_ReadPos = 2; return (char*)&m_MsgBuf[header_length];}
 
 	protected:
 		inline bool canAdd(int32_t size)

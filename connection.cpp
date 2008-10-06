@@ -29,6 +29,7 @@
 #include "tasks.h"
 #include "scheduler.h"
 #include "configmanager.h"
+#include "tools.h"
 
 #include <boost/bind.hpp>
 
@@ -235,18 +236,16 @@ void Connection::parsePacket(const boost::system::error_code& error)
 		// Protocol selection
 		if(!m_protocol)
 		{
-			//Checksum
-			m_msg.SkipBytes(4);
+			// Checksum
+			uint32_t recvChecksum = m_msg.PeekU32();
+			uint32_t checksum = adlerChecksum((uint8_t*)(m_msg.getBuffer() + m_msg.getReadPos() + 4)
+				m_msg.getMessageLength() - m_msg.getReadPos() - 4);
 
-			// Protocol depends on the first byte of the packet
+			// if they key match, we can skip 4 bytes
+			if(recvChecksum == checksum)
+				msg.SkipBytes(4);
+
 			uint8_t protocolId = m_msg.GetByte();
-
-			if(protocolId != 0x01 && protocolId != 0x0A)
-			{
-				m_msg.setReadPos(m_msg.getReadPos() - 5);
-				protocolId = m_msg.GetByte();
-			}
-
 			switch(protocolId)
 			{
 				case 0x01: // Login server protocol

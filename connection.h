@@ -51,7 +51,7 @@ struct LoginBlock
 class ConnectionManager
 {
 	public:
-		~ConnectionManager()
+		virtual ~ConnectionManager()
 		{
 			OTSYS_THREAD_LOCKVARRELEASE(m_connectionManagerLock);
 		}
@@ -117,7 +117,7 @@ class Connection : boost::noncopyable
 		friend class ConnectionManager;
 
 	public:
-		~Connection()
+		virtual ~Connection()
 		{
 			ConnectionManager::getInstance()->releaseConnection(this);
 			OTSYS_THREAD_LOCKVARRELEASE(m_connectionLock);
