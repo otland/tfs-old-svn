@@ -59,7 +59,7 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		void addCryptoHeader()
 		{
 			*(uint32_t*)(m_MsgBuf + 2) = adlerChecksum((uint8_t*)(m_MsgBuf + 6), m_MsgSize);
-			m_MsgSize = m_MsgSize + 4;
+			m_MsgSize += 4;
 			*(uint16_t*)(m_MsgBuf) = m_MsgSize;
 			m_MsgSize += 2;
 			m_outputBufferStart = 0;

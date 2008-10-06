@@ -44,7 +44,6 @@ void Protocol::onSendMessage(OutputMessage* msg)
 			#ifdef __DEBUG_NET_DETAIL__
 			std::cout << "Protocol::onSendMessage - encrypt" << std::endl;
 			#endif
-
 			XTEA_encrypt(*msg);
 		}
 	}
@@ -64,7 +63,6 @@ void Protocol::onRecvMessage(NetworkMessage& msg)
 		#ifdef __DEBUG_NET_DETAIL__
 		std::cout << "Protocol::onRecvMessage - decrypt" << std::endl;
 		#endif
-
 		XTEA_decrypt(msg);
 	}
 	parsePacket(msg);
