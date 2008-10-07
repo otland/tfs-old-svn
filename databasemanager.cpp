@@ -480,15 +480,40 @@ uint32_t DatabaseManager::updateDatabase()
 			break;
 		}
 
-		case 2:
+		case 1:
 		{
 			Database* db = Database::getInstance();
 
 			DBQuery query;
 			DBResult* result;
 
-			std::cout << "> Updating database to version: 3..." << std::endl;
+			std::cout << "> Updating database to version: 2..." << std::endl;
 
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
+				query << "ALTER TABLE `players` ADD `promotion` INTEGER NOT NULL DEFAULT 0;";
+			else
+				query << "ALTER TABLE `players` ADD `promotion` INT NOT NULL DEFAULT 0;";
+			db->executeQuery(query.str());
+
+			query.str("");
+			query << "SELECT `player_id`, `value` FROM `player_storage` WHERE `key` = 30018 AND `value` > 0";
+			if((result = db->storeQuery(query.str())))
+			{
+				do
+				{
+					query.str("");
+					query << "UPDATE `players` SET `promotion` = " << result->getDataLong("value") << " WHERE `id` = " << result->getDataInt("player_id") << ";";
+					db->executeQuery(query.str());
+				}
+				while(result->next());
+				db->freeResult(result);
+			}
+
+			query.str("");
+			query << "DELETE FROM `player_storage` WHERE `key` = 30018;";
+			db->executeQuery(query.str());
+
+			query.str("");
 			query << "ALTER TABLE `accounts` ADD `name` VARCHAR(32) NOT NULL DEFAULT '';";
 			db->executeQuery(query.str());
 
@@ -524,9 +549,8 @@ uint32_t DatabaseManager::updateDatabase()
 				query << "ALTER TABLE `players` ADD `deleted` TINYINT(1) NOT NULL DEFAULT 0;";
 			}
 			db->executeQuery(query.str());
-
-			registerDatabaseConfig("db_version", 3);
-			return 3;
+			registerDatabaseConfig("db_version", 2);
+			return 2;
 			break;
 		}
 

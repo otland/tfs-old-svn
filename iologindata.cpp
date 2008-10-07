@@ -1270,12 +1270,13 @@ DeleteCharacter_t IOLoginData::deleteCharacter(uint32_t accountId, const std::st
 	if(!(result = db->storeQuery(query.str())))
 		return DELETE_INTERNAL;
 
+	uint32_t id = result->getDataInt("id");
+	db->freeResult(result);
+
 	House* house = Houses::getInstance().getHouseByPlayerId(id);
 	if(house)
 		return DELETE_HOUSE;
 
-	uint32_t id = result->getDataInt("id");
-	db->freeResult(result);
 	if(IOGuild::getInstance()->getGuildLevel(id) == 3)
 		return DELETE_LEADER;
 
@@ -1290,6 +1291,7 @@ DeleteCharacter_t IOLoginData::deleteCharacter(uint32_t accountId, const std::st
 	query.str("");
 	query << "DELETE FROM `player_viplist` WHERE `vip_id` = " << id;
 	db->executeQuery(query.str());
+
 	query.str("");
 	query << "DELETE FROM `guild_invites` WHERE `player_id` = " << id;
 	db->executeQuery(query.str());

@@ -3961,11 +3961,10 @@ void Player::manageAccount(const std::string &text)
 				if(!IOLoginData::getInstance()->playerExists(newCharacterName))
 				{
 					uint32_t _guid;
-					IOLoginData::getInstance()->getGuidByName(_guid, namelockedPlayer);
-					if(IOLoginData::getInstance()->changeName(_guid, newCharacterName, namelockedPlayer))
+					if(IOLoginData::getInstance()->getGuidByName(_guid, namelockedPlayer) &&
+						IOLoginData::getInstance()->changeName(_guid, newCharacterName, namelockedPlayer) &&
+						IOBan::getInstance()->removeNamelock(_guid))
 					{
-						IOBan::getInstance()->removeNamelock(_guid);
-
 						talkState[1] = true;
 						talkState[2] = false;
 						msg << "Your character has been successfully renamed, you should now be able to login at it without any problems.";
