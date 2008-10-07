@@ -274,6 +274,33 @@ function getExperienceForLevel(level)
 	return (50 * level * level * level) / 3 - 100 * level * level + (850 * level) / 3 - 200
 end
 
+function convertIntToIP(int, mask)
+	local mask = mask or 4294967295
+
+	local b4 = bit.urshift(bit.uband(int,  4278190080), 24)
+	local b3 = bit.urshift(bit.uband(int,  16711680), 16)
+	local b2 = bit.urshift(bit.uband(int,  65280), 8)
+	local b1 = bit.urshift(bit.uband(int,  255), 0)
+	if mask ~= nil then
+		local m4 = bit.urshift(bit.uband(mask,  4278190080), 24)
+		local m3 = bit.urshift(bit.uband(mask,  16711680), 16)
+		local m2 = bit.urshift(bit.uband(mask,  65280), 8)
+		local m1 = bit.urshift(bit.uband(mask,  255), 0)
+		if (m1 == 255 or m1 == 0) and (m2 == 255 or m2 == 0) and (m3 == 255 or m3 == 0) and (m4 == 255 or m4 == 0) then
+			if m1 == 0 then b1 = "x" end
+			if m2 == 0 then b2 = "x" end
+			if m3 == 0 then b3 = "x" end
+			if m4 == 0 then b4 = "x" end
+		else
+			if m1 ~= 255 or m2 ~= 255 or m3 ~= 255 or m4 ~= 255 then
+				return b1 .. "." .. b2 .. "." .. b3 .. "." .. b4 .. " : " .. m1 .. "." .. m2 .. "." .. m3 .. "." .. m4
+			end
+		end
+	end
+	
+	return b1 .. "." .. b2 .. "." .. b3 .. "." .. b4
+end
+
 exhaustion =
 {
 

@@ -14,6 +14,7 @@
 	<talkaction filter="word" log="yes" access="3" words="/save" script="save.lua"/>
 	<talkaction filter="word" log="yes" access="3" words="/clean" script="clean.lua"/>
 	<talkaction filter="word" log="yes" access="3" words="/reports" script="reports.lua"/>
+	<talkaction log="yes" access="3" words="/mc" script="multicheck.lua"/>
 
 	<!-- Senior Tutors -->
 	<talkaction filter="word" log="yes" access="2" words="/b" script="broadcast.lua"/>

@@ -596,14 +596,14 @@ PlayerVector Game::getPlayersByAccount(uint32_t acc)
 	return players;
 }
 
-PlayerVector Game::getPlayersByIP(uint32_t ipadress, uint32_t mask)
+PlayerVector Game::getPlayersByIP(uint32_t ip, uint32_t mask)
 {
 	PlayerVector players;
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
 		if(!it->second->isRemoved())
 		{
-			if((it->second->getIP() & mask) == (ipadress & mask))
+			if((it->second->getIP() & mask) == (ip & mask))
 				players.push_back(it->second);
 		}
 	}

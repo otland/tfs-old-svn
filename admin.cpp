@@ -701,12 +701,7 @@ bool AdminProtocolConfig::allowIP(uint32_t ip)
 		}
 	}
 	else
-	{
-		if(ConnectionManager::getInstance()->isDisabled(ip))
-			return false;
-		else
-			return true;
-	}
+		return !ConnectionManager::getInstance()->isDisabled(ip))
 }
 
 bool AdminProtocolConfig::requireLogin()
