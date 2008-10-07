@@ -250,7 +250,7 @@ bool IOLoginData::createAccount(std::string name, std::string password)
 		password = transformToSHA1(password);
 
 	DBQuery query;
-	query << "INSERT INTO `accounts` (`name`, `password`) VALUES (" << db->escapeString(name) << ", " << db->escapeString(password);
+	query << "INSERT INTO `accounts` (`name`, `password`) VALUES (" << db->escapeString(name) << ", " << db->escapeString(password) << ");";
 	return db->executeQuery(query.str());
 }
 
