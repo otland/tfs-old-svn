@@ -1408,10 +1408,13 @@ bool Commands::unban(Creature* creature, const std::string& cmd, const std::stri
 	if(player)
 	{
 		uint32_t accountNumber = atoi(param.c_str());
-		bool removedIpBan = false;
+		bool removedNamelock = false, removedIpBan = false;
 		if(accountNumber == 0 && IOLoginData::getInstance()->playerExists(param))
 		{
 			accountNumber = IOLoginData::getInstance()->getAccountNumberByName(param);
+			if(IOBan::getInstance()->isNamelocked(param))
+				removedNamelock = IOBan::getInstance()->removeNamelock(param);
+
 			uint32_t lastip = IOLoginData::getInstance()->getLastIPByName(param);
 			if(lastip != 0 && IOBan::getInstance()->isIpBanished(lastip))
 				removedIpBan = IOBan::getInstance()->removeIpBanishment(lastip);
@@ -1433,10 +1436,17 @@ bool Commands::unban(Creature* creature, const std::string& cmd, const std::stri
 			sprintf(buffer, "%s has been undeleted.", param.c_str());
 			player->sendTextMessage(MSG_INFO_DESCR, buffer);
 		}
-		else if(!removedIpBan)
+		else if(!removedNamelock && !removedIpBan)
 		{
 			player->sendCancel("That player or account is not banished or deleted.");
 			return false;
+		}
+
+		if(removedNamelock)
+		{
+			char buffer[80];
+			sprintf(buffer, "Namelock from %s has been removed.", param.c_str());
+			player->sendTextMessage(MSG_INFO_DESCR, buffer);
 		}
 
 		if(removedIpBan)
