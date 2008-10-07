@@ -26,11 +26,21 @@
 #include "player.h"
 #include "database.h"
 
+enum DeleteCharacter_t
+{
+	DELETE_NOTEXIST,
+	DELETE_NOTMATCH,
+	DELETE_LEADER,
+	DELETE_HOUSE,
+	DELETE_ONLINE,
+	DELETE_SUCCESS
+};
+
 class PlayerGroup
 {
 	public:
-		PlayerGroup(){}
-		virtual ~PlayerGroup(){}
+		PlayerGroup() {}
+		virtual ~PlayerGroup() {}
 
 		std::string m_name;
 		uint64_t m_flags;
@@ -39,6 +49,7 @@ class PlayerGroup
 		uint16_t m_violationaccess;
 		uint32_t m_maxdepotitems;
 		uint32_t m_maxviplist;
+		uint16_t m_outfit;
 };
 
 typedef std::pair<int32_t, Item*> itemBlock;

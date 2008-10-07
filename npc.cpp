@@ -1758,7 +1758,7 @@ void Npc::onPlayerTrade(Player* player, ShopEvent_t type, int32_t callback, uint
 	if(shopItemList.empty())
 		player->closeShopWindow();
 
-	player->sendGoods(g_game.getMoney(player), player->parseGoods(shopItemList));
+	player->sendGoods(g_game.getMoney(player), player->getGoods(shopItemList));
 }
 
 void Npc::onPlayerEndTrade(Player* player, int32_t buyCallback,
@@ -2859,7 +2859,7 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 	player->setShopOwner(npc, buyCallback, sellCallback);
 
 	player->sendShop(npc->shopItemList);
-	player->sendGoods(g_game.getMoney(player), player->parseGoods(npc->shopItemList));
+	player->sendGoods(g_game.getMoney(player), player->getGoods(npc->shopItemList));
 
 	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;

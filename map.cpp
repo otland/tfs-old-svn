@@ -195,7 +195,7 @@ bool Map::placeCreature(const Position& centerPos, Creature* creature, bool forc
 	{
 		placeInPZ = tile->hasFlag(TILESTATE_PROTECTIONZONE);
 		ReturnValue ret;
-		if(creature->getPlayer() && creature->getName() == "Account Manager")
+		if(creature->getPlayer() && creature->isAccountManager())
 			ret = tile->__queryAdd(0, creature, 1, FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE);
 		else
 			ret = tile->__queryAdd(0, creature, 1, FLAG_IGNOREBLOCKITEM);

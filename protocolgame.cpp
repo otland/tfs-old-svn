@@ -296,30 +296,33 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		{
 			if(g_config.getBool(ConfigManager::NAMELOCK_MANAGER))
 			{
-				std::string realPassword = player->password;
 				player = NULL;
 				player = new Player("Account Manager", this);
 				player->useThing2();
 				player->setID();
 				IOLoginData::getInstance()->loadPlayer(player, "Account Manager");
-				player->password = realPassword;
+				player->accountManager = MANAGER_NAMELOCK;
 				player->realAccount = accnumber;
 				player->namelockedPlayer = name;
-				player->accountManager = true;
 			}
 			else
 				isNamelocked = true;
 		}
 
-		if(player->getName() == "Account Manager" && accnumber > 1 && !player->accountManager && g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
+		if(player->getName() == "Account Manager" && g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
 		{
-			player->accountManager = true;
-			player->realAccount = accnumber;
+			if(accnumber == 1)
+				player->accountManager = MANAGER_NEW;
+			else if(!player->isAccountManager())
+			{
+				player->accountManager = MANAGER_ACCOUNT;
+				player->realAccount = accnumber;
+			}
 		}
 
 		player->setOperatingSystem((OperatingSystem_t)operatingSystem);
 
-		if(gamemasterLogin == 1 && !player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) && player->getName() != "Account Manager")
+		if(gamemasterLogin == 1 && !player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) && !player->isAccountManager())
 		{
 			disconnectClient(0x14, "You are not a gamemaster!");
 			return false;
@@ -367,7 +370,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			return false;
 		}
 
-		if(g_config.getBool(ConfigManager::ONE_PLAYER_ON_ACCOUNT) && player->getName() != "Account Manager"
+		if(g_config.getBool(ConfigManager::ONE_PLAYER_ON_ACCOUNT) && !player->isAccountManager()
 			&& g_game.getPlayerByAccount(player->getAccount()) && !IOLoginData::getInstance()->hasCustomFlag(accnumber, PlayerCustomFlag_CanLoginMultipleCharacters))
 		{
 			disconnectClient(0x14, "You may only login with one character\nof your account at the same time.");
@@ -647,7 +650,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 	if((player->isRemoved() || player->getHealth() <= 0) && recvbyte != 0x14)
 		return;
 
-	if(player->getName() == "Account Manager")
+	if(player->isAccountManager())
 	{
 		switch(recvbyte)
 		{
@@ -2347,7 +2350,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, bool isLogin)
 				if(isLogin)
 				{
 					std::string tempstring = g_config.getString(ConfigManager::LOGIN_MSG);
-					if(player->getName() != "Account Manager")
+					if(!player->isAccountManager())
 					{
 						if(!player->getLastLoginSaved() > 0)
 						{
@@ -2366,14 +2369,22 @@ void ProtocolGame::sendAddCreature(const Creature* creature, bool isLogin)
 						}
 						AddTextMessage(msg, MSG_STATUS_DEFAULT, tempstring);
 					}
-					else if(player->getName() == "Account Manager")
+					else if(player->isAccountManager())
 					{
-						if(player->getNamelockedPlayer() != "")
-							AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, it appears that your character has been namelocked, what would you like as your new name?");
-						else if(!player->isAccountManager())
-							AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, type 'account' to create an account or type 'recover' to recover an account.");
-						else
-							AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, type 'account' to manage your account and if you want to start over then type 'cancel'.");
+						switch(player->accountManager)
+						{
+							case MANAGER_NAMELOCK:
+								AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, it appears that your character has been namelocked, what would you like as your new name?");
+								break;
+							case MANAGER_ACCOUNT:							
+								AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, type 'account' to manage your account and if you want to start over then type 'cancel'.");
+								break;
+							case MANAGER_NEW:
+								AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, type 'account' to create an account or type 'recover' to recover an account.");
+								break;
+							default:
+								break;
+						}
 					}
 				}
 
@@ -2849,7 +2860,7 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creatur
 	//Add level only for players
 	if(const Player* speaker = creature->getPlayer())
 	{
-		if(type != SPEAK_RVR_ANSWER && speaker->getName() != "Account Manager")
+		if(type != SPEAK_RVR_ANSWER && !speaker->isAccountManager())
 			msg->AddU16(speaker->getPlayerInfo(PLAYERINFO_LEVEL));
 		else
 			msg->AddU16(0x0000);

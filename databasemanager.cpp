@@ -489,7 +489,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 			std::cout << "> Updating database to version: 3..." << std::endl;
 
-			query << "ALTER TABLE `accounts` ADD `name` VARCHAR(32) DEFAULT '';";
+			query << "ALTER TABLE `accounts` ADD `name` VARCHAR(32) NOT NULL DEFAULT '';";
 			db->executeQuery(query.str());
 
 			query.str("");
@@ -505,6 +505,25 @@ uint32_t DatabaseManager::updateDatabase()
 				while(result->next());
 				db->freeResult(result);
 			}
+
+			query.str("");
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
+			{
+				query << "ALTER TABLE `groups` ADD `outfit` INTEGER NOT NULL DEFAULT 0;";
+				db->executeQuery(query.str());
+
+				query.str("");
+				query << "ALTER TABLE `players` ADD `deleted` BOOLEAN NOT NULL DEFAULT 0;";
+			}
+			else
+			{
+				query << "ALTER TABLE `groups` ADD `outfit` INT NOT NULL DEFAULT 0;";
+				db->executeQuery(query.str());
+
+				query.str("");
+				query << "ALTER TABLE `players` ADD `deleted` TINYINT(1) NOT NULL DEFAULT 0;";
+			}
+			db->executeQuery(query.str());
 
 			registerDatabaseConfig("db_version", 3);
 			return 3;

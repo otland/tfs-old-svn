@@ -3338,7 +3338,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 
 bool Game::playerSayCommand(Player* player, SpeakClasses type, const std::string& text)
 {
-	if(player->getName() == "Account Manager")
+	if(player->isAccountManager())
 		return internalCreatureSay(player, SPEAK_SAY, text);
 
 	//First, check if this was a command
@@ -3355,7 +3355,7 @@ bool Game::playerSayCommand(Player* player, SpeakClasses type, const std::string
 
 bool Game::playerSayTalkAction(Player* player, SpeakClasses type, const std::string& text)
 {
-	if(player->getName() == "Account Manager")
+	if(player->isAccountManager())
 		return internalCreatureSay(player, SPEAK_SAY, text);
 
 	TalkActionResult_t result;
@@ -3368,7 +3368,7 @@ bool Game::playerSayTalkAction(Player* player, SpeakClasses type, const std::str
 
 bool Game::playerSaySpell(Player* player, SpeakClasses type, const std::string& text)
 {
-	if(player->getName() == "Account Manager")
+	if(player->isAccountManager())
 		return internalCreatureSay(player, SPEAK_SAY, text);
 
 	TalkActionResult_t result;
@@ -3661,7 +3661,7 @@ bool Game::internalCreatureTurn(Creature* creature, Direction dir)
 bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text)
 {
 	Player* player = creature->getPlayer();
-	if(player && player->getName() == "Account Manager")
+	if(player && player->isAccountManager())
 		player->manageAccount(text);
 	else
 	{

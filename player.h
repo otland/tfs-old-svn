@@ -100,6 +100,14 @@ enum tradestate_t
 	TRADE_TRANSFER
 };
 
+enum AccountManager_t
+{
+	MANAGER_NONE,
+	MANAGER_NEW,
+	MANAGER_ACCOUNT,
+	MANAGER_NAMELOCK
+};
+
 typedef std::pair<uint32_t, Container*> containervector_pair;
 typedef std::vector<containervector_pair> ContainerVector;
 typedef std::map<uint32_t, Depot*> DepotMap;
@@ -134,7 +142,7 @@ class Player : public Creature, public Cylinder
 
 		void manageAccount(const std::string &text);
 		const std::string& getNamelockedPlayer() const {return namelockedPlayer;}
-		bool isAccountManager() const {return accountManager;}
+		bool isAccountManager() const {return (accountManager != MANAGER_NONE);}
 
 		void sendFYIBox(std::string message)
 			{if(client) client->sendFYIBox(message);}
@@ -328,7 +336,7 @@ class Player : public Creature, public Cylinder
 		tradestate_t getTradeState() {return tradeState;}
 		Item* getTradeItem() {return tradeItem;}
 
-		std::map<uint16_t, uint8_t> parseGoods(const std::list<ShopInfo>& shop);
+		std::map<uint16_t, uint8_t> getGoods(const std::list<ShopInfo>& shop);
 
 		//shop functions
 		void setShopOwner(Npc* owner, int32_t onBuy, int32_t onSell)
@@ -652,6 +660,7 @@ class Player : public Creature, public Cylinder
 
 		uint64_t balance;
 		uint32_t marriage;
+		uint16_t groupOutfit;
 
 		VIPListSet VIPList;
 		uint32_t maxVipLimit;
@@ -753,7 +762,8 @@ class Player : public Creature, public Cylinder
 		bool ignorePrivMsg;
 		bool teleportByMap;
 
-		bool talkState[13], accountManager;
+		bool talkState[13];
+		AccountManager_t accountManager;
 		int32_t newVocation;
 		PlayerSex_t _newSex;
 		uint32_t realAccount;

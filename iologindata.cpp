@@ -80,7 +80,7 @@ Account IOLoginData::loadAccount(uint32_t accId, bool preLoad /*= false*/)
 		if(preLoad)
 			return acc;
 
-		query << "SELECT `name` FROM `players` WHERE `account_id` = " << accId;
+		query << "SELECT `name` FROM `players` WHERE `account_id` = " << accId << " AND `deleted` = 0;";
 		if((result = db->storeQuery(query.str())))
 		{
 			do
@@ -250,7 +250,7 @@ bool IOLoginData::createAccount(std::string name, std::string password)
 		password = transformToSHA1(password);
 
 	DBQuery query;
-	query << "INSERT INTO `accounts` (`name`, `password`, `premdays`, `lastday`, `key`, `warnings`, `group_id`) VALUES (" << db->escapeString(name) << ", " << db->escapeString(password) << ", 0, 0, 0, 0, 1)";
+	query << "INSERT INTO `accounts` (`name`, `password`) VALUES (" << db->escapeString(name) << ", " << db->escapeString(password);
 	return db->executeQuery(query.str());
 }
 
@@ -358,8 +358,8 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	player->health = result->getDataInt("health");
 	player->healthMax = result->getDataInt("healthmax");
 
-	if(player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
-		player->defaultOutfit.lookType = 75;
+	if(player->groupOutfit > 0)
+		player->defaultOutfit.lookType = player->groupOutfit;
 	else
 		player->defaultOutfit.lookType = result->getDataInt("looktype");
 
@@ -956,7 +956,7 @@ const PlayerGroup* IOLoginData::getPlayerGroup(uint32_t groupId)
 		DBQuery query;
 		DBResult* result;
 
-		query << "SELECT `name`, `flags`, `customflags`, `access`, `violationaccess`, `maxdepotitems`, `maxviplist` FROM `groups` WHERE `id` = " << groupId;
+		query << "SELECT `name`, `flags`, `customflags`, `access`, `violationaccess`, `maxdepotitems`, `maxviplist`, `outfit` FROM `groups` WHERE `id` = " << groupId;
 		if(!(result = db->storeQuery(query.str())))
 			return NULL;
 
@@ -968,6 +968,7 @@ const PlayerGroup* IOLoginData::getPlayerGroup(uint32_t groupId)
 		group->m_violationaccess = result->getDataInt("violationaccess");
 		group->m_maxdepotitems = result->getDataInt("maxdepotitems");
 		group->m_maxviplist = result->getDataInt("maxviplist");
+		group->m_outfit = result->getDataInt("outfit");
 
 		playerGroupMap[groupId] = group;
 		db->freeResult(result);
@@ -1255,65 +1256,51 @@ bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName,
 	return db->executeQuery(query.str());
 }
 
-int16_t IOLoginData::deleteCharacter(uint32_t accountId, const std::string characterName)
+DeleteCharacter_t IOLoginData::deleteCharacter(uint32_t accountId, const std::string characterName)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
 	DBResult* result;
 
-	Player* _player = g_game.getPlayerByName(characterName);
-	if(!_player)
+	Player* player = g_game.getPlayerByName(characterName);
+	if(player)
+		return DELETE_ONLINE;
+
+	query << "SELECT `id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(characterName) << " AND `account_id` = " << accountId << " AND `deleted` = 0;";
+	if(!(result = db->storeQuery(query.str())))
+		return DELETE_INTERNAL;
+
+	House* house = Houses::getInstance().getHouseByPlayerId(id);
+	if(house)
+		return DELETE_HOUSE;
+
+	uint32_t id = result->getDataInt("id");
+	db->freeResult(result);
+	if(IOGuild::getInstance()->getGuildLevel(id) == 3)
+		return DELETE_LEADER;
+
+	query.str("");
+	query << "UPDATE `players` SET `deleted` = 1 WHERE `id` = " << id;
+	if(!db->executeQuery(query.str()))
+		return DELETE_INTERNAL;
+
+	query.str("");
+	query << "DELETE FROM `player_viplist` WHERE `player_id` = " << id;
+	db->executeQuery(query.str());
+	query.str("");
+	query << "DELETE FROM `player_viplist` WHERE `vip_id` = " << id;
+	db->executeQuery(query.str());
+	query.str("");
+	query << "DELETE FROM `guild_invites` WHERE `player_id` = " << id;
+	db->executeQuery(query.str());
+
+	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		query << "SELECT `id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(characterName) << " AND `account_id` = " << accountId;
-		if(!(result = db->storeQuery(query.str())))
-			return 0;
-
-		uint32_t id = result->getDataInt("id");
-		db->freeResult(result);
-		if(IOGuild::getInstance()->getGuildLevel(id) == 3)
-			return 3;
-
-		House* house = Houses::getInstance().getHouseByPlayerId(id);
-		if(house)
-			return 2;
-
-		query.str("");
-		query << "DELETE FROM `players` WHERE `id` = " << id;
-		if(!db->executeQuery(query.str()))
-			return 0;
-
-		query.str("");
-		query << "DELETE FROM `player_items` WHERE `player_id` = " << id;
-		db->executeQuery(query.str());
-		query.str("");
-		query << "DELETE FROM `player_depotitems` WHERE `player_id` = " << id;
-		db->executeQuery(query.str());
-		query.str("");
-		query << "DELETE FROM `player_storage` WHERE `player_id` = " << id;
-		db->executeQuery(query.str());
-		query.str("");
-		query << "DELETE FROM `player_skills` WHERE `player_id` = " << id;
-		db->executeQuery(query.str());
-		query.str("");
-		query << "DELETE FROM `player_viplist` WHERE `player_id` = " << id;
-		db->executeQuery(query.str());
-		query.str("");
-		query << "DELETE FROM `player_viplist` WHERE `vip_id` = " << id;
-		db->executeQuery(query.str());
-		query.str("");
-		query << "DELETE FROM `guild_invites` WHERE `player_id` = " << id;
-		db->executeQuery(query.str());
-
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		{
-			VIPListSet::iterator it_ = it->second->VIPList.find(id);
-			if(it_ != it->second->VIPList.end())
-				it->second->VIPList.erase(it_);
-		}
-		return 1;
+		VIPListSet::iterator it_ = it->second->VIPList.find(id);
+		if(it_ != it->second->VIPList.end())
+			it->second->VIPList.erase(it_);
 	}
-	else
-		return 4;
+	return DELETE_SUCCESS;
 }
 
 uint32_t IOLoginData::getLevel(uint32_t guid) const

@@ -272,6 +272,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual uint32_t getConditionImmunities() const {return 0;}
 		virtual uint32_t getConditionSuppressions() const {return 0;}
 		virtual bool isAttackable() const {return true;}
+		virtual bool isAccountManager() const {return false;}
 		bool isIdle() const {return checkCreatureVectorIndex == 0;}
 
 		virtual void changeHealth(int32_t healthChange);
