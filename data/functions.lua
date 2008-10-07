@@ -1,14 +1,12 @@
 function doPlayerGiveItem(cid, itemid, amount, subType)
-	local ret = RETURNVALUE_NOERROR
 	local item = 0
 	for i = 1, amount do
 		item = doCreateItemEx(itemid, subType)
-		ret = doPlayerAddItemEx(cid, item, 1)
-		if(ret ~= RETURNVALUE_NOERROR) then
-			break
+		if(doPlayerAddItemEx(cid, item, 1) ~= RETURNVALUE_NOERROR) then
+			return LUA_ERROR
 		end
 	end
-	return ret
+	return LUA_NO_ERROR
 end
 
 function doPlayerTakeItem(cid, itemid, amount)
@@ -18,7 +16,7 @@ function doPlayerTakeItem(cid, itemid, amount)
 			for i = 1, amount do
 				local subType = math.min(100, amount)
 				ret = doPlayerRemoveItem(cid, itemid, 1, subType)
-				if(ret ~= LUA_NOERROR) then
+				if(ret ~= LUA_NO_ERROR) then
 					break
 				end
 				i = subType
