@@ -17,7 +17,7 @@ function onSay(cid, words, param)
 		elseif(strings[curStr] ~= "") then
 			breakline = ", "
 		end
-		if(config.displayGamemastersWithOnlineCommand != "yes") then
+		if(config.displayGamemastersWithOnlineCommand ~= "yes") then
 			local playerId = getPlayerByName(player)
 			if(getPlayerCustomFlagValue(playerId, PlayerCustomFlag_GamemasterPrivileges) == FALSE or getPlayerCustomFlagValue(cid, PlayerCustomFlag_GamemasterPrivileges) == TRUE) then
 				strings[curStr] = strings[curStr] .. breakline .. player .. " [" .. getPlayerLevel(playerId) .. "]"
