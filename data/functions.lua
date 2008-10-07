@@ -1,55 +1,33 @@
-function doPlayerGiveItem(cid, itemid, count, charges)
-	local hasCharges = (isItemRune(itemid) == TRUE or isItemFluidContainer(itemid) == TRUE)
-	if(hasCharges and charges == nil) then
-		charges = 1
-	end
-	while count > 0 do
-		local tempcount = 1
-		if(hasCharges) then
-			tempcount = charges
-		end
-		if(isItemStackable(itemid) == TRUE) then
-			tempcount = math.min(100, count)
-   		end
-	   	local ret = doPlayerAddItem(cid, itemid, tempcount)
-	   	if(ret == LUA_ERROR) then
-			ret = doCreateItem(itemid, tempcount, getPlayerPosition(cid))
-		end
-		if(ret ~= LUA_ERROR) then
-			if(hasCharges) then
-				count = count - 1
-			else
-				count = count - tempcount
-			end
-		else
-			return LUA_ERROR
+function doPlayerGiveItem(cid, itemid, amount, subType)
+	local ret = RETURNVALUE_NOERROR
+	local item = 0
+	for i = 1, amount do
+		item = doCreateItemEx(itemid, subType)
+		ret = doPlayerAddItemEx(cid, item, 1)
+		if(ret ~= RETURNVALUE_NOERROR) then
+			break
 		end
 	end
-	return LUA_NO_ERROR
+	return ret
 end
 
-function doPlayerTakeItem(cid, itemid, count)
-	if(getPlayerItemCount(cid,itemid) >= count) then
-		while count > 0 do
-			local tempcount = 0
-			if(isItemStackable(itemid) == TRUE) then
-				tempcount = math.min(100, count)
-			else
-				tempcount = 1
+function doPlayerTakeItem(cid, itemid, amount)
+	local ret = LUA_ERROR
+	if(getPlayerItemCount(cid, itemid) >= amount) then
+		if(isItemStackable(itemid) == TRUE) then
+			for i = 1, amount do
+				local subType = math.min(100, amount)
+				ret = doPlayerRemoveItem(cid, itemid, 1, subType)
+				if(ret ~= LUA_NOERROR) then
+					break
+				end
+				i = subType
 			end
-			local ret = doPlayerRemoveItem(cid, itemid, tempcount)
-			if(ret ~= LUA_ERROR) then
-				count = count - tempcount
-			else
-				return LUA_ERROR
-			end
+		else
+			ret = doPlayerRemoveItem(cid, itemid, amount)
 		end
-		if(count == 0) then
-			return LUA_NO_ERROR
-		end
-	else
-		return LUA_ERROR
 	end
+	return ret
 end
 
 function doPlayerBuyItem(cid, itemid, count, cost, charges)
