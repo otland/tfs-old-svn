@@ -422,15 +422,15 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 	}
 	else
 	{
-		if(eventConnect != 0 || !g_config.getBool(ConfigManager::REPLACE_KICK_ON_LOGIN))
-		{
-			//Already trying to connect
-			disconnectClient(0x14, "Your already logged in.");
-			return false;
-		}
-
 		if(_player->isOnline())
 		{
+			if(eventConnect != 0 || !g_config.getBool(ConfigManager::REPLACE_KICK_ON_LOGIN))
+			{
+				//Already trying to connect
+				disconnectClient(0x14, "Your already logged in.");
+				return false;
+			}
+
 			g_chat.removeUserFromAllChannels(_player);
 			_player->disconnect();
 			_player->isConnecting = true;

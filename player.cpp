@@ -1225,7 +1225,7 @@ void Player::sendPing(uint32_t interval)
 			client->sendPing();
 	}
 
-	if(canLogout())
+	if(canLogout() && !isConnecting)
 	{
 		if(!client)
 			g_game.removeCreature(this, true);
