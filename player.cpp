@@ -169,7 +169,7 @@ Creature()
 	groupFlags = 0;
 	groupCustomFlags = 0;
 
- 	accountManager = false;
+ 	accountManager = MANAGER_NONE;
 	removeChar = "";
 	for(int8_t i = 0; i <= 13; i++)
 		talkState[i] = false;
