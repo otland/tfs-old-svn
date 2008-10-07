@@ -825,9 +825,9 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 
 	query_insert.setQuery("INSERT INTO `player_storage` (`player_id`, `key`, `value`) VALUES ");
 	player->genReservedStorageRange();
-	for(StorageMap::const_iterator cit = player->getStorageIteratorBegin(); cit != player->getStorageIteratorEnd();cit++)
+	for(StorageMap::const_iterator cit = player->getStorageIteratorBegin(); cit != player->getStorageIteratorEnd(); cit++)
 	{
-		sprintf(buffer, "(%d, %d, %u)", player->getGUID(), cit->first, (uint32_t)cit->second);
+		sprintf(buffer, "(%u, %u, %d)", player->getGUID(), cit->first, cit->second);
 		if(!query_insert.addRow(buffer))
 			return false;
 	}
