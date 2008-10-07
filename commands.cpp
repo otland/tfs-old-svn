@@ -84,6 +84,7 @@ s_defcommands Commands::defined_commands[] =
 	{"/unban", &Commands::unban},
 	{"/ghost", &Commands::ghost},
 	{"/squelch", &Commands::squelch},
+	{"/maport", &Commands::mapTeleport},
 	{"/attr", &Commands::changeThingProporties},
 	{"/baninfo", &Commands::showBanishmentInfo},
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__

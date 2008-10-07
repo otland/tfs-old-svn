@@ -32,6 +32,7 @@
 	<command cmd="/down" log="yes" access="3"/>
 	<command cmd="/ghost" log="yes" access="3"/>
 	<command cmd="/squelch" log="yes" access="3"/>
+	<command cmd="/maport" log="yes" access="3"/>
 
 	<!-- Senior Tutors -->
 	<command cmd="/gethouse" log="yes" access="2"/>
