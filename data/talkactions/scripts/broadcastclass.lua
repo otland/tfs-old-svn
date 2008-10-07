@@ -12,7 +12,7 @@ local colors = {
 
 function onSay(cid, words, param)
 	if param ~= nil then
-		local seperator = string.find(param, ", ", (string.find(string.lower(param), "[advance,event,orange,info,small,blue,red,warning,status]") + 1))
+		local seperator = string.find(param, "; ", (string.find(string.lower(param), "[advance,event,orange,info,small,blue,red,warning,status]") + 1))
 		if seperator ~= nil then
 			doBroadcastMessage(string.sub(param, (seperator + 2), string.len(param)), colors[string.sub(param, 1, seperator - 1)])
 		else
