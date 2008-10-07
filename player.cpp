@@ -824,7 +824,7 @@ void Player::addStorageValue(const uint32_t key, const int32_t value)
 			std::cout << "Warning: unknown reserved key: " << key << " player: " << getName() << std::endl;
 	}
 	else if(value == -1)
-		storageMap.erase(key)
+		storageMap.erase(key);
 	else
 		storageMap[key] = value;
 }
