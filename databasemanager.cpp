@@ -594,17 +594,17 @@ void DatabaseManager::registerDatabaseConfig(std::string config, int32_t value)
 
 void DatabaseManager::checkPasswordType()
 {
-	PasswordType_t value = PASSWORD_TYPE_PLAIN;
 	PasswordType_t newValue = (PasswordType_t)g_config.getNumber(ConfigManager::PASSWORDTYPE);
-	if(getDatabaseConfig("password_type", (int32_t&)value))
+	int32_t value = (int32_t)PASSWORD_TYPE_PLAIN;
+	if(getDatabaseConfig("password_type", value))
 	{
-		if(value != newValue)
+		if(newValue != (PasswordType_t)value)
 		{
 			switch(newValue)
 			{
 				case PASSWORD_TYPE_MD5:
 				{
-					if(value != PASSWORD_TYPE_PLAIN)
+					if((PasswordType_t)value != PASSWORD_TYPE_PLAIN)
 					{
 						std::cout << "> WARNING: You can not change the passwordType to MD5, change it back in config.lua to \"sha1\"." << std::endl;
 						return;
@@ -641,7 +641,7 @@ void DatabaseManager::checkPasswordType()
 
 				case PASSWORD_TYPE_SHA1:
 				{
-					if(value != PASSWORD_TYPE_PLAIN)
+					if((PasswordType_t)value != PASSWORD_TYPE_PLAIN)
 					{
 						std::cout << "> WARNING: You can not change the passwordType to SHA1, change it back in config.lua to \"md5\"." << std::endl;
 						return;
