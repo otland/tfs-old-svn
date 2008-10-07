@@ -649,6 +649,9 @@ void Monster::doAttacking(uint32_t interval)
 
 	for(SpellList::iterator it = mType->spellAttackList.begin(); it != mType->spellAttackList.end(); ++it)
 	{
+		if(it->isMelee && isFleeing())
+			continue;
+
 		bool inRange = false;
 		if(canUseSpell(myPos, targetPos, *it, interval, inRange))
 		{
