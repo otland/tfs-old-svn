@@ -181,7 +181,7 @@ function isRookie(cid)
 end
 
 function getConfigInfo(info)
-	if (type(info) ~= 'string') then return nil end
+	if(type(info) ~= 'string') then return nil end
 
 	dofile(getConfigFile())
 	return _G[info]
