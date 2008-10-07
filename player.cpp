@@ -188,6 +188,7 @@ Creature()
 	mayNotMove = false;
 	ghostMode = false;
 	ignorePrivMsg = false;
+	teleportByMap = false;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	playerCount++;
 #endif
