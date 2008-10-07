@@ -27,7 +27,7 @@ Container(_type)
 {
 	depotId = 0;
 	maxSize = 30;
-	maxDepotLimit = 1500;
+	maxDepotLimit = 1000;
 }
 
 Depot::~Depot()

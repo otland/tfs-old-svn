@@ -933,8 +933,6 @@ Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
 	if(it != depots.end())
 		return it->second;
 
-	//depot does not yet exist
-
 	//create a new depot?
 	if(autoCreateDepot)
 	{

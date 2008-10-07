@@ -27,7 +27,7 @@ class Depot : public Container
 {
 	public:
 		Depot(uint16_t _type);
-		~Depot();
+		virtual ~Depot();
 
 		virtual Depot* getDepot() {return this;}
 		virtual const Depot* getDepot() const {return this;}
