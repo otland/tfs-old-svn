@@ -271,7 +271,7 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 		(this->*cfunc)(creature, strCommand, strParam);
 		if(player && it->second->logged)
 		{
-			player->sendTextMessage(MSG_STATUS_CONSOLE_RED, cmd.c_str());
+			player->sendTextMessage(MSG_STATUS_CONSOLE_RED, cmdThis.c_str());
 	
 			char buf[21], buffer[100];
 			formatDate(time(NULL), buf);
@@ -280,7 +280,7 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 			FILE* file = fopen(buffer, "a");
 			if(file)
 			{
-				fprintf(file, "[%s] %s\n", buf, cmd.c_str());
+				fprintf(file, "[%s] %s\n", buf, cmdThis.c_str());
 				fclose(file);
 			}
 		}
@@ -1541,6 +1541,21 @@ bool Commands::squelch(Creature* creature, const std::string& cmd, const std::st
 		player->switchPrivMsgIgnore();
 		char buffer[90];
 		sprintf(buffer, "You have %s private messages ignoring.", (player->isIgnoringPrivMsg() ? "enabled" : "disabled"));
+		player->sendTextMessage(MSG_INFO_DESCR, buffer);
+		return true;
+	}
+
+	return false;
+}
+
+bool Commands::mapTeleport(Creature* creature, const std::string& cmd, const std::string& param)
+{
+	Player* player = creature->getPlayer();
+	if(player)
+	{
+		player->switchTeleportByMap();
+		char buffer[90];
+		sprintf(buffer, "You have %s map click teleporting.", (player->isTeleportingByMap() ? "enabled" : "disabled"));
 		player->sendTextMessage(MSG_INFO_DESCR, buffer);
 		return true;
 	}

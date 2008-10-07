@@ -2137,6 +2137,49 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
+	
+	if(player->isTeleportingByMap())
+	{
+		Position pos = player->getPosition();
+		for(std::list<Direction>::iterator it = listDir.begin(); it != listDir.end() ; ++it)
+		{
+			switch(*it)
+			{
+				case EAST:
+					pos.x += 1;
+					break;
+				case NORTHEAST:
+					pos.x += 1;
+					pos.y -= 1;
+					break;
+				case NORTH:
+					pos.y -= 1;
+					break;
+				case NORTHWEST:
+					pos.x -= 1;
+					pos.y -= 1;
+					break;
+				case WEST:
+					pos.x -= 1;
+					break;
+				case SOUTHWEST:
+					pos.x -= 1;
+					pos.y += 1;
+					break;
+				case SOUTH:
+					pos.y += 1;
+					break;
+				case SOUTHEAST:
+					pos.x += 1;
+					pos.y += 1;
+					break;
+				default:
+					continue;
+			}
+		}
+		internalTeleport(player, pos, false);
+		return true;
+	}
 
 	player->resetIdleTime();
 	player->setNextWalkTask(NULL);

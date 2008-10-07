@@ -79,6 +79,7 @@ class Commands
 		bool squelch(Creature* creature, const std::string& cmd, const std::string& param);
 		bool changeThingProporties(Creature* creature, const std::string& cmd, const std::string& param);
 		bool showBanishmentInfo(Creature* creature, const std::string& cmd, const std::string& param);
+		bool mapTeleport(Creature* creature, const std::string& cmd, const std::string& param);
 
 		//table of commands
 		static s_defcommands defined_commands[];

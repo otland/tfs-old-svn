@@ -237,6 +237,9 @@ class Player : public Creature, public Cylinder
 		void switchPrivMsgIgnore() {ignorePrivMsg = !ignorePrivMsg;}
 		bool isIgnoringPrivMsg() const {return ignorePrivMsg;}
 
+		void switchTeleportByMap() {teleportByMap = !teleportByMap;}
+		bool isTeleportingByMap() const {return teleportByMap;}
+
 		uint32_t getAccount() const {return accountNumber;}
 		uint16_t getAccessLevel() const {return accessLevel;}
 		uint16_t getViolationAccess() const {return violationAccess;}
@@ -748,6 +751,7 @@ class Player : public Creature, public Cylinder
 		OperatingSystem_t operatingSystem;
 		bool ghostMode;
 		bool ignorePrivMsg;
+		bool teleportByMap;
 
 		bool talkState[13], accountManager;
 		int32_t newVocation;
