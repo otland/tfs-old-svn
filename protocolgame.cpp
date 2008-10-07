@@ -2899,7 +2899,7 @@ void ProtocolGame::AddCreatureHealth(NetworkMessage* msg,const Creature* creatur
 
 void ProtocolGame::AddCreatureInvisible(NetworkMessage* msg, const Creature* creature)
 {
-	if(player->canSeeInvisibility())
+	if(player->canSeeInvisibility() && !creature->isInGhostMode())
 		AddCreatureOutfit(msg, creature, creature->getCurrentOutfit());
 	else
 	{
