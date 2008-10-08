@@ -2,7 +2,7 @@
 <talkactions>
 	<!-- Gods -->
 	<talkaction filter="word" log="yes" access="5" words="/shutdown" script="shutdown.lua"/>
-	<talkaction filter="word" log="yes" access="5" words="/pvp" script="pvp.lua"/>
+	<talkaction filter="word" log="yes" access="5" words="/mode" script="mode.lua"/>
 
 	<!-- Community Managers -->
 	<talkaction filter="word" access="4" words="!z" script="magiceffect.lua"/>
@@ -29,7 +29,7 @@
 	<talkaction words="!changender" script="changender.lua"/>
 	<talkaction words="/uptime" script="uptime.lua"/>
 	<talkaction filter="word" words="/deathlist" script="deathlist.lua"/>
-	<talkaction words="/mode" script="mode.lua"/>
+	<talkaction words="/pvp" script="pvp.lua"/>
 	<talkaction words="!q" script="money.lua"/>
 	<talkaction words="/serverinfo" script="serverinfo.lua"/>
 </talkactions>
