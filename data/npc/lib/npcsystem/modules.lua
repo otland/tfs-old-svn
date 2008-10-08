@@ -852,17 +852,21 @@ if(Modules == nil) then
 
 		local a = 0
 		if(inBackpacks) then
-			item = doCreateItemEx(backpack, 1)
+			local container = doCreateItemEx(backpack, 1)
 			for i = 1, amount do
-				doAddContainerItem(item, itemid, subType)
+				item = doAddContainerItem(container, itemid, subType)
+				if(itemid == ITEM_PARCEL) then
+					doAddContainerItem(item, ITEM_LABEL)
+				end
+
 				if(isInArray({20, amount}, i) == TRUE) then
-					if(doPlayerAddItemEx(cid, item, ignoreCap) ~= RETURNVALUE_NOERROR) then
+					if(doPlayerAddItemEx(cid, container, ignoreCap) ~= RETURNVALUE_NOERROR) then
 						break
 					end
-
 					a = a + i
+
 					if(amount > i) then
-						item = doCreateItemEx(backpack, 1)
+						container = doCreateItemEx(backpack, 1)
 					end
 				end
 			end
@@ -871,10 +875,13 @@ if(Modules == nil) then
 
 		for i = 1, amount do
 			item = doCreateItemEx(itemid, subType)
+			if(itemid == ITEM_PARCEL) then
+				doAddContainerItem(item, ITEM_LABEL)
+			end
+
 			if(doPlayerAddItemEx(cid, item, ignoreCap) ~= RETURNVALUE_NOERROR) then
 				break
 			end
-
 			a = a + 1
 		end
 		return a, 0

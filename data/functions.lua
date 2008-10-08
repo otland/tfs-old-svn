@@ -12,17 +12,17 @@ end
 function doPlayerTakeItem(cid, itemid, amount)
 	local ret = LUA_ERROR
 	if(getPlayerItemCount(cid, itemid) >= amount) then
+		ret = LUA_NO_ERROR
 		if(isItemStackable(itemid) == TRUE) then
 			for i = 1, amount do
 				local subType = math.min(100, amount)
-				ret = doPlayerRemoveItem(cid, itemid, 1, subType)
-				if(ret ~= LUA_NO_ERROR) then
-					break
+				if(doPlayerRemoveItem(cid, itemid, 1, subType) ~= TRUE) then
+					return LUA_ERROR
 				end
 				i = subType
 			end
-		else
-			ret = doPlayerRemoveItem(cid, itemid, amount)
+		elseif(doPlayerRemoveItem(cid, itemid, amount) ~= TRUE) then
+			return LUA_ERROR
 		end
 	end
 	return ret
