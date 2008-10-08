@@ -6559,16 +6559,16 @@ int32_t LuaScriptInterface::luaIsMovable(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetPlayerByName(lua_State* L)
+int32_t LuaScriptInterface::luaGetCreatureByName(lua_State* L)
 {
-	//getPlayerByName(name)
+	//getCreatureByName(name)
 	const char* name = popString(L);
 
 	ScriptEnviroment* env = getScriptEnv();
 
-	if(Player* player = g_game.getPlayerByName(name))
+	if(Creature* creature = g_game.getCreatureByName(name))
 	{
-		uint32_t cid = env->addThing(player);
+		uint32_t cid = env->addThing(creature);
 		lua_pushnumber(L, cid);
 	}
 	else

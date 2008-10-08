@@ -70,6 +70,11 @@ function getPlayerMasterPos(cid)
 	return getTemplePositionById(getPlayerTown(cid))
 end
 
+function getPlayerByName(name)
+	local cid = getCreatureByName(name)
+	return isPlayer(creature) and cid or nil
+end
+
 function hasCondition(cid, condition)
 	return getCreatureCondition(cid, condition)
 end

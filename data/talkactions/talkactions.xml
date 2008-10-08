@@ -23,7 +23,7 @@
 	<talkaction log="yes" access="1" words="!pos" script="position.lua"/>
 
 	<!-- Players -->
-	<talkaction words="!buypremium" script="buyprem.lua"/>
+	<talkaction words="!buypremium" script="buypremium.lua"/>
 	<talkaction words="!leavehouse" script="leavehouse.lua"/>
 	<talkaction words="/online" script="online.lua"/>
 	<talkaction words="!changender" script="changender.lua"/>
