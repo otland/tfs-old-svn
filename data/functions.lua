@@ -1,9 +1,16 @@
 function doPlayerGiveItem(cid, itemid, amount, subType)
 	local item = 0
-	for i = 1, amount do
-		item = doCreateItemEx(itemid, subType)
-		if(doPlayerAddItemEx(cid, item, 1) ~= RETURNVALUE_NOERROR) then
+	if(isItemStackable(itemid) == TRUE) then
+		item = doCreateItemEx(itemid, amount)
+		if(doPlayerAddItemEx(cid, item) ~= RETURNVALUE_NOERROR) then
 			return LUA_ERROR
+		end
+	else
+		for i = 1, amount do
+			item = doCreateItemEx(itemid, subType)
+			if(doPlayerAddItemEx(cid, item) ~= RETURNVALUE_NOERROR) then
+				return LUA_ERROR
+			end
 		end
 	end
 	return LUA_NO_ERROR
