@@ -2909,7 +2909,7 @@ void ProtocolGame::AddCreatureHealth(NetworkMessage* msg,const Creature* creatur
 
 void ProtocolGame::AddCreatureInvisible(NetworkMessage* msg, const Creature* creature)
 {
-	if(creature->canSeeInvisibility())
+	if(player->canSeeInvisibility())
 		AddCreatureOutfit(msg, creature, creature->getCurrentOutfit());
 	else
 		msg->AddU32(0x00);
