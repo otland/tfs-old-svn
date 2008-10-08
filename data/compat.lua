@@ -72,7 +72,7 @@ end
 
 function getPlayerByName(name)
 	local cid = getCreatureByName(name)
-	return isPlayer(creature) == TRUE and cid or nil
+	return isPlayer(cid) == TRUE and cid or nil
 end
 
 function hasCondition(cid, condition)
