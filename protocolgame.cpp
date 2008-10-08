@@ -2782,10 +2782,10 @@ void ProtocolGame::AddCreature(NetworkMessage* msg, const Creature* creature, bo
 	msg->AddByte((int32_t)std::ceil(((float)creature->getHealth()) * 100 / std::max(creature->getMaxHealth(), (int32_t)1)));
 	msg->AddByte((uint8_t)creature->getDirection());
 
-	if(!creature->isInvisible() && !creature->isInGhostMode())
-		AddCreatureOutfit(msg, creature, creature->getCurrentOutfit());
-	else
+	if(creature->isInvisible() || creature->isInGhostMode())
 		AddCreatureInvisible(msg, creature);
+	else
+		AddCreatureOutfit(msg, creature, creature->getCurrentOutfit());		
 
 	LightInfo lightInfo;
 	creature->getCreatureLight(lightInfo);
@@ -2909,10 +2909,10 @@ void ProtocolGame::AddCreatureHealth(NetworkMessage* msg,const Creature* creatur
 
 void ProtocolGame::AddCreatureInvisible(NetworkMessage* msg, const Creature* creature)
 {
-	if(!creature->canSeeInvisibility())
-		msg->AddU32(0x00);
-	else
+	if(canSeeInvisibility())
 		AddCreatureOutfit(msg, creature, creature->getCurrentOutfit());
+	else
+		msg->AddU32(0x00);
 }
 
 void ProtocolGame::AddCreatureOutfit(NetworkMessage* msg, const Creature* creature, const Outfit_t& outfit)

@@ -924,9 +924,7 @@ bool Player::canSee(const Position& pos) const
 
 bool Player::canSeeCreature(const Creature* creature) const
 {
-	if(creature->isInvisible() && !creature->getPlayer() && !canSeeInvisibility())
-		return false;
-	return true;
+	return !(creature->isInvisible() && !creature->getPlayer() && !canSeeInvisibility());
 }
 
 Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
