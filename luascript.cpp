@@ -1459,8 +1459,8 @@ void LuaScriptInterface::registerFunctions()
 	//isMovable(uid)
 	lua_register(m_luaState, "isMovable", LuaScriptInterface::luaIsMovable);
 
-	//getPlayerByName(name)
-	lua_register(m_luaState, "getPlayerByName", LuaScriptInterface::luaGetPlayerByName);
+	//getCreatureByName(name)
+	lua_register(m_luaState, "getCreatureByName", LuaScriptInterface::luaGetCreatureByName);
 
 	//getPlayerGUIDByName(name)
 	lua_register(m_luaState, "getPlayerGUIDByName", LuaScriptInterface::luaGetPlayerGUIDByName);
