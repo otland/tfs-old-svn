@@ -489,7 +489,7 @@ bool AccessList::parseList(const std::string& _list)
 		if(line.find("@") != std::string::npos)
 		{
 			std::string::size_type pos = line.find("@");
-			addGuild(line.substr(pos + 1), line.substr(0, pos - 1));
+			addGuild(line.substr(pos + 1), line.substr(0, pos));
 		}
 		else if(line.find("!") != std::string::npos || line.find("*") != std::string::npos || line.find("?") != std::string::npos)
 			addExpression(line);
