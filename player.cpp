@@ -255,7 +255,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 	if(lookDistance == -1)
 	{
 		s << "yourself.";
-		if(hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
+		if(hasCustomFlag(PlayerCustomFlag_DescriptionGroupInsteadVocation))
 			s << " You are " << groupName;
 		else if(vocation_id != 0)
 			s << " You are " << vocation->getVocDescription();
@@ -265,7 +265,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 	else
 	{
 		s << name;
-		if(!hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
+		if(hasCustomFlag(PlayerCustomFlag_DescriptionHideLevel))
 			s << " (Level " << level << ")";
 		s << ".";
 
@@ -274,7 +274,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 		else
 			s << " He";
 
-		if(hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
+		if(hasCustomFlag(PlayerCustomFlag_DescriptionGroupInsteadVocation))
 			s << " is " << groupName;
 		else if(vocation_id != 0)
 			s << " is " << vocation->getVocDescription();
@@ -294,9 +294,9 @@ std::string Player::getDescription(int32_t lookDistance) const
 		}
 
 		if(sex == PLAYERSEX_FEMALE)
-			s << " wife";
+			s << "wife";
 		else
-			s << " husband";
+			s << "husband";
 		s << " of " << str;
 	}
 	s << ".";

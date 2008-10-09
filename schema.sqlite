@@ -43,11 +43,11 @@ CREATE TABLE "groups" (
 );
 
 INSERT INTO "groups" VALUES (1, 'Player', 0, 0, 0, 0, 0, 0, 0);
-INSERT INTO "groups" VALUES (2, 'Tutor', 16809984, 3, 1, 0, 0, 0, 0);
-INSERT INTO "groups" VALUES (3, 'Senior Tutor', 68736352256, 15, 2, 1, 0, 0, 0);
-INSERT INTO "groups" VALUES (4, 'Gamemaster', 510024081247, 257215, 3, 2, 6000, 300, 75);
-INSERT INTO "groups" VALUES (5, 'Community Manager', 542239465466, 257535, 4, 3, 6000, 400, 266);
-INSERT INTO "groups" VALUES (6, 'God', 546534563834, 262143, 5, 3, 10000, 500, 302);
+INSERT INTO "groups" VALUES (2, 'Tutor', 16809984, 524291, 1, 0, 0, 0, 0);
+INSERT INTO "groups" VALUES (3, 'Senior Tutor', 68736352256, 524303, 2, 1, 0, 0, 0);
+INSERT INTO "groups" VALUES (4, 'Gamemaster', 510024081247, 4189375, 3, 2, 6000, 300, 75);
+INSERT INTO "groups" VALUES (5, 'Community Manager', 542239465466, 4189695, 4, 3, 6000, 400, 266);
+INSERT INTO "groups" VALUES (6, 'God', 546534563834, 4194303, 5, 3, 10000, 500, 302);
 
 CREATE TABLE "accounts" (
     "id" INTEGER PRIMARY KEY NOT NULL,

@@ -477,6 +477,10 @@ enum PlayerCustomFlags
 	PlayerCustomFlag_IsImmune,					//2^15 = 32768
 	PlayerCustomFlag_NotGainSkull,				//2^16 = 65536
 	PlayerCustomFlag_NotGainUnjustified,		//2^17 = 131072
+	PlayerCustomFlag_CanSeeStaffChannel,				//2^18 = 262144
+	PlayerCustomFlag_CanSeeCounsellorChannel,		//2^19 = 524288
+	PlayerCustomFlag_DescriptionGroupInsteadVocation,				//2^20 = 1048576
+	PlayerCustomFlag_DescriptionHideLevel,		//2^21 = 2097152
 
 	PlayerCustomFlag_LastFlag
 };

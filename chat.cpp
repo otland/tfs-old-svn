@@ -136,12 +136,12 @@ bool ChatChannel::addUser(Player* player)
 		}
 
 		case 0x01:
-			if(!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
+			if(!player->hasCustomFlag(PlayerCustomFlag_CanSeeStaffChannel))
 				return false;
 			break;
 
 		case 0x02:
-			if(!player->hasCustomFlag(PlayerCustomFlag_CanReportBugs) && !player->hasFlag(PlayerFlag_TalkOrangeHelpChannel))
+			if(!player->hasCustomFlag(PlayerCustomFlag_CanSeeCounsellorChannel))
 				return false;
 			break;
 
@@ -205,7 +205,7 @@ Chat::Chat()
 	if(newChannel)
 		m_normalChannels[0x01] = newChannel;
 
-	newChannel = new ChatChannel(0x02, "Counselor");
+	newChannel = new ChatChannel(0x02, "Counsellor");
 	if(newChannel)
 		m_normalChannels[0x02] = newChannel;
 
@@ -965,12 +965,12 @@ ChannelList Chat::getChannelList(Player* player)
 		switch(itn->first)
 		{
 			case 0x01:
-				if(!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
+				if(!player->hasCustomFlag(PlayerCustomFlag_CanSeeStaffChannel))
 					skip = true;
 				break;
 
 			case 0x02:
-				if(!player->hasCustomFlag(PlayerCustomFlag_CanReportBugs) && !player->hasFlag(PlayerFlag_TalkOrangeHelpChannel))
+				if(!player->hasCustomFlag(PlayerCustomFlag_CanSeeCounsellorChannel))
 					skip = true;
 				break;
 
@@ -1034,12 +1034,12 @@ ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 		switch(channelId)
 		{
 			case 0x01:
-				if(!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
+				if(!player->hasCustomFlag(PlayerCustomFlag_CanSeeStaffChannel))
 					return NULL;
 				break;
 
 			case 0x02:
-				if(!player->hasCustomFlag(PlayerCustomFlag_CanReportBugs) && !player->hasFlag(PlayerFlag_TalkOrangeHelpChannel))
+				if(!player->hasCustomFlag(PlayerCustomFlag_CanSeeCounsellorChannel))
 					return NULL;
 				break;
 

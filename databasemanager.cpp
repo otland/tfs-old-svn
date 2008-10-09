@@ -516,23 +516,23 @@ uint32_t DatabaseManager::updateDatabase()
 					switch(result->getDataInt("id"))
 					{
 						case 2:
-							query << "UPDATE `groups` SET `customflags` = 3 WHERE `id` = 2;";
+							query << "UPDATE `groups` SET `customflags` = 524291 WHERE `id` = 2;";
 							break;
 
 						case 3:
-							query << "UPDATE `groups` SET `customflags` = 15 WHERE `id` = 3;";
+							query << "UPDATE `groups` SET `customflags` = 524303 WHERE `id` = 3;";
 							break;
 
 						case 4:
-							query << "UPDATE `groups` SET `name` = 'Gamemaster', `flags` = 510024081247, `customflags` = 257215, `outfit` = 75 WHERE `id` = 4;";
+							query << "UPDATE `groups` SET `name` = 'Gamemaster', `flags` = 510024081247, `customflags` = 4189375, `outfit` = 75 WHERE `id` = 4;";
 							break;
 
 						case 5:
-							query << "UPDATE `groups` SET `customflags` = 257535, `outfit` = 266 WHERE `id` = 5;";
+							query << "UPDATE `groups` SET `customflags` = 4189695, `outfit` = 266 WHERE `id` = 5;";
 							break;
 
 						case 6:
-							query << "UPDATE `groups` SET `customflags` = 262143, `outfit` = 302 WHERE `id` = 6;";
+							query << "UPDATE `groups` SET `customflags` = 4194303, `outfit` = 302 WHERE `id` = 6;";
 							break;
 
 						default:
