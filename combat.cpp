@@ -77,8 +77,8 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 			{
 				case FORMULA_LEVELMAGIC:
 				{
-					min = (int32_t)((player->getLevel() * 2 + player->getMagicLevel() * 3) * 1. * maxa + maxb);
-					max = (int32_t)((player->getLevel() * 2 + player->getMagicLevel() * 3) * 1. * mina + minb);
+					min = (int32_t)((player->getLevel() * 2 + player->getMagicLevel() * 3) * 1. * mina + minb);
+					max = (int32_t)((player->getLevel() * 2 + player->getMagicLevel() * 3) * 1. * maxa + maxb);
 					return true;
 					break;
 				}
@@ -89,7 +89,6 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 					const Weapon* weapon = g_weapons->getWeapon(tool);
 
 					min = (int32_t)minb;
-
 					if(weapon)
 					{
 						max = (int32_t)(weapon->getWeaponDamage(player, target, tool, true) * maxa + maxb);
