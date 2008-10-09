@@ -83,12 +83,12 @@ CREATE TABLE `groups`
 	PRIMARY KEY (`id`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `groups` VALUES (1, 'Player', 0, 0, 0, 0, 0, 0);
-INSERT INTO `groups` VALUES (2, 'Tutor', 16809984, 1, 1, 0, 0, 0);
-INSERT INTO `groups` VALUES (3, 'Senior Tutor', 68736352256, 3, 2, 1, 0, 0);
-INSERT INTO `groups` VALUES (4, 'Game Master', 492842123151, 63, 3, 2, 4000, 200);
-INSERT INTO `groups` VALUES (5, 'Community Manager', 542239465466, 1279, 4, 3, 6000, 300);
-INSERT INTO `groups` VALUES (6, 'God', 546534563834, 2047, 5, 3, 8000, 400);
+INSERT INTO `groups` VALUES (1, 'Player', 0, 0, 0, 0, 0, 0, 0);
+INSERT INTO `groups` VALUES (2, 'Tutor', 16809984, 3, 1, 0, 0, 0, 0);
+INSERT INTO `groups` VALUES (3, 'Senior Tutor', 68736352256, 15, 2, 1, 0, 0, 0);
+INSERT INTO `groups` VALUES (4, 'Gamemaster', 510024081247, 257215, 3, 2, 4000, 200, 75);
+INSERT INTO `groups` VALUES (5, 'Community Manager', 542239465466, 257535, 4, 3, 6000, 300, 266);
+INSERT INTO `groups` VALUES (6, 'God', 546534563834, 262143, 5, 3, 8000, 400, 302);
 
 CREATE TABLE `accounts`
 (

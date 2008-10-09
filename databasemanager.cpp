@@ -228,22 +228,20 @@ uint32_t DatabaseManager::updateDatabase()
 				 * //db->executeQuery(query.str());
 				 */
 
-				bool imported[6] = {false, false, false, false, false, false};
-				bool groupWarn = false;
+				bool imported[7] = {false, false, false, false, false, false, false};
 				query.str("");
 				query << "SELECT `id` FROM `groups`;";
 				if((result = db->storeQuery(query.str())))
 				{
 					do
 					{
-						int32_t type = result->getDataInt("id");
+						uint32_t type = result->getDataInt("id");
 						if(type >= 1 && type <= 6)
-							imported[type - 1] = true;
+							imported[type] = true;
 						else if(!groupWarn)
-							groupWarn = true;
+							imported[0] = true;
 
 						query.str("");
-						bool execQuery = true;
 						switch(type)
 						{
 							case 1:
@@ -271,60 +269,59 @@ uint32_t DatabaseManager::updateDatabase()
 								break;
 
 							default:
-								execQuery = false;
+								continue;
 								break;
 						}
-
-						if(execQuery)
-							db->executeQuery(query.str());
+						db->executeQuery(query.str());
 					}
 					while(result->next());
+					db->freeResult(result);
 				}
 
-				if(!imported[0])
+				if(!imported[1])
 				{
 					query.str("");
 					query << "INSERT INTO `groups` VALUES (1, 'Player', 0, 0, 0, 0, 0, 0);";
 					db->executeQuery(query.str());
 				}
 
-				if(!imported[1])
+				if(!imported[2])
 				{
 					query.str("");
 					query << "INSERT INTO `groups` VALUES (2, 'Tutor', 16809984, 1, 1, 0, 0, 0);";
 					db->executeQuery(query.str());
 				}
 
-				if(!imported[2])
+				if(!imported[3])
 				{
 					query.str("");
 					query << "INSERT INTO `groups` VALUES (3, 'Senior Tutor', 68736352256, 3, 2, 1, 0, 0);";
 					db->executeQuery(query.str());
 				}
 
-				if(!imported[3])
+				if(!imported[4])
 				{
 					query.str("");
 					query << "INSERT INTO `groups` VALUES (4, 'Game Master', 492842123151, 63, 3, 2, 4000, 200);";
 					db->executeQuery(query.str());
 				}
 
-				if(!imported[4])
+				if(!imported[5])
 				{
 					query.str("");
 					query << "INSERT INTO `groups` VALUES (5, 'Community Manager', 542239465466, 1279, 4, 3, 6000, 300);";
 					db->executeQuery(query.str());
 				}
 
-				if(!imported[5])
+				if(!imported[6])
 				{
 					query.str("");
 					query << "INSERT INTO `groups` VALUES (6, 'God', 546534563834, 2047, 5, 3, 8000, 400);";
 					db->executeQuery(query.str());
 				}
 
-				if(groupWarn)
-					std::cout << "WARNING: It appears that you have more than 6 groups, there is nothing wrong with that you have more than 6 groups, but we didn't update them with the new settings from 0.3 which you might want to do!" << std::endl;
+				if(imported[0])
+					std::cout << "WARNING: It appears that you have more than 6 groups, there is nothing wrong with that you have more than 6 groups, but they weren't updated with the new settings from 0.3 which you might want to do!" << std::endl;
 
 				//Update players table
 				query.str("");
@@ -372,7 +369,6 @@ uint32_t DatabaseManager::updateDatabase()
 
 				//Update bans table
 				query.str("");
-
 				query << "CREATE TABLE IF NOT EXISTS `bans2` ( `id` INT UNSIGNED NOT NULL auto_increment, `type` TINYINT(1) NOT NULL COMMENT 'this field defines if its ip, account, player, or any else ban', `value` INT UNSIGNED NOT NULL COMMENT 'ip, player guid, account number', `param` INT UNSIGNED NOT NULL DEFAULT 4294967295 COMMENT 'mask', `active` TINYINT(1) NOT NULL DEFAULT TRUE, `expires` INT UNSIGNED NOT NULL, `added` INT UNSIGNED NOT NULL, `admin_id` INT UNSIGNED NOT NULL DEFAULT 0, `comment` TEXT NOT NULL DEFAULT '', `reason` INT UNSIGNED NOT NULL DEFAULT 0, `action` INT UNSIGNED NOT NULL DEFAULT 0, PRIMARY KEY  (`id`), KEY `type` (`type`, `value`) ) ENGINE = InnoDB;";
 				if(db->executeQuery(query.str()))
 				{
@@ -383,7 +379,6 @@ uint32_t DatabaseManager::updateDatabase()
 						do
 						{
 							query.str("");
-							bool execQuery = false;
 							switch(result->getDataInt("type"))
 							{
 								case 1:
@@ -404,12 +399,10 @@ uint32_t DatabaseManager::updateDatabase()
 									break;
 
 								default:
-									execQuery = false;
+									continue;
 									break;
 							}
-
-							if(execQuery)
-								db->executeQuery(query.str());
+							db->executeQuery(query.str());
 						}
 						while(result->next());
 						db->freeResult(result);
@@ -512,6 +505,46 @@ uint32_t DatabaseManager::updateDatabase()
 				query << "ALTER TABLE `players` ADD `deleted` TINYINT(1) NOT NULL DEFAULT 0;";
 			}
 			db->executeQuery(query.str());
+
+			query.str("");
+			query << "SELECT `id` FROM `groups`;";
+			if((result = db->storeQuery(query.str())))
+			{
+				do
+				{
+					query.str("");
+					switch(result->getDataInt("id"))
+					{
+						case 2:
+							query << "UPDATE `groups` SET `customflags` = 3 WHERE `id` = " << type << ";";
+							break;
+
+						case 3:
+							query << "UPDATE `groups` SET `customflags` = 15 WHERE `id` = " << type << ";";
+							break;
+
+						case 4:
+							query << "UPDATE `groups` SET `name` = 'Gamemaster', `flags` = 510024081247, `customflags` = 257215, `outfit` = 75 WHERE `id` = " << type << ";";
+							break;
+
+						case 5:
+							query << "UPDATE `groups` SET `customflags` = 257535, `outfit` = 266 WHERE `id` = " << type << ";";
+							break;
+
+						case 6:
+							query << "UPDATE `groups` SET `customflags` = 262143, `outfit` = 302 WHERE `id` = " << type << ";";
+							break;
+
+						default:
+							continue;
+							break;
+					}
+					db->executeQuery(query.str());
+				}
+				while(result->next());
+				db->freeResult(result);
+			}
+
 			registerDatabaseConfig("db_version", 2);
 			return 2;
 			break;
