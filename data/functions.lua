@@ -18,11 +18,11 @@ end
 
 function doPlayerTakeItem(cid, itemid, amount)
 	if(getPlayerItemCount(cid, itemid) >= amount) then
-		if(doPlayerRemoveItem(cid, itemid, amount) ~= TRUE) then
-			return LUA_ERROR
+		if(doPlayerRemoveItem(cid, itemid, amount) == TRUE) then
+			return LUA_NO_ERROR
 		end
 	end
-	return LUA_NO_ERROR
+	return LUA_ERROR
 end
 
 function doPlayerBuyItem(cid, itemid, count, cost, charges)
