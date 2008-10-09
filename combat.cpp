@@ -273,9 +273,7 @@ ReturnValue Combat::canTargetCreature(const Player* player, const Creature* targ
 
 		if(player->getSecureMode() == SECUREMODE_ON && !Combat::isInPvpZone(player, target) &&
 			player->getSkullClient(target->getPlayer()) == SKULL_NONE)
-		{
 			return RET_TURNSECUREMODETOATTACKUNMARKEDPLAYERS;
-		}
 	}
 	return Combat::canDoCombat(player, target);
 }
@@ -326,6 +324,9 @@ bool Combat::isInPvpZone(const Creature* attacker, const Creature* target)
 
 bool Combat::isProtected(const Player* attacker, const Player* target)
 {
+	if(attacker->hasFlag(PlayerFlag_CannotAttackPlayer) || !target->isAttackable())
+		return true;
+
 	if(g_config.getBool(ConfigManager::PVP_TILE_IGNORE_PROTECTION) && isInPvpZone(attacker, target))
 		return false;
 
@@ -348,35 +349,32 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 	{
 		if(const Player* targetPlayer = target->getPlayer())
 		{
-			if(targetPlayer->hasFlag(PlayerFlag_CannotBeAttacked))
+			if(!targetPlayer->isAttackable())
 				return RET_YOUMAYNOTATTACKTHISPLAYER;
 
 			if(const Player* attackerPlayer = attacker->getPlayer())
 			{
-				if(attackerPlayer->hasFlag(PlayerFlag_CannotAttackPlayer) || isProtected(attackerPlayer, targetPlayer))
+				if(isProtected(attackerPlayer, targetPlayer))
 					return RET_YOUMAYNOTATTACKTHISPLAYER;
 
-				//nopvp-zone
-				if(targetPlayer->getTile()->hasFlag(TILESTATE_NOPVPZONE))
-					return RET_ACTIONNOTPERMITTEDINANOPVPZONE;
-				else if(attackerPlayer->getTile()->hasFlag(TILESTATE_NOPVPZONE) &&
+				if(targetPlayer->getTile()->hasFlag(TILESTATE_NOPVPZONE) ||
+					(attackerPlayer->getTile()->hasFlag(TILESTATE_NOPVPZONE) &&
 					!targetPlayer->getTile()->hasFlag(TILESTATE_NOPVPZONE) &&
-					!targetPlayer->getTile()->hasFlag(TILESTATE_PROTECTIONZONE))
+					!targetPlayer->getTile()->hasFlag(TILESTATE_PROTECTIONZONE)))
 					return RET_ACTIONNOTPERMITTEDINANOPVPZONE;
 			}
-
-			if(attacker->isSummon())
+			else if(attacker->isSummon())
 			{
 				if(const Player* masterAttackerPlayer = attacker->getMaster()->getPlayer())
 				{
-					if(masterAttackerPlayer->hasFlag(PlayerFlag_CannotAttackPlayer))
-						return RET_YOUMAYNOTATTACKTHISPLAYER;
-
-					if(targetPlayer->getTile()->hasFlag(TILESTATE_NOPVPZONE))
-						return RET_ACTIONNOTPERMITTEDINANOPVPZONE;
-
 					if(isProtected(masterAttackerPlayer, targetPlayer))
 						return RET_YOUMAYNOTATTACKTHISPLAYER;
+
+					if(targetPlayer->getTile()->hasFlag(TILESTATE_NOPVPZONE) ||
+						(masterAttackerPlayer->getTile()->hasFlag(TILESTATE_NOPVPZONE) &&
+						!targetPlayer->getTile()->hasFlag(TILESTATE_NOPVPZONE) &&
+						!targetPlayer->getTile()->hasFlag(TILESTATE_PROTECTIONZONE)))
+						return RET_ACTIONNOTPERMITTEDINANOPVPZONE;
 				}
 			}
 		}
@@ -396,17 +394,11 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 		{
 			if(attacker->getPlayer() || (attacker->isSummon() && attacker->getMaster()->getPlayer()))
 			{
-				if(target->getPlayer())
-				{
-					if(!isInPvpZone(attacker, target))
-						return RET_YOUMAYNOTATTACKTHISPLAYER;
-				}
+				if(target->getPlayer() && !isInPvpZone(attacker, target))
+					return RET_YOUMAYNOTATTACKTHISPLAYER;
 
-				if(target->isSummon() && target->getMaster()->getPlayer())
-				{
-					if(!isInPvpZone(attacker, target))
-						return RET_YOUMAYNOTATTACKTHISCREATURE;
-				}
+				if(target->isSummon() && target->getMaster()->getPlayer() && !isInPvpZone(attacker, target))
+					return RET_YOUMAYNOTATTACKTHISCREATURE;
 			}
 		}
 	}
@@ -1424,19 +1416,16 @@ void MagicField::onStepInField(Creature* creature)
 				bool harmfulField = true;
 				if(g_game.getWorldType() == WORLD_TYPE_NO_PVP || getTile()->hasFlag(TILESTATE_NOPVPZONE))
 				{
-					Creature* creature = g_game.getCreatureByID(owner);
-					if(creature)
+					if(Creature* creature = g_game.getCreatureByID(owner))
 					{
 						if(creature->getPlayer() || (creature->isSummon() && creature->getMaster()->getPlayer()))
 							harmfulField = false;
 					}
 				}
 
-				Player* targetPlayer = creature->getPlayer();
-				if(targetPlayer)
+				if(Player* targetPlayer = creature->getPlayer())
 				{
-					Player* attackerPlayer = g_game.getPlayerByID(owner);
-					if(attackerPlayer)
+					if(Player* attackerPlayer = g_game.getPlayerByID(owner))
 					{
 						if(Combat::isProtected(attackerPlayer, targetPlayer))
 							harmfulField = false;
