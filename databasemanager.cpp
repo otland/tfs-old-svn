@@ -238,34 +238,34 @@ uint32_t DatabaseManager::updateDatabase()
 						uint32_t type = result->getDataInt("id");
 						if(type >= 1 && type <= 6)
 							imported[type] = true;
-						else if(!groupWarn)
+						else if(!imported[0])
 							imported[0] = true;
 
 						query.str("");
 						switch(type)
 						{
 							case 1:
-								query << "UPDATE `groups` SET `name` = 'Player', `flags` = 0, `access` = 0, `maxdepotitems` = 0, `maxviplist` = 0 WHERE `id` = " << type << ";";
+								query << "UPDATE `groups` SET `name` = 'Player', `flags` = 0, `access` = 0, `maxdepotitems` = 0, `maxviplist` = 0 WHERE `id` = 1;";
 								break;
 
 							case 2:
-								query << "UPDATE `groups` SET `name` = 'Tutor', `flags` = 16809984, `customflags` = 1, `access` = 1, `maxdepotitems` = 0, `maxviplist` = 0 WHERE `id` = " << type << ";";
+								query << "UPDATE `groups` SET `name` = 'Tutor', `flags` = 16809984, `customflags` = 1, `access` = 1, `maxdepotitems` = 0, `maxviplist` = 0 WHERE `id` = 2;";
 								break;
 
 							case 3:
-								query << "UPDATE `groups` SET `name` = 'Senior Tutor', `flags` = 68736352256, `customflags` = 3, `access` = 2, `violationaccess` = 1, `maxdepotitems` = 0, `maxviplist` = 0 WHERE `id` = " << type << ";";
+								query << "UPDATE `groups` SET `name` = 'Senior Tutor', `flags` = 68736352256, `customflags` = 3, `access` = 2, `violationaccess` = 1, `maxdepotitems` = 0, `maxviplist` = 0 WHERE `id` = 3;";
 								break;
 
 							case 4:
-								query << "UPDATE `groups` SET `name` = 'Game Master', `flags` = 492842123151, `customflags` = 63, `access` = 3, `violationaccess` = 2, `maxdepotitems` = 4000, `maxviplist` = 200 WHERE `id` = " << type << ";";
+								query << "UPDATE `groups` SET `name` = 'Game Master', `flags` = 492842123151, `customflags` = 63, `access` = 3, `violationaccess` = 2, `maxdepotitems` = 4000, `maxviplist` = 200 WHERE `id` = 4;";
 								break;
 
 							case 5:
-								query << "UPDATE `groups` SET `name` = 'Community Manager', `flags` = 542239465466, `customflags` = 1279, `access` = 4, `violationaccess` = 3, `maxdepotitems` = 6000, `maxviplist` = 300 WHERE `id` = " << type << ";";
+								query << "UPDATE `groups` SET `name` = 'Community Manager', `flags` = 542239465466, `customflags` = 1279, `access` = 4, `violationaccess` = 3, `maxdepotitems` = 6000, `maxviplist` = 300 WHERE `id` = 5;";
 								break;
 
 							case 6:
-								query << "UPDATE `groups` SET `name` = 'God', `flags` = 546534563834, `customflags` = 2047, `access` = 5, `violationaccess` = 3, `maxdepotitems` = 8000, `maxviplist` = 400 WHERE `id` = " << type << ";";
+								query << "UPDATE `groups` SET `name` = 'God', `flags` = 546534563834, `customflags` = 2047, `access` = 5, `violationaccess` = 3, `maxdepotitems` = 8000, `maxviplist` = 400 WHERE `id` = 6;";
 								break;
 
 							default:
@@ -516,23 +516,23 @@ uint32_t DatabaseManager::updateDatabase()
 					switch(result->getDataInt("id"))
 					{
 						case 2:
-							query << "UPDATE `groups` SET `customflags` = 3 WHERE `id` = " << type << ";";
+							query << "UPDATE `groups` SET `customflags` = 3 WHERE `id` = 2;";
 							break;
 
 						case 3:
-							query << "UPDATE `groups` SET `customflags` = 15 WHERE `id` = " << type << ";";
+							query << "UPDATE `groups` SET `customflags` = 15 WHERE `id` = 3;";
 							break;
 
 						case 4:
-							query << "UPDATE `groups` SET `name` = 'Gamemaster', `flags` = 510024081247, `customflags` = 257215, `outfit` = 75 WHERE `id` = " << type << ";";
+							query << "UPDATE `groups` SET `name` = 'Gamemaster', `flags` = 510024081247, `customflags` = 257215, `outfit` = 75 WHERE `id` = 4;";
 							break;
 
 						case 5:
-							query << "UPDATE `groups` SET `customflags` = 257535, `outfit` = 266 WHERE `id` = " << type << ";";
+							query << "UPDATE `groups` SET `customflags` = 257535, `outfit` = 266 WHERE `id` = 5;";
 							break;
 
 						case 6:
-							query << "UPDATE `groups` SET `customflags` = 262143, `outfit` = 302 WHERE `id` = " << type << ";";
+							query << "UPDATE `groups` SET `customflags` = 262143, `outfit` = 302 WHERE `id` = 6;";
 							break;
 
 						default:
