@@ -627,7 +627,7 @@ void Player::updateInventoryWeigth()
 		{
 			Item* item = getInventoryItem((slots_t)i);
 			if(item)
-				inventoryWeight += item->getWeight();
+				inventoryWeight += item->getWeight();th
 		}
 	}
 }
@@ -1221,12 +1221,6 @@ void Player::sendPing(uint32_t interval)
 		npings++;
 		if(client)
 			client->sendPing();
-		
-#ifdef __MASK_ANTIBOT__
-		else
-			setAttackedCreature(NULL);
-#endif
-			
 	}
 
 	if(canLogout() && !isConnecting)
