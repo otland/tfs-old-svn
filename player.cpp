@@ -265,7 +265,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 	else
 	{
 		s << name;
-		if(hasCustomFlag(PlayerCustomFlag_DescriptionHideLevel))
+		if(!hasCustomFlag(PlayerCustomFlag_DescriptionHideLevel))
 			s << " (Level " << level << ")";
 		s << ".";
 
@@ -1221,6 +1221,12 @@ void Player::sendPing(uint32_t interval)
 		npings++;
 		if(client)
 			client->sendPing();
+		
+#ifdef __MASK_ANTIBOT__
+		else
+			setAttackedCreature(NULL);
+#endif
+			
 	}
 
 	if(canLogout() && !isConnecting)
