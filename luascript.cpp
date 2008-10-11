@@ -8475,8 +8475,8 @@ int32_t LuaScriptInterface::luaSetItemHitChance(lua_State* L)
 int32_t LuaScriptInterface::luaGetConfigFile(lua_State* L)
 {
 	//getConfigFile()
-	#if !defined(WIN32) && !defined(__NO_HOMEDIR_CONF__)
-	lua_pushstring(L, getenv("HOME")."/.otserv/config.lua");
+	#if !defined(WIN32) && defined(__HOMEDIR_CONF__)
+	lua_pushstring(L, "~/.otserv/config.lua");
 	#else
 	lua_pushstring(L, "config.lua");
 	#endif

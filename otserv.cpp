@@ -257,8 +257,8 @@ void mainLoader()
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading config");
 	#endif
-	#if !defined(WIN32) && !defined(__NO_HOMEDIR_CONF__)
-	if(!g_config.loadFile(getenv("HOME")."/.otserv/config.lua"))
+	#if !defined(WIN32) && defined(__HOMEDIR_CONF__)
+	if(!g_config.loadFile("~/.otserv/config.lua"))
 	#else
 	if(!g_config.loadFile("config.lua"))
 	#endif

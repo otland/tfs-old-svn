@@ -22,6 +22,13 @@ AC_ARG_ENABLE(otallocator, [  --enable-otallocator   enable otserv custom alloca
 	otservAllocator=yes
 )
 
+# check if we want homedir conf enabled
+homedirConf=no
+AC_ARG_ENABLE(otallocator, [  --enable-homedir-conf   enable homedir config],
+	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__HOMEDIR_CONF__"]
+	homedirConf=yes
+)
+
 AC_SUBST(OPTIONAL_FLAGS)
 
 AM_CONDITIONAL(USE_MYSQL, false)
@@ -178,10 +185,12 @@ AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
 
 echo
-echo $PACKAGE $VERSION
+echo The Forgotten Server 0.3
+#echo $PACKAGE $VERSION
 echo
 echo Debug build................. : $debugBuild
 echo OtServ allocator............ : $otservAllocator
+echo Homedir config.............. : $homedirConf
 echo
 echo Build with MySQL............ : $useMySQL
 echo Build with SQLite........... : $useSQLite
@@ -192,7 +201,7 @@ if test "x$useMySQL" = "xno" ; then
 	if test "x$useSQLite" = "xno" ; then
 		if test "x$usePostgreSQL" = "xno" ; then
 			if test "x$useODBC" = "xno" ; then
-				echo Warning: no database driver is enabled! To enable a database driver, configure with --enable-\<dbdriver\> \(example: --enable-mysql\).
+				echo Warning: no database driver was enabled! To enable a database driver, configure with --enable-\<dbdriver\> \(example: --enable-mysql\).
 				echo
 			fi
 		fi
