@@ -24,7 +24,7 @@ AC_ARG_ENABLE(otallocator, [  --enable-otallocator   enable otserv custom alloca
 
 # check if we want homedir conf enabled
 homedirConf=no
-AC_ARG_ENABLE(otallocator, [  --enable-homedir-conf   enable homedir config],
+AC_ARG_ENABLE(homedir-conf, [  --enable-homedir-conf   enable homedir config],
 	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__HOMEDIR_CONF__"]
 	homedirConf=yes
 )
