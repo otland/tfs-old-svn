@@ -63,6 +63,12 @@ class PgSQLResult;
 #endif
 #endif
 
+#ifndef DATABASE_CLASS
+#error "You have to compile with atleast one database driver"
+#define DBResult void
+#define DBInsert void*
+#define Database void
+#else
 typedef DATABASE_CLASS Database;
 typedef DBRES_CLASS DBResult;
 
@@ -353,5 +359,7 @@ class DBTransaction
 		TransactionStates_t m_state;
 		Database* m_database;
 };
+
+#endif
 
 #endif

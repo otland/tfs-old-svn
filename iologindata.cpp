@@ -583,7 +583,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 		{
 			uint32_t vip_id = result->getDataInt("vip_id");
 			std::string dummy_str;
-			if(storeNameByGuid(*db, vip_id))
+			if(storeNameByGuid(vip_id))
 				player->addVIP(vip_id, dummy_str, false, true);
 		}
 		while(result->next());
@@ -1109,21 +1109,23 @@ bool IOLoginData::getNameByGuid(uint32_t guid, std::string& name)
 	return true;
 }
 
-bool IOLoginData::storeNameByGuid(Database& db, uint32_t guid)
+bool IOLoginData::storeNameByGuid(uint32_t guid)
 {
 	NameCacheMap::iterator it = nameCacheMap.find(guid);
 	if(it != nameCacheMap.end())
 		return true;
 
+	Database* db = Database::getInstance();
+
 	DBQuery query;
 	DBResult* result;
 
 	query << "SELECT `name` FROM `players` WHERE `id` = " << guid;
-	if(!(result = db.storeQuery(query.str())))
+	if(!(result = db->storeQuery(query.str())))
 		return false;
 
 	nameCacheMap[guid] = result->getDataString("name");
-	db.freeResult(result);
+	db->freeResult(result);
 	return true;
 }
 

@@ -133,7 +133,7 @@ class IOLoginData
 		void loadItems(ItemMap& itemMap, DBResult *result);
 		bool saveItems(const Player* player, const ItemBlockList& itemList, DBInsert& query_insert);
 
-		bool storeNameByGuid(Database &mysql, uint32_t guid);
+		bool storeNameByGuid(uint32_t guid);
 
 		PlayerGroupMap playerGroupMap;
 		NameCacheMap nameCacheMap;
