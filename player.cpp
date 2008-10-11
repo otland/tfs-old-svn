@@ -627,7 +627,7 @@ void Player::updateInventoryWeigth()
 		{
 			Item* item = getInventoryItem((slots_t)i);
 			if(item)
-				inventoryWeight += item->getWeight();th
+				inventoryWeight += item->getWeight();
 		}
 	}
 }
