@@ -1081,7 +1081,7 @@ void ProtocolGame::checkCreatureAsKnown(uint32_t id, bool &known, uint32_t &remo
 
 bool ProtocolGame::canSee(const Creature* c) const
 {
-	if(c->isRemoved())
+	if(!player || !c || c->isRemoved())
 		return false;
 
 	if(c->isInGhostMode() && !player->isAccessPlayer())
@@ -1097,6 +1097,9 @@ bool ProtocolGame::canSee(const Position& pos) const
 
 bool ProtocolGame::canSee(int32_t x, int32_t y, int32_t z) const
 {
+	if(!player)
+		return false;
+
 #ifdef __DEBUG__
 	if(z < 0 || z >= MAP_MAX_LAYERS)
 		std::cout << "WARNING! ProtocolGame::canSee() Z-value is out of range!" << std::endl;

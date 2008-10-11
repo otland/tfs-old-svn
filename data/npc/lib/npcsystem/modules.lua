@@ -867,7 +867,8 @@ if(Modules == nil) then
 	-- Callback onBuy() function. If you wish, you can change certain Npc to use your onBuy().
 	function ShopModule:callbackOnBuy(cid, itemid, subType, amount)
 		if(self.npcHandler.shopItems[itemid] == nil) then
-			error("[ShopModule.onBuy]", "items[itemid] == nil")
+			print("Error: [ShopModule.onBuy] items[itemid] == nil")
+			return false
 		end
 
 		local parseInfo = {
