@@ -247,7 +247,7 @@ void mainLoader()
 
 	#if !defined(WIN32) && !defined(__ROOT_PERMISSION__)
 	if(getuid() == 0 || geteuid() == 0)
-		std::cout << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user, it is recommended to execute is as a normal user." << std::endl;
+		std::cout << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user! It is recommended to execute as a normal user." << std::endl;
 	#endif
 
 	std::cout << std::endl;
@@ -488,36 +488,29 @@ void mainLoader()
 	}
 
 	std::cout << ">> All modules has been loaded, server starting up..." << std::endl;
+	serverIPs.push_back(make_pair(inet_addr("127.0.0.1"), 0xFFFFFFFF));
 
-	std::pair<uint32_t, uint32_t> IpNetMask;
-	IpNetMask.first  = inet_addr("127.0.0.1");
-	IpNetMask.second = 0xFFFFFFFF;
-	serverIPs.push_back(IpNetMask);
-
-	char szHostName[128];
-	if(gethostname(szHostName, 128) == 0)
+	char hostName[128];
+	if(gethostname(hostName, 128) == 0)
 	{
-		hostent *he = gethostbyname(szHostName);
-		if(he)
+		hostent *host = gethostbyname(hostName);
+		if(host)
 		{
-			unsigned char** addr = (unsigned char**)he->h_addr_list;
-			while(addr[0] != NULL)
+			uint8_t** address = (uint8_t**)host->h_addr_list;
+			while(address[0] != NULL)
 			{
-				IpNetMask.first  = *(uint32_t*)(*addr);
-				IpNetMask.second = 0x0000FFFF;
-				serverIPs.push_back(IpNetMask);
-				addr++;
+				serverIPs.push_back(make_pair(*(uint32_t*)(*address), 0x0000FFFF));
+				address++;
 			}
 		}
 	}
 
 	std::string ip = g_config.getString(ConfigManager::IP);
-	uint32_t resolvedIp = inet_addr(ip.c_str());
-	if(resolvedIp == INADDR_NONE)
+	if(inet_addr(ip.c_str()) == INADDR_NONE)
 	{
-		struct hostent* he = gethostbyname(ip.c_str());
-		if(he != 0)
-			resolvedIp = *(uint32_t*)he->h_addr;
+		hostent *host = gethostbyname(ip.c_str());
+		if(host != 0)
+			serverIPs.push_back(make_pair(*(uint32_t*)host->h_addr, 0));
 		else
 		{
 			std::cout << "ERROR: Cannot resolve " << ip << "!" << std::endl;
@@ -525,13 +518,9 @@ void mainLoader()
 		}
 	}
 
-	IpNetMask.first  = resolvedIp;
-	IpNetMask.second = 0;
-	serverIPs.push_back(IpNetMask);
-
 	#if !defined(WIN32) && !defined(__ROOT_PERMISSION__)
 	if(getuid() == 0 || geteuid() == 0)
-		std::cout << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user, it is recommended to execute is as a normal user." << std::endl;
+		std::cout << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user! It is recommended to execute as a normal user." << std::endl;
 	#endif
 
 	IOLoginData::getInstance()->resetOnlineStatus();
