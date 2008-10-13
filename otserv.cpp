@@ -488,8 +488,8 @@ void mainLoader()
 	}
 
 	std::cout << ">> All modules has been loaded, server starting up..." << std::endl;
-	serverIPs.push_back(make_pair(inet_addr("127.0.0.1"), 0xFFFFFFFF));
 
+	serverIPs.push_back(make_pair(inet_addr("127.0.0.1"), 0xFFFFFFFF));
 	char hostName[128];
 	if(gethostname(hostName, 128) == 0)
 	{
@@ -506,17 +506,20 @@ void mainLoader()
 	}
 
 	std::string ip = g_config.getString(ConfigManager::IP);
-	if(inet_addr(ip.c_str()) == INADDR_NONE)
+	uint32_t resolvedIp = inet_addr(ip.c_str());
+	if(resolvedIp == INADDR_NONE)
 	{
 		hostent *host = gethostbyname(ip.c_str());
 		if(host != 0)
-			serverIPs.push_back(make_pair(*(uint32_t*)host->h_addr, 0));
+			resolvedIp = *(uint32_t*)host->h_addr;
 		else
 		{
 			std::cout << "ERROR: Cannot resolve " << ip << "!" << std::endl;
 			startupErrorMessage("");
 		}
 	}
+
+	serverIPs.push_back(resolvedIp, 0));
 
 	#if !defined(WIN32) && !defined(__ROOT_PERMISSION__)
 	if(getuid() == 0 || geteuid() == 0)

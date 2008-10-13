@@ -891,6 +891,7 @@ if(Modules == nil) then
 	function ShopModule:callbackOnBuy(cid, itemid, subType, amount, ignoreCap, inBackpacks)
 		if(self.npcHandler.shopItems[itemid] == nil) then
 			error("[ShopModule.onBuy]", "items[itemid] == nil")
+			return false
 		end
 
 		local totalCost = amount * self.npcHandler.shopItems[itemid].buyPrice
@@ -951,6 +952,7 @@ if(Modules == nil) then
 	function ShopModule:callbackOnSell(cid, itemid, subType, amount, ignoreCap, inBackpacks)
 		if(self.npcHandler.shopItems[itemid] == nil) then
 			error("[ShopModule.onSell]", "items[itemid] == nil")
+			return false
 		end
 
 		local parseInfo = {
