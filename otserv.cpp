@@ -519,7 +519,7 @@ void mainLoader()
 		}
 	}
 
-	serverIPs.push_back(resolvedIp, 0));
+	serverIPs.push_back(make_pair(resolvedIp, 0));
 
 	#if !defined(WIN32) && !defined(__ROOT_PERMISSION__)
 	if(getuid() == 0 || geteuid() == 0)
