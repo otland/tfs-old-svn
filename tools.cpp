@@ -1205,11 +1205,11 @@ std::string getFilePath(FileType_t filetype, std::string  filename)
 			break;
 		case FILE_TYPE_CONFIG:
 			#if defined(__FILESYSTEM_HIERARCHY_STANDARD__) && defined(__HOMEDIR_CONF__)
-			if(fileExists("~/.otserv/config.lua"))
-				path = "~/.otserv/config.lua";
+			if(fileExists("~/.tfs/" + filename))
+				path = "~/.tfs/" + filename;
 			else
 				path = "/etc/tfs/" + filename;
-			#elif defined(__FILESYSTEM_HIERARCHY_STANDARD__) && !defined(__HOMEDIR_CONF__)
+			#elif defined(__FILESYSTEM_HIERARCHY_STANDARD__)
 				path = "/etc/tfs/" + filename;
 			#else
 				path = filename;
