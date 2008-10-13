@@ -549,7 +549,7 @@ AdminProtocolConfig::~AdminProtocolConfig()
 
 bool AdminProtocolConfig::loadXMLConfig()
 {
-	xmlDocPtr doc = xmlParseFile("data/XML/admin.xml");
+	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "admin.xml").c_str());
 	if(!doc)
 		return false;
 
@@ -624,11 +624,11 @@ bool AdminProtocolConfig::loadXMLConfig()
 							if(readXMLString(q, "file", str))
 							{
 								m_key_RSA1024XTEA = new RSA();
-								if(!m_key_RSA1024XTEA->setKey("data/XML/" + str))
+								if(!m_key_RSA1024XTEA->setKey(getFilePath(FILE_TYPE_XML, str)))
 								{
 									delete m_key_RSA1024XTEA;
 									m_key_RSA1024XTEA = NULL;
-									std::cout << "Can not load key from data/XML/" << str << std::endl;
+									std::cout << "Can not load key from " << getFilePath(FILE_TYPE_XML, str) << std::endl;
 								}
 							}
 							else

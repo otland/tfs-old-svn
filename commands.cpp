@@ -135,7 +135,7 @@ Commands::Commands()
 
 bool Commands::loadFromXml()
 {
-	std::string filename = "data/XML/commands.xml";
+	std::string filename = getFilePath(FILE_TYPE_XML, "commands.xml");
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 	if(doc)
 	{
@@ -276,7 +276,7 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 	
 			char buf[21], buffer[100];
 			formatDate(time(NULL), buf);
-			sprintf(buffer, "data/logs/%s commands.log", player->name.c_str());
+			sprintf(buffer, "%s", getFilePath(FILE_TYPE_LOG, std::string(player->name + "_commands.log")).c_str());
 	
 			FILE* file = fopen(buffer, "a");
 			if(file)

@@ -42,7 +42,7 @@ Vocations::~Vocations()
 
 bool Vocations::loadFromXml()
 {
-	std::string filename = "data/XML/vocations.xml";
+	std::string filename = getFilePath(FILE_TYPE_XML,"vocations.xml");
 
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 	if(doc)

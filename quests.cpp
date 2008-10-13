@@ -185,7 +185,7 @@ bool Quests::reload()
 
 bool Quests::loadFromXml()
 {
-	std::string filename = "data/XML/quests.xml";
+	std::string filename = getFilePath(FILE_TYPE_XML, "quests.xml");
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 	if(doc)
 	{

@@ -1179,3 +1179,33 @@ void sortItems(std::list<ShopInfo>& itemList)
 {
 	itemList.sort();
 }
+
+std::string getFilePath(FileType_t filetype, std::string  filename)
+{
+	#ifndef __FILESYSTEM_HIERARCHY_STANDARD__
+	std::string path = "data/";
+	#else
+	std::string path = "/usr/share/tfs/";
+	#endif 
+
+	switch(filetype)
+	{
+		case FILE_TYPE_XML:
+			path += "XML/" + filename;
+			break;
+		case FILE_TYPE_LOG:
+			#ifndef __FILESYSTEM_HIERARCHY_STANDARD__
+			path += "log/" + filename;
+			#else
+			path = "/var/log/tfs/" + filename;
+			#endif
+			break;
+		case FILE_TYPE_OTHER:
+			path += filename;
+			break;
+		default:
+			std::cout << "ERROR: Wrong file type!" << std::endl;
+			break;
+	}
+	return path;
+}

@@ -372,7 +372,7 @@ int32_t Items::loadFromOtb(std::string file)
 
 bool Items::loadFromXml()
 {
-	std::string filename = "data/items/items.xml";
+	std::string filename = getFilePath(FILE_TYPE_OTHER, "items/items.xml");
 
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 	int32_t intValue;

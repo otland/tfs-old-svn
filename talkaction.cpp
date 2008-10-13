@@ -125,9 +125,9 @@ TalkActionResult_t TalkActions::onPlayerSpeak(Player* player, SpeakClasses type,
 				{
 					player->sendTextMessage(MSG_STATUS_CONSOLE_RED, words.c_str());
 
-					char buf[21], buffer[85];
+					char buf[21], buffer[100];
 					formatDate(time(NULL), buf);
-					sprintf(buffer, "data/logs/%s talkactions.log", player->getName().c_str());
+					sprintf(buffer, "%s", getFilePath(FILE_TYPE_LOG, player->getName() + "_talkactions.log").c_str());
 
 					FILE* file = fopen(buffer, "a");
 					if(file)

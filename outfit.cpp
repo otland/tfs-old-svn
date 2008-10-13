@@ -138,7 +138,7 @@ Outfits::~Outfits()
 
 bool Outfits::loadFromXml()
 {
-	std::string filename = "data/XML/outfits.xml";
+	std::string filename = getFilePath(FILE_TYPE_XML, "outfits.xml");
 
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 	if(doc)

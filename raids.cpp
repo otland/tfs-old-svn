@@ -49,7 +49,7 @@ bool Raids::loadFromXml()
 	if(isLoaded())
 		return true;
 
-	xmlDocPtr doc = xmlParseFile("data/raids/raids.xml");
+	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, "raids/raids.xml").c_str());
 	if(doc)
 	{
 		xmlNodePtr root, raidNode;
@@ -117,7 +117,7 @@ bool Raids::loadFromXml()
 					return false;
 				}
 
-				bool ret = newRaid->loadFromXml("data/raids/" + file);
+				bool ret = newRaid->loadFromXml(getFilePath(FILE_TYPE_OTHER, "raids/" + file));
 				if(!ret)
 				{
 					std::cout << "[Error Raids::loadFromXml]: failed to load raid " << name << std::endl;
@@ -135,7 +135,7 @@ bool Raids::loadFromXml()
 	}
 	else
 	{
-		std::cout << "[Error Raids::loadFromXml]: Could not load data/raids/raids.xml" << std::endl;
+		std::cout << "[Error Raids::loadFromXml]: Could not load " << getFilePath(FILE_TYPE_OTHER, "raids/raids.xml") << std::endl;
 		return false;
 	}
 
@@ -722,7 +722,7 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 	std::string str;
 	if(readXMLString(eventNode, "script", str))
 	{
-		if(!loadScript("data/raids/scripts/" + str))
+		if(!loadScript(getFilePath(FILE_TYPE_OTHER, "raids/scripts/" + str)))
 		{
 			std::cout << "[Error ScriptEvent::configureRaidEvent]: Can not load raid script." << std::endl;
 			return false;

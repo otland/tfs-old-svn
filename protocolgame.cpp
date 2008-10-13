@@ -1538,7 +1538,7 @@ void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
 	std::string description = msg.GetString();
 	std::string comment = msg.GetString();
 
-	FILE* file = fopen("data/logs/client_assertions.txt", "a");
+	FILE* file = fopen(getFilePath(FILE_TYPE_LOG, "client_assertions.txt").c_str(), "a");
 	if(file)
 	{
 		char bufferDate[32], bufferIp[32];

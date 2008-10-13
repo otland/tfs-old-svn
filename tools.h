@@ -43,6 +43,14 @@ enum DistributionType_t
 	DISTRO_NORMAL
 };
 
+enum FileType_t
+{
+	FILE_TYPE_XML,
+	FILE_TYPE_LOG,
+	FILE_TYPE_OTHER
+};
+
+
 std::string transformToMD5(std::string plainText, bool upperCase = false);
 std::string transformToSHA1(std::string plainText, bool upperCase = false);
 bool passwordTest(const std::string &plain, std::string &hash);
@@ -116,4 +124,6 @@ uint32_t adlerChecksum(uint8_t *data, size_t length);
 
 bool operator<(const ShopInfo& left, const ShopInfo& right);
 void sortItems(std::list<ShopInfo>& itemList);
+
+std::string getFilePath(FileType_t filetype, std::string  filename);
 #endif

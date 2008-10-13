@@ -43,10 +43,10 @@ bool BaseEvents::loadFromXml()
 	}
 	Event* event = NULL;
 	std::string scriptsName = getScriptBaseName();
-	if(getScriptInterface().loadFile(std::string("data/" + scriptsName + "/lib/" + scriptsName + ".lua")) == -1)
+	if(getScriptInterface().loadFile(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/" + scriptsName + ".lua"))) == -1)
 		std::cout << "Warning: [BaseEvents::loadFromXml] Can not load " << scriptsName << " lib/" << scriptsName << ".lua" << std::endl;
 
-	std::string filename = "data/" + scriptsName + "/" + scriptsName + ".xml";
+	std::string filename = getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/" + scriptsName + ".xml"));
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 	if(doc)
 	{
@@ -74,7 +74,7 @@ bool BaseEvents::loadFromXml()
 						std::string scriptfile;
 						if(readXMLString(p, "script", scriptfile))
 						{
-							if(!event->loadScript("data/" + scriptsName + "/scripts/" + scriptfile))
+							if(!event->loadScript(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/scripts/" + scriptfile))))
 								success = false;
 						}
 						else if(readXMLString(p, "function", scriptfile))

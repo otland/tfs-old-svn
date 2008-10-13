@@ -355,7 +355,7 @@ void mainLoader()
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading items");
 	#endif
-	if(Item::items.loadFromOtb("data/items/items.otb"))
+	if(Item::items.loadFromOtb(getFilePath(FILE_TYPE_OTHER, "items/items.otb")))
 		startupErrorMessage("Unable to load items (OTB)!");
 
 	if(!Item::items.loadFromXml())
@@ -489,7 +489,7 @@ void mainLoader()
 
 	std::cout << ">> All modules has been loaded, server starting up..." << std::endl;
 
-	serverIPs.push_back(make_pair(inet_addr("127.0.0.1"), 0xFFFFFFFF));
+	serverIPs.push_back(std::make_pair(inet_addr("127.0.0.1"), 0xFFFFFFFF));
 	char hostName[128];
 	if(gethostname(hostName, 128) == 0)
 	{
@@ -499,7 +499,7 @@ void mainLoader()
 			uint8_t** address = (uint8_t**)host->h_addr_list;
 			while(address[0] != NULL)
 			{
-				serverIPs.push_back(make_pair(*(uint32_t*)(*address), 0x0000FFFF));
+				serverIPs.push_back(std::make_pair(*(uint32_t*)(*address), 0x0000FFFF));
 				address++;
 			}
 		}
@@ -519,7 +519,7 @@ void mainLoader()
 		}
 	}
 
-	serverIPs.push_back(make_pair(resolvedIp, 0));
+	serverIPs.push_back(std::make_pair(resolvedIp, 0));
 
 	#if !defined(WIN32) && !defined(__ROOT_PERMISSION__)
 	if(getuid() == 0 || geteuid() == 0)

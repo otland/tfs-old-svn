@@ -65,7 +65,7 @@ int32_t TextLogger::overflow(int32_t c)
 	#ifdef __GUI_LOGS__
 	char buf[21], buffer[85];
 	formatDate2(time(NULL), buf);
-	sprintf(buffer, "data/logs/server/%s.log", buf);
+	buffer = getFilePath(FILE_TYPE_LOG,"server/" + buf + ".log");
 
 	FILE* file = fopen(buffer, "a");
 	if(file)

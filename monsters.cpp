@@ -224,7 +224,7 @@ Monsters::Monsters()
 bool Monsters::loadFromXml(bool reloading /*= false*/)
 {
 	loaded = false;
-	std::string filename = "data/monster/monsters.xml";
+	std::string filename = getFilePath(FILE_TYPE_OTHER, "monster/monsters.xml");
 
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 	if(doc)
@@ -256,7 +256,7 @@ bool Monsters::loadFromXml(bool reloading /*= false*/)
 
 				if(readXMLString(p, "file", file) && readXMLString(p, "name", name))
 				{
-					file = "data/monster/" + file;
+					file = getFilePath(FILE_TYPE_OTHER, "monster/" + file);
 					loadMonster(file, name, reloading);
 				}
 			}
@@ -362,7 +362,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 
 		combatSpell = new CombatSpell(NULL, needTarget, needDirection);
 
-		if(!combatSpell->loadScript("data/" + g_spells->getScriptBaseName() + "/scripts/" + scriptName))
+		if(!combatSpell->loadScript(getFilePath(FILE_TYPE_OTHER, g_spells->getScriptBaseName() + "/scripts/" + scriptName)))
 			return false;
 
 		if(!combatSpell->loadScriptCombat())

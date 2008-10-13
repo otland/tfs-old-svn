@@ -231,7 +231,7 @@ int32_t Game::loadMap(std::string filename)
 	Player::maxMessageBuffer = g_config.getNumber(ConfigManager::MAX_MESSAGEBUFFER);
 	Monster::despawnRange = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRANGE);
 	Monster::despawnRadius = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRADIUS);
-	return map->loadMap("data/world/" + filename + ".otbm");
+	return map->loadMap(getFilePath(FILE_TYPE_OTHER, std::string("world/" + filename + ".otbm")));
 }
 
 void Game::refreshMap()
@@ -4958,7 +4958,7 @@ uint64_t Game::getExperienceStage(uint32_t level)
 
 bool Game::loadExperienceStages()
 {
-	std::string filename = "data/XML/stages.xml";
+	std::string filename = getFilePath(FILE_TYPE_XML, "stages.xml");
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 	if(doc)
 	{

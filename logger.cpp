@@ -26,7 +26,7 @@
 
 Logger::Logger()
 {
-	m_file = fopen("data/logs/OTAdminLog.txt", "a");
+	m_file = fopen(getFilePath(FILE_TYPE_LOG, "OTAdminLog.txt").c_str(), "a");
 }
 
 Logger::~Logger()

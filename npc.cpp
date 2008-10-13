@@ -79,7 +79,7 @@ Npc* Npc::createNpc(const std::string& name)
 Npc::Npc(const std::string& _name) :
 	Creature()
 {
-	m_filename = "data/npc/" + _name + ".xml";
+	m_filename = getFilePath(FILE_TYPE_OTHER, "npc/" + _name + ".xml");
 	loaded = false;
 
 	m_npcEventHandler = NULL;
@@ -109,7 +109,7 @@ bool Npc::load()
 	if(!m_scriptInterface)
 	{
 		m_scriptInterface = new NpcScriptInterface();
-		m_scriptInterface->loadNpcLib("data/npc/lib/npc.lua");
+		m_scriptInterface->loadNpcLib(getFilePath(FILE_TYPE_OTHER, "npc/lib/npc.lua"));
 	}
 
 	loaded = loadFromXml(m_filename);
@@ -354,7 +354,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 		{
 			if(readXMLString(node, "file", strValue))
 			{
-				std::string includeFilename = "data/npc/lib/" + strValue;
+				std::string includeFilename = getFilePath(FILE_TYPE_OTHER, "npc/lib/" + strValue);
 				xmlDocPtr doc = xmlParseFile(includeFilename.c_str());
 				if(doc)
 				{

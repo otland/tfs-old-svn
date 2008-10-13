@@ -43,7 +43,7 @@ bool GameServers::reload(bool showResult /*= true*/)
 
 bool GameServers::loadFromXml(bool showResult /*= true*/)
 {
-	std::string filename = "data/XML/servers.xml";
+	std::string filename = getFilePath(FILE_TYPE_XML, "servers.xml");
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 	if(doc)
 	{
