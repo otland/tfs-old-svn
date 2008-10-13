@@ -1180,7 +1180,7 @@ void sortItems(std::list<ShopInfo>& itemList)
 	itemList.sort();
 }
 
-std::string getFilePath(FileType_t filetype, std::string  filename)
+std::string getFilePath(FileType_t filetype, std::string filename)
 {
 	#ifndef __FILESYSTEM_HIERARCHY_STANDARD__
 	std::string path = "data/";

@@ -127,7 +127,7 @@ TalkActionResult_t TalkActions::onPlayerSpeak(Player* player, SpeakClasses type,
 
 					char buf[21], buffer[100];
 					formatDate(time(NULL), buf);
-					sprintf(buffer, "%s", getFilePath(FILE_TYPE_LOG, player->getName() + "_talkactions.log").c_str());
+					sprintf(buffer, "%s_talkactions.log", getFilePath(FILE_TYPE_LOG, player->getName()).c_str());
 
 					FILE* file = fopen(buffer, "a");
 					if(file)

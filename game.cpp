@@ -4958,8 +4958,7 @@ uint64_t Game::getExperienceStage(uint32_t level)
 
 bool Game::loadExperienceStages()
 {
-	std::string filename = getFilePath(FILE_TYPE_XML, "stages.xml");
-	xmlDocPtr doc = xmlParseFile(filename.c_str());
+	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "stages.xml").c_str());
 	if(doc)
 	{
 		xmlNodePtr root, p;

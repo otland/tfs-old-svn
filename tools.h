@@ -125,5 +125,5 @@ uint32_t adlerChecksum(uint8_t *data, size_t length);
 bool operator<(const ShopInfo& left, const ShopInfo& right);
 void sortItems(std::list<ShopInfo>& itemList);
 
-std::string getFilePath(FileType_t filetype, std::string  filename);
+std::string getFilePath(FileType_t filetype, std::string filename);
 #endif
