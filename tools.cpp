@@ -1203,6 +1203,18 @@ std::string getFilePath(FileType_t filetype, std::string  filename)
 		case FILE_TYPE_OTHER:
 			path += filename;
 			break;
+		case FILE_TYPE_CONFIG:
+			#if defined(__FILESYSTEM_HIERARCHY_STANDARD__) && defined(__HOMEDIR_CONF__)
+			if(fileExists("~/.otserv/config.lua"))
+				path = "~/.otserv/config.lua";
+			else
+				path = "/etc/tfs/" + filename;
+			#elif defined(__FILESYSTEM_HIERARCHY_STANDARD__) && !defined(__HOMEDIR_CONF__)
+				path = "/etc/tfs/" + filename;
+			#else
+				path = filename;
+			#endif
+			break;
 		default:
 			std::cout << "ERROR: Wrong file type!" << std::endl;
 			break;

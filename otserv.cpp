@@ -257,11 +257,7 @@ void mainLoader()
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading config");
 	#endif
-	#if !defined(WIN32) && defined(__HOMEDIR_CONF__)
-	if(!g_config.loadFile("~/.otserv/config.lua"))
-	#else
-	if(!g_config.loadFile("config.lua"))
-	#endif
+	if(!g_config.loadFile(getFilePath(FILE_TYPE_CONFIG, "config.lua")))
 		startupErrorMessage("Unable to load config.lua!");
 
 	#ifdef WIN32
