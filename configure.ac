@@ -189,7 +189,7 @@ echo The Forgotten Server 0.3
 #echo $PACKAGE $VERSION
 echo
 echo Debug build................. : $debugBuild
-echo OtServ allocator............ : $otservAllocator
+echo OTServ allocator............ : $otservAllocator
 echo Homedir config.............. : $homedirConf
 echo
 echo Build with MySQL............ : $useMySQL
@@ -207,4 +207,4 @@ if test "x$useMySQL" = "xno" ; then
 		fi
 	fi
 fi
-echo configure complete, now type \'make\'
+echo Configure complete, now you may type \'make\'.
