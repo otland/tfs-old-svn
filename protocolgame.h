@@ -190,9 +190,9 @@ class ProtocolGame : public Protocol
 		void sendCreatureSkull(const Creature* creature);
 		void sendCreatureShield(const Creature* creature);
 
-		void sendShop(const std::list<ShopInfo>& shop);
+		void sendShop(const ShopInfoList& itemList);
 		void sendCloseShop();
-		void sendPlayerGoods(uint32_t money, std::map<uint16_t, uint8_t> itemMap);
+		void sendGoods(const std::map<uint16_t, uint8_t>& itemMap);
 		void sendTradeItemRequest(const Player* player, const Item* item, bool ack);
 		void sendCloseTrade();
 

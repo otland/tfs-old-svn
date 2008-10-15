@@ -620,9 +620,9 @@ void Player::sendIcons() const
 
 void Player::updateInventoryWeigth()
 {
-	inventoryWeight = 0.00;
 	if(!hasFlag(PlayerFlag_HasInfiniteCapacity))
 	{
+		inventoryWeight = 0.00;
 		for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 		{
 			Item* item = getInventoryItem((slots_t)i);
@@ -630,6 +630,10 @@ void Player::updateInventoryWeigth()
 				inventoryWeight += item->getWeight();
 		}
 	}
+
+	int32_t onBuy, onSell;
+	if(Npc* npc = getShopOwner(onBuy, onSell))
+		sendGoods();
 }
 
 int32_t Player::getPlayerInfo(playerinfo_t playerinfo) const
@@ -1542,31 +1546,30 @@ void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bo
 	}
 }
 
-void Player::closeShopWindow()
+void Player::openShopWindow()
 {
-	//unreference callbacks
-	int32_t onBuy;
-	int32_t onSell;
-
-	Npc* npc = getShopOwner(onBuy, onSell);
-	if(npc)
-	{
-		setShopOwner(NULL, -1, -1);
-		npc->onPlayerEndTrade(this, onBuy, onSell);
-		sendCloseShop();
-	}
-}
-
-std::map<uint16_t, uint8_t> Player::getGoods(const std::list<ShopInfo>& shop)
-{
-	std::map<uint16_t, uint8_t> itemMap;
-	for(std::list<ShopInfo>::const_iterator it = shop.begin(); it != shop.end(); ++it)
+	for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
 	{
 		uint32_t itemCount = __getItemTypeCount((*it).itemId);
 		if(itemCount > 0)
-			itemMap[(*it).itemId] = itemCount;
+			goodsMap[(*it).itemId] = itemCount;
 	}
-	return itemMap;
+
+	sortItems(shopOffer); //TODO: make this configurable
+	sendShop();
+	sendGoods();
+}
+
+void Player::closeShopWindow()
+{
+	int32_t onBuy, onSell;
+	if(Npc* npc = getShopOwner(onBuy, onSell))
+	{
+		npc->onPlayerEndTrade(this, onBuy, onSell);
+		setShopOwner(NULL, -1, -1, ShopInfoList);
+		sendCloseShop();
+		goodsMap.clear();
+	}
 }
 
 void Player::onWalk(Direction& dir)

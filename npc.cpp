@@ -1755,10 +1755,7 @@ void Npc::onPlayerTrade(Player* player, ShopEvent_t type, int32_t callback, uint
 	if(m_npcEventHandler)
 		m_npcEventHandler->onPlayerTrade(player, callback, itemId, count, amount, ignoreCap, inBackpacks);
 
-	if(shopItemList.empty())
-		player->closeShopWindow();
-
-	player->sendGoods(g_game.getMoney(player), player->getGoods(shopItemList));
+	player->sendGoods();
 }
 
 void Npc::onPlayerEndTrade(Player* player, int32_t buyCallback,
@@ -2816,35 +2813,29 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 	else
 		buyCallback = popCallback(L);
 
-	if(npc->shopItemList.empty())
+	if(lua_istable(L, -1) == 0)
 	{
-		if(lua_istable(L, -1) == 0)
-		{
-			reportError(__FUNCTION__, "item list is not a table.");
-			lua_pushnumber(L, LUA_ERROR);
-			return 1;
-		}
-		lua_pushnil(L);
-
-		ShopInfo item;
-		while(lua_next(L, -2) != 0)
-		{
-			item.itemId = getField(L, "id");
-			item.subType = getField(L, "subType");
-			item.buyPrice = getField(L, "buy");
-			item.sellPrice = getField(L, "sell");
-			item.itemName = getFieldString(L, "name");
-			npc->shopItemList.push_back(item);
-
-			lua_pop(L, 1);
-		}
-		lua_pop(L, 1);
-
-		sortItems(npc->shopItemList);
+		reportError(__FUNCTION__, "item list is not a table.");
+		lua_pushnumber(L, LUA_ERROR);
+		return 1;
 	}
-	else
-		lua_pop(L, 1);
+	lua_pushnil(L);
 
+	ShopInfoList itemList;
+	while(lua_next(L, -2) != 0)
+	{
+		ShopInfo item;
+		item.itemId = getField(L, "id");
+		item.subType = getField(L, "subType");
+		item.buyPrice = getField(L, "buy");
+		item.sellPrice = getField(L, "sell");
+		item.itemName = getFieldString(L, "name");
+		itemList.push_back(item);
+
+		lua_pop(L, 1);
+	}
+	lua_pop(L, 1);
+	
 	Player* player = env->getPlayerByUID(popNumber(L));
 	if(!player)
 	{
@@ -2856,10 +2847,8 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 	player->closeShopWindow();
 
 	npc->addShopPlayer(player);
-	player->setShopOwner(npc, buyCallback, sellCallback);
-
-	player->sendShop(npc->shopItemList);
-	player->sendGoods(g_game.getMoney(player), player->getGoods(npc->shopItemList));
+	player->setShopOwner(npc, buyCallback, sellCallback, itemList);
+	player->openShopWindow();
 
 	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;

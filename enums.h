@@ -290,4 +290,5 @@ struct ShopInfo
 		sellPrice(_sellPrice), itemName(_itemName) {}
 };
 
+typedef std::list<ShopInfo> ShopInfoList;
 #endif
