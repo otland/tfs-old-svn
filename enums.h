@@ -21,6 +21,7 @@
 #ifndef __OTSERV_ENUMS_H__
 #define __OTSERV_ENUMS_H__
 #include <string>
+#include <list>
 
 enum DatabaseEngine_t
 {
