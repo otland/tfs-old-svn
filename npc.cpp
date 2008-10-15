@@ -147,7 +147,6 @@ void Npc::reset()
 	itemListMap.clear();
 	responseScriptMap.clear();
 	shopPlayerList.clear();
-	shopItemList.clear();
 }
 
 void Npc::reload()
@@ -2875,23 +2874,11 @@ int32_t NpcScriptInterface::luaCloseShopWindow(lua_State* L)
 		return 1;
 	}
 
-	int32_t buyCallback;
-	int32_t sellCallback;
-	Npc* merchant = player->getShopOwner(buyCallback, sellCallback);
-
-	//Check if we actually have a shop window with this player.
+	int32_t onBuy, onSell;
+	Npc* merchant = player->getShopOwner(onBuy, onSell);
 	if(merchant == npc)
-	{
-		player->sendCloseShop();
+		player->closeShopWindow(npc, onBuy, onSell);
 
-		if(buyCallback != -1)
-			luaL_unref(L, LUA_REGISTRYINDEX, buyCallback);
-		if(sellCallback != -1)
-			luaL_unref(L, LUA_REGISTRYINDEX, sellCallback);
-
-		player->setShopOwner(NULL, -1, -1);
-		npc->removeShopPlayer(player);
-	}
 	return 1;
 }
 
