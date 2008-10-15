@@ -976,8 +976,12 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		if(it.weaponType == WEAPON_DIST && it.ammoType != AMMO_NONE)
 		{
 			s << " (Range:" << it.shootRange;
-			if(it.attack != 0 || (item && item->getAttack() != 0))
-				s << ", Atk:" << std::showpos << (item ? item->getAttack() : it.attack) << std::noshowpos;
+			if(it.attack != 0 || it.extraAttack != 0 || (item && (item->getAttack() != 0 || item->getExtraAttack() != 0)))
+			{
+				s << "Atk:" << int32_t(item ? item->getAttack() : it.attack);
+				if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
+					s << " " << std::showpos << int32_t(item ? item->getExtraAttack() : it.extraAttack) << std::noshowpos;
+			}
 
 			if(it.hitChance > 0 || (item && item->getHitChance() > 0))
 				s << ", Hit%" << std::showpos << (item ? item->getHitChance() : it.hitChance) << std::noshowpos;

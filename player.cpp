@@ -631,8 +631,7 @@ void Player::updateInventoryWeigth()
 		}
 	}
 
-	int32_t onBuy, onSell;
-	if(Npc* npc = getShopOwner(onBuy, onSell))
+	if(shopOwner)
 		sendGoods();
 }
 

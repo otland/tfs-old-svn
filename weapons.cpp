@@ -111,10 +111,9 @@ bool Weapons::loadDefaults()
 					weapons[it->id] = weapon;
 					break;
 				}
+
 				default:
-				{
 					break;
-				}
 			}
 		}
 	}
