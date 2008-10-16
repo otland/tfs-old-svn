@@ -1140,9 +1140,9 @@ int32_t AStarNodes::getEstimatedDistance(int32_t x, int32_t y, int32_t xGoal, in
 
 Floor::Floor()
 {
-	for(unsigned int32_t i = 0; i < FLOOR_SIZE; ++i)
+	for(int32_t i = 0; i < FLOOR_SIZE; ++i)
 	{
-		for(unsigned int32_t j = 0; j < FLOOR_SIZE; ++j)
+		for(int32_t j = 0; j < FLOOR_SIZE; ++j)
 			tiles[i][j] = 0;
 	}
 }
@@ -1171,7 +1171,7 @@ QTreeLeafNode* QTreeNode::getLeaf(uint32_t x, uint32_t y)
 	{
 		uint32_t index = ((x & 0x8000) >> 15) | ((y & 0x8000) >> 14);
 		if(m_child[index])
-			return m_child[index]->getLeaf(x*2, y*2);
+			return m_child[index]->getLeaf(x * 2, y * 2);
 		else
 			return NULL;
 	}
@@ -1191,8 +1191,8 @@ QTreeLeafNode* QTreeNode::getLeafStatic(QTreeNode* root, uint32_t x, uint32_t y)
 			if(currentNode->m_child[index])
 			{
 				currentNode = currentNode->m_child[index];
-				currentX = currentX*2;
-				currentY = currentY*2;
+				currentX = currentX * 2;
+				currentY = currentY * 2;
 			}
 			else
 				return NULL;
@@ -1218,7 +1218,7 @@ QTreeLeafNode* QTreeNode::createLeaf(uint32_t x, uint32_t y, uint32_t level)
 				QTreeLeafNode::newLeaf = true;
 			}
 		}
-		return m_child[index]->createLeaf(x*2, y*2, level - 1);
+		return m_child[index]->createLeaf(x * 2, y * 2, level - 1);
 	}
 	else
 		return static_cast<QTreeLeafNode*>(this);
@@ -1229,7 +1229,7 @@ QTreeLeafNode* QTreeNode::createLeaf(uint32_t x, uint32_t y, uint32_t level)
 bool QTreeLeafNode::newLeaf = false;
 QTreeLeafNode::QTreeLeafNode()
 {
-	for(unsigned int32_t i = 0; i < MAP_MAX_LAYERS; ++i)
+	for(int32_t i = 0; i < MAP_MAX_LAYERS; ++i)
 		m_array[i] = NULL;
 
 	m_isLeaf = true;
@@ -1239,7 +1239,7 @@ QTreeLeafNode::QTreeLeafNode()
 
 QTreeLeafNode::~QTreeLeafNode()
 {
-	for(unsigned int32_t i = 0; i < MAP_MAX_LAYERS; ++i)
+	for(int32_t i = 0; i < MAP_MAX_LAYERS; ++i)
 		delete m_array[i];
 }
 
