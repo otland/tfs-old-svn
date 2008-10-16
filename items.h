@@ -61,7 +61,7 @@ struct Abilities
 {
 	Abilities()
 	{
-		absorbPercentAll = 0;
+		absorbPercentOther = 0;
 		absorbPercentPhysical = 0;
 		absorbPercentFire = 0;
 		absorbPercentEnergy = 0;

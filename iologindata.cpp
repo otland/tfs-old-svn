@@ -638,33 +638,31 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	if(result->getDataInt("save") == 0)
-		return true;
-
+	bool save = result->getDataInt("save");
 	db->freeResult(result);
 
 	DBTransaction trans(db);
 	if(!trans.begin())
 		return false;
 
-	//serialize conditions
-	PropWriteStream propWriteStream;
-	for(ConditionList::const_iterator it = player->conditions.begin(); it != player->conditions.end(); ++it)
-	{
-		if((*it)->isPersistent())
-		{
-			if(!(*it)->serialize(propWriteStream))
-				return false;
-			propWriteStream.ADD_UCHAR(CONDITIONATTR_END);
-		}
-	}
-
-	uint32_t conditionsSize;
-	const char* conditions = propWriteStream.getStream(conditionsSize);
-
 	//First, an UPDATE query to write the player itself
 	query.str("");
 	query << "UPDATE `players` SET ";
+	if(player->lastLoginSaved != 0)
+		query << "`lastlogin` = " << player->lastLoginSaved << ", ";
+
+	if(player->lastIP != 0)
+		query << "`lastip` = " << player->lastIP << ", ";
+
+	if(!save)
+	{
+		query << " WHERE `id` = " << player->getGUID();
+		if(!db->executeQuery(query.str()))
+			return false;
+
+		return trans.commit();
+	}
+
 	query << "`level` = " << player->level << ", ";
 	query << "`group_id` = " << player->groupId << ", ";
 	query << "`vocation` = " << (uint32_t)player->getVocationId() << ", ";
@@ -692,12 +690,20 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	query << "`stamina` = " << player->getStamina() << ", ";
 	query << "`promotion` = " << player->promotionLevel << ", ";
 
-	if(player->lastLoginSaved != 0)
-		query << "`lastlogin` = " << player->lastLoginSaved << ", ";
+	//serialize conditions
+	PropWriteStream propWriteStream;
+	for(ConditionList::const_iterator it = player->conditions.begin(); it != player->conditions.end(); ++it)
+	{
+		if((*it)->isPersistent())
+		{
+			if(!(*it)->serialize(propWriteStream))
+				return false;
+			propWriteStream.ADD_UCHAR(CONDITIONATTR_END);
+		}
+	}
 
-	if(player->lastIP != 0)
-		query << "`lastip` = " << player->lastIP << ", ";
-
+	uint32_t conditionsSize;
+	const char* conditions = propWriteStream.getStream(conditionsSize);
 	query << "`conditions` = " << db->escapeBlob(conditions, conditionsSize) << ", ";
 	query << "`loss_experience` = " << (uint32_t)player->getLossPercent(LOSS_EXPERIENCE) << ", ";
 	query << "`loss_mana` = " << (uint32_t)player->getLossPercent(LOSS_MANASPENT) << ", ";
@@ -725,13 +731,13 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		query << ", `guildnick` = " << db->escapeString(player->guildNick) << ", ";
 		query << "`rank_id` = " << IOGuild::getInstance()->getRankIdByGuildIdAndLevel(player->getGuildId(), player->getGuildLevel());
 	}
-	query << " WHERE `id` = " << player->getGUID();
 
+	query << " WHERE `id` = " << player->getGUID();
 	if(!db->executeQuery(query.str()))
 		return false;
-	query.str("");
 
 	// skills
+	query.str("");
 	for(int32_t i = 0; i <= 6; i++)
 	{
 		query << "UPDATE `player_skills` SET `value` = " << player->skills[i][SKILL_LEVEL] << ", `count` = " << player->skills[i][SKILL_TRIES] << " WHERE `player_id` = " << player->getGUID() << " AND `skillid` = " << i;
@@ -743,7 +749,6 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	// learned spells
 	query.str("");
 	query << "DELETE FROM `player_spells` WHERE `player_id` = " << player->getGUID();
-
 	if(!db->executeQuery(query.str()))
 		return false;
 

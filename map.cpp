@@ -489,7 +489,7 @@ bool Map::canThrowObjectTo(const Position& fromPos, const Position& toPos, bool 
 	if(fromPos.z - fromPos.z > 2)
 		return false;
 
-	int deltax, deltay, deltaz;
+	int32_t deltax, deltay, deltaz;
 	deltax = std::abs(fromPos.x - toPos.x);
 	deltay = std::abs(fromPos.y - toPos.y);
 	deltaz = std::abs(fromPos.z - toPos.z);
@@ -512,12 +512,12 @@ bool Map::isSightClear(const Position& fromPos, const Position& toPos, bool floo
 	Position start = fromPos;
 	Position end = toPos;
 
-	int deltax, deltay, deltaz;
+	int32_t deltax, deltay, deltaz;
 	deltax = abs(start.x - end.x);
 	deltay = abs(start.y - end.y);
 	deltaz = abs(start.z - end.z);
 
-	int max = deltax, dir = 0;
+	int32_t max = deltax, dir = 0;
 	if(deltay > max)
 	{
 		max = deltay;
@@ -554,21 +554,22 @@ bool Map::isSightClear(const Position& fromPos, const Position& toPos, bool floo
 			break;
 	}
 
-	int stepx = ((start.x < end.x) ? 1 : -1);
-	int stepy = ((start.y < end.y) ? 1 : -1);
-	int stepz = ((start.z < end.z) ? 1 : -1);
+	int32_t stepx = ((start.x < end.x) ? 1 : -1);
+	int32_t stepy = ((start.y < end.y) ? 1 : -1);
+	int32_t stepz = ((start.z < end.z) ? 1 : -1);
 
-	int x, y, z;
-	int errory = 0, errorz = 0;
+	int32_t x, y, z;
+	int32_t errory = 0, errorz = 0;
 	x = start.x;
 	y = start.y;
 	z = start.z;
 
-	int lastrx = x, lastry = y, lastrz = z;
+	int32_t lastrx = x, lastry = y, lastrz = z;
+	int32_t ax = 0, ay = 0, az = 0;
 
 	for( ; x != end.x + stepx; x += stepx)
 	{
-		int rx, ry, rz;
+		int32_t rx, ry, rz;
 		switch(dir)
 		{
 			case 1:
@@ -593,21 +594,35 @@ bool Map::isSightClear(const Position& fromPos, const Position& toPos, bool floo
 			lastrx = rx; lastry = ry; lastrz = rz;
 
 			Tile* tile = getTile(rx, ry, rz);
-			if(tile)
+			if(tile && tile->hasProperty(BLOCKPROJECTILE))
 			{
-				if(tile->hasProperty(BLOCKPROJECTILE))
+				if(ax != 0 || ay != 0 || az != 0)
+				{
+					tile = getTile(rx + ax, ry + ay, rz + az);
+					if(tile && tile->hasProperty(BLOCKPROJECTILE))
+						return false;
+				}
+				else
 					return false;
 			}
+			ax = ay = az = 0;
 		}
 
 		errory += deltay;
 		errorz += deltaz;
-		if(2*errory >= deltax)
+		if(2 * errory >= deltax)
 		{
 			y += stepy;
+			if(std::abs(deltax) != std::abs(deltay))
+			{
+				if(dir == 0)
+					ay = -stepy;
+				else
+					ax = -stepy;
+			}
 			errory -= deltax;
 		}
-		if(2*errorz >= deltax)
+		if(2 * errorz >= deltax)
 		{
 			z += stepz;
 			errorz -= deltax;
@@ -620,9 +635,14 @@ const Tile* Map::canWalkTo(const Creature* creature, const Position& pos)
 {
 	switch(creature->getWalkCache(pos))
 	{
-		case 0: return NULL;
-		case 1: return getTile(pos);
-		break;
+		case 0:
+			return NULL;
+			break;
+		case 1:
+			return getTile(pos);
+			break;
+		default:
+			break;
 	}
 
 	//used for none-cached tiles
@@ -987,7 +1007,7 @@ AStarNode* AStarNodes::getBestNode()
 	if(curNode == 0)
 		return NULL;
 
-	int best_node_f = 100000;
+	int32_t best_node_f = 100000;
 	uint32_t best_node = 0;
 	bool found = false;
 
@@ -1078,7 +1098,7 @@ AStarNode* AStarNodes::getNodeInList(int32_t x, int32_t y)
 int32_t AStarNodes::getMapWalkCost(const Creature* creature, AStarNode* node,
 	const Tile* neighbourTile, const Position& neighbourPos)
 {
-	int cost = 0;
+	int32_t cost = 0;
 	if(std::abs((int)node->x - neighbourPos.x) == std::abs((int)node->y - neighbourPos.y))
 	{
 		//diagonal movement extra cost
@@ -1092,7 +1112,7 @@ int32_t AStarNodes::getMapWalkCost(const Creature* creature, AStarNode* node,
 
 int32_t AStarNodes::getTileWalkCost(const Creature* creature, const Tile* tile)
 {
-	int cost = 0;
+	int32_t cost = 0;
 	if(!tile->creatures.empty())
 	{
 		//destroy creature cost
@@ -1107,10 +1127,10 @@ int32_t AStarNodes::getTileWalkCost(const Creature* creature, const Tile* tile)
 	return cost;
 }
 
-int AStarNodes::getEstimatedDistance(int32_t x, int32_t y, int32_t xGoal, int32_t yGoal)
+int32_t AStarNodes::getEstimatedDistance(int32_t x, int32_t y, int32_t xGoal, int32_t yGoal)
 {
-	int h_diagonal = std::min(std::abs(x - xGoal), std::abs(y - yGoal));
-	int h_straight = (std::abs(x - xGoal) + std::abs(y - yGoal));
+	int32_t h_diagonal = std::min(std::abs(x - xGoal), std::abs(y - yGoal));
+	int32_t h_straight = (std::abs(x - xGoal) + std::abs(y - yGoal));
 
 	return MAP_DIAGONALWALKCOST * h_diagonal + MAP_NORMALWALKCOST * (h_straight - 2 * h_diagonal);
 	//return (std::abs(x - xGoal) + std::abs(y - yGoal)) * MAP_NORMALWALKCOST;
@@ -1120,9 +1140,9 @@ int AStarNodes::getEstimatedDistance(int32_t x, int32_t y, int32_t xGoal, int32_
 
 Floor::Floor()
 {
-	for(unsigned int i = 0; i < FLOOR_SIZE; ++i)
+	for(unsigned int32_t i = 0; i < FLOOR_SIZE; ++i)
 	{
-		for(unsigned int j = 0; j < FLOOR_SIZE; ++j)
+		for(unsigned int32_t j = 0; j < FLOOR_SIZE; ++j)
 			tiles[i][j] = 0;
 	}
 }
@@ -1209,7 +1229,7 @@ QTreeLeafNode* QTreeNode::createLeaf(uint32_t x, uint32_t y, uint32_t level)
 bool QTreeLeafNode::newLeaf = false;
 QTreeLeafNode::QTreeLeafNode()
 {
-	for(unsigned int i = 0; i < MAP_MAX_LAYERS; ++i)
+	for(unsigned int32_t i = 0; i < MAP_MAX_LAYERS; ++i)
 		m_array[i] = NULL;
 
 	m_isLeaf = true;
@@ -1219,7 +1239,7 @@ QTreeLeafNode::QTreeLeafNode()
 
 QTreeLeafNode::~QTreeLeafNode()
 {
-	for(unsigned int i = 0; i < MAP_MAX_LAYERS; ++i)
+	for(unsigned int32_t i = 0; i < MAP_MAX_LAYERS; ++i)
 		delete m_array[i];
 }
 

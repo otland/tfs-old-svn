@@ -1978,7 +1978,7 @@ void ProtocolGame::sendGoods(const std::map<uint16_t, uint8_t>& itemMap)
 		msg->AddByte(std::min((size_t)255, itemMap.size()));
 
 		uint32_t i = 0;
-		for(std::map<uint16_t, uint8_t>::iterator it = itemMap.begin(); it != itemMap.end() && i < 255; ++it, ++i)
+		for(std::map<uint16_t, uint8_t>::const_iterator it = itemMap.begin(); it != itemMap.end() && i < 255; ++it, ++i)
 		{
 			msg->AddItemId(it->first);
 			msg->AddByte(it->second);

@@ -881,7 +881,18 @@ bool Items::loadFromXml()
 							else if(tmpStrValue == "absorbpercentall")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.abilities.absorbPercentAll = intValue;
+								{
+									it.abilities.absorbPercentPhysical = intValue;
+									it.abilities.absorbPercentEnergy = intValue;
+									it.abilities.absorbPercentFire = intValue;
+									it.abilities.absorbPercentEarth = intValue;
+									it.abilities.absorbPercentIce = intValue;
+									it.abilities.absorbPercentHoly = intValue;
+									it.abilities.absorbPercentDeath = intValue;
+									it.abilities.absorbPercentLifeDrain = intValue;
+									it.abilities.absorbPercentManaDrain = intValue;
+									it.abilities.absorbPercentDrown = intValue;
+								}
 							}
 							else if(tmpStrValue == "absorbpercentmagic")
 							{
