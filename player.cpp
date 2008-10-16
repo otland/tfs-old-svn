@@ -2021,12 +2021,13 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 	if(damage != 0)
 	{
 		int32_t blocked = 0;
+		Item* item = NULL;
 		for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
 		{
 			if(!isItemAbilityEnabled((slots_t)slot))
 				continue;
 
-			if(!(Item* item = getInventoryItem((slots_t)slot)))
+			if(!(item = getInventoryItem((slots_t)slot)))
 				continue;
 
 			const ItemType& it = Item::items[item->getID()];
