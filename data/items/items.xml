@@ -3986,10 +3986,7 @@
 		<attribute key="charges" value="50"/>
 		<attribute key="showcharges" value="1"/>
 		<attribute key="absorbPercentPhysical" value="10"/>
-		<attribute key="absorbPercentEnergy" value="10"/>
-		<attribute key="absorbPercentFire" value="10"/>
-		<attribute key="absorbPercentEarth" value="10"/>
-		<attribute key="absorbPercentIce" value="10"/>
+		<attribute key="absorbPercentElements" value="10"/>
 	</item>
 	<item id="2199" article="a" name="garlic necklace">
 		<attribute key="weight" value="380"/>
