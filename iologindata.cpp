@@ -581,10 +581,10 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	{
 		do
 		{
-			uint32_t vip_id = result->getDataInt("vip_id");
-			std::string dummy_str;
-			if(storeNameByGuid(vip_id))
-				player->addVIP(vip_id, dummy_str, false, true);
+			uint32_t vid = result->getDataInt("vip_id");
+			std::string vname;
+			if(storeNameByGuid(vid))
+				player->addVIP(vid, vname, false, true);
 		}
 		while(result->next());
 		db->freeResult(result);
@@ -801,7 +801,6 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 
 	query.str("");
 	query << "DELETE FROM `player_storage` WHERE `player_id` = " << player->getGUID();
-
 	if(!db->executeQuery(query.str()))
 		return false;
 
