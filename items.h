@@ -96,7 +96,7 @@ struct Abilities
 	};
 
 	//damage abilities modifiers
-	int16_t absorbPercentAll;
+	int16_t absorbPercentOther;
 	int16_t absorbPercentPhysical;
 	int16_t absorbPercentFire;
 	int16_t absorbPercentEnergy;
