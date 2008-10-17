@@ -925,9 +925,8 @@ bool Houses::payHouses()
 				}
 			}
 
-			Depot* depot = player->getDepot(town->getTownID(), true);
 			bool savePlayerHere = true;
-			if(depot)
+			if(Depot* depot = player->getDepot(town->getTownID(), true))
 			{
 				if(g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM) || player->isPremium())
 				{
@@ -973,11 +972,7 @@ bool Houses::payHouses()
 						}
 						else
 						{
-							int32_t daysLeft = 7 - house->getPayRentWarnings();
-
-							Item* letter = Item::CreateItem(ITEM_LETTER_STAMPED);
 							std::string period = "";
-
 							switch(rentPeriod)
 							{
 								case RENTPERIOD_DAILY:
@@ -1001,7 +996,9 @@ bool Houses::payHouses()
 							}
 
 							char warningText[200];
-							sprintf(warningText, "Warning! \nThe %s rent of %d gold for your house \"%s\" is payable. Have it within %d days or you will lose this house.", period.c_str(), house->getRent(), house->getName().c_str(), daysLeft);
+							sprintf(warningText, "Warning! \nThe %s rent of %d gold for your house \"%s\" is payable. Have it within %d days or you will lose this house.", period.c_str(), house->getRent(), house->getName().c_str(), (7 - house->getPayRentWarnings()));
+
+							Item* letter = Item::CreateItem(ITEM_LETTER_STAMPED);
 							letter->setText(warningText);
 							g_game.internalAddItem(depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT);
 							house->setPayRentWarnings(house->getPayRentWarnings() + 1);
