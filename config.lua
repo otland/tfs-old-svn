@@ -10,7 +10,7 @@
 	newPlayerTownId = 1
 	newPlayerLevel = 1
 	newPlayerMagicLevel = 0
-	generateAccountNumber = "yes"
+	generateAccountNumber = "no"
 
 	-- Banishments
 	notationsToBan = 3

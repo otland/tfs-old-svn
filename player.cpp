@@ -3827,7 +3827,7 @@ void Player::checkRedSkullTicks(int32_t ticks)
 	if(redSkullTicks < 1000 && !hasCondition(CONDITION_INFIGHT) && skull == SKULL_RED)
 	{
 		setSkull(SKULL_NONE);
-		g_game.updateCreatureSkull(this);promotionLevel
+		g_game.updateCreatureSkull(this);
 	}
 }
 

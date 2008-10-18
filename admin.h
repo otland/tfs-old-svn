@@ -139,7 +139,7 @@ class AdminProtocolConfig
 {
 	public:
 		AdminProtocolConfig();
-		~AdminProtocolConfig();
+		virtual ~AdminProtocolConfig();
 
 		bool loadXMLConfig();
 

@@ -651,7 +651,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		query << "`lastlogin` = " << player->lastLoginSaved << ", ";
 
 	if(player->lastIP != 0)
-		query << "`lastip` = " << player->lastIP << ", ";
+		query << "`lastip` = " << player->lastIP;
 
 	if(!save)
 	{
@@ -662,12 +662,8 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		return trans.commit();
 	}
 
-	query << "`level` = " << player->level << ", ";
+	query << ", `level` = " << player->level << ", ";
 	query << "`group_id` = " << player->groupId << ", ";
-	while(player->vocation->getFromVocation())
-		player->setVocation(player->vocation->getFromVocation());
-
-	query << "`vocation` = " << (uint32_t)player->getVocationId() << ", ";
 	query << "`health` = " << player->health << ", ";
 	query << "`healthmax` = " << player->healthMax << ", ";
 	query << "`experience` = " << player->experience << ", ";
@@ -727,13 +723,17 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	}
 	query << "`lastlogout` = " << player->getLastLogout() << ", ";
 	query << "`blessings` = " << player->blessings << ", ";
-	query << "`marriage` = " << player->marriage;
+	query << "`marriage` = " << player->marriage << ", ";
 	if(g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
 	{
-		query << ", `guildnick` = " << db->escapeString(player->guildNick) << ", ";
-		query << "`rank_id` = " << IOGuild::getInstance()->getRankIdByGuildIdAndLevel(player->getGuildId(), player->getGuildLevel());
+		query << "`guildnick` = " << db->escapeString(player->guildNick) << ", ";
+		query << "`rank_id` = " << IOGuild::getInstance()->getRankIdByGuildIdAndLevel(player->getGuildId(), player->getGuildLevel()) << ", ";
 	}
 
+	for(uint32_t i = 0; i <= player->promotionLevel + 1; i++)
+		player->setVocation(player->vocation->getFromVocation());
+
+	query << "`vocation` = " << (uint32_t)player->getVocationId();
 	query << " WHERE `id` = " << player->getGUID();
 	if(!db->executeQuery(query.str()))
 		return false;

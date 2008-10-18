@@ -10,7 +10,7 @@ AC_LANG(C++)
 # check if we want a debug build
 debugBuild=no
 AC_ARG_ENABLE(debug, [  --enable-debug      enable debuging],
-	[DEBUG_FLAGS="-D__DEBUG__MOVESYS__ -D__DEBUG_HOUSES__ -D__DEBUG_MAILBOX__ -D__DEBUG_LUASCRIPTS__ -D__DEBUG_NET__"]
+	[DEBUG_FLAGS="-D__DEBUG__MOVESYS__ -D__DEBUG_HOUSES__ -D__DEBUG_MAILBOX__ -D__DEBUG_LUASCRIPTS__ -D__DEBUG_NET__ -D__DEBUG__"]
 	debugBuild=yes
 )
 AC_SUBST(DEBUG_FLAGS)
@@ -22,9 +22,16 @@ AC_ARG_ENABLE(otallocator, [  --enable-otallocator   enable otserv custom alloca
 	otservAllocator=yes
 )
 
+# check if we want server diag enabled
+serverDiag=no
+AC_ARG_ENABLE(server-diag, [  --enable-server-diag   enable server diagnostic],
+	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__ENABLE_SERVER_DIAGNOSTIC__"]
+	serverDiag=yes
+)
+
 # check if we want homedir conf enabled
 homedirConf=no
-AC_ARG_ENABLE(homedir-conf, [  --enable-homedir-conf   enable homedir config],
+AC_ARG_ENABLE(homedir-conf, [  --enable-homedir-conf   enable home directory configuration],
 	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__HOMEDIR_CONF__"]
 	homedirConf=yes
 )
@@ -189,8 +196,9 @@ echo The Forgotten Server 0.3
 #echo $PACKAGE $VERSION
 echo
 echo Debug build................. : $debugBuild
-echo OTServ allocator............ : $otservAllocator
-echo Homedir config.............. : $homedirConf
+echo Server diagnostics.......... : $serverDiag
+echo OTServ custom allocator..... : $otservAllocator
+echo Home-directory configuration : $homedirConf
 echo
 echo Build with MySQL............ : $useMySQL
 echo Build with SQLite........... : $useSQLite
