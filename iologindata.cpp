@@ -325,7 +325,6 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	player->blessings = result->getDataInt("blessings");
 	player->balance = result->getDataLong("balance");
 	player->marriage = result->getDataInt("marriage");
-	player->promotionLevel = result->getDataInt("promotion");
 
 	unsigned long conditionsSize = 0;
 	const char* conditions = result->getDataStream("conditions", conditionsSize);
@@ -341,22 +340,22 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 			delete condition;
 	}
 
-	player->setVocation(result->getDataInt("vocation"));
+	player->vocation_id = result->getDataInt("vocation");
+	player->setPromotionLevel(result->getDataInt("promotion"));
+
+	player->health = result->getDataInt("health");
+	player->healthMax = result->getDataInt("healthmax");
 	player->mana = result->getDataInt("mana");
 	player->manaMax = result->getDataInt("manamax");
-	player->magLevel = result->getDataInt("maglevel");
 
+	player->magLevel = result->getDataInt("maglevel");
 	uint64_t nextManaCount = player->vocation->getReqMana(player->magLevel + 1);
 	uint64_t manaSpent = result->getDataLong("manaspent");
 	if(manaSpent > nextManaCount)
 		manaSpent = 0;
 
 	player->manaSpent = manaSpent;
-	player->magLevelPercent = Player::getPercentLevel(player->manaSpent,
-		nextManaCount);
-
-	player->health = result->getDataInt("health");
-	player->healthMax = result->getDataInt("healthmax");
+	player->magLevelPercent = Player::getPercentLevel(player->manaSpent, nextManaCount);
 
 	if(player->groupOutfit > 0)
 		player->defaultOutfit.lookType = player->groupOutfit;
@@ -665,8 +664,9 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 
 	query << "`level` = " << player->level << ", ";
 	query << "`group_id` = " << player->groupId << ", ";
-	for(int i = 0; i <= player->promotionLevel+1; i++)
+	while(player->vocation->getFromVocation())
 		player->setVocation(player->vocation->getFromVocation());
+
 	query << "`vocation` = " << (uint32_t)player->getVocationId() << ", ";
 	query << "`health` = " << player->health << ", ";
 	query << "`healthmax` = " << player->healthMax << ", ";

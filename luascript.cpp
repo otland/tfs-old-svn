@@ -1163,6 +1163,9 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerPromotionLevel(cid)
 	lua_register(m_luaState, "getPlayerPromotionLevel", LuaScriptInterface::luaGetPlayerPromotionLevel);
 
+	//setPlayerPromotionLevel(cid, level)
+	lua_register(m_luaState, "setPlayerPromotionLevel", LuaScriptInterface::luaSetPlayerPromotionLevel);
+
 	//getPlayerGroupId(cid)
 	lua_register(m_luaState, "getPlayerGroupId", LuaScriptInterface::luaGetPlayerGroupId);
 
@@ -4202,7 +4205,7 @@ int32_t LuaScriptInterface::luaDoPlayerSetTown(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoPlayerSetVocation(lua_State* L)
 {
-	//doPlayerSetVocation(cid,voc)
+	//doPlayerSetVocation(cid, voc)
 	uint32_t voc = popNumber(L);
 	uint32_t cid = popNumber(L);
 
@@ -7645,16 +7648,36 @@ int32_t LuaScriptInterface::luaDoPlayerAddBlessing(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaSetPlayerGroupId(lua_State* L)
+int32_t LuaScriptInterface::luaSetPlayerPromotionLevel(lua_State* L)
 {
-	//setPlayerGroupId(cid, newGroupId)
-	uint32_t newGroupId = popNumber(L);
+	//setPlayerPromotionLevel(cid, level)
+	uint32_t level = popNumber(L);
 	uint32_t cid = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 	Player* player = env->getPlayerByUID(cid);
 	if(player)
 	{
-		player->setGroupId(newGroupId);
+		player->setPromotionLevel(level);
+		lua_pushboolean(L, true);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaSetPlayerGroupId(lua_State* L)
+{
+	//setPlayerGroupId(cid, groupId)
+	uint32_t groupId = popNumber(L);
+	uint32_t cid = popNumber(L);
+	ScriptEnviroment* env = getScriptEnv();
+	Player* player = env->getPlayerByUID(cid);
+	if(player)
+	{
+		player->setGroupId(groupId);
 		lua_pushboolean(L, true);
 	}
 	else

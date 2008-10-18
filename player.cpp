@@ -71,6 +71,7 @@ Creature()
 
 	name = _name;
 	setVocation(0);
+	promotionLevel = 0;
 	capacity = 400.00;
 	mana = 0;
 	manaMax = 0;
@@ -3826,13 +3827,29 @@ void Player::checkRedSkullTicks(int32_t ticks)
 	if(redSkullTicks < 1000 && !hasCondition(CONDITION_INFIGHT) && skull == SKULL_RED)
 	{
 		setSkull(SKULL_NONE);
-		g_game.updateCreatureSkull(this);
+		g_game.updateCreatureSkull(this);promotionLevel
 	}
 }
 
-bool Player::isPromoted(uint32_t pLevel/* = 1*/)
+void Player::setPromotionLevel(uint32_t level)
 {
-	return promotionLevel == pLevel;
+	uint32_t tmpLevel = 0, currentVoc = vocation_id;
+	for(uint32_t i = 1; i <= level; i++)
+	{
+		currentVoc = g_vocations.getPromotedVocation(currentVoc);
+		if(currentVoc == 0)
+			break;
+
+		Vocation *voc = g_vocations.getVocation(currentVoc);
+		if(voc->isPremiumNeeded() && !isPremium() && g_config.getBool(ConfigManager::PREMIUM_FOR_PROMOTION))
+			break;
+
+		vocation_id = currentVoc;
+		tmpLevel++;
+	}
+
+	setVocation(vocation_id);
+	promotionLevel += tmpLevel;
 }
 
 double Player::getLostPercent(lossTypes_t lossType)

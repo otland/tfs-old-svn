@@ -42,14 +42,11 @@ Vocations::~Vocations()
 
 bool Vocations::loadFromXml()
 {
-	std::string filename = getFilePath(FILE_TYPE_XML,"vocations.xml");
-
-	xmlDocPtr doc = xmlParseFile(filename.c_str());
+	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML,"vocations.xml").c_str());
 	if(doc)
 	{
 		xmlNodePtr root, p;
 		root = xmlDocGetRootElement(doc);
-
 		if(xmlStrcmp(root->name,(const xmlChar*)"vocations") != 0)
 		{
 			xmlFreeDoc(doc);
@@ -57,7 +54,6 @@ bool Vocations::loadFromXml()
 		}
 
 		p = root->children;
-
 		while(p)
 		{
 			std::string str;
@@ -66,11 +62,11 @@ bool Vocations::loadFromXml()
 			if(xmlStrcmp(p->name, (const xmlChar*)"vocation") == 0)
 			{
 				Vocation* voc = new Vocation();
-				uint32_t voc_id;
+				uint32_t vocId;
 				xmlNodePtr configNode;
 				if(readXMLInteger(p, "id", intVal))
 				{
-					voc_id = intVal;
+					vocId = intVal;
 					if(readXMLString(p, "name", str))
 						voc->name = str;
 
@@ -119,7 +115,7 @@ bool Vocations::loadFromXml()
 					if(readXMLString(p, "attackable", str))
 						voc->attackable = booleanString(str);
 
-					if(readXMLInteger(p, "fromvoc", intVal))
+					if(readXMLInteger(p, "fromvoc", intVal) || readXMLInteger(p, "fromvocation", intVal))
 						voc->fromVocation = intVal;
 
 					configNode = p->children;
@@ -147,7 +143,7 @@ bool Vocations::loadFromXml()
 							if(readXMLFloat(configNode, "meleeDamage", floatVal))
 								voc->meleeDamageMultipler = floatVal;
 
-							if(readXMLFloat(configNode, "distDamage", floatVal))
+							if(readXMLFloat(configNode, "distDamage", floatVal) || readXMLFloat(configNode, "distanceDamage", floatVal))
 								voc->distDamageMultipler = floatVal;
 
 							if(readXMLFloat(configNode, "defense", floatVal))
@@ -158,7 +154,7 @@ bool Vocations::loadFromXml()
 						}
 						configNode = configNode->next;
 					}
-					vocationsMap[voc_id] = voc;
+					vocationsMap[vocId] = voc;
 				}
 				else
 					std::cout << "Missing vocation id." << std::endl;
@@ -178,7 +174,7 @@ Vocation* Vocations::getVocation(uint32_t vocId)
 	else
 	{
 		std::cout << "Warning: [Vocations::getVocation] Vocation " << vocId << " not found." << std::endl;
-		return &def_voc;
+		return &defVoc;
 	}
 }
 

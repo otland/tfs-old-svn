@@ -459,7 +459,6 @@ class LuaScriptInterface
 		static int32_t luaSetHouseAccessList(lua_State* L);
 
 		//get creature info functions
-		static int32_t luaGetPlayerPromotionLevel(lua_State* L);
 		static int32_t luaGetPlayerFood(lua_State* L);
 		static int32_t luaGetPlayerAccess(lua_State* L);
 		static int32_t luaGetPlayerLevel(lua_State* L);
@@ -498,6 +497,8 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerCustomFlagValue(lua_State* L);
 		static int32_t luaGetCreatureCondition(lua_State* L);
 
+		static int32_t luaGetPlayerPromotionLevel(lua_State* L);
+		static int32_t luaSetPlayerPromotionLevel(lua_State* L);
 		static int32_t luaGetPlayerGroupId(lua_State* L);
 		static int32_t luaSetPlayerGroupId(lua_State* L);
 

@@ -64,7 +64,7 @@ class PgSQLResult;
 #endif
 
 #ifndef DATABASE_CLASS
-#error "You have to compile with atleast one database driver"
+#error "You have to compile with atl east one database driver!"
 #define DBResult void
 #define DBInsert void*
 #define Database void
