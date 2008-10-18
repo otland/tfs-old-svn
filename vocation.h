@@ -32,6 +32,7 @@ class Vocation
 		virtual ~Vocation();
 		const std::string& getVocName() const {return name;}
 		const std::string& getVocDescription() const {return description;}
+		const bool isPremiumNeeded() const {return needPremium; }
 		uint32_t getReqSkillTries(int32_t skill, int32_t level);
 		uint64_t getReqMana(uint32_t magLevel);
 
@@ -61,6 +62,7 @@ class Vocation
 
 		std::string name;
 		std::string description;
+		bool needPremium;
 
 		uint32_t gainHealthTicks;
 		uint32_t gainHealthAmount;

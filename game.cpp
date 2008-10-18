@@ -680,19 +680,24 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool forced /*
 				player->addCondition(conditionYell->clone());
 		}
 
-		if(player->isPremium() || !g_config.getBool(ConfigManager::PREMIUM_FOR_PROMOTION))
+		uint32_t currentVocationId = player->getVocationId();
+		uint32_t correctVocationId = player->getVocationId();
+		for(uint32_t i = 1; i <= player->promotionLevel; i++)
 		{
-			uint32_t promotedVocation = g_vocations.getPromotedVocation(player->getVocationId());
-			if(promotedVocation == 0 && player->getVocationId() != promotedVocation)
+			currentVocationId = g_vocations.getPromotedVocation(currentVocationId);
+			if(currentVocationId == 0)
+				break;
+			Vocation *voc = g_vocations.getVocation(currentVocationId);
+			//FIXME: i have no brain to make it shorter...
+			if(voc->isPremiumNeeded())
 			{
-				if(!player->isPromoted())
-					player->setPromotionLevel(1);
+				if(player->isPremium() || !g_config.getBool(ConfigManager::PREMIUM_FOR_PROMOTION))
+					correctVocationId = currentVocationId;
 			}
-			else if(player->isPromoted())
-				player->setVocation(promotedVocation);
+			else
+				correctVocationId = currentVocationId;
 		}
-		else if(player->isPromoted())
-			player->setVocation(player->vocation->getFromVocation());
+		player->setVocation(correctVocationId);
 	}
 
 	addCreatureCheck(creature);

@@ -4212,9 +4212,6 @@ int32_t LuaScriptInterface::luaDoPlayerSetVocation(lua_State* L)
 	if(player)
 	{
 		player->setVocation(voc);
-		uint32_t promotedVocation = g_vocations.getPromotedVocation(player->getVocationId());
-		if(promotedVocation == 0 && player->getVocationId() != promotedVocation)
-			player->setPromotionLevel(1);
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else

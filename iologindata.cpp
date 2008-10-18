@@ -665,6 +665,8 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 
 	query << "`level` = " << player->level << ", ";
 	query << "`group_id` = " << player->groupId << ", ";
+	for(int i = 0; i <= player->promotionLevel+1; i++)
+		player->setVocation(player->vocation->getFromVocation());
 	query << "`vocation` = " << (uint32_t)player->getVocationId() << ", ";
 	query << "`health` = " << player->health << ", ";
 	query << "`healthmax` = " << player->healthMax << ", ";

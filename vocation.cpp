@@ -77,6 +77,9 @@ bool Vocations::loadFromXml()
 					if(readXMLString(p, "description", str))
 						voc->description = str;
 
+					if(readXMLString(p, "needpremium", str))
+						voc->needPremium = booleanString(str);
+
 					if(readXMLInteger(p, "gaincap", intVal))
 						voc->gainCap = intVal;
 
@@ -205,6 +208,7 @@ Vocation::Vocation()
 {
 	name = "none";
 	description = "";
+	needPremium = false;
 	gainHealthTicks = 6;
 	gainHealthAmount = 1;
 	gainManaTicks = 6;
