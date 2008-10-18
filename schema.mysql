@@ -264,7 +264,7 @@ CREATE TABLE `player_items`
 	`sid` INT NOT NULL DEFAULT 0,
 	`itemtype` INT NOT NULL DEFAULT 0,
 	`count` INT NOT NULL DEFAULT 0,
-	`attributes` text NOT NULL,
+	`attributes` BLOB NOT NULL,
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 

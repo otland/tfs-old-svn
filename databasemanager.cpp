@@ -111,12 +111,11 @@ bool DatabaseManager::tableExists(std::string table)
 	else
 		query << "SELECT `TABLE_NAME` FROM `information_schema`.`tables` WHERE `TABLE_SCHEMA` = " << db->escapeString(g_config.getString(ConfigManager::SQL_DB)) << " AND `TABLE_NAME` = " << db->escapeString(table) << ";";
 
-	if((result = db->storeQuery(query.str())))
-	{
-		db->freeResult(result);
-		return true;
-	}
-	return false;
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	db->freeResult(result);
+	return true;
 }
 
 bool DatabaseManager::isDatabaseSetup()
@@ -432,6 +431,8 @@ uint32_t DatabaseManager::updateDatabase()
 				query << "CREATE TRIGGER `ondelete_players` BEFORE DELETE ON `players` FOR EACH ROW BEGIN DELETE FROM `bans` WHERE `type` = 2 AND `value` = OLD.`id`; UPDATE `houses` SET `owner` = 0 WHERE `owner` = OLD.`id`; END;";
 				db->executeQuery(query.str());
 			}
+
+			query.str("");
 			return 1;
 			break;
 		}
@@ -543,6 +544,14 @@ uint32_t DatabaseManager::updateDatabase()
 				}
 				while(result->next());
 				db->freeResult(result);
+			}
+
+			query.str("");
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
+			{
+				query << "ALTER TABLE `player_items` CHANGE `attributes` `attributes` BLOB NOT NULL;";
+				db->executeQuery(query.str());
+				query.str("");
 			}
 
 			registerDatabaseConfig("db_version", 2);
