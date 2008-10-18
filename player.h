@@ -881,7 +881,7 @@ class Player : public Creature, public Cylinder
 				baseSpeed = 900;
 		}
 
-		bool isPromoted(uint32_t pLevel = 1) const {return promotionLevel >= pLevel;}
+		bool isPromoted(uint32_t level = 1) const {return promotionLevel >= level;}
 
 		uint32_t getVocAttackSpeed() const {return vocation->getAttackSpeed();}
 		uint32_t getAttackSpeed();
