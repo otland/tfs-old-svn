@@ -159,7 +159,9 @@ void Game::setGameState(GameState_t newState)
 				}
 
 				Houses::getInstance().payHouses();
-				saveGameState(false);
+
+				Dispatcher::getDispatcher().addTask(
+					createTask(boost::bind(&Game::saveGameState, this, false)));
 
 				Dispatcher::getDispatcher().addTask(
 					createTask(boost::bind(&Game::shutdown, this)));
@@ -182,7 +184,8 @@ void Game::setGameState(GameState_t newState)
 				}
 
 				Houses::getInstance().payHouses();
-				saveGameState(false);
+				Dispatcher::getDispatcher().addTask(
+					createTask(boost::bind(&Game::saveGameState, this, false)));
 				break;
 			}
 			case GAME_STATE_STARTUP:
@@ -4535,7 +4538,8 @@ void Game::removePremium(Account account)
 
 void Game::autoSave()
 {
-	saveGameState(true);
+	Dispatcher::getDispatcher().addTask(
+		createTask(boost::bind(&Game::saveGameState, this, true)));
 	Scheduler::getScheduler().addEvent(createSchedulerTask(g_config.getNumber(ConfigManager::AUTO_SAVE_EACH_MINUTES)  * 1000 * 60, boost::bind(&Game::autoSave, this)));
 }
 

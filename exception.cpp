@@ -165,7 +165,8 @@ EXCEPTION_DISPOSITION
 	uint32_t file,foundRetAddress = 0;
 	_MEMORY_BASIC_INFORMATION mbi;
 
-	g_game.saveGameState(true);
+	Dispatcher::getDispatcher().addTask(
+		createTask(boost::bind(&Game::saveGameState, g_game, true)));
 
 	std::ostream *outdriver;
 	std::cout << "Error: generating report file..." << std::endl;

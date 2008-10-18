@@ -873,7 +873,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						g_game.saveGameState(true);
+						Dispatcher::getDispatcher().addTask(
+							createTask(boost::bind(&Game::saveGameState, g_game, true)));
 						MessageBoxA(NULL, "The players online has been saved.", "Save players", MB_OK);
 					}
 				}
