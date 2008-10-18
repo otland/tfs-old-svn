@@ -658,22 +658,15 @@ class Player : public Creature, public Cylinder
 		void learnInstantSpell(const std::string& name);
 		bool hasLearnedInstantSpell(const std::string& name) const;
 
-		uint64_t balance;
-		uint32_t marriage;
-		uint16_t groupOutfit;
-
+		DepotMap depots;
+		uint32_t maxDepotLimit;
 		VIPListSet VIPList;
 		uint32_t maxVipLimit;
 
 		InvitedToGuildsList invitedToGuildsList;
-
-		//items
 		ContainerVector containerVec;
 		void preSave();
-
-		//depots
-		DepotMap depots;
-		uint32_t maxDepotLimit;
+		uint64_t balance;
 
 	protected:
 		void checkTradeState(const Item* item);
@@ -683,6 +676,7 @@ class Player : public Creature, public Cylinder
 		void addExperience(uint64_t exp);
 
 		void updateInventoryWeigth();
+		void postUpdateGoods(uint32_t itemId);
 
 		void setNextWalkActionTask(SchedulerTask* task);
 		void setNextWalkTask(SchedulerTask* task);
@@ -754,10 +748,12 @@ class Player : public Creature, public Cylinder
 		PartyList invitePartyList;
 
 		std::string groupName;
+		uint16_t groupOutfit;
 		int32_t idleTime;
 		int32_t extraExpRate;
 		int32_t groupId;
 		OperatingSystem_t operatingSystem;
+		uint32_t marriage;
 		bool ghostMode;
 		bool ignorePrivMsg;
 		bool teleportByMap;
@@ -832,7 +828,7 @@ class Player : public Creature, public Cylinder
 		int32_t saleCallback;
 		ShopInfoList shopOffer;
 
-		std::map<uint16_t, uint8_t> goodsMap;
+		std::map<uint32_t, uint32_t> goodsMap;
 
 		std::string name;
 		std::string nameDescription;

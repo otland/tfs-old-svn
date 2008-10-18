@@ -631,9 +631,6 @@ void Player::updateInventoryWeigth()
 				inventoryWeight += item->getWeight();
 		}
 	}
-
-	if(shopOwner)
-		sendGoods();
 }
 
 int32_t Player::getPlayerInfo(playerinfo_t playerinfo) const
@@ -1527,20 +1524,20 @@ void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bo
 				saved = true;
 				break;
 			}
-#ifdef __DEBUG_PLAYERS__
+#ifdef __DEBUG__
 			else
 				std::cout << "Error while saving player: " << getName() << ", strike " << tries << std::endl;
 #endif
 		}
 
 		if(!saved)
-#ifndef __DEBUG_PLAYERS__
+#ifndef __DEBUG__
 			std::cout << "Error while saving player: " << getName() << std::endl;
 #else
 			std::cout << "Player " << getName() << " couldn't be saved." << std::endl;
 #endif
 
-#ifdef __DEBUG_PLAYERS__
+#ifdef __DEBUG__
 		std::cout << (uint32_t)g_game.getPlayersOnline() << " players online." << std::endl;
 #endif
 	}
@@ -3053,6 +3050,9 @@ void Player::postAddNotification(Thing* thing, int32_t index, cylinderlink_t lin
 	{
 		if(const Container* container = item->getContainer())
 			onSendContainer(container);
+
+		if(shopOwner)
+			postUpdateGoods(item->getID());
 	}
 	else if(const Creature* creature = thing->getCreature())
 	{
@@ -3100,7 +3100,27 @@ void Player::postRemoveNotification(Thing* thing, int32_t index, bool isComplete
 			else
 				autoCloseContainers(container);
 		}
+
+		if(shopOwner)
+			postUpdateGoods(item->getID());
 	}
+}
+
+void Player::postUpdateGoods(uint32_t itemId)
+{
+	for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
+	{
+		if((*it).itemId == itemId)
+		{
+			uint32_t itemCount = __getItemTypeCount((*it).itemId);
+			if(itemCount > 0)
+				goodsMap[(*it).itemId] = itemCount;
+			else
+				goodsMap.erase((*it).itemId);
+		}
+	}
+
+	sendGoods();
 }
 
 void Player::__internalAddThing(Thing* thing)

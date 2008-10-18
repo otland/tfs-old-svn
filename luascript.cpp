@@ -4055,7 +4055,7 @@ int32_t LuaScriptInterface::luaDoRemoveCreature(lua_State* L)
 int32_t LuaScriptInterface::luaDoPlayerAddMoney(lua_State *L)
 {
 	//doPlayerAddMoney(cid, money)
-	uint32_t money = popNumber(L);
+	uint64_t money = popNumber(L);
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
@@ -4077,7 +4077,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddMoney(lua_State *L)
 int32_t LuaScriptInterface::luaDoPlayerRemoveMoney(lua_State* L)
 {
 	//doPlayerRemoveMoney(cid,money)
-	uint32_t money = popNumber(L);
+	uint64_t money = popNumber(L);
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
@@ -4101,7 +4101,7 @@ int32_t LuaScriptInterface::luaDoPlayerRemoveMoney(lua_State* L)
 int32_t LuaScriptInterface::luaDoPlayerWithdrawMoney(lua_State *L)
 {
 	//doPlayerWithdrawMoney(cid, money)
-	uint32_t money = popNumber(L);
+	uint64_t money = popNumber(L);
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
@@ -4125,7 +4125,7 @@ int32_t LuaScriptInterface::luaDoPlayerWithdrawMoney(lua_State *L)
 int32_t LuaScriptInterface::luaDoPlayerDepositMoney(lua_State *L)
 {
 	//doPlayerDepositMoney(cid, money)
-	uint32_t money = popNumber(L);
+	uint64_t money = popNumber(L);
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
@@ -4149,7 +4149,7 @@ int32_t LuaScriptInterface::luaDoPlayerDepositMoney(lua_State *L)
 int32_t LuaScriptInterface::luaDoPlayerTransferMoneyTo(lua_State *L)
 {
 	//doPlayerTransferMoneyTo(cid, target, money)
-	uint32_t money = popNumber(L);
+	uint64_t money = popNumber(L);
 	std::string target = popString(L);
 	uint32_t cid = popNumber(L);
 
