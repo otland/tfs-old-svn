@@ -2035,77 +2035,77 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 				case COMBAT_PHYSICALDAMAGE:
 				{
 					if(it.abilities.absorbPercentPhysical != 0)
-						blocked += (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentPhysical) / 100));
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentPhysical / 100));
 					break;
 				}
 
 				case COMBAT_FIREDAMAGE:
 				{
 					if(it.abilities.absorbPercentFire != 0)
-						blocked += (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentFire) / 100));
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentFire / 100));
 					break;
 				}
 
 				case COMBAT_ENERGYDAMAGE:
 				{
 					if(it.abilities.absorbPercentEnergy != 0)
-						blocked += (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentEnergy) / 100));
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentEnergy / 100));
 					break;
 				}
 
 				case COMBAT_EARTHDAMAGE:
 				{
 					if(it.abilities.absorbPercentEarth != 0)
-						blocked += (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentEarth) / 100));
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentEarth / 100));
 					break;
 				}
 
 				case COMBAT_LIFEDRAIN:
 				{
 					if(it.abilities.absorbPercentLifeDrain != 0)
-						blocked += (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentLifeDrain) / 100));
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentLifeDrain / 100));
 					break;
 				}
 
 				case COMBAT_MANADRAIN:
 				{
 					if(it.abilities.absorbPercentManaDrain != 0)
-						blocked += (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentManaDrain) / 100));
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentManaDrain / 100));
 					break;
 				}
 
 				case COMBAT_DROWNDAMAGE:
 				{
 					if(it.abilities.absorbPercentDrown != 0)
-						blocked += (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentDrown) / 100));
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentDrown / 100));
 					break;
 				}
 
 				case COMBAT_ICEDAMAGE:
 				{
 					if(it.abilities.absorbPercentIce != 0)
-						blocked += (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentIce) / 100));
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentIce / 100));
 					break;
 				}
 
 				case COMBAT_HOLYDAMAGE:
 				{
 					if(it.abilities.absorbPercentHoly != 0)
-						blocked += (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentHoly) / 100));
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentHoly / 100));
 					break;
 				}
 
 				case COMBAT_DEATHDAMAGE:
 				{
 					if(it.abilities.absorbPercentDeath != 0)
-						blocked += (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentDeath) / 100));
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentDeath / 100));
 					break;
 				}
 
 				default:
 				{
 					if(it.abilities.absorbPercentOther != 0)
-						blocked += (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentOther) / 100));
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentOther / 100));
 					break;
 				}
 			}
