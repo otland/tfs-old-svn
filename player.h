@@ -876,12 +876,12 @@ class Player : public Creature, public Cylinder
 		void updateBaseSpeed()
 		{
 			if(!hasFlag(PlayerFlag_SetMaxSpeed))
-				baseSpeed = 220 + (2* (level - 1));
+				baseSpeed = 220 + (2 * (level - 1));
 			else
 				baseSpeed = 900;
 		}
 
-		bool isPromoted(uint32_t level = 1) const {return promotionLevel >= level;}
+		bool isPromoted(uint32_t pLevel = 1) const {return promotionLevel >= pLevel;}
 
 		uint32_t getVocAttackSpeed() const {return vocation->getAttackSpeed();}
 		uint32_t getAttackSpeed();
