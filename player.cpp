@@ -209,8 +209,7 @@ Player::~Player()
 		}
 	}
 
-	DepotMap::iterator it;
-	for(it = depots.begin(); it != depots.end(); it++)
+	for(DepotMap::iterator it = depots.begin(); it != depots.end(); it++)
 		it->second->releaseThing2();
 
 	//std::cout << "Player destructor " << this << std::endl;
@@ -1557,7 +1556,7 @@ void Player::openShopWindow()
 	sendGoods();
 }
 
-void Player::closeShopWindow(Npc* npc/* = NULL*/, int32_t onBuy/* = 0*/, int32_t onSell/* = 0*/)
+void Player::closeShopWindow(Npc* npc/* = NULL*/, int32_t onBuy/* = -1*/, int32_t onSell/* = -1*/)
 {
 	if(!npc)
 		npc = getShopOwner(onBuy, onSell);
