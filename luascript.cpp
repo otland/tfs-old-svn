@@ -8636,7 +8636,7 @@ int32_t LuaScriptInterface::luaDBResultGetDataStream(lua_State *L)
 	DBResult* res = env->getDBResult(resId);
 	CHECK_RESULT()
 
-	unsigned long length;
+	uint64_t length;
 	const char* str = res->getDataStream(s, length);
 	lua_pushstring(L, str);
 	lua_pushnumber(L, length);

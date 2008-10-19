@@ -209,7 +209,7 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 
 			item = NULL;
 
-			unsigned long attrSize = 0;
+			uint64_t attrSize = 0;
 			const char* attr = result->getDataStream("attributes", attrSize);
 			PropStream propStream;
 			propStream.init(attr, attrSize);

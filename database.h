@@ -201,9 +201,6 @@ class _Database
 
 class _DBResult
 {
-		// unused at the moment
-		//friend class Database;
-
 	public:
 		/** Get the Integer value of a field in database
 		*\returns The Integer value of the selected field and row
@@ -224,7 +221,7 @@ class _DBResult
 		*\returns a PropStream that is initiated with the blob data field, if not exist it returns NULL.
 		*\param s The name of the field
 		*/
-		DATABASE_VIRTUAL const char* getDataStream(const std::string &s, unsigned long &size) { return 0; }
+		DATABASE_VIRTUAL const char* getDataStream(const std::string &s, uint64_t &size) { return 0; }
 
 		/**
 		* Moves to next result in set.
@@ -249,7 +246,7 @@ class DBQuery : public std::stringstream
 
 	public:
 		DBQuery();
-		~DBQuery();
+		virtual ~DBQuery();
 
 	protected:
 		static OTSYS_THREAD_LOCKVAR database_lock;
@@ -269,7 +266,7 @@ class DBInsert
 		* @param Database* database wrapper
 		*/
 		DBInsert(Database* db);
-		~DBInsert() {}
+		virtual ~DBInsert() {}
 
 		/**
 		* Sets query prototype.
@@ -297,11 +294,13 @@ class DBInsert
 		bool execute();
 
 	protected:
-		Database* m_db;
 		bool m_multiLine;
+
 		uint32_t m_rows;
 		std::string m_query;
 		std::string m_buf;
+
+		Database* m_db;
 };
 
 
@@ -326,11 +325,10 @@ class DBTransaction
 			m_state = STATE_NO_START;
 		}
 
-		~DBTransaction()
+		virtual ~DBTransaction()
 		{
-			if(m_state == STATE_START){
+			if(m_state == STATE_START)
 				m_database->rollback();
-			}
 		}
 
 		bool begin()
@@ -341,21 +339,23 @@ class DBTransaction
 
 		bool commit()
 		{
-			if(m_state == STATE_START){
+			if(m_state == STATE_START)
+			{
 				m_state = STEATE_COMMIT;
 				return m_database->commit();
 			}
-			else{
+			else
 				return false;
-			}
 		}
 
 	private:
-		enum TransactionStates_t{
+		enum TransactionStates_t
+		{
 			STATE_NO_START,
 			STATE_START,
 			STEATE_COMMIT
 		};
+
 		TransactionStates_t m_state;
 		Database* m_database;
 };
