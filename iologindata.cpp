@@ -741,7 +741,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 
 	Vocation* tmpVoc = player->vocation;
 	for(uint32_t i = 0; i <= player->promotionLevel; i++)
-		tmpVoc = tmpVoc->getFromVocation();
+		tmpVoc = g_vocations.getVocation(tmpVoc->getFromVocation());
 
 	query << "`vocation` = " << tmpVoc->getVocId();
 	query << " WHERE `id` = " << player->getGUID();
