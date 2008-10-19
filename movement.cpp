@@ -573,7 +573,7 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 						{
 							vocEquipMap[vocationId] = true;
 							int32_t promotedVocation = g_vocations.getPromotedVocation(vocationId);
-							if(promotedVocation != 0)
+							if(promotedVocation != -1)
 								vocEquipMap[promotedVocation] = true;
 
 							intValue = 1;

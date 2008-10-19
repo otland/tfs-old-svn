@@ -194,7 +194,7 @@ int32_t Vocations::getPromotedVocation(uint32_t vocationId)
 		if(it->second->fromVocation == vocationId && it->first != vocationId)
 			return it->first;
 	}
-	return 0;
+	return -1;
 }
 
 uint32_t Vocation::skillBase[SKILL_LAST + 1] = { 50, 50, 50, 50, 30, 100, 20 };

@@ -516,7 +516,7 @@ bool Spell::configureSpell(xmlNodePtr p)
 				{
 					vocSpellMap[vocationId] = true;
 					int32_t promotedVocation = g_vocations.getPromotedVocation(vocationId);
-					if(promotedVocation != 0)
+					if(promotedVocation != -1)
 						vocSpellMap[promotedVocation] = true;
 				}
 				else
