@@ -58,10 +58,13 @@ void ProtocolLogin::deleteProtocolTask()
 void ProtocolLogin::disconnectClient(uint8_t error, const char* message)
 {
 	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
-	TRACK_MESSAGE(output);
-	output->AddByte(error);
-	output->AddString(message);
-	OutputMessagePool::getInstance()->send(output);
+	if(output)
+	{
+		TRACK_MESSAGE(output);
+		output->AddByte(error);
+		output->AddString(message);
+		OutputMessagePool::getInstance()->send(output);
+	}
 	getConnection()->closeConnection();
 }
 
@@ -163,53 +166,58 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	g_bans.addLoginAttempt(clientip, true);
 
 	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
-	TRACK_MESSAGE(output);
-
-	//Remove premium days
-	g_game.removePremium(account);
-
-	//Add MOTD
-	output->AddByte(0x14);
-	char motd[1300];
-	sprintf(motd, "%d\n%s", g_game.getMotdNum(), g_config.getString(ConfigManager::MOTD).c_str());
-	output->AddString(motd);
-
-	//Add char list
-	output->AddByte(0x64);
-	if(accnumber != 1 && g_config.getString(ConfigManager::ACCOUNT_MANAGER) == "yes")
+	if(output)
 	{
-		output->AddByte((uint8_t)account.charList.size() + 1);
-		output->AddString("Account Manager");
-		output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
-		output->AddU32(serverip);
-		output->AddU16(g_config.getNumber(ConfigManager::PORT));
-	}
-	else
-		output->AddByte((uint8_t)account.charList.size());
-	std::list<std::string>::iterator it;
-	for(it = account.charList.begin(); it != account.charList.end(); it++)
-	{
-		output->AddString((*it));
-		if(g_config.getString(ConfigManager::ON_OR_OFF_CHARLIST) == "yes")
+		TRACK_MESSAGE(output);
+
+		//Remove premium days
+		g_game.removePremium(account);
+
+		//Add MOTD
+		output->AddByte(0x14);
+		char motd[1300];
+		sprintf(motd, "%d\n%s", g_game.getMotdNum(), g_config.getString(ConfigManager::MOTD).c_str());
+		output->AddString(motd);
+
+		//Add char list
+		output->AddByte(0x64);
+		if(accnumber != 1 && g_config.getString(ConfigManager::ACCOUNT_MANAGER) == "yes")
 		{
-			if(g_game.getPlayerByName((*it)))
-				output->AddString("Online");
-			else
-				output->AddString("Offline");
+			output->AddByte((uint8_t)account.charList.size() + 1);
+			output->AddString("Account Manager");
+			output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
+			output->AddU32(serverip);
+			output->AddU16(g_config.getNumber(ConfigManager::PORT));
 		}
 		else
-			output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
-		output->AddU32(serverip);
-		output->AddU16(g_config.getNumber(ConfigManager::PORT));
+			output->AddByte((uint8_t)account.charList.size());
+
+		std::list<std::string>::iterator it;
+		for(it = account.charList.begin(); it != account.charList.end(); it++)
+		{
+			output->AddString((*it));
+			if(g_config.getString(ConfigManager::ON_OR_OFF_CHARLIST) == "yes")
+			{
+				if(g_game.getPlayerByName((*it)))
+					output->AddString("Online");
+				else
+					output->AddString("Offline");
+			}
+			else
+				output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
+
+			output->AddU32(serverip);
+			output->AddU16(g_config.getNumber(ConfigManager::PORT));
+		}
+
+		//Add premium days
+		if(g_config.getString(ConfigManager::FREE_PREMIUM) == "yes")
+			output->AddU16(65535); //client displays free premium
+		else
+			output->AddU16(account.premiumDays);
+
+		OutputMessagePool::getInstance()->send(output);
 	}
-
-	//Add premium days
-	if(g_config.getString(ConfigManager::FREE_PREMIUM) == "yes")
-		output->AddU16(65535); //client displays free premium
-	else
-		output->AddU16(account.premiumDays);
-
-	OutputMessagePool::getInstance()->send(output);
 	getConnection()->closeConnection();
 	return true;
 }

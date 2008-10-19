@@ -86,6 +86,7 @@ class Connection : boost::noncopyable
 	private:
 		Connection(boost::asio::io_service& io_service) : m_socket(io_service)
 		{
+			m_refCount = 0;
 			m_protocol = NULL;
 			m_pendingWrite = 0;
 			m_pendingRead = 0;
@@ -119,6 +120,9 @@ class Connection : boost::noncopyable
 
 		uint32_t getIP() const;
 
+		int32_t addRef() {return ++m_refCount;}
+		int32_t unRef() {return --m_refCount;}
+
 	private:
 		void parseHeader(const boost::system::error_code& error);
 		void parsePacket(const boost::system::error_code& error);
@@ -145,6 +149,7 @@ class Connection : boost::noncopyable
 		std::list <OutputMessage*> m_outputQueue;
 		int32_t m_pendingRead;
 		uint32_t m_closeState;
+		uint32_t m_refCount;
 
 		OTSYS_THREAD_LOCKVAR m_connectionLock;
 
