@@ -326,7 +326,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	player->balance = result->getDataLong("balance");
 	player->marriage = result->getDataInt("marriage");
 
-	unsigned long conditionsSize = 0;
+	uint64_t conditionsSize = 0;
 	const char* conditions = result->getDataStream("conditions", conditionsSize);
 	PropStream propStream;
 	propStream.init(conditions, conditionsSize);
@@ -368,7 +368,6 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	player->defaultOutfit.lookFeet = result->getDataInt("lookfeet");
 	player->defaultOutfit.lookAddons = result->getDataInt("lookaddons");
 	player->currentOutfit = player->defaultOutfit;
-
 	if(g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
 	{
 		int32_t redSkullSeconds = result->getDataInt("redskulltime") - time(NULL);
@@ -397,6 +396,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	Town* town = Towns::getInstance().getTown(player->town);
 	if(town)
 		player->masterPos = town->getTemplePosition();
+
 	Position loginPos = player->loginPosition;
 	if(loginPos.x == 0 && loginPos.y == 0 && loginPos.z == 0)
 		player->loginPosition = player->masterPos;
@@ -469,6 +469,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 		while(result->next());
 		db->freeResult(result);
 	}
+
 	query.str("");
  	query << "SELECT `player_id`, `name` FROM `player_spells` WHERE `player_id` = " << player->getGUID();
 	if((result = db->storeQuery(query.str())))
@@ -606,7 +607,7 @@ void IOLoginData::loadItems(ItemMap& itemMap, DBResult* result)
 		int32_t type = result->getDataInt("itemtype");
 		int32_t count = result->getDataInt("count");
 
-		unsigned long attrSize = 0;
+		uint64_t attrSize = 0;
 		const char* attr = result->getDataStream("attributes", attrSize);
 
 		PropStream propStream;
@@ -617,7 +618,7 @@ void IOLoginData::loadItems(ItemMap& itemMap, DBResult* result)
 		{
 			if(!item->unserializeAttr(propStream))
 				std::cout << "WARNING: Serialize error in IOLoginData::loadItems" << std::endl;
-			std::pair<Item*, int> pair(item, pid);
+			std::pair<Item*, int32_t> pair(item, pid);
 			itemMap[sid] = pair;
 		}
 	}
@@ -644,16 +645,24 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	if(!trans.begin())
 		return false;
 
-	//First, an UPDATE query to write the player itself
 	query.str("");
-	query << "UPDATE `players` SET ";
+	if(save || player->lastLoginSaved != 0 || player->lastIP != 0)
+		query << "UPDATE `players` SET ";
+
 	if(player->lastLoginSaved != 0)
-		query << "`lastlogin` = " << player->lastLoginSaved << ", ";
+		query << "`lastlogin` = " << player->lastLoginSaved;
 
 	if(player->lastIP != 0)
-		query << "`lastip` = " << player->lastIP;
+	{
+		if(player->lastLoginSaved != 0)
+			query << ", ";
 
-	if(!save)
+		query << "`lastip` = " << player->lastIP;
+	}
+
+	if(save)
+		query << ", ";
+	else
 	{
 		query << " WHERE `id` = " << player->getGUID();
 		if(!db->executeQuery(query.str()))
@@ -662,7 +671,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		return trans.commit();
 	}
 
-	query << ", `level` = " << player->level << ", ";
+	query << "`level` = " << player->level << ", ";
 	query << "`group_id` = " << player->groupId << ", ";
 	query << "`health` = " << player->health << ", ";
 	query << "`healthmax` = " << player->healthMax << ", ";
@@ -700,7 +709,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		}
 	}
 
-	uint32_t conditionsSize;
+	uint64_t conditionsSize;
 	const char* conditions = propWriteStream.getStream(conditionsSize);
 	query << "`conditions` = " << db->escapeBlob(conditions, conditionsSize) << ", ";
 	query << "`loss_experience` = " << (uint32_t)player->getLossPercent(LOSS_EXPERIENCE) << ", ";

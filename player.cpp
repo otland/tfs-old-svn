@@ -3576,21 +3576,18 @@ void Player::onKilledCreature(Creature* target)
 
 void Player::gainExperience(uint64_t gainExp)
 {
-	if(!hasFlag(PlayerFlag_NotGainExperience))
+	if(!hasFlag(PlayerFlag_NotGainExperience) && gainExp > 0)
 	{
-		if(gainExp > 0)
+		//soul regeneration
+		if(gainExp >= getLevel())
 		{
-			//soul regeneration
-			if(gainExp >= getLevel())
-			{
-				Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SOUL, 4 * 60 * 1000, 0);
-				condition->setParam(CONDITIONPARAM_SOULGAIN, 1);
-				condition->setParam(CONDITIONPARAM_SOULTICKS, vocation->getSoulGainTicks() * 1000);
-				addCondition(condition);
-			}
-
-			addExperience(gainExp);
+			Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SOUL, 4 * 60 * 1000, 0);
+			condition->setParam(CONDITIONPARAM_SOULGAIN, 1);
+			condition->setParam(CONDITIONPARAM_SOULTICKS, vocation->getSoulGainTicks() * 1000);
+			addCondition(condition);
 		}
+
+		addExperience(gainExp);
 	}
 }
 
@@ -3854,7 +3851,7 @@ void Player::checkRedSkullTicks(int32_t ticks)
 void Player::setPromotionLevel(uint32_t level)
 {
 	uint32_t tmpLevel = 0, currentVoc = vocation_id;
-	for(uint32_t i = 1; i <= level; i++)
+	for(uint32_t i = 0; i < level; i++)
 	{
 		currentVoc = g_vocations.getPromotedVocation(currentVoc);
 		if(currentVoc == 0)
