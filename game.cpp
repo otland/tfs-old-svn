@@ -4159,8 +4159,7 @@ void Game::startDecay(Item* item)
 		if(decayState == DECAYING_TRUE)
 			 return;
 
-		int32_t dur = item->getDuration();
-		if(dur > 0)
+		if(item->getDuration() > 0)
 		{
 			item->useThing2();
 			item->setDecaying(DECAYING_TRUE);
@@ -4230,7 +4229,6 @@ void Game::checkDecay()
 	}
 
 	lastBucket = bucket;
-
 	cleanup();
 }
 
@@ -4394,7 +4392,6 @@ void Game::cleanup()
 		(*it)->releaseThing2();
 
 	ToReleaseThings.clear();
-
 	for(DecayList::iterator it = toDecayItems.begin(); it != toDecayItems.end(); ++it)
 	{
 		int32_t dur = (*it)->getDuration();
