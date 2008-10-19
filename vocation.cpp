@@ -62,11 +62,10 @@ bool Vocations::loadFromXml()
 			if(xmlStrcmp(p->name, (const xmlChar*)"vocation") == 0)
 			{
 				Vocation* voc = new Vocation();
-				uint32_t vocId;
 				xmlNodePtr configNode;
 				if(readXMLInteger(p, "id", intVal))
 				{
-					vocId = intVal;
+					voc->id = intVal;
 					if(readXMLString(p, "name", str))
 						voc->name = str;
 
@@ -154,7 +153,7 @@ bool Vocations::loadFromXml()
 						}
 						configNode = configNode->next;
 					}
-					vocationsMap[vocId] = voc;
+					vocationsMap[voc->id] = voc;
 				}
 				else
 					std::cout << "Missing vocation id." << std::endl;

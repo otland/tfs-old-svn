@@ -739,10 +739,11 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		query << "`rank_id` = " << IOGuild::getInstance()->getRankIdByGuildIdAndLevel(player->getGuildId(), player->getGuildLevel()) << ", ";
 	}
 
-	for(uint32_t i = 0; i <= player->promotionLevel + 1; i++)
-		player->setVocation(player->vocation->getFromVocation());
+	Vocation* tmpVoc = player->vocation;
+	for(uint32_t i = 0; i <= player->promotionLevel; i++)
+		tmpVoc = tmpVoc->getFromVocation();
 
-	query << "`vocation` = " << (uint32_t)player->getVocationId();
+	query << "`vocation` = " << tmpVoc->getVocId();
 	query << " WHERE `id` = " << player->getGUID();
 	if(!db->executeQuery(query.str()))
 		return false;
