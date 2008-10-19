@@ -1943,21 +1943,20 @@ void ProtocolGame::sendContainer(uint32_t cid, const Container* container, bool 
 	}
 }
 
-void ProtocolGame::sendShop(const std::list<ShopInfo>& shop)
+void ProtocolGame::sendShop(const ShopInfoList& itemList)
 {
 	NetworkMessage* msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0x7A);
-		if(shop.size() > 255)
+		if(itemList.size() > 255)
 			msg->AddByte(255);
 		else
-			msg->AddByte(shop.size());
+			msg->AddByte(itemList.size());
 
-		std::list<ShopInfo>::const_iterator it;
 		uint32_t i = 0;
-		for(it = shop.begin(); it != shop.end() && i < 255; ++it, ++i)
+		for(ShopInfoList::const_iterator it = itemList.begin(); it != itemList.end() && i < 255; ++it, ++i)
 			AddShopItem(msg, (*it));
 	}
 }
@@ -1972,18 +1971,18 @@ void ProtocolGame::sendCloseShop()
 	}
 }
 
-void ProtocolGame::sendPlayerGoods(uint32_t money, std::map<uint16_t, uint8_t> itemMap)
+void ProtocolGame::sendGoods(const std::map<uint16_t, uint8_t>& itemMap)
 {
 	NetworkMessage* msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0x7B);
-		msg->AddU32(money);
+		msg->AddU32(g_game.getMoney(player));
 		msg->AddByte(std::min((size_t)255, itemMap.size()));
 
 		uint32_t i = 0;
-		for(std::map<uint16_t, uint8_t>::iterator it = itemMap.begin(); it != itemMap.end() && i < 255; ++it, ++i)
+		for(std::map<uint16_t, uint8_t>::const_iterator it = itemMap.begin(); it != itemMap.end() && i < 255; ++it, ++i)
 		{
 			msg->AddItemId(it->first);
 			msg->AddByte(it->second);

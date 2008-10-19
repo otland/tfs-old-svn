@@ -21,6 +21,7 @@
 #ifndef __OTSERV_ENUMS_H__
 #define __OTSERV_ENUMS_H__
 #include <string>
+#include <list>
 
 enum StorageValues_t
 {
@@ -277,5 +278,7 @@ struct ShopInfo
 		const std::string& _itemName = "") : itemId(_itemId), subType(_subType), buyPrice(_buyPrice),
 		sellPrice(_sellPrice), itemName(_itemName) {}
 };
+
+typedef std::list<ShopInfo> ShopInfoList;
 
 #endif

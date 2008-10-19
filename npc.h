@@ -468,8 +468,6 @@ class Npc : public Creature
 
 		NpcScriptInterface* getScriptInterface();
 
-		std::list<ShopInfo> shopItemList;
-
 	protected:
 		Npc(const std::string& _name);
 
