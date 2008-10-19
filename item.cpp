@@ -845,7 +845,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 	{
 		s << " (Arm:" << it.armor;
 
-		if(it.abilities.absorbPercentAll != 0 || it.abilities.absorbPercentDeath != 0 ||
+		if(it.abilities.absorbPercentOther != 0 || it.abilities.absorbPercentDeath != 0 ||
 			it.abilities.absorbPercentDrown != 0 || it.abilities.absorbPercentEarth != 0 ||
 			it.abilities.absorbPercentEnergy != 0 || it.abilities.absorbPercentFire != 0 ||
 			it.abilities.absorbPercentHoly != 0 || it.abilities.absorbPercentIce != 0 ||
@@ -854,9 +854,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		{
 			bool isBegin = true;
 			s << ", protection";
-			if(it.abilities.absorbPercentAll != 0)
+			if(it.abilities.absorbPercentOther != 0)
 			{
-				s << " all " << std::showpos << it.abilities.absorbPercentAll << std::noshowpos << "%";
+				s << " other " << std::showpos << it.abilities.absorbPercentOther << std::noshowpos << "%";
 				isBegin = false;
 			}
 
