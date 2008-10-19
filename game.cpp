@@ -4262,12 +4262,12 @@ void Game::checkDecay()
 	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
 		boost::bind(&Game::checkDecay, this)));
 
-	size_t bucket = (lastBucket + 1) % EVENT_DECAY_BUCKETS;
+	size_t bucket = (lastBucket + 1) % EVENT_DECAYBUCKETS;
 	for(DecayList::iterator it = decayItems[bucket].begin(); it != decayItems[bucket].end();)
 	{
 		Item* item = *it;
 
-		item->decreaseDuration(EVENT_DECAYINTERVAL * EVENT_DECAY_BUCKETS);
+		item->decreaseDuration(EVENT_DECAYINTERVAL * EVENT_DECAYBUCKETS);
 		if(!item->canDecay())
 		{
 			item->setDecaying(DECAYING_FALSE);
@@ -4283,10 +4283,10 @@ void Game::checkDecay()
 			internalDecayItem(item);
 			FreeThing(item);
 		}
-		else if(dur < EVENT_DECAYINTERVAL * EVENT_DECAY_BUCKETS)
+		else if(dur < EVENT_DECAYINTERVAL * EVENT_DECAYBUCKETS)
 		{
 			it = decayItems[bucket].erase(it);
-			size_t newBucket = (bucket + ((dur + EVENT_DECAYINTERVAL / 2) / 1000)) % EVENT_DECAY_BUCKETS;
+			size_t newBucket = (bucket + ((dur + EVENT_DECAYINTERVAL / 2) / 1000)) % EVENT_DECAYBUCKETS;
 			if(newBucket == bucket)
 			{
 				internalDecayItem(item);
@@ -4466,10 +4466,10 @@ void Game::cleanup()
 	for(DecayList::iterator it = toDecayItems.begin(); it != toDecayItems.end(); ++it)
 	{
 		int32_t dur = (*it)->getDuration();
-		if(dur >= EVENT_DECAYINTERVAL * EVENT_DECAY_BUCKETS)
+		if(dur >= EVENT_DECAYINTERVAL * EVENT_DECAYBUCKETS)
 			decayItems[lastBucket].push_back(*it);
 		else
-			decayItems[(lastBucket + 1 + (*it)->getDuration() / 1000) % EVENT_DECAY_BUCKETS].push_back(*it);
+			decayItems[(lastBucket + 1 + (*it)->getDuration() / 1000) % EVENT_DECAYBUCKETS].push_back(*it);
 	}
 
 	toDecayItems.clear();
