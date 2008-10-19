@@ -709,14 +709,13 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		}
 	}
 
-	uint64_t conditionsSize;
+	uint32_t conditionsSize;
 	const char* conditions = propWriteStream.getStream(conditionsSize);
 	query << "`conditions` = " << db->escapeBlob(conditions, conditionsSize) << ", ";
 	query << "`loss_experience` = " << (uint32_t)player->getLossPercent(LOSS_EXPERIENCE) << ", ";
 	query << "`loss_mana` = " << (uint32_t)player->getLossPercent(LOSS_MANASPENT) << ", ";
 	query << "`loss_skills` = " << (uint32_t)player->getLossPercent(LOSS_SKILLTRIES) << ", ";
 	query << "`loss_items` = " << (uint32_t)player->getLossPercent(LOSS_ITEMS) << ", ";
-
 	if(g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
 	{
 		int32_t redSkullTime = 0;
@@ -730,6 +729,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 
 		query << "`redskull` = " << redSkull << ", ";
 	}
+
 	query << "`lastlogout` = " << player->getLastLogout() << ", ";
 	query << "`blessings` = " << player->blessings << ", ";
 	query << "`marriage` = " << player->marriage << ", ";
