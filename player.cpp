@@ -3130,7 +3130,7 @@ void Player::__internalAddThing(Thing* thing)
 
 void Player::__internalAddThing(uint32_t index, Thing* thing)
 {
-#ifdef __DEBUG__MOVESYS__NOTICE
+#ifdef __DEBUG__MOVESYS__
 	std::cout << "[Player::__internalAddThing] index: " << index << std::endl;
 #endif
 

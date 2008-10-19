@@ -286,7 +286,7 @@ function convertIntToIP(int, mask)
 			if m2 == 0 then b2 = "x" end
 			if m3 == 0 then b3 = "x" end
 			if m4 == 0 then b4 = "x" end
-		else if(m1 ~= 255 or m2 ~= 255 or m3 ~= 255 or m4 ~= 255) then
+		elseif(m1 ~= 255 or m2 ~= 255 or m3 ~= 255 or m4 ~= 255) then
 			return b1 .. "." .. b2 .. "." .. b3 .. "." .. b4 .. " : " .. m1 .. "." .. m2 .. "." .. m3 .. "." .. m4
 		end
 	end
