@@ -99,7 +99,8 @@ struct RuleViolation
 typedef std::map< uint32_t, shared_ptr<RuleViolation> > RuleViolationsMap;
 
 #define EVENT_LIGHTINTERVAL 10000
-#define EVENT_DECAYINTERVAL 10000
+#define EVENT_DECAYINTERVAL 1000
+#define EVENT_DECAY_BUCKETS 16
 
 typedef std::vector< std::pair<std::string, unsigned int> > Highscore;
 
@@ -570,8 +571,9 @@ class Game
 		void internalDecayItem(Item* item);
 
 		typedef std::list<Item*> DecayList;
-		DecayList decayItems;
+		DecayList decayItems[EVENT_DECAY_BUCKETS];
 		DecayList toDecayItems;
+		size_t lastBucket;
 
 		static const int32_t LIGHT_LEVEL_DAY = 250;
 		static const int32_t LIGHT_LEVEL_NIGHT = 40;

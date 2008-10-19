@@ -163,7 +163,7 @@ bool Connection::closingConnection()
 			std::cout << "Deleting Connection" << std::endl;
 			#endif
 
-			m_connectionLock.unlock();
+			OTSYS_THREAD_UNLOCK(m_connectionLock, "");
 
 			Dispatcher::getDispatcher().addTask(
 				createTask(boost::bind(&Connection::deleteConnectionTask, this)));

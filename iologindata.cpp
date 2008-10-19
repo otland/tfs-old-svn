@@ -676,7 +676,20 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		return false;
 
 	if(result.getDataInt("save") == 0)
+	{
+		query.str("");
+		query << "UPDATE `players` SET `lastlogin` = " << player->lastLoginSaved << ", `lastip` = " << player->lastIP << " WHERE `id` = " << player->getGUID() << ";";
+
+		DBTransaction trans(db);
+		if(!trans.start())
+			return false;
+
+		if(db->executeQuery(query))
+			return false;
+
+		trans.success();
 		return true;
+	}
 
 	DBTransaction trans(db);
 	if(!trans.start())

@@ -620,7 +620,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 						if(iitem->getTrashHolder())
 							continue;
 
-						if(!iiType.hasHeight || iiType.pickupable)
+						if(!iiType.hasHeight || iiType.pickupable || iiType.isBed())
 							return RET_NOTENOUGHROOM;
 					}
 					else

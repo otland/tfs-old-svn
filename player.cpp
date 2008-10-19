@@ -513,7 +513,8 @@ int32_t Player::getDefense() const
 
 float Player::getAttackFactor() const
 {
-	switch(fightMode){
+	switch(fightMode)
+	{
 		case FIGHTMODE_ATTACK:
 		{
 			return 1.0f;
@@ -3169,19 +3170,7 @@ void Player::doAttacking(uint32_t interval)
 
 		bool result = false;
 		if(weapon)
-		{
-			if(!weapon->interuptSwing())
-				result = weapon->useWeapon(this, tool, attackedCreature);
-			else if(!canDoAction())
-			{
-				uint32_t delay = getNextActionTime();
-				SchedulerTask* task = createSchedulerTask(delay, boost::bind(&Game::checkCreatureAttack,
-					&g_game, getID()));
-				setNextActionTask(task);
-			}
-			else if(!hasCondition(CONDITION_EXHAUST_COMBAT) || !weapon->hasExhaustion())
-				result = weapon->useWeapon(this, tool, attackedCreature);
-		}
+			result = weapon->useWeapon(this, tool, attackedCreature);
 		else
 			result = Weapon::useFist(this, attackedCreature);
 
