@@ -151,7 +151,6 @@ class WeaponDistance : public Weapon
 
 		virtual bool configureEvent(xmlNodePtr p);
 		virtual bool configureWeapon(const ItemType& it);
-		virtual bool interuptSwing() const {return true;}
 
 		virtual int32_t playerWeaponCheck(Player* player, Creature* target) const;
 		virtual bool useWeapon(Player* player, Item* item, Creature* target) const;

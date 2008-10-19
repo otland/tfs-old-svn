@@ -646,23 +646,8 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		return false;
 
 	query.str("");
-	if(save || player->lastLoginSaved != 0 || player->lastIP != 0)
-		query << "UPDATE `players` SET ";
-
-	if(player->lastLoginSaved != 0)
-		query << "`lastlogin` = " << player->lastLoginSaved;
-
-	if(player->lastIP != 0)
-	{
-		if(player->lastLoginSaved != 0)
-			query << ", ";
-
-		query << "`lastip` = " << player->lastIP;
-	}
-
-	if(save)
-		query << ", ";
-	else
+	query << "UPDATE `players` SET `lastlogin` = " << player->lastLoginSaved << ", `lastip` = " << player->lastIP;
+	if(!save)
 	{
 		query << " WHERE `id` = " << player->getGUID();
 		if(!db->executeQuery(query.str()))
@@ -671,6 +656,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		return trans.commit();
 	}
 
+	query << ", ";
 	query << "`level` = " << player->level << ", ";
 	query << "`group_id` = " << player->groupId << ", ";
 	query << "`health` = " << player->health << ", ";
@@ -743,8 +729,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	for(uint32_t i = 0; i <= player->promotionLevel; i++)
 		tmpVoc = g_vocations.getVocation(tmpVoc->getFromVocation());
 
-	query << "`vocation` = " << tmpVoc->getVocId();
-	query << " WHERE `id` = " << player->getGUID();
+	query << "`vocation` = " << tmpVoc->getVocId() << " WHERE `id` = " << player->getGUID();
 	if(!db->executeQuery(query.str()))
 		return false;
 
@@ -755,6 +740,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		query << "UPDATE `player_skills` SET `value` = " << player->skills[i][SKILL_LEVEL] << ", `count` = " << player->skills[i][SKILL_TRIES] << " WHERE `player_id` = " << player->getGUID() << " AND `skillid` = " << i;
 		if(!db->executeQuery(query.str()))
 			return false;
+
 		query.str("");
 	}
 

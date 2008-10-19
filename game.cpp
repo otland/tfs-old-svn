@@ -78,7 +78,6 @@ Game::Game()
 		globalSaveMessage[i] = false;
 
 	OTSYS_THREAD_LOCKVARINIT(AutoID::autoIDLock);
-
 	#ifdef __EXCEPTION_TRACER__
 	OTSYS_THREAD_LOCKVARINIT(maploadlock);
 	#endif
@@ -97,6 +96,7 @@ Game::Game()
 	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_CREATURE_THINK_INTERVAL,
 		boost::bind(&Game::checkCreatures, this)));
 
+	lastBucket = 0;
 	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
 		boost::bind(&Game::checkDecay, this)));
 }
@@ -4262,29 +4262,44 @@ void Game::checkDecay()
 	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
 		boost::bind(&Game::checkDecay, this)));
 
-	Item* item = NULL;
-	for(DecayList::iterator it = decayItems.begin(); it != decayItems.end();)
+	size_t bucket = (lastBucket + 1) % EVENT_DECAY_BUCKETS;
+	for(DecayList::iterator it = decayItems[bucket].begin(); it != decayItems[bucket].end();)
 	{
-		item = *it;
-		item->decreaseDuration(EVENT_DECAYINTERVAL);
+		Item* item = *it;
 
+		item->decreaseDuration(EVENT_DECAYINTERVAL * EVENT_DECAY_BUCKETS);
 		if(!item->canDecay())
 		{
 			item->setDecaying(DECAYING_FALSE);
 			FreeThing(item);
-			it = decayItems.erase(it);
+			it = decayItems[bucket].erase(it);
 			continue;
 		}
 
-		if(item->getDuration() <= 0)
+		int32_t dur = item->getDuration();
+		if(dur <= 0)
 		{
-			it = decayItems.erase(it);
+			it = decayItems[bucket].erase(it);
 			internalDecayItem(item);
 			FreeThing(item);
+		}
+		else if(dur < EVENT_DECAYINTERVAL * EVENT_DECAY_BUCKETS)
+		{
+			it = decayItems[bucket].erase(it);
+			size_t newBucket = (bucket + ((dur + EVENT_DECAYINTERVAL / 2) / 1000)) % EVENT_DECAY_BUCKETS;
+			if(newBucket == bucket)
+			{
+				internalDecayItem(item);
+				FreeThing(item);
+			}
+			else
+				decayItems[newBucket].push_back(item);
 		}
 		else
 			++it;
 	}
+
+	lastBucket = bucket;
 	cleanup();
 }
 
@@ -4448,9 +4463,14 @@ void Game::cleanup()
 		(*it)->releaseThing2();
 
 	ToReleaseThings.clear();
-
 	for(DecayList::iterator it = toDecayItems.begin(); it != toDecayItems.end(); ++it)
-		decayItems.push_back(*it);
+	{
+		int32_t dur = (*it)->getDuration();
+		if(dur >= EVENT_DECAYINTERVAL * EVENT_DECAY_BUCKETS)
+			decayItems[lastBucket].push_back(*it);
+		else
+			decayItems[(lastBucket + 1 + (*it)->getDuration() / 1000) % EVENT_DECAY_BUCKETS].push_back(*it);
+	}
 
 	toDecayItems.clear();
 }
