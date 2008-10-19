@@ -701,7 +701,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				}
 				case ID_MENU_SERVER_OPEN:
 				{
-					if(g_game.getGameState() != GAME_STATE_STARTUP && !GUI::getInstance()->m_connections)
+					if(g_game.getGameState() != GAME_STATE_STARTUP && GUI::getInstance()->m_connections)
 					{
 						Dispatcher::getDispatcher().addTask(
 							createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_NORMAL)));
