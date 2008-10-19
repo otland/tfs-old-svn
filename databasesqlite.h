@@ -67,7 +67,7 @@ class SQLiteResult : public _DBResult
 		DATABASE_VIRTUAL int32_t getDataInt(const std::string &s);
 		DATABASE_VIRTUAL int64_t getDataLong(const std::string &s);
 		DATABASE_VIRTUAL std::string getDataString(const std::string &s);
-		DATABASE_VIRTUAL const char* getDataStream(const std::string &s, unsigned long &size);
+		DATABASE_VIRTUAL const char* getDataStream(const std::string &s, uint64_t &size);
 
 		DATABASE_VIRTUAL bool next();
 
