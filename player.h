@@ -156,17 +156,17 @@ class Player : public Creature, public Cylinder
 		void addList();
 		void kickPlayer(bool displayEffect);
 
-		static uint64_t getExpForLevel(uint32_t level)
+		static uint64_t getExpForLevel(uint32_t lv)
 		{
 			/* Talaturen's formula
-			  *uint64_t x = level;
+			  *uint64_t x = lv;
 			  *return (x > 1 ? ((50 * x / 3 - 100) * x + 850 / 3) * x - 200 : 0);
 			  */
-			level--;
-			return ((50ULL * level * level * level) - (150ULL * level * level) + (400ULL * level))/3ULL;
+			lv--;
+			return ((50ULL * lv * lv * lv) - (150ULL * lv * lv) + (400ULL * lv)) / 3ULL;
 		}
 
-		void setPromotionLevel(uint32_t level);
+		void setPromotionLevel(uint32_t pLevel);
 
 		bool hasRequestedOutfit() const {return requestedOutfit;}
 		void hasRequestedOutfit(bool newValue) {requestedOutfit = newValue;}

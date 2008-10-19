@@ -3848,10 +3848,10 @@ void Player::checkRedSkullTicks(int32_t ticks)
 	}
 }
 
-void Player::setPromotionLevel(uint32_t level)
+void Player::setPromotionLevel(uint32_t pLevel)
 {
 	uint32_t tmpLevel = 0, currentVoc = vocation_id;
-	for(uint32_t i = 0; i < level; i++)
+	for(uint32_t i = 1; i <= pLevel; i++)
 	{
 		currentVoc = g_vocations.getPromotedVocation(currentVoc);
 		if(currentVoc == 0)
