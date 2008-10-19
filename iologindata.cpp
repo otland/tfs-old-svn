@@ -684,7 +684,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		if(!trans.start())
 			return false;
 
-		if(db->executeQuery(query))
+		if(!db->executeQuery(query))
 			return false;
 
 		trans.success();
