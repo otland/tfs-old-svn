@@ -74,7 +74,7 @@
 	maxDeathRecords = 5
 
 	-- Guilds
-	inGameGuildManagement = "yes"
+	ingameGuildManagement = "yes"
 	levelToFormGuild = 8
 	guildNameMinLength = 4
 	guildNameMaxLength = 20
