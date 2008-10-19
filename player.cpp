@@ -602,9 +602,6 @@ void Player::updateInventoryWeigth()
 				inventoryWeight += item->getWeight();
 		}
 	}
-
-	if(shopOwner)
-		sendGoods();
 }
 
 int32_t Player::getPlayerInfo(playerinfo_t playerinfo) const
@@ -1490,7 +1487,7 @@ void Player::openShopWindow()
 	sendGoods();
 }
 
-void Player::closeShopWindow(Npc* npc/* = NULL*/, int32_t onBuy/* = 0*/, int32_t onSell/* = 0*/)
+void Player::closeShopWindow(Npc* npc/* = NULL*/, int32_t onBuy/* = -1*/, int32_t onSell/* = -1*/)
 {
 	if(!npc)
 		npc = getShopOwner(onBuy, onSell);
@@ -1941,9 +1938,8 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 
 	if(damage != 0)
 	{
-		bool absorbedDamage;
+		int32_t blocked = 0;
 
-		//reduce damage against inventory items
 		Item* item = NULL;
 		for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
 		{
@@ -1954,128 +1950,91 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 				continue;
 
 			const ItemType& it = Item::items[item->getID()];
-			absorbedDamage = false;
-
-			if(it.abilities.absorbPercentAll != 0)
-			{
-				damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentAll) / 100));
-				absorbedDamage = (it.abilities.absorbPercentAll > 0);
-			}
-
 			switch(combatType)
 			{
 				case COMBAT_PHYSICALDAMAGE:
 				{
 					if(it.abilities.absorbPercentPhysical != 0)
-					{
-						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentPhysical) / 100));
-						absorbedDamage = (it.abilities.absorbPercentPhysical > 0);
-					}
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentPhysical / 100));
 					break;
 				}
 
 				case COMBAT_FIREDAMAGE:
 				{
 					if(it.abilities.absorbPercentFire != 0)
-					{
-						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentFire) / 100));
-						absorbedDamage = (it.abilities.absorbPercentFire > 0);
-					}
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentFire / 100));
 					break;
 				}
 
 				case COMBAT_ENERGYDAMAGE:
 				{
 					if(it.abilities.absorbPercentEnergy != 0)
-					{
-						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentEnergy) / 100));
-						absorbedDamage = (it.abilities.absorbPercentEnergy > 0);
-					}
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentEnergy / 100));
 					break;
 				}
 
 				case COMBAT_EARTHDAMAGE:
 				{
 					if(it.abilities.absorbPercentEarth != 0)
-					{
-						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentEarth) / 100));
-						absorbedDamage = (it.abilities.absorbPercentEarth > 0);
-					}
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentEarth / 100));
 					break;
 				}
 
 				case COMBAT_LIFEDRAIN:
 				{
 					if(it.abilities.absorbPercentLifeDrain != 0)
-					{
-						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentLifeDrain) / 100));
-						absorbedDamage = (it.abilities.absorbPercentLifeDrain > 0);
-					}
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentLifeDrain / 100));
 					break;
 				}
 
 				case COMBAT_MANADRAIN:
 				{
 					if(it.abilities.absorbPercentManaDrain != 0)
-					{
-						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentManaDrain) / 100));
-						absorbedDamage = (it.abilities.absorbPercentManaDrain > 0);
-					}
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentManaDrain / 100));
 					break;
 				}
 
 				case COMBAT_DROWNDAMAGE:
 				{
 					if(it.abilities.absorbPercentDrown != 0)
-					{
-						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentDrown) / 100));
-						absorbedDamage = (it.abilities.absorbPercentDrown > 0);
-					}
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentDrown / 100));
 					break;
 				}
 
 				case COMBAT_ICEDAMAGE:
 				{
 					if(it.abilities.absorbPercentIce != 0)
-					{
-						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentIce) / 100));
-						absorbedDamage = (it.abilities.absorbPercentIce > 0);
-					}
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentIce / 100));
 					break;
 				}
 
 				case COMBAT_HOLYDAMAGE:
 				{
 					if(it.abilities.absorbPercentHoly != 0)
-					{
-						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentHoly) / 100));
-						absorbedDamage = (it.abilities.absorbPercentHoly > 0);
-					}
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentHoly / 100));
 					break;
 				}
 
 				case COMBAT_DEATHDAMAGE:
 				{
 					if(it.abilities.absorbPercentDeath != 0)
-					{
-						damage = (int32_t)std::ceil(damage * ((float)(100 - it.abilities.absorbPercentDeath) / 100));
-						absorbedDamage = (it.abilities.absorbPercentDeath > 0);
-					}
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentDeath / 100));
 					break;
 				}
 
 				default:
+				{
+					if(it.abilities.absorbPercentOther != 0)
+						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentOther / 100));
 					break;
+				}
 			}
 
-			if(absorbedDamage)
-			{
-				int32_t charges = item->getCharges();
-				if(charges != 0)
-					g_game.transformItem(item, item->getID(), charges - 1);
-			}
+			if(item->hasCharges())
+				g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
 		}
 
+		damage -= blocked;
 		if(damage <= 0)
 		{
 			damage = 0;
@@ -3019,6 +2978,9 @@ void Player::postAddNotification(Thing* thing, int32_t index, cylinderlink_t lin
 	{
 		if(const Container* container = item->getContainer())
 			onSendContainer(container);
+
+		if(shopOwner)
+			postUpdateGoods(item->getID());
 	}
 	else if(const Creature* creature = thing->getCreature())
 	{
@@ -3066,7 +3028,27 @@ void Player::postRemoveNotification(Thing* thing, int32_t index, bool isComplete
 			else
 				autoCloseContainers(container);
 		}
+
+		if(shopOwner)
+			postUpdateGoods(item->getID());
 	}
+}
+
+void Player::postUpdateGoods(uint32_t itemId)
+{
+	for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
+	{
+		if((*it).itemId == itemId)
+		{
+			uint32_t itemCount = __getItemTypeCount((*it).itemId);
+			if(itemCount > 0)
+				goodsMap[(*it).itemId] = itemCount;
+			else
+				goodsMap.erase((*it).itemId);
+		}
+	}
+
+	sendGoods();
 }
 
 void Player::__internalAddThing(Thing* thing)
@@ -3512,22 +3494,18 @@ void Player::onKilledCreature(Creature* target)
 
 void Player::gainExperience(uint64_t gainExp)
 {
-	if(!hasFlag(PlayerFlag_NotGainExperience))
+	if(!hasFlag(PlayerFlag_NotGainExperience) && gainExp > 0)
 	{
-		if(gainExp > 0)
+		//soul regeneration
+		if(gainExp >= getLevel())
 		{
-			//soul regeneration
-			if(gainExp >= getLevel())
-			{
-				Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SOUL, 4 * 60 * 1000, 0);
-				uint32_t vocSoulTicks = vocation->getSoulGainTicks();
-				condition->setParam(CONDITIONPARAM_SOULGAIN, 1);
-				condition->setParam(CONDITIONPARAM_SOULTICKS, vocSoulTicks * 1000);
-				addCondition(condition);
-			}
-
-			addExperience(gainExp);
+			Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SOUL, 4 * 60 * 1000, 0);
+			condition->setParam(CONDITIONPARAM_SOULGAIN, 1);
+			condition->setParam(CONDITIONPARAM_SOULTICKS, vocation->getSoulGainTicks() * 1000);
+			addCondition(condition);
 		}
+
+		addExperience(gainExp);
 	}
 }
 

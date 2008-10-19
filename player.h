@@ -348,11 +348,11 @@ class Player : public Creature, public Cylinder
 
 		void stopWalk();
 		void openShopWindow();
-		void closeShopWindow(Npc* npc = NULL, int32_t onBuy = 0, int32_t onSell = 0);
+		void closeShopWindow(Npc* npc = NULL, int32_t onBuy = -1, int32_t onSell = -1);
 
 		void setChaseMode(chaseMode_t mode);
 		void setFightMode(fightMode_t mode);
-		void setSecureMode(secureMode_t mode) { secureMode = mode; }
+		void setSecureMode(secureMode_t mode) {secureMode = mode;}
 
 		//combat functions
 		virtual bool setAttackedCreature(Creature* creature);
@@ -646,6 +646,7 @@ class Player : public Creature, public Cylinder
 		void addExperience(uint64_t exp);
 
 		void updateInventoryWeigth();
+		void postUpdateGoods(uint32_t itemId);
 
 		void setNextWalkActionTask(SchedulerTask* task);
 		void setNextWalkTask(SchedulerTask* task);
@@ -778,12 +779,14 @@ class Player : public Creature, public Cylinder
 		Player* tradePartner;
 		tradestate_t tradeState;
 		Item* tradeItem;
+
+		//shop variables
 		Npc* shopOwner;
 		int32_t purchaseCallback;
 		int32_t saleCallback;
 		ShopInfoList shopOffer;
 
-		std::map<uint16_t, uint8_t> goodsMap;
+		std::map<uint32_t, uint32_t> goodsMap;
 
 		std::string name;
 		std::string nameDescription;
