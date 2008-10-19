@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3 Alpha 2
+		0.3 Alpha 3
 
 	Codenamed
 		\
@@ -90,7 +90,9 @@
 						* Talkaction based on new LUA function, deprecated from commands
 					broadcastclass.lua
 					mode.lua
+					multicheck.lua
 						* Added (...)
+					buypremium.lua
 
 			weapons/
 				scripts/
@@ -229,6 +231,10 @@
 				scripts/
 					firstitems.lua
 						* Moved first items script to creature events instead of move events
+
+			talkactions/
+				scripts/
+					buyprem.lua
 
 			weapons/
 				scripts/

@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3 Alpha 2
+		0.3 Alpha 3
 
 	Codenamed
 		\
@@ -36,6 +36,7 @@
 [ DEVELOPERS
 	Project Manager(s)
 		Talaturen
+		Elf (Temp., responsible for 0.3 Alpha stage)
 
 	Founder(s)
 		Talaturen
@@ -81,11 +82,7 @@
 		Download required packages
 			Debian \ Ubuntu
 				Launch a terminal, and paste in the following commands:
-					sudo apt-get install libboost-date-time-dev libboost-date-time1.35.1 libboost-dev libboost-regex-dev libboost-regex1.35.1 libboost-signals-dev libboost-signals1.35.1 libboost-thread-dev libboost-thread1.35.1 liblua5.1-0 liblua5.1-0-dev liblua50 liblua50-dev liblualib50 liblualib50-dev lua50 libsqlite0 libsqlite0-dev libsqlite3-0 libsqlite3-dev sqlite3 lua5.1 libmysql++-dev libgmp3-dev subversion make g++ libxml2 libxml2-dev libxml++2.6-dev libmysqlclient15-dev mysql-client-5.0 mysql-common mysql-server-5.0 gcc cpp
-					wget http://heanet.dl.sourceforge.net/sourceforge/asio/boost_asio_1_0_0.tar.gz
-					tar -xf boost_asio_1_0_0.tar.gz
-					sudo cp -ar boost_asio_1_0_0/boost/* /usr/include/boost/
-					sudo g++ boost_asio_1_0_0/libs/system/src/error_code.cpp -c -o /usr/lib/libboost_system.a
+					sudo apt-get install libboost1.35.0-dev liblua5.1-0 liblua5.1-0-dev liblua50 liblua50-dev liblualib50 liblualib50-dev lua50 libsqlite0 libsqlite0-dev libsqlite3-0 libsqlite3-dev sqlite3 lua5.1 libmysql++-dev libgmp3-dev subversion make g++ libxml2 libxml2-dev libxml++2.6-dev libmysqlclient15-dev mysql-client-5.0 mysql-common mysql-server-5.0 gcc cpp automake autoconf pkg-config
 
 			sudo: command not found
 				If you're running Debian it's possible that you don't have sudo,
@@ -94,14 +91,18 @@
 
 		Download sources
 			Launch a terminal, and paste in this command:
-				svn co http://public.otland.net/svn/forgottenserver
+				svn co http://svn.otland.net/public/forgottenserver/tags/0.3a3
 
 		Compiling
 			Launch a terminal, and type this:
-				cd tags/0.3a1 && make
+				cd 0.3a3 && ./autogen.sh && ./configure --enable-mysql --enable-server-diag && make
 
 		Linker error
-			If you receive a linker error saying something with 'libboost', paste this command to terminal and try to compile again:
+			If you receive a linker error saying something with 'libboost', try pasting the following commands to terminal and then move back to compiling again:
+				wget http://heanet.dl.sourceforge.net/sourceforge/asio/boost_asio_1_0_0.tar.gz
+				tar -xf boost_asio_1_0_0.tar.gz
+				sudo cp -ar boost_asio_1_0_0/boost/* /usr/include/boost/
+				sudo g++ boost_asio_1_0_0/libs/system/src/error_code.cpp -c -o /usr/lib/libboost_system.a
 				ln /usr/lib/libboost_regex-mt.so /usr/lib/libboost_regex.so && ln /usr/lib/libboost_regex-mt.a /usr/lib/libboost_regex.a && ln /usr/lib/libboost_thread-mt.so /usr/lib/libboost_thread.so && ln /usr/lib/libboost_thread-mt.a /usr/lib/libboost_thread.a
 
 	Windows
