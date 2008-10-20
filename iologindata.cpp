@@ -339,7 +339,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	player->levelPercent = Player::getPercentLevel(player->experience - currExpCount, nextExpCount - currExpCount);
 	player->soul = result.getDataInt("soul");
 	player->capacity = result.getDataInt("cap");
-	player->blessings = result.getDataInt("blessings");
+	player->blessings = std::min(result.getDataInt("blessings"), 31);
 
 	unsigned long conditionsSize = 0;
 	const char* conditions = result.getDataBlob("conditions", conditionsSize);

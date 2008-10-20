@@ -7050,7 +7050,7 @@ int32_t LuaScriptInterface::luaGetPlayerBlessing(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoPlayerAddBlessing(lua_State* L)
 {
-	int32_t blessing = popNumber(L);
+	int16_t blessing = popNumber(L);
 	uint32_t cid = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 	Player* player = env->getPlayerByUID(cid);

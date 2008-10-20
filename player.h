@@ -198,8 +198,8 @@ class Player : public Creature, public Cylinder
 		void setFlags(uint64_t flags){groupFlags = flags;}
 		bool hasFlag(PlayerFlags value) const {return (0 != (groupFlags & ((uint64_t)1 << value)));}
 
-		void addBlessing(uint64_t blessings_){blessings = blessings_;}
-		bool hasBlessing(int value) const {return (0 != (blessings & ((short)1 << value)));}
+		void addBlessing(int16_t blessings_){blessings = std::min((int32_t)blessings_, 31);}
+		bool hasBlessing(int16_t value) const {return (0 != (blessings & ((int16_t)1 << value)));}
 
 		bool isOnline() const {return (client != NULL);}
 		void disconnect() {if(client) client->disconnect();}
@@ -706,7 +706,7 @@ class Player : public Creature, public Cylinder
 		PlayerSex_t sex;
 		int32_t soul, soulMax;
 		uint64_t groupFlags;
-		uint32_t blessings;
+		int16_t blessings;
 		uint32_t MessageBufferTicks;
 		int32_t MessageBufferCount;
 		uint32_t actionTaskEvent;
