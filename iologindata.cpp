@@ -326,7 +326,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	player->balance = result->getDataLong("balance");
 	player->marriage = result->getDataInt("marriage");
 
-	unsigned long conditionsSize = 0;
+	uint64_t conditionsSize = 0;
 	const char* conditions = result->getDataStream("conditions", conditionsSize);
 	PropStream propStream;
 	propStream.init(conditions, conditionsSize);
@@ -607,7 +607,7 @@ void IOLoginData::loadItems(ItemMap& itemMap, DBResult* result)
 		int32_t type = result->getDataInt("itemtype");
 		int32_t count = result->getDataInt("count");
 
-		unsigned long attrSize = 0;
+		uint64_t attrSize = 0;
 		const char* attr = result->getDataStream("attributes", attrSize);
 
 		PropStream propStream;
@@ -774,7 +774,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 
 	ItemBlockList itemList;
 	Item* item;
-	for(int32_t slotId = 1; slotId <= 10; ++slotId)
+	for(int32_t slotId = 0; slotId < 10; ++slotId)
 	{
 		if((item = player->inventory[slotId]))
 			itemList.push_back(itemBlock(slotId, item));
@@ -882,7 +882,7 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 		item->serializeAttr(propWriteStream);
 		const char* attributes = propWriteStream.getStream(attributesSize);
 
-		char buffer[attributesSize * 3 + 100]; //MUST be (size * 2), else people can crash server when filling letter with ¥ŒÆÑÓ£
+		char buffer[attributesSize * 3 + 100]; //MUST be (size * 2), else people can crash server when filling writable with native characters
 		sprintf(buffer, "%d, %d, %d, %d, %d, %s", player->getGUID(), pid, runningId, item->getID(), (int32_t)item->getSubType(), db->escapeBlob(attributes, attributesSize).c_str());
 		if(!query_insert.addRow(buffer))
 			return false;
