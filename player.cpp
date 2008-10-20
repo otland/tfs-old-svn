@@ -3036,6 +3036,7 @@ void Player::postRemoveNotification(Thing* thing, int32_t index, bool isComplete
 
 void Player::postUpdateGoods(uint32_t itemId)
 {
+	uint32_t amount = 0;
 	for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
 	{
 		if((*it).itemId == itemId)
@@ -3045,10 +3046,13 @@ void Player::postUpdateGoods(uint32_t itemId)
 				goodsMap[(*it).itemId] = itemCount;
 			else
 				goodsMap.erase((*it).itemId);
+
+			amount++;
 		}
 	}
 
-	sendGoods();
+	if(amount > 0)
+		sendGoods();
 }
 
 void Player::__internalAddThing(Thing* thing)
