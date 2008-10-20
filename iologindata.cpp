@@ -607,7 +607,7 @@ void IOLoginData::loadItems(ItemMap& itemMap, DBResult* result)
 		int32_t type = result->getDataInt("itemtype");
 		int32_t count = result->getDataInt("count");
 
-		uint32_t conditionsSize = 0;
+		unsigned long attrSize = 0;
 		const char* attr = result->getDataStream("attributes", attrSize);
 
 		PropStream propStream;
