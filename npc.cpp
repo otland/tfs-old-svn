@@ -2847,6 +2847,7 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 	player->closeShopWindow();
 
 	npc->addShopPlayer(player);
+	player->setShopOwner(npc, buyCallback, sellCallback, itemList);
 	player->openShopWindow();
 
 	lua_pushnumber(L, LUA_NO_ERROR);
