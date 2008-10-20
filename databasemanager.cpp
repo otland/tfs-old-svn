@@ -568,7 +568,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 			std::cout << "> Updating database to version: 3..." << std::endl;
 
-			query << "UPDATE `players` SET `vocation` = `vocation` - 4 WHERE `vocation` >= 4 AND `vocation` <= 8;";
+			query << "UPDATE `players` SET `vocation` = `vocation` - 4 WHERE `vocation` >= 5 AND `vocation` <= 8;";
 			db->executeQuery(query.str());
 
 			query.str("");
