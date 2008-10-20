@@ -877,7 +877,6 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 		++runningId;
 
 		uint32_t attributesSize;
-
 		PropWriteStream propWriteStream;
 		item->serializeAttr(propWriteStream);
 		const char* attributes = propWriteStream.getStream(attributesSize);
@@ -910,7 +909,7 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 			item->serializeAttr(propWriteStream);
 			const char* attributes = propWriteStream.getStream(attributesSize);
 
-			char buffer[attributesSize * 3 + 100]; //MUST be (size * 2), else people can crash server when filling letter with ¥ŒÆÑÓ£
+			char buffer[attributesSize * 3 + 100]; //MUST be (size * 2), else people can crash server when filling writable with native characters
 			sprintf(buffer, "%d, %d, %d, %d, %d, %s", player->getGUID(), parentId, runningId, item->getID(), (int32_t)item->getSubType(), db->escapeBlob(attributes, attributesSize).c_str());
 			if(!query_insert.addRow(buffer))
 				return false;

@@ -41,6 +41,7 @@
 #include "vocation.h"
 #include "teleport.h"
 #include "ioban.h"
+#include "raids.h"
 
 extern Game g_game;
 extern Monsters g_monsters;
