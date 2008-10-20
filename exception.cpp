@@ -166,7 +166,7 @@ EXCEPTION_DISPOSITION
 	_MEMORY_BASIC_INFORMATION mbi;
 
 	Dispatcher::getDispatcher().addTask(
-		createTask(boost::bind(&Game::saveGameState, g_game, true)));
+		createTask(boost::bind(&Game::saveGameState, &g_game, true)));
 
 	std::ostream *outdriver;
 	std::cout << "Error: generating report file..." << std::endl;

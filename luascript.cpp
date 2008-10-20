@@ -7131,7 +7131,7 @@ int32_t LuaScriptInterface::luaGetCreatureMaxHealth(lua_State* L)
 int32_t LuaScriptInterface::luaSaveData(lua_State* L)
 {
 	Dispatcher::getDispatcher().addTask(
-		createTask(boost::bind(&Game::saveGameState, g_game, true)));
+		createTask(boost::bind(&Game::saveGameState, &g_game, true)));
 	return 1;
 }
 
