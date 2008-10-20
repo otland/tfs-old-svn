@@ -326,7 +326,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	player->balance = result->getDataLong("balance");
 	player->marriage = result->getDataInt("marriage");
 
-	uint64_t conditionsSize = 0;
+	unsigned long conditionsSize = 0;
 	const char* conditions = result->getDataStream("conditions", conditionsSize);
 	PropStream propStream;
 	propStream.init(conditions, conditionsSize);
@@ -607,7 +607,7 @@ void IOLoginData::loadItems(ItemMap& itemMap, DBResult* result)
 		int32_t type = result->getDataInt("itemtype");
 		int32_t count = result->getDataInt("count");
 
-		uint64_t attrSize = 0;
+		uint32_t conditionsSize = 0;
 		const char* attr = result->getDataStream("attributes", attrSize);
 
 		PropStream propStream;
