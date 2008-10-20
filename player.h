@@ -204,8 +204,8 @@ class Player : public Creature, public Cylinder
 		void setCustomFlags(uint64_t flags){groupCustomFlags = flags;}
 		bool hasCustomFlag(PlayerCustomFlags value) const {return (0 != (groupCustomFlags & ((uint64_t)1 << value)));}
 
-		void addBlessing(uint64_t blessings_){blessings = blessings_;}
-		bool hasBlessing(uint16_t value) const {return (0 != (blessings & ((uint16_t)1 << value)));}
+		void addBlessing(int16_t blessings_) {blessings += blessings_;}
+		bool hasBlessing(int16_t value) const {return (0 != (blessings & ((int16_t)1 << value)));}
 
 		OperatingSystem_t getOperatingSystem() const {return operatingSystem;}
 		void setOperatingSystem(OperatingSystem_t clientos) {operatingSystem = clientos;}
@@ -736,7 +736,7 @@ class Player : public Creature, public Cylinder
 		int32_t soulMax;
 		uint64_t groupFlags;
 		uint64_t groupCustomFlags;
-		uint32_t blessings;
+		int16_t blessings;
 		uint32_t MessageBufferTicks;
 		int32_t MessageBufferCount;
 		uint32_t actionTaskEvent;
