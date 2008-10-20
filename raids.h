@@ -116,6 +116,7 @@ class Raid
 		bool isLoaded() {return loaded;}
 		uint64_t getMargin() {return margin;}
 		uint32_t getInterval() {return interval;}
+		bool isEnabled() {return enabled;}
 
 		void stopEvents();
 
