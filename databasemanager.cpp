@@ -559,6 +559,32 @@ uint32_t DatabaseManager::updateDatabase()
 			break;
 		}
 
+		case 2:
+		{
+			Database* db = Database::getInstance();
+
+			DBQuery query;
+			DBResult* result;
+
+			std::cout << "> Updating database to version: 3..." << std::endl;
+
+			query << "UPDATE `players` SET `vocation` = `vocation` - 4 WHERE `vocation` >= 4 AND `vocation` <= 8;";
+			db->executeQuery(query.str());
+
+			query.str("");
+			query << "SELECT COUNT(`id`) AS `count` FROM `players` WHERE `vocation` > 4;";
+			if((result = db->storeQuery(query.str())))
+			{
+				std::cout << "[Warning] There are still " << result->getDataInt("count") << " players with vocation above 4, please mind to update them manually." << std::endl;
+				db->freeResult(result);
+			}
+
+			query.str("");
+			registerDatabaseConfig("db_version", 3);
+			return 3;
+			break;
+		}
+
 		default:
 			break;
 	}

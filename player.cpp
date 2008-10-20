@@ -3850,18 +3850,19 @@ void Player::checkRedSkullTicks(int32_t ticks)
 void Player::setPromotionLevel(uint32_t pLevel)
 {
 	uint32_t tmpLevel = 0, currentVoc = vocation_id;
-	for(uint32_t i = 1; i <= pLevel; i++)
+	for(uint32_t i = promotionLevel; i < pLevel; i++)
 	{
 		currentVoc = g_vocations.getPromotedVocation(currentVoc);
 		if(currentVoc == 0)
 			break;
+
+		tmpLevel++;
 
 		Vocation *voc = g_vocations.getVocation(currentVoc);
 		if(voc->isPremiumNeeded() && !isPremium() && g_config.getBool(ConfigManager::PREMIUM_FOR_PROMOTION))
 			continue;
 
 		vocation_id = currentVoc;
-		tmpLevel++;
 	}
 
 	setVocation(vocation_id);

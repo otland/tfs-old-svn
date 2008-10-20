@@ -52,4 +52,4 @@
 #define CLIENT_VERSION_MIN 830
 #define CLIENT_VERSION_MAX 831
 #define CLIENT_VERSION_STRING "Only clients with protocol 8.3 allowed!"
-#define LATEST_DB_VERSION 2
+#define LATEST_DB_VERSION 3

@@ -112,7 +112,7 @@
 	defaultPriority = "high"
 	saveGlobalStorage = "yes"
 	bankSystem = "yes"
-	displaySkillLevelOnAdvance = "no" --FIXME: Causes crash in some cases
+	displaySkillLevelOnAdvance = "no"
 	spellNameInsteadOfWordsOnCast = "no" --FIXME: Causes crashes
 
 	-- Premium account
@@ -129,8 +129,7 @@
 
 	-- Global save
 	-- NOTE: globalSaveHour means like 03:00, not that it will save every 3 hours,
-	-- if you want such a system use autoSaveEachMinutes. This save method
-	-- may be unstable, we recommend using OTAdmin if you want real saves.
+	-- if you want such a system please check out data/globalevents directory.
 	globalSaveEnabled = "no"
 	globalSaveHour = 8
 	shutdownAtGlobalSave = "yes"
@@ -142,8 +141,8 @@
 
 	-- Summons
 	maxPlayerSummons = 2
-	teleportAllSummons = "no" --FIXME: doesn't work
-	teleportPlayerSummons = "no" --FIXME: doesn't work
+	teleportAllSummons = "no" --FIXME: Doesn't work
+	teleportPlayerSummons = "no" --FIXME: Doesn't work
 
 	-- Status
 	ownerName = ""
