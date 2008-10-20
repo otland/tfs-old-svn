@@ -1895,6 +1895,9 @@ void LuaScriptInterface::registerFunctions()
 	//getConfigFile()
 	lua_register(m_luaState, "getConfigFile", LuaScriptInterface::luaGetConfigFile);
 
+	//executeRaid(name)
+	lua_register(m_luaState, "executeRaid", LuaScriptInterface::luaExecuteRaid);
+
 	//saveServer()
 	lua_register(m_luaState, "saveServer", LuaScriptInterface::luaSaveServer);
 
@@ -8102,6 +8105,47 @@ int32_t LuaScriptInterface::luaGetSpectators(lua_State *L)
 		lua_settable(L, -3);
 	}
 
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaExecuteRaid(lua_State* L)
+{
+	//executeRaid(name)
+	std::string name = popString(L);
+
+	Raid* raid = Raids::getInstance()->getRaidByName(name);
+	if(!raid || !raid->isLoaded())
+	{
+		reportErrorFunc("Such raid does not exists.");
+		lua_pushnumber(L, LUA_NULL);
+		return 1;
+	}
+
+	if(Raids::getInstance()->getRunning())
+	{
+		lua_pushnumber(L, LUA_FALSE);
+		return 1;
+	}
+
+	Raids::getInstance()->setRunning(raid);
+	RaidEvent* event = raid->getNextRaidEvent();
+	if(!event)
+	{
+		lua_pushnumber(L, LUA_FALSE);
+		return 1;
+	}
+
+	raid->setState(RAIDSTATE_EXECUTING);
+
+	uint32_t ticks = event->getDelay();
+	if(ticks > 0)
+		Scheduler::getScheduler().addEvent(createSchedulerTask(ticks,
+			boost::bind(&Raid::executeRaidEvent, raid, event)));
+	else
+		Dispatcher::getDispatcher().addTask(createTask(
+			boost::bind(&Raid::executeRaidEvent, raid, event)));
+
+	lua_pushnumber(L, LUA_TRUE);
 	return 1;
 }
 

@@ -70,7 +70,9 @@ bool Raids::loadFromXml()
 			if(xmlStrcmp(raidNode->name, (const xmlChar*)"raid") == 0)
 			{
 				std::string name, file;
-				uint32_t interval, margin;
+				uint32_t interval;
+				uint64_t margin;
+				bool enabled = true;
 
 				if(readXMLString(raidNode, "name", strValue))
 					name = strValue;
@@ -88,11 +90,10 @@ bool Raids::loadFromXml()
 					char buffer[100];
 					sprintf(buffer, "raids/%s.xml", name.c_str());
 					file = buffer;
-					std::cout << "[Warning Raids::loadFromXml]: file tag missing for raid " << name << ". Using default: " << file << std::endl;
+					std::cout << "[Warning Raids::loadFromXml]: file tag missing for raid " << name << ", using default: " << file << std::endl;
 				}
 
-				//interval2 is the average interval between
-				// 2 executions of the raid in minutes
+				//interval2 is the average interval between 2 executions of the raid in minutes
 				if(readXMLInteger(raidNode, "interval2", intValue))
 					interval = intValue * 60;
 				else
@@ -110,15 +111,17 @@ bool Raids::loadFromXml()
 					margin = 0;
 				}
 
-				Raid* newRaid = new Raid(name, interval, margin);
+				if(readXMLString(raidNode, "enabled", strValue))
+					enabled = booleanString(strValue);
+
+				Raid* newRaid = new Raid(name, interval, margin, enabled);
 				if(!newRaid)
 				{
 					xmlFreeDoc(doc);
 					return false;
 				}
 
-				bool ret = newRaid->loadFromXml(getFilePath(FILE_TYPE_OTHER, "raids/" + file));
-				if(!ret)
+				if(!newRaid->loadFromXml(getFilePath(FILE_TYPE_OTHER, "raids/" + file)))
 				{
 					std::cout << "[Error Raids::loadFromXml]: failed to load raid " << name << std::endl;
 					delete newRaid;
@@ -220,24 +223,24 @@ Raid* Raids::getRaidByName(const std::string& name)
 	return NULL;
 }
 
-Raid::Raid(const std::string& _name, uint32_t _interval, uint32_t _marginTime)
+Raid::Raid(const std::string& _name, uint32_t _interval, uint64_t _margin, bool _enabled)
 {
 	loaded = false;
 	name = _name;
 	interval = _interval;
 	nextEvent = 0;
 	state = RAIDSTATE_IDLE;
-	margin = _marginTime;
+	margin = _margin;
 	nextEventEvent = 0;
+	enabled = _enabled;
 }
 
 Raid::~Raid()
 {
 	stopEvents();
-
-	RaidEventVector::iterator it;
-	for(it = raidEvents.begin(); it != raidEvents.end(); it++)
+	for(RaidEventVector::iterator it = raidEvents.begin(); it != raidEvents.end(); it++)
 		delete (*it);
+
 	raidEvents.clear();
 }
 

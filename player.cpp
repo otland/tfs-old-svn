@@ -3857,7 +3857,6 @@ void Player::setPromotionLevel(uint32_t pLevel)
 			break;
 
 		tmpLevel++;
-
 		Vocation *voc = g_vocations.getVocation(currentVoc);
 		if(voc->isPremiumNeeded() && !isPremium() && g_config.getBool(ConfigManager::PREMIUM_FOR_PROMOTION))
 			continue;

@@ -64,7 +64,7 @@ class Raids
 			return &instance;
 		}
 
-		~Raids();
+		virtual ~Raids();
 
 		bool loadFromXml();
 		bool startup();
@@ -97,8 +97,8 @@ class Raids
 class Raid
 {
 	public:
-		Raid(const std::string& _name, uint32_t _interval, uint32_t _marginTime);
-		~Raid();
+		Raid(const std::string& _name, uint32_t _interval, uint64_t _margin, bool _enabled);
+		virtual ~Raid();
 
 		bool loadFromXml(const std::string& _filename);
 
@@ -120,14 +120,17 @@ class Raid
 		void stopEvents();
 
 	private:
+		bool loaded;
 		RaidEventVector raidEvents;
+
 		std::string name;
 		uint32_t interval;
 		uint32_t nextEvent;
 		uint64_t margin;
+		bool enabled;
+
 		RaidState_t state;
 		uint32_t nextEventEvent;
-		bool loaded;
 };
 
 class RaidEvent
@@ -203,7 +206,7 @@ class ScriptEvent : public RaidEvent, public Event
 {
 	public:
 		ScriptEvent();
-		~ScriptEvent() {}
+		virtual ~ScriptEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
 		virtual bool configureEvent(xmlNodePtr p) {return false;}
