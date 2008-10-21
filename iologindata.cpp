@@ -774,7 +774,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 
 	ItemBlockList itemList;
 	Item* item;
-	for(int32_t slotId = 0; slotId < 10; ++slotId)
+	for(int32_t slotId = 1; slotId <= 10; ++slotId)
 	{
 		if((item = player->inventory[slotId]))
 			itemList.push_back(itemBlock(slotId, item));
