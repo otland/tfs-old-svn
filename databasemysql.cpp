@@ -35,6 +35,7 @@
 #endif
 
 #include "configmanager.h"
+#include "scheduler.h"
 extern ConfigManager g_config;
 
 /** DatabaseMySQL definitions */
@@ -232,7 +233,7 @@ void DatabaseMySQL::freeResult(DBResult* res)
 	delete (MySQLResult*)res;
 }
 
-bool DatabaseMySQL::keepAlive()
+void DatabaseMySQL::keepAlive()
 {
 	uint32_t delay = (g_config.getNumber(ConfigManager::SQL_KEEPALIVE) * 1000);
 	if(m_lastUse > (time(NULL) + delay))
