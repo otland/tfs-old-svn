@@ -268,8 +268,15 @@ function isInArea(pos, fromPos, toPos)
 	return FALSE
 end
 
-function getExperienceForLevel(level)
-	return (50 * level * level * level) / 3 - 100 * level * level + (850 * level) / 3 - 200
+function getExperienceForLevel(lv)
+	lv = lv - 1
+	return ((50 * lv * lv * lv) - (150 * lv * lv) + (400 * lv)) / 3
+end
+
+function doMutePlayer(cid, time)
+	local condition = createConditionObject(CONDITION_MUTED)
+	setConditionParam(condition, CONDITION_PARAM_TICKS, time * 1000)
+	return doAddCondition(cid, condition)
 end
 
 function convertIntToIP(int, mask)
@@ -297,7 +304,6 @@ end
 
 exhaustion =
 {
-
 	check = function (cid, storage)
 		local exhaust = getPlayerStorageValue(cid, storage)
 		if (os.time(t) >= exhaust) then
@@ -332,96 +338,94 @@ exhaustion =
 	end
 }
 
-	table.find = function (table, value)
-		for i, v in pairs(table) do
-			if(v == value) then
-				return i
-			end
+table.find = function (table, value)
+	for i, v in pairs(table) do
+		if(v == value) then
+			return i
 		end
-		return nil
 	end
-	table.getPos = table.find
+	return nil
+end
 
-
-	table.isStrIn = function (txt, str)
-		local result = false
-		for i, v in pairs(str) do
-			result = (string.find(txt, v) and not string.find(txt, '(%w+)' .. v) and not string.find(txt, v .. '(%w+)'))
-			if(result) then
-				break
-			end
+table.isStrIn = function (txt, str)
+	local result = false
+	for i, v in pairs(str) do
+		result = (string.find(txt, v) and not string.find(txt, '(%w+)' .. v) and not string.find(txt, v .. '(%w+)'))
+		if(result) then
+			break
 		end
-		return result
 	end
+	return result
+end
 
-	table.countElements = function (table, item)
-		local count = 0
-		for i, n in pairs(table) do
-			if(item == n) then
-				count = count + 1
-			end
+table.countElements = function (table, item)
+	local count = 0
+	for i, n in pairs(table) do
+		if(item == n) then
+			count = count + 1
 		end
-		return count
+	end
+	return count
+end
+
+table.getCombinations = function (table, num)
+	local a, number, select, newlist = {}, #table, num, {}
+	for i = 1, select do
+		a[#a + 1] = i
 	end
 
-	table.getCombinations = function (table, num)
-		local a, number, select, newlist = {}, #table, num, {}
+	local newthing = {}
+	while(true) do
+		local newrow = {}
 		for i = 1, select do
-			a[#a + 1] = i
+			newrow[#newrow + 1] = table[a[i]]
 		end
 
-		local newthing = {}
-		while(TRUE) do
-			local newrow = {}
-			for i = 1, select do
-				newrow[#newrow + 1] = table[a[i]]
-			end
-
-			newlist[#newlist + 1] = newrow
-			i = select
-			while(a[i] == (number - select + i)) do
-				i = i - 1
-			end
-
-			if(i < 1) then
-				break
-			end
-
-			a[i] = a[i] + 1
-			for j = i, select do
-				a[j] = a[i] + j - i
-			end
-		end
-		return newlist
-	end
-
-	string.split = function (str)
-		local t = {}
-		local function helper(word)
-			table.insert(t, word)
-			return ""
+		newlist[#newlist + 1] = newrow
+		i = select
+		while(a[i] == (number - select + i)) do
+			i = i - 1
 		end
 
-		if(not str:gsub("%w+", helper):find"%S") then
-			return t
+		if(i < 1) then
+			break
+		end
+
+		a[i] = a[i] + 1
+		for j = i, select do
+			a[j] = a[i] + j - i
 		end
 	end
+	return newlist
+end
 
-	string.trim = function (str)
-		return (string.gsub(str, "^%s*(.-)%s*$", "%1"))
+string.split = function (str)
+	local t = {}
+	local function helper(word)
+		table.insert(t, word)
+		return ""
 	end
 
-	string.explode = function (str, sep)
-		local pos, t = 1, {}
-		if #sep == 0 or #str == 0 then
-			return
-		end
-
-		for s, e in function() return string.find(str, sep, pos) end do
-			table.insert(t, string.trim(string.sub(str, pos, s - 1)))
-			pos = e + 1
-		end
-
-		table.insert(t, string.trim(string.sub(str, pos)))
+	if(not str:gsub("%w+", helper):find"%S") then
 		return t
 	end
+end
+
+string.trim = function (str)
+	return (string.gsub(str, "^%s*(.-)%s*$", "%1"))
+end
+
+string.explode = function (str, sep)
+	local pos, t = 1, {}
+	if #sep == 0 or #str == 0 then
+		return
+	end
+
+	for s, e in function() return string.find(str, sep, pos) end do
+		table.insert(t, string.trim(string.sub(str, pos, s - 1)))
+		pos = e + 1
+	end
+
+	table.insert(t, string.trim(string.sub(str, pos)))
+	return t
+end
