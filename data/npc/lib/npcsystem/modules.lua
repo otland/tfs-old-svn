@@ -852,13 +852,14 @@ if(Modules == nil) then
 		local a = 0
 		if(inBackpacks) then
 			local container = doCreateItemEx(backpack, 1)
+			local backpackCap = getContainerCapById(backpack)
 			for i = 1, amount do
 				item = doAddContainerItem(container, itemid, subType)
 				if(itemid == ITEM_PARCEL) then
 					doAddContainerItem(item, ITEM_LABEL)
 				end
 
-				if(isInArray({20, amount}, i) == TRUE) then
+				if(isInArray({backpackCap, amount}, i) == TRUE) then
 					if(doPlayerAddItemEx(cid, container, ignoreCap) ~= RETURNVALUE_NOERROR) then
 						break
 					end
