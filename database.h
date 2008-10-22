@@ -188,7 +188,7 @@ class _Database
 		DATABASE_VIRTUAL DatabaseEngine_t getDatabaseEngine() { return DATABASE_ENGINE_NONE; }
 
 	protected:
-		_Database() {}
+		_Database() { m_lastUse = time(NULL); }
 		DATABASE_VIRTUAL ~_Database() {}
 
 		DBResult* verifyResult(DBResult* result);

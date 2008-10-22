@@ -2305,8 +2305,7 @@ int32_t LuaScriptInterface::luaGetPlayerRequiredMana(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetPlayerRequiredSkillTries(lua_	//getPlayerSkillLevel(cid, skillid)
-	lua_register(m_luaState, "getPlayerSkill", LuaScriptInterface::luaGetPlayerSkill);State* L)
+int32_t LuaScriptInterface::luaGetPlayerRequiredSkillTries(lua_State* L)
 {
 	//getPlayerRequiredSkillTries(cid, skillId, skillLevel)
 	int32_t sLevel = popNumber(L);
