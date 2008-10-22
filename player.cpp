@@ -1882,13 +1882,13 @@ void Player::addManaSpent(uint64_t amount)
 			if(manaSpent > vocation->getReqMana(magLevel + 1))
 				manaSpent = 0;
 
+			currReqMana = nextReqMana;
 			//scripting event - onAdvance
 			CreatureEvent* eventAdvance = getCreatureEvent(CREATURE_EVENT_ADVANCE);
 			if(eventAdvance)
 				eventAdvance->executeOnAdvance(this, (skills_t)MAGLEVEL, (magLevel - 1), magLevel);
 		}
 
-		currReqMana = nextReqMana;
 		nextReqMana = vocation->getReqMana(magLevel + 1);
 		if(nextReqMana > currReqMana)
 			magLevelPercent = Player::getPercentLevel(manaSpent, nextReqMana);

@@ -7986,8 +7986,8 @@ int32_t LuaScriptInterface::luaGetVocationInfo(lua_State* L)
 	Vocation* voc = g_vocations.getVocation(id);
 
 	lua_newtable(L);
-	setField(L, "name", voc->getName().c_str());
-	setField(L, "description", voc->getNameDescription().c_str());
+	setField(L, "name", voc->getVocName().c_str());
+	setField(L, "description", voc->getVocDescription().c_str());
 	setField(L, "healthGain", voc->getHealthGain());
 	setField(L, "healthGainTicks", voc->getHealthGainTicks());
 	setField(L, "healthGainAmount", voc->getHealthGainAmount());
