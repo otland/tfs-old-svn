@@ -1795,6 +1795,7 @@ void Player::addManaSpent(uint64_t amount)
 		{
 			//player has reached max magic level
 			manaSpent = 0;
+			magLevelPercent = 0;
 			return;
 		}
 
@@ -1827,6 +1828,7 @@ void Player::addExperience(uint64_t exp)
 	if(Player::getExpForLevel(newLevel) > nextLevelExp)
 	{
 		//player has reached max level
+		levelPercent = 0;
 		return;
 	}
 	experience += exp;
@@ -2125,7 +2127,11 @@ void Player::death()
 		}
 
 		manaSpent -= std::max((int32_t)0, (int32_t)lostMana);
-		magLevelPercent = Player::getPercentLevel(manaSpent, vocation->getReqMana(magLevel + 1));
+		uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
+		if(nextReqMana > vocation->getReqMana(magLevel))
+			magLevelPercent = Player::getPercentLevel(manaSpent, nextReqMana);
+		else
+			magLevelPercent = 0;
 
 		//Skill loss
 		uint32_t lostSkillTries;
@@ -2177,7 +2183,11 @@ void Player::death()
 		}
 
 		uint64_t currLevelExp = Player::getExpForLevel(newLevel);
-		levelPercent = Player::getPercentLevel(experience - currLevelExp - getLostExperience(), Player::getExpForLevel(newLevel + 1) - currLevelExp);
+		uint64_t nextLevelExp = Player::getExpForLevel(newLevel + 1);
+		if(nextLevelExp > currLevelExp)
+			levelPercent = Player::getPercentLevel(experience - currLevelExp - getLostExperience(), nextLevelExp - currLevelExp);
+		else
+			levelPercent = 0;
 
 		if(!inventory[SLOT_BACKPACK])
 			__internalAddThing(SLOT_BACKPACK, Item::CreateItem(1987));

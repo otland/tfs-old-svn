@@ -336,7 +336,11 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 		experience = currExpCount;
 
 	player->experience = experience;
-	player->levelPercent = Player::getPercentLevel(player->experience - currExpCount, nextExpCount - currExpCount);
+	if(currExpCount < nextExpCount)
+		player->levelPercent = Player::getPercentLevel(player->experience - currExpCount, nextExpCount - currExpCount);
+	else
+		player->levelPercent = 0;
+
 	player->soul = result.getDataInt("soul");
 	player->capacity = result.getDataInt("cap");
 	player->blessings = result.getDataInt("blessings");
