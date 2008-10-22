@@ -2017,8 +2017,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 
 	if(damage != 0)
 	{
-		int32_t blocked = 0;
-
+		int32_t blocked;
 		Item* item = NULL;
 		for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
 		{
@@ -2028,6 +2027,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 			if(!(item = getInventoryItem((slots_t)slot)))
 				continue;
 
+			blocked = 0;
 			const ItemType& it = Item::items[item->getID()];
 			switch(combatType)
 			{
@@ -2109,11 +2109,11 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 				}
 			}
 
-			if(item->hasCharges())
+			damage -= blocked;
+			if(blocked != 0 && item->hasCharges())
 				g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
 		}
 
-		damage -= blocked;
 		if(damage <= 0)
 		{
 			damage = 0;
