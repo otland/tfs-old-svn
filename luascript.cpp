@@ -6764,8 +6764,6 @@ int32_t LuaScriptInterface::luaGetContainerCapById(lua_State* L)
 	//getContainerCapById(itemid)
 	uint32_t itemId = popNumber(L);
 
-	ScriptEnviroment* env = getScriptEnv();
-
 	const ItemType& it = Item::items[itemId];
 	if(it.isContainer())
 		lua_pushnumber(L, it.maxItems);

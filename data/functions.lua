@@ -39,8 +39,8 @@ function doPlayerBuyItemContainer(cid, containerid, itemid, count, cost, charges
 			for x = 1, getContainerCapById(containerid) do
 				doAddContainerItem(container, itemid, charges)
 			end
+			doPlayerAddItemEx(cid, container, 1)
 		end
-		doPlayerAddItemEx(cid, container, 1)
 		return LUA_NO_ERROR
 	end
 	return LUA_ERROR
