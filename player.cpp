@@ -1789,16 +1789,30 @@ void Player::addManaSpent(uint64_t amount)
 {
 	if(amount != 0 && !hasFlag(PlayerFlag_NotGainMana))
 	{
-		manaSpent += amount * g_config.getNumber(ConfigManager::RATE_MAGIC);
-		uint64_t reqMana = vocation->getReqMana(magLevel + 1);
-		if(manaSpent >= reqMana)
+		uint64_t currReqMana = vocation->getReqMana(magLevel);
+		uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
+		if(currReqMana > nextReqMana)
 		{
-			manaSpent -= reqMana;
+			//player has reached max magic level
+			manaSpent = 0;
+			return;
+		}
+
+		manaSpent += amount * g_config.getNumber(ConfigManager::RATE_MAGIC);
+		if(manaSpent >= nextReqMana)
+		{
+			manaSpent -= nextReqMana;
 			magLevel++;
 			char MaglvMsg[50];
 			sprintf(MaglvMsg, "You advanced to magic level %d.", magLevel);
 			sendTextMessage(MSG_EVENT_ADVANCE, MaglvMsg);
 			sendStats();
+
+			if(manaSpent > vocation->getReqMana(magLevel + 1))
+			{
+				//prevent player from getting a magic level everytime s/he casts a spell
+				manaSpent = 0;
+			}
 		}
 
 		magLevelPercent = Player::getPercentLevel(manaSpent, vocation->getReqMana(magLevel + 1));
@@ -1807,10 +1821,17 @@ void Player::addManaSpent(uint64_t amount)
 
 void Player::addExperience(uint64_t exp)
 {
-	experience += exp;
-	int32_t prevLevel = getLevel();
 	int32_t newLevel = getLevel();
-	while(experience >= Player::getExpForLevel(newLevel + 1))
+
+	uint64_t nextLevelExp = Player::getExpForLevel(newLevel + 1);
+	if(Player::getExpForLevel(newLevel) > nextLevelExp)
+	{
+		//player has reached max level
+		return;
+	}
+	experience += exp;
+
+	while(experience >= nextLevelExp)
 	{
 		++newLevel;
 		healthMax += vocation->getHPGain();
@@ -1818,8 +1839,15 @@ void Player::addExperience(uint64_t exp)
 		manaMax += vocation->getManaGain();
 		mana += vocation->getManaGain();
 		capacity += vocation->getCapGain();
+		nextLevelExp = Player::getExpForLevel(newLevel + 1);
+		if(Player::getExpForLevel(newLevel) > nextLevelExp)
+		{
+			//player has reached max level
+			break;
+		}
 	}
 
+	int32_t prevLevel = getLevel();
 	if(prevLevel != newLevel)
 	{
 		level = newLevel;
@@ -1840,9 +1868,14 @@ void Player::addExperience(uint64_t exp)
 	}
 
 	uint64_t currLevelExp = Player::getExpForLevel(level);
-	uint32_t newPercent = Player::getPercentLevel(experience - currLevelExp, Player::getExpForLevel(level + 1) - currLevelExp);
-	if(newPercent != levelPercent)
+	nextLevelExp = Player::getExpForLevel(level + 1);
+	if(nextLevelExp > currLevelExp)
+	{
+		uint32_t newPercent = Player::getPercentLevel(experience - currLevelExp, Player::getExpForLevel(level + 1) - currLevelExp);
 		levelPercent = newPercent;
+	}
+	else
+		levelPercent = 0;
 
 	sendStats();
 }
