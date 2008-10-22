@@ -1814,9 +1814,9 @@ void Player::addManaSpent(uint64_t amount)
 				//prevent player from getting a magic level everytime s/he casts a spell
 				manaSpent = 0;
 			}
+			currReqMana = nextReqMana;
 		}
 
-		currReqMana = nextReqMana;
 		nextReqMana = vocation->getReqMana(magLevel + 1);
 		if(nextReqMana > currReqMana)
 			magLevelPercent = Player::getPercentLevel(manaSpent, nextReqMana);
