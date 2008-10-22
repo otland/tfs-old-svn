@@ -586,13 +586,14 @@ function table.find(table, value)
 	return nil
 end
 
-function doPlayerBuyItemContainer(cid, container, itemid, count, cost, charges)
+function doPlayerBuyItemContainer(cid, containerid, itemid, count, cost, charges)
 	if doPlayerRemoveMoney(cid, cost) == TRUE then
 		for i = 1, count do
-			local containerItem = doPlayerAddItem(cid, container, 1)
-			for x = 1, getContainerCap(containerItem[1]) do
-				doAddContainerItem(containerItem[1], itemid, charges)
+			local container = doCreateItemEx(containerid, 1)
+			for x = 1, getContainerCapById(containerid) do
+				doAddContainerItem(container, itemid, charges)
 			end
+			doPlayerAddItemEx(cid, container, 1)
 		end
 		return LUA_NO_ERROR
 	end

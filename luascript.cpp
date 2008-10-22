@@ -1437,6 +1437,9 @@ void LuaScriptInterface::registerFunctions()
 	//getContainerCap(uid)
 	lua_register(m_luaState, "getContainerCap", LuaScriptInterface::luaGetContainerCap);
 
+	//getContainerCapById(itemid)
+	lua_register(m_luaState, "getContainerCapById", LuaScriptInterface::luaGetContainerCapById);
+
 	//getContainerItem(uid, slot)
 	lua_register(m_luaState, "getContainerItem", LuaScriptInterface::luaGetContainerItem);
 
@@ -6141,6 +6144,22 @@ int32_t LuaScriptInterface::luaGetContainerCap(lua_State* L)
 
 	if(Container* container = env->getContainerByUID(uid))
 		lua_pushnumber(L, container->capacity());
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CONTAINER_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetContainerCapById(lua_State* L)
+{
+	//getContainerCapById(itemid)
+	uint32_t itemId = popNumber(L);
+
+	const ItemType& it = Item::items[itemId];
+	if(it.isContainer())
+		lua_pushnumber(L, it.maxItems);
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CONTAINER_NOT_FOUND));
