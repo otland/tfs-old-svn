@@ -69,6 +69,7 @@ DatabaseMySQL::DatabaseMySQL()
 	}
 
 	m_connected = true;
+	Scheduler::getScheduler().addEvent(createSchedulerTask((g_config.getNumber(ConfigManager::SQL_KEEPALIVE) * 1000), boost::bind(&DatabaseMySQL::keepAlive, this)));
 }
 
 DatabaseMySQL::~DatabaseMySQL()
@@ -229,6 +230,15 @@ std::string DatabaseMySQL::escapeBlob(const char* s, uint32_t length)
 void DatabaseMySQL::freeResult(DBResult* res)
 {
 	delete (MySQLResult*)res;
+}
+
+bool DatabaseMySQL::keepAlive()
+{
+	uint32_t delay = (g_config.getNumber(ConfigManager::SQL_KEEPALIVE) * 1000);
+	if(m_lastUse > (time(NULL) + delay))
+		bool tmp = executeQuery("SHOW TABLES;");
+
+	Scheduler::getScheduler().addEvent(createSchedulerTask(delay, boost::bind(&DatabaseMySQL::keepAlive, this)));
 }
 
 /** MySQLResult definitions */

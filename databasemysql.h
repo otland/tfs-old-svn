@@ -56,6 +56,9 @@ class DatabaseMySQL : public _Database
 
 	protected:
 		MYSQL m_handle;
+
+	private:
+		DATABASE_VIRTUAL void keepAlive();
 };
 
 class MySQLResult : public _DBResult

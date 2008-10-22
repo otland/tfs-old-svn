@@ -1858,16 +1858,29 @@ void Player::addManaSpent(uint64_t amount)
 {
 	if(amount != 0 && !hasFlag(PlayerFlag_NotGainMana))
 	{
-		manaSpent += amount * g_config.getNumber(ConfigManager::RATE_MAGIC);
-		uint64_t reqMana = vocation->getReqMana(magLevel + 1);
-		if(manaSpent >= reqMana)
+		uint64_t currReqMana = vocation->getReqMana(magLevel);
+		uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
+		if(currReqMana > nextReqMana)
 		{
-			manaSpent -= reqMana;
-			magLevel++;
-			char MaglvMsg[50];
-			sprintf(MaglvMsg, "You advanced to magic level %d.", magLevel);
-			sendTextMessage(MSG_EVENT_ADVANCE, MaglvMsg);
+			//player has reached max magic level
+			manaSpent = 0;
+			magLevelPercent = 0;
 			sendStats();
+			return;
+		}
+
+		manaSpent += amount * g_config.getNumber(ConfigManager::RATE_MAGIC);
+		if(manaSpent >= nextReqMana)
+		{
+			manaSpent -= nextReqMana;
+			magLevel++;
+			char advMsg[50];
+			sprintf(advMsg, "You advanced to magic level %d.", magLevel);
+			sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
+
+			//prevent player from getting a magic level everytime s/he casts a spell
+			if(manaSpent > vocation->getReqMana(magLevel + 1))
+				manaSpent = 0;
 
 			//scripting event - onAdvance
 			CreatureEvent* eventAdvance = getCreatureEvent(CREATURE_EVENT_ADVANCE);
@@ -1875,16 +1888,32 @@ void Player::addManaSpent(uint64_t amount)
 				eventAdvance->executeOnAdvance(this, (skills_t)MAGLEVEL, (magLevel - 1), magLevel);
 		}
 
-		magLevelPercent = Player::getPercentLevel(manaSpent, vocation->getReqMana(magLevel + 1));
+		currReqMana = nextReqMana;
+		nextReqMana = vocation->getReqMana(magLevel + 1);
+		if(nextReqMana > currReqMana)
+			magLevelPercent = Player::getPercentLevel(manaSpent, nextReqMana);
+		else
+			magLevelPercent = 0;
+
+		sendStats();
 	}
 }
 
 void Player::addExperience(uint64_t exp)
 {
-	experience += exp;
-	int32_t prevLevel = getLevel();
 	int32_t newLevel = getLevel();
-	while(experience >= Player::getExpForLevel(newLevel + 1))
+
+	uint64_t nextLevelExp = Player::getExpForLevel(newLevel + 1);
+	if(Player::getExpForLevel(newLevel) > nextLevelExp)
+	{
+		//player has reached max level
+		levelPercent = 0;
+		sendStats();
+		return;
+	}
+	experience += exp;
+
+	while(experience >= nextLevelExp)
 	{
 		++newLevel;
 		healthMax += vocation->getHPGain();
@@ -1892,8 +1921,15 @@ void Player::addExperience(uint64_t exp)
 		manaMax += vocation->getManaGain();
 		mana += vocation->getManaGain();
 		capacity += vocation->getCapGain();
+		nextLevelExp = Player::getExpForLevel(newLevel + 1);
+		if(Player::getExpForLevel(newLevel) > nextLevelExp)
+		{
+			//player has reached max level
+			break;
+		}
 	}
 
+	int32_t prevLevel = getLevel();
 	if(prevLevel != newLevel)
 	{
 		level = newLevel;
@@ -1908,9 +1944,9 @@ void Player::addExperience(uint64_t exp)
 		if(getParty())
 			getParty()->updateSharedExperience();
 
-		char levelMsg[60];
-		sprintf(levelMsg, "You advanced from Level %d to Level %d.", prevLevel, newLevel);
-		sendTextMessage(MSG_EVENT_ADVANCE, levelMsg);
+		char advMsg[60];
+		sprintf(advMsg, "You advanced from Level %d to Level %d.", prevLevel, newLevel);
+		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
 
 		//scripting event - onAdvance
 		CreatureEvent* eventAdvance = getCreatureEvent(CREATURE_EVENT_ADVANCE);
@@ -1919,9 +1955,14 @@ void Player::addExperience(uint64_t exp)
 	}
 
 	uint64_t currLevelExp = Player::getExpForLevel(level);
-	uint32_t newPercent = Player::getPercentLevel(experience - currLevelExp, Player::getExpForLevel(level + 1) - currLevelExp);
-	if(newPercent != levelPercent)
+	nextLevelExp = Player::getExpForLevel(level + 1);
+	if(nextLevelExp > currLevelExp)
+	{
+		uint32_t newPercent = Player::getPercentLevel(experience - currLevelExp, Player::getExpForLevel(level + 1) - currLevelExp);
 		levelPercent = newPercent;
+	}
+	else
+		levelPercent = 0;
 
 	sendStats();
 }
@@ -2171,12 +2212,16 @@ void Player::death()
 		}
 
 		manaSpent -= std::max((int32_t)0, (int32_t)lostMana);
-		magLevelPercent = Player::getPercentLevel(manaSpent, vocation->getReqMana(magLevel + 1));
+		uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
+		if(nextReqMana > vocation->getReqMana(magLevel))
+			magLevelPercent = Player::getPercentLevel(manaSpent, nextReqMana);
+		else
+			magLevelPercent = 0;
 
 		//Skill loss
 		uint32_t lostSkillTries;
 		uint32_t sumSkillTries;
-		for(int16_t i = 0; i <= 6; ++i) //for each skill
+		for(int16_t i = 0; i < 7; ++i) //for each skill
 		{
 			lostSkillTries = 0;
 			sumSkillTries = 0;
@@ -2223,7 +2268,11 @@ void Player::death()
 		}
 
 		uint64_t currLevelExp = Player::getExpForLevel(newLevel);
-		levelPercent = Player::getPercentLevel(experience - currLevelExp - getLostExperience(), Player::getExpForLevel(newLevel + 1) - currLevelExp);
+		uint64_t nextLevelExp = Player::getExpForLevel(newLevel + 1);
+		if(nextLevelExp > currLevelExp)
+			levelPercent = Player::getPercentLevel(experience - currLevelExp - getLostExperience(), nextLevelExp - currLevelExp);
+		else
+			levelPercent = 0;
 
 		if(!inventory[SLOT_BACKPACK])
 			__internalAddThing(SLOT_BACKPACK, Item::CreateItem(1987));

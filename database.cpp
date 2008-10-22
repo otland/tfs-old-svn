@@ -70,6 +70,8 @@ Database* _Database::getInstance()
 #endif
 		OTSYS_THREAD_LOCKVARINIT(DBQuery::database_lock);
 	}
+
+	m_lastUse = time(NULL);
 	return _instance;
 }
 

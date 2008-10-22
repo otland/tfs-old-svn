@@ -61,6 +61,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confString[SQL_USER] = getGlobalString(L, "sqlUser", "root");
 		m_confString[SQL_PASS] = getGlobalString(L, "sqlPass", "");
 		m_confString[SQL_FILE] = getGlobalString(L, "sqlFile", "forgottenserver.s3db");
+		m_confString[SQL_KEEPALIVE] = getGlobalNumber(L, "sqlKeepAlive", 60);
 		m_confString[PASSWORD_TYPE] = getGlobalString(L, "passwordType", "plain");
 		m_confNumber[PASSWORDTYPE] = PASSWORD_TYPE_PLAIN;
 		m_confString[MAP_NAME] = getGlobalString(L, "mapName", "forgotten");

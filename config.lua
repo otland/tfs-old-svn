@@ -59,7 +59,8 @@
 	forceSlowConnectionsToDisconnect = "no"
 
 	-- Database
-	-- NOTE: sqlFile is used only by sqlite database
+	-- NOTE: sqlFile is used only by sqlite database, and sqlKeepAlive by mysql database.
+	-- To disable sqlKeepAlive use 0 value.
 	sqlType = "sqlite"
 	sqlHost = "localhost"
 	sqlPort = 3306
@@ -67,6 +68,7 @@
 	sqlPass = ""
 	sqlDatabase = "theforgottenserver"
 	sqlFile = "forgottenserver.s3db"
+	sqlKeepAlive = 60
 	passwordType = "plain"
 
 	-- Deathlist

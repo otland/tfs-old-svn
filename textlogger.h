@@ -30,7 +30,7 @@ class TextLogger : public std::streambuf
 		std::streambuf* out;
 		std::streambuf* err;
 		TextLogger();
-		~TextLogger();
+		virtual ~TextLogger();
 
 	protected:
 		int32_t overflow(int32_t c);

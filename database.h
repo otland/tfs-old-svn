@@ -194,6 +194,7 @@ class _Database
 		DBResult* verifyResult(DBResult* result);
 
 		bool m_connected;
+		time_t m_lastUse;
 
 	private:
 		static Database* _instance;

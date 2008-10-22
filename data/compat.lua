@@ -100,3 +100,11 @@ end
 function savePlayers()
 	return saveServer()
 end
+
+function getPlayerSkill(cid, skillid)
+	return getPlayerSkillLevel(cid, skillid)
+end
+
+function getPlayerVocationName(cid)
+	return getVocationInfo(getPlayerVocation(cid)).name
+end

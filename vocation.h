@@ -38,7 +38,7 @@ class Vocation
 		uint32_t getReqSkillTries(int32_t skill, int32_t level);
 		uint64_t getReqMana(uint32_t magLevel);
 
-		uint32_t getHPGain() const {return gainHP;}
+		uint32_t getHealthGain() const {return gainHP;}
 		uint32_t getHealthGainTicks() const {return gainHealthTicks;}
 		uint32_t getHealthGainAmount() const {return gainHealthAmount;}
 		uint32_t getManaGain() const {return gainMana;}
