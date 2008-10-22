@@ -1916,8 +1916,8 @@ void Player::addExperience(uint64_t exp)
 	while(experience >= nextLevelExp)
 	{
 		++newLevel;
-		healthMax += vocation->getHPGain();
-		health += vocation->getHPGain();
+		healthMax += vocation->getHealthGain();
+		health += vocation->getHealthGain();
 		manaMax += vocation->getManaGain();
 		mana += vocation->getManaGain();
 		capacity += vocation->getCapGain();
@@ -2327,7 +2327,7 @@ void Player::preSave()
 			while(level > 1 && experience < Player::getExpForLevel(level))
 			{
 				--level;
-				healthMax = std::max((int32_t)0, (healthMax - (int32_t)vocation->getHPGain()));
+				healthMax = std::max((int32_t)0, (healthMax - (int32_t)vocation->getHealthGain()));
 				manaMax = std::max((int32_t)0, (manaMax - (int32_t)vocation->getManaGain()));
 				capacity = std::max((double)0, (capacity - (double)vocation->getCapGain()));
 			}

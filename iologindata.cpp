@@ -1231,10 +1231,10 @@ bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName,
 
 	Vocation* vocation = g_vocations.getVocation(vocationId);
 	Vocation* rookVoc = g_vocations.getVocation(0);
-	uint16_t healthMax = 150, manaMax = 0, capMax = 400, lookType = 136, hpGain = vocation->getHPGain(), manaGain = vocation->getManaGain(), capGain = vocation->getCapGain(), rookHpGain = rookVoc->getHPGain(), rookManaGain = rookVoc->getManaGain(), rookCapGain = rookVoc->getCapGain();
+	uint32_t level = g_config.getNumber(ConfigManager::START_LEVEL);
+	uint16_t healthMax = 150, manaMax = 0, capMax = 400, lookType = 136, healthGain = vocation->getHealthGain(), manaGain = vocation->getManaGain(), capGain = vocation->getCapGain(), rookHealthGain = rookVoc->getHealthGain(), rookManaGain = rookVoc->getManaGain(), rookCapGain = rookVoc->getCapGain();
 	if(sex == PLAYERSEX_MALE)
 		lookType = 128;
-	uint32_t level = g_config.getNumber(ConfigManager::START_LEVEL);
 
 	uint64_t exp = 0;
 	if(level > 1)
@@ -1244,13 +1244,13 @@ bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName,
 	{
 		if(i < 8)
 		{
-			healthMax += rookHpGain;
+			healthMax += rookHealthGain;
 			manaMax += rookManaGain;
 			capMax += rookCapGain;
 		}
 		else
 		{
-			healthMax += hpGain;
+			healthMax += healthGain;
 			manaMax += manaGain;
 			capMax += capGain;
 		}
