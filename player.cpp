@@ -1796,6 +1796,7 @@ void Player::addManaSpent(uint64_t amount)
 			//player has reached max magic level
 			manaSpent = 0;
 			magLevelPercent = 0;
+			sendStats();
 			return;
 		}
 
@@ -1807,7 +1808,6 @@ void Player::addManaSpent(uint64_t amount)
 			char MaglvMsg[50];
 			sprintf(MaglvMsg, "You advanced to magic level %d.", magLevel);
 			sendTextMessage(MSG_EVENT_ADVANCE, MaglvMsg);
-			sendStats();
 
 			if(manaSpent > vocation->getReqMana(magLevel + 1))
 			{
@@ -1816,7 +1816,14 @@ void Player::addManaSpent(uint64_t amount)
 			}
 		}
 
-		magLevelPercent = Player::getPercentLevel(manaSpent, vocation->getReqMana(magLevel + 1));
+		currReqMana = nextReqMana;
+		nextReqMana = vocation->getReqMana(magLevel + 1);
+		if(nextReqMana > currReqMana)
+			magLevelPercent = Player::getPercentLevel(manaSpent, nextReqMana);
+		else
+			magLevelPercent = 0;
+
+		sendStats();
 	}
 }
 
@@ -1829,6 +1836,7 @@ void Player::addExperience(uint64_t exp)
 	{
 		//player has reached max level
 		levelPercent = 0;
+		sendStats();
 		return;
 	}
 	experience += exp;
