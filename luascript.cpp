@@ -1067,8 +1067,8 @@ std::string LuaScriptInterface::getFieldString(lua_State* L, const char* key)
 void LuaScriptInterface::registerFunctions()
 {
 	//TODO: Change all player lua functions that a creature has use of too, to support creatures aswell,
-	//also remove things like getPlayerPosition as there already is getCreaturePosition ...
 
+	//example(...)
 	//lua_register(L, "name", C_function);
 
 	//getPlayerFood(cid)
@@ -1844,9 +1844,6 @@ void LuaScriptInterface::registerFunctions()
 
 	//getPlayerBalance(cid)
 	lua_register(m_luaState, "getPlayerBalance", LuaScriptInterface::luaGetPlayerBalance);
-
-	//getPromotedVocation(vocation)
-	lua_register(m_luaState, "getPromotedVocation", LuaScriptInterface::luaGetPromotedVocation);
 
 	//getPlayerBlessing(cid, blessing)
 	lua_register(m_luaState, "getPlayerBlessing", LuaScriptInterface::luaGetPlayerBlessing);
@@ -7681,14 +7678,6 @@ int32_t LuaScriptInterface::luaStopEvent(lua_State* L)
 	else
 		lua_pushnumber(L, LUA_ERROR);
 
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaGetPromotedVocation(lua_State* L)
-{
-	//getPromotedVocation(voc)
-	int32_t vocationId = (int32_t)popNumber(L);
-	lua_pushnumber(L, g_vocations.getPromotedVocation(vocationId));
 	return 1;
 }
 
