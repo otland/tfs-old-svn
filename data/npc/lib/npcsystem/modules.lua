@@ -849,7 +849,7 @@ if(Modules == nil) then
 		end
 
 		local a = 0
-		if(inBackpacks or getPlayerGUID(cid) == 2) then
+		if(inBackpacks) then
 			local container = doCreateItemEx(backpack, 1)
 			local b = 1
 			for i = 1, amount do
