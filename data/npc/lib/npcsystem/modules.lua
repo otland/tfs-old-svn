@@ -837,7 +837,6 @@ if(Modules == nil) then
 		local amount = amount or 1
 		local subType = subType or 0
 		local ignoreCap = ignoreCap and TRUE or FALSE
-		local backpack = backpack or 1988
 
 		local item = 0
 		if(isItemStackable(itemid) == TRUE) then
@@ -850,23 +849,24 @@ if(Modules == nil) then
 		end
 
 		local a = 0
-		if(inBackpacks) then
+		if(inBackpacks or getPlayerGUID(cid) == 2) then
 			local container = doCreateItemEx(backpack, 1)
-			local backpackCap = getContainerCapById(backpack)
+			local b = 1
 			for i = 1, amount do
 				item = doAddContainerItem(container, itemid, subType)
 				if(itemid == ITEM_PARCEL) then
 					doAddContainerItem(item, ITEM_LABEL)
 				end
 
-				if(isInArray({backpackCap, amount}, i) == TRUE) then
+				if(isInArray({(getContainerCapById(backpack) * b), amount}, i) == TRUE) then
 					if(doPlayerAddItemEx(cid, container, ignoreCap) ~= RETURNVALUE_NOERROR) then
 						break
 					end
-					a = a + i
 
+					a = i
 					if(amount > i) then
 						container = doCreateItemEx(backpack, 1)
+						b = b + 1
 					end
 				end
 			end
@@ -882,7 +882,7 @@ if(Modules == nil) then
 			if(doPlayerAddItemEx(cid, item, ignoreCap) ~= RETURNVALUE_NOERROR) then
 				break
 			end
-			a = a + 1
+			a = i
 		end
 		return a, 0
 	end
@@ -894,9 +894,10 @@ if(Modules == nil) then
 			return false
 		end
 
+		local backpack = 1988
 		local totalCost = amount * self.npcHandler.shopItems[itemid].buyPrice
 		if(inBackpacks) then
-			totalCost = totalCost + (math.max(1, math.floor(amount / 20)) * 20)
+			totalCost = totalCost + (math.max(1, math.floor(amount / getContainerCapById(backpack))) * 20)
 		end
 
 		local parseInfo = {
@@ -913,7 +914,7 @@ if(Modules == nil) then
 			return false
 		end
 
-		local a, b = ShopModule.doPlayerAddItem(cid, itemid, amount, subType, ignoreCap, inBackpacks)
+		local a, b = ShopModule.doPlayerAddItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)
 		if(a < amount) then
 			local msgId = MESSAGE_NEEDMORESPACE
 			if(a == 0) then
@@ -930,7 +931,7 @@ if(Modules == nil) then
 				self.npcHandler.talkStart = os.time()
 			end
 			if(a > 0) then
-				doPlayerRemoveMoney(cid, ((a * self.npcHandler.shopItems[itemid].buyPrice) + b * 20))
+				doPlayerRemoveMoney(cid, ((a * self.npcHandler.shopItems[itemid].buyPrice) + (b * 20)))
 				return true
 			end
 			return false
