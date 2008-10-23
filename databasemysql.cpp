@@ -236,7 +236,7 @@ void DatabaseMySQL::freeResult(DBResult* res)
 void DatabaseMySQL::keepAlive()
 {
 	uint32_t delay = g_config.getNumber(ConfigManager::SQL_KEEPALIVE);
-	if(m_lastUse > (time(NULL) + delay))
+	if(time(NULL) > (m_lastUse + delay))
 		executeQuery("SHOW TABLES;");
 
 	Scheduler::getScheduler().addEvent(createSchedulerTask((delay * 1000), boost::bind(&DatabaseMySQL::keepAlive, this)));
