@@ -1355,10 +1355,10 @@ bool Commands::createGuild(Creature* creature, const std::string& cmd, const std
 		if(player->guildId == 0)
 		{
 			trimString((std::string&)param);
-			const uint32_t minLength = g_config.getNumber(ConfigManager::MIN_GUILDNAME);
-			const uint32_t maxLength = g_config.getNumber(ConfigManager::MAX_GUILDNAME);
 			if(isValidName(param))
 			{
+				const uint32_t minLength = g_config.getNumber(ConfigManager::MIN_GUILDNAME);
+				const uint32_t maxLength = g_config.getNumber(ConfigManager::MAX_GUILDNAME);
 				if(param.length() >= minLength)
 				{
 					if(param.length() <= maxLength)
