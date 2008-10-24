@@ -57,7 +57,7 @@ bool IOLoginData::getAccountId(const std::string& name, uint32_t& number)
 	return true;
 }
 
-Account IOLoginData::loadAccount(uint32_t accId, bool preLoad /*= false*/)
+Account IOLoginData::loadAccount(uint32_t accId, bool preLoad/* = false*/)
 {
 	Account acc;
 
@@ -775,7 +775,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 
 	ItemBlockList itemList;
 	Item* item;
-	for(int32_t slotId = 1; slotId <= 10; ++slotId)
+	for(int32_t slotId = 1; slotId < 11; ++slotId)
 	{
 		if((item = player->inventory[slotId]))
 			itemList.push_back(itemBlock(slotId, item));

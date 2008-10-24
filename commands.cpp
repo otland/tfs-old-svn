@@ -1357,44 +1357,49 @@ bool Commands::createGuild(Creature* creature, const std::string& cmd, const std
 			trimString((std::string&)param);
 			const uint32_t minLength = g_config.getNumber(ConfigManager::MIN_GUILDNAME);
 			const uint32_t maxLength = g_config.getNumber(ConfigManager::MAX_GUILDNAME);
-			if(param.length() >= minLength)
+			if(isValidName(param))
 			{
-				if(param.length() <= maxLength)
+				if(param.length() >= minLength)
 				{
-					uint32_t guildId;
-					if(!IOGuild::getInstance()->getGuildIdByName(guildId, param))
+					if(param.length() <= maxLength)
 					{
-						const uint32_t levelToFormGuild = g_config.getNumber(ConfigManager::LEVEL_TO_FORM_GUILD);
-						if(player->getLevel() >= levelToFormGuild)
+						uint32_t guildId;
+						if(!IOGuild::getInstance()->getGuildIdByName(guildId, param))
 						{
-							if(player->isPremium())
+							const uint32_t levelToFormGuild = g_config.getNumber(ConfigManager::LEVEL_TO_FORM_GUILD);
+							if(player->getLevel() >= levelToFormGuild)
 							{
-								char buffer[50 + maxLength];
-								sprintf(buffer, "You have formed the guild: %s!", param.c_str());
-								player->sendTextMessage(MSG_INFO_DESCR, buffer);
-								player->setGuildName(param);
+								if(player->isPremium())
+								{
+									char buffer[50 + maxLength];
+									sprintf(buffer, "You have formed the guild: %s!", param.c_str());
+									player->sendTextMessage(MSG_INFO_DESCR, buffer);
+									player->setGuildName(param);
 
-								IOGuild::getInstance()->createGuild(player);
-								return true;
+									IOGuild::getInstance()->createGuild(player);
+									return true;
+								}
+								else
+									player->sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
 							}
 							else
-								player->sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
+							{
+								char buffer[70 + levelToFormGuild];
+								sprintf(buffer, "You have to be at least Level %d to form a guild.", levelToFormGuild);
+								player->sendCancel(buffer);
+							}
 						}
 						else
-						{
-							char buffer[70 + levelToFormGuild];
-							sprintf(buffer, "You have to be at least Level %d to form a guild.", levelToFormGuild);
-							player->sendCancel(buffer);
-						}
+							player->sendCancel("There is already a guild with that name.");
 					}
 					else
-						player->sendCancel("There is already a guild with that name.");
+						player->sendCancel("That guild name is too long, please select a shorter name.");
 				}
 				else
-					player->sendCancel("That guild name is too long, please select a shorter name.");
+					player->sendCancel("That guild name is too short, please select a longer name.");
 			}
 			else
-				player->sendCancel("That guild name is too short, please select a longer name.");
+				player->sendCancel("That guild name contains illegal characters, please choose another name.");
 		}
 		else
 			player->sendCancel("You are already in a guild.");
@@ -1776,7 +1781,7 @@ bool Commands::showBanishmentInfo(Creature* creature, const std::string& cmd, co
 			char buffer[500 + ban.comment.length()];
 			sprintf(buffer, "Your account has been %s at:\n%s by: %s,\nfor the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.\nYour %s%s.",
 				(deletion ? "deleted" : "banished"), date, name_.c_str(), getReason(ban.reason).c_str(), getAction(ban.action, false).c_str(),
-				ban.comment.c_str(), (deletion ? "account won't be undeleted" : "banishment will be lifted at:\n"),	(deletion ? "." : date));
+				ban.comment.c_str(), (deletion ? "account won't be undeleted" : "banishment will be lifted at:\n"), (deletion ? "." : date));
 
 			player->sendFYIBox(buffer);
 		}

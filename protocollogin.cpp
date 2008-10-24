@@ -81,7 +81,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	uint16_t version  = msg.GetU16();
 	msg.SkipBytes(12);
 
-	if(version <= 760)
+	if(version <= 822)
 	{
 		disconnectClient(0x0A, CLIENT_VERSION_STRING);
 		return false;

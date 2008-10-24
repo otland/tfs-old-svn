@@ -73,8 +73,8 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 			STATE_WAITING
 		};
 
-		Protocol* getProtocol() { return m_protocol;}
-		Connection* getConnection() { return m_connection;}
+		Protocol* getProtocol() const {return m_protocol;}
+		Connection* getConnection() const {return m_connection;}
 
 #ifdef __TRACK_NETWORK__
 		void Track(std::string file, int64_t line, std::string func)
@@ -84,19 +84,20 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 
 			std::ostringstream os;
 			os << /*file << ":"*/ "line " << line << " " << func;
-			last_uses.push_back(os.str());
+			lastUses.push_back(os.str());
 		}
+
 		void PrintTrace()
 		{
 			uint32_t n = 1;
-			for(std::list<std::string>::const_reverse_iterator iter = last_uses.rbegin(); iter != last_uses.rend(); ++iter, ++n)
-				std::cout << "\t" << n << ".\t" << *iter << std::endl;
+			for(std::list<std::string>::const_reverse_iterator it = lastUses.rbegin(); it != lastUses.rend(); ++it, ++n)
+				std::cout << "\t" << n << ".\t" << (*it) << std::endl;
 		}
 #endif
 
 	protected:
 #ifdef __TRACK_NETWORK__
-		std::list<std::string> last_uses;
+		std::list<std::string> lastUses;
 #endif
 
 		void freeMessage()
@@ -111,14 +112,14 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 
 		friend class OutputMessagePool;
 
-		void setProtocol(Protocol* protocol){ m_protocol = protocol;}
-		void setConnection(Connection* connection){ m_connection = connection;}
+		void setProtocol(Protocol* protocol) {m_protocol = protocol;}
+		void setConnection(Connection* connection) {m_connection = connection;}
 
-		void setState(OutputMessageState state) { m_state = state;}
-		OutputMessageState getState() const { return m_state;}
+		void setState(OutputMessageState state) {m_state = state;}
+		OutputMessageState getState() const {return m_state;}
 
-		void setFrame(uint64_t frame) { m_frame = frame;}
-		uint64_t getFrame() const { return m_frame;}
+		void setFrame(uint64_t frame) {m_frame = frame;}
+		uint64_t getFrame() const {return m_frame;}
 
 		Protocol* m_protocol;
 		Connection* m_connection;
@@ -135,7 +136,7 @@ class OutputMessagePool
 		OutputMessagePool();
 
 	public:
-		~OutputMessagePool();
+		virtual ~OutputMessagePool();
 
 		static OutputMessagePool* getInstance()
 		{

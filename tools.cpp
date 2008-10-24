@@ -405,9 +405,7 @@ bool isValidAccountName(std::string text)
 	uint32_t textLength = text.length();
 	for(uint32_t size = 0; size < textLength; size++)
 	{
-		if(isLowercaseLetter(text[size]) || isNumber(text[size]))
-			continue;
-		else
+		if(!isLowercaseLetter(text[size]) && !isNumber(text[size]))
 			return false;
 	}
 	return true;
@@ -420,9 +418,7 @@ bool isValidPassword(std::string text)
 	uint32_t textLength = text.length();
 	for(uint32_t size = 0; size < textLength; size++)
 	{
-		if(isLowercaseLetter(text[size]) || isNumber(text[size]) || isPasswordCharacter(text[size]))
-			continue;
-		else
+		if(!isLowercaseLetter(text[size]) && !isNumber(text[size]) && !isPasswordCharacter(text[size]))
 			return false;
 	}
 	return true;
@@ -435,9 +431,7 @@ bool isValidName(std::string text)
 	uint32_t textLength = text.length();
 	for(uint32_t size = 0; size < textLength; size++)
 	{
-		if(isLowercaseLetter(text[size]) || text[size] == 32 || text[size] == 39 || text[size] == 45)
-			continue;
-		else
+		if(!isLowercaseLetter(text[size]) && !text[size] == 32 && !text[size] == 39 && !text[size] == 45)
 			return false;
 	}
 	return true;
@@ -463,21 +457,14 @@ bool checkText(std::string text, std::string str)
 std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLenght)
 {
 	std::stringstream key;
-	int32_t i(0);
-	int32_t j(0);
-	int32_t lastNumber = 99;
-	int32_t number = 0;
-	char character = 0;
-	char lastCharacter = 0;
-	bool doNumber = false;
-	bool madeNumber = false;
-	bool madeCharacter = false;
+	int32_t i = 0, j = 0, lastNumber = 99, number = 0;
+	char character = 0, lastCharacter = 0;
+	bool doNumber = false, madeNumber = false, madeCharacter = false;
 	do
 	{
 		do
 		{
-			madeNumber = false;
-			madeCharacter = false;
+			madeNumber = madeCharacter = false;
 			doNumber = (bool)random_range(0, 1);
 			if(doNumber)
 			{
@@ -524,12 +511,11 @@ std::string trimString(std::string& str)
 
 std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end)
 {
-	std::string tmp;
 	if(it == end)
 		return "";
 	else
 	{
-		tmp = *it;
+		std::string tmp = (*it);
 		++it;
 		if(tmp[0] == '"')
 		{

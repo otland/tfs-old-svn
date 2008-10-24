@@ -103,11 +103,9 @@ void PrivateChatChannel::excludePlayer(Player* player, Player* excludePlayer)
 
 void PrivateChatChannel::closeChannel()
 {
-	UsersMap::iterator cit;
-	for(cit = m_users.begin(); cit != m_users.end(); ++cit)
+	for(UsersMap::iterator cit = m_users.begin(); cit != m_users.end(); ++cit)
 	{
-		Player* toPlayer = cit->second->getPlayer();
-		if(toPlayer)
+		if(Player* toPlayer = cit->second->getPlayer())
 			toPlayer->sendClosePrivate(getId());
 	}
 }
@@ -324,7 +322,7 @@ bool Chat::deleteChannel(Player* player, uint16_t channelId)
 bool Chat::addUserToChannel(Player* player, uint16_t channelId)
 {
 	ChatChannel* channel = getChannel(player, channelId);
-	if(!channel)
+	if(!channel || !player)
 		return false;
 
 	return channel->addUser(player);
@@ -935,8 +933,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 
 std::string Chat::getChannelName(Player* player, uint16_t channelId)
 {
-	ChatChannel* channel = getChannel(player, channelId);
-	if(channel)
+	if(ChatChannel* channel = getChannel(player, channelId))
 		return channel->getName();
 	else
 		return "";
@@ -945,63 +942,53 @@ std::string Chat::getChannelName(Player* player, uint16_t channelId)
 ChannelList Chat::getChannelList(Player* player)
 {
 	ChannelList list;
-	NormalChannelMap::iterator itn;
-	PrivateChannelMap::iterator it;
 	bool gotPrivate = false;
 
 	// If has guild
 	if(player->getGuildId() && player->getGuildName().length())
 	{
-		ChatChannel* channel = getChannel(player, 0x00);
-		if(channel)
+		if(ChatChannel* channel = getChannel(player, 0x00))
 			list.push_back(channel);
 		else if((channel = createChannel(player, 0x00)))
 			list.push_back(channel);
 	}
 
-	for(itn = m_normalChannels.begin(); itn != m_normalChannels.end(); ++itn)
+	for(NormalChannelMap::iterator nit = m_normalChannels.begin(); nit != m_normalChannels.end(); ++nit)
 	{
-		bool skip = false;
-		switch(itn->first)
+		switch(nit->first)
 		{
 			case 0x01:
 				if(!player->hasCustomFlag(PlayerCustomFlag_CanSeeStaffChannel))
-					skip = true;
+					continue;
 				break;
 
 			case 0x02:
 				if(!player->hasCustomFlag(PlayerCustomFlag_CanSeeCounsellorChannel))
-					skip = true;
+					continue;
 				break;
 
 			case 0x03:
 				if(!player->hasFlag(PlayerFlag_CanAnswerRuleViolations))
-					skip = true;
+					continue;
 				break;
 
 			case 0x05:
 				if(!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) && player->getVocationId() == 0)
-					skip = true;
+					continue;
 				break;
 
 			case 0x06:
 				if(!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) && player->getVocationId() != 0)
-					skip = true;
+					continue;
 				break;
 		}
 
-		if(!skip)
-		{
-			ChatChannel *channel = itn->second;
-			list.push_back(channel);
-		}
+		list.push_back(nit->second);
 	}
 
-	for(it = m_privateChannels.begin(); it != m_privateChannels.end(); ++it)
+	for(PrivateChannelMap::iterator pit = m_privateChannels.begin(); pit != m_privateChannels.end(); ++pit)
 	{
-		PrivateChatChannel* channel = it->second;
-
-		if(channel)
+		if(PrivateChatChannel* channel = pit->second)
 		{
 			if(channel->isInvited(player))
 				list.push_back(channel);
