@@ -342,7 +342,7 @@ int32_t random_range(int32_t lowestNumber, int32_t highestNumber, DistributionTy
 	}
 
 	if(type == DISTRO_UNIFORM)
-		return (lowestNumber + (rand24b() % (range + 1)));
+		return (lowestNumber + (rand24b() % (float(highestNumber - lowestNumber) + 1)));
 	else if(type == DISTRO_NORMAL)
 	{
 		float value = box_muller(0.5, 0.25);
