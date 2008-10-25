@@ -777,8 +777,8 @@ void LuaScriptInterface::executeTimerEvent(uint32_t eventIndex)
 		//free resources
 		for(std::list<int32_t>::iterator lt = it->second.parameters.begin(); lt != it->second.parameters.end(); ++lt)
 			luaL_unref(m_luaState, LUA_REGISTRYINDEX, *lt);
-		it->second.parameters.clear();
 
+		it->second.parameters.clear();
 		luaL_unref(m_luaState, LUA_REGISTRYINDEX, it->second.function);
 		m_timerEvents.erase(it);
 	}
@@ -792,12 +792,14 @@ int32_t LuaScriptInterface::luaErrorHandler(lua_State* L)
 		lua_pop(L, 1);
 		return 1;
 	}
+
 	lua_getfield(L, -1, "traceback");
 	if (!lua_isfunction(L, -1))
 	{
 		lua_pop(L, 2);
 		return 1;
 	}
+
 	lua_pushvalue(L, 1);
 	lua_pushinteger(L, 2);
 	lua_call(L, 2, 1);
@@ -834,6 +836,7 @@ void LuaScriptInterface::pushVariant(lua_State* L, const LuaVariant& var)
 {
 	lua_newtable(L);
 	setField(L, "type", var.type);
+
 	switch(var.type)
 	{
 		case VARIANT_NUMBER:
@@ -7726,7 +7729,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddBlessing(lua_State* L)
 	{
 		if(!player->hasBlessing(blessing))
 		{
-			blessing = 1 << blessing;
+			blessing <<= 1;
 			player->addBlessing(blessing);
 			lua_pushboolean(L, true);
 		}

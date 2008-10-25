@@ -201,14 +201,14 @@ class Player : public Creature, public Cylinder
 
 		void setFlags(uint64_t flags) {groupFlags = flags;}
 		bool hasFlag(PlayerFlags value) const {return (0 != (groupFlags & ((uint64_t)1 << value)));}
-		void setCustomFlags(uint64_t flags){groupCustomFlags = flags;}
+		void setCustomFlags(uint64_t flags) {groupCustomFlags = flags;}
 		bool hasCustomFlag(PlayerCustomFlags value) const {return (0 != (groupCustomFlags & ((uint64_t)1 << value)));}
 
-		void addBlessing(int16_t blessings_) {blessings += blessings_;}
+		void addBlessing(int16_t blessing) {blessings += blessing;}
 		bool hasBlessing(int16_t value) const {return (0 != (blessings & ((int16_t)1 << value)));}
 
 		OperatingSystem_t getOperatingSystem() const {return operatingSystem;}
-		void setOperatingSystem(OperatingSystem_t clientos) {operatingSystem = clientos;}
+		void setOperatingSystem(OperatingSystem_t clientOs) {operatingSystem = clientOs;}
 		bool isOnline() const {return (client != NULL);}
 		void disconnect() {if(client) client->disconnect();}
 		uint32_t getIP() const;
