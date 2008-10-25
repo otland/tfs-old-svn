@@ -2168,6 +2168,7 @@ uint32_t Player::getIP() const
 {
 	if(client)
 		return client->getIP();
+
 	return 0;
 }
 
@@ -2189,7 +2190,6 @@ void Player::death()
 	}
 
 	loginPosition = masterPos;
-
 	if(skillLoss)
 	{
 		//Magic level loss
@@ -2201,9 +2201,7 @@ void Player::death()
 			sumMana += vocation->getReqMana(i);
 
 		sumMana += manaSpent;
-
 		lostMana = (int32_t)(sumMana * getLostPercent(LOSS_MANASPENT));
-
 		while((uint64_t)lostMana > manaSpent && magLevel > 0)
 		{
 			lostMana -= manaSpent;
@@ -2262,9 +2260,9 @@ void Player::death()
 
 		if(newLevel != level)
 		{
-			char lvMsg[90];
-			sprintf(lvMsg, "You were downgraded from Level %d to Level %d.", level, newLevel);
-			sendTextMessage(MSG_EVENT_ADVANCE, lvMsg);
+			char advMsg[90];
+			sprintf(advMsg, "You were downgraded from Level %d to Level %d.", level, newLevel);
+			sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
 		}
 
 		uint64_t currLevelExp = Player::getExpForLevel(newLevel);
@@ -2312,8 +2310,10 @@ Item* Player::getCorpse()
 			sprintf(buffer, "You recognize %s. %s was killed by %s.", getNameDescription().c_str(), (getSex() == PLAYERSEX_FEMALE ? "She" : "He"), lastHitCreature_->getNameDescription().c_str());
 		else
 			sprintf(buffer, "You recognize %s.", getNameDescription().c_str());
+
 		corpse->setSpecialDescription(buffer);
 	}
+
 	return corpse;
 }
 
@@ -2331,11 +2331,12 @@ void Player::preSave()
 				manaMax = std::max((int32_t)0, (manaMax - (int32_t)vocation->getManaGain()));
 				capacity = std::max((double)0, (capacity - (double)vocation->getCapGain()));
 			}
+
 			blessings = 0;
-			mana = manaMax;
 		}
 
 		health = healthMax;
+		mana = manaMax;
 	}
 }
 
@@ -3735,24 +3736,23 @@ bool Player::canLogout()
 
 void Player::genReservedStorageRange()
 {
-	uint32_t base_key;
+	uint32_t baseKey;
 	//generate outfits range
-	base_key = PSTRG_OUTFITS_RANGE_START + 1;
+	baseKey = PSTRG_OUTFITS_RANGE_START + 1;
 
-	const OutfitList& global_outfits = Outfits::getInstance()->getOutfitList(sex);
-
+	const OutfitList& globalOutfits = Outfits::getInstance()->getOutfitList(sex);
 	const OutfitListType& outfits = m_playerOutfits.getOutfits();
-	OutfitListType::const_iterator it;
-	for(it = outfits.begin(); it != outfits.end(); ++it)
+
+	for(OutfitListType::const_iterator it = outfits.begin(); it != outfits.end(); ++it)
 	{
 		uint32_t looktype = (*it)->looktype;
 		uint32_t addons = (*it)->addons;
-		if(!global_outfits.isInList(looktype, addons, isPremium(), getSex()))
+		if(!globalOutfits.isInList(looktype, addons, isPremium(), getSex()))
 		{
-			long value = (looktype << 16) | (addons & 0xFF);
-			storageMap[base_key] = value;
-			base_key++;
-			if(base_key > PSTRG_OUTFITS_RANGE_START + PSTRG_OUTFITS_RANGE_SIZE)
+			int64_t value = (looktype << 16) | (addons & 0xFF);
+			storageMap[baseKey] = value;
+			baseKey++;
+			if(baseKey > PSTRG_OUTFITS_RANGE_START + PSTRG_OUTFITS_RANGE_SIZE)
 			{
 				std::cout << "Warning: [Player::genReservedStorageRange()] Player " << getName() << " with more than 500 outfits!." << std::endl;
 				break;
@@ -3923,7 +3923,7 @@ void Player::setPromotionLevel(uint32_t pLevel)
 
 double Player::getLostPercent(lossTypes_t lossType)
 {
-	double lostPercent = (double)lossPercent[lossType];
+	double lostPercent = lossPercent[lossType];
 	if(g_game.getWorldType() == WORLD_TYPE_PVP_ENFORCED)
 		return lostPercent / (double)100;
 

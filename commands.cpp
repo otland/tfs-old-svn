@@ -222,6 +222,7 @@ bool Commands::reload()
 		it->second->logged = true;
 		it->second->loadedLogging = false;
 	}
+
 	g_game.resetCommandTag();
 	return loadFromXml();
 }
@@ -235,9 +236,7 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 	while(cmdit != cmdtokens.end())
 	{
 		
-		std::string strCommand;
-		std::string strParam;
-		std::string cmdThis = parseParams(cmdit, cmdtokens.end());
+		std::string strCommand, strParam, cmdThis = parseParams(cmdit, cmdtokens.end());
 		trimString(cmdThis);
 
 		std::string::size_type loc = cmdThis.find(' ', 0 );

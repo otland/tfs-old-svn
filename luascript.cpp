@@ -834,11 +834,14 @@ void LuaScriptInterface::pushVariant(lua_State* L, const LuaVariant& var)
 {
 	lua_newtable(L);
 	setField(L, "type", var.type);
-
 	switch(var.type)
 	{
-		case VARIANT_NUMBER: setField(L, "number", var.number); break;
-		case VARIANT_STRING: setField(L, "string", var.text); break;
+		case VARIANT_NUMBER:
+			setField(L, "number", var.number);
+			break;
+		case VARIANT_STRING:
+			setField(L, "string", var.text);
+			break;
 		case VARIANT_TARGETPOSITION:
 		case VARIANT_POSITION:
 		{
@@ -880,6 +883,7 @@ void LuaScriptInterface::pushThing(lua_State* L, Thing* thing, uint32_t thingid)
 			type = 2;
 		else
 			type = 3; //npc
+
 		setField(L, "type", type);
 		setField(L, "actionid", 0);
 	}
@@ -925,17 +929,11 @@ LuaVariant LuaScriptInterface::popVariant(lua_State* L)
 	switch(type)
 	{
 		case VARIANT_NUMBER:
-		{
 			var.number = getFieldU32(L, "number");
 			break;
-		}
-
 		case VARIANT_STRING:
-		{
 			var.text = getField(L, "string");
 			break;
-		}
-
 		case VARIANT_POSITION:
 		case VARIANT_TARGETPOSITION:
 		{
@@ -944,12 +942,9 @@ LuaVariant LuaScriptInterface::popVariant(lua_State* L)
 			popPosition(L, var.pos);
 			break;
 		}
-
 		default:
-		{
 			var.type = VARIANT_NONE;
 			break;
-		}
 	}
 
 	lua_pop(L, 1); //table
@@ -7708,9 +7703,9 @@ int32_t LuaScriptInterface::luaGetPlayerBlessing(lua_State* L)
 	//getPlayerBlessings(cid, blessing)
 	int16_t blessing = popNumber(L) - 1;
 	uint32_t cid = popNumber(L);
+
 	ScriptEnviroment* env = getScriptEnv();
-	Player* player = env->getPlayerByUID(cid);
-	if(player)
+	if(Player* player = env->getPlayerByUID(cid))
 		lua_pushboolean(L, player->hasBlessing(blessing));
 	else
 	{
@@ -7723,11 +7718,11 @@ int32_t LuaScriptInterface::luaGetPlayerBlessing(lua_State* L)
 int32_t LuaScriptInterface::luaDoPlayerAddBlessing(lua_State* L)
 {
 	//doPlayerAddBlessing(cid, blessing)
-	int32_t blessing = popNumber(L) - 1;
+	int16_t blessing = popNumber(L) - 1;
 	uint32_t cid = popNumber(L);
+
 	ScriptEnviroment* env = getScriptEnv();
-	Player* player = env->getPlayerByUID(cid);
-	if(player)
+	if(Player* player = env->getPlayerByUID(cid))
 	{
 		if(!player->hasBlessing(blessing))
 		{
