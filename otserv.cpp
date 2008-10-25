@@ -182,7 +182,7 @@ int main(int argc, char *argv[])
 	OTSYS_THREAD_WAITSIGNAL(g_loaderSignal, g_loaderLock);
 
 	Server server(INADDR_ANY, g_config.getNumber(ConfigManager::PORT));
-	std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " Server Online!" << std::endl << std::endl;
+	std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
 	GUI::getInstance()->m_connections = true;
@@ -431,9 +431,9 @@ void mainLoader()
 	if(!g_game.loadMap(g_config.getString(ConfigManager::MAP_NAME)))
 		startupErrorMessage("");
 
-	std::cout << ">> Setting initialization gamestate modules." << std::endl;
+	std::cout << ">> All modules were loaded, server starting up..." << std::endl;
 	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Setting initialization gamestate modules.");
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> All modules were loaded, server starting up...");
 	#endif
 	g_game.setGameState(GAME_STATE_INIT);
 
@@ -482,8 +482,6 @@ void mainLoader()
 		if(!ignoreEvent && (hoursLeftInMS + minutesLeftInMS) > 0)
 			Scheduler::getScheduler().addEvent(createSchedulerTask(hoursLeftInMS + minutesLeftInMS, boost::bind(&Game::prepareGlobalSave, &g_game)));
 	}
-
-	std::cout << ">> All modules has been loaded, server starting up..." << std::endl;
 
 	serverIPs.push_back(std::make_pair(inet_addr("127.0.0.1"), 0xFFFFFFFF));
 	char hostName[128];
