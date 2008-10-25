@@ -276,9 +276,8 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 			char buf[21], buffer[100];
 			formatDate(time(NULL), buf);
 			sprintf(buffer, "%s_commands.log", getFilePath(FILE_TYPE_LOG, player->getName()).c_str());
-	
-			FILE* file = fopen(buffer, "a");
-			if(file)
+
+			if(FILE* file = fopen(buffer, "a"))
 			{
 				fprintf(file, "[%s] %s\n", buf, cmdThis.c_str());
 				fclose(file);
@@ -303,8 +302,7 @@ bool Commands::placeNpc(Creature* creature, const std::string& cmd, const std::s
 	else
 	{
 		delete npc;
-		Player* player = creature->getPlayer();
-		if(player)
+		if(Player* player = creature->getPlayer())
 		{
 			player->sendCancelMessage(RET_NOTENOUGHROOM);
 			g_game.addMagicEffect(creature->getPosition(), NM_ME_POFF);

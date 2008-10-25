@@ -1102,10 +1102,10 @@ void LuaScriptInterface::registerFunctions()
 	lua_register(m_luaState, "getPlayerAccess", LuaScriptInterface::luaGetPlayerAccess);
 
 	//getPlayerSkillLevel(cid, skillid)
-	lua_register(m_luaState, "getPlayerSkill", LuaScriptInterface::luaGetPlayerSkillLevel);
+	lua_register(m_luaState, "getPlayerSkillLevel", LuaScriptInterface::luaGetPlayerSkillLevel);
 
 	//getPlayerSkillTries(cid, skillid)
-	lua_register(m_luaState, "getPlayerSkill", LuaScriptInterface::luaGetPlayerSkillTries);
+	lua_register(m_luaState, "getPlayerSkillTries", LuaScriptInterface::luaGetPlayerSkillTries);
 
 	//getPlayerTown(cid)
 	lua_register(m_luaState, "getPlayerTown", LuaScriptInterface::luaGetPlayerTown);

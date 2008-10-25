@@ -48,8 +48,9 @@ int32_t TextLogger::overflow(int32_t c)
 	formatDate(time(NULL), date);
 	#ifdef __GUI_LOGS__
 	formatDate2(time(NULL), buf);
+	sprintf(buffer, "%s%s.log", getFilePath(FILE_TYPE_LOG, "server/").c_str(), buf);
 
-	if(FILE* file = fopen(getFilePath(FILE_TYPE_LOG,"server/" + buf + ".log").c_str(), "a"))
+	if(FILE* file = fopen(buffer, "a"))
 	{
 		fprintf(file, "%c", c);
 		if(displayDate)
