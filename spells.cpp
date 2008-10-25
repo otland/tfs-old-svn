@@ -523,6 +523,7 @@ bool Spell::configureSpell(xmlNodePtr p)
 					std::cout << "Warning: [Spell::configureSpell] Wrong vocation name: " << strValue << std::endl;
 			}
 		}
+
 		vocationNode = vocationNode->next;
 	}
 	return true;

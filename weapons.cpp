@@ -170,7 +170,6 @@ Weapon::Weapon(LuaScriptInterface* _interface) :
 	premium = false;
 	enabled = true;
 	wieldUnproperly = false;
-	range = 1;
 	ammoAction = AMMOACTION_NONE;
 	params.blockedByArmor = true;
 	params.blockedByShield = true;
@@ -243,11 +242,6 @@ bool Weapon::configureEvent(xmlNodePtr p)
 	if(readXMLString(p, "type", strValue))
 		params.combatType = getCombatType(strValue);
 
-	if(readXMLString(p, "ammo", strValue))
-		std::cout << "[Warning Weapon::configureEvent]: ammo is not longer used in weapons.xml." << std::endl;
-
-	range = Item::items[id].shootRange;
-
 	STRING_LIST vocStringList;
 
 	xmlNodePtr vocationNode = p->children;
@@ -265,6 +259,7 @@ bool Weapon::configureEvent(xmlNodePtr p)
 					if(promotedVocation != -1)
 						vocWeaponMap[promotedVocation] = true;
 
+					intValue = 1;
 					readXMLInteger(vocationNode, "showInDescription", intValue);
 					if(intValue != 0)
 					{
@@ -274,6 +269,7 @@ bool Weapon::configureEvent(xmlNodePtr p)
 				}
 			}
 		}
+
 		vocationNode = vocationNode->next;
 	}
 
@@ -282,14 +278,15 @@ bool Weapon::configureEvent(xmlNodePtr p)
 	{
 		for(STRING_LIST::iterator it = vocStringList.begin(); it != vocStringList.end(); ++it)
 		{
-			if(*it != vocStringList.front())
+			if((*it) != vocStringList.front())
 			{
-				if(*it != vocStringList.back())
+				if((*it) != vocStringList.back())
 					vocationString += ", ";
 				else
 					vocationString += " and ";
 			}
-			vocationString += *it;
+
+			vocationString += (*it);
 			vocationString += "s";
 		}
 
@@ -341,14 +338,15 @@ int32_t Weapon::playerWeaponCheck(Player* player, Creature* target) const
 	if(playerPos.z != targetPos.z)
 		return 0;
 
-	int32_t trueRange;
 	const ItemType& it = Item::items[getID()];
-	if(it.weaponType == WEAPON_AMMO)
-		trueRange = player->getShootRange();
-	else
-		trueRange = range;
 
-	if(std::max(std::abs(playerPos.x - targetPos.x), std::abs(playerPos.y - targetPos.y)) > trueRange)
+	int32_t range;
+	if(it.weaponType == WEAPON_AMMO)
+		range = player->getShootRange();
+	else
+		range = it.shootRange;
+
+	if(std::max(std::abs(playerPos.x - targetPos.x), std::abs(playerPos.y - targetPos.y)) > range)
 		return 0;
 
 	if(!player->hasFlag(PlayerFlag_IgnoreWeaponCheck))
@@ -702,7 +700,7 @@ WeaponDistance::WeaponDistance(LuaScriptInterface* _interface) :
 	hitChance = -1;
 	maxHitChance = 0;
 	breakChance = 0;
-	ammuAttackValue = 0;
+	ammoAttackValue = 0;
 	params.blockedByShield = false;
 }
 
@@ -737,13 +735,6 @@ bool WeaponDistance::configureEvent(xmlNodePtr p)
 	if(it.ammoAction != AMMOACTION_NONE)
 		ammoAction = it.ammoAction;
 
-	int32_t intValue;
-	if(readXMLInteger(p, "hitChance", intValue))
-		std::cout << "Warning: hitChance is not longer used in weapons.xml." << std::endl;
-
-	if(readXMLInteger(p, "breakChance", intValue))
-		std::cout << "Warning: breakChance is not longer used in weapons.xml." << std::endl;
-
 	return true;
 }
 
@@ -776,8 +767,7 @@ bool WeaponDistance::configureWeapon(const ItemType& it)
 		ammoAction = it.ammoAction;
 
 	params.distanceEffect = it.shootType;
-	range = it.shootRange;
-	ammuAttackValue = it.attack;
+	ammoAttackValue = it.attack;
 
 	return Weapon::configureWeapon(it);
 }
@@ -789,9 +779,9 @@ int32_t WeaponDistance::playerWeaponCheck(Player* player, Creature* target) cons
 	{
 		if(Item* bow = player->getWeapon(true))
 		{
-			const Weapon* boWeap = g_weapons->getWeapon(bow);
-			if(boWeap)
-				return boWeap->playerWeaponCheck(player, target);
+			const Weapon* boWeapon = g_weapons->getWeapon(bow);
+			if(boWeapon)
+				return boWeapon->playerWeaponCheck(player, target);
 		}
 	}
 	return Weapon::playerWeaponCheck(player, target);
@@ -963,17 +953,14 @@ void WeaponDistance::onUsedWeapon(Player* player, Item* item, Tile* destTile) co
 void WeaponDistance::onUsedAmmo(Player* player, Item* item, Tile* destTile) const
 {
 	if(ammoAction == AMMOACTION_MOVEBACK && breakChance > 0 && random_range(1, 100) < breakChance)
-	{
-		int32_t newCount = std::max(0, item->getItemCount() - 1);
-		g_game.transformItem(item, item->getID(), newCount);
-	}
+		g_game.transformItem(item, item->getID(), std::max(0, item->getItemCount() - 1));
 	else
 		Weapon::onUsedAmmo(player, item, destTile);
 }
 
 int32_t WeaponDistance::getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage /*= false*/) const
 {
-	int32_t attackValue = ammuAttackValue;
+	int32_t attackValue = ammoAttackValue;
 	if(item->getWeaponType() == WEAPON_AMMO)
 	{
 		Item* bow = const_cast<Player*>(player)->getWeapon(true);
@@ -1065,7 +1052,6 @@ bool WeaponWand::configureEvent(xmlNodePtr p)
 bool WeaponWand::configureWeapon(const ItemType& it)
 {
 	m_scripted = false;
-	range = it.shootRange;
 	params.distanceEffect = it.shootType;
 
 	return Weapon::configureWeapon(it);

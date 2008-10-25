@@ -586,6 +586,7 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 						}
 					}
 				}
+
 				vocationNode = vocationNode->next;
 			}
 
@@ -593,16 +594,18 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 			{
 				for(STRING_LIST::iterator it = vocStringList.begin(); it != vocStringList.end(); ++it)
 				{
-					if(*it != vocStringList.front())
+					if((*it) != vocStringList.front())
 					{
-						if(*it != vocStringList.back())
+						if((*it) != vocStringList.back())
 							vocationString += ", ";
 						else
 							vocationString += " and ";
 					}
-					vocationString += *it;
+
+					vocationString += (*it);
 					vocationString += "s";
 				}
+
 				wieldInfo |= WIELDINFO_VOCREQ;
 			}
 		}

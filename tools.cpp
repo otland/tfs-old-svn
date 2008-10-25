@@ -344,7 +344,7 @@ int32_t random_range(int32_t lowestNumber, int32_t highestNumber, DistributionTy
 	switch(type)
 	{
 		case DISTRO_UNIFORM:
-			return (lowestNumber + int32_t(rand24b() % (highestNumber - lowestNumber + 1)));
+			return (lowestNumber + ((int32_t)rand24b() % (highestNumber - lowestNumber + 1)));
 			break;
 		case DISTRO_NORMAL:
 			return (lowestNumber + int32_t(float(highestNumber - lowestNumber) * (float)std::min((float)1, std::max((float)0, box_muller(0.5, 0.25)))));

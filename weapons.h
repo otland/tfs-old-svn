@@ -112,7 +112,6 @@ class Weapon : public Event
 		int32_t mana;
 		int32_t manaPercent;
 		int32_t soul;
-		int32_t range;
 		AmmoAction_t ammoAction;
 		CombatParams params;
 
@@ -164,7 +163,7 @@ class WeaponDistance : public Weapon
 		int32_t hitChance;
 		int32_t maxHitChance;
 		int32_t breakChance;
-		int32_t ammuAttackValue;
+		int32_t ammoAttackValue;
 };
 
 class WeaponWand : public Weapon
