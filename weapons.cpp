@@ -130,17 +130,17 @@ Event* Weapons::getEvent(const std::string& nodeName)
 		return new WeaponDistance(&m_scriptInterface);
 	else if(tmpNodeName == "wand" || tmpNodeName == "rod")
 		return new WeaponWand(&m_scriptInterface);
-	else
-		return NULL;
+
+	return NULL;
 }
 
 bool Weapons::registerEvent(Event* event, xmlNodePtr p)
 {
 	Weapon* weapon = dynamic_cast<Weapon*>(event);
-	if(weapon)
-		weapons[weapon->getID()] = weapon;
-	else
+	if(!weapon)
 		return false;
+
+	weapons[weapon->getID()] = weapon;
 	return true;
 }
 
@@ -372,8 +372,10 @@ int32_t Weapon::playerWeaponCheck(Player* player, Creature* target) const
 		int32_t damageModifier = 100;
 		if(player->getLevel() < getReqLevel())
 			damageModifier = (isWieldedUnproperly() ? damageModifier / 2 : 0);
+
 		if(player->getMagicLevel() < getReqMagLv())
 			damageModifier = (isWieldedUnproperly() ? damageModifier / 2 : 0);
+
 		return damageModifier;
 	}
 	return 100;
@@ -384,6 +386,7 @@ bool Weapon::useWeapon(Player* player, Item* item, Creature* target) const
 	int32_t damageModifier = playerWeaponCheck(player, target);
 	if(damageModifier == 0)
 		return false;
+
 	return internalUseWeapon(player, item, target, damageModifier);
 }
 
@@ -513,6 +516,7 @@ int32_t Weapon::getManaCost(const Player* player) const
 		int32_t manaCost = (maxMana * manaPercent) / 100;
 		return manaCost;
 	}
+
 	return 0;
 }
 
@@ -588,6 +592,7 @@ bool WeaponMelee::useWeapon(Player* player, Item* item, Creature* target) const
 		int32_t damage = getElementDamage(player, item);
 		Combat::doCombatHealth(player, target, damage, damage, element);
 	}
+
 	return true;
 }
 
@@ -784,6 +789,7 @@ int32_t WeaponDistance::playerWeaponCheck(Player* player, Creature* target) cons
 				return boWeapon->playerWeaponCheck(player, target);
 		}
 	}
+
 	return Weapon::playerWeaponCheck(player, target);
 }
 
@@ -912,16 +918,16 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 	else
 	{
 		//miss target
-		typedef std::pair<int32_t, int32_t> dPair;
-		std::vector<dPair> destList;
-		destList.push_back(dPair(-1, -1));
-		destList.push_back(dPair(-1, 0));
-		destList.push_back(dPair(-1, 1));
-		destList.push_back(dPair(0, -1));
-		destList.push_back(dPair(0, 1));
-		destList.push_back(dPair(1, -1));
-		destList.push_back(dPair(1, 0));
-		destList.push_back(dPair(1, 1));
+		typedef std::pair<int32_t, int32_t> tmpPair;
+		std::vector<tmpPair> destList;
+		destList.push_back(tmpPair(-1, -1));
+		destList.push_back(tmpPair(-1, 0));
+		destList.push_back(tmpPair(-1, 1));
+		destList.push_back(tmpPair(0, -1));
+		destList.push_back(tmpPair(0, 1));
+		destList.push_back(tmpPair(1, -1));
+		destList.push_back(tmpPair(1, 0));
+		destList.push_back(tmpPair(1, 1));
 
 		std::random_shuffle(destList.begin(), destList.end());
 
@@ -929,7 +935,7 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 		Tile* destTile = target->getTile();
 		Tile* tmpTile = NULL;
 
-		for(std::vector<dPair>::iterator it = destList.begin(); it != destList.end(); ++it)
+		for(std::vector<tmpPair>::iterator it = destList.begin(); it != destList.end(); ++it)
 		{
 			tmpTile = g_game.getTile(destPos.x + it->first, destPos.y + it->second, destPos.z);
 			if(tmpTile && !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID))
