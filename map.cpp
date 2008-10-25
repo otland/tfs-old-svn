@@ -114,7 +114,6 @@ Tile* Map::getTile(uint16_t x, uint16_t y, uint8_t z)
 {
 	if(z < MAP_MAX_LAYERS)
 	{
-		//QTreeLeafNode* leaf = getLeaf(x, y);
 		QTreeLeafNode* leaf = QTreeNode::getLeafStatic(&root, x, y);
 		if(leaf)
 		{
@@ -584,18 +583,13 @@ bool Map::checkSightLine(const Position& fromPos, const Position& toPos) const
 
 		if(!(toPos.x == rx && toPos.y == ry && toPos.z == rz) && !(fromPos.x == rx && fromPos.y == ry && fromPos.z == rz))
 		{
-			if(lastrz != rz)
-			{
-				if(const_cast<Map*>(this)->getTile(lastrx, lastry, std::min(lastrz, rz)))
-					return false;
-			}
+			if(lastrz != rz && const_cast<Map*>(this)->getTile(lastrx, lastry, std::min(lastrz, rz)))
+				return false;
 
 			lastrx = rx; lastry = ry; lastrz = rz;
-			if(const Tile* tile = const_cast<Map*>(this)->getTile(rx, ry, rz))
-			{
-				if(tile->hasProperty(BLOCKPROJECTILE))
-					return false;
-			}
+			const Tile* tile = const_cast<Map*>(this)->getTile(rx, ry, rz);
+			if(tile && tile->hasProperty(BLOCKPROJECTILE))
+				return false;
 		}
 
 		ey += dy;
@@ -730,7 +724,6 @@ bool Map::getPathTo(const Creature* creature, const Position& destPos,
 
 					//Check if the node is already in the closed/open list
 					//If it exists and the nodes already on them has a lower cost (g) then we can ignore this neighbour node
-
 					AStarNode* neighbourNode = nodes.getNodeInList(pos.x, pos.y);
 					if(neighbourNode)
 					{
@@ -896,7 +889,6 @@ bool Map::getPathMatching(const Creature* creature, std::list<Direction>& dirLis
 
 				//Check if the node is already in the closed/open list
 				//If it exists and the nodes already on them has a lower cost (g) then we can ignore this neighbour node
-
 				AStarNode* neighbourNode = nodes.getNodeInList(pos.x, pos.y);
 				if(neighbourNode)
 				{
@@ -1000,22 +992,22 @@ AStarNode* AStarNodes::getBestNode()
 	if(curNode == 0)
 		return NULL;
 
-	int32_t best_node_f = 100000;
-	uint32_t best_node = 0;
+	int32_t bestNodeF = 100000;
+	uint32_t bestNode = 0;
 	bool found = false;
 
 	for(uint32_t i = 0; i < curNode; i++)
 	{
-		if(nodes[i].f < best_node_f && openNodes[i] == 1)
+		if(nodes[i].f < bestNodeF && openNodes[i] == 1)
 		{
 			found = true;
-			best_node_f = nodes[i].f;
-			best_node = i;
+			bestNodeF = nodes[i].f;
+			bestNode = i;
 		}
 	}
 
 	if(found)
-		return &nodes[best_node];
+		return &nodes[bestNode];
 
 	return NULL;
 }
@@ -1122,11 +1114,10 @@ int32_t AStarNodes::getTileWalkCost(const Creature* creature, const Tile* tile)
 
 int32_t AStarNodes::getEstimatedDistance(int32_t x, int32_t y, int32_t xGoal, int32_t yGoal)
 {
-	int32_t h_diagonal = std::min(std::abs(x - xGoal), std::abs(y - yGoal));
-	int32_t h_straight = (std::abs(x - xGoal) + std::abs(y - yGoal));
+	int32_t diagonal = std::min(std::abs(x - xGoal), std::abs(y - yGoal));
+	int32_t straight = (std::abs(x - xGoal) + std::abs(y - yGoal));
 
-	return MAP_DIAGONALWALKCOST * h_diagonal + MAP_NORMALWALKCOST * (h_straight - 2 * h_diagonal);
-	//return (std::abs(x - xGoal) + std::abs(y - yGoal)) * MAP_NORMALWALKCOST;
+	return MAP_DIAGONALWALKCOST * diagonal + MAP_NORMALWALKCOST * (straight - 2 * diagonal);
 }
 
 //*********** Floor constructor **************
@@ -1299,11 +1290,13 @@ uint32_t Map::clean()
 			else
 				leafE = getLeaf(nx + FLOOR_SIZE, ny);
 		}
+
 		if(leafS)
 			leafS = leafS->stepSouth();
 		else
 			leafS = getLeaf(0, ny + FLOOR_SIZE);
 	}
+
 	std::cout << "> Cleaning time: " << (OTSYS_TIME() - start) / (1000.) << " seconds, collected " << count << " item" << (count != 1 ? "s" : "") << "." << std::endl;
 	return count;
 }

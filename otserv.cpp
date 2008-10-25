@@ -424,7 +424,7 @@ void mainLoader()
 	status->setMapAuthor(g_config.getString(ConfigManager::MAP_AUTHOR));
 	status->setMapName(g_config.getString(ConfigManager::MAP_NAME));
 
-	std::cout << ">> Loading map" << std::endl;
+	std::cout << ">> Loading map and spawns..." << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading map");
 	#endif

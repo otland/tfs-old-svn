@@ -144,7 +144,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 		return false;
 	}
 
-	unsigned char attribute;
+	uint8_t attribute;
 	std::string mapDescription;
 	std::string tmp;
 	while(propStream.GET_UCHAR(attribute))
@@ -231,7 +231,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 						return false;
 					}
 
-					unsigned short px, py, pz;
+					uint16_t px, py, pz;
 					OTBM_Tile_coords* tile_coord;
 					if(!propStream.GET_STRUCT(tile_coord))
 					{
@@ -276,7 +276,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					map->setTile(px, py, pz, tile);
 
 					//read tile attributes
-					unsigned char attribute;
+					uint8_t attribute;
 					while(propStream.GET_UCHAR(attribute))
 					{
 						switch(attribute)

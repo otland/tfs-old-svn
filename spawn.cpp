@@ -59,6 +59,8 @@ bool Spawns::loadFromXml(const std::string& _filename)
 
 	if(doc)
 	{
+		int64_t start = OTSYS_TIME();
+
 		xmlNodePtr root, spawnNode;
 		root = xmlDocGetRootElement(doc);
 
@@ -136,10 +138,18 @@ bool Spawns::loadFromXml(const std::string& _filename)
 						{
 							switch(intValue)
 							{
-								case 0: dir = NORTH; break;
-								case 1: dir = EAST; break;
-								case 2: dir = SOUTH; break;
-								case 3: dir = WEST; break;
+								case 0:
+									dir = NORTH;
+									break;
+								case 1:
+									dir = EAST;
+									break;
+								case 2:
+									dir = SOUTH;
+									break;
+								case 3:
+									dir = WEST;
+									break;
 							}
 						}
 
@@ -190,10 +200,18 @@ bool Spawns::loadFromXml(const std::string& _filename)
 						{
 							switch(intValue)
 							{
-								case 0: direction = NORTH; break;
-								case 1: direction = EAST; break;
-								case 2: direction = SOUTH; break;
-								case 3: direction = WEST; break;
+								case 0:
+									direction = NORTH;
+									break;
+								case 1:
+									direction = EAST;
+									break;
+								case 2:
+									direction = SOUTH;
+									break;
+								case 3:
+									direction = WEST;
+									break;
 							}
 						}
 
@@ -224,15 +242,21 @@ bool Spawns::loadFromXml(const std::string& _filename)
 						npc->setMasterPos(placePos, radius);
 						npcList.push_back(npc);
 					}
+
 					tmpNode = tmpNode->next;
 				}
 			}
+
 			spawnNode = spawnNode->next;
 		}
+
 		xmlFreeDoc(doc);
 		loaded = true;
+
+		std::cout << "> Spawns loading time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 		return true;
 	}
+
 	return false;
 }
 
@@ -363,10 +387,8 @@ void Spawn::startup()
 {
 	for(SpawnMap::iterator it = spawnMap.begin(); it != spawnMap.end(); ++it)
 	{
-		uint32_t spawnId = it->first;
 		spawnBlock_t& sb = it->second;
-
-		spawnMonster(spawnId, sb.mType, sb.pos, sb.direction, true);
+		spawnMonster(it->first, sb.mType, sb.pos, sb.direction, true);
 	}
 }
 
