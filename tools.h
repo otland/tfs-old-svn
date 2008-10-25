@@ -33,7 +33,6 @@
 #include <libxml/parser.h>
 #include <boost/tokenizer.hpp>
 
-#define RAND_MAX24 16777216
 typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
 typedef std::list<std::string> STRING_LIST;
 

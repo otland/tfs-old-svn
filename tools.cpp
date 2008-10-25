@@ -341,21 +341,21 @@ int32_t random_range(int32_t lowestNumber, int32_t highestNumber, DistributionTy
 		lowestNumber = tmp;
 	}
 
-	if(type == DISTRO_UNIFORM)
-		return (lowestNumber + (rand24b() % (float(highestNumber - lowestNumber) + 1)));
-	else if(type == DISTRO_NORMAL)
+	switch(type)
 	{
-		float value = box_muller(0.5, 0.25);
-
-		if(value < 0)
-			value = 0;
-		else if(value > 1)
-			value = 1;
-
-		return (lowestNumber + (int32_t)(float(highestNumber - lowestNumber) * value));
+		case DISTRO_UNIFORM:
+			return (lowestNumber + int32_t(rand24b() % (float(highestNumber - lowestNumber) + 1)));
+			break;
+		case DISTRO_NORMAL:
+			return (lowestNumber + int32_t(float(highestNumber - lowestNumber) * (float)std::min((float)1, std::max((float)0, box_muller(0.5, 0.25)))));
+			break;
+		default:
+		{
+			const float randMax = 16777216;
+			return (lowestNumber + int32_t(float(highestNumber - lowestNumber) * float(1.f - sqrt((1.f * rand24b()) / randMax))));
+			break;
+		}
 	}
-	else
-		return (lowestNumber + (int32_t)(float(highestNumber - lowestNumber) * float(1.f - sqrt((1.f * rand24b()) / RAND_MAX24))));
 }
 
 char upchar(char character)
