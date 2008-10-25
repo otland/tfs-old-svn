@@ -145,7 +145,7 @@ class Game
 
 		void setWorldType(WorldType_t type);
 		WorldType_t getWorldType() const {return worldType;}
-		int32_t getInFightTicks() {return inFightTicks;}
+		int32_t getInFightTicks() const {return inFightTicks;}
 
 		Cylinder* internalGetCylinder(Player* player, const Position& pos);
 		Thing* internalGetThing(Player* player, const Position& pos, int32_t index,

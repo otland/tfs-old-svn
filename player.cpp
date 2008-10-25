@@ -1393,9 +1393,9 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 			#endif
 		}
 
-		uint32_t offlineTime = time(NULL) - getLastLogout();
-		if(offlineTime > 600)
-			useStamina(int64_t(offlineTime * -500), false);
+		int32_t offline = (time(NULL) - getLastLogout());
+		if(offline > 600)
+			useStamina(int64_t((offline - 600) * -500), false);
 
 		IOLoginData::getInstance()->updateOnlineStatus(guid, true);
 		#ifndef __CONSOLE__
@@ -2246,7 +2246,6 @@ void Player::death()
 			}
 			skills[i][SKILL_TRIES] = std::max((int32_t)0, (int32_t)(skills[i][SKILL_TRIES] - lostSkillTries));
 		}
-		//
 
 		//Level loss
 		uint32_t newLevel = level;
@@ -4698,7 +4697,7 @@ bool Player::transferMoneyTo(const std::string& name, uint64_t amount)
 		}
 	}
 
-	this->balance -= amount;
+	balance -= amount;
 	target->balance += amount;
 	if(!target->isOnline())
 	{
@@ -4711,14 +4710,10 @@ bool Player::transferMoneyTo(const std::string& name, uint64_t amount)
 
 void Player::useStamina(int64_t value, bool ticks)
 {
-	int64_t timeToRemove = value;
 	if(ticks)
-	{
-		timeToRemove *= getAttackSpeed();
-		timeToRemove = std::min((int64_t)g_game.getInFightTicks(), timeToRemove);
-	}
+		value *= (int64_t)getAttackSpeed();
 
-	stamina = (uint64_t)std::max((uint64_t)0, std::min((uint64_t)201660000, (uint64_t)stamina - timeToRemove));
+	stamina = std::min((uint64_t)201660000, (uint64_t)stamina - value));
 }
 
 void Player::sendCriticalHit() const

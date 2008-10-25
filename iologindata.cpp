@@ -1040,9 +1040,9 @@ bool IOLoginData::hasCustomFlag(std::string name, PlayerCustomFlags value)
 bool IOLoginData::isPremium(uint32_t guid)
 {
 	Database* db = Database::getInstance();
-	DBQuery query;
 	DBResult* result;
 
+	DBQuery query;
 	query << "SELECT `account_id` FROM `players` WHERE `id` = " << guid;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -1054,9 +1054,9 @@ bool IOLoginData::isPremium(uint32_t guid)
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	const uint16_t premDays = result->getDataInt("premdays");
+	const uint32_t premium = result->getDataInt("premdays");
 	db->freeResult(result);
-	return premDays > 0;
+	return premium > 0;
 }
 
 bool IOLoginData::playerExists(uint32_t guid)
