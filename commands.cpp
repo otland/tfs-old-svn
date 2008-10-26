@@ -1275,29 +1275,34 @@ bool Commands::createGuild(Creature* creature, const std::string& cmd, const std
 			{
 				if(param.length() < 21)
 				{
-					uint32_t guildId;
-					if(!IOGuild::getInstance()->getGuildIdByName(guildId, param))
+					if(isValidName(param))
 					{
-						if(player->level > 7)
+						uint32_t guildId;
+						if(!IOGuild::getInstance()->getGuildIdByName(guildId, param))
 						{
-							if(player->isPremium())
+							if(player->level > 7)
 							{
-								char buffer[80];
-								sprintf(buffer, "You have formed the guild: %s!", param.c_str());
-								player->sendTextMessage(MSG_INFO_DESCR, buffer);
-								player->setGuildName(param);
+								if(player->isPremium())
+								{
+									char buffer[80];
+									sprintf(buffer, "You have formed the guild: %s!", param.c_str());
+									player->sendTextMessage(MSG_INFO_DESCR, buffer);
+									player->setGuildName(param);
 
-								IOGuild::getInstance()->createGuild(player);
-								return true;
+									IOGuild::getInstance()->createGuild(player);
+									return true;
+								}
+								else
+									player->sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
 							}
 							else
-								player->sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
+								player->sendCancel("You have to be atleast Level 8 to form a guild.");
 						}
 						else
-							player->sendCancel("You have to be atleast Level 8 to form a guild.");
+							player->sendCancel("There is already a guild with that name.");
 					}
 					else
-						player->sendCancel("There is already a guild with that name.");
+						player->sendCancel("Invalid guild name format.");
 				}
 				else
 					player->sendCancel("That guild name is too long, please select a shorter name.");

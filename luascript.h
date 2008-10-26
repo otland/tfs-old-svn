@@ -219,6 +219,7 @@ enum PlayerInfo_t{
 	PlayerInfoSoul,
 	PlayerInfoFreeCap,
 	PlayerInfoGuildId,
+	PlayerInfoGuildLevel,
 	PlayerInfoGuildName,
 	PlayerInfoGuildRank,
 	PlayerInfoGuildNick,
@@ -464,6 +465,7 @@ class LuaScriptInterface
 
 		static int32_t luaGetPlayerDepotItems(lua_State* L);
 		static int32_t luaGetPlayerGuildId(lua_State* L);
+		static int32_t luaGetPlayerGuildLevel(lua_State* L);
 		static int32_t luaGetPlayerGuildName(lua_State* L);
 		static int32_t luaGetPlayerGuildRank(lua_State* L);
 		static int32_t luaGetPlayerGuildNick(lua_State* L);

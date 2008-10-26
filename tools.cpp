@@ -377,6 +377,11 @@ bool isNumber(char character)
 	return (character >= 48 && character <= 57);
 }
 
+bool isUppercaseLetter(char character)
+{
+	return (character >= 65 && character <= 90);
+}
+
 bool isLowercaseLetter(char character)
 {
 	return (character >= 97 && character <= 122);
@@ -394,9 +399,7 @@ bool isValidPassword(std::string text)
 	uint32_t textLength = text.length();
 	for(uint32_t size = 0; size < textLength; size++)
 	{
-		if(isLowercaseLetter(text[size]) || isNumber(text[size]) || isPasswordCharacter(text[size]))
-			continue;
-		else
+		if(!isLowercaseLetter(text[size]) && !isNumber(text[size]) && !isPasswordCharacter(text[size]))
 			return false;
 	}
 	return true;
@@ -415,14 +418,22 @@ bool isNumbers(std::string text)
 
 bool isValidName(std::string text)
 {
-	toLowerCaseString(text);
-
 	uint32_t textLength = text.length();
+	uint32_t lenBeforeSpace = 0;
 	for(uint32_t size = 0; size < textLength; size++)
 	{
-		if(isLowercaseLetter(text[size]) || text[size] == 32 || text[size] == 39 || text[size] == 45)
-			continue;
+		if(text[size] != 32)
+			lenBeforeSpace++;
 		else
+		{
+			if(lenBeforeSpace <= 1)
+				return false;
+
+			lenBeforeSpace = 0;
+		}
+
+		if(!isLowercaseLetter(text[size]) && text[size] != 32 && text[size] != 39 && text[size] != 45
+			|| isUppercaseLetter(text[size]) && text[size - 1] != 32)
 			return false;
 	}
 	return true;

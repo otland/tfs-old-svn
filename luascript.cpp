@@ -1113,6 +1113,9 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerGuildId(cid)
 	lua_register(m_luaState, "getPlayerGuildId", LuaScriptInterface::luaGetPlayerGuildId);
 
+	//getPlayerGuildLevel(cid)
+	lua_register(m_luaState, "getPlayerGuildLevel", LuaScriptInterface::luaGetPlayerGuildLevel);
+
 	//getPlayerGuildName(cid)
 	lua_register(m_luaState, "getPlayerGuildName", LuaScriptInterface::luaGetPlayerGuildName);
 
@@ -1811,6 +1814,9 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 			case PlayerInfoGuildId:
 				value = player->getGuildId();
 				break;
+			case PlayerInfoGuildLevel:
+				value = player->getGuildLevel();
+				break;
 			case PlayerInfoGuildName:
 				lua_pushstring(L, player->getGuildName().c_str());
 				return 1;
@@ -1885,6 +1891,9 @@ int32_t LuaScriptInterface::luaGetPlayerFreeCap(lua_State* L){
 
 int32_t LuaScriptInterface::luaGetPlayerGuildId(lua_State* L){
 	return internalGetPlayerInfo(L,PlayerInfoGuildId);}
+
+int32_t LuaScriptInterface::luaGetPlayerGuildLevel(lua_State* L){
+	return internalGetPlayerInfo(L,PlayerInfoGuildLevel);}
 
 int32_t LuaScriptInterface::luaGetPlayerGuildName(lua_State* L){
 	return internalGetPlayerInfo(L,PlayerInfoGuildName);}
