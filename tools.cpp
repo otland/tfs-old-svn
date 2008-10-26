@@ -521,9 +521,9 @@ void formatDate(time_t time, char* buffer/* atleast 21 */)
 {
 	const tm* tms = localtime(&time);
 	if(tms)
-		sprintf(buffer, "%02d/%02d/%04d  %02d:%02d:%02d", tms->tm_mday, tms->tm_mon + 1, tms->tm_year + 1900, tms->tm_hour, tms->tm_min, tms->tm_sec);
+		sprintf(buffer, "%02d/%02d/%04d %02d:%02d:%02d", tms->tm_mday, tms->tm_mon + 1, tms->tm_year + 1900, tms->tm_hour, tms->tm_min, tms->tm_sec);
 	else
-		sprintf(buffer, "UNIX Time : %d", (int32_t)time);
+		sprintf(buffer, "UNIX Time: %d", (int32_t)time);
 }
 
 void formatDate2(time_t time, char* buffer/* atleast 16 */)
@@ -532,7 +532,7 @@ void formatDate2(time_t time, char* buffer/* atleast 16 */)
 	if(tms)
 		strftime(buffer, 12, "%d %b %Y", tms);
 	else
-		sprintf(buffer, "UNIX Time : %d", (int32_t)time);
+		sprintf(buffer, "UNIX Time: %d", (int32_t)time);
 }
 
 Direction getDirection(std::string string)

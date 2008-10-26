@@ -16,7 +16,7 @@
 ]
 
 [ FEATURES
-	Multiworld system (use revmultisys methods + custom config path from argv)
+	Multiworld system (revmultisys methods + custom config path from argv)
 		Assigned to: Elf, Kiper
 
 	House information stored in houses table at database
@@ -24,14 +24,20 @@
 ]
 
 [ BUGS
-	Guilds on house lists
+	MySQL database connection being closed
 		Assigned to: *
+
+	Guilds on house lists
+		Assigned to: Elf
 ]
 
 [ TASKS
 	Make more constant values configurable
 		Assigned to: *
 
-	Deprecate guild management system from Chat class and rewrite as TalkActions
+	Deprecate marked TalkAction callbacks and rewrite them in Lua
+		Assigned to: Elf
+
+	Deprecate guild management system from Chat class and rewrite in TalkActions
 		Assigned to: Elf
 ]
