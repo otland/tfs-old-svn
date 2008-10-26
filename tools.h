@@ -70,6 +70,7 @@ bool hasBitSet(uint32_t flag, uint32_t flags);
 std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLength);
 
 bool isNumber(char character);
+bool isUppercaseLetter(char character);
 bool isLowercaseLetter(char character);
 bool isPasswordCharacter(char character);
 
