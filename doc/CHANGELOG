@@ -195,6 +195,7 @@
 				scripts/
 					*.lua
 						* Removed permission checking from access needing talkactions
+						* Fixed return values
 					changesex.lua
 						* Updated due to deprecated LUA function
 						* Added a check for gratis premium account
@@ -246,6 +247,9 @@
 		Some of the features were added to Mystic Spirit (0.2) due popularity of them.
 	]
 
+	Always up-to-date with OpenTibia branch, Avesta, changes (*)
+	Alot new configurables (*)
+	Replaced config manager values (mostly strings) used as booleans with new, boolean type (Elf, Talaturen)
 	White skull time configurable on config.lua (Talaturen)
 	Time to decrease frags on config.lua (Talaturen)
 	Added most of monsters of protocol 8.1 and some of 8.2 (OpenTibia SVN, Lithium)
@@ -280,10 +284,12 @@
 	Cascading actions (Elf, OpenTibia SVN)
 	Rewritten ban class (Elf, Talaturen, OpenTibia SVN)
 	/baninfo command (Elf)
+	Advanced /unban command (Talaturen, Elf)
 	Bank system (OpenTibia SVN, Elf)
 	Stamina system (Elf)
 	Moved players record and motd to database (Elf)
 	Moved CTRL + Z bug reports to database, written /reports command (Elf)
+	Lighweight NPC system (Talaturen, OpenTibia SVN)
 	OTBv3 (OpenTibia SVN, Talaturen, Elf)
 	Monsters with elemental weaknesses (Marcinek Paladinek, Lithium)
 	Marriage 'system' (Elf)
@@ -292,8 +298,15 @@
 	Thing attribute changing (Kiper)
 	onAttack creaturescript (Elf)
 	Database Manager - http://otland.net/f123/built-database-manager-12642/ (Talaturen)
+	Autotools (Talaturen)
+	Filesystem Hierarchy Standard (Kiper)
 	Promotion levels (Kiper, Talaturen, Elf)
+	Account names (Elf)
 	Full protocol 8.31 NPC Shop window behaviour (Elf)
+	Group outfits (Elf)
+	&& syntax for commands (Kiper)
+	Mapclick teleportation (Kiper)
+	MySQL keepalive for servers with timeout (Elf)
 ]
 
 [ Deprecated
@@ -318,16 +331,20 @@
 	LuaFunction: doPlayerRemovePremiumDays(cid, days), use: doPlayerAddPremiumDays(cid, -days) [negative values]
 	LuaFunction: doPlayerRemOutfit(cid, looktype, addons), use: doPlayerRemoveOutfit(cid, looktype, addons)
 	LuaFunction: doSetCreatureDropLoot(cid, doDrop), use: doCreatureSetDropLoot(cid, doDrop)
+	LuaFunction: doPlayerAddManaSpent(cid, mana), use: doPlayerAddSpentMana(cid, amount)
+	LuaFunction: getPromotedVocation(vocId), use: getVocationInfo(id).promotedVocation
 ]
 
 [ Fixed issues with...
-	Last house warnings (OpenTibia SVN, Elf)
+	House warnings (OpenTibia SVN, Elf)
 	High CPU usage (Everyone, OpenTibia SVN)
-	Zones skill loss and item drop (Talaturen, Elf, OpenTibia SVN)
-	Not unserialized bed sleepers (Elf)
-	Items with 0 charges not being removed (Elf, Kiper)
+	Skill loss and item drop in [pvp-]zone area (Talaturen, Elf, OpenTibia SVN)
+	Bed sleepers not being loaded (Elf)
+	Items with 0 charges acting infinite (Elf, Kiper)
 	Blessings (Talaturen)
-	Crash on VIP List saving (Elf)
-	Huge writables (Elf)
-	Custom item attributes not displayed or crashing server (Elf)
+	Crash when saving non-existing VIP (Elf)
+	Huge writables crash-ability (Elf)
+	Custom item attributes not displayed and/or crashing server (Elf)
+	No timestamp in __GUI_LOGS__ (Elf)
+	Item absorb abilities (Elf, OpenTibia SVN, Gesior)
 ]

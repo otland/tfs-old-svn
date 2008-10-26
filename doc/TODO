@@ -15,13 +15,28 @@
 		http://otland.net/
 ]
 
-[ LIST
-	Make more constant values configurable
-		Assigned to: Talaturen, Elf
+[ FEATURES
+	Multiworld system (use revmultisys methods + custom config path from argv)
+		Assigned to: Elf, Kiper
 
-	Multiworld system (patch the methods from revmultisys + custom config path from argv)
-		Assigned to: Elf, Talaturen
-
-	(Fix?) Guilds on house lists
+	TalkActions access by channels
 		Assigned to: Elf
+
+	House information stored in houses table at database
+		Assigned to: Elf, Talaturen
 ]
+
+[ BUGS
+	Guilds on house lists
+		Assigned to: *
+]
+
+[ TASKS
+	Make more constant values configurable
+		Assigned to: *
+
+	Deprecate Commands class and implement to TalkActions as functions
+		Assigned to: Elf
+
+	Deprecate guild management system from Chat class and rewrite as TalkActions
+		Assigned to: Elf
