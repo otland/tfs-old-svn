@@ -24,7 +24,6 @@
 
 #include <string>
 #include <map>
-#include <list>
 #include "creature.h"
 #include "enums.h"
 
