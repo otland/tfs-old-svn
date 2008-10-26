@@ -147,7 +147,7 @@ TalkResult_t TalkActions::onPlayerSay(Player* player, uint16_t channelId, const 
 		}
 	}
 
-	if(!talkAction)
+	if(!talkAction || (talkAction->getChannel() != -1 && talkAction->getChannel() != channelId))
 		return TALK_CONTINUE;
 
 	if(talkAction->getAccess() > player->getAccessLevel() || player->isAccountManager())
@@ -229,7 +229,7 @@ TalkAction::TalkAction(LuaScriptInterface* _interface) : Event(_interface)
 {
 	m_filter = TALKFILTER_QUOTATION;
 	m_access = 0;
-	m_channel = 0;
+	m_channel = -1;
 	m_logged = false;
 	m_sensitive = true;
 }

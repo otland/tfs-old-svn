@@ -19,9 +19,6 @@
 	Multiworld system (use revmultisys methods + custom config path from argv)
 		Assigned to: Elf, Kiper
 
-	TalkActions access by channels
-		Assigned to: Elf
-
 	House information stored in houses table at database
 		Assigned to: Elf, Talaturen
 ]
@@ -35,8 +32,6 @@
 	Make more constant values configurable
 		Assigned to: *
 
-	Deprecate Commands class and implement to TalkActions as functions
-		Assigned to: Elf
-
 	Deprecate guild management system from Chat class and rewrite as TalkActions
 		Assigned to: Elf
+]

@@ -77,6 +77,8 @@ class TalkAction : public Event
 		std::string getWords() const {return m_words;}
 		TalkActionFilter getFilter() const {return m_filter;}
 		uint32_t getAccess() const {return m_access;}
+		int32_t getChannel() const {return m_channel;}
+
 		bool isLogged() const {return m_logged;}
 		bool isSensitive() const {return m_sensitive;}
 
@@ -119,7 +121,8 @@ class TalkAction : public Event
 
 		std::string m_words;
 		TalkActionFilter m_filter;
-		uint32_t m_access, m_channel;
+		uint32_t m_access;
+		int32_t m_channel;
 		bool m_logged, m_sensitive;
 
 		static TalkActionCallback_t definedCallbacks[];
