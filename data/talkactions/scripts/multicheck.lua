@@ -27,5 +27,5 @@ function onSay(cid, words, param)
 	else
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Currently there aren't any players with same IP address(es).")
 	end
-	return FALSE
+	return TRUE
 end

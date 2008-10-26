@@ -7,6 +7,7 @@ function onSay(cid, words, param)
 	else
 		saveServer()
 	end
+	return TRUE
 end
 
 function save(delay)

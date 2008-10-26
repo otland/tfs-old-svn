@@ -28,5 +28,5 @@ function onSay(cid, words, param)
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "There are no active reports.")
 		end
 	end
-	return FALSE
+	return TRUE
 end

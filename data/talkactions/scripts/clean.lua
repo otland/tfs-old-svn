@@ -26,4 +26,5 @@ function prepareClean(minutes, cid)
 		doBroadcastMessage(message)
 		addEvent(prepareClean, 60000, minutes - 1, cid)
 	end
+	return TRUE
 end

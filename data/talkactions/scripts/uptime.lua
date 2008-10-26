@@ -6,4 +6,5 @@ function onSay(cid, words, param)
 		hours = hours + 1
 	end
 	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Uptime: " .. hours .. " hours and " .. minutes .. " minutes.")
+	return TRUE
 end

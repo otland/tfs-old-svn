@@ -19,4 +19,5 @@ function onSay(cid, words, param)
 			doBroadcastMessage(param)
 		end
 	end
+	return TRUE
 end

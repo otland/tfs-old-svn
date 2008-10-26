@@ -7,4 +7,5 @@ function onSay(cid, words, param)
 			i = i + 1
 		end
 	end
+	return TRUE
 end

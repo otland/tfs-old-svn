@@ -11,4 +11,5 @@ function onSay(cid, words, param)
 		doPlayerSendCancel(cid, "You can not buy more than one year of Premium Account.")
 		doSendMagicEffect(getPlayerPosition(cid), CONST_ME_POFF)
 	end
+	return TRUE
 end

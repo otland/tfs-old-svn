@@ -13,5 +13,5 @@ function onSay(cid, words, param)
 	end
 	
 	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "World type is currently set to " .. msg .. ".")
-	return FALSE
+	return TRUE
 end

@@ -8,6 +8,7 @@ function onSay(cid, words, param)
 	else
 		doPlayerSendCancel(cid, "Command requires param for action.")
 	end
+	return TRUE
 end
 
 function prepareShutdown(minutes)

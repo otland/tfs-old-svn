@@ -14,4 +14,5 @@ function onSay(cid, words, param)
 		doPlayerSendCancel(cid, "You do not have enough premium days, changing sex costs three of your premium days.")
 		doSendMagicEffect(getPlayerPosition(cid), CONST_ME_POFF)
 	end
+	return TRUE
 end

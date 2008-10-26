@@ -15,5 +15,5 @@ function onSay(cid, words, param)
 	else
 		doPlayerSendCancel(cid, "You need to type text.")
 	end
-	return FALSE
+	return TRUE
 end
