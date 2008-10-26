@@ -76,7 +76,7 @@ class Actions : public BaseEvents
 		void registerActionID(int32_t actionId, Event* event);
 		void registerUniqueID(int32_t uniqueId, Event* event);
 
-		typedef std::map<unsigned short, Action*> ActionUseMap;
+		typedef std::map<uint16_t, Action*> ActionUseMap;
 		ActionUseMap useItemMap;
 		ActionUseMap uniqueItemMap;
 		ActionUseMap actionItemMap;
@@ -105,10 +105,10 @@ class Action : public Event
 		//
 
 		bool getAllowFarUse() const {return allowFarUse;}
-		void setAllowFarUse(bool v){allowFarUse = v;}
+		void setAllowFarUse(bool v) {allowFarUse = v;}
 
 		bool getCheckLineOfSight() const {return checkLineOfSight;}
-		void setCheckLineOfSight(bool v){checkLineOfSight = v;}
+		void setCheckLineOfSight(bool v) {checkLineOfSight = v;}
 
 		virtual ReturnValue canExecuteAction(const Player* player, const Position& toPos);
 		virtual bool hasOwnErrorHandler() {return false;}

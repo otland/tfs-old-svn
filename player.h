@@ -414,6 +414,8 @@ class Player : public Creature, public Cylinder
 
 		virtual void drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage);
 		virtual void drainMana(Creature* attacker, int32_t manaLoss);
+
+		void addExperience(uint64_t exp);
 		void addManaSpent(uint64_t amount);
 		void addSkillAdvance(skills_t skill, uint32_t count);
 
@@ -463,7 +465,9 @@ class Player : public Creature, public Cylinder
 		void setSkull(Skulls_t newSkull) {skull = newSkull;}
 		void sendCreatureSkull(const Creature* creature) const
 			{if(client) client->sendCreatureSkull(creature);}
+
 		void checkRedSkullTicks(int32_t ticks);
+		int64_t getRedSkullTicks() const {return redSkullTicks;}
 
 		const OutfitListType& getPlayerOutfits();
 		bool canWear(uint32_t _looktype, uint32_t _addons);
@@ -666,6 +670,8 @@ class Player : public Creature, public Cylinder
 		InvitedToGuildsList invitedToGuildsList;
 		ContainerVector containerVec;
 		void preSave();
+
+		uint32_t marriage;
 		uint64_t balance;
 
 	protected:
@@ -673,7 +679,6 @@ class Player : public Creature, public Cylinder
 		bool hasCapacity(const Item* item, uint32_t count) const;
 
 		void gainExperience(uint64_t exp);
-		void addExperience(uint64_t exp);
 
 		void updateInventoryWeigth();
 		void postUpdateGoods(uint32_t itemId);
@@ -753,7 +758,6 @@ class Player : public Creature, public Cylinder
 		int32_t extraExpRate;
 		int32_t groupId;
 		OperatingSystem_t operatingSystem;
-		uint32_t marriage;
 		bool ghostMode;
 		bool ignorePrivMsg;
 		bool teleportByMap;

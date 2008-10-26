@@ -38,22 +38,18 @@ bool BaseEvents::loadFromXml()
 {
 	if(m_loaded)
 	{
-		std::cout << "Error: [BaseEvents::loadFromXml] loaded == true" << std::endl;
+		std::cout << "[Error - BaseEvents::loadFromXml] loaded == true" << std::endl;
 		return false;
 	}
-	Event* event = NULL;
+
 	std::string scriptsName = getScriptBaseName();
 	if(getScriptInterface().loadFile(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/" + scriptsName + ".lua"))) == -1)
-		std::cout << "Warning: [BaseEvents::loadFromXml] Can not load " << scriptsName << " lib/" << scriptsName << ".lua" << std::endl;
+		std::cout << "[Warning - BaseEvents::loadFromXml] Can not load " << scriptsName << " lib/" << scriptsName << ".lua" << std::endl;
 
-	std::string filename = getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/" + scriptsName + ".xml"));
-	xmlDocPtr doc = xmlParseFile(filename.c_str());
+	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/" + scriptsName + ".xml")).c_str());
 	if(doc)
 	{
-		m_loaded = true;
-		xmlNodePtr root, p;
-		root = xmlDocGetRootElement(doc);
-
+		xmlNodePtr p, root = xmlDocGetRootElement(doc);
 		if(xmlStrcmp(root->name,(const xmlChar*)scriptsName.c_str()) != 0)
 		{
 			xmlFreeDoc(doc);
@@ -65,51 +61,43 @@ bool BaseEvents::loadFromXml()
 		{
 			if(p->name)
 			{
-				std::string nodeName = (const char*)p->name;
-				if((event = getEvent(nodeName)))
+				if(Event* event = getEvent((const char*)p->name))
 				{
 					if(event->configureEvent(p))
 					{
-						bool success = true;
-						std::string scriptfile;
-						if(readXMLString(p, "script", scriptfile))
-						{
-							if(!event->loadScript(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/scripts/" + scriptfile))))
-								success = false;
-						}
-						else if(readXMLString(p, "function", scriptfile))
-						{
-							if(!event->loadFunction(scriptfile))
-								success = false;
-						}
-						else
-							success = false;
+						bool success = false;
 
-						if(success)
+						std::string strValue;
+						if(readXMLString(p, "script", strValue))
 						{
-							if(!registerEvent(event, p))
-							{
-								success = false;
-								delete event;
-							}
+							if(event->loadScript(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/scripts/" + strValue))))
+								success = true;
 						}
-						else
+						else if(readXMLString(p, "function", strValue))
+						{
+							if(event->loadFunction(strValue))
+								success = true;
+						}
+
+						if(success && !registerEvent(event, p))
 							delete event;
 					}
 					else
 					{
-						std::cout << "Warning: [BaseEvents::loadFromXml] Can not configure event" << std::endl;
+						std::cout << "[Warning - BaseEvents::loadFromXml] Can not configure event" << std::endl;
 						delete event;
 					}
-					event = NULL;
 				}
 			}
+
 			p = p->next;
 		}
+
 		xmlFreeDoc(doc);
+		m_loaded = true;
 	}
 	else
-		std::cout << "Warning: [BaseEvents::loadFromXml] Can not open " << scriptsName << ".xml" << std::endl;
+		std::cout << "[Warning - BaseEvents::loadFromXml] Can not open " << scriptsName << ".xml" << std::endl;
 
 	return m_loaded;
 }

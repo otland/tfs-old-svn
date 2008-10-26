@@ -26,6 +26,7 @@
 #include <string>
 #include "luascript.h"
 #include "baseevents.h"
+#include "creature.h"
 #include "enums.h"
 
 enum TalkActionFilter
@@ -58,6 +59,9 @@ class TalkActions : public BaseEvents
 		LuaScriptInterface m_scriptInterface;
 };
 
+typedef bool (TalkActionCallback)(Creature* creature, const std::string& words, const std::string& param);
+struct TalkActionCallback_t;
+
 class TalkAction : public Event
 {
 	public:
@@ -65,6 +69,10 @@ class TalkAction : public Event
 		virtual ~TalkAction() {}
 
 		virtual bool configureEvent(xmlNodePtr p);
+		virtual bool loadFunction(const std::string& functionName);
+
+		int32_t executeSay(Creature* creature, const std::string& words, const std::string& param);
+		TalkActionCallback* callback;
 
 		std::string getWords() const {return m_words;}
 		TalkActionFilter getFilter() const {return m_filter;}
@@ -72,16 +80,58 @@ class TalkAction : public Event
 		bool isLogged() const {return m_logged;}
 		bool isSensitive() const {return m_sensitive;}
 
-		//scripting
-		int32_t executeSay(Creature* creature, const std::string& words, const std::string& param);
+		static ReturnValue placeSummon(Creature* creature, const std::string& name);
 
 	protected:
+		static TalkActionCallback_t definedCallbacks[];
 		virtual std::string getScriptEventName();
+
+		static TalkActionCallback placeNpc;
+		static TalkActionCallback placeMonster;
+		static TalkActionCallback placeSummon;
+		static TalkActionCallback teleportMasterPos;
+		static TalkActionCallback teleportHere;
+		static TalkActionCallback teleportToTown;
+		static TalkActionCallback teleportTo;
+		static TalkActionCallback sendTo;
+		static TalkActionCallback createItemById;
+		static TalkActionCallback createItemByName;
+		static TalkActionCallback reloadInfo;
+		static TalkActionCallback getInfo;
+		static TalkActionCallback closeServer;
+		static TalkActionCallback openServer;
+		static TalkActionCallback teleportNTiles;
+		static TalkActionCallback kickPlayer;
+		static TalkActionCallback setHouseOwner;
+		static TalkActionCallback sellHouse;
+		static TalkActionCallback getHouse;
+		static TalkActionCallback serverDiag;
+		static TalkActionCallback changeFloor;
+		static TalkActionCallback removeThing;
+		static TalkActionCallback buyHouse;
+		static TalkActionCallback newType;
+		static TalkActionCallback forceRaid;
+		static TalkActionCallback addSkill;
+		static TalkActionCallback playerFrags;
+		static TalkActionCallback unban;
+		static TalkActionCallback joinGuild;
+		static TalkActionCallback createGuild;
+		static TalkActionCallback ghost;
+		static TalkActionCallback squelch;
+		static TalkActionCallback changeThingProporties;
+		static TalkActionCallback showBanishmentInfo;
+		static TalkActionCallback mapTeleport;
 
 		std::string m_words;
 		TalkActionFilter m_filter;
 		uint32_t m_access, m_channel;
 		bool m_logged, m_sensitive;
+};
+
+struct TalkActionCallback_t
+{
+	const char* name;
+	TalkActionCallback callback;
 };
 
 #endif

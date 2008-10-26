@@ -76,16 +76,9 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	uint32_t clientIP = getConnection()->getIP();
-
 	/*uint16_t operatingSystem = */msg.GetU16();
 	uint16_t version  = msg.GetU16();
 	msg.SkipBytes(12);
-
-	if(version <= 822)
-	{
-		disconnectClient(0x0A, CLIENT_VERSION_STRING);
-		return false;
-	}
 
 	if(!RSA_decrypt(g_otservRSA, msg))
 	{
