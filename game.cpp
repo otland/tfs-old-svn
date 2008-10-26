@@ -3349,7 +3349,7 @@ bool Game::playerSaySpell(Player* player, SpeakClasses type, const std::string& 
 	if(player->isAccountManager())
 		return internalCreatureSay(player, SPEAK_SAY, text);
 
-	TalkResult_t result = g_spells->playerSaySpell(player, type, text);
+	TalkResult_t result = g_spells->onPlayerSay(player, type, text);
 	if(result == TALK_BREAK)
 	{
 		std::string tmp = text;
