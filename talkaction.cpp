@@ -115,15 +115,10 @@ TalkResult_t TalkActions::onPlayerSay(Player* player, uint16_t channelId, const 
 		return TALK_CONTINUE;
 
 	if(talkAction->getAccess() > player->getAccessLevel() || player->isAccountManager())
-	{
-		if(player->getAccessLevel() > 0)
-			player->sendTextMessage(MSG_STATUS_SMALL, "You can not execute this talkaction.");
-
-		return TALK_FAILED;
-	}
+		return TALK_ACCESS;
 
 	if(!talkAction->executeSay(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]))
-		return TALK_BREAK;
+		return TALK_FAILED;
 
 	if(talkAction->isLogged())
 	{
@@ -140,7 +135,7 @@ TalkResult_t TalkActions::onPlayerSay(Player* player, uint16_t channelId, const 
 		}
 	}
 
-	return TALK_CONTINUE;
+	return TALK_BREAK;
 }
 
 TalkAction::TalkAction(LuaScriptInterface* _interface) : Event(_interface)

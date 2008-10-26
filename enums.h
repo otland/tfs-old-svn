@@ -56,7 +56,8 @@ enum TalkResult_t
 {
 	TALK_CONTINUE,
 	TALK_BREAK,
-	TALK_FAILED
+	TALK_FAILED,
+	TALK_ACCESS
 };
 
 enum RaceType_t

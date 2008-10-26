@@ -234,25 +234,24 @@ TalkResult_t Commands::onPlayerSay(Player* player, uint16_t channelId, const std
 			paramstring = std::string("");
 		}
 
-		//check does command exists
-		CommandsMap::iterator it = commandsMap.find(cmdstring);
-		if(it == commandsMap.end())
-			return TALK_CONTINUE;
+		Command* cmd = NULL;
+		for(CommandsMap::iterator it = commandsMap.begin(); it != commandsMap.end(); ++it)
+		{
+			if(it->first == cmdstring || (!it->second->sensitive && strcasecmp(it->first.c_str(), cmdstring.c_str()) == 0))
+			{
+				cmd = it->second;
+				break;
+			}
+		}
 
-		Command* cmd = it->second;
-		if(!cmd->loaded)
+		if(!cmd || !cmd->loaded)
 			return TALK_CONTINUE;
 
 		if(cmd->access > player->getAccessLevel() || player->isAccountManager())
-		{
-			if(player->getAccessLevel() > 0)
-				player->sendTextMessage(MSG_STATUS_SMALL, "You can not execute this command.");
-	
-			return TALK_FAILED;
-		}
+			return TALK_ACCESS;
 	
 		if(!(this->*cmd->callback)(player, cmdstring, paramstring))
-			return TALK_BREAK;
+			return TALK_FAILED;
 
 		if(cmd->logged)
 		{
@@ -270,7 +269,7 @@ TalkResult_t Commands::onPlayerSay(Player* player, uint16_t channelId, const std
 		}
 	}
 
-	return TALK_CONTINUE;
+	return TALK_BREAK;
 }
 
 bool Commands::placeNpc(Creature* creature, const std::string& cmd, const std::string& param)

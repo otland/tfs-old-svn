@@ -79,10 +79,10 @@ TalkResult_t Spells::onPlayerSay(Player* player, SpeakClasses type, const std::s
 		}
 	}
 
-	if(instantSpell->playerCastInstant(player, param))
-		return TALK_BREAK;
-	else
+	if(!instantSpell->playerCastInstant(player, param))
 		return TALK_FAILED;
+
+	return TALK_BREAK;
 }
 
 void Spells::clear()
