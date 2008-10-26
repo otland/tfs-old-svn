@@ -837,68 +837,48 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(g_monsters.reload())
-						{
-							if(Quests::getInstance()->reload())
-							{
-								if(g_game.reloadHighscores())
-								{
-									if(g_config.reload())
-									{
-										if(g_actions->reload())
-										{
-											if(g_moveEvents->reload())
-											{
-												if(g_talkActions->reload())
-												{
-													if(g_spells->reload())
-													{
-														if(g_creatureEvents->reload())
-														{
-															if(g_globalEvents->reload())
-															{
-																if(Raids::getInstance()->reload() && Raids::getInstance()->startup())
-																{
-																	if(Houses::getInstance().reloadPrices())
-																	{
-																		g_npcs.reload();
-																		std::cout << "Reloaded all." << std::endl;
-																	}
-																	else
-																		std::cout << "Failed to reload house prices." << std::endl;
-																}
-																else
-																	std::cout << "Failed to reload raids." << std::endl;
-															}
-															else
-																std::cout << "Failed to reload global events." << std::endl;
-														}
-														else
-															std::cout << "Failed to reload creature events." << std::endl;
-													}
-													else
-														std::cout << "Failed to reload spells." << std::endl;
-												}
-												else
-													std::cout << "Failed to reload talk actions." << std::endl;
-											}
-											else
-												std::cout << "Failed to reload movements." << std::endl;
-										}
-										else
-											std::cout << "Failed to reload actions." << std::endl;
-									}
-									else
-										std::cout << "Failed to reload config." << std::endl;
-								}
-								else
-									std::cout << "Failed to reload highscores." << std::endl;
-							}
-							else
-								std::cout << "Failed to reload quests." << std::endl;
-						}
+						std::stringstream ss;
+						if(!g_monsters.reload())
+							ss << "monsters, ";
+
+						if(!Quests::getInstance()->reload())
+							ss << "quests, ";
+
+						if(!g_game.reloadHighscores())
+							ss << "highscores, ";
+
+						if(!g_config.reload())
+							ss << "config, ";
+
+						if(!g_actions->reload())
+							ss << "actions, ";
+
+						if(!g_moveEvents->reload())
+							ss << "move events, ";
+
+						if(!g_talkActions->reload())
+							ss << "talk actions, ";
+
+						if(!g_spells->reload())
+							ss << "spells, ";
+
+						if(!g_creatureEvents->reload())
+							ss << "creature events, ";
+
+						if(!g_globalEvents->reload())
+							ss << "global events, ";
+
+						if(!Raids::getInstance()->reload() || !Raids::getInstance()->startup())
+							ss << "raids, ";
+
+						if(!Houses::getInstance().reloadPrices())
+							ss << "house prices, ";
+
+						g_npcs.reload();
+						if(!ss.str().length())
+							std::cout << "Reloaded all." << std::endl;
 						else
-							std::cout << "Failed to reload monsters." << std::endl;
+							std::cout << "Failed to reload: " << ss.str() << " ..." << std::endl;
 					}
 					break;
 				}

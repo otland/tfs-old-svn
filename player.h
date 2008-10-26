@@ -468,6 +468,7 @@ class Player : public Creature, public Cylinder
 
 		void checkRedSkullTicks(int32_t ticks);
 		int64_t getRedSkullTicks() const {return redSkullTicks;}
+		void setRedSkullTicks(int64_t amount) {redSkullTicks = amount;}
 
 		const OutfitListType& getPlayerOutfits();
 		bool canWear(uint32_t _looktype, uint32_t _addons);
