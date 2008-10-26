@@ -90,7 +90,7 @@ TalkResult_t TalkActions::onPlayerSay(Player* player, uint16_t channelId, const 
 	{
 		cmdstring[TALKFILTER_QUOTATION] = std::string(words, 0, loc);
 		paramstring[TALKFILTER_QUOTATION] = std::string(words, (loc + 1), (words.size() - loc - 1));
-		trimString(cmdstring[TALKFILTER_QUOTATION], " ");
+		trimString(cmdstring[TALKFILTER_QUOTATION]);
 	}
 
 	loc = words.find(" ", 0);
