@@ -67,8 +67,6 @@ extern Chat g_chat;
 extern CreatureEvents* g_creatureEvents;
 extern GlobalEvents* g_globalEvents;
 
-#define ipText(a) (uint32_t)a[0] << "." << (uint32_t)a[1] << "." << (uint32_t)a[2] << "." << (uint32_t)a[3]
-
 commands_t Commands::definedCommands[] =
 {
 	{"/s", &Commands::placeNpc},
@@ -156,7 +154,7 @@ bool Commands::loadFromXml()
 						Command* cmd = it->second;
 						if(cmd->loaded)
 						{
-							std::cout << "Duplicate entry for command: " << words << std::endl;
+							std::cout << "[Warning] Duplicate entry for command: " << words << std::endl;
 							p = p->next;
 							continue;
 						}
@@ -184,10 +182,10 @@ bool Commands::loadFromXml()
 						cmd->loaded = true;
 					}
 					else
-						std::cout << "Unknown command: " << words << std::endl;
+						std::cout << "[Notice] Unknown command: " << words << std::endl;
 				}
 				else
-					std::cout << "Missing command words, ignoring." << std::endl;
+					std::cout << "[Notice] Missing command words, ignoring." << std::endl;
 			}
 
 			p = p->next;
@@ -760,19 +758,23 @@ bool Commands::getInfo(Creature* creature, const std::string& cmd, const std::st
 	{
 		if(player != paramPlayer && paramPlayer->getAccessLevel() >= player->getAccessLevel())
 		{
-			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "You can not get info about this player.");
+			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "You cannot get info about this player.");
 			return true;
 		}
-		uint8_t ip[4]; *(uint32_t*)&ip = paramPlayer->lastIP;
+
 		std::stringstream info;
-		info << "name:      " << paramPlayer->name << std::endl <<
-			"access:    " << paramPlayer->accessLevel << std::endl <<
-			"level:     " << paramPlayer->level << std::endl <<
-			"maglvl:    " << paramPlayer->magLevel << std::endl <<
-			"speed:     " << paramPlayer->getSpeed() <<std::endl <<
-			"position:  " << paramPlayer->getPosition() << std::endl <<
-			"notations: " << IOBan::getInstance()->getNotationsCount(paramPlayer->getAccount()) << std::endl <<
-			"ip:        " << ipText(ip);
+		info << "Name:      " << paramPlayer->name << std::endl <<
+			"GUID:      " << paramPlayer->getGUID() << std::endl <<
+			"Access:    " << paramPlayer->accessLevel << std::endl <<
+			"Level:     " << paramPlayer->level << std::endl <<
+			"MagLevel:  " << paramPlayer->magLevel << std::endl <<
+			"Speed:     " << paramPlayer->getSpeed() <<std::endl <<
+			"Position:  " << paramPlayer->getPosition() << std::endl <<
+			"Notations: " << IOBan::getInstance()->getNotationsCount(paramPlayer->getAccount()) << std::endl;
+
+		char buffer[17];
+		formatIP(paramPlayer->lastIP, buffer);
+		info << "IP:        " << buffer;
 		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, info.str().c_str());
 	}
 	else

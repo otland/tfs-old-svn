@@ -1,50 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <commands>
 	<!-- Gods -->
-	<command cmd="/openserver" log="yes" access="5"/>
-	<command cmd="/closeserver" log="yes" access="5"/>
-	<command cmd="/addskill" log="yes" access="5"/>
-	<command cmd="/owner" log="yes" access="5"/>
-	<command cmd="/serverdiag" log="yes" access="5"/>
+	<command words="/openserver" access="5"/>
+	<command words="/closeserver" access="5"/>
+	<command words="/addskill" access="5"/>
+	<command words="/owner" access="5"/>
+	<command words="/serverdiag" access="5"/>
 
 	<!-- Community Managers -->
-	<command cmd="/r" log="yes" access="4"/>
-	<command cmd="/i" log="yes" access="4"/>
-	<command cmd="/n" log="yes" access="4"/>
-	<command cmd="/attr" log="yes" access="4"/>
-	<command cmd="/s" log="yes" access="4"/>
-	<command cmd="/m" log="yes" access="4"/>
-	<command cmd="/summon" log="yes" access="4"/>
-	<command cmd="/raid" log="yes" access="4"/>
-	<command cmd="/reload" log="yes" access="4"/>
-	<command cmd="/newtype" log="yes" access="4"/>
+	<command words="/r" access="4"/>
+	<command words="/i" access="4"/>
+	<command words="/n" access="4"/>
+	<command words="/attr" access="4"/>
+	<command words="/s" access="4"/>
+	<command words="/m" access="4"/>
+	<command words="/summon" access="4"/>
+	<command words="/raid" access="4"/>
+	<command words="/reload" access="4"/>
+	<command words="/newtype" access="4"/>
 
 	<!-- Game Masters -->
-	<command cmd="/kick" log="yes" access="3"/>
-	<command cmd="/unban" log="yes" access="3"/>
-	<command cmd="/a" log="yes" access="3"/>
-	<command cmd="/goto" log="yes" access="3"/>
-	<command cmd="/send" log="yes" access="3"/>
-	<command cmd="/town" log="yes" access="3"/>
-	<command cmd="/c" log="yes" access="3"/>
-	<command cmd="/t" log="yes" access="3"/>
-	<command cmd="/up" log="yes" access="3"/>
-	<command cmd="/down" log="yes" access="3"/>
-	<command cmd="/ghost" log="yes" access="3"/>
-	<command cmd="/squelch" log="yes" access="3"/>
-	<command cmd="/maport" log="yes" access="3"/>
+	<command words="/kick" access="3"/>
+	<command words="/unban" access="3"/>
+	<command words="/a" access="3"/>
+	<command words="/goto" access="3"/>
+	<command words="/send" access="3"/>
+	<command words="/town" access="3"/>
+	<command words="/c" access="3"/>
+	<command words="/t" access="3"/>
+	<command words="/up" access="3"/>
+	<command words="/down" access="3"/>
+	<command words="/ghost" access="3"/>
+	<command words="/squelch" access="3"/>
+	<command words="/maport" access="3"/>
 
 	<!-- Senior Tutors -->
-	<command cmd="/gethouse" log="yes" access="2"/>
-	<command cmd="/info" log="yes" access="2"/>
+	<command words="/gethouse" access="2"/>
+	<command words="/info" access="2"/>
 
 	<!-- Tutors  -->
-	<command cmd="/baninfo" log="no" access="2"/>
+	<command words="/baninfo" log="no" access="2"/>
 
 	<!-- Players -->
-	<command cmd="!buyhouse" log="no" access="0"/>
-	<command cmd="!sellhouse" log="no" access="0"/>
-	<command cmd="!frags" log="no" access="0"/>
-	<command cmd="!createguild" log="no" access="0"/>
-	<command cmd="!joinguild" log="no" access="0"/>
+	<command words="!buyhouse" log="no" access="0"/>
+	<command words="!sellhouse" log="no" access="0"/>
+	<command words="!frags" log="no" access="0"/>
+	<command words="!createguild" log="no" access="0"/>
+	<command words="!joinguild" log="no" access="0"/>
 </commands>

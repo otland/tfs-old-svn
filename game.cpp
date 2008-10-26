@@ -3352,14 +3352,14 @@ bool Game::playerSaySpell(Player* player, SpeakClasses type, const std::string& 
 	TalkResult_t result = g_spells->playerSaySpell(player, type, text);
 	if(g_spells->playerSaySpell(player, type, text) == TALK_BREAK)
 	{
-		std::string msg = text;
+		std::string tmp = text;
 		if(g_config.getBool(ConfigManager::SPELL_NAME_INSTEAD_WORDS))
 		{
-			if(InstantSpell* spell = g_spells->getInstantSpell(msg))
-				msg = spell->getName();
+			if(InstantSpell* spell = g_spells->getInstantSpell(tmp))
+				tmp = spell->getName();
 		}
 
-		return internalCreatureSay(player, SPEAK_SAY, msg);
+		return internalCreatureSay(player, SPEAK_SAY, tmp);
 	}
 	else if(result == TALK_FAILED)
 		return true;
