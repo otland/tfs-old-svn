@@ -1163,7 +1163,7 @@ std::string getFilePath(FileType_t filetype, std::string filename)
 			break;
 		case FILE_TYPE_LOG:
 			#ifndef __FILESYSTEM_HIERARCHY_STANDARD__
-			path += "log/" + filename;
+			path += "logs/" + filename;
 			#else
 			path = "/var/log/tfs/" + filename;
 			#endif

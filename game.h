@@ -243,7 +243,7 @@ class Game
 		  * \param forced If true, placing the creature will not fail because of obstacles (creatures/items)
 		  */
 		bool placeCreature(Creature* creature, const Position& pos, bool force = false);
-		ReturnValue placeSummon(Creature* creature, const std::string& name)
+		ReturnValue placeSummon(Creature* creature, const std::string& name);
 
 		/**
 		  * Remove Creature from the map.
