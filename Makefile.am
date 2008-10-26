@@ -22,8 +22,8 @@ endif
 
 theforgottenserver_SOURCES = account.cpp account.h actions.cpp actions.h \
 	admin.cpp allocator.cpp allocator.h baseevents.cpp baseevents.h \
-	beds.cpp beds.h chat.cpp chat.h combat.cpp combat.h commands.cpp \
-	commands.h condition.cpp condition.h config.h configmanager.cpp \
+	beds.cpp beds.h chat.cpp chat.h combat.cpp combat.h \
+	condition.cpp condition.h config.h configmanager.cpp \
 	configmanager.h connection.cpp connection.h const.h container.cpp \
 	container.h creature.cpp creature.h creatureevent.cpp creatureevent.h \
 	cylinder.cpp cylinder.h database.cpp database.h databasemanager.cpp \

@@ -40,7 +40,6 @@ class Creature;
 class Monster;
 class Npc;
 class CombatInfo;
-class Commands;
 
 enum stackPosType_t
 {
@@ -244,6 +243,7 @@ class Game
 		  * \param forced If true, placing the creature will not fail because of obstacles (creatures/items)
 		  */
 		bool placeCreature(Creature* creature, const Position& pos, bool force = false);
+		ReturnValue placeSummon(Creature* creature, const std::string& name)
 
 		/**
 		  * Remove Creature from the map.
@@ -525,7 +525,6 @@ class Game
 		bool getGlobalSaveMessage(int16_t key) const {return globalSaveMessage[key];}
 
 	protected:
-		bool playerSayCommand(Player* player, const std::string& text, uint16_t channelId);
 		bool playerSayTalkAction(Player* player, const std::string& text, uint16_t channelId);
 		bool playerSaySpell(Player* player, SpeakClasses type, const std::string& text);
 		bool playerWhisper(Player* player, const std::string& text);

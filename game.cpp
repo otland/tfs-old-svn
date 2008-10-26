@@ -30,7 +30,6 @@
 #include "otsystem.h"
 #include "tasks.h"
 #include "items.h"
-#include "commands.h"
 #include "creature.h"
 #include "player.h"
 #include "monster.h"
@@ -60,7 +59,6 @@ extern OTSYS_THREAD_LOCKVAR maploadlock;
 extern ConfigManager g_config;
 extern Server* g_server;
 extern Actions* g_actions;
-extern Commands commands;
 extern Chat g_chat;
 extern TalkActions* g_talkActions;
 extern Spells* g_spells;
@@ -684,6 +682,22 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool forced /*
 	addCreatureCheck(creature);
 	creature->onPlacedCreature();
 	return true;
+}
+
+ReturnValue Game::placeSummon(Creature* creature, const std::string& name)
+{
+	Monster* monster = Monster::createMonster(name);
+	if(!monster)
+		return RET_NOTPOSSIBLE;
+
+	// Place the monster
+	creature->addSummon(monster);
+	if(!placeCreature(monster, creature->getPosition()))
+	{
+		creature->removeSummon(monster);
+		return RET_NOTENOUGHROOM;
+	}
+	return RET_NOERROR;
 }
 
 bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
@@ -3270,9 +3284,6 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 		return false;
 	}
 
-	if(playerSayCommand(player, text, channelId))
-		return true;
-
 	if(playerSayTalkAction(player, text, channelId))
 		return true;
 
@@ -3319,31 +3330,6 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 		default:
 			break;
 	}
-	return false;
-}
-
-bool Game::playerSayCommand(Player* player, const std::string& text, uint16_t channelId)
-{
-	if(player->isAccountManager())
-		return internalCreatureSay(player, SPEAK_SAY, text);
-
-	switch(commands.onPlayerSay(player, channelId, text))
-	{
-		case TALK_CONTINUE:
-			break;
-		case TALK_ACCESS:
-		{
-			if(player->getAccessLevel() > 0)
-				player->sendTextMessage(MSG_STATUS_SMALL, "You cannot execute this command.");
-
-			return false;
-			break;
-		}
-		default:
-			return true;
-			break;
-	}
-
 	return false;
 }
 

@@ -80,12 +80,7 @@ class TalkAction : public Event
 		bool isLogged() const {return m_logged;}
 		bool isSensitive() const {return m_sensitive;}
 
-		static ReturnValue placeSummon(Creature* creature, const std::string& name);
-
 	protected:
-		static TalkActionCallback_t definedCallbacks[];
-		virtual std::string getScriptEventName();
-
 		static TalkActionCallback placeNpc;
 		static TalkActionCallback placeMonster;
 		static TalkActionCallback placeSummon;
@@ -126,12 +121,15 @@ class TalkAction : public Event
 		TalkActionFilter m_filter;
 		uint32_t m_access, m_channel;
 		bool m_logged, m_sensitive;
+
+		static TalkActionCallback_t definedCallbacks[];
+		virtual std::string getScriptEventName();
 };
 
 struct TalkActionCallback_t
 {
 	const char* name;
-	TalkActionCallback callback;
+	TalkActionCallback* callback;
 };
 
 #endif

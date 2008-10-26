@@ -23,7 +23,6 @@
 #include <fstream>
 #include <utility>
 
-#include "commands.h"
 #include "player.h"
 #include "npc.h"
 #include "monsters.h"
@@ -154,9 +153,6 @@ TalkResult_t TalkActions::onPlayerSay(Player* player, uint16_t channelId, const 
 	if(talkAction->getAccess() > player->getAccessLevel() || player->isAccountManager())
 		return TALK_ACCESS;
 
-	if(!talkAction->executeSay(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]))
-		return TALK_FAILED;
-
 	if(talkAction->isLogged())
 	{
 		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, words.c_str());
@@ -172,7 +168,18 @@ TalkResult_t TalkActions::onPlayerSay(Player* player, uint16_t channelId, const 
 		}
 	}
 
-	return TALK_BREAK;
+	if(talkAction->isScripted())
+	{
+		if(talkAction->executeSay(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]))
+			return TALK_BREAK;
+	}
+	else if(talkAction->callback)
+	{
+		if(talkAction->callback(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]))
+			return TALK_BREAK;
+	}
+
+	return TALK_FAILED;
 }
 
 TalkActionCallback_t TalkAction::definedCallbacks[] =
@@ -263,7 +270,7 @@ bool TalkAction::configureEvent(xmlNodePtr p)
 	return true;
 }
 
-bool Action::loadFunction(const std::string& functionName)
+bool TalkAction::loadFunction(const std::string& functionName)
 {
 	std::string tmpFunctionName = asLowerCaseString(functionName);
 	for(uint32_t i = 0; i < sizeof(definedCallbacks) / sizeof(definedCallbacks[0]); i++)
@@ -278,22 +285,6 @@ bool Action::loadFunction(const std::string& functionName)
 
 	std::cout << "[Warning - TalkAction::loadFunction] Function \"" << functionName << "\" does not exist." << std::endl;
 	return false;
-}
-
-ReturnValue TalkAction::placeSummon(Creature* creature, const std::string& name)
-{
-	Monster* monster = Monster::createMonster(name);
-	if(!monster)
-		return RET_NOTPOSSIBLE;
-
-	// Place the monster
-	creature->addSummon(monster);
-	if(!g_game.placeCreature(monster, creature->getPosition()))
-	{
-		creature->removeSummon(monster);
-		return RET_NOTENOUGHROOM;
-	}
-	return RET_NOERROR;
 }
 
 bool TalkAction::placeNpc(Creature* creature, const std::string& cmd, const std::string& param)
@@ -356,7 +347,7 @@ bool TalkAction::placeMonster(Creature* creature, const std::string& cmd, const 
 
 bool TalkAction::placeSummon(Creature* creature, const std::string& cmd, const std::string& param)
 {
-	ReturnValue ret = placeSummon(creature, param);
+	ReturnValue ret = g_game.placeSummon(creature, param);
 	if(ret != RET_NOERROR)
 	{
 		if(Player* player = creature->getPlayer())
