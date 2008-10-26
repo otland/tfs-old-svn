@@ -50,35 +50,31 @@ Spells::~Spells()
 	clear();
 }
 
-TalkResult_t Spells::playerSaySpell(Player* player, SpeakClasses type, const std::string& words)
+TalkResult_t Spells::onPlayerSay(Player* player, SpeakClasses type, const std::string& words)
 {
-	std::string str_words = words;
+	std::string wordstring = words;
+	trimString(wordstring);
 
-	//strip trailing spaces
-	trimString(str_words);
-
-	InstantSpell* instantSpell = getInstantSpell(str_words);
+	InstantSpell* instantSpell = getInstantSpell(wordstring);
 	if(!instantSpell)
 		return TALK_CONTINUE;
 
 	std::string param = "";
 	if(instantSpell->getHasParam())
 	{
-		size_t spellLen = instantSpell->getWords().length();
-		size_t paramLen = str_words.length() - spellLen;
-		std::string paramText = str_words.substr(spellLen, paramLen);
-
-		if(!paramText.empty() && paramText[0] == ' ')
+		size_t loc = instantSpell->getWords().length();
+		std::string paramstring = wordstring.substr(loc, (size_t)wordstring.length() - loc);
+		if(!paramstring.empty() && paramstring[0] == ' ')
 		{
-			size_t loc1 = paramText.find('"', 0);
-			size_t loc2 = std::string::npos;
-			if(loc1 != std::string::npos)
-				loc2 = paramText.find('"', loc1 + 1);
+			loc = paramstring.find('"', 0);
+			size_t tmp = std::string::npos;
+			if(loc != tmp)
+				tmp = paramstring.find('"', loc + 1);
 
-			if(loc2 == std::string::npos)
-				loc2 = paramText.length();
+			if(tmp == std::string::npos)
+				tmp = paramstring.length();
 
-			param = paramText.substr(loc1 + 1, loc2 - loc1 - 1);
+			param = paramstring.substr(loc + 1, tmp - loc - 1);
 			trimString(param);
 		}
 	}
@@ -906,6 +902,9 @@ std::string InstantSpell::getScriptEventName()
 bool InstantSpell::configureEvent(xmlNodePtr p)
 {
 	if(!Spell::configureSpell(p))
+		return false;
+
+	if(!TalkAction::configureEvent(p))
 		return false;
 
 	int32_t intValue;
