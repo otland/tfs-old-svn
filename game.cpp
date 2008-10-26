@@ -3327,11 +3327,22 @@ bool Game::playerSayCommand(Player* player, const std::string& text, uint16_t ch
 	if(player->isAccountManager())
 		return internalCreatureSay(player, SPEAK_SAY, text);
 
-	TalkResult_t result = commands.onPlayerSay(player, channelId, text);
-	if(result == TALK_BREAK)
-		return true;
-	else if(result == TALK_ACCESS && player->getAccessLevel() > 0)
-		player->sendTextMessage(MSG_STATUS_SMALL, "You cannot execute this command.");
+	switch(commands.onPlayerSay(player, channelId, text))
+	{
+		case TALK_CONTINUE:
+			break;
+		case TALK_ACCESS:
+		{
+			if(player->getAccessLevel() > 0)
+				player->sendTextMessage(MSG_STATUS_SMALL, "You cannot execute this command.");
+
+			return false;
+			break;
+		}
+		default:
+			return true;
+			break;
+	}
 
 	return false;
 }
@@ -3341,11 +3352,22 @@ bool Game::playerSayTalkAction(Player* player, const std::string& text, uint16_t
 	if(player->isAccountManager())
 		return internalCreatureSay(player, SPEAK_SAY, text);
 
-	TalkResult_t result = g_talkActions->onPlayerSay(player, channelId, text);
-	if(result == TALK_BREAK)
-		return true;
-	else if(result == TALK_ACCESS && player->getAccessLevel() > 0)
-		player->sendTextMessage(MSG_STATUS_SMALL, "You cannot execute this talkaction.");
+	switch(g_talkActions->onPlayerSay(player, channelId, text))
+	{
+		case TALK_CONTINUE:
+			break;
+		case TALK_ACCESS:
+		{
+			if(player->getAccessLevel() > 0)
+				player->sendTextMessage(MSG_STATUS_SMALL, "You cannot execute this talkaction.");
+
+			return false;
+			break;
+		}
+		default:
+			return true;
+			break;
+	}
 
 	return false;
 }
@@ -3355,20 +3377,26 @@ bool Game::playerSaySpell(Player* player, SpeakClasses type, const std::string& 
 	if(player->isAccountManager())
 		return internalCreatureSay(player, SPEAK_SAY, text);
 
-	TalkResult_t result = g_spells->onPlayerSay(player, type, text);
-	if(result == TALK_BREAK)
+	switch(g_spells->onPlayerSay(player, type, text))
 	{
-		std::string ret = text;
-		if(g_config.getBool(ConfigManager::SPELL_NAME_INSTEAD_WORDS))
+		case TALK_CONTINUE:
+			break;
+		case TALK_BREAK:
 		{
-			if(InstantSpell* tmp = g_spells->getInstantSpell(ret))
-				ret = tmp->getName();
-		}
+			std::string ret = text;
+			if(g_config.getBool(ConfigManager::SPELL_NAME_INSTEAD_WORDS))
+			{
+				if(InstantSpell* tmp = g_spells->getInstantSpell(ret))
+					ret = tmp->getName();
+			}
 
-		return internalCreatureSay(player, SPEAK_SAY, ret);
+			return internalCreatureSay(player, SPEAK_SAY, ret);
+			break;
+		}
+		default:
+			return true;
+			break;
 	}
-	else if(result == TALK_FAILED)
-		return true;
 
 	return false;
 }
