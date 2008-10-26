@@ -67,11 +67,9 @@ extern Chat g_chat;
 extern CreatureEvents* g_creatureEvents;
 extern GlobalEvents* g_globalEvents;
 
-extern bool readXMLInteger(xmlNodePtr p, const char* tag, int32_t &value);
-
 #define ipText(a) (uint32_t)a[0] << "." << (uint32_t)a[1] << "." << (uint32_t)a[2] << "." << (uint32_t)a[3]
 
-s_defcommands Commands::defined_commands[] =
+commands_t Commands::definedCommands[] =
 {
 	{"/s", &Commands::placeNpc},
 	{"/m", &Commands::placeMonster},
@@ -119,17 +117,15 @@ Commands::Commands()
 {
 	loaded = false;
 
-	//setup command map
-	for(uint32_t i = 0; i < sizeof(defined_commands) / sizeof(defined_commands[0]); i++)
+	Command* tmp;
+	for(uint32_t i = 0; i < sizeof(definedCommands) / sizeof(definedCommands[0]); i++)
 	{
-		Command* cmd = new Command;
-		cmd->loadedAccess = false;
-		cmd->accessLevel = 0;
-		cmd->loadedLogging = false;
-		cmd->logged = true;
-		cmd->f = defined_commands[i].f;
-		std::string key = defined_commands[i].name;
-		commandMap[key] = cmd;
+		tmp = new Command;
+		tmp->callback = definedCommands[i].callback;
+		tmp->access = tmp->channel = 0;
+		tmp->logged = tmp->sensitive = true;
+		tmp->loaded = false;
+		commandsMap[definedCommands[i].name] = tmp;
 	}
 }
 
@@ -138,10 +134,7 @@ bool Commands::loadFromXml()
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "commands.xml").c_str());
 	if(doc)
 	{
-		loaded = true;
 		xmlNodePtr root, p;
-		std::string strCmd;
-
 		root = xmlDocGetRootElement(doc);
 		if(xmlStrcmp(root->name,(const xmlChar*)"commands") != 0)
 		{
@@ -149,128 +142,123 @@ bool Commands::loadFromXml()
 			return false;
 		}
 
+		std::string words;
 		p = root->children;
 		while(p)
 		{
 			if(xmlStrcmp(p->name, (const xmlChar*)"command") == 0)
 			{
-				if(readXMLString(p, "cmd", strCmd))
+				if(readXMLString(p, "words", words) || readXMLString(p, "cmd", words))
 				{
-					int32_t intValue;
-					std::string strValue;
-
-					CommandMap::iterator it = commandMap.find(strCmd);
-					if(it != commandMap.end())
+					CommandsMap::iterator it = commandsMap.find(words);
+					if(it != commandsMap.end())
 					{
-						if(readXMLInteger(p, "access", intValue))
+						Command* cmd = it->second;
+						if(cmd->loaded)
 						{
-							if(!it->second->loadedAccess)
-							{
-								it->second->accessLevel = intValue;
-								it->second->loadedAccess = true;
-							}
-							else
-								std::cout << "Duplicated access tag for " << strCmd << std::endl;
+							std::cout << "Duplicate entry for command: " << words << std::endl;
+							p = p->next;
+							continue;
 						}
-						else
-							std::cout << "Missing access tag for " << strCmd << std::endl;
 
-						if(readXMLString(p, "log", strValue))
-						{
-							if(!it->second->loadedLogging)
-							{
-								it->second->logged = booleanString(strValue);
-								it->second->loadedLogging = true;
-							}
-							else
-								std::cout << "Duplicated log tag for " << strCmd << std::endl;
-						}
+						int32_t intValue;
+						if(readXMLInteger(p, "access", intValue))
+							cmd->access = intValue;
 						else
-							std::cout << "Missing log tag for " << strCmd << std::endl;
+						{
+							std::cout << "[Warning] Missing access tag for command: " << words << std::endl;
+							p = p->next;
+							continue;
+						}
+
+						if(readXMLInteger(p, "channel", intValue))
+							cmd->channel = intValue;
+
+						std::string strValue;
+						if(readXMLString(p, "log", strValue))
+							cmd->logged = booleanString(strValue);
+
+						if(readXMLString(p, "case-sensitive", strValue))
+							cmd->sensitive = booleanString(strValue);
+
+						cmd->loaded = true;
 					}
 					else
-						std::cout << "Unknown command " << strCmd << std::endl;
+						std::cout << "Unknown command: " << words << std::endl;
 				}
 				else
-					std::cout << "Missing cmd." << std::endl;
+					std::cout << "Missing command words, ignoring." << std::endl;
 			}
+
 			p = p->next;
 		}
+
 		xmlFreeDoc(doc);
+		loaded = true;
 	}
 
-	for(CommandMap::iterator it = commandMap.begin(); it != commandMap.end(); ++it)
-	{
-		if(!it->second->loadedAccess)
-			std::cout << "Warning: Missing access for command " << it->first << std::endl;
-
-		if(!it->second->loadedLogging)
-			std::cout << "Warning: Missing log command " << it->first << std::endl;
-
-		g_game.addCommandTag(it->first.substr(0, 1));
-	}
 	return loaded;
 }
 
 bool Commands::reload()
 {
 	loaded = false;
-	for(CommandMap::iterator it = commandMap.begin(); it != commandMap.end(); ++it)
+	for(CommandsMap::iterator it = commandsMap.begin(); it != commandsMap.end(); ++it)
 	{
-		it->second->accessLevel = 0;
-		it->second->loadedAccess = false;
-		it->second->logged = true;
-		it->second->loadedLogging = false;
+		it->second->access = it->second->channel = 0;
+		it->second->logged = it->second->sensitive = true;
+		it->second->loaded = false;
 	}
 
-	g_game.resetCommandTag();
 	return loadFromXml();
 }
 
-bool Commands::exeCommand(Creature* creature, const std::string& cmd)
+TalkResult_t Commands::onPlayerSay(Player* player, uint16_t channelId, const std::string& words)
 {
 	boost::char_separator<char> sep("&&");
-	tokenizer cmdtokens(cmd, sep);
+	tokenizer cmdtokens(words, sep);
 	tokenizer::iterator cmdit = cmdtokens.begin();
 
 	while(cmdit != cmdtokens.end())
 	{
-		
-		std::string strCommand, strParam, cmdThis = parseParams(cmdit, cmdtokens.end());
-		trimString(cmdThis);
+		std::string cmdstring, paramstring, tmp = parseParams(cmdit, cmdtokens.end());
+		trimString(tmp);
 
-		std::string::size_type loc = cmdThis.find(' ', 0 );
+		std::string::size_type loc = tmp.find(' ', 0 );
 		if(loc != std::string::npos && loc >= 0)
 		{
-			strCommand = std::string(cmdThis, 0, loc);
-			strParam = std::string(cmdThis, (loc + 1), cmdThis.size() - loc - 1);
+			cmdstring = std::string(tmp, 0, loc);
+			paramstring = std::string(tmp, (loc + 1), tmp.size() - loc - 1);
 		}
 		else
 		{
-			strCommand = cmdThis;
-			strParam = std::string("");
+			cmdstring = tmp;
+			paramstring = std::string("");
 		}
-	
-		//find command
-		CommandMap::iterator it = commandMap.find(strCommand);
-		if(it == commandMap.end())
-			return false;
-	
-		Player* player = creature->getPlayer();
-		if(player && (it->second->accessLevel > player->getAccessLevel() || player->isAccountManager()))
+
+		//check does command exists
+		CommandsMap::iterator it = commandsMap.find(cmdstring);
+		if(it == commandsMap.end())
+			return TALK_CONTINUE;
+
+		Command* cmd = it->second;
+		if(!cmd->loaded)
+			return TALK_CONTINUE;
+
+		if(cmd->access > player->getAccessLevel() || player->isAccountManager())
 		{
 			if(player->getAccessLevel() > 0)
 				player->sendTextMessage(MSG_STATUS_SMALL, "You can not execute this command.");
 	
-			return false;
+			return TALK_FAILED;
 		}
 	
-		//execute command
-		CommandFunc cfunc = it->second->f;
-		(this->*cfunc)(creature, strCommand, strParam);
-		if(player && it->second->logged)
+		if(!(this->*cmd->callback)(player, cmdstring, paramstring))
+			return TALK_BREAK;
+
+		if(cmd->logged)
 		{
-			player->sendTextMessage(MSG_STATUS_CONSOLE_RED, cmdThis.c_str());
+			player->sendTextMessage(MSG_STATUS_CONSOLE_RED, tmp.c_str());
 	
 			char buf[21], buffer[100];
 			formatDate(time(NULL), buf);
@@ -278,12 +266,13 @@ bool Commands::exeCommand(Creature* creature, const std::string& cmd)
 
 			if(FILE* file = fopen(buffer, "a"))
 			{
-				fprintf(file, "[%s] %s\n", buf, cmdThis.c_str());
+				fprintf(file, "[%s] %s\n", buf, tmp.c_str());
 				fclose(file);
 			}
 		}
 	}
-	return true;
+
+	return TALK_CONTINUE;
 }
 
 bool Commands::placeNpc(Creature* creature, const std::string& cmd, const std::string& param)

@@ -26,6 +26,7 @@
 #include "player.h"
 #include "actions.h"
 #include "talkaction.h"
+#include "enums.h"
 #include "baseevents.h"
 
 class InstantSpell;
@@ -52,7 +53,7 @@ class Spells : public BaseEvents
 		uint32_t getInstantSpellCount(const Player* player);
 		InstantSpell* getInstantSpellByIndex(const Player* player, uint32_t index);
 
-		TalkActionResult_t playerSaySpell(Player* player, SpeakClasses type, const std::string& words);
+		TalkResult_t playerSaySpell(Player* player, SpeakClasses type, const std::string& words);
 
 		static Position getCasterPosition(Creature* creature, Direction dir);
 		virtual std::string getScriptBaseName();

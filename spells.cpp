@@ -50,7 +50,7 @@ Spells::~Spells()
 	clear();
 }
 
-TalkActionResult_t Spells::playerSaySpell(Player* player, SpeakClasses type, const std::string& words)
+TalkResult_t Spells::playerSaySpell(Player* player, SpeakClasses type, const std::string& words)
 {
 	std::string str_words = words;
 
@@ -59,7 +59,7 @@ TalkActionResult_t Spells::playerSaySpell(Player* player, SpeakClasses type, con
 
 	InstantSpell* instantSpell = getInstantSpell(str_words);
 	if(!instantSpell)
-		return TALKACTION_CONTINUE;
+		return TALK_CONTINUE;
 
 	std::string param = "";
 	if(instantSpell->getHasParam())
@@ -84,9 +84,9 @@ TalkActionResult_t Spells::playerSaySpell(Player* player, SpeakClasses type, con
 	}
 
 	if(instantSpell->playerCastInstant(player, param))
-		return TALKACTION_BREAK;
+		return TALK_BREAK;
 	else
-		return TALKACTION_FAILED;
+		return TALK_FAILED;
 }
 
 void Spells::clear()
@@ -883,8 +883,7 @@ ReturnValue Spell::CreateIllusion(Creature* creature, uint32_t itemId, int32_t t
 	return CreateIllusion(creature, outfit, time);
 }
 
-InstantSpell::InstantSpell(LuaScriptInterface* _interface) :
-TalkAction(_interface)
+InstantSpell::InstantSpell(LuaScriptInterface* _interface) : TalkAction(_interface)
 {
 	needDirection = false;
 	hasParam = false;
@@ -907,9 +906,6 @@ std::string InstantSpell::getScriptEventName()
 bool InstantSpell::configureEvent(xmlNodePtr p)
 {
 	if(!Spell::configureSpell(p))
-		return false;
-
-	if(!TalkAction::configureEvent(p))
 		return false;
 
 	int32_t intValue;
@@ -1656,16 +1652,7 @@ bool ConjureSpell::configureEvent(xmlNodePtr p)
 	if(!InstantSpell::configureEvent(p))
 		return false;
 
-	/*
-	if(!Spell::configureSpell(p))
-		return false;
-
-	if(!TalkAction::configureEvent(p))
-		return false;
-	*/
-
 	int32_t intValue;
-
 	if(readXMLInteger(p, "conjureId", intValue))
 		conjureId = intValue;
 

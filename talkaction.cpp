@@ -43,12 +43,12 @@ TalkActions::~TalkActions()
 
 void TalkActions::clear()
 {
-	TalkActionList::iterator it = wordsMap.begin();
-	while(it != wordsMap.end())
+	TalkActionsMap::iterator it = talksMap.begin();
+	while(it != talksMap.end())
 	{
 		delete it->second;
-		wordsMap.erase(it);
-		it = wordsMap.begin();
+		talksMap.erase(it);
+		it = talksMap.begin();
 	}
 
 	m_scriptInterface.reInitState();
@@ -78,17 +78,13 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p)
 	if(!talkAction)
 		return false;
 
-	wordsMap.push_back(std::make_pair(talkAction->getWords(), talkAction));
+	talksMap[talkAction->getWords()] = talkAction;
 	return true;
 }
 
-TalkActionResult_t TalkActions::onPlayerSpeak(Player* player, SpeakClasses type, const std::string& words)
+TalkResult_t TalkActions::onPlayerSay(Player* player, uint16_t channelId, const std::string& words)
 {
-	if(type != SPEAK_SAY)
-		return TALKACTION_CONTINUE;
-
 	std::string cmdstring[TALKFILTER_LAST] = words, paramstring[TALKFILTER_LAST] = "";
-
 	size_t loc = words.find('"', 0);
 	if(loc != std::string::npos && loc >= 0)
 	{
@@ -105,56 +101,61 @@ TalkActionResult_t TalkActions::onPlayerSpeak(Player* player, SpeakClasses type,
 		paramstring[TALKFILTER_WORD] = std::string(words, (loc + 1), (words.size() - loc - 1));
 	}
 
-	for(TalkActionList::iterator it = wordsMap.begin(); it != wordsMap.end(); ++it)
+	TalkAction* talkAction = NULL;
+	for(TalkActionsMap::iterator it = talksMap.begin(); it != talksMap.end(); ++it)
 	{
-		if(it->first == cmdstring[it->second->getFilter()] || (!it->second->isSensitive() &&
+		if(it->first == cmdstring[it->second->getFilter()] || (!it->second->isSensitive() && 
 			strcasecmp(it->first.c_str(), cmdstring[it->second->getFilter()].c_str()) == 0))
 		{
-			TalkAction* talkAction = it->second;
-			if(talkAction->getAccess() > player->getAccessLevel() || player->isAccountManager())
-			{
-				if(player->getAccessLevel() > 0)
-					player->sendTextMessage(MSG_STATUS_SMALL, "You can not execute this talkaction.");
-
-				return TALKACTION_FAILED;
-			}
-
-			if(talkAction->executeSay(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]) == 1)
-			{
-				if(player && talkAction->isLogged())
-				{
-					player->sendTextMessage(MSG_STATUS_CONSOLE_RED, words.c_str());
-
-					char buf[21], buffer[100];
-					formatDate(time(NULL), buf);
-					sprintf(buffer, "%s_talkactions.log", getFilePath(FILE_TYPE_LOG, player->getName()).c_str());
-
-					if(FILE* file = fopen(buffer, "a"))
-					{
-						fprintf(file, "[%s] %s\n", buf, words.c_str());
-						fclose(file);
-					}
-				}
-				return TALKACTION_CONTINUE;
-			}
-			else
-				return TALKACTION_BREAK;
+			talkAction = it->second;
+			break;
 		}
 	}
-	return TALKACTION_CONTINUE;
+
+	if(!talkAction)
+		return TALK_CONTINUE;
+
+	if(talkAction->getAccess() > player->getAccessLevel() || player->isAccountManager())
+	{
+		if(player->getAccessLevel() > 0)
+			player->sendTextMessage(MSG_STATUS_SMALL, "You can not execute this talkaction.");
+
+		return TALK_FAILED;
+	}
+
+	if(!talkAction->executeSay(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]))
+		return TALK_BREAK;
+
+	if(talkAction->isLogged())
+	{
+		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, words.c_str());
+
+		char buf[21], buffer[100];
+		formatDate(time(NULL), buf);
+		sprintf(buffer, "%s_talkactions.log", getFilePath(FILE_TYPE_LOG, player->getName()).c_str());
+
+		if(FILE* file = fopen(buffer, "a"))
+		{
+			fprintf(file, "[%s] %s\n", buf, words.c_str());
+			fclose(file);
+		}
+	}
+
+	return TALK_CONTINUE;
 }
 
-TalkAction::TalkAction(LuaScriptInterface* _interface) :
-Event(_interface), m_filter(TALKFILTER_QUOTATION), m_access(0), m_logged(false), m_sensitive(true)
+TalkAction::TalkAction(LuaScriptInterface* _interface) : Event(_interface)
 {
-	//
+	m_filter = TALKFILTER_QUOTATION;
+	m_access = 0;
+	m_channel = 0;
+	m_logged = false;
+	m_sensitive = true;
 }
 
 bool TalkAction::configureEvent(xmlNodePtr p)
 {
-	int32_t intValue;
 	std::string strValue;
-
 	if(readXMLString(p, "words", strValue))
 		m_words = strValue;
 	else
@@ -172,8 +173,12 @@ bool TalkAction::configureEvent(xmlNodePtr p)
 			m_filter = TALKFILTER_WORD;
 	}
 
+	int32_t intValue;
 	if(readXMLInteger(p, "access", intValue))
 		m_access = intValue;
+
+	if(readXMLInteger(p, "channel", intValue))
+		m_channel = intValue;
 
 	if(readXMLString(p, "log", strValue))
 		m_logged = booleanString(asLowerCaseString(strValue));

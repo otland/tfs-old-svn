@@ -882,15 +882,15 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 
 ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, uint32_t flags /*= 0*/)
 {
+	creature->setLastPosition(creature->getPosition());
 	Cylinder* fromTile = creature->getTile();
 	Cylinder* toTile = NULL;
 
-	creature->setLastPosition(creature->getPosition());
 	const Position& currentPos = creature->getPosition();
 	Position destPos = currentPos;
 	destPos = getNextPosition(direction, destPos);
 
-	if(creature->getPlayer())
+	if(direction < SOUTHWEST && creature->getPlayer())
 	{
 		//try go up
 		if(currentPos.z != 8 && creature->getTile()->hasHeight(3))
@@ -3270,10 +3270,10 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 		return false;
 	}
 
-	if(playerSayCommand(player, type, text))
+	if(playerSayCommand(player, text, channelId))
 		return true;
 
-	if(playerSayTalkAction(player, type, text))
+	if(playerSayTalkAction(player, text, channelId))
 		return true;
 
 	if(playerSaySpell(player, type, text))
@@ -3322,34 +3322,26 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 	return false;
 }
 
-bool Game::playerSayCommand(Player* player, SpeakClasses type, const std::string& text)
+bool Game::playerSayCommand(Player* player, const std::string& text, uint16_t channelId)
 {
 	if(player->isAccountManager())
 		return internalCreatureSay(player, SPEAK_SAY, text);
 
-	//First, check if this was a command
-	for(uint32_t i = 0; i < commandTags.size(); i++)
-	{
-		if(commandTags[i] == text.substr(0,1))
-		{
-			if(commands.exeCommand(player, text))
-				return true;
-		}
-	}
-	return false;
+	if(commands.onPlayerSay(player, channelId, text) == TALK_CONTINUE)
+		return false;
+
+	return true;
 }
 
-bool Game::playerSayTalkAction(Player* player, SpeakClasses type, const std::string& text)
+bool Game::playerSayTalkAction(Player* player, const std::string& text, uint16_t channelId)
 {
 	if(player->isAccountManager())
 		return internalCreatureSay(player, SPEAK_SAY, text);
 
-	TalkActionResult_t result;
-	result = g_talkActions->onPlayerSpeak(player, type, text);
-	if(result == TALKACTION_BREAK)
-		return true;
+	if(g_talkActions->onPlayerSay(player, channelId, text) == TALK_CONTINUE)
+		return false;
 
-	return false;
+	return true;
 }
 
 bool Game::playerSaySpell(Player* player, SpeakClasses type, const std::string& text)
@@ -3357,14 +3349,19 @@ bool Game::playerSaySpell(Player* player, SpeakClasses type, const std::string& 
 	if(player->isAccountManager())
 		return internalCreatureSay(player, SPEAK_SAY, text);
 
-	TalkActionResult_t result;
-	result = g_spells->playerSaySpell(player, type, text);
-	if(result == TALKACTION_BREAK)
+	TalkResult_t result = g_spells->playerSaySpell(player, type, text);
+	if(g_spells->playerSaySpell(player, type, text) == TALK_BREAK)
 	{
-		//std::string _text = (g_config.getBool(ConfigManager::SPELL_NAME_INSTEAD_WORDS) ? g_spells->getInstantSpell(text)->getName() : text);
-		return internalCreatureSay(player, SPEAK_SAY, text);
+		std::string msg = text;
+		if(g_config.getBool(ConfigManager::SPELL_NAME_INSTEAD_WORDS))
+		{
+			if(InstantSpell* spell = g_spells->getInstantSpell(msg))
+				msg = spell->getName();
+		}
+
+		return internalCreatureSay(player, SPEAK_SAY, msg);
 	}
-	else if(result == TALKACTION_FAILED)
+	else if(result == TALK_FAILED)
 		return true;
 
 	return false;
@@ -4415,27 +4412,6 @@ bool Game::closeRuleViolation(Player* player)
 		}
 	}
 	return true;
-}
-
-void Game::addCommandTag(std::string tag)
-{
-	bool found = false;
-	for(uint32_t i = 0; i < commandTags.size() ;i++)
-	{
-		if(commandTags[i] == tag)
-		{
-			found = true;
-			break;
-		}
-	}
-
-	if(!found)
-		commandTags.push_back(tag);
-}
-
-void Game::resetCommandTag()
-{
-	commandTags.clear();
 }
 
 void Game::shutdown()

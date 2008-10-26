@@ -115,7 +115,7 @@
 	saveGlobalStorage = "yes"
 	bankSystem = "yes"
 	displaySkillLevelOnAdvance = "no"
-	spellNameInsteadOfWordsOnCast = "no" --FIXME: Causes crashes
+	spellNameInsteadOfWordsOnCast = "no"
 
 	-- Premium account
 	freePremium = "no"

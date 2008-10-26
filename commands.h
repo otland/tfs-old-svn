@@ -24,10 +24,12 @@
 
 #include <string>
 #include <map>
+#include <list>
 #include "creature.h"
+#include "enums.h"
 
 struct Command;
-struct s_defcommands;
+struct commands_t;
 
 class Commands
 {
@@ -37,14 +39,13 @@ class Commands
 		bool loadFromXml();
 		bool reload();
 
-		bool exeCommand(Creature* creature, const std::string& cmd);
+		TalkResult_t onPlayerSay(Player* player, uint16_t channelId, const std::string& words);
 
 		static ReturnValue placeSummon(Creature* creature, const std::string& name);
 
 	protected:
-		bool loaded;
+		static commands_t definedCommands[];
 
-		//commands
 		bool placeNpc(Creature* creature, const std::string& cmd, const std::string& param);
 		bool placeMonster(Creature* creature, const std::string& cmd, const std::string& param);
 		bool placeSummon(Creature* creature, const std::string& cmd, const std::string& param);
@@ -81,28 +82,25 @@ class Commands
 		bool showBanishmentInfo(Creature* creature, const std::string& cmd, const std::string& param);
 		bool mapTeleport(Creature* creature, const std::string& cmd, const std::string& param);
 
-		//table of commands
-		static s_defcommands defined_commands[];
+		typedef std::map<std::string, Command*> CommandsMap;
+		CommandsMap commandsMap;
 
-		typedef std::map<std::string, Command*> CommandMap;
-		CommandMap commandMap;
+		bool loaded;
 };
 
-typedef bool (Commands::*CommandFunc)(Creature*, const std::string&, const std::string&);
+typedef bool (Commands::*CommandCallback)(Creature*, const std::string&, const std::string&);
 
 struct Command
 {
-	CommandFunc f;
-	uint32_t accessLevel;
-	bool loadedAccess;
-	bool logged;
-	bool loadedLogging;
+	CommandCallback callback;
+	uint32_t access, channel;
+	bool logged, sensitive, loaded;
 };
 
-struct s_defcommands
+struct commands_t
 {
 	const char* name;
-	CommandFunc f;
+	CommandCallback callback;
 };
 
 #endif

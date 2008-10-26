@@ -498,10 +498,8 @@ class Game
 		//animation help functions
 		void addCreatureHealth(const Creature* target);
 		void addCreatureHealth(const SpectatorVec& list, const Creature* target);
-		void addAnimatedText(const Position& pos, uint8_t textColor,
-			const std::string& text);
-		void addAnimatedText(const SpectatorVec& list, const Position& pos, uint8_t textColor,
-			const std::string& text);
+		void addAnimatedText(const Position& pos, uint8_t textColor, const std::string& text);
+		void addAnimatedText(const SpectatorVec& list, const Position& pos, uint8_t textColor, const std::string& text);
 		void addMagicEffect(const Position& pos, uint8_t effect, bool ghostMode = false);
 		void addMagicEffect(const SpectatorVec& list, const Position& pos, uint8_t effect, bool ghostMode = false);
 		void addDistanceEffect(const Position& fromPos, const Position& toPos,
@@ -512,10 +510,7 @@ class Game
 		Map* getMap() {return map;}
 		const Map* getMap() const {return map;}
 
-		int getLightHour() {return light_hour;}
-
-		void addCommandTag(std::string tag);
-		void resetCommandTag();
+		int32_t getLightHour() {return light_hour;}
 
 		void npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, bool publicize);
 
@@ -530,8 +525,8 @@ class Game
 		bool getGlobalSaveMessage(int16_t key) const {return globalSaveMessage[key];}
 
 	protected:
-		bool playerSayCommand(Player* player, SpeakClasses type, const std::string& text);
-		bool playerSayTalkAction(Player* player, SpeakClasses type, const std::string& text);
+		bool playerSayCommand(Player* player, const std::string& text, uint16_t channelId);
+		bool playerSayTalkAction(Player* player, const std::string& text, uint16_t channelId);
 		bool playerSaySpell(Player* player, SpeakClasses type, const std::string& text);
 		bool playerWhisper(Player* player, const std::string& text);
 		bool playerYell(Player* player, const std::string& text);
@@ -599,7 +594,5 @@ class Game
 		bool stagesEnabled;
 		uint32_t lastStageLevel;
 		bool useLastStageLevel;
-
-		std::vector<std::string> commandTags;
 };
 #endif

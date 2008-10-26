@@ -22,18 +22,11 @@
 #ifndef __TALKACTION_H__
 #define __TALKACTION_H__
 
-#include <list>
+#include <map>
 #include <string>
 #include "luascript.h"
 #include "baseevents.h"
-#include "const.h"
-
-enum TalkActionResult_t
-{
-	TALKACTION_CONTINUE,
-	TALKACTION_BREAK,
-	TALKACTION_FAILED
-};
+#include "enums.h"
 
 enum TalkActionFilter
 {
@@ -50,7 +43,7 @@ class TalkActions : public BaseEvents
 		TalkActions();
 		virtual ~TalkActions();
 
-		TalkActionResult_t onPlayerSpeak(Player* player, SpeakClasses type, const std::string& words);
+		TalkResult_t onPlayerSay(Player* player, uint16_t channelId, const std::string& words);
 
 	protected:
 		virtual LuaScriptInterface& getScriptInterface();
@@ -59,8 +52,8 @@ class TalkActions : public BaseEvents
 		virtual bool registerEvent(Event* event, xmlNodePtr p);
 		virtual void clear();
 
-		typedef std::list< std::pair<std::string, TalkAction* > > TalkActionList;
-		TalkActionList wordsMap;
+		typedef std::map<std::string, TalkAction*> TalkActionsMap;
+		TalkActionsMap talksMap;
 
 		LuaScriptInterface m_scriptInterface;
 };
@@ -87,10 +80,8 @@ class TalkAction : public Event
 
 		std::string m_words;
 		TalkActionFilter m_filter;
-		uint32_t m_group;
-		uint32_t m_access;
-		bool m_logged;
-		bool m_sensitive;
+		uint32_t m_access, m_channel;
+		bool m_logged, m_sensitive;
 };
 
 #endif

@@ -537,8 +537,7 @@ void formatDate2(time_t time, char* buffer/* atleast 16 */)
 
 Direction getDirection(std::string string)
 {
-	Direction direction = NORTH;
-
+	Direction direction = SOUTH;
 	if(string == "north" || string == "n" || string == "0")
 		direction = NORTH;
 	else if(string == "east" || string == "e" || string == "1")
@@ -561,7 +560,7 @@ Direction getDirection(std::string string)
 
 Direction getReverseDirection(Direction dir)
 {
-	Direction _dir = NORTH;
+	Direction _dir = SOUTH;
 	switch(dir)
 	{
 		case NORTH:
@@ -591,6 +590,7 @@ Direction getReverseDirection(Direction dir)
 		default:
 			break;
 	}
+
 	return _dir;
 }
 
@@ -618,17 +618,18 @@ Position getNextPosition(Direction direction, Position pos)
 			pos.x--;
 			pos.y--;
 			break;
-		case NORTHEAST:
-			pos.x++;
-			pos.y--;
-			break;
 		case SOUTHEAST:
 			pos.x++;
 			pos.y++;
 			break;
+		case NORTHEAST:
+			pos.x++;
+			pos.y--;
+			break;
 		default:
 			break;
 	}
+
 	return pos;
 }
 

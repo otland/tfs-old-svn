@@ -235,7 +235,7 @@ void DatabaseMySQL::freeResult(DBResult* res)
 
 void DatabaseMySQL::keepAlive()
 {
-	uint32_t delay = g_config.getNumber(ConfigManager::SQL_KEEPALIVE);
+	int32_t delay = g_config.getNumber(ConfigManager::SQL_KEEPALIVE);
 	if(time(NULL) > (m_lastUse + delay))
 		executeQuery("SHOW TABLES;");
 

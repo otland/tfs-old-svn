@@ -1393,9 +1393,12 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 			#endif
 		}
 
-		int32_t offline = (time(NULL) - getLastLogout());
-		if(offline > 600)
-			useStamina(int64_t((offline - 600) * -500), false);
+		if(lastLogout)
+		{
+			uint32_t period = (time(NULL) - lastLogout) - 600;
+			if(period)
+				useStamina(-int64_t(period * 500), false);
+		}
 
 		IOLoginData::getInstance()->updateOnlineStatus(guid, true);
 		#ifndef __CONSOLE__
@@ -4713,7 +4716,7 @@ void Player::useStamina(int64_t value, bool ticks)
 	if(ticks)
 		value *= (int64_t)getAttackSpeed();
 
-	stamina = std::min((uint64_t)201660000, (uint64_t)stamina - value));
+	stamina = std::min((uint64_t)201660000, (uint64_t)stamina - value);
 }
 
 void Player::sendCriticalHit() const
