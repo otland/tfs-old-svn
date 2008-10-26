@@ -3327,7 +3327,7 @@ bool Game::playerSayCommand(Player* player, const std::string& text, uint16_t ch
 	if(player->isAccountManager())
 		return internalCreatureSay(player, SPEAK_SAY, text);
 
-	TalkResult_t result = commands.onPlayerSay(player, channelId, text)
+	TalkResult_t result = commands.onPlayerSay(player, channelId, text);
 	if(result == TALK_BREAK)
 		return true;
 	else if(result == TALK_ACCESS && player->getAccessLevel() > 0)

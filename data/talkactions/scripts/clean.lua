@@ -9,6 +9,7 @@ function onSay(cid, words, param)
 		local count = cleanMap()
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Collected " .. count .. " items.")
 	end
+	return TRUE
 end
 
 function prepareClean(minutes, cid)
@@ -26,5 +27,4 @@ function prepareClean(minutes, cid)
 		doBroadcastMessage(message)
 		addEvent(prepareClean, 60000, minutes - 1, cid)
 	end
-	return TRUE
 end
