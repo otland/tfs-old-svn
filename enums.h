@@ -52,14 +52,6 @@ enum OperatingSystem_t
 	CLIENTOS_WINDOWS = 0x02
 };
 
-enum TalkResult_t
-{
-	TALK_CONTINUE,
-	TALK_BREAK,
-	TALK_FAILED,
-	TALK_ACCESS
-};
-
 enum RaceType_t
 {
 	RACE_NONE	= 0,

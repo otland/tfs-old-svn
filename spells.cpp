@@ -49,39 +49,42 @@ Spells::~Spells()
 	clear();
 }
 
-TalkResult_t Spells::onPlayerSay(Player* player, SpeakClasses type, const std::string& words)
+bool Spells::onPlayerSay(Player* player, const std::string& words)
 {
 	std::string wordstring = words;
 	trimString(wordstring);
 
 	InstantSpell* instantSpell = getInstantSpell(wordstring);
 	if(!instantSpell)
-		return TALK_CONTINUE;
+		return false;
 
 	std::string param = "";
 	if(instantSpell->getHasParam())
 	{
-		size_t loc = instantSpell->getWords().length();
-		std::string paramstring = wordstring.substr(loc, (size_t)wordstring.length() - loc);
-		if(!paramstring.empty() && paramstring[0] == ' ')
+		size_t size = instantSpell->getWords().length();
+		std::string str = wordstring.substr(size, (size_t)wordstring.length() - size);
+		if(!str.empty() && str[0] == ' ')
 		{
-			loc = paramstring.find('"', 0);
+			size = str.find('"', 0);
 			size_t tmp = std::string::npos;
-			if(loc != tmp)
-				tmp = paramstring.find('"', loc + 1);
+			if(size != tmp)
+				tmp = paramstring.find('"', size + 1);
 
 			if(tmp == std::string::npos)
-				tmp = paramstring.length();
+				tmp = str.length();
 
-			param = paramstring.substr(loc + 1, tmp - loc - 1);
+			param = str.substr(size + 1, tmp - size - 1);
 			trimString(param);
 		}
 	}
 
 	if(!instantSpell->playerCastInstant(player, param))
-		return TALK_FAILED;
+		return true;
 
-	return TALK_BREAK;
+	if(g_config.getBool(ConfigManager::SPELL_NAME_INSTEAD_WORDS))
+		return g_game.internalCreatureSay(player, SPEAK_SAY, instantSpell->getName());
+
+	return g_game.internalCreatureSay(player, SPEAK_SAY, words);
 }
 
 void Spells::clear()

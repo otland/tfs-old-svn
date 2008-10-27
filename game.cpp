@@ -3282,13 +3282,15 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 		return false;
 	}
 
-	if(playerSayTalkAction(player, text, channelId))
-		return true;
-
-	if(playerSaySpell(player, type, text))
-		return true;
-
 	player->removeMessageBuffer();
+	if(!player->isAccountManager())
+	{
+		if(g_talkActions->onPlayerSay(player, channelId, text))
+			return true;
+
+		if(g_spells->onPlayerSay(player, text))
+			return true;
+	}
 
 	switch(type)
 	{
@@ -3328,60 +3330,6 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 		default:
 			break;
 	}
-	return false;
-}
-
-bool Game::playerSayTalkAction(Player* player, const std::string& text, uint16_t channelId)
-{
-	if(player->isAccountManager())
-		return internalCreatureSay(player, SPEAK_SAY, text);
-
-	switch(g_talkActions->onPlayerSay(player, channelId, text))
-	{
-		case TALK_CONTINUE:
-			break;
-		case TALK_ACCESS:
-		{
-			if(player->getAccessLevel() > 0)
-				player->sendTextMessage(MSG_STATUS_SMALL, "You cannot execute this talkaction.");
-
-			return false;
-			break;
-		}
-		default:
-			return true;
-			break;
-	}
-
-	return false;
-}
-
-bool Game::playerSaySpell(Player* player, SpeakClasses type, const std::string& text)
-{
-	if(player->isAccountManager())
-		return internalCreatureSay(player, SPEAK_SAY, text);
-
-	switch(g_spells->onPlayerSay(player, type, text))
-	{
-		case TALK_CONTINUE:
-			break;
-		case TALK_BREAK:
-		{
-			std::string ret = text;
-			if(g_config.getBool(ConfigManager::SPELL_NAME_INSTEAD_WORDS))
-			{
-				if(InstantSpell* tmp = g_spells->getInstantSpell(ret))
-					ret = tmp->getName();
-			}
-
-			return internalCreatureSay(player, SPEAK_SAY, ret);
-			break;
-		}
-		default:
-			return true;
-			break;
-	}
-
 	return false;
 }
 

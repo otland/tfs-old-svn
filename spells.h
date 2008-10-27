@@ -53,7 +53,7 @@ class Spells : public BaseEvents
 		uint32_t getInstantSpellCount(const Player* player);
 		InstantSpell* getInstantSpellByIndex(const Player* player, uint32_t index);
 
-		TalkResult_t onPlayerSay(Player* player, SpeakClasses type, const std::string& words);
+		bool onPlayerSay(Player* player, const std::string& words);
 
 		static Position getCasterPosition(Creature* creature, Direction dir);
 		virtual std::string getScriptBaseName();

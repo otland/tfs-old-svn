@@ -118,7 +118,7 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p)
 	return true;
 }
 
-TalkResult_t TalkActions::onPlayerSay(Player* player, uint16_t channelId, const std::string& words)
+bool TalkActions::onPlayerSay(Player* player, uint16_t channelId, const std::string& words)
 {
 	std::string cmdstring[TALKFILTER_LAST] = words, paramstring[TALKFILTER_LAST] = "";
 	size_t loc = words.find('"', 0);
@@ -148,10 +148,18 @@ TalkResult_t TalkActions::onPlayerSay(Player* player, uint16_t channelId, const 
 	}
 
 	if(!talkAction || (talkAction->getChannel() != -1 && talkAction->getChannel() != channelId))
-		return TALK_CONTINUE;
+		return false;
 
 	if(talkAction->getAccess() > player->getAccessLevel() || player->isAccountManager())
-		return TALK_ACCESS;
+	{
+		if(player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
+		{
+			player->sendTextMessage(MSG_STATUS_SMALL, "You cannot execute this talkaction.");
+			return true;
+		}
+
+		return false;
+	}
 
 	if(talkAction->isLogged())
 	{
@@ -171,15 +179,15 @@ TalkResult_t TalkActions::onPlayerSay(Player* player, uint16_t channelId, const 
 	if(talkAction->isScripted())
 	{
 		if(talkAction->executeSay(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]))
-			return TALK_BREAK;
+			return true;
 	}
 	else if(talkAction->callback)
 	{
 		if(talkAction->callback(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]))
-			return TALK_BREAK;
+			return true;
 	}
 
-	return TALK_FAILED;
+	return false;
 }
 
 TalkActionCallback_t TalkAction::definedCallbacks[] =

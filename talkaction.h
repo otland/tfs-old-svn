@@ -44,7 +44,7 @@ class TalkActions : public BaseEvents
 		TalkActions();
 		virtual ~TalkActions();
 
-		TalkResult_t onPlayerSay(Player* player, uint16_t channelId, const std::string& words);
+		bool onPlayerSay(Player* player, uint16_t channelId, const std::string& words);
 
 	protected:
 		virtual LuaScriptInterface& getScriptInterface();
@@ -71,8 +71,8 @@ class TalkAction : public Event
 		virtual bool configureEvent(xmlNodePtr p);
 		virtual bool loadFunction(const std::string& functionName);
 
-		int32_t executeSay(Creature* creature, const std::string& words, const std::string& param);
 		TalkActionCallback* callback;
+		int32_t executeSay(Creature* creature, const std::string& words, const std::string& param);
 
 		std::string getWords() const {return m_words;}
 		TalkActionFilter getFilter() const {return m_filter;}
