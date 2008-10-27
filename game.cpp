@@ -3273,25 +3273,27 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 	if(!player || player->isRemoved())
 		return false;
 
-	uint32_t muteTime = player->isMuted();
-	if(muteTime > 0)
+	if(player->isMuted())
 	{
 		char buffer[75];
-		sprintf(buffer, "You are still muted for %d seconds.", muteTime);
+		sprintf(buffer, "You are still muted for %d seconds.", player->isMuted());
 		player->sendTextMessage(MSG_STATUS_SMALL, buffer);
 		return false;
 	}
 
-	player->removeMessageBuffer();
-	if(!player->isAccountManager())
+	if(player->isAccountManager())
 	{
-		if(g_talkActions->onPlayerSay(player, channelId, text))
-			return true;
-
-		if(g_spells->onPlayerSay(player, text))
-			return true;
+		player->removeMessageBuffer();
+		return internalCreatureSay(player, SPEAK_SAY, text);
 	}
 
+	if(g_talkActions->onPlayerSay(player, channelId, text))
+		return true;
+
+	if(g_spells->onPlayerSay(player, text))
+		return true;
+
+	player->removeMessageBuffer();
 	switch(type)
 	{
 		case SPEAK_SAY:

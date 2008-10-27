@@ -1805,13 +1805,13 @@ uint32_t Player::isMuted()
 
 void Player::addMessageBuffer()
 {
-	if(MessageBufferCount > 0 && Player::maxMessageBuffer != 0 && !hasFlag(PlayerFlag_CannotBeMuted))
+	if(!hasFlag(PlayerFlag_CannotBeMuted) && Player::maxMessageBuffer != 0 && MessageBufferCount > 0)
 		MessageBufferCount--;
 }
 
 void Player::removeMessageBuffer()
 {
-	if(!hasFlag(PlayerFlag_CannotBeMuted) && MessageBufferCount <= Player::maxMessageBuffer + 1 && Player::maxMessageBuffer != 0)
+	if(!hasFlag(PlayerFlag_CannotBeMuted) && Player::maxMessageBuffer != 0 && MessageBufferCount <= Player::maxMessageBuffer + 1)
 	{
 		MessageBufferCount++;
 		if(MessageBufferCount > Player::maxMessageBuffer)
