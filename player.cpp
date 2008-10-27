@@ -3925,12 +3925,9 @@ void Player::setPromotionLevel(uint32_t pLevel)
 
 double Player::getLostPercent(lossTypes_t lossType)
 {
-	if(!lossPercent[lossType])
-		return 0;
-
 	uint32_t lostPercent = lossPercent[lossType];
-	if(g_game.getWorldType() == WORLD_TYPE_PVP_ENFORCED)
-		return (double)lostPercent / 100;
+	if(!lostPercent)
+		return 0;
 
 	for(int16_t i = 1; i < 6; i++)
 	{
