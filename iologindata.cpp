@@ -424,37 +424,39 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	if(loginPos.x == 0 && loginPos.y == 0 && loginPos.z == 0)
 		player->loginPosition = player->masterPos;
 
-	player->guildRankId = result->getDataInt("rank_id");
-	query.str("");
-	if(player->guildRankId > 0)
+	const uint32_t rankId = result->getDataInt("rank_id");
+	const std::string nick = result->getDataString("guildnick");
+	db->freeResult(result);
+	if(rankId > 0)
 	{
-		player->guildNick = result->getDataString("guildnick");
-		db->freeResult(result);
-		query << "SELECT `guild_ranks`.`name` AS `rank`, `guild_ranks`.`guild_id` AS `guildid`, `guild_ranks`.`level` AS `level`, `guilds`.`name` AS `guildname` FROM `guild_ranks`, `guilds` WHERE `guild_ranks`.`id` = " << player->guildRankId << " AND `guild_ranks`.`guild_id` = `guilds`.`id`";
+		query.str("");
+		query << "SELECT `guild_ranks`.`name` AS `rank`, `guild_ranks`.`guild_id` AS `guildid`, `guild_ranks`.`level` AS `level`, `guilds`.`name` AS `guildname` FROM `guild_ranks`, `guilds` WHERE `guild_ranks`.`id` = " << rankId << " AND `guild_ranks`.`guild_id` = `guilds`.`id`";
 		if((result = db->storeQuery(query.str())))
 		{
 			player->guildName = result->getDataString("guildname");
 			player->guildLevel = result->getDataInt("level");
 			player->guildId = result->getDataInt("guildid");
 			player->guildRank = result->getDataString("rank");
+			player->guildRankId = rankId;
+			player->guildNick = nick;
 		}
+
 		db->freeResult(result);
 	}
 	else if(g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
 	{
-		db->freeResult(result);
+		query.str("");
 		query << "SELECT `guild_id` FROM `guild_invites` WHERE `player_id` = " << player->getGUID();
 		if((result = db->storeQuery(query.str())))
 		{
 			do
-				player->invitedToGuildsList.push_back(result->getDataInt("guild_id"));
+				player->invitedToGuildsList.push_back((uint32_t)result->getDataInt("guild_id"));
 			while(result->next());
 			db->freeResult(result);
 		}
 	}
-	query.str("");
 
-	//get password
+	query.str("");
 	query << "SELECT `password` FROM `accounts` WHERE `id` = " << accId;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -487,6 +489,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 			}
 		}
 		while(result->next());
+
 		db->freeResult(result);
 	}
 
@@ -500,10 +503,9 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 			player->learnedInstantSpellList.push_back(spellName);
 		}
 		while(result->next());
+
 		db->freeResult(result);
 	}
-	else
-		query.str("");
 
 	//load inventory items
 	ItemMap itemMap;
@@ -512,30 +514,26 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	if((result = db->storeQuery(query.str())))
 	{
 		loadItems(itemMap, result);
-
-		ItemMap::reverse_iterator it;
-		ItemMap::iterator it2;
-
-		for(it = itemMap.rbegin(); it != itemMap.rend(); ++it)
+		ItemMap::iterator it;
+		for(ItemMap::reverse_iterator rit = itemMap.rbegin(); rit != itemMap.rend(); ++rit)
 		{
-			Item* item = it->second.first;
-			int32_t pid = it->second.second;
+			Item* item = rit->second.first;
+			int32_t pid = rit->second.second;
 			if(pid >= 1 && pid <= 10)
 				player->__internalAddThing(pid, item);
 			else
 			{
-				it2 = itemMap.find(pid);
-				if(it2 != itemMap.end())
+				it = itemMap.find(pid);
+				if(it != itemMap.end())
 				{
-					if(Container* container = it2->second.first->getContainer())
+					if(Container* container = it->second.first->getContainer())
 						container->__internalAddThing(item);
 				}
 			}
 		}
+
 		db->freeResult(result);
 	}
-	else
-		query.str("");
 
 	//load depot items
 	itemMap.clear();
@@ -544,12 +542,11 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	if((result = db->storeQuery(query.str())))
 	{
 		loadItems(itemMap, result);
-		ItemMap::reverse_iterator it;
-		ItemMap::iterator it2;
-		for(it = itemMap.rbegin(); it != itemMap.rend(); ++it)
+		ItemMap::iterator it;
+		for(ItemMap::reverse_iterator rit = itemMap.rbegin(); rit != itemMap.rend(); ++rit)
 		{
-			Item* item = it->second.first;
-			int32_t pid = it->second.second;
+			Item* item = rit->second.first;
+			int32_t pid = rit->second.second;
 			if(pid >= 0 && pid < 100)
 			{
 				if(Container* c = item->getContainer())
@@ -564,18 +561,17 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 			}
 			else
 			{
-				it2 = itemMap.find(pid);
-				if(it2 != itemMap.end())
+				it = itemMap.find(pid);
+				if(it != itemMap.end())
 				{
-					if(Container* container = it2->second.first->getContainer())
+					if(Container* container = it->second.first->getContainer())
 						container->__internalAddThing(item);
 				}
 			}
 		}
+
 		db->freeResult(result);
 	}
-	else
-		query.str("");
 
 	//load storage map
 	query.str("");
@@ -583,16 +579,11 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	if((result = db->storeQuery(query.str())))
 	{
 		do
-		{
-			uint32_t key = result->getDataInt("key");
-			int32_t value = result->getDataLong("value");
-			player->addStorageValue(key, value);
-		}
+			player->addStorageValue((uint32_t)result->getDataInt("key"), result->getDataLong("value"));
 		while(result->next());
+
 		db->freeResult(result);
 	}
-	else
-		query.str("");
 
 	//load vip
 	query.str("");
@@ -607,10 +598,9 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 				player->addVIP(vid, vname, false, true);
 		}
 		while(result->next());
+
 		db->freeResult(result);
 	}
-	else
-		query.str("");
 
 	player->updateBaseSpeed();
 	player->updateInventoryWeigth();
@@ -633,8 +623,7 @@ void IOLoginData::loadItems(ItemMap& itemMap, DBResult* result)
 		PropStream propStream;
 		propStream.init(attr, attrSize);
 
-		Item* item = Item::CreateItem(type, count);
-		if(item)
+		if(Item* item = Item::CreateItem(type, count))
 		{
 			if(!item->unserializeAttr(propStream))
 				std::cout << "WARNING: Serialize error in IOLoginData::loadItems" << std::endl;
@@ -711,6 +700,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		{
 			if(!(*it)->serialize(propWriteStream))
 				return false;
+
 			propWriteStream.ADD_UCHAR(CONDITIONATTR_END);
 		}
 	}
@@ -754,14 +744,12 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		return false;
 
 	// skills
-	query.str("");
 	for(int32_t i = 0; i <= 6; i++)
 	{
+		query.str("");
 		query << "UPDATE `player_skills` SET `value` = " << player->skills[i][SKILL_LEVEL] << ", `count` = " << player->skills[i][SKILL_TRIES] << " WHERE `player_id` = " << player->getGUID() << " AND `skillid` = " << i;
 		if(!db->executeQuery(query.str()))
 			return false;
-
-		query.str("");
 	}
 
 	// learned spells
@@ -773,10 +761,9 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	char buffer[150];
 	DBInsert query_insert(db);
 	query_insert.setQuery("INSERT INTO `player_spells` (`player_id`, `name`) VALUES ");
-	for(LearnedInstantSpellList::const_iterator it = player->learnedInstantSpellList.begin();
-			it != player->learnedInstantSpellList.end(); ++it)
+	for(LearnedInstantSpellList::const_iterator it = player->learnedInstantSpellList.begin(); it != player->learnedInstantSpellList.end(); ++it)
 	{
-		sprintf(buffer, "%d,%s", player->getGUID(), db->escapeString(*it).c_str());
+		sprintf(buffer, "%d, %s", player->getGUID(), db->escapeString(*it).c_str());
 		if(!query_insert.addRow(buffer))
 			return false;
 	}
@@ -790,16 +777,14 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	if(!db->executeQuery(query.str()))
 		return false;
 
-	query_insert.setQuery("INSERT INTO `player_items` (`player_id`, `pid`, `sid`, `itemtype`, `count`, `attributes`) VALUES ");
-
 	ItemBlockList itemList;
-	Item* item;
 	for(int32_t slotId = 1; slotId < 11; ++slotId)
 	{
-		if((item = player->inventory[slotId]))
+		if(Item* item = player->inventory[slotId])
 			itemList.push_back(itemBlock(slotId, item));
 	}
 
+	query_insert.setQuery("INSERT INTO `player_items` (`player_id`, `pid`, `sid`, `itemtype`, `count`, `attributes`) VALUES ");
 	if(!saveItems(player, itemList, query_insert))
 		return false;
 
@@ -809,11 +794,11 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	if(!db->executeQuery(query.str()))
 		return false;
 
-	query_insert.setQuery("INSERT INTO `player_depotitems` (`player_id`, `pid`, `sid`, `itemtype`, `count`, `attributes`) VALUES ");
 	itemList.clear();
 	for(DepotMap::iterator it = player->depots.begin(); it != player->depots.end(); ++it)
 		itemList.push_back(itemBlock(it->first, it->second));
 
+	query_insert.setQuery("INSERT INTO `player_depotitems` (`player_id`, `pid`, `sid`, `itemtype`, `count`, `attributes`) VALUES ");
 	if(!saveItems(player, itemList, query_insert))
 		return false;
 
@@ -822,9 +807,9 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	if(!db->executeQuery(query.str()))
 		return false;
 
-	query_insert.setQuery("INSERT INTO `player_storage` (`player_id`, `key`, `value`) VALUES ");
 	player->genReservedStorageRange();
-	for(StorageMap::const_iterator cit = player->getStorageIteratorBegin(); cit != player->getStorageIteratorEnd(); cit++)
+	query_insert.setQuery("INSERT INTO `player_storage` (`player_id`, `key`, `value`) VALUES ");
+	for(StorageMap::const_iterator cit = player->getStorageIteratorBegin(); cit != player->getStorageIteratorEnd(); ++cit)
 	{
 		sprintf(buffer, "%u, %u, %d", player->getGUID(), cit->first, cit->second);
 		if(!query_insert.addRow(buffer))
@@ -850,6 +835,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 			if(!query_insert.addRow(buffer))
 				return false;
 		}
+
 		if(!query_insert.execute())
 			return false;
 	}
@@ -934,6 +920,7 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 				return false;
 		}
 	}
+
 	if(!query_insert.execute())
 		return false;
 
@@ -972,10 +959,9 @@ const PlayerGroup* IOLoginData::getPlayerGroup(uint32_t groupId)
 	else
 	{
 		Database* db = Database::getInstance();
-
-		DBQuery query;
 		DBResult* result;
 
+		DBQuery query;
 		query << "SELECT `name`, `flags`, `customflags`, `access`, `violationaccess`, `maxdepotitems`, `maxviplist`, `outfit` FROM `groups` WHERE `id` = " << groupId;
 		if(!(result = db->storeQuery(query.str())))
 			return NULL;
@@ -1000,9 +986,9 @@ const PlayerGroup* IOLoginData::getPlayerGroup(uint32_t groupId)
 const PlayerGroup* IOLoginData::getPlayerGroupByAccount(uint32_t accId)
 {
 	Database* db = Database::getInstance();
-	DBQuery query;
 	DBResult* result;
 
+	DBQuery query;
 	query << "SELECT `group_id` FROM `accounts` WHERE `id` = " << accId;
 	if((result = db->storeQuery(query.str())))
 	{
