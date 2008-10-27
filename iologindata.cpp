@@ -651,14 +651,14 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		player->preSave();
 
 	Database* db = Database::getInstance();
-	DBQuery query;
 	DBResult* result;
 
+	DBQuery query;
 	query << "SELECT `save` FROM `players` WHERE `id` = " << player->getGUID();
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	bool save = result->getDataInt("save");
+	const bool save = result->getDataInt("save");
 	db->freeResult(result);
 
 	DBTransaction trans(db);
@@ -1216,6 +1216,7 @@ uint32_t IOLoginData::getAccountNumberByName(std::string name)
 bool IOLoginData::changeName(uint32_t guid, std::string newName, std::string oldName)
 {
 	Database* db = Database::getInstance();
+
 	DBQuery query;
 	query << "UPDATE `players` SET `name` = " << db->escapeString(newName) << " WHERE `id` = " << guid;
 	if(db->executeQuery(query.str()))
@@ -1230,6 +1231,7 @@ bool IOLoginData::changeName(uint32_t guid, std::string newName, std::string old
 		nameCacheMap[guid] = newName;
 		return true;
 	}
+
 	return false;
 }
 

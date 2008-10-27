@@ -2361,6 +2361,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, bool isLogin)
 						{
 							if(tempstring.size())
 								AddTextMessage(msg, MSG_STATUS_DEFAULT, tempstring.c_str());
+
 							tempstring = "Your last visit was on ";
 							time_t lastLogin = player->getLastLoginSaved();
 							tempstring += ctime(&lastLogin);
@@ -2369,7 +2370,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, bool isLogin)
 						}
 						AddTextMessage(msg, MSG_STATUS_DEFAULT, tempstring);
 					}
-					else if(player->isAccountManager())
+					else
 					{
 						switch(player->accountManager)
 						{

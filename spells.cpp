@@ -82,21 +82,19 @@ bool Spells::onPlayerSay(Player* player, const std::string& words)
 		return true;
 
 	if(g_config.getBool(ConfigManager::SPELL_NAME_INSTEAD_WORDS))
-		return g_game.internalCreatureSay(player, SPEAK_SAY, instantSpell->getName());
+		return g_game.internalCreatureSay(player, SPEAK_SAY, instantSpell->getName() + (param.length() ? ": " + param : ""));
 
-	return g_game.internalCreatureSay(player, SPEAK_SAY, words);
+	return g_game.internalCreatureSay(player, SPEAK_SAY, wordstring);
 }
 
 void Spells::clear()
 {
-	RunesMap::iterator it;
-	for(it = runes.begin(); it != runes.end(); ++it)
-		delete it->second;
+	for(RunesMap::iterator rit = runes.begin(); rit != runes.end(); ++rit)
+		delete rit->second;
 	runes.clear();
 
-	InstantsMap::iterator it2;
-	for(it2 = instants.begin(); it2 != instants.end(); ++it2)
-		delete it2->second;
+	for(InstantsMap::iterator it = instants.begin(); it != instants.end(); ++it)
+		delete it->second;
 	instants.clear();
 }
 
