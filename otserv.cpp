@@ -83,14 +83,13 @@
 #endif
 
 IPList serverIPs;
-
+extern GlobalEvents* g_globalEvents;
 extern AdminProtocolConfig* g_adminConfig;
 Game g_game;
 Npcs g_npcs;
 ConfigManager g_config;
 Monsters g_monsters;
 Vocations g_vocations;
-extern GlobalEvents* g_globalEvents;
 
 #ifndef __CONSOLE__
 #ifdef WIN32
@@ -250,7 +249,6 @@ void mainLoader()
 
 	std::cout << std::endl;
 
-	// read global config
 	std::cout << ">> Loading config" << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading config");
@@ -327,7 +325,6 @@ void mainLoader()
 			std::cout << "> No tables were optimized." << std::endl;
 	}
 
-	//load vocations
 	std::cout << ">> Loading vocations" << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading vocations");
@@ -335,7 +332,6 @@ void mainLoader()
 	if(!g_vocations.loadFromXml())
 		startupErrorMessage("Unable to load vocations!");
 
-	// load item data
 	std::cout << ">> Loading items" << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading items");
@@ -379,7 +375,7 @@ void mainLoader()
 		startupErrorMessage("Unable to load outfits!");
 
 	g_adminConfig = new AdminProtocolConfig();
-	std::cout << ">> Loading admin protocol config" << std::endl;
+	std::cout << ">> Loading administration protocol config" << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading admin protocol config");
 	#endif
@@ -410,7 +406,7 @@ void mainLoader()
 
 	std::cout << ">> Loading map and spawns..." << std::endl;
 	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading map");
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading map and spawns...");
 	#endif
 	if(!g_game.loadMap(g_config.getString(ConfigManager::MAP_NAME)))
 		startupErrorMessage("");

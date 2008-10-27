@@ -197,7 +197,6 @@ void Game::setGameState(GameState_t newState)
 void Game::saveGameState(bool savePlayers)
 {
 	std::cout << "> Saving server..." << std::endl;
-
 	if(savePlayers)
 	{
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
@@ -230,6 +229,7 @@ int32_t Game::loadMap(std::string filename)
 	Player::maxMessageBuffer = g_config.getNumber(ConfigManager::MAX_MESSAGEBUFFER);
 	Monster::despawnRange = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRANGE);
 	Monster::despawnRadius = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRADIUS);
+
 	return map->loadMap(getFilePath(FILE_TYPE_OTHER, std::string("world/" + filename + ".otbm")));
 }
 
@@ -421,10 +421,7 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 
 void Game::internalGetPosition(Item* item, Position& pos, uint8_t& stackpos)
 {
-	pos.x = 0;
-	pos.y = 0;
-	pos.z = 0;
-	stackpos = 0;
+	pos.x = pos.y = pos.z = stackpos = 0;
 
 	Cylinder* topParent = item->getTopParent();
 	if(topParent)
