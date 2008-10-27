@@ -51,10 +51,10 @@ Spells::~Spells()
 
 bool Spells::onPlayerSay(Player* player, const std::string& words)
 {
-	std::string wordstring = words;
-	trimString(wordstring);
+	std::string reWords = words;
+	trimString(reWords);
 
-	InstantSpell* instantSpell = getInstantSpell(wordstring);
+	InstantSpell* instantSpell = getInstantSpell(reWords);
 	if(!instantSpell)
 		return false;
 
@@ -62,18 +62,18 @@ bool Spells::onPlayerSay(Player* player, const std::string& words)
 	if(instantSpell->getHasParam())
 	{
 		size_t size = instantSpell->getWords().length();
-		std::string str = wordstring.substr(size, (size_t)wordstring.length() - size);
-		if(!str.empty() && str[0] == ' ')
+		std::string tmp = rewords.substr(size, (size_t)reWords.length() - size);
+		if(!tmp.empty() && tmp[0] == ' ')
 		{
-			size = str.find('"', 0);
-			size_t tmp = std::string::npos;
-			if(size != tmp)
-				tmp = paramstring.find('"', size + 1);
+			size = tmp.find('"', 0);
+			size_t tmpSize = std::string::npos;
+			if(size != tmpSize)
+				tmpSize = tmp.find('"', size + 1);
 
-			if(tmp == std::string::npos)
-				tmp = str.length();
+			if(tmpSize == std::string::npos)
+				tmpSize = tmp.length();
 
-			param = str.substr(size + 1, tmp - size - 1);
+			param = tmp.substr(size + 1, tmpSize - size - 1);
 			trimString(param);
 		}
 	}
@@ -82,9 +82,12 @@ bool Spells::onPlayerSay(Player* player, const std::string& words)
 		return true;
 
 	if(g_config.getBool(ConfigManager::SPELL_NAME_INSTEAD_WORDS))
-		return g_game.internalCreatureSay(player, SPEAK_SAY, instantSpell->getName() + (param.length() ? ": " + param : ""));
+	{
+		param = (param.length() ? ": " + param : "");
+		return g_game.internalCreatureSay(player, SPEAK_SAY, instantSpell->getName() + param);
+	}
 
-	return g_game.internalCreatureSay(player, SPEAK_SAY, wordstring);
+	return g_game.internalCreatureSay(player, SPEAK_SAY, reWords);
 }
 
 void Spells::clear()
