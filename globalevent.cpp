@@ -78,6 +78,12 @@ bool GlobalEvents::registerEvent(Event* event, xmlNodePtr p)
 	return true;
 }
 
+void GlobalEvents::startup()
+{
+	Scheduler::getScheduler().addEvent(createSchedulerTask(GLOBAL_THINK_INTERVAL,
+		boost::bind(&GlobalEvents::onThink, this, GLOBAL_THINK_INTERVAL)));
+}
+
 void GlobalEvents::onThink(uint32_t interval)
 {
 	uint32_t timeNow = time(NULL);
@@ -87,7 +93,7 @@ void GlobalEvents::onThink(uint32_t interval)
 		if(timeNow > (globalEvent->getLastExecution() + globalEvent->getInterval()))
 		{
 			globalEvent->setLastExecution(timeNow);
-			if(globalEvent->executeThink(interval, timeNow) != 1)
+			if(!globalEvent->executeThink(interval, timeNow))
 				std::cout << "[Error - GlobalEvents::onThink] Couldn't execute event: " << globalEvent->getName() << std::endl;
 		}
 	}
@@ -96,10 +102,9 @@ void GlobalEvents::onThink(uint32_t interval)
 		boost::bind(&GlobalEvents::onThink, this, interval)));
 }
 
-GlobalEvent::GlobalEvent(LuaScriptInterface* _interface) :
-Event(_interface), m_lastExecution(time(NULL))
+GlobalEvent::GlobalEvent(LuaScriptInterface* _interface) : Event(_interface)
 {
-	//
+	m_lastExecution = time(NULL);
 }
 
 bool GlobalEvent::configureEvent(xmlNodePtr p)

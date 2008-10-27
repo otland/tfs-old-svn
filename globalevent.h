@@ -30,6 +30,7 @@
 #include "const.h"
 #include "scheduler.h"
 
+#define GLOBAL_THINK_INTERVAL 1000
 class GlobalEvent;
 
 class GlobalEvents : public BaseEvents
@@ -38,6 +39,7 @@ class GlobalEvents : public BaseEvents
 		GlobalEvents();
 		virtual ~GlobalEvents();
 
+		void startup();
 		void onThink(uint32_t interval);
 
 	protected:

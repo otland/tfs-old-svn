@@ -138,6 +138,7 @@ void Game::setGameState(GameState_t newState)
 				loadGameState();
 				timedHighscoreUpdate();
 
+				IOLoginData::getInstance()->resetOnlineStatus();
 				if(g_config.getBool(ConfigManager::REMOVE_PREMIUM_ON_INIT))
 					IOLoginData::getInstance()->updatePremiumDays();
 				break;

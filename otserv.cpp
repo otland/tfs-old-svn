@@ -285,7 +285,6 @@ void mainLoader()
 		std::cout << "> Using plaintext passwords" << std::endl;
 	}
 
-	//load RSA key
 	std::cout << ">> Loading RSA key" << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading RSA Key");
@@ -404,15 +403,10 @@ void mainLoader()
 		g_game.setWorldType(WORLD_TYPE_PVP_ENFORCED);
 	else
 	{
-		std::cout << std::endl << "> ERROR: Unknown world type: " << g_config.getString(ConfigManager::WORLD_TYPE) << std::endl;
-		startupErrorMessage("");
+		std::cout << std::endl;
+		startupErrorMessage("Unknown world type: " + g_config.getString(ConfigManager::WORLD_TYPE));
 	}
 	std::cout << asUpperCaseString(worldType) << std::endl;
-
-	Status* status = Status::getInstance();
-	status->setMaxPlayersOnline(g_config.getNumber(ConfigManager::MAX_PLAYERS));
-	status->setMapAuthor(g_config.getString(ConfigManager::MAP_AUTHOR));
-	status->setMapName(g_config.getString(ConfigManager::MAP_NAME));
 
 	std::cout << ">> Loading map and spawns..." << std::endl;
 	#ifndef __CONSOLE__
@@ -421,13 +415,18 @@ void mainLoader()
 	if(!g_game.loadMap(g_config.getString(ConfigManager::MAP_NAME)))
 		startupErrorMessage("");
 
+	Status* status = Status::getInstance();
+	status->setMaxPlayersOnline(g_config.getNumber(ConfigManager::MAX_PLAYERS));
+	status->setMapAuthor(g_config.getString(ConfigManager::MAP_AUTHOR));
+	status->setMapName(g_config.getString(ConfigManager::MAP_NAME));
+
 	std::cout << ">> All modules were loaded, server starting up..." << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> All modules were loaded, server starting up...");
 	#endif
 	g_game.setGameState(GAME_STATE_INIT);
 
-	if(g_config.getBool(ConfigManager::GLOBALSAVE_ENABLED) && g_config.getNumber(ConfigManager::GLOBALSAVE_H) >= 0 && g_config.getNumber(ConfigManager::GLOBALSAVE_H) <= 24)
+	if(g_config.getBool(ConfigManager::GLOBALSAVE_ENABLED) && g_config.getNumber(ConfigManager::GLOBALSAVE_H) >= 1 && g_config.getNumber(ConfigManager::GLOBALSAVE_H) <= 24)
 	{
 		int32_t prepareGlobalSaveHour = g_config.getNumber(ConfigManager::GLOBALSAVE_H) - 1;
 		int32_t hoursLeft = 0, minutesLeft = 0, minutesToRemove = 0;
@@ -497,10 +496,7 @@ void mainLoader()
 		if(host != 0)
 			resolvedIp = *(uint32_t*)host->h_addr;
 		else
-		{
-			std::cout << "ERROR: Cannot resolve " << ip << "!" << std::endl;
-			startupErrorMessage("");
-		}
+			startupErrorMessage("Cannot resolve " + ip + "!");
 	}
 
 	serverIPs.push_back(std::make_pair(resolvedIp, 0));
@@ -510,9 +506,8 @@ void mainLoader()
 		std::cout << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user! It is recommended to execute as a normal user." << std::endl;
 	#endif
 
-	IOLoginData::getInstance()->resetOnlineStatus();
+	g_globalEvents->startup();
 	g_game.setGameState(GAME_STATE_NORMAL);
-	g_globalEvents->onThink(1000);
 	OTSYS_THREAD_SIGNAL_SEND(g_loaderSignal);
 }
 
