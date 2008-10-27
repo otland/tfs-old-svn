@@ -2035,7 +2035,7 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 				value = player->getTown();
 				break;
 			case PlayerInfoPromotionLevel:
-				value = player->getPromotionLevel();
+				value = player->promotionLevel;
 				break;
 			case PlayerInfoGUID:
 				value = player->getGUID();

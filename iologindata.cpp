@@ -1274,7 +1274,7 @@ bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName,
 
 DeleteCharacter_t IOLoginData::deleteCharacter(uint32_t accountId, const std::string characterName)
 {
-	if(Player* player = g_game.getPlayerByName(characterName))
+	if(g_game.getPlayerByName(characterName))
 		return DELETE_ONLINE;
 
 	Database* db = Database::getInstance();

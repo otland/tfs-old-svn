@@ -441,8 +441,8 @@ bool isValidName(std::string text)
 
 		if(size != 0)
 		{
-			if(!isLowercaseLetter(text[size]) && text[size] != 32 && text[size] != 39 && text[size] != 45
-				|| isUppercaseLetter(text[size]) && text[size - 1] != 32)
+			if((!isLowercaseLetter(text[size]) && text[size] != 32 && text[size] != 39 && text[size] != 45)
+				|| (isUppercaseLetter(text[size]) && text[size - 1] != 32))
 				return false;
 		}
 		else if(!isUppercaseLetter(text[0]))
