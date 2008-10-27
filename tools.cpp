@@ -413,9 +413,22 @@ bool isValidPassword(std::string text)
 
 bool isValidName(std::string text)
 {
-	uint32_t textLength = text.length(), lenBeforeSpace = 0;
+	uint32_t textLength = text.length(), lenBeforeSpace = 0, lenBeforeQuote = 0;
 	for(uint32_t size = 0; size < textLength; size++)
 	{
+		if(text[size] != 39)
+		{
+			if(text[size] != 32)
+				lenBeforeQuote++;
+		}
+		else
+		{
+			if(lenBeforeQuote == 0)
+				return false;
+
+			lenBeforeQuote = 0;
+		}
+
 		if(text[size] != 32)
 			lenBeforeSpace++;
 		else
@@ -426,8 +439,13 @@ bool isValidName(std::string text)
 			lenBeforeSpace = 0;
 		}
 
-		if(!isLowercaseLetter(text[size]) && text[size] != 32 && text[size] != 39 && text[size] != 45
-			|| isUppercaseLetter(text[size]) && text[size - 1] != 32)
+		if(size != 0)
+		{
+			if(!isLowercaseLetter(text[size]) && text[size] != 32 && text[size] != 39 && text[size] != 45
+				|| isUppercaseLetter(text[size]) && text[size - 1] != 32)
+				return false;
+		}
+		else if(!isUppercaseLetter(text[0]))
 			return false;
 	}
 	return true;
