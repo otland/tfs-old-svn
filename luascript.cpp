@@ -2005,7 +2005,7 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 {
 	uint32_t cid = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
-	int32_t value;
+	int32_t value = 0;
 
 	const Player* player = env->getPlayerByUID(cid);
 	if(player)
@@ -2014,42 +2014,40 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 		switch(info)
 		{
 			case PlayerInfoAccess:
-				value = player->accessLevel;
+				value = player->getAccessLevel();
 				break;
 			case PlayerInfoLevel:
-				value = player->level;
+				value = player->getLevel();
 				break;
 			case PlayerInfoExperience:
-				value = player->experience;
+				value = player->getExperience();
 				break;
 			case PlayerInfoMagLevel:
-				value = player->magLevel;
+				value = player->getMagicLevel();
 				break;
 			case PlayerInfoManaSpent:
-				value = player->manaSpent;
+				value = player->getSpentMana();
 				break;
 			case PlayerInfoLookDirection:
-				value = player->direction;
+				value = player->getDirection();
 				break;
 			case PlayerInfoTown:
 				value = player->getTown();
 				break;
 			case PlayerInfoPromotionLevel:
-				value = player->promotionLevel;
+				value = player->getPromotionLevel();
 				break;
 			case PlayerInfoGUID:
-				value = player->guid;
+				value = player->getGUID();
 				break;
 			case PlayerInfoPremiumDays:
 				value = player->premiumDays;
 				break;
 			case PlayerInfoSkullType:
-				value = (int32_t)player->getSkull();
+				value = player->getSkull();
 				break;
 			case PlayerInfoFood:
 			{
-				value = 0;
-
 				if(Condition* condition = player->getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT))
 					value = condition->getTicks() / 1000;
 
@@ -2062,7 +2060,7 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 				value = player->getPlayerInfo(PLAYERINFO_SOUL);
 				break;
 			case PlayerInfoFreeCap:
-				value = (int32_t)player->getFreeCapacity();
+				value = player->getFreeCapacity();
 				break;
 			case PlayerInfoGuildId:
 				value = player->getGuildId();
@@ -2070,22 +2068,25 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 			case PlayerInfoGuildName:
 				lua_pushstring(L, player->getGuildName().c_str());
 				return 1;
+			case PlayerInfoGuildRankId:
+				value = player->getGuildRankId();
+				break;
 			case PlayerInfoGuildRank:
 				lua_pushstring(L, player->getGuildRank().c_str());
-				return 1;
-				break;
-			case PlayerInfoGuildNick:
-				lua_pushstring(L, player->getGuildNick().c_str());
 				return 1;
 				break;
 			case PlayerInfoGuildLevel:
 				value = player->getGuildLevel();
 				break;
+			case PlayerInfoGuildNick:
+				lua_pushstring(L, player->getGuildNick().c_str());
+				return 1;
+				break;
 			case PlayerInfoSex:
 				value = player->getSex();
 				break;
 			case PlayerInfoGroupId:
-				value = player->groupId;
+				value = player->getGroupId();
 				break;
 			case PlayerInfoBalance:
 				value = (g_config.getBool(ConfigManager::BANK_SYSTEM) ? player->balance : 0);
@@ -2117,7 +2118,7 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 				value = 0;
 				break;
 		}
-		lua_pushnumber(L,value);
+		lua_pushnumber(L, value);
 		return 1;
 	}
 	else
@@ -2185,19 +2186,24 @@ int32_t LuaScriptInterface::luaGetPlayerGuildName(lua_State* L)
 	return internalGetPlayerInfo(L, PlayerInfoGuildName);
 }
 
+int32_t LuaScriptInterface::luaGetPlayerGuildRankId(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoGuildRankId);
+}
+
 int32_t LuaScriptInterface::luaGetPlayerGuildRank(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoGuildRank);
 }
 
-int32_t LuaScriptInterface::luaGetPlayerGuildNick(lua_State* L)
-{
-	return internalGetPlayerInfo(L, PlayerInfoGuildNick);
-}
-
 int32_t LuaScriptInterface::luaGetPlayerGuildLevel(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoGuildLevel);
+}
+
+int32_t LuaScriptInterface::luaGetPlayerGuildNick(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoGuildNick);
 }
 
 int32_t LuaScriptInterface::luaGetPlayerSex(lua_State* L)

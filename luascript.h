@@ -91,7 +91,7 @@ class ScriptEnviroment
 {
 	public:
 		ScriptEnviroment();
-		~ScriptEnviroment();
+		virtual ~ScriptEnviroment();
 
 		void resetEnv();
 		void resetCallback() {m_callbackId = 0;}
@@ -220,9 +220,10 @@ enum PlayerInfo_t
 	PlayerInfoFreeCap,
 	PlayerInfoGuildId,
 	PlayerInfoGuildName,
+	PlayerInfoGuildRankId,
 	PlayerInfoGuildRank,
-	PlayerInfoGuildNick,
 	PlayerInfoGuildLevel,
+	PlayerInfoGuildNick,
 	PlayerInfoSex,
 	PlayerInfoLookDirection,
 	PlayerInfoGroupId,
@@ -492,8 +493,9 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerGuildId(lua_State* L);
 		static int32_t luaGetPlayerGuildName(lua_State* L);
 		static int32_t luaGetPlayerGuildRank(lua_State* L);
-		static int32_t luaGetPlayerGuildNick(lua_State* L);
+		static int32_t luaGetPlayerGuildRankId(lua_State* L);
 		static int32_t luaGetPlayerGuildLevel(lua_State* L);
+		static int32_t luaGetPlayerGuildNick(lua_State* L);
 		static int32_t luaGetPlayerSex(lua_State* L);
 		static int32_t luaGetPlayerLookDir(lua_State* L);
 		static int32_t luaGetPlayerGUID(lua_State* L);

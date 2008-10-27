@@ -133,6 +133,9 @@ class IOLoginData
 		void loadItems(ItemMap& itemMap, DBResult *result);
 		bool saveItems(const Player* player, const ItemBlockList& itemList, DBInsert& query_insert);
 
+		bool internalHasFlag(uint32_t groupId, PlayerFlags value);
+		bool internalHasCustomFlag(uint32_t groupId, PlayerCustomFlags value);
+
 		bool storeNameByGuid(uint32_t guid);
 
 		PlayerGroupMap playerGroupMap;

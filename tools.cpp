@@ -413,12 +413,21 @@ bool isValidPassword(std::string text)
 
 bool isValidName(std::string text)
 {
-	toLowerCaseString(text);
-
-	uint32_t textLength = text.length();
+	uint32_t textLength = text.length(), lenBeforeSpace = 0;
 	for(uint32_t size = 0; size < textLength; size++)
 	{
-		if(!isLowercaseLetter(text[size]) && !text[size] == 32 && !text[size] == 39 && !text[size] == 45)
+		if(text[size] != 32)
+			lenBeforeSpace++;
+		else
+		{
+			if(lenBeforeSpace <= 1)
+				return false;
+
+			lenBeforeSpace = 0;
+		}
+
+		if(!isLowercaseLetter(text[size]) && text[size] != 32 && text[size] != 39 && text[size] != 45
+			|| isUppercaseLetter(text[size]) && text[size - 1] != 32)
 			return false;
 	}
 	return true;
