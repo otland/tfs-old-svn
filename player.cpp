@@ -3825,18 +3825,23 @@ bool Player::isPromoted()
 
 double Player::getLostPercent()
 {
-	uint16_t lostPercent = g_config.getNumber(ConfigManager::DEATH_LOSE_PERCENT);
-	for(int16_t i = 0; i < 5; i++)
+	uint32_t lostPercent = g_config.getNumber(ConfigManager::DEATH_LOSE_PERCENT);
+	if(!lostPercent)
+		return 0;
+
+	for(int16_t i = 1; i < 6; i++)
 	{
-		if(lostPercent == 0) break;
-		if(hasBlessing(i))
+		if(isPromoted() && i < 4)
 			lostPercent--;
+
+		if(lostPercent && hasBlessing(i))
+			lostPercent--;
+
+		if(!lostPercent)
+			return 0;
 	}
 
-	if(isPromoted() && lostPercent >= 3)
-		lostPercent -= 3;
-
-	return lostPercent / (double)100;
+	return (double)lostPercent / 100;
 }
 
 void Player::learnInstantSpell(const std::string& name)

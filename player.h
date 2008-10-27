@@ -198,7 +198,7 @@ class Player : public Creature, public Cylinder
 		void setFlags(uint64_t flags){groupFlags = flags;}
 		bool hasFlag(PlayerFlags value) const {return (0 != (groupFlags & ((uint64_t)1 << value)));}
 
-		void addBlessing(int16_t blessings_) {blessings += blessings_;}
+		void addBlessing(int16_t blessing) {blessings += blessing;}
 		bool hasBlessing(int16_t value) const {return (0 != (blessings & ((int16_t)1 << value)));}
 
 		bool isOnline() const {return (client != NULL);}
