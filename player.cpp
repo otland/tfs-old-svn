@@ -3826,6 +3826,9 @@ bool Player::isPromoted()
 double Player::getLostPercent()
 {
 	uint32_t lostPercent = g_config.getNumber(ConfigManager::DEATH_LOSE_PERCENT);
+	if(!lostPercent)
+		return 0;
+
 	if(isPromoted())
 	{
 		if(lostPercent <= 3)
@@ -3836,13 +3839,12 @@ double Player::getLostPercent()
 
 	for(int16_t i = 0; i < 5; i++)
 	{
-		if(!lostPercent)
-			return 0;
-
 		if(hasBlessing(i))
 			lostPercent--;
-	}
 
+		if(!lostPercent)
+			return 0;
+	}
 	return (double)lostPercent / 100;
 }
 
