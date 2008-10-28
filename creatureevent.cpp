@@ -327,7 +327,7 @@ uint32_t CreatureEvent::executeOnThink(Creature* creature, uint32_t interval)
 		int32_t result = m_scriptInterface->callFunction(2);
 		m_scriptInterface->releaseScriptEnv();
 
-		return (result == LUA_TRUE);
+		return (result != LUA_FALSE);
 	}
 	else
 	{
@@ -364,7 +364,7 @@ uint32_t CreatureEvent::executeOnPrepareDeath(Player* player, Creature* killer)
 		int32_t result = m_scriptInterface->callFunction(2);
 		m_scriptInterface->releaseScriptEnv();
 
-		return (result == LUA_TRUE);
+		return (result != LUA_FALSE);
 	}
 	else
 	{
@@ -403,7 +403,7 @@ uint32_t CreatureEvent::executeOnDeath(Creature* creature, Item* corpse, Creatur
 		int32_t result = m_scriptInterface->callFunction(3);
 		m_scriptInterface->releaseScriptEnv();
 
-		return (result == LUA_TRUE);
+		return (result != LUA_FALSE);
 	}
 	else
 	{
@@ -440,7 +440,7 @@ uint32_t CreatureEvent::executeOnKill(Creature* creature, Creature* target)
 		int32_t result = m_scriptInterface->callFunction(2);
 		m_scriptInterface->releaseScriptEnv();
 
-		return (result == LUA_TRUE);
+		return (result != LUA_FALSE);
 	}
 	else
 	{

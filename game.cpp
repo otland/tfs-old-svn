@@ -900,9 +900,23 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 	creature->setLastPosition(creature->getPosition());
 	const Position& currentPos = creature->getPosition();
 	Position destPos = currentPos;
-	destPos = getNextPosition(direction, destPos);
+	bool diagonalMovement;
+	switch(direction)
+	{
+		case NORTHWEST:
+		case NORTHEAST:
+		case SOUTHWEST:
+		case SOUTHEAST:
+			diagonalMovement = true;
+			break;
 
-	if(creature->getPlayer())
+		default:
+			diagonalMovement = false;
+			break;
+	}
+
+	destPos = getNextPosition(direction, destPos);
+	if(creature->getPlayer() && !diagonalMovement)
 	{
 		//try go up
 		if(currentPos.z != 8 && creature->getTile()->hasHeight(3))

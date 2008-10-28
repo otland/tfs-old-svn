@@ -639,31 +639,39 @@ Position getNextPosition(Direction direction, Position pos)
 		case NORTH:
 			pos.y--;
 			break;
+
 		case SOUTH:
 			pos.y++;
 			break;
+
 		case WEST:
 			pos.x--;
 			break;
+
 		case EAST:
 			pos.x++;
 			break;
+
 		case SOUTHWEST:
 			pos.x--;
 			pos.y++;
 			break;
+
 		case NORTHWEST:
 			pos.x--;
 			pos.y--;
 			break;
+
 		case NORTHEAST:
 			pos.x++;
 			pos.y--;
 			break;
+
 		case SOUTHEAST:
 			pos.x++;
 			pos.y++;
 			break;
+
 		default:
 			break;
 	}
