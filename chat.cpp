@@ -729,7 +729,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 										{
 											if(param2.length() < 15)
 											{
-												if(isValidName(param2))
+												if(isValidName(param2, false))
 												{
 													if(IOGuild::getInstance()->guildExists(paramPlayer->getGuildId()))
 													{
@@ -775,7 +775,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 										{
 											if(param2.length() < 15)
 											{
-												if(isValidName(param2))
+												if(isValidName(param2, false))
 												{
 													if(IOGuild::getInstance()->guildExists(guid))
 													{
@@ -833,7 +833,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 									{
 										if(param2.length() < 21)
 										{
-											if(isValidName(param2))
+											if(isValidName(param2, false))
 											{
 												if(IOGuild::getInstance()->rankNameExists(param1, player->getGuildId()))
 												{

@@ -3993,23 +3993,25 @@ void Player::manageAccount(const std::string &text)
 			{
 				newCharacterName = text;
 				trimString(newCharacterName);
-				if(!isValidName(newCharacterName))
-					msg << "That name seems to contain invalid symbols tell me another name.";
-				else if(islower(newCharacterName[0]))
-					msg << "Names dont start with lowercase tell me another name starting with uppercase!";
+				if(newCharacterName.length() < 4)
+					msg << "Your name you want is too short, please select a longer name.";
 				else if(newCharacterName.length() > 20)
 					msg << "The name you want is too long, please select a shorter name.";
-				else if((upchar(newCharacterName[0]) == 'G' || upchar(newCharacterName[0]) == 'C') && ((upchar(newCharacterName[1]) == 'M' && newCharacterName[2] == ' ') || ((upchar(newCharacterName[1]) == 'O' && upchar(newCharacterName[2]) == 'D') && newCharacterName[3] == ' ')))
-					msg << "Your character is not a staff member, please tell me another name!";
+				if(!isValidName(newCharacterName))
+					msg << "That name seems to contain invalid symbols, please choose another name.";
 				else if(IOLoginData::getInstance()->playerExists(newCharacterName))
-					msg << "A player with this name currently exists, please choose another name.";
-				else if(newCharacterName.length() < 4)
-					msg << "Your name you want is too short, please select a longer name.";
+					msg << "A player with such name already exists, please choose another name.";
 				else
 				{
-					talkState[1] = true;
-					talkState[2] = true;
-					msg << newCharacterName << ", are you sure?";
+					std::string tmp = asLowerCaseString(newCharacterName);
+					if(tmp.substr(0, 4) != "god " && tmp.substr(0, 3) != "cm " && tmp.substr(0, 3) != "gm ")
+					{
+						talkState[1] = true;
+						talkState[2] = true;
+						msg << newCharacterName << ", are you sure?";
+					}
+					else
+						msg << "Your character is not a staff member, please tell me another name!";
 				}
 			}
 			else if(checkText(text, "no") && talkState[2])
@@ -4058,6 +4060,7 @@ void Player::manageAccount(const std::string &text)
 				talkState[1] = true;
 				for(int8_t i = 2; i <= 12; i++)
 					talkState[i] = false;
+
 				msg << "Do you want to change your 'password', request a 'recovery key', add a 'character', or 'delete' a character?";
 			}
 			else if(checkText(text, "delete") && talkState[1])
@@ -4068,15 +4071,15 @@ void Player::manageAccount(const std::string &text)
 			}
 			else if(talkState[2])
 			{
-				std::string tmpStr = text;
-				trimString(tmpStr);
-				if(!isValidName(tmpStr))
+				std::string tmp = text;
+				trimString(tmp);
+				if(!isValidName(tmp, false))
 					msg << "That name contains invalid characters, try to say your name again, you might have typed it wrong.";
 				else
 				{
 					talkState[2] = false;
 					talkState[3] = true;
-					removeChar = tmpStr;
+					removeChar = tmp;
 					msg << "Do you really want to delete the character named " << removeChar << "?";
 				}
 			}
@@ -4104,6 +4107,7 @@ void Player::manageAccount(const std::string &text)
 						msg << "A character with that name is currently online, to delete a character it has to be offline.";
 						break;
 				}
+
 				talkState[1] = true;
 				for(int8_t i = 2; i <= 12; i++)
 					talkState[i] = false;
@@ -4122,22 +4126,19 @@ void Player::manageAccount(const std::string &text)
 			}
 			else if(talkState[4])
 			{
-				std::string tmpStr = text;
-				trimString(tmpStr);
-				if(isValidPassword(tmpStr))
-				{
-					if(tmpStr.length() > 5)
-					{
-						talkState[4] = false;
-						talkState[5] = true;
-						newPassword = tmpStr;
-						msg << "Should '" << newPassword << "' be your new password?";
-					}
-					else
-						msg << "That password is too short, please select a longer password.";
-				}
+				std::string tmp = text;
+				trimString(tmp);
+				if(tmp.length() < 6)
+					msg << "That password is too short, at least 6 digits are required. Please select a longer password.";
+				else if(!isValidPassword(tmp))
+					msg << "Your password contains invalid characters... please tell me another one.";
 				else
-					msg << "That password contains invalid characters... tell me another one.";
+				{
+					talkState[4] = false;
+					talkState[5] = true;
+					newPassword = tmp;
+					msg << "Should '" << newPassword << "' be your new password?";
+				}
 			}
 			else if(checkText(text, "yes") && talkState[5])
 			{
@@ -4153,6 +4154,7 @@ void Player::manageAccount(const std::string &text)
 				talkState[1] = true;
 				for(int8_t i = 2; i <= 12; i++)
 					talkState[i] = false;
+
 				msg << "Then not.";
 			}
 			else if(checkText(text, "character") && talkState[1])
@@ -4168,6 +4170,7 @@ void Player::manageAccount(const std::string &text)
 					talkState[1] = true;
 					for(int8_t i = 2; i <= 12; i++)
 						talkState[i] = false;
+
 					msg << "Your account reach the limit of 15 players, you can 'delete' a character if you want to create a new one.";
 				}
 			}
@@ -4175,23 +4178,25 @@ void Player::manageAccount(const std::string &text)
 			{
 				newCharacterName = text;
 				trimString(newCharacterName);
-				if(!isValidName(newCharacterName))
-					msg << "That name seems to contain invalid symbols tell me another name.";
-				else if(islower(newCharacterName[0]))
-					msg << "Names dont start with lowercase tell me another name starting with uppercase!";
+				if(newCharacterName.length() < 4)
+					msg << "Your name you want is too short, please select a longer name.";
 				else if(newCharacterName.length() > 20)
 					msg << "The name you want is too long, please select a shorter name.";
-				else if((upchar(newCharacterName[0]) == 'G' || upchar(newCharacterName[0]) == 'C') && ((upchar(newCharacterName[1]) == 'M' && newCharacterName[2] == ' ') || ((upchar(newCharacterName[1]) == 'O' && upchar(newCharacterName[2]) == 'D') && newCharacterName[3] == ' ')))
-					msg << "Your character is not a staff member, please tell me a another name!";
+				if(!isValidName(newCharacterName))
+					msg << "That name seems to contain invalid symbols, please choose another name.";
 				else if(IOLoginData::getInstance()->playerExists(newCharacterName))
-					msg << "A player with this name currently exists, please choose another name.";
-				else if(newCharacterName.length() < 4)
-					msg << "Your name you want is too short, please select a longer name.";
+					msg << "A player with such name already exists, please choose another name.";
 				else
 				{
-					talkState[6] = false;
-					talkState[7] = true;
-					msg << newCharacterName << ", are you sure?";
+					std::string tmp = asLowerCaseString(newCharacterName);
+					if(tmp.substr(0, 4) != "god " && tmp.substr(0, 3) != "cm " && tmp.substr(0, 3) != "gm ")
+					{
+						talkState[6] = false;
+						talkState[7] = true;
+						msg << newCharacterName << ", are you sure?";
+					}
+					else
+						msg << "Your character is not a staff member, please tell me another name!";
 				}
 			}
 			else if(checkText(text, "no") && talkState[7])
@@ -4233,6 +4238,7 @@ void Player::manageAccount(const std::string &text)
 				{
 					talkState[9] = false;
 					talkState[11] = true;
+
 					bool firstPart = true;
 					for(VocationsMap::iterator it = g_vocations.getFirstVocation(); it != g_vocations.getLastVocation(); ++it)
 					{
@@ -4257,10 +4263,11 @@ void Player::manageAccount(const std::string &text)
 						talkState[1] = true;
 						for(int8_t i = 2; i <= 12; i++)
 							talkState[i] = false;
+
 						if(IOLoginData::getInstance()->createCharacter(realAccount, newCharacterName, newVocation, _newSex))
-							msg << "Your character has been made.";
+							msg << "Your character has been created.";
 						else
-							msg << "Your character has NOT been made, please try again.";
+							msg << "Your character couldn't be created, please try again.";
 					}
 					else
 					{
@@ -4274,16 +4281,16 @@ void Player::manageAccount(const std::string &text)
 			{
 				for(VocationsMap::iterator it = g_vocations.getFirstVocation(); it != g_vocations.getLastVocation(); ++it)
 				{
-					std::string vocationName = (it->second)->getVocName();
-					std::transform(vocationName.begin(), vocationName.end(), vocationName.begin(), tolower);
-					if(checkText(text, vocationName) && it != g_vocations.getLastVocation() && it->first == (it->second)->getFromVocation() && it->first != 0)
+					std::string vocationName = asLowerCaseString(it->second->getVocName());
+					if(checkText(text, vocationName) && it != g_vocations.getLastVocation() && it->first == it->second->getFromVocation() && it->first != 0)
 					{
-						msg << "So you would like to be " << (it->second)->getVocDescription() << "... are you sure?";
+						msg << "So you would like to be " << it->second->getVocDescription() << "... are you sure?";
 						newVocation = it->first;
 						talkState[11] = false;
 						talkState[12] = true;
 					}
 				}
+
 				if(msg.str().length() == 17)
 					msg << "I don't understand what vocation you would like to be... could you please repeat it?";
 			}
@@ -4294,10 +4301,11 @@ void Player::manageAccount(const std::string &text)
 					talkState[1] = true;
 					for(int8_t i = 2; i <= 12; i++)
 						talkState[i] = false;
+
 					if(IOLoginData::getInstance()->createCharacter(realAccount, newCharacterName, newVocation, _newSex))
-						msg << "Your character has been made.";
+						msg << "Your character has been created.";
 					else
-						msg << "Your character has NOT been made, please try again.";
+						msg << "Your character couldn't be created, please try again.";
 				}
 				else
 				{
@@ -4328,6 +4336,7 @@ void Player::manageAccount(const std::string &text)
 					IOLoginData::getInstance()->setRecoveryKey(realAccount, recoveryKey);
 					msg << "Your recovery key is: " << recoveryKey << ".";
 				}
+
 				talkState[1] = true;
 				for(int8_t i = 2; i <= 12; i++)
 					talkState[i] = false;
@@ -4354,22 +4363,19 @@ void Player::manageAccount(const std::string &text)
 			}
 			else if(talkState[2])
 			{
-				std::string tmpStr = text;
-				trimString(tmpStr);
-				if(isValidPassword(tmpStr))
-				{
-					if(tmpStr.length() > 5)
-					{
-						newPassword = tmpStr;
-						msg << newPassword << " is it? 'yes' or 'no'?";
-						talkState[3] = true;
-						talkState[2] = false;
-					}
-					else
-						msg << "That password is too short, please select a longer password.";
-				}
+				std::string tmp = text;
+				trimString(tmp);
+				if(tmp.length() < 6)
+					msg << "That password is too short, at least 6 digits are required. Please select a longer password.";
+				else if(!isValidPassword(tmp))
+					msg << "Your password contains invalid characters... please tell me another one.";
 				else
-					msg << "That password contains invalid characters... tell me another one.";
+				{
+					talkState[3] = false;
+					talkState[2] = true;
+					newPassword = tmp;
+					msg << newPassword << " is it? 'yes' or 'no'?";
+				}
 			}
 			else if(checkText(text, "yes") && talkState[3])
 			{
@@ -4399,27 +4405,21 @@ void Player::manageAccount(const std::string &text)
 			}
 			else if(talkState[4])
 			{
-				std::string tmpStr = text;
-				trimString(tmpStr);
-				if(isValidAccountName(tmpStr))
-				{
-					if(tmpStr.length() >= 3)
-					{
-						if(tmpStr.length() <= 25)
-						{
-							sprintf(newAccount, "%s", tmpStr.c_str());
-							msg << newAccount << ", are you sure?";
-							talkState[4] = false;
-							talkState[5] = true;
-						}
-						else
-							msg << "That account name is too long... an account name has to be at least 3 digits and not more than 25 digits, please pick another account name.";
-					}
-					else
-						msg << "That account name is too short... an account name has to be at least 3 digits and not more than 25 digits, please pick another account name.";
-				}
+				std::string tmp = text;
+				trimString(tmp);
+				if(tmp.length() < 3)
+					msg << "That account name is too short, at least 3 digits are required. Please select a longer account name.";
+				else if(tmp.length() > 25)
+					msg << "That account name is too long, not more than 25 digits are required. Please select a shorter account name.";
+				else if(!isValidAccountName(tmp))
+					msg << "Your account name contains invalid characters, please choose another account name.";
 				else
-					msg << "Your account name contains invalid characters, please pick another account name.";
+				{
+					sprintf(newAccount, "%s", tmp.c_str());
+					msg << newAccount << ", are you sure?";
+					talkState[4] = false;
+					talkState[5] = true;
+				}
 			}
 			else if(checkText(text, "yes") && talkState[5])
 			{
@@ -4477,8 +4477,10 @@ void Player::manageAccount(const std::string &text)
 			break;
 		}
 		default:
+			return;
 			break;
 	}
+
 	sendTextMessage(MSG_STATUS_CONSOLE_BLUE, msg.str().c_str());
 }
 

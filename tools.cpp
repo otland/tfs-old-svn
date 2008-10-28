@@ -411,10 +411,18 @@ bool isValidPassword(std::string text)
 	return true;
 }
 
-bool isValidName(std::string text)
+bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 {
-	uint32_t textLength = text.length(), lenBeforeSpace = 0, lenBeforeQuote = 0;
-	for(uint32_t size = 0; size < textLength; size++)
+	uint32_t textLength = text.length(), lenBeforeSpace = 1, lenBeforeQuote = 1;
+	if(forceUppercaseOnFirstLetter)
+	{
+		if(!isUppercaseLetter(text[0]))
+			return false;
+	}
+	else if(!isLowercaseLetter(text[0]) && !isUppercaseLetter(text[0]))
+		return false;
+
+	for(uint32_t size = 1; size < textLength; size++)
 	{
 		if(text[size] != 39)
 		{
@@ -439,13 +447,8 @@ bool isValidName(std::string text)
 			lenBeforeSpace = 0;
 		}
 
-		if(size != 0)
-		{
-			if((!isLowercaseLetter(text[size]) && text[size] != 32 && text[size] != 39 && text[size] != 45)
-				|| (isUppercaseLetter(text[size]) && text[size - 1] != 32))
-				return false;
-		}
-		else if(!isUppercaseLetter(text[0]))
+		if((!isLowercaseLetter(text[size]) && text[size] != 32 && text[size] != 39 && text[size] != 45)
+			|| (isUppercaseLetter(text[size]) && text[size - 1] != 32))
 			return false;
 	}
 	return true;
