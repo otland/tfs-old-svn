@@ -1351,7 +1351,25 @@ bool Commands::unban(Creature* creature, const std::string& cmd, const std::stri
 			player->sendTextMessage(MSG_INFO_DESCR, buffer);
 		}
 		else
-			player->sendCancel("That player or account is not banished or deleted.");
+		{
+			bool removedNamelock = false;
+			if(IOLoginData::getInstance()->playerExists(param))
+			{
+				uint32_t guid = 0;
+				std::string name = param;
+				if(IOLoginData::getInstance()->getGuidByName(guid, name) &&
+					g_bans.removePlayerNamelock(guid))
+				{
+					char buffer[85];
+					sprintf(buffer, "Namelock on %s has been lifted.", param.c_str());
+					player->sendTextMessage(MSG_INFO_DESCR, buffer);
+					removedNamelock = true;
+				}
+			}
+
+			if(!removedNamelock)
+				player->sendCancel("That player or account is not banished or deleted.");
+		}
 	}
 	return false;
 }
