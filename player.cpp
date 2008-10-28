@@ -3826,9 +3826,6 @@ bool Player::isPromoted()
 double Player::getLostPercent()
 {
 	uint32_t lostPercent = g_config.getNumber(ConfigManager::DEATH_LOSE_PERCENT);
-	if(!lostPercent)
-		return 0;
-
 	if(isPromoted())
 	{
 		if(lostPercent <= 3)
@@ -3839,11 +3836,11 @@ double Player::getLostPercent()
 
 	for(int16_t i = 0; i < 5; i++)
 	{
-		if(hasBlessing(i))
-			lostPercent--;
-
 		if(!lostPercent)
 			return 0;
+
+		if(hasBlessing(i))
+			lostPercent--;
 	}
 	return (double)lostPercent / 100;
 }
@@ -3884,9 +3881,9 @@ void Player::manageAccount(const std::string &text)
 				msg << "Your name you want is too short, please select a longer name.";
 			else if(newCharacterName.length() > 20)
 				msg << "The name you want is too long, please select a shorter name.";
-			else if(asLowerCaseString(newCharacterName).substr(0, 4) == "God "
-				|| asLowerCaseString(newCharacterName).substr(0, 3) == "Gm "
-				|| asLowerCaseString(newCharacterName).substr(0, 3) == "Cm ")
+			else if(asLowerCaseString(newCharacterName).substr(0, 4) == "god "
+				|| asLowerCaseString(newCharacterName).substr(0, 3) == "gm "
+				|| asLowerCaseString(newCharacterName).substr(0, 3) == "cm ")
 			{
 				msg << "You are not a gamemaster, please pick another name.";
 			}
@@ -4062,9 +4059,9 @@ void Player::manageAccount(const std::string &text)
 				msg << "Your name you want is too short, please select a longer name.";
 			else if(newCharacterName.length() > 20)
 				msg << "The name you want is too long, please select a shorter name.";
-			else if(asLowerCaseString(newCharacterName).substr(0, 4) == "God "
-				|| asLowerCaseString(newCharacterName).substr(0, 3) == "Gm "
-				|| asLowerCaseString(newCharacterName).substr(0, 3) == "Cm ")
+			else if(asLowerCaseString(newCharacterName).substr(0, 4) == "god "
+				|| asLowerCaseString(newCharacterName).substr(0, 3) == "gm "
+				|| asLowerCaseString(newCharacterName).substr(0, 3) == "cm ")
 			{
 				msg << "You are not a gamemaster, please pick another name.";
 			}
