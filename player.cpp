@@ -3829,18 +3829,22 @@ double Player::getLostPercent()
 	if(!lostPercent)
 		return 0;
 
-	for(int16_t i = 1; i < 6; i++)
+	if(isPromoted())
 	{
-		if(isPromoted() && i < 4)
-			lostPercent--;
+		if(lostPercent <= 3)
+			return 0;
+		else
+			lostPercent -= 3;
+	}
 
-		if(lostPercent && hasBlessing(i))
+	for(int16_t i = 0; i < 5; i++)
+	{
+		if(hasBlessing(i))
 			lostPercent--;
 
 		if(!lostPercent)
 			return 0;
 	}
-
 	return (double)lostPercent / 100;
 }
 
