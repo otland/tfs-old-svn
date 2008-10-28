@@ -3926,19 +3926,21 @@ void Player::setPromotionLevel(uint32_t pLevel)
 double Player::getLostPercent(lossTypes_t lossType)
 {
 	uint32_t lostPercent = lossPercent[lossType];
-	if(!lostPercent)
-		return 0;
-
-	for(int16_t i = 1; i < 6; i++)
+	if(isPromoted())
 	{
-		if(isPromoted() && i < 4)
-			lostPercent--;
+		if(lostPercent <= 3)
+			return 0;
 
-		if(lostPercent && hasBlessing(i))
-			lostPercent--;
+		lostPercent -= 3;
+	}
 
+	for(int16_t i = 0; i < 16; i++)
+	{
 		if(!lostPercent)
 			return 0;
+
+		if(hasBlessing(i))
+			lostPercent--;
 	}
 
 	return (double)lostPercent / 100;

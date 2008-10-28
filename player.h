@@ -200,12 +200,12 @@ class Player : public Creature, public Cylinder
 		void resetGuildInformation();
 
 		void setFlags(uint64_t flags) {groupFlags = flags;}
-		bool hasFlag(PlayerFlags value) const {return (0 != (groupFlags & ((uint64_t)1 << value)));}
+		bool hasFlag(PlayerFlags value) const {return (groupFlags & ((uint64_t)1 << value));}
 		void setCustomFlags(uint64_t flags) {groupCustomFlags = flags;}
-		bool hasCustomFlag(PlayerCustomFlags value) const {return (0 != (groupCustomFlags & ((uint64_t)1 << value)));}
+		bool hasCustomFlag(PlayerCustomFlags value) const {return (groupCustomFlags & ((uint64_t)1 << value));}
 
 		void addBlessing(int16_t blessing) {blessings += blessing;}
-		bool hasBlessing(int16_t value) const {return (0 != (blessings & ((int16_t)1 << value)));}
+		bool hasBlessing(int16_t value) const {return (blessings & ((int16_t)1 << value));}
 
 		OperatingSystem_t getOperatingSystem() const {return operatingSystem;}
 		void setOperatingSystem(OperatingSystem_t clientOs) {operatingSystem = clientOs;}

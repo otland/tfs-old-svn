@@ -269,7 +269,7 @@ uint32_t CreatureEvent::executeOnLogin(Player* player)
 		int32_t result = m_scriptInterface->callFunction(1);
 		m_scriptInterface->releaseScriptEnv();
 
-		return (result != LUA_FALSE);
+		return (result == LUA_TRUE);
 	}
 	else
 	{
@@ -304,7 +304,7 @@ uint32_t CreatureEvent::executeOnLogout(Player* player)
 		int32_t result = m_scriptInterface->callFunction(1);
 		m_scriptInterface->releaseScriptEnv();
 
-		return (result != LUA_FALSE);
+		return (result == LUA_TRUE);
 	}
 	else
 	{
