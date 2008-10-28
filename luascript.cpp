@@ -7086,8 +7086,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddBlessing(lua_State* L)
 	{
 		if(!player->hasBlessing(blessing))
 		{
-			blessing = 1 << blessing;
-			player->addBlessing(blessing);
+			player->addBlessing(1 << blessing);
 			lua_pushboolean(L, true);
 		}
 		else
