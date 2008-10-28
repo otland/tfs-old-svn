@@ -4242,17 +4242,17 @@ void Player::manageAccount(const std::string &text)
 					bool firstPart = true;
 					for(VocationsMap::iterator it = g_vocations.getFirstVocation(); it != g_vocations.getLastVocation(); ++it)
 					{
-						if(it->first == (it->second)->getFromVocation() && it->first != 0)
+						if(it->first == it->second->getFromVocation() && it->first != 0)
 						{
 							if(firstPart)
 							{
-								msg << "What do you want to be... " << (it->second)->getVocDescription();
+								msg << "What do you want to be... " << it->second->getVocDescription();
 								firstPart = false;
 							}
 							else if(it->first - 1 != 0)
-								msg << ", " << (it->second)->getVocDescription();
+								msg << ", " << it->second->getVocDescription();
 							else
-								msg << " or " << (it->second)->getVocDescription() << ".";
+								msg << " or " << it->second->getVocDescription() << ".";
 						}
 					}
 				}
@@ -4384,7 +4384,7 @@ void Player::manageAccount(const std::string &text)
 					do
 						sprintf(newAccount, "%d%d%d%d%d%d%d", random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9));
 					while(IOLoginData::getInstance()->accountNameExists(newAccount));
-					msg << "Your account has been created, you can login now with account name: '" << newAccount << "', and password: '" << newPassword << "'! If the account name is too hard to remember, please note it somewhere.";
+					msg << "Your account has been created, you can login now with name: '" << newAccount << "', and password: '" << newPassword << "'! If the account name is too hard to remember, please note it somewhere.";
 
 					IOLoginData::getInstance()->createAccount(newAccount, newPassword);
 					for(int8_t i = 2; i <= 8; i++)
@@ -4412,7 +4412,7 @@ void Player::manageAccount(const std::string &text)
 				else if(tmp.length() > 25)
 					msg << "That account name is too long, not more than 25 digits are required. Please select a shorter account name.";
 				else if(!isValidAccountName(tmp))
-					msg << "Your account name contains invalid characters, please choose another account name.";
+					msg << "Your account name contains invalid characters, please choose another one.";
 				else
 				{
 					sprintf(newAccount, "%s", tmp.c_str());
@@ -4426,7 +4426,7 @@ void Player::manageAccount(const std::string &text)
 				if(!IOLoginData::getInstance()->accountNameExists(newAccount))
 				{
 					IOLoginData::getInstance()->createAccount(newAccount, newPassword);
-					msg << "Your account has been created, you can login now with account name: '" << newAccount << "', and password: '" << newPassword << "'!";
+					msg << "Your account has been created, you can login now with name: '" << newAccount << "', and password: '" << newPassword << "'!";
 				}
 				else
 				{
@@ -4445,28 +4445,38 @@ void Player::manageAccount(const std::string &text)
 			{
 				talkState[6] = true;
 				talkState[7] = true;
-				msg << "What was your account number?";
+				msg << "What was your account name?";
 			}
 			else if(talkState[7])
 			{
-				accountNumberAttempt = text;
-				talkState[7] = false;
-				talkState[8] = true;
-				msg << "What was your recovery key?";
+				recoverAttempt = text;
+				uint32_t tmp;
+				if(IOLoginData::getInstance()->getAccountId(recoverAttempt, tmp))
+				{
+					realAccount = tmp;
+					talkState[7] = false;
+					talkState[8] = true;
+					msg << "What was your recovery key?";
+				}
+				else
+				{
+					msg << "Sorry, but account with such name doesn't exists.";
+					for(int8_t i = 2; i <= 8; i++)
+						talkState[i] = false;
+				}
 			}
 			else if(talkState[8])
 			{
-				recoveryKeyAttempt = text;
-				uint32_t accountId = atoi(accountNumberAttempt.c_str());
-				if(IOLoginData::getInstance()->validRecoveryKey(accountId, recoveryKeyAttempt) && recoveryKeyAttempt != "0")
+				recoverAttempt = text;
+				if(IOLoginData::getInstance()->validRecoveryKey(realAccount, recoveryKeyAttempt) && recoveryKeyAttempt != "0")
 				{
-					char buffer[100];
+					char buffer[10 + g_config.getString(ConfigManager::SERVER_NAME).length()];
 					sprintf(buffer, "%s%d", g_config.getString(ConfigManager::SERVER_NAME).c_str(), random_range(100, 999));
-					IOLoginData::getInstance()->setNewPassword(accountId, buffer);
+					IOLoginData::getInstance()->setNewPassword(realAccount, buffer);
 					msg << "Correct! Your new password is: " << buffer << ".";
 				}
 				else
-					msg << "Sorry, but information you gave me did not match to any account :(.";
+					msg << "Sorry, but this key doesn't match to account you gave me.";
 
 				for(int8_t i = 2; i <= 8; i++)
 					talkState[i] = false;

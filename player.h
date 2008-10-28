@@ -774,7 +774,7 @@ class Player : public Creature, public Cylinder
 		PlayerSex_t _newSex;
 		uint32_t realAccount;
 		char newAccount[35];
-		std::string newPassword, newCharacterName, removeChar, accountNumberAttempt, recoveryKeyAttempt, namelockedPlayer, recoveryKey;
+		std::string newPassword, newCharacterName, removeChar, recoverAttempt, namelockedPlayer, recoveryKey;
 
 		bool mayNotMove;
 		bool requestedOutfit;
