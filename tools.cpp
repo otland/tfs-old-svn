@@ -427,7 +427,7 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 		if(!isUppercaseLetter(text[0]))
 			return false;
 	}
-	else if(!isLowercaseLetter(text[0]) || !isUppercaseLetter(text[0]))
+	else if(!isLowercaseLetter(text[0]) && !isUppercaseLetter(text[0]))
 		return false;
 
 	for(uint32_t size = 1; size < textLength; size++)
@@ -456,7 +456,7 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 		}
 
 		if(isLowercaseLetter(text[size]) || text[size] == 32 || text[size] == 39 || text[size] == 45
-			|| (isUppercaseLetter(text[size]) && text[size - 1] != 32))
+			|| (isUppercaseLetter(text[size]) && text[size - 1] == 32))
 		{
 			continue;
 		}
