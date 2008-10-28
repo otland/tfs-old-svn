@@ -177,17 +177,11 @@ bool TalkActions::onPlayerSay(Player* player, uint16_t channelId, const std::str
 	}
 
 	if(talkAction->isScripted())
-	{
-		if(talkAction->executeSay(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]))
-			return true;
-	}
+		talkAction->executeSay(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]);
 	else if(talkAction->callback)
-	{
-		if(talkAction->callback(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]))
-			return true;
-	}
+		talkAction->callback(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]);
 
-	return false;
+	return true;
 }
 
 TalkActionCallback_t TalkAction::definedCallbacks[] =

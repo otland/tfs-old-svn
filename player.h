@@ -248,6 +248,9 @@ class Player : public Creature, public Cylinder
 		void switchTeleportByMap() {teleportByMap = !teleportByMap;}
 		bool isTeleportingByMap() const {return teleportByMap;}
 
+		void switchSaving() {saving = !saving;}
+		bool isSaving() const {return saving;}
+
 		uint32_t getAccount() const {return accountNumber;}
 		uint16_t getAccessLevel() const {return accessLevel;}
 		uint16_t getViolationAccess() const {return violationAccess;}
@@ -763,6 +766,7 @@ class Player : public Creature, public Cylinder
 		bool ghostMode;
 		bool ignorePrivMsg;
 		bool teleportByMap;
+		bool saving;
 
 		bool talkState[13];
 		AccountManager_t accountManager;

@@ -656,7 +656,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 
 	query.str("");
 	query << "UPDATE `players` SET `lastlogin` = " << player->lastLoginSaved << ", `lastip` = " << player->lastIP;
-	if(!save)
+	if(!save || !player->isSaving())
 	{
 		query << " WHERE `id` = " << player->getGUID();
 		if(!db->executeQuery(query.str()))

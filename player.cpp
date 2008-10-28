@@ -187,6 +187,7 @@ Creature()
 	setParty(NULL);
 
 	requestedOutfit = false;
+	saving = true;
 	mayNotMove = false;
 	ghostMode = false;
 	ignorePrivMsg = false;
@@ -241,7 +242,6 @@ void Player::setVocation(uint32_t vocId)
 bool Player::isPushable() const
 {
 	bool ret = Creature::isPushable();
-
 	if(hasFlag(PlayerFlag_CannotBePushed))
 		return false;
 

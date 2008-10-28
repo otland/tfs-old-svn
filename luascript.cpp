@@ -1452,6 +1452,12 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerLossSkill(cid)
 	lua_register(m_luaState, "getPlayerLossSkill", LuaScriptInterface::luaGetPlayerLossSkill);
 
+	//doPlayerSwitchSaving(cid)
+	lua_register(m_luaState, "doPlayerSwitchSaving", LuaScriptInterface::luaDoPlayerSwitchSaving);
+
+	//doPlayerSave(cid)
+	lua_register(m_luaState, "doPlayerSave", LuaScriptInterface::luaDoPlayerSave);
+
 	//isPlayer(cid)
 	lua_register(m_luaState, "isPlayer", LuaScriptInterface::luaIsPlayer);
 
@@ -1460,6 +1466,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//isPlayerGhost(cid)
 	lua_register(m_luaState, "isPlayerGhost", LuaScriptInterface::luaIsPlayerGhost);
+
+	//isPlayerSaving(cid)
+	lua_register(m_luaState, "isPlayerSaving", LuaScriptInterface::luaIsPlayerSaving);
 
 	//isCreature(cid)
 	lua_register(m_luaState, "isCreature", LuaScriptInterface::luaIsCreature);
@@ -2112,12 +2121,16 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 			case PlayerInfoPzLock:
 				value = player->isPzLocked();
 				break;
+			case PlayerInfoSaving:
+				value = player->isSaving();
+				break;
 			default:
-				std::string error_str = "Unknown player info. info = " + info;
-				reportErrorFunc(error_str);
+				std::string tmp = "Unknown player info - " + info;
+				reportErrorFunc(tmp);
 				value = 0;
 				break;
 		}
+
 		lua_pushnumber(L, value);
 		return 1;
 	}
@@ -2130,6 +2143,7 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;
 }
+
 //getPlayer[Info](uid)
 int32_t LuaScriptInterface::luaGetPlayerFood(lua_State* L)
 {
@@ -2284,6 +2298,11 @@ int32_t LuaScriptInterface::luaGetPlayerPartner(lua_State* L)
 int32_t LuaScriptInterface::luaIsPlayerPzLocked(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoPzLock);
+}
+
+int32_t LuaScriptInterface::luaIsPlayerSaving(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoSaving);
 }
 //
 
@@ -7710,7 +7729,7 @@ int32_t LuaScriptInterface::luaGetCreatureCondition(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerBlessing(lua_State* L)
 {
 	//getPlayerBlessings(cid, blessing)
-	int16_t blessing = popNumber(L) - 1;
+	int16_t blessing = popNumber(L);
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
@@ -7727,7 +7746,7 @@ int32_t LuaScriptInterface::luaGetPlayerBlessing(lua_State* L)
 int32_t LuaScriptInterface::luaDoPlayerAddBlessing(lua_State* L)
 {
 	//doPlayerAddBlessing(cid, blessing)
-	int16_t blessing = popNumber(L) - 1;
+	int16_t blessing = popNumber(L);
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
@@ -8160,7 +8179,7 @@ int32_t LuaScriptInterface::luaSetPlayerExtraExpRate(lua_State* L)
 	if(player)
 	{
 		if(value < 0)
-			value = std::max((int32_t)value, (int32_t)-(g_game.getExperienceStage(player->getLevel()) - 1));
+			value = std::max((int32_t)value, -int32_t(g_game.getExperienceStage(player->getLevel()) - 1));
 		player->setExtraExpRate(value);
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}
@@ -8168,6 +8187,41 @@ int32_t LuaScriptInterface::luaSetPlayerExtraExpRate(lua_State* L)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoPlayerSwitchSaving(lua_State* L)
+{
+	//doPlayerSwitchSaving(cid)
+	uint32_t cid = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	if(Player* player = env->getPlayerByUID(cid))
+	{
+		player->switchSaving();
+		lua_pushnumber(L, LUA_NO_ERROR);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoPlayerSave(lua_State* L)
+{
+	//doPlayerSave(cid)
+	uint32_t cid = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	if(Player* player = env->getPlayerByUID(cid))
+		lua_pushboolean(L, IOLoginData::getInstance()->savePlayer(player, false));
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushboolean(L, false);
 	}
 	return 1;
 }

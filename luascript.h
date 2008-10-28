@@ -237,7 +237,8 @@ enum PlayerInfo_t
 	PlayerInfoLossSkill,
 	PlayerInfoNoMove,
 	PlayerInfoMarriage,
-	PlayerInfoPzLock
+	PlayerInfoPzLock,
+	PlayerInfoSaving
 };
 
 #define reportErrorFunc(a)  reportError(__FUNCTION__, a)
@@ -407,6 +408,8 @@ class LuaScriptInterface
 		static int32_t luaDoPlayerResetIdleTime(lua_State* L);
 		static int32_t luaDoSetCreatureLight(lua_State* L);
 		static int32_t luaGetPlayerSkullType(lua_State* L);
+		static int32_t luaDoPlayerSwitchSaving(lua_State* L);
+		static int32_t luaDoPlayerSave(lua_State* L);
 
 		//queries
 		static int32_t luaGetCreatureByName(lua_State* L);
@@ -549,6 +552,7 @@ class LuaScriptInterface
 		static int32_t luaIsPlayer(lua_State* L);
 		static int32_t luaIsPlayerPzLocked(lua_State* L);
 		static int32_t luaIsPlayerGhost(lua_State* L);
+		static int32_t luaIsPlayerSaving(lua_State* L);
 		static int32_t luaIsCreature(lua_State* L);
 		static int32_t luaIsContainer(lua_State* L);
 		static int32_t luaIsCorpse(lua_State* L);
