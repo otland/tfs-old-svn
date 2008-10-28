@@ -3880,18 +3880,20 @@ void Player::manageAccount(const std::string &text)
 		{
 			newCharacterName = text;
 			trimString(newCharacterName);
-			if(!isValidName(newCharacterName))
-				msg << "That name seems to contain invalid symbols tell me another name.";
-			else if(islower(newCharacterName[0]))
-				msg << "Names dont start with lowercase tell me another name starting with uppercase!";
+			if(newCharacterName.length() < 4)
+				msg << "Your name you want is too short, please select a longer name.";
 			else if(newCharacterName.length() > 20)
 				msg << "The name you want is too long, please select a shorter name.";
-			else if(upchar(newCharacterName[0]) == 'G' && upchar(newCharacterName[1]) == 'M')
-				msg << "Your character is not a gamemaster please tell me another name!";
+			else if(asLowerCaseString(newCharacterName).substr(0, 4) == "God "
+				|| asLowerCaseString(newCharacterName).substr(0, 3) == "Gm "
+				|| asLowerCaseString(newCharacterName).substr(0, 3) == "Cm ")
+			{
+				msg << "You are not a gamemaster, please pick another name.";
+			}
 			else if(IOLoginData::getInstance()->playerExists(newCharacterName))
 				msg << "A player with this name currently exists, please choose another name.";
-			else if(newCharacterName.length() < 4)
-				msg << "Your name you want is too short, please select a longer name.";
+			else if(!isValidName(newCharacterName))
+				msg << "That name seems to contain invalid symbols tell me another name.";
 			else
 			{
 				talkState[1] = true;
@@ -3954,17 +3956,11 @@ void Player::manageAccount(const std::string &text)
 		}
 		else if(talkState[2])
 		{
-			std::string tmpStr = text;
-			trimString(tmpStr);
-			if(!isValidName(tmpStr))
-				msg << "That name contains invalid characters, try to say your name again, you might have typed it wrong.";
-			else
-			{
-				talkState[2] = false;
-				talkState[3] = true;
-				removeChar = tmpStr;
-				msg << "Do you really want to delete the character named " << removeChar << "?";
-			}
+			removeChar = text;
+			trimString(removeChar);
+			talkState[2] = false;
+			talkState[3] = true;
+			msg << "Do you really want to delete the character named " << removeChar << "?";
 		}
 		else if(checkText(text, "yes") && talkState[3])
 		{
@@ -4062,18 +4058,20 @@ void Player::manageAccount(const std::string &text)
 		{
 			newCharacterName = text;
 			trimString(newCharacterName);
-			if(!isValidName(newCharacterName))
-				msg << "That name seems to contain invalid symbols tell me another name.";
-			else if(islower(newCharacterName[0]))
-				msg << "Names dont start with lowercase tell me another name starting with uppercase!";
+			if(newCharacterName.length() < 4)
+				msg << "Your name you want is too short, please select a longer name.";
 			else if(newCharacterName.length() > 20)
 				msg << "The name you want is too long, please select a shorter name.";
-			else if(upchar(newCharacterName[0]) == 'G' && (upchar(newCharacterName[1]) == 'M' || (upchar(newCharacterName[1]) == 'O' && upchar(newCharacterName[2]) == 'D')))
-				msg << "Your character is not a gamemaster please tell me a another name!";
+			else if(asLowerCaseString(newCharacterName).substr(0, 4) == "God "
+				|| asLowerCaseString(newCharacterName).substr(0, 3) == "Gm "
+				|| asLowerCaseString(newCharacterName).substr(0, 3) == "Cm ")
+			{
+				msg << "You are not a gamemaster, please pick another name.";
+			}
 			else if(IOLoginData::getInstance()->playerExists(newCharacterName))
 				msg << "A player with this name currently exists, please choose another name.";
-			else if(newCharacterName.length() < 4)
-				msg << "Your name you want is too short, please select a longer name.";
+			else if(!isValidName(newCharacterName))
+				msg << "That name seems to contain invalid symbols tell me another name.";
 			else
 			{
 				talkState[6] = false;

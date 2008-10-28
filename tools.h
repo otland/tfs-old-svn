@@ -74,7 +74,7 @@ bool isUppercaseLetter(char character);
 bool isLowercaseLetter(char character);
 bool isPasswordCharacter(char character);
 
-bool isValidName(std::string text);
+bool isValidName(std::string text, bool forceUppercaseOnFirstLetter = true);
 bool isValidPassword(std::string text);
 bool isNumbers(std::string text);
 
