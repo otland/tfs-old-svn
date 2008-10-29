@@ -303,7 +303,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 				IOLoginData::getInstance()->loadPlayer(player, "Account Manager");
 				player->accountManager = MANAGER_NAMELOCK;
 				player->managerNumber = accnumber;
-				player->managerString = name;
+				player->managerString2 = name;
 			}
 			else
 				isNamelocked = true;

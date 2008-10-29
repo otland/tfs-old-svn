@@ -62,7 +62,7 @@ void House::addTile(HouseTile* tile)
 	houseTiles.push_back(tile);
 }
 
-void House::setHouseOwner(uint32_t guid, bool cleanContent/* = true*/)
+void House::setHouseOwner(uint32_t guid, bool cleaned/* = true*/)
 {
 	if(isLoaded && houseOwner == guid)
 		return;
@@ -70,11 +70,11 @@ void House::setHouseOwner(uint32_t guid, bool cleanContent/* = true*/)
 	isLoaded = true;
 	if(houseOwner)
 	{
-		if(cleanContent)
+		if(cleaned)
 			clean();
 
-		setAccessList(SUBOWNER_LIST, "");
-		setAccessList(GUEST_LIST, "");
+		setAccessList(SUBOWNER_LIST, "", !cleaned);
+		setAccessList(GUEST_LIST, "", !cleaned);
 		for(HouseDoorList::iterator it = doorList.begin(); it != doorList.end(); ++it)
 			(*it)->setAccessList("");
 
@@ -135,18 +135,22 @@ void House::removePlayer(Player* player)
 
 void House::removePlayers(bool ignoreInvites)
 {
+	PlayerVector kickList;
 	for(HouseTileList::iterator it = houseTiles.begin(); it != houseTiles.end(); ++it)
 	{
-		if((*it)->creatures.size())
+		if(!(*it)->creatures.size())
+			continue;
+
+		for(CreatureVector::iterator cit = (*it)->creatures.begin(); cit != (*it)->creatures.end(); ++cit)
 		{
-			for(CreatureVector::iterator cit = (*it)->creatures.begin(); cit != (*it)->creatures.end(); ++cit)
-			{
-				Player* player = (*cit)->getPlayer();
-				if(player && (ignoreInvites || !isInvited(player)))
-					removePlayer(player);
-			}
+			Player* player = (*cit)->getPlayer();
+			if(player && !player->isRemoved() && (ignoreInvites || !isInvited(player)))
+				kickList.push_back(player);
 		}
 	}
+
+	for(PlayerVector::iterator it = kickList.begin(); it != kickList.end(); ++it)
+		removePlayer((*it));
 }
 
 void House::clean()
@@ -185,7 +189,7 @@ void House::setPrice(uint32_t _price, bool update /*= false*/)
 		updateDoorDescription();
 }
 
-void House::setAccessList(uint32_t listId, const std::string& textlist)
+void House::setAccessList(uint32_t listId, const std::string& textlist, bool teleport/* = true*/)
 {
 	if(listId == GUEST_LIST)
 		guestList.parseList(textlist);
@@ -203,7 +207,8 @@ void House::setAccessList(uint32_t listId, const std::string& textlist)
 		return;
 	}
 
-	removePlayers(false);
+	if(teleport)
+		removePlayers(false);
 }
 
 bool House::transferToDepot()
@@ -394,7 +399,6 @@ void House::resetTransferItem()
 		Item* tmpItem = transferItem;
 		transferItem = NULL;
 		transfer_container.setParent(NULL);
-
 		transfer_container.__removeThing(tmpItem, tmpItem->getItemCount());
 		g_game.FreeThing(tmpItem);
 	}
@@ -406,6 +410,7 @@ HouseTransferItem* HouseTransferItem::createHouseTransferItem(House* house)
 	transferItem->useThing2();
 	transferItem->setID(ITEM_HOUSE_TRANSFER);
 	transferItem->setSubType(1);
+
 	char buffer[150];
 	sprintf(buffer, "It is a house transfer document for '%s'.", house->getName().c_str());
 	transferItem->setSpecialDescription(buffer);
@@ -733,6 +738,7 @@ void Door::onRemoved()
 Houses::Houses()
 {
 	rentPeriod = RENTPERIOD_NEVER;
+
 	std::string strRentPeriod = asLowerCaseString(g_config.getString(ConfigManager::HOUSE_RENT_PERIOD));
 	if(strRentPeriod == "yearly")
 		rentPeriod = RENTPERIOD_YEARLY;
