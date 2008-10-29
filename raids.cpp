@@ -459,7 +459,7 @@ bool SingleSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 	{
 		std::vector<int32_t> posList = vectorAtoi(explodeString(strValue, ";"));
 		if(posList.size() >= 3)
-			m_position(posList[0], posList[1], posList[2]);
+			m_position = Position(posList[0], posList[1], posList[2]);
 		else
 		{
 			std::cout << "[Error SingleSpawnEvent::configureRaidEvent]: malformed pos tag for singlespawn event." << std::endl;
@@ -532,7 +532,7 @@ bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 		{
 			std::vector<int32_t> posList = vectorAtoi(explodeString(strValue, ";"));
 			if(posList.size() >= 3)
-				centerPos(posList[0], posList[1], posList[2]);
+				centerPos = Position(posList[0], posList[1], posList[2]);
 			else
 			{
 				std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: malformed centerpos tag for areaspawn event." << std::endl;
@@ -580,7 +580,7 @@ bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 		{
 			std::vector<int32_t> posList = vectorAtoi(explodeString(strValue, ";"));
 			if(posList.size() >= 3)
-				m_fromPos(posList[0], posList[1], posList[2]);
+				m_fromPos = Position(posList[0], posList[1], posList[2]);
 			else
 			{
 				std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: malformed frompos tag for areaspawn event." << std::endl;
@@ -618,7 +618,7 @@ bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 		{
 			std::vector<int32_t> posList = vectorAtoi(explodeString(strValue, ";"));
 			if(posList.size() >= 3)
-				m_toPos(posList[0], posList[1], posList[2]);
+				m_toPos = Position(posList[0], posList[1], posList[2]);
 			else
 			{
 				std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: malformed topos tag for areaspawn event." << std::endl;
