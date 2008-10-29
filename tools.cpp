@@ -420,7 +420,8 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 {
 	uint32_t textLength = text.length();
 	uint32_t lenBeforeSpace = 1;
-	uint32_t lenBeforeQuote = 1;
+	uint32_t lenBeforeSingleQuote = 1;
+	uint32_t lenBeforeDash = 1;
 
 	if(forceUppercaseOnFirstLetter)
 	{
@@ -432,27 +433,38 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 
 	for(uint32_t size = 1; size < textLength; size++)
 	{
-		if(text[size] != 39)
-		{
-			if(text[size] != 32)
-				lenBeforeQuote++;
-		}
-		else
-		{
-			if(lenBeforeQuote == 0)
-				return false;
-
-			lenBeforeQuote = 0;
-		}
-
 		if(text[size] != 32)
+		{
 			lenBeforeSpace++;
+
+			if(text[size] != 39)
+				lenBeforeSingleQuote++;
+			else
+			{
+				if(lenBeforeSingleQuote <= 1 || size == textLength - 1 || text[size + 1] == 32)
+					return false;
+
+				lenBeforeSingleQuote = 0;
+			}
+
+			if(text[size] != 45)
+				lenBeforeDash++;
+			else
+			{
+				if(lenBeforeDash <= 1 || size == textLength - 1 || text[size + 1] == 32)
+					return false;
+
+				lenBeforeDash = 0;
+			}
+		}
 		else
 		{
-			if(lenBeforeSpace <= 1)
+			if(lenBeforeSpace <= 1 || size == textLength - 1 || text[size + 1] == 32)
 				return false;
 
 			lenBeforeSpace = 0;
+			lenBeforeSingleQuote = 0;
+			lenBeforeDash = 0;
 		}
 
 		if(isLowercaseLetter(text[size]) || text[size] == 32 || text[size] == 39 || text[size] == 45
