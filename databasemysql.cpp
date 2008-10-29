@@ -38,25 +38,18 @@
 #include "scheduler.h"
 extern ConfigManager g_config;
 
-/** DatabaseMySQL definitions */
-
 DatabaseMySQL::DatabaseMySQL()
 {
 	m_connected = false;
-
-	// connection handle initialization
 	if(!mysql_init(&m_handle))
 	{
 		std::cout << "Failed to initialize MySQL connection handler." << std::endl;
 		return;
 	}
 
-	// automatic reconnect
 	my_bool reconnect = true;
 	mysql_options(&m_handle, MYSQL_OPT_RECONNECT, &reconnect);
-
-	// connects to database
-	if(!mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(ConfigManager::SQL_USER).c_str(), g_config.getString(ConfigManager::SQL_PASS).c_str(), g_config.getString(ConfigManager::SQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), NULL, 0))
+	if(!connect())
 	{
 		std::cout << "Failed connecting to database. MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
 		return;
@@ -69,8 +62,13 @@ DatabaseMySQL::DatabaseMySQL()
 		std::cout << "[Warning] Outdated MySQL server detected. Consider upgrading to a newer version." << std::endl;
 	}
 
+#ifndef __DISABLE_DIRTY_RECONNECT__
+	m_attempts = 0;
+#endif
 	m_connected = true;
-	Scheduler::getScheduler().addEvent(createSchedulerTask((g_config.getNumber(ConfigManager::SQL_KEEPALIVE) * 1000), boost::bind(&DatabaseMySQL::keepAlive, this)));
+	uint32_t keepAlive = g_config.getNumber(ConfigManager::SQL_KEEPALIVE);
+	if(keepAlive)
+		Scheduler::getScheduler().addEvent(createSchedulerTask((keepAlive * 1000), boost::bind(&DatabaseMySQL::keepAlive, this)));
 }
 
 DatabaseMySQL::~DatabaseMySQL()
@@ -101,10 +99,6 @@ bool DatabaseMySQL::rollback()
 	if(!m_connected)
 		return false;
 
-	#ifdef __SQL_QUERY_DEBUG__
-	std::cout << "ROLLBACK" << std::endl;
-	#endif
-
 	if(mysql_rollback(&m_handle) != 0)
 	{
 		std::cout << "mysql_rollback(): MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
@@ -119,9 +113,6 @@ bool DatabaseMySQL::commit()
 	if(!m_connected)
 		return false;
 
-	#ifdef __SQL_QUERY_DEBUG__
-	std::cout << "COMMIT" << std::endl;
-	#endif
 	if(mysql_commit(&m_handle) != 0)
 	{
 		std::cout << "mysql_commit(): MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
@@ -136,32 +127,28 @@ bool DatabaseMySQL::executeQuery(const std::string &query)
 	if(!m_connected)
 		return false;
 
-	#ifdef __SQL_QUERY_DEBUG__
-	std::cout << "MYSQL QUERY: " << query << std::endl;
-	#endif
-
-	bool state = true;
-
-	// executes the query
 	if(mysql_real_query(&m_handle, query.c_str(), query.length()) != 0)
 	{
-		std::cout << "mysql_real_query(): " << query << ": MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
 		int32_t error = mysql_errno(&m_handle);
-
 		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
+		{
+#ifndef __DISABLE_DIRTY_RECONNECT__
+			if(reconnect())
+				return executeQuery(query);
+#else
 			m_connected = false;
+#endif
+		}
 
-		state = false;
+		std::cout << "mysql_real_query(): " << query << ": MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
+		return false;
+
 	}
 
-	// we should call that every time as someone would call executeQuery('SELECT...')
-	// as it is described in MySQL manual: "it doesn't hurt" :P
-	MYSQL_RES* m_res = mysql_store_result(&m_handle);
-
-	if(m_res)
+	if(MYSQL_RES* m_res = mysql_store_result(&m_handle))
 		mysql_free_result(m_res);
 
-	return state;
+	return true;
 }
 
 DBResult* DatabaseMySQL::storeQuery(const std::string &query)
@@ -169,63 +156,64 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 	if(!m_connected)
 		return NULL;
 
-	#ifdef __SQL_QUERY_DEBUG__
-	std::cout << "MYSQL QUERY: " << query << std::endl;
-	#endif
-
-	// executes the query
 	if(mysql_real_query(&m_handle, query.c_str(), query.length()) != 0)
 	{
+		int32_t error = mysql_errno(&m_handle);
+		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
+		{
+#ifndef __DISABLE_DIRTY_RECONNECT__
+			if(reconnect())
+				return storeQuery(query);
+#else
+			m_connected = false;
+#endif
+		}
+
 		std::cout << "mysql_real_query(): " << query << ": MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
-		int32_t error = mysql_errno(&m_handle);
-
-		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
-			m_connected = false;
-
-	}
-
-	// we should call that every time as someone would call executeQuery('SELECT...')
-	// as it is described in MySQL manual: "it doesn't hurt" :P
-	MYSQL_RES* m_res = mysql_store_result(&m_handle);
-
-	// error occured
-	if(!m_res)
-	{
-		std::cout << "mysql_store_result(): " << query << ": MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
-		int32_t error = mysql_errno(&m_handle);
-
-		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
-			m_connected = false;
-
 		return NULL;
+
 	}
 
-	// retriving results of query
-	DBResult* res = (DBResult*)new MySQLResult(m_res);
-	return verifyResult(res);
+	if(MYSQL_RES* m_res = mysql_store_result(&m_handle))
+	{
+		DBResult* res = (DBResult*)new MySQLResult(m_res);
+		return verifyResult(res);
+	}
+
+	int32_t error = mysql_errno(&m_handle);
+	if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
+	{
+#ifndef __DISABLE_DIRTY_RECONNECT__
+		if(reconnect())
+			return storeQuery(query);
+#else
+		m_connected = false;
+#endif
+	}
+
+	std::cout << "mysql_store_result(): " << query << ": MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
+	return NULL;
 }
 
 std::string DatabaseMySQL::escapeString(const std::string &s)
 {
-	return escapeBlob( s.c_str(), s.length() );
+	return escapeBlob(s.c_str(), s.length());
 }
 
 std::string DatabaseMySQL::escapeBlob(const char* s, uint32_t length)
 {
-	// remember about quoiting even an empty string!
 	if(!s)
 		return std::string("''");
 
-	// the worst case is 2n + 1
 	char* output = new char[length * 2 + 1];
-
-	// quotes escaped string and frees temporary buffer
 	mysql_real_escape_string(&m_handle, output, s, length);
-	std::string r = "'";
-	r += output;
-	r += "'";
+
+	std::string res = "'";
+	res += output;
+	res += "'";
+
 	delete[] output;
-	return r;
+	return res;
 }
 
 void DatabaseMySQL::freeResult(DBResult* res)
@@ -242,7 +230,30 @@ void DatabaseMySQL::keepAlive()
 	Scheduler::getScheduler().addEvent(createSchedulerTask((delay * 1000), boost::bind(&DatabaseMySQL::keepAlive, this)));
 }
 
-/** MySQLResult definitions */
+bool DatabaseMySQL::connect()
+{
+	if(mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(ConfigManager::SQL_USER).c_str(), g_config.getString(ConfigManager::SQL_PASS).c_str(), g_config.getString(ConfigManager::SQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), NULL, 0))
+		return true;
+
+	return false;
+}
+
+#ifndef __DISABLE_DIRTY_RECONNECT__
+bool DatabaseMySQL::reconnect()
+{
+	if(connect())
+		m_attempts = 0;
+	else if(m_attempts < MAX_RECONNECT_ATTEMPTS)
+		m_attempts++;
+	else
+	{
+		m_connected = false;
+		std::cout << "Failed reconnecting to database. MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
+		return false;
+	}
+	return true;
+}
+#endif
 
 int32_t MySQLResult::getDataInt(const std::string &s)
 {

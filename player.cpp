@@ -4025,8 +4025,7 @@ void Player::manageAccount(const std::string &text)
 			}
 			else if(checkText(text, "no") && talkState[2])
 			{
-				talkState[1] = false;
-				talkState[2] = true;
+				talkState[1] = talkState[2] = false;
 				msg << "What else would you like to name your character?";
 			}
 			else if(checkText(text, "yes") && talkState[2])
@@ -4044,15 +4043,13 @@ void Player::manageAccount(const std::string &text)
 					}
 					else
 					{
-						talkState[1] = false;
-						talkState[2] = true;
+						talkState[1] = talkState[2] = false;
 						msg << "Failed to change your name, please try again.";
 					}
 				}
 				else
 				{
-					talkState[1] = false;
-					talkState[2] = true;
+					talkState[1] = talkState[2] = false;
 					msg << "A player with that name already exists, please pick another name.";
 				}
 			}
@@ -4380,8 +4377,8 @@ void Player::manageAccount(const std::string &text)
 					msg << "Your password contains invalid characters... please tell me another one.";
 				else
 				{
-					talkState[3] = false;
-					talkState[2] = true;
+					talkState[3] = true;
+					talkState[2] = false;
 					managerString = tmp;
 					msg << managerString << " is it? 'yes' or 'no'?";
 				}
@@ -4396,7 +4393,7 @@ void Player::manageAccount(const std::string &text)
 					msg << "Your account has been created, you can login now with name: '" << managerChar << "', and password: '" << managerString << "'! If the account name is too hard to remember, please note it somewhere.";
 
 					IOLoginData::getInstance()->createAccount(managerChar, managerString);
-					for(int8_t i = 2; i <= 8; i++)
+					for(int8_t i = 2; i <= 5; i++)
 						talkState[i] = false;
 				}
 				else
@@ -4436,6 +4433,8 @@ void Player::manageAccount(const std::string &text)
 				{
 					IOLoginData::getInstance()->createAccount(managerChar, managerString);
 					msg << "Your account has been created, you can login now with name: '" << managerChar << "', and password: '" << managerString << "'!";
+					for(int8_t i = 2; i <= 5; i++)
+						talkState[i] = false;
 				}
 				else
 				{
@@ -4468,8 +4467,7 @@ void Player::manageAccount(const std::string &text)
 				else
 				{
 					msg << "Sorry, but account with such name doesn't exists.";
-					for(int8_t i = 2; i <= 8; i++)
-						talkState[i] = false;
+					talkState[6] = talkState[7] = false;
 				}
 			}
 			else if(talkState[8])
@@ -4484,8 +4482,7 @@ void Player::manageAccount(const std::string &text)
 				else
 					msg << "Sorry, but this key doesn't match to account you gave me.";
 
-				for(int8_t i = 2; i <= 8; i++)
-					talkState[i] = false;
+				talkState[7] = talkState[8] = false;
 			}
 			else
 				msg << "Sorry, but I can't understand you, please try to repeat that.";

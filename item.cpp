@@ -968,7 +968,8 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 
 				s << " magic level " << it.runeMagLevel;
 			}
-			s << " or higher.";
+
+			s << " or higher";
 		}
 	}
 	else if(it.weaponType != WEAPON_NONE)
@@ -1016,13 +1017,12 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 
 				s << "magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICLEVEL] << std::noshowpos;
 			}
+
 			s << ")";
 		}
 
 		if(it.showCharges)
 			s << " that has " << subType << " charge" << (subType > 1 ? "s" : "") << " left";
-
-		s << ".";
 	}
 	else if(it.armor != 0 || (item && item->getArmor() != 0))
 	{
@@ -1133,16 +1133,20 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 				isBegin = false;
 			}
 		}
-		s << ").";
+
+		if(it.abilities.speed > 0)
+			s << ", speed +" << it.abilities.speed / 2;
+
+		s << ")";
 	}
+	else if(it.abilities.speed > 0)
+		s << " (speed +" << it.abilities.speed / 2 << ")";
 	else if(it.isFluidContainer())
 	{
 		if(subType > 0)
 			s << " of " << (items[subType].name.length() ? items[subType].name : "unknown");
 		else
 			s << ". It is empty";
-
-		s << ".";
 	}
 	else if(it.isSplash())
 	{
@@ -1151,13 +1155,11 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			s << items[subType].name;
 		else
 			s << "unknown";
-
-		s << ".";
 	}
 	else if(it.isContainer())
-		s << " (Vol:" << (int32_t)it.maxItems << ").";
+		s << " (Vol:" << (int32_t)it.maxItems << ")";
 	else if(it.isKey())
-		s << " (Key:" << (item ? (int32_t)item->getActionId() : 0) << ").";
+		s << " (Key:" << (item ? (int32_t)item->getActionId() : 0) << ")";
 	else if(it.allowDistRead)
 	{
 		s << std::endl;
@@ -1184,13 +1186,13 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 				s << item->getText();
 			}
 			else
-				s << "You are too far away to read it.";
+				s << "You are too far away to read it";
 		}
 		else
-			s << "Nothing is written on it.";
+			s << "Nothing is written on it";
 	}
 	else if(it.showCharges)
-		s << " that has " << subType << " charge" << (subType > 1 ? "s" : "") << " left.";
+		s << " that has " << subType << " charge" << (subType > 1 ? "s" : "") << " left";
 	else if(it.showDuration)
 	{
 		if(item && item->hasAttribute(ATTR_ITEM_DURATION))
@@ -1199,20 +1201,19 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			s << " that has energy for ";
 
 			if(duration >= 120)
-				s << duration / 60 << " minutes left.";
+				s << duration / 60 << " minutes left";
 			else if(duration > 60)
-				s << "1 minute left.";
+				s << "1 minute left";
 			else
-				s << " less than a minute left.";
+				s << " less than a minute left";
 		}
 		else
-			s << " that is brand-new.";
+			s << " that is brand-new";
 	}
 	else if(it.isLevelDoor() && item && item->getActionId() >= 1000)
-		s << " for level " << item->getActionId() - 1000 << ".";
-	else
-		s << ".";
+		s << " for level " << item->getActionId() - 1000;
 
+	s << ".";
 	if(it.wieldInfo != 0)
 	{
 		s << std::endl << "It can only be wielded properly by ";
@@ -1235,6 +1236,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 				s << " of";
 			s << " magic level " << (int32_t)it.minReqMagicLevel << " or higher";
 		}
+
 		s << ".";
 	}
 

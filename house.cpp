@@ -128,6 +128,9 @@ AccessHouseLevel_t House::getHouseAccessLevel(const Player* player)
 
 void House::removePlayer(Player* player)
 {
+	if(player->hasFlag(PlayerFlag_CanEditHouses))
+		return;
+
 	Position tmp = player->getPosition();
 	if(g_game.internalTeleport(player, g_game.getClosestFreeTile(player, getEntryPosition()), true) == RET_NOERROR && !player->isInGhostMode())
 	{
@@ -172,15 +175,15 @@ void House::clean()
 
 bool House::kickPlayer(Player* player, const std::string& name)
 {
-	Player* kickedPlayer = NULL;
-	if(g_game.getPlayerByNameWildcard(name, player) == RET_NOERROR && kickedPlayer && !kickedPlayer->isRemoved())
+	AccessHouseLevel_t tmp = getHouseAccessLevel(player);
+	if(g_game.getPlayerByNameWildcard(name, player) == RET_NOERROR && player && !player->isRemoved())
 	{
-		HouseTile* houseTile = dynamic_cast<HouseTile*>(kickedPlayer->getTile());
+		HouseTile* houseTile = dynamic_cast<HouseTile*>(player->getTile());
 		if(houseTile && houseTile->getHouse() == this)
 		{
-			if(getHouseAccessLevel(player) >= getHouseAccessLevel(kickedPlayer) && !kickedPlayer->hasFlag(PlayerFlag_CanEditHouses))
+			if(tmp >= getHouseAccessLevel(player))
 			{
-				removePlayer(kickedPlayer);
+				removePlayer(player);
 				return true;
 			}
 		}
