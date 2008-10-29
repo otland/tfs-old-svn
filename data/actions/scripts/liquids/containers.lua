@@ -11,13 +11,12 @@ local TYPE_LIFE_FLUID = 10
 local TYPE_OIL = 11
 local TYPE_WINE = 15
 local TYPE_MUD = 19
+local TYPE_LAVA = 26
 local TYPE_RUM = 27
 local TYPE_SWAMP = 28
 
 local oilLamps = {[2046] = 2044}
-
 local casks = {[1771] = TYPE_WATER, [1772] = TYPE_BEER, [1773] = TYPE_WINE}
-
 local alcoholDrinks = {TYPE_BEER, TYPE_WINE, TYPE_RUM}
 local poisonDrinks = {TYPE_SLIME, TYPE_SWAMP}
 
@@ -42,36 +41,46 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			return TRUE
 		end
 
-		if hasCondition(cid, CONDITION_EXHAUST_HEAL) == TRUE then
-			doPlayerSendDefaultCancel(cid, RETURNVALUE_YOUAREEXHAUSTED)
-			return TRUE
-		end
-
 		if item.type == TYPE_MANA_FLUID then
+			if hasCondition(cid, CONDITION_EXHAUST_HEAL) == TRUE then
+				doPlayerSendDefaultCancel(cid, RETURNVALUE_YOUAREEXHAUSTED)
+				return TRUE
+			end
+
 			if doPlayerAddMana(cid, math.random(80, 160)) == LUA_ERROR then
 				return FALSE
 			end
+
 			doCreatureSay(cid, "Aaaah...", TALKTYPE_ORANGE_1)
 			doSendMagicEffect(toPosition, CONST_ME_MAGIC_BLUE)
+			doAddCondition(cid, exhaust)
 		elseif item.type == TYPE_LIFE_FLUID then
+			if hasCondition(cid, CONDITION_EXHAUST_HEAL) == TRUE then
+				doPlayerSendDefaultCancel(cid, RETURNVALUE_YOUAREEXHAUSTED)
+				return TRUE
+			end
+
 			if doCreatureAddHealth(cid, math.random(40, 75)) == LUA_ERROR then
 				return FALSE
 			end
+
 			doCreatureSay(cid, "Aaaah...", TALKTYPE_ORANGE_1)
 			doSendMagicEffect(toPosition, CONST_ME_MAGIC_BLUE)
+			doAddCondition(cid, exhaust)
 		elseif isInArray(alcoholDrinks, item.type) == TRUE then
 			if doTargetCombatCondition(0, cid, drunk, CONST_ME_NONE) == LUA_ERROR then
 				return FALSE
 			end
+
 			doCreatureSay(cid, "Aaah...", TALKTYPE_ORANGE_1)
 		elseif isInArray(poisonDrinks, item.type) == TRUE then
 			if doTargetCombatCondition(0, cid, poison, CONST_ME_NONE) == LUA_ERROR then
 				return FALSE
 			end
 		else
-			doCreatureSay(cid, "Glup.", TALKTYPE_ORANGE_1)
+			doCreatureSay(cid, "Gulp.", TALKTYPE_ORANGE_1)
 		end
-		doAddCondition(cid, exhaust)
+
 		doChangeTypeItem(item.uid, TYPE_EMPTY)
 		return TRUE
 	end
@@ -100,23 +109,9 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 				return TRUE
 			end
 
-			if isInArray(NORMAL_CORPSE_STAGE_I, itemEx.itemid) == TRUE then
-				doChangeTypeItem(item.uid, TYPE_BLOOD)
-				return TRUE
-			end
-
-			if isInArray(MUD, itemEx.itemid) == TRUE then
-				doChangeTypeItem(item.uid, TYPE_MUD)
-				return TRUE
-			end
-
-			if isInArray(SWAMP_CORPSE_STAGE_I, itemEx.itemid) == TRUE or isInArray(SWAMP, itemEx.itemid) == TRUE then
-				doChangeTypeItem(item.uid, TYPE_SLIME)
-				return TRUE
-			end
-
-			if isInArray(WATER, itemEx.itemid) == TRUE then
-				doChangeTypeItem(item.uid, TYPE_WATER)
+			local fluidEx = getFluidSourceType(itemEx.itemid)
+			if fluidEx ~= LUA_ERROR then
+				doChangeTypeItem(item.uid, fluidEx)
 				return TRUE
 			end
 
@@ -133,10 +128,6 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		if hasProperty(itemEx.uid, CONST_PROP_BLOCKSOLID) == TRUE then
 			return FALSE
 		end
-	end
-
-	if fromPosition.x == CONTAINER_POSITION then
-		fromPosition = getThingPos(cid)
 	end
 
 	local splash = doCreateItem(ITEM_POOL, item.type, toPosition)

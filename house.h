@@ -160,7 +160,7 @@ class House
 		void setName(const std::string& _houseName) {houseName = _houseName;}
 		const std::string& getName() const {return houseName;}
 
-		void setHouseOwner(uint32_t guid, bool clean = true);
+		void setHouseOwner(uint32_t guid, bool cleanContent = true);
 		uint32_t getHouseOwner() const {return houseOwner;}
 
 		void setPaidUntil(uint32_t paid) {paidUntil = paid;}
@@ -213,8 +213,8 @@ class House
 		HouseTileList::iterator getHouseTileEnd() {return houseTiles.end();}
 
 	private:
-		bool removePlayer(Player* player);
-		bool removePlayers(bool ignoreInvites);
+		void removePlayer(Player* player);
+		void removePlayers(bool ignoreInvites);
 
 		void updateDoorDescription();
 		bool transferToDepot();

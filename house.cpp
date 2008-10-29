@@ -62,7 +62,7 @@ void House::addTile(HouseTile* tile)
 	houseTiles.push_back(tile);
 }
 
-void House::setHouseOwner(uint32_t guid, bool clean/* = true*/)
+void House::setHouseOwner(uint32_t guid, bool cleanContent/* = true*/)
 {
 	if(isLoaded && houseOwner == guid)
 		return;
@@ -70,7 +70,7 @@ void House::setHouseOwner(uint32_t guid, bool clean/* = true*/)
 	isLoaded = true;
 	if(houseOwner)
 	{
-		if(clean)
+		if(cleanContent)
 			clean();
 
 		setAccessList(SUBOWNER_LIST, "");
@@ -142,8 +142,8 @@ void House::removePlayers(bool ignoreInvites)
 			for(CreatureVector::iterator cit = (*it)->creatures.begin(); cit != (*it)->creatures.end(); ++cit)
 			{
 				Player* player = (*cit)->getPlayer();
-				if(player && (ignoreInvitation || !isInvited(player)))
-					teleportPlayer(player);
+				if(player && (ignoreInvites || !isInvited(player)))
+					removePlayer(player);
 			}
 		}
 	}

@@ -35,9 +35,9 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			if failed == TRUE then
 				doPlayerSendCancel(cid, "Sorry, not possible.")
 				return TRUE
-			else
-				failed = TRUE
 			end
+
+			failed = TRUE
 		end
 
 		for i = 1, 4 do

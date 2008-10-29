@@ -6746,9 +6746,9 @@ int32_t LuaScriptInterface::luaGetPlayerByNameWildcard(lua_State* L)
 	//getPlayerByNameWildcard(name~)
 	std::string name = popString(L);
 
-	Player player = NULL;
+	Player* player = NULL;
 	ScriptEnviroment* env = getScriptEnv();
-	if(g_game.getPlayerByNameWildcard(nameWildcard, player) == RET_NOERROR && player)
+	if(g_game.getPlayerByNameWildcard(name, player) == RET_NOERROR && player)
 	{
 		uint32_t cid = env->addThing(player);
 		lua_pushnumber(L, cid);

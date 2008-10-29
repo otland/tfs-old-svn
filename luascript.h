@@ -651,9 +651,9 @@ class LuaScriptInterface
 		static int32_t luaDoPlayerSetNoMove(lua_State* L);
 		static int32_t luaGetPlayerNoMove(lua_State* L);
 
-		static int32_t luaGetTemplePositionByName(lua_State* L);
-		static int32_t luaGetTemplePositionById(lua_State* L);
+		static int32_t luaGetTownId(lua_State* L);
 		static int32_t luaGetTownName(lua_State* L);
+		static int32_t luaGetTownTemplePosition(lua_State* L);
 		static int32_t luaGetTownHouses(lua_State* L);
 
 		static int32_t luaGetSpectators(lua_State *L);
