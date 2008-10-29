@@ -108,17 +108,20 @@ void House::updateDoorDescription()
 
 AccessHouseLevel_t House::getHouseAccessLevel(const Player* player)
 {
-	if(player->hasFlag(PlayerFlag_CanEditHouses))
-		return HOUSE_OWNER;
+	if(player)
+	{
+		if(player->hasFlag(PlayerFlag_CanEditHouses))
+			return HOUSE_OWNER;
 
-	if(player->getGUID() == houseOwner)
-		return HOUSE_OWNER;
+		if(player->getGUID() == houseOwner)
+			return HOUSE_OWNER;
 
-	if(subOwnerList.isInList(player))
-		return HOUSE_SUBOWNER;
+		if(subOwnerList.isInList(player))
+			return HOUSE_SUBOWNER;
 
-	if(guestList.isInList(player))
-		return HOUSE_GUEST;
+		if(guestList.isInList(player))
+			return HOUSE_GUEST;
+	}
 
 	return HOUSE_NO_INVITED;
 }
@@ -149,8 +152,11 @@ void House::removePlayers(bool ignoreInvites)
 		}
 	}
 
-	for(PlayerVector::iterator it = kickList.begin(); it != kickList.end(); ++it)
-		removePlayer((*it));
+	if(kickList.size())
+	{
+		for(PlayerVector::iterator it = kickList.begin(); it != kickList.end(); ++it)
+			removePlayer((*it));
+	}
 }
 
 void House::clean()
@@ -166,7 +172,8 @@ void House::clean()
 
 bool House::kickPlayer(Player* player, const std::string& name)
 {
-	if(Player* kickedPlayer = g_game.getPlayerByName(name))
+	Player* kickedPlayer = NULL;
+	if(g_game.getPlayerByNameWildcard(name, player) == RET_NOERROR && kickedPlayer && !kickedPlayer->isRemoved())
 	{
 		HouseTile* houseTile = dynamic_cast<HouseTile*>(kickedPlayer->getTile());
 		if(houseTile && houseTile->getHouse() == this)
@@ -269,7 +276,7 @@ bool House::transferToDepot()
 			(*it), (*it)->getItemCount(), NULL, FLAG_NOLIMIT);
 	}
 
-	if(player && !player->isOnline())
+	if(player && player->isVirtual())
 	{
 		IOLoginData::getInstance()->savePlayer(player);
 		delete player;
@@ -1020,7 +1027,7 @@ bool Houses::payHouses()
 				}
 			}
 
-			if(!player->isOnline())
+			if(player->isVirtual())
 			{
 				if(savePlayerHere)
 					IOLoginData::getInstance()->savePlayer(player);

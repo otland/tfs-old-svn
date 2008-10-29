@@ -4706,6 +4706,9 @@ bool Player::transferMoneyTo(const std::string& name, uint64_t amount)
 	if(!g_config.getBool(ConfigManager::BANK_SYSTEM))
 		return false;
 
+	if(amount > balance)
+		return false;
+
 	Player* target = g_game.getPlayerByName(name);
 	if(!target)
 	{
@@ -4722,7 +4725,7 @@ bool Player::transferMoneyTo(const std::string& name, uint64_t amount)
 
 	balance -= amount;
 	target->balance += amount;
-	if(!target->isOnline())
+	if(target->isVirtual())
 	{
 		IOLoginData::getInstance()->savePlayer(target);
 		delete target;

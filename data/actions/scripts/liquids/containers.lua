@@ -77,6 +77,8 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			if doTargetCombatCondition(0, cid, poison, CONST_ME_NONE) == LUA_ERROR then
 				return FALSE
 			end
+
+			doCreatureSay(cid, "Urgh!", TALKTYPE_ORANGE_1)
 		else
 			doCreatureSay(cid, "Gulp.", TALKTYPE_ORANGE_1)
 		end

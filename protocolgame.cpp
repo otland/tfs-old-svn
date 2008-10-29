@@ -422,7 +422,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 	}
 	else
 	{
-		if(_player->isOnline())
+		if(_player->client)
 		{
 			if(eventConnect != 0 || !g_config.getBool(ConfigManager::REPLACE_KICK_ON_LOGIN))
 			{
@@ -448,7 +448,7 @@ bool ProtocolGame::connect(uint32_t playerId)
 {
 	eventConnect = 0;
 	Player* _player = g_game.getPlayerByID(playerId);
-	if(!_player || _player->isRemoved() || _player->isOnline())
+	if(!_player || _player->isRemoved() || _player->client)
 	{
 		disconnectClient(0x14, "Your already logged in.");
 		return false;
@@ -2721,7 +2721,7 @@ void ProtocolGame::sendVIP(uint32_t guid, const std::string& name, bool isOnline
 		msg->AddByte(0xD2);
 		msg->AddU32(guid);
 		msg->AddString(name);
-		msg->AddByte(isOnline == true ? 1 : 0);
+		msg->AddByte(isOnline ? 1 : 0);
 	}
 }
 

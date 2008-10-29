@@ -127,18 +127,16 @@ bool BedItem::canUse(Player* player)
 						delete sleeper;
 						return isBed();
 					}
-
-					delete sleeper;
 				}
+
+				delete sleeper;
 			}
 
 			return false;
 		}
 	}
-	else
-		return isBed();
 
-	return true;
+	return isBed();
 }
 
 void BedItem::sleep(Player* player)

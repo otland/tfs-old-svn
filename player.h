@@ -208,7 +208,8 @@ class Player : public Creature, public Cylinder
 
 		OperatingSystem_t getOperatingSystem() const {return operatingSystem;}
 		void setOperatingSystem(OperatingSystem_t clientOs) {operatingSystem = clientOs;}
-		bool isOnline() const {return (client != NULL);}
+
+		bool isVirtual() const {return (getID() == 0);}
 		void disconnect() {if(client) client->disconnect();}
 		uint32_t getIP() const;
 

@@ -1289,14 +1289,11 @@ DeleteCharacter_t IOLoginData::deleteCharacter(uint32_t accountId, const std::st
 		return DELETE_INTERNAL;
 
 	query.str("");
-	query << "DELETE FROM `player_viplist` WHERE `player_id` = " << id;
-	db->executeQuery(query.str());
-	query.str("");
-	query << "DELETE FROM `player_viplist` WHERE `vip_id` = " << id;
+	query << "DELETE FROM `guild_invites` WHERE `player_id` = " << id;
 	db->executeQuery(query.str());
 
 	query.str("");
-	query << "DELETE FROM `guild_invites` WHERE `player_id` = " << id;
+	query << "DELETE FROM `player_viplist` WHERE `vip_id` = " << id;
 	db->executeQuery(query.str());
 
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
