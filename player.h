@@ -141,7 +141,6 @@ class Player : public Creature, public Cylinder
 		virtual std::string getDescription(int32_t lookDistance) const;
 
 		void manageAccount(const std::string &text);
-		const std::string& getNamelockedPlayer() const {return namelockedPlayer;}
 		bool isAccountManager() const {return (accountManager != MANAGER_NONE);}
 
 		void sendFYIBox(std::string message)
@@ -770,11 +769,10 @@ class Player : public Creature, public Cylinder
 
 		bool talkState[13];
 		AccountManager_t accountManager;
-		int32_t newVocation;
-		PlayerSex_t _newSex;
-		uint32_t realAccount;
-		char newAccount[35];
-		std::string newPassword, newCharacterName, removeChar, recoverAttempt, namelockedPlayer, recoveryKey;
+		PlayerSex_t managerSex;
+		int32_t managerNumber, managerNumber2;
+		char managerChar[100];
+		std::string managerString, managerString2;
 
 		bool mayNotMove;
 		bool requestedOutfit;

@@ -496,30 +496,22 @@ Player* Game::getPlayerByID(uint32_t id)
 
 Creature* Game::getCreatureByName(const std::string& s)
 {
-	std::string txt1 = asUpperCaseString(s);
+	std::string tmp = asLowerCaseString(s);
 	for(AutoList<Creature>::listiterator it = listCreature.list.begin(); it != listCreature.list.end(); ++it)
 	{
-		if(!(*it).second->isRemoved())
-		{
-			std::string txt2 = asUpperCaseString((*it).second->getName());
-			if(txt1 == txt2)
-				return it->second;
-		}
+		if(!(*it).second->isRemoved() && tmp == asLowerCaseString((*it).second->getName()))
+			return it->second;
 	}
 	return NULL; //just in case the creature doesnt exist
 }
 
 Player* Game::getPlayerByName(const std::string& s)
 {
-	std::string txt1 = asUpperCaseString(s);
+	std::string tmp = asLowerCaseString(s);
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		if(!(*it).second->isRemoved())
-		{
-			std::string txt2 = asUpperCaseString((*it).second->getName());
-			if(txt1 == txt2)
-				return it->second;
-		}
+		if(!(*it).second->isRemoved() && tmp == asLowerCaseString((*it).second->getName()))
+			return it->second;
 	}
 	return NULL; //just in case the player doesnt exist
 }
@@ -527,7 +519,6 @@ Player* Game::getPlayerByName(const std::string& s)
 ReturnValue Game::getPlayerByNameWildcard(const std::string& s, Player*& player)
 {
 	player = NULL;
-
 	if(s.empty())
 		return RET_PLAYERWITHTHISNAMEISNOTONLINE;
 
@@ -541,18 +532,18 @@ ReturnValue Game::getPlayerByNameWildcard(const std::string& s, Player*& player)
 	}
 
 	Player* lastFound = NULL;
-	std::string txt1 = asUpperCaseString(s.substr(0, s.length()-1));
+	std::string tmp = asLowerCaseString(s.substr(0, s.length() - 1));
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
 		if(!(*it).second->isRemoved())
 		{
-			std::string txt2 = asUpperCaseString((*it).second->getName());
-			if(txt2.substr(0, txt1.length()) == txt1)
+			std::string name = asLowerCaseString((*it).second->getName());
+			if(name.substr(0, tmp.length()) == tmp)
 			{
-				if(lastFound == NULL)
-					lastFound = (*it).second;
-				else
+				if(lastFound)
 					return RET_NAMEISTOOAMBIGIOUS;
+
+				lastFound = (*it).second;
 			}
 		}
 	}
@@ -562,6 +553,7 @@ ReturnValue Game::getPlayerByNameWildcard(const std::string& s, Player*& player)
 		player = lastFound;
 		return RET_NOERROR;
 	}
+
 	return RET_PLAYERWITHTHISNAMEISNOTONLINE;
 }
 

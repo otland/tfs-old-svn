@@ -413,11 +413,11 @@ bool AnnounceEvent::configureRaidEvent(xmlNodePtr eventNode)
 			m_messageType = MSG_EVENT_DEFAULT;
 		else if(tmpStrValue == "description")
 			m_messageType = MSG_INFO_DESCR;
-		else if(tmpStrValue == "smallstatus")
+		else if(tmpStrValue == "status")
 			m_messageType = MSG_STATUS_SMALL;
-		else if(tmpStrValue == "blueconsole")
+		else if(tmpStrValue == "blue")
 			m_messageType = MSG_STATUS_CONSOLE_BLUE;
-		else if(tmpStrValue == "redconsole")
+		else if(tmpStrValue == "red")
 			m_messageType = MSG_STATUS_CONSOLE_RED;
 		else
 		{
@@ -455,28 +455,42 @@ bool SingleSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 		return false;
 	}
 
-	if(readXMLInteger(eventNode, "x", intValue))
-		m_position.x = intValue;
-	else
+	if(readXMLString(eventNode, "pos", strValue))
 	{
-		std::cout << "[Error SingleSpawnEvent::configureRaidEvent]: x tag missing for singlespawn event." << std::endl;
-		return false;
+		std::vector<int32_t> posList = vectorAtoi(explodeString(strValue, ";"));
+		if(posList.size() >= 3)
+			m_position(posList[0], posList[1], posList[2]);
+		else
+		{
+			std::cout << "[Error SingleSpawnEvent::configureRaidEvent]: malformed pos tag for singlespawn event." << std::endl;
+			return false;
+		}
 	}
-
-	if(readXMLInteger(eventNode, "y", intValue))
-		m_position.y = intValue;
 	else
 	{
-		std::cout << "[Error SingleSpawnEvent::configureRaidEvent]: y tag missing for singlespawn event." << std::endl;
-		return false;
-	}
+		if(readXMLInteger(eventNode, "x", intValue))
+			m_position.x = intValue;
+		else
+		{
+			std::cout << "[Error SingleSpawnEvent::configureRaidEvent]: x tag missing for singlespawn event." << std::endl;
+			return false;
+		}
 
-	if(readXMLInteger(eventNode, "z", intValue))
-		m_position.z = intValue;
-	else
-	{
-		std::cout << "[Error SingleSpawnEvent::configureRaidEvent]: z tag missing for singlespawn event." << std::endl;
-		return false;
+		if(readXMLInteger(eventNode, "y", intValue))
+			m_position.y = intValue;
+		else
+		{
+			std::cout << "[Error SingleSpawnEvent::configureRaidEvent]: y tag missing for singlespawn event." << std::endl;
+			return false;
+		}
+
+		if(readXMLInteger(eventNode, "z", intValue))
+			m_position.z = intValue;
+		else
+		{
+			std::cout << "[Error SingleSpawnEvent::configureRaidEvent]: z tag missing for singlespawn event." << std::endl;
+			return false;
+		}
 	}
 
 	return true;
@@ -514,28 +528,42 @@ bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 		int32_t radius = intValue;
 		Position centerPos;
 
-		if(readXMLInteger(eventNode, "centerx", intValue))
-			centerPos.x = intValue;
-		else
+		if(readXMLString(eventNode, "centerpos", strValue))
 		{
-			std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: centerx tag missing for areaspawn event." << std::endl;
-			return false;
+			std::vector<int32_t> posList = vectorAtoi(explodeString(strValue, ";"));
+			if(posList.size() >= 3)
+				centerPos(posList[0], posList[1], posList[2]);
+			else
+			{
+				std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: malformed centerpos tag for areaspawn event." << std::endl;
+				return false;
+			}
 		}
-
-		if(readXMLInteger(eventNode, "centery", intValue))
-			centerPos.y = intValue;
 		else
 		{
-			std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: centery tag missing for areaspawn event." << std::endl;
-			return false;
-		}
+			if(readXMLInteger(eventNode, "centerx", intValue))
+				centerPos.x = intValue;
+			else
+			{
+				std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: centerx tag missing for areaspawn event." << std::endl;
+				return false;
+			}
 
-		if(readXMLInteger(eventNode, "centerz", intValue))
-			centerPos.z = intValue;
-		else
-		{
-			std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: centerz tag missing for areaspawn event." << std::endl;
-			return false;
+			if(readXMLInteger(eventNode, "centery", intValue))
+				centerPos.y = intValue;
+			else
+			{
+				std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: centery tag missing for areaspawn event." << std::endl;
+				return false;
+			}
+
+			if(readXMLInteger(eventNode, "centerz", intValue))
+				centerPos.z = intValue;
+			else
+			{
+				std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: centerz tag missing for areaspawn event." << std::endl;
+				return false;
+			}
 		}
 
 		m_fromPos.x = centerPos.x - radius;
@@ -548,52 +576,80 @@ bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 	}
 	else
 	{
-		if(readXMLInteger(eventNode, "fromx", intValue))
-			m_fromPos.x = intValue;
+		if(readXMLString(eventNode, "frompos", strValue))
+		{
+			std::vector<int32_t> posList = vectorAtoi(explodeString(strValue, ";"));
+			if(posList.size() >= 3)
+				m_fromPos(posList[0], posList[1], posList[2]);
+			else
+			{
+				std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: malformed frompos tag for areaspawn event." << std::endl;
+				return false;
+			}
+		}
 		else
 		{
-			std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: fromx tag missing for areaspawn event." << std::endl;
-			return false;
+			if(readXMLInteger(eventNode, "fromx", intValue))
+				m_fromPos.x = intValue;
+			else
+			{
+				std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: fromx tag missing for areaspawn event." << std::endl;
+				return false;
+			}
+
+			if(readXMLInteger(eventNode, "fromy", intValue))
+				m_fromPos.y = intValue;
+			else
+			{
+				std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: fromy tag missing for areaspawn event." << std::endl;
+				return false;
+			}
+
+			if(readXMLInteger(eventNode, "fromz", intValue))
+				m_fromPos.z = intValue;
+			else
+			{
+				std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: fromz tag missing for areaspawn event." << std::endl;
+				return false;
+			}
 		}
 
-		if(readXMLInteger(eventNode, "fromy", intValue))
-			m_fromPos.y = intValue;
-		else
+		if(readXMLString(eventNode, "topos", strValue))
 		{
-			std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: fromy tag missing for areaspawn event." << std::endl;
-			return false;
+			std::vector<int32_t> posList = vectorAtoi(explodeString(strValue, ";"));
+			if(posList.size() >= 3)
+				m_toPos(posList[0], posList[1], posList[2]);
+			else
+			{
+				std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: malformed topos tag for areaspawn event." << std::endl;
+				return false;
+			}
 		}
-
-		if(readXMLInteger(eventNode, "fromz", intValue))
-			m_fromPos.z = intValue;
 		else
 		{
-			std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: fromz tag missing for areaspawn event." << std::endl;
-			return false;
-		}
+			if(readXMLInteger(eventNode, "tox", intValue))
+				m_toPos.x = intValue;
+			else
+			{
+				std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: tox tag missing for areaspawn event." << std::endl;
+				return false;
+			}
 
-		if(readXMLInteger(eventNode, "tox", intValue))
-			m_toPos.x = intValue;
-		else
-		{
-			std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: tox tag missing for areaspawn event." << std::endl;
-			return false;
-		}
+			if(readXMLInteger(eventNode, "toy", intValue))
+				m_toPos.y = intValue;
+			else
+			{
+				std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: toy tag missing for areaspawn event." << std::endl;
+				return false;
+			}
 
-		if(readXMLInteger(eventNode, "toy", intValue))
-			m_toPos.y = intValue;
-		else
-		{
-			std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: toy tag missing for areaspawn event." << std::endl;
-			return false;
-		}
-
-		if(readXMLInteger(eventNode, "toz", intValue))
-			m_toPos.z = intValue;
-		else
-		{
-			std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: toz tag missing for areaspawn event." << std::endl;
-			return false;
+			if(readXMLInteger(eventNode, "toz", intValue))
+				m_toPos.z = intValue;
+			else
+			{
+				std::cout << "[Error AreaSpawnEvent::configureRaidEvent]: toz tag missing for areaspawn event." << std::endl;
+				return false;
+			}
 		}
 	}
 
@@ -706,8 +762,7 @@ bool AreaSpawnEvent::executeEvent()
 
 LuaScriptInterface ScriptEvent::m_scriptInterface("Raid Interface");
 
-ScriptEvent::ScriptEvent() :
-Event(&m_scriptInterface)
+ScriptEvent::ScriptEvent() : Event(&m_scriptInterface)
 {
 	m_scriptInterface.initState();
 }

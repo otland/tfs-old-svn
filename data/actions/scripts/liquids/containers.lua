@@ -36,11 +36,6 @@ local exhaust = createConditionObject(CONDITION_EXHAUST_HEAL)
 setConditionParam(exhaust, CONDITION_PARAM_TICKS, getConfigInfo('timeBetweenExActions'))
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if fromPosition.x == 31 and fromPosition.y == 31 and fromPosition.z == 7 then
-		itemEx = item
-		fromPosition = getThingPos(item.uid)
-	end
-
 	if itemEx.uid == cid then -- Player is using on himself
 		if item.type == TYPE_EMPTY then
 			doPlayerSendCancel(cid, "It is empty.")
@@ -144,7 +139,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		fromPosition = getThingPos(cid)
 	end
 
-	local splash = doCreateItem(ITEM_POOL, item.type, fromPosition)
+	local splash = doCreateItem(ITEM_POOL, item.type, toPosition)
 	doDecayItem(splash)
 
 	doChangeTypeItem(item.uid, TYPE_EMPTY)

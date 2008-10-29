@@ -1138,17 +1138,21 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 	else if(it.isFluidContainer())
 	{
 		if(subType > 0)
-			s << " of " << items[subType].name << ".";
+			s << " of " << (items[subType].name.length() ? items[subType].name : "unknown");
 		else
-			s << ". It is empty.";
+			s << ". It is empty";
+
+		s << ".";
 	}
 	else if(it.isSplash())
 	{
 		s << " of ";
-		if(subType > 0)
+		if(subType > 0 && items[subType].name.length())
 			s << items[subType].name;
 		else
-			s << items[1].name;
+			s << "unknown";
+
+		s << ".";
 	}
 	else if(it.isContainer())
 		s << " (Vol:" << (int32_t)it.maxItems << ").";

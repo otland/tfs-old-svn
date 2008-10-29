@@ -36,7 +36,7 @@ class Town
 			townid = _townid;
 		}
 
-		virtual ~Town(){}
+		virtual ~Town() {}
 
 		const Position& getTemplePosition() const {return posTemple;}
 		const std::string& getName() const {return townName;}

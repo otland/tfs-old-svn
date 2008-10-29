@@ -400,16 +400,8 @@ enum item_t
 	ITEM_LETTER_STAMPED	= 2598,
 	ITEM_LABEL		= 2599,
 
+	ITEM_WATERBALL		= 7711,
 	ITEM_HOUSE_TRANSFER	= 1968 //read-only
-};
-
-enum PlayerBlessings
-{
-	PlayerBlessing_First = 0,
-	PlayerBlessing_Second,
-	PlayerBlessing_Third,
-	PlayerBlessing_Fourth,
-	PlayerBlessing_Fifth
 };
 
 enum PlayerFlags

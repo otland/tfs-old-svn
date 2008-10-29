@@ -69,7 +69,7 @@ function getPlayerMaxMana(cid)
 end
 
 function getPlayerMasterPos(cid)
-	return getTemplePositionById(getPlayerTown(cid))
+	return getTownTemplePosition(getPlayerTown(cid))
 end
 
 function getPlayerByName(name)

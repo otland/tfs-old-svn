@@ -164,12 +164,17 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
+	//Remove premium days
+	IOLoginData::getInstance()->removePremium(account);
+	if(!g_config.getBool(ConfigManager::ACCOUNT_MANAGER) && !account.charList.size())
+	{
+		disconnectClient(0x0A, "This account doesn't contain any character.\nCreate a new character on the " + g_config.getString(ConfigManager::SERVER_NAME) + " website at \"" + g_config.getString(ConfigManager::URL) + "\".");
+		return false;
+	}
+
 	ConnectionManager::getInstance()->addLoginAttempt(clientIP, true);
 	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	TRACK_MESSAGE(output);
-
-	//Remove premium days
-	IOLoginData::getInstance()->removePremium(account);
 
 	//Add MOTD
 	output->AddByte(0x14);
@@ -179,7 +184,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	//Add char list
 	output->AddByte(0x64);
-	if(id != 1 && g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
+	if(g_config.getBool(ConfigManager::ACCOUNT_MANAGER) && id != 1)
 	{
 		output->AddByte((uint8_t)account.charList.size() + 1);
 		output->AddString("Account Manager");

@@ -85,8 +85,8 @@ class IOLoginData
 		bool createAccount(std::string name, std::string password);
 		void removePremium(Account account);
 
-		bool loadPlayer(Player* player, const std::string& name, bool preload = false);
-		bool savePlayer(Player* player, bool preSave);
+		bool loadPlayer(Player* player, const std::string& name, bool preLoad = false);
+		bool savePlayer(Player* player, bool preSave = true);
 		bool updateOnlineStatus(uint32_t guid, bool login);
 
 		const PlayerGroup* getPlayerGroup(uint32_t groupId);

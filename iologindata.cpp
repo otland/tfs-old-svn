@@ -296,7 +296,7 @@ bool IOLoginData::internalHasCustomFlag(uint32_t groupId, PlayerCustomFlags valu
 	return (0 != (flags & ((uint64_t)1 << value)));
 }
 
-bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preload /*= false*/)
+bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLoad /*= false*/)
 {
 	Database* db = Database::getInstance();
 	DBResult* result;
@@ -320,7 +320,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	player->setGroupId(result->getDataInt("group_id"));
 	player->premiumDays = acc.premiumDays;
 
-	if(preload)
+	if(preLoad)
 	{
 		//only loading basic info
 		db->freeResult(result);
@@ -634,7 +634,7 @@ void IOLoginData::loadItems(ItemMap& itemMap, DBResult* result)
 	while(result->next());
 }
 
-bool IOLoginData::savePlayer(Player* player, bool preSave)
+bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 {
 	if(preSave)
 		player->preSave();

@@ -71,7 +71,7 @@ class AccessList
 
 		bool parseList(const std::string& _list);
 		bool addPlayer(std::string& name);
-		bool addGuild(const std::string& guildName, const std::string& rank);
+		bool addGuild(const std::string& guildName, const std::string& rankName);
 		bool addExpression(const std::string& expression);
 
 		bool isInList(const Player* player);
@@ -152,17 +152,7 @@ class House
 	public:
 		House(uint32_t _houseid);
 		virtual ~House();
-
-		void addTile(HouseTile* tile);
-
-		bool canEditAccessList(uint32_t listId, const Player* player);
-		void setAccessList(uint32_t listId, const std::string& textlist);
-		bool getAccessList(uint32_t listId, std::string& list) const;
-
-		bool isInvited(const Player* player);
-
-		AccessHouseLevel_t getHouseAccessLevel(const Player* player);
-		bool kickPlayer(Player* player, const std::string& name);
+		uint32_t getHouseId() const {return houseid;}
 
 		void setEntryPos(const Position& pos) {posEntry = pos;}
 		const Position& getEntryPosition() const {return posEntry;}
@@ -170,13 +160,13 @@ class House
 		void setName(const std::string& _houseName) {houseName = _houseName;}
 		const std::string& getName() const {return houseName;}
 
-		void setHouseOwner(uint32_t guid);
+		void setHouseOwner(uint32_t guid, bool clean = true);
 		uint32_t getHouseOwner() const {return houseOwner;}
 
-		void setPaidUntil(uint32_t paid){paidUntil = paid;}
+		void setPaidUntil(uint32_t paid) {paidUntil = paid;}
 		uint32_t getPaidUntil() const {return paidUntil;}
 
-		void setRent(uint32_t _rent){rent = _rent;}
+		void setRent(uint32_t _rent) {rent = _rent;}
 		uint32_t getRent() const {return rent;}
 
 		void setPrice(uint32_t _price, bool update = false);
@@ -188,13 +178,13 @@ class House
 		void setPayRentWarnings(uint32_t warnings) {rentWarnings = warnings;}
 		uint32_t getPayRentWarnings() const {return rentWarnings;}
 
-		void setTownId(uint32_t _town){townid = _town;}
+		void setTownId(uint32_t _town) {townid = _town;}
 		uint32_t getTownId() const {return townid;}
 
-		uint32_t getHouseId() const {return houseid;}
+		bool canEditAccessList(uint32_t listId, const Player* player);
+		void setAccessList(uint32_t listId, const std::string& textlist);
+		bool getAccessList(uint32_t listId, std::string& list) const;
 
-		void addDoor(Door* door);
-		void removeDoor(Door* door);
 		Door* getDoorByNumber(uint32_t doorId);
 		Door* getDoorByNumber(uint32_t doorId) const;
 		Door* getDoorByPosition(const Position& pos);
@@ -203,10 +193,14 @@ class House
 		void resetTransferItem();
 		bool executeTransfer(HouseTransferItem* item, Player* player);
 
-		HouseTileList::iterator getHouseTileBegin() {return houseTiles.begin();}
-		HouseTileList::iterator getHouseTileEnd() {return houseTiles.end();}
+		bool kickPlayer(Player* player, const std::string& name);
+		bool isInvited(const Player* player);
+		AccessHouseLevel_t getHouseAccessLevel(const Player* player);
 		uint32_t getHouseTileSize() {return houseTiles.size();}
+		void clean();
 
+		void addDoor(Door* door);
+		void removeDoor(Door* door);
 		HouseDoorList::iterator getHouseDoorBegin() {return doorList.begin();}
 		HouseDoorList::iterator getHouseDoorEnd() {return doorList.end();}
 
@@ -214,7 +208,14 @@ class House
 		HouseBedItemList::iterator getHouseBedsBegin() {return bedsList.begin();}
 		HouseBedItemList::iterator getHouseBedsEnd() {return bedsList.end();}
 
+		void addTile(HouseTile* tile);
+		HouseTileList::iterator getHouseTileBegin() {return houseTiles.begin();}
+		HouseTileList::iterator getHouseTileEnd() {return houseTiles.end();}
+
 	private:
+		bool removePlayer(Player* player);
+		bool removePlayers(bool ignoreInvites);
+
 		void updateDoorDescription();
 		bool transferToDepot();
 

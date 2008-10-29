@@ -302,8 +302,8 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 				player->setID();
 				IOLoginData::getInstance()->loadPlayer(player, "Account Manager");
 				player->accountManager = MANAGER_NAMELOCK;
-				player->realAccount = accnumber;
-				player->namelockedPlayer = name;
+				player->managerNumber = accnumber;
+				player->managerString = name;
 			}
 			else
 				isNamelocked = true;
@@ -316,7 +316,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			else if(!player->isAccountManager())
 			{
 				player->accountManager = MANAGER_ACCOUNT;
-				player->realAccount = accnumber;
+				player->managerNumber = accnumber;
 			}
 		}
 

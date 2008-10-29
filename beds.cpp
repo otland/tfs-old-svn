@@ -60,7 +60,6 @@ bool BedItem::readAttr(AttrTypes_t attr, PropStream& propStream)
 			return true;
 			break;
 		}
-
 		case ATTR_SLEEPSTART:
 		{
 			uint32_t sleep_start;
@@ -71,10 +70,10 @@ bool BedItem::readAttr(AttrTypes_t attr, PropStream& propStream)
 			return true;
 			break;
 		}
-
 		default:
 			break;
 	}
+
 	return Item::readAttr(attr, propStream);
 }
 
@@ -91,6 +90,7 @@ bool BedItem::serializeAttr(PropWriteStream& propWriteStream)
 		propWriteStream.ADD_UCHAR(ATTR_SLEEPSTART);
 		propWriteStream.ADD_ULONG((int32_t)sleepStart);
 	}
+
 	return true;
 }
 
@@ -125,15 +125,13 @@ bool BedItem::canUse(Player* player)
 					if(house->getHouseAccessLevel(sleeper) <= house->getHouseAccessLevel(player))
 					{
 						delete sleeper;
-						sleeper = NULL;
-
 						return isBed();
 					}
 
 					delete sleeper;
-					sleeper = NULL;
 				}
 			}
+
 			return false;
 		}
 	}
@@ -158,9 +156,9 @@ void BedItem::sleep(Player* player)
 	}
 	else
 	{
-		BedItem* nextBedItem = getNextBedItem();
-
 		internalSetSleeper(player);
+
+		BedItem* nextBedItem = getNextBedItem();
 		if(nextBedItem)
 			nextBedItem->internalSetSleeper(player);
 
@@ -201,11 +199,10 @@ void BedItem::wakeUp(Player* player)
 				if(IOLoginData::getInstance()->loadPlayer(_player, name))
 				{
 					regeneratePlayer(_player);
-					IOLoginData::getInstance()->savePlayer(_player, true);
+					IOLoginData::getInstance()->savePlayer(_player);
 				}
 
 				delete _player;
-				_player = NULL;
 			}
 		}
 		else
@@ -217,7 +214,6 @@ void BedItem::wakeUp(Player* player)
 
 	// update the BedSleepersMap
 	Beds::getInstance().setBedSleeper(NULL, sleeperGUID);
-
 	BedItem* nextBedItem = getNextBedItem();
 
 	// unset sleep info
@@ -284,11 +280,11 @@ void BedItem::updateAppearance(const Player* player)
 
 void BedItem::internalSetSleeper(const Player* player)
 {
-	std::string desc_str = player->getName() + " is sleeping there.";
+	std::string tmp = player->getName() + " is sleeping there.";
 
 	setSleeper(player->getGUID());
 	setSleepStart(time(NULL));
-	setSpecialDescription(desc_str);
+	setSpecialDescription(tmp);
 }
 
 void BedItem::internalRemoveSleeper()

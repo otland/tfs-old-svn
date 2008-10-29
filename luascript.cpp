@@ -1470,6 +1470,12 @@ void LuaScriptInterface::registerFunctions()
 	//isPlayerSaving(cid)
 	lua_register(m_luaState, "isPlayerSaving", LuaScriptInterface::luaIsPlayerSaving);
 
+	//isMonster(cid)
+	lua_register(m_luaState, "isMonster", LuaScriptInterface::luaIsMonster);
+
+	//isNpc(cid)
+	lua_register(m_luaState, "isNpc", LuaScriptInterface::luaIsNpc);
+
 	//isCreature(cid)
 	lua_register(m_luaState, "isCreature", LuaScriptInterface::luaIsCreature);
 
@@ -1484,6 +1490,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//getCreatureByName(name)
 	lua_register(m_luaState, "getCreatureByName", LuaScriptInterface::luaGetCreatureByName);
+
+	//getPlayerByNameWildcard(name~)
+	lua_register(m_luaState, "getPlayerByNameWildcard", LuaScriptInterface::luaGetPlayerByNameWildcard);
 
 	//getPlayerGUIDByName(name)
 	lua_register(m_luaState, "getPlayerGUIDByName", LuaScriptInterface::luaGetPlayerGUIDByName);
@@ -1542,7 +1551,7 @@ void LuaScriptInterface::registerFunctions()
 	//getDepotId(uid)
 	lua_register(m_luaState, "getDepotId", LuaScriptInterface::luaGetDepotId);
 
-	//setHouseOwner(houseid, ownerGUID)
+	//setHouseOwner(houseid, ownerGUID[, clean])
 	lua_register(m_luaState, "setHouseOwner", LuaScriptInterface::luaSetHouseOwner);
 
 	//getWorldType()
@@ -1900,14 +1909,17 @@ void LuaScriptInterface::registerFunctions()
 	//getCreatureSummons(cid)
 	lua_register(m_luaState, "getCreatureSummons", LuaScriptInterface::luaGetCreatureSummons);
 
-	//getTemplePositionByName(townName)
-	lua_register(m_luaState, "getTemplePositionByName", LuaScriptInterface::luaGetTemplePositionByName);
-
-	//getTemplePositionById(townId)
-	lua_register(m_luaState, "getTemplePositionById", LuaScriptInterface::luaGetTemplePositionById);
+	//getTownId(townName)
+	lua_register(m_luaState, "getTownId", LuaScriptInterface::luaGetTownId);
 
 	//getTownName(townId)
 	lua_register(m_luaState, "getTownName", LuaScriptInterface::luaGetTownName);
+
+	//getTownTemplePosition(townId)
+	lua_register(m_luaState, "getTownTemplePosition", LuaScriptInterface::luaGetTownTemplePosition);
+
+	//getTownHouses(townId)
+	lua_register(m_luaState, "getTownHouses", LuaScriptInterface::luaGetTownHouses);
 
 	//getSpectators(centerPos, rangex, rangey, multifloor)
 	lua_register(m_luaState, "getSpectators", LuaScriptInterface::luaGetSpectators);
@@ -1926,6 +1938,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//saveServer()
 	lua_register(m_luaState, "saveServer", LuaScriptInterface::luaSaveServer);
+
+	//cleanHouse(houseId)
+	lua_register(m_luaState, "cleanHouse", LuaScriptInterface::luaCleanHouse);
 
 	//cleanMap()
 	lua_register(m_luaState, "cleanMap", LuaScriptInterface::luaCleanMap);
@@ -4618,14 +4633,19 @@ int32_t LuaScriptInterface::luaGetDepotId(lua_State *L)
 
 int32_t LuaScriptInterface::luaSetHouseOwner(lua_State* L)
 {
-	//setHouseOwner(houseid, owner)
+	//setHouseOwner(houseid, owner[, clean])
+	bool clean = true;
+	int32_t parameters = lua_gettop(L);
+	if(parameters >= 3)
+		clean = popNumber(L);
+
 	uint32_t owner = popNumber(L);
 	uint32_t houseid = popNumber(L);
 
 	House* house = Houses::getInstance().getHouse(houseid);
 	if(house)
 	{
-		house->setHouseOwner(owner);
+		house->setHouseOwner(owner, clean);
 		lua_pushnumber(L, LUA_TRUE);
 	}
 	else
@@ -6607,6 +6627,38 @@ int32_t LuaScriptInterface::luaIsPlayer(lua_State* L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaIsMonster(lua_State* L)
+{
+	//isMonster(cid)
+	uint32_t cid = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+
+	Creature* c = env->getCreatureByUID(cid);
+	if(c && c->getMonster())
+		lua_pushnumber(L, LUA_TRUE);
+	else
+		lua_pushnumber(L, LUA_FALSE);
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaIsNpc(lua_State* L)
+{
+	//isNpc(cid)
+	uint32_t cid = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+
+	Creature* c = env->getCreatureByUID(cid);
+	if(c && c->getNpc())
+		lua_pushnumber(L, LUA_TRUE);
+	else
+		lua_pushnumber(L, LUA_FALSE);
+
+	return 1;
+}
+
 int32_t LuaScriptInterface::luaIsCreature(lua_State* L)
 {
 	//isCreature(cid)
@@ -6675,13 +6727,30 @@ int32_t LuaScriptInterface::luaIsMovable(lua_State* L)
 int32_t LuaScriptInterface::luaGetCreatureByName(lua_State* L)
 {
 	//getCreatureByName(name)
-	const char* name = popString(L);
+	std::string name = popString(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
 	if(Creature* creature = g_game.getCreatureByName(name))
 	{
 		uint32_t cid = env->addThing(creature);
+		lua_pushnumber(L, cid);
+	}
+	else
+		lua_pushnumber(L, LUA_NULL);
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetPlayerByNameWildcard(lua_State* L)
+{
+	//getPlayerByNameWildcard(name~)
+	std::string name = popString(L);
+
+	Player player = NULL;
+	ScriptEnviroment* env = getScriptEnv();
+	if(g_game.getPlayerByNameWildcard(nameWildcard, player) == RET_NOERROR && player)
+	{
+		uint32_t cid = env->addThing(player);
 		lua_pushnumber(L, cid);
 	}
 	else
@@ -8041,7 +8110,7 @@ int32_t LuaScriptInterface::luaSetCreatureMaxHealth(lua_State* L)
 	Creature* creature = env->getCreatureByUID(cid);
 	if(creature)
 	{
- 	    creature->changeMaxHealth(maxHealth);
+		creature->changeMaxHealth(maxHealth);
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else
@@ -8062,7 +8131,7 @@ int32_t LuaScriptInterface::luaSetCreatureMaxMana(lua_State* L)
 	Creature* creature = env->getCreatureByUID(cid);
 	if(creature)
 	{
- 	    creature->changeMaxMana(maxMana);
+		creature->changeMaxMana(maxMana);
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else
@@ -8225,34 +8294,16 @@ int32_t LuaScriptInterface::luaDoPlayerSave(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetTemplePositionByName(lua_State* L)
+int32_t LuaScriptInterface::luaGetTownId(lua_State* L)
 {
-	//getTemplePositionByName(townName)
+	//getTownId(townName)
 	std::string townName = popString(L);
-
-	Town* town = Towns::getInstance().getTown(townName);
-	if(town)
-		pushPosition(L, town->getTemplePosition(), 255);
+	if(Town* town = Towns::getInstance().getTown(townName))
+		lua_pushnumber(L, town->getTownID());
 	else
 	{
 		reportError(__FUNCTION__, "town not found.");
-		lua_pushnumber(L, LUA_ERROR);
-	}
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaGetTemplePositionById(lua_State* L)
-{
-	//getTemplePositionById(townId)
-	uint32_t townId = popNumber(L);
-
-	Town* town = Towns::getInstance().getTown(townId);
-	if(town)
-		pushPosition(L, town->getTemplePosition(), 255);
-	else
-	{
-		reportError(__FUNCTION__, "town not found.");
-		lua_pushnumber(L, LUA_ERROR);
+		lua_pushnumber(L, LUA_NULL);
 	}
 	return 1;
 }
@@ -8261,15 +8312,50 @@ int32_t LuaScriptInterface::luaGetTownName(lua_State* L)
 {
 	//getTownName(townId)
 	uint32_t townId = popNumber(L);
-
-	Town* town = Towns::getInstance().getTown(townId);
-	if(town)
+	if(Town* town = Towns::getInstance().getTown(townId))
 		lua_pushstring(L, town->getName().c_str());
 	else
 	{
 		reportError(__FUNCTION__, "town not found.");
 		lua_pushnumber(L, LUA_ERROR);
 	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetTownTemplePosition(lua_State* L)
+{
+	//getTownTemplePosition(townId)
+	uint32_t townId = popNumber(L);
+
+	if(Town* town = Towns::getInstance().getTown(townId))
+		pushPosition(L, town->getTemplePosition(), 255);
+	else
+	{
+		reportError(__FUNCTION__, "town not found.");
+		lua_pushnumber(L, LUA_ERROR);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetTownHouses(lua_State* L)
+{
+	//getTownHouses(townId)
+	uint32_t townId = 0;
+	if(lua_gettop(L) > 0)
+		townId = popNumber(L);
+
+	lua_newtable(L);
+	HouseMap::iterator it = Houses::getInstance().getHouseBegin();
+	for(uint32_t i = 1; it != Houses::getInstance().getHouseEnd(); ++i, ++it)
+	{
+		if(townId != 0 && it->second->getTownId() != townId)
+			continue;
+
+		lua_pushnumber(L, i);
+		lua_pushnumber(L, it->second->getHouseId());
+		lua_settable(L, -3);
+	}
+		
 	return 1;
 }
 
@@ -8350,6 +8436,23 @@ int32_t LuaScriptInterface::luaSaveServer(lua_State* L)
 	g_game.setGameState(GAME_STATE_MAINTAIN);
 	g_game.saveGameState(true);
 	g_game.setGameState(GAME_STATE_NORMAL);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaCleanHouse(lua_State *L)
+{
+	//cleanHouse(houseId)
+	uint32_t houseId = popNumber(L);
+	if(House* house = Houses::getInstance().getHouse(houseId))
+	{
+		house->clean();
+		lua_pushboolean(L, 1);
+	}
+	else
+	{
+		reportErrorFunc("House not found.");
+		lua_pushboolean(L, 0);
+	}
 	return 1;
 }
 

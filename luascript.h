@@ -413,6 +413,7 @@ class LuaScriptInterface
 
 		//queries
 		static int32_t luaGetCreatureByName(lua_State* L);
+		static int32_t luaGetPlayerByNameWildcard(lua_State* L);
 		static int32_t luaGetPlayerGUIDByName(lua_State* L);
 		static int32_t luaGetPlayerNameByGUID(lua_State* L);
 		static int32_t luaGetPlayersByAccountNumber(lua_State *L);
@@ -553,6 +554,8 @@ class LuaScriptInterface
 		static int32_t luaIsPlayerPzLocked(lua_State* L);
 		static int32_t luaIsPlayerGhost(lua_State* L);
 		static int32_t luaIsPlayerSaving(lua_State* L);
+		static int32_t luaIsMonster(lua_State* L);
+		static int32_t luaIsNpc(lua_State* L);
 		static int32_t luaIsCreature(lua_State* L);
 		static int32_t luaIsContainer(lua_State* L);
 		static int32_t luaIsCorpse(lua_State* L);
@@ -651,11 +654,13 @@ class LuaScriptInterface
 		static int32_t luaGetTemplePositionByName(lua_State* L);
 		static int32_t luaGetTemplePositionById(lua_State* L);
 		static int32_t luaGetTownName(lua_State* L);
+		static int32_t luaGetTownHouses(lua_State* L);
 
 		static int32_t luaGetSpectators(lua_State *L);
 		static int32_t luaGetOnlinePlayers(lua_State* L);
 		static int32_t luaExecuteRaid(lua_State* L);
 		static int32_t luaSaveServer(lua_State* L);
+		static int32_t luaCleanHouse(lua_State* L);
 		static int32_t luaCleanMap(lua_State* L);
 		static int32_t luaShutdown(lua_State* L);
 

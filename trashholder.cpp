@@ -65,12 +65,16 @@ void TrashHolder::__addThing(Thing* thing)
 
 void TrashHolder::__addThing(int32_t index, Thing* thing)
 {
-	if(Item* item = thing->getItem()){
-		if(item != this && item->hasProperty(MOVEABLE)){
+	if(Item* item = thing->getItem())
+	{
+		if(item->getID() == ITEM_WATERBALL)
+			return;
+
+		if(item != this && item->hasProperty(MOVEABLE))
+		{
 			g_game.internalRemoveItem(item);
-			if(effect != NM_ME_NONE){
+			if(effect != NM_ME_NONE)
 				g_game.addMagicEffect(getPosition(), effect);
-			}
 		}
 	}
 }
