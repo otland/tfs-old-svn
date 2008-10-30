@@ -193,7 +193,7 @@ class House
 		void resetTransferItem();
 		bool executeTransfer(HouseTransferItem* item, Player* player);
 
-		bool kickPlayer(Player* player, const std::string& name);
+		bool kickPlayer(Player* player, Player* target);
 		bool isInvited(const Player* player);
 		AccessHouseLevel_t getHouseAccessLevel(const Player* player);
 		uint32_t getHouseTileSize() {return houseTiles.size();}
@@ -243,22 +243,22 @@ class House
 
 class Houses
 {
-	Houses();
-	virtual ~Houses();
-
 	public:
+		Houses();
+		virtual ~Houses();
 		static Houses& getInstance()
 		{
 			static Houses instance;
 			return instance;
 		}
 
-		House* getHouse(uint32_t houseid, bool add = false);
-		House* getHouseByPlayerId(uint32_t playerId);
-
 		bool loadHousesXML(std::string filename);
 		bool reloadPrices();
 		bool payHouses();
+
+		House* getHouseByCreature(Creature* creature);
+		House* getHouse(uint32_t houseid, bool add = false);
+		House* getHouseByPlayerId(uint32_t playerId);
 
 		uint16_t getHousesCount(uint32_t accno) const;
 

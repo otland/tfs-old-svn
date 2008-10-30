@@ -173,19 +173,15 @@ void House::clean()
 	}
 }
 
-bool House::kickPlayer(Player* player, const std::string& name)
+bool House::kickPlayer(Player* player, Player* target)
 {
-	AccessHouseLevel_t tmp = getHouseAccessLevel(player);
-	if(g_game.getPlayerByNameWildcard(name, player) == RET_NOERROR && player && !player->isRemoved())
+	if(player && !player->isRemoved() && target && !target->isRemoved())
 	{
-		HouseTile* houseTile = dynamic_cast<HouseTile*>(player->getTile());
-		if(houseTile && houseTile->getHouse() == this)
+		HouseTile* houseTile = dynamic_cast<HouseTile*>(target->getTile());
+		if(houseTile && houseTile->getHouse() == this && getHouseAccessLevel(player) >= getHouseAccessLevel(target))
 		{
-			if(tmp >= getHouseAccessLevel(player))
-			{
-				removePlayer(player);
-				return true;
-			}
+			removePlayer(target);
+			return true;
 		}
 	}
 
@@ -765,34 +761,6 @@ Houses::~Houses()
 	//
 }
 
-House* Houses::getHouse(uint32_t houseid, bool add /*= false*/)
-{
-	HouseMap::iterator it = houseMap.find(houseid);
-	if(it != houseMap.end())
-		return it->second;
-
-	if(add)
-	{
-		House* house = new House(houseid);
-		houseMap[houseid] = house;
-		return house;
-	}
-
-	return NULL;
-}
-
-House* Houses::getHouseByPlayerId(uint32_t playerId)
-{
-	for(HouseMap::iterator it = houseMap.begin(); it != houseMap.end(); ++it)
-	{
-		House* house = it->second;
-		if(house->getHouseOwner() == playerId)
-			return house;
-	}
-
-	return NULL;
-}
-
 bool Houses::loadHousesXML(std::string filename)
 {
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
@@ -1040,6 +1008,50 @@ bool Houses::payHouses()
 		}
 	}
 	return true;
+}
+
+House* Houses::getHouse(uint32_t houseid, bool add /*= false*/)
+{
+	HouseMap::iterator it = houseMap.find(houseid);
+	if(it != houseMap.end())
+		return it->second;
+
+	if(add)
+	{
+		House* house = new House(houseid);
+		houseMap[houseid] = house;
+		return house;
+	}
+
+	return NULL;
+}
+
+House* Houses::getHouseByCreature(Creature* creature)
+{
+	if(creature)
+	{
+		if(Player* player = creature->getPlayer())
+		{
+			if(HouseTile* houseTile = dynamic_cast<HouseTile*>(player->getTile()))
+			{
+				if(House* house = houseTile->getHouse())
+					return house;
+			}
+		}
+	}
+	return NULL;
+}
+
+House* Houses::getHouseByPlayerId(uint32_t playerId)
+{
+	for(HouseMap::iterator it = houseMap.begin(); it != houseMap.end(); ++it)
+	{
+		House* house = it->second;
+		if(house->getHouseOwner() == playerId)
+			return house;
+	}
+
+	return NULL;
 }
 
 uint16_t Houses::getHousesCount(uint32_t accno) const

@@ -248,7 +248,6 @@ bool Player::isPushable() const
 std::string Player::getDescription(int32_t lookDistance) const
 {
 	std::stringstream s;
-	std::string tmp;
 	if(lookDistance == -1)
 	{
 		s << "yourself.";
@@ -279,6 +278,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 			s << " has no vocation";
 	}
 
+	std::string tmp;
 	if(IOLoginData::getInstance()->getNameByGuid(marriage, tmp))
 	{
 		s << ", ";
@@ -324,8 +324,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 		s << ".";
 	}
 
-	tmp = s.str();
-	return tmp;
+	return s.str();
 }
 
 Item* Player::getInventoryItem(slots_t slot) const

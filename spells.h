@@ -200,8 +200,6 @@ class InstantSpell : public TalkAction, public Spell
 		static InstantSpellFunction Levitate;
 		static InstantSpellFunction Illusion;
 
-		static House* getHouseFromPos(Creature* creature);
-
 		bool internalCastSpell(Creature* creature, const LuaVariant& var);
 
 		bool needDirection;

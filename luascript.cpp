@@ -1266,6 +1266,9 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerSendDefaultCancel(cid, ReturnValue)
 	lua_register(m_luaState, "doPlayerSendDefaultCancel", LuaScriptInterface::luaDoSendDefaultCancel);
 
+	//getSearchString(fromPosition, toPosition[, isPlayer])
+	lua_register(m_luaState, "getSearchString", LuaScriptInterface::luaGetSearchString);
+
 	//getClosestFreeTile(cid, targetpos)
 	lua_register(m_luaState, "getClosestFreeTile", LuaScriptInterface::luaGetClosestFreeTile);
 
@@ -2752,6 +2755,29 @@ int32_t LuaScriptInterface::luaDoSendDefaultCancel(lua_State* L)
 		lua_pushnumber(L, LUA_ERROR);
 	}
 
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetSearchString(lua_State* L)
+{
+	//getSearchString(fromPosition, toPosition[, isPlayer])
+	int32_t parameters = lua_gettop(L);
+
+	bool isPlayer = false;
+	if(parameters > 3)
+		isPlayer = popNumber(L) == LUA_TRUE;
+
+	PositionEx toPos, fromPos;
+	popPosition(L, toPos);
+	popPosition(L, fromPos);
+
+	if(toPos.x > 0 && fromPos.x > 0)
+		lua_pushstring(L, g_game.getSearchString(fromPos, toPos, isPlayer).c_str());
+	else
+	{
+		reportErrorFunc("wrong positions specified.");
+		lua_pushnumber(L, LUA_ERROR);
+	}
 	return 1;
 }
 
