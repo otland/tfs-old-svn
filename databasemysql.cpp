@@ -49,7 +49,7 @@ DatabaseMySQL::DatabaseMySQL()
 
 	my_bool reconnect = true;
 	mysql_options(&m_handle, MYSQL_OPT_RECONNECT, &reconnect);
-	if(!connect())
+	if(!mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(ConfigManager::SQL_USER).c_str(), g_config.getString(ConfigManager::SQL_PASS).c_str(), g_config.getString(ConfigManager::SQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), NULL, 0))
 	{
 		std::cout << "Failed connecting to database. MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
 		return;
@@ -230,27 +230,20 @@ void DatabaseMySQL::keepAlive()
 	Scheduler::getScheduler().addEvent(createSchedulerTask((delay * 1000), boost::bind(&DatabaseMySQL::keepAlive, this)));
 }
 
-bool DatabaseMySQL::connect()
-{
-	if(mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(ConfigManager::SQL_USER).c_str(), g_config.getString(ConfigManager::SQL_PASS).c_str(), g_config.getString(ConfigManager::SQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), NULL, 0))
-		return true;
-
-	return false;
-}
-
 #ifndef __DISABLE_DIRTY_RECONNECT__
 bool DatabaseMySQL::reconnect()
 {
-	if(connect())
-		m_attempts = 0;
-	else if(m_attempts < MAX_RECONNECT_ATTEMPTS)
-		m_attempts++;
-	else
+	if(m_attempts > MAX_RECONNECT_ATTEMPTS)
 	{
 		m_connected = false;
 		std::cout << "Failed reconnecting to database. MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
 		return false;
 	}
+	else if(mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(ConfigManager::SQL_USER).c_str(), g_config.getString(ConfigManager::SQL_PASS).c_str(), g_config.getString(ConfigManager::SQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), NULL, 0))
+		m_attempts = 0;
+	else
+		m_attempts++;
+
 	return true;
 }
 #endif

@@ -32,7 +32,9 @@
 #endif
 #include <sstream>
 
+#ifndef __DISABLE_DIRTY_RECONNECT__
 #define MAX_RECONNECT_ATTEMPTS 3
+#endif
 
 class DatabaseMySQL : public _Database
 {
@@ -58,7 +60,6 @@ class DatabaseMySQL : public _Database
 
 	protected:
 		DATABASE_VIRTUAL void keepAlive();
-		DATABASE_VIRTUAL bool connect();
 #ifndef __DISABLE_DIRTY_RECONNECT__
 		DATABASE_VIRTUAL bool reconnect();
 #endif
