@@ -20,10 +20,6 @@
 
 #include "otpch.h"
 
-#include "definitions.h"
-#include "otsystem.h"
-#include "boost/asio.hpp"
-
 #include "tools.h"
 #include "configmanager.h"
 #include "md5.h"

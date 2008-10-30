@@ -1142,6 +1142,7 @@ bool Items::loadFromXml()
 							else if(tmpStrValue == "femaletransformto")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
+								{
 									it.transformToOnUse[PLAYERSEX_FEMALE] = intValue;
 									ItemType& ot = getItemType(intValue);
 									if(ot.transformToFree == 0)
@@ -1149,6 +1150,7 @@ bool Items::loadFromXml()
 
 									if(it.transformToOnUse[PLAYERSEX_MALE] == 0)
 										it.transformToOnUse[PLAYERSEX_MALE] = intValue;
+								}
 							}
 							else if(tmpStrValue == "transformto")
 							{
