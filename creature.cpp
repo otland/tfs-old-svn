@@ -1434,6 +1434,25 @@ void Creature::removeCondition(Condition* condition)
 	}
 }
 
+void Creature::removeConditions(ConditionEnd_t reason, bool onlyPersistent/* = true*/)
+{
+	for(ConditionList::iterator it = conditions.begin(); it != conditions.end();)
+	{
+		if(onlyPersistent && !(*it)->isPersistent())
+		{
+			++it;
+			continue;
+		}
+
+		Condition* condition = *it;
+		it = conditions.erase(it);
+
+		condition->endCondition(this, reason);
+		onEndCondition(condition->getType());
+		delete condition;
+	}
+}
+
 Condition* Creature::getCondition(ConditionType_t type, ConditionId_t id) const
 {
 	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)

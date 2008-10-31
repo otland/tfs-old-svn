@@ -608,9 +608,7 @@ void Player::sendIcons() const
 	if(client)
 	{
 		int32_t icons = 0;
-
-		ConditionList::const_iterator it;
-		for(it = conditions.begin(); it != conditions.end(); ++it)
+		for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
 		{
 			if(!isSuppress((*it)->getType()))
 				icons |= (*it)->getIcons();
@@ -2216,21 +2214,7 @@ uint32_t Player::getIP() const
 
 void Player::death()
 {
-	for(ConditionList::iterator it = conditions.begin(); it != conditions.end();)
-	{
-		if((*it)->isPersistent())
-		{
-			Condition* condition = *it;
-			it = conditions.erase(it);
-
-			condition->endCondition(this, CONDITIONEND_DEATH);
-			onEndCondition(condition->getType());
-			delete condition;
-		}
-		else
-			++it;
-	}
-
+	removeConditions(CONDITIONEND_DEATH);
 	loginPosition = masterPos;
 	if(skillLoss)
 	{

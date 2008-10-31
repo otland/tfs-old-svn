@@ -261,6 +261,7 @@ class Creature : public AutoID, virtual public Thing
 		void removeCondition(ConditionType_t type);
 		void removeCondition(Condition* condition);
 		void removeCondition(const Creature* attacker, ConditionType_t type);
+		void removeConditions(ConditionEnd_t reason, bool onlyPersistent = true);
 		Condition* getCondition(ConditionType_t type, ConditionId_t id) const;
 		Condition* getCondition(ConditionType_t type) const;
 		void executeConditions(uint32_t interval);

@@ -373,6 +373,7 @@ class LuaScriptInterface
 		static int32_t luaDoMonsterChangeTarget(lua_State* L);
 		static int32_t luaDoAddCondition(lua_State* L);
 		static int32_t luaDoRemoveCondition(lua_State* L);
+		static int32_t luaDoRemoveConditions(lua_State* L);
 		static int32_t luaDoRemoveCreature(lua_State* L);
 		static int32_t luaDoMoveCreature(lua_State* L);
 		static int32_t luaGetHouseTilesSize(lua_State* L);
@@ -658,7 +659,7 @@ class LuaScriptInterface
 		static int32_t luaGetTownHouses(lua_State* L);
 
 		static int32_t luaGetSpectators(lua_State *L);
-		static int32_t luaGetOnlinePlayers(lua_State* L);
+		static int32_t luaGetPlayersOnline(lua_State* L);
 		static int32_t luaExecuteRaid(lua_State* L);
 		static int32_t luaSaveServer(lua_State* L);
 		static int32_t luaCleanHouse(lua_State* L);

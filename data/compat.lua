@@ -47,6 +47,14 @@ function getPlayerMasterPos(cid)
 	return getTownTemplePosition(getPlayerTown(cid))
 end
 
+function getOnlinePlayers()
+	local players = {}
+	for i, cid in ipairs(getPlayersOnline()) do
+		table.insert(players, getCreatureName(cid))
+	end
+	return players
+end
+
 function getPlayerByName(name)
 	local cid = getCreatureByName(name)
 	return isPlayer(cid) == TRUE and cid or nil

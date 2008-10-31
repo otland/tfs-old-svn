@@ -1216,8 +1216,8 @@ void LuaScriptInterface::registerFunctions()
 	//setGlobalStorageValue(valueid, newvalue)
 	lua_register(m_luaState, "setGlobalStorageValue", LuaScriptInterface::luaSetGlobalStorageValue);
 
-	//getOnlinePlayers()
-	lua_register(m_luaState, "getOnlinePlayers", LuaScriptInterface::luaGetOnlinePlayers);
+	//getPlayersOnline()
+	lua_register(m_luaState, "getPlayersOnline", LuaScriptInterface::luaGetPlayersOnline);
 
 	//getTilePzInfo(pos)
 	//1 is pz. 0 no pz.
@@ -1397,6 +1397,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//doRemoveCondition(cid, type)
 	lua_register(m_luaState, "doRemoveCondition", LuaScriptInterface::luaDoRemoveCondition);
+
+	//doRemoveConditions(cid)
+	lua_register(m_luaState, "doRemoveConditions", LuaScriptInterface::luaDoRemoveConditions);
 
 	//doRemoveCreature(cid)
 	lua_register(m_luaState, "doRemoveCreature", LuaScriptInterface::luaDoRemoveCreature);
@@ -6249,6 +6252,26 @@ int32_t LuaScriptInterface::luaDoRemoveCondition(lua_State* L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaDoRemoveConditions(lua_State* L)
+{
+	//doRemoveConditions(cid)
+	uint32_t cid = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+
+	Creature* creature = env->getCreatureByUID(cid);
+	if(!creature)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+		return 1;
+	}
+
+	creature->removeConditions(CONDITIONEND_ABORT, false);
+	lua_pushnumber(L, LUA_NO_ERROR);
+	return 1;
+}
+
 int32_t LuaScriptInterface::luaNumberToVariant(lua_State* L)
 {
 	//numberToVariant(number)
@@ -8121,15 +8144,18 @@ int32_t LuaScriptInterface::luaGetVocationInfo(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetOnlinePlayers(lua_State* L)
+int32_t LuaScriptInterface::luaGetPlayersOnline(lua_State* L)
 {
-	//getOnlinePlayers()
-	int32_t i = 0;
+	//getPlayersOnline()
+	ScriptEnviroment* env = getScriptEnv();
+	AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
+
 	lua_newtable(L);
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	for(int32_t i = 1; it != Player::listPlayer.list.end(); ++it, ++i)
 	{
-		lua_pushnumber(L, ++i);
-		lua_pushstring(L, (*it).second->getName().c_str());
+		uint32_t cid = env->addThing(it->second);
+		lua_pushnumber(L, i);
+		lua_pushnumber(L, cid);
 		lua_settable(L, -3);
 	}
 	return 1;
