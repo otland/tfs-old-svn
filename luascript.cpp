@@ -4860,21 +4860,24 @@ int32_t LuaScriptInterface::luaGetPlayerLight(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoPlayerAddExp(lua_State* L)
 {
-	//doPlayerAddExp(cid,exp)
-	uint64_t exp = popNumber(L);
+	//doPlayerAddExp(cid, exp)
+	int64_t exp = popNumber(L);
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	Player* player = env->getPlayerByUID(cid);
-	if(player)
+	if(Player* player = env->getPlayerByUID(cid))
 	{
 		if(exp > 0)
-		{
 			player->addExperience(exp);
-			lua_pushnumber(L, LUA_TRUE);
-		}
+		else if(exp < 0)
+			player->removeExperience(exp);
 		else
+		{
 			lua_pushnumber(L, LUA_FALSE);
+			return 1;
+		}
+
+		lua_pushnumber(L, LUA_TRUE);
 	}
 	else
 	{

@@ -1908,7 +1908,6 @@ void Player::addManaSpent(uint64_t amount)
 void Player::addExperience(uint64_t exp)
 {
 	int32_t newLevel = getLevel();
-
 	uint64_t nextLevelExp = Player::getExpForLevel(newLevel + 1);
 	if(Player::getExpForLevel(newLevel) > nextLevelExp)
 	{
@@ -1917,8 +1916,8 @@ void Player::addExperience(uint64_t exp)
 		sendStats();
 		return;
 	}
-	experience += exp;
 
+	experience += exp;
 	while(experience >= nextLevelExp)
 	{
 		++newLevel;
@@ -1969,6 +1968,43 @@ void Player::addExperience(uint64_t exp)
 	}
 	else
 		levelPercent = 0;
+
+	sendStats();
+}
+
+void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
+{
+	uint32_t newLevel = level;
+	while((uint64_t)(experience - exp) < Player::getExpForLevel(newLevel))
+	{
+		if(newLevel > 1)
+			newLevel--;
+		else
+			break;
+	}
+
+	if(newLevel != level)
+	{
+		char advMsg[90];
+		sprintf(advMsg, "You were downgraded from Level %d to Level %d.", level, newLevel);
+		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
+	}
+
+	uint64_t currLevelExp = Player::getExpForLevel(newLevel);
+	uint64_t nextLevelExp = Player::getExpForLevel(newLevel + 1);
+	if(nextLevelExp > currLevelExp)
+		levelPercent = Player::getPercentLevel(experience - currLevelExp - getLostExperience(), nextLevelExp - currLevelExp);
+	else
+		levelPercent = 0;
+
+	if(!updateStats)
+		return;
+
+	updateBaseSpeed();
+	setBaseSpeed(getBaseSpeed());
+
+	g_game.changeSpeed(this, 0);
+	g_game.addCreatureHealth(this);
 
 	sendStats();
 }
@@ -2253,30 +2289,7 @@ void Player::death()
 			skills[i][SKILL_TRIES] = std::max((int32_t)0, (int32_t)(skills[i][SKILL_TRIES] - lostSkillTries));
 		}
 
-		//Level loss
-		uint32_t newLevel = level;
-		while((uint64_t)(experience - getLostExperience()) < Player::getExpForLevel(newLevel))
-		{
-			if(newLevel > 1)
-				newLevel--;
-			else
-				break;
-		}
-
-		if(newLevel != level)
-		{
-			char advMsg[90];
-			sprintf(advMsg, "You were downgraded from Level %d to Level %d.", level, newLevel);
-			sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
-		}
-
-		uint64_t currLevelExp = Player::getExpForLevel(newLevel);
-		uint64_t nextLevelExp = Player::getExpForLevel(newLevel + 1);
-		if(nextLevelExp > currLevelExp)
-			levelPercent = Player::getPercentLevel(experience - currLevelExp - getLostExperience(), nextLevelExp - currLevelExp);
-		else
-			levelPercent = 0;
-
+		removeExperience(getLostExperience(), false);
 		if(!inventory[SLOT_BACKPACK])
 			__internalAddThing(SLOT_BACKPACK, Item::CreateItem(1987));
 

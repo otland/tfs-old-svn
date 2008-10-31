@@ -420,6 +420,7 @@ class Player : public Creature, public Cylinder
 		virtual void drainMana(Creature* attacker, int32_t manaLoss);
 
 		void addExperience(uint64_t exp);
+		void removeExperience(uint64_t exp, bool updateStats = true);
 		void addManaSpent(uint64_t amount);
 		void addSkillAdvance(skills_t skill, uint32_t count);
 
