@@ -1933,6 +1933,12 @@ void LuaScriptInterface::registerFunctions()
 	//debugPrint(text)
 	lua_register(m_luaState, "debugPrint", LuaScriptInterface::luaDebugPrint);
 
+	//getDataDir()
+	lua_register(m_luaState, "getDataDir", LuaScriptInterface::luaGetDataDir);
+
+	//getLogsDir()
+	lua_register(m_luaState, "getLogsDir", LuaScriptInterface::luaGetLogsDir);
+
 	//getConfigFile()
 	lua_register(m_luaState, "getConfigFile", LuaScriptInterface::luaGetConfigFile);
 
@@ -8857,6 +8863,20 @@ int32_t LuaScriptInterface::luaSetItemHitChance(lua_State* L)
 	}
 	item->setHitChance(value);
 	lua_pushnumber(L, LUA_NO_ERROR);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetDataDir(lua_State* L)
+{
+	//getDataDir()
+	lua_pushstring(L, getFilePath(FILE_TYPE_OTHER, "").c_str());
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetLogsDir(lua_State* L)
+{
+	//getLogsDir()
+	lua_pushstring(L, getFilePath(FILE_TYPE_LOG, "").c_str());
 	return 1;
 }
 

@@ -687,6 +687,8 @@ class LuaScriptInterface
 		static int32_t luaGetItemHitChance(lua_State* L);
 		static int32_t luaSetItemHitChance(lua_State* L);
 
+		static int32_t luaGetDataDir(lua_State* L);
+		static int32_t luaGetLogsDir(lua_State* L);
 		static int32_t luaGetConfigFile(lua_State* L);
 		//
 
