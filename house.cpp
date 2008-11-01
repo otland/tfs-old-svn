@@ -963,7 +963,7 @@ bool Houses::payHouses()
 				}
 			}
 
-			if(!player->isOffline())
+			if(player->isOffline())
 			{
 				if(savePlayerHere)
 					IOLoginData::getInstance()->savePlayer(player, true);
