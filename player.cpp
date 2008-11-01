@@ -3893,7 +3893,7 @@ void Player::manageAccount(const std::string &text)
 			newCharacterName = text;
 			trimString(newCharacterName);
 			if(newCharacterName.length() < 4)
-				msg << "Your name you want is too short, please select a longer name.";
+				msg << "The name you want is too short, please select a longer name.";
 			else if(newCharacterName.length() > 20)
 				msg << "The name you want is too long, please select a shorter name.";
 			else if(asLowerCaseString(newCharacterName).substr(0, 4) == "god "
@@ -4071,7 +4071,7 @@ void Player::manageAccount(const std::string &text)
 			newCharacterName = text;
 			trimString(newCharacterName);
 			if(newCharacterName.length() < 4)
-				msg << "Your name you want is too short, please select a longer name.";
+				msg << "The name you want is too short, please select a longer name.";
 			else if(newCharacterName.length() > 20)
 				msg << "The name you want is too long, please select a shorter name.";
 			else if(asLowerCaseString(newCharacterName).substr(0, 4) == "god "
