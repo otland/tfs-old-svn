@@ -48,8 +48,9 @@ function getPlayerMasterPos(cid)
 end
 
 function getOnlinePlayers()
+	local playerlist = getPlayersOnline()
 	local players = {}
-	for i, cid in ipairs(getPlayersOnline()) do
+	for i, cid in ipairs(playerlist) do
 		table.insert(players, getCreatureName(cid))
 	end
 	return players
