@@ -675,7 +675,6 @@ class Player : public Creature, public Cylinder
 
 		InvitedToGuildsList invitedToGuildsList;
 		ContainerVector containerVec;
-		void preSave();
 
 		uint32_t marriage;
 		uint64_t balance;

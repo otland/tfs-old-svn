@@ -639,8 +639,8 @@ void IOLoginData::loadItems(ItemMap& itemMap, DBResult* result)
 
 bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 {
-	if(preSave)
-		player->preSave();
+	/*if(preSave)
+		player->preSave(); deprecated*/
 
 	Database* db = Database::getInstance();
 	DBResult* result;

@@ -1969,10 +1969,15 @@ void Player::addExperience(uint64_t exp)
 
 void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 {
-	uint32_t prevLevel = (uint32_t)level;
+	int32_t prevLevel = level;
 	experience -= exp;
 	while(level > 1 && experience < Player::getExpForLevel(level))
+	{
 		level--;
+		healthMax = std::max((int32_t)0, (healthMax - (int32_t)vocation->getHealthGain()));
+		manaMax = std::max((int32_t)0, (manaMax - (int32_t)vocation->getManaGain()));
+		capacity = std::max((double)0, (capacity - (double)vocation->getCapGain()));
+	}
 
 	if(level != prevLevel)
 	{
@@ -1984,10 +1989,6 @@ void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 			g_game.changeSpeed(this, 0);
 			g_game.addCreatureHealth(this);
 		}
-
-		healthMax = std::max((int32_t)0, (healthMax - (int32_t)vocation->getHealthGain()));
-		manaMax = std::max((int32_t)0, (manaMax - (int32_t)vocation->getManaGain()));
-		capacity = std::max((double)0, (capacity - (double)vocation->getCapGain()));
 
 		char advMsg[90];
 		sprintf(advMsg, "You were downgraded from Level %d to Level %d.", prevLevel, level);
