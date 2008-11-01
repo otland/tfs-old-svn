@@ -201,7 +201,7 @@ class Player : public Creature, public Cylinder
 		void addBlessing(int16_t blessing) {blessings += blessing;}
 		bool hasBlessing(int16_t value) const {return (0 != (blessings & ((int16_t)1 << value)));}
 
-		bool isOnline() const {return (client != NULL);}
+		bool isOffline() const {return (getID() == 0);}
 		void disconnect() {if(client) client->disconnect();}
 		uint32_t getIP() const;
 

@@ -285,7 +285,7 @@ bool House::transferToDepot()
 			(*it), (*it)->getItemCount(), NULL, FLAG_NOLIMIT);
 	}
 
-	if(!player->isOnline())
+	if(player->isOffline())
 	{
 		IOLoginData::getInstance()->savePlayer(player, true);
 		delete player;
@@ -963,7 +963,7 @@ bool Houses::payHouses()
 				}
 			}
 
-			if(!player->isOnline())
+			if(!player->isOffline())
 			{
 				if(savePlayerHere)
 					IOLoginData::getInstance()->savePlayer(player, true);
