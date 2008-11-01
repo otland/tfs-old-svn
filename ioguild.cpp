@@ -37,11 +37,11 @@ bool IOGuild::getGuildIdByName(uint32_t& guildId, const std::string& guildName)
 
 	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
-		query << "SELECT `id` FROM `guilds` WHERE `name` LIKE '" << Database::escapeString(guildName) << "'";
+		query << "SELECT `id` FROM `guilds` WHERE `name` LIKE '" << Database::escapePatternString(guildName) << "'";
 	else
 		query << "SELECT `id` FROM `guilds` WHERE `name` = '" << Database::escapeString(guildName) << "'";
 	#elif defined __USE_SQLITE__
-	query << "SELECT `id` FROM `guilds` WHERE `name` LIKE '" << Database::escapeString(guildName) << "'";
+	query << "SELECT `id` FROM `guilds` WHERE `name` LIKE '" << Database::escapePatternString(guildName) << "'";
 	#elif defined __USE_MYSQL__
 	query << "SELECT `id` FROM `guilds` WHERE `name` = '" << Database::escapeString(guildName) << "'";
 	#endif
@@ -106,11 +106,11 @@ bool IOGuild::rankNameExists(std::string rankName, uint32_t guildId)
 	DBResult result;
 	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
-		query << "SELECT `name` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `name` LIKE '" << Database::escapeString(rankName) << "'";
+		query << "SELECT `name` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `name` LIKE '" << Database::escapePatternString(rankName) << "'";
 	else
 		query << "SELECT `name` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `name` = '" << Database::escapeString(rankName) << "'";
 	#elif defined __USE_SQLITE__
-	query << "SELECT `name` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `name` LIKE '" << Database::escapeString(rankName) << "'";
+	query << "SELECT `name` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `name` LIKE '" << Database::escapePatternString(rankName) << "'";
 	#elif defined __USE_MYSQL__
 	query << "SELECT `name` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `name` = '" << Database::escapeString(rankName) << "'";
 	#endif
@@ -128,11 +128,11 @@ bool IOGuild::changeRankName(std::string oldRankName, std::string newRankName, u
 
 	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
-		query << "SELECT `name` FROM `guild_ranks` WHERE `name` LIKE '" << Database::escapeString(newRankName) << "' AND `guild_id` = " << guildId;
+		query << "SELECT `name` FROM `guild_ranks` WHERE `name` LIKE '" << Database::escapePatternString(newRankName) << "' AND `guild_id` = " << guildId;
 	else
 		query << "SELECT `name` FROM `guild_ranks` WHERE `name` = '" << Database::escapeString(newRankName) << "' AND `guild_id` = " << guildId;
 	#elif defined __USE_SQLITE__
-	query << "SELECT `name` FROM `guild_ranks` WHERE `name` LIKE '" << Database::escapeString(newRankName) << "' AND `guild_id` = " << guildId;
+	query << "SELECT `name` FROM `guild_ranks` WHERE `name` LIKE '" << Database::escapePatternString(newRankName) << "' AND `guild_id` = " << guildId;
 	#elif defined __USE_MYSQL__
 	query << "SELECT `name` FROM `guild_ranks` WHERE `name` = '" << Database::escapeString(newRankName) << "' AND `guild_id` = " << guildId;
 	#endif
@@ -141,11 +141,11 @@ bool IOGuild::changeRankName(std::string oldRankName, std::string newRankName, u
 
 	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
-		query << "UPDATE `guild_ranks` SET `name` = '" << Database::escapeString(newRankName) << "' WHERE `name` LIKE '" << Database::escapeString(oldRankName) << "' AND `guild_id` = " << guildId;
+		query << "UPDATE `guild_ranks` SET `name` = '" << Database::escapeString(newRankName) << "' WHERE `name` LIKE '" << Database::escapePatternString(oldRankName) << "' AND `guild_id` = " << guildId;
 	else
 		query << "UPDATE `guild_ranks` SET `name` = '" << Database::escapeString(newRankName) << "' WHERE `name` = '" << Database::escapeString(oldRankName) << "' AND `guild_id` = " << guildId;
 	#elif defined __USE_SQLITE__
-	query << "UPDATE `guild_ranks` SET `name` = '" << Database::escapeString(newRankName) << "' WHERE `name` LIKE '" << Database::escapeString(oldRankName) << "' AND `guild_id` = " << guildId;
+	query << "UPDATE `guild_ranks` SET `name` = '" << Database::escapeString(newRankName) << "' WHERE `name` LIKE '" << Database::escapePatternString(oldRankName) << "' AND `guild_id` = " << guildId;
 	#elif defined __USE_MYSQL__
 	query << "UPDATE `guild_ranks` SET `name` = '" << Database::escapeString(newRankName) << "' WHERE `name` = '" << Database::escapeString(oldRankName) << "' AND `guild_id` = " << guildId;
 	#endif

@@ -4829,9 +4829,9 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 					g_bans.addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
 				}
 				else if(account.warnings == 3)
-					g_bans.addAccountBan(account.accnumber, (time(NULL) + (30 * 86400)), reason, action, banComment, player->getGUID());
+					g_bans.addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 				else
-					g_bans.addAccountBan(account.accnumber, (time(NULL) + (7 * 86400)), reason, action, "4 notations received, auto banishment.", player->getGUID());
+					g_bans.addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, "4 notations received, auto banishment.", player->getGUID());
 			}
 			else
 				isNotation = true;
@@ -4855,9 +4855,9 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 			{
 				account.warnings++;
 				if(account.warnings == 3)
-					g_bans.addAccountBan(account.accnumber, (time(NULL) + (30 * 86400)), reason, action, banComment, player->getGUID());
+					g_bans.addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 				else
-					g_bans.addAccountBan(account.accnumber, (time(NULL) + (7 * 86400)), reason, action, banComment, player->getGUID());
+					g_bans.addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 				g_bans.addPlayerNamelock(guid);
 			}
 			break;
@@ -4868,7 +4868,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 			if(account.warnings < 3)
 			{
 				account.warnings = 3;
-				g_bans.addAccountBan(account.accnumber, (time(NULL) + (30 * 86400)), reason, action, banComment, player->getGUID());
+				g_bans.addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 			}
 			else
 			{
@@ -4883,7 +4883,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 			if(account.warnings < 3)
 			{
 				account.warnings = 3;
-				g_bans.addAccountBan(account.accnumber, (time(NULL) + (30 * 86400)), reason, action, banComment, player->getGUID());
+				g_bans.addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 				g_bans.addPlayerNamelock(guid);
 			}
 			else
@@ -4905,9 +4905,9 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 			else
 			{
 				if(account.warnings == 3)
-					g_bans.addAccountBan(account.accnumber, (time(NULL) + (30 * 86400)), reason, action, banComment, player->getGUID());
+					g_bans.addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 				else
-					g_bans.addAccountBan(account.accnumber, (time(NULL) + (7 * 86400)), reason, action, banComment, player->getGUID());
+					g_bans.addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 			}
 			break;
 		}

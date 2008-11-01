@@ -169,11 +169,11 @@ bool IOLoginData::validRecoveryKey(uint32_t accountNumber, const std::string rec
 
 	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
-		query << "SELECT `id` FROM `accounts` WHERE `key` LIKE '" << Database::escapeString(recoveryKey) << "' AND `id` = " << accountNumber;
+		query << "SELECT `id` FROM `accounts` WHERE `key` LIKE '" << Database::escapePatternString(recoveryKey) << "' AND `id` = " << accountNumber;
 	else
 		query << "SELECT `id` FROM `accounts` WHERE `key` = '" << Database::escapeString(recoveryKey) << "' AND `id` = " << accountNumber;
 	#elif defined __USE_SQLITE__
-	query << "SELECT `id` FROM `accounts` WHERE `key` LIKE '" << Database::escapeString(recoveryKey) << "' AND `id` = " << accountNumber;
+	query << "SELECT `id` FROM `accounts` WHERE `key` LIKE '" << Database::escapePatternString(recoveryKey) << "' AND `id` = " << accountNumber;
 	#elif defined __USE_MYSQL__
 	query << "SELECT `id` FROM `accounts` WHERE `key` = '" << Database::escapeString(recoveryKey) << "' AND `id` = " << accountNumber;
 	#endif
@@ -206,11 +206,11 @@ AccountType_t IOLoginData::getAccountType(std::string name)
 	DBResult result;
 	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
-		query << "SELECT `account_id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "'";
+		query << "SELECT `account_id` FROM `players` WHERE `name` LIKE '" << Database::escapePatternString(name) << "'";
 	else
 		query << "SELECT `account_id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "'";
 	#elif defined __USE_SQLITE__
-	query << "SELECT `account_id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "'";
+	query << "SELECT `account_id` FROM `players` WHERE `name` LIKE '" << Database::escapePatternString(name) << "'";
 	#elif defined __USE_MYSQL__
 	query << "SELECT `account_id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "'";
 	#endif
@@ -234,11 +234,11 @@ uint32_t IOLoginData::getLastIPByName(std::string name)
 	DBResult result;
 	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
-		query << "SELECT `lastip` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "'";
+		query << "SELECT `lastip` FROM `players` WHERE `name` LIKE '" << Database::escapePatternString(name) << "'";
 	else
 		query << "SELECT `lastip` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "'";
 	#elif defined __USE_SQLITE__
-	query << "SELECT `lastip` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "'";
+	query << "SELECT `lastip` FROM `players` WHERE `name` LIKE '" << Database::escapePatternString(name) << "'";
 	#elif defined __USE_MYSQL__
 	query << "SELECT `lastip` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "'";
 	#endif
@@ -295,11 +295,11 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 
 	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
-		query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `redskulltime`, `redskull`, `guildnick`, `rank_id`, `town_id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "'";
+		query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `redskulltime`, `redskull`, `guildnick`, `rank_id`, `town_id` FROM `players` WHERE `name` LIKE '" << Database::escapePatternString(name) << "'";
 	else
 		query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `redskulltime`, `redskull`, `guildnick`, `rank_id`, `town_id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "'";
 	#elif defined __USE_SQLITE__
-	query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `redskulltime`, `redskull`, `guildnick`, `rank_id`, `town_id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "'";
+	query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `redskulltime`, `redskull`, `guildnick`, `rank_id`, `town_id` FROM `players` WHERE `name` LIKE '" << Database::escapePatternString(name) << "'";
 	#elif defined __USE_MYSQL__
 	query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `redskulltime`, `redskull`, `guildnick`, `rank_id`, `town_id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "'";
 	#endif
@@ -955,11 +955,11 @@ bool IOLoginData::getGuidByName(uint32_t &guid, std::string& name)
 
 	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
-		query << "SELECT `id`, `name` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "';";
+		query << "SELECT `id`, `name` FROM `players` WHERE `name` LIKE '" << Database::escapePatternString(name) << "';";
 	else
 		query << "SELECT `id`, `name` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "';";
 	#elif defined __USE_SQLITE__
-	query << "SELECT `id`, `name` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "';";
+	query << "SELECT `id`, `name` FROM `players` WHERE `name` LIKE '" << Database::escapePatternString(name) << "';";
 	#elif defined __USE_MYSQL__
 	query << "SELECT `id`, `name` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "';";
 	#endif
@@ -984,11 +984,11 @@ bool IOLoginData::getGuidByNameEx(uint32_t &guid, bool &specialVip, std::string&
 
 	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
-		query << "SELECT `name`, `id`, `group_id`, `account_id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "'";
+		query << "SELECT `name`, `id`, `group_id`, `account_id` FROM `players` WHERE `name` LIKE '" << Database::escapePatternString(name) << "'";
 	else
 		query << "SELECT `name`, `id`, `group_id`, `account_id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "'";
 	#elif defined __USE_SQLITE__
-	query << "SELECT `name`, `id`, `group_id`, `account_id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "'";
+	query << "SELECT `name`, `id`, `group_id`, `account_id` FROM `players` WHERE `name` LIKE '" << Database::escapePatternString(name) << "'";
 	#elif defined __USE_MYSQL__
 	query << "SELECT `name`, `id`, `group_id`, `account_id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "'";
 	#endif
@@ -1010,7 +1010,7 @@ bool IOLoginData::getGuidByNameEx(uint32_t &guid, bool &specialVip, std::string&
 	return true;
 }
 
-bool IOLoginData::playerExists(std::string name)
+bool IOLoginData::playerExists(std::string& name)
 {
 	Database* db = Database::getInstance();
 	if(!db->connect())
@@ -1021,15 +1021,20 @@ bool IOLoginData::playerExists(std::string name)
 
 	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
-		query << "SELECT `id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "';";
+		query << "SELECT `name` FROM `players` WHERE `name` LIKE '" << Database::escapePatternString(name) << "';";
 	else
-		query << "SELECT `id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "';";
+		query << "SELECT `name` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "';";
 	#elif defined __USE_SQLITE__
-	query << "SELECT `id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "';";
+	query << "SELECT `name` FROM `players` WHERE `name` LIKE '" << Database::escapePatternString(name) << "';";
 	#elif defined __USE_MYSQL__
-	query << "SELECT `id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "';";
+	query << "SELECT `name` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "';";
 	#endif
-	return db->storeQuery(query, result);
+	if(db->storeQuery(query, result))
+	{
+		name = result.getDataString("name");
+		return true;
+	}
+	return false;
 }
 
 bool IOLoginData::playerExists(uint32_t guid)
@@ -1191,11 +1196,11 @@ uint32_t IOLoginData::getAccountNumberByName(std::string name)
 	DBResult result;
 	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
-		query << "SELECT `account_id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "';";
+		query << "SELECT `account_id` FROM `players` WHERE `name` LIKE '" << Database::escapePatternString(name) << "';";
 	else
 		query << "SELECT `account_id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "';";
 	#elif defined __USE_SQLITE__
-	query << "SELECT `account_id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(name) << "';";
+	query << "SELECT `account_id` FROM `players` WHERE `name` LIKE '" << Database::escapePatternString(name) << "';";
 	#elif defined __USE_MYSQL__
 	query << "SELECT `account_id` FROM `players` WHERE `name` = '" << Database::escapeString(name) << "';";
 	#endif
@@ -1262,11 +1267,11 @@ int16_t IOLoginData::deleteCharacter(uint32_t accountNumber, const std::string c
 	{
 		#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 		if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
-			query << "SELECT `id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(characterName) << "' AND `account_id` = " << accountNumber;
+			query << "SELECT `id` FROM `players` WHERE `name` LIKE '" << Database::escapePatternString(characterName) << "' AND `account_id` = " << accountNumber;
 		else
 			query << "SELECT `id` FROM `players` WHERE `name` = '" << Database::escapeString(characterName) << "' AND `account_id` = " << accountNumber;
 		#elif defined __USE_SQLITE__
-		query << "SELECT `id` FROM `players` WHERE `name` LIKE '" << Database::escapeString(characterName) << "' AND `account_id` = " << accountNumber;
+		query << "SELECT `id` FROM `players` WHERE `name` LIKE '" << Database::escapePatternString(characterName) << "' AND `account_id` = " << accountNumber;
 		#elif defined __USE_MYSQL__
 		query << "SELECT `id` FROM `players` WHERE `name` = '" << Database::escapeString(characterName) << "' AND `account_id` = " << accountNumber;
 		#endif

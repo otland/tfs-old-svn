@@ -19,6 +19,9 @@
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 
+#ifdef __USE_SQLITE__
+#include <boost/regex.hpp>
+#endif
 #include <iostream>
 #include <string>
 #include "database.h"
@@ -324,22 +327,36 @@ void escape_string(std::string & s)
 std::string _Database::escapeString(const std::string &s)
 {
 	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
-		if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
-			return escapeString(s.c_str(), s.size());
-		else
-		{
-			std::string r = std::string(s);
-			escape_string(r);
-			return r;
-		}
-	#elif defined __USE_MYSQL__
+	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
 		return escapeString(s.c_str(), s.size());
-	#elif defined __USE_SQLITE__
+	else
+	{
 		std::string r = std::string(s);
 		escape_string(r);
 		return r;
+	}
+	#elif defined __USE_MYSQL__
+	return escapeString(s.c_str(), s.size());
+	#elif defined __USE_SQLITE__
+	std::string r = std::string(s);
+	escape_string(r);
+	return r;
 	#endif
 }
+
+#ifdef __USE_SQLITE__
+std::string _Database::escapePatternString(const std::string &s)
+{
+	std::string r = std::string(s);
+	escape_string(r);
+
+	//escape % and _ because they can manipulate the pattern.
+	r = boost::regex_replace(r, boost::regex("%"), "\\%");
+	r = boost::regex_replace(r, boost::regex("_"), "\\_");
+
+	return r;
+}
+#endif
 
 // probably the mysql_escape_string version should be dropped as it's less generic
 // but i'm keeping it atm

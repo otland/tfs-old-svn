@@ -71,7 +71,7 @@ class IOLoginData
 		bool getGuidByName(uint32_t& guid, std::string& name);
 		bool getGuidByNameEx(uint32_t &guid, bool& specialVip, std::string& name);
 		bool getNameByGuid(uint32_t guid, std::string& name);
-		bool playerExists(std::string name);
+		bool playerExists(std::string& name);
 		bool playerExists(uint32_t guid);
 		int32_t getLevel(uint32_t guid);
 		bool isPremium(uint32_t guid);

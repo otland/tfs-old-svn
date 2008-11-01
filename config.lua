@@ -13,6 +13,8 @@
 
 	-- Banishments
 	broadcastBanishments = "yes"
+	banDays = 7
+	finalBanDays = 30
 	killsToBan = 5
 
 	-- Battle

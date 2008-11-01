@@ -3798,9 +3798,9 @@ void Player::addUnjustifiedDead(const Player* attacked)
 		if(account.warnings > 3)
 			g_bans.addAccountDeletion(accountNumber, time(NULL), 20, 7, "No comment.", 0);
 		else if(account.warnings == 3)
-			g_bans.addAccountBan(accountNumber, time(NULL) + (30 * 86400), 20, 4, "No comment.", 0);
+			g_bans.addAccountBan(accountNumber, time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400), 20, 4, "No comment.", 0);
 		else
-			g_bans.addAccountBan(accountNumber, time(NULL) + (7 * 86400), 20, 2, "No comment.", 0);
+			g_bans.addAccountBan(accountNumber, time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400), 20, 2, "No comment.", 0);
 
 		uint32_t playerId = getID();
 		g_game.addMagicEffect(getPosition(), NM_ME_MAGIC_POISON);

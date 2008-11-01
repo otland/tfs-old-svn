@@ -1323,11 +1323,14 @@ bool Commands::unban(Creature* creature, const std::string& cmd, const std::stri
 	{
 		uint32_t accountNumber = atoi(param.c_str());
 		bool removedIPBan = false;
-		if(IOLoginData::getInstance()->playerExists(param))
+		std::string name = param;
+		bool playerExists = false;
+		if(IOLoginData::getInstance()->playerExists(name))
 		{
-			accountNumber = IOLoginData::getInstance()->getAccountNumberByName(param);
+			playerExists = true;
+			accountNumber = IOLoginData::getInstance()->getAccountNumberByName(name);
 
-			uint32_t lastIP = IOLoginData::getInstance()->getLastIPByName(param);
+			uint32_t lastIP = IOLoginData::getInstance()->getLastIPByName(name);
 			if(lastIP != 0)
 				removedIPBan = g_bans.removeIPBan(lastIP);
 		}
@@ -1335,33 +1338,32 @@ bool Commands::unban(Creature* creature, const std::string& cmd, const std::stri
 		if(g_bans.removeAccountBan(accountNumber))
 		{
 			char buffer[70];
-			sprintf(buffer, "%s has been unbanned.", param.c_str());
+			sprintf(buffer, "%s has been unbanned.", name.c_str());
 			player->sendTextMessage(MSG_INFO_DESCR, buffer);
 		}
 		else if(g_bans.removeAccountDeletion(accountNumber))
 		{
 			char buffer[70];
-			sprintf(buffer, "%s has been undeleted.", param.c_str());
+			sprintf(buffer, "%s has been undeleted.", name.c_str());
 			player->sendTextMessage(MSG_INFO_DESCR, buffer);
 		}
 		else if(removedIPBan)
 		{
 			char buffer[80];
-			sprintf(buffer, "IPBan on %s has been lifted.", param.c_str());
+			sprintf(buffer, "IPBan on %s has been lifted.", name.c_str());
 			player->sendTextMessage(MSG_INFO_DESCR, buffer);
 		}
 		else
 		{
 			bool removedNamelock = false;
-			if(IOLoginData::getInstance()->playerExists(param))
+			if(playerExists)
 			{
 				uint32_t guid = 0;
-				std::string name = param;
 				if(IOLoginData::getInstance()->getGuidByName(guid, name) &&
 					g_bans.removePlayerNamelock(guid))
 				{
 					char buffer[85];
-					sprintf(buffer, "Namelock on %s has been lifted.", param.c_str());
+					sprintf(buffer, "Namelock on %s has been lifted.", name.c_str());
 					player->sendTextMessage(MSG_INFO_DESCR, buffer);
 					removedNamelock = true;
 				}

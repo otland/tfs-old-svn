@@ -213,6 +213,14 @@ class _Database
 		*/
 		static std::string escapeString(const std::string &s);
 
+		#ifdef __USE_SQLITE__
+		/** Escape the special characters in a pattern string for no problems with the query
+		*\returns The string modified
+		*\param s The source string
+		*/
+		static std::string escapePatternString(const std::string &s);
+		#endif
+
 		/** Escape the special characters in a string for no problems with the query
 		*\returns The string modified
 		*\param s The source string
