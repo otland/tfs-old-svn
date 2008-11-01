@@ -150,14 +150,14 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	Account account;
-	if(IOLoginData::getInstance()->getAccountId(name, id))
+	if(IOLoginData::getInstance()->getAccountId(name, id) || (!name.length() && g_config.getBool(ConfigManager::ACCOUNT_MANAGER)))
 	{
 		account = IOLoginData::getInstance()->loadAccount(id);
 		if(id < 1 || id != account.number || !passwordTest(password, account.password))
 			account.number = 0;
 	}
 
-	if(account.number == 0)
+	if(!account.number)
 	{
 		ConnectionManager::getInstance()->addLoginAttempt(clientIP, false);
 		disconnectClient(0x0A, "Account name or password is not correct.");

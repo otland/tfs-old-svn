@@ -44,6 +44,9 @@ extern Game g_game;
 
 bool IOLoginData::getAccountId(const std::string& name, uint32_t& number)
 {
+	if(!name.length())
+		return false;
+
 	Database* db = Database::getInstance();
 	DBResult* result;
 

@@ -1150,6 +1150,9 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerGuildRank(cid)
 	lua_register(m_luaState, "getPlayerGuildRank", LuaScriptInterface::luaGetPlayerGuildRank);
 
+	//getPlayerGuildRank(cid)
+	lua_register(m_luaState, "getPlayerGuildRank", LuaScriptInterface::luaGetPlayerGuildRank);
+
 	//getPlayerGuildNick(cid)
 	lua_register(m_luaState, "getPlayerGuildNick", LuaScriptInterface::luaGetPlayerGuildNick);
 
