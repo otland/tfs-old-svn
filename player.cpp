@@ -1905,7 +1905,7 @@ void Player::addManaSpent(uint64_t amount)
 
 void Player::addExperience(uint64_t exp)
 {
-	int32_t prevLevel = level;
+	uint32_t prevLevel = level;
 	uint64_t nextLevelExp = Player::getExpForLevel(level + 1);
 	if(Player::getExpForLevel(level) > nextLevelExp)
 	{
@@ -1969,7 +1969,7 @@ void Player::addExperience(uint64_t exp)
 
 void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 {
-	int32_t prevLevel = level;
+	uint32_t prevLevel = level;
 	experience -= exp;
 	while(level > 1 && experience < Player::getExpForLevel(level))
 	{
@@ -1979,7 +1979,7 @@ void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 		capacity = std::max((double)0, (capacity - (double)vocation->getCapGain()));
 	}
 
-	if(level != prevLevel)
+	if(prevLevel != level)
 	{
 		if(updateStats)
 		{
