@@ -144,9 +144,6 @@ bool ScriptEnviroment::saveGameState()
 
 bool ScriptEnviroment::loadGameState()
 {
-	if(!g_config.getBool(ConfigManager::SAVE_GLOBAL_STORAGE))
-		return true;
-
 	Database* db = Database::getInstance();
 
 	DBResult* result;
