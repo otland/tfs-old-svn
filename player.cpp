@@ -1905,9 +1905,9 @@ void Player::addManaSpent(uint64_t amount)
 
 void Player::addExperience(uint64_t exp)
 {
-	int32_t newLevel = getLevel();
-	uint64_t nextLevelExp = Player::getExpForLevel(newLevel + 1);
-	if(Player::getExpForLevel(newLevel) > nextLevelExp)
+	int32_t prevLevel = level;
+	uint64_t nextLevelExp = Player::getExpForLevel(level + 1);
+	if(Player::getExpForLevel(level) > nextLevelExp)
 	{
 		//player has reached max level
 		levelPercent = 0;
@@ -1918,28 +1918,25 @@ void Player::addExperience(uint64_t exp)
 	experience += exp;
 	while(experience >= nextLevelExp)
 	{
-		++newLevel;
+		++level;
 		healthMax += vocation->getHealthGain();
 		health += vocation->getHealthGain();
 		manaMax += vocation->getManaGain();
 		mana += vocation->getManaGain();
 		capacity += vocation->getCapGain();
-		nextLevelExp = Player::getExpForLevel(newLevel + 1);
-		if(Player::getExpForLevel(newLevel) > nextLevelExp)
+
+		nextLevelExp = Player::getExpForLevel(level + 1);
+		if(Player::getExpForLevel(level) > nextLevelExp)
 		{
 			//player has reached max level
 			break;
 		}
 	}
 
-	int32_t prevLevel = getLevel();
-	if(prevLevel != newLevel)
+	if(prevLevel != level)
 	{
-		level = newLevel;
 		updateBaseSpeed();
-
-		int32_t newSpeed = getBaseSpeed();
-		setBaseSpeed(newSpeed);
+		setBaseSpeed(getBaseSpeed());
 
 		g_game.changeSpeed(this, 0);
 		g_game.addCreatureHealth(this);
@@ -1948,20 +1945,20 @@ void Player::addExperience(uint64_t exp)
 			getParty()->updateSharedExperience();
 
 		char advMsg[60];
-		sprintf(advMsg, "You advanced from Level %d to Level %d.", prevLevel, newLevel);
+		sprintf(advMsg, "You advanced from Level %d to Level %d.", prevLevel, level);
 		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
 
 		//scripting event - onAdvance
 		CreatureEvent* eventAdvance = getCreatureEvent(CREATURE_EVENT_ADVANCE);
 		if(eventAdvance)
-			eventAdvance->executeOnAdvance(this, (skills_t)LEVEL, prevLevel, newLevel);
+			eventAdvance->executeOnAdvance(this, (skills_t)LEVEL, prevLevel, level);
 	}
 
 	uint64_t currLevelExp = Player::getExpForLevel(level);
 	nextLevelExp = Player::getExpForLevel(level + 1);
 	if(nextLevelExp > currLevelExp)
 	{
-		uint32_t newPercent = Player::getPercentLevel(experience - currLevelExp, Player::getExpForLevel(level + 1) - currLevelExp);
+		uint32_t newPercent = Player::getPercentLevel(experience - currLevelExp, nextLevelExp - currLevelExp);
 		levelPercent = newPercent;
 	}
 	else
@@ -1972,39 +1969,40 @@ void Player::addExperience(uint64_t exp)
 
 void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 {
-	uint32_t newLevel = level;
-	while((uint64_t)(experience - exp) < Player::getExpForLevel(newLevel))
-	{
-		if(newLevel > 1)
-			newLevel--;
-		else
-			break;
-	}
+	uint32_t prevLevel = (uint32_t)level;
+	experience -= exp;
+	while(level > 1 && experience < Player::getExpForLevel(level))
+		level--;
 
-	if(newLevel != level)
+	if(level != prevLevel)
 	{
+		if(updateStats)
+		{
+			updateBaseSpeed();
+			setBaseSpeed(getBaseSpeed());
+
+			g_game.changeSpeed(this, 0);
+			g_game.addCreatureHealth(this);
+		}
+
+		healthMax = std::max((int32_t)0, (healthMax - (int32_t)vocation->getHealthGain()));
+		manaMax = std::max((int32_t)0, (manaMax - (int32_t)vocation->getManaGain()));
+		capacity = std::max((double)0, (capacity - (double)vocation->getCapGain()));
+
 		char advMsg[90];
-		sprintf(advMsg, "You were downgraded from Level %d to Level %d.", level, newLevel);
+		sprintf(advMsg, "You were downgraded from Level %d to Level %d.", prevLevel, level);
 		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
 	}
 
-	uint64_t currLevelExp = Player::getExpForLevel(newLevel);
-	uint64_t nextLevelExp = Player::getExpForLevel(newLevel + 1);
+	uint64_t currLevelExp = Player::getExpForLevel(level);
+	uint64_t nextLevelExp = Player::getExpForLevel(level + 1);
 	if(nextLevelExp > currLevelExp)
-		levelPercent = Player::getPercentLevel(experience - currLevelExp - getLostExperience(), nextLevelExp - currLevelExp);
+		levelPercent = Player::getPercentLevel(experience - currLevelExp, nextLevelExp - currLevelExp);
 	else
 		levelPercent = 0;
 
-	if(!updateStats)
-		return;
-
-	updateBaseSpeed();
-	setBaseSpeed(getBaseSpeed());
-
-	g_game.changeSpeed(this, 0);
-	g_game.addCreatureHealth(this);
-
-	sendStats();
+	if(updateStats)
+		sendStats();
 }
 
 uint32_t Player::getPercentLevel(uint64_t count, uint64_t nextLevelCount)
@@ -2221,8 +2219,6 @@ void Player::death()
 		//Magic level loss
 		uint32_t sumMana = 0;
 		uint64_t lostMana = 0;
-
-		//sum up all the mana
 		for(uint32_t i = 1; i <= magLevel; ++i)
 			sumMana += vocation->getReqMana(i);
 
@@ -2249,13 +2245,11 @@ void Player::death()
 		{
 			lostSkillTries = 0;
 			sumSkillTries = 0;
-
 			for(uint32_t c = 11; c <= skills[i][SKILL_LEVEL]; ++c) //sum up all required tries for all skill levels
 				sumSkillTries += vocation->getReqSkillTries(i, c);
 
 			sumSkillTries += skills[i][SKILL_TRIES];
 			lostSkillTries = (uint32_t)(sumSkillTries * getLostPercent(LOSS_SKILLTRIES));
-
 			while(lostSkillTries > skills[i][SKILL_TRIES])
 			{
 				lostSkillTries -= skills[i][SKILL_TRIES];
@@ -2274,6 +2268,7 @@ void Player::death()
 		}
 
 		removeExperience(getLostExperience(), false);
+		blessings = 0;
 		if(!inventory[SLOT_BACKPACK])
 			__internalAddThing(SLOT_BACKPACK, Item::CreateItem(1987));
 
@@ -2288,13 +2283,17 @@ void Player::dropCorpse()
 {
 	if(getZone() == ZONE_PVP)
 	{
-		preSave();
 		setDropLoot(true);
 		setLossSkill(true);
-		sendStats();
+		onThink(EVENT_CREATURE_THINK_INTERVAL);
 		g_game.internalTeleport(this, getTemplePosition(), true);
 		g_game.addCreatureHealth(this);
-		onThink(EVENT_CREATURE_THINK_INTERVAL);
+		if(health <= 0)
+		{
+			health = healthMax;
+			mana = manaMax;
+			sendStats();
+		}
 	}
 	else
 		Creature::dropCorpse();
@@ -2317,29 +2316,6 @@ Item* Player::getCorpse()
 	}
 
 	return corpse;
-}
-
-void Player::preSave()
-{
-	if(health <= 0)
-	{
-		if(skillLoss)
-		{
-			experience -= getLostExperience();
-			while(level > 1 && experience < Player::getExpForLevel(level))
-			{
-				--level;
-				healthMax = std::max((int32_t)0, (healthMax - (int32_t)vocation->getHealthGain()));
-				manaMax = std::max((int32_t)0, (manaMax - (int32_t)vocation->getManaGain()));
-				capacity = std::max((double)0, (capacity - (double)vocation->getCapGain()));
-			}
-
-			blessings = 0;
-		}
-
-		health = healthMax;
-		mana = manaMax;
-	}
 }
 
 void Player::addWeaponExhaust(uint32_t ticks)

@@ -23,11 +23,6 @@
 		Assigned to: Elf, Talaturen
 ]
 
-[ BUGS
-	MySQL database connection being closed
-		Assigned to: *
-]
-
 [ TASKS
 	Make more constant values configurable
 		Assigned to: *
