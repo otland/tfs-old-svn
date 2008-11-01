@@ -34,7 +34,7 @@ CREATE TABLE `server_config`
 	`value` INT NOT NULL
 ) ENGINE = InnoDB;
 
-INSERT INTO `server_config` VALUES ('db_version', 2);
+INSERT INTO `server_config` VALUES ('db_version', 3);
 
 CREATE TABLE `server_motd`
 (
