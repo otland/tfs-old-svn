@@ -585,8 +585,8 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	std::string accPass;
-	if((!(IOLoginData::getInstance()->getAccountId(accName, accId) || (!name.length() && g_config.getBool(ConfigManager::ACCOUNT_MANAGER))) ||
-		!(IOLoginData::getInstance()->getPassword(accId, name, accPass) && passwordTest(password, accPass))) && name != "Account Manager")
+	if(name != "Account Manager" && ((accName.length() && !IOLoginData::getInstance()->getAccountId(accName, accId)) ||
+		!IOLoginData::getInstance()->getPassword(accId, name, accPass) || !passwordTest(password, accPass)))
 	{
 		ConnectionManager::getInstance()->addLoginAttempt(getIP(), false);
 		getConnection()->closeConnection();
