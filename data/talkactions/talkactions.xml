@@ -45,16 +45,16 @@
 	<talkaction log="yes" access="3" words="/mc" script="multicheck.lua"/>
 
 	<!-- Senior Tutors -->
-	<talkaction filter="word" words="/info" access="2" function="getInfo"/>
-	<talkaction filter="word" words="/gethouse" access="2" function="getHouse"/>
+	<talkaction filter="word" log="yes" words="/info" access="2" function="getInfo"/>
+	<talkaction filter="word" log="yes" words="/gethouse" access="2" function="getHouse"/>
 	<talkaction filter="word" log="yes" access="2" words="/b" script="broadcast.lua"/>
 
 	<!-- Tutors -->
-	<talkaction filter="word" words="/baninfo" access="1" function="showBanishmentInfo"/>
+	<talkaction filter="word" log="yes" words="/baninfo" access="1" function="showBanishmentInfo"/>
 	<talkaction log="yes" access="1" words="!pos" script="position.lua"/>
 
 	<!-- Players -->
-	<talkaction log="yes" words="!frags" function="playerFrags"/>
+	<talkaction words="!frags" function="playerFrags"/>
 	<talkaction words="!buyhouse" function="buyHouse"/>
 	<talkaction filter="word" words="!sellhouse" function="sellHouse"/>
 	<talkaction filter="word" words="!createguild" function="createGuild"/>

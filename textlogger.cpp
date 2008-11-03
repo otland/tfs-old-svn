@@ -52,10 +52,10 @@ int32_t TextLogger::overflow(int32_t c)
 
 	if(FILE* file = fopen(buffer, "a"))
 	{
-		fprintf(file, "%c", c);
 		if(displayDate)
 			fprintf(file, "[%s] ", date);
 
+		fprintf(file, "%c", c);
 		fclose(file);
 	}
 	#endif

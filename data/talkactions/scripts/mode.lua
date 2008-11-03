@@ -7,13 +7,13 @@ function onSay(cid, words, param)
 		local world = getWorldType()
 
 		param = string.lower(param)
-		if table.isStrIn(param, nopvpWords) == TRUE then
+		if table.isStrIn(param, nopvpWords) then
 			setWorldType(WORLD_TYPE_NO_PVP)
 			world = "No-PVP"
-		elseif table.isStrIn(param, pvpWords) == TRUE then
+		elseif table.isStrIn(param, pvpWords) then
 			setWorldType(WORLD_TYPE_PVP)
 			world = "PVP"
-		elseif table.isStrIn(param, pvpenforcedWords) == TRUE then
+		elseif table.isStrIn(param, pvpenforcedWords) then
 			setWorldType(WORLD_TYPE_PVP_ENFORCED)
 			world = "PVP-Enforced"
 		else
