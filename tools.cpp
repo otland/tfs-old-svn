@@ -1145,6 +1145,9 @@ bool fileExists(const char* filename)
 
 uint32_t adlerChecksum(uint8_t *data, size_t length)
 {
+	if(length > 30000)
+		return 0;
+
 	const uint16_t adler = 65521;
 	uint32_t a = 1, b = 0;
 	while (length > 0)
