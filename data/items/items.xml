@@ -9664,6 +9664,7 @@
 	<item id="3684" article="a" name="ramp">
 	</item>
 	<item id="3685" article="a" name="ramp">
+		<attribute key="floorchange" value="north"/>
 	</item>
 	<item id="3686" article="a" name="ramp">
 	</item>
