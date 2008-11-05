@@ -39,23 +39,24 @@ Mission::~Mission()
 {
 	for(uint32_t it = 0; it != state.size(); it++)
 		delete state[it];
+
 	state.clear();
 }
 
 std::string Mission::getDescription(Player* player)
 {
 	uint32_t current = endValue;
-	uint32_t value;
 	while(current >= startValue)
 	{
-		player->getStorageValue(storageID, (int32_t&)value);
-		if(value == current)
+		uint32_t value;
+		if(player->getStorageValue(storageID, (int32_t&)value) && value == current)
 		{
-			StateList::const_iterator it2;
-			it2 = state.find(current);
-			if(it2 != state.end())
-				return it2->second->getMissionDescription();
+			StateList::const_iterator sit;
+			sit = state.find(current);
+			if(sit != state.end())
+				return sit->second->getMissionDescription();
 		}
+
 		current--;
 	}
 	return "An error has occurred, please contact a gamemaster.";
@@ -63,11 +64,10 @@ std::string Mission::getDescription(Player* player)
 
 bool Mission::isStarted(Player* player) const
 {
-	uint32_t value;
 	if(player)
 	{
-		player->getStorageValue(storageID, (int32_t&)value);
-		if(value >= startValue && value <= endValue)
+		uint32_t value;
+		if(player->getStorageValue(storageID, (int32_t&)value) && value >= startValue && value <= endValue)
 			return true;
 	}
 	return false;
@@ -75,11 +75,10 @@ bool Mission::isStarted(Player* player) const
 
 bool Mission::isCompleted(Player* player) const
 {
-	uint32_t value;
 	if(player)
 	{
-		player->getStorageValue(storageID, (int32_t&)value);
-		if(value == endValue)
+		uint32_t value;
+		if(player->getStorageValue(storageID, (int32_t&)value) && value == endValue)
 			return true;
 	}
 	return false;
@@ -103,28 +102,15 @@ Quest::Quest(std::string _name, uint16_t _id, uint32_t _startStorageID, uint32_t
 
 Quest::~Quest()
 {
-	MissionsList::iterator it;
-	for(it = missions.begin(); it != missions.end(); it++)
+	for(MissionsList::iterator it = missions.begin(); it != missions.end(); it++)
 		delete (*it);
-	missions.clear();
-}
 
-uint16_t Quest::getMissionsCount(Player* player)
-{
-	uint16_t count = 0;
-	MissionsList::iterator it;
-	for(it = missions.begin(); it != missions.end(); it++)
-	{
-		if((*it)->isStarted(player))
-			count++;
-	}
-	return count;
+	missions.clear();
 }
 
 bool Quest::isCompleted(Player* player)
 {
-	MissionsList::iterator it;
-	for(it = missions.begin(); it != missions.end(); it++)
+	for(MissionsList::iterator it = missions.begin(); it != missions.end(); it++)
 	{
 		if(!(*it)->isCompleted(player))
 			return false;
@@ -134,23 +120,33 @@ bool Quest::isCompleted(Player* player)
 
 bool Quest::isStarted(Player* player) const
 {
-	uint32_t value;
 	if(player)
 	{
-		player->getStorageValue(startStorageID, (int32_t&)value);
-		if(value >= startStorageValue)
+		uint32_t value;
+		if(player->getStorageValue(startStorageID, (int32_t&)value) && value >= startStorageValue)
 			return true;
 	}
 	return false;
 }
+
+uint16_t Quest::getMissionsCount(Player* player)
+{
+	uint16_t count = 0;
+	for(MissionsList::iterator it = missions.begin(); it != missions.end(); it++)
+	{
+		if((*it)->isStarted(player))
+			count++;
+	}
+	return count;
+}
+
 
 void Quest::getMissionList(Player* player, NetworkMessage* msg)
 {
 	msg->AddByte(0xF1);
 	msg->AddU16(id);
 	msg->AddByte(getMissionsCount(player));
-	MissionsList::iterator it;
-	for(it = missions.begin(); it != missions.end(); it++)
+	for(MissionsList::iterator it = missions.begin(); it != missions.end(); it++)
 	{
 		if((*it)->isStarted(player))
 		{
@@ -160,26 +156,20 @@ void Quest::getMissionList(Player* player, NetworkMessage* msg)
 	}
 }
 
-Quests::Quests()
-{
-	//
-}
-
 Quests::~Quests()
 {
-	QuestsList::iterator it;
-	for(it = quests.begin(); it != quests.end(); it++)
+	for(QuestsList::iterator it = quests.begin(); it != quests.end(); it++)
 		delete (*it);
+
 	quests.clear();
 }
 
 bool Quests::reload()
 {
-	QuestsList::iterator it;
-	for(it = quests.begin(); it != quests.end(); it++)
+	for(QuestsList::iterator it = quests.begin(); it != quests.end(); it++)
 		delete (*it);
-	quests.clear();
 
+	quests.clear();
 	return loadFromXml();
 }
 
@@ -269,22 +259,10 @@ bool Quests::loadFromXml()
 	return false;
 }
 
-Quest *Quests::getQuestByID(uint16_t id)
-{
-	QuestsList::iterator it;
-	for(it = quests.begin(); it != quests.end(); it++)
-	{
-		if((*it)->getID() == id)
-			return (*it);
-	}
-	return NULL;
-}
-
 uint16_t Quests::getQuestsCount(Player* player)
 {
 	uint16_t count = 0;
-	QuestsList::iterator it;
-	for(it = quests.begin(); it != quests.end(); it++)
+	for(QuestsList::iterator it = quests.begin(); it != quests.end(); it++)
 	{
 		if((*it)->isStarted(player))
 			count++;
@@ -296,8 +274,7 @@ void Quests::getQuestsList(Player* player, NetworkMessage* msg)
 {
 	msg->AddByte(0xF0);
 	msg->AddU16(getQuestsCount(player));
-	QuestsList::iterator it;
-	for(it = quests.begin(); it != quests.end(); it++)
+	for(QuestsList::iterator it = quests.begin(); it != quests.end(); it++)
 	{
 		if((*it)->isStarted(player))
 		{
@@ -306,4 +283,14 @@ void Quests::getQuestsList(Player* player, NetworkMessage* msg)
 			msg->AddByte((*it)->isCompleted(player));
 		}
 	}
+}
+
+Quest *Quests::getQuestByID(uint16_t id)
+{
+	for(QuestsList::iterator it = quests.begin(); it != quests.end(); it++)
+	{
+		if((*it)->getID() == id)
+			return (*it);
+	}
+	return NULL;
 }

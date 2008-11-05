@@ -17,10 +17,7 @@
 
 [ FEATURES
 	Multiworld system (revmultisys methods + custom config path from argv)
-		Assigned to: Elf, Kiper
-
-	House information stored in houses table at database
-		Assigned to: Elf, Talaturen
+		Assigned to: Elf, Kipe
 ]
 
 [ TASKS

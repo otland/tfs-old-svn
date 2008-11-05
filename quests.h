@@ -38,8 +38,10 @@ class MissionState
 {
 	public:
 		MissionState(std::string _description, uint32_t _missionID);
-		uint32_t getMissionID() { return missionID; }
-		std::string getMissionDescription() { return description; }
+		virtual ~MissionState() {}
+
+		uint32_t getMissionID() const {return missionID;}
+		std::string getMissionDescription() const {return description;}
 
 	private:
 		std::string description;
@@ -50,11 +52,14 @@ class Mission
 {
 	public:
 		Mission(std::string _missionName, uint32_t _storageID, uint32_t _startValue, int32_t _endValue);
-		~Mission();
+		virtual ~Mission();
+
 		bool isCompleted(Player* player) const;
 		bool isStarted(Player* player) const;
+
 		std::string getName(Player* player);
 		std::string getDescription(Player* player);
+
 		StateList state;
 
 	private:
@@ -66,14 +71,17 @@ class Quest
 {
 	public:
 		Quest(std::string _name, uint16_t _id, uint32_t _startStorageID, uint32_t _startStorageValue);
-		~Quest();
+		virtual ~Quest();
 
 		bool isCompleted(Player* player);
 		bool isStarted(Player* player) const;
-		void getMissionList(Player* player, NetworkMessage* msg);
-		uint16_t getID() {return id;}
-		std::string getName() {return name;}
+
+		uint16_t getID() const {return id;}
+		std::string getName() const {return name;}
+
 		uint16_t getMissionsCount(Player* player);
+		void getMissionList(Player* player, NetworkMessage* msg);
+
 		MissionsList missions;
 
 	private:
@@ -85,8 +93,8 @@ class Quest
 class Quests
 {
 	public:
-		Quests();
-		~Quests();
+		Quests() {}
+		virtual ~Quests();
 
 		static Quests* getInstance()
 		{
@@ -94,12 +102,14 @@ class Quests
 			return &instance;
 		}
 
-		bool loadFromXml();
-		Quest* getQuestByID(uint16_t id);
-		void getQuestsList(Player* player, NetworkMessage* msg);
-		uint16_t getQuestsCount(Player* player);
-		QuestsList quests;
 		bool reload();
+		bool loadFromXml();
+
+		uint16_t getQuestsCount(Player* player);
+		void getQuestsList(Player* player, NetworkMessage* msg);
+
+		Quest* getQuestByID(uint16_t id);
+		QuestsList quests;
 };
 
 #endif

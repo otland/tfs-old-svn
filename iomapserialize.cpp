@@ -357,15 +357,14 @@ bool IOMapSerialize::saveHouseInfo(Map* map)
 	if(!db->executeQuery(query.str()))
 		return false;
 
-	std::stringstream housestream;
-
 	DBInsert query_insert(db);
-	query_insert.setQuery("INSERT INTO `houses` (`id`, `owner`, `paid`, `warnings`, `lastwarning`) VALUES ");
+	query_insert.setQuery("INSERT INTO `houses` (`id`, `owner`, `paid`, `warnings`, `lastwarning`, `name`, `town`, `size`, `price`, `rent`) VALUES ");
 
+	std::stringstream housestream;
 	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
 	{
 		House* house = it->second;
-		housestream << house->getHouseId() << ", " << house->getHouseOwner() << ", " << house->getPaidUntil() << ", " << house->getPayRentWarnings() << ", " << house->getLastWarning();
+		housestream << house->getHouseId() << ", " << house->getHouseOwner() << ", " << house->getPaidUntil() << ", " << house->getPayRentWarnings() << ", " << house->getLastWarning() << ", " << db->escapeString(house->getName()) << ", " << house->getTownId() << ", " << house->getSize() << ", " << house->getPrice() << ", " << house->getRent();
 		if(!query_insert.addRow(housestream.str()))
 			return false;
 
@@ -377,7 +376,7 @@ bool IOMapSerialize::saveHouseInfo(Map* map)
 
 	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
 	{
-		bool save_lists = false;
+		bool saveLists = false;
 		query_insert.setQuery("INSERT INTO `house_lists` (`house_id`, `listid`, `list`) VALUES ");
 		House* house = it->second;
 
@@ -385,7 +384,7 @@ bool IOMapSerialize::saveHouseInfo(Map* map)
 		if(house->getAccessList(GUEST_LIST, listText) && listText != "")
 		{
 			housestream << house->getHouseId() << ", " << GUEST_LIST << ", " << db->escapeString(listText);
-			save_lists = true;
+			saveLists = true;
 
 			if(!query_insert.addRow(housestream.str()))
 				return false;
@@ -396,7 +395,7 @@ bool IOMapSerialize::saveHouseInfo(Map* map)
 		if(house->getAccessList(SUBOWNER_LIST, listText) && listText != "")
 		{
 			housestream << house->getHouseId() << ", " << SUBOWNER_LIST << ", " << db->escapeString(listText);
-			save_lists = true;
+			saveLists = true;
 
 			if(!query_insert.addRow(housestream.str()))
 				return false;
@@ -410,7 +409,7 @@ bool IOMapSerialize::saveHouseInfo(Map* map)
 			if(door->getAccessList(listText) && listText != "")
 			{
 				housestream << house->getHouseId() << ", " << door->getDoorId() << ", " << db->escapeString(listText);
-				save_lists = true;
+				saveLists = true;
 
 				if(!query_insert.addRow(housestream.str()))
 					return false;
@@ -419,7 +418,7 @@ bool IOMapSerialize::saveHouseInfo(Map* map)
 			}
 		}
 
-		if(save_lists)
+		if(saveLists)
 		{
 			if(!query_insert.execute())
 				return false;

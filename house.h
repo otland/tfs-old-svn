@@ -181,6 +181,9 @@ class House
 		void setTownId(uint32_t _town) {townid = _town;}
 		uint32_t getTownId() const {return townid;}
 
+		void setSize(uint32_t _size) {size = _size;}
+		uint32_t getSize() const {return size;}
+
 		bool canEditAccessList(uint32_t listId, const Player* player);
 		void setAccessList(uint32_t listId, const std::string& textlist, bool teleport = true);
 		bool getAccessList(uint32_t listId, std::string& list) const;
@@ -220,22 +223,13 @@ class House
 		bool transferToDepot();
 
 		bool isLoaded;
-		uint32_t houseid;
-		uint32_t houseOwner;
-		std::string houseOwnerName;
+		uint32_t houseid, houseOwner, paidUntil, rentWarnings, lastWarning, rent, price, townid, size;
+		std::string houseName, houseOwnerName;
 		HouseTileList houseTiles;
 		HouseDoorList doorList;
 		HouseBedItemList bedsList;
-		AccessList guestList;
-		AccessList subOwnerList;
-		std::string houseName;
+		AccessList guestList, subOwnerList;
 		Position posEntry;
-		uint32_t paidUntil;
-		uint32_t rentWarnings;
-		uint32_t lastWarning;
-		uint32_t rent;
-		uint32_t price;
-		uint32_t townid;
 
 		HouseTransferItem* transferItem;
 		Container transfer_container;

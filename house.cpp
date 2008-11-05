@@ -813,20 +813,18 @@ bool Houses::loadHousesXML(std::string filename)
 				if(readXMLInteger(houseNode, "entryz", intValue))
 					entryPos.z = intValue;
 
-				if(entryPos.x == 0 && entryPos.y == 0 && entryPos.z == 0)
-				{
-					std::cout << "Warning: [Houses::loadHousesXML] House entry not set"
-						<< " - Name: " << house->getName()
-						<< " - House id: " << _houseid << std::endl;
-				}
-
 				house->setEntryPos(entryPos);
+				if(entryPos.x == 0 || entryPos.y == 0 || entryPos.z == 0)
+					std::cout << "[Warning - Houses::loadHousesXML] House entry not set for: " << house->getName() << " (" << _houseid << ")" << std::endl;
 
 				if(readXMLInteger(houseNode, "rent", intValue))
 					house->setRent(intValue);
 
 				if(readXMLInteger(houseNode, "townid", intValue))
 					house->setTownId(intValue);
+
+				if(readXMLInteger(houseNode, "size", intValue))
+					house->setSize(intValue);
 
 				if(g_config.getBool(ConfigManager::HOUSE_RENTASPRICE) && house->getRent())
 					house->setPrice(house->getRent());

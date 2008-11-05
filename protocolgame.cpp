@@ -313,7 +313,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		{
 			if(accnumber == 1)
 				player->accountManager = MANAGER_NEW;
-			else if(!player->isAccountManager())
+			else
 			{
 				player->accountManager = MANAGER_ACCOUNT;
 				player->managerNumber = accnumber;
@@ -321,7 +321,6 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		}
 
 		player->setOperatingSystem((OperatingSystem_t)operatingSystem);
-
 		if(gamemasterLogin == 1 && !player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) && !player->isAccountManager())
 		{
 			disconnectClient(0x14, "You are not a gamemaster!");
@@ -427,7 +426,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			if(eventConnect != 0 || !g_config.getBool(ConfigManager::REPLACE_KICK_ON_LOGIN))
 			{
 				//Already trying to connect
-				disconnectClient(0x14, "Your already logged in.");
+				disconnectClient(0x14, "You are already logged in.");
 				return false;
 			}
 
@@ -450,7 +449,7 @@ bool ProtocolGame::connect(uint32_t playerId)
 	Player* _player = g_game.getPlayerByID(playerId);
 	if(!_player || _player->isRemoved() || _player->client)
 	{
-		disconnectClient(0x14, "Your already logged in.");
+		disconnectClient(0x14, "You are already logged in.");
 		return false;
 	}
 
@@ -555,7 +554,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 			password = "1";
 		else
 		{
-			disconnectClient(0x14, "You must enter your account number.");
+			disconnectClient(0x14, "You must enter your account name.");
 			return false;
 		}
 	}
@@ -585,8 +584,8 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	std::string accPass;
-	if(name != "Account Manager" && ((accName.length() && !IOLoginData::getInstance()->getAccountId(accName, accId)) ||
-		!IOLoginData::getInstance()->getPassword(accId, name, accPass) || !passwordTest(password, accPass)))
+	if(((accName.length() && !IOLoginData::getInstance()->getAccountId(accName, accId)) ||
+		!IOLoginData::getInstance()->getPassword(accId, name, accPass) || !passwordTest(password, accPass)) && name != "Account Manager")
 	{
 		ConnectionManager::getInstance()->addLoginAttempt(getIP(), false);
 		getConnection()->closeConnection();
@@ -594,7 +593,6 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	ConnectionManager::getInstance()->addLoginAttempt(getIP(), true);
-
 	Dispatcher::getDispatcher().addTask(
 		createTask(boost::bind(&ProtocolGame::login, this, name, accId, password, operatingSystem, gamemasterLogin)));
 

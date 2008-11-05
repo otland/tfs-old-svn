@@ -573,7 +573,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 			query.str("");
 			query << "SELECT COUNT(`id`) AS `count` FROM `players` WHERE `vocation` > 4;";
-			if((result = db->storeQuery(query.str())))
+			if((result = db->storeQuery(query.str())) && result->getDataInt("count"))
 			{
 				std::cout << "[Warning] There are still " << result->getDataInt("count") << " players with vocation above 4, please mind to update them manually." << std::endl;
 				db->freeResult(result);
@@ -582,6 +582,59 @@ uint32_t DatabaseManager::updateDatabase()
 			query.str("");
 			registerDatabaseConfig("db_version", 3);
 			return 3;
+			break;
+		}
+
+		case 3:
+		{
+			Database* db = Database::getInstance();
+
+			DBQuery query;
+			DBResult* result;
+
+			std::cout << "> Updating database to version: 4..." << std::endl;
+
+			query << "ALTER TABLE `houses` ADD `name` VARCHAR(255) NOT NULL;";
+			db->executeQuery(query.str());
+
+			query.str("");
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
+			{
+				query << "ALTER TABLE `houses` ADD `size` INTEGER NOT NULL DEFAULT 0;";
+				db->executeQuery(query.str());
+
+				query.str("");
+				query << "ALTER TABLE `houses` ADD `town` INTEGER NOT NULL DEFAULT 0;";
+				db->executeQuery(query.str());
+
+				query.str("");
+				query << "ALTER TABLE `houses` ADD `price` INTEGER NOT NULL DEFAULT 0;";
+				db->executeQuery(query.str());
+
+				query.str("");
+				query << "ALTER TABLE `houses` ADD `rent` INTEGER NOT NULL DEFAULT 0;";
+			}
+			else
+			{
+				query << "ALTER TABLE `houses` ADD `size` INT UNSIGNED NOT NULL DEFAULT 0;";
+				db->executeQuery(query.str());
+
+				query.str("");
+				query << "ALTER TABLE `houses` ADD `town` INT UNSIGNED NOT NULL DEFAULT 0;";
+				db->executeQuery(query.str());
+
+				query.str("");
+				query << "ALTER TABLE `houses` ADD `price` INT UNSIGNED NOT NULL DEFAULT 0;";
+				db->executeQuery(query.str());
+
+				query.str("");
+				query << "ALTER TABLE `houses` ADD `rent` INT UNSIGNED NOT NULL DEFAULT 0;";
+			}
+			db->executeQuery(query.str());
+
+			query.str("");
+			registerDatabaseConfig("db_version", 4);
+			return 4;
 			break;
 		}
 

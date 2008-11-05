@@ -34,7 +34,7 @@ CREATE TABLE `server_config`
 	`value` INT NOT NULL
 ) ENGINE = InnoDB;
 
-INSERT INTO `server_config` VALUES ('db_version', 3);
+INSERT INTO `server_config` VALUES ('db_version', 4);
 
 CREATE TABLE `server_motd`
 (
@@ -231,6 +231,11 @@ CREATE TABLE `houses`
 	`paid` INT UNSIGNED NOT NULL DEFAULT 0,
 	`warnings` INT NOT NULL DEFAULT 0,
 	`lastwarning` INT UNSIGNED NOT NULL DEFAULT 0,
+	`name` VARCHAR(255) NOT NULL,
+	`town` INT UNSIGNED NOT NULL DEFAULT 0,
+	`size` INT UNSIGNED NOT NULL DEFAULT 0,
+	`price` INT UNSIGNED NOT NULL DEFAULT 0,
+	`rent` INT UNSIGNED NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`)
 ) ENGINE = InnoDB;
 
