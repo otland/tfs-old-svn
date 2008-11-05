@@ -3491,14 +3491,14 @@ void Game::npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, b
 		{
 			tmpPlayer = (*it)->getPlayer();
 			if((tmpPlayer != NULL) && (tmpPlayer != player))
-				tmpPlayer->sendCreatureSay(npc, SPEAK_SAY, text);
+				tmpPlayer->sendCreatureSay(npc, SPEAK_SAY, tmp);
 		}
 
 		//event method
 		for(it = list.begin(); it != list.end(); ++it)
 		{
 			if((*it) != player)
-				(*it)->onCreatureSay(npc, SPEAK_SAY, text);
+				(*it)->onCreatureSay(npc, SPEAK_SAY, tmp);
 		}
 	}
 }
