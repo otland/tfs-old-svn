@@ -3477,8 +3477,12 @@ void Game::npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, b
 
 	if(publicize)
 	{
-		SpectatorVec list;
+		std::string tmp = text;
+		replaceString(tmp, "{", "");
+		replaceString(tmp, "}", "");
+
 		SpectatorVec::iterator it;
+		SpectatorVec list;
 		getSpectators(list, npc->getPosition());
 
 		//send to client
