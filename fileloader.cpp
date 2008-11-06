@@ -26,7 +26,7 @@ FileLoader::FileLoader()
 {
 	m_file = NULL;
 	m_root = NULL;
-	m_buffer = new unsigned char[1024];
+	m_buffer = new uint8_t[1024];
 	m_buffer_size = 1024;
 	m_lastError = ERROR_NONE;
 
@@ -229,7 +229,7 @@ const unsigned char* FileLoader::getProps(const NODE node, uint32_t &size)
 		if(node->propsSize >= m_buffer_size)
 		{
 			delete[] m_buffer;
-			m_buffer = new unsigned char[m_buffer_size + 1024];
+			m_buffer = new uint8_t[m_buffer_size + 1024];
 			m_buffer_size = m_buffer_size + 1024;
 		}
 
@@ -272,7 +272,7 @@ const unsigned char* FileLoader::getProps(const NODE node, uint32_t &size)
 bool FileLoader::getProps(const NODE node, PropStream &props)
 {
 	uint32_t size;
-	const unsigned char* a = getProps(node, size);
+	const uint8_t* a = getProps(node, size);
 	if(!a)
 	{
 		props.init(NULL, 0);
@@ -285,7 +285,7 @@ bool FileLoader::getProps(const NODE node, PropStream &props)
 	}
 }
 
-int32_t FileLoader::setProps(void* data, unsigned short size)
+int32_t FileLoader::setProps(void* data, uint16_t size)
 {
 	//data
 	if(!writeData(data, size, true))
@@ -294,16 +294,16 @@ int32_t FileLoader::setProps(void* data, unsigned short size)
 	return ERROR_NONE;
 }
 
-void FileLoader::startNode(unsigned char type)
+void FileLoader::startNode(uint8_t type)
 {
-	unsigned char nodeBegin = NODE_START;
+	uint8_t nodeBegin = NODE_START;
 	writeData(&nodeBegin, sizeof(nodeBegin), false);
 	writeData(&type, sizeof(type), true);
 }
 
 void FileLoader::endNode()
 {
-	unsigned char nodeEnd = NODE_END;
+	uint8_t nodeEnd = NODE_END;
 	writeData(&nodeEnd, sizeof(nodeEnd), false);
 }
 
@@ -378,7 +378,7 @@ inline bool FileLoader::readByte(int32_t &value)
 	}
 }
 
-inline bool FileLoader::readBytes(unsigned char* buffer, int32_t size, int32_t pos)
+inline bool FileLoader::readBytes(uint8_t* buffer, int32_t size, int32_t pos)
 {
 	if(m_use_cache)
 	{
@@ -547,7 +547,7 @@ int32_t FileLoader::loadCacheBlock(uint32_t pos)
 	}
 
 	if(m_cached_data[loading_cache].data == NULL)
-		m_cached_data[loading_cache].data = new unsigned char[m_cache_size];
+		m_cached_data[loading_cache].data = new uint8_t[m_cache_size];
 
 	m_cached_data[loading_cache].base = base_pos;
 
@@ -557,7 +557,7 @@ int32_t FileLoader::loadCacheBlock(uint32_t pos)
 		return -1;
 	}
 
-	int32_t size = fread(m_cached_data[loading_cache].data, 1, m_cache_size, m_file);
+	uint32_t size = fread(m_cached_data[loading_cache].data, 1, m_cache_size, m_file);
 	m_cached_data[loading_cache].size = size;
 
 	if(size < (pos - m_cached_data[loading_cache].base))
