@@ -413,6 +413,7 @@ class Creature : public AutoID, virtual public Thing
 		bool skillLoss;
 		bool lootDrop;
 		Skulls_t skull;
+		PartyShields_t partyShield;
 		Direction direction;
 		ConditionList conditions;
 		LightInfo internalLight;
