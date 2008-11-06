@@ -49,6 +49,7 @@
 #include "admin.h"
 #include "status.h"
 #include "protocollogin.h"
+#include "protocolold.h"
 #endif
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
@@ -1013,7 +1014,8 @@ bool TalkAction::serverDiag(Creature* creature, const std::string& cmd, const st
 	text << "ProtocolGame: " << ProtocolGame::protocolGameCount << "\n";
 	text << "ProtocolLogin: " << ProtocolLogin::protocolLoginCount << "\n";
 	text << "ProtocolAdmin: " << ProtocolAdmin::protocolAdminCount << "\n";
-	text << "ProtocolStatus: " << ProtocolStatus::protocolStatusCount << "\n\n";
+	text << "ProtocolStatus: " << ProtocolStatus::protocolStatusCount << "\n";
+	text << "ProtocolOld: " << ProtocolOld::protocolOldCount << "\n\n";
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
 
 	text.str("");

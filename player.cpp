@@ -1550,9 +1550,12 @@ void Player::openShopWindow()
 {
 	for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
 	{
-		uint32_t itemCount = __getItemTypeCount((*it).itemId);
-		if(itemCount > 0)
-			goodsMap[(*it).itemId] = itemCount;
+		if((*it).sellPrice > 0)
+		{
+			uint32_t itemCount = __getItemTypeCount((*it).itemId);
+			if(itemCount > 0)
+				goodsMap[(*it).itemId] = itemCount;
+		}
 	}
 
 	sortItems(shopOffer); //TODO: make this configurable
@@ -3148,7 +3151,7 @@ void Player::postUpdateGoods(uint32_t itemId)
 	uint32_t amount = 0;
 	for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
 	{
-		if((*it).itemId == itemId)
+		if((*it).sellPrice > 0 && (*it).itemId == itemId)
 		{
 			uint32_t itemCount = __getItemTypeCount((*it).itemId);
 			if(itemCount > 0)
@@ -3222,6 +3225,9 @@ bool Player::setFollowCreature(Creature* creature, bool fullPathSearch /*= false
 		stopEventWalk();
 		return false;
 	}
+
+	if(creature)
+		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
 
 	return true;
 }
@@ -3789,23 +3795,21 @@ Skulls_t Player::getSkull() const
 	return skull;
 }
 
-Skulls_t Player::getSkullClient(const Player* player) const
+Skulls_t Player::getSkullClient(const Creature* creature) const
 {
-	if(!player || g_game.getWorldType() != WORLD_TYPE_PVP || player->hasCustomFlag(PlayerCustomFlag_NotGainSkull))
-		return SKULL_NONE;
-
-	if(getSkull() != SKULL_NONE && player->getSkull() != SKULL_RED)
+	if(const Player* player = creature->getPlayer())
 	{
-		if(player->hasAttacked(this))
+		if(g_game.getWorldType() != WORLD_TYPE_PVP)
+			return SKULL_NONE;
+
+		if(skull != SKULL_NONE && player->getSkull() != SKULL_RED && player->hasAttacked(this))
 			return SKULL_YELLOW;
-	}
 
-	if(player->getSkull() == SKULL_NONE)
-	{
-		if(isPartner(player))
+		if(player->getSkull() == SKULL_NONE && isPartner(player))
 			return SKULL_GREEN;
 	}
-	return player->getSkull();
+
+	return Creature::getSkullClient(creature);
 }
 
 bool Player::hasAttacked(const Player* attacked) const
@@ -3849,7 +3853,7 @@ void Player::addUnjustifiedDead(const Player* attacked)
 	}
 
 	redSkullTicks += g_config.getNumber(ConfigManager::FRAG_TIME);
-	if(g_config.getNumber(ConfigManager::KILLS_TO_RED) != 0 && getSkull() != SKULL_RED && !hasCustomFlag(PlayerCustomFlag_NotGainSkull) &&
+	if(g_config.getNumber(ConfigManager::KILLS_TO_RED) != 0 && getSkull() != SKULL_RED &&
 		redSkullTicks >= ((g_config.getNumber(ConfigManager::KILLS_TO_RED) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME)))
 	{
 		setSkull(SKULL_RED);
@@ -4014,6 +4018,9 @@ void Player::manageAccount(const std::string &text)
 						IOLoginData::getInstance()->changeName(tmp, managerString, managerString2) &&
 						IOBan::getInstance()->removeNamelock(tmp))
 					{
+						if(House* house = Houses::getInstance().getHouseByPlayerId(tmp))
+							house->updateDoorDescription(managerString);
+
 						talkState[1] = true;
 						talkState[2] = false;
 						msg << "Your character has been successfully renamed, you should now be able to login at it without any problems.";

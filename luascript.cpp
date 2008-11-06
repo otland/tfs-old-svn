@@ -1861,8 +1861,11 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerPremiumDays(cid)
 	lua_register(m_luaState, "getPlayerPremiumDays", LuaScriptInterface::luaGetPlayerPremiumDays);
 
-	//getPlayerSkullType(cid)
-	lua_register(m_luaState, "getPlayerSkullType", LuaScriptInterface::luaGetPlayerSkullType);
+	//getCreatureSkullType(cid)
+	lua_register(m_luaState, "getCreatureSkullType", LuaScriptInterface::luaGetCreatureSkullType);
+
+	//doCreatureSetSkullType(cid, skull)
+	lua_register(m_luaState, "doCreatureSetSkullType", LuaScriptInterface::luaDoCreatureSetSkullType);
 
 	//getPlayerBalance(cid)
 	lua_register(m_luaState, "getPlayerBalance", LuaScriptInterface::luaGetPlayerBalance);
@@ -2079,9 +2082,6 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 			case PlayerInfoPremiumDays:
 				value = player->premiumDays;
 				break;
-			case PlayerInfoSkullType:
-				value = player->getSkull();
-				break;
 			case PlayerInfoFood:
 			{
 				if(Condition* condition = player->getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT))
@@ -2280,11 +2280,6 @@ int32_t LuaScriptInterface::luaGetPlayerGUID(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerPremiumDays(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoPremiumDays);
-}
-
-int32_t LuaScriptInterface::luaGetPlayerSkullType(lua_State* L)
-{
-	return internalGetPlayerInfo(L, PlayerInfoSkullType);
 }
 
 int32_t LuaScriptInterface::luaGetPlayerBalance(lua_State* L)
@@ -7605,6 +7600,42 @@ int32_t LuaScriptInterface::luaGetCreatureName(lua_State* L)
 	Creature* creature = env->getCreatureByUID(cid);
 	if(creature)
 		lua_pushstring(L, creature->getName().c_str());
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetCreatureSkullType(lua_State* L)
+{
+	//getCreatureSkullType(cid)
+	uint32_t cid = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	if(Creature* creature = env->getCreatureByUID(cid))
+		lua_pushnumber(L, creature->getSkull());
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoCreatureSetSkullType(lua_State* L)
+{
+	//doCreatureSetSkullType(cid, skull)
+	Skulls_t skull = (Skulls_t)popNumber(L);
+	uint32_t cid = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	if(Creature* creature = env->getCreatureByUID(cid))
+	{
+		creature->setSkull(skull);
+		lua_pushnumber(L, LUA_NO_ERROR);
+	}
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));

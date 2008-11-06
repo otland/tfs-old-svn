@@ -461,13 +461,12 @@ class Player : public Creature, public Cylinder
 		bool getNoMove() const {return mayNotMove;}
 
 		Skulls_t getSkull() const;
-		Skulls_t getSkullClient(const Player* player) const;
+		Skulls_t getSkullClient(const Creature* creature) const;
 
 		bool hasAttacked(const Player* attacked) const;
 		void addAttacked(const Player* attacked);
 		void clearAttacked();
 		void addUnjustifiedDead(const Player* attacked);
-		void setSkull(Skulls_t newSkull) {skull = newSkull;}
 		void sendCreatureSkull(const Creature* creature) const
 			{if(client) client->sendCreatureSkull(creature);}
 
@@ -867,7 +866,6 @@ class Player : public Creature, public Cylinder
 		uint32_t editListId;
 
 		int64_t redSkullTicks;
-		Skulls_t skull;
 		typedef std::set<uint32_t> AttackedSet;
 		AttackedSet attackedSet;
 

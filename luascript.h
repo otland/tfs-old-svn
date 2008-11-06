@@ -229,7 +229,6 @@ enum PlayerInfo_t
 	PlayerInfoGroupId,
 	PlayerInfoGUID,
 	PlayerInfoPremiumDays,
-	PlayerInfoSkullType,
 	PlayerInfoBalance,
 	PlayerInfoStamina,
 	PlayerInfoGhostStatus,
@@ -409,7 +408,8 @@ class LuaScriptInterface
 		static int32_t luaDoPlayerSetSex(lua_State* L);
 		static int32_t luaDoPlayerResetIdleTime(lua_State* L);
 		static int32_t luaDoSetCreatureLight(lua_State* L);
-		static int32_t luaGetPlayerSkullType(lua_State* L);
+		static int32_t luaGetCreatureSkullType(lua_State* L);
+		static int32_t luaDoCreatureSetSkullType(lua_State* L);
 		static int32_t luaDoPlayerSwitchSaving(lua_State* L);
 		static int32_t luaDoPlayerSave(lua_State* L);
 

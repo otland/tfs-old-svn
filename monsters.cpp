@@ -79,6 +79,7 @@ void MonsterType::reset()
 
 	lightLevel = 0;
 	lightColor = 0;
+	skull = SKULL_NONE;
 
 	manaCost = 0;
 	summonList.clear();
@@ -894,6 +895,21 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 
 						if(readXMLInteger(tmpNode, "runonhealth", intValue))
 							mType->runAwayHealth = intValue;
+
+						if(readXMLString(tmpNode, "skull", strValue))
+						{
+							std::string tmpStrValue = asLowerCaseString(strValue);
+							if(tmpStrValue == "red" || tmpStrValue == "4")
+								mType->skull = SKULL_RED;
+							else if(tmpStrValue == "white" || tmpStrValue == "3")
+								mType->skull = SKULL_WHITE;
+							else if(tmpStrValue == "green" || tmpStrValue == "2")
+								mType->skull = SKULL_GREEN;
+							else if(tmpStrValue == "yellow" || tmpStrValue == "1")
+								mType->skull = SKULL_YELLOW;
+							else
+								mType->skull = SKULL_NONE;
+						}
 					}
 					tmpNode = tmpNode->next;
 				}

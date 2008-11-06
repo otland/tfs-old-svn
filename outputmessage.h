@@ -44,43 +44,27 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		OutputMessage();
 
 	public:
-		virtual ~OutputMessage() {}
+		virtual ~OutputMessage(){}
 
-		char* getOutputBuffer() { return (char*)&m_MsgBuf[m_outputBufferStart];}
-
-		void writeMessageLength()
-		{
-			*(uint16_t*)(m_MsgBuf + 6) = m_MsgSize;
-			//added header size to the message size
-			m_MsgSize += 2;
-			m_outputBufferStart = 6;
-		}
-
-		void addCryptoHeader()
-		{
-			*(uint32_t*)(m_MsgBuf + 2) = adlerChecksum((uint8_t*)(m_MsgBuf + 6), m_MsgSize);
-			m_MsgSize += 4;
-			*(uint16_t*)(m_MsgBuf) = m_MsgSize;
-			m_MsgSize += 2;
-			m_outputBufferStart = 0;
-		}
-
-		enum OutputMessageState
-		{
-			STATE_FREE,
-			STATE_ALLOCATED,
-			STATE_ALLOCATED_NO_AUTOSEND,
-			STATE_WAITING
-		};
-
+		char* getOutputBuffer() {return (char*)&m_MsgBuf[m_outputBufferStart];}
 		Protocol* getProtocol() const {return m_protocol;}
 		Connection* getConnection() const {return m_connection;}
+
+		void writeMessageLength() {addHeader((uint16_t)(m_MsgSize));}
+
+		void addCryptoHeader(bool addChecksum)
+		{
+			if(addChecksum)
+				addHeader((uint32_t)(adlerChecksum((uint8_t*)(m_MsgBuf + m_outputBufferStart), m_MsgSize)));
+
+			addHeader((uint16_t)(m_MsgSize));
+		}
 
 #ifdef __TRACK_NETWORK__
 		void Track(std::string file, int64_t line, std::string func)
 		{
-			if(last_uses.size() >= 25)
-				last_uses.pop_front();
+			if(lastUses.size() >= 25)
+				lastUses.pop_front();
 
 			std::ostringstream os;
 			os << /*file << ":"*/ "line " << line << " " << func;
@@ -95,16 +79,38 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		}
 #endif
 
+		enum OutputMessageState
+		{
+			STATE_FREE,
+			STATE_ALLOCATED,
+			STATE_ALLOCATED_NO_AUTOSEND,
+			STATE_WAITING
+		};
+
 	protected:
-#ifdef __TRACK_NETWORK__
-		std::list<std::string> lastUses;
-#endif
+		template <typename T>
+		inline void addHeader(T value)
+		{
+			if((int32_t)m_outputBufferStart - (int32_t)sizeof(T) < 0)
+			{
+				std::cout << "[Error - OutputMessage::addHeader] m_outputBufferStart(" << m_outputBufferStart << ") < " << sizeof(T) << std::endl;
+				return;
+			}
+
+			m_outputBufferStart = m_outputBufferStart - sizeof(T);
+			*(T*)(m_MsgBuf + m_outputBufferStart) = value;
+			m_MsgSize = m_MsgSize + sizeof(T);
+		}
 
 		void freeMessage()
 		{
 			setConnection(NULL);
 			setProtocol(NULL);
 			m_frame = 0;
+			//allocate enough size for headers
+			//2 bytes for unencrypted message
+			//4 bytes for checksum
+			//2 bytes for encrypted message
 			m_outputBufferStart = 8;
 			//setState have to be the last one
 			setState(OutputMessage::STATE_FREE);
@@ -124,10 +130,13 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		Protocol* m_protocol;
 		Connection* m_connection;
 
-		uint32_t m_outputBufferStart;
-		uint64_t m_frame;
-
 		OutputMessageState m_state;
+		uint64_t m_frame;
+		uint32_t m_outputBufferStart;
+
+#ifdef __TRACK_NETWORK__
+		std::list<std::string> lastUses;
+#endif
 };
 
 class OutputMessagePool
@@ -176,5 +185,4 @@ class OutputMessagePool
 #else
 	#define TRACK_MESSAGE(omsg)
 #endif
-
 #endif

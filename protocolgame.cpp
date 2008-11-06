@@ -607,10 +607,13 @@ void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)
 void ProtocolGame::disconnectClient(uint8_t error, const char* message)
 {
 	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
-	TRACK_MESSAGE(output);
-	output->AddByte(error);
-	output->AddString(message);
-	OutputMessagePool::getInstance()->send(output);
+	if(output)
+	{
+		TRACK_MESSAGE(output);
+		output->AddByte(error);
+		output->AddString(message);
+		OutputMessagePool::getInstance()->send(output);
+	}
 	disconnect();
 }
 
@@ -1711,18 +1714,15 @@ void ProtocolGame::sendCreatureShield(const Creature* creature)
 
 void ProtocolGame::sendCreatureSkull(const Creature* creature)
 {
-	if(g_game.getWorldType() == WORLD_TYPE_PVP)
+	if(canSee(creature))
 	{
-		if(canSee(creature))
+		NetworkMessage* msg = getOutputBuffer();
+		if(msg)
 		{
-			NetworkMessage* msg = getOutputBuffer();
-			if(msg)
-			{
-				TRACK_MESSAGE(msg);
-				msg->AddByte(0x90);
-				msg->AddU32(creature->getID());
-				msg->AddByte(player->getSkullClient(creature->getPlayer()));
-			}
+			TRACK_MESSAGE(msg);
+			msg->AddByte(0x90);
+			msg->AddU32(creature->getID());
+			msg->AddByte(player->getSkullClient(creature));
 		}
 	}
 }
@@ -2793,7 +2793,7 @@ void ProtocolGame::AddCreature(NetworkMessage* msg, const Creature* creature, bo
 
 	msg->AddU16(creature->getStepSpeed());
 
-	msg->AddByte(player->getSkullClient(creature->getPlayer()));
+	msg->AddByte(player->getSkullClient(creature));
 	msg->AddByte(player->getPartyShield(creature->getPlayer()));
 }
 

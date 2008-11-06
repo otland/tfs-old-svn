@@ -210,6 +210,21 @@ bool Npc::loadFromXml(const std::string& filename)
 		if(readXMLInteger(root, "floorchange", intValue))
 			floorChange = (intValue != 0);
 
+		if(readXMLString(root, "skull", strValue))
+		{
+			std::string tmpStrValue = asLowerCaseString(strValue);
+			if(tmpStrValue == "red" || tmpStrValue == "4")
+				setSkull(SKULL_RED);
+			else if(tmpStrValue == "white" || tmpStrValue == "3")
+				setSkull(SKULL_WHITE);
+			else if(tmpStrValue == "green" || tmpStrValue == "2")
+				setSkull(SKULL_GREEN);
+			else if(tmpStrValue == "yellow" || tmpStrValue == "1")
+				setSkull(SKULL_YELLOW);
+			else
+				setSkull(SKULL_NONE);
+		}
+
 		while(p)
 		{
 			if(xmlStrcmp(p->name, (const xmlChar*)"health") == 0)

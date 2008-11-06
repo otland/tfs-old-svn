@@ -73,6 +73,7 @@ Creature()
 	baseSpeed = mType->base_speed;
 	internalLight.level = mType->lightLevel;
 	internalLight.color = mType->lightColor;
+	setSkull(mType->skull);
 
 	minCombatValue = 0;
 	maxCombatValue = 0;

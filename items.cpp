@@ -1061,7 +1061,6 @@ bool Items::loadFromXml()
 									{
 										it.combatType = combatType;
 										it.condition = conditionDamage;
-										it.condition->setParam(CONDITIONPARAM_FORCEUPDATE, true);
 										uint32_t ticks = 0;
 										int32_t damage = 0;
 										int32_t start = 0;
@@ -1113,6 +1112,9 @@ bool Items::loadFromXml()
 											}
 											fieldAttributesNode = fieldAttributesNode->next;
 										}
+
+										if(conditionDamage->getTotalDamage() > 0)
+											it.condition->setParam(CONDITIONPARAM_FORCEUPDATE, true);
 									}
 								}
 							}

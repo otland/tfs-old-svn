@@ -83,22 +83,23 @@ void House::setHouseOwner(uint32_t guid, bool cleaned/* = true*/)
 		rentWarnings = 0;
 	}
 
-	std::string tmp;
-	if(guid != 0 && IOLoginData::getInstance()->getNameByGuid(guid, tmp))
-	{
+	if(guid != 0)
 		houseOwner = guid;
-		houseOwnerName = tmp;
-	}
 
 	updateDoorDescription();
 	setLastWarning(time(NULL)); //So the new owner has one day before he start the payement
 }
 
-void House::updateDoorDescription()
+void House::updateDoorDescription(std::string name/* = ""*/)
 {
 	char houseDescription[200];
 	if(houseOwner != 0)
-		sprintf(houseDescription, "It belongs to house '%s'. %s owns this house.", houseName.c_str(), houseOwnerName.c_str());
+	{
+		if(name == "")
+			IOLoginData::getInstance()->getNameByGuid(houseOwner, name);
+
+		sprintf(houseDescription, "It belongs to house '%s'. %s owns this house.", houseName.c_str(), name.c_str());
+	}
 	else
 		sprintf(houseDescription, "It belongs to house '%s'. Nobody owns this house. It costs %d gold coins.", houseName.c_str(), price);
 

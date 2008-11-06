@@ -51,6 +51,9 @@ class NetworkMessage
 		}
 
 	public:
+		// skips count unknown/unused bytes in an incoming message
+		void SkipBytes(int32_t count) {m_ReadPos += count;}
+
 		// simply read functions for incoming message
 		uint8_t GetByte() {return m_MsgBuf[m_ReadPos++];}
 		uint16_t GetU16()
@@ -59,7 +62,11 @@ class NetworkMessage
 			m_ReadPos += 2;
 			return v;
 		}
-		uint16_t GetSpriteId() {return GetU16();}
+		uint16_t PeekU16()
+		{
+			uint16_t v = *(uint16_t*)(m_MsgBuf + m_ReadPos);
+			return v;
+		}
 		uint32_t GetU32()
 		{
 			uint32_t v = *(uint32_t*)(m_MsgBuf + m_ReadPos);
@@ -71,15 +78,15 @@ class NetworkMessage
 			uint32_t v = *(uint32_t*)(m_MsgBuf + m_ReadPos);
 			return v;
 		}
+
 		std::string GetString();
 		std::string GetRaw();
-		Position GetPosition();
 
-		// skips count unknown/unused bytes in an incoming message
-		void SkipBytes(int32_t count) {m_ReadPos += count;}
+		Position GetPosition();
+		uint16_t GetSpriteId() {return GetU16();}
 
 		// simply write functions for outgoing message
-		void AddByte(uint8_t  value)
+		void AddByte(uint8_t value)
 		{
 			if(!canAdd(1))
 				return;
@@ -103,10 +110,11 @@ class NetworkMessage
 			*(uint32_t*)(m_MsgBuf + m_ReadPos) = value;
 			m_ReadPos += 4; m_MsgSize += 4;
 		}
+
 		void AddBytes(const char* bytes, uint32_t size);
 		void AddPaddingBytes(uint32_t n);
 
-		void AddString(const std::string &value){AddString(value.c_str());}
+		void AddString(const std::string &value) {AddString(value.c_str());}
 		void AddString(const char* value);
 
 		// write functions for complex types
@@ -115,17 +123,17 @@ class NetworkMessage
 		void AddItem(const Item *item);
 		void AddItemId(const Item *item);
 		void AddItemId(uint16_t itemId);
-		void AddCreature(const Creature *creature, bool known, unsigned int remove);
 
 		int32_t getMessageLength() const {return m_MsgSize;}
 		void setMessageLength(int32_t newSize) {m_MsgSize = newSize;}
+
 		int32_t getReadPos() const {return m_ReadPos;}
 		void setReadPos(int32_t newPos) {m_ReadPos = newPos;}
 
-		int32_t decodeHeader();
-
 		char* getBuffer() {return (char*)&m_MsgBuf[0];}
-		char* getBodyBuffer(int32_t header = header_length) {m_ReadPos = 2; return (char*)&m_MsgBuf[header];}
+		char* getBodyBuffer() {m_ReadPos = 2; return (char*)&m_MsgBuf[header_length];}
+
+		int32_t decodeHeader();
 
 	protected:
 		inline bool canAdd(int32_t size)

@@ -41,11 +41,11 @@ theforgottenserver_SOURCES = account.cpp account.h actions.cpp actions.h \
 	outputmessage.cpp outputmessage.h party.cpp party.h playerbox.cpp \
 	playerbox.h player.cpp player.h position.cpp position.h protocol.cpp \
 	protocol.h protocolgame.cpp protocolgame.h protocollogin.cpp \
-	protocollogin.h quests.cpp quests.h raids.cpp raids.h resources.h \
-	rsa.cpp rsa.h scheduler.cpp scheduler.h scriptmanager.cpp \
-	scriptmanager.h server.cpp server.h sha1.cpp sha1.h spawn.cpp spawn.h \
-	spells.cpp spells.h status.cpp status.h talkaction.cpp talkaction.h \
-	tasks.cpp tasks.h teleport.cpp teleport.h templates.h textlogger.cpp \
-	textlogger.h thing.cpp thing.h tile.cpp tile.h tools.cpp tools.h \
-	town.h trashholder.cpp trashholder.h waitlist.cpp waitlist.h \
+	protocollogin.h protocolold.cpp protocolold.h quests.cpp quests.h \
+	raids.cpp raids.h resources.h rsa.cpp rsa.h scheduler.cpp scheduler.h \
+	scriptmanager.cpp scriptmanager.h server.cpp server.h sha1.cpp sha1.h \
+	spawn.cpp spawn.h spells.cpp spells.h status.cpp status.h talkaction.cpp \
+	talkaction.h tasks.cpp tasks.h teleport.cpp teleport.h templates.h \
+	textlogger.cpp textlogger.h thing.cpp thing.h tile.cpp tile.h tools.cpp \
+	tools.h town.h trashholder.cpp trashholder.h waitlist.cpp waitlist.h \
 	weapons.cpp weapons.h vocation.cpp vocation.h

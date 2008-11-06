@@ -557,7 +557,7 @@ int32_t FileLoader::loadCacheBlock(uint32_t pos)
 		return -1;
 	}
 
-	size_t size = fread(m_cached_data[loading_cache].data, 1, m_cache_size, m_file);
+	int32_t size = fread(m_cached_data[loading_cache].data, 1, m_cache_size, m_file);
 	m_cached_data[loading_cache].size = size;
 
 	if(size < (pos - m_cached_data[loading_cache].base))

@@ -3330,7 +3330,9 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 bool Game::playerWhisper(Player* player, const std::string& text)
 {
 	SpectatorVec list;
-	getSpectators(list, player->getPosition());
+	getSpectators(list, player->getPosition(), false, false,
+		Map::maxClientViewportX, Map::maxClientViewportX,
+		Map::maxClientViewportY, Map::maxClientViewportY);
 	SpectatorVec::const_iterator it;
 
 	//send to client
@@ -3622,7 +3624,9 @@ bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std:
 		if(type == SPEAK_YELL || type == SPEAK_MONSTER_YELL)
 			getSpectators(list, creature->getPosition(), false, true, 18, 18, 14, 14);
 		else
-			getSpectators(list, creature->getPosition(), false, false);
+			getSpectators(list, creature->getPosition(), false, false,
+				Map::maxClientViewportX, Map::maxClientViewportX,
+				Map::maxClientViewportY, Map::maxClientViewportY);
 
 		//send to client
 		Player* tmpPlayer = NULL;
@@ -4515,19 +4519,16 @@ Highscore Game::getHighscore(uint16_t skill)
 	return hs;
 }
 
-void Game::updateCreatureSkull(Player* player)
+void Game::updateCreatureSkull(Creature* creature)
 {
-	if(getWorldType() != WORLD_TYPE_PVP)
-		return;
-
-	const SpectatorVec& list = getSpectators(player->getPosition());
+	const SpectatorVec& list = getSpectators(creature->getPosition());
 
 	//send to client
 	Player* tmpPlayer = NULL;
 	for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
 	{
 		 if((tmpPlayer = (*it)->getPlayer()))
-			tmpPlayer->sendCreatureSkull(player);
+			tmpPlayer->sendCreatureSkull(creature);
 	}
 }
 

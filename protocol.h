@@ -35,6 +35,7 @@ class Protocol : boost::noncopyable
 		{
 			m_connection = connection;
 			m_encryptionEnabled = false;
+			m_checksumEnabled = true;
 			m_rawMessages = false;
 			m_key[0] = 0;
 			m_key[1] = 0;
@@ -42,9 +43,7 @@ class Protocol : boost::noncopyable
 			m_key[3] = 0;
 			m_outputBuffer = NULL;
 		}
-
 		virtual ~Protocol() {}
-
 		virtual int32_t getProtocolId() {return 0x00;}
 
 		virtual void parsePacket(NetworkMessage& msg){}
@@ -53,25 +52,28 @@ class Protocol : boost::noncopyable
 		void onRecvMessage(NetworkMessage& msg);
 		virtual void onRecvFirstMessage(NetworkMessage& msg) = 0;
 
-		Connection* getConnection() { return m_connection;}
-		const Connection* getConnection() const { return m_connection;}
-		void setConnection(Connection* connection) { m_connection = connection;}
+		Connection* getConnection() {return m_connection;}
+		const Connection* getConnection() const {return m_connection;}
+		void setConnection(Connection* connection) {m_connection = connection;}
 
-	uint32_t getIP() const;
+		uint32_t getIP() const;
 
 	protected:
 		//Use this function for autosend messages only
 		OutputMessage* getOutputBuffer();
 
-		void enableXTEAEncryption() { m_encryptionEnabled = true; }
-		void disableXTEAEncryption() { m_encryptionEnabled = false; }
-		void setXTEAKey(const uint32_t* key) { memcpy(m_key, key, sizeof(uint32_t)*4); }
+		void enableXTEAEncryption() {m_encryptionEnabled = true;}
+		void disableXTEAEncryption() {m_encryptionEnabled = false;}
+		void setXTEAKey(const uint32_t* key) {memcpy(m_key, key, sizeof(uint32_t)*4);}
 
 		void XTEA_encrypt(OutputMessage& msg);
 		bool XTEA_decrypt(NetworkMessage& msg);
 		bool RSA_decrypt(RSA* rsa, NetworkMessage& msg);
 
-		void setRawMessages(bool value) { m_rawMessages = value; }
+		void enableChecksum() {m_checksumEnabled = true;}
+		void disableChecksum() {m_checksumEnabled = false;}
+
+		void setRawMessages(bool value) {m_rawMessages = value;}
 
 		virtual void deleteProtocolTask();
 		friend class Connection;
@@ -80,6 +82,7 @@ class Protocol : boost::noncopyable
 		OutputMessage* m_outputBuffer;
 		Connection* m_connection;
 		bool m_encryptionEnabled;
+		bool m_checksumEnabled;
 		bool m_rawMessages;
 		uint32_t m_key[4];
 };

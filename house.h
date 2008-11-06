@@ -200,6 +200,7 @@ class House
 		bool isInvited(const Player* player);
 		AccessHouseLevel_t getHouseAccessLevel(const Player* player);
 		uint32_t getHouseTileSize() {return houseTiles.size();}
+		void updateDoorDescription(std::string name = "");
 		void clean();
 
 		void addDoor(Door* door);
@@ -216,20 +217,18 @@ class House
 		HouseTileList::iterator getHouseTileEnd() {return houseTiles.end();}
 
 	private:
+		bool transferToDepot();
 		void removePlayer(Player* player);
 		void removePlayers(bool ignoreInvites);
 
-		void updateDoorDescription();
-		bool transferToDepot();
-
 		bool isLoaded;
+		std::string houseName;
 		uint32_t houseid, houseOwner, paidUntil, rentWarnings, lastWarning, rent, price, townid, size;
-		std::string houseName, houseOwnerName;
+		AccessList guestList, subOwnerList;
+		Position posEntry;
 		HouseTileList houseTiles;
 		HouseDoorList doorList;
 		HouseBedItemList bedsList;
-		AccessList guestList, subOwnerList;
-		Position posEntry;
 
 		HouseTransferItem* transferItem;
 		Container transfer_container;
@@ -250,8 +249,8 @@ class Houses
 		bool reloadPrices();
 		bool payHouses();
 
-		House* getHouseByCreature(Creature* creature);
 		House* getHouse(uint32_t houseid, bool add = false);
+		House* getHouseByCreature(Creature* creature);
 		House* getHouseByPlayerId(uint32_t playerId);
 
 		uint16_t getHousesCount(uint32_t accno) const;

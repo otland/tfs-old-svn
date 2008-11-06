@@ -30,6 +30,7 @@ isItemMoveable = isItemMovable
 saveData = saveServer
 savePlayers = saveServer
 getPlayerSkill = getPlayerSkillLevel
+getPlayerSkullType = getCreatureSkullType
 
 function getPlayerVocationName(cid)
 	return getVocationInfo(getPlayerVocation(cid)).name
@@ -48,9 +49,9 @@ function getPlayerMasterPos(cid)
 end
 
 function getOnlinePlayers()
-	local playerlist = getPlayersOnline()
+	local tmp = getPlayersOnline()
 	local players = {}
-	for i, cid in ipairs(playerlist) do
+	for i, cid in ipairs(tmp) do
 		table.insert(players, getCreatureName(cid))
 	end
 	return players

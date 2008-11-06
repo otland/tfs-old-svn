@@ -24,6 +24,7 @@
 #include "outputmessage.h"
 #include "protocolgame.h"
 #include "protocollogin.h"
+#include "protocolold.h"
 #include "admin.h"
 #include "status.h"
 #include "tasks.h"
@@ -234,12 +235,17 @@ void Connection::parsePacket(const boost::system::error_code& error)
 	if(!error)
 	{
 		// Checksum
-		uint32_t recvChecksum = m_msg.PeekU32();
-		uint32_t checksum = adlerChecksum((uint8_t*)(m_msg.getBuffer() + m_msg.getReadPos() + 4), m_msg.getMessageLength() - m_msg.getReadPos() - 4);
+		uint32_t receivedChecksum = m_msg.PeekU32(), checksum = 0;
+		int32_t length = m_msg.getMessageLength() - m_msg.getReadPos() - 4;
+		if(length)
+			checksum = adlerChecksum((uint8_t*)(m_msg.getBuffer() + m_msg.getReadPos() + 4), length);
 
-		// if they key match, we can skip 4 bytes
-		if(recvChecksum == checksum)
+		bool checksumEnabled = false;
+		if(receivedChecksum == checksum)
+		{
 			m_msg.SkipBytes(4);
+			checksumEnabled = true;
+		}
 
 		// Protocol selection
 		if(!m_protocol)
@@ -248,10 +254,16 @@ void Connection::parsePacket(const boost::system::error_code& error)
 			switch(protocolId)
 			{
 				case 0x01: // Login server protocol
-					m_protocol = new ProtocolLogin(this);
+					if(checksumEnabled)
+						m_protocol = new ProtocolLogin(this);
+					else
+						m_protocol = new ProtocolOld(this);
 					break;
 				case 0x0A: // World server protocol
-					m_protocol = new ProtocolGame(this);
+					if(checksumEnabled)
+						m_protocol = new ProtocolGame(this);
+					else
+						m_protocol = new ProtocolOld(this);
 					break;
 				case 0xFE: // Admin protocol
 					m_protocol = new ProtocolAdmin(this);
@@ -260,19 +272,15 @@ void Connection::parsePacket(const boost::system::error_code& error)
 					m_protocol = new ProtocolStatus(this);
 					break;
 				default:
-					// No valid protocol
 					closeConnection();
 					OTSYS_THREAD_UNLOCK(m_connectionLock, "");
 					return;
-					break;
 			}
+
 			m_protocol->onRecvFirstMessage(m_msg);
 		}
 		else
-		{
-			// Send the packet to the current protocol
 			m_protocol->onRecvMessage(m_msg);
-		}
 
 		// Wait to the next packet
 		m_pendingRead++;

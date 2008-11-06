@@ -91,7 +91,7 @@ class MonsterType
 {
 	public:
 		MonsterType();
-		~MonsterType();
+		virtual ~MonsterType();
 
 		void reset();
 
@@ -126,6 +126,7 @@ class MonsterType
 
 		int32_t lightLevel;
 		int32_t lightColor;
+		Skulls_t skull;
 
 		uint32_t manaCost;
 		SummonList summonList;
@@ -152,7 +153,7 @@ class Monsters
 {
 	public:
 		Monsters();
-		~Monsters();
+		virtual ~Monsters();
 
 		bool loadFromXml(bool reloading = false);
 		bool isLoaded(){return loaded;}

@@ -269,7 +269,7 @@ class Game
 			int32_t minRangeX = 0, int32_t maxRangeX = 0,
 			int32_t minRangeY = 0, int32_t maxRangeY = 0)
 		{
-			map->getSpectators(list, centerPos, checkforduplicate, multifloor, minRangeX, maxRangeY, minRangeY, maxRangeY);
+			map->getSpectators(list, centerPos, checkforduplicate, multifloor, minRangeX, maxRangeX, minRangeY, maxRangeY);
 		}
 
 		const SpectatorVec& getSpectators(const Position& centerPos) {return map->getSpectators(centerPos);}
@@ -473,7 +473,7 @@ class Game
 		void internalCreatureChangeOutfit(Creature* creature, const Outfit_t& oufit);
 		void internalCreatureChangeVisible(Creature* creature, bool visible);
 		void changeLight(const Creature* creature);
-		void updateCreatureSkull(Player* player);
+		void updateCreatureSkull(Creature* creature);
 
 		void sendPublicSquare(Player* sender, SquareColor_t color);
 

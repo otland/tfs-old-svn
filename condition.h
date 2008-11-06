@@ -296,6 +296,7 @@ class ConditionDamage: public Condition
 
 		bool addDamage(int32_t rounds, int32_t time, int32_t value);
 		bool doForceUpdate() const {return forceUpdate;}
+		int32_t getTotalDamage() const;
 
 		//serialization
 		virtual xmlNodePtr serialize();
@@ -317,7 +318,6 @@ class ConditionDamage: public Condition
 		uint32_t owner;
 
 		bool init();
-		int32_t getTotalDamage() const;
 
 		typedef std::list<IntervalInfo> DamageList;
 		DamageList damageList;
