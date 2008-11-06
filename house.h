@@ -218,7 +218,7 @@ class House
 
 	private:
 		bool transferToDepot();
-		void removePlayer(Player* player);
+		void removePlayer(Player* player, bool ignoreRights);
 		void removePlayers(bool ignoreInvites);
 
 		bool isLoaded;
@@ -250,10 +250,10 @@ class Houses
 		bool payHouses();
 
 		House* getHouse(uint32_t houseid, bool add = false);
-		House* getHouseByCreature(Creature* creature);
+		House* getHouseByPlayer(Player* player);
 		House* getHouseByPlayerId(uint32_t playerId);
 
-		uint16_t getHousesCount(uint32_t accno) const;
+		uint32_t getHousesCount(uint32_t accId) const;
 
 		HouseMap::iterator getHouseBegin() {return houseMap.begin();}
 		HouseMap::iterator getHouseEnd() {return houseMap.end();}

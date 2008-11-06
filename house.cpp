@@ -127,16 +127,16 @@ AccessHouseLevel_t House::getHouseAccessLevel(const Player* player)
 	return HOUSE_NO_INVITED;
 }
 
-void House::removePlayer(Player* player)
+void House::removePlayer(Player* player, bool ignoreRights)
 {
-	if(player->hasFlag(PlayerFlag_CanEditHouses))
+	if(ignoreRights && player->hasFlag(PlayerFlag_CanEditHouses))
 		return;
 
 	Position tmp = player->getPosition();
 	if(g_game.internalTeleport(player, g_game.getClosestFreeTile(player, getEntryPosition()), true) == RET_NOERROR && !player->isInGhostMode())
 	{
 		g_game.addMagicEffect(tmp, NM_ME_POFF);
-		g_game.addMagicEffect(getEntryPosition(), NM_ME_TELEPORT);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_TELEPORT);
 	}
 }
 
@@ -159,7 +159,7 @@ void House::removePlayers(bool ignoreInvites)
 	if(kickList.size())
 	{
 		for(PlayerVector::iterator it = kickList.begin(); it != kickList.end(); ++it)
-			removePlayer((*it));
+			removePlayer((*it), true);
 	}
 }
 
@@ -176,13 +176,22 @@ void House::clean()
 
 bool House::kickPlayer(Player* player, Player* target)
 {
-	if(player && !player->isRemoved() && target && !target->isRemoved())
+	if(target && !target->isRemoved())
 	{
 		HouseTile* houseTile = dynamic_cast<HouseTile*>(target->getTile());
-		if(houseTile && houseTile->getHouse() == this && getHouseAccessLevel(player) >= getHouseAccessLevel(target))
+		if(houseTile && houseTile->getHouse() == this)
 		{
-			removePlayer(target);
-			return true;
+			if(player == target)
+			{
+				removePlayer(target, false);
+				return true;
+			}
+
+			if(getHouseAccessLevel(player) >= getHouseAccessLevel(target))
+			{
+				removePlayer(target, true);
+				return true;
+			}
 		}
 	}
 
@@ -1009,7 +1018,7 @@ bool Houses::payHouses()
 	return true;
 }
 
-House* Houses::getHouse(uint32_t houseid, bool add /*= false*/)
+House* Houses::getHouse(uint32_t houseid, bool add/*= false*/)
 {
 	HouseMap::iterator it = houseMap.find(houseid);
 	if(it != houseMap.end())
@@ -1025,17 +1034,14 @@ House* Houses::getHouse(uint32_t houseid, bool add /*= false*/)
 	return NULL;
 }
 
-House* Houses::getHouseByCreature(Creature* creature)
+House* Houses::getHouseByPlayer(Player* player)
 {
-	if(creature)
+	if(player && !player->isRemoved())
 	{
-		if(Player* player = creature->getPlayer())
+		if(HouseTile* houseTile = dynamic_cast<HouseTile*>(player->getTile()))
 		{
-			if(HouseTile* houseTile = dynamic_cast<HouseTile*>(player->getTile()))
-			{
-				if(House* house = houseTile->getHouse())
-					return house;
-			}
+			if(House* house = houseTile->getHouse())
+				return house;
 		}
 	}
 	return NULL;
@@ -1053,15 +1059,14 @@ House* Houses::getHouseByPlayerId(uint32_t playerId)
 	return NULL;
 }
 
-uint16_t Houses::getHousesCount(uint32_t accno) const
+uint32_t Houses::getHousesCount(uint32_t accId) const
 {
-	Account account = IOLoginData::getInstance()->loadAccount(accno);
-	uint32_t _guid;
-	uint16_t count = 0;
+	Account account = IOLoginData::getInstance()->loadAccount(accId);
+	uint32_t guid, count = 0;
 
 	for(std::list<std::string>::iterator it = account.charList.begin(); it != account.charList.end(); ++it)
 	{
-		if(IOLoginData::getInstance()->getGuidByName(_guid, (*it)) && getInstance().getHouseByPlayerId(_guid))
+		if(IOLoginData::getInstance()->getGuidByName(guid, (*it)) && getInstance().getHouseByPlayerId(guid))
 			count++;
 	}
 	return count;

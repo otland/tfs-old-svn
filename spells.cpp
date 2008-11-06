@@ -1188,7 +1188,7 @@ bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 
 bool InstantSpell::HouseGuestList(const InstantSpell* spell, Creature* creature, const std::string& param)
 {
-	House* house = Houses::getInstance().getHouseByCreature(creature);
+	House* house = Houses::getInstance().getHouseByPlayer(creature->getPlayer());
 	if(!house)
 		return false;
 
@@ -1208,7 +1208,7 @@ bool InstantSpell::HouseGuestList(const InstantSpell* spell, Creature* creature,
 
 bool InstantSpell::HouseSubOwnerList(const InstantSpell* spell, Creature* creature, const std::string& param)
 {
-	House* house = Houses::getInstance().getHouseByCreature(creature);
+	House* house = Houses::getInstance().getHouseByPlayer(creature->getPlayer());
 	if(!house)
 		return false;
 
@@ -1228,7 +1228,7 @@ bool InstantSpell::HouseSubOwnerList(const InstantSpell* spell, Creature* creatu
 
 bool InstantSpell::HouseDoorList(const InstantSpell* spell, Creature* creature, const std::string& param)
 {
-	House* house = Houses::getInstance().getHouseByCreature(creature);
+	House* house = Houses::getInstance().getHouseByPlayer(creature->getPlayer());
 	if(!house)
 		return false;
 
@@ -1256,7 +1256,7 @@ bool InstantSpell::HouseKick(const InstantSpell* spell, Creature* creature, cons
 	if(g_game.getPlayerByNameWildcard(param, targetPlayer) != RET_NOERROR || !targetPlayer || targetPlayer->isRemoved())
 		targetPlayer = creature->getPlayer();
 
-	House* house = Houses::getInstance().getHouseByCreature(targetPlayer);
+	House* house = Houses::getInstance().getHouseByPlayer(targetPlayer);
 	if(!house)
 	{
 		g_game.addMagicEffect(creature->getPosition(), NM_ME_POFF);
