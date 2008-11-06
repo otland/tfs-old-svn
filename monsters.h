@@ -127,6 +127,7 @@ class MonsterType
 		int32_t lightLevel;
 		int32_t lightColor;
 		Skulls_t skull;
+		PartyShields_t partyShield;
 
 		uint32_t manaCost;
 		SummonList summonList;

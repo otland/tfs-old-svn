@@ -55,6 +55,7 @@ Creature::Creature() :
 	lootDrop = true;
 	skillLoss = true;
 	skull = SKULL_NONE;
+	partyShield = SHIELD_NONE;
 
 	health     = 1000;
 	healthMax  = 1000;

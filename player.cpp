@@ -182,7 +182,6 @@ Creature()
  	town = 0;
 
 	redSkullTicks = 0;
-	skull = SKULL_NONE;
 	setParty(NULL);
 
 	requestedOutfit = false;
@@ -4545,13 +4544,13 @@ void Player::setGroupId(int32_t newId)
 	}
 }
 
-PartyShields_t Player::getPartyShield(const Player* player) const
+PartyShields_t Player::getPartyShield(const Creature* creature) const
 {
+	const Player* player = creature->getPlayer();
 	if(!player)
-		return SHIELD_NONE;
+		return Creature::getPartyShield(creature);
 
-	Party* party = getParty();
-	if(party)
+	if(Party* party = getParty())
 	{
 		if(party->getLeader() == player)
 		{
@@ -4565,6 +4564,7 @@ PartyShields_t Player::getPartyShield(const Player* player) const
 
 				return SHIELD_YELLOW_NOSHAREDEXP_BLINK;
 			}
+
 			return SHIELD_YELLOW;
 		}
 
@@ -4580,6 +4580,7 @@ PartyShields_t Player::getPartyShield(const Player* player) const
 
 				return SHIELD_BLUE_NOSHAREDEXP_BLINK;
 			}
+
 			return SHIELD_BLUE;
 		}
 

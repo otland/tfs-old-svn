@@ -74,6 +74,7 @@ Creature()
 	internalLight.level = mType->lightLevel;
 	internalLight.color = mType->lightColor;
 	setSkull(mType->skull);
+	setPartyShield(mType->partyShield);
 
 	minCombatValue = 0;
 	maxCombatValue = 0;

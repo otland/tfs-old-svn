@@ -1253,7 +1253,7 @@ bool InstantSpell::HouseDoorList(const InstantSpell* spell, Creature* creature, 
 bool InstantSpell::HouseKick(const InstantSpell* spell, Creature* creature, const std::string& param)
 {
 	Player* targetPlayer = NULL;
-	if(g_game.getPlayerByNameWildcard(param, targetPlayer) != RET_NOERROR || !targetPlayer || targetPlayer->isRemoved())
+	if(g_game.getPlayerByNameWildcard(param, targetPlayer) != RET_NOERROR)
 		targetPlayer = creature->getPlayer();
 
 	House* house = Houses::getInstance().getHouseByPlayer(targetPlayer);

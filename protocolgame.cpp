@@ -1707,7 +1707,7 @@ void ProtocolGame::sendCreatureShield(const Creature* creature)
 			TRACK_MESSAGE(msg);
 			msg->AddByte(0x91);
 			msg->AddU32(creature->getID());
-			msg->AddByte(player->getPartyShield(creature->getPlayer()));
+			msg->AddByte(player->getPartyShield(creature));
 		}
 	}
 }
@@ -2794,7 +2794,7 @@ void ProtocolGame::AddCreature(NetworkMessage* msg, const Creature* creature, bo
 	msg->AddU16(creature->getStepSpeed());
 
 	msg->AddByte(player->getSkullClient(creature));
-	msg->AddByte(player->getPartyShield(creature->getPlayer()));
+	msg->AddByte(player->getPartyShield(creature));
 }
 
 void ProtocolGame::AddPlayerStats(NetworkMessage* msg)
