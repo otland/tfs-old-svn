@@ -6,7 +6,7 @@ local lastAttack = 0
 local followTimeout = 10
 
 local function isSkulled(cid)
-	if(getPlayerSkullType(cid) >= 3 and isPlayerPzLocked(cid) == TRUE) then
+	if(getCreatureSkullType(cid) >= 3 and isPlayerPzLocked(cid) == TRUE) then
 		return true
 	end
 
