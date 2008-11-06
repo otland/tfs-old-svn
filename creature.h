@@ -354,9 +354,9 @@ class Creature : public AutoID, virtual public Thing
 		virtual Skulls_t getSkull() const {return skull;}
 		virtual Skulls_t getSkullClient(const Creature* creature) const {return creature->getSkull();}
 
-		virtual void setPartyShield(PartyShields_t newPartyShield) {partyShield = newPartyShield;}
-		virtual PartyShields_t getPartyShield() const {return partyShield;}
-		virtual PartyShields_t getPartyShieldClient(const Creature* creature) const {return creature->getPartyShield();}
+		virtual void setShield(PartyShields_t newPartyShield) {partyShield = newPartyShield;}
+		virtual PartyShields_t getShield() const {return partyShield;}
+		virtual PartyShields_t getPartyShield(const Creature* creature) const {return creature->getShield();}
 
 		uint32_t getSummonCount() const {return summons.size();}
 		void setDropLoot(bool _lootDrop) {lootDrop = _lootDrop;}

@@ -229,27 +229,27 @@ bool Npc::loadFromXml(const std::string& filename)
 		{
 			std::string tmpStrValue = asLowerCaseString(strValue);
 			if(tmpStrValue == "whitenoshareoff" || tmpStrValue == "10")
-				setPartyShield(SHIELD_YELLOW_NOSHAREDEXP);
+				setShield(SHIELD_YELLOW_NOSHAREDEXP);
 			else if(tmpStrValue == "blueshareoff" || tmpStrValue == "9")
-				setPartyShield(SHIELD_BLUE_NOSHAREDEXP);
+				setShield(SHIELD_BLUE_NOSHAREDEXP);
 			else if(tmpStrValue == "yellowshareblink" || tmpStrValue == "8")
-				setPartyShield(SHIELD_YELLOW_NOSHAREDEXP_BLINK);
+				setShield(SHIELD_YELLOW_NOSHAREDEXP_BLINK);
 			else if(tmpStrValue == "blueshareblink" || tmpStrValue == "7")
-				setPartyShield(SHIELD_BLUE_NOSHAREDEXP_BLINK);
+				setShield(SHIELD_BLUE_NOSHAREDEXP_BLINK);
 			else if(tmpStrValue == "yellowshareon" || tmpStrValue == "6")
-				setPartyShield(SHIELD_YELLOW_SHAREDEXP);
+				setShield(SHIELD_YELLOW_SHAREDEXP);
 			else if(tmpStrValue == "blueshareon" || tmpStrValue == "5")
-				setPartyShield(SHIELD_BLUE_SHAREDEXP);
+				setShield(SHIELD_BLUE_SHAREDEXP);
 			else if(tmpStrValue == "yellow" || tmpStrValue == "4")
-				setPartyShield(SHIELD_YELLOW);
+				setShield(SHIELD_YELLOW);
 			else if(tmpStrValue == "blue" || tmpStrValue == "3")
-				setPartyShield(SHIELD_BLUE);
+				setShield(SHIELD_BLUE);
 			else if(tmpStrValue == "whiteyellow" || tmpStrValue == "2")
-				setPartyShield(SHIELD_WHITEYELLOW);
+				setShield(SHIELD_WHITEYELLOW);
 			else if(tmpStrValue == "whiteblue" || tmpStrValue == "1")
-				setPartyShield(SHIELD_WHITEBLUE);
+				setShield(SHIELD_WHITEBLUE);
 			else
-				setPartyShield(SHIELD_NONE);
+				setShield(SHIELD_NONE);
 		}
 
 		while(p)
