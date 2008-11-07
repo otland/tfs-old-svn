@@ -796,6 +796,8 @@ void Container::__internalAddThing(uint32_t index, Thing* thing)
 #ifdef __DEBUG__MOVESYS__NOTICE
 	std::cout << "[Container::__internalAddThing] index: " << index << std::endl;
 #endif
+	if(!thing)
+		return;
 
 	Item* item = thing->getItem();
 	if(item == NULL)
@@ -805,16 +807,6 @@ void Container::__internalAddThing(uint32_t index, Thing* thing)
 #endif
 		return;
 	}
-
-	/*
-	if(index < 0 || index >= capacity())
-	{
-#ifdef __DEBUG__
-		std::cout << "Failure: [Container::__internalAddThing] - index is out of range" << std::endl;
-#endif
-		return;
-	}
-	*/
 
 	totalWeight += item->getWeight();
 	if(Container* parentContainer = getParentContainer())
