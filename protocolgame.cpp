@@ -309,9 +309,9 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 				isNamelocked = true;
 		}
 
-		if(player->getName() == "Account Manager" && g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
+		if(player->getName() == "Account Manager" && g_config.getBool(ConfigManager::ACCOUNT_MANAGER) && !isNamelocked)
 		{
-			if(accnumber == 1)
+			if(accnumber > 1)
 				player->accountManager = MANAGER_NEW;
 			else
 			{

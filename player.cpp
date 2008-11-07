@@ -1557,7 +1557,6 @@ void Player::openShopWindow()
 		}
 	}
 
-	sortItems(shopOffer); //TODO: make this configurable
 	sendShop();
 	sendGoods();
 }

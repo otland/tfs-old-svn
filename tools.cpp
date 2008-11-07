@@ -409,7 +409,8 @@ bool isValidPassword(std::string text)
 
 bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 {
-	uint32_t textLength = text.length(), lenBeforeSpace = 1, lenBeforeQuote = 1;
+	uint32_t textLength = text.length(), lenBeforeSpace = 1, lenBeforeQuote = 1, lenBeforeDash = 1;
+
 	if(forceUppercaseOnFirstLetter)
 	{
 		if(!isUppercaseLetter(text[0]))
@@ -420,31 +421,40 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 
 	for(uint32_t size = 1; size < textLength; size++)
 	{
-		if(text[size] != 39)
-		{
-			if(text[size] != 32)
-				lenBeforeQuote++;
-		}
-		else
-		{
-			if(lenBeforeQuote == 0)
-				return false;
-
-			lenBeforeQuote = 0;
-		}
-
 		if(text[size] != 32)
+		{
 			lenBeforeSpace++;
+
+			if(text[size] != 39)
+				lenBeforeQuote++;
+			else
+			{
+				if(lenBeforeQuote <= 1 || size == textLength - 1 || text[size + 1] == 32)
+					return false;
+
+				lenBeforeQuote = 0;
+			}
+
+			if(text[size] != 45)
+				lenBeforeDash++;
+			else
+			{
+				if(lenBeforeDash <= 1 || size == textLength - 1 || text[size + 1] == 32)
+					return false;
+
+				lenBeforeDash = 0;
+			}
+		}
 		else
 		{
-			if(lenBeforeSpace <= 1)
+			if(lenBeforeSpace <= 1 || size == textLength - 1 || text[size + 1] == 32)
 				return false;
 
-			lenBeforeSpace = 0;
+			lenBeforeSpace = lenBeforeQuote = lenBeforeDash = 0;
 		}
 
-		if((!isLowercaseLetter(text[size]) && text[size] != 32 && text[size] != 39 && text[size] != 45)
-			|| (isUppercaseLetter(text[size]) && text[size - 1] != 32))
+		if(!isLowercaseLetter(text[size]) && text[size] != 32 && text[size] != 39 && text[size] != 45
+			&& !(isUppercaseLetter(text[size]) && text[size - 1] == 32))
 			return false;
 	}
 	return true;
@@ -1165,16 +1175,6 @@ uint32_t adlerChecksum(uint8_t *data, size_t length)
 		b %= adler;
 	}
 	return (b << 16) | a;
-}
-
-bool operator<(const ShopInfo& left, const ShopInfo& right)
-{
-	return left.itemName < right.itemName;
-}
-
-void sortItems(std::list<ShopInfo>& itemList)
-{
-	itemList.sort();
 }
 
 std::string getFilePath(FileType_t filetype, std::string filename)

@@ -7,7 +7,7 @@ function onSay(cid, words, param)
 		local ip = getIPByName(getCreatureName(pid))
 		local pos = table.find(IPs, ip)
 		if(pos ~= nil) then
-			if(isInArray(multiClients, players[pos])) then
+			if(isInArray(multiClients, players[pos]) == TRUE) then
 				table.insert(multiClients, players[pos])
 				table.insert(multiClientIPs, ip)
 			end
