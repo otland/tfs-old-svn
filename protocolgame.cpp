@@ -292,7 +292,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		}
 
 		bool isNamelocked = false;
-		if(IOBan::getInstance()->isNamelocked(player->getGUID()) && accnumber > 1)
+		if(IOBan::getInstance()->isNamelocked(player->getGUID()) && accnumber != 1)
 		{
 			if(g_config.getBool(ConfigManager::NAMELOCK_MANAGER))
 			{
@@ -311,7 +311,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 
 		if(player->getName() == "Account Manager" && g_config.getBool(ConfigManager::ACCOUNT_MANAGER) && !isNamelocked)
 		{
-			if(accnumber > 1)
+			if(accnumber == 1)
 				player->accountManager = MANAGER_NEW;
 			else
 			{
