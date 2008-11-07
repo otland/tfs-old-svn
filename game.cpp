@@ -3320,7 +3320,9 @@ bool Game::playerSaySpell(Player* player, SpeakClasses type, const std::string& 
 bool Game::playerWhisper(Player* player, const std::string& text)
 {
 	SpectatorVec list;
-	getSpectators(list, player->getPosition());
+	getSpectators(list, player->getPosition(), false, false,
+		Map::maxClientViewportX, Map::maxClientViewportX,
+		Map::maxClientViewportY, Map::maxClientViewportY);
 	SpectatorVec::const_iterator it;
 
 	//send to client
@@ -3600,7 +3602,11 @@ bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std:
 		if(type == SPEAK_YELL || type == SPEAK_MONSTER_YELL)
 			getSpectators(list, creature->getPosition(), false, true, 18, 18, 14, 14);
 		else
-			getSpectators(list, creature->getPosition(), false, false);
+		{
+			getSpectators(list, creature->getPosition(), false, false,
+				Map::maxClientViewportX, Map::maxClientViewportX,
+				Map::maxClientViewportY, Map::maxClientViewportY);
+		}
 
 		//send to client
 		Player* tmpPlayer = NULL;

@@ -47,7 +47,8 @@ class NetworkMessage
 
 	protected:
 		// resets the internal buffer to an empty message
-		void Reset(){
+		void Reset()
+		{
 			m_MsgSize = 0;
 			m_ReadPos = 8;
 		}

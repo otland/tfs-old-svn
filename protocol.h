@@ -35,6 +35,7 @@ class Protocol : boost::noncopyable
 		{
 			m_connection = connection;
 			m_encryptionEnabled = false;
+			m_checksumEnabled = true;
 			m_rawMessages = false;
 			m_key[0] = 0;
 			m_key[1] = 0;
@@ -70,6 +71,8 @@ class Protocol : boost::noncopyable
 		void enableXTEAEncryption() { m_encryptionEnabled = true; }
 		void disableXTEAEncryption() { m_encryptionEnabled = false; }
 		void setXTEAKey(const uint32_t* key) { memcpy(m_key, key, sizeof(uint32_t)*4); }
+		void enableChecksum() { m_checksumEnabled = true; }
+		void disableChecksum() { m_checksumEnabled = false; }
 
 		void XTEA_encrypt(OutputMessage& msg);
 		bool XTEA_decrypt(NetworkMessage& msg);
@@ -85,6 +88,7 @@ class Protocol : boost::noncopyable
 		OutputMessage* m_outputBuffer;
 		Connection* m_connection;
 		bool m_encryptionEnabled;
+		bool m_checksumEnabled;
 		bool m_rawMessages;
 		uint32_t m_key[4];
 		uint32_t m_refCount;

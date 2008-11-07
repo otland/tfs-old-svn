@@ -412,7 +412,7 @@ struct NpcState
 	std::string listName;
 	std::string listPluralName;
 	int32_t level;
-	uint64_t prevInteraction;
+	int64_t prevInteraction;
 	std::string respondToText;
 	uint32_t respondToCreature;
 	std::string prevRespondToText;

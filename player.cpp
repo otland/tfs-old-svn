@@ -73,6 +73,7 @@ Creature()
 	if(client)
 		client->setPlayer(this);
 
+	accountNumber = 0;
 	name = _name;
 	setVocation(0);
 	capacity = 400.00;
@@ -3202,6 +3203,11 @@ bool Player::setAttackedCreature(Creature* creature)
 	else
 		setFollowCreature(NULL);
 
+	if(creature)
+	{
+		Dispatcher::getDispatcher().addTask(createTask(
+			boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
+	}
 	return true;
 }
 

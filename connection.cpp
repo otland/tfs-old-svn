@@ -24,6 +24,7 @@
 #include "outputmessage.h"
 #include "protocolgame.h"
 #include "protocollogin.h"
+#include "protocolold.h"
 #include "admin.h"
 #include "status.h"
 #include "tasks.h"
@@ -236,43 +237,73 @@ void Connection::parsePacket(const boost::system::error_code& error)
 
 	if(!error)
 	{
-		// Checksum
+		//Check packet checksum
 		uint32_t recvChecksum = m_msg.PeekU32();
-		uint32_t checksum = adlerChecksum((uint8_t*)(m_msg.getBuffer() + m_msg.getReadPos() + 4), m_msg.getMessageLength() - m_msg.getReadPos() - 4);
+		uint32_t checksum = 0;
+		int32_t len = m_msg.getMessageLength() - m_msg.getReadPos() - 4;
+		if(len > 0)
+			checksum = adlerChecksum((uint8_t*)(m_msg.getBuffer() + m_msg.getReadPos() + 4), len);
 
-		// if they key match, we can skip 4 bytes
-		if(recvChecksum == checksum)
-			m_msg.SkipBytes(4);
-
-		// Protocol selection
 		if(!m_protocol)
 		{
-			uint8_t protocolId = m_msg.GetByte();
-			switch(protocolId)
+			if(recvChecksum == checksum)
 			{
-				case 0x01: // Login server protocol
-					m_protocol = new ProtocolLogin(this);
-					break;
-				case 0x0A: // World server protocol
-					m_protocol = new ProtocolGame(this);
-					break;
-				case 0xFE: // Admin protocol
-					m_protocol = new ProtocolAdmin(this);
-					break;
-				case 0xFF: // Status protocol
-					m_protocol = new ProtocolStatus(this);
-					break;
-				default:
-					// No valid protocol
-					closeConnection();
-					OTSYS_THREAD_UNLOCK(m_connectionLock, "");
-					return;
-					break;
+				// remove the checksum
+				m_msg.GetU32();
+
+				// Protocol depends on the first byte of the packet
+				uint8_t protocolId = m_msg.GetByte();
+				switch(protocolId)
+				{
+					case 0x01: // Login server protocol
+						m_protocol = new ProtocolLogin(this);
+						break;
+
+					case 0x0A: // World server protocol
+						m_protocol = new ProtocolGame(this);
+						break;
+
+					default:
+						// No valid protocol
+						closeConnection();
+						OTSYS_THREAD_UNLOCK(m_connectionLock, "");
+						return;
+				}
+				m_protocol->onRecvFirstMessage(m_msg);
 			}
-			m_protocol->onRecvFirstMessage(m_msg);
+			else
+			{
+				//Protocols without checksum
+				uint8_t protocolId = m_msg.GetByte();
+				switch(protocolId)
+				{
+					case 0x01: // Old Login server protocol
+					case 0x0A: // Old World server protocol
+						//This occurs if you try login with an old client version ( < 8.3)
+						m_protocol = new ProtocolOld(this);
+						break;
+
+					case 0xFE: // Admin protocol
+						m_protocol = new ProtocolAdmin(this);
+						break;
+
+					case 0xFF: // Status protocol
+						m_protocol = new ProtocolStatus(this);
+						break;
+
+					default:
+						closeConnection();
+						OTSYS_THREAD_UNLOCK(m_connectionLock, "");
+						return;
+				}
+				m_protocol->onRecvFirstMessage(m_msg);
+			}
 		}
 		else
 		{
+			if(recvChecksum == checksum)
+				m_msg.GetU32();
+
 			// Send the packet to the current protocol
 			m_protocol->onRecvMessage(m_msg);
 		}

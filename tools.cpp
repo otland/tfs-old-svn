@@ -1033,26 +1033,26 @@ bool fileExists(const char* filename)
 	return exists;
 }
 
-uint32_t adlerChecksum(uint8_t *data, size_t length)
+#define MOD_ADLER 65521
+uint32_t adlerChecksum(uint8_t* data, int32_t len)
 {
-	if(length > 30000)
+	if(len < 0)
 		return 0;
 
-	const uint16_t adler = 65521;
 	uint32_t a = 1, b = 0;
-	while (length > 0)
+	while(len > 0)
 	{
-		size_t tmp = length > 5552 ? 5552 : length;
-		length -= tmp;
+		size_t tlen = len > 5552 ? 5552 : len;
+		len -= tlen;
 		do
 		{
 			a += *data++;
 			b += a;
 		}
-		while(--tmp);
+		while(--tlen);
 
-		a %= adler;
-		b %= adler;
+		a %= MOD_ADLER;
+		b %= MOD_ADLER;
 	}
 	return (b << 16) | a;
 }
