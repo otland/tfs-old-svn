@@ -210,8 +210,6 @@ class ScriptEvent : public RaidEvent, public Event
 
 		bool executeEvent();
 
-		static void reInitScriptInterface();
-
 	protected:
 		virtual std::string getScriptEventName();
 

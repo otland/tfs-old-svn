@@ -705,14 +705,9 @@ bool AreaSpawnEvent::executeEvent()
 LuaScriptInterface ScriptEvent::m_scriptInterface("Raid Interface");
 
 ScriptEvent::ScriptEvent() :
-Event(&m_scriptInterface)
+	Event(&m_scriptInterface)
 {
 	m_scriptInterface.initState();
-}
-
-void ScriptEvent::reInitScriptInterface()
-{
-	m_scriptInterface.reInitState();
 }
 
 bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)

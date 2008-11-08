@@ -45,7 +45,7 @@ extern Actions* g_actions;
 extern ConfigManager g_config;
 
 Actions::Actions() :
-m_scriptInterface("Action Interface")
+	m_scriptInterface("Action Interface")
 {
 	m_scriptInterface.initState();
 }
