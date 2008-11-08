@@ -136,11 +136,12 @@ Event* Weapons::getEvent(const std::string& nodeName)
 bool Weapons::registerEvent(Event* event, xmlNodePtr p)
 {
 	Weapon* weapon = dynamic_cast<Weapon*>(event);
-	if(weapon)
+	if(weapon && weapons[weapon->getID()] == NULL)
+	{
 		weapons[weapon->getID()] = weapon;
-	else
-		return false;
-	return true;
+		return true;
+	}
+	return false;
 }
 
 //monsters
