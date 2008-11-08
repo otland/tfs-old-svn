@@ -817,6 +817,9 @@ void Player::dropLoot(Container* corpse)
 			}
 		}
 	}
+
+	if(!inventory[SLOT_BACKPACK])
+		__internalAddThing(SLOT_BACKPACK, Item::CreateItem(1987));
 }
 
 void Player::addStorageValue(const uint32_t key, const int32_t value)
@@ -2209,9 +2212,6 @@ void Player::death()
 			levelPercent = Player::getPercentLevel(experience - currLevelExp - getLostExperience(), nextLevelExp - currLevelExp);
 		else
 			levelPercent = 0;
-
-		if(!inventory[SLOT_BACKPACK])
-			__internalAddThing(SLOT_BACKPACK, Item::CreateItem(1987));
 
 		sendReLoginWindow();
 	}
