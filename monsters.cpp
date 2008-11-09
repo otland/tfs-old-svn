@@ -177,6 +177,9 @@ Item* MonsterType::createLootItem(const LootBlock& lootBlock)
 		if(lootBlock.actionId != -1)
 			tmpItem->setActionId(lootBlock.actionId);
 
+		if(lootBlock.uniqueId != -1)
+			tmpItem->setUniqueId(lootBlock.uniqueId);
+
 		if(lootBlock.text != "")
 			tmpItem->setText(lootBlock.text);
 
@@ -1413,6 +1416,9 @@ bool Monsters::loadLootItem(xmlNodePtr node, LootBlock& lootBlock)
 
 	if(readXMLInteger(node, "actionId", intValue))
 		lootBlock.actionId = intValue;
+
+	if(readXMLInteger(node, "uniqueId", intValue))
+		lootBlock.uniqueId = intValue;
 
 	if(readXMLString(node, "text", strValue))
 		lootBlock.text = strValue;
