@@ -58,7 +58,7 @@ struct spellBlock_t
 {
 	BaseSpell* spell;
 	uint32_t chance, speed, range;
-	int32_t minCombatValue maxCombatValue;
+	int32_t minCombatValue, maxCombatValue;
 	bool combatSpell, isMelee;
 };
 
