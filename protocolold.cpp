@@ -26,6 +26,9 @@
 
 #include "rsa.h"
 #include "game.h"
+#ifndef __CONSOLE__
+#include "gui.h"
+#endif
 
 extern Game g_game;
 extern RSA* g_otservRSA;

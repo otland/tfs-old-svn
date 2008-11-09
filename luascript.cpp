@@ -2177,7 +2177,7 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 				value = player->getPlayerInfo(PLAYERINFO_SOUL);
 				break;
 			case PlayerInfoFreeCap:
-				value = player->getFreeCapacity();
+				value = (int64_t)player->getFreeCapacity();
 				break;
 			case PlayerInfoGuildId:
 				value = player->getGuildId();
