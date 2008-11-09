@@ -1,7 +1,7 @@
 [Project]
 FileName=TheForgottenServer-console-debug.dev
 Name=TheForgottenServer
-UnitCount=167
+UnitCount=165
 Type=1
 Ver=1
 ObjFiles=
@@ -190,7 +190,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit17]
-FileName=..\commands.cpp
+FileName=..\protocolold.cpp
 CompileCpp=1
 Folder=TheForgottenServer
 Compile=1
@@ -200,7 +200,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit18]
-FileName=..\commands.h
+FileName=..\protocolold.h
 CompileCpp=1
 Folder=TheForgottenServer
 Compile=1
@@ -1671,26 +1671,6 @@ BuildCmd=
 
 [Unit165]
 FileName=..\databasemanager.h
-CompileCpp=1
-Folder=TheForgottenServer
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit166]
-FileName=..\protocolold.cpp
-CompileCpp=1
-Folder=TheForgottenServer
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit167]
-FileName=..\protocolold.h
 CompileCpp=1
 Folder=TheForgottenServer
 Compile=1
