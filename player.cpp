@@ -2214,8 +2214,6 @@ uint32_t Player::getIP() const
 
 void Player::death()
 {
-	removeConditions(CONDITIONEND_DEATH);
-	loginPosition = masterPos;
 	if(skillLoss)
 	{
 		//Magic level loss
@@ -2270,6 +2268,8 @@ void Player::death()
 		}
 
 		removeExperience(getLostExperience(), false);
+		removeConditions(CONDITIONEND_DEATH);
+		loginPosition = masterPos;
 		blessings = 0;
 		if(!inventory[SLOT_BACKPACK])
 			__internalAddThing(SLOT_BACKPACK, Item::CreateItem(1987));
@@ -3859,14 +3859,14 @@ void Player::addUnjustifiedDead(const Player* attacked)
 	}
 	else if(g_config.getNumber(ConfigManager::KILLS_TO_BAN) != 0 && redSkullTicks >= (g_config.getNumber(ConfigManager::KILLS_TO_BAN) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME))
 	{
-		Account account = IOLoginData::getInstance()->loadAccount(accountNumber);
+		Account account = IOLoginData::getInstance()->loadAccount(accountId, true);
 		bool success = false;
 		if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
-			success = IOBan::getInstance()->addDeletion(accountNumber, 20, 7, "Unjustified player killing.", 0);
+			success = IOBan::getInstance()->addDeletion(accountId, 20, 7, "Unjustified player killing.", 0);
 		else if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
-			success = IOBan::getInstance()->addBanishment(accountNumber, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), 20, 4, "Unjustified player killing.", 0);
+			success = IOBan::getInstance()->addBanishment(accountId, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), 20, 4, "Unjustified player killing.", 0);
 		else
-			success = IOBan::getInstance()->addBanishment(accountNumber, (time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH)), 20, 2, "Unjustified player killing.", 0);
+			success = IOBan::getInstance()->addBanishment(accountId, (time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH)), 20, 2, "Unjustified player killing.", 0);
 
 		if(success)
 		{

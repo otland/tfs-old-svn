@@ -42,24 +42,6 @@ extern Game g_game;
 #pragma warning( disable : 4996)
 #endif
 
-bool IOLoginData::getAccountId(const std::string& name, uint32_t& number)
-{
-	if(!name.length())
-		return false;
-
-	Database* db = Database::getInstance();
-	DBResult* result;
-
-	DBQuery query;
-	query << "SELECT `id` FROM `accounts` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name);
-	if(!(result = db->storeQuery(query.str())))
-		return false;
-
-	number = result->getDataInt("id");
-	db->freeResult(result);
-	return true;
-}
-
 Account IOLoginData::loadAccount(uint32_t accId, bool preLoad/* = false*/)
 {
 	Account acc;
@@ -105,6 +87,45 @@ bool IOLoginData::saveAccount(Account acc)
 	DBQuery query;
 	query << "UPDATE `accounts` SET `premdays` = " << acc.premiumDays << ", `warnings` = " << acc.warnings << ", `lastday` = " << acc.lastDay << " WHERE `id` = " << acc.number;
 	return db->executeQuery(query.str());
+}
+
+bool IOLoginData::getAccountId(const std::string& name, uint32_t& number)
+{
+	if(!name.length())
+		return false;
+
+	Database* db = Database::getInstance();
+	DBResult* result;
+
+	DBQuery query;
+	query << "SELECT `id` FROM `accounts` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name);
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	number = result->getDataInt("id");
+	db->freeResult(result);
+	return true;
+}
+
+bool IOLoginData::getAccountName(uint32_t number, std::string& name)
+{
+	if(number < 2)
+	{
+		name = number ? "1" : "";
+		return true;
+	}
+
+	Database* db = Database::getInstance();
+	DBResult* result;
+
+	DBQuery query;
+	query << "SELECT `name` FROM `accounts` WHERE `id` = " << number;
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	name = result->getDataString("name");
+	db->freeResult(result);
+	return true;
 }
 
 bool IOLoginData::hasFlag(uint32_t accId, PlayerFlags value)
@@ -317,7 +338,8 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	}
 
 	Account acc = loadAccount(accId);
-	player->accountNumber = accId;
+	player->accountId = accId;
+	player->account = acc.name;
 
 	player->setGUID(result->getDataInt("id"));
 	player->setGroupId(result->getDataInt("group_id"));
@@ -1188,20 +1210,18 @@ bool IOLoginData::getGuidByNameEx(uint32_t& guid, bool &specialVip, std::string&
 	return true;
 }
 
-uint32_t IOLoginData::getAccountNumberByName(std::string name)
+uint32_t IOLoginData::getAccountIdByName(std::string name)
 {
 	Database* db = Database::getInstance();
 	DBResult* result;
+
 	DBQuery query;
-
-	uint32_t accountId = 0;
 	query << "SELECT `account_id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name);
-	if((result = db->storeQuery(query.str())))
-	{
-		accountId = result->getDataInt("account_id");
-		db->freeResult(result);
-	}
+	if(!(result = db->storeQuery(query.str())))
+		return 0;
 
+	const uint32_t accountId = result->getDataInt("account_id");
+	db->freeResult(result);
 	return accountId;
 }
 

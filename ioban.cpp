@@ -396,100 +396,66 @@ uint32_t IOBan::getNotationsCount(uint32_t account)
 	return count;
 }
 
-bool IOBan::getBanishmentData(uint32_t account, Ban& ban)
+bool IOBan::getData(uint32_t account, Ban& ban)
 {
 	Database* db = Database::getInstance();
-	DBQuery query;
 	DBResult* result;
 
 	uint32_t currentTime = time(NULL);
-	query <<
-		"SELECT "
-			"`id`, "
-			"`type`, "
-			"`param`, "
-			"`expires`, "
-			"`added`, "
-			"`admin_id`, "
-			"`comment`, "
-			"`reason`, "
-			"`action` "
-		"FROM "
-			"`bans` "
-		"WHERE "
-			"`value` = " << account << " AND "
-			"`active` = 1 AND " <<
-			"(`type` = 3 OR `type` = 5) AND " <<
-			"(`expires` > " << currentTime << " OR `expires` <= 0)";
 
-	if((result = db->storeQuery(query.str())))
-	{
-		ban.value = account;
-		ban.id = result->getDataInt("id");
-		ban.type = (BanType_t)result->getDataInt("type");
-		ban.param = result->getDataString("param");
-		ban.expires = (uint32_t)result->getDataLong("expires");
-		ban.added = (uint32_t)result->getDataLong("added");
-		ban.adminid = result->getDataInt("admin_id");
-		ban.comment = result->getDataString("comment");
-		ban.reason = result->getDataInt("reason");
-		ban.action = result->getDataInt("action");
+	DBQuery query;
+	query << "SELECT `id`, `type`, `param`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action` FROM `bans` WHERE `value` = " << account << " AND `active` = 1 AND (`type` = 3 OR `type` = 5) AND (`expires` > " << currentTime << " OR `expires` <= 0)";
 
-		db->freeResult(result);
-		return true;
-	}
+	if(!(result = db->storeQuery(query.str())))
+		return false;
 
-	return false;
+	ban.value = account;
+	ban.id = result->getDataInt("id");
+	ban.type = (BanType_t)result->getDataInt("type");
+	ban.param = result->getDataString("param");
+	ban.expires = (uint32_t)result->getDataLong("expires");
+	ban.added = (uint32_t)result->getDataLong("added");
+	ban.adminid = result->getDataInt("admin_id");
+	ban.comment = result->getDataString("comment");
+	ban.reason = result->getDataInt("reason");
+	ban.action = result->getDataInt("action");
+
+	db->freeResult(result);
+	return true;
 }
 
-std::vector<Ban> IOBan::bansManager(BanType_t type) const
+BansVec IOBan::getList(BanType_t type)
 {
 	Database* db = Database::getInstance();
-	DBQuery query;
 	DBResult* result;
 
 	uint32_t currentTime = time(NULL);
-	query <<
-		"SELECT "
-			"`id`, "
-			"`value`, "
-			"`param`, "
-			"`expires`, "
-			"`added`, "
-			"`admin_id`, "
-			"`comment`, "
-			"`reason`, "
-			"`action` "
-		"FROM "
-			"`bans` "
-		"WHERE "
-			"`type` = " << type << " AND "
-			"`active` = 1 AND " <<
-			"(`expires` > " << currentTime << " OR `expires` <= 0)";
 
-	std::vector<Ban> vec;
+	DBQuery query;
+	query << "SELECT `id`, `value`, `param`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action` FROM `bans` WHERE `type` = " << type << " AND `active` = 1 AND (`expires` > " << currentTime << " OR `expires` <= 0)";
+
+	BansVec data;
 	if((result = db->storeQuery(query.str())))
 	{
-		Ban tmpBan;
+		Ban tmp;
 		do {
-			tmpBan.type = type;
-			tmpBan.id = result->getDataInt("id");
-			tmpBan.value = result->getDataString("value");
-			tmpBan.param = result->getDataString("param");
-			tmpBan.expires = (uint32_t)result->getDataLong("expires");
-			tmpBan.added = (uint32_t)result->getDataLong("added");
-			tmpBan.adminid = result->getDataInt("admin_id");
-			tmpBan.comment = result->getDataString("comment");
-			tmpBan.reason = result->getDataInt("reason");
-			tmpBan.action = result->getDataInt("action");
-			vec.push_back(tmpBan);
+			tmp.type = type;
+			tmp.id = result->getDataInt("id");
+			tmp.value = result->getDataString("value");
+			tmp.param = result->getDataString("param");
+			tmp.expires = (uint32_t)result->getDataLong("expires");
+			tmp.added = (uint32_t)result->getDataLong("added");
+			tmp.adminid = result->getDataInt("admin_id");
+			tmp.comment = result->getDataString("comment");
+			tmp.reason = result->getDataInt("reason");
+			tmp.action = result->getDataInt("action");
+			data.push_back(tmp);
 		}
 		while(result->next());
-
 		db->freeResult(result);
 	}
 
-	return vec;
+	return data;
 }
 
 bool IOBan::clearTemporials()

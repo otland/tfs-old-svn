@@ -140,6 +140,12 @@ bool Weapons::registerEvent(Event* event, xmlNodePtr p)
 	if(!weapon)
 		return false;
 
+	if(weapons[weapon->getID()] != NULL)
+	{
+		std::cout << "[Warning - Weapons::registerEvent] Duplicate registered item with id: " << weapon->getID() << std::endl;
+		return false;
+	}
+
 	weapons[weapon->getID()] = weapon;
 	return true;
 }

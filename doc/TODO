@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3 Alpha 3
+		0.3 Alpha 4
 
 	Codenamed
 		\
@@ -17,15 +17,12 @@
 
 [ FEATURES
 	Multiworld system (revmultisys methods + custom config path from argv)
-		Assigned to: Elf, Kipe
+		Assigned to: Elf, Kiper
 ]
 
 [ TASKS
 	Make more constant values configurable
 		Assigned to: *
-
-	Deprecate marked TalkAction callbacks and rewrite them in Lua
-		Assigned to: Elf
 
 	Deprecate guild management system from Chat class and rewrite in TalkActions
 		Assigned to: Elf

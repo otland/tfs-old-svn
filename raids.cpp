@@ -767,11 +767,6 @@ ScriptEvent::ScriptEvent() : Event(&m_scriptInterface)
 	m_scriptInterface.initState();
 }
 
-void ScriptEvent::reInitScriptInterface()
-{
-	m_scriptInterface.reInitState();
-}
-
 bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 {
 	if(!RaidEvent::configureRaidEvent(eventNode))

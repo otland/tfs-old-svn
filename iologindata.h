@@ -58,7 +58,7 @@ class IOLoginData
 {
 	public:
 		IOLoginData(){}
-		virtual ~IOLoginData(){}
+		virtual ~IOLoginData() {}
 
 		static IOLoginData* getInstance()
 		{
@@ -66,10 +66,11 @@ class IOLoginData
 			return &instance;
 		}
 
-		bool getAccountId(const std::string& name, uint32_t& number);
-
 		Account loadAccount(uint32_t accId, bool preLoad = false);
 		bool saveAccount(Account acc);
+
+		bool getAccountId(const std::string& name, uint32_t& number);
+		bool getAccountName(uint32_t number, std::string& name);
 
 		bool hasFlag(uint32_t accId, PlayerFlags value);
 		bool hasCustomFlag(uint32_t accId, PlayerCustomFlags value);
@@ -97,17 +98,17 @@ class IOLoginData
 		bool hasCustomFlag(std::string name, PlayerCustomFlags value);
 
 		bool isPremium(uint32_t guid);
+		uint32_t getAccountIdByName(std::string name);
 
 		bool playerExists(std::string name);
 		bool playerExists(uint32_t guid);
 		bool getNameByGuid(uint32_t guid, std::string& name);
 		bool getGuidByName(uint32_t& guid, std::string& name);
 		bool getGuidByNameEx(uint32_t& guid, bool& specialVip, std::string& name);
-		uint32_t getAccountNumberByName(std::string name);
 
 		bool changeName(uint32_t guid, std::string newName, std::string oldName);
 		bool createCharacter(uint32_t accountId, std::string characterName, int32_t vocationId, PlayerSex_t sex);
-		DeleteCharacter_t deleteCharacter(uint32_t accountNumber, const std::string characterName);
+		DeleteCharacter_t deleteCharacter(uint32_t accountId, const std::string characterName);
 
 		uint32_t getLevel(uint32_t guid) const;
 		uint32_t getLastIP(uint32_t guid) const;

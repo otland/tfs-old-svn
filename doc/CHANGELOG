@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3 Alpha 3
+		0.3 Alpha 4
 
 	Codenamed
 		\
@@ -66,6 +66,7 @@
 					* Added most of 8.1 protocol monsters
 					* Added missing monsters and bosses
 					* Added few monsters of procotol 8.2
+					* Added alot of protocol 8.3 monsters
 
 			npc/
 				*.xml
@@ -93,6 +94,9 @@
 					multicheck.lua
 						* Added (...)
 					buypremium.lua
+						* File name change
+					*.lua
+						* Deprecated commands
 
 			weapons/
 				scripts/
@@ -152,6 +156,7 @@
 					* Added protocol 8.1 elemental armory with limitations
 					* Added protocol 8.2 elemental armory with limitations
 					* Fixed protocol 8.2 elemental armory due to OTBv3 update
+					* Added items requiring vocation, level or magic level
 				scripts/
 					swimming/
 						*.lua
@@ -192,10 +197,12 @@
 					* Added all the new talkactions
 					* Added new access system tags (access="")
 					* Added log="" tags responsible for talkaction logging
+					* Added hardcoded functions
 				scripts/
 					*.lua
 						* Removed permission checking from access needing talkactions
 						* Fixed return values
+						* Fixes regarding params
 					changesex.lua
 						* Updated due to deprecated LUA function
 						* Added a check for gratis premium account
@@ -304,9 +311,16 @@
 	Account names (Elf)
 	Full protocol 8.31 NPC Shop window behaviour (Elf)
 	Group outfits (Elf)
-	&& syntax for commands (Kiper)
 	Mapclick teleportation (Kiper)
 	MySQL keepalive for servers with timeout (Elf)
+	isValidName working Tibia-like (Talaturen)
+	Skulls and Shields for NPCs and Monsters (Elf)
+	doPlayerAddExperience supporting negative values (Elf)
+	House Kick supporting wildcards (Elf)
+	Deprecated most possible commands and rewritten them in Lua (Elf)
+	Raids position may be now stored under one tag, which will be exploded- *x"="10" *y="10" *z="7"; can be now added as *pos="10;10;7" (Elf)
+	Merged Commands class with TalkActions, hardcoded commands may be now used as functions (Elf)
+	House information being stored at database, houses table (Elf)
 ]
 
 [ Deprecated
@@ -314,13 +328,6 @@
 		All deprecated Lua functions are stored in compat.lua and use their equivalents, nevertheless please use proper ones for new scripts.
 	]
 
-	Command: !kills, use !frags.
-	Command: /clean, use /clean from talkactions
-	Command: /pos, use /pos from talkactions
-	Command: /q, use /q from talkactions
-	Command: /B, use #b or /b from talkactions
-	Command: /b, use violation window for banning
-	Command: /pvp, use /pvp from talkactions
 	LuaFunction: savePlayers(), use saveData().
 	LuaFunction: doPlayerAddMana(cid, mana), use doCreatureAddMana(cid, mana)
 	LuaFunction: broadcastMessage(cid, type), use doBroadcastMessage(cid, type)
@@ -341,10 +348,24 @@
 	Skill loss and item drop in [pvp-]zone area (Talaturen, Elf, OpenTibia SVN)
 	Bed sleepers not being loaded (Elf)
 	Items with 0 charges acting infinite (Elf, Kiper)
-	Blessings (Talaturen)
+	Blessings (Talaturen, Elf)
 	Crash when saving non-existing VIP (Elf)
 	Huge writables crash-ability (Elf)
 	Custom item attributes not displayed and/or crashing server (Elf)
 	No timestamp in __GUI_LOGS__ (Elf)
 	Item absorb abilities (Elf, OpenTibia SVN, Gesior)
+	House Doors not being updated when player changes name (Elf)
+	MySQL reconnecting- dirty way... (Elf)
+	Brackets not being removed from publicized NPC speak (Elf)
+	Old protocols support (OpenTibia SVN, Elf)
+	Waterpolo Ball being removed from Trasholder (Elf)
+	Account Manager variables and return values (Elf)
+	Healing damage being displayed for Ghost player (Elf)
+	GUI logs date being saved unpropperly (Elf)
+	spellNameInsteadOfWords configurable working properly (Elf)
+	Shop goods being constantly updated no matter was it item or creature at post* (Elf)
+	BuyContainer fix (Elf, Gesior)
+	Guild name not being validated when creating guild (Elf)
+	Liquids issue (Elf)
+	No possibility to logout without account name and password when Account Manager was enabled (Elf)
 ]

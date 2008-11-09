@@ -1,6 +1,9 @@
 function onSay(cid, words, param)
-	if isPlayer(cid) == TRUE and param ~= "" then
-		doSendMagicEffect(getCreaturePosition(cid), param)
+	if(param == "") then
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
+		return FALSE
 	end
+
+	doSendMagicEffect(getCreaturePosition(cid), param)
 	return TRUE
 end

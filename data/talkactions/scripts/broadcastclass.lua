@@ -11,13 +11,17 @@ local colors = {
 }
 
 function onSay(cid, words, param)
-	if param ~= nil then
-		local seperator = string.find(param, "; ", (string.find(string.lower(param), "[advance,event,orange,info,small,blue,red,warning,status]") + 1))
-		if seperator ~= nil then
-			doBroadcastMessage(string.sub(param, (seperator + 2), string.len(param)), colors[string.sub(param, 1, seperator - 1)])
-		else
-			doBroadcastMessage(param)
-		end
+	if(param == "") then
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
+		return FALSE
+	end
+
+	local t = string.explode(param, ";")
+	if(not t[2]) then
+		doBroadcastMessage(t[1])
+	elseif(doBroadcastMessage(t[2], colors[t[1]]) == LUA_ERROR) then
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Bad message color type.")
+		return FALSE
 	end
 	return TRUE
 end

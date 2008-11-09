@@ -63,6 +63,7 @@ Map::~Map()
 
 bool Map::loadMap(const std::string& identifier)
 {
+	int64_t start = OTSYS_TIME();
 	IOMap* loader = new IOMap();
 	if(!loader->loadMap(this, identifier))
 	{
@@ -70,16 +71,23 @@ bool Map::loadMap(const std::string& identifier)
 		return false;
 	}
 
+	std::cout << "> Map loading time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
+	start = OTSYS_TIME();
+
 	if(!loader->loadSpawns(this))
-		std::cout << "WARNING: could not load spawn data." << std::endl;
+		std::cout << "WARNING: Could not load spawn data." << std::endl;
 
 	if(!loader->loadHouses(this))
-		std::cout << "WARNING: could not load house data." << std::endl;
+		std::cout << "WARNING: Could not load house data." << std::endl;
 
 	delete loader;
+	std::cout << "> Data loading time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
+	start = OTSYS_TIME();
 
 	IOMapSerialize.loadHouseInfo(this);
 	IOMapSerialize.loadMap(this);
+
+	std::cout << "> Serialization loading time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 	return true;
 }
 

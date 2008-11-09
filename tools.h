@@ -116,7 +116,7 @@ std::string getSkillName(uint16_t skillid);
 skills_t getSkillId(std::string param);
 
 std::string getReason(int32_t reasonId);
-std::string getAction(int32_t actionId, bool IPBanishment);
+std::string getAction(int32_t actionId, bool ipBanishment);
 
 bool fileExists(const char* filename);
 uint32_t adlerChecksum(uint8_t *data, size_t length);

@@ -4895,21 +4895,20 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 
 	bool auth = false;
 	Account account;
-	uint32_t guid;
-	uint32_t ip;
+	uint32_t guid, ip;
 
 	Player* targetPlayer = getPlayerByName(targetPlayerName);
 	if(targetPlayer)
 	{
 		auth = targetPlayer->hasFlag(PlayerFlag_CannotBeBanned);
-		account = IOLoginData::getInstance()->loadAccount(targetPlayer->getAccount());
+		account = IOLoginData::getInstance()->loadAccount(targetPlayer->getAccount(), true);
 		guid = targetPlayer->getGUID();
 		ip = targetPlayer->lastIP;
 	}
 	else
 	{
 		auth = IOLoginData::getInstance()->hasFlag(targetPlayerName, PlayerFlag_CannotBeBanned);
-		account = IOLoginData::getInstance()->loadAccount(IOLoginData::getInstance()->getAccountNumberByName(targetPlayerName));
+		account = IOLoginData::getInstance()->loadAccount(IOLoginData::getInstance()->getAccountIdByName(targetPlayerName), true);
 		IOLoginData::getInstance()->getGuidByName(guid, targetPlayerName);
 		ip = IOLoginData::getInstance()->getLastIP(guid);
 	}

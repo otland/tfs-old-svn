@@ -1,5 +1,5 @@
 local config = {
-	displayGamemastersWithOnlineCommand = getConfigInfo('displayGamemastersWithOnlineCommand')
+	showGamemasters = getConfigInfo('displayGamemastersWithOnlineCommand')
 }
 
 function onSay(cid, words, param)
@@ -19,7 +19,7 @@ function onSay(cid, words, param)
 			breakline = ", "
 		end
 
-		if(config.displayGamemastersWithOnlineCommand ~= "yes") then
+		if(config.showGamemasters ~= "yes") then
 			if(getPlayerCustomFlagValue(pid, PlayerCustomFlag_GamemasterPrivileges) == FALSE or getPlayerCustomFlagValue(cid, PlayerCustomFlag_GamemasterPrivileges) == TRUE) then
 				strings[curStr] = strings[curStr] .. breakline .. getCreatureName(pid) .. " [" .. getPlayerLevel(pid) .. "]"
 			else

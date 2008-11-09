@@ -59,8 +59,6 @@ bool Spawns::loadFromXml(const std::string& _filename)
 
 	if(doc)
 	{
-		int64_t start = OTSYS_TIME();
-
 		xmlNodePtr root, spawnNode;
 		root = xmlDocGetRootElement(doc);
 
@@ -252,8 +250,6 @@ bool Spawns::loadFromXml(const std::string& _filename)
 
 		xmlFreeDoc(doc);
 		loaded = true;
-
-		std::cout << "> Spawns loading time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 		return true;
 	}
 

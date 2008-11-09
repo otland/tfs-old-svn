@@ -37,22 +37,16 @@ enum BanType_t
 struct Ban
 {
 	BanType_t type;
-	uint32_t id;
-	uint32_t added;
-	uint32_t expires;
-	uint32_t adminid;
-	uint32_t reason;
-	uint32_t action;
-	std::string comment;
-	std::string value;
-	std::string param;
+	std::string comment, value, param;
+	uint32_t id, added, expires, adminid, reason, action;
 };
+
+typedef std::vector<Ban> BansVec;
 
 class IOBan
 {
 	public:
 		virtual ~IOBan(){}
-
 		static IOBan* getInstance()
 		{
 			static IOBan instance;
@@ -70,14 +64,14 @@ class IOBan
 		bool addNamelock(std::string name, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster);
 		bool addBanishment(uint32_t account, time_t banTime, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster);
 		bool addDeletion(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster);
-		virtual void addNotation(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster);
+		void addNotation(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster);
 
 		bool removeIpBanishment(uint32_t ip);
 		bool removeNamelock(uint32_t guid);
 		bool removeNamelock(std::string name);
 		bool removeBanishment(uint32_t account);
 		bool removeDeletion(uint32_t account);
-		virtual void removeNotations(uint32_t account);
+		void removeNotations(uint32_t account);
 
 		//id is account or guid, for guid needed player = true
 		uint32_t getAction(uint32_t id, bool player = false);
@@ -88,8 +82,8 @@ class IOBan
 		uint32_t getAdminGUID(uint32_t id, bool player = false);
 
 		uint32_t getNotationsCount(uint32_t account);
-		bool getBanishmentData(uint32_t account, Ban& ban);
-		std::vector<Ban> bansManager(BanType_t type) const;
+		bool getData(uint32_t account, Ban& ban);
+		std::vector<Ban> getList(BanType_t type);
 		bool clearTemporials();
 
 	protected:

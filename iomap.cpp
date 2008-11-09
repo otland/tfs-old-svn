@@ -61,8 +61,6 @@ extern Game g_game;
 
 bool IOMap::loadMap(Map* map, const std::string& identifier)
 {
-	int64_t start = OTSYS_TIME();
-
 	FileLoader f;
 	if(!f.openFile(identifier.c_str(), false, true))
 	{
@@ -465,7 +463,5 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 		nodeMapData = f.getNextNode(nodeMapData, type);
 	}
-
-	std::cout << "> Map loading time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 	return true;
 }

@@ -31,6 +31,14 @@ saveData = saveServer
 savePlayers = saveServer
 getPlayerSkill = getPlayerSkillLevel
 getPlayerSkullType = getCreatureSkullType
+getAccountNumberByName = getAccountIdByName
+getIPByName = getIpByName
+getPlayersByIP = getPlayersByIp
+getThingfromPos = getThingFromPos
+getPlayersByAccountNumber = getPlayersByAccountId
+getIPByPlayerName = getIpByName
+getPlayersByIPNumber = getPlayersByIp
+getAccountNumberByPlayerName = getAccountIdByName
 
 function getPlayerVocationName(cid)
 	return getVocationInfo(getPlayerVocation(cid)).name

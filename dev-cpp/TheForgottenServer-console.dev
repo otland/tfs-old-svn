@@ -1,7 +1,7 @@
 [Project]
 FileName=TheForgottenServer-console.dev
 Name=TheForgottenServer
-UnitCount=165
+UnitCount=167
 Type=1
 Ver=1
 ObjFiles=
@@ -1679,6 +1679,26 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
+[Unit166]
+FileName=..\protocolold.cpp
+CompileCpp=1
+Folder=TheForgottenServer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit167]
+FileName=..\protocolold.h
+CompileCpp=1
+Folder=TheForgottenServer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
 [VersionInfo]
 Major=0
 Minor=3
@@ -1687,7 +1707,7 @@ Build=0
 LanguageID=1033
 CharsetID=1252
 CompanyName=
-FileVersion=0.3a3
+FileVersion=0.3a4
 FileDescription=The Forgotten Server
 InternalName=
 LegalCopyright=

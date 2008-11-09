@@ -72,15 +72,15 @@ class Raids
 		void clear();
 		bool reload();
 
-		bool isLoaded() {return loaded;}
-		bool isStarted() {return started;}
+		bool isLoaded() const {return loaded;}
+		bool isStarted() const {return started;}
 
-		Raid* getRunning() {return running;}
+		Raid* getRunning() const {return running;}
 		void setRunning(Raid* newRunning) {running = newRunning;}
 
 		Raid* getRaidByName(const std::string& name);
 
-		uint64_t getLastRaidEnd() {return lastRaidEnd;}
+		uint64_t getLastRaidEnd() const {return lastRaidEnd;}
 		void setLastRaidEnd(uint64_t newLastRaidEnd) {lastRaidEnd = newLastRaidEnd;}
 
 		void checkRaids();
@@ -113,10 +113,10 @@ class Raid
 
 		void addEvent(RaidEvent* event);
 
-		bool isLoaded() {return loaded;}
-		uint64_t getMargin() {return margin;}
-		uint32_t getInterval() {return interval;}
-		bool isEnabled() {return enabled;}
+		bool isLoaded() const {return loaded;}
+		uint64_t getMargin() const {return margin;}
+		uint32_t getInterval() const {return interval;}
+		bool isEnabled() const {return enabled;}
 
 		void stopEvents();
 
@@ -142,7 +142,7 @@ class RaidEvent
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
 
-		virtual bool executeEvent() {return false;}
+		virtual bool executeEvent() const {return false;}
 		uint32_t getDelay() const {return m_delay;}
 		void setDelay(uint32_t newDelay) {m_delay = newDelay;}
 
@@ -213,8 +213,6 @@ class ScriptEvent : public RaidEvent, public Event
 		virtual bool configureEvent(xmlNodePtr p) {return false;}
 
 		bool executeEvent();
-
-		static void reInitScriptInterface();
 
 	protected:
 		virtual std::string getScriptEventName();

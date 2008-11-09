@@ -228,6 +228,8 @@ enum PlayerInfo_t
 	PlayerInfoLookDirection,
 	PlayerInfoGroupId,
 	PlayerInfoGUID,
+	PlayerInfoAccountId,
+	PlayerInfoAccount,
 	PlayerInfoPremiumDays,
 	PlayerInfoBalance,
 	PlayerInfoStamina,
@@ -237,7 +239,9 @@ enum PlayerInfo_t
 	PlayerInfoNoMove,
 	PlayerInfoMarriage,
 	PlayerInfoPzLock,
-	PlayerInfoSaving
+	PlayerInfoSaving,
+	PlayerInfoIp,
+	PlayerInfoRedSkullTicks
 };
 
 #define reportErrorFunc(a)  reportError(__FUNCTION__, a)
@@ -368,7 +372,7 @@ class LuaScriptInterface
 		static int32_t luaDoConvinceCreature(lua_State* L);
 		static int32_t luaGetMonsterTargetList(lua_State* L);
 		static int32_t luaGetMonsterFriendList(lua_State* L);
-		static int32_t luaDoSetMonsterTarget(lua_State* L);
+		static int32_t luaDoMonsterSetTarget(lua_State* L);
 		static int32_t luaDoMonsterChangeTarget(lua_State* L);
 		static int32_t luaDoAddCondition(lua_State* L);
 		static int32_t luaDoRemoveCondition(lua_State* L);
@@ -410,6 +414,8 @@ class LuaScriptInterface
 		static int32_t luaDoSetCreatureLight(lua_State* L);
 		static int32_t luaGetCreatureSkullType(lua_State* L);
 		static int32_t luaDoCreatureSetSkullType(lua_State* L);
+		static int32_t luaGetPlayerRedSkullTicks(lua_State* L);
+		static int32_t luaDoPlayerSetRedSkullTicks(lua_State* L);
 		static int32_t luaDoPlayerSwitchSaving(lua_State* L);
 		static int32_t luaDoPlayerSave(lua_State* L);
 
@@ -418,10 +424,32 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerByNameWildcard(lua_State* L);
 		static int32_t luaGetPlayerGUIDByName(lua_State* L);
 		static int32_t luaGetPlayerNameByGUID(lua_State* L);
-		static int32_t luaGetPlayersByAccountNumber(lua_State *L);
-		static int32_t luaGetAccountNumberByName(lua_State *L);
-		static int32_t luaGetIPByName(lua_State *L);
-		static int32_t luaGetPlayersByIP(lua_State *L);
+		static int32_t luaGetPlayersByAccountId(lua_State *L);
+		static int32_t luaGetAccountIdByName(lua_State *L);
+		static int32_t luaGetAccountByName(lua_State *L);
+		static int32_t luaGetIpByName(lua_State *L);
+		static int32_t luaGetPlayersByIp(lua_State *L);
+
+		//bans
+		static int32_t luaIsIpBanished(lua_State* L);
+		static int32_t luaIsPlayerNamelocked(lua_State* L);
+		static int32_t luaIsAccountBanished(lua_State* L);
+		static int32_t luaIsAccountDeleted(lua_State* L);
+		static int32_t luaDoAddIpBanishment(lua_State* L);
+		static int32_t luaDoAddNamelock(lua_State* L);
+		static int32_t luaDoAddBanishment(lua_State* L);
+		static int32_t luaDoAddDeletion(lua_State* L);
+		static int32_t luaDoAddNotation(lua_State* L);
+		static int32_t luaDoRemoveIpBanishment(lua_State* L);
+		static int32_t luaDoRemoveNamelock(lua_State* L);
+		static int32_t luaDoRemoveBanishment(lua_State* L);
+		static int32_t luaDoRemoveDeletion(lua_State* L);
+		static int32_t luaDoRemoveNotations(lua_State* L);
+		static int32_t luaGetNotationsCount(lua_State* L);
+		static int32_t luaGetBanData(lua_State* L);
+		static int32_t luaGetBanReason(lua_State* L);
+		static int32_t luaGetBanAction(lua_State* L);
+		static int32_t luaGetBanList(lua_State* L);
 
 		//custom modifiers
 		static int32_t luaSetPlayerExtraExpRate(lua_State* L);
@@ -434,7 +462,7 @@ class LuaScriptInterface
 
 		//get item info
 		static int32_t luaGetItemRWInfo(lua_State* L);
-		static int32_t luaGetThingfromPos(lua_State* L);
+		static int32_t luaGetThingFromPos(lua_State* L);
 		static int32_t luaGetThing(lua_State* L);
 		static int32_t luaGetThingPos(lua_State* L);
 		static int32_t luaGetTileItemById(lua_State* L);
@@ -494,6 +522,9 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerItemById(lua_State* L);
 		static int32_t luaGetPlayerRequiredMana(lua_State* L);
 		static int32_t luaGetPlayerRequiredSkillTries(lua_State* L);
+		static int32_t luaGetPlayerIp(lua_State* L);
+		static int32_t luaGetPlayerAccountId(lua_State* L);
+		static int32_t luaGetPlayerAccount(lua_State* L);
 
 		static int32_t luaGetPlayerDepotItems(lua_State* L);
 		static int32_t luaGetPlayerGuildId(lua_State* L);

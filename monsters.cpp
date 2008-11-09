@@ -365,10 +365,17 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 		combatSpell = new CombatSpell(NULL, needTarget, needDirection);
 
 		if(!combatSpell->loadScript(getFilePath(FILE_TYPE_OTHER, g_spells->getScriptBaseName() + "/scripts/" + scriptName)))
+		{
+			delete combatSpell;
 			return false;
+		}
 
 		if(!combatSpell->loadScriptCombat())
+		{
+			delete combatSpell;
 			return false;
+
+		}
 
 		combatSpell->getCombat()->setPlayerCombatValues(FORMULA_VALUE, sb.minCombatValue, 0, sb.maxCombatValue, 0);
 	}

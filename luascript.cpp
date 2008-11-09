@@ -1108,6 +1108,9 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerVocation(cid)
 	lua_register(m_luaState, "getPlayerVocation", LuaScriptInterface::luaGetPlayerVocation);
 
+	//getPlayerIp(cid)
+	lua_register(m_luaState, "getPlayerIp", LuaScriptInterface::luaGetPlayerIp);
+
 	//getPlayerRequiredMana(cid, magicLevel)
 	lua_register(m_luaState, "getPlayerRequiredMana", LuaScriptInterface::luaGetPlayerRequiredMana);
 
@@ -1164,6 +1167,12 @@ void LuaScriptInterface::registerFunctions()
 
 	//getPlayerGUID(cid)
 	lua_register(m_luaState, "getPlayerGUID", LuaScriptInterface::luaGetPlayerGUID);
+
+	//getPlayerAccountId(cid)
+	lua_register(m_luaState, "getPlayerAccountId", LuaScriptInterface::luaGetPlayerAccountId);
+
+	//getPlayerAccount(cid)
+	lua_register(m_luaState, "getPlayerAccount", LuaScriptInterface::luaGetPlayerAccount);
 
 	//getPlayerFlagValue(cid, flag)
 	lua_register(m_luaState, "getPlayerFlagValue", LuaScriptInterface::luaGetPlayerFlagValue);
@@ -1224,14 +1233,14 @@ void LuaScriptInterface::registerFunctions()
 	lua_register(m_luaState, "getTilePzInfo", LuaScriptInterface::luaGetTilePzInfo);
 
 	//getTileHouseInfo(pos)
-	//0 no house. != 0 house id
+	//0 no house != 0 house id
 	lua_register(m_luaState, "getTileHouseInfo", LuaScriptInterface::luaGetTileHouseInfo);
 
 	//getItemRWInfo(uid)
 	lua_register(m_luaState, "getItemRWInfo", LuaScriptInterface::luaGetItemRWInfo);
 
-	//getThingfromPos(pos)
-	lua_register(m_luaState, "getThingfromPos", LuaScriptInterface::luaGetThingfromPos);
+	//getThingFromPos(pos)
+	lua_register(m_luaState, "getThingFromPos", LuaScriptInterface::luaGetThingFromPos);
 
 	//getThing(uid)
 	lua_register(m_luaState, "getThing", LuaScriptInterface::luaGetThing);
@@ -1386,8 +1395,8 @@ void LuaScriptInterface::registerFunctions()
 	//getMonsterFriendList(cid)
 	lua_register(m_luaState, "getMonsterFriendList", LuaScriptInterface::luaGetMonsterFriendList);
 
-	//doSetMonsterTarget(cid, target)
-	lua_register(m_luaState, "doSetMonsterTarget", LuaScriptInterface::luaDoSetMonsterTarget);
+	//doMonsterSetTarget(cid, target)
+	lua_register(m_luaState, "doMonsterTarget", LuaScriptInterface::luaDoMonsterSetTarget);
 
 	//doMonsterChangeTarget(cid)
 	lua_register(m_luaState, "doMonsterChangeTarget", LuaScriptInterface::luaDoMonsterChangeTarget);
@@ -1834,17 +1843,20 @@ void LuaScriptInterface::registerFunctions()
 	//stopEvent(eventid)
 	lua_register(m_luaState, "stopEvent", LuaScriptInterface::luaStopEvent);
 
-	//getPlayersByAccountNumber(accountNumber)
-	lua_register(m_luaState, "getPlayersByAccountNumber", LuaScriptInterface::luaGetPlayersByAccountNumber);
+	//getPlayersByAccountId(accId)
+	lua_register(m_luaState, "getPlayersByAccountId", LuaScriptInterface::luaGetPlayersByAccountId);
 
-	//getAccountNumberByName(name)
-	lua_register(m_luaState, "getAccountNumberByName", LuaScriptInterface::luaGetAccountNumberByName);
+	//getAccountIdByName(name)
+	lua_register(m_luaState, "getAccountIdByName", LuaScriptInterface::luaGetAccountIdByName);
 
-	//getIPByName(name)
-	lua_register(m_luaState, "getIPByName", LuaScriptInterface::luaGetIPByName);
+	//getAccountByName(name)
+	lua_register(m_luaState, "getAccountByName", LuaScriptInterface::luaGetAccountByName);
 
-	//getPlayersByIP(ip[, mask = 0xFFFFFFFF])
-	lua_register(m_luaState, "getPlayersByIP", LuaScriptInterface::luaGetPlayersByIP);
+	//getIpByName(name)
+	lua_register(m_luaState, "getIpByName", LuaScriptInterface::luaGetIpByName);
+
+	//getPlayersByIp(ip[, mask = 0xFFFFFFFF])
+	lua_register(m_luaState, "getPlayersByIp", LuaScriptInterface::luaGetPlayersByIp);
 
 	//doPlayerPopupFYI(cid, message)
 	lua_register(m_luaState, "doPlayerPopupFYI", LuaScriptInterface::luaDoPlayerPopupFYI);
@@ -1866,6 +1878,12 @@ void LuaScriptInterface::registerFunctions()
 
 	//doCreatureSetSkullType(cid, skull)
 	lua_register(m_luaState, "doCreatureSetSkullType", LuaScriptInterface::luaDoCreatureSetSkullType);
+
+	//getPlayerRedSkullTicks(cid)
+	lua_register(m_luaState, "getPlayerRedSkullTicks", LuaScriptInterface::luaGetPlayerRedSkullTicks);
+
+	//doPlayerSetRedSkullTicks(cid, amount)
+	lua_register(m_luaState, "doPlayerSetRedSkullTicks", LuaScriptInterface::luaDoPlayerSetRedSkullTicks);
 
 	//getPlayerBalance(cid)
 	lua_register(m_luaState, "getPlayerBalance", LuaScriptInterface::luaGetPlayerBalance);
@@ -1935,6 +1953,63 @@ void LuaScriptInterface::registerFunctions()
 
 	//getVocationInfo(id)
 	lua_register(m_luaState, "getVocationInfo", LuaScriptInterface::luaGetVocationInfo);
+
+	//isIpBanished(ip)
+	lua_register(m_luaState, "isIpBanished", LuaScriptInterface::luaIsIpBanished);
+
+	//isPlayerNamelocked(name)
+	lua_register(m_luaState, "isPlayerNamelocked", LuaScriptInterface::luaIsPlayerNamelocked);
+
+	//isAccountBanished(accId)
+	lua_register(m_luaState, "isAccountBanished", LuaScriptInterface::luaIsAccountBanished);
+
+	//isAccountDeleted(accId)
+	lua_register(m_luaState, "isAccountDeleted", LuaScriptInterface::luaIsAccountDeleted);
+
+	//doAddIpBanishment(ip)
+	lua_register(m_luaState, "doAddIpBanishment", LuaScriptInterface::luaDoAddIpBanishment);
+
+	//doAddNamelock(name)
+	lua_register(m_luaState, "doAddNamelock", LuaScriptInterface::luaDoAddNamelock);
+
+	//doAddBanishment(accId)
+	lua_register(m_luaState, "doAddBanishment", LuaScriptInterface::luaDoAddBanishment);
+
+	//doAddDeletion(accId)
+	lua_register(m_luaState, "doAddDeletion", LuaScriptInterface::luaDoAddDeletion);
+
+	//doAddNotation(accId)
+	lua_register(m_luaState, "doAddNotation", LuaScriptInterface::luaDoAddNotation);
+
+	//doRemoveIpBanishment(ip)
+	lua_register(m_luaState, "doRemoveIpBanishment", LuaScriptInterface::luaDoRemoveIpBanishment);
+
+	//doRemoveNamelock(name)
+	lua_register(m_luaState, "doRemoveNamelock", LuaScriptInterface::luaDoRemoveNamelock);
+
+	//doRemoveBanishment(accId)
+	lua_register(m_luaState, "doRemoveBanishment", LuaScriptInterface::luaDoRemoveBanishment);
+
+	//doRemoveDeletion(accId)
+	lua_register(m_luaState, "doRemoveDeletion", LuaScriptInterface::luaDoRemoveDeletion);
+
+	//doRemoveNotations(accId)
+	lua_register(m_luaState, "doRemoveNotations", LuaScriptInterface::luaDoRemoveNotations);
+
+	//getNotationsCount(accId)
+	lua_register(m_luaState, "getNotationsCount", LuaScriptInterface::luaGetNotationsCount);
+
+	//getBanData(accId)
+	lua_register(m_luaState, "getBanData", LuaScriptInterface::luaGetBanData);
+
+	//getBanReason(id)
+	lua_register(m_luaState, "getBanReason", LuaScriptInterface::luaGetBanReason);
+
+	//getBanAction(id)
+	lua_register(m_luaState, "getBanAction", LuaScriptInterface::luaGetBanAction);
+
+	//getBanList(type)
+	lua_register(m_luaState, "getBanList", LuaScriptInterface::luaGetBanList);
 
 	//debugPrint(text)
 	lua_register(m_luaState, "debugPrint", LuaScriptInterface::luaDebugPrint);
@@ -2044,7 +2119,7 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 {
 	uint32_t cid = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
-	int32_t value = 0;
+	int64_t value = 0;
 
 	const Player* player = env->getPlayerByUID(cid);
 	if(player)
@@ -2079,6 +2154,12 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 			case PlayerInfoGUID:
 				value = player->getGUID();
 				break;
+			case PlayerInfoAccountId:
+				value = player->getAccount();
+				break;
+			case PlayerInfoAccount:
+				lua_pushstring(L, player->getAccountName().c_str());
+				return 1;
 			case PlayerInfoPremiumDays:
 				value = player->premiumDays;
 				break;
@@ -2150,6 +2231,12 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 				break;
 			case PlayerInfoSaving:
 				value = player->isSaving();
+				break;
+			case PlayerInfoIp:
+				value = player->getIP();
+				break;
+			case PlayerInfoRedSkullTicks:
+				value = player->getRedSkullTicks();
 				break;
 			default:
 				std::string tmp = "Unknown player info - " + info;
@@ -2277,6 +2364,16 @@ int32_t LuaScriptInterface::luaGetPlayerGUID(lua_State* L)
 	return internalGetPlayerInfo(L, PlayerInfoGUID);
 }
 
+int32_t LuaScriptInterface::luaGetPlayerAccountId(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoAccountId);
+}
+
+int32_t LuaScriptInterface::luaGetPlayerAccount(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoAccount);
+}
+
 int32_t LuaScriptInterface::luaGetPlayerPremiumDays(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoPremiumDays);
@@ -2325,6 +2422,16 @@ int32_t LuaScriptInterface::luaIsPlayerPzLocked(lua_State* L)
 int32_t LuaScriptInterface::luaIsPlayerSaving(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoSaving);
+}
+
+int32_t LuaScriptInterface::luaGetPlayerIp(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoIp);
+}
+
+int32_t LuaScriptInterface::luaGetPlayerRedSkullTicks(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoRedSkullTicks);
 }
 //
 
@@ -3589,11 +3696,11 @@ int32_t LuaScriptInterface::luaDoDecayItem(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetThingfromPos(lua_State* L)
+int32_t LuaScriptInterface::luaGetThingFromPos(lua_State* L)
 {
 	//Consider using getTileItemById/getTileItemByType/getTileThingByPos/getTopCreature instead.
 
-	//getThingfromPos(pos)
+	//getThingFromPos(pos)
 	//Note:
 	//	stackpos = 255. Get the top thing(item moveable or creature)
 	//	stackpos = 254. Get MagicFieldtItem
@@ -4194,15 +4301,14 @@ int32_t LuaScriptInterface::luaDoRemoveCreature(lua_State* L)
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	Creature* creature = env->getCreatureByUID(cid);
-	if(creature)
+	if(Creature* creature = env->getCreatureByUID(cid))
 	{
 		Player* player = creature->getPlayer();
 		if(player)
 			player->kickPlayer(true); //Players will get kicked without restrictions
 		else
 			g_game.removeCreature(creature); //Monsters/NPCs will get removed
+
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else
@@ -6120,9 +6226,9 @@ int32_t LuaScriptInterface::luaGetMonsterFriendList(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoSetMonsterTarget(lua_State* L)
+int32_t LuaScriptInterface::luaDoMonsterSetTarget(lua_State* L)
 {
-	//doSetMonsterTarget(cid, target)
+	//doMonsterSetTarget(cid, target)
 	uint32_t targetCid = popNumber(L);
 	uint32_t cid = popNumber(L);
 
@@ -6801,7 +6907,7 @@ int32_t LuaScriptInterface::luaGetPlayerByNameWildcard(lua_State* L)
 
 	Player* player = NULL;
 	ScriptEnviroment* env = getScriptEnv();
-	if(g_game.getPlayerByNameWildcard(name, player) == RET_NOERROR && player)
+	if(g_game.getPlayerByNameWildcard(name, player) == RET_NOERROR)
 	{
 		uint32_t cid = env->addThing(player);
 		lua_pushnumber(L, cid);
@@ -6848,47 +6954,42 @@ int32_t LuaScriptInterface::luaGetPlayerNameByGUID(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetPlayersByAccountNumber(lua_State *L)
+int32_t LuaScriptInterface::luaGetPlayersByAccountId(lua_State *L)
 {
-	//getPlayerByAccountNumber(accountNumber)
-	uint32_t accno = popNumber(L);
+	//getPlayersByAccountId(accId)
+	uint32_t accId = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
+	PlayerVector players = g_game.getPlayersByAccount(accId);
 
 	lua_newtable(L);
-	PlayerVector players = g_game.getPlayersByAccount(accno);
-	int32_t index = 0;
-	PlayerVector::iterator iter = players.begin();
-	while(iter != players.end())
+	PlayerVector::iterator it = players.begin();
+	for(uint32_t i = 1; it != players.end(); ++it, ++i)
 	{
-		uint32_t cid = env->addThing(*iter);
-
-		lua_pushnumber(L, index);
+		uint32_t cid = env->addThing(*it);
+		lua_pushnumber(L, i);
 		lua_pushnumber(L, cid);
 		lua_settable(L, -3);
-
-		++iter, ++index;
 	}
-
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetIPByName(lua_State *L)
+int32_t LuaScriptInterface::luaGetIpByName(lua_State *L)
 {
-	//getIPByName(name)
+	//getIpByName(name)
 	std::string name = popString(L);
 
 	if(Player* player = g_game.getPlayerByName(name))
 		lua_pushnumber(L, player->getIP());
 	else
-		lua_pushnumber(L, LUA_NULL);
+		lua_pushnumber(L, IOLoginData::getInstance()->getLastIPByName(name));
 
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetPlayersByIP(lua_State *L)
+int32_t LuaScriptInterface::luaGetPlayersByIp(lua_State *L)
 {
-	//getPlayersByIP(ip[, mask])
+	//getPlayersByIp(ip[, mask])
 	int32_t parameters = lua_gettop(L);
 
 	uint32_t mask = 0xFFFFFFFF;
@@ -6917,15 +7018,32 @@ int32_t LuaScriptInterface::luaGetPlayersByIP(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetAccountNumberByName(lua_State *L)
+int32_t LuaScriptInterface::luaGetAccountIdByName(lua_State *L)
 {
-	//getAccountNumberByName(name)
+	//getAccountIdByName(name)
 	std::string name = popString(L);
 
 	if(Player* player = g_game.getPlayerByName(name))
 		lua_pushnumber(L, player->getAccount());
 	else
-		lua_pushnumber(L, IOLoginData::getInstance()->getAccountNumberByName(name));
+		lua_pushnumber(L, IOLoginData::getInstance()->getAccountIdByName(name));
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetAccountByName(lua_State *L)
+{
+	//getAccountByName(name)
+	std::string name = popString(L);
+
+	if(Player* player = g_game.getPlayerByName(name))
+		lua_pushstring(L, player->getAccountName().c_str());
+	else
+	{
+		std::string tmp;
+		IOLoginData::getInstance()->getAccountName(IOLoginData::getInstance()->getAccountIdByName(name), tmp);
+		lua_pushstring(L, tmp.c_str());
+	}
 
 	return 1;
 }
@@ -7280,7 +7398,7 @@ int32_t LuaScriptInterface::luaCanPlayerWearOutfit(lua_State* L)
 	Player* player = env->getPlayerByUID(cid);
 	if(player)
 	{
-		lua_pushnumber(L, (player->canWear(looktype, addon)? LUA_TRUE : LUA_FALSE));
+		lua_pushnumber(L, (player->canWear(looktype, addon) ? LUA_TRUE : LUA_FALSE));
 		return 1;
 	}
 
@@ -7425,15 +7543,15 @@ int32_t LuaScriptInterface::luaDoPlayerAddPremiumDays(lua_State* L)
 		Account account = IOLoginData::getInstance()->loadAccount(player->getAccount());
 		if(player->premiumDays < 65535)
 		{
-			if(days >= 0)
-			{
-				account.premiumDays = std::min((uint32_t)65534, uint32_t(account.premiumDays + (uint32_t)days));
-				player->premiumDays = std::min((uint32_t)65534, uint32_t(player->premiumDays + (uint32_t)days));
-			}
-			else
+			if(days < 0)
 			{
 				account.premiumDays = std::max((uint32_t)0, uint32_t(account.premiumDays + (int32_t)days));
 				player->premiumDays = std::max((uint32_t)0, uint32_t(player->premiumDays + (int32_t)days));
+			}
+			else
+			{
+				account.premiumDays = std::min((uint32_t)65534, uint32_t(account.premiumDays + (uint32_t)days));
+				player->premiumDays = std::min((uint32_t)65534, uint32_t(player->premiumDays + (uint32_t)days));
 			}
 			IOLoginData::getInstance()->saveAccount(account);
 		}
@@ -7639,6 +7757,26 @@ int32_t LuaScriptInterface::luaDoCreatureSetSkullType(lua_State* L)
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoPlayerSetRedSkullTicks(lua_State* L)
+{
+	//doPlayerSetRedSkullTicks(cid, amount)
+	int64_t amount = popNumber(L);
+	uint32_t cid = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	if(Player* player = env->getPlayerByUID(cid))
+	{
+		player->setRedSkullTicks(std::max((int64_t)0, amount));
+		lua_pushnumber(L, LUA_NO_ERROR);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
 	}
 	return 1;
@@ -8504,7 +8642,7 @@ int32_t LuaScriptInterface::luaExecuteRaid(lua_State* L)
 	RaidEvent* event = raid->getNextRaidEvent();
 	if(!event)
 	{
-		lua_pushnumber(L, LUA_FALSE);
+		lua_pushnumber(L, LUA_ERROR);
 		return 1;
 	}
 
@@ -8923,6 +9061,275 @@ int32_t LuaScriptInterface::luaSetItemHitChance(lua_State* L)
 	}
 	item->setHitChance(value);
 	lua_pushnumber(L, LUA_NO_ERROR);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaIsIpBanished(lua_State *L)
+{
+	//isIpBanished(ip[, mask])
+	lua_pushnumber(L, IOBan::getInstance()->isIpBanished((uint32_t)popNumber(L)) ? LUA_TRUE : LUA_FALSE);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaIsPlayerNamelocked(lua_State *L)
+{
+	//isPlayerNamelocked(name)
+	lua_pushnumber(L, IOBan::getInstance()->isNamelocked(popString(L)) ? LUA_TRUE : LUA_FALSE);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaIsAccountBanished(lua_State *L)
+{
+	//isAccountBanished(accId)
+	lua_pushnumber(L, IOBan::getInstance()->isBanished((uint32_t)popNumber(L)) ? LUA_TRUE : LUA_FALSE);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaIsAccountDeleted(lua_State *L)
+{
+	//isAccountDeleted(accId)
+	lua_pushnumber(L, IOBan::getInstance()->isDeleted((uint32_t)popNumber(L)) ? LUA_TRUE : LUA_FALSE);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoAddIpBanishment(lua_State *L)
+{
+	//doAddIpBanishment(ip[, length[, comment[, admin]]])
+	int32_t parameters = lua_gettop(L);
+
+	uint32_t admin = 0, length = g_config.getNumber(ConfigManager::IPBANISHMENT_LENGTH);
+	std::string comment = "No comment.";
+
+	if(parameters > 3)
+		admin = popNumber(L);
+
+	if(parameters > 2)
+		comment = popString(L);
+
+	if(parameters > 1)
+		length = popNumber(L);
+
+	uint32_t ip = popNumber(L);
+	lua_pushnumber(L, IOBan::getInstance()->addIpBanishment(ip, (time(NULL) + length), comment, admin) ? LUA_NO_ERROR : LUA_ERROR);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoAddNamelock(lua_State *L)
+{
+	//doAddNamelock(name[, reason[, action[, comment[, admin]]]])
+	int32_t parameters = lua_gettop(L);
+
+	uint32_t admin = 0, action = 0, reason = 0;
+	std::string comment = "No comment.";
+
+	if(parameters > 4)
+		admin = popNumber(L);
+
+	if(parameters > 3)
+		comment = popString(L);
+
+	if(parameters > 2)
+		action = popNumber(L);
+
+	if(parameters > 1)
+		reason = popNumber(L);
+
+	std::string name = popString(L);
+	lua_pushnumber(L, IOBan::getInstance()->addNamelock(name, reason, action, comment, admin) ? LUA_NO_ERROR : LUA_ERROR);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoAddBanishment(lua_State *L)
+{
+	//doAddBanishment(accId[, length[, reason[, action[, comment[, admin]]]]])
+	int32_t parameters = lua_gettop(L);
+
+	uint32_t admin = 0, action = 0, reason = 0, length = g_config.getNumber(ConfigManager::BAN_LENGTH);
+	std::string comment = "No comment.";
+
+	if(parameters > 5)
+		admin = popNumber(L);
+
+	if(parameters > 4)
+		comment = popString(L);
+
+	if(parameters > 3)
+		action = popNumber(L);
+
+	if(parameters > 2)
+		reason = popNumber(L);
+
+	if(parameters > 1)
+		length = popNumber(L);
+
+	uint32_t id = popNumber(L);
+	lua_pushnumber(L, IOBan::getInstance()->addBanishment(id, (time(NULL) + length), reason, action, comment, admin) ? LUA_NO_ERROR : LUA_ERROR);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoAddDeletion(lua_State *L)
+{
+	//doAddDeletion(accId[, reason[, action[, comment[, admin]]]]])
+	int32_t parameters = lua_gettop(L);
+
+	uint32_t admin = 0, action = 0, reason = 0;
+	std::string comment = "No comment.";
+
+	if(parameters > 4)
+		admin = popNumber(L);
+
+	if(parameters > 3)
+		comment = popString(L);
+
+	if(parameters > 2)
+		action = popNumber(L);
+
+	if(parameters > 1)
+		reason = popNumber(L);
+
+	uint32_t id = popNumber(L);
+	lua_pushnumber(L, IOBan::getInstance()->addDeletion(id, reason, action, comment, admin) ? LUA_NO_ERROR : LUA_ERROR);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoAddNotation(lua_State *L)
+{
+	//doAddNotation(accId[, reason[, action[, comment[, admin]]]]])
+	int32_t parameters = lua_gettop(L);
+
+	uint32_t admin = 0, action = 0, reason = 0;
+	std::string comment = "No comment.";
+
+	if(parameters > 4)
+		admin = popNumber(L);
+
+	if(parameters > 3)
+		comment = popString(L);
+
+	if(parameters > 2)
+		action = popNumber(L);
+
+	if(parameters > 1)
+		reason = popNumber(L);
+
+	uint32_t id = popNumber(L);
+	IOBan::getInstance()->addNotation(id, reason, action, comment, admin);
+	lua_pushnumber(L, LUA_NO_ERROR);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoRemoveIpBanishment(lua_State *L)
+{
+	//doRemoveIpBanishment(ip[, mask])
+	lua_pushnumber(L, IOBan::getInstance()->removeIpBanishment((uint32_t)popNumber(L)) ? LUA_TRUE : LUA_FALSE);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoRemoveNamelock(lua_State *L)
+{
+	//doRemoveNamelock(name)
+	lua_pushnumber(L, IOBan::getInstance()->removeNamelock(popString(L)) ? LUA_TRUE : LUA_FALSE);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoRemoveBanishment(lua_State *L)
+{
+	//doRemoveBanisment(accId)
+	lua_pushnumber(L, IOBan::getInstance()->removeBanishment((uint32_t)popNumber(L)) ? LUA_TRUE : LUA_FALSE);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoRemoveDeletion(lua_State *L)
+{
+	//doRemoveDeletion(accId)
+	lua_pushnumber(L, IOBan::getInstance()->removeDeletion((uint32_t)popNumber(L)) ? LUA_TRUE : LUA_FALSE);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoRemoveNotations(lua_State *L)
+{
+	//doRemoveNotations(accId)
+	IOBan::getInstance()->removeNotations((uint32_t)popNumber(L));
+	lua_pushnumber(L, LUA_TRUE);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetNotationsCount(lua_State *L)
+{
+	//getNotationsCount(accId)
+	lua_pushnumber(L, IOBan::getInstance()->getNotationsCount((uint32_t)popNumber(L)));
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetBanData(lua_State *L)
+{
+	//getBanData(accId)
+	Ban tmp;
+	if(!IOBan::getInstance()->getData((uint32_t)popNumber(L), tmp))
+	{
+		lua_pushnumber(L, LUA_ERROR);
+		return 1;
+	}
+
+	lua_createtable(L, 10, 0);
+	setField(L, "id", tmp.id);
+	setField(L, "type", tmp.type);
+	setField(L, "value", tmp.value);
+	setField(L, "param", tmp.param);
+	setField(L, "added", tmp.added);
+	setField(L, "expires", tmp.expires);
+	setField(L, "adminId", tmp.adminid);
+	setField(L, "reason", tmp.reason);
+	setField(L, "action", tmp.action);
+	setField(L, "comment", tmp.comment);
+
+	lua_settable(L, -3);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetBanReason(lua_State *L)
+{
+	//getBanReason(id)
+	lua_pushstring(L, getReason(popNumber(L)).c_str());
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetBanAction(lua_State *L)
+{
+	//getBanAction(id)
+	bool ipBanishment = false;
+	if(lua_gettop(L) > 1)
+		ipBanishment = popNumber(L) == LUA_TRUE;
+
+	lua_pushstring(L, getAction(popNumber(L), ipBanishment).c_str());
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetBanList(lua_State *L)
+{
+	//getBanList(type)
+	BansVec bans = IOBan::getInstance()->getList((BanType_t)popNumber(L));
+	lua_createtable(L, bans.size(), 0);
+
+	BansVec::const_iterator it = bans.begin();
+	for(uint32_t i = 1; it != bans.end(); ++it, ++i)
+	{
+		lua_pushnumber(L, i);
+		lua_createtable(L, 10, 0);
+
+		Ban tmp = (*it);
+		setField(L, "id", tmp.id);
+		setField(L, "type", tmp.type);
+		setField(L, "value", tmp.value);
+		setField(L, "param", tmp.param);
+		setField(L, "added", tmp.added);
+		setField(L, "expires", tmp.expires);
+		setField(L, "adminId", tmp.adminid);
+		setField(L, "reason", tmp.reason);
+		setField(L, "action", tmp.action);
+		setField(L, "comment", tmp.comment);
+		lua_settable(L, -3);
+	}
 	return 1;
 }
 

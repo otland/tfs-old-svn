@@ -22,6 +22,7 @@
 #define __OTSERV_ALLOCATOR_H
 
 #ifdef __OTSERV_ALLOCATOR__
+#include "otsystem.h"
 
 #include <memory>
 #include <cstdlib>
@@ -29,7 +30,6 @@
 #include <fstream>
 #include <ctime>
 #include <boost/pool/pool.hpp>
-#include "otsystem.h"
 
 #include "definitions.h"
 
@@ -44,15 +44,18 @@ class dummyallocator
 		typedef T& reference;
 		typedef const T& const_reference;
 		typedef T value_type;
-		template <class U> struct rebind
+		template<class U> struct rebind
 		{
 			typedef dummyallocator<U> other;
 		};
+
 		dummyallocator() throw() {}
 		dummyallocator(const dummyallocator&) throw() {}
+
 		template <class U>
 			dummyallocator(const dummyallocator<U>&) throw() {}
-		~dummyallocator() throw() {}
+		virtual ~dummyallocator() throw() {}
+
 		pointer address(reference x) const {return &x;}
 		const_pointer address(const_reference x) const {return &x;}
 		pointer allocate(size_type n, void* hint32_t = 0)
@@ -129,6 +132,7 @@ class PoolManager
 					return tag + 1;
 				}
 			}
+
 			poolTag* tag = reinterpret_cast<poolTag*>(std::malloc(size + sizeof(poolTag)));
 			#ifdef __OTSERV_ALLOCATOR_STATS__
 			poolsStats[0]->allocations++;
@@ -163,6 +167,7 @@ class PoolManager
 				poolsStats[0]->deallocations++;
 				#endif
 			}
+
 			OTSYS_THREAD_UNLOCK(poolLock, NULL);
 		}
 
@@ -172,21 +177,21 @@ class PoolManager
 			time_t rawtime;
 			time(&rawtime);
 			std::ofstream output("mem_dump.txt",std::ios_base::app);
-			output << "Otserv Allocator Stats: " << std::ctime(&rawtime);
-			PoolsStats::iterator it;
-			for(it = poolsStats.begin(); it != poolsStats.end(); ++it)
+			output << "OTServ Allocator Stats: " << std::ctime(&rawtime);
+			for(PoolsStats::iterator it = poolsStats.begin(); it != poolsStats.end(); ++it)
 			{
 				output << (int32_t)(it->first) << " alloc: " << (int32_t)(it->second->allocations) << " dealloc: " << (int32_t)(it->second->deallocations) << " unused: " << (int32_t)(it->second->unused);
 				if(it->second->allocations != 0 && it->first != 0)
 					output << " avg: " << (int32_t)((it->first) - (it->second->unused)/(it->second->allocations)) << " %unused: " << (int32_t)((it->second->unused)*100/(it->second->allocations)/(it->first));
 				output << " N: " << ((int32_t)(it->second->allocations) - (int32_t)(it->second->deallocations)) << std::endl;
 			}
+
 			output << std::endl;
 			output.close();
 		}
 		#endif
 
-		~PoolManager()
+		virtual ~PoolManager()
 		{
 			Pools::iterator it = pools.begin();
 			while(it != pools.end())
@@ -195,11 +200,10 @@ class PoolManager
 				pools.erase(it++);
 			}
 			#ifdef __OTSERV_ALLOCATOR_STATS__
-			PoolsStats::iterator it2;
-			for(it2 = poolsStats.begin(); it2 != poolsStats.end(); ++it2)
+			for(PoolsStats::iterator sit = poolsStats.begin(); sit != poolsStats.end(); ++sit)
 			{
-				std::free(it2->second);
-				poolsStats.erase(it2++);
+				std::free(sit->second);
+				poolsStats.erase(sit++);
 			}
 			#endif
 		}
@@ -210,9 +214,7 @@ class PoolManager
 			pools[size] = new(0) boost::pool<boost::default_user_allocator_malloc_free>(size, next_size);
 			#ifdef __OTSERV_ALLOCATOR_STATS__
 			t_PoolStats * tmp = new(0) t_PoolStats;
-			tmp->unused = 0;
-			tmp->allocations = 0;
-			tmp->deallocations = 0;
+			tmp->unused = tmp->allocations = tmp->deallocations = 0;
 			poolsStats[size] = tmp;
 			#endif
 		}
@@ -230,9 +232,7 @@ class PoolManager
 			addPool(16384, 128);
 			#ifdef __OTSERV_ALLOCATOR_STATS__
 			t_PoolStats * tmp = new(0) t_PoolStats;
-			tmp->unused = 0;
-			tmp->allocations = 0;
-			tmp->deallocations = 0;
+			tmp->unused = tmp->allocations = tmp->deallocations = 0;
 			poolsStats[0] = tmp;
 			#endif
 		}
@@ -247,9 +247,7 @@ class PoolManager
 		#ifdef __OTSERV_ALLOCATOR_STATS__
 		struct t_PoolStats
 		{
-			int32_t allocations;
-			int32_t deallocations;
-			int32_t unused;
+			int32_t allocations, deallocations, unused;
 		};
 		typedef std::map<size_t, t_PoolStats*, std::less<size_t >, dummyallocator<std::pair<const size_t, t_PoolStats* > > > PoolsStats;
 		PoolsStats poolsStats;

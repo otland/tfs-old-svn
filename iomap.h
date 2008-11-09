@@ -122,7 +122,7 @@ class IOMap
 {
 	public:
 		IOMap() {}
-		~IOMap() {}
+		virtual ~IOMap() {}
 
 		bool loadMap(Map* map, const std::string& identifier);
 

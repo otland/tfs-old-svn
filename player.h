@@ -251,7 +251,8 @@ class Player : public Creature, public Cylinder
 		void switchSaving() {saving = !saving;}
 		bool isSaving() const {return saving;}
 
-		uint32_t getAccount() const {return accountNumber;}
+		uint32_t getAccount() const {return accountId;}
+		std::string getAccountName() const {return account;}
 		uint16_t getAccessLevel() const {return accessLevel;}
 		uint16_t getViolationAccess() const {return violationAccess;}
 		bool isPremium() const;
@@ -803,8 +804,8 @@ class Player : public Creature, public Cylinder
 		uint32_t lastIP;
 
 		//account variables
-		uint32_t accountNumber;
-		std::string password;
+		uint32_t accountId;
+		std::string account, password;
 
 		//inventory variables
 		Item* inventory[11];

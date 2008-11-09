@@ -1105,7 +1105,7 @@ std::string getReason(int32_t reasonId)
 	}
 }
 
-std::string getAction(int32_t actionId, bool IPBanishment)
+std::string getAction(int32_t actionId, bool ipBanishment)
 {
 	std::string action;
 	switch(actionId)
@@ -1136,7 +1136,7 @@ std::string getAction(int32_t actionId, bool IPBanishment)
 			break;
 	}
 
-	if(IPBanishment)
+	if(ipBanishment)
 		action += " + IP Banishment";
 
 	return action;

@@ -1,5 +1,5 @@
 function onSay(cid, words, param)
-	if getPlayerPremiumDays(cid) <= 350 then
+	if getPlayerPremiumDays(cid) <= 360 then
 		if doPlayerRemoveMoney(cid, 10000) == TRUE then
 			doPlayerAddPremiumDays(cid, 90)
 			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You have bought 90 days of premium account.")
