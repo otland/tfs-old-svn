@@ -422,6 +422,8 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 	uint32_t lenBeforeSpace = 1;
 	uint32_t lenBeforeSingleQuote = 1;
 	uint32_t lenBeforeDash = 1;
+	uint32_t repeatedCharacter = 0;
+	char lastChar = 32;
 
 	if(forceUppercaseOnFirstLetter)
 	{
@@ -456,6 +458,17 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 
 				lenBeforeDash = 0;
 			}
+
+			if(text[size] == lastChar)
+			{
+				repeatedCharacter++;
+				if(repeatedCharacter > 2)
+					return false;
+			}
+			else
+				repeatedCharacter = 0;
+
+			lastChar = text[size];
 		}
 		else
 		{
