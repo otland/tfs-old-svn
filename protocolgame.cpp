@@ -369,32 +369,45 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			return false;
 		}
 
-		if(g_config.getBool(ConfigManager::ONE_PLAYER_ON_ACCOUNT) && !player->isAccountManager()
-			&& g_game.getPlayerByAccount(player->getAccount()) && !IOLoginData::getInstance()->hasCustomFlag(accnumber, PlayerCustomFlag_CanLoginMultipleCharacters))
+		if(g_config.getBool(ConfigManager::ONE_PLAYER_ON_ACCOUNT) && !player->isAccountManager() && !IOLoginData::getInstance()->hasCustomFlag(accnumber, PlayerCustomFlag_CanLoginMultipleCharacters))
 		{
-			disconnectClient(0x14, "You may only login with one character\nof your account at the same time.");
-			return false;
+			bool found = false;
+			PlayerVector tmp = g_game.getPlayersByAccount(accnumber);
+			for(PlayerVector::iterator it = tmp.begin(); it != tmp.end(); ++it)
+			{
+				if((*it)->getName() == name)
+					found = true;
+			}
+
+			if(tmp.size() > 0 && !found)
+			{
+				disconnectClient(0x14, "You may only login with one character\nof your account at the same time.");
+				return false;
+			}
 		}
 
 		if(!WaitingList::getInstance()->clientLogin(player))
 		{
-			int32_t currentSlot = WaitingList::getInstance()->getClientSlot(player);
-			int32_t retryTime = WaitingList::getTime(currentSlot);
-			std::stringstream ss;
+			if(OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
+			{
+				int32_t currentSlot = WaitingList::getInstance()->getClientSlot(player);
 
-			ss << "Too many players online.\n" << "You are at ";
-			if(currentSlot > 0)
-				ss << currentSlot;
-			else
-				ss << "unknown";
-			ss << " place on the waiting list.";
+				std::stringstream ss;
+				ss << "Too many players online.\n" << "You are at ";
+				if(currentSlot > 0)
+					ss << currentSlot;
+				else
+					ss << "unknown";
 
-			OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
-			TRACK_MESSAGE(output);
-			output->AddByte(0x16);
-			output->AddString(ss.str());
-			output->AddByte(retryTime);
-			OutputMessagePool::getInstance()->send(output);
+				ss << " place on the waiting list.";
+
+				TRACK_MESSAGE(output);
+				output->AddByte(0x16);
+				output->AddString(ss.str());
+				output->AddByte(WaitingList::getTime(currentSlot));
+				OutputMessagePool::getInstance()->send(output);
+			}
+
 			getConnection()->closeConnection();
 			return false;
 		}
@@ -438,8 +451,10 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 
 			return true;
 		}
+
 		return connect(_player->getID());
 	}
+
 	return false;
 }
 

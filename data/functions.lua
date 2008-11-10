@@ -279,7 +279,37 @@ function doMutePlayer(cid, time)
 	return doAddCondition(cid, condition)
 end
 
-function convertIntToIP(int, mask)
+function getPlayerVocationName(cid)
+	return getVocationInfo(getPlayerVocation(cid)).name
+end
+
+function getPromotedVocation(vid)
+	return getVocationInfo(vid).promotedVocation
+end
+
+function doPlayerRemovePremiumDays(cid, days)
+	return doPlayerAddPremiumDays(cid, -days)
+end
+
+function getPlayerMasterPos(cid)
+	return getTownTemplePosition(getPlayerTown(cid))
+end
+
+function getOnlinePlayers()
+	local tmp = getPlayersOnline()
+	local players = {}
+	for i, cid in ipairs(tmp) do
+		table.insert(players, getCreatureName(cid))
+	end
+	return players
+end
+
+function getPlayerByName(name)
+	local cid = getCreatureByName(name)
+	return isPlayer(cid) == TRUE and cid or nil
+end
+
+function doConvertIntegerToIp(int, mask)
 	local b4 = bit.urshift(bit.uband(int, 4278190080), 24)
 	local b3 = bit.urshift(bit.uband(int, 16711680), 16)
 	local b2 = bit.urshift(bit.uband(int, 65280), 8)
