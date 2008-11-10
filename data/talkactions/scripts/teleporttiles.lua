@@ -5,7 +5,7 @@ function onSay(cid, words, param)
 	end
 
 	local tmp = getCreaturePosition(cid)
-	local pos = getClosestFreeTile(cid, getPosByDir(tmp, getPlayerLookDir(cid), tonumber(param)))
+	local pos = getClosestFreeTile(cid, getPosByDir(getCreaturePosition(cid), getPlayerLookDir(cid), tonumber(param)))
 	if(doTeleportThing(cid, pos, TRUE) ~= LUA_ERROR and isPlayerGhost(cid) ~= TRUE) then
 		doSendMagicEffect(tmp, CONST_ME_POFF)
 		doSendMagicEffect(pos, CONST_ME_TELEPORT)

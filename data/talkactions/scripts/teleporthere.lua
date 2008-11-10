@@ -5,9 +5,9 @@ function onSay(cid, words, param)
 	end
 
 	local target = getPlayerByNameWildcard(param)
-	if(not target) then
+	if(target == 0) then
 		target = getCreatureByName(param)
-		if(not target) then
+		if(target == 0) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Creature not found.")
 			return FALSE
 		end
@@ -15,7 +15,7 @@ function onSay(cid, words, param)
 
 	local tmp = getCreaturePosition(target)
 	local pos = getClosestFreeTile(target, getCreaturePosition(cid))
-	if(doTeleportThing(target, pos, TRUE) ~= LUA_ERROR and isPlayer(target) == TRUE and isPlayerGhost(target) ~= TRUE) then
+	if(doTeleportThing(target, pos, TRUE) ~= LUA_ERROR and isPlayerGhost(target) ~= TRUE) then
 		doSendMagicEffect(tmp, CONST_ME_POFF)
 		doSendMagicEffect(pos, CONST_ME_TELEPORT)
 	end
