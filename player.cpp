@@ -832,7 +832,7 @@ void Player::addStorageValue(const uint32_t key, const int32_t value)
 			outfit.looktype = value >> 16;
 			outfit.addons = value & 0xFF;
 			if(outfit.addons > 3)
-				std::cout << "Warning: No valid addons value key:" << key << " value: " << (int32_t)(value & 0xFF) << " player: " << getName() << std::endl;
+				std::cout << "Warning: No valid addons value key:" << key << " value: " << (int32_t)value << " player: " << getName() << std::endl;
 			else
 				m_playerOutfits.addOutfit(outfit);
 		}
