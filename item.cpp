@@ -841,7 +841,6 @@ bool Item::serializeAttr(PropWriteStream& propWriteStream)
 bool Item::hasProperty(enum ITEMPROPERTY prop) const
 {
 	const ItemType& it = items[id];
-
 	switch(prop)
 	{
 		case BLOCKSOLID:
@@ -920,7 +919,7 @@ double Item::getWeight() const
 }
 
 std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
-	const Item* item /*= NULL*/, int32_t subType /*= -1*/)
+	const Item* item /*= NULL*/, int32_t subType /*= -1*/, bool addArticle /*= true*/)
 {
 	if(item)
 		subType = item->getSubType();
@@ -937,10 +936,13 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		}
 		else
 		{
-			if(item && !item->getArticle().empty())
-				s << item->getArticle() << " ";
-			else if(!it.article.empty())
-				s << it.article << " ";
+			if(addArticle)
+			{
+				if(item && !item->getArticle().empty())
+					s << item->getArticle() << " ";
+				else if(!it.article.empty())
+					s << it.article << " ";
+			}
 
 			s << (item ? item->getName() : it.name);
 		}

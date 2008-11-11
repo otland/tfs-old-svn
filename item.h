@@ -300,7 +300,7 @@ class Item : virtual public Thing, public ItemAttributes
 		virtual const BedItem* getBed() const {return NULL;}
 
 		static std::string getDescription(const ItemType& it, int32_t lookDistance,
-			const Item* item = NULL, int32_t subType = -1);
+			const Item* item = NULL, int32_t subType = -1, bool addArticle = true);
 		static std::string getWeightDescription(const ItemType& it, double weight, uint32_t count = 1);
 
 		//serialization

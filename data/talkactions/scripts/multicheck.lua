@@ -4,7 +4,7 @@ function onSay(cid, words, param)
 	local multiClients = {}
 	local multiClientIPs = {}
 	for i, pid in ipairs(players) do
-		local ip = getIPByName(getCreatureName(pid))
+		local ip = getIpByName(getCreatureName(pid))
 		local pos = table.find(IPs, ip)
 		if(pos ~= nil) then
 			if(isInArray(multiClients, players[pos]) == TRUE) then

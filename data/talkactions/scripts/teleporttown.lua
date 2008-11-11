@@ -7,6 +7,10 @@ function onSay(cid, words, param)
 	local t = string.explode(param, ",")
 	if(t[2]) then
 		cid = getPlayerByNameWildcard(t[2])
+		if(cid == 0)
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. t[2] .. " not found.")
+			return FALSE
+		end
 	end
 
 	local tmp = t[1]

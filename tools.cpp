@@ -409,7 +409,8 @@ bool isValidPassword(std::string text)
 
 bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 {
-	uint32_t textLength = text.length(), lenBeforeSpace = 1, lenBeforeQuote = 1, lenBeforeDash = 1;
+	uint32_t textLength = text.length(), lenBeforeSpace = 1, lenBeforeQuote = 1, lenBeforeDash = 1, repeatedCharacter = 0;
+	char lastChar = 32;
 
 	if(forceUppercaseOnFirstLetter)
 	{
@@ -444,6 +445,17 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 
 				lenBeforeDash = 0;
 			}
+
+			if(text[size] == lastChar)
+			{
+				repeatedCharacter++;
+				if(repeatedCharacter > 2)
+					return false;
+			}
+			else
+				repeatedCharacter = 0;
+
+			lastChar = text[size];
 		}
 		else
 		{

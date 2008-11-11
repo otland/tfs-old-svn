@@ -17,8 +17,8 @@ function onSay(cid, words, param)
 	end
 
 	local pid = getPlayerByNameWildcard(t[1])
-	if(not pid) then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player not found.")
+	if(pid == 0) then
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. t[1] .. " not found.")
 		return FALSE
 	end
 

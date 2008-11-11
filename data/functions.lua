@@ -309,6 +309,10 @@ function getPlayerByName(name)
 	return isPlayer(cid) == TRUE and cid or nil
 end
 
+function getPlayerFrags(cid)
+	return math.ceil((getPlayerRedSkullTicks(cid) / getConfigInfo('timeToDecreaseFrags')) + 1)
+end
+
 function doConvertIntegerToIp(int, mask)
 	local b4 = bit.urshift(bit.uband(int, 4278190080), 24)
 	local b3 = bit.urshift(bit.uband(int, 16711680), 16)

@@ -1,6 +1,10 @@
 function onSay(cid, words, param)
 	if(param ~= "") then
 		cid = getPlayerByNameWildcard(param)
+		if(cid == 0) then
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. param .. " not found.")
+			return FALSE
+		end
 	end
 
 	local tmp = getCreaturePosition(cid)

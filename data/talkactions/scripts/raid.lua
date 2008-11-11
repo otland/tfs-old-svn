@@ -4,7 +4,7 @@ function onSay(cid, words, param)
 		return FALSE
 	end
 
-	local ret = execute
+	local ret = executeRaid(param)
 	if(ret == nil) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Such raid does not exists.")
 		return FALSE
