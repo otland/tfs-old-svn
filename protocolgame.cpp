@@ -3178,7 +3178,13 @@ void ProtocolGame::AddShopItem(NetworkMessage* msg, const ShopInfo item)
 {
 	const ItemType& it = Item::items[item.itemId];
 	msg->AddU16(it.clientId);
-	msg->AddByte(item.subType);
+	if(it.stackable || it.isRune())
+		msg->AddByte(item.subType);
+	else if(it.isSplash() || it.isFluidContainer())
+		msg->AddByte(fluidMap[item.subType % 8]);
+	else
+		msg->AddByte(0x01);
+
 	msg->AddString(item.itemName);
 	msg->AddU32(uint32_t(it.weight * 100));
 	msg->AddU32(item.buyPrice);
