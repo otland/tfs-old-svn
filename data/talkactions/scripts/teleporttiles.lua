@@ -1,12 +1,19 @@
 function onSay(cid, words, param)
-	if(param == "") then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command requires param.")
+	local n = 1
+	if(param ~= "" and tonumber(param)) then
+		n = tonumber(param)
+	end
+
+	local pos = getPosByDir(getCreaturePosition(cid), getPlayerLookDir(cid), n)
+	pos.stackpos = STACKPOS_GROUND
+	if(getTileThingByPos(pos).uid == 0)
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You cannot teleport there.")
 		return FALSE
 	end
 
-	local pos = getClosestFreeTile(cid, getPosByDir(getCreaturePosition(cid), getPlayerLookDir(cid), tonumber(param)))
+	pos = getClosestFreeTile(cid, pos)
 	if(pos == LUA_ERROR or isInArray({pos.x, pos.y, pos.z}, 0) == TRUE) then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You cannot teleport there.")
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Destination not reachable.")
 		return FALSE
 	end
 

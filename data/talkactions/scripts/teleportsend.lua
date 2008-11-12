@@ -12,7 +12,7 @@ function onSay(cid, words, param)
 
 	local tmp = string.explode(t[2], ",")
 	if(not tmp[3] or tmp[1] == 0 or tmp[2] == 0 or tmp[3] == 0) then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Invalid position specified.")
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Specified position is not valid.")
 		return FALSE
 	end
 
@@ -22,7 +22,13 @@ function onSay(cid, words, param)
 		return FALSE
 	end
 
-	local pos = getClosestFreeTile(pid, {x = tmp[1], y = tmp[2], z = tmp[3]})
+	local pos = {x = tmp[1], y = tmp[2], z = tmp[3], stackpos = STACKPOS_GROUND}
+	if(getTileThingByPos(pos).uid == 0)
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Destination tile does not exists.")
+		return FALSE
+	end
+
+	pos = getClosestFreeTile(pid, pos)
 	if(pos == LUA_ERROR or isInArray({pos.x, pos.y, pos.z}, 0) == TRUE) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Destination not reachable.")
 		return FALSE

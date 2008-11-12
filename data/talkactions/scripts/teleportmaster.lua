@@ -7,7 +7,13 @@ function onSay(cid, words, param)
 		end
 	end
 
-	local pos = getClosestFreeTile(cid, getTownTemplePosition(getPlayerTown(cid)))
+	local pos = getTownTemplePosition(getPlayerTown(cid))
+	if(pos == LUA_ERROR or isInArray({pos.x, pos.y, pos.z}, 0) == TRUE) then
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Temple town does not exists.")
+		return FALSE
+	end
+
+	pos = getClosestFreeTile(cid, pos)
 	if(pos == LUA_ERROR or isInArray({pos.x, pos.y, pos.z}, 0) == TRUE) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Destination not reachable.")
 		return FALSE

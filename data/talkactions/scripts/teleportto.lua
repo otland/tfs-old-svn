@@ -7,15 +7,17 @@ function onSay(cid, words, param)
 	local creature = getCreatureByName(param)
 	local player = getPlayerByNameWildcard(param)
 	local tile = string.explode(param, ",")
-	local pos = {}
+	local pos = {x = 0, y = 0, z = 0}
 
 	if(player ~= 0) then
-		pos = getCreaturePosition(tmpPlayer)
+		pos = getCreaturePosition(player)
 	elseif(creature ~= 0) then
-		pos = getCreaturePosition(tmpCreature)
+		pos = getCreaturePosition(creature)
 	elseif(tile[3]) then
 		pos = {x = tile[1], y = tile[2], z = tile[3]}
-	else
+	end
+
+	if(pos == LUA_ERROR or isInArray({pos.x, pos.y, pos.z}, 0) == TRUE) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Invalid param specified.")
 		return FALSE
 	end

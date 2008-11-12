@@ -283,25 +283,25 @@ ReturnValue Actions::canUseFar(const Creature* creature, const Position& toPos, 
 	return RET_NOERROR;
 }
 
-Action* Actions::getAction(const Item* item, ActionType_t type /* = ACTION_ANY */)
+Action* Actions::getAction(const Item* item, ActionType_t type /* = ACTION_ANY */) const
 {
 	if(item->getUniqueId() != 0 && (type == ACTION_ANY || type == ACTION_UNIQUEID))
 	{
-		ActionUseMap::iterator it = uniqueItemMap.find(item->getUniqueId());
+		ActionUseMap::const_iterator it = uniqueItemMap.find(item->getUniqueId());
 		if(it != uniqueItemMap.end())
 			return it->second;
 	}
 
 	if(item->getActionId() != 0 && (type == ACTION_ANY || type == ACTION_ACTIONID))
 	{
-		ActionUseMap::iterator it = actionItemMap.find(item->getActionId());
+		ActionUseMap::const_iterator it = actionItemMap.find(item->getActionId());
 		if(it != actionItemMap.end())
 			return it->second;
 	}
 
 	if(type == ACTION_ANY || type == ACTION_ITEMID)
 	{
-		ActionUseMap::iterator it = useItemMap.find(item->getID());
+		ActionUseMap::const_iterator it = useItemMap.find(item->getID());
 		if(it != useItemMap.end())
 	   		return it->second;
 	}
@@ -480,15 +480,10 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 bool Actions::executeUseEx(Action* action, Player* player, Item* item, const PositionEx& fromPosEx,
 	const PositionEx& toPosEx, bool isHotkey, uint32_t creatureId)
 {
-	if(!action->executeUse(player, item, fromPosEx, toPosEx, isHotkey, creatureId))
-	{
-		if(action->hasOwnErrorHandler()) //The error message has already been handled by action itself
-			return true;
+	if(action->executeUse(player, item, fromPosEx, toPosEx, isHotkey, creatureId) || action->hasOwnErrorHandler())
+		return true;
 
-		return false;
-	}
-
-	return true;
+	return false;
 }
 
 ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPosEx, const PositionEx& toPosEx,
@@ -596,11 +591,11 @@ void Actions::showUseHotkeyMessage(Player* player, int32_t id, uint32_t count)
 {
 	const ItemType& it = Item::items[id];
 	char buffer[40 + it.name.size()];
-
 	if(count == 1)
 		sprintf(buffer, "Using the last %s...", it.name.c_str());
 	else
 		sprintf(buffer, "Using one of %d %s...", count, it.pluralName.c_str());
+
 	player->sendTextMessage(MSG_INFO_DESCR, buffer);
 }
 
@@ -618,21 +613,18 @@ bool Actions::openContainer(Player* player, Container* container, const uint8_t 
 	else
 		openContainer = container;
 
-	if(container->getCorpseOwner() != 0)
+	if(container->getCorpseOwner() != 0 && !player->canOpenCorpse(container->getCorpseOwner()))
 	{
-		if(!player->canOpenCorpse(container->getCorpseOwner()))
-		{
-			player->sendCancel("You are not the owner.");
-			return false;
-		}
+		player->sendCancel("You are not the owner.");
+		return true;
 	}
 
 	//open/close container
-	int32_t oldcid = player->getContainerID(openContainer);
-	if(oldcid != -1)
+	int32_t oldCid = player->getContainerID(openContainer);
+	if(oldCid != -1)
 	{
 		player->onCloseContainer(openContainer);
-		player->closeContainer(oldcid);
+		player->closeContainer(oldCid);
 	}
 	else
 	{
@@ -643,15 +635,13 @@ bool Actions::openContainer(Player* player, Container* container, const uint8_t 
 	return true;
 }
 
-Action::Action(LuaScriptInterface* _interface) :
-	Event(_interface)
+Action::Action(LuaScriptInterface* _interface) : Event(_interface)
 {
 	allowFarUse = false;
 	checkLineOfSight = true;
 }
 
-Action::Action(const Action* copy) :
-	Event(copy)
+Action::Action(const Action* copy) : Event(copy)
 {
 	allowFarUse = copy->allowFarUse;
 	checkLineOfSight = copy->checkLineOfSight;
@@ -664,16 +654,16 @@ Action::~Action()
 
 bool Action::configureEvent(xmlNodePtr p)
 {
-	int32_t intValue;
-	if(readXMLInteger(p, "allowfaruse", intValue))
+	std::string strValue;
+	if(readXMLString(p, "allowfaruse", strValue))
 	{
-		if(intValue != 0)
+		if(booleanString(strValue))
 			setAllowFarUse(true);
 	}
 
-	if(readXMLInteger(p, "blockwalls", intValue))
+	if(readXMLString(p, "blockwalls", strValue))
 	{
-		if(intValue == 0)
+		if(!booleanString(strValue))
 			setCheckLineOfSight(false);
 	}
 	return true;
@@ -700,44 +690,32 @@ bool Action::loadFunction(const std::string& functionName)
 
 bool Action::highscoreBook(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
 {
-	if(player)
+	if(player && item && item->getActionId() >= 150 && item->getActionId() <= 158)
 	{
-		if(item)
-		{
-			if(item->getActionId() >= 150 && item->getActionId() <= 158)
-			{
-				std::string highscoreString = g_game.getHighscoreString(item->getActionId() - 150);
-				item->setText(highscoreString);
-				player->sendTextWindow(item, highscoreString.size(), false);
-				return true;
-			}
-		}
+		std::string highscoreString = g_game.getHighscoreString(item->getActionId() - 150);
+		item->setText(highscoreString);
+		player->sendTextWindow(item, highscoreString.size(), false);
+		return true;
 	}
 	return false;
 }
 
 bool Action::increaseItemId(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
 {
-	if(player)
+	if(player && item)
 	{
-		if(item)
-		{
-			g_game.transformItem(item, item->getID() + 1);
-			return true;
-		}
+		g_game.transformItem(item, item->getID() + 1);
+		return true;
 	}
 	return false;
 }
 
 bool Action::decreaseItemId(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
 {
-	if(player)
+	if(player && item)
 	{
-		if(item)
-		{
-			g_game.transformItem(item, item->getID() - 1);
-			return true;
-		}
+		g_game.transformItem(item, item->getID() - 1);
+		return true;
 	}
 	return false;
 }
@@ -754,6 +732,7 @@ ReturnValue Action::canExecuteAction(const Player* player, const Position& toPos
 		ret = g_actions->canUse(player, toPos);
 	else
 		ret = g_actions->canUseFar(player, toPos, getCheckLineOfSight());
+
 	return ret;
 }
 

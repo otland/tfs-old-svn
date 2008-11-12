@@ -363,12 +363,15 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 
 				case STACKPOS_USEITEM:
 				{
-					thing = tile->getItemByTopOrder(2);
-					if(thing == NULL)
-						thing = tile->getTopDownItem();
-
-					if(thing == NULL)
-						thing = tile->getTopTopItem();
+					Item* item = tile->getItemByTopOrder(2); //First check items with topOrder 2 (ladders, signs, splashes)
+					if(item && g_actions->hasAction(item))
+						thing = item;
+					else
+					{
+						thing = tile->getTopDownItem(); //then down items
+						if(thing == NULL)
+							thing = tile->getTopTopItem(); //then last we check items with topOrder 3 (doors etc)
+					}
 					break;
 				}
 

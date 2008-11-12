@@ -55,6 +55,7 @@ class Actions : public BaseEvents
 		ReturnValue canUse(const Player* player, const Position& pos);
 		ReturnValue canUse(const Player* player, const Position& pos, const Item* item);
 		ReturnValue canUseFar(const Creature* creature, const Position& toPos, bool checkLineOfSight);
+		bool hasAction(const Item* item) const {return (getAction(item) != NULL);}
 
 	protected:
 		bool executeUse(Action* action, Player* player, Item* item, const PositionEx& posEx, uint32_t creatureId);
@@ -81,7 +82,7 @@ class Actions : public BaseEvents
 		ActionUseMap uniqueItemMap;
 		ActionUseMap actionItemMap;
 
-		Action* getAction(const Item* item, ActionType_t type = ACTION_ANY);
+		Action* getAction(const Item* item, ActionType_t type = ACTION_ANY) const;
 		void clearMap(ActionUseMap& map);
 
 		LuaScriptInterface m_scriptInterface;
