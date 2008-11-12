@@ -1412,8 +1412,8 @@ ReturnValue Game::internalRemoveItem(Item* item, int32_t count /*= -1*/, bool te
 		count = item->getItemCount();
 
 	//check if we can remove this item
-	ReturnValue ret = cylinder->__queryRemove(item, count, flags);
-	if(ret != RET_NOERROR && ret != RET_NOTMOVEABLE)
+	ReturnValue ret = cylinder->__queryRemove(item, count, flags | FLAG_IGNORENOTMOVEABLE);
+	if(ret != RET_NOERROR)
 		return ret;
 
 	if(!item->canRemove())
