@@ -208,7 +208,7 @@ Item* Tile::getTopDownItem()
 	return NULL;
 }
 
-Item* Tile::getItemByTopOrder(uint32_t topOrder)
+Item* Tile::getItemByTopOrder(int32_t topOrder)
 {
 	//topOrder:
 	//1: borders
