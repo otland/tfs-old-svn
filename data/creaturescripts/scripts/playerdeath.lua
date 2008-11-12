@@ -4,20 +4,29 @@ local config = {
 	maxDeathRecords = getConfigInfo('maxDeathRecords')
 }
 
-function onDeath(cid, corpse, killer)
-	doPlayerSendTextMessage(cid, MESSAGE_EVENT_ADVANCE, "You are dead.")
+function onDeath(cid, corpse, lastHitKiller, mostDamageKiller)
 	if(config.deathListEnabled == "yes") then
-		if(killer ~= FALSE) then
-			if(isPlayer(killer) == TRUE) then
-				killerName = getPlayerGUID(killer)
+		local hitKillerName = ""
+		local damageKillerName = ""
+		if(lastHitKiller ~= FALSE) then
+			if(isPlayer(lastHitKiller) == TRUE) then
+				hitKillerName = getPlayerGUID(lastHitKiller)
 			else
-				killerName = getCreatureName(killer)
+				hitKillerName = getCreatureName(lastHitKiller)
+			end
+
+			if(mostDamageKiller ~= FALSE) then
+				if(isPlayer(mostDamageKiller) == TRUE) then
+					damageKillerName = getPlayerGUID(mostDamageKiller)
+				else
+					damageKillerName = getCreatureName(mostDamageKiller)
+				end
 			end
 		else
-			killerName = "field item"
+			hitKillerName = "field item"
 		end
 
-		db.executeQuery("INSERT INTO `player_deaths` (`player_id`, `time`, `level`, `killed_by`) VALUES (" .. getPlayerGUID(cid) .. ", " .. os.time() .. ", " .. getPlayerLevel(cid) .. ", " .. db.escapeString(killerName) .. ");")
+		db.executeQuery("INSERT INTO `player_deaths` (`player_id`, `time`, `level`, `killed_by`, `altkilled_by`) VALUES (" .. getPlayerGUID(cid) .. ", " .. os.time() .. ", " .. getPlayerLevel(cid) .. ", " .. db.escapeString(hitKillerName) .. ", " .. db.escapeString(damageKillerName) .. ");")
 		local rows = db.getResult("SELECT `player_id` FROM `player_deaths` WHERE `player_id` = " .. getPlayerGUID(cid) .. ";")
 		if(rows:getID() ~= -1) then
 			local deathRecords = rows:numRows(true)

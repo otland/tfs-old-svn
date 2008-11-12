@@ -3,7 +3,7 @@ CREATE TABLE "server_config" (
     "value" INTEGER NOT NULL
 );
 
-INSERT INTO "server_config" VALUES ('db_version', 4);
+INSERT INTO "server_config" VALUES ('db_version', 5);
 
 CREATE TABLE "server_motd" (
     "id" INTEGER PRIMARY KEY,
@@ -174,6 +174,7 @@ CREATE TABLE "player_deaths" (
     "time" INTEGER NOT NULL DEFAULT 0,
     "level" INTEGER NOT NULL DEFAULT 1,
     "killed_by" VARCHAR(255) NOT NULL DEFAULT '',
+    "altkilled_by" VARCHAR(255) NOT NULL DEFAULT '',
     FOREIGN KEY ("player_id") REFERENCES "players" ("id")
 );
 

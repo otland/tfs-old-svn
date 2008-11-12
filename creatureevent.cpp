@@ -497,9 +497,9 @@ uint32_t CreatureEvent::executeOnKill(Creature* creature, Creature* target)
 	}
 }
 
-uint32_t CreatureEvent::executeOnDeath(Creature* creature, Item* corpse, Creature* killer)
+uint32_t CreatureEvent::executeOnDeath(Creature* creature, Item* corpse, Creature* lastHitKiller, Creature* mostDamageKiller)
 {
-	//onDeath(cid, corpse, killer)
+	//onDeath(cid, corpse, lastHitKiller, mostDamageKiller)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
@@ -514,17 +514,19 @@ uint32_t CreatureEvent::executeOnDeath(Creature* creature, Item* corpse, Creatur
 		env->setRealPos(creature->getPosition());
 
 		uint32_t cid = env->addThing(creature);
-		uint32_t corpseid = env->addThing(corpse);
-		uint32_t killercid = env->addThing(killer);
+		uint32_t corpseId = env->addThing(corpse);
+		uint32_t lastKid = env->addThing(lastHitKiller);
+		uint32_t mostKid = env->addThing(mostDamageKiller);
 
 		lua_State* L = m_scriptInterface->getLuaState();
 
 		m_scriptInterface->pushFunction(m_scriptId);
 		lua_pushnumber(L, cid);
-		lua_pushnumber(L, corpseid);
-		lua_pushnumber(L, killercid);
+		lua_pushnumber(L, corpseId);
+		lua_pushnumber(L, lastKid);
+		lua_pushnumber(L, mostKid);
 
-		int32_t result = m_scriptInterface->callFunction(3);
+		int32_t result = m_scriptInterface->callFunction(4);
 		m_scriptInterface->releaseScriptEnv();
 
 		return (result == LUA_TRUE);

@@ -150,10 +150,10 @@ class Creature : public AutoID, virtual public Thing
 			 */
 			this->id = auto_id | this->idRange();
 		}
-		void setRemoved(){isInternalRemoved = true;}
+		void setRemoved() {isInternalRemoved = true;}
 
 		virtual uint32_t idRange() = 0;
-		uint32_t getID() const { return id; }
+		uint32_t getID() const {return id;}
 		virtual void removeList() = 0;
 		virtual void addList() = 0;
 
@@ -161,10 +161,10 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool canSeeCreature(const Creature* creature) const;
 
 		virtual RaceType_t getRace() const {return RACE_NONE;}
-		Direction getDirection() const { return direction;}
+		Direction getDirection() const {return direction;}
 		void setDirection(Direction dir) {direction = dir;}
 
-		const Position& getMasterPos() const { return masterPos;}
+		const Position& getMasterPos() const {return masterPos;}
 		void setMasterPos(const Position& pos, uint32_t radius = 1) {masterPos = pos; masterRadius = radius;}
 
 		virtual int32_t getThrowRange() const {return 1;}
@@ -432,7 +432,8 @@ class Creature : public AutoID, virtual public Thing
 
 		//combat variables
 		Creature* attackedCreature;
-		Creature* _lastHitCreature;
+		Creature* lastHitCreature;
+		Creature* mostDamageCreature;
 
 		struct CountBlock_t
 		{
@@ -444,7 +445,7 @@ class Creature : public AutoID, virtual public Thing
 
 		CountMap damageMap;
 		CountMap healMap;
-		uint32_t lastHitCreature;
+		uint32_t lastHitCreatureId;
 		uint32_t blockCount;
 		uint32_t blockTicks;
 
@@ -454,6 +455,7 @@ class Creature : public AutoID, virtual public Thing
 		{
 			return (0 != (scriptEventsBitField & ((uint32_t)1 << event)));
 		}
+
 		typedef std::list<CreatureEvent*> CreatureEventList;
 		CreatureEventList eventsList;
 		CreatureEventList::iterator findEvent(CreatureEventType_t type);
@@ -469,12 +471,12 @@ class Creature : public AutoID, virtual public Thing
 		virtual void doAttacking(uint32_t interval) {}
 		virtual bool hasExtraSwing() {return false;}
 
-		virtual uint64_t getLostExperience() const { return 0; }
+		virtual uint64_t getLostExperience() const {return 0;}
 		virtual double getDamageRatio(Creature* attacker) const;
 		uint32_t getStaminaRatio(Creature* attacker) const;
 		bool getKillers(Creature** lastHitCreature, Creature** mostDamageCreature);
 		virtual void dropLoot(Container* corpse) {}
-		virtual uint16_t getLookCorpse() const { return 0; }
+		virtual uint16_t getLookCorpse() const {return 0;}
 		virtual void getPathSearchParams(const Creature* creature, FindPathParams& fpp) const;
 		virtual void death() {}
 		virtual void dropCorpse();

@@ -345,20 +345,37 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 			}
 
 			Thing* thing = NULL;
-			/*for move operations*/
-			if(type == STACKPOS_MOVE)
+			switch(type)
 			{
-				Item* item = tile->getTopDownItem();
-				if(item && !item->isNotMoveable())
-					thing = item;
-				else
-					thing = tile->getTopCreature();
+				case STACKPOS_MOVE: /*for move operations*/
+				{
+					Item* item = tile->getTopDownItem();
+					if(item && !item->isNotMoveable())
+						thing = item;
+					else
+						thing = tile->getTopCreature();
+					break;
+				}
+
+				case STACKPOS_USE: /*use item*/
+					thing = tile->getTopDownItem();
+					break;
+
+				case STACKPOS_USEITEM:
+				{
+					thing = tile->getItemByTopOrder(2);
+					if(thing == NULL)
+						thing = tile->getTopDownItem();
+
+					if(thing == NULL)
+						thing = tile->getTopTopItem();
+					break;
+				}
+
+				default:
+					thing = tile->__getThing(index);
+					break;
 			}
-			/*use item*/
-			else if(type == STACKPOS_USE)
-				thing = tile->getTopDownItem();
-			else
-				thing = tile->__getThing(index);
 
 			if(player)
 			{
@@ -1206,7 +1223,7 @@ ReturnValue Game::internalMoveItem(Cylinder* fromCylinder, Cylinder* toCylinder,
 			if(retExchangeMaxCount != RET_NOERROR && maxExchangeQueryCount == 0)
 				return retExchangeMaxCount;
 
-			if((toCylinder->__queryRemove(toItem, toItem->getItemCount()) == RET_NOERROR) && ret == RET_NOERROR)
+			if((toCylinder->__queryRemove(toItem, toItem->getItemCount(), flags) == RET_NOERROR) && ret == RET_NOERROR)
 			{
 				int32_t oldToItemIndex = toCylinder->__getIndexOfThing(toItem);
 				toCylinder->__removeThing(toItem, toItem->getItemCount());
@@ -1246,7 +1263,7 @@ ReturnValue Game::internalMoveItem(Cylinder* fromCylinder, Cylinder* toCylinder,
 	Item* moveItem = item;
 
 	//check if we can remove this item
-	ret = fromCylinder->__queryRemove(item, m);
+	ret = fromCylinder->__queryRemove(item, m, flags);
 	if(ret != RET_NOERROR)
 		return ret;
 
@@ -1382,7 +1399,7 @@ ReturnValue Game::internalAddItem(Cylinder* toCylinder, Item* item, int32_t inde
 	return RET_NOERROR;
 }
 
-ReturnValue Game::internalRemoveItem(Item* item, int32_t count /*= -1*/, bool test /*= false*/)
+ReturnValue Game::internalRemoveItem(Item* item, int32_t count /*= -1*/, bool test /*= false*/, uint32_t flags /*= 0*/)
 {
 	Cylinder* cylinder = item->getParent();
 	if(cylinder == NULL)
@@ -1392,7 +1409,7 @@ ReturnValue Game::internalRemoveItem(Item* item, int32_t count /*= -1*/, bool te
 		count = item->getItemCount();
 
 	//check if we can remove this item
-	ReturnValue ret = cylinder->__queryRemove(item, count);
+	ReturnValue ret = cylinder->__queryRemove(item, count, flags);
 	if(ret != RET_NOERROR && ret != RET_NOTMOVEABLE)
 		return ret;
 
@@ -1857,7 +1874,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 	return NULL;
 }
 
-ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pushMove)
+ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pushMove, uint32_t flags /*= 0*/)
 {
 	if(newPos == thing->getPosition())
 		return RET_NOERROR;
@@ -1876,7 +1893,7 @@ ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pu
 			return RET_NOERROR;
 		}
 		else if(Item* item = thing->getItem())
-			return internalMoveItem(item->getParent(), toTile, INDEX_WHEREEVER, item, item->getItemCount(), NULL);
+			return internalMoveItem(item->getParent(), toTile, INDEX_WHEREEVER, item, item->getItemCount(), NULL, flags);
 	}
 
 	return RET_NOTPOSSIBLE;
@@ -2163,7 +2180,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 	if(isHotkey && !g_config.getBool(ConfigManager::AIMBOT_HOTKEY_ENABLED))
 		return false;
 
-	Thing* thing = internalGetThing(player, fromPos, fromStackPos, fromSpriteId);
+	Thing* thing = internalGetThing(player, fromPos, fromStackPos, fromSpriteId, STACKPOS_USEITEM);
 	if(!thing)
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
@@ -2171,7 +2188,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 	}
 
 	Item* item = thing->getItem();
-	if(!item || item->getClientID() != fromSpriteId || !item->isUseable())
+	if(!item || !item->isUseable())
 	{
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
 		return false;
@@ -2256,7 +2273,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 	if(isHotkey && !g_config.getBool(ConfigManager::AIMBOT_HOTKEY_ENABLED))
 		return false;
 
-	Thing* thing = internalGetThing(player, pos, stackPos, spriteId);
+	Thing* thing = internalGetThing(player, pos, stackPos, spriteId, STACKPOS_USEITEM);
 	if(!thing)
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
@@ -2264,7 +2281,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 	}
 
 	Item* item = thing->getItem();
-	if(!item || item->getClientID() != spriteId)
+	if(!item)
 	{
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
 		return false;

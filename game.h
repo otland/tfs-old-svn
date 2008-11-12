@@ -46,7 +46,8 @@ enum stackPosType_t
 	STACKPOS_NORMAL,
 	STACKPOS_MOVE,
 	STACKPOS_LOOK,
-	STACKPOS_USE
+	STACKPOS_USE,
+	STACKPOS_USEITEM
 };
 
 enum WorldType_t
@@ -80,11 +81,7 @@ enum LightState_t
 struct RuleViolation
 {
 	RuleViolation(Player* _reporter, const std::string& _text, uint32_t _time) :
-		reporter(_reporter),
-		gamemaster(NULL),
-		text(_text),
-		time(_time),
-		isOpen(true)
+		reporter(_reporter), gamemaster(NULL), text(_text), time(_time), isOpen(true)
 	{}
 
 	Player* reporter;
@@ -288,7 +285,7 @@ class Game
 
 		ReturnValue internalAddItem(Cylinder* toCylinder, Item* item, int32_t index = INDEX_WHEREEVER,
 			uint32_t flags = 0, bool test = false);
-		ReturnValue internalRemoveItem(Item* item, int32_t count = -1,  bool test = false);
+		ReturnValue internalRemoveItem(Item* item, int32_t count = -1,  bool test = false, uint32_t flags = 0);
 
 		ReturnValue internalPlayerAddItem(Player* player, Item* item, bool dropOnMap = true);
 
@@ -351,9 +348,10 @@ class Game
 		  * Teleports an object to another position
 		  * \param thing is the object to teleport
 		  * \param newPos is the new position
+		  * \param flags optional flags to modify default behavior
 		  * \returns true if the teleportation was successful
 		  */
-		ReturnValue internalTeleport(Thing* thing, const Position& newPos, bool pushMove);
+		ReturnValue internalTeleport(Thing* thing, const Position& newPos, bool pushMove, uint32_t flags = 0);
 
 		/**
 			* Turn a creature to a different direction.

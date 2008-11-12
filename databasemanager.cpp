@@ -584,7 +584,6 @@ uint32_t DatabaseManager::updateDatabase()
 		case 3:
 		{
 			Database* db = Database::getInstance();
-
 			std::cout << "> Updating database to version: 4..." << std::endl;
 
 			DBQuery query;
@@ -629,6 +628,21 @@ uint32_t DatabaseManager::updateDatabase()
 			query.str("");
 			registerDatabaseConfig("db_version", 4);
 			return 4;
+			break;
+		}
+
+		case 4:
+		{
+			Database* db = Database::getInstance();
+			std::cout << "> Updating database to version: 5..." << std::endl;
+
+			DBQuery query;
+			query << "ALTER TABLE `player_deaths` ADD `altkilled_by` VARCHAR(255) NOT NULL;";
+			db->executeQuery(query.str());
+
+			query.str("");
+			registerDatabaseConfig("db_version", 5);
+			return 5;
 			break;
 		}
 

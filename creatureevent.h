@@ -89,7 +89,7 @@ class CreatureEvent : public Event
 		uint32_t executeOnLook(Player* player, const Position& position, uint8_t stackpos);
 		uint32_t executeOnAttack(Creature* creature, Creature* target);
 		uint32_t executeOnKill(Creature* creature, Creature* target);
-		uint32_t executeOnDeath(Creature* creature, Item* corpse, Creature* killer);
+		uint32_t executeOnDeath(Creature* creature, Item* corpse, Creature* lastHitKiller, Creature* mostDamageKiller);
 		//
 
 	protected:

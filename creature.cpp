@@ -82,8 +82,9 @@ Creature::Creature() :
 	memset(localMapCache, false, sizeof(localMapCache));
 
 	attackedCreature = NULL;
-	_lastHitCreature = NULL;
-	lastHitCreature = 0;
+	lastHitCreatureId = 0;
+	lastHitCreature = NULL;
+	mostDamageCreature = NULL;
 	blockCount = 0;
 	blockTicks = 0;
 	walkUpdateTicks = 0;
@@ -756,25 +757,24 @@ void Creature::onCreatureChangeVisible(const Creature* creature, bool visible)
 
 void Creature::onDeath()
 {
-	Creature* mostDamageCreature = NULL;
-	Creature* mostDamageCreatureMaster = NULL;
 	Creature* lastHitCreatureMaster = NULL;
+	Creature* mostDamageCreatureMaster = NULL;
 
-	if(getKillers(&_lastHitCreature, &mostDamageCreature))
+	if(getKillers(&lastHitCreature, &mostDamageCreature))
 	{
-		if(_lastHitCreature)
+		if(lastHitCreature)
 		{
-			_lastHitCreature->onKilledCreature(this);
-			lastHitCreatureMaster = _lastHitCreature->getMaster();
+			lastHitCreature->onKilledCreature(this);
+			lastHitCreatureMaster = lastHitCreature->getMaster();
 		}
 
 		if(mostDamageCreature)
 		{
 			mostDamageCreatureMaster = mostDamageCreature->getMaster();
 			bool isNotLastHitMaster = (mostDamageCreature != lastHitCreatureMaster);
-			bool isNotMostDamageMaster = (_lastHitCreature != mostDamageCreatureMaster);
+			bool isNotMostDamageMaster = (lastHitCreature != mostDamageCreatureMaster);
 			bool isNotSameMaster = lastHitCreatureMaster == NULL || (mostDamageCreatureMaster != lastHitCreatureMaster);
-			if(mostDamageCreature != _lastHitCreature && isNotLastHitMaster && isNotMostDamageMaster && isNotSameMaster)
+			if(mostDamageCreature != lastHitCreature && isNotLastHitMaster && isNotMostDamageMaster && isNotSameMaster)
 				mostDamageCreature->onKilledCreature(this);
 		}
 	}
@@ -829,16 +829,16 @@ void Creature::dropCorpse()
 	//scripting event - onDeath
 	CreatureEvent* eventDeath = getCreatureEvent(CREATURE_EVENT_DEATH);
 	if(eventDeath)
-		eventDeath->executeOnDeath(this, corpse, _lastHitCreature);
+		eventDeath->executeOnDeath(this, corpse, lastHitCreature, mostDamageCreature);
 
 	g_game.removeCreature(this, false);
 }
 
 bool Creature::getKillers(Creature** _lastHitCreature, Creature** _mostDamageCreature)
 {
-	*_lastHitCreature = g_game.getCreatureByID(lastHitCreature);
-
+	*_lastHitCreature = g_game.getCreatureByID(lastHitCreatureId);
 	int32_t mostDamage = 0;
+
 	CountBlock_t cb;
 	for(CountMap::iterator it = damageMap.begin(); it != damageMap.end(); ++it)
 	{
@@ -1156,7 +1156,7 @@ void Creature::addDamagePoints(Creature* attacker, int32_t damagePoints)
 	}
 
 	if(damagePoints > 0)
-		lastHitCreature = attackerId;
+		lastHitCreatureId = attackerId;
 }
 
 void Creature::addHealPoints(Creature* caster, int32_t healthPoints)

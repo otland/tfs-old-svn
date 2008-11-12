@@ -34,7 +34,7 @@ CREATE TABLE `server_config`
 	`value` INT NOT NULL
 ) ENGINE = InnoDB;
 
-INSERT INTO `server_config` VALUES ('db_version', 4);
+INSERT INTO `server_config` VALUES ('db_version', 5);
 
 CREATE TABLE `server_motd`
 (
@@ -245,6 +245,7 @@ CREATE TABLE `player_deaths`
 	`time` BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	`level` INT NOT NULL DEFAULT 1,
 	`killed_by` VARCHAR(255) NOT NULL,
+	`altkilled_by` VARCHAR(255) NOT NULL,
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
