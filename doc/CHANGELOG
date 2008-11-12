@@ -76,7 +76,7 @@
 [ Milestone
 	Ghost mode.
 	Party experience share.
-	Protocol 8.21 support.
+	Protocol 8.31 support.
 	More lua functions.
 	More configurable things.
 	Cleanups & code optimizations.
@@ -96,7 +96,7 @@
 [ SqLite Update Queries ]
 
 [ Fixed issues...
-	all reported bugs that we could reproduce
-	except the SqLite attributes issue. It will
+	All reported bugs that we could reproduce
+	except the SQLite attributes issue. It will
 	be fixed in 0.3.
 ]

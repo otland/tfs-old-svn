@@ -1,7 +1,7 @@
 [Project]
 FileName=TheForgottenServer-debug.dev
 Name=TheForgottenServer
-UnitCount=159
+UnitCount=161
 Type=0
 Ver=1
 ObjFiles=
@@ -1611,6 +1611,26 @@ BuildCmd=
 
 [Unit159]
 FileName=..\ban.h
+CompileCpp=1
+Folder=TheForgottenServer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit160]
+FileName=..\protocolold.cpp
+CompileCpp=1
+Folder=TheForgottenServer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit161]
+FileName=..\protocolold.h
 CompileCpp=1
 Folder=TheForgottenServer
 Compile=1
