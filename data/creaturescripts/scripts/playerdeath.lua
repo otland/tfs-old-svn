@@ -6,7 +6,7 @@ local config = {
 
 function onDeath(cid, corpse, lastHitKiller, mostDamageKiller)
 	if(config.deathListEnabled == "yes") then
-		local hitKillerName = ""
+		local hitKillerName = "field item"
 		local damageKillerName = ""
 		if(lastHitKiller ~= FALSE) then
 			if(isPlayer(lastHitKiller) == TRUE) then
@@ -22,8 +22,6 @@ function onDeath(cid, corpse, lastHitKiller, mostDamageKiller)
 					damageKillerName = getCreatureName(mostDamageKiller)
 				end
 			end
-		else
-			hitKillerName = "field item"
 		end
 
 		db.executeQuery("INSERT INTO `player_deaths` (`player_id`, `time`, `level`, `killed_by`, `altkilled_by`) VALUES (" .. getPlayerGUID(cid) .. ", " .. os.time() .. ", " .. getPlayerLevel(cid) .. ", " .. db.escapeString(hitKillerName) .. ", " .. db.escapeString(damageKillerName) .. ");")

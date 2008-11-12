@@ -6,7 +6,7 @@ function onSay(cid, words, param)
 		target:free()
 
 		local str = ""
-		local deaths = db.getResult("SELECT `time`, `level`, `killed_by` FROM `player_deaths` WHERE `player_id` = " .. targetGUID .. " ORDER BY `time` DESC;")
+		local deaths = db.getResult("SELECT `time`, `level`, `killed_by`, `altkilled_by` FROM `player_deaths` WHERE `player_id` = " .. targetGUID .. " ORDER BY `time` DESC;")
 		if(deaths:getID() ~= -1) then
 			local breakline = ""
 
@@ -17,24 +17,33 @@ function onSay(cid, words, param)
 
 				local time = os.date("%d %B %Y %X ", deaths:getDataInt("time"))
 				local level = deaths:getDataInt("level")
-				local killedBy = deaths:getDataString("killed_by")
+				local killed = ""
+				local lastHitKiller = deaths:getDataString("killed_by")
+				local mostDamageKiller = deaths:getDataString("altkilled_by")
 
-				if(isNumber(killedBy) == TRUE) then
-					killedBy = getPlayerNameByGUID(killedBy)
+				if(tonumber(lastHitKiller)) then
+					killed = getPlayerNameByGUID(tonumber(lastHitKiller))
 				else
-					killedBy = getArticle(killedBy) .. " " .. string.lower(killedBy)
+					killed = getArticle(lastHitKiller) .. " " .. string.lower(lastHitKiller)
 				end
 
-				str = str .. breakline .. " " .. time .. "  Died at Level " .. level .. " by " .. killedBy .. "."
+				if(mostDamageKiller ~= "") then
+					if(tonumber(mostDamageKiller)) then
+						killed = killed .. " and by " .. getPlayerNameByGUID(tonumber(mostDamageKiller))
+					else
+						killed = killed .. " and by " .. getArticle(mostDamageKiller) .. " " .. string.lower(mostDamageKiller)
+				end
+
+				str = str .. breakline .. " " .. time .. "  Died at Level " .. level .. " by " .. killed .. "."
 				if not(deaths:next()) then
 					break
 				end
 			end
 			deaths:free()
 		else
-			str = "No deaths."
+			str = "No deaths recorded."
 		end
-		doPlayerPopupFYI(cid, "Deathlist for player, " .. targetName .. ".\n\n" .. str)
+		doPlayerPopupFYI(cid, "Deathlist for player: " .. targetName .. ".\n\n" .. str)
 	else
 		doPlayerSendCancel(cid, "A player with that name does not exist.")
 	end

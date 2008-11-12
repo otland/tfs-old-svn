@@ -1888,6 +1888,12 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerBalance(cid)
 	lua_register(m_luaState, "getPlayerBalance", LuaScriptInterface::luaGetPlayerBalance);
 
+	//getPlayerViolationAccess(cid)
+	lua_register(m_luaState, "getPlayerViolationAccess", LuaScriptInterface::luaGetPlayerViolationAccess);
+
+	//getPlayerGroupName(cid)
+	lua_register(m_luaState, "getPlayerGroupName", LuaScriptInterface::luaGetPlayerGroupName);
+
 	//getPlayerBlessing(cid, blessing)
 	lua_register(m_luaState, "getPlayerBlessing", LuaScriptInterface::luaGetPlayerBlessing);
 
@@ -2191,22 +2197,26 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 			case PlayerInfoGuildRank:
 				lua_pushstring(L, player->getGuildRank().c_str());
 				return 1;
-				break;
 			case PlayerInfoGuildLevel:
 				value = player->getGuildLevel();
 				break;
 			case PlayerInfoGuildNick:
 				lua_pushstring(L, player->getGuildNick().c_str());
 				return 1;
-				break;
 			case PlayerInfoSex:
 				value = player->getSex();
 				break;
 			case PlayerInfoGroupId:
 				value = player->getGroupId();
 				break;
+			case PlayerInfoGroupName:
+				lua_pushstring(L, player->groupName.c_str());
+				return 1;
 			case PlayerInfoBalance:
 				value = (g_config.getBool(ConfigManager::BANK_SYSTEM) ? player->balance : 0);
+				break;
+			case PlayerInfoViolationAccess:
+				value = player->getViolationAccess();
 				break;
 			case PlayerInfoStamina:
 				value = player->getStaminaMinutes();
@@ -2249,6 +2259,7 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 		return 1;
 	}
 	else
+
 	{
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
@@ -2359,6 +2370,11 @@ int32_t LuaScriptInterface::luaGetPlayerGroupId(lua_State* L)
 	return internalGetPlayerInfo(L, PlayerInfoGroupId);
 }
 
+int32_t LuaScriptInterface::luaGetPlayerGroupName(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoGroupName);
+}
+
 int32_t LuaScriptInterface::luaGetPlayerGUID(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoGUID);
@@ -2382,6 +2398,11 @@ int32_t LuaScriptInterface::luaGetPlayerPremiumDays(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerBalance(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoBalance);
+}
+
+int32_t LuaScriptInterface::luaGetPlayerViolationAccess(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoViolationAccess);
 }
 
 int32_t LuaScriptInterface::luaGetPlayerStamina(lua_State* L)

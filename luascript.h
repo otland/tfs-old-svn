@@ -227,11 +227,13 @@ enum PlayerInfo_t
 	PlayerInfoSex,
 	PlayerInfoLookDirection,
 	PlayerInfoGroupId,
+	PlayerInfoGroupName,
 	PlayerInfoGUID,
 	PlayerInfoAccountId,
 	PlayerInfoAccount,
 	PlayerInfoPremiumDays,
 	PlayerInfoBalance,
+	PlayerInfoViolationAccess,
 	PlayerInfoStamina,
 	PlayerInfoGhostStatus,
 	PlayerInfoExtraExpRate,
@@ -546,6 +548,7 @@ class LuaScriptInterface
 		static int32_t luaSetPlayerPromotionLevel(lua_State* L);
 		static int32_t luaGetPlayerGroupId(lua_State* L);
 		static int32_t luaSetPlayerGroupId(lua_State* L);
+		static int32_t luaGetPlayerGroupName(lua_State* L);
 
 		static int32_t luaDoPlayerLearnInstantSpell(lua_State* L);
 		static int32_t luaCanPlayerLearnInstantSpell(lua_State* L);
@@ -676,6 +679,7 @@ class LuaScriptInterface
 		static int32_t luaRegisterCreatureEvent(lua_State* L);
 
 		static int32_t luaGetPlayerBalance(lua_State* L);
+		static int32_t luaGetPlayerViolationAccess(lua_State* L);
 		static int32_t luaDoPlayerPopupFYI(lua_State* L);
 		static int32_t luaDoPlayerSendTutorial(lua_State* L);
 		static int32_t luaDoPlayerAddMapMark(lua_State* L);
