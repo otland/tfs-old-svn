@@ -87,7 +87,7 @@ bool Map::loadMap(const std::string& identifier)
 	IOMapSerialize.loadHouseInfo(this);
 	IOMapSerialize.loadMap(this);
 
-	std::cout << "> Serialization loading time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
+	std::cout << "> Unserialization time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 	return true;
 }
 
