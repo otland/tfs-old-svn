@@ -482,9 +482,9 @@ int32_t Player::getArmor() const
 
 void Player::getShieldAndWeapon(const Item* &shield, const Item* &weapon) const
 {
+	shield = weapon = NULL;
+
 	Item* item;
-	shield = NULL;
-	weapon = NULL;
 	for(uint32_t slot = SLOT_RIGHT; slot <= SLOT_LEFT; slot++)
 	{
 		item = getInventoryItem((slots_t)slot);
@@ -513,28 +513,30 @@ void Player::getShieldAndWeapon(const Item* &shield, const Item* &weapon) const
 
 int32_t Player::getDefense() const
 {
-	int32_t baseDefense = 5;
-	int32_t defenseValue = 0;
-	int32_t defenseSkill = 0;
-	int32_t extraDefense = 0;
+	int32_t baseDefense = 5, defenseValue = 0, defenseSkill = 0, extraDefense = 0;
 	float defenseFactor = getDefenseFactor();
+
 	const Item* weapon = NULL;
 	const Item* shield = NULL;
 	getShieldAndWeapon(shield, weapon);
 
 	if(weapon)
 	{
-		defenseValue = baseDefense + weapon->getDefense();
 		extraDefense = weapon->getExtraDefense();
+		defenseValue = baseDefense + weapon->getDefense();
 		defenseSkill = getWeaponSkill(weapon);
 	}
 
-	if(shield && shield->getDefense() >= defenseValue)
+	if(shield && shield->getDefense() > defenseValue)
 	{
-		defenseValue = baseDefense + shield->getDefense() + extraDefense;
+		if(shield->getExtraDefense() > extraDefense)
+			extraDefense = shield->getExtraDefense();
+
+		defenseValue = baseDefense + shield->getDefense();
 		defenseSkill = getSkill(SKILL_SHIELD, SKILL_LEVEL);
 	}
 
+	defenseValue += extraDefense;
 	if(vocation->defenseMultipler != 1.0)
 		defenseValue = int32_t(defenseValue * vocation->defenseMultipler);
 
