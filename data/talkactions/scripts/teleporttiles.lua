@@ -6,7 +6,7 @@ function onSay(cid, words, param)
 
 	local pos = getPosByDir(getCreaturePosition(cid), getPlayerLookDir(cid), n)
 	pos.stackpos = STACKPOS_GROUND
-	if(getTileThingByPos(pos).uid == 0)
+	if(getTileThingByPos(pos).uid == 0) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You cannot teleport there.")
 		return FALSE
 	end

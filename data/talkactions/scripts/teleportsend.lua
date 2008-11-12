@@ -23,7 +23,7 @@ function onSay(cid, words, param)
 	end
 
 	local pos = {x = tmp[1], y = tmp[2], z = tmp[3], stackpos = STACKPOS_GROUND}
-	if(getTileThingByPos(pos).uid == 0)
+	if(getTileThingByPos(pos).uid == 0) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Destination tile does not exists.")
 		return FALSE
 	end
