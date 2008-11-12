@@ -336,6 +336,10 @@ function doConvertIntegerToIp(int, mask)
 	return b1 .. "." .. b2 .. "." .. b3 .. "." .. b4
 end
 
+function getBooleanFromString(str)
+	return (str == "yes" or str == "true" or tonumber(str) > 0) and TRUE or FALSE
+end
+
 exhaustion =
 {
 	check = function (cid, storage)
