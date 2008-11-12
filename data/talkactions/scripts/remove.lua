@@ -37,7 +37,7 @@ function onSay(cid, words, param)
 	end
 
 	local limit = 1
-	if(getPlayerAccess(cid) >= 5) then
+	if(getPlayerCustomFlagValue(cid, PlayerCustomFlag_CanMoveAnywhere) == TRUE) then
 		limit = 0
 	end
 

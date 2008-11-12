@@ -29,16 +29,14 @@ function onDeath(cid, corpse, lastHitKiller, mostDamageKiller)
 		db.executeQuery("INSERT INTO `player_deaths` (`player_id`, `time`, `level`, `killed_by`, `altkilled_by`) VALUES (" .. getPlayerGUID(cid) .. ", " .. os.time() .. ", " .. getPlayerLevel(cid) .. ", " .. db.escapeString(hitKillerName) .. ", " .. db.escapeString(damageKillerName) .. ");")
 		local rows = db.getResult("SELECT `player_id` FROM `player_deaths` WHERE `player_id` = " .. getPlayerGUID(cid) .. ";")
 		if(rows:getID() ~= -1) then
-			local deathRecords = rows:numRows(true)
-			if(config.sqlType == "sqlite") then
-				while(deathRecords > config.maxDeathRecords) do
-					db.executeQuery("DELETE FROM `player_deaths` WHERE `rowid` = (SELECT `rowid` FROM `player_deaths` WHERE `player_id` = " .. getPlayerGUID(cid) .. " ORDER BY `time` LIMIT 1);")
-					deathRecords = deathRecords - 1
-				end
-			else
-				while(deathRecords > config.maxDeathRecords) do
-					db.executeQuery("DELETE FROM `player_deaths` WHERE `player_id` = " .. getPlayerGUID(cid) .. " ORDER BY `time` LIMIT 1;")
-					deathRecords = deathRecords - 1
+			local amount = (rows:numRows(true) - config.maxDeathRecords)
+			if(amount > 0) then
+				if(config.sqlType == "sqlite") then
+					for i = 1, amount do
+						db.executeQuery("DELETE FROM `player_deaths` WHERE `rowid` = (SELECT `rowid` FROM `player_deaths` WHERE `player_id` = " .. getPlayerGUID(cid) .. " ORDER BY `time` LIMIT 1);")
+					end
+				else
+					db.executeQuery("DELETE FROM `player_deaths` WHERE `player_id` = " .. getPlayerGUID(cid) .. " ORDER BY `time` LIMIT " .. amount .. ";")
 				end
 			end
 		end
