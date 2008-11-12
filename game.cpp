@@ -4554,19 +4554,19 @@ void Game::prepareGlobalSave()
 	if(!globalSaveMessage[0])
 	{
 		globalSaveMessage[0] = true;
-		broadcastMessage("Server is saving game in 5 minutes. Please logout.", MSG_STATUS_WARNING);
+		broadcastMessage("Server is going down for a global save within 5 minutes. Please logout.", MSG_STATUS_WARNING);
 		Scheduler::getScheduler().addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareGlobalSave, this)));
 	}
 	else if(!globalSaveMessage[1])
 	{
 		globalSaveMessage[1] = true;
-		broadcastMessage("Server is saving game in 3 minutes. Please logout.", MSG_STATUS_WARNING);
+		broadcastMessage("Server is going down for a global save within 3 minutes. Please logout.", MSG_STATUS_WARNING);
 		Scheduler::getScheduler().addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareGlobalSave, this)));
 	}
 	else if(!globalSaveMessage[2])
 	{
 		globalSaveMessage[2] = true;
-		broadcastMessage("Server is saving game in one minute. Please logout.", MSG_STATUS_WARNING);
+		broadcastMessage("Server is going down for a global save in one minute, please logout!", MSG_STATUS_WARNING);
 		Scheduler::getScheduler().addEvent(createSchedulerTask(60000, boost::bind(&Game::prepareGlobalSave, this)));
 	}
 	else
@@ -4910,30 +4910,30 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 		return false;
 	}
 
-	bool auth = false;
 	Account account;
 	uint32_t guid, ip;
-
 	Player* targetPlayer = getPlayerByName(targetPlayerName);
 	if(targetPlayer)
 	{
-		auth = targetPlayer->hasFlag(PlayerFlag_CannotBeBanned);
+		if(targetPlayer->hasFlag(PlayerFlag_CannotBeBanned))
+		{
+			player->sendCancel("You do not have authorization for this action.");
+			return false;
+		}
 		account = IOLoginData::getInstance()->loadAccount(targetPlayer->getAccount(), true);
 		guid = targetPlayer->getGUID();
 		ip = targetPlayer->lastIP;
 	}
 	else
 	{
-		auth = IOLoginData::getInstance()->hasFlag(targetPlayerName, PlayerFlag_CannotBeBanned);
+		if(!IOLoginData::getInstance()->hasFlag(targetPlayerName, PlayerFlag_CannotBeBanned))
+		{
+			player->sendCancel("You do not have authorization for this action.");
+			return false;
+		}
 		account = IOLoginData::getInstance()->loadAccount(IOLoginData::getInstance()->getAccountIdByName(targetPlayerName), true);
 		IOLoginData::getInstance()->getGuidByName(guid, targetPlayerName);
 		ip = IOLoginData::getInstance()->getLastIP(guid);
-	}
-
-	if(auth)
-	{
-		player->sendCancel("You do not have authorization for this action.");
-		return false;
 	}
 
 	bool notation = false;

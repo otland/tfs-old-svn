@@ -98,6 +98,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	setXTEAKey(key);
 
 	std::string name = msg.GetString();
+	toLowerCaseString(name);
 	std::string password = msg.GetString();
 	uint32_t id = 1;
 

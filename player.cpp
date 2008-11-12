@@ -2765,7 +2765,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 			return this;
 
 		//find a appropiate slot
-		for(int i = SLOT_FIRST; i < SLOT_LAST; ++i)
+		for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 		{
 			if(inventory[i] == NULL)
 			{
@@ -2995,7 +2995,7 @@ void Player::__removeThing(Thing* thing, uint32_t count)
 
 int32_t Player::__getIndexOfThing(const Thing* thing) const
 {
-	for(int i = SLOT_FIRST; i < SLOT_LAST; ++i)
+	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 	{
 		if(inventory[i] == thing)
 			return i;
@@ -3283,8 +3283,7 @@ void Player::doAttacking(uint32_t interval)
 			else if(!canDoAction())
 			{
 				uint32_t delay = getNextActionTime();
-				SchedulerTask* task = createSchedulerTask(delay, boost::bind(&Game::checkCreatureAttack,
-					&g_game, getID()));
+				SchedulerTask* task = createSchedulerTask(delay, boost::bind(&Game::checkCreatureAttack, &g_game, getID()));
 				setNextActionTask(task);
 			}
 			else if(!hasCondition(CONDITION_EXHAUST_WEAPON) || !weapon->hasExhaustion())
@@ -3872,10 +3871,8 @@ void Player::addUnjustifiedDead(const Player* attacked)
 
 		if(success)
 		{
-			uint32_t playerId = getID();
 			g_game.addMagicEffect(getPosition(), NM_ME_MAGIC_POISON);
-			Scheduler::getScheduler().addEvent(createSchedulerTask(500,
-				boost::bind(&Game::kickPlayer, &g_game, playerId, false)));
+			Scheduler::getScheduler().addEvent(createSchedulerTask(500, boost::bind(&Game::kickPlayer, &g_game, getID(), false)));
 		}
 	}
 }

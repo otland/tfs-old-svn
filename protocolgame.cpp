@@ -553,6 +553,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 	uint8_t gamemasterLogin = msg.GetByte();
 	std::string accName = msg.GetString();
+	toLowerCaseString(accName);
 	const std::string name = msg.GetString();
 	std::string password = msg.GetString();
 	uint32_t accId = 1;

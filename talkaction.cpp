@@ -210,7 +210,7 @@ TalkActionCallback_t TalkAction::definedCallbacks[] =
 
 TalkAction::TalkAction(LuaScriptInterface* _interface) : Event(_interface)
 {
-	m_filter = TALKFILTER_QUOTATION;
+	m_filter = TALKFILTER_WORD;
 	m_access = 0;
 	m_channel = -1;
 	m_logged = false;
@@ -230,11 +230,13 @@ bool TalkAction::configureEvent(xmlNodePtr p)
 
 	if(readXMLString(p, "filter", strValue))
 	{
-		strValue = asLowerCaseString(strValue);
-		if(strValue == "quotation")
+		std::string tmpStrValue = asLowerCaseString(strValue);
+		if(tmpStrValue == "quotation")
 			m_filter = TALKFILTER_QUOTATION;
-		else if(strValue == "word")
+		else if(tmpStrValue == "word")
 			m_filter = TALKFILTER_WORD;
+		else
+			std::cout << "[Warning - TalkAction::configureEvent] Unknown filter for TalkAction: " << strValue << ", using default." << std::endl;
 	}
 
 	int32_t intValue;
@@ -702,12 +704,12 @@ bool TalkAction::showBanishmentInfo(Creature* creature, const std::string& cmd, 
 	Player* player = creature->getPlayer();
 	if(player)
 	{
-		uint32_t accountNumber = atoi(param.c_str());
-		if(accountNumber == 0 && IOLoginData::getInstance()->playerExists(param))
-			accountNumber = IOLoginData::getInstance()->getAccountIdByName(param);
+		uint32_t accountId = atoi(param.c_str());
+		if(accountId == 0 && IOLoginData::getInstance()->playerExists(param))
+			accountId = IOLoginData::getInstance()->getAccountIdByName(param);
 
 		Ban ban;
-		if(IOBan::getInstance()->getData(accountNumber, ban))
+		if(IOBan::getInstance()->getData(accountId, ban))
 		{
 			bool deletion = (ban.type == BANTYPE_DELETION);
 

@@ -32,6 +32,7 @@ function onSay(cid, words, param)
 						killed = killed .. " and by " .. getPlayerNameByGUID(tonumber(mostDamageKiller))
 					else
 						killed = killed .. " and by " .. getArticle(mostDamageKiller) .. " " .. string.lower(mostDamageKiller)
+					end
 				end
 
 				str = str .. breakline .. " " .. time .. "  Died at Level " .. level .. " by " .. killed .. "."

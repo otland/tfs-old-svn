@@ -56,23 +56,14 @@ enum slots_t
 
 struct FindPathParams
 {
-	bool fullPathSearch;
-	bool clearSight;
-	bool allowDiagonal;
-	bool keepDistance;
-	int32_t maxSearchDist;
-	int32_t minTargetDist;
-	int32_t maxTargetDist;
+	bool fullPathSearch, clearSight, allowDiagonal, keepDistance;
+	int32_t maxSearchDist, minTargetDist, maxTargetDist;
 
 	FindPathParams()
 	{
-		fullPathSearch = true;
-		clearSight = true;
-		allowDiagonal = true;
+		fullPathSearch = clearSight = allowDiagonal = true;
+		maxSearchDist = minTargetDist = maxTargetDist = -1;
 		keepDistance = false;
-		maxSearchDist = -1;
-		minTargetDist = -1;
-		maxTargetDist = -1;
 	}
 };
 

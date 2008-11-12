@@ -93,8 +93,6 @@
 	#include <assert.h>
 	#define ATOI64 atoll
 #else
-	typedef unsigned long long uint64_t;
-
 	#define _WIN32_WINNT 0x0500
 
 	#ifndef NOMINMAX
@@ -119,7 +117,7 @@
 		return ::_strnicmp(s1, s2, n);
 	}
 
-	typedef unsigned long long uint64_t
+	typedef unsigned long long uint64_t;
 	typedef signed long long int64_t;
 	typedef unsigned long uint32_t;
 	typedef signed long int32_t;
