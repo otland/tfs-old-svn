@@ -408,6 +408,8 @@ struct NpcState
 	int32_t amount;
 	int32_t itemId;
 	int32_t subType;
+	bool ignoreCap;
+	bool inBackpacks;
 	std::string spellName;
 	std::string listName;
 	std::string listPluralName;

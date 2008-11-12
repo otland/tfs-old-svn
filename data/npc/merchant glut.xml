@@ -4,7 +4,7 @@
 	<look type="100" head="0" body="0" legs="0" feet="0"/>
 
   <interaction range="3" idletime="0" defaultpublic="0">
-    <!--This will include the bankman interaction, in this way several npc can use the same interaction-->
+    <!--This will include the merchant interaction, in this way several npc can use the same interaction-->
     <include file="merchant.xml"/>
 
     <interact keywords="hi" focus="1">

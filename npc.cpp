@@ -993,6 +993,8 @@ NpcState* Npc::getState(const Player* player, bool makeNew /*= true*/)
 	state->amount = 1;
 	state->itemId = 0;
 	state->subType = -1;
+	state->ignoreCap = false;
+	state->inBackpacks = false;
 	state->spellName = "";
 	state->listName = "";
 	state->listPluralName = "";
@@ -1595,9 +1597,10 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 						{
 							bool adddelim = (n + 1 != response->prop.itemList.size());
 							scriptstream << "{id = " << iit->itemId
-								<< ", subtype = " << iit->subType
-								<< ", buy=" << iit->buyPrice
-								<< ", sell=" << iit->sellPrice << "}";
+								<< ", subType = " << iit->subType
+								<< ", buy = " << iit->buyPrice
+								<< ", sell = " << iit->sellPrice
+								<< ", name = '" << iit->name << "'}";
 
 							if(adddelim)
 								scriptstream << "," << std::endl;
@@ -1775,6 +1778,8 @@ void Npc::onPlayerTrade(Player* player, ShopEvent_t type, int32_t callback, uint
 			npcState->subType = count;
 			npcState->itemId = itemId;
 			npcState->buyPrice = getListItemPrice(itemId, SHOPEVENT_BUY);
+			npcState->ignoreCap = ignoreCap;
+			npcState->inBackpacks = inBackpacks;
 			const NpcResponse* response = getResponse(player, npcState, EVENT_PLAYER_SHOPBUY);
 			executeResponse(player, npcState, response);
 		}
