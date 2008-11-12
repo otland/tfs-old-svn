@@ -1,14 +1,10 @@
 function onSay(cid, words, param)
-	if(param ~= "") then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
+	if(param == "" or not tonumber(param)) then
+		doPlayerSendCancel(cid, "Command requires numeric param.")
 		return FALSE
 	end
 
-	if(tonumber(param)) then
-		prepareShutdown(tonumber(param))
-	else
-		doPlayerSendCancel(cid, "Command requires numeric param.")
-	end
+	prepareShutdown(tonumber(param))
 	return TRUE
 end
 
