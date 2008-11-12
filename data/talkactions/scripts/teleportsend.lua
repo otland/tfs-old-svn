@@ -24,7 +24,7 @@ function onSay(cid, words, param)
 
 	local pos = getClosestFreeTile(pid, {x = tmp[1], y = tmp[2], z = tmp[3]})
 	if(pos == LUA_ERROR or isInArray({pos.x, pos.y, pos.z}, 0) == TRUE) then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You cannot teleport there.")
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Destination not reachable.")
 		return FALSE
 	end
 
