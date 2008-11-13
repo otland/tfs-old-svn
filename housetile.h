@@ -42,10 +42,10 @@ class HouseTile : public Tile
 		virtual void __internalAddThing(uint32_t index, Thing* thing);
 
 		House* getHouse() {return house;}
+		virtual bool isHouseTile() const {return true;}
 
 	private:
 		void updateHouse(Item* item);
-
 		House* house;
 };
 
