@@ -6,8 +6,9 @@ function onSay(cid, words, param)
 
 	local t = string.explode(param, ",")
 	if(t[2]) then
+		local tid = cid
 		cid = getPlayerByNameWildcard(t[2])
-		if(cid == 0 or isPlayerGhost(cid) == TRUE) then
+		if(cid == 0 or (isPlayerGhost(cid) == TRUE and getPlayerAccess(cid) > getPlayerAccess(tid)) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. t[2] .. " not found.")
 			return FALSE
 		end
