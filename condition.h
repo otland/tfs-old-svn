@@ -164,7 +164,7 @@ class ConditionGeneric: public Condition
 		virtual void addCondition(Creature* creature, const Condition* condition);
 		virtual uint32_t getIcons() const;
 
-		virtual ConditionGeneric* clone()  const { return new ConditionGeneric(*this); }
+		virtual ConditionGeneric* clone() const {return new ConditionGeneric(*this);}
 };
 
 class ConditionManaShield : public ConditionGeneric
@@ -173,7 +173,7 @@ class ConditionManaShield : public ConditionGeneric
 		ConditionManaShield(ConditionId_t _id, ConditionType_t _type, int32_t _ticks) : ConditionGeneric(_id, _type, _ticks) {}
 		virtual ~ConditionManaShield(){}
 
-		virtual ConditionManaShield* clone()  const { return new ConditionManaShield(*this); }
+		virtual ConditionManaShield* clone() const {return new ConditionManaShield(*this);}
 };
 
 class ConditionAttributes : public ConditionGeneric
@@ -187,7 +187,7 @@ class ConditionAttributes : public ConditionGeneric
 		virtual void endCondition(Creature* creature, ConditionEnd_t reason);
 		virtual void addCondition(Creature* creature, const Condition* condition);
 
-		virtual ConditionAttributes* clone()  const { return new ConditionAttributes(*this); }
+		virtual ConditionAttributes* clone() const {return new ConditionAttributes(*this);}
 
 		virtual bool setParam(ConditionParam_t param, int32_t value);
 
@@ -218,7 +218,7 @@ class ConditionRegeneration : public ConditionGeneric
 		virtual void addCondition(Creature* creature, const Condition* addCondition);
 		virtual bool executeCondition(Creature* creature, int32_t interval);
 
-		virtual ConditionRegeneration* clone()  const { return new ConditionRegeneration(*this); }
+		virtual ConditionRegeneration* clone() const {return new ConditionRegeneration(*this);}
 
 		virtual bool setParam(ConditionParam_t param, int32_t value);
 
@@ -247,7 +247,7 @@ class ConditionSoul : public ConditionGeneric
 		virtual void addCondition(Creature* creature, const Condition* addCondition);
 		virtual bool executeCondition(Creature* creature, int32_t interval);
 
-		virtual ConditionSoul* clone()  const { return new ConditionSoul(*this); }
+		virtual ConditionSoul* clone() const {return new ConditionSoul(*this);}
 
 		virtual bool setParam(ConditionParam_t param, int32_t value);
 
@@ -273,7 +273,7 @@ class ConditionInvisible: public ConditionGeneric
 		virtual bool startCondition(Creature* creature);
 		virtual void endCondition(Creature* creature, ConditionEnd_t reason);
 
-		virtual ConditionInvisible* clone()  const { return new ConditionInvisible(*this); }
+		virtual ConditionInvisible* clone() const {return new ConditionInvisible(*this);}
 };
 
 class ConditionDamage: public Condition
@@ -283,6 +283,7 @@ class ConditionDamage: public Condition
 		virtual ~ConditionDamage(){}
 
 		static void generateDamageList(int32_t amount, int32_t start, std::list<int32_t>& list);
+		int32_t getTotalDamage() const;
 
 		virtual bool startCondition(Creature* creature);
 		virtual bool executeCondition(Creature* creature, int32_t interval);
@@ -290,10 +291,8 @@ class ConditionDamage: public Condition
 		virtual void addCondition(Creature* creature, const Condition* condition);
 		virtual uint32_t getIcons() const;
 
-		virtual ConditionDamage* clone()  const { return new ConditionDamage(*this); }
-
+		virtual ConditionDamage* clone() const {return new ConditionDamage(*this);}
 		virtual bool setParam(ConditionParam_t param, int32_t value);
-
 		bool addDamage(int32_t rounds, int32_t time, int32_t value);
 		bool doForceUpdate() const {return forceUpdate;}
 
@@ -317,7 +316,6 @@ class ConditionDamage: public Condition
 		uint32_t owner;
 
 		bool init();
-		int32_t getTotalDamage() const;
 
 		typedef std::list<IntervalInfo> DamageList;
 		DamageList damageList;
@@ -339,7 +337,7 @@ class ConditionSpeed: public Condition
 		virtual void addCondition(Creature* creature, const Condition* condition);
 		virtual uint32_t getIcons() const;
 
-		virtual ConditionSpeed* clone()  const { return new ConditionSpeed(*this); }
+		virtual ConditionSpeed* clone() const {return new ConditionSpeed(*this);}
 
 		virtual bool setParam(ConditionParam_t param, int32_t value);
 
@@ -376,7 +374,7 @@ class ConditionOutfit: public Condition
 		virtual void addCondition(Creature* creature, const Condition* condition);
 		virtual uint32_t getIcons() const;
 
-		virtual ConditionOutfit* clone()  const { return new ConditionOutfit(*this); }
+		virtual ConditionOutfit* clone() const {return new ConditionOutfit(*this);}
 
 		void addOutfit(Outfit_t outfit);
 
@@ -405,7 +403,7 @@ class ConditionLight: public Condition
 		virtual void addCondition(Creature* creature, const Condition* addCondition);
 		virtual uint32_t getIcons() const;
 
-		virtual ConditionLight* clone()  const { return new ConditionLight(*this); }
+		virtual ConditionLight* clone() const {return new ConditionLight(*this);}
 
 		virtual bool setParam(ConditionParam_t param, int32_t value);
 
