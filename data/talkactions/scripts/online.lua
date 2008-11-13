@@ -22,7 +22,7 @@ function onSay(cid, words, param)
 		end
 
 		tmp = TRUE
-		if((getBooleanFromString(config.showGamemasters) == FALSE and getPlayerCustomFlagValue(pid, PlayerCustomFlag_GamemasterPrivileges) == TRUE and getPlayerCustomFlagValue(cid, PlayerCustomFlag_GamemasterPrivileges) == FALSE) or (isPlayerGhost(pid) == TRUE and getPlayerAccess(pid) > getPlayerAccess(cid)) then
+		if((getBooleanFromString(config.showGamemasters) == FALSE and getPlayerCustomFlagValue(pid, PlayerCustomFlag_GamemasterPrivileges) == TRUE and getPlayerCustomFlagValue(cid, PlayerCustomFlag_GamemasterPrivileges) == FALSE) or (isPlayerGhost(pid) == TRUE and getPlayerAccess(pid) > getPlayerAccess(cid))) then
 			count = count + 1
 			tmp = FALSE
 		else

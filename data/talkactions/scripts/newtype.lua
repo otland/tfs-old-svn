@@ -13,7 +13,7 @@ function onSay(cid, words, param)
 
 	if(t[2]) then
 		cid = getPlayerByNameWildcard(t[2])
-		if(cid == 0 or (isPlayerGhost(pid) == TRUE and getPlayerAccess(pid) > getPlayerAccess(cid)) then
+		if(cid == 0 or (isPlayerGhost(pid) == TRUE and getPlayerAccess(pid) > getPlayerAccess(cid))) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. t[2] .. " not found.")
 			return FALSE
 		end

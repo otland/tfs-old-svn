@@ -9,7 +9,7 @@ function onSay(cid, words, param)
 	local tile = string.explode(param, ",")
 	local pos = {x = 0, y = 0, z = 0}
 
-	if(player ~= 0 and (isPlayerGhost(player) == FALSE or getPlayerAccess(player) <= getPlayerAccess(cid)) then
+	if(player ~= 0 and (isPlayerGhost(player) == FALSE or getPlayerAccess(player) <= getPlayerAccess(cid))) then
 		pos = getCreaturePosition(player)
 	elseif(creature ~= 0 and (isPlayer(creature) == FALSE or (isPlayerGhost(creature) == FALSE or getPlayerAccess(creature) <= getPlayerAccess(cid)))) then
 		pos = getCreaturePosition(creature)
