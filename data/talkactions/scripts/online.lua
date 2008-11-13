@@ -5,32 +5,32 @@ local config = {
 function onSay(cid, words, param)
 	local players = getPlayersOnline()
 	local strings = {}
-	local curStr = 1
-	local nrGMs = 0
+	local pos = 1
+	local count = 0
+	local tmp = TRUE
 	for i, pid in ipairs(players) do
-		if(i > curStr * 7) then
-			curStr = curStr + 1
-		end
-
-		if(strings[curStr] == nil) then
-			strings[curStr] = ""
-			breakline = ""
-		elseif(strings[curStr] ~= "") then
-			breakline = ", "
-		end
-
-		if(config.showGamemasters ~= "yes") then
-			if(getPlayerCustomFlagValue(pid, PlayerCustomFlag_GamemasterPrivileges) == FALSE or getPlayerCustomFlagValue(cid, PlayerCustomFlag_GamemasterPrivileges) == TRUE) then
-				strings[curStr] = strings[curStr] .. breakline .. getCreatureName(pid) .. " [" .. getPlayerLevel(pid) .. "]"
-			else
-				nrGMs = nrGMs + 1
+		local line = ", "
+		if(tmp == TRUE) then
+			if(i > pos * 7) then
+				pos = pos + 1
 			end
+
+			if(strings[pos] == nil) then
+				strings[pos] = ""
+				line = ""
+			end
+		end
+
+		tmp = TRUE
+		if((getBooleanFromString(config.showGamemasters) == FALSE and getPlayerCustomFlagValue(pid, PlayerCustomFlag_GamemasterPrivileges) == TRUE and getPlayerCustomFlagValue(cid, PlayerCustomFlag_GamemasterPrivileges) == FALSE) or isPlayerGhost(pid) == TRUE) then
+			count = count + 1
+			tmp = FALSE
 		else
-			strings[curStr] = strings[curStr] .. breakline .. getCreatureName(pid) .. " [" .. getPlayerLevel(pid) .. "]"
+			strings[pos] = strings[pos] .. line .. getCreatureName(pid) .. " [" .. getPlayerLevel(pid) .. "]"
 		end
 	end
 
-	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, (#players - nrGMs) .. " player(s) online:")
+	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, (#players - count) .. " player(s) online:")
 	for i, string in ipairs(strings) do
 		if(string ~= "") then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, string .. ".")

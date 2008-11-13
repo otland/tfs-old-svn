@@ -5,7 +5,7 @@ function onSay(cid, words, param)
 	end
 
 	local pid = getPlayerByNameWildcard(param)
-	if(pid == 0) then
+	if(pid == 0 or isPlayerGhost(pid) == TRUE) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. param .. " is not currently online.")
 		return FALSE
 	end
@@ -16,5 +16,6 @@ function onSay(cid, words, param)
 	end
 
 	doRemoveCreature(pid)
+	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, getCreatureName(pid) .. " has been kicked.")
 	return TRUE
 end
