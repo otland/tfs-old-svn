@@ -159,7 +159,7 @@ bool Condition::executeCondition(Creature* creature, int32_t interval)
 {
 	if(ticks != -1)
 	{
-		setTicks(std::max((int32_t)0, (getTicks() - interval)));
+		setTicks(getTicks() - interval);
 		return getTicks() > 0;
 	}
 

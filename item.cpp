@@ -1022,9 +1022,6 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 
 			s << ")";
 		}
-
-		if(it.showCharges)
-			s << " that has " << subType << " charge" << (subType > 1 ? "s" : "") << " left";
 	}
 	else if(it.armor != 0 || (item && item->getArmor() != 0))
 	{
@@ -1141,8 +1138,12 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 
 		s << ")";
 	}
+	else if(it.isContainer())
+		s << " (Vol:" << (int32_t)it.maxItems << ")";
 	else if(it.abilities.speed > 0)
 		s << " (speed +" << it.abilities.speed / 2 << ")";
+	else if(it.isKey())
+		s << " (Key:" << (item ? (int32_t)item->getActionId() : 0) << ")";
 	else if(it.isFluidContainer())
 	{
 		if(subType > 0)
@@ -1158,10 +1159,6 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		else
 			s << "unknown";
 	}
-	else if(it.isContainer())
-		s << " (Vol:" << (int32_t)it.maxItems << ")";
-	else if(it.isKey())
-		s << " (Key:" << (item ? (int32_t)item->getActionId() : 0) << ")";
 	else if(it.allowDistRead)
 	{
 		s << std::endl;
@@ -1193,9 +1190,13 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		else
 			s << "Nothing is written on it";
 	}
-	else if(it.showCharges)
+	else if(it.isLevelDoor() && item && item->getActionId() >= 1000)
+		s << " for level " << item->getActionId() - 1000;
+
+	if(it.showCharges)
 		s << " that has " << subType << " charge" << (subType > 1 ? "s" : "") << " left";
-	else if(it.showDuration)
+
+	if(it.showDuration)
 	{
 		if(item && item->hasAttribute(ATTR_ITEM_DURATION))
 		{
@@ -1212,8 +1213,6 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		else
 			s << " that is brand-new";
 	}
-	else if(it.isLevelDoor() && item && item->getActionId() >= 1000)
-		s << " for level " << item->getActionId() - 1000;
 
 	s << ".";
 	if(it.wieldInfo != 0)
