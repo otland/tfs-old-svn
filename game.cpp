@@ -4342,7 +4342,7 @@ void Game::checkLight()
 
 void Game::getWorldLightInfo(LightInfo& lightInfo)
 {
-	lightInfo.level = lightlevel;
+	lightInfo.level = lightLevel;
 	lightInfo.color = 0xD7;
 }
 
@@ -4469,10 +4469,10 @@ void Game::checkHighscores()
 	if(tmp <= 0)
 		return;
 
-	Scheduler::getScheduler().addEvent(createSchedulerTask(highscoreUpdateTime, boost::bind(&Game::checkHighscores, this)));
+	Scheduler::getScheduler().addEvent(createSchedulerTask(tmp, boost::bind(&Game::checkHighscores, this)));
 }
 
-std::string Game::getHighscoresString(uint16_t skill)
+std::string Game::getHighscoreString(uint16_t skill)
 {
 	Highscore hs = highscoreStorage[skill];
 	std::stringstream ss;

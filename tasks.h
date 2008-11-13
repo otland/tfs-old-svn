@@ -84,7 +84,7 @@ class Dispatcher
 		OTSYS_THREAD_SIGNALVAR m_taskSignal;
 
 		std::list<Task*> m_taskList;
-		static TaskState_t m_threadState;
+		static DispatcherState m_threadState;
 };
 
 #endif
