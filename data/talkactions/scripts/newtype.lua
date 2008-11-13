@@ -19,13 +19,13 @@ function onSay(cid, words, param)
 		end
 	end
 
-	if(param < 0 or param == 1 or param == 135 or (param > 160 and param < 192) or param > 302) then
+	if(t[1] < 0 or t[1] == 1 or t[1] == 135 or (t[1] > 160 and t[1] < 192) or t[1] > 302) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Such outfit does not exist.")
 		return FALSE
 	end
 
 	local tmp = getCreatureOutfit(cid)
-	tmp.lookType = param
+	tmp.lookType = t[1]
 	doCreatureChangeOutfit(cid, tmp)
 	return TRUE
 end
