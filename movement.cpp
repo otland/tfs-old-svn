@@ -240,7 +240,7 @@ void MoveEvents::addEvent(MoveEvent* moveEvent, int32_t id, MoveListMap& map)
 		for(std::list<MoveEvent*>::iterator it = moveEventList.begin(); it != moveEventList.end(); ++it)
 		{
 			if((*it)->getSlot() == moveEvent->getSlot())
-				std::cout << "Warning: [MoveEvents::addEvent] Duplicate move event found: " << id << std::endl;
+				std::cout << "[Warning - MoveEvents::addEvent] Duplicate move event found: " << id << std::endl;
 		}
 		moveEventList.push_back(moveEvent);
 	}
@@ -310,7 +310,7 @@ void MoveEvents::addEvent(MoveEvent* moveEvent, Position pos, MovePosListMap& ma
 	{
 		std::list<MoveEvent*>& moveEventList = it->second.moveEvent[moveEvent->getEventType()];
 		if(!moveEventList.empty())
-			std::cout << "Warning: [MoveEvents::addEvent] Duplicate move event found: " << pos << std::endl;
+			std::cout << "[Warning - MoveEvents::addEvent] Duplicate move event found: " << pos << std::endl;
 		moveEventList.push_back(moveEvent);
 	}
 }
@@ -476,7 +476,7 @@ std::string MoveEvent::getScriptEventName()
 			break;
 
 		default:
-			std::cout << "Error: [MoveEvent::getScriptEventName()] No valid event type." << std::endl;
+			std::cout << "[Error - MoveEvent::getScriptEventName] No valid event type." << std::endl;
 			return "";
 			break;
 	}
@@ -503,7 +503,7 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 			m_eventType = MOVE_EVENT_REMOVE_ITEM;
 		else
 		{
-			std::cout << "Error: [MoveEvent::configureMoveEvent] No valid event name " << str << std::endl;
+			std::cout << "[Error - MoveEvent::configureMoveEvent] No valid event name " << str << std::endl;
 			return false;
 		}
 
@@ -535,7 +535,7 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 				else if(tmpStr == "ammo")
 					slot = SLOT_AMMO;
 				else
-					std::cout << "Warning: [MoveEvent::configureMoveEvent] " << "Unknown slot type " << str << std::endl;
+					std::cout << "[Warning - MoveEvent::configureMoveEvent] " << "Unknown slot type " << str << std::endl;
 			}
 
 			wieldInfo = 0;
@@ -612,7 +612,7 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 	}
 	else
 	{
-		std::cout << "Error: [MoveEvent::configureMoveEvent] No event found." << std::endl;
+		std::cout << "[Error - MoveEvent::configureMoveEvent] No event found." << std::endl;
 		return false;
 	}
 	return true;
@@ -647,7 +647,7 @@ MoveEvent_t MoveEvent::getEventType() const
 {
 	if(m_eventType == MOVE_EVENT_NONE)
 	{
-		std::cout << "Error: [MoveEvent::getEventType()] MOVE_EVENT_NONE" << std::endl;
+		std::cout << "[Error - MoveEvent::getEventType] MOVE_EVENT_NONE" << std::endl;
 		return (MoveEvent_t)0;
 	}
 	return m_eventType;
@@ -911,7 +911,7 @@ uint32_t MoveEvent::executeStep(Creature* creature, Item* item, const Position& 
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. MoveEvent::executeStep" << std::endl;
+		std::cout << "[Error - MoveEvent::executeStep] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -958,7 +958,7 @@ uint32_t MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. MoveEvent::executeEquip" << std::endl;
+		std::cout << "[Error - MoveEvent::executeEquip] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
@@ -1007,7 +1007,7 @@ uint32_t MoveEvent::executeAddRemItem(Item* item, Item* tileItem, const Position
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. MoveEvent::executeAddRemItem" << std::endl;
+		std::cout << "[Error - MoveEvent::executeAddRemItem] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
