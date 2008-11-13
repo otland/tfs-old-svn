@@ -4677,10 +4677,7 @@ std::string Game::getSearchString(const Position lookPos, const Position searchP
 	direction_t direction;
 	level_t level;
 
-	int32_t dx = lookPos.x - searchPos.x;
-	int32_t dy = lookPos.y - searchPos.y;
-	int32_t dz = lookPos.z - searchPos.z;
-
+	int32_t dx = lookPos.x - searchPos.x, dy = lookPos.y - searchPos.y, dz = lookPos.z - searchPos.z;
 	if(dz > 0)
 		level = LEVEL_HIGHER;
 	else if(dz < 0)
@@ -4692,12 +4689,12 @@ std::string Game::getSearchString(const Position lookPos, const Position searchP
 		distance = DISTANCE_BESIDE;
 	else
 	{
-		int32_t distance2 = dx * dx + dy * dy;
-		if(distance2 < 625)
+		int32_t tmp = dx * dx + dy * dy;
+		if(tmp < 625)
 			distance = DISTANCE_CLOSE_1;
-		else if(distance2 < 10000)
+		else if(tmp < 10000)
 			distance = DISTANCE_CLOSE_2;
-		else if(distance2 < 75076)
+		else if(tmp < 75076)
 			distance = DISTANCE_FAR;
 		else
 			distance = DISTANCE_VERYFAR;
@@ -4921,17 +4918,19 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 			player->sendCancel("You do not have authorization for this action.");
 			return false;
 		}
+
 		account = IOLoginData::getInstance()->loadAccount(targetPlayer->getAccount(), true);
 		guid = targetPlayer->getGUID();
 		ip = targetPlayer->lastIP;
 	}
 	else
 	{
-		if(!IOLoginData::getInstance()->hasFlag(targetPlayerName, PlayerFlag_CannotBeBanned))
+		if(IOLoginData::getInstance()->hasFlag(targetPlayerName, PlayerFlag_CannotBeBanned))
 		{
 			player->sendCancel("You do not have authorization for this action.");
 			return false;
 		}
+
 		account = IOLoginData::getInstance()->loadAccount(IOLoginData::getInstance()->getAccountIdByName(targetPlayerName), true);
 		IOLoginData::getInstance()->getGuidByName(guid, targetPlayerName);
 		ip = IOLoginData::getInstance()->getLastIP(guid);
