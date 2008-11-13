@@ -166,7 +166,7 @@ void Scheduler::stop()
 	OTSYS_THREAD_UNLOCK(m_eventLock, "");
 }
 
-void Scheduler::stop()
+void Scheduler::shutdown()
 {
 	OTSYS_THREAD_LOCK(m_eventLock, "");
 	m_threadState = Scheduler::STATE_TERMINATED;
