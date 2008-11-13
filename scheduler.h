@@ -35,7 +35,7 @@
 class SchedulerTask : public Task
 {
 	public:
-		~SchedulerTask() {}
+		virtual ~SchedulerTask() {}
 
 		void setEventId(uint32_t eventid) {m_eventid = eventid;}
 		uint32_t getEventId() const {return m_eventid;}
@@ -65,6 +65,7 @@ inline SchedulerTask* createSchedulerTask(uint32_t delay, boost::function<void (
 	assert(delay != 0);
 	if(delay < SCHEDULER_MINTICKS)
 		delay = SCHEDULER_MINTICKS;
+
 	return new SchedulerTask(delay, f);
 }
 
@@ -80,7 +81,7 @@ class lessSchedTask : public std::binary_function<SchedulerTask*&, SchedulerTask
 class Scheduler
 {
 	public:
-		~Scheduler() {}
+		virtual ~Scheduler() {}
 
 		static Scheduler& getScheduler()
 		{
@@ -90,6 +91,7 @@ class Scheduler
 
 		uint32_t addEvent(SchedulerTask* task);
 		bool stopEvent(uint32_t eventId);
+
 		void stop();
 		void shutdown();
 
@@ -98,14 +100,22 @@ class Scheduler
 	protected:
 		Scheduler();
 
+		uint32_t m_lastEventId;
+		typedef std::set<uint32_t> EventIdSet;
+		EventIdSet m_eventIds;
+
+		enum SchedulerState
+		{
+			STATE_RUNNING,
+			STATE_CLOSING,
+			STATE_TERMINATED
+		};
+
 		OTSYS_THREAD_LOCKVAR m_eventLock;
 		OTSYS_THREAD_SIGNALVAR m_eventSignal;
 
-		uint32_t m_lastEventId;
 		std::priority_queue<SchedulerTask*, std::vector<SchedulerTask*>, lessSchedTask > m_eventList;
-		typedef std::set<uint32_t> EventIdSet;
-		EventIdSet m_eventIds;
-		static bool m_shutdown;
+		static SchedulerState m_threadState;
 };
 
 #endif

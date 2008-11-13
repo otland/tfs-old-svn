@@ -69,8 +69,8 @@ Game::Game()
 	gameState = GAME_STATE_NORMAL;
 	worldType = WORLD_TYPE_PVP;
 	map = NULL;
-	lastStageLevel = 0;
 	lastPlayersRecord = 0;
+	lastStageLevel = 0;
 	useLastStageLevel = false;
 	for(int16_t i = 0; i < 3; i++)
 		globalSaveMessage[i] = false;
@@ -80,23 +80,21 @@ Game::Game()
 	OTSYS_THREAD_LOCKVARINIT(maploadlock);
 	#endif
 
-	int32_t daycycle = 3600;
-	//(1440 minutes/day)/(3600 seconds/day)*10 seconds event interval
-	light_hour_delta = 1440 * 10 / daycycle;
-	light_hour = SUNRISE + (SUNSET - SUNRISE) / 2;
-	lightlevel = LIGHT_LEVEL_DAY;
-	light_state = LIGHT_STATE_DAY;
-
+	//(1440 minutes/day) * 10 seconds event interval / (3600 seconds/day)
+	lightHourDelta = 1440 * 10 / 3600;
+	lightHour = SUNRISE + (SUNSET - SUNRISE) / 2;
+	lightLevel = LIGHT_LEVEL_DAY;
+	lightState = LIGHT_STATE_DAY;
 	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
 		boost::bind(&Game::checkLight, this)));
-
-	checkCreatureLastIndex = 0;
-	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_CREATURE_THINK_INTERVAL,
-		boost::bind(&Game::checkCreatures, this)));
 
 	lastBucket = 0;
 	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
 		boost::bind(&Game::checkDecay, this)));
+
+	checkCreatureLastIndex = 0;
+	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_CREATURE_THINK_INTERVAL,
+		boost::bind(&Game::checkCreatures, this)));
 }
 
 Game::~Game()
@@ -129,16 +127,13 @@ void Game::setGameState(GameState_t newState)
 			case GAME_STATE_INIT:
 			{
 				Spawns::getInstance()->startup();
-
 				Raids::getInstance()->loadFromXml();
 				Raids::getInstance()->startup();
-
 				Quests::getInstance()->loadFromXml();
 
 				loadGameState();
-				timedHighscoreUpdate();
-
 				IOLoginData::getInstance()->resetOnlineStatus();
+				checkHighscores();
 				if(g_config.getBool(ConfigManager::REMOVE_PREMIUM_ON_INIT))
 					IOLoginData::getInstance()->updatePremiumDays();
 				break;
@@ -154,12 +149,13 @@ void Game::setGameState(GameState_t newState)
 					it = Player::listPlayer.list.begin();
 				}
 
-				Houses::getInstance().payHouses();
 				IOBan::getInstance()->clearTemporials();
+				Houses::getInstance().payHouses();
 				saveGameState(false);
 
-				Dispatcher::getDispatcher().addTask(
-					createTask(boost::bind(&Game::shutdown, this)));
+				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, this)));
+				Scheduler::getScheduler().stop();
+				Dispatcher::getDispatcher().stop();
 				break;
 			}
 
@@ -178,8 +174,8 @@ void Game::setGameState(GameState_t newState)
 						++it;
 				}
 
-				Houses::getInstance().payHouses();
 				IOBan::getInstance()->clearTemporials();
+				Houses::getInstance().payHouses();
 				saveGameState(false);
 				break;
 			}
@@ -4293,28 +4289,28 @@ void Game::checkLight()
 	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
 		boost::bind(&Game::checkLight, this)));
 
-	light_hour = light_hour + light_hour_delta;
-	if(light_hour > 1440)
-		light_hour = light_hour - 1440;
+	lightHour = lightHour + lightHourDelta;
+	if(lightHour > 1440)
+		lightHour = lightHour - 1440;
 
-	if(std::abs(light_hour - SUNRISE) < 2*light_hour_delta)
-		light_state = LIGHT_STATE_SUNRISE;
-	else if(std::abs(light_hour - SUNSET) < 2*light_hour_delta)
-		light_state = LIGHT_STATE_SUNSET;
+	if(std::abs(lightHour - SUNRISE) < 2 * lightHourDelta)
+		lightState = LIGHT_STATE_SUNRISE;
+	else if(std::abs(lightHour - SUNSET) < 2 * lightHourDelta)
+		lightState = LIGHT_STATE_SUNSET;
 
-	int32_t newlightlevel = lightlevel;
+	int32_t newLightLevel = lightLevel;
 	bool lightChange = false;
-	switch(light_state)
+	switch(lightState)
 	{
 		case LIGHT_STATE_SUNRISE:
 		{
-			newlightlevel += (LIGHT_LEVEL_DAY - LIGHT_LEVEL_NIGHT) / 30;
+			newLightLevel += (LIGHT_LEVEL_DAY - LIGHT_LEVEL_NIGHT) / 30;
 			lightChange = true;
 			break;
 		}
 		case LIGHT_STATE_SUNSET:
 		{
-			newlightlevel -= (LIGHT_LEVEL_DAY - LIGHT_LEVEL_NIGHT) / 30;
+			newLightLevel -= (LIGHT_LEVEL_DAY - LIGHT_LEVEL_NIGHT) / 30;
 			lightChange = true;
 			break;
 		}
@@ -4322,18 +4318,18 @@ void Game::checkLight()
 			break;
 	}
 
-	if(newlightlevel <= LIGHT_LEVEL_NIGHT)
+	if(newLightLevel <= LIGHT_LEVEL_NIGHT)
 	{
-		lightlevel = LIGHT_LEVEL_NIGHT;
-		light_state = LIGHT_STATE_NIGHT;
+		lightLevel = LIGHT_LEVEL_NIGHT;
+		lightState = LIGHT_STATE_NIGHT;
 	}
-	else if(newlightlevel >= LIGHT_LEVEL_DAY)
+	else if(newLightLevel >= LIGHT_LEVEL_DAY)
 	{
-		lightlevel = LIGHT_LEVEL_DAY;
-		light_state = LIGHT_STATE_DAY;
+		lightLevel = LIGHT_LEVEL_DAY;
+		lightState = LIGHT_STATE_DAY;
 	}
 	else
-		lightlevel = newlightlevel;
+		lightLevel = newLightLevel;
 
 	if(lightChange)
 	{
@@ -4405,9 +4401,9 @@ bool Game::closeRuleViolation(Player* player)
 void Game::shutdown()
 {
 	std::cout << "Preparing shutdown";
-	Scheduler::getScheduler().stop();
+	Scheduler::getScheduler().shutdown();
 	std::cout << ".";
-	Dispatcher::getDispatcher().stop();
+	Dispatcher::getDispatcher().shutdown();
 	std::cout << ".";
 	Spawns::getInstance()->clear();
 	std::cout << "." << std::endl;
@@ -4444,38 +4440,6 @@ void Game::FreeThing(Thing* thing)
 	ToReleaseThings.push_back(thing);
 }
 
-bool Game::reloadHighscores()
-{
-	lastHSUpdate = time(NULL);
-	for(int16_t i = 0; i <= 8; i++)
-		highscoreStorage[i] = getHighscore(i);
-	return true;
-}
-
-void Game::timedHighscoreUpdate()
-{
-	reloadHighscores();
-
-	int32_t highscoreUpdateTime = g_config.getNumber(ConfigManager::HIGHSCORES_UPDATETIME) * 1000 * 60;
-	if(highscoreUpdateTime <= 0)
-		return;
-
-	Scheduler::getScheduler().addEvent(createSchedulerTask(highscoreUpdateTime, boost::bind(&Game::timedHighscoreUpdate, this)));
-}
-
-std::string Game::getHighscoreString(uint16_t skill)
-{
-	Highscore hs = highscoreStorage[skill];
-	std::stringstream ss;
-	ss << "Highscore for " << getSkillName(skill) << "\n\nRank. Level - Player Name";
-	for(uint32_t i = 0; i < hs.size(); i++)
-		ss << "\n" << i+1 << ".  " << hs[i].second << "  -  " << hs[i].first;
-	ss << "\n\nLast updated on:\n" << std::ctime(&lastHSUpdate);
-	std::string highscores = ss.str();
-	highscores.erase(highscores.length() - 1);
-	return highscores;
-}
-
 bool Game::broadcastMessage(const std::string& text, MessageClasses type)
 {
 	if(type >= MSG_CLASS_FIRST && type <= MSG_CLASS_LAST)
@@ -4488,19 +4452,53 @@ bool Game::broadcastMessage(const std::string& text, MessageClasses type)
 	return false;
 }
 
+bool Game::reloadHighscores()
+{
+	lastHighscoreCheck = time(NULL);
+	for(int16_t i = 0; i <= 8; i++)
+		highscoreStorage[i] = getHighscore(i);
+
+	return true;
+}
+
+void Game::checkHighscores()
+{
+	reloadHighscores();
+
+	int32_t tmp = g_config.getNumber(ConfigManager::HIGHSCORES_UPDATETIME) * 60 * 1000;
+	if(tmp <= 0)
+		return;
+
+	Scheduler::getScheduler().addEvent(createSchedulerTask(highscoreUpdateTime, boost::bind(&Game::checkHighscores, this)));
+}
+
+std::string Game::getHighscoresString(uint16_t skill)
+{
+	Highscore hs = highscoreStorage[skill];
+	std::stringstream ss;
+	ss << "Highscore for " << getSkillName(skill) << "\n\nRank. Level - Player Name";
+	for(uint32_t i = 1; i <= hs.size(); i++)
+		ss << "\n" << i << ".  " << hs[i].second << "  -  " << hs[i].first;
+
+	ss << "\n\nLast updated on:\n" << std::ctime(&lastHighscoreCheck);
+	return ss.str();
+}
+
 Highscore Game::getHighscore(uint16_t skill)
 {
-	Highscore hs;
 	Database* db = Database::getInstance();
-	DBQuery query;
 	DBResult* result;
-	int32_t highscoresTop = g_config.getNumber(ConfigManager::HIGHSCORES_TOP);
+
+	DBQuery query;
+	Highscore hs;
+
+	int32_t limit = g_config.getNumber(ConfigManager::HIGHSCORES_TOP);
 	if(skill >= 7)
 	{
 		if(skill == 7)
-			query << "SELECT `maglevel`, `name` FROM `players` ORDER BY `maglevel` DESC, `manaspent` DESC LIMIT " << highscoresTop;
+			query << "SELECT `maglevel`, `name` FROM `players` ORDER BY `maglevel` DESC, `manaspent` DESC LIMIT " << limit;
 		else
-			query << "SELECT `level`, `name` FROM `players` ORDER BY `level` DESC, `experience` DESC LIMIT " << highscoresTop;
+			query << "SELECT `level`, `name` FROM `players` ORDER BY `level` DESC, `experience` DESC LIMIT " << limit;
 
 		if((result = db->storeQuery(query.str())))
 		{
@@ -4522,7 +4520,7 @@ Highscore Game::getHighscore(uint16_t skill)
 	}
 	else
 	{
-		query << "SELECT `player_skills`.`value`, `players`.`name` FROM `player_skills`,`players` WHERE `player_skills`.`skillid`=" << skill << " AND `player_skills`.`player_id`=`players`.`id` ORDER BY `player_skills`.`value` DESC, `player_skills`.`count` DESC LIMIT " << highscoresTop;
+		query << "SELECT `player_skills`.`value`, `players`.`name` FROM `player_skills`,`players` WHERE `player_skills`.`skillid`=" << skill << " AND `player_skills`.`player_id`=`players`.`id` ORDER BY `player_skills`.`value` DESC, `player_skills`.`count` DESC LIMIT " << limit;
 		if((result = db->storeQuery(query.str())))
 		{
 			do

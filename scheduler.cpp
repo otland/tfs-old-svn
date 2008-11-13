@@ -26,13 +26,14 @@
 #include "exception.h"
 #endif
 
-bool Scheduler::m_shutdown = false;
+Scheduler::SchedulerState Scheduler::m_threadState = Scheduler::STATE_TERMINATED;
 
 Scheduler::Scheduler()
 {
+	m_lastEventId = 0;
+	Scheduler::m_threadState = STATE_RUNNING;
 	OTSYS_THREAD_LOCKVARINIT(m_eventLock);
 	OTSYS_THREAD_SIGNALVARINIT(m_eventSignal);
-	m_lastEventId = 0;
 	OTSYS_CREATE_THREAD(Scheduler::schedulerThread, NULL);
 }
 
@@ -42,30 +43,24 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 	ExceptionHandler schedulerExceptionHandler;
 	schedulerExceptionHandler.InstallHandler();
 	#endif
-	srand((unsigned int)OTSYS_TIME());
+	srand((uint32_t)OTSYS_TIME());
 
-	while(!Scheduler::m_shutdown)
+	while(Scheduler::m_threadState != Scheduler::STATE_TERMINATED)
 	{
 		SchedulerTask* task = NULL;
 		bool runTask = false;
-		int ret;
+		int32_t ret;
 
 		// check if there are events waiting...
 		OTSYS_THREAD_LOCK(getScheduler().m_eventLock, "eventThread()")
 
-		if(getScheduler().m_eventList.empty())
-		{
-			// unlock mutex and wait for signal
+		if(getScheduler().m_eventList.empty()) // unlock mutex and wait for signal
 			ret = OTSYS_THREAD_WAITSIGNAL(getScheduler().m_eventSignal, getScheduler().m_eventLock);
-		}
-		else
-		{
-			// unlock mutex and wait for signal or timeout
+		else // unlock mutex and wait for signal or timeout
 			ret = OTSYS_THREAD_WAITSIGNAL_TIMED(getScheduler().m_eventSignal, getScheduler().m_eventLock, getScheduler().m_eventList.top()->getCycle());
-		}
 
 		// the mutex is locked again now...
-		if(ret == OTSYS_THREAD_TIMEOUT && !Scheduler::m_shutdown)
+		if(!ret && Scheduler::m_threadState != Scheduler::STATE_TERMINATED)
 		{
 			// ok we had a timeout, so there has to be an event we have to execute...
 			task = getScheduler().m_eventList.top();
@@ -90,10 +85,7 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 			if(runTask)
 				Dispatcher::getDispatcher().addTask(task);
 			else
-			{
-				// was stopped, have to be deleted here
-				delete task;
-			}
+				delete task; // was stopped, have to be deleted here
 		}
 	}
 	#if defined __EXCEPTION_TRACER__
@@ -106,11 +98,11 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 
 uint32_t Scheduler::addEvent(SchedulerTask* task)
 {
-	OTSYS_THREAD_LOCK(m_eventLock, "");
-
-	bool do_signal = false;
-	if(!Scheduler::m_shutdown)
+	bool signal = false;
+	if(Scheduler::m_threadState == Scheduler::STATE_RUNNING)
 	{
+		OTSYS_THREAD_LOCK(m_eventLock, "");
+
 		// check if the event has a valid id
 		if(task->getEventId() == 0)
 		{
@@ -121,25 +113,23 @@ uint32_t Scheduler::addEvent(SchedulerTask* task)
 			++m_lastEventId;
 			task->setEventId(m_lastEventId);
 		}
+
 		// insert the eventid in the list of active events
 		m_eventIds.insert(task->getEventId());
-
 		// add the event to the queue
 		m_eventList.push(task);
-
 		// if the list was empty or this event is the top in the list
 		// we have to signal it
-		do_signal = (task == m_eventList.top());
+		signal = (task == m_eventList.top());
 
+		OTSYS_THREAD_UNLOCK(m_eventLock, "");
 	}
-#ifdef _DEBUG
+#ifdef __DEBUG_SCHEDULER__
 	else
-		std::cout << "Error: [Scheduler::addTask] Scheduler thread is terminated." << std::endl;
+		std::cout << "[Error - Scheduler::addTask] Scheduler thread is terminated." << std::endl;
 #endif
 
-	OTSYS_THREAD_UNLOCK(m_eventLock, "");
-
-	if(do_signal)
+	if(signal)
 		OTSYS_THREAD_SIGNAL_SEND(m_eventSignal);
 
 	return task->getEventId();
@@ -152,7 +142,7 @@ bool Scheduler::stopEvent(uint32_t eventid)
 
 	OTSYS_THREAD_LOCK(m_eventLock, "")
 
-	// search the event id..
+	// search the event id...
 	EventIdSet::iterator it = m_eventIds.find(eventid);
 	if(it != m_eventIds.end())
 	{
@@ -172,7 +162,14 @@ bool Scheduler::stopEvent(uint32_t eventid)
 void Scheduler::stop()
 {
 	OTSYS_THREAD_LOCK(m_eventLock, "");
-	m_shutdown = true;
+	m_threadState = Scheduler::STATE_CLOSING;
+	OTSYS_THREAD_UNLOCK(m_eventLock, "");
+}
+
+void Scheduler::stop()
+{
+	OTSYS_THREAD_LOCK(m_eventLock, "");
+	m_threadState = Scheduler::STATE_TERMINATED;
 
 	//this list should already be empty
 	while(!m_eventList.empty())

@@ -391,18 +391,26 @@ void mainLoader()
 
 	std::cout << ">> Checking world type... ";
 	std::string worldType = asLowerCaseString(g_config.getString(ConfigManager::WORLD_TYPE));
-	if(worldType == "pvp")
+	if(worldType == "pvp" || worldType == "2" || worldType == "normal")
+	{
 		g_game.setWorldType(WORLD_TYPE_PVP);
-	else if(worldType == "no-pvp")
+		std::cout << "PvP" << std::endl;
+	}
+	else if(worldType == "no-pvp" || worldType == "nopvp" || worldType == "non-pvp" || worldType == "nonpvp" || worldType == "1" || worldType == "safe")
+	{
 		g_game.setWorldType(WORLD_TYPE_NO_PVP);
-	else if(worldType == "pvp-enforced")
+		std::cout << "NoN-PvP" << std::endl;
+	}
+	else if(worldType == "pvp-enforced" || worldType == "pvpenforced" || worldType == "pvp-enfo" || worldType == "pvpenfo" || worldType == "pvpe" || worldType == "enforced" || worldType == "enfo" || worldType == "3" || worldType == "war")
+	{
 		g_game.setWorldType(WORLD_TYPE_PVP_ENFORCED);
+		std::cout << "PvP-Enforced" << std::endl;
+	}
 	else
 	{
 		std::cout << std::endl;
 		startupErrorMessage("Unknown world type: " + g_config.getString(ConfigManager::WORLD_TYPE));
 	}
-	std::cout << asUpperCaseString(worldType) << std::endl;
 
 	std::cout << ">> Loading map and spawns..." << std::endl;
 	#ifndef __CONSOLE__
@@ -424,8 +432,7 @@ void mainLoader()
 
 	if(g_config.getBool(ConfigManager::GLOBALSAVE_ENABLED) && g_config.getNumber(ConfigManager::GLOBALSAVE_H) >= 1 && g_config.getNumber(ConfigManager::GLOBALSAVE_H) <= 24)
 	{
-		int32_t prepareGlobalSaveHour = g_config.getNumber(ConfigManager::GLOBALSAVE_H) - 1;
-		int32_t hoursLeft = 0, minutesLeft = 0, minutesToRemove = 0;
+		int32_t prepareGlobalSaveHour = g_config.getNumber(ConfigManager::GLOBALSAVE_H) - 1, hoursLeft = 0, minutesLeft = 0, minutesToRemove = 0;
 		bool ignoreEvent = false;
 		time_t timeNow = time(NULL);
 		const tm* theTime = localtime(&timeNow);

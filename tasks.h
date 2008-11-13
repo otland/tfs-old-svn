@@ -46,7 +46,8 @@ class Task
 		friend Task* createTask(boost::function<void (void)>);
 };
 
-inline Task* createTask(boost::function<void (void)> f){
+inline Task* createTask(boost::function<void (void)> f)
+{
 	return new Task(f);
 }
 
@@ -62,7 +63,9 @@ class Dispatcher
 		}
 
 		void addTask(Task* task);
+
 		void stop();
+		void shutdown();
 
 		static OTSYS_THREAD_RETURN dispatcherThread(void* p);
 
@@ -70,11 +73,18 @@ class Dispatcher
 		Dispatcher();
 		void flush();
 
+		enum DispatcherState
+		{
+			STATE_RUNNING,
+			STATE_CLOSING,
+			STATE_TERMINATED
+		};
+
 		OTSYS_THREAD_LOCKVAR m_taskLock;
 		OTSYS_THREAD_SIGNALVAR m_taskSignal;
 
 		std::list<Task*> m_taskList;
-		static bool m_shutdown;
+		static TaskState_t m_threadState;
 };
 
 #endif

@@ -113,9 +113,9 @@ class Game
 		virtual ~Game();
 
 		Highscore getHighscore(uint16_t skill);
-		void timedHighscoreUpdate();
-		bool reloadHighscores();
 		std::string getHighscoreString(uint16_t skill);
+		void checkHighscores();
+		bool reloadHighscores();
 
 		void prepareGlobalSave();
 		void globalSave();
@@ -509,7 +509,7 @@ class Game
 		Map* getMap() {return map;}
 		const Map* getMap() const {return map;}
 
-		int32_t getLightHour() {return light_hour;}
+		int32_t getLightHour() {return lightHour;}
 
 		void npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, bool publicize);
 
@@ -533,7 +533,7 @@ class Game
 		bool playerContinueReport(Player* player, const std::string& text);
 
 		Highscore highscoreStorage[9];
-		time_t lastHSUpdate;
+		time_t lastHighscoreCheck;
 
 		bool globalSaveMessage[2];
 
@@ -553,7 +553,7 @@ class Game
 		struct GameEvent
 		{
 			int64_t tick;
-			int type;
+			int32_t type;
 			void* data;
 		};
 
@@ -569,10 +569,10 @@ class Game
 		static const int32_t LIGHT_LEVEL_NIGHT = 40;
 		static const int32_t SUNSET = 1305;
 		static const int32_t SUNRISE = 430;
-		int32_t lightlevel;
-		LightState_t light_state;
-		int32_t light_hour;
-		int32_t light_hour_delta;
+		int32_t lightLevel;
+		LightState_t lightState;
+		int32_t lightHour;
+		int32_t lightHourDelta;
 
 		uint32_t maxPlayers;
 		uint32_t inFightTicks;
