@@ -60,7 +60,7 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 			ret = OTSYS_THREAD_WAITSIGNAL_TIMED(getScheduler().m_eventSignal, getScheduler().m_eventLock, getScheduler().m_eventList.top()->getCycle());
 
 		// the mutex is locked again now...
-		if(!ret && Scheduler::m_threadState != Scheduler::STATE_TERMINATED)
+		if(ret == OTSYS_THREAD_TIMEOUT && Scheduler::m_threadState != Scheduler::STATE_TERMINATED)
 		{
 			// ok we had a timeout, so there has to be an event we have to execute...
 			task = getScheduler().m_eventList.top();

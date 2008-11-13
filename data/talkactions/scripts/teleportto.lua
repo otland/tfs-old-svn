@@ -30,8 +30,8 @@ function onSay(cid, words, param)
 
 	local tmp = getCreaturePosition(cid)
 	if(doTeleportThing(cid, pos, TRUE) ~= LUA_ERROR and isPlayerGhost(cid) ~= TRUE) then
-		doSendMagicEffect(pos, CONST_ME_POFF)
-		doSendMagicEffect(target, CONST_ME_TELEPORT)
+		doSendMagicEffect(tmp, CONST_ME_POFF)
+		doSendMagicEffect(pos, CONST_ME_TELEPORT)
 	end
 
 	return TRUE
