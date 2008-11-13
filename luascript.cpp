@@ -8653,7 +8653,7 @@ int32_t LuaScriptInterface::luaExecuteRaid(lua_State* L)
 	if(!raid || !raid->isLoaded())
 	{
 		reportErrorFunc("Such raid does not exists.");
-		lua_pushnumber(L, LUA_NULL);
+		lua_pushnumber(L, LUA_ERROR);
 		return 1;
 	}
 
@@ -8667,7 +8667,7 @@ int32_t LuaScriptInterface::luaExecuteRaid(lua_State* L)
 	RaidEvent* event = raid->getNextRaidEvent();
 	if(!event)
 	{
-		lua_pushnumber(L, LUA_ERROR);
+		lua_pushnumber(L, LUA_FALSE);
 		return 1;
 	}
 
