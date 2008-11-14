@@ -336,7 +336,7 @@ void ConditionGeneric::endCondition(Creature* creature, ConditionEnd_t reason)
 void ConditionGeneric::addCondition(Creature* creature, const Condition* addCondition)
 {
 	if(updateCondition(addCondition))
-		setTicks(dCondition->getTicks());
+		setTicks(addCondition->getTicks());
 }
 
 uint32_t ConditionGeneric::getIcons() const
