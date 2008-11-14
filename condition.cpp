@@ -1391,14 +1391,14 @@ bool ConditionDamage::executeCondition(Creature* creature, int32_t interval)
 	{
 		IntervalInfo& damageInfo = damageList.front();
 
-		bool bRemove = (getTicks() != -1);
-		creature->onTickCondition(getType(), bRemove);
+		bool remove = (getTicks() != -1);
+		creature->onTickCondition(getType(), remove);
 		damageInfo.timeLeft -= interval;
 
 		if(damageInfo.timeLeft <= 0){
 			int32_t damage = damageInfo.value;
 
-			if(bRemove)
+			if(remove)
 				damageList.pop_front();
 			else
 				damageInfo.timeLeft = damageInfo.interval;
@@ -1406,7 +1406,7 @@ bool ConditionDamage::executeCondition(Creature* creature, int32_t interval)
 			doDamage(creature, damage);
 		}
 
-		if(!bRemove)
+		if(!remove)
 			interval = 0;
 	}
 	return Condition::executeCondition(creature, interval);

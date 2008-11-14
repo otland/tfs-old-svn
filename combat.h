@@ -69,46 +69,36 @@ struct CombatParams
 {
 	CombatParams()
 	{
+		blockedByArmor = blockedByShield = targetCasterOrTopMost = useCharges = false;
+		impactEffect = distanceEffect = NM_ME_NONE;
+		dispelType = CONDITION_NONE;
 		combatType = COMBAT_NONE;
-		blockedByArmor = false;
-		blockedByShield = false;
-		targetCasterOrTopMost = false;
 		isAggressive = true;
 		itemId = 0;
-		impactEffect = NM_ME_NONE;
-		distanceEffect = NM_ME_NONE;
-		condition = NULL;
-		dispelType = CONDITION_NONE;
-		useCharges = false;
 
+		targetCallback = NULL;
 		valueCallback = NULL;
 		tileCallback = NULL;
-		targetCallback = NULL;
+		condition = NULL;
 	}
 
+	bool blockedByArmor, blockedByShield, targetCasterOrTopMost, isAggressive, useCharges
+	uint8_t impactEffect, distanceEffect;
 	const Condition* condition;
 	ConditionType_t dispelType;
 	CombatType_t combatType;
-	bool blockedByArmor;
-	bool blockedByShield;
-	bool targetCasterOrTopMost;
-	bool isAggressive;
 	uint32_t itemId;
-	uint8_t impactEffect;
-	uint8_t distanceEffect;
-	bool useCharges;
 
+	TargetCallback* targetCallback;
 	ValueCallback* valueCallback;
 	TileCallback* tileCallback;
-	TargetCallback* targetCallback;
 };
 
 typedef bool (*COMBATFUNC)(Creature*, Creature*, const CombatParams&, void*);
 
 struct Combat2Var
 {
-	int32_t minChange;
-	int32_t maxChange;
+	int32_t minChange, maxChange;
 };
 
 class MatrixArea
@@ -116,8 +106,7 @@ class MatrixArea
 	public:
 		MatrixArea(uint32_t _rows, uint32_t _cols)
 		{
-			centerX = 0;
-			centerY = 0;
+			centerX = centerY = 0;
 
 			rows = _rows;
 			cols = _cols;
@@ -150,7 +139,7 @@ class MatrixArea
 			}
 		}
 
-		~MatrixArea()
+		virtual ~MatrixArea()
 		{
 			for(uint32_t row = 0; row < rows; ++row)
 				delete[] data_[row];
@@ -170,11 +159,7 @@ class MatrixArea
 		inline bool* operator[](uint32_t i) { return data_[i]; }
 
 	protected:
-		uint32_t centerX;
-		uint32_t centerY;
-
-		uint32_t rows;
-		uint32_t cols;
+		uint32_t centerX, centerY, rows, cols;
 		bool** data_;
 };
 
@@ -184,7 +169,7 @@ class AreaCombat
 {
 	public:
 		AreaCombat() {hasExtArea = false;}
-		~AreaCombat() {clear();}
+		virtual ~AreaCombat() {clear();}
 
 		AreaCombat(const AreaCombat& rhs);
 
@@ -213,8 +198,7 @@ class AreaCombat
 
 		MatrixArea* getArea(const Position& centerPos, const Position& targetPos) const
 		{
-			int32_t dx = targetPos.x - centerPos.x;
-			int32_t dy = targetPos.y - centerPos.y;
+			int32_t dx = targetPos.x - centerPos.x, dy = targetPos.y - centerPos.y;
 
 			Direction dir = NORTH;
 			if(dx < 0)
@@ -329,10 +313,7 @@ class Combat
 
 		//formula variables
 		formulaType_t formulaType;
-		double mina;
-		double minb;
-		double maxa;
-		double maxb;
+		double mina, minb, maxa, maxb;
 
 		AreaCombat* area;
 };
@@ -341,7 +322,7 @@ class MagicField : public Item
 {
 	public:
 		MagicField(uint16_t _type) : Item(_type) {createTime = OTSYS_TIME();}
-		~MagicField() {}
+		virtual ~MagicField() {}
 
 		virtual MagicField* getMagicField() {return this;}
 		virtual const MagicField* getMagicField() const {return this;}
