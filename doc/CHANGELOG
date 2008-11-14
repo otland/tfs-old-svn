@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3 Alpha 4
+		0.3 Beta 1
 
 	Codenamed
 		\
@@ -22,12 +22,6 @@
 
 	A...
 		data/
-			compat.lua
-				* Added for compatibility with other engines - will contain deprecated functions
-
-			functions.lua
-				* Contains all lua-made functions from global.lua
-
 			actions/
 				scripts/
 					liquids/
@@ -38,10 +32,6 @@
 						blessed_wooden_stake.lua
 						obsidian_knife.lua
 							* Added
-
-			classes/
-				*.*
-					* Added all _needed_ class files
 
 			creaturescripts/
 				scripts/
@@ -56,7 +46,15 @@
 				scripts/
 					*.lua
 						* Added basic scripts
-
+			lib/
+				data.lua
+				constant.lua
+				function.lua
+				compat.lua
+				database.lua
+				exhaustion.lua
+					* Added files created from global.lua (organized)
+				
 			logs/
 				server/
 					* Created directory for GUI logs
@@ -230,6 +228,9 @@
 
 	D...
 		data/
+			global.lua
+				* Moved to lib/ directory
+
 			actions/
 				scripts/
 					fluids.lua
@@ -321,6 +322,9 @@
 	Raids position may be now stored under one tag, which will be exploded- *x"="10" *y="10" *z="7"; can be now added as *pos="10;10;7" (Elf)
 	Merged Commands class with TalkActions, hardcoded commands may be now used as functions (Elf)
 	House information being stored at database, houses table (Elf)
+	onDeath event has now also new parameter- creature, that did most damage to dying creature (Elf)
+	New icon! ;-) (Macroman)
+	DescriptionHideLevel flag replaced with HideLevel, which is used now also for hiding player level in chat (Elf)
 ]
 
 [ Deprecated

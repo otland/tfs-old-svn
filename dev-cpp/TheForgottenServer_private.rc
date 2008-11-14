@@ -20,7 +20,7 @@ FILETYPE VFT_APP
 		 BLOCK "040904E4"
 		 {
 			 VALUE "CompanyName", ""
-			 VALUE "FileVersion", "0.3a4"
+			 VALUE "FileVersion", "0.3b1"
 			 VALUE "FileDescription", "The Forgotten Server"
 			 VALUE "InternalName", ""
 			 VALUE "LegalCopyright", ""
