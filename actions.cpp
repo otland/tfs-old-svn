@@ -426,14 +426,15 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
 			player->setWriteItem(NULL);
 			player->sendTextWindow(item, 0, false);
 		}
+
 		return RET_NOERROR;
 	}
 
 	//if it is a container try to open it
 	if(Container* container = item->getContainer())
 	{
-		if(openContainer(player, container, index))
-			return RET_NOERROR;
+		openContainer(player, container, index);
+		return RET_NOERROR;
 	}
 
 	if(!foundAction)
@@ -473,7 +474,11 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 	if(isHotkey)
 		showUseHotkeyMessage(player, itemId, itemCount);
 
-	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::ACTIONS_DELAY_INTERVAL));
+	uint32_t delay = g_config.getNumber(ConfigManager::ACTIONS_DELAY_INTERVAL);
+	if(Spell* tmp = g_spells->getRuneSpell(item->getID()))
+		delay = tmp->getExhaustion();
+
+	player->setNextAction(OTSYS_TIME() + delay);
 	return true;
 }
 
@@ -583,7 +588,11 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 	if(isHotkey)
 		showUseHotkeyMessage(player, itemId, itemCount);
 
-	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::EX_ACTIONS_DELAY_INTERVAL));
+	uint32_t delay = g_config.getNumber(ConfigManager::EX_ACTIONS_DELAY_INTERVAL);
+	if(Spell* tmp = g_spells->getRuneSpell(item->getID()))
+		delay = tmp->getExhaustion();
+
+	player->setNextAction(OTSYS_TIME() + delay);
 	return true;
 }
 
@@ -616,7 +625,7 @@ bool Actions::openContainer(Player* player, Container* container, const uint8_t 
 	if(container->getCorpseOwner() != 0 && !player->canOpenCorpse(container->getCorpseOwner()))
 	{
 		player->sendCancel("You are not the owner.");
-		return true;
+		return false;
 	}
 
 	//open/close container

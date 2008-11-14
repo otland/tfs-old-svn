@@ -3273,26 +3273,12 @@ void Player::doAttacking(uint32_t interval)
 	if((OTSYS_TIME() - lastAttack) >= getAttackSpeed())
 	{
 		Item* tool = getWeapon();
-		const Weapon* weapon = g_weapons->getWeapon(tool);
-
-		bool result = false;
-		if(weapon)
+		if(const Weapon* weapon = g_weapons->getWeapon(tool))
 		{
-			if(!weapon->interuptSwing())
-				result = weapon->useWeapon(this, tool, attackedCreature);
-			else if(!canDoAction())
-			{
-				uint32_t delay = getNextActionTime();
-				SchedulerTask* task = createSchedulerTask(delay, boost::bind(&Game::checkCreatureAttack, &g_game, getID()));
-				setNextActionTask(task);
-			}
-			else if(!hasCondition(CONDITION_EXHAUST_WEAPON) || !weapon->hasExhaustion())
-				result = weapon->useWeapon(this, tool, attackedCreature);
+			if((!hasCondition(CONDITION_EXHAUST_WEAPON) || !weapon->hasExhaustion()) && weapon->useWeapon(this, tool, attackedCreature))
+				lastAttack = OTSYS_TIME();
 		}
-		else
-			result = Weapon::useFist(this, attackedCreature);
-
-		if(result)
+		else if(Weapon::useFist(this, attackedCreature))
 			lastAttack = OTSYS_TIME();
 	}
 }

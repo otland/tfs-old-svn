@@ -30,11 +30,12 @@
 extern Game g_game;
 
 Condition::Condition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks) :
-id(_id),
-ticks(_ticks),
-conditionType(_type)
+id(_id), ticks(_ticks), conditionType(_type)
 {
-	//
+	if(_ticks == -1)
+		endTime = (OTSYS_TIME() + std::max((int32_t)0, _ticks));
+	else
+		endTime = -1;
 }
 
 bool Condition::setParam(ConditionParam_t param, int32_t value)
@@ -43,7 +44,7 @@ bool Condition::setParam(ConditionParam_t param, int32_t value)
 	{
 		case CONDITIONPARAM_TICKS:
 		{
-			ticks = value;
+			setTicks(value);
 			return true;
 			break;
 		}
@@ -121,7 +122,7 @@ bool Condition::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
 			if(!propStream.GET_VALUE(value))
 				return false;
 
-			ticks = value;
+			setTicks(value);
 			return true;
 			break;
 		}
@@ -151,12 +152,21 @@ bool Condition::serialize(PropWriteStream& propWriteStream)
 	return true;
 }
 
+void Condition::setTicks(int32_t _ticks)
+{
+	ticks = _ticks;
+	if(ticks != -1)
+		endTime = (OTSYS_TIME() + std::max((int32_t)0, _ticks));
+	else
+		endTime = -1;
+}
+
 bool Condition::executeCondition(Creature* creature, int32_t interval)
 {
 	if(ticks != -1)
 	{
-		setTicks(getTicks() - interval);
-		return (getTicks() > 0);
+		ticks = std::max((int32_t)0, (getTicks() - interval));
+		return (getEndTime() >= OTSYS_TIME());
 	}
 
 	return true;
@@ -279,7 +289,7 @@ Condition* Condition::createCondition(PropStream& propStream)
 
 bool Condition::isPersistent() const
 {
-	if(ticks == -1)
+	if(getTicks() == -1)
 		return false;
 
 	if(!(id == CONDITIONID_DEFAULT || id == CONDITIONID_COMBAT))
@@ -326,7 +336,7 @@ void ConditionGeneric::endCondition(Creature* creature, ConditionEnd_t reason)
 void ConditionGeneric::addCondition(Creature* creature, const Condition* addCondition)
 {
 	if(updateCondition(addCondition))
-		ticks = addCondition->getTicks();
+		setTicks(dCondition->getTicks());
 }
 
 uint32_t ConditionGeneric::getIcons() const
@@ -368,7 +378,7 @@ void ConditionAttributes::addCondition(Creature* creature, const Condition* addC
 {
 	if(updateCondition(addCondition))
 	{
-		ticks = addCondition->getTicks();
+		setTicks(addCondition->getTicks());
 
 		const ConditionAttributes& conditionAttrs = static_cast<const ConditionAttributes&>(*addCondition);
 		//Remove the old condition
@@ -748,7 +758,7 @@ void ConditionRegeneration::addCondition(Creature* creature, const Condition* ad
 {
 	if(updateCondition(addCondition))
 	{
-		ticks = addCondition->getTicks();
+		setTicks(addCondition->getTicks());
 
 		const ConditionRegeneration& conditionRegen = static_cast<const ConditionRegeneration&>(*addCondition);
 
@@ -935,7 +945,7 @@ void ConditionSoul::addCondition(Creature* creature, const Condition* addConditi
 {
 	if(updateCondition(addCondition))
 	{
-		ticks = addCondition->getTicks();
+		setTicks(addCondition->getTicks());
 
 		const ConditionSoul& conditionSoul = static_cast<const ConditionSoul&>(*addCondition);
 
@@ -1446,7 +1456,7 @@ void ConditionDamage::addCondition(Creature* creature, const Condition* addCondi
 
 		if(updateCondition(&conditionDamage))
 		{
-			ticks = addCondition->getTicks();
+			setTicks(addCondition->getTicks());
 			owner = conditionDamage.owner;
 			maxDamage = conditionDamage.maxDamage;
 			minDamage = conditionDamage.minDamage;
@@ -1749,7 +1759,7 @@ void ConditionSpeed::addCondition(Creature* creature, const Condition* addCondit
 {
 	if(updateCondition(addCondition))
 	{
-		ticks = addCondition->getTicks();
+		setTicks(addCondition->getTicks());
 
 		const ConditionSpeed& conditionSpeed = static_cast<const ConditionSpeed&>(*addCondition);
 		int32_t oldSpeedDelta = speedDelta;
@@ -1943,7 +1953,7 @@ void ConditionOutfit::addCondition(Creature* creature, const Condition* addCondi
 {
 	if(updateCondition(addCondition))
 	{
-		ticks = addCondition->getTicks();
+		setTicks(addCondition->getTicks());
 
 		const ConditionOutfit& conditionOutfit = static_cast<const ConditionOutfit&>(*addCondition);
 		outfits = conditionOutfit.outfits;
@@ -2003,7 +2013,7 @@ void ConditionLight::addCondition(Creature* creature, const Condition* addCondit
 {
 	if(updateCondition(addCondition))
 	{
-		ticks = addCondition->getTicks();
+		setTicks(addCondition->getTicks());
 
 		const ConditionLight& conditionLight = static_cast<const ConditionLight&>(*addCondition);
 		lightInfo.level = conditionLight.lightInfo.level;

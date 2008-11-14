@@ -127,6 +127,7 @@ class Spell : public BaseSpell
 		uint32_t getMagicLevel() const {return magLevel;}
 		int32_t getMana() const {return mana;}
 		int32_t getManaPercent() const {return manaPercent;}
+		uint32_t getExhaustion() const {return exhaustion;}
 		const bool isPremium() const {return premium;}
 
 		virtual bool isInstant() const = 0;
