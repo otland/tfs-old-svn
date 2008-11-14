@@ -84,7 +84,7 @@
 
 IPList serverIPs;
 extern GlobalEvents* g_globalEvents;
-extern AdminProtocolConfig* g_adminConfig;
+extern Admin* g_admin;
 Game g_game;
 Npcs g_npcs;
 ConfigManager g_config;
@@ -374,13 +374,13 @@ void mainLoader()
 	if(!outfits->loadFromXml())
 		startupErrorMessage("Unable to load outfits!");
 
-	g_adminConfig = new AdminProtocolConfig();
-	std::cout << ">> Loading administration protocol config" << std::endl;
+	g_admin = new Admin();
+	std::cout << ">> Loading administration protocol" << std::endl;
 	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading admin protocol config");
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading administration protocol");
 	#endif
-	if(!g_adminConfig->loadXMLConfig())
-		startupErrorMessage("Unable to load admin protocol config!");
+	if(!g_admin->loadXMLConfig())
+		startupErrorMessage("Unable to load administration protocol!");
 
 	std::cout << ">> Loading experience stages" << std::endl;
 	#ifndef __CONSOLE__

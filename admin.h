@@ -85,13 +85,12 @@ class RSA;
 
 enum
 {
-	//
 	AP_MSG_LOGIN = 1,
 	AP_MSG_ENCRYPTION = 2,
 	AP_MSG_KEY_EXCHANGE = 3,
 	AP_MSG_COMMAND = 4,
 	AP_MSG_PING = 5,
-	//
+
 	AP_MSG_HELLO = 1,
 	AP_MSG_KEY_EXCHANGE_OK = 2,
 	AP_MSG_KEY_EXCHANGE_FAILED = 3,
@@ -135,43 +134,36 @@ enum
 	ENCRYPTION_RSA1024XTEA = 1,
 };
 
-class AdminProtocolConfig
+class Admin
 {
 	public:
-		AdminProtocolConfig();
-		virtual ~AdminProtocolConfig();
+		Admin();
+		virtual ~Admin();
 
 		bool loadXMLConfig();
 
-		bool isEnabled();
-
-		bool onlyLocalHost();
 		bool addConnection();
 		void removeConnection();
-
-		bool requireLogin();
-		bool requireEncryption();
 
 		uint16_t getProtocolPolicy();
 		uint32_t getProtocolOptions();
 
-		bool allowIP(uint32_t ip);
+		bool isEnabled() const {return m_enabled;}
+		bool onlyLocalHost() const {return m_onlyLocalHost;}
+
+		bool requireLogin() const {return m_requireLogin;}
+		bool requireEncryption() const {return m_requireEncryption;}
 
 		bool passwordMatch(std::string& password);
-
 		RSA* getRSAKey(uint8_t type);
 
+		bool allowIP(uint32_t ip);
+
 	protected:
-		bool m_enabled;
-		bool m_onlyLocalHost;
-		int32_t m_maxConnections;
-		int32_t m_currrentConnections;
+		int32_t m_maxConnections, m_currrentConnections;
+		bool m_enabled, m_onlyLocalHost, m_requireLogin, m_requireEncryption;
 
 		std::string m_password;
-
-		bool m_requireLogin;
-		bool m_requireEncryption;
-
 		RSA* m_key_RSA1024XTEA;
 };
 
@@ -194,10 +186,7 @@ class ProtocolAdmin : public Protocol
 	protected:
 		virtual void deleteProtocolTask();
 
-		void adminCommandCloseServer();
 		void adminCommandPayHouses();
-		void adminCommandOpenServer();
-		void adminCommandShutdownServer();
 		void adminCommandKickPlayer(const std::string& name);
 		void adminCommandSetOwner(const std::string& param);
 
@@ -210,13 +199,10 @@ class ProtocolAdmin : public Protocol
 			LOGGED_IN,
 		};
 
-
-
 	private:
 		int32_t m_loginTries;
 		ConnectionState_t m_state;
-		uint32_t m_lastCommand;
-		uint32_t m_startTime;
+		uint32_t m_lastCommand, m_startTime;
 };
 
 #endif
