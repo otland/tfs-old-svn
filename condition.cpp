@@ -1684,7 +1684,7 @@ ConditionGeneric(_id, _type, _ticks)
 bool ConditionInvisible::startCondition(Creature* creature)
 {
 	g_game.internalCreatureChangeVisible(creature, false);
-	return true;
+	return Condition::startCondition(creature);
 }
 
 void ConditionInvisible::endCondition(Creature* creature, ConditionEnd_t reason)
