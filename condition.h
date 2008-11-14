@@ -105,9 +105,7 @@ enum ConditionAttr_t
 
 struct IntervalInfo
 {
-	int32_t timeLeft;
-	int32_t value;
-	int32_t interval;
+	int32_t timeLeft, value, interval;
 };
 
 class Condition
@@ -116,7 +114,7 @@ class Condition
 		Condition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks);
 		virtual ~Condition(){}
 
-		virtual bool startCondition(Creature* creature) = 0;
+		virtual bool startCondition(Creature* creature);
 		virtual bool executeCondition(Creature* creature, int32_t interval);
 		virtual void endCondition(Creature* creature, ConditionEnd_t reason) = 0;
 		virtual void addCondition(Creature* creature, const Condition* condition) = 0;
@@ -148,8 +146,8 @@ class Condition
 	protected:
 		ConditionId_t id;
 		int32_t ticks;
-		int64_t endTime;
 		ConditionType_t conditionType;
+		int64_t endTime;
 
 		virtual bool updateCondition(const Condition* addCondition);
 };
@@ -160,7 +158,6 @@ class ConditionGeneric: public Condition
 		ConditionGeneric(ConditionId_t _id, ConditionType_t _type, int32_t _ticks);
 		virtual ~ConditionGeneric(){}
 
-		virtual bool startCondition(Creature* creature);
 		virtual bool executeCondition(Creature* creature, int32_t interval);
 		virtual void endCondition(Creature* creature, ConditionEnd_t reason);
 		virtual void addCondition(Creature* creature, const Condition* condition);
