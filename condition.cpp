@@ -320,6 +320,9 @@ Condition(_id, _type, _ticks)
 
 bool ConditionGeneric::startCondition(Creature* creature)
 {
+	if(getTicks() > 0)
+		endTime = (OTSYS_TIME() + getTicks());
+
 	return true;
 }
 
