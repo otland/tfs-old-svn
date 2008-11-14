@@ -492,16 +492,16 @@
 	<movevent event="DeEquip" itemid="7896" slot="legs" function="onDeEquipItem"/>
 
 	<!-- Shields -->
-	<movevent event="Equip" fromid="8905" toid="8909" slot="left-hand" level="100" function="onEquipItem">
+	<movevent event="Equip" fromid="8906" toid="8909" slot="left-hand" level="100" function="onEquipItem">
 		<vocation name="Knight"/>
 		<vocation name="Elite Knight" showInDescription="0"/>
 	</movevent>
-	<movevent event="DeEquip" fromid="8905" toid="8909" slot="left-hand" function="onDeEquipItem"/>
-	<movevent event="Equip" fromid="8905" toid="8909" slot="right-hand" level="100" function="onEquipItem">
+	<movevent event="DeEquip" fromid="8906" toid="8909" slot="left-hand" function="onDeEquipItem"/>
+	<movevent event="Equip" fromid="8906" toid="8909" slot="right-hand" level="100" function="onEquipItem">
 		<vocation name="Knight"/>
 		<vocation name="Elite Knight" showInDescription="0"/>
 	</movevent>
-	<movevent event="DeEquip" fromid="8905" toid="8909" slot="right-hand" function="onDeEquipItem"/>
+	<movevent event="DeEquip" fromid="8906" toid="8909" slot="right-hand" function="onDeEquipItem"/>
 	<movevent event="Equip" itemid="8900" slot="left-hand" level="30" function="onEquipItem">
 		<vocation name="Sorcerer"/>
 		<vocation name="Master Sorcerer" showInDescription="0"/>

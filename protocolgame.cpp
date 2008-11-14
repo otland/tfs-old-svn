@@ -2861,25 +2861,22 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creatur
 	msg->AddByte(0xAA);
 	msg->AddU32(0x00000000);
 
-	//Do not add name for anonymous channel talk
-	if(type != SPEAK_CHANNEL_R2)
+	switch(type)
 	{
-		if(type != SPEAK_RVR_ANSWER)
-			msg->AddString(creature->getName());
-		else
+		case SPEAK_CHANNEL_R2:
+			msg->AddString("");
+			break;
+		case SPEAK_RVR_ANSWER:
 			msg->AddString("Gamemaster");
+			break;
+		default:
+			msg->AddString(creature->getName());
+			break;
 	}
-	else
-		msg->AddString("");
 
-	//Add level only for players
-	if(const Player* speaker = creature->getPlayer())
-	{
-		if(type != SPEAK_RVR_ANSWER && !speaker->isAccountManager())
-			msg->AddU16(speaker->getPlayerInfo(PLAYERINFO_LEVEL));
-		else
-			msg->AddU16(0x0000);
-	}
+	const Player* speaker = creature->getPlayer();
+	if(type != SPEAK_RVR_ANSWER && speaker && !speaker->hasCustomFlag(PlayerCustomFlag_HideLevel) && !speaker->isAccountManager())
+		msg->AddU16(speaker->getPlayerInfo(PLAYERINFO_LEVEL));
 	else
 		msg->AddU16(0x0000);
 
@@ -2904,8 +2901,8 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creatur
 
 		case SPEAK_RVR_CHANNEL:
 		{
-			uint32_t _time = (OTSYS_TIME() / 1000) & 0xFFFFFFFF;
-			msg->AddU32(_time - time);
+			uint32_t tmp = (OTSYS_TIME() / 1000) & 0xFFFFFFFF;
+			msg->AddU32(tmp - time);
 			break;
 		}
 

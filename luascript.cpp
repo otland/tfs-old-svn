@@ -715,8 +715,8 @@ bool LuaScriptInterface::initState()
 	luaL_openlibs(m_luaState);
 	registerFunctions();
 
-	if(loadFile(getFilePath(FILE_TYPE_OTHER, "global.lua")) == -1)
-		std::cout << "Warning: [LuaScriptInterface::initState] Can not load " << getFilePath(FILE_TYPE_OTHER, "global.lua") << "." << std::endl;
+	if(loadFile(getFilePath(FILE_TYPE_OTHER, "lib/data.lua")) == -1)
+		std::cout << "Warning: [LuaScriptInterface::initState] Can not load " << getFilePath(FILE_TYPE_OTHER, "lib/data.lua") << "." << std::endl;
 
 	lua_newtable(m_luaState);
 	lua_setfield(m_luaState, LUA_REGISTRYINDEX, "EVENTS");

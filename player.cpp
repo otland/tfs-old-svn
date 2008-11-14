@@ -260,7 +260,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 	else
 	{
 		s << name;
-		if(!hasCustomFlag(PlayerCustomFlag_DescriptionHideLevel))
+		if(!hasCustomFlag(PlayerCustomFlag_HideLevel))
 			s << " (Level " << level << ")";
 		s << ".";
 
