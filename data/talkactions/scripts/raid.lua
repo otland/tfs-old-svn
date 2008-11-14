@@ -5,18 +5,13 @@ function onSay(cid, words, param)
 	end
 
 	local ret = executeRaid(param)
-	if(ret == nil) then
+	if(ret == LUA_ERROR) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Such raid does not exists.")
 		return FALSE
 	end
 
 	if(ret == FALSE) then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Another raid is already being executed.")
-		return FALSE
-	end
-
-	if(ret == LUA_ERROR) then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "The raid does not contain any data.")
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Could not execute raid.")
 		return FALSE
 	end
 
