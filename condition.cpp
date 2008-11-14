@@ -32,7 +32,7 @@ extern Game g_game;
 Condition::Condition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks) :
 id(_id), ticks(_ticks), conditionType(_type)
 {
-	if(_ticks == -1)
+	if(_ticks != -1)
 		endTime = (OTSYS_TIME() + std::max((int32_t)0, _ticks));
 	else
 		endTime = -1;
@@ -166,7 +166,7 @@ bool Condition::executeCondition(Creature* creature, int32_t interval)
 	if(ticks != -1)
 	{
 		ticks = std::max((int32_t)0, (getTicks() - interval));
-		return (getEndTime() >= OTSYS_TIME());
+		return (getTicks() > 0);
 	}
 
 	return true;
