@@ -103,6 +103,7 @@ void Server::onAccept(Connection* connection, const boost::system::error_code& e
 				std::cout << "Error: [Server::onAccept] More than 100 listen errors." << std::endl;
 			#else
 			std::cout << "Warning: [Server::onAccept] More than 100 listen errors." << std::endl;
+			m_listenErrors = 0;
 			#endif
 		}
 		else

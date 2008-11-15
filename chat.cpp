@@ -322,14 +322,12 @@ bool Chat::removeUserFromChannel(Player* player, uint16_t channelId)
 			deleteChannel(player, channelId);
 		return true;
 	}
-	else
-		return false;
+	return false;
 }
 
 void Chat::removeUserFromAllChannels(Player* player)
 {
 	ChannelList list = getChannelList(player);
-
 	while(list.size())
 	{
 		ChatChannel* channel = list.front();
@@ -920,16 +918,11 @@ ChannelList Chat::getChannelList(Player* player)
 	for(itn = m_normalChannels.begin(); itn != m_normalChannels.end(); ++itn)
 	{
 		bool skip = false;
-		switch(itn->first)
+		if((itn->first >= 0x01 && itn->first <= 0x03) || (itn->first >= 05 && itn->first <= 06))
 		{
-			case 0x01:
-			case 0x02:
-			case 0x03:
-			case 0x05:
-			case 0x06:
-				ChatChannel* channel = getChannel(player, itn->first);
-				if(!channel)
-					skip = true;
+			ChatChannel* channel = getChannel(player, itn->first);
+			if(!channel)
+				skip = true;
 		}
 
 		if(!skip)

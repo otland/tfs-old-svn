@@ -30,26 +30,26 @@ class MissionState;
 class Mission;
 class Quest;
 
-typedef std::map<uint32_t, MissionState*> StateList;
+typedef std::map<int32_t, MissionState*> StateList;
 typedef std::list<Mission*> MissionsList;
 typedef std::list<Quest*> QuestsList;
 
 class MissionState
 {
 	public:
-		MissionState(std::string _description, uint32_t _missionID);
-		uint32_t getMissionID() { return missionID; }
+		MissionState(std::string _description, int32_t _missionID);
+		int32_t getMissionID() { return missionID; }
 		std::string getMissionDescription() { return description; }
 
 	private:
 		std::string description;
-		uint32_t missionID;
+		int32_t missionID;
 };
 
 class Mission
 {
 	public:
-		Mission(std::string _missionName, uint32_t _storageID, uint32_t _startValue, int32_t _endValue);
+		Mission(std::string _missionName, int32_t _storageID, int32_t _startValue, int32_t _endValue);
 		~Mission();
 		bool isCompleted(Player* player) const;
 		bool isStarted(Player* player) const;
@@ -59,13 +59,13 @@ class Mission
 
 	private:
 		std::string missionName;
-		uint32_t storageID, startValue, endValue;
+		int32_t storageID, startValue, endValue;
 };
 
 class Quest
 {
 	public:
-		Quest(std::string _name, uint16_t _id, uint32_t _startStorageID, uint32_t _startStorageValue);
+		Quest(std::string _name, uint16_t _id, int32_t _startStorageID, int32_t _startStorageValue);
 		~Quest();
 
 		bool isCompleted(Player* player);
@@ -79,7 +79,7 @@ class Quest
 	private:
 		std::string name;
 		uint16_t id;
-		uint32_t startStorageID, startStorageValue;
+		int32_t startStorageID, startStorageValue;
 };
 
 class Quests
