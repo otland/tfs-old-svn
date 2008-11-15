@@ -5076,21 +5076,21 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 
 uint64_t Game::getExperienceStage(uint32_t level)
 {
-	if(stagesEnabled)
-	{
-		if(useLastStageLevel && level >= lastStageLevel)
-			return stages[lastStageLevel];
-		else
-			return stages[level];
-	}
-	else
+	if(!g_config.getBool(ConfigManager::EXPERIENCE_STAGES))
 		return g_config.getNumber(ConfigManager::RATE_EXPERIENCE);
+
+	if(useLastStageLevel && level >= lastStageLevel)
+		return stages[lastStageLevel];
+		
+	return stages[level];	
 }
 
 bool Game::loadExperienceStages()
 {
-	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "stages.xml").c_str());
-	if(doc)
+	if(!g_config.getBool(ConfigManager::EXPERIENCE_STAGES))
+		return true;
+
+	if(xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "stages.xml").c_str()))
 	{
 		xmlNodePtr root, p;
 		int32_t intVal, low, high, mult;
@@ -5100,15 +5100,10 @@ bool Game::loadExperienceStages()
 			xmlFreeDoc(doc);
 			return false;
 		}
-		p = root->children;
 
+		p = root->children;
 		while(p)
 		{
-			if(!xmlStrcmp(p->name, (const xmlChar*)"config"))
-			{
-				if(readXMLInteger(p, "enabled", intVal))
-					stagesEnabled = (intVal != 0);
-			}
 			else if(!xmlStrcmp(p->name, (const xmlChar*)"stage"))
 			{
 				if(readXMLInteger(p, "minlevel", intVal))
@@ -5138,8 +5133,10 @@ bool Game::loadExperienceStages()
 						stages[iteratorValue] = mult;
 				}
 			}
+
 			p = p->next;
 		}
+
 		xmlFreeDoc(doc);
 	}
 	return true;

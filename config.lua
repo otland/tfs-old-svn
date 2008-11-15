@@ -123,15 +123,17 @@
 	removePremiumOnInit = "yes"
 
 	-- Rates
+	-- NOTE: experienceStages configuration is located in data/XML/stages.xml.
 	rateExp = 5
 	rateSkill = 3
 	rateLoot = 2
 	rateMagic = 3
 	rateSpawn = 1
+	experienceStarges = "no"
 
 	-- Global save
 	-- NOTE: globalSaveHour means like 03:00, not that it will save every 3 hours,
-	-- if you want such a system please check out data/globalevents directory.
+	-- if you want such a system please check out data/globalevents/globalevents.xml.
 	globalSaveEnabled = "no"
 	globalSaveHour = 8
 	shutdownAtGlobalSave = "yes"

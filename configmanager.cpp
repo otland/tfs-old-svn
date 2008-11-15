@@ -163,6 +163,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confNumber[MAX_PLAYER_SUMMONS] = getGlobalNumber(L, "maxPlayerSummons", 2);
 	m_confBool[SAVE_GLOBAL_STORAGE] = getGlobalBool(L, "saveGlobalStorage", "yes");
 	m_confBool[FORCE_CLOSE_SLOW_CONNECTION] = getGlobalBool(L, "forceSlowConnectionsToDisconnect", "no");
+	m_confBool[EXPERIENCE_STAGES] = getGlobalBool(L, "experienceStages", "no");
 	m_isLoaded = true;
 
 	lua_close(L);

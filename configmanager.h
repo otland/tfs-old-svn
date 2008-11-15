@@ -167,6 +167,7 @@ class ConfigManager
 			CANNOT_ATTACK_SAME_LOOKFEET,
 			AIMBOT_HOTKEY_ENABLED,
 			FORCE_CLOSE_SLOW_CONNECTION,
+			EXPERIENCE_STAGES,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 
