@@ -15,7 +15,7 @@ function onSay(cid, words, param)
 		return FALSE
 	end
 
-	doRemoveCreature(pid)
 	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, getCreatureName(pid) .. " has been kicked.")
+	doRemoveCreature(pid)
 	return TRUE
 end
