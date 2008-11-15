@@ -2216,6 +2216,7 @@ uint32_t Player::getIP() const
 
 void Player::death()
 {
+	removeConditions(CONDITIONEND_DEATH);
 	if(skillLoss)
 	{
 		//Magic level loss
@@ -2270,7 +2271,6 @@ void Player::death()
 		}
 
 		removeExperience(getLostExperience(), false);
-		removeConditions(CONDITIONEND_DEATH);
 		loginPosition = masterPos;
 		blessings = 0;
 		if(!inventory[SLOT_BACKPACK])
