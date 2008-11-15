@@ -449,7 +449,8 @@ void ProtocolAdmin::adminCommandKickPlayer(const std::string& name)
 	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	TRACK_MESSAGE(output);
 
-	if(Player* player = g_game.getPlayerByNameWildcard(name))
+	Player* player = NULL;
+	if(g_game.getPlayerByNameWildcard(name, player) == RET_NOERROR)
 	{
 		player->kickPlayer(false);
 		addLogLine(this, LOGTYPE_EVENT, 1, "kicked player " + player->getName());
@@ -637,7 +638,7 @@ bool Admin::allowIP(uint32_t ip)
 		{
 			char buffer[32];
 			formatIP(ip, buffer);
-			addLogLine(NULL, LOGTYPE_WARNING, 1, "forbidden connection try from " + buffer);
+			addLogLine(NULL, LOGTYPE_WARNING, 1, std::string("forbidden connection try from ") + buffer);
 			return false;
 		}
 	}

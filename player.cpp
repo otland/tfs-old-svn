@@ -3226,9 +3226,6 @@ bool Player::setFollowCreature(Creature* creature, bool fullPathSearch /*= false
 		return false;
 	}
 
-	if(creature)
-		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
-
 	return true;
 }
 
@@ -3250,6 +3247,9 @@ bool Player::setAttackedCreature(Creature* creature)
 	}
 	else
 		setFollowCreature(NULL);
+
+	if(creature)
+		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
 
 	return true;
 }
