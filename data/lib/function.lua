@@ -337,7 +337,7 @@ function doConvertIntegerToIp(int, mask)
 end
 
 function getBooleanFromString(str)
-	return (str:lower() == "yes" or str:lower() == "true" or (tonumber(str) ~= nil and tonumber(str) > 0)) and TRUE or FALSE
+	return (str:lower() == "yes" or str:lower() == "true" or (tonumber(str) and tonumber(str) > 0)) and TRUE or FALSE
 end
 
 table.find = function (table, value)

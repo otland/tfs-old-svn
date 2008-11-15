@@ -2289,15 +2289,15 @@ void Player::dropCorpse()
 	{
 		setDropLoot(true);
 		setLossSkill(true);
-		onThink(EVENT_CREATURE_THINK_INTERVAL);
-		g_game.internalTeleport(this, getTemplePosition(), true);
-		g_game.addCreatureHealth(this);
 		if(health <= 0)
 		{
 			health = healthMax;
 			mana = manaMax;
-			sendStats();
 		}
+
+		onThink(EVENT_CREATURE_THINK_INTERVAL);
+		g_game.internalTeleport(this, getTemplePosition(), true);
+		sendStats();
 	}
 	else
 		Creature::dropCorpse();
