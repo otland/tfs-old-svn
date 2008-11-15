@@ -27,6 +27,7 @@
 
 extern ConfigManager g_config;
 extern Game g_game;
+extern Chat g_chat;
 
 PrivateChatChannel::PrivateChatChannel(uint16_t channelId, std::string channelName) :
 	ChatChannel(channelId, channelName)
@@ -42,17 +43,12 @@ bool PrivateChatChannel::isInvited(const Player* player)
 	if(player->getGUID() == getOwner())
 		return true;
 
-	InvitedMap::iterator it = m_invites.find(player->getGUID());
-	if(it != m_invites.end())
-		return true;
-
-	return false;
+	return m_invites[player->getGUID()] != NULL;
 }
 
 bool PrivateChatChannel::addInvited(Player* player)
 {
-	InvitedMap::iterator it = m_invites.find(player->getGUID());
-	if(it != m_invites.end())
+	if(m_invites[player->getGUID()] != NULL)
 		return false;
 
 	m_invites[player->getGUID()] = player;
@@ -61,11 +57,10 @@ bool PrivateChatChannel::addInvited(Player* player)
 
 bool PrivateChatChannel::removeInvited(Player* player)
 {
-	InvitedMap::iterator it = m_invites.find(player->getGUID());
-	if(it == m_invites.end())
+	if(m_invites[player->getGUID()] == NULL)
 		return false;
 
-	m_invites.erase(it);
+	m_invites[player->getGUID()] = NULL;
 	return true;
 }
 
@@ -120,8 +115,7 @@ ChatChannel::ChatChannel(uint16_t channelId, std::string channelName)
 
 bool ChatChannel::addUser(Player* player)
 {
-	UsersMap::iterator it = m_users.find(player->getID());
-	if(it != m_users.end())
+	if(isInChannel(player))
 		return false;
 
 	switch(m_id)
@@ -136,27 +130,12 @@ bool ChatChannel::addUser(Player* player)
 		}
 
 		case 0x01:
-			if(player->getAccountType() < ACCOUNT_TYPE_GAMEMASTER)
-				return false;
-			break;
-
 		case 0x02:
-			if(player->getAccountType() < ACCOUNT_TYPE_TUTOR)
-				return false;
-			break;
-
 		case 0x03:
-			if(!player->hasFlag(PlayerFlag_CanAnswerRuleViolations) && player->getAccountType() < ACCOUNT_TYPE_GAMEMASTER)
-				return false;
-			break;
-
 		case 0x05:
-			if(player->getAccountType() < ACCOUNT_TYPE_SENIORTUTOR && player->getVocationId() == 0)
-				return false;
-			break;
-
 		case 0x06:
-			if(player->getAccountType() < ACCOUNT_TYPE_SENIORTUTOR && player->getVocationId() != 0)
+			ChatChannel* channel = g_chat.getChannel(player, m_id);
+			if(!channel)
 				return false;
 			break;
 	}
@@ -167,8 +146,11 @@ bool ChatChannel::addUser(Player* player)
 
 bool ChatChannel::removeUser(Player* player)
 {
+	if(!isInChannel(player))
+		return false;
+
 	UsersMap::iterator it = m_users.find(player->getID());
-	if(it == m_users.end())
+	if(it == m_users.end()) //better safe than sorry.
 		return false;
 
 	m_users.erase(it);
@@ -183,11 +165,11 @@ bool ChatChannel::talk(Player* fromPlayer, SpeakClasses type, const std::string&
 		fromPlayer->addCondition(condition);
 	}
 
-	//FIXME: find out how looping m_users is causing crash here certain conditions
-	// so we don't have to loop all online players
+	ChatChannel* channel = NULL;
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		if(m_id != 0x00 || (m_id == 0x00 && fromPlayer->getGuildId() == (*it).second->getGuildId()))
+		channel = g_chat.getChannel((*it).second, m_id);
+		if(channel && channel->isInChannel((*it).second))
 			(*it).second->sendToChannel(fromPlayer, type, text, m_id, time);
 	}
 	return true;
@@ -246,6 +228,11 @@ Chat::~Chat()
 	for(PrivateChannelMap::iterator it = m_privateChannels.begin(); it != m_privateChannels.end(); ++it)
 		delete it->second;
 	m_privateChannels.clear();
+}
+
+bool ChatChannel::isInChannel(Player* player)
+{
+	return m_users[player->getID()] != NULL;
 }
 
 ChatChannel* Chat::createChannel(Player* player, uint16_t channelId)
@@ -909,8 +896,8 @@ std::string Chat::getChannelName(Player* player, uint16_t channelId)
 	ChatChannel *channel = getChannel(player, channelId);
 	if(channel)
 		return channel->getName();
-	else
-		return "";
+
+	return "";
 }
 
 ChannelList Chat::getChannelList(Player* player)
@@ -936,29 +923,13 @@ ChannelList Chat::getChannelList(Player* player)
 		switch(itn->first)
 		{
 			case 0x01:
-				if(player->getAccountType() < ACCOUNT_TYPE_GAMEMASTER)
-					skip = true;
-				break;
-
 			case 0x02:
-				if(player->getAccountType() < ACCOUNT_TYPE_TUTOR)
-					skip = true;
-				break;
-
 			case 0x03:
-				if(!player->hasFlag(PlayerFlag_CanAnswerRuleViolations) && player->getAccountType() < ACCOUNT_TYPE_GAMEMASTER)
-					skip = true;
-				break;
-
 			case 0x05:
-				if(player->getAccountType() < ACCOUNT_TYPE_SENIORTUTOR && player->getVocationId() == 0)
-					skip = true;
-				break;
-
 			case 0x06:
-				if(player->getAccountType() < ACCOUNT_TYPE_SENIORTUTOR && player->getVocationId() != 0)
+				ChatChannel* channel = getChannel(player, itn->first);
+				if(!channel)
 					skip = true;
-				break;
 		}
 
 		if(!skip)
@@ -971,7 +942,6 @@ ChannelList Chat::getChannelList(Player* player)
 	for(it = m_privateChannels.begin(); it != m_privateChannels.end(); ++it)
 	{
 		PrivateChatChannel* channel = it->second;
-
 		if(channel)
 		{
 			if(channel->isInvited(player))
@@ -1034,8 +1004,10 @@ ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 
 	PrivateChannelMap::iterator pit = m_privateChannels.find(channelId);
 	if(pit != m_privateChannels.end())
-		return pit->second;
-
+	{
+		if(pit->second->isInvited(player))
+			return pit->second;
+	}
 	return NULL;
 }
 
