@@ -35,7 +35,7 @@ Condition::Condition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks) :
 	endTime(0),
 	conditionType(_type)
 {
-	//
+	setTicks(_ticks);
 }
 
 bool Condition::setParam(ConditionParam_t param, int32_t value)

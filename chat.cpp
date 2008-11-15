@@ -169,7 +169,7 @@ bool ChatChannel::talk(Player* fromPlayer, SpeakClasses type, const std::string&
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
 		channel = g_chat.getChannel((*it).second, m_id);
-		if(channel && channel->isInChannel((*it).second))
+		if(channel && channel->isInChannel((*it).second) && channel == this)
 			(*it).second->sendToChannel(fromPlayer, type, text, m_id, time);
 	}
 	return true;
