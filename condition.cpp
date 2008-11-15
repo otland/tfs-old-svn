@@ -1239,6 +1239,7 @@ bool ConditionDamage::startCondition(Creature* creature)
 	if(!init())
 		return false;
 
+	bool tmp = Condition::startCondition(creature);
 	if(!delayed)
 	{
 		int32_t damage = 0;
@@ -1246,7 +1247,7 @@ bool ConditionDamage::startCondition(Creature* creature)
 			return doDamage(creature, damage);
 	}
 
-	return Condition::startCondition(creature);
+	return tmp;
 }
 
 bool ConditionDamage::executeCondition(Creature* creature, int32_t interval)
