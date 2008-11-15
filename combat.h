@@ -82,7 +82,7 @@ struct CombatParams
 		condition = NULL;
 	}
 
-	bool blockedByArmor, blockedByShield, targetCasterOrTopMost, isAggressive, useCharges
+	bool blockedByArmor, blockedByShield, targetCasterOrTopMost, isAggressive, useCharges;
 	uint8_t impactEffect, distanceEffect;
 	const Condition* condition;
 	ConditionType_t dispelType;
