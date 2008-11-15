@@ -129,7 +129,7 @@
 	rateLoot = 2
 	rateMagic = 3
 	rateSpawn = 1
-	experienceStarges = "no"
+	experienceStages = "no"
 
 	-- Global save
 	-- NOTE: globalSaveHour means like 03:00, not that it will save every 3 hours,
