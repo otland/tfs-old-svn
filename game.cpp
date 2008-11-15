@@ -5104,7 +5104,7 @@ bool Game::loadExperienceStages()
 		p = root->children;
 		while(p)
 		{
-			else if(!xmlStrcmp(p->name, (const xmlChar*)"stage"))
+			if(!xmlStrcmp(p->name, (const xmlChar*)"stage"))
 			{
 				if(readXMLInteger(p, "minlevel", intVal))
 					low = intVal;
