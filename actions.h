@@ -47,6 +47,8 @@ class Actions : public BaseEvents
 		ReturnValue canUse(const Player* player, const Position& pos, const Item* item);
 		ReturnValue canUseFar(const Creature* creature, const Position& toPos, bool checkLineOfSight);
 
+		bool hasAction(const Item* item);
+
 	protected:
 		ReturnValue internalUseItem(Player* player, const Position& pos,
 			uint8_t index, Item* item, uint32_t creatureId);

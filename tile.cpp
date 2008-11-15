@@ -208,6 +208,21 @@ Item* Tile::getTopDownItem()
 	return NULL;
 }
 
+Item* Tile::getItemByTopOrder(int32_t topOrder)
+{
+	//topOrder:
+	//1: borders
+	//2: ladders, signs, splashes
+	//3: doors etc
+	//4: creatures
+	for(ItemVector::reverse_iterator it = topItems.rbegin(); it != topItems.rend(); ++it)
+	{
+		if(Item::items[(*it)->getID()].alwaysOnTopOrder == topOrder)
+			return (*it);
+	}
+	return NULL;
+}
+
 Item* Tile::getTopTopItem()
 {
 	if(!topItems.empty())
@@ -642,7 +657,7 @@ ReturnValue Tile::__queryMaxCount(int32_t index, const Thing* thing, uint32_t co
 	return RET_NOERROR;
 }
 
-ReturnValue Tile::__queryRemove(const Thing* thing, uint32_t count) const
+ReturnValue Tile::__queryRemove(const Thing* thing, uint32_t count, uint32_t flags) const
 {
 	int32_t index = __getIndexOfThing(thing);
 
@@ -656,7 +671,7 @@ ReturnValue Tile::__queryRemove(const Thing* thing, uint32_t count) const
 	if(count == 0 || (item->isStackable() && count > item->getItemCount()))
 		return RET_NOTPOSSIBLE;
 
-	if(item->isNotMoveable())
+	if(item->isNotMoveable() && !hasBitSet(FLAG_IGNORENOTMOVEABLE, flags))
 		return RET_NOTMOVEABLE;
 
 	return RET_NOERROR;

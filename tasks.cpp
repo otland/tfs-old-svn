@@ -29,12 +29,13 @@ extern Game g_game;
 #include "exception.h"
 #endif
 
-bool Dispatcher::m_shutdown = false;
+Dispatcher::DispatcherState Dispatcher::m_threadState = Dispatcher::STATE_TERMINATED;
 
 Dispatcher::Dispatcher()
 {
 	OTSYS_THREAD_LOCKVARINIT(m_taskLock);
 	OTSYS_THREAD_SIGNALVARINIT(m_taskSignal);
+	Dispatcher::m_threadState = Dispatcher::STATE_RUNNING;
 	OTSYS_CREATE_THREAD(Dispatcher::dispatcherThread, NULL);
 }
 
@@ -46,7 +47,7 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 	#endif
 	srand((unsigned int)OTSYS_TIME());
 
-	while(!Dispatcher::m_shutdown)
+	while(Dispatcher::m_threadState != Dispatcher::STATE_TERMINATED)
 	{
 		Task* task = NULL;
 
@@ -59,7 +60,7 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 			OTSYS_THREAD_WAITSIGNAL(getDispatcher().m_taskSignal, getDispatcher().m_taskLock);
 		}
 
-		if(!getDispatcher().m_taskList.empty() && !Dispatcher::m_shutdown)
+		if(!getDispatcher().m_taskList.empty() && (Dispatcher::m_threadState != Dispatcher::STATE_TERMINATED))
 		{
 			// take the first task
 			task = getDispatcher().m_taskList.front();
@@ -88,20 +89,20 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 
 void Dispatcher::addTask(Task* task)
 {
-	OTSYS_THREAD_LOCK(m_taskLock, "");
-
 	bool do_signal = false;
-	if(!Dispatcher::m_shutdown)
+	if(Dispatcher::m_threadState == Dispatcher::STATE_RUNNING)
 	{
+		OTSYS_THREAD_LOCK(m_taskLock, "");
+
 		do_signal = m_taskList.empty();
 		m_taskList.push_back(task);
+
+		OTSYS_THREAD_UNLOCK(m_taskLock, "");
 	}
-	#ifdef _DEBUG
+	#ifdef __DEBUG_SCHEDULER__
 	else
 		std::cout << "Error: [Dispatcher::addTask] Dispatcher thread is terminated." << std::endl;
 	#endif
-
-	OTSYS_THREAD_UNLOCK(m_taskLock, "");
 
 	// send a signal if the list was empty
 	if(do_signal)
@@ -125,7 +126,14 @@ void Dispatcher::flush()
 void Dispatcher::stop()
 {
 	OTSYS_THREAD_LOCK(m_taskLock, "");
+	m_threadState = Dispatcher::STATE_CLOSING;
+	OTSYS_THREAD_UNLOCK(m_taskLock, "");
+}
+
+void Dispatcher::shutdown()
+{
+	OTSYS_THREAD_LOCK(m_taskLock, "");
+	m_threadState = Dispatcher::STATE_TERMINATED;
 	flush();
-	m_shutdown = true;
 	OTSYS_THREAD_UNLOCK(m_taskLock, "");
 }

@@ -117,6 +117,7 @@ class Tile : public Cylinder
 		Item* getTopDownItem();
 		bool isMoveableBlocking() const;
 		Thing* getTopThing();
+		Item* getItemByTopOrder(int32_t topOrder);
 
 		uint32_t getThingCount() const {return thingCount;}
 
@@ -163,7 +164,7 @@ class Tile : public Cylinder
 			uint32_t flags) const;
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
 			uint32_t& maxQueryCount, uint32_t flags) const;
-		virtual ReturnValue __queryRemove(const Thing* thing, uint32_t count) const;
+		virtual ReturnValue __queryRemove(const Thing* thing, uint32_t count, uint32_t flags) const;
 		virtual Cylinder* __queryDestination(int32_t& index, const Thing* thing, Item** destItem,
 			uint32_t& flags);
 

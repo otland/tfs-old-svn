@@ -617,7 +617,7 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 		item = it->second;
 		++runningId;
 
-		uint32_t attributesSize;
+		uint32_t attributesSize = 0;
 
 		PropWriteStream propWriteStream;
 		item->serializeAttr(propWriteStream);
@@ -646,7 +646,7 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 			if(container)
 				stack.push_back(containerBlock(container, runningId));
 
-			uint32_t attributesSize;
+			uint32_t attributesSize = 0;
 			PropWriteStream propWriteStream;
 			item->serializeAttr(propWriteStream);
 			const char* attributes = propWriteStream.getStream(attributesSize);
@@ -710,7 +710,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 		}
 	}
 
-	uint32_t conditionsSize;
+	uint32_t conditionsSize = 0;
 	const char* conditions = propWriteStream.getStream(conditionsSize);
 
 	//First, an UPDATE query to write the player itself

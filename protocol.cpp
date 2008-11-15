@@ -150,7 +150,9 @@ bool Protocol::XTEA_decrypt(NetworkMessage& msg)
 {
 	if((msg.getMessageLength() - 6) % 8 != 0)
 	{
-		std::cout << "Failure: [Protocol::XTEA_decrypt]. Not valid encrypted message size" << std::endl;
+		#ifdef __DEBUG_NET_DETAIL__
+		std::cout << "[Failure - Protocol::XTEA_decrypt] Not valid encrypted message size" << std::endl;
+		#endif
 		return false;
 	}
 
@@ -185,7 +187,9 @@ bool Protocol::XTEA_decrypt(NetworkMessage& msg)
 	int tmp = msg.GetU16();
 	if(tmp > msg.getMessageLength() - 8)
 	{
-		std::cout << "Failure: [Protocol::XTEA_decrypt]. Not valid unencrypted message size" << std::endl;
+		#ifdef __DEBUG_NET_DETAIL__
+		std::cout << "[Failure - Protocol::XTEA_decrypt] Not valid unencrypted message size" << std::endl;
+		#endif
 		return false;
 	}
 
@@ -197,7 +201,9 @@ bool Protocol::RSA_decrypt(RSA* rsa, NetworkMessage& msg)
 {
 	if(msg.getMessageLength() - msg.getReadPos() != 128)
 	{
-		std::cout << "Warning: [Protocol::RSA_decrypt]. Not valid packet size" << std::endl;
+		#ifdef __DEBUG_NET_DETAIL__
+		std::cout << "[Warning - Protocol::RSA_decrypt] Not valid packet size" << std::endl;
+		#endif
 		return false;
 	}
 
@@ -205,10 +211,9 @@ bool Protocol::RSA_decrypt(RSA* rsa, NetworkMessage& msg)
 
 	if(msg.GetByte() != 0)
 	{
-		std::cout << "Warning: [Protocol::RSA_decrypt]. First byte != 0" << std::endl;
+		std::cout << "[Warning - Protocol::RSA_decrypt] First byte != 0" << std::endl;
 		return false;
 	}
-
 	return true;
 }
 

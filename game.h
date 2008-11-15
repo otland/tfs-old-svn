@@ -47,7 +47,8 @@ enum stackPosType_t
 	STACKPOS_NORMAL,
 	STACKPOS_MOVE,
 	STACKPOS_LOOK,
-	STACKPOS_USE
+	STACKPOS_USE,
+	STACKPOS_USEITEM
 };
 
 enum WorldType_t
@@ -287,7 +288,7 @@ class Game
 
 		ReturnValue internalAddItem(Cylinder* toCylinder, Item* item, int32_t index = INDEX_WHEREEVER,
 			uint32_t flags = 0, bool test = false);
-		ReturnValue internalRemoveItem(Item* item, int32_t count = -1,  bool test = false);
+		ReturnValue internalRemoveItem(Item* item, int32_t count = -1, bool test = false, uint32_t flags = 0);
 
 		ReturnValue internalPlayerAddItem(Player* player, Item* item, bool dropOnMap = true);
 
@@ -350,15 +351,17 @@ class Game
 		  * Teleports an object to another position
 		  * \param thing is the object to teleport
 		  * \param newPos is the new position
+		  * \param pushMove should player be pushed if newPos is 1 sqm away
+		  * \param flags optional flags to modify default behavior
 		  * \returns true if the teleportation was successful
 		  */
-		ReturnValue internalTeleport(Thing* thing, const Position& newPos, bool pushMove);
+		ReturnValue internalTeleport(Thing* thing, const Position& newPos, bool pushMove = true, uint32_t flags = 0);
 
 		/**
-			* Turn a creature to a different direction.
-			* \param creature Creature to change the direction
-			* \param dir Direction to turn to
-			*/
+		  * Turn a creature to a different direction.
+		  * \param creature Creature to change the direction
+		  * \param dir Direction to turn to
+		  */
 		bool internalCreatureTurn(Creature* creature, Direction dir);
 
 		/**

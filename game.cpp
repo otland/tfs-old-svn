@@ -166,6 +166,8 @@ void Game::setGameState(GameState_t newState)
 
 				Dispatcher::getDispatcher().addTask(
 					createTask(boost::bind(&Game::shutdown, this)));
+				Scheduler::getScheduler().stop();
+				Dispatcher::getDispatcher().stop();
 				break;
 			}
 
@@ -354,7 +356,23 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 				else
 					thing = tile->getTopCreature();
 			}
-			/*use item*/
+			else if(type == STACKPOS_USEITEM)
+			{
+				//First check items with topOrder 2 (ladders, signs, splashes)
+				Item* item =  tile->getItemByTopOrder(2);
+				if(item && g_actions->hasAction(item))
+					thing = item;
+				else
+				{
+					//then down items
+					thing = tile->getTopDownItem();
+					if(thing == NULL)
+					{
+						//then last we check items with topOrder 3 (doors etc)
+						thing = tile->getTopTopItem();
+					}
+				}
+			}
 			else if(type == STACKPOS_USE)
 				thing = tile->getTopDownItem();
 			else
@@ -1224,7 +1242,7 @@ ReturnValue Game::internalMoveItem(Cylinder* fromCylinder, Cylinder* toCylinder,
 			if(retExchangeMaxCount != RET_NOERROR && maxExchangeQueryCount == 0)
 				return retExchangeMaxCount;
 
-			if((toCylinder->__queryRemove(toItem, toItem->getItemCount()) == RET_NOERROR) && ret == RET_NOERROR)
+			if((toCylinder->__queryRemove(toItem, toItem->getItemCount(), flags) == RET_NOERROR) && ret == RET_NOERROR)
 			{
 				int32_t oldToItemIndex = toCylinder->__getIndexOfThing(toItem);
 				toCylinder->__removeThing(toItem, toItem->getItemCount());
@@ -1264,7 +1282,7 @@ ReturnValue Game::internalMoveItem(Cylinder* fromCylinder, Cylinder* toCylinder,
 	Item* moveItem = item;
 
 	//check if we can remove this item
-	ret = fromCylinder->__queryRemove(item, m);
+	ret = fromCylinder->__queryRemove(item, m, flags);
 	if(ret != RET_NOERROR)
 		return ret;
 
@@ -1400,7 +1418,7 @@ ReturnValue Game::internalAddItem(Cylinder* toCylinder, Item* item, int32_t inde
 	return RET_NOERROR;
 }
 
-ReturnValue Game::internalRemoveItem(Item* item, int32_t count /*= -1*/, bool test /*= false*/)
+ReturnValue Game::internalRemoveItem(Item* item, int32_t count /*= -1*/, bool test /*= false*/, uint32_t flags /*= 0*/)
 {
 	Cylinder* cylinder = item->getParent();
 	if(cylinder == NULL)
@@ -1410,8 +1428,8 @@ ReturnValue Game::internalRemoveItem(Item* item, int32_t count /*= -1*/, bool te
 		count = item->getItemCount();
 
 	//check if we can remove this item
-	ReturnValue ret = cylinder->__queryRemove(item, count);
-	if(ret != RET_NOERROR && ret != RET_NOTMOVEABLE)
+	ReturnValue ret = cylinder->__queryRemove(item, count, flags | FLAG_IGNORENOTMOVEABLE);
+	if(ret != RET_NOERROR)
 		return ret;
 
 	if(!item->canRemove())
@@ -1874,7 +1892,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 	return NULL;
 }
 
-ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pushMove)
+ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pushMove /*= true*/, uint32_t flags /*= 0*/)
 {
 	if(newPos == thing->getPosition())
 		return RET_NOERROR;
@@ -1886,14 +1904,14 @@ ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pu
 	{
 		if(Creature* creature = thing->getCreature())
 		{
-			if(Position::areInRange<1,1,0>(creature->getPosition(), newPos) && pushMove)
+			if(pushMove && Position::areInRange<1,1,0>(creature->getPosition(), newPos))
 				creature->getTile()->moveCreature(creature, toTile, false);
 			else
 				creature->getTile()->moveCreature(creature, toTile, true);
 			return RET_NOERROR;
 		}
 		else if(Item* item = thing->getItem())
-			return internalMoveItem(item->getParent(), toTile, INDEX_WHEREEVER, item, item->getItemCount(), NULL);
+			return internalMoveItem(item->getParent(), toTile, INDEX_WHEREEVER, item, item->getItemCount(), NULL, flags);
 	}
 
 	return RET_NOTPOSSIBLE;
@@ -2164,7 +2182,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 	if(isHotkey && g_config.getString(ConfigManager::AIMBOT_HOTKEY_ENABLED) == "no")
 		return false;
 
-	Thing* thing = internalGetThing(player, fromPos, fromStackPos, fromSpriteId);
+	Thing* thing = internalGetThing(player, fromPos, fromStackPos, fromSpriteId, STACKPOS_USEITEM);
 	if(!thing)
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
@@ -2172,7 +2190,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 	}
 
 	Item* item = thing->getItem();
-	if(!item || item->getClientID() != fromSpriteId || !item->isUseable())
+	if(!item || !item->isUseable())
 	{
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
 		return false;
@@ -2257,7 +2275,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 	if(isHotkey && g_config.getString(ConfigManager::AIMBOT_HOTKEY_ENABLED) == "no")
 		return false;
 
-	Thing* thing = internalGetThing(player, pos, stackPos, spriteId);
+	Thing* thing = internalGetThing(player, pos, stackPos, spriteId, STACKPOS_USEITEM);
 	if(!thing)
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
@@ -2265,7 +2283,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 	}
 
 	Item* item = thing->getItem();
-	if(!item || item->getClientID() != spriteId)
+	if(!item)
 	{
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
 		return false;
@@ -4387,19 +4405,20 @@ void Game::resetCommandTag()
 
 void Game::shutdown()
 {
-	std::cout << "Preparing shutdown";
-	Scheduler::getScheduler().stop();
+	std::cout << "Shutting down server";
+	Scheduler::getScheduler().shutdown();
 	std::cout << ".";
-	Dispatcher::getDispatcher().stop();
+	Dispatcher::getDispatcher().shutdown();
 	std::cout << ".";
 	Spawns::getInstance()->clear();
-	std::cout << "." << std::endl;
+	std::cout << ".";
 
 	if(g_server)
 		g_server->stop();
 
+	std::cout << " ";
 	cleanup();
-	std::cout << "Exiting." << std::endl;
+	std::cout << "done." << std::endl;
 	exit(1);
 }
 

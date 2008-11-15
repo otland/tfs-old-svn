@@ -476,6 +476,11 @@ bool Actions::openContainer(Player* player, Container* container, const uint8_t 
 	return true;
 }
 
+bool Actions::hasAction(const Item* item)
+{
+	return getAction(item);
+}
+
 Action::Action(LuaScriptInterface* _interface) :
 	Event(_interface)
 {

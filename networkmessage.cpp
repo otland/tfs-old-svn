@@ -74,7 +74,7 @@ Position NetworkMessage::GetPosition()
 void NetworkMessage::AddString(const char* value)
 {
 	uint32_t stringlen = (uint32_t)strlen(value);
-	if(!canAdd(stringlen+2) || stringlen > 8192)
+	if(!canAdd(stringlen + 2) || stringlen > 8192)
 		return;
 
 	AddU16(stringlen);
@@ -99,7 +99,7 @@ void NetworkMessage::AddPaddingBytes(uint32_t n)
 		return;
 
 	memset((void*)&m_MsgBuf[m_ReadPos], 0x33, n);
-	m_MsgSize = m_MsgSize + n;
+	m_MsgSize += n;
 }
 
 void NetworkMessage::AddPosition(const Position& pos)

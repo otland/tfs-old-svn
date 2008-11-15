@@ -44,7 +44,7 @@ bool Condition::setParam(ConditionParam_t param, int32_t value)
 	{
 		case CONDITIONPARAM_TICKS:
 		{
-			ticks = value;
+			setTicks(value);
 			return true;
 			break;
 		}
@@ -122,7 +122,7 @@ bool Condition::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
 			if(!propStream.GET_VALUE(value))
 				return false;
 
-			ticks = value;
+			setTicks(value);
 			return true;
 			break;
 		}
@@ -160,13 +160,13 @@ void Condition::setTicks(int32_t newTicks)
 
 bool Condition::executeCondition(Creature* creature, int32_t interval)
 {
-	if(ticks != -1)
-	{
-		setTicks(getTicks() - interval);
-		return (getTicks() > 0);
-	}
+	if(ticks == -1)
+		return true;
 
-	return true;
+	int32_t newTicks = std::max(((int32_t)0), ((int32_t)getTicks() - interval));
+	//Not using set ticks here since it would reset endTime
+	ticks = newTicks;
+	return (getEndTime() >= OTSYS_TIME());
 }
 
 Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, int32_t param)

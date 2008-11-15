@@ -26,13 +26,14 @@
 #include "exception.h"
 #endif
 
-bool Scheduler::m_shutdown = false;
+Scheduler::SchedulerState Scheduler::m_threadState = Scheduler::STATE_TERMINATED;
 
 Scheduler::Scheduler()
 {
 	OTSYS_THREAD_LOCKVARINIT(m_eventLock);
 	OTSYS_THREAD_SIGNALVARINIT(m_eventSignal);
 	m_lastEventId = 0;
+	Scheduler::m_threadState = STATE_RUNNING;
 	OTSYS_CREATE_THREAD(Scheduler::schedulerThread, NULL);
 }
 
@@ -44,7 +45,7 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 	#endif
 	srand((unsigned int)OTSYS_TIME());
 
-	while(!Scheduler::m_shutdown)
+	while(Scheduler::m_threadState != Scheduler::STATE_TERMINATED)
 	{
 		SchedulerTask* task = NULL;
 		bool runTask = false;
@@ -65,7 +66,7 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 		}
 
 		// the mutex is locked again now...
-		if(ret == OTSYS_THREAD_TIMEOUT && !Scheduler::m_shutdown)
+		if(ret == OTSYS_THREAD_TIMEOUT && (Scheduler::m_threadState != Scheduler::STATE_TERMINATED))
 		{
 			// ok we had a timeout, so there has to be an event we have to execute...
 			task = getScheduler().m_eventList.top();
@@ -106,11 +107,11 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 
 uint32_t Scheduler::addEvent(SchedulerTask* task)
 {
-	OTSYS_THREAD_LOCK(m_eventLock, "");
-
 	bool do_signal = false;
-	if(!Scheduler::m_shutdown)
+	if(Scheduler::m_threadState == Scheduler::STATE_RUNNING)
 	{
+		OTSYS_THREAD_LOCK(m_eventLock, "");
+
 		// check if the event has a valid id
 		if(task->getEventId() == 0)
 		{
@@ -131,13 +132,12 @@ uint32_t Scheduler::addEvent(SchedulerTask* task)
 		// we have to signal it
 		do_signal = (task == m_eventList.top());
 
+		OTSYS_THREAD_UNLOCK(m_eventLock, "");
 	}
-#ifdef _DEBUG
+#ifdef __DEBUG_SCHEDULER__
 	else
 		std::cout << "Error: [Scheduler::addTask] Scheduler thread is terminated." << std::endl;
 #endif
-
-	OTSYS_THREAD_UNLOCK(m_eventLock, "");
 
 	if(do_signal)
 		OTSYS_THREAD_SIGNAL_SEND(m_eventSignal);
@@ -172,7 +172,14 @@ bool Scheduler::stopEvent(uint32_t eventid)
 void Scheduler::stop()
 {
 	OTSYS_THREAD_LOCK(m_eventLock, "");
-	m_shutdown = true;
+	m_threadState = Scheduler::STATE_CLOSING;
+	OTSYS_THREAD_UNLOCK(m_eventLock, "");
+}
+
+void Scheduler::shutdown()
+{
+	OTSYS_THREAD_LOCK(m_eventLock, "");
+	m_threadState = Scheduler::STATE_TERMINATED;
 
 	//this list should already be empty
 	while(!m_eventList.empty())

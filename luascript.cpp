@@ -2814,19 +2814,23 @@ int32_t LuaScriptInterface::luaDoRelocate(lua_State* L)
 		return 1;
 	}
 
-	int32_t thingCount = fromTile->getThingCount();
-	for(int32_t i = thingCount - 1; i >= 0; --i)
+	if(fromTile != toTile)
 	{
-		Thing* thing = fromTile->__getThing(i);
-		if(thing)
+		int32_t thingCount = fromTile->getThingCount();
+		for(int32_t i = thingCount - 1; i >= 0; --i)
 		{
-			if(Item* item = thing->getItem())
+			Thing* thing = fromTile->__getThing(i);
+			if(thing)
 			{
-				if(item->isPushable())
-					g_game.internalTeleport(item, toPos, false);
+				if(Item* item = thing->getItem())
+				{
+					const ItemType& it = Item::items[item->getID()];
+					if(!it.isGroundTile() && !it.alwaysOnTop && !it.isMagicField())
+						g_game.internalTeleport(item, toPos, false, FLAG_IGNORENOTMOVEABLE);
+				}
+				else if(Creature* creature = thing->getCreature())
+					g_game.internalTeleport(creature, toPos, true);
 			}
-			else if(Creature* creature = thing->getCreature())
-				g_game.internalTeleport(creature, toPos, true);
 		}
 	}
 
