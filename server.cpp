@@ -22,8 +22,8 @@
 #include "server.h"
 #include "connection.h"
 
-Server::Server(uint32_t serverip, uint16_t port)
-: m_io_service()
+Server::Server(uint32_t serverip, uint16_t port):
+m_io_service()
 {
 	m_acceptor = NULL;
 	m_listenErrors = 0;
@@ -41,9 +41,9 @@ void Server::accept()
 {
 	if(!m_acceptor)
 	{
-		#ifdef __DEBUG_NET__
-		std::cout << "Error: [Server::accept] NULL m_acceptor." << std::endl;
-		#endif
+#ifdef __DEBUG_NET__
+		std::cout << "[Error - Server::accept] NULL m_acceptor." << std::endl;
+#endif
 		return;
 	}
 
@@ -64,6 +64,7 @@ void Server::closeListenSocket()
 			if(error)
 				PRINT_ASIO_ERROR("Closing listen socket");
 		}
+
 		delete m_acceptor;
 		m_acceptor = NULL;
 	}
@@ -83,35 +84,31 @@ void Server::onAccept(Connection* connection, const boost::system::error_code& e
 	{
 		connection->acceptConnection();
 		#ifdef __DEBUG_NET_DETAIL__
-		std::cout << "accept - OK" << std::endl;
+		std::cout << "[Notice - Server::onAccept] Accepted connection." << std::endl;
 		#endif
 		accept();
 	}
-	else
+	else if(error != boost::asio::error::operation_aborted)
 	{
-		if(error != boost::asio::error::operation_aborted)
-		{
-			m_listenErrors++;
-			PRINT_ASIO_ERROR("Accepting");
-			closeListenSocket();
-			#ifdef __ENABLE_LISTEN_ERROR__
-			if(m_listenErrors < 100)
-			#endif
-				openListenSocket();
-			#ifdef __ENABLE_LISTEN_ERROR__
-			else
-				std::cout << "Error: [Server::onAccept] More than 100 listen errors." << std::endl;
-			#else
-			std::cout << "Warning: [Server::onAccept] More than 100 listen errors." << std::endl;
-			#endif
-		}
+		PRINT_ASIO_ERROR("Accepting");
+		closeListenSocket();
+
+		m_listenErrors++;
+#ifdef __ENABLE_LISTEN_ERROR__
+		if(m_listenErrors <= 100)
+			openListenSocket();
 		else
-		{
-			#ifdef __DEBUG_NET__
-			std::cout << "Error: [Server::onAccept] Operation aborted." << std::endl;
-			#endif
-		}
+			std::cout << "[Error - Server::onAccept] More than 100 listen errors." << std::endl;
+#else
+		openListenSocket();
+		if(m_listenErrors > 100)
+			std::cout << "[Warning - Server::onAccept] More than 100 listen errors." << std::endl;
+#endif
 	}
+	#ifdef __DEBUG_NET__
+	else
+		std::cout << "[Error - Server::onAccept] Operation aborted." << std::endl;
+	#endif
 }
 
 void Server::stop()
