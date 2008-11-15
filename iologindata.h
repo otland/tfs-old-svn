@@ -78,7 +78,7 @@ class IOLoginData
 		bool accountExists(uint32_t accId);
 		bool accountNameExists(const std::string& name);
 
-		bool getPassword(uint32_t accno, const std::string& name, std::string& password);
+		bool getPassword(uint32_t accId, const std::string& name, std::string& password);
 		bool setNewPassword(uint32_t accountId, std::string newPassword);
 		bool validRecoveryKey(uint32_t accountId, const std::string recoveryKey);
 		bool setRecoveryKey(uint32_t accountId, std::string recoveryKey);
@@ -126,7 +126,7 @@ class IOLoginData
 			}
 		};
 
-		typedef std::map<int,std::pair<Item*,int> > ItemMap;
+		typedef std::map<int,std::pair<Item*, int32_t> > ItemMap;
 		typedef std::map<uint32_t, std::string> NameCacheMap;
 		typedef std::map<std::string, uint32_t, StringCompareCase> GuidCacheMap;
 		typedef std::map<uint32_t, PlayerGroup*> PlayerGroupMap;

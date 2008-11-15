@@ -981,9 +981,9 @@ FluidTypes_t getFluidType(const std::string& strValue)
 	return FLUID_NONE;
 }
 
-std::string getSkillName(uint16_t skillid)
+std::string getSkillName(uint16_t skillId)
 {
-	switch(skillid)
+	switch(skillId)
 	{
 		case SKILL_FIST:
 			return "fist fighting";
