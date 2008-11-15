@@ -49,6 +49,8 @@ class ChatChannel
 
 		virtual const uint32_t getOwner() {return 0;}
 
+		bool isInChannel(Player* player);
+
 	protected:
 		UsersMap m_users;
 		std::string m_name;
