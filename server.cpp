@@ -82,27 +82,31 @@ void Server::onAccept(Connection* connection, const boost::system::error_code& e
 {
 	if(!error)
 	{
-		connection->acceptConnection();
 		#ifdef __DEBUG_NET_DETAIL__
 		std::cout << "[Notice - Server::onAccept] Accepted connection." << std::endl;
 		#endif
+		connection->acceptConnection();
 		accept();
 	}
 	else if(error != boost::asio::error::operation_aborted)
 	{
 		PRINT_ASIO_ERROR("Accepting");
 		closeListenSocket();
+#ifndef __ENABLE_LISTEN_ERROR__
+		openListenSocket();
+#endif
 
 		m_listenErrors++;
-#ifdef __ENABLE_LISTEN_ERROR__
-		if(m_listenErrors <= 100)
-			openListenSocket();
-		else
-			std::cout << "[Error - Server::onAccept] More than 100 listen errors." << std::endl;
-#else
-		openListenSocket();
 		if(m_listenErrors > 100)
-			std::cout << "[Warning - Server::onAccept] More than 100 listen errors." << std::endl;
+#ifndef __ENABLE_LISTEN_ERROR__
+		{
+			std::cout << "[Warning - Server::onAccept] More than 100 listen errors" << std::endl;
+			m_listenErrors = 0;
+		}
+#else
+			std::cout << "[Error - Server::onAccept] More than 100 listen errors." << std::endl;
+		else
+			openListenSocket();
 #endif
 	}
 	#ifdef __DEBUG_NET__
