@@ -155,9 +155,6 @@ bool ChatChannel::addUser(Player* player)
 
 bool ChatChannel::removeUser(Player* player)
 {
-	if(!isInChannel(player))
-		return false;
-
 	UsersMap::iterator it = m_users.find(player->getID());
 	if(it == m_users.end()) //better safe than sorry.
 		return false;
