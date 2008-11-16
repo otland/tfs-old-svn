@@ -1458,7 +1458,7 @@ bool ConditionDamage::executeCondition(Creature* creature, int32_t interval)
 		if(!bRemove)
 			interval = 0;
 	}
-	return Condition::executeCondition(creature, interval);
+	return !damageList.empty();
 }
 
 bool ConditionDamage::getNextDamage(int32_t& damage)

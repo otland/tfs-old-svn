@@ -43,12 +43,12 @@ bool PrivateChatChannel::isInvited(const Player* player)
 	if(player->getGUID() == getOwner())
 		return true;
 
-	return m_invites[player->getGUID()] != NULL;
+	return isInvitedEx(player);
 }
 
 bool PrivateChatChannel::addInvited(Player* player)
 {
-	if(m_invites[player->getGUID()] != NULL)
+	if(isInvitedEx(player))
 		return false;
 
 	m_invites[player->getGUID()] = player;
@@ -57,10 +57,14 @@ bool PrivateChatChannel::addInvited(Player* player)
 
 bool PrivateChatChannel::removeInvited(Player* player)
 {
-	if(m_invites[player->getGUID()] == NULL)
+	if(!isInvitedEx(player))
 		return false;
 
-	m_invites[player->getGUID()] = NULL;
+	InvitedMap::iterator it = m_invites.find(player->getGUID());
+	if(it == m_invites.end()) //better safe than sorry
+		return false;
+
+	m_invites.erase(it);
 	return true;
 }
 
@@ -105,6 +109,11 @@ void PrivateChatChannel::closeChannel()
 		if(toPlayer)
 			toPlayer->sendClosePrivate(getId());
 	}
+}
+
+bool PrivateChatChannel::isInvitedEx(const Player* player)
+{
+	return m_invites[player->getGUID()] != NULL;
 }
 
 ChatChannel::ChatChannel(uint16_t channelId, std::string channelName)
@@ -230,7 +239,7 @@ Chat::~Chat()
 	m_privateChannels.clear();
 }
 
-bool ChatChannel::isInChannel(Player* player)
+bool ChatChannel::isInChannel(const Player* player)
 {
 	return m_users[player->getID()] != NULL;
 }
