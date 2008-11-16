@@ -1,11 +1,11 @@
 local config = {
-	deathListEnabled = getConfigInfo('deathListEnabled'),
+	deathListEnabled = getBooleanFromString(getConfigInfo('deathListEnabled')),
 	sqlType = getConfigInfo('sqlType'),
 	maxDeathRecords = getConfigInfo('maxDeathRecords')
 }
 
 function onDeath(cid, corpse, lastHitKiller, mostDamageKiller)
-	if(config.deathListEnabled == "yes") then
+	if(config.deathListEnabled == TRUE) then
 		local hitKillerName = "field item"
 		local damageKillerName = ""
 		if(lastHitKiller ~= FALSE) then
@@ -15,7 +15,7 @@ function onDeath(cid, corpse, lastHitKiller, mostDamageKiller)
 				hitKillerName = getCreatureName(lastHitKiller)
 			end
 
-			if(mostDamageKiller ~= FALSE) then
+			if(mostDamageKiller ~= FALSE and mostDamageKiller ~= lastHitKiller) then
 				if(isPlayer(mostDamageKiller) == TRUE) then
 					damageKillerName = getPlayerGUID(mostDamageKiller)
 				else
