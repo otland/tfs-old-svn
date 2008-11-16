@@ -730,9 +730,7 @@ bool LuaScriptInterface::closeState()
 	if(m_luaState)
 	{
 		m_cacheFiles.clear();
-
-		LuaTimerEvents::iterator it;
-		for(it = m_timerEvents.begin(); it != m_timerEvents.end(); ++it)
+		for(LuaTimerEvents::iterator it = m_timerEvents.begin(); it != m_timerEvents.end(); ++it)
 		{
 			for(std::list<int32_t>::iterator lt = it->second.parameters.begin(); lt != it->second.parameters.end(); ++lt)
 				luaL_unref(m_luaState, LUA_REGISTRYINDEX, *lt);
@@ -740,10 +738,11 @@ bool LuaScriptInterface::closeState()
 
 			luaL_unref(m_luaState, LUA_REGISTRYINDEX, it->second.function);
 		}
-		m_timerEvents.clear();
 
+		m_timerEvents.clear();
 		lua_close(m_luaState);
 	}
+
 	return true;
 }
 

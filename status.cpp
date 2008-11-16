@@ -280,7 +280,7 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage* output, NetworkMessa
 
 bool Status::hasSlot() const
 {
-	return m_playersOnline < m_playersMax;
+	return m_playersMax > m_playersOnline;
 }
 
 uint64_t Status::getUptime() const

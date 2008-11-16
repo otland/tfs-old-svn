@@ -32,11 +32,9 @@ extern ConfigManager g_config;
 
 Raids::Raids()
 {
-	loaded = false;
-	started = false;
 	running = NULL;
-	lastRaidEnd = 0;
-	checkRaidsEvent = 0;
+	loaded = started = false;
+	lastRaidEnd = checkRaidsEvent = 0;
 }
 
 Raids::~Raids()
@@ -192,17 +190,15 @@ void Raids::checkRaids()
 void Raids::clear()
 {
 	Scheduler::getScheduler().stopEvent(checkRaidsEvent);
-	checkRaidsEvent = 0;
+	m_scriptInterface.reInitState();
+	checkRaidsEvent = lastRaidEnd = 0;
+	loaded = started = false;
 
-	RaidList::iterator it;
-	for(it = raidList.begin(); it != raidList.end(); ++it)
+	for(RaidList::iterator it = raidList.begin(); it != raidList.end(); ++it)
 		delete (*it);
-	raidList.clear();
 
-	loaded = false;
-	started = false;
+	raidList.clear();
 	running = NULL;
-	lastRaidEnd = 0;
 }
 
 bool Raids::reload()
