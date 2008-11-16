@@ -190,7 +190,6 @@ void Raids::checkRaids()
 void Raids::clear()
 {
 	Scheduler::getScheduler().stopEvent(checkRaidsEvent);
-	m_scriptInterface.reInitState();
 	checkRaidsEvent = lastRaidEnd = 0;
 	loaded = started = false;
 
