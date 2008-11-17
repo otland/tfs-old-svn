@@ -370,7 +370,9 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->soul = result->getDataInt("soul");
 	player->capacity = result->getDataInt("cap");
 	player->setStamina(result->getDataLong("stamina"));
-	player->blessings = result->getDataInt("blessings");
+	if(player->isPremium() || !g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM))
+		player->blessings = result->getDataInt("blessings");
+
 	player->balance = result->getDataLong("balance");
 	player->marriage = result->getDataInt("marriage");
 
@@ -405,16 +407,16 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->manaSpent = manaSpent;
 	player->magLevelPercent = Player::getPercentLevel(player->manaSpent, nextManaCount);
 
-	if(player->groupOutfit > 0)
-		player->defaultOutfit.lookType = player->groupOutfit;
-	else
-		player->defaultOutfit.lookType = result->getDataInt("looktype");
-
 	player->defaultOutfit.lookHead = result->getDataInt("lookhead");
 	player->defaultOutfit.lookBody = result->getDataInt("lookbody");
 	player->defaultOutfit.lookLegs = result->getDataInt("looklegs");
 	player->defaultOutfit.lookFeet = result->getDataInt("lookfeet");
 	player->defaultOutfit.lookAddons = result->getDataInt("lookaddons");
+	if(!player->groupOutfit)
+		player->defaultOutfit.lookType = result->getDataInt("looktype");
+	else
+		player->defaultOutfit.lookType = player->groupOutfit;
+
 	player->currentOutfit = player->defaultOutfit;
 	if(g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
 	{
@@ -755,7 +757,9 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 	}
 
 	query << "`lastlogout` = " << player->getLastLogout() << ", ";
-	query << "`blessings` = " << player->blessings << ", ";
+	if(player->isPremium() || !g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM))
+		query << "`blessings` = " << player->blessings << ", ";
+
 	query << "`marriage` = " << player->marriage << ", ";
 	if(g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
 	{

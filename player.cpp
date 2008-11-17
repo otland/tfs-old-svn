@@ -1198,6 +1198,10 @@ void Player::sendCancelMessage(ReturnValue message) const
 			sendCancel("Name is too ambigious.");
 			break;
 
+		case RET_YOUARENOTTHEOWNER:
+			sendCancel("You are not the owner.");
+			break;
+
 		case RET_NOTPOSSIBLE:
 		default:
 			sendCancel("Sorry, not possible.");
@@ -3907,13 +3911,16 @@ double Player::getLostPercent(lossTypes_t lossType)
 		lostPercent -= 3;
 	}
 
-	for(int16_t i = 0; i < 16; i++)
+	if(isPremium() || !g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM))
 	{
-		if(!lostPercent)
-			return 0;
+		for(int16_t i = 0; i < 16; i++)
+		{
+			if(!lostPercent)
+				return 0;
 
-		if(hasBlessing(i))
-			lostPercent--;
+			if(hasBlessing(i))
+				lostPercent--;
+		}
 	}
 
 	return (double)lostPercent / 100;
@@ -4489,6 +4496,7 @@ bool Player::isPremium() const
 {
 	if(g_config.getBool(ConfigManager::FREE_PREMIUM) || hasFlag(PlayerFlag_IsAlwaysPremium))
 		return true;
+
 	return premiumDays;
 }
 
@@ -4647,7 +4655,7 @@ bool Player::withdrawMoney(uint64_t amount)
 	if(!g_config.getBool(ConfigManager::BANK_SYSTEM))
 		return false;
 
-	if(balance < amount)
+	if(amount > balance)
 		return false;
 
 	g_game.addMoney(this, amount);

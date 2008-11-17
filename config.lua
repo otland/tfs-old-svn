@@ -93,7 +93,6 @@
 	housePriceAsRent = "no"
 	housePriceEachSQM = 1000
 	houseRentPeriod = "never"
-	houseNeedPremiumAccount = "yes"
 
 	-- Item usage
 	timeBetweenActions = 200
@@ -119,8 +118,11 @@
 
 	-- Premium account
 	freePremium = "no"
-	premiumForPromotion = "yes"
 	removePremiumOnInit = "yes"
+	premiumForPromotion = "yes"
+	blessingsOnlyForPremium = "yes"
+	houseNeedPremium = "yes"
+	bedsRequirePremium = "yes"
 
 	-- Rates
 	-- NOTE: experienceStages configuration is located in data/XML/stages.xml.

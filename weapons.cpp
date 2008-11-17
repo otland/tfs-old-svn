@@ -355,7 +355,7 @@ int32_t Weapon::playerWeaponCheck(Player* player, Creature* target) const
 	if(std::max(std::abs(playerPos.x - targetPos.x), std::abs(playerPos.y - targetPos.y)) > range)
 		return 0;
 
-	if(!player->hasFlag(PlayerFlag_IgnoreWeaponCheck))
+	if(!player->hasFlag(PlayerFlag_IgnoreEquipCheck))
 	{
 		if(!enabled)
 			return 0;

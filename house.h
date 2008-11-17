@@ -231,7 +231,7 @@ class House
 		HouseBedItemList bedsList;
 
 		HouseTransferItem* transferItem;
-		Container transfer_container;
+		Container transferContainer;
 };
 
 class Houses

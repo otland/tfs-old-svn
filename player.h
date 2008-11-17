@@ -605,8 +605,8 @@ class Player : public Creature, public Cylinder
 		void sendStats();
 		void sendSkills() const
 			{if(client) client->sendSkills();}
-		void sendTextMessage(MessageClasses mclass, const std::string& message) const
-			{if(client) client->sendTextMessage(mclass, message);}
+		void sendTextMessage(MessageClasses type, const std::string& message) const
+			{if(client) client->sendTextMessage(type, message);}
 		void sendReLoginWindow() const
 			{if(client) client->sendReLoginWindow();}
 		void sendTextWindow(Item* item, uint16_t maxlen, bool canWrite) const

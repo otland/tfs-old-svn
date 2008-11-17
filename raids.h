@@ -78,11 +78,10 @@ class Raids
 		Raid* getRunning() const {return running;}
 		void setRunning(Raid* newRunning) {running = newRunning;}
 
-		Raid* getRaidByName(const std::string& name);
-
 		uint64_t getLastRaidEnd() const {return lastRaidEnd;}
 		void setLastRaidEnd(uint64_t newLastRaidEnd) {lastRaidEnd = newLastRaidEnd;}
 
+		Raid* getRaidByName(const std::string& name);
 		void checkRaids();
 
 	private:
@@ -103,21 +102,17 @@ class Raid
 		bool loadFromXml(const std::string& _filename);
 
 		void startRaid();
-
 		void executeRaidEvent(RaidEvent* raidEvent);
 		void resetRaid();
 
-		RaidEvent* getNextRaidEvent();
-		void setState(RaidState_t newState) {state = newState;}
-		std::string getName() const {return name;}
-
-		void addEvent(RaidEvent* event);
-
 		bool isLoaded() const {return loaded;}
+		std::string getName() const {return name;}
 		uint64_t getMargin() const {return margin;}
 		uint32_t getInterval() const {return interval;}
 		bool isEnabled() const {return enabled;}
 
+		RaidEvent* getNextRaidEvent();
+		void setState(RaidState_t newState) {state = newState;}
 		void stopEvents();
 
 	private:
@@ -162,8 +157,7 @@ class AnnounceEvent : public RaidEvent
 		virtual ~AnnounceEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
-
-		virtual bool executeEvent();
+		virtual bool executeEvent() const;
 
 	private:
 		std::string m_message;
@@ -177,8 +171,7 @@ class SingleSpawnEvent : public RaidEvent
 		virtual ~SingleSpawnEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
-
-		virtual bool executeEvent();
+		virtual bool executeEvent() const;
 
 	private:
 		std::string m_monsterName;
@@ -192,11 +185,10 @@ class AreaSpawnEvent : public RaidEvent
 		virtual ~AreaSpawnEvent();
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
+		virtual bool executeEvent() const;
 
 		void addMonster(MonsterSpawn* monsterSpawn);
 		void addMonster(const std::string& monsterName, uint32_t minAmount, uint32_t maxAmount);
-
-		virtual bool executeEvent();
 
 	private:
 		MonsterSpawnList m_spawnList;
@@ -210,13 +202,12 @@ class ScriptEvent : public RaidEvent, public Event
 		virtual ~ScriptEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
-		virtual bool configureEvent(xmlNodePtr p) {return false;}
+		virtual bool executeEvent() const;
 
-		bool executeEvent();
+		virtual bool configureEvent(xmlNodePtr p) {return false;}
 
 	protected:
 		virtual std::string getScriptEventName();
-
 		static LuaScriptInterface m_scriptInterface;
 };
 

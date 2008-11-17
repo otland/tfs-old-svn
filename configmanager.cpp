@@ -138,7 +138,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confNumber[HOUSES_PER_ACCOUNT] = getGlobalNumber(L, "housesPerAccount", 0);
 	m_confBool[HOUSE_BUY_AND_SELL] = getGlobalBool(L, "buyableAndSellableHouses", "yes");
 	m_confBool[REPLACE_KICK_ON_LOGIN] = getGlobalBool(L, "replaceKickOnLogin", "yes");
-	m_confBool[HOUSE_NEED_PREMIUM] = getGlobalBool(L, "houseNeedPremiumAccount", "yes");
+	m_confBool[HOUSE_NEED_PREMIUM] = getGlobalBool(L, "houseNeedPremium", "yes");
 	m_confBool[HOUSE_RENTASPRICE] = getGlobalBool(L, "houseRentAsPrice", "no");
 	m_confBool[HOUSE_PRICEASRENT] = getGlobalBool(L, "housePriceAsRent", "no");
 	m_confNumber[FRAG_TIME] = getGlobalNumber(L, "timeToDecreaseFrags", 24 * 60 * 60 * 1000);
@@ -164,6 +164,8 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBool[SAVE_GLOBAL_STORAGE] = getGlobalBool(L, "saveGlobalStorage", "yes");
 	m_confBool[FORCE_CLOSE_SLOW_CONNECTION] = getGlobalBool(L, "forceSlowConnectionsToDisconnect", "no");
 	m_confBool[EXPERIENCE_STAGES] = getGlobalBool(L, "experienceStages", "no");
+	m_confBool[BLESSING_ONLY_PREMIUM] = getGlobalBool(L, "blessingsOnlyForPremium", "yes");
+	m_confBool[BED_REQUIRE_PREMIUM] = getGlobalBool(L, "bedsRequirePremium", "yes");
 	m_isLoaded = true;
 
 	lua_close(L);

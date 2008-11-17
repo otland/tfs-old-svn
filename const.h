@@ -441,7 +441,7 @@ enum PlayerFlags
 	PlayerFlag_CanTalkRedChannelAnonymous,  //2^32 = 4294967296
 	PlayerFlag_IgnoreProtectionZone,        //2^33 = 8589934592
 	PlayerFlag_IgnoreSpellCheck,            //2^34 = 17179869184
-	PlayerFlag_IgnoreWeaponCheck,           //2^35 = 34359738368
+	PlayerFlag_IgnoreEquipCheck,           //2^35 = 34359738368
 	PlayerFlag_CannotBeMuted,               //2^36 = 68719476736
 	PlayerFlag_IsAlwaysPremium,             //2^37 = 137438953472
 	PlayerFlag_CanAnswerRuleViolations,     //2^38 = 274877906944

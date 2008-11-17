@@ -55,7 +55,7 @@ class MoveEvents : public BaseEvents
 		MoveEvents();
 		virtual ~MoveEvents();
 
-		uint32_t onCreatureMove(Creature* creature, Tile* tile, bool isIn);
+		uint32_t onCreatureMove(Creature* creature, Tile* tile, bool isStepping);
 		uint32_t onPlayerEquip(Player* player, Item* item, slots_t slot);
 		uint32_t onPlayerDeEquip(Player* player, Item* item, slots_t slot, bool isRemoval);
 		uint32_t onItemMove(Item* item, Tile* tile, bool isAdd);

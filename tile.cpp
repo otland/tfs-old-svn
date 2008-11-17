@@ -1165,17 +1165,17 @@ Thing* Tile::__getThing(uint32_t index) const
 		--index;
 	}
 
-	if((unsigned) index < topItems.size())
+	if((unsigned)index < topItems.size())
 		return topItems[index];
 
 	index -= (uint32_t)topItems.size();
 
-	if((unsigned) index < creatures.size())
+	if((unsigned)index < creatures.size())
 		return creatures[index];
 
 	index -= (uint32_t)creatures.size();
 
-	if((unsigned) index < downItems.size())
+	if((unsigned)index < downItems.size())
 		return downItems[index];
 
 	return NULL;
@@ -1197,34 +1197,29 @@ void Tile::postAddNotification(Thing* thing, int32_t index, cylinderlink_t link 
 
 	//add a reference to this item, it may be deleted after being added (mailbox for example)
 	thing->useThing2();
+	Item* item = thing->getItem();
 
 	bool removal = false;
 	if(link == LINK_OWNER)
 	{
 		//calling movement scripts
-		Creature* creature = thing->getCreature();
-		if(creature)
+		if(Creature* creature = thing->getCreature())
 			g_moveEvents->onCreatureMove(creature, this, true);
-		else
-		{
-			Item* item = thing->getItem();
-			if(item)
-				g_moveEvents->onItemMove(item, this, true);
-		}
+		else if(item)
+			g_moveEvents->onItemMove(item, this, true);
 
 		if(Teleport* teleport = getTeleportItem())
 			teleport->__addThing(thing);
 		else if(TrashHolder* trashHolder = getTrashHolder())
 		{
 			trashHolder->__addThing(thing);
-			removal = thing != trashHolder;
+			removal = (thing != trashHolder);
 		}
 		else if(Mailbox* mailbox = getMailbox())
 			mailbox->__addThing(thing);
 	}
 
 	//update floor change flags
-	Item* item = thing->getItem();
 	if(item)
 		updateTileFlags(item, removal);
 
@@ -1250,18 +1245,13 @@ void Tile::postRemoveNotification(Thing* thing, int32_t index, bool isCompleteRe
 	}
 
 	//calling movement scripts
-	Creature* creature = thing->getCreature();
-	if(creature)
+	Item* item = thing->getItem();
+	if(Creature* creature = thing->getCreature())
 		g_moveEvents->onCreatureMove(creature, this, false);
-	else
-	{
-		Item* item = thing->getItem();
-		if(item)
-			g_moveEvents->onItemMove(item, this, false);
-	}
+	else if(item)
+		g_moveEvents->onItemMove(item, this, false);
 
 	//update floor change flags
-	Item* item = thing->getItem();
 	if(item)
 		updateTileFlags(item, true);
 }
@@ -1285,8 +1275,7 @@ void Tile::__internalAddThing(uint32_t index, Thing* thing)
 	else
 	{
 		Item* item = thing->getItem();
-
-		if(item == NULL)
+		if(!item)
 			return;
 
 		if(item->isGroundTile())

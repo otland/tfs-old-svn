@@ -45,20 +45,20 @@ if(Modules == nil) then
 		if(npcHandler == nil) then
 			error('StdModule.say called without any npcHandler instance.')
 		end
+
 		local onlyFocus = (parameters.onlyFocus == nil or parameters.onlyFocus == true)
 		if(not npcHandler:isFocused(cid) and onlyFocus) then
 			return false
 		end
-		local parseInfo = {
-				[TAG_PLAYERNAME] = getCreatureName(cid),
-		}
-		msgout = npcHandler:parseMessage(parameters.text or parameters.message, parseInfo)
-		npcHandler:say(msgout, cid, parameters.publicize and true)
+
+		local parseInfo = {[TAG_PLAYERNAME] = getCreatureName(cid)}
+		npcHandler:say(npcHandler:parseMessage(parameters.text or parameters.message, parseInfo), cid, parameters.publicize and true)
 		if(parameters.reset == true) then
 			npcHandler:resetNpc()
 		elseif(parameters.moveup ~= nil and type(parameters.moveup) == 'number') then
 			npcHandler.keywordHandler:moveUp(parameters.moveup)
 		end
+
 		return true
 	end
 
@@ -71,11 +71,12 @@ if(Modules == nil) then
 		if(npcHandler == nil) then
 			error('StdModule.promotePlayer called without any npcHandler instance.')
 		end
+
 		if(not npcHandler:isFocused(cid)) then
 			return false
 		end
 
-		if(isPlayerPremiumCallback == nil or isPlayerPremiumCallback(cid) == true or parameters.premium == false) then
+		if(isPlayerPremiumCallback(cid) or not(parameters.premium)) then
 			if(getPlayerPromotionLevel(cid) >= parameters.promotion) then
 				npcHandler:say('You are already promoted!', cid)
 			elseif(getPlayerLevel(cid) < parameters.level) then
@@ -89,6 +90,7 @@ if(Modules == nil) then
 		else
 			npcHandler:say("You need a premium account in order to get promoted.", cid)
 		end
+
 		npcHandler:resetNpc()
 		return true
 	end
@@ -96,13 +98,14 @@ if(Modules == nil) then
 	function StdModule.learnSpell(cid, message, keywords, parameters, node)
 		local npcHandler = parameters.npcHandler
 		if(npcHandler == nil) then
-			error('StdModule.buySpell called without any npcHandler instance.')
+			error('StdModule.learnSpell called without any npcHandler instance.')
 		end
+
 		if(not npcHandler:isFocused(cid)) then
 			return false
 		end
 
-		if(isPlayerPremiumCallback == nil or isPlayerPremiumCallback(cid) == true or parameters.premium == false) then
+		if(isPlayerPremiumCallback(cid) or not(parameters.premium)) then
 			if getPlayerLearnedInstantSpell(cid, parameters.spellName) == TRUE then
 				npcHandler:say('You already know this spell.', cid)
 			elseif getPlayerLevel(cid) < parameters.level then
@@ -118,6 +121,7 @@ if(Modules == nil) then
 		else
 			npcHandler:say('You need a premium account in order to buy ' .. parameters.spellName .. '.', cid)
 		end
+
 		npcHandler:resetNpc()
 		return true
 	end
@@ -127,11 +131,12 @@ if(Modules == nil) then
 		if(npcHandler == nil) then
 			error('StdModule.bless called without any npcHandler instance.')
 		end
+
 		if(not npcHandler:isFocused(cid)) then
 			return false
 		end
 
-		if(isPlayerPremiumCallback == nil or isPlayerPremiumCallback(cid) == true or parameters.premium == false) then
+		if(isPlayerPremiumCallback(cid) or getBooleanFromString(getConfigInfo('blessingsOnlyForPremium')) ~= TRUE or not(parameters.premium)) then
 			if getPlayerBlessing(cid, parameters.bless) then
 				npcHandler:say("Gods have already blessed you with this blessing!", cid)
 			elseif doPlayerRemoveMoney(cid, parameters.cost) == FALSE then
@@ -143,6 +148,7 @@ if(Modules == nil) then
 		else
 			npcHandler:say('You need a premium account in order to be blessed.', cid)
 		end
+
 		npcHandler:resetNpc()
 		return true
 	end
@@ -152,10 +158,12 @@ if(Modules == nil) then
 		if(npcHandler == nil) then
 			error('StdModule.travel called without any npcHandler instance.')
 		end
+
 		if(not npcHandler:isFocused(cid)) then
 			return false
 		end
-		if(isPlayerPremiumCallback == nil or isPlayerPremiumCallback(cid) == true or parameters.premium == false) then
+
+		if(isPlayerPremiumCallback(cid) or not(parameters.premium)) then
 			if(parameters.level ~= nil and getPlayerLevel(cid) < parameters.level) then
 				npcHandler:say('You must reach level ' .. parameters.level .. ' before I can let you go there.', cid)
 			elseif(doPlayerRemoveMoney(cid, parameters.cost) ~= TRUE) then
@@ -167,6 +175,7 @@ if(Modules == nil) then
 		else
 			npcHandler:say('I can only allow premium players to travel with me.', cid)
 		end
+
 		npcHandler:resetNpc()
 		return true
 	end
@@ -412,7 +421,7 @@ if(Modules == nil) then
 		local destination = parentParameters.destination
 		local premium = parentParameters.premium
 
-		if(isPlayerPremiumCallback == nil or isPlayerPremiumCallback(cid) == true or parameters.premium ~= true) then
+		if(isPlayerPremiumCallback(cid) or parameters.premium ~= true) then
 			if(doPlayerRemoveMoney(cid, cost) ~= TRUE) then
 				npcHandler:say('You do not have enough money!', cid)
 			else
@@ -455,7 +464,7 @@ if(Modules == nil) then
 		local destination = parameters.destination
 		local premium = parameters.premium
 
-		if(isPlayerPremiumCallback == nil or isPlayerPremiumCallback(cid) == true or parameters.premium ~= true) then
+		if(isPlayerPremiumCallback(cid) or parameters.premium ~= true) then
 			if(doPlayerRemoveMoney(cid, cost) == TRUE) then
 				doTeleportThing(cid, destination, 0)
 				doSendMagicEffect(destination, 10)

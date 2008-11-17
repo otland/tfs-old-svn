@@ -33,7 +33,7 @@ extern ConfigManager g_config;
 extern Game g_game;
 
 House::House(uint32_t _houseid) :
-transfer_container(ITEM_LOCKER1)
+transferContainer(ITEM_LOCKER1)
 {
 	isLoaded = false;
 	houseName = "Forgotten headquarter (Flat 1, Area 42)";
@@ -402,9 +402,9 @@ HouseTransferItem* House::getTransferItem()
 	if(transferItem != NULL)
 		return NULL;
 
-	transfer_container.setParent(NULL);
+	transferContainer.setParent(NULL);
 	transferItem = HouseTransferItem::createHouseTransferItem(this);
-	transfer_container.__addThing(transferItem);
+	transferContainer.__addThing(transferItem);
 	return transferItem;
 }
 
@@ -414,8 +414,8 @@ void House::resetTransferItem()
 	{
 		Item* tmpItem = transferItem;
 		transferItem = NULL;
-		transfer_container.setParent(NULL);
-		transfer_container.__removeThing(tmpItem, tmpItem->getItemCount());
+		transferContainer.setParent(NULL);
+		transferContainer.__removeThing(tmpItem, tmpItem->getItemCount());
 		g_game.FreeThing(tmpItem);
 	}
 }
@@ -900,9 +900,8 @@ bool Houses::payHouses()
 				continue;
 			}
 
-			uint32_t ownerid = house->getHouseOwner();
 			std::string name;
-			if(!IOLoginData::getInstance()->getNameByGuid(ownerid, name))
+			if(!IOLoginData::getInstance()->getNameByGuid(house->getHouseOwner(), name))
 			{
 				house->setHouseOwner(0);
 				continue;
@@ -915,7 +914,7 @@ bool Houses::payHouses()
 				if(!IOLoginData::getInstance()->loadPlayer(player, name))
 				{
 					#ifdef __DEBUG__
-					std::cout << "Failure: [Houses::payHouses], can not load player: " << name << std::endl;
+					std::cout << "[Failure - Houses::payHouses]: Cannot load player: " << name << std::endl;
 					#endif
 					delete player;
 					continue;
@@ -925,7 +924,7 @@ bool Houses::payHouses()
 			bool savePlayerHere = true;
 			if(Depot* depot = player->getDepot(town->getTownID(), true))
 			{
-				if(g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM) || player->isPremium())
+				if(player->isPremium() || !g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM))
 				{
 					//get money from depot then from bank
 					bool paid = false;
