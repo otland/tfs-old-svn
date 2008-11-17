@@ -318,8 +318,7 @@ bool Actions::executeUse(Action* action, Player* player, Item* item,
 	return action->executeUse(player, item, posEx, posEx, false, creatureId);
 }
 
-ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
-	uint8_t index, Item* item, uint32_t creatureId)
+ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_t index, Item* item, uint32_t creatureId)
 {
 	if(Door* door = item->getDoor())
 	{
@@ -333,34 +332,58 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
 	Action* action = NULL;
 	if((action = getAction(item, ACTION_UNIQUEID)))
 	{
-		if(action->isScripted() && executeUse(action, player, item, posEx, creatureId))
-			return RET_NOERROR;
-		else if(action->function && action->function(player, item, posEx, posEx, false, creatureId))
-			return RET_NOERROR;
+		if(action->isScripted())
+		{
+			if(executeUse(action, player, item, posEx, creatureId))
+				return RET_NOERROR;
+		}
+		else if(action->function)
+		{
+			if(action->function(player, item, posEx, posEx, false, creatureId))
+				return RET_NOERROR;
+		}
 	}
 
 	if((action = getAction(item, ACTION_ACTIONID)))
 	{
-		if(action->isScripted() && executeUse(action, player, item, posEx, creatureId))
-			return RET_NOERROR;
-		else if(action->function && action->function(player, item, posEx, posEx, false, creatureId))
-			return RET_NOERROR;
+		if(action->isScripted())
+		{
+			if(executeUse(action, player, item, posEx, creatureId))
+				return RET_NOERROR;
+		}
+		else if(action->function)
+		{
+			if(action->function(player, item, posEx, posEx, false, creatureId))
+				return RET_NOERROR;
+		}
 	}
 
 	if((action = getAction(item, ACTION_ITEMID)))
 	{
-		if(action->isScripted() && executeUse(action, player, item, posEx, creatureId))
-			return RET_NOERROR;
-		else if(action->function && action->function(player, item, posEx, posEx, false, creatureId))
-			return RET_NOERROR;
+		if(action->isScripted())
+		{
+			if(executeUse(action, player, item, posEx, creatureId))
+				return RET_NOERROR;
+		}
+		else if(action->function)
+		{
+			if(action->function(player, item, posEx, posEx, false, creatureId))
+				return RET_NOERROR;
+		}
 	}
 
 	if((action = getAction(item, ACTION_RUNEID)))
 	{
-		if(action->isScripted() && executeUse(action, player, item, posEx, creatureId))
-			return RET_NOERROR;
-		else if(action->function && action->function(player, item, posEx, posEx, false, creatureId))
-			return RET_NOERROR;
+		if(action->isScripted())
+		{
+			if(executeUse(action, player, item, posEx, creatureId))
+				return RET_NOERROR;
+		}
+		else if(action->function)
+		{
+			if(action->function(player, item, posEx, posEx, false, creatureId))
+				return RET_NOERROR;
+		}
 	}
 
 	if(BedItem* bed = item->getBed())
@@ -399,7 +422,6 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
 			player->onSendContainer(tmpContainer);
 		}
 
-		return RET_NOERROR;
 	}
 
 	if(item->isReadable())
