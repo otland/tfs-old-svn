@@ -370,11 +370,10 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->soul = result->getDataInt("soul");
 	player->capacity = result->getDataInt("cap");
 	player->setStamina(result->getDataLong("stamina"));
-	if(player->isPremium() || !g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM))
-		player->blessings = result->getDataInt("blessings");
-
 	player->balance = result->getDataLong("balance");
 	player->marriage = result->getDataInt("marriage");
+	if(player->isPremium() || !g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM))
+		player->blessings = result->getDataInt("blessings");
 
 	uint64_t conditionsSize = 0;
 	const char* conditions = result->getDataStream("conditions", conditionsSize);

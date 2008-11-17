@@ -894,7 +894,7 @@ bool Houses::payHouses()
 			if(!town)
 			{
 				#ifdef __DEBUG_HOUSES__
-				std::cout << "Warning: [Houses::payHouses] town = NULL, townid = " <<
+				std::cout << "[Warning - Houses::payHouses]: town = NULL, townid = " <<
 					house->getTownId() << ", houseid = " << house->getHouseId() << std::endl;
 				#endif
 				continue;
@@ -914,7 +914,7 @@ bool Houses::payHouses()
 				if(!IOLoginData::getInstance()->loadPlayer(player, name))
 				{
 					#ifdef __DEBUG__
-					std::cout << "[Failure - Houses::payHouses]: Cannot load player: " << name << std::endl;
+					std::cout << "[Failure - Houses::payHouses]: Cannot load player " << name << std::endl;
 					#endif
 					delete player;
 					continue;
@@ -987,12 +987,14 @@ bool Houses::payHouses()
 									break;
 							}
 
-							char warningText[200];
-							sprintf(warningText, "Warning! \nThe %s rent of %d gold for your house \"%s\" is payable. Have it within %d days or you will lose this house.", period.c_str(), house->getRent(), house->getName().c_str(), (7 - house->getPayRentWarnings()));
+							if(Item* letter = Item::CreateItem(ITEM_LETTER_STAMPED))
+							{
+								char warningText[200];
+								sprintf(warningText, "Warning! \nThe %s rent of %d gold for your house \"%s\" is payable. Have it within %d days or you will lose this house.", period.c_str(), house->getRent(), house->getName().c_str(), (7 - house->getPayRentWarnings()));
+								letter->setText(warningText);
+								g_game.internalAddItem(depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT);
+							}
 
-							Item* letter = Item::CreateItem(ITEM_LETTER_STAMPED);
-							letter->setText(warningText);
-							g_game.internalAddItem(depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT);
 							house->setPayRentWarnings(house->getPayRentWarnings() + 1);
 							house->setLastWarning(currentTime);
 						}
