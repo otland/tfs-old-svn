@@ -35,7 +35,7 @@ id(_id), ticks(_ticks), conditionType(_type)
 	if(_ticks == -1)
 		endTime = -1;
 	else if(_ticks > 0)
-		endTime = (OTSYS_TIME() + std::max((int32_t)0, _ticks));
+		endTime = (OTSYS_TIME() + _ticks);
 }
 
 bool Condition::setParam(ConditionParam_t param, int32_t value)
@@ -149,18 +149,16 @@ void Condition::setTicks(int32_t _ticks)
 	if(_ticks == -1)
 		endTime = -1;
 	else if(_ticks > 0)
-		endTime = (OTSYS_TIME() + std::max((int32_t)0, _ticks));
+		endTime = (OTSYS_TIME() + _ticks);
 }
 
 bool Condition::executeCondition(Creature* creature, int32_t interval)
 {
-	if(ticks != -1)
-	{
-		ticks = std::max((int32_t)0, (getTicks() - interval));
-		return (getTicks() > 0);
-	}
+	if(ticks == -1)
+		return true;
 
-	return true;
+	ticks = std::max((int32_t)0, (getTicks() - interval));
+	return (endTime >= OTSYS_TIME() || endTime == -1);
 }
 
 Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, int32_t param)

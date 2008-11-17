@@ -688,18 +688,19 @@ bool AreaSpawnEvent::executeEvent() const
 				return false;
 			}
 
+			bool success = false;
 			for(int32_t tries = 0; tries < MAXIMUM_TRIES_PER_MONSTER; tries++)
 			{
-				Position pos;
-				pos.x = random_range(m_fromPos.x, m_toPos.x);
-				pos.y = random_range(m_fromPos.y, m_toPos.y);
-				pos.z = random_range(m_fromPos.z, m_toPos.z);
-
-				if(g_game.placeCreature(monster, pos))
+				if(g_game.placeCreature(monster, Position(random_range(m_fromPos.x, m_toPos.x),
+					random_range(m_fromPos.y, m_toPos.y), random_range(m_fromPos.z, m_toPos.z))))
+				{
+					success = true;
 					break;
+				}
 			}
 
-			delete monster;
+			if(!success)
+				delete monster;
 		}
 	}
 
