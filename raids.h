@@ -43,7 +43,7 @@ struct MonsterSpawn
 	uint32_t maxAmount;
 };
 
-//How many times it will try to find a tile to add the monster to before giving up
+#define MAX_RAND_RANGE 10000000
 #define MAXIMUM_TRIES_PER_MONSTER 10
 #define CHECK_RAIDS_INTERVAL 60
 #define RAID_MINTICKS 1000
