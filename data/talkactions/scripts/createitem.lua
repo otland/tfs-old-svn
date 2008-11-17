@@ -1,7 +1,7 @@
 function onSay(cid, words, param)
 	if(param == "") then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
-		return FALSE
+		return TRUE
 	end
 
 	local t = string.explode(param, ",")
@@ -18,7 +18,7 @@ function onSay(cid, words, param)
 	local ret = doPlayerAddItem(cid, id, amount, 1)
 	if(not ret or ret == LUA_ERROR) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Couldn't add item: " .. t[1])
-		return FALSE
+		return TRUE
 	end
 
 	doSendMagicEffect(getCreaturePosition(cid), CONST_ME_MAGIC_RED)

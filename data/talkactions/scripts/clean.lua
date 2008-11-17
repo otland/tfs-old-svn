@@ -6,7 +6,7 @@ function onSay(cid, words, param)
 
 	if(not tonumber(param)) then
 		doPlayerSendCancel(cid, "Command requires numeric param.")
-		return FALSE
+		return TRUE
 	end
 
 	prepareClean(tonumber(param), cid)

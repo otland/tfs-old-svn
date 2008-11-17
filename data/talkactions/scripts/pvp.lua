@@ -9,7 +9,7 @@ function onSay(cid, words, param)
 	elseif(tmp == WORLD_TYPE_PVP_ENFORCED) then
 		msg = "PVP-Enforced"
 	else
-		return FALSE
+		return TRUE
 	end
 	
 	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "World type is currently set to " .. msg .. ".")

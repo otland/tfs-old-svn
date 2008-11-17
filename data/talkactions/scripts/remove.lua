@@ -57,5 +57,5 @@ function onSay(cid, words, param)
 	end
 
 	doSendMagicEffect(getCreaturePosition(cid), CONST_ME_POFF)
-	return FALSE
+	return TRUE
 end

@@ -1,13 +1,13 @@
 function onSay(cid, words, param)
 	if(param == "") then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
-		return FALSE
+		return TRUE
 	end
 
 	local t = string.explode(param, ",")
 	if(not t[2]) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You need to type color.")
-		return FALSE
+		return TRUE
 	end
 
 	t[1] = tonumber(t[1])

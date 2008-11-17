@@ -1,7 +1,7 @@
 function onSay(cid, words, param)
 	if(param == "") then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command requires param.")
-		return FALSE
+		return TRUE
 	end
 
 	local creature = getCreatureByName(param)
@@ -17,18 +17,18 @@ function onSay(cid, words, param)
 		pos = {x = tile[1], y = tile[2], z = tile[3]}
 	else
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Invalid param specified.")
-		return FALSE
+		return TRUE
 	end
 
 	if(pos == LUA_ERROR or isInArray({pos.x, pos.y, pos.z}, 0) == TRUE) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Destination not reachable.")
-		return FALSE
+		return TRUE
 	end
 
 	pos = getClosestFreeTile(cid, pos)
 	if(pos == LUA_ERROR or isInArray({pos.x, pos.y, pos.z}, 0) == TRUE) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Cannot perform action.")
-		return FALSE
+		return TRUE
 	end
 
 	local tmp = getCreaturePosition(cid)

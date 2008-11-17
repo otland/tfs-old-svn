@@ -1,13 +1,13 @@
 function onSay(cid, words, param)
 	if(param == "") then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
-		return FALSE
+		return TRUE
 	end
 
 	local pid = getPlayerByNameWildcard(param)
 	if(pid == 0 or (isPlayerGhost(pid) == TRUE and getPlayerAccess(pid) > getPlayerAccess(cid))) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. param .. " not found.")
-		return FALSE
+		return TRUE
 	end
 
 	local tmp = {accountId = getPlayerAccountId(pid), ip = getPlayerIp(pid)}

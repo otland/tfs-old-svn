@@ -1,13 +1,13 @@
 function onSay(cid, words, param)
 	if(param == "") then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
-		return FALSE
+		return TRUE
 	end
 
 	local tmp = getAccountIdByName(param)
 	if(tmp == 0) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. param .. " does not exists.")
-		return FALSE
+		return TRUE
 	end
 
 	if(isAccountBanished(tmp) == TRUE and doRemoveBanishment(tmp) == TRUE) then

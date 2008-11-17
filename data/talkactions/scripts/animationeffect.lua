@@ -1,6 +1,6 @@
 function onSay(cid, words, param)
 	if(param == "") then
-		return FALSE
+		return TRUE
 	end
 
 	local position = getCreaturePosition(cid)
