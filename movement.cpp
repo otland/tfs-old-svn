@@ -130,7 +130,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 
 	bool success = true;
 	int32_t id, endId;
-	std::string str;
+	std::string strValue;
 
 	MoveEvent_t eventType = moveEvent->getEventType();
 	if(eventType == MOVE_EVENT_ADD_ITEM || eventType == MOVE_EVENT_REMOVE_ITEM)
@@ -153,6 +153,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 
 	if(readXMLInteger(p, "itemid", id))
 	{
+		addEvent(moveEvent, id, m_itemIdMap);
 		if(moveEvent->getEventType() == MOVE_EVENT_EQUIP)
 		{
 			ItemType& it = Item::items.getItemType(id);
@@ -161,11 +162,10 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 			it.minReqMagicLevel = moveEvent->getReqMagLv();
 			it.vocationString = moveEvent->getVocationString();
 		}
-
-		addEvent(moveEvent, id, m_itemIdMap);
 	}
 	else if(readXMLInteger(p, "fromid", id) && readXMLInteger(p, "toid", endId))
 	{
+		addEvent(moveEvent, id, m_itemIdMap);
 		if(moveEvent->getEventType() == MOVE_EVENT_EQUIP)
 		{
 			ItemType& it = Item::items.getItemType(id);
@@ -174,20 +174,20 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 			it.minReqMagicLevel = moveEvent->getReqMagLv();
 			it.vocationString = moveEvent->getVocationString();
 
-			addEvent(moveEvent, id, m_itemIdMap);
 			while(id < endId)
 			{
-				addEvent(new MoveEvent(moveEvent), ++id, m_itemIdMap);
-				it = Item::items.getItemType(id);
-				it.wieldInfo = moveEvent->getWieldInfo();
-				it.minReqLevel = moveEvent->getReqLevel();
-				it.minReqMagicLevel = moveEvent->getReqMagLv();
-				it.vocationString = moveEvent->getVocationString();
+				id++;
+				addEvent(new MoveEvent(moveEvent), id, m_itemIdMap);
+
+				ItemType& tit = Item::items.getItemType(id);
+				tit.wieldInfo = moveEvent->getWieldInfo();
+				tit.minReqLevel = moveEvent->getReqLevel();
+				tit.minReqMagicLevel = moveEvent->getReqMagLv();
+				tit.vocationString = moveEvent->getVocationString();
 			}
 		}
 		else
 		{
-			addEvent(moveEvent, id, m_itemIdMap);
 			while(id < endId)
 				addEvent(new MoveEvent(moveEvent), ++id, m_itemIdMap);
 		}
@@ -208,9 +208,9 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 		while(id < endId)
 			addEvent(new MoveEvent(moveEvent), ++id, m_actionIdMap);
 	}
-	else if(readXMLString(p, "pos", str))
+	else if(readXMLString(p, "pos", strValue))
 	{
-		std::vector<int32_t> posList = vectorAtoi(explodeString(str, ";"));
+		std::vector<int32_t> posList = vectorAtoi(explodeString(strValue, ";"));
 		if(posList.size() >= 3)
 		{
 			Position pos(posList[0], posList[1], posList[2]);
@@ -242,6 +242,7 @@ void MoveEvents::addEvent(MoveEvent* moveEvent, int32_t id, MoveListMap& map)
 			if((*it)->getSlot() == moveEvent->getSlot())
 				std::cout << "[Warning - MoveEvents::addEvent] Duplicate move event found: " << id << std::endl;
 		}
+
 		moveEventList.push_back(moveEvent);
 	}
 }
@@ -258,6 +259,7 @@ MoveEvent* MoveEvents::getEvent(Item* item, MoveEvent_t eventType, slots_t slot)
 				return *it;
 		}
 	}
+
 	return NULL;
 }
 
@@ -415,6 +417,7 @@ Event(_interface)
 	moveFunction = NULL;
 	equipFunction = NULL;
 	slot = SLOT_WHEREEVER;
+	wieldInfo = 0;
 	reqLevel = 0;
 	reqMagLevel = 0;
 	premium = false;
