@@ -422,6 +422,7 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 			player->onSendContainer(tmpContainer);
 		}
 
+		return RET_NOERROR;
 	}
 
 	if(item->isReadable())
