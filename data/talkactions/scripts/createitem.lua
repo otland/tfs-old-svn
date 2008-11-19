@@ -23,16 +23,14 @@ function onSay(cid, words, param)
 	end
 
 	local item = doCreateItemEx(id, amount)
-	if(t[3]) then
-		if(getBooleanFromString(t[3]) == TRUE)
-			if(t[4] and getBooleanFromString(t[4]) == TRUE) then
-				tmp = getPlayerLookPos(cid)
-			end
-
-			ret = doTileAddItemEx(tmp, item)
-		else
-			ret = doPlayerAddItemEx(cid, item, TRUE)
+	if(t[3] and getBooleanFromString(t[3]) == TRUE) then
+		if(t[4] and getBooleanFromString(t[4]) == TRUE) then
+			tmp = getPlayerLookPos(cid)
 		end
+
+		ret = doTileAddItemEx(tmp, item)	
+	else
+		ret = doPlayerAddItemEx(cid, item, TRUE)
 	end
 
 	if(ret ~= LUA_NO_ERROR) then
