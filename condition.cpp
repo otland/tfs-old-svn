@@ -143,7 +143,7 @@ bool Condition::serialize(PropWriteStream& propWriteStream)
 void Condition::setTicks(int32_t _ticks)
 {
 	ticks = _ticks;
-	(_ticks > 0)
+	if(_ticks > 0)
 		endTime = (OTSYS_TIME() + _ticks);
 }
 
