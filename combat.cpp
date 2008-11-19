@@ -652,7 +652,7 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 		{
 			if(caster->getPlayer())
 				player = caster->getPlayer();
-			else if(caster->isSummon() && caster->getMaster()->getPlayer())))
+			else if(caster->isSummon() && caster->getMaster()->getPlayer())
 				player = caster->getMaster()->getPlayer();
 		}
 
@@ -1450,7 +1450,7 @@ void MagicField::onStepInField(Creature* creature)
 					}
 				}
 
-				if(!harmfulField || (OTSYS_TIME() - createTime) <= g_config.getNumber(ConfigManager::FIELD_OWNERSHIP)
+				if(!harmfulField || (OTSYS_TIME() - createTime) <= (uint32_t)g_config.getNumber(ConfigManager::FIELD_OWNERSHIP)
 					|| creature->hasBeenAttacked(owner))
 					conditionCopy->setParam(CONDITIONPARAM_OWNER, owner);
 			}

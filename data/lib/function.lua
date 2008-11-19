@@ -351,13 +351,15 @@ function doCopyItem(item, attributes)
 	end
 
 	if(isContainer(item.uid) == TRUE) then
-		local tmp = getContainerSize(item.uid)
-		for i = tmp, 1, -1 do
-			doAddContainerItemEx(ret, doItemCopy(getContainerItem(item.uid, i), TRUE))
+		for i = (getContainerSize(item.uid) - 1), 0, -1 do
+			local tmp = getContainerItem(item.uid, i)
+			if(tmp.itemid > 0) then
+				doAddContainerItemEx(ret, doCopyItem(tmp, TRUE).uid)
+			end
 		end
 	end
 
-	return ret
+	return getThing(ret)
 end
 
 table.find = function (table, value)

@@ -614,7 +614,7 @@ PlayerVector Game::getPlayersByIP(uint32_t ip, uint32_t mask)
 	return players;
 }
 
-bool Game::internalPlaceCreature(Creature* creature, const Position& pos, bool forced /*= false*/)
+bool Game::internalPlaceCreature(Creature* creature, const Position& pos, bool extendedPos /*= false*/, bool forced /*= false*/)
 {
 	if(creature->getParent() != NULL)
 		return false;

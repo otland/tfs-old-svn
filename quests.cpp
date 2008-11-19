@@ -48,10 +48,10 @@ std::string Mission::getDescription(Player* player)
 	for(uint32_t i = endValue; i >= startValue; i--)
 	{
 		uint32_t value;
-		if(player->getStorageValue(storageID, (int32_t&)value) && value == current)
+		if(player->getStorageValue(storageID, (int32_t&)value) && value == i)
 		{
 			StateList::const_iterator sit;
-			sit = state.find(current);
+			sit = state.find(i);
 			if(sit != state.end())
 				return sit->second->getMissionDescription();
 		}
