@@ -1,38 +1,80 @@
 local annihilatorReward = {1990, 2400, 2431, 2494}
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if item.uid > 1000 and item.uid < 10000 then
-		local itemWeight = getItemWeightById(item.uid, 1)
-		local playerCap = getPlayerFreeCap(cid)
-		if isInArray(annihilatorReward, item.uid) == TRUE then
-			if getPlayerStorageValue(cid, 30015) == -1 then
-				if playerCap >= itemWeight then
-					if item.uid == 1990 then
-						local container = doPlayerAddItem(cid, 1990, 1)
-						doAddContainerItem(container[1], 2326, 1)
-					else
-						doPlayerAddItem(cid, item.uid, 1)
+	if(item.uid > 1000 and item.uid < 10000) then
+		local result = "It is empty."
+		if(isInArray(annihilatorReward, item.uid) == TRUE) then
+			if(getPlayerStorageValue(cid, 30015) == -1) then
+				result = "You have found " .. getItemArticleById(item.uid) .. " " .. getItemNameById(item.uid)
+				local ret = getItemWeightById(item.uid, 1)
+				if(getPlayerFreeCap(cid) >= ret) then
+					local tmp = doPlayerAddItem(cid, item.uid, 1)
+					if(item.uid == 1990) then
+						doAddContainerItem(tmp[1], 2326, 1)
 					end
-					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'You have found a ' .. getItemNameById(item.uid) .. '.')
+
+					result = result .. "."
 					setPlayerStorageValue(cid, 30015, 1)
 				else
-					doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'You have found a ' .. getItemNameById(item.uid) .. ' weighing ' .. itemWeight .. ' oz it\'s too heavy.')
+					result = result .. " weighing " .. ret .. " oz. It is too heavy."
 				end
-			else
-				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "It is empty.")
 			end
-		elseif getPlayerStorageValue(cid, item.uid) == -1 then
-			if playerCap >= itemWeight then
-				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'You have found a ' .. getItemNameById(item.uid) .. '.')
-				doPlayerAddItem(cid, item.uid ,1)
-				setPlayerStorageValue(cid, item.uid, 1)
-			else
-				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'You have found a ' .. getItemNameById(item.uid) .. ' weighing ' .. itemWeight .. ' oz it\'s too heavy.')
+		elseif(getPlayerStorageValue(cid, item.uid) == -1) then
+			local items = {}
+			for i = 1, getContainerSize(item.uid) do
+				local tmp = getContainerItem(item.uid, i)
+				if(item.itemid > 0) then
+					table.insert(items, item)
+				end
 			end
-		else
-			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "It is empty.")
+
+			local reward = 0
+			if(#items == 0) then
+				reward = doCopyItem(item, FALSE)
+			elseif(#items == 1) then
+				reward = doCreateItemEx(items[1].itemid, items[1].type)
+			end
+
+			result = "You have found "
+			if(reward ~= 0) then
+				result = result .. getItemArticle(reward) .. " " .. getItemName(reward) .. "."
+			else
+				if(#items > 20) then
+					reward = doCopyItem(item, FALSE)
+				elseif(#items > 8)
+					reward = doCreateItemEx(1988, 1)
+				else
+					reward = doCreateItemEx(1987, 1)
+				end
+
+				for i = #items, 1, -1 do
+					local tmp = doCopyItem(items[i], TRUE)
+					if(doAddContainerItemEx(reward, tmp) ~= RETURNVALUE_NOERROR) then
+						error("[quests.lua]: Could not add quest reward!")
+						break
+					end
+
+					local ret = ", "
+					if(i == 2) then
+						ret = " and "
+					else if(i == 1) then
+						ret = "."
+					end
+
+					result = result .. getItemArticle(item) .. " " .. getItemName(item) .. ret
+				end
+			end
+
+			if(doPlayerAddItemEx(cid, reward, FALSE) ~= RETURNVALUE_NOERROR) then
+				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You don't have enough capacity or free space in backpack for reward.")
+				return FALSE
+			end
+
+			setPlayerStorageValue(cid, item.uid, 1)
 		end
-	else
-		return FALSE
+
+		doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, result)
+		return TRUE
 	end
-	return TRUE
+
+	return FALSE
 end

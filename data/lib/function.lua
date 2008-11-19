@@ -340,6 +340,26 @@ function getBooleanFromString(str)
 	return (str:lower() == "yes" or str:lower() == "true" or (tonumber(str) and tonumber(str) > 0)) and TRUE or FALSE
 end
 
+function doCopyItem(item, attributes)
+	local attributes = attributes or FALSE
+
+	local ret = doCreateItemEx(item.itemid, item.type)
+	if(attributes == TRUE) then
+		if(item.actionid > 0) then
+			doSetItemActionId(ret, item.actionid)
+		end
+	end
+
+	if(isContainer(item.uid) == TRUE) then
+		local tmp = getContainerSize(item.uid)
+		for i = tmp, 1, -1 do
+			doAddContainerItemEx(ret, doItemCopy(getContainerItem(item.uid, i), TRUE))
+		end
+	end
+
+	return ret
+end
+
 table.find = function (table, value)
 	for i, v in pairs(table) do
 		if(v == value) then

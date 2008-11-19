@@ -12,7 +12,7 @@ function onSay(cid, words, param)
 
 	local multifloor = FALSE
 	if(t[3]) then
-		clean = getBooleanFromString(t[3])
+		multifloor = getBooleanFromString(t[3])
 	end
 
 	local tmp = 0
