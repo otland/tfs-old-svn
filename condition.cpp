@@ -143,17 +143,13 @@ bool Condition::serialize(PropWriteStream& propWriteStream)
 void Condition::setTicks(int32_t _ticks)
 {
 	ticks = _ticks;
-	/*if(_ticks == -1)
-		endTime = -1;
-	else if(_ticks > 0)*/
+	(_ticks > 0)
 		endTime = (OTSYS_TIME() + _ticks);
 }
 
 bool Condition::startCondition(Creature* creature)
 {
-	/*if(ticks == -1)
-		endTime = -1;
-	else */if(ticks > 0)
+	if(ticks > 0)
 		endTime = (OTSYS_TIME() + ticks);
 
 	return true;
@@ -165,7 +161,7 @@ bool Condition::executeCondition(Creature* creature, int32_t interval)
 		return true;
 
 	ticks = std::max((int32_t)0, (ticks - interval));
-	return (/*endTime == -1 || */endTime >= OTSYS_TIME());
+	return endTime >= OTSYS_TIME();
 }
 
 Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, int32_t param)
@@ -219,6 +215,7 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 		default:
 			break;
 	}
+
 	return NULL;
 }
 

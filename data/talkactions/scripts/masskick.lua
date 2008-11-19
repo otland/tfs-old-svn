@@ -15,13 +15,13 @@ function onSay(cid, words, param)
 		multifloor = getBooleanFromString(t[3])
 	end
 
-	local players = getSpectators(getCreaturePosition(cid), t[1], t[2], multifloor)
-	local tmp = table.maxn(players)
-	for i, pid in ipairs(players) do
-		if(pid ~= cid and getPlayerAccess(pid) < getPlayerAccess(cid)) then
-			doRemoveCreature(pid)
+	local tmp = 0
+	local spectators = getSpectators(getCreaturePosition(cid), t[1], t[2], multifloor)
+	for i, tid in ipairs(spectators) do
+		if(isPlayer(tid) == TRUE and tid ~= cid and getPlayerAccess(tid) < getPlayerAccess(cid)) then
+			doRemoveCreature(tid)
 		else
-			tmp = tmp - 1
+			tmp = tmp + 1
 		end
 	end
 
