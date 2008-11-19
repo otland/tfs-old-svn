@@ -47,7 +47,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			for i = size, 1, -1 do
 				local tmp = doCopyItem(items[i], TRUE)
 				if(doAddContainerItemEx(reward, tmp.uid) ~= RETURNVALUE_NOERROR) then
-					error("[system.lua]: Could not add quest reward!")
+					print("[Warning] QuestSystem:", "Could not add quest reward, skipping...")
 					break
 				end
 
