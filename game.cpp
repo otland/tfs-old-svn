@@ -69,10 +69,9 @@ Game::Game()
 	gameState = GAME_STATE_NORMAL;
 	worldType = WORLD_TYPE_PVP;
 	map = NULL;
-	lastPlayersRecord = 0;
-	lastStageLevel = 0;
+	lastPlayersRecord = lastStageLevel = 0;
 	useLastStageLevel = false;
-	for(int16_t i = 0; i < 3; i++)
+	for(int8_t i = 0; i < 3; i++)
 		globalSaveMessage[i] = false;
 
 	OTSYS_THREAD_LOCKVARINIT(AutoID::autoIDLock);

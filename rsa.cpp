@@ -47,17 +47,15 @@ RSA::~RSA()
 
 bool RSA::setKey(const std::string& file)
 {
-	//loads p,q and d from a file
+	//loads p, q and d from a file
 	FILE* f = fopen(file.c_str(), "r");
 	if(!f)
 		return false;
 
-	char p[512];
-	char q[512];
-	char d[512];
-	fgets(p, 512, f);
-	fgets(q, 512, f);
-	fgets(d, 512, f);
+	char p[512], q[512], d[512];
+	delete fgets(p, 512, f);
+	delete fgets(q, 512, f);
+	delete fgets(d, 512, f);
 	setKey(p, q, d);
 	return true;
 }
