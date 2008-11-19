@@ -355,13 +355,11 @@ inline bool FileLoader::readByte(int32_t &value)
 	}
 
 	value = fgetc(m_file);
-	if(value == EOF)
-	{
-		m_lastError = ERROR_EOF;
-		return false;
-	}
+	if(value != EOF)
+		return true;
 
-	return true;
+	m_lastError = ERROR_EOF;
+	return false;
 }
 
 inline bool FileLoader::readBytes(uint8_t* buffer, int32_t size, int32_t pos)
