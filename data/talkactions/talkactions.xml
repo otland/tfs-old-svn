@@ -23,6 +23,7 @@
 	<talkaction access="4" words="!x" script="animationeffect.lua"/>
 	<talkaction access="4" words="!y" script="animatedtext.lua"/>
 	<talkaction log="yes" access="4" words="/bc" script="broadcastclass.lua"/>
+	<talkaction log="yes" access="4" words="/mkick" script="masskick.lua"/>
 
 	<!-- Gamemasters -->
 	<talkaction log="yes" words="/t" access="3" script="teleportmaster.lua"/>

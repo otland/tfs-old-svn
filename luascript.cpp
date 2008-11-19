@@ -8614,8 +8614,11 @@ int32_t LuaScriptInterface::luaGetTownHouses(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetSpectators(lua_State *L)
 {
-	//getSpectators(centerPos, rangex, rangey, multifloor)
-	bool multifloor = popNumber(L) == 1;
+	//getSpectators(centerPos, rangex, rangey[, multifloor])
+	bool multifloor = false;
+	if(lua_gettop(L) >= 4)
+		multifloor = popNumber(L) == 1;
+
 	uint32_t rangey = popNumber(L);
 	uint32_t rangex = popNumber(L);
 
@@ -8630,12 +8633,15 @@ int32_t LuaScriptInterface::luaGetSpectators(lua_State *L)
 		return 1;
 	}
 
+	ScriptEnviroment* env = getScriptEnv();
 	lua_newtable(L);
+
 	SpectatorVec::const_iterator it = list.begin();
 	for(uint32_t i = 1; it != list.end(); ++it, ++i)
 	{
+		uint32_t cid = env->addThing(*it);
 		lua_pushnumber(L, i);
-		lua_pushnumber(L, (*it)->getID());
+		lua_pushnumber(L, cid);
 		lua_settable(L, -3);
 	}
 
