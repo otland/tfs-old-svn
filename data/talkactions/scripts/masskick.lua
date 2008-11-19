@@ -20,7 +20,6 @@ function onSay(cid, words, param)
 	for i, tid in ipairs(spectators) do
 		if(isPlayer(tid) == TRUE and tid ~= cid and getPlayerAccess(tid) < getPlayerAccess(cid)) then
 			doRemoveCreature(tid)
-		else
 			tmp = tmp + 1
 		end
 	end
