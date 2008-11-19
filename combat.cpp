@@ -132,7 +132,7 @@ void Combat::getCombatArea(const Position& centerPos, const Position& targetPos,
 	else if(targetPos.x >= 0 && targetPos.y >= 0 && targetPos.z >= 0 &&
 		targetPos.x <= 0xFFFF && targetPos.y <= 0xFFFF && targetPos.z < MAP_MAX_LAYERS)
 	{
-		Tile* tile = g_game.getTile(targetPos.x, targetPos.y, targetPos.z)
+		Tile* tile = g_game.getTile(targetPos.x, targetPos.y, targetPos.z);
 		if(!tile)
 		{
 			tile = new Tile(targetPos.x, targetPos.y, targetPos.z);
@@ -209,7 +209,7 @@ ConditionType_t Combat::DamageToConditionType(CombatType_t type)
 
 bool Combat::isPlayerCombat(const Creature* target)
 {
-	if(target->getPlayer() || target->isSummon() && target->getMaster()->getPlayer())
+	if(target->getPlayer() || (target->isSummon() && target->getMaster()->getPlayer()))
 		return true;
 
 	return false;
@@ -711,16 +711,20 @@ void Combat::CombatFunc(Creature* caster, const Position& pos,
 	{
 		if(canDoCombat(caster, *it, params.isAggressive) == RET_NOERROR)
 		{
-			for(CreatureVector::iterator cit = (*it)->creatures.begin(); bContinue && cit != (*it)->creatures.end(); ++cit)
+			bool skip = true;
+			for(CreatureVector::iterator cit = (*it)->creatures.begin(); skip && cit != (*it)->creatures.end(); ++cit)
 			{
 				if(params.targetCasterOrTopMost)
 				{
 					if(caster && caster->getTile() == (*it))
 					{
-						if(*cit != caster)
-							continue;
+						if(*cit == caster)
+							skip = false;
 					}
-					else if(*cit != (*it)->getTopCreature())
+					else if(*cit == (*it)->getTopCreature())
+						skip = false;
+
+					if(skip)
 						continue;
 				}
 
@@ -731,9 +735,11 @@ void Combat::CombatFunc(Creature* caster, const Position& pos,
 						params.targetCallback->onTargetCombat(caster, *cit);
 				}
 			}
+
 			combatTileEffects(list, caster, *it, params);
 		}
 	}
+
 	postCombatEffects(caster, pos, params);
 }
 
