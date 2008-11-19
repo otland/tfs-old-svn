@@ -57,24 +57,26 @@ FileLoader::~FileLoader()
 
 bool FileLoader::openFile(const char* filename, bool write, bool caching /*= false*/)
 {
+	uint32_t version = 0;
 	if(write)
 	{
 		m_file = fopen(filename, "wb");
 		if(m_file)
 		{
-			uint32_t version = 0;
 			writeData(&version, sizeof(version), false);
 			return true;
 		}
-
-		m_lastError = ERROR_CAN_NOT_CREATE;
-		return false;
+		else
+		{
+			m_lastError = ERROR_CAN_NOT_CREATE;
+			return false;
+		}
 	}
 
-	if((m_file = fopen(filename, "rb")))
+	m_file = fopen(filename, "rb");
+	if(m_file)
 	{
-		uint32_t version;
-		if(fread(&version, sizeof(version), 1, m_file) == 1)
+		if(fread(&version, sizeof(version), 1, m_file))
 		{
 			if(version > 0)
 			{
@@ -97,17 +99,13 @@ bool FileLoader::openFile(const char* filename, bool write, bool caching /*= fal
 				delete m_root;
 				m_root = new NodeStruct();
 				m_root->start = 4;
+
 				int32_t byte;
 				if(safeSeek(4) && readByte(byte) && byte == NODE_START)
-				{
-					bool ret = parseNode(m_root);
-					return ret;
-				}
-
-				return false;
+					return parseNode(m_root);
 			}
-
-			m_lastError = ERROR_INVALID_FORMAT;
+			else
+				m_lastError = ERROR_INVALID_FORMAT;
 		}
 		else
 			m_lastError = ERROR_EOF;
@@ -125,88 +123,101 @@ bool FileLoader::parseNode(NODE node)
 	while(true)
 	{
 		//read node type
-		if(readByte(byte))
+		if(!readByte(byte))
+			return false;
+
+		currentNode->type = byte;
+		bool setPropsSize = false;
+		while(true)
 		{
-			currentNode->type = byte;
-			bool setPropsSize = false;
-			while(true)
+			if(!readByte(byte))
+				return false;
+
+			bool skipNode = false;
+			switch(byte)
 			{
-				//search child and next node
-				if(readByte(byte))
+				case NODE_START:
 				{
-					if(byte == NODE_START)
+					//child node start
+					if(!safeTell(pos))
+						return false;
+
+					if(NODE childNode = new NodeStruct())
 					{
-						//child node start
-						if(safeTell(pos))
-						{
-							NODE childNode = new NodeStruct();
-							childNode->start = pos;
-							setPropsSize = true;
-							currentNode->propsSize = pos - currentNode->start - 2;
-							currentNode->child = childNode;
-							if(!parseNode(childNode))
-								return false;
-						}
-						else
+						childNode->start = pos;
+						currentNode->propsSize = pos - currentNode->start - 2;
+						currentNode->child = childNode;
+
+						setPropsSize = true;
+						if(!parseNode(childNode))
 							return false;
 					}
-					else if(byte == NODE_END)
+
+					break;
+				}
+
+				case NODE_END:
+				{
+					//current node end
+					if(!setPropsSize)
 					{
-						//current node end
-						if(!setPropsSize)
+						if(!safeTell(pos))
+							return false;
+
+						currentNode->propsSize = pos - currentNode->start - 2;
+					}
+
+					if(!readByte(byte))
+						return true;
+
+					switch(byte)
+					{
+						case NODE_START:
 						{
+							//starts next node
 							if(!safeTell(pos))
 								return false;
 
-							currentNode->propsSize = pos - currentNode->start - 2;
+							skipNode = true;
+							if(NODE nextNode = new NodeStruct())
+							{
+								nextNode->start = pos;
+								currentNode->next = nextNode;
+								currentNode = nextNode;
+							}
+
+							break;
 						}
 
-						if(readByte(byte))
-						{
-							if(byte == NODE_START)
-							{
-								//starts next node
-								if(safeTell(pos))
-								{
-									NODE nextNode = new NodeStruct();
-									nextNode->start = pos;
-									currentNode->next = nextNode;
-									currentNode = nextNode;
-									break;
-								}
+						case NODE_END:
+							return safeTell(pos) && safeSeek(pos);
 
-								return false;
-							}
-							else if(byte == NODE_END)
-							{
-								//up 1 level and move 1 position back
-								if(safeTell(pos) && safeSeek(pos))
-									return true;
-
-								return false;
-							}
-
-							//wrong format
+						default:
 							m_lastError = ERROR_INVALID_FORMAT;
 							return false;
-						}
+					}
 
-						//end of file?
-						return true;
-					}
-					else if(byte == ESCAPE_CHAR)
-					{
-						if(!readByte(byte))
-							return false;
-					}
+					break;
 				}
 
-				return false;
-			}
-		}
+				case ESCAPE_CHAR:
+				{
+					if(!readByte(byte))
+						return false;
 
-		return false;
+					break;
+				}
+
+				default:
+					break;
+			}
+
+			if(skipNode)
+				break;
+		}
 	}
+
+	return false;
 }
 
 const uint8_t* FileLoader::getProps(const NODE node, uint32_t &size)
@@ -254,15 +265,14 @@ const uint8_t* FileLoader::getProps(const NODE node, uint32_t &size)
 bool FileLoader::getProps(const NODE node, PropStream &props)
 {
 	uint32_t size;
-	const uint8_t* a = getProps(node, size);
-	if(!a)
+	if(const uint8_t* a = getProps(node, size))
 	{
-		props.init(NULL, 0);
-		return false;
+		props.init((char*)a, size);
+		return true;
 	}
 
-	props.init((char*)a, size);
-	return true;
+	props.init(NULL, 0);
+	return false;
 }
 
 int32_t FileLoader::setProps(void* data, uint16_t size)
@@ -297,7 +307,6 @@ const NODE FileLoader::getChildNode(const NODE parent, uint32_t &type)
 
 		return child;
 	}
-
 
 	type = m_root->type;
 	return m_root;
@@ -346,11 +355,13 @@ inline bool FileLoader::readByte(int32_t &value)
 	}
 
 	value = fgetc(m_file);
-	if(value != EOF)
-		return true;
+	if(value == EOF)
+	{
+		m_lastError = ERROR_EOF;
+		return false;
+	}
 
-	m_lastError = ERROR_EOF;
-	return false;
+	return true;
 }
 
 inline bool FileLoader::readBytes(uint8_t* buffer, int32_t size, int32_t pos)
@@ -391,8 +402,7 @@ inline bool FileLoader::readBytes(uint8_t* buffer, int32_t size, int32_t pos)
 		return false;
 	}
 
-	int32_t value = fread(buffer, 1, size, m_file);
-	if(value == size)
+	if(fread(buffer, 1, size, m_file) == (uint32_t)size)
 		return true;
 
 	m_lastError = ERROR_EOF;
@@ -427,13 +437,10 @@ inline bool FileLoader::safeSeek(uint32_t pos)
 		m_cache_index = i;
 		m_cache_offset = pos - m_cached_data[i].base;
 	}
-	else
+	else if(fseek(m_file, pos, SEEK_SET))
 	{
-		if(fseek(m_file, pos, SEEK_SET))
-		{
-			m_lastError = ERROR_SEEK_ERROR;
-			return false;
-		}
+		m_lastError = ERROR_SEEK_ERROR;
+		return false;
 	}
 
 	return true;
@@ -454,14 +461,14 @@ inline bool FileLoader::safeTell(int32_t &pos)
 	}
 
 	pos = ftell(m_file);
-	if(pos != -1)
+	if(pos == -1)
 	{
-		pos = pos - 1;
-		return true;
+		m_lastError = ERROR_TELL_ERROR;
+		return false;
 	}
 
-	m_lastError = ERROR_TELL_ERROR;
-	return false;
+	pos = pos - 1;
+	return true;
 }
 
 inline uint32_t FileLoader::getCacheBlock(uint32_t pos)
@@ -502,7 +509,7 @@ int32_t FileLoader::loadCacheBlock(uint32_t pos)
 	{
 		for(i = 0; i < CACHE_BLOCKS; i++)
 		{
-			if((long)(abs((long)m_cached_data[i].base - base_pos)) > (long)(2*m_cache_size))
+			if((long)(abs((long)m_cached_data[i].base - base_pos)) > (long)(2 * m_cache_size))
 			{
 				loading_cache = i;
 				break;
