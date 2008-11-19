@@ -5,7 +5,7 @@ function onSay(cid, words, param)
 	end
 
 	local t = string.explode(param, ",")
-	local ret = RET_NO_ERROR
+	local ret = RETURNVALUE_NOERROR
 	local tmp = getCreaturePosition(cid)
 
 	local id = tonumber(t[1])
@@ -33,7 +33,7 @@ function onSay(cid, words, param)
 		ret = doPlayerAddItemEx(cid, item, TRUE)
 	end
 
-	if(ret ~= LUA_NO_ERROR) then
+	if(ret ~= RETURNVALUE_NOERROR) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Couldn't add item: " .. t[1])
 		return TRUE
 	end
