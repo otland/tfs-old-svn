@@ -143,17 +143,17 @@ bool Condition::serialize(PropWriteStream& propWriteStream)
 void Condition::setTicks(int32_t _ticks)
 {
 	ticks = _ticks;
-	if(_ticks == -1)
+	/*if(_ticks == -1)
 		endTime = -1;
-	else if(_ticks > 0)
+	else if(_ticks > 0)*/
 		endTime = (OTSYS_TIME() + _ticks);
 }
 
 bool Condition::startCondition(Creature* creature)
 {
-	if(ticks == -1)
+	/*if(ticks == -1)
 		endTime = -1;
-	else if(ticks > 0)
+	else */if(ticks > 0)
 		endTime = (OTSYS_TIME() + ticks);
 
 	return true;
@@ -165,7 +165,7 @@ bool Condition::executeCondition(Creature* creature, int32_t interval)
 		return true;
 
 	ticks = std::max((int32_t)0, (ticks - interval));
-	return (endTime >= OTSYS_TIME());
+	return (/*endTime == -1 || */endTime >= OTSYS_TIME());
 }
 
 Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, int32_t param)
@@ -252,7 +252,7 @@ Condition* Condition::createCondition(PropStream& propStream)
 
 bool Condition::isPersistent() const
 {
-	if(getTicks() == -1)
+	if(ticks == -1)
 		return false;
 
 	if(!(id == CONDITIONID_DEFAULT || id == CONDITIONID_COMBAT))
@@ -266,10 +266,7 @@ bool Condition::updateCondition(const Condition* addCondition)
 	if(conditionType != addCondition->getType())
 		return false;
 
-	if(getTicks() == -1 && addCondition->getTicks() > 0)
-		return false;
-
-	if(addCondition->getTicks() > 0 && addCondition->getTicks() <= getTicks())
+	if(addCondition->getTicks() > 0 && (ticks == -1 || addCondition->getTicks() <= ticks))
 		return false;
 
 	return true;
@@ -331,7 +328,6 @@ void ConditionAttributes::addCondition(Creature* creature, const Condition* addC
 	{
 		setTicks(addCondition->getTicks());
 		const ConditionAttributes& conditionAttrs = static_cast<const ConditionAttributes&>(*addCondition);
-		//Remove the old condition
 		endCondition(creature, CONDITIONEND_ABORT);
 
 		//Apply the new one
@@ -1230,18 +1226,14 @@ bool ConditionDamage::init()
 
 bool ConditionDamage::startCondition(Creature* creature)
 {
-	if(!init())
-		return false;
-
-	bool tmp = Condition::startCondition(creature);
-	if(!delayed)
+	if(Condition::startCondition(creature) && init() && !delayed)
 	{
 		int32_t damage = 0;
 		if(getNextDamage(damage))
 			return doDamage(creature, damage);
 	}
 
-	return tmp;
+	return false;
 }
 
 bool ConditionDamage::executeCondition(Creature* creature, int32_t interval)
