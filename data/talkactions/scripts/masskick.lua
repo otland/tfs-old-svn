@@ -15,17 +15,18 @@ function onSay(cid, words, param)
 		multifloor = getBooleanFromString(t[3])
 	end
 
-	local tmp = 0
 	local players = getSpectators(getCreaturePosition(cid), t[1], t[2], multifloor)
+	local tmp = table.maxn(players)
 	for i, pid in ipairs(players) do
 		if(pid ~= cid and getPlayerAccess(pid) < getPlayerAccess(cid)) then
 			doRemoveCreature(pid)
-			tmp = tmp + 1
+		else
+			tmp = tmp - 1
 		end
 	end
 
 	if(tmp > 0) then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Kicked " .. kicked .. " players.")
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Kicked " .. tmp .. " players.")
 	else
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Could not kick any player.")
 	end
