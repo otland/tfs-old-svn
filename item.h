@@ -358,7 +358,7 @@ class Item : virtual public Thing, public ItemAttributes
 		void setHitChance(int32_t hitchance) {setIntAttr(ATTR_ITEM_HITCHANCE, hitchance);}
 
 		virtual double getWeight() const;
-		int32_t getSlotPosition() const {return items[id].slot_position;}
+		int32_t getSlotPosition() const {return items[id].slotPosition;}
 
 		bool isReadable() const {return items[id].canReadText;}
 		bool canWriteText() const {return items[id].canWriteText;}

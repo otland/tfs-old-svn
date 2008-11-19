@@ -30,12 +30,9 @@
 extern Game g_game;
 
 Condition::Condition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks) :
-id(_id), ticks(_ticks), conditionType(_type)
+id(_id), conditionType(_type)
 {
-	if(_ticks == -1)
-		endTime = -1;
-	else if(_ticks > 0)
-		endTime = (OTSYS_TIME() + _ticks);
+	setTicks(_ticks);
 }
 
 bool Condition::setParam(ConditionParam_t param, int32_t value)
@@ -152,13 +149,23 @@ void Condition::setTicks(int32_t _ticks)
 		endTime = (OTSYS_TIME() + _ticks);
 }
 
+bool Condition::startCondition(Creature* creature)
+{
+	if(ticks == -1)
+		endTime = -1;
+	else if(ticks > 0)
+		endTime = (OTSYS_TIME() + ticks);
+
+	return true;
+}
+
 bool Condition::executeCondition(Creature* creature, int32_t interval)
 {
 	if(ticks == -1)
 		return true;
 
-	ticks = std::max((int32_t)0, (getTicks() - interval));
-	return (endTime >= OTSYS_TIME() || endTime == -1);
+	ticks = std::max((int32_t)0, (ticks - interval));
+	return (endTime >= OTSYS_TIME());
 }
 
 Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, int32_t param)
@@ -218,8 +225,7 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 
 Condition* Condition::createCondition(PropStream& propStream)
 {
-	uint8_t attr;
-
+	uint8_t attr = 0;
 	if(!propStream.GET_UCHAR(attr) || attr != CONDITIONATTR_TYPE)
 		return NULL;
 
@@ -269,17 +275,7 @@ bool Condition::updateCondition(const Condition* addCondition)
 	return true;
 }
 
-bool Condition::startCondition(Creature* creature)
-{
-	if(getTicks() == -1)
-		endTime = -1;
-	else if(getTicks() > 0)
-		endTime = (OTSYS_TIME() + getTicks());
-
-	return true;
-}
-
-ConditionGeneric::ConditionGeneric(ConditionId_t _id, ConditionType_t _type, int32_t _ticks) :
+ConditionGeneric::ConditionGeneric(ConditionId_t _id, ConditionType_t _type, int32_t _ticks):
 Condition(_id, _type, _ticks)
 {
 	//

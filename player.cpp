@@ -2328,32 +2328,34 @@ Item* Player::getCorpse()
 
 void Player::addWeaponExhaust(uint32_t ticks)
 {
-	Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST_WEAPON, ticks, 0);
-	addCondition(condition);
+	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST_WEAPON, ticks, 0))
+		addCondition(condition);
 }
 
 void Player::addCombatExhaust(uint32_t ticks)
 {
-	Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST_COMBAT, ticks, 0);
-	addCondition(condition);
+	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST_COMBAT, ticks, 0))
+		addCondition(condition);
 }
 
 void Player::addHealExhaust(uint32_t ticks)
 {
-	Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST_HEAL, ticks, 0);
-	addCondition(condition);
+	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST_HEAL, ticks, 0))
+		addCondition(condition);
 }
 
-void Player::addInFightTicks()
+void Player::addInFightTicks(bool pzLock/* = false*/)
 {
-	Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT, g_game.getInFightTicks(), 0);
-	addCondition(condition);
+	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT, g_game.getInFightTicks(), 0))
+		addCondition(condition);
+
+	if(pzLock)
+		pzLocked = true;
 }
 
 void Player::addDefaultRegeneration(uint32_t addTicks)
 {
 	Condition* condition = getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT);
-
 	if(condition)
 		condition->setTicks(condition->getTicks() + addTicks);
 	else

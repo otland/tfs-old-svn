@@ -647,26 +647,44 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 {
 	if(params.itemId != 0)
 	{
+		Player* player = NULL;
+		if(caster)
+		{
+			if(caster->getPlayer())
+				player = caster->getPlayer();
+			else if(caster->isSummon() && caster->getMaster()->getPlayer())))
+				player = caster->getMaster()->getPlayer();
+		}
+
 		uint32_t itemId = params.itemId;
-		if(caster && (caster->getPlayer() || (caster->isSummon() && caster->getMaster()->getPlayer())))
+		if(player)
 		{
 			if(g_game.getWorldType() == WORLD_TYPE_NO_PVP || tile->hasFlag(TILESTATE_NOPVPZONE))
 			{
-				if(itemId == ITEM_FIREFIELD_PVP)
-					itemId = ITEM_FIREFIELD_NOPVP;
-				else if(itemId == ITEM_POISONFIELD_PVP)
-					itemId = ITEM_POISONFIELD_NOPVP;
-				else if(itemId == ITEM_ENERGYFIELD_PVP)
-					itemId = ITEM_ENERGYFIELD_NOPVP;
+				switch(itemId)
+				{
+					case ITEM_FIREFIELD_PVP:
+						itemId = ITEM_FIREFIELD_NOPVP;
+						break;
+					case ITEM_POISONFIELD_PVP:
+						itemId = ITEM_POISONFIELD_NOPVP;
+						break;
+					case ITEM_ENERGYFIELD_PVP:
+						itemId = ITEM_ENERGYFIELD_NOPVP;
+						break;
+					default:
+						break;
+				}
 			}
+			else if(params.isAggressive)
+				player->addInFightTicks(true);
 		}
-		Item* item = Item::CreateItem(itemId);
 
+		Item* item = Item::CreateItem(itemId);
 		if(caster)
 			item->setOwner(caster->getID());
 
-		ReturnValue ret = g_game.internalAddItem(tile, item);
-		if(ret == RET_NOERROR)
+		if(g_game.internalAddItem(tile, item) == RET_NOERROR)
 			g_game.startDecay(item);
 		else
 			delete item;
@@ -1432,7 +1450,8 @@ void MagicField::onStepInField(Creature* creature)
 					}
 				}
 
-				if(!harmfulField || (OTSYS_TIME() - createTime <= 5000) || creature->hasBeenAttacked(owner))
+				if(!harmfulField || (OTSYS_TIME() - createTime) <= g_config.getNumber(ConfigManager::FIELD_OWNERSHIP)
+					|| creature->hasBeenAttacked(owner))
 					conditionCopy->setParam(CONDITIONPARAM_OWNER, owner);
 			}
 

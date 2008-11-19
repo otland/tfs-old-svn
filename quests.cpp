@@ -45,8 +45,7 @@ Mission::~Mission()
 
 std::string Mission::getDescription(Player* player)
 {
-	uint32_t current = endValue;
-	while(current >= startValue)
+	for(uint32_t i = endValue; i >= startValue; i--)
 	{
 		uint32_t value;
 		if(player->getStorageValue(storageID, (int32_t&)value) && value == current)
@@ -56,9 +55,8 @@ std::string Mission::getDescription(Player* player)
 			if(sit != state.end())
 				return sit->second->getMissionDescription();
 		}
-
-		current--;
 	}
+
 	return "An error has occurred, please contact a gamemaster.";
 }
 
@@ -70,6 +68,7 @@ bool Mission::isStarted(Player* player) const
 		if(player->getStorageValue(storageID, (int32_t&)value) && value >= startValue && value <= endValue)
 			return true;
 	}
+
 	return false;
 }
 
@@ -81,6 +80,7 @@ bool Mission::isCompleted(Player* player) const
 		if(player->getStorageValue(storageID, (int32_t&)value) && value == endValue)
 			return true;
 	}
+
 	return false;
 }
 
@@ -88,8 +88,8 @@ std::string Mission::getName(Player* player)
 {
 	if(isCompleted(player))
 		return missionName + " (completed)";
-	else
-		return missionName;
+
+	return missionName;
 }
 
 Quest::Quest(std::string _name, uint16_t _id, uint32_t _startStorageID, uint32_t _startStorageValue)

@@ -420,7 +420,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 
 		if(!g_game.placeCreature(player, player->getLoginPosition()))
 		{
-			if(!g_game.placeCreature(player, player->getTemplePosition(), true))
+			if(!g_game.placeCreature(player, player->getTemplePosition(), false, true))
 			{
 				disconnectClient(0x14, "Temple position is wrong. Contact the administrator.");
 				return false;
@@ -1548,6 +1548,7 @@ void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
 {
 	if(m_debugAssertSent)
 		return;
+
 	m_debugAssertSent = true;
 
 	std::string assertLine = msg.GetString();
@@ -1555,8 +1556,7 @@ void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
 	std::string description = msg.GetString();
 	std::string comment = msg.GetString();
 
-	FILE* file = fopen(getFilePath(FILE_TYPE_LOG, "client_assertions.txt").c_str(), "a");
-	if(file)
+	if(FILE* file = fopen(getFilePath(FILE_TYPE_LOG, "client_assertions.txt").c_str(), "a"))
 	{
 		char bufferDate[32], bufferIp[32];
 		uint64_t tmp = time(NULL);

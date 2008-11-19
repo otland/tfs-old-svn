@@ -39,6 +39,7 @@
 	noDamageToSameLookfeet = "no"
 	experienceByKillingPlayers = "no"
 	showHealingDamage = "no"
+	fieldOwnershipDuration = 5 * 1000
 
 	-- Connection config
 	ip = "127.0.0.1"

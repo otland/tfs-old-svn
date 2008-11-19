@@ -437,7 +437,7 @@ class Player : public Creature, public Cylinder
 		void addWeaponExhaust(uint32_t ticks);
 		void addCombatExhaust(uint32_t ticks);
 		void addHealExhaust(uint32_t ticks);
-		void addInFightTicks();
+		void addInFightTicks(bool pzLock = false);
 		void addDefaultRegeneration(uint32_t addTicks);
 
 		virtual uint64_t getGainedExperience(Creature* attacker) const;

@@ -191,16 +191,14 @@ void Map::setTile(uint16_t x, uint16_t y, uint8_t z, Tile* newTile)
 	}
 }
 
-bool Map::placeCreature(const Position& centerPos, Creature* creature, bool forceLogin /*=false*/)
+bool Map::placeCreature(const Position& centerPos, Creature* creature, bool extendedPos /*= false*/, bool forceLogin /*= false*/)
 {
+	bool foundTile = false, placeInPz = false;
+
 	Tile* tile = getTile(centerPos);
-
-	bool foundTile = false;
-	bool placeInPZ = false;
-
 	if(tile)
 	{
-		placeInPZ = tile->hasFlag(TILESTATE_PROTECTIONZONE);
+		placeInPz = tile->hasFlag(TILESTATE_PROTECTIONZONE);
 		ReturnValue ret;
 		if(creature->getPlayer() && creature->isAccountManager())
 			ret = tile->__queryAdd(0, creature, 1, FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE);
@@ -212,7 +210,19 @@ bool Map::placeCreature(const Position& centerPos, Creature* creature, bool forc
 	}
 
 	typedef std::pair<int32_t, int32_t> relPair;
+	uint8_t shufflePos = 0;
+
 	std::vector<relPair> relList;
+	if(extendedPos)
+	{
+		shufflePos = 8;
+		relList.push_back(relPair(-2, 0));
+		relList.push_back(relPair(0, -2));
+		relList.push_back(relPair(0, 2));
+		relList.push_back(relPair(2, 0));
+		std::random_shuffle(relList.begin(), relList.end());
+	}
+
 	relList.push_back(relPair(-1, -1));
 	relList.push_back(relPair(-1, 0));
 	relList.push_back(relPair(-1, 1));
@@ -221,10 +231,9 @@ bool Map::placeCreature(const Position& centerPos, Creature* creature, bool forc
 	relList.push_back(relPair(1, -1));
 	relList.push_back(relPair(1, 0));
 	relList.push_back(relPair(1, 1));
+	std::random_shuffle(relList.begin() + shufflePos, relList.end());
 
-	std::random_shuffle(relList.begin(), relList.end());
 	uint32_t radius = 1;
-
 	Position tryPos;
 	for(uint32_t n = 1; n <= radius && !foundTile; ++n)
 	{
@@ -238,13 +247,24 @@ bool Map::placeCreature(const Position& centerPos, Creature* creature, bool forc
 			tryPos.y = tryPos.y + dy;
 
 			tile = getTile(tryPos);
-			if(!tile || (placeInPZ && !tile->hasFlag(TILESTATE_PROTECTIONZONE)))
+			if(!tile || (placeInPz && !tile->hasFlag(TILESTATE_PROTECTIONZONE)))
 				continue;
 
 			if(tile->__queryAdd(0, creature, 1, 0) == RET_NOERROR)
 			{
-				foundTile = true;
-				break;
+				if(extendedPos)
+				{
+					if(isSightClear(centerPos, tryPos, false))
+					{
+						foundTile = true;
+						break;
+					}
+				}
+				else
+				{
+					foundTile = true;
+					break;
+				}
 			}
 		}
 	}
@@ -264,7 +284,6 @@ bool Map::placeCreature(const Position& centerPos, Creature* creature, bool forc
 #ifdef __DEBUG__
 	std::cout << "Failed to place creature onto map!" << std::endl;
 #endif
-
 	return false;
 }
 

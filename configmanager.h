@@ -119,6 +119,7 @@ class ConfigManager
 			FINALBAN_LENGTH,
 			IPBANISHMENT_LENGTH,
 			MAX_PLAYER_SUMMONS,
+			FIELD_OWNERSHIP,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 

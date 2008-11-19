@@ -189,7 +189,7 @@ class ItemType
 		int32_t extraDefense;
 		int32_t armor;
 		uint32_t attackSpeed;
-		uint16_t slot_position;
+		uint16_t slotPosition;
 		bool isVertical;
 		bool isHorizontal;
 		bool isHangable;

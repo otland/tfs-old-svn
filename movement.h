@@ -92,7 +92,7 @@ class MoveEvents : public BaseEvents
 
 typedef uint32_t (StepFunction)(Creature* creature, Item* item, const Position& pos);
 typedef uint32_t (MoveFunction)(Item* item, Item* tileItem, const Position& pos);
-typedef uint32_t (EquipFunction)(Player* player, Item* item, slots_t slot, bool isRemoval);
+typedef uint32_t (EquipFunction)(MoveEvent* moveEvent, Player* player, Item* item, slots_t slot, bool isRemoval);
 
 class MoveEvent : public Event
 {
@@ -111,7 +111,7 @@ class MoveEvent : public Event
 		uint32_t fireAddRemItem(Item* item, Item* tileItem, const Position& pos);
 		uint32_t fireEquip(Player* player, Item* item, slots_t slot, bool isRemoval);
 
-		slots_t getSlot() const {return slot;}
+		uint32_t getSlot() const {return slot;}
 
 		//scripting
 		uint32_t executeStep(Creature* creature, Item* item, const Position& pos);
@@ -141,7 +141,7 @@ class MoveEvent : public Event
 		StepFunction* stepFunction;
 		MoveFunction* moveFunction;
 		EquipFunction* equipFunction;
-		slots_t slot;
+		uint32_t slot;
 
 		//onEquip information
 		int32_t reqLevel;

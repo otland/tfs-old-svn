@@ -619,7 +619,7 @@ bool Game::internalPlaceCreature(Creature* creature, const Position& pos, bool f
 	if(creature->getParent() != NULL)
 		return false;
 
-	if(!map->placeCreature(pos, creature, forced))
+	if(!map->placeCreature(pos, creature, extendedPos, forced))
 		return false;
 
 	creature->useThing2();
@@ -629,9 +629,9 @@ bool Game::internalPlaceCreature(Creature* creature, const Position& pos, bool f
 	return true;
 }
 
-bool Game::placeCreature(Creature* creature, const Position& pos, bool forced /*= false*/)
+bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedPos /*= false*/, bool forced /*= false*/)
 {
-	if(!internalPlaceCreature(creature, pos, forced))
+	if(!internalPlaceCreature(creature, pos, extendedPos, forced))
 		return false;
 
 	SpectatorVec list;
@@ -698,7 +698,7 @@ ReturnValue Game::placeSummon(Creature* creature, const std::string& name)
 
 	// Place the monster
 	creature->addSummon(monster);
-	if(!placeCreature(monster, creature->getPosition()))
+	if(!placeCreature(monster, creature->getPosition(), true))
 	{
 		creature->removeSummon(monster);
 		return RET_NOTENOUGHROOM;

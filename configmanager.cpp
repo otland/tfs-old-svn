@@ -166,6 +166,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBool[EXPERIENCE_STAGES] = getGlobalBool(L, "experienceStages", "no");
 	m_confBool[BLESSING_ONLY_PREMIUM] = getGlobalBool(L, "blessingsOnlyForPremium", "yes");
 	m_confBool[BED_REQUIRE_PREMIUM] = getGlobalBool(L, "bedsRequirePremium", "yes");
+	m_confNumber[FIELD_OWNERSHIP] = getGlobalNumber(L, "fieldOwnershipDuration", 5 * 1000);
 	m_isLoaded = true;
 
 	lua_close(L);
