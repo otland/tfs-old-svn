@@ -4,19 +4,17 @@ setCombatParam(combat, COMBAT_PARAM_EFFECT, CONST_ME_MAGIC_BLUE)
 setCombatParam(combat, COMBAT_PARAM_AGGRESSIVE, FALSE)
 setCombatParam(combat, COMBAT_PARAM_DISPEL, CONDITION_PARALYZE)
 
-function getCombatFormulas(cid, lv, maglv)
-	-- Formulas completly NOT accurate, and I never testes this spell. Please, someone send me an accurate formula
-	-- Pedro B. at OTFans.net
-	local formula_min = ((lv*3 + maglv*2) * 0.55) + 15
-	local formula_max = ((lv*4 + maglv*1) * 0.95) + 20
+function getCombatFormulas(cid, level, magicLevel)
+	local min = ((level * 3 + magicLevel * 2) * 0.55) + 15
+	local max = ((level * 4 + magicLevel * 1) * 0.95) + 20
 
-	if(formula_max < formula_min) then
-		--Normalize values
-		local tmp = formula_max
-		formula_max = formula_min
-		formula_min = tmp
+	if(max < min) then
+		local tmp = max
+		max = min
+		min = tmp
 	end
-	return formula_min, formula_max
+
+	return min, max
 end
 
 setCombatCallback(combat, CALLBACK_PARAM_LEVELMAGICVALUE, "getCombatFormulas")
