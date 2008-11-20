@@ -2218,9 +2218,8 @@ uint32_t Player::getIP() const
 	return 0;
 }
 
-void Player::death()
+void Player::onDeath()
 {
-	removeConditions(CONDITIONEND_DEATH);
 	if(skillLoss)
 	{
 		//Magic level loss
@@ -2274,8 +2273,8 @@ void Player::death()
 			skills[i][SKILL_TRIES] = std::max((int32_t)0, (int32_t)(skills[i][SKILL_TRIES] - lostSkillTries));
 		}
 
-		removeExperience(getLostExperience(), false);
 		loginPosition = masterPos;
+		removeExperience(getLostExperience(), false);
 		blessings = 0;
 		if(!inventory[SLOT_BACKPACK])
 			__internalAddThing(SLOT_BACKPACK, Item::CreateItem(1987));
@@ -2285,6 +2284,7 @@ void Player::death()
 
 	sendStats();
 	sendSkills();
+	Creature::onDeath();
 }
 
 void Player::dropCorpse()

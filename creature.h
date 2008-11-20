@@ -470,7 +470,6 @@ class Creature : public AutoID, virtual public Thing
 		virtual void dropLoot(Container* corpse) {}
 		virtual uint16_t getLookCorpse() const {return 0;}
 		virtual void getPathSearchParams(const Creature* creature, FindPathParams& fpp) const;
-		virtual void death() {}
 		virtual void dropCorpse();
 		virtual Item* getCorpse();
 

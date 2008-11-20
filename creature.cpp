@@ -785,50 +785,48 @@ void Creature::onDeath()
 			attacker->onAttackedCreatureKilled(this);
 	}
 
-	death();
 	dropCorpse();
-
 	if(getMaster())
 		getMaster()->removeSummon(this);
 }
 
 void Creature::dropCorpse()
 {
-	Item* splash = NULL;
-	switch(getRace())
+	if(Tile* tile = getTile())
 	{
-		case RACE_VENOM:
-			splash = Item::CreateItem(ITEM_FULLSPLASH, FLUID_GREEN);
-			break;
+		Item* splash = NULL;
+		switch(getRace())
+		{
+			case RACE_VENOM:
+				splash = Item::CreateItem(ITEM_FULLSPLASH, FLUID_GREEN);
+				break;
 
-		case RACE_BLOOD:
-			splash = Item::CreateItem(ITEM_FULLSPLASH, FLUID_BLOOD);
-			break;
+			case RACE_BLOOD:
+				splash = Item::CreateItem(ITEM_FULLSPLASH, FLUID_BLOOD);
+				break;
 
-		case RACE_UNDEAD:
-		case RACE_FIRE:
-		default:
-			break;
-	}
+			case RACE_UNDEAD:
+			case RACE_FIRE:
+			default:
+				break;
+		}
 
-	Tile* tile = getTile();
-	if(splash)
-	{
-		g_game.internalAddItem(tile, splash, INDEX_WHEREEVER, FLAG_NOLIMIT);
-		g_game.startDecay(splash);
-	}
+		if(splash)
+		{
+			g_game.internalAddItem(tile, splash, INDEX_WHEREEVER, FLAG_NOLIMIT);
+			g_game.startDecay(splash);
+		}
 
-	Item* corpse = getCorpse();
-	if(corpse)
-	{
-		g_game.internalAddItem(tile, corpse, INDEX_WHEREEVER, FLAG_NOLIMIT);
-		dropLoot(corpse->getContainer());
-		g_game.startDecay(corpse);
+		if(Item* corpse = getCorpse())
+		{
+			g_game.internalAddItem(tile, corpse, INDEX_WHEREEVER, FLAG_NOLIMIT);
+			dropLoot(corpse->getContainer());
+			g_game.startDecay(corpse);
+		}
 	}
 
 	//scripting event - onDeath
-	CreatureEvent* eventDeath = getCreatureEvent(CREATURE_EVENT_DEATH);
-	if(eventDeath)
+	if(CreatureEvent* eventDeath = getCreatureEvent(CREATURE_EVENT_DEATH))
 		eventDeath->executeOnDeath(this, corpse, lastHitCreature, mostDamageCreature);
 
 	g_game.removeCreature(this, false);

@@ -1187,7 +1187,7 @@ bool Monster::canWalkTo(Position pos, Direction dir)
 	return false;
 }
 
-void Monster::death()
+void Monster::onDeath()
 {
 	setAttackedCreature(NULL);
 	for(CreatureList::iterator cit = summons.begin(); cit != summons.end(); ++cit)
@@ -1196,11 +1196,12 @@ void Monster::death()
 		(*cit)->setMaster(NULL);
 		(*cit)->releaseThing2();
 	}
-	summons.clear();
 
+	summons.clear();
 	clearTargetList();
 	clearFriendList();
 	deactivate(true);
+	Creature::onDeath();
 }
 
 Item* Monster::getCorpse()
