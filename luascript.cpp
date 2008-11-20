@@ -1285,11 +1285,8 @@ void LuaScriptInterface::registerFunctions()
 	//doTransformItem(uid, toitemid, <optional> count/subtype)
 	lua_register(m_luaState, "doTransformItem", LuaScriptInterface::luaDoTransformItem);
 
-	//doCreatureSay(cid, text, type)
+	//doCreatureSay(cid, text, type[, pos])
 	lua_register(m_luaState, "doCreatureSay", LuaScriptInterface::luaDoCreatureSay);
-
-	//doCreatureSayOnPos(cid, text, type, pos)
-	lua_register(m_luaState, "doCreatureSayOnPos", LuaScriptInterface::luaDoCreatureSayOnPos);
 
 	//doSendMagicEffect(pos, type[, player])
 	lua_register(m_luaState, "doSendMagicEffect", LuaScriptInterface::luaDoSendMagicEffect);
@@ -3015,16 +3012,18 @@ int32_t LuaScriptInterface::luaDoTransformItem(lua_State* L)
 int32_t LuaScriptInterface::luaDoCreatureSay(lua_State* L)
 {
 	//doCreatureSay(uid,text,type)
+	PositionEx pos;
+	if(lua_gettop(L) >= 4)
+		popPosition(L, pos);
+
 	uint32_t type = popNumber(L);
-	const char* text = popString(L);
+	std::string text = popString(L);
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	Creature* creature = env->getCreatureByUID(cid);
-	if(creature)
+	if(Creature* creature = env->getCreatureByUID(cid))
 	{
-		g_game.internalCreatureSay(creature, (SpeakClasses) type, std::string(text));
+		g_game.internalCreatureSay(creature, (SpeakClasses)type, text, &pos);
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else
@@ -3034,49 +3033,17 @@ int32_t LuaScriptInterface::luaDoCreatureSay(lua_State* L)
 	}
 	return 1;
 }
-int32_t LuaScriptInterface::luaDoCreatureSayOnPos(lua_State* L)
-{
-	//doCreatureSayOnPos*cid, text, type, pos)
-	uint32_t type, cid;
-	const char* text;
-	PositionEx pos;
-	ScriptEnviroment* env;
-	Creature* c;
-
-	popPosition(L, pos);
-	type = popNumber(L);
-	text = popString(L);
-	cid = popNumber(L);
-
-	env = getScriptEnv();
-	c = env->getCreatureByUID(cid);
-
-	if (c)
-	{
-		g_game.internalCreatureSay(c, (SpeakClasses) type, std::string(text), &pos);
-		lua_pushnumber(L, LUA_NO_ERROR);
-	} else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
-		lua_pushnumber(L, LUA_ERROR);
-	}
-
-	return 1;
-}
 
 int32_t LuaScriptInterface::luaDoSendMagicEffect(lua_State* L)
 {
-	//doSendMagicEffect(pos, type[, player])
+	//doSendMagicEffect(pos, type[, creature])
 	ScriptEnviroment* env = getScriptEnv();
 
-	uint32_t parameters = lua_gettop(L);
 	SpectatorVec list;
-	if(parameters > 2)
+	if(lua_gettop(L) >= 3)
 	{
-		uint32_t cid = popNumber(L);
-		Player* player = env->getPlayerByUID(cid);
-		if(player)
-			list.push_back(player);
+		if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+			list.push_back(creature);
 	}
 
 	uint32_t type = popNumber(L);
@@ -3097,13 +3064,20 @@ int32_t LuaScriptInterface::luaDoSendMagicEffect(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoSendDistanceShoot(lua_State* L)
 {
-	//doSendDistanceShoot(frompos, topos, type)
-	uint32_t type = popNumber(L);
-	PositionEx toPos;
-	popPosition(L, toPos);
-	PositionEx fromPos;
-	popPosition(L, fromPos);
+	//doSendDistanceShoot(fromPos, toPos, type[, creature])
 	ScriptEnviroment* env = getScriptEnv();
+
+	SpectatorVec list;
+	if(lua_gettop(L) >= 4)
+	{
+		if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+			list.push_back(creature);
+	}
+
+	uint32_t type = popNumber(L);
+	PositionEx toPos, fromPos;
+	popPosition(L, toPos);
+	popPosition(L, fromPos);
 
 	if(fromPos.x == 0xFFFF)
 		fromPos = env->getRealPos();
@@ -3111,7 +3085,11 @@ int32_t LuaScriptInterface::luaDoSendDistanceShoot(lua_State* L)
 	if(toPos.x == 0xFFFF)
 		toPos = env->getRealPos();
 
-	g_game.addDistanceEffect(fromPos, toPos, type);
+	if(!list.empty())
+		g_game.addDistanceEffect(list, fromPos, toPos, type);
+	else
+		g_game.addDistanceEffect(fromPos, toPos, type);
+
 	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;
 }
@@ -3493,40 +3471,46 @@ int32_t LuaScriptInterface::luaDoPlayerSendTextMessage(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoSendAnimatedText(lua_State* L)
 {
-	//doSendAnimatedText(pos, text, color)
+	//doSendAnimatedText(pos, text, color[, creature])
+	ScriptEnviroment* env = getScriptEnv();
+
+	SpectatorVec list;
+	if(lua_gettop(L) >= 4)
+	{
+		if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+			list.push_back(creature);
+	}
+			
 	uint32_t color = popNumber(L);
 	std::string text = popString(L);
 	PositionEx pos;
 	popPosition(L, pos);
 
-	ScriptEnviroment* env = getScriptEnv();
-
-	SpectatorVec list;
-	SpectatorVec::iterator it;
-
 	if(pos.x == 0xFFFF)
 		pos = env->getRealPos();
 
-	g_game.addAnimatedText(pos, color, text);
+	if(!list.empty())
+		g_game.addAnimatedText(list, pos, color, text);
+	else
+		g_game.addAnimatedText(pos, color, text);
+
+	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaGetPlayerSkillLevel(lua_State* L)
 {
 	//getPlayerSkillLevel(cid, skillid)
-	uint32_t skillid = popNumber(L);
-	uint32_t cid = popNumber(L);
+	uint32_t skillId = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	const Player* player = env->getPlayerByUID(cid);
-	if(player)
+	if(const Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		if(skillid <= 6)
-			lua_pushnumber(L, player->skills[skillid][SKILL_LEVEL]);
+		if(skillId <= 6)
+			lua_pushnumber(L, player->skills[skillId][SKILL_LEVEL]);
 		else
 		{
-			reportErrorFunc("No valid skillId");
+			reportErrorFunc("Invalid skillId");
 			lua_pushnumber(L, LUA_ERROR);
 		}
 	}

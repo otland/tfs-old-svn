@@ -242,11 +242,11 @@ class Player : public Creature, public Cylinder
 		bool canSeeGhost(const Creature* creature) const
 			{return (creature->getPlayer() && creature->getPlayer()->getAccessLevel() <= accessLevel);}
 
-		void switchPrivMsgIgnore() {ignorePrivMsg = !ignorePrivMsg;}
-		bool isIgnoringPrivMsg() const {return ignorePrivMsg;}
+		void switchPrivateIgnore() {privateIgnore = !privateIgnore;}
+		bool isIgnoringPrivate() const {return privateIgnore;}
 
-		void switchTeleportByMap() {teleportByMap = !teleportByMap;}
-		bool isTeleportingByMap() const {return teleportByMap;}
+		void switchClickTeleport() {clickTeleport = !clickTeleport;}
+		bool isTeleportingByClick() const {return clickTeleport;}
 
 		void switchSaving() {saving = !saving;}
 		bool isSaving() const {return saving;}
@@ -497,7 +497,7 @@ class Player : public Creature, public Cylinder
 		void sendUpdateTile(const Tile* tile, const Position& pos)
 			{if(client) client->sendUpdateTile(tile, pos);}
 
-		void sendChannelMessage(std::string author, std::string text, SpeakClasses type, unsigned char channel)
+		void sendChannelMessage(std::string author, std::string text, SpeakClasses type, uint8_t channel)
 			{if(client) client->sendChannelMessage(author, text, type, channel);}
 		void sendCreatureAppear(const Creature* creature, bool isLogin)
 			{if(client) client->sendAddCreature(creature, isLogin);}
@@ -509,8 +509,8 @@ class Player : public Creature, public Cylinder
 
 		void sendCreatureTurn(const Creature* creature, uint32_t stackpos)
 			{if(client) client->sendCreatureTurn(creature, stackpos);}
-		void sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* overridePosition = NULL)
-			{if(client) client->sendCreatureSay(creature, type, text, overridePosition);}
+		void sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos = NULL)
+			{if(client) client->sendCreatureSay(creature, type, text, pos);}
 		void sendCreatureSquare(const Creature* creature, SquareColor_t color)
 			{if(client) client->sendCreatureSquare(creature, color);}
 		void sendCreatureChangeOutfit(const Creature* creature, const Outfit_t& outfit)
@@ -768,8 +768,8 @@ class Player : public Creature, public Cylinder
 		int32_t groupId;
 		OperatingSystem_t operatingSystem;
 		bool ghostMode;
-		bool ignorePrivMsg;
-		bool teleportByMap;
+		bool privateIgnore;
+		bool clickTeleport;
 		bool saving;
 
 		bool talkState[13];

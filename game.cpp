@@ -2143,17 +2143,17 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 	if(!player || player->isRemoved())
 		return false;
 
-	if(player->isTeleportingByMap())
+	player->resetIdleTime();
+	if(player->isTeleportingByClick())
 	{
 		Position pos = player->getPosition();
-		for(std::list<Direction>::iterator it = listDir.begin(); it != listDir.end() ; ++it)
+		for(std::list<Direction>::iterator it = listDir.begin(); it != listDir.end(); ++it)
 			pos = getNextPosition(*it, pos);
 
 		internalTeleport(player, pos, false);
 		return true;
 	}
 
-	player->resetIdleTime();
 	player->setNextWalkTask(NULL);
 	return player->startAutoWalk(listDir);
 }
@@ -3355,12 +3355,7 @@ bool Game::playerWhisper(Player* player, const std::string& text)
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
-		{
-			if(!Position::areInRange<1,1,0>(player->getPosition(), (*it)->getPosition()))
-				tmpPlayer->sendCreatureSay(player, SPEAK_WHISPER, "Pssst");
-			else
-				tmpPlayer->sendCreatureSay(player, SPEAK_WHISPER, text);
-		}
+			tmpPlayer->sendCreatureSay(player, SPEAK_WHISPER, text);
 	}
 
 	//event method
@@ -3378,9 +3373,10 @@ bool Game::playerYell(Player* player, const std::string& text)
 		{
 			if(!player->hasFlag(PlayerFlag_CannotBeMuted))
 			{
-				Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_YELLTICKS, 30000, 0);
-				player->addCondition(condition);
+				if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_YELLTICKS, 30000, 0))
+					player->addCondition(condition);
 			}
+
 			internalCreatureSay(player, SPEAK_YELL, asUpperCaseString(text));
 		}
 		else
@@ -3402,11 +3398,14 @@ bool Game::playerSpeakTo(Player* player, SpeakClasses type, const std::string& r
 		return false;
 	}
 
-	if(!toPlayer->isInGhostMode() && toPlayer->isIgnoringPrivMsg() &&
-		!player->canSeeGhost(toPlayer) && !player->hasFlag(PlayerFlag_CannotBeMuted))
+	if(toPlayer->isIgnoringPrivate() && !player->hasFlag(PlayerFlag_CannotBeMuted) && !player->canSeeGhost(toPlayer))
 	{
 		char buffer[70];
-		sprintf(buffer, "Sorry, %s is ignoring private messages.", toPlayer->getName().c_str());
+		if(toPlayer->isInGhostMode())
+			sprintf(buffer, "A player with this name is not online.");
+		else
+			sprintf(buffer, "Sorry, %s is currently ignoring private messages.", toPlayer->getName().c_str());
+
 		player->sendTextMessage(MSG_STATUS_SMALL, buffer);
 		return false;
 	}
@@ -3531,7 +3530,6 @@ bool Game::playerReportRuleViolation(Player* player, const std::string& text)
 	}
 
 	cancelRuleViolation(player);
-
 	boost::shared_ptr<RuleViolation> rvr(new RuleViolation(
 		player,
 		text,
@@ -3539,9 +3537,7 @@ bool Game::playerReportRuleViolation(Player* player, const std::string& text)
 	));
 
 	ruleViolations[player->getID()] = rvr;
-
-	ChatChannel* channel = g_chat.getChannelById(0x03); //Rule Violations channel
-	if(channel)
+	if(ChatChannel* channel = g_chat.getChannelById(0x03)) //Rule Violations channel
 	{
 		channel->talk(player, SPEAK_RVR_CHANNEL, text, rvr->time);
 		return true;
@@ -3622,39 +3618,42 @@ bool Game::internalCreatureTurn(Creature* creature, Direction dir)
 	return false;
 }
 
-bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text, Position* overridePosition /*= NULL*/)
+bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text, Position* pos/* = NULL*/)
 {
 	Player* player = creature->getPlayer();
 	if(player && player->isAccountManager())
 		player->manageAccount(text);
 	else
 	{
+		Position destPos = creature->getPosition();
+		if(pos)
+			destPos = (*pos);
+
 		// This somewhat complex construct ensures that the cached SpectatorVec
 		// is used if available and if it can be used, else a local vector is
 		// used. (Hopefully the compiler will optimize away the construction of
 		// the temporary when it's not used.
 		SpectatorVec list;
-		SpectatorVec::const_iterator it;
-
 		if(type == SPEAK_YELL || type == SPEAK_MONSTER_YELL)
-			getSpectators(list, creature->getPosition(), false, true, 18, 18, 14, 14);
+			getSpectators(list, destPos, false, true, 18, 18, 14, 14);
 		else
-			getSpectators(list, creature->getPosition(), false, false,
+			getSpectators(list, destPos, false, false,
 				Map::maxClientViewportX, Map::maxClientViewportX,
 				Map::maxClientViewportY, Map::maxClientViewportY);
 
 		//send to client
-		Player* tmpPlayer = NULL;
+		SpectatorVec::const_iterator it;
 		for(it = list.begin(); it != list.end(); ++it)
 		{
-			if((tmpPlayer = (*it)->getPlayer()))
-				tmpPlayer->sendCreatureSay(creature, type, text, overridePosition);
+			if(Player* tmpPlayer = (*it)->getPlayer())
+				tmpPlayer->sendCreatureSay(creature, type, text, &destPos);
 		}
 
 		//event method
 		for(it = list.begin(); it != list.end(); ++it)
-			(*it)->onCreatureSay(creature, type, text, overridePosition);
+			(*it)->onCreatureSay(creature, type, text, &destPos);
 	}
+
 	return true;
 }
 
@@ -4186,14 +4185,18 @@ void Game::addMagicEffect(const SpectatorVec& list, const Position& pos, uint8_t
 	}
 }
 
-void Game::addDistanceEffect(const Position& fromPos, const Position& toPos,
-	uint8_t effect)
+void Game::addDistanceEffect(const Position& fromPos, const Position& toPos, uint8_t effect)
 {
 	SpectatorVec list;
 
 	getSpectators(list, fromPos, false, true);
 	getSpectators(list, toPos, true, true);
 
+	addDistanceEffect(list, fromPos, toPos, effect);
+}
+
+void Game::addDistanceEffect(const SpectatorVec& list, const Position& fromPos, const Position& toPos, uint8_t effect)
+{
 	Player* player = NULL;
 	for(SpectatorVec::const_iterator it = list.begin(); it != list.end(); ++it)
 	{

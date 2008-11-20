@@ -2093,13 +2093,13 @@ void ProtocolGame::sendCreatureTurn(const Creature* creature, uint8_t stackPos)
 	}
 }
 
-void ProtocolGame::sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* overridePosition)
+void ProtocolGame::sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos/* = NULL*/)
 {
 	NetworkMessage* msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		AddCreatureSpeak(msg, creature, type, text, 0, 0, overridePosition);
+		AddCreatureSpeak(msg, creature, type, text, 0, 0, pos);
 	}
 }
 
@@ -2855,9 +2855,8 @@ void ProtocolGame::AddPlayerSkills(NetworkMessage* msg)
 	msg->AddByte(player->getSkill(SKILL_FISH, SKILL_PERCENT));
 }
 
-void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creature,
-	SpeakClasses type, std::string text, uint16_t channelId, uint32_t time /*= 0*/,
-	Position* overridePosition /*= NULL*/)
+void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creature, SpeakClasses type,
+	std::string text, uint16_t channelId, uint32_t time /*= 0*/, Position* pos/* = NULL*/)
 {
 	msg->AddByte(0xAA);
 	msg->AddU32(0x00000000);
@@ -2876,7 +2875,7 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creatur
 	}
 
 	const Player* speaker = creature->getPlayer();
-	if(type != SPEAK_RVR_ANSWER && speaker && !speaker->hasCustomFlag(PlayerCustomFlag_HideLevel) && !speaker->isAccountManager())
+	if(speaker && type != SPEAK_RVR_ANSWER && !speaker->isAccountManager() && !speaker->hasCustomFlag(PlayerCustomFlag_HideLevel))
 		msg->AddU16(speaker->getPlayerInfo(PLAYERINFO_LEVEL));
 	else
 		msg->AddU16(0x0000);
@@ -2890,11 +2889,13 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creatur
 		case SPEAK_MONSTER_SAY:
 		case SPEAK_MONSTER_YELL:
 		case SPEAK_PRIVATE_NP:
-			if (overridePosition)
-				msg->AddPosition(*overridePosition);	
+		{
+			if(pos)
+				msg->AddPosition(*pos);
 			else
 				msg->AddPosition(creature->getPosition());
 			break;
+		}
 
 		case SPEAK_CHANNEL_Y:
 		case SPEAK_CHANNEL_R1:

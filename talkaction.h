@@ -95,7 +95,7 @@ class TalkAction : public Event
 		static TalkFunction showBanishmentInfo;
 		static TalkFunction ghost;
 		static TalkFunction squelch;
-		static TalkFunction mapTeleport;
+		static TalkFunction clickTeleport;
 		static TalkFunction sellHouse;
 		static TalkFunction buyHouse;
 		static TalkFunction joinGuild;

@@ -365,9 +365,9 @@ class Game
 		  * \param creature Creature pointer
 		  * \param type Type of message
 		  * \param text The text to say
-		  * \param overridePosition Appear as sent on another position
+		  * \param pos Appear as sent from different position
 		  */
-		bool internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text, Position* overridePosition = NULL);
+		bool internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text, Position* pos = NULL);
 
 		Position getClosestFreeTile(Creature* creature, Position toPos);
 		std::string getSearchString(const Position lookPos, const Position searchPos, bool player = false);
@@ -502,8 +502,8 @@ class Game
 		void addAnimatedText(const SpectatorVec& list, const Position& pos, uint8_t textColor, const std::string& text);
 		void addMagicEffect(const Position& pos, uint8_t effect, bool ghostMode = false);
 		void addMagicEffect(const SpectatorVec& list, const Position& pos, uint8_t effect, bool ghostMode = false);
-		void addDistanceEffect(const Position& fromPos, const Position& toPos,
-		uint8_t effect);
+		void addDistanceEffect(const SpectatorVec& list, const Position& fromPos, const Position& toPos, uint8_t effect);
+		void addDistanceEffect(const Position& fromPos, const Position& toPos, uint8_t effect);
 
 		void startDecay(Item* item);
 

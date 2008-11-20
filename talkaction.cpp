@@ -205,7 +205,7 @@ TalkFunction_t TalkAction::definedFunctions[] =
  	{"createguild", &createGuild},
 	{"ghost", &ghost},
 	{"squelch", &squelch},
-	{"mapteleport", &mapTeleport}
+	{"clickteleport", &clickTeleport}
 };
 
 TalkAction::TalkAction(LuaScriptInterface* _interface):
@@ -623,9 +623,9 @@ bool TalkAction::changeThingProporties(Player* player, const std::string& cmd, c
 						else if(strcasecmp(tmp.c_str(), "ghost") == 0)
 							_player->switchGhostMode();
 						else if(strcasecmp(tmp.c_str(), "squelch") == 0)
-							_player->switchPrivMsgIgnore();
-						else if(strcasecmp(tmp.c_str(), "maport") == 0)
-							_player->switchTeleportByMap();
+							_player->switchPrivateIgnore();
+						else if(strcasecmp(tmp.c_str(), "cliport") == 0)
+							_player->switchClickTeleport();
 						else if(strcasecmp(tmp.c_str(), "saving") == 0)
 							_player->switchSaving();
 						else
@@ -1059,21 +1059,21 @@ bool TalkAction::ghost(Player* player, const std::string& cmd, const std::string
 
 bool TalkAction::squelch(Player* player, const std::string& cmd, const std::string& param)
 {
-	player->switchPrivMsgIgnore();
+	player->switchPrivateIgnore();
 
 	char buffer[90];
-	sprintf(buffer, "You have %s private messages ignoring.", (player->isIgnoringPrivMsg() ? "enabled" : "disabled"));
+	sprintf(buffer, "You have %s private messages ignoring.", (player->isIgnoringPrivate() ? "enabled" : "disabled"));
 	player->sendTextMessage(MSG_INFO_DESCR, buffer);
 
 	return true;
 }
 
-bool TalkAction::mapTeleport(Player* player, const std::string& cmd, const std::string& param)
+bool TalkAction::clickTeleport(Player* player, const std::string& cmd, const std::string& param)
 {
-	player->switchTeleportByMap();
+	player->switchClickTeleport();
 
 	char buffer[90];
-	sprintf(buffer, "You have %s map click teleporting.", (player->isTeleportingByMap() ? "enabled" : "disabled"));
+	sprintf(buffer, "You have %s click teleporting.", (player->isTeleportingByClick() ? "enabled" : "disabled"));
 	player->sendTextMessage(MSG_INFO_DESCR, buffer);
 
 	return true;
