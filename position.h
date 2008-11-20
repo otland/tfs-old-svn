@@ -40,11 +40,8 @@ enum Direction
 class Position
 {
 	public:
-		Position() : x(31), y(31), z(7) {}
-		virtual ~Position() {}
-		int32_t x, y, z;
-
-		Position(int32_t _x, int32_t _y, int32_t _z) : x(_x), y(_y), z(_z) {}
+		Position() : x(0), y(0), z(7) {}
+		~Position() {}
 
 		template<int32_t deltax, int32_t deltay, int32_t deltaz>
 		inline static bool areInRange(const Position& p1, const Position& p2)
@@ -64,20 +61,26 @@ class Position
 			return true;
 		}
 
+		Position(int32_t _x, int32_t _y, int32_t _z) : x(_x), y(_y), z(_z) {}
+		int32_t x, y, z;
+
 		bool operator<(const Position& p) const
 		{
 			if(z < p.z)
 				return true;
+
 			if(z > p.z)
 				return false;
 
 			if(y < p.y)
 				return true;
+
 			if(y > p.y)
 				return false;
 
 			if(x < p.x)
 				return true;
+
 			if(x > p.x)
 				return false;
 
@@ -86,26 +89,28 @@ class Position
 
 		bool operator>(const Position& p) const
 		{
-			return ! (*this < p);
+			return !(*this < p);
 		}
 
 		bool operator==(const Position p) const
 		{
 			if(p.x == x && p.y == y && p.z == z)
 				return true;
+
 			return false;
 		}
 
 		bool operator!=(const Position p) const
 		{
-			if(p.x==x && p.y==y && p.z ==z)
+			if(p.x == x && p.y == y && p.z == z)
 				return false;
+
 			return true;
 		}
 
 		Position operator-(const Position p1)
 		{
-			return Position(x-p1.x, y-p1.y,z-p1.z);
+			return Position(x - p1.x, y - p1.y, z - p1.z);
 		}
 };
 
@@ -116,16 +121,15 @@ class PositionEx : public Position
 {
 	public:
 		PositionEx() {}
-		virtual ~PositionEx() {}
-		int32_t stackpos;
+		~PositionEx() {}
 
 		PositionEx(int32_t _x, int32_t _y, int32_t _z, int32_t _stackpos) : Position(_x,_y,_z), stackpos(_stackpos) {}
-
 		PositionEx(int32_t _x, int32_t _y, int32_t _z) : Position(_x,_y,_z), stackpos(0) {}
 
-		PositionEx(Position p) : Position(p.x,p.y,p.z), stackpos(0) {}
+		PositionEx(Position p) : Position(p.x, p.y, p.z), stackpos(0) {}
+		PositionEx(Position p, int32_t _stackpos) : Position(p.x, p.y, p.z), stackpos(_stackpos) {}
 
-		PositionEx(Position p, int32_t _stackpos) : Position(p.x,p.y,p.z), stackpos(_stackpos) {}
+		int32_t stackpos;
 
 		bool operator==(const PositionEx p)  const
 		{
