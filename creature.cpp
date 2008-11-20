@@ -759,7 +759,6 @@ void Creature::onDeath()
 {
 	Creature* lastHitCreatureMaster = NULL;
 	Creature* mostDamageCreatureMaster = NULL;
-
 	if(getKillers(&lastHitCreature, &mostDamageCreature))
 	{
 		if(lastHitCreature)
@@ -785,9 +784,10 @@ void Creature::onDeath()
 			attacker->onAttackedCreatureKilled(this);
 	}
 
-	dropCorpse();
 	if(getMaster())
 		getMaster()->removeSummon(this);
+
+	dropCorpse();
 }
 
 void Creature::dropCorpse()
@@ -829,8 +829,6 @@ void Creature::dropCorpse()
 	//scripting event - onDeath
 	if(CreatureEvent* eventDeath = getCreatureEvent(CREATURE_EVENT_DEATH))
 		eventDeath->executeOnDeath(this, corpse, lastHitCreature, mostDamageCreature);
-
-	g_game.removeCreature(this, false);
 }
 
 bool Creature::getKillers(Creature** _lastHitCreature, Creature** _mostDamageCreature)

@@ -2220,6 +2220,7 @@ uint32_t Player::getIP() const
 
 void Player::onDeath()
 {
+	Creature::onDeath();
 	if(skillLoss)
 	{
 		//Magic level loss
@@ -2282,9 +2283,11 @@ void Player::onDeath()
 		sendReLoginWindow();
 	}
 
+	removeConditions(CONDITIONEND_DEATH);
 	sendStats();
 	sendSkills();
-	Creature::onDeath();
+	if(skillLoss)
+		g_game.removeCreature(this, false);
 }
 
 void Player::dropCorpse()

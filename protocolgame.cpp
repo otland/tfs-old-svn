@@ -2858,6 +2858,10 @@ void ProtocolGame::AddPlayerSkills(NetworkMessage* msg)
 void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creature, SpeakClasses type,
 	std::string text, uint16_t channelId, uint32_t time /*= 0*/, Position* pos/* = NULL*/)
 {
+	Position tmp = creature->getPosition();
+	if(pos)
+		tmp = (*pos);
+
 	msg->AddByte(0xAA);
 	msg->AddU32(0x00000000);
 
@@ -2889,13 +2893,8 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creatur
 		case SPEAK_MONSTER_SAY:
 		case SPEAK_MONSTER_YELL:
 		case SPEAK_PRIVATE_NP:
-		{
-			if(pos)
-				msg->AddPosition(*pos);
-			else
-				msg->AddPosition(creature->getPosition());
+			msg->AddPosition(tmp);
 			break;
-		}
 
 		case SPEAK_CHANNEL_Y:
 		case SPEAK_CHANNEL_R1:
@@ -2906,8 +2905,7 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creatur
 
 		case SPEAK_RVR_CHANNEL:
 		{
-			uint32_t tmp = (OTSYS_TIME() / 1000) & 0xFFFFFFFF;
-			msg->AddU32(tmp - time);
+			msg->AddU32(uint32_t(OTSYS_TIME() / 1000 & 0xFFFFFFFF) - time);
 			break;
 		}
 
