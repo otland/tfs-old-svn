@@ -3011,7 +3011,7 @@ int32_t LuaScriptInterface::luaDoTransformItem(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoCreatureSay(lua_State* L)
 {
-	//doCreatureSay(uid,text,type)
+	//doCreatureSay(uid,text,type[,pos])
 	PositionEx pos;
 	if(lua_gettop(L) >= 4)
 		popPosition(L, pos);
@@ -3023,7 +3023,11 @@ int32_t LuaScriptInterface::luaDoCreatureSay(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Creature* creature = env->getCreatureByUID(cid))
 	{
-		g_game.internalCreatureSay(creature, (SpeakClasses)type, text, &pos);
+		if(pos.x != 0 && pos.y != 0)
+			g_game.internalCreatureSay(creature, (SpeakClasses)type, text, &pos);
+		else
+			g_game.internalCreatureSay(creature, (SpeakClasses)type, text);
+
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else

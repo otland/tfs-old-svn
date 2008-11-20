@@ -3634,6 +3634,8 @@ bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std:
 		// used. (Hopefully the compiler will optimize away the construction of
 		// the temporary when it's not used.
 		SpectatorVec list;
+		SpectatorVec::const_iterator it;
+
 		if(type == SPEAK_YELL || type == SPEAK_MONSTER_YELL)
 			getSpectators(list, destPos, false, true, 18, 18, 14, 14);
 		else
@@ -3642,10 +3644,10 @@ bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std:
 				Map::maxClientViewportY, Map::maxClientViewportY);
 
 		//send to client
-		SpectatorVec::const_iterator it;
+		Player* tmpPlayer = NULL;
 		for(it = list.begin(); it != list.end(); ++it)
 		{
-			if(Player* tmpPlayer = (*it)->getPlayer())
+			if((tmpPlayer = (*it)->getPlayer()))
 				tmpPlayer->sendCreatureSay(creature, type, text, &destPos);
 		}
 

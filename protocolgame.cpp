@@ -1878,8 +1878,7 @@ void ProtocolGame::sendRuleViolationsChannel(uint16_t channelId)
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0xAE);
 		msg->AddU16(channelId);
-		RuleViolationsMap::const_iterator it = g_game.getRuleViolations().begin();
-		for( ; it != g_game.getRuleViolations().end(); ++it)
+		for(RuleViolationsMap::const_iterator it = g_game.getRuleViolations().begin(); it != g_game.getRuleViolations().end(); ++it)
 		{
 			RuleViolation& rvr = *it->second;
 			if(rvr.isOpen && rvr.reporter)
@@ -2858,13 +2857,8 @@ void ProtocolGame::AddPlayerSkills(NetworkMessage* msg)
 void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creature, SpeakClasses type,
 	std::string text, uint16_t channelId, uint32_t time /*= 0*/, Position* pos/* = NULL*/)
 {
-	Position tmp = creature->getPosition();
-	if(pos)
-		tmp = (*pos);
-
 	msg->AddByte(0xAA);
 	msg->AddU32(0x00000000);
-
 	switch(type)
 	{
 		case SPEAK_CHANNEL_R2:
@@ -2893,8 +2887,13 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creatur
 		case SPEAK_MONSTER_SAY:
 		case SPEAK_MONSTER_YELL:
 		case SPEAK_PRIVATE_NP:
-			msg->AddPosition(tmp);
+		{
+			if(pos)
+				msg->AddPosition(*pos);
+			else
+				msg->AddPosition(creature->getPosition());
 			break;
+		}
 
 		case SPEAK_CHANNEL_Y:
 		case SPEAK_CHANNEL_R1:

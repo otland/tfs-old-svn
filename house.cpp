@@ -824,7 +824,7 @@ bool Houses::loadHousesXML(std::string filename)
 					entryPos.z = intValue;
 
 				house->setEntryPos(entryPos);
-				if(entryPos.x == 0 || entryPos.y == 0 || entryPos.z == 0)
+				if(entryPos.x == 0 || entryPos.y == 0)
 					std::cout << "[Warning - Houses::loadHousesXML] House entry not set for: " << house->getName() << " (" << _houseid << ")" << std::endl;
 
 				if(readXMLInteger(houseNode, "rent", intValue))
