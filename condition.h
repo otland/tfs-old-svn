@@ -146,8 +146,8 @@ class Condition
 	protected:
 		ConditionId_t id;
 		int32_t ticks;
-		ConditionType_t conditionType;
 		int64_t endTime;
+		ConditionType_t conditionType;
 
 		virtual bool updateCondition(const Condition* addCondition);
 };

@@ -30,9 +30,9 @@
 extern Game g_game;
 
 Condition::Condition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks) :
-id(_id), conditionType(_type)
+id(_id), ticks(_ticks), endTime(0), conditionType(_type)
 {
-	setTicks(_ticks);
+	//
 }
 
 bool Condition::setParam(ConditionParam_t param, int32_t value)
@@ -40,7 +40,7 @@ bool Condition::setParam(ConditionParam_t param, int32_t value)
 	switch(param)
 	{
 		case CONDITIONPARAM_TICKS:
-			setTicks(value);
+			ticks = value;
 			return true;
 
 		default:
@@ -113,7 +113,7 @@ bool Condition::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
 			if(!propStream.GET_VALUE(value))
 				return false;
 
-			setTicks(value);
+			ticks = value;
 			return true;
 		}
 
@@ -143,14 +143,13 @@ bool Condition::serialize(PropWriteStream& propWriteStream)
 void Condition::setTicks(int32_t _ticks)
 {
 	ticks = _ticks;
-	if(_ticks > 0)
-		endTime = (OTSYS_TIME() + _ticks);
+	endTime = OTSYS_TIME() + _ticks;
 }
 
 bool Condition::startCondition(Creature* creature)
 {
 	if(ticks > 0)
-		endTime = (OTSYS_TIME() + ticks);
+		endTime = OTSYS_TIME() + ticks;
 
 	return true;
 }
