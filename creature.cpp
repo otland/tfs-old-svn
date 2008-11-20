@@ -792,6 +792,7 @@ void Creature::onDeath()
 
 void Creature::dropCorpse()
 {
+	Item* corpse = getCorpse();
 	if(Tile* tile = getTile())
 	{
 		Item* splash = NULL;
@@ -817,7 +818,7 @@ void Creature::dropCorpse()
 			g_game.startDecay(splash);
 		}
 
-		if(Item* corpse = getCorpse())
+		if(corpse)
 		{
 			g_game.internalAddItem(tile, corpse, INDEX_WHEREEVER, FLAG_NOLIMIT);
 			dropLoot(corpse->getContainer());
