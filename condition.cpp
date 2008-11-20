@@ -143,7 +143,8 @@ bool Condition::serialize(PropWriteStream& propWriteStream)
 void Condition::setTicks(int32_t _ticks)
 {
 	ticks = _ticks;
-	endTime = OTSYS_TIME() + _ticks;
+	if(_ticks > 0)
+		endTime = OTSYS_TIME() + _ticks;
 }
 
 bool Condition::startCondition(Creature* creature)

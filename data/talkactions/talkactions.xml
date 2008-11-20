@@ -35,7 +35,7 @@
 	<talkaction log="yes" words="/unban" access="3" script="unban.lua"/>
 	<talkaction log="yes" words="/ghost" access="3" function="ghost"/>
 	<talkaction log="yes" words="/squelch" access="3" function="squelch"/>
-	<talkaction log="yes" words="/maport" access="3" function="mapTeleport"/>
+	<talkaction log="yes" words="/cliport" access="3" function="clickTeleport"/>
 	<talkaction log="yes" words="/town" access="3" script="teleporttown.lua"/>
 	<talkaction log="yes" words="/up" access="3" script="teleportfloor.lua"/>
 	<talkaction log="yes" words="/down" access="3" script="teleportfloor.lua"/>

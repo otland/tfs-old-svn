@@ -1161,7 +1161,7 @@ void Npc::onCreatureSay(const Creature* creature, SpeakClasses type, const std::
 		{
 			Position destPos = creature->getPosition();
 			if(pos)
-				destPos = pos;
+				destPos = (*pos);
 
 			const Position& myPos = getPosition();
 			if(canSee(myPos))
