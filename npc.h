@@ -91,7 +91,7 @@ class NpcEventsHandler
 		virtual void onCreatureAppear(const Creature* creature) {}
 		virtual void onCreatureDisappear(const Creature* creature) {}
 		virtual void onCreatureMove(const Creature* creature, const Position& oldPos, const Position& newPos) {}
-		virtual void onCreatureSay(const Creature* creature, SpeakClasses, const std::string& text) {}
+		virtual void onCreatureSay(const Creature* creature, SpeakClasses, const std::string& text, Position* pos = NULL) {}
 		virtual void onPlayerTrade(const Player* player, int32_t callback, uint16_t itemid,
 			uint8_t count, uint8_t amount, bool ignoreCap, bool inBackpacks) {}
 		virtual void onPlayerCloseChannel(const Player* player) {}
@@ -114,7 +114,7 @@ class NpcScript : public NpcEventsHandler
 		virtual void onCreatureAppear(const Creature* creature);
 		virtual void onCreatureDisappear(const Creature* creature);
 		virtual void onCreatureMove(const Creature* creature, const Position& oldPos, const Position& newPos);
-		virtual void onCreatureSay(const Creature* creature, SpeakClasses, const std::string& text);
+		virtual void onCreatureSay(const Creature* creature, SpeakClasses, const std::string& text, Position* pos = NULL);
 		virtual void onPlayerTrade(const Player* player, int32_t callback, uint16_t itemid,
 			uint8_t count, uint8_t amount, bool ignoreCap, bool inBackpacks);
 		virtual void onPlayerCloseChannel(const Player* player);
@@ -487,7 +487,7 @@ class Npc : public Creature
 			const Tile* oldTile, const Position& oldPos, uint32_t oldStackPos, bool teleport);
 
 		virtual void onCreatureTurn(const Creature* creature, uint32_t stackpos);
-		virtual void onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text);
+		virtual void onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos = NULL);
 		virtual void onCreatureChangeOutfit(const Creature* creature, const Outfit_t& outfit);
 		virtual void onThink(uint32_t interval);
 		virtual std::string getDescription(int32_t lookDistance) const;

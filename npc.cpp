@@ -1146,7 +1146,7 @@ void Npc::onCreatureTurn(const Creature* creature, uint32_t stackpos)
 	Creature::onCreatureTurn(creature, stackpos);
 }
 
-void Npc::onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text)
+void Npc::onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos/* = NULL*/)
 {
 	if(creature->getID() == this->getID())
 		return;
@@ -1155,20 +1155,25 @@ void Npc::onCreatureSay(const Creature* creature, SpeakClasses type, const std::
 	if(const Player* player = creature->getPlayer())
 	{
 		if(m_npcEventHandler)
-			m_npcEventHandler->onCreatureSay(player, type, text);
+			m_npcEventHandler->onCreatureSay(player, type, text, pos);
 
 		if(type == SPEAK_SAY || type == SPEAK_PRIVATE_PN)
 		{
+			Position destPos = creature->getPosition();
+			if(pos)
+				destPos = pos;
+
 			const Position& myPos = getPosition();
-			const Position& pos = creature->getPosition();
 			if(canSee(myPos))
 			{
-				if ((pos.x >= myPos.x - talkRadius) && (pos.x <= myPos.x + talkRadius) &&
-					(pos.y >= myPos.y - talkRadius) && (pos.y <= myPos.y + talkRadius))
+				if((destPos.x >= myPos.x - talkRadius) && (destPos.x <= myPos.x + talkRadius) &&
+					(destPos.y >= myPos.y - talkRadius) && (destPos.y <= myPos.y + talkRadius))
 				{
-					NpcState* npcState = getState(player);
-					npcState->respondToText = text;
-					npcState->respondToCreature = player->getID();
+					if(NpcState* npcState = getState(player))
+					{
+						npcState->respondToText = text;
+						npcState->respondToCreature = player->getID();
+					}
 				}
 			}
 		}
@@ -3074,7 +3079,7 @@ void NpcScript::onCreatureMove(const Creature* creature, const Position& oldPos,
 		std::cout << "[Error - NpcScript::onCreatureMove] NPC Name: " << m_npc->getName() << " - Call stack overflow" << std::endl;
 }
 
-void NpcScript::onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text)
+void NpcScript::onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos/* = NULL*/)
 {
 	if(m_onCreatureSay == -1)
 		return;
