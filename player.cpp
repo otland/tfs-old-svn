@@ -188,8 +188,8 @@ Creature()
 	saving = true;
 	mayNotMove = false;
 	ghostMode = false;
-	ignorePrivMsg = false;
-	teleportByMap = false;
+	privateIgnore = false;
+	clickTeleport = false;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 
 	playerCount++;
