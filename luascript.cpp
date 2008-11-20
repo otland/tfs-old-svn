@@ -3012,7 +3012,7 @@ int32_t LuaScriptInterface::luaDoTransformItem(lua_State* L)
 int32_t LuaScriptInterface::luaDoCreatureSay(lua_State* L)
 {
 	//doCreatureSay(uid,text,type[,pos])
-	PositionEx pos;
+	PositionEx pos(0, 0, 0);
 	if(lua_gettop(L) >= 4)
 		popPosition(L, pos);
 
