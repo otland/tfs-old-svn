@@ -365,8 +365,9 @@ class Game
 		  * \param creature Creature pointer
 		  * \param type Type of message
 		  * \param text The text to say
+		  * \param overridePosition Appear as sent on another position
 		  */
-		bool internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text);
+		bool internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text, Position* overridePosition = NULL);
 
 		Position getClosestFreeTile(Creature* creature, Position toPos);
 		std::string getSearchString(const Position lookPos, const Position searchPos, bool player = false);

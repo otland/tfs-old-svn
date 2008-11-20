@@ -966,7 +966,7 @@ uint32_t MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
 
 		#ifdef __DEBUG_LUASCRIPTS__
 		std::stringstream desc;
-		desc << player->getName() << " itemid: " << item->getID() << " slot: " slot;
+		desc << player->getName() << " itemid: " << item->getID() << " slot: " << slot;
 		env->setEventDesc(desc.str());
 		#endif
 

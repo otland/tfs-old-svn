@@ -2093,13 +2093,13 @@ void ProtocolGame::sendCreatureTurn(const Creature* creature, uint8_t stackPos)
 	}
 }
 
-void ProtocolGame::sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text)
+void ProtocolGame::sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* overridePosition)
 {
 	NetworkMessage* msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		AddCreatureSpeak(msg, creature, type, text, 0);
+		AddCreatureSpeak(msg, creature, type, text, 0, 0, overridePosition);
 	}
 }
 
@@ -2856,7 +2856,8 @@ void ProtocolGame::AddPlayerSkills(NetworkMessage* msg)
 }
 
 void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creature,
-	SpeakClasses type, std::string text, uint16_t channelId, uint32_t time /*= 0*/)
+	SpeakClasses type, std::string text, uint16_t channelId, uint32_t time /*= 0*/,
+	Position* overridePosition /*= NULL*/)
 {
 	msg->AddByte(0xAA);
 	msg->AddU32(0x00000000);
@@ -2889,7 +2890,10 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creatur
 		case SPEAK_MONSTER_SAY:
 		case SPEAK_MONSTER_YELL:
 		case SPEAK_PRIVATE_NP:
-			msg->AddPosition(creature->getPosition());
+			if (overridePosition)
+				msg->AddPosition(*overridePosition);	
+			else
+				msg->AddPosition(creature->getPosition());
 			break;
 
 		case SPEAK_CHANNEL_Y:

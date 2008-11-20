@@ -190,4 +190,7 @@
 	<action fromid="7054" toid="7057" script="other/doors.lua"/>
 	<action fromid="8541" toid="8558" script="other/doors.lua"/>
 	<action itemid="1981" function="highscoreBook"/>
+
+	<action itemid="5791" script="other/stuffed_dragon.lua"/>
+	<action itemid="1877" script="other/watch.lua"/>
 </actions>

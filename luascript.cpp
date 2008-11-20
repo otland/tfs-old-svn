@@ -1288,6 +1288,9 @@ void LuaScriptInterface::registerFunctions()
 	//doCreatureSay(cid, text, type)
 	lua_register(m_luaState, "doCreatureSay", LuaScriptInterface::luaDoCreatureSay);
 
+	//doCreatureSayOnPos(cid, text, type, pos)
+	lua_register(m_luaState, "doCreatureSayOnPos", LuaScriptInterface::luaDoCreatureSayOnPos);
+
 	//doSendMagicEffect(pos, type[, player])
 	lua_register(m_luaState, "doSendMagicEffect", LuaScriptInterface::luaDoSendMagicEffect);
 
@@ -3021,7 +3024,7 @@ int32_t LuaScriptInterface::luaDoCreatureSay(lua_State* L)
 	Creature* creature = env->getCreatureByUID(cid);
 	if(creature)
 	{
-		g_game.internalCreatureSay(creature, (SpeakClasses)type,std::string(text));
+		g_game.internalCreatureSay(creature, (SpeakClasses) type, std::string(text));
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else
@@ -3029,6 +3032,35 @@ int32_t LuaScriptInterface::luaDoCreatureSay(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
 	}
+	return 1;
+}
+int32_t LuaScriptInterface::luaDoCreatureSayOnPos(lua_State* L)
+{
+	//doCreatureSayOnPos*cid, text, type, pos)
+	uint32_t type, cid;
+	const char* text;
+	PositionEx pos;
+	ScriptEnviroment* env;
+	Creature* c;
+
+	popPosition(L, pos);
+	type = popNumber(L);
+	text = popString(L);
+	cid = popNumber(L);
+
+	env = getScriptEnv();
+	c = env->getCreatureByUID(cid);
+
+	if (c)
+	{
+		g_game.internalCreatureSay(c, (SpeakClasses) type, std::string(text), &pos);
+		lua_pushnumber(L, LUA_NO_ERROR);
+	} else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+
 	return 1;
 }
 

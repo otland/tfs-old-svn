@@ -509,8 +509,8 @@ class Player : public Creature, public Cylinder
 
 		void sendCreatureTurn(const Creature* creature, uint32_t stackpos)
 			{if(client) client->sendCreatureTurn(creature, stackpos);}
-		void sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text)
-			{if(client) client->sendCreatureSay(creature, type, text);}
+		void sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* overridePosition = NULL)
+			{if(client) client->sendCreatureSay(creature, type, text, overridePosition);}
 		void sendCreatureSquare(const Creature* creature, SquareColor_t color)
 			{if(client) client->sendCreatureSquare(creature, color);}
 		void sendCreatureChangeOutfit(const Creature* creature, const Outfit_t& outfit)

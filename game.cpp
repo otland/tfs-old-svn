@@ -3622,7 +3622,7 @@ bool Game::internalCreatureTurn(Creature* creature, Direction dir)
 	return false;
 }
 
-bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text)
+bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text, Position* overridePosition /*= NULL*/)
 {
 	Player* player = creature->getPlayer();
 	if(player && player->isAccountManager())
@@ -3648,12 +3648,12 @@ bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std:
 		for(it = list.begin(); it != list.end(); ++it)
 		{
 			if((tmpPlayer = (*it)->getPlayer()))
-				tmpPlayer->sendCreatureSay(creature, type, text);
+				tmpPlayer->sendCreatureSay(creature, type, text, overridePosition);
 		}
 
 		//event method
 		for(it = list.begin(); it != list.end(); ++it)
-			(*it)->onCreatureSay(creature, type, text);
+			(*it)->onCreatureSay(creature, type, text, overridePosition);
 	}
 	return true;
 }

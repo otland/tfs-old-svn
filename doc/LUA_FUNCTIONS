@@ -622,6 +622,7 @@
 	doCreatureSetDropLoot(cid, doDrop)
 	doCreatureChangeOutfit(cid, outfit)
 	doCreatureSay(cid, text, type)
+	doCreatureSayOnPos(cid, text, type, pos)
 	doSetCreatureLight(cid, lightLevel, lightColor, time)
 	doSetCreatureOutfit(cid, outfit, time)
 	doRemoveCreature(cid)
