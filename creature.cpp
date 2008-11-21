@@ -846,6 +846,7 @@ bool Creature::getKillers(Creature** _lastHitCreature, Creature** _mostDamageCre
 				mostDamage = cb.total;
 		}
 	}
+
 	return (*_lastHitCreature || *_mostDamageCreature);
 }
 
@@ -1329,7 +1330,7 @@ void Creature::removeSummon(const Creature* creature)
 	if(cit != summons.end())
 	{
 		(*cit)->setDropLoot(false);
-		(*cit)->setLossSkill(true);
+		(*cit)->setLossSkill(false);
 		(*cit)->setMaster(NULL);
 		(*cit)->releaseThing2();
 		summons.erase(cit);

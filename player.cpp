@@ -2218,6 +2218,7 @@ uint32_t Player::getIP() const
 void Player::onDeath()
 {
 	Creature::onDeath();
+	removeConditions(CONDITIONEND_DEATH);
 	if(skillLoss)
 	{
 		//Magic level loss
@@ -2271,40 +2272,38 @@ void Player::onDeath()
 			skills[i][SKILL_TRIES] = std::max((int32_t)0, (int32_t)(skills[i][SKILL_TRIES] - lostSkillTries));
 		}
 
-		loginPosition = masterPos;
 		removeExperience(getLostExperience(), false);
+		loginPosition = masterPos;
 		blessings = 0;
 		if(!inventory[SLOT_BACKPACK])
 			__internalAddThing(SLOT_BACKPACK, Item::CreateItem(1987));
 
+		sendStats();
+		sendSkills();
 		sendReLoginWindow();
-	}
-
-	removeConditions(CONDITIONEND_DEATH);
-	sendStats();
-	sendSkills();
-	if(skillLoss)
 		g_game.removeCreature(this, false);
+	}
+	else
+		setLossSkill(true);
 }
 
 void Player::dropCorpse()
 {
-	if(getZone() == ZONE_PVP)
+	if(lootDrop)
+		Creature::dropCorpse();
+	else
 	{
-		setDropLoot(true);
-		setLossSkill(true);
 		if(health <= 0)
 		{
 			health = healthMax;
 			mana = manaMax;
 		}
 
-		onThink(EVENT_CREATURE_THINK_INTERVAL);
-		g_game.internalTeleport(this, getTemplePosition(), true);
 		sendStats();
+		onThink(EVENT_CREATURE_THINK_INTERVAL);
+		sendDropLoot(true);
+		g_game.internalTeleport(this, getTemplePosition(), true);
 	}
-	else
-		Creature::dropCorpse();
 }
 
 Item* Player::getCorpse()
