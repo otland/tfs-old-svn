@@ -3029,7 +3029,7 @@ int32_t LuaScriptInterface::luaDoCreatureSay(lua_State* L)
 		{
 			if(pos.x == 0 || pos.y == 0)
 			{
-				reportErrorFunc("Invalid position specified.")
+				reportErrorFunc("Invalid position specified.");
 				lua_pushnumber(L, LUA_ERROR);
 				return 1;
 			}

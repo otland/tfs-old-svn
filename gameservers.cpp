@@ -35,71 +35,83 @@ void GameServers::clear()
 	serverList.clear();
 }
 
-bool GameServers::reload(bool showResult /*= true*/)
+bool GameServers::reload(bool showResult/* = true*/)
 {
 	clear();
 	return loadFromXml(showResult);
 }
 
-bool GameServers::loadFromXml(bool showResult /*= true*/)
+bool GameServers::loadFromXml(bool showResult/* = true*/)
 {
-	std::string filename = getFilePath(FILE_TYPE_XML, "servers.xml");
-	xmlDocPtr doc = xmlParseFile(filename.c_str());
-	if(doc)
+	if(xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "servers.xml").c_str()))
 	{
 		xmlNodePtr root, p;
-		std::string strValue, name, ip;
-		int32_t intValue, id, port;
-
 		root = xmlDocGetRootElement(doc);
 		if(xmlStrcmp(root->name,(const xmlChar*)"servers") != 0)
 		{
 			xmlFreeDoc(doc);
+			std::cout << "[Error - GameServers::loadFromXml] Malformed servers file" << std::endl;
 			return false;
 		}
 
+		std::string strValue;
+		int32_t intValue;
 		p = root->children;
 		while(p)
 		{
-
-			if(!xmlStrcmp(p->name, (const xmlChar*)"server"))
+			if(xmlStrcmp(p->name, (const xmlChar*)"server") != 0)
 			{
-				if(readXMLInteger(p, "id", intValue))
-					id = intValue;
-				else
-				{
-					std::cout << "[Error - GameServers::load] Missing server id" << std::endl;
-					continue;
-				}
-
-				if(readXMLString(p, "name", strValue))
-					name = strValue;
-				else
-				{
-					std::cout << "[Error - GameServers::load] Missing server name" << std::endl;
-					continue;
-				}
-
-				if(readXMLString(p, "ip", strValue))
-					ip = strValue;
-				else
-				{
-					std::cout << "[Error - GameServers::load] Missing server ip" << std::endl;
-					continue;
-				}
-
-				if(readXMLInteger(p, "port", intValue))
-					port = intValue;
-				else
-				{
-					std::cout << "[Error - GameServers::load] Missing server port" << std::endl;
-					continue;
-				}
-
-				GameServer* server = new GameServer(name, ip, port);
-				if(server && !addServer(id, server))
-					std::cout << "[Error - GameServers::load] Couldn't add server - " << server->getError() << std::endl;
+				std::cout << "[Warning - GameServers::loadFromXml] Malformed server node, skipping" << std::endl;
+				p = p->next;
+				continue;
 			}
+
+			std::string name, address;
+			uint32_t id, port;
+			if(readXMLInteger(p, "id", intValue))
+				id = intValue;
+			else
+			{
+				std::cout << "[Error - GameServers::loadFromXml] Missing id, skipping" << std::endl;
+				p = p->next;
+				continue;
+			}
+
+			if(getServerById(id))
+			{
+				std::cout << "[Error - GameServers::loadFromXml] Duplicate server id " << id << ", skipping" << std::endl;
+				p = p->next;
+				continue;
+			}
+
+			if(readXMLString(p, "name", strValue))
+				name = strValue;
+			else
+			{
+				name = "Server #" + id;
+				std::cout << "[Warning - GameServers::loadFromXml] Missing name for server " << id << ", using default" << std::endl;
+			}
+
+			if(readXMLString(p, "address", strValue))
+				address = strValue;
+			else
+			{
+				address = "localhost";
+				std::cout << "[Warning - GameServers::loadFromXml] Missing address for server " << id << ", using default" << std::endl;
+			}
+
+			if(readXMLInteger(p, "port", intValue))
+				port = intValue;
+			else
+			{
+				port = 7171;
+				std::cout << "[Warning - GameServers::loadFromXml] Missing port for server " << id << ", using default" << std::endl;
+			}
+
+			if(GameServer* server = new GameServer(name, address, port))
+				serverList[id] = server;
+			else
+				std::cout << "[Error - GameServers::loadFromXml] Couldn't add server " << name << std::endl;
 
 			p = p->next;
 		}
@@ -113,38 +125,11 @@ bool GameServers::loadFromXml(bool showResult /*= true*/)
 		for(GameServersMap::iterator it = serverList.begin(); it != serverList.end(); it++)
 			std::cout << it->second->getName() << " (" << it->second->getAddress() << ":" << it->second->getPort() << ")" << std::endl;
 	}
+
 	return true;
 }
 
-bool GameServers::addServer(uint32_t id, GameServer* server)
-{
-	if(getServerByID(id))
-	{
-		char buf[200];
-		sprintf(buf, "[Warning - GameServers::addServer] Duplicated id - %i", id);
-		server->setError(buf);
-		return false;
-	}
-
-	serverList[id] = server;
-	return true;
-}
-
-GameServer::GameServer()
-{
-	ip = "127.0.0.1";
-	port = 7171;
-	name = "ForgottenServer";
-}
-
-GameServer::GameServer(std::string _name, std::string _ip, uint32_t _port)
-{
-	name = _name;
-	ip = _ip;
-	port = _port;
-}
-
-GameServer* GameServers::getServerByID(uint32_t id) const
+GameServer* GameServers::getServerById(uint32_t id) const
 {
 	GameServersMap::const_iterator it = serverList.find(id);
 	if(it != serverList.end())
@@ -160,6 +145,7 @@ GameServer* GameServers::getServerByName(std::string name) const
 		if(it->second->getName() == name)
 			return it->second;
 	}
+
 	return NULL;
 }
 
@@ -170,6 +156,7 @@ GameServer* GameServers::getServerByAddress(std::string address) const
 		if(it->second->getAddress() == address)
 			return it->second;
 	}
+
 	return NULL;
 }
 
@@ -180,5 +167,6 @@ GameServer* GameServers::getServerByPort(uint32_t port) const
 		if(it->second->getPort() == port)
 			return it->second;
 	}
+
 	return NULL;
 }

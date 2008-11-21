@@ -155,6 +155,9 @@ void Game::setGameState(GameState_t newState)
 				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, this)));
 				Scheduler::getScheduler().stop();
 				Dispatcher::getDispatcher().stop();
+				if(g_server)
+					g_server->stop();
+
 				break;
 			}
 
@@ -4411,9 +4414,6 @@ void Game::shutdown()
 	std::cout << ".";
 	Spawns::getInstance()->clear();
 	std::cout << "." << std::endl;
-
-	if(g_server)
-		g_server->stop();
 
 	cleanup();
 	std::cout << "Exiting." << std::endl;

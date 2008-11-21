@@ -26,31 +26,28 @@
 class GameServer
 {
 	public:
-		GameServer();
-		GameServer(std::string, std::string, uint32_t);
+		GameServer() : name("TheForgottenServer"), address("localhost"), port(7171) {}
+		GameServer(std::string _name, std::string _address, uint32_t _port) : name(_name), address(_address), port(_port) {}
 		virtual ~GameServer() {}
 
 		std::string getName() const {return name;}
-		std::string getAddress() const {return ip;}
+		std::string getAddress() const {return address;}
 		uint32_t getPort() const {return port;}
-
-		std::string getError() const {return error;}
-		void setError(std::string _error) {error = _error;}
 
 	protected:
 		std::string name;
-		std::string ip;
+		std::string address;
 		uint32_t port;
-
-		std::string error;
 };
 
-typedef std::map< uint32_t, GameServer* > GameServersMap;
+typedef std::map<uint32_t, GameServer*> GameServersMap;
 
 class GameServers
 {
 	public:
 		GameServers() {}
+		virtual ~GameServers() {clear();}
+
 		static GameServers* getInstance()
 		{
 			static GameServers instance;
@@ -60,15 +57,12 @@ class GameServers
 		bool loadFromXml(bool showResult = false);
 		bool reload(bool showResult = false);
 
-		bool addServer(uint32_t, GameServer*);
-
-		GameServer* getServerByID(uint32_t id) const;
+		GameServer* getServerById(uint32_t id) const;
 		GameServer* getServerByName(std::string name) const;
 		GameServer* getServerByAddress(std::string address) const;
 		GameServer* getServerByPort(uint32_t port) const;
 
 	protected:
-		virtual ~GameServers() {clear();}
 		void clear();
 
 		GameServersMap serverList;

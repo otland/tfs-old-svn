@@ -27,6 +27,7 @@ m_io_service()
 {
 	m_acceptor = NULL;
 	m_listenErrors = 0;
+	m_shutdown = false;
 	m_serverIp = serverip;
 	m_serverPort = port;
 	openListenSocket();
@@ -39,18 +40,12 @@ Server::~Server()
 
 void Server::accept()
 {
-	if(!m_acceptor)
-	{
-#ifdef __DEBUG_NET__
-		std::cout << "[Error - Server::accept] NULL m_acceptor." << std::endl;
-#endif
+	if(m_shutdown || !m_acceptor)
 		return;
-	}
 
-	Connection* connection = ConnectionManager::getInstance()->createConnection(m_io_service);
-	m_acceptor->async_accept(connection->getHandle(),
-		boost::bind(&Server::onAccept, this, connection,
-		boost::asio::placeholders::error));
+	if(Connection* connection = ConnectionManager::getInstance()->createConnection(m_io_service))
+		m_acceptor->async_accept(connection->getHandle(), boost::bind(&Server::onAccept, this, connection,
+			boost::asio::placeholders::error));
 }
 
 void Server::closeListenSocket()
@@ -117,6 +112,7 @@ void Server::onAccept(Connection* connection, const boost::system::error_code& e
 
 void Server::stop()
 {
+	m_shutdown = true;
 	m_io_service.post(boost::bind(&Server::onStopServer, this));
 }
 

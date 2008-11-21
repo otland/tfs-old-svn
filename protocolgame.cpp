@@ -1295,20 +1295,19 @@ void ProtocolGame::parseRequestOutfit(NetworkMessage& msg)
 
 void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 {
-	uint16_t looktype = msg.GetU16();
-	uint8_t lookhead = msg.GetByte();
-	uint8_t lookbody = msg.GetByte();
-	uint8_t looklegs = msg.GetByte();
-	uint8_t lookfeet = msg.GetByte();
-	uint8_t lookaddons = msg.GetByte();
+	Outfit_t newOutfit = player->currentOutfit;
+	newOutfit.lookType = msg.getU16();
+	if(g_config.getBool(ConfigManager::ALLOW_CHANGEOUTFIT_COLORS))
+	{
+		newOutfit.lookHead = msg.getByte();
+		newOutfit.lookBody = msg.getByte();
+		newOutfit.lookLegs = msg.getByte();
+		newOutfit.lookFeet = msg.getByte();
+		newOutfit.lookAddons = msg.getByte();
+	}
+	else
+		msg.SkipBytes(5);
 
-	Outfit_t newOutfit;
-	newOutfit.lookType = looktype;
-	newOutfit.lookHead = lookhead;
-	newOutfit.lookBody = lookbody;
-	newOutfit.lookLegs = looklegs;
-	newOutfit.lookFeet = lookfeet;
-	newOutfit.lookAddons = lookaddons;
 	addGameTask(&Game::playerChangeOutfit, player->getID(), newOutfit);
 }
 
@@ -1627,22 +1626,21 @@ void ProtocolGame::parseQuestLine(NetworkMessage& msg)
 	if(_msg)
 	{
 		TRACK_MESSAGE(_msg);
-		Quest* quest = Quests::getInstance()->getQuestByID(quid);
-		if(quest)
+		if(Quest* quest = Quests::getInstance()->getQuestById(quid))
 			quest->getMissionList(player, _msg);
 	}
 }
 
 void ProtocolGame::parseViolationWindow(NetworkMessage& msg)
 {
-	std::string targetPlayerName = msg.GetString();
+	std::string playerName = msg.GetString();
 	uint8_t reasonId = msg.GetByte();
 	uint8_t actionId = msg.GetByte();
 	std::string comment = msg.GetString();
 	std::string statement = msg.GetString();
-	msg.GetU16();
+	msg.GetU16(); //Find out what is this byte
 	bool ipBanishment = msg.GetByte();
-	addGameTask(&Game::violationWindow, player->getID(), targetPlayerName, reasonId, actionId, comment, statement, ipBanishment);
+	addGameTask(&Game::violationWindow, player->getID(), playerName, reasonId, actionId, comment, statement, ipBanishment);
 }
 
 //********************** Send methods *******************************//
@@ -2650,55 +2648,66 @@ void ProtocolGame::sendHouseWindow(uint32_t windowTextId, House* _house,
 
 void ProtocolGame::sendOutfitWindow()
 {
-	#define MAX_NUMBER_OF_OUTFITS 25
 	NetworkMessage* msg = getOutputBuffer();
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0xC8);
+
 		AddCreatureOutfit(msg, player, player->getDefaultOutfit());
-
-		const OutfitListType& global_outfits = Outfits::getInstance()->getOutfits(player->getSex());
-		int32_t count_outfits = global_outfits.size();
-
-		if(count_outfits > MAX_NUMBER_OF_OUTFITS)
-			count_outfits = MAX_NUMBER_OF_OUTFITS;
-		else if(count_outfits == 0)
+		const OutfitListType& globalOutfits = Outfits::getInstance()->getOutfits(player->getSex());
+		if(!globalOutfits.size())
 			return;
 
-		OutfitListType::const_iterator it, it_;
-		for(it = global_outfits.begin(); it != global_outfits.end(); ++it)
-		{
-			if((*it)->premium && !player->isPremium())
-				count_outfits--;
-		}
+		uint32_t count = std::min((size_t)OUTFITS_MAX_NUMBER, globalOutfits.size());
+		std::list<int32_t> tmpList;
 
-		msg->AddByte(count_outfits);
-
-		bool addedAddon;
-		const OutfitListType& player_outfits = player->getPlayerOutfits();
-		for(it = global_outfits.begin(); it != global_outfits.end() && (count_outfits > 0); ++it)
+		OutfitListType::const_iterator git, it;
+		for(git = globalOutfits.begin(); git != globalOutfits.end(); ++git)
 		{
-			if(((*it)->premium && player->isPremium()) || !(*it)->premium)
+			if((*git)->premium && !player->isPremium())
+				tmpList.push_back((*git)->looktype);
+
+			if((*git)->quest)
 			{
-				addedAddon = false;
-				msg->AddU16((*it)->looktype);
-				msg->AddString(Outfits::getInstance()->getOutfitName((*it)->looktype));
-				//TODO: Try to avoid using loop to get addons
-				for(it_ = player_outfits.begin(); it_ != player_outfits.end(); ++it_)
-				{
-					if((*it_)->looktype == (*it)->looktype)
-					{
-						msg->AddByte((*it_)->addons);
-						addedAddon = true;
-						break;
-					}
-				}
-				if(!addedAddon)
-					msg->AddByte(0x00);
-				count_outfits--;
+				int32_t value;
+				if(!player->getStorageValue((*git)->quest, value) || value != OUTFITS_QUEST_VALUE)
+					tmpList.push_back((*git)->looktype);
 			}
 		}
+
+		count -= tmpList.size();
+		if(!count)
+			return;
+
+		msg->AddByte(count);
+		const OutfitListType& playerOutfits = player->getPlayerOutfits();
+		for(git = globalOutfits.begin(); git != globalOutfits.end() && count > 0; ++git)
+		{
+			std::list<int32_t>::const_iterator tit = tmpList.find((*git)->looktype);
+			if(tit != tmpList.end())
+				continue;
+
+			msg->AddU16((*git)->looktype);
+			msg->AddString(Outfits::getInstance()->getOutfitName((*git)->looktype));
+
+			bool addedAddon = false;
+			for(it = playerOutfits.begin(); it != playerOutfits.end(); ++it)
+			{
+				if((*it)->looktype == (*it)->looktype)
+				{
+					msg->AddByte((*it)->addons);
+					addedAddon = true;
+					break;
+				}
+			}
+
+			if(!addedAddon)
+				msg->AddByte(0x00);
+
+			count--;
+		}
+
 		player->hasRequestedOutfit(true);
 	}
 }

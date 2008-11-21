@@ -37,21 +37,21 @@ typedef std::list<Quest*> QuestsList;
 class MissionState
 {
 	public:
-		MissionState(std::string _description, uint32_t _missionID);
+		MissionState(std::string _description, uint32_t _missionId);
 		virtual ~MissionState() {}
 
-		uint32_t getMissionID() const {return missionID;}
+		uint32_t getMissionId() const {return missionId;}
 		std::string getMissionDescription() const {return description;}
 
 	private:
 		std::string description;
-		uint32_t missionID;
+		uint32_t missionId;
 };
 
 class Mission
 {
 	public:
-		Mission(std::string _missionName, uint32_t _storageID, uint32_t _startValue, int32_t _endValue);
+		Mission(std::string _missionName, uint32_t _storageId, int32_t _startValue, int32_t _endValue);
 		virtual ~Mission();
 
 		bool isCompleted(Player* player) const;
@@ -64,19 +64,20 @@ class Mission
 
 	private:
 		std::string missionName;
-		uint32_t storageID, startValue, endValue;
+		uint32_t storageId;
+		int32_t startValue, endValue;
 };
 
 class Quest
 {
 	public:
-		Quest(std::string _name, uint16_t _id, uint32_t _startStorageID, uint32_t _startStorageValue);
+		Quest(std::string _name, uint16_t _id, uint32_t _startStorageId, int32_t _startStorageValue);
 		virtual ~Quest();
 
 		bool isCompleted(Player* player);
 		bool isStarted(Player* player) const;
 
-		uint16_t getID() const {return id;}
+		uint16_t getId() const {return id;}
 		std::string getName() const {return name;}
 
 		uint16_t getMissionsCount(Player* player);
@@ -87,7 +88,8 @@ class Quest
 	private:
 		std::string name;
 		uint16_t id;
-		uint32_t startStorageID, startStorageValue;
+		uint32_t startStorageId;
+		int32_t startStorageValue;
 };
 
 class Quests
@@ -108,7 +110,7 @@ class Quests
 		uint16_t getQuestsCount(Player* player);
 		void getQuestsList(Player* player, NetworkMessage* msg);
 
-		Quest* getQuestByID(uint16_t id);
+		Quest* getQuestById(uint16_t id);
 		QuestsList quests;
 };
 

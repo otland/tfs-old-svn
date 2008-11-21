@@ -26,11 +26,16 @@
 #include <string>
 #include <map>
 #include "enums.h"
+#include "player.h"
+
+#define OUTFITS_QUEST_VALUE 1
+#define OUTFITS_MAX_NUMBER 25
 
 struct Outfit
 {
 	uint32_t looktype;
 	uint32_t addons;
+	uint32_t quest;
 	bool premium;
 };
 
@@ -38,67 +43,70 @@ typedef std::list<Outfit*> OutfitListType;
 
 class OutfitList
 {
-public:
-	OutfitList();
-	~OutfitList();
+	public:
+		OutfitList() {}
+		virtual ~OutfitList();
 
-	void addOutfit(const Outfit& outfit);
-	bool remOutfit(const Outfit& outfit);
-	const OutfitListType& getOutfits() const {return m_list;}
-	bool isInList(uint32_t looktype, uint32_t addons, bool playerPremium, int32_t playerSex) const;
+		void addOutfit(const Outfit& outfit);
+		bool remOutfit(const Outfit& outfit);
+		const OutfitListType& getOutfits() const {return m_list;}
+		bool isInList(Player* player, uint32_t looktype, uint32_t addons) const;
 
-private:
-	OutfitListType m_list;
+	private:
+		OutfitListType m_list;
 };
 
 class Outfits
 {
-public:
-	~Outfits();
+	public:
+		virtual ~Outfits();
 
-	static Outfits* getInstance(){
-		static Outfits instance;
-		return &instance;
-	}
-
-	bool loadFromXml();
-	const OutfitListType& getOutfits(uint32_t type){
-		return getOutfitList(type).getOutfits();
-	}
-
-	const OutfitList& getOutfitList(uint32_t type){
-		if(type < m_list.size()){
-			return *m_list[type];
+		static Outfits* getInstance()
+		{
+			static Outfits instance;
+			return &instance;
 		}
-		else{
+
+		bool loadFromXml();
+
+		const OutfitListType& getOutfits(uint32_t type)
+		{
+			return getOutfitList(type).getOutfits();
+		}
+
+		const OutfitList& getOutfitList(uint32_t type)
+		{
+			if(type < m_list.size())
+				return *m_list[type];
+
+
 			if(type == PLAYERSEX_FEMALE)
-				return m_female_list;
-			else
-				return m_male_list;
+				return m_femaleList;
+
+			return m_maleList;
 		}
-	}
 
-	const std::string& getOutfitName(uint32_t looktype) const{
-		std::map<uint32_t, std::string>::const_iterator it;
-		it = outfitNamesMap.find(looktype);
-		if(it != outfitNamesMap.end()){
-			return it->second;
+		const std::string& getOutfitName(uint32_t looktype) const
+		{
+			OutfitNamesMap::const_iterator it = outfitNamesMap.find(looktype);
+			if(it != outfitNamesMap.end())
+				return it->second;
+
+			static const std::string ret = "Outfit";
+			return ret;
 		}
-		else{
-			static const std::string d = "Outfit";
-			return d;
-		}
-	}
 
-private:
-	Outfits();
-	typedef std::vector<OutfitList*> OutfitsListVector;
-	OutfitsListVector m_list;
+	private:
+		Outfits();
 
-	std::map<uint32_t, std::string> outfitNamesMap;
+		typedef std::vector<OutfitList*> OutfitsListVector;
+		OutfitsListVector m_list;
 
-	OutfitList m_female_list;
-	OutfitList m_male_list;
+		typedef std::map<uint32_t, std::string> OutfitNamesMap;
+		OutfitNamesMap outfitNamesMap;
+
+		OutfitList m_femaleList;
+		OutfitList m_maleList;
 };
 
 #endif
