@@ -404,7 +404,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 
 		if(!g_game.placeCreature(player, player->getLoginPosition()))
 		{
-			if(!g_game.placeCreature(player, player->getTemplePosition(), true))
+			if(!g_game.placeCreature(player, player->getTemplePosition(), false, true))
 			{
 				disconnectClient(0x14, "Temple position is wrong. Contact the administrator.");
 				return false;
@@ -421,7 +421,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		if(eventConnect != 0 || g_config.getString(ConfigManager::REPLACE_KICK_ON_LOGIN) != "yes")
 		{
 			//Already trying to connect
-			disconnectClient(0x14, "Your already logged in.");
+			disconnectClient(0x14, "You are already logged in.");
 			return false;
 		}
 
@@ -450,7 +450,7 @@ bool ProtocolGame::connect(uint32_t playerId)
 	Player* _player = g_game.getPlayerByID(playerId);
 	if(!_player || _player->isRemoved() || _player->client)
 	{
-		disconnectClient(0x14, "Your already logged in.");
+		disconnectClient(0x14, "You are already logged in.");
 		return false;
 	}
 

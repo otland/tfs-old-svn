@@ -248,13 +248,29 @@ void MoveEvents::addEvent(MoveEvent* moveEvent, int32_t id, MoveListMap& map)
 
 MoveEvent* MoveEvents::getEvent(Item* item, MoveEvent_t eventType, slots_t slot)
 {
+	uint32_t slotp = 0;
+	switch(slot)
+	{
+		case SLOT_HEAD: slotp = SLOTP_HEAD; break;
+		case SLOT_NECKLACE: slotp = SLOTP_NECKLACE; break;
+		case SLOT_BACKPACK: slotp = SLOTP_BACKPACK; break;
+		case SLOT_ARMOR: slotp = SLOTP_ARMOR; break;
+		case SLOT_RIGHT: slotp = SLOTP_RIGHT; break;
+		case SLOT_LEFT: slotp = SLOTP_LEFT; break;
+		case SLOT_LEGS: slotp = SLOTP_LEGS; break;
+		case SLOT_FEET: slotp = SLOTP_FEET; break;
+		case SLOT_AMMO: slotp = SLOTP_AMMO; break;
+		case SLOT_RING: slotp = SLOTP_RING; break;
+		default: slotp = 0; break;
+	}
+
 	MoveListMap::iterator it = m_itemIdMap.find(item->getID());
 	if(it != m_itemIdMap.end())
 	{
 		std::list<MoveEvent*>& moveEventList = it->second.moveEvent[eventType];
 		for(std::list<MoveEvent*>::iterator it = moveEventList.begin(); it != moveEventList.end(); ++it)
 		{
-			if((*it)->getSlot() == slot)
+			if(((*it)->getSlot() & slotp) != 0)
 				return *it;
 		}
 	}
@@ -358,7 +374,7 @@ uint32_t MoveEvents::onCreatureMove(Creature* creature, Tile* tile, bool isIn)
 uint32_t MoveEvents::onPlayerEquip(Player* player, Item* item, slots_t slot)
 {
 	MoveEvent* moveEvent = getEvent(item, MOVE_EVENT_EQUIP, slot);
-	if(moveEvent && slot == moveEvent->getSlot())
+	if(moveEvent)
 		return moveEvent->fireEquip(player, item, slot, false);
 	return 1;
 }
@@ -366,7 +382,7 @@ uint32_t MoveEvents::onPlayerEquip(Player* player, Item* item, slots_t slot)
 uint32_t MoveEvents::onPlayerDeEquip(Player* player, Item* item, slots_t slot, bool isRemoval)
 {
 	MoveEvent* moveEvent = getEvent(item, MOVE_EVENT_DEEQUIP, slot);
-	if(moveEvent && slot == moveEvent->getSlot())
+	if(moveEvent)
 		return moveEvent->fireEquip(player, item, slot, isRemoval);
 	return 1;
 }
@@ -417,7 +433,7 @@ MoveEvent::MoveEvent(LuaScriptInterface* _interface) :
 	stepFunction = NULL;
 	moveFunction = NULL;
 	equipFunction = NULL;
-	slot = SLOT_WHEREEVER;
+	slot = 0xFFFFFFFF;
 	reqLevel = 0;
 	reqMagLevel = 0;
 	premium = false;
@@ -513,25 +529,27 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 			{
 				std::string tmpStr = asLowerCaseString(str);
 				if(tmpStr == "head")
-					slot = SLOT_HEAD;
+					slot = SLOTP_HEAD;
 				else if(tmpStr == "necklace")
-					slot = SLOT_NECKLACE;
+					slot = SLOTP_NECKLACE;
 				else if(tmpStr == "backpack")
-					slot = SLOT_BACKPACK;
+					slot = SLOTP_BACKPACK;
 				else if(tmpStr == "armor")
-					slot = SLOT_ARMOR;
+					slot = SLOTP_ARMOR;
 				else if(tmpStr == "right-hand")
-					slot = SLOT_RIGHT;
+					slot = SLOTP_RIGHT;
 				else if(tmpStr == "left-hand")
-					slot = SLOT_LEFT;
+					slot = SLOTP_LEFT;
+				else if(tmpStr == "hand")
+					slot = SLOTP_RIGHT | SLOTP_LEFT;
 				else if(tmpStr == "legs")
-					slot = SLOT_LEGS;
+					slot = SLOTP_LEGS;
 				else if(tmpStr == "feet")
-					slot = SLOT_FEET;
+					slot = SLOTP_FEET;
 				else if(tmpStr == "ring")
-					slot = SLOT_RING;
+					slot = SLOTP_RING;
 				else if(tmpStr == "ammo")
-					slot = SLOT_AMMO;
+					slot = SLOTP_AMMO;
 				else
 					std::cout << "Warning: [MoveEvent::configureMoveEvent] " << "Unknown slot type " << str << std::endl;
 			}
@@ -688,22 +706,25 @@ uint32_t MoveEvent::RemoveItemField(Item* item, Item* tileItem, const Position& 
 	return 1;
 }
 
-uint32_t MoveEvent::EquipItem(Player* player, Item* item, slots_t slot, bool transform)
+uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, slots_t slot, bool isRemoval)
 {
 	if(player->isItemAbilityEnabled(slot))
 		return 1;
 
 	//Enable item only when requirements are complete
 	//This includes item transforming
-	MoveEvent* moveEvent = g_moveEvents->getEvent(item, MOVE_EVENT_EQUIP);
-	if(moveEvent && !player->hasFlag(PlayerFlag_IgnoreWeaponCheck))
+	if(!player->hasFlag(PlayerFlag_IgnoreWeaponCheck) && moveEvent->getWieldInfo() != 0)
 	{
-		if((int32_t)player->getLevel() < moveEvent->getReqLevel() || (int32_t)player->getMagicLevel() < moveEvent->getReqMagLv() ||
-			(!player->isPremium() && moveEvent->isPremium()) || (!moveEvent->getVocEquipMap().empty() &&
-			moveEvent->getVocEquipMap().find(player->getVocationId()) == moveEvent->getVocEquipMap().end()))
+		if((int32_t)player->getLevel() < moveEvent->getReqLevel()
+			|| (int32_t)player->getMagicLevel() < moveEvent->getReqMagLv()
+			|| !player->isPremium() && moveEvent->isPremium())
 		{
 			return 1;
 		}
+
+		const VocEquipMap vocMap = moveEvent->getVocEquipMap();
+		if(!vocMap.empty() && vocMap.find(player->getVocationId()) == vocMap.end())
+			return 1;
 	}
 
 	const ItemType& it = Item::items[item->getID()];
@@ -794,7 +815,7 @@ uint32_t MoveEvent::EquipItem(Player* player, Item* item, slots_t slot, bool tra
 	return 1;
 }
 
-uint32_t MoveEvent::DeEquipItem(Player* player, Item* item, slots_t slot, bool isRemoval)
+uint32_t MoveEvent::DeEquipItem(MoveEvent* moveEvent, Player* player, Item* item, slots_t slot, bool isRemoval)
 {
 	if(!player->isItemAbilityEnabled(slot))
 		return 1;
@@ -802,7 +823,6 @@ uint32_t MoveEvent::DeEquipItem(Player* player, Item* item, slots_t slot, bool i
 	player->setItemAbility(slot, false);
 
 	const ItemType& it = Item::items[item->getID()];
-
 	if(isRemoval && it.transformDeEquipTo != 0)
 	{
 		g_game.transformItem(item, it.transformDeEquipTo);
@@ -914,7 +934,7 @@ uint32_t MoveEvent::fireEquip(Player* player, Item* item, slots_t slot, bool isR
 	if(m_scripted)
 		return executeEquip(player, item, slot);
 	else
-		return equipFunction(player, item, slot, isRemoval);
+		return equipFunction(this, player, item, slot, isRemoval);
 }
 
 uint32_t MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)

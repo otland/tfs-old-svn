@@ -23,8 +23,9 @@
 #include "connection.h"
 
 Server::Server(uint32_t serverip, uint16_t port)
-: m_io_service()
+	: m_io_service()
 {
+	m_isOpen = true;
 	m_acceptor = NULL;
 	m_listenErrors = 0;
 	m_serverIp = serverip;
@@ -39,6 +40,9 @@ Server::~Server()
 
 void Server::accept()
 {
+	if(!m_isOpen)
+		return;
+
 	if(!m_acceptor)
 	{
 		#ifdef __DEBUG_NET__
@@ -117,6 +121,7 @@ void Server::onAccept(Connection* connection, const boost::system::error_code& e
 
 void Server::stop()
 {
+	m_isOpen = false;
 	m_io_service.post(boost::bind(&Server::onStopServer, this));
 }
 

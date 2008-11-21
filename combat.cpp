@@ -137,7 +137,8 @@ void Combat::getCombatArea(const Position& centerPos, const Position& targetPos,
 {
 	if(area)
 		area->getList(centerPos, targetPos, list);
-	else
+	else if(targetPos.x >= 0 && targetPos.y >= 0 && targetPos.z >= 0 &&
+		targetPos.x <= 0xFFFF && targetPos.y <= 0xFFFF && targetPos.z < MAP_MAX_LAYERS)
 	{
 		Tile* tile = g_game.getTile(targetPos.x, targetPos.y, targetPos.z);
 		if(!tile)
@@ -657,7 +658,16 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 	if(params.itemId != 0)
 	{
 		uint32_t itemId = params.itemId;
-		if(caster && (caster->getPlayer() || (caster->isSummon() && caster->getMaster()->getPlayer())))
+		Player* _caster = NULL;
+		if(caster)
+		{
+			if(caster->getPlayer())
+				_caster = caster->getPlayer();
+			else if(caster->isSummon())
+				_caster = caster->getMaster()->getPlayer();
+		}
+
+		if(_caster)
 		{
 			if(g_game.getWorldType() == WORLD_TYPE_NO_PVP || tile->hasFlag(TILESTATE_NOPVPZONE))
 			{
@@ -668,7 +678,10 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 				else if(itemId == ITEM_ENERGYFIELD_PVP)
 					itemId = ITEM_ENERGYFIELD_NOPVP;
 			}
+			else if(params.isAggressive)
+				_caster->addInFightTicks(true);
 		}
+
 		Item* item = Item::CreateItem(itemId);
 
 		if(caster)
@@ -1130,15 +1143,19 @@ bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, s
 		{
 			if(area->getValue(y, x) != 0)
 			{
-				if(g_game.isSightClear(centerPos, tmpPos, true))
+				if(tmpPos.x >= 0 && tmpPos.y >= 0 && tmpPos.z >= 0 &&
+					tmpPos.x <= 0xFFFF && tmpPos.y <= 0xFFFF && tmpPos.z < MAP_MAX_LAYERS)
 				{
-					tile = g_game.getTile(tmpPos.x, tmpPos.y, tmpPos.z);
-					if(!tile)
+					if(g_game.isSightClear(centerPos, tmpPos, true))
 					{
-						tile = new Tile(tmpPos.x, tmpPos.y, tmpPos.z);
-						g_game.setTile(tile);
+						tile = g_game.getTile(tmpPos.x, tmpPos.y, tmpPos.z);
+						if(!tile)
+						{
+							tile = new Tile(tmpPos.x, tmpPos.y, tmpPos.z);
+							g_game.setTile(tile);
+						}
+						list.push_back(tile);
 					}
-					list.push_back(tile);
 				}
 			}
 			tmpPos.x++;

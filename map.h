@@ -164,28 +164,28 @@ class Map
 		Map();
 		~Map();
 
-		static const int32_t maxViewportX = 11;         //min value: maxClientViewportX + 1
-		static const int32_t maxViewportY = 11;         //min value: maxClientViewportY + 1
+		static const int32_t maxViewportX = 11; //min value: maxClientViewportX + 1
+		static const int32_t maxViewportY = 11; //min value: maxClientViewportY + 1
 		static const int32_t maxClientViewportX = 8;
 		static const int32_t maxClientViewportY = 6;
 
 		/**
-		* Load a map.
-		* \returns true if the map was loaded successfully
-		*/
+		  * Load a map.
+		  * \returns true if the map was loaded successfully
+		  */
 		bool loadMap(const std::string& identifier);
 
 		/**
-		* Save a map.
-		* \param identifier file/database to save to
-		* \returns true if the map was saved successfully
-		*/
+		  * Save a map.
+		  * \param identifier file/database to save to
+		  * \returns true if the map was saved successfully
+		  */
 		bool saveMap();
 
 		/**
-		* Get a single tile.
-		* \returns A pointer to that tile.
-		*/
+		  * Get a single tile.
+		  * \returns A pointer to that tile.
+		  */
 		Tile* getTile(uint16_t x, uint16_t y, uint8_t z);
 		Tile* getTile(const Position& pos);
 
@@ -194,9 +194,9 @@ class Map
 		QTreeLeafNode* getLeaf(uint16_t x, uint16_t y){ return root.getLeaf(x, y);}
 
 		/**
-		* Set a single tile.
-		* \param a tile to set for the position
-		*/
+		  * Set a single tile.
+		  * \param a tile to set for the position
+		  */
 		void setTile(uint16_t _x, uint16_t _y, uint8_t _z, Tile* newTile);
 		void setTile(const Position& pos, Tile* newTile)
 		{
@@ -204,52 +204,53 @@ class Map
 		}
 
 		/**
-		* Place a creature on the map
-		* \param pos The position to place the creature
-		* \param creature Creature to place on the map
-		* \param forceLogin If true, placing the creature will not fail becase of obstacles (creatures/chests)
-		*/
-		bool placeCreature(const Position& centerPos, Creature* creature, bool forceLogin = false);
+		  * Place a creature on the map
+		  * \param pos The position to place the creature
+		  * \param creature Creature to place on the map
+		  * \param extendedPos If true, the creature will in first-hand be placed 2 tiles away
+		  * \param forceLogin If true, placing the creature will not fail becase of obstacles (creatures/chests)
+		  */
+		bool placeCreature(const Position& centerPos, Creature* creature, bool extendedPos = false, bool forceLogin = false);
 
 		/**
-		* Remove a creature from the map.
-		* \param c Creature pointer to the creature to remove
-		*/
+		  * Remove a creature from the map.
+		  * \param c Creature pointer to the creature to remove
+		  */
 		bool removeCreature(Creature* c);
 
 		/**
-		* Checks if you can throw an object to that position
-		*	\param fromPos from Source point
-		*	\param toPos Destination point
-		*	\param rangex maximum allowed range horizontially
-		*	\param rangey maximum allowed range vertically
-		*	\param checkLineOfSight checks if there is any blocking objects in the way
-		*	\returns The result if you can throw there or not
-		*/
+		  * Checks if you can throw an object to that position
+		  *	\param fromPos from Source point
+		  *	\param toPos Destination point
+		  *	\param rangex maximum allowed range horizontially
+		  *	\param rangey maximum allowed range vertically
+		  *	\param checkLineOfSight checks if there is any blocking objects in the way
+		  *	\returns The result if you can throw there or not
+		  */
 		bool canThrowObjectTo(const Position& fromPos, const Position& toPos, bool checkLineOfSight = true,
 			int32_t rangex = Map::maxClientViewportX, int32_t rangey = Map::maxClientViewportY);
 
 		/**
-		* Checks if path is clear from fromPos to toPos
-		* Notice: This only checks a straight line if the path is clear, for path finding use getPathTo.
-		*	\param fromPos from Source point
-		*	\param toPos Destination point
-		*	\param floorCheck if true then view is not clear if fromPos.z is not the same as toPos.z
-		*	\returns The result if there is no obstacles
-		*/
+		  * Checks if path is clear from fromPos to toPos
+		  * Notice: This only checks a straight line if the path is clear, for path finding use getPathTo.
+		  *	\param fromPos from Source point
+		  *	\param toPos Destination point
+		  *	\param floorCheck if true then view is not clear if fromPos.z is not the same as toPos.z
+		  *	\returns The result if there is no obstacles
+		  */
 		bool isSightClear(const Position& fromPos, const Position& toPos, bool floorCheck) const;
 		bool checkSightLine(const Position& fromPos, const Position& toPos) const;
 
 		const Tile* canWalkTo(const Creature* creature, const Position& pos);
 
 		/**
-		* Get the path to a specific position on the map.
-		* \param creature The creature that wants a path
-		* \param destPos The position we want a path calculated to
-		* \param listDir contains a list of directions to the destination
-		* \param maxDist Maximum distance from our current position to search, default: -1 (no limit)
-		* \returns returns true if a path was found
-		*/
+		  * Get the path to a specific position on the map.
+		  * \param creature The creature that wants a path
+		  * \param destPos The position we want a path calculated to
+		  * \param listDir contains a list of directions to the destination
+		  * \param maxDist Maximum distance from our current position to search, default: -1 (no limit)
+		  * \returns returns true if a path was found
+		  */
 		bool getPathTo(const Creature* creature, const Position& destPos,
 			std::list<Direction>& listDir, int32_t maxDist = -1);
 

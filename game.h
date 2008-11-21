@@ -233,17 +233,19 @@ class Game
 		/* Place Creature on the map without sending out events to the surrounding.
 		  * \param creature Creature to place on the map
 		  * \param pos The position to place the creature
+		  * \param extendedPos If true, the creature will in first-hand be placed 2 tiles away
 		  * \param forced If true, placing the creature will not fail because of obstacles (creatures/items)
 		  */
-		bool internalPlaceCreature(Creature* creature, const Position& pos, bool forced = false);
+		bool internalPlaceCreature(Creature* creature, const Position& pos, bool extendedPos = false, bool forced = false);
 
 		/**
 		  * Place Creature on the map.
 		  * \param creature Creature to place on the map
 		  * \param pos The position to place the creature
+		  * \param extendedPos If true, the creature will in first-hand be placed 2 tiles away
 		  * \param forced If true, placing the creature will not fail because of obstacles (creatures/items)
 		  */
-		bool placeCreature(Creature* creature, const Position& pos, bool force = false);
+		bool placeCreature(Creature* creature, const Position& pos, bool extendedPos = false, bool force = false);
 
 		/**
 		  * Remove Creature from the map.

@@ -168,6 +168,10 @@ void Game::setGameState(GameState_t newState)
 					createTask(boost::bind(&Game::shutdown, this)));
 				Scheduler::getScheduler().stop();
 				Dispatcher::getDispatcher().stop();
+
+				if(g_server)
+					g_server->stop();
+
 				break;
 			}
 
@@ -627,12 +631,12 @@ PlayerVector Game::getPlayersByIP(uint32_t ipadress, uint32_t mask)
 	return players;
 }
 
-bool Game::internalPlaceCreature(Creature* creature, const Position& pos, bool forced /*= false*/)
+bool Game::internalPlaceCreature(Creature* creature, const Position& pos, bool extendedPos /*=false*/, bool forced /*= false*/)
 {
 	if(creature->getParent() != NULL)
 		return false;
 
-	if(!map->placeCreature(pos, creature, forced))
+	if(!map->placeCreature(pos, creature, extendedPos, forced))
 		return false;
 
 	creature->useThing2();
@@ -642,9 +646,9 @@ bool Game::internalPlaceCreature(Creature* creature, const Position& pos, bool f
 	return true;
 }
 
-bool Game::placeCreature(Creature* creature, const Position& pos, bool forced /*= false*/)
+bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedPos /*=false*/, bool forced /*= false*/)
 {
-	if(!internalPlaceCreature(creature, pos, forced))
+	if(!internalPlaceCreature(creature, pos, extendedPos, forced))
 		return false;
 
 	SpectatorVec list;
@@ -4412,13 +4416,8 @@ void Game::shutdown()
 	std::cout << ".";
 	Spawns::getInstance()->clear();
 	std::cout << ".";
-
-	if(g_server)
-		g_server->stop();
-
-	std::cout << " ";
 	cleanup();
-	std::cout << "done." << std::endl;
+	std::cout << " done." << std::endl;
 	exit(1);
 }
 

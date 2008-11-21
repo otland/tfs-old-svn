@@ -49,8 +49,6 @@ class ChatChannel
 
 		virtual const uint32_t getOwner() {return 0;}
 
-		bool isInChannel(const Player* player);
-
 	protected:
 		UsersMap m_users;
 		std::string m_name;
@@ -67,7 +65,6 @@ class PrivateChatChannel : public ChatChannel
 		void setOwner(uint32_t id) {m_owner = id;}
 
 		bool isInvited(const Player* player);
-		bool isInvitedEx(const Player* player);
 
 		void invitePlayer(Player* player, Player* invitePlayer);
 		void excludePlayer(Player* player, Player* excludePlayer);

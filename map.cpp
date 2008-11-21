@@ -138,6 +138,12 @@ Tile* Map::getTile(const Position& pos)
 
 void Map::setTile(uint16_t x, uint16_t y, uint8_t z, Tile* newTile)
 {
+	if(z >= MAP_MAX_LAYERS)
+	{
+		std::cout << "ERROR: Attempt to set tile on invalid Z coordinate " << int(z) << "!" << std::endl;
+		return;
+	}
+
 	QTreeLeafNode::newLeaf = false;
 	QTreeLeafNode* leaf = root.createLeaf(x, y, 15);
 	if(QTreeLeafNode::newLeaf)
@@ -184,7 +190,7 @@ void Map::setTile(uint16_t x, uint16_t y, uint8_t z, Tile* newTile)
 	}
 }
 
-bool Map::placeCreature(const Position& centerPos, Creature* creature, bool forceLogin /*=false*/)
+bool Map::placeCreature(const Position& centerPos, Creature* creature, bool extendedPos /*=false*/, bool forceLogin /*=false*/)
 {
 	Tile* tile = getTile(centerPos);
 
@@ -206,6 +212,15 @@ bool Map::placeCreature(const Position& centerPos, Creature* creature, bool forc
 
 	typedef std::pair<int32_t, int32_t> relPair;
 	std::vector<relPair> relList;
+	if(extendedPos)
+	{
+		relList.push_back(relPair(0, -2));
+		relList.push_back(relPair(-2, 0));
+		relList.push_back(relPair(0, 2));
+		relList.push_back(relPair(2, 0));
+		std::random_shuffle(relList.begin(), relList.end());
+	}
+
 	relList.push_back(relPair(-1, -1));
 	relList.push_back(relPair(-1, 0));
 	relList.push_back(relPair(-1, 1));
@@ -215,7 +230,7 @@ bool Map::placeCreature(const Position& centerPos, Creature* creature, bool forc
 	relList.push_back(relPair(1, 0));
 	relList.push_back(relPair(1, 1));
 
-	std::random_shuffle(relList.begin(), relList.end());
+	std::random_shuffle(relList.begin() + (extendedPos? 4 : 0), relList.end());
 	uint32_t radius = 1;
 
 	Position tryPos;
@@ -236,8 +251,19 @@ bool Map::placeCreature(const Position& centerPos, Creature* creature, bool forc
 
 			if(tile->__queryAdd(0, creature, 1, 0) == RET_NOERROR)
 			{
-				foundTile = true;
-				break;
+				if(extendedPos)
+				{
+					if(isSightClear(centerPos, tryPos, false))
+					{
+						foundTile = true;
+						break;
+					}
+				}
+				else
+				{
+					foundTile = true;
+					break;
+				}
 			}
 		}
 	}
