@@ -2698,7 +2698,7 @@ void ProtocolGame::sendOutfitWindow()
 			bool addedAddon = false;
 			for(it = playerOutfits.begin(); it != playerOutfits.end(); ++it)
 			{
-				if((*it)->looktype == (*it)->looktype)
+				if((*it)->looktype == (*git)->looktype)
 				{
 					msg->AddByte((*it)->addons);
 					addedAddon = true;
