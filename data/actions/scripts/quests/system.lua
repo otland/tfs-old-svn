@@ -29,51 +29,57 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 		size = table.maxn(items)
 		if(size == 1) then
-			reward = doCreateItemEx(items[1].itemid, items[1].type)
+			reward = getThing(doCreateItemEx(items[1].itemid, items[1].type))
 		end
 
-		result = "You have found "
 		if(reward ~= 0) then
-			result = result .. getItemArticle(reward) .. " " .. getItemName(reward) .. "."
+			local ret = getItemDescriptions(reward.uid)
+			if(reward.type > 0 and isItemRune(reward.itemid) == TRUE) then
+				result = reward.type .. " charges " .. ret.name .. "."
+			elseif(reward.type > 0 and isItemStackable(reward.itemid) == TRUE) then
+				result = reward.type .. " " .. ret.plural .. "."
+			else
+				result = ret.article .. " " .. ret.name .. "."
+			end
 		else
 			if(size > 20) then
 				reward = doCopyItem(item, FALSE)
 			elseif(size > 8) then
-				reward = doCreateItemEx(1988, 1)
+				reward = getThing(doCreateItemEx(1988, 1))
 			else
-				reward = doCreateItemEx(1987, 1)
+				reward = getThing(doCreateItemEx(1987, 1))
 			end
 
 			for i = size, 1, -1 do
 				local tmp = doCopyItem(items[i], TRUE)
-				if(doAddContainerItemEx(reward, tmp.uid) ~= RETURNVALUE_NOERROR) then
-					print("[Warning] QuestSystem:", "Could not add quest reward, skipping...")
-					break
-				end
-
-				local space = ", "
-				if(i == 2) then
-					space = " and "
-				elseif(i == 1) then
-					space = "."
-				end
-
-				local ret = getItemDescriptions(tmp.uid)
-				if(tmp.type > 0 and isItemRune(tmp.itemid) == TRUE) then
-					result = result .. tmp.type .. " charges " .. ret.name .. space
-				elseif(tmp.type > 0 and isItemStackable(tmp.itemid) == TRUE) then
-					result = result .. tmp.type .. " " .. ret.plural .. space
+				if(doAddContainerItemEx(reward.uid, tmp.uid) ~= RETURNVALUE_NOERROR) then
+					print("[Warning] QuestSystem:", "Could not add quest reward")
 				else
-					result = result .. ret.article .. " " .. ret.name .. space
+					result = ", "
+					if(i == 2) then
+						result = " and "
+					elseif(i == 1) then
+						result = "."
+					end
+
+					local ret = getItemDescriptions(tmp.uid)
+					if(tmp.type > 0 and isItemRune(tmp.itemid) == TRUE) then
+						result = tmp.type .. " charges " .. ret.name .. result
+					elseif(tmp.type > 0 and isItemStackable(tmp.itemid) == TRUE) then
+						result = tmp.type .. " " .. ret.plural .. result
+					else
+						result = ret.article .. " " .. ret.name .. result
+					end
 				end
 			end
 		end
 
-		if(doPlayerAddItemEx(cid, reward, FALSE) ~= RETURNVALUE_NOERROR) then
+		if(doPlayerAddItemEx(cid, reward.uid, FALSE) ~= RETURNVALUE_NOERROR) then
 			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You don't have enough capacity or free space in backpack for reward.")
 			return FALSE
 		end
 
+		result = "You have found " .. result
 		setPlayerStorageValue(cid, storage, 1)
 	end
 

@@ -19,11 +19,15 @@
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 
-#include "outfit.h"
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
-#include "creature.h"
+
+#include "outfit.h"
+#include "player.h"
+#include "game.h"
 #include "tools.h"
+
+extern Game g_game;
 
 OutfitList::~OutfitList()
 {
@@ -76,8 +80,9 @@ bool OutfitList::remOutfit(const Outfit& outfit)
 	return false;
 }
 
-bool OutfitList::isInList(Player* player, uint32_t looktype, uint32_t addons) const
+bool OutfitList::isInList(int32_t playerId, uint32_t looktype, uint32_t addons) const
 {
+	Player* player = g_game.getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
 

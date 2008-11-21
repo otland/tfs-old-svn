@@ -509,6 +509,7 @@ Player* Game::getPlayerByID(uint32_t id)
 		if(!(*it).second->isRemoved())
 			return (*it).second;
 	}
+
 	return NULL; //just in case the player doesnt exist
 }
 

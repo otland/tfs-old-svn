@@ -19,9 +19,6 @@
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 
-#include "definitions.h"
-
-#include <string>
 #include <iostream>
 #include <algorithm>
 
@@ -3705,7 +3702,7 @@ const OutfitListType& Player::getPlayerOutfits()
 
 bool Player::canWear(uint32_t _looktype, uint32_t _addons)
 {
-	return m_playerOutfits.isInList(this, _looktype, _addons);
+	return m_playerOutfits.isInList(getID(), _looktype, _addons);
 }
 
 bool Player::canLogout()
@@ -3730,7 +3727,7 @@ void Player::genReservedStorageRange()
 	const OutfitList& globalOutfits = Outfits::getInstance()->getOutfitList(sex);
 	for(OutfitListType::const_iterator it = outfits.begin(); it != outfits.end(); ++it)
 	{
-		if(!globalOutfits.isInList(this, (*it)->looktype, (*it)->addons)
+		if(!globalOutfits.isInList(getID(), (*it)->looktype, (*it)->addons)
 		{
 			storageMap[baseKey] = int64_t((*it)->looktype << 16) | ((*it)->addons & 0xFF);
 

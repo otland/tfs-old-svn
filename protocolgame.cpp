@@ -1297,17 +1297,17 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 {
 	Outfit_t newOutfit = player->currentOutfit;
 	if(g_config.getBool(ConfigManager::ALLOW_CHANGEOUTFIT))
-		newOutfit.lookType = msg.getU16();
+		newOutfit.lookType = msg.GetU16();
 	else
 		msg.SkipBytes(2);
 
 	if(g_config.getBool(ConfigManager::ALLOW_CHANGECOLORS))
 	{
-		newOutfit.lookHead = msg.getByte();
-		newOutfit.lookBody = msg.getByte();
-		newOutfit.lookLegs = msg.getByte();
-		newOutfit.lookFeet = msg.getByte();
-		newOutfit.lookAddons = msg.getByte();
+		newOutfit.lookHead = msg.GetByte();
+		newOutfit.lookBody = msg.GetByte();
+		newOutfit.lookLegs = msg.GetByte();
+		newOutfit.lookFeet = msg.GetByte();
+		newOutfit.lookAddons = msg.GetByte();
 	}
 	else
 		msg.SkipBytes(5);
@@ -2664,19 +2664,19 @@ void ProtocolGame::sendOutfitWindow()
 			return;
 
 		uint32_t count = std::min((size_t)OUTFITS_MAX_NUMBER, globalOutfits.size());
-		std::list<uint32_t> tmpList;
+		OTSERV_HASH_SET<uint32_t> tmpList;
 
 		OutfitListType::const_iterator git, it;
 		for(git = globalOutfits.begin(); git != globalOutfits.end(); ++git)
 		{
 			if((*git)->premium && !player->isPremium())
-				tmpList.push_back((*git)->looktype);
+				tmpList.insert((*git)->looktype);
 
 			if((*git)->quest)
 			{
 				int32_t value;
 				if(!player->getStorageValue((*git)->quest, value) || value != OUTFITS_QUEST_VALUE)
-					tmpList.push_back((*git)->looktype);
+					tmpList.insert((*git)->looktype);
 			}
 		}
 
@@ -2688,7 +2688,7 @@ void ProtocolGame::sendOutfitWindow()
 		const OutfitListType& playerOutfits = player->getPlayerOutfits();
 		for(git = globalOutfits.begin(); git != globalOutfits.end() && count > 0; ++git)
 		{
-			std::list<uint32_t>::const_iterator tit = tmpList.find((*git)->looktype);
+			OTSERV_HASH_SET<uint32_t>::const_iterator tit = tmpList.find((*git)->looktype);
 			if(tit != tmpList.end())
 				continue;
 

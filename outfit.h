@@ -26,7 +26,6 @@
 #include <string>
 #include <map>
 #include "enums.h"
-#include "player.h"
 
 #define OUTFITS_QUEST_VALUE 1
 #define OUTFITS_MAX_NUMBER 25
@@ -50,7 +49,7 @@ class OutfitList
 		void addOutfit(const Outfit& outfit);
 		bool remOutfit(const Outfit& outfit);
 		const OutfitListType& getOutfits() const {return m_list;}
-		bool isInList(Player* player, uint32_t looktype, uint32_t addons) const;
+		bool isInList(int32_t playerId, uint32_t looktype, uint32_t addons) const;
 
 	private:
 		OutfitListType m_list;

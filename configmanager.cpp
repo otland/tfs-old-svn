@@ -153,7 +153,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBool[PREMIUM_FOR_PROMOTION] = getGlobalBool(L, "premiumForPromotion", "yes");
 	m_confBool[REMOVE_PREMIUM_ON_INIT] = getGlobalBool(L, "removePremiumOnInit", "yes");
 	m_confBool[SHOW_HEALING_DAMAGE] = getGlobalBool(L, "showHealingDamage", "no");
-	m_confBool[TELEPORT_SUMMONS] = getGlobalString(L, "teleportAllSummons", "no");
+	m_confBool[TELEPORT_SUMMONS] = getGlobalBool(L, "teleportAllSummons", "no");
 	m_confBool[TELEPORT_PLAYER_SUMMONS] = getGlobalBool(L, "teleportPlayerSummons", "no");
 	m_confBool[PVP_TILE_IGNORE_PROTECTION] = getGlobalBool(L, "pvpTileIgnoreLevelAndVocationProtection", "yes");
 	m_confBool[DISPLAY_CRITICAL_HIT] = getGlobalBool(L, "displayCriticalHitNotify", "no");
