@@ -2301,7 +2301,7 @@ void Player::dropCorpse()
 
 		sendStats();
 		onThink(EVENT_CREATURE_THINK_INTERVAL);
-		sendDropLoot(true);
+		setDropLoot(true);
 		g_game.internalTeleport(this, getTemplePosition(), true);
 	}
 }
@@ -3583,7 +3583,6 @@ void Player::onKilledCreature(Creature* target)
 		target->setDropLoot(false);
 
 	Creature::onKilledCreature(target);
-
 	if(Player* targetPlayer = target->getPlayer())
 	{
 		if(targetPlayer && targetPlayer->getZone() == ZONE_PVP)
