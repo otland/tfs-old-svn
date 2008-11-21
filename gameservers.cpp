@@ -61,7 +61,6 @@ bool GameServers::loadFromXml(bool showResult/* = true*/)
 		{
 			if(xmlStrcmp(p->name, (const xmlChar*)"server") != 0)
 			{
-				std::cout << "[Warning - GameServers::loadFromXml] Malformed server node, skipping" << std::endl;
 				p = p->next;
 				continue;
 			}

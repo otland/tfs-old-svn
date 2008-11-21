@@ -197,7 +197,6 @@ bool Quests::loadFromXml()
 		{
 			if(xmlStrcmp(p->name, (const xmlChar*)"quest") != 0)
 			{
-				std::cout << "[Error - Quests::loadFromXml] Malformed quest node" << std::endl;
 				p = p->next;
 				continue;
 			}
@@ -221,7 +220,6 @@ bool Quests::loadFromXml()
 				{
 					if(xmlStrcmp(missionNode->name, (const xmlChar*)"mission") != 0)
 					{
-						std::cout << "[Error - Quests::loadFromXml] Malformed mission node" << std::endl;
 						missionNode = missionNode->next;
 						continue;
 					}
@@ -248,7 +246,6 @@ bool Quests::loadFromXml()
 						{
 							if(xmlStrcmp(stateNode->name, (const xmlChar*)"missionstate") != 0)
 							{
-								std::cout << "[Error - Quests::loadFromXml] Malformed missionstate node" << std::endl;
 								stateNode = stateNode->next;
 								continue;
 							}
