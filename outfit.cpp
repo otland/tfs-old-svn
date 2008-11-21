@@ -23,7 +23,6 @@
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 #include "creature.h"
-#include "const.h"
 #include "tools.h"
 
 OutfitList::~OutfitList()

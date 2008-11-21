@@ -153,8 +153,8 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBool[PREMIUM_FOR_PROMOTION] = getGlobalBool(L, "premiumForPromotion", "yes");
 	m_confBool[REMOVE_PREMIUM_ON_INIT] = getGlobalBool(L, "removePremiumOnInit", "yes");
 	m_confBool[SHOW_HEALING_DAMAGE] = getGlobalBool(L, "showHealingDamage", "no");
-	//m_confBool[TELEPORT_SUMMONS] = getGlobalString(L, "teleportAllSummons", "no");
-	//m_confBool[TELEPORT_PLAYER_SUMMONS] = getGlobalBool(L, "teleportPlayerSummons", "no");
+	m_confBool[TELEPORT_SUMMONS] = getGlobalString(L, "teleportAllSummons", "no");
+	m_confBool[TELEPORT_PLAYER_SUMMONS] = getGlobalBool(L, "teleportPlayerSummons", "no");
 	m_confBool[PVP_TILE_IGNORE_PROTECTION] = getGlobalBool(L, "pvpTileIgnoreLevelAndVocationProtection", "yes");
 	m_confBool[DISPLAY_CRITICAL_HIT] = getGlobalBool(L, "displayCriticalHitNotify", "no");
 	m_confBool[ADVANCING_SKILL_LEVEL] = getGlobalBool(L, "displaySkillLevelOnAdvance", "no");
@@ -167,6 +167,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBool[BLESSING_ONLY_PREMIUM] = getGlobalBool(L, "blessingsOnlyForPremium", "yes");
 	m_confBool[BED_REQUIRE_PREMIUM] = getGlobalBool(L, "bedsRequirePremium", "yes");
 	m_confNumber[FIELD_OWNERSHIP] = getGlobalNumber(L, "fieldOwnershipDuration", 5 * 1000);
+	m_confBool[ALLOW_CHANGECOLORS] = getGlobalBool(L, "allowChangeColors", "yes");
 	m_isLoaded = true;
 
 	lua_close(L);

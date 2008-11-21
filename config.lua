@@ -109,6 +109,7 @@
 	-- NOTE: defaultPriority works only on Windows
 	kickIdlePlayerAfterMinutes = 15
 	allowChangeOutfit = "yes"
+	allowChangeColors = "yes"
 	maxMessageBuffer = 4
 	displayGamemastersWithOnlineCommand = "no"
 	defaultPriority = "high"

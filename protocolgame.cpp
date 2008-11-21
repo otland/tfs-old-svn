@@ -903,13 +903,13 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				break;
 
 			case 0xD2: // request outfit
-				if(g_config.getBool(ConfigManager::ALLOW_CHANGEOUTFIT))
+				if(g_config.getBool(ConfigManager::ALLOW_CHANGECOLORS)
+					|| g_config.getBool(ConfigManager::ALLOW_CHANGEOUTFIT))
 					parseRequestOutfit(msg);
 				break;
 
 			case 0xD3: // set outfit
-				if(g_config.getBool(ConfigManager::ALLOW_CHANGEOUTFIT))
-					parseSetOutfit(msg);
+				parseSetOutfit(msg);
 				break;
 
 			case 0xDC:
@@ -1296,8 +1296,12 @@ void ProtocolGame::parseRequestOutfit(NetworkMessage& msg)
 void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 {
 	Outfit_t newOutfit = player->currentOutfit;
-	newOutfit.lookType = msg.getU16();
-	if(g_config.getBool(ConfigManager::ALLOW_CHANGEOUTFIT_COLORS))
+	if(g_config.getBool(ConfigManager::ALLOW_CHANGEOUTFIT))
+		newOutfit.lookType = msg.getU16();
+	else
+		msg.SkipBytes(2);
+
+	if(g_config.getBool(ConfigManager::ALLOW_CHANGECOLORS))
 	{
 		newOutfit.lookHead = msg.getByte();
 		newOutfit.lookBody = msg.getByte();
@@ -2660,7 +2664,7 @@ void ProtocolGame::sendOutfitWindow()
 			return;
 
 		uint32_t count = std::min((size_t)OUTFITS_MAX_NUMBER, globalOutfits.size());
-		std::list<int32_t> tmpList;
+		std::list<uint32_t> tmpList;
 
 		OutfitListType::const_iterator git, it;
 		for(git = globalOutfits.begin(); git != globalOutfits.end(); ++git)
@@ -2684,7 +2688,7 @@ void ProtocolGame::sendOutfitWindow()
 		const OutfitListType& playerOutfits = player->getPlayerOutfits();
 		for(git = globalOutfits.begin(); git != globalOutfits.end() && count > 0; ++git)
 		{
-			std::list<int32_t>::const_iterator tit = tmpList.find((*git)->looktype);
+			std::list<uint32_t>::const_iterator tit = tmpList.find((*git)->looktype);
 			if(tit != tmpList.end())
 				continue;
 
