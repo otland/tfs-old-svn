@@ -14100,21 +14100,21 @@
 	</item>
 	<item id="5504" article="a" name="wooden pillar">
 	</item>
-	<item id="5505" article="a" name="torture machine">
+	<item id="5505" article="a" name="pulley">
 	</item>
-	<item id="5506" article="a" name="torture machine">
+	<item id="5506" article="a" name="pulley">
 	</item>
-	<item id="5507" article="a" name="torture machine">
+	<item id="5507" article="a" name="pulley">
 	</item>
-	<item id="5508" article="a" name="torture machine">
+	<item id="5508" article="a" name="pulley">
 	</item>
-	<item id="5509" article="a" name="torture machine">
+	<item id="5509" article="a" name="pulley">
 	</item>
-	<item id="5510" article="a" name="torture machine">
+	<item id="5510" article="a" name="pulley">
 	</item>
-	<item id="5511" article="a" name="torture machine">
+	<item id="5511" article="a" name="pulley">
 	</item>
-	<item id="5512" article="a" name="torture machine">
+	<item id="5512" article="a" name="pulley">
 	</item>
 	<item id="5513" article="a" name="distillery">
 		<attribute key="decayTo" value="5469"/>
@@ -14179,14 +14179,14 @@
 		<attribute key="corpseType" value="blood"/>
 		<attribute key="fluidSource" value="blood"/>
 	</item>
-	<item id="5527" article="a" name="dead enlightened of the cult">
+	<item id="5527" article="a" name="demon dust">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="5528"/>
 		<attribute key="duration" value="900"/>
 		<attribute key="corpseType" value="blood"/>
 		<attribute key="fluidSource" value="blood"/>
 	</item>
-	<item id="5528" article="a" name="dead enlightened of the cult">
+	<item id="5528" article="a" name="demon dust">
 		<attribute key="decayTo" value="0"/>
 		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
@@ -16122,7 +16122,7 @@
 		<attribute key="corpseType" value="blood"/>
 		<attribute key="fluidSource" value="blood"/>
 	</item>
-	<item id="6068" article="a" name="dead enlightened of the cult">
+	<item id="6068" article="a" name="demon dust">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="5527"/>
 		<attribute key="duration" value="10"/>
