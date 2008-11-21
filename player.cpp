@@ -3727,7 +3727,7 @@ void Player::genReservedStorageRange()
 	const OutfitList& globalOutfits = Outfits::getInstance()->getOutfitList(sex);
 	for(OutfitListType::const_iterator it = outfits.begin(); it != outfits.end(); ++it)
 	{
-		if(!globalOutfits.isInList(getID(), (*it)->looktype, (*it)->addons)
+		if(!globalOutfits.isInList(getID(), (*it)->looktype, (*it)->addons))
 		{
 			storageMap[baseKey] = int64_t((*it)->looktype << 16) | ((*it)->addons & 0xFF);
 
