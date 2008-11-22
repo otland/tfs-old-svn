@@ -19,13 +19,13 @@
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 
-#include <libxml/xmlmemory.h>
-#include <libxml/parser.h>
-
 #include "outfit.h"
 #include "player.h"
 #include "game.h"
 #include "tools.h"
+
+#include <libxml/xmlmemory.h>
+#include <libxml/parser.h>
 
 extern Game g_game;
 

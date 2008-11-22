@@ -542,28 +542,17 @@ int32_t Player::getDefense() const
 
 float Player::getAttackFactor() const
 {
-	switch(fightMode){
-		case FIGHTMODE_ATTACK:
-		{
-			return 1.0f;
-			break;
-		}
-
+	switch(fightMode)
+	{
 		case FIGHTMODE_BALANCED:
-		{
 			return 1.2f;
-			break;
-		}
 
 		case FIGHTMODE_DEFENSE:
-		{
 			return 2.0f;
-			break;
-		}
 
+		case FIGHTMODE_ATTACK:
 		default:
 			return 1.0f;
-			break;
 	}
 }
 
@@ -571,17 +560,8 @@ float Player::getDefenseFactor() const
 {
 	switch(fightMode)
 	{
-		case FIGHTMODE_ATTACK:
-		{
-			return 1.0f;
-			break;
-		}
-
 		case FIGHTMODE_BALANCED:
-		{
 			return 1.2f;
-			break;
-		}
 
 		case FIGHTMODE_DEFENSE:
 		{
@@ -592,12 +572,11 @@ float Player::getDefenseFactor() const
 			}
 
 			return 2.0f;
-			break;
 		}
 
+		case FIGHTMODE_ATTACK:
 		default:
 			return 1.0f;
-			break;
 	}
 }
 
