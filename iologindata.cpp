@@ -319,6 +319,7 @@ const PlayerGroup* IOLoginData::getPlayerGroup(uint32_t groupId)
 		db->freeResult(result);
 		return group;
 	}
+
 	return NULL;
 }
 
@@ -335,11 +336,16 @@ const PlayerGroup* IOLoginData::getPlayerGroupByAccount(uint32_t accId)
 		db->freeResult(result);
 		return getPlayerGroup(groupId);
 	}
+
 	return NULL;
 }
 
 bool IOLoginData::internalHasFlag(uint32_t groupId, PlayerFlags value)
 {
+	PlayerGroupMap::const_iterator it = playerGroupMap.find(groupId);
+	if(it != playerGroupMap.end())
+		return (0 != (it->second->m_flags & ((uint64_t)1 << value)));
+
 	Database* db = Database::getInstance();
 	DBResult* result;
 
@@ -355,6 +361,10 @@ bool IOLoginData::internalHasFlag(uint32_t groupId, PlayerFlags value)
 
 bool IOLoginData::internalHasCustomFlag(uint32_t groupId, PlayerCustomFlags value)
 {
+	PlayerGroupMap::const_iterator it = playerGroupMap.find(groupId);
+	if(it != playerGroupMap.end())
+		return (0 != (it->second->m_customflags & ((uint64_t)1 << value)));
+
 	Database* db = Database::getInstance();
 	DBResult* result;
 
@@ -726,7 +736,6 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 
 	const bool save = result->getDataInt("save");
 	db->freeResult(result);
-
 	DBTransaction trans(db);
 	if(!trans.begin())
 		return false;
@@ -1009,10 +1018,10 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 bool IOLoginData::updateOnlineStatus(uint32_t guid, bool login)
 {
 	Database* db = Database::getInstance();
-	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `online` FROM `players` WHERE `id` = " << guid;
+	DBQuery query;
+	query << "SELECT `online` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -1033,9 +1042,9 @@ bool IOLoginData::updateOnlineStatus(uint32_t guid, bool login)
 bool IOLoginData::hasFlag(std::string name, PlayerFlags value)
 {
 	Database* db = Database::getInstance();
-	DBQuery query;
 	DBResult* result;
 
+	DBQuery query;
 	query << "SELECT `group_id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -1048,9 +1057,9 @@ bool IOLoginData::hasFlag(std::string name, PlayerFlags value)
 bool IOLoginData::hasCustomFlag(std::string name, PlayerCustomFlags value)
 {
 	Database* db = Database::getInstance();
-	DBQuery query;
 	DBResult* result;
 
+	DBQuery query;
 	query << "SELECT `group_id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -1091,9 +1100,9 @@ bool IOLoginData::isPremium(uint32_t guid)
 bool IOLoginData::playerExists(uint32_t guid)
 {
 	Database* db = Database::getInstance();
-	DBQuery query;
 	DBResult* result;
 
+	DBQuery query;
 	query << "SELECT `id` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -1105,9 +1114,9 @@ bool IOLoginData::playerExists(uint32_t guid)
 bool IOLoginData::playerExists(std::string name)
 {
 	Database* db = Database::getInstance();
-	DBQuery query;
 	DBResult* result;
 
+	DBQuery query;
 	query << "SELECT `id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -1126,17 +1135,17 @@ bool IOLoginData::getNameByGuid(uint32_t guid, std::string& name)
 	}
 
 	Database* db = Database::getInstance();
-	DBQuery query;
 	DBResult* result;
 
+	DBQuery query;
 	query << "SELECT `name` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
 	name = result->getDataString("name");
+	db->freeResult(result);
 
 	nameCacheMap[guid] = name;
-	db->freeResult(result);
 	return true;
 }
 
@@ -1147,10 +1156,9 @@ bool IOLoginData::storeNameByGuid(uint32_t guid)
 		return true;
 
 	Database* db = Database::getInstance();
-
-	DBQuery query;
 	DBResult* result;
 
+	DBQuery query;
 	query << "SELECT `name` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -1171,9 +1179,9 @@ bool IOLoginData::getGuidByName(uint32_t& guid, std::string& name)
 	}
 
 	Database* db = Database::getInstance();
-	DBQuery query;
 	DBResult* result;
 
+	DBQuery query;
 	query << "SELECT `name`, `id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -1189,27 +1197,18 @@ bool IOLoginData::getGuidByName(uint32_t& guid, std::string& name)
 bool IOLoginData::getGuidByNameEx(uint32_t& guid, bool &specialVip, std::string& name)
 {
 	Database* db = Database::getInstance();
-	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `name`, `id`, `group_id`, `account_id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
+	DBQuery query;
+	query << "SELECT `id`, `name`, `group_id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	name = result->getDataString("name");
 	guid = result->getDataInt("id");
-	const PlayerGroup* accountGroup = getPlayerGroupByAccount(result->getDataInt("account_id"));
-	const PlayerGroup* playerGroup = getPlayerGroup(result->getDataInt("group_id"));
+	specialVip = internalHasFlag(result->getDataInt("group_id"), PlayerFlag_SpecialVIP);
+	name = result->getDataString("name");
+
 	db->freeResult(result);
-
-	uint64_t flags = 0;
-	if(playerGroup)
-		flags |= playerGroup->m_flags;
-
-	if(accountGroup)
-		flags |= accountGroup->m_flags;
-
-	specialVip = (0 != (flags & ((uint64_t)1 << PlayerFlag_SpecialVIP)));
 	return true;
 }
 
@@ -1338,9 +1337,9 @@ DeleteCharacter_t IOLoginData::deleteCharacter(uint32_t accountId, const std::st
 uint32_t IOLoginData::getLevel(uint32_t guid) const
 {
 	Database* db = Database::getInstance();
-	DBQuery query;
 	DBResult* result;
 
+	DBQuery query;
 	query << "SELECT `level` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return 0;
@@ -1353,9 +1352,9 @@ uint32_t IOLoginData::getLevel(uint32_t guid) const
 uint32_t IOLoginData::getLastIP(uint32_t guid) const
 {
 	Database* db = Database::getInstance();
-	DBQuery query;
 	DBResult* result;
 
+	DBQuery query;
 	query << "SELECT `lastip` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return 0;
@@ -1368,9 +1367,9 @@ uint32_t IOLoginData::getLastIP(uint32_t guid) const
 uint32_t IOLoginData::getLastIPByName(std::string name)
 {
 	Database* db = Database::getInstance();
-	DBQuery query;
 	DBResult* result;
 
+	DBQuery query;
 	query << "SELECT `lastip` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return 0;
@@ -1383,14 +1382,12 @@ uint32_t IOLoginData::getLastIPByName(std::string name)
 bool IOLoginData::updatePremiumDays()
 {
 	Database* db = Database::getInstance();
-
 	DBTransaction trans(db);
 	if(!trans.begin())
 		return false;
 
 	DBResult* result;
 	DBQuery query;
-
 	query << "SELECT `id` FROM `accounts` WHERE `lastday` <= " << time(NULL) - 86400;
 	if((result = db->storeQuery(query.str())))
 	{
@@ -1416,6 +1413,6 @@ bool IOLoginData::resetGuildInformation(uint32_t guid)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `players` SET `rank_id` = 0, `guildnick` = '' WHERE `id` = " << guid;
+	query << "UPDATE `players` SET `rank_id` = 0, `guildnick` = '' WHERE `id` = " << guid << " AND `deleted` = 0;";
 	return db->executeQuery(query.str());
 }
