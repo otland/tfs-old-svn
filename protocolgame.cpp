@@ -1295,7 +1295,7 @@ void ProtocolGame::parseRequestOutfit(NetworkMessage& msg)
 
 void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 {
-	Outfit_t newOutfit = player->currentOutfit;
+	Outfit_t newOutfit = player->defaultOutfit;
 	if(g_config.getBool(ConfigManager::ALLOW_CHANGEOUTFIT))
 		newOutfit.lookType = msg.GetU16();
 	else
