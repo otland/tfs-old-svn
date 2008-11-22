@@ -290,6 +290,54 @@ void IOLoginData::removePremium(Account account)
 		std::cout << "> ERROR: Failed to save account: " << account.name << "!" << std::endl;
 }
 
+const PlayerGroup* IOLoginData::getPlayerGroup(uint32_t groupId)
+{
+	PlayerGroupMap::const_iterator it = playerGroupMap.find(groupId);
+	if(it != playerGroupMap.end())
+		return it->second;
+	else
+	{
+		Database* db = Database::getInstance();
+		DBResult* result;
+
+		DBQuery query;
+		query << "SELECT `name`, `flags`, `customflags`, `access`, `violationaccess`, `maxdepotitems`, `maxviplist`, `outfit` FROM `groups` WHERE `id` = " << groupId;
+		if(!(result = db->storeQuery(query.str())))
+			return NULL;
+
+		PlayerGroup* group = new PlayerGroup;
+		group->m_name = result->getDataString("name");
+		group->m_flags = result->getDataLong("flags");
+		group->m_customflags = result->getDataLong("customflags");
+		group->m_access = result->getDataInt("access");
+		group->m_violationaccess = result->getDataInt("violationaccess");
+		group->m_maxdepotitems = result->getDataInt("maxdepotitems");
+		group->m_maxviplist = result->getDataInt("maxviplist");
+		group->m_outfit = result->getDataInt("outfit");
+
+		playerGroupMap[groupId] = group;
+		db->freeResult(result);
+		return group;
+	}
+	return NULL;
+}
+
+const PlayerGroup* IOLoginData::getPlayerGroupByAccount(uint32_t accId)
+{
+	Database* db = Database::getInstance();
+	DBResult* result;
+
+	DBQuery query;
+	query << "SELECT `group_id` FROM `accounts` WHERE `id` = " << accId;
+	if((result = db->storeQuery(query.str())))
+	{
+		const uint32_t groupId = result->getDataInt("group_id");
+		db->freeResult(result);
+		return getPlayerGroup(groupId);
+	}
+	return NULL;
+}
+
 bool IOLoginData::internalHasFlag(uint32_t groupId, PlayerFlags value)
 {
 	Database* db = Database::getInstance();
@@ -326,7 +374,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `redskulltime`, `redskull`, `guildnick`, `rank_id`, `town_id`, `balance`, `stamina`, `loss_experience`, `loss_mana`, `loss_skills`, `loss_items`, `marriage`, `promotion` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name);
+	query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, `health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, `lastlogout`, `lastip`, `conditions`, `redskulltime`, `redskull`, `guildnick`, `rank_id`, `town_id`, `balance`, `stamina`, `loss_experience`, `loss_mana`, `loss_skills`, `loss_items`, `marriage`, `promotion` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -982,61 +1030,13 @@ bool IOLoginData::updateOnlineStatus(uint32_t guid, bool login)
 	return db->executeQuery(query.str());
 }
 
-const PlayerGroup* IOLoginData::getPlayerGroup(uint32_t groupId)
-{
-	PlayerGroupMap::const_iterator it = playerGroupMap.find(groupId);
-	if(it != playerGroupMap.end())
-		return it->second;
-	else
-	{
-		Database* db = Database::getInstance();
-		DBResult* result;
-
-		DBQuery query;
-		query << "SELECT `name`, `flags`, `customflags`, `access`, `violationaccess`, `maxdepotitems`, `maxviplist`, `outfit` FROM `groups` WHERE `id` = " << groupId;
-		if(!(result = db->storeQuery(query.str())))
-			return NULL;
-
-		PlayerGroup* group = new PlayerGroup;
-		group->m_name = result->getDataString("name");
-		group->m_flags = result->getDataLong("flags");
-		group->m_customflags = result->getDataLong("customflags");
-		group->m_access = result->getDataInt("access");
-		group->m_violationaccess = result->getDataInt("violationaccess");
-		group->m_maxdepotitems = result->getDataInt("maxdepotitems");
-		group->m_maxviplist = result->getDataInt("maxviplist");
-		group->m_outfit = result->getDataInt("outfit");
-
-		playerGroupMap[groupId] = group;
-		db->freeResult(result);
-		return group;
-	}
-	return NULL;
-}
-
-const PlayerGroup* IOLoginData::getPlayerGroupByAccount(uint32_t accId)
-{
-	Database* db = Database::getInstance();
-	DBResult* result;
-
-	DBQuery query;
-	query << "SELECT `group_id` FROM `accounts` WHERE `id` = " << accId;
-	if((result = db->storeQuery(query.str())))
-	{
-		const uint32_t groupId = result->getDataInt("group_id");
-		db->freeResult(result);
-		return getPlayerGroup(groupId);
-	}
-	return NULL;
-}
-
 bool IOLoginData::hasFlag(std::string name, PlayerFlags value)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `group_id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name);
+	query << "SELECT `group_id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -1051,7 +1051,7 @@ bool IOLoginData::hasCustomFlag(std::string name, PlayerCustomFlags value)
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `group_id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name);
+	query << "SELECT `group_id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -1069,7 +1069,7 @@ bool IOLoginData::isPremium(uint32_t guid)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `account_id`, `group_id` FROM `players` WHERE `id` = " << guid;
+	query << "SELECT `account_id`, `group_id` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -1094,7 +1094,7 @@ bool IOLoginData::playerExists(uint32_t guid)
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `id` FROM `players` WHERE `id` = " << guid;
+	query << "SELECT `id` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -1108,7 +1108,7 @@ bool IOLoginData::playerExists(std::string name)
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name);
+	query << "SELECT `id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -1129,7 +1129,7 @@ bool IOLoginData::getNameByGuid(uint32_t guid, std::string& name)
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `name` FROM `players` WHERE `id` = " << guid;
+	query << "SELECT `name` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -1151,7 +1151,7 @@ bool IOLoginData::storeNameByGuid(uint32_t guid)
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `name` FROM `players` WHERE `id` = " << guid;
+	query << "SELECT `name` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -1174,7 +1174,7 @@ bool IOLoginData::getGuidByName(uint32_t& guid, std::string& name)
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `name`, `id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name);
+	query << "SELECT `name`, `id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -1192,7 +1192,7 @@ bool IOLoginData::getGuidByNameEx(uint32_t& guid, bool &specialVip, std::string&
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `name`, `id`, `group_id`, `account_id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name);
+	query << "SELECT `name`, `id`, `group_id`, `account_id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -1219,7 +1219,7 @@ uint32_t IOLoginData::getAccountIdByName(std::string name)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `account_id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name);
+	query << "SELECT `account_id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return 0;
 
@@ -1341,7 +1341,7 @@ uint32_t IOLoginData::getLevel(uint32_t guid) const
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `level` FROM `players` WHERE `id` = " << guid;
+	query << "SELECT `level` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return 0;
 
@@ -1356,7 +1356,7 @@ uint32_t IOLoginData::getLastIP(uint32_t guid) const
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `lastip` FROM `players` WHERE `id` = " << guid;
+	query << "SELECT `lastip` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return 0;
 
@@ -1371,7 +1371,7 @@ uint32_t IOLoginData::getLastIPByName(std::string name)
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `lastip` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name);
+	query << "SELECT `lastip` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return 0;
 
