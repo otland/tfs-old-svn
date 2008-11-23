@@ -3717,9 +3717,9 @@ void Game::addCreatureCheck(Creature* creature)
 	if(creature->checkCreatureVectorIndex != 0)
 		return; //Already in a vector
 
-	uint32_t tmp = checkCreatureLastIndex % EVENT_CREATURECOUNT;
+	uint32_t tmp = (checkCreatureLastIndex + 1) % EVENT_CREATURECOUNT;
 	checkCreatureVectors[tmp].push_back(creature);
-	creature->checkCreatureVectorIndex = tmp + 1;
+	creature->checkCreatureVectorIndex = (tmp + 1);
 }
 
 void Game::removeCreatureCheck(Creature* creature)
@@ -3741,12 +3741,11 @@ void Game::removeCreatureCheck(Creature* creature)
 void Game::checkCreatures()
 {
 	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_CHECK_CREATURE_INTERVAL, boost::bind(&Game::checkCreatures, this)));
+	checkCreatureLastIndex++;
 	if(checkCreatureLastIndex == EVENT_CREATURECOUNT)
 		checkCreatureLastIndex = 0;
 
 	CreatureVector& checkCreatureVector = checkCreatureVectors[checkCreatureLastIndex];
-	checkCreatureLastIndex++;
-
 	Creature* creature;
 	for(uint32_t i = 0; i < checkCreatureVector.size(); ++i)
 	{

@@ -633,7 +633,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 				{
 					if(item->isPickupable())
 					{
-						if(iitem->getTrashHolder())
+						if(iiType.allowPickupable)
 							continue;
 
 						if(!iiType.hasHeight || iiType.pickupable || iiType.isBed())

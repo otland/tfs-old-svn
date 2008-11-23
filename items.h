@@ -238,6 +238,7 @@ class ItemType
 		bool blockPickupable;
 		bool blockProjectile;
 		bool blockPathFind;
+		bool allowPickupable;
 
 		uint16_t transformEquipTo;
 		uint16_t transformDeEquipTo;

@@ -60,6 +60,7 @@ ItemType::ItemType()
 	blockSolid = false;
 	blockProjectile = false;
 	blockPathFind = false;
+	allowPickupable = false;
 
 	wieldInfo = 0;
 	minReqLevel = 0;
@@ -528,6 +529,11 @@ bool Items::loadFromXml()
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.blockProjectile = (intValue == 1);
+							}
+							else if(tmpStrValue == "allowpickupable")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+									it.allowPickupable = (intValue == 1);
 							}
 							else if(tmpStrValue == "floorchange")
 							{
