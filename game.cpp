@@ -3717,8 +3717,9 @@ void Game::addCreatureCheck(Creature* creature)
 	if(creature->checkCreatureVectorIndex != 0)
 		return; //Already in a vector
 
-	checkCreatureVectors[checkCreatureLastIndex % EVENT_CREATURECOUNT].push_back(creature);
-	creature->checkCreatureVectorIndex = checkCreatureLastIndex;
+	uint32_t tmp = checkCreatureLastIndex % EVENT_CREATURECOUNT;
+	checkCreatureVectors[tmp].push_back(creature);
+	creature->checkCreatureVectorIndex = tmp + 1;
 }
 
 void Game::removeCreatureCheck(Creature* creature)
@@ -3726,27 +3727,24 @@ void Game::removeCreatureCheck(Creature* creature)
 	if(creature->checkCreatureVectorIndex == 0)
 		return;
 
-	std::vector<Creature*>& checkCreatureVector = checkCreatureVectors[creature->checkCreatureVectorIndex - 1];
-
-	std::vector<Creature*>::iterator cit = std::find(checkCreatureVector.begin(),
-	checkCreatureVector.end(), creature);
+	CreatureVector& checkCreatureVector = checkCreatureVectors[creature->checkCreatureVectorIndex - 1];
+	CreatureVector::iterator cit = std::find(checkCreatureVector.begin(), checkCreatureVector.end(), creature);
 	if(cit != checkCreatureVector.end())
 	{
 		std::swap(*cit, checkCreatureVector.back());
 		checkCreatureVector.pop_back();
 	}
+
 	creature->checkCreatureVectorIndex = 0;
 }
 
 void Game::checkCreatures()
 {
-	Scheduler::getScheduler().addEvent(createSchedulerTask(
-		EVENT_CHECK_CREATURE_INTERVAL, boost::bind(&Game::checkCreatures, this)));
-
+	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_CHECK_CREATURE_INTERVAL, boost::bind(&Game::checkCreatures, this)));
 	if(checkCreatureLastIndex == EVENT_CREATURECOUNT)
 		checkCreatureLastIndex = 0;
 
-	std::vector<Creature*>& checkCreatureVector = checkCreatureVectors[checkCreatureLastIndex];
+	CreatureVector& checkCreatureVector = checkCreatureVectors[checkCreatureLastIndex];
 	checkCreatureLastIndex++;
 
 	Creature* creature;
@@ -3763,6 +3761,7 @@ void Game::checkCreatures()
 		else
 			creature->onDeath();
 	}
+
 	cleanup();
 }
 
