@@ -311,17 +311,17 @@ bool Chat::addUserToChannel(Player* player, uint16_t channelId)
 bool Chat::removeUserFromChannel(Player* player, uint16_t channelId)
 {
 	ChatChannel *channel = getChannel(player, channelId);
-	if(!channel || !player)
+	if(!channel)
 		return false;
 
 	if(channel->removeUser(player))
 	{
 		if(channel->getOwner() == player->getGUID())
 			deleteChannel(player, channelId);
+
 		return true;
 	}
-	else
-		return false;
+	return false;
 }
 
 void Chat::removeUserFromAllChannels(Player* player)
