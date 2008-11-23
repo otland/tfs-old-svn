@@ -4,7 +4,7 @@ local specialQuests = {
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	local storage = item.uid
-	for k,v in ipairs(specialQuests) do
+	for k,v in pairs(specialQuests) do
 		if(item.actionid == k) then
 			storage = v
 		end
@@ -29,7 +29,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 		size = table.maxn(items)
 		if(size == 1) then
-			reward = getThing(doCreateItemEx(items[1].itemid, items[1].type))
+			reward = doCopyItem(item, TRUE)
 		end
 
 		if(reward ~= 0) then
