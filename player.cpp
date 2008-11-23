@@ -597,13 +597,12 @@ void Player::sendIcons() const
 
 void Player::updateInventoryWeigth()
 {
+	inventoryWeight = 0.00;
 	if(!hasFlag(PlayerFlag_HasInfiniteCapacity))
 	{
-		inventoryWeight = 0.00;
 		for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 		{
-			Item* item = getInventoryItem((slots_t)i);
-			if(item)
+			if(Item* item = getInventoryItem((slots_t)i))
 				inventoryWeight += item->getWeight();
 		}
 	}
@@ -3109,12 +3108,9 @@ void Player::postRemoveNotification(Thing* thing, int32_t index, bool isComplete
 	{
 		if(const Container* container = item->getContainer())
 		{
-			if(!container->isRemoved() &&
-					(container->getTopParent() == this || (dynamic_cast<const Container*>(container->getTopParent()))) &&
-					Position::areInRange<1,1,0>(getPosition(), container->getPosition()))
-			{
+			if(!container->isRemoved() && (container->getTopParent() == this || (dynamic_cast<const Container*>(container->getTopParent())))
+				&& Position::areInRange<1,1,0>(getPosition(), container->getPosition()))
 				onSendContainer(container);
-			}
 			else
 				autoCloseContainers(container);
 		}
@@ -3132,7 +3128,7 @@ void Player::postUpdateGoods(uint32_t itemId)
 		return;
 	}
 
-	uint32_t amount = 0;
+	bool send = false;
 	for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
 	{
 		if((*it).sellPrice > 0 && (*it).itemId == itemId)
@@ -3143,11 +3139,12 @@ void Player::postUpdateGoods(uint32_t itemId)
 			else
 				goodsMap.erase((*it).itemId);
 
-			amount++;
+			if(!send)
+				send = true;
 		}
 	}
 
-	if(amount > 0)
+	if(send)
 		sendGoods();
 }
 
