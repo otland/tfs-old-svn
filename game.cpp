@@ -3717,18 +3717,8 @@ void Game::addCreatureCheck(Creature* creature)
 	if(creature->checkCreatureVectorIndex != 0)
 		return; //Already in a vector
 
-	size_t min = std::numeric_limits<size_t>::max();
-	size_t insertindex = 0;
-	for(size_t i = 0; i < EVENT_CREATURECOUNT; ++i)
-	{
-		if(checkCreatureVectors[i].size() < min)
-		{
-			insertindex = i;
-			min = checkCreatureVectors[i].size();
-		}
-	}
-	checkCreatureVectors[insertindex].push_back(creature);
-	creature->checkCreatureVectorIndex = insertindex + 1;
+	checkCreatureVectors[checkCreatureLastIndex % EVENT_CREATURECOUNT].push_back(creature);
+	creature->checkCreatureVectorIndex = checkCreatureLastIndex;
 }
 
 void Game::removeCreatureCheck(Creature* creature)
