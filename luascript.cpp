@@ -1760,6 +1760,9 @@ void LuaScriptInterface::registerFunctions()
 	//getItemDescriptions(uid)
 	lua_register(m_luaState, "getItemDescriptions", LuaScriptInterface::luaGetItemDescriptions);
 
+	//getItemWeight(uid, <optional: default: 1> precise)
+	lua_register(m_luaState, "getItemWeight", LuaScriptInterface::luaGetItemWeight);
+
 	//getItemName(uid)
 	lua_register(m_luaState, "getItemName", LuaScriptInterface::luaGetItemName);
 
@@ -8780,6 +8783,36 @@ int32_t LuaScriptInterface::luaGetItemDescriptions(lua_State* L)
 	setField(L, "name", item->getName().c_str());
 	setField(L, "article", item->getArticle().c_str());
 	setField(L, "plural", item->getPluralName().c_str());
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetItemWeight(lua_State* L)
+{
+	//getItemWeight(itemid, <optional: default: 1> precise)
+	bool precise = true;
+	if(lua_gettop(L) > 2)
+		precise = popNumber(L) == LUA_TRUE;
+
+	uint32_t uid = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	Item* item = env->getItemByUID(uid);
+	if(!item)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+		return 1;
+	}
+
+	double weight = item->getWeight();
+	if(precise)
+	{
+		std::stringstream ws;
+		ws << std::fixed << std::setprecision(2) << weight;
+		weight = atof(ws.str().c_str());
+	}
+
+	lua_pushnumber(L, weight);
 	return 1;
 }
 

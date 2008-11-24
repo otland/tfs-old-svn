@@ -668,6 +668,7 @@ class LuaScriptInterface
 		static int32_t luaGetItemNameById(lua_State* L);
 		static int32_t luaGetItemPluralNameById(lua_State* L);
 		static int32_t luaGetItemArticleById(lua_State* L);
+		static int32_t luaGetItemWeight(lua_State* L);
 		static int32_t luaGetItemWeightById(lua_State* L);
 		static int32_t luaGetItemIdByName(lua_State* L);
 		static int32_t luaIsSightClear(lua_State* L);

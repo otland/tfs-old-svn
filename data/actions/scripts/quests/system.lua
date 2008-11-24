@@ -75,12 +75,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 
 		if(doPlayerAddItemEx(cid, reward.uid, FALSE) ~= RETURNVALUE_NOERROR) then
-			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You don't have enough capacity or free space in backpack for reward.")
-			return FALSE
+			result = "You have found a reward weighing " .. getItemWeight(reward.uid) .. " oz. It is too heavy or you have not enough space."
+		else
+			result = "You have found " .. result
+			setPlayerStorageValue(cid, storage, 1)
 		end
-
-		result = "You have found " .. result
-		setPlayerStorageValue(cid, storage, 1)
 	end
 
 	doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, result)
