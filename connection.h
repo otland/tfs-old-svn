@@ -42,10 +42,10 @@ class Connection;
 #define PRINT_ASIO_ERROR(desc)
 #endif
 
-struct LoginBlock
+struct ConnectionBlock
 {
-	uint32_t lastLoginTime;
-	uint32_t numberOfLogins;
+	uint32_t lastLogin;
+	uint32_t loginsAmount;
 };
 
 class ConnectionManager
@@ -64,21 +64,18 @@ class ConnectionManager
 
 		Connection* createConnection(boost::asio::io_service& io_service);
 		void releaseConnection(Connection* connection);
-		void closeAll();
 
-		bool isDisabled(uint32_t clientip);
-		bool acceptConnection(uint32_t clientip);
-		void addLoginAttempt(uint32_t clientip, bool isSuccess);
+		bool isDisabled(uint32_t clientIp);
+		void addAttempt(uint32_t clientIp, bool success);
+
+		void closeAll();
 
 	protected:
 		ConnectionManager();
+		uint32_t loginTimeout, maxLoginTries, retryTimeout;
 
-		typedef std::map<uint32_t, LoginBlock > IpLoginMap;
-		IpLoginMap ipLoginMap;
-
-		uint32_t loginTimeout;
-		uint32_t maxLoginTries;
-		uint32_t retryTimeout;
+		typedef std::map<uint32_t, ConnectionBlock > IpConnectionMap;
+		IpConnectionMap ipConnectionMap;
 
 		std::list<Connection*> m_connections;
 		OTSYS_THREAD_LOCKVAR m_connectionManagerLock;
@@ -102,18 +99,17 @@ class Connection : boost::noncopyable
 		Connection(boost::asio::io_service& io_service) : m_socket(io_service)
 		{
 			m_protocol = NULL;
-			m_pendingWrite = 0;
-			m_pendingRead = 0;
+			m_pendingWrite = m_pendingRead = 0;
 			m_closeState = CLOSE_STATE_NONE;
 			m_socketClosed = false;
 			OTSYS_THREAD_LOCKVARINIT(m_connectionLock);
-			m_writeError = false;
-			m_readError = false;
+			m_writeError = m_readError = false;
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			connectionCount++;
 #endif
 		}
+
 		friend class ConnectionManager;
 
 	public:
@@ -127,13 +123,12 @@ class Connection : boost::noncopyable
 #endif
 		}
 
-		boost::asio::ip::tcp::socket& getHandle() { return m_socket; }
+		boost::asio::ip::tcp::socket& getHandle() {return m_socket;}
 
 		void closeConnection();
 		void acceptConnection();
 
 		bool send(OutputMessage* msg);
-
 		uint32_t getIP() const;
 
 	private:
@@ -145,8 +140,8 @@ class Connection : boost::noncopyable
 		void handleReadError(const boost::system::error_code& error);
 		void handleWriteError(const boost::system::error_code& error);
 
-		void closeConnectionTask();
 		bool closingConnection();
+		void closeConnectionTask();
 		void deleteConnectionTask();
 
 		void internalSend(OutputMessage* msg);
@@ -164,7 +159,6 @@ class Connection : boost::noncopyable
 		uint32_t m_closeState;
 
 		OTSYS_THREAD_LOCKVAR m_connectionLock;
-
 		Protocol* m_protocol;
 };
 

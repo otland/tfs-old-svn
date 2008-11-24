@@ -45,8 +45,11 @@ typedef std::vector<Ban> BansVec;
 
 class IOBan
 {
+	protected:
+		IOBan() {}
+
 	public:
-		virtual ~IOBan(){}
+		virtual ~IOBan() {}
 		static IOBan* getInstance()
 		{
 			static IOBan instance;
@@ -73,6 +76,9 @@ class IOBan
 		bool removeDeletion(uint32_t account);
 		void removeNotations(uint32_t account);
 
+		bool getData(uint32_t account, Ban& ban);
+		std::vector<Ban> getList(BanType_t type);
+
 		//id is account or guid, for guid needed player = true
 		uint32_t getAction(uint32_t id, bool player = false);
 		uint32_t getReason(uint32_t id, bool player = false);
@@ -82,17 +88,7 @@ class IOBan
 		uint32_t getAdminGUID(uint32_t id, bool player = false);
 
 		uint32_t getNotationsCount(uint32_t account);
-		bool getData(uint32_t account, Ban& ban);
-		std::vector<Ban> getList(BanType_t type);
 		bool clearTemporials();
-
-	protected:
-		IOBan()
-		{
-			OTSYS_THREAD_LOCKVARINIT(banLock);
-		}
-
-		OTSYS_THREAD_LOCKVAR banLock;
 };
 
 #endif

@@ -43,7 +43,7 @@ ConnectionManager::ConnectionManager()
 {
 	OTSYS_THREAD_LOCKVARINIT(m_connectionManagerLock);
 
-	maxLoginTries = (uint32_t)g_config.getNumber(ConfigManager::LOGIN_TRIES);
+	maxLoginTries = g_config.getNumber(ConfigManager::LOGIN_TRIES);
 	retryTimeout = (uint32_t)g_config.getNumber(ConfigManager::RETRY_TIMEOUT) / 1000;
 	loginTimeout = (uint32_t)g_config.getNumber(ConfigManager::LOGIN_TIMEOUT) / 1000;
 }
@@ -51,9 +51,10 @@ ConnectionManager::ConnectionManager()
 Connection* ConnectionManager::createConnection(boost::asio::io_service& io_service)
 {
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Create new Connection" << std::endl;
+	std::cout << "Creating new connection" << std::endl;
 	#endif
 	OTSYS_THREAD_LOCK_CLASS(m_connectionManagerLock, "");
+
 	Connection* connection = new Connection(io_service);
 	m_connections.push_back(connection);
 	return connection;
@@ -65,13 +66,57 @@ void ConnectionManager::releaseConnection(Connection* connection)
 	std::cout << "Releasing connection" << std::endl;
 	#endif
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
-	std::list<Connection*>::iterator it =
-		std::find(m_connections.begin(), m_connections.end(), connection);
 
+	std::list<Connection*>::iterator it = std::find(m_connections.begin(), m_connections.end(), connection);
 	if(it != m_connections.end())
 		m_connections.erase(it);
 	else
-		std::cout << "Error: [ConnectionManager::releaseConnection] Connection not found" << std::endl;
+		std::cout << "[Error - ConnectionManager::releaseConnection] Connection not found" << std::endl;
+}
+
+bool ConnectionManager::isDisabled(uint32_t clientIp)
+{
+	OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
+	if(maxLoginTries == 0 || clientIp == 0)
+		return false;
+
+	IpConnectionMap::const_iterator it = ipConnectionMap.find(clientIp);
+	if(it != ipConnectionMap.end())
+	{
+		if((it->second.loginsAmount >= maxLoginTries) && (time(NULL) < it->second.lastLogin + loginTimeout))
+			return true;
+	}
+
+	return false;
+}
+
+void ConnectionManager::addAttempt(uint32_t clientIp, bool success)
+{
+	OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
+	if(clientIp == 0)
+		return;
+
+	uint32_t currentTime = time(NULL);
+	IpConnectionMap::iterator it = ipConnectionMap.find(clientIp);
+	if(it == ipConnectionMap.end())
+	{
+		ConnectionBlock tmp;
+		tmp.lastLogin = 0;
+		tmp.loginsAmount = 0;
+
+		ipConnectionMap[clientIp] = tmp;
+		it = ipConnectionMap.find(clientIp);
+	}
+
+	if(it->second.loginsAmount >= maxLoginTries)
+		it->second.loginsAmount = 0;
+
+	if(!success || (currentTime < it->second.lastLogin + retryTimeout))
+		it->second.loginsAmount++;
+	else
+		it->second.loginsAmount = 0;
+
+	it->second.lastLogin = currentTime;
 }
 
 void ConnectionManager::closeAll()
@@ -80,6 +125,7 @@ void ConnectionManager::closeAll()
 	std::cout << "Closing all connections" << std::endl;
 	#endif
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
+
 	std::list<Connection*>::iterator it = m_connections.begin();
 	while(it != m_connections.end())
 	{
@@ -88,55 +134,8 @@ void ConnectionManager::closeAll()
 		(*it)->m_socket.close(error);
 		++it;
 	}
+
 	m_connections.clear();
-}
-
-bool ConnectionManager::isDisabled(uint32_t clientip)
-{
-	if(maxLoginTries == 0)
-		return false;
-
-	if(clientip != 0)
-	{
-		uint32_t currentTime = time(NULL);
-		IpLoginMap::const_iterator it = ipLoginMap.find(clientip);
-		if(it != ipLoginMap.end())
-		{
-			if((it->second.numberOfLogins >= maxLoginTries) && (currentTime < it->second.lastLoginTime + loginTimeout))
-				return true;
-		}
-	}
-
-	return false;
-}
-
-void ConnectionManager::addLoginAttempt(uint32_t clientip, bool isSuccess)
-{
-	if(clientip != 0)
-	{
-		uint32_t currentTime = time(NULL);
-
-		IpLoginMap::iterator it = ipLoginMap.find(clientip);
-		if(it == ipLoginMap.end())
-		{
-			LoginBlock lb;
-			lb.lastLoginTime = 0;
-			lb.numberOfLogins = 0;
-
-			ipLoginMap[clientip] = lb;
-			it = ipLoginMap.find(clientip);
-		}
-
-		if(it->second.numberOfLogins >= maxLoginTries)
-			it->second.numberOfLogins = 0;
-
-		if(!isSuccess || (currentTime < it->second.lastLoginTime + retryTimeout))
-			++it->second.numberOfLogins;
-		else
-			it->second.numberOfLogins = 0;
-
-		it->second.lastLoginTime = currentTime;
-	}
 }
 
 //*****************
@@ -152,9 +151,7 @@ void Connection::closeConnection()
 		return;
 
 	m_closeState = CLOSE_STATE_REQUESTED;
-
-	Dispatcher::getDispatcher().addTask(
-		createTask(boost::bind(&Connection::closeConnectionTask, this)));
+	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Connection::closeConnectionTask, this)));
 }
 
 void Connection::closeConnectionTask()
@@ -173,7 +170,6 @@ void Connection::closeConnectionTask()
 	}
 
 	m_closeState = CLOSE_STATE_CLOSING;
-
 	if(m_protocol)
 	{
 		Dispatcher::getDispatcher().addTask(
@@ -284,8 +280,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 
 		// Wait to the next packet
 		m_pendingRead++;
-		boost::asio::async_read(m_socket,
-			boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),
+		boost::asio::async_read(m_socket, boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),
 			boost::bind(&Connection::parseHeader, this, boost::asio::placeholders::error));
 	}
 	else
@@ -299,27 +294,33 @@ void Connection::handleReadError(const boost::system::error_code& error)
 	#ifdef __DEBUG_NET_DETAIL__
 	PRINT_ASIO_ERROR("Reading - detail");
 	#endif
-	if(error == boost::asio::error::operation_aborted)
+	switch(error)
 	{
-		//Operation aborted because connection will be closed
-		//Do NOT call closeConnection() from here
+		case boost::asio::error::operation_aborted:
+		{
+			//Operation aborted because connection will be closed
+			//Do NOT call closeConnection() from here
+			break;
+		}
+
+		case boost::asio::error::connection_reset:
+		case boost::asio::error::connection_aborted:
+		case boost::asio::error::eof:
+		{
+			//Connection closed remotely or nothing more to read
+			closeConnection();
+			break;
+		}
+
+
+		default:
+		{
+			PRINT_ASIO_ERROR("Reading");
+			closeConnection();
+			break;
+		}
 	}
-	else if(error == boost::asio::error::eof)
-	{
-		//No more to read
-		closeConnection();
-	}
-	else if(error == boost::asio::error::connection_reset ||
-			error == boost::asio::error::connection_aborted)
-	{
-		//Connection closed remotely
-		closeConnection();
-	}
-	else
-	{
-		PRINT_ASIO_ERROR("Reading");
-		closeConnection();
-	}
+
 	m_readError = true;
 }
 
@@ -335,8 +336,8 @@ bool Connection::send(OutputMessage* msg)
 		OTSYS_THREAD_UNLOCK(m_connectionLock, "");
 		return false;
 	}
-	msg->getProtocol()->onSendMessage(msg);
 
+	msg->getProtocol()->onSendMessage(msg);
 	if(m_pendingWrite == 0)
 	{
 		#ifdef __DEBUG_NET_DETAIL__
@@ -357,6 +358,7 @@ bool Connection::send(OutputMessage* msg)
 			closeConnection();
 		}
 	}
+
 	OTSYS_THREAD_UNLOCK(m_connectionLock, "");
 	return true;
 }
@@ -364,8 +366,7 @@ bool Connection::send(OutputMessage* msg)
 void Connection::internalSend(OutputMessage* msg)
 {
 	m_pendingWrite++;
-	boost::asio::async_write(m_socket,
-		boost::asio::buffer(msg->getOutputBuffer(), msg->getMessageLength()),
+	boost::asio::async_write(m_socket, boost::asio::buffer(msg->getOutputBuffer(), msg->getMessageLength()),
 		boost::bind(&Connection::onWriteOperation, this, msg, boost::asio::placeholders::error));
 }
 
@@ -376,11 +377,9 @@ uint32_t Connection::getIP() const
 	const boost::asio::ip::tcp::endpoint endpoint = m_socket.remote_endpoint(error);
 	if(!error)
 		return htonl(endpoint.address().to_v4().to_ulong());
-	else
-	{
-		PRINT_ASIO_ERROR("Getting remote ip");
-		return 0;
-	}
+
+	PRINT_ASIO_ERROR("Getting remote ip");
+	return 0;
 }
 
 void Connection::onWriteOperation(OutputMessage* msg, const boost::system::error_code& error)
@@ -390,9 +389,7 @@ void Connection::onWriteOperation(OutputMessage* msg, const boost::system::error
 	#endif
 
 	OutputMessagePool::getInstance()->releaseMessage(msg, true);
-
 	OTSYS_THREAD_LOCK(m_connectionLock, "");
-
 	if(!error)
 	{
 		if(m_pendingWrite > 0)
@@ -437,27 +434,34 @@ void Connection::handleWriteError(const boost::system::error_code& error)
 	#ifdef __DEBUG_NET_DETAIL__
 	PRINT_ASIO_ERROR("Writing - detail");
 	#endif
-	if(error == boost::asio::error::operation_aborted)
+
+	switch(error)
 	{
-		//Operation aborted because connection will be closed
-		//Do NOT call closeConnection() from here
+		case boost::asio::error::operation_aborted:
+		{
+			//Operation aborted because connection will be closed
+			//Do NOT call closeConnection() from here
+			break;
+		}
+
+		case boost::asio::error::connection_reset:
+		case boost::asio::error::connection_aborted:
+		case boost::asio::error::eof:
+		{
+			//Connection closed remotely or nothing more to read
+			closeConnection();
+			break;
+		}
+
+
+		default:
+		{
+			PRINT_ASIO_ERROR("Writting");
+			closeConnection();
+			break;
+		}
 	}
-	else if(error == boost::asio::error::eof)
-	{
-		//No more to read
-		closeConnection();
-	}
-	else if(error == boost::asio::error::connection_reset ||
-			error == boost::asio::error::connection_aborted)
-	{
-		//Connection closed remotely
-		closeConnection();
-	}
-	else
-	{
-		PRINT_ASIO_ERROR("Writting");
-		closeConnection();
-	}
+
 	m_writeError = true;
 }
 
@@ -475,17 +479,12 @@ bool Connection::closingConnection()
 			#ifdef __DEBUG_NET_DETAIL__
 			std::cout << "Closing socket" << std::endl;
 			#endif
+
 			boost::system::error_code error;
 			m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
-			if(error)
-			{
-				if(error == boost::asio::error::not_connected)
-				{
-					//Transport endpoint is not connected.
-				}
-				else
-					PRINT_ASIO_ERROR("Shutdown");
-			}
+			if(error && error != boost::asio::error::not_connected)
+				PRINT_ASIO_ERROR("Shutdown");
+
 			m_socket.close(error);
 			m_socketClosed = true;
 			if(error)
@@ -499,13 +498,11 @@ bool Connection::closingConnection()
 			#endif
 
 			OTSYS_THREAD_UNLOCK(m_connectionLock, "");
-
-			Dispatcher::getDispatcher().addTask(
-				createTask(boost::bind(&Connection::deleteConnectionTask, this)));
-
+			Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Connection::deleteConnectionTask, this)));
 			return true;
 		}
 	}
+
 	return false;
 }
 
@@ -518,5 +515,6 @@ void Connection::deleteConnectionTask()
 		m_outputQueue.pop_back();
 		--m_pendingWrite;
 	}
+
 	delete this;
 }

@@ -163,7 +163,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	if(!account.number)
 	{
-		ConnectionManager::getInstance()->addLoginAttempt(clientIP, false);
+		ConnectionManager::getInstance()->addAttempt(clientIP, false);
 		disconnectClient(0x0A, "Account name or password is not correct.");
 		return false;
 	}
@@ -172,11 +172,11 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	IOLoginData::getInstance()->removePremium(account);
 	if(!g_config.getBool(ConfigManager::ACCOUNT_MANAGER) && !account.charList.size())
 	{
-		disconnectClient(0x0A, std::string("This account doesn't contain any character.\nCreate a new character on the " + g_config.getString(ConfigManager::SERVER_NAME) + " website at \"" + g_config.getString(ConfigManager::URL) + "\".").c_str());
+		disconnectClient(0x0A, std::string("This account does not contain any character.\nCreate a new character on the " + g_config.getString(ConfigManager::SERVER_NAME) + " website at " + g_config.getString(ConfigManager::URL) + ".").c_str());
 		return false;
 	}
 
-	ConnectionManager::getInstance()->addLoginAttempt(clientIP, true);
+	ConnectionManager::getInstance()->addAttempt(clientIP, true);
 	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	TRACK_MESSAGE(output);
 

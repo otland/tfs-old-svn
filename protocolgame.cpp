@@ -603,12 +603,12 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	if(((accName.length() && !IOLoginData::getInstance()->getAccountId(accName, accId)) ||
 		!IOLoginData::getInstance()->getPassword(accId, name, accPass) || !passwordTest(password, accPass)) && name != "Account Manager")
 	{
-		ConnectionManager::getInstance()->addLoginAttempt(getIP(), false);
+		ConnectionManager::getInstance()->addAttempt(getIP(), false);
 		getConnection()->closeConnection();
 		return false;
 	}
 
-	ConnectionManager::getInstance()->addLoginAttempt(getIP(), true);
+	ConnectionManager::getInstance()->addAttempt(getIP(), true);
 	Dispatcher::getDispatcher().addTask(
 		createTask(boost::bind(&ProtocolGame::login, this, name, accId, password, operatingSystem, gamemasterLogin)));
 

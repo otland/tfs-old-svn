@@ -30,7 +30,6 @@ bool IOBan::isIpBanished(uint32_t ip, uint32_t mask /*= 0xFFFFFFFF*/)
 {
 	if(ip != 0)
 	{
-		OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 		Database* db = Database::getInstance();
 		DBResult* result;
 
@@ -55,7 +54,6 @@ bool IOBan::isIpBanished(uint32_t ip, uint32_t mask /*= 0xFFFFFFFF*/)
 
 bool IOBan::isNamelocked(uint32_t guid)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	Database* db = Database::getInstance();
 	DBResult* result;
 
@@ -80,7 +78,6 @@ bool IOBan::isNamelocked(std::string name)
 
 bool IOBan::isBanished(uint32_t account)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	Database* db = Database::getInstance();
 	DBResult* result;
 
@@ -104,7 +101,6 @@ bool IOBan::isBanished(uint32_t account)
 
 bool IOBan::isDeleted(uint32_t account)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	Database* db = Database::getInstance();
 	DBResult* result;
 
@@ -120,7 +116,6 @@ bool IOBan::isDeleted(uint32_t account)
 
 bool IOBan::addIpBanishment(uint32_t ip, time_t banTime, std::string comment, uint32_t gamemaster)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	if(isIpBanished(ip))
 		return false;
 
@@ -134,7 +129,6 @@ bool IOBan::addIpBanishment(uint32_t ip, time_t banTime, std::string comment, ui
 
 bool IOBan::addNamelock(uint32_t playerId, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	if(isNamelocked(playerId))
 		return false;
 
@@ -157,7 +151,6 @@ bool IOBan::addNamelock(std::string name, uint32_t reasonId, uint32_t actionId, 
 
 bool IOBan::addBanishment(uint32_t account, time_t banTime, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	if(isBanished(account) || isDeleted(account))
 		return false;
 
@@ -171,7 +164,6 @@ bool IOBan::addBanishment(uint32_t account, time_t banTime, uint32_t reasonId, u
 
 bool IOBan::addDeletion(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	if(isDeleted(account))
 		return false;
 
@@ -191,7 +183,6 @@ bool IOBan::addDeletion(uint32_t account, uint32_t reasonId, uint32_t actionId, 
 
 void IOBan::addNotation(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	Database* db = Database::getInstance();
 
 	DBQuery query;
@@ -201,7 +192,6 @@ void IOBan::addNotation(uint32_t account, uint32_t reasonId, uint32_t actionId, 
 
 bool IOBan::removeIpBanishment(uint32_t ip)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	Database* db = Database::getInstance();
 
 	DBQuery query;
@@ -214,7 +204,6 @@ bool IOBan::removeIpBanishment(uint32_t ip)
 
 bool IOBan::removeNamelock(uint32_t guid)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	Database* db = Database::getInstance();
 
 	DBQuery query;
@@ -236,7 +225,6 @@ bool IOBan::removeNamelock(std::string name)
 
 bool IOBan::removeBanishment(uint32_t account)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	Database* db = Database::getInstance();
 
 	DBQuery query;
@@ -249,7 +237,6 @@ bool IOBan::removeBanishment(uint32_t account)
 
 bool IOBan::removeDeletion(uint32_t account)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	Database* db = Database::getInstance();
 
 	DBQuery query;
@@ -262,7 +249,6 @@ bool IOBan::removeDeletion(uint32_t account)
 
 void IOBan::removeNotations(uint32_t account)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	Database* db = Database::getInstance();
 
 	DBQuery query;
@@ -272,7 +258,6 @@ void IOBan::removeNotations(uint32_t account)
 
 uint32_t IOBan::getReason(uint32_t id, bool player /* = false */)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	Database* db = Database::getInstance();
 	DBResult* result;
 
@@ -290,7 +275,6 @@ uint32_t IOBan::getReason(uint32_t id, bool player /* = false */)
 
 uint32_t IOBan::getAction(uint32_t id, bool player /* = false */)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	Database* db = Database::getInstance();
 	DBResult* result;
 
@@ -308,7 +292,6 @@ uint32_t IOBan::getAction(uint32_t id, bool player /* = false */)
 
 uint64_t IOBan::getExpireTime(uint32_t id, bool player /* = false */)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	Database* db = Database::getInstance();
 	DBResult* result;
 
@@ -326,7 +309,6 @@ uint64_t IOBan::getExpireTime(uint32_t id, bool player /* = false */)
 
 uint64_t IOBan::getAddedTime(uint32_t id, bool player /* = false */)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	Database* db = Database::getInstance();
 	DBResult* result;
 
@@ -344,7 +326,6 @@ uint64_t IOBan::getAddedTime(uint32_t id, bool player /* = false */)
 
 std::string IOBan::getComment(uint32_t id, bool player /* = false */)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	Database* db = Database::getInstance();
 	DBResult* result;
 
@@ -362,7 +343,6 @@ std::string IOBan::getComment(uint32_t id, bool player /* = false */)
 
 uint32_t IOBan::getAdminGUID(uint32_t id, bool player /* = false */)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	Database* db = Database::getInstance();
 	DBResult* result;
 
@@ -380,7 +360,6 @@ uint32_t IOBan::getAdminGUID(uint32_t id, bool player /* = false */)
 
 uint32_t IOBan::getNotationsCount(uint32_t account)
 {
-	OTSYS_THREAD_LOCK_CLASS lockClass(banLock, "");
 	Database* db = Database::getInstance();
 	DBResult* result;
 
