@@ -2,11 +2,20 @@ local specialQuests = {
 	[2001] = 30015 --Annihilator
 }
 
+local questsExperience = {
+	[30015] = 10000
+}
+
 function onUse(cid, item, fromPosition, itemEx, toPosition)
+	if(getPlayerCustomFlagValue(cid, PlayerCustomFlag_GamemasterPrivileges) == TRUE) then
+		return TRUE
+	end
+
 	local storage = item.uid
 	for k,v in pairs(specialQuests) do
 		if(item.actionid == k) then
 			storage = v
+			break
 		end
 	end
 
@@ -79,6 +88,13 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		else
 			result = "You have found " .. result
 			setPlayerStorageValue(cid, storage, 1)
+			for k,v in pairs(questsExperience) do
+				if(storage == k) then
+					doPlayerAddExp(cid, v)
+					doSendAnimatedText(getCreaturePosition(cid), v, TEXTCOLOR_WHITE_EXP)
+					break
+				end
+			end
 		end
 	end
 
