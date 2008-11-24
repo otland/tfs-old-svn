@@ -294,31 +294,22 @@ void Connection::handleReadError(const boost::system::error_code& error)
 	#ifdef __DEBUG_NET_DETAIL__
 	PRINT_ASIO_ERROR("Reading - detail");
 	#endif
-	switch(error)
+
+	if(error == boost::asio::error::operation_aborted)
 	{
-		case boost::asio::error::operation_aborted:
-		{
-			//Operation aborted because connection will be closed
-			//Do NOT call closeConnection() from here
-			break;
-		}
-
-		case boost::asio::error::connection_reset:
-		case boost::asio::error::connection_aborted:
-		case boost::asio::error::eof:
-		{
-			//Connection closed remotely or nothing more to read
-			closeConnection();
-			break;
-		}
-
-
-		default:
-		{
-			PRINT_ASIO_ERROR("Reading");
-			closeConnection();
-			break;
-		}
+		//Operation aborted because connection will be closed
+		//Do NOT call closeConnection() from here
+	}
+	else if(error == boost::asio::error::eof || error == boost::asio::error::connection_reset
+		|| error == boost::asio::error::connection_aborted)
+	{
+		//No more to read or connection closed remotely
+		closeConnection();
+	}
+	else
+	{
+		PRINT_ASIO_ERROR("Writting");
+		closeConnection();
 	}
 
 	m_readError = true;
@@ -435,31 +426,21 @@ void Connection::handleWriteError(const boost::system::error_code& error)
 	PRINT_ASIO_ERROR("Writing - detail");
 	#endif
 
-	switch(error)
+	if(error == boost::asio::error::operation_aborted)
 	{
-		case boost::asio::error::operation_aborted:
-		{
-			//Operation aborted because connection will be closed
-			//Do NOT call closeConnection() from here
-			break;
-		}
-
-		case boost::asio::error::connection_reset:
-		case boost::asio::error::connection_aborted:
-		case boost::asio::error::eof:
-		{
-			//Connection closed remotely or nothing more to read
-			closeConnection();
-			break;
-		}
-
-
-		default:
-		{
-			PRINT_ASIO_ERROR("Writting");
-			closeConnection();
-			break;
-		}
+		//Operation aborted because connection will be closed
+		//Do NOT call closeConnection() from here
+	}
+	else if(error == boost::asio::error::eof || error == boost::asio::error::connection_reset
+		|| error == boost::asio::error::connection_aborted)
+	{
+		//No more to read or connection closed remotely
+		closeConnection();
+	}
+	else
+	{
+		PRINT_ASIO_ERROR("Writting");
+		closeConnection();
 	}
 
 	m_writeError = true;
