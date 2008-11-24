@@ -264,11 +264,11 @@ void Game::refreshMap()
 		for(ItemVector::reverse_iterator it = list.rbegin(); it != list.rend(); ++it)
 		{
 			Item* item = (*it)->clone();
-			ReturnValue ret = internalAddItem(tile, item , INDEX_WHEREEVER, FLAG_NOLIMIT);
-			if(ret == RET_NOERROR)
+			if(internalAddItem(tile, item , INDEX_WHEREEVER, FLAG_NOLIMIT) == RET_NOERROR)
 			{
 				if(item->getUniqueId() != 0)
 					ScriptEnviroment::addUniqueThing(item);
+
 				startDecay(item);
 			}
 			else
@@ -1045,7 +1045,8 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 		return false;
 	}
 
-	if(!item->isPushable() || (item->getUniqueId() != 0 && !player->hasCustomFlag(PlayerCustomFlag_CanPushAllItems)))
+	if(!item->isPushable() || ((item->getUniqueId() != 0 || item->getActionId() != 0) &&
+		item->isLoadedFromMap() && !player->hasCustomFlag(PlayerCustomFlag_CanPushAllItems)))
 	{
 		player->sendCancelMessage(RET_NOTMOVEABLE);
 		return false;
@@ -2473,7 +2474,8 @@ bool Game::playerRotateItem(uint32_t playerId, const Position& pos, uint8_t stac
 		return false;
 
 	Item* item = thing->getItem();
-	if(!item || item->getClientID() != spriteId || !item->isRoteable() || item->getUniqueId() != 0)
+	if(!item || item->getClientID() != spriteId || !item->isRoteable() ||
+		((item->getUniqueId() != 0 || item->getActionId() != 0) && item->isLoadedFromMap()))
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
 		return false;
@@ -2604,7 +2606,8 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, uint8_t st
 	}
 
 	Item* tradeItem = dynamic_cast<Item*>(internalGetThing(player, pos, stackPos, spriteId, STACKPOS_USE));
-	if(!tradeItem || tradeItem->getClientID() != spriteId || !tradeItem->isPickupable() || tradeItem->getUniqueId() != 0)
+	if(!tradeItem || tradeItem->getClientID() != spriteId || !tradeItem->isPickupable() ||
+		((tradeItem->getUniqueId() != 0 || tradeItem->getActionId() != 0) && tradeItem->isLoadedFromMap()))
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
 		return false;
