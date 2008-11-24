@@ -250,6 +250,12 @@ void ProtocolGame::setPlayer(Player* p)
 
 void ProtocolGame::deleteProtocolTask()
 {
+	if(eventConnect != 0)
+	{
+		Scheduler::getScheduler().stopEvent(eventConnect);
+		eventConnect = 0;
+	}
+
 	//dispatcher thread
 	if(player)
 	{
