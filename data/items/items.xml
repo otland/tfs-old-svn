@@ -4520,8 +4520,11 @@
 	<item id="2322" article="a" name="doll">
 		<attribute key="weight" value="20"/>
 	</item>
-	<item id="2323" article="a" name="magician hat">
-		<attribute key="weight" value="805"/>
+	<item id="2323" article="a" name="hat of the mad">
+		<attribute key="weight" value="700"/>
+		<attribute key="armor" value="3"/>
+		<attribute key="magicpoints" value="1"/>
+		<attribute key="slotType" value="head"/>
 	</item>
 	<item id="2324" article="a" name="broom">
 		<attribute key="weight" value="1100"/>
