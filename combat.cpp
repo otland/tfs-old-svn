@@ -597,6 +597,7 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 		uint32_t itemId = params.itemId;
 		if(player)
 		{
+			bool pzLock = false;
 			if(g_game.getWorldType() == WORLD_TYPE_NO_PVP || tile->hasFlag(TILESTATE_NOPVPZONE))
 			{
 				switch(itemId)
@@ -614,8 +615,10 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 						break;
 				}
 			}
-			else if(params.isAggressive)
-				player->addInFightTicks(true);
+			else if(itemId == ITEM_FIREFIELD_PVP || itemId == ITEM_POISONFIELD_PVP || itemId == ITEM_ENERGYFIELD_PVP)
+				pzLock = true;
+
+			player->addInFightTicks(pzLock);
 		}
 
 		if(Item* item = Item::CreateItem(itemId))
