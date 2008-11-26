@@ -200,18 +200,14 @@ int main
 	mainExceptionHandler.InstallHandler();
 	#endif
 
+	#ifndef WIN32
 	// ignore sigpipe...
-	#ifdef WIN32
-	//nothing yet
-	#else
 	struct sigaction sigh;
 	sigh.sa_handler = SIG_IGN;
 	sigh.sa_flags = 0;
 	sigemptyset(&sigh.sa_mask);
 	sigaction(SIGPIPE, &sigh, NULL);
-	#endif
 
-	#ifndef WIN32
 	// register signals
 	signal(SIGHUP, signalHandler); //save
 	signal(SIGTRAP, signalHandler); //clean

@@ -8754,8 +8754,7 @@ int32_t LuaScriptInterface::luaCleanMap(lua_State* L)
 	//cleanMap()
 	uint32_t count = 0;
 	g_game.setGameState(GAME_STATE_MAINTAIN);
-	Dispatcher::getDispatcher().addTask(
-		createTask(boost::bind(&Game::cleanMap, &g_game, count)));
+	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::cleanMap, &g_game, count)));
 	g_game.setGameState(GAME_STATE_NORMAL);
 	lua_pushnumber(L, count);
 	return 1;
@@ -8764,8 +8763,7 @@ int32_t LuaScriptInterface::luaCleanMap(lua_State* L)
 int32_t LuaScriptInterface::luaShutdown(lua_State* L)
 {
 	//shutdown()
-	Dispatcher::getDispatcher().addTask(createTask(
-		boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
+	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
 	return 1;
 }
 
