@@ -74,6 +74,10 @@
 #include "allocator.h"
 #endif
 
+#ifdef __SIGNAL_CONTROLLING__
+#include <signal.h>
+#endif
+
 #ifdef BOOST_NO_EXCEPTIONS
 	#include <exception>
 	void boost::throw_exception(std::exception const & e)
@@ -135,6 +139,14 @@ void mainLoader(
 #endif
 );
 
+#ifdef __SIGNAL_CONTROLLING__
+void *signalHandler(int signum)
+{
+	if(signum == SIGTERM)
+		g_game.setGameState(GAME_STATE_SHUTDOWN);
+}
+#endif
+
 #ifndef __CONSOLE__
 void serverMain(void* param)
 #else
@@ -164,6 +176,10 @@ int main(int argc, char *argv[])
 	sigh.sa_flags = 0;
 	sigemptyset(&sigh.sa_mask);
 	sigaction(SIGPIPE, &sigh, NULL);
+	#endif
+
+	#ifdef __SIGNAL_CONTROLLING__
+	signal(SIGTERM, signalHandler);
 	#endif
 
 	OTSYS_THREAD_LOCKVARINIT(g_loaderLock);
