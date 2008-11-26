@@ -478,9 +478,12 @@ class Game
 
 		GameState_t getGameState();
 		void setGameState(GameState_t newState);
+
 		void saveGameState(bool savePlayers);
 		void loadGameState();
+
 		void refreshMap();
+		void cleanMap(uint32_t& count) const {if(map) count = map->clean();}
 
 		//Events
 		void checkCreatureWalk(uint32_t creatureId);

@@ -8727,7 +8727,7 @@ int32_t LuaScriptInterface::luaSaveServer(lua_State* L)
 {
 	//saveServer()
 	g_game.setGameState(GAME_STATE_MAINTAIN);
-	g_game.saveGameState(true);
+	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::saveGameState, &g_game, true)));
 	g_game.setGameState(GAME_STATE_NORMAL);
 	return 1;
 }
@@ -8752,9 +8752,12 @@ int32_t LuaScriptInterface::luaCleanHouse(lua_State *L)
 int32_t LuaScriptInterface::luaCleanMap(lua_State* L)
 {
 	//cleanMap()
+	uint32_t count = 0;
 	g_game.setGameState(GAME_STATE_MAINTAIN);
-	lua_pushnumber(L, g_game.getMap()->clean());
+	Dispatcher::getDispatcher().addTask(
+		createTask(boost::bind(&Game::cleanMap, &g_game, count)));
 	g_game.setGameState(GAME_STATE_NORMAL);
+	lua_pushnumber(L, count);
 	return 1;
 }
 

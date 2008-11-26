@@ -118,10 +118,10 @@ OTSYS_THREAD_SIGNALVAR g_loaderSignal;
 #endif
 #include "networkmessage.h"
 
-void startupErrorMessage(std::string errorStr)
+void startupErrorMessage(std::string error)
 {
-	if(errorStr.length() > 0)
-		std::cout << "> ERROR: " << errorStr << std::endl;
+	if(error.length() > 0)
+		std::cout << "> ERROR: " << error << std::endl;
 
 	#ifdef WIN32
 	#ifndef __CONSOLE__
@@ -133,25 +133,58 @@ void startupErrorMessage(std::string errorStr)
 	exit(-1);
 }
 
-void mainLoader(
-#ifdef __CONSOLE__
-	int argc, char *argv[]
-#endif
-);
-
-#ifdef __SIGNAL_CONTROLLING__
-void *signalHandler(int signum)
+#ifndef WIN32
+void signalHandler(int32_t sig)
 {
-	if(signum == SIGTERM)
-		g_game.setGameState(GAME_STATE_SHUTDOWN);
+	uint32_t tmp = 0;
+	switch(sig)
+	{
+		case SIGHUP:
+			g_game.setGameState(GAME_STATE_MAINTAIN);
+			Dispatcher::getDispatcher().addTask(
+				createTask(boost::bind(&Game::saveGameState, &g_game, true)));
+			g_game.setGameState(GAME_STATE_NORMAL);
+			break;
+		case SIGTRAP:
+			g_game.setGameState(GAME_STATE_MAINTAIN);
+			Dispatcher::getDispatcher().addTask(
+				createTask(boost::bind(&Game::cleanMap, &g_game, tmp)));
+			g_game.setGameState(GAME_STATE_NORMAL);
+			break;
+		case SIGUSR1:
+			Dispatcher::getDispatcher().addTask(
+				createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
+			break;
+		case SIGUSR2:
+			g_game.setGameState(GAME_STATE_NORMAL);
+			break;
+		case SIGWINCH:
+			//TODO: reload all
+			break;
+		case SIGQUIT:
+			Dispatcher::getDispatcher().addTask(
+				createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
+			break;
+		case SIGTERM:
+                        Dispatcher::getDispatcher().addTask(
+                                createTask(boost::bind(&Game::shutdown, &g_game)));
+			break;
+		case SIGKILL:
+			exit(-1);
+		default:
+			break;
+	}
 }
 #endif
 
+void otserv(int argc, char *argv[]);
+
 #ifndef __CONSOLE__
-void serverMain(void* param)
+void serverMain
 #else
-int main(int argc, char *argv[])
+int main
 #endif
+(int argc, char *argv[])
 {
 	#ifdef WIN32
 	#ifndef __CONSOLE__
@@ -178,18 +211,22 @@ int main(int argc, char *argv[])
 	sigaction(SIGPIPE, &sigh, NULL);
 	#endif
 
-	#ifdef __SIGNAL_CONTROLLING__
-	signal(SIGTERM, signalHandler);
+	#ifndef WIN32
+	// register signals
+	signal(SIGHUP, signalHandler); //save
+	signal(SIGTRAP, signalHandler); //clean
+	signal(SIGUSR1, signalHandler); //close server
+	signal(SIGUSR2, signalHandler); //open server
+	signal(SIGWINCH, signalHandler); //reload all
+	signal(SIGQUIT, signalHandler); //save & shutdown
+	signal(SIGTERM, signalHandler); //shutdown
+	signal(SIGKILL, signalHandler); //exit
 	#endif
 
 	OTSYS_THREAD_LOCKVARINIT(g_loaderLock);
 	OTSYS_THREAD_SIGNALVARINIT(g_loaderSignal);
 
-	Dispatcher::getDispatcher().addTask(createTask(boost::bind(mainLoader
-#ifdef __CONSOLE__
-	, argc, argv
-#endif
-	)));
+	Dispatcher::getDispatcher().addTask(createTask(boost::bind(otserv, argc, argv)));
 
 	OTSYS_THREAD_LOCK(g_loaderLock, "main()");
 	OTSYS_THREAD_WAITSIGNAL(g_loaderSignal, g_loaderLock);
@@ -212,11 +249,7 @@ int main(int argc, char *argv[])
 #endif
 }
 
-#ifdef __CONSOLE__
-void mainLoader(int argc, char *argv[])
-#else
-void mainLoader()
-#endif
+void otserv(int argc, char *argv[])
 {
 	//dispatcher thread
 	g_game.setGameState(GAME_STATE_STARTUP);
@@ -683,7 +716,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
 						g_game.setGameState(GAME_STATE_MAINTAIN);
-						g_game.saveGameState(true);
+						Dispatcher::getDispatcher().addTask(
+							createTask(boost::bind(&Game::saveGameState, &g_game, true)));
 						g_game.setGameState(GAME_STATE_NORMAL);
 						MessageBox(NULL, "Server has been saved.", "Save server", MB_OK);
 					}
@@ -693,10 +727,13 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
+						uint32_t count = 0;
 						g_game.setGameState(GAME_STATE_MAINTAIN);
-						char buffer[100];
-						sprintf(buffer, "Map has been cleaned, collected %u items.", g_game.getMap()->clean());
+						Dispatcher::getDispatcher().addTask(
+							createTask(boost::bind(&Game::cleanMap, &g_game, count)));
 						g_game.setGameState(GAME_STATE_NORMAL);
+						char buffer[100];
+						sprintf(buffer, "Map has been cleaned, collected %u items.", count);
 						MessageBox(NULL, buffer, "Clean map", MB_OK);
 					}
 					break;
@@ -705,8 +742,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP && GUI::getInstance()->m_connections)
 					{
-						Dispatcher::getDispatcher().addTask(
-							createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_NORMAL)));
+						g_game.setGameState(GAME_STATE_NORMAL);
 						ModifyMenu(GetMenu(hwnd), ID_MENU_SERVER_OPEN, MF_STRING, ID_MENU_SERVER_CLOSE, "&Close server");
 					}
 					break;
@@ -968,6 +1004,7 @@ int32_t WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 		TranslateMessage(&messages);
 		DispatchMessage(&messages);
 	}
+
 	return messages.wParam;
 }
 #endif
