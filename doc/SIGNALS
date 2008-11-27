@@ -1,0 +1,62 @@
+[ CUSTOM FLAGS
+	Project Name
+		The Forgotten Server
+
+	Version
+		0.3 Beta 1
+
+	Codenamed
+		\
+
+	License
+		GNU GPLv3
+
+	Forum
+		http://otland.net/
+]
+
+[ How to use SIGNALS
+	[ Note
+		Signals are designed for Linux, so if you are Windows user,
+		you may skip reading it, as you won't have use of them.
+	]
+
+	Signals are nothing else than signals sent to a software when using
+	'kill' command. To use signals, you have to type:
+
+	kill -SIGNAL processId
+
+		or
+
+	killall -SIGNAL processName
+
+	[ Example
+		killall -HUP theforgottenserver; will save the server.
+	]
+]
+
+[ Available signal actions
+	HUP
+		* Saves server
+
+	TRAP
+		* Cleans map
+
+	USR1
+		* Closes server
+
+	USR2
+		* Open the server
+
+	WINCH
+		* Reloads everything
+
+	QUIT
+		* Saves server and shut it down
+
+	TERM
+		* Shuts down the server
+
+	KILL
+		* Instant exit
+]
