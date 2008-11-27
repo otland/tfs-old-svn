@@ -4607,30 +4607,29 @@ void Game::globalSave()
 
 Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extended/* = false*/)
 {
-	typedef std::pair<uint8_t, uint8_t> relPair;
-	std::vector<relPair> relList;
-	refList.push_back(relPair(0, 0));
-	relList.push_back(relPair(-1, -1));
-	relList.push_back(relPair(-1, 0));
-	relList.push_back(relPair(-1, 1));
-	relList.push_back(relPair(0, -1));
-	relList.push_back(relPair(0, 1));
-	relList.push_back(relPair(1, -1));
-	relList.push_back(relPair(1, 0));
-	relList.push_back(relPair(1, 1));
+	std::vector<std::pair<uint8_t, uint8_t> > relList;
+	relList.push_back(std::make_pair(0, 0));
+	relList.push_back(std::make_pair(-1, -1));
+	relList.push_back(std::make_pair(-1, 0));
+	relList.push_back(std::make_pair(-1, 1));
+	relList.push_back(std::make_pair(0, -1));
+	relList.push_back(std::make_pair(0, 1));
+	relList.push_back(std::make_pair(1, -1));
+	relList.push_back(std::make_pair(1, 0));
+	relList.push_back(std::make_pair(1, 1));
 	if(extended)
 	{
-		relList.push_back(relPair(-2, 0));
-		relList.push_back(relPair(0, -2));
-		relList.push_back(relPair(0, 2));
-		relList.push_back(relPair(2, 0));
+		relList.push_back(std::make_pair(-2, 0));
+		relList.push_back(std::make_pair(0, -2));
+		relList.push_back(std::make_pair(0, 2));
+		relList.push_back(std::make_pair(2, 0));
 	}
 
 	std::random_shuffle(relList.begin() + 1, relList.end());
-	Tile* tile = NULL
+	Tile* tile = NULL;
 	if(Player* player = creature->getPlayer())
 	{
-		for(std::vector<relPair>::iterator it = relList.begin(); it != relList.end(); ++it)
+		for(std::vector<std::pair<uint8_t, uint8_t> >::iterator it = relList.begin(); it != relList.end(); ++it)
 		{
 			if((tile = getTile(pos.x + it->first, pos.y + it->second, pos.z)) && tile->creatures.empty() && (!tile->hasProperty(IMMOVABLEBLOCKSOLID)
 				|| player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere)))
@@ -4639,13 +4638,14 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 	}
 	else
 	{
-		for(std::vector<relPair>::iterator it = relList.begin(); it != relList.end(); ++it)
+		for(std::vector<std::pair<uint8_t, uint8_t> >::iterator it = relList.begin(); it != relList.end(); ++it)
 		{
 			if((tile = getTile(pos.x + it->first, pos.y + it->second, pos.z)) && tile->creatures.empty() && !tile->hasProperty(IMMOVABLEBLOCKSOLID))
 				return tile->getPosition();
 		}
 	}
 
+	delete tile;
 	return Position(0, 0, 0);
 }
 
