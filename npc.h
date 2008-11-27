@@ -452,7 +452,7 @@ class Npc : public Creature
 		void reload();
 
 		virtual const std::string& getName() const {return name;}
-		virtual const std::string& getNameDescription() const {return name;}
+		virtual const std::string& getNameDescription() const {return nameDescription;}
 
 		void doSay(std::string msg, Player* focus = NULL, bool publicize = false);
 		void doMove(Direction dir);
@@ -490,7 +490,7 @@ class Npc : public Creature
 		virtual void onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos = NULL);
 		virtual void onCreatureChangeOutfit(const Creature* creature, const Outfit_t& outfit);
 		virtual void onThink(uint32_t interval);
-		virtual std::string getDescription(int32_t lookDistance) const;
+		virtual std::string getDescription(int32_t lookDistance) const {return nameDescription + ".";}
 
 		bool isImmune(CombatType_t type) const {return true;}
 		bool isImmune(ConditionType_t type) const {return true;}
@@ -533,19 +533,10 @@ class Npc : public Creature
 		void closeAllShopWindows();
 		uint32_t getListItemPrice(uint16_t itemId, ShopEvent_t type);
 
-		std::string name;
-		std::string m_filename;
 		uint32_t walkTicks;
-		bool floorChange;
-		bool attackable;
-		bool isIdle;
-		bool hasBusyReply;
-		bool hasScriptedFocus;
-		int32_t talkRadius;
-		int32_t idleTime;
-		int32_t idleInterval;
-		bool defaultPublic;
-		int32_t focusCreature;
+		std::string name, nameDescription, m_filename;
+		int32_t talkRadius, idleTime, idleInterval, focusCreature;
+		bool floorChange, attackable, isIdle, hasBusyReply, hasScriptedFocus, defaultPublic;
 
 		typedef std::list<Player*> ShopPlayerList;
 		ShopPlayerList shopPlayerList;

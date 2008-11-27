@@ -46,7 +46,7 @@ extern ConfigManager g_config;
 extern CreatureEvents* g_creatureEvents;
 
 Creature::Creature() :
-	isInternalRemoved(false)
+isInternalRemoved(false)
 {
 	id = 0;
 	_tile = NULL;

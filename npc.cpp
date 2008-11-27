@@ -190,6 +190,11 @@ bool Npc::loadFromXml(const std::string& filename)
 		else
 			name = "";
 
+		if(readXMLString(root, "namedescription", strValue))
+			nameDescription = strValue;
+		else
+			nameDescription = name;
+
 		if(readXMLInteger(root, "speed", intValue))
 			baseSpeed = intValue;
 		else
@@ -207,8 +212,8 @@ bool Npc::loadFromXml(const std::string& filename)
 			walkTicks = 2000;
 		}
 
-		if(readXMLInteger(root, "floorchange", intValue))
-			floorChange = (intValue != 0);
+		if(readXMLString(root, "floorchange", strValue))
+			floorChange = booleanString(strValue);
 
 		if(readXMLString(root, "skull", strValue))
 		{
@@ -1016,13 +1021,6 @@ bool Npc::canSee(const Position& pos) const
 		return false;
 
 	return Creature::canSee(getPosition(), pos, Map::maxClientViewportX, Map::maxClientViewportY);
-}
-
-std::string Npc::getDescription(int32_t lookDistance) const
-{
-	std::stringstream s;
-	s << name << ".";
-	return s.str();
 }
 
 void Npc::onAddTileItem(const Tile* tile, const Position& pos, const Item* item)

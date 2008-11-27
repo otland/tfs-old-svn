@@ -67,6 +67,7 @@ Creature()
 		client->setPlayer(this);
 
 	name = _name;
+	nameDescription = _name;
 	setVocation(0);
 	promotionLevel = 0;
 	capacity = 400.00;
@@ -256,11 +257,11 @@ std::string Player::getDescription(int32_t lookDistance) const
 	}
 	else
 	{
-		s << name;
+		s << nameDescription;
 		if(!hasCustomFlag(PlayerCustomFlag_HideLevel))
 			s << " (Level " << level << ")";
-		s << ".";
 
+		s << ".";
 		if(sex == PLAYERSEX_FEMALE)
 			s << " She";
 		else
@@ -292,7 +293,6 @@ std::string Player::getDescription(int32_t lookDistance) const
 			s << "husband";
 
 		s << " of " << tmp;
-		tmp = "";
 	}
 
 	s << ".";

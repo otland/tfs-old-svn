@@ -137,7 +137,7 @@ class Player : public Creature, public Cylinder
 		static int32_t maxMessageBuffer;
 
 		virtual const std::string& getName() const {return name;}
-		virtual const std::string& getNameDescription() const {return name;}
+		virtual const std::string& getNameDescription() const {return nameDescription;}
 		virtual std::string getDescription(int32_t lookDistance) const;
 
 		void manageAccount(const std::string &text);
