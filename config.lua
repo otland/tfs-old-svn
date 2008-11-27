@@ -117,6 +117,7 @@
 	bankSystem = "yes"
 	displaySkillLevelOnAdvance = "no"
 	spellNameInsteadOfWordsOnCast = "no"
+	spellNameOrangeOnCast = "yes" -- needs the above option to be set to 'yes' to work
 
 	-- Premium account
 	freePremium = "no"

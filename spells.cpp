@@ -84,7 +84,8 @@ bool Spells::onPlayerSay(Player* player, const std::string& words)
 	if(g_config.getBool(ConfigManager::SPELL_NAME_INSTEAD_WORDS))
 	{
 		param = (param.length() ? ": " + param : "");
-		return g_game.internalCreatureSay(player, SPEAK_SAY, instantSpell->getName() + param);
+		return g_game.internalCreatureSay(player, g_config.getBool(ConfigManager::SPELL_NAME_ORANGE) ? 
+			SPEAK_MONSTER_SAY : SPEAK_SAY, instantSpell->getName() + param);
 	}
 
 	return g_game.internalCreatureSay(player, SPEAK_SAY, reWords);
