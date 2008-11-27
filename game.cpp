@@ -4644,8 +4644,6 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 				return tile->getPosition();
 		}
 	}
-
-	delete tile;
 	return Position(0, 0, 0);
 }
 
