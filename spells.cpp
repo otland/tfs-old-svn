@@ -87,7 +87,7 @@ bool Spells::onPlayerSay(Player* player, const std::string& words)
 		if(param.length())
 		{
 			trimString(param);
-			ret += ": " + param;
+			ret += param;
 		}
 
 		return g_game.internalCreatureSay(player, type, ret);
