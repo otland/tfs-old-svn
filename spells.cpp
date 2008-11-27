@@ -58,37 +58,42 @@ bool Spells::onPlayerSay(Player* player, const std::string& words)
 	if(!instantSpell)
 		return false;
 
-	std::string param = "";
-	if(instantSpell->getHasParam())
+	size_t size = instantSpell->getWords().length();
+	std::string tmp = reWords.substr(size, reWords.length() - size), reParam = "";
+	if(instantSpell->getHasParam() && !param.empty() && param[0] == ' ')
 	{
-		size_t size = instantSpell->getWords().length();
-		std::string tmp = reWords.substr(size, reWords.length() - size);
-		if(!tmp.empty() && tmp[0] == ' ')
-		{
-			size = tmp.find('"', 0);
-			size_t tmpSize = std::string::npos;
-			if(size != tmpSize)
-				tmpSize = tmp.find('"', size + 1);
+		size = param.find('"', 0);
+		size_t tmpSize = std::string::npos;
+		if(size != tmpSize)
+			tmpSize = param.find('"', size + 1);
 
-			if(tmpSize == std::string::npos)
-				tmpSize = tmp.length();
+		if(tmpSize == std::string::npos)
+			tmpSize = param.length();
 
-			param = tmp.substr(size + 1, tmpSize - size - 1);
-			trimString(param);
-		}
+		reParam = param.substr(size + 1, tmpSize - size - 1);
+		trimString(reParam);
 	}
 
-	if(!instantSpell->playerCastInstant(player, param))
+	if(!instantSpell->playerCastInstant(player, reParam))
 		return true;
+
+	SpeakClasses type = SPEAK_SAY;
+	if(g_config.getBool(ConfigManager::EMOTE_SPELLS))
+		type = SPEAK_MONSTER_SAY;
 
 	if(g_config.getBool(ConfigManager::SPELL_NAME_INSTEAD_WORDS))
 	{
-		param = (param.length() ? ": " + param : "");
-		return g_game.internalCreatureSay(player, g_config.getBool(ConfigManager::SPELL_NAME_ORANGE) ? 
-			SPEAK_MONSTER_SAY : SPEAK_SAY, instantSpell->getName() + param);
+		std::string ret = instantSpell->getName();
+		if(param.length())
+		{
+			trimString(param);
+			ret += ": " + param;
+		}
+
+		return g_game.internalCreatureSay(player, type, ret);
 	}
 
-	return g_game.internalCreatureSay(player, SPEAK_SAY, reWords);
+	return g_game.internalCreatureSay(player, type, reWords);
 }
 
 void Spells::clear()

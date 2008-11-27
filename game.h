@@ -369,7 +369,7 @@ class Game
 		  */
 		bool internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text, Position* pos = NULL);
 
-		Position getClosestFreeTile(Creature* creature, Position toPos);
+		Position getClosestFreeTile(Creature* creature, Position pos, bool extended = false);
 		std::string getSearchString(const Position lookPos, const Position searchPos, bool player = false);
 
 		int32_t getMotdNum();

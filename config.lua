@@ -116,8 +116,8 @@
 	saveGlobalStorage = "yes"
 	bankSystem = "yes"
 	displaySkillLevelOnAdvance = "no"
-	spellNameInsteadOfWordsOnCast = "no"
-	spellNameOrangeOnCast = "yes" -- needs the above option to be set to 'yes' to work
+	spellNameInsteadOfWords = "no"
+	emoteSpells = "no"
 
 	-- Premium account
 	freePremium = "no"

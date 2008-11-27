@@ -215,7 +215,7 @@ bool Map::placeCreature(const Position& centerPos, Creature* creature, bool exte
 			foundTile = true;
 	}
 
-	typedef std::pair<int32_t, int32_t> relPair;
+	typedef std::pair<uint8_t, uint8_t> relPair;
 	uint8_t shufflePos = 0;
 
 	std::vector<relPair> relList;
