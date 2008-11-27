@@ -59,7 +59,7 @@ bool Spells::onPlayerSay(Player* player, const std::string& words)
 		return false;
 
 	size_t size = instantSpell->getWords().length();
-	std::string tmp = reWords.substr(size, reWords.length() - size), reParam = "";
+	std::string param = reWords.substr(size, reWords.length() - size), reParam = "";
 	if(instantSpell->getHasParam() && !param.empty() && param[0] == ' ')
 	{
 		size = param.find('"', 0);
