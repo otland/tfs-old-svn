@@ -200,23 +200,21 @@ void Map::setTile(uint16_t x, uint16_t y, uint8_t z, Tile* newTile)
 bool Map::placeCreature(const Position& centerPos, Creature* creature, bool extendedPos /*= false*/, bool forceLogin /*= false*/)
 {
 	bool foundTile = false, placeInPz = false;
-
 	Tile* tile = getTile(centerPos);
 	if(tile)
 	{
 		placeInPz = tile->hasFlag(TILESTATE_PROTECTIONZONE);
-		ReturnValue ret;
-		if(creature->getPlayer() && creature->isAccountManager())
-			ret = tile->__queryAdd(0, creature, 1, FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE);
-		else
-			ret = tile->__queryAdd(0, creature, 1, FLAG_IGNOREBLOCKITEM);
+		uint32_t flags = FLAG_IGNOREBLOCKITEM;
+		if(creature->isAccountManager())
+			flags |= FLAG_IGNOREBLOCKCREATURE;
 
+		ReturnValue ret = tile->__queryAdd(0, creature, 1, flags);
 		if(forceLogin || ret == RET_NOERROR || ret == RET_PLAYERISNOTINVITED)
 			foundTile = true;
 	}
 
-	uint8_t shufflePos = 0;
-	std::vector<std::pair<uint8_t, uint8_t> > relList;
+	size_t shufflePos = 0;
+	std::vector<std::pair<uint32_t, uint32_t> > relList;
 	if(extendedPos)
 	{
 		shufflePos = 8;
@@ -241,7 +239,7 @@ bool Map::placeCreature(const Position& centerPos, Creature* creature, bool exte
 	Position tryPos;
 	for(uint32_t n = 1; n <= radius && !foundTile; ++n)
 	{
-		for(std::vector<std::pair<uint8_t, uint8_t> >::iterator it = relList.begin(); it != relList.end() && !foundTile; ++it)
+		for(std::vector<std::pair<uint32_t, uint32_t> >::iterator it = relList.begin(); it != relList.end() && !foundTile; ++it)
 		{
 			int32_t dx = it->first * n;
 			int32_t dy = it->second * n;

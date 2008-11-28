@@ -1276,7 +1276,7 @@ void LuaScriptInterface::registerFunctions()
 	//getSearchString(fromPosition, toPosition[, isPlayer])
 	lua_register(m_luaState, "getSearchString", LuaScriptInterface::luaGetSearchString);
 
-	//getClosestFreeTile(cid, targetpos[, extended])
+	//getClosestFreeTile(cid, targetpos[, extended[, ignoreHouse]])
 	lua_register(m_luaState, "getClosestFreeTile", LuaScriptInterface::luaGetClosestFreeTile);
 
 	//doTeleportThing(cid, newpos, <optional> pushmove)
@@ -2916,9 +2916,13 @@ int32_t LuaScriptInterface::luaGetSearchString(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetClosestFreeTile(lua_State* L)
 {
-	//getClosestFreeTile(cid, targetpos[, extended])
-	bool extended = false;
-	if(lua_gettop(L) >= 3)
+	//getClosestFreeTile(cid, targetpos[, extended[, ignoreHouse]])
+	uint32_t params = lua_gettop(L);
+	bool ignoreHouse = true, extended = false;
+	if(params >= 4)
+		ignoreHouse = popNumber(L) == LUA_TRUE;
+
+	if(params >= 3)
 		extended = popNumber(L) == LUA_TRUE;
 
 	PositionEx pos;
@@ -2928,7 +2932,7 @@ int32_t LuaScriptInterface::luaGetClosestFreeTile(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Creature* creature = env->getCreatureByUID(cid))
 	{
-		Position newPos = g_game.getClosestFreeTile(creature, pos, extended);
+		Position newPos = g_game.getClosestFreeTile(creature, pos, extended, ignoreHouse);
 		if(newPos.x != 0)
 			pushPosition(L, newPos, 0);
 		else

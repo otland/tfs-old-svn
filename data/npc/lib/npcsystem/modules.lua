@@ -841,61 +841,6 @@ if(Modules == nil) then
 		return true
 	end
 
-	-- doPlayerAddItem function variation. Used specifically for NPCs.
-	ShopModule.doPlayerAddItem = function(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)
-		local amount = amount or 1
-		local subType = subType or 0
-		local ignoreCap = ignoreCap and TRUE or FALSE
-
-		local item = 0
-		if(isItemStackable(itemid) == TRUE) then
-			item = doCreateItemEx(itemid, amount)
-			if(doPlayerAddItemEx(cid, item, ignoreCap) ~= RETURNVALUE_NOERROR) then
-				return 0, 0
-			end
-
-			return amount, 0
-		end
-
-		local a = 0
-		if(inBackpacks) then
-			local container = doCreateItemEx(backpack, 1)
-			local b = 1
-			for i = 1, amount do
-				item = doAddContainerItem(container, itemid, subType)
-				if(itemid == ITEM_PARCEL) then
-					doAddContainerItem(item, ITEM_LABEL)
-				end
-
-				if(isInArray({(getContainerCapById(backpack) * b), amount}, i) == TRUE) then
-					if(doPlayerAddItemEx(cid, container, ignoreCap) ~= RETURNVALUE_NOERROR) then
-						break
-					end
-
-					a = i
-					if(amount > i) then
-						container = doCreateItemEx(backpack, 1)
-						b = b + 1
-					end
-				end
-			end
-			return a, b
-		end
-
-		for i = 1, amount do
-			item = doCreateItemEx(itemid, subType)
-			if(itemid == ITEM_PARCEL) then
-				doAddContainerItem(item, ITEM_LABEL)
-			end
-
-			if(doPlayerAddItemEx(cid, item, ignoreCap) ~= RETURNVALUE_NOERROR) then
-				break
-			end
-			a = i
-		end
-		return a, 0
-	end
-
 	-- Callback onBuy() function. If you wish, you can change certain Npc to use your onBuy().
 	function ShopModule:callbackOnBuy(cid, itemid, subType, amount, ignoreCap, inBackpacks)
 		if(self.npcHandler.shopItems[itemid] == nil) then
@@ -923,7 +868,7 @@ if(Modules == nil) then
 			return false
 		end
 
-		local a, b = ShopModule.doPlayerAddItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)
+		local a, b = doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)
 		if(a < amount) then
 			local msgId = MESSAGE_NEEDMORESPACE
 			if(a == 0) then

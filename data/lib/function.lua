@@ -368,18 +368,17 @@ table.find = function (table, value)
 			return i
 		end
 	end
+
 	return nil
 end
 
 table.isStrIn = function (txt, str)
-	local result = false
 	for i, v in pairs(str) do
-		result = (string.find(txt, v) and not string.find(txt, '(%w+)' .. v) and not string.find(txt, v .. '(%w+)'))
-		if(result) then
-			break
-		end
+		if(txt:find(v) and not txt:find('(%w+)' .. v) and not txt:find(v .. '(%w+)'))
+			return true
 	end
-	return result
+
+	return false
 end
 
 table.countElements = function (table, item)
@@ -389,6 +388,7 @@ table.countElements = function (table, item)
 			count = count + 1
 		end
 	end
+
 	return count
 end
 
@@ -420,6 +420,7 @@ table.getCombinations = function (table, num)
 			a[j] = a[i] + j - i
 		end
 	end
+
 	return newlist
 end
 
@@ -430,7 +431,7 @@ string.split = function (str)
 		return ""
 	end
 
-	if(not str:gsub("%w+", helper):find"%S") then
+	if(not str:gsub("%w+", helper):find("%S")) then
 		return t
 	end
 end
@@ -445,11 +446,11 @@ string.explode = function (str, sep)
 		return
 	end
 
-	for s, e in function() return string.find(str, sep, pos) end do
-		table.insert(t, string.trim(string.sub(str, pos, s - 1)))
+	for s, e in function() return (str:find(sep, pos) end do
+		table.insert(t, str:sub(pos, s - 1):trim())
 		pos = e + 1
 	end
 
-	table.insert(t, string.trim(string.sub(str, pos)))
+	table.insert(t, str:sub(pos):trim())
 	return t
 end

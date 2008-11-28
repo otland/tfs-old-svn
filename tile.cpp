@@ -432,8 +432,7 @@ void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport 
 	toTile->postAddNotification(creature, newStackPos);
 }
 
-ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
-	uint32_t flags) const
+ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, uint32_t flags) const
 {
 	Thing* iithing = NULL;
 
@@ -500,7 +499,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			if(hasFlag(TILESTATE_MAGICFIELD))
 			{
 				MagicField* field = getFieldItem();
-				if(!field->isBlocking())
+				if(field && !field->isBlocking())
 				{
 					CombatType_t combatType = field->getCombatType();
 					//There is 3 options for a monster to enter a magic field
@@ -519,6 +518,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 					}
 				}
 			}
+
 			return RET_NOERROR;
 		}
 		else if(const Player* player = creature->getPlayer())
