@@ -153,19 +153,20 @@ class Game
 		/**
 		  * Get a single tile of the map.
 		  * \returns A pointer to the tile
-		*/
-		Tile* getTile(uint32_t x, uint32_t y, uint32_t z);
+		  */
+		Tile* getTile(uint32_t x, uint32_t y, uint32_t z) {return map->getTile(x, y, z);}
+		Tile* getTile(const Position& pos) {return map->getTile(pos.x, pos.y, pos.z);}
 
 		/**
 		  * Set a single tile of the map, position is read from this tile
-		*/
-		void setTile(Tile* newTile);
+		  */
+		void setTile(Tile* newTile) {if(map) return map->setTile(newTile->getPosition(), newTile);}
 
 		/**
 		  * Get a leaf of the map.
 		  * \returns A pointer to a leaf
-		*/
-		QTreeLeafNode* getLeaf(uint32_t x, uint32_t y);
+		  */
+		QTreeLeafNode* getLeaf(uint32_t x, uint32_t y) {return map->getLeaf(x, y);}
 
 		/**
 		  * Returns a creature based on the unique creature identifier

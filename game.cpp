@@ -469,21 +469,6 @@ void Game::internalGetPosition(Item* item, Position& pos, uint8_t& stackpos)
 	}
 }
 
-void Game::setTile(Tile* newTile)
-{
-	return map->setTile(newTile->getPosition(), newTile);
-}
-
-Tile* Game::getTile(uint32_t x, uint32_t y, uint32_t z)
-{
-	return map->getTile(x, y, z);
-}
-
-QTreeLeafNode* Game::getLeaf(uint32_t x, uint32_t y)
-{
-	return map->getLeaf(x, y);
-}
-
 Creature* Game::getCreatureByID(uint32_t id)
 {
 	if(id == 0)
