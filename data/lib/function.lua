@@ -374,8 +374,9 @@ end
 
 table.isStrIn = function (txt, str)
 	for i, v in pairs(str) do
-		if(txt:find(v) and not txt:find('(%w+)' .. v) and not txt:find(v .. '(%w+)'))
+		if(txt:find(v) and not txt:find('(%w+)' .. v) and not txt:find(v .. '(%w+)')) then
 			return true
+		end
 	end
 
 	return false
@@ -446,7 +447,7 @@ string.explode = function (str, sep)
 		return
 	end
 
-	for s, e in function() return (str:find(sep, pos) end do
+	for s, e in function() return str:find(sep, pos) end do
 		table.insert(t, str:sub(pos, s - 1):trim())
 		pos = e + 1
 	end
