@@ -4616,7 +4616,7 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 		for(std::vector<std::pair<uint32_t, uint32_t> >::iterator it = relList.begin(); it != relList.end(); ++it)
 		{
 			Position tmp = Position((pos.x + it->first), (pos.y + it->second), pos.z);
-			if(Tile* tile = getTile(tmp))
+			if(Tile* tile = map->getTile(tmp))
 			{
 				if(!tile->creatures.empty() || (tile->hasProperty(IMMOVABLEBLOCKSOLID)
 					&& !player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere)))
@@ -4635,7 +4635,7 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 		for(std::vector<std::pair<uint32_t, uint32_t> >::iterator it = relList.begin(); it != relList.end(); ++it)
 		{
 			Position tmp = Position((pos.x + it->first), (pos.y + it->second), pos.z);
-			if(Tile* tile = getTile(tmp))
+			if(Tile* tile = map->getTile(tmp))
 			{
 				if(tile->creatures.empty() && !tile->hasProperty(IMMOVABLEBLOCKSOLID))
 					return tile->getPosition();

@@ -154,8 +154,8 @@ class Game
 		  * Get a single tile of the map.
 		  * \returns A pointer to the tile
 		  */
-		Tile* getTile(uint32_t x, uint32_t y, uint32_t z) {return map->getTile(x, y, z);}
-		Tile* getTile(const Position& pos) {return map->getTile(pos.x, pos.y, pos.z);}
+		Tile* getTile(uint16_t x, uint16_t y, uint8_t z) {return map->getTile(x, y, z);}
+		Tile* getTile(const Position& pos) {return map->getTile(pos);}
 
 		/**
 		  * Set a single tile of the map, position is read from this tile
