@@ -440,7 +440,7 @@ int32_t Creature::getWalkCache(const Position& pos) const
 
 #ifdef __DEBUG__
 		//testing
-		Tile* tile = g_game.getTile(pos.x, pos.y, pos.z);
+		Tile* tile = g_game.getTile(pos);
 		if(tile && (tile->__queryAdd(0, this, 1, FLAG_PATHFINDING | FLAG_IGNOREFIELDDAMAGE) == RET_NOERROR))
 		{
 			if(!localMapCache[y][x])

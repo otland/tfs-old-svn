@@ -132,7 +132,7 @@ void Combat::getCombatArea(const Position& centerPos, const Position& targetPos,
 	else if(targetPos.x >= 0 && targetPos.y >= 0 && targetPos.z >= 0 &&
 		targetPos.x <= 0xFFFF && targetPos.y <= 0xFFFF && targetPos.z < MAP_MAX_LAYERS)
 	{
-		Tile* tile = g_game.getTile(targetPos.x, targetPos.y, targetPos.z);
+		Tile* tile = g_game.getTile(targetPos);
 		if(!tile)
 		{
 			tile = new Tile(targetPos.x, targetPos.y, targetPos.z);
@@ -1072,7 +1072,7 @@ AreaCombat::AreaCombat(const AreaCombat& rhs)
 
 bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, std::list<Tile*>& list) const
 {
-	Tile* tile = g_game.getTile(targetPos.x, targetPos.y, targetPos.z);
+	Tile* tile = g_game.getTile(targetPos);
 
 	const MatrixArea* area = getArea(centerPos, targetPos);
 	if(!area)
@@ -1099,7 +1099,7 @@ bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, s
 					tmpPos.x <= 0xFFFF && tmpPos.y <= 0xFFFF && tmpPos.z < MAP_MAX_LAYERS
 					&& g_game.isSightClear(centerPos, tmpPos, true))
 				{
-					tile = g_game.getTile(tmpPos.x, tmpPos.y, tmpPos.z);
+					tile = g_game.getTile(tmpPos);
 					if(!tile)
 					{
 						tile = new Tile(tmpPos.x, tmpPos.y, tmpPos.z);
