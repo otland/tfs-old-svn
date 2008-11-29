@@ -194,27 +194,24 @@ InstantSpell* Spells::getInstantSpell(const std::string words)
 	for(InstantsMap::iterator it = instants.begin(); it != instants.end(); ++it)
 	{
 		InstantSpell* instantSpell = it->second;
-		size_t spellLen = instantSpell->getWords().length();
-		if(strncasecmp(instantSpell->getWords().c_str(), words.c_str(), spellLen) == 0)
+		if(strncasecmp(instantSpell->getWords().c_str(), words.c_str(), instantSpell->getWords().length()) == 0)
 		{
 			if(!result || spellLen > result->getWords().length())
 				result = instantSpell;
 		}
 	}
 
-	if(result)
+	if(result && words.length() > result->getWords().length())
 	{
-		if(words.length() > result->getWords().length())
-		{
-			size_t spellLen = result->getWords().length();
-			size_t paramLen = words.length() - spellLen;
-			std::string paramText = words.substr(spellLen, paramLen);
-			if(paramText.substr(0, 1) != " " || (paramText.length() >= 2 && paramText.substr(0, 2) != " \""))
-				return NULL;
-		}
-		return result;
+		std::string param = words.substr(result->getWords().length(), words.length());
+		if(param[0] != ' ')
+			return NULL;
+
+		if(param.length() >= 2 && param.find(' ', 1) != std::string::npos && param[1] != '"')
+			return NULL;
 	}
-	return NULL;
+
+	return result;
 }
 
 uint32_t Spells::getInstantSpellCount(const Player* player)
