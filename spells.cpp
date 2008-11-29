@@ -196,7 +196,7 @@ InstantSpell* Spells::getInstantSpell(const std::string words)
 		InstantSpell* instantSpell = it->second;
 		if(strncasecmp(instantSpell->getWords().c_str(), words.c_str(), instantSpell->getWords().length()) == 0)
 		{
-			if(!result || spellLen > result->getWords().length())
+			if(!result || instantSpell->getWords().length() > result->getWords().length())
 				result = instantSpell;
 		}
 	}
