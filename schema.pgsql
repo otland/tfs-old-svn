@@ -20,7 +20,7 @@ CREATE TABLE `server_record`
 (
 	`record` INT NOT NULL,
 	`timestamp` BIGINT NOT NULL,
-	PRIMARY KEY (`timestamp`, `record`)
+	UNIQUE (`timestamp`, `record`)
 );
 
 INSERT INTO `server_record` VALUES (0, 0);
@@ -154,7 +154,7 @@ CREATE TABLE `global_storage`
 (
 	`key` INT NOT NULL,
 	`value` INT NOT NULL,
-	PRIMARY KEY  (`key`)
+	UNIQUE (`key`)
 );
 
 CREATE TABLE `guilds`
@@ -171,7 +171,7 @@ CREATE TABLE `guild_invites`
 (
 	`player_id` INT NOT NULL DEFAULT 0,
 	`guild_id` INT NOT NULL DEFAULT 0,
-	PRIMARY KEY (`player_id`, `guild_id`)
+	UNIQUE (`player_id`, `guild_id`)
 );
 
 CREATE TABLE `guild_ranks`
@@ -189,7 +189,7 @@ CREATE TABLE `house_lists`
 	`house_id` INT NOT NULL,
 	`listid` INT NOT NULL,
 	`list` TEXT NOT NULL,
-	PRIMARY KEY (`house_id`, `listid`)
+	UNIQUE (`house_id`, `listid`)
 );
 
 CREATE TABLE `houses`
@@ -227,8 +227,7 @@ CREATE TABLE `player_depotitems`
 	`count` INT NOT NULL DEFAULT 0,
 	`attributes` BYTEA NOT NULL,
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
-	KEY (`player_id`, `depot_id`),
-	UNIQUE KEY (`player_id`, `sid`)
+	UNIQUE (`player_id`, `sid`)
 );
 
 CREATE TABLE `player_items`
@@ -239,7 +238,8 @@ CREATE TABLE `player_items`
 	`itemtype` INT NOT NULL DEFAULT 0,
 	`count` INT NOT NULL DEFAULT 0,
 	`attributes` BYTEA NOT NULL,
-	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
+	UNIQUE (`player_id`, `sid`)
 );
 
 CREATE TABLE `player_skills`
@@ -280,7 +280,7 @@ CREATE TABLE `tiles`
 	`x` INT(5) NOT NULL,
 	`y` INT(5) NOT NULL,
 	`z` SMALLINT NOT NULL,
-	PRIMARY KEY(`id`)
+	PRIMARY KEY (`id`)
 );
 
 CREATE TABLE `tile_items`

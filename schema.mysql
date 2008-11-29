@@ -50,7 +50,7 @@ CREATE TABLE `server_record`
 (
 	`record` INT NOT NULL,
 	`timestamp` BIGINT NOT NULL,
-	PRIMARY KEY (`timestamp`, `record`)
+	UNIQUE (`timestamp`, `record`)
 ) ENGINE = InnoDB;
 
 INSERT INTO `server_record` VALUES (0, 0);
@@ -66,7 +66,6 @@ CREATE TABLE `server_reports`
 	`report` TEXT NOT NULL,
 	`reads` INT NOT NULL DEFAULT 0,
 	PRIMARY KEY (`id`),
-	KEY (`player_id`),
 	KEY (`reads`)
 ) ENGINE = InnoDB;
 
@@ -191,7 +190,7 @@ CREATE TABLE `global_storage`
 (
 	`key` INT UNSIGNED NOT NULL,
 	`value` INT NOT NULL,
-	PRIMARY KEY  (`key`)
+	UNIQUE  (`key`)
 ) ENGINE = InnoDB;
 
 CREATE TABLE `guilds`
@@ -208,7 +207,7 @@ CREATE TABLE `guild_invites`
 (
 	`player_id` INT UNSIGNED NOT NULL DEFAULT 0,
 	`guild_id` INT UNSIGNED NOT NULL DEFAULT 0,
-	PRIMARY KEY (`player_id`, `guild_id`)
+	UNIQUE (`player_id`, `guild_id`)
 ) ENGINE = InnoDB;
 
 CREATE TABLE `guild_ranks`
@@ -226,7 +225,7 @@ CREATE TABLE `house_lists`
 	`house_id` INT NOT NULL,
 	`listid` INT NOT NULL,
 	`list` TEXT NOT NULL,
-	PRIMARY KEY (`house_id`, `listid`)
+	UNIQUE (`house_id`, `listid`)
 ) ENGINE = InnoDB;
 
 CREATE TABLE `houses`
@@ -265,7 +264,7 @@ CREATE TABLE `player_depotitems`
 	`attributes` BLOB NOT NULL,
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
 	KEY (`player_id`, `depot_id`),
-	UNIQUE KEY (`player_id`, `sid`)
+	UNIQUE (`player_id`, `sid`)
 ) ENGINE = InnoDB;
 
 CREATE TABLE `player_items`
@@ -276,7 +275,8 @@ CREATE TABLE `player_items`
 	`itemtype` INT NOT NULL DEFAULT 0,
 	`count` INT NOT NULL DEFAULT 0,
 	`attributes` BLOB NOT NULL,
-	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
+	UNIQUE (`player_id`, `sid`)
 ) ENGINE = InnoDB;
 
 CREATE TABLE `player_skills`
@@ -317,8 +317,8 @@ CREATE TABLE `tiles`
 	`x` INT(5) UNSIGNED NOT NULL,
 	`y` INT(5) UNSIGNED NOT NULL,
 	`z` TINYINT(2) UNSIGNED NOT NULL,
-	PRIMARY KEY(`id`)
-	KEY(`x`, `y`, `z`)
+	PRIMARY KEY (`id`)
+	KEY (`x`, `y`, `z`)
 ) ENGINE = InnoDB;
 
 CREATE TABLE `tile_items`
@@ -330,7 +330,7 @@ CREATE TABLE `tile_items`
 	`count` INT NOT NULL DEFAULT 0,
 	`attributes` BLOB NOT NULL,
 	FOREIGN KEY (`tile_id`) REFERENCES `tiles`(`id`) ON DELETE CASCADE,
-	INDEX (`sid`)
+	KEY (`sid`)
 ) ENGINE = InnoDB;
 
 DELIMITER |

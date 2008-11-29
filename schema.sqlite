@@ -16,6 +16,7 @@ INSERT INTO `server_motd` VALUES (1, 'Welcome to The Forgotten Server!');
 CREATE TABLE `server_record` (
 	`record` INTEGER NOT NULL,
 	`timestamp` INTEGER PRIMARY KEY
+	UNIQUE (`timestamp`, `record`)
 );
 
 INSERT INTO `server_record` VALUES (0, 0);
@@ -125,7 +126,8 @@ INSERT INTO `players` VALUES (1, 'Account Manager', 1, 1, 1, 0, 150, 150, 0, 0, 
 
 CREATE TABLE `global_storage` (
 	`key` INTEGER NOT NULL,
-	`value` INTEGER NOT NULL
+	`value` INTEGER NOT NULL,
+	UNIQUE (`key`)
 );
 
 CREATE TABLE `guilds` (
@@ -139,7 +141,8 @@ CREATE TABLE `guilds` (
 
 CREATE TABLE `guild_invites` (
 	`player_id` INTEGER NOT NULL,
-	`guild_id` INTEGER NOT NULL
+	`guild_id` INTEGER NOT NULL,
+	UNIQUE (`player_id`, `guild_id`)
 );
 
 CREATE TABLE `guild_ranks` (
@@ -167,6 +170,7 @@ CREATE TABLE `house_lists` (
 	`house_id` INTEGER NOT NULL,
 	`listid` INTEGER NOT NULL,
 	`list` TEXT NOT NULL,
+	UNIQUE (`house_id`, `listid`)
 	FOREIGN KEY (`house_id`) REFERENCES `houses` (`id`)
 );
 
