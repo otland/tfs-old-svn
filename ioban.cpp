@@ -35,7 +35,7 @@ bool IOBan::isIpBanished(uint32_t ip, uint32_t mask /*= 0xFFFFFFFF*/)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `expires` FROM `bans` WHERE ((" << ip << " & " << mask << " & `param`) = (`value` & `param` & " << mask << ")) AND `type` = " << (BanType_t)BANTYPE_IP_BANISHMENT << " AND `active` = 1";
+	query << "SELECT `expires` FROM `bans` WHERE `type` = " << (BanType_t)BANTYPE_IP_BANISHMENT << " AND ((" << ip << " & " << mask << " & `param`) = (`value` & `param` & " << mask << ")) AND `active` = 1";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -46,26 +46,6 @@ bool IOBan::isIpBanished(uint32_t ip, uint32_t mask /*= 0xFFFFFFFF*/)
 
 	removeIpBanishment(ip);
 	return false;
-
-	/*query << "SELECT `value`, `param`, `expires` FROM `bans` WHERE `type` = " << (BanType_t)BANTYPE_IP_BANISHMENT << " AND `active` = 1";
-	if(!(result = db->storeQuery(query.str())))
-		return false;
-
-	bool ret = false;
-	do
-	{
-		if((ip & mask & result->getDataInt("param")) == (result->getDataInt("value") & result->getDataInt("param") & mask))
-		{
-			if(result->getDataLong("expires") == 0 || time(NULL) <= (time_t)result->getDataLong("expires"))
-				ret = true;
-			else
-				removeIpBanishment(ip);
-		}
-	}
-	while(result->next());
-
-	db->freeResult(result);
-	return ret;*/
 }
 
 bool IOBan::isNamelocked(uint32_t guid)

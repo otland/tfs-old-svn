@@ -141,14 +141,12 @@ void signalHandler(int32_t sig)
 	{
 		case SIGHUP:
 			g_game.setGameState(GAME_STATE_MAINTAIN);
-			Dispatcher::getDispatcher().addTask(
-				createTask(boost::bind(&Game::saveGameState, &g_game, true)));
+			g_game.saveGameState(true);
 			g_game.setGameState(GAME_STATE_NORMAL);
 			break;
 		case SIGTRAP:
 			g_game.setGameState(GAME_STATE_MAINTAIN);
-			Dispatcher::getDispatcher().addTask(
-				createTask(boost::bind(&Game::cleanMap, &g_game, tmp)));
+			g_game.cleanMap(tmp);
 			g_game.setGameState(GAME_STATE_NORMAL);
 			break;
 		case SIGUSR1:
@@ -712,8 +710,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
 						g_game.setGameState(GAME_STATE_MAINTAIN);
-						Dispatcher::getDispatcher().addTask(
-							createTask(boost::bind(&Game::saveGameState, &g_game, true)));
+						g_game.saveGameState(true);
 						g_game.setGameState(GAME_STATE_NORMAL);
 						MessageBox(NULL, "Server has been saved.", "Save server", MB_OK);
 					}
@@ -725,8 +722,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					{
 						uint32_t count = 0;
 						g_game.setGameState(GAME_STATE_MAINTAIN);
-						Dispatcher::getDispatcher().addTask(
-							createTask(boost::bind(&Game::cleanMap, &g_game, count)));
+						g_game.cleanMap(count);
 						g_game.setGameState(GAME_STATE_NORMAL);
 						char buffer[100];
 						sprintf(buffer, "Map has been cleaned, collected %u items.", count);
