@@ -159,7 +159,7 @@ CREATE TABLE `players`
 	`marriage` INT UNSIGNED NOT NULL DEFAULT 0,
 	`promotion` INT NOT NULL DEFAULT 0,
 	`deleted` TINYINT(1) NOT NULL DEFAULT FALSE,
-	PRIMARY KEY (`id`), UNIQUE (`name`),
+	PRIMARY KEY (`id`), UNIQUE (`name`, `deleted`),
 	KEY (`account_id`), KEY (`group_id`),
 	KEY (`online`), KEY (`deleted`),
 	FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE,

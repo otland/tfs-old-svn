@@ -127,7 +127,7 @@ CREATE TABLE `players`
 	`marriage` INT NOT NULL DEFAULT 0,
 	`promotion` INT NOT NULL DEFAULT 0,
 	`deleted` SMALLINT NOT NULL DEFAULT FALSE,
-	PRIMARY KEY (`id`), UNIQUE (`name`),
+	PRIMARY KEY (`id`), UNIQUE (`name`, `deleted`),
 	FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE,
 	FOREIGN KEY (`group_id`) REFERENCES `groups`(`id`)
 );
