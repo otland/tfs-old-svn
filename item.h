@@ -420,7 +420,7 @@ class Item : virtual public Thing, public ItemAttributes
 
 		virtual void __startDecaying();
 
-		bool isLoadedFromMap() {return loadedFromMap;}
+		bool isLoadedFromMap() const {return loadedFromMap;}
 		void setLoadedFromMap(bool value) {loadedFromMap = value;}
 
 	protected:
