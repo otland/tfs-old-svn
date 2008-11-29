@@ -197,7 +197,7 @@ void Map::setTile(uint16_t x, uint16_t y, uint8_t z, Tile* newTile)
 	}
 }
 
-bool Map::placeCreature(const Position& centerPos, Creature* creature, bool extendedPos /*= false*/, bool forceLogin /*= false*/)
+bool Map::placeCreature(const Position& centerPos, Creature* creature, bool extendedPos /*= false*/, bool forced /*= false*/)
 {
 	bool foundTile = false, placeInPz = false;
 	Tile* tile = getTile(centerPos);
@@ -209,37 +209,37 @@ bool Map::placeCreature(const Position& centerPos, Creature* creature, bool exte
 			flags |= FLAG_IGNOREBLOCKCREATURE;
 
 		ReturnValue ret = tile->__queryAdd(0, creature, 1, flags);
-		if(forceLogin || ret == RET_NOERROR || ret == RET_PLAYERISNOTINVITED)
+		if(forced || ret == RET_NOERROR || ret == RET_PLAYERISNOTINVITED)
 			foundTile = true;
 	}
 
 	size_t shufflePos = 0;
-	std::vector<std::pair<uint32_t, uint32_t> > relList;
+	PositionVec relList;
 	if(extendedPos)
 	{
 		shufflePos = 8;
-		relList.push_back(std::make_pair(-2, 0));
-		relList.push_back(std::make_pair(0, -2));
-		relList.push_back(std::make_pair(0, 2));
-		relList.push_back(std::make_pair(2, 0));
+		relList.push_back(PositionPair(-2, 0));
+		relList.push_back(PositionPair(0, -2));
+		relList.push_back(PositionPair(0, 2));
+		relList.push_back(PositionPair(2, 0));
 		std::random_shuffle(relList.begin(), relList.end());
 	}
 
-	relList.push_back(std::make_pair(-1, -1));
-	relList.push_back(std::make_pair(-1, 0));
-	relList.push_back(std::make_pair(-1, 1));
-	relList.push_back(std::make_pair(0, -1));
-	relList.push_back(std::make_pair(0, 1));
-	relList.push_back(std::make_pair(1, -1));
-	relList.push_back(std::make_pair(1, 0));
-	relList.push_back(std::make_pair(1, 1));
+	relList.push_back(PositionPair(-1, -1));
+	relList.push_back(PositionPair(-1, 0));
+	relList.push_back(PositionPair(-1, 1));
+	relList.push_back(PositionPair(0, -1));
+	relList.push_back(PositionPair(0, 1));
+	relList.push_back(PositionPair(1, -1));
+	relList.push_back(PositionPair(1, 0));
+	relList.push_back(PositionPair(1, 1));
 	std::random_shuffle(relList.begin() + shufflePos, relList.end());
 
 	uint32_t radius = 1;
 	Position tryPos;
 	for(uint32_t n = 1; n <= radius && !foundTile; ++n)
 	{
-		for(std::vector<std::pair<uint32_t, uint32_t> >::iterator it = relList.begin(); it != relList.end() && !foundTile; ++it)
+		for(PositionVec::iterator it = relList.begin(); it != relList.end() && !foundTile; ++it)
 		{
 			int32_t dx = it->first * n;
 			int32_t dy = it->second * n;

@@ -4592,33 +4592,40 @@ void Game::globalSave()
 
 Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extended/* = false*/, bool ignoreHouse/* = true*/)
 {
-	std::vector<std::pair<uint32_t, uint32_t> > relList;
-	relList.push_back(std::make_pair(0, 0));
-	relList.push_back(std::make_pair(-1, -1));
-	relList.push_back(std::make_pair(-1, 0));
-	relList.push_back(std::make_pair(-1, 1));
-	relList.push_back(std::make_pair(0, -1));
-	relList.push_back(std::make_pair(0, 1));
-	relList.push_back(std::make_pair(1, -1));
-	relList.push_back(std::make_pair(1, 0));
-	relList.push_back(std::make_pair(1, 1));
+	PositionVec relList;
+	relList.push_back(PositionPair(0, 0));
+	relList.push_back(PositionPair(-1, -1));
+	relList.push_back(PositionPair(-1, 0));
+	relList.push_back(PositionPair(-1, 1));
+	relList.push_back(PositionPair(0, -1));
+	relList.push_back(PositionPair(0, 1));
+	relList.push_back(PositionPair(1, -1));
+	relList.push_back(PositionPair(1, 0));
+	relList.push_back(PositionPair(1, 1));
 	if(extended)
 	{
-		relList.push_back(std::make_pair(-2, 0));
-		relList.push_back(std::make_pair(0, -2));
-		relList.push_back(std::make_pair(0, 2));
-		relList.push_back(std::make_pair(2, 0));
+		relList.push_back(PositionPair(-2, 0));
+		relList.push_back(PositionPair(0, -2));
+		relList.push_back(PositionPair(0, 2));
+		relList.push_back(PositionPair(2, 0));
 	}
 
 	std::random_shuffle(relList.begin() + 1, relList.end());
 	if(Player* player = creature->getPlayer())
 	{
-		for(std::vector<std::pair<uint32_t, uint32_t> >::iterator it = relList.begin(); it != relList.end(); ++it)
+		for(PositionVec::iterator it = relList.begin(); it != relList.end(); ++it)
 		{
 			Position tmp = Position((pos.x + it->first), (pos.y + it->second), pos.z);
 			if(Tile* tile = map->getTile(tmp))
 			{
-				if(!tile->creatures.empty() || (tile->hasProperty(IMMOVABLEBLOCKSOLID)
+				uint32_t i = creatures.size();
+				for(CreatureVector::iterator cit = creatures.begin(); cit != creatures.end(); ++cit)
+				{
+					if((*cit)->isInGhostMode())
+						i--;
+				}
+
+				if(i || (tile->hasProperty(IMMOVABLEBLOCKSOLID)
 					&& !player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere)))
 					continue;
 
@@ -4637,7 +4644,14 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 			Position tmp = Position((pos.x + it->first), (pos.y + it->second), pos.z);
 			if(Tile* tile = map->getTile(tmp))
 			{
-				if(tile->creatures.empty() && !tile->hasProperty(IMMOVABLEBLOCKSOLID))
+				uint32_t i = creatures.size();
+				for(CreatureVector::iterator cit = creatures.begin(); cit != creatures.end(); ++cit)
+				{
+					if((*cit)->isInGhostMode())
+						i--;
+				}
+
+				if(!i && !tile->hasProperty(IMMOVABLEBLOCKSOLID))
 					return tile->getPosition();
 			}
 		}
