@@ -76,7 +76,7 @@ if(Modules == nil) then
 			return false
 		end
 
-		if(isPlayerPremiumCallback(cid) or not(parameters.premium)) then
+		if(isPlayerPremiumCallback(cid) or getBooleanFromString(getConfigInfo('premiumForPromotion')) ~= TRUE or not(parameters.premium)) then
 			if(getPlayerPromotionLevel(cid) >= parameters.promotion) then
 				npcHandler:say('You are already promoted!', cid)
 			elseif(getPlayerLevel(cid) < parameters.level) then
@@ -136,7 +136,7 @@ if(Modules == nil) then
 			return false
 		end
 
-		if(isPlayerPremiumCallback(cid) or getBooleanFromString(getConfigInfo('blessingsOnlyForPremium')) ~= TRUE or not(parameters.premium)) then
+		if(isPlayerPremiumCallback(cid) or getBooleanFromString(getConfigInfo('blessingsOnlyPremium')) ~= TRUE or not(parameters.premium)) then
 			if getPlayerBlessing(cid, parameters.bless) then
 				npcHandler:say("Gods have already blessed you with this blessing!", cid)
 			elseif doPlayerRemoveMoney(cid, parameters.cost) == FALSE then

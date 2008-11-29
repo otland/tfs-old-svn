@@ -123,7 +123,7 @@
 	freePremium = "no"
 	removePremiumOnInit = "yes"
 	premiumForPromotion = "yes"
-	blessingsOnlyForPremium = "yes"
+	blessingsOnlyPremium = "yes"
 	houseNeedPremium = "yes"
 	bedsRequirePremium = "yes"
 

@@ -165,7 +165,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBool[SAVE_GLOBAL_STORAGE] = getGlobalBool(L, "saveGlobalStorage", "yes");
 	m_confBool[FORCE_CLOSE_SLOW_CONNECTION] = getGlobalBool(L, "forceSlowConnectionsToDisconnect", "no");
 	m_confBool[EXPERIENCE_STAGES] = getGlobalBool(L, "experienceStages", "no");
-	m_confBool[BLESSING_ONLY_PREMIUM] = getGlobalBool(L, "blessingsOnlyForPremium", "yes");
+	m_confBool[BLESSING_ONLY_PREMIUM] = getGlobalBool(L, "blessingsOnlyPremium", "yes");
 	m_confBool[BED_REQUIRE_PREMIUM] = getGlobalBool(L, "bedsRequirePremium", "yes");
 	m_confNumber[FIELD_OWNERSHIP] = getGlobalNumber(L, "fieldOwnershipDuration", 5 * 1000);
 	m_confBool[ALLOW_CHANGECOLORS] = getGlobalBool(L, "allowChangeColors", "yes");
