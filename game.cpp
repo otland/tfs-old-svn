@@ -4618,7 +4618,7 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 			Position tmp = Position((pos.x + it->first), (pos.y + it->second), pos.z);
 			if(Tile* tile = map->getTile(tmp))
 			{
-				uint32_t i = creatures.size();
+				uint32_t i = tile->creatures.size();
 				for(CreatureVector::iterator cit = creatures.begin(); cit != creatures.end(); ++cit)
 				{
 					if((*cit)->isInGhostMode())
@@ -4644,7 +4644,7 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 			Position tmp = Position((pos.x + it->first), (pos.y + it->second), pos.z);
 			if(Tile* tile = map->getTile(tmp))
 			{
-				uint32_t i = creatures.size();
+				uint32_t i = tile->creatures.size();
 				for(CreatureVector::iterator cit = creatures.begin(); cit != creatures.end(); ++cit)
 				{
 					if((*cit)->isInGhostMode())
