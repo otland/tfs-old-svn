@@ -60,18 +60,18 @@ bool Spells::onPlayerSay(Player* player, const std::string& words)
 
 	size_t size = instantSpell->getWords().length();
 	std::string param = reWords.substr(size, reWords.length() - size), reParam = "";
-	if(instantSpell->getHasParam() && !param.empty() && param[0] == " ")
+	if(instantSpell->getHasParam() && !param.empty() && param[0] == ' ')
 	{
-		size_t quote = param.find("\"", 1);
+		size_t quote = param.find('"', 1);
 		if(quote != std::string::npos)
 		{
-			size_t tmp = param.find("\"", quote + 1);
+			size_t tmp = param.find('"', quote + 1);
 			if(tmp == std::string::npos)
 				tmp = param.length();
 
 			reParam = param.substr(quote + 1, tmp - quote - 1);
 		}
-		else if(param.find(" ", 1) == std::string::npos)
+		else if(param.find(' ', 1) == std::string::npos)
 			reParam = param.substr(1, param.length());
 
 		trimString(reParam);
