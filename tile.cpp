@@ -510,7 +510,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, 
 						//2) Monster is already afflicated by this type of condition
 						if(hasBitSet(FLAG_IGNOREFIELDDAMAGE, flags))
 						{
-							if(!(monster->canPushItems() || monster->hasCondition(Combat::DamageToConditionType(combatType))))
+							if(!monster->canPushItems() && !monster->hasCondition(Combat::DamageToConditionType(combatType)))
 								return RET_NOTPOSSIBLE;
 						}
 						else
@@ -583,7 +583,8 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, 
 				{
 					if(hasBitSet(FLAG_IGNOREBLOCKITEM, flags))
 					{
-						if(!iiType.moveable || iitem->getUniqueId() != 0)
+						if(!iiType.moveable || ((iitem->getUniqueId() != 0 || iitem->getActionId() != 0) &&
+							iitem->isLoadedFromMap()))
 							return RET_NOTPOSSIBLE;
 					}
 					else

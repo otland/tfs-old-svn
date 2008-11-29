@@ -11,11 +11,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return TRUE
 	end
 
-	local storage = item.uid
-	for k,v in pairs(specialQuests) do
-		if(item.actionid == k) then
-			storage = v
-			break
+	local storage = table.find(specialQuests, item.actionid)
+	if(storage == nil) then
+		storage = item.uid
+		if(storage > 65535) then
+			return FALSE
 		end
 	end
 
@@ -88,12 +88,10 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		else
 			result = "You have found " .. result
 			setPlayerStorageValue(cid, storage, 1)
-			for k,v in pairs(questsExperience) do
-				if(storage == k) then
-					doPlayerAddExp(cid, v)
-					doSendAnimatedText(getCreaturePosition(cid), v, TEXTCOLOR_WHITE_EXP)
-					break
-				end
+			local experience = table.find(questsExperience, storage)
+			if(experience ~= nil) then
+				doPlayerAddExp(cid, experience)
+				doSendAnimatedText(getCreaturePosition(cid), experience, TEXTCOLOR_WHITE_EXP)
 			end
 		end
 	end
