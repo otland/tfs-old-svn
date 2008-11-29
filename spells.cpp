@@ -60,17 +60,20 @@ bool Spells::onPlayerSay(Player* player, const std::string& words)
 
 	size_t size = instantSpell->getWords().length();
 	std::string param = reWords.substr(size, reWords.length() - size), reParam = "";
-	if(instantSpell->getHasParam() && !param.empty() && param[0] == ' ')
+	if(instantSpell->getHasParam() && !param.empty() && param[0] == " ")
 	{
-		size = param.find('"', 0);
-		size_t tmpSize = std::string::npos;
-		if(size != tmpSize)
-			tmpSize = param.find('"', size + 1);
+		size_t quote = param.find("\"", 1);
+		if(quote != std::string::npos)
+		{
+			size_t tmp = param.find("\"", quote + 1);
+			if(tmp == std::string::npos)
+				tmp = param.length();
 
-		if(tmpSize == std::string::npos)
-			tmpSize = param.length();
+			reParam = param.substr(quote + 1, tmp - quote - 1);
+		}
+		else if(param.find(" ", 1) == std::string::npos)
+			reParam = param.substr(1, param.length());
 
-		reParam = param.substr(size + 1, tmpSize - size - 1);
 		trimString(reParam);
 	}
 
@@ -81,19 +84,17 @@ bool Spells::onPlayerSay(Player* player, const std::string& words)
 	if(g_config.getBool(ConfigManager::EMOTE_SPELLS))
 		type = SPEAK_MONSTER_SAY;
 
-	if(g_config.getBool(ConfigManager::SPELL_NAME_INSTEAD_WORDS))
-	{
-		std::string ret = instantSpell->getName();
-		if(param.length())
-		{
-			trimString(param);
-			ret += param;
-		}
+	if(!g_config.getBool(ConfigManager::SPELL_NAME_INSTEAD_WORDS))
+		return g_game.internalCreatureSay(player, type, reWords);
 
-		return g_game.internalCreatureSay(player, type, ret);
+	std::string ret = instantSpell->getName();
+	if(param.length())
+	{
+		trimString(param);
+		ret += ": " + param.substr(1, param.length());
 	}
 
-	return g_game.internalCreatureSay(player, type, reWords);
+	return g_game.internalCreatureSay(player, type, ret);
 }
 
 void Spells::clear()
