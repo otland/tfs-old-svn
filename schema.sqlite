@@ -170,8 +170,8 @@ CREATE TABLE `house_lists` (
 	`house_id` INTEGER NOT NULL,
 	`listid` INTEGER NOT NULL,
 	`list` TEXT NOT NULL,
+	FOREIGN KEY (`house_id`) REFERENCES `houses` (`id`),
 	UNIQUE (`house_id`, `listid`)
-	FOREIGN KEY (`house_id`) REFERENCES `houses` (`id`)
 );
 
 CREATE TABLE `player_deaths` (
@@ -191,7 +191,8 @@ CREATE TABLE `player_depotitems` (
 	`itemtype` INTEGER NOT NULL,
 	`count` INTEGER NOT NULL DEFAULT 0,
 	`attributes` BLOB NOT NULL,
-	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`)
+	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`),
+	UNIQUE (`player_id`, `sid`)
 );
 
 CREATE TABLE `player_skills` (
@@ -199,21 +200,24 @@ CREATE TABLE `player_skills` (
 	`skillid` INTEGER NOT NULL,
 	`value` INTEGER NOT NULL DEFAULT 0,
 	`count` INTEGER NOT NULL DEFAULT 0,
-	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`)
+	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`),
+	UNIQUE (`player_id`, `skillid`)
 );
 
 CREATE TABLE `player_storage` (
 	`player_id` INTEGER NOT NULL,
 	`key` INTEGER NOT NULL,
 	`value` INTEGER NOT NULL,
-	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`)
+	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`),
+	UNIQUE (`player_id`, `key`)
 );
 
 CREATE TABLE `player_viplist` (
 	`player_id` INTEGER NOT NULL,
 	`vip_id` INTEGER NOT NULL,
 	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`),
-	FOREIGN KEY (`vip_id`) REFERENCES `players` (`id`)
+	FOREIGN KEY (`vip_id`) REFERENCES `players` (`id`),
+	UNIQUE (`player_id`, `vip_id`)
 );
 
 CREATE TABLE `tiles` (
@@ -240,13 +244,15 @@ CREATE TABLE `player_items` (
 	`itemtype` INT NOT NULL,
 	`count` INT NOT NULL DEFAULT 0,
 	`attributes` BLOB NOT NULL,
-	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`)
+	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`),
+	UNIQUE (`player_id`, `sid`)
 );
 
 CREATE TABLE `player_spells` (
 	`player_id` INTEGER NOT NULL,
 	`name` VARCHAR(255) NOT NULL,
-	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`)
+	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`),
+	UNIQUE (`player_id`, `name`)
 );
 
 CREATE TABLE `bans` (

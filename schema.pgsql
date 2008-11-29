@@ -71,7 +71,7 @@ CREATE TABLE `accounts`
 	`blocked` SMALLINT NOT NULL DEFAULT FALSE,
 	`warnings` INT NOT NULL DEFAULT 0,
 	`group_id` INT NOT NULL DEFAULT 1,
-	PRIMARY KEY (`id`),
+	PRIMARY KEY (`id`), UNIQUE (`name`),
 	FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`)
 );
 
@@ -147,7 +147,7 @@ CREATE TABLE `bans`
 	`comment` TEXT NOT NULL,
 	`reason` INT NOT NULL DEFAULT 0,
 	`action` INT NOT NULL DEFAULT 0,
-	PRIMARY KEY  (`id`),
+	PRIMARY KEY  (`id`)
 );
 
 CREATE TABLE `global_storage`
@@ -248,14 +248,16 @@ CREATE TABLE `player_skills`
 	`skillid` TINYIT(2) NOT NULL DEFAULT 0,
 	`value` INT NOT NULL DEFAULT 0,
 	`count` INT NOT NULL DEFAULT 0,
-	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
+	UNIQUE (`player_id`, `skillid`)
 );
 
 CREATE TABLE `player_spells`
 (
 	`player_id` INT NOT NULL,
 	`name` VARCHAR(255) NOT NULL,
-	 FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
+	 FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
+	UNIQUE (`player_id`, `name`)
 );
 
 CREATE TABLE `player_storage`
@@ -263,7 +265,8 @@ CREATE TABLE `player_storage`
 	`player_id` INT NOT NULL DEFAULT 0,
 	`key` INT NOT NULL DEFAULT 0,
 	`value` INT NOT NULL DEFAULT 0,
-	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
+	UNIQUE (`player_id`, `key`)
 );
 
 CREATE TABLE `player_viplist`
@@ -271,7 +274,8 @@ CREATE TABLE `player_viplist`
 	`player_id` INT NOT NULL,
 	`vip_id` INT NOT NULL,
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
-	FOREIGN KEY (`vip_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
+	FOREIGN KEY (`vip_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
+	UNIQUE (`player_id`, `vip_id`)
 );
 
 CREATE TABLE `tiles`
