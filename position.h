@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <cmath>
 #include <iostream>
+#include <vector>
 
 enum Direction
 {

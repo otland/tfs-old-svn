@@ -4619,14 +4619,14 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 			if(Tile* tile = map->getTile(tmp))
 			{
 				uint32_t i = tile->creatures.size();
-				for(CreatureVector::iterator cit = creatures.begin(); cit != creatures.end(); ++cit)
+				for(CreatureVector::iterator cit = tile->creatures.begin(); cit != tile->creatures.end(); ++cit)
 				{
 					if((*cit)->isInGhostMode())
 						i--;
 				}
 
-				if(i || (tile->hasProperty(IMMOVABLEBLOCKSOLID)
-					&& !player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere)))
+				if(i || (tile->hasProperty(IMMOVABLEBLOCKSOLID) &&
+					!player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere)))
 					continue;
 
 				ReturnValue ret = tile->__queryAdd(0, player, 1, FLAG_IGNOREBLOCKITEM);
@@ -4639,13 +4639,13 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 	}
 	else
 	{
-		for(std::vector<std::pair<uint32_t, uint32_t> >::iterator it = relList.begin(); it != relList.end(); ++it)
+		for(PositionVec::iterator it = relList.begin(); it != relList.end(); ++it)
 		{
 			Position tmp = Position((pos.x + it->first), (pos.y + it->second), pos.z);
 			if(Tile* tile = map->getTile(tmp))
 			{
 				uint32_t i = tile->creatures.size();
-				for(CreatureVector::iterator cit = creatures.begin(); cit != creatures.end(); ++cit)
+				for(CreatureVector::iterator cit = tile->creatures.begin(); cit != tile->creatures.end(); ++cit)
 				{
 					if((*cit)->isInGhostMode())
 						i--;
