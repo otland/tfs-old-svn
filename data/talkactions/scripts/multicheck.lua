@@ -1,31 +1,29 @@
 function onSay(cid, words, param)
+	local list = {}
+	local ips = {}
 	local players = getPlayersOnline()
-	local IPs = {}
-	local multiClients = {}
-	local multiClientIPs = {}
 	for i, pid in ipairs(players) do
-		local ip = getIpByName(getCreatureName(pid))
-		local pos = table.find(IPs, ip)
-		if(pos ~= nil) then
-			if(isInArray(multiClients, players[pos]) == TRUE) then
-				table.insert(multiClients, players[pos])
-				table.insert(multiClientIPs, ip)
+		local ip = getPlayerIp(pid)
+		local tmp = table.find(ips, ip)
+		if(tmp ~= nil) then
+			if(table.countElements(list, ip) == 0) then
+				list[players[tmp]] = ip
 			end
-			table.remove(players, pos)
-			table.remove(IPs, pos)
-			table.insert(multiClients, pid)
-			table.insert(multiClientIPs, ip)
+
+			list[pid] = ip
 		end
-		table.insert(IPs, ip)
+
+		table.insert(ips, ip)
 	end
 
-	if(table.maxn(multiClients) > 0) then
+	if(table.maxn(list) > 0) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Currently online players with same IP address(es):")
-		for i, pid in ipairs(multiClients) do
-			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, getCreatureName(pid) .. " (" .. convertIntToIP(multiClientIPs[i]) .. ")")
+		for pid, ip in pairs(list) do
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, getCreatureName(pid) .. " (" .. doConvertIntToIp(ip) .. ")")
 		end
 	else
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Currently there aren't any players with same IP address(es).")
 	end
+
 	return TRUE
 end

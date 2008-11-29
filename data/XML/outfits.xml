@@ -43,7 +43,7 @@
 	<outfit type="1" looktype="278" enabled="1" name="Brotherhood" premium="1"/>
 	<outfit type="1" looktype="289"	enabled="1" name="Demonhunter" premium="1"/>
 	<!-- Custom outfits -->
-	<outfit type="2" looktype="12" enabled="1" name="Archdemon" premium="1"/>
+	<outfit type="2" looktype="12" enabled="1" name="Archdemon" premium="1" quest="30015"/>
 	<outfit type="2" looktype="159" enabled="1" name="Elf" premium="1"/>
 	<outfit type="2" looktype="160" enabled="1" name="Dwarf" premium="1"/>
 	<outfit type="2" looktype="226" enabled="1" name="Frog" premium="1"/>

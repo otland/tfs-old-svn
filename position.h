@@ -44,7 +44,7 @@ typedef std::vector<PositionPair> PositionVec;
 class Position
 {
 	public:
-		Position() : x(31), y(31), z(7) {}
+		Position() : x(0), y(0), z(7) {}
 		~Position() {}
 
 		template<int32_t deltax, int32_t deltay, int32_t deltaz>

@@ -36,7 +36,7 @@
 [ DEVELOPERS
 	Project Manager(s)
 		Talaturen
-		Elf (Temp., responsible for 0.3 Alpha stage)
+		Elf (Temp., responsible for 0.3 Alpha & Beta stage)
 
 	Founder(s)
 		Talaturen
@@ -91,11 +91,11 @@
 
 		Download sources
 			Launch a terminal, and paste in this command:
-				svn co http://svn.otland.net/public/forgottenserver/tags/0.3a3
+				svn co http://svn.otland.net/public/forgottenserver/tags/0.3b1
 
 		Compiling
 			Launch a terminal, and type this:
-				cd 0.3a3 && ./autogen.sh && ./configure --enable-mysql --enable-server-diag && make
+				cd 0.3a4 && ./autogen.sh && ./configure --enable-mysql --enable-server-diag && make
 
 		Linker error
 			If you receive a linker error saying something with 'libboost', try pasting the following commands to terminal and then move back to compiling again:
@@ -128,12 +128,12 @@
 [ EXECUTING
 	Linux
 		MySQL
-			Read MYSQL_HELP, and then launch a terminal, and paste in this command:
-				cd ~/forgottenserver/forgottenserver/ && ./TheForgottenServer
+			Read MYSQL_HELP then launch a terminal, and paste this command:
+				cd ~/forgottenserver/forgottenserver/ && ./theforgottenserver
 
 		SqLite
-			Launch a terminal, and paste in this command:
-				cd ~/forgottenserver/forgottenserver/ && ./TheForgottenServer
+			Launch a terminal, and paste this command:
+				cd ~/forgottenserver/forgottenserver/ && ./theforgottenserver
 
 	Windows
 		MySQL

@@ -117,21 +117,16 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 				{
 					char name[30];
 					GetWindowText(list, name, sizeof(name));
-					Player* player = g_game.getPlayerByName(name);
-					if(player)
+					if(Player* player = g_game.getPlayerByName(name))
 					{
 						char buffer[150];
 						sprintf(buffer, "Are you sure you want to %s %s?", ((HWND)lParam == kick ? "kick" : "ban permamently"), player->getName().c_str());
-						if(MessageBox(hWnd, buffer, "Player management", MB_YESNO) == IDYES)
+						if(MessageBox(hWnd, buffer, "Player management", MB_YESNO) == IDYES && player && !player->isRemoved())
 						{
-							player = g_game.getPlayerByName(name);
-							if(player)
-							{
-								if((HWND)lParam == permBan)
-									IOBan::getInstance()->addDeletion(player->getAccount(), 33, 2, "Permament banishment.", 0);
+							if((HWND)lParam == permBan)
+								IOBan::getInstance()->addDeletion(player->getAccount(), 23, 7, "Permament banishment.", 0);
 
-								player->kickPlayer(true);
-							}
+							g_game.kickPlayer(player->getID(), true);
 						}
 					}
 					else
