@@ -249,8 +249,8 @@ CREATE TABLE `player_deaths`
 	`level` INT NOT NULL DEFAULT 1,
 	`killed_by` VARCHAR(255) NOT NULL,
 	`altkilled_by` VARCHAR(255) NOT NULL,
-	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
-	KEY (`player_id`)
+	KEY (`player_id`),
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `player_depotitems`
@@ -262,9 +262,9 @@ CREATE TABLE `player_depotitems`
 	`itemtype` INT NOT NULL,
 	`count` INT NOT NULL DEFAULT 0,
 	`attributes` BLOB NOT NULL,
-	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
 	KEY (`player_id`, `depot_id`),
-	UNIQUE (`player_id`, `sid`)
+	UNIQUE (`player_id`, `sid`),
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `player_items`
@@ -275,9 +275,9 @@ CREATE TABLE `player_items`
 	`itemtype` INT NOT NULL DEFAULT 0,
 	`count` INT NOT NULL DEFAULT 0,
 	`attributes` BLOB NOT NULL,
-	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
 	KEY (`player_id`),
-	UNIQUE (`player_id`, `sid`)
+	UNIQUE (`player_id`, `sid`),
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `player_skills`
@@ -286,16 +286,16 @@ CREATE TABLE `player_skills`
 	`skillid` TINYIT(2) NOT NULL DEFAULT 0,
 	`value` INT UNSIGNED NOT NULL DEFAULT 0,
 	`count` INT UNSIGNED NOT NULL DEFAULT 0,
-	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
-	KEY (`player_id`), UNIQUE (`player_id`, `skillid`)
+	KEY (`player_id`), UNIQUE (`player_id`, `skillid`),
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `player_spells`
 (
 	`player_id` INT NOT NULL,
 	`name` VARCHAR(255) NOT NULL,
-	 FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
-	KEY (`player_id`), UNIQUE (`player_id`, `name`)
+	KEY (`player_id`), UNIQUE (`player_id`, `name`),
+	 FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `player_storage`
@@ -303,17 +303,17 @@ CREATE TABLE `player_storage`
 	`player_id` INT NOT NULL DEFAULT 0,
 	`key` INT UNSIGNED NOT NULL DEFAULT 0,
 	`value` INT NOT NULL DEFAULT 0,
-	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
-	KEY (`player_id`), UNIQUE (`player_id`, `key`)
+	KEY (`player_id`), UNIQUE (`player_id`, `key`),
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `player_viplist`
 (
 	`player_id` INT NOT NULL COMMENT 'id of player whose viplist entry it is',
 	`vip_id` INT NOT NULL COMMENT 'id of target player of viplist entry',
+	KEY (`player_id`), KEY (`vip_id`), UNIQUE (`player_id`, `vip_id`),
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
-	FOREIGN KEY (`vip_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
-	KEY (`player_id`), KEY (`vip_id`), UNIQUE (`player_id`, `vip_id`)
+	FOREIGN KEY (`vip_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `tiles`
@@ -334,8 +334,8 @@ CREATE TABLE `tile_items`
 	`itemtype` INT NOT NULL,
 	`count` INT NOT NULL DEFAULT 0,
 	`attributes` BLOB NOT NULL,
-	FOREIGN KEY (`tile_id`) REFERENCES `tiles`(`id`) ON DELETE CASCADE,
-	KEY (`sid`)
+	KEY (`sid`),
+	FOREIGN KEY (`tile_id`) REFERENCES `tiles`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 DELIMITER |

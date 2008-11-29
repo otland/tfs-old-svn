@@ -137,7 +137,7 @@ INSERT INTO `players` VALUES (1, 'Account Manager', 1, 1, 1, 0, 150, 150, 0, 0, 
 CREATE TABLE `bans`
 (
 	`id` SERIAL,
-	`type` SMALLINT NOT NULLm
+	`type` SMALLINT NOT NULL,
 	`value` INT NOT NULL,
 	`param` INT NOT NULL DEFAULT 4294967295,
 	`active` SMALLINT NOT NULL DEFAULT TRUE,
@@ -226,8 +226,8 @@ CREATE TABLE `player_depotitems`
 	`itemtype` INT NOT NULL,
 	`count` INT NOT NULL DEFAULT 0,
 	`attributes` BYTEA NOT NULL,
-	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
-	UNIQUE (`player_id`, `sid`)
+	UNIQUE (`player_id`, `sid`),
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `player_items`
@@ -238,8 +238,8 @@ CREATE TABLE `player_items`
 	`itemtype` INT NOT NULL DEFAULT 0,
 	`count` INT NOT NULL DEFAULT 0,
 	`attributes` BYTEA NOT NULL,
-	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
-	UNIQUE (`player_id`, `sid`)
+	UNIQUE (`player_id`, `sid`),
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `player_skills`
@@ -248,16 +248,16 @@ CREATE TABLE `player_skills`
 	`skillid` TINYIT(2) NOT NULL DEFAULT 0,
 	`value` INT NOT NULL DEFAULT 0,
 	`count` INT NOT NULL DEFAULT 0,
-	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
-	UNIQUE (`player_id`, `skillid`)
+	UNIQUE (`player_id`, `skillid`),
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `player_spells`
 (
 	`player_id` INT NOT NULL,
 	`name` VARCHAR(255) NOT NULL,
-	 FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
-	UNIQUE (`player_id`, `name`)
+	UNIQUE (`player_id`, `name`),
+	 FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `player_storage`
@@ -265,17 +265,17 @@ CREATE TABLE `player_storage`
 	`player_id` INT NOT NULL DEFAULT 0,
 	`key` INT NOT NULL DEFAULT 0,
 	`value` INT NOT NULL DEFAULT 0,
-	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
-	UNIQUE (`player_id`, `key`)
+	UNIQUE (`player_id`, `key`),
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `player_viplist`
 (
 	`player_id` INT NOT NULL,
 	`vip_id` INT NOT NULL,
+	UNIQUE (`player_id`, `vip_id`),
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
-	FOREIGN KEY (`vip_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
-	UNIQUE (`player_id`, `vip_id`)
+	FOREIGN KEY (`vip_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `tiles`
