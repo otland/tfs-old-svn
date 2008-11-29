@@ -47,7 +47,7 @@ bool IOBan::isIpBanished(uint32_t ip, uint32_t mask /*= 0xFFFFFFFF*/)
 	removeIpBanishment(ip);
 	return false;*/
 
-	query << "SELECT `value`, `param`, `expires` FROM `bans` WHERE `active` = 1";
+	query << "SELECT `value`, `param`, `expires` FROM `bans` WHERE `type` = " << (BanType_t)BANTYPE_IP_BANISHMENT << " AND `active` = 1";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
