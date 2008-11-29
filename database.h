@@ -246,8 +246,11 @@ class DBQuery : public std::stringstream
 	friend class _Database;
 
 	public:
-		DBQuery() {}
-		virtual ~DBQuery() {}
+		DBQuery();
+		virtual ~DBQuery();
+
+	protected:
+		static OTSYS_THREAD_LOCKVAR databaseLock;
 };
 
 /**
