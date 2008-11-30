@@ -7117,7 +7117,9 @@ int32_t LuaScriptInterface::luaGetAccountByName(lua_State *L)
 int32_t LuaScriptInterface::luaGetAccountIdByAccount(lua_State *L)
 {
 	//getAccountIdByAccount(accName)
-	lua_pushnumber(L, IOLoginData::getInstance()->getAccountId(popString(L)));
+	uint32_t value = 0;
+	IOLoginData::getInstance()->getAccountId(popString(L), value);
+	lua_pushnumber(L, value);
 	return 1;
 }
 
