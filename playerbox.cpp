@@ -121,7 +121,7 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 					{
 						char buffer[150];
 						sprintf(buffer, "Are you sure you want to %s %s?", ((HWND)lParam == kick ? "kick" : "ban permamently"), player->getName().c_str());
-						if(MessageBox(hWnd, buffer, "Player management", MB_YESNO) == IDYES && player && !player->isRemoved())
+						if(MessageBox(hWnd, buffer, "Player management", MB_YESNO) == IDYES)
 						{
 							if((HWND)lParam == permBan)
 								IOBan::getInstance()->addDeletion(player->getAccount(), 23, 7, "Permament banishment.", 0);

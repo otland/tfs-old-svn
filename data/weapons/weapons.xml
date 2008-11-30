@@ -53,6 +53,7 @@
 	</wand>
 
 	<!-- Swords -->
+	<melee id="2396" function="default"/>
 	<melee id="2413" unproperly="1" function="default">
 		<vocation name="Knight"/>
 	</melee>

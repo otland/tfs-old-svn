@@ -336,18 +336,22 @@
 	<item id="598" name="lava">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="fire"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="599" name="lava">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="fire"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="600" name="lava">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="fire"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="601" name="lava">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="fire"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="670" name="snow">
 	</item>
@@ -356,18 +360,22 @@
 	<item id="708" name="tar">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="poff"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="709" name="tar">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="poff"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="710" name="tar">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="poff"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="711" name="tar">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="poff"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="724" name="cobbled pavement">
 	</item>
@@ -2668,6 +2676,7 @@
 	</item>
 	<item id="1777" article="a" name="dustbin">
 		<attribute key="type" value="trashholder"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="1778" article="a" name="big wine cask">
 		<attribute key="fluidSource" value="wine"/>
@@ -11836,54 +11845,63 @@
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4609" name="shallow water">
 		<attribute key="description" value="You see the silvery movement of fish."/>
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4610" name="shallow water">
 		<attribute key="description" value="You see the silvery movement of fish."/>
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4611" name="shallow water">
 		<attribute key="description" value="You see the silvery movement of fish."/>
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4612" name="shallow water">
 		<attribute key="description" value="You see the silvery movement of fish."/>
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4613" name="shallow water">
 		<attribute key="description" value="You see the silvery movement of fish."/>
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4614" name="shallow water">
 		<attribute key="description" value="You see the silvery movement of fish."/>
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4615" name="shallow water">
 		<attribute key="description" value="You see the silvery movement of fish."/>
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4616" name="shallow water">
 		<attribute key="description" value="You see the silvery movement of fish."/>
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4617" name="shallow water">
 		<attribute key="decayTo" value="4608"/>
@@ -11891,6 +11909,7 @@
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4618" name="shallow water">
 		<attribute key="decayTo" value="4609"/>
@@ -11898,6 +11917,7 @@
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4619" name="shallow water">
 		<attribute key="decayTo" value="4610"/>
@@ -11905,36 +11925,43 @@
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4620" name="shallow water">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4621" name="shallow water">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4622" name="shallow water">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4623" name="shallow water">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4624" name="shallow water">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4625" name="shallow water">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4632" name="shallow water">
 		<attribute key="fluidSource" value="water"/>
@@ -11973,119 +12000,96 @@
 		<attribute key="fluidSource" value="water"/>
 	</item>
 	<item id="4644" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4645" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4646" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4647" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4648" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4649" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4650" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4651" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4652" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4653" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4654" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4655" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4656" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4657" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4658" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4659" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4660" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4661" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4662" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4663" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4664" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4665" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4666" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4667" name="dirt">
 	</item>
@@ -12138,90 +12142,112 @@
 	<item id="4691" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4692" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4693" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4694" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4695" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4696" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4697" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4698" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4699" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4700" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4701" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4702" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4703" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4704" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4705" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4706" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4707" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4708" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4709" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4710" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4711" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4712" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4713" name="swamp">
 	</item>
@@ -12298,30 +12324,37 @@
 	<item id="4749" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4750" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4751" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4752" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4753" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4754" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4755" name="swamp">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="greenbubble"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4760" name="sand">
 	</item>
@@ -12447,31 +12480,37 @@
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4821" name="shallow water">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4822" name="shallow water">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4823" name="shallow water">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4824" name="shallow water">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4825" name="shallow water">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4826" article="a" name="mountain">
 	</item>
@@ -12481,21 +12520,25 @@
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4829" name="shallow water">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4830" name="shallow water">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4831" name="shallow water">
 		<attribute key="type" value="trashholder"/>
 		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
+		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="4832" name="dirt">
 	</item>
@@ -22304,28 +22347,52 @@
 	<item id="7940" name="cave entrance">
 	</item>
 	<item id="7943" name="shallow water">
+		<attribute key="allowpickupable" value="1"/>
+		<attribute key="fluidSource" value="water"/>
 	</item>
 	<item id="7944" name="shallow water">
+		<attribute key="allowpickupable" value="1"/>
+		<attribute key="fluidSource" value="water"/>
 	</item>
 	<item id="7945" name="shallow water">
+		<attribute key="allowpickupable" value="1"/>
+		<attribute key="fluidSource" value="water"/>
 	</item>
 	<item id="7946" name="shallow water">
+		<attribute key="allowpickupable" value="1"/>
+		<attribute key="fluidSource" value="water"/>
 	</item>
 	<item id="7947" name="shallow water">
+		<attribute key="allowpickupable" value="1"/>
+		<attribute key="fluidSource" value="water"/>
 	</item>
 	<item id="7948" name="shallow water">
+		<attribute key="allowpickupable" value="1"/>
+		<attribute key="fluidSource" value="water"/>
 	</item>
 	<item id="7949" name="shallow water">
+		<attribute key="allowpickupable" value="1"/>
+		<attribute key="fluidSource" value="water"/>
 	</item>
 	<item id="7950" name="shallow water">
+		<attribute key="allowpickupable" value="1"/>
+		<attribute key="fluidSource" value="water"/>
 	</item>
 	<item id="7951" name="shallow water">
+		<attribute key="allowpickupable" value="1"/>
+		<attribute key="fluidSource" value="water"/>
 	</item>
 	<item id="7952" name="shallow water">
+		<attribute key="allowpickupable" value="1"/>
+		<attribute key="fluidSource" value="water"/>
 	</item>
 	<item id="7953" name="shallow water">
+		<attribute key="allowpickupable" value="1"/>
+		<attribute key="fluidSource" value="water"/>
 	</item>
 	<item id="7954" name="shallow water">
+		<attribute key="allowpickupable" value="1"/>
+		<attribute key="fluidSource" value="water"/>
 	</item>
 	<item id="7955" article="a" name="parcel">
 	</item>
@@ -22342,7 +22409,15 @@
 	</item>
 	<item id="7959" article="the" name="fireflanz">
 		<attribute key="weight" value="1000"/>
-		<attribute key="weaponType" value="sword"/>
+	</item>
+	<item id="7960" article="a" name="furniture package">
+		<attribute key="weight" value="2500"/>
+	</item>
+	<item id="7961" article="a" name="furniture package">
+		<attribute key="weight" value="2500"/>
+	</item>
+	<item id="7962" article="a" name="furniture package">
+		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="7963" article="a" name="shark fish">
 	</item>
@@ -22450,6 +22525,56 @@
 	<item id="8018" name="earth">
 	</item>
 	<item id="8019" name="earth">
+	</item>
+	<item id="8020" name="earth">
+	</item>
+	<item id="8021" name="">
+	</item>
+	<item id="8022" name="earth">
+	</item>
+	<item id="8023" name="earth">
+	</item>
+	<item id="8024" name="earth">
+	</item>
+	<item id="8025" name="earth">
+	</item>
+	<item id="8026" name="earth">
+	</item>
+	<item id="8027" name="earth">
+	</item>
+	<item id="8028" name="earth">
+	</item>
+	<item id="8030" name="earth">
+	</item>
+	<item id="8031" name="earth">
+	</item>
+	<item id="8032" name="earth">
+	</item>
+	<item id="8033" name="sand">
+	</item>
+	<item id="8034" name="sand">
+	</item>
+	<item id="8035" name="sand">
+	</item>
+	<item id="8036" name="sand">
+	</item>
+	<item id="8037" name="sand">
+	</item>
+	<item id="8038" name="sand">
+	</item>
+	<item id="8039" name="sand">
+	</item>
+	<item id="8040" name="sand">
+	</item>
+	<item id="8041" name="sand">
+	</item>
+	<item id="8042" name="sand">
+	</item>
+	<item id="8043" name="sand">
+	</item>
+	<item id="8044" name="sand">
+	</item>
+	<item id="8045" name="sand">
 	</item>
 	<item id="8048" name="earth">
 	</item>
@@ -22625,6 +22750,38 @@
 	<item id="8243" article="an" name="archway">
 	</item>
 	<item id="8244" article="an" name="archway">
+	</item>
+	<item id="8245" article="an" name="archway">
+	</item>
+	<item id="8246" article="an" name="archway">
+	</item>
+	<item id="8247" article="an" name="archway">
+	</item>
+	<item id="8248" article="an" name="archway">
+	</item>
+	<item id="8249" article="a" name="hole">
+		<attribute key="floorchange" value="down"/>
+	</item>
+	<item id="8250" article="a" name="hole">
+		<attribute key="floorchange" value="down"/>
+	</item>
+	<item id="8251" article="a" name="hole">
+		<attribute key="floorchange" value="down"/>
+	</item>
+	<item id="8252" article="a" name="hole">
+		<attribute key="floorchange" value="down"/>
+	</item>
+	<item id="8253" article="a" name="hole">
+		<attribute key="floorchange" value="down"/>
+	</item>
+	<item id="8254" article="a" name="hole">
+		<attribute key="floorchange" value="down"/>
+	</item>
+	<item id="8255" article="a" name="hole">
+		<attribute key="floorchange" value="down"/>
+	</item>
+	<item id="8256" article="a" name="hole">
+		<attribute key="floorchange" value="down"/>
 	</item>
 	<item id="8257" name="grass">
 	</item>
@@ -22818,23 +22975,27 @@
 	<item id="8323" article="a" name="hole">
 		<attribute key="floorchange" value="down"/>
 	</item>
-	<item id="8326" name="melting earth">
+	<item id="8324" article="a" name="sand dune">
 	</item>
-	<item id="8327" name="melting earth">
+	<item id="8325" article="a" name="sand dune">
 	</item>
-	<item id="8328" name="melting earth">
+	<item id="8326" name="dry grass">
 	</item>
-	<item id="8329" name="melting earth">
+	<item id="8327" name="dry grass">
 	</item>
-	<item id="8330" name="melting earth">
+	<item id="8328" name="dry grass">
 	</item>
-	<item id="8331" name="melting earth">
+	<item id="8329" name="dry grass">
 	</item>
-	<item id="8332" name="melting earth">
+	<item id="8330" name="dry grass">
 	</item>
-	<item id="8333" name="melting earth">
+	<item id="8331" name="dry grass">
 	</item>
-	<item id="8334" name="melting earth">
+	<item id="8332" name="dry grass">
+	</item>
+	<item id="8333" name="dry grass">
+	</item>
+	<item id="8334" name="dry grass">
 	</item>
 	<item id="8335" name="sand">
 	</item>
@@ -22860,33 +23021,33 @@
 	</item>
 	<item id="8346" name="sand">
 	</item>
-	<item id="8347" name="melting earth">
+	<item id="8347" name="dry grass">
 	</item>
-	<item id="8348" name="melting earth">
+	<item id="8348" name="dry grass">
 	</item>
-	<item id="8349" name="melting earth">
+	<item id="8349" name="dry grass">
 	</item>
-	<item id="8350" name="melting earth">
+	<item id="8350" name="dry grass">
 	</item>
-	<item id="8351" name="melting earth">
+	<item id="8351" name="dry grass">
 	</item>
-	<item id="8352" name="melting earth">
+	<item id="8352" name="dry grass">
 	</item>
-	<item id="8353" name="melting earth">
+	<item id="8353" name="dry grass">
 	</item>
-	<item id="8354" name="melting earth">
+	<item id="8354" name="dry grass">
 	</item>
-	<item id="8355" name="melting earth">
+	<item id="8355" name="dry grass">
 	</item>
-	<item id="8356" name="melting earth">
+	<item id="8356" name="dry grass">
 	</item>
-	<item id="8357" name="melting earth">
+	<item id="8357" name="dry grass">
 	</item>
-	<item id="8358" name="melting earth">
+	<item id="8358" name="dry grass">
 	</item>
-	<item id="8359" name="melting earth">
+	<item id="8359" name="dry grass">
 	</item>
-	<item id="8360" name="melting earth">
+	<item id="8360" name="dry grass">
 	</item>
 	<item id="8362" name="earth">
 	</item>
@@ -22931,6 +23092,16 @@
 	</item>
 	<item id="8380" article="a" name="tunnel entrance">
 		<attribute key="floorchange" value="down"/>
+	</item>
+	<item id="8381" article="a" name="tunnel entrance">
+	</item>
+	<item id="8382" article="a" name="tunnel entrance">
+	</item>
+	<item id="8383" article="a" name="tunnel entrance">
+	</item>
+	<item id="8384" article="a" name="tunnel entrance">
+	</item>
+	<item id="8385" article="a" name="tunnel entrance">
 	</item>
 	<item id="8386" name="skeletal remains">
 	</item>
@@ -23432,6 +23603,10 @@
 		<attribute key="weaponType" value="sword"/>
 		<attribute key="extradef" value="1"/>
 	</item>
+	<item id="8603" article="a" name="mill">
+	</item>
+	<item id="8604" article="a" name="mill">
+	</item>
 	<item id="8605" article="a" name="brick wall">
 	</item>
 	<item id="8606" article="a" name="brick wall">
@@ -23605,8 +23780,12 @@
 	</item>
 	<item id="8701" article="an" name="ancient parchment">
 	</item>
+	<item id="8700" article="a" name="bounty poster">
+	</item>
 	<item id="8702" article="a" name="the witches' grimoire">
 		<attribute key="weight" value="1300"/>
+	</item>
+	<item id="8703" article="a" name="coffin">
 	</item>
 	<item id="8704" article="a" name="small health potion">
 		<attribute key="weight" value="175"/>
@@ -23719,6 +23898,9 @@
 		<attribute key="decayTo" value="8757"/>
 		<attribute key="duration" value="45"/>
 	</item>
+	<item id="8760" article="a" name="blue vase">
+		<attribute key="weight" value="1800"/>
+	</item>
 	<item id="8761" article="an" name="invitation">
 		<attribute key="weight" value="10"/>
 		<attribute key="description" value="It is the invitation to the king's ball."/>
@@ -23757,73 +23939,73 @@
 	</item>
 	<item id="8784" article="a" name="caged wagon">
 	</item>
-	<item id="8785">
+	<item id="8785" article="a" name="damaged tree">
 	</item>
-	<item id="8786">
+	<item id="8786" article="a" name="damaged tree">
 	</item>
-	<item id="8787">
+	<item id="8787" article="a" name="damaged tree">
 	</item>
-	<item id="8788">
+	<item id="8788" article="a" name="damaged tree">
 	</item>
-	<item id="8789">
+	<item id="8789" article="a" name="damaged tree">
 	</item>
-	<item id="8790">
+	<item id="8790" article="a" name="damaged tree">
 	</item>
-	<item id="8791">
+	<item id="8791" article="a" name="damaged tree">
 	</item>
-	<item id="8792">
+	<item id="8792" article="a" name="damaged palm tree">
 	</item>
-	<item id="8793">
+	<item id="8793" article="a" name="damaged palm tree">
 	</item>
-	<item id="8794">
+	<item id="8794" article="a" name="damaged palm tree">
 	</item>
-	<item id="8795">
+	<item id="8795" article="a" name="damaged palm tree">
 	</item>
-	<item id="8796">
+	<item id="8796" article="a" name="damaged palm tree">
 	</item>
-	<item id="8797">
+	<item id="8797" article="a" name="palm tree stump">
 	</item>
-	<item id="8798">
+	<item id="8798" article="a" name="dead tree">
 	</item>
-	<item id="8799">
+	<item id="8799" article="a" name="dead tree">
 	</item>
-	<item id="8800">
+	<item id="8800" article="a" name="dead tree">
 	</item>
-	<item id="8801">
+	<item id="8801" article="a" name="dead tree">
 	</item>
-	<item id="8802">
+	<item id="8802" article="a" name="dead tree">
 	</item>
-	<item id="8803">
+	<item id="8803" article="a" name="dead tree">
 	</item>
-	<item id="8804">
+	<item id="8804" article="a" name="dead tree">
 	</item>
-	<item id="8805">
+	<item id="8805" article="a" name="dead tree">
 	</item>
-	<item id="8806">
+	<item id="8806" article="a" name="dead tree">
 	</item>
-	<item id="8807">
+	<item id="8807" article="a" name="dead tree">
 	</item>
-	<item id="8808">
+	<item id="8808" article="a" name="dead tree">
 	</item>
-	<item id="8809">
+	<item id="8809" article="a" name="dead tree">
 	</item>
-	<item id="8810">
+	<item id="8810" article="a" name="dead tree">
 	</item>
-	<item id="8811">
+	<item id="8811" article="a" name="dead tree">
 	</item>
-	<item id="8812">
+	<item id="8812" article="a" name="dead tree">
 	</item>
-	<item id="8813">
+	<item id="8813" article="a" name="dead tree">
 	</item>
-	<item id="8814">
+	<item id="8814" article="a" name="dead tree">
 	</item>
-	<item id="8815">
+	<item id="8815" article="a" name="dead tree">
 	</item>
-	<item id="8816">
+	<item id="8816" article="a" name="dead tree">
 	</item>
-	<item id="8817">
+	<item id="8817" article="a" name="dead tree">
 	</item>
-	<item id="8818">
+	<item id="8818" article="a" name="dead tree">
 	</item>
 	<item id="8819" article="a" name="magician's robe">
 		<attribute key="armor" value="6"/>
@@ -24701,21 +24883,21 @@
 	</item>
 	<item id="8993">
 	</item>
-	<item id="8994">
+	<item id="8994" article="a" name="dwarven contraption">
 	</item>
-	<item id="8995">
+	<item id="8995" article="a" name="dwarven contraption">
 	</item>
-	<item id="8996">
+	<item id="8996" article="a" name="dwarven contraption">
 	</item>
-	<item id="8997">
+	<item id="8997" article="a" name="dwarven contraption">
 	</item>
-	<item id="8998">
+	<item id="8998" article="a" name="large blackboard">
 	</item>
-	<item id="8999">
+	<item id="8999" article="a" name="large blackboard">
 	</item>
-	<item id="9000">
+	<item id="9000" article="a" name="dead tree">
 	</item>
-	<item id="9001">
+	<item id="9001" article="a" name="dead tree">
 	</item>
 	<item id="9002" article="a" name="tibiacity encyclopedia">
 		<attribute key="description" value="It contains all the knowledge of Tibia."/>
