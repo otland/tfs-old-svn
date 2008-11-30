@@ -176,21 +176,19 @@ void signalHandler(int32_t sig)
 #endif
 
 void otserv(
-#ifndef WIN32 || defined __CONSOLE__
+#if not defined(WIN32) || defined(__CONSOLE__)
 int argc, char *argv[]
 #endif
 );
 
-#ifndef WIN32 || defined __CONSOLE__
+#if not defined(WIN32) || defined(__CONSOLE__)
 int main(int argc, char *argv[])
 #else
 void serverMain(void* param)
 #endif
 {
-	#ifdef WIN32
-	#ifndef __CONSOLE__
+	#if defined(WIN32) && not defined(__CONSOLE__)
 	std::cout.rdbuf(&logger);
-	#endif
 	#endif
 	#ifdef __OTSERV_ALLOCATOR_STATS__
 	OTSYS_CREATE_THREAD(allocatorStatsThread, NULL);
@@ -224,7 +222,7 @@ void serverMain(void* param)
 	OTSYS_THREAD_SIGNALVARINIT(g_loaderSignal);
 
 	Dispatcher::getDispatcher().addTask(createTask(boost::bind(otserv
-	#ifndef WIN32 || defined __CONSOLE__
+	#if not defined(WIN32) || defined(__CONSOLE__)
 	, argc, argv
 	#endif
 	)));
@@ -234,7 +232,7 @@ void serverMain(void* param)
 
 	Server server(INADDR_ANY, g_config.getNumber(ConfigManager::PORT));
 	std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
-	#ifndef __CONSOLE__
+	#if not defined(WIN32) || defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
 	GUI::getInstance()->m_connections = true;
 	#endif
@@ -251,7 +249,7 @@ void serverMain(void* param)
 }
 
 void otserv(
-#ifndef WIN32 || defined __CONSOLE__
+#if not defined(WIN32) || defined(__CONSOLE__)
 int argc, char *argv[]
 #endif
 )
