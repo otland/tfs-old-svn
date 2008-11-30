@@ -428,7 +428,7 @@ uint32_t CreatureEvent::executeOnLook(Player* player, const Position& position, 
 	}
 }
 
-uint32_t CreatureEvent::executeOnStatsChange(Player* player, Player* attacker, StatsChange_t type, CombatType_t combat, int32_t value)
+uint32_t CreatureEvent::executeOnStatsChange(Creature* creature, Creature* attacker, StatsChange_t type, CombatType_t combat, int32_t value)
 {
 	//onStatsChange(cid, attacker, type, combat, value)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -444,14 +444,14 @@ uint32_t CreatureEvent::executeOnStatsChange(Player* player, Player* attacker, S
 		env->setScriptId(m_scriptId, m_scriptInterface);
 		env->setRealPos(player->getPosition());
 
-		uint32_t cid = env->addThing(player);
-		uint32_t attackerCid = env->addThing(attacker);
+		uint32_t cid = env->addThing(creature);
+		uint32_t aid = env->addThing(attacker);
 
 		lua_State* L = m_scriptInterface->getLuaState();
 
 		m_scriptInterface->pushFunction(m_scriptId);
 		lua_pushnumber(L, cid);
-		lua_pushnumber(L, attackerCid);
+		lua_pushnumber(L, aid);
 		lua_pushnumber(L, (uint32_t)type);
 		lua_pushnumber(L, (uint32_t)combat);
 		lua_pushnumber(L, value);
