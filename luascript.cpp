@@ -2031,6 +2031,9 @@ void LuaScriptInterface::registerFunctions()
 	//getConfigFile()
 	lua_register(m_luaState, "getConfigFile", LuaScriptInterface::luaGetConfigFile);
 
+	//getHighscoreString(skillId)
+	lua_register(m_luaState, "getHighscoreString", LuaScriptInterface::luaGetHighscoreString);
+
 	//executeRaid(name)
 	lua_register(m_luaState, "executeRaid", LuaScriptInterface::luaExecuteRaid);
 
@@ -8700,6 +8703,21 @@ int32_t LuaScriptInterface::luaGetSpectators(lua_State *L)
 		lua_settable(L, -3);
 	}
 
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetHighscoreString(lua_State* L)
+{
+	//getHighscoreString(skillId)
+	uint16_t skillId = popNumber(L);
+	if(skillId > 8)
+	{
+		reportErrorFunc("Invalid skillId");
+		lua_pushnumber(L, LUA_ERROR);
+		return 1;
+	}
+
+	lua_pushstring(L, g_game.getHighscoreString(skillId).c_str());
 	return 1;
 }
 

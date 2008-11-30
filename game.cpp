@@ -4443,7 +4443,7 @@ bool Game::broadcastMessage(const std::string& text, MessageClasses type)
 bool Game::reloadHighscores()
 {
 	lastHighscoreCheck = time(NULL);
-	for(int16_t i = 0; i <= 8; i++)
+	for(int16_t i = 0; i < 9; ++i)
 		highscoreStorage[i] = getHighscore(i);
 
 	return true;
@@ -4453,7 +4453,7 @@ void Game::checkHighscores()
 {
 	reloadHighscores();
 
-	int32_t tmp = g_config.getNumber(ConfigManager::HIGHSCORES_UPDATETIME) * 60 * 1000;
+	uint32_t tmp = g_config.getNumber(ConfigManager::HIGHSCORES_UPDATETIME) * 60 * 1000;
 	if(tmp <= 0)
 		return;
 
@@ -4464,9 +4464,9 @@ std::string Game::getHighscoreString(uint16_t skill)
 {
 	Highscore hs = highscoreStorage[skill];
 	std::stringstream ss;
-	ss << "Highscore for " << getSkillName(skill) << "\n\nRank. Level - Player Name";
-	for(uint32_t i = 1; i <= hs.size(); i++)
-		ss << "\n" << i << ".  " << hs[i].second << "  -  " << hs[i].first;
+	ss << "Highscore for " << getSkillName(skill) << "\n\nRank Level - Player Name";
+	for(uint32_t i = 0; i < hs.size(); i++)
+		ss << "\n" << (i + 1) << ".  " << hs[i].second << "  -  " << hs[i].first;
 
 	ss << "\n\nLast updated on:\n" << std::ctime(&lastHighscoreCheck);
 	return ss.str();
@@ -4500,7 +4500,7 @@ Highscore Game::getHighscore(uint16_t skill)
 
 				std::string name = result->getDataString("name");
 				if(name.length() > 0)
-					hs.push_back(make_pair(name, level));
+					hs.push_back(std::make_pair(name, level));
 			}
 			while(result->next());
 			db->freeResult(result);
@@ -4516,7 +4516,7 @@ Highscore Game::getHighscore(uint16_t skill)
 				uint32_t level = result->getDataInt("value");
 				std::string name = result->getDataString("name");
 				if(name.length() > 0)
-					hs.push_back(make_pair(name, level));
+					hs.push_back(std::make_pair(name, level));
 			}
 			while(result->next());
 			db->freeResult(result);

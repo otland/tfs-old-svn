@@ -36,6 +36,8 @@
 					other/
 						stuffeddragon.lua
 							* Added as example of position param for doCreatureSay function
+						highscores.lua
+							* Added due to hardcoded highscores function deprecation
 
 			creaturescripts/
 				scripts/
@@ -351,6 +353,7 @@
 	New onPrepareDeath creature event- no overflows and FALSE return denies death (Elf)
 	onStatsChange creature event (Elf)
 	Player and Global Storage now supports strings as values (Elf)
+	Deprecated hardcoded highscores function and rewritten as Lua function (Elf)
 ]
 
 [ Deprecated

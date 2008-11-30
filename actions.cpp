@@ -646,8 +646,6 @@ bool Action::loadFunction(const std::string& functionName)
 		function = increaseItemId;
 	else if(tmpFunctionName == "decreaseitemid")
 		function = decreaseItemId;
-	else if(tmpFunctionName == "highscorebook")
-		function = highscoreBook;
 	else
 	{
 		std::cout << "[Warning - Action::loadFunction] Function \"" << functionName << "\" does not exist." << std::endl;
@@ -658,18 +656,6 @@ bool Action::loadFunction(const std::string& functionName)
 	return true;
 }
 
-bool Action::highscoreBook(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
-{
-	if(player && item && item->getActionId() >= 150 && item->getActionId() <= 158)
-	{
-		std::string highscoreString = g_game.getHighscoreString(item->getActionId() - 150);
-		item->setText(highscoreString);
-		player->sendTextWindow(item, highscoreString.size(), false);
-		return true;
-	}
-	return false;
-}
-
 bool Action::increaseItemId(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
 {
 	if(player && item)
@@ -677,6 +663,7 @@ bool Action::increaseItemId(Player* player, Item* item, const PositionEx& posFro
 		g_game.transformItem(item, item->getID() + 1);
 		return true;
 	}
+
 	return false;
 }
 
@@ -687,6 +674,7 @@ bool Action::decreaseItemId(Player* player, Item* item, const PositionEx& posFro
 		g_game.transformItem(item, item->getID() - 1);
 		return true;
 	}
+
 	return false;
 }
 

@@ -15,20 +15,18 @@
 		http://otland.net/
 ]
 
-[ BUGS
-	Fix Highscores
-		Assigned to:
-]
-
 [ FEATURES
+	PvP Arenas
+		Assigned to: Elf
+
 	Multiworld system (revmultisys methods + custom config path from argv)
 		Assigned to: Elf, Kiper
 ]
 
 [ TASKS
-	Make more constant values configurable
-		Assigned to: *
-
 	Deprecate guild management system from Chat class and rewrite it in TalkActions
 		Assigned to: Elf
+
+	Make more constant values configurable
+		Assigned to: *
 ]

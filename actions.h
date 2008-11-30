@@ -119,7 +119,6 @@ class Action : public Event
 	protected:
 		virtual std::string getScriptEventName();
 
-		static ActionFunction highscoreBook;
 		static ActionFunction increaseItemId;
 		static ActionFunction decreaseItemId;
 

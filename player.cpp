@@ -3260,7 +3260,14 @@ void Player::doAttacking(uint32_t interval)
 		Item* tool = getWeapon();
 		if(const Weapon* weapon = g_weapons->getWeapon(tool))
 		{
-			if((!hasCondition(CONDITION_EXHAUST_WEAPON) || !weapon->hasExhaustion()) && weapon->useWeapon(this, tool, attackedCreature))
+			if(weapon->interruptSwing() && !canDoAction())
+			{
+				SchedulerTask* task = createSchedulerTask(getNextActionTime(), boost::bind(
+					&Game::checkCreatureAttack, &g_game, getID()));
+				setNextActionTask(task);
+			}
+			else if((!hasCondition(CONDITION_EXHAUST_WEAPON) || !weapon->hasExhaustion())
+				&& weapon->useWeapon(this, tool, attackedCreature))
 				lastAttack = OTSYS_TIME();
 		}
 		else if(Weapon::useFist(this, attackedCreature))
