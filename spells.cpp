@@ -210,7 +210,7 @@ InstantSpell* Spells::getInstantSpell(const std::string words)
 		if(param[0] != ' ')
 			return NULL;
 
-		if(param.length() >= 2 && param.find(' ', 1) != std::string::npos && param[1] != '"')
+		if(param.length() > 1 && ((param.find(' ', 1) == std::string::npos && !result->getHasParam()) || param[1] != '"')))
 			return NULL;
 	}
 
