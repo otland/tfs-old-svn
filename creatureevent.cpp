@@ -173,6 +173,8 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 			m_type = CREATURE_EVENT_ADVANCE;
 		else if(tmpStr == "look")
 			m_type = CREATURE_EVENT_LOOK;
+		else if(tmpStr == "statschange")
+			m_type = CREATURE_EVENT_STATSCHANGE;
 		else if(tmpStr == "attack")
 			m_type = CREATURE_EVENT_ATTACK;
 		else if(tmpStr == "kill")
@@ -212,6 +214,8 @@ std::string CreatureEvent::getScriptEventName()
 			return "onAdvance";
 		case CREATURE_EVENT_LOOK:
 			return "onLook";
+		case CREATURE_EVENT_STATSCHANGE:
+			return "onStatsChange";
 		case CREATURE_EVENT_ATTACK:
 			return "onAttack";
 		case CREATURE_EVENT_KILL:
@@ -420,6 +424,46 @@ uint32_t CreatureEvent::executeOnLook(Player* player, const Position& position, 
 	else
 	{
 		std::cout << "[Error - CreatureEvent::executeOnLook] Call stack overflow." << std::endl;
+		return 0;
+	}
+}
+
+uint32_t CreatureEvent::executeOnStatsChange(Player* player, Player* attacker, StatsChange_t type, CombatType_t combat, int32_t value)
+{
+	//onStatsChange(cid, attacker, type, combat, value)
+	if(m_scriptInterface->reserveScriptEnv())
+	{
+		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+
+		#ifdef __DEBUG_LUASCRIPTS__
+		char desc[35];
+		sprintf(desc, "%s", player->getName().c_str());
+		env->setEventDesc(desc);
+		#endif
+
+		env->setScriptId(m_scriptId, m_scriptInterface);
+		env->setRealPos(player->getPosition());
+
+		uint32_t cid = env->addThing(player);
+		uint32_t attackerCid = env->addThing(attacker);
+
+		lua_State* L = m_scriptInterface->getLuaState();
+
+		m_scriptInterface->pushFunction(m_scriptId);
+		lua_pushnumber(L, cid);
+		lua_pushnumber(L, attackerCid);
+		lua_pushnumber(L, (uint32_t)type);
+		lua_pushnumber(L, (uint32_t)combat);
+		lua_pushnumber(L, value);
+
+		int32_t result = m_scriptInterface->callFunction(5);
+		m_scriptInterface->releaseScriptEnv();
+
+		return (result == LUA_TRUE);
+	}
+	else
+	{
+		std::cout << "[Error - CreatureEvent::executeOnStatsChange] Call stack overflow." << std::endl;
 		return 0;
 	}
 }

@@ -349,6 +349,7 @@
 	Quest outfits (Elf)
 	NPC descriptions (Elf)
 	New onPrepareDeath creature event- no overflows and FALSE return denies death (Elf)
+	onStatsChange creature event
 ]
 
 [ Deprecated

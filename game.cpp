@@ -3899,17 +3899,13 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 	const Position& targetPos = target->getPosition();
 	if(healthChange > 0)
 	{
-		if(!force)
-		{
-			if(target->getHealth() <= 0)
-				return false;
-
-			if(g_config.getBool(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attacker && target &&
-				attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && combatType != COMBAT_HEALING)
-				return false;
-		}
+		if(!force && target->getHealth() <= 0)
+			return false;
 
 		target->gainHealth(attacker, healthChange);
+		if(CreatureEvent* eventStats = target->getCreatureEvent(CREATURE_EVENT_STATSCHANGE))
+			eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_HEALTHGAIN, combatType, healthChange);
+
 		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isInGhostMode())
 		{
 			const SpectatorVec& list = getSpectators(targetPos);
@@ -3944,6 +3940,9 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 				if(manaDamage != 0)
 				{
 					target->drainMana(attacker, manaDamage);
+					if(CreatureEvent* eventStats = target->getCreatureEvent(CREATURE_EVENT_STATSCHANGE))
+						eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_MANALOSS, combatType, healthChange);
+
 					char buffer[20];
 					sprintf(buffer, "%d", manaDamage);
 					addMagicEffect(list, targetPos, NM_ME_LOSE_ENERGY);
@@ -3956,6 +3955,8 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			{
 				target->drainHealth(attacker, combatType, damage);
 				addCreatureHealth(list, target);
+				if(CreatureEvent* eventStats = target->getCreatureEvent(CREATURE_EVENT_STATSCHANGE))
+					eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_HEALTHLOSS, combatType, healthChange);
 
 				TextColor_t textColor = TEXTCOLOR_NONE;
 				uint8_t hitEffect = 0;
@@ -4077,14 +4078,11 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 {
 	const Position& targetPos = target->getPosition();
 	const SpectatorVec& list = getSpectators(targetPos);
-
 	if(manaChange > 0)
 	{
-		if(g_config.getBool(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attacker && target
-			&& attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet)
-			return false;
-
 		target->changeMana(manaChange);
+		if(CreatureEvent* eventStats = target->getCreatureEvent(CREATURE_EVENT_STATSCHANGE))
+			eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_MANAGAIN, COMBAT_HEALING, manaChange);
 	}
 	else
 	{
@@ -4109,6 +4107,9 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 		if(manaLoss > 0)
 		{
 			target->drainMana(attacker, manaLoss);
+			if(CreatureEvent* eventStats = target->getCreatureEvent(CREATURE_EVENT_STATSCHANGE))
+				eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_MANALOSS, COMBAT_UNDEFINEDDAMAGE, manaChange);
+
 			char buffer[20];
 			sprintf(buffer, "%d", manaLoss);
 			addAnimatedText(list, targetPos, TEXTCOLOR_BLUE, buffer);
