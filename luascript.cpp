@@ -1312,7 +1312,7 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerAddSkillTry(cid, skillid, n)
 	lua_register(m_luaState, "doPlayerAddSkillTry", LuaScriptInterface::luaDoPlayerAddSkillTry);
 
-	//doCreatureAddHealth(cid, health)
+	//doCreatureAddHealth(cid, health[, force])
 	lua_register(m_luaState, "doCreatureAddHealth", LuaScriptInterface::luaDoCreatureAddHealth);
 
 	//doCreatureAddMana(cid, mana)
@@ -3175,17 +3175,20 @@ int32_t LuaScriptInterface::luaDoPlayerAddSkillTry(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoCreatureAddHealth(lua_State* L)
 {
-	//doCreatureAddHealth(uid,health)
+	//doCreatureAddHealth(uid, health[, force])
+	bool force = false;
+	if(lua_gettop(L) >= 3)
+		force = popNumber(L) == LUA_TRUE;
+
 	int32_t healthChange = (int32_t)popNumber(L);
-	uint32_t cid = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
-	Creature* creature = env->getCreatureByUID(cid);
-	if(creature)
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
 		if(healthChange >= 0)
-			g_game.combatChangeHealth(COMBAT_HEALING, NULL, creature, healthChange);
+			g_game.combatChangeHealth(COMBAT_HEALING, NULL, creature, healthChange, force);
 		else
-			g_game.combatChangeHealth(COMBAT_UNDEFINEDDAMAGE, NULL, creature, healthChange);
+			g_game.combatChangeHealth(COMBAT_UNDEFINEDDAMAGE, NULL, creature, healthChange, force);
+
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else
@@ -3198,12 +3201,10 @@ int32_t LuaScriptInterface::luaDoCreatureAddHealth(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoCreatureAddMana(lua_State* L)
 {
-	//doCreatureAddMana(uid,mana)
+	//doCreatureAddMana(uid, mana)
 	int32_t manaChange = (int32_t)popNumber(L);
-	uint32_t cid = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
-	Creature* creature = env->getCreatureByUID(cid);
-	if(creature)
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
 		g_game.combatChangeMana(NULL, creature, manaChange);
 		lua_pushnumber(L, LUA_NO_ERROR);
