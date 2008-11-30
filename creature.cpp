@@ -755,7 +755,7 @@ void Creature::onCreatureChangeVisible(const Creature* creature, bool visible)
 	//
 }
 
-void Creature::onDeath()
+bool Creature::onDeath()
 {
 	Creature* lastHitCreatureMaster = NULL;
 	Creature* mostDamageCreatureMaster = NULL;
@@ -781,7 +781,7 @@ void Creature::onDeath()
 	if(CreatureEvent* eventPrepareDeath = getCreatureEvent(CREATURE_EVENT_PREPAREDEATH))
 	{
 		if(!eventPrepareDeath->executeOnPrepareDeath(this, lastHitCreature, mostDamageCreature))
-			return;
+			return false;
 	}
 
 	for(CountMap::iterator it = damageMap.begin(); it != damageMap.end(); ++it)
@@ -794,6 +794,7 @@ void Creature::onDeath()
 		getMaster()->removeSummon(this);
 
 	dropCorpse();
+	return true;
 }
 
 void Creature::dropCorpse()

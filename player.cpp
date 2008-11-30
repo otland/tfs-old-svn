@@ -2193,9 +2193,11 @@ uint32_t Player::getIP() const
 	return 0;
 }
 
-void Player::onDeath()
+bool Player::onDeath()
 {
-	Creature::onDeath();
+	if(!Creature::onDeath())
+		return false;
+
 	removeConditions(CONDITIONEND_DEATH);
 	if(skillLoss)
 	{
@@ -2263,6 +2265,8 @@ void Player::onDeath()
 	}
 	else
 		setLossSkill(true);
+
+	return true;
 }
 
 void Player::dropCorpse()
