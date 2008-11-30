@@ -175,14 +175,17 @@ void signalHandler(int32_t sig)
 }
 #endif
 
-void otserv(int argc, char *argv[]);
-
-#ifndef __CONSOLE__
-void serverMain
-#else
-int main
+void otserv(
+#ifndef WIN32 || defined __CONSOLE__
+int argc, char *argv[]
 #endif
-(int argc, char *argv[])
+);
+
+#ifndef WIN32 || defined __CONSOLE__
+int main(int argc, char *argv[])
+#else
+void serverMain(void* param)
+#endif
 {
 	#ifdef WIN32
 	#ifndef __CONSOLE__
@@ -220,7 +223,11 @@ int main
 	OTSYS_THREAD_LOCKVARINIT(g_loaderLock);
 	OTSYS_THREAD_SIGNALVARINIT(g_loaderSignal);
 
-	Dispatcher::getDispatcher().addTask(createTask(boost::bind(otserv, argc, argv)));
+	Dispatcher::getDispatcher().addTask(createTask(boost::bind(otserv
+	#ifndef WIN32 || defined __CONSOLE__
+	, argc, argv
+	#endif
+	)));
 
 	OTSYS_THREAD_LOCK(g_loaderLock, "main()");
 	OTSYS_THREAD_WAITSIGNAL(g_loaderSignal, g_loaderLock);
@@ -243,7 +250,11 @@ int main
 #endif
 }
 
-void otserv(int argc, char *argv[])
+void otserv(
+#ifndef WIN32 || defined __CONSOLE__
+int argc, char *argv[]
+#endif
+)
 {
 	//dispatcher thread
 	g_game.setGameState(GAME_STATE_STARTUP);
@@ -576,7 +587,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 			SendMessage(GUI::getInstance()->m_logWindow, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
 			NID.hWnd = hwnd;
 			NID.hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(ID_ICON));
-			NID.uCallbackMessage = WM_USER+1;
+			NID.uCallbackMessage = WM_USER + 1;
 			NID.uFlags = NIF_TIP | NIF_ICON | NIF_MESSAGE;
 			strcpy(NID.szTip, STATUS_SERVER_NAME);
 			Shell_NotifyIcon(NIM_ADD, &NID);
