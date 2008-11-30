@@ -437,12 +437,12 @@ uint32_t CreatureEvent::executeOnStatsChange(Creature* creature, Creature* attac
 
 		#ifdef __DEBUG_LUASCRIPTS__
 		char desc[35];
-		sprintf(desc, "%s", player->getName().c_str());
+		sprintf(desc, "%s", creature->getName().c_str());
 		env->setEventDesc(desc);
 		#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);
-		env->setRealPos(player->getPosition());
+		env->setRealPos(creature->getPosition());
 
 		uint32_t cid = env->addThing(creature);
 		uint32_t aid = env->addThing(attacker);
