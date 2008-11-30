@@ -1853,6 +1853,9 @@ void LuaScriptInterface::registerFunctions()
 	//getAccountByName(name)
 	lua_register(m_luaState, "getAccountByName", LuaScriptInterface::luaGetAccountByName);
 
+	//getAccountIdByAccount(accName)
+	lua_register(m_luaState, "getAccountIdByAccount", LuaScriptInterface::luaGetAccountIdByAccount);
+
 	//getIpByName(name)
 	lua_register(m_luaState, "getIpByName", LuaScriptInterface::luaGetIpByName);
 
@@ -2006,7 +2009,7 @@ void LuaScriptInterface::registerFunctions()
 	//getNotationsCount(accId)
 	lua_register(m_luaState, "getNotationsCount", LuaScriptInterface::luaGetNotationsCount);
 
-	//getBanData(accId)
+	//getBanData(value)
 	lua_register(m_luaState, "getBanData", LuaScriptInterface::luaGetBanData);
 
 	//getBanReason(id)
@@ -7111,6 +7114,13 @@ int32_t LuaScriptInterface::luaGetAccountByName(lua_State *L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaGetAccountIdByAccount(lua_State *L)
+{
+	//getAccountIdByAccount(accName)
+	lua_pushnumber(L, IOLoginData::getInstance()->getAccountId(popString(L)));
+	return 1;
+}
+
 int32_t LuaScriptInterface::luaRegisterCreatureEvent(lua_State* L)
 {
 	//registerCreatureEvent(cid, name)
@@ -9363,7 +9373,7 @@ int32_t LuaScriptInterface::luaGetNotationsCount(lua_State *L)
 
 int32_t LuaScriptInterface::luaGetBanData(lua_State *L)
 {
-	//getBanData(accId)
+	//getBanData(value)
 	Ban tmp;
 	if(!IOBan::getInstance()->getData((uint32_t)popNumber(L), tmp))
 	{
@@ -9407,8 +9417,12 @@ int32_t LuaScriptInterface::luaGetBanAction(lua_State *L)
 
 int32_t LuaScriptInterface::luaGetBanList(lua_State *L)
 {
-	//getBanList(type)
-	BansVec bans = IOBan::getInstance()->getList((BanType_t)popNumber(L));
+	//getBanList(type[, value])
+	uint32_t value = 0;
+	if(lua_gettop(L) >= 2)
+		value = popNumber(L);
+
+	BansVec bans = IOBan::getInstance()->getList((BanType_t)popNumber(L), value);
 	lua_createtable(L, bans.size(), 0);
 
 	BansVec::const_iterator it = bans.begin();
@@ -9417,17 +9431,16 @@ int32_t LuaScriptInterface::luaGetBanList(lua_State *L)
 		lua_pushnumber(L, i);
 		lua_createtable(L, 10, 0);
 
-		Ban tmp = (*it);
-		setField(L, "id", tmp.id);
-		setField(L, "type", tmp.type);
-		setField(L, "value", tmp.value);
-		setField(L, "param", tmp.param);
-		setField(L, "added", tmp.added);
-		setField(L, "expires", tmp.expires);
-		setField(L, "adminId", tmp.adminid);
-		setField(L, "reason", tmp.reason);
-		setField(L, "action", tmp.action);
-		setField(L, "comment", tmp.comment);
+		setField(L, "id", (*it).id);
+		setField(L, "type", (*it).type);
+		setField(L, "value", (*it).value);
+		setField(L, "param", (*it).param);
+		setField(L, "added", (*it).added);
+		setField(L, "expires", (*it).expires);
+		setField(L, "adminId", (*it).adminid);
+		setField(L, "reason", (*it).reason);
+		setField(L, "action", (*it).action);
+		setField(L, "comment", (*it).comment);
 		lua_settable(L, -3);
 	}
 	return 1;

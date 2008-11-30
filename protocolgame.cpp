@@ -328,24 +328,22 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		}
 
 		Ban ban;
-		if(IOBan::getInstance()->getData(accnumber, ban) && !player->hasFlag(PlayerFlag_CannotBeBanned))
+		if(IOBan::getInstance()->getData(accnumber, ban) && (ban.type == BANTYPE_BANISHMENT ||
+			ban.type == BANTYPE_DELETION) && !player->hasFlag(PlayerFlag_CannotBeBanned))
 		{
-			bool deletion = (ban.type == BANTYPE_DELETION);
-
+			bool deletion = ban.type == BANTYPE_DELETION;
 			std::string name_;
 			if(ban.adminid == 0)
 				name_ = (deletion ? "Automatic deletion" : "Automatic banishment");
 			else
 				IOLoginData::getInstance()->getNameByGuid(ban.adminid, name_);
 
-			char date[16], date2[16];
+			char date[16], date2[16], buffer[500 + ban.comment.length()];
 			formatDate2(ban.added, date);
 			formatDate2(ban.expires, date2);
-
-			char buffer[500 + ban.comment.length()];
 			sprintf(buffer, "Your account has been %s at:\n%s by: %s,\nfor the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.\nYour %s%s.",
 				(deletion ? "deleted" : "banished"), date, name_.c_str(), getReason(ban.reason).c_str(), getAction(ban.action, false).c_str(),
-				ban.comment.c_str(), (deletion ? "account won't be undeleted" : "banishment will be lifted at:\n"),	(deletion ? "." : date2));
+				ban.comment.c_str(), (deletion ? "account won't be undeleted" : "banishment will be lifted at:\n"), (deletion ? "." : date2));
 
 			disconnectClient(0x14, buffer);
 			return false;

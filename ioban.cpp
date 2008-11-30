@@ -351,7 +351,7 @@ uint32_t IOBan::getNotationsCount(uint32_t account)
 	return count;
 }
 
-bool IOBan::getData(uint32_t account, Ban& ban)
+bool IOBan::getData(uint32_t value, Ban& ban)
 {
 	Database* db = Database::getInstance();
 	DBResult* result;
@@ -359,12 +359,12 @@ bool IOBan::getData(uint32_t account, Ban& ban)
 	uint32_t currentTime = time(NULL);
 
 	DBQuery query;
-	query << "SELECT `id`, `type`, `param`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action` FROM `bans` WHERE `value` = " << account << " AND `active` = 1 AND (`type` = 3 OR `type` = 5) AND (`expires` > " << currentTime << " OR `expires` <= 0)";
+	query << "SELECT `id`, `type`, `param`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action` FROM `bans` WHERE `value` = " << value << " AND `active` = 1 AND (`expires` > " << currentTime << " OR `expires` <= 0)";
 
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	ban.value = account;
+	ban.value = value;
 	ban.id = result->getDataInt("id");
 	ban.type = (BanType_t)result->getDataInt("type");
 	ban.param = result->getDataString("param");
@@ -379,7 +379,7 @@ bool IOBan::getData(uint32_t account, Ban& ban)
 	return true;
 }
 
-BansVec IOBan::getList(BanType_t type)
+BansVec IOBan::getList(BanType_t type, uint32_t value/* = 0*/)
 {
 	Database* db = Database::getInstance();
 	DBResult* result;
@@ -387,7 +387,11 @@ BansVec IOBan::getList(BanType_t type)
 	uint32_t currentTime = time(NULL);
 
 	DBQuery query;
-	query << "SELECT `id`, `value`, `param`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action` FROM `bans` WHERE `type` = " << type << " AND `active` = 1 AND (`expires` > " << currentTime << " OR `expires` <= 0)";
+	query << "SELECT `id`, `value`, `param`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action` FROM `bans` WHERE ";
+	if(value > 0)
+		query << "`value` = " << value << " AND ";
+
+	query << "`type` = " << type << " AND `active` = 1 AND (`expires` > " << currentTime << " OR `expires` <= 0)";
 
 	BansVec data;
 	if((result = db->storeQuery(query.str())))

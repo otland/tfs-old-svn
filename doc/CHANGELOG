@@ -348,6 +348,7 @@
 	Spell parameters working as in Tibia (Elf)
 	Quest outfits (Elf)
 	NPC descriptions (Elf)
+	New onPrepareDeath creature event- no overflows and FALSE return denies death (Elf)
 ]
 
 [ Deprecated
@@ -396,4 +397,5 @@
 	Liquids issue (Elf)
 	No possibility to logout without account name and password when Account Manager was enabled (Elf)
 	Unaccurate conditions length (Elf, OpenTibia SVN)
+	Players being unable to throw items at borders (Elf, OpenTibia SVN)
 ]

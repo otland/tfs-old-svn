@@ -45,6 +45,7 @@
 	<talkaction log="yes" access="3" words="/mc" script="multicheck.lua"/>
 
 	<!-- Senior Tutors -->
+	<talkaction log="yes" words="/notations" access="2" script="notations.lua"/>
 	<talkaction log="yes" words="/info" access="2" script="playerinfo.lua"/>
 	<talkaction log="yes" words="/gethouse" access="2" script="gethouse.lua"/>
 	<talkaction log="yes" access="2" words="/b" script="broadcast.lua"/>

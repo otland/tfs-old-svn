@@ -76,8 +76,8 @@ class IOBan
 		bool removeDeletion(uint32_t account);
 		void removeNotations(uint32_t account);
 
-		bool getData(uint32_t account, Ban& ban);
-		std::vector<Ban> getList(BanType_t type);
+		bool getData(uint32_t value, Ban& ban);
+		std::vector<Ban> getList(BanType_t type, uint32_t value = 0);
 
 		//id is account or guid, for guid needed player = true
 		uint32_t getAction(uint32_t id, bool player = false);

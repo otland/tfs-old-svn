@@ -778,6 +778,12 @@ void Creature::onDeath()
 		}
 	}
 
+	if(CreatureEvent* eventPrepareDeath = getCreatureEvent(CREATURE_EVENT_PREPAREDEATH))
+	{
+		if(!eventPrepareDeath->executeOnPrepareDeath(this, lastHitCreature, mostDamageCreature))
+			return;
+	}
+
 	for(CountMap::iterator it = damageMap.begin(); it != damageMap.end(); ++it)
 	{
 		if(Creature* attacker = g_game.getCreatureByID((*it).first))
