@@ -5,7 +5,7 @@ CREATE TABLE `server_config`
 	UNIQUE (`config`)
 );
 
-INSERT INTO `server_config` VALUES ('db_version', 5);
+INSERT INTO `server_config` VALUES ('db_version', 6);
 
 CREATE TABLE `server_motd`
 (
@@ -153,7 +153,7 @@ CREATE TABLE `bans`
 CREATE TABLE `global_storage`
 (
 	`key` INT NOT NULL,
-	`value` INT NOT NULL,
+	`value` VARCHAR(255) NOT NULL DEFAULT '0',
 	UNIQUE (`key`)
 );
 
@@ -264,7 +264,7 @@ CREATE TABLE `player_storage`
 (
 	`player_id` INT NOT NULL DEFAULT 0,
 	`key` INT NOT NULL DEFAULT 0,
-	`value` INT NOT NULL DEFAULT 0,
+	`value` VARCHAR(255) NULL DEFAULT '0',
 	UNIQUE (`player_id`, `key`),
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 );

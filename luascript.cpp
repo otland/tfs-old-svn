@@ -121,21 +121,19 @@ bool ScriptEnviroment::saveGameState()
 		return true;
 
 	Database* db = Database::getInstance();
-
 	if(!db->executeQuery("DELETE FROM `global_storage`"))
 		return false;
 
 	DBInsert query_insert(db);
 	query_insert.setQuery("INSERT INTO `global_storage` (`key`, `value`) VALUES ");
-	DBQuery query;
 	for(StorageMap::const_iterator it = m_globalStorageMap.begin(); it != m_globalStorageMap.end(); ++it)
 	{
-		query << it->first << ", " << it->second;
-		if(!query_insert.addRow(query.str()))
+		char buffer[25 + it->second.length()];
+		sprintf(buffer, "%u, %s", it->first, db->escapeString(it->second).c_str());
+		if(!query_insert.addRow(buffer))
 			return false;
-
-		query.str("");
 	}
+
 	if(!query_insert.execute())
 		return false;
 
@@ -152,7 +150,7 @@ bool ScriptEnviroment::loadGameState()
 		do
 		{
 			int32_t key = result->getDataInt("key");
-			int32_t value = result->getDataInt("value");
+			std::string value = result->getDataString("value");
 
 			m_globalStorageMap[key] = value;
 		}
@@ -450,12 +448,12 @@ DBResult* ScriptEnviroment::getDBResult(uint32_t resId)
 	return NULL;
 }
 
-void ScriptEnviroment::addGlobalStorageValue(const uint32_t key, const int32_t value)
+void ScriptEnviroment::addGlobalStorageValue(const uint32_t key, const std::string& value)
 {
 	m_globalStorageMap[key] = value;
 }
 
-bool ScriptEnviroment::getGlobalStorageValue(const uint32_t key, int32_t& value) const
+bool ScriptEnviroment::getGlobalStorageValue(const uint32_t key, std::string& value) const
 {
 	StorageMap::const_iterator it;
 	it = m_globalStorageMap.find(key);
@@ -466,7 +464,7 @@ bool ScriptEnviroment::getGlobalStorageValue(const uint32_t key, int32_t& value)
 	}
 	else
 	{
-		value = 0;
+		value = "-1";
 		return false;
 	}
 }
@@ -4156,16 +4154,19 @@ int32_t LuaScriptInterface::luaGetPlayerStorageValue(lua_State* L)
 {
 	//getPlayerStorageValue(cid, valueid)
 	uint32_t key = popNumber(L);
-	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	const Player* player = env->getPlayerByUID(cid);
-	if(player)
+	if(const Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		int32_t value;
-		if(player->getStorageValue(key, value))
-			lua_pushnumber(L, value);
+		std::string strValue;
+		if(player->getStorageValue(key, strValue))
+		{
+			int32_t intValue = atoi(strValue.c_str());
+			if(intValue)
+				lua_pushnumber(L, intValue);
+			else
+				lua_pushstring(L, strValue.c_str());
+		}
 		else
 			lua_pushnumber(L, -1);
 	}
@@ -4180,25 +4181,22 @@ int32_t LuaScriptInterface::luaGetPlayerStorageValue(lua_State* L)
 int32_t LuaScriptInterface::luaSetPlayerStorageValue(lua_State* L)
 {
 	//setPlayerStorageValue(cid, valueid, newvalue)
-	int32_t value = (int32_t)popNumber(L);
-	uint32_t key = popNumber(L);
-	uint32_t cid = popNumber(L);
+	std::string value = popString(L);
+	uint32_t key = popNumber(L), cid = popNumber(L);
 	if(IS_IN_KEYRANGE(key, RESERVED_RANGE))
 	{
-		char error_str[45];
-		sprintf(error_str, "Accessing reserved range: %d", key);
-		reportErrorFunc(error_str);
+		char buffer[60];
+		sprintf(buffer, "Accessing reserved range: %d", key);
+		reportErrorFunc(buffer);
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
 	}
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	Player* player = env->getPlayerByUID(cid);
-	if(player)
+	if(Player* player = env->getPlayerByUID(cid))
 	{
 		player->addStorageValue(key, value);
-		lua_pushnumber(L, 0);
+		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else
 	{
@@ -6664,27 +6662,31 @@ int32_t LuaScriptInterface::luaSetItemOutfit(lua_State* L)
 int32_t LuaScriptInterface::luaGetGlobalStorageValue(lua_State* L)
 {
 	//getGlobalStorageValue(valueid)
-	uint32_t key = popNumber(L);
-
 	ScriptEnviroment* env = getScriptEnv();
 
-	int32_t value;
-	if(env->getGlobalStorageValue(key, value))
-		lua_pushnumber(L, value);
+	std::string strValue;
+	if(env->getGlobalStorageValue(popNumber(L), strValue))
+	{
+		int32_t intValue = atoi(strValue.c_str());
+		if(intValue)
+			lua_pushnumber(L, intValue);
+		else
+			lua_pushstring(L, strValue.c_str());
+	}
 	else
 		lua_pushnumber(L, -1);
+
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaSetGlobalStorageValue(lua_State* L)
 {
 	//setGlobalStorageValue(valueid, newvalue)
-	int32_t value = (int32_t)popNumber(L);
-	uint32_t key = popNumber(L);
-
 	ScriptEnviroment* env = getScriptEnv();
-	env->addGlobalStorageValue(key, value);
-	lua_pushnumber(L, 0);
+
+	std::string value = popString(L);
+	env->addGlobalStorageValue(popNumber(L), value);
+	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;
 }
 

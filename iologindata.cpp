@@ -663,7 +663,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	if((result = db->storeQuery(query.str())))
 	{
 		do
-			player->addStorageValue((uint32_t)result->getDataInt("key"), result->getDataLong("value"));
+			player->addStorageValue((uint32_t)result->getDataInt("key"), result->getDataString("value"));
 		while(result->next());
 
 		db->freeResult(result);
@@ -846,7 +846,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 	if(!db->executeQuery(query.str()))
 		return false;
 
-	char buffer[150];
+	char buffer[280];
 	DBInsert query_insert(db);
 	query_insert.setQuery("INSERT INTO `player_spells` (`player_id`, `name`) VALUES ");
 	for(LearnedInstantSpellList::const_iterator it = player->learnedInstantSpellList.begin(); it != player->learnedInstantSpellList.end(); ++it)
@@ -899,7 +899,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 	query_insert.setQuery("INSERT INTO `player_storage` (`player_id`, `key`, `value`) VALUES ");
 	for(StorageMap::const_iterator cit = player->getStorageIteratorBegin(); cit != player->getStorageIteratorEnd(); ++cit)
 	{
-		sprintf(buffer, "%u, %u, %d", player->getGUID(), cit->first, cit->second);
+		sprintf(buffer, "%u, %u, %s", player->getGUID(), cit->first, db->escapeString(cit->second).c_str());
 		if(!query_insert.addRow(buffer))
 			return false;
 	}

@@ -2672,8 +2672,8 @@ void ProtocolGame::sendOutfitWindow()
 
 			if((*git)->quest)
 			{
-				int32_t value;
-				if(!player->getStorageValue((*git)->quest, value) || value != OUTFITS_QUEST_VALUE)
+				std::string value;
+				if(!player->getStorageValue((*git)->quest, value) || atoi(value.c_str()) != OUTFITS_QUEST_VALUE)
 					tmpList.insert((*git)->looktype);
 			}
 		}

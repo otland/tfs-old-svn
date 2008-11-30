@@ -823,10 +823,10 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 								}
 								else if(tmpStrValue == "storage")
 								{
-									if(readXMLInteger(subNode, "value", intValue))
+									if(readXMLString(subNode, "value", strValue))
 									{
 										action.actionType = ACTION_SETSTORAGE;
-										action.intValue = intValue;
+										action.strValue = strValue;
 									}
 								}
 								else if(tmpStrValue == "addqueue")
@@ -1438,7 +1438,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 				case ACTION_SETSTORAGE:
 				{
 					if((*it).key > 0)
-						player->addStorageValue((*it).key, (*it).intValue);
+						player->addStorageValue((*it).key, (*it).strValue);
 					break;
 				}
 
@@ -2081,45 +2081,47 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 
 		if((*it)->getStorageId() != -1)
 		{
-			int32_t playerStorageValue = -1;
-			if(!player->getStorageValue((*it)->getStorageId(), playerStorageValue))
-				playerStorageValue = -1;
-
 			int32_t storageValue = (*it)->getStorageValue();
-			StorageComparision_t comp = (*it)->getStorageComp();
-			switch(comp)
+			std::string playerStorageValue;
+
+			int32_t tmp = -1;
+			if(player->getStorageValue((*it)->getStorageId(), playerStorageValue))
+				tmp = atoi(playerStorageValue.c_str());
+
+			switch((*it)->getStorageComp())
 			{
 				case STORAGE_LESS:
 				{
-					if(playerStorageValue >= storageValue)
+					if(tmp >= storageValue)
 						continue;
 					break;
 				}
 				case STORAGE_LESSOREQUAL:
 				{
-					if(playerStorageValue > storageValue)
+					if(tmp > storageValue)
 						continue;
 					break;
 				}
 				case STORAGE_EQUAL:
 				{
-					if(playerStorageValue != storageValue)
+					if(tmp != storageValue)
 						continue;
 					break;
 				}
 				case STORAGE_GREATEROREQUAL:
 				{
-					if(playerStorageValue < storageValue)
+					if(tmp < storageValue)
 						continue;
 					break;
 				}
 				case STORAGE_GREATER:
 				{
-					if(playerStorageValue <= storageValue)
+					if(tmp <= storageValue)
 						continue;
 					break;
 				}
-				default: break;
+				default:
+					break;
 			}
 			++matchCount;
 		}

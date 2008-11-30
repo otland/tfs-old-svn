@@ -106,8 +106,8 @@ bool OutfitList::isInList(int32_t playerId, uint32_t looktype, uint32_t addons) 
 					
 			if((*git)->quest)
 			{
-				int32_t value;
-				if(!player->getStorageValue((*git)->quest, value) || value != OUTFITS_QUEST_VALUE)
+				std::string value;
+				if(!player->getStorageValue((*git)->quest, value) || atoi(value.c_str()) != OUTFITS_QUEST_VALUE)
 					return false;
 			}
 

@@ -47,8 +47,8 @@ std::string Mission::getDescription(Player* player)
 {
 	for(int32_t i = endValue; i >= startValue; i--)
 	{
-		int32_t value;
-		if(player->getStorageValue(storageId, value) && value == i)
+		std::string value;
+		if(player->getStorageValue(storageId, value) && atoi(value.c_str()) == i)
 		{
 			StateList::const_iterator sit = state.find(i);
 			if(sit != state.end())
@@ -64,8 +64,8 @@ bool Mission::isStarted(Player* player) const
 	if(!player)
 		return false;
 
-	int32_t value;
-	if(player->getStorageValue(storageId, value) && value >= startValue && value <= endValue)
+	std::string value;
+	if(player->getStorageValue(storageId, value) && atoi(value.c_str()) >= startValue && atoi(value.c_str()) <= endValue)
 		return true;
 
 	return false;
@@ -76,8 +76,8 @@ bool Mission::isCompleted(Player* player) const
 	if(!player)
 		return false;
 
-	int32_t value;
-	if(player->getStorageValue(storageId, value) && value == endValue)
+	std::string value;
+	if(player->getStorageValue(storageId, value) && atoi(value.c_str()) == endValue)
 		return true;
 
 	return false;
@@ -123,8 +123,8 @@ bool Quest::isStarted(Player* player) const
 	if(player)
 		return false;
 
-	int32_t value;
-	if(player->getStorageValue(startStorageId, value) && value >= startStorageValue)
+	std::string value;
+	if(player->getStorageValue(startStorageId, value) && atoi(value.c_str()) >= startStorageValue)
 		return true;
 
 	return false;

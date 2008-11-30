@@ -83,7 +83,7 @@ bool ConnectionManager::isDisabled(uint32_t clientIp)
 	IpConnectionMap::const_iterator it = ipConnectionMap.find(clientIp);
 	if(it != ipConnectionMap.end())
 	{
-		if((it->second.loginsAmount >= maxLoginTries) && (time(NULL) < it->second.lastLogin + loginTimeout))
+		if((it->second.loginsAmount >= maxLoginTries) && ((uint64_t)time(NULL) < it->second.lastLogin + loginTimeout))
 			return true;
 	}
 

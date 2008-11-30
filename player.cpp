@@ -852,30 +852,30 @@ void Player::dropLoot(Container* corpse)
 	}
 }
 
-void Player::addStorageValue(const uint32_t key, const int32_t value)
+void Player::addStorageValue(const uint32_t key, const std::string& value)
 {
 	if(IS_IN_KEYRANGE(key, RESERVED_RANGE))
 	{
 		if(IS_IN_KEYRANGE(key, OUTFITS_RANGE))
 		{
 			Outfit outfit;
-			outfit.looktype = value >> 16;
-			outfit.addons = value & 0xFF;
+			outfit.looktype = atoi(value.c_str()) >> 16;
+			outfit.addons = atoi(value.c_str()) & 0xFF;
 			if(outfit.addons <= 3)
 				m_playerOutfits.addOutfit(outfit);
 			else
-				std::cout << "[Warning - Player::addStorageValue]: Invalid addons value key: " << key << ", value: " << (int32_t)value << " for player: " << getName() << std::endl;
+				std::cout << "[Warning - Player::addStorageValue]: Invalid addons value key: " << key << ", value: " << value << " for player: " << getName() << std::endl;
 		}
 		else
 			std::cout << "[Warning - Player::addStorageValue]: Unknown reserved key: " << key << " for player: " << getName() << std::endl;
 	}
-	else if(value == -1)
+	else if(atoi(value.c_str()) == -1)
 		storageMap.erase(key);
 	else
 		storageMap[key] = value;
 }
 
-bool Player::getStorageValue(const uint32_t key, int32_t& value) const
+bool Player::getStorageValue(const uint32_t key, std::string& value) const
 {
 	StorageMap::const_iterator it;
 	it = storageMap.find(key);
@@ -886,7 +886,7 @@ bool Player::getStorageValue(const uint32_t key, int32_t& value) const
 	}
 	else
 	{
-		value = -1;
+		value = "-1";
 		return false;
 	}
 }
@@ -3707,7 +3707,9 @@ void Player::genReservedStorageRange()
 	{
 		if(!globalOutfits.isInList(getID(), (*it)->looktype, (*it)->addons))
 		{
-			storageMap[baseKey] = int64_t((*it)->looktype << 16) | ((*it)->addons & 0xFF);
+			char buffer[100];
+			sprintf(buffer, "%lld", int64_t((*it)->looktype << 16) | ((*it)->addons & 0xFF));
+			storageMap[baseKey] = buffer;
 
 			baseKey++;
 			if(baseKey > PSTRG_OUTFITS_RANGE_START + PSTRG_OUTFITS_RANGE_SIZE)

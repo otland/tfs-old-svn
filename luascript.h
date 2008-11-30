@@ -125,8 +125,8 @@ class ScriptEnviroment
 		bool removeDBResult(uint32_t resId);
 		DBResult* getDBResult(uint32_t resId);
 
-		void addGlobalStorageValue(const uint32_t key, const int32_t value);
-		bool getGlobalStorageValue(const uint32_t key, int32_t& value) const;
+		void addGlobalStorageValue(const uint32_t key, const std::string& value);
+		bool getGlobalStorageValue(const uint32_t key, std::string& value) const;
 
 		void setRealPos(const Position& realPos) {m_realPos = realPos;}
 		Position getRealPos() {return m_realPos;}
@@ -155,7 +155,7 @@ class ScriptEnviroment
 	private:
 		typedef std::map<uint64_t, Thing*> ThingMap;
 		typedef std::vector<const LuaVariant*> VariantVector;
-		typedef std::map<uint32_t, int32_t> StorageMap;
+		typedef std::map<uint32_t, std::string> StorageMap;
 		typedef std::map<uint32_t, AreaCombat*> AreaMap;
 		typedef std::map<uint32_t, Combat*> CombatMap;
 		typedef std::map<uint32_t, Condition*> ConditionMap;
