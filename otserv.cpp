@@ -232,7 +232,7 @@ void serverMain(void* param)
 
 	Server server(INADDR_ANY, g_config.getNumber(ConfigManager::PORT));
 	std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
-	#if defined(WIN32) || not defined(__CONSOLE__)
+	#if defined(WIN32) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
 	GUI::getInstance()->m_connections = true;
 	#endif
