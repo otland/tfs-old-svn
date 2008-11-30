@@ -3738,15 +3738,13 @@ void Game::checkCreatures()
 	for(uint32_t i = 0; i < checkCreatureVector.size(); ++i)
 	{
 		creature = checkCreatureVector[i];
-		if(creature->getHealth() > 0)
+		if(creature->getHealth() > 0 || !creature->onDeath())
 		{
 			creature->onThink(EVENT_CREATURE_THINK_INTERVAL);
 			//creature->onAttacking(EVENT_CREATURE_THINK_INTERVAL);
 			//TODO: find out why does it cause crash in some cases
 			creature->executeConditions(EVENT_CREATURE_THINK_INTERVAL);
 		}
-		else
-			creature->onDeath();
 	}
 
 	cleanup();
