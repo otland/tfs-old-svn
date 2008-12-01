@@ -344,14 +344,14 @@ void Monster::onCreatureLeave(Creature* creature)
 
 	if(getMaster() == creature)
 	{
-		/*if(g_config.getBool(ConfigManager::TELEPORT_SUMMONS) || (creature->getPlayer()
+		if(g_config.getBool(ConfigManager::TELEPORT_SUMMONS) || (creature->getPlayer()
 			&& g_config.getBool(ConfigManager::TELEPORT_PLAYER_SUMMONS)))
 		{
-			if(g_game.internalTeleport(this, g_game.getClosestFreeTile(NULL,
-				this, creature->getPosition(), true), false) == RET_NOERROR)
-				g_game.addMagicEffect(creature->getPosition(), NM_ME_ENERGY_AREA);
+			g_game.addMagicEffect(getPosition(), NM_ME_POFF);
+			if(g_game.internalTeleport(this, g_game.getClosestFreeTile(this, getMaster()->getPosition(), true), false) == RET_NOERROR)
+				g_game.addMagicEffect(getPosition(), NM_ME_ENERGY_AREA);
 		}
-		else*/
+		else
 		{
 			//Turn the monster off until its master comes back
 			isMasterInRange = false;
@@ -616,6 +616,15 @@ void Monster::onThink(uint32_t interval)
 			{
 				//This happens just after a master orders an attack, so lets follow it aswell.
 				setFollowCreature(attackedCreature);
+			}
+			if(!isMasterInRange)
+			{
+				if(g_config.getBool(ConfigManager::TELEPORT_SUMMONS) || (getMaster() && getMaster()->getPlayer() && g_config.getBool(ConfigManager::TELEPORT_PLAYER_SUMMONS)))
+				{
+					g_game.addMagicEffect(getPosition(), NM_ME_POFF);
+					if(g_game.internalTeleport(this, g_game.getClosestFreeTile(this, getMaster()->getPosition(), true), false) == RET_NOERROR)
+						g_game.addMagicEffect(getPosition(), NM_ME_ENERGY_AREA);
+				}
 			}
 		}
 		else if(!targetList.empty())
