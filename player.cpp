@@ -3715,7 +3715,7 @@ void Player::genReservedStorageRange()
 		if(!globalOutfits.isInList(getID(), (*it)->looktype, (*it)->addons))
 		{
 			char buffer[100];
-			sprintf(buffer, "%lld", int64_t((*it)->looktype << 16) | ((*it)->addons & 0xFF));
+			sprintf(buffer, "%jd", int64_t((*it)->looktype << 16) | ((*it)->addons & 0xFF));
 			storageMap[baseKey] = buffer;
 
 			baseKey++;
