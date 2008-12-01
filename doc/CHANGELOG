@@ -403,4 +403,5 @@
 	No possibility to logout without account name and password when Account Manager was enabled (Elf)
 	Unaccurate conditions length (Elf, OpenTibia SVN)
 	Players being unable to throw items at borders (Elf, OpenTibia SVN)
+	Database manager automatic table optimization not working (Elf)
 ]
