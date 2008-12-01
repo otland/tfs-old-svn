@@ -286,7 +286,7 @@ bool Weapon::configureEvent(xmlNodePtr p)
 	std::string vocationString;
 	if(!vocStringVec.empty())
 	{
-		for(StringVector::iterator it = vocStringVec.begin(); it != vocStringVec.end(); ++it)
+		for(StringVec::iterator it = vocStringVec.begin(); it != vocStringVec.end(); ++it)
 		{
 			if((*it) != vocStringVec.front())
 			{
