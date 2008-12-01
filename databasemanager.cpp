@@ -200,6 +200,9 @@ uint32_t DatabaseManager::updateDatabase()
 	Database* db = Database::getInstance();
 
 	uint32_t version = getDatabaseVersion();
+	if(db->getDatabaseEngine() == DATABASE_ENGINE_ODBC)
+		return version;
+
 	if(version < 6 && db->getDatabaseEngine() == DATABASE_ENGINE_POSTGRESQL)
 	{
 		std::cout << "> WARNING: Couldn't update database - PostgreSQL support available since version 6, please use latest schema.pgsql." << std::endl;
@@ -215,7 +218,7 @@ uint32_t DatabaseManager::updateDatabase()
 			std::cout << "> Updating database to version: 1..." << std::endl;
 
 			DBQuery query;
-			if(db->getDatabaseEngine() != DATABASE_ENGINE_MYSQL)
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
 				query << "CREATE TABLE IF NOT EXISTS `server_config` ( `config` VARCHAR(35) NOT NULL DEFAULT '', `value` INTEGER NOT NULL );";
 			else
 				query << "CREATE TABLE IF NOT EXISTS `server_config` ( `config` VARCHAR(35) NOT NULL DEFAULT '', `value` INT NOT NULL ) ENGINE = InnoDB;";
@@ -225,9 +228,9 @@ uint32_t DatabaseManager::updateDatabase()
 			query << "INSERT INTO `server_config` VALUES ('db_version', 1);";
 			db->executeQuery(query.str());
 
-			if(db->getDatabaseEngine() != DATABASE_ENGINE_MYSQL)
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
 			{
-				//Updating from 0.2 with SQLite is not supported yet, so we'll stop here.
+				//TODO: 0.2 migration SQLite support
 				return 1;
 			}
 
