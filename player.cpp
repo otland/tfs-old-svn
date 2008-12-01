@@ -3564,12 +3564,14 @@ void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)
 	}
 }
 
-void Player::onKilledCreature(Creature* target)
+bool Player::onKilledCreature(Creature* target)
 {
 	if(hasFlag(PlayerFlag_NotGenerateLoot))
 		target->setDropLoot(false);
 
-	Creature::onKilledCreature(target);
+	if(!Creature::onKilledCreature(target))
+		return false;
+
 	if(Player* targetPlayer = target->getPlayer())
 	{
 		if(targetPlayer && targetPlayer->getZone() == ZONE_PVP)
@@ -3595,6 +3597,8 @@ void Player::onKilledCreature(Creature* target)
 			}
 		}
 	}
+
+	return true;
 }
 
 void Player::gainExperience(uint64_t gainExp)

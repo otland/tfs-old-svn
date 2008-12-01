@@ -763,7 +763,9 @@ bool Creature::onDeath()
 	{
 		if(lastHitCreature)
 		{
-			lastHitCreature->onKilledCreature(this);
+			if(!lastHitCreature->onKilledCreature(this))
+				return false;
+
 			lastHitCreatureMaster = lastHitCreature->getMaster();
 		}
 
@@ -774,7 +776,10 @@ bool Creature::onDeath()
 			bool isNotMostDamageMaster = (lastHitCreature != mostDamageCreatureMaster);
 			bool isNotSameMaster = lastHitCreatureMaster == NULL || (mostDamageCreatureMaster != lastHitCreatureMaster);
 			if(mostDamageCreature != lastHitCreature && isNotLastHitMaster && isNotMostDamageMaster && isNotSameMaster)
-				mostDamageCreature->onKilledCreature(this);
+			{
+				if(!mostDamageCreature->onKilledCreature(this))
+					return false;
+			}
 		}
 	}
 
@@ -1273,15 +1278,20 @@ void Creature::onAttackedCreatureKilled(Creature* target)
 	}
 }
 
-void Creature::onKilledCreature(Creature* target)
+bool Creature::onKilledCreature(Creature* target)
 {
+	bool ret = true;
 	if(getMaster())
-		getMaster()->onKilledCreature(target);
+		ret = getMaster()->onKilledCreature(target);
 
 	//scripting event - onKill
-	CreatureEvent* eventKill = getCreatureEvent(CREATURE_EVENT_KILL);
-	if(eventKill)
-		eventKill->executeOnKill(this, target);
+	if(CreatureEvent* eventKill = getCreatureEvent(CREATURE_EVENT_KILL))
+	{
+		if(!eventKill->executeOnKill(this, target))
+			return false;
+	}
+
+	return ret;
 }
 
 void Creature::onGainExperience(uint64_t gainExp)
