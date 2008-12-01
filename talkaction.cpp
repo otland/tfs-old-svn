@@ -704,7 +704,7 @@ bool TalkAction::addSkill(Player* player, const std::string& cmd, const std::str
 	if(skill[0] == 'l' || skill[0] == 'e')
 		target->addExperience(Player::getExpForLevel(target->getLevel() + 1) - target->getExperience());
 	else if(skill[0] == 'm')
-		target->addManaSpent(player->getVocation()->getReqMana(target->getMagicLevel() + 1) - target->getSpentMana());
+		target->addManaSpent(target->getVocation()->getReqMana(target->getMagicLevel() + 1) - target->getSpentMana());
 	else
 	{
 		skills_t skillId = getSkillId(skill);
