@@ -510,7 +510,7 @@ class Npc : public Creature
 		const NpcResponse* getResponse(const Player* player, NpcState* npcState, NpcEvent_t eventType);
 		std::string getEventResponseName(NpcEvent_t eventType);
 
-		uint32_t getMatchCount(NpcResponse* response, std::vector<std::string> wordList,
+		uint32_t getMatchCount(NpcResponse* response, StringVec wordList,
 			bool exactMatch, int32_t& matchAllCount, int32_t& totalKeywordCount);
 
 		void executeResponse(Player* player, NpcState* npcState, const NpcResponse* response);

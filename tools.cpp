@@ -256,25 +256,25 @@ bool readXMLContentString(xmlNodePtr node, std::string& value)
 	return false;
 }
 
-std::vector<std::string> explodeString(const std::string& inString, const std::string& separator)
+StringVec explodeString(const std::string& string, const std::string& separator)
 {
-	std::vector<std::string> returnVector;
-	std::string::size_type start = 0, end = 0;
+	StringVec returnVector;
+	size_t start = 0, end = 0;
 
-	while((end = inString.find(separator, start)) != std::string::npos)
+	while((end = string.find(separator, start)) != std::string::npos)
 	{
-		returnVector.push_back(inString.substr(start, end - start));
+		returnVector.push_back(string.substr(start, end - start));
 		start = end + separator.size();
 	}
 
-	returnVector.push_back(inString.substr(start));
+	returnVector.push_back(string.substr(start));
 	return returnVector;
 }
 
-std::vector<int32_t> vectorAtoi(std::vector<std::string> stringVector)
+IntegerVec vectorAtoi(StringVec stringVector)
 {
-	std::vector<int32_t> returnVector;
-	for(std::vector<std::string>::iterator it = stringVector.begin(); it != stringVector.end(); ++it)
+	IntegerVec returnVector;
+	for(StringVec::iterator it = stringVector.begin(); it != stringVector.end(); ++it)
 		returnVector.push_back(atoi((*it).c_str()));
 
 	return returnVector;

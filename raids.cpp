@@ -418,7 +418,7 @@ bool SingleSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 
 	if(readXMLString(eventNode, "pos", strValue))
 	{
-		std::vector<int32_t> posList = vectorAtoi(explodeString(strValue, ";"));
+		IntegerVec posList = vectorAtoi(explodeString(strValue, ";"));
 		if(posList.size() >= 3)
 			m_position = Position(posList[0], posList[1], posList[2]);
 		else
@@ -485,7 +485,7 @@ bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 
 		if(readXMLString(eventNode, "centerpos", strValue))
 		{
-			std::vector<int32_t> posList = vectorAtoi(explodeString(strValue, ";"));
+			IntegerVec posList = vectorAtoi(explodeString(strValue, ";"));
 			if(posList.size() >= 3)
 				centerPos = Position(posList[0], posList[1], posList[2]);
 			else
@@ -533,7 +533,7 @@ bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 	{
 		if(readXMLString(eventNode, "frompos", strValue))
 		{
-			std::vector<int32_t> posList = vectorAtoi(explodeString(strValue, ";"));
+			IntegerVec posList = vectorAtoi(explodeString(strValue, ";"));
 			if(posList.size() >= 3)
 				m_fromPos = Position(posList[0], posList[1], posList[2]);
 			else
@@ -571,7 +571,7 @@ bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 
 		if(readXMLString(eventNode, "topos", strValue))
 		{
-			std::vector<int32_t> posList = vectorAtoi(explodeString(strValue, ";"));
+			IntegerVec posList = vectorAtoi(explodeString(strValue, ";"));
 			if(posList.size() >= 3)
 				m_toPos = Position(posList[0], posList[1], posList[2]);
 			else

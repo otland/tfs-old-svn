@@ -250,8 +250,7 @@ bool Weapon::configureEvent(xmlNodePtr p)
 	if(readXMLString(p, "type", strValue))
 		params.combatType = getCombatType(strValue);
 
-	STRING_LIST vocStringList;
-
+	StringVec vocStringVec;
 	xmlNodePtr vocationNode = p->children;
 	while(vocationNode)
 	{
@@ -272,7 +271,7 @@ bool Weapon::configureEvent(xmlNodePtr p)
 					if(intValue != 0)
 					{
 						toLowerCaseString(strValue);
-						vocStringList.push_back(strValue);
+						vocStringVec.push_back(strValue);
 					}
 				}
 			}
@@ -281,14 +280,17 @@ bool Weapon::configureEvent(xmlNodePtr p)
 		vocationNode = vocationNode->next;
 	}
 
+	if(!vocWeaponMap.empty())
+		wieldInfo |= WIELDINFO_VOCREQ;
+
 	std::string vocationString;
-	if(!vocStringList.empty())
+	if(!vocStringVec.empty())
 	{
-		for(STRING_LIST::iterator it = vocStringList.begin(); it != vocStringList.end(); ++it)
+		for(StringVector::iterator it = vocStringVec.begin(); it != vocStringVec.end(); ++it)
 		{
-			if((*it) != vocStringList.front())
+			if((*it) != vocStringVec.front())
 			{
-				if((*it) != vocStringList.back())
+				if((*it) != vocStringVec.back())
 					vocationString += ", ";
 				else
 					vocationString += " and ";
@@ -297,8 +299,6 @@ bool Weapon::configureEvent(xmlNodePtr p)
 			vocationString += (*it);
 			vocationString += "s";
 		}
-
-		wieldInfo |= WIELDINFO_VOCREQ;
 	}
 
 	if(wieldInfo != 0)

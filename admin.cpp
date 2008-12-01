@@ -471,7 +471,7 @@ void ProtocolAdmin::adminCommandSetOwner(const std::string& param)
 	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	TRACK_MESSAGE(output);
 
-	std::vector<std::string> params = explodeString(param, ";");
+	StringVec params = explodeString(param, ";");
 	std::string houseId = params[0], name = params[1];
 	trimString(houseId);
 	trimString(name);

@@ -210,7 +210,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 	}
 	else if(readXMLString(p, "pos", strValue))
 	{
-		std::vector<int32_t> posList = vectorAtoi(explodeString(strValue, ";"));
+		IntegerVec posList = vectorAtoi(explodeString(strValue, ";"));
 		if(posList.size() >= 3)
 		{
 			Position pos(posList[0], posList[1], posList[2]);
@@ -597,7 +597,7 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 					wieldInfo |= WIELDINFO_PREMIUM;
 			}
 
-			STRING_LIST vocStringList;
+			StringVec vocStringVec;
 
 			xmlNodePtr vocationNode = p->children;
 			while(vocationNode)
@@ -619,7 +619,7 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 							if(intValue != 0)
 							{
 								toLowerCaseString(strValue);
-								vocStringList.push_back(strValue);
+								vocStringVec.push_back(strValue);
 							}
 						}
 					}
@@ -628,13 +628,16 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 				vocationNode = vocationNode->next;
 			}
 
-			if(!vocStringList.empty())
+			if(!vocEquipMap.empty())
+				wieldInfo |= WIELDINFO_VOCREQ;
+
+			if(!vocStringVec.empty())
 			{
-				for(STRING_LIST::iterator it = vocStringList.begin(); it != vocStringList.end(); ++it)
+				for(StringVec::iterator it = vocStringVec.begin(); it != vocStringVec.end(); ++it)
 				{
-					if((*it) != vocStringList.front())
+					if((*it) != vocStringVec.front())
 					{
-						if((*it) != vocStringList.back())
+						if((*it) != vocStringVec.back())
 							vocationString += ", ";
 						else
 							vocationString += " and ";
@@ -643,8 +646,6 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 					vocationString += (*it);
 					vocationString += "s";
 				}
-
-				wieldInfo |= WIELDINFO_VOCREQ;
 			}
 		}
 	}

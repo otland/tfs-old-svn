@@ -682,7 +682,7 @@ bool TalkAction::changeThingProporties(Player* player, const std::string& cmd, c
 
 bool TalkAction::addSkill(Player* player, const std::string& cmd, const std::string& param)
 {
-	std::vector<std::string> params = explodeString(param, ",");
+	StringVec params = explodeString(param, ",");
 	if(params.size() < 2)
 	{
 		player->sendTextMessage(MSG_STATUS_SMALL, "Command requires at least 2 parameters.");

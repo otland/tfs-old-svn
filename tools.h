@@ -32,8 +32,9 @@
 #include <libxml/parser.h>
 #include <boost/tokenizer.hpp>
 
+typedef std::vector<std::string> StringVec;
+typedef std::vector<int32_t> IntegerVec;
 typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
-typedef std::list<std::string> STRING_LIST;
 
 enum DistributionType_t
 {
@@ -73,8 +74,8 @@ bool readXMLFloat(xmlNodePtr node, const char* tag, float& value);
 bool readXMLString(xmlNodePtr node, const char* tag, std::string& value);
 bool readXMLContentString(xmlNodePtr node, std::string& value);
 
-std::vector<std::string> explodeString(const std::string& inString, const std::string& separator);
-std::vector<int32_t> vectorAtoi(std::vector<std::string> stringVector);
+StringVec explodeString(const std::string& string, const std::string& separator);
+IntegerVec vectorAtoi(StringVec stringVector);
 bool hasBitSet(uint32_t flag, uint32_t flags);
 
 bool isNumber(char character);

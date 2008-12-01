@@ -353,8 +353,8 @@ uint32_t Npc::loadParams(xmlNodePtr node)
 
 	if(readXMLString(node, "param", strValue))
 	{
-		std::vector<std::string> paramList = explodeString(strValue, ";");
-		for(std::vector<std::string>::iterator it = paramList.begin(); it != paramList.end(); ++it)
+		StringVec paramList = explodeString(strValue, ";");
+		for(StringVec::iterator it = paramList.begin(); it != paramList.end(); ++it)
 		{
 			std::string tmpParam = asLowerCaseString(*it);
 			if(tmpParam == "male")
@@ -842,7 +842,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 								{
 									if(readXMLString(subNode, "value", strValue))
 									{
-										std::vector<std::string> posList = explodeString(strValue, ";");
+										StringVec posList = explodeString(strValue, ";");
 										action.actionType = ACTION_SETTELEPORT;
 										action.strValue = strValue;
 										action.pos.x = 0;
@@ -1942,7 +1942,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 	NpcState* npcState, const std::string& text, bool exactMatch /*= false*/)
 {
 	std::string textString = asLowerCaseString(text);
-	std::vector<std::string> wordList = explodeString(textString, " ");
+	StringVec wordList = explodeString(textString, " ");
 	NpcResponse* response = NULL;
 	int32_t bestMatchCount = 0;
 	int32_t totalMatchCount = 0;
@@ -2198,7 +2198,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 	return response;
 }
 
-uint32_t Npc::getMatchCount(NpcResponse* response, std::vector<std::string> wordList,
+uint32_t Npc::getMatchCount(NpcResponse* response, StringVec wordList,
 	bool exactMatch, int32_t& matchAllCount, int32_t& totalKeywordCount)
 {
 	matchAllCount = 0;
@@ -2209,11 +2209,11 @@ uint32_t Npc::getMatchCount(NpcResponse* response, std::vector<std::string> word
 	for(std::list<std::string>::const_iterator it = inputList.begin(); it != inputList.end(); ++it)
 	{
 		int32_t matchCount = 0;
-		std::vector<std::string>::iterator lastWordMatchIter = wordList.begin();
+		StringVec::iterator lastWordMatchIter = wordList.begin();
 		std::string keywords = (*it);
-		std::vector<std::string> keywordList = explodeString(keywords, ";");
+		StringVec keywordList = explodeString(keywords, ";");
 
-		for(std::vector<std::string>::iterator keyIter = keywordList.begin(); keyIter != keywordList.end(); ++keyIter)
+		for(StringVec::iterator keyIter = keywordList.begin(); keyIter != keywordList.end(); ++keyIter)
 		{
 			if(!exactMatch && (*keyIter) == "|*|")
 			{
@@ -2234,7 +2234,7 @@ uint32_t Npc::getMatchCount(NpcResponse* response, std::vector<std::string> word
 			}
 			else
 			{
-				std::vector<std::string>::iterator wordIter = wordList.end();
+				StringVec::iterator wordIter = wordList.end();
 				for(wordIter = lastWordMatchIter; wordIter != wordList.end(); ++wordIter)
 				{
 					size_t pos = (*wordIter).find_first_of("!\"#�%&/()=?`{[]}\\^*><,.-_'~");
