@@ -3963,7 +3963,7 @@ void Player::manageAccount(const std::string &text)
 					msg << "Your name you want is too short, please select a longer name.";
 				else if(managerString.length() > 20)
 					msg << "The name you want is too long, please select a shorter name.";
-				if(!isValidName(managerString))
+				else if(!isValidName(managerString))
 					msg << "That name seems to contain invalid symbols, please choose another name.";
 				else if(IOLoginData::getInstance()->playerExists(managerString))
 					msg << "A player with such name already exists, please choose another name.";
@@ -4148,7 +4148,7 @@ void Player::manageAccount(const std::string &text)
 					msg << "Your name you want is too short, please select a longer name.";
 				else if(managerString.length() > 20)
 					msg << "The name you want is too long, please select a shorter name.";
-				if(!isValidName(managerString))
+				else if(!isValidName(managerString))
 					msg << "That name seems to contain invalid symbols, please choose another name.";
 				else if(IOLoginData::getInstance()->playerExists(managerString))
 					msg << "A player with such name already exists, please choose another name.";

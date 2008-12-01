@@ -357,7 +357,7 @@ int argc, char *argv[]
 		std::cout << ">> Running Database Manager" << std::endl;
 		if(!DatabaseManager::getInstance()->isDatabaseSetup())
 			startupErrorMessage("The database you specified in config.lua is empty, please import schema.<dbengine> to the database (if you are using MySQL, please read doc/MYSQL_HELP for more information).");
-		else if(db->getDatabaseEngine() != DATABASE_ENGINE_POSTGRESQL)
+		else
 		{
 			uint32_t version = 0;
 			do

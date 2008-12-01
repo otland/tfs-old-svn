@@ -181,7 +181,7 @@ CREATE TABLE `bans`
 	`reason` INT UNSIGNED NOT NULL DEFAULT 0,
 	`action` INT UNSIGNED NOT NULL DEFAULT 0,
 	PRIMARY KEY  (`id`),
-	KEY `type` (`type`, `value`)
+	KEY `type` (`type`, `value`),
 	KEY `active` (`active`)
 ) ENGINE = InnoDB;
 
@@ -283,7 +283,7 @@ CREATE TABLE `player_items`
 CREATE TABLE `player_skills`
 (
 	`player_id` INT NOT NULL DEFAULT 0,
-	`skillid` TINYIT(2) NOT NULL DEFAULT 0,
+	`skillid` TINYINT(2) NOT NULL DEFAULT 0,
 	`value` INT UNSIGNED NOT NULL DEFAULT 0,
 	`count` INT UNSIGNED NOT NULL DEFAULT 0,
 	KEY (`player_id`), UNIQUE (`player_id`, `skillid`),
@@ -295,7 +295,7 @@ CREATE TABLE `player_spells`
 	`player_id` INT NOT NULL,
 	`name` VARCHAR(255) NOT NULL,
 	KEY (`player_id`), UNIQUE (`player_id`, `name`),
-	 FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `player_storage`

@@ -452,7 +452,7 @@
 				end
 ]
 
-[ TODO - Info, example use
+[ LIST
 	//get*
 	getCreatureHealth(cid)
 	getCreatureMaxHealth(cid)
@@ -467,9 +467,11 @@
 	getCreatureBaseSpeed(cid)
 	getCreatureTarget(cid)
 	getCreatureByName(name)
+	getCreatureSkullType(cid)
 	getCreatureCondition(cid, condition)
 	getMonsterTargetList(cid)
 	getMonsterFriendList(cid)
+	getPlayerByNameWildcard(name~)
 	getPlayerLossSkill(cid)
 	getPlayerLossPercent(cid, lossType)
 	getPlayerGUIDByName(name)
@@ -488,6 +490,9 @@
 	getPlayerRequiredSkillTries(cid, skillId, skillLevel)
 	getPlayerItemCount(cid, itemid)
 	getPlayerSoul(cid)
+	getPlayerAccountId(cid)
+	getPlayerAccount(cid)
+	getPlayerIp(cid)
 	getPlayerFreeCap(cid)
 	getPlayerLight(cid)
 	getPlayerSlotItem(cid, slot)
@@ -518,34 +523,29 @@
 	getPlayerPartner(cid)
 	getPlayerParty(cid)
 	getPlayerPremiumDays(cid)
-	getPlayerSkullType(cid)
 	getPlayerBalance(cid)
-	getPlayersByAccountNumber(accountNumber)
-	getPlayersByIP(ip[, mask = 0xFFFFFFFF])
+	getPlayerRedSkullTicks(cid)
 	getInstantSpellInfoByName(cid, name)
 	getInstantSpellWords(name)
+	getPlayersByAccountId(accountNumber)
+	getPlayersByIp(ip[, mask = 0xFFFFFFFF])
+	getPlayersOnline()
 	getPartyMembers(lid)
-	getAccountNumberByName(name)
-	getIPByName(name)
-	getHouseOwner(houseid)
-	getHouseName(houseid)
-	getHouseEntry(houseid)
-	getHouseRent(houseid)
-	getHousePrice(houseid)
-	getHouseTown(houseid)
-	getHouseAccessList(houseid, listid)
-	getHouseByPlayerGUID(playerGUID)
-	getHouseTilesSize(houseid)
+	getAccountIdByName(name)
+	getAccountByName(name)
+	getAccountIdByAccount(accName)
+	getIpByName(name)
 	getItemRWInfo(uid)
 	getItemDescriptionsById(itemid)
 	getItemNameById(itemid)
 	getItemPluralNameById(itemid)
-	getItemIdArticleById(itemid)
+	getItemArticleById(itemid)
 	getItemWeightById(itemid, count[, precise])
 	getItemDescriptions(uid)
 	getItemName(uid)
 	getItemPluralName(uid)
-	getItemIdArticle(uid)
+	getItemArticle(uid)
+	getItemWeight(uid[, precise])
 	getItemAttack(uid)
 	getItemExtraAttack(uid)
 	getItemDefense(uid)
@@ -554,6 +554,7 @@
 	getItemAttackSpeed(uid)
 	getItemHitChance(uid)
 	getItemIdByName(name)
+	getFluidSourceType(type)
 	getContainerSize(uid)
 	getContainerCap(uid)
 	getContainerCapById(itemid)
@@ -564,26 +565,43 @@
 	getTileThingByPos(pos)
 	getTilePzInfo(pos)
 	getTileHouseInfo(pos)
-	getClosestFreeTile(cid, targetpos)
-	getThingfromPos(pos)
+	getTopCreature(pos)
+	getClosestFreeTile(cid, targetpos[, extended[, ignoreHouse]])
+	getThingFromPos(pos)
 	getThing(uid)
 	getThingPos(uid)
-	getTemplePositionByName(townName)
-	getTemplePositionById(townId)
+	getHouseOwner(houseid)
+	getHouseName(houseid)
+	getHouseEntry(houseid)
+	getHouseRent(houseid)
+	getHousePrice(houseid)
+	getHouseTown(houseid)
+	getHouseAccessList(houseid, listid)
+	getHouseByPlayerGUID(playerGUID)
+	getHouseTilesSize(houseid)
+	getTownId(townName)
 	getTownName(townId)
+	getTownTemplePosition(townId)
+	getTownHouses(townId)
 	getWorldType()
 	getWorldTime()
 	getWorldLight()
 	getWorldCreatures(type) //0 players, 1 monsters, 2 npcs, 3 all
 	getWorldUpTime()
-	getOnlinePlayers()
-	getGlobalStorageValue(valueid)
-	getSpectators(centerPos, rangex, rangey, multifloor)
-	getTopCreature(pos)
+	getHighscoreString(skillId)
 	getVocationInfo(id)
 	getGuildId(guildName)
-	getFluidSourceType(type)
+	getSpectators(centerPos, rangex, rangey, multifloor)
+	getSearchString(fromPosition, toPosition[, isPlayer])
+	getNotationsCound(accId)
+	getBanData(value)
+	getBanList(type[, value])
+	getBanReason(id)
+	getBanAction(id[, ipBanishment])
+	getGlobalStorageValue(valueid)
 	getConfigFile()
+	getLogsDir()
+	getDataDir()
 
 	//set*
 	setCreatureMaxHealth(cid, health)
@@ -617,9 +635,10 @@
 	setWorldType(type)
 
 	//do*
-	doCreatureAddHealth(cid, health)
+	doCreatureAddHealth(cid, health[, force])
 	doCreatureAddMana(cid, mana)
 	doCreatureSetDropLoot(cid, doDrop)
+	doCreatureSetSkullType(cid, skull)
 	doCreatureChangeOutfit(cid, outfit)
 	doCreatureSay(cid, text, type[, pos])
 	doSetCreatureLight(cid, lightLevel, lightColor, time)
@@ -631,7 +650,7 @@
 	doChallengeCreature(cid, target)
 	doChangeSpeed(cid, delta)
 	doMonsterChangeTarget(cid)
-	doSetMonsterTarget(cid, target)
+	doMonsterSetTarget(cid, target)
 	doSetMonsterOutfit(cid, name, time)
 	doPlayerBroadcastMessage(cid, message[, type])
 	doPlayerSetSex(cid, newSex)
@@ -644,6 +663,7 @@
 	doPlayerSetGuildNick(cid, nick)
 	doPlayerAddOutfit(cid,looktype, addons)
 	doPlayerRemoveOutfit(cid,looktype, addons)
+	doPlayerSetRedSkullTicks(cid, amount)
 	doPlayerSetLossPercent(cid, lossType, newPercent)
 	doPlayerSetLossSkill(cid, doLose)
 	doPlayerAddSkillTry(cid, skillid, n)
@@ -701,9 +721,22 @@
 	doShowTextDialog(cid, itemid, text)
 	doRelocate(pos, posTo)
 	doBroadcastMessage(message, type)
+	doAddIpBanishment(ip[, length[, comment[, admin]]])
+	doAddNamelock(name[, reason[, action[, comment[, admin]]]])
+	doAddBanishment(accId[, length[, reason[, action[, comment[, admin]]]]])
+	doAddDeletion(accId[, reason[, action[, comment[, admin]]]]])
+	doAddNotation(accId[, reason[, action[, comment[, admin]]]]])
+	doRemoveIpBanishment(ip[, mask])
+	doRemoveNamelock(name)
+	doRemoveBanisment(accId)
+	doRemoveDeletion(accId)
+	doRemoveNotations(accId)
+
 
 	//is*
 	isCreature(cid)
+	isMonster(uid)
+	isNpc(uid)
 	isPlayer(cid)
 	isPlayerPzLocked(cid)
 	isPlayerGhost(cid)
@@ -718,6 +751,10 @@
 	isCorpse(uid)
 	isMovable(uid)
 	isSightClear(fromPos, toPos, floorCheck)
+	isIpBanished(ip[, mask])
+	isPlayerNamelocked(name)
+	isAccountBanished(accId)
+	isAccountDeleted(accId)
 	isInArray({array}, value)
 
 	//others
@@ -739,6 +776,7 @@
 	canPlayerWearOutfit(cid, looktype, addons)
 	executeRaid(name)
 	saveServer()
+	cleanHouse(houseId)
 	cleanMap()
 	shutdown()
 	addEvent(callback, delay, ...)
@@ -778,4 +816,91 @@
 	bit.ulshift(type, n)
 	bit.urshift(type, n)
 	#bit.uarshift
+
+	//compats
+	table.getPos = table.find
+	doSetCreatureDropLoot = doCreatureSetDropLoot
+	doPlayerSay = doCreatureSay
+	doPlayerAddMana = doCreatureAddMana
+	playerLearnInstantSpell = doPlayerLearnInstantSpell
+	doPlayerRemOutfit = doPlayerRemoveOutfit
+	pay = doPlayerRemoveMoney
+	broadcastMessage = doBroadcastMessage
+	getPlayerName = getCreatureName
+	getPlayerPosition = getCreaturePosition
+	getCreaturePos = getCreaturePosition
+	creatureGetPosition = getCreaturePosition
+	getPlayerMana = getCreatureMana
+	getPlayerMaxMana = getCreatureMaxMana
+	hasCondition = getCreatureCondition
+	isMoveable = isMovable
+	isItemMoveable = isItemMovable
+	saveData = saveServer
+	savePlayers = saveServer
+	getPlayerSkill = getPlayerSkillLevel
+	getPlayerSkullType = getCreatureSkullType
+	getAccountNumberByName = getAccountIdByName
+	getIPByName = getIpByName
+	getPlayersByIP = getPlayersByIp
+	getThingfromPos = getThingFromPos
+	getPlayersByAccountNumber = getPlayersByAccountId
+	getIPByPlayerName = getIpByName
+	getPlayersByIPNumber = getPlayersByIp
+	getAccountNumberByPlayerName = getAccountIdByName
+	convertIntToIP = doConvertIntegerToIp
+
+	//lua-made functions
+	doPlayerGiveItem(cid, itemid, amount, subType)
+	doPlayerTakeItem(cid, itemid, amount)
+	doPlayerBuyItem(cid, itemid, count, cost, charges)
+	doPlayerBuyItemContainer(cid, containerid, itemid, count, cost, charges)
+	doPlayerSellItem(cid, itemid, count, cost)
+	isInRange(pos, fromPos, toPos)
+	isPremium(cid)
+	getMonthDayEnding(day)
+	getMonthString(m)
+	getArticle(str)
+	isNumber(str)
+	getDistanceBetween(firstPosition, secondPosition)
+	doPlayerAddAddons(cid, addon)
+	isSorcerer(cid)
+	isDruid(cid)
+	isPaladin(cid)
+	isKnight(cid)
+	isRookie(cid)
+	getConfigInfo(info)
+	getDirectionTo(pos1, pos2)
+	getPlayerLookPos(cid)
+	getPosByDir(fromPosition, direction, size)
+	getPlayerMoney(cid)
+	doPlayerWithdrawAllMoney(cid)
+	doPlayerDepositAllMoney(cid)
+	doPlayerTransferAllMoneyTo(cid, target)
+	playerExists(name)
+	getTibiaTime()
+	doWriteLogFile(file, text)
+	isInArea(pos, fromPos, toPos)
+	getExperienceForLevel(lv)
+	doMutePlayer(cid, time)
+	getPlayerVocationName(cid)
+	getPromotedVocation(vid)
+	doPlayerRemovePremiumDays(cid, days)
+	getPlayerMasterPos(cid)
+	getOnlinePlayers()
+	getPlayerByName(name)
+	getPlayerFrags(cid)
+	doConvertIntegerToIp(int, mask)
+	getBooleanFromString(str)
+	doCopyItem(item, attributes)
+	exhaustion.check(cid, storage)
+	exhaustion.get(cid, storage)
+	exhaustion.set(cid, storage, time)
+	exhaustion.make(cid, storage, time)
+	table.find(table, value)
+	table.isStrIn(txt, str)
+	table.countElements(table, item)
+	table.getCombinations(table, num)
+	string.split(str)
+	string.trim(str)
+	string.explode(str, sep)
 ]

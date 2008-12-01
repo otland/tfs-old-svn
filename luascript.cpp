@@ -1271,7 +1271,7 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerSendDefaultCancel(cid, ReturnValue)
 	lua_register(m_luaState, "doPlayerSendDefaultCancel", LuaScriptInterface::luaDoSendDefaultCancel);
 
-	//getSearchString(fromPosition, toPosition[, isPlayer])
+	//getSearchString(fromPosition, toPosition[, fromIsCreature[, toIsCreature]])
 	lua_register(m_luaState, "getSearchString", LuaScriptInterface::luaGetSearchString);
 
 	//getClosestFreeTile(cid, targetpos[, extended[, ignoreHouse]])
@@ -1749,7 +1749,7 @@ void LuaScriptInterface::registerFunctions()
 	//getItemPluralNameById(itemid)
 	lua_register(m_luaState, "getItemPluralNameById", LuaScriptInterface::luaGetItemPluralNameById);
 
-	//getItemIdArticleById(itemid)
+	//getItemArticleById(itemid)
 	lua_register(m_luaState, "getItemArticleById", LuaScriptInterface::luaGetItemArticleById);
 
 	//getItemWeightById(itemid, count, <optional: default: 1> precise)
@@ -1773,7 +1773,7 @@ void LuaScriptInterface::registerFunctions()
 	//setItemPluralName(uid)
 	lua_register(m_luaState, "setItemPluralName", LuaScriptInterface::luaSetItemPluralName);
 
-	//getItemIdArticle(uid)
+	//getItemArticle(uid)
 	lua_register(m_luaState, "getItemArticle", LuaScriptInterface::luaGetItemArticle);
 
 	//setItemIdArticle(uid)
@@ -2016,7 +2016,7 @@ void LuaScriptInterface::registerFunctions()
 	//getBanAction(id)
 	lua_register(m_luaState, "getBanAction", LuaScriptInterface::luaGetBanAction);
 
-	//getBanList(type)
+	//getBanList(type[, value])
 	lua_register(m_luaState, "getBanList", LuaScriptInterface::luaGetBanList);
 
 	//debugPrint(text)
@@ -2897,22 +2897,25 @@ int32_t LuaScriptInterface::luaDoSendDefaultCancel(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetSearchString(lua_State* L)
 {
-	//getSearchString(fromPosition, toPosition[, isPlayer])
-	int32_t parameters = lua_gettop(L);
+	//getSearchString(fromPosition, toPosition[, fromIsCreature[, toIsCreature]])
+	int32_t params = lua_gettop(L);
+	bool toIsCreature = false, fromIsCreature = false;
 
-	bool isPlayer = false;
-	if(parameters > 3)
-		isPlayer = popNumber(L) == LUA_TRUE;
+	if(params >= 4)
+		toIsCreature = popNumber(L) == LUA_TRUE;
+
+	if(params >= 3)
+		fromIsCreature = popNumber(L) == LUA_TRUE;
 
 	PositionEx toPos, fromPos;
 	popPosition(L, toPos);
 	popPosition(L, fromPos);
 
 	if(toPos.x > 0 && fromPos.x > 0)
-		lua_pushstring(L, g_game.getSearchString(fromPos, toPos, isPlayer).c_str());
+		lua_pushstring(L, g_game.getSearchString(fromPos, toPos, fromIsCreature, toIsCreature).c_str());
 	else
 	{
-		reportErrorFunc("wrong positions specified.");
+		reportErrorFunc("wrong position(s) specified.");
 		lua_pushnumber(L, LUA_ERROR);
 	}
 	return 1;
@@ -4165,7 +4168,7 @@ int32_t LuaScriptInterface::luaGetPlayerStorageValue(lua_State* L)
 		if(player->getStorageValue(key, strValue))
 		{
 			int32_t intValue = atoi(strValue.c_str());
-			if(intValue)
+			if(intValue || strValue == "0")
 				lua_pushnumber(L, intValue);
 			else
 				lua_pushstring(L, strValue.c_str());
@@ -6671,7 +6674,7 @@ int32_t LuaScriptInterface::luaGetGlobalStorageValue(lua_State* L)
 	if(env->getGlobalStorageValue(popNumber(L), strValue))
 	{
 		int32_t intValue = atoi(strValue.c_str());
-		if(intValue)
+		if(intValue || strValue == "0")
 			lua_pushnumber(L, intValue);
 		else
 			lua_pushstring(L, strValue.c_str());

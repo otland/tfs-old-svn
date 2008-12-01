@@ -38,7 +38,7 @@ DatabasePgSQL::DatabasePgSQL()
 	m_connected = PQstatus(m_handle) == CONNECTION_OK;
 
 	if(!m_connected)
-		std::cout << "Failed to connected to PostgreSQL database: " << PQerrorMessage(m_handle) << std::endl;
+		std::cout << "Failed to estabilish PostgreSQL database connection: " << PQerrorMessage(m_handle) << std::endl;
 }
 
 DatabasePgSQL::~DatabasePgSQL()

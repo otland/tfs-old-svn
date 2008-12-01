@@ -142,7 +142,7 @@ bool IOGuild::createGuild(Player* player)
 	DBQuery query;
 	DBResult* result;
 
-	query << "INSERT INTO `guilds` (`id`, `name`, `ownerid`, `creationdata`, `motd`) VALUES (NULL , " << db->escapeString(player->getGuildName()) << ", " << player->getGUID() << ", " << time(NULL) << ", 'Your guild has successfully been created, to view all available commands use: <!commands>. If you would like to remove this message use <!cleanmotd>, if you would like to edit it, use <!setmotd newMotd>.');";
+	query << "INSERT INTO `guilds` (`name`, `ownerid`, `creationdata`, `motd`) VALUES (" << db->escapeString(player->getGuildName()) << ", " << player->getGUID() << ", " << time(NULL) << ", 'Your guild has successfully been created, to view all available commands use: <!commands>. If you would like to remove this message use <!cleanmotd>, if you would like to edit it, use <!setmotd newMotd>.');";
 	if(!db->executeQuery(query.str()))
 		return false;
 
@@ -253,7 +253,7 @@ bool IOGuild::invitePlayerToGuild(uint32_t guid, uint32_t guildId)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "INSERT INTO `guild_invites` ( `player_id` , `guild_id` ) VALUES ('" << guid << "', '" << guildId << "');";
+	query << "INSERT INTO `guild_invites` (`player_id`, `guild_id`) VALUES ('" << guid << "', '" << guildId << "');";
 	return db->executeQuery(query.str());
 }
 
@@ -271,7 +271,7 @@ uint32_t IOGuild::getGuildId(uint32_t guid)
 	DBQuery query;
 	DBResult* result;
 
-	query << "SELECT `guild_ranks`.`guild_id` FROM `players`,`guild_ranks` WHERE `guild_ranks`.`id`=`players`.`rank_id` AND `players`.`id` = " << guid;
+	query << "SELECT `guild_ranks`.`guild_id` FROM `players`, `guild_ranks` WHERE `guild_ranks`.`id`=`players`.`rank_id` AND `players`.`id` = " << guid;
 	if(!(result = db->storeQuery(query.str())))
 		return 0;
 

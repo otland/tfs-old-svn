@@ -4667,7 +4667,7 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 	return Position(0, 0, 0);
 }
 
-std::string Game::getSearchString(const Position lookPos, const Position searchPos, bool player/* = false*/)
+std::string Game::getSearchString(const Position fromPos, const Position toPos, bool fromIsCreature/* = false*/, bool toIsCreature/* = false*/)
 {
 	//a. From 1 to 4 sq's pos is [player: standing] next to you.
 	//b. From 5 to 100 sq's pos is to the south, north, east, west.
@@ -4703,7 +4703,7 @@ std::string Game::getSearchString(const Position lookPos, const Position searchP
 	direction_t direction;
 	level_t level;
 
-	int32_t dx = lookPos.x - searchPos.x, dy = lookPos.y - searchPos.y, dz = lookPos.z - searchPos.z;
+	int32_t dx = fromPos.x - toPos.x, dy = fromPos.y - toPos.y, dz = fromPos.z - toPos.z;
 	if(dz > 0)
 		level = LEVEL_HIGHER;
 	else if(dz < 0)
@@ -4765,66 +4765,121 @@ std::string Game::getSearchString(const Position lookPos, const Position searchP
 	}
 
 	std::stringstream ss;
-	if(distance == DISTANCE_BESIDE)
+	switch(distance)
 	{
-		if(level == LEVEL_SAME)
-			ss << "is " << (player ? "standing " : "") << "next to you";
-		else if(level == LEVEL_HIGHER)
-			ss << "is above you";
-		else if(level == LEVEL_LOWER)
-			ss << "is below you";
-	}
-	else
-	{
-		switch(distance)
+		case DISTANCE_BESIDE:
 		{
-			case DISTANCE_CLOSE_1:
-				if(level == LEVEL_SAME)
-					ss << "is to the";
-				else if(level == LEVEL_HIGHER)
-					ss << "is on a higher level to the";
-				else if(level == LEVEL_LOWER)
-					ss << "is on a lower level to the";
-				break;
-			case DISTANCE_CLOSE_2:
-				ss << "is to the";
-				break;
-			case DISTANCE_FAR:
-				ss << "is far to the";
-				break;
-			case DISTANCE_VERYFAR:
-				ss << "is very far to the";
-				break;
-			default:
-				break;
+			switch(level)
+			{
+				case LEVEL_SAME:
+				{
+					ss << "is ";
+					if(toIsCreature)
+						ss << "standing ";
+
+					ss << "next to you";
+					break;
+				}
+
+				case LEVEL_HIGHER:
+				{
+					ss << "is above ";
+					if(fromIsCreature)
+						ss << "you";
+
+					break;
+				}
+			
+				case LEVEL_LOWER:
+				{
+					ss << "is below ";
+					if(fromIsCreature)
+						ss << "you";
+
+					break;
+				}
+
+				default:
+					break;
+			}
+
+			break;
 		}
 
+		case DISTANCE_CLOSE_1:
+		{
+			switch(level)
+			{
+				case LEVEL_SAME:
+					ss << "is to the";
+					break;
+				case LEVEL_HIGHER:
+					ss << "is on a higher level to the";
+					break;
+				case LEVEL_LOWER:
+					ss << "is on a lower level to the";
+					break;
+				default:
+					break;
+			}
+
+			break;
+		}
+
+		case DISTANCE_CLOSE_2:
+			ss << "is to the";
+			break;
+
+		case DISTANCE_FAR:
+			ss << "is far to the";
+			break;
+
+		case DISTANCE_VERYFAR:
+			ss << "is very far to the";
+			break;
+
+		default:
+			break;
+	}
+
+	if(distance != DISTANCE_BESIDE)
+	{
 		ss << " ";
 		switch(direction)
 		{
 			case DIR_N:
 				ss << "north";
 				break;
+
 			case DIR_S:
 				ss << "south";
 				break;
+
 			case DIR_E:
 				ss << "east";
 				break;
+
 			case DIR_W:
 				ss << "west";
 				break;
+
 			case DIR_NE:
 				ss << "north-east";
 				break;
+
 			case DIR_NW:
 				ss << "north-west";
 				break;
+
 			case DIR_SE:
 				ss << "south-east";
 				break;
+
 			case DIR_SW:
 				ss << "south-west";
+				break;
+
+			default:
 				break;
 		}
 	}
