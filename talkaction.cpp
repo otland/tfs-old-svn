@@ -685,7 +685,7 @@ bool TalkAction::addSkill(Player* player, const std::string& cmd, const std::str
 	std::vector<std::string> params = explodeString(param, ",");
 	if(params.size() < 2)
 	{
-		player->sendTextMessage(MSG_STATUS_SMALL, "Not enough params given.");
+		player->sendTextMessage(MSG_STATUS_SMALL, "Command requires at least 2 parameters.");
 		return true;
 	}
 
