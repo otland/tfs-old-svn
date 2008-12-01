@@ -44,11 +44,10 @@ bool DatabaseManager::optimizeTables()
 			query.str("");
 			do
 			{
+				std::cout << "> Optimizing table: " << result->getDataString("TABLE_NAME") << std::endl;
 				query << "OPTIMIZE TABLE `" << result->getDataString("TABLE_NAME") << "`;";
-				if(db->executeQuery(query.str()))
-					std::cout << "> Optimizing table: " << result->getDataString("TABLE_NAME") << std::endl;
-				else
-					std::cout << "> Failed optimizing table: " << result->getDataString("TABLE_NAME") << std::endl;
+				if(!db->executeQuery(query.str()))
+					std::cout << "WARNING: Optimization failed." << std::endl;
 
 				query.str("");
 			}
