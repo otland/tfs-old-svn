@@ -26,11 +26,12 @@ function selfMoveToCreature(id)
 		selfGotoIdle()
 	end
 
-	local tx, ty, tz = getCreaturePosition(id)
-	if(tx == nil) then
+	local t = {}
+	t.x, t.y, t.z = getCreaturePosition(id)
+	if(t.x == nil) then
 		selfGotoIdle()
 	else
-		moveToPosition(tx, ty, tz)
+		moveToPosition(t.x, t.y, t.z)
 	end
 end
 
@@ -39,13 +40,19 @@ function getDistanceToCreature(id)
 		selfGotoIdle()
 	end
 
-	local cx, cy, cz = getCreaturePosition(id)
-	if(cx == nil) then
+	local c = {}
+	c.x, c.y, c.z = getCreaturePosition(id)
+	if(c.x == nil) then
 		return nil
 	end
 
-	local sx, sy, sz = selfGetPosition()
-	return math.max(math.abs(sx - cx), math.abs(sy - cy))
+	local s = {}
+	s.x, s.y, s.z = selfGetPosition()
+	if(s.z ~= c.z) then
+		return nil
+	end
+
+	return math.max(math.abs(s.x - c.x), math.abs(s.y - c.y))
 end
 
 function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)
