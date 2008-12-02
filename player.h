@@ -148,10 +148,6 @@ class Player : public Creature, public Cylinder
 
 		static uint64_t getExpForLevel(int32_t level)
 		{
-			/* Talaturen's formula
-			  *uint64_t x = level;
-			  *return (x > 1 ? ((50 * x / 3 - 100) * x + 850 / 3) * x - 200 : 0);
-			  */
 			level--;
 			return ((50ULL * level * level * level) - (150ULL * level * level) + (400ULL * level))/3ULL;
 		}

@@ -207,9 +207,9 @@ Chat::Chat()
 	if(newChannel)
 		m_normalChannels[0x06] = newChannel;
 
-	newChannel = new ChatChannel(0x08, "Help");
+	newChannel = new ChatChannel(0x09, "Help");
 	if(newChannel)
-		m_normalChannels[0x08] = newChannel;
+		m_normalChannels[0x09] = newChannel;
 
 	newChannel = new PrivateChatChannel(0xFFFF, "Private Chat Channel");
 	if(newChannel)

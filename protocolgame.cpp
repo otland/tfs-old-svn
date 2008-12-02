@@ -542,9 +542,9 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	const std::string name = msg.GetString();
 	std::string password = msg.GetString();
 
-	if(version < 830)
+	if(version < 840)
 	{
-		disconnectClient(0x0A, "Only clients with protocol 8.3 allowed!");
+		disconnectClient(0x0A, "Only clients with protocol 8.4 allowed!");
 		return false;
 	}
 
@@ -2181,7 +2181,7 @@ void ProtocolGame::sendDistanceShoot(const Position& from, const Position& to, u
 
 void ProtocolGame::sendMagicEffect(const Position& pos, uint8_t type)
 {
-	if(canSee(pos) && type <= 56)
+	if(canSee(pos) && type <= 66)
 	{
 		NetworkMessage* msg = getOutputBuffer();
 		if(msg)

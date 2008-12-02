@@ -146,14 +146,16 @@ enum SpeakClasses
 	SPEAK_SAY		= 0x01,
 	SPEAK_WHISPER		= 0x02,
 	SPEAK_YELL		= 0x03,
-	SPEAK_PRIVATE_PN	= 0x04,
+	SPEAK_PRIVATE_PN	= 0x04, // debug
 	SPEAK_PRIVATE_NP	= 0x05,
 	SPEAK_PRIVATE		= 0x06,
 	SPEAK_CHANNEL_Y		= 0x07,
+
+	/* everything below this line = debug? */
 	SPEAK_RVR_CHANNEL	= 0x08,
 	SPEAK_RVR_ANSWER	= 0x09,
-	SPEAK_RVR_CONTINUE	= 0x0A,
-	SPEAK_BROADCAST		= 0x0B,
+	SPEAK_RVR_CONTINUE	= 0x0A, // _DOES NOT DEBUG_
+	SPEAK_BROADCAST		= 0x0B, // _DOES NOT DEBUG_
 	SPEAK_CHANNEL_R1	= 0x0C, //red - #c text
 	SPEAK_PRIVATE_RED	= 0x0D,	//@name@text
 	SPEAK_CHANNEL_O		= 0x0E,
@@ -166,16 +168,16 @@ enum SpeakClasses
 
 enum MessageClasses
 {
-	MSG_CLASS_FIRST			= 0x11,
+	MSG_CLASS_FIRST			= 0x12,
 	MSG_STATUS_CONSOLE_RED		= MSG_CLASS_FIRST, /*Red message in the console*/
-	MSG_STATUS_CONSOLE_ORANGE	= 0x13, /*Orange message in the console*/
-	MSG_STATUS_WARNING		= 0x14, /*Red message in game window and in the console*/
-	MSG_EVENT_ADVANCE		= 0x15, /*White message in game window and in the console*/
-	MSG_EVENT_DEFAULT		= 0x16, /*White message at the bottom of the game window and in the console*/
-	MSG_STATUS_DEFAULT		= 0x17, /*White message at the bottom of the game window and in the console*/
-	MSG_INFO_DESCR			= 0x18, /*Green message in game window and in the console*/
-	MSG_STATUS_SMALL		= 0x19, /*White message at the bottom of the game window"*/
-	MSG_STATUS_CONSOLE_BLUE		= 0x1A, /*Blue message in the console*/
+	MSG_STATUS_CONSOLE_ORANGE	= 0x14, /*Orange message in the console*/
+	MSG_STATUS_WARNING		= 0x15, /*Red message in game window and in the console*/
+	MSG_EVENT_ADVANCE		= 0x16, /*White message in game window and in the console*/
+	MSG_EVENT_DEFAULT		= 0x17, /*White message at the bottom of the game window and in the console*/
+	MSG_STATUS_DEFAULT		= 0x18, /*White message at the bottom of the game window and in the console*/
+	MSG_INFO_DESCR			= 0x19, /*Green message in game window and in the console*/
+	MSG_STATUS_SMALL		= 0x1A, /*White message at the bottom of the game window"*/
+	MSG_STATUS_CONSOLE_BLUE		= 0x1B, /*Blue message in the console*/
 	MSG_CLASS_LAST			= MSG_STATUS_CONSOLE_BLUE
 };
 

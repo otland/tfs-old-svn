@@ -3422,14 +3422,14 @@ bool Game::playerTalkToChannel(Player* player, SpeakClasses type, const std::str
 	{
 		case SPEAK_CHANNEL_Y:
 		{
-			if(channelId == 0x08 && (player->hasFlag(PlayerFlag_TalkOrangeHelpChannel) || player->getAccountType() > ACCOUNT_TYPE_NORMAL))
+			if(channelId == 0x09 && (player->hasFlag(PlayerFlag_TalkOrangeHelpChannel) || player->getAccountType() > ACCOUNT_TYPE_NORMAL))
 				type = SPEAK_CHANNEL_O;
 			break;
 		}
 
 		case SPEAK_CHANNEL_O:
 		{
-			if(channelId != 0x08 || (!player->hasFlag(PlayerFlag_TalkOrangeHelpChannel) && player->getAccountType() == ACCOUNT_TYPE_NORMAL))
+			if(channelId != 0x09 || (!player->hasFlag(PlayerFlag_TalkOrangeHelpChannel) && player->getAccountType() == ACCOUNT_TYPE_NORMAL))
 				type = SPEAK_CHANNEL_Y;
 			break;
 		}
