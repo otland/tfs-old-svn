@@ -13,7 +13,7 @@ function onSay(cid, words, param)
 		if(isCreature(tmp.uid) == TRUE) then
 			doRemoveCreature(tmp.uid)
 		else
-			doRemoveItem(tmp.uid, math.min(tmp.type, amount))
+			doRemoveItem(tmp.uid, math.min(math.max(1, tmp.type), amount))
 		end
 
 		doSendMagicEffect(toPos, CONST_ME_MAGIC_RED)
@@ -23,7 +23,7 @@ function onSay(cid, words, param)
 	toPos.stackpos = STACKPOS_TOP_FIELD
 	tmp = getThingFromPos(toPos)
 	if(tmp.uid ~= 0) then
-		doRemoveItem(tmp.uid, math.min(tmp.type, amount))
+		doRemoveItem(tmp.uid, math.min(math.max(1, tmp.type), amount))
 		doSendMagicEffect(toPos, CONST_ME_MAGIC_RED)
 		return TRUE
 	end
@@ -43,7 +43,7 @@ function onSay(cid, words, param)
 			if(isCreature(tmp.uid) == TRUE) then
 				doRemoveCreature(tmp.uid)
 			else
-				doRemoveItem(tmp.uid, math.min(tmp.type, amount))
+				doRemoveItem(tmp.uid, math.min(math.max(1, tmp.type), amount))
 			end
 
 			doSendMagicEffect(toPos, CONST_ME_MAGIC_RED)
