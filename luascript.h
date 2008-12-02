@@ -330,7 +330,7 @@ class LuaScriptInterface
 		static LuaVariant popVariant(lua_State* L);
 		static void popPosition(lua_State* L, PositionEx& position);
 		static void popPosition(lua_State* L, Position& position, uint32_t& stackpos);
-		static uint64_t popNumber(lua_State* L);
+		static int64_t popNumber(lua_State* L);
 		static double popFloatNumber(lua_State* L);
 		static const char* popString(lua_State* L);
 		static int32_t popCallback(lua_State* L);
