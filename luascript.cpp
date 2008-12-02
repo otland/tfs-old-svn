@@ -967,10 +967,10 @@ void LuaScriptInterface::popPosition(lua_State* L, Position& position, uint32_t&
 	lua_pop(L, 1); //table
 }
 
-uint64_t LuaScriptInterface::popNumber(lua_State* L)
+int64_t LuaScriptInterface::popNumber(lua_State* L)
 {
 	lua_pop(L, 1);
-	return (uint64_t)lua_tonumber(L, 0);
+	return (int64_t)lua_tonumber(L, 0);
 }
 
 double LuaScriptInterface::popFloatNumber(lua_State* L)
