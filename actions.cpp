@@ -441,7 +441,10 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		return RET_NOERROR;
 	}
 
-	return RET_CANNOTUSETHISOBJECT;	
+	if(getAction(item))
+		return RET_CANNOTUSETHISOBJECT;
+
+	return RET_NOERROR;
 }
 
 bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* item, bool isHotkey)
