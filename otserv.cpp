@@ -145,10 +145,10 @@ int main(int argc, char *argv[])
 #endif
 {
 	#ifdef __CONSOLE__
-	if(argc > 0)
+	if(argc > 1)
 	{
 		char buffer[200];
-		sscanf(argv[0], "--config=%s", buffer);
+		sscanf(argv[1], "--config=%s", buffer);
 		ConfigManager::filename = buffer;
 	}
 	#endif
