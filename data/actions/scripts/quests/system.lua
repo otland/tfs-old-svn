@@ -38,7 +38,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 		size = table.maxn(items)
 		if(size == 1) then
-			reward = doCopyItem(item, TRUE)
+			reward = doCopyItem(items[1], TRUE)
 		end
 
 		if(reward ~= 0) then
