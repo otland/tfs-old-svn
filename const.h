@@ -92,7 +92,7 @@ enum MagicEffectClasses
 	NM_ME_STEPSHORIZONTAL	= 0x3E, //62
 	NM_ME_BLOODYSTEPS	= 0x3F, //63
 	NM_ME_STEPSVERTICAL	= 0x40, //64
-	NM_ME_YALAHARIANGHOST	= 0x41, //65
+	NM_ME_YALAHARIGHOST	= 0x41, //65
 	NM_ME_BATS		= 0x42, //66
 
 	//for internal use, dont send to client
