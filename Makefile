@@ -8,7 +8,8 @@ OBJ = account.o actions.o admin.o allocator.o ban.o baseevents.o beds.o creature
 
 all: forgottenserver
 
-clean: rm -rf *.o
+clean:
+	rm -rf *.o
 
 forgottenserver: $(OBJ)
 	g++ $(CFLAGS) $(FLAGS) -o ./TheForgottenServer $(OBJ) $(LIBLINK)
