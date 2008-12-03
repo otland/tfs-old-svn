@@ -24,6 +24,8 @@
 #include "tools.h"
 #include <iostream>
 
+std::string ConfigManager::filename = "config.lua";
+
 ConfigManager::ConfigManager()
 {
 	m_isLoaded = false;

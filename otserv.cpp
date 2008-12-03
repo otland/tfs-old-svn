@@ -144,6 +144,15 @@ void serverMain(void* param)
 int main(int argc, char *argv[])
 #endif
 {
+	#ifdef __CONSOLE__
+	if(argc > 0)
+	{
+		char buffer[200];
+		sscanf(argv[0], "--config=%s", buffer);
+		ConfigManager::filename = buffer;
+	}
+	#endif
+
 	#ifdef WIN32
 	#ifndef __CONSOLE__
 	std::cout.rdbuf(&logger);
@@ -258,11 +267,11 @@ void mainLoader()
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading config");
 	#endif
 	#if !defined(WIN32) && !defined(__NO_HOMEDIR_CONF__)
-	if(!g_config.loadFile(getenv("HOME")."/.otserv/config.lua"))
+	if(!g_config.loadFile(getenv("HOME")."/.otserv/" + ConfigManager::filename))
 	#else
-	if(!g_config.loadFile("config.lua"))
+	if(!g_config.loadFile(ConfigManager::filename))
 	#endif
-		startupErrorMessage("Unable to load config.lua!");
+		startupErrorMessage("Unable to load " + ConfigManager::filename);
 
 	#ifdef WIN32
 	std::string defaultPriority = asLowerCaseString(g_config.getString(ConfigManager::DEFAULT_PRIORITY));

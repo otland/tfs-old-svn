@@ -174,6 +174,7 @@ class ConfigManager
 
 		bool loadFile(const std::string& _filename);
 		bool reload();
+		static std::string filename;
 
 		const std::string& getString(uint32_t _what) const;
 		bool getBool(uint32_t _what) const;
