@@ -262,9 +262,9 @@ void mainLoader()
 	std::cout << std::endl;
 
 	// read global config
-	std::cout << ">> Loading config" << std::endl;
+	std::cout << ">> Loading config (" << ConfigManager::filename << ")" << std::endl;
 	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading config");
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading config (" + ConfigManager::filename + ")"));
 	#endif
 	#if !defined(WIN32) && !defined(__NO_HOMEDIR_CONF__)
 	if(!g_config.loadFile(getenv("HOME")."/.otserv/" + ConfigManager::filename))
