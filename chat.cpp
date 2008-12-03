@@ -962,13 +962,13 @@ ChannelList Chat::getChannelList(Player* player)
 	{
 		if(it->first == 0x04 || it->first == 0x06 || it->first == 0x09)
 		{
-			list.push_back(channel);
+			list.push_back(it->second);
 			continue;
 		}
 
 		ChatChannel* channel = getChannel(player, it->first);
 		if(channel)
-			list.push_back(channel);
+			list.push_back(it->second);
 	}
 
 	bool hasPrivate = false;
