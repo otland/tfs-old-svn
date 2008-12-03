@@ -1220,21 +1220,16 @@ bool Monster::onDeath()
 Item* Monster::getCorpse()
 {
 	Item* corpse = Creature::getCorpse();
-	if(corpse)
+	if(corpse && mostDamageCreature)
 	{
-		Creature* lastHitCreature_ = NULL;
-		Creature* mostDamageCreature = NULL;
-		if(getKillers(&lastHitCreature_, &mostDamageCreature) && mostDamageCreature)
-		{
-			uint32_t corpseOwner = 0;
-			if(mostDamageCreature->getPlayer())
-				corpseOwner = mostDamageCreature->getID();
-			else if(mostDamageCreature->getMaster() && mostDamageCreature->getMaster()->getPlayer())
-				corpseOwner = mostDamageCreature->getMaster()->getID();
+		uint32_t owner = 0;
+		if(mostDamageCreature->getPlayer())
+			owner = mostDamageCreature->getID();
+		else if(mostDamageCreature->getMaster() && mostDamageCreature->getMaster()->getPlayer())
+			owner = mostDamageCreature->getMaster()->getID();
 
-			if(corpseOwner != 0)
-				corpse->setCorpseOwner(corpseOwner);
-		}
+		if(owner != 0)
+			corpse->setCorpseOwner(owner);
 	}
 
 	return corpse;
@@ -1255,9 +1250,8 @@ bool Monster::inDespawnRange(const Position& pos)
 
 		if(std::abs(pos.z - masterPos.z) > Monster::despawnRange)
 			return true;
-
-		return false;
 	}
+
 	return false;
 }
 
@@ -1279,7 +1273,6 @@ bool Monster::getCombatValues(int32_t& min, int32_t& max)
 void Monster::updateLookDirection()
 {
 	Direction newDir = getDirection();
-
 	if(attackedCreature)
 	{
 		const Position& pos = getPosition();
@@ -1335,6 +1328,7 @@ void Monster::updateLookDirection()
 			}
 		}
 	}
+
 	g_game.internalCreatureTurn(this, newDir);
 }
 
@@ -1381,6 +1375,7 @@ bool Monster::challengeCreature(Creature* creature)
 
 		return result;
 	}
+
 	return false;
 }
 

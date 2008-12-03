@@ -24,6 +24,7 @@
 #include "player.h"
 
 typedef std::vector<Player*> PlayerVector;
+typedef std::vector<Item*> ItemVector;
 
 class Player;
 class Party;
@@ -38,21 +39,20 @@ class Party
 		void setLeader(Player* _leader) {leader = _leader;}
 		PlayerVector getMembers() {return memberList;}
 
-		void disband();
-		bool invitePlayer(Player* player);
-		bool joinParty(Player* player);
-		void revokeInvitation(Player* player);
 		bool passPartyLeadership(Player* player);
-		bool leaveParty(Player* player);
-		bool removeInvite(Player* player);
+		void disband();
+		bool disbandParty() {return (memberList.empty() && inviteList.empty());}
 
-		bool isPlayerMember(const Player* player) const;
-		bool isPlayerInvited(const Player* player) const;
+		bool invitePlayer(Player* player);
+		void revokeInvitation(Player* player);
+		bool removeInvite(Player* player);
+		bool joinParty(Player* player);
+		bool leaveParty(Player* player);
+
 		void updateAllPartyIcons();
 		void updatePartyIcons(Player* player);
-		void broadcastPartyMessage(MessageClasses msgClass, const std::string& msg, bool sendToInvitations = false);
-		bool disbandParty() {return (memberList.empty() && inviteList.empty());}
-		bool canOpenCorpse(uint32_t ownerId);
+		void broadcastPartyMessage(MessageClasses messageClass, const std::string& text, bool sendToInvitations = false);
+		void broadcastPartyLoot(const std::string& monster, const ItemVector& items);
 
 		void shareExperience(uint64_t experience);
 		bool setSharedExperience(Player* player, bool _sharedExpActive);
@@ -64,6 +64,10 @@ class Party
 		void addPlayerHealedMember(Player* player, uint32_t points);
 		void addPlayerDamageMonster(Player* player, uint32_t points);
 		void clearPlayerPoints(Player* player);
+
+		bool isPlayerMember(const Player* player) const;
+		bool isPlayerInvited(const Player* player) const;
+		bool canOpenCorpse(uint32_t ownerId);
 
 	protected:
 		bool sharedExpActive;

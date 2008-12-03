@@ -232,18 +232,6 @@ bool Party::invitePlayer(Player* player)
 	return true;
 }
 
-bool Party::isPlayerMember(const Player* player) const
-{
-	PlayerVector::const_iterator it = std::find(memberList.begin(), memberList.end(), player);
-	return it != memberList.end();
-}
-
-bool Party::isPlayerInvited(const Player* player) const
-{
-	PlayerVector::const_iterator it = std::find(inviteList.begin(), inviteList.end(), player);
-	return it != inviteList.end();
-}
-
 void Party::updatePartyIcons(Player* player)
 {
 	for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
@@ -279,21 +267,54 @@ void Party::updateAllPartyIcons()
 	getLeader()->sendPlayerPartyIcons(getLeader());
 }
 
-void Party::broadcastPartyMessage(MessageClasses msgClass, const std::string& msg, bool sendToInvitations /*= false*/)
+void Party::broadcastPartyMessage(MessageClasses messageClass, const std::string& text, bool sendToInvitations /*= false*/)
 {
 	PlayerVector::iterator it;
 	if(!memberList.empty())
 	{
 		for(it = memberList.begin(); it != memberList.end(); ++it)
-			(*it)->sendTextMessage(msgClass, msg);
+			(*it)->sendTextMessage(messageClass, text);
 	}
 
-	getLeader()->sendTextMessage(msgClass, msg);
+	getLeader()->sendTextMessage(messageClass, text);
 	if(sendToInvitations && !inviteList.empty())
 	{
 		for(it = inviteList.begin(); it != inviteList.end(); ++it)
-			(*it)->sendTextMessage(msgClass, msg);
+			(*it)->sendTextMessage(messageClass, text);
 	}
+}
+
+void Party::broadcastPartyLoot(const std::string& monster, const ItemVector& items)
+{
+	std::stringstream ss;
+	ss << "Loot of " << monster << ":";
+	for(ItemVector::const_iterator it = items.end(); it != items.begin(); --it)
+	{
+		ss << " ";
+		if((*it)->isRune())
+		{
+			ss << (*it)->getSubType() << " charges " << (*it)->getName();
+		}
+		else if((*it)->isStackable())
+		{
+			ss << (*it)->getSubType() << " " << (*it)->getPluralName();
+		}
+		else
+			ss << (*it)->getArticle() << " " << (*it)->getName();
+
+		if((*it) != items.front())
+			ss << ",";
+	}
+
+	ss << ".";
+	PlayerVector::iterator it;
+	if(!memberList.empty())
+	{
+		for(it = memberList.begin(); it != memberList.end(); ++it)
+			(*it)->sendChannelMessage("", ss.str().c_str(), SPEAK_CHANNEL_W, 0x08);
+	}
+
+	getLeader()->sendChannelMessage("", ss.str().c_str(), SPEAK_CHANNEL_W, 0x08);
 }
 
 void Party::updateSharedExperience()
@@ -448,6 +469,18 @@ void Party::clearPlayerPoints(Player* player)
 		pointMap.erase(it);
 		updateSharedExperience();
 	}
+}
+
+bool Party::isPlayerMember(const Player* player) const
+{
+	PlayerVector::const_iterator it = std::find(memberList.begin(), memberList.end(), player);
+	return it != memberList.end();
+}
+
+bool Party::isPlayerInvited(const Player* player) const
+{
+	PlayerVector::const_iterator it = std::find(inviteList.begin(), inviteList.end(), player);
+	return it != inviteList.end();
 }
 
 bool Party::canOpenCorpse(uint32_t ownerId)
