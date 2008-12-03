@@ -717,7 +717,7 @@ uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, 
 	{
 		if((int32_t)player->getLevel() < moveEvent->getReqLevel()
 			|| (int32_t)player->getMagicLevel() < moveEvent->getReqMagLv()
-			|| !player->isPremium() && moveEvent->isPremium())
+			|| (!player->isPremium() && moveEvent->isPremium()))
 		{
 			return 1;
 		}

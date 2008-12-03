@@ -4722,7 +4722,14 @@ void Game::loadMotd()
 	char motdText[1250];
 	sprintf(motdText, "%s", lastMotdText.c_str());
 
-	fscanf(file, "%d\n%s", &lastMotdNum, motdText);
+	int32_t tmp = fscanf(file, "%d\n%s", &lastMotdNum, motdText);
+	if(tmp == EOF)
+	{
+		std::cout << "> ERROR: Failed to load lastMotd.txt" << std::endl;
+		lastMotdNum = random_range(5, 500);
+		return;
+	}
+
 	lastMotdText = motdText;
 	fclose(file);
 }
@@ -4748,7 +4755,13 @@ void Game::savePlayersRecord()
 		return;
 	}
 
-	fprintf(file, "%d", lastPlayersRecord);
+	int32_t tmp = fprintf(file, "%d", lastPlayersRecord);
+	if(tmp == EOF)
+	{
+		std::cout << "> ERROR: Failed to save playersRecord.txt" << std::endl;
+		return;
+	}
+
 	fclose(file);
 }
 
@@ -4762,7 +4775,14 @@ void Game::loadPlayersRecord()
 		return;
 	}
 
-	fscanf(file, "%d", &lastPlayersRecord);
+	int32_t tmp = fscanf(file, "%d", &lastPlayersRecord);
+	if(tmp == EOF)
+	{
+		std::cout << "> ERROR: Failed to load playersRecord.txt" << std::endl;
+		lastPlayersRecord = 0;
+		return;
+	}
+
 	fclose(file);
 }
 

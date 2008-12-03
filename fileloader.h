@@ -33,17 +33,11 @@ struct NodeStruct
 {
 	NodeStruct()
 	{
-		start = 0;
-		propsSize = 0;
-		next = 0;
-		child = 0;
-		type = 0;
+		start = propsSize = type = 0;
+		next = child = 0;
 	}
 
-	~NodeStruct()
-	{
-		//
-	}
+	virtual ~NodeStruct() {}
 
 	uint32_t start;
 	uint32_t propsSize;
@@ -112,14 +106,14 @@ class FileLoader
 		virtual ~FileLoader();
 
 		bool openFile(const char* filename, bool write, bool caching = false);
-		const unsigned char* getProps(const NODE, uint32_t &size);
+		const uint8_t* getProps(const NODE, uint32_t &size);
 		bool getProps(const NODE, PropStream& props);
 		const NODE getChildNode(const NODE parent, uint32_t &type);
 		const NODE getNextNode(const NODE prev, uint32_t &type);
 
-		void startNode(unsigned char type);
+		void startNode(uint8_t type);
 		void endNode();
-		int32_t setProps(void* data, unsigned short size);
+		int32_t setProps(void* data, uint16_t size);
 
 		int32_t getError() {return m_lastError;}
 		void clearError() {m_lastError = ERROR_NONE;}
@@ -145,10 +139,10 @@ class FileLoader
 		{
 			for(int32_t i = 0; i < size; ++i)
 			{
-				unsigned char c = *(((unsigned char*)data) + i);
+				uint8_t c = *(((uint8_t*)data) + i);
 				if(unescape && (c == NODE_START || c == NODE_END || c == ESCAPE_CHAR))
 				{
-					unsigned char escape = ESCAPE_CHAR;
+					uint8_t escape = ESCAPE_CHAR;
 					size_t value = fwrite(&escape, 1, 1, m_file);
 					if(value != 1)
 					{
@@ -172,7 +166,7 @@ class FileLoader
 		FILELOADER_ERRORS m_lastError;
 		NODE m_root;
 		uint32_t m_buffer_size;
-		unsigned char* m_buffer;
+		uint8_t* m_buffer;
 
 		bool m_use_cache;
 		struct _cache
@@ -180,7 +174,7 @@ class FileLoader
 			uint32_t loaded;
 			uint32_t base;
 			uint32_t size;
-			unsigned char* data;
+			uint8_t* data;
 		};
 
 		#define CACHE_BLOCKS 3
