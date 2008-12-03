@@ -231,6 +231,10 @@ Chat::~Chat()
 		delete it->second;
 
 	m_guildChannels.clear();
+	for(PartyChannelMap::iterator it = m_partyChannels.begin(); it != m_partyChannels.end(); ++it)
+		delete it->second;
+
+	m_partyChannels.clear();
 	for(PrivateChannelMap::iterator it = m_privateChannels.begin(); it != m_privateChannels.end(); ++it)
 		delete it->second;
 
