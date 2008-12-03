@@ -296,7 +296,7 @@ void Party::broadcastPartyLoot(const std::string& monster, const ItemVector& ite
 			if(it.isRune())
 			{
 				int32_t charges = (*rit)->getSubType();
-				ss << charges << " charge" << (charges > 1 ? "s" : "") << it.name;
+				ss << charges << " charge" << (charges != 1 ? "s" : "") << it.name;
 			}
 			else if(it.stackable)
 				ss << (*rit)->getSubType() << " " << it.pluralName;
