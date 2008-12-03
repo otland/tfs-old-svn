@@ -51,6 +51,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 				result = ret.article .. " " .. ret.name
 			end
 		else
+			result = ""
 			if(size > 20) then
 				reward = doCopyItem(item, FALSE)
 			elseif(size > 8) then
@@ -59,7 +60,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 				reward = getThing(doCreateItemEx(1987, 1))
 			end
 
-			for i = size, 1, -1 do
+			for i = 1, size do
 				local tmp = doCopyItem(items[i], TRUE)
 				if(doAddContainerItemEx(reward.uid, tmp.uid) ~= RETURNVALUE_NOERROR) then
 					print("[Warning] QuestSystem:", "Could not add quest reward")
@@ -74,11 +75,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 					result = result .. ret
 					ret = getItemDescriptions(tmp.uid)
 					if(tmp.type > 0 and isItemRune(tmp.itemid) == TRUE) then
-						result = tmp.type .. " charges " .. ret.name .. result
+						result = result .. tmp.type .. " charges " .. ret.name
 					elseif(tmp.type > 0 and isItemStackable(tmp.itemid) == TRUE) then
-						result = tmp.type .. " " .. ret.plural .. result
+						result = result .. tmp.type .. " " .. ret.plural
 					else
-						result = ret.article .. " " .. ret.name .. result
+						result = result .. ret.article .. " " .. ret.name
 					end
 				end
 			end
