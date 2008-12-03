@@ -478,11 +478,7 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 	if(isHotkey)
 		showUseHotkeyMessage(player, itemId, itemCount);
 
-	uint32_t delay = g_config.getNumber(ConfigManager::ACTIONS_DELAY_INTERVAL);
-	if(Spell* tmp = g_spells->getRuneSpell(item->getID()))
-		delay = tmp->getExhaustion();
-
-	player->setNextAction(OTSYS_TIME() + delay);
+	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::ACTIONS_DELAY_INTERVAL));
 	return true;
 }
 
@@ -586,11 +582,7 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 	if(isHotkey)
 		showUseHotkeyMessage(player, itemId, itemCount);
 
-	uint32_t delay = g_config.getNumber(ConfigManager::EX_ACTIONS_DELAY_INTERVAL);
-	if(Spell* tmp = g_spells->getRuneSpell(item->getID()))
-		delay = tmp->getExhaustion();
-
-	player->setNextAction(OTSYS_TIME() + delay);
+	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::EX_ACTIONS_DELAY_INTERVAL));
 	return true;
 }
 
