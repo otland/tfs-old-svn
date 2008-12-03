@@ -288,21 +288,19 @@ void Party::broadcastPartyLoot(const std::string& monster, const ItemVector& ite
 {
 	std::stringstream ss;
 	ss << "Loot of " << monster << ":";
-	for(ItemVector::const_iterator it = items.end(); it != items.begin(); --it)
+	for(ItemVector::const_iterator rit = items.end(); rit != items.begin(); --rit)
 	{
 		ss << " ";
-		if((*it)->isRune())
-		{
-			ss << (*it)->getSubType() << " charges " << (*it)->getName();
-		}
-		else if((*it)->isStackable())
-		{
-			ss << (*it)->getSubType() << " " << (*it)->getPluralName();
-		}
-		else
-			ss << (*it)->getArticle() << " " << (*it)->getName();
 
-		if((*it) != items.front())
+		const ItemType& it = Items::item[(*rit)->getID()];
+		if(it.isRune())
+			ss << (*it)->getSubType() << " charges " << it.name;
+		else if(it.stackable)
+			ss << (*it)->getSubType() << " " << it.pluralName;
+		else
+			ss << it.article << " " << it.name;
+
+		if((*rit) != items.front())
 			ss << ",";
 	}
 
