@@ -27,6 +27,7 @@
 
 #include "const.h"
 #include "definitions.h"
+#include "party.h"
 
 class Player;
 
@@ -36,7 +37,7 @@ class ChatChannel
 {
 	public:
 		ChatChannel(uint16_t channelId, std::string channelName);
-		virtual ~ChatChannel(){}
+		virtual ~ChatChannel() {}
 
 		bool addUser(Player* player);
 		bool removeUser(Player* player);
@@ -76,7 +77,6 @@ class PrivateChatChannel : public ChatChannel
 
 	protected:
 		typedef std::map<uint32_t, Player*> InvitedMap;
-
 		InvitedMap m_invites;
 		uint32_t m_owner;
 };
@@ -87,7 +87,8 @@ class Chat
 {
 	public:
 		Chat();
-		~Chat();
+		virtual ~Chat();
+
 		ChatChannel* createChannel(Player* player, uint16_t channelId);
 		bool deleteChannel(Player* player, uint16_t channelId);
 
@@ -97,21 +98,22 @@ class Chat
 
 		bool talkToChannel(Player* player, SpeakClasses type, const std::string& text, unsigned short channelId);
 
-		std::string getChannelName(Player* player, uint16_t channelId);
-		ChannelList getChannelList(Player* player);
-
 		ChatChannel* getChannel(Player* player, uint16_t channelId);
+		std::string getChannelName(Player* player, uint16_t channelId);
 		ChatChannel* getChannelById(uint16_t channelId);
+
+		ChannelList getChannelList(Player* player);
 		PrivateChatChannel* getPrivateChannel(Player* player);
 
 	private:
 		typedef std::map<uint16_t, ChatChannel*> NormalChannelMap;
+		typedef std::map<uint16_t, PrivateChatChannel*> PrivateChannelMap;
+		typedef std::map<Party*, ChatChannel*> PartyChannelMap;
 		typedef std::map<uint32_t, ChatChannel*> GuildChannelMap;
 		NormalChannelMap m_normalChannels;
-		GuildChannelMap m_guildChannels;
-
-		typedef std::map<uint16_t, PrivateChatChannel*> PrivateChannelMap;
 		PrivateChannelMap m_privateChannels;
+		PartyChannelMap m_partyChannels;
+		GuildChannelMap m_guildChannels;
 
 		ChatChannel* dummyPrivate;
 };

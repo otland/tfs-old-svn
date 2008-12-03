@@ -84,6 +84,16 @@ enum MagicEffectClasses
 	NM_ME_PLANTATTACK	= 0x36, //54
 	NM_ME_TUTORIALARROW	= 0x37, //55
 	NM_ME_TUTORIALSQUARE	= 0x38, //56
+	NM_ME_MIRRORHORIZONTAL	= 0x39, //57
+	NM_ME_MIRRORVERTICAL	= 0x3A, //58
+	NM_ME_SKULLHORIZONTAL	= 0x3B, //59
+	NM_ME_SKULLVERTICAL	= 0x3C, //60
+	NM_ME_ASSASSIN		= 0x3D, //61
+	NM_ME_HANDSHORIZONTAL	= 0x3E, //62
+	NM_ME_BLOODSPOT		= 0x3F, //63
+	NM_ME_HANDSVERTICAL	= 0x40, //64
+	NM_ME_YALAHARIANGHOST	= 0x41, //65
+	NM_ME_BATS		= 0x42, //66
 
 	//for internal use, dont send to client
 	NM_ME_NONE             = 0xFF,
@@ -144,40 +154,42 @@ enum ShootType_t
 enum SpeakClasses
 {
 	SPEAK_CLASS_FIRST 	= 0x01,
-	SPEAK_SAY			= SPEAK_CLASS_FIRST,
+	SPEAK_SAY		= SPEAK_CLASS_FIRST,
 	SPEAK_WHISPER		= 0x02,
-	SPEAK_YELL			= 0x03,
+	SPEAK_YELL		= 0x03,
 	SPEAK_PRIVATE_PN	= 0x04,
 	SPEAK_PRIVATE_NP	= 0x05,
 	SPEAK_PRIVATE		= 0x06,
 	SPEAK_CHANNEL_Y		= 0x07,
-	SPEAK_RVR_CHANNEL	= 0x08,
-	SPEAK_RVR_ANSWER	= 0x09,
-	SPEAK_RVR_CONTINUE	= 0x0A,
-	SPEAK_BROADCAST		= 0x0B,
-	SPEAK_CHANNEL_R1	= 0x0C, //red - #c text
-	SPEAK_PRIVATE_RED	= 0x0D,	//@name@text
-	SPEAK_CHANNEL_O		= 0x0E,
-	SPEAK_UNKNOWN_1		= 0x0F,
-	SPEAK_CHANNEL_R2	= 0x10,	//red anonymous - #d text
-	SPEAK_UNKNOWN_2		= 0x11,
-	SPEAK_MONSTER_SAY	= 0x12,
-	SPEAK_MONSTER_YELL	= 0x13,
+	SPEAK_CHANNEL_W		= 0x08,
+	SPEAK_RVR_CHANNEL	= 0x09,
+	SPEAK_RVR_ANSWER	= 0x0A,
+	SPEAK_RVR_CONTINUE	= 0x0B,
+	SPEAK_BROADCAST		= 0x0C,
+	SPEAK_CHANNEL_R1	= 0x0D, //red - #c text
+	SPEAK_PRIVATE_RED	= 0x0E,	//@name@text
+	SPEAK_CHANNEL_O		= 0x0F,
+	//SPEAK_UNKNOWN_1		= 0x10,
+	SPEAK_CHANNEL_R2	= 0x11,	//red anonymous - #d text
+	//SPEAK_UNKNOWN_2		= 0x12,
+	SPEAK_MONSTER_SAY	= 0x13,
+	SPEAK_MONSTER_YELL	= 0x14,
 	SPEAK_CLASS_LAST 	= SPEAK_MONSTER_YELL
 };
 
 enum MessageClasses
 {
-	MSG_CLASS_FIRST			= 0x11,
+	MSG_CLASS_FIRST			= 0x12,
 	MSG_STATUS_CONSOLE_RED		= MSG_CLASS_FIRST, /*Red message in the console*/
-	MSG_STATUS_CONSOLE_ORANGE	= 0x13, /*Orange message in the console*/
-	MSG_STATUS_WARNING		= 0x14, /*Red message in game window and in the console*/
-	MSG_EVENT_ADVANCE		= 0x15, /*White message in game window and in the console*/
-	MSG_EVENT_DEFAULT		= 0x16, /*White message at the bottom of the game window and in the console*/
-	MSG_STATUS_DEFAULT		= 0x17, /*White message at the bottom of the game window and in the console*/
-	MSG_INFO_DESCR			= 0x18, /*Green message in game window and in the console*/
-	MSG_STATUS_SMALL		= 0x19, /*White message at the bottom of the game window"*/
-	MSG_STATUS_CONSOLE_BLUE		= 0x1A, /*Blue message in the console*/
+	MSG_EVENT_ORANGE		= 0x13, /*Orange message in the console*/
+	MSG_STATUS_CONSOLE_ORANGE	= 0x14, /*Orange message in the console*/
+	MSG_STATUS_WARNING		= 0x15, /*Red message in game window and in the console*/
+	MSG_EVENT_ADVANCE		= 0x16, /*White message in game window and in the console*/
+	MSG_EVENT_DEFAULT		= 0x17, /*White message at the bottom of the game window and in the console*/
+	MSG_STATUS_DEFAULT		= 0x18, /*White message at the bottom of the game window and in the console*/
+	MSG_INFO_DESCR			= 0x19, /*Green message in game window and in the console*/
+	MSG_STATUS_SMALL		= 0x1A, /*White message at the bottom of the game window"*/
+	MSG_STATUS_CONSOLE_BLUE		= 0x1B, /*Blue message in the console*/
 	MSG_CLASS_LAST			= MSG_STATUS_CONSOLE_BLUE
 };
 

@@ -79,6 +79,7 @@ class Party
 			int32_t totalDamage;
 			int64_t ticks;
 		};
+
 		typedef std::map<uint32_t, CountBlock_t> CountMap;
 		CountMap pointMap;
 

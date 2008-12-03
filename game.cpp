@@ -3297,40 +3297,33 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 	{
 		case SPEAK_SAY:
 			return internalCreatureSay(player, SPEAK_SAY, text);
-			break;
 		case SPEAK_WHISPER:
 			return playerWhisper(player, text);
-			break;
 		case SPEAK_YELL:
 			return playerYell(player, text);
-			break;
 		case SPEAK_PRIVATE:
 		case SPEAK_PRIVATE_RED:
 		case SPEAK_RVR_ANSWER:
 			return playerSpeakTo(player, type, receiver, text);
-			break;
 		case SPEAK_CHANNEL_O:
 		case SPEAK_CHANNEL_Y:
 		case SPEAK_CHANNEL_R1:
 		case SPEAK_CHANNEL_R2:
+		case SPEAK_CHANNEL_W:
 			return playerTalkToChannel(player, type, text, channelId);
-			break;
 		case SPEAK_PRIVATE_PN:
 			return playerSpeakToNpc(player, text);
-			break;
 		case SPEAK_BROADCAST:
 			return playerBroadcastMessage(player, text, SPEAK_BROADCAST);
-			break;
 		case SPEAK_RVR_CHANNEL:
 			return playerReportRuleViolation(player, text);
-			break;
 		case SPEAK_RVR_CONTINUE:
 			return playerContinueReport(player, text);
-			break;
 
 		default:
 			break;
 	}
+
 	return false;
 }
 
@@ -3425,14 +3418,14 @@ bool Game::playerTalkToChannel(Player* player, SpeakClasses type, const std::str
 	{
 		case SPEAK_CHANNEL_Y:
 		{
-			if(channelId == 0x08 && player->hasFlag(PlayerFlag_TalkOrangeHelpChannel))
+			if(channelId == 0x09 && player->hasFlag(PlayerFlag_TalkOrangeHelpChannel))
 				type = SPEAK_CHANNEL_O;
 			break;
 		}
 
 		case SPEAK_CHANNEL_O:
 		{
-			if(channelId != 0x08 || !player->hasFlag(PlayerFlag_TalkOrangeHelpChannel))
+			if(channelId != 0x09 || !player->hasFlag(PlayerFlag_TalkOrangeHelpChannel))
 				type = SPEAK_CHANNEL_Y;
 			break;
 		}
