@@ -1805,8 +1805,9 @@ void ProtocolGame::sendClosePrivate(uint16_t channelId)
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		if(channelId == 0x00)
+		if(channelId == 0x00 || channelId == 0x08)
 			g_chat.removeUserFromChannel(player, channelId);
+
 		msg->AddByte(0xB3);
 		msg->AddU16(channelId);
 	}
@@ -2880,6 +2881,7 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creatur
 		case SPEAK_CHANNEL_R1:
 		case SPEAK_CHANNEL_R2:
 		case SPEAK_CHANNEL_O:
+		case SPEAK_CHANNEL_W:
 			msg->AddU16(channelId);
 			break;
 
