@@ -24,6 +24,8 @@
 #include "tools.h"
 #include <iostream>
 
+std::string ConfigManager::filename = getFilePath(FILE_TYPE_CONFIG, "config.lua");
+
 ConfigManager::ConfigManager()
 {
 	m_isLoaded = false;
@@ -69,6 +71,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confBool[GLOBALSAVE_ENABLED] = getGlobalBool(L, "globalSaveEnabled", "yes");
 		m_confNumber[GLOBALSAVE_H] = getGlobalNumber(L, "globalSaveHour", 8);
 		m_confString[HOUSE_RENT_PERIOD] = getGlobalString(L, "houseRentPeriod", "monthly");
+		m_confNumber[WORLD_ID] = getGlobalNumber(L, "worldId", 0);
 	}
 
 	m_confString[LOGIN_MSG] = getGlobalString(L, "loginMessage", "Welcome to the Forgotten Server!");
@@ -169,6 +172,11 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBool[BED_REQUIRE_PREMIUM] = getGlobalBool(L, "bedsRequirePremium", "yes");
 	m_confNumber[FIELD_OWNERSHIP] = getGlobalNumber(L, "fieldOwnershipDuration", 5 * 1000);
 	m_confBool[ALLOW_CHANGECOLORS] = getGlobalBool(L, "allowChangeColors", "yes");
+	#ifndef __LOGIN_SERVER__
+	m_confBool[LOGIN_ONLY_LOGINSERVER] = getGlobalBool(L, "loginOnlyWithLoginServer", "no");
+	#else
+	m_confBool[LOGIN_ONLY_LOGINSERVER] = false;
+	#endif
 	m_isLoaded = true;
 
 	lua_close(L);

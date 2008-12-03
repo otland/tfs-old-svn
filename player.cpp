@@ -3969,7 +3969,7 @@ void Player::manageAccount(const std::string &text)
 					msg << "The name you want is too long, please select a shorter name.";
 				else if(!isValidName(managerString))
 					msg << "That name seems to contain invalid symbols, please choose another name.";
-				else if(IOLoginData::getInstance()->playerExists(managerString))
+				else if(IOLoginData::getInstance()->playerExists(managerString, true))
 					msg << "A player with such name already exists, please choose another name.";
 				else
 				{
@@ -3991,7 +3991,7 @@ void Player::manageAccount(const std::string &text)
 			}
 			else if(checkText(text, "yes") && talkState[2])
 			{
-				if(!IOLoginData::getInstance()->playerExists(managerString))
+				if(!IOLoginData::getInstance()->playerExists(managerString, true))
 				{
 					uint32_t tmp;
 					if(IOLoginData::getInstance()->getGuidByName(tmp, managerString2) &&
@@ -4154,7 +4154,7 @@ void Player::manageAccount(const std::string &text)
 					msg << "The name you want is too long, please select a shorter name.";
 				else if(!isValidName(managerString))
 					msg << "That name seems to contain invalid symbols, please choose another name.";
-				else if(IOLoginData::getInstance()->playerExists(managerString))
+				else if(IOLoginData::getInstance()->playerExists(managerString, true))
 					msg << "A player with such name already exists, please choose another name.";
 				else
 				{
@@ -4228,7 +4228,7 @@ void Player::manageAccount(const std::string &text)
 				}
 				else
 				{
-					if(!IOLoginData::getInstance()->playerExists(managerString))
+					if(!IOLoginData::getInstance()->playerExists(managerString, true))
 					{
 						talkState[1] = true;
 						for(int8_t i = 2; i <= 12; i++)
@@ -4266,7 +4266,7 @@ void Player::manageAccount(const std::string &text)
 			}
 			else if(checkText(text, "yes") && talkState[12])
 			{
-				if(!IOLoginData::getInstance()->playerExists(managerString))
+				if(!IOLoginData::getInstance()->playerExists(managerString, true))
 				{
 					talkState[1] = true;
 					for(int8_t i = 2; i <= 12; i++)

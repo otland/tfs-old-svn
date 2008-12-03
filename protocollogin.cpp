@@ -97,6 +97,14 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	enableXTEAEncryption();
 	setXTEAKey(key);
 
+	#ifndef __LOGIN_SERVER__
+	if(g_config.getBool(ConfigManager::LOGIN_ONLY_LOGINSERVER))
+	{
+		disconnectClient(0x0A, "Please re-connect using port 7171.");
+		return false;
+	}
+	#endif
+
 	std::string name = msg.GetString();
 	toLowerCaseString(name);
 	std::string password = msg.GetString();
@@ -199,7 +207,16 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	else
 		output->AddByte((uint8_t)account.charList.size());
 
-	for(std::list<std::string>::iterator it = account.charList.begin(); it != account.charList.end(); it++)
+	#ifdef __LOGIN_SERVER__
+	for(CharactersMap::iterator it = account.charList.begin(); it != account.charList.end(); it++)
+	{
+		output->AddString(it->first);
+		output->AddString(it->second->getName());
+		output->AddU32(inet_addr(it->second->getAddress().c_str()));
+		output->AddU16(it->second->getPort());
+	}
+	#else
+	for(StringVec::iterator it = account.charList.begin(); it != account.charList.end(); it++)
 	{
 		output->AddString((*it));
 		if(g_config.getBool(ConfigManager::ON_OR_OFF_CHARLIST))
@@ -211,9 +228,11 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		}
 		else
 			output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
+
 		output->AddU32(serverIP);
 		output->AddU16(g_config.getNumber(ConfigManager::PORT));
 	}
+	#endif
 
 	//Add premium days
 	if(g_config.getBool(ConfigManager::FREE_PREMIUM))

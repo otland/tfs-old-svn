@@ -1,7 +1,7 @@
 #ifndef __CONSOLE__
 #include "resources.h"
 #include <windows.h>
-
+	
 ID_ICON ICON "TheForgottenServer.ico"
 
 ID_MENU MENU
@@ -35,7 +35,10 @@ BEGIN
 		MENUITEM "Acti&ons", ID_MENU_RELOAD_ACTIONS
 		MENUITEM "&Config", ID_MENU_RELOAD_CONFIG
 		MENUITEM "Creature &Events", ID_MENU_RELOAD_CREATUREEVENTS
-		MENUITEM "&Global Events", ID_MENU_RELOAD_GLOBALEVENTS
+		#ifdef __LOGIN_SERVER__
+		MENUITEM "&Game Servers", ID_MENU_RELOAD_GAMESERVERS
+		#endif
+		MENUITEM "G&lobal Events", ID_MENU_RELOAD_GLOBALEVENTS
 		MENUITEM "&Highscores", ID_MENU_RELOAD_HIGHSCORES
 		MENUITEM "House &Prices", ID_MENU_RELOAD_HOUSEPRICES
 		MENUITEM "&Monsters", ID_MENU_RELOAD_MONSTERS

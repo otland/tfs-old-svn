@@ -43,6 +43,9 @@
 #include "globalevent.h"
 #include "chat.h"
 #include "teleport.h"
+#ifdef __LOGIN_SERVER__
+#include "gameservers.h"
+#endif
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 #include "outputmessage.h"
 #include "connection.h"
@@ -385,6 +388,13 @@ bool TalkAction::reloadInfo(Player* player, const std::string& cmd, const std::s
 		g_creatureEvents->reload();
 		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded creature scripts.");
 	}
+	#ifdef __LOGIN_SERVER__
+	else if(tmpParam == "gameserver" || tmpParam == "gameservers")
+	{
+		GameServers::getInstance()->reload();
+		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded game servers.");
+	}
+	#endif
 	else if(tmpParam == "globalevent" || tmpParam == "globalevents")
 	{
 		g_globalEvents->reload();
@@ -717,7 +727,7 @@ bool TalkAction::addSkill(Player* player, const std::string& cmd, const std::str
 bool TalkAction::showBanishmentInfo(Player* player, const std::string& cmd, const std::string& param)
 {
 	uint32_t accountId = atoi(param.c_str());
-	if(accountId == 0 && IOLoginData::getInstance()->playerExists(param))
+	if(accountId == 0 && IOLoginData::getInstance()->playerExists(param, true))
 		accountId = IOLoginData::getInstance()->getAccountIdByName(param);
 
 	Ban ban;
@@ -728,7 +738,7 @@ bool TalkAction::showBanishmentInfo(Player* player, const std::string& cmd, cons
 		if(ban.adminid == 0)
 			name = (deletion ? "Automatic deletion" : "Automatic banishment");
 		else
-			IOLoginData::getInstance()->getNameByGuid(ban.adminid, name);
+			IOLoginData::getInstance()->getNameByGuid(ban.adminid, name, true);
 
 		char date[16], date2[16], buffer[500 + ban.comment.length()];
 		formatDate2(ban.added, date);

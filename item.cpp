@@ -46,9 +46,7 @@ Items Item::items;
 Item* Item::CreateItem(const uint16_t _type, uint16_t _count /*= 1*/)
 {
 	Item* newItem = NULL;
-
 	const ItemType& it = Item::items[_type];
-
 	if(it.group == ITEM_GROUP_DEPRECATED)
 	{
 		#ifdef __DEBUG__
@@ -97,7 +95,6 @@ Item* Item::CreateItem(const uint16_t _type, uint16_t _count /*= 1*/)
 Item* Item::CreateItem(PropStream& propStream)
 {
 	uint16_t _id;
-
 	if(!propStream.GET_USHORT(_id))
 		return NULL;
 
@@ -948,7 +945,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		if(!it.runeSpellName.empty())
 			s << "\"" << it.runeSpellName << "\", ";
 
-		s << "Charges:" << subType <<")";
+		s << "Charges:" << subType << ")";
 		if(it.runeLevel > 0 || it.runeMagLevel > 0)
 		{
 			s << "." << std::endl << "It can only be used with";

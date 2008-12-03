@@ -69,6 +69,9 @@
 
 #include "databasemanager.h"
 #include "admin.h"
+#ifdef __LOGIN_SERVER__
+#include "gameservers.h"
+#endif
 
 #ifdef __OTSERV_ALLOCATOR__
 #include "allocator.h"
@@ -189,6 +192,14 @@ void serverMain(void* param)
 {
 	#if defined(WIN32) && not defined(__CONSOLE__)
 	std::cout.rdbuf(&logger);
+	#else
+	if(argc > 1)
+	{
+		char buffer[200];
+		sscanf(argv[1], "--config=%s", buffer);
+		ConfigManager::filename = buffer;
+	}
+
 	#endif
 	#ifdef __OTSERV_ALLOCATOR_STATS__
 	OTSYS_CREATE_THREAD(allocatorStatsThread, NULL);
@@ -254,19 +265,15 @@ int argc, char *argv[]
 #endif
 )
 {
-	//dispatcher thread
-	g_game.setGameState(GAME_STATE_STARTUP);
-
-	srand((uint32_t)OTSYS_TIME());
-	#ifdef WIN32
-	#ifdef __CONSOLE__
+	#if defined(WIN32) && defined(__CONSOLE__)
 	SetConsoleTitle(STATUS_SERVER_NAME);
 	#endif
-	#endif
+	g_game.setGameState(GAME_STATE_STARTUP);
+	srand((uint32_t)OTSYS_TIME());
+
 	std::cout << STATUS_SERVER_NAME << " - Version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")." << std::endl;
 	std::cout << "A server developed by Talaturen, Kiper, Kornholijo, Jonern, Lithium & Elf." << std::endl;
 	std::cout << "Visit our forum for updates, support and resources: http://otland.net/." << std::endl;
-
 	#if defined __DEBUG__MOVESYS__ || defined __DEBUG_HOUSES__ || defined __DEBUG_MAILBOX__ || defined __DEBUG_LUASCRIPTS__ || defined __DEBUG_RAID__ || defined __DEBUG_NET__
 	std::cout << ">> Debugging:";
 	#ifdef __DEBUG__MOVESYS__
@@ -293,20 +300,18 @@ int argc, char *argv[]
 	#ifndef __CONSOLE__
 	GUI::getInstance()->m_connections = false;
 	#endif
-
 	#if !defined(WIN32) && !defined(__ROOT_PERMISSION__)
 	if(getuid() == 0 || geteuid() == 0)
 		std::cout << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user! It is recommended to execute as a normal user." << std::endl;
 	#endif
 
 	std::cout << std::endl;
-
-	std::cout << ">> Loading config" << std::endl;
+	std::cout << ">> Loading config (" << ConfigManager::filename << ")" << std::endl;
 	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading config");
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading config (" + ConfigManager::filename + ")");
 	#endif
-	if(!g_config.loadFile(getFilePath(FILE_TYPE_CONFIG, "config.lua")))
-		startupErrorMessage("Unable to load config.lua!");
+	if(!g_config.loadFile(ConfigManager::filename))
+		startupErrorMessage("Unable to load " + ConfigManager::filename + "!");
 
 	#ifdef WIN32
 	std::string defaultPriority = asLowerCaseString(g_config.getString(ConfigManager::DEFAULT_PRIORITY));
@@ -395,6 +400,10 @@ int argc, char *argv[]
 	{
 		#ifndef __CONSOLE__
 		if(MessageBox(GUI::getInstance()->m_mainWindow, "Unable to load items (XML)! Continue?", "Items (XML)", MB_YESNO) == IDNO)
+		#else
+		std::cout << "Unable to load items (XML)! Continue? (y/N)" << std::endl;
+		char buffer;
+		if(scanf("%c", buffer) == EOF || (buffer != 121 && buffer != 89))
 		#endif
 			startupErrorMessage("Unable to load items (XML)!");
 	}
@@ -414,6 +423,10 @@ int argc, char *argv[]
 	{
 		#ifndef __CONSOLE__
 		if(MessageBox(GUI::getInstance()->m_mainWindow, "Unable to load monsters! Continue?", "Monsters", MB_YESNO) == IDNO)
+		#else
+		std::cout << "Unable to load monsters! Continue? (y/N)" << std::endl;
+		char buffer;
+		if(scanf("%c", buffer) == EOF || (buffer != 121 && buffer != 89))
 		#endif
 			startupErrorMessage("Unable to load monsters!");
 	}
@@ -471,10 +484,21 @@ int argc, char *argv[]
 	if(!g_game.loadMap(g_config.getString(ConfigManager::MAP_NAME)))
 		startupErrorMessage("");
 
-	Status* status = Status::getInstance();
-	status->setMaxPlayersOnline(g_config.getNumber(ConfigManager::MAX_PLAYERS));
-	status->setMapAuthor(g_config.getString(ConfigManager::MAP_AUTHOR));
-	status->setMapName(g_config.getString(ConfigManager::MAP_NAME));
+	#ifdef __LOGIN_SERVER__
+	std::cout << ">> Loading game servers" << std::endl;
+	#ifndef __CONSOLE__
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading game servers");
+	#endif
+	if(!GameServers::getInstance()->loadFromXml(true))
+		startupErrorMessage("Unable to load game servers!");
+	#endif
+
+	if(Status* status = Status::getInstance())
+	{
+		status->setMaxPlayersOnline(g_config.getNumber(ConfigManager::MAX_PLAYERS));
+		status->setMapAuthor(g_config.getString(ConfigManager::MAP_AUTHOR));
+		status->setMapName(g_config.getString(ConfigManager::MAP_NAME));
+	}
 
 	std::cout << ">> All modules were loaded, server starting up..." << std::endl;
 	#ifndef __CONSOLE__
@@ -796,6 +820,17 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload creature events." << std::endl;
 					}
 					break;
+				#ifdef __LOGIN_SERVER__
+				case ID_MENU_RELOAD_GAMESERVERS:
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(GameServers::getInstance()->reload())
+							std::cout << "Reloaded game servers." << std::endl;
+						else
+							std::cout << "Failed to reload game servers." << std::endl;
+					}
+					break;
+				#endif
 				case ID_MENU_RELOAD_GLOBALEVENTS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -918,6 +953,11 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 						if(!g_globalEvents->reload())
 							ss << "global events, ";
+
+						#ifdef __LOGIN_SERVER__
+						if(!GameServers::getInstance()->reload())
+							ss << "game servers, ";
+						#endif
 
 						if(!Raids::getInstance()->reload() || !Raids::getInstance()->startup())
 							ss << "raids, ";

@@ -3323,7 +3323,6 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 		default:
 			break;
 	}
-
 	return false;
 }
 
@@ -4345,8 +4344,7 @@ bool Game::cancelRuleViolation(Player* player)
 	else
 	{
 		//Send to channel
-		ChatChannel* channel = g_chat.getChannelById(0x03);
-		if(channel)
+		if(ChatChannel* channel = g_chat.getChannelById(0x03))
 		{
 			for(UsersMap::const_iterator ut = channel->getUsers().begin(); ut != channel->getUsers().end(); ++ut)
 			{
@@ -4885,14 +4883,15 @@ int32_t Game::getMotdNum()
 	if(lastMotdText != g_config.getString(ConfigManager::MOTD))
 	{
 		Database* db = Database::getInstance();
-		DBQuery query;
-
-		lastMotdNum++;
 		lastMotdText = g_config.getString(ConfigManager::MOTD);
-		query << "INSERT INTO `server_motd` (`id`, `text`) VALUES (" << lastMotdNum << ", " << db->escapeString(lastMotdText) << ");";
+		lastMotdNum++;
+
+		DBQuery query;
+		query << "INSERT INTO `server_motd` (`id`, `world_id`, `text`) VALUES (" << lastMotdNum << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << db->escapeString(lastMotdText) << ");";
 		db->executeQuery(query.str());
 		query.str("");
 	}
+
 	return lastMotdNum;
 }
 
@@ -4901,13 +4900,17 @@ void Game::loadMotd()
 	Database* db = Database::getInstance();
 	DBResult* result;
 
-	if(!(result = db->storeQuery("SELECT `id`, `text` FROM `server_motd` ORDER BY `id` DESC LIMIT 1")))
+	DBQuery query;
+	query << "SELECT `id`, `text` FROM `server_motd` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " ORDER BY `id` DESC LIMIT 1";
+	if(!(result = db->storeQuery(query.str())))
 	{
 		std::cout << "> ERROR: Failed to load motd!" << std::endl;
+		query.str("");
 		lastMotdNum = random_range(5, 500);
 		return;
 	}
 
+	query.str("");
 	lastMotdNum = result->getDataInt("id");
 	lastMotdText = result->getDataString("text");
 	db->freeResult(result);
@@ -4918,14 +4921,14 @@ void Game::checkPlayersRecord()
 	if(getPlayersOnline() > lastPlayersRecord)
 	{
 		Database* db = Database::getInstance();
-		DBQuery query;
-
 		lastPlayersRecord = getPlayersOnline();
-		query << "INSERT INTO `server_record` (`record`, `timestamp`) VALUES (" << lastPlayersRecord << ", " << time(NULL) << ");";
-		db->executeQuery(query.str());
-		query.str("");
 
-		char buffer[60];
+		DBQuery query;
+		query << "INSERT INTO `server_record` (`record`, `timestamp`, `world_id`) VALUES (" << lastPlayersRecord << ", " << time(NULL) << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ");";
+		db->executeQuery(query.str());
+
+		query.str("");
+		char buffer[50];
 		sprintf(buffer, "New record: %d players are logged in.", lastPlayersRecord);
 		broadcastMessage(buffer, MSG_STATUS_DEFAULT);
 	}
@@ -4936,13 +4939,17 @@ void Game::loadPlayersRecord()
 	Database* db = Database::getInstance();
 	DBResult* result;
 
-	if(!(result = db->storeQuery("SELECT `record` FROM `server_record` ORDER BY `timestamp` DESC LIMIT 1")))
+	DBQuery query;
+	query << "SELECT `record` FROM `server_record` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " ORDER BY `timestamp` DESC LIMIT 1";
+	if(!(result = db->storeQuery(query.str())))
 	{
-		std::cout << "> ERROR: Failed to load online record!" << std::endl;
 		lastPlayersRecord = 0;
+		std::cout << "> ERROR: Failed to load online record!" << std::endl;
+		query.str("");
 		return;
 	}
 
+	query.str("");
 	lastPlayersRecord = result->getDataInt("record");
 	db->freeResult(result);
 }
@@ -5340,20 +5347,20 @@ bool Game::playerReportBug(uint32_t playerId, std::string bug)
 		return false;
 
 	Database* db = Database::getInstance();
+
 	DBQuery query;
-
-	query << "INSERT INTO `server_reports` (`player_id`, `posx`, `posy`, `posz`, `timestamp`, `report`) VALUES (";
-	query << player->getGUID() << ", ";
-	query << player->getPosition().x << ", " << player->getPosition().y << ", " << player->getPosition().z << ", ";
+	query << "INSERT INTO `server_reports` (`id`, `world_id`, `player_id`, `posx`, `posy`, `posz`, `timestamp`, `report`) VALUES (NULL, ";
+	query << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << player->getGUID() << ", ";
+	Position pos = player->getPosition();
+	query << pos.x << ", " << pos.y << ", " << pos.z << ", ";
 	query << time(NULL) << ", " << db->escapeString(bug.c_str()) << ");";
-
-	if(db->executeQuery(query.str()))
+	if(!db->executeQuery(query.str()))
 	{
 		query.str("");
-		player->sendTextMessage(MSG_EVENT_DEFAULT, "Your report has been sent to " + g_config.getString(ConfigManager::SERVER_NAME) + ".");
-		return true;
+		return false;
 	}
 
 	query.str("");
-	return false;
+	player->sendTextMessage(MSG_EVENT_DEFAULT, "Your report has been sent to " + g_config.getString(ConfigManager::SERVER_NAME) + ".");
+	return true;
 }

@@ -926,15 +926,15 @@ bool Houses::payHouses()
 			{
 				if(player->isPremium() || !g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM))
 				{
-					//get money from depot then from bank
+					//get money from bank then from depot
 					bool paid = false;
-					if(g_game.removeMoney(depot, house->getRent(), FLAG_NOLIMIT))
-						paid = true;
-					else if(g_config.getBool(ConfigManager::BANK_SYSTEM) && player->balance >= house->getRent())
+					if(g_config.getBool(ConfigManager::BANK_SYSTEM) && player->balance >= house->getRent())
 					{
 						player->balance -= house->getRent();
 						paid = true;
 					}
+					else if(g_game.removeMoney(depot, house->getRent(), FLAG_NOLIMIT))
+						paid = true;
 
 					if(paid)
 					{
@@ -1064,10 +1064,15 @@ uint32_t Houses::getHousesCount(uint32_t accId) const
 {
 	Account account = IOLoginData::getInstance()->loadAccount(accId);
 	uint32_t guid, count = 0;
-
-	for(std::list<std::string>::iterator it = account.charList.begin(); it != account.charList.end(); ++it)
+#ifdef __LOGIN_SERVER__
+	for(CharactersMap::iterator it = account.charList.begin(); it != account.charList.end(); ++it)
+	{
+		if(IOLoginData::getInstance()->getGuidByName(guid, (std::string&)it->first) && getInstance().getHouseByPlayerId(guid))
+#else
+	for(StringVec::iterator it = account.charList.begin(); it != account.charList.end(); ++it)
 	{
 		if(IOLoginData::getInstance()->getGuidByName(guid, (*it)) && getInstance().getHouseByPlayerId(guid))
+#endif
 			count++;
 	}
 	return count;
