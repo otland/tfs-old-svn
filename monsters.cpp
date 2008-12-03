@@ -28,10 +28,12 @@
 #include "luascript.h"
 #include "weapons.h"
 #include "configmanager.h"
+#include "game.h"
 
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 
+extern Game g_game;
 extern Spells* g_spells;
 extern Monsters g_monsters;
 extern ConfigManager g_config;
@@ -129,6 +131,7 @@ uint32_t Monsters::getLootRandom()
 
 void MonsterType::createLoot(Container* corpse)
 {
+	ItemVector itemVector;
 	for(LootItems::const_iterator it = lootItems.begin(); it != lootItems.end() && (corpse->capacity() - corpse->size() > 0); it++)
 	{
 		Item* tmpItem = createLootItem(*it);
@@ -137,17 +140,29 @@ void MonsterType::createLoot(Container* corpse)
 			//check containers
 			if(Container* container = tmpItem->getContainer())
 			{
-				createLootContainer(container, *it);
+				createLootContainer(container, *it, itemVector);
 				if(container->size() == 0)
 					delete container;
 				else
 					corpse->__internalAddThing(tmpItem);
 			}
 			else
+			{
 				corpse->__internalAddThing(tmpItem);
+				itemVector.push_back(tmpItem);
+			}
 		}
 	}
+
 	corpse->__startDecaying();
+
+	uint32_t ownerId = corpse->getCorpseOwner();
+	if(ownerId && itemVector.size())
+	{
+		Player* owner = NULL;
+		if((owner = g_game.getPlayerByID(ownerId)) && owner->getParty())
+			owner->getParty()->broadcastPartyLoot(name, itemVector);
+	}
 }
 
 Item* MonsterType::createLootItem(const LootBlock& lootBlock)
@@ -185,7 +200,7 @@ Item* MonsterType::createLootItem(const LootBlock& lootBlock)
 	return NULL;
 }
 
-void MonsterType::createLootContainer(Container* parent, const LootBlock& lootblock)
+void MonsterType::createLootContainer(Container* parent, const LootBlock& lootblock, ItemVector& itemVector)
 {
 	if(parent->size() < parent->capacity())
 	{
@@ -197,14 +212,17 @@ void MonsterType::createLootContainer(Container* parent, const LootBlock& lootbl
 			{
 				if(Container* container = tmpItem->getContainer())
 				{
-					createLootContainer(container, *it);
+					createLootContainer(container, *it, itemVector);
 					if(container->size() == 0)
 						delete container;
 					else
 						parent->__internalAddThing(container);
 				}
 				else
+				{
 					parent->__internalAddThing(tmpItem);
+					itemVector.push_back(tmpItem);
+				}
 			}
 		}
 	}

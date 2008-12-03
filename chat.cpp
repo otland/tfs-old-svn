@@ -125,8 +125,12 @@ bool ChatChannel::addUser(Player* player)
 		case 0x00:
 		{
 			if(IOGuild::getInstance()->getMotd(player->getGuildId()).length())
+			{
+				uint32_t playerId = player->getID();
+				uint32_t guildId = player->getGuildId();
 				Scheduler::getScheduler().addEvent(createSchedulerTask(150, boost::bind(
-					&Game::sendGuildMotd, &g_game, player->getID(), player->getGuildId())));
+					&Game::sendGuildMotd, &g_game, playerId, guildId)));
+			}
 			break;
 		}
 
@@ -184,11 +188,11 @@ Chat::Chat()
 	// Create the default channels
 	ChatChannel *newChannel;
 
-	newChannel = new ChatChannel(0x01, "Staff");
+	newChannel = new ChatChannel(0x01, "Gamemaster");
 	if(newChannel)
 		m_normalChannels[0x01] = newChannel;
 
-	newChannel = new ChatChannel(0x02, "Counselor");
+	newChannel = new ChatChannel(0x02, "Tutor");
 	if(newChannel)
 		m_normalChannels[0x02] = newChannel;
 
@@ -358,7 +362,6 @@ bool Chat::removeUserFromChannel(Player* player, uint16_t channelId)
 
 		return true;
 	}
-
 	return false;
 }
 
@@ -1071,6 +1074,5 @@ PrivateChatChannel* Chat::getPrivateChannel(Player* player)
 		if((channel = it->second) && channel->getOwner() == player->getGUID())
 			return channel;
 	}
-
 	return channel;
 }

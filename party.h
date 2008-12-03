@@ -22,6 +22,7 @@
 #define __PARTY_H__
 
 #include "player.h"
+#include "monsters.h"
 
 typedef std::vector<Player*> PlayerVector;
 
@@ -51,6 +52,7 @@ class Party
 		void updateAllPartyIcons();
 		void updatePartyIcons(Player* player);
 		void broadcastPartyMessage(MessageClasses msgClass, const std::string& msg, bool sendToInvitations = false);
+		void broadcastPartyLoot(const std::string& monster, const ItemVector& items);
 		bool disbandParty() {return (memberList.empty() && inviteList.empty());}
 		bool canOpenCorpse(uint32_t ownerId);
 

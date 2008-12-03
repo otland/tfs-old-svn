@@ -297,6 +297,49 @@ void Party::broadcastPartyMessage(MessageClasses msgClass, const std::string& ms
 	}
 }
 
+void Party::broadcastPartyLoot(const std::string& monster, const ItemVector& items)
+{
+	std::stringstream ss;
+	ss << "Loot of " << monster << ": ";
+	if(items.size())
+	{
+		for(ItemVector::const_reverse_iterator rit = items.rbegin(); rit != items.rend(); ++rit)
+		{
+			const ItemType& it = Item::items[(*rit)->getID()];
+			if(it.isRune())
+			{
+				int32_t charges = (*rit)->getSubType();
+				ss << charges << " charge" << (charges > 1 ? "s" : "") << it.name;
+			}
+			else if(it.stackable)
+				ss << (*rit)->getSubType() << " " << it.pluralName;
+			else
+			{
+				if(it.article != "")
+					ss << it.article << " ";
+
+				ss << it.name;
+			}
+
+			if((*rit) != items.front())
+				ss << ", ";
+		}
+	}
+	else
+		ss << "none";
+
+	ss << ".";
+
+	PlayerVector::iterator it;
+	if(!memberList.empty())
+	{
+		for(it = memberList.begin(); it != memberList.end(); ++it)
+			(*it)->sendChannelMessage("", ss.str().c_str(), SPEAK_CHANNEL_W, 0x08);
+	}
+
+	getLeader()->sendChannelMessage("", ss.str().c_str(), SPEAK_CHANNEL_W, 0x08);
+}
+
 void Party::updateSharedExperience()
 {
 	if(sharedExpActive)

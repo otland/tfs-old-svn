@@ -349,6 +349,7 @@ class Item : virtual public Thing, public ItemAttributes
 
 		const std::string& getName() const {return items[id].name;}
 		const std::string& getPluralName() const {return items[id].pluralName;}
+		const std::string& getArticle() const {return items[id].article;}
 
 		// get the number of items
 		uint16_t getItemCount() const {return count;}
