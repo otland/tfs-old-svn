@@ -948,10 +948,10 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		if(!it.runeSpellName.empty())
 			s << "\"" << it.runeSpellName << "\", ";
 
-		s << "Charges:" << subType <<").";
+		s << "Charges:" << subType <<")";
 		if(it.runeLevel > 0 || it.runeMagLevel > 0)
 		{
-			s << std::endl << "It can only be used with";
+			s << "." << std::endl << "It can only be used with";
 			if(it.runeLevel > 0)
 				s << " level " << it.runeLevel;
 
