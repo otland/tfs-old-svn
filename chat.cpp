@@ -980,11 +980,15 @@ ChannelList Chat::getChannelList(Player* player)
 
 	for(NormalChannelMap::iterator it = m_normalChannels.begin(); it != m_normalChannels.end(); ++it)
 	{
-		if((it->first > 0x00 && it->first < 0x04) || it->first == 0x05 || it->first == 0x07)
+		if(it->first == 0x04 || it->first == 0x06 || it->first == 0x09)
 		{
-			if(ChatChannel* channel = getChannel(player, it->first))
-				list.push_back(channel);
+			list.push_back(channel);
+			continue;
 		}
+
+		ChatChannel* channel = getChannel(player, it->first);
+		if(channel)
+			list.push_back(channel);
 	}
 
 	bool hasPrivate = false;
