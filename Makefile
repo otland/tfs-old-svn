@@ -1,6 +1,6 @@
 CFLAGS = -I. -I/usr/include/libxml2 -I/usr/include/lua5.1 -Werror -Wall -O1
 
-LIBLINK = -L/usr/lib -lxml2 -lpthread -llua5.1 -lgmp -lmysqlclient -lboost_regex -lsqlite3 -llua5.1-sql-mysql -llua5.1-sql-sqlite3 -ldl -lboost_system
+LIBLINK = -L/usr/lib -lxml2 -lpthread -llua5.1 -lgmp -lmysqlclient -lboost_regex -lsqlite3 -llua5.1-sql-mysql -llua5.1-sql-sqlite -ldl -lboost_system
 
 FLAGS = -D_THREAD_SAFE -D_REENTRANT -D__NO_HOMEDIR_CONF__ -D__USE_MYSQL__ -D__USE_SQLITE__ -D__ENABLE_SERVER_DIAGNOSTIC__
 
