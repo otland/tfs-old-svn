@@ -15,7 +15,7 @@ function onDeath(cid, corpse, lastHitKiller, mostDamageKiller)
 				hitKillerName = getCreatureName(lastHitKiller)
 			end
 
-			if(mostDamageKiller ~= FALSE and mostDamageKiller ~= lastHitKiller) then
+			if(mostDamageKiller ~= FALSE and mostDamageKiller ~= lastHitKiller and getCreatureName(mostDamageKiller) ~= getCreatureName(lastHitKiller)) then
 				if(isPlayer(mostDamageKiller) == TRUE) then
 					damageKillerName = getPlayerGUID(mostDamageKiller)
 				else
