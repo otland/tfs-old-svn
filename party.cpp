@@ -287,24 +287,36 @@ void Party::broadcastPartyMessage(MessageClasses messageClass, const std::string
 void Party::broadcastPartyLoot(const std::string& monster, const ItemVector& items)
 {
 	std::stringstream ss;
-	ss << "Loot of " << monster << ":";
-	for(ItemVector::const_iterator rit = items.end(); rit != items.begin(); --rit)
+	ss << "Loot of " << monster << ": ";
+	if(items.size())
 	{
-		ss << " ";
+		for(ItemVector::const_reverse_iterator rit = items.rbegin(); rit != items.rend(); ++rit)
+		{
+			const ItemType& it = Item::items[(*rit)->getID()];
+			if(it.isRune())
+			{
+				int32_t charges = (*rit)->getSubType();
+				ss << charges << " charge" << (charges > 1 ? "s" : "") << it.name;
+			}
+			else if(it.stackable)
+				ss << (*rit)->getSubType() << " " << it.pluralName;
+			else
+			{
+				if(it.article != "")
+					ss << it.article << " ";
 
-		const ItemType& it = Items::item[(*rit)->getID()];
-		if(it.isRune())
-			ss << (*it)->getSubType() << " charges " << it.name;
-		else if(it.stackable)
-			ss << (*it)->getSubType() << " " << it.pluralName;
-		else
-			ss << it.article << " " << it.name;
+				ss << it.name;
+			}
 
-		if((*rit) != items.front())
-			ss << ",";
+			if((*rit) != items.front())
+				ss << ", ";
+		}
 	}
+	else
+		ss << "none";
 
 	ss << ".";
+
 	PlayerVector::iterator it;
 	if(!memberList.empty())
 	{
