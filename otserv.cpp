@@ -402,8 +402,8 @@ int argc, char *argv[]
 		if(MessageBox(GUI::getInstance()->m_mainWindow, "Unable to load items (XML)! Continue?", "Items (XML)", MB_YESNO) == IDNO)
 		#else
 		std::cout << "Unable to load items (XML)! Continue? (y/N)" << std::endl;
-		char buffer;
-		if(scanf("%c", buffer) == EOF || (buffer != 121 && buffer != 89))
+		char buffer = getchar();
+		if(buffer == 10 || (buffer != 121 && buffer != 89))
 		#endif
 			startupErrorMessage("Unable to load items (XML)!");
 	}
@@ -425,8 +425,8 @@ int argc, char *argv[]
 		if(MessageBox(GUI::getInstance()->m_mainWindow, "Unable to load monsters! Continue?", "Monsters", MB_YESNO) == IDNO)
 		#else
 		std::cout << "Unable to load monsters! Continue? (y/N)" << std::endl;
-		char buffer;
-		if(scanf("%c", buffer) == EOF || (buffer != 121 && buffer != 89))
+		char buffer = getchar();
+		if(buffer == 10 || (buffer != 121 && buffer != 89))
 		#endif
 			startupErrorMessage("Unable to load monsters!");
 	}

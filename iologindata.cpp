@@ -53,6 +53,21 @@ Account IOLoginData::loadAccount(uint32_t accId, bool preLoad/* = false*/)
 	DBResult* result;
 
 	DBQuery query;
+	query << "SELECT `id`, `name`, `password`, `premdays`, `lastday`, `key`, `warnings` FROM `accounts` WHERE `id` = " << accId;
+	if((result = db->storeQuery(query.str())))
+	{
+		acc.number = result->getDataInt("id");
+		acc.name = result->getDataString("name");
+		acc.password = result->getDataString("password");
+		acc.premiumDays = result->getDataInt("premdays");
+		acc.lastDay = result->getDataInt("lastday");
+		acc.recoveryKey = result->getDataString("key");
+		acc.warnings = result->getDataInt("warnings");
+		query.str("");
+		db->freeResult(result);
+		if(preLoad)
+			return acc;
+
 #ifndef __LOGIN_SERVER__
 		query << "SELECT `name` FROM `players` WHERE `account_id` = " << accId << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " AND `deleted` = 0;";
 #else
@@ -73,13 +88,13 @@ Account IOLoginData::loadAccount(uint32_t accId, bool preLoad/* = false*/)
 #endif
 			}
 			while(result->next());
-
 			db->freeResult(result);
 #ifndef __LOGIN_SERVER__
 			std::sort(acc.charList.begin(), acc.charList.end());
 #endif
 		}
 	}
+
 	return acc;
 }
 

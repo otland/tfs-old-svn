@@ -134,7 +134,7 @@ ItemType::~ItemType()
 }
 
 Items::Items() :
-items(8000)
+items(10000)
 {
 	//
 }
@@ -216,6 +216,7 @@ int32_t Items::loadFromOtb(std::string file)
 		PropStream props;
 		if(!f.getProps(node,props))
 			return f.getError();
+
 		flags_t flags;
 		ItemType* iType = new ItemType();
 		iType->group = (itemgroup_t)type;
@@ -373,17 +374,13 @@ int32_t Items::loadFromOtb(std::string file)
 
 bool Items::loadFromXml()
 {
-	std::string filename = getFilePath(FILE_TYPE_OTHER, "items/items.xml");
-
-	xmlDocPtr doc = xmlParseFile(filename.c_str());
-	int32_t intValue;
-	std::string strValue;
-	uint32_t id = 0;
-
-	if(doc)
+	if(xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, "items/items.xml").c_str()))
 	{
-		xmlNodePtr root = xmlDocGetRootElement(doc);
+		int32_t intValue;
+		std::string strValue;
+		uint32_t id = 0;
 
+		xmlNodePtr root = xmlDocGetRootElement(doc);
 		if(xmlStrcmp(root->name,(const xmlChar*)"items") != 0)
 		{
 			xmlFreeDoc(doc);
@@ -1209,8 +1206,10 @@ bool Items::loadFromXml()
 				else
 					std::cout << "Warning: [Items::loadFromXml] - No itemid found" << std::endl;
 			}
+
 			itemNode = itemNode->next;
 		}
+
 		xmlFreeDoc(doc);
 	}
 
@@ -1225,6 +1224,7 @@ bool Items::loadFromXml()
 		if((it->transformToFree != 0 || it->transformToOnUse[PLAYERSEX_FEMALE] != 0 || it->transformToOnUse[PLAYERSEX_MALE] != 0) && it->type != ITEM_TYPE_BED)
 			std::cout << "Warning: [Items::loadFromXml] Item " << it->id << " is not set as a bed-type." << std::endl;
 	}
+
 	return true;
 }
 

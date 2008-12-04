@@ -13,11 +13,14 @@ endif
 if USE_SQLITE
 MAYBE_SQLITE = databasesqlite.cpp databasesqlite.h
 endif
+if USE_PGSQL
+MAYBE_PGSQL = databasepgsql.cpp databasepgsql.h
+endif
 if USE_ODBC
 MAYBE_ODBC = databaseodbc.cpp databaseodbc.h
 endif
-if USE_PGSQL
-MAYBE_PGSQL = databasepgsql.cpp databasepgsql.h
+if LOGIN_SERVER
+MAYBE_LOGIN = gameservers.cpp gameservers.h
 endif
 
 theforgottenserver_SOURCES = account.cpp account.h actions.cpp actions.h \
@@ -27,10 +30,10 @@ theforgottenserver_SOURCES = account.cpp account.h actions.cpp actions.h \
 	configmanager.h connection.cpp connection.h const.h container.cpp \
 	container.h creature.cpp creature.h creatureevent.cpp creatureevent.h \
 	cylinder.cpp cylinder.h database.cpp database.h databasemanager.cpp \
-	databasemanager.h $(MAYBE_MYSQL) $(MAYBE_SQLITE) $(MAYBE_ODBC) \
-	$(MAYBE_PGSQL) depot.cpp depot.h exception.cpp exception.h \
-	fileloader.cpp fileloader.h game.cpp game.h gameservers.cpp \
-	gameservers.h globalevent.cpp globalevent.h gui.cpp gui.h house.cpp \
+	databasemanager.h $(MAYBE_MYSQL) $(MAYBE_SQLITE) $(MAYBE_PGSQL) \
+	$(MAYBE_ODBC) depot.cpp depot.h exception.cpp exception.h \
+	fileloader.cpp fileloader.h game.cpp game.h $(MAYBE_LOGIN) \
+	globalevent.cpp globalevent.h gui.cpp gui.h house.cpp \
 	house.h housetile.cpp housetile.h inputbox.cpp inputbox.h ioban.cpp \
 	ioban.h ioguild.cpp ioguild.h iologindata.cpp iologindata.h iomap.cpp \
 	iomapserialize.cpp iomapserialize.h item.cpp item.h items.cpp items.h \

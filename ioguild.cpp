@@ -31,11 +31,11 @@ bool IOGuild::getGuildIdByName(uint32_t& guildId, const std::string& guildName)
 	Database* db = Database::getInstance();
 	DBResult* result;
 
+	DBQuery query;
 	query << "SELECT `id` FROM `guilds` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(guildName) << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	DBQuery query;
 	guildId = result->getDataInt("id");
 	db->freeResult(result);
 	return true;

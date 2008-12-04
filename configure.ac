@@ -17,7 +17,7 @@ AC_SUBST(DEBUG_FLAGS)
 
 # check if we want otserv allocator enabled
 otservAllocator=no
-AC_ARG_ENABLE(otallocator, [  --enable-otallocator   enable otserv custom allocator],
+AC_ARG_ENABLE(otserv-allocator, [  --enable-otserv-allocator   enable otserv custom allocator],
 	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__OTSERV_ALLOCATOR__"]
 	otservAllocator=yes
 )
@@ -34,6 +34,15 @@ homedirConf=no
 AC_ARG_ENABLE(homedir-conf, [  --enable-homedir-conf   enable home directory configuration],
 	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__HOMEDIR_CONF__"]
 	homedirConf=yes
+)
+
+# check if we want login server mode
+AM_CONDITIONAL(LOGIN_SERVER, false)
+loginServer=no
+AC_ARG_ENABLE(login-server, [  --enable-login-server   enable login server mode],
+	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__LOGIN_SERVER__"]
+	AM_CONDITIONAL(LOGIN_SERVER, true)
+	loginServer=yes
 )
 
 AC_SUBST(OPTIONAL_FLAGS)
@@ -195,6 +204,7 @@ echo
 echo The Forgotten Server 0.3
 #echo $PACKAGE $VERSION
 echo
+echo Login server mode........... : $loginServer
 echo Debug build................. : $debugBuild
 echo Server diagnostics.......... : $serverDiag
 echo OTServ custom allocator..... : $otservAllocator
