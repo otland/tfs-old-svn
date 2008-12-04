@@ -15,12 +15,9 @@
 		http://otland.net/
 ]
 
-[ FEATURES
-	PvP Arenas
-		Assigned to: Elf
-
-	Multiworld system (revmultisys methods + custom config path from argv)
-		Assigned to: Elf, Kiper
+[ BUGS
+	Fix not opening channels issue
+		Assigned to: Talaturen
 ]
 
 [ TASKS

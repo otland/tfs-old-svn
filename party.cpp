@@ -368,7 +368,7 @@ void Party::shareExperience(uint64_t experience)
 {
 	uint64_t shareExperience = (uint64_t)std::ceil(((double)experience / (memberList.size() + 1)));
 	if(experience > 20)
-		shareExperience += (uint64_t)std::ceil((double)shareExperience * 0.1);
+		shareExperience += (uint64_t)std::ceil((double)experience * 0.05);
 
 	for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
 		(*it)->onGainSharedExperience(shareExperience);

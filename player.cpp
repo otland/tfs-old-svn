@@ -2293,15 +2293,35 @@ Item* Player::getCorpse()
 	Item* corpse = Creature::getCorpse();
 	if(corpse && corpse->getContainer())
 	{
-		Creature* lastHitCreature_ = NULL;
-		Creature* mostDamageCreature = NULL;
-		char buffer[190];
-		if(getKillers(&lastHitCreature_, &mostDamageCreature) && lastHitCreature_)
-			sprintf(buffer, "You recognize %s. %s was killed by %s.", getNameDescription().c_str(), (getSex() == PLAYERSEX_FEMALE ? "She" : "He"), lastHitCreature_->getNameDescription().c_str());
-		else
-			sprintf(buffer, "You recognize %s.", getNameDescription().c_str());
+		std::stringstream ss;
+		ss << "You recognize " << getNameDescription() << ". " << (getSex() == PLAYERSEX_FEMALE ? "She" : "He") << " was killed by ";
 
-		corpse->setSpecialDescription(buffer);
+		Creature* lastHitCreatureMaster = NULL;
+		Creature* mostDamageCreatureMaster = NULL;
+		if(lastHitCreature)
+		{
+			ss << lastHitCreature->getNameDescription();
+			lastHitCreatureMaster = lastHitCreature->getMaster();
+		}
+
+		if(mostDamageCreature)
+		{
+			mostDamageCreatureMaster = mostDamageCreature->getMaster();
+			bool isNotLastHitMaster = mostDamageCreature != lastHitCreatureMaster;
+			bool isNotMostDamageMaster = lastHitCreature != mostDamageCreatureMaster;
+			bool isNotSameMaster = !lastHitCreatureMaster || (mostDamageCreatureMaster != lastHitCreatureMaster);
+			bool isNotSameName = lastHitCreature && lastHitCreature->getName() != mostDamageCreature->getName();
+			if(mostDamageCreature != lastHitCreature && isNotLastHitMaster && isNotMostDamageMaster && isNotSameMaster && isNotSameName)
+			{
+				if(lastHitCreature)
+					ss << ", and by ";
+
+				ss << mostDamageCreature->getNameDescription();
+			}
+		}
+
+		ss << "."
+		corpse->setSpecialDescription(ss.str().c_str());
 	}
 
 	return corpse;

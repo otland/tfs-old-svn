@@ -342,39 +342,39 @@ bool Chat::deleteChannel(Player* player, uint16_t channelId)
 
 bool Chat::addUserToChannel(Player* player, uint16_t channelId)
 {
-	if(ChatChannel* channel = getChannel(player, channelId))
-		return channel->addUser(player);
+	ChatChannel* channel = getChannel(player, channelId);
+	if(!channel || !player)
+		return false;
 
-	return false;
+	return channel->addUser(player);
 }
 
 bool Chat::removeUserFromChannel(Player* player, uint16_t channelId)
 {
 	ChatChannel* channel = getChannel(player, channelId);
-	if(channel && channel->removeUser(player))
-	{
-		if(channel->getOwner() == player->getGUID())
-			deleteChannel(player, channelId);
+	if(!channel || !player || !channel->removeUser(player))
+		return false;
 
-		return true;
-	}
+	if(channel->getOwner() == player->getGUID())
+		deleteChannel(player, channelId);
 
-	return false;
+	return true;
 }
 
 void Chat::removeUserFromAllChannels(Player* player)
 {
+	if(!player)
+		return;
+
 	ChannelList list = getChannelList(player);
-	while(list.size())
+	for(ChannelList::iterator it = list.begin(); it != list.end(); ++it)
 	{
-		if(ChatChannel* channel = list.front())
+		ChatChannel* channel = (*it);
+		if(channel && channel->removeUser(player))
 		{
-			channel->removeUser(player);
 			if(channel->getOwner() == player->getGUID())
 				deleteChannel(player, channel->getId());
 		}
-
-		list.pop_front();
 	}
 }
 
@@ -1023,12 +1023,12 @@ ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 
 	if(channelId == 0x08)
 	{
-		if(!player->getParty())
-			return NULL;
-
-		PartyChannelMap::iterator it = m_partyChannels.find(player->getParty());
-		if(it != m_partyChannels.end())
-			return it->second;
+		if(player->getParty())
+		{
+			PartyChannelMap::iterator it = m_partyChannels.find(player->getParty());
+			if(it != m_partyChannels.end())
+				return it->second;
+		}
 
 		return NULL;
 	}
