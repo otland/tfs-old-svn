@@ -1180,13 +1180,13 @@ void ProtocolGame::parseGetChannels(NetworkMessage& msg)
 
 void ProtocolGame::parseOpenChannel(NetworkMessage& msg)
 {
-	unsigned short channelId = msg.GetU16();
+	uint16_t channelId = msg.GetU16();
 	addGameTask(&Game::playerOpenChannel, player->getID(), channelId);
 }
 
 void ProtocolGame::parseCloseChannel(NetworkMessage& msg)
 {
-	unsigned short channelId = msg.GetU16();
+	uint16_t channelId = msg.GetU16();
 	addGameTask(&Game::playerCloseChannel, player->getID(), channelId);
 }
 
@@ -1844,17 +1844,16 @@ void ProtocolGame::sendChannelsDialog()
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		ChannelList list;
-		list = g_chat.getChannelList(player);
 		msg->AddByte(0xAB);
-		msg->AddByte(list.size()); //how many
-		while(list.size())
+		ChannelList list = g_chat.getChannelList(player);
+		msg->AddByte(list.size());
+		for(ChannelList::iterator it = list.begin(); it != list.end(); ++it)
 		{
-			ChatChannel* channel;
-			channel = list.front();
-			list.pop_front();
-			msg->AddU16(channel->getId());
-			msg->AddString(channel->getName());
+			if(ChatChannel* channel = (*it))
+			{
+				msg->AddU16(channel->getId());
+				msg->AddString(channel->getName());
+			}
 		}
 	}
 }
@@ -1881,7 +1880,7 @@ void ProtocolGame::sendRuleViolationsChannel(uint16_t channelId)
 		msg->AddU16(channelId);
 		for(RuleViolationsMap::const_iterator it = g_game.getRuleViolations().begin(); it != g_game.getRuleViolations().end(); ++it)
 		{
-			RuleViolation& rvr = *it->second;
+			RuleViolation& rvr = (*it)->second;
 			if(rvr.isOpen && rvr.reporter)
 				AddCreatureSpeak(msg, rvr.reporter, SPEAK_RVR_CHANNEL, rvr.text, channelId, rvr.time);
 		}
@@ -2012,7 +2011,6 @@ void ProtocolGame::sendTradeItemRequest(const Player* player, const Item* item, 
 			msg->AddByte(0x7E);
 
 		msg->AddString(player->getName());
-
 		if(const Container* tradeContainer = item->getContainer())
 		{
 			std::list<const Container*> listContainer;

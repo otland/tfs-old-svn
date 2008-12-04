@@ -1457,7 +1457,6 @@ void Player::onAttackedCreatureChangeZone(ZoneType_t zone)
 void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bool isLogout)
 {
 	Creature::onCreatureDisappear(creature, stackpos, isLogout);
-
 	if(creature == this)
 	{
 		if(isLogout)
@@ -1477,22 +1476,20 @@ void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bo
 			getParty()->leaveParty(this);
 
 		g_game.cancelRuleViolation(this);
-
 		if(hasFlag(PlayerFlag_CanAnswerRuleViolations))
 		{
-			std::list<Player*> closeReportList;
+			PlayerVec closeReportList;
 			for(RuleViolationsMap::const_iterator it = g_game.getRuleViolations().begin(); it != g_game.getRuleViolations().end(); ++it)
 			{
 				if(it->second->gamemaster == this)
 					closeReportList.push_back(it->second->reporter);
 			}
 
-			for(std::list<Player*>::iterator it = closeReportList.begin(); it != closeReportList.end(); ++it)
+			for(PlayerVec::iterator it = closeReportList.begin(); it != closeReportList.end(); ++it)
 				g_game.closeRuleViolation(*it);
 		}
 
 		g_chat.removeUserFromAllChannels(this);
-
 		IOLoginData::getInstance()->updateOnlineStatus(guid, false);
 		#ifndef __CONSOLE__
 		GUI::getInstance()->m_pBox.removePlayer(this);
@@ -1544,10 +1541,7 @@ void Player::openShopWindow()
 
 void Player::closeShopWindow(Npc* npc/* = NULL*/, int32_t onBuy/* = -1*/, int32_t onSell/* = -1*/)
 {
-	if(!npc)
-		npc = getShopOwner(onBuy, onSell);
-
-	if(npc)
+	if(npc || (npc = getShopOwner(onBuy, onSell)))
 		npc->onPlayerEndTrade(this, onBuy, onSell);
 
 	shopOwner = NULL;
@@ -2320,7 +2314,7 @@ Item* Player::getCorpse()
 			}
 		}
 
-		ss << "."
+		ss << ".";
 		corpse->setSpecialDescription(ss.str().c_str());
 	}
 
@@ -3092,7 +3086,7 @@ void Player::postAddNotification(Thing* thing, int32_t index, cylinderlink_t lin
 		if(const Container* container = item->getContainer())
 			onSendContainer(container);
 
-		if(shopOwner)
+		if(shopOwner && link == LINK_OWNER)
 			postUpdateGoods(item->getID());
 	}
 	else if(const Creature* creature = thing->getCreature())
@@ -3100,14 +3094,14 @@ void Player::postAddNotification(Thing* thing, int32_t index, cylinderlink_t lin
 		if(creature == this)
 		{
 			//check containers
-			std::vector<Container*> containers;
+			ContainerVector containers;
 			for(ContainerVector::iterator it = containerVec.begin(); it != containerVec.end(); ++it)
 			{
 				if(!Position::areInRange<1,1,0>(it->second->getPosition(), getPosition()))
 					containers.push_back(it->second);
 			}
 
-			for(std::vector<Container*>::const_iterator it = containers.begin(); it != containers.end(); ++it)
+			for(ContainerVector::const_iterator it = containers.begin(); it != containers.end(); ++it)
 				autoCloseContainers(*it);
 		}
 	}
@@ -3139,7 +3133,7 @@ void Player::postRemoveNotification(Thing* thing, int32_t index, bool isComplete
 				autoCloseContainers(container);
 		}
 
-		if(shopOwner)
+		if(shopOwner && link == LINK_OWNER)
 			postUpdateGoods(item->getID());
 	}
 }

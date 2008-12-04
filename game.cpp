@@ -2012,6 +2012,7 @@ bool Game::playerOpenChannel(uint32_t playerId, uint16_t channelId)
 		player->sendChannel(channel->getId(), channel->getName());
 	else
 		player->sendRuleViolationsChannel(channel->getId());
+
 	return true;
 }
 
