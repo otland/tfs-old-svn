@@ -23,13 +23,12 @@
 
 #include <string>
 #ifndef __LOGIN_SERVER__
-#include <list>
+#include <vector>
 #else
 #include <map>
 #include "gameservers.h"
 #endif
 #include "definitions.h"
-#include "enums.h"
 
 #ifdef __LOGIN_SERVER__
 typedef std::map<std::string, GameServer*> CharactersMap;
