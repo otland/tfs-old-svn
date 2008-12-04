@@ -24,7 +24,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		local items = {}
 		local reward = 0
 
-		local size = getContainerSize(item.uid)
+		local size = isContainer(item.uid) == TRUE and getContainerSize(item.uid) or 0
 		if(size == 0) then
 			reward = doCopyItem(item, FALSE)
 		else
