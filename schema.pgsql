@@ -164,7 +164,8 @@ CREATE TABLE "guilds"
 	"ownerid" INT NOT NULL,
 	"creationdata" INT NOT NULL,
 	"motd" VARCHAR(255) NOT NULL,
-	PRIMARY KEY ("id")
+	PRIMARY KEY ("id"),
+	UNIQUE ("name")
 );
 
 CREATE TABLE "guild_invites"
@@ -280,11 +281,11 @@ CREATE TABLE "player_viplist"
 
 CREATE TABLE "tiles"
 (
-	"id" SERIAL,
+	"id" INT NOT NULL,
 	"x" INT NOT NULL,
 	"y" INT NOT NULL,
 	"z" SMALLINT NOT NULL,
-	PRIMARY KEY ("id")
+	UNIQUE ("id")
 );
 
 CREATE TABLE "tile_items"
@@ -295,6 +296,7 @@ CREATE TABLE "tile_items"
 	"itemtype" INT NOT NULL,
 	"count" INT NOT NULL DEFAULT 0,
 	"attributes" BYTEA NOT NULL,
+	UNIQUE ("tile_id", "sid"),
 	FOREIGN KEY ("tile_id") REFERENCES "tiles"("id") ON DELETE CASCADE
 );
 

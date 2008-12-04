@@ -68,8 +68,8 @@ CREATE TABLE `server_reports`
 	`timestamp` BIGINT NOT NULL DEFAULT 0,
 	`report` TEXT NOT NULL,
 	`reads` INT NOT NULL DEFAULT 0,
-	PRIMARY KEY (`id`, `world_id`),
-	KEY (`reads`)
+	PRIMARY KEY (`id`),
+	KEY (`world_id`), KEY (`reads`)
 ) ENGINE = InnoDB;
 
 CREATE TABLE `groups`
@@ -205,13 +205,14 @@ CREATE TABLE `guilds`
 	`ownerid` INT NOT NULL,
 	`creationdata` INT NOT NULL,
 	`motd` VARCHAR(255) NOT NULL,
-	PRIMARY KEY (`id`, `world_id`)
+	PRIMARY KEY (`id`),
+	UNIQUE (`name`, `world_id`)
 ) ENGINE = InnoDB;
 
 CREATE TABLE `guild_invites`
 (
 	`player_id` INT UNSIGNED NOT NULL DEFAULT 0,
-	`guild_id` INT UNSIGNED NOT NULL DEFAULT 0,
+	`guild_id` INT NOT NULL DEFAULT 0,
 	UNIQUE (`player_id`, `guild_id`)
 ) ENGINE = InnoDB;
 
@@ -326,18 +327,18 @@ CREATE TABLE `player_viplist`
 
 CREATE TABLE `tiles`
 (
-	`id` INT NOT NULL AUTO_INCREMENT,
+	`id` INT UNSIGNED NOT NULL,
 	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
 	`x` INT(5) UNSIGNED NOT NULL,
 	`y` INT(5) UNSIGNED NOT NULL,
 	`z` TINYINT(2) UNSIGNED NOT NULL,
-	PRIMARY KEY (`id`, `world_id`),
+	UNIQUE (`id`, `world_id`),
 	KEY (`x`, `y`, `z`)
 ) ENGINE = InnoDB;
 
 CREATE TABLE `tile_items`
 (
-	`tile_id` INT NOT NULL,
+	`tile_id` INT UNSIGNED NOT NULL,
 	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
 	`sid` INT NOT NULL,
 	`pid` INT NOT NULL DEFAULT 0,
