@@ -749,6 +749,7 @@ Container* Player::getContainer(uint32_t cid)
 		if(it->first == cid)
 			return it->second;
 	}
+
 	return NULL;
 }
 
@@ -759,6 +760,7 @@ int32_t Player::getContainerID(const Container* container) const
 		if(cl->second == container)
 			return cl->first;
 	}
+
 	return -1;
 }
 
@@ -779,12 +781,7 @@ void Player::addContainer(uint32_t cid, Container* container)
 		}
 	}
 
-	//id doesnt exist, create it
-	containervector_pair cv;
-	cv.first = cid;
-	cv.second = container;
-
-	containerVec.push_back(cv);
+	containerVec.push_back(std::make_pair(cid, container));
 }
 
 void Player::closeContainer(uint32_t cid)
@@ -812,8 +809,8 @@ uint16_t Player::getLookCorpse() const
 {
 	if(sex != 0)
 		return ITEM_MALE_CORPSE;
-	else
-		return ITEM_FEMALE_CORPSE;
+
+	return ITEM_FEMALE_CORPSE;
 }
 
 void Player::dropLoot(Container* corpse)
@@ -895,6 +892,7 @@ bool Player::canSee(const Position& pos) const
 {
 	if(client)
 		return client->canSee(pos);
+
 	return false;
 }
 
@@ -935,8 +933,8 @@ Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
 
 bool Player::addDepot(Depot* depot, uint32_t depotId)
 {
-	Depot* depot2 = getDepot(depotId, false);
-	if(depot2)
+	Depot* tmp = getDepot(depotId, false);
+	if(tmp)
 		return false;
 
 	depots[depotId] = depot;
@@ -1478,14 +1476,14 @@ void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bo
 		g_game.cancelRuleViolation(this);
 		if(hasFlag(PlayerFlag_CanAnswerRuleViolations))
 		{
-			PlayerVec closeReportList;
+			PlayerVector closeReportList;
 			for(RuleViolationsMap::const_iterator it = g_game.getRuleViolations().begin(); it != g_game.getRuleViolations().end(); ++it)
 			{
 				if(it->second->gamemaster == this)
 					closeReportList.push_back(it->second->reporter);
 			}
 
-			for(PlayerVec::iterator it = closeReportList.begin(); it != closeReportList.end(); ++it)
+			for(PlayerVector::iterator it = closeReportList.begin(); it != closeReportList.end(); ++it)
 				g_game.closeRuleViolation(*it);
 		}
 
@@ -1632,7 +1630,7 @@ void Player::onSendContainer(const Container* container)
 {
 	if(client)
 	{
-		bool hasParent = (dynamic_cast<const Container*>(container->getParent()) != NULL);
+		bool hasParent = dynamic_cast<const Container*>(container->getParent()) != NULL;
 		for(ContainerVector::const_iterator cl = containerVec.begin(); cl != containerVec.end(); ++cl)
 		{
 			if(cl->second == container)
@@ -3093,15 +3091,15 @@ void Player::postAddNotification(Thing* thing, int32_t index, cylinderlink_t lin
 	{
 		if(creature == this)
 		{
-			//check containers
-			ContainerVector containers;
+			typedef std::vector<Container*> Containers;
+			Containers containers;
 			for(ContainerVector::iterator it = containerVec.begin(); it != containerVec.end(); ++it)
 			{
 				if(!Position::areInRange<1,1,0>(it->second->getPosition(), getPosition()))
 					containers.push_back(it->second);
 			}
 
-			for(ContainerVector::const_iterator it = containers.begin(); it != containers.end(); ++it)
+			for(Containers::const_iterator it = containers.begin(); it != containers.end(); ++it)
 				autoCloseContainers(*it);
 		}
 	}
