@@ -759,14 +759,13 @@ bool Creature::onDeath()
 {
 	Creature* lastHitCreatureMaster = NULL;
 	Creature* mostDamageCreatureMaster = NULL;
+	bool lastHitKiller = false, mostDamageKiller = false;
 	if(getKillers(&lastHitCreature, &mostDamageCreature))
 	{
 		if(lastHitCreature)
 		{
-			if(!lastHitCreature->onKilledCreature(this))
-				return false;
-
 			lastHitCreatureMaster = lastHitCreature->getMaster();
+			lastHitKiller = true;
 		}
 
 		if(mostDamageCreature)
@@ -776,10 +775,7 @@ bool Creature::onDeath()
 			bool isNotMostDamageMaster = (lastHitCreature != mostDamageCreatureMaster);
 			bool isNotSameMaster = lastHitCreatureMaster == NULL || (mostDamageCreatureMaster != lastHitCreatureMaster);
 			if(mostDamageCreature != lastHitCreature && isNotLastHitMaster && isNotMostDamageMaster && isNotSameMaster)
-			{
-				if(!mostDamageCreature->onKilledCreature(this))
-					return false;
-			}
+				mostDamageKiller = true;
 		}
 	}
 
@@ -788,6 +784,12 @@ bool Creature::onDeath()
 		if(!eventPrepareDeath->executeOnPrepareDeath(this, lastHitCreature, mostDamageCreature))
 			return false;
 	}
+
+	if(lastHitKiller && !lastHitCreature->onKilledCreature(this))
+		return false;
+
+	if(mostDamageKiller && !mostDamageCreature->onKilledCreature(this))
+		return false;
 
 	for(CountMap::iterator it = damageMap.begin(); it != damageMap.end(); ++it)
 	{
