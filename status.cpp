@@ -77,13 +77,18 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 		{
 			if(msg.GetRaw() == "info")
 			{
-				OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
-				TRACK_MESSAGE(output);
-				Status* status = Status::getInstance();
-				std::string str = status->getStatusString();
-				output->AddBytes(str.c_str(), str.size());
-				setRawMessages(true); // we dont want the size header, nor encryption
-				OutputMessagePool::getInstance()->send(output);
+				if(OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
+				{
+					TRACK_MESSAGE(output);
+					if(Status* status = Status::getInstance())
+					{
+						std::string str = status->getStatusString();
+						output->AddBytes(str.c_str(), str.size());
+					}
+
+					setRawMessages(true); // we dont want the size header, nor encryption
+					OutputMessagePool::getInstance()->send(output);
+				}
 			}
 			break;
 		}
@@ -92,16 +97,21 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 		case 0x01:
 		{
 			uint32_t requestedInfo = msg.GetU16(); //Only a Byte is necessary, though we could add new infos here
-			OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
-			TRACK_MESSAGE(output);
-			Status* status = Status::getInstance();
-			status->getInfo(requestedInfo, output, msg);
-			OutputMessagePool::getInstance()->send(output);
+			if(OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
+			{
+				TRACK_MESSAGE(output);
+				if(Status* status = Status::getInstance())
+					status->getInfo(requestedInfo, output, msg);
+
+				OutputMessagePool::getInstance()->send(output);
+			}
 			break;
 		}
+
 		default:
 			break;
 	}
+
 	getConnection()->closeConnection();
 }
 
@@ -118,16 +128,6 @@ Status::Status()
 	m_playersOnline = 0;
 	m_playersMax = 0;
 	m_start = OTSYS_TIME();
-}
-
-void Status::addPlayer()
-{
-	m_playersOnline++;
-}
-
-void Status::removePlayer()
-{
-	m_playersOnline--;
 }
 
 std::string Status::getStatusString() const
@@ -225,13 +225,13 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage* output, NetworkMessa
 
 	if(requestedInfo & REQUEST_MISC_SERVER_INFO)
 	{
-		uint64_t running = getUptime();
 		output->AddByte(0x12);
 		output->AddString(g_config.getString(ConfigManager::MOTD).c_str());
 		output->AddString(g_config.getString(ConfigManager::LOCATION).c_str());
 		output->AddString(g_config.getString(ConfigManager::URL).c_str());
-		output->AddU32((uint32_t)(running >> 32));
-		output->AddU32((uint32_t)(running));
+		uint64_t uptime = getUptime();
+		output->AddU32((uint32_t)(uptime >> 32));
+		output->AddU32((uint32_t)(uptime));
 		output->AddString(STATUS_SERVER_VERSION);
   	}
 
@@ -276,14 +276,4 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage* output, NetworkMessa
 			output->AddByte(0x00);
 	}
 	return;
-}
-
-bool Status::hasSlot() const
-{
-	return m_playersMax > m_playersOnline;
-}
-
-uint64_t Status::getUptime() const
-{
-	return (OTSYS_TIME() - m_start) / 1000;
 }

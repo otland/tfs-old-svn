@@ -67,9 +67,9 @@ class Status
 			return &status;
 		}
 
-		void addPlayer();
-		void removePlayer();
-		bool hasSlot() const;
+		void addPlayer() {m_playersOnline++;}
+		void removePlayer() {m_playersOnline--;}
+		bool hasSlot() const {return m_playersMax > m_playersOnline;}
 
 		std::string getStatusString() const;
 		void getInfo(uint32_t requestedInfo, OutputMessage* output, NetworkMessage& msg) const;
@@ -82,7 +82,7 @@ class Status
 		void setMapName(std::string mapName) {m_mapName = mapName;}
 		void setMapAuthor(std::string mapAuthor) {m_mapAuthor = mapAuthor;}
 
-		uint64_t getUptime() const;
+		uint64_t getUptime() const {return (OTSYS_TIME() - m_start) / 1000;}
 
 	protected:
 		Status();
