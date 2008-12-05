@@ -4591,7 +4591,7 @@ void Game::globalSave()
 
 Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extended/* = false*/, bool ignoreHouse/* = true*/)
 {
-	PositionVec relList;
+	PairVector relList;
 	relList.push_back(PositionPair(0, 0));
 	relList.push_back(PositionPair(-1, -1));
 	relList.push_back(PositionPair(-1, 0));
@@ -4612,7 +4612,7 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 	std::random_shuffle(relList.begin() + 1, relList.end());
 	if(Player* player = creature->getPlayer())
 	{
-		for(PositionVec::iterator it = relList.begin(); it != relList.end(); ++it)
+		for(PairVector::iterator it = relList.begin(); it != relList.end(); ++it)
 		{
 			Position tmp = Position((pos.x + it->first), (pos.y + it->second), pos.z);
 			if(Tile* tile = map->getTile(tmp))
@@ -4638,7 +4638,7 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 	}
 	else
 	{
-		for(PositionVec::iterator it = relList.begin(); it != relList.end(); ++it)
+		for(PairVector::iterator it = relList.begin(); it != relList.end(); ++it)
 		{
 			Position tmp = Position((pos.x + it->first), (pos.y + it->second), pos.z);
 			if(Tile* tile = map->getTile(tmp))

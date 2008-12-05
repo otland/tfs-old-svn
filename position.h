@@ -39,7 +39,8 @@ enum Direction
 };
 
 typedef std::pair<int32_t, int32_t> PositionPair;
-typedef std::vector<PositionPair> PositionVec;
+typedef std::vector<PositionPair> PairVector;
+typedef std::vector<Direction> DirVector;
 
 class Position
 {
