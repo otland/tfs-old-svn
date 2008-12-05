@@ -975,7 +975,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 					s << " " << std::showpos << int32_t(item ? item->getExtraAttack() : it.extraAttack) << std::noshowpos;
 			}
 
-			if(it.hitChance > 0 || (item && item->getHitChance() > 0))
+			if(it.hitChance != -1 || (item && item->getHitChance() != -1))
 				s << ", Hit%" << std::showpos << (item ? item->getHitChance() : it.hitChance) << std::noshowpos;
 
 			s << ")";
