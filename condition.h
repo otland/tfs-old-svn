@@ -22,6 +22,8 @@
 #define __OTSERV_CONDITION_H__
 
 #include "fileloader.h"
+
+#include "const.h"
 #include "enums.h"
 
 #include <list>
@@ -119,7 +121,7 @@ class Condition
 		virtual bool executeCondition(Creature* creature, int32_t interval);
 		virtual void endCondition(Creature* creature, ConditionEnd_t reason) = 0;
 		virtual void addCondition(Creature* creature, const Condition* condition) = 0;
-		virtual uint32_t getIcons() const;
+		virtual Icons_t getIcons() const;
 		virtual ConditionId_t getId() const {return id;}
 
 		virtual Condition* clone() const = 0;
@@ -163,7 +165,7 @@ class ConditionGeneric: public Condition
 		virtual bool executeCondition(Creature* creature, int32_t interval);
 		virtual void endCondition(Creature* creature, ConditionEnd_t reason);
 		virtual void addCondition(Creature* creature, const Condition* condition);
-		virtual uint32_t getIcons() const;
+		virtual Icons_t getIcons() const;
 
 		virtual ConditionGeneric* clone() const {return new ConditionGeneric(*this);}
 };
@@ -290,7 +292,7 @@ class ConditionDamage: public Condition
 		virtual bool executeCondition(Creature* creature, int32_t interval);
 		virtual void endCondition(Creature* creature, ConditionEnd_t reason);
 		virtual void addCondition(Creature* creature, const Condition* condition);
-		virtual uint32_t getIcons() const;
+		virtual Icons_t getIcons() const;
 
 		virtual ConditionDamage* clone() const {return new ConditionDamage(*this);}
 		virtual bool setParam(ConditionParam_t param, int32_t value);
@@ -336,7 +338,7 @@ class ConditionSpeed: public Condition
 		virtual bool executeCondition(Creature* creature, int32_t interval);
 		virtual void endCondition(Creature* creature, ConditionEnd_t reason);
 		virtual void addCondition(Creature* creature, const Condition* condition);
-		virtual uint32_t getIcons() const;
+		virtual Icons_t getIcons() const;
 
 		virtual ConditionSpeed* clone() const {return new ConditionSpeed(*this);}
 
@@ -373,7 +375,6 @@ class ConditionOutfit: public Condition
 		virtual bool executeCondition(Creature* creature, int32_t interval);
 		virtual void endCondition(Creature* creature, ConditionEnd_t reason);
 		virtual void addCondition(Creature* creature, const Condition* condition);
-		virtual uint32_t getIcons() const;
 
 		virtual ConditionOutfit* clone() const {return new ConditionOutfit(*this);}
 
@@ -402,7 +403,6 @@ class ConditionLight: public Condition
 		virtual bool executeCondition(Creature* creature, int32_t interval);
 		virtual void endCondition(Creature* creature, ConditionEnd_t reason);
 		virtual void addCondition(Creature* creature, const Condition* addCondition);
-		virtual uint32_t getIcons() const;
 
 		virtual ConditionLight* clone() const {return new ConditionLight(*this);}
 

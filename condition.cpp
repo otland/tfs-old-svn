@@ -274,7 +274,7 @@ bool Condition::updateCondition(const Condition* addCondition)
 	return true;
 }
 
-uint32_t Condition::getIcons() const
+Icons_t Condition::getIcons() const
 {
 	if(buff)
 		return ICON_BUFF;
@@ -304,7 +304,7 @@ void ConditionGeneric::addCondition(Creature* creature, const Condition* addCond
 		setTicks(addCondition->getTicks());
 }
 
-uint32_t ConditionGeneric::getIcons() const
+Icons_t ConditionGeneric::getIcons() const
 {
 	Icons_t icon = Condition::getIcons();
 	if(icon != ICON_NONE)
@@ -1388,7 +1388,7 @@ int32_t ConditionDamage::getTotalDamage() const
 	return std::abs(result);
 }
 
-uint32_t ConditionDamage::getIcons() const
+Icons_t ConditionDamage::getIcons() const
 {
 	Icons_t icon = Condition::getIcons();
 	if(icon != ICON_NONE)
@@ -1669,7 +1669,7 @@ void ConditionSpeed::addCondition(Creature* creature, const Condition* addCondit
 	}
 }
 
-uint32_t ConditionSpeed::getIcons() const
+Icons_t ConditionSpeed::getIcons() const
 {
 	Icons_t icon = Condition::getIcons();
 	if(icon != ICON_NONE)
