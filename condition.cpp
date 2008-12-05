@@ -1450,7 +1450,6 @@ ConditionSpeed::ConditionSpeed(ConditionId_t _id, ConditionType_t _type, int32_t
 Condition(_id, _type, _ticks)
 {
 	speedDelta = changeSpeed;
-	ignoreDispel = false;
 	mina = minb = maxa = maxb = 0.0f;
 }
 
