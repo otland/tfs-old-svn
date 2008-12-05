@@ -214,6 +214,7 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 		case CONDITION_MUTED:
 		case CONDITION_TRADETICKS:
 		case CONDITION_YELLTICKS:
+		case CONDITION_DISABLE_ATTACK:
 			return new ConditionGeneric(_id, _type, _ticks);
 
 		default:
@@ -1449,6 +1450,7 @@ ConditionSpeed::ConditionSpeed(ConditionId_t _id, ConditionType_t _type, int32_t
 Condition(_id, _type, _ticks)
 {
 	speedDelta = changeSpeed;
+	ignoreDispel = false;
 	mina = minb = maxa = maxb = 0.0f;
 }
 
@@ -1469,18 +1471,22 @@ void ConditionSpeed::getFormulaValues(int32_t var, int32_t& min, int32_t& max) c
 bool ConditionSpeed::setParam(ConditionParam_t param, int32_t value)
 {
 	bool ret = Condition::setParam(param, value);
-	if(param == CONDITIONPARAM_SPEED)
+	switch(param)
 	{
-		speedDelta = value;
-		if(value > 0)
-			conditionType = CONDITION_HASTE;
-		else
-			conditionType = CONDITION_PARALYZE;
+		case CONDITIONPARAM_SPEED:
+		{
+			speedDelta = value;
+			if(value > 0)
+				conditionType = CONDITION_HASTE;
+			else
+				conditionType = CONDITION_PARALYZE;
 
-		return true;
+			return true;
+		}
+
+		default:
+			break;
 	}
-	else
-		return false;
 
 	return ret;
 }

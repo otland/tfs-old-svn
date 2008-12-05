@@ -3245,7 +3245,7 @@ void Player::doAttacking(uint32_t interval)
 	if(lastAttack == 0)
 		lastAttack = OTSYS_TIME() - getAttackSpeed() - 1;
 
-	if((OTSYS_TIME() - lastAttack) >= getAttackSpeed())
+	if((OTSYS_TIME() - lastAttack) >= getAttackSpeed() && !hasCondition(CONDITION_DISABLE_ATTACK))
 	{
 		Item* tool = getWeapon();
 		if(const Weapon* weapon = g_weapons->getWeapon(tool))
@@ -3437,16 +3437,13 @@ void Player::onCombatRemoveCondition(const Creature* attacker, Condition* condit
 {
 	//Creature::onCombatRemoveCondition(attacker, condition);
 	bool remove = true;
-
 	if(condition->getId() != 0)
 	{
 		remove = false;
-
 		//Means the condition is from an item, id == slot
 		if(g_game.getWorldType() == WORLD_TYPE_PVP_ENFORCED)
 		{
-			Item* item = getInventoryItem((slots_t)condition->getId());
-			if(item)
+			if(Item* item = getInventoryItem((slots_t)condition->getId()))
 			{
 				//25% chance to destroy the item
 				if(25 >= random_range(0, 100))

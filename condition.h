@@ -60,7 +60,8 @@ enum ConditionType_t
 	CONDITION_DAZZLED = 2097152,
 	CONDITION_CURSED = 4194304,
 	CONDITION_EXHAUST_COMBAT = 8388608,
-	CONDITION_EXHAUST_HEAL = 16777216
+	CONDITION_EXHAUST_HEAL = 16777216,
+	CONDITION_DISABLE_ATTACK = 33554432
 };
 
 enum ConditionEnd_t
@@ -157,7 +158,7 @@ class ConditionGeneric: public Condition
 {
 	public:
 		ConditionGeneric(ConditionId_t _id, ConditionType_t _type, int32_t _ticks);
-		virtual ~ConditionGeneric(){}
+		virtual ~ConditionGeneric() {}
 
 		virtual bool executeCondition(Creature* creature, int32_t interval);
 		virtual void endCondition(Creature* creature, ConditionEnd_t reason);

@@ -1452,8 +1452,9 @@ void Creature::removeCondition(Condition* condition)
 		it = conditions.erase(it);
 
 		condition->endCondition(this, CONDITIONEND_ABORT);
-		onEndCondition(condition->getType());
 		delete condition;
+
+		onEndCondition(condition->getType());
 	}
 }
 
@@ -1471,8 +1472,9 @@ void Creature::removeConditions(ConditionEnd_t reason, bool onlyPersistent/* = t
 		it = conditions.erase(it);
 
 		condition->endCondition(this, reason);
-		onEndCondition(condition->getType());
 		delete condition;
+
+		onEndCondition(condition->getType());
 	}
 }
 
