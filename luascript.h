@@ -545,6 +545,10 @@ class LuaScriptInterface
 		static int32_t luaGetCreatureCondition(lua_State* L);
 
 		static int32_t luaGetVocationInfo(lua_State* L);
+		static int32_t luaGetMonsterInfo(lua_State* L);
+		static int32_t luaGetMonsterHealingSpells(lua_State* L);
+		static int32_t luaGetMonsterAttackSpells(lua_State* L);
+		static int32_t luaGetMonsterLootList(lua_State* L);
 
 		static int32_t luaGetPlayerPromotionLevel(lua_State* L);
 		static int32_t luaSetPlayerPromotionLevel(lua_State* L);

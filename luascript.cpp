@@ -1404,6 +1404,18 @@ void LuaScriptInterface::registerFunctions()
 	//doMonsterChangeTarget(cid)
 	lua_register(m_luaState, "doMonsterChangeTarget", LuaScriptInterface::luaDoMonsterChangeTarget);
 
+	//getMonsterInfo(name)
+	lua_register(m_luaState, "getMonsterInfo", LuaScriptInterface::luaGetMonsterInfo);
+
+	//getMonsterHealingSpells(name)
+	lua_register(m_luaState, "getMonsterHealingSpells", LuaScriptInterface::luaGetMonsterHealingSpells);
+
+	//getMonsterAttackSpells(name)
+	lua_register(m_luaState, "getMonsterAttackSpells", LuaScriptInterface::luaGetMonsterAttackSpells);
+
+	//getMonsterLootList(name)
+	lua_register(m_luaState, "getMonsterLootList", LuaScriptInterface::luaGetMonsterLootList);
+
 	//doAddCondition(cid, condition)
 	lua_register(m_luaState, "doAddCondition", LuaScriptInterface::luaDoAddCondition);
 
@@ -6370,6 +6382,132 @@ int32_t LuaScriptInterface::luaDoMonsterChangeTarget(lua_State* L)
 		monster->searchTarget(TARGETSEARCH_RANDOM);
 
 	lua_pushnumber(L, LUA_NO_ERROR);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetMonsterInfo(lua_State* L)
+{
+	//getMonsterInfo(name)
+	const MonsterType* mType = g_monsters.getMonsterType(popString(L));
+	if(mType)
+	{
+		lua_newtable(L);
+		setField(L, "name", mType->name.c_str());
+		setField(L, "experience", mType->experience);
+		setField(L, "health", mType->health);
+		setField(L, "healthMax", mType->health_max);
+		setField(L, "manaCost", mType->manaCost);
+		setField(L, "defense", mType->defense);
+		setField(L, "armor", mType->armor);
+		setField(L, "baseSpeed", mType->base_speed);
+		setField(L, "lookCorpse", mType->lookcorpse);
+		setField(L, "race", mType->race);
+		setField(L, "skull", mType->skull);
+		setField(L, "partyShield", mType->partyShield);
+		setField(L, "summonable", mType->isSummonable);
+		setField(L, "illusionable", mType->isIllusionable);
+		setField(L, "convinceable", mType->isConvinceable);
+		setField(L, "attackable", mType->isAttackable);
+		setField(L, "hostile", mType->isHostile);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetMonsterHealingSpells(lua_State* L)
+{
+	//getMonsterHealingSpells(name)
+	const MonsterType* mType = g_monsters.getMonsterType(popString(L));
+
+	lua_createtable(L, mType->spellDefenseList.size(), 0);
+	SpellList::const_iterator it = mType->spellDefenseList.begin();
+	for(uint32_t i = 1; it != mType->spellDefenseList.end(); ++it, ++i)
+	{
+		lua_pushnumber(L, i);
+		lua_createtable(L, 6, 0);
+
+		setField(L, "speed", (*it).speed);
+		setField(L, "chance", (*it).chance);
+		setField(L, "range", (*it).range);
+		setField(L, "minCombatValue", (*it).minCombatValue);
+		setField(L, "maxCombatValue", (*it).maxCombatValue);
+		setField(L, "isMelee", (*it).isMelee);
+		lua_settable(L, -3);
+	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetMonsterAttackSpells(lua_State* L)
+{
+	//getMonsterAttackSpells(name)
+	const MonsterType* mType = g_monsters.getMonsterType(popString(L));
+
+	lua_createtable(L, mType->spellAttackList.size(), 0);
+	SpellList::const_iterator it = mType->spellAttackList.begin();
+	for(uint32_t i = 1; it != mType->spellAttackList.end(); ++it, ++i)
+	{
+		lua_pushnumber(L, i);
+		lua_createtable(L, 6, 0);
+
+		setField(L, "speed", (*it).speed);
+		setField(L, "chance", (*it).chance);
+		setField(L, "range", (*it).range);
+		setField(L, "minCombatValue", (*it).minCombatValue);
+		setField(L, "maxCombatValue", (*it).maxCombatValue);
+		setField(L, "isMelee", (*it).isMelee);
+		lua_settable(L, -3);
+	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetMonsterLootList(lua_State* L)
+{
+	//getMonsterLootList(name)
+	const MonsterType* mType = g_monsters.getMonsterType(popString(L));
+
+	lua_createtable(L, mType->lootItems.size(), 0);
+	LootItems::const_iterator it = mType->lootItems.begin();
+	for(uint32_t i = 1; it != mType->lootItems.end(); ++it, ++i)
+	{
+		lua_pushnumber(L, i);
+		lua_createtable(L, 7, 0);
+
+		setField(L, "id", (*it).id);
+		setField(L, "countMax", (*it).countmax);
+		setField(L, "chance", (*it).chance);
+		setField(L, "subType", (*it).subType);
+		setField(L, "actionId", (*it).actionId);
+		setField(L, "uniqueId", (*it).uniqueId);
+		setField(L, "text", (*it).text);
+		lua_settable(L, -3);
+
+		if((*it).childLoot.size() > 0)
+		{
+			LootItems::const_iterator cit = (*it).childLoot.begin();
+			for(uint32_t j = 1; cit != (*it).childLoot.end(); ++cit, ++j)
+			{
+				lua_pushnumber(L, i);
+				lua_createtable(L, 7, 0);
+
+				setField(L, "id", (*cit).id);
+				setField(L, "countMax", (*cit).countmax);
+				setField(L, "chance", (*cit).chance);
+				setField(L, "subType", (*cit).subType);
+				setField(L, "actionId", (*cit).actionId);
+				setField(L, "uniqueId", (*cit).uniqueId);
+				setField(L, "text", (*cit).text);
+				lua_settable(L, -3);
+			}
+		}
+	}
+
 	return 1;
 }
 
