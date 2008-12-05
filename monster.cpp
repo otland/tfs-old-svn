@@ -1062,7 +1062,7 @@ bool Monster::getDanceStep(const Position& creaturePos, Direction& dir,	bool kee
 {
 	assert(attackedCreature != NULL);
 	bool canDoAttackNow = canUseAttack(creaturePos, attackedCreature);
-	const Position& centerPos = attackedCreatuer->getPosition();
+	const Position& centerPos = attackedCreature->getPosition();
 
 	uint32_t tmpDist, centerToDist = std::max(std::abs(creaturePos.x - centerPos.x), std::abs(creaturePos.y - centerPos.y));
 	DirVector dirVector;
