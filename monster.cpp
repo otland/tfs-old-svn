@@ -644,7 +644,7 @@ void Monster::doAttacking(uint32_t interval)
 	if(!attackedCreature || (isSummon() && attackedCreature == this))
 		return;
 
-	bool updateLook = true, outOfRange = true
+	bool updateLook = true, outOfRange = true;
 	resetTicks = interval != 0;
 	attackTicks += interval;
 
@@ -886,7 +886,7 @@ bool Monster::pushItem(Item* item, int32_t radius)
 	pairVector.push_back(PositionPair(1, 0));
 	pairVector.push_back(PositionPair(1, 1));
 
-	std::random_shuffle(relList.begin(), relList.end());
+	std::random_shuffle(pairVector.begin(), pairVector.end());
 	Position tryPos;
 	for(int32_t n = 1; n <= radius; ++n)
 	{
@@ -1062,9 +1062,9 @@ bool Monster::getDanceStep(const Position& creaturePos, Direction& dir,	bool kee
 {
 	assert(attackedCreature != NULL);
 	bool canDoAttackNow = canUseAttack(creaturePos, attackedCreature);
-	uint32_t tmpDist, centerToDist = std::max(std::abs(creaturePos.x - centerPos.x), std::abs(creaturePos.y - centerPos.y));
+	const Position& centerPos = attackedCreatuer->getPosition();
 
-	const Position& centerPos = attackedCreature->getPosition();
+	uint32_t tmpDist, centerToDist = std::max(std::abs(creaturePos.x - centerPos.x), std::abs(creaturePos.y - centerPos.y));
 	DirVector dirVector;
 	if(!keepDistance || creaturePos.y - centerPos.y >= 0)
 	{
