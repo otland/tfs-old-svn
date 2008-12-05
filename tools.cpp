@@ -465,8 +465,8 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 			lenBeforeSpace = lenBeforeQuote = lenBeforeDash = 0;
 		}
 
-		if((!isLowercaseLetter(text[size]) && text[size] != 32 && text[size] != 39 && text[size] != 45)
-			|| (text[size - 1] == 32 && !isUppercaseLetter(text[size])))
+		if(!(isLowercaseLetter(text[size]) || text[size] == 32 || text[size] == 39 || text[size] == 45
+			|| (isUppercaseLetter(text[size]) && text[size - 1] == 32)))
 			return false;
 	}
 	return true;
