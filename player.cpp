@@ -802,7 +802,7 @@ void Player::closeContainer(uint32_t cid)
 
 bool Player::canOpenCorpse(uint32_t ownerId)
 {
-	return getID() == ownerId || (party && party->canOpenCorpse(ownerId));
+	return getID() == ownerId || (party && party->canOpenCorpse(ownerId)) || hasCustomFlag(PlayerCustomFlag_GamemasterPrivilieges);
 }
 
 uint16_t Player::getLookCorpse() const
@@ -1169,6 +1169,10 @@ void Player::sendCancelMessage(ReturnValue message) const
 
 		case RET_NAMEISTOOAMBIGIOUS:
 			sendCancel("Name is too ambigious.");
+			break;
+
+		case RET_CANONLYUSEONESHIELD:
+			sendCancel("You may only use one shield.");
 			break;
 
 		case RET_YOUARENOTTHEOWNER:
@@ -2045,9 +2049,7 @@ void Player::onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType)
 bool Player::hasShield() const
 {
 	bool result = false;
-	Item* item;
-
-	item = getInventoryItem(SLOT_LEFT);
+	Item* item = getInventoryItem(SLOT_LEFT);
 	if(item && item->getWeaponType() == WEAPON_SHIELD)
 		result = true;
 
@@ -2586,16 +2588,12 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 							//check if weapon, can only carry one weapon
 							if(item == leftItem && count == item->getItemCount())
 								ret = RET_NOERROR;
-							else if(!item->isWeapon() || item->getWeaponType() == WEAPON_SHIELD ||
-								item->getWeaponType() == WEAPON_AMMO)
-							{
-									ret = RET_NOERROR;
-							}
-							else if(!leftItem->isWeapon() || leftItem->getWeaponType() == WEAPON_AMMO ||
-								leftItem->getWeaponType() == WEAPON_SHIELD)
-							{
+							else if(!item->isWeapon() || item->getWeaponType() == WEAPON_AMMO)
 								ret = RET_NOERROR;
-							}
+							else if(!leftItem->isWeapon() || leftItem->getWeaponType() == WEAPON_AMMO)
+								ret = RET_NOERROR;
+							else if(item->getWeaponType() == WEAPON_SHIELD)
+								ret = RET_CANONLYUSEONESHIELD;
 							else
 								ret = RET_CANONLYUSEONEWEAPON;
 						}
@@ -2629,16 +2627,12 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 							//check if weapon, can only carry one weapon
 							if(item == rightItem && count == item->getItemCount())
 								ret = RET_NOERROR;
-							else if(!item->isWeapon() || item->getWeaponType() == WEAPON_SHIELD ||
-								item->getWeaponType() == WEAPON_AMMO)
-							{
-									ret = RET_NOERROR;
-							}
-							else if(!rightItem->isWeapon() || rightItem->getWeaponType() == WEAPON_AMMO ||
-								rightItem->getWeaponType() == WEAPON_SHIELD)
-							{
+							else if(!item->isWeapon() || item->getWeaponType() == WEAPON_AMMO)
 								ret = RET_NOERROR;
-							}
+							else if(!rightItem->isWeapon() || rightItem->getWeaponType() == WEAPON_AMMO)
+								ret = RET_NOERROR;
+							else if(item->getWeaponType() == WEAPON_SHIELD)
+								ret = RET_CANONLYUSEONESHIELD;
 							else
 								ret = RET_CANONLYUSEONEWEAPON;
 						}
@@ -2665,12 +2659,9 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 				ret = RET_NOERROR;
 			break;
 		case SLOT_WHEREEVER:
-			ret = RET_NOTENOUGHROOM;
-			break;
 		case -1:
 			ret = RET_NOTENOUGHROOM;
 			break;
-
 		default:
 			ret = RET_NOTPOSSIBLE;
 			break;
@@ -2691,6 +2682,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 		else
 			return RET_NOTENOUGHCAPACITY;
 	}
+
 	return ret;
 }
 
