@@ -2578,16 +2578,17 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 				else if(inventory[SLOT_LEFT])
 				{
 					const Item* leftItem = inventory[SLOT_LEFT];
+					WeaponType_t type = item->getWeaponType(), leftType = leftItem->getWeaponType();
 					if(leftItem->getSlotPosition() & SLOTP_TWO_HAND)
 						ret = RET_DROPTWOHANDEDITEM;
 					else if(item == leftItem && count == item->getItemCount())
 						ret = RET_NOERROR;
-					else if(!leftItem->isWeapon() || leftItem->getWeaponType() == WEAPON_AMMO
-						|| !item->isWeapon() || item->getWeaponType() == WEAPON_AMMO)
-						ret = RET_NOERROR;
-					else if(leftItem->getWeaponType() == WEAPON_SHIELD
-						&& item->getWeaponType() == WEAPON_SHIELD)
+					else if(leftType == WEAPON_SHIELD && type == WEAPON_SHIELD)
 						ret = RET_CANONLYUSEONESHIELD;
+					else if(!leftItem->isWeapon() || !item->isWeapon() ||
+						leftType == WEAPON_SHIELD || leftType == WEAPON_AMMO
+						|| type == WEAPON_SHIELD || type == WEAPON_AMMO)
+						ret = RET_NOERROR;
 					else
 						ret = RET_CANONLYUSEONEWEAPON;
 				}
@@ -2609,16 +2610,17 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 				else if(inventory[SLOT_RIGHT])
 				{
 					const Item* rightItem = inventory[SLOT_RIGHT];
+					WeaponType_t type = item->getWeaponType(), rightType = rightItem->getWeaponType();
 					if(rightItem->getSlotPosition() & SLOTP_TWO_HAND)
 						ret = RET_DROPTWOHANDEDITEM;
 					else if(item == rightItem && count == item->getItemCount())
 						ret = RET_NOERROR;
-					else if(!rightItem->isWeapon() || rightItem->getWeaponType() == WEAPON_AMMO
-						|| !item->isWeapon() || item->getWeaponType() == WEAPON_AMMO)
-						ret = RET_NOERROR;
-					else if(rightItem->getWeaponType() == WEAPON_SHIELD
-						&& item->getWeaponType() == WEAPON_SHIELD)
+					else if(rightType == WEAPON_SHIELD && type == WEAPON_SHIELD)
 						ret = RET_CANONLYUSEONESHIELD;
+					else if(!rightItem->isWeapon() || !item->isWeapon() ||
+						rightType == WEAPON_SHIELD || rightType == WEAPON_AMMO
+						|| type == WEAPON_SHIELD || type == WEAPON_AMMO)
+						ret = RET_NOERROR;
 					else
 						ret = RET_CANONLYUSEONEWEAPON;
 				}
