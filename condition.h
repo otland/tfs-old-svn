@@ -118,7 +118,7 @@ class Condition
 		virtual bool executeCondition(Creature* creature, int32_t interval);
 		virtual void endCondition(Creature* creature, ConditionEnd_t reason) = 0;
 		virtual void addCondition(Creature* creature, const Condition* condition) = 0;
-		virtual uint32_t getIcons() const = 0;
+		virtual uint32_t getIcons() const;
 		virtual ConditionId_t getId() const {return id;}
 
 		virtual Condition* clone() const = 0;
@@ -148,6 +148,7 @@ class Condition
 		int32_t ticks;
 		int64_t endTime;
 		ConditionType_t conditionType;
+		bool buff;
 
 		virtual bool updateCondition(const Condition* addCondition);
 };

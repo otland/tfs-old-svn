@@ -30,7 +30,7 @@
 extern Game g_game;
 
 Condition::Condition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks) :
-id(_id), ticks(_ticks), endTime(0), conditionType(_type)
+id(_id), ticks(_ticks), endTime(0), conditionType(_type), buff(false)
 {
 	//
 }
@@ -41,6 +41,10 @@ bool Condition::setParam(ConditionParam_t param, int32_t value)
 	{
 		case CONDITIONPARAM_TICKS:
 			ticks = value;
+			return true;
+
+		case CONDITIONPARAM_BUFF:
+			buff = value != 0;
 			return true;
 
 		default:
@@ -269,6 +273,14 @@ bool Condition::updateCondition(const Condition* addCondition)
 	return true;
 }
 
+uint32_t Condition::getIcons() const
+{
+	if(buff)
+		return ICON_BUFF;
+
+	return ICON_NONE;
+}
+
 ConditionGeneric::ConditionGeneric(ConditionId_t _id, ConditionType_t _type, int32_t _ticks):
 Condition(_id, _type, _ticks)
 {
@@ -293,6 +305,10 @@ void ConditionGeneric::addCondition(Creature* creature, const Condition* addCond
 
 uint32_t ConditionGeneric::getIcons() const
 {
+	Icons_t icon = Condition::getIcons();
+	if(icon != ICON_NONE)
+		return icon;
+
 	switch(conditionType)
 	{
 		case CONDITION_MANASHIELD:
@@ -307,7 +323,8 @@ uint32_t ConditionGeneric::getIcons() const
 		default:
 			break;
 	}
-	return 0;
+
+	return ICON_NONE;
 }
 
 ConditionAttributes::ConditionAttributes(ConditionId_t _id, ConditionType_t _type, int32_t _ticks) :
@@ -1372,6 +1389,10 @@ int32_t ConditionDamage::getTotalDamage() const
 
 uint32_t ConditionDamage::getIcons() const
 {
+	Icons_t icon = Condition::getIcons();
+	if(icon != ICON_NONE)
+		return icon;
+
 	switch(conditionType)
 	{
 		case CONDITION_FIRE:
@@ -1398,7 +1419,8 @@ uint32_t ConditionDamage::getIcons() const
 		default:
 			break;
 	}
-	return 0;
+
+	return ICON_NONE;
 }
 
 void ConditionDamage::generateDamageList(int32_t amount, int32_t start, std::list<int32_t>& list)
@@ -1644,6 +1666,10 @@ void ConditionSpeed::addCondition(Creature* creature, const Condition* addCondit
 
 uint32_t ConditionSpeed::getIcons() const
 {
+	Icons_t icon = Condition::getIcons();
+	if(icon != ICON_NONE)
+		return icon;
+
 	switch(conditionType)
 	{
 		case CONDITION_HASTE:
@@ -1656,7 +1682,7 @@ uint32_t ConditionSpeed::getIcons() const
 			break;
 	}
 
-	return 0;
+	return ICON_NONE;
 }
 
 ConditionInvisible::ConditionInvisible(ConditionId_t _id, ConditionType_t _type, int32_t _ticks) :
@@ -1819,11 +1845,6 @@ void ConditionOutfit::addCondition(Creature* creature, const Condition* addCondi
 
 		changeOutfit(creature);
 	}
-}
-
-uint32_t ConditionOutfit::getIcons() const
-{
-	return 0;
 }
 
 ConditionLight::ConditionLight(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, int32_t _lightlevel, int32_t _lightcolor) :
@@ -2014,9 +2035,4 @@ bool ConditionLight::serialize(PropWriteStream& propWriteStream)
 	propWriteStream.ADD_VALUE(lightChangeInterval);
 
 	return true;
-}
-
-uint32_t ConditionLight::getIcons() const
-{
-	return 0;
 }

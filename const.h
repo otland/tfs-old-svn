@@ -294,6 +294,7 @@ enum TextColor_t
 
 enum Icons_t
 {
+	ICON_NONE = 0,
 	ICON_POISON = 1,
 	ICON_BURN = 2,
 	ICON_ENERGY =  4,
@@ -305,7 +306,8 @@ enum Icons_t
 	ICON_DROWNING = 256,
 	ICON_FREEZING = 512,
 	ICON_DAZZLED = 1024,
-	ICON_CURSED = 2048
+	ICON_CURSED = 2048,
+	ICON_BUFF = 4096
 };
 
 enum WeaponType_t
