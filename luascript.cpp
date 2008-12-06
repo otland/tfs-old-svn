@@ -200,12 +200,13 @@ void ScriptEnviroment::addUniqueThing(Thing* thing)
 	if(item && item->getUniqueId() != 0)
 	{
 		int32_t uid = item->getUniqueId();
-
-		Thing* tmp = m_globalMap[uid];
-		if(!tmp)
-			m_globalMap[uid] = thing;
+		if(Thing* tmp = m_globalMap[uid])
+		{
+			if(item->getActionId() != 2000)
+				std::cout << "Duplicate uniqueId " << uid << std::endl;
+		}
 		else
-			std::cout << "Duplicate uniqueId " << uid << std::endl;
+			m_globalMap[uid] = thing;
 	}
 }
 

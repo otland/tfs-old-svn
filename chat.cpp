@@ -118,7 +118,12 @@ bool ChatChannel::addUser(Player* player)
 {
 	UsersMap::iterator it = m_users.find(player->getID());
 	if(it != m_users.end())
+	{
+		#ifdef __DEBUG_CHAT__
+		std::cout << "ChatChannel::addUser - player already exists in m_users map." << std::endl;
+		#endif
 		return false;
+	}
 
 	switch(m_id)
 	{
@@ -126,7 +131,8 @@ bool ChatChannel::addUser(Player* player)
 		{
 			if(IOGuild::getInstance()->getMotd(player->getGuildId()).length())
 				Scheduler::getScheduler().addEvent(createSchedulerTask(150, boost::bind(
-					&Game::sendGuildMotd, &g_game, player->getID(), player->getGuildId())));
+					&Game::sendGuildMotd, &g_game, player->getID(), player->getGuildId()
+				)));
 			break;
 		}
 
@@ -138,7 +144,12 @@ bool ChatChannel::addUser(Player* player)
 		{
 			ChatChannel* channel = g_chat.getChannel(player, m_id);
 			if(!channel)
+			{
+				#ifdef __DEBUG_CHAT__
+				std::cout << "ChatChannel::addUser - failed retrieving channel." << std::endl;
+				#endif
 				return false;
+			}
 			break;
 		}
 
@@ -344,7 +355,12 @@ bool Chat::addUserToChannel(Player* player, uint16_t channelId)
 {
 	ChatChannel* channel = getChannel(player, channelId);
 	if(!channel || !player)
+	{
+		#ifdef __DEBUG_CHAT__
+		std::cout << "ChatChannel::addUser - failed retrieving channel or player NULL." << std::endl;
+		#endif
 		return false;
+	}
 
 	return channel->addUser(player);
 }

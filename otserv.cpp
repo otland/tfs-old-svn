@@ -308,7 +308,7 @@ int argc, char *argv[]
 	std::cout << std::endl;
 	std::cout << ">> Loading config (" << ConfigManager::filename << ")" << std::endl;
 	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading config (" + ConfigManager::filename + ")");
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading config");
 	#endif
 	if(!g_config.loadFile(ConfigManager::filename))
 		startupErrorMessage("Unable to load " + ConfigManager::filename + "!");

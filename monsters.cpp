@@ -203,29 +203,25 @@ Item* MonsterType::createLootItem(const LootBlock& lootBlock)
 
 bool MonsterType::createLootContainer(Container* parent, const LootBlock& lootblock, ItemVector& itemVector)
 {
-	if(parent->size() < parent->capacity())
-	{
-		LootItems::const_iterator it;
-		if(it == lootblock.childLoot.end())
-			return true;
+	LootItems::const_iterator it = lootblock.childLoot.begin();
+	if(it == lootblock.childLoot.end())
+		return true;
 
-		for(it = lootblock.childLoot.begin(); it != lootblock.childLoot.end(); it++)
+	for(; it != lootblock.childLoot.end() && parent->size() < parent->capacity(); ++it)
+	{
+		if(Item* tmpItem = createLootItem((*it)))
 		{
-			Item* tmpItem = createLootItem(*it);
-			if(tmpItem)
+			if(Container* container = tmpItem->getContainer())
 			{
-				if(Container* container = tmpItem->getContainer())
-				{
-					if(createLootContainer(container, (*it), itemVector))
-						parent->__internalAddThing(container);
-					else
-						delete container;
-				}
+				if(createLootContainer(container, (*it), itemVector))
+					parent->__internalAddThing(container);
 				else
-				{
-					parent->__internalAddThing(tmpItem);
-					itemVector.push_back(tmpItem);
-				}
+					delete container;
+			}
+			else
+			{
+				parent->__internalAddThing(tmpItem);
+				itemVector.push_back(tmpItem);
 			}
 		}
 	}

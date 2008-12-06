@@ -2002,10 +2002,18 @@ bool Game::playerOpenChannel(uint32_t playerId, uint16_t channelId)
 		return false;
 
 	if(!g_chat.addUserToChannel(player, channelId))
+	{
+		#ifdef __DEBUG_CHAT__
+		std::cout << "Game::playerOpenChannel - failed adding user to channel." << std::endl;
+		#endif
 		return false;
 
 	ChatChannel* channel = g_chat.getChannel(player, channelId);
 	if(!channel)
+	{
+		#ifdef __DEBUG_CHAT__
+		std::cout << "Game::playerOpenChannel - failed retrieving channel." << std::endl;
+		#endif
 		return false;
 
 	if(channel->getId() != 0x03)
