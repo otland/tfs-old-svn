@@ -3062,7 +3062,7 @@ void Player::postAddNotification(Thing* thing, int32_t index, cylinderlink_t lin
 		if(const Container* container = item->getContainer())
 			onSendContainer(container);
 
-		if(shopOwner && link == LINK_OWNER)
+		if(shopOwner)
 			postUpdateGoods(item->getID());
 	}
 	else if(const Creature* creature = thing->getCreature())
@@ -3109,7 +3109,7 @@ void Player::postRemoveNotification(Thing* thing, int32_t index, bool isComplete
 				autoCloseContainers(container);
 		}
 
-		if(shopOwner && link == LINK_OWNER)
+		if(shopOwner)
 			postUpdateGoods(item->getID());
 	}
 }
