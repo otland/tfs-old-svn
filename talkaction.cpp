@@ -1012,15 +1012,12 @@ bool TalkAction::ghost(Player* player, const std::string& cmd, const std::string
 
 	SpectatorVec list;
 	g_game.getSpectators(list, player->getPosition(), true);
+	int32_t index = player->getTopParent()->__getIndexOfThing(player);
+
 	SpectatorVec::const_iterator it;
-
-	Cylinder* cylinder = player->getTopParent();
-	int32_t index = cylinder->__getIndexOfThing(player);
-
-	Player* tmpPlayer;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
-		if((tmpPlayer = (*it)->getPlayer()))
+		if(Player* tmpPlayer = (*it)->getPlayer())
 		{
 			tmpPlayer->sendCreatureChangeVisible(player, !player->isInGhostMode());
 			if(tmpPlayer != player && !tmpPlayer->canSeeGhost(player))

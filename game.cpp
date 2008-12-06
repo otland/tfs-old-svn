@@ -3201,18 +3201,15 @@ bool Game::playerSetFightModes(uint32_t playerId, fightMode_t fightMode, chaseMo
 	return true;
 }
 
-bool Game::playerRequestAddVip(uint32_t playerId, const std::string& vip_name)
+bool Game::playerRequestAddVip(uint32_t playerId, const std::string& vipName)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
-
-	std::string real_name;
-	real_name = vip_name;
+  
 	uint32_t guid;
 	bool specialVip;
-
-	if(!IOLoginData::getInstance()->getGuidByNameEx(guid, specialVip, real_name))
+	if(!IOLoginData::getInstance()->getGuidByNameEx(guid, specialVip, vipName))
 	{
 		player->sendTextMessage(MSG_STATUS_SMALL, "A player with that name does not exist.");
 		return false;
@@ -3224,8 +3221,11 @@ bool Game::playerRequestAddVip(uint32_t playerId, const std::string& vip_name)
 		return false;
 	}
 
-	bool online = (getPlayerByName(real_name) != NULL);
-	return player->addVIP(guid, real_name, online);
+	bool online = false;
+	if(Player* target = getPlayerByName(vipName))
+		online = (!target->isInGhostMode() || player->canSeeGhost(target));
+
+	return player->addVIP(guid, vipName, online);
 }
 
 bool Game::playerRequestRemoveVip(uint32_t playerId, uint32_t guid)
