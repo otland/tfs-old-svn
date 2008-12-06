@@ -3207,9 +3207,10 @@ bool Game::playerRequestAddVip(uint32_t playerId, const std::string& vipName)
 	if(!player || player->isRemoved())
 		return false;
   
+	std::string name = vipName;
 	uint32_t guid;
 	bool specialVip;
-	if(!IOLoginData::getInstance()->getGuidByNameEx(guid, specialVip, vipName))
+	if(!IOLoginData::getInstance()->getGuidByNameEx(guid, specialVip, name))
 	{
 		player->sendTextMessage(MSG_STATUS_SMALL, "A player with that name does not exist.");
 		return false;
@@ -3222,10 +3223,10 @@ bool Game::playerRequestAddVip(uint32_t playerId, const std::string& vipName)
 	}
 
 	bool online = false;
-	if(Player* target = getPlayerByName(vipName))
+	if(Player* target = getPlayerByName(name))
 		online = (!target->isInGhostMode() || player->canSeeGhost(target));
 
-	return player->addVIP(guid, vipName, online);
+	return player->addVIP(guid, name, online);
 }
 
 bool Game::playerRequestRemoveVip(uint32_t playerId, uint32_t guid)
