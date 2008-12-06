@@ -88,11 +88,11 @@ bool Raids::loadFromXml()
 					std::cout << "[Warning Raids::loadFromXml]: file tag missing for raid " << name << ", using default: " << file << std::endl;
 				}
 
-				if(readXMLInteger(raidNode, "interval2", intValue))
+				if(readXMLInteger(raidNode, "interval2", intValue) && intValue > 0)
 					interval = intValue * 60;
 				else
 				{
-					std::cout << "[Error Raids::loadFromXml]: interval2 tag missing for raid " << name << std::endl;
+					std::cout << "[Error Raids::loadFromXml]: interval2 tag missing or divided by 0 for raid " << name << std::endl;
 					raidNode = raidNode->next;
 					continue;
 				}
