@@ -191,13 +191,16 @@ bool IOGuild::joinGuild(Player* player, uint32_t guildId)
 	DBQuery query;
 	DBResult result;
 
-	query << "SELECT `name` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `level` = 1";
+	query << "SELECT `id`, `name` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `level` = 1";
 	if(!db->storeQuery(query, result))
 		return false;
 
-	player->setGuildId(guildId);
-
 	player->setGuildRank(result.getDataString("name"));
+	player->setGuildId(guildId);
+	query << "UPDATE `players` SET `rank_id` = " << result.getDataInt("id") << " WHERE `id` = " << player->getGUID() << ";";
+	if(!db->executeQuery(query))
+		return false;
+
 	query << "SELECT `name` AS `guildname` FROM `guilds` WHERE `id` = " << guildId;
 	if(!db->storeQuery(query, result))
 		return false;
