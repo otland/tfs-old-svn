@@ -2307,7 +2307,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 		return false;
 	}
 
-	if(item->getClientID() != fromSpriteId)
+	if(item->getClientID() != spriteId)
 	{
 		std::cout << "[Cheat detected] Player: " << player->getName() << " sent spriteId to useItem that does not match item at stackpos!" << std::endl;
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
