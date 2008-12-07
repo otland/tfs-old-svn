@@ -366,7 +366,7 @@ uint32_t DatabaseManager::updateDatabase()
 				}
 
 				if(imported[0])
-					std::cout << "WARNING: It appears that you have more than 6 groups, there is nothing wrong with that you have more than 6 groups, but they weren't updated with the new settings from 0.3 which you might want to do!" << std::endl;
+					std::cout << "WARNING: It appears that you have more than 6 groups, there is nothing wrong with that you have more that, but they weren't updated with the new settings from 0.3 so you might want to take a look at them!" << std::endl;
 
 				//Update players table
 				query.str("");
@@ -744,6 +744,29 @@ uint32_t DatabaseManager::updateDatabase()
 			query.str("");
 			registerDatabaseConfig("db_version", 6);
 			return 6;
+		}
+
+		case 6:
+		{
+			std::cout << "> Updating database to version: 7..." << std::endl;
+
+			DBQuery query;
+			query << "SELECT `id`, `guild_id` FROM `guild_ranks` WHERE `level` = 3;";
+			if((result = db->storeQuery(query.str())))
+			{
+				do
+				{
+					query.str("");
+					query << "UPDATE `guilds`, `players` SET `guilds`.`ownerid` = `players`.`id` WHERE `guilds`.`id` = " << result->getDataInt("guild_id") << " AND `players`.`rank_id` = " << result->getDataInt("id") << ";";
+					db->executeQuery(query.str());
+				}
+				while(result->next());
+				db->freeResult(result);
+			}
+
+			query.str("");
+			registerDatabaseConfig("db_version", 7);
+			return 7;
 		}
 
 		default:
