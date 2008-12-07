@@ -354,7 +354,7 @@ bool IOGuild::updateOwnerId(uint32_t guildId, uint32_t guid)
 		return false;
 
 	DBQuery query;
-	query << "UPDATE `guilds` SET `ownerid` = " << guildId << " WHERE `id` = " << guildId;
+	query << "UPDATE `guilds` SET `ownerid` = " << guid << " WHERE `id` = " << guildId;
 	return db->executeQuery(query);
 }
 
