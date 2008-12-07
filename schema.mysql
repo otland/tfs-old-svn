@@ -114,8 +114,8 @@ INSERT INTO `accounts` VALUES (1, '1', '1', 65535, 0, '', '0', 0, 0, 1);
 CREATE TABLE `players`
 (
 	`id` INT NOT NULL AUTO_INCREMENT,
-	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
 	`name` VARCHAR(255) NOT NULL,
+	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
 	`group_id` INT NOT NULL DEFAULT 1,
 	`account_id` INT NOT NULL DEFAULT 0,
 	`level` INT NOT NULL DEFAULT 1,
@@ -169,7 +169,7 @@ CREATE TABLE `players`
 	FOREIGN KEY (`group_id`) REFERENCES `groups`(`id`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `players` VALUES (1, 0, 'Account Manager', 1, 1, 1, 0, 150, 150, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 50, 50, 7, '', 400, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 201660000, 0, 10, 10, 10, 10, 0, 0, 0, 0, 0);
+INSERT INTO `players` VALUES (1, 'Account Manager', 0, 1, 1, 1, 0, 150, 150, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 50, 50, 7, '', 400, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 201660000, 0, 10, 10, 10, 10, 0, 0, 0, 0, 0);
 
 CREATE TABLE `bans`
 (
@@ -211,7 +211,7 @@ CREATE TABLE `guilds`
 
 CREATE TABLE `guild_invites`
 (
-	`player_id` INT UNSIGNED NOT NULL DEFAULT 0,
+	`player_id` INT NOT NULL DEFAULT 0,
 	`guild_id` INT NOT NULL DEFAULT 0,
 	UNIQUE (`player_id`, `guild_id`)
 ) ENGINE = InnoDB;

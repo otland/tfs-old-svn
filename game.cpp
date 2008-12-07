@@ -2187,8 +2187,22 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 	}
 
 	Item* item = thing->getItem();
-	if(!item || !item->isUseable())
+	if(!item)
 	{
+		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
+		return false;
+	}
+
+	if(!item->isUseable())
+	{
+		std::cout << "[Cheat detected] Player: " << player->getName() << " sent useItemEx packet on useItem item!" << std::endl;
+		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
+		return false;
+	}
+
+	if(item->getClientID() != fromSpriteId)
+	{
+		std::cout << "[Cheat detected] Player: " << player->getName() << " sent spriteId to useItemEx that does not match item at stackpos!" << std::endl;
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
 		return false;
 	}
@@ -2282,6 +2296,20 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 	Item* item = thing->getItem();
 	if(!item)
 	{
+		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
+		return false;
+	}
+
+	if(item->isUseable())
+	{
+		std::cout << "[Cheat detected] Player: " << player->getName() << " sent useItem packet on useItemEx item!" << std::endl;
+		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
+		return false;
+	}
+
+	if(item->getClientID() != fromSpriteId)
+	{
+		std::cout << "[Cheat detected] Player: " << player->getName() << " sent spriteId to useItem that does not match item at stackpos!" << std::endl;
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
 		return false;
 	}

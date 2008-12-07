@@ -7,22 +7,26 @@ CREATE TABLE `server_config` (
 INSERT INTO `server_config` VALUES ('db_version', 6);
 
 CREATE TABLE `server_motd` (
-	`id` INTEGER PRIMARY KEY,
-	`text` TEXT NOT NULL DEFAULT ''
+	`id` INTEGER NOT NULL,
+	`world_id` INTEGER NOT NULL DEFAULT 0,
+	`text` TEXT NOT NULL DEFAULT '',
+	UNIQUE (`id`, `world_id`)
 );
 
-INSERT INTO `server_motd` VALUES (1, 'Welcome to The Forgotten Server!');
+INSERT INTO `server_motd` VALUES (1, 0, 'Welcome to The Forgotten Server!');
 
 CREATE TABLE `server_record` (
 	`record` INTEGER NOT NULL,
 	`timestamp` INTEGER NOT NULL,
-	UNIQUE (`timestamp`, `record`)
+	`world_id` INTEGER NOT NULL DEFAULT 0,
+	UNIQUE (`timestamp`, `record`, `world_id`)
 );
 
-INSERT INTO `server_record` VALUES (0, 0);
+INSERT INTO `server_record` VALUES (0, 0, 0);
 
 CREATE TABLE `server_reports` (
 	`id` INTEGER PRIMARY KEY,
+	`world_id` INTEGER NOT NULL DEFAULT 0,
 	`player_id` INTEGER NOT NULL DEFAULT 0,
 	`posx` INTEGER NOT NULL DEFAULT 0,
 	`posy` INTEGER NOT NULL DEFAULT 0,
@@ -71,6 +75,7 @@ INSERT INTO `accounts` VALUES (1, '1', '1', 65535, 0, '', '0', 0, 0, 1);
 CREATE TABLE `players` (
 	`id` INTEGER PRIMARY KEY NOT NULL,
 	`name` VARCHAR(255) NOT NULL,
+	`world_id` INTEGER NOT NULL DEFAULT 0,
 	`group_id` INTEGER NOT NULL,
 	`account_id` INTEGER NOT NULL,
 	`level` INTEGER NOT NULL DEFAULT 1,
@@ -122,21 +127,23 @@ CREATE TABLE `players` (
 	FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`)
 );
 
-INSERT INTO `players` VALUES (1, 'Account Manager', 1, 1, 1, 0, 150, 150, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 50, 50, 7, '', 400, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 201660000, 0, 10, 10, 10, 10, 0, 0, 0, 0, 0);
+INSERT INTO `players` VALUES (1, 'Account Manager', 0, 1, 1, 1, 0, 150, 150, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 50, 50, 7, '', 400, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 201660000, 0, 10, 10, 10, 10, 0, 0, 0, 0, 0);
 
 CREATE TABLE `global_storage` (
 	`key` INTEGER NOT NULL,
+	`world_id` INTEGER NOT NULL DEFAULT 0,
 	`value` VARCHAR(255) NOT NULL DEFAULT '0',
-	UNIQUE (`key`)
+	UNIQUE (`key`, `world_id`)
 );
 
 CREATE TABLE `guilds` (
 	`id` INTEGER PRIMARY KEY,
+	`world_id` INTEGER NOT NULL DEFAULT 0,
 	`name` VARCHAR(255) NOT NULL,
 	`ownerid` INTEGER NOT NULL,
 	`creationdata` INTEGER NOT NULL,
 	`motd` VARCHAR(255) NOT NULL DEFAULT '',
-	UNIQUE (`name`),
+	UNIQUE (`name`, `world_id`),
 	FOREIGN KEY (`ownerid`) REFERENCES `players` (`id`)
 );
 
@@ -155,7 +162,8 @@ CREATE TABLE `guild_ranks` (
 );
 
 CREATE TABLE `houses` (
-	`id` INTEGER PRIMARY KEY,
+	`id` INTEGER NOT NULL,
+	`world_id` INTEGER NOT NULL DEFAULT 0,
 	`owner` INTEGER NOT NULL,
 	`paid` INTEGER NOT NULL DEFAULT 0,
 	`warnings` INTEGER NOT NULL DEFAULT 0,
@@ -164,14 +172,16 @@ CREATE TABLE `houses` (
 	`town` INTEGER NOT NULL DEFAULT 0,
 	`size` INTEGER NOT NULL DEFAULT 0,
 	`price` INTEGER NOT NULL DEFAULT 0,
-	`rent` INTEGER NOT NULL DEFAULT 0
+	`rent` INTEGER NOT NULL DEFAULT 0,
+	UNIQUE (`id`, `world_id`)
 );
 
 CREATE TABLE `house_lists` (
 	`house_id` INTEGER NOT NULL,
+	`world_id` INTEGER NOT NULL DEFAULT 0,
 	`listid` INTEGER NOT NULL,
 	`list` TEXT NOT NULL,
-	UNIQUE (`house_id`, `listid`),
+	UNIQUE (`house_id`, `world_id`, `listid`),
 	FOREIGN KEY (`house_id`) REFERENCES `houses` (`id`)
 );
 
@@ -223,20 +233,22 @@ CREATE TABLE `player_viplist` (
 
 CREATE TABLE `tiles` (
 	`id` INTEGER NOT NULL,
+	`world_id` INTEGER NOT NULL DEFAULT 0,
 	`x` INTEGER NOT NULL,
 	`y` INTEGER NOT NULL,
 	`z` INTEGER NOT NULL,
-	UNIQUE (`id`)
+	UNIQUE (`id`, `world_id`)
 );
 
 CREATE TABLE `tile_items` (
 	`tile_id` INTEGER NOT NULL,
+	`world_id` INTEGER NOT NULL DEFAULT 0,
 	`sid` INTEGER NOT NULL,
 	`pid` INTEGER NOT NULL DEFAULT 0,
 	`itemtype` INTEGER NOT NULL,
 	`count` INTEGER NOT NULL DEFAULT 0,
 	`attributes` BLOB NOT NULL,
-	UNIQUE (`tile_id`, `sid`),
+	UNIQUE (`tile_id`, `world_id`, `sid`),
 	FOREIGN KEY (`tile_id`) REFERENCES `tiles` (`id`)
 );
 
