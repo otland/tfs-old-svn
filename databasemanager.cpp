@@ -751,6 +751,7 @@ uint32_t DatabaseManager::updateDatabase()
 			std::cout << "> Updating database to version: 7..." << std::endl;
 
 			DBQuery query;
+			DBResult* result;
 			query << "SELECT `id`, `guild_id` FROM `guild_ranks` WHERE `level` = 3;";
 			if((result = db->storeQuery(query.str())))
 			{
