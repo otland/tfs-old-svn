@@ -175,6 +175,7 @@ class ConfigManager
 			BED_REQUIRE_PREMIUM,
 			ALLOW_CHANGECOLORS,
 			LOGIN_ONLY_LOGINSERVER,
+			STOP_ATTACK_AT_EXIT,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

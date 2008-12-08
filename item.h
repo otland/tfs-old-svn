@@ -192,15 +192,15 @@ class ItemAttributes
 			ATTR_ITEM_WRITTENBY = 32,
 
 			ATTR_ITEM_NAME = 64,
-			ATTR_ITEM_ARTICLE = 128,
-			ATTR_ITEM_PLURALNAME = 256,
-			ATTR_ITEM_ATTACK = 512,
-			ATTR_ITEM_EXTRAATTACK = 1024,
-			ATTR_ITEM_DEFENSE = 2048,
-			ATTR_ITEM_EXTRADEFENSE = 4096,
-			ATTR_ITEM_ARMOR = 8192,
-			ATTR_ITEM_ATTACKSPEED = 16384,
-			ATTR_ITEM_HITCHANCE = 32768,
+			ATTR_ITEM_PLURALNAME = 128,
+			ATTR_ITEM_ATTACK = 256,
+			ATTR_ITEM_EXTRAATTACK = 512,
+			ATTR_ITEM_DEFENSE = 1024,
+			ATTR_ITEM_EXTRADEFENSE = 2048,
+			ATTR_ITEM_ARMOR = 4096,
+			ATTR_ITEM_ATTACKSPEED = 8192,
+			ATTR_ITEM_HITCHANCE = 16384,
+			ATTR_ITEM_SHOOTRANGE = 32768,
 
 			ATTR_ITEM_OWNER = 65536,
 			ATTR_ITEM_DURATION = 131072,
@@ -208,7 +208,9 @@ class ItemAttributes
 			ATTR_ITEM_CORPSEOWNER = 524288,
 			ATTR_ITEM_CHARGES = 1048576,
 			ATTR_ITEM_FLUIDTYPE = 2097152,
-			ATTR_ITEM_DOORID = 4194304
+			ATTR_ITEM_DOORID = 4194304,
+
+			ATTR_ITEM_ARTICLE = 8388608
 		};
 
 		bool hasAttribute(itemAttrTypes type) const;
@@ -323,15 +325,8 @@ class Item : virtual public Thing, public ItemAttributes
 		uint16_t getClientID() const {return items[id].clientId;}
 		void setID(uint16_t newid);
 
-		WeaponType_t getWeaponType() const {return items[id].weaponType;}
-		Ammo_t	getAmmoType() const {return items[id].ammoType;}
-		int32_t getShootRange() const {return items[id].shootRange;}
-
 		const std::string& getName() const {return getStrAttr(ATTR_ITEM_NAME) != "" ? getStrAttr(ATTR_ITEM_NAME) : items[id].name;}
 		void setName(std::string name) {setStrAttr(ATTR_ITEM_NAME, name);}
-
-		const std::string& getArticle() const {return getStrAttr(ATTR_ITEM_ARTICLE) != "" ? getStrAttr(ATTR_ITEM_ARTICLE) : items[id].article;}
-		void setArticle(std::string article) {setStrAttr(ATTR_ITEM_ARTICLE, article);}
 
 		const std::string& getPluralName() const {return getStrAttr(ATTR_ITEM_PLURALNAME) != "" ? getStrAttr(ATTR_ITEM_PLURALNAME) : items[id].pluralName;}
 		void setPluralName(std::string pluralname) {setStrAttr(ATTR_ITEM_PLURALNAME, pluralname);}
@@ -357,12 +352,21 @@ class Item : virtual public Thing, public ItemAttributes
 		int32_t getHitChance() const {return hasAttribute(ATTR_ITEM_HITCHANCE) ? getIntAttr(ATTR_ITEM_HITCHANCE) : items[id].hitChance;}
 		void setHitChance(int32_t hitchance) {setIntAttr(ATTR_ITEM_HITCHANCE, hitchance);}
 
+		int32_t getShootRange() const {return hasAttribute(ATTR_ITEM_SHOOTRANGE) ? getIntAttr(ATTR_ITEM_SHOOTRANGE) : items[id].shootRange;}
+		void setShootRange(int32_t shootrange) {setIntAttr(ATTR_ITEM_HITCHANCE, shootrange);}
+
+		const std::string& getArticle() const {return getStrAttr(ATTR_ITEM_ARTICLE) != "" ? getStrAttr(ATTR_ITEM_ARTICLE) : items[id].article;}
+		void setArticle(std::string article) {setStrAttr(ATTR_ITEM_ARTICLE, article);}
+
 		virtual double getWeight() const;
-		int32_t getSlotPosition() const {return items[id].slotPosition;}
 
 		bool isReadable() const {return items[id].canReadText;}
 		bool canWriteText() const {return items[id].canWriteText;}
 		int32_t getMaxWriteLength() const {return items[id].maxTextLen;}
+
+		int32_t getSlotPosition() const {return items[id].slotPosition;}
+		WeaponType_t getWeaponType() const {return items[id].weaponType;}
+		Ammo_t getAmmoType() const {return items[id].ammoType;}
 
 		int32_t getWorth() const;
 		void getLight(LightInfo& lightInfo);

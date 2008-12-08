@@ -354,6 +354,9 @@
 	onStatsChange creature event (Elf)
 	Player and Global Storage now supports strings as values (Elf)
 	Deprecated hardcoded highscores function and rewritten as Lua function (Elf)
+	Protocol 8.4 support (Talaturen, Elf, Kiper)
+	Multiworld system (Elf)
+	Possibility to choose config file path for console/non-windows versions by --config=%PATH% argument (Elf)
 ]
 
 [ Deprecated
@@ -404,4 +407,6 @@
 	Unaccurate conditions length (Elf, OpenTibia SVN)
 	Players being unable to throw items at borders (Elf, OpenTibia SVN)
 	Database manager automatic table optimization not working (Elf)
+	Empty containers not being dropped by monsters (Elf)
+	Possibility to track an invisible GM by re-adding to VIP (Elf)
 ]

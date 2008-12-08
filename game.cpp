@@ -3934,15 +3934,19 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 		if(!force && target->getHealth() <= 0)
 			return false;
 
-		target->gainHealth(attacker, healthChange);
 		if(CreatureEvent* eventStats = target->getCreatureEvent(CREATURE_EVENT_STATSCHANGE))
-			eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_HEALTHGAIN, combatType, healthChange);
+		{
+			if(!eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_HEALTHGAIN, combatType, healthChange))
+				return false;
+		}
 
+		target->gainHealth(attacker, healthChange);
 		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isInGhostMode())
 		{
-			const SpectatorVec& list = getSpectators(targetPos);
 			char buffer[20];
 			sprintf(buffer, "+%d", healthChange);
+
+			const SpectatorVec& list = getSpectators(targetPos);
 			if(combatType != COMBAT_HEALING)
 				addMagicEffect(list, targetPos, NM_ME_MAGIC_ENERGY);
 
@@ -3951,7 +3955,6 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 	}
 	else
 	{
-		const SpectatorVec& list = getSpectators(targetPos);
 		if(!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR)
 		{
 			addMagicEffect(list, targetPos, NM_ME_POFF);
@@ -3971,12 +3974,17 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 				damage = std::max((int32_t)0, damage - manaDamage);
 				if(manaDamage != 0)
 				{
-					target->drainMana(attacker, manaDamage);
 					if(CreatureEvent* eventStats = target->getCreatureEvent(CREATURE_EVENT_STATSCHANGE))
-						eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_MANALOSS, combatType, healthChange);
+					{
+						if(!eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_MANALOSS, combatType, healthChange))
+							return false;
+					}
 
+					target->drainMana(attacker, manaDamage);
 					char buffer[20];
 					sprintf(buffer, "%d", manaDamage);
+
+					const SpectatorVec& list = getSpectators(targetPos);
 					addMagicEffect(list, targetPos, NM_ME_LOSE_ENERGY);
 					addAnimatedText(list, targetPos, TEXTCOLOR_BLUE, buffer);
 				}
@@ -3985,11 +3993,14 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			damage = std::min(target->getHealth(), damage);
 			if(damage > 0)
 			{
+				if(CreatureEvent* eventStats = target->getCreatureEvent(CREATURE_EVENT_STATSCHANGE))
+				{
+					if(!eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_HEALTHLOSS, combatType, healthChange))
+						return false;
+				}
+
 				target->drainHealth(attacker, combatType, damage);
 				addCreatureHealth(list, target);
-				if(CreatureEvent* eventStats = target->getCreatureEvent(CREATURE_EVENT_STATSCHANGE))
-					eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_HEALTHLOSS, combatType, healthChange);
-
 				TextColor_t textColor = TEXTCOLOR_NONE;
 				uint8_t hitEffect = 0;
 				switch(combatType)
@@ -4097,24 +4108,38 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 				{
 					char buffer[20];
 					sprintf(buffer, "%d", damage);
+
+					const SpectatorVec& list = getSpectators(targetPos);
 					addMagicEffect(list, targetPos, hitEffect);
 					addAnimatedText(list, targetPos, textColor, buffer);
 				}
 			}
 		}
 	}
+
 	return true;
 }
 
 bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaChange)
 {
-	const Position& targetPos = target->getPosition();
 	const SpectatorVec& list = getSpectators(targetPos);
 	if(manaChange > 0)
 	{
-		target->changeMana(manaChange);
 		if(CreatureEvent* eventStats = target->getCreatureEvent(CREATURE_EVENT_STATSCHANGE))
-			eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_MANAGAIN, COMBAT_HEALING, manaChange);
+		{
+			if(!eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_MANAGAIN, COMBAT_HEALING, manaChange))
+				return false;
+		}
+
+		target->changeMana(manaChange);
+		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isInGhostMode())
+		{
+			char buffer[20];
+			sprintf(buffer, "+%d", manaChange);
+
+			const SpectatorVec& list = getSpectators(targetPos);
+			addAnimatedText(list, targetPos, TEXTCOLOR_PURPLE, buffer);
+		}
 	}
 	else
 	{
@@ -4132,21 +4157,28 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 		BlockType_t blockType = target->blockHit(attacker, COMBAT_MANADRAIN, manaLoss);
 		if(blockType != BLOCK_NONE)
 		{
+			const SpectatorVec& list = getSpectators(targetPos);
 			addMagicEffect(list, targetPos, NM_ME_POFF);
 			return false;
 		}
 
 		if(manaLoss > 0)
 		{
-			target->drainMana(attacker, manaLoss);
 			if(CreatureEvent* eventStats = target->getCreatureEvent(CREATURE_EVENT_STATSCHANGE))
-				eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_MANALOSS, COMBAT_UNDEFINEDDAMAGE, manaChange);
+			{
+				if(!eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_MANALOSS, COMBAT_UNDEFINEDDAMAGE, manaChange))
+					return false;
+			}
 
+			target->drainMana(attacker, manaLoss);
 			char buffer[20];
 			sprintf(buffer, "%d", manaLoss);
+
+			const SpectatorVec& list = getSpectators(targetPos);
 			addAnimatedText(list, targetPos, TEXTCOLOR_BLUE, buffer);
 		}
 	}
+
 	return true;
 }
 
@@ -4257,7 +4289,7 @@ void Game::internalDecayItem(Item* item)
 	{
 		ReturnValue ret = internalRemoveItem(item);
 		if(ret != RET_NOERROR)
-			std::cout << "DEBUG, internalDecayItem failed, error code: " << (int32_t) ret << "item id: " << item->getID() << std::endl;
+			std::cout << "> DEBUG: internalDecayItem failed, error code: " << (int32_t)ret << "item id: " << item->getID() << std::endl;
 	}
 }
 
@@ -4407,9 +4439,7 @@ bool Game::closeRuleViolation(Player* player)
 
 	ruleViolations.erase(it);
 	player->sendLockRuleViolation();
-
-	ChatChannel* channel = g_chat.getChannelById(0x03);
-	if(channel)
+	if(ChatChannel* channel = g_chat.getChannelById(0x03))
 	{
 		for(UsersMap::const_iterator ut = channel->getUsers().begin(); ut != channel->getUsers().end(); ++ut)
 		{

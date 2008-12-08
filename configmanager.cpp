@@ -172,6 +172,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBool[BED_REQUIRE_PREMIUM] = getGlobalBool(L, "bedsRequirePremium", "yes");
 	m_confNumber[FIELD_OWNERSHIP] = getGlobalNumber(L, "fieldOwnershipDuration", 5 * 1000);
 	m_confBool[ALLOW_CHANGECOLORS] = getGlobalBool(L, "allowChangeColors", "yes");
+	m_confBool[STOP_ATTACK_AT_EXIT] = getGlobalBool(L, "stopAttackingAtExit", "no");
 	#ifndef __LOGIN_SERVER__
 	m_confBool[LOGIN_ONLY_LOGINSERVER] = getGlobalBool(L, "loginOnlyWithLoginServer", "no");
 	#else

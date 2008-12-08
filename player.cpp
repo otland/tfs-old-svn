@@ -1201,6 +1201,8 @@ void Player::sendPing(uint32_t interval)
 		npings++;
 		if(client)
 			client->sendPing();
+		else if(g_config.getBool(ConfigManager::STOP_ATTACK_AT_EXIT))
+			setAttackedCreature(NULL);
 	}
 
 	if(canLogout())
@@ -3705,9 +3707,9 @@ void Player::genReservedStorageRange()
 	{
 		if(!globalOutfits.isInList(getID(), (*it)->looktype, (*it)->addons))
 		{
-			char buffer[100];
-			sprintf(buffer, "%jd", int64_t((*it)->looktype << 16) | ((*it)->addons & 0xFF));
-			storageMap[baseKey] = buffer;
+			std::stringstream ss;
+			ss << (int64_t((*it)->looktype << 16) | ((*it)->addons & 0xFF));
+			storageMap[baseKey] = ss.str();
 
 			baseKey++;
 			if(baseKey > PSTRG_OUTFITS_RANGE_START + PSTRG_OUTFITS_RANGE_SIZE)
@@ -3906,13 +3908,12 @@ double Player::getLostPercent(lossTypes_t lossType)
 uint32_t Player::getAttackSpeed()
 {
 	uint32_t attackSpeed = vocation->getAttackSpeed();
-
-	Item* weapon = getWeapon();
-	if(weapon)
+	if(Item* weapon = getWeapon())
 	{
 		if(weapon->getAttackSpeed() != 0)
 			attackSpeed = weapon->getAttackSpeed();
 	}
+
 	return attackSpeed;
 }
 

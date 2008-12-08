@@ -593,7 +593,8 @@ class Player : public Creature, public Cylinder
 		void sendDistanceShoot(const Position& from, const Position& to, unsigned char type) const
 			{if(client) client->sendDistanceShoot(from, to, type);}
 		void sendHouseWindow(House* house, uint32_t listId) const;
-		void sendOutfitWindow() const;
+		void sendOutfitWindow() const
+			{if(client) client->sendOutfitWindow();}
 		void sendCreatePrivateChannel(uint16_t channelId, const std::string& channelName)
 			{if(client) client->sendCreatePrivateChannel(channelId, channelName);}
 		void sendClosePrivate(uint16_t channelId) const
@@ -888,9 +889,9 @@ class Player : public Creature, public Cylinder
 		void updateBaseSpeed()
 		{
 			if(!hasFlag(PlayerFlag_SetMaxSpeed))
-				baseSpeed = 220 + (2 * (level - 1));
+				baseSpeed = vocation->getBaseSpeed() + (2 * (level - 1));
 			else
-				baseSpeed = 900;
+				baseSpeed = PLAYER_MAX_SPEED;
 		}
 
 		bool isPromoted(uint32_t pLevel = 1) const {return promotionLevel >= pLevel;}

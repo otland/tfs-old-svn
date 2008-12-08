@@ -200,7 +200,8 @@ void ScriptEnviroment::addUniqueThing(Thing* thing)
 	if(item && item->getUniqueId() != 0)
 	{
 		int32_t uid = item->getUniqueId();
-		if(Thing* tmp = m_globalMap[uid])
+		Thing* tmp = m_globalMap[uid];
+		if(tmp)
 		{
 			if(item->getActionId() != 2000)
 				std::cout << "Duplicate uniqueId " << uid << std::endl;
@@ -1196,6 +1197,9 @@ void LuaScriptInterface::registerFunctions()
 	//setPlayerGroupId(cid, newGroupId)
 	lua_register(m_luaState, "setPlayerGroupId", LuaScriptInterface::luaSetPlayerGroupId);
 
+	//doPlayerSendOutfitWindow(cid)
+	lua_register(m_luaState, "doPlayerSendOutfitWindow", LuaScriptInterface::luaDoPlayerSendOutfitWindow);
+
 	//doPlayerLearnInstantSpell(cid, name)
 	lua_register(m_luaState, "doPlayerLearnInstantSpell", LuaScriptInterface::luaDoPlayerLearnInstantSpell);
 
@@ -1841,6 +1845,12 @@ void LuaScriptInterface::registerFunctions()
 	//setItemHitChance(uid, hitChance)
 	lua_register(m_luaState, "setItemHitChance", LuaScriptInterface::luaSetItemHitChance);
 
+	//getItemShootRange(uid)
+	lua_register(m_luaState, "getItemShootRange", LuaScriptInterface::luaGetItemShootRange);
+
+	//setItemShootRange(uid, shootRange)
+	lua_register(m_luaState, "setItemShootRange", LuaScriptInterface::luaSetItemShootRange);
+
 	//hasProperty(uid)
 	lua_register(m_luaState, "hasProperty", LuaScriptInterface::luaHasProperty);
 
@@ -2273,6 +2283,10 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 			case PlayerInfoRedSkullTicks:
 				value = player->getRedSkullTicks();
 				break;
+			case PlayerInfoOutfitWindow:
+				value = LUA_NO_ERROR;
+				player->sendOutfitWindow();
+				break;
 			default:
 				std::string tmp = "Unknown player info - " + info;
 				reportErrorFunc(tmp);
@@ -2478,6 +2492,11 @@ int32_t LuaScriptInterface::luaGetPlayerIp(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerRedSkullTicks(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoRedSkullTicks);
+}
+
+int32_t LuaScriptInterface::luaDoPlayerSendOutfitWindow(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoOutfitWindow);
 }
 //
 
@@ -5089,11 +5108,9 @@ int32_t LuaScriptInterface::luaGetPlayerSlotItem(lua_State* L)
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	const Player* player = env->getPlayerByUID(cid);
-	if(player)
+	if(const Player* player = env->getPlayerByUID(cid))
 	{
-		Thing* thing = player->__getThing(slot);
-		if(thing)
+		if(Thing* thing = player->__getThing(slot))
 		{
 			uint32_t uid = env->addThing(thing);
 			pushThing(L, thing, uid);
@@ -5118,16 +5135,16 @@ int32_t LuaScriptInterface::luaGetPlayerWeapon(lua_State* L)
 	if(parameters > 2)
 		ignoreAmmo = (popNumber(L) == LUA_TRUE);
 
-	uint32_t cid = popNumber(L);
-
 	ScriptEnviroment* env = getScriptEnv();
-	Player* player = env->getPlayerByUID(cid);
-	if(player)
+	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
 		if(Item* weapon = player->getWeapon(ignoreAmmo))
-			lua_pushnumber(L, weapon->getID());
+		{
+			uint32_t uid = env->addThing(weapon);
+			pushThing(L, weapon, uid);
+		}
 		else
-			lua_pushnumber(L, LUA_NULL);
+			pushThing(L, NULL, 0);
 	}
 	else
 	{
@@ -9347,6 +9364,40 @@ int32_t LuaScriptInterface::luaSetItemHitChance(lua_State* L)
 		return 1;
 	}
 	item->setHitChance(value);
+	lua_pushnumber(L, LUA_NO_ERROR);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetItemShootRange(lua_State* L)
+{
+	uint32_t uid = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	Item* item = env->getItemByUID(uid);
+	if(!item)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+		return 1;
+	}
+	lua_pushnumber(L, item->getShootRange());
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaSetItemShootRange(lua_State* L)
+{
+	int32_t value = (int32_t)popNumber(L);
+	uint32_t uid = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	Item* item = env->getItemByUID(uid);
+	if(!item)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+		return 1;
+	}
+	item->setShootRange(value);
 	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;
 }

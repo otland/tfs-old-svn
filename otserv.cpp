@@ -197,7 +197,8 @@ void serverMain(void* param)
 	{
 		char buffer[200];
 		sscanf(argv[1], "--config=%s", buffer);
-		ConfigManager::filename = buffer;
+		if(fileExists(buffer))
+			ConfigManager::filename = buffer;
 	}
 
 	#endif

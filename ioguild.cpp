@@ -183,7 +183,7 @@ bool IOGuild::joinGuild(Player* player, uint32_t guildId)
 
 	query.str("");
 	query << "UPDATE `players` SET `rank_id` = " << rankId << " WHERE `id` = " << player->getGUID() << ";";
-	if(!db->executeQuery(query))
+	if(!db->executeQuery(query.str()))
 		return false;
 
 	player->setGuildId(guildId);

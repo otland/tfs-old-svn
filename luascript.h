@@ -243,10 +243,11 @@ enum PlayerInfo_t
 	PlayerInfoPzLock,
 	PlayerInfoSaving,
 	PlayerInfoIp,
-	PlayerInfoRedSkullTicks
+	PlayerInfoRedSkullTicks,
+	PlayerInfoOutfitWindow
 };
 
-#define reportErrorFunc(a)  reportError(__FUNCTION__, a)
+#define reportErrorFunc(a) reportError(__FUNCTION__, a)
 
 enum ErrorCode_t
 {
@@ -421,6 +422,7 @@ class LuaScriptInterface
 		static int32_t luaDoPlayerSetRedSkullTicks(lua_State* L);
 		static int32_t luaDoPlayerSwitchSaving(lua_State* L);
 		static int32_t luaDoPlayerSave(lua_State* L);
+		static int32_t luaDoPlayerSendOutfitWindow(lua_State* L);
 
 		//queries
 		static int32_t luaGetCreatureByName(lua_State* L);
@@ -730,6 +732,8 @@ class LuaScriptInterface
 		static int32_t luaSetItemAttackSpeed(lua_State* L);
 		static int32_t luaGetItemHitChance(lua_State* L);
 		static int32_t luaSetItemHitChance(lua_State* L);
+		static int32_t luaGetItemShootRange(lua_State* L);
+		static int32_t luaSetItemShootRange(lua_State* L);
 
 		static int32_t luaGetDataDir(lua_State* L);
 		static int32_t luaGetLogsDir(lua_State* L);
