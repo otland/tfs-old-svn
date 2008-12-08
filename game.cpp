@@ -2207,13 +2207,6 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 		return false;
 	}
 
-	if(item->getClientID() != fromSpriteId)
-	{
-		std::cout << "[Cheat detected] Player: " << player->getName() << " sent spriteid to useItem that does not match item at stackpos!" << std::endl;
-		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
-		return false;
-	}
-
 	Position walkToPos = fromPos;
 	ReturnValue ret = g_actions->canUse(player, fromPos);
 	if(ret == RET_NOERROR)
@@ -2310,13 +2303,6 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 	if(item->isUseable())
 	{
 		std::cout << "[Cheat detected] Player: " << player->getName() << " sent useItem packet on useItemEx item!" << std::endl;
-		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
-		return false;
-	}
-
-	if(item->getClientID() != spriteId)
-	{
-		std::cout << "[Cheat detected] Player: " << player->getName() << " sent spriteid to useItem that does not match item at stackpos!" << std::endl;
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
 		return false;
 	}
