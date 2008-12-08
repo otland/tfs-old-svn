@@ -165,32 +165,34 @@ bool IOGuild::joinGuild(Player* player, uint32_t guildId)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `name` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `level` = 1";
+	query << "SELECT `id`, `name` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `level` = 1";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
+	const uint32_t rankId = result->getDataInt("id");
 	const std::string rankName = result->getDataString("name");
+	db->freeResult(result);
 
 	query.str("");
-	db->freeResult(result);
 	query << "SELECT `name` as `guildname` FROM `guilds` WHERE `id` = " << guildId;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
 	const std::string guildName = result->getDataString("guildname");
+	db->freeResult(result);
 
 	query.str("");
-	db->freeResult(result);
-	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `level` = 1";
-	if(!(result = db->storeQuery(query.str())))
+	query << "UPDATE `players` SET `rank_id` = " << rankId << " WHERE `id` = " << player->getGUID() << ";";
+	if(!db->executeQuery(query))
 		return false;
 
-	player->setGuildName(guildName);
 	player->setGuildId(guildId);
-	player->setGuildLevel(GUILDLEVEL_MEMBER);
+	player->setGuildName(guildName);
+	player->setGuildRankId(rankId);
 	player->setGuildRank(rankName);
+	player->setGuildLevel(GUILDLEVEL_MEMBER);
+
 	player->invitedToGuildsList.clear();
-	db->freeResult(result);
 	return true;
 }
 

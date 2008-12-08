@@ -749,23 +749,27 @@ uint32_t DatabaseManager::updateDatabase()
 		case 6:
 		{
 			std::cout << "> Updating database to version: 7..." << std::endl;
-
-			DBQuery query;
-			DBResult* result;
-			query << "SELECT `id`, `guild_id` FROM `guild_ranks` WHERE `level` = 3;";
-			if((result = db->storeQuery(query.str())))
+			if(g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
 			{
-				do
+				DBResult* result;
+
+				DBQuery query;
+				query << "SELECT `r`.`id`, `r`.`guild_id` FROM `guild_ranks` r LEFT JOIN `guilds` g ON `r`.`guild_id` = `g`.`id` WHERE `g`.`ownerid` = `g`.`id` AND `r`.`level` = 3;";
+				if((result = db->storeQuery(query.str())))
 				{
-					query.str("");
-					query << "UPDATE `guilds`, `players` SET `guilds`.`ownerid` = `players`.`id` WHERE `guilds`.`id` = " << result->getDataInt("guild_id") << " AND `players`.`rank_id` = " << result->getDataInt("id") << ";";
-					db->executeQuery(query.str());
+					do
+					{
+						query.str("");
+						query << "UPDATE `guilds`, `players` SET `guilds`.`ownerid` = `players`.`id` WHERE `guilds`.`id` = " << result->getDataInt("guild_id") << " AND `players`.`rank_id` = " << result->getDataInt("id") << ";";
+						db->executeQuery(query.str());
+					}
+					while(result->next());
+					db->freeResult(result);
 				}
-				while(result->next());
-				db->freeResult(result);
+
+				query.str("");
 			}
 
-			query.str("");
 			registerDatabaseConfig("db_version", 7);
 			return 7;
 		}
