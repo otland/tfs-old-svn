@@ -4879,6 +4879,7 @@
 		<attribute key="attack" value="60"/>
 		<attribute key="defense" value="1"/>
 		<attribute key="weaponType" value="sword"/>
+		<attribute key="elementIce" value="18"/>
 		<attribute key="charges" value="1"/>
 	</item>
 	<item id="2397" article="a" name="longsword">

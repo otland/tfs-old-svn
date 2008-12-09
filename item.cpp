@@ -970,31 +970,46 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			s << " (Range:" << int32_t(item ? item->getShootRange() : it.shootRange);
 			if(it.attack != 0 || it.extraAttack != 0 || (item && (item->getAttack() != 0 || item->getExtraAttack() != 0)))
 			{
-				s << " Atk:" << int32_t(item ? item->getAttack() : it.attack);
+				s << ", Atk:" << int32_t(item ? item->getAttack() : it.attack);
 				if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
 					s << " " << std::showpos << int32_t(item ? item->getExtraAttack() : it.extraAttack) << std::noshowpos;
 			}
 
 			if(it.hitChance != -1 || (item && item->getHitChance() != -1))
-				s << " Hit%" << std::showpos << (item ? item->getHitChance() : it.hitChance) << std::noshowpos;
+				s << ", Hit%" << std::showpos << (item ? item->getHitChance() : it.hitChance) << std::noshowpos;
 
 			s << ")";
 		}
 		else if(it.weaponType != WEAPON_AMMO && it.weaponType != WEAPON_WAND)
 		{
 			s << " (";
+			bool isBegin = true;
 			if(it.attack != 0 || it.extraAttack != 0 || (item && (item->getAttack() != 0 || item->getExtraAttack() != 0)))
 			{
-				s << "Atk:" << int32_t(item ? item->getAttack() : it.attack);
-				if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
-					s << " " << std::showpos << int32_t(item ? item->getExtraAttack() : it.extraAttack) << std::noshowpos;
+				isBegin = false;
+				s << "Atk:";
+				if(it.abilities.elementType != COMBAT_NONE && charges <= 0)
+				{
+					s << std::min(0, int32_t((item ? item->getAttack() : it.attack) - it.abilities.elementDamage));
+					if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
+						s << " " << std::showpos << int32_t(item ? item->getExtraAttack() : it.extraAttack) << std::noshowpos;
+
+					s << " physical + " << it.abilities.elementDamage << " " << getCombatName(it.abilities.elementType);
+				}
+				else
+				{
+					s << int32_t(item ? item->getAttack() : it.attack);
+					if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
+						s << " " << std::showpos << int32_t(item ? item->getExtraAttack() : it.extraAttack) << std::noshowpos;
+				}
 			}
 
 			if(it.defense != 0 || it.extraDefense != 0 || (item && (item->getDefense() != 0 || item->getExtraDefense() != 0)))
 			{
-				if(it.attack != 0 || it.extraAttack != 0 || (item && (item->getAttack() != 0 || item->getExtraAttack() != 0)))
-					s << " ";
+				if(!isBegin)
+					s << ", ";
 
+				isBegin = false;
 				s << "Def:" << int32_t(item ? item->getDefense() : it.defense);
 				if(it.extraDefense != 0 || (item && item->getExtraDefense() != 0))
 					s << " " << std::showpos << int32_t(item ? item->getExtraDefense() : it.extraDefense) << std::noshowpos;
@@ -1002,10 +1017,10 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 
 			if(it.abilities.stats[STAT_MAGICLEVEL] != 0)
 			{
-				if(it.attack != 0 || it.extraAttack != 0 || it.defense != 0 || it.extraDefense != 0 || (item &&
-					(item->getAttack() != 0 || item->getExtraAttack() != 0 || item->getDefense() != 0 || item->getExtraDefense() != 0)))
+				if(!isBegin)
 					s << ", ";
 
+				isBegin = false;
 				s << "magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICLEVEL] << std::noshowpos;
 			}
 
@@ -1015,125 +1030,123 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 	else if(it.armor != 0 || (item && item->getArmor() != 0))
 	{
 		s << " (Arm:" << (item ? item->getArmor() : it.armor);
-
 		if(it.abilities.absorbPercentOther != 0 || it.abilities.absorbPercentDeath != 0 ||
 			it.abilities.absorbPercentDrown != 0 || it.abilities.absorbPercentEarth != 0 ||
 			it.abilities.absorbPercentEnergy != 0 || it.abilities.absorbPercentFire != 0 ||
 			it.abilities.absorbPercentHoly != 0 || it.abilities.absorbPercentIce != 0 ||
 			it.abilities.absorbPercentLifeDrain != 0 || it.abilities.absorbPercentManaDrain != 0 ||
 			it.abilities.absorbPercentPhysical != 0)
-		{
-			bool isBegin = true;
 			s << ", protection";
-			if(it.abilities.absorbPercentOther != 0)
-			{
-				s << " other " << std::showpos << it.abilities.absorbPercentOther << std::noshowpos << "%";
-				isBegin = false;
-			}
 
-			if(it.abilities.absorbPercentDeath != 0)
-			{
-				if(!isBegin)
-					s << ",";
+		bool isBegin = true;
+		if(it.abilities.absorbPercentOther != 0)
+		{
+			isBegin = false;
+			s << " other " << std::showpos << it.abilities.absorbPercentOther << std::noshowpos << "%";
+		}
 
-				s << " death " << std::showpos << it.abilities.absorbPercentDeath << std::noshowpos << "%";
-				isBegin = false;
-			}
+		if(it.abilities.absorbPercentDeath != 0)
+		{
+			if(!isBegin)
+				s << ",";
 
-			if(it.abilities.absorbPercentDrown != 0)
-			{
-				if(!isBegin)
-					s << ",";
+			isBegin = false;
+			s << " death " << std::showpos << it.abilities.absorbPercentDeath << std::noshowpos << "%";
+		}
 
-				s << " drown " << std::showpos << it.abilities.absorbPercentDrown << std::noshowpos << "%";
-				isBegin = false;
-			}
+		if(it.abilities.absorbPercentDrown != 0)
+		{
+			if(!isBegin)
+				s << ",";
 
-			if(it.abilities.absorbPercentEarth != 0)
-			{
-				if(!isBegin)
-					s << ",";
+			isBegin = false;
+			s << " drown " << std::showpos << it.abilities.absorbPercentDrown << std::noshowpos << "%";
+		}
 
-				s << " earth " << std::showpos << it.abilities.absorbPercentEarth << std::noshowpos << "%";
-				isBegin = false;
-			}
+		if(it.abilities.absorbPercentEarth != 0)
+		{
+			if(!isBegin)
+				s << ",";
 
-			if(it.abilities.absorbPercentEnergy != 0)
-			{
-				if(!isBegin)
-					s << ",";
+			isBegin = false;
+			s << " earth " << std::showpos << it.abilities.absorbPercentEarth << std::noshowpos << "%";
+		}
 
-				s << " energy " << std::showpos << it.abilities.absorbPercentEnergy << std::noshowpos << "%";
-				isBegin = false;
-			}
+		if(it.abilities.absorbPercentEnergy != 0)
+		{
+			if(!isBegin)
+				s << ",";
 
-			if(it.abilities.absorbPercentFire != 0)
-			{
-				if(!isBegin)
-					s << ",";
+			isBegin = false;
+			s << " energy " << std::showpos << it.abilities.absorbPercentEnergy << std::noshowpos << "%";
+		}
 
-				s << " fire " << std::showpos << it.abilities.absorbPercentFire << std::noshowpos << "%";
-				isBegin = false;
-			}
+		if(it.abilities.absorbPercentFire != 0)
+		{
+			if(!isBegin)
+				s << ",";
 
-			if(it.abilities.absorbPercentHoly != 0)
-			{
-				if(!isBegin)
-					s << ",";
+			isBegin = false;
+			s << " fire " << std::showpos << it.abilities.absorbPercentFire << std::noshowpos << "%";
+		}
 
-				s << " holy " << std::showpos << it.abilities.absorbPercentHoly << std::noshowpos << "%";
-				isBegin = false;
-			}
+		if(it.abilities.absorbPercentHoly != 0)
+		{
+			if(!isBegin)
+				s << ",";
 
-			if(it.abilities.absorbPercentIce != 0)
-			{
-				if(!isBegin)
-					s << ",";
+			isBegin = false;
+			s << " holy " << std::showpos << it.abilities.absorbPercentHoly << std::noshowpos << "%";
+		}
 
-				s << " ice " << std::showpos << it.abilities.absorbPercentIce << std::noshowpos << "%";
-				isBegin = false;
-			}
+		if(it.abilities.absorbPercentIce != 0)
+		{
+			if(!isBegin)
+				s << ",";
 
-			if(it.abilities.absorbPercentLifeDrain != 0)
-			{
-				if(!isBegin)
-					s << ",";
+			isBegin = false;
+			s << " ice " << std::showpos << it.abilities.absorbPercentIce << std::noshowpos << "%";
+		}
 
-				s << " life drain " << std::showpos << it.abilities.absorbPercentLifeDrain << std::noshowpos << "%";
-				isBegin = false;
-			}
+		if(it.abilities.absorbPercentLifeDrain != 0)
+		{
+			if(!isBegin)
+				s << ",";
 
-			if(it.abilities.absorbPercentManaDrain != 0)
-			{
-				if(!isBegin)
-					s << ",";
+			isBegin = false;
+			s << " life drain " << std::showpos << it.abilities.absorbPercentLifeDrain << std::noshowpos << "%";
+		}
 
-				s << " mana drain " << std::showpos << it.abilities.absorbPercentManaDrain << std::noshowpos << "%";
-				isBegin = false;
-			}
+		if(it.abilities.absorbPercentManaDrain != 0)
+		{
+			if(!isBegin)
+				s << ",";
 
-			if(it.abilities.absorbPercentPhysical != 0)
-			{
-				if(!isBegin)
-					s << ",";
+			isBegin = false;
+			s << " mana drain " << std::showpos << it.abilities.absorbPercentManaDrain << std::noshowpos << "%";
+		}
 
-				s << " physical " << std::showpos << it.abilities.absorbPercentPhysical << std::noshowpos << "%";
-				isBegin = false;
-			}
+		if(it.abilities.absorbPercentPhysical != 0)
+		{
+			if(!isBegin)
+				s << ",";
+
+			isBegin = false;
+			s << " physical " << std::showpos << it.abilities.absorbPercentPhysical << std::noshowpos << "%";
 		}
 
 		if(it.abilities.stats[STAT_MAGICLEVEL] != 0)
 			s << ", magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICLEVEL] << std::noshowpos;
 
 		if(it.abilities.speed > 0)
-			s << ", speed +" << it.abilities.speed / 2;
+			s << ", speed " << std::showpos << (it.abilities.speed / 2) << std::noshowpos;
 
 		s << ")";
 	}
 	else if(it.isContainer())
 		s << " (Vol:" << (int32_t)it.maxItems << ")";
 	else if(it.abilities.speed > 0)
-		s << " (speed +" << it.abilities.speed / 2 << ")";
+		s << " (speed " << std::showpos << (it.abilities.speed / 2) << std::noshowpos << ")";
 	else if(it.isKey())
 		s << " (Key:" << (item ? (int32_t)item->getActionId() : 0) << ")";
 	else if(it.isFluidContainer())
@@ -1240,20 +1253,14 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			s << std::endl << getWeightDescription(it, weight);
 	}
 
-	if(it.abilities.elementType != COMBAT_NONE)
+	if(it.abilities.elementType != COMBAT_NONE && charges > 0)
 	{
-		s << " It is";
-		if(it.charges != 0)
-			s << " temporarily";
-
-		s << " enchanted with " << getCombatName(it.abilities.elementType) << " (";
+		s << " It is temporarily enchanted with " << getCombatName(it.abilities.elementType) << " (";
+		s << std::min(0, int32_t((item ? item->getAttack() : it.attack) - it.abilities.elementDamage));
 		if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
-			s << ((item ? item->getAttack() : it.attack) + (item ? item->getExtraAttack() : it.extraAttack)) - it.abilities.elementDamage;
-		else
-			s << it.attack - it.abilities.elementDamage;
+			s << " " << std::showpos << int32_t(item ? item->getExtraAttack() : it.extraAttack) << std::noshowpos;
 
-		s << " physical + " << it.abilities.elementDamage << " " << getCombatName(it.abilities.elementType);
-		s << " damage).";
+		s << " physical + " << it.abilities.elementDamage << " " << getCombatName(it.abilities.elementType) << " damage).";
 	}
 
 	if(item && !item->getSpecialDescription().empty())
