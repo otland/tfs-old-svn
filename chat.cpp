@@ -354,7 +354,7 @@ bool Chat::deleteChannel(Player* player, uint16_t channelId)
 bool Chat::addUserToChannel(Player* player, uint16_t channelId)
 {
 	ChatChannel* channel = getChannel(player, channelId);
-	if(!channel || !player)
+	if(!channel)
 	{
 		#ifdef __DEBUG_CHAT__
 		std::cout << "ChatChannel::addUser - failed retrieving channel or player NULL." << std::endl;
@@ -368,10 +368,10 @@ bool Chat::addUserToChannel(Player* player, uint16_t channelId)
 bool Chat::removeUserFromChannel(Player* player, uint16_t channelId)
 {
 	ChatChannel* channel = getChannel(player, channelId);
-	if(!channel || !player || !channel->removeUser(player))
+	if(!channel || !channel->removeUser(player))
 		return false;
 
-	if(channel->getOwner() == player->getGUID())
+	if(player && channel->getOwner() == player->getGUID())
 		deleteChannel(player, channelId);
 
 	return true;
@@ -379,18 +379,15 @@ bool Chat::removeUserFromChannel(Player* player, uint16_t channelId)
 
 void Chat::removeUserFromAllChannels(Player* player)
 {
-	if(!player)
-		return;
-
 	ChannelList list = getChannelList(player);
 	for(ChannelList::iterator it = list.begin(); it != list.end(); ++it)
 	{
 		ChatChannel* channel = (*it);
-		if(channel && channel->removeUser(player))
-		{
-			if(channel->getOwner() == player->getGUID())
-				deleteChannel(player, channel->getId());
-		}
+		if(!channel || !channel->removeUser(player))
+			continue;
+
+		if(player && channel->getOwner() == player->getGUID())
+			deleteChannel(player, channel->getId());
 	}
 }
 

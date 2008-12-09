@@ -1548,12 +1548,14 @@ void Player::closeShopWindow(Npc* npc/* = NULL*/, int32_t onBuy/* = -1*/, int32_
 	if(npc || (npc = getShopOwner(onBuy, onSell)))
 		npc->onPlayerEndTrade(this, onBuy, onSell);
 
+	if(shopOwner)
+		sendCloseShop();
+
 	shopOwner = NULL;
 	purchaseCallback = -1;
 	saleCallback = -1;
 	shopOffer.clear();
 	goodsMap.clear();
-	sendCloseShop();
 }
 
 void Player::onWalk(Direction& dir)
