@@ -2154,10 +2154,12 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 	if(player->isTeleportingByClick())
 	{
 		Position pos = player->getPosition();
-		for(std::list<Direction>::iterator it = listDir.begin(); it != listDir.end(); ++it)
+		std::list<Direction>::iterator it
+		for(it = listDir.begin(); it != listDir.end()-1; ++it)
 			pos = getNextPosition(*it, pos);
-
+		
 		internalTeleport(player, pos, false);
+		playerMove(playerId, ++it);
 		return true;
 	}
 
