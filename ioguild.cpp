@@ -124,17 +124,20 @@ bool IOGuild::changeRankName(std::string oldRankName, std::string newRankName, u
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
+	const uint32_t rankId = result->getDataInt("id");
 	db->freeResult(result);
+
 	query.str("");
-	query << "UPDATE `guild_ranks` SET `name` = " << db->escapeString(newRankName) << " WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(oldRankName) << " AND `guild_id` = " << guildId;
+	query << "UPDATE `guild_ranks` SET `name` = " << db->escapeString(newRankName) << " WHERE `id` = " << rankId << " AND `guild_id` = " << guildId;
 	if(!db->executeQuery(query.str()))
 		return false;
 
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		if((*it).second->getGuildId() == guildId && (*it).second->getGuildRank() == oldRankName)
+		if((*it).second->getGuildId() == guildId && (*it).second->getGuildRankId() == rankId)
 			(*it).second->setGuildRank(newRankName);
 	}
+
 	return false;
 }
 
@@ -144,7 +147,7 @@ bool IOGuild::createGuild(Player* player)
 	DBResult* result;
 
 	DBQuery query;
-	query << "INSERT INTO `guilds` (`id`, `world_id`, `name`, `ownerid`, `creationdata`, `motd`) VALUES (NULL, " << db->escapeString(player->getGuildName()) << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << player->getGUID() << ", " << time(NULL) << ", 'Your guild has successfully been created, to view all available commands use: <!commands>. If you would like to remove this message use <!cleanmotd>, if you would like to edit it, use <!setmotd newMotd>.');";
+	query << "INSERT INTO `guilds` (`id`, `world_id`, `name`, `ownerid`, `creationdata`, `motd`) VALUES (NULL, " << db->escapeString(player->getGuildName()) << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << player->getGUID() << ", " << time(NULL) << ", 'Your guild has been successfully created, to view all available commands type: !commands. If you would like to remove this message use !cleanmotd and to set new motd use !setmotd text.');";
 	if(!db->executeQuery(query.str()))
 		return false;
 
@@ -199,9 +202,12 @@ bool IOGuild::joinGuild(Player* player, uint32_t guildId)
 bool IOGuild::disbandGuild(uint32_t guildId)
 {
 	Database* db = Database::getInstance();
+
 	DBQuery query;
 	query << "UPDATE `players` SET `rank_id` = '' AND `guildnick` = '' WHERE `rank_id` = " << getRankIdByGuildIdAndLevel(guildId, 3) << " OR rank_id = " << getRankIdByGuildIdAndLevel(guildId, 2) << " OR rank_id = " << getRankIdByGuildIdAndLevel(guildId, 1);
-	db->executeQuery(query.str());
+	if(!db->executeQuery(query.str()))
+		return false;
+
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
 		if((*it).second->getGuildId() == guildId)
@@ -215,7 +221,8 @@ bool IOGuild::disbandGuild(uint32_t guildId)
 
 	query.str("");
 	query << "DELETE FROM `guild_invites` WHERE `guild_id` = " << guildId;
-	db->executeQuery(query.str());
+	if(!db->executeQuery(query.str()))
+		return false;
 
 	query.str("");
 	query << "DELETE FROM `guild_ranks` WHERE `guild_id` = " << guildId;
@@ -229,14 +236,12 @@ bool IOGuild::hasGuild(uint32_t guid)
 
 	DBQuery query;
 	query << "SELECT `rank_id` FROM `players` WHERE `id` = " << guid;
-	if((result = db->storeQuery(query.str())))
-	{
-		const uint32_t rankId = result->getDataInt("rank_id");
-		db->freeResult(result);
-		if(rankId != 0)
-			return true;
-	}
-	return false;
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	const uint32_t rankId = result->getDataInt("rank_id");
+	db->freeResult(result);
+	return (rankId != 0);
 }
 
 bool IOGuild::isInvitedToGuild(uint32_t guid, uint32_t guildId)
