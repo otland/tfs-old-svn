@@ -85,29 +85,29 @@
 #endif
 
 #ifdef BOOST_NO_EXCEPTIONS
-	#include <exception>
-	void boost::throw_exception(std::exception const & e)
-	{
-		std::cout << "Boost exception: " << e.what() << std::endl;
-	}
+#include <exception>
+void boost::throw_exception(std::exception const & e)
+{
+	std::cout << "Boost exception: " << e.what() << std::endl;
+}
 #endif
 
 IPList serverIPs;
-extern GlobalEvents* g_globalEvents;
 #ifdef __REMOTE_CONTROL__
 extern Admin* g_admin;
 #endif
+extern GlobalEvents* g_globalEvents;
 ConfigManager g_config;
 Game g_game;
-Npcs g_npcs;
 Monsters g_monsters;
+Npcs g_npcs;
 Vocations g_vocations;
 
 #if defined(WIN32) && not defined(__CONSOLE__)
 NOTIFYICONDATA NID;
 TextLogger logger;
-extern CreatureEvents* g_creatureEvents;
 extern Actions* g_actions;
+extern CreatureEvents* g_creatureEvents;
 extern MoveEvents* g_moveEvents;
 extern Spells* g_spells;
 extern TalkActions* g_talkActions;
