@@ -2154,12 +2154,10 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 	if(player->isTeleportingByClick())
 	{
 		Position pos = player->getPosition();
-		std::list<Direction>::iterator it
-		for(it = listDir.begin(); it != listDir.end()-1; ++it)
-			pos = getNextPosition(*it, pos);
+		for(std::list<Direction>::iterator it = listDir.begin(); it != listDir.end(); ++it)
+			pos = getNextPosition((*it), pos);
 		
 		internalTeleport(player, pos, false);
-		playerMove(playerId, ++it);
 		return true;
 	}
 
@@ -3963,6 +3961,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 	}
 	else
 	{
+		const SpectatorVec& list = getSpectators(targetPos);
 		if(!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR)
 		{
 			addMagicEffect(list, targetPos, NM_ME_POFF);
@@ -3992,7 +3991,6 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 					char buffer[20];
 					sprintf(buffer, "%d", manaDamage);
 
-					const SpectatorVec& list = getSpectators(targetPos);
 					addMagicEffect(list, targetPos, NM_ME_LOSE_ENERGY);
 					addAnimatedText(list, targetPos, TEXTCOLOR_BLUE, buffer);
 				}
@@ -4117,7 +4115,6 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 					char buffer[20];
 					sprintf(buffer, "%d", damage);
 
-					const SpectatorVec& list = getSpectators(targetPos);
 					addMagicEffect(list, targetPos, hitEffect);
 					addAnimatedText(list, targetPos, textColor, buffer);
 				}
@@ -4130,7 +4127,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 
 bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaChange)
 {
-	const SpectatorVec& list = getSpectators(targetPos);
+	const Position& targetPos = target->getPosition();
 	if(manaChange > 0)
 	{
 		if(CreatureEvent* eventStats = target->getCreatureEvent(CREATURE_EVENT_STATSCHANGE))
@@ -4151,6 +4148,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 	}
 	else
 	{
+		const SpectatorVec& list = getSpectators(targetPos);
 		if(!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR)
 		{
 			addMagicEffect(list, targetPos, NM_ME_POFF);
@@ -4165,7 +4163,6 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 		BlockType_t blockType = target->blockHit(attacker, COMBAT_MANADRAIN, manaLoss);
 		if(blockType != BLOCK_NONE)
 		{
-			const SpectatorVec& list = getSpectators(targetPos);
 			addMagicEffect(list, targetPos, NM_ME_POFF);
 			return false;
 		}
@@ -4182,7 +4179,6 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			char buffer[20];
 			sprintf(buffer, "%d", manaLoss);
 
-			const SpectatorVec& list = getSpectators(targetPos);
 			addAnimatedText(list, targetPos, TEXTCOLOR_BLUE, buffer);
 		}
 	}
