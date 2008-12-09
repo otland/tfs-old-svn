@@ -21,10 +21,10 @@
 #ifndef __OTSERV_OTTHREAD_H__
 #define __OTSERV_OTTHREAD_H__
 
+#include "definitions.h"
 #include <list>
 #include <vector>
 #include <algorithm>
-
 typedef std::vector< std::pair<uint32_t, uint32_t> > IPList;
 
 #ifdef WIN32

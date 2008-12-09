@@ -20,9 +20,9 @@
 
 #ifndef __OTSERV_OUTPUT_MESSAGE_H__
 #define __OTSERV_OUTPUT_MESSAGE_H__
+#include "otsystem.h"
 
 #include "networkmessage.h"
-#include "otsystem.h"
 #include "tools.h"
 #include <list>
 

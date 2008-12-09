@@ -20,11 +20,10 @@
 
 #ifndef __OTSERV_NETWORK_MESSAGE_H__
 #define __OTSERV_NETWORK_MESSAGE_H__
-
-
-#include "definitions.h"
 #include "otsystem.h"
+
 #include "const.h"
+#include <string>
 
 class Item;
 class Creature;

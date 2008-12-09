@@ -67,18 +67,21 @@
 #include "resources.h"
 #endif
 
+#include "networkmessage.h"
 #include "databasemanager.h"
-#include "admin.h"
 #ifdef __LOGIN_SERVER__
 #include "gameservers.h"
+#endif
+#ifdef __REMOTE_CONTROL__
+#include "admin.h"
 #endif
 
 #ifdef __OTSERV_ALLOCATOR__
 #include "allocator.h"
 #endif
 
-#ifdef __SIGNAL_CONTROLLING__
-#include <signal.h>
+#ifdef __EXCEPTION_TRACER__
+#include "exception.h"
 #endif
 
 #ifdef BOOST_NO_EXCEPTIONS
@@ -91,23 +94,23 @@
 
 IPList serverIPs;
 extern GlobalEvents* g_globalEvents;
+#ifdef __REMOTE_CONTROL__
 extern Admin* g_admin;
+#endif
+ConfigManager g_config;
 Game g_game;
 Npcs g_npcs;
-ConfigManager g_config;
 Monsters g_monsters;
 Vocations g_vocations;
 
-#ifndef __CONSOLE__
-#ifdef WIN32
+#if defined(WIN32) && not defined(__CONSOLE__)
 NOTIFYICONDATA NID;
 TextLogger logger;
-extern Actions* g_actions;
 extern CreatureEvents* g_creatureEvents;
+extern Actions* g_actions;
 extern MoveEvents* g_moveEvents;
 extern Spells* g_spells;
 extern TalkActions* g_talkActions;
-#endif
 #endif
 
 RSA* g_otservRSA = NULL;
@@ -115,11 +118,6 @@ Server* g_server = NULL;
 
 OTSYS_THREAD_LOCKVAR g_loaderLock;
 OTSYS_THREAD_SIGNALVAR g_loaderSignal;
-
-#ifdef __EXCEPTION_TRACER__
-#include "exception.h"
-#endif
-#include "networkmessage.h"
 
 void startupErrorMessage(std::string error)
 {
@@ -440,6 +438,7 @@ int argc, char *argv[]
 	if(!outfits->loadFromXml())
 		startupErrorMessage("Unable to load outfits!");
 
+	#ifdef __REMOTE_CONTROL__
 	g_admin = new Admin();
 	std::cout << ">> Loading administration protocol" << std::endl;
 	#ifndef __CONSOLE__
@@ -447,6 +446,7 @@ int argc, char *argv[]
 	#endif
 	if(!g_admin->loadXMLConfig())
 		startupErrorMessage("Unable to load administration protocol!");
+	#endif
 
 	std::cout << ">> Loading experience stages" << std::endl;
 	#ifndef __CONSOLE__

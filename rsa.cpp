@@ -20,6 +20,7 @@
 #include "otpch.h"
 
 #include "rsa.h"
+#include <string>
 
 RSA::RSA()
 {

@@ -309,7 +309,7 @@ Spawn::~Spawn()
 	for(SpawnedMap::iterator it = spawnedMap.begin(); it != spawnedMap.end(); ++it)
 	{
 		Monster* monster = it->second;
-		spawnedMap.erase(*it);
+		spawnedMap.erase(it->first);
 
 		monster->setSpawn(NULL);
 		if(monster->isRemoved())
@@ -368,7 +368,7 @@ bool Spawn::spawnMonster(uint32_t spawnId, MonsterType* mType, const Position& p
 	monster->setMasterPos(pos, radius);
 	monster->useThing2();
 
-	spawnedMap.insert(spawned_pair(spawnId, monster));
+	spawnedMap.insert(SpawnedPair(spawnId, monster));
 	spawnMap[spawnId].lastSpawn = OTSYS_TIME();
 	return true;
 }
@@ -407,7 +407,7 @@ void Spawn::checkSpawn()
 		}
 		else if(!isInSpawnZone(monster->getPosition()) && spawnId != 0)
 		{
-			spawnedMap.insert(spawned_pair(0, monster));
+			spawnedMap.insert(SpawnedPair(0, monster));
 			spawnedMap.erase(it++);
 		}
 		else

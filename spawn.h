@@ -77,7 +77,7 @@ class Spawn
 {
 	public:
 		Spawn(const Position& _pos, int32_t _radius);
-		~Spawn();
+		virtual ~Spawn();
 
 		bool addMonster(const std::string& _name, const Position& _pos, Direction _dir, uint32_t _interval);
 		void removeMonster(Monster* monster);
@@ -102,7 +102,7 @@ class Spawn
 
 		//map of the spawned creatures
 		typedef std::multimap<uint32_t, Monster*, std::less<uint32_t> > SpawnedMap;
-		typedef SpawnedMap::value_type spawned_pair;
+		typedef SpawnedMap::value_type SpawnedPair;
 		SpawnedMap spawnedMap;
 
 		uint32_t interval;

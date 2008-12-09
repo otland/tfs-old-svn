@@ -31,6 +31,7 @@
 #include <mysql/mysql.h>
 #endif
 #include <sstream>
+#include <map>
 
 #ifndef __DISABLE_DIRTY_RECONNECT__
 #define MAX_RECONNECT_ATTEMPTS 3

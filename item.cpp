@@ -988,7 +988,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			{
 				isBegin = false;
 				s << "Atk:";
-				if(it.abilities.elementType != COMBAT_NONE && !hasCharges())
+				if(it.abilities.elementType != COMBAT_NONE && subType <= 0)
 				{
 					s << std::max(0, int32_t((item ? item->getAttack() : it.attack) - it.abilities.elementDamage));
 					if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
@@ -1254,7 +1254,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			s << std::endl << getWeightDescription(it, weight);
 	}
 
-	if(it.abilities.elementType != COMBAT_NONE && hasCharges())
+	if(it.abilities.elementType != COMBAT_NONE && subType)
 	{
 		s << " It is temporarily enchanted with " << getCombatName(it.abilities.elementType) << " (";
 		s << std::max(0, int32_t((item ? item->getAttack() : it.attack) - it.abilities.elementDamage));
