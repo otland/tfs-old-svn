@@ -975,12 +975,12 @@ bool TalkAction::createGuild(Player* player, const std::string& cmd, const std::
 						{
 							if(player->isPremium())
 							{
+								player->setGuildName(param);
 								IOGuild::getInstance()->createGuild(player);
 
 								char buffer[50 + maxLength];
 								sprintf(buffer, "You have formed the guild: %s!", param.c_str());
 								player->sendTextMessage(MSG_INFO_DESCR, buffer);
-								player->setGuildName(param);
 							}
 							else
 								player->sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
