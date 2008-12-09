@@ -368,7 +368,7 @@ class Item : virtual public Thing, public ItemAttributes
 		WeaponType_t getWeaponType() const {return items[id].weaponType;}
 		Ammo_t getAmmoType() const {return items[id].ammoType;}
 
-		int32_t getWorth() const;
+		int32_t getWorth() const {return getItemCount() * items[id].worth;}
 		void getLight(LightInfo& lightInfo);
 
 		bool hasProperty(enum ITEMPROPERTY prop) const;
@@ -433,7 +433,6 @@ class Item : virtual public Thing, public ItemAttributes
 		uint8_t count; // number of stacked items
 
 		bool loadedFromMap;
-
 		//Don't add variables here, use the ItemAttribute class.
 };
 

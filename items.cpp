@@ -121,6 +121,7 @@ ItemType::ItemType()
 	combatType = COMBAT_NONE;
 
 	replaceable = true;
+	worth = 0;
 
 	bedPartnerDir = NORTH;
 	transformToOnUse[PLAYERSEX_MALE] = 0;
@@ -178,19 +179,24 @@ int32_t Items::loadFromOtb(std::string file)
 		uint32_t flags;
 		if(!props.GET_ULONG(flags))
 			return ERROR_INVALID_FORMAT;
+
 		attribute_t attr;
 		if(!props.GET_VALUE(attr))
 			return ERROR_INVALID_FORMAT;
+
 		if(attr == ROOT_ATTR_VERSION)
 		{
 			datasize_t datalen = 0;
 			if(!props.GET_VALUE(datalen))
 				return ERROR_INVALID_FORMAT;
+
 			if(datalen != sizeof(VERSIONINFO))
 				return ERROR_INVALID_FORMAT;
+
 			VERSIONINFO *vi;
 			if(!props.GET_STRUCT(vi))
 				return ERROR_INVALID_FORMAT;
+
 			Items::dwMajorVersion = vi->dwMajorVersion; //items otb format file version
 			Items::dwMinorVersion = vi->dwMinorVersion; //client version
 			Items::dwBuildNumber = vi->dwBuildNumber; //revision
@@ -198,19 +204,19 @@ int32_t Items::loadFromOtb(std::string file)
 	}
 
 	if(Items::dwMajorVersion == 0xFFFFFFFF)
-		std::cout << "[Warning] Items::loadFromOtb items.otb using generic client version." << std::endl;
+		std::cout << "[Warning - Items::loadFromOtb] items.otb using generic client version." << std::endl;
 	else if(Items::dwMajorVersion != 3)
 	{
-		std::cout << "Old version detected, a newer version of items.otb is required." << std::endl;
+		std::cout << "[Error - Items::loadFromOtb] Old version detected, a newer version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
 	}
 	else if(Items::dwMinorVersion < CLIENT_VERSION_820)
 	{
-		std::cout << "A newer version of items.otb is required." << std::endl;
+		std::cout << "[Error - Items::loadFromOtb] A newer version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
 	}
-	node = f.getChildNode(node, type);
 
+	node = f.getChildNode(node, type);
 	while(node != NO_NODE)
 	{
 		PropStream props;
@@ -246,7 +252,6 @@ int32_t Items::loadFromOtb(std::string file)
 				break;
 			default:
 				return ERROR_INVALID_FORMAT;
-				break;
 		}
 		//read 4 byte flags
 		if(!props.GET_VALUE(flags))
@@ -287,6 +292,7 @@ int32_t Items::loadFromOtb(std::string file)
 				delete iType;
 				return ERROR_INVALID_FORMAT;
 			}
+
 			switch(attrib)
 			{
 				case ITEM_ATTR_SERVERID:
@@ -369,6 +375,7 @@ int32_t Items::loadFromOtb(std::string file)
 		items.addElement(iType, iType->id);
 		node = f.getNextNode(node, type);
 	}
+
 	return ERROR_NONE;
 }
 
@@ -405,7 +412,6 @@ bool Items::loadFromXml()
 					}
 
 					ItemType& it = Item::items.getItemType(id);
-
 					if(readXMLString(itemNode, "name", strValue))
 						it.name = strValue;
 
@@ -416,7 +422,6 @@ bool Items::loadFromXml()
 						it.pluralName = strValue;
 
 					xmlNodePtr itemAttributesNode = itemNode->children;
-
 					while(itemAttributesNode)
 					{
 						if(readXMLString(itemAttributesNode, "key", strValue))
@@ -1194,9 +1199,15 @@ bool Items::loadFromXml()
 									it.abilities.elementType = COMBAT_ENERGYDAMAGE;
 								}
 							}
+							else if(tmpStrValue == "worth")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+									it.worth = intValue;
+							}							
 							else
-								std::cout << "Warning: [Items::loadFromXml] Unknown key value " << strValue << std::endl;
+								std::cout << "[Warning - Items::loadFromXml] Unknown key value " << strValue << std::endl;
 						}
+
 						itemAttributesNode = itemAttributesNode->next;
 					}
 
@@ -1204,7 +1215,7 @@ bool Items::loadFromXml()
 						it.pluralName = it.name + "s";
 				}
 				else
-					std::cout << "Warning: [Items::loadFromXml] - No itemid found" << std::endl;
+					std::cout << "[Warning - Items::loadFromXml] No itemid found" << std::endl;
 			}
 
 			itemNode = itemNode->next;
@@ -1222,7 +1233,7 @@ bool Items::loadFromXml()
 
 		//check bed items
 		if((it->transformToFree != 0 || it->transformToOnUse[PLAYERSEX_FEMALE] != 0 || it->transformToOnUse[PLAYERSEX_MALE] != 0) && it->type != ITEM_TYPE_BED)
-			std::cout << "Warning: [Items::loadFromXml] Item " << it->id << " is not set as a bed-type." << std::endl;
+			std::cout << "[Warning - Items::loadFromXml] Item " << it->id << " is not set as a bed-type." << std::endl;
 	}
 
 	return true;
@@ -1264,6 +1275,7 @@ const ItemType& Items::getItemIdByClientId(int32_t spriteId) const
 		iType = items.getElement(i);
 		if(iType && iType->clientId == spriteId)
 			return *iType;
+
 		i++;
 	}
 	while(iType);
@@ -1286,9 +1298,11 @@ int32_t Items::getItemIdByName(const std::string& name)
 				if(strcasecmp(name.c_str(), iType->name.c_str()) == 0)
 					return i;
 			}
+
 			i++;
 		}
 		while(iType);
 	}
+
 	return -1;
 }

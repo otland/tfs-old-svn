@@ -1,11 +1,8 @@
 #ifdef __OTSERV_OTCP_H__
-#error "Precompiled header should only be included once."
+#error "Precompiled header should be included only once."
 #endif
 
 #define __OTSERV_OTCP_H__
-
-//#undef __USE_OTPCH__
-
 // Definitions should be global.
 #include "definitions.h"
 

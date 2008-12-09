@@ -36,8 +36,8 @@ void GUI::initFont()
 {
 	LOGFONT lFont;
 	memset(&lFont, 0, sizeof(lFont));
-	lstrcpy(lFont.lfFaceName, _T("Arial"));
-	lFont.lfHeight = 16;
+	lstrcpy(lFont.lfFaceName, _T("Tahoma"));
+	lFont.lfHeight = 14;
 	lFont.lfWeight = FW_NORMAL;
 	lFont.lfItalic = FALSE;
 	lFont.lfCharSet = DEFAULT_CHARSET;

@@ -17,8 +17,10 @@
 // along with this program; if not, write to the Free Software Foundation,
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
+#ifdef __REMOTE_CONTROL__
 #include "otpch.h"
 
+#include <iostream>
 #include "admin.h"
 #include "game.h"
 #include "connection.h"
@@ -30,15 +32,53 @@
 #include "tools.h"
 #include "rsa.h"
 
-#include "logger.h"
-
-static void addLogLine(ProtocolAdmin* protocol, eLogType type, int32_t level, std::string message);
-
 extern Game g_game;
 extern ConfigManager g_config;
-
 Admin* g_admin = NULL;
 
+Logger::Logger()
+{
+	m_file = fopen(getFilePath(FILE_TYPE_LOG, "OTAdmin.log").c_str(), "a");
+}
+
+Logger::~Logger()
+{
+	if(m_file)
+		fclose(m_file);
+}
+
+void Logger::logMessage(const char* channel, eLogType type, int32_t level, std::string message, const char* func)
+{
+	char buffer[32];
+	formatDate(time(NULL), buffer);
+	fprintf(m_file, "%s", buffer);
+
+	if(channel)
+		fprintf(m_file, " [%s] ", channel);
+
+	std::string typeStr;
+	switch(type)
+	{
+		case LOGTYPE_EVENT:
+			typeStr = "event";
+			break;
+		case LOGTYPE_WARNING:
+			typeStr = "warning";
+			break;
+		case LOGTYPE_ERROR:
+			typeStr = "error";
+			break;
+		default:
+			typeStr = "unknown";
+			break;
+	}
+
+	fprintf(m_file, " %s:", typeStr.c_str());
+	fprintf(m_file, " %s\n", message.c_str());
+	fflush(m_file);
+}
+
+static void addLogLine(ProtocolAdmin* protocol, eLogType type, int32_t level, std::string message);
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t ProtocolAdmin::protocolAdminCount = 0;
 #endif
@@ -675,10 +715,9 @@ RSA* Admin::getRSAKey(uint8_t type)
 		default:
 			break;
 	}
+
 	return NULL;
 }
-
-/////////////////////////////////////////////
 
 static void addLogLine(ProtocolAdmin* protocol, eLogType type, int32_t level, std::string message)
 {
@@ -698,3 +737,4 @@ static void addLogLine(ProtocolAdmin* protocol, eLogType type, int32_t level, st
 		LOG_MESSAGE("OTADMIN", type, level, tmp);
 	}
 }
+#endif

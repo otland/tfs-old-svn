@@ -22,10 +22,13 @@ endif
 if LOGIN_SERVER
 MAYBE_LOGIN = gameservers.cpp gameservers.h
 endif
+if REMOTE_CONTROL
+MAYBE_REMOTE = admin.cpp admin.h
+endif
 
 theforgottenserver_SOURCES = account.cpp account.h actions.cpp actions.h \
-	admin.cpp allocator.cpp allocator.h baseevents.cpp baseevents.h \
-	beds.cpp beds.h chat.cpp chat.h combat.cpp combat.h \
+	$(MAYBE_REMOTE) allocator.cpp allocator.h baseevents.cpp \
+	baseevents.h beds.cpp beds.h chat.cpp chat.h combat.cpp combat.h \
 	condition.cpp condition.h config.h configmanager.cpp \
 	configmanager.h connection.cpp connection.h const.h container.cpp \
 	container.h creature.cpp creature.h creatureevent.cpp creatureevent.h \
@@ -37,7 +40,7 @@ theforgottenserver_SOURCES = account.cpp account.h actions.cpp actions.h \
 	house.h housetile.cpp housetile.h inputbox.cpp inputbox.h ioban.cpp \
 	ioban.h ioguild.cpp ioguild.h iologindata.cpp iologindata.h iomap.cpp \
 	iomapserialize.cpp iomapserialize.h item.cpp item.h items.cpp items.h \
-	logger.cpp logger.h luascript.cpp luascript.h mailbox.cpp mailbox.h \
+	luascript.cpp luascript.h mailbox.cpp mailbox.h \
 	map.cpp map.h md5.cpp md5.h monster.cpp monster.h monsters.cpp \
 	monsters.h movement.cpp movement.h networkmessage.cpp networkmessage.h \
 	npc.cpp npc.h otpch.h otserv.cpp otsystem.h outfit.cpp outfit.h \

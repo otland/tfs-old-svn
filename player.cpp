@@ -3120,7 +3120,7 @@ void Player::postRemoveNotification(Thing* thing, int32_t index, bool isComplete
 
 void Player::postUpdateGoods(uint32_t itemId)
 {
-	if(itemId == ITEM_COINS_GOLD || itemId == ITEM_COINS_PLATINUM || itemId == ITEM_COINS_CRYSTAL)
+	if(Item::items[itemId].worth)
 	{
 		sendGoods();
 		return;

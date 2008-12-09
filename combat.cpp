@@ -85,13 +85,12 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 			case FORMULA_SKILL:
 			{
 				min = (int32_t)minb;
-
 				Item* tool = player->getWeapon();
 				if(const Weapon* weapon = g_weapons->getWeapon(tool))
 				{
-						max = (int32_t)(weapon->getWeaponDamage(player, target, tool, true) * maxa + maxb);
-						if(params.useCharges && tool->hasCharges())
-							g_game.transformItem(tool, tool->getID(), std::max((int32_t)0, ((int32_t)tool->getCharges()) - 1));
+					max = (int32_t)(weapon->getWeaponDamage(player, target, tool, true) * maxa + maxb);
+					if(params.useCharges && tool->hasCharges())
+						g_game.transformItem(tool, tool->getID(), std::max((int32_t)0, ((int32_t)tool->getCharges()) - 1));
 				}
 				else
 					max = (int32_t)maxb;

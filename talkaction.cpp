@@ -488,7 +488,9 @@ bool TalkAction::serverDiag(Player* player, const std::string& cmd, const std::s
 	text << "--------------------\n";
 	text << "ProtocolGame: " << ProtocolGame::protocolGameCount << "\n";
 	text << "ProtocolLogin: " << ProtocolLogin::protocolLoginCount << "\n";
+#ifdef __REMOTE_CONTROL__
 	text << "ProtocolAdmin: " << ProtocolAdmin::protocolAdminCount << "\n";
+#endif
 	text << "ProtocolStatus: " << ProtocolStatus::protocolStatusCount << "\n";
 	text << "ProtocolOld: " << ProtocolOld::protocolOldCount << "\n\n";
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
@@ -535,39 +537,41 @@ bool TalkAction::changeThingProporties(Player* player, const std::string& cmd, c
 				{
 					tmp = parseParams(cmdit, cmdtokens.end());
 					if(strcasecmp(tmp.c_str(), "description") == 0)
-							item->setSpecialDescription(parseParams(cmdit, cmdtokens.end()));
+						item->setSpecialDescription(parseParams(cmdit, cmdtokens.end()));
 					else if(strcasecmp(tmp.c_str(), "count") == 0 || strcasecmp(tmp.c_str(), "fluidtype") == 0 || strcasecmp(tmp.c_str(), "charges") == 0)
-							item->setSubType(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						item->setSubType(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 					else if(strcasecmp(tmp.c_str(), "action") == 0 || strcasecmp(tmp.c_str(), "actionid") == 0 || strcasecmp(tmp.c_str(), "aid") == 0)
-							item->setActionId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						item->setActionId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 					else if(strcasecmp(tmp.c_str(), "unique") == 0 || strcasecmp(tmp.c_str(), "uniqueid") == 0 || strcasecmp(tmp.c_str(), "uid") == 0)
-							item->setUniqueId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						item->setUniqueId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 					else if(strcasecmp(tmp.c_str(), "duration") == 0)
-							item->setDuration(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						item->setDuration(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 					else if(strcasecmp(tmp.c_str(), "writer") == 0)
-							item->setWriter(parseParams(cmdit, cmdtokens.end()));
+						item->setWriter(parseParams(cmdit, cmdtokens.end()));
 					else if(strcasecmp(tmp.c_str(), "text") == 0)
-							item->setText(parseParams(cmdit, cmdtokens.end()));
+						item->setText(parseParams(cmdit, cmdtokens.end()));
 					else if(strcasecmp(tmp.c_str(), "name") == 0)
-							item->setName(parseParams(cmdit, cmdtokens.end()));
+						item->setName(parseParams(cmdit, cmdtokens.end()));
 					else if(strcasecmp(tmp.c_str(), "pluralname") == 0)
-							item->setPluralName(parseParams(cmdit, cmdtokens.end()));
+						item->setPluralName(parseParams(cmdit, cmdtokens.end()));
 					else if(strcasecmp(tmp.c_str(), "article") == 0)
-							item->setArticle(parseParams(cmdit, cmdtokens.end()));
+						item->setArticle(parseParams(cmdit, cmdtokens.end()));
 					else if(strcasecmp(tmp.c_str(), "attack") == 0)
-							item->setAttack(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						item->setAttack(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 					else if(strcasecmp(tmp.c_str(), "extraattack") == 0)
-							item->setExtraAttack(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						item->setExtraAttack(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 					else if(strcasecmp(tmp.c_str(), "defense") == 0)
-							item->setDefense(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						item->setDefense(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 					else if(strcasecmp(tmp.c_str(), "extradefense") == 0)
-							item->setExtraDefense(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						item->setExtraDefense(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 					else if(strcasecmp(tmp.c_str(), "armor") == 0)
-							item->setArmor(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						item->setArmor(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 					else if(strcasecmp(tmp.c_str(), "attackspeed") == 0)
-							item->setAttackSpeed(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						item->setAttackSpeed(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 					else if(strcasecmp(tmp.c_str(), "hitchance") == 0)
-							item->setHitChance(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						item->setHitChance(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "shootrange") == 0)
+						item->setShootRange(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 					else if(strcasecmp(tmp.c_str(), "depot") == 0 || strcasecmp(tmp.c_str(), "depotid") == 0)
 					{
 						if(item->getContainer() && item->getContainer()->getDepot())

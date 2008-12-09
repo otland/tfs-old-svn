@@ -1572,6 +1572,7 @@ bool Game::removeItemOfType(Cylinder* cylinder, uint16_t itemId, int32_t count, 
 			}
 		}
 	}
+
 	return (count == 0);
 }
 
@@ -1616,6 +1617,7 @@ uint32_t Game::getMoney(const Cylinder* cylinder)
 				moneyCount += item->getWorth();
 		}
 	}
+
 	return moneyCount;
 }
 
@@ -1626,12 +1628,12 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 	if(money <= 0)
 		return true;
 
+	typedef std::multimap<int32_t, Item*, std::less<int32_t> > MoneyMap;
+	typedef MoneyMap::value_type MoneyPair;
+
+	MoneyMap moneyMap;
 	std::list<Container*> listContainer;
 	Container* tmpContainer = NULL;
-
-	typedef std::multimap<int, Item*, std::less<int> > MoneyMap;
-	typedef MoneyMap::value_type moneymap_pair;
-	MoneyMap moneyMap;
 	Thing* thing = NULL;
 	Item* item = NULL;
 	int32_t moneyCount = 0;
@@ -1649,7 +1651,7 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 		else if(item->getWorth() != 0)
 		{
 			moneyCount += item->getWorth();
-			moneyMap.insert(moneymap_pair(item->getWorth(), item));
+			moneyMap.insert(MoneyPair(item->getWorth(), item));
 		}
 	}
 
@@ -1657,7 +1659,6 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 	{
 		Container* container = listContainer.front();
 		listContainer.pop_front();
-
 		for(int32_t i = 0; i < (int32_t)container->size() && money > 0; i++)
 		{
 			Item* item = container->getItem(i);
@@ -1666,25 +1667,27 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 			else if(item->getWorth() != 0)
 			{
 				moneyCount += item->getWorth();
-				moneyMap.insert(moneymap_pair(item->getWorth(), item));
+				moneyMap.insert(MoneyPair(item->getWorth(), item));
 			}
 		}
 	}
 
-	/*not enough money*/
+	// Not enough money
 	if(moneyCount < money)
 		return false;
 
-	MoneyMap::iterator mit;
-	for(mit = moneyMap.begin(); mit != moneyMap.end() && money > 0; mit++)
+	for(MoneyMap::iterator mit = moneyMap.begin(); mit != moneyMap.end() && money > 0; mit++)
 	{
 		Item* item = mit->second;
+		if(!item)
+			continue;
+
 		internalRemoveItem(item);
 		if(mit->first <= money)
 			money = money - mit->first;
 		else
 		{
-			/* Remove a monetary value from an item*/
+			// Remove a monetary value from an item
 			int32_t remaind = item->getWorth() - money;
 			addMoney(cylinder, remaind, flags);
 			money = 0;
@@ -1694,8 +1697,7 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 	}
 
 	moneyMap.clear();
-
-	return (money == 0);
+	return money == 0;
 }
 
 void Game::addMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/)
@@ -1763,7 +1765,6 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 
 	const ItemType& curType = Item::items[item->getID()];
 	const ItemType& newType = Item::items[newId];
-
 	if(curType.alwaysOnTop != newType.alwaysOnTop)
 	{
 		//This only occurs when you transform items on tiles from a downItem to a topItem (or vice versa)
@@ -1786,6 +1787,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 			delete newItem;
 			return NULL;
 		}
+
 		return newItem;
 	}
 
@@ -1865,6 +1867,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 
 		return newItem;
 	}
+
 	return NULL;
 }
 
@@ -2206,13 +2209,6 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 		return false;
 	}
 
-	if(item->getClientID() != fromSpriteId)
-	{
-		std::cout << "[Cheat detected] Player: " << player->getName() << " sent spriteId to useItemEx that does not match item at stackpos!" << std::endl;
-		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
-		return false;
-	}
-
 	Position walkToPos = fromPos;
 	ReturnValue ret = g_actions->canUse(player, fromPos);
 	if(ret == RET_NOERROR)
@@ -2309,13 +2305,6 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 	if(item->isUseable())
 	{
 		std::cout << "[Cheat detected] Player: " << player->getName() << " sent useItem packet on useItemEx item!" << std::endl;
-		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
-		return false;
-	}
-
-	if(item->getClientID() != spriteId)
-	{
-		std::cout << "[Cheat detected] Player: " << player->getName() << " sent spriteId to useItem that does not match item at stackpos!" << std::endl;
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
 		return false;
 	}

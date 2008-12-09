@@ -18,6 +18,7 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
+#ifdef __REMOTE_CONTROL__
 #ifndef __OTSERV_ADMIN_H__
 #define __OTSERV_ADMIN_H__
 
@@ -76,12 +77,20 @@
 //		message(string)
 //
 
+#include "otsystem.h"
 #include "player.h"
-#include "logger.h"
 #include <string>
+#include <map>
 
 class NetworkMessage;
 class RSA;
+
+enum eLogType
+{
+	LOGTYPE_EVENT,
+	LOGTYPE_WARNING,
+	LOGTYPE_ERROR,
+};
 
 enum
 {
@@ -133,6 +142,26 @@ enum
 {
 	ENCRYPTION_RSA1024XTEA = 1,
 };
+
+class Logger
+{
+	public:
+		virtual ~Logger();
+		static Logger* getInstance()
+		{
+			static Logger instance;
+			return &instance;
+		}
+
+		void logMessage(const char* channel, eLogType type, int32_t level, std::string message, const char* func);
+
+	private:
+		FILE* m_file;
+		Logger();
+};
+
+#define LOG_MESSAGE(channel, type, level, message) \
+	Logger::getInstance()->logMessage(channel, type, level, message, __OTSERV_PRETTY_FUNCTION__);
 
 class Admin
 {
@@ -205,4 +234,5 @@ class ProtocolAdmin : public Protocol
 		uint32_t m_lastCommand, m_startTime;
 };
 
+#endif
 #endif

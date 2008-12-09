@@ -21,8 +21,6 @@
 #ifndef __OTSERV_OTTHREAD_H__
 #define __OTSERV_OTTHREAD_H__
 
-#include "logger.h"
-
 #include <list>
 #include <vector>
 #include <algorithm>
@@ -192,5 +190,12 @@ class OTSYS_THREAD_LOCK_CLASS
 
 		OTSYS_THREAD_LOCKVAR *mutex;
 };
+
+#ifdef __GNUC__
+#define __OTSERV_PRETTY_FUNCTION__ __PRETTY_FUNCTION__
+#endif
+#ifdef _MSC_VER
+#define __OTSERV_PRETTY_FUNCTION__ __FUNCDNAME__
+#endif
 
 #endif // #ifndef __OTSYSTEM_H__

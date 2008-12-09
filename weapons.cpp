@@ -500,16 +500,29 @@ void Weapon::onUsedAmmo(Player* player, Item* item, Tile* destTile) const
 {
 	if(g_config.getBool(ConfigManager::REMOVE_AMMO))
 	{
-		if(ammoAction == AMMOACTION_REMOVECOUNT)
-			g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getItemCount()) - 1));
-		else if(ammoAction == AMMOACTION_REMOVECHARGE)
-			g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getCharges()) - 1));
-		else if(ammoAction == AMMOACTION_MOVE)
-			g_game.internalMoveItem(item->getParent(), destTile, INDEX_WHEREEVER, item, 1, NULL, FLAG_NOLIMIT);
-		else if(ammoAction == AMMOACTION_MOVEBACK)
-			{ /* do nothing */ }
-		else if(item->hasCharges())
-			g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getCharges()) - 1));
+		switch(ammoAction)
+		{
+			case AMMOACTION_REMOVECOUNT:
+				g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getItemCount()) - 1));
+				break;
+
+			case AMMOACTION_REMOVECHARGE:
+				g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getCharges()) - 1));
+				break;
+
+			case AMMOACTION_MOVE:
+				g_game.internalMoveItem(item->getParent(), destTile, INDEX_WHEREEVER, item, 1, NULL, FLAG_NOLIMIT);
+				break;
+
+			case AMMOACTION_MOVEBACK:
+				break;
+
+			default:
+				if(item->hasCharges())
+					g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getCharges()) - 1));
+
+				break;
+		}
 	}
 }
 
@@ -618,7 +631,6 @@ bool WeaponMelee::getSkillType(const Player* player, const Item* item,
 	skills_t& skill, uint32_t& skillpoint) const
 {
 	skillpoint = 0;
-
 	if(player->getAddAttackSkill())
 	{
 		switch(player->getLastAttackBlockType())
@@ -641,34 +653,31 @@ bool WeaponMelee::getSkillType(const Player* player, const Item* item,
 		{
 			skill = SKILL_SWORD;
 			return true;
-			break;
 		}
 
 		case WEAPON_CLUB:
 		{
 			skill = SKILL_CLUB;
 			return true;
-			break;
 		}
 
 		case WEAPON_AXE:
 		{
 			skill = SKILL_AXE;
 			return true;
-			break;
 		}
 
 		case WEAPON_FIST:
 		{
 			skill = SKILL_FIST;
 			return true;
-			break;
 		}
 
 		default:
-			return false;
 			break;
 	}
+
+	return false;
 }
 
 int32_t WeaponMelee::getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage /*= false*/) const
@@ -723,8 +732,6 @@ bool WeaponDistance::configureEvent(xmlNodePtr p)
 		return false;
 
 	const ItemType& it = Item::items[id];
-
-	//default values
 	if(it.ammoType != AMMO_NONE)
 	{
 		//hit chance on two-handed weapons is limited to 90%
@@ -754,8 +761,6 @@ bool WeaponDistance::configureEvent(xmlNodePtr p)
 bool WeaponDistance::configureWeapon(const ItemType& it)
 {
 	m_scripted = false;
-
-	//default values
 	if(it.ammoType != AMMO_NONE)
 	{
 		//hit chance on two-handed weapons is limited to 90%

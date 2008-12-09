@@ -261,9 +261,11 @@ void Connection::parsePacket(const boost::system::error_code& error)
 					else
 						m_protocol = new ProtocolOld(this);
 					break;
+				#ifdef __REMOTE_CONTROL__
 				case 0xFE: // Admin protocol
 					m_protocol = new ProtocolAdmin(this);
 					break;
+				#endif
 				case 0xFF: // Status protocol
 					m_protocol = new ProtocolStatus(this);
 					break;

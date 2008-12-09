@@ -649,8 +649,8 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		//Teleport class
 		case ATTR_TELE_DEST:
 		{
-			TeleportDest* tele_dest;
-			if(!propStream.GET_STRUCT(tele_dest))
+			TeleportDest* _teleDest;
+			if(!propStream.GET_STRUCT(_teleDest))
 				return false;
 
 			return true;
@@ -988,9 +988,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			{
 				isBegin = false;
 				s << "Atk:";
-				if(it.abilities.elementType != COMBAT_NONE && charges <= 0)
+				if(it.abilities.elementType != COMBAT_NONE && !hasCharges())
 				{
-					s << std::min(0, int32_t((item ? item->getAttack() : it.attack) - it.abilities.elementDamage));
+					s << std::max(0, int32_t((item ? item->getAttack() : it.attack) - it.abilities.elementDamage));
 					if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
 						s << " " << std::showpos << int32_t(item ? item->getExtraAttack() : it.extraAttack) << std::noshowpos;
 
@@ -1240,6 +1240,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 				s << " and";
 			else
 				s << " of";
+
 			s << " magic level " << (int32_t)it.minReqMagicLevel << " or higher";
 		}
 
@@ -1253,10 +1254,10 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 			s << std::endl << getWeightDescription(it, weight);
 	}
 
-	if(it.abilities.elementType != COMBAT_NONE && charges > 0)
+	if(it.abilities.elementType != COMBAT_NONE && hasCharges())
 	{
 		s << " It is temporarily enchanted with " << getCombatName(it.abilities.elementType) << " (";
-		s << std::min(0, int32_t((item ? item->getAttack() : it.attack) - it.abilities.elementDamage));
+		s << std::max(0, int32_t((item ? item->getAttack() : it.attack) - it.abilities.elementDamage));
 		if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
 			s << " " << std::showpos << int32_t(item ? item->getExtraAttack() : it.extraAttack) << std::noshowpos;
 
@@ -1302,7 +1303,7 @@ std::string Item::getWeightDescription(const ItemType& it, double weight, uint32
 
 void Item::setUniqueId(uint16_t n)
 {
-	if(getUniqueId() != 0)
+	if(getUniqueId() != 0 && getActionId() != 2000)
 		return;
 
 	ItemAttributes::setUniqueId(n);
@@ -1314,7 +1315,7 @@ bool Item::canDecay()
 	if(isRemoved())
 		return false;
 
-	if(getUniqueId() != 0)
+	if((isLoadedFromMap() && (getUniqueId() != 0 || getActionId() != 0)))
 		return false;
 
 	const ItemType& it = Item::items[id];
@@ -1322,25 +1323,6 @@ bool Item::canDecay()
 		return false;
 
 	return true;
-}
-
-int32_t Item::getWorth() const
-{
-	switch(getID())
-	{
-		case ITEM_COINS_GOLD:
-			return getItemCount();
-			break;
-		case ITEM_COINS_PLATINUM:
-			return getItemCount() * 100;
-			break;
-		case ITEM_COINS_CRYSTAL:
-			return getItemCount() * 10000;
-			break;
-		default:
-			return 0;
-			break;
-	}
 }
 
 void Item::getLight(LightInfo& lightInfo)
@@ -1357,11 +1339,10 @@ const std::string& ItemAttributes::getStrAttr(itemAttrTypes type) const
 	if(!validateStrAttrType(type))
 		return emptyString;
 
-	Attribute* attr = getAttrConst(type);
-	if(attr)
+	if(Attribute* attr = getAttrConst(type))
 		return *(std::string*)attr->value;
-	else
-		return emptyString;
+
+	return emptyString;
 }
 
 void ItemAttributes::setStrAttr(itemAttrTypes type, const std::string& value)
@@ -1372,8 +1353,7 @@ void ItemAttributes::setStrAttr(itemAttrTypes type, const std::string& value)
 	if(value.length() == 0)
 		return;
 
-	Attribute* attr = getAttr(type);
-	if(attr)
+	if(Attribute* attr = getAttr(type))
 	{
 		if(attr->value)
 			delete (std::string*)attr->value;
@@ -1423,6 +1403,7 @@ void ItemAttributes::removeAttribute(itemAttrTypes type)
 				delete curAttr;
 				return;
 			}
+
 			//advance in the linked list
 			prevAttr = curAttr;
 			curAttr = curAttr->next;
@@ -1435,11 +1416,10 @@ uint32_t ItemAttributes::getIntAttr(itemAttrTypes type) const
 	if(!validateIntAttrType(type))
 		return 0;
 
-	Attribute* attr = getAttrConst(type);
-	if(attr)
+	if(Attribute* attr = getAttrConst(type))
 		return static_cast<uint32_t>(0xFFFFFFFF & reinterpret_cast<ptrdiff_t>(attr->value));
-	else
-		return 0;
+
+	return 0;
 }
 
 void ItemAttributes::setIntAttr(itemAttrTypes type, int32_t value)
@@ -1447,8 +1427,7 @@ void ItemAttributes::setIntAttr(itemAttrTypes type, int32_t value)
 	if(!validateIntAttrType(type))
 		return;
 
-	Attribute* attr = getAttr(type);
-	if(attr)
+	if(Attribute* attr = getAttr(type))
 		attr->value = reinterpret_cast<void*>(static_cast<ptrdiff_t>(value));
 }
 
@@ -1457,8 +1436,7 @@ void ItemAttributes::increaseIntAttr(itemAttrTypes type, int32_t value)
 	if(!validateIntAttrType(type))
 		return;
 
-	Attribute* attr = getAttr(type);
-	if(attr)
+	if(Attribute* attr = getAttr(type))
 		attr->value = reinterpret_cast<void*>(static_cast<ptrdiff_t>(static_cast<uint32_t>(0xFFFFFFFF & reinterpret_cast<ptrdiff_t>(attr->value)) + value));
 }
 
@@ -1483,13 +1461,13 @@ bool ItemAttributes::validateIntAttrType(itemAttrTypes type)
 		case ATTR_ITEM_ARMOR:
 		case ATTR_ITEM_ATTACKSPEED:
 		case ATTR_ITEM_HITCHANCE:
+		case ATTR_ITEM_SHOOTRANGE:
 			return true;
-			break;
 
 		default:
-			return false;
 			break;
 	}
+
 	return false;
 }
 
@@ -1504,12 +1482,11 @@ bool ItemAttributes::validateStrAttrType(itemAttrTypes type)
 		case ATTR_ITEM_PLURALNAME:
 		case ATTR_ITEM_ARTICLE:
 			return true;
-			break;
 
 		default:
-			return false;
 			break;
 	}
+
 	return false;
 }
 
@@ -1542,7 +1519,8 @@ ItemAttributes::Attribute* ItemAttributes::getAttrConst(itemAttrTypes type) cons
 
 		curAttr = curAttr->next;
 	}
-	std::cout << "Warning: [ItemAttributes::getAttrConst] (type & m_attributes) != 0 but attribute not found" << std::endl;
+
+	std::cout << "[Warning - ItemAttributes::getAttrConst] (type & m_attributes) != 0 but attribute not found" << std::endl;
 	return NULL;
 }
 
@@ -1566,7 +1544,8 @@ ItemAttributes::Attribute* ItemAttributes::getAttr(itemAttrTypes type)
 			curAttr = curAttr->next;
 		}
 	}
-	std::cout << "Warning: [ItemAttributes::getAttr] (type & m_attributes) != 0 but attribute not found" << std::endl;
+
+	std::cout << "[Warning - ItemAttributes::getAttr] (type & m_attributes) != 0 but attribute not found" << std::endl;
 	curAttr = new Attribute(type);
 	addAttr(curAttr);
 	return curAttr;

@@ -45,6 +45,15 @@ AC_ARG_ENABLE(login-server, [  --enable-login-server   enable login server mode]
 	loginServer=yes
 )
 
+# check if we want remote control feature
+AM_CONDITIONAL(REMOTE_CONTROL, false)
+remoteControl=no
+AC_ARG_ENABLE(remote-control, [  --enable-remote-control   enable remote control feature],
+	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__REMOTE_CONTROL__"]
+	AM_CONDITIONAL(REMOTE_CONTROL, true)
+	remoteControl=yes
+)
+
 AC_SUBST(OPTIONAL_FLAGS)
 
 AM_CONDITIONAL(USE_MYSQL, false)
@@ -205,6 +214,7 @@ echo The Forgotten Server 0.3
 #echo $PACKAGE $VERSION
 echo
 echo Login server mode........... : $loginServer
+echo Remote control.............. : $remoteControl
 echo Debug build................. : $debugBuild
 echo Server diagnostics.......... : $serverDiag
 echo OTServ custom allocator..... : $otservAllocator

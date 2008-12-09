@@ -252,6 +252,7 @@ class ItemType
 		AmmoAction_t ammoAction;
 		FluidTypes_t fluidSource;
 
+		uint32_t worth;
 		Abilities abilities;
 
 		Condition* condition;
@@ -296,8 +297,8 @@ A Array<A>::getElement(uint32_t id)
 {
 	if(id < m_size)
 		return m_data[id];
-	else
-		return 0;
+
+	return 0;
 }
 
 template<typename A>
@@ -305,8 +306,8 @@ const A Array<A>::getElement(uint32_t id) const
 {
 	if(id < m_size)
 		return m_data[id];
-	else
-		return 0;
+
+	return 0;
 }
 
 template<typename A>
@@ -319,6 +320,7 @@ void Array<A>::addElement(A a, uint32_t pos)
 		memset(m_data + m_size, 0, sizeof(A)*(pos + INCREMENT - m_size));
 		m_size = pos + INCREMENT;
 	}
+
 	m_data[pos] = a;
 }
 
