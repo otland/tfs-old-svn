@@ -152,6 +152,7 @@ void Game::setGameState(GameState_t newState)
 				Houses::getInstance().payHouses();
 				saveGameState(false);
 
+				Spawns::getInstance()->clear();
 				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, this)));
 				Scheduler::getScheduler().stop();
 				Dispatcher::getDispatcher().stop();
@@ -337,8 +338,10 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 
 						return tile->ground;
 					}
+
 					return c;
 				}
+
 				return tile->getTopThing();
 			}
 
@@ -395,6 +398,7 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 					}
 				}
 			}
+
 			return thing;
 		}
 	}
@@ -425,6 +429,7 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 				if(index < maxFluidType)
 					subType = reverseFluidMap[index];
 			}
+
 			return findItemOfType(player, it.id, true, subType);
 		}
 		//inventory
@@ -434,6 +439,7 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 			return player->getInventoryItem(slot);
 		}
 	}
+
 	return NULL;
 }
 
@@ -4457,10 +4463,9 @@ void Game::shutdown()
 	std::cout << ".";
 	Dispatcher::getDispatcher().shutdown();
 	std::cout << ".";
-	Spawns::getInstance()->clear();
-	std::cout << "." << std::endl;
-
 	cleanup();
+	std::cout << ".";
+
 	std::cout << "Exiting." << std::endl;
 	exit(1);
 }

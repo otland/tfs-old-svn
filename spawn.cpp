@@ -38,8 +38,7 @@ extern Game g_game;
 
 Spawns::Spawns()
 {
-	loaded = false;
-	started = false;
+	loaded = started = false;
 	filename = "";
 }
 
@@ -263,8 +262,8 @@ void Spawns::startup()
 
 	for(NpcList::iterator it = npcList.begin(); it != npcList.end(); ++it)
 		g_game.placeCreature((*it), (*it)->getMasterPos(), false, true);
-	npcList.clear();
 
+	npcList.clear();
 	for(SpawnList::iterator it = spawnList.begin(); it != spawnList.end(); ++it)
 		(*it)->startup();
 
@@ -277,9 +276,7 @@ void Spawns::clear()
 		delete (*it);
 
 	spawnList.clear();
-
-	loaded = false;
-	started = false;
+	loaded = started = false;
 	filename = "";
 }
 
@@ -308,35 +305,32 @@ Spawn::Spawn(const Position& _pos, int32_t _radius)
 
 Spawn::~Spawn()
 {
-	Monster* monster;
+	stopEvent();
 	for(SpawnedMap::iterator it = spawnedMap.begin(); it != spawnedMap.end(); ++it)
 	{
-		monster = it->second;
-		it->second = NULL;
+		Monster* monster = it->second;
+		spawnedMap.erase(*it);
 
 		monster->setSpawn(NULL);
 		if(monster->isRemoved())
 			monster->releaseThing2();
 	}
 
-	spawnedMap.clear();
 	spawnMap.clear();
-
-	stopEvent();
 }
 
 bool Spawn::findPlayer(const Position& pos)
 {
 	SpectatorVec list;
-	SpectatorVec::iterator it;
 	g_game.getSpectators(list, pos);
 
 	Player* tmpPlayer = NULL;
-	for(it = list.begin(); it != list.end(); ++it)
+	for(SpectatorVec::iterator it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()) && !tmpPlayer->hasFlag(PlayerFlag_IgnoredByMonsters))
 			return true;
 	}
+
 	return false;
 }
 
