@@ -467,7 +467,7 @@ void ConditionAttributes::addCondition(Creature* creature, const Condition* addC
 
 xmlNodePtr ConditionAttributes::serialize()
 {
-	xmlNodePtr nodeCondition = Condition::serialize();
+	xmlNodePtr nodeCondition = ConditionGeneric::serialize();
 
 	char buffer[20], buffer2[20];
 	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
@@ -489,7 +489,7 @@ xmlNodePtr ConditionAttributes::serialize()
 
 bool ConditionAttributes::unserialize(xmlNodePtr p)
 {
-	if(!Condition::unserialize(p))
+	if(!ConditionGeneric::unserialize(p))
 		return false;
 
 	char buffer[20];
@@ -542,12 +542,12 @@ bool ConditionAttributes::unserializeProp(ConditionAttr_t attr, PropStream& prop
 			break;
 	}
 
-	return Condition::unserializeProp(attr, propStream);
+	return ConditionGeneric::unserializeProp(attr, propStream);
 }
 
 bool ConditionAttributes::serialize(PropWriteStream& propWriteStream)
 {
-	if(!Condition::serialize(propWriteStream))
+	if(!ConditionGeneric::serialize(propWriteStream))
 		return false;
 
 	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
@@ -778,7 +778,7 @@ void ConditionRegeneration::addCondition(Creature* creature, const Condition* ad
 
 xmlNodePtr ConditionRegeneration::serialize()
 {
-	xmlNodePtr nodeCondition = Condition::serialize();
+	xmlNodePtr nodeCondition = ConditionGeneric::serialize();
 
 	char buffer[20];
 	sprintf(buffer, "%d", healthTicks);
@@ -794,7 +794,7 @@ xmlNodePtr ConditionRegeneration::serialize()
 
 bool ConditionRegeneration::unserialize(xmlNodePtr p)
 {
-	if(!Condition::unserialize(p))
+	if(!ConditionGeneric::unserialize(p))
 		return false;
 
 	int32_t intValue;
@@ -862,12 +862,12 @@ bool ConditionRegeneration::unserializeProp(ConditionAttr_t attr, PropStream& pr
 			break;
 	}
 
-	return Condition::unserializeProp(attr, propStream);
+	return ConditionGeneric::unserializeProp(attr, propStream);
 }
 
 bool ConditionRegeneration::serialize(PropWriteStream& propWriteStream)
 {
-	if(!Condition::serialize(propWriteStream))
+	if(!ConditionGeneric::serialize(propWriteStream))
 		return false;
 
 	propWriteStream.ADD_UCHAR(CONDITIONATTR_HEALTHTICKS);
@@ -954,7 +954,7 @@ void ConditionSoul::addCondition(Creature* creature, const Condition* addConditi
 
 xmlNodePtr ConditionSoul::serialize()
 {
-	xmlNodePtr nodeCondition = Condition::serialize();
+	xmlNodePtr nodeCondition = ConditionGeneric::serialize();
 
 	char buffer[20];
 	sprintf(buffer, "%d", soulGain);
@@ -966,7 +966,7 @@ xmlNodePtr ConditionSoul::serialize()
 
 bool ConditionSoul::unserialize(xmlNodePtr p)
 {
-	if(!Condition::unserialize(p))
+	if(!ConditionGeneric::unserialize(p))
 		return false;
 
 	int32_t intValue;
@@ -1008,12 +1008,12 @@ bool ConditionSoul::unserializeProp(ConditionAttr_t attr, PropStream& propStream
 			break;
 	}
 
-	return Condition::unserializeProp(attr, propStream);
+	return ConditionGeneric::unserializeProp(attr, propStream);
 }
 
 bool ConditionSoul::serialize(PropWriteStream& propWriteStream)
 {
-	if(!Condition::serialize(propWriteStream))
+	if(!ConditionGeneric::serialize(propWriteStream))
 		return false;
 
 	propWriteStream.ADD_UCHAR(CONDITIONATTR_SOULGAIN);
