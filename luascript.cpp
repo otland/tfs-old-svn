@@ -2290,8 +2290,8 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 				value = player->getRedSkullTicks();
 				break;
 			case PlayerInfoOutfitWindow:
-				value = LUA_NO_ERROR;
 				player->sendOutfitWindow();
+				value = LUA_TRUE;
 				break;
 			default:
 				std::string tmp = "Unknown player info - " + info;
