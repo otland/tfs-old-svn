@@ -29,8 +29,8 @@
 
 extern Game g_game;
 
-Condition::Condition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks) :
-id(_id), ticks(_ticks), endTime(0), conditionType(_type), buff(false)
+Condition::Condition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff):
+id(_id), ticks(_ticks), endTime(0), conditionType(_type), buff(_buff)
 {
 	//
 }
@@ -40,7 +40,7 @@ bool Condition::setParam(ConditionParam_t param, int32_t value)
 	switch(param)
 	{
 		case CONDITIONPARAM_TICKS:
-			ticks = value;
+			setTicks(value);
 			return true;
 
 		case CONDITIONPARAM_BUFF:
@@ -61,7 +61,7 @@ bool Condition::unserialize(xmlNodePtr p)
 
 xmlNodePtr Condition::serialize()
 {
-	xmlNodePtr nodeCondition = xmlNewNode(NULL,(const xmlChar*)"condition");
+	xmlNodePtr nodeCondition = xmlNewNode(NULL, (const xmlChar*)"condition");
 
 	char buffer[20];
 	sprintf(buffer, "%d", conditionType);
@@ -72,6 +72,9 @@ xmlNodePtr Condition::serialize()
 
 	sprintf(buffer, "%d", ticks);
 	xmlSetProp(nodeCondition, (const xmlChar*)"ticks", (const xmlChar*)buffer);
+
+	sprintf(buffer, "%d", buff ? 1 : 0);
+	xmlSetProp(nodeCondition, (const xmlChar*)"buff", (const xmlChar*)buffer);
 	return nodeCondition;
 }
 
@@ -117,7 +120,17 @@ bool Condition::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
 			if(!propStream.GET_VALUE(value))
 				return false;
 
-			ticks = value;
+			setTicks(value);
+			return true;
+		}
+
+		case CONDITIONATTR_BUFF:
+		{
+			int32_t value = 0;
+			if(!propStream.GET_VALUE(value))
+				return false;
+
+			buff = value != 0;
 			return true;
 		}
 
@@ -141,6 +154,9 @@ bool Condition::serialize(PropWriteStream& propWriteStream)
 
 	propWriteStream.ADD_UCHAR(CONDITIONATTR_TICKS);
 	propWriteStream.ADD_VALUE((int32_t)ticks);
+
+	propWriteStream.ADD_UCHAR(CONDITIONATTR_BUFF);
+	propWriteStream.ADD_VALUE((int32_t)buff ? 1 : 0);
 	return true;
 }
 
@@ -168,7 +184,7 @@ bool Condition::executeCondition(Creature* creature, int32_t interval)
 	return endTime >= OTSYS_TIME();
 }
 
-Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, int32_t param)
+Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, int32_t param, bool _buff/* = false*/)
 {
 	switch((int32_t)_type)
 	{
@@ -179,32 +195,32 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 		case CONDITION_FREEZING:
 		case CONDITION_DAZZLED:
 		case CONDITION_CURSED:
-			return new ConditionDamage(_id, _type);
+			return new ConditionDamage(_id, _type, _buff);
 
 		case CONDITION_HASTE:
 		case CONDITION_PARALYZE:
-			return new ConditionSpeed(_id, _type, _ticks, param);
+			return new ConditionSpeed(_id, _type, _ticks, _buff, param);
 
 		case CONDITION_INVISIBLE:
-			return new ConditionInvisible(_id, _type, _ticks);
+			return new ConditionInvisible(_id, _type, _ticks, _buff);
 
 		case CONDITION_OUTFIT:
-			return new ConditionOutfit(_id, _type, _ticks);
+			return new ConditionOutfit(_id, _type, _ticks, _buff);
 
 		case CONDITION_LIGHT:
-			return new ConditionLight(_id, _type, _ticks, param & 0xFF, (param & 0xFF00) >> 8);
+			return new ConditionLight(_id, _type, _ticks, _buff, param & 0xFF, (param & 0xFF00) >> 8);
 
 		case CONDITION_REGENERATION:
-			return new ConditionRegeneration(_id, _type, _ticks);
+			return new ConditionRegeneration(_id, _type, _ticks, _buff);
 
 		case CONDITION_SOUL:
-			return new ConditionSoul(_id, _type, _ticks);
+			return new ConditionSoul(_id, _type, _ticks, _buff);
 
 		case CONDITION_MANASHIELD:
-			return new ConditionManaShield(_id, _type,_ticks);
+			return new ConditionManaShield(_id, _type,_ticks, _buff);
 
 		case CONDITION_ATTRIBUTES:
-			return new ConditionAttributes(_id, _type,_ticks);
+			return new ConditionAttributes(_id, _type, _ticks, _buff);
 
 		case CONDITION_INFIGHT:
 		case CONDITION_MUTED:
@@ -216,7 +232,7 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 		case CONDITION_EXHAUST_WEAPON:
 		case CONDITION_DRUNK:
 		case CONDITION_DISABLE_ATTACK:
-			return new ConditionGeneric(_id, _type, _ticks);
+			return new ConditionGeneric(_id, _type, _ticks, _buff);
 
 		default:
 			break;
@@ -250,7 +266,14 @@ Condition* Condition::createCondition(PropStream& propStream)
 	if(!propStream.GET_ULONG(_ticks))
 		return NULL;
 
-	return createCondition((ConditionId_t)_id, (ConditionType_t)_type, _ticks, 0);
+	if(!propStream.GET_UCHAR(attr) || attr != CONDITIONATTR_BUFF)
+		return NULL;
+
+	uint32_t _buff = 0;
+	if(!propStream.GET_ULONG(_buff))
+		return NULL;
+
+	return createCondition((ConditionId_t)_id, (ConditionType_t)_type, _ticks, 0, _buff != 0);
 }
 
 bool Condition::isPersistent() const
@@ -283,8 +306,8 @@ Icons_t Condition::getIcons() const
 	return ICON_NONE;
 }
 
-ConditionGeneric::ConditionGeneric(ConditionId_t _id, ConditionType_t _type, int32_t _ticks):
-Condition(_id, _type, _ticks)
+ConditionGeneric::ConditionGeneric(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff):
+Condition(_id, _type, _ticks, _buff)
 {
 	//
 }
@@ -313,9 +336,6 @@ Icons_t ConditionGeneric::getIcons() const
 
 	switch(conditionType)
 	{
-		case CONDITION_MANASHIELD:
-			return ICON_MANASHIELD;
-
 		case CONDITION_INFIGHT:
 			return ICON_SWORDS;
 
@@ -329,8 +349,23 @@ Icons_t ConditionGeneric::getIcons() const
 	return ICON_NONE;
 }
 
-ConditionAttributes::ConditionAttributes(ConditionId_t _id, ConditionType_t _type, int32_t _ticks) :
-ConditionGeneric(_id, _type, _ticks)
+ConditionManaShield::ConditionManaShield(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff):
+ConditionGeneric(_id, _type, _ticks, _buff)
+{
+	//
+}
+
+Icons_t ConditionManaShield::getIcons() const
+{
+	Icons_t icon = Condition::getIcons();
+	if(icon != ICON_NONE)
+		return icon;
+
+	return ICON_MANASHIELD;
+}
+
+ConditionAttributes::ConditionAttributes(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff):
+ConditionGeneric(_id, _type, _ticks, _buff)
 {
 	currentSkill = currentStat = 0;
 	memset(skills, 0, sizeof(skills));
@@ -539,8 +574,7 @@ bool ConditionAttributes::executeCondition(Creature* creature, int32_t interval)
 
 void ConditionAttributes::endCondition(Creature* creature, ConditionEnd_t reason)
 {
-	Player* player = creature->getPlayer();
-	if(player)
+	if(Player* player = creature->getPlayer())
 	{
 		bool needUpdateSkills = false;
 		for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
@@ -650,8 +684,8 @@ bool ConditionAttributes::setParam(ConditionParam_t param, int32_t value)
 	return ret;
 }
 
-ConditionRegeneration::ConditionRegeneration(ConditionId_t _id, ConditionType_t _type, int32_t _ticks) :
-ConditionGeneric(_id, _type, _ticks)
+ConditionRegeneration::ConditionRegeneration(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff):
+ConditionGeneric(_id, _type, _ticks, _buff)
 {
 	internalHealthTicks = internalManaTicks = healthGain = manaGain = 0;
 	healthTicks = manaTicks = 1000;
@@ -830,8 +864,8 @@ bool ConditionRegeneration::setParam(ConditionParam_t param, int32_t value)
 	return ret;
 }
 
-ConditionSoul::ConditionSoul(ConditionId_t _id, ConditionType_t _type, int32_t _ticks) :
-ConditionGeneric(_id, _type, _ticks)
+ConditionSoul::ConditionSoul(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff):
+ConditionGeneric(_id, _type, _ticks, _buff)
 {
 	internalSoulTicks = soulTicks = soulGain = 0;
 }
@@ -959,8 +993,8 @@ bool ConditionSoul::setParam(ConditionParam_t param, int32_t value)
 	return ret;
 }
 
-ConditionDamage::ConditionDamage(ConditionId_t _id, ConditionType_t _type) :
-Condition(_id, _type, 0)
+ConditionDamage::ConditionDamage(ConditionId_t _id, ConditionType_t _type, bool _buff):
+Condition(_id, _type, 0, _buff)
 {
 	tickInterval = 2000;
 	delayed = forceUpdate = false;
@@ -1092,7 +1126,7 @@ bool ConditionDamage::unserializeProp(ConditionAttr_t attr, PropStream& propStre
 		case CONDITIONATTR_DELAYED:
 		{
 			bool value = false;
-				if(!propStream.GET_VALUE(value))
+			if(!propStream.GET_VALUE(value))
 				return false;
 
 			delayed = value;
@@ -1307,6 +1341,7 @@ bool ConditionDamage::getNextDamage(int32_t& damage)
 
 		return true;
 	}
+
 	return false;
 }
 
@@ -1377,7 +1412,6 @@ void ConditionDamage::addCondition(Creature* creature, const Condition* addCondi
 int32_t ConditionDamage::getTotalDamage() const
 {
 	int32_t result = 0;
-
 	if(!damageList.empty())
 	{
 		for(DamageList::const_iterator it = damageList.begin(); it != damageList.end(); ++it)
@@ -1447,8 +1481,8 @@ void ConditionDamage::generateDamageList(int32_t amount, int32_t start, std::lis
 	}
 }
 
-ConditionSpeed::ConditionSpeed(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, int32_t changeSpeed) :
-Condition(_id, _type, _ticks)
+ConditionSpeed::ConditionSpeed(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff, int32_t changeSpeed):
+Condition(_id, _type, _ticks, _buff)
 {
 	speedDelta = changeSpeed;
 	mina = minb = maxa = maxb = 0.0f;
@@ -1691,8 +1725,8 @@ Icons_t ConditionSpeed::getIcons() const
 	return ICON_NONE;
 }
 
-ConditionInvisible::ConditionInvisible(ConditionId_t _id, ConditionType_t _type, int32_t _ticks) :
-ConditionGeneric(_id, _type, _ticks)
+ConditionInvisible::ConditionInvisible(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff):
+ConditionGeneric(_id, _type, _ticks, _buff)
 {
 	//
 }
@@ -1709,8 +1743,8 @@ void ConditionInvisible::endCondition(Creature* creature, ConditionEnd_t reason)
 		g_game.internalCreatureChangeVisible(creature, true);
 }
 
-ConditionOutfit::ConditionOutfit(ConditionId_t _id, ConditionType_t _type, int32_t _ticks) :
-Condition(_id, _type, _ticks)
+ConditionOutfit::ConditionOutfit(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff):
+Condition(_id, _type, _ticks, _buff)
 {
 	//
 }
@@ -1723,6 +1757,7 @@ void ConditionOutfit::addOutfit(Outfit_t outfit)
 xmlNodePtr ConditionOutfit::serialize()
 {
 	xmlNodePtr nodeCondition = Condition::serialize();
+
 	char buffer[20];
 	for(std::vector<Outfit_t>::const_iterator it = outfits.begin(); it != outfits.end(); ++it)
 	{
@@ -1778,8 +1813,10 @@ bool ConditionOutfit::unserialize(xmlNodePtr p)
 
 			outfits.push_back(outfit);
 		}
+
 		nodeList = nodeList->next;
 	}
+
 	return true;
 }
 
@@ -1853,13 +1890,12 @@ void ConditionOutfit::addCondition(Creature* creature, const Condition* addCondi
 	}
 }
 
-ConditionLight::ConditionLight(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, int32_t _lightlevel, int32_t _lightcolor) :
-Condition(_id, _type, _ticks)
+ConditionLight::ConditionLight(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff, int32_t lightLevel, int32_t lightColor):
+Condition(_id, _type, _ticks, _buff)
 {
-	lightInfo.level = _lightlevel;
-	lightInfo.color = _lightcolor;
-	internalLightTicks = 0;
-	lightChangeInterval = 0;
+	lightInfo.level = lightLevel;
+	lightInfo.color = lightColor;
+	internalLightTicks = lightChangeInterval = 0;
 }
 
 bool ConditionLight::startCondition(Creature* creature)
@@ -1886,6 +1922,7 @@ bool ConditionLight::executeCondition(Creature* creature, int32_t interval)
 			g_game.changeLight(creature);
 		}
 	}
+
 	return Condition::executeCondition(creature, interval);
 }
 
@@ -1956,7 +1993,6 @@ bool ConditionLight::unserialize(xmlNodePtr p)
 		return false;
 
 	int32_t intValue;
-
 	if(readXMLInteger(p, "lightcolor", intValue))
 		lightInfo.color = intValue;
 
