@@ -571,10 +571,6 @@ bool Spell::playerSpellCheck(Player* player) const
 
 		if(player->hasCondition(CONDITION_EXHAUST_COMBAT))
 			exhaust = true;
-
-		ConditionGeneric* condition = dynamic_cast<ConditionGeneric*>(player->getCondition(CONDITION_DISABLE_ATTACK));
-		if(condition && condition->isAffectingSpells())
-			disabled = true;
 	}
 	else
 	{
@@ -595,7 +591,8 @@ bool Spell::playerSpellCheck(Player* player) const
 		return false;
 	}
 
-	if(disabled)
+	ConditionGeneric* condition = dynamic_cast<ConditionGeneric*>(player->getCondition(CONDITION_DISABLE_ATTACK));
+	if(disabled || (condition && condition->isAffectingSpells()))
 	{
 		player->sendCancelMessage(RET_YOUCANNOTCASTTHISSPELLRIGHTNOW);
 		if(isInstant())
