@@ -447,7 +447,7 @@ bool Spell::configureSpell(xmlNodePtr p)
 			"cursecondition"
 		};
 
-		for(uint32_t i = 0; i < sizeof(reservedList)/sizeof(const char*); ++i)
+		for(uint32_t i = 0; i < sizeof(reservedList) / sizeof(const char*); ++i)
 		{
 			if(strcasecmp(reservedList[i], name.c_str()) == 0)
 			{
@@ -560,7 +560,7 @@ bool Spell::playerSpellCheck(Player* player) const
 	if(!isEnabled())
 		return false;
 
-	bool exhaust = false;
+	bool exhaust = false, disabled = false;
 	if(isAggressive)
 	{
 		if(!player->hasFlag(PlayerFlag_IgnoreProtectionZone) && player->getZone() == ZONE_PROTECTION)
@@ -571,13 +571,33 @@ bool Spell::playerSpellCheck(Player* player) const
 
 		if(player->hasCondition(CONDITION_EXHAUST_COMBAT))
 			exhaust = true;
+
+		ConditionGeneric* condition = dynamic_cast<ConditionGeneric*>(player->getCondition(CONDITION_DISABLE_ATTACK));
+		if(condition && condition->isAffectingSpells())
+			disabled = true;
 	}
-	else if(player->hasCondition(CONDITION_EXHAUST_HEAL))
-		exhaust = true;
+	else
+	{
+		if(player->hasCondition(CONDITION_EXHAUST_HEAL))
+			exhaust = true;
+
+		ConditionGeneric* condition = dynamic_cast<ConditionGeneric*>(player->getCondition(CONDITION_DISABLE_DEFENSE));
+		if(condition && condition->isAffectingSpells())
+			disabled = true;
+	}
 
 	if(exhaust)
 	{
 		player->sendCancelMessage(RET_YOUAREEXHAUSTED);
+		if(isInstant())
+			g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+
+		return false;
+	}
+
+	if(disabled)
+	{
+		player->sendCancelMessage(RET_YOUCANNOTCASTTHISSPELLRIGHTNOW);
 		if(isInstant())
 			g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 

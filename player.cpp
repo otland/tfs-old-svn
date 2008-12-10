@@ -516,7 +516,6 @@ int32_t Player::getDefense() const
 	const Item* weapon = NULL;
 	const Item* shield = NULL;
 	getShieldAndWeapon(shield, weapon);
-
 	if(weapon)
 	{
 		extraDefense = weapon->getExtraDefense();
@@ -552,8 +551,10 @@ float Player::getAttackFactor() const
 
 		case FIGHTMODE_ATTACK:
 		default:
-			return 1.0f;
+			break;
 	}
+
+	return 1.0f;
 }
 
 float Player::getDefenseFactor() const
@@ -1138,7 +1139,7 @@ void Player::sendCancelMessage(ReturnValue message) const
 			break;
 
 		case RET_ACTIONNOTPERMITTEDINANOPVPZONE:
-			sendCancel("This action is not permitted in a none pvp zone.");
+			sendCancel("This action is not permitted in a non-pvp zone.");
 			break;
 
 		case RET_YOUCANNOTLOGOUTHERE:
@@ -1171,6 +1172,10 @@ void Player::sendCancelMessage(ReturnValue message) const
 
 		case RET_YOUHAVETOBEINPARTY:
 			sendCancel("You have to be in party.");
+			break;
+
+		case RET_YOUCANNOTCASTTHISSPELLRIGHTNOW:
+			sendCancel("You can not cast this spell right now.");
 			break;
 
 		case RET_NOTPOSSIBLE:
@@ -2010,7 +2015,6 @@ void Player::onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType)
 	Creature::onAttackedCreatureBlockHit(target, blockType);
 
 	lastAttackBlockType = blockType;
-
 	switch(blockType)
 	{
 		case BLOCK_NONE:
@@ -2062,7 +2066,6 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 	bool checkDefense /* = false*/, bool checkArmor /* = false*/)
 {
 	BlockType_t blockType = Creature::blockHit(attacker, combatType, damage, checkDefense, checkArmor);
-
 	if(attacker)
 		sendCreatureSquare(attacker, SQ_COLOR_BLACK);
 
@@ -2174,6 +2177,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 			blockType = BLOCK_DEFENSE;
 		}
 	}
+
 	return blockType;
 }
 

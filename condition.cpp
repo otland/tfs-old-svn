@@ -232,6 +232,7 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 		case CONDITION_EXHAUST_WEAPON:
 		case CONDITION_DRUNK:
 		case CONDITION_DISABLE_ATTACK:
+		case CONDITION_DISABLE_DEFENSE:
 			return new ConditionGeneric(_id, _type, _ticks, _buff);
 
 		default:
@@ -240,7 +241,6 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 
 	return NULL;
 }
-
 
 Condition* Condition::createCondition(PropStream& propStream)
 {
@@ -309,7 +309,7 @@ Icons_t Condition::getIcons() const
 ConditionGeneric::ConditionGeneric(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff):
 Condition(_id, _type, _ticks, _buff)
 {
-	//
+	affectSpells = false;
 }
 
 bool ConditionGeneric::executeCondition(Creature* creature, int32_t interval)
@@ -326,6 +326,76 @@ void ConditionGeneric::addCondition(Creature* creature, const Condition* addCond
 {
 	if(updateCondition(addCondition))
 		setTicks(addCondition->getTicks());
+}
+
+xmlNodePtr ConditionGeneric::serialize()
+{
+	xmlNodePtr nodeCondition = Condition::serialize();
+
+	char buffer[20];
+	sprintf(buffer, "%d", affectSpells ? 1 : 0);
+	xmlSetProp(nodeCondition, (const xmlChar*)"affectspells", (const xmlChar*)buffer);
+	return nodeCondition;
+}
+
+bool ConditionGeneric::unserialize(xmlNodePtr p)
+{
+	if(!Condition::unserialize(p))
+		return false;
+
+	int32_t intValue;
+	if(readXMLInteger(p, "affectspells", intValue))
+		affectSpells = intValue != 0;
+
+	return true;
+}
+
+bool ConditionGeneric::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
+{
+	switch(attr)
+	{
+		case CONDITIONATTR_AFFECTSPELLS:
+		{
+			uint32_t value = 0;
+			if(!propStream.GET_VALUE(value))
+				return false;
+
+			affectSpells = value != 0;
+			return true;
+		}
+
+		default:
+			break;
+	}
+
+	return Condition::unserializeProp(attr, propStream);
+}
+
+bool ConditionGeneric::serialize(PropWriteStream& propWriteStream)
+{
+	if(!Condition::serialize(propWriteStream))
+		return false;
+
+	propWriteStream.ADD_UCHAR(CONDITIONATTR_AFFECTSPELLS);
+	propWriteStream.ADD_VALUE(affectSpells ? 1 : 0);
+
+	return true;
+}
+
+bool ConditionGeneric::setParam(ConditionParam_t param, int32_t value)
+{
+	bool ret = Condition::setParam(param, value);
+	switch(param)
+	{
+		case CONDITIONPARAM_AFFECTSPELLS:
+			affectSpells = value != 0;
+			return true;
+
+		default:
+			break;
+	}
+
+	return ret;
 }
 
 Icons_t ConditionGeneric::getIcons() const

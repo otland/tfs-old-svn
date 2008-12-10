@@ -64,7 +64,8 @@ enum ConditionType_t
 	CONDITION_EXHAUST_COMBAT = 8388608,
 	CONDITION_EXHAUST_HEAL = 16777216,
 	CONDITION_EXHAUST_WEAPON = 33554432,
-	CONDITION_DISABLE_ATTACK = 67108864
+	CONDITION_DISABLE_ATTACK = 67108864,
+	CONDITION_DISABLE_DEFENSE = 
 };
 
 enum ConditionEnd_t
@@ -103,6 +104,7 @@ enum ConditionAttr_t
 	CONDITIONATTR_OUTFIT = 24,
 	CONDITIONATTR_PERIODDAMAGE = 25,
 	CONDITIONATTR_BUFF = 26,
+	CONDITIONATTR_AFFECTSPELLS = 27,
 
 	//reserved for serialization
 	CONDITIONATTR_END      = 254
@@ -147,6 +149,7 @@ class Condition
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 
 		bool isPersistent() const;
+		virtual bool isAffectingSpells() const {return false;}
 
 	protected:
 		ConditionId_t id;
@@ -170,6 +173,20 @@ class ConditionGeneric: public Condition
 		virtual Icons_t getIcons() const;
 
 		virtual ConditionGeneric* clone() const {return new ConditionGeneric(*this);}
+
+		virtual bool setParam(ConditionParam_t param, int32_t value);
+
+		//serialization
+		virtual xmlNodePtr serialize();
+		virtual bool unserialize(xmlNodePtr p);
+
+		virtual bool serialize(PropWriteStream& propWriteStream);
+		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
+
+		virtual bool isAffectingSpells() const {return affectSpells;}
+
+	private:
+		bool affectSpells;
 };
 
 class ConditionManaShield : public ConditionGeneric
@@ -178,9 +195,9 @@ class ConditionManaShield : public ConditionGeneric
 		ConditionManaShield(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff);
 		virtual ~ConditionManaShield() {}
 
-		virtual ConditionManaShield* clone() const {return new ConditionManaShield(*this);}
-
 		virtual Icons_t getIcons() const;
+
+		virtual ConditionManaShield* clone() const {return new ConditionManaShield(*this);}
 };
 
 class ConditionAttributes : public ConditionGeneric

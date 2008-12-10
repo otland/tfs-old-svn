@@ -934,7 +934,6 @@ BlockType_t Creature::blockHit(Creature* attacker, CombatType_t combatType, int3
 	bool checkDefense /* = false */, bool checkArmor /* = false */)
 {
 	BlockType_t blockType = BLOCK_NONE;
-
 	if(isImmune(combatType))
 	{
 		damage = 0;
@@ -949,7 +948,7 @@ BlockType_t Creature::blockHit(Creature* attacker, CombatType_t combatType, int3
 			hasDefense = true;
 		}
 
-		if(checkDefense && hasDefense)
+		if(checkDefense && hasDefense && !hasCondition(CONDITION_DISABLE_DEFENSE))
 		{
 			int32_t maxDefense = getDefense();
 			int32_t minDefense = maxDefense / 2;
@@ -997,7 +996,6 @@ BlockType_t Creature::blockHit(Creature* attacker, CombatType_t combatType, int3
 	}
 
 	onAttacked();
-
 	return blockType;
 }
 
