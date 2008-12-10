@@ -3242,7 +3242,7 @@ void Player::doAttacking(uint32_t interval)
 	if((OTSYS_TIME() - lastAttack) >= getAttackSpeed() && !hasCondition(CONDITION_DISABLE_ATTACK))
 	{
 		Item* tool = getWeapon();
-		if(!item)
+		if(!tool)
 			return;
 
 		if(const Weapon* weapon = g_weapons->getWeapon(tool))
@@ -3283,6 +3283,7 @@ uint64_t Player::getGainedExperience(Creature* attacker) const
 
 				uint32_t b = getLevel();
 				uint64_t c = getExperience();
+
 				uint64_t result = std::max((uint64_t)0, (uint64_t)std::floor(getDamageRatio(attacker) * std::max((double)0, ((double)(1 - (((double)a / b))))) * 0.05 * c));
 				return (result * (g_game.getExperienceStage(attackerPlayer->getLevel()) + attackerPlayer->extraExpRate));
 			}
