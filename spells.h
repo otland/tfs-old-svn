@@ -128,7 +128,9 @@ class Spell : public BaseSpell
 		int32_t getMana() const {return mana;}
 		int32_t getManaPercent() const {return manaPercent;}
 		uint32_t getExhaustion() const {return exhaustion;}
+		const bool isEnabled() const {return enabled;}
 		const bool isPremium() const {return premium;}
+		const bool isParty() const {return party;}
 
 		virtual bool isInstant() const = 0;
 		bool isLearnable() const {return learnable;}
@@ -145,6 +147,7 @@ class Spell : public BaseSpell
 		bool learnable;
 		bool enabled;
 		bool premium;
+		bool party;
 		int32_t level;
 		int32_t magLevel;
 

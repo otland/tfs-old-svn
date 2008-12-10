@@ -965,7 +965,7 @@ void Player::sendCancelMessage(ReturnValue message) const
 			break;
 
 		case RET_CANONLYUSEONEWEAPON:
-			sendCancel("You may only use one weapon.");
+			sendCancel("You may use only one weapon.");
 			break;
 
 		case RET_TOOFARAWAY:
@@ -1162,11 +1162,15 @@ void Player::sendCancelMessage(ReturnValue message) const
 			break;
 
 		case RET_CANONLYUSEONESHIELD:
-			sendCancel("You may only use one shield.");
+			sendCancel("You may use only one shield.");
 			break;
 
 		case RET_YOUARENOTTHEOWNER:
 			sendCancel("You are not the owner.");
+			break;
+
+		case RET_YOUHAVETOBEINPARTY:
+			sendCancel("You have to be in party.");
 			break;
 
 		case RET_NOTPOSSIBLE:
