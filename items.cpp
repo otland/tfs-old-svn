@@ -1055,11 +1055,11 @@ bool Items::loadFromXml()
 										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_DROWN, false);
 										combatType = COMBAT_DROWNDAMAGE;
 									}
-									else if(tmpStrValue == "physical")
+									/*else if(tmpStrValue == "physical")
 									{
-										damageCondition = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_PHYSICAL, false);
+										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_PHYSICAL, false);
 										combatType = COMBAT_PHYSICALDAMAGE;
-									}
+									}*/
 									else
 										std::cout << "[Warning - Items::loadFromXml] " << "Unknown field value " << strValue << std::endl;
 
