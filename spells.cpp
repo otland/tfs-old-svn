@@ -859,14 +859,13 @@ int32_t Spell::getSoulCost() const
 
 ReturnValue Spell::CreateIllusion(Creature* creature, const Outfit_t outfit, int32_t time)
 {
-	ConditionOutfit* outfitCondition = new ConditionOutfit(CONDITIONID_COMBAT, CONDITION_OUTFIT, time);
+	ConditionOutfit* outfitCondition = new ConditionOutfit(CONDITIONID_COMBAT, CONDITION_OUTFIT, time, false);
 
 	if(!outfitCondition)
 		return RET_NOTPOSSIBLE;
 
 	outfitCondition->addOutfit(outfit);
 	creature->addCondition(outfitCondition);
-
 	return RET_NOERROR;
 }
 
@@ -878,7 +877,6 @@ ReturnValue Spell::CreateIllusion(Creature* creature, const std::string& name, i
 		return RET_CREATUREDOESNOTEXIST;
 
 	const MonsterType* mType = g_monsters.getMonsterType(mId);
-
 	if(mType == NULL)
 		return RET_CREATUREDOESNOTEXIST;
 
