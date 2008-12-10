@@ -1,39 +1,36 @@
+local DUSTS = {
+	-- Demons
+	[2956] = {25000, 5905},
+
+	-- Vampires
+	[2916] = {25000, 5906}
+}
+
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if(itemEx.itemid == FALSE) then
-		return FALSE
-	end
-
-	if(getPlayerLevel(cid) >= 2) then
-		local found = FALSE
-		local dust = 0
-
-		if(isInArray({2956}, itemEx.itemid) == TRUE) then
-			found = TRUE
-			if(math.random(1,5) == 1) then
-				dust = 5905
-			end
-		elseif(isInArray({2916}, itemEx.itemid) == TRUE) then
-			found = TRUE
-			if(math.random(1,5) == 1) then
-				dust = 5906
-			end
-		end
-
-		if(found == TRUE) then
-			if(dust == 0) then
-				doSendMagicEffect(toPosition, CONST_ME_POFF)
-			else
-				doSendMagicEffect(toPosition, CONST_ME_GROUNDSHAKER)
-				doPlayerAddItem(cid, dust, 1)
-				doSendAnimatedText(fromPosition, 'Success!', TEXTCOLOR_WHITE_EXP);
-			end
-			doTransformItem(itemEx.uid, itemEx.itemid + 1)
-		else
-			doPlayerSendCancel(cid, "Sorry, not possible.")
-		end
-	else
+	if(getPlayerLevel(cid) <= 1) then
 		doPlayerSendCancel(cid, "You have to be at least Level 2 to use this tool.")
+		return TRUE
 	end
 
+	local dust = DUSTS[itemEx.itemid]
+	if(dust == nil) then
+		doPlayerSendCancel(cid, "Sorry, not possible.")
+		return TRUE
+	end
+
+	local random = math.random(1, 100000)
+	if(random <= dust[1]) then
+		doSendMagicEffect(toPosition, CONST_ME_GROUNDSHAKER)
+		doPlayerAddItem(cid, dust[2], 1)
+		doSendAnimatedText(fromPosition, 'Success!', TEXTCOLOR_WHITE_EXP);
+	elseif(dust[3] and random >= dust[3]) then
+		doSendMagicEffect(toPosition, CONST_ME_GROUNDSHAKER)
+		doPlayerAddItem(cid, dust[4], 1)
+		doSendAnimatedText(fromPosition, 'Success!', TEXTCOLOR_WHITE_EXP);
+	else
+		doSendMagicEffect(toPosition, CONST_ME_POFF)
+	end
+
+	doTransformItem(itemEx.uid, itemEx.itemid + 1)
 	return TRUE
 end

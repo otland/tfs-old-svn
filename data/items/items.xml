@@ -20509,6 +20509,8 @@
 	<item id="7536" article="a" name="cocoon">
 	</item>
 	<item id="7537" article="a" name="destroyed cocoon">
+		<attribute key="decayTo" value="7536"/>
+		<attribute key="duration" value="600"/>
 	</item>
 	<item id="7538" article="a" name="spider's web">
 	</item>
@@ -20523,8 +20525,12 @@
 	<item id="7543" article="a" name="spider's web">
 	</item>
 	<item id="7544" article="a" name="spider's web">
+		<attribute key="decayTo" value="7538"/>
+		<attribute key="duration" value="240"/>
 	</item>
 	<item id="7545" article="a" name="spider's web">
+		<attribute key="decayTo" value="7539"/>
+		<attribute key="duration" value="240"/>
 	</item>
 	<item id="7546" article="a" name="spider's web">
 	</item>
@@ -20575,6 +20581,8 @@
 	<item id="7585" article="a" name="cocoon">
 	</item>
 	<item id="7586" article="a" name="destroyed cocoon">
+		<attribute key="decayTo" value="7585"/>
+		<attribute key="duration" value="600"/>
 	</item>
 	<item id="7587" article="a" name="bag">
 		<attribute key="weight" value="800"/>
