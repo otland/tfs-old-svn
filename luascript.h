@@ -467,6 +467,7 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerLossSkill(lua_State* L);
 
 		//get item info
+		static int32_t luaGetItemWeaponType(lua_State* L);
 		static int32_t luaGetItemRWInfo(lua_State* L);
 		static int32_t luaGetThingFromPos(lua_State* L);
 		static int32_t luaGetThing(lua_State* L);
@@ -653,6 +654,7 @@ class LuaScriptInterface
 		static int32_t luaVariantToPosition(lua_State* L);
 
 		static int32_t luaDoChangeSpeed(lua_State* L);
+		static int32_t luaGetExperienceStage(lua_State* L);
 
 		static int32_t luaDoCreatureChangeOutfit(lua_State* L);
 		static int32_t luaSetCreatureOutfit(lua_State* L);

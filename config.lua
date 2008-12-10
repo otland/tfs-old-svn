@@ -42,6 +42,7 @@
 	fieldOwnershipDuration = 5 * 1000
 
 	-- Connection config
+	worldId = 0
 	ip = "127.0.0.1"
 	port = 7171
 	loginTries = 10
@@ -58,6 +59,7 @@
 	statusTimeout = 5 * 60 * 1000
 	replaceKickOnLogin = "yes"
 	forceSlowConnectionsToDisconnect = "no"
+	loginOnlyWithLoginServer = "no"
 
 	-- Database
 	-- NOTE: sqlFile is used only by sqlite database, and sqlKeepAlive by mysql database.

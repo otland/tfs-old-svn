@@ -7,7 +7,7 @@ setCombatParam(combat, COMBAT_PARAM_TARGETCASTERORTOPMOST, TRUE)
 setCombatParam(combat, COMBAT_PARAM_AGGRESSIVE, FALSE)
 setCombatParam(combat, COMBAT_PARAM_DISPEL, CONDITION_POISON)
 
-local exhaust = createConditionObject(CONDITION_EXHAUST_HEAL)
+local exhaust = createConditionObject(CONDITION_EXHAUST)
 setConditionParam(exhaust, CONDITION_PARAM_TICKS, getConfigInfo('timeBetweenExActions'))
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)

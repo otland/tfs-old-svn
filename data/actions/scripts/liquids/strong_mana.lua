@@ -2,7 +2,7 @@ local MIN = 110
 local MAX = 190
 local EMPTY_POTION = 7634
 
-local exhaust = createConditionObject(CONDITION_EXHAUST_HEAL)
+local exhaust = createConditionObject(CONDITION_EXHAUST)
 setConditionParam(exhaust, CONDITION_PARAM_TICKS, getConfigInfo('timeBetweenExActions'))
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)

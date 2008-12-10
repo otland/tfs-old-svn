@@ -31,7 +31,7 @@ setConditionParam(poison, CONDITION_PARAM_STARTVALUE, -5) -- The damage the cond
 setConditionParam(poison, CONDITION_PARAM_TICKINTERVAL, 4000) -- Delay between damages
 setConditionParam(poison, CONDITION_PARAM_FORCEUPDATE, TRUE) -- Re-update condition when adding it(ie. min/max value)
 
-local exhaust = createConditionObject(CONDITION_EXHAUST_HEAL)
+local exhaust = createConditionObject(CONDITION_EXHAUST)
 setConditionParam(exhaust, CONDITION_PARAM_TICKS, getConfigInfo('timeBetweenExActions'))
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)

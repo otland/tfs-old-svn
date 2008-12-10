@@ -565,19 +565,18 @@ float Player::getDefenseFactor() const
 
 		case FIGHTMODE_DEFENSE:
 		{
-			if((OTSYS_TIME() - lastAttack) < const_cast<Player*>(this)->getAttackSpeed())
-			{
-				//Attacking will cause us to get into normal defense
+			if((OTSYS_TIME() - lastAttack) < const_cast<Player*>(this)->getAttackSpeed()) //Attacking will cause us to get into normal defense
 				return 1.0f;
-			}
 
 			return 2.0f;
 		}
 
 		case FIGHTMODE_ATTACK:
 		default:
-			return 1.0f;
+			break;
 	}
+
+	return 1.0f;
 }
 
 void Player::sendIcons() const
@@ -614,35 +613,26 @@ int32_t Player::getPlayerInfo(playerinfo_t playerinfo) const
 	{
 		case PLAYERINFO_LEVEL:
 			return level;
-			break;
 		case PLAYERINFO_LEVELPERCENT:
 			return levelPercent;
-			break;
 		case PLAYERINFO_MAGICLEVEL:
 			return std::max((int32_t)0, ((int32_t)magLevel + varStats[STAT_MAGICLEVEL]));
-			break;
 		case PLAYERINFO_MAGICLEVELPERCENT:
 			return magLevelPercent;
-			break;
 		case PLAYERINFO_HEALTH:
 			return health;
-			break;
 		case PLAYERINFO_MAXHEALTH:
 			return std::max((int32_t)1, ((int32_t)healthMax + varStats[STAT_MAXHEALTH]));
-			break;
 		case PLAYERINFO_MANA:
 			return mana;
-			break;
 		case PLAYERINFO_MAXMANA:
 			return std::max((int32_t)0, ((int32_t)manaMax + varStats[STAT_MAXMANA]));
-			break;
 		case PLAYERINFO_SOUL:
 			return std::max((int32_t)0, ((int32_t)soul + varStats[STAT_SOUL]));
-			break;
 		default:
-			return 0;
 			break;
 	}
+
 	return 0;
 }
 
@@ -2325,12 +2315,6 @@ Item* Player::getCorpse()
 	return corpse;
 }
 
-void Player::addWeaponExhaust(uint32_t ticks)
-{
-	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST_WEAPON, ticks, 0))
-		addCondition(condition);
-}
-
 void Player::addCombatExhaust(uint32_t ticks)
 {
 	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST_COMBAT, ticks, 0))
@@ -2340,6 +2324,12 @@ void Player::addCombatExhaust(uint32_t ticks)
 void Player::addHealExhaust(uint32_t ticks)
 {
 	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST_HEAL, ticks, 0))
+		addCondition(condition);
+}
+
+void Player::addWeaponExhaust(uint32_t ticks)
+{
+	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST_WEAPON, ticks, 0))
 		addCondition(condition);
 }
 
@@ -3252,6 +3242,9 @@ void Player::doAttacking(uint32_t interval)
 	if((OTSYS_TIME() - lastAttack) >= getAttackSpeed() && !hasCondition(CONDITION_DISABLE_ATTACK))
 	{
 		Item* tool = getWeapon();
+		if(!item)
+			return;
+
 		if(const Weapon* weapon = g_weapons->getWeapon(tool))
 		{
 			if(weapon->interruptSwing() && !canDoAction())
@@ -3290,7 +3283,6 @@ uint64_t Player::getGainedExperience(Creature* attacker) const
 
 				uint32_t b = getLevel();
 				uint64_t c = getExperience();
-
 				uint64_t result = std::max((uint64_t)0, (uint64_t)std::floor(getDamageRatio(attacker) * std::max((double)0, ((double)(1 - (((double)a / b))))) * 0.05 * c));
 				return (result * (g_game.getExperienceStage(attackerPlayer->getLevel()) + attackerPlayer->extraExpRate));
 			}

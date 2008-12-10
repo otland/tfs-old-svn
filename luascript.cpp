@@ -1244,6 +1244,9 @@ void LuaScriptInterface::registerFunctions()
 	//0 no house != 0 house id
 	lua_register(m_luaState, "getTileHouseInfo", LuaScriptInterface::luaGetTileHouseInfo);
 
+	//getItemWeaponType(uid)
+	lua_register(m_luaState, "getItemWeaponType", LuaScriptInterface::luaGetItemWeaponType);
+
 	//getItemRWInfo(uid)
 	lua_register(m_luaState, "getItemRWInfo", LuaScriptInterface::luaGetItemRWInfo);
 
@@ -2051,6 +2054,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//debugPrint(text)
 	lua_register(m_luaState, "debugPrint", LuaScriptInterface::luaDebugPrint);
+
+	//getExperienceStage(level)
+	lua_register(m_luaState, "getExperienceStage", LuaScriptInterface::luaGetExperienceStage);
 
 	//getDataDir()
 	lua_register(m_luaState, "getDataDir", LuaScriptInterface::luaGetDataDir);
@@ -3757,30 +3763,42 @@ int32_t LuaScriptInterface::luaDoShowTextDialog(lua_State* L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaGetItemWeaponType(lua_State* L)
+{
+	//getItemWeaponType(uid)
+	ScriptEnviroment* env = getScriptEnv();
+	if(const Item* item = env->getItemByUID(popNumber(L)))
+		lua_pushnumber(L, item->getWeaponType());
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+
+	return 1;
+}
+
 int32_t LuaScriptInterface::luaGetItemRWInfo(lua_State* L)
 {
 	//getItemRWInfo(uid)
-	uint32_t uid = popNumber(L);
-
 	ScriptEnviroment* env = getScriptEnv();
-
-	const Item* item = env->getItemByUID(uid);
-	if(item)
+	if(const Item* item = env->getItemByUID(popNumber(L)))
 	{
-		uint32_t rwflags = 0;
+		uint32_t flags = 0;
 		if(item->isReadable())
-			rwflags |= 1;
+			flags |= 1;
 
 		if(item->canWriteText())
-			rwflags |= 2;
+			flags |= 2;
 
-		lua_pushnumber(L, rwflags);
+		lua_pushnumber(L, flags);
 	}
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
 	}
+
 	return 1;
 }
 
@@ -9671,6 +9689,13 @@ int32_t LuaScriptInterface::luaGetBanList(lua_State *L)
 		setField(L, "comment", (*it).comment);
 		lua_settable(L, -3);
 	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetExperienceStage(lua_State* L)
+{
+	//getExperienceStage(level)
+	lua_pushnumber(L, g_game.getExperienceStage(popNumber(L)));
 	return 1;
 }
 

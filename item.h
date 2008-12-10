@@ -72,7 +72,7 @@ enum ItemDecayState_t
 	DECAYING_PENDING
 };
 
-/*from iomap.h*/
+// from iomap.h
 #pragma pack(1)
 struct TeleportDest
 {
