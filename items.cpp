@@ -1037,33 +1037,31 @@ bool Items::loadFromXml()
 									tmpStrValue = asLowerCaseString(strValue);
 									if(tmpStrValue == "fire")
 									{
-										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_FIRE);
+										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_FIRE, false);
 										combatType = COMBAT_FIREDAMAGE;
 									}
 									else if(tmpStrValue == "energy")
 									{
-										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_ENERGY);
+										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_ENERGY, false);
 										combatType = COMBAT_ENERGYDAMAGE;
 									}
 									else if(tmpStrValue == "earth" || tmpStrValue == "poison")
 									{
-										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_POISON);
+										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_POISON, false);
 										combatType = COMBAT_EARTHDAMAGE;
 									}
 									else if(tmpStrValue == "drown")
 									{
-										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_DROWN);
+										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_DROWN, false);
 										combatType = COMBAT_DROWNDAMAGE;
 									}
-									/*
 									else if(tmpStrValue == "physical")
 									{
-										damageCondition = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_PHYSICAL);
+										damageCondition = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_PHYSICAL, false);
 										combatType = COMBAT_PHYSICALDAMAGE;
 									}
-									*/
 									else
-										std::cout << "Warning: [Items::loadFromXml] " << "Unknown field value " << strValue << std::endl;
+										std::cout << "[Warning - Items::loadFromXml] " << "Unknown field value " << strValue << std::endl;
 
 									if(combatType != COMBAT_NONE)
 									{
@@ -1118,6 +1116,7 @@ bool Items::loadFromXml()
 													}
 												}
 											}
+
 											fieldAttributesNode = fieldAttributesNode->next;
 										}
 
