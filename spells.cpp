@@ -401,8 +401,9 @@ Spell::Spell()
 	selfTarget = false;
 	blockingSolid = false;
 	blockingCreature = false;
-	premium = false;
 	enabled = true;
+	premium = false;
+	party = false;
 	isAggressive = true;
 	learnable = false;
 }
