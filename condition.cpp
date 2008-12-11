@@ -451,7 +451,6 @@ bool ConditionAttributes::unserialize(xmlNodePtr p)
 
 	char buffer[20];
 	int32_t intValue;
-
 	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 	{
 		sprintf(buffer, "skill%d", i);
@@ -542,7 +541,7 @@ void ConditionAttributes::updatePercentSkills(Player* player)
 		if(skillsPercent[i] == 0)
 			continue;
 
-		skills[i] += (int32_t)(player->getSkill(i, SKILL_LEVEL) * ((skillsPercent[i] - 100) / 100.f));
+		skills[i] += (int32_t)(player->getSkill((skills_t)i, SKILL_LEVEL) * ((skillsPercent[i] - 100) / 100.f));
 	}
 }
 
