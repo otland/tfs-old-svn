@@ -218,10 +218,12 @@ class ConditionAttributes : public ConditionGeneric
 	protected:
 		int32_t skills[SKILL_LAST + 1];
 		int32_t stats[STAT_LAST + 1];
+		int32_t skillsPercent[SKILL_LAST + 1];
 		int32_t statsPercent[STAT_LAST + 1];
 		int32_t currentSkill;
 		int32_t currentStat;
 
+		void updatePercentSkills(Player* player);
 		void updatePercentStats(Player* player);
 		void updateSkills(Player* player);
 		void updateStats(Player* player);

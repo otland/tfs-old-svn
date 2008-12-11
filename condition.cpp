@@ -408,11 +408,13 @@ void ConditionAttributes::addCondition(Creature* creature, const Condition* addC
 
 		//Apply the new one
 		memcpy(skills, conditionAttrs.skills, sizeof(skills));
+		memcpy(skillsPercent, conditionAttrs.skillsPercent, sizeof(skillsPercent));
 		memcpy(stats, conditionAttrs.stats, sizeof(stats));
 		memcpy(statsPercent, conditionAttrs.statsPercent, sizeof(statsPercent));
 
 		if(Player* player = creature->getPlayer())
 		{
+			updatePercentSkills(player);
 			updateSkills(player);
 			updatePercentStats(player);
 			updateStats(player);
@@ -524,12 +526,24 @@ bool ConditionAttributes::startCondition(Creature* creature)
 {
 	if(Player* player = creature->getPlayer())
 	{
+		updatePercentSkills(player);
 		updateSkills(player);
 		updatePercentStats(player);
 		updateStats(player);
 	}
 
 	return Condition::startCondition(creature);
+}
+
+void ConditionAttributes::updatePercentSkills(Player* player)
+{
+	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
+	{
+		if(skillsPercent[i] == 0)
+			continue;
+
+		skills[i] += (int32_t)(player->getSkill(i, SKILL_LEVEL) * ((skillsPercent[i] - 100) / 100.f));
+	}
 }
 
 void ConditionAttributes::updatePercentStats(Player* player)
@@ -542,19 +556,22 @@ void ConditionAttributes::updatePercentStats(Player* player)
 		switch(i)
 		{
 			case STAT_MAXHEALTH:
-				stats[i] = (int32_t)(player->getMaxHealth() * ((statsPercent[i] - 100) / 100.f));
+				stats[i] += (int32_t)(player->getMaxHealth() * ((statsPercent[i] - 100) / 100.f));
 				break;
 
 			case STAT_MAXMANA:
-				stats[i] = (int32_t)(player->getMaxMana() * ((statsPercent[i] - 100) / 100.f));
+				stats[i] += (int32_t)(player->getMaxMana() * ((statsPercent[i] - 100) / 100.f));
 				break;
 
 			case STAT_SOUL:
-				stats[i] = (int32_t)(player->getSoul() * ((statsPercent[i] - 100) / 100.f));
+				stats[i] += (int32_t)(player->getSoul() * ((statsPercent[i] - 100) / 100.f));
 				break;
 
 			case STAT_MAGICLEVEL:
-				stats[i] = (int32_t)(player->getMagicLevel() * ((statsPercent[i] - 100) / 100.f));
+				stats[i] += (int32_t)(player->getMagicLevel() * ((statsPercent[i] - 100) / 100.f));
+				break;
+
+			default:
 				break;
 		}
 	}
@@ -635,12 +652,8 @@ bool ConditionAttributes::setParam(ConditionParam_t param, int32_t value)
 	switch(param)
 	{
 		case CONDITIONPARAM_SKILL_MELEE:
-		{
-			skills[SKILL_CLUB] = value;
-			skills[SKILL_AXE] = value;
-			skills[SKILL_SWORD] = value;
+			skills[SKILL_CLUB] = skills[SKILL_AXE] = skills[SKILL_SWORD] = value;
 			return true;
-		}
 
 		case CONDITIONPARAM_SKILL_FIST:
 			skills[SKILL_FIST] = value;
@@ -700,6 +713,38 @@ bool ConditionAttributes::setParam(ConditionParam_t param, int32_t value)
 
 		case CONDITIONPARAM_STAT_MAGICLEVELPERCENT:
 			statsPercent[STAT_MAGICLEVEL] = std::max((int32_t)0, value);
+			return true;
+
+		case CONDITIONPARAM_SKILL_MELEEPERCENT:
+			skillsPercent[SKILL_CLUB] = skillsPercent[SKILL_AXE] = skillsPercent[SKILL_SWORD] = std::max((int32_t)0, value);
+			return true;
+
+		case CONDITIONPARAM_SKILL_FISTPERCENT:
+			skillsPercent[SKILL_FIST] = std::max((int32_t)0, value);
+			return true;
+
+		case CONDITIONPARAM_SKILL_CLUBPERCENT:
+			skillsPercent[SKILL_CLUB] = std::max((int32_t)0, value);
+			return true;
+
+		case CONDITIONPARAM_SKILL_SWORDPERCENT:
+			skillsPercent[SKILL_SWORD] = std::max((int32_t)0, value);
+			return true;
+
+		case CONDITIONPARAM_SKILL_AXEPERCENT:
+			skillsPercent[SKILL_AXE] = std::max((int32_t)0, value);
+			return true;
+
+		case CONDITIONPARAM_SKILL_DISTANCEPERCENT:
+			skillsPercent[SKILL_DIST] = std::max((int32_t)0, value);
+			return true;
+
+		case CONDITIONPARAM_SKILL_SHIELDPERCENT:
+			skillsPercent[SKILL_SHIELD] = std::max((int32_t)0, value);
+			return true;
+
+		case CONDITIONPARAM_SKILL_FISHINGPERCENT:
+			skillsPercent[SKILL_FISH] = std::max((int32_t)0, value);
 			return true;
 
 		default:
