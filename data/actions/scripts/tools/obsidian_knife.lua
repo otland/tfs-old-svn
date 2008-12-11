@@ -41,11 +41,9 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(random <= skin[1]) then
 		doSendMagicEffect(toPosition, CONST_ME_GROUNDSHAKER)
 		doPlayerAddItem(cid, skin[2], 1)
-		doSendAnimatedText(fromPosition, 'Success!', TEXTCOLOR_WHITE_EXP);
 	elseif(skin[3] and random >= skin[3]) then
 		doSendMagicEffect(toPosition, CONST_ME_GROUNDSHAKER)
 		doPlayerAddItem(cid, skin[4], 1)
-		doSendAnimatedText(fromPosition, 'Success!', TEXTCOLOR_WHITE_EXP);
 	else
 		doSendMagicEffect(toPosition, CONST_ME_POFF)
 	end

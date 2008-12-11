@@ -2,7 +2,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if item.itemid == ITEM_GOLD_COIN and item.type == ITEMCOUNT_MAX then
 		doChangeTypeItem(item.uid, item.type - item.type)
 		doPlayerAddItem(cid, ITEM_PLATINUM_COIN, 1)
-		doSendAnimatedText(fromPosition, "$$$", TEXTCOLOR_PLATINUMBLUE)
+		doSendAnimatedText(fromPosition, "$$$", TEXTCOLOR_LIGHTBLUE)
 	elseif item.itemid == ITEM_PLATINUM_COIN and item.type == ITEMCOUNT_MAX then
 		doChangeTypeItem(item.uid, item.type - item.type)
 		doPlayerAddItem(cid, ITEM_CRYSTAL_COIN, 1)
@@ -14,7 +14,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	elseif item.itemid == ITEM_CRYSTAL_COIN then
 		doChangeTypeItem(item.uid, item.type - 1)
 		doPlayerAddItem(cid, ITEM_PLATINUM_COIN, ITEMCOUNT_MAX)
-		doSendAnimatedText(fromPosition, "$$$", TEXTCOLOR_PLATINUMBLUE)
+		doSendAnimatedText(fromPosition, "$$$", TEXTCOLOR_LIGHTBLUE)
 	else
 		return FALSE
 	end

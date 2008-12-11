@@ -1310,7 +1310,7 @@ void Creature::onGainExperience(uint64_t gainExp)
 
 		std::stringstream strExp;
 		strExp << gainExp;
-		g_game.addAnimatedText(getPosition(), TEXTCOLOR_WHITE_EXP, strExp.str());
+		g_game.addAnimatedText(getPosition(), TEXTCOLOR_WHITE, strExp.str());
 	}
 }
 
@@ -1320,7 +1320,7 @@ void Creature::onGainSharedExperience(uint64_t gainExp)
 	{
 		std::stringstream strExp;
 		strExp << gainExp;
-		g_game.addAnimatedText(getPosition(), TEXTCOLOR_WHITE_EXP, strExp.str());
+		g_game.addAnimatedText(getPosition(), TEXTCOLOR_WHITE, strExp.str());
 	}
 }
 

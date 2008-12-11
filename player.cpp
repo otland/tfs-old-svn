@@ -2072,7 +2072,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 	if(blockType != BLOCK_NONE)
 		return blockType;
 
-	if(damage != 0)
+	if(damage > 0)
 	{
 		int32_t blocked;
 		Item* item = NULL;

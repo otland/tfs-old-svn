@@ -4018,7 +4018,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 								break;
 
 							case RACE_UNDEAD:
-								textColor = TEXTCOLOR_LIGHTGREY;
+								textColor = TEXTCOLOR_GREY;
 								hitEffect = NM_ME_HIT_AREA;
 								break;
 
@@ -4069,7 +4069,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 
 					case COMBAT_ICEDAMAGE:
 					{
-						textColor = TEXTCOLOR_LIGHTBLUE;
+						textColor = TEXTCOLOR_TEAL;
 						hitEffect = NM_ME_ICEATTACK;
 						break;
 					}
@@ -4132,7 +4132,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			sprintf(buffer, "+%d", manaChange);
 
 			const SpectatorVec& list = getSpectators(targetPos);
-			addAnimatedText(list, targetPos, TEXTCOLOR_PURPLE, buffer);
+			addAnimatedText(list, targetPos, TEXTCOLOR_DARKPURPLE, buffer);
 		}
 	}
 	else
