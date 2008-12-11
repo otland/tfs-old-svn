@@ -189,7 +189,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual int32_t getHealth() const {return health;}
 		virtual int32_t getMaxHealth() const {return healthMax;}
 		virtual int32_t getMana() const {return mana;}
-		virtual int32_t getMaxMana() const {return manaMax;}z
+		virtual int32_t getMaxMana() const {return manaMax;}
 
 		const Outfit_t getCurrentOutfit() const {return currentOutfit;}
 		const void setCurrentOutfit(Outfit_t outfit) {currentOutfit = outfit;}
