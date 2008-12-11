@@ -3250,9 +3250,6 @@ void Player::doAttacking(uint32_t interval)
 	if((OTSYS_TIME() - lastAttack) >= getAttackSpeed() && !hasCondition(CONDITION_DISABLE_ATTACK))
 	{
 		Item* tool = getWeapon();
-		if(!tool)
-			return;
-
 		if(const Weapon* weapon = g_weapons->getWeapon(tool))
 		{
 			if(weapon->interruptSwing() && !canDoAction())
