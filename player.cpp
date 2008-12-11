@@ -3244,7 +3244,7 @@ void Player::doAttacking(uint32_t interval)
 	if((OTSYS_TIME() - lastAttack) < getAttackSpeed())
 		return;
 
-	if(hasCondition(CONDITION_DISABLE_ATTACK) && !hasCustomFlag(PlayerCustomFlag_IgnoreDisable)))
+	if(hasCondition(CONDITION_DISABLE_ATTACK) && !hasCustomFlag(PlayerCustomFlag_IgnoreDisable))
 		return;
 
 	Item* tool = getWeapon();
