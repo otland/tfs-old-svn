@@ -29,8 +29,8 @@ extern ConfigManager g_config;
 extern Game g_game;
 extern Chat g_chat;
 
-PrivateChatChannel::PrivateChatChannel(uint16_t channelId, std::string channelName) :
-	ChatChannel(channelId, channelName)
+PrivateChatChannel::PrivateChatChannel(uint16_t channelId, std::string channelName):
+ChatChannel(channelId, channelName)
 {
 	m_owner = 0;
 }
@@ -43,13 +43,13 @@ bool PrivateChatChannel::isInvited(const Player* player)
 	if(player->getGUID() == getOwner())
 		return true;
 
-	InvitedMap::iterator it = m_invites.find(player->getGUID());
+	UsersMap::iterator it = m_invites.find(player->getGUID());
 	return it != m_invites.end();
 }
 
 bool PrivateChatChannel::addInvited(Player* player)
 {
-	InvitedMap::iterator it = m_invites.find(player->getGUID());
+	UsersMap::iterator it = m_invites.find(player->getGUID());
 	if(it != m_invites.end())
 		return false;
 
@@ -59,7 +59,7 @@ bool PrivateChatChannel::addInvited(Player* player)
 
 bool PrivateChatChannel::removeInvited(Player* player)
 {
-	InvitedMap::iterator it = m_invites.find(player->getGUID());
+	UsersMap::iterator it = m_invites.find(player->getGUID());
 	if(it == m_invites.end())
 		return false;
 
@@ -99,10 +99,9 @@ void PrivateChatChannel::excludePlayer(Player* player, Player* excludePlayer)
 
 void PrivateChatChannel::closeChannel()
 {
-	ChatChannel* channel = NULL;
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		channel = g_chat.getChannel((*it).second, getId());
+		ChatChannel* channel = g_chat.getChannel((*it).second, getId());
 		if(channel && m_invites[(*it).second->getID()] != NULL && channel == this)
 			(*it).second->sendClosePrivate(getId());
 	}
@@ -179,10 +178,9 @@ bool ChatChannel::talk(Player* fromPlayer, SpeakClasses type, const std::string&
 		fromPlayer->addCondition(condition);
 	}
 
-	ChatChannel* channel = NULL;
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		channel = g_chat.getChannel((*it).second, m_id);
+		ChatChannel* channel = g_chat.getChannel((*it).second, m_id);
 		if(channel && m_users[(*it).second->getID()] != NULL && channel == this)
 			(*it).second->sendToChannel(fromPlayer, type, text, m_id, time);
 	}

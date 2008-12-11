@@ -76,8 +76,7 @@ class PrivateChatChannel : public ChatChannel
 		void closeChannel();
 
 	protected:
-		typedef std::map<uint32_t, Player*> InvitedMap;
-		InvitedMap m_invites;
+		UsersMap m_invites;
 		uint32_t m_owner;
 };
 
