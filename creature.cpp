@@ -1501,9 +1501,6 @@ void Creature::executeConditions(uint32_t interval)
 {
 	for(ConditionList::iterator it = conditions.begin(); it != conditions.end();)
 	{
-		//(*it)->executeCondition(this, newticks);
-		//if((*it)->getTicks() <= 0){
-
 		if(!(*it)->executeCondition(this, interval))
 		{
 			ConditionType_t type = (*it)->getType();
@@ -1528,7 +1525,7 @@ bool Creature::hasCondition(ConditionType_t type) const
 
 	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
-		if((*it)->getType() == type && ((*it)->getTicks() == -1 || (*it)->getEndTime() >= OTSYS_TIME()))
+		if((*it)->getType() == type && ((*it)->getEndTime() == 0 || (*it)->getEndTime() >= OTSYS_TIME()))
 			return true;
 	}
 
