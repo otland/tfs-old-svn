@@ -310,6 +310,14 @@
 		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin"/>
 	</instant>
+	<instant name="Protector" words="utamo tempo" mana="200" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="support/protector.lua">
+		<vocation name="Knight"/>
+		<vocation name="Elite Knight"/>
+	</instant>
+	<instant name="Blood Rage" words="utito tempo" mana="290" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="support/bloodrage.lua">
+		<vocation name="Knight"/>
+		<vocation name="Elite Knight"/>
+	</instant>
 
 	<!-- Summon Spells -->
 	<instant name="Summon Creature" words="utevo res" lvl="25" params="1" exhaustion="2000" needlearn="0" function="summonMonster">
