@@ -20506,11 +20506,11 @@
 	</item>
 	<item id="7535" article="a" name="parchment">
 	</item>
-	<item id="7536" article="a" name="cocoon">
-	</item>
-	<item id="7537" article="a" name="destroyed cocoon">
-		<attribute key="decayTo" value="7536"/>
+	<item id="7536" article="a" name="destroyed cocoon">
+		<attribute key="decayTo" value="7537"/>
 		<attribute key="duration" value="600"/>
+	</item>
+	<item id="7537" article="a" name="cocoon">
 	</item>
 	<item id="7538" article="a" name="spider's web">
 	</item>
