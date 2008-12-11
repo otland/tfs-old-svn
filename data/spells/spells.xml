@@ -504,7 +504,7 @@
 		<vocation name="Sorcerer"/>
 		<vocation name="Master Sorcerer"/>
 	</conjure>
-	<conjure name="Wild Growth" words="adevo grav vita" lvl="27" mana="600" soul="5" prem="1" reagentId="2260" conjureId="2269" conjureCount="2" needlearn="0" script="support/wild growth.lua">
+	<conjure name="Wild Growth" words="adevo grav vita" lvl="27" mana="600" soul="5" prem="1" reagentId="2260" conjureId="2269" conjureCount="2" needlearn="0" function="conjureRune">
 		<vocation name="Druid"/>
 		<vocation name="Elder Druid"/>
 	</conjure>
