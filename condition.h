@@ -104,7 +104,6 @@ enum ConditionAttr_t
 	CONDITIONATTR_OUTFIT = 24,
 	CONDITIONATTR_PERIODDAMAGE = 25,
 	CONDITIONATTR_BUFF = 26,
-	CONDITIONATTR_AFFECTSPELLS = 27,
 
 	//reserved for serialization
 	CONDITIONATTR_END      = 254
@@ -149,7 +148,6 @@ class Condition
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 
 		bool isPersistent() const;
-		virtual bool isAffectingSpells() const {return false;}
 
 	protected:
 		ConditionId_t id;
@@ -182,11 +180,6 @@ class ConditionGeneric: public Condition
 
 		virtual bool serialize(PropWriteStream& propWriteStream);
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
-
-		virtual bool isAffectingSpells() const {return affectSpells;}
-
-	private:
-		bool affectSpells;
 };
 
 class ConditionManaShield : public ConditionGeneric
