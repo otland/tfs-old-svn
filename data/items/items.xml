@@ -4314,8 +4314,10 @@
 		<attribute key="weight" value="120"/>
 		<attribute key="charges" value="3"/>
 	</item>
-	<item id="2269" article="a" name="spell rune">
+	<item id="2269" article="a" name="wild growth rune">
+		<attribute key="runeSpellName" value="adevo grav vita"/>
 		<attribute key="weight" value="120"/>
+		<attribute key="charges" value="2"/>
 	</item>
 	<item id="2270" article="a" name="spell rune">
 		<attribute key="weight" value="120"/>

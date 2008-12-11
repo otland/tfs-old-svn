@@ -37,6 +37,7 @@
 	<rune name="Destroy Field" id="2261" allowfaruse="1" charges="3" lvl="17" maglv="3" exhaustion="1000" aggressive="0" range="5" script="support/destroy field rune.lua"/>
 	<rune name="Chameleon" id="2291" allowfaruse="1" charges="1" lvl="27" maglv="4" exhaustion="1000" aggressive="0" selftarget="1" blocktype="solid" function="chameleon"/>
 	<rune name="Magic Wall" id="2293" allowfaruse="1" charges="3" lvl="32" maglv="9" exhaustion="1000" blocktype="all" script="support/magic wall rune.lua"/>
+	<rune name="Wild Growth" id="2269" allowfaruse="1" charges="2" lvl="27" maglv="8" exhaustion="1000" blocktype="all" script="support/wild growth rune.lua"/>
 	<rune name="Paralyze" id="2278" allowfaruse="1" charges="1" lvl="54" maglv="18" exhaustion="2000" mana="1400" needtarget="1" blocktype="solid" script="support/paralyze rune.lua"/>
 
 	<!-- Custom Runes -->
@@ -295,9 +296,6 @@
 		<vocation name="Sorcerer"/>
 		<vocation name="Master Sorcerer"/>
 	</instant>
-	<instant name="Wild Growth" words="exevo grav vita" lvl="27" mana="220" prem="1" direction="1" blocking="1" exhaustion="2000" needlearn="0" script="support/wild growth.lua">
-		<vocation name="Elder Druid"/>
-	</instant>
 	<instant name="Invisibility" words="utana vid" lvl="35" mana="440" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="support/invisible.lua">
 		<vocation name="Sorcerer"/>
 		<vocation name="Druid"/>
@@ -505,6 +503,10 @@
 	<conjure name="Magic Wall" words="adevo grav tera" lvl="32" mana="750" soul="5" prem="1" reagentId="2260" conjureId="2293" conjureCount="3" exhaustion="1000" needlearn="0" function="conjureRune">
 		<vocation name="Sorcerer"/>
 		<vocation name="Master Sorcerer"/>
+	</conjure>
+	<conjure name="Wild Growth" words="adevo grav vita" lvl="27" mana="600" soul="5" prem="1" reagentId="2260" conjureId="2269" conjureCount="2" needlearn="0" script="support/wild growth.lua">
+		<vocation name="Druid"/>
+		<vocation name="Elder Druid"/>
 	</conjure>
 	<conjure name="Paralyze" words="adana ani" lvl="54" mana="1400" soul="3" prem="1" reagentId="2260" conjureId="2278" conjureCount="1" exhaustion="1000" needlearn="0" function="conjureRune">
 		<vocation name="Druid"/>
