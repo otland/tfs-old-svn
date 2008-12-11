@@ -560,7 +560,7 @@ bool Spell::playerSpellCheck(Player* player) const
 	if(!isEnabled())
 		return false;
 
-	bool exhaust = false, disabled = false;
+	bool exhausted = false;
 	if(isAggressive)
 	{
 		if(!player->hasFlag(PlayerFlag_IgnoreProtectionZone) && player->getZone() == ZONE_PROTECTION)
@@ -570,29 +570,14 @@ bool Spell::playerSpellCheck(Player* player) const
 		}
 
 		if(player->hasCondition(CONDITION_EXHAUST_COMBAT))
-			exhaust = true;
+			exhausted = true;
 	}
-	else
-	{
-		if(player->hasCondition(CONDITION_EXHAUST_HEAL))
-			exhaust = true;
+	else if(player->hasCondition(CONDITION_EXHAUST_HEAL))
+			exhausted = true;
 
-		if(player->hasCondition(CONDITION_DISABLE_ATTACK))
-			disabled = true;
-	}
-
-	if(exhaust && !player->hasFlag(PlayerFlag_HasNoExhaustion))
+	if(exhausted && !player->hasFlag(PlayerFlag_HasNoExhaustion))
 	{
 		player->sendCancelMessage(RET_YOUAREEXHAUSTED);
-		if(isInstant())
-			g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
-
-		return false;
-	}
-
-	if((disabled || player->hasCondition(CONDITION_DISABLE_ATTACK)) && !player->hasCustomFlag(PlayerCustomFlag_IgnoreDisable))
-	{
-		player->sendCancelMessage(RET_YOUCANNOTCASTTHISSPELLRIGHTNOW);
 		if(isInstant())
 			g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 
@@ -608,7 +593,7 @@ bool Spell::playerSpellCheck(Player* player) const
 
 	if(isParty() && !player->getParty())
 	{
-		player->sendCancelMessage(RET_YOUHAVETOBEINPARTY);
+		player->sendCancelMessage(RET_NOPARTYMEMBERSINRANGE);
 		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 		return false;
 	}

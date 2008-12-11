@@ -1168,12 +1168,8 @@ void Player::sendCancelMessage(ReturnValue message) const
 			sendCancel("You are not the owner.");
 			break;
 
-		case RET_YOUHAVETOBEINPARTY:
-			sendCancel("You have to be in party.");
-			break;
-
-		case RET_YOUCANNOTCASTTHISSPELLRIGHTNOW:
-			sendCancel("You can not cast this spell right now.");
+		case RET_NOPARTYMEMBERSINRANGE:
+			sendCancel("No party members in range.");
 			break;
 
 		case RET_NOTPOSSIBLE:
@@ -3245,24 +3241,25 @@ void Player::doAttacking(uint32_t interval)
 	if(lastAttack == 0)
 		lastAttack = OTSYS_TIME() - getAttackSpeed() - 1;
 
-	if((OTSYS_TIME() - lastAttack) >= getAttackSpeed() && (!hasCondition(CONDITION_DISABLE_ATTACK) || hasCustomFlag(PlayerCustomFlag_IgnoreDisable)))
+	if((OTSYS_TIME() - lastAttack) < getAttackSpeed())
+		return;
+
+	if(hasCondition(CONDITION_DISABLE_ATTACK) && !hasCustomFlag(PlayerCustomFlag_IgnoreDisable)))
+		return;
+
+	Item* tool = getWeapon();
+	if(const Weapon* weapon = g_weapons->getWeapon(tool))
 	{
-		Item* tool = getWeapon();
-		if(const Weapon* weapon = g_weapons->getWeapon(tool))
+		if(weapon->interruptSwing() && !canDoAction())
 		{
-			if(weapon->interruptSwing() && !canDoAction())
-			{
-				SchedulerTask* task = createSchedulerTask(getNextActionTime(), boost::bind(
-					&Game::checkCreatureAttack, &g_game, getID()));
-				setNextActionTask(task);
-			}
-			else if((!hasCondition(CONDITION_EXHAUST_WEAPON) || !weapon->hasExhaustion())
-				&& weapon->useWeapon(this, tool, attackedCreature))
-				lastAttack = OTSYS_TIME();
+			SchedulerTask* task = createSchedulerTask(getNextActionTime(), boost::bind(&Game::checkCreatureAttack, &g_game, getID()));
+			setNextActionTask(task);
 		}
-		else if(Weapon::useFist(this, attackedCreature))
+		else if((!hasCondition(CONDITION_EXHAUST_WEAPON) || !weapon->hasExhaustion()) && weapon->useWeapon(this, tool, attackedCreature))
 			lastAttack = OTSYS_TIME();
 	}
+	else if(Weapon::useFist(this, attackedCreature))
+		lastAttack = OTSYS_TIME();
 }
 
 uint64_t Player::getGainedExperience(Creature* attacker) const
