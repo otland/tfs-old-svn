@@ -399,10 +399,10 @@ Item* Player::getWeapon(bool ignoreAmmo /*= false*/)
 
 WeaponType_t Player::getWeaponType()
 {
-	Item* item = getWeapon();
-	if(!item)
-		return WEAPON_NONE;
-	return item->getWeaponType();
+	if(Item* item = getWeapon())
+		return item->getWeaponType();
+
+	return WEAPON_NONE;
 }
 
 int32_t Player::getWeaponSkill(const Item* item) const
@@ -412,7 +412,6 @@ int32_t Player::getWeaponSkill(const Item* item) const
 
 	WeaponType_t weaponType = item->getWeaponType();
 	int32_t attackSkill;
-
 	switch(weaponType)
 	{
 		case WEAPON_SWORD:
@@ -457,7 +456,6 @@ int32_t Player::getWeaponSkill(const Item* item) const
 int32_t Player::getArmor() const
 {
 	int32_t armor = 0;
-
 	if(getInventoryItem(SLOT_HEAD))
 		armor += getInventoryItem(SLOT_HEAD)->getArmor();
 	if(getInventoryItem(SLOT_NECKLACE))
@@ -472,7 +470,7 @@ int32_t Player::getArmor() const
 		armor += getInventoryItem(SLOT_RING)->getArmor();
 
 	if(vocation->armorMultipler != 1.0)
-		armor = int32_t(armor * vocation->armorMultipler);
+		return int32_t(armor * vocation->armorMultipler);
 
 	return armor;
 }
@@ -3247,7 +3245,7 @@ void Player::doAttacking(uint32_t interval)
 	if(lastAttack == 0)
 		lastAttack = OTSYS_TIME() - getAttackSpeed() - 1;
 
-	if((OTSYS_TIME() - lastAttack) >= getAttackSpeed() && !hasCondition(CONDITION_DISABLE_ATTACK))
+	if((OTSYS_TIME() - lastAttack) >= getAttackSpeed() && (!hasCondition(CONDITION_DISABLE_ATTACK) || hasCustomFlag(PlayerCustomFlag_IgnoreDisable)))
 	{
 		Item* tool = getWeapon();
 		if(const Weapon* weapon = g_weapons->getWeapon(tool))

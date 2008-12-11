@@ -572,12 +572,16 @@ bool Spell::playerSpellCheck(Player* player) const
 		if(player->hasCondition(CONDITION_EXHAUST_COMBAT))
 			exhaust = true;
 	}
-	else if(player->hasCondition(CONDITION_EXHAUST_HEAL))
-		exhaust = true;
-	else if(player->hasCondition(CONDITION_DISABLE_ATTACK))
-		disabled = true;
+	else
+	{
+		if(player->hasCondition(CONDITION_EXHAUST_HEAL))
+			exhaust = true;
 
-	if(exhaust)
+		if(player->hasCondition(CONDITION_DISABLE_ATTACK))
+			disabled = true;
+	}
+
+	if(exhaust && !player->hasFlag(PlayerFlag_HasNoExhaustion))
 	{
 		player->sendCancelMessage(RET_YOUAREEXHAUSTED);
 		if(isInstant())
@@ -586,7 +590,7 @@ bool Spell::playerSpellCheck(Player* player) const
 		return false;
 	}
 
-	if(disabled || player->hasCondition(CONDITION_DISABLE_ATTACK))
+	if((disabled || player->hasCondition(CONDITION_DISABLE_ATTACK)) && !player->hasCustomFlag(PlayerCustomFlag_IgnoreDisable))
 	{
 		player->sendCancelMessage(RET_YOUCANNOTCASTTHISSPELLRIGHTNOW);
 		if(isInstant())
