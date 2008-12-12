@@ -2606,7 +2606,7 @@ int32_t LuaScriptInterface::luaDoPlayerLearnInstantSpell(lua_State* L)
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	Player* player = env->getPlayerByUID(cid)
+	Player* player = env->getPlayerByUID(cid);
 	if(!player)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
@@ -2622,7 +2622,7 @@ int32_t LuaScriptInterface::luaDoPlayerLearnInstantSpell(lua_State* L)
 	}
 
 	player->learnInstantSpell(spell->getName());
-	lua_pushnumber(L, LUA_TRUE);
+	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;
 }
 
@@ -2633,7 +2633,7 @@ int32_t LuaScriptInterface::luaDoPlayerUnlearnInstantSpell(lua_State* L)
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	Player* player = env->getPlayerByUID(cid)
+	Player* player = env->getPlayerByUID(cid);
 	if(!player)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
@@ -2649,7 +2649,7 @@ int32_t LuaScriptInterface::luaDoPlayerUnlearnInstantSpell(lua_State* L)
 	}
 
 	player->unlearnInstantSpell(spell->getName());
-	lua_pushnumber(L, LUA_TRUE);
+	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;
 }
 
@@ -2660,7 +2660,7 @@ int32_t LuaScriptInterface::luaGetPlayerLearnedInstantSpell(lua_State* L)
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	Player* player = env->getPlayerByUID(cid)
+	Player* player = env->getPlayerByUID(cid);
 	if(!player)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
@@ -2706,7 +2706,7 @@ int32_t LuaScriptInterface::luaGetPlayerSpellInfoByIndex(lua_State* L)
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	Player* player = env->getPlayerByUID(cid)
+	Player* player = env->getPlayerByUID(cid);
 	if(!player)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
