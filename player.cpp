@@ -3918,6 +3918,16 @@ void Player::learnInstantSpell(const std::string& name)
 		learnedInstantSpellList.push_back(name);
 }
 
+void Player::unlearnInstantSpell(const std::string& name)
+{
+	if(hasLearnedInstantSpell(name))
+	{
+		LearnedInstantSpellList::const_iterator it = std::find(learnedInstantSpellList.begin(), learnedInstantSpellList.end(), name);
+		if(it != learnedInstantSpellList.end())
+			learnedInstantSpellList.erase(it);
+	}
+}
+
 bool Player::hasLearnedInstantSpell(const std::string& name) const
 {
 	if(hasFlag(PlayerFlag_CannotUseSpells))
@@ -3931,6 +3941,7 @@ bool Player::hasLearnedInstantSpell(const std::string& name) const
 		if(strcasecmp((*it).c_str(), name.c_str()) == 0)
 			return true;
 	}
+
 	return false;
 }
 

@@ -1203,8 +1203,8 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerLearnInstantSpell(cid, name)
 	lua_register(m_luaState, "doPlayerLearnInstantSpell", LuaScriptInterface::luaDoPlayerLearnInstantSpell);
 
-	//canPlayerLearnInstantSpell(cid, name)
-	lua_register(m_luaState, "canPlayerLearnInstantSpell", LuaScriptInterface::luaCanPlayerLearnInstantSpell);
+	//doPlayerUnlearnInstantSpell(cid, name)
+	lua_register(m_luaState, "doPlayerUnlearnInstantSpell", LuaScriptInterface::luaDoPlayerUnlearnInstantSpell);
 
 	//getPlayerLearnedInstantSpell(cid, name)
 	lua_register(m_luaState, "getPlayerLearnedInstantSpell", LuaScriptInterface::luaGetPlayerLearnedInstantSpell);
@@ -1212,11 +1212,11 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerInstantSpellCount(cid)
 	lua_register(m_luaState, "getPlayerInstantSpellCount", LuaScriptInterface::luaGetPlayerInstantSpellCount);
 
-	//getPlayerInstantSpellInfo(cid, index)
-	lua_register(m_luaState, "getPlayerInstantSpellInfo", LuaScriptInterface::luaGetPlayerInstantSpellInfo);
+	//getPlayerSpellInfoByIndex(cid, index)
+	lua_register(m_luaState, "getPlayerSpellInfoByIndex", LuaScriptInterface::luaGetPlayerSpellInfoByIndex);
 
-	//getInstantSpellInfoByName(cid, name)
-	lua_register(m_luaState, "getInstantSpellInfoByName", LuaScriptInterface::luaGetInstantSpellInfoByName);
+	//getPlayerSpellInfoByName(cid, name)
+	lua_register(m_luaState, "getPlayerSpellInfoByName", LuaScriptInterface::luaGetPlayerSpellInfoByName);
 
 	//getInstantSpellWords(name)
 	lua_register(m_luaState, "getInstantSpellWords", LuaScriptInterface::luaGetInstantSpellWords);
@@ -2629,9 +2629,9 @@ int32_t LuaScriptInterface::luaDoPlayerLearnInstantSpell(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaCanPlayerLearnInstantSpell(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerUnlearnInstantSpell(lua_State* L)
 {
-	//canPlayerLearnInstantSpell(cid, name)
+	//doPlayerUnlearnInstantSpell(cid, name)
 	std::string spellName = popString(L);
 	uint32_t cid = popNumber(L);
 
@@ -2654,21 +2654,7 @@ int32_t LuaScriptInterface::luaCanPlayerLearnInstantSpell(lua_State* L)
 		return 1;
 	}
 
-	if(!player->hasFlag(PlayerFlag_IgnoreSpellCheck))
-	{
-		if(player->getLevel() < spell->getLevel())
-		{
-			lua_pushnumber(L, LUA_FALSE);
-			return 1;
-		}
-
-		if(player->getMagicLevel() < spell->getMagicLevel())
-		{
-			lua_pushnumber(L, LUA_FALSE);
-			return 1;
-		}
-	}
-
+	player->unlearnInstantSpell(spell->getName());
 	lua_pushnumber(L, LUA_TRUE);
 	return 1;
 }
@@ -2726,9 +2712,9 @@ int32_t LuaScriptInterface::luaGetPlayerInstantSpellCount(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetPlayerInstantSpellInfo(lua_State* L)
+int32_t LuaScriptInterface::luaGetPlayerSpellInfoByIndex(lua_State* L)
 {
-	//getPlayerInstantSpellInfo(cid, index)
+	//getPlayerSpellInfoByIndex(cid, index)
 	uint32_t index = popNumber(L);
 	uint32_t cid = popNumber(L);
 
@@ -2760,9 +2746,9 @@ int32_t LuaScriptInterface::luaGetPlayerInstantSpellInfo(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetInstantSpellInfoByName(lua_State* L)
+int32_t LuaScriptInterface::luaGetPlayerSpellInfoByName(lua_State* L)
 {
-	//getInstantSpellInfoByName(cid, name)
+	//getPlayerSpellInfoByName(cid, name)
 	std::string spellName = popString(L);
 	uint32_t cid = popNumber(L);
 
