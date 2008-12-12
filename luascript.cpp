@@ -1212,14 +1212,11 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerInstantSpellCount(cid)
 	lua_register(m_luaState, "getPlayerInstantSpellCount", LuaScriptInterface::luaGetPlayerInstantSpellCount);
 
-	//getPlayerSpellInfoByIndex(cid, index)
-	lua_register(m_luaState, "getPlayerSpellInfoByIndex", LuaScriptInterface::luaGetPlayerSpellInfoByIndex);
+	//getPlayerInstantSpellInfo(cid, index)
+	lua_register(m_luaState, "getPlayerInstantSpellInfo", LuaScriptInterface::luaGetPlayerInstantSpellInfo);
 
-	//getPlayerSpellInfoByName(cid, name)
-	lua_register(m_luaState, "getPlayerSpellInfoByName", LuaScriptInterface::luaGetPlayerSpellInfoByName);
-
-	//getInstantSpellWords(name)
-	lua_register(m_luaState, "getInstantSpellWords", LuaScriptInterface::luaGetInstantSpellWords);
+	//getInstantSpellInfo(cid, name)
+	lua_register(m_luaState, "getInstantSpellInfo", LuaScriptInterface::luaGetInstantSpellInfo);
 
 	//getPlayerStorageValue(uid, valueid)
 	lua_register(m_luaState, "getPlayerStorageValue", LuaScriptInterface::luaGetPlayerStorageValue);
