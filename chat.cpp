@@ -116,9 +116,14 @@ ChatChannel::ChatChannel(uint16_t channelId, std::string channelName)
 
 bool ChatChannel::addUser(Player* player)
 {
+	std::cout << "[ChatChannel::addUser] Trying to add: " << player->getName() << " [" << player->getID() << "] to channel: " << m_id << "!" << std::endl;
 	UsersMap::iterator it = m_users.find(player->getID());
 	if(it != m_users.end())
+	{
+		std::cout << "[ChatChannel::addUser] Failed to add: " << player->getName() << " [" << player->getID() << "] to channel: " << m_id << ", reason:" << std::endl;
+		std::cout << "\tit != m_users.end()" << std::endl;
 		return false;
+	}
 
 	switch(m_id)
 	{
@@ -142,7 +147,11 @@ bool ChatChannel::addUser(Player* player)
 		{
 			ChatChannel* channel = g_chat.getChannel(player, m_id);
 			if(!channel)
+			{
+				std::cout << "[ChatChannel::addUser] Failed to add: " << player->getName() << " [" << player->getID() << "] to channel: " << m_id << ", reason:" << std::endl;
+				std::cout << "\t!channel" << std::endl;
 				return false;
+			}
 			break;
 		}
 
@@ -150,16 +159,29 @@ bool ChatChannel::addUser(Player* player)
 			break;
 	}
 
+	std::cout << "[ChatChannel::addUser] Successfully added: " << player->getName() << " [" << player->getID() << "] to channel: " << m_id << "!" << std::endl;
 	m_users[player->getID()] = player;
 	return true;
 }
 
-bool ChatChannel::removeUser(Player* player)
+bool ChatChannel::isInChannel(Player* player)
 {
 	UsersMap::iterator it = m_users.find(player->getID());
-	if(it == m_users.end())
-		return false;
+	return it != m_users.end();
+}
 
+bool ChatChannel::removeUser(Player* player)
+{
+	std::cout << "[ChatChannel::removeUser] Trying to remove: " << player->getName() << " [" << player->getID() << "] from channel: " << m_id << "!" << std::endl;
+	UsersMap::iterator it = m_users.find(player->getID());
+	if(it == m_users.end())
+	{
+		std::cout << "[ChatChannel::removeUser] Failed to remove: " << player->getName() << " [" << player->getID() << "] from channel: " << m_id << ", reason:" << std::endl;
+		std::cout << "\tit == m_users.end()" << std::endl;
+		return false;
+	}
+
+	std::cout << "[ChatChannel::removeUser] Successfully removed: " << player->getName() << " [" << player->getID() << "] from channel: " << m_id << "!" << std::endl;
 	m_users.erase(it);
 	return true;
 }
