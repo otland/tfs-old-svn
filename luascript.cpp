@@ -2606,9 +2606,7 @@ int32_t LuaScriptInterface::luaDoPlayerLearnInstantSpell(lua_State* L)
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	Player* player = env->getPlayerByUID(cid);
-	if(!player)
+	if(Player* player = env->getPlayerByUID(cid))
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
@@ -2618,8 +2616,6 @@ int32_t LuaScriptInterface::luaDoPlayerLearnInstantSpell(lua_State* L)
 	InstantSpell* spell = g_spells->getInstantSpellByName(spellName);
 	if(!spell)
 	{
-		std::string error_str = (std::string)"Spell \"" + spellName +  (std::string)"\" not found";
-		reportErrorFunc(error_str);
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
 	}
@@ -2636,9 +2632,7 @@ int32_t LuaScriptInterface::luaDoPlayerUnlearnInstantSpell(lua_State* L)
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	Player* player = env->getPlayerByUID(cid);
-	if(!player)
+	if(Player* player = env->getPlayerByUID(cid))
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
@@ -2648,8 +2642,6 @@ int32_t LuaScriptInterface::luaDoPlayerUnlearnInstantSpell(lua_State* L)
 	InstantSpell* spell = g_spells->getInstantSpellByName(spellName);
 	if(!spell)
 	{
-		std::string error_str = (std::string)"Spell \"" + spellName +  (std::string)"\" not found";
-		reportErrorFunc(error_str);
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
 	}
@@ -2666,9 +2658,7 @@ int32_t LuaScriptInterface::luaGetPlayerLearnedInstantSpell(lua_State* L)
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	Player* player = env->getPlayerByUID(cid);
-	if(!player)
+	if(Player* player = env->getPlayerByUID(cid))
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
@@ -2678,19 +2668,17 @@ int32_t LuaScriptInterface::luaGetPlayerLearnedInstantSpell(lua_State* L)
 	InstantSpell* spell = g_spells->getInstantSpellByName(spellName);
 	if(!spell)
 	{
-		std::string error_str = (std::string)"Spell \"" + spellName +  (std::string)"\" not found";
-		reportErrorFunc(error_str);
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
 	}
 
-	if(!player->hasLearnedInstantSpell(spellName))
+	if(player->hasLearnedInstantSpell(spellName))
 	{
-		lua_pushnumber(L, LUA_FALSE);
+		lua_pushnumber(L, LUA_TRUE);
 		return 1;
 	}
 
-	lua_pushnumber(L, LUA_TRUE);
+	lua_pushnumber(L, LUA_FALSE);
 	return 1;
 }
 
@@ -2700,9 +2688,7 @@ int32_t LuaScriptInterface::luaGetPlayerInstantSpellCount(lua_State* L)
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	Player* player = env->getPlayerByUID(cid);
-	if(player)
+	if(Player* player = env->getPlayerByUID(cid))
 		lua_pushnumber(L, g_spells->getInstantSpellCount(player));
 	else
 	{
@@ -2714,14 +2700,12 @@ int32_t LuaScriptInterface::luaGetPlayerInstantSpellCount(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetPlayerSpellInfoByIndex(lua_State* L)
 {
-	//getPlayerSpellInfoByIndex(cid, index)
+	//getPlayerInstantSpellInfo(cid, index)
 	uint32_t index = popNumber(L);
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	Player* player = env->getPlayerByUID(cid);
-	if(!player)
+	if(Player* player = env->getPlayerByUID(cid))
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
@@ -2748,19 +2732,8 @@ int32_t LuaScriptInterface::luaGetPlayerSpellInfoByIndex(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetPlayerSpellInfoByName(lua_State* L)
 {
-	//getPlayerSpellInfoByName(cid, name)
+	//getInstantSpellInfo(name)
 	std::string spellName = popString(L);
-	uint32_t cid = popNumber(L);
-
-	ScriptEnviroment* env = getScriptEnv();
-
-	Player* player = env->getPlayerByUID(cid);
-	if(!player && cid != 0)
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushnumber(L, LUA_ERROR);
-		return 1;
-	}
 
 	InstantSpell* spell = g_spells->getInstantSpellByName(spellName);
 	if(!spell)
@@ -2775,24 +2748,8 @@ int32_t LuaScriptInterface::luaGetPlayerSpellInfoByName(lua_State* L)
 	setField(L, "words", spell->getWords());
 	setField(L, "level", spell->getLevel());
 	setField(L, "mlevel", spell->getMagicLevel());
-	setField(L, "mana", (player != NULL ? spell->getManaCost(player) : 0));
+	setField(L, "mana", spell->getManaCost(NULL));
 	setField(L, "manapercent", spell->getManaPercent());
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaGetInstantSpellWords(lua_State* L)
-{
-	//getInstantSpellWords(name)
-	std::string spellName = popString(L);
-	InstantSpell* spell = g_spells->getInstantSpellByName(spellName);
-	if(!spell)
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_SPELL_NOT_FOUND));
-		lua_pushnumber(L, LUA_ERROR);
-		return 1;
-	}
-
-	lua_pushstring(L, spell->getWords().c_str());
 	return 1;
 }
 

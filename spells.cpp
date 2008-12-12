@@ -240,9 +240,11 @@ InstantSpell* Spells::getInstantSpellByIndex(const Player* player, uint32_t inde
 		{
 			if(count == index)
 				return instantSpell;
+
 			++count;
 		}
 	}
+
 	return NULL;
 }
 
@@ -843,12 +845,9 @@ int32_t Spell::getManaCost(const Player* player) const
 	if(mana != 0)
 		return mana;
 
-	if(manaPercent != 0)
-	{
-		int32_t maxMana = player->getMaxMana();
-		int32_t manaCost = (maxMana * manaPercent) / 100;
-		return manaCost;
-	}
+	if(player && manaPercent != 0)
+		return std::floor((player->getMaxMana() * manaPercent) / 100);
+
 	return 0;
 }
 
