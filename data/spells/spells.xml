@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <spells>
-    <!-- Attack Runes -->
+	<!-- Attack Runes -->
 	<rune name="Poison Field" id="2285" allowfaruse="1" charges="3" lvl="14" maglv="0" exhaustion="2000" blocktype="solid" script="attack/poison field.lua"/>
 	<rune name="Poison Bomb" id="2286" allowfaruse="1" charges="2" lvl="25" maglv="4" exhaustion="2000" blocktype="solid" script="attack/poison bomb.lua"/>
 	<rune name="Poison Wall" id="2289" allowfaruse="1" charges="4" lvl="29" maglv="5" exhaustion="2000" blocktype="solid" script="attack/poison wall.lua"/>
@@ -36,9 +36,15 @@
 	<rune name="Desintegrate" id="2310" allowfaruse="0" charges="3" lvl="21" maglv="4" exhaustion="2000" range="5" script="support/desintegrate rune.lua"/>
 	<rune name="Destroy Field" id="2261" allowfaruse="1" charges="3" lvl="17" maglv="3" exhaustion="1000" aggressive="0" range="5" script="support/destroy field rune.lua"/>
 	<rune name="Chameleon" id="2291" allowfaruse="1" charges="1" lvl="27" maglv="4" exhaustion="1000" aggressive="0" selftarget="1" blocktype="solid" function="chameleon"/>
-	<rune name="Magic Wall" id="2293" allowfaruse="1" charges="3" lvl="32" maglv="9" exhaustion="1000" aggressive="0" blocktype="all" script="support/magic wall rune.lua"/>
-	<rune name="Wild Growth" id="2269" allowfaruse="1" charges="2" lvl="27" maglv="8" exhaustion="1000" aggressive="0" blocktype="all" script="support/wild growth rune.lua"/>
-	<rune name="Paralyze" id="2278" allowfaruse="1" charges="1" lvl="54" maglv="18" exhaustion="2000" mana="1400" needtarget="1" blocktype="solid" script="support/paralyze rune.lua"/>
+	<rune name="Magic Wall" id="2293" allowfaruse="1" charges="3" lvl="32" maglv="9" exhaustion="2000" blocktype="all" script="support/magic wall rune.lua"/>
+	<rune name="Wild Growth" id="2269" allowfaruse="1" charges="2" lvl="27" maglv="8" exhaustion="2000" blocktype="all" script="support/wild growth rune.lua">
+		<vocation name="Druid"/>
+		<vocation name="Elder Druid"/>
+	</rune>
+	<rune name="Paralyze" id="2278" allowfaruse="1" charges="1" lvl="54" maglv="18" exhaustion="2000" mana="1400" needtarget="1" blocktype="solid" script="support/paralyze rune.lua">
+		<vocation name="Druid"/>
+		<vocation name="Elder Druid"/>
+	</rune>
 
 	<!-- Custom Runes -->
 	<rune name="Polymorph" id="2270" charges="1" maglv="20" exhaustion="2000" blocktype="solid" allowfaruse="1" script="custom/polymorph.lua"/>
@@ -304,15 +310,15 @@
 		<vocation name="Elder Druid"/>
 		<vocation name="Royal Paladin"/>
 	</instant>
-	<instant name="Sharpshooter" words="utito tempo san" mana="450" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="support/sharpshooter.lua">
+	<instant name="Sharpshooter" words="utito tempo san" lvl="60" mana="450" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="support/sharpshooter.lua">
 		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin"/>
 	</instant>
-	<instant name="Protector" words="utamo tempo" mana="200" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="support/protector.lua">
+	<instant name="Protector" words="utamo tempo" lvl="55" mana="200" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="support/protector.lua">
 		<vocation name="Knight"/>
 		<vocation name="Elite Knight"/>
 	</instant>
-	<instant name="Blood Rage" words="utito tempo" mana="290" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="support/bloodrage.lua">
+	<instant name="Blood Rage" words="utito tempo" lvl="60" mana="290" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="support/bloodrage.lua">
 		<vocation name="Knight"/>
 		<vocation name="Elite Knight"/>
 	</instant>
