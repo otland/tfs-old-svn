@@ -846,7 +846,7 @@ int32_t Spell::getManaCost(const Player* player) const
 		return mana;
 
 	if(player && manaPercent != 0)
-		return std::floor((player->getMaxMana() * manaPercent) / 100);
+		return (int32_t)std::floor(double(player->getMaxMana() * manaPercent) / 100);
 
 	return 0;
 }
