@@ -2696,7 +2696,7 @@ int32_t LuaScriptInterface::luaGetPlayerInstantSpellCount(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetPlayerSpellInfoByIndex(lua_State* L)
+int32_t LuaScriptInterface::luaGetPlayerInstantSpellInfo(lua_State* L)
 {
 	//getPlayerInstantSpellInfo(cid, index)
 	uint32_t index = popNumber(L);
@@ -2729,7 +2729,7 @@ int32_t LuaScriptInterface::luaGetPlayerSpellInfoByIndex(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetPlayerSpellInfoByName(lua_State* L)
+int32_t LuaScriptInterface::luaGetInstantSpellInfo(lua_State* L)
 {
 	//getInstantSpellInfo(name)
 	std::string spellName = popString(L);
