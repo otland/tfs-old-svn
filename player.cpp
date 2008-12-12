@@ -3922,7 +3922,7 @@ void Player::unlearnInstantSpell(const std::string& name)
 {
 	if(hasLearnedInstantSpell(name))
 	{
-		LearnedInstantSpellList::const_iterator it = std::find(learnedInstantSpellList.begin(), learnedInstantSpellList.end(), name);
+		LearnedInstantSpellList::iterator it = std::find(learnedInstantSpellList.begin(), learnedInstantSpellList.end(), name);
 		if(it != learnedInstantSpellList.end())
 			learnedInstantSpellList.erase(it);
 	}
