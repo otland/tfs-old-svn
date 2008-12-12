@@ -29,6 +29,10 @@
 #include "definitions.h"
 #include "party.h"
 
+class Player;
+
+typedef std::map<uint32_t, Player*> UsersMap;
+
 class ChatChannel
 {
 	public:
@@ -42,12 +46,12 @@ class ChatChannel
 
 		const std::string& getName() {return m_name;}
 		const uint16_t getId() {return m_id;}
-		const PlayerVector& getUsers() {return m_users;}
+		const UsersMap& getUsers() {return m_users;}
 
 		virtual const uint32_t getOwner() {return 0;}
 
 	protected:
-		PlayerVector m_users;
+		UsersMap m_users;
 		std::string m_name;
 		uint16_t m_id;
 };
@@ -72,7 +76,7 @@ class PrivateChatChannel : public ChatChannel
 		void closeChannel();
 
 	protected:
-		PlayerVector m_invites;
+		UsersMap m_invites;
 		uint32_t m_owner;
 };
 

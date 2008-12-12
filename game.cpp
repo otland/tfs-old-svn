@@ -2084,12 +2084,13 @@ bool Game::playerProcessRuleViolation(uint32_t playerId, const std::string& name
 	rvr.isOpen = false;
 	rvr.gamemaster = player;
 
-	if(ChatChannel* channel = g_chat.getChannelById(0x03))
+	ChatChannel* channel = g_chat.getChannelById(0x03);
+	if(channel)
 	{
-		for(PlayerVector::const_iterator it = channel->getUsers().begin(); it != channel->getUsers().end(); ++it)
+		for(UsersMap::const_iterator it = channel->getUsers().begin(); it != channel->getUsers().end(); ++it)
 		{
-			if(Player* tmpPlayer = (*it))
-				tmpPlayer->sendRemoveReport(reporter->getName());
+			if(it->second)
+				it->second->sendRemoveReport(reporter->getName());
 		}
 	}
 	return true;
@@ -4410,10 +4411,10 @@ bool Game::cancelRuleViolation(Player* player)
 		//Send to channel
 		if(ChatChannel* channel = g_chat.getChannelById(0x03))
 		{
-			for(PlayerVector::const_iterator ut = channel->getUsers().begin(); ut != channel->getUsers().end(); ++ut)
+			for(UsersMap::const_iterator ut = channel->getUsers().begin(); ut != channel->getUsers().end(); ++ut)
 			{
-				if(Player* tmpPlayer = (*ut))
-					tmpPlayer->sendRemoveReport(player->getName());
+				if(ut->second)
+					ut->second->sendRemoveReport(player->getName());
 			}
 		}
 	}
@@ -4433,10 +4434,10 @@ bool Game::closeRuleViolation(Player* player)
 	player->sendLockRuleViolation();
 	if(ChatChannel* channel = g_chat.getChannelById(0x03))
 	{
-		for(PlayerVector::const_iterator ut = channel->getUsers().begin(); ut != channel->getUsers().end(); ++ut)
+		for(UsersMap::const_iterator ut = channel->getUsers().begin(); ut != channel->getUsers().end(); ++ut)
 		{
-			if(Player* tmpPlayer = (*ut))
-				tmpPlayer->sendRemoveReport(player->getName());
+			if(ut->second)
+				ut->second->sendRemoveReport(player->getName());
 		}
 	}
 	return true;
