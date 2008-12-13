@@ -854,7 +854,6 @@ bool TalkAction::sellHouse(Player* player, const std::string& cmd, const std::st
 	}
 
 	Player* tradePartner = NULL;
-
 	ReturnValue ret = g_game.getPlayerByNameWildcard(param, tradePartner);
 	if(ret != RET_NOERROR)
 	{
@@ -898,7 +897,7 @@ bool TalkAction::sellHouse(Player* player, const std::string& cmd, const std::st
 		return true;
 	}
 
-	if(!tradePartner->isPremium())
+	if(!tradePartner->isPremium() && !g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM))
 	{
 		player->sendCancel("Trade player does not have a premium account.");
 		return true;

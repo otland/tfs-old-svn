@@ -165,21 +165,10 @@ class ConditionGeneric: public Condition
 		ConditionGeneric(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff);
 		virtual ~ConditionGeneric() {}
 
-		virtual bool executeCondition(Creature* creature, int32_t interval);
-		virtual void endCondition(Creature* creature, ConditionEnd_t reason);
 		virtual void addCondition(Creature* creature, const Condition* condition);
 		virtual Icons_t getIcons() const;
 
 		virtual ConditionGeneric* clone() const {return new ConditionGeneric(*this);}
-
-		virtual bool setParam(ConditionParam_t param, int32_t value);
-
-		//serialization
-		virtual xmlNodePtr serialize();
-		virtual bool unserialize(xmlNodePtr p);
-
-		virtual bool serialize(PropWriteStream& propWriteStream);
-		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 };
 
 class ConditionManaShield : public ConditionGeneric

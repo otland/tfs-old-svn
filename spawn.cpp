@@ -313,7 +313,7 @@ Spawn::~Spawn()
 
 		monster->setSpawn(NULL);
 		if(monster->isRemoved())
-			monster->releaseThing2();
+			g_game.FreeThing(monster);
 	}
 
 	spawnMap.clear();

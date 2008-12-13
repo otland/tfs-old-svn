@@ -21,6 +21,7 @@
 
 #include "server.h"
 #include "connection.h"
+#include "outputmessage.h"
 
 Server::Server(uint32_t serverip, uint16_t port):
 m_io_service()
@@ -43,9 +44,9 @@ void Server::accept()
 	if(m_shutdown || !m_acceptor)
 		return;
 
-	if(Connection* connection = ConnectionManager::getInstance()->createConnection(m_io_service))
-		m_acceptor->async_accept(connection->getHandle(), boost::bind(&Server::onAccept, this, connection,
-			boost::asio::placeholders::error));
+	Connection* connection = ConnectionManager::getInstance()->createConnection(m_io_service);
+	if(connection)
+		m_acceptor->async_accept(connection->getHandle(), boost::bind(&Server::onAccept, this, connection, boost::asio::placeholders::error));
 }
 
 void Server::closeListenSocket()
@@ -67,8 +68,7 @@ void Server::closeListenSocket()
 
 void Server::openListenSocket()
 {
-	m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service,
-		boost::asio::ip::tcp::endpoint(boost::asio::ip::address(
+	m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::address(
 		boost::asio::ip::address_v4(m_serverIp)), m_serverPort));
 	accept();
 }
@@ -113,11 +113,12 @@ void Server::onAccept(Connection* connection, const boost::system::error_code& e
 void Server::stop()
 {
 	m_shutdown = true;
+	OutputMessagePool::getInstance()->stop();
 	m_io_service.post(boost::bind(&Server::onStopServer, this));
 }
 
 void Server::onStopServer()
 {
 	closeListenSocket();
-	ConnectionManager::getInstance()->closeAll();
+	//ConnectionManager::getInstance()->closeAll();
 }

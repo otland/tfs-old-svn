@@ -965,7 +965,6 @@ void Monster::pushCreatures(Tile* tile)
 	for(uint32_t i = 0; i < tile->creatures.size();)
 	{
 		Monster* monster = tile->creatures[i]->getMonster();
-
 		if(monster && monster->isPushable())
 		{
 			if(pushCreature(monster))
@@ -1323,7 +1322,6 @@ void Monster::setNormalCreatureLight()
 void Monster::drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage)
 {
 	Creature::drainHealth(attacker, combatType, damage);
-
 	if(isInvisible())
 		removeCondition(CONDITION_INVISIBLE);
 }
@@ -1331,7 +1329,6 @@ void Monster::drainHealth(Creature* attacker, CombatType_t combatType, int32_t d
 void Monster::changeHealth(int32_t healthChange)
 {
 	Creature::changeHealth(healthChange);
-
 	//In case a player with ignore flag set attacks the monster
 	activate(true);
 }

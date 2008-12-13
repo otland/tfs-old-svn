@@ -716,7 +716,7 @@ bool Items::loadFromXml()
 							else if(tmpStrValue == "duration")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.decayTime = intValue;
+									it.decayTime = std::max((int32_t)0, intValue);
 							}
 							else if(tmpStrValue == "showduration")
 							{

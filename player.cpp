@@ -1351,7 +1351,7 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 			if((item = getInventoryItem((slots_t)slot)))
 			{
 				item->__startDecaying();
-				g_moveEvents->onPlayerEquip(this, item, (slots_t)slot);
+				g_moveEvents->onPlayerEquip(this, item, (slots_t)slot, false);
 			}
 		}
 
@@ -2507,41 +2507,39 @@ bool Player::hasCapacity(const Item* item, uint32_t count) const
 	return true;
 }
 
-ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
-	uint32_t flags) const
+ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count, uint32_t flags) const
 {
 	const Item* item = thing->getItem();
 	if(item == NULL)
 		return RET_NOTPOSSIBLE;
 
-	bool childIsOwner = ((flags & FLAG_CHILDISOWNER) == FLAG_CHILDISOWNER);
-	bool skipLimit = ((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT);
-
+	bool childIsOwner = ((flags & FLAG_CHILDISOWNER) == FLAG_CHILDISOWNER), skipLimit = ((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT);
 	if(childIsOwner)
 	{
 		//a child container is querying the player, just check if enough capacity
 		if(skipLimit || hasCapacity(item, count))
 			return RET_NOERROR;
-		else
-			return RET_NOTENOUGHCAPACITY;
+
+		return RET_NOTENOUGHCAPACITY;
 	}
 
 	if(!item->isPickupable())
 		return RET_CANNOTPICKUP;
 
-	ReturnValue ret = RET_NOERROR;
-
-	if((item->getSlotPosition() & SLOTP_HEAD) || (item->getSlotPosition() & SLOTP_NECKLACE) ||
+	if(!g_moveEvents->onPlayerEquip(this, thing->getItem(), (slots_t)index, true) ||
+		(item->getSlotPosition() & SLOTP_HEAD) || (item->getSlotPosition() & SLOTP_NECKLACE) ||
 		(item->getSlotPosition() & SLOTP_BACKPACK) || (item->getSlotPosition() & SLOTP_ARMOR) ||
-		(item->getSlotPosition() & SLOTP_LEGS) ||(item->getSlotPosition() & SLOTP_FEET) ||
+		(item->getSlotPosition() & SLOTP_LEGS) || (item->getSlotPosition() & SLOTP_FEET) ||
 		(item->getSlotPosition() & SLOTP_RING))
-		ret = RET_CANNOTBEDRESSED;
-	else if(item->getSlotPosition() & SLOTP_TWO_HAND)
-		ret = RET_PUTTHISOBJECTINBOTHHANDS;
-	else if((item->getSlotPosition() & SLOTP_RIGHT) || (item->getSlotPosition() & SLOTP_LEFT))
-		ret = RET_PUTTHISOBJECTINYOURHAND;
+		return RET_CANNOTBEDRESSED;
 
-	//check if we can dress this object
+	if(item->getSlotPosition() & SLOTP_TWO_HAND)
+		return RET_PUTTHISOBJECTINBOTHHANDS;
+
+	if((item->getSlotPosition() & SLOTP_RIGHT) || (item->getSlotPosition() & SLOTP_LEFT))
+		return RET_PUTTHISOBJECTINYOURHAND;
+
+	ReturnValue ret = RET_NOERROR;
 	switch(index)
 	{
 		case SLOT_HEAD:
@@ -2649,21 +2647,17 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 			break;
 	}
 
-	if(ret == RET_NOERROR || ret == RET_NOTENOUGHROOM)
-	{
-		//need an exchange with source?
-		if(getInventoryItem((slots_t)index) != NULL)
-		{
-			if(!getInventoryItem((slots_t)index)->isStackable() || getInventoryItem((slots_t)index)->getID() != item->getID())
-				return RET_NEEDEXCHANGE;
-		}
+	if(ret != RET_NOERROR && ret != RET_NOTENOUGHROOM)
+		return ret;
 
-		//check if enough capacity
-		if(hasCapacity(item, count))
-			return ret;
-		else
-			return RET_NOTENOUGHCAPACITY;
-	}
+	//need an exchange with source?
+	if(getInventoryItem((slots_t)index) != NULL && !getInventoryItem((slots_t)index)->isStackable()
+		|| getInventoryItem((slots_t)index)->getID() != item->getID())
+		return RET_NEEDEXCHANGE;
+
+	//check if enough capacity
+	if(!hasCapacity(item, count))
+		return RET_NOTENOUGHCAPACITY;
 
 	return ret;
 }
@@ -3040,11 +3034,8 @@ Thing* Player::__getThing(uint32_t index) const
 
 void Player::postAddNotification(Thing* thing, int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
 {
-	if(link == LINK_OWNER)
-	{
-		//calling movement scripts
-		g_moveEvents->onPlayerEquip(this, thing->getItem(), (slots_t)index);
-	}
+	if(link == LINK_OWNER) //calling movement scripts
+		g_moveEvents->onPlayerEquip(this, thing->getItem(), (slots_t)index, false);
 
 	if(link == LINK_OWNER || link == LINK_TOPPARENT)
 	{
@@ -3081,11 +3072,8 @@ void Player::postAddNotification(Thing* thing, int32_t index, cylinderlink_t lin
 
 void Player::postRemoveNotification(Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
 {
-	if(link == LINK_OWNER)
-	{
-		//calling movement scripts
+	if(link == LINK_OWNER) //calling movement scripts
 		g_moveEvents->onPlayerDeEquip(this, thing->getItem(), (slots_t)index, isCompleteRemoval);
-	}
 
 	if(link == LINK_OWNER || link == LINK_TOPPARENT)
 	{

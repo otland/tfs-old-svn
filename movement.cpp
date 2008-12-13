@@ -394,10 +394,10 @@ uint32_t MoveEvents::onCreatureMove(Creature* creature, Tile* tile, bool isStepp
 	return ret;
 }
 
-uint32_t MoveEvents::onPlayerEquip(Player* player, Item* item, slots_t slot)
+uint32_t MoveEvents::onPlayerEquip(Player* player, Item* item, slots_t slot, bool isCheck)
 {
 	if(MoveEvent* moveEvent = getEvent(item, MOVE_EVENT_EQUIP, slot))
-		return moveEvent->fireEquip(player, item, slot, false);
+		return moveEvent->fireEquip(player, item, slot, isCheck);
 
 	return 1;
 }
@@ -734,7 +734,7 @@ uint32_t MoveEvent::RemoveItemField(Item* item, Item* tileItem, const Position& 
 	return 1;
 }
 
-uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, slots_t slot, bool isRemoval)
+uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, slots_t slot, bool isCheck)
 {
 	if(player->isItemAbilityEnabled(slot))
 		return 1;
@@ -742,14 +742,17 @@ uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, 
 	if(!player->hasFlag(PlayerFlag_IgnoreEquipCheck) && moveEvent->getWieldInfo() != 0)
 	{
 		if(player->getLevel() < (uint32_t)moveEvent->getReqLevel() || player->getMagicLevel() < (uint32_t)moveEvent->getReqMagLv())
-			return 1;
+			return 0;
 
 		if(moveEvent->isPremium() && !player->isPremium())
-			return 1;
+			return 0;
 
 		if(!moveEvent->getVocEquipMap().empty() && moveEvent->getVocEquipMap().find(player->getVocationId()) == moveEvent->getVocEquipMap().end())
-			return 1;
+			return 0;
 	}
+
+	if(isCheck)
+		return 1;
 
 	const ItemType& it = Item::items[item->getID()];
 	if(it.transformEquipTo != 0)
@@ -949,12 +952,12 @@ uint32_t MoveEvent::executeStep(Creature* creature, Item* item, const Position& 
 	}
 }
 
-uint32_t MoveEvent::fireEquip(Player* player, Item* item, slots_t slot, bool isRemoval)
+uint32_t MoveEvent::fireEquip(Player* player, Item* item, slots_t slot, bool boolean)
 {
 	if(m_scripted)
 		return executeEquip(player, item, slot);
 
-	return equipFunction(this, player, item, slot, isRemoval);
+	return equipFunction(this, player, item, slot, boolean);
 }
 
 uint32_t MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)

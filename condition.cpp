@@ -40,7 +40,7 @@ bool Condition::setParam(ConditionParam_t param, int32_t value)
 	switch(param)
 	{
 		case CONDITIONPARAM_TICKS:
-			setTicks(value);
+			ticks = value;
 			return true;
 
 		case CONDITIONPARAM_BUFF:
@@ -120,7 +120,7 @@ bool Condition::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
 			if(!propStream.GET_VALUE(value))
 				return false;
 
-			setTicks(value);
+			ticks = value;
 			return true;
 		}
 
@@ -312,45 +312,10 @@ Condition(_id, _type, _ticks, _buff)
 	//
 }
 
-bool ConditionGeneric::executeCondition(Creature* creature, int32_t interval)
-{
-	return Condition::executeCondition(creature, interval);
-}
-
-void ConditionGeneric::endCondition(Creature* creature, ConditionEnd_t reason)
-{
-	//
-}
-
 void ConditionGeneric::addCondition(Creature* creature, const Condition* addCondition)
 {
 	if(updateCondition(addCondition))
 		setTicks(addCondition->getTicks());
-}
-
-xmlNodePtr ConditionGeneric::serialize()
-{
-	return Condition::serialize();
-}
-
-bool ConditionGeneric::unserialize(xmlNodePtr p)
-{
-	return Condition::unserialize(p);
-}
-
-bool ConditionGeneric::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
-{
-	return Condition::unserializeProp(attr, propStream);
-}
-
-bool ConditionGeneric::serialize(PropWriteStream& propWriteStream)
-{
-	return Condition::serialize(propWriteStream);
-}
-
-bool ConditionGeneric::setParam(ConditionParam_t param, int32_t value)
-{
-	return Condition::setParam(param, value);
 }
 
 Icons_t ConditionGeneric::getIcons() const

@@ -153,12 +153,14 @@ class OutputMessagePool
 			return &instance;
 		}
 
+		OutputMessage* getOutputMessage(Protocol* protocol, bool autosend = true);
+
 		void send(OutputMessage* msg);
 		void sendAll();
-		OutputMessage* getOutputMessage(Protocol* protocol, bool autosend = true);
-		void startExecutionFrame();
 
+		void startExecutionFrame();
 		void releaseMessage(OutputMessage* msg, bool sent = false);
+		void stop() {m_shutdown = true;}
 
 		size_t getTotalMessageCount() const {return m_allOutputMessages.size();}
 		size_t getAvailableMessageCount() const {return m_outputMessages.size();}
@@ -166,18 +168,16 @@ class OutputMessagePool
 
 	protected:
 		void configureOutputMessage(OutputMessage* msg, Protocol* protocol, bool autosend);
-
 		void internalReleaseMessage(OutputMessage* msg);
 
 		typedef std::list<OutputMessage*> OutputMessageVector;
-
 		OutputMessageVector m_outputMessages;
 		OutputMessageVector m_autoSendOutputMessages;
-
 		OutputMessageVector m_allOutputMessages;
 
 		OTSYS_THREAD_LOCKVAR m_outputPoolLock;
 		uint64_t m_frameTime;
+		bool m_shutdown;
 };
 
 #ifdef __TRACK_NETWORK__

@@ -99,7 +99,6 @@ void MonsterType::reset()
 	}
 
 	spellAttackList.clear();
-
 	for(SpellList::iterator it = spellDefenseList.begin(); it != spellDefenseList.end(); ++it)
 	{
 		if(it->combatSpell)
@@ -110,14 +109,12 @@ void MonsterType::reset()
 	}
 
 	spellDefenseList.clear();
-
 	yellSpeedTicks = 0;
 	yellChance = 0;
 	voiceVector.clear();
 
 	changeTargetSpeed = 0;
 	changeTargetChance = 0;
-
 	scriptList.clear();
 }
 
@@ -365,9 +362,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 		return true;
 
 	CombatSpell* combatSpell = NULL;
-	bool needTarget = false;
-	bool needDirection = false;
-
+	bool needTarget = false, needDirection = false;
 	if(isScripted)
 	{
 		if(readXMLInteger(node, "direction", intValue))
@@ -377,7 +372,6 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			needTarget = (intValue != 0);
 
 		combatSpell = new CombatSpell(NULL, needTarget, needDirection);
-
 		if(!combatSpell->loadScript(getFilePath(FILE_TYPE_OTHER, g_spells->getScriptBaseName() + "/scripts/" + scriptName)))
 		{
 			delete combatSpell;
@@ -397,7 +391,6 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 	{
 		Combat* combat = new Combat;
 		sb.combatSpell = true;
-
 		if(readXMLInteger(node, "length", intValue))
 		{
 			int32_t length = intValue;

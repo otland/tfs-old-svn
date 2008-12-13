@@ -48,6 +48,7 @@ OutputMessagePool::OutputMessagePool()
 void OutputMessagePool::startExecutionFrame()
 {
 	m_frameTime = OTSYS_TIME();
+	m_shutdown = false;
 }
 
 OutputMessagePool::~OutputMessagePool()
@@ -107,7 +108,7 @@ void OutputMessagePool::sendAll()
 	{
 		#ifdef __NO_PLAYER_SENDBUFFER__
 		//use this define only for debugging
-		bool v = 1;
+		bool v = true;
 		#else
 		//It will send only messages bigger then 1 kb or with a lifetime greater than 10 ms
 		bool v = (*it)->getMessageLength() > 1024 || (m_frameTime - (*it)->getFrame() > 10);
@@ -117,7 +118,6 @@ void OutputMessagePool::sendAll()
 			#ifdef __DEBUG_NET_DETAIL__
 			std::cout << "Sending message - ALL" << std::endl;
 			#endif
-
 			if((*it)->getConnection())
 			{
 				if((*it)->getConnection()->send(*it))
@@ -196,6 +196,9 @@ OutputMessage* OutputMessagePool::getOutputMessage(Protocol* protocol, bool auto
 	#ifdef __DEBUG_NET_DETAIL__
 	std::cout << "request output message - auto = " << autosend << std::endl;
 	#endif
+
+	if(m_shutdown)
+		return NULL;
 
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_outputPoolLock);
 	OutputMessage* outputmessage;

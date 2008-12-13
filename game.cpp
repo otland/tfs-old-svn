@@ -148,17 +148,12 @@ void Game::setGameState(GameState_t newState)
 					it = Player::listPlayer.list.begin();
 				}
 
-				IOBan::getInstance()->clearTemporials();
 				Houses::getInstance().payHouses();
 				saveGameState(false);
-
-				Spawns::getInstance()->clear();
 				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, this)));
+
 				Scheduler::getScheduler().stop();
 				Dispatcher::getDispatcher().stop();
-				if(g_server)
-					g_server->stop();
-
 				break;
 			}
 
@@ -4446,14 +4441,22 @@ bool Game::closeRuleViolation(Player* player)
 void Game::shutdown()
 {
 	std::cout << "Preparing shutdown";
+	IOBan::getInstance()->clearTemporials();
+	std::cout << ".";
 	Scheduler::getScheduler().shutdown();
 	std::cout << ".";
 	Dispatcher::getDispatcher().shutdown();
+	std::cout << "." std::endl;
+
+	std::cout << "Exiting" std::endl;
+	Spawns::getInstance()->clear();
+	std::cout << ".";
+	if(g_server)
+		g_server->stop();
+
 	std::cout << ".";
 	cleanup();
 	std::cout << ".";
-
-	std::cout << "Exiting." << std::endl;
 	exit(1);
 }
 
