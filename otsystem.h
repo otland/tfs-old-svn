@@ -208,18 +208,18 @@ class OTSYS_THREAD_LOCK_CLASS
 		inline OTSYS_THREAD_LOCK_CLASS(OTSYS_THREAD_LOCKVAR &a)
 		{
 			mutex = &a;
-			OTSYS_THREAD_LOCK(a, NULL)
+			OTSYS_THREAD_LOCK(a, "")
 		}
 
 		inline OTSYS_THREAD_LOCK_CLASS(OTSYS_THREAD_LOCKVAR &a, const char* s)
 		{
 			mutex = &a;
-			OTSYS_THREAD_LOCK(a, NULL)
+			OTSYS_THREAD_LOCK(a, "")
 		}
 
 		inline ~OTSYS_THREAD_LOCK_CLASS()
 		{
-			OTSYS_THREAD_UNLOCK_PTR(mutex, NULL)
+			OTSYS_THREAD_UNLOCK_PTR(mutex, "")
 		}
 
 		OTSYS_THREAD_LOCKVAR *mutex;

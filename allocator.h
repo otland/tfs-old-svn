@@ -116,7 +116,7 @@ class PoolManager
 		void* allocate(size_t size)
 		{
 			Pools::iterator it;
-			OTSYS_THREAD_LOCK(poolLock, NULL);
+			OTSYS_THREAD_LOCK(poolLock, "");
 			for(it = pools.begin(); it != pools.end(); ++it)
 			{
 				if(it->first >= size + sizeof(poolTag))
@@ -128,7 +128,7 @@ class PoolManager
 					poolsStats[it->first]->allocations++;
 					poolsStats[it->first]->unused+= it->first - (size + sizeof(poolTag));
 					#endif
-					OTSYS_THREAD_UNLOCK(poolLock, NULL);
+					OTSYS_THREAD_UNLOCK(poolLock, "");
 					return tag + 1;
 				}
 			}
@@ -139,7 +139,7 @@ class PoolManager
 			poolsStats[0]->unused += size;
 			#endif
 			tag->poolbytes = 0;
-			OTSYS_THREAD_UNLOCK(poolLock, NULL);
+			OTSYS_THREAD_UNLOCK(poolLock, "");
 			return tag + 1;
 		}
 
@@ -149,7 +149,7 @@ class PoolManager
 				return;
 
 			poolTag* const tag = reinterpret_cast<poolTag*>(deletable) - 1U;
-			OTSYS_THREAD_LOCK(poolLock, NULL);
+			OTSYS_THREAD_LOCK(poolLock, "");
 			if(tag->poolbytes)
 			{
 				Pools::iterator it;
@@ -168,7 +168,7 @@ class PoolManager
 				#endif
 			}
 
-			OTSYS_THREAD_UNLOCK(poolLock, NULL);
+			OTSYS_THREAD_UNLOCK(poolLock, "");
 		}
 
 		#ifdef __OTSERV_ALLOCATOR_STATS__

@@ -86,12 +86,12 @@ DBResult* _Database::verifyResult(DBResult* result)
 
 DBQuery::DBQuery()
 {
-	OTSYS_THREAD_LOCK(databaseLock, NULL);
+	OTSYS_THREAD_LOCK(databaseLock, "");
 }
 
 DBQuery::~DBQuery()
 {
-	OTSYS_THREAD_UNLOCK(databaseLock, NULL);
+	OTSYS_THREAD_UNLOCK(databaseLock, "");
 }
 
 DBInsert::DBInsert(Database* db)
