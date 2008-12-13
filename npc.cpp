@@ -190,7 +190,7 @@ bool Npc::loadFromXml(const std::string& filename)
 		else
 			name = "";
 
-		if(readXMLString(root, "namedescription", strValue))
+		if(readXMLString(root, "namedescription", strValue) || readXMLString(root, "nameDescription", strValue))
 			nameDescription = strValue;
 		else
 			nameDescription = name;
