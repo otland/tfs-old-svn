@@ -53,7 +53,7 @@ Connection* ConnectionManager::createConnection(boost::asio::io_service& io_serv
 	#ifdef __DEBUG_NET_DETAIL__
 	std::cout << "Creating new connection" << std::endl;
 	#endif
-	OTSYS_THREAD_LOCK_CLASS(m_connectionManagerLock, "");
+	OTSYS_THREAD_LOCK_CLASS(m_connectionManagerLock);
 
 	Connection* connection = new Connection(io_service);
 	m_connections.push_back(connection);

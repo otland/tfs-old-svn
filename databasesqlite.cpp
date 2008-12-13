@@ -121,7 +121,7 @@ std::string DatabaseSQLite::_parse(const std::string &s)
 
 bool DatabaseSQLite::executeQuery(const std::string &query)
 {
-	OTSYS_THREAD_LOCK_CLASS(sqliteLock, "");
+	OTSYS_THREAD_LOCK_CLASS(sqliteLock);
 	if(!m_connected)
 		return false;
 
@@ -155,7 +155,7 @@ bool DatabaseSQLite::executeQuery(const std::string &query)
 
 DBResult* DatabaseSQLite::storeQuery(const std::string &query)
 {
-	OTSYS_THREAD_LOCK_CLASS(sqliteLock, "");
+	OTSYS_THREAD_LOCK_CLASS(sqliteLock);
 	if(!m_connected)
 		return NULL;
 
