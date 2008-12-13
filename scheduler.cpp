@@ -100,7 +100,7 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 	#if defined __EXCEPTION_TRACER__
 	schedulerExceptionHandler.RemoveHandler();
 	#endif
-	#ifndef WIN32
+	#if not defined(__USE_BOOST_THREAD__) && not defined(WIN32)
 	return NULL;
 	#endif
 }
