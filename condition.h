@@ -127,7 +127,7 @@ class Condition
 		virtual Icons_t getIcons() const;
 		virtual ConditionId_t getId() const {return id;}
 
-		virtual Condition* clone() const = 0;
+		virtual Condition* clone() const {return NULL;}
 
 		ConditionType_t getType() const {return conditionType;}
 		int64_t getEndTime() const {return endTime;}
