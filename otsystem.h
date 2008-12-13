@@ -30,30 +30,6 @@
 #endif
 typedef std::vector<std::pair<uint32_t, uint32_t> > IPList;
 
-#ifdef __USE_BOOST_THREAD__
-#define OTSYS_CREATE_THREAD(a, b) 				boost::thread(boost::bind(&a, (void*)b))
-
-#define OTSYS_THREAD_LOCKVAR 					boost::mutex
-#define OTSYS_THREAD_LOCKVARINIT(a)
-#define OTSYS_THREAD_LOCKVARRELEASE(a)
-#define OTSYS_THREAD_LOCK(a, b) 				a.lock();
-#define OTSYS_THREAD_UNLOCK(a, b) 				a.unlock();
-#define OTSYS_THREAD_UNLOCK_PTR(a, b) 				a->unlock();
-
-#define OTSYS_SLEEP(time)					boost::this_thread::sleep(time)
-
-#define OTSYS_THREAD_TIMEOUT 					false
-#define OTSYS_THREAD_SIGNALVAR					boost::timed_mutex
-#define OTSYS_THREAD_SIGNALVARINIT(a)
-#define OTSYS_THREAD_SIGNAL_SEND(a) 				a.unlock()
-inline int OTSYS_THREAD_WAITSIGNAL(OTSYS_THREAD_SIGNALVAR& a, OTSYS_THREAD_LOCKVAR& b)
-{
-	a.lock();
-	return 1;
-}
-#define OTSYS_THREAD_WAITSIGNAL_TIMED(a, b, c)			a.timed_lock(boost::posix_time::milliseconds(c))
-#endif
-
 #ifdef WIN32
 #ifdef __WIN_LOW_FRAG_HEAP__
 #define _WIN32_WINNT 0x0501
@@ -192,13 +168,40 @@ inline int64_t OTSYS_TIME()
 	ftime(&t);
 	return ((int64_t)t.millitm) + ((int64_t)t.time) * 1000;
 }
-
-#ifndef closesocket
-#define closesocket close
-#endif
 #endif
 
-#ifndef __USE_BOOST_THREAD__
+#ifdef __USE_BOOST_THREAD__
+#define OTSYS_CREATE_THREAD(a, b)		boost::thread(boost::bind(&a, (void*)b))
+
+#define OTSYS_THREAD_LOCKVAR			boost::mutex
+#define OTSYS_THREAD_LOCKVARINIT(a)
+#define OTSYS_THREAD_LOCKVARRELEASE(a)
+#define OTSYS_THREAD_LOCK(a, b)			a.lock();
+#define OTSYS_THREAD_UNLOCK(a, b)		a.unlock();
+#define OTSYS_THREAD_UNLOCK_PTR(a, b)		a->unlock();
+
+#define OTSYS_SLEEP(time)			boost::this_thread::sleep(boost::posix_time::milliseconds(time))
+
+#define OTSYS_THREAD_TIMEOUT			false
+#define OTSYS_THREAD_SIGNALVAR			boost::condition_variable
+#define OTSYS_THREAD_SIGNALVARINIT(a)
+#define OTSYS_THREAD_SIGNAL_SEND(a)		a.notify_all()
+
+inline int OTSYS_THREAD_WAITSIGNAL(OTSYS_THREAD_SIGNALVAR& a, OTSYS_THREAD_LOCKVAR& b)
+{
+	boost::unique_lock<boost::mutex> lock(b);
+	a.wait(lock);
+	return 1;
+}
+
+inline int OTSYS_THREAD_WAITSIGNAL_TIMED(OTSYS_THREAD_SIGNALVAR&a, OTSYS_THREAD_LOCKVAR&b, uint64_t c)
+{
+	boost::unique_lock<boost::mutex> lock(b);
+	return (int)a.timed_wait(lock, boost::get_system_time() + boost::posix_time::milliseconds(c));
+}
+
+typedef boost::mutex::scoped_lock OTSYS_THREAD_LOCK_CLASS;
+#else
 class OTSYS_THREAD_LOCK_CLASS
 {
 	public:
