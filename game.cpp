@@ -4446,9 +4446,9 @@ void Game::shutdown()
 	Scheduler::getScheduler().shutdown();
 	std::cout << ".";
 	Dispatcher::getDispatcher().shutdown();
-	std::cout << "." std::endl;
+	std::cout << "." << std::endl;
 
-	std::cout << "Exiting" std::endl;
+	std::cout << "Exiting";
 	Spawns::getInstance()->clear();
 	std::cout << ".";
 	if(g_server)
@@ -4456,7 +4456,7 @@ void Game::shutdown()
 
 	std::cout << ".";
 	cleanup();
-	std::cout << ".";
+	std::cout << "." << std::endl;
 	exit(1);
 }
 
