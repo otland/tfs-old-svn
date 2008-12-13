@@ -2526,7 +2526,7 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 	if(!item->isPickupable())
 		return RET_CANNOTPICKUP;
 
-	if(!g_moveEvents->onPlayerEquip(this, thing->getItem(), (slots_t)index, true) ||
+	if(!g_moveEvents->onPlayerEquip(const_cast<Player*>(this), const_cast<Item*>(item), (slots_t)index, true) ||
 		(item->getSlotPosition() & SLOTP_HEAD) || (item->getSlotPosition() & SLOTP_NECKLACE) ||
 		(item->getSlotPosition() & SLOTP_BACKPACK) || (item->getSlotPosition() & SLOTP_ARMOR) ||
 		(item->getSlotPosition() & SLOTP_LEGS) || (item->getSlotPosition() & SLOTP_FEET) ||
@@ -2651,8 +2651,8 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 		return ret;
 
 	//need an exchange with source?
-	if(getInventoryItem((slots_t)index) != NULL && !getInventoryItem((slots_t)index)->isStackable()
-		|| getInventoryItem((slots_t)index)->getID() != item->getID())
+	if(getInventoryItem((slots_t)index) != NULL && (!getInventoryItem((slots_t)index)->isStackable()
+		|| getInventoryItem((slots_t)index)->getID() != item->getID()))
 		return RET_NEEDEXCHANGE;
 
 	//check if enough capacity

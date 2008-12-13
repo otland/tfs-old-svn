@@ -606,7 +606,7 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_ULONG(duration))
 				return false;
 
-			setDuration(std::max((int32_t)0, duration));
+			setDuration(std::max((uint32_t)0, duration));
 			break;
 		}
 
