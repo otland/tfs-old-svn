@@ -122,8 +122,8 @@ class Condition
 
 		virtual bool startCondition(Creature* creature);
 		virtual bool executeCondition(Creature* creature, int32_t interval);
-		virtual void endCondition(Creature* creature, ConditionEnd_t reason) = 0;
-		virtual void addCondition(Creature* creature, const Condition* condition) = 0;
+		virtual void endCondition(Creature* creature, ConditionEnd_t reason) {}
+		virtual void addCondition(Creature* creature, const Condition* condition) {}
 		virtual Icons_t getIcons() const;
 		virtual ConditionId_t getId() const {return id;}
 
