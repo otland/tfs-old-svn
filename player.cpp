@@ -2526,20 +2526,17 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 	if(!item->isPickupable())
 		return RET_CANNOTPICKUP;
 
-	if(!g_moveEvents->onPlayerEquip(const_cast<Player*>(this), const_cast<Item*>(item), (slots_t)index, true) ||
-		(item->getSlotPosition() & SLOTP_HEAD) || (item->getSlotPosition() & SLOTP_NECKLACE) ||
+	ReturnValue ret = RET_NOERROR;
+	if((item->getSlotPosition() & SLOTP_HEAD) || (item->getSlotPosition() & SLOTP_NECKLACE) ||
 		(item->getSlotPosition() & SLOTP_BACKPACK) || (item->getSlotPosition() & SLOTP_ARMOR) ||
 		(item->getSlotPosition() & SLOTP_LEGS) || (item->getSlotPosition() & SLOTP_FEET) ||
 		(item->getSlotPosition() & SLOTP_RING))
-		return RET_CANNOTBEDRESSED;
+		ret = RET_CANNOTBEDRESSED;
+	else if(item->getSlotPosition() & SLOTP_TWO_HAND)
+		ret = RET_PUTTHISOBJECTINBOTHHANDS;
+	else if((item->getSlotPosition() & SLOTP_RIGHT) || (item->getSlotPosition() & SLOTP_LEFT))
+		ret = RET_PUTTHISOBJECTINYOURHAND;
 
-	if(item->getSlotPosition() & SLOTP_TWO_HAND)
-		return RET_PUTTHISOBJECTINBOTHHANDS;
-
-	if((item->getSlotPosition() & SLOTP_RIGHT) || (item->getSlotPosition() & SLOTP_LEFT))
-		return RET_PUTTHISOBJECTINYOURHAND;
-
-	ReturnValue ret = RET_NOERROR;
 	switch(index)
 	{
 		case SLOT_HEAD:
@@ -2647,17 +2644,20 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 			break;
 	}
 
-	if(ret != RET_NOERROR && ret != RET_NOTENOUGHROOM)
-		return ret;
+	if(ret == RET_NOERROR || ret == RET_NOTENOUGHROOM)
+	{
+		//need an exchange with source?
+		if(getInventoryItem((slots_t)index) != NULL && (!getInventoryItem((slots_t)index)->isStackable()
+			|| getInventoryItem((slots_t)index)->getID() != item->getID()))
+			return RET_NEEDEXCHANGE;
 
-	//need an exchange with source?
-	if(getInventoryItem((slots_t)index) != NULL && (!getInventoryItem((slots_t)index)->isStackable()
-		|| getInventoryItem((slots_t)index)->getID() != item->getID()))
-		return RET_NEEDEXCHANGE;
+		if(!g_moveEvents->onPlayerEquip(const_cast<Player*>(this), const_cast<Item*>(item), (slots_t)index, true)
+			return RET_CANNOTBEDRESSED;
 
-	//check if enough capacity
-	if(!hasCapacity(item, count))
-		return RET_NOTENOUGHCAPACITY;
+		//check if enough capacity
+		if(!hasCapacity(item, count))
+			return RET_NOTENOUGHCAPACITY;
+	}
 
 	return ret;
 }
