@@ -3682,7 +3682,7 @@ Skulls_t Player::getSkullClient(const Creature* creature) const
 		if(skull != SKULL_NONE && player->getSkull() != SKULL_RED && player->hasAttacked(this))
 			return SKULL_YELLOW;
 
-		if(player->getSkull() == SKULL_NONE && isPartner(player))
+		if(player->getSkull() == SKULL_NONE && isPartner(player) && g_game.getWorldType() != WORLD_TYPE_NO_PVP)
 			return SKULL_GREEN;
 	}
 
