@@ -4261,7 +4261,7 @@ void Game::checkDecay()
 	for(DecayList::iterator it = decayItems[bucket].begin(); it != decayItems[bucket].end();)
 	{
 		Item* item = *it;
-		int32_t decreaseTime = EVENT_DECAYINTERVAL * EVENT_DECAY_BUCKETS;
+		int32_t decreaseTime = EVENT_DECAYINTERVAL * EVENT_DECAYBUCKETS;
 		if(item->getDuration() - decreaseTime < 0)
 			decreaseTime = item->getDuration();
 
