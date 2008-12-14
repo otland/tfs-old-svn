@@ -68,7 +68,9 @@ enum OTBM_NodeTypes_t
 	OTBM_MONSTER = 11,
 	OTBM_TOWNS = 12,
 	OTBM_TOWN = 13,
-	OTBM_HOUSETILE = 14
+	OTBM_HOUSETILE = 14,
+	OTBM_WAYPOINTS = 15,
+	OTBM_WAYPOINT = 16
 };
 
 #pragma pack(1)
@@ -82,14 +84,7 @@ struct OTBM_root_header
 	uint32_t minorVersionItems;
 };
 
-struct OTBM_TeleportDest
-{
-	uint16_t _x;
-	uint16_t _y;
-	uint8_t _z;
-};
-
-struct OTBM_Tile_area_coords
+struct OTBM_Destination_coords
 {
 	uint16_t _x;
 	uint16_t _y;
@@ -100,13 +95,6 @@ struct OTBM_Tile_coords
 {
 	uint8_t _x;
 	uint8_t _y;
-};
-
-struct OTBM_TownTemple_coords
-{
-	uint16_t _x;
-	uint16_t _y;
-	uint8_t _z;
 };
 
 struct OTBM_HouseTile_coords

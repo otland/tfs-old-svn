@@ -200,7 +200,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 				return false;
 			}
 
-			OTBM_Tile_area_coords* area_coord;
+			OTBM_Destination_coords* area_coord;
 			if(!propStream.GET_STRUCT(area_coord))
 			{
 				setLastErrorString("Invalid map node.");
@@ -410,18 +410,18 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 						return false;
 					}
 
-					uint32_t townid = 0;
-					if(!propStream.GET_ULONG(townid))
+					uint32_t townId = 0;
+					if(!propStream.GET_ULONG(townId))
 					{
 						setLastErrorString("Could not read town id.");
 						return false;
 					}
 
-					Town* town = Towns::getInstance().getTown(townid);
+					Town* town = Towns::getInstance().getTown(townId);
 					if(!town)
 					{
-						town = new Town(townid);
-						Towns::getInstance().addTown(townid, town);
+						town = new Town(townId);
+						Towns::getInstance().addTown(townId, town);
 					}
 
 					std::string townName = "";
@@ -432,18 +432,14 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					}
 
 					town->setName(townName);
-
-					OTBM_TownTemple_coords *town_coords;
+					OTBM_Destination_coords *town_coords;
 					if(!propStream.GET_STRUCT(town_coords))
 					{
 						setLastErrorString("Could not read town coordinates.");
 						return false;
 					}
 
-					Position pos;
-					pos.x = town_coords->_x;
-					pos.y = town_coords->_y;
-					pos.z = town_coords->_z;
+					Position pos = Position(town_coords->_x, town_coords->_y, town_coords->_z);
 					town->setTemplePos(pos);
 				}
 				else
@@ -453,6 +449,46 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 				}
 
 				nodeTown = f.getNextNode(nodeTown, type);
+			}
+		}
+		else if(type == OTBM_WAYPOINTS && root_header->version > 1)
+		{
+			NODE nodeWaypoint = f.getChildNode(nodeMapData, type);
+			while(nodeWaypoint != NO_NODE)
+			{
+				if(type == OTBM_WAYPOINT)
+				{
+					if(!f.getProps(nodeWaypoint, propStream))
+					{
+						setLastErrorString("Could not read waypoint data.");
+						return false;
+					}
+
+					std::string name;
+					if(!propStream.GET_STRING(name))
+					{
+						setLastErrorString("Could not read waypoint name.");
+						return false;
+					}
+
+					OTBM_Destination_coords* waypoint_coords;
+					if(!propStream.GET_STRUCT(waypoint_coords))
+					{
+						setLastErrorString("Could not read waypoint coordinates.");
+						return false;
+					}
+
+					Position pos = Position(waypoint_coords->_x, waypoint_coords->_y, waypoint_coords->_z);
+					WaypointPtr waypoint(new Waypoint(name, pos));
+					map->waypoints.addWaypoint(waypoint);
+				}
+				else
+				{
+					setLastErrorString("Unknown waypoint node.");
+					return false;
+				}
+
+				nodeWaypoint = f.getNextNode(nodeWaypoint, type);
 			}
 		}
 		else

@@ -30,8 +30,8 @@ using boost::shared_ptr;
 
 #include "position.h"
 #include "item.h"
-//#include "creature.h"
 #include "fileloader.h"
+#include "waypoints.h"
 
 #include "tools.h"
 #include "tile.h"
@@ -63,7 +63,7 @@ class AStarNodes
 {
 	public:
 		AStarNodes();
-		~AStarNodes(){}
+		virtual ~AStarNodes(){}
 
 		AStarNode* createOpenNode();
 		AStarNode* getBestNode();
@@ -162,7 +162,7 @@ class Map
 {
 	public:
 		Map();
-		~Map();
+		virtual ~Map();
 
 		static const int32_t maxViewportX = 11;         //min value: maxClientViewportX + 1
 		static const int32_t maxViewportY = 11;         //min value: maxClientViewportY + 1
@@ -256,6 +256,11 @@ class Map
 
 		bool getPathMatching(const Creature* creature, std::list<Direction>& dirList,
 			const FrozenPathingConditionCall& pathCondition, const FindPathParams& fpp);
+
+		/**
+		* Waypoints
+		*/
+		Waypoints waypoints;
 
 	protected:
 		uint32_t mapWidth, mapHeight;
