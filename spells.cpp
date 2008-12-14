@@ -91,7 +91,7 @@ bool Spells::onPlayerSay(Player* player, const std::string& words)
 	if(param.length())
 	{
 		trimString(param);
-		size_t tmp = 0, rtmp = (param.length() - 1);
+		size_t tmp = 0, rtmp = param.length();
 		if(param[0] == '"')
 			tmp = 1;
 
