@@ -846,12 +846,12 @@ bool Items::loadFromXml()
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.skills[SKILL_FIST] = intValue;
 							}
-							else if(tmpStrValue == "maxhitpoints" || tmpStrValue == "maxhealthpoints")
+							else if(tmpStrValue == "maxhealthpoints")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.stats[STAT_MAXHEALTH] = intValue;
 							}
-							else if(tmpStrValue == "maxhitpointspercent" || tmpStrValue == "maxhealthpercent")
+							else if(tmpStrValue == "maxhealthpercent")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.statsPercent[STAT_MAXHEALTH] = intValue;
@@ -861,7 +861,7 @@ bool Items::loadFromXml()
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.stats[STAT_MAXMANA] = intValue;
 							}
-							else if(tmpStrValue == "maxmanapointspercent" || tmpStrValue == "maxmanapercent")
+							else if(tmpStrValue == "maxmanapercent")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.statsPercent[STAT_MAXMANA] = intValue;
@@ -871,17 +871,17 @@ bool Items::loadFromXml()
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.stats[STAT_SOUL] = intValue;
 							}
-							else if(tmpStrValue == "soulpointspercent" || tmpStrValue == "soulpercent")
+							else if(tmpStrValue == "soulpercent")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.statsPercent[STAT_SOUL] = intValue;
 							}
-							else if(tmpStrValue == "magicpoints" || tmpStrValue == "magiclevelpoints")
+							else if(tmpStrValue == "magiclevelpoints")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.stats[STAT_MAGICLEVEL] = intValue;
 							}
-							else if(tmpStrValue == "magicpointspercent" || tmpStrValue == "magiclevelpercent")
+							else if(tmpStrValue == "magiclevelpercent")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.statsPercent[STAT_MAGICLEVEL] = intValue;
@@ -890,95 +890,91 @@ bool Items::loadFromXml()
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 								{
-									it.abilities.absorbPercentEnergy += intValue;
-									it.abilities.absorbPercentFire += intValue;
-									it.abilities.absorbPercentEarth += intValue;
-									it.abilities.absorbPercentIce += intValue;
-									it.abilities.absorbPercentHoly += intValue;
-									it.abilities.absorbPercentDeath += intValue;
-									it.abilities.absorbPercentPhysical += intValue;
-									it.abilities.absorbPercentLifeDrain += intValue;
-									it.abilities.absorbPercentManaDrain += intValue;
-									it.abilities.absorbPercentDrown += intValue;
-									it.abilities.absorbPercentOther += intValue;
+									for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+										it.abilities.absorbPercent[i] += intValue;
 								}
 							}
 							else if(tmpStrValue == "absorbpercentelements")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 								{
-									it.abilities.absorbPercentEnergy += intValue;
-									it.abilities.absorbPercentFire += intValue;
-									it.abilities.absorbPercentEarth += intValue;
-									it.abilities.absorbPercentIce += intValue;
+									it.abilities.absorbPercent[COMBAT_ENERGYDAMAGE] += intValue;
+									it.abilities.absorbPercent[COMBAT_FIREDAMAGE] += intValue;
+									it.abilities.absorbPercent[COMBAT_EARTHDAMAGE] += intValue;
+									it.abilities.absorbPercent[COMBAT_ICEDAMAGE] += intValue;
 								}
 							}
 							else if(tmpStrValue == "absorbpercentmagic")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 								{
-									it.abilities.absorbPercentEnergy += intValue;
-									it.abilities.absorbPercentFire += intValue;
-									it.abilities.absorbPercentEarth += intValue;
-									it.abilities.absorbPercentIce += intValue;
-									it.abilities.absorbPercentHoly += intValue;
-									it.abilities.absorbPercentDeath += intValue;
+									it.abilities.absorbPercent[COMBAT_ENERGYDAMAGE] += intValue;
+									it.abilities.absorbPercent[COMBAT_FIREDAMAGE] += intValue;
+									it.abilities.absorbPercent[COMBAT_EARTHDAMAGE] += intValue;
+									it.abilities.absorbPercent[COMBAT_ICEDAMAGE] += intValue;
+									it.abilities.absorbPercent[COMBAT_HOLYDAMAGE] += intValue;
+									it.abilities.absorbPercent[COMBAT_DEATHDAMAGE] += intValue;
 								}
 							}
 							else if(tmpStrValue == "absorbpercentenergy")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.abilities.absorbPercentEnergy += intValue;
+									it.abilities.absorbPercent[COMBAT_ENERGYDAMAGE] += intValue;
 							}
 							else if(tmpStrValue == "absorbpercentfire")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.abilities.absorbPercentFire += intValue;
+									it.abilities.absorbPercent[COMBAT_FIREDAMAGE] += intValue;
 							}
 							else if(tmpStrValue == "absorbpercentpoison" ||	tmpStrValue == "absorbpercentearth")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.abilities.absorbPercentEarth += intValue;
+									it.abilities.absorbPercent[COMBAT_EARTHDAMAGE] += intValue;
 							}
 							else if(tmpStrValue == "absorbpercentice")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.abilities.absorbPercentIce += intValue;
+									it.abilities.absorbPercent[COMBAT_ICEDAMAGE] += intValue;
 							}
 							else if(tmpStrValue == "absorbpercentholy")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.abilities.absorbPercentHoly += intValue;
+									it.abilities.absorbPercent[COMBAT_HOLYDAMAGE] += intValue;
 							}
 							else if(tmpStrValue == "absorbpercentdeath")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.abilities.absorbPercentDeath += intValue;
+									it.abilities.absorbPercent[COMBAT_DEATHDAMAGE] += intValue;
 							}
 							else if(tmpStrValue == "absorbpercentlifedrain")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.abilities.absorbPercentLifeDrain += intValue;
+									it.abilities.absorbPercent[COMBAT_LIFEDRAIN] += intValue;
 							}
 							else if(tmpStrValue == "absorbpercentmanadrain")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.abilities.absorbPercentManaDrain += intValue;
+									it.abilities.absorbPercent[COMBAT_MANADRAIN] += intValue;
 							}
 							else if(tmpStrValue == "absorbpercentdrown")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.abilities.absorbPercentDrown += intValue;
+									it.abilities.absorbPercent[COMBAT_DROWNDAMAGE] += intValue;
 							}
 							else if(tmpStrValue == "absorbpercentphysical")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.abilities.absorbPercentPhysical += intValue;
+									it.abilities.absorbPercent[COMBAT_PHYSICALDAMAGE] += intValue;
 							}
-							else if(tmpStrValue == "absorbpercentother")
+							else if(tmpStrValue == "absorbpercenthealing")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.abilities.absorbPercentOther += intValue;
+									it.abilities.absorbPercent[COMBAT_HEALING] += intValue;
+							}
+							else if(tmpStrValue == "absorbpercentundefined")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+									it.abilities.absorbPercent[COMBAT_UNDEFINEDDAMAGE] += intValue;
 							}
 							else if(tmpStrValue == "suppressdrunk")
 							{

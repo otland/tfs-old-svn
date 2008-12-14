@@ -37,6 +37,7 @@ Vocations::~Vocations()
 {
 	for(VocationsMap::iterator it = vocationsMap.begin(); it != vocationsMap.end(); ++it)
 		delete it->second;
+
 	vocationsMap.clear();
 }
 
@@ -56,7 +57,7 @@ bool Vocations::loadFromXml()
 		p = root->children;
 		while(p)
 		{
-			std::string str;
+			std::string strVal;
 			int32_t intVal;
 			float floatVal;
 			if(xmlStrcmp(p->name, (const xmlChar*)"vocation") == 0)
@@ -66,28 +67,28 @@ bool Vocations::loadFromXml()
 				if(readXMLInteger(p, "id", intVal))
 				{
 					voc->id = intVal;
-					if(readXMLString(p, "name", str))
-						voc->name = str;
+					if(readXMLString(p, "name", strVal))
+						voc->name = strVal;
 
-					if(readXMLString(p, "description", str))
-						voc->description = str;
+					if(readXMLString(p, "description", strVal))
+						voc->description = strVal;
 
-					if(readXMLString(p, "needpremium", str))
-						voc->needPremium = booleanString(str);
+					if(readXMLString(p, "needpremium", strVal))
+						voc->needPremium = booleanString(strVal);
 
-					if(readXMLInteger(p, "gaincap", intVal))
+					if(readXMLInteger(p, "gaincap", intVal) || readXMLInteger(p, "gaincapacity", intVal))
 						voc->gainCap = intVal;
 
-					if(readXMLInteger(p, "gainhp", intVal))
+					if(readXMLInteger(p, "gainhp", intVal) || readXMLInteger(p, "gainhealth", intVal))
 						voc->gainHP = intVal;
 
 					if(readXMLInteger(p, "gainmana", intVal))
 						voc->gainMana = intVal;
 
-					if(readXMLInteger(p, "gainhpticks", intVal))
+					if(readXMLInteger(p, "gainhpticks", intVal) || readXMLInteger(p, "gainhealthticks", intVal))
 						voc->gainHealthTicks = intVal;
 
-					if(readXMLInteger(p, "gainhpamount", intVal))
+					if(readXMLInteger(p, "gainhpamount", intVal) || readXMLInteger(p, "gainhealthamount", intVal))
 						voc->gainHealthAmount = intVal;
 
 					if(readXMLInteger(p, "gainmanaticks", intVal))
@@ -111,8 +112,8 @@ bool Vocations::loadFromXml()
 					if(readXMLInteger(p, "gainsoulticks", intVal))
 						voc->gainSoulTicks = intVal;
 
-					if(readXMLString(p, "attackable", str))
-						voc->attackable = booleanString(str);
+					if(readXMLString(p, "attackable", strVal))
+						voc->attackable = booleanString(strVal);
 
 					if(readXMLInteger(p, "fromvoc", intVal) || readXMLInteger(p, "fromvocation", intVal))
 						voc->fromVocation = intVal;
@@ -122,16 +123,16 @@ bool Vocations::loadFromXml()
 					{
 						if(xmlStrcmp(configNode->name, (const xmlChar*)"skill") == 0)
 						{
-							uint32_t skill_id;
+							uint32_t skillId;
 							if(readXMLInteger(configNode, "id", intVal))
 							{
-								skill_id = intVal;
-								if(skill_id < SKILL_FIRST || skill_id > SKILL_LAST)
-									std::cout << "No valid skill id. " << skill_id << std::endl;
+								skillId = intVal;
+								if(skillId < SKILL_FIRST || skillId > SKILL_LAST)
+									std::cout << "No valid skill id. " << skillId << std::endl;
 								else
 								{
 									if(readXMLFloat(configNode, "multiplier", floatVal))
-										voc->skillMultipliers[skill_id] = floatVal;
+										voc->skillMultipliers[skillId] = floatVal;
 								}
 							}
 							else
@@ -151,17 +152,70 @@ bool Vocations::loadFromXml()
 							if(readXMLFloat(configNode, "armor", floatVal))
 								voc->armorMultipler = floatVal;
 						}
+						else if(xmlStrcmp(configNode->name, (const xmlChar*)"absorb") == 0)
+						{
+							if(readXMLInteger(configNode, "percentAll", intVal))
+							{
+								for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+									voc->absorbPercent[i] += intVal;
+							}
+							else if(readXMLInteger(configNode, "percentElements", intVal))
+							{
+								voc->absorbPercent[COMBAT_ENERGYDAMAGE] += intVal;
+								voc->absorbPercent[COMBAT_FIREDAMAGE] += intVal;
+								voc->absorbPercent[COMBAT_EARTHDAMAGE] += intVal;
+								voc->absorbPercent[COMBAT_ICEDAMAGE] += intVal;
+							}
+							else if(readXMLInteger(configNode, "percentMagic", intVal))
+							{
+								voc->absorbPercent[COMBAT_ENERGYDAMAGE] += intVal;
+								voc->absorbPercent[COMBAT_FIREDAMAGE] += intVal;
+								voc->absorbPercent[COMBAT_EARTHDAMAGE] += intVal;
+								voc->absorbPercent[COMBAT_ICEDAMAGE] += intVal;
+								voc->absorbPercent[COMBAT_HOLYDAMAGE] += intVal;
+								voc->absorbPercent[COMBAT_DEATHDAMAGE] += intVal;
+							}
+							else if(readXMLInteger(configNode, "percentEnergy", intVal))
+								voc->absorbPercent[COMBAT_ENERGYDAMAGE] += intVal;
+							else if(readXMLInteger(configNode, "percentFire", intVal))
+								voc->absorbPercent[COMBAT_FIREDAMAGE] += intVal;
+							else if(readXMLInteger(configNode, "percentPoison", intVal) || readXMLInteger(configNode, "percentEarth", intVal))
+								voc->absorbPercent[COMBAT_EARTHDAMAGE] += intVal;
+							else if(readXMLInteger(configNode, "percentIce", intVal))
+								voc->absorbPercent[COMBAT_ICEDAMAGE] += intVal;
+							else if(readXMLInteger(configNode, "percentHoly", intVal))
+								voc->absorbPercent[COMBAT_HOLYDAMAGE] += intVal;
+							else if(readXMLInteger(configNode, "percentDeath", intVal))
+								voc->absorbPercent[COMBAT_DEATHDAMAGE] += intVal;
+							else if(readXMLInteger(configNode, "percentLifeDrain", intVal))
+								voc->absorbPercent[COMBAT_LIFEDRAIN] += intVal;
+							else if(readXMLInteger(configNode, "percentManaDrain", intVal))
+								voc->absorbPercent[COMBAT_MANADRAIN] += intVal;
+							else if(readXMLInteger(configNode, "percentDrown", intVal))
+								voc->absorbPercent[COMBAT_DROWNDAMAGE] += intVal;
+							else if(readXMLInteger(configNode, "percentPhysical", intVal))
+								voc->absorbPercent[COMBAT_PHYSICALDAMAGE] += intVal;
+							else if(readXMLInteger(configNode, "percentHealing", intVal))
+								voc->absorbPercent[COMBAT_HEALING] += intVal;
+							else if(readXMLInteger(configNode, "percentUndefined", intVal))
+								voc->absorbPercent[COMBAT_UNDEFINEDDAMAGE] += intVal;
+						}
+
 						configNode = configNode->next;
 					}
+
 					vocationsMap[voc->id] = voc;
 				}
 				else
 					std::cout << "Missing vocation id." << std::endl;
 			}
+
 			p = p->next;
 		}
+
 		xmlFreeDoc(doc);
 	}
+
 	return true;
 }
 
@@ -170,11 +224,9 @@ Vocation* Vocations::getVocation(uint32_t vocId)
 	VocationsMap::iterator it = vocationsMap.find(vocId);
 	if(it != vocationsMap.end())
 		return it->second;
-	else
-	{
-		std::cout << "Warning: [Vocations::getVocation] Vocation " << vocId << " not found." << std::endl;
-		return &defVoc;
-	}
+
+	std::cout << "Warning: [Vocations::getVocation] Vocation " << vocId << " not found." << std::endl;
+	return &defVoc;
 }
 
 int32_t Vocations::getVocationId(const std::string& name)
@@ -184,6 +236,7 @@ int32_t Vocations::getVocationId(const std::string& name)
 		if(strcasecmp(it->second->name.c_str(), name.c_str()) == 0)
 			return it->first;
 	}
+
 	return -1;
 }
 
@@ -194,10 +247,11 @@ int32_t Vocations::getPromotedVocation(uint32_t vocationId)
 		if(it->second->fromVocation == vocationId && it->first != vocationId)
 			return it->first;
 	}
+
 	return -1;
 }
 
-uint32_t Vocation::skillBase[SKILL_LAST + 1] = { 50, 50, 50, 50, 30, 100, 20 };
+uint32_t Vocation::skillBase[SKILL_LAST + 1] = {50, 50, 50, 50, 30, 100, 20};
 
 Vocation::Vocation()
 {
@@ -231,6 +285,8 @@ Vocation::Vocation()
 	skillMultipliers[4] = 2.0f;
 	skillMultipliers[5] = 1.5f;
 	skillMultipliers[6] = 1.1f;
+
+	memset(absorbPercent, 0, sizeof(absorbPercent));
 }
 
 Vocation::~Vocation()

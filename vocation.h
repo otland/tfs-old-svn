@@ -37,6 +37,7 @@ class Vocation
 
 		uint32_t getReqSkillTries(int32_t skill, int32_t level);
 		uint64_t getReqMana(uint32_t magLevel);
+		int16_t getAbsorbPercent(CombatType_t combat) const {return absorbPercent[combat];}
 
 		uint32_t getHealthGain() const {return gainHP;}
 		uint32_t getHealthGainTicks() const {return gainHealthTicks;}
@@ -81,6 +82,7 @@ class Vocation
 		uint32_t fromVocation;
 		bool attackable;
 		bool needPremium;
+		int16_t absorbPercent[COMBAT_LAST + 1];
 
 		static uint32_t skillBase[SKILL_LAST + 1];
 		float skillMultipliers[SKILL_LAST + 1];
