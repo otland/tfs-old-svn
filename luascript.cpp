@@ -2067,6 +2067,12 @@ void LuaScriptInterface::registerFunctions()
 	//getHighscoreString(skillId)
 	lua_register(m_luaState, "getHighscoreString", LuaScriptInterface::luaGetHighscoreString);
 
+	//getWaypointPosition(name)
+	lua_register(m_luaState, "getWaypointPosition", LuaScriptInterface::luaGetWaypointPosition);
+
+	//doWaypointAddTemporial(name, pos)
+	lua_register(m_luaState, "doWaypointAddTemporial", LuaScriptInterface::luaDoWaypointAddTemporial);
+
 	//executeRaid(name)
 	lua_register(m_luaState, "executeRaid", LuaScriptInterface::luaExecuteRaid);
 
@@ -8852,12 +8858,32 @@ int32_t LuaScriptInterface::luaGetHighscoreString(lua_State* L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaGetWaypointPosition(lua_State* L)
+{
+	//getWaypointPosition(name)
+	if(WaypointPtr waypoint = g_game.getMap()->waypoints.getWaypointByName(popString(L)))
+		pushPosition(L, waypoint->pos, 0);
+	else
+		lua_pushnumber(L, LUA_ERROR);
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoWaypointAddTemporial(lua_State* L)
+{
+	//doWaypointAddTemporial(name, pos)
+	PositionEx pos;
+	popPosition(L, pos);
+
+	map->waypoints.addWaypoint(new Waypoint(popString(L), pos));
+	lua_pushnumber(L, LUA_NO_ERROR);
+	return 1;
+}
+
 int32_t LuaScriptInterface::luaExecuteRaid(lua_State* L)
 {
 	//executeRaid(name)
-	std::string name = popString(L);
-
-	Raid* raid = Raids::getInstance()->getRaidByName(name);
+	Raid* raid = Raids::getInstance()->getRaidByName(popString(L));
 	if(!raid || !raid->isLoaded())
 	{
 		reportErrorFunc("Such raid does not exists.");
@@ -8880,7 +8906,6 @@ int32_t LuaScriptInterface::luaExecuteRaid(lua_State* L)
 	}
 
 	raid->setState(RAIDSTATE_EXECUTING);
-
 	uint32_t ticks = event->getDelay();
 	if(ticks > 0)
 		Scheduler::getScheduler().addEvent(createSchedulerTask(ticks,

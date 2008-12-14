@@ -439,8 +439,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 						return false;
 					}
 
-					Position pos = Position(town_coords->_x, town_coords->_y, town_coords->_z);
-					town->setTemplePos(pos);
+					town->setTemplePos(Position(town_coords->_x, town_coords->_y, town_coords->_z));
 				}
 				else
 				{
@@ -478,9 +477,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 						return false;
 					}
 
-					Position pos = Position(waypoint_coords->_x, waypoint_coords->_y, waypoint_coords->_z);
-					WaypointPtr waypoint(new Waypoint(name, pos));
-					map->waypoints.addWaypoint(waypoint);
+					map->waypoints.addWaypoint(new Waypoint(name, Position(waypoint_coords->_x, waypoint_coords->_y, waypoint_coords->_z)));
 				}
 				else
 				{
