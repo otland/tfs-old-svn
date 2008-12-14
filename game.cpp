@@ -168,10 +168,6 @@ void Game::setGameState(GameState_t newState)
 					createTask(boost::bind(&Game::shutdown, this)));
 				Scheduler::getScheduler().stop();
 				Dispatcher::getDispatcher().stop();
-
-				if(g_server)
-					g_server->stop();
-
 				break;
 			}
 
@@ -1969,10 +1965,7 @@ bool Game::playerCreatePrivateChannel(uint32_t playerId)
 		return false;
 
 	ChatChannel* channel = g_chat.createChannel(player, 0xFFFF);
-	if(!channel)
-		return false;
-
-	if(!channel->addUser(player))
+	if(!channel || !channel->addUser(player))
 		return false;
 
 	player->sendCreatePrivateChannel(channel->getId(), channel->getName());
@@ -2031,17 +2024,14 @@ bool Game::playerOpenChannel(uint32_t playerId, uint16_t channelId)
 	if(!player || player->isRemoved())
 		return false;
 
-	if(!g_chat.addUserToChannel(player, channelId))
-		return false;
-
-	ChatChannel* channel = g_chat.getChannel(player, channelId);
+	ChatChannel* channel = g_chat.addUserToChannel(player, channelId);
 	if(!channel)
 		return false;
 
-	if(channel->getId() != 0x03)
-		player->sendChannel(channel->getId(), channel->getName());
-	else
+	if(channel->getId() == 0x03)
 		player->sendRuleViolationsChannel(channel->getId());
+	else
+		player->sendChannel(channel->getId(), channel->getName());
 	return true;
 }
 
@@ -2194,15 +2184,8 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 	}
 
 	Item* item = thing->getItem();
-	if(!item)
+	if(!item || !item->isUseable())
 	{
-		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
-		return false;
-	}
-
-	if(!item->isUseable())
-	{
-		std::cout << "[Cheat detected] Player: " << player->getName() << " sent useItemEx packet on useItem item!" << std::endl;
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
 		return false;
 	}
@@ -2294,15 +2277,8 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 	}
 
 	Item* item = thing->getItem();
-	if(!item)
+	if(!item || item->isUseable())
 	{
-		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
-		return false;
-	}
-
-	if(item->isUseable())
-	{
-		std::cout << "[Cheat detected] Player: " << player->getName() << " sent useItem packet on useItemEx item!" << std::endl;
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
 		return false;
 	}
@@ -4250,7 +4226,11 @@ void Game::checkDecay()
 	{
 		Item* item = *it;
 
-		item->decreaseDuration(EVENT_DECAYINTERVAL * EVENT_DECAY_BUCKETS);
+		int32_t decreaseTime = EVENT_DECAYINTERVAL * EVENT_DECAY_BUCKETS;
+		if(item->getDuration() - decreaseTime < 0)
+			decreaseTime = item->getDuration();
+
+		item->decreaseDuration(decreaseTime);
 		if(!item->canDecay())
 		{
 			item->setDecaying(DECAYING_FALSE);
@@ -4431,6 +4411,10 @@ void Game::shutdown()
 	Spawns::getInstance()->clear();
 	std::cout << ".";
 	cleanup();
+	std::cout << ".";
+	if(g_server)
+		g_server->stop();
+
 	std::cout << " done." << std::endl;
 	exit(1);
 }

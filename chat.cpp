@@ -125,38 +125,12 @@ bool ChatChannel::addUser(Player* player)
 		return false;
 	}
 
-	switch(m_id)
+	if(m_id == 0x00 && IOGuild::getInstance()->getMotd(player->getGuildId()).length())
 	{
-		case 0x00:
-		{
-			if(IOGuild::getInstance()->getMotd(player->getGuildId()).length())
-			{
-				uint32_t playerId = player->getID();
-				uint32_t guildId = player->getGuildId();
-				Scheduler::getScheduler().addEvent(createSchedulerTask(150, boost::bind(
-					&Game::sendGuildMotd, &g_game, playerId, guildId)));
-			}
-			break;
-		}
-
-		case 0x01:
-		case 0x02:
-		case 0x03:
-		case 0x05:
-		case 0x07:
-		{
-			ChatChannel* channel = g_chat.getChannel(player, m_id);
-			if(!channel)
-			{
-				std::cout << "[ChatChannel::addUser] Failed to add: " << player->getName() << " [" << player->getID() << "] to channel: " << m_id << ", reason:" << std::endl;
-				std::cout << "\t!channel" << std::endl;
-				return false;
-			}
-			break;
-		}
-
-		default:
-			break;
+		uint32_t playerId = player->getID();
+		uint32_t guildId = player->getGuildId();
+		Scheduler::getScheduler().addEvent(createSchedulerTask(150, boost::bind(
+			&Game::sendGuildMotd, &g_game, playerId, guildId)));
 	}
 
 	std::cout << "[ChatChannel::addUser] Successfully added: " << player->getName() << " [" << player->getID() << "] to channel: " << m_id << "!" << std::endl;
@@ -366,12 +340,13 @@ bool Chat::deleteChannel(Player* player, uint16_t channelId)
 	return false;
 }
 
-bool Chat::addUserToChannel(Player* player, uint16_t channelId)
+ChatChannel* Chat::addUserToChannel(Player* player, uint16_t channelId)
 {
-	if(ChatChannel* channel = getChannel(player, channelId))
-		return channel->addUser(player);
+	ChatChannel* channel = getChannel(player, channelId);
+	if(channel && channel->addUser(player))
+		return channel;
 
-	return false;
+	return NULL;
 }
 
 bool Chat::removeUserFromChannel(Player* player, uint16_t channelId)
@@ -1066,6 +1041,9 @@ ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 			case 0x07:
 				if(player->getAccountType() < ACCOUNT_TYPE_SENIORTUTOR && player->getVocationId() != 0)
 					return NULL;
+				break;
+
+			default:
 				break;
 		}
 

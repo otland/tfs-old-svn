@@ -48,6 +48,7 @@ OutputMessagePool::OutputMessagePool()
 void OutputMessagePool::startExecutionFrame()
 {
 	m_frameTime = OTSYS_TIME();
+	m_isOpen = true;
 }
 
 OutputMessagePool::~OutputMessagePool()
@@ -212,6 +213,9 @@ OutputMessage* OutputMessagePool::getOutputMessage(Protocol* protocol, bool auto
 	#ifdef __DEBUG_NET_DETAIL__
 	std::cout << "request output message - auto = " << autosend << std::endl;
 	#endif
+
+	if(!m_isOpen)
+		return NULL;
 
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_outputPoolLock);
 

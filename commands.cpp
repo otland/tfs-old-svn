@@ -738,12 +738,19 @@ bool Commands::getInfo(Creature* creature, const std::string& cmd, const std::st
 
 bool Commands::closeServer(Creature* creature, const std::string& cmd, const std::string& param)
 {
-	Dispatcher::getDispatcher().addTask(
-		createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
+	if(param == "shutdown")
+	{
+		Dispatcher::getDispatcher().addTask(
+			createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
+	}
+	else
+	{
+		Dispatcher::getDispatcher().addTask(
+			createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
 
-	if(creature->getPlayer())
-		creature->getPlayer()->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Server is now closed.");
-
+		if(creature->getPlayer())
+			creature->getPlayer()->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Server is now closed.");
+	}
 	return true;
 }
 

@@ -157,6 +157,7 @@ class OutputMessagePool
 
 		void send(OutputMessage* msg);
 		void sendAll();
+		void stop() {m_isOpen = false;}
 		OutputMessage* getOutputMessage(Protocol* protocol, bool autosend = true);
 		void startExecutionFrame();
 
@@ -180,6 +181,7 @@ class OutputMessagePool
 
 		OTSYS_THREAD_LOCKVAR m_outputPoolLock;
 		uint64_t m_frameTime;
+		bool m_isOpen;
 };
 
 #ifdef __TRACK_NETWORK__

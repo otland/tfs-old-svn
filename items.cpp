@@ -726,7 +726,12 @@ bool Items::loadFromXml()
 							else if(tmpStrValue == "duration")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
+								{
+									if(intValue < 0)
+										intValue = 0;
+
 									it.decayTime = intValue;
+								}
 							}
 							else if(tmpStrValue == "showduration")
 							{

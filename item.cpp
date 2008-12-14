@@ -327,7 +327,12 @@ bool Item::unserialize(xmlNodePtr nodeItem)
 		setUniqueId(intValue);
 
 	if(readXMLInteger(nodeItem, "duration", intValue))
+	{
+		if(intValue < 0)
+			intValue = 0;
+
 		setDuration(intValue);
+	}
 
 	if(readXMLInteger(nodeItem, "decayState", intValue))
 	{
@@ -510,6 +515,9 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			uint32_t duration = 0;
 			if(!propStream.GET_ULONG(duration))
 				return false;
+
+			if(((int32_t)duration) < 0)
+				duration = 0;
 
 			setDuration(duration);
 			break;
@@ -1018,7 +1026,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 	{
 		if(item && item->hasAttribute(ATTR_ITEM_DURATION))
 		{
-			uint32_t duration = item->getDuration() / 1000;
+			int32_t duration = item->getDuration() / 1000;
 			s << " that has energy for ";
 
 			if(duration >= 120)
