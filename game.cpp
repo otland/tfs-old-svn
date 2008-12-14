@@ -2005,19 +2005,11 @@ bool Game::playerOpenChannel(uint32_t playerId, uint16_t channelId)
 	if(!player || player->isRemoved())
 		return false;
 
-	if(!g_chat.addUserToChannel(player, channelId))
-	{
-		#ifdef __DEBUG_CHAT__
-		std::cout << "Game::playerOpenChannel - failed adding user to channel." << std::endl;
-		#endif
-		return false;
-	}
-
-	ChatChannel* channel = g_chat.getChannel(player, channelId);
+	ChatChannel* channel = g_chat.addUserToChannel(player, channelId);
 	if(!channel)
 	{
 		#ifdef __DEBUG_CHAT__
-		std::cout << "Game::playerOpenChannel - failed retrieving channel." << std::endl;
+		std::cout << "Game::playerOpenChannel - failed adding user to channel." << std::endl;
 		#endif
 		return false;
 	}
@@ -2191,15 +2183,8 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 	}
 
 	Item* item = thing->getItem();
-	if(!item)
+	if(!item || !item->isUseable())
 	{
-		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
-		return false;
-	}
-
-	if(!item->isUseable())
-	{
-		std::cout << "[Cheat detected] Player: " << player->getName() << " sent useItemEx packet on useItem item!" << std::endl;
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
 		return false;
 	}
@@ -2269,7 +2254,6 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 	}
 
 	player->setNextActionTask(NULL);
-
 	return g_actions->useItemEx(player, fromPos, toPos, toStackPos, item, isHotkey);
 }
 
@@ -2291,15 +2275,8 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 	}
 
 	Item* item = thing->getItem();
-	if(!item)
+	if(!item || item->isUseable())
 	{
-		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
-		return false;
-	}
-
-	if(item->isUseable())
-	{
-		std::cout << "[Cheat detected] Player: " << player->getName() << " sent useItem packet on useItemEx item!" << std::endl;
 		player->sendCancelMessage(RET_CANNOTUSETHISOBJECT);
 		return false;
 	}
@@ -2337,9 +2314,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 	}
 
 	player->setNextActionTask(NULL);
-
-	g_actions->useItem(player, pos, index, item, isHotkey);
-	return true;
+	return g_actions->useItem(player, pos, index, item, isHotkey);
 }
 
 bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, uint8_t fromStackPos,
@@ -3544,11 +3519,7 @@ bool Game::playerReportRuleViolation(Player* player, const std::string& text)
 	}
 
 	cancelRuleViolation(player);
-	boost::shared_ptr<RuleViolation> rvr(new RuleViolation(
-		player,
-		text,
-		std::time(NULL)
-	));
+	boost::shared_ptr<RuleViolation> rvr(new RuleViolation(player, text, std::time(NULL)));
 
 	ruleViolations[player->getID()] = rvr;
 	if(ChatChannel* channel = g_chat.getChannelById(0x03)) //Rule Violations channel
@@ -4290,8 +4261,11 @@ void Game::checkDecay()
 	for(DecayList::iterator it = decayItems[bucket].begin(); it != decayItems[bucket].end();)
 	{
 		Item* item = *it;
+		int32_t decreaseTime = EVENT_DECAYINTERVAL * EVENT_DECAY_BUCKETS;
+		if(item->getDuration() - decreaseTime < 0)
+			decreaseTime = item->getDuration();
 
-		item->decreaseDuration(EVENT_DECAYINTERVAL * EVENT_DECAYBUCKETS);
+		item->decreaseDuration(decreaseTime);
 		if(!item->canDecay())
 		{
 			item->setDecaying(DECAYING_FALSE);

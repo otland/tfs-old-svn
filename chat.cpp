@@ -349,18 +349,16 @@ bool Chat::deleteChannel(Player* player, uint16_t channelId)
 	return false;
 }
 
-bool Chat::addUserToChannel(Player* player, uint16_t channelId)
+ChatChannel* Chat::addUserToChannel(Player* player, uint16_t channelId)
 {
 	ChatChannel* channel = getChannel(player, channelId);
-	if(!channel)
-	{
-		#ifdef __DEBUG_CHAT__
-		std::cout << "ChatChannel::addUser - failed retrieving channel or player NULL." << std::endl;
-		#endif
-		return false;
-	}
+	if(channel && channel->addUser(player))
+		return channel;
 
-	return channel->addUser(player);
+	#ifdef __DEBUG_CHAT__
+	std::cout << "ChatChannel::addUser - failed retrieving channel or player NULL." << std::endl;
+	#endif
+	return NULL;
 }
 
 bool Chat::removeUserFromChannel(Player* player, uint16_t channelId)

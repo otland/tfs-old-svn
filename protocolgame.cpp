@@ -939,7 +939,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				break;
 
 			default:
-				std::cout << "[Cheat detected] Player: " << player->getName() << " has sent unknown byte: 0x" << std::hex << (int16_t)recvbyte << std::dec << "." << std::endl;
+				std::cout << "[Notice - ProtocolGame::parsePacket] Player: " << player->getName() << " has sent unknown byte: 0x" << std::hex << (int16_t)recvbyte << std::dec << "!" << std::endl;
 				break;
 		}
 	}
