@@ -477,7 +477,8 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 						return false;
 					}
 
-					map->waypoints.addWaypoint(new Waypoint(name, Position(waypoint_coords->_x, waypoint_coords->_y, waypoint_coords->_z)));
+					map->waypoints.addWaypoint(WaypointPtr(new Waypoint(name,
+						Position(waypoint_coords->_x, waypoint_coords->_y, waypoint_coords->_z))));
 				}
 				else
 				{

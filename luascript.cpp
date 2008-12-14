@@ -8875,7 +8875,7 @@ int32_t LuaScriptInterface::luaDoWaypointAddTemporial(lua_State* L)
 	PositionEx pos;
 	popPosition(L, pos);
 
-	map->waypoints.addWaypoint(new Waypoint(popString(L), pos));
+	g_game.getMap()->waypoints.addWaypoint(WaypointPtr(new Waypoint(popString(L), pos)));
 	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;
 }
