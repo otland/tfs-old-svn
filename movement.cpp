@@ -153,6 +153,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 
 	if(readXMLInteger(p, "itemid", id))
 	{
+		addEvent(moveEvent, id, m_itemIdMap);
 		if(moveEvent->getEventType() == MOVE_EVENT_EQUIP)
 		{
 			ItemType& it = Item::items.getItemType(id);
@@ -161,11 +162,10 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 			it.minReqMagicLevel = moveEvent->getReqMagLv();
 			it.vocationString = moveEvent->getVocationString();
 		}
-
-		addEvent(moveEvent, id, m_itemIdMap);
 	}
 	else if(readXMLInteger(p, "fromid", id) && readXMLInteger(p, "toid", endId))
 	{
+		addEvent(moveEvent, id, m_itemIdMap);
 		if(moveEvent->getEventType() == MOVE_EVENT_EQUIP)
 		{
 			ItemType& it = Item::items.getItemType(id);
@@ -174,20 +174,20 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 			it.minReqMagicLevel = moveEvent->getReqMagLv();
 			it.vocationString = moveEvent->getVocationString();
 
-			addEvent(moveEvent, id, m_itemIdMap);
 			while(id < endId)
 			{
-				addEvent(new MoveEvent(moveEvent), ++id, m_itemIdMap);
-				it = Item::items.getItemType(id);
-				it.wieldInfo = moveEvent->getWieldInfo();
-				it.minReqLevel = moveEvent->getReqLevel();
-				it.minReqMagicLevel = moveEvent->getReqMagLv();
-				it.vocationString = moveEvent->getVocationString();
+				id++;
+				addEvent(new MoveEvent(moveEvent), id, m_itemIdMap);
+
+				ItemType& tit = Item::items.getItemType(id);
+				tit.wieldInfo = moveEvent->getWieldInfo();
+				tit.minReqLevel = moveEvent->getReqLevel();
+				tit.minReqMagicLevel = moveEvent->getReqMagLv();
+				tit.vocationString = moveEvent->getVocationString();
 			}
 		}
 		else
 		{
-			addEvent(moveEvent, id, m_itemIdMap);
 			while(id < endId)
 				addEvent(new MoveEvent(moveEvent), ++id, m_itemIdMap);
 		}
@@ -251,17 +251,38 @@ MoveEvent* MoveEvents::getEvent(Item* item, MoveEvent_t eventType, slots_t slot)
 	uint32_t slotp = 0;
 	switch(slot)
 	{
-		case SLOT_HEAD: slotp = SLOTP_HEAD; break;
-		case SLOT_NECKLACE: slotp = SLOTP_NECKLACE; break;
-		case SLOT_BACKPACK: slotp = SLOTP_BACKPACK; break;
-		case SLOT_ARMOR: slotp = SLOTP_ARMOR; break;
-		case SLOT_RIGHT: slotp = SLOTP_RIGHT; break;
-		case SLOT_LEFT: slotp = SLOTP_LEFT; break;
-		case SLOT_LEGS: slotp = SLOTP_LEGS; break;
-		case SLOT_FEET: slotp = SLOTP_FEET; break;
-		case SLOT_AMMO: slotp = SLOTP_AMMO; break;
-		case SLOT_RING: slotp = SLOTP_RING; break;
-		default: slotp = 0; break;
+		case SLOT_HEAD:
+			slotp = SLOTP_HEAD;
+			break;
+		case SLOT_NECKLACE:
+			slotp = SLOTP_NECKLACE;
+			break;
+		case SLOT_BACKPACK:
+			slotp = SLOTP_BACKPACK;
+			break;
+		case SLOT_ARMOR:
+			slotp = SLOTP_ARMOR;
+			break;
+		case SLOT_RIGHT:
+			slotp = SLOTP_RIGHT;
+			break;
+		case SLOT_LEFT:
+			slotp = SLOTP_LEFT;
+			break;
+		case SLOT_LEGS:
+			slotp = SLOTP_LEGS;
+			break;
+		case SLOT_FEET:
+			slotp = SLOTP_FEET;
+			break;
+		case SLOT_AMMO:
+			slotp = SLOTP_AMMO;
+			break;
+		case SLOT_RING:
+			slotp = SLOTP_RING;
+			break;
+		default:
+			break;
 	}
 
 	MoveListMap::iterator it = m_itemIdMap.find(item->getID());
@@ -371,11 +392,12 @@ uint32_t MoveEvents::onCreatureMove(Creature* creature, Tile* tile, bool isIn)
 	return ret;
 }
 
-uint32_t MoveEvents::onPlayerEquip(Player* player, Item* item, slots_t slot)
+uint32_t MoveEvents::onPlayerEquip(Player* player, Item* item, slots_t slot, bool isCheck)
 {
 	MoveEvent* moveEvent = getEvent(item, MOVE_EVENT_EQUIP, slot);
 	if(moveEvent)
-		return moveEvent->fireEquip(player, item, slot, false);
+		return moveEvent->fireEquip(player, item, slot, isCheck);
+
 	return 1;
 }
 
@@ -384,6 +406,7 @@ uint32_t MoveEvents::onPlayerDeEquip(Player* player, Item* item, slots_t slot, b
 	MoveEvent* moveEvent = getEvent(item, MOVE_EVENT_DEEQUIP, slot);
 	if(moveEvent)
 		return moveEvent->fireEquip(player, item, slot, isRemoval);
+
 	return 1;
 }
 
@@ -433,7 +456,8 @@ MoveEvent::MoveEvent(LuaScriptInterface* _interface) :
 	stepFunction = NULL;
 	moveFunction = NULL;
 	equipFunction = NULL;
-	slot = 0xFFFFFFFF;
+	slot = SLOTP_WHEREEVER;
+	wieldInfo = 0;
 	reqLevel = 0;
 	reqMagLevel = 0;
 	premium = false;
@@ -603,6 +627,9 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 				vocationNode = vocationNode->next;
 			}
 
+			if(!vocEquipMap.empty())
+				wieldInfo |= WIELDINFO_VOCREQ;
+
 			if(!vocStringList.empty())
 			{
 				for(STRING_LIST::iterator it = vocStringList.begin(); it != vocStringList.end(); ++it)
@@ -617,7 +644,6 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 					vocationString += *it;
 					vocationString += "s";
 				}
-				wieldInfo |= WIELDINFO_VOCREQ;
 			}
 		}
 	}
@@ -706,29 +732,27 @@ uint32_t MoveEvent::RemoveItemField(Item* item, Item* tileItem, const Position& 
 	return 1;
 }
 
-uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, slots_t slot, bool isRemoval)
+uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, slots_t slot, bool isCheck)
 {
 	if(player->isItemAbilityEnabled(slot))
 		return 1;
 
-	//Enable item only when requirements are complete
-	//This includes item transforming
-	if(!player->hasFlag(PlayerFlag_IgnoreWeaponCheck) && moveEvent->getWieldInfo() != 0)
+	if(!player->hasFlag(PlayerFlag_IgnoreEquipCheck) && moveEvent->getWieldInfo() != 0)
 	{
-		if((int32_t)player->getLevel() < moveEvent->getReqLevel()
-			|| (int32_t)player->getMagicLevel() < moveEvent->getReqMagLv()
-			|| (!player->isPremium() && moveEvent->isPremium()))
-		{
-			return 1;
-		}
+		if(player->getLevel() < (uint32_t)moveEvent->getReqLevel() || player->getMagicLevel() < (uint32_t)moveEvent->getReqMagLv())
+			return 0;
 
-		const VocEquipMap vocMap = moveEvent->getVocEquipMap();
-		if(!vocMap.empty() && vocMap.find(player->getVocationId()) == vocMap.end())
-			return 1;
+		if(moveEvent->isPremium() && !player->isPremium())
+			return 0;
+
+		if(!moveEvent->getVocEquipMap().empty() && moveEvent->getVocEquipMap().find(player->getVocationId()) == moveEvent->getVocEquipMap().end())
+			return 0;
 	}
 
-	const ItemType& it = Item::items[item->getID()];
+	if(isCheck)
+		return 1;
 
+	const ItemType& it = Item::items[item->getID()];
 	if(it.transformEquipTo != 0)
 	{
 		Item* newItem = g_game.transformItem(item, it.transformEquipTo);
@@ -929,12 +953,12 @@ uint32_t MoveEvent::executeStep(Creature* creature, Item* item, const Position& 
 	}
 }
 
-uint32_t MoveEvent::fireEquip(Player* player, Item* item, slots_t slot, bool isRemoval)
+uint32_t MoveEvent::fireEquip(Player* player, Item* item, slots_t slot, bool boolean)
 {
 	if(m_scripted)
 		return executeEquip(player, item, slot);
 	else
-		return equipFunction(this, player, item, slot, isRemoval);
+		return equipFunction(this, player, item, slot, boolean);
 }
 
 uint32_t MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)

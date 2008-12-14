@@ -1324,7 +1324,7 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 			if((item = getInventoryItem((slots_t)slot)))
 			{
 				item->__startDecaying();
-				g_moveEvents->onPlayerEquip(this, item, (slots_t)slot);
+				g_moveEvents->onPlayerEquip(this, item, (slots_t)slot, false);
 			}
 		}
 
@@ -2465,36 +2465,29 @@ bool Player::hasCapacity(const Item* item, uint32_t count) const
 	return true;
 }
 
-ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
-	uint32_t flags) const
+ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count, uint32_t flags) const
 {
 	const Item* item = thing->getItem();
 	if(item == NULL)
 		return RET_NOTPOSSIBLE;
 
-	bool childIsOwner = ((flags & FLAG_CHILDISOWNER) == FLAG_CHILDISOWNER);
-	bool skipLimit = ((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT);
-
+	bool childIsOwner = ((flags & FLAG_CHILDISOWNER) == FLAG_CHILDISOWNER), skipLimit = ((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT);
 	if(childIsOwner)
 	{
 		//a child container is querying the player, just check if enough capacity
 		if(skipLimit || hasCapacity(item, count))
 			return RET_NOERROR;
-		else
-			return RET_NOTENOUGHCAPACITY;
+
+		return RET_NOTENOUGHCAPACITY;
 	}
 
 	if(!item->isPickupable())
 		return RET_CANNOTPICKUP;
 
 	ReturnValue ret = RET_NOERROR;
-
-	if((item->getSlotPosition() & SLOTP_HEAD) ||
-		(item->getSlotPosition() & SLOTP_NECKLACE) ||
-		(item->getSlotPosition() & SLOTP_BACKPACK) ||
-		(item->getSlotPosition() & SLOTP_ARMOR) ||
-		(item->getSlotPosition() & SLOTP_LEGS) ||
-		(item->getSlotPosition() & SLOTP_FEET) ||
+	if((item->getSlotPosition() & SLOTP_HEAD) || (item->getSlotPosition() & SLOTP_NECKLACE) ||
+		(item->getSlotPosition() & SLOTP_BACKPACK) || (item->getSlotPosition() & SLOTP_ARMOR) ||
+		(item->getSlotPosition() & SLOTP_LEGS) || (item->getSlotPosition() & SLOTP_FEET) ||
 		(item->getSlotPosition() & SLOTP_RING))
 		ret = RET_CANNOTBEDRESSED;
 	else if(item->getSlotPosition() & SLOTP_TWO_HAND)
@@ -2502,7 +2495,6 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 	else if((item->getSlotPosition() & SLOTP_RIGHT) || (item->getSlotPosition() & SLOTP_LEFT))
 		ret = RET_PUTTHISOBJECTINYOURHAND;
 
-	//check if we can dress this object
 	switch(index)
 	{
 		case SLOT_HEAD:
@@ -2532,38 +2524,25 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 					else
 						ret = RET_NOERROR;
 				}
-				else
+				else if(inventory[SLOT_LEFT])
 				{
-					//check if we already carry a double-handed item
-					if(inventory[SLOT_LEFT])
-					{
-						const Item* leftItem = inventory[SLOT_LEFT];
-						if(leftItem->getSlotPosition() & SLOTP_TWO_HAND)
-							ret = RET_DROPTWOHANDEDITEM;
-						else
-						{
-							//check if weapon, can only carry one weapon
-							if(item == leftItem && count == item->getItemCount())
-								ret = RET_NOERROR;
-							else if(!item->isWeapon() ||
-								item->getWeaponType() == WEAPON_SHIELD ||
-								item->getWeaponType() == WEAPON_AMMO)
-							{
-									ret = RET_NOERROR;
-							}
-							else if(!leftItem->isWeapon() ||
-								leftItem->getWeaponType() == WEAPON_AMMO ||
-								leftItem->getWeaponType() == WEAPON_SHIELD)
-							{
-								ret = RET_NOERROR;
-							}
-							else
-								ret = RET_CANONLYUSEONEWEAPON;
-						}
-					}
-					else
+					const Item* leftItem = inventory[SLOT_LEFT];
+					WeaponType_t type = item->getWeaponType(), leftType = leftItem->getWeaponType();
+					if(leftItem->getSlotPosition() & SLOTP_TWO_HAND)
+						ret = RET_DROPTWOHANDEDITEM;
+					else if(item == leftItem && count == item->getItemCount())
 						ret = RET_NOERROR;
+					else if(leftType == WEAPON_SHIELD && type == WEAPON_SHIELD)
+						ret = RET_CANONLYUSEONESHIELD;
+					else if(!leftItem->isWeapon() || !item->isWeapon() ||
+						leftType == WEAPON_SHIELD || leftType == WEAPON_AMMO
+						|| type == WEAPON_SHIELD || type == WEAPON_AMMO)
+						ret = RET_NOERROR;
+					else
+						ret = RET_CANONLYUSEONEWEAPON;
 				}
+				else
+					ret = RET_NOERROR;
 			}
 			break;
 		case SLOT_LEFT:
@@ -2577,38 +2556,25 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 					else
 						ret = RET_NOERROR;
 				}
-				else
+				else if(inventory[SLOT_RIGHT])
 				{
-					//check if we already carry a double-handed item
-					if(inventory[SLOT_RIGHT])
-					{
-						const Item* rightItem = inventory[SLOT_RIGHT];
-						if(rightItem->getSlotPosition() & SLOTP_TWO_HAND)
-							ret = RET_DROPTWOHANDEDITEM;
-						else
-						{
-							//check if weapon, can only carry one weapon
-							if(item == rightItem && count == item->getItemCount())
-								ret = RET_NOERROR;
-							else if(!item->isWeapon() ||
-								item->getWeaponType() == WEAPON_SHIELD ||
-								item->getWeaponType() == WEAPON_AMMO)
-							{
-									ret = RET_NOERROR;
-							}
-							else if(!rightItem->isWeapon() ||
-								rightItem->getWeaponType() == WEAPON_AMMO ||
-								rightItem->getWeaponType() == WEAPON_SHIELD)
-							{
-								ret = RET_NOERROR;
-							}
-							else
-								ret = RET_CANONLYUSEONEWEAPON;
-						}
-					}
-					else
+					const Item* rightItem = inventory[SLOT_RIGHT];
+					WeaponType_t type = item->getWeaponType(), rightType = rightItem->getWeaponType();
+					if(rightItem->getSlotPosition() & SLOTP_TWO_HAND)
+						ret = RET_DROPTWOHANDEDITEM;
+					else if(item == rightItem && count == item->getItemCount())
 						ret = RET_NOERROR;
+					else if(rightType == WEAPON_SHIELD && type == WEAPON_SHIELD)
+						ret = RET_CANONLYUSEONESHIELD;
+					else if(!rightItem->isWeapon() || !item->isWeapon() ||
+						rightType == WEAPON_SHIELD || rightType == WEAPON_AMMO
+						|| type == WEAPON_SHIELD || type == WEAPON_AMMO)
+						ret = RET_NOERROR;
+					else
+						ret = RET_CANONLYUSEONEWEAPON;
 				}
+				else
+					ret = RET_NOERROR;
 			}
 			break;
 		case SLOT_LEGS:
@@ -2628,12 +2594,9 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 				ret = RET_NOERROR;
 			break;
 		case SLOT_WHEREEVER:
-			ret = RET_NOTENOUGHROOM;
-			break;
 		case -1:
 			ret = RET_NOTENOUGHROOM;
 			break;
-
 		default:
 			ret = RET_NOTPOSSIBLE;
 			break;
@@ -2642,18 +2605,18 @@ ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count
 	if(ret == RET_NOERROR || ret == RET_NOTENOUGHROOM)
 	{
 		//need an exchange with source?
-		if(getInventoryItem((slots_t)index) != NULL)
-		{
-			if(!getInventoryItem((slots_t)index)->isStackable() || getInventoryItem((slots_t)index)->getID() != item->getID())
-				return RET_NEEDEXCHANGE;
-		}
+		if(getInventoryItem((slots_t)index) != NULL && (!getInventoryItem((slots_t)index)->isStackable()
+			|| getInventoryItem((slots_t)index)->getID() != item->getID()))
+			return RET_NEEDEXCHANGE;
+
+		if(!g_moveEvents->onPlayerEquip(const_cast<Player*>(this), const_cast<Item*>(item), (slots_t)index, true))
+			return RET_CANNOTBEDRESSED;
 
 		//check if enough capacity
-		if(hasCapacity(item, count))
-			return ret;
-		else
+		if(!hasCapacity(item, count))
 			return RET_NOTENOUGHCAPACITY;
 	}
+
 	return ret;
 }
 
@@ -3032,7 +2995,7 @@ void Player::postAddNotification(Thing* thing, int32_t index, cylinderlink_t lin
 	if(link == LINK_OWNER)
 	{
 		//calling movement scripts
-		g_moveEvents->onPlayerEquip(this, thing->getItem(), (slots_t)index);
+		g_moveEvents->onPlayerEquip(this, thing->getItem(), (slots_t)index, false);
 	}
 
 	if(link == LINK_OWNER || link == LINK_TOPPARENT)
