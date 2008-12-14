@@ -127,13 +127,14 @@ bool Party::passPartyLeadership(Player* player)
 	if(!player || getLeader() == player || !isPlayerMember(player))
 		return false;
 
-	memberList.insert(memberList.begin(), getLeader());
-	setLeader(player);
-
 	//Remove it before to broadcast the message correctly
 	PlayerVector::iterator it = std::find(memberList.begin(), memberList.end(), player);
 	if(it != memberList.end())
 		memberList.erase(it);
+
+	Player* oldLeader = getLeader();
+	setLeader(player);
+	memberList.insert(memberList.begin(), oldLeader);
 
 	char buffer[125];
 	sprintf(buffer, "%s is now the leader of the party.", player->getName().c_str());
@@ -142,7 +143,6 @@ bool Party::passPartyLeadership(Player* player)
 
 	updateSharedExperience();
 	updatePartyIcons(oldLeader);
-	updatePartyIcons(getLeader());
 	updatePartyIcons(player);
 	return true;
 }
