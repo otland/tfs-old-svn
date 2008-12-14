@@ -1,17 +1,16 @@
 function onSay(cid, words, param)
-	local ret = tonumber(param)
-	if(ret == nil) then
-		local t = string.explode(param, ",")
-		if(t[2] and getBooleanFromString(t[2]) == TRUE) then
-			ret = getAccountIdByName(t[1])
-		else
-			ret = getAccountIdByAccount(t[1])
-		end
+	if(param == "") then
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
+		return TRUE
 	end
 
-	if(ret <= 0) then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Invalid account data or player name.")
-		return TRUE
+	local ret = getAccountIdByName(param)
+	if(ret == 0) then
+		ret = getAccountIdByAccount(param)
+		if(ret == 0) then
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player or account '" .. param .. "' does not exists.")
+			return TRUE
+		end
 	end
 
 	local list = getBanList(BANTYPE_NOTATION, ret)

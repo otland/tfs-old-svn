@@ -6,8 +6,11 @@ function onSay(cid, words, param)
 
 	local tmp = getAccountIdByName(param)
 	if(tmp == 0) then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. param .. " does not exists.")
-		return TRUE
+		tmp = getAccountIdByAccount(param)
+		if(tmp == 0) then
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player or account '" .. param .. "' does not exists.")
+			return TRUE
+		end
 	end
 
 	if(isAccountBanished(tmp) == TRUE and doRemoveBanishment(tmp) == TRUE) then
