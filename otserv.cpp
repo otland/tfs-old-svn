@@ -116,7 +116,7 @@ extern TalkActions* g_talkActions;
 RSA* g_otservRSA = NULL;
 Server* g_server = NULL;
 
-OTSYS_THREAD_LOCKVAR g_loaderLock;
+OTSYS_THREAD_LOCKVAR_PTR g_loaderLock;
 OTSYS_THREAD_SIGNALVAR g_loaderSignal;
 
 void startupErrorMessage(std::string error)
