@@ -52,22 +52,18 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 		int32_t ret;
 
 		// check if there are events waiting...
-		OTSYS_THREAD_LOCK(getScheduler().m_eventLock, "eventThread()")
-
+		OTSYS_THREAD_LOCK(getScheduler().m_eventLock, "schedulerThread()")
 		if(getScheduler().m_eventList.empty())
 		{
 			// unlock mutex and wait for signal
-			OTSYS_THREAD_UNLOCK(getScheduler().m_eventLock, "eventThread()");
 			ret = OTSYS_THREAD_WAITSIGNAL(getScheduler().m_eventSignal, getScheduler().m_eventLock);
 		}
 		else
 		{
 			// unlock mutex and wait for signal or timeout
-			OTSYS_THREAD_UNLOCK(getScheduler().m_eventLock, "eventThread()");
 			ret = OTSYS_THREAD_WAITSIGNAL_TIMED(getScheduler().m_eventSignal, getScheduler().m_eventLock, getScheduler().m_eventList.top()->getCycle());
 		}
 
-		OTSYS_THREAD_LOCK(getScheduler().m_eventLock, "eventThread()")
 		// the mutex is locked again now...
 		if(ret == OTSYS_THREAD_TIMEOUT && Scheduler::m_threadState != Scheduler::STATE_TERMINATED)
 		{
@@ -85,8 +81,7 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 			}
 		}
 
-		OTSYS_THREAD_UNLOCK(getScheduler().m_eventLock, "eventThread()");
-
+		OTSYS_THREAD_UNLOCK(getScheduler().m_eventLock, "schedulerThread()");
 		// add task to dispatcher
 		if(task)
 		{

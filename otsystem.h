@@ -190,16 +190,16 @@ inline int64_t OTSYS_TIME()
 #define OTSYS_THREAD_SIGNALVARINIT(a)
 #define OTSYS_THREAD_SIGNAL_SEND(a)		a.notify_all()
 
-inline int OTSYS_THREAD_WAITSIGNAL(OTSYS_THREAD_SIGNALVAR& a, OTSYS_THREAD_LOCKVAR_PTR& b)
+inline int OTSYS_THREAD_WAITSIGNAL(OTSYS_THREAD_SIGNALVAR& a, OTSYS_THREAD_LOCKVAR& b)
 {
-	boost::unique_lock<boost::mutex> lock(b);
+	boost::unique_lock<boost::mutex> lock(b, boost::defer_lock);
 	a.wait(lock);
 	return (int)true;
 }
 
-inline int OTSYS_THREAD_WAITSIGNAL_TIMED(OTSYS_THREAD_SIGNALVAR&a, OTSYS_THREAD_LOCKVAR_PTR&b, uint64_t c)
+inline int OTSYS_THREAD_WAITSIGNAL_TIMED(OTSYS_THREAD_SIGNALVAR&a, OTSYS_THREAD_LOCKVAR&b, uint64_t c)
 {
-	boost::unique_lock<boost::mutex> lock(b);
+	boost::unique_lock<boost::mutex> lock(b, boost::defer_lock);
 	return (int)a.timed_wait(lock, boost::get_system_time() + boost::posix_time::milliseconds(c));
 }
 

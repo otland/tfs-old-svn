@@ -21,7 +21,6 @@
 #ifndef __OTSERV_SCHEDULER_H__
 #define __OTSERV_SCHEDULER_H__
 
-#include <boost/function.hpp>
 #include <boost/bind.hpp>
 #include <vector>
 #include <queue>
