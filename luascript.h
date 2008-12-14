@@ -736,8 +736,8 @@ class LuaScriptInterface
 		static int32_t luaGetItemShootRange(lua_State* L);
 		static int32_t luaSetItemShootRange(lua_State* L);
 
-		static int32_t luaGetWaypointPosition(luaState* L);
-		static int32_t luaDoWaypointAddTemporial(luaState* L);
+		static int32_t luaGetWaypointPosition(lua_State* L);
+		static int32_t luaDoWaypointAddTemporial(lua_State* L);
 		static int32_t luaGetDataDir(lua_State* L);
 		static int32_t luaGetLogsDir(lua_State* L);
 		static int32_t luaGetConfigFile(lua_State* L);
