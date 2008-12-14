@@ -2087,8 +2087,8 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 			}
 		}
 
-		if(vocation->getAbsorbPercent[combatType] != 0)
-			blocked += (int32_t)std::ceil((float)damage * vocation->getAbsorbPercent[combatType] / 100);
+		if(vocation->getAbsorbPercent(combatType) != 0)
+			blocked += (int32_t)std::ceil((float)damage * vocation->getAbsorbPercent(combatType) / 100);
 
 		damage -= blocked;
 		if(damage <= 0)
