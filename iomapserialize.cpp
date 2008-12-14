@@ -31,7 +31,7 @@ extern Game g_game;
 bool IOMapSerialize::loadMap(Map* map)
 {
 	Database* db = Database::getInstance();
-	DBQuery query; //we need this to lock database
+	//DBQuery query; //we need this to lock database
 
 	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
 	{
