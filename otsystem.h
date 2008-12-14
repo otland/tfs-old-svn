@@ -43,6 +43,7 @@ typedef std::vector<std::pair<uint32_t, uint32_t> > IPList;
 #ifndef __USE_BOOST_THREAD__
 #define OTSYS_CREATE_THREAD(a, b)	_beginthread(a, 0, b)
 #define OTSYS_THREAD_LOCKVAR		CRITICAL_SECTION
+#define OTSYS_THREAD_LOCKVAR_PTR	CRITICAL_SECTION
 
 #define OTSYS_THREAD_LOCKVARINIT(a)	InitializeCriticalSection(&a);
 #define OTSYS_THREAD_LOCKVARRELEASE(a)	DeleteCriticalSection(&a);
@@ -120,6 +121,7 @@ inline int64_t OTSYS_TIME()
 #define OTSYS_THREAD_SIGNAL_SEND(a)	pthread_cond_signal(&a);
 
 typedef pthread_mutex_t OTSYS_THREAD_LOCKVAR;
+typedef pthread_mutex_t OTSYS_THREAD_LOCKVAR_PTR;
 typedef pthread_cond_t OTSYS_THREAD_SIGNALVAR;
 
 inline void OTSYS_CREATE_THREAD(void *(*a)(void*), void *b)
@@ -173,7 +175,8 @@ inline int64_t OTSYS_TIME()
 #ifdef __USE_BOOST_THREAD__
 #define OTSYS_CREATE_THREAD(a, b)		boost::thread(boost::bind(&a, (void*)b))
 
-#define OTSYS_THREAD_LOCKVAR			boost::mutex
+#define OTSYS_THREAD_LOCKVAR			boost::recursive_mutex
+#define OTSYS_THREAD_LOCKVAR_PTR		boost::mutex
 #define OTSYS_THREAD_LOCKVARINIT(a)
 #define OTSYS_THREAD_LOCKVARRELEASE(a)
 #define OTSYS_THREAD_LOCK(a, b)			a.lock();
@@ -187,20 +190,20 @@ inline int64_t OTSYS_TIME()
 #define OTSYS_THREAD_SIGNALVARINIT(a)
 #define OTSYS_THREAD_SIGNAL_SEND(a)		a.notify_all()
 
-inline int OTSYS_THREAD_WAITSIGNAL(OTSYS_THREAD_SIGNALVAR& a, OTSYS_THREAD_LOCKVAR& b)
+inline int OTSYS_THREAD_WAITSIGNAL(OTSYS_THREAD_SIGNALVAR& a, OTSYS_THREAD_LOCKVAR_PTR& b)
 {
 	boost::unique_lock<boost::mutex> lock(b);
 	a.wait(lock);
-	return 1;
+	return (int)true;
 }
 
-inline int OTSYS_THREAD_WAITSIGNAL_TIMED(OTSYS_THREAD_SIGNALVAR&a, OTSYS_THREAD_LOCKVAR&b, uint64_t c)
+inline int OTSYS_THREAD_WAITSIGNAL_TIMED(OTSYS_THREAD_SIGNALVAR&a, OTSYS_THREAD_LOCKVAR_PTR&b, uint64_t c)
 {
 	boost::unique_lock<boost::mutex> lock(b);
 	return (int)a.timed_wait(lock, boost::get_system_time() + boost::posix_time::milliseconds(c));
 }
 
-typedef boost::mutex::scoped_lock OTSYS_THREAD_LOCK_CLASS;
+typedef boost::recursive_mutex::scoped_lock OTSYS_THREAD_LOCK_CLASS;
 #else
 class OTSYS_THREAD_LOCK_CLASS
 {

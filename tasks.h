@@ -80,7 +80,7 @@ class Dispatcher
 			STATE_TERMINATED
 		};
 
-		OTSYS_THREAD_LOCKVAR m_taskLock;
+		OTSYS_THREAD_LOCKVAR_PTR m_taskLock;
 		OTSYS_THREAD_SIGNALVAR m_taskSignal;
 
 		std::list<Task*> m_taskList;
