@@ -54,4 +54,4 @@ theforgottenserver_SOURCES = account.cpp account.h actions.cpp actions.h \
 	talkaction.h tasks.cpp tasks.h teleport.cpp teleport.h templates.h \
 	textlogger.cpp textlogger.h thing.cpp thing.h tile.cpp tile.h tools.cpp \
 	tools.h town.h trashholder.cpp trashholder.h waitlist.cpp waitlist.h \
-	weapons.cpp weapons.h vocation.cpp vocation.h
+	waypoints.h weapons.cpp weapons.h vocation.cpp vocation.h
