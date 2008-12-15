@@ -54,7 +54,7 @@ inline WaypointPtr Waypoints::getWaypointByName(const std::string& name) const
 {
 	WaypointMap::const_iterator it = waypoints.find(name);
 	if(it != waypoints.end())
-		return WaypointPtr();
+		return it->second;
 
-	return it->second;
+	return WaypointPtr();
 }
