@@ -3316,7 +3316,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 		case SPEAK_CHANNEL_R2:
 		case SPEAK_CHANNEL_W:
 		{
-			if(playerTalkToChannel(player, type, text, channelId);
+			if(playerTalkToChannel(player, type, text, channelId))
 				return true;
 
 			return internalCreatureSay(player, SPEAK_SAY, text);
