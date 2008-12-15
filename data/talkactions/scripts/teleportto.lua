@@ -6,6 +6,7 @@ function onSay(cid, words, param)
 
 	local creature = getCreatureByName(param)
 	local player = getPlayerByNameWildcard(param)
+	local waypoint = getWaypointPosition(param)
 	local tile = string.explode(param, ",")
 	local pos = {x = 0, y = 0, z = 0}
 
@@ -13,6 +14,8 @@ function onSay(cid, words, param)
 		pos = getCreaturePosition(player)
 	elseif(creature ~= 0 and (isPlayer(creature) == FALSE or (isPlayerGhost(creature) == FALSE or getPlayerAccess(creature) <= getPlayerAccess(cid)))) then
 		pos = getCreaturePosition(creature)
+	elseif(type(waypoint) == 'table' and waypoint.x ~= 0 and waypoint.y ~= 0) then
+		pos = waypoint
 	elseif(tile[3]) then
 		pos = {x = tile[1], y = tile[2], z = tile[3]}
 	else
