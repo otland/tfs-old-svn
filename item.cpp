@@ -1237,7 +1237,7 @@ bool Item::canDecay()
 	if(isRemoved())
 		return false;
 
-	if(isLoadedFromMap() && (getUniqueId() != 0 || (getActionId() != 0 && item->getContainer())))
+	if(isLoadedFromMap() && (getUniqueId() != 0 || (getActionId() != 0 && getContainer())))
 		return false;
 
 	const ItemType& it = Item::items[id];
