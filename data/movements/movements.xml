@@ -521,6 +521,27 @@
 	<movevent event="DeEquip" itemid="8892" slot="armor" function="onDeEquipItem"/>
 
 	<!-- Legs -->
+	<movevent event="Equip" itemid="2477" slot="legs" function="onEquipItem">
+		<vocation name="Knight"/>
+		<vocation name="Elite Knight" showInDescription="0"/>
+		<vocation name="Paladin"/>
+		<vocation name="Royal Paladin" showInDescription="0"/>
+	</movevent>
+	<movevent event="DeEquip" itemid="2477" slot="legs" function="onDeEquipItem"/>
+	<movevent event="Equip" itemid="2488" slot="legs" function="onEquipItem">
+		<vocation name="Knight"/>
+		<vocation name="Elite Knight" showInDescription="0"/>
+		<vocation name="Paladin"/>
+		<vocation name="Royal Paladin" showInDescription="0"/>
+	</movevent>
+	<movevent event="DeEquip" itemid="2488" slot="legs" function="onDeEquipItem"/>
+	<movevent event="Equip" itemid="2470" slot="legs" function="onEquipItem">
+		<vocation name="Knight"/>
+		<vocation name="Elite Knight" showInDescription="0"/>
+		<vocation name="Paladin"/>
+		<vocation name="Royal Paladin" showInDescription="0"/>
+	</movevent>
+	<movevent event="DeEquip" itemid="2470" slot="legs" function="onDeEquipItem"/>
 	<movevent event="Equip" itemid="7885" slot="legs" level="40" function="onEquipItem">
 		<vocation name="Sorcerer"/>
 		<vocation name="Master Sorcerer" showInDescription="0"/>
