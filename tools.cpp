@@ -981,41 +981,63 @@ FluidTypes_t getFluidType(const std::string& strValue)
 	return FLUID_NONE;
 }
 
-std::string getSkillName(uint16_t skillId)
+std::string getSkillName(uint16_t skillId, bool suffix/* = true*/)
 {
 	switch(skillId)
 	{
 		case SKILL_FIST:
-			return "fist fighting";
-			break;
+		{
+			std::string tmp = "fist";
+			if(suffix)
+				tmp += " fighting";
+
+			return tmp;
+		}
 		case SKILL_CLUB:
-			return "club fighting";
-			break;
+		{
+			std::string tmp = "club";
+			if(suffix)
+				tmp += " fighting";
+
+			return tmp;
+		}
 		case SKILL_SWORD:
-			return "sword fighting";
-			break;
+		{
+			std::string tmp = "sword";
+			if(suffix)
+				tmp += " fighting";
+
+			return tmp;
+		}
 		case SKILL_AXE:
-			return "axe fighting";
-			break;
+		{
+			std::string tmp = "axe";
+			if(suffix)
+				tmp += " fighting";
+
+			return tmp;
+		}
 		case SKILL_DIST:
-			return "distance fighting";
-			break;
+		{
+			std::string tmp = "distance";
+			if(suffix)
+				tmp += " fighting";
+
+			return tmp;
+		}
 		case SKILL_SHIELD:
 			return "shielding";
-			break;
 		case SKILL_FISH:
 			return "fishing";
-			break;
 		case MAGLEVEL:
 			return "magic level";
-			break;
 		case LEVEL:
 			return "level";
-			break;
 		default:
-			return "unknown";
 			break;
 	}
+
+	return "unknown";
 }
 
 skills_t getSkillId(std::string param)
@@ -1044,77 +1066,55 @@ std::string getReason(int32_t reasonId)
 	{
 		case 0:
 			return "Offensive Name";
-			break;
 		case 1:
 			return "Invalid Name Format";
-			break;
 		case 2:
 			return "Unsuitable Name";
-			break;
 		case 3:
 			return "Name Inciting Rule Violation";
-			break;
 		case 4:
 			return "Offensive Statement";
-			break;
 		case 5:
 			return "Spamming";
-			break;
 		case 6:
 			return "Illegal Advertising";
-			break;
 		case 7:
 			return "Off-Topic Public Statement";
-			break;
 		case 8:
 			return "Non-English Public Statement";
-			break;
 		case 9:
 			return "Inciting Rule Violation";
-			break;
 		case 10:
 			return "Bug Abuse";
-			break;
 		case 11:
 			return "Game Weakness Abuse";
-			break;
 		case 12:
 			return "Using Unofficial Software to Play";
-			break;
 		case 13:
 			return "Hacking";
-			break;
 		case 14:
 			return "Multi-Clienting";
-			break;
 		case 15:
 			return "Account Trading or Sharing";
-			break;
 		case 16:
 			return "Threatening Gamemaster";
-			break;
 		case 17:
 			return "Pretending to Have Influence on Rule Enforcement";
-			break;
 		case 18:
 			return "False Report to Gamemaster";
-			break;
 		case 19:
 			return "Destructive Behaviour";
-			break;
 		case 20:
 			return "Excessive Unjustified Player Killing";
-			break;
 		case 21:
 			return "Invalid Payment";
-			break;
 		case 22:
 			return "Spoiling Auction";
-			break;
 		default:
-			return "Unknown Reason";
 			break;
 	}
+
+	return "Unknown Reason";
 }
 
 std::string getAction(int32_t actionId, bool ipBanishment)

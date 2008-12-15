@@ -171,7 +171,7 @@ Item* Item::CreateItem(PropStream& propStream)
 }
 
 Item::Item(const uint16_t _type, uint16_t _count /*= 0*/) :
-	ItemAttributes()
+ItemAttributes()
 {
 	id = _type;
 
@@ -193,7 +193,7 @@ Item::Item(const uint16_t _type, uint16_t _count /*= 0*/) :
 }
 
 Item::Item(const Item &i) :
-	Thing(), ItemAttributes()
+Thing(), ItemAttributes()
 {
 	//std::cout << "Item copy constructor " << this << std::endl;
 	id = i.id;
@@ -210,6 +210,7 @@ Item* Item::clone() const
 	_item->m_attributes = m_attributes;
 	if(m_firstAttr)
 		_item->m_firstAttr = new Attribute(*m_firstAttr);
+
 	return _item;
 }
 
@@ -271,7 +272,6 @@ bool Item::hasSubType() const
 uint16_t Item::getSubType() const
 {
 	const ItemType& it = items[getID()];
-
 	if(it.isFluidContainer() || it.isSplash())
 		return getFluidType();
 	else if(it.charges != 0)
@@ -1037,7 +1037,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 		for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; i++)
 		{
 			if(it.abilities.skills[i] != 0)
-				s << ", " << getSkillName(i) << " " << std::showpos << (int32_t)it.abilities.skills[i] << std::noshowpos;
+				s << ", " << getSkillName(i, false) << " " << std::showpos << (int32_t)it.abilities.skills[i] << std::noshowpos;
 		}
 
 		if(it.abilities.stats[STAT_MAGICLEVEL] != 0)

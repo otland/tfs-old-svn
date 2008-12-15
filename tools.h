@@ -113,7 +113,7 @@ CombatType_t getCombatType(const std::string& strValue);
 FluidTypes_t getFluidType(const std::string& strValue);
 std::string getCombatName(CombatType_t combatType);
 
-std::string getSkillName(uint16_t skillid);
+std::string getSkillName(uint16_t skillid, bool suffix = true);
 skills_t getSkillId(std::string param);
 
 std::string getReason(int32_t reasonId);

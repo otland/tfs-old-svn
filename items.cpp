@@ -135,7 +135,7 @@ ItemType::~ItemType()
 }
 
 Items::Items() :
-items(10000)
+items(15000)
 {
 	//
 }
