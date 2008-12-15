@@ -583,8 +583,8 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, 
 				{
 					if(hasBitSet(FLAG_IGNOREBLOCKITEM, flags))
 					{
-						if(!iiType.moveable || ((iitem->getUniqueId() != 0 || iitem->getActionId() != 0) &&
-							iitem->isLoadedFromMap()))
+						if(!iiType.moveable || (iitem->isLoadedFromMap() &&
+							(iitem->getUniqueId() != 0 || (iitem->getActionId() != 0 && iitem->getContainer()))))
 							return RET_NOTPOSSIBLE;
 					}
 					else

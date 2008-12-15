@@ -1031,8 +1031,8 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 		return false;
 	}
 
-	if(!item->isPushable() || ((item->getUniqueId() != 0 || item->getActionId() != 0) &&
-		item->isLoadedFromMap() && !player->hasCustomFlag(PlayerCustomFlag_CanPushAllItems)))
+	if(!player->hasCustomFlag(PlayerCustomFlag_CanPushAllItems) && (!item->isPushable() || (item->isLoadedFromMap() &&
+		(item->getUniqueId() != 0 || (item->getActionId() != 0 && item->getContainer())))))
 	{
 		player->sendCancelMessage(RET_NOTMOVEABLE);
 		return false;
@@ -2463,8 +2463,8 @@ bool Game::playerRotateItem(uint32_t playerId, const Position& pos, uint8_t stac
 		return false;
 
 	Item* item = thing->getItem();
-	if(!item || item->getClientID() != spriteId || !item->isRoteable() ||
-		((item->getUniqueId() != 0 || item->getActionId() != 0) && item->isLoadedFromMap()))
+	if(!item || item->getClientID() != spriteId || !item->isRoteable() || (item->isLoadedFromMap() &&
+		(item->getUniqueId() != 0 || (item->getActionId() != 0 && item->getContainer()))))
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
 		return false;
@@ -2595,8 +2595,8 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, uint8_t st
 	}
 
 	Item* tradeItem = dynamic_cast<Item*>(internalGetThing(player, pos, stackPos, spriteId, STACKPOS_USE));
-	if(!tradeItem || tradeItem->getClientID() != spriteId || !tradeItem->isPickupable() ||
-		((tradeItem->getUniqueId() != 0 || tradeItem->getActionId() != 0) && tradeItem->isLoadedFromMap()))
+	if(!tradeItem || tradeItem->getClientID() != spriteId || !tradeItem->isPickupable() || (tradeItem->isLoadedFromMap() &&
+		(tradeItem->getUniqueId() != 0 || (tradeItem->getActionId() != 0 && tradeItem->getContainer()))))
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
 		return false;

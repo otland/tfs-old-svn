@@ -838,7 +838,8 @@ bool Item::hasProperty(enum ITEMPROPERTY prop) const
 			break;
 
 		case MOVEABLE:
-			if(it.moveable && (!isLoadedFromMap() || (getUniqueId() == 0 && getActionId() == 0)))
+			if(it.moveable && (!isLoadedFromMap() ||
+				(getUniqueId() == 0 && (getActionId() == 0 || getContainer()))))
 				return true;
 			break;
 
@@ -868,12 +869,14 @@ bool Item::hasProperty(enum ITEMPROPERTY prop) const
 			break;
 
 		case IMMOVABLEBLOCKSOLID:
-			if(it.blockSolid && (!it.moveable || ((getUniqueId() != 0 || getActionId() != 0) && isLoadedFromMap())))
+			if(it.blockSolid && (!it.moveable || (isLoadedFromMap() &&
+				(getUniqueId() != 0 || (getActionId() != 0 && getContainer())))))
 				return true;
 			break;
 
 		case IMMOVABLEBLOCKPATH:
-			if(it.blockPathFind && (!it.moveable || ((getUniqueId() != 0 || getActionId() != 0) && isLoadedFromMap())))
+			if(it.blockPathFind && (!it.moveable || (isLoadedFromMap() &&
+				(getUniqueId() != 0 || (getActionId() != 0 && getContainer())))))
 				return true;
 			break;
 
@@ -883,7 +886,8 @@ bool Item::hasProperty(enum ITEMPROPERTY prop) const
 			break;
 
 		case IMMOVABLENOFIELDBLOCKPATH:
-			if(!it.isMagicField() && it.blockPathFind && (!it.moveable || ((getUniqueId() != 0 || getActionId() != 0) && isLoadedFromMap())))
+			if(!it.isMagicField() && it.blockPathFind && (!it.moveable || (isLoadedFromMap() &&
+				(getUniqueId() != 0 || (getActionId() != 0 && getContainer())))))
 				return true;
 			break;
 
@@ -1233,7 +1237,7 @@ bool Item::canDecay()
 	if(isRemoved())
 		return false;
 
-	if((isLoadedFromMap() && (getUniqueId() != 0 || getActionId() != 0)))
+	if(isLoadedFromMap() && (getUniqueId() != 0 || (getActionId() != 0 && item->getContainer())))
 		return false;
 
 	const ItemType& it = Item::items[id];
