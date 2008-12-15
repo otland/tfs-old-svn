@@ -24291,6 +24291,7 @@
 		<attribute key="armor" value="15"/>
 		<attribute key="absorbPercentFire" value="5"/>
 		<attribute key="absorbPercentIce" value="-5"/>
+		<attribute key="skillSword" value="2"/>
 		<attribute key="slotType" value="body"/>
 	</item>
 	<item id="8882" article="an" name="earthborn titan armor">
@@ -24298,6 +24299,7 @@
 		<attribute key="armor" value="15"/>
 		<attribute key="absorbPercentEarth" value="5"/>
 		<attribute key="absorbPercentFire" value="-5"/>
+		<attribute key="skillAxe" value="2"/>
 		<attribute key="slotType" value="body"/>
 	</item>
 	<item id="8883" article="a" name="windborn colossus armor">
@@ -24305,6 +24307,7 @@
 		<attribute key="armor" value="15"/>
 		<attribute key="absorbPercentEnergy" value="5"/>
 		<attribute key="absorbPercentEarth" value="-5"/>
+		<attribute key="skillClub" value="2"/>
 		<attribute key="slotType" value="body"/>
 	</item>
 	<item id="8884" article="an" name="oceanborn leviathan armor">
