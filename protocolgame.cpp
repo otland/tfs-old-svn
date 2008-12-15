@@ -2869,24 +2869,33 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creatur
 {
 	msg->AddByte(0xAA);
 	msg->AddU32(0x00000000);
-	switch(type)
+	if(creature)
 	{
-		case SPEAK_CHANNEL_R2:
-			msg->AddString("");
-			break;
-		case SPEAK_RVR_ANSWER:
-			msg->AddString("Gamemaster");
-			break;
-		default:
-			msg->AddString(creature->getName());
-			break;
-	}
+		switch(type)
+		{
+			case SPEAK_CHANNEL_R2:
+				msg->AddString("");
+				break;
+			case SPEAK_RVR_ANSWER:
+				msg->AddString("Gamemaster");
+				break;
+			default:
+				msg->AddString(creature->getName());
+				break;
+		}
 
-	const Player* speaker = creature->getPlayer();
-	if(speaker && type != SPEAK_RVR_ANSWER && !speaker->isAccountManager() && !speaker->hasCustomFlag(PlayerCustomFlag_HideLevel))
-		msg->AddU16(speaker->getPlayerInfo(PLAYERINFO_LEVEL));
+		const Player* speaker = creature->getPlayer();
+		if(speaker && type != SPEAK_RVR_ANSWER && !speaker->isAccountManager() && !speaker->hasCustomFlag(PlayerCustomFlag_HideLevel))
+			msg->AddU16(speaker->getPlayerInfo(PLAYERINFO_LEVEL));
+		else
+			msg->AddU16(0x0000);
+
+	}
 	else
+	{
+		msg->AddString("");
 		msg->AddU16(0x0000);
+	}
 
 	msg->AddByte(type);
 	switch(type)
@@ -2900,8 +2909,11 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creatur
 		{
 			if(pos)
 				msg->AddPosition(*pos);
-			else
+			else if(creature)
 				msg->AddPosition(creature->getPosition());
+			else
+				msg->AddPosition(Position(0,0,7));
+
 			break;
 		}
 
@@ -2922,6 +2934,7 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creatur
 		default:
 			break;
 	}
+
 	msg->AddString(text);
 }
 

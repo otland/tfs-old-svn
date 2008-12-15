@@ -178,14 +178,19 @@ bool ChatChannel::talk(Player* fromPlayer, SpeakClasses type, const std::string&
 		fromPlayer->addCondition(condition);
 	}
 
+	bool success = false;
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
 		ChatChannel* channel = g_chat.getChannel((*it).second, m_id);
 		if(channel && m_users[(*it).second->getID()] != NULL && channel == this)
+		{
 			(*it).second->sendToChannel(fromPlayer, type, text, m_id, time);
+			if(!success)
+				success = true;
+		}
 	}
 
-	return true;
+	return success;
 }
 
 Chat::Chat()

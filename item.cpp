@@ -911,38 +911,10 @@ double Item::getWeight() const
 	return items[id].weight;
 }
 
-std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
-	const Item* item /*= NULL*/, int32_t subType /*= -1*/, bool addArticle /*= true*/)
+std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const Item* item /*= NULL*/, int32_t subType /*= -1*/, bool addArticle /*= true*/)
 {
-	if(item)
-		subType = item->getSubType();
-
 	std::stringstream s;
-	if(it.name.length() || (item && item->getName().length()))
-	{
-		if(it.stackable && subType > 1)
-		{
-			if(it.showCount)
-				s << subType << " ";
-
-			s << (item ? item->getPluralName() : it.pluralName);
-		}
-		else
-		{
-			if(addArticle)
-			{
-				if(item && !item->getArticle().empty())
-					s << item->getArticle() << " ";
-				else if(!it.article.empty())
-					s << it.article << " ";
-			}
-
-			s << (item ? item->getName() : it.name);
-		}
-	}
-	else
-		s << "an item of type " << it.id;
-
+	s << getNameDescription(it, item, subType, addArticle);
 	if(it.isRune())
 	{
 		s << "(";
@@ -1200,10 +1172,55 @@ std::string Item::getDescription(int32_t lookDistance) const
 	return getDescription(it, lookDistance, this);
 }
 
-std::string Item::getWeightDescription() const
+std::string Item::getNameDescription(const ItemType& it, const Item* item /*= NULL*/, int32_t subType /*= -1*/, bool addArticle /*= true*/)
 {
-	double weight = getWeight();
-	return (weight > 0 ? getWeightDescription(weight) : "");
+	if(item)
+		subType = item->getSubType();
+
+	std::stringstream s;
+	if(it.name.length() || (item && item->getName().length()))
+	{
+		if(it.stackable && subType > 1)
+		{
+			if(it.showCount)
+				s << subType << " ";
+
+			s << (item ? item->getPluralName() : it.pluralName);
+		}
+		else
+		{
+			if(addArticle)
+			{
+				if(item && !item->getArticle().empty())
+					s << item->getArticle() << " ";
+				else if(!it.article.empty())
+					s << it.article << " ";
+			}
+
+			s << (item ? item->getName() : it.name);
+		}
+	}
+	else
+		s << "an item of type " << it.id;
+
+	return s.str();
+}
+
+std::string Item::getNameDescription() const
+{
+	const ItemType& it = items[id];
+	return getDescription(it, this);
+}
+
+std::string Item::getWeightDescription(const ItemType& it, double weight, uint32_t count /*= 1*/)
+{
+	std::stringstream s;
+	if(it.stackable && count > 1)
+		s << "They weigh " << std::fixed << std::setprecision(2) << weight << " oz.";
+	else
+		s << "It weighs " << std::fixed << std::setprecision(2) << weight << " oz.";
+
+	return s.str();
 }
 
 std::string Item::getWeightDescription(double weight) const
@@ -1212,15 +1229,10 @@ std::string Item::getWeightDescription(double weight) const
 	return getWeightDescription(it, weight, count);
 }
 
-std::string Item::getWeightDescription(const ItemType& it, double weight, uint32_t count /*= 1*/)
+std::string Item::getWeightDescription() const
 {
-	std::stringstream ss;
-	if(it.stackable && count > 1)
-		ss << "They weigh " << std::fixed << std::setprecision(2) << weight << " oz.";
-	else
-		ss << "It weighs " << std::fixed << std::setprecision(2) << weight << " oz.";
-
-	return ss.str();
+	double weight = getWeight();
+	return (weight > 0 ? getWeightDescription(weight) : "");
 }
 
 void Item::setUniqueId(uint16_t n)

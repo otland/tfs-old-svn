@@ -278,39 +278,26 @@ void Party::broadcastPartyMessage(MessageClasses messageClass, const std::string
 
 void Party::broadcastPartyLoot(const std::string& monster, const ItemVector& items)
 {
-	std::stringstream ss;
-	ss << "Loot of " << monster << ": ";
+	std::stringstream s;
+	s << "Loot of " << monster << ": ";
 	if(items.size())
 	{
 		for(ItemVector::const_reverse_iterator rit = items.rbegin(); rit != items.rend(); ++rit)
 		{
-			const ItemType& it = Item::items[(*rit)->getID()];
-			if(it.isRune())
-				ss << (*rit)->getSubType() << " charge" << ((*rit)->getSubType() != 1 ? "s" : "") << it.name;
-			else if(it.stackable && (*rit)->getSubType() != 1)
-				ss << (*rit)->getSubType() << " " << it.pluralName;
-			else
-			{
-				if(it.article != "")
-					ss << it.article << " ";
-
-				ss << it.name;
-			}
-
+			s << (*rit)->getNameDescription();
 			if((*rit) != items.front())
-				ss << ", ";
+				s << ", ";
 		}
 	}
 	else
-		ss << "none";
+		s << "none";
 
-	ss << ".";
-	getLeader()->sendChannelMessage("", ss.str().c_str(), SPEAK_CHANNEL_W, 0x08);
+	s << ".";
+	getLeader()->sendChannelMessage("", s.str().c_str(), SPEAK_CHANNEL_W, 0x08);
 	if(!memberList.empty())
 	{
-		PlayerVector::iterator it;
-		for(it = memberList.begin(); it != memberList.end(); ++it)
-			(*it)->sendChannelMessage("", ss.str().c_str(), SPEAK_CHANNEL_W, 0x08);
+		for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
+			(*it)->sendChannelMessage("", s.str().c_str(), SPEAK_CHANNEL_W, 0x08);
 	}
 }
 

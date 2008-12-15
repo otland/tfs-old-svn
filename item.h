@@ -301,9 +301,13 @@ class Item : virtual public Thing, public ItemAttributes
 		virtual BedItem* getBed() {return NULL;}
 		virtual const BedItem* getBed() const {return NULL;}
 
-		static std::string getDescription(const ItemType& it, int32_t lookDistance,
-			const Item* item = NULL, int32_t subType = -1, bool addArticle = true);
+		static std::string getDescription(const ItemType& it, int32_t lookDistance, const Item* item = NULL, int32_t subType = -1, bool addArticle = true);
+		static std::string getNameDescription(const ItemType& it, const Item* item = NULL, int32_t subType = -1, bool addArticle = true);
 		static std::string getWeightDescription(const ItemType& it, double weight, uint32_t count = 1);
+
+		virtual std::string getDescription(int32_t lookDistance) const;
+		std::string getNameDescription() const;
+		std::string getWeightDescription() const;
 
 		//serialization
 		virtual bool unserialize(xmlNodePtr p);
@@ -311,15 +315,11 @@ class Item : virtual public Thing, public ItemAttributes
 
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool unserializeAttr(PropStream& propStream);
-		virtual bool unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream);
-
 		virtual bool serializeAttr(PropWriteStream& propWriteStream);
+		virtual bool unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream);
 
 		virtual bool isPushable() const {return !isNotMoveable();}
 		virtual int32_t getThrowRange() const {return (isPickupable() ? 15 : 2);}
-
-		virtual std::string getDescription(int32_t lookDistance) const;
-		std::string getWeightDescription() const;
 
 		uint16_t getID() const {return id;}
 		uint16_t getClientID() const {return items[id].clientId;}

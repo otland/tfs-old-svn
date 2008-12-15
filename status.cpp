@@ -52,6 +52,7 @@ enum RequestedInfo_t
 	REQUEST_MAP_INFO = 0x10,
 	REQUEST_EXT_PLAYERS_INFO = 0x20,
 	REQUEST_PLAYER_STATUS_INFO = 0x40,
+	REQUEST_SERVER_SOFTWARE_INFO = 0x80
 };
 
 std::map<uint32_t, int64_t> ProtocolStatus::ipConnectMap;
@@ -69,7 +70,6 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 	}
 
 	ipConnectMap[getIP()] = OTSYS_TIME();
-
 	switch(msg.GetByte())
 	{
 		//XML info protocol
@@ -148,12 +148,12 @@ std::string Status::getStatusString() const
 	sprintf(buffer, "%u", (uint32_t)getUptime());
 	xmlSetProp(p, (const xmlChar*)"uptime", (const xmlChar*)buffer);
 	xmlSetProp(p, (const xmlChar*)"ip", (const xmlChar*)g_config.getString(ConfigManager::IP).c_str());
-	xmlSetProp(p, (const xmlChar*)"servername", (const xmlChar*)g_config.getString(ConfigManager::SERVER_NAME).c_str()); char send_[30]; sprintf(send_, "%c%c%c %c%c%c%c%c%c%c%c%c %c%c%c%c%c%c", 84, 104, 101, 70, 111, 114, 103, 111, 116, 116, 101, 110, 83, 101, 114, 118, 101, 114);
+	xmlSetProp(p, (const xmlChar*)"servername", (const xmlChar*)g_config.getString(ConfigManager::SERVER_NAME).c_str());
 	sprintf(buffer, "%d", g_config.getNumber(ConfigManager::PORT));
 	xmlSetProp(p, (const xmlChar*)"port", (const xmlChar*)buffer);
 	xmlSetProp(p, (const xmlChar*)"location", (const xmlChar*)g_config.getString(ConfigManager::LOCATION).c_str());
 	xmlSetProp(p, (const xmlChar*)"url", (const xmlChar*)g_config.getString(ConfigManager::URL).c_str());
-	xmlSetProp(p, (const xmlChar*)"server", (const xmlChar*)send_);
+	xmlSetProp(p, (const xmlChar*)"server", (const xmlChar*)STATUS_SERVER_NAME);
 	xmlSetProp(p, (const xmlChar*)"version", (const xmlChar*)STATUS_SERVER_VERSION);
 	xmlSetProp(p, (const xmlChar*)"client", (const xmlChar*)STATUS_SERVER_PROTOCOL);
 	xmlAddChild(root, p);
@@ -177,6 +177,11 @@ std::string Status::getStatusString() const
 	xmlSetProp(p, (const xmlChar*)"total", (const xmlChar*)buffer);
 	xmlAddChild(root, p);
 
+	p = xmlNewNode(NULL,(const xmlChar*)"npcs");
+	sprintf(buffer, "%d", g_game.getNpcsOnline());
+	xmlSetProp(p, (const xmlChar*)"total", (const xmlChar*)buffer);
+	xmlAddChild(root, p);
+
 	p = xmlNewNode(NULL,(const xmlChar*)"map");
 	xmlSetProp(p, (const xmlChar*)"name", (const xmlChar*)m_mapName.c_str());
 	xmlSetProp(p, (const xmlChar*)"author", (const xmlChar*)m_mapAuthor.c_str());
@@ -193,7 +198,6 @@ std::string Status::getStatusString() const
 	xmlChar* s = NULL;
 	int32_t len = 0;
 	xmlDocDumpMemory(doc, (xmlChar**)&s, &len);
-
 	if(s)
 		xml = std::string((char*)s, len);
 	else
@@ -275,5 +279,14 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage* output, NetworkMessa
 		else
 			output->AddByte(0x00);
 	}
+
+	if(requestedInfo & REQUEST_SERVER_SOFTWARE_INFO)
+	{
+		output->AddByte(0x23) // server software info
+		output->AddString(STATUS_SERVER_NAME);
+		output->AddString(STATUS_SERVER_VERSION);
+		output->AddString(STATUS_SERVER_PROTOCOL);
+	}
+		
 	return;
 }
