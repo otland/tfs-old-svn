@@ -282,7 +282,7 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage* output, NetworkMessa
 
 	if(requestedInfo & REQUEST_SERVER_SOFTWARE_INFO)
 	{
-		output->AddByte(0x23) // server software info
+		output->AddByte(0x23); // server software info
 		output->AddString(STATUS_SERVER_NAME);
 		output->AddString(STATUS_SERVER_VERSION);
 		output->AddString(STATUS_SERVER_PROTOCOL);
