@@ -433,6 +433,7 @@ class LuaScriptInterface
 		static int32_t luaGetAccountIdByName(lua_State *L);
 		static int32_t luaGetAccountByName(lua_State *L);
 		static int32_t luaGetAccountIdByAccount(lua_State *L);
+		static int32_t luaGetAccountByAccountId(lua_State *L);
 		static int32_t luaGetIpByName(lua_State *L);
 		static int32_t luaGetPlayersByIp(lua_State *L);
 

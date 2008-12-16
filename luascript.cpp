@@ -1884,6 +1884,9 @@ void LuaScriptInterface::registerFunctions()
 	//getAccountIdByAccount(accName)
 	lua_register(m_luaState, "getAccountIdByAccount", LuaScriptInterface::luaGetAccountIdByAccount);
 
+	//getAccountByAccountId(accId)
+	lua_register(m_luaState, "getAccountByAccountId", LuaScriptInterface::luaGetAccountByAccountId);
+
 	//getIpByName(name)
 	lua_register(m_luaState, "getIpByName", LuaScriptInterface::luaGetIpByName);
 
@@ -7263,6 +7266,15 @@ int32_t LuaScriptInterface::luaGetAccountIdByAccount(lua_State *L)
 	uint32_t value = 0;
 	IOLoginData::getInstance()->getAccountId(popString(L), value);
 	lua_pushnumber(L, value);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetAccountByAccountId(lua_State *L)
+{
+	//getAccountByAccountId(accId)
+	std::string value = 0;
+	IOLoginData::getInstance()->getAccount(popNumber(L), value);
+	lua_pushstring(L, value);
 	return 1;
 }
 
