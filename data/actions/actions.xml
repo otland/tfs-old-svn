@@ -145,6 +145,14 @@
 	<action itemid="2152" script="other/changegold.lua"/>
 	<action itemid="2160" script="other/changegold.lua"/>
 	<action fromid="3901" toid="3938" script="other/constructionkits.lua"/>
+	<action fromid="5086" toid="5088" script="other/constructionkits.lua"/>
+	<action fromid="3901" toid="3938" script="other/constructionkits.lua"/>
+	<action fromid="6114" toid="6115" script="other/constructionkits.lua"/>
+	<action fromid="6372" toid="6373" script="other/constructionkits.lua"/>
+	<action fromid="7960" toid="7962" script="other/constructionkits.lua"/>
+	<action fromid="8692" toid="8693" script="other/constructionkits.lua"/>
+	<action itemid="7503" script="other/constructionkits.lua"/>
+	<action itemid="7700" script="other/constructionkits.lua"/>
 	<action fromid="2070" toid="2078" script="other/music.lua"/>
 	<action fromid="2080" toid="2085" script="other/music.lua"/>
 	<action itemid="2332" script="other/music.lua"/>
