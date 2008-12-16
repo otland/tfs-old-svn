@@ -6416,7 +6416,7 @@ int32_t LuaScriptInterface::luaGetMonsterHealingSpells(lua_State* L)
 	for(uint32_t i = 1; it != mType->spellDefenseList.end(); ++it, ++i)
 	{
 		lua_pushnumber(L, i);
-		lua_createtable(L, 6, 0);
+		lua_newtable(L);
 
 		setField(L, "speed", (*it).speed);
 		setField(L, "chance", (*it).chance);
@@ -6440,7 +6440,7 @@ int32_t LuaScriptInterface::luaGetMonsterAttackSpells(lua_State* L)
 	for(uint32_t i = 1; it != mType->spellAttackList.end(); ++it, ++i)
 	{
 		lua_pushnumber(L, i);
-		lua_createtable(L, 6, 0);
+		lua_newtable(L);
 
 		setField(L, "speed", (*it).speed);
 		setField(L, "chance", (*it).chance);
@@ -6464,7 +6464,7 @@ int32_t LuaScriptInterface::luaGetMonsterLootList(lua_State* L)
 	for(uint32_t i = 1; it != mType->lootItems.end(); ++it, ++i)
 	{
 		lua_pushnumber(L, i);
-		lua_createtable(L, 7, 0);
+		lua_newtable(L);
 
 		setField(L, "id", (*it).id);
 		setField(L, "countMax", (*it).countmax);
@@ -6481,7 +6481,7 @@ int32_t LuaScriptInterface::luaGetMonsterLootList(lua_State* L)
 			for(uint32_t j = 1; cit != (*it).childLoot.end(); ++cit, ++j)
 			{
 				lua_pushnumber(L, i);
-				lua_createtable(L, 7, 0);
+				lua_newtable(L);
 
 				setField(L, "id", (*cit).id);
 				setField(L, "countMax", (*cit).countmax);
@@ -9606,7 +9606,7 @@ int32_t LuaScriptInterface::luaGetBanData(lua_State *L)
 		return 1;
 	}
 
-	lua_createtable(L, 10, 0);
+	lua_newtable(L);
 	setField(L, "id", tmp.id);
 	setField(L, "type", tmp.type);
 	setField(L, "value", tmp.value);
@@ -9654,7 +9654,7 @@ int32_t LuaScriptInterface::luaGetBanList(lua_State *L)
 	for(uint32_t i = 1; it != bans.end(); ++it, ++i)
 	{
 		lua_pushnumber(L, i);
-		lua_createtable(L, 10, 0);
+		lua_newtable(L);
 
 		setField(L, "id", (*it).id);
 		setField(L, "type", (*it).type);
