@@ -4675,7 +4675,6 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 			if((tile = map->getTile(Position((pos.x + it->first), (pos.y + it->second), pos.z)))
 				&& tile->__queryAdd(0, creature, 1, FLAG_IGNOREBLOCKITEM) == RET_NOERROR)
 					return tile->getPosition();
-			}
 		}
 	}
 
