@@ -1209,7 +1209,7 @@ std::string Item::getNameDescription(const ItemType& it, const Item* item /*= NU
 std::string Item::getNameDescription() const
 {
 	const ItemType& it = items[id];
-	return getDescription(it, this);
+	return getNameDescription(it, this);
 }
 
 std::string Item::getWeightDescription(const ItemType& it, double weight, uint32_t count /*= 1*/)
