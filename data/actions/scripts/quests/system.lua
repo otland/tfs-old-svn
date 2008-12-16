@@ -19,7 +19,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 	end
 
-	local result = "It is empty"
+	local result = "It is empty."
 	if(getPlayerStorageValue(cid, storage) == -1) then
 		local items = {}
 		local reward = 0
