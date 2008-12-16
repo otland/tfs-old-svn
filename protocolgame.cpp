@@ -901,13 +901,13 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				break;
 
 			case 0xD2: // request outfit
-				if(!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) || g_config.getBool(ConfigManager::DISABLE_OUTFITS_PRIVILEGED)
+				if((!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) || g_config.getBool(ConfigManager::DISABLE_OUTFITS_PRIVILEGED))
 					&& (g_config.getBool(ConfigManager::ALLOW_CHANGECOLORS || g_config.getBool(ConfigManager::ALLOW_CHANGEOUTFIT)))
 					parseRequestOutfit(msg);
 				break;
 
 			case 0xD3: // set outfit
-				if(!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) || g_config.getBool(ConfigManager::DISABLE_OUTFITS_PRIVILEGED)
+				if((!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) || g_config.getBool(ConfigManager::DISABLE_OUTFITS_PRIVILEGED))
 					&& (g_config.getBool(ConfigManager::ALLOW_CHANGECOLORS || g_config.getBool(ConfigManager::ALLOW_CHANGEOUTFIT)))
 				parseSetOutfit(msg);
 				break;
