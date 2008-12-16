@@ -329,9 +329,7 @@ bool Monster::isOpponent(const Creature* creature)
 		return true;
 	else if((creature->getPlayer() && !creature->getPlayer()->hasFlag(PlayerFlag_IgnoredByMonsters)) ||
 		(creature->getMaster() && creature->getMaster()->getPlayer()))
-	{
 		return true;
-	}
 
 	return false;
 }
@@ -342,19 +340,9 @@ void Monster::onCreatureLeave(Creature* creature)
 
 	if(getMaster() == creature)
 	{
-		if(g_config.getBool(ConfigManager::TELEPORT_SUMMONS) || (creature->getPlayer()
-			&& g_config.getBool(ConfigManager::TELEPORT_PLAYER_SUMMONS)))
-		{
-			g_game.addMagicEffect(getPosition(), NM_ME_POFF);
-			if(g_game.internalTeleport(this, g_game.getClosestFreeTile(this, getMaster()->getPosition(), true), false) == RET_NOERROR)
-				g_game.addMagicEffect(getPosition(), NM_ME_ENERGY_AREA);
-		}
-		else
-		{
-			//Turn the monster off until its master comes back
-			isMasterInRange = false;
-			deactivate();
-		}
+		//Turn the monster off until its master comes back
+		isMasterInRange = false;
+		deactivate();
 	}
 
 	//update friendList
@@ -591,7 +579,6 @@ void Monster::onThink(uint32_t interval)
 	else if(!deactivate())
 	{
 		addEventWalk();
-
 		if(isSummon())
 		{
 			if(!attackedCreature)
@@ -614,12 +601,16 @@ void Monster::onThink(uint32_t interval)
 				//This happens just after a master orders an attack, so lets follow it aswell.
 				setFollowCreature(attackedCreature);
 			}
-			if(!isMasterInRange && (g_config.getBool(ConfigManager::TELEPORT_SUMMONS) ||
-				(getMaster() && getMaster()->getPlayer() && g_config.getBool(ConfigManager::TELEPORT_PLAYER_SUMMONS))))
+
+			if(!isMasterInRange && getMaster() && (g_config.getBool(ConfigManager::TELEPORT_SUMMONS) ||
+				(getMaster()->getPlayer() && g_config.getBool(ConfigManager::TELEPORT_PLAYER_SUMMONS))
 			{
-				g_game.addMagicEffect(getPosition(), NM_ME_POFF);
+				const Position& tmp = getPosition();
 				if(g_game.internalTeleport(this, g_game.getClosestFreeTile(this, getMaster()->getPosition(), true), false) == RET_NOERROR)
+				{
+					g_game.addMagicEffect(tmp, NM_ME_POFF);
 					g_game.addMagicEffect(getPosition(), NM_ME_ENERGY_AREA);
+				}
 			}
 		}
 		else if(!targetList.empty())

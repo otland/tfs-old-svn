@@ -23,9 +23,11 @@
 #include "player.h"
 #include "game.h"
 #include "chat.h"
+#include "configmanager.h"
 
 extern Game g_game;
 extern Chat g_chat;
+extern ConfigManager g_config;
 
 Party::Party(Player* _leader)
 {
@@ -341,8 +343,8 @@ bool Party::setSharedExperience(Player* player, bool _sharedExpActive)
 void Party::shareExperience(uint64_t experience)
 {
 	uint64_t shareExperience = (uint64_t)std::ceil(((double)experience / (memberList.size() + 1)));
-	if(experience > 20)
-		shareExperience += (uint64_t)std::ceil((double)experience * 0.05);
+	if(experience > g_config.getNumber(ConfigManager::EXTRA_PARTY_LIMIT))
+		shareExperience += (uint64_t)std::ceil((double)experience * (double)g_config.getNumber(ConfigManager::EXTRA_PARTY_PERCENT) / 100);
 
 	getLeader()->onGainSharedExperience(shareExperience);
 	for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)

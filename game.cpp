@@ -1873,8 +1873,7 @@ ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pu
 	else if(thing->isRemoved())
 		return RET_NOTPOSSIBLE;
 
-	Tile* toTile = getTile(newPos.x, newPos.y, newPos.z);
-	if(toTile)
+	if(Tile* toTile = getTile(newPos.x, newPos.y, newPos.z))
 	{
 		if(Creature* creature = thing->getCreature())
 		{
@@ -4658,25 +4657,13 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 	{
 		for(PairVector::iterator it = relList.begin(); it != relList.end(); ++it)
 		{
-			Position tmp = Position((pos.x + it->first), (pos.y + it->second), pos.z);
-			if(Tile* tile = map->getTile(tmp))
+			if(Tile* tile = map->getTile(Position((pos.x + it->first), (pos.y + it->second), pos.z)))
 			{
-				uint32_t i = tile->creatures.size();
-				for(CreatureVector::iterator cit = tile->creatures.begin(); cit != tile->creatures.end(); ++cit)
-				{
-					if((*cit)->isInGhostMode())
-						i--;
-				}
-
-				if(i || (tile->hasProperty(IMMOVABLEBLOCKSOLID) &&
-					!player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere)))
-					continue;
-
 				ReturnValue ret = tile->__queryAdd(0, player, 1, FLAG_IGNOREBLOCKITEM);
-				if(!ignoreHouse && ret == RET_PLAYERISNOTINVITED && !player->hasFlag(PlayerFlag_CanEditHouses))
-					continue;
-
-				return tile->getPosition();
+				if(((ret != RET_NOTENOUGHROOM && ret != RET_NOTPOSSIBLE) || (ret == RET_PLAYERISNOTINVITED && (ignoreHouse ||
+					player->hasFlag(PlayerFlag_CanEditHouses)))) && (!tile->hasProperty(IMMOVABLEBLOCKSOLID)
+					|| player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere)))
+					return tile->getPosition();
 			}
 		}
 	}
@@ -4684,17 +4671,9 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 	{
 		for(PairVector::iterator it = relList.begin(); it != relList.end(); ++it)
 		{
-			Position tmp = Position((pos.x + it->first), (pos.y + it->second), pos.z);
-			if(Tile* tile = map->getTile(tmp))
-			{
-				uint32_t i = tile->creatures.size();
-				for(CreatureVector::iterator cit = tile->creatures.begin(); cit != tile->creatures.end(); ++cit)
-				{
-					if((*cit)->isInGhostMode())
-						i--;
-				}
-
-				if(!i && !tile->hasProperty(IMMOVABLEBLOCKSOLID))
+			Tile* tile = NULL;
+			if((tile = map->getTile(Position((pos.x + it->first), (pos.y + it->second), pos.z)))
+				&& tile->__queryAdd(0, creature, 1, FLAG_IGNOREBLOCKITEM) == RET_NOERROR)
 					return tile->getPosition();
 			}
 		}
@@ -4705,13 +4684,13 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 
 std::string Game::getSearchString(const Position fromPos, const Position toPos, bool fromIsCreature/* = false*/, bool toIsCreature/* = false*/)
 {
-	//a. From 1 to 4 sq's pos is [player: standing] next to you.
+	//a. From 1 to 4 sq's pos is [toIsCreature: standing] next to pos/you.
 	//b. From 5 to 100 sq's pos is to the south, north, east, west.
 	//c. From 101 to 274 sq's pos is far to the south, north, east, west.
 	//d. From 275 to infinite sq's pos is very far to the south, north, east, west.
-	//e. South-west, s-e, n-w, n-e (corner coordinates): this phrase appears if the player you're looking for has moved five squares in any direction from the south, north, east or west.
-	//f. Lower level to the (direction): this phrase applies if the person you're looking for is from 1-25 squares up/down the actual floor you're in.
-	//g. Higher level to the (direction): this phrase applies if the person you're looking for is from 1-25 squares up/down the actual floor you're in.
+	//e. South-west, s-e, n-w, n-e (corner coordinates): this phrase appears if the pos/player you're looking for has moved five squares in any direction from the south, north, east or west.
+	//f. Lower level to the (direction): this phrase applies if the pos/player you're looking for is from 1-25 squares up/down the actual floor you're in.
+	//g. Higher level to the (direction): this phrase applies if the pos/player you're looking for is from 1-25 squares up/down the actual floor you're in.
 
 	enum distance_t
 	{

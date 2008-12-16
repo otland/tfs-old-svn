@@ -120,6 +120,8 @@
 	displaySkillLevelOnAdvance = "no"
 	spellNameInsteadOfWords = "no"
 	emoteSpells = "no"
+	disableOutfitsForPrivilegedPlayers = "no"
+	expireReportsAfterReads = 1
 
 	-- Premium account
 	freePremium = "no"
@@ -136,6 +138,8 @@
 	rateLoot = 2
 	rateMagic = 3
 	rateSpawn = 1
+	extraPartyExpLimit = 20
+	extraPartyExpPercent = 5
 	experienceStages = "no"
 
 	-- Global save

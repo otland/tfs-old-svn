@@ -121,6 +121,8 @@ class ConfigManager
 			MAX_PLAYER_SUMMONS,
 			FIELD_OWNERSHIP,
 			WORLD_ID,
+			EXTRA_PARTY_PERCENT,
+			EXTRA_PARTY_LIMIT,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 
@@ -176,6 +178,7 @@ class ConfigManager
 			ALLOW_CHANGECOLORS,
 			LOGIN_ONLY_LOGINSERVER,
 			STOP_ATTACK_AT_EXIT,
+			DISABLE_OUTFITS_PRIVILEGED,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

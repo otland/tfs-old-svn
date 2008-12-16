@@ -435,7 +435,6 @@ void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport 
 ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, uint32_t flags) const
 {
 	Thing* iithing = NULL;
-
 	if(const Creature* creature = thing->getCreature())
 	{
 		if(hasBitSet(FLAG_NOLIMIT, flags))
@@ -464,11 +463,9 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, 
 				for(uint32_t i = 0; i < creatures.size(); ++i)
 				{
 					creature = creatures[i];
-					if(!creature->getMonster() || !creature->isPushable() ||
-						(creature->getMonster()->isSummon() && creature->getMonster()->getMaster()->getPlayer()))
-					{
+					if(!creature->getMonster() || !creature->isPushable() || (creature->getMonster()->isSummon()
+						&& creature->getMonster()->getMaster()->getPlayer()))
 						return RET_NOTPOSSIBLE;
-					}
 				}
 			}
 			else if(!creatures.empty())
@@ -508,18 +505,14 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, 
 					{
 						//1) Monster is "strong" enough to handle the damage
 						//2) Monster is already afflicated by this type of condition
-						if(hasBitSet(FLAG_IGNOREFIELDDAMAGE, flags))
-						{
-							if(!monster->canPushItems() && !monster->hasCondition(Combat::DamageToConditionType(combatType)))
-								return RET_NOTPOSSIBLE;
-						}
-						else
+						if(!hasBitSet(FLAG_IGNOREFIELDDAMAGE, flags))
 							return RET_NOTPOSSIBLE;
+
+						if(!monster->canPushItems() && !monster->hasCondition(Combat::DamageToConditionType(combatType)))
+							return RET_NOTPOSSIBLE;	
 					}
 				}
 			}
-
-			return RET_NOERROR;
 		}
 		else if(const Player* player = creature->getPlayer())
 		{
@@ -581,14 +574,12 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, 
 				const ItemType& iiType = Item::items[iitem->getID()];
 				if(iiType.blockSolid)
 				{
-					if(hasBitSet(FLAG_IGNOREBLOCKITEM, flags))
-					{
-						if(!iiType.moveable || (iitem->isLoadedFromMap() &&
-							(iitem->getUniqueId() != 0 || (iitem->getActionId() != 0 && iitem->getContainer()))))
-							return RET_NOTPOSSIBLE;
-					}
-					else
+					if(!hasBitSet(FLAG_IGNOREBLOCKITEM, flags))
 						return RET_NOTENOUGHROOM;
+
+					if(!iiType.moveable || (iitem->isLoadedFromMap() &&
+						(iitem->getUniqueId() != 0 || (iitem->getActionId() != 0 && iitem->getContainer()))))
+						return RET_NOTPOSSIBLE;
 				}
 			}
 		}
@@ -611,8 +602,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, 
 		if(!creatures.empty() && item->isBlocking() && !hasBitSet(FLAG_IGNOREBLOCKCREATURE, flags))
 			return RET_NOTENOUGHROOM;
 
-		bool hasHangable = false;
-		bool supportHangable = false;
+		bool hasHangable = false, supportHangable = false;
 		for(uint32_t i = 0; i < getThingCount(); ++i)
 		{
 			iithing = __getThing(i);
@@ -627,20 +617,16 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, 
 					supportHangable = true;
 
 				if(itemIsHangable && (iiType.isHorizontal || iiType.isVertical))
-				{
-					//
-				}
+					{}
 				else if(iiType.blockSolid)
 				{
-					if(item->isPickupable())
-					{
-						if(iiType.allowPickupable)
-							continue;
+					if(!item->isPickupable())
+						return RET_NOTENOUGHROOM;
 
-						if(!iiType.hasHeight || iiType.pickupable || iiType.isBed())
-							return RET_NOTENOUGHROOM;
-					}
-					else
+					if(iiType.allowPickupable)
+						continue;
+
+					if(!iiType.hasHeight || iiType.pickupable || iiType.isBed())
 						return RET_NOTENOUGHROOM;
 				}
 			}
@@ -649,6 +635,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, 
 		if(itemIsHangable && hasHangable && supportHangable)
 			return RET_NEEDEXCHANGE;
 	}
+
 	return RET_NOERROR;
 }
 
@@ -662,7 +649,6 @@ ReturnValue Tile::__queryMaxCount(int32_t index, const Thing* thing, uint32_t co
 ReturnValue Tile::__queryRemove(const Thing* thing, uint32_t count, uint32_t flags) const
 {
 	int32_t index = __getIndexOfThing(thing);
-
 	if(index == -1)
 		return RET_NOTPOSSIBLE;
 
@@ -679,8 +665,7 @@ ReturnValue Tile::__queryRemove(const Thing* thing, uint32_t count, uint32_t fla
 	return RET_NOERROR;
 }
 
-Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** destItem,
-	uint32_t& flags)
+Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** destItem, uint32_t& flags)
 {
 	Tile* destTile = NULL;
 	*destItem = NULL;
