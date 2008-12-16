@@ -7274,7 +7274,7 @@ int32_t LuaScriptInterface::luaGetAccountByAccountId(lua_State *L)
 	//getAccountByAccountId(accId)
 	std::string value = 0;
 	IOLoginData::getInstance()->getAccountName(popNumber(L), value);
-	lua_pushstring(L, value);
+	lua_pushstring(L, value.c_str());
 	return 1;
 }
 
