@@ -192,13 +192,13 @@ bool Party::removeInvite(Player* player)
 
 void Party::revokeInvitation(Player* player)
 {
-	removeInvite(player);
-
 	char buffer[150];
 	sprintf(buffer, "%s has revoked %s invitation.", leader->getName().c_str(), (leader->getSex() == PLAYERSEX_FEMALE ? "her" : "his"));
 	player->sendTextMessage(MSG_INFO_DESCR, buffer);
 	sprintf(buffer, "Invitation for %s has been revoked.", player->getName().c_str());
 	getLeader()->sendTextMessage(MSG_INFO_DESCR, buffer);
+
+	removeInvite(player);
 }
 
 bool Party::invitePlayer(Player* player)
