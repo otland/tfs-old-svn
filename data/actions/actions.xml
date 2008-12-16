@@ -154,7 +154,6 @@
 	<action itemid="2160" script="other/changegold.lua"/>
 	<action fromid="3901" toid="3938" script="other/constructionkits.lua"/>
 	<action fromid="5086" toid="5088" script="other/constructionkits.lua"/>
-	<action fromid="3901" toid="3938" script="other/constructionkits.lua"/>
 	<action fromid="6114" toid="6115" script="other/constructionkits.lua"/>
 	<action fromid="6372" toid="6373" script="other/constructionkits.lua"/>
 	<action fromid="7960" toid="7962" script="other/constructionkits.lua"/>
