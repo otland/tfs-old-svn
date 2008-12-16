@@ -915,6 +915,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 {
 	std::stringstream s;
 	s << getNameDescription(it, item, subType, addArticle);
+	if(item)
+		subType = item->getSubType();
+
 	if(it.isRune())
 	{
 		s << "(";
@@ -964,7 +967,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			{
 				begin = false;
 				s << "Atk:";
-				if(it.abilities.elementType != COMBAT_NONE && subType <= 0)
+				if(it.abilities.elementType != COMBAT_NONE && it.decayTo == 0)
 				{
 					s << std::max(0, int32_t((item ? item->getAttack() : it.attack) - it.abilities.elementDamage));
 					if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
@@ -1009,7 +1012,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; i++)
 		{
 			if(it.abilities.skills[i] != 0)
-				s << ", " << getSkillName(i, false) << " " << std::showpos << (int32_t)it.abilities.skills[i] << std::noshowpos;
+				s << ", " << getSkillName(i) << std::showpos << (int32_t)it.abilities.skills[i] << std::noshowpos;
 		}
 
 		if(it.abilities.stats[STAT_MAGICLEVEL] != 0)
@@ -1093,7 +1096,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		s << " for level " << item->getActionId() - 1000;
 
 	if(it.showCharges)
-		s << " that has " << subType << " charge" << (subType > 1 ? "s" : "") << " left";
+		s << " that has " << subType << " charge" << (subType != 1 ? "s" : "") << " left";
 
 	if(it.showDuration)
 	{
@@ -1148,9 +1151,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			s << std::endl << getWeightDescription(it, weight);
 	}
 
-	if(it.abilities.elementType != COMBAT_NONE && subType)
+	if(it.abilities.elementType != COMBAT_NONE && it.decayTo != 0)
 	{
-		s << " It is temporarily enchanted with " << getCombatName(it.abilities.elementType) << " (";
+		s << std::endl << "It is temporarily enchanted with " << getCombatName(it.abilities.elementType) << " (";
 		s << std::max(0, int32_t((item ? item->getAttack() : it.attack) - it.abilities.elementDamage));
 		if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
 			s << " " << std::showpos << int32_t(item ? item->getExtraAttack() : it.extraAttack) << std::noshowpos;

@@ -5098,11 +5098,9 @@ int32_t LuaScriptInterface::luaGetPlayerSlotItem(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerWeapon(lua_State* L)
 {
 	//getPlayerWeapon(cid, <optional> ignoreAmmo)
-	uint32_t parameters = lua_gettop(L);
-
 	bool ignoreAmmo = false;
-	if(parameters > 2)
-		ignoreAmmo = (popNumber(L) == LUA_TRUE);
+	if(lua_gettop(L) >= 2)
+		ignoreAmmo = popNumber(L) == LUA_TRUE;
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
