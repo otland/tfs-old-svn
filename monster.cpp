@@ -603,7 +603,7 @@ void Monster::onThink(uint32_t interval)
 			}
 
 			if(!isMasterInRange && getMaster() && (g_config.getBool(ConfigManager::TELEPORT_SUMMONS) ||
-				(getMaster()->getPlayer() && g_config.getBool(ConfigManager::TELEPORT_PLAYER_SUMMONS))
+				(getMaster()->getPlayer() && g_config.getBool(ConfigManager::TELEPORT_PLAYER_SUMMONS))))
 			{
 				const Position& tmp = getPosition();
 				if(g_game.internalTeleport(this, g_game.getClosestFreeTile(this, getMaster()->getPosition(), true), false) == RET_NOERROR)
