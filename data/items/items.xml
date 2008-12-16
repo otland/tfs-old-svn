@@ -4535,6 +4535,7 @@
 		<attribute key="weight" value="20"/>
 	</item>
 	<item id="2323" article="a" name="hat of the mad">
+		<attribute key="description" value="You have a vague feeling that it looks somewhat silly."/>
 		<attribute key="weight" value="700"/>
 		<attribute key="armor" value="3"/>
 		<attribute key="magiclevelpoints" value="1"/>
@@ -10319,7 +10320,7 @@
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3936" article="a" name="furniture package">
-		<attribute key="description" value="It is a kit for a bamboo drawer."/>
+		<attribute key="description" value="It is a kit for a time table."/>
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="3937" article="a" name="furniture package">
