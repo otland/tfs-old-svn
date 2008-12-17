@@ -585,6 +585,7 @@ void Monster::onThink(uint32_t interval)
 			{
 				g_game.addMagicEffect(tmp, NM_ME_POFF);
 				g_game.addMagicEffect(getPosition(), NM_ME_TELEPORT);
+				teleportToMaster = false;
 			}
 		}
 
