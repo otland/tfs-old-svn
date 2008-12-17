@@ -320,7 +320,7 @@ ReturnValue Combat::canTargetCreature(const Player* player, const Creature* targ
 	return Combat::canDoCombat(player, target);
 }
 
-bool Combat::isProtected(Player* attacker, Player* target)
+bool Combat::isProtected(Player* attacker, Player* target) const
 {
 	if(attacker->hasFlag(PlayerFlag_CannotAttackPlayer) || !target->isAttackable())
 		return true;
