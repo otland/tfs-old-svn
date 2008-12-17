@@ -32,7 +32,7 @@ function Result:getRows(free)
 
 	return c
 end
-Result:numRows = Result:getRows
+Result.numRows = Result.getRows
 
 function Result:getDataInt(s)
 	if(self:getID() == -1) then
