@@ -238,15 +238,16 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 	if(attacker)
 		return RET_NOERROR;
 
-	if(Player* targetPlayer = target->getPlayer())
+	if(Player* targetPlayer = const_cast<Creature*>(target)->getPlayer())
 	{
 		if(!targetPlayer->isAttackable())
 			return RET_YOUMAYNOTATTACKTHISPLAYER;
 
 		Player* attackerPlayer = NULL;
-		if((attackerPlayer = attacker->getPlayer()) || (attacker->getMaster() && (attackerPlayer = attacker->getMaster()->getPlayer())))
+		if((attackerPlayer = const_cast<Creature*>(attacker)->getPlayer()) || (attacker->getMaster()
+			&& (attackerPlayer = const_cast<Creature*>(attacker)->getMaster()->getPlayer())))
 		{
-			if(isProtected(const_cast<Player*>(attackerPlayer), const_cast<Player*>(targetPlayer)))
+			if(isProtected(attackerPlayer, targetPlayer))
 				return RET_YOUMAYNOTATTACKTHISPLAYER;
 
 			if(target->getTile()->hasFlag(TILESTATE_NOPVPZONE) || (attacker->getTile()->hasFlag(TILESTATE_NOPVPZONE) &&
@@ -260,7 +261,8 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 			return RET_YOUMAYNOTATTACKTHISCREATURE;
 
 		Player* attackerPlayer = NULL;
-		if((attackerPlayer = attacker->getPlayer()) || (attacker->getMaster() && (attackerPlayer = attacker->getMaster()->getPlayer())))
+		if((attackerPlayer = const_cast<Creature*>(attacker)->getPlayer()) || (attacker->getMaster()
+			&& (attackerPlayer = const_cast<Creature*>(attacker)->getMaster()->getPlayer())))
 		{
 			if(attackerPlayer->hasFlag(PlayerFlag_CannotAttackMonster))
 				return RET_YOUMAYNOTATTACKTHISCREATURE;
