@@ -204,8 +204,8 @@ class Creature : public AutoID, virtual public Thing
 				return ZONE_NOPVP;
 			else if(tile->hasFlag(TILESTATE_PVPZONE))
 				return ZONE_PVP;
-			else
-				return ZONE_NORMAL;
+
+			return ZONE_NORMAL;
 		}
 
 		//walk functions

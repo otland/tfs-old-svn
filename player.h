@@ -654,7 +654,6 @@ class Player : public Creature, public Cylinder
 		void receivePing() {if(npings > 0) npings--;}
 
 		virtual void onThink(uint32_t interval);
-		virtual void onAttacking(uint32_t interval);
 		void sendCriticalHit() const;
 
 		virtual void postAddNotification(Thing* thing, int32_t index, cylinderlink_t link = LINK_OWNER);

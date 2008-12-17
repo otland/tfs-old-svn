@@ -359,7 +359,7 @@ class NpcResponse
 			}
 		}
 
-		~NpcResponse()
+		virtual ~NpcResponse()
 		{
 			for(ResponseList::iterator it = subResponseList.begin(); it != subResponseList.end(); ++it)
 				delete *it;
@@ -379,15 +379,15 @@ class NpcResponse
 		const std::string& getKnowSpell() const {return prop.knowSpell;}
 		const std::string& getText() const {return prop.output;}
 		int32_t getAmount() const {return prop.amount;}
-		void setAmount(int32_t _amount) { prop.amount = _amount;}
+		void setAmount(int32_t _amount) {prop.amount = _amount;}
 		bool publicize() const {return prop.publicize;}
 
 		std::string formatResponseString(Creature* creature) const;
 		void addAction(ResponseAction action) {prop.actionList.push_back(action);}
-		const std::list<std::string>& getInputList() const { return prop.inputList;}
+		const std::list<std::string>& getInputList() const {return prop.inputList;}
 
-		void setResponseList(ResponseList _list) { subResponseList.insert(subResponseList.end(),_list.begin(),_list.end());}
-		const ResponseList& getResponseList() const { return subResponseList;}
+		void setResponseList(ResponseList _list) {subResponseList.insert(subResponseList.end(),_list.begin(),_list.end());}
+		const ResponseList& getResponseList() const {return subResponseList;}
 
 		ActionList::const_iterator getFirstAction() const {return prop.actionList.begin();}
 		ActionList::const_iterator getEndAction() const {return prop.actionList.end();}
@@ -494,7 +494,7 @@ class Npc : public Creature
 
 		bool isImmune(CombatType_t type) const {return true;}
 		bool isImmune(ConditionType_t type) const {return true;}
-		virtual bool isAttackable() const { return attackable; }
+		virtual bool isAttackable() const {return attackable;}
 		virtual bool getNextStep(Direction& dir);
 
 		bool canWalkTo(const Position& fromPos, Direction dir);
