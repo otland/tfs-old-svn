@@ -181,6 +181,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confNumber[EXTRA_PARTY_PERCENT] = getGlobalNumber(L, "extraPartyExpPercent", 5);
 	m_confNumber[EXTRA_PARTY_LIMIT] = getGlobalNumber(L, "extraPartyExpLimit", 20);
 	m_confBool[DISABLE_OUTFITS_PRIVILEGED] = getGlobalBool(L, "disableOutfitsForPrivilegedPlayers", "no");
+	m_confBool[OPTIMIZE_DB_AT_STARTUP] = getGlobalBool(L, "optimizeDatabaseAtStartup", "yes");
 	m_isLoaded = true;
 
 	lua_close(L);

@@ -122,6 +122,7 @@
 	emoteSpells = "no"
 	disableOutfitsForPrivilegedPlayers = "no"
 	expireReportsAfterReads = 1
+	optimizeDatabaseAtStartup = "yes"
 
 	-- Premium account
 	freePremium = "no"
