@@ -320,6 +320,11 @@ ReturnValue Combat::canTargetCreature(const Player* player, const Creature* targ
 	return Combat::canDoCombat(player, target);
 }
 
+bool Combat::isInPvpZone(Creature* attacker, Creature* target)
+{
+	return attacker->getZone() == ZONE_PVP && target->getZone() == ZONE_PVP;
+}
+
 bool Combat::isProtected(Player* attacker, Player* target)
 {
 	if(attacker->hasFlag(PlayerFlag_CannotAttackPlayer) || !target->isAttackable())

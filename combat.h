@@ -262,7 +262,7 @@ class Combat
 		static void getCombatArea(const Position& centerPos, const Position& targetPos,
 			const AreaCombat* area, std::list<Tile*>& list);
 
-		static bool isInPvpZone(Creature* attacker, Creature* target) {return attacker->getZone() == ZONE_PVP && target->getZone() == ZONE_PVP;}
+		static bool isInPvpZone(Creature* attacker, Creature* target);
 		static bool isProtected(Player* attacker, Player* target);
 		static CombatType_t ConditionToDamageType(ConditionType_t type);
 		static ConditionType_t DamageToConditionType(CombatType_t type);
