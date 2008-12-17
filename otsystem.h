@@ -40,6 +40,13 @@ typedef std::vector<std::pair<uint32_t, uint32_t> > IPList;
 #include <process.h>
 #include <windows.h>
 
+inline int64_t OTSYS_TIME()
+{
+	_timeb t;
+	_ftime(&t);
+	return ((int64_t)t.millitm) + ((int64_t)t.time) * 1000;
+}
+
 #ifndef __USE_BOOST_THREAD__
 #define OTSYS_CREATE_THREAD(a, b)	_beginthread(a, 0, b)
 #define OTSYS_THREAD_LOCKVAR		CRITICAL_SECTION
@@ -88,13 +95,6 @@ inline int OTSYS_THREAD_WAITSIGNAL_TIMED(OTSYS_THREAD_SIGNALVAR& signal, OTSYS_T
 	return ret;
 }
 #endif
-
-inline int64_t OTSYS_TIME()
-{
-	_timeb t;
-	_ftime(&t);
-	return ((int64_t)t.millitm) + ((int64_t)t.time) * 1000;
-}
 #else
 #include <pthread.h>
 #include <semaphore.h>
@@ -162,8 +162,8 @@ inline int OTSYS_THREAD_WAITSIGNAL_TIMED(OTSYS_THREAD_SIGNALVAR& signal, OTSYS_T
 	tv.tv_nsec = (int64_t)(cycle % 1000) * 1000000;
 	return pthread_cond_timedwait(&signal, &lock, &tv);
 }
-#endif
 
+#endif
 inline int64_t OTSYS_TIME()
 {
 	timeb t;
