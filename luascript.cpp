@@ -1749,20 +1749,20 @@ void LuaScriptInterface::registerFunctions()
 	//isItemRune(itemid)
 	lua_register(m_luaState, "isItemRune", LuaScriptInterface::luaIsItemRune);
 
-	//isItemDoor(itemid)
-	lua_register(m_luaState, "isItemDoor", LuaScriptInterface::luaIsItemDoor);
-
-	//isItemLevelDoor(itemid)
-	lua_register(m_luaState, "isItemLevelDoor", LuaScriptInterface::luaIsItemLevelDoor);
+	//isItemFluidContainer(itemid)
+	lua_register(m_luaState, "isItemFluidContainer", LuaScriptInterface::luaIsItemFluidContainer);
 
 	//isItemContainer(itemid)
 	lua_register(m_luaState, "isItemContainer", LuaScriptInterface::luaIsItemContainer);
 
-	//isItemFluidContainer(itemid)
-	lua_register(m_luaState, "isItemFluidContainer", LuaScriptInterface::luaIsItemFluidContainer);
-
 	//isItemMovable(itemid)
 	lua_register(m_luaState, "isItemMovable", LuaScriptInterface::luaIsItemMovable);
+
+	//isItemDoor(itemid)
+	lua_register(m_luaState, "isItemDoor", LuaScriptInterface::luaIsItemDoor);
+
+	//getItemLevelDoor(itemid)
+	lua_register(m_luaState, "getItemLevelDoor", LuaScriptInterface::luaGetItemLevelDoor);
 
 	//getItemDescriptionsById(itemid)
 	lua_register(m_luaState, "getItemDescriptionsById", LuaScriptInterface::luaGetItemDescriptionsById);
@@ -8109,15 +8109,10 @@ int32_t LuaScriptInterface::luaIsItemDoor(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaIsItemLevelDoor(lua_State* L)
+int32_t LuaScriptInterface::luaGetItemLevelDoor(lua_State* L)
 {
-	//isItemLevelDoor(itemid)
-	uint32_t itemid = popNumber(L);
-	const ItemType& it = Item::items[itemid];
-	if(it.isLevelDoor())
-		lua_pushnumber(L, LUA_TRUE);
-	else
-		lua_pushnumber(L, LUA_FALSE);
+	//getItemLevelDoor(itemid)
+	lua_pushnumber(L, Item::items[popNumber(L)].levelDoor);
 	return 1;
 }
 

@@ -127,6 +127,7 @@ ItemType::ItemType()
 	transformToOnUse[PLAYERSEX_MALE] = 0;
 	transformToOnUse[PLAYERSEX_FEMALE] = 0;
 	transformToFree = 0;
+	levelDoor = 0;
 }
 
 ItemType::~ItemType()
@@ -1203,7 +1204,12 @@ bool Items::loadFromXml()
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.worth = intValue;
-							}							
+							}
+							else if(tmpStrValue == "leveldoor")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+									it.levelDoor = intValue;
+							}
 							else
 								std::cout << "[Warning - Items::loadFromXml] Unknown key value " << strValue << std::endl;
 						}

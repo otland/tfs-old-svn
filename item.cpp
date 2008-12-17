@@ -1092,8 +1092,8 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		else
 			s << "Nothing is written on it";
 	}
-	else if(it.isLevelDoor() && item && item->getActionId() >= 1000)
-		s << " for level " << item->getActionId() - 1000;
+	else if(it.levelDoor != 0 && item && item->getActionId() >= it.levelDoor)
+		s << " for level " << item->getActionId() - it.levelDoor;
 
 	if(it.showCharges)
 		s << " that has " << subType << " charge" << (subType != 1 ? "s" : "") << " left";

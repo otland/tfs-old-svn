@@ -372,24 +372,29 @@ class Item : virtual public Thing, public ItemAttributes
 		void getLight(LightInfo& lightInfo);
 
 		bool hasProperty(enum ITEMPROPERTY prop) const;
+		bool hasCharges() const {return items[id].charges != 0;}
+		bool isGroundTile() const {return items[id].isGroundTile();}
+		bool isContainer() const {return items[id].isContainer();}
+		bool isSplash() const {return items[id].isSplash();}
+		bool isFluidContainer() const {return (items[id].isFluidContainer());}
+		bool isDoor() const {return items[id].isDoor();}
+		bool isMagicField() const {return items[id].isMagicField();}
+		bool isTeleport() const {return items[id].isTeleport();}
+		bool isKey() const {return items[id].isKey();}
+		bool isDepot() const {return items[id].isDepot();}
+		bool isMailbox() const {return items[id].isMailbox();}
+		bool isTrashHolder() const {return items[id].isTrashHolder();}
+		bool isBed() const {return items[id].isBed();}
+		bool isRune() const {return items[id].isRune();}
 		bool isBlocking() const {return items[id].blockSolid;}
 		bool isStackable() const {return items[id].stackable;}
-		bool isRune() const {return items[id].isRune();}
-		bool isFluidContainer() const {return (items[id].isFluidContainer());}
 		bool isAlwaysOnTop() const {return items[id].alwaysOnTop;}
-		bool isGroundTile() const {return items[id].isGroundTile();}
-		bool isSplash() const {return items[id].isSplash();}
-		bool isMagicField() const {return items[id].isMagicField();}
 		bool isNotMoveable() const {return !items[id].moveable;}
 		bool isPickupable() const {return items[id].pickupable;}
-		bool isWeapon() const {return (items[id].weaponType != WEAPON_NONE);}
 		bool isUseable() const {return items[id].useable;}
 		bool isHangable() const {return items[id].isHangable;}
 		bool isRoteable() const {const ItemType& it = items[id]; return it.rotable && it.rotateTo;}
-		bool isDoor() const {return items[id].isDoor();}
-		bool isBed() const {return items[id].isBed();}
-		bool isLevelDoor() const {return items[id].isLevelDoor();}
-		bool hasCharges() const {return items[id].charges != 0;}
+		bool isWeapon() const {return (items[id].weaponType != WEAPON_NONE);}
 
 		bool floorChangeDown() const {return items[id].floorChangeDown;}
 		bool floorChangeNorth() const {return items[id].floorChangeNorth;}

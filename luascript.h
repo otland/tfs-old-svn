@@ -668,11 +668,11 @@ class LuaScriptInterface
 
 		static int32_t luaIsItemStackable(lua_State* L);
 		static int32_t luaIsItemRune(lua_State* L);
-		static int32_t luaIsItemDoor(lua_State* L);
-		static int32_t luaIsItemLevelDoor(lua_State* L);
-		static int32_t luaIsItemContainer(lua_State* L);
 		static int32_t luaIsItemFluidContainer(lua_State* L);
+		static int32_t luaIsItemContainer(lua_State* L);
 		static int32_t luaIsItemMovable(lua_State* L);
+		static int32_t luaIsItemDoor(lua_State* L);
+		static int32_t luaGetItemLevelDoor(lua_State* L);
 		static int32_t luaGetItemDescriptionsById(lua_State* L);
 		static int32_t luaGetItemNameById(lua_State* L);
 		static int32_t luaGetItemPluralNameById(lua_State* L);

@@ -19,7 +19,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 		return TRUE
 	elseif isInArray(levelDoors, item.itemid) == TRUE then
-		if item.actionid > 0 and getPlayerLevel(cid) >= item.actionid - 1000 then
+		if getItemLevelDoor(itemid) > 0 and item.actionid > 0 and getPlayerLevel(cid) >= (item.actionid - getItemLevelDoor(itemid)) then
 			doTransformItem(item.uid, item.itemid + 1)
 			doTeleportThing(cid, toPosition, TRUE)
 		else
