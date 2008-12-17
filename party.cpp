@@ -343,7 +343,7 @@ bool Party::setSharedExperience(Player* player, bool _sharedExpActive)
 void Party::shareExperience(uint64_t experience)
 {
 	uint64_t shareExperience = (uint64_t)std::ceil(((double)experience / (memberList.size() + 1)));
-	if(experience > g_config.getNumber(ConfigManager::EXTRA_PARTY_LIMIT))
+	if(experience > (uint32_t)g_config.getNumber(ConfigManager::EXTRA_PARTY_LIMIT))
 		shareExperience += (uint64_t)std::ceil((double)experience * (double)g_config.getNumber(ConfigManager::EXTRA_PARTY_PERCENT) / 100);
 
 	getLeader()->onGainSharedExperience(shareExperience);
