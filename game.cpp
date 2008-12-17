@@ -4660,10 +4660,11 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 			if(Tile* tile = map->getTile(Position((pos.x + it->first), (pos.y + it->second), pos.z)))
 			{
 				ReturnValue ret = tile->__queryAdd(0, player, 1, FLAG_IGNOREBLOCKITEM);
-				if(((ret != RET_NOTENOUGHROOM && ret != RET_NOTPOSSIBLE) || (ret == RET_PLAYERISNOTINVITED && (ignoreHouse ||
-					player->hasFlag(PlayerFlag_CanEditHouses)))) && (!tile->hasProperty(IMMOVABLEBLOCKSOLID)
-					|| player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere)))
-					return tile->getPosition();
+				if(ret == RET_NOTENOUGHROOM || (ret == RET_NOTPOSSIBLE && !player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere))
+					|| (ret == RET_PLAYERISNOTINVITED && !ignoreHouse && !player->hasFlag(PlayerFlag_CanEditHouses)))
+					continue;
+
+				return tile->getPosition();
 			}
 		}
 	}
@@ -4674,7 +4675,7 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 			Tile* tile = NULL;
 			if((tile = map->getTile(Position((pos.x + it->first), (pos.y + it->second), pos.z)))
 				&& tile->__queryAdd(0, creature, 1, FLAG_IGNOREBLOCKITEM) == RET_NOERROR)
-					return tile->getPosition();
+				return tile->getPosition();
 		}
 	}
 
