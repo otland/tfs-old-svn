@@ -164,7 +164,6 @@ void Monster::onCreatureMove(const Creature* creature, const Tile* newTile, cons
 	const Tile* oldTile, const Position& oldPos, uint32_t oldStackPos, bool teleport)
 {
 	Creature::onCreatureMove(creature, newTile, newPos, oldTile, oldPos, oldStackPos, teleport);
-
 	if(creature == this)
 	{
 		if(isSummon())
@@ -183,9 +182,7 @@ void Monster::onCreatureMove(const Creature* creature, const Tile* newTile, cons
 	}
 	else
 	{
-		bool canSeeNewPos = canSee(newPos);
-		bool canSeeOldPos = canSee(oldPos);
-
+		bool canSeeNewPos = canSee(newPos), canSeeOldPos = canSee(oldPos);
 		if(canSeeNewPos && !canSeeOldPos)
 			onCreatureEnter(const_cast<Creature*>(creature));
 		else if(!canSeeNewPos && canSeeOldPos)
@@ -337,8 +334,7 @@ bool Monster::isOpponent(const Creature* creature)
 void Monster::onCreatureLeave(Creature* creature)
 {
 	//std::cout << "onCreatureLeave - " << creature->getName() << std::endl;
-
-	if(getMaster() == creature)
+	if(creature == getMaster())
 	{
 		//Turn the monster off until its master comes back
 		isMasterInRange = false;
@@ -477,9 +473,7 @@ bool Monster::isTarget(Creature* creature)
 {
 	if(creature->isRemoved() || !creature->isAttackable() ||
 		creature->getZone() == ZONE_PROTECTION || !canSeeCreature(creature))
-	{
 		return false;
-	}
 
 	if(creature->getPosition().z != getPosition().z)
 		return false;
@@ -514,6 +508,7 @@ bool Monster::selectTarget(Creature* creature)
 				boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
 		}
 	}
+
 	return setFollowCreature(creature, true);
 }
 
@@ -575,8 +570,24 @@ void Monster::onThink(uint32_t interval)
 	{
 		g_game.removeCreature(this, true);
 		deactivate(true);
+		return;
 	}
-	else if(!deactivate())
+
+	if(isSummon() && !isMasterInRange)
+	{
+		if(getMaster() && (g_config.getBool(ConfigManager::TELEPORT_SUMMONS) ||
+			(getMaster()->getPlayer() && g_config.getBool(ConfigManager::TELEPORT_PLAYER_SUMMONS))))
+		{
+			const Position& tmp = getPosition();
+			if(g_game.internalTeleport(this, g_game.getClosestFreeTile(this, getMaster()->getPosition(), true), false) == RET_NOERROR)
+			{
+				g_game.addMagicEffect(tmp, NM_ME_POFF);
+				g_game.addMagicEffect(getPosition(), NM_ME_TELEPORT);
+			}
+		}
+	}
+
+	if(!deactivate())
 	{
 		addEventWalk();
 		if(isSummon())
@@ -600,17 +611,6 @@ void Monster::onThink(uint32_t interval)
 			{
 				//This happens just after a master orders an attack, so lets follow it aswell.
 				setFollowCreature(attackedCreature);
-			}
-
-			if(!isMasterInRange && getMaster() && (g_config.getBool(ConfigManager::TELEPORT_SUMMONS) ||
-				(getMaster()->getPlayer() && g_config.getBool(ConfigManager::TELEPORT_PLAYER_SUMMONS))))
-			{
-				const Position& tmp = getPosition();
-				if(g_game.internalTeleport(this, g_game.getClosestFreeTile(this, getMaster()->getPosition(), true), false) == RET_NOERROR)
-				{
-					g_game.addMagicEffect(tmp, NM_ME_POFF);
-					g_game.addMagicEffect(getPosition(), NM_ME_ENERGY_AREA);
-				}
 			}
 		}
 		else if(!targetList.empty())
@@ -662,7 +662,6 @@ void Monster::doAttacking(uint32_t interval)
 				it->spell->castSpell(this, attackedCreature);
 				if(it->isMelee)
 					extraMeleeAttack = false;
-
 #ifdef __DEBUG__
 				static uint64_t prevTicks = OTSYS_TIME();
 				std::cout << "doAttacking ticks: " << OTSYS_TIME() - prevTicks << std::endl;
@@ -673,11 +672,8 @@ void Monster::doAttacking(uint32_t interval)
 
 		if(inRange)
 			outOfRange = false;
-		else if(it->isMelee)
-		{
-			//melee swing out of reach
+		else if(it->isMelee) //melee swing out of reach
 			extraMeleeAttack = true;
-		}
 	}
 
 	if(updateLook)
@@ -689,17 +685,18 @@ void Monster::doAttacking(uint32_t interval)
 
 bool Monster::canUseAttack(const Position& pos, const Creature* target) const
 {
-	if(isHostile())
+	if(!isHostile())
+		return true;
+
+
+	const Position& targetPos = target->getPosition();
+	for(SpellList::iterator it = mType->spellAttackList.begin(); it != mType->spellAttackList.end(); ++it)
 	{
-		const Position& targetPos = target->getPosition();
-		for(SpellList::iterator it = mType->spellAttackList.begin(); it != mType->spellAttackList.end(); ++it)
-		{
-			if((*it).range != 0 && std::max(std::abs(pos.x - targetPos.x), std::abs(pos.y - targetPos.y)) <= (int32_t)(*it).range)
-				return g_game.isSightClear(pos, targetPos, true);
-		}
-		return false;
+		if((*it).range != 0 && std::max(std::abs(pos.x - targetPos.x), std::abs(pos.y - targetPos.y)) <= (int32_t)(*it).range)
+			return g_game.isSightClear(pos, targetPos, true);
 	}
-	return true;
+
+	return false;
 }
 
 bool Monster::canUseSpell(const Position& pos, const Position& targetPos,
@@ -726,6 +723,7 @@ bool Monster::canUseSpell(const Position& pos, const Position& targetPos,
 		inRange = false;
 		return false;
 	}
+
 	return true;
 }
 
@@ -902,9 +900,7 @@ bool Monster::pushItem(Item* item, int32_t radius)
 
 void Monster::pushItems(Tile* tile)
 {
-	uint32_t moveCount = 0;
-	uint32_t removeCount = 0;
-
+	uint32_t moveCount = 0, removeCount = 0;
 	//We can not use iterators here since we can push the item to another tile
 	//which will invalidate the iterator.
 	//start from the end to minimize the amount of traffic
@@ -1328,19 +1324,15 @@ bool Monster::challengeCreature(Creature* creature)
 {
 	if(isSummon())
 		return false;
-	else
-	{
-		bool result = selectTarget(creature);
-		if(result)
-		{
-			targetChangeCooldown = 8000;
-			targetChangeTicks = 0;
-		}
 
-		return result;
+	bool result = selectTarget(creature);
+	if(result)
+	{
+		targetChangeCooldown = 8000;
+		targetChangeTicks = 0;
 	}
 
-	return false;
+	return result;
 }
 
 bool Monster::convinceCreature(Creature* creature)
@@ -1372,8 +1364,8 @@ bool Monster::convinceCreature(Creature* creature)
 				(*cit)->setMaster(NULL);
 				(*cit)->releaseThing2();
 			}
-			summons.clear();
 
+			summons.clear();
 			isMasterInRange = true;
 			updateTargetList();
 			activate();
