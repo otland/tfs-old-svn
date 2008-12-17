@@ -16024,8 +16024,12 @@
 		<attribute key="weaponType" value="sword"/>
 		<attribute key="slotType" value="two-handed"/>
 	</item>
-	<item id="7403" name="">
-		<attribute key="weight" value="0"/>
+	<item id="7403" name="berserker">
+		<attribute key="weight" value="13000"/>
+		<attribute key="defense" value="21"/>
+		<attribute key="attack" value="48"/>
+		<attribute key="weaponType" value="sword"/>
+		<attribute key="slotType" value="two-handed"/>
 	</item>
 	<item id="7404" article="an" name="assassin dagger">
 		<attribute key="weight" value="1700"/>
@@ -16113,8 +16117,12 @@
 		<attribute key="weaponType" value="sword"/>
 		<attribute key="extradef" value="-3"/>
 	</item>
-	<item id="7417" name="">
-		<attribute key="weight" value="0"/>
+	<item id="7417" name="runed sword">
+		<attribute key="weight" value="4600"/>
+		<attribute key="defense" value="32"/>
+		<attribute key="attack" value="45"/>
+		<attribute key="weaponType" value="sword"/>
+		<attribute key="extradef" value="2"/>
 	</item>
 	<item id="7418" article="a" name="nightmare blade">
 		<attribute key="weight" value="5900"/>
@@ -16140,8 +16148,12 @@
 	<item id="7421" name="">
 		<attribute key="weight" value="0"/>
 	</item>
-	<item id="7422" name="">
-		<attribute key="weight" value="0"/>
+	<item id="7422" name="jade hammer">
+		<attribute key="weight" value="3200"/>
+		<attribute key="defense" value="20"/>
+		<attribute key="attack" value="46"/>
+		<attribute key="weaponType" value="club"/>
+		<attribute key="extradef" value="1"/>		
 	</item>
 	<item id="7423" name="">
 		<attribute key="weight" value="0"/>
@@ -16175,8 +16187,12 @@
 		<attribute key="slotType" value="two-handed"/>
 		<attribute key="description" value="Only those who have descended to the deepest depths may wield this hammer without it cursing them."/>
 	</item>
-	<item id="7428" name="">
-		<attribute key="weight" value="0"/>
+	<item id="7428" name="bonebreaker">
+		<attribute key="weight" value="12000"/>
+		<attribute key="defense" value="15"/>
+		<attribute key="attack" value="46"/>
+		<attribute key="weaponType" value="club"/>
+		<attribute key="slotType" value="two-handed"/>		
 	</item>
 	<item id="7429" article="a" name="blessed sceptre">
 		<attribute key="weight" value="3900"/>
@@ -16219,8 +16235,12 @@
 	<item id="7435" name="">
 		<attribute key="weight" value="0"/>
 	</item>
-	<item id="7436" name="">
-		<attribute key="weight" value="0"/>
+	<item id="7436" name="angelic axe">
+		<attribute key="weight" value="5600"/>
+		<attribute key="defense" value="24"/>
+		<attribute key="attack" value="44"/>
+		<attribute key="weaponType" value="axe"/>
+		<attribute key="slotType" value="two-handed"/>	
 	</item>
 	<item id="7437" article="a" name="sapphire hammer">
 		<attribute key="weight" value="2100"/>
@@ -16294,11 +16314,19 @@
 		<attribute key="weaponType" value="club"/>
 		<attribute key="slotType" value="two-handed"/>
 	</item>
-	<item id="7453" name="">
-		<attribute key="weight" value="0"/>
+	<item id="7453" name="executioner">
+		<attribute key="weight" value="9900"/>
+		<attribute key="defense" value="20"/>
+		<attribute key="attack" value="51"/>
+		<attribute key="weaponType" value="axe"/>
+		<attribute key="slotType" value="two-handed"/>
 	</item>
-	<item id="7454" name="">
-		<attribute key="weight" value="0"/>
+	<item id="7454" name="glorious axe">
+		<attribute key="weight" value="9500"/>
+		<attribute key="defense" value="23"/>
+		<attribute key="attack" value="40"/>
+		<attribute key="weaponType" value="axe"/>
+		<attribute key="slotType" value="two-handed"/>
 	</item>
 	<item id="7455" name="">
 		<attribute key="weight" value="0"/>
@@ -19877,7 +19905,13 @@
 		<attribute key="weaponType" value="club"/>
 		<attribute key="extradef" value="2"/>
 	</item>
-	<item id="8929"/>
+	<item id="8929" article="the" name="stomper">
+		<attribute key="weight" value="9000"/> <!-- Not Correct -->
+		<attribute key="defense" value="20"/>
+		<attribute key="attack" value="51"/>
+		<attribute key="weaponType" value="club"/>
+		<attribute key="extradef" value="3"/>
+	</item>
 	<item id="8930" article="an" name="emerald sword">
 		<attribute key="weight" value="4200"/>
 		<attribute key="defense" value="33"/>
