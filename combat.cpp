@@ -238,12 +238,12 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 	if(attacker)
 		return RET_NOERROR;
 
-	if(Player* targetPlayer = target->getPlayer())
+	if(const Player* targetPlayer = target->getPlayer())
 	{
 		if(!targetPlayer->isAttackable())
 			return RET_YOUMAYNOTATTACKTHISPLAYER;
 
-		Player* attackerPlayer = NULL;
+		const Player* attackerPlayer = NULL;
 		if((attackerPlayer = attacker->getPlayer()) || (attacker->getMaster()
 			&& (attackerPlayer = attacker->getMaster()->getPlayer())))
 		{
@@ -260,7 +260,7 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 		if(!target->isAttackable())
 			return RET_YOUMAYNOTATTACKTHISCREATURE;
 
-		Player* attackerPlayer = NULL;
+		const Player* attackerPlayer = NULL;
 		if((attackerPlayer = attacker->getPlayer()) || (attacker->getMaster()
 			&& (attackerPlayer = attacker->getMaster()->getPlayer())))
 		{
