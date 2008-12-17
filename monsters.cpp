@@ -975,10 +975,10 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 			else if(xmlStrcmp(p->name, (const xmlChar*)"strategy") == 0)
 			{
 				if(readXMLInteger(p, "attack", intValue)){}
-					mType->attackStrength = intValue;
+					//mType->attackStrength = intValue;
 
 				if(readXMLInteger(p, "defense", intValue)){}
-					mType->defenseStrength = intValue;
+					//mType->defenseStrength = intValue;
 			}
 			else if(xmlStrcmp(p->name, (const xmlChar*)"look") == 0)
 			{
