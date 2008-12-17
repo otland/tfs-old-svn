@@ -3,7 +3,7 @@ local function checkStackpos(item, position)
 	local thing = getThingfromPos(position)
 	position.stackpos = STACKPOS_TOP_FIELD
 	local field = getThingfromPos(position)
-	if item.uid ~= thing.uid and thing.itemid >= 100 or field.itemid ~= 0 then
+	if(item.uid ~= thing.uid and thing.itemid >= 100 or field.itemid ~= 0) then
 		return FALSE
 	end
 
@@ -55,12 +55,12 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		local doorPosition = fromPosition
 		doorPosition.stackpos = STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE
 		local doorCreature = getThingfromPos(doorPosition)
-		if doorCreature.itemid ~= 0 then
-			if getTilePzInfo(doorPosition) == TRUE and getTilePzInfo(newPosition) == FALSE and doorCreature.uid ~= cid then
-				doPlayerSendCancel(cid, "Sorry, not possible.")
+		if(doorCreature.itemid ~= 0) then
+			if(getTilePzInfo(doorPosition) == TRUE and getTilePzInfo(newPosition) == FALSE and doorCreature.uid ~= cid) then
+				doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 			else
 				doTeleportThing(doorCreature.uid, newPosition, TRUE)
-				if isInArray(closingDoors, item.itemid) ~= TRUE then
+				if(isInArray(closingDoors, item.itemid) ~= TRUE) then
 					doTransformItem(item.uid, item.itemid - 1)
 				end
 			end
@@ -78,12 +78,12 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		local doorPosition = fromPosition
 		doorPosition.stackpos = STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE
 		local doorCreature = getThingfromPos(doorPosition)
-		if doorCreature.itemid ~= 0 then
-			if getTilePzInfo(doorPosition) == TRUE and getTilePzInfo(newPosition) == FALSE and doorCreature.uid ~= cid then
-				doPlayerSendCancel(cid, "Sorry, not possible.")
+		if(doorCreature.itemid ~= 0) then
+			if(getTilePzInfo(doorPosition) == TRUE and getTilePzInfo(newPosition) == FALSE and doorCreature.uid ~= cid) then
+				doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 			else
 				doTeleportThing(doorCreature.uid, newPosition, TRUE)
-				if isInArray(closingDoors, item.itemid) ~= TRUE then
+				if(isInArray(closingDoors, item.itemid) ~= TRUE) then
 					doTransformItem(item.uid, item.itemid - 1)
 				end
 			end
