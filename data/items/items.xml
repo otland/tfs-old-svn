@@ -25047,6 +25047,11 @@
 	</item>
 	<item id="9072" name="frozen mud">
 	</item>
+	<item id="9573" name="corkscrew stairs">
+	</item>
+	<item id="9690" article="a" name="gear wheel">
+		<attribute key="weight" value="5"/>
+	</item>
 	<item id="9774" article="a" name="brocade backpack">
 		<attribute key="weight" value="1800"/>
 		<attribute key="containerSize" value="20"/>
@@ -25099,6 +25104,10 @@
 	</item>
 	<item id="9934" article="a" name="worn firewalker boots">
 		<attribute key="weight" value="950"/>
+	</item>
+	<item id="9955" article="a" name="vampiric crest">
+		<attribute key="description" value="This crest seems important. You shouldn't lose it."
+		<attribute key="weight" value="500"/>
 	</item>
 	<item id="10016" article="a" name="batwing hat">
 		<attribute key="weight" value="600"/>
