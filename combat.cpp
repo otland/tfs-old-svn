@@ -269,7 +269,7 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 
 			if(target->getMaster() && target->getMaster()->getPlayer())
 			{
-				if(g_game.getWorldType() == WORLD_TYPE_NO_PVP && !Combat::isInPvpZone(attacker, target)
+				if(g_game.getWorldType() == WORLD_TYPE_NO_PVP && !Combat::isInPvpZone(attacker, target))
 					return RET_YOUMAYNOTATTACKTHISCREATURE;
 
 				if(target->getTile()->hasFlag(TILESTATE_NOPVPZONE) || (attacker->getTile()->hasFlag(TILESTATE_NOPVPZONE) &&
@@ -313,7 +313,7 @@ ReturnValue Combat::canTargetCreature(const Player* player, const Creature* targ
 		return RET_YOUMAYNOTATTACKTHISCREATURE;
 	}
 
-	if(target->getPlayer() && player->getSecureMode() == SECUREMODE_ON && !Combat::isInPvpZone(attacker, target)
+	if(target->getPlayer() && player->getSecureMode() == SECUREMODE_ON && !Combat::isInPvpZone(player, target)
 		&& player->getSkullClient(target->getPlayer()) == SKULL_NONE)
 		return RET_TURNSECUREMODETOATTACKUNMARKEDPLAYERS;
 

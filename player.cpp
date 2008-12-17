@@ -3430,7 +3430,7 @@ void Player::onRemovedCreature()
 void Player::onAttackedCreatureDrainHealth(Creature* target, int32_t points)
 {
 	Creature::onAttackedCreatureDrainHealth(target, points);
-	if(target && getParty() && !Combat::isPlayerCombat(target))
+	if(getParty() && target && !target->getPlayer() && (!target->getMaster() || !target->getMaster()->getPlayer()))
 	{
 		Monster* tmpMonster = target->getMonster();
 		if(tmpMonster && tmpMonster->isHostile()) //We have fulfilled a requirement for shared experience
