@@ -63,6 +63,7 @@ Creature()
 {
 	isActivated = false;
 	isMasterInRange = false;
+	teleportToMaster = false;
 	mType = _mtype;
 	spawn = NULL;
 	defaultOutfit = mType->outfit;
@@ -148,7 +149,6 @@ void Monster::onCreatureAppear(const Creature* creature, bool isLogin)
 void Monster::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bool isLogout)
 {
 	Creature::onCreatureDisappear(creature, stackpos, isLogout);
-
 	if(creature == this)
 	{
 		if(spawn)
@@ -334,11 +334,16 @@ bool Monster::isOpponent(const Creature* creature)
 void Monster::onCreatureLeave(Creature* creature)
 {
 	//std::cout << "onCreatureLeave - " << creature->getName() << std::endl;
-	if(creature == getMaster())
+	if(isSummon() && getMaster() == creature)
 	{
-		//Turn the monster off until its master comes back
-		isMasterInRange = false;
-		deactivate();
+		if(!g_config.getBool(ConfigManager::TELEPORT_SUMMONS) && (!getMaster()->getPlayer() || !g_config.getBool(ConfigManager::TELEPORT_PLAYER_SUMMONS)))
+		{
+			//Turn the monster off until its master comes back
+			isMasterInRange = false;
+			deactivate();
+		}
+		else
+			teleportToMaster = true;
 	}
 
 	//update friendList
@@ -570,13 +575,10 @@ void Monster::onThink(uint32_t interval)
 	{
 		g_game.removeCreature(this, true);
 		deactivate(true);
-		return;
 	}
-
-	if(isSummon() && !isMasterInRange)
+	else if(!deactivate())
 	{
-		if(getMaster() && (g_config.getBool(ConfigManager::TELEPORT_SUMMONS) ||
-			(getMaster()->getPlayer() && g_config.getBool(ConfigManager::TELEPORT_PLAYER_SUMMONS))))
+		if(teleportToMaster)
 		{
 			const Position& tmp = getPosition();
 			if(g_game.internalTeleport(this, g_game.getClosestFreeTile(this, getMaster()->getPosition(), true), false) == RET_NOERROR)
@@ -585,10 +587,7 @@ void Monster::onThink(uint32_t interval)
 				g_game.addMagicEffect(getPosition(), NM_ME_TELEPORT);
 			}
 		}
-	}
 
-	if(!deactivate())
-	{
 		addEventWalk();
 		if(isSummon())
 		{
@@ -820,10 +819,8 @@ void Monster::onThinkDefense(uint32_t interval)
 				Monster* summon = Monster::createMonster(it->name);
 				if(summon)
 				{
-					const Position& summonPos = getPosition();
-
 					addSummon(summon);
-					if(!g_game.placeCreature(summon, summonPos))
+					if(!g_game.placeCreature(summon, getPosition()))
 						removeSummon(summon);
 					else
 						g_game.addMagicEffect(getPosition(), NM_ME_MAGIC_ENERGY);

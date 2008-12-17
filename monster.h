@@ -138,6 +138,7 @@ class Monster : public Creature
 
 		Spawn* spawn;
 		bool isMasterInRange;
+		bool teleportToMaster;
 
 		std::string strDescription;
 
