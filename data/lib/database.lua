@@ -3,27 +3,10 @@ if(result == nil) then
 	return
 end
 
-function db.getResult(query)
-	if(type(query) ~= "string") then
-		return nil
-	end
-
-	local resId = db.storeQuery(query)
-	local res = Result:new()
-	res:setID(resId)
-	return res
-end
-
-Result = {
+Result = createClass(nil)
+Result:setAttributes({
 	id = -1
-}
-
-function Result:new(o)
-	local o = o or {}
-	setmetatable(o, self)
-	self.__index = self
-	return o
-end
+})
 
 function Result:getID()
 	return self.id
@@ -33,9 +16,9 @@ function Result:setID(_id)
 	self.id = _id
 end
 
-function Result:numRows(free)
+function Result:getRows(free)
 	if(self:getID() == -1) then
-		error("[Result:numRows]: Result not set!")
+		error("[Result:getRows]: Result not set!")
 	end
 
 	local c = 1
@@ -46,8 +29,10 @@ function Result:numRows(free)
 	if(free) then
 		self:free()
 	end
+
 	return c
 end
+Result:numRows = Result:getRows
 
 function Result:getDataInt(s)
 	if(self:getID() == -1) then
@@ -97,4 +82,14 @@ function Result:free()
 	local ret = result.free(self:getID())
 	self:setID(-1)
 	return ret
+end
+
+function db.getResult(query)
+	if(type(query) ~= 'string') then
+		return nil
+	end
+
+	local res = Result:new()
+	res:setID(db.storeQuery(query))
+	return res
 end
