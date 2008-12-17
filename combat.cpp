@@ -238,16 +238,16 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 	if(attacker)
 		return RET_NOERROR;
 
-	if(Player* targetPlayer = const_cast<Creature*>(target)->getPlayer())
+	if(Player* targetPlayer = target->getPlayer())
 	{
 		if(!targetPlayer->isAttackable())
 			return RET_YOUMAYNOTATTACKTHISPLAYER;
 
 		Player* attackerPlayer = NULL;
-		if((attackerPlayer = const_cast<Creature*>(attacker)->getPlayer()) || (attacker->getMaster()
-			&& (attackerPlayer = const_cast<Creature*>(attacker)->getMaster()->getPlayer())))
+		if((attackerPlayer = attacker->getPlayer()) || (attacker->getMaster()
+			&& (attackerPlayer = attacker->getMaster()->getPlayer())))
 		{
-			if(isProtected(attackerPlayer, targetPlayer))
+			if(isProtected(const_cast<Player*>(attackerPlayer), const_cast<Player*>(targetPlayer)))
 				return RET_YOUMAYNOTATTACKTHISPLAYER;
 
 			if(target->getTile()->hasFlag(TILESTATE_NOPVPZONE) || (attacker->getTile()->hasFlag(TILESTATE_NOPVPZONE) &&
@@ -261,15 +261,15 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 			return RET_YOUMAYNOTATTACKTHISCREATURE;
 
 		Player* attackerPlayer = NULL;
-		if((attackerPlayer = const_cast<Creature*>(attacker)->getPlayer()) || (attacker->getMaster()
-			&& (attackerPlayer = const_cast<Creature*>(attacker)->getMaster()->getPlayer())))
+		if((attackerPlayer = attacker->getPlayer()) || (attacker->getMaster()
+			&& (attackerPlayer = attacker->getMaster()->getPlayer())))
 		{
 			if(attackerPlayer->hasFlag(PlayerFlag_CannotAttackMonster))
 				return RET_YOUMAYNOTATTACKTHISCREATURE;
 
 			if(target->getMaster() && target->getMaster()->getPlayer())
 			{
-				if(g_game.getWorldType() == WORLD_TYPE_NO_PVP && !isInPvpZone(const_cast<Creature*>(attacker), const_cast<Creature*>(target)))
+				if(g_game.getWorldType() == WORLD_TYPE_NO_PVP && !Combat::isInPvpZone(attacker, target)
 					return RET_YOUMAYNOTATTACKTHISCREATURE;
 
 				if(target->getTile()->hasFlag(TILESTATE_NOPVPZONE) || (attacker->getTile()->hasFlag(TILESTATE_NOPVPZONE) &&
@@ -313,14 +313,14 @@ ReturnValue Combat::canTargetCreature(const Player* player, const Creature* targ
 		return RET_YOUMAYNOTATTACKTHISCREATURE;
 	}
 
-	if(target->getPlayer() && player->getSecureMode() == SECUREMODE_ON && !isInPvpZone(const_cast<Player*>(player), const_cast<Creature*>(target))
+	if(target->getPlayer() && player->getSecureMode() == SECUREMODE_ON && !Combat::isInPvpZone(attacker, target)
 		&& player->getSkullClient(target->getPlayer()) == SKULL_NONE)
 		return RET_TURNSECUREMODETOATTACKUNMARKEDPLAYERS;
 
 	return Combat::canDoCombat(player, target);
 }
 
-bool Combat::isInPvpZone(Creature* attacker, Creature* target)
+bool Combat::isInPvpZone(const Creature* attacker, const Creature* target)
 {
 	return attacker->getZone() == ZONE_PVP && target->getZone() == ZONE_PVP;
 }
@@ -330,7 +330,7 @@ bool Combat::isProtected(Player* attacker, Player* target)
 	if(attacker->hasFlag(PlayerFlag_CannotAttackPlayer) || !target->isAttackable())
 		return true;
 
-	if(Combat::isInPvpZone(attacker, target) && g_config.getBool(ConfigManager::PVP_TILE_IGNORE_PROTECTION))
+	if(attacker->getZone() == ZONE_PVP && target->getZone() == ZONE_PVP && g_config.getBool(ConfigManager::PVP_TILE_IGNORE_PROTECTION))
 		return false;
 
 	if(attacker->hasCustomFlag(PlayerCustomFlag_IsProtected) || target->hasCustomFlag(PlayerCustomFlag_IsProtected))

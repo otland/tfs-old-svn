@@ -3433,11 +3433,8 @@ void Player::onAttackedCreatureDrainHealth(Creature* target, int32_t points)
 	if(target && getParty() && !Combat::isPlayerCombat(target))
 	{
 		Monster* tmpMonster = target->getMonster();
-		if(tmpMonster && tmpMonster->isHostile())
-		{
-			//We have fulfilled a requirement for shared experience
+		if(tmpMonster && tmpMonster->isHostile()) //We have fulfilled a requirement for shared experience
 			getParty()->addPlayerDamageMonster(this, points);
-		}
 	}
 }
 
