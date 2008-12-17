@@ -1012,7 +1012,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; i++)
 		{
 			if(it.abilities.skills[i] != 0)
-				s << ", " << getSkillName(i) << std::showpos << (int32_t)it.abilities.skills[i] << std::noshowpos;
+				s << ", " << getSkillName(i) << " " << std::showpos << (int32_t)it.abilities.skills[i] << std::noshowpos;
 		}
 
 		if(it.abilities.stats[STAT_MAGICLEVEL] != 0)
