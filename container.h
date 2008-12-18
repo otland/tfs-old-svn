@@ -21,6 +21,8 @@
 #ifndef __OTSERV_CONTAINER_H__
 #define __OTSERV_CONTAINER_H__
 
+#include <queue>
+
 #include "definitions.h"
 #include "cylinder.h"
 #include "item.h"
@@ -28,6 +30,32 @@
 typedef std::list<Item *> ItemList;
 
 class Depot;
+class Container;
+
+class ContainerIterator
+{
+	public:
+		ContainerIterator();
+		ContainerIterator(const ContainerIterator& rhs);
+		virtual ~ContainerIterator();
+	
+		ContainerIterator& operator=(const ContainerIterator& rhs);
+		bool operator==(const ContainerIterator& rhs);
+		bool operator!=(const ContainerIterator& rhs);
+		ContainerIterator& operator++();
+		ContainerIterator operator++(int32_t);
+		Item* operator*();
+		Item* operator->();
+	
+	protected:
+		ContainerIterator(Container* super);
+	
+		Container* super;
+		std::queue<Container*> over;
+		ItemList::iterator cur;
+
+		friend class Container;
+};
 
 class Container : public Item, public Cylinder
 {
@@ -44,11 +72,15 @@ class Container : public Item, public Cylinder
 		//serialization
 		virtual bool unserialize(xmlNodePtr p);
 		virtual xmlNodePtr serialize();
-
 		bool unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream);
 
 		uint32_t size() const {return (uint32_t)itemlist.size();}
 		uint32_t capacity() const {return maxSize;}
+
+		ContainerIterator begin();
+		ContainerIterator end();
+		ContainerIterator begin() const;
+		ContainerIterator end() const;
 
 		ItemList::const_iterator getItems() const {return itemlist.begin();}
 		ItemList::const_iterator getEnd() const {return itemlist.end();}
@@ -56,7 +88,6 @@ class Container : public Item, public Cylinder
 		void addItem(Item* item);
 		Item* getItem(uint32_t index);
 		bool isHoldingItem(const Item* item) const;
-
 		uint32_t getItemHoldingCount() const;
 		virtual double getWeight() const;
 
@@ -102,9 +133,9 @@ class Container : public Item, public Cylinder
 	protected:
 		uint32_t maxSize;
 		double totalWeight;
-		ItemList itemlist;
 
-		//friend void Item::setParent(Cylinder* cylinder);
+		ItemList itemlist;
+		friend class ContainerIterator;
 };
 
 #endif

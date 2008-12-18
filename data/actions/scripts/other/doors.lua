@@ -11,8 +11,8 @@ local function checkStackpos(item, position)
 end
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if(getItemLevelDoor(itemid) > 0) then
-		if(item.actionid > 0 and getPlayerLevel(cid) >= (item.actionid - getItemLevelDoor(itemid))) then
+	if(getItemLevelDoor(item.itemid) > 0) then
+		if(item.actionid > 0 and getPlayerLevel(cid) >= (item.actionid - getItemLevelDoor(item.itemid))) then
 			doTransformItem(item.uid, item.itemid + 1)
 			doTeleportThing(cid, toPosition, TRUE)
 		else
