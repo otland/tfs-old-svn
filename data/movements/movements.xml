@@ -658,21 +658,8 @@
 	<movevent event="DeEquip" itemid="8918" slot="shield" function="onDeEquipItem"/>
 
 	<!-- Swimming -->
-	<movevent event="StepIn" itemid="4828" script="swimming/north.lua"/>
-	<movevent event="StepIn" itemid="4829" script="swimming/east.lua"/>
-	<movevent event="StepIn" itemid="4830" script="swimming/south.lua"/>
-	<movevent event="StepIn" itemid="4831" script="swimming/west.lua"/>
-
-	<movevent event="StepIn" itemid="7943" script="swimming/north.lua"/>
-	<movevent event="StepIn" itemid="7944" script="swimming/west.lua"/>
-	<movevent event="StepIn" itemid="7945" script="swimming/south.lua"/>
-	<movevent event="StepIn" itemid="7946" script="swimming/east.lua"/>
-	<movevent event="StepIn" itemid="7947" script="swimming/south.lua"/>
-	<movevent event="StepIn" itemid="7948" script="swimming/south.lua"/>
-	<movevent event="StepIn" itemid="7949" script="swimming/north.lua"/>
-	<movevent event="StepIn" itemid="7950" script="swimming/north.lua"/>
-	<movevent event="StepIn" itemid="7951" script="swimming/south.lua"/>
-	<movevent event="StepIn" itemid="7952" script="swimming/south.lua"/>
-	<movevent event="StepIn" itemid="7953" script="swimming/north.lua"/>
-	<movevent event="StepIn" itemid="7954" script="swimming/north.lua"/>
+	<movevent event="StepIn" fromid="4620" toid="4625" script="swimming.lua"/>
+	<movevent event="StepOut" fromid="4620" toid="4625" script="swimming.lua"/>
+	<movevent event="StepIn" itemid="5405" script="drowning.lua"/>
+	<movevent event="StepOut" itemid="5405" script="drowning.lua"/>
 </movements>
