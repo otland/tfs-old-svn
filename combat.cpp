@@ -238,6 +238,7 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 	if(!attacker)
 		return RET_NOERROR;
 
+	bool checkZones = false;
 	if(const Player* targetPlayer = target->getPlayer())
 	{
 		if(!targetPlayer->isAttackable())
@@ -247,12 +248,10 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 		if((attackerPlayer = attacker->getPlayer()) || (attacker->getMaster()
 			&& (attackerPlayer = attacker->getMaster()->getPlayer())))
 		{
-			if(isProtected(const_cast<Player*>(attackerPlayer), const_cast<Player*>(targetPlayer)))
+			checkZones = true;
+			if((g_game.getWorldType() == WORLD_TYPE_NO_PVP && !Combat::isInPvpZone(attacker, target)) ||
+				isProtected(const_cast<Player*>(attackerPlayer), const_cast<Player*>(targetPlayer)))
 				return RET_YOUMAYNOTATTACKTHISPLAYER;
-
-			if(target->getTile()->hasFlag(TILESTATE_NOPVPZONE) || (attacker->getTile()->hasFlag(TILESTATE_NOPVPZONE) &&
-				!target->getTile()->hasFlag(TILESTATE_NOPVPZONE) && !target->getTile()->hasFlag(TILESTATE_PROTECTIONZONE)))
-				return RET_ACTIONNOTPERMITTEDINANOPVPZONE;
 		}
 	}
 	else if(target->getMonster())
@@ -269,14 +268,18 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 
 			if(target->getMaster() && target->getMaster()->getPlayer())
 			{
+				checkZones = true;
 				if(g_game.getWorldType() == WORLD_TYPE_NO_PVP && !Combat::isInPvpZone(attacker, target))
 					return RET_YOUMAYNOTATTACKTHISCREATURE;
-
-				if(target->getTile()->hasFlag(TILESTATE_NOPVPZONE) || (attacker->getTile()->hasFlag(TILESTATE_NOPVPZONE) &&
-					!target->getTile()->hasFlag(TILESTATE_NOPVPZONE) && !target->getTile()->hasFlag(TILESTATE_PROTECTIONZONE)))
-					return RET_ACTIONNOTPERMITTEDINANOPVPZONE;
 			}
 		}
+	}
+
+	if(checkZones)
+	{
+		if(target->getTile()->hasFlag(TILESTATE_NOPVPZONE) || (attacker->getTile()->hasFlag(TILESTATE_NOPVPZONE) &&
+			!target->getTile()->hasFlag(TILESTATE_NOPVPZONE) && !target->getTile()->hasFlag(TILESTATE_PROTECTIONZONE)))
+			return RET_ACTIONNOTPERMITTEDINANOPVPZONE;
 	}
 
 	return RET_NOERROR;
