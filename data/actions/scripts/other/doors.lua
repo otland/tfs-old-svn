@@ -23,7 +23,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	if(isInArray(specialDoors, item.itemid) == TRUE) then
-		if(getPlayerStorageValue(cid, item.actionid) ~= -1) then
+		if(item.actionid ~= 0 and getPlayerStorageValue(cid, item.actionid) ~= -1) then
 			doTransformItem(item.uid, item.itemid + 1)
 			doTeleportThing(cid, toPosition, TRUE)
 		else
