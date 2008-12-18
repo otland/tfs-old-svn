@@ -235,7 +235,7 @@ ReturnValue Combat::canDoCombat(const Creature* caster, const Tile* tile, bool i
 
 ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target)
 {
-	if(attacker)
+	if(!attacker)
 		return RET_NOERROR;
 
 	if(const Player* targetPlayer = target->getPlayer())

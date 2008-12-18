@@ -20441,7 +20441,7 @@
 	<item id="9564" article="a" name="large gem"/>
 	<item id="9565" article="a" name="large gem"/>
 	<item id="9573" name="corkscrew stairs">
-		<attribute key="floorchange" value="north"/>
+		<attribute key="floorchange" value="east"/>
 	</item>
 	<item id="9574" name="corkscrew stairs">
 		<attribute key="floorchange" value="down"/>
@@ -20454,6 +20454,9 @@
 	<item id="9580" article="a" name="golden street lamp"/>
 	<item id="9581" article="a" name="golden street lamp"/>
 	<item id="9582" article="a" name="golden street lamp"/>
+	<item id="9606" name="stairs">
+		<attribute key="floorchange" value="down"/>
+	</item>
 	<item id="9747" article="a" name="golden wall lamp"/>
 	<item id="9748" article="a" name="golden wall lamp"/>
 	<item id="9749" article="a" name="golden wall lamp"/>
