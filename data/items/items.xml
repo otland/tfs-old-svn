@@ -18783,7 +18783,6 @@
 		<attribute key="weight" value="50"/>
 	</item>
 	<item id="8371" name="earth"/>
-	<item id="8371" name="earth"/>
 	<item id="8372" name="stairs">
 		<attribute key="floorchange" value="east"/>
 	</item>
@@ -19226,7 +19225,7 @@
 		<attribute key="description" value="It is a kit for a furnace."/>
 		<attribute key="weight" value="60000"/>
 	</item>
-	<item id="8692" article="a" name="furniture package">
+	<item id="8693" article="a" name="furniture package">
 		<attribute key="description" value="It is empty."/>
 		<attribute key="weight" value="2500"/>
 	</item>
@@ -20155,7 +20154,7 @@
 		<attribute key="decayTo" value="0"/>
 		<attribute key="duration" value="500"/>
 		<attribute key="corpseType" value="fire"/>
-	</item>>
+	</item>
 	<item id="8970" article="a" name="piano"/>
 	<item id="8971" article="a" name="gland" plural="gland">
 		<attribute key="description" value="It is the pheromone gland of a rotworm queen."/>

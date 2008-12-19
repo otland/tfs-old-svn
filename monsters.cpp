@@ -902,8 +902,8 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 
 						if(readXMLInteger(tmpNode, "targetdistance", intValue))
 						{
-							if(intValue > 6)
-								SHOW_XML_WARNING("targetdistance greater than 6");
+							if(intValue > maxViewportX)
+								SHOW_XML_WARNING("targetdistance greater than maxViewportX");
 
 							mType->targetDistance = std::max(1, intValue);
 						}
