@@ -77,6 +77,7 @@
 	randomizeTiles = "yes"
 
 	-- Messaging
+	enableRuleViolationReports = "yes"
 	maxMessageBuffer = 4
 
 	-- MySQL

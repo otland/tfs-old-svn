@@ -103,7 +103,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 	bool success = true;
 	if(readXMLInteger(p, "itemid", id))
 	{
-		if(useItemMap[id] != NULL)
+		if(useItemMap.find(id) != useItemMap.end())
 		{
 			std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with id: " << id << std::endl;
 			return false;
@@ -113,7 +113,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 	else if(readXMLInteger(p, "fromid", id) && readXMLInteger(p, "toid", id2))
 	{
 		from = id;
-		if(useItemMap[id] != NULL)
+		if(useItemMap.find(id) != useItemMap.end())
 		{
 			std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with id: " << id << " in fromid: " << from << ", toid: " << id2 << std::endl;
 			success = false;
@@ -124,7 +124,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 		while(id < id2)
 		{
 			id++;
-			if(useItemMap[id] != NULL)
+			if(useItemMap.find(id) != useItemMap.end())
 			{
 				std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with id: " << id << " in fromid: " << from << ", toid: " << id2 << std::endl;
 				continue;
@@ -134,7 +134,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 	}
 	else if(readXMLInteger(p, "uniqueid", id))
 	{
-		if(uniqueItemMap[id] != NULL)
+		if(uniqueItemMap.find(id) != uniqueItemMap.end())
 		{
 			std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with uniqueid: " << id << std::endl;
 			return false;
@@ -144,7 +144,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 	else if(readXMLInteger(p, "fromuid", id) && readXMLInteger(p, "touid", id2))
 	{
 		from = id;
-		if(uniqueItemMap[id] != NULL)
+		if(uniqueItemMap.find(id) != uniqueItemMap.end())
 		{
 			std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with uniqueid: " << id << " in fromuid: " << from << ", touid: " << id2 << std::endl;
 			success = false;
@@ -155,7 +155,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 		while(id < id2)
 		{
 			id++;
-			if(uniqueItemMap[id] != NULL)
+			if(uniqueItemMap.find(id) != uniqueItemMap.end())
 			{
 				std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with uniqueid: " << id << " in fromuid: " << from << ", touid: " << id2 << std::endl;
 				continue;
@@ -165,7 +165,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 	}
 	else if(readXMLInteger(p, "actionid", id))
 	{
-		if(actionItemMap[id] != NULL)
+		if(actionItemMap.find(id) != actionItemMap.end())
 		{
 			std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with actionid: " << id << std::endl;
 			return false;
@@ -175,7 +175,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 	else if(readXMLInteger(p, "fromaid", id) && readXMLInteger(p, "toaid", id2))
 	{
 		from = id;
-		if(actionItemMap[id] != NULL)
+		if(actionItemMap.find(id) != actionItemMap.end())
 		{
 			std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with actionid: " << id << " in fromaid: " << from << ", toaid: " << id2 << std::endl;
 			success = false;
@@ -186,7 +186,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 		while(id < id2)
 		{
 			id++;
-			if(actionItemMap[id] != NULL)
+			if(actionItemMap.find(id) != actionItemMap.end())
 			{
 				std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with actionid: " << id << " in fromaid: " << from << ", toaid: " << id2 << std::endl;
 				continue;

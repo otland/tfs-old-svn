@@ -139,6 +139,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confInteger[WHITE_SKULL_TIME] = getGlobalNumber(L, "whiteSkullTime", 15 * 60 * 1000);
 	m_confInteger[AUTO_SAVE_EACH_MINUTES] = getGlobalNumber(L, "autoSaveEachMinutes", 0);
 	m_confString[REPLACE_KICK_ON_LOGIN] = getGlobalString(L, "replaceKickOnLogin", "yes");
+	m_confString[ENABLE_RULE_VIOLATION_REPORTS] = getGlobalString(L, "enableRuleViolationReports", "yes");
 	m_isLoaded = true;
 
 	lua_close(L);

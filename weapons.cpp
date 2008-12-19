@@ -138,7 +138,7 @@ bool Weapons::registerEvent(Event* event, xmlNodePtr p)
 	Weapon* weapon = dynamic_cast<Weapon*>(event);
 	if(weapon)
 	{
-		if(weapons[weapon->getID()] != NULL)
+		if(weapons.find(weapon->getID()) != weapons.end())
 		{
 			std::cout << "[Warning - Weapons::registerEvent] Duplicate registered item with id: " << weapon->getID() << std::endl;
 			return false;

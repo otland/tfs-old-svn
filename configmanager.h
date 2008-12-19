@@ -85,6 +85,7 @@ class ConfigManager
 			SAVE_GLOBAL_STORAGE,
 			INGAME_GUILD_SYSTEM,
 			REPLACE_KICK_ON_LOGIN,
+			ENABLE_RULE_VIOLATION_REPORTS,
 			LAST_STRING_CONFIG /* this must be the last one */
 		};
 
