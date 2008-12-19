@@ -20509,19 +20509,19 @@
 		<attribute key="description" value="If you can remove the rust layer and dirt from the armor you will be able to see what it is."/>
 		<attribute key="weight" value="10000"/>
 		<attribute key="armor" value="1"/>
-		<attribute key="slotType" value="armor"/>
+		<attribute key="slotType" value="body"/>
 	</item>
 	<item id="9809" article="a" name="rusty armor">
 		<attribute key="description" value="If you can remove the rust layer and dirt from the armor you will be able to see what it is."/>
 		<attribute key="weight" value="10000"/>
 		<attribute key="armor" value="1"/>
-		<attribute key="slotType" value="armor"/>
+		<attribute key="slotType" value="body"/>
 	</item>
 	<item id="9810" article="a" name="rusty armor">
 		<attribute key="description" value="If you can remove the rust layer and dirt from the armor you will be able to see what it is."/>
 		<attribute key="weight" value="10000"/>
 		<attribute key="armor" value="1"/>
-		<attribute key="slotType" value="armor"/>
+		<attribute key="slotType" value="body"/>
 	</item>
 	<item id="9811" article="a" name="rusty legs">
 		<attribute key="description" value="If you can remove the rust layer and dirt from the legs you will be able to see what it is."/>
