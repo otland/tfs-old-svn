@@ -134,8 +134,8 @@ Event* Spells::getEvent(const std::string& nodeName)
 		return new InstantSpell(&m_scriptInterface);
 	else if(tmpNodeName == "conjure")
 		return new ConjureSpell(&m_scriptInterface);
-	else
-		return NULL;
+
+	return NULL;
 }
 
 bool Spells::registerEvent(Event* event, xmlNodePtr p)
@@ -144,7 +144,7 @@ bool Spells::registerEvent(Event* event, xmlNodePtr p)
 	RuneSpell* rune = dynamic_cast<RuneSpell*>(event);
 	if(instant)
 	{
-		if(instants[instant->getWords()] != NULL)
+		instants.find(instant->getWords()) != instants.end()
 		{
 			std::cout << "[Warning - Spells::registerEvent] Duplicate registered instant spell with words: " << instant->getWords() << std::endl;
 			return false;
@@ -155,7 +155,7 @@ bool Spells::registerEvent(Event* event, xmlNodePtr p)
 	}
 	else if(rune)
 	{
-		if(runes[rune->getRuneItemId()] != NULL)
+		if(runes.find(rune->getRuneItemId()) != runes.end())
 		{
 			std::cout << "[Warning - Spells::registerEvent] Duplicate registered rune with id: " << rune->getRuneItemId() << std::endl;
 			return false;

@@ -43,14 +43,12 @@ bool PrivateChatChannel::isInvited(const Player* player)
 	if(player->getGUID() == getOwner())
 		return true;
 
-	UsersMap::iterator it = m_invites.find(player->getGUID());
-	return it != m_invites.end();
+	return m_invites.find(player->getGUID()) != m_invites.end();
 }
 
 bool PrivateChatChannel::addInvited(Player* player)
 {
-	UsersMap::iterator it = m_invites.find(player->getGUID());
-	if(it != m_invites.end())
+	if(m_invites.find(player->getGUID()) != m_invites.end())
 		return false;
 
 	m_invites[player->getGUID()] = player;
@@ -99,11 +97,11 @@ void PrivateChatChannel::excludePlayer(Player* player, Player* excludePlayer)
 
 void PrivateChatChannel::closeChannel()
 {
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	for(UsersMap::iterator cit = m_users.begin(); cit != m_users.end(); ++cit)
 	{
-		ChatChannel* channel = g_chat.getChannel((*it).second, getId());
-		if(channel && m_invites[(*it).second->getID()] != NULL && channel == this)
-			(*it).second->sendClosePrivate(getId());
+		Player* toPlayer = cit->second->getPlayer();
+		if(toPlayer)
+			toPlayer->sendClosePrivate(getId());
 	}
 }
 
@@ -115,8 +113,7 @@ ChatChannel::ChatChannel(uint16_t channelId, std::string channelName)
 
 bool ChatChannel::addUser(Player* player)
 {
-	UsersMap::iterator it = m_users.find(player->getID());
-	if(it != m_users.end())
+	if(m_users.find(player->getID()) != m_users.end())
 	{
 		#ifdef __DEBUG_CHAT__
 		std::cout << "ChatChannel::addUser - player already exists in m_users map." << std::endl;
@@ -179,14 +176,30 @@ bool ChatChannel::talk(Player* fromPlayer, SpeakClasses type, const std::string&
 	}
 
 	bool success = false;
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	if(m_id == 0x00 || m_id == 0x08)
 	{
-		ChatChannel* channel = g_chat.getChannel((*it).second, m_id);
-		if(channel && m_users[(*it).second->getID()] != NULL && channel == this)
+		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 		{
-			(*it).second->sendToChannel(fromPlayer, type, text, m_id, time);
-			if(!success)
-				success = true;
+			ChatChannel* channel = g_chat.getChannel((*it).second, m_id);
+			if(channel && channel == this && m_users.find((*it).second->getID()) != m_users_end())
+			{
+				(*it).second->sendToChannel(fromPlayer, type, text, m_id, time);
+				if(!success)
+					success = true;
+			}
+		}
+	}
+	else
+	{
+		for(UsersMap::iterator cit = m_users.begin(); cit != m_users.end(); ++cit)
+		{
+			Player* toPlayer = cit->second->getPlayer();
+			if(toPlayer)
+			{
+				toPlayer->sendToChannel(fromPlayer, type, text, m_id, time);
+				if(!success)
+					success = true;
+			}
 		}
 	}
 
