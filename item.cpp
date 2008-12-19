@@ -750,7 +750,7 @@ double Item::getWeight() const
 	return items[id].weight;
 }
 
-std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const Item* item /*= NULL*/, int32_t subType /*= -1*/)
+std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const Item* item /*= NULL*/, int32_t subType /*= -1*/, bool addArticle /*= true*/)
 {
 	std::stringstream s;
 	s << getNameDescription(it, item, subType, addArticle);
@@ -804,7 +804,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				s << "Atk:";
 				if(it.abilities.elementType != COMBAT_NONE && it.decayTo < 1)
 				{
-					s << std::max(0, it.attack - it.abilities.elementDamage)) << " physical + ";
+					s << std::max(0, it.attack - it.abilities.elementDamage) << " physical + ";
 					s << it.abilities.elementDamage << " " << getCombatName(it.abilities.elementType);
 				}
 				else
@@ -822,13 +822,13 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 					s << " " << std::showpos << it.extraDefense << std::noshowpos;
 			}
 
-			if(it.abilities.stats[STAT_MAGICLEVEL] != 0)
+			if(it.abilities.stats[STAT_MAGICPOINTS] != 0)
 			{
 				if(!begin)
 					s << ", ";
 
 				begin = false;
-				s << "magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICLEVEL] << std::noshowpos;
+				s << "magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICPOINTS] << std::noshowpos;
 			}
 
 			s << ")";
@@ -843,8 +843,8 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				s << ", " << getSkillName(i) << " " << std::showpos << (int32_t)it.abilities.skills[i] << std::noshowpos;
 		}
 
-		if(it.abilities.stats[STAT_MAGICLEVEL] != 0)
-			s << ", magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICLEVEL] << std::noshowpos;
+		if(it.abilities.stats[STAT_MAGICPOINTS] != 0)
+			s << ", magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICPOINTS] << std::noshowpos;
 
 		bool begin = true;
 		for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
