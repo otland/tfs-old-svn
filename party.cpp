@@ -159,7 +159,7 @@ bool Party::joinParty(Player* player)
 	if(!player || player->isRemoved())
 		return false;
 
-	char buffer[120];
+	char buffer[200];
 	sprintf(buffer, "%s has joined the party.", player->getName().c_str());
 	broadcastPartyMessage(MSG_INFO_DESCR, buffer);
 
@@ -174,7 +174,7 @@ bool Party::joinParty(Player* player)
 	updateSharedExperience();
 	updatePartyIcons(player);
 
-	sprintf(buffer, "You have joined %s'%s party.", leader->getName().c_str(), (leader->getName()[leader->getName().length() - 1] == 's' ? "" : "s"));
+	sprintf(buffer, "You have joined %s'%s party. Open the party channel to communicate with your companions.", leader->getName().c_str(), (leader->getName()[leader->getName().length() - 1] == 's' ? "" : "s"));
 	player->sendTextMessage(MSG_INFO_DESCR, buffer);
 	return true;
 }
@@ -224,8 +224,8 @@ bool Party::invitePlayer(Player* player)
 	player->sendPlayerPartyIcons(getLeader());
 	player->addPartyInvitation(this);
 
-	char buffer[105];
-	sprintf(buffer, "%s has been invited.", player->getName().c_str());
+	char buffer[120];
+	sprintf(buffer, "%s has been invited.%s", player->getName().c_str(), (!memberList.size() ? " Open the party channel to communicate with your members." : ""));
 	leader->sendTextMessage(MSG_INFO_DESCR, buffer);
 
 	sprintf(buffer, "%s has invited you to %s party.", leader->getName().c_str(), (leader->getSex() == PLAYERSEX_FEMALE ? "her" : "his"));
@@ -299,42 +299,27 @@ void Party::broadcastPartyMessage(MessageClasses msgClass, const std::string& ms
 
 void Party::broadcastPartyLoot(const std::string& monster, const ItemVector& items)
 {
-	std::stringstream ss;
-	ss << "Loot of " << monster << ": ";
+	std::stringstream s;
+	s << "Loot of " << monster << ": ";
 	if(items.size())
 	{
 		for(ItemVector::const_reverse_iterator rit = items.rbegin(); rit != items.rend(); ++rit)
 		{
-			const ItemType& it = Item::items[(*rit)->getID()];
-			if(it.isRune())
-				ss << (*rit)->getSubType() << " charge" << ((*rit)->getSubType() != 1 ? "s" : "") << it.name;
-			else if(it.stackable && (*rit)->getSubType() != 1)
-				ss << (*rit)->getSubType() << " " << it.pluralName;
-			else
-			{
-				if(it.article != "")
-					ss << it.article << " ";
-
-				ss << it.name;
-			}
-
+			s << (*rit)->getNameDescription();
 			if((*rit) != items.front())
-				ss << ", ";
+				s << ", ";
 		}
 	}
 	else
-		ss << "none";
+		s << "none";
 
-	ss << ".";
-
-	PlayerVector::iterator it;
+	s << ".";
+	getLeader()->sendChannelMessage("", s.str().c_str(), SPEAK_CHANNEL_W, 0x08);
 	if(!memberList.empty())
 	{
-		for(it = memberList.begin(); it != memberList.end(); ++it)
-			(*it)->sendChannelMessage("", ss.str().c_str(), SPEAK_CHANNEL_W, 0x08);
+		for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
+			(*it)->sendChannelMessage("", s.str().c_str(), SPEAK_CHANNEL_W, 0x08);
 	}
-
-	getLeader()->sendChannelMessage("", ss.str().c_str(), SPEAK_CHANNEL_W, 0x08);
 }
 
 void Party::updateSharedExperience()
@@ -376,10 +361,7 @@ bool Party::setSharedExperience(Player* player, bool _sharedExpActive)
 
 void Party::shareExperience(uint64_t experience)
 {
-	uint32_t shareExperience = (uint64_t)std::ceil(((double)experience / (memberList.size() + 1)));
-	if(experience > 20)
-		shareExperience += (uint64_t)std::ceil((double)shareExperience * 0.1);
-
+	uint32_t shareExperience = (uint64_t)std::ceil((((double)experience / (memberList.size() + 1)) + ((double)experience * 0.05)));
 	for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
 		(*it)->onGainSharedExperience(shareExperience);
 

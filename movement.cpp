@@ -564,7 +564,7 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 					slot = SLOTP_RIGHT;
 				else if(tmpStr == "left-hand")
 					slot = SLOTP_LEFT;
-				else if(tmpStr == "hand")
+				else if(tmpStr == "hand" || tmpStr == "shield")
 					slot = SLOTP_RIGHT | SLOTP_LEFT;
 				else if(tmpStr == "legs")
 					slot = SLOTP_LEGS;

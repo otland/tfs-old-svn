@@ -721,12 +721,6 @@ std::string formatTime(int32_t hours, int32_t minutes)
 	return time.str();
 }
 
-struct AmmoTypeNames
-{
-	const char* name;
-	Ammo_t ammoType;
-};
-
 struct MagicEffectNames
 {
 	const char* name;
@@ -737,6 +731,18 @@ struct ShootTypeNames
 {
 	const char* name;
 	ShootType_t shoot;
+};
+
+struct CombatTypeNames
+{
+	const char* name;
+	CombatType_t combat;
+};
+
+struct AmmoTypeNames
+{
+	const char* name;
+	Ammo_t ammoType;
 };
 
 struct AmmoActionNames
@@ -852,6 +858,22 @@ ShootTypeNames shootTypeNames[] =
 	{"cake",		NM_SHOOT_CAKE}
 };
 
+CombatTypeNames combatTypeNames[] =
+{
+	{"physical",		COMBAT_PHYSICALDAMAGE},
+	{"energy",		COMBAT_ENERGYDAMAGE},
+	{"earth",		COMBAT_EARTHDAMAGE},
+	{"fire",		COMBAT_FIREDAMAGE},
+	{"undefined",		COMBAT_UNDEFINEDDAMAGE},
+	{"lifedrain",		COMBAT_LIFEDRAIN},
+	{"manadrain",		COMBAT_MANADRAIN},
+	{"healing",		COMBAT_HEALING},
+	{"drown",		COMBAT_DROWNDAMAGE},
+	{"ice",			COMBAT_ICEDAMAGE},
+	{"holy",		COMBAT_HOLYDAMAGE},
+	{"death",		COMBAT_DEATHDAMAGE}
+};
+
 AmmoTypeNames ammoTypeNames[] =
 {
 	{"spear",		AMMO_SPEAR},
@@ -905,6 +927,26 @@ ShootType_t getShootType(const std::string& strValue)
 			return shootTypeNames[i].shoot;
 	}
 	return NM_SHOOT_UNK;
+}
+
+CombatType_t getCombatType(const std::string& strValue)
+{
+	for(uint32_t i = 0; i < sizeof(combatTypeNames) / sizeof(CombatTypeNames); ++i)
+	{
+		if(strcasecmp(strValue.c_str(), combatTypeNames[i].name) == 0)
+			return combatTypeNames[i].combat;
+	}
+	return COMBAT_NONE;
+}
+
+std::string getCombatName(CombatType_t combatType)
+{
+	for(uint32_t i = 0; i < sizeof(combatTypeNames) / sizeof(CombatTypeNames); ++i)
+	{
+		if(combatTypeNames[i].combat == combatType)
+			return combatTypeNames[i].name;
+	}
+	return "unknown";
 }
 
 Ammo_t getAmmoType(const std::string& strValue)
@@ -1046,36 +1088,27 @@ bool fileExists(const char* filename)
 	return exists;
 }
 
-#define MOD_ADLER 65521
-uint32_t adlerChecksum(uint8_t* data, int32_t len)
+uint32_t adlerChecksum(uint8_t *data, size_t length)
 {
-	if(len < 0)
+	if(length > NETWORKMESSAGE_MAXSIZE || length < 0)
 		return 0;
 
+	const uint16_t adler = 65521;
 	uint32_t a = 1, b = 0;
-	while(len > 0)
+	while(length > 0)
 	{
-		size_t tlen = len > 5552 ? 5552 : len;
-		len -= tlen;
+		size_t tmp = length > 5552 ? 5552 : length;
+		length -= tmp;
 		do
 		{
 			a += *data++;
 			b += a;
 		}
-		while(--tlen);
+		while(--tmp);
 
-		a %= MOD_ADLER;
-		b %= MOD_ADLER;
+		a %= adler;
+		b %= adler;
 	}
+
 	return (b << 16) | a;
-}
-
-bool operator<(const ShopInfo& left, const ShopInfo& right)
-{
-	return left.itemName < right.itemName;
-}
-
-void sortItems(std::list<ShopInfo>& itemList)
-{
-	itemList.sort();
 }

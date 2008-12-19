@@ -1147,6 +1147,18 @@ void Player::sendCancelMessage(ReturnValue message) const
 			sendCancel("Name is too ambigious.");
 			break;
 
+		case RET_CANONLYUSEONESHIELD:
+			sendCancel("You may use only one shield.");
+			break;
+
+		case RET_NOPARTYMEMBERSINRANGE:
+			sendCancel("No party members in range.");
+			break;
+
+		case RET_YOUARENOTTHEOWNER:
+			sendCancel("You are not the owner.");
+			break;
+
 		case RET_NOTPOSSIBLE:
 		default:
 			sendCancel("Sorry, not possible.");
@@ -1498,7 +1510,6 @@ void Player::openShopWindow()
 			goodsMap[(*it).itemId] = itemCount;
 	}
 
-	sortItems(shopOffer);
 	sendShop();
 	sendGoods();
 }
@@ -1511,12 +1522,14 @@ void Player::closeShopWindow(Npc* npc/* = NULL*/, int32_t onBuy/* = -1*/, int32_
 	if(npc)
 		npc->onPlayerEndTrade(this, onBuy, onSell);
 
+	if(shopOwner)
+		sendCloseShop();
+
 	shopOwner = NULL;
 	purchaseCallback = -1;
 	saleCallback = -1;
 	shopOffer.clear();
 	goodsMap.clear();
-	sendCloseShop();
 }
 
 void Player::onWalk(Direction& dir)
@@ -1988,118 +2001,41 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 	bool checkDefense /* = false*/, bool checkArmor /* = false*/)
 {
 	BlockType_t blockType = Creature::blockHit(attacker, combatType, damage, checkDefense, checkArmor);
-
 	if(attacker)
 		sendCreatureSquare(attacker, SQ_COLOR_BLACK);
 
 	if(blockType != BLOCK_NONE)
 		return blockType;
 
-	if(damage != 0)
+	if(damage > 0)
 	{
-		int32_t blocked;
-		Item* item = NULL;
+		int32_t blocked = 0;
 		for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
 		{
 			if(!isItemAbilityEnabled((slots_t)slot))
 				continue;
 
-			if(!(item = getInventoryItem((slots_t)slot)))
+			Item* item = getInventoryItem((slots_t)slot);
+			if(!item)
 				continue;
 
-			blocked = 0;
 			const ItemType& it = Item::items[item->getID()];
-			switch(combatType)
+			if(it.abilities.absorbPercent[combatType] != 0)
 			{
-				case COMBAT_PHYSICALDAMAGE:
-				{
-					if(it.abilities.absorbPercentPhysical != 0)
-						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentPhysical / 100);
-					break;
-				}
-
-				case COMBAT_FIREDAMAGE:
-				{
-					if(it.abilities.absorbPercentFire != 0)
-						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentFire / 100);
-					break;
-				}
-
-				case COMBAT_ENERGYDAMAGE:
-				{
-					if(it.abilities.absorbPercentEnergy != 0)
-						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentEnergy / 100);
-					break;
-				}
-
-				case COMBAT_EARTHDAMAGE:
-				{
-					if(it.abilities.absorbPercentEarth != 0)
-						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentEarth / 100);
-					break;
-				}
-
-				case COMBAT_LIFEDRAIN:
-				{
-					if(it.abilities.absorbPercentLifeDrain != 0)
-						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentLifeDrain / 100);
-					break;
-				}
-
-				case COMBAT_MANADRAIN:
-				{
-					if(it.abilities.absorbPercentManaDrain != 0)
-						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentManaDrain / 100);
-					break;
-				}
-
-				case COMBAT_DROWNDAMAGE:
-				{
-					if(it.abilities.absorbPercentDrown != 0)
-						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentDrown / 100);
-					break;
-				}
-
-				case COMBAT_ICEDAMAGE:
-				{
-					if(it.abilities.absorbPercentIce != 0)
-						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentIce / 100);
-					break;
-				}
-
-				case COMBAT_HOLYDAMAGE:
-				{
-					if(it.abilities.absorbPercentHoly != 0)
-						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentHoly / 100);
-					break;
-				}
-
-				case COMBAT_DEATHDAMAGE:
-				{
-					if(it.abilities.absorbPercentDeath != 0)
-						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentDeath / 100);
-					break;
-				}
-
-				default:
-				{
-					if(it.abilities.absorbPercentOther != 0)
-						blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercentOther / 100);
-					break;
-				}
+				blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercent[combatType] / 100);
+				if(item->hasCharges())
+					g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
 			}
-
-			damage -= blocked;
-			if(blocked != 0 && item->hasCharges())
-				g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
 		}
 
+		damage -= blocked;
 		if(damage <= 0)
 		{
 			damage = 0;
 			blockType = BLOCK_DEFENSE;
 		}
 	}
+
 	return blockType;
 }
 

@@ -275,21 +275,10 @@ Action* Actions::getAction(const Item* item)
 ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
 	uint8_t index, Item* item, uint32_t creatureId)
 {
-	bool executedAction = false;
-
 	if(Door* door = item->getDoor())
 	{
 		if(!door->canUse(player))
 			return RET_CANNOTUSETHISOBJECT;
-	}
-
-	if(BedItem* bed = item->getBed())
-	{
-		if(!bed->canUse(player))
-			return RET_CANNOTUSETHISOBJECT;
-
-		bed->sleep(player);
-		executedAction = true;
 	}
 
 	Action* action = getAction(item);
@@ -312,6 +301,50 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
 		}
 	}
 
+	if(BedItem* bed = item->getBed())
+	{
+		if(!bed->canUse(player))
+			return RET_CANNOTUSETHISOBJECT;
+
+		bed->sleep(player);
+		return RET_NOERROR;
+	}
+
+	if(Container* container = item->getContainer())
+	{
+		Container* openContainer = NULL;
+		//depot container
+		if(Depot* depot = container->getDepot())
+		{
+			Depot* myDepot = player->getDepot(depot->getDepotId(), true);
+			myDepot->setParent(depot->getParent());
+			openContainer = myDepot;
+		}
+		else
+			openContainer = container;
+
+		if(container->getCorpseOwner() != 0)
+		{
+			if(!player->canOpenCorpse(container->getCorpseOwner()))
+				return RET_YOUARENOTTHEOWNER;
+		}
+
+		//open/close container
+		int32_t oldcid = player->getContainerID(openContainer);
+		if(oldcid != -1)
+		{
+			player->onCloseContainer(openContainer);
+			player->closeContainer(oldcid);
+		}
+		else
+		{
+			player->addContainer(index, openContainer);
+			player->onSendContainer(openContainer);
+		}
+
+		return RET_NOERROR;
+	}
+
 	if(item->isReadable())
 	{
 		if(item->canWriteText())
@@ -324,17 +357,9 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
 			player->setWriteItem(NULL);
 			player->sendTextWindow(item, 0, false);
 		}
+
 		return RET_NOERROR;
 	}
-
-	if(Container* container = item->getContainer())
-	{
-		if(openContainer(player, container, index))
-			return RET_NOERROR;
-	}
-
-	if(executedAction)
-		return RET_NOERROR;
 
 	return RET_CANNOTUSETHISOBJECT;
 }
@@ -438,45 +463,6 @@ void Actions::showUseHotkeyMessage(Player* player, int32_t id, uint32_t count)
 	else
 		sprintf(buffer, "Using one of %d %s...", count, it.pluralName.c_str());
 	player->sendTextMessage(MSG_INFO_DESCR, buffer);
-}
-
-bool Actions::openContainer(Player* player, Container* container, const uint8_t index)
-{
-	Container* openContainer = NULL;
-
-	//depot container
-	if(Depot* depot = container->getDepot())
-	{
-		Depot* myDepot = player->getDepot(depot->getDepotId(), true);
-		myDepot->setParent(depot->getParent());
-		openContainer = myDepot;
-	}
-	else
-		openContainer = container;
-
-	if(container->getCorpseOwner() != 0)
-	{
-		if(!player->canOpenCorpse(container->getCorpseOwner()))
-		{
-			player->sendCancel("You are not the owner.");
-			return true;
-		}
-	}
-
-	//open/close container
-	int32_t oldcid = player->getContainerID(openContainer);
-	if(oldcid != -1)
-	{
-		player->onCloseContainer(openContainer);
-		player->closeContainer(oldcid);
-	}
-	else
-	{
-		player->addContainer(index, openContainer);
-		player->onSendContainer(openContainer);
-	}
-
-	return true;
 }
 
 bool Actions::hasAction(const Item* item)

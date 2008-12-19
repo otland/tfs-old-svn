@@ -61,22 +61,10 @@ struct Abilities
 {
 	Abilities()
 	{
-		absorbPercentOther = 0;
-		absorbPercentPhysical = 0;
-		absorbPercentFire = 0;
-		absorbPercentEnergy = 0;
-		absorbPercentEarth = 0;
-		absorbPercentLifeDrain = 0;
-		absorbPercentManaDrain = 0;
-		absorbPercentDrown = 0;
-		absorbPercentIce = 0;
-		absorbPercentHoly = 0;
-		absorbPercentDeath = 0;
-
 		elementType = COMBAT_NONE;
 		elementDamage = 0;
 		memset(skills, 0, sizeof(skills));
-
+		memset(absorbPercent, 0, sizeof(absorbPercent));
 		memset(stats, 0 , sizeof(stats));
 		memset(statsPercent, 0, sizeof(statsPercent));
 
@@ -94,25 +82,15 @@ struct Abilities
 		conditionSuppressions = 0;
 	};
 
-	//damage abilities modifiers
-	int16_t absorbPercentOther;
-	int16_t absorbPercentPhysical;
-	int16_t absorbPercentFire;
-	int16_t absorbPercentEnergy;
-	int16_t absorbPercentEarth;
-	int16_t absorbPercentLifeDrain;
-	int16_t absorbPercentManaDrain;
-	int16_t absorbPercentDrown;
-	int16_t absorbPercentIce;
-	int16_t absorbPercentHoly;
-	int16_t absorbPercentDeath;
-
 	//elemental damage
 	CombatType_t elementType;
 	int16_t elementDamage;
 
 	//extra skill modifiers
 	int32_t skills[SKILL_LAST + 1];
+
+	//damage abilities modifiers
+	int16_t absorbPercent[COMBAT_LAST + 1];
 
 	//stats modifiers
 	int32_t stats[STAT_LAST + 1];
@@ -141,7 +119,7 @@ class ItemType
 
 	public:
 		ItemType();
-		~ItemType();
+		virtual ~ItemType();
 
 		itemgroup_t group;
 		ItemTypes_t type;
@@ -159,7 +137,7 @@ class ItemType
 		bool isMailbox() const {return (type == ITEM_TYPE_MAILBOX);}
 		bool isTrashHolder() const {return (type == ITEM_TYPE_TRASHHOLDER);}
 		bool isBed() const {return (type == ITEM_TYPE_BED);}
-		bool isLevelDoor() const {return id == 1227 || id == 1229 || id == 1245 || id == 1247 || id == 1259 || id == 1261 || id == 3540 || id == 3549 || id == 5103 || id == 5112 || id == 5121 || id == 5130 || id == 5292 || id == 5294 || id == 6206 || id == 6208 || id == 6263 || id == 6265 || id == 6896 || id == 6905 || id == 7038 || id == 7047 || id == 8555 || id == 8557;}
+		bool isLevelDoor() const {return id == 1227 || id == 1229 || id == 1245 || id == 1247 || id == 1259 || id == 1261 || id == 3540 || id == 3549 || id == 5103 || id == 5112 || id == 5121 || id == 5130 || id == 5292 || id == 5294 || id == 6206 || id == 6208 || id == 6263 || id == 6265 || id == 6896 || id == 6905 || id == 7038 || id == 7047 || id == 8555 || id == 8557 || id == 9179 || id == 9181 || id == 9281 || id == 9283;}
 		bool hasSubType() const {return (isFluidContainer() || isSplash() || stackable || charges != 0);}
 		bool isRune() const {return clientCharges;}
 

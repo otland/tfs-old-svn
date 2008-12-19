@@ -52,6 +52,7 @@ enum RequestedInfo_t
 	REQUEST_MAP_INFO = 0x10,
 	REQUEST_EXT_PLAYERS_INFO = 0x20,
 	REQUEST_PLAYER_STATUS_INFO = 0x40,
+	REQUEST_SERVER_SOFTWARE_INFO = 0x80
 };
 
 std::map<uint32_t, int64_t> ProtocolStatus::ipConnectMap;
@@ -281,6 +282,15 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage* output, NetworkMessa
 		else
 			output->AddByte(0x00);
 	}
+
+	if(requestedInfo & REQUEST_SERVER_SOFTWARE_INFO)
+	{
+		output->AddByte(0x23); // server software info
+		output->AddString(STATUS_SERVER_NAME);
+		output->AddString(STATUS_SERVER_VERSION);
+		output->AddString(STATUS_SERVER_PROTOCOL);
+	}
+
 	return;
 }
 

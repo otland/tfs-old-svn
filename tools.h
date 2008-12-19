@@ -101,6 +101,8 @@ MagicEffectClasses getMagicEffect(const std::string& strValue);
 ShootType_t getShootType(const std::string& strValue);
 Ammo_t getAmmoType(const std::string& strValue);
 AmmoAction_t getAmmoAction(const std::string& strValue);
+CombatType_t getCombatType(const std::string& strValue);
+std::string getCombatName(CombatType_t combatType);
 
 std::string getSkillName(uint16_t skillid);
 skills_t getSkillId(std::string param);
@@ -109,8 +111,5 @@ std::string getReason(int32_t reasonId);
 std::string getAction(int32_t actionId, bool IPBanishment);
 
 bool fileExists(const char* filename);
-uint32_t adlerChecksum(uint8_t* data, int32_t len);
-
-bool operator<(const ShopInfo& left, const ShopInfo& right);
-void sortItems(std::list<ShopInfo>& itemList);
+uint32_t adlerChecksum(uint8_t* data, size_t len);
 #endif
