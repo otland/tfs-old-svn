@@ -6477,7 +6477,7 @@ int32_t LuaScriptInterface::luaGetMonsterLootList(lua_State* L)
 		setField(L, "text", (*it).text);
 		if((*it).childLoot.size() > 0)
 		{
-			LootItems::const_iterator cit = (*it).childLoot.begin()
+			LootItems::const_iterator cit = (*it).childLoot.begin();
 
 			lua_newtable(L);
 			for(uint32_t j = 1; cit != (*it).childLoot.end(); ++cit, ++j)
