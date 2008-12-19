@@ -13,7 +13,7 @@
     <flag pushable="0"/>
     <flag canpushitems="0"/>
     <flag canpushcreatures="0"/>
-    <flag targetdistance="7"/>
+    <flag targetdistance="6"/>
     <flag staticattack="0"/>
     <flag runonhealth="80"/>
   </flags>
@@ -104,12 +104,12 @@
         <item id="2102" chance="10000"/> --Flower Bowl
         <item id="2159" chance="1000"/> --Scarab Coin
         <item id="1987" chance="100000"> --Bag
-          <inside>
-        <item id="5900" chance="10000"/> --Dwarven Beard
-        <item id="5022" chance="10000"/> --Orichalcum Pearl
-        <item id="2160" chance="100"/> --Crystal Coin
-        <item id="2534" chance="500"/> --Vampire Shield
-        </inside>
+		  <inside>
+			<item id="5900" chance="10000"/> --Dwarven Beard
+			<item id="5022" chance="10000"/> --Orichalcum Pearl
+			<item id="2160" chance="100"/> --Crystal Coin
+			<item id="2534" chance="500"/> --Vampire Shield
+		  </inside>
        </item>
      </inside>
     </item>
