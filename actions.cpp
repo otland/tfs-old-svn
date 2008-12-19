@@ -180,7 +180,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 	else if(readXMLInteger(p, "fromaid", id) && readXMLInteger(p, "toaid", endId))
 	{
 		tmp = id;
-		if(actionItemMap.end(id) != actionItemMap.end())
+		if(actionItemMap.find(id) != actionItemMap.end())
 		{
 			std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with actionid: " << id << ", in fromaid: " << tmp << " and toaid: " << endId << std::endl;
 			success = false;
