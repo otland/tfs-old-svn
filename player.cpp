@@ -1164,12 +1164,12 @@ void Player::sendCancelMessage(ReturnValue message) const
 			sendCancel("You may use only one shield.");
 			break;
 
-		case RET_YOUARENOTTHEOWNER:
-			sendCancel("You are not the owner.");
-			break;
-
 		case RET_NOPARTYMEMBERSINRANGE:
 			sendCancel("No party members in range.");
+			break;
+
+		case RET_YOUARENOTTHEOWNER:
+			sendCancel("You are not the owner.");
 			break;
 
 		case RET_NOTPOSSIBLE:

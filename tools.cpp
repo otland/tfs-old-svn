@@ -1167,7 +1167,7 @@ bool fileExists(const char* filename)
 
 uint32_t adlerChecksum(uint8_t *data, size_t length)
 {
-	if(length > NETWORKMESSAGE_MAXSIZE)
+	if(length > NETWORKMESSAGE_MAXSIZE || length < 0)
 		return 0;
 
 	const uint16_t adler = 65521;
@@ -1186,6 +1186,7 @@ uint32_t adlerChecksum(uint8_t *data, size_t length)
 		a %= adler;
 		b %= adler;
 	}
+
 	return (b << 16) | a;
 }
 

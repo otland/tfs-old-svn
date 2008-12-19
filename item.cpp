@@ -949,13 +949,13 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			s << " (Range:" << int32_t(item ? item->getShootRange() : it.shootRange);
 			if(it.attack != 0 || it.extraAttack != 0 || (item && (item->getAttack() != 0 || item->getExtraAttack() != 0)))
 			{
-				s << ", Atk:" << int32_t(item ? item->getAttack() : it.attack);
+				s << ", Atk " << std::showpos << int32_t(item ? item->getAttack() : it.attack);
 				if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
 					s << " " << std::showpos << int32_t(item ? item->getExtraAttack() : it.extraAttack) << std::noshowpos;
 			}
 
 			if(it.hitChance != -1 || (item && item->getHitChance() != -1))
-				s << ", Hit%" << std::showpos << (item ? item->getHitChance() : it.hitChance) << std::noshowpos;
+				s << ", Hit% " << std::showpos << (item ? item->getHitChance() : it.hitChance) << std::noshowpos;
 
 			s << ")";
 		}

@@ -398,6 +398,7 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		return RET_NOERROR;
 	}
 
+	bool executed = getAction(item) != NULL;
 	if(Container* container = item->getContainer())
 	{
 		if(container->getCorpseOwner() != 0 && !player->canOpenCorpse(container->getCorpseOwner()))
@@ -425,7 +426,7 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 			player->onSendContainer(tmpContainer);
 		}
 
-		return RET_NOERROR;
+		executed = true;
 	}
 
 	if(item->isReadable())
@@ -441,10 +442,10 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 			player->sendTextWindow(item, 0, false);
 		}
 
-		return RET_NOERROR;
+		executed = true;
 	}
 
-	if(getAction(item))
+	if(executed)
 		return RET_CANNOTUSETHISOBJECT;
 
 	return RET_NOERROR;
