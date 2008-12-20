@@ -71,7 +71,7 @@ Game::Game()
 	map = NULL;
 	lastPlayersRecord = lastStageLevel = 0;
 	useLastStageLevel = false;
-	stateTime = OTSYS_TIME()
+	stateTime = OTSYS_TIME();
 	for(int8_t i = 0; i < 3; i++)
 		globalSaveMessage[i] = false;
 
