@@ -64,8 +64,6 @@ extern TalkActions* g_talkActions;
 extern Spells* g_spells;
 extern Vocations g_vocations;
 
-uint64_t Game::stateTime = OTSYS_TIME();
-
 Game::Game()
 {
 	gameState = GAME_STATE_NORMAL;
@@ -73,6 +71,7 @@ Game::Game()
 	map = NULL;
 	lastPlayersRecord = lastStageLevel = 0;
 	useLastStageLevel = false;
+	stateTime = OTSYS_TIME()
 	for(int8_t i = 0; i < 3; i++)
 		globalSaveMessage[i] = false;
 
@@ -181,11 +180,11 @@ void Game::setGameState(GameState_t newState)
 			}
 
 			case GAME_STATE_NORMAL:
-				Game::stateTime = OTSYS_TIME() + 500;
+				stateTime = OTSYS_TIME() + STATE_TIME;
 				break;
 
 			case GAME_STATE_MAINTAIN:
-				Game::stateTime = 0;
+				stateTime = 0;
 				break;
 
 			case GAME_STATE_STARTUP:

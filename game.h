@@ -100,6 +100,7 @@ typedef std::vector< std::pair<std::string, uint32_t> > Highscore;
 #define EVENT_LIGHTINTERVAL 10000
 #define EVENT_DECAYINTERVAL 1000
 #define EVENT_DECAYBUCKETS 16
+#define STATE_TIME 1000
 
 /**
   * Main Game class.
@@ -253,7 +254,8 @@ class Game
 		void addCreatureCheck(Creature* creature);
 		void removeCreatureCheck(Creature* creature);
 
-		bool violationWindow(uint32_t playerId, std::string targetPlayerName, int32_t reasonId, int32_t actionId, std::string banComment, std::string statement, bool IPBanishment);
+		bool violationWindow(uint32_t playerId, std::string targetPlayerName, int32_t reasonId, int32_t actionId,
+			std::string banComment, std::string statement, bool IPBanishment);
 
 		uint32_t getPlayersOnline() {return (uint32_t)Player::listPlayer.list.size();}
 		uint32_t getMonstersOnline() {return (uint32_t)Monster::listMonster.list.size();}
@@ -509,15 +511,6 @@ class Game
 		void addDistanceEffect(const SpectatorVec& list, const Position& fromPos, const Position& toPos, uint8_t effect);
 		void addDistanceEffect(const Position& fromPos, const Position& toPos, uint8_t effect);
 
-		void startDecay(Item* item);
-
-		Map* getMap() {return map;}
-		const Map* getMap() const {return map;}
-
-		int32_t getLightHour() {return lightHour;}
-
-		void npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, bool publicize);
-
 		const RuleViolationsMap& getRuleViolations() const {return ruleViolations;}
 		bool cancelRuleViolation(Player* player);
 		bool closeRuleViolation(Player* player);
@@ -527,6 +520,14 @@ class Game
 
 		void setGlobalSaveMessage(int16_t key, bool value) {globalSaveMessage[key] = value;}
 		bool getGlobalSaveMessage(int16_t key) const {return globalSaveMessage[key];}
+
+		Map* getMap() {return map;}
+		const Map* getMap() const {return map;}
+
+		int32_t getLightHour() {return lightHour;}
+		uint64_t getStateTime() const {return stateTime;}
+		void startDecay(Item* item);
+		void npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, bool publicize);
 
 	protected:
 		bool playerWhisper(Player* player, const std::string& text);
@@ -539,9 +540,8 @@ class Game
 
 		Highscore highscoreStorage[9];
 		time_t lastHighscoreCheck;
-
 		bool globalSaveMessage[2];
-		static uint64_t stateTime;
+		uint64_t stateTime;
 
 		std::vector<Thing*> ToReleaseThings;
 
