@@ -255,8 +255,8 @@ int32_t MySQLResult::getDataInt(const std::string &s)
 	{
 		if(m_row[it->second] == NULL)
 			return 0;
-		else
-			return atoi(m_row[it->second]);
+
+		return atoi(m_row[it->second]);
 	}
 
 	std::cout << "Error during getDataInt(" << s << ")." << std::endl;
@@ -270,8 +270,8 @@ int64_t MySQLResult::getDataLong(const std::string &s)
 	{
 		if(m_row[it->second] == NULL)
 			return 0;
-		else
-			return ATOI64(m_row[it->second]);
+
+		return ATOI64(m_row[it->second]);
 	}
 
 	std::cout << "Error during getDataLong(" << s << ")." << std::endl;
@@ -285,8 +285,8 @@ std::string MySQLResult::getDataString(const std::string &s)
 	{
 		if(m_row[it->second] == NULL)
 			return std::string("");
-		else
-			return std::string(m_row[it->second]);
+
+		return std::string(m_row[it->second]);
 	}
 
 	std::cout << "Error during getDataString(" << s << ")." << std::endl;
@@ -303,11 +303,9 @@ const char* MySQLResult::getDataStream(const std::string &s, uint64_t &size)
 			size = 0;
 			return NULL;
 		}
-		else
-		{
-			size = mysql_fetch_lengths(m_handle)[it->second];
-			return m_row[it->second];
-		}
+
+		size = mysql_fetch_lengths(m_handle)[it->second];
+		return m_row[it->second];
 	}
 
 	std::cout << "Error during getDataStream(" << s << ")." << std::endl;
