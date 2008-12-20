@@ -256,7 +256,8 @@ CREATE TABLE `tile_items`
 	`itemtype` INT NOT NULL,
 	`count` INT NOT NULL DEFAULT 0,
 	`attributes` BLOB NOT NULL,
-	FOREIGN KEY (`tile_id`) REFERENCES `tiles`(`id`) ON DELETE CASCADE
+	FOREIGN KEY (`tile_id`) REFERENCES `tiles` (`id`) ON DELETE CASCADE,
+	INDEX (`sid`)
 ) ENGINE = InnoDB;
 
 DELIMITER |
