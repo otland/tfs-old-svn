@@ -181,7 +181,7 @@ void Game::setGameState(GameState_t newState)
 			}
 
 			case GAME_STATE_NORMAL:
-				Game::stateTime = OTSYS_TIME;
+				Game::stateTime = OTSYS_TIME() + 500;
 				break;
 
 			case GAME_STATE_MAINTAIN:
