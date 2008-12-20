@@ -1539,7 +1539,7 @@ bool Creature::hasCondition(ConditionType_t type) const
 			if(seekTime == 0)
 				return true;
 
-			if((*it)->getEndTime() >= stateTime)
+			if((*it)->getEndTime() >= seekTime)
 				seekTime = (*it)->getEndTime();
 
 			if(seekTime >= OTSYS_TIME())
