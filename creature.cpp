@@ -1530,8 +1530,21 @@ bool Creature::hasCondition(ConditionType_t type) const
 
 	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
-		if((*it)->getType() == type && ((*it)->getEndTime() == 0 || (*it)->getEndTime() >= OTSYS_TIME()))
-			return true;
+		if((*it)->getType() == type)
+		{
+			if((*it)->getEndTime() == 0)
+				return true;
+
+			uint64_t seekTime = Game::stateTime;
+			if(seekTime == 0)
+				return true;
+
+			if((*it)->getEndTime() >= stateTime)
+				seekTime = (*it)->getEndTime();
+
+			if(seekTime >= OTSYS_TIME())
+				return true;
+		}
 	}
 
 	return false;

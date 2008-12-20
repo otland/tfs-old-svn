@@ -64,6 +64,8 @@ extern TalkActions* g_talkActions;
 extern Spells* g_spells;
 extern Vocations g_vocations;
 
+uint64_t Game::stateTime = OTSYS_TIME();
+
 Game::Game()
 {
 	gameState = GAME_STATE_NORMAL;
@@ -178,10 +180,16 @@ void Game::setGameState(GameState_t newState)
 				break;
 			}
 
+			case GAME_STATE_NORMAL:
+				Game::stateTime = OTSYS_TIME;
+				break;
+
 			case GAME_STATE_MAINTAIN:
+				Game::stateTime = 0;
+				break;
+
 			case GAME_STATE_STARTUP:
 			case GAME_STATE_CLOSING:
-			case GAME_STATE_NORMAL:
 			default:
 				break;
 		}
@@ -3269,8 +3277,7 @@ bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 	return true;
 }
 
-bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
-	const std::string& receiver, const std::string& text)
+bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, const std::string& receiver, const std::string& text)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
@@ -3457,8 +3464,7 @@ bool Game::playerTalkToChannel(Player* player, SpeakClasses type, const std::str
 			break;
 	}
 
-	g_chat.talkToChannel(player, type, text, channelId);
-	return true;
+	return g_chat.talkToChannel(player, type, text, channelId);
 }
 
 bool Game::playerSpeakToNpc(Player* player, const std::string& text)

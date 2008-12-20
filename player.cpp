@@ -806,22 +806,17 @@ void Player::dropLoot(Container* corpse)
 {
 	if(corpse && lootDrop)
 	{
-		bool preventLoss = false;
 		Item* preventItem = NULL;
 		for(uint8_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 		{
 			if(!(preventItem = getInventoryItem((slots_t)i)))
 				continue;
 
-			const ItemType& pit = Item::items[preventItem->getID()];
-			if(pit.abilities.preventLoss)
-			{
-				preventLoss = true;
+			if(Item::items[preventItem->getID()].abilities.preventLoss)
 				break;
-			}
 		}
 
-		if(preventLoss && getSkull() != SKULL_RED && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
+		if(preventItem && getSkull() != SKULL_RED && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
 			g_game.internalRemoveItem(preventItem, 1);
 		else
 		{
@@ -3795,7 +3790,7 @@ double Player::getLostPercent(lossTypes_t lossType)
 	{
 		for(int16_t i = 0; i < 16; i++)
 		{
-			if(!lostPercent)
+			if(lostPercent <= 0)
 				return 0;
 
 			if(hasBlessing(i))
@@ -3803,7 +3798,7 @@ double Player::getLostPercent(lossTypes_t lossType)
 		}
 	}
 
-	return (double)lostPercent / 100;
+	return (double)lostPercent / 100.;
 }
 
 uint32_t Player::getAttackSpeed()

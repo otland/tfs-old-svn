@@ -1051,16 +1051,15 @@ void ProtocolGame::GetFloorDescription(NetworkMessage* msg, int32_t x, int32_t y
 	}
 }
 
-void ProtocolGame::checkCreatureAsKnown(uint32_t id, bool &known, uint32_t &removedKnown)
+void ProtocolGame::checkCreatureAsKnown(uint32_t id, bool& known, uint32_t& removedKnown)
 {
 	// loop through the known creature list and check if the given creature is in
-	std::list<uint32_t>::iterator i;
-	for(i = knownCreatureList.begin(); i != knownCreatureList.end(); ++i)
+	for(std::list<uint32_t>::iterator it = knownCreatureList.begin(); it != knownCreatureList.end(); ++it)
 	{
-		if((*i) == id)
+		if((*it) == id)
 		{
 			// know... make the creature even more known...
-			knownCreatureList.erase(i);
+			knownCreatureList.erase(it);
 			knownCreatureList.push_back(id);
 
 			known = true;
@@ -1070,10 +1069,8 @@ void ProtocolGame::checkCreatureAsKnown(uint32_t id, bool &known, uint32_t &remo
 
 	// ok, he is unknown...
 	known = false;
-
 	// ... but not in future
 	knownCreatureList.push_back(id);
-
 	// too many known creatures?
 	if(knownCreatureList.size() > 150)
 	{
@@ -1081,7 +1078,6 @@ void ProtocolGame::checkCreatureAsKnown(uint32_t id, bool &known, uint32_t &remo
 		for(int32_t n = 0; n < 150; n++)
 		{
 			removedKnown = knownCreatureList.front();
-
 			Creature* c = g_game.getCreatureByID(removedKnown);
 			if((!c) || (!canSee(c)))
 				break;

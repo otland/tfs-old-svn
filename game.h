@@ -541,6 +541,7 @@ class Game
 		time_t lastHighscoreCheck;
 
 		bool globalSaveMessage[2];
+		static uint64_t stateTime;
 
 		std::vector<Thing*> ToReleaseThings;
 
