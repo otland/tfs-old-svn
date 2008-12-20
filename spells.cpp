@@ -144,7 +144,7 @@ bool Spells::registerEvent(Event* event, xmlNodePtr p)
 	RuneSpell* rune = dynamic_cast<RuneSpell*>(event);
 	if(instant)
 	{
-		instants.find(instant->getWords()) != instants.end()
+		if(instants.find(instant->getWords()) != instants.end())
 		{
 			std::cout << "[Warning - Spells::registerEvent] Duplicate registered instant spell with words: " << instant->getWords() << std::endl;
 			return false;
