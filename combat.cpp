@@ -581,7 +581,7 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 						break;
 				}
 			}
-			else if(itemId == ITEM_FIREFIELD_PVP || itemId == ITEM_POISONFIELD_PVP || itemId == ITEM_ENERGYFIELD_PVP)
+			else if(params.isAggressive && !Item::items[itemId].blockSolid)
 				pzLock = true;
 
 			player->addInFightTicks(pzLock);
