@@ -170,6 +170,7 @@
 	<monster name="Diabolic Imp" file="Demons/diabolic imp.xml"/>
 	<monster name="Fire Devil" file="Demons/fire devil.xml"/>
 	<monster name="Fury" file="Demons/fury.xml"/>
+	<monster name="Gozzler" file="Demons/gozzler.xml"/>
 	<monster name="Hand of Cursed Fate" file="Demons/hand of cursed fate.xml"/>
 	<monster name="Juggernaut" file="Demons/juggernaut.xml"/>
 	<monster name="Nightmare" file="Demons/nightmare.xml"/>
@@ -240,6 +241,7 @@
 	<monster name="Jagged Earth Elemental" file="Geo-Elementals/jagged earth elemental.xml"/>
 	<monster name="Massive Earth Elemental" file="Geo-Elementals/massive earth elemental.xml"/>
 	<monster name="Muddy Earth Elemental" file="Geo-Elementals/muddy earth elemental.xml"/>
+	<monster name="War Golem" file="Geo-Elementals/war golem.xml"/>
 
 	<!-- Ghosts -->
 	<monster name="Ghost" file="Ghosts/ghost.xml"/>
@@ -326,6 +328,8 @@
 	<monster name="Assassin" file="Outlaws/assassin.xml"/>
 	<monster name="Bandit" file="Outlaws/bandit.xml"/>
 	<monster name="Black Knight" file="Outlaws/black knight.xml"/>
+	<monster name="Crazed Beggar" file="Outlaws/crazed beggar.xml"/>
+	<monster name="Gang Member" file="Outlaws/gang member.xml"/>
 	<monster name="Hero" file="Outlaws/hero.xml"/>
 	<monster name="Hunter" file="Outlaws/hunter.xml"/>
 	<monster name="Nomad" file="Outlaws/nomad.xml"/>
@@ -404,8 +408,11 @@
 	<monster name="Undead Dragon" file="Skeletons/undead dragon.xml"/>
 
 	<!-- Slime-Elementals -->
+	<monster name="Acid Blob" file="Slime-Elementals/acid blob.xml"/>
 	<monster name="Bog Raider" file="Slime-Elementals/bog raider.xml"/>
+	<monster name="Death Blob" file="Slime-Elementals/death blob.xml"/>
 	<monster name="Defiler" file="Slime-Elementals/defiler.xml"/>
+	<monster name="Mercury Blob" file="Slime-Elementals/mercury blob.xml"/>
 	<monster name="Slime Summon" file="Slime-Elementals/slime summon.xml"/>
 	<monster name="Slime" file="Slime-Elementals/slime.xml"/>
 
@@ -444,4 +451,6 @@
 	<monster name="Lich" file="Undead Humanoids/lich.xml"/>
 	<monster name="Mummy" file="Undead Humanoids/mummy.xml"/>
 	<monster name="Vampire" file="Undead Humanoids/vampire.xml"/>
+	<monster name="Vampire Bride" file="Undead Humanoids/vampire bride.xml"/>
+	<monster name="Zombie" file="Undead Humanoids/zombie.xml"/>
 </monsters>
