@@ -278,7 +278,6 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 	if(!_player || g_config.getNumber(ConfigManager::ALLOW_CLONES) != 0 || name == "Account Manager")
 	{
 		player = new Player(name, this);
-
 		player->useThing2();
 		player->setID();
 
@@ -296,10 +295,11 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		{
 			if(g_config.getBool(ConfigManager::NAMELOCK_MANAGER))
 			{
-				player = NULL;
+				delete player;
 				player = new Player("Account Manager", this);
 				player->useThing2();
 				player->setID();
+
 				IOLoginData::getInstance()->loadPlayer(player, "Account Manager");
 				player->accountManager = MANAGER_NAMELOCK;
 				player->managerNumber = accnumber;
@@ -532,20 +532,14 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	uint16_t operatingSystem = msg.GetU16();
-	uint16_t version = msg.GetU16();
-
+	uint16_t operatingSystem = msg.GetU16(), version = msg.GetU16();
 	if(!RSA_decrypt(g_otservRSA, msg))
 	{
 		getConnection()->closeConnection();
 		return false;
 	}
 
-	uint32_t key[4];
-	key[0] = msg.GetU32();
-	key[1] = msg.GetU32();
-	key[2] = msg.GetU32();
-	key[3] = msg.GetU32();
+	uint32_t key[4] = {msg.GetU32(), msg.GetU32(), msg.GetU32(), msg.GetU32()};
 	enableXTEAEncryption();
 	setXTEAKey(key);
 
@@ -628,6 +622,7 @@ void ProtocolGame::disconnectClient(uint8_t error, const char* message)
 		output->AddString(message);
 		OutputMessagePool::getInstance()->send(output);
 	}
+
 	disconnect();
 }
 

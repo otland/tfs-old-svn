@@ -108,10 +108,11 @@ void Spells::clear()
 {
 	for(RunesMap::iterator rit = runes.begin(); rit != runes.end(); ++rit)
 		delete rit->second;
-	runes.clear();
 
+	runes.clear();
 	for(InstantsMap::iterator it = instants.begin(); it != instants.end(); ++it)
 		delete it->second;
+
 	instants.clear();
 }
 
@@ -539,6 +540,14 @@ bool Spell::configureSpell(xmlNodePtr p)
 					int32_t promotedVocation = g_vocations.getPromotedVocation(vocationId);
 					if(promotedVocation != -1)
 						vocSpellMap[promotedVocation] = true;
+
+					intValue = 1;
+					readXMLInteger(vocationNode, "showInDescription", intValue);
+					if(intValue != 0)
+					{
+						toLowerCaseString(strValue);
+						vocStringVec.push_back(strValue);
+					}
 				}
 				else
 					std::cout << "[Warning - Spell::configureSpell] Wrong vocation name: " << strValue << std::endl;
@@ -1719,20 +1728,33 @@ bool RuneSpell::configureEvent(xmlNodePtr p)
 		return false;
 	}
 
-	uint32_t charges = 0;
 	if(readXMLInteger(p, "charges", intValue))
-		charges = (uint32_t)intValue;
+		hasCharges = (intValue > 0);
 
-	hasCharges = (charges > 0);
+	ItemType& it = Item::items.getItemType(runeId);
+	if(level != 0 && level != it.runeLevel)
+		it.runeLevel = level;
 
-	if(magLevel != 0 || level != 0)
+	if(magLevel != 0 && magLevel != it.runeMagLevel)
+		it.runeMagLevel = magLevel;
+
+	if(!vocStringVec.empty())
 	{
-		//Change information in the ItemType to get accurate description
-		ItemType& iType = Item::items.getItemType(runeId);
-		iType.runeLevel = level;
-		iType.runeMagLevel = magLevel;
-		iType.charges = charges;
+		for(VocStringVec::iterator it = vocStringVec.begin(); it != vocStringVec.end(); ++it)
+		{
+			if((*it) != vocStringVec.front())
+			{
+				if((*it) != vocStringVec.back())
+					it.vocationString += ", ";
+				else
+					it.vocationString += " and ";
+			}
+
+			it.vocationString += (*it);
+			it.vocationString += "s";
+		}
 	}
+
 	return true;
 }
 

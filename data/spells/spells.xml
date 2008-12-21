@@ -14,7 +14,10 @@
 	<rune name="Energybomb" id="2262" allowfaruse="1" charges="2" lvl="37" maglv="10" exhaustion="2000" blocktype="solid" script="attack/energy bomb.lua"/>
 	<rune name="Energy Wall" id="2279" allowfaruse="1" charges="4" lvl="41" maglv="9" exhaustion="2000" blocktype="solid" script="attack/energy wall.lua"/>
 	<rune name="Light Magic Missile" id="2287" allowfaruse="1" charges="10" lvl="15" exhaustion="2000" maglv="0" needtarget="1" blocktype="solid" script="attack/light magic missile.lua"/>
-	<rune name="Heavy Magic Missile" id="2311" allowfaruse="1" charges="10" lvl="25" exhaustion="2000" maglv="3" needtarget="1" blocktype="solid" script="attack/heavy magic missile.lua"/>
+	<rune name="Heavy Magic Missile" id="2311" allowfaruse="1" charges="10" lvl="25" exhaustion="2000" maglv="3" needtarget="1" blocktype="solid" script="attack/heavy magic missile.lua">
+		<vocation name="Sorcerer"/>
+		<vocation name="Master Sorcerer"/>
+	</rune>
 	<rune name="Explosion" id="2313" allowfaruse="1" charges="6" lvl="31" maglv="6" exhaustion="2000" blocktype="solid" script="attack/explosion.lua"/>
 	<rune name="Sudden Death" id="2268" allowfaruse="1" charges="3" lvl="45" maglv="15" exhaustion="2000" needtarget="1" blocktype="solid" script="attack/sudden death.lua"/>
 	<rune name="Icicle" id="2271" allowfaruse="1" charges="5" lvl="28" maglv="4" exhaustion="2000" needtarget="1" script="attack/icicle.lua"/>

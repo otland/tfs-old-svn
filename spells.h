@@ -165,6 +165,8 @@ class Spell : public BaseSpell
 
 		typedef std::map<int32_t, bool> VocSpellMap;
 		VocSpellMap vocSpellMap;
+		typedef std::vector<std::string> VocStringVec;
+		VocStringVec vocStringVec;
 
 	private:
 		std::string name;

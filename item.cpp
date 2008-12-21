@@ -925,21 +925,27 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			s << "\"" << it.runeSpellName << "\", ";
 
 		s << "Charges:" << subType << ")";
-		if(it.runeLevel > 0 || it.runeMagLevel > 0)
+		if(it.runeLevel > 0 || it.runeMagLevel > 0 || (it.vocationString != "" && it.wieldInfo == 0))
 		{
-			s << "." << std::endl << "It can only be used with";
+			s << "." << std::endl << "It can only be used by ";
+			if(it.vocationString != "" && it.wieldInfo == 0)
+				s << it.vocationString;
+
+			bool begin = true;
 			if(it.runeLevel > 0)
-				s << " level " << it.runeLevel;
+			{
+				begin = false;
+				s << " with level " << it.runeLevel;
+			}
 
 			if(it.runeMagLevel > 0)
 			{
-				if(it.runeLevel > 0)
-					s << " and";
-
-				s << " magic level " << it.runeMagLevel;
+				begin = false;
+				s << " " << (begin ? "with" : "and") << " magic level " << it.runeMagLevel;
 			}
 
-			s << " or higher";
+			if(!begin)
+				s << " or higher";
 		}
 	}
 	else if(it.weaponType != WEAPON_NONE)

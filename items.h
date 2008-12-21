@@ -183,12 +183,11 @@ class ItemType
 		bool rotable;
 		int32_t rotateTo;
 
-		int32_t runeMagLevel;
-		int32_t runeLevel;
 		std::string runeSpellName;
-
-		uint32_t wieldInfo;
+		int32_t runeLevel;
+		int32_t runeMagLevel;
 		std::string vocationString;
+		uint32_t wieldInfo;
 		uint32_t minReqLevel;
 		uint32_t minReqMagicLevel;
 

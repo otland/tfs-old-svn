@@ -15,7 +15,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return TRUE
 	end
 
-	if((not(isKnight(itemEx.uid)) or getPlayerLevel(itemEx.uid) < 50) and getPlayerCustomFlagValue(itemEx.uid, PlayerCustomFlag_GamemasterPrivileges) == FALSE) then
+	if((not(isKnight(itemEx.uid)) or getPlayerLevel(itemEx.uid) < 80) and getPlayerCustomFlagValue(itemEx.uid, PlayerCustomFlag_GamemasterPrivileges) == FALSE) then
 		doCreatureSay(itemEx.uid, "Only knights of level 80 or above may drink this fluid.", TALKTYPE_ORANGE_1)
 		return TRUE
 	end
