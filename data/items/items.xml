@@ -20510,7 +20510,7 @@
 	<item id="10016" article="a" name="batwing hat">
 		<attribute key="weight" value="600"/>
 		<attribute key="armor" value="3"/>
-		<attribute key="slotType" value="body"/>
+		<attribute key="slotType" value="head"/>
 		<attribute key="magicpoints" value="1"/>
 	</item>
 	<item id="10017" article="a" name="football"/>
