@@ -99,7 +99,7 @@ void PrivateChatChannel::closeChannel()
 {
 	for(UsersMap::iterator it = m_users.begin(); it != m_users.end(); ++it)
 	{
-		if(!it->second)
+		if(!it->second || it->second->isRemoved() || it->second->isVirtual())
 		{
 			m_users.erase(it);
 			continue;
@@ -182,7 +182,7 @@ bool ChatChannel::talk(Player* fromPlayer, SpeakClasses type, const std::string&
 	bool success = false;
 	for(UsersMap::iterator it = m_users.begin(); it != m_users.end(); ++it)
 	{
-		if(!it->second)
+		if(!it->second || it->second->isRemoved() || it->second->isVirtual())
 		{
 			m_users.erase(it);
 			continue;
