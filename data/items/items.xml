@@ -20629,6 +20629,49 @@
 		<attribute key="description" value="It is said to make you more resistant to weaknesses and to supply you with energy."/>
 		<attribute key="weight" value="850"/>
 	</item>
+	<item id="10002" article="a" name="dead war golem">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="10003"/>
+		<attribute key="duration" value="900"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="10003" article="a" name="dead war golem">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="10004"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="10004" article="a" name="dead war golem">
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="10005" article="a" name="dead war golem">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="10002"/>
+		<attribute key="duration" value="10"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="10007" article="a" name="slain zombie">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="10008"/>
+		<attribute key="duration" value="10"/>
+		<attribute key="corpseType" value="blood"/>
+		<attribute key="fluidSource" value="blood"/>
+	</item>
+	<item id="10008" article="a" name="slain zombie">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="10009"/>
+		<attribute key="duration" value="900"/>
+		<attribute key="corpseType" value="blood"/>
+		<attribute key="fluidSource" value="blood"/>
+	</item>
+	<item id="10009" article="a" name="slain zombie">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
 	<item id="10016" article="a" name="batwing hat">
 		<attribute key="weight" value="600"/>
 		<attribute key="armor" value="3"/>
