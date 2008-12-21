@@ -20295,6 +20295,13 @@
 	<item id="9070" name="frozen mud"/>
 	<item id="9071" name="frozen mud"/>
 	<item id="9072" name="frozen mud"/>
+	<item id="9107" article="a" name="dead mutated human">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="10007"/>
+		<attribute key="duration" value="900"/>
+		<attribute key="corpseType" value="blood"/>
+		<attribute key="fluidSource" value="blood"/>
+	</item>
 	<item id="9141" article="a" name="blood crystal ">
 		<attribute key="description" value="It has the power to store magic energy."/>
 		<attribute key="weight" value="890"/>
@@ -20460,6 +20467,30 @@
 	<item id="9606" name="stairs">
 		<attribute key="floorchange" value="down"/>
 	</item>
+	<item id="9654" article="a" name="slain vampire bride">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="9658"/>
+		<attribute key="duration" value="900"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="9658" article="a" name="slain vampire bride">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="9659"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="9659" article="a" name="slain vampire bride">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="9660" article="a" name="slain vampire bride">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="9654"/>
+		<attribute key="duration" value="10"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
 	<item id="9662" article="a" name="ghost's tear">
 		<attribute key="weight" value="1000"/>
 	</item>
@@ -20552,6 +20583,30 @@
 	<item id="9846" name="corkscrew stairs">
 		<attribute key="floorchange" value="down"/>
 	</item>
+	<item id="9875" article="a" name="slain zombie">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="9876"/>
+		<attribute key="duration" value="10"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="9876" article="a" name="slain zombie">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="9877"/>
+		<attribute key="duration" value="900"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="9877" article="a" name="slain zombie">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="9878"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="9878" article="a" name="slain zombie">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="10"/>
+		<attribute key="corpseType" value="blood"/>
+	</item>
 	<item id="9930" article="a" name="rust remover">
 		<attribute key="weight" value="250"/>
 	</item>
@@ -20607,6 +20662,42 @@
 		<attribute key="description" value="This crest seems important. You shouldn't lose it."/>
 		<attribute key="weight" value="500"/>
 	</item>
+	<item id="9960" article="a" name="slain death blob">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="9963"/>
+		<attribute key="duration" value="10"/>
+		<attribute key="corpseType" value="undead"/>
+	</item>
+	<item id="9961" article="a" name="slain mercury blob">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="9964"/>
+		<attribute key="duration" value="10"/>
+		<attribute key="corpseType" value="undead"/>
+	</item>
+	<item id="9962" article="a" name="slain acid blob">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="9965"/>
+		<attribute key="duration" value="10"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
+	<item id="9963" article="a" name="slain death blob">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="900"/>
+		<attribute key="corpseType" value="undead"/>
+	</item>
+	<item id="9964" article="a" name="slain mercury blob">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="900"/>
+		<attribute key="corpseType" value="undead"/>
+	</item>
+	<item id="9965" article="a" name="slain acid blob">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="900"/>
+		<attribute key="corpseType" value="venom"/>
+	</item>
 	<item id="9966" article="a" name="glob of mercury">
 		<attribute key="weight" value="10"/>
 	</item>
@@ -20652,21 +20743,21 @@
 		<attribute key="duration" value="10"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
-	<item id="10007" article="a" name="slain zombie">
+	<item id="10007" article="a" name="dead mutated human">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="10008"/>
-		<attribute key="duration" value="10"/>
-		<attribute key="corpseType" value="blood"/>
-		<attribute key="fluidSource" value="blood"/>
-	</item>
-	<item id="10008" article="a" name="slain zombie">
-		<attribute key="containerSize" value="10"/>
-		<attribute key="decayTo" value="10009"/>
 		<attribute key="duration" value="900"/>
 		<attribute key="corpseType" value="blood"/>
 		<attribute key="fluidSource" value="blood"/>
 	</item>
-	<item id="10009" article="a" name="slain zombie">
+	<item id="10008" article="a" name="dead mutated human">
+		<attribute key="containerSize" value="10"/>
+		<attribute key="decayTo" value="10009"/>
+		<attribute key="duration" value="600"/>
+		<attribute key="corpseType" value="blood"/>
+		<attribute key="fluidSource" value="blood"/>
+	</item>
+	<item id="10009" article="a" name="dead mutated human">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="0"/>
 		<attribute key="duration" value="600"/>
