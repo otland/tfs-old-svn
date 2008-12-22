@@ -1740,17 +1740,17 @@ bool RuneSpell::configureEvent(xmlNodePtr p)
 
 	if(!vocStringVec.empty())
 	{
-		for(VocStringVec::iterator it = vocStringVec.begin(); it != vocStringVec.end(); ++it)
+		for(VocStringVec::iterator vit = vocStringVec.begin(); vit != vocStringVec.end(); ++vit)
 		{
-			if((*it) != vocStringVec.front())
+			if((*vit) != vocStringVec.front())
 			{
-				if((*it) != vocStringVec.back())
+				if((*vit) != vocStringVec.back())
 					it.vocationString += ", ";
 				else
 					it.vocationString += " and ";
 			}
 
-			it.vocationString += (*it);
+			it.vocationString += (*vit);
 			it.vocationString += "s";
 		}
 	}

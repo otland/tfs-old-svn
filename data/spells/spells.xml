@@ -14,10 +14,7 @@
 	<rune name="Energybomb" id="2262" allowfaruse="1" charges="2" lvl="37" maglv="10" exhaustion="2000" blocktype="solid" script="attack/energy bomb.lua"/>
 	<rune name="Energy Wall" id="2279" allowfaruse="1" charges="4" lvl="41" maglv="9" exhaustion="2000" blocktype="solid" script="attack/energy wall.lua"/>
 	<rune name="Light Magic Missile" id="2287" allowfaruse="1" charges="10" lvl="15" exhaustion="2000" maglv="0" needtarget="1" blocktype="solid" script="attack/light magic missile.lua"/>
-	<rune name="Heavy Magic Missile" id="2311" allowfaruse="1" charges="10" lvl="25" exhaustion="2000" maglv="3" needtarget="1" blocktype="solid" script="attack/heavy magic missile.lua">
-		<vocation name="Sorcerer"/>
-		<vocation name="Master Sorcerer"/>
-	</rune>
+	<rune name="Heavy Magic Missile" id="2311" allowfaruse="1" charges="10" lvl="25" exhaustion="2000" maglv="3" needtarget="1" blocktype="solid" script="attack/heavy magic missile.lua"/>
 	<rune name="Explosion" id="2313" allowfaruse="1" charges="6" lvl="31" maglv="6" exhaustion="2000" blocktype="solid" script="attack/explosion.lua"/>
 	<rune name="Sudden Death" id="2268" allowfaruse="1" charges="3" lvl="45" maglv="15" exhaustion="2000" needtarget="1" blocktype="solid" script="attack/sudden death.lua"/>
 	<rune name="Icicle" id="2271" allowfaruse="1" charges="5" lvl="28" maglv="4" exhaustion="2000" needtarget="1" script="attack/icicle.lua"/>
@@ -41,12 +38,12 @@
 	<rune name="Chameleon" id="2291" allowfaruse="1" charges="1" lvl="27" maglv="4" exhaustion="1000" aggressive="0" selftarget="1" blocktype="solid" function="chameleon"/>
 	<rune name="Magic Wall" id="2293" allowfaruse="1" charges="3" lvl="32" maglv="9" exhaustion="2000" blocktype="all" script="support/magic wall rune.lua"/>
 	<rune name="Wild Growth" id="2269" allowfaruse="1" charges="2" lvl="27" maglv="8" exhaustion="2000" blocktype="all" script="support/wild growth rune.lua">
-		<vocation name="Druid"/>
-		<vocation name="Elder Druid"/>
+		<vocation name="Druid" showInDescription="0"/>
+		<vocation name="Elder Druid" showInDescription="0"/>
 	</rune>
 	<rune name="Paralyze" id="2278" allowfaruse="1" charges="1" lvl="54" maglv="18" exhaustion="2000" mana="1400" needtarget="1" blocktype="solid" script="support/paralyze rune.lua">
-		<vocation name="Druid"/>
-		<vocation name="Elder Druid"/>
+		<vocation name="Druid" showInDescription="0"/>
+		<vocation name="Elder Druid" showInDescription="0"/>
 	</rune>
 
 	<!-- Custom Runes -->
@@ -408,6 +405,8 @@
 		<vocation name="Elder Druid"/>
 	</conjure>
 	<conjure name="Stalagmite" words="adori tera" lvl="24" mana="400" soul="2" prem="2" reagentId="2260" conjureId="2292" conjureCount="10" exhaustion="1000" needlearn="0" function="conjureRune">
+		<vocation name="Sorcerer"/>
+		<vocation name="Master Sorcerer"/>
 		<vocation name="Druid"/>
 		<vocation name="Elder Druid"/>
 	</conjure>
@@ -418,6 +417,8 @@
 	<conjure name="Heavy Magic Missile" words="adori vis" lvl="25" mana="350" soul="2" reagentId="2260" conjureId="2311" conjureCount="10" exhaustion="1000" needlearn="0" function="conjureRune">
 		<vocation name="Sorcerer"/>
 		<vocation name="Master Sorcerer"/>
+		<vocation name="Druid"/>
+		<vocation name="Elder Druid"/>
 	</conjure>
 	<conjure name="Poison Bomb" words="adevo mas pox" lvl="25" mana="520" soul="2" prem="1" reagentId="2260" conjureId="2286" conjureCount="2" exhaustion="1000" needlearn="0" function="conjureRune">
 		<vocation name="Druid"/>
