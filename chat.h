@@ -31,7 +31,7 @@
 
 class Player;
 
-typedef std::map<uint32_t, Player*> UsersMap;
+typedef std::list<uint32_t> UsersList;
 
 class ChatChannel
 {
@@ -46,14 +46,14 @@ class ChatChannel
 
 		const std::string& getName() {return m_name;}
 		const uint16_t getId() {return m_id;}
-		const UsersMap& getUsers() {return m_users;}
+		const UsersList getUsers() {return m_users;}
 
 		virtual const uint32_t getOwner() {return 0;}
 
 	protected:
-		UsersMap m_users;
 		std::string m_name;
 		uint16_t m_id;
+		UsersList m_users;
 };
 
 class PrivateChatChannel : public ChatChannel
@@ -76,7 +76,7 @@ class PrivateChatChannel : public ChatChannel
 		void closeChannel();
 
 	protected:
-		UsersMap m_invites;
+		UsersList m_invites;
 		uint32_t m_owner;
 };
 

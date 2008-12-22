@@ -2018,7 +2018,7 @@ bool Game::playerOpenChannel(uint32_t playerId, uint16_t channelId)
 		return false;
 	}
 
-	if(channel->getId() != 0x03)
+	if(channel->getId() != CHANNEL_RVR)
 		player->sendChannel(channel->getId(), channel->getName());
 	else
 		player->sendRuleViolationsChannel(channel->getId());
@@ -2075,15 +2075,15 @@ bool Game::playerProcessRuleViolation(uint32_t playerId, const std::string& name
 	rvr.isOpen = false;
 	rvr.gamemaster = player;
 
-	ChatChannel* channel = g_chat.getChannelById(0x03);
-	if(channel)
+	if(ChatChannel* channel = g_chat.getChannelById(CHANNEL_RVR))
 	{
-		for(UsersMap::const_iterator it = channel->getUsers().begin(); it != channel->getUsers().end(); ++it)
+		for(AutoList<Player>::listiterator pt = Player::listPlayer.list.begin(); pt != Player::listPlayer.list.end(); ++pt)
 		{
-			if(it->second)
-				it->second->sendRemoveReport(reporter->getName());
+			if(std::find(channel->getUsers().begin(), channel->getUsers().end(), (*pt).second->getID()) != channel->getUsers().end())
+				(*pt).second->sendRemoveReport(reporter->getName());
 		}
 	}
+
 	return true;
 }
 
@@ -3431,14 +3431,14 @@ bool Game::playerTalkToChannel(Player* player, SpeakClasses type, const std::str
 	{
 		case SPEAK_CHANNEL_Y:
 		{
-			if(channelId == 0x09 && player->hasFlag(PlayerFlag_TalkOrangeHelpChannel))
+			if(channelId == CHANNEL_HELP && player->hasFlag(PlayerFlag_TalkOrangeHelpChannel))
 				type = SPEAK_CHANNEL_O;
 			break;
 		}
 
 		case SPEAK_CHANNEL_O:
 		{
-			if(channelId != 0x09 || !player->hasFlag(PlayerFlag_TalkOrangeHelpChannel))
+			if(channelId != CHANNEL_HELP || !player->hasFlag(PlayerFlag_TalkOrangeHelpChannel))
 				type = SPEAK_CHANNEL_Y;
 			break;
 		}
@@ -3530,11 +3530,12 @@ bool Game::playerReportRuleViolation(Player* player, const std::string& text)
 	boost::shared_ptr<RuleViolation> rvr(new RuleViolation(player, text, std::time(NULL)));
 
 	ruleViolations[player->getID()] = rvr;
-	if(ChatChannel* channel = g_chat.getChannelById(0x03)) //Rule Violations channel
+	if(ChatChannel* channel = g_chat.getChannelById(CHANNEL_RVR))
 	{
 		channel->talk(player, SPEAK_RVR_CHANNEL, text, rvr->time);
 		return true;
 	}
+
 	return false;
 }
 
@@ -4383,16 +4384,12 @@ bool Game::cancelRuleViolation(Player* player)
 		//Send to the responser
 		gamemaster->sendRuleViolationCancel(player->getName());
 	}
-	else
+	else if(ChatChannel* channel = g_chat.getChannelById(CHANNEL_RVR))
 	{
-		//Send to channel
-		if(ChatChannel* channel = g_chat.getChannelById(0x03))
+		for(AutoList<Player>::listiterator pt = Player::listPlayer.list.begin(); pt != Player::listPlayer.list.end(); ++pt)
 		{
-			for(UsersMap::const_iterator ut = channel->getUsers().begin(); ut != channel->getUsers().end(); ++ut)
-			{
-				if(ut->second)
-					ut->second->sendRemoveReport(player->getName());
-			}
+			if(std::find(channel->getUsers().begin(), channel->getUsers().end(), (*pt).second->getID()) != channel->getUsers().end())
+				(*pt).second->sendRemoveReport(player->getName());
 		}
 	}
 
@@ -4409,14 +4406,15 @@ bool Game::closeRuleViolation(Player* player)
 
 	ruleViolations.erase(it);
 	player->sendLockRuleViolation();
-	if(ChatChannel* channel = g_chat.getChannelById(0x03))
+	if(ChatChannel* channel = g_chat.getChannelById(CHANNEL_RVR))
 	{
-		for(UsersMap::const_iterator ut = channel->getUsers().begin(); ut != channel->getUsers().end(); ++ut)
+		for(AutoList<Player>::listiterator pt = Player::listPlayer.list.begin(); pt != Player::listPlayer.list.end(); ++pt)
 		{
-			if(ut->second)
-				ut->second->sendRemoveReport(player->getName());
+			if(std::find(channel->getUsers().begin(), channel->getUsers().end(), (*pt).second->getID()) != channel->getUsers().end())
+				(*pt).second->sendRemoveReport(player->getName());
 		}
 	}
+
 	return true;
 }
 

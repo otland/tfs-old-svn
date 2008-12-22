@@ -290,6 +290,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			if(g_config.getBool(ConfigManager::NAMELOCK_MANAGER))
 			{
 				delete player;
+				player->releaseThing2();
 				player = new Player("Account Manager", this);
 				player->useThing2();
 				player->setID();

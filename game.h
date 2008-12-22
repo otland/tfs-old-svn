@@ -524,8 +524,10 @@ class Game
 		Map* getMap() {return map;}
 		const Map* getMap() const {return map;}
 
+		int64_t getStateTime() const {return stateTime;}
+		void setStateTime(int64_t _stateTime) {stateTime = _stateTime;}
+
 		int32_t getLightHour() {return lightHour;}
-		uint64_t getStateTime() const {return stateTime;}
 		void startDecay(Item* item);
 		void npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, bool publicize);
 
@@ -541,7 +543,7 @@ class Game
 		Highscore highscoreStorage[9];
 		time_t lastHighscoreCheck;
 		bool globalSaveMessage[2];
-		uint64_t stateTime;
+		int64_t stateTime;
 
 		std::vector<Thing*> ToReleaseThings;
 

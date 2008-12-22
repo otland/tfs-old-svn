@@ -1535,7 +1535,7 @@ bool Creature::hasCondition(ConditionType_t type) const
 			if((*it)->getEndTime() == 0)
 				return true;
 
-			uint64_t seekTime = g_game.getStateTime();
+			int64_t seekTime = g_game.getStateTime();
 			if(seekTime == 0)
 				return true;
 
