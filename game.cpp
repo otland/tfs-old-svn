@@ -1782,9 +1782,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 			newItem = Item::CreateItem(newId, newCount);
 
 		newItem->copyAttributes(item);
-
-		ret = internalAddItem(cylinder, newItem, INDEX_WHEREEVER);
-		if(ret != RET_NOERROR)
+		if(internalAddItem(cylinder, newItem, INDEX_WHEREEVER) != RET_NOERROR)
 		{
 			delete newItem;
 			return NULL;
@@ -1823,10 +1821,10 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 		}
 		else
 		{
-			cylinder->postRemoveNotification(item, itemIndex, false);
 			uint16_t itemId = item->getID();
 			int32_t count = item->getSubType();
 
+			cylinder->postRemoveNotification(item, itemIndex, false);
 			if(curType.id != newType.id)
 			{
 				if(newType.group != curType.group)

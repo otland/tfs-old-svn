@@ -150,11 +150,12 @@ void ProtocolAdmin::deleteProtocolTask()
 void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 {
 	uint8_t recvbyte = msg.GetByte();
-
 	OutputMessagePool* outputPool = OutputMessagePool::getInstance();
 	OutputMessage* output = outputPool->getOutputMessage(this, false);
-	TRACK_MESSAGE(output);
+	if(!output)
+		return;
 
+	TRACK_MESSAGE(output);
 	switch(m_state)
 	{
 		case ENCRYPTION_NO_SET:
@@ -287,11 +288,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 						if(RSA_decrypt(rsa, msg))
 						{
 							m_state = NO_LOGGED_IN;
-							uint32_t k[4];
-							k[0] = msg.GetU32();
-							k[1] = msg.GetU32();
-							k[2] = msg.GetU32();
-							k[3] = msg.GetU32();
+							uint32_t k[4]= {msg.GetU32(), msg.GetU32(), msg.GetU32(), msg.GetU32()};
 
 							//use for in/out the new key we have
 							enableXTEAEncryption();
@@ -467,8 +464,10 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 void ProtocolAdmin::adminCommandPayHouses()
 {
 	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
-	TRACK_MESSAGE(output);
+	if(!output)
+		return;
 
+	TRACK_MESSAGE(output);
 	if(Houses::getInstance().payHouses())
 	{
 		addLogLine(this, LOGTYPE_EVENT, 1, "pay houses ok");
@@ -487,8 +486,10 @@ void ProtocolAdmin::adminCommandPayHouses()
 void ProtocolAdmin::adminCommandKickPlayer(const std::string& name)
 {
 	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
-	TRACK_MESSAGE(output);
+	if(!output)
+		return;
 
+	TRACK_MESSAGE(output);
 	Player* player = NULL;
 	if(g_game.getPlayerByNameWildcard(name, player) == RET_NOERROR)
 	{
@@ -509,8 +510,10 @@ void ProtocolAdmin::adminCommandKickPlayer(const std::string& name)
 void ProtocolAdmin::adminCommandSetOwner(const std::string& param)
 {
 	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
-	TRACK_MESSAGE(output);
+	if(!output)
+		return;
 
+	TRACK_MESSAGE(output);
 	StringVec params = explodeString(param, ";");
 	std::string houseId = params[0], name = params[1];
 	trimString(houseId);
@@ -567,7 +570,6 @@ bool Admin::loadXMLConfig()
 
 	xmlNodePtr root, p, q;
 	root = xmlDocGetRootElement(doc);
-
 	if(!xmlStrEqual(root->name,(const xmlChar*)"otadmin"))
 	{
 		xmlFreeDoc(doc);

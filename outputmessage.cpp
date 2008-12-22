@@ -81,10 +81,14 @@ void OutputMessagePool::send(OutputMessage* msg)
 				OTSYS_THREAD_LOCK(m_outputPoolLock, "");
 				if(msg->getState() != OutputMessage::STATE_FREE)
 					msg->setState(OutputMessage::STATE_WAITING);
+
 				OTSYS_THREAD_UNLOCK(m_outputPoolLock, "");
 			}
 			else
+			{
+				msg->getProtocol()->onSendMessage(msg);
 				internalReleaseMessage(msg);
+			}
 		}
 		else
 		{
@@ -127,7 +131,10 @@ void OutputMessagePool::sendAll()
 						(*it)->setState(OutputMessage::STATE_WAITING);
 				}
 				else
+				{
+					(*it)->getProtocol()->onSendMessage((*it));
 					internalReleaseMessage(*it);
+				}
 			}
 			else
 			{
@@ -135,6 +142,7 @@ void OutputMessagePool::sendAll()
 				std::cout << "Error: [OutputMessagePool::send] NULL connection." << std::endl;
 				#endif
 			}
+
 			m_autoSendOutputMessages.erase(it++);
 		}
 		else
@@ -144,8 +152,16 @@ void OutputMessagePool::sendAll()
 
 void OutputMessagePool::internalReleaseMessage(OutputMessage* msg)
 {
-	//Simulate that the message is sent and then liberate it
-	msg->getProtocol()->onSendMessage(msg);
+	if(msg->getProtocol())
+		msg->getProtocol()->unRef();
+	else
+		std::cout << "[Warning - OutputMessagePool::internalReleaseMessage] protocol not found." << std::endl;
+
+	if(msg->getConnection())
+		msg->getConnection()->unRef();
+	else
+		std::cout << "[Warning - OutputMessagePool::internalReleaseMessage] connection not found." << std::endl;
+
 	msg->freeMessage();
 	m_outputMessages.push_back(msg);
 }
@@ -161,22 +177,18 @@ void OutputMessagePool::releaseMessage(OutputMessage* msg, bool sent /*= false*/
 				std::find(m_autoSendOutputMessages.begin(), m_autoSendOutputMessages.end(), msg);
 			if(it != m_autoSendOutputMessages.end())
 				m_autoSendOutputMessages.erase(it);
-			msg->freeMessage();
-			m_outputMessages.push_back(msg);
+
+			internalReleaseMessage(msg);
 			break;
 		}
 		case OutputMessage::STATE_ALLOCATED_NO_AUTOSEND:
-			msg->freeMessage();
-			m_outputMessages.push_back(msg);
+			internalReleaseMessage(msg);
 			break;
 		case OutputMessage::STATE_WAITING:
-			if(!sent)
-				std::cout << "Error: [OutputMessagePool::releaseMessage] Releasing STATE_WAITING OutputMessage." << std::endl;
+			if(sent)
+				internalReleaseMessage(msg);
 			else
-			{
-				msg->freeMessage();
-				m_outputMessages.push_back(msg);
-			}
+				std::cout << "Error: [OutputMessagePool::releaseMessage] Releasing STATE_WAITING OutputMessage." << std::endl;
 			break;
 		case OutputMessage::STATE_FREE:
 			std::cout << "Error: [OutputMessagePool::releaseMessage] Releasing STATE_FREE OutputMessage." << std::endl;
@@ -189,10 +201,6 @@ void OutputMessagePool::releaseMessage(OutputMessage* msg, bool sent /*= false*/
 
 OutputMessage* OutputMessagePool::getOutputMessage(Protocol* protocol, bool autosend /*= true*/)
 {
-	#ifdef __DEBUG_NET__
-	if(protocol->getConnection() == NULL)
-		std::cout << "Warning: [OutputMessagePool::getOutputMessage] NULL connection." << std::endl;
-	#endif
 	#ifdef __DEBUG_NET_DETAIL__
 	std::cout << "request output message - auto = " << autosend << std::endl;
 	#endif
@@ -201,6 +209,9 @@ OutputMessage* OutputMessagePool::getOutputMessage(Protocol* protocol, bool auto
 		return NULL;
 
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_outputPoolLock);
+	if(protocol->getConnection() == NULL)
+		return NULL;
+
 	OutputMessage* outputmessage;
 	if(m_outputMessages.empty())
 	{
@@ -247,7 +258,13 @@ void OutputMessagePool::configureOutputMessage(OutputMessage* msg, Protocol* pro
 	else
 		msg->setState(OutputMessage::STATE_ALLOCATED_NO_AUTOSEND);
 
+	Connection* connection = protocol->getConnection();
+	assert(connection != NULL);
+
 	msg->setProtocol(protocol);
+	protocol->addRef();
 	msg->setConnection(protocol->getConnection());
+	connection->addRef();
+
 	msg->setFrame(m_frameTime);
 }

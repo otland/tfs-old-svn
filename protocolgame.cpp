@@ -250,13 +250,6 @@ void ProtocolGame::setPlayer(Player* p)
 
 void ProtocolGame::deleteProtocolTask()
 {
-	//dispatcher thread
-	if(eventConnect != 0)
-	{
-		Scheduler::getScheduler().stopEvent(eventConnect);
-		eventConnect = 0;
-	}
-
 	if(player)
 	{
 		#ifdef __DEBUG_NET_DETAIL__
@@ -268,6 +261,7 @@ void ProtocolGame::deleteProtocolTask()
 		g_game.FreeThing(player);
 		player = NULL;
 	}
+
 	Protocol::deleteProtocolTask();
 }
 
@@ -388,6 +382,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		{
 			if(OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 			{
+				TRACK_MESSAGE(output);
 				int32_t currentSlot = WaitingList::getInstance()->getClientSlot(player);
 
 				std::stringstream ss;
@@ -399,7 +394,6 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 
 				ss << " place on the waiting list.";
 
-				TRACK_MESSAGE(output);
 				output->AddByte(0x16);
 				output->AddString(ss.str());
 				output->AddByte(WaitingList::getTime(currentSlot));
@@ -444,12 +438,15 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			g_chat.removeUserFromAllChannels(_player);
 			_player->disconnect();
 			_player->isConnecting = true;
+
+			addRef();
 			eventConnect = Scheduler::getScheduler().addEvent(
 				createSchedulerTask(1000, boost::bind(&ProtocolGame::connect, this, _player->getID())));
 
 			return true;
 		}
 
+		addRef();
 		return connect(_player->getID());
 	}
 
@@ -458,7 +455,9 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 
 bool ProtocolGame::connect(uint32_t playerId)
 {
+	unRef();
 	eventConnect = 0;
+
 	Player* _player = g_game.getPlayerByID(playerId);
 	if(!_player || _player->isRemoved() || _player->client)
 	{
@@ -969,7 +968,7 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage* msg)
 			bool known;
 			uint32_t removedKnown;
 			checkCreatureAsKnown((*itc)->getID(), known, removedKnown);
-			AddCreature(msg,*itc, known, removedKnown);
+			AddCreature(msg, *itc, known, removedKnown);
 			count++;
 		}
 

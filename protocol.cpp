@@ -28,6 +28,7 @@
 #include "protocol.h"
 #include "connection.h"
 #include "outputmessage.h"
+#include "scheduler.h"
 #include "rsa.h"
 
 void Protocol::onSendMessage(OutputMessage* msg)
@@ -82,9 +83,20 @@ OutputMessage* Protocol::getOutputBuffer()
 		return NULL;
 }
 
+void Protocol::releaseProtocol()
+{
+	if(m_refCount > 0)
+		Scheduler::getScheduler().addEvent(createSchedulerTask(SCHEDULER_MINTICKS, boost::bind(&Protocol::releaseProtocol, this)));
+	else
+		deleteProtocolTask();
+		
+}
+
 void Protocol::deleteProtocolTask()
 {
 	//dispather thread
+	assert(m_refCount == 0);
+	setConnection(NULL);
 	if(m_outputBuffer)
 		OutputMessagePool::getInstance()->releaseMessage(m_outputBuffer);
 
@@ -94,13 +106,10 @@ void Protocol::deleteProtocolTask()
 void Protocol::XTEA_encrypt(OutputMessage& msg)
 {
 	uint32_t k[4];
-	k[0] = m_key[0];
-	k[1] = m_key[1];
-	k[2] = m_key[2];
-	k[3] = m_key[3];
+	for(uint8_t i = 0; i < 4; i++)
+		k[i] = m_key[i];
 
 	int32_t messageLength = msg.getMessageLength();
-
 	//add bytes until reach 8 multiple
 	uint32_t n;
 	if((messageLength % 8) != 0)
@@ -138,16 +147,13 @@ bool Protocol::XTEA_decrypt(NetworkMessage& msg)
 		return false;
 	}
 
-	//
 	uint32_t k[4];
-	k[0] = m_key[0];
-	k[1] = m_key[1];
-	k[2] = m_key[2];
-	k[3] = m_key[3];
+	for(uint8_t i = 0; i < 4; i++)
+		k[i] = m_key[i];
 
+	int32_t messageLength = msg.getMessageLength() - 6;
 	uint32_t* buffer = (uint32_t*)(msg.getBuffer() + msg.getReadPos());
 	int32_t readPos = 0;
-	int32_t messageLength = msg.getMessageLength() - 6;
 	while(readPos < messageLength / 4)
 	{
 		uint32_t v0 = buffer[readPos], v1 = buffer[readPos + 1];
@@ -186,7 +192,6 @@ bool Protocol::RSA_decrypt(RSA* rsa, NetworkMessage& msg)
 	}
 
 	rsa->decrypt((char*)(msg.getBuffer() + msg.getReadPos()), 128);
-
 	if(msg.GetByte() != 0)
 	{
 		std::cout << "Warning: [Protocol::RSA_decrypt]. First byte != 0" << std::endl;

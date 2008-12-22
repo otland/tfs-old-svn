@@ -172,8 +172,7 @@ void Connection::closeConnectionTask()
 	m_closeState = CLOSE_STATE_CLOSING;
 	if(m_protocol)
 	{
-		Dispatcher::getDispatcher().addTask(
-			createTask(boost::bind(&Protocol::deleteProtocolTask, m_protocol)));
+		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Protocol::releaseProtocol, m_protocol)));
 		m_protocol->setConnection(NULL);
 		m_protocol = NULL;
 	}
@@ -182,12 +181,64 @@ void Connection::closeConnectionTask()
 		OTSYS_THREAD_UNLOCK(m_connectionLock, "");
 }
 
+bool Connection::closingConnection()
+{
+	//any thread
+	#ifdef __DEBUG_NET_DETAIL__
+	std::cout << "Connection::closingConnection" << std::endl;
+	#endif
+	if(m_pendingWrite == 0 || m_writeError == true)
+	{
+		if(!m_socketClosed)
+		{
+			#ifdef __DEBUG_NET_DETAIL__
+			std::cout << "Closing socket" << std::endl;
+			#endif
+
+			boost::system::error_code error;
+			m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+			if(error && error != boost::asio::error::not_connected)
+				PRINT_ASIO_ERROR("Shutdown");
+
+			m_socket.close(error);
+			m_socketClosed = true;
+			if(error)
+				PRINT_ASIO_ERROR("Close");
+		}
+
+		if(m_refCount == 0 && m_pendingRead == 0)
+		{
+			#ifdef __DEBUG_NET_DETAIL__
+			std::cout << "Deleting Connection" << std::endl;
+			#endif
+
+			OTSYS_THREAD_UNLOCK(m_connectionLock, "");
+			Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Connection::deleteConnectionTask, this)));
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Connection::deleteConnectionTask()
+{
+	//dispather thread
+	assert(m_refCount == 0);
+	while(!m_outputQueue.empty())
+	{
+		OutputMessagePool::getInstance()->releaseMessage(m_outputQueue.back(), true);
+		m_outputQueue.pop_back();
+	}
+
+	delete this;
+}
+
 void Connection::acceptConnection()
 {
 	// Read size of te first packet
 	m_pendingRead++;
-	boost::asio::async_read(m_socket,
-		boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),
+	boost::asio::async_read(m_socket, boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),
 		boost::bind(&Connection::parseHeader, this, boost::asio::placeholders::error));
 }
 
@@ -199,6 +250,7 @@ void Connection::parseHeader(const boost::system::error_code& error)
 	{
 		if(!closingConnection())
 			OTSYS_THREAD_UNLOCK(m_connectionLock, "");
+
 		return;
 	}
 
@@ -397,13 +449,13 @@ void Connection::onWriteOperation(OutputMessage* msg, const boost::system::error
 				std::cout << "Connection::onWriteOperation send " << msg->getMessageLength() << std::endl;
 				#endif
 			}
+
 			m_pendingWrite--;
 		}
 		else
 		{
 			std::cout << "Error: [Connection::onWriteOperation] Getting unexpected notification!" << std::endl;
-			// Error. Pending operations counter is 0, but we are getting a
-			// notification!!
+			// Error. Pending operations counter is 0, but we are getting a notification!!
 		}
 	}
 	else
@@ -446,58 +498,4 @@ void Connection::handleWriteError(const boost::system::error_code& error)
 	}
 
 	m_writeError = true;
-}
-
-bool Connection::closingConnection()
-{
-	//any thread
-	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Connection::closingConnection" << std::endl;
-	#endif
-
-	if(m_pendingWrite == 0 || m_writeError == true)
-	{
-		if(!m_socketClosed)
-		{
-			#ifdef __DEBUG_NET_DETAIL__
-			std::cout << "Closing socket" << std::endl;
-			#endif
-
-			boost::system::error_code error;
-			m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
-			if(error && error != boost::asio::error::not_connected)
-				PRINT_ASIO_ERROR("Shutdown");
-
-			m_socket.close(error);
-			m_socketClosed = true;
-			if(error)
-				PRINT_ASIO_ERROR("Close");
-		}
-
-		if(m_pendingRead == 0)
-		{
-			#ifdef __DEBUG_NET_DETAIL__
-			std::cout << "Deleting Connection" << std::endl;
-			#endif
-
-			OTSYS_THREAD_UNLOCK(m_connectionLock, "");
-			Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Connection::deleteConnectionTask, this)));
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void Connection::deleteConnectionTask()
-{
-	//dispather thread
-	while(!m_outputQueue.empty())
-	{
-		OutputMessagePool::getInstance()->releaseMessage(m_outputQueue.back(), true);
-		m_outputQueue.pop_back();
-		--m_pendingWrite;
-	}
-
-	delete this;
 }

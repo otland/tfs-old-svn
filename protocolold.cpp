@@ -55,6 +55,7 @@ void ProtocolOld::disconnectClient(uint8_t error, const char* message)
 		output->AddString(message);
 		OutputMessagePool::getInstance()->send(output);
 	}
+
 	getConnection()->closeConnection();
 }
 
@@ -82,11 +83,7 @@ bool ProtocolOld::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	uint32_t key[4];
-	key[0] = msg.GetU32();
-	key[1] = msg.GetU32();
-	key[2] = msg.GetU32();
-	key[3] = msg.GetU32();
+	uint32_t key[4] = {msg.GetU32(), msg.GetU32(), msg.GetU32(), msg.GetU32()};
 	enableXTEAEncryption();
 	setXTEAKey(key);
 
