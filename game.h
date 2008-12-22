@@ -515,19 +515,18 @@ class Game
 		void addDistanceEffect(const Position& fromPos, const Position& toPos,
 		uint8_t effect);
 
-		void startDecay(Item* item);
-
 		Map* getMap() { return map;}
 		const Map* getMap() const { return map;}
 
-		int getLightHour() {return light_hour;}
+		uint64_t getStateTime() const {return stateTime;}
+		void setStateTime(uint64_t _stateTime) {stateTime = _stateTime;}
 
 		void addCommandTag(std::string tag);
 		void resetCommandTag();
 
+		void startDecay(Item* item);
+		int getLightHour() {return light_hour;}
 		bool npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, bool publicize);
-		uint32_t getStateTime() const {return stateTime;}
-		void setStateTime(uint32_t _stateTime) {stateTime = _stateTime;}
 
 		const RuleViolationsMap& getRuleViolations() const {return ruleViolations;}
 		bool cancelRuleViolation(Player* player);
@@ -554,7 +553,7 @@ class Game
 		time_t lastHSUpdate;
 
 		bool serverSaveMessage[2];
-		uint32_t stateTime;
+		uint64_t stateTime;
 
 		std::vector<Thing*> ToReleaseThings;
 
