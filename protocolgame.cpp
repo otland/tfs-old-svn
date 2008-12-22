@@ -273,6 +273,18 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 	{
 		player = new Player(name, this);
 
+		bool letNamelockedLogin = true, namelockManager = false;
+		if(g_bans.isPlayerNamelocked(name) && accnumber > 1)
+		{
+			if(g_config.getString(ConfigManager::ACCOUNT_MANAGER) == "yes")
+			{
+				player->name = "Account Manager";
+				namelockManager = true;
+			}
+			else
+				letNamelockedLogin = false;
+		}
+
 		player->useThing2();
 		player->setID();
 
@@ -285,29 +297,12 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			return false;
 		}
 
-		bool letNamelockedLogin = true;
-		if(g_bans.isPlayerNamelocked(name) && accnumber > 1)
-		{
-			if(g_config.getString(ConfigManager::ACCOUNT_MANAGER) == "yes")
-			{
-				std::string realPassword = player->password;
-				player = NULL;
-				player = new Player("Account Manager", this);
-				player->useThing2();
-				player->setID();
-				IOLoginData::getInstance()->loadPlayer(player, "Account Manager");
-				player->password = realPassword;
-				player->realAccount = accnumber;
-				player->namelockedPlayer = name;
-			}
-			else
-				letNamelockedLogin = false;
-		}
-
-		if(player->getName() == "Account Manager" && accnumber > 1 && !player->accountManager && g_config.getString(ConfigManager::ACCOUNT_MANAGER) == "yes")
+		if(player->name == "Account Manager" && accnumber > 1 && !player->accountManager && g_config.getString(ConfigManager::ACCOUNT_MANAGER) == "yes")
 		{
 			player->accountManager = true;
 			player->realAccount = accnumber;
+			if(namelockManager)
+				player->namelockedPlayer = name;
 		}
 
 		player->setOperatingSystem((OperatingSystem_t)operatingSystem);
