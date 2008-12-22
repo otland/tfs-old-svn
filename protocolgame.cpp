@@ -648,8 +648,6 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 	if((player->isRemoved() || player->getHealth() <= 0) && recvbyte != 0x14)
 		return;
 
-	std::cout << "Player: " << player->getName() << " sent packet header: 0x" << std::hex << (int16_t)recvbyte << std::dec << "!" << std::endl;
-
 	if(player->getName() == "Account Manager")
 	{
 		switch(recvbyte)
