@@ -75,6 +75,7 @@ Game::Game()
 	lastStageLevel = 0;
 	lastPlayersRecord = 0;
 	useLastStageLevel = false;
+	stateTime = OTSYS_TIME();
 	for(int16_t i = 0; i < 3; i++)
 		serverSaveMessage[i] = false;
 
@@ -202,6 +203,8 @@ void Game::setGameState(GameState_t newState)
 
 void Game::saveGameState(bool savePlayers)
 {
+	stateTime = 0;
+	std::cout << "Saving server..." << std::endl;
 	if(savePlayers)
 	{
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
@@ -213,8 +216,8 @@ void Game::saveGameState(bool savePlayers)
 
 	g_bans.saveBans();
 	map->saveMap();
-
 	ScriptEnviroment::saveGameState();
+	stateTime = OTSYS_TIME() + STATE_TIME;
 }
 
 void Game::loadGameState()
@@ -4591,7 +4594,7 @@ void Game::autoSave()
 {
 	Dispatcher::getDispatcher().addTask(
 		createTask(boost::bind(&Game::saveGameState, this, true)));
-	Scheduler::getScheduler().addEvent(createSchedulerTask(g_config.getNumber(ConfigManager::AUTO_SAVE_EACH_MINUTES)  * 1000 * 60, boost::bind(&Game::autoSave, this)));
+	Scheduler::getScheduler().addEvent(createSchedulerTask(g_config.getNumber(ConfigManager::AUTO_SAVE_EACH_MINUTES) * 1000 * 60, boost::bind(&Game::autoSave, this)));
 }
 
 void Game::prepareServerSave()

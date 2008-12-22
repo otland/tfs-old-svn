@@ -102,6 +102,7 @@ typedef std::map< uint32_t, shared_ptr<RuleViolation> > RuleViolationsMap;
 #define EVENT_LIGHTINTERVAL 10000
 #define EVENT_DECAYINTERVAL 1000
 #define EVENT_DECAY_BUCKETS 16
+#define STATE_TIME 1000
 
 typedef std::vector< std::pair<std::string, unsigned int> > Highscore;
 
@@ -525,6 +526,8 @@ class Game
 		void resetCommandTag();
 
 		bool npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, bool publicize);
+		uint32_t getStateTime() const {return stateTime;}
+		void setStateTime(uint32_t _stateTime) {stateTime = _stateTime;}
 
 		const RuleViolationsMap& getRuleViolations() const {return ruleViolations;}
 		bool cancelRuleViolation(Player* player);
@@ -551,6 +554,7 @@ class Game
 		time_t lastHSUpdate;
 
 		bool serverSaveMessage[2];
+		uint32_t stateTime;
 
 		std::vector<Thing*> ToReleaseThings;
 

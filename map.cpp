@@ -1275,6 +1275,7 @@ Floor* QTreeLeafNode::createFloor(uint32_t z)
 
 uint32_t Map::clean()
 {
+	g_game.setStateTime(0);
 	uint64_t start = OTSYS_TIME();
 	uint64_t count = 0;
 	Tile* tile = NULL;
@@ -1333,6 +1334,8 @@ uint32_t Map::clean()
 		else
 			leafS = getLeaf(0, ny + FLOOR_SIZE);
 	}
+
 	std::cout << "> Cleaning time: " << (OTSYS_TIME() - start) / (1000.) << " seconds, collected " << count << " item" << (count != 1 ? "s" : "") << "." << std::endl;
+	g_game.setStateTime(OTSYS_TIME() + STATE_TIME);
 	return count;
 }
