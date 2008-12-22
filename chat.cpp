@@ -51,7 +51,7 @@ bool PrivateChatChannel::addInvited(Player* player)
 	if(std::find(m_invites.begin(), m_invites.end(), player->getGUID()) != m_invites.end())
 		return false;
 
-	m_invites[player->getGUID()] = player;
+	m_invites.push_back(player->getGUID());
 	return true;
 }
 

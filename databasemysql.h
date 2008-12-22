@@ -66,6 +66,7 @@ class DatabaseMySQL : public _Database
 #endif
 
 		MYSQL m_handle;
+		my_bool myTrue, myFalse;
 #ifndef __DISABLE_DIRTY_RECONNECT__
 		uint32_t m_attempts;
 #endif
