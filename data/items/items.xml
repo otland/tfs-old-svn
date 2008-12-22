@@ -20298,7 +20298,7 @@
 	<item id="9107" article="a" name="dead mutated human">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="10007"/>
-		<attribute key="duration" value="900"/>
+		<attribute key="duration" value="10"/>
 		<attribute key="corpseType" value="blood"/>
 		<attribute key="fluidSource" value="blood"/>
 	</item>
@@ -20535,27 +20535,27 @@
 		<attribute key="slotType" value="head"/>
 		<attribute key="magiclevelpoints" value="2"/>
 	</item>
-	<item id="9801" article="a" name="dead worker holem">
+	<item id="9801" article="a" name="dead worker golem">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="9802"/>
 		<attribute key="duration" value="10"/>
 		<attribute key="corpseType" value="venom"/>
 		<attribute key="fluidSource" value="slime"/>
 	</item>
-	<item id="9802" article="a" name="dead worker holem">
+	<item id="9802" article="a" name="dead worker golem">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="9803"/>
 		<attribute key="duration" value="900"/>
 		<attribute key="corpseType" value="venom"/>
 		<attribute key="fluidSource" value="slime"/>
 	</item>
-	<item id="9803" article="a" name="dead worker holem">
+	<item id="9803" article="a" name="dead worker golem">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="9804"/>
 		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="venom"/>
 	</item>
-	<item id="9804" article="a" name="dead worker holem">
+	<item id="9804" article="a" name="dead worker golem">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="0"/>
 		<attribute key="duration" value="600"/>
@@ -20716,7 +20716,7 @@
 	<item id="9878" article="a" name="slain zombie">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="0"/>
-		<attribute key="duration" value="10"/>
+		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
 	<item id="9913" article="a" name="dead mutated tiger">
