@@ -518,8 +518,8 @@ class Game
 		Map* getMap() { return map;}
 		const Map* getMap() const { return map;}
 
-		uint64_t getStateTime() const {return stateTime;}
-		void setStateTime(uint64_t _stateTime) {stateTime = _stateTime;}
+		int64_t getStateTime() const {return stateTime;}
+		void setStateTime(int64_t _stateTime) {stateTime = _stateTime;}
 
 		void addCommandTag(std::string tag);
 		void resetCommandTag();
@@ -553,7 +553,7 @@ class Game
 		time_t lastHSUpdate;
 
 		bool serverSaveMessage[2];
-		uint64_t stateTime;
+		int64_t stateTime;
 
 		std::vector<Thing*> ToReleaseThings;
 
