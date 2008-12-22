@@ -20779,25 +20779,25 @@
 		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
-	<item id="9923" article="a" name="dead gozzler">
+	<item id="9923" article="a" name="dead hellspawn">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="9924"/>
 		<attribute key="duration" value="10"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
-	<item id="9924" article="a" name="dead gozzler">
+	<item id="9924" article="a" name="dead hellspawn">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="9925"/>
 		<attribute key="duration" value="900"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
-	<item id="9925" article="a" name="dead gozzler">
+	<item id="9925" article="a" name="dead hellspawn">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="9926"/>
 		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
-	<item id="9926" article="a" name="dead gozzler">
+	<item id="9926" article="a" name="dead hellspawn">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="0"/>
 		<attribute key="duration" value="600"/>
