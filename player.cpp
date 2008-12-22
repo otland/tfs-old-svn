@@ -814,6 +814,8 @@ void Player::dropLoot(Container* corpse)
 
 			if(Item::items[preventItem->getID()].abilities.preventLoss)
 				break;
+
+			preventItem = NULL;
 		}
 
 		if(preventItem && getSkull() != SKULL_RED && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
