@@ -310,7 +310,7 @@
 	<monster name="Training Monk" file="Monks/Training Monk.xml"/>
 	
 	<!-- Mutated-Mammals -->
-	<monster name="Mutated Bat" file="Demons/mutated bat.xml"/>
+	<monster name="Mutated Bat" file="Mutated-Mammals/mutated bat.xml"/>
 
 	<!-- Necromancers -->
 	<monster name="Necromancer" file="Necromancers/necromancer.xml"/>
