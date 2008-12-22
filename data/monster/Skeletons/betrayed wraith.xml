@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="betrayed wraith" nameDescription="a betrayed wraith" race="blood" experience="3000" speed="310" manacost="0">
+<monster name="betrayed wraith" nameDescription="a betrayed wraith" race="blood" experience="3500" speed="310" manacost="0">
   <health now="4200" max="4200"/>
   <look type="233" corpse="6316"/>
   <targetchange interval="5000" chance="8"/>

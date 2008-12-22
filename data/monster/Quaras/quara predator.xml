@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <monster name="quara predator" nameDescription="a quara predator" race="blood" experience="1600" speed="520" manacost="0">
   <health now="2200" max="2200"/>
   <look type="20" head="0" body="0" legs="0" feet="0" corpse="6067"/>
@@ -18,9 +18,12 @@
     <flag runonhealth="0"/>
   </flags>
   <attacks>
-	<attack name="melee" interval="2000" min="-30" max="-350"/>
+	<attack name="melee" interval="2000" min="-30" max="-470"/>
   </attacks>
   <defenses armor="40" defense="45">
+    <defense name="speed" interval="10000" chance="40" speedchange="210" duration="20000">
+      <attribute key="areaEffect" value="greenshimmer"/>
+    </defense>
     <defense name="healing" interval="1000" chance="25" min="113" max="187">
       <attribute key="areaEffect" value="blueshimmer"/>
     </defense>
@@ -50,6 +53,7 @@
 		<item id="2145" chance="1429" countmax="1"/>
 		<item id="2483" chance="4000"/>
 		<item id="5741" chance="956"/>
+		<item id="7897" chance="800" />
 	  </inside>
 	</item>
   </loot>

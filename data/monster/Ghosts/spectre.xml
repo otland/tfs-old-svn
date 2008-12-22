@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="spectre" nameDescription="a spectre" race="undead" experience="1350" speed="250" manacost="0">
+<monster name="spectre" nameDescription="a spectre" race="undead" experience="2100" speed="250" manacost="0">
   <health now="1350" max="1350"/>
   <look type="235" head="20" corpse="6348"/>
   <targetchange interval="5000" chance="8"/>

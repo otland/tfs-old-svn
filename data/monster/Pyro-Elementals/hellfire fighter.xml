@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="hellfire fighter" nameDescription="a hellfire fighter" race="fire" experience="2200" speed="260" manacost="0">
+<?xml version="1.0" encoding="UTF-8"?>
+<monster name="hellfire fighter" nameDescription="a hellfire fighter" race="fire" experience="3900" speed="260" manacost="0">
   <health now="3800" max="3800"/>
   <look type="243" corpse="6324"/>
   <targetchange interval="5000" chance="8"/>
