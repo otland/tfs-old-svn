@@ -65,6 +65,7 @@ class ProtocolGame : public Protocol
 		void disconnect();
 		void disconnectClient(uint8_t error, const char* message);
 
+		virtual void releaseProtocol();
 		virtual void deleteProtocolTask();
 
 		void checkCreatureAsKnown(uint32_t id, bool &known, uint32_t &removedKnown);

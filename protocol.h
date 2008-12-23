@@ -80,7 +80,7 @@ class Protocol : boost::noncopyable
 
 		void setRawMessages(bool value) { m_rawMessages = value; }
 
-		void releaseProtocol();
+		virtual void releaseProtocol();
 		virtual void deleteProtocolTask();
 		friend class Connection;
 

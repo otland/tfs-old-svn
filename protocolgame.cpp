@@ -248,6 +248,15 @@ void ProtocolGame::setPlayer(Player* p)
 	player = p;
 }
 
+void ProtocolGame::releaseProtocol()
+{
+	//dispatcher thread
+	if(player && player->client == this)
+		player->client = NULL;
+
+	Protocol::releaseProtocol();
+}
+
 void ProtocolGame::deleteProtocolTask()
 {
 	//dispatcher thread
@@ -256,8 +265,6 @@ void ProtocolGame::deleteProtocolTask()
 		#ifdef __DEBUG_NET_DETAIL__
 		std::cout << "Deleting ProtocolGame - Protocol:" << this << ", Player: " << player << std::endl;
 		#endif
-
-		player->client = NULL;
 
 		g_game.FreeThing(player);
 		player = NULL;
@@ -273,13 +280,13 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 	{
 		player = new Player(name, this);
 
-		bool letNamelockedLogin = true, namelockManager = false;
+		bool letNamelockedLogin = true;
 		if(g_bans.isPlayerNamelocked(name) && accnumber > 1)
 		{
 			if(g_config.getString(ConfigManager::ACCOUNT_MANAGER) == "yes")
 			{
 				player->name = "Account Manager";
-				namelockManager = true;
+				player->namelockedPlayer = name;
 			}
 			else
 				letNamelockedLogin = false;
@@ -301,8 +308,6 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		{
 			player->accountManager = true;
 			player->realAccount = accnumber;
-			if(namelockManager)
-				player->namelockedPlayer = name;
 		}
 
 		player->setOperatingSystem((OperatingSystem_t)operatingSystem);
