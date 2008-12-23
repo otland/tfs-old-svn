@@ -2076,9 +2076,10 @@ bool Game::playerProcessRuleViolation(uint32_t playerId, const std::string& name
 
 	if(ChatChannel* channel = g_chat.getChannelById(CHANNEL_RVR))
 	{
+		UsersList tmpList = channel->getUsers();
 		for(AutoList<Player>::listiterator pt = Player::listPlayer.list.begin(); pt != Player::listPlayer.list.end(); ++pt)
 		{
-			if(std::find(channel->getUsers().begin(), channel->getUsers().end(), (*pt).second->getID()) != channel->getUsers().end())
+			if(std::find(tmpList.begin(), tmpList.end(), (*pt).second->getID()) != tmpList.end())
 				(*pt).second->sendRemoveReport(reporter->getName());
 		}
 	}
@@ -4386,9 +4387,10 @@ bool Game::cancelRuleViolation(Player* player)
 	}
 	else if(ChatChannel* channel = g_chat.getChannelById(CHANNEL_RVR))
 	{
+		UsersList tmpList = channel->getUsers();
 		for(AutoList<Player>::listiterator pt = Player::listPlayer.list.begin(); pt != Player::listPlayer.list.end(); ++pt)
 		{
-			if(std::find(channel->getUsers().begin(), channel->getUsers().end(), (*pt).second->getID()) != channel->getUsers().end())
+			if(std::find(tmpList.begin(), tmpList.end(), (*pt).second->getID()) != tmpList.end())
 				(*pt).second->sendRemoveReport(player->getName());
 		}
 	}
@@ -4408,9 +4410,10 @@ bool Game::closeRuleViolation(Player* player)
 	player->sendLockRuleViolation();
 	if(ChatChannel* channel = g_chat.getChannelById(CHANNEL_RVR))
 	{
+		UsersList tmpList = channel->getUsers();
 		for(AutoList<Player>::listiterator pt = Player::listPlayer.list.begin(); pt != Player::listPlayer.list.end(); ++pt)
 		{
-			if(std::find(channel->getUsers().begin(), channel->getUsers().end(), (*pt).second->getID()) != channel->getUsers().end())
+			if(std::find(tmpList.begin(), tmpList.end(), (*pt).second->getID()) != tmpList.end())
 				(*pt).second->sendRemoveReport(player->getName());
 		}
 	}

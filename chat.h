@@ -46,7 +46,7 @@ class ChatChannel
 
 		const std::string& getName() {return m_name;}
 		const uint16_t getId() {return m_id;}
-		const UsersList getUsers() {return m_users;}
+		const UsersList& getUsers() {return m_users;}
 
 		virtual const uint32_t getOwner() {return 0;}
 
