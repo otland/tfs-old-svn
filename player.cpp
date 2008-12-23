@@ -2227,7 +2227,7 @@ Item* Player::getCorpse()
 			if(mostDamageCreature != lastHitCreature && isNotLastHitMaster && isNotMostDamageMaster && isNotSameMaster && isNotSameName)
 			{
 				if(lastHitCreature)
-					ss << ", and by ";
+					ss << " and by ";
 
 				ss << mostDamageCreature->getNameDescription();
 			}
