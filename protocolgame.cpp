@@ -459,6 +459,7 @@ bool ProtocolGame::connect(uint32_t playerId)
 	}
 
 	player = _player;
+	player->useThing2();
 	player->isConnecting = false;
 	player->client = this;
 	player->client->sendAddCreature(player, false);
