@@ -774,6 +774,58 @@ uint32_t DatabaseManager::updateDatabase()
 			return 7;
 		}
 
+		case 7:
+		{
+			std::cout << "> Updating database version to: 8..." << std::endl;
+
+			DBQuery query;
+			std::string worldIDTables[10] =
+			{
+				"server_motd", "server_record", "server_reports", "players",
+				"global_storage", "guilds", "houses", "house_lists", "tiles",
+				"tile_items"
+			};
+
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_SQLITE:
+				{
+					for(int i = 0; i < 10; i++)
+					{
+						query << "ALTER TABLE `" << worldIDTables[i] << "` ADD `world_id` INTEGER NOT NULL DEFAULT 0;";
+						db->executeQuery(query.str());
+						query.str("");
+					}
+					break;
+				}
+
+				case DATABASE_ENGINE_MYSQL:
+				{
+					for(int i = 0; i < 10; i++)
+					{
+						query << "ALTER TABLE `" << worldIDTables[i] << "` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;";
+						db->executeQuery(query.str());
+						query.str("");
+					}
+					break;
+				}
+
+				case DATABASE_ENGINE_POSTGRESQL:
+				{
+					for(int i = 0; i < 10; i++)
+					{
+						query << "ALTER TABLE `" << worldIDTables[i] << "` ADD `world_id` SMALLINT UNSIGNED NOT NULL DEFAULT 0;";
+						db->executeQuery(query.str());
+						query.str("");
+					}
+					break;
+				}
+			}
+
+			registerDatabaseConfig("db_version", 8);
+			return 8;
+		}
+
 		default:
 			break;
 	}
