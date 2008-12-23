@@ -96,8 +96,7 @@ isInternalRemoved(false)
 
 Creature::~Creature()
 {
-	std::list<Creature*>::iterator cit;
-	for(cit = summons.begin(); cit != summons.end(); ++cit)
+	for(std::list<Creature*>::iterator cit = summons.begin(); cit != summons.end(); ++cit)
 	{
 		(*cit)->setAttackedCreature(NULL);
 		(*cit)->setMaster(NULL);
@@ -105,7 +104,6 @@ Creature::~Creature()
 	}
 
 	summons.clear();
-
 	for(ConditionList::iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
 		(*it)->endCondition(this, CONDITIONEND_CLEANUP);
@@ -113,9 +111,7 @@ Creature::~Creature()
 	}
 
 	conditions.clear();
-
 	attackedCreature = NULL;
-
 	eventsList.clear();
 	//std::cout << "Creature destructor " << this->getID() << std::endl;
 }

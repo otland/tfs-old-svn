@@ -248,16 +248,18 @@ void ProtocolGame::setPlayer(Player* p)
 	player = p;
 }
 
+void ProtocolGame::releaseProtocol()
+{
+	if(player && player->client == this)
+		player->client = NULL;
+
+	Protocol::releaseProtocol();
+}
+
 void ProtocolGame::deleteProtocolTask()
 {
 	if(player)
 	{
-		#ifdef __DEBUG_NET_DETAIL__
-		std::cout << "Deleting ProtocolGame - Protocol:" << this << ", Player: " << player << std::endl;
-		#endif
-
-		player->client = NULL;
-
 		g_game.FreeThing(player);
 		player = NULL;
 	}
@@ -269,7 +271,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 {
 	//dispatcher thread
 	Player* _player = g_game.getPlayerByName(name);
-	if(!_player || g_config.getNumber(ConfigManager::ALLOW_CLONES) != 0 || name == "Account Manager")
+	if(!_player || name == "Account Manager" || g_config.getNumber(ConfigManager::ALLOW_CLONES) != 0)
 	{
 		player = new Player(name, this);
 		player->useThing2();
@@ -277,9 +279,6 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 
 		if(!IOLoginData::getInstance()->loadPlayer(player, name, true))
 		{
-#ifdef __DEBUG__
-			std::cout << "ProtocolGame::login - loadPlayer failed - " << name << std::endl;
-#endif
 			disconnectClient(0x14, "Your character could not be loaded.");
 			return false;
 		}
@@ -289,12 +288,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		{
 			if(g_config.getBool(ConfigManager::NAMELOCK_MANAGER))
 			{
-				g_game.FreeThing(player);
-				player = new Player("Account Manager", this);
-				player->useThing2();
-				player->setID();
-
-				IOLoginData::getInstance()->loadPlayer(player, "Account Manager");
+				player->name = "Account Manager";
 				player->accountManager = MANAGER_NAMELOCK;
 				player->managerNumber = accnumber;
 				player->managerString2 = name;
@@ -305,13 +299,13 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 
 		if(player->getName() == "Account Manager" && g_config.getBool(ConfigManager::ACCOUNT_MANAGER) && !isNamelocked)
 		{
-			if(accnumber == 1)
-				player->accountManager = MANAGER_NEW;
-			else
+			if(accnumber != 1)
 			{
 				player->accountManager = MANAGER_ACCOUNT;
 				player->managerNumber = accnumber;
 			}
+			else
+				player->accountManager = MANAGER_NEW;
 		}
 
 		player->setOperatingSystem((OperatingSystem_t)operatingSystem);
@@ -438,7 +432,6 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			g_chat.removeUserFromAllChannels(_player);
 			_player->disconnect();
 			_player->isConnecting = true;
-
 			addRef();
 			eventConnect = Scheduler::getScheduler().addEvent(
 				createSchedulerTask(1000, boost::bind(&ProtocolGame::connect, this, _player->getID())));
@@ -466,11 +459,11 @@ bool ProtocolGame::connect(uint32_t playerId)
 	}
 
 	player = _player;
-	player->useThing2();
 	player->isConnecting = false;
 	player->client = this;
 	player->client->sendAddCreature(player, false);
 	player->sendIcons();
+
 	player->lastIP = player->getIP();
 	player->lastLoginSaved = std::max(time(NULL), player->lastLoginSaved + 1);
 	m_acceptPackets = true;
@@ -1219,8 +1212,7 @@ void ProtocolGame::parseReceivePing(NetworkMessage& msg)
 {
 	if(m_now > m_nextPing)
 	{
-		Dispatcher::getDispatcher().addTask(
-			createTask(boost::bind(&Game::playerReceivePing, &g_game, player->getID())));
+		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerReceivePing, &g_game, player->getID())));
 		m_nextPing = m_now + 2000;
 	}
 }

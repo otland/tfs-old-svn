@@ -607,6 +607,7 @@ PlayerVector Game::getPlayersByIP(uint32_t ip, uint32_t mask)
 				players.push_back(it->second);
 		}
 	}
+
 	return players;
 }
 
@@ -699,6 +700,7 @@ ReturnValue Game::placeSummon(Creature* creature, const std::string& name)
 		creature->removeSummon(monster);
 		return RET_NOTENOUGHROOM;
 	}
+
 	return RET_NOERROR;
 }
 
@@ -706,10 +708,6 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 {
 	if(creature->isRemoved())
 		return false;
-
-#ifdef __DEBUG__
-	std::cout << "removing creature " << std::endl;
-#endif
 
 	Cylinder* cylinder = creature->getTile();
 
@@ -734,19 +732,19 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 		(*it)->onCreatureDisappear(creature, index, isLogout);
 
 	creature->getParent()->postRemoveNotification(creature, index, true);
+	creature->setRemoved();
 
 	listCreature.removeList(creature->getID());
 	creature->removeList();
-	creature->setRemoved();
-	FreeThing(creature);
-
-	removeCreatureCheck(creature);
 
 	for(std::list<Creature*>::iterator cit = creature->summons.begin(); cit != creature->summons.end(); ++cit)
 	{
 		(*cit)->setLossSkill(false);
 		removeCreature(*cit);
 	}
+
+	removeCreatureCheck(creature);
+	FreeThing(creature);
 
 	creature->onRemovedCreature();
 	return true;
@@ -1424,6 +1422,7 @@ ReturnValue Game::internalRemoveItem(Item* item, int32_t count /*= -1*/, bool te
 			isCompleteRemoval = true;
 			FreeThing(item);
 		}
+
 		cylinder->postRemoveNotification(item, index, isCompleteRemoval);
 	}
 
@@ -1863,8 +1862,8 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 
 		item->setParent(NULL);
 		cylinder->postRemoveNotification(item, itemIndex, true);
-		FreeThing(item);
 
+		FreeThing(item);
 		return newItem;
 	}
 
@@ -2731,11 +2730,10 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 			tradeItems.erase(it);
 		}
 
-		bool isSuccess = false;
-
 		ReturnValue ret1 = internalAddItem(tradePartner, tradeItem1, INDEX_WHEREEVER, 0, true);
 		ReturnValue ret2 = internalAddItem(player, tradeItem2, INDEX_WHEREEVER, 0, true);
 
+		bool isSuccess = false;
 		if(ret1 == RET_NOERROR && ret2 == RET_NOERROR)
 		{
 			ret1 = internalRemoveItem(tradeItem1, tradeItem1->getItemCount(), true);
@@ -2777,6 +2775,7 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 		tradePartner->sendTradeClose();
 		return isSuccess;
 	}
+
 	return false;
 }
 
@@ -2921,6 +2920,7 @@ bool Game::internalCloseTrade(Player* player)
 			FreeThing(it->first);
 			tradeItems.erase(it);
 		}
+
 		player->tradeItem->onTradeEvent(ON_TRADE_CANCEL, player);
 		player->tradeItem = NULL;
 	}
@@ -4466,14 +4466,14 @@ void Game::FreeThing(Thing* thing)
 
 bool Game::broadcastMessage(const std::string& text, MessageClasses type)
 {
-	if(type >= MSG_CLASS_FIRST && type <= MSG_CLASS_LAST)
-	{
-		std::cout << "> Broadcasted message: \"" << text << "\"." << std::endl;
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-			(*it).second->sendTextMessage(type, text);
-		return true;
-	}
-	return false;
+	if(type <= MSG_CLASS_FIRST || type >= MSG_CLASS_LAST)
+		return false;
+
+	std::cout << "> Broadcasted message: \"" << text << "\"." << std::endl;
+	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		(*it).second->sendTextMessage(type, text);
+
+	return true;
 }
 
 bool Game::reloadHighscores()

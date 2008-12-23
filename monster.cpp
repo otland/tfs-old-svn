@@ -98,6 +98,7 @@ Creature()
 		if(!registerCreatureEvent(*it))
 			std::cout << "Warning: [Monster::Monster]. Unknown event name - " << *it << std::endl;
 	}
+
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	monsterCount++;
 #endif
@@ -287,7 +288,6 @@ void Monster::onCreatureFound(Creature* creature, bool pushFront /*= false*/)
 void Monster::onCreatureEnter(Creature* creature)
 {
 	//std::cout << "onCreatureEnter - " << creature->getName() << std::endl;
-
 	if(getMaster() == creature)
 	{
 		//Turn the summon on again
@@ -317,6 +317,7 @@ bool Monster::isFriend(const Creature* creature)
 		if(creature->getMonster() && !creature->isSummon())
 			return true;
 	}
+
 	return false;
 }
 
@@ -1398,8 +1399,8 @@ bool Monster::convinceCreature(Creature* creature)
 			(*cit)->setMaster(NULL);
 			(*cit)->releaseThing2();
 		}
-		summons.clear();
 
+		summons.clear();
 		isMasterInRange = true;
 		updateTargetList();
 		activate();

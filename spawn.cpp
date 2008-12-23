@@ -53,9 +53,7 @@ bool Spawns::loadFromXml(const std::string& _filename)
 		return true;
 
 	filename = _filename;
-
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
-
 	if(doc)
 	{
 		xmlNodePtr root, spawnNode;
@@ -363,10 +361,10 @@ bool Spawn::spawnMonster(uint32_t spawnId, MonsterType* mType, const Position& p
 		}
 	}
 
-	monster->setDirection(dir);
 	monster->setSpawn(this);
-	monster->setMasterPos(pos, radius);
 	monster->useThing2();
+	monster->setDirection(dir);
+	monster->setMasterPos(pos, radius);
 
 	spawnedMap.insert(SpawnedPair(spawnId, monster));
 	spawnMap[spawnId].lastSpawn = OTSYS_TIME();
@@ -431,7 +429,6 @@ void Spawn::checkSpawn()
 				}
 
 				spawnMonster(spawnId, sb.mType, sb.pos, sb.direction);
-
 				++spawnCount;
 				if(spawnCount >= (uint32_t)g_config.getNumber(ConfigManager::RATE_SPAWN))
 					break;

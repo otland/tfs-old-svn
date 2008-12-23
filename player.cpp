@@ -2296,8 +2296,8 @@ void Player::addList()
 {
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 		(*it).second->notifyLogIn(this);
-	listPlayer.addList(this);
 
+	listPlayer.addList(this);
 	Status::getInstance()->addPlayer();
 }
 
