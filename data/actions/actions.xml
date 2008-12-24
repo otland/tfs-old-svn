@@ -192,7 +192,8 @@
 	<action itemid="5543" script="other/teleport.lua"/>
 	<action fromid="2376" toid="2404" script="other/destroy.lua"/>
 	<action fromid="2406" toid="2419" script="other/destroy.lua"/>
-	<action fromid="2421" toid="2453" script="other/destroy.lua"/>
+	<action fromid="2421" toid="2441" script="other/destroy.lua"/>
+	<action fromid="2443" toid="2453" script="other/destroy.lua"/>
 	<action fromid="5792" toid="5797" script="other/dice.lua"/>
 	<action itemid="2692" script="other/createbread.lua"/>
 	<action itemid="2694" script="other/createbread.lua"/>
