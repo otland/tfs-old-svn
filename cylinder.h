@@ -101,16 +101,18 @@ class Cylinder : virtual public Thing
 
 		/**
 		  * Add the object to the cylinder
+		  * \param actor is creature adding the object (can be NULL)
 		  * \param item is the object to add
 		  */
-		virtual void __addThing(Thing* thing) = 0;
+		virtual void __addThing(Creature* actor, Thing* thing) = 0;
 
 		/**
 		  * Add the object to the cylinder
+		  * \param actor is creature adding the object (can be NULL)
 		  * \param index points to the destination index (inventory slot/container position)
 		  * \param item is the object to add
 		  */
-		virtual void __addThing(int32_t index, Thing* thing) = 0;
+		virtual void __addThing(Creature* actor, int32_t index, Thing* thing) = 0;
 
 		/**
 		  * Update the item count or type for an object
@@ -136,20 +138,22 @@ class Cylinder : virtual public Thing
 
 		/**
 		  * Is sent after an operation (move/add) to update internal values
+		  * \param actor is the creature that is responsible (can be NULL)
 		  * \param thing is the object that has been added
 		  * \param index is the objects new index value
 		  * \param link holds the relation the object has to the cylinder
 		  */
-		virtual void postAddNotification(Thing* thing, int32_t index, cylinderlink_t link = LINK_OWNER) = 0;
+		virtual void postAddNotification(Creature* actor, Thing* thing, int32_t index, cylinderlink_t link = LINK_OWNER) = 0;
 
 		/**
 		  * Is sent after an operation (move/remove) to update internal values
+		  * \param actor is the creature that is responsible (can be NULL)
 		  * \param thing is the object that has been removed
 		  * \param index is the previous index of the removed object
 		  * \param isCompleteRemoval indicates if the item was completely removed or just partially (stackables)
 		  * \param link holds the relation the object has to the cylinder
 		  */
-		virtual void postRemoveNotification(Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER) = 0;
+		virtual void postRemoveNotification(Creature* actor, Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER) = 0;
 
 		/**
 		  * Gets the index of an object
@@ -214,14 +218,14 @@ class VirtualCylinder : public Cylinder
 		virtual Cylinder* __queryDestination(int32_t& index, const Thing* thing, Item** destItem,
 			uint32_t& flags) {return NULL;}
 
-		virtual void __addThing(Thing* thing) {}
-		virtual void __addThing(int32_t index, Thing* thing) {}
+		virtual void __addThing(Creature* actor, Thing* thing) {}
+		virtual void __addThing(Creature* actor, int32_t index, Thing* thing) {}
 		virtual void __updateThing(Thing* thing, uint16_t itemId, uint32_t count) {}
 		virtual void __replaceThing(uint32_t index, Thing* thing) {}
 		virtual void __removeThing(Thing* thing, uint32_t count) {}
 
-		virtual void postAddNotification(Thing* thing, int32_t index, cylinderlink_t link = LINK_OWNER) {}
-		virtual void postRemoveNotification(Thing* thing, int32_t index, bool isCompleteRemoval,
+		virtual void postAddNotification(Creature* actor, Thing* thing, int32_t index, cylinderlink_t link = LINK_OWNER) {}
+		virtual void postRemoveNotification(Creature* actor, Thing* thing, int32_t index, bool isCompleteRemoval,
 			cylinderlink_t link = LINK_OWNER) {}
 
 		virtual bool isPushable() const {return false;}

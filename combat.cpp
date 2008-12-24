@@ -592,7 +592,7 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 			if(caster)
 				item->setOwner(caster->getID());
 
-			if(g_game.internalAddItem(tile, item) == RET_NOERROR)
+			if(g_game.internalAddItem(caster, tile, item) == RET_NOERROR)
 				g_game.startDecay(item);
 			else
 				delete item;
@@ -1338,7 +1338,7 @@ void MagicField::onStepInField(Creature* creature)
 {
 	//remove magic walls/wild growth
 	if(isBlocking())
-		g_game.internalRemoveItem(this, 1);
+		g_game.internalRemoveItem(creature, this, 1);
 	else
 	{
 		const ItemType& it = items[getID()];

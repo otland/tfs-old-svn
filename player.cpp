@@ -819,7 +819,7 @@ void Player::dropLoot(Container* corpse)
 		}
 
 		if(preventItem && getSkull() != SKULL_RED && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
-			g_game.internalRemoveItem(preventItem, 1);
+			g_game.internalRemoveItem(NULL, preventItem, 1);
 		else
 		{
 			for(uint8_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
@@ -827,7 +827,7 @@ void Player::dropLoot(Container* corpse)
 				Item* item = inventory[i];
 				if(item && (item->getContainer() || (uint32_t)random_range(1, 100) <= uint32_t(getLostPercent(LOSS_ITEMS) * 100) || getSkull() == SKULL_RED))
 				{
-					g_game.internalMoveItem(this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
+					g_game.internalMoveItem(NULL, this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
 					sendRemoveInventoryItem((slots_t)i, inventory[(slots_t)i]);
 				}
 			}
@@ -2698,12 +2698,12 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 		return this;
 }
 
-void Player::__addThing(Thing* thing)
+void Player::__addThing(Creature* actor, Thing* thing)
 {
-	__addThing(0, thing);
+	__addThing(actor, 0, thing);
 }
 
-void Player::__addThing(int32_t index, Thing* thing)
+void Player::__addThing(Creature* actor, int32_t index, Thing* thing)
 {
 	if(index < 0 || index > 11)
 	{
@@ -2955,7 +2955,7 @@ Thing* Player::__getThing(uint32_t index) const
 	return NULL;
 }
 
-void Player::postAddNotification(Thing* thing, int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
+void Player::postAddNotification(Creature* actor, Thing* thing, int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
 {
 	if(link == LINK_OWNER) //calling movement scripts
 		g_moveEvents->onPlayerEquip(this, thing->getItem(), (slots_t)index, false);
@@ -2993,7 +2993,7 @@ void Player::postAddNotification(Thing* thing, int32_t index, cylinderlink_t lin
 	}
 }
 
-void Player::postRemoveNotification(Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
+void Player::postRemoveNotification(Creature* actor, Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
 {
 	if(link == LINK_OWNER) //calling movement scripts
 		g_moveEvents->onPlayerDeEquip(this, thing->getItem(), (slots_t)index, isCompleteRemoval);
@@ -3350,7 +3350,7 @@ void Player::onCombatRemoveCondition(const Creature* attacker, Condition* condit
 			{
 				//25% chance to destroy the item
 				if(25 >= random_range(0, 100))
-					g_game.internalRemoveItem(item);
+					g_game.internalRemoveItem(NULL, item);
 			}
 		}
 	}

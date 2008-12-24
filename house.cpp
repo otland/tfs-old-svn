@@ -280,7 +280,7 @@ bool House::transferToDepot()
 
 	for(std::list<Item*>::iterator it = moveItemList.begin(); it != moveItemList.end(); ++it)
 	{
-		g_game.internalMoveItem((*it)->getParent(), depot, INDEX_WHEREEVER,
+		g_game.internalMoveItem(NULL, (*it)->getParent(), depot, INDEX_WHEREEVER,
 			(*it), (*it)->getItemCount(), NULL, FLAG_NOLIMIT);
 	}
 
@@ -403,7 +403,7 @@ HouseTransferItem* House::getTransferItem()
 
 	transferContainer.setParent(NULL);
 	transferItem = HouseTransferItem::createHouseTransferItem(this);
-	transferContainer.__addThing(transferItem);
+	transferContainer.__addThing(NULL, transferItem);
 	return transferItem;
 }
 
@@ -441,7 +441,7 @@ bool HouseTransferItem::onTradeEvent(TradeEvents_t event, Player* owner)
 			if(House* house = getHouse())
 				house->executeTransfer(this, owner);
 
-			g_game.internalRemoveItem(this, 1);
+			g_game.internalRemoveItem(NULL, this, 1);
 			break;
 		}
 		case ON_TRADE_CANCEL:
@@ -991,7 +991,7 @@ bool Houses::payHouses()
 								char warningText[200];
 								sprintf(warningText, "Warning! \nThe %s rent of %d gold for your house \"%s\" is payable. Have it within %d days or you will lose this house.", period.c_str(), house->getRent(), house->getName().c_str(), (7 - house->getPayRentWarnings()));
 								letter->setText(warningText);
-								g_game.internalAddItem(depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT);
+								g_game.internalAddItem(NULL, depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT);
 							}
 
 							house->setPayRentWarnings(house->getPayRentWarnings() + 1);

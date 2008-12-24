@@ -656,8 +656,8 @@ class Player : public Creature, public Cylinder
 		virtual void onThink(uint32_t interval);
 		void sendCriticalHit() const;
 
-		virtual void postAddNotification(Thing* thing, int32_t index, cylinderlink_t link = LINK_OWNER);
-		virtual void postRemoveNotification(Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
+		virtual void postAddNotification(Creature* actor, Thing* thing, int32_t index, cylinderlink_t link = LINK_OWNER);
+		virtual void postRemoveNotification(Creature* actor, Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
 
 		void setNextAction(int64_t time) {if(time > nextAction) {nextAction = time;}}
 		bool canDoAction() const {return nextAction <= OTSYS_TIME();}
@@ -710,8 +710,8 @@ class Player : public Creature, public Cylinder
 		virtual Cylinder* __queryDestination(int32_t& index, const Thing* thing, Item** destItem,
 			uint32_t& flags);
 
-		virtual void __addThing(Thing* thing);
-		virtual void __addThing(int32_t index, Thing* thing);
+		virtual void __addThing(Creature* actor, Thing* thing);
+		virtual void __addThing(Creature* actor, int32_t index, Thing* thing);
 
 		virtual void __updateThing(Thing* thing, uint16_t itemId, uint32_t count);
 		virtual void __replaceThing(uint32_t index, Thing* thing);

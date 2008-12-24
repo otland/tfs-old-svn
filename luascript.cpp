@@ -2780,7 +2780,7 @@ int32_t LuaScriptInterface::luaDoRemoveItem(lua_State* L)
 		return 1;
 	}
 
-	ReturnValue ret = g_game.internalRemoveItem(item, count);
+	ReturnValue ret = g_game.internalRemoveItem(NULL, item, count);
 	if(ret != RET_NOERROR)
 	{
 		lua_pushnumber(L, LUA_ERROR);
@@ -3276,7 +3276,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddItem(lua_State* L)
 				return 1;
 			}
 
-			ReturnValue ret = g_game.internalPlayerAddItem(player, newItem, canDropOnMap);
+			ReturnValue ret = g_game.internalPlayerAddItem(NULL, player, newItem, canDropOnMap);
 			if(ret != RET_NOERROR)
 			{
 				delete newItem;
@@ -3313,7 +3313,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddItem(lua_State* L)
 			return 1;
 		}
 
-		ReturnValue ret = g_game.internalPlayerAddItem(player, newItem, canDropOnMap);
+		ReturnValue ret = g_game.internalPlayerAddItem(NULL, player, newItem, canDropOnMap);
 		if(ret != RET_NOERROR)
 		{
 			delete newItem;
@@ -3370,7 +3370,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddItemEx(lua_State* L)
 		return 1;
 	}
 
-	lua_pushnumber(L, g_game.internalPlayerAddItem(player, item, canDropOnMap));
+	lua_pushnumber(L, g_game.internalPlayerAddItem(NULL, player, item, canDropOnMap));
 	return 1;
 }
 
@@ -3405,7 +3405,7 @@ int32_t LuaScriptInterface::luaDoTileAddItemEx(lua_State* L)
 		return 1;
 	}
 
-	lua_pushnumber(L, g_game.internalAddItem(tile, item));
+	lua_pushnumber(L, g_game.internalAddItem(NULL, tile, item));
 	return 1;
 }
 
@@ -4003,7 +4003,7 @@ int32_t LuaScriptInterface::luaDoCreateItem(lua_State* L)
 				return 1;
 			}
 
-			ReturnValue ret = g_game.internalAddItem(tile, newItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
+			ReturnValue ret = g_game.internalAddItem(NULL, tile, newItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
 			if(ret != RET_NOERROR)
 			{
 				delete newItem;
@@ -4034,7 +4034,7 @@ int32_t LuaScriptInterface::luaDoCreateItem(lua_State* L)
 	{
 		Item* newItem = Item::CreateItem(itemId, count);
 
-		ReturnValue ret = g_game.internalAddItem(tile, newItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
+		ReturnValue ret = g_game.internalAddItem(NULL, tile, newItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
 		if(ret != RET_NOERROR)
 		{
 			delete newItem;
@@ -4121,8 +4121,7 @@ int32_t LuaScriptInterface::luaDoCreateTeleport(lua_State* L)
 	}
 
 	newTeleport->setDestPos(toPos);
-
-	ReturnValue ret = g_game.internalAddItem(tile, newTeleport, INDEX_WHEREEVER, FLAG_NOLIMIT);
+	ReturnValue ret = g_game.internalAddItem(NULL, tile, newTeleport, INDEX_WHEREEVER, FLAG_NOLIMIT);
 	if(ret != RET_NOERROR)
 	{
 		delete newItem;
@@ -7384,7 +7383,7 @@ int32_t LuaScriptInterface::luaDoAddContainerItemEx(lua_State* L)
 		}
 
 		ReturnValue ret = RET_NOERROR;
-		ret = g_game.internalAddItem(container, item);
+		ret = g_game.internalAddItem(NULL, container, item);
 		if(ret == RET_NOERROR)
 			env->removeTempItem(item);
 
@@ -7431,7 +7430,7 @@ int32_t LuaScriptInterface::luaDoAddContainerItem(lua_State* L)
 					return 1;
 				}
 
-				ReturnValue ret = g_game.internalAddItem(container, newItem);
+				ReturnValue ret = g_game.internalAddItem(NULL, container, newItem);
 				if(ret != RET_NOERROR)
 				{
 					delete newItem;
@@ -7461,8 +7460,7 @@ int32_t LuaScriptInterface::luaDoAddContainerItem(lua_State* L)
 		else
 		{
 			Item* newItem = Item::CreateItem(itemId, count);
-
-			ReturnValue ret = g_game.internalAddItem(container, newItem);
+			ReturnValue ret = g_game.internalAddItem(NULL, container, newItem);
 			if(ret != RET_NOERROR)
 			{
 				delete newItem;

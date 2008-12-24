@@ -410,7 +410,7 @@ uint32_t MoveEvents::onPlayerDeEquip(Player* player, Item* item, slots_t slot, b
 	return 1;
 }
 
-uint32_t MoveEvents::onItemMove(Item* item, Tile* tile, bool isAdd)
+uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool isAdd)
 {
 	MoveEvent_t eventType1 = MOVE_EVENT_REMOVE_ITEM, eventType2 = MOVE_EVENT_REMOVE_ITEM_ITEMTILE;
 	if(isAdd)
@@ -422,11 +422,11 @@ uint32_t MoveEvents::onItemMove(Item* item, Tile* tile, bool isAdd)
 	uint32_t ret = 1;
 	MoveEvent* moveEvent = getEvent(tile, eventType1);
 	if(moveEvent)
-		ret = ret & moveEvent->fireAddRemItem(item, NULL, tile->getPosition());
+		ret = ret & moveEvent->fireAddRemItem(actor, item, NULL, tile->getPosition());
 
 	moveEvent = getEvent(item, eventType1);
 	if(moveEvent)
-		ret = ret & moveEvent->fireAddRemItem(item, NULL, tile->getPosition());
+		ret = ret & moveEvent->fireAddRemItem(actor, item, NULL, tile->getPosition());
 
 	int32_t tmp = tile->__getLastIndex();
 	Item* tileItem = NULL;
@@ -437,7 +437,7 @@ uint32_t MoveEvents::onItemMove(Item* item, Tile* tile, bool isAdd)
 		{
 			moveEvent = getEvent(tileItem, eventType2);
 			if(moveEvent)
-				ret = ret & moveEvent->fireAddRemItem(item, tileItem, tile->getPosition());
+				ret = ret & moveEvent->fireAddRemItem(actor, item, tileItem, tile->getPosition());
 		}
 	}
 
@@ -721,7 +721,7 @@ uint32_t MoveEvent::AddItemField(Item* item, Item* tileItem, const Position& pos
 	{
 		Tile* tile = item->getTile();
 		for(CreatureVector::iterator cit = tile->creatures.begin(); cit != tile->creatures.end(); ++cit)
-			field->onStepInField(*cit);
+			field->onStepInField((*cit));
 
 		return 1;
 	}
@@ -999,18 +999,18 @@ uint32_t MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
 	}
 }
 
-uint32_t MoveEvent::fireAddRemItem(Item* item, Item* tileItem, const Position& pos)
+uint32_t MoveEvent::fireAddRemItem(Creature* actor, Item* item, Item* tileItem, const Position& pos)
 {
 	if(m_scripted)
-		return executeAddRemItem(item, tileItem, pos);
+		return executeAddRemItem(actor, item, tileItem, pos);
 
 	return moveFunction(item, tileItem, pos);
 }
 
-uint32_t MoveEvent::executeAddRemItem(Item* item, Item* tileItem, const Position& pos)
+uint32_t MoveEvent::executeAddRemItem(Creature* actor, Item* item, Item* tileItem, const Position& pos)
 {
-	//onAddItem(moveitem, tileitem, position)
-	//onRemoveItem(moveitem, tileitem, position)
+	//onAddItem(moveitem, tileitem, position, cid)
+	//onRemoveItem(moveitem, tileitem, position, cid)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
@@ -1037,7 +1037,10 @@ uint32_t MoveEvent::executeAddRemItem(Item* item, Item* tileItem, const Position
 		LuaScriptInterface::pushThing(L, tileItem, itemidTile);
 		LuaScriptInterface::pushPosition(L, pos, 0);
 
-		int32_t result = m_scriptInterface->callFunction(3);
+		uint32_t cid = env->addThing(actor);
+		lua_pushnumber(L, cid);
+
+		int32_t result = m_scriptInterface->callFunction(4);
 		m_scriptInterface->releaseScriptEnv();
 
 		return (result == LUA_TRUE);

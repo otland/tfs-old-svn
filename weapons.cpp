@@ -511,7 +511,7 @@ void Weapon::onUsedAmmo(Player* player, Item* item, Tile* destTile) const
 				break;
 
 			case AMMOACTION_MOVE:
-				g_game.internalMoveItem(item->getParent(), destTile, INDEX_WHEREEVER, item, 1, NULL, FLAG_NOLIMIT);
+				g_game.internalMoveItem(player, item->getParent(), destTile, INDEX_WHEREEVER, item, 1, NULL, FLAG_NOLIMIT);
 				break;
 
 			case AMMOACTION_MOVEBACK:

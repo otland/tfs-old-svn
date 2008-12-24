@@ -777,7 +777,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 7:
 		{
-			DBResult* result;
+			//DBResult* result;
 			std::cout << "> Updating database version to: 8..." << std::endl;
 
 			DBQuery query;

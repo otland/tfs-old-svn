@@ -1303,7 +1303,7 @@ uint32_t Map::clean()
 											item = tile->__getThing(i)->getItem();
 											if(item && !item->isLoadedFromMap() && !item->isNotMoveable())
 											{
-												g_game.internalRemoveItem(item);
+												g_game.internalRemoveItem(NULL, item);
 												i--;
 												count++;
 											}

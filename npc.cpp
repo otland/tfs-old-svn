@@ -1498,7 +1498,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 							for(int32_t i = 0; i < npcState->amount; ++i)
 							{
 								Item* item = Item::CreateItem(it.id, subType);
-								if(g_game.internalPlayerAddItem(player, item) != RET_NOERROR)
+								if(g_game.internalPlayerAddItem(this, player, item) != RET_NOERROR)
 									delete item;
 							}
 						}
@@ -1548,7 +1548,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 						for(int32_t i = 0; i < npcState->amount; ++i)
 						{
 							Item* item = Item::CreateItem(it.id, subType);
-							if(g_game.internalPlayerAddItem(player, item) != RET_NOERROR)
+							if(g_game.internalPlayerAddItem(this, player, item) != RET_NOERROR)
 								delete item;
 						}
 					}
