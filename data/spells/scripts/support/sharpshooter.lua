@@ -12,8 +12,10 @@ local speed = createConditionObject(CONDITION_PARALYZE)
 setConditionParam(speed, CONDITION_PARAM_TICKS, 10000)
 setConditionFormula(speed, -0.7, 56, -0.7, 56)
 
+--[[
 local disable = createConditionObject(CONDITION_DISABLE_DEFENSE)
 setConditionParam(disable, CONDITION_PARAM_TICKS, 10000)
+]]--
 
 local exhaust = createConditionObject(CONDITION_EXHAUST_HEAL)
 setConditionParam(exhaust, CONDITION_PARAM_TICKS, 10000)

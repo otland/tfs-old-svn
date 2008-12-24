@@ -277,6 +277,14 @@
 		<vocation name="Royal Paladin"/>
 		<vocation name="Elite Knight"/>
 	</instant>
+	<instant name="Charge" words="utani tempo hur" lvl="25" mana="100" prem="1" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="support/charge.lua">
+		<vocation name="Knight"/>
+		<vocation name="Elite Knight"/>
+	</instant>
+	<instant name="Swift Foot" words="utamo tempo san" lvl="55" mana="400" prem="1" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="support/swift foot.lua">
+		<vocation name="Paladin"/>
+		<vocation name="Royal Paladin"/>
+	</instant>
 	<instant name="Challenge" words="exeta res" lvl="20" mana="30" prem="1" aggressive="0" exhaustion="1000" needlearn="0" script="support/challenge.lua">
 		<vocation name="Elite Knight"/>
 	</instant>
@@ -318,7 +326,7 @@
 		<vocation name="Knight"/>
 		<vocation name="Elite Knight"/>
 	</instant>
-	<instant name="Blood Rage" words="utito tempo" lvl="60" mana="290" prem="1" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="support/bloodrage.lua">
+	<instant name="Blood Rage" words="utito tempo" lvl="60" mana="290" prem="1" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="support/blood rage.lua">
 		<vocation name="Knight"/>
 		<vocation name="Elite Knight"/>
 	</instant>
