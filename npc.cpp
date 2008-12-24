@@ -1855,12 +1855,14 @@ bool Npc::canWalkTo(const Position& fromPos, Direction dir)
 	if(!result)
 		return false;
 
-	Tile* tile = g_game.getTile(toPos.x, toPos.y, toPos.z);
-	if(!tile || tile->__queryAdd(0, this, 1, 0) != RET_NOERROR)
-		return false;
+	if(Tile* tile = g_game.getTile(toPos.x, toPos.y, toPos.z))
+	{
+		if(floorChange && (tile->floorChange() || tile->getTeleportItem()))
+			return true;
 
-	if(!floorChange && (tile->floorChange() || tile->getTeleportItem()))
-		return false;
+		if(tile->__queryAdd(0, this, 1, FLAG_PATHFINDING) != RET_NOERROR)
+			return false;
+	}
 
 	return true;
 }
