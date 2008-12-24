@@ -264,15 +264,24 @@ int argc, char *argv[]
 #endif
 )
 {
-	#if defined(WIN32) && defined(__CONSOLE__)
+	#ifdef WIN32
+	#ifdef __CONSOLE__
 	SetConsoleTitle(STATUS_SERVER_NAME);
+	#else
+	GUI::getInstance()->m_connections = false;
+	#endif
 	#endif
 	g_game.setGameState(GAME_STATE_STARTUP);
 	srand((uint32_t)OTSYS_TIME());
 
-	std::cout << STATUS_SERVER_NAME << " - Version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")." << std::endl;
-	std::cout << "A server developed by Talaturen, Kiper, Kornholijo, Jonern, Lithium & Elf." << std::endl;
-	std::cout << "Visit our forum for updates, support and resources: http://otland.net/." << std::endl;
+	std::cout << "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
+	std::cout << "* " << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME;
+	std::cout << ")                                            *" << std::endl;
+	std::cout << "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
+	std::cout << "* " << "A server developed by Elf, Talaturen, Lithium, Kiper, Kornholijo, Jonern & Nightmare. *" << std::endl;
+	std::cout << "* " << "Visit our forum for updates, support and resources: http://otland.net.                *" << std::endl;
+	std::cout << "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
+	std::cout << std::endl;
 	#if defined __DEBUG__MOVESYS__ || defined __DEBUG_HOUSES__ || defined __DEBUG_MAILBOX__ || defined __DEBUG_LUASCRIPTS__ || defined __DEBUG_RAID__ || defined __DEBUG_NET__
 	std::cout << ">> Debugging:";
 	#ifdef __DEBUG__MOVESYS__
@@ -296,15 +305,11 @@ int argc, char *argv[]
 	std::cout << std::endl;
 	#endif
 
-	#ifndef __CONSOLE__
-	GUI::getInstance()->m_connections = false;
-	#endif
 	#if !defined(WIN32) && !defined(__ROOT_PERMISSION__)
 	if(getuid() == 0 || geteuid() == 0)
 		std::cout << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user! It is recommended to execute as a normal user." << std::endl;
 	#endif
 
-	std::cout << std::endl;
 	std::cout << ">> Loading config (" << ConfigManager::filename << ")" << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading config");
@@ -580,12 +585,6 @@ int argc, char *argv[]
 	}
 
 	serverIPs.push_back(std::make_pair(resolvedIp, 0));
-
-	#if !defined(WIN32) && !defined(__ROOT_PERMISSION__)
-	if(getuid() == 0 || geteuid() == 0)
-		std::cout << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user! It is recommended to execute as a normal user." << std::endl;
-	#endif
-
 	g_globalEvents->startup();
 	g_game.setGameState(GAME_STATE_NORMAL);
 	OTSYS_THREAD_SIGNAL_SEND(g_loaderSignal);
@@ -686,9 +685,14 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					{
 						GUI::getInstance()->m_logText = "";
 						GUI::getInstance()->m_lineCount = 0;
-						std::cout << STATUS_SERVER_NAME << " - Version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")." << std::endl;
-						std::cout << "A server developed by Talaturen, Kiper, Kornholijo, Jonern, Lithium & Elf." << std::endl;
-						std::cout << "Visit our forum for updates, support and resources: http://otland.net/." << std::endl << std::endl;
+						std::cout << "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
+						std::cout << "* " << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME;
+						std::cout << ")                                            *" << std::endl;
+						std::cout << "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
+						std::cout << "* " << "A server developed by Elf, Talaturen, Lithium, Kiper, Kornholijo, Jonern & Nightmare. *" << std::endl;
+						std::cout << "* " << "Visit our forum for updates, support and resources: http://otland.net.                *" << std::endl;
+						std::cout << "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
+						std::cout << std::endl;
 					}
 					break;
 				}

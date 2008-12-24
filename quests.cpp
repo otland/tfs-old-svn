@@ -77,7 +77,7 @@ bool Mission::isCompleted(Player* player) const
 		return false;
 
 	std::string value;
-	if(player->getStorageValue(storageId, value) && atoi(value.c_str()) == endValue)
+	if(player->getStorageValue(storageId, value) && atoi(value.c_str()) >= endValue)
 		return true;
 
 	return false;
@@ -120,7 +120,7 @@ bool Quest::isCompleted(Player* player)
 
 bool Quest::isStarted(Player* player) const
 {
-	if(player)
+	if(!player)
 		return false;
 
 	std::string value;
@@ -213,7 +213,7 @@ bool Quests::loadFromXml()
 			if(readXMLInteger(p, "startstoragevalue", intValue))
 				startStorageValue = intValue;
 
-			if(Quest* quest = new Quest(name, id, startStorageId, startStorageValue))
+			if(Quest* quest = new Quest(name, ++id, startStorageId, startStorageValue))
 			{
 				xmlNodePtr missionNode = p->children;
 				while(missionNode)
@@ -277,7 +277,6 @@ bool Quests::loadFromXml()
 				quests.push_back(quest);
 			}
 
-			id++;
 			p = p->next;
 		}
 
@@ -315,7 +314,7 @@ void Quests::getQuestsList(Player* player, NetworkMessage* msg)
 	}
 }
 
-Quest *Quests::getQuestById(uint16_t id)
+Quest* Quests::getQuestById(uint16_t id)
 {
 	for(QuestsList::iterator it = quests.begin(); it != quests.end(); it++)
 	{

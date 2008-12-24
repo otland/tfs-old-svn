@@ -1103,6 +1103,8 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 								mType->damageImmunities |= COMBAT_LIFEDRAIN;
 								mType->conditionImmunities |= CONDITION_LIFEDRAIN;
 							}
+							else if(tmpStrValue == "manadrain")
+								mType->damageImmunities |= COMBAT_MANADRAIN;
 							else if(tmpStrValue == "paralyze")
 								mType->conditionImmunities |= CONDITION_PARALYZE;
 							else if(tmpStrValue == "outfit")
@@ -1188,6 +1190,11 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 								mType->conditionImmunities |= CONDITION_LIFEDRAIN;
 							}
 						}
+						else if(readXMLInteger(tmpNode, "manadrain", intValue))
+						{
+							if(intValue != 0)
+								mType->damageImmunities |= COMBAT_LIFEDRAIN;
+						}
 						else if(readXMLInteger(tmpNode, "paralyze", intValue))
 						{
 							if(intValue != 0)
@@ -1208,9 +1215,8 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 							if(intValue != 0)
 								mType->conditionImmunities |= CONDITION_INVISIBLE;
 						}
-						else
-							SHOW_XML_WARNING("Unknown immunity " << strValue);
 					}
+
 					tmpNode = tmpNode->next;
 				}
 			}

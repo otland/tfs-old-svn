@@ -1001,10 +1001,6 @@ void ProtocolGame::GetMapDescription(uint16_t x, uint16_t y, uint8_t z,
 		msg->AddByte(0xFF);
 		//cc += skip;
 	}
-
-	#ifdef __DEBUG__
-	//printf("tiles in total: %d \n", cc);
-	#endif
 }
 
 void ProtocolGame::GetFloorDescription(NetworkMessage* msg, int32_t x, int32_t y, int32_t z, int32_t width, int32_t height, int32_t offset, int& skip)
@@ -1127,8 +1123,7 @@ bool ProtocolGame::canSee(int32_t x, int32_t y, int32_t z) const
 
 	//negative offset means that the action taken place is on a lower floor than ourself
 	int32_t offsetz = myPos.z - z;
-
-	if ((x >= myPos.x - 8 + offsetz) && (x <= myPos.x + 9 + offsetz) &&
+	if((x >= myPos.x - 8 + offsetz) && (x <= myPos.x + 9 + offsetz) &&
 		(y >= myPos.y - 6 + offsetz) && (y <= myPos.y + 7 + offsetz))
 		return true;
 
@@ -1256,6 +1251,7 @@ void ProtocolGame::parseAutoWalk(NetworkMessage& msg)
 			default:
 				continue;
 		}
+
 		path.push_back(dir);
 	}
 	addGameTask(&Game::playerAutoWalk, player->getID(), path);
@@ -1608,11 +1604,11 @@ void ProtocolGame::parseQuestLog(NetworkMessage& msg)
 
 void ProtocolGame::parseQuestLine(NetworkMessage& msg)
 {
-	uint16_t quid = msg.GetU16();
 	NetworkMessage* _msg = getOutputBuffer();
 	if(_msg)
 	{
 		TRACK_MESSAGE(_msg);
+		uint16_t quid = msg.GetU16();
 		if(Quest* quest = Quests::getInstance()->getQuestById(quid))
 			quest->getMissionList(player, _msg);
 	}
@@ -1625,7 +1621,7 @@ void ProtocolGame::parseViolationWindow(NetworkMessage& msg)
 	uint8_t actionId = msg.GetByte();
 	std::string comment = msg.GetString();
 	std::string statement = msg.GetString();
-	msg.GetU16(); //Find out what is this byte
+	msg.GetU16(); //TODO: Find out what is this byte
 	bool ipBanishment = msg.GetByte();
 	addGameTask(&Game::violationWindow, player->getID(), playerName, reasonId, actionId, comment, statement, ipBanishment);
 }

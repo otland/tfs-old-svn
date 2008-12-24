@@ -29,6 +29,7 @@
 #include <map>
 #include <fstream>
 #include <ctime>
+#include <limits>
 #include <boost/pool/pool.hpp>
 
 #include "definitions.h"
@@ -37,8 +38,8 @@ template<typename T>
 class dummyallocator
 {
 	public:
-		typedef std::size_t size_type;
-		typedef std::ptrdiff_t difference_type;
+		typedef size_t size_type;
+		typedef ptrdiff_t difference_type;
 		typedef T* pointer;
 		typedef const T* const_pointer;
 		typedef T& reference;
@@ -49,11 +50,10 @@ class dummyallocator
 			typedef dummyallocator<U> other;
 		};
 
-		dummyallocator() throw() {}
-		dummyallocator(const dummyallocator&) throw() {}
-
 		template <class U>
-			dummyallocator(const dummyallocator<U>&) throw() {}
+		dummyallocator(const dummyallocator<U>&) throw() {}
+		dummyallocator(const dummyallocator&) throw() {}
+		dummyallocator() throw() {}
 		virtual ~dummyallocator() throw() {}
 
 		pointer address(reference x) const {return &x;}
@@ -69,7 +69,7 @@ class dummyallocator
 		}
 
 		size_type max_size() const throw()
-		{
+		{\
 			return std::numeric_limits<size_type>::max() / sizeof(T);
 		}
 

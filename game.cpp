@@ -1329,41 +1329,28 @@ ReturnValue Game::internalAddItem(Cylinder* toCylinder, Item* item, int32_t inde
 		return RET_NOTPOSSIBLE;
 
 	Item* toItem = NULL;
-	toCylinder = toCylinder->__queryDestination(index, item, &toItem, flags);
 
-	//check if we can add this item
+	toCylinder = toCylinder->__queryDestination(index, item, &toItem, flags);
 	ReturnValue ret = toCylinder->__queryAdd(index, item, item->getItemCount(), flags);
 	if(ret != RET_NOERROR)
 		return ret;
 
-	//check how much we can move
 	uint32_t maxQueryCount = 0;
 	ret = toCylinder->__queryMaxCount(index, item, item->getItemCount(), maxQueryCount, flags);
-
 	if(ret != RET_NOERROR)
 		return ret;
 
-	uint32_t m = 0;
-	uint32_t n = 0;
-
-	if(item->isStackable())
-		m = std::min((uint32_t)item->getItemCount(), maxQueryCount);
-	else
-		m = maxQueryCount;
-
 	if(!test)
 	{
-		Item* moveItem = item;
-
-		//update item(s)
+		uint32_t m = maxQueryCount;
 		if(item->isStackable())
-		{
-			if(toItem && toItem->getID() == item->getID())
-			{
-				n = std::min((uint32_t)100 - toItem->getItemCount(), m);
-				toCylinder->__updateThing(toItem, toItem->getID(), toItem->getItemCount() + n);
-			}
+			m = std::min((uint32_t)item->getItemCount(), maxQueryCount);
 
+		Item* moveItem = item;
+		if(item->isStackable() && toItem && toItem->getID() == item->getID())
+		{
+			uint32_t n = std::min((uint32_t)100 - toItem->getItemCount(), m);
+			toCylinder->__updateThing(toItem, toItem->getID(), toItem->getItemCount() + n);
 			if(m - n > 0)
 			{
 				if(m - n != item->getItemCount())
@@ -1372,7 +1359,8 @@ ReturnValue Game::internalAddItem(Cylinder* toCylinder, Item* item, int32_t inde
 			else
 			{
 				moveItem = NULL;
-				FreeThing(item);
+				if(item->getParent() != VirtualCylinder::virtualCylinder)
+					FreeThing(item);
 			}
 		}
 
@@ -1390,6 +1378,7 @@ ReturnValue Game::internalAddItem(Cylinder* toCylinder, Item* item, int32_t inde
 				toCylinder->postAddNotification(item, itemIndex);
 		}
 	}
+
 	return RET_NOERROR;
 }
 
@@ -1412,10 +1401,10 @@ ReturnValue Game::internalRemoveItem(Item* item, int32_t count /*= -1*/, bool te
 
 	if(!test)
 	{
-		int32_t index = cylinder->__getIndexOfThing(item);
-
 		//remove the item
+		int32_t index = cylinder->__getIndexOfThing(item);
 		cylinder->__removeThing(item, count);
+
 		bool isCompleteRemoval = false;
 		if(item->isRemoved())
 		{
@@ -1677,7 +1666,7 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 	if(moneyCount < money)
 		return false;
 
-	for(MoneyMap::iterator mit = moneyMap.begin(); mit != moneyMap.end() && money > 0; mit++)
+	for(MoneyMap::iterator mit = moneyMap.begin(); mit != moneyMap.end() && money > 0; ++mit)
 	{
 		Item* item = mit->second;
 		if(!item)
@@ -1685,7 +1674,7 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 
 		internalRemoveItem(item);
 		if(mit->first <= money)
-			money = money - mit->first;
+			money -= mit->first;
 		else
 		{
 			// Remove a monetary value from an item

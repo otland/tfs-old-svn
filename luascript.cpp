@@ -99,8 +99,8 @@ void ScriptEnviroment::resetEnv()
 		if((*it)->getParent() == VirtualCylinder::virtualCylinder)
 			delete *it;
 	}
-	m_tempItems.clear();
 
+	m_tempItems.clear();
 	if(m_loaded)
 	{
 		Database* db = Database::getInstance();
@@ -110,9 +110,7 @@ void ScriptEnviroment::resetEnv()
 		m_tempResults.clear();
 	}
 
-	m_realPos.x = 0;
-	m_realPos.y = 0;
-	m_realPos.z = 0;
+	m_realPos.x = m_realPos.y = m_realPos.z = 0;
 }
 
 bool ScriptEnviroment::saveGameState()
@@ -3242,21 +3240,19 @@ int32_t LuaScriptInterface::luaDoPlayerAddSpentMana(lua_State* L)
 int32_t LuaScriptInterface::luaDoPlayerAddItem(lua_State* L)
 {
 	//doPlayerAddItem(cid, itemid, <optional> count/subtype, <optional: default: 1> canDropOnMap)
-	int32_t parameters = lua_gettop(L);
+	uint32_t params = lua_gettop(L);
 
 	bool canDropOnMap = true;
-	if(parameters > 3)
-		canDropOnMap = (popNumber(L) == 1);
+	if(params >= 4)
+		canDropOnMap = (popNumber(L) == LUA_TRUE);
 
 	uint32_t count = 0;
-	if(parameters > 2)
+	if(params >= 3)
 		count = popNumber(L);
 
 	uint32_t itemId = (uint32_t)popNumber(L);
-	uint32_t cid = popNumber(L);
-
 	ScriptEnviroment* env = getScriptEnv();
-	Player* player = env->getPlayerByUID(cid);
+	Player* player = env->getPlayerByUID(popNumber(L));
 	if(!player)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
@@ -3345,17 +3341,13 @@ int32_t LuaScriptInterface::luaDoPlayerAddItem(lua_State* L)
 int32_t LuaScriptInterface::luaDoPlayerAddItemEx(lua_State* L)
 {
 	//doPlayerAddItemEx(cid, uid, <optional: default: 0> canDropOnMap)
-	int32_t parameters = lua_gettop(L);
-
 	bool canDropOnMap = false;
-	if(parameters > 2)
+	if(lua_gettop(L) >= 3)
 		canDropOnMap = (popNumber(L) == 1);
 
 	uint32_t uid = (uint32_t)popNumber(L);
-	uint32_t cid = popNumber(L);
-
 	ScriptEnviroment* env = getScriptEnv();
-	Player* player = env->getPlayerByUID(cid);
+	Player* player = env->getPlayerByUID(popNumber(L));
 	if(!player)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
@@ -3378,13 +3370,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddItemEx(lua_State* L)
 		return 1;
 	}
 
-	ReturnValue ret = RET_NOERROR;
-	if(canDropOnMap)
-		ret = g_game.internalPlayerAddItem(player, item);
-	else
-		ret = g_game.internalAddItem(player, item);
-
-	lua_pushnumber(L, ret);
+	lua_pushnumber(L, g_game.internalPlayerAddItem(player, item, canDropOnMap));
 	return 1;
 }
 
@@ -3419,8 +3405,7 @@ int32_t LuaScriptInterface::luaDoTileAddItemEx(lua_State* L)
 		return 1;
 	}
 
-	ReturnValue ret = g_game.internalAddItem(tile, item);
-	lua_pushnumber(L, ret);
+	lua_pushnumber(L, g_game.internalAddItem(tile, item));
 	return 1;
 }
 
@@ -4077,24 +4062,19 @@ int32_t LuaScriptInterface::luaDoCreateItem(lua_State* L)
 int32_t LuaScriptInterface::luaDoCreateItemEx(lua_State* L)
 {
 	//doCreateItemEx(itemid, <optional> count/subtype)
-	int32_t parameters = lua_gettop(L);
-
 	uint32_t count = 0;
-	if(parameters > 1)
+	if(lua_gettop(L) >= 2)
 		count = popNumber(L);
 
-	uint32_t itemId = (uint32_t)popNumber(L);
-
 	ScriptEnviroment* env = getScriptEnv();
-
-	const ItemType& it = Item::items[itemId];
+	const ItemType& it = Item::items[(uint32_t)popNumber(L)];
 	if(it.stackable && count > 100)
 	{
 		reportErrorFunc("Stack count cannot be higher than 100.");
 		count = 100;
 	}
 
-	Item* newItem = Item::CreateItem(itemId, count);
+	Item* newItem = Item::CreateItem(it.id, count);
 	if(!newItem)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));

@@ -231,6 +231,7 @@ uint32_t DatabaseManager::updateDatabase()
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
 			{
 				//TODO: 0.2 migration SQLite support
+				std::cerr << "> SQLite migration from 0.2 support not available, please use latest database!" << std::endl;
 				return 1;
 			}
 
@@ -776,48 +777,59 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 7:
 		{
+			DBResult* result;
 			std::cout << "> Updating database version to: 8..." << std::endl;
 
 			DBQuery query;
-			std::string worldIDTables[10] =
-			{
-				"server_motd", "server_record", "server_reports", "players",
-				"global_storage", "guilds", "houses", "house_lists", "tiles",
-				"tile_items"
-			};
-
 			switch(db->getDatabaseEngine())
 			{
-				case DATABASE_ENGINE_SQLITE:
-				{
-					for(int i = 0; i < 10; i++)
-					{
-						query << "ALTER TABLE `" << worldIDTables[i] << "` ADD `world_id` INTEGER NOT NULL DEFAULT 0;";
-						db->executeQuery(query.str());
-						query.str("");
-					}
-					break;
-				}
-
 				case DATABASE_ENGINE_MYSQL:
 				{
-					for(int i = 0; i < 10; i++)
+					std::string queryList[29] = {
+						"ALTER TABLE `server_motd` CHANGE `id` `id` INT UNSIGNED NOT NULL;",
+						"ALTER TABLE `server_motd` DROP PRIMARY KEY;",
+						"ALTER TABLE `server_motd` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
+						"ALTER TABLE `server_motd` ADD UNIQUE (`id`, `world_id`);",
+						"ALTER TABLE `server_record` DROP INDEX `timestamp`;",
+						"ALTER TABLE `server_record` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
+						"ALTER TABLE `server_record` ADD UNIQUE (`timestamp`, `record`, `world_id`);",
+						"ALTER TABLE `server_reports` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
+						"ALTER TABLE `server_reports` ADD INDEX (`world_id`);",
+						"ALTER TABLE `players` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
+						"ALTER TABLE `global_storage` DROP INDEX `key`;",
+						"ALTER TABLE `global_storage` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
+						"ALTER TABLE `global_storage` ADD UNIQUE (`key`, `world_id`);",
+						"ALTER TABLE `guilds` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
+						"ALTER TABLE `guilds` ADD UNIQUE (`name`, `world_id`);",
+						"ALTER TABLE `house_lists` DROP INDEX `house_id`;",
+						"ALTER TABLE `house_lists` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
+						"ALTER TABLE `house_lists` ADD UNIQUE (`house_id`, `world_id`, `listid`);",
+						"ALTER TABLE `houses` CHANGE `id` `id` INT NOT NULL;",
+						"ALTER TABLE `houses` DROP PRIMARY KEY;",
+						"ALTER TABLE `houses` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
+						"ALTER TABLE `houses` ADD UNIQUE (`id`, `world_id`);",
+						"ALTER TABLE `tiles` CHANGE `id` `id` INT NOT NULL;",
+						"ALTER TABLE `tiles` DROP PRIMARY KEY;",
+						"ALTER TABLE `tiles` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
+						"ALTER TABLE `tiles` ADD UNIQUE (`id`, `world_id`);",
+						"ALTER TABLE `tile_items` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
+						"ALTER TABLE `tile_items` ADD UNIQUE (`tile_id`, `world_id`, `sid`);"
+					};
+
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
 					{
-						query << "ALTER TABLE `" << worldIDTables[i] << "` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;";
+						query << queryList[i];
 						db->executeQuery(query.str());
 						query.str("");
 					}
 					break;
 				}
 
+				case DATABASE_ENGINE_SQLITE:
 				case DATABASE_ENGINE_POSTGRESQL:
+				default:
 				{
-					for(int i = 0; i < 10; i++)
-					{
-						query << "ALTER TABLE `" << worldIDTables[i] << "` ADD `world_id` SMALLINT UNSIGNED NOT NULL DEFAULT 0;";
-						db->executeQuery(query.str());
-						query.str("");
-					}
+					//TODO
 					break;
 				}
 			}

@@ -884,10 +884,12 @@ if(Modules == nil) then
 			else
 				self.npcHandler.talkStart = os.time()
 			end
+
 			if(a > 0) then
 				doPlayerRemoveMoney(cid, ((a * self.npcHandler.shopItems[itemid].buyPrice) + (b * 20)))
 				return true
 			end
+
 			return false
 		else
 			local msg = self.npcHandler:getMessage(MESSAGE_BOUGHT)
@@ -899,6 +901,7 @@ if(Modules == nil) then
 			else
 				self.npcHandler.talkStart = os.time()
 			end
+
 			return true
 		end
 	end

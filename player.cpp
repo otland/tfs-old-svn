@@ -3479,8 +3479,9 @@ bool Player::onKilledCreature(Creature* target)
 			if(!Combat::isInPvpZone(this, targetPlayer) && hasCondition(CONDITION_INFIGHT))
 			{
 				pzLocked = true;
-				Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT, g_config.getNumber(ConfigManager::WHITE_SKULL_TIME), 0);
-				addCondition(condition);
+				if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT,
+					g_config.getNumber(ConfigManager::WHITE_SKULL_TIME), 0))
+					addCondition(condition);
 			}
 		}
 	}
@@ -3495,10 +3496,12 @@ void Player::gainExperience(uint64_t gainExp)
 		//soul regeneration
 		if(gainExp >= getLevel())
 		{
-			Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SOUL, 4 * 60 * 1000, 0);
-			condition->setParam(CONDITIONPARAM_SOULGAIN, 1);
-			condition->setParam(CONDITIONPARAM_SOULTICKS, vocation->getSoulGainTicks() * 1000);
-			addCondition(condition);
+			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SOUL, 4 * 60 * 1000, 0))
+			{
+				condition->setParam(CONDITIONPARAM_SOULGAIN, 1);
+				condition->setParam(CONDITIONPARAM_SOULTICKS, vocation->getSoulGainTicks() * 1000);
+				addCondition(condition);
+			}
 		}
 
 		addExperience(gainExp);
