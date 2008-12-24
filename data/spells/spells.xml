@@ -148,7 +148,7 @@
 	</instant>
 
 	<!-- Healing Spells -->
-	<instant name="Light Healing" words="exura" lvl="9" mana="25" aggressive="0" selftarget="1" exhaustion="1000" needlearn="1" script="healing/light healing.lua">
+	<instant name="Light Healing" words="exura" lvl="9" mana="20" aggressive="0" selftarget="1" exhaustion="1000" needlearn="1" script="healing/light healing.lua">
 		<vocation name="Sorcerer" />
 		<vocation name="Druid" />
 		<vocation name="Paladin" />
@@ -389,7 +389,9 @@
 		<vocation name="Elder Druid" />
 	</conjure>
 	<conjure name="Stalagmite" words="adori tera" lvl="24" mana="400" soul="2" prem="2" reagentId="2260" conjureId="2292" conjureCount="10" exhaustion="1000" needlearn="1" function="conjureRune">
+		<vocation name="Sorcerer" />
 		<vocation name="Druid" />
+		<vocation name="Master Sorcerer" />
 		<vocation name="Elder Druid" />
 	</conjure>
 	<conjure name="Great Fireball" words="adori mas flam" lvl="30" mana="530" soul="3" reagentId="2260" conjureId="2304" conjureCount="4" exhaustion="1000" needlearn="1" function="conjureRune">
@@ -398,7 +400,9 @@
 	</conjure>
 	<conjure name="Heavy Magic Missile" words="adori vis" lvl="25" mana="350" soul="2" reagentId="2260" conjureId="2311" conjureCount="10" exhaustion="1000" needlearn="1" function="conjureRune">
 		<vocation name="Sorcerer" />
+		<vocation name="Druid" />
 		<vocation name="Master Sorcerer" />
+		<vocation name="Elder Druid" />
 	</conjure>
 	<conjure name="Poison Bomb" words="adevo mas pox" lvl="25" mana="520" soul="2" prem="1" reagentId="2260" conjureId="2286" conjureCount="2" exhaustion="1000" needlearn="1" function="conjureRune">
 		<vocation name="Druid" />
