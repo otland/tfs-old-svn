@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3 Beta 1
+		0.3 Beta 2
 
 	Codenamed
 		\
@@ -36,28 +36,31 @@
 [ DEVELOPERS
 	Project Manager(s)
 		Talaturen
-		Elf (Temp., responsible for 0.3 Alpha & Beta stage)
+		Elf
 
 	Founder(s)
 		Talaturen
 		Kiper
 
 	C++ Programmer(s)
-		Talaturen
 		Elf
+		Talaturen
 		Kiper
 
 	LUA Scripter(s)
 		Talaturen
 		Elf
 		Jonern
+		Nightmare
 
 	PHP Programmer(s)
 		Talaturen
 		Kornholijo
+		Elf
 
 	DATA Directory Manager(s)
 		Lithium
+		Nightmare
 		Elf
 ]
 

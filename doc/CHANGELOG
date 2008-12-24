@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3 Beta 1
+		0.3 Beta 2
 
 	Codenamed
 		\
@@ -71,6 +71,7 @@
 					* Added missing monsters and bosses
 					* Added few monsters of procotol 8.2
 					* Added alot of protocol 8.3 monsters
+					* Several protocol 8.4 monsters
 
 			npc/
 				*.xml
@@ -80,6 +81,12 @@
 				scripts/
 					*.lua
 						* Added more NPC's examples
+
+			spells/
+				scripts/
+					support/
+						*.lua
+							* Added 8.4 profession (no party buffs yet) spells
 
 			talkactions/
 				scripts/
@@ -115,21 +122,43 @@
 	M...
 		data/
 			actions/
+				actions.xml
+					* Added obsidian knife and blessed wooden stake
+					* Added heavy machete
+					* Added stuffed dragon
+					* Added furnace
+					* Added protocol 8.4 lamps
+					* Kits
+					* Fixes
 				scripts/
 					tools/
 						fishing.lua
 							* Fixed worms usage
 						rope.lua
 							* Protocol 8.2 rope spots
+						blessed_wooden_stake.lua
+						obsidian_knife.lua
+							* Optimalized and fixed script
+						shovel.lua
+							* Fixes
+					quests/
+						system.lua
+							* Fixed reported bugs
 					other/
+						changegold.lua
+							* Textcolor fix
 						constructionkits.lua
 							* Fixed construction kits
+							* New kits
 						doors.lua
 							* Fixed special doors
 							* Fixed disappearing doors
+							* Applicated usage of engine-sided level doors detection
 					liquids/
 						containers.lua
 							* Fixed few issues of fluids
+						great_health.lua
+							* Level requirement fix
 						mastermind_potion.lua
 							* Fixed issue with not working condition
 
@@ -139,6 +168,7 @@
 				scripts/
 					playerdeath.lua
 						* Updated due to changed escapeString return
+						* mostHitCreatureKiller and lastHitKiller division
 
 			items/
 				items.xml
@@ -148,20 +178,34 @@
 					* Compatibility with protocol 8.22
 					* Compatibility with OTBv3
 					* Fixed construction kits
+					* Some 8.4 items
+					* More construction kits
+					* New attributes usage
 				items.otb
 					* Compatibility with protocol 8.22
 					* Compatibility with OTBv3
+					* Compatibility with protocol 8.4
 
 			lib/
 				function.lua
 					* Fixes and optimializations
+				data.lua
+					* Inheritation
+				database.lua
+					* Usage of inheritation
+				constant.lua
+					* Added new constants
+					* Fixed some existing constants including 8.4 needs
+					* Deprecated levelDoors table
 
 			monster/
 				monsters.xml
 					* Added most 8.1 monsters
 					* Added some 8.2 monsters
+					* Added some 8.4 monsters
 				*/*.xml
 					* Fixed loots, voices, formating and introduced elemental weakness
+					* Updated experience as of Tibia 8.4 was introduced to some PoI monsters
 
 			movements/
 				movements.xml
@@ -172,6 +216,7 @@
 					* Fixed protocol 8.2 elemental armory due to OTBv3 update
 					* Added items requiring vocation, level or magic level
 					* Added 'shield'/'hand' slot
+					* Added protocol 8.4 armory
 				scripts/
 					swimming/
 						*.lua
@@ -208,6 +253,8 @@
 					* Charges and names fixed
 					* Fixed spell range
 					* Fixed exhaustions
+					* Added runes division by vocations
+					* Vocation 8.4 spells
 
 			talkactions/
 				talkactions.xml
@@ -227,14 +274,23 @@
 					deathlist.lua
 						* Updated due to changed escapeString return
 
+			weapons/
+				weapons.xml
+					* Protocol 8.4 weapons
+
 			world/
 				*.xml
 				forgotten.otbm
 					* Placed some NPC's on the map
 					* Updated to OTBv3
-					* Re-added spawns file
+				forgotten-spawns.xml
+					* Fixed the spawns file
 
 			XML/
+				outfits.xml
+					* Example of quest outfits usage
+					* Protocol 8.4 outfits
+
 				stages.xml
 					* Deprecated configuration and moved to config.lua
 
@@ -357,6 +413,13 @@
 	Protocol 8.4 support (Talaturen, Elf, Kiper)
 	Multiworld system (Elf)
 	Possibility to choose config file path for console/non-windows versions by --config=%PATH% argument (Elf)
+	Bumped onKill, onDeath and onAttack creature events (Elf)
+	Protocol 8.4 support (Elf)
+	Party features of 8.4 (Elf)
+	New condition types and condition param 'buff' for buff icon (Elf)
+	All attributes displaying in item description (Elf)
+	Waypoints support (OpenTibia SVN, Elf)
+	Move (add and remove) items actor tracking, cid param for onAddItem/onRemoveItem move event (Elf [not from revscriptsys])
 ]
 
 [ Deprecated
@@ -409,4 +472,16 @@
 	Database manager automatic table optimization not working (Elf)
 	Empty containers not being dropped by monsters (Elf)
 	Possibility to track an invisible GM by re-adding to VIP (Elf)
+	NPCs walking on path blocking items (Elf)
+	Items from virtualcylinder being freed in internalAddItem causing crash (Elf)
+	Proper search string (Elf, TibiaWiki)
+	Fixed channels issues (Talaturen, Elf)
+	Fixed blockHit damage stacking (Elf)
+	Possibility to wear items even if movement does not allow it (Elf)
+	Guilds issues (Elf, Talaturen)
+	Not working vocation base speed XML configurable (Elf)
+	Possibility to track Ghost mode by re-adding player without 'specialVip' flag to viplist (Elf)
+	Engine not accepting negative values in scripting (Elf)
+	Not working configurables (Elf)
+	Possibility to wield two shields (Elf)
 ]
