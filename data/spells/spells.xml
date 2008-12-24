@@ -155,7 +155,7 @@
 	</instant>
 
 	<!-- Healing Spells -->
-	<instant name="Light Healing" words="exura" lvl="9" mana="25" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="healing/light healing.lua">
+	<instant name="Light Healing" words="exura" lvl="9" mana="20" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="healing/light healing.lua">
 		<vocation name="Sorcerer"/>
 		<vocation name="Druid"/>
 		<vocation name="Paladin"/>

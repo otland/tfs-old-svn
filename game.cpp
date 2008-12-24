@@ -4677,19 +4677,20 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 
 std::string Game::getSearchString(const Position fromPos, const Position toPos, bool fromIsCreature/* = false*/, bool toIsCreature/* = false*/)
 {
-	//a. From 1 to 4 sq's pos is [toIsCreature: standing] next to pos/you.
-	//b. From 5 to 100 sq's pos is to the south, north, east, west.
-	//c. From 101 to 274 sq's pos is far to the south, north, east, west.
-	//d. From 275 to infinite sq's pos is very far to the south, north, east, west.
-	//e. South-west, s-e, n-w, n-e (corner coordinates): this phrase appears if the pos/player you're looking for has moved five squares in any direction from the south, north, east or west.
-	//f. Lower level to the (direction): this phrase applies if the pos/player you're looking for is from 1-25 squares up/down the actual floor you're in.
-	//g. Higher level to the (direction): this phrase applies if the pos/player you're looking for is from 1-25 squares up/down the actual floor you're in.
+	/*
+	 * When the position is on same level and 0 to 4 squares away, they are "[toIsCreature: standing] next to you"
+	 * When the position is on same level and 5 to 100 squares away they are "to the north/west/south/east."
+	 * When the position is on any level and 101 to 274 squares away they are "far to the north/west/south/east."
+	 * When the position is on any level and 275+ squares away they are "very far to the north/west/south/east."
+	 * When the position is not directly north/west/south/east of you they are "((very) far) to the north-west/south-west/south-east/north-east."
+	 * When the position is on a lower or higher level and 5 to 100 squares away they are "on a lower (or) higher level to the north/west/south/east."
+	 * When the position is on a lower or higher level and 0 to 4 squares away they are "below (or) above you."
+	 */
 
 	enum distance_t
 	{
 		DISTANCE_BESIDE,
-		DISTANCE_CLOSE_1,
-		DISTANCE_CLOSE_2,
+		DISTANCE_CLOSE,
 		DISTANCE_FAR,
 		DISTANCE_VERYFAR
 	};
@@ -4719,16 +4720,14 @@ std::string Game::getSearchString(const Position fromPos, const Position toPos, 
 	else
 		level = LEVEL_SAME;
 
-	if(std::abs(dx) < 4 && std::abs(dy) < 4)
+	if(std::abs(dx) < 5 && std::abs(dy) < 5)
 		distance = DISTANCE_BESIDE;
 	else
 	{
 		int32_t tmp = dx * dx + dy * dy;
-		if(tmp < 625)
-			distance = DISTANCE_CLOSE_1;
-		else if(tmp < 10000)
-			distance = DISTANCE_CLOSE_2;
-		else if(tmp < 75076)
+		if(tmp < 10000)
+			distance = DISTANCE_CLOSE;
+		else if(tmp < 75625)
 			distance = DISTANCE_FAR;
 		else
 			distance = DISTANCE_VERYFAR;
@@ -4736,7 +4735,7 @@ std::string Game::getSearchString(const Position fromPos, const Position toPos, 
 
 	float tan;
 	if(dx != 0)
-		tan = (float)dy/(float)dx;
+		tan = (float)dy / (float)dx;
 	else
 		tan = 10.;
 
@@ -4814,7 +4813,7 @@ std::string Game::getSearchString(const Position fromPos, const Position toPos, 
 			break;
 		}
 
-		case DISTANCE_CLOSE_1:
+		case DISTANCE_CLOSE:
 		{
 			switch(level)
 			{
@@ -4833,10 +4832,6 @@ std::string Game::getSearchString(const Position fromPos, const Position toPos, 
 
 			break;
 		}
-
-		case DISTANCE_CLOSE_2:
-			ss << "is to the";
-			break;
 
 		case DISTANCE_FAR:
 			ss << "is far to the";
