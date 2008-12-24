@@ -416,6 +416,7 @@ class LuaScriptInterface
 		static int32_t luaDoPlayerSetSex(lua_State* L);
 		static int32_t luaDoPlayerResetIdleTime(lua_State* L);
 		static int32_t luaDoSetCreatureLight(lua_State* L);
+		static int32_t luaDoCreatureSetLookDir(lua_State* L);
 		static int32_t luaGetCreatureSkullType(lua_State* L);
 		static int32_t luaDoCreatureSetSkullType(lua_State* L);
 		static int32_t luaGetPlayerRedSkullTicks(lua_State* L);
@@ -487,6 +488,7 @@ class LuaScriptInterface
 		//get tile info
 		static int32_t luaGetTilePzInfo(lua_State* L);
 		static int32_t luaGetTileHouseInfo(lua_State* L);
+		static int32_t luaGetTileZoneInfo(lua_State* L);
 		static int32_t luaQueryTileAddThing(lua_State* L);
 
 		//houses

@@ -260,8 +260,8 @@ uint32_t ScriptEnviroment::addThing(Thing* thing)
 		m_localMap[newUid] = thing;
 		return newUid;
 	}
-	else
-		return 0;
+
+	return 0;
 }
 
 void ScriptEnviroment::insertThing(uint32_t uid, Thing* thing)
@@ -291,46 +291,46 @@ Thing* ScriptEnviroment::getThingByUID(uint32_t uid)
 			return tmp;
 		}
 	}
+
 	return NULL;
 }
 
 Item* ScriptEnviroment::getItemByUID(uint32_t uid)
 {
-	Thing* tmp = getThingByUID(uid);
-	if(tmp)
+	if(Thing* tmp = getThingByUID(uid))
 	{
 		if(Item* item = tmp->getItem())
 			return item;
 	}
+
 	return NULL;
 }
 
 Container* ScriptEnviroment::getContainerByUID(uint32_t uid)
 {
-	Item* tmp = getItemByUID(uid);
-	if(tmp)
+	if(Item* tmp = getItemByUID(uid))
 	{
 		if(Container* container = tmp->getContainer())
 			return container;
 	}
+
 	return NULL;
 }
 
 Creature* ScriptEnviroment::getCreatureByUID(uint32_t uid)
 {
-	Thing* tmp = getThingByUID(uid);
-	if(tmp)
+	if(Thing* tmp = getThingByUID(uid))
 	{
 		if(Creature* creature = tmp->getCreature())
 			return creature;
 	}
+
 	return NULL;
 }
 
 Player* ScriptEnviroment::getPlayerByUID(uint32_t uid)
 {
-	Thing* tmp = getThingByUID(uid);
-	if(tmp)
+	if(Thing* tmp = getThingByUID(uid))
 	{
 		if(Creature* creature = tmp->getCreature())
 		{
@@ -338,6 +338,7 @@ Player* ScriptEnviroment::getPlayerByUID(uint32_t uid)
 				return player;
 		}
 	}
+
 	return NULL;
 }
 
@@ -1239,6 +1240,9 @@ void LuaScriptInterface::registerFunctions()
 	//0 no house != 0 house id
 	lua_register(m_luaState, "getTileHouseInfo", LuaScriptInterface::luaGetTileHouseInfo);
 
+	//getTileZoneInfo(pos)
+	lua_register(m_luaState, "getTileZoneInfo", LuaScriptInterface::luaGetTileZoneInfo);
+
 	//getItemWeaponType(uid)
 	lua_register(m_luaState, "getItemWeaponType", LuaScriptInterface::luaGetItemWeaponType);
 
@@ -1905,6 +1909,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//getPlayerPremiumDays(cid)
 	lua_register(m_luaState, "getPlayerPremiumDays", LuaScriptInterface::luaGetPlayerPremiumDays);
+
+	//doCreatureSetLookDir(cid, dir)
+	lua_register(m_luaState, "doCreatureSetLookDirection", LuaScriptInterface::luaDoCreatureSetLookDir);
 
 	//getCreatureSkullType(cid)
 	lua_register(m_luaState, "getCreatureSkullType", LuaScriptInterface::luaGetCreatureSkullType);
@@ -4311,6 +4318,30 @@ int32_t LuaScriptInterface::luaGetTileHouseInfo(lua_State* L)
 		}
 		else
 			lua_pushnumber(L, LUA_NULL);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_TILE_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetTileZoneInfo(lua_State* L)
+{
+	//getTileZoneInfo(pos)
+	PositionEx pos;
+	popPosition(L, pos);
+
+	Tile *tile = g_game.getMap()->getTile(pos);
+	if(tile)
+	{
+		if(tile->hasFlag(TILESTATE_PVPZONE))
+			lua_pushnumber(L, 2);
+		else if(tile->hasFlag(TILESTATE_NOPVPZONE))
+			lua_pushnumber(L, 1);
+		else
+			lua_pushnumber(L, 0);
 	}
 	else
 	{
@@ -7941,6 +7972,26 @@ int32_t LuaScriptInterface::luaGetCreatureSkullType(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Creature* creature = env->getCreatureByUID(cid))
 		lua_pushnumber(L, creature->getSkull());
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoCreatureSetLookDir(lua_State* L)
+{
+	//doCreatureSetLookDir(cid, dir)
+	Direction dir = (Direction)popNumber(L);
+	uint32_t cid = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	if(Creature* creature = env->getCreatureByUID(cid))
+	{
+		creature->setDirection(dir);
+		lua_pushnumber(L, LUA_NO_ERROR);
+	}
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));

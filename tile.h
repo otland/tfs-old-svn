@@ -137,19 +137,14 @@ class Tile : public Cylinder
 			{
 				case NORTH:
 					return hasFlag(TILESTATE_FLOORCHANGE_NORTH);
-					break;
 				case SOUTH:
 					return hasFlag(TILESTATE_FLOORCHANGE_SOUTH);
-					break;
 				case EAST:
 					return hasFlag(TILESTATE_FLOORCHANGE_EAST);
-					break;
 				case WEST:
 					return hasFlag(TILESTATE_FLOORCHANGE_WEST);
-					break;
 				default:
 					return false;
-					break;
 			}
 		}
 		bool hasHeight(uint32_t n) const;
