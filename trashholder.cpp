@@ -60,7 +60,7 @@ Cylinder* TrashHolder::__queryDestination(int32_t& index, const Thing* thing, It
 
 void TrashHolder::__addThing(Creature* actor, Thing* thing)
 {
-	return __addThing(0, thing);
+	return __addThing(actor, 0, thing);
 }
 
 void TrashHolder::__addThing(Creature* actor, int32_t index, Thing* thing)
