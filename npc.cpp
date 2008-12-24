@@ -1857,7 +1857,7 @@ bool Npc::canWalkTo(const Position& fromPos, Direction dir)
 
 	if(Tile* tile = g_game.getTile(toPos.x, toPos.y, toPos.z))
 	{
-		if(floorChange && (tile->floorChange() || tile->getTeleportItem()))
+		if(floorChange && (tile->floorChange() || tile->positionChange()))
 			return true;
 
 		if(tile->__queryAdd(0, this, 1, FLAG_PATHFINDING) != RET_NOERROR)
