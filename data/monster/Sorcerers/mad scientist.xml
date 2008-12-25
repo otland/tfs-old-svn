@@ -56,7 +56,7 @@
 		<item id="2787" countmax="3" chance1="900" /> <!-- white mushroom -->
 		<item id="2308" chance="1500"/> <!-- powder herb -->
 		<item id="7620" chance="13500"/> <!-- mp -->
-		<item id="7618" chance="12500"/> <!-- hP -->
+		<item id="7618" chance="12500"/> <!-- hp -->
 		<item id="2687" countmax="3" chance1="900" /> <!-- cookie -->
 		<item id="1987" chance="100000"> <!-- bag -->
 			<inside>
