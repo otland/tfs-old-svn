@@ -200,8 +200,6 @@ class ConfigManager
 		int32_t getGlobalNumber(lua_State* _L, const std::string& _identifier, const int32_t _default = 0);
 		double getGlobalDouble(lua_State* _L, const std::string& _identifier, const int32_t _default = 0);
 
-		std::string getGlobalStringField(lua_State* _L, const std::string& _identifier, const int32_t _key, const std::string& _default = "");
-
 		bool m_isLoaded;
 		std::string m_confString[LAST_STRING_CONFIG];
 		bool m_confBool[LAST_BOOL_CONFIG];

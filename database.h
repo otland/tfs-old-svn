@@ -21,7 +21,6 @@
 #ifndef __OTSERV_DATABASE_H__
 #define __OTSERV_DATABASE_H__
 
-#include "definitions.h"
 #include "otsystem.h"
 #include "enums.h"
 

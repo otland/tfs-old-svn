@@ -18,10 +18,7 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
-#include "otpch.h"
-
 #include <iostream>
-
 #if defined __WINDOWS__ || defined WIN32
 #include <winsock2.h>
 #endif
@@ -34,8 +31,9 @@
 #include <mysql/errmsg.h>
 #endif
 
-#include "configmanager.h"
 #include "scheduler.h"
+
+#include "configmanager.h"
 extern ConfigManager g_config;
 
 DatabaseMySQL::DatabaseMySQL()
@@ -84,11 +82,11 @@ bool DatabaseMySQL::getParam(DBParam_t param)
 	{
 		case DBPARAM_MULTIINSERT:
 			return true;
-			break;
 		default:
-			return false;
 			break;
 	}
+
+	return false;
 }
 
 bool DatabaseMySQL::beginTransaction()
@@ -204,7 +202,7 @@ std::string DatabaseMySQL::escapeString(const std::string &s)
 
 std::string DatabaseMySQL::escapeBlob(const char* s, uint32_t length)
 {
-	if(!s)
+	if(!s.size())
 		return std::string("''");
 
 	char* output = new char[length * 2 + 1];

@@ -23,11 +23,9 @@
 
 #undef MULTI_SQL_DRIVERS
 #define SQL_DRIVERS __USE_SQLITE__+__USE_MYSQL__+__USE_ODBC__+__USE_PGSQL__
-#if SQL_DRIVERS>1
+#if SQL_DRIVERS > 1
 #define MULTI_SQL_DRIVERS
 #endif
-
-#include "exception.h"
 
 #ifndef WIN32
 	#define __CONSOLE__
@@ -43,6 +41,7 @@
 	#define DEBUG_REPORT int *a = NULL; *a = 1;
 #else
 	#ifdef __EXCEPTION_TRACER__
+		#include "exception.h"
 		#define DEBUG_REPORT ExceptionHandler::dumpStack();
 	#else
 		#define DEBUG_REPORT
@@ -135,7 +134,6 @@
 	#pragma warning(disable:4018)
 
 #endif
-
 //*nix systems
 #else
 	#ifndef __USE_BOOST_THREAD__
@@ -161,7 +159,5 @@
 	#include <time.h>
 
 	#define ATOI64 atoll
-
 #endif
-
 #endif

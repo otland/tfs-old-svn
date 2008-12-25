@@ -31,9 +31,9 @@
 extern ConfigManager g_config;
 
 #if SQLITE_VERSION_NUMBER < 3003009
-#define OTS_SQLITE3_PREPARE sqlite3_prepare
+#define OTSYS_SQLITE3_PREPARE sqlite3_prepare
 #else
-#define OTS_SQLITE3_PREPARE sqlite3_prepare_v2
+#define OTSYS_SQLITE3_PREPARE sqlite3_prepare_v2
 #endif
 
 /** DatabaseSQLite definitions */
@@ -68,12 +68,11 @@ bool DatabaseSQLite::getParam(DBParam_t param)
 	switch(param)
 	{
 		case DBPARAM_MULTIINSERT:
-			return false;
-			break;
-
 		default:
-			return false;
+			break;
 	}
+
+	return false;
 }
 
 bool DatabaseSQLite::beginTransaction()
@@ -94,26 +93,24 @@ bool DatabaseSQLite::commit()
 std::string DatabaseSQLite::_parse(const std::string &s)
 {
 	std::string query = "";
-
 	query.reserve(s.size());
-	bool inString = false;
-	uint8_t ch;
-	for(uint32_t a = 0; a < s.length(); a++)
-	{
-		ch = s[a];
 
-		if(ch == '\'')
+	bool inString = false;
+	for(uint32_t i = 0; i < s.length(); i++)
+	{
+		uint8_t c = s[i];
+		if(c == '\'')
 		{
-			if(inString && s[a + 1] != '\'')
+			if(inString && s[i + 1] != '\'')
 				inString = false;
 			else
 				inString = true;
 		}
 
-		if(ch == '`' && !inString)
-			ch = '"';
+		if(c == '`' && !inString)
+			c = '"';
 
-		query += ch;
+		query += c;
 	}
 
 	return query;
@@ -132,14 +129,14 @@ bool DatabaseSQLite::executeQuery(const std::string &query)
 	std::string buf = _parse(query);
 	sqlite3_stmt* stmt;
 	// prepares statement
-	if(OTS_SQLITE3_PREPARE(m_handle, buf.c_str(), buf.length(), &stmt, NULL) != SQLITE_OK)
+	if(OTSYS_SQLITE3_PREPARE(m_handle, buf.c_str(), buf.length(), &stmt, NULL) != SQLITE_OK)
 	{
 		std::cout << "OTS_SQLITE3_PREPARE(): SQLITE ERROR: " << sqlite3_errmsg(m_handle) << std::endl;
 		return false;
 	}
 
 	// executes it once
-	int ret = sqlite3_step(stmt);
+	int32_t ret = sqlite3_step(stmt);
 	if(ret != SQLITE_OK && ret != SQLITE_DONE && ret != SQLITE_ROW)
 	{
 		std::cout << "sqlite3_step(): SQLITE ERROR: " << sqlite3_errmsg(m_handle) << std::endl;
@@ -149,7 +146,6 @@ bool DatabaseSQLite::executeQuery(const std::string &query)
 	// closes statement
 	// at all not sure if it should be debugged - query was executed correctly...
 	sqlite3_finalize(stmt);
-
 	return true;
 }
 
@@ -166,14 +162,14 @@ DBResult* DatabaseSQLite::storeQuery(const std::string &query)
 	std::string buf = _parse(query);
 	sqlite3_stmt* stmt;
 	// prepares statement
-	if(OTS_SQLITE3_PREPARE(m_handle, buf.c_str(), buf.length(), &stmt, NULL) != SQLITE_OK)
+	if(OTSYS_SQLITE3_PREPARE(m_handle, buf.c_str(), buf.length(), &stmt, NULL) != SQLITE_OK)
 	{
 		std::cout << "OTS_SQLITE3_PREPARE(): SQLITE ERROR: " << sqlite3_errmsg(m_handle) << std::endl;
 		return NULL;
 	}
 
-	DBResult* results = new SQLiteResult(stmt);
-	return verifyResult(results);
+	DBResult* result = new SQLiteResult(stmt);
+	return verifyResult(result);
 }
 
 std::string DatabaseSQLite::escapeString(const std::string &s)
@@ -182,7 +178,7 @@ std::string DatabaseSQLite::escapeString(const std::string &s)
 	if(!s.size())
 		return std::string("''");
 
-	// the worst case is 2n + 1
+	// the worst case is 2n + 3
 	char* output = new char[s.length() * 2 + 3];
 
 	// quotes escaped string and frees temporary buffer
@@ -193,18 +189,16 @@ std::string DatabaseSQLite::escapeString(const std::string &s)
 	//escape % and _ because we are using LIKE operator.
 	r = boost::regex_replace(r, boost::regex("%"), "\\%");
 	r = boost::regex_replace(r, boost::regex("_"), "\\_");
-
 	if(r[r.length() - 1] != '\'')
 		r += "'";
+
 	return r;
 }
 
 std::string DatabaseSQLite::escapeBlob(const char* s, uint32_t length)
 {
 	std::string buf = "x'";
-
 	char* hex = new char[2 + 1]; //need one extra byte for null-character
-
 	for(uint32_t i = 0; i < length; i++)
 	{
 		sprintf(hex, "%02x", ((uint8_t)s[i]));
@@ -212,7 +206,6 @@ std::string DatabaseSQLite::escapeBlob(const char* s, uint32_t length)
 	}
 
 	delete[] hex;
-
 	buf += "'";
 	return buf;
 }
