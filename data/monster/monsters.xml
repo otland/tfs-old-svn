@@ -139,9 +139,10 @@
 	<monster name="Dog" file="Canines/dog.xml"/>
 	<monster name="Hellhound" file="Canines/hellhound.xml"/>
 	<monster name="War wolf" file="Canines/war wolf.xml"/>
+	<monster name="Werewolf" file="Canines/werewolf.xml"/>
 	<monster name="Winter wolf" file="Canines/winter wolf.xml"/>
 	<monster name="Wolf" file="Canines/wolf.xml"/>
-
+	
 	<!-- Chakoyas -->
 	<monster name="Chakoya Toolshaper" file="Chakoyas/chakoya toolshaper.xml"/>
 	<monster name="Chakoya Tribewarden" file="Chakoyas/chakoya tribewarden.xml"/>
@@ -178,9 +179,11 @@
 	<monster name="Fury" file="Demons/fury.xml"/>
 	<monster name="Gozzler" file="Demons/gozzler.xml"/>
 	<monster name="Hand of Cursed Fate" file="Demons/hand of cursed fate.xml"/>
+	<monster name="Hellspawn" file="Demons/hellspawn.xml"/>
 	<monster name="Juggernaut" file="Demons/juggernaut.xml"/>
 	<monster name="Nightmare" file="Demons/nightmare.xml"/>
 	<monster name="Nightmare Scion" file="Demons/nightmare scion.xml"/>
+	<monster name="Nightstalker" file="Demons/nightstalker.xml"/>
 	<monster name="Plaguesmith" file="Demons/plaguesmith.xml"/>
 	<monster name="Ungreez" file="Demons/ungreez.xml"/>
 
@@ -289,7 +292,9 @@
 	<monster name="Lizard Templar" file="Lizards/lizard templar.xml"/>
 
 	<!-- Machines -->
+	<monster name="Damaged Worker Golem" file="Machines/damaged worker golem.xml"/>
 	<monster name="War Golem" file="Machines/war golem.xml"/>
+	<monster name="Worker Golem" file="Machines/worker golem.xml"/>
 
 	<!-- Minotaurs -->
 	<monster name="Minotaur Archer" file="Minotaurs/minotaur archer.xml"/>
@@ -317,6 +322,9 @@
 	
 	<!-- Mutated -->
 	<monster name="Mutated Bat" file="Mutated/mutated bat.xml"/>
+	<monster name="Mutated Human" file="Mutated/mutated human.xml"/>
+	<monster name="Mutated Rat" file="Mutated/mutated rat.xml"/>
+	<monster name="Mutated Tiger" file="Mutated/mutated tiger.xml"/>
 
 	<!-- Necromancers -->
 	<monster name="Necromancer" file="Necromancers/necromancer.xml"/>
@@ -342,6 +350,7 @@
 	<monster name="Black Knight" file="Outlaws/black knight.xml"/>
 	<monster name="Crazed Beggar" file="Outlaws/crazed beggar.xml"/>
 	<monster name="Gang Member" file="Outlaws/gang member.xml"/>
+	<monster name="Gladiator" file="Outlaws/gladiator.xml"/>
 	<monster name="Hero" file="Outlaws/hero.xml"/>
 	<monster name="Hunter" file="Outlaws/hunter.xml"/>
 	<monster name="Nomad" file="Outlaws/nomad.xml"/>
@@ -418,12 +427,14 @@
 	<monster name="Skeleton" file="Skeletons/skeleton.xml"/>
 	<monster name="Skeleton Warrior" file="Skeletons/skeleton warrior.xml"/>
 	<monster name="Undead Dragon" file="Skeletons/undead dragon.xml"/>
+	<monster name="Undead Gladiator" file="Skeletons/undead gladiator.xml"/>
 
 	<!-- Slime-Elementals -->
 	<monster name="Acid Blob" file="Slime-Elementals/acid blob.xml"/>
 	<monster name="Bog Raider" file="Slime-Elementals/bog raider.xml"/>
 	<monster name="Death Blob" file="Slime-Elementals/death blob.xml"/>
 	<monster name="Defiler" file="Slime-Elementals/defiler.xml"/>
+	<monster name="Haunted Treeling" file="Slime-Elementals/haunted treeling.xml"/>
 	<monster name="Mercury Blob" file="Slime-Elementals/mercury blob.xml"/>
 	<monster name="Slime Summon" file="Slime-Elementals/slime summon.xml"/>
 	<monster name="Slime" file="Slime-Elementals/slime.xml"/>
@@ -432,6 +443,8 @@
 	<monster name="Dark Apprentice" file="Sorcerers/dark apprentice.xml"/>
 	<monster name="Dark Magician" file="Sorcerers/dark magician.xml"/>
 	<monster name="Ice Witch" file="Sorcerers/ice witch.xml"/>
+	<monster name="Infernalist" file="Sorcerers/infernalist.xml"/>
+	<monster name="Mad Scientist" file="Sorcerers/mad scientist.xml"/>
 	<monster name="Warlock" file="Sorcerers/warlock.xml"/>
 	<monster name="Witch" file="Sorcerers/witch.xml"/>
 
