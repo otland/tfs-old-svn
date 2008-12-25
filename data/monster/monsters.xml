@@ -438,6 +438,7 @@
 	<monster name="Mercury Blob" file="Slime-Elementals/mercury blob.xml"/>
 	<monster name="Slime Summon" file="Slime-Elementals/slime summon.xml"/>
 	<monster name="Slime" file="Slime-Elementals/slime.xml"/>
+	<monster name="Son of Verminor" file="Slime-Elementals/son of verminor.xml"/>
 
 	<!-- Sorcerers -->
 	<monster name="Dark Apprentice" file="Sorcerers/dark apprentice.xml"/>
