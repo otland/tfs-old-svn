@@ -202,7 +202,7 @@ std::string DatabaseMySQL::escapeString(const std::string &s)
 
 std::string DatabaseMySQL::escapeBlob(const char* s, uint32_t length)
 {
-	if(!s.size())
+	if(!s)
 		return std::string("''");
 
 	char* output = new char[length * 2 + 1];
