@@ -7,10 +7,10 @@ CONSTRUCTIONS = {
 }
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if getTileHouseInfo(fromPosition) == FALSE then
-		doPlayerSendCancel(cid,"You may only construct this inside a house.")
-	elseif fromPosition.x == CONTAINER_POSITION then
+	if fromPosition.x == CONTAINER_POSITION then
 		doPlayerSendCancel(cid, "Put the construction kit on the floor first.")
+	elseif getTileHouseInfo(fromPosition) == FALSE then
+		doPlayerSendCancel(cid,"You may only construct this inside a house.")
 	elseif CONSTRUCTIONS[item.itemid] ~= nil then
 		doTransformItem(item.uid, CONSTRUCTIONS[item.itemid])
 		doSendMagicEffect(fromPosition, CONST_ME_POFF)
