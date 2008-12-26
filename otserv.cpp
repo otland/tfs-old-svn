@@ -168,8 +168,6 @@ void signalHandler(int32_t sig)
                         Dispatcher::getDispatcher().addTask(
                                 createTask(boost::bind(&Game::shutdown, &g_game)));
 			break;
-		case SIGKILL:
-			exit(-1);
 		default:
 			break;
 	}
@@ -225,7 +223,6 @@ void serverMain(void* param)
 	signal(SIGWINCH, signalHandler); //reload all
 	signal(SIGQUIT, signalHandler); //save & shutdown
 	signal(SIGTERM, signalHandler); //shutdown
-	signal(SIGKILL, signalHandler); //exit
 	#endif
 
 	OTSYS_THREAD_LOCKVARINIT(g_loaderLock);
@@ -602,7 +599,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 			GUI::getInstance()->m_statusBar = CreateWindowEx(0, STATUSCLASSNAME, NULL, WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP, 0, 0, 0, 0, hwnd, (HMENU)ID_STATUS_BAR, GetModuleHandle(NULL), NULL);
 			int32_t statusBarWidthLine[] = {150, -1};
 			GUI::getInstance()->m_lineCount = 0;
-			SendMessage(GUI::getInstance()->m_statusBar, SB_SETPARTS, sizeof(statusBarWidthLine)/sizeof(int32_t), (LPARAM)statusBarWidthLine);
+			SendMessage(GUI::getInstance()->m_statusBar, SB_SETPARTS, sizeof(statusBarWidthLine) / sizeof(int32_t), (LPARAM)statusBarWidthLine);
 			SendMessage(GUI::getInstance()->m_statusBar, SB_SETTEXT, 0, (LPARAM)"Not loaded");
 			GUI::getInstance()->m_minimized = false;
 			GUI::getInstance()->m_pBox.setParent(hwnd);
@@ -1017,8 +1014,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 		break;
 		default:
 			return DefWindowProc(hwnd, message, wParam, lParam);
-			break;
 	}
+
 	return 0;
 }
 

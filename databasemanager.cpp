@@ -785,7 +785,7 @@ uint32_t DatabaseManager::updateDatabase()
 			{
 				case DATABASE_ENGINE_MYSQL:
 				{
-					std::string queryList[29] = {
+					std::string queryList[] = {
 						"ALTER TABLE `server_motd` CHANGE `id` `id` INT UNSIGNED NOT NULL;",
 						"ALTER TABLE `server_motd` DROP PRIMARY KEY;",
 						"ALTER TABLE `server_motd` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
