@@ -414,7 +414,6 @@
 	Multiworld system (Elf)
 	Possibility to choose config file path for console/non-windows versions by --config=%PATH% argument (Elf)
 	Bumped onKill, onDeath and onAttack creature events (Elf)
-	Protocol 8.4 support (Elf)
 	Party features of 8.4 (Elf)
 	New condition types and condition param 'buff' for buff icon (Elf)
 	All attributes displaying in item description (Elf)
