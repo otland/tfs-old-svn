@@ -99,7 +99,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 		return false;
 	}
 
-	if(root_header->version != 1)
+	if(root_header->version > 2)
 	{
 		setLastErrorString("Unknown OTBM version detected.");
 		return false;
