@@ -414,5 +414,7 @@ BansVec IOBan::getList(BanType_t type, uint32_t value/* = 0*/)
 bool IOBan::clearTemporials()
 {
 	Database* db = Database::getInstance();
-	return db->executeQuery("UPDATE `bans` SET `active` = 0 WHERE `expires` = 0 AND `active` = 1;");
+	DBQuery query;
+	query << "UPDATE `bans` SET `active` = 0 WHERE (`expires` = 0 OR `expires` < " << time(NULL) << ") AND `active` = 1;";
+	return db->executeQuery(query.str());
 }

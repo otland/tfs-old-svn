@@ -121,7 +121,6 @@ void Game::setGameState(GameState_t newState)
 	if(gameState != newState)
 	{
 		gameState = newState;
-
 		switch(newState)
 		{
 			case GAME_STATE_INIT:
@@ -131,11 +130,12 @@ void Game::setGameState(GameState_t newState)
 				Raids::getInstance()->startup();
 				Quests::getInstance()->loadFromXml();
 
+				IOBan::getInstance()->clearTemporials();
 				loadGameState();
-				IOLoginData::getInstance()->resetOnlineStatus();
-				checkHighscores();
 				if(g_config.getBool(ConfigManager::REMOVE_PREMIUM_ON_INIT))
 					IOLoginData::getInstance()->updatePremiumDays();
+
+				Houses::getInstance().payHouses();
 				break;
 			}
 
@@ -143,13 +143,12 @@ void Game::setGameState(GameState_t newState)
 			{
 				//kick all players that are still online
 				AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
-				while(it != Player::listPlayer.list.end())
+				for(; it != Player::listPlayer.list.end(); ++it)
 				{
-					(*it).second->kickPlayer(true);
-					it = Player::listPlayer.list.begin();
+					if((*it).second)
+						(*it).second->kickPlayer(true);
 				}
 
-				Houses::getInstance().payHouses();
 				saveGameState(false);
 				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, this)));
 
@@ -162,19 +161,12 @@ void Game::setGameState(GameState_t newState)
 			{
 				//kick all players who not allowed to stay
 				AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
-				while(it != Player::listPlayer.list.end())
+				for(; it != Player::listPlayer.list.end(); ++it)
 				{
-					if(!(*it).second->hasFlag(PlayerFlag_CanAlwaysLogin))
-					{
+					if((*it).second && !(*it).second->hasFlag(PlayerFlag_CanAlwaysLogin))
 						(*it).second->kickPlayer(true);
-						it = Player::listPlayer.list.begin();
-					}
-					else
-						++it;
 				}
 
-				IOBan::getInstance()->clearTemporials();
-				Houses::getInstance().payHouses();
 				saveGameState(false);
 				break;
 			}
@@ -208,16 +200,16 @@ void Game::saveGameState(bool savePlayers)
 	}
 
 	map->saveMap();
-	if(g_config.getBool(ConfigManager::SAVE_GLOBAL_STORAGE))
-		ScriptEnviroment::saveGameState();
+	ScriptEnviroment::saveGameState();
 }
 
 void Game::loadGameState()
 {
-	loadMotd();
+	IOLoginData::getInstance()->resetOnlineStatus();
 	loadPlayersRecord();
-
 	ScriptEnviroment::loadGameState();
+	checkHighscores();
+	loadMotd();
 }
 
 int32_t Game::loadMap(std::string filename)
@@ -4412,23 +4404,19 @@ bool Game::closeRuleViolation(Player* player)
 
 void Game::shutdown()
 {
-	std::cout << "Preparing shutdown";
-	IOBan::getInstance()->clearTemporials();
-	std::cout << ".";
+	std::cout << "Preparing";
+	Spawns::getInstance()->clear();
+	std::cout << " shutdown";
 	Scheduler::getScheduler().shutdown();
 	std::cout << ".";
 	Dispatcher::getDispatcher().shutdown();
-	std::cout << "." << std::endl;
-
-	std::cout << "Exiting";
-	Spawns::getInstance()->clear();
 	std::cout << ".";
 	if(g_server)
 		g_server->stop();
 
-	std::cout << ".";
-	cleanup();
 	std::cout << "." << std::endl;
+	cleanup();
+	std::cout << "Exiting";
 	exit(1);
 }
 
@@ -4606,9 +4594,15 @@ void Game::globalSave()
 		if(g_config.getBool(ConfigManager::CLEAN_MAP_AT_GLOBALSAVE))
 			map->clean();
 
-		//remove premium days from accounts
+		//clear temporial and expired bans
+		IOBan::getInstance()->clearTemporials();
+
+		//remove premium days globally if configured to
 		if(g_config.getBool(ConfigManager::REMOVE_PREMIUM_ON_INIT))
 			IOLoginData::getInstance()->updatePremiumDays();
+
+		//pay all houses
+		Houses::getInstance().payHouses();
 
 		//reload highscores
 		reloadHighscores();

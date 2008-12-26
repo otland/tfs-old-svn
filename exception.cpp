@@ -102,7 +102,7 @@ bool ExceptionHandler::InstallHandler()
 
 	#ifdef __GNUC__
 	SEHChain *prevSEH;
-	__asm__ ("movl %%fs:0,%%eax;movl %%eax,%0;":"=r"(prevSEH)::"%eax" );
+	__asm__ ("movl %%fs:0,%%eax;movl %%eax,%0;":"=r"(prevSEH)::"%eax");
 	chain.prev = prevSEH;
 	chain.SEHfunction = (void*)&_SEHHandler;
 	__asm__("movl %0,%%eax;movl %%eax,%%fs:0;": : "g" (&chain):"%eax");
@@ -140,22 +140,17 @@ char* getFunctionName(unsigned long addr, unsigned long& start)
 				functions--;
 				start = functions->first;
 				return functions->second;
-				break;
 			}
 		}
 	}
+
 	return NULL;
 }
 
 #ifdef WIN32
-EXCEPTION_DISPOSITION
- __cdecl _SEHHandler(
-	 struct _EXCEPTION_RECORD *ExceptionRecord,
-	 void * EstablisherFrame,
-	 struct _CONTEXT *ContextRecord,
-	 void * DispatcherContext
-	 ){
-	//
+EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRecord, void * EstablisherFrame,
+	 struct _CONTEXT *ContextRecord, void * DispatcherContext)
+{
 	uint32_t *esp;
 	uint32_t *next_ret;
 	uint32_t stack_val;
@@ -165,7 +160,8 @@ EXCEPTION_DISPOSITION
 	uint32_t file,foundRetAddress = 0;
 	_MEMORY_BASIC_INFORMATION mbi;
 
-	g_game.saveGameState(true);
+	//we SHOUDLN'T save at crash, as it may truncate tile_items table
+	//g_game.saveGameState(true);
 
 	std::ostream *outdriver;
 	std::cout << "Error: generating report file..." << std::endl;
@@ -240,9 +236,11 @@ EXCEPTION_DISPOSITION
 				*outdriver << "Threads: " << uProcess.cntThreads << std::endl;
 				break;
 			}
+
 			r = Process32Next(lSnapShot, &uProcess);
 		}
-		CloseHandle (lSnapShot);
+
+		CloseHandle(lSnapShot);
 	}
 
 	*outdriver << std::endl;
@@ -314,14 +312,17 @@ EXCEPTION_DISPOSITION
 			output << (unsigned long)esp << "  " << functionName << "(" <<
 				functionAddr << ")" << std::endl;
 		}
+
 		esp++;
 	}
+
 	*outdriver << "*****************************************************" << std::endl;
 	if(file)
 		((std::ofstream*)outdriver)->close();
-	MessageBoxA(NULL, "If you want developers review this crashlog, please open a tracker ticket for the software at OtLand.net and attach the report.txt file.", "Error", MB_OK | MB_ICONERROR);
-	std::cout << "Error report generated. Killing server." << std::endl;
-	exit(1); //force exit
+
+	MessageBoxA(NULL, "If you want developers review this crash log, please open a tracker ticket for the software at OtLand.net and attach the report.txt file.", "Error", MB_OK | MB_ICONERROR);
+	std::cout << "> CRASH: Error report generated, killing server." << std::endl;
+	exit(1);
 	return ExceptionContinueSearch;
 }
 
@@ -361,9 +362,8 @@ bool ExceptionHandler::LoadMap()
 			break;
 	}
 
-	if(feof(input)){
+	if(feof(input))
 		return false;
-	}
 
 	char tofind[] = "0x";
 	char lib[] = ".a(";
@@ -372,6 +372,7 @@ bool ExceptionHandler::LoadMap()
 		char* pos = strstr(line, lib);
 		if(pos)
 			break; //not load libs
+
 		pos = strstr(line, tofind);
 		if(pos)
 		{
@@ -389,8 +390,10 @@ bool ExceptionHandler::LoadMap()
 				{
 					if(*pos2 != ' ')
 						break;
+
 					pos2++;
 				}
+
 				if(*pos2 == 0 || (*pos2 == '0' && *(pos2+1) == 'x'))
 					continue;
 
@@ -406,9 +409,10 @@ bool ExceptionHandler::LoadMap()
 			}
 		}
 	}
-	// close file
+
+	//close file
 	fclose(input);
-	//std::cout << "Loaded " << n << " stack symbols" <<std::endl;
+	//std::cout << "> Loaded " << n << " stack symbols" <<std::endl;
 	maploaded = true;
 	#endif
 	return true;
@@ -460,28 +464,32 @@ void ExceptionHandler::dumpStack()
 	#endif
 	uint32_t frame_param_counter;
 	frame_param_counter = 0;
-	while(esp < stacklimit){
+	while(esp < stacklimit)
+	{
 		stack_val = *esp;
 		if(foundRetAddress)
 			nparameters++;
 
-		if(esp - stackstart < 20 || nparameters < 10 || std::abs(esp - next_ret) < 10 || frame_param_counter < 8){
+		if(esp - stackstart < 20 || nparameters < 10 || std::abs(esp - next_ret) < 10 || frame_param_counter < 8)
+		{
 			output  << (uint32_t)esp << " | ";
 			printPointer(&output, stack_val);
-			if(esp == next_ret){
+			if(esp == next_ret)
 				output << " \\\\\\\\\\\\ stack frame //////";
-			}
-			else if(esp - next_ret == 1){
+			else if(esp - next_ret == 1)
 				output << " <-- ret" ;
-			}
-			else if(esp - next_ret == 2){
+			else if(esp - next_ret == 2)
+			{
 				next_ret = (uint32_t*)*(esp - 2);
 				frame_param_counter = 0;
 			}
+
 			frame_param_counter++;
 			output << std::endl;
 		}
-		if(stack_val >= min_off && stack_val <= max_off){
+
+		if(stack_val >= min_off && stack_val <= max_off)
+		{
 			foundRetAddress++;
 			//
 			unsigned long functionAddr;
@@ -489,8 +497,10 @@ void ExceptionHandler::dumpStack()
 			output << (unsigned long)esp << "  " << functionName << "(" <<
 				functionAddr << ")" << std::endl;
 		}
+
 		esp++;
 	}
+
 	output << "*****************************************************" << std::endl;
 	output.close();
 }
