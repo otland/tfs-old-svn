@@ -1161,7 +1161,7 @@ QTreeNode::QTreeNode()
 
 QTreeNode::~QTreeNode()
 {
-	for(in32_t i = 0; i < 4; ++i)
+	for(int32_t i = 0; i < 4; ++i)
 		delete m_child[i];
 }
 
@@ -1249,64 +1249,57 @@ Floor* QTreeLeafNode::createFloor(uint32_t z)
 
 uint32_t Map::clean()
 {
-	uint64_t start = OTSYS_TIME();
-	uint64_t count = 0;
 	Tile* tile = NULL;
-	Item *item = NULL;
+	Item* item = NULL;
 
-	QTreeLeafNode* startLeaf;
-	QTreeLeafNode* leafE;
-	QTreeLeafNode* leafS;
-	Floor* floor;
-
-	startLeaf = getLeaf(0, 0);
-	leafS = startLeaf;
-
-	for(int32_t ny = 0; ny <= 0xFFFF; ny += FLOOR_SIZE)
+	uint64_t start = OTSYS_TIME(), count = 0;
+	if(g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES))
 	{
-		leafE = leafS;
-		for(int32_t nx = 0; nx <= 0xFFFF; nx += FLOOR_SIZE)
+		for(int32_t z = 0; z <= MAP_MAX_LAYERS; z++)
 		{
-			if(leafE)
+			for(uint32_t y = 1; y <= mapHeight; y++)
 			{
-				for(int32_t nz = 0; nz < MAP_MAX_LAYERS; ++nz)
+				for(uint32_t x = 1; x <= mapWidth; x++)
 				{
-					if(leafE && (floor = leafE->getFloor(nz)))
+					if((tile = getTile(x, y, (uint32_t)z)) && !tile->hasFlag(TILESTATE_HOUSE))
 					{
-						for(int32_t ly = 0; ly < FLOOR_SIZE; ++ly)
+						uint32_t tmp = tile->getThingCount();
+						for(uint32_t i = 0; i < tmp; ++i)
 						{
-							for(int32_t lx = 0; lx < FLOOR_SIZE; ++lx)
+							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
 							{
-								if(floor && (tile = floor->tiles[(nx + lx) & FLOOR_MASK][(ny + ly) & FLOOR_MASK]))
-								{
-									if((g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES) && !tile->hasFlag(TILESTATE_HOUSE)) || !tile->hasFlag(TILESTATE_PROTECTIONZONE))
-									{
-										for(uint32_t i = 0; i < tile->getThingCount(); ++i)
-										{
-											item = tile->__getThing(i)->getItem();
-											if(item && !item->isLoadedFromMap() && !item->isNotMoveable())
-											{
-												g_game.internalRemoveItem(NULL, item);
-												i--;
-												count++;
-											}
-										}
-									}
-						return static_cast<QTreeLeafNode*>(this);		}
+								g_game.internalRemoveItem(NULL, item);
+								count++;
 							}
 						}
 					}
 				}
-				leafE = leafE->stepEast();
 			}
-			else
-				leafE = getLeaf(nx + FLOOR_SIZE, ny);
 		}
-
-		if(leafS)
-			leafS = leafS->stepSouth();
-		else
-			leafS = getLeaf(0, ny + FLOOR_SIZE);
+	}
+	else
+	{
+		for(int32_t z = 0; z <= MAP_MAX_LAYERS; z++)
+		{
+			for(uint32_t y = 1; y <= mapHeight; y++)
+			{
+				for(uint32_t x = 1; x <= mapWidth; x++)
+				{
+					if((tile = getTile(x, y, (uint32_t)z)) && !tile->hasFlag(TILESTATE_PROTECTIONZONE))
+					{
+						uint32_t tmp = tile->getThingCount();
+						for(uint32_t i = 0; i < tmp; ++i)
+						{
+							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
+							{
+								g_game.internalRemoveItem(NULL, item);
+								count++;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	std::cout << "> Cleaning time: " << (OTSYS_TIME() - start) / (1000.) << " seconds, collected " << count << " item" << (count != 1 ? "s" : "") << "." << std::endl;
