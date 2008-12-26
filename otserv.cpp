@@ -271,13 +271,9 @@ int argc, char *argv[]
 	g_game.setGameState(GAME_STATE_STARTUP);
 	srand((uint32_t)OTSYS_TIME());
 
-	std::cout << "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
-	std::cout << "* " << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME;
-	std::cout << ")                                            *" << std::endl;
-	std::cout << "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
-	std::cout << "* " << "A server developed by Elf, Talaturen, Lithium, Kiper, Kornholijo, Jonern & Nightmare. *" << std::endl;
-	std::cout << "* " << "Visit our forum for updates, support and resources: http://otland.net.                *" << std::endl;
-	std::cout << "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
+	std::cout << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl;
+	std::cout << "A server developed by Elf, Talaturen, Lithium, Kiper, Kornholijo, Jonern & Nightmare." << std::endl;
+	std::cout << "Visit our forum for updates, support and resources: http://otland.net." << std::endl;
 	std::cout << std::endl;
 	#if defined __DEBUG__MOVESYS__ || defined __DEBUG_HOUSES__ || defined __DEBUG_MAILBOX__ || defined __DEBUG_LUASCRIPTS__ || defined __DEBUG_RAID__ || defined __DEBUG_NET__
 	std::cout << ">> Debugging:";
@@ -682,13 +678,9 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					{
 						GUI::getInstance()->m_logText = "";
 						GUI::getInstance()->m_lineCount = 0;
-						std::cout << "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
-						std::cout << "* " << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME;
-						std::cout << ")                                            *" << std::endl;
-						std::cout << "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
-						std::cout << "* " << "A server developed by Elf, Talaturen, Lithium, Kiper, Kornholijo, Jonern & Nightmare. *" << std::endl;
-						std::cout << "* " << "Visit our forum for updates, support and resources: http://otland.net.                *" << std::endl;
-						std::cout << "* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *" << std::endl;
+						std::cout << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl;
+						std::cout << "A server developed by Elf, Talaturen, Lithium, Kiper, Kornholijo, Jonern & Nightmare." << std::endl;
+						std::cout << "Visit our forum for updates, support and resources: http://otland.net." << std::endl;
 						std::cout << std::endl;
 					}
 					break;
