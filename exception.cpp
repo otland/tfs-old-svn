@@ -85,10 +85,10 @@ bool ExceptionHandler::InstallHandler()
 {
 	#ifdef WIN32
 	OTSYS_THREAD_LOCK_CLASS lockObj(maploadlock);
-	if(maploaded == false)
+	if(!maploaded)
 		LoadMap();
 
-	if(installed == true)
+	if(installed)
 		return false;
 
 	/*
@@ -115,7 +115,7 @@ bool ExceptionHandler::InstallHandler()
 
 bool ExceptionHandler::RemoveHandler()
 {
-	if(installed == false)
+	if(!installed)
 		return false;
 
 	#ifdef WIN32
@@ -164,7 +164,7 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 	//g_game.saveGameState(true);
 
 	std::ostream *outdriver;
-	std::cout << "Error: generating report file..." << std::endl;
+	std::cout << ">> CRASH: Generating report file..." << std::endl;
 	std::ofstream output("report.txt", std::ios_base::app);
 	if(output.fail())
 	{
@@ -321,7 +321,7 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 		((std::ofstream*)outdriver)->close();
 
 	MessageBoxA(NULL, "If you want developers review this crash log, please open a tracker ticket for the software at OtLand.net and attach the report.txt file.", "Error", MB_OK | MB_ICONERROR);
-	std::cout << "> CRASH: Error report generated, killing server." << std::endl;
+	std::cout << "> Crash report generated, killing server." << std::endl;
 	exit(1);
 	return ExceptionContinueSearch;
 }

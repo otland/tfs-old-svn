@@ -152,8 +152,8 @@ void Game::setGameState(GameState_t newState)
 				saveGameState(false);
 				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, this)));
 
-				//Scheduler::getScheduler().stop();
-				//Dispatcher::getDispatcher().stop();
+				Scheduler::getScheduler().stop();
+				Dispatcher::getDispatcher().stop();
 				break;
 			}
 

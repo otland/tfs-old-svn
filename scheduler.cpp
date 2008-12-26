@@ -92,6 +92,7 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 				delete task; // was stopped, have to be deleted here
 		}
 	}
+
 	#if defined __EXCEPTION_TRACER__
 	schedulerExceptionHandler.RemoveHandler();
 	#endif
@@ -106,7 +107,6 @@ uint32_t Scheduler::addEvent(SchedulerTask* task)
 	if(Scheduler::m_threadState == Scheduler::STATE_RUNNING)
 	{
 		OTSYS_THREAD_LOCK(m_eventLock, "");
-
 		// check if the event has a valid id
 		if(task->getEventId() == 0)
 		{
@@ -122,10 +122,10 @@ uint32_t Scheduler::addEvent(SchedulerTask* task)
 		m_eventIds.insert(task->getEventId());
 		// add the event to the queue
 		m_eventList.push(task);
+
 		// if the list was empty or this event is the top in the list
 		// we have to signal it
 		signal = (task == m_eventList.top());
-
 		OTSYS_THREAD_UNLOCK(m_eventLock, "");
 	}
 #ifdef __DEBUG_SCHEDULER__
@@ -145,7 +145,6 @@ bool Scheduler::stopEvent(uint32_t eventid)
 		return false;
 
 	OTSYS_THREAD_LOCK(m_eventLock, "")
-
 	// search the event id...
 	EventIdSet::iterator it = m_eventIds.find(eventid);
 	if(it != m_eventIds.end())
@@ -174,7 +173,6 @@ void Scheduler::shutdown()
 {
 	OTSYS_THREAD_LOCK(m_eventLock, "");
 	m_threadState = Scheduler::STATE_TERMINATED;
-
 	//this list should already be empty
 	while(!m_eventList.empty())
 		m_eventList.pop();

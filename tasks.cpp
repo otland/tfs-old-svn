@@ -51,7 +51,6 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 	while(Dispatcher::m_threadState != Dispatcher::STATE_TERMINATED)
 	{
 		Task* task = NULL;
-
 		// check if there are tasks waiting
 		OTSYS_THREAD_LOCK(getDispatcher().m_taskLock, "")
 		if(getDispatcher().m_taskList.empty())
@@ -78,6 +77,7 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 			g_game.clearSpectatorCache();
 		}
 	}
+
 	#if defined __EXCEPTION_TRACER__
 	dispatcherExceptionHandler.RemoveHandler();
 	#endif
