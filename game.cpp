@@ -4416,7 +4416,7 @@ void Game::shutdown()
 
 	std::cout << "." << std::endl;
 	cleanup();
-	std::cout << "Exiting";
+	std::cout << "Exiting" << std::endl;
 	exit(1);
 }
 
