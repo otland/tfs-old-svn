@@ -10,7 +10,11 @@ setCombatCondition(combat, condition)
 local disable = createConditionObject(CONDITION_DISABLE_ATTACK)
 setConditionParam(disable, CONDITION_PARAM_TICKS, 10000)
 
+local disableAggressiveSpells = createConditionObject(CONDITION_EXHAUST_COMBAT)
+setConditionParam(disableAggressiveSpells, CONDITION_PARAM_TICKS, 10000)
+
 function onCastSpell(cid, var)
 	doAddCondition(cid, disable)
+	doAddCondition(cid, disableAggressiveSpells)
 	return doCombat(cid, combat, var)
 end
