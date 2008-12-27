@@ -1263,12 +1263,12 @@ uint32_t Map::clean()
 				{
 					if((tile = getTile(x, y, (uint32_t)z)) && !tile->hasFlag(TILESTATE_HOUSE))
 					{
-						uint32_t tmp = tile->getThingCount();
-						for(uint32_t i = 0; i < tmp; ++i)
+						for(uint32_t i = 0; i < tile->getThingCount(); ++i)
 						{
 							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
 							{
 								g_game.internalRemoveItem(NULL, item);
+								--i;
 								count++;
 							}
 						}
@@ -1287,12 +1287,12 @@ uint32_t Map::clean()
 				{
 					if((tile = getTile(x, y, (uint32_t)z)) && !tile->hasFlag(TILESTATE_PROTECTIONZONE))
 					{
-						uint32_t tmp = tile->getThingCount();
-						for(uint32_t i = 0; i < tmp; ++i)
+						for(uint32_t i = 0; i < tile->getThingCount(); ++i)
 						{
 							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
 							{
 								g_game.internalRemoveItem(NULL, item);
+								--i;
 								count++;
 							}
 						}
