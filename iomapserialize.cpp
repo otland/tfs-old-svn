@@ -121,7 +121,9 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 
 	for(ContainerStackList::iterator cit = containerStackList.begin(); cit != containerStackList.end(); ++cit)
 	{
-		for(ItemList::const_iterator it = container->getItems(); it != container->getEnd(); ++it)
+		container = (*cit).first;
+		parentId = (*cit).second;
+		for(ItemList::iterator it = container->getItems(); it != container->getEnd(); ++it)
 		{
 			item = (*it);
 
@@ -131,7 +133,7 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 			const char* attributes = propWriteStream.getStream(attributesSize);
 
 			runningId++;
-			query << tileId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << runningId << ", " << (*cit).second << ", "
+			query << tileId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << runningId << ", " << parentId << ", "
 				<< item->getID() << ", " << (int32_t)item->getSubType() << ", " << db->escapeBlob(attributes, attributesSize);
 			if(!query_insert.addRow(query.str()))
 				return false;
