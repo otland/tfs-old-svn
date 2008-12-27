@@ -819,25 +819,21 @@ ContainerIterator Container::end()
 
 ContainerIterator Container::begin() const
 {
-	if(Container* evil = const_cast<Container*>(this))
-		return evil->begin();
-
-	return NULL;
+	Container* evil = const_cast<Container*>(this);
+	return evil->begin();
 }
 
 ContainerIterator Container::end() const
 {
-	if(Container* evil = const_cast<Container*>(this))
-		return evil->end();
-
-	return NULL;
+	Container* evil = const_cast<Container*>(this);
+	return evil->end();
 }
 
 ContainerIterator::ContainerIterator():
 base(NULL) {}
 
-ContainerIterator::ContainerIterator(Container* base):
-base(base) {}
+ContainerIterator::ContainerIterator(Container* _base):
+base(_base) {}
 
 ContainerIterator::ContainerIterator(const ContainerIterator& rhs):
 base(rhs.base), over(rhs.over), current(rhs.current) {}
