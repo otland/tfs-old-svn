@@ -123,7 +123,7 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 	{
 		container = (*cit).first;
 		parentId = (*cit).second;
-		for(ItemList::iterator it = container->getItems(); it != container->getEnd(); ++it)
+		for(ItemList::const_iterator it = container->getItems(); it != container->getEnd(); ++it)
 		{
 			item = (*it);
 
