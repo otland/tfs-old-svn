@@ -332,6 +332,7 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 	int32_t tmp = item->getParent()->__getIndexOfThing(item);
 	PositionEx posEx(pos, tmp);
 
+	bool executed = false;
 	Action* action = NULL;
 	if((action = getAction(item, ACTION_UNIQUEID)))
 	{
@@ -345,6 +346,8 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 			if(action->function(player, item, posEx, posEx, false, creatureId))
 				return RET_NOERROR;
 		}
+
+		executed = true;
 	}
 
 	if((action = getAction(item, ACTION_ACTIONID)))
@@ -359,6 +362,8 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 			if(action->function(player, item, posEx, posEx, false, creatureId))
 				return RET_NOERROR;
 		}
+
+		executed = true;
 	}
 
 	if((action = getAction(item, ACTION_ITEMID)))
@@ -373,6 +378,8 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 			if(action->function(player, item, posEx, posEx, false, creatureId))
 				return RET_NOERROR;
 		}
+
+		executed = true;
 	}
 
 	if((action = getAction(item, ACTION_RUNEID)))
@@ -387,6 +394,8 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 			if(action->function(player, item, posEx, posEx, false, creatureId))
 				return RET_NOERROR;
 		}
+
+		executed = true;
 	}
 
 	if(BedItem* bed = item->getBed())
@@ -398,7 +407,6 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		return RET_NOERROR;
 	}
 
-	bool executed = getAction(item) != NULL;
 	if(Container* container = item->getContainer())
 	{
 		if(container->getCorpseOwner() != 0 && !player->canOpenCorpse(container->getCorpseOwner()))
@@ -445,7 +453,7 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		executed = true;
 	}
 
-	if(executed)
+	if(!executed)
 		return RET_CANNOTUSETHISOBJECT;
 
 	return RET_NOERROR;
