@@ -1263,7 +1263,8 @@ uint32_t Map::clean()
 				{
 					if((tile = getTile(x, y, (uint32_t)z)) && !tile->hasFlag(TILESTATE_HOUSE))
 					{
-						for(uint32_t i = (tile->getThingCount() - 1); i = 0; i--)
+						uint32_t tmp = tile->getThingCount();
+						for(uint32_t i = 0; i < tmp; ++i)
 						{
 							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
 							{
@@ -1286,7 +1287,8 @@ uint32_t Map::clean()
 				{
 					if((tile = getTile(x, y, (uint32_t)z)) && !tile->hasFlag(TILESTATE_PROTECTIONZONE))
 					{
-						for(uint32_t i = (tile->getThingCount() - 1); i = 0; i--)
+						uint32_t tmp = tile->getThingCount();
+						for(uint32_t i = 0; i < tmp; ++i)
 						{
 							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
 							{
