@@ -205,7 +205,7 @@ uint32_t Container::getItemHoldingCount() const
 {
 	uint32_t counter = 0;
 	for(ContainerIterator it = begin(); it != end(); ++it)
-		++counter;
+		counter++;
 
 	return counter;
 }
@@ -890,11 +890,12 @@ Item* ContainerIterator::operator->()
 ContainerIterator& ContainerIterator::operator++() 
 {
 	assert(base);
-	Item* item = *current;
-
-	Container* container = item->getContainer();
-	if(container)
-		over.push(container);
+	if(Item* item = *current)
+	{
+		Container* container = item->getContainer();
+		if(container)
+			over.push(container);
+	}
 
 	++current;
 	if(current == over.front()->itemlist.end())
