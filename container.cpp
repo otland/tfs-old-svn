@@ -203,19 +203,47 @@ Item* Container::getItem(uint32_t index)
 
 uint32_t Container::getItemHoldingCount() const
 {
+	std::list<const Container*> listContainer;
+	ItemList::const_iterator cit;
+	listContainer.push_back(this);
+
 	uint32_t counter = 0;
-	for(ContainerIterator it = begin(); it != end(); ++it)
-		counter++;
+	while(listContainer.size() > 0)
+	{
+		const Container* container = listContainer.front();
+		listContainer.pop_front();
+		for(cit = container->getItems(); cit != container->getEnd(); ++cit)
+		{
+			Container* container = (*cit)->getContainer();
+			if(container)
+				listContainer.push_back(container);
+
+			++counter;
+		}
+	}
 
 	return counter;
 }
 
 bool Container::isHoldingItem(const Item* item) const
 {
-	for(ContainerIterator it = begin(); it != end(); ++it)
+	std::list<const Container*> listContainer;
+	ItemList::const_iterator cit;
+	listContainer.push_back(this);
+
+	const Container* tmpContainer = NULL;
+	while(listContainer.size() > 0)
 	{
-		if(*it == item)
-			return true;
+		const Container* container = listContainer.front();
+		listContainer.pop_front();
+		for(cit = container->getItems(); cit != container->getEnd(); ++cit)
+		{
+			if(*cit == item)
+				return true;
+
+			if((tmpContainer = (*cit)->getContainer()))
+				listContainer.push_back(tmpContainer);
+		}
 	}
 
 	return false;

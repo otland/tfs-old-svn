@@ -48,7 +48,7 @@ class ContainerIterator
 		Item* operator->();
 	
 	protected:
-		ContainerIterator(Container* base);
+		ContainerIterator(Container* _base);
 	
 		Container* base;
 		std::queue<Container*> over;
