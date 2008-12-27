@@ -25,12 +25,15 @@
 #include "map.h"
 
 #include <string>
+#include <list>
+
+typedef std::list<std::pair<Container*, int32_t> > ContainerStackList;
 
 class IOMapSerialize
 {
 	public:
-		IOMapSerialize(){}
-		~IOMapSerialize(){}
+		IOMapSerialize() {}
+		virtual ~IOMapSerialize() {}
 
 		bool loadMap(Map* map);
 		bool saveMap(Map* map);

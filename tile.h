@@ -144,8 +144,10 @@ class Tile : public Cylinder
 				case WEST:
 					return hasFlag(TILESTATE_FLOORCHANGE_WEST);
 				default:
-					return false;
+					break;
 			}
+
+			return false;
 		}
 		bool hasHeight(uint32_t n) const;
 		uint32_t getHeight() const;

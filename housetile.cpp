@@ -22,11 +22,12 @@
 #include "housetile.h"
 #include "house.h"
 #include "game.h"
+#include "configmanager.h"
 
 extern Game g_game;
 
-HouseTile::HouseTile(int32_t x, int32_t y, int32_t z, House* _house) :
-	Tile(x, y, z)
+HouseTile::HouseTile(int32_t x, int32_t y, int32_t z, House* _house):
+Tile(x, y, z)
 {
 	house = _house;
 	setFlag(TILESTATE_HOUSE);
@@ -83,22 +84,18 @@ Cylinder* HouseTile::__queryDestination(int32_t& index, const Thing* thing, Item
 	{
 		if(const Player* player = creature->getPlayer())
 		{
-			if(!house->isInvited(player))
+			if(!house->isInvited(player) && !player->hasFlag(PlayerFlag_CanEditHouses))
 			{
-				const Position& entryPos = house->getEntryPosition();
-				Tile* destTile = g_game.getTile(entryPos.x, entryPos.y, entryPos.z);
+				Tile* destTile = g_game.getTile(house->getEntryPosition());
 				if(!destTile)
 				{
 					#ifdef __DEBUG__
 					assert(destTile != NULL);
 					#endif
-					std::cout << "Error: [HouseTile::__queryDestination] House entry not correct"
-						<< " - Name: " << house->getName()
-						<< " - House id: " << house->getHouseId()
-						<< " - Tile not found: " << entryPos << std::endl;
+					std::cout << "[Error - HouseTile::__queryDestination] Tile at house entry position for house: "
+						<< house->getName() << " (" << house->getHouseId() << ") does not exist." << std::endl;
 
-					const Position& templePos = player->getTemplePosition();
-					destTile = g_game.getTile(templePos.x, templePos.y, templePos.z);
+					destTile = g_game.getTile(player->getTemplePosition());
 					if(!destTile)
 						destTile = &(Tile::null_tile);
 				}
