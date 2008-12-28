@@ -358,13 +358,13 @@
 		<vocation name="Royal Paladin" showInDescription="0"/>
 	</movevent>
 	<movevent event="DeEquip" itemid="2487" slot="armor" function="onDeEquipItem"/>
-	<movevent event="Equip" itemid="2469" slot="armor" function="onEquipItem">
+	<movevent event="Equip" itemid="2492" slot="armor" function="onEquipItem">
 		<vocation name="Knight"/>
 		<vocation name="Elite Knight" showInDescription="0"/>
 		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin" showInDescription="0"/>
 	</movevent>
-	<movevent event="DeEquip" itemid="2469" slot="armor" function="onDeEquipItem"/>
+	<movevent event="DeEquip" itemid="2492" slot="armor" function="onDeEquipItem"/>
 	<movevent event="Equip" itemid="2466" slot="armor" function="onEquipItem">
 		<vocation name="Knight"/>
 		<vocation name="Elite Knight" showInDescription="0"/>
