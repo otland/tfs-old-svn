@@ -32,7 +32,7 @@ setConditionParam(poison, CONDITION_PARAM_TICKINTERVAL, 4000) -- Delay between d
 setConditionParam(poison, CONDITION_PARAM_FORCEUPDATE, TRUE) -- Re-update condition when adding it(ie. min/max value)
 
 local exhaust = createConditionObject(CONDITION_EXHAUST)
-setConditionParam(exhaust, CONDITION_PARAM_TICKS, getConfigInfo('timeBetweenExActions'))
+setConditionParam(exhaust, CONDITION_PARAM_TICKS, (getConfigInfo('timeBetweenExActions') - 100))
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if itemEx.uid == cid then -- Player is using on himself

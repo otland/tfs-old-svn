@@ -3,7 +3,7 @@ local MAX = 200
 local EMPTY_POTION = 7636
 
 local exhaust = createConditionObject(CONDITION_EXHAUST)
-setConditionParam(exhaust, CONDITION_PARAM_TICKS, getConfigInfo('timeBetweenExActions'))
+setConditionParam(exhaust, CONDITION_PARAM_TICKS, (getConfigInfo('timeBetweenExActions') - 100))
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if isPlayer(itemEx.uid) == FALSE then
