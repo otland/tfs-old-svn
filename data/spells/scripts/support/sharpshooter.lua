@@ -21,7 +21,7 @@ local exhaust = createConditionObject(CONDITION_EXHAUST_HEAL)
 setConditionParam(exhaust, CONDITION_PARAM_TICKS, 10000)
 
 function onCastSpell(cid, var)
-	doAddCondition(cid, disable)
+--	doAddCondition(cid, disable)
 	doAddCondition(cid, exhaust)
 	doAddCondition(cid, speed)
 	return doCombat(cid, combat, var)
