@@ -3555,7 +3555,6 @@ bool Game::internalCreatureTurn(Creature* creature, Direction dir)
 	if(creature->getDirection() != dir)
 	{
 		creature->setDirection(dir);
-
 		int32_t stackpos = creature->getParent()->__getIndexOfThing(creature);
 
 		const SpectatorVec& list = getSpectators(creature->getPosition());
@@ -3581,6 +3580,7 @@ bool Game::internalCreatureTurn(Creature* creature, Direction dir)
 						}
 					}
 				}
+
 				tmpPlayer->sendCreatureTurn(creature, stackpos - i);
 			}
 		}
@@ -3591,6 +3591,7 @@ bool Game::internalCreatureTurn(Creature* creature, Direction dir)
 
 		return true;
 	}
+
 	return false;
 }
 

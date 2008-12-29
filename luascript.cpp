@@ -7989,7 +7989,10 @@ int32_t LuaScriptInterface::luaDoCreatureSetLookDir(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Creature* creature = env->getCreatureByUID(cid))
 	{
-		creature->setDirection(dir);
+		g_game.internalCreatureTurn(creature, dir);
+		if(Player* player = creature->getPlayer())
+			player->resetIdleTime();
+
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else
