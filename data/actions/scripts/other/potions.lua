@@ -20,7 +20,8 @@ setCombatParam(antidote, COMBAT_PARAM_AGGRESSIVE, FALSE)
 setCombatParam(antidote, COMBAT_PARAM_DISPEL, CONDITION_POISON)
 
 local exhaust = createConditionObject(CONDITION_EXHAUST_HEAL)
-setConditionParam(exhaust, CONDITION_PARAM_TICKS, getConfigInfo('timeBetweenExActions'))
+setConditionParam(exhaust, CONDITION_PARAM_TICKS, (getConfigInfo('timeBetweenExActions') - 100))
+-- 1000 - 100 due to exact condition timing. -100 doesn't hurt us, and players don't have reminding ~50ms exhaustion.
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(itemEx.uid ~= cid or itemEx.itemid ~= 1) then
