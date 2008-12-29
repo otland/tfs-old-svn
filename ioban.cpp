@@ -415,6 +415,6 @@ bool IOBan::clearTemporials()
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `bans` SET `active` = 0 WHERE `active` = 1 AND (`expires` = 0 OR (`expires` > 0 AND `expires` < " << time(NULL) << "));";
+	query << "UPDATE `bans` SET `active` = 0 WHERE `expires` <= " << time(NULL) << " AND `expires` >= 0 AND `active` = 1;";
 	return db->executeQuery(query.str());
 }
