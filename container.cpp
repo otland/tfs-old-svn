@@ -196,7 +196,8 @@ std::string Container::getContentDescription() const
 std::stringstream& Container::getContentDescription(std::stringstream& s) const
 {
 	bool begin = true;
-	for(ContainerIterator it = begin(); it != end(); ++it)
+	Container* evil = const_cast<Container*>(this);
+	for(ContainerIterator it = evil->begin(); it != evil->end(); ++it)
 	{
 		if(!begin)
 			s << ", ";
