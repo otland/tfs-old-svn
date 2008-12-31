@@ -196,14 +196,14 @@ std::string Container::getContentDescription() const
 std::stringstream& Container::getContentDescription(std::stringstream& s) const
 {
 	bool begin = true;
-	for(ContainerIterator cit = begin(); cit != end(); ++cit)
+	for(ContainerIterator it = begin(); it != end(); ++it)
 	{
 		if(!begin)
 			s << ", ";
 		else
 			begin = false;
 
-		s << (*cit)->getLongName();
+		s << (*it)->getNameDescription();
 	}
 
 	if(begin)
