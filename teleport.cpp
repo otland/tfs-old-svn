@@ -91,11 +91,11 @@ bool Teleport::readAttr(AttrTypes_t attr, PropStream& propStream)
 {
 	if(ATTR_TELE_DEST == attr)
 	{
-		TeleportDest* tele_dest;
-		if(!propStream.GET_STRUCT(tele_dest))
+		TeleportDest* teleDest;
+		if(!propStream.GET_STRUCT(teleDest))
 			return false;
 
-		setDestPos(Position(tele_dest->_x, tele_dest->_y, tele_dest->_z));
+		setDestPos(Position(teleDest->_x, teleDest->_y, teleDest->_z));
 		return true;
 	}
 
@@ -112,7 +112,7 @@ bool Teleport::serializeAttr(PropWriteStream& propWriteStream)
 	tmpDest._y = destPos.y;
 	tmpDest._z = destPos.z;
 
-	propWriteStream.ADD_VALUE(tele_dest);
+	propWriteStream.ADD_VALUE(teleDest);
 	return ret;
 }
 
