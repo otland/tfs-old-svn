@@ -200,8 +200,8 @@ bool Npc::loadFromXml(const std::string& filename)
 		else
 			baseSpeed = 110;
 
-		if(readXMLInteger(root, "attackable", intValue))
-			attackable = (intValue != 0);
+		if(readXMLString(root, "attackable", strValue))
+			attackable = booleanString(strValue);
 
 		if(readXMLInteger(root, "walkinterval", intValue))
 			walkTicks = intValue;
@@ -303,12 +303,12 @@ bool Npc::loadFromXml(const std::string& filename)
 				{
 					if(xmlStrcmp(q->name, (const xmlChar*)"parameter") == 0)
 					{
-						std::string paramKey;
-						std::string paramValue;
+						std::string paramKey, paramValue;
 						if(!readXMLString(q, "key", paramKey))
 							continue;
 						if(!readXMLString(q, "value", paramValue))
 							continue;
+
 						m_parameters[paramKey] = paramValue;
 					}
 				}

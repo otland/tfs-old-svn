@@ -187,6 +187,31 @@ double Container::getWeight() const
 	return Item::getWeight() + totalWeight;
 }
 
+std::string Container::getContentDescription() const
+{
+	std::stringstream s;
+	return getContentDescription(s).str();
+}
+
+std::stringstream& Container::getContentDescription(std::stringstream& s) const
+{
+	bool begin = true;
+	for(ContainerIterator cit = begin(); cit != end(); ++cit)
+	{
+		if(!begin)
+			s << ", ";
+		else
+			begin = false;
+
+		s << (*cit)->getLongName();
+	}
+
+	if(begin)
+		s << "nothing";
+
+	return s;
+}
+
 Item* Container::getItem(uint32_t index)
 {
 	size_t n = 0;

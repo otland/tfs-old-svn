@@ -112,7 +112,7 @@ bool Teleport::serializeAttr(PropWriteStream& propWriteStream)
 	tmpDest._y = destPos.y;
 	tmpDest._z = destPos.z;
 
-	propWriteStream.ADD_VALUE(teleDest);
+	propWriteStream.ADD_VALUE(tmpDest);
 	return ret;
 }
 

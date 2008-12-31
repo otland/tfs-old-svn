@@ -88,6 +88,8 @@ class Container : public Item, public Cylinder
 		void addItem(Item* item);
 		Item* getItem(uint32_t index);
 		bool isHoldingItem(const Item* item) const;
+
+		std::string getContentDescription() const;
 		uint32_t getItemHoldingCount() const;
 		virtual double getWeight() const;
 
@@ -129,6 +131,7 @@ class Container : public Item, public Cylinder
 
 		Container* getParentContainer();
 		void updateItemWeight(double diff);
+		std::stringstream& getContentDescription(std::stringstream& s) const;
 
 	protected:
 		uint32_t maxSize;

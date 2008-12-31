@@ -417,19 +417,15 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 				return NULL;
 
 			int32_t subType = -1;
-			if(it.isFluidContainer())
-			{
-				int32_t maxFluidType = sizeof(reverseFluidMap) / sizeof(uint32_t);
-				if(index < maxFluidType)
-					subType = reverseFluidMap[index];
-			}
+			if(it.isFluidContainer() && index < int32_t(sizeof(reverseFluidMap) / sizeof(int32_t)))
+				subType = reverseFluidMap[index];
 
 			return findItemOfType(player, it.id, true, subType);
 		}
 		//inventory
 		else
 		{
-			slots_t slot = (slots_t)static_cast<unsigned char>(pos.y);
+			slots_t slot = (slots_t)static_cast<uint8_t>(pos.y);
 			return player->getInventoryItem(slot);
 		}
 	}
@@ -2955,15 +2951,9 @@ bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t coun
 	if(it.id == 0)
 		return false;
 
-	uint8_t subType = 0;
-	if(it.isFluidContainer())
-	{
-		int32_t maxFluidType = sizeof(reverseFluidMap) / sizeof(uint32_t);
-		if(count < maxFluidType)
-			subType = (uint8_t)reverseFluidMap[count];
-	}
-	else
-		subType = count;
+	uint8_t subType = count;
+	if(it.isFluidContainer() && count < uint8_t(sizeof(reverseFluidMap) / sizeof(int32_t)))
+		subType = reverseFluidMap[count];
 
 	merchant->onPlayerTrade(player, SHOPEVENT_BUY, onBuy, it.id, subType, amount, ignoreCap, inBackpacks);
 	return true;
@@ -2986,15 +2976,9 @@ bool Game::playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count, u
 	if(it.id == 0)
 		return false;
 
-	uint8_t subType = 0;
-	if(it.isFluidContainer())
-	{
-		int32_t maxFluidType = sizeof(reverseFluidMap) / sizeof(uint32_t);
-		if(count < maxFluidType)
-			subType = (uint8_t)reverseFluidMap[count];
-	}
-	else
-		subType = count;
+	uint8_t subType = count;
+	if(it.isFluidContainer() && count < uint8_t(sizeof(reverseFluidMap) / sizeof(int32_t)))
+		subType = reverseFluidMap[count];
 
 	merchant->onPlayerTrade(player, SHOPEVENT_SELL, onSell, it.id, subType, amount);
 	return true;
@@ -3020,15 +3004,9 @@ bool Game::playerLookInShop(uint32_t playerId, uint16_t spriteId, uint8_t count)
 	if(it.id == 0)
 		return false;
 
-	int32_t subType = 0;
-	if(it.isFluidContainer())
-	{
-		int32_t maxFluidType = sizeof(reverseFluidMap) / sizeof(uint32_t);
-		if(count < maxFluidType)
-			subType = reverseFluidMap[count];
-	}
-	else
-		subType = count;
+	int32_t subType = count;
+	if(it.isFluidContainer() && count < uint8_t(sizeof(reverseFluidMap) / sizeof(int32_t)))
+		subType = reverseFluidMap[count];
 
 	std::stringstream ss;
 	ss << "You see " << Item::getDescription(it, 1, NULL, subType);
@@ -3954,8 +3932,9 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 
 				target->drainHealth(attacker, combatType, damage);
 				addCreatureHealth(list, target);
+
 				TextColor_t textColor = TEXTCOLOR_NONE;
-				uint8_t hitEffect = 0;
+				MagicEffectClasses hitEffect = NM_ME_NONE;
 				switch(combatType)
 				{
 					case COMBAT_PHYSICALDAMAGE:

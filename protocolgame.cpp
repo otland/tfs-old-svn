@@ -1018,6 +1018,7 @@ void ProtocolGame::GetFloorDescription(NetworkMessage* msg, int32_t x, int32_t y
 					msg->AddByte(skip);
 					msg->AddByte(0xFF);
 				}
+
 				skip = 0;
 				GetTileDescription(tile, msg);
 			}
@@ -1924,14 +1925,10 @@ void ProtocolGame::sendContainer(uint32_t cid, const Container* container, bool 
 		msg->AddString(container->getName());
 		msg->AddByte(container->capacity());
 		msg->AddByte(hasParent ? 0x01 : 0x00);
-		if(container->size() > 255)
-			msg->AddByte(255);
-		else
-			msg->AddByte(container->size());
+		msg->AddByte(std::min(container->size(), (uint32_t)255));
 
-		ItemList::const_iterator cit;
-		uint32_t i = 0;
-		for(cit = container->getItems(); cit != container->getEnd() && i < 255; ++cit, ++i)
+		ItemList::const_iterator cit = container->getItems();
+		for(uint32_t i = 0; cit != container->getEnd() && i < 255; ++cit, ++i)
 			msg->AddItem(*cit);
 	}
 }
@@ -1943,10 +1940,10 @@ void ProtocolGame::sendShop(const ShopInfoList& itemList)
 	{
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0x7A);
-		msg->AddByte(std::min((size_t)255, itemList.size()));
+		msg->AddByte(std::min(itemList.size(), (size_t)255));
 
-		uint32_t i = 0;
-		for(ShopInfoList::const_iterator it = itemList.begin(); it != itemList.end() && i < 255; ++it, ++i)
+		ShopInfoList::const_iterator it = itemList.begin();
+		for(uint32_t i = 0; it != itemList.end() && i < 255; ++it, ++i)
 			AddShopItem(msg, (*it));
 	}
 }
@@ -1969,13 +1966,13 @@ void ProtocolGame::sendGoods(const std::map<uint32_t, uint32_t>& itemMap)
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0x7B);
 		msg->AddU32(g_game.getMoney(player));
-		msg->AddByte(std::min((size_t)255, itemMap.size()));
+		msg->AddByte(std::min(itemMap.size(), (size_t)255));
 
-		uint32_t i = 0;
-		for(std::map<uint32_t, uint32_t>::const_iterator it = itemMap.begin(); it != itemMap.end() && i < 255; ++it, ++i)
+		std::map<uint32_t, uint32_t>::const_iterator it = itemMap.begin();
+		for(uint32_t i = 0; it != itemMap.end() && i < 255; ++it, ++i)
 		{
 			msg->AddItemId(it->first);
-			msg->AddByte(std::min((uint32_t)255, it->second));
+			msg->AddByte(std::min(it->second, (uint32_t)255));
 		}
 	}
 }
@@ -1992,35 +1989,11 @@ void ProtocolGame::sendTradeItemRequest(const Player* player, const Item* item, 
 			msg->AddByte(0x7E);
 
 		msg->AddString(player->getName());
-		if(const Container* tradeContainer = item->getContainer())
+		if(const Container* container = item->getContainer())
 		{
-			std::list<const Container*> listContainer;
-			ItemList::const_iterator it;
-			Container* tmpContainer = NULL;
-
-			listContainer.push_back(tradeContainer);
-
-			std::list<const Item*> listItem;
-			listItem.push_back(tradeContainer);
-			while(listContainer.size() > 0)
-			{
-				const Container* container = listContainer.front();
-				listContainer.pop_front();
-				for(it = container->getItems(); it != container->getEnd(); ++it)
-				{
-					if((tmpContainer = (*it)->getContainer()))
-						listContainer.push_back(tmpContainer);
-					listItem.push_back(*it);
-				}
-			}
-
-			msg->AddByte(listItem.size());
-			while(listItem.size() > 0)
-			{
-				const Item* item = listItem.front();
-				listItem.pop_front();
-				msg->AddItem(item);
-			}
+			msg->AddByte(container->getItemHoldingCount());
+			for(ContainerIterator it = container->begin(); it != container->end(); ++it)
+				msg->AddItem(*it);
 		}
 		else
 		{

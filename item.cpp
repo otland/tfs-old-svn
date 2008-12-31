@@ -170,14 +170,13 @@ Item* Item::CreateItem(PropStream& propStream)
 	return Item::CreateItem(_id, 0);
 }
 
-Item::Item(const uint16_t _type, uint16_t _count /*= 0*/) :
+Item::Item(const uint16_t _type, uint16_t _count /*= 0*/):
 ItemAttributes()
 {
 	id = _type;
+	count = 1;
 
 	const ItemType& it = items[id];
-
-	count = 1;
 	if(it.charges != 0)
 		setCharges(it.charges);
 
@@ -192,13 +191,12 @@ ItemAttributes()
 	setDefaultDuration();
 }
 
-Item::Item(const Item &i) :
+Item::Item(const Item &i):
 Thing(), ItemAttributes()
 {
 	//std::cout << "Item copy constructor " << this << std::endl;
 	id = i.id;
 	count = i.count;
-
 	m_attributes = i.m_attributes;
 	if(i.m_firstAttr)
 		m_firstAttr = new Attribute(*i.m_firstAttr);
@@ -206,12 +204,12 @@ Thing(), ItemAttributes()
 
 Item* Item::clone() const
 {
-	Item* _item = Item::CreateItem(id, count);
-	_item->m_attributes = m_attributes;
+	Item* tmp = Item::CreateItem(id, count);
+	tmp->m_attributes = m_attributes;
 	if(m_firstAttr)
-		_item->m_firstAttr = new Attribute(*m_firstAttr);
+		tmp->m_firstAttr = new Attribute(*m_firstAttr);
 
-	return _item;
+	return tmp;
 }
 
 void Item::copyAttributes(Item* item)
@@ -232,9 +230,9 @@ Item::~Item()
 
 void Item::setDefaultSubtype()
 {
-	const ItemType& it = items[id];
-
 	count = 1;
+
+	const ItemType& it = items[id];
 	if(it.charges != 0)
 		setCharges(it.charges);
 }
@@ -1024,22 +1022,37 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		if(it.abilities.stats[STAT_MAGICLEVEL] != 0)
 			s << ", magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICLEVEL] << std::noshowpos;
 
-		bool begin = true;
-		for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+		int32_t show = it.abilities.absorbPercent[COMBAT_FIRST];
+		for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
 		{
-			if(it.abilities.absorbPercent[i] != 0)
+			if(it.abilities.absorbPercent[i] != show)
 			{
-				if(begin)
-				{
-					s << ", protection ";
-					begin = false;
-				}
-				else
-					s << ", ";
-
-				s << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities.absorbPercent[i] << std::noshowpos << "%";
+				show = 0;
+				break;
 			}
 		}
+
+		if(!show)
+		{
+			bool begin = true;
+			for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+			{
+				if(it.abilities.absorbPercent[i] != 0)
+				{
+					if(!begin)
+						s << ", ";
+			  		else
+					{
+						begin = false;
+						s << ", protection ";
+					}
+
+					s << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities.absorbPercent[i] << std::noshowpos << "%";
+				}
+			}
+		}
+		else
+			s << ", protection all " << std::showpos << show << std::noshowpos << "%";
 
 		if(it.abilities.speed > 0)
 			s << ", speed " << std::showpos << (it.abilities.speed / 2) << std::noshowpos;

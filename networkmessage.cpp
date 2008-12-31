@@ -132,10 +132,7 @@ void NetworkMessage::AddItem(const Item* item)
 	if(it.stackable || it.isRune())
 		AddByte(item->getSubType());
 	else if(it.isSplash() || it.isFluidContainer())
-	{
-		uint32_t fluidIndex = item->getSubType() % 8;
-		AddByte(fluidMap[fluidIndex]);
-	}
+		AddByte(fluidMap[item->getSubType() % 8]);
 }
 
 void NetworkMessage::AddItemId(const Item *item)
