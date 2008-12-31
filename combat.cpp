@@ -754,6 +754,7 @@ void Combat::doCombatHealth(Creature* caster, Creature* target,
 		Combat2Var var;
 		var.minChange = minChange;
 		var.maxChange = maxChange;
+
 		CombatHealthFunc(caster, target, params, (void*)&var);
 		if(params.impactEffect != NM_ME_NONE)
 			g_game.addMagicEffect(target->getPosition(), params.impactEffect);

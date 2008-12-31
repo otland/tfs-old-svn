@@ -741,7 +741,7 @@ if(Modules == nil) then
 	function ShopModule:addBuyableItem(names, itemid, cost, subType, realName)
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
 			if(self.npcHandler.shopItems[itemid] == nil) then
-				self.npcHandler.shopItems[itemid] = {buyPrice = 0, sellPrice = 0, subType = 0, realName = ""}
+				self.npcHandler.shopItems[itemid] = {buyPrice = -1, sellPrice = -1, subType = 0, realName = ""}
 			end
 
 			self.npcHandler.shopItems[itemid].buyPrice = cost
@@ -808,7 +808,7 @@ if(Modules == nil) then
 	function ShopModule:addSellableItem(names, itemid, cost, realName)
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
 			if(self.npcHandler.shopItems[itemid] == nil) then
-				self.npcHandler.shopItems[itemid] = {buyPrice = 0, sellPrice = 0, subType = 0, realName = ""}
+				self.npcHandler.shopItems[itemid] = {buyPrice = -1, sellPrice = -1, subType = 0, realName = ""}
 			end
 
 			self.npcHandler.shopItems[itemid].sellPrice = cost
@@ -845,6 +845,11 @@ if(Modules == nil) then
 	function ShopModule:callbackOnBuy(cid, itemid, subType, amount, ignoreCap, inBackpacks)
 		if(self.npcHandler.shopItems[itemid] == nil) then
 			error("[ShopModule.onBuy]", "items[itemid] == nil")
+			return false
+		end
+
+		if(self.npcHandler.shopItems[itemid].buyPrice == -1) then
+			error("[ShopModule.onSell]", "Attempt to buy a non-buyable item")
 			return false
 		end
 
@@ -913,6 +918,11 @@ if(Modules == nil) then
 			return false
 		end
 
+		if(self.npcHandler.shopItems[itemid].sellPrice == -1) then
+			error("[ShopModule.onSell]", "Attempt to sell a non-sellable item")
+			return false
+		end
+
 		local parseInfo = {
 			[TAG_PLAYERNAME] = getPlayerName(cid),
 			[TAG_ITEMCOUNT] = amount,
@@ -923,6 +933,7 @@ if(Modules == nil) then
 		if(subType < 1) then
 			subType = -1
 		end
+
 		if(doPlayerRemoveItem(cid, itemid, amount, subType) == TRUE) then
 			local msg = self.npcHandler:getMessage(MESSAGE_SOLD)
 			msg = self.npcHandler:parseMessage(msg, parseInfo)
