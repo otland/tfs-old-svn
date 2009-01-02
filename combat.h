@@ -79,12 +79,10 @@ struct CombatParams
 		targetCallback = NULL;
 		valueCallback = NULL;
 		tileCallback = NULL;
-		condition = NULL;
 	}
 
 	bool blockedByArmor, blockedByShield, targetCasterOrTopMost, isAggressive, useCharges;
 	uint8_t impactEffect, distanceEffect;
-	const Condition* condition;
 	ConditionType_t dispelType;
 	CombatType_t combatType;
 	uint32_t itemId;
@@ -92,6 +90,8 @@ struct CombatParams
 	TargetCallback* targetCallback;
 	ValueCallback* valueCallback;
 	TileCallback* tileCallback;
+
+	std::list<const Condition*> conditionList;
 };
 
 typedef bool (*COMBATFUNC)(Creature*, Creature*, const CombatParams&, void*);
@@ -129,7 +129,6 @@ class MatrixArea
 			cols = rhs.cols;
 
 			data_ = new bool*[rows];
-
 			for(uint32_t row = 0; row < rows; ++row)
 			{
 				data_[row] = new bool[cols];
@@ -143,6 +142,7 @@ class MatrixArea
 		{
 			for(uint32_t row = 0; row < rows; ++row)
 				delete[] data_[row];
+
 			delete[] data_;
 		}
 
@@ -288,7 +288,7 @@ class Combat
 			area = _area;
 		}
 		bool hasArea() const {return area != NULL;}
-		void setCondition(const Condition* _condition) {params.condition = _condition;}
+		void setCondition(const Condition* _condition) {params.conditionList.push_back(_condition);}
 		void setPlayerCombatValues(formulaType_t _type, double _mina, double _minb, double _maxa, double _maxb);
 		void postCombatEffects(Creature* caster, const Position& pos) const {Combat::postCombatEffects(caster, pos, params);}
 

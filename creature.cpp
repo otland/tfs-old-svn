@@ -948,8 +948,7 @@ BlockType_t Creature::blockHit(Creature* attacker, CombatType_t combatType, int3
 			hasDefense = true;
 		}
 
-		if(checkDefense && hasDefense && (!hasCondition(CONDITION_DISABLE_DEFENSE) ||
-			(getPlayer() && getPlayer()->hasCustomFlag(PlayerCustomFlag_IgnoreDisable))))
+		if(checkDefense && hasDefense)
 		{
 			int32_t maxDefense = getDefense();
 			int32_t minDefense = maxDefense / 2;

@@ -35,7 +35,6 @@ extern ConfigManager g_config;
 
 Combat::Combat()
 {
-	params.condition = NULL;
 	params.valueCallback = NULL;
 	params.tileCallback = NULL;
 	params.targetCallback = NULL;
@@ -50,7 +49,10 @@ Combat::Combat()
 
 Combat::~Combat()
 {
-	delete params.condition;
+	for(std::list<const Condition*>::iterator it = params.conditionList.begin(); it != params.conditionList.end(); ++it)
+		delete (*it);
+
+	params.conditionList.clear();
 	delete params.valueCallback;
 	delete params.tileCallback;
 	delete params.targetCallback;
@@ -515,16 +517,19 @@ bool Combat::CombatManaFunc(Creature* caster, Creature* target, const CombatPara
 bool Combat::CombatConditionFunc(Creature* caster, Creature* target, const CombatParams& params, void* data)
 {
 	bool result = false;
-	if(params.condition)
+	if(!params.conditionList.empty())
 	{
-		if(caster == target || !target->isImmune(params.condition->getType()))
+		for(std::list<const Condition*>::const_iterator it = params.conditionList.begin(); it != params.conditionList.end(); ++it)
 		{
-			Condition* conditionCopy = params.condition->clone();
-			if(caster)
-				conditionCopy->setParam(CONDITIONPARAM_OWNER, caster->getID());
+			if(caster == target || !target->isImmune((*it)->getType()))
+			{
+				Condition* conditionCopy = (*it)->clone();
+				if(caster)
+					conditionCopy->setParam(CONDITIONPARAM_OWNER, caster->getID());
 
-			//TODO: infight condition until all aggressive conditions has ended
-			result = target->addCombatCondition(conditionCopy);
+				//TODO: infight condition until all aggressive conditions has ended
+				result = target->addCombatCondition(conditionCopy);
+			}
 		}
 	}
 	return result;

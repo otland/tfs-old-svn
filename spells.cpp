@@ -20,6 +20,7 @@
 #include "otpch.h"
 
 #include "definitions.h"
+#include "game.h"
 #include "tools.h"
 #include "house.h"
 #include "housetile.h"

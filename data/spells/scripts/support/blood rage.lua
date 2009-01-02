@@ -10,8 +10,8 @@ setCombatCondition(combat, condition)
 
 local disable = createConditionObject(CONDITION_DISABLE_DEFENSE)
 setConditionParam(disable, CONDITION_PARAM_TICKS, 10000)
+setCombatCondition(combat, disable)
 
 function onCastSpell(cid, var)
-	doAddCondition(cid, disable)
 	return doCombat(cid, combat, var)
 end

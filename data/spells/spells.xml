@@ -22,6 +22,10 @@
 	<rune name="Stone Shower" id="2288" allowfaruse="1" charges="4" lvl="28" maglv="4" exhaustion="2000" script="attack/stone shower.lua"/>
 	<rune name="Thunderstorm" id="2315" allowfaruse="1" charges="4" lvl="28" maglv="4" exhaustion="2000" script="attack/thunderstorm.lua"/>
 	<rune name="Stalagmite" id="2292" allowfaruse="1" charges="10" lvl="24" maglv="3" exhaustion="2000" needtarget="1" script="attack/stalagmite.lua"/>
+	<rune name="adori san" id="2295" lvl="27" maglv="4" needtarget="1" charges="3" script="attack/holy_missile.lua">
+		<vocation name="Paladin"/>
+		<vocation name="Royal Paladin"/>
+	</rune>
 
 	<!-- Healing Runes -->
 	<rune name="Antidote Rune" id="2266" allowfaruse="1" charges="1" lvl="15" maglv="0" exhaustion="1000" aggressive="0" needtarget="1" blocktype="solid" script="healing/antidote rune.lua"/>
@@ -545,6 +549,10 @@
 	<conjure name="Thunderstorm" words="adori mas vis" lvl="28" mana="430" soul="3" prem="1" reagentId="2260" conjureId="2315" conjureCount="4" exhaustion="1000" needlearn="0" function="conjureRune">
 		<vocation name="Sorcerer"/>
 		<vocation name="Master Sorcerer"/>
+	</conjure>
+	<conjure name="Holy Missile" words="adori san" lvl="27" mana="350" soul="3" reagentId="2260" conjureId="2295" conjureCount="5" function="conjureRune">
+		<vocation name="Paladin"/>
+		<vocation name="Royal Paladin"/>
 	</conjure>
 
 	<!-- Custom Spells -->

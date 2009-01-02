@@ -231,8 +231,7 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 		case CONDITION_EXHAUST_HEAL:
 		case CONDITION_EXHAUST_WEAPON:
 		case CONDITION_DRUNK:
-		case CONDITION_DISABLE_ATTACK:
-		case CONDITION_DISABLE_DEFENSE:
+		case CONDITION_PACIFIED:
 			return new ConditionGeneric(_id, _type, _ticks, _buff);
 
 		default:

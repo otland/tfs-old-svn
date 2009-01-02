@@ -496,7 +496,7 @@ enum PlayerCustomFlags
 	PlayerCustomFlag_CanSeeCounsellorChannel,		//2^19 = 524288
 	PlayerCustomFlag_DescriptionGroupInsteadVocation,				//2^20 = 1048576
 	PlayerCustomFlag_HideLevel,		//2^21 = 2097152
-	PlayerCustomFlag_IgnoreDisable,		//2^22 = 4194304
+	PlayerCustomFlag_IgnorePacification,		//2^22 = 4194304
 
 	PlayerCustomFlag_LastFlag
 };
