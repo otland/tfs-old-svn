@@ -530,6 +530,9 @@ int32_t Player::getDefense() const
 		defenseSkill = getSkill(SKILL_SHIELD, SKILL_LEVEL);
 	}
 
+	if(!defenseSkill)
+		return 0;
+
 	defenseValue += extraDefense;
 	if(vocation->defenseMultipler != 1.0)
 		defenseValue = int32_t(defenseValue * vocation->defenseMultipler);
