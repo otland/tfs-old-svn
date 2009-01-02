@@ -415,7 +415,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 				//Update bans table
 				query.str("");
-				query << "CREATE TABLE IF NOT EXISTS `bans2` ( `id` INT UNSIGNED NOT NULL auto_increment, `type` TINYINT(1) NOT NULL COMMENT 'this field defines if its ip, account, player, or any else ban', `value` INT UNSIGNED NOT NULL COMMENT 'ip, player guid, account number', `param` INT UNSIGNED NOT NULL DEFAULT 4294967295 COMMENT 'mask', `active` TINYINT(1) NOT NULL DEFAULT TRUE, `expires` INT UNSIGNED NOT NULL, `added` INT UNSIGNED NOT NULL, `admin_id` INT UNSIGNED NOT NULL DEFAULT 0, `comment` TEXT NOT NULL DEFAULT '', `reason` INT UNSIGNED NOT NULL DEFAULT 0, `action` INT UNSIGNED NOT NULL DEFAULT 0, PRIMARY KEY  (`id`), KEY `type` (`type`, `value`) ) ENGINE = InnoDB;";
+				query << "CREATE TABLE IF NOT EXISTS `bans2` ( `id` INT UNSIGNED NOT NULL auto_increment, `type` TINYINT(1) NOT NULL COMMENT 'this field defines if its ip, account, player, or any else ban', `value` INT UNSIGNED NOT NULL COMMENT 'ip, player guid, account number', `param` INT UNSIGNED NOT NULL DEFAULT 4294967295 COMMENT 'mask', `active` TINYINT(1) NOT NULL DEFAULT TRUE, `expires` INT UNSIGNED NOT NULL, `added` INT UNSIGNED NOT NULL, `admin_id` INT UNSIGNED NOT NULL DEFAULT 0, `comment` TEXT NOT NULL, `reason` INT UNSIGNED NOT NULL DEFAULT 0, `action` INT UNSIGNED NOT NULL DEFAULT 0, PRIMARY KEY  (`id`), KEY `type` (`type`, `value`) ) ENGINE = InnoDB;";
 				if(db->executeQuery(query.str()))
 				{
 					query.str("");
@@ -447,7 +447,9 @@ uint32_t DatabaseManager::updateDatabase()
 								default:
 									break;
 							}
-							db->executeQuery(query.str());
+
+							if(query.str() != "")
+								db->executeQuery(query.str());
 						}
 						while(result->next());
 						db->freeResult(result);
@@ -581,7 +583,9 @@ uint32_t DatabaseManager::updateDatabase()
 						default:
 							break;
 					}
-					db->executeQuery(query.str());
+
+					if(query.str() != "")
+						db->executeQuery(query.str());
 				}
 				while(result->next());
 				db->freeResult(result);
@@ -790,18 +794,17 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `server_motd` DROP PRIMARY KEY;",
 						"ALTER TABLE `server_motd` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
 						"ALTER TABLE `server_motd` ADD UNIQUE (`id`, `world_id`);",
-						"ALTER TABLE `server_record` DROP INDEX `timestamp`;",
+						"ALTER TABLE `server_record` DROP PRIMARY KEY;",
 						"ALTER TABLE `server_record` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
 						"ALTER TABLE `server_record` ADD UNIQUE (`timestamp`, `record`, `world_id`);",
 						"ALTER TABLE `server_reports` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
 						"ALTER TABLE `server_reports` ADD INDEX (`world_id`);",
 						"ALTER TABLE `players` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
-						"ALTER TABLE `global_storage` DROP INDEX `key`;",
+						"ALTER TABLE `global_storage` DROP PRIMARY KEY;",
 						"ALTER TABLE `global_storage` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
 						"ALTER TABLE `global_storage` ADD UNIQUE (`key`, `world_id`);",
 						"ALTER TABLE `guilds` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
 						"ALTER TABLE `guilds` ADD UNIQUE (`name`, `world_id`);",
-						"ALTER TABLE `house_lists` DROP INDEX `house_id`;",
 						"ALTER TABLE `house_lists` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
 						"ALTER TABLE `house_lists` ADD UNIQUE (`house_id`, `world_id`, `listid`);",
 						"ALTER TABLE `houses` CHANGE `id` `id` INT NOT NULL;",
