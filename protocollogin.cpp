@@ -182,8 +182,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	ConnectionManager::getInstance()->addAttempt(clientIP, true);
-	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
-	if(output)
+	if(OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 	{
 		TRACK_MESSAGE(output);
 
@@ -206,17 +205,9 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		else
 			output->AddByte((uint8_t)account.charList.size());
 
-		#ifdef __LOGIN_SERVER__
-		for(CharactersMap::iterator it = account.charList.begin(); it != account.charList.end(); it++)
+		for(Characters::iterator it = account.charList.begin(); it != account.charList.end(); it++)
 		{
-			output->AddString(it->first);
-			output->AddString(it->second->getName());
-			output->AddU32(inet_addr(it->second->getAddress().c_str()));
-			output->AddU16(it->second->getPort());
-		}
-		#else
-		for(StringVec::iterator it = account.charList.begin(); it != account.charList.end(); it++)
-		{
+			#ifndef __LOGIN_SERVER__
 			output->AddString((*it));
 			if(g_config.getBool(ConfigManager::ON_OR_OFF_CHARLIST))
 			{
@@ -230,8 +221,13 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 			output->AddU32(serverIP);
 			output->AddU16(g_config.getNumber(ConfigManager::PORT));
+			#else
+			output->AddString(it->first);
+			output->AddString(it->second->getName());
+			output->AddU32(inet_addr(it->second->getAddress().c_str()));
+			output->AddU16(it->second->getPort());
+			#endif
 		}
-		#endif
 
 		//Add premium days
 		if(g_config.getBool(ConfigManager::FREE_PREMIUM))

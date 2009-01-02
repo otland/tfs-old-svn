@@ -89,6 +89,7 @@ Account IOLoginData::loadAccount(uint32_t accId, bool preLoad/* = false*/)
 			}
 			while(result->next());
 			db->freeResult(result);
+
 #ifndef __LOGIN_SERVER__
 			std::sort(acc.charList.begin(), acc.charList.end());
 #endif
@@ -412,7 +413,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		return false;
 	}
 
-	Account acc = loadAccount(accId);
+	Account acc = loadAccount(accId, true);
 	player->accountId = accId;
 	player->account = acc.name;
 
