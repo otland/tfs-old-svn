@@ -3485,8 +3485,10 @@
 	<item id="2294" article="a" name="spell rune">
 		<attribute key="weight" value="120"/>
 	</item>
-	<item id="2295" article="a" name="spell rune">
+	<item id="2295" article="a" name="holy missile rune">
+		<attribute key="runeSpellName" value="adori san"/>
 		<attribute key="weight" value="120"/>
+		<attribute key="charges" value="5"/>
 	</item>
 	<item id="2296" article="a" name="spell rune">
 		<attribute key="weight" value="120"/>
