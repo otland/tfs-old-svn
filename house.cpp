@@ -1059,7 +1059,7 @@ House* Houses::getHouseByPlayerId(uint32_t playerId)
 	return NULL;
 }
 
-uint32_t Houses::getHousesCount(uint32_t accId) const
+uint32_t Houses::getHousesCount(uint32_t accId)
 {
 	Account account = IOLoginData::getInstance()->loadAccount(accId);
 	uint32_t guid, count = 0;

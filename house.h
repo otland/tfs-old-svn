@@ -253,7 +253,7 @@ class Houses
 		House* getHouseByPlayer(Player* player);
 		House* getHouseByPlayerId(uint32_t playerId);
 
-		uint32_t getHousesCount(uint32_t accId) const;
+		uint32_t getHousesCount(uint32_t accId);
 
 		HouseMap::iterator getHouseBegin() {return houseMap.begin();}
 		HouseMap::iterator getHouseEnd() {return houseMap.end();}
