@@ -16040,12 +16040,12 @@
 		<attribute key="weaponType" value="sword"/>
 		<attribute key="extradef" value="-2"/>
 	</item>
-	<item id="7405" article="a" name="shenlong sword">
-		<attribute key="weight" value="8000"/>
-		<attribute key="defense" value="31"/>
-		<attribute key="attack" value="48"/>
+	<item id="7405" article="a" name="havoc blade">
+		<attribute key="weight" value="7200"/>
+		<attribute key="defense" value="34"/>
+		<attribute key="attack" value="49"/>
 		<attribute key="weaponType" value="sword"/>
-		<attribute key="extradef" value="-2"/>
+		<attribute key="slotType" value="two-handed"/>
 	</item>
 	<item id="7406" article="a" name="blacksteel sword">
 		<attribute key="weight" value="5900"/>
