@@ -11,7 +11,7 @@ setConditionParam(condition, CONDITION_PARAM_HEALTHGAIN, 20)
 setConditionParam(condition, CONDITION_PARAM_HEALTHTICKS, 2000)
 
 function onCastSpell(cid, var)
-	local pos = variantToPosition(var)
+	local pos = getCreaturePosition(cid)
 
 	local memberList = getPartyMembers(cid)
 	if(type(memberList) ~= 'table') then

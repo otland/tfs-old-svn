@@ -10,7 +10,7 @@ setConditionParam(condition, CONDITION_PARAM_TICKS, 2 * 60 * 1000)
 setConditionParam(condition, CONDITION_PARAM_STAT_MAGICLEVEL, 1)
 
 function onCastSpell(cid, var)
-	local pos = variantToPosition(var)
+	local pos = getCreaturePosition(cid)
 
 	local memberList = getPartyMembers(cid)
 	if(type(memberList) ~= 'table') then
