@@ -3209,12 +3209,20 @@ int32_t LuaScriptInterface::luaDoCreatureAddHealth(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoCreatureAddMana(lua_State* L)
 {
-	//doCreatureAddMana(uid, mana)
-	int32_t manaChange = (int32_t)popNumber(L);
+	//doCreatureAddMana(uid, mana[, aggressive])
+	bool aggressive = true;
+	if(lua_gettop(L) >= 3)
+		aggressive = popNumber(L) == LUA_TRUE;
+
+	int32_t manaChange = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
-		g_game.combatChangeMana(NULL, creature, manaChange);
+		if(aggressive)
+			g_game.combatChangeMana(NULL, creature, manaChange);
+		else
+			creature->changeMana(manaChange);
+
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else
@@ -8531,20 +8539,21 @@ int32_t LuaScriptInterface::luaDoPlayerJoinParty(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetPartyMembers(lua_State* L)
 {
-	//getPartyMembers(lid)
+	//getPartyMembers(cid)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
 		if(Party* party = player->getParty())
 		{
-			PlayerVector::iterator it = party->getMembers().begin();
+			PlayerVector list = party->getMembers();
+			list.push_back(party->getLeader());
 
+			PlayerVector::const_iterator it = list.begin();
 			lua_newtable(L);
-			for(uint32_t i = 1; it != party->getMembers().end(); ++it, ++i)
+			for(uint32_t i = 1; it != list.end(); ++it, ++i)
 			{
-				uint32_t cid = env->addThing(*it);
 				lua_pushnumber(L, i);
-				lua_pushnumber(L, cid);
+				lua_pushnumber(L, (*it)->getID());
 				lua_settable(L, -3);
 			}
 

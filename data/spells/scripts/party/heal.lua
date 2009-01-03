@@ -21,7 +21,7 @@ function onCastSpell(cid, var)
 	end
 
 	local mana = (table.maxn(memberList) * 50)
-	if(getPlayerMana(cid) < mana) then
+	if(getCreatureMana(cid) < mana) then
 		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTENOUGHMANA)
 		doSendMagicEffect(pos, CONST_ME_POFF)
 		return LUA_ERROR
@@ -34,8 +34,9 @@ function onCastSpell(cid, var)
 			end
 		end
 
-		doPlayerAddManaSpent(cid, mana)
-		return LUA_NO_ERROR
+		doCreatureAddMana(cid, -mana, FALSE)
+		doPlayerAddSpentMana(cid, mana)
+		return LUA_NOERROR
 	end
 
 	return LUA_ERROR
