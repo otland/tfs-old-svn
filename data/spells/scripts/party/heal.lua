@@ -11,6 +11,8 @@ setConditionParam(condition, CONDITION_PARAM_HEALTHGAIN, 20)
 setConditionParam(condition, CONDITION_PARAM_HEALTHTICKS, 2000)
 
 function onCastSpell(cid, var)
+	local pos = getCreaturePosition(cid)
+
 	local membersList = getPartyMembers(cid)
 	if(type(membersList) ~= 'table' or table.maxn(membersList) <= 1) then
 		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOPARTYMEMBERSINRANGE)
@@ -18,7 +20,6 @@ function onCastSpell(cid, var)
 		return LUA_ERROR
 	end
 
-	local pos = getCreaturePosition(cid)
 	local affectedList = {}
 	for _, pid in ipairs(membersList) do
 		if(getDistanceBetween(getCreaturePosition(pid), pos) <= 36) then

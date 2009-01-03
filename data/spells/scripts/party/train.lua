@@ -4,12 +4,14 @@ setCombatArea(combat, area)
 setCombatParam(combat, COMBAT_PARAM_EFFECT, CONST_ME_MAGIC_RED)
 setCombatParam(combat, COMBAT_PARAM_AGGRESSIVE, FALSE)
 
-local condition = createConditionObject(CONDITION_PARTY_TRAIN)
+local condition = createConditionObject(CONDITION_PARTY_KNIGHT)
 setConditionParam(condition, CONDITION_PARAM_BUFF, TRUE)
 setConditionParam(condition, CONDITION_PARAM_TICKS, 2 * 60 * 1000)
 setConditionParam(condition, CONDITION_PARAM_SKILL_MELEE, 3)
 
 function onCastSpell(cid, var)
+	local pos = getCreaturePosition(cid)
+
 	local membersList = getPartyMembers(cid)
 	if(type(membersList) ~= 'table' or table.maxn(membersList) <= 1) then
 		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOPARTYMEMBERSINRANGE)
@@ -17,7 +19,6 @@ function onCastSpell(cid, var)
 		return LUA_ERROR
 	end
 
-	local pos = getCreaturePosition(cid)
 	local affectedList = {}
 	for _, pid in ipairs(membersList) do
 		if(getDistanceBetween(getCreaturePosition(pid), pos) <= 36) then
