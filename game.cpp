@@ -5254,6 +5254,7 @@ bool Game::playerJoinParty(uint32_t playerId, uint32_t leaderId)
 		player->sendTextMessage(MSG_INFO_DESCR, "You are already in a party.");
 		return false;
 	}
+
 	return leader->getParty()->joinParty(player);
 }
 

@@ -572,6 +572,7 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerPartner(lua_State* L);
 		static int32_t luaSetPlayerPartner(lua_State* L);
 		static int32_t luaGetPlayerParty(lua_State* L);
+		static int32_t luaDoPlayerJoinParty(lua_State* L);
 		static int32_t luaGetPartyMembers(lua_State* L);
 
 		static int32_t luaGetPlayerStorageValue(lua_State* L);

@@ -1973,6 +1973,9 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerParty(cid)
 	lua_register(m_luaState, "getPlayerParty", LuaScriptInterface::luaGetPlayerParty);
 
+	//doPlayerJoinParty(cid, lid)
+	lua_register(m_luaState, "doPlayerJoinParty", LuaScriptInterface::luaDoPlayerJoinParty);
+
 	//getPartyMembers(lid)
 	lua_register(m_luaState, "getPartyMembers", LuaScriptInterface::luaGetPartyMembers);
 
@@ -8502,9 +8505,33 @@ int32_t LuaScriptInterface::luaGetPlayerParty(lua_State* L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaDoPlayerJoinParty(lua_State* L)
+{
+	//doPlayerJoinParty(cid, lid)
+	ScriptEnviroment* env = getScriptEnv();
+
+	Player* leader = env->getPlayerByUID(popNumber(L));
+	if(!leader)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnumber(L, LUA_FALSE);
+	}
+
+	Player* player = env->getPlayerByUID(popNumber(L));
+	if(!player)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnumber(L, LUA_FALSE);
+	}
+
+	g_game.playerJoinParty(player->getID(), leader->getID());
+	lua_pushnumber(L, LUA_TRUE);
+	return 1;
+}
+
 int32_t LuaScriptInterface::luaGetPartyMembers(lua_State* L)
 {
-	//getPartyMembers(lid) // lid = leaderId (= partyId)
+	//getPartyMembers(lid)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
