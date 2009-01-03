@@ -334,6 +334,8 @@
 		<vocation name="Knight"/>
 		<vocation name="Elite Knight"/>
 	</instant>
+
+	<!-- Party Spells -->
 	<instant name="Train Party" words="utito mas sio" lvl="32" mana="0" prem="1" party="1" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="party/train.lua">
 		<vocation name="Elite Knight"/>
 	</instant>
