@@ -11,20 +11,23 @@ setConditionParam(condition, CONDITION_PARAM_HEALTHGAIN, 20)
 setConditionParam(condition, CONDITION_PARAM_HEALTHTICKS, 2000)
 
 function onCastSpell(cid, var)
+	local pos = variantToPosition(var)
+
 	local memberList = getPartyMembers(cid)
 	if(type(memberList) ~= 'table') then
 		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOPARTYMEMBERSINRANGE)
+		doSendMagicEffect(pos, CONST_ME_POFF)
 		return LUA_ERROR
 	end
 
 	local mana = (table.maxn(memberList) * 50)
 	if(getPlayerMana(cid) < mana) then
 		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTENOUGHMANA)
+		doSendMagicEffect(pos, CONST_ME_POFF)
 		return LUA_ERROR
 	end
 
 	if(doCombat(cid, combat, var) == LUA_NO_ERROR) then
-		local pos = variantToPosition(var)
 		for _, member in ipairs(memberList) do
 			if(getDistanceBetween(getCreaturePosition(member), pos) <= 36) then
 				doAddCondition(member, condition)
