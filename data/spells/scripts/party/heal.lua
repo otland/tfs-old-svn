@@ -12,6 +12,11 @@ setConditionParam(condition, CONDITION_PARAM_HEALTHTICKS, 2000)
 
 function onCastSpell(cid, var)
 	local memberList = getPartyMembers(cid)
+	if(type(memberList) ~= 'table') then
+		doPlayerSendDefaultCancel(RETURNVALUE_NOPARTYMEMBERSINRANGE)
+		return LUA_ERROR
+	end
+
 	local mana = (table.maxn(memberList) * 50)
 	if(getPlayerMana(cid) < mana) then
 		doPlayerSendDefaultCancel(RETURNVALUE_NOTENOUGHMANA)
