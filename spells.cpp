@@ -407,7 +407,6 @@ Spell::Spell()
 	blockingCreature = false;
 	enabled = true;
 	premium = false;
-	party = false;
 	isAggressive = true;
 	learnable = false;
 }
@@ -489,9 +488,6 @@ bool Spell::configureSpell(xmlNodePtr p)
 
 	if(readXMLString(p, "prem", strValue) || readXMLString(p, "premium", strValue))
 		premium = booleanString(strValue);
-
-	if(readXMLString(p, "party", strValue))
-		party = booleanString(strValue);
 
 	if(readXMLString(p, "needtarget", strValue))
 		needTarget = booleanString(strValue);
@@ -585,7 +581,7 @@ bool Spell::playerSpellCheck(Player* player) const
 			exhausted = true;
 	}
 	else if(player->hasCondition(CONDITION_EXHAUST_HEAL))
-			exhausted = true;
+		exhausted = true;
 
 	if(exhausted && !player->hasFlag(PlayerFlag_HasNoExhaustion))
 	{
@@ -599,13 +595,6 @@ bool Spell::playerSpellCheck(Player* player) const
 	if(isPremium() && !player->isPremium())
 	{
 		player->sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
-		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
-		return false;
-	}
-
-	if(isParty() && !player->getParty())
-	{
-		player->sendCancelMessage(RET_NOPARTYMEMBERSINRANGE);
 		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 		return false;
 	}

@@ -213,6 +213,9 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 		case CONDITION_REGENERATION:
 			return new ConditionRegeneration(_id, _type, _ticks, _buff);
 
+		case CONDITION_PARTY_DRUID:
+			return new ConditionRegeneration_Party(_id, _type, _ticks, _buff);
+
 		case CONDITION_SOUL:
 			return new ConditionSoul(_id, _type, _ticks, _buff);
 
@@ -221,6 +224,11 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 
 		case CONDITION_ATTRIBUTES:
 			return new ConditionAttributes(_id, _type, _ticks, _buff);
+
+		case CONDITION_PARTY_SORCERER:
+		case CONDITION_PARTY_PALADIN:
+		case CONDITION_PARTY_KNIGHT:
+			return new ConditionAttributes_Party(_id, _type, _ticks, _buff);
 
 		case CONDITION_INFIGHT:
 		case CONDITION_MUTED:
@@ -718,6 +726,12 @@ bool ConditionAttributes::setParam(ConditionParam_t param, int32_t value)
 	return ret;
 }
 
+ConditionAttributes_Party::ConditionAttributes_Party(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff):
+ConditionAttributes(_id, _type, _ticks, _buff)
+{
+	//
+}
+
 ConditionRegeneration::ConditionRegeneration(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff):
 ConditionGeneric(_id, _type, _ticks, _buff)
 {
@@ -896,6 +910,12 @@ bool ConditionRegeneration::setParam(ConditionParam_t param, int32_t value)
 	}
 
 	return ret;
+}
+
+ConditionRegeneration_Party::ConditionRegeneration_Party(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff):
+ConditionRegeneration(_id, _type, _ticks, _buff)
+{
+	//
 }
 
 ConditionSoul::ConditionSoul(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff):

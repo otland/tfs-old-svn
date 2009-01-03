@@ -64,7 +64,11 @@ enum ConditionType_t
 	CONDITION_EXHAUST_COMBAT = 8388608,
 	CONDITION_EXHAUST_HEAL = 16777216,
 	CONDITION_EXHAUST_WEAPON = 33554432,
-	CONDITION_PACIFIED = 67108864
+	CONDITION_PACIFIED = 67108864,
+	CONDITION_PARTY_SORCERER = 134217728,
+	CONDITION_PARTY_DRUID = 268435456,
+	CONDITION_PARTY_PALADIN = 536870912,
+	CONDITION_PARTY_KNIGHT = 1073741824
 };
 
 enum ConditionEnd_t
@@ -217,6 +221,15 @@ class ConditionAttributes : public ConditionGeneric
 		void updateStats(Player* player);
 };
 
+class ConditionAttributes_Party : public ConditionAttributes
+{
+	public:
+		ConditionAttributes_Party(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff);
+		virtual ~ConditionAttributes_Party() {}
+
+		virtual ConditionAttributes_Party* clone() const {return new ConditionAttributes_Party(*this);}
+};
+
 class ConditionRegeneration : public ConditionGeneric
 {
 	public:
@@ -244,6 +257,15 @@ class ConditionRegeneration : public ConditionGeneric
 		uint32_t manaTicks;
 		uint32_t healthGain;
 		uint32_t manaGain;
+};
+
+class ConditionRegeneration_Party : public ConditionRegeneration
+{
+	public:
+		ConditionRegeneration_Party(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff);
+		virtual ~ConditionRegeneration_Party() {}
+
+		virtual ConditionRegeneration_Party* clone() const {return new ConditionRegeneration_Party(*this);}
 };
 
 class ConditionSoul : public ConditionGeneric
