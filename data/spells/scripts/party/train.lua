@@ -10,33 +10,46 @@ setConditionParam(condition, CONDITION_PARAM_TICKS, 2 * 60 * 1000)
 setConditionParam(condition, CONDITION_PARAM_SKILL_MELEE, 3)
 
 function onCastSpell(cid, var)
-	local pos = getCreaturePosition(cid)
-
-	local memberList = getPartyMembers(cid)
-	if(type(memberList) ~= 'table' or table.maxn(memberList) <= 1) then
+	local membersList = getPartyMembers(cid)
+	if(type(membersList) ~= 'table' or table.maxn(membersList) <= 1) then
 		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOPARTYMEMBERSINRANGE)
 		doSendMagicEffect(pos, CONST_ME_POFF)
 		return LUA_ERROR
 	end
 
-	local mana = (table.maxn(memberList) * 50)
+	local pos = getCreaturePosition(cid)
+	local affectedList = {}
+	for _, pid in ipairs(membersList) do
+		if(getDistanceBetween(getCreaturePosition(pid), pos) <= 36) then
+			table.insert(affectedList, pid)
+		end
+	end
+
+	local tmp = table.maxn(affectedList)
+	if(tmp <= 0) then
+		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOPARTYMEMBERSINRANGE)
+		doSendMagicEffect(pos, CONST_ME_POFF)
+		return LUA_ERROR
+	end
+
+	local mana = (tmp * 50)
 	if(getCreatureMana(cid) < mana) then
 		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTENOUGHMANA)
 		doSendMagicEffect(pos, CONST_ME_POFF)
 		return LUA_ERROR
 	end
 
-	if(doCombat(cid, combat, var) == LUA_NO_ERROR) then
-		for _, member in ipairs(memberList) do
-			if(getDistanceBetween(getCreaturePosition(member), pos) <= 36) then
-				doAddCondition(member, condition)
-			end
-		end
-
-		doCreatureAddMana(cid, -mana, FALSE)
-		doPlayerAddSpentMana(cid, mana)
-		return LUA_NOERROR
+	if(doCombat(cid, combat, var) ~= LUA_NO_ERROR) then
+		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
+		doSendMagicEffect(pos, CONST_ME_POFF)
+		return LUA_ERROR
 	end
 
-	return LUA_ERROR
+	doCreatureAddMana(cid, -mana, FALSE)
+	doPlayerAddSpentMana(cid, mana)
+	for _, pid in ipairs(affectedList) do
+		doAddCondition(pid, condition)
+	end
+
+	return LUA_NO_ERROR
 end

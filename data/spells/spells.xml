@@ -336,16 +336,16 @@
 	</instant>
 
 	<!-- Party Spells -->
-	<instant name="Train Party" words="utito mas sio" lvl="32" mana="0" prem="1" party="1" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="party/train.lua">
+	<instant name="Train Party" words="utito mas sio" lvl="32" mana="0" prem="1" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="party/train.lua">
 		<vocation name="Elite Knight"/>
 	</instant>
-	<instant name="Protect Party" words="utamo mas sio" lvl="32" mana="0" prem="1" party="1" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="party/protect.lua">
+	<instant name="Protect Party" words="utamo mas sio" lvl="32" mana="0" prem="1" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="party/protect.lua">
 		<vocation name="Royal Paladin"/>
 	</instant>
-	<instant name="Heal Party" words="utura mas sio" lvl="32" mana="0" prem="1" party="1" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="party/heal.lua">
+	<instant name="Heal Party" words="utura mas sio" lvl="32" mana="0" prem="1" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="party/heal.lua">
 		<vocation name="Elder Druid"/>
 	</instant>
-	<instant name="Enchant Party" words="utori mas sio" lvl="32" mana="0" prem="1" party="1" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="party/enchant.lua">
+	<instant name="Enchant Party" words="utori mas sio" lvl="32" mana="0" prem="1" aggressive="0" selftarget="1" exhaustion="1000" needlearn="0" script="party/enchant.lua">
 		<vocation name="Master Sorcerer"/>
 	</instant>
 
