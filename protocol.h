@@ -21,6 +21,7 @@
 #ifndef __OTSERV_PROTOCOL_H__
 #define __OTSERV_PROTOCOL_H__
 
+#include <stdio.h>
 #include <boost/utility.hpp>
 
 class NetworkMessage;
@@ -67,7 +68,7 @@ class Protocol : boost::noncopyable
 
 		void enableXTEAEncryption() {m_encryptionEnabled = true;}
 		void disableXTEAEncryption() {m_encryptionEnabled = false;}
-		void setXTEAKey(const uint32_t* key) {memcpy(m_key, key, sizeof(uint32_t)*4);}
+		void setXTEAKey(const uint32_t* key) {memcpy(&m_key, key, sizeof(uint32_t) * 4);}
 
 		void XTEA_encrypt(OutputMessage& msg);
 		bool XTEA_decrypt(NetworkMessage& msg);
