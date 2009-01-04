@@ -1004,20 +1004,15 @@ NpcState* Npc::getState(const Player* player, bool makeNew /*= true*/)
 		return NULL;
 
 	NpcState* state = new NpcState;
-	state->prevInteraction = 0;
-	state->price = 0;
-	state->sellPrice = -1;
-	state->buyPrice = -1;
+	state->prevInteraction = state->price = 0;
+	state->sellPrice = state->buyPrice = -1;
 	state->amount = 1;
 	state->itemId = 0;
 	state->subType = -1;
-	state->ignoreCap = false;
-	state->inBackpacks = false;
-	state->spellName = "";
-	state->listName = "";
+	state->ignoreCap = state->inBackpacks = false;
+	state->spellName = state->listName = "";
 	state->listPluralName = "";
-	state->level = -1;
-	state->topic = -1;
+	state->level = state->topic = -1;
 	state->isIdle = true;
 	state->isQueued = false;
 	state->respondToText = "";
@@ -2927,7 +2922,7 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 		lua_pop(L, 1);
 	}
 	lua_pop(L, 1);
-	
+
 	Player* player = env->getPlayerByUID(popNumber(L));
 	if(!player)
 	{
@@ -2935,7 +2930,6 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
 	}
-
 	player->closeShopWindow();
 
 	npc->addShopPlayer(player);

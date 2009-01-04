@@ -295,7 +295,7 @@ struct ShopInfo
 		itemName = "";
 	}
 
-	ShopInfo(uint32_t _itemId = 0, int32_t _subType = 1, int32_t _buyPrice = -1, uint32_t _sellPrice = -1,
+	ShopInfo(uint32_t _itemId, int32_t _subType = 1, int32_t _buyPrice = -1, uint32_t _sellPrice = -1,
 		const std::string& _itemName = ""): itemId(_itemId), subType(_subType), buyPrice(_buyPrice),
 		sellPrice(_sellPrice), itemName(_itemName) {}
 };

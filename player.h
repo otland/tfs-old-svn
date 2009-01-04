@@ -911,6 +911,7 @@ class Player : public Creature, public Cylinder
 
 		friend class Game;
 		friend class LuaScriptInterface;
+		friend class Npc;
 		friend class Map;
 		friend class Actions;
 		friend class IOLoginData;
