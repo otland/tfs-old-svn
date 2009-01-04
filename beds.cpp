@@ -212,7 +212,7 @@ void BedItem::wakeUp(Player* player)
 void BedItem::regeneratePlayer(Player* player) const
 {
 	int32_t sleptTime = int32_t(time(NULL) - sleepStart);
-	if(Condition* condition = player->getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT, 0))
+	if(Condition* condition = player->getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT))
 	{
 		int32_t amount = 0;
 		if(condition->getTicks() != -1)
