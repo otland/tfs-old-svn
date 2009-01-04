@@ -11,7 +11,8 @@ local disable = createConditionObject(CONDITION_PACIFIED)
 setConditionParam(disable, CONDITION_PARAM_TICKS, 10000)
 setCombatCondition(combat, disable)
 
-local exhaust = createConditionObject(CONDITION_EXHAUST_COMBAT)
+local exhaust = createConditionObject(CONDITION_EXHAUST)
+setConditionParam(exhaust, CONDITION_PARAM_SUBID, 1)
 setConditionParam(exhaust, CONDITION_PARAM_TICKS, 10000)
 setCombatCondition(combat, exhaust)
 
