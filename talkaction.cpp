@@ -737,10 +737,10 @@ bool TalkAction::showBanishmentInfo(Player* player, const std::string& cmd, cons
 	Ban ban;
 	if(IOBan::getInstance()->getData(accountId, ban) && (ban.type == BANTYPE_BANISHMENT || ban.type == BANTYPE_DELETION))
 	{
-		bool deletion = ban.type == BANTYPE_DELETION;
-		std::string name;
+		bool deletion = (ban.type == BANTYPE_DELETION);
+		std::string name = "Automatic ";
 		if(ban.adminid == 0)
-			name = (deletion ? "Automatic deletion" : "Automatic banishment");
+			name += (deletion ? "deletion" : "banishment");
 		else
 			IOLoginData::getInstance()->getNameByGuid(ban.adminid, name, true);
 

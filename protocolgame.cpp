@@ -319,12 +319,12 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		if(IOBan::getInstance()->getData(accnumber, ban) && (ban.type == BANTYPE_BANISHMENT ||
 			ban.type == BANTYPE_DELETION) && !player->hasFlag(PlayerFlag_CannotBeBanned))
 		{
-			bool deletion = ban.type == BANTYPE_DELETION;
-			std::string name_;
+			bool deletion = (ban.type == BANTYPE_DELETION);
+			std::string name_ = "Automatic ";
 			if(ban.adminid == 0)
-				name_ = (deletion ? "Automatic deletion" : "Automatic banishment");
+				name_ += (deletion ? "deletion" : "banishment");
 			else
-				IOLoginData::getInstance()->getNameByGuid(ban.adminid, name_);
+				IOLoginData::getInstance()->getNameByGuid(ban.adminid, name_, true);
 
 			char date[16], date2[16], buffer[500 + ban.comment.length()];
 			formatDate2(ban.added, date);

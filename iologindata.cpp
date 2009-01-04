@@ -1121,10 +1121,9 @@ bool IOLoginData::playerExists(uint32_t guid, bool multiworld /*= false*/)
 	DBResult* result;
 
 	DBQuery query;
-	if(multiworld)
-		query << "SELECT `id` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0;";
-	else
-		query << "SELECT `id` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0 AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	query << "SELECT `id` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0";
+	if(!multiworld)
+		query << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -1139,10 +1138,9 @@ bool IOLoginData::playerExists(std::string name, bool multiworld /*= false*/)
 	DBResult* result;
 
 	DBQuery query;
-	if(multiworld)
-		query << "SELECT `id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
-	else
-		query << "SELECT `id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0 AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	query << "SELECT `id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0";
+	if(!multiworld)
+		query << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -1164,10 +1162,9 @@ bool IOLoginData::getNameByGuid(uint32_t guid, std::string& name, bool multiworl
 	DBResult* result;
 
 	DBQuery query;
-	if(multiworld)
-		query << "SELECT `name` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0;";
-	else
-		query << "SELECT `name` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0 AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	query << "SELECT `name` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0";
+	if(!multiworld)
+		query << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -1212,10 +1209,9 @@ bool IOLoginData::getGuidByName(uint32_t &guid, std::string& name, bool multiwor
 	DBResult* result;
 
 	DBQuery query;
-	if(multiworld)
-		query << "SELECT `name`, `id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
-	else
-		query << "SELECT `name`, `id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0 AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	query << "SELECT `name`, `id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0";
+	if(!multiworld)
+		query << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 
 	if(!(result = db->storeQuery(query.str())))
 		return false;
