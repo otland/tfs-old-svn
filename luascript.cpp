@@ -2569,7 +2569,7 @@ int32_t LuaScriptInterface::luaGetPlayerFlagValue(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		if(flagindex < PlayerFlag_LastFlag)
+		if(index < PlayerFlag_LastFlag)
 			lua_pushnumber(L, player->hasFlag((PlayerFlags)index) ? 1 : 0);
 		else
 		{
@@ -2594,7 +2594,7 @@ int32_t LuaScriptInterface::luaGetPlayerCustomFlagValue(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		if(flagindex < PlayerCustomFlag_LastFlag)
+		if(index < PlayerCustomFlag_LastFlag)
 			lua_pushnumber(L, player->hasCustomFlag((PlayerCustomFlags)index) ? 1 : 0);
 		else
 		{
@@ -6517,7 +6517,8 @@ int32_t LuaScriptInterface::luaDoAddCondition(lua_State* L)
 		return 1;
 	}
 
-	if(Condition* condition = env->getConditionObject(conditionId))
+	Condition* condition = env->getConditionObject(conditionId);
+	if(!condition)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CONDITION_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
