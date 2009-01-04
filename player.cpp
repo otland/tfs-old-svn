@@ -1773,9 +1773,10 @@ uint32_t Player::isMuted()
 	int32_t muteTicks = 0;
 	for(ConditionList::iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
-		if((*it)->getType() == CONDITION_MUTED && (*it)->getTicks() > muteTicks)
+		if((*it)->getType() == CONDITION_MUTED && (*it)->getSubId() == 0 && (*it)->getTicks() > muteTicks)
 			muteTicks = (*it)->getTicks();
 	}
+
 	return ((uint32_t)muteTicks / 1000);
 }
 

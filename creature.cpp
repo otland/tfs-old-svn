@@ -1362,8 +1362,7 @@ bool Creature::addCondition(Condition* condition)
 	if(condition == NULL)
 		return false;
 
-	Condition* previous = getCondition(condition->getType(), condition->getId(), condition->getSubId());
-	if(previous)
+	if(Condition* previous = getCondition(condition->getType(), condition->getId(), condition->getSubId()))
 	{
 		previous->addCondition(this, condition);
 		delete condition;
@@ -1396,47 +1395,37 @@ void Creature::removeCondition(ConditionType_t type)
 {
 	for(ConditionList::iterator it = conditions.begin(); it != conditions.end();)
 	{
-		if((*it)->getType() == type)
+		if((*it)->getType() != type)
 		{
-			Condition* condition = *it;
-			it = conditions.erase(it);
-
-			condition->endCondition(this, CONDITIONEND_ABORT);
-			delete condition;
-
-			onEndCondition(type);
-		}
-		else
 			++it;
+			continue;
+		}
+
+		Condition* condition = *it;
+		it = conditions.erase(it);
+
+		condition->endCondition(this, CONDITIONEND_ABORT);
+		onEndCondition(condition->getType());
+		delete condition;
 	}
 }
 
-void Creature::removeCondition(ConditionType_t type, ConditionId_t id, uint32_t subId/* = 0*/)
+void Creature::removeCondition(ConditionType_t type, ConditionId_t id)
 {
 	for(ConditionList::iterator it = conditions.begin(); it != conditions.end();)
 	{
-		if((*it)->getType() == type && (*it)->getId() == id && (*it)->getSubId())
+		if((*it)->getType() != type || (*it)->getId() != id)
 		{
-			Condition* condition = *it;
-			it = conditions.erase(it);
-
-			condition->endCondition(this, CONDITIONEND_ABORT);
-			delete condition;
-
-			onEndCondition(type);
-		}
-		else
 			++it;
-	}
-}
+			continue;
+		}
 
-void Creature::removeCondition(const Creature* attacker, ConditionType_t type)
-{
-	ConditionList tmpList = conditions;
-	for(ConditionList::iterator it = tmpList.begin(); it != tmpList.end(); ++it)
-	{
-		if((*it)->getType() == type)
-			onCombatRemoveCondition(attacker, *it);
+		Condition* condition = *it;
+		it = conditions.erase(it);
+
+		condition->endCondition(this, CONDITIONEND_ABORT);
+		onEndCondition(condition->getType());
+		delete condition;
 	}
 }
 
@@ -1449,9 +1438,18 @@ void Creature::removeCondition(Condition* condition)
 		it = conditions.erase(it);
 
 		condition->endCondition(this, CONDITIONEND_ABORT);
-		delete condition;
-
 		onEndCondition(condition->getType());
+		delete condition;
+	}
+}
+
+void Creature::removeCondition(const Creature* attacker, ConditionType_t type)
+{
+	ConditionList tmpList = conditions;
+	for(ConditionList::iterator it = tmpList.begin(); it != tmpList.end(); ++it)
+	{
+		if((*it)->getType() == type)
+			onCombatRemoveCondition(attacker, *it);
 	}
 }
 
@@ -1469,9 +1467,8 @@ void Creature::removeConditions(ConditionEnd_t reason, bool onlyPersistent/* = t
 		it = conditions.erase(it);
 
 		condition->endCondition(this, reason);
-		delete condition;
-
 		onEndCondition(condition->getType());
+		delete condition;
 	}
 }
 
@@ -1490,20 +1487,18 @@ void Creature::executeConditions(uint32_t interval)
 {
 	for(ConditionList::iterator it = conditions.begin(); it != conditions.end();)
 	{
-		if(!(*it)->executeCondition(this, interval))
+		if((*it)->executeCondition(this, interval))
 		{
-			ConditionType_t type = (*it)->getType();
-
-			Condition* condition = *it;
-			it = conditions.erase(it);
-
-			condition->endCondition(this, CONDITIONEND_TICKS);
-			delete condition;
-
-			onEndCondition(type);
-		}
-		else
 			++it;
+			continue;
+		}
+
+		Condition* condition = *it;
+		it = conditions.erase(it);
+
+		condition->endCondition(this, CONDITIONEND_TICKS);
+		onEndCondition(condition->getType());
+		delete condition;
 	}
 }
 
@@ -1514,21 +1509,21 @@ bool Creature::hasCondition(ConditionType_t type, uint32_t subId/* = 0*/) const
 
 	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
-		if((*it)->getType() == type && (*it)->getSubId() == subId)
-		{
-			if((*it)->getEndTime() == 0)
-				return true;
+		if((*it)->getType() != type || (*it)->getSubId() != subId)
+			continue;
 
-			int64_t seekTime = g_game.getStateTime();
-			if(seekTime == 0)
-				return true;
+		if((*it)->getEndTime() == 0)
+			return true;
 
-			if((*it)->getEndTime() >= seekTime)
-				seekTime = (*it)->getEndTime();
+		int64_t seekTime = g_game.getStateTime();
+		if(seekTime == 0)
+			return true;
 
-			if(seekTime >= OTSYS_TIME())
-				return true;
-		}
+		if((*it)->getEndTime() >= seekTime)
+			seekTime = (*it)->getEndTime();
+
+		if(seekTime >= OTSYS_TIME())
+			return true;
 	}
 
 	return false;

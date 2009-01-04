@@ -161,12 +161,12 @@ bool ChatChannel::removeUser(Player* player)
 	return true;
 }
 
-bool ChatChannel::talk(Player* fromPlayer, SpeakClasses type, const std::string& text, uint32_t time /*= 0*/)
+bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& text, uint32_t time /*= 0*/)
 {
-	if((m_id == CHANNEL_TRADE || m_id == CHANNEL_TRADEROOK) && !fromPlayer->hasFlag(PlayerFlag_CannotBeMuted))
+	if((m_id == CHANNEL_TRADE || m_id == CHANNEL_TRADEROOK) && !player->hasFlag(PlayerFlag_CannotBeMuted))
 	{
 		if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_MUTED, 120000, 0, false, (m_id == CHANNEL_TRADE ? 2 : 3)))
-			fromPlayer->addCondition(condition);
+			player->addCondition(condition);
 	}
 
 	bool success = false;
@@ -175,7 +175,7 @@ bool ChatChannel::talk(Player* fromPlayer, SpeakClasses type, const std::string&
 		ChatChannel* channel = g_chat.getChannel((*it).second, m_id);
 		if(channel && channel == this && std::find(m_users.begin(), m_users.end(), (*it).second->getID()) != m_users.end())
 		{
-			(*it).second->sendToChannel(fromPlayer, type, text, m_id, time);
+			(*it).second->sendToChannel(player, type, text, m_id, time);
 			if(!success)
 				success = true;
 		}

@@ -638,7 +638,7 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 
 	if(Player* player = creature->getPlayer())
 	{
-		for(uint32_t i = 0; i < 4; i++)
+		for(uint32_t i = 0; i < 4; ++i)
 		{
 			Condition* condition = player->getCondition(CONDITION_MUTED, CONDITIONID_DEFAULT, i);
 			if(condition && condition->getTicks() > 0)
