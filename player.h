@@ -32,6 +32,7 @@
 #include "protocolgame.h"
 #include "ioguild.h"
 #include "party.h"
+#include "npc.h"
 
 #include <vector>
 #include <ctime>
@@ -909,9 +910,7 @@ class Player : public Creature, public Cylinder
 		virtual void getPathSearchParams(const Creature* creature, FindPathParams& fpp) const;
 
 		friend class Game;
-		friend class Npc;
 		friend class LuaScriptInterface;
-		friend class Commands;
 		friend class Map;
 		friend class Actions;
 		friend class IOLoginData;
