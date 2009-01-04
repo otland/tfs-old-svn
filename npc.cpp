@@ -666,8 +666,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 
 										if(strValue != "|SPELL|")
 										{
-											InstantSpell* spell = g_spells->getInstantSpellByName(strValue);
-											if(!spell)
+											if(!g_spells->getInstantSpellByName(strValue))
 												std::cout << "[Warning - Npc::loadInteraction] NPC Name: " << name << " - Could not find an instant spell called: " << strValue << std::endl;
 										}
 									}
@@ -1403,8 +1402,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 					if((*it).strValue == "|SPELLLEVEL|")
 					{
 						npcState->level = -1;
-						InstantSpell* spell = g_spells->getInstantSpellByName(npcState->spellName);
-						if(spell)
+						if(InstantSpell* spell = g_spells->getInstantSpellByName(npcState->spellName))
 							npcState->level = spell->getLevel();
 					}
 					else
@@ -1415,7 +1413,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 				case ACTION_SETSPELL:
 				{
 					npcState->spellName = "";
-					if(InstantSpell* spell = g_spells->getInstantSpellByName((*it).strValue))
+					if(g_spells->getInstantSpellByName((*it).strValue))
 						npcState->spellName = (*it).strValue;
 					break;
 				}
@@ -2091,6 +2089,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 
 			if(!player->hasLearnedInstantSpell(spellName))
 				continue;
+
 			++matchCount;
 		}
 
