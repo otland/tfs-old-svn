@@ -163,10 +163,10 @@ bool ChatChannel::removeUser(Player* player)
 
 bool ChatChannel::talk(Player* fromPlayer, SpeakClasses type, const std::string& text, uint32_t time /*= 0*/)
 {
-	if(!fromPlayer->hasFlag(PlayerFlag_CannotBeMuted) && (m_id == CHANNEL_TRADE || m_id == CHANNEL_TRADEROOK))
+	if((m_id == CHANNEL_TRADE || m_id == CHANNEL_TRADEROOK) && !fromPlayer->hasFlag(PlayerFlag_CannotBeMuted))
 	{
-		Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_TRADETICKS, 120000, 0);
-		fromPlayer->addCondition(condition);
+		if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_MUTED, 120000, 0, false, (m_id == CHANNEL_TRADE ? 2 : 3)))
+			fromPlayer->addCondition(condition);
 	}
 
 	bool success = false;
@@ -388,7 +388,8 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 
 	if(!player->hasFlag(PlayerFlag_CannotBeMuted))
 	{
-		if(player->hasCondition(CONDITION_TRADETICKS) && (channelId == CHANNEL_TRADE || channelId == CHANNEL_TRADEROOK))
+		if((player->hasCondition(CONDITION_MUTED, 2) && channelId == CHANNEL_TRADE) ||
+			(player->hasCondition(CONDITION_MUTED, 3) && channelId == CHANNEL_TRADEROOK))
 		{
 			player->sendCancel("You may only place one offer in two minutes.");
 			return true;

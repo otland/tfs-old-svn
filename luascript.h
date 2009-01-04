@@ -211,7 +211,6 @@ enum PlayerInfo_t
 	PlayerInfoAccess,
 	PlayerInfoLevel,
 	PlayerInfoExperience,
-	PlayerInfoMagLevel,
 	PlayerInfoManaSpent,
 	PlayerInfoVocation,
 	PlayerInfoTown,

@@ -1039,27 +1039,27 @@ bool Items::loadFromXml()
 									tmpStrValue = asLowerCaseString(strValue);
 									if(tmpStrValue == "fire")
 									{
-										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_FIRE, false);
+										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_FIRE, false, 0);
 										combatType = COMBAT_FIREDAMAGE;
 									}
 									else if(tmpStrValue == "energy")
 									{
-										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_ENERGY, false);
+										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_ENERGY, false, 0);
 										combatType = COMBAT_ENERGYDAMAGE;
 									}
 									else if(tmpStrValue == "earth" || tmpStrValue == "poison")
 									{
-										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_POISON, false);
+										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_POISON, false, 0);
 										combatType = COMBAT_EARTHDAMAGE;
 									}
 									else if(tmpStrValue == "drown")
 									{
-										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_DROWN, false);
+										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_DROWN, false, 0);
 										combatType = COMBAT_DROWNDAMAGE;
 									}
 									/*else if(tmpStrValue == "physical")
 									{
-										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_PHYSICAL, false);
+										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_PHYSICAL, false, 0);
 										combatType = COMBAT_PHYSICALDAMAGE;
 									}*/
 									else

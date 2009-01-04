@@ -2243,21 +2243,9 @@ Item* Player::getCorpse()
 	return corpse;
 }
 
-void Player::addCombatExhaust(uint32_t ticks)
+void Player::addExhaust(uint32_t ticks, uint32_t type)
 {
-	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST_COMBAT, ticks, 0))
-		addCondition(condition);
-}
-
-void Player::addHealExhaust(uint32_t ticks)
-{
-	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST_HEAL, ticks, 0))
-		addCondition(condition);
-}
-
-void Player::addWeaponExhaust(uint32_t ticks)
-{
-	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST_WEAPON, ticks, 0))
+	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST, ticks, 0, false, type))
 		addCondition(condition);
 }
 
@@ -2275,9 +2263,8 @@ void Player::addDefaultRegeneration(uint32_t addTicks)
 	Condition* condition = getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT);
 	if(condition)
 		condition->setTicks(condition->getTicks() + addTicks);
-	else
+	else if((condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_REGENERATION, addTicks, 0)))
 	{
-		condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_REGENERATION, addTicks, 0);
 		condition->setParam(CONDITIONPARAM_HEALTHGAIN, vocation->getHealthGainAmount());
 		condition->setParam(CONDITIONPARAM_HEALTHTICKS, vocation->getHealthGainTicks() * 1000);
 		condition->setParam(CONDITIONPARAM_MANAGAIN, vocation->getManaGainAmount());
@@ -2344,12 +2331,11 @@ void Player::notifyLogOut(Player* logout_player)
 bool Player::removeVIP(uint32_t _guid)
 {
 	VIPListSet::iterator it = VIPList.find(_guid);
-	if(it != VIPList.end())
-	{
-		VIPList.erase(it);
-		return true;
-	}
-	return false;
+	if(it == VIPList.end())
+		return false;
+
+	VIPList.erase(it);
+	return true;
 }
 
 bool Player::addVIP(uint32_t _guid, std::string& name, bool isOnline, bool internal /*=false*/)
@@ -3164,7 +3150,7 @@ void Player::doAttacking(uint32_t interval)
 			SchedulerTask* task = createSchedulerTask(getNextActionTime(), boost::bind(&Game::checkCreatureAttack, &g_game, getID()));
 			setNextActionTask(task);
 		}
-		else if((!hasCondition(CONDITION_EXHAUST_WEAPON) || !weapon->hasExhaustion()) && weapon->useWeapon(this, tool, attackedCreature))
+		else if((!hasCondition(CONDITION_EXHAUST, 3) || !weapon->hasExhaustion()) && weapon->useWeapon(this, tool, attackedCreature))
 			lastAttack = OTSYS_TIME();
 	}
 	else if(Weapon::useFist(this, attackedCreature))

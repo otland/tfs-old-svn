@@ -636,37 +636,19 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 	int32_t newStackPos = creature->getParent()->__getIndexOfThing(creature);
 	creature->getParent()->postAddNotification(NULL, creature, newStackPos);
 
-	Player* player = creature->getPlayer();
-	if(player)
+	if(Player* player = creature->getPlayer())
 	{
-		Condition* conditionMuted = player->getCondition(CONDITION_MUTED, CONDITIONID_DEFAULT);
-		if(conditionMuted && conditionMuted->getTicks() > 0)
+		for(uint32_t i = 0; i < 4; i++)
 		{
-			conditionMuted->setTicks(conditionMuted->getTicks() - (time(NULL) - player->getLastLogout()) * 1000);
-			if(conditionMuted->getTicks() <= 0)
-				player->removeCondition(conditionMuted);
-			else
-				player->addCondition(conditionMuted->clone());
-		}
-
-		Condition* conditionTrade = player->getCondition(CONDITION_TRADETICKS, CONDITIONID_DEFAULT);
-		if(conditionTrade && conditionTrade->getTicks() > 0)
-		{
-			conditionTrade->setTicks(conditionTrade->getTicks() - (time(NULL) - player->getLastLogout()) * 1000);
-			if(conditionTrade->getTicks() <= 0)
-				player->removeCondition(conditionTrade);
-			else
-				player->addCondition(conditionTrade->clone());
-		}
-
-		Condition* conditionYell = player->getCondition(CONDITION_YELLTICKS, CONDITIONID_DEFAULT);
-		if(conditionYell && conditionYell->getTicks() > 0)
-		{
-			conditionYell->setTicks(conditionYell->getTicks() - (time(NULL) - player->getLastLogout()) * 1000);
-			if(conditionYell->getTicks() <= 0)
-				player->removeCondition(conditionYell);
-			else
-				player->addCondition(conditionYell->clone());
+			Condition* condition = player->getCondition(CONDITION_MUTED, CONDITIONID_DEFAULT, i);
+			if(condition && condition->getTicks() > 0)
+			{
+				condition->setTicks(condition->getTicks() - (time(NULL) - player->getLastLogout()) * 1000);
+				if(condition->getTicks() <= 0)
+					player->removeCondition(condition);
+				else
+					player->addCondition(condition->clone());
+			}
 		}
 	}
 
@@ -2203,7 +2185,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 			}
 
 			std::list<Direction> listDir;
-			if(getPathToEx(player, walkToPos, listDir, 0, 1, true, true))
+			if(getPathToEx(player, walkToPos, listDir, 0, 1, true, true, 10))
 			{
 				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 					this, player->getID(), listDir)));
@@ -3327,11 +3309,11 @@ bool Game::playerYell(Player* player, const std::string& text)
 {
 	if(player->getLevel() > 1)
 	{
-		if(!player->hasCondition(CONDITION_YELLTICKS))
+		if(!player->hasCondition(CONDITION_MUTED, 1))
 		{
 			if(!player->hasFlag(PlayerFlag_CannotBeMuted))
 			{
-				if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_YELLTICKS, 30000, 0))
+				if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_MUTED, 30000, 0, false, 1))
 					player->addCondition(condition);
 			}
 

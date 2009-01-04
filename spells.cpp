@@ -577,10 +577,10 @@ bool Spell::playerSpellCheck(Player* player) const
 			return false;
 		}
 
-		if(player->hasCondition(CONDITION_EXHAUST_COMBAT))
+		if(player->hasCondition(CONDITION_EXHAUST, 1))
 			exhausted = true;
 	}
-	else if(player->hasCondition(CONDITION_EXHAUST_HEAL))
+	else if(player->hasCondition(CONDITION_EXHAUST, 2))
 		exhausted = true;
 
 	if(exhausted && !player->hasFlag(PlayerFlag_HasNoExhaustion))
@@ -808,16 +808,8 @@ void Spell::postCastSpell(Player* player, bool finishedCast /*= true*/, bool pay
 {
 	if(finishedCast)
 	{
-		if(!player->hasFlag(PlayerFlag_HasNoExhaustion))
-		{
-			if(exhaustion > 0)
-			{
-				if(isAggressive)
-					player->addCombatExhaust(exhaustion);
-				else
-					player->addHealExhaust(exhaustion);
-			}
-		}
+		if(!player->hasFlag(PlayerFlag_HasNoExhaustion) && exhaustion > 0)
+			player->addExhaust(exhaustion, (isAggressive ? 1 : 2));
 
 		if(isAggressive && !player->hasFlag(PlayerFlag_NotGainInFight))
 			player->addInFightTicks();
@@ -857,7 +849,7 @@ int32_t Spell::getSoulCost() const
 
 ReturnValue Spell::CreateIllusion(Creature* creature, const Outfit_t outfit, int32_t time)
 {
-	ConditionOutfit* outfitCondition = new ConditionOutfit(CONDITIONID_COMBAT, CONDITION_OUTFIT, time, false);
+	ConditionOutfit* outfitCondition = new ConditionOutfit(CONDITIONID_COMBAT, CONDITION_OUTFIT, time, false, 0);
 
 	if(!outfitCondition)
 		return RET_NOTPOSSIBLE;

@@ -4,13 +4,19 @@ setCombatArea(combat, area)
 setCombatParam(combat, COMBAT_PARAM_EFFECT, CONST_ME_MAGIC_GREEN)
 setCombatParam(combat, COMBAT_PARAM_AGGRESSIVE, FALSE)
 
-local condition = createConditionObject(CONDITION_PARTY_PALADIN)
+local condition = createConditionObject(CONDITION_ATTRIBUTES)
+setConditionParam(condition, CONDITION_PARAM_SUBID, 1)
 setConditionParam(condition, CONDITION_PARAM_BUFF, TRUE)
 setConditionParam(condition, CONDITION_PARAM_TICKS, 2 * 60 * 1000)
 setConditionParam(condition, CONDITION_PARAM_SKILL_SHIELD, 2)
 
 function onCastSpell(cid, var)
 	local pos = getCreaturePosition(cid)
+	if(getPlayerParty(cid) == nil) then
+		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOPARTYMEMBERSINRANGE)
+		doSendMagicEffect(pos, CONST_ME_POFF)
+		return LUA_ERROR
+	end
 
 	local membersList = getPartyMembers(cid)
 	if(type(membersList) ~= 'table' or table.maxn(membersList) <= 1) then
@@ -27,7 +33,7 @@ function onCastSpell(cid, var)
 	end
 
 	local tmp = table.maxn(affectedList)
-	if(tmp <= 0) then
+	if(tmp <= 1) then
 		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOPARTYMEMBERSINRANGE)
 		doSendMagicEffect(pos, CONST_ME_POFF)
 		return LUA_ERROR

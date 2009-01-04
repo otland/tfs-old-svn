@@ -13,5 +13,6 @@ function onCastSpell(cid, var)
 	if(variantToNumber(var) ~= 0) then
 		return doCombat(cid, distanceCombat, var)
 	end
+
 	return doCombat(cid, combat, var)
 end

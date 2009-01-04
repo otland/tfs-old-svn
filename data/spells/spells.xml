@@ -121,7 +121,7 @@
 		<vocation name="Sorcerer"/>
 		<vocation name="Master Sorcerer"/>
 	</instant>
-	<instant name="Divine Missile" words="exori san" lvl="40" mana="20" prem="1" casterTargetOrDirection="1" needlearn="0" lockwalls="1" exhaustion="2000" script="attack/divine missile.lua">
+	<instant name="Divine Missile" words="exori san" lvl="40" mana="20" prem="1" range="4" casterTargetOrDirection="1" needlearn="0" blockwalls="1" exhaustion="2000" script="attack/divine missile.lua">
 		<vocation name="Paladin"/>
 		<vocation name="Royal Paladin"/>
 	</instant>

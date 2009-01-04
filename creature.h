@@ -249,15 +249,14 @@ class Creature : public AutoID, virtual public Thing
 
 		bool addCondition(Condition* condition);
 		bool addCombatCondition(Condition* condition);
-		void removeCondition(ConditionType_t type, ConditionId_t id);
+		void removeCondition(ConditionType_t type, ConditionId_t id, uint32_t subId = 0);
 		void removeCondition(ConditionType_t type);
 		void removeCondition(Condition* condition);
 		void removeCondition(const Creature* attacker, ConditionType_t type);
 		void removeConditions(ConditionEnd_t reason, bool onlyPersistent = true);
-		Condition* getCondition(ConditionType_t type, ConditionId_t id) const;
-		Condition* getCondition(ConditionType_t type) const;
+		Condition* getCondition(ConditionType_t type, ConditionId_t id, uint32_t subId = 0) const;
 		void executeConditions(uint32_t interval);
-		bool hasCondition(ConditionType_t type) const;
+		bool hasCondition(ConditionType_t type, uint32_t subId = 0) const;
 		virtual bool isImmune(ConditionType_t type) const;
 		virtual bool isImmune(CombatType_t type) const;
 		virtual bool isSuppress(ConditionType_t type) const;

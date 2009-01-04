@@ -1362,10 +1362,10 @@ bool Creature::addCondition(Condition* condition)
 	if(condition == NULL)
 		return false;
 
-	Condition* prevCond = getCondition(condition->getType(), condition->getId());
-	if(prevCond)
+	Condition* previous = getCondition(condition->getType(), condition->getId(), condition->getSubId());
+	if(previous)
 	{
-		prevCond->addCondition(this, condition);
+		previous->addCondition(this, condition);
 		delete condition;
 		return true;
 	}
@@ -1411,11 +1411,11 @@ void Creature::removeCondition(ConditionType_t type)
 	}
 }
 
-void Creature::removeCondition(ConditionType_t type, ConditionId_t id)
+void Creature::removeCondition(ConditionType_t type, ConditionId_t id, uint32_t subId/* = 0*/)
 {
 	for(ConditionList::iterator it = conditions.begin(); it != conditions.end();)
 	{
-		if((*it)->getType() == type && (*it)->getId() == id)
+		if((*it)->getType() == type && (*it)->getId() == id && (*it)->getSubId())
 		{
 			Condition* condition = *it;
 			it = conditions.erase(it);
@@ -1475,24 +1475,14 @@ void Creature::removeConditions(ConditionEnd_t reason, bool onlyPersistent/* = t
 	}
 }
 
-Condition* Creature::getCondition(ConditionType_t type, ConditionId_t id) const
+Condition* Creature::getCondition(ConditionType_t type, ConditionId_t id, uint32_t subId/* = 0*/) const
 {
 	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
-		if((*it)->getType() == type && (*it)->getId() == id)
+		if((*it)->getType() == type && (*it)->getId() == id && (*it)->getSubId() == subId)
 			return *it;
 	}
-	return NULL;
-}
 
-Condition* Creature::getCondition(ConditionType_t type) const
-{
-	//This one just returns the first one found.
-	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
-	{
-		if((*it)->getType() == type)
-			return *it;
-	}
 	return NULL;
 }
 
@@ -1517,14 +1507,14 @@ void Creature::executeConditions(uint32_t interval)
 	}
 }
 
-bool Creature::hasCondition(ConditionType_t type) const
+bool Creature::hasCondition(ConditionType_t type, uint32_t subId/* = 0*/) const
 {
 	if(isSuppress(type))
 		return false;
 
 	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
-		if((*it)->getType() == type)
+		if((*it)->getType() == type && (*it)->getSubId() == subId)
 		{
 			if((*it)->getEndTime() == 0)
 				return true;
