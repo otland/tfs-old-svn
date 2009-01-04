@@ -1412,6 +1412,9 @@ bool Creature::hasCondition(ConditionType_t type) const
 	{
 		if((*it)->getType() == type)
 		{
+			if(g_config.getString(ConfigManager::OLD_CONDITION_ACCURACY) == "yes")
+				return true;
+
 			if((*it)->getEndTime() == 0)
 				return true;
 
