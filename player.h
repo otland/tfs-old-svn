@@ -329,6 +329,8 @@ class Player : public Creature, public Cylinder
 			return shopOwner;
 		}
 
+		bool hasShopItemForSale(uint32_t itemId);
+
 		//V.I.P. functions
 		void notifyLogIn(Player* player);
 		void notifyLogOut(Player* player);

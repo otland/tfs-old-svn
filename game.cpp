@@ -2947,7 +2947,7 @@ bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t coun
 		return false;
 
 	const ItemType& it = Item::items.getItemIdByClientId(spriteId);
-	if(it.id == 0)
+	if(it.id == 0 || !player->hasShopItemForSale(it.id))
 		return false;
 
 	uint8_t subType = 0;

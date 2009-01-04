@@ -2167,6 +2167,7 @@ void Player::dropCorpse()
 		g_game.internalTeleport(this, getTemplePosition(), true);
 		g_game.addCreatureHealth(this);
 		onThink(EVENT_CREATURE_THINK_INTERVAL);
+		onIdleStatus();
 	}
 	else
 		Creature::dropCorpse();
@@ -3020,6 +3021,16 @@ void Player::postUpdateGoods(uint32_t itemId)
 
 	if(amount > 0)
 		sendGoods();
+}
+
+bool Player::hasShopItemForSale(uint32_t itemId)
+{
+	for(ShopInfoList::const_iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
+	{
+		if((*it).itemId == itemId && (*it).buyPrice > 0)
+			return true;
+	}
+	return false;
 }
 
 void Player::__internalAddThing(Thing* thing)
