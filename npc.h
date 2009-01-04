@@ -124,13 +124,8 @@ class NpcScript : public NpcEventsHandler
 	private:
 		NpcScriptInterface* m_scriptInterface;
 
-		int32_t m_onCreatureAppear;
-		int32_t m_onCreatureDisappear;
-		int32_t m_onCreatureMove;
-		int32_t m_onCreatureSay;
-		int32_t m_onPlayerCloseChannel;
-		int32_t m_onPlayerEndTrade;
-		int32_t m_onThink;
+		int32_t m_onCreatureAppear, m_onCreatureDisappear, m_onCreatureMove, m_onCreatureSay;
+		int32_t m_onPlayerCloseChannel, m_onPlayerEndTrade, m_onThink;
 };
 
 enum RespondParam_t
@@ -184,6 +179,7 @@ enum ReponseActionParam_t
 	ACTION_SETLISTNAME,
 	ACTION_SETLISTPNAME,
 	ACTION_TEACHSPELL,
+	ACTION_UNTEACHSPELL,
 	ACTION_SETSTORAGE,
 	ACTION_SETTELEPORT,
 	ACTION_SCRIPT,
@@ -234,17 +230,13 @@ struct ResponseAction
 		ResponseAction()
 		{
 			actionType = ACTION_NONE;
-			key = 0;
-			intValue = 0;
+			key = intValue = 0;
 			strValue = "";
-			pos.x = 0;
-			pos.y = 0;
-			pos.z = 0;
+			pos = Position();
 		}
 
 		ReponseActionParam_t actionType;
-		int32_t key;
-		int32_t intValue;
+		int32_t key, intValue;
 		std::string strValue;
 		Position pos;
 };
@@ -253,26 +245,14 @@ struct ScriptVars
 {
 	ScriptVars()
 	{
-		n1 = -1;
-		n2 = -1;
-		n3 = -1;
-		b1 = false;
-		b2 = false;
-		b3 = false;
-		s1 = "";
-		s2 = "";
-		s3 = "";
+		n1 = n2 = n3 = -1;
+		b1 = b2 = b3 = false;
+		s1 = s2 = s3 = "";
 	}
 
-	int32_t n1;
-	int32_t n2;
-	int32_t n3;
-	bool b1;
-	bool b2;
-	bool b3;
-	std::string s1;
-	std::string s2;
-	std::string s3;
+	int32_t n1, n2, n3;
+	bool b1, b2, b3;
+	std::string s1, s2, s3;
 };
 
 struct ListItem
@@ -281,20 +261,12 @@ struct ListItem
 	{
 		itemId = 0;
 		subType = 1;
-		sellPrice = 0;
-		buyPrice = 0;
-		keywords = "";
-		name = "";
-		pluralName = "";
+		sellPrice = buyPrice = -1;
+		keywords = name = pluralName = "";
 	}
 
-	int32_t sellPrice;
-	int32_t buyPrice;
-	int32_t itemId;
-	int32_t subType;
-	std::string keywords;
-	std::string name;
-	std::string pluralName;
+	int32_t sellPrice, buyPrice, itemId, subType;
+	std::string keywords, name, pluralName;
 };
 
 typedef std::list<ResponseAction> ActionList;
@@ -308,30 +280,24 @@ class NpcResponse
 		{
 			ResponseProperties()
 			{
-				topic = -1;
-				amount = -1;
-				focusStatus = -1;
+				topic = amount = focusStatus = -1;
 				output = "";
 				interactType = INTERACT_TEXT;
 				responseType = RESPONSE_DEFAULT;
 				params = 0;
-				storageId = -1;
-				storageValue = -1;
+				storageId = storageValue = -1;
 				storageComp = STORAGE_EQUAL;
 				knowSpell = "";
 				publicize = true;
 			}
 
-			int32_t topic;
-			int32_t amount;
-			int32_t focusStatus;
+			int32_t topic, amount, focusStatus;
 			std::list<std::string> inputList;
 			std::string output;
 			InteractType_t interactType;
 			ResponseType_t responseType;
 			uint32_t params;
-			int32_t storageId;
-			int32_t storageValue;
+			int32_t storageId, storageValue;
 			StorageComparision_t storageComp;
 			std::string knowSpell;
 			ActionList actionList;
@@ -400,19 +366,10 @@ class NpcResponse
 struct NpcState
 {
 	int32_t topic;
-	bool isIdle;
-	bool isQueued;
-	int32_t price;
-	int32_t sellPrice;
-	int32_t buyPrice;
-	int32_t amount;
-	int32_t itemId;
-	int32_t subType;
-	bool ignoreCap;
-	bool inBackpacks;
-	std::string spellName;
-	std::string listName;
-	std::string listPluralName;
+	bool isIdle, isQueued;
+	int32_t price, sellPrice, buyPrice, amount, itemId, subType;
+	bool ignoreCap, inBackpacks;
+	std::string spellName, listName, listPluralName;
 	int32_t level;
 	uint64_t prevInteraction;
 	std::string respondToText;

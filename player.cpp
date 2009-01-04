@@ -1545,10 +1545,20 @@ void Player::closeShopWindow(Npc* npc/* = NULL*/, int32_t onBuy/* = -1*/, int32_
 		sendCloseShop();
 
 	shopOwner = NULL;
-	purchaseCallback = -1;
-	saleCallback = -1;
+	purchaseCallback = saleCallback = -1;
 	shopOffer.clear();
 	goodsMap.clear();
+}
+
+bool Player::canShopItem(uint32_t itemId, ShopEvent_t event)
+{
+	for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
+	{
+		if((*it).itemId == itemId && ((event == SHOPEVENT_BUY && (*it).buyPrice > -1) || (event == SHOPEVENT_SELL && (*it).sellPrice > -1)))
+			return true;
+	}
+
+	return false;
 }
 
 void Player::onWalk(Direction& dir)
@@ -1562,7 +1572,6 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 	const Tile* oldTile, const Position& oldPos, uint32_t oldStackPos, bool teleport)
 {
 	Creature::onCreatureMove(creature, newTile, newPos, oldTile, oldPos, oldStackPos, teleport);
-
 	if(creature == this)
 	{
 		if(tradeState != TRADE_TRANSFER)

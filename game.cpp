@@ -2922,15 +2922,14 @@ bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t coun
 	if(player == NULL || player->isRemoved())
 		return false;
 
-	int32_t onBuy;
-	int32_t onSell;
+	int32_t onBuy, onSell;
 
 	Npc* merchant = player->getShopOwner(onBuy, onSell);
 	if(merchant == NULL)
 		return false;
 
 	const ItemType& it = Item::items.getItemIdByClientId(spriteId);
-	if(it.id == 0)
+	if(it.id == 0 || !player->canShopItem(it.id, SHOPEVENT_BUY))
 		return false;
 
 	uint8_t subType = count;
@@ -2947,15 +2946,14 @@ bool Game::playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count, u
 	if(player == NULL || player->isRemoved())
 		return false;
 
-	int32_t onBuy;
-	int32_t onSell;
+	int32_t onBuy, onSell;
 
 	Npc* merchant = player->getShopOwner(onBuy, onSell);
 	if(merchant == NULL)
 		return false;
 
 	const ItemType& it = Item::items.getItemIdByClientId(spriteId);
-	if(it.id == 0)
+	if(it.id == 0 || !player->canShopItem(it.id, SHOPEVENT_SELL))
 		return false;
 
 	uint8_t subType = count;

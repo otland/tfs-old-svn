@@ -697,8 +697,21 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 
 										if(strValue != "|SPELL|")
 										{
-											InstantSpell* spell = g_spells->getInstantSpellByName(strValue);
-											if(!spell)
+											if(!g_spells->getInstantSpellByName(strValue))
+												std::cout << "[Warning - Npc::loadInteraction] NPC Name: " << name << " - Could not find an instant spell called: " << strValue << std::endl;
+										}
+									}
+								}
+								else if(tmpStrValue == "unteachspell")
+								{
+									if(readXMLString(subNode, "value", strValue))
+									{
+										action.actionType = ACTION_UNTEACHSPELL;
+										action.strValue = strValue;
+
+										if(strValue != "|SPELL|")
+										{
+											if(!g_spells->getInstantSpellByName(strValue))
 												std::cout << "[Warning - Npc::loadInteraction] NPC Name: " << name << " - Could not find an instant spell called: " << strValue << std::endl;
 										}
 									}
@@ -993,8 +1006,8 @@ NpcState* Npc::getState(const Player* player, bool makeNew /*= true*/)
 	NpcState* state = new NpcState;
 	state->prevInteraction = 0;
 	state->price = 0;
-	state->sellPrice = 0;
-	state->buyPrice = 0;
+	state->sellPrice = -1;
+	state->buyPrice = -1;
 	state->amount = 1;
 	state->itemId = 0;
 	state->subType = -1;
@@ -1344,12 +1357,25 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 		{
 			switch((*it).actionType)
 			{
-				case ACTION_SETTOPIC: npcState->topic = (*it).intValue; resetTopic = false; break;
-				case ACTION_SETSELLPRICE: npcState->sellPrice = (*it).intValue; break;
-				case ACTION_SETBUYPRICE: npcState->buyPrice = (*it).intValue; break;
-				case ACTION_SETITEM: npcState->itemId = (*it).intValue; break;
-				case ACTION_SETSUBTYPE: npcState->subType = (*it).intValue; break;
-				case ACTION_SETEFFECT: g_game.addMagicEffect(player->getPosition(), (*it).intValue); break;
+				case ACTION_SETTOPIC:
+					npcState->topic = (*it).intValue;
+					resetTopic = false;
+					break;
+				case ACTION_SETSELLPRICE:
+					npcState->sellPrice = (*it).intValue;
+					break;
+				case ACTION_SETBUYPRICE:
+					npcState->buyPrice = (*it).intValue;
+					break;
+				case ACTION_SETITEM:
+					npcState->itemId = (*it).intValue;
+					break;
+				case ACTION_SETSUBTYPE:
+					npcState->subType = (*it).intValue;
+					break;
+				case ACTION_SETEFFECT:
+					g_game.addMagicEffect(player->getPosition(), (*it).intValue);
+					break;
 				case ACTION_SETPRICE:
 				{
 					if((*it).strValue == "|SELLPRICE|")
@@ -1366,6 +1392,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 					Position teleportTo = (*it).pos;
 					if((*it).strValue == "|TEMPLE|")
 						teleportTo = player->getTemplePosition();
+
 					g_game.internalTeleport(player, teleportTo, true);
 					break;
 				}
@@ -1393,8 +1420,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 				case ACTION_SETSPELL:
 				{
 					npcState->spellName = "";
-					InstantSpell* spell = g_spells->getInstantSpellByName((*it).strValue);
-					if(spell)
+					if(InstantSpell* spell = g_spells->getInstantSpellByName((*it).strValue))
 						npcState->spellName = (*it).strValue;
 					break;
 				}
@@ -1432,6 +1458,18 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 						spellName = (*it).strValue;
 
 					player->learnInstantSpell(spellName);
+					break;
+				}
+
+				case ACTION_UNTEACHSPELL:
+				{
+					std::string spellName = "";
+					if((*it).strValue == "|SPELL|")
+						spellName = npcState->spellName;
+					else
+						spellName = (*it).strValue;
+
+					player->unlearnInstantSpell(spellName);
 					break;
 				}
 
@@ -1766,6 +1804,7 @@ uint32_t Npc::getListItemPrice(uint16_t itemId, ShopEvent_t type)
 			}
 		}
 	}
+
 	return 0;
 }
 

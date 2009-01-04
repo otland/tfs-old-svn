@@ -284,17 +284,18 @@ struct LightInfo
 
 struct ShopInfo
 {
-	uint32_t itemId, subType, buyPrice, sellPrice;
+	int32_t itemId, subType, buyPrice, sellPrice;
 	std::string itemName;
 
 	ShopInfo()
 	{
-		itemId = buyPrice = sellPrice = 0;
+		itemId = 0;
 		subType = 1;
+		buyPrice = sellPrice = -1;
 		itemName = "";
 	}
 
-	ShopInfo(uint32_t _itemId, int32_t _subType = 0, uint32_t _buyPrice = 0, uint32_t _sellPrice = 0,
+	ShopInfo(uint32_t _itemId = 0, int32_t _subType = 1, int32_t _buyPrice = -1, uint32_t _sellPrice = -1,
 		const std::string& _itemName = ""): itemId(_itemId), subType(_subType), buyPrice(_buyPrice),
 		sellPrice(_sellPrice), itemName(_itemName) {}
 };
