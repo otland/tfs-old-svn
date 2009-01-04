@@ -20520,13 +20520,13 @@
 	</item>
 	<item id="9776" article="a" name="yalahari armor">
 		<attribute key="weight" value="7000"/>
-		<attribute key="armor" value="17"/>
+		<attribute key="armor" value="16"/>
 		<attribute key="slotType" value="body"/>
-		<attribute key="absorbPercentDeath" value="5"/>
+		<attribute key="absorbPercentDeath" value="3"/>
 	</item>
 	<item id="9777" article="a" name="yalahari leg piece">
 		<attribute key="weight" value="6500"/>
-		<attribute key="armor" value="9"/>
+		<attribute key="armor" value="8"/>
 		<attribute key="slotType" value="legs"/>
 		<attribute key="absorbPercentDeath" value="5"/>
 		<attribute key="skillDist" value="2"/>
