@@ -3464,7 +3464,8 @@
 	<item id="2294" article="a" name="spell rune">
 		<attribute key="weight" value="120"/>
 	</item>
-	<item id="2295" article="a" name="spell rune">
+	<item id="2295" article="a" name="holy missile rune">
+		<attribute key="runeSpellName" value="adori san"/>
 		<attribute key="weight" value="120"/>
 	</item>
 	<item id="2296" article="a" name="spell rune">
@@ -15917,12 +15918,12 @@
 		<attribute key="weaponType" value="sword"/>
 		<attribute key="extradef" value="-2"/>
 	</item>
-	<item id="7405" article="a" name="shenlong sword">
-		<attribute key="weight" value="8000"/>
-		<attribute key="defense" value="31"/>
-		<attribute key="attack" value="48"/>
+	<item id="7405" article="a" name="havoc blade">
+		<attribute key="weight" value="7200"/>
+		<attribute key="defense" value="34"/>
+		<attribute key="attack" value="49"/>
 		<attribute key="weaponType" value="sword"/>
-		<attribute key="extradef" value="-2"/>
+		<attribute key="slotType" value="two-handed"/>
 	</item>
 	<item id="7406" article="a" name="blacksteel sword">
 		<attribute key="weight" value="5900"/>
@@ -20396,13 +20397,13 @@
 	</item>
 	<item id="9776" article="a" name="yalahari armor">
 		<attribute key="weight" value="7000"/>
-		<attribute key="armor" value="17"/>
+		<attribute key="armor" value="16"/>
 		<attribute key="slotType" value="body"/>
-		<attribute key="absorbPercentDeath" value="5"/>
+		<attribute key="absorbPercentDeath" value="3"/>
 	</item>
 	<item id="9777" article="a" name="yalahari leg piece">
 		<attribute key="weight" value="6500"/>
-		<attribute key="armor" value="9"/>
+		<attribute key="armor" value="8"/>
 		<attribute key="slotType" value="legs"/>
 		<attribute key="absorbPercentDeath" value="5"/>
 		<attribute key="skillDist" value="2"/>
