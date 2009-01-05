@@ -1504,6 +1504,9 @@ void Creature::executeConditions(uint32_t interval)
 
 bool Creature::hasCondition(ConditionType_t type, uint32_t subId/* = 0*/) const
 {
+	if(type == CONDITION_EXHAUST && g_game.getStateDelay() == 0)
+		return true;
+
 	if(isSuppress(type))
 		return false;
 
@@ -1515,11 +1518,11 @@ bool Creature::hasCondition(ConditionType_t type, uint32_t subId/* = 0*/) const
 		if((*it)->getEndTime() == 0)
 			return true;
 
-		int64_t seekTime = g_game.getStateTime();
+		int64_t seekTime = g_game.getStateDelay();
 		if(seekTime == 0)
 			return true;
 
-		if((*it)->getEndTime() >= seekTime)
+		if((*it)->getEndTime() > seekTime)
 			seekTime = (*it)->getEndTime();
 
 		if(seekTime >= OTSYS_TIME())

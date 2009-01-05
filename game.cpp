@@ -71,7 +71,7 @@ Game::Game()
 	map = NULL;
 	lastPlayersRecord = lastStageLevel = 0;
 	useLastStageLevel = false;
-	stateTime = OTSYS_TIME();
+	stateDelay = OTSYS_TIME();
 	for(int8_t i = 0; i < 3; i++)
 		globalSaveMessage[i] = false;
 
@@ -172,11 +172,11 @@ void Game::setGameState(GameState_t newState)
 			}
 
 			case GAME_STATE_NORMAL:
-				stateTime = OTSYS_TIME() + STATE_TIME;
+				stateDelay = OTSYS_TIME() + STATE_DELAY;
 				break;
 
 			case GAME_STATE_MAINTAIN:
-				stateTime = 0;
+				stateDelay = 0;
 				break;
 
 			case GAME_STATE_STARTUP:

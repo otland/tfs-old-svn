@@ -2209,6 +2209,7 @@ void Player::dropCorpse()
 
 		sendStats();
 		onThink(EVENT_CREATURE_THINK_INTERVAL);
+		onIdleStatus();
 		setDropLoot(true);
 		g_game.internalTeleport(this, getTemplePosition(), true);
 	}

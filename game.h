@@ -61,13 +61,15 @@ enum WorldType_t
 
 enum GameState_t
 {
-	GAME_STATE_STARTUP,
-	GAME_STATE_INIT,
-	GAME_STATE_NORMAL,
-	GAME_STATE_MAINTAIN,
-	GAME_STATE_CLOSED,
-	GAME_STATE_SHUTDOWN,
-	GAME_STATE_CLOSING
+	GAME_STATE_FIRST = 1,
+	GAME_STATE_STARTUP = GAME_STATE_FIRST,
+	GAME_STATE_INIT = 2,
+	GAME_STATE_NORMAL = 3,
+	GAME_STATE_MAINTAIN = 4,
+	GAME_STATE_CLOSED = 5,
+	GAME_STATE_SHUTDOWN = 6,
+	GAME_STATE_CLOSING = 7,
+	GAME_STATE_LAST = GAME_STATE_CLOSING
 };
 
 enum LightState_t
@@ -80,9 +82,8 @@ enum LightState_t
 
 struct RuleViolation
 {
-	RuleViolation(Player* _reporter, const std::string& _text, uint32_t _time) :
-		reporter(_reporter), gamemaster(NULL), text(_text), time(_time), isOpen(true)
-	{}
+	RuleViolation(Player* _reporter, const std::string& _text, uint32_t _time):
+		reporter(_reporter), gamemaster(NULL), text(_text), time(_time), isOpen(true) {}
 
 	Player* reporter;
 	Player* gamemaster;
@@ -100,7 +101,7 @@ typedef std::vector< std::pair<std::string, uint32_t> > Highscore;
 #define EVENT_LIGHTINTERVAL 10000
 #define EVENT_DECAYINTERVAL 1000
 #define EVENT_DECAYBUCKETS 16
-#define STATE_TIME 1000
+#define STATE_DELAY 1000
 
 /**
   * Main Game class.
@@ -524,8 +525,8 @@ class Game
 		Map* getMap() {return map;}
 		const Map* getMap() const {return map;}
 
-		int64_t getStateTime() const {return stateTime;}
-		void setStateTime(int64_t _stateTime) {stateTime = _stateTime;}
+		int64_t getStateDelay() const {return stateDelay;}
+		void setStateDelay(int64_t _stateDelay) {stateDelay = _stateDelay;}
 
 		int32_t getLightHour() {return lightHour;}
 		void startDecay(Item* item);
@@ -543,7 +544,7 @@ class Game
 		Highscore highscoreStorage[9];
 		time_t lastHighscoreCheck;
 		bool globalSaveMessage[2];
-		int64_t stateTime;
+		int64_t stateDelay;
 
 		std::vector<Thing*> ToReleaseThings;
 
