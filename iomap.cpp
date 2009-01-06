@@ -39,7 +39,7 @@ typedef uint32_t flags_t;
 extern Game g_game;
 
 /*
-	OTBM_ROOTV2
+	OTBM_ROOTV1
 	|
 	|--- OTBM_MAP_DATA
 	|	|
@@ -50,14 +50,11 @@ extern Game g_game;
 	|	|	|--- OTBM_HOUSETILE
 	|	|
 	|	|--- OTBM_SPAWNS (not implemented)
-	|	|	|--- OTBM_SPAWN (not implemented)
+	|	|	|--- OTBM_SPAWN_AREA (not implemented)
 	|	|	|--- OTBM_MONSTER (not implemented)
 	|	|
 	|	|--- OTBM_TOWNS
-	|	|	|--- OTBM_TOWN
-	|	|
-	|	|--- OTBM_WAYPOINTS
-	|		|--- OTBM_WAYPOINT
+	|		|--- OTBM_TOWN
 	|
 	|--- OTBM_ITEM_DEF (not implemented)
 */
@@ -98,11 +95,11 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 		//In otbm version 1 the count variable after splashes/fluidcontainers and stackables
 		//are saved as attributes instead, this solves alot of problems with items
 		//that is changed (stackable/charges/fluidcontainer/splash) during an update.
-		setLastErrorString("This map needs to be upgraded by using the latest map editor version to be able to load correctly.");
+		setLastErrorString("This map need to be upgraded by using the latest map editor version to be able to load correctly.");
 		return false;
 	}
 
-	if(root_header->version > 2)
+	if(root_header->version > 1)
 	{
 		setLastErrorString("Unknown OTBM version detected.");
 		return false;
@@ -110,7 +107,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 	if(root_header->majorVersionItems < 3)
 	{
-		setLastErrorString("This map needs to be upgraded by using the latest map editor version to be able to load correctly.");
+		setLastErrorString("This map need to be upgraded by using the latest map editor version to be able to load correctly.");
 		return false;
 	}
 
@@ -122,12 +119,12 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 	if(root_header->minorVersionItems < CLIENT_VERSION_810)
 	{
-		setLastErrorString("This map needs an updated items.otb.");
+		setLastErrorString("This map needs to be updated.");
 		return false;
 	}
 
 	if(root_header->minorVersionItems > (uint32_t)Items::dwMinorVersion)
-		setLastErrorString("This map needs an updated items.otb.");
+		std::cout << "Warning: [OTBM loader] This map needs an updated items.otb." <<std::endl;
 
 	std::cout << "> Map size: " << root_header->width << "x" << root_header->height << "." << std::endl;
 	map->mapWidth = root_header->width;
@@ -415,18 +412,18 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 						return false;
 					}
 
-					uint32_t townId = 0;
-					if(!propStream.GET_ULONG(townId))
+					uint32_t townid = 0;
+					if(!propStream.GET_ULONG(townid))
 					{
 						setLastErrorString("Could not read town id.");
 						return false;
 					}
 
-					Town* town = Towns::getInstance().getTown(townId);
+					Town* town = Towns::getInstance().getTown(townid);
 					if(!town)
 					{
-						town = new Town(townId);
-						Towns::getInstance().addTown(townId, town);
+						town = new Town(townid);
+						Towns::getInstance().addTown(townid, town);
 					}
 
 					std::string townName = "";
@@ -458,45 +455,6 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 				}
 
 				nodeTown = f.getNextNode(nodeTown, type);
-			}
-		}
-		else if(type == OTBM_WAYPOINTS && root_header->version > 1)
-		{
-			NODE nodeWaypoint = f.getChildNode(nodeMapData, type);
-			while(nodeWaypoint != NO_NODE)
-			{
-				if(type == OTBM_WAYPOINT)
-				{
-					if(!f.getProps(nodeWaypoint, propStream))
-					{
-						setLastErrorString("Could not read waypoint data.");
-						return false;
-					}
-
-					std::string name;
-					if(!propStream.GET_STRING(name))
-					{
-						setLastErrorString("Could not read waypoint name.");
-						return false;
-					}
-
-					OTBM_TownTemple_coords* waypoint_coords;
-					if(!propStream.GET_STRUCT(waypoint_coords))
-					{
-						setLastErrorString("Could not read waypoint coordinates.");
-						return false;
-					}
-
-					map->waypoints.addWaypoint(WaypointPtr(new Waypoint(name,
-						Position(waypoint_coords->_x, waypoint_coords->_y, waypoint_coords->_z))));
-				}
-				else
-				{
-					setLastErrorString("Unknown waypoint node.");
-					return false;
-				}
-
-				nodeWaypoint = f.getNextNode(nodeWaypoint, type);
 			}
 		}
 		else
