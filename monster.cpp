@@ -324,7 +324,10 @@ bool Monster::isFriend(const Creature* creature)
 bool Monster::isOpponent(const Creature* creature)
 {
 	if(isSummon() && getMaster()->getPlayer())
-		return true;
+	{
+		if(creature != getMaster())
+			return true;
+	}
 	else
 	{
 		if((creature->getPlayer() && !creature->getPlayer()->hasFlag(PlayerFlag_IgnoredByMonsters)) ||
@@ -437,15 +440,11 @@ void Monster::onFollowCreatureComplete(const Creature* creature)
 			targetList.erase(it);
 
 			if(hasFollowPath)
-			{
-				//push target we have found a path to the front
 				targetList.push_front(target);
-			}
 			else if(!isSummon())
-			{
-				//push target we have not found a path to the back
 				targetList.push_back(target);
-			}
+			else
+				target->releaseThing2();
 		}
 	}
 }
