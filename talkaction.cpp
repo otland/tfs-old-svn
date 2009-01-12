@@ -183,7 +183,7 @@ bool TalkActions::onPlayerSay(Player* player, uint16_t channelId, const std::str
 	if(talkAction->isScripted())
 		return talkAction->executeSay(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()], channelId);
 	else if(talkAction->function)
-		return talkAction->function(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()], channelId);
+		return talkAction->function(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]);
 
 	return false;
 }
