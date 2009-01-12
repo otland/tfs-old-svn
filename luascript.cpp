@@ -1761,15 +1761,6 @@ void LuaScriptInterface::registerFunctions()
 	//getItemDescriptionsById(itemid)
 	lua_register(m_luaState, "getItemDescriptionsById", LuaScriptInterface::luaGetItemDescriptionsById);
 
-	//getItemNameById(itemid)
-	lua_register(m_luaState, "getItemNameById", LuaScriptInterface::luaGetItemNameById);
-
-	//getItemPluralNameById(itemid)
-	lua_register(m_luaState, "getItemPluralNameById", LuaScriptInterface::luaGetItemPluralNameById);
-
-	//getItemArticleById(itemid)
-	lua_register(m_luaState, "getItemArticleById", LuaScriptInterface::luaGetItemArticleById);
-
 	//getItemWeightById(itemid, count, <optional: default: 1> precise)
 	lua_register(m_luaState, "getItemWeightById", LuaScriptInterface::luaGetItemWeightById);
 
@@ -1779,22 +1770,13 @@ void LuaScriptInterface::registerFunctions()
 	//getItemWeight(uid, <optional: default: 1> precise)
 	lua_register(m_luaState, "getItemWeight", LuaScriptInterface::luaGetItemWeight);
 
-	//getItemName(uid)
-	lua_register(m_luaState, "getItemName", LuaScriptInterface::luaGetItemName);
-
 	//setItemName(uid)
 	lua_register(m_luaState, "setItemName", LuaScriptInterface::luaSetItemName);
-
-	//getItemPluralName(uid)
-	lua_register(m_luaState, "getItemPluralName", LuaScriptInterface::luaGetItemPluralName);
 
 	//setItemPluralName(uid)
 	lua_register(m_luaState, "setItemPluralName", LuaScriptInterface::luaSetItemPluralName);
 
-	//getItemArticle(uid)
-	lua_register(m_luaState, "getItemArticle", LuaScriptInterface::luaGetItemArticle);
-
-	//setItemIdArticle(uid)
+	//setItemArticle(uid)
 	lua_register(m_luaState, "setItemArticle", LuaScriptInterface::luaSetItemArticle);
 
 	//getItemAttack(uid)
@@ -7745,33 +7727,6 @@ int32_t LuaScriptInterface::luaGetItemDescriptionsById(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetItemNameById(lua_State* L)
-{
-	//getItemNameById(itemid)
-	uint32_t itemid = popNumber(L);
-	const ItemType& it = Item::items[itemid];
-	lua_pushstring(L, it.name.c_str());
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaGetItemPluralNameById(lua_State* L)
-{
-	//getItemPluralNameById(itemid)
-	uint32_t itemid = popNumber(L);
-	const ItemType& it = Item::items[itemid];
-	lua_pushstring(L, it.pluralName.c_str());
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaGetItemArticleById(lua_State* L)
-{
-	//getItemArticleById(itemid)
-	uint32_t itemid = popNumber(L);
-	const ItemType& it = Item::items[itemid];
-	lua_pushstring(L, it.article.c_str());
-	return 1;
-}
-
 int32_t LuaScriptInterface::luaGetItemWeightById(lua_State* L)
 {
 	//getItemWeightById(itemid, count, <optional: default: 1> precise)
@@ -8970,7 +8925,7 @@ int32_t LuaScriptInterface::luaGetItemDescriptions(lua_State* L)
 	setField(L, "article", item->getArticle().c_str());
 	setField(L, "plural", item->getPluralName().c_str());
 	setField(L, "text", item->getText().c_str());
-	setField(L, "writer", item->getWriter());
+	setField(L, "writer", item->getWriter().c_str());
 	setField(L, "date", item->getDate());
 	return 1;
 }
@@ -9005,22 +8960,6 @@ int32_t LuaScriptInterface::luaGetItemWeight(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetItemName(lua_State* L)
-{
-	uint32_t uid = popNumber(L);
-
-	ScriptEnviroment* env = getScriptEnv();
-	Item* item = env->getItemByUID(uid);
-	if(!item)
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
-		lua_pushnumber(L, LUA_ERROR);
-		return 1;
-	}
-	lua_pushstring(L, item->getName().c_str());
-	return 1;
-}
-
 int32_t LuaScriptInterface::luaSetItemName(lua_State* L)
 {
 	std::string name = popString(L);
@@ -9039,22 +8978,6 @@ int32_t LuaScriptInterface::luaSetItemName(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetItemPluralName(lua_State* L)
-{
-	uint32_t uid = popNumber(L);
-
-	ScriptEnviroment* env = getScriptEnv();
-	Item* item = env->getItemByUID(uid);
-	if(!item)
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
-		lua_pushnumber(L, LUA_ERROR);
-		return 1;
-	}
-	lua_pushstring(L, item->getPluralName().c_str());
-	return 1;
-}
-
 int32_t LuaScriptInterface::luaSetItemPluralName(lua_State* L)
 {
 	std::string pluralName = popString(L);
@@ -9070,22 +8993,6 @@ int32_t LuaScriptInterface::luaSetItemPluralName(lua_State* L)
 	}
 	item->setPluralName(pluralName);
 	lua_pushnumber(L, LUA_NO_ERROR);
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaGetItemArticle(lua_State* L)
-{
-	uint32_t uid = popNumber(L);
-
-	ScriptEnviroment* env = getScriptEnv();
-	Item* item = env->getItemByUID(uid);
-	if(!item)
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
-		lua_pushnumber(L, LUA_ERROR);
-		return 1;
-	}
-	lua_pushstring(L, item->getArticle().c_str());
 	return 1;
 }
 

@@ -295,6 +295,42 @@ function getPlayerMasterPos(cid)
 	return getTownTemplePosition(getPlayerTown(cid))
 end
 
+function getItemNameById(itemid)
+	return getItemDescriptions(itemid).name
+end
+
+function getItemPluralNameById(itemid)
+	return getItemDescriptions(itemid).plural
+end
+
+function getItemArticleById(itemid)
+	return getItemDescriptions(itemid).article
+end
+
+function getItemName(uid)
+	return getItemDescriptions(uid).name
+end
+
+function getItemPluralName(uid)
+	return getItemDescriptions(uid).plural
+end
+
+function getItemArticle(uid)
+	return getItemDescriptions(uid).article
+end
+
+function getItemText(uid)
+	return getItemDescriptions(uid).text
+end
+
+function getItemWriter(uid)
+	return getItemDescriptions(uid).writer
+end
+
+function getItemDate(uid)
+	return getItemDescriptions(uid).date
+end
+
 function getOnlinePlayers()
 	local tmp = getPlayersOnline()
 	local players = {}

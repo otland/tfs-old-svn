@@ -181,9 +181,9 @@ bool TalkActions::onPlayerSay(Player* player, uint16_t channelId, const std::str
 	}
 
 	if(talkAction->isScripted())
-		return talkAction->executeSay(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]);
+		return talkAction->executeSay(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()], channelId);
 	else if(talkAction->function)
-		return talkAction->function(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]);
+		return talkAction->function(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()], channelId);
 
 	return false;
 }
@@ -253,7 +253,7 @@ bool TalkAction::configureEvent(xmlNodePtr p)
 	if(readXMLString(p, "log", strValue))
 		m_logged = booleanString(asLowerCaseString(strValue));
 
-	if(readXMLString(p, "case-sensitive", strValue))
+	if(readXMLString(p, "case-sensitive", strValue) || readXMLString(p, "casesensitive", strValue))
 		m_sensitive = booleanString(asLowerCaseString(strValue));
 
 	return true;
@@ -281,7 +281,7 @@ std::string TalkAction::getScriptEventName()
 	return "onSay";
 }
 
-int32_t TalkAction::executeSay(Creature* creature, const std::string& words, const std::string& param)
+int32_t TalkAction::executeSay(Creature* creature, const std::string& words, const std::string& param, uint16_t channel)
 {
 	//onSay(cid, words, param)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -305,15 +305,16 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, con
 		lua_pushnumber(L, cid);
 		lua_pushstring(L, words.c_str());
 		lua_pushstring(L, param.c_str());
+		lua_pushnumber(L, channel);
 
-		int32_t result = m_scriptInterface->callFunction(3);
+		int32_t result = m_scriptInterface->callFunction(4);
 		m_scriptInterface->releaseScriptEnv();
 
 		return (result == LUA_TRUE);
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. TalkAction::executeSay" << std::endl;
+		std::cout << "[Error - TalkAction::executeSay] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
