@@ -103,11 +103,7 @@ class Door : public Item
 		House* getHouse() {return house;}
 
 		//serialization
-		virtual bool unserialize(xmlNodePtr p);
-		virtual xmlNodePtr serialize();
-
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
-		virtual bool serializeAttr(PropWriteStream& propWriteStream);
 
 		void setDoorId(uint32_t _doorId){ setIntAttr(ATTR_ITEM_DOORID, (uint32_t)_doorId); }
 		uint32_t getDoorId() const{ return getIntAttr(ATTR_ITEM_DOORID); }

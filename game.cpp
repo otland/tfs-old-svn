@@ -134,8 +134,6 @@ void Game::setGameState(GameState_t newState)
 				loadGameState();
 				if(g_config.getBool(ConfigManager::REMOVE_PREMIUM_ON_INIT))
 					IOLoginData::getInstance()->updatePremiumDays();
-
-				Houses::getInstance().payHouses();
 				break;
 			}
 
@@ -143,12 +141,13 @@ void Game::setGameState(GameState_t newState)
 			{
 				//kick all players that are still online
 				AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
-				for(; it != Player::listPlayer.list.end(); ++it)
+				while(it != Player::listPlayer.list.end())
 				{
-					if((*it).second)
-						(*it).second->kickPlayer(true);
+					(*it).second->kickPlayer(true);
+					it = Player::listPlayer.list.begin();
 				}
 
+				Houses::getInstance().payHouses();
 				saveGameState(false);
 				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, this)));
 
@@ -161,12 +160,18 @@ void Game::setGameState(GameState_t newState)
 			{
 				//kick all players who not allowed to stay
 				AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
-				for(; it != Player::listPlayer.list.end(); ++it)
+				while(it != Player::listPlayer.list.end())
 				{
-					if((*it).second && !(*it).second->hasFlag(PlayerFlag_CanAlwaysLogin))
+					if(!(*it).second->hasFlag(PlayerFlag_CanAlwaysLogin))
+					{
 						(*it).second->kickPlayer(true);
+						it = Player::listPlayer.list.begin();
+					}
+					else
+						++it;
 				}
 
+				Houses::getInstance().payHouses();
 				saveGameState(false);
 				break;
 			}
@@ -205,6 +210,12 @@ void Game::saveGameState(bool savePlayers)
 
 void Game::loadGameState()
 {
+	maxPlayers = g_config.getNumber(ConfigManager::MAX_PLAYERS);
+	inFightTicks = g_config.getNumber(ConfigManager::PZ_LOCKED);
+	Player::maxMessageBuffer = g_config.getNumber(ConfigManager::MAX_MESSAGEBUFFER);
+	Monster::despawnRange = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRANGE);
+	Monster::despawnRadius = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRADIUS);
+
 	IOLoginData::getInstance()->resetOnlineStatus();
 	loadPlayersRecord();
 	ScriptEnviroment::loadGameState();
@@ -216,12 +227,6 @@ int32_t Game::loadMap(std::string filename)
 {
 	if(!map)
 		map = new Map;
-
-	maxPlayers = g_config.getNumber(ConfigManager::MAX_PLAYERS);
-	inFightTicks = g_config.getNumber(ConfigManager::PZ_LOCKED);
-	Player::maxMessageBuffer = g_config.getNumber(ConfigManager::MAX_MESSAGEBUFFER);
-	Monster::despawnRange = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRANGE);
-	Monster::despawnRadius = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRADIUS);
 
 	return map->loadMap(getFilePath(FILE_TYPE_OTHER, std::string("world/" + filename + ".otbm")));
 }

@@ -424,7 +424,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		{
 			if(eventConnect != 0 || !g_config.getBool(ConfigManager::REPLACE_KICK_ON_LOGIN))
 			{
-				//Already trying to connect
+				//A task has already been scheduled just bail out (should not be overriden)
 				disconnectClient(0x14, "You are already logged in.");
 				return false;
 			}

@@ -137,9 +137,6 @@ class Condition
 		virtual bool setParam(ConditionParam_t param, int32_t value);
 
 		//serialization
-		virtual xmlNodePtr serialize();
-		virtual bool unserialize(xmlNodePtr p);
-
 		bool unserialize(PropStream& propStream);
 		virtual bool serialize(PropWriteStream& propWriteStream);
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
@@ -196,9 +193,6 @@ class ConditionAttributes : public ConditionGeneric
 		virtual bool setParam(ConditionParam_t param, int32_t value);
 
 		//serialization
-		virtual xmlNodePtr serialize();
-		virtual bool unserialize(xmlNodePtr p);
-
 		virtual bool serialize(PropWriteStream& propWriteStream);
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 
@@ -229,9 +223,6 @@ class ConditionRegeneration : public ConditionGeneric
 		virtual bool setParam(ConditionParam_t param, int32_t value);
 
 		//serialization
-		virtual xmlNodePtr serialize();
-		virtual bool unserialize(xmlNodePtr p);
-
 		virtual bool serialize(PropWriteStream& propWriteStream);
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 
@@ -258,9 +249,6 @@ class ConditionSoul : public ConditionGeneric
 		virtual bool setParam(ConditionParam_t param, int32_t value);
 
 		//serialization
-		virtual xmlNodePtr serialize();
-		virtual bool unserialize(xmlNodePtr p);
-
 		virtual bool serialize(PropWriteStream& propWriteStream);
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 
@@ -303,9 +291,6 @@ class ConditionDamage: public Condition
 		bool doForceUpdate() const {return forceUpdate;}
 
 		//serialization
-		virtual xmlNodePtr serialize();
-		virtual bool unserialize(xmlNodePtr p);
-
 		virtual bool serialize(PropWriteStream& propWriteStream);
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 
@@ -350,9 +335,6 @@ class ConditionSpeed: public Condition
 		void setFormulaVars(float _mina, float _minb, float _maxa, float _maxb);
 
 		//serialization
-		virtual xmlNodePtr serialize();
-		virtual bool unserialize(xmlNodePtr p);
-
 		virtual bool serialize(PropWriteStream& propWriteStream);
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 
@@ -384,9 +366,6 @@ class ConditionOutfit: public Condition
 		void addOutfit(Outfit_t outfit);
 
 		//serialization
-		virtual xmlNodePtr serialize();
-		virtual bool unserialize(xmlNodePtr p);
-
 		virtual bool serialize(PropWriteStream& propWriteStream);
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 
@@ -412,9 +391,6 @@ class ConditionLight: public Condition
 		virtual bool setParam(ConditionParam_t param, int32_t value);
 
 		//serialization
-		virtual xmlNodePtr serialize();
-		virtual bool unserialize(xmlNodePtr p);
-
 		virtual bool serialize(PropWriteStream& propWriteStream);
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 

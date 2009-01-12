@@ -310,9 +310,6 @@ class Item : virtual public Thing, public ItemAttributes
 		std::string getWeightDescription() const;
 
 		//serialization
-		virtual bool unserialize(xmlNodePtr p);
-		virtual xmlNodePtr serialize();
-
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool unserializeAttr(PropStream& propStream);
 		virtual bool serializeAttr(PropWriteStream& propWriteStream);

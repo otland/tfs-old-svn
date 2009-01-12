@@ -523,12 +523,12 @@ bool Combat::CombatConditionFunc(Creature* caster, Creature* target, const Comba
 		{
 			if(caster == target || !target->isImmune((*it)->getType()))
 			{
-				Condition* conditionCopy = (*it)->clone();
+				Condition* tmp = (*it)->clone();
 				if(caster)
-					conditionCopy->setParam(CONDITIONPARAM_OWNER, caster->getID());
+					tmp->setParam(CONDITIONPARAM_OWNER, caster->getID());
 
 				//TODO: infight condition until all aggressive conditions has ended
-				result = target->addCombatCondition(conditionCopy);
+				result = target->addCombatCondition(tmp);
 			}
 		}
 	}
@@ -1069,7 +1069,7 @@ bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, s
 			{
 				if(tmpPos.x >= 0 && tmpPos.y >= 0 && tmpPos.z >= 0 &&
 					tmpPos.x <= 0xFFFF && tmpPos.y <= 0xFFFF && tmpPos.z < MAP_MAX_LAYERS
-					&& g_game.isSightClear(centerPos, tmpPos, true))
+					&& g_game.isSightClear(targetPos, tmpPos, true))
 				{
 					tile = g_game.getTile(tmpPos);
 					if(!tile)

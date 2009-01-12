@@ -35,18 +35,6 @@ Depot::~Depot()
 	//
 }
 
-bool Depot::unserialize(xmlNodePtr nodeItem)
-{
-	bool ret = Container::unserialize(nodeItem);
-	return ret;
-}
-
-xmlNodePtr Depot::serialize()
-{
-	xmlNodePtr xmlptr = Container::serialize();
-	return xmlptr;
-}
-
 bool Depot::readAttr(AttrTypes_t attr, PropStream& propStream)
 {
 	if(ATTR_DEPOT_ID == attr)

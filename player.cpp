@@ -285,6 +285,8 @@ std::string Player::getDescription(int32_t lookDistance) const
 				s << "and you are";
 			else
 				s << "and is";
+
+			s << " ";
 		}
 
 		if(sex == PLAYERSEX_FEMALE)
@@ -2668,18 +2670,45 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 		}
 
 		//try containers
+		std::list<Container*> containerList;
 		for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 		{
+			if(inventory[i] == tradeItem)
+				continue;
+
 			if(Container* subContainer = dynamic_cast<Container*>(inventory[i]))
 			{
-				if(subContainer != tradeItem && subContainer->__queryAdd(-1, item, item->getItemCount(), 0) == RET_NOERROR)
+				if(subContainer->__queryAdd(-1, item, item->getItemCount(), 0) == RET_NOERROR)
 				{
 					index = INDEX_WHEREEVER;
 					*destItem = NULL;
 					return subContainer;
 				}
+				else
+					containerList.push_back(subContainer);
 			}
 		}
+
+		//check deeper in the containers
+		for(std::list<Container*>::iterator it = containerList.begin(); it != containerList.end(); ++it)
+		{
+			for(ContainerIterator iit = (*it)->begin(); iit != (*it)->end(); ++iit)
+			{
+				if((*iit) == tradeItem)
+					continue;
+
+				if(Container* subContainer = dynamic_cast<Container*>(*iit))
+				{
+					if(subContainer->__queryAdd(-1, item, item->getItemCount(), 0) == RET_NOERROR)
+					{
+						index = INDEX_WHEREEVER;
+						*destItem = NULL;
+						return subContainer;
+					}
+				}
+			}
+		}
+
 		return this;
 	}
 

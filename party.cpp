@@ -280,8 +280,9 @@ void Party::broadcastPartyMessage(MessageClasses messageClass, const std::string
 
 void Party::broadcastPartyLoot(const std::string& monster, const ItemVector& items)
 {
+	std::string monster_ = asLowerCaseString(monster);
 	std::stringstream s;
-	s << "Loot of " << monster << ": ";
+	s << "Loot of " << monster_ << ": ";
 	if(items.size())
 	{
 		for(ItemVector::const_reverse_iterator rit = items.rbegin(); rit != items.rend(); ++rit)

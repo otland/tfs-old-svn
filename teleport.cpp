@@ -38,55 +38,6 @@ Teleport::~Teleport()
 	//
 }
 
-bool Teleport::unserialize(xmlNodePtr nodeItem)
-{
-	bool ret = Item::unserialize(nodeItem);
-	char* nodeValue;
-
-	nodeValue = (char*)xmlGetProp(nodeItem, (const xmlChar *) "destx");
-	if(nodeValue)
-	{
-		destPos.x = atoi(nodeValue);
-		xmlFreeOTSERV(nodeValue);
-	}
-
-	nodeValue = (char*)xmlGetProp(nodeItem, (const xmlChar *) "desty");
-	if(nodeValue)
-	{
-		destPos.y = atoi(nodeValue);
-		xmlFreeOTSERV(nodeValue);
-	}
-
-	nodeValue = (char*)xmlGetProp(nodeItem, (const xmlChar *) "destz");
-	if(nodeValue)
-	{
-		destPos.z = atoi(nodeValue);
-		xmlFreeOTSERV(nodeValue);
-	}
-
-	return ret;
-}
-
-xmlNodePtr Teleport::serialize()
-{
-	xmlNodePtr xmlptr = Item::serialize();
-	std::stringstream ss;
-
-	ss.str("");
-	ss << (int32_t) destPos.x;
-	xmlSetProp(xmlptr, (const xmlChar*)"destx", (const xmlChar*)ss.str().c_str());
-
-	ss.str("");
-	ss << (int32_t) destPos.y;
-	xmlSetProp(xmlptr, (const xmlChar*)"desty", (const xmlChar*)ss.str().c_str());
-
-	ss.str("");
-	ss << (int32_t)destPos.z;
-	xmlSetProp(xmlptr, (const xmlChar*)"destz", (const xmlChar*)ss.str().c_str());
-
-	return xmlptr;
-}
-
 bool Teleport::readAttr(AttrTypes_t attr, PropStream& propStream)
 {
 	if(ATTR_TELE_DEST == attr)

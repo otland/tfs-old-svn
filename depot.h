@@ -33,9 +33,6 @@ class Depot : public Container
 		virtual const Depot* getDepot() const {return this;}
 
 		//serialization
-		virtual bool unserialize(xmlNodePtr p);
-		virtual xmlNodePtr serialize();
-
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
 
 		uint32_t getDepotId() {return depotId;}

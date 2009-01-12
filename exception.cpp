@@ -186,11 +186,16 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 
 	//system and process info
 	//- global memory information
-	MEMORYSTATUS mstate;
-	GlobalMemoryStatus(&mstate);
-	*outdriver << "Memory load: " << mstate.dwMemoryLoad << std::endl <<
-		"Total phys: " << mstate.dwTotalPhys/1024 << " K available phys: " <<
-		mstate.dwAvailPhys/1024 << " K" << std::endl;
+	MEMORYSTATUSEX mstate;
+	if(GlobalMemoryStatusEx(&mstate))
+	{
+		*outdriver << "Memory load: " << mstate.dwMemoryLoad << std::endl <<
+			"Total phys: " << mstate.ullTotalPhys/1024 << " K available phys: " <<
+			mstate.ullAvailPhys/1024 << " K" << std::endl;
+	}
+	else
+		*outdriver << "Memory load: Error" << std::endl;
+
 	//-process info
 	FILETIME FTcreation,FTexit,FTkernel,FTuser;
 	SYSTEMTIME systemtime;
