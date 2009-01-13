@@ -296,15 +296,15 @@ function getPlayerMasterPos(cid)
 end
 
 function getItemNameById(itemid)
-	return getItemDescriptions(itemid).name
+	return getItemDescriptionsById(itemid).name
 end
 
 function getItemPluralNameById(itemid)
-	return getItemDescriptions(itemid).plural
+	return getItemDescriptionsById(itemid).plural
 end
 
 function getItemArticleById(itemid)
-	return getItemDescriptions(itemid).article
+	return getItemDescriptionsById(itemid).article
 end
 
 function getItemName(uid)
