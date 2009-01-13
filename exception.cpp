@@ -192,6 +192,7 @@ EXCEPTION_DISPOSITION
 	//system and process info
 	//- global memory information
 	MEMORYSTATUSEX mstate;
+	mstate.dwLength = sizeof(mstate);
 	if(GlobalMemoryStatusEx(&mstate))
 	{
 		*outdriver << "Memory load: " << mstate.dwMemoryLoad << std::endl <<

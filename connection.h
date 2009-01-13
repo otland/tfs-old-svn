@@ -135,6 +135,7 @@ class Connection : boost::noncopyable
 		void closeConnectionTask();
 		bool closingConnection();
 		void deleteConnectionTask();
+		void releaseConnection();
 
 		void internalSend(OutputMessage* msg);
 
