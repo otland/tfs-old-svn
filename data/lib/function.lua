@@ -331,6 +331,27 @@ function getItemDate(uid)
 	return getItemDescriptions(uid).date
 end
 
+function getTilePzInfo(pos)
+	return getTileInfo(pos).protection and TRUE or FALSE
+end
+
+function getTileHouseInfo(pos)
+	return getTileInfo(pos).house and TRUE or FALSE
+end
+
+function getTileZoneInfo(pos)
+	local tmp = getTileInfo(pos)
+	if(tmp.pvp) then
+		return 2
+	end
+
+	if(tmp.nopvp) then
+		return 1
+	end
+
+	return 0
+end
+
 function getOnlinePlayers()
 	local tmp = getPlayersOnline()
 	local players = {}

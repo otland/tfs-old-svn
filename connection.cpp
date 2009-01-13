@@ -206,19 +206,27 @@ bool Connection::closingConnection()
 				PRINT_ASIO_ERROR("Close");
 		}
 
-		if(m_refCount == 0 && m_pendingRead == 0)
+		if(m_pendingRead == 0)
 		{
 			#ifdef __DEBUG_NET_DETAIL__
 			std::cout << "Deleting Connection" << std::endl;
 			#endif
 
 			OTSYS_THREAD_UNLOCK(m_connectionLock, "");
-			Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Connection::deleteConnectionTask, this)));
+			Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Connection::releaseConnection, this)));
 			return true;
 		}
 	}
 
 	return false;
+}
+
+void Connection::releaseConnection()
+{
+	if(m_refCount > 0) //Reschedule it and try again.
+		Scheduler::getScheduler().addEvent(createSchedulerTask(SCHEDULER_MINTICKS, boost::bind(&Connection::releaseConnection, this)));
+	else
+		deleteConnectionTask();
 }
 
 void Connection::deleteConnectionTask()
