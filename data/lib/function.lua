@@ -358,6 +358,7 @@ function getOnlinePlayers()
 	for i, cid in ipairs(tmp) do
 		table.insert(players, getCreatureName(cid))
 	end
+
 	return players
 end
 

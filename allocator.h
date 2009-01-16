@@ -176,14 +176,19 @@ class PoolManager
 		{
 			time_t rawtime;
 			time(&rawtime);
-			std::ofstream output("mem_dump.txt",std::ios_base::app);
+			std::ofstream output("memory_dump.txt", std::ios_base::app);
 			output << "OTServ Allocator Stats: " << std::ctime(&rawtime);
 			for(PoolsStats::iterator it = poolsStats.begin(); it != poolsStats.end(); ++it)
 			{
-				output << (int32_t)(it->first) << " alloc: " << (int32_t)(it->second->allocations) << " dealloc: " << (int32_t)(it->second->deallocations) << " unused: " << (int32_t)(it->second->unused);
+				output << (int32_t)(it->first) << " alloc: " << (int64_t)(it->second->allocations) << " dealloc: ";
+				output << (int64_t)(it->second->deallocations) << " unused: " << (int64_t)(it->second->unused);
 				if(it->second->allocations != 0 && it->first != 0)
-					output << " avg: " << (int32_t)((it->first) - (it->second->unused)/(it->second->allocations)) << " %unused: " << (int32_t)((it->second->unused)*100/(it->second->allocations)/(it->first));
-				output << " N: " << ((int32_t)(it->second->allocations) - (int32_t)(it->second->deallocations)) << std::endl;
+				{
+					output << " avg: " << (int64_t)((it->first) - (it->second->unused) / (it->second->allocations));
+					output << " %unused: " << (int64_t)((it->second->unused) * 100 / (it->second->allocations) / (it->first));
+				}
+
+				output << " N: " << ((int64_t)(it->second->allocations) - (int64_t)(it->second->deallocations)) << std::endl;
 			}
 
 			output << std::endl;
@@ -247,7 +252,7 @@ class PoolManager
 		#ifdef __OTSERV_ALLOCATOR_STATS__
 		struct t_PoolStats
 		{
-			int32_t allocations, deallocations, unused;
+			int64_t allocations, deallocations, unused;
 		};
 		typedef std::map<size_t, t_PoolStats*, std::less<size_t >, dummyallocator<std::pair<const size_t, t_PoolStats* > > > PoolsStats;
 		PoolsStats poolsStats;
