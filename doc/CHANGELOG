@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3 Beta 2
+		0.3 Beta 3
 
 	Codenamed
 		\
@@ -419,6 +419,8 @@
 	All attributes displaying in item description (Elf)
 	Waypoints support (OpenTibia SVN, Elf)
 	Move (add and remove) items actor tracking, cid param for onAddItem/onRemoveItem move event (Elf [not from revscriptsys])
+	Protocol 8.4 related combat and conditions upgrades, party spells (Elf, OpenTibia SVN)
+	Rewritten so optimized map cleaning code (Elf)
 ]
 
 [ Deprecated
@@ -483,4 +485,8 @@
 	Engine not accepting negative values in scripting (Elf)
 	Not working configurables (Elf)
 	Possibility to wield two shields (Elf)
+	Certain conditions not working (Elf)
+	Shopping exploits (Elf, OpenTibia SVN)
+	Deletions being removed after restart (Elf)
+	Shutdown issue (Elf)
 ]

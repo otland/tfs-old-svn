@@ -919,13 +919,13 @@ bool Houses::payHouses()
 								paidUntil += 24 * 60 * 60;
 								break;
 							case RENTPERIOD_WEEKLY:
-								paidUntil += 24 * 60 * 60 * 7;
+								paidUntil += 7 * 24 * 60 * 60;
 								break;
 							case RENTPERIOD_MONTHLY:
-								paidUntil += 24 * 60 * 60 * 30;
+								paidUntil += 30 * 24 * 60 * 60;
 								break;
 							case RENTPERIOD_YEARLY:
-								paidUntil += 24 * 60 * 60 * 365;
+								paidUntil += 12 * 30 * 24 * 60 * 60;
 								break;
 							default:
 								break;

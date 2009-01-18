@@ -180,6 +180,7 @@ class ConfigManager
 			STOP_ATTACK_AT_EXIT,
 			DISABLE_OUTFITS_PRIVILEGED,
 			OPTIMIZE_DB_AT_STARTUP,
+			OLD_CONDITION_ACCURACY,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

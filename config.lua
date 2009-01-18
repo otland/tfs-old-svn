@@ -40,6 +40,8 @@
 	experienceByKillingPlayers = "no"
 	showHealingDamage = "no"
 	fieldOwnershipDuration = 5 * 1000
+	stopAttackingAtExit = "no"
+	oldConditionAccuracy = "no"
 
 	-- Connection config
 	worldId = 0
@@ -72,6 +74,7 @@
 	sqlDatabase = "theforgottenserver"
 	sqlFile = "forgottenserver.s3db"
 	sqlKeepAlive = 60
+	optimizeDatabaseAtStartup = "yes"
 	passwordType = "plain"
 
 	-- Deathlist
@@ -109,20 +112,19 @@
 
 	-- Miscellaneous
 	-- NOTE: defaultPriority works only on Windows
+	defaultPriority = "high"
+	maxMessageBuffer = 4
 	kickIdlePlayerAfterMinutes = 15
 	allowChangeOutfit = "yes"
 	allowChangeColors = "yes"
-	maxMessageBuffer = 4
+	disableOutfitsForPrivilegedPlayers = "no"
 	displayGamemastersWithOnlineCommand = "no"
-	defaultPriority = "high"
-	saveGlobalStorage = "yes"
 	bankSystem = "yes"
+	saveGlobalStorage = "yes"
 	displaySkillLevelOnAdvance = "no"
 	spellNameInsteadOfWords = "no"
 	emoteSpells = "no"
-	disableOutfitsForPrivilegedPlayers = "no"
 	expireReportsAfterReads = 1
-	optimizeDatabaseAtStartup = "yes"
 
 	-- Premium account
 	freePremium = "no"

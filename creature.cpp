@@ -1515,6 +1515,9 @@ bool Creature::hasCondition(ConditionType_t type, uint32_t subId/* = 0*/) const
 		if((*it)->getType() != type || (*it)->getSubId() != subId)
 			continue;
 
+		if(g_config.getBool(ConfigManager::OLD_CONDITION_ACCURACY))
+			return true;
+
 		if((*it)->getEndTime() == 0)
 			return true;
 

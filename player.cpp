@@ -2621,14 +2621,13 @@ ReturnValue Player::__queryMaxCount(int32_t index, const Thing* thing, uint32_t 
 
 	if(maxQueryCount < count)
 		return RET_NOTENOUGHROOM;
-	else
-		return RET_NOERROR;
+
+	return RET_NOERROR;
 }
 
 ReturnValue Player::__queryRemove(const Thing* thing, uint32_t count, uint32_t flags) const
 {
 	int32_t index = __getIndexOfThing(thing);
-
 	if(index == -1)
 		return RET_NOTPOSSIBLE;
 
@@ -2651,12 +2650,12 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 	if(index == 0 /*drop to capacity window*/ || index == INDEX_WHEREEVER)
 	{
 		*destItem = NULL;
-
 		const Item* item = thing->getItem();
 		if(item == NULL)
 			return this;
 
-		//find a appropiate slot
+		//find a appropiate slot and list deep containers
+		std::list<Container*> containerList;
 		for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 		{
 			if(inventory[i] == NULL)
@@ -2667,16 +2666,9 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 					return this;
 				}
 			}
-		}
-
-		//try containers
-		std::list<Container*> containerList;
-		for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
-		{
-			if(inventory[i] == tradeItem)
+			else if(inventory[i] == tradeItem)
 				continue;
-
-			if(Container* subContainer = dynamic_cast<Container*>(inventory[i]))
+			else if(Container* subContainer = dynamic_cast<Container*>(inventory[i]))
 			{
 				if(subContainer->__queryAdd(-1, item, item->getItemCount(), 0) == RET_NOERROR)
 				{
@@ -2689,7 +2681,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 			}
 		}
 
-		//check deeper in the containers
+		//check the deep containers
 		for(std::list<Container*>::iterator it = containerList.begin(); it != containerList.end(); ++it)
 		{
 			for(ContainerIterator iit = (*it)->begin(); iit != (*it)->end(); ++iit)
@@ -2705,6 +2697,8 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 						*destItem = NULL;
 						return subContainer;
 					}
+					else
+						containerList.push_back(subContainer);
 				}
 			}
 		}
@@ -2919,6 +2913,7 @@ int32_t Player::__getIndexOfThing(const Thing* thing) const
 		if(inventory[i] == thing)
 			return i;
 	}
+
 	return -1;
 }
 
@@ -2935,10 +2930,9 @@ int32_t Player::__getLastIndex() const
 uint32_t Player::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, bool itemCount /*= true*/) const
 {
 	uint32_t count = 0;
-
 	std::list<const Container*> listContainer;
-	ItemList::const_iterator cit;
 	Container* tmpContainer = NULL;
+
 	Item* item = NULL;
 	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; i++)
 	{
@@ -2948,13 +2942,10 @@ uint32_t Player::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, b
 			{
 				if(itemCount)
 					count += item->getItemCount();
+				else if(item->isRune())
+					count += item->getCharges();
 				else
-				{
-					if(item->isRune())
-						count += item->getCharges();
-					else
-						count += item->getItemCount();
-				}
+					count += item->getItemCount();
 			}
 
 			if((tmpContainer = item->getContainer()))
@@ -2962,10 +2953,12 @@ uint32_t Player::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, b
 		}
 	}
 
+	ItemList::const_iterator cit;
 	while(listContainer.size() > 0)
 	{
 		const Container* container = listContainer.front();
 		listContainer.pop_front();
+
 		count += container->__getItemTypeCount(itemId, subType, itemCount);
 		for(cit = container->getItems(); cit != container->getEnd(); ++cit)
 		{
@@ -2973,6 +2966,7 @@ uint32_t Player::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, b
 				listContainer.push_back(tmpContainer);
 		}
 	}
+
 	return count;
 }
 

@@ -43,21 +43,15 @@ typedef std::map<uint32_t, char*> FunctionMap;
 
 extern Game g_game;
 
-uint32_t max_off;
-uint32_t min_off;
+uint32_t max_off, min_off;
 FunctionMap functionMap;
 bool maploaded = false;
 OTSYS_THREAD_LOCKVAR maploadlock;
 
 #ifdef WIN32
-EXCEPTION_DISPOSITION
- __cdecl _SEHHandler(
-	struct _EXCEPTION_RECORD *ExceptionRecord,
-	void * EstablisherFrame,
-	struct _CONTEXT *ContextRecord,
-	void * DispatcherContext
-);
 void printPointer(std::ostream* output,uint32_t p);
+EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRecord, void * EstablisherFrame,
+	struct _CONTEXT *ContextRecord, void * DispatcherContext);
 #endif
 
 #ifndef COMPILER_STRING
@@ -77,7 +71,7 @@ ExceptionHandler::ExceptionHandler()
 
 ExceptionHandler::~ExceptionHandler()
 {
-	if(installed == true)
+	if(installed)
 		RemoveHandler();
 }
 
@@ -160,7 +154,7 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 	uint32_t file,foundRetAddress = 0;
 	_MEMORY_BASIC_INFORMATION mbi;
 
-	//we SHOUDLN'T save at crash, as it may truncate tile_items table
+	//We SHOULD NOT save at crash, as it may cause data loss
 	//g_game.saveGameState(true);
 
 	std::ostream *outdriver;
@@ -197,16 +191,14 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 	else
 		*outdriver << "Memory load: Error" << std::endl;
 
-	//-process info
-	FILETIME FTcreation,FTexit,FTkernel,FTuser;
+	//- process info
+	FILETIME FTcreation, FTexit, FTkernel, FTuser;
 	SYSTEMTIME systemtime;
-	GetProcessTimes(GetCurrentProcess(),&FTcreation,&FTexit,&FTkernel,&FTuser);
+	GetProcessTimes(GetCurrentProcess(), &FTcreation, &FTexit, &FTkernel, &FTuser);
 	// creation time
-	FileTimeToSystemTime(&FTcreation,&systemtime);
-	*outdriver << "Start time: " << systemtime.wDay << "-" <<
-		systemtime.wMonth << "-" << systemtime.wYear << "  " <<
-		systemtime.wHour << ":" << systemtime.wMinute << ":" <<
-		systemtime.wSecond << std::endl;
+	FileTimeToSystemTime(&FTcreation, &systemtime);
+	*outdriver << "Start time: " << systemtime.wDay << "-" << systemtime.wMonth << "-" << systemtime.wYear << "  " <<
+		systemtime.wHour << ":" << systemtime.wMinute << ":" << systemtime.wSecond << std::endl;
 	// kernel time
 	uint32_t miliseconds;
 	miliseconds = FTkernel.dwHighDateTime * 429497 + FTkernel.dwLowDateTime/10000;
@@ -252,16 +244,15 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 	*outdriver << std::endl;
 	//exception header type and eip
 	outdriver->flags(std::ios::hex | std::ios::showbase);
-	*outdriver << "Exception: " << (uint32_t)ExceptionRecord->ExceptionCode <<
-		" at eip = " << (uint32_t)ExceptionRecord->ExceptionAddress;
+	*outdriver << "Exception: " << (uint32_t)ExceptionRecord->ExceptionCode << " at eip = " << (uint32_t)ExceptionRecord->ExceptionAddress;
 	FunctionMap::iterator functions;
 	unsigned long functionAddr;
 	char* functionName = getFunctionName((unsigned long)ExceptionRecord->ExceptionAddress, functionAddr);
 	if(functionName)
 		*outdriver << "(" << functionName << " - " << functionAddr << ")";
-	*outdriver << std::endl ;
 
 	//registers
+	*outdriver << std::endl;
 	*outdriver << "eax = ";printPointer(outdriver,ContextRecord->Eax);*outdriver << std::endl;
 	*outdriver << "ebx = ";printPointer(outdriver,ContextRecord->Ebx);*outdriver << std::endl;
 	*outdriver << "ecx = ";printPointer(outdriver,ContextRecord->Ecx);*outdriver << std::endl;
@@ -271,13 +262,13 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 	*outdriver << "ebp = ";printPointer(outdriver,ContextRecord->Ebp);*outdriver << std::endl;
 	*outdriver << "esp = ";printPointer(outdriver,ContextRecord->Esp);*outdriver << std::endl;
 	*outdriver << "efl = " << ContextRecord->EFlags << std::endl;
-	*outdriver << std::endl;
 
 	//stack dump
 	esp = (uint32_t *)(ContextRecord->Esp);
 	VirtualQuery(esp, &mbi, sizeof(mbi));
 	stacklimit = (uint32_t*)((uint32_t)(mbi.BaseAddress) + mbi.RegionSize);
 
+	*outdriver << std::endl;
 	*outdriver << "---Stack Trace---" << std::endl;
 	*outdriver << "From: " << (uint32_t)esp <<
 		" to: " << (uint32_t)stacklimit << std::endl;
@@ -305,6 +296,7 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 				next_ret = (uint32_t*)*(esp - 2);
 				frame_param_counter = 0;
 			}
+
 			frame_param_counter++;
 			*outdriver<< std::endl;
 		}
@@ -328,7 +320,7 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 
 	MessageBoxA(NULL, "If you want developers review this crash log, please open a tracker ticket for the software at OtLand.net and attach the report.txt file.", "Error", MB_OK | MB_ICONERROR);
 	std::cout << "> Crash report generated, killing server." << std::endl;
-	exit(1);
+	exit(-1);
 	return ExceptionContinueSearch;
 }
 
@@ -344,8 +336,9 @@ void printPointer(std::ostream* output,uint32_t p)
 bool ExceptionHandler::LoadMap()
 {
 	#ifdef __GNUC__
-	if(maploaded == true)
+	if(maploaded)
 		return false;
+
 	functionMap.clear();
 	installed = false;
 	//load map file if exists
@@ -356,8 +349,9 @@ bool ExceptionHandler::LoadMap()
 	int32_t n = 0;
 	if(!input)
 	{
-		std::cout << "Failed loading symbols. forgottenserver.map not found. " << std::endl;
-		exit(1);
+		MessageBoxA(NULL, "Failed loading symbols, forgottenserver.map file not found.", "Error", MB_OK | MB_ICONERROR);
+		std::cout << "Failed loading symbols, forgottenserver.map file not found. " << std::endl;
+		exit(-1);
 		return false;
 	}
 
@@ -418,7 +412,6 @@ bool ExceptionHandler::LoadMap()
 
 	//close file
 	fclose(input);
-	//std::cout << "> Loaded " << n << " stack symbols" <<std::endl;
 	maploaded = true;
 	#endif
 	return true;
@@ -439,8 +432,8 @@ void ExceptionHandler::dumpStack()
 	uint32_t foundRetAddress = 0;
 	_MEMORY_BASIC_INFORMATION mbi;
 
-	std::cout << "Error: generating report file..." << std::endl;
-	std::ofstream output("report.txt",std::ios_base::app);
+	std::cout << ">> CRASH: Generating report file..." << std::endl;
+	std::ofstream output("report.txt", std::ios_base::app);
 	output.flags(std::ios::hex | std::ios::showbase);
 	time_t rawtime;
 	time(&rawtime);
@@ -509,5 +502,6 @@ void ExceptionHandler::dumpStack()
 
 	output << "*****************************************************" << std::endl;
 	output.close();
+	std::cout << "> Crash report generated, killing server." << std::endl;
 }
 #endif
