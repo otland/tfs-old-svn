@@ -560,9 +560,9 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 								else if(text[2] == 'e')
 									length = 10;
 								else if(text[2] == 'a')
-									length = 18;
+									length = 17;
 								else
-									length = 8;
+									length = 7;
 
 								if(text.length() < length)
 								{
@@ -728,7 +728,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 						}
 						else if(text.substr(0, 5) == "!nick")
 						{
-							StringVec params = explodeString(text.substr(7), ",");
+							StringVec params = explodeString(text.substr(6), ",");
 							if(params.size() >= 2)
 							{
 								std::string param1 = params[0], param2 = params[1];
@@ -830,7 +830,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 						}
 						else if(text.substr(0, 12) == "!setrankname")
 						{
-							StringVec params = explodeString(text.substr(14), ",");
+							StringVec params = explodeString(text.substr(13), ",");
 							if(params.size() >= 2)
 							{
 								std::string param1 = params[0], param2 = params[1];

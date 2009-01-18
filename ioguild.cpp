@@ -156,19 +156,18 @@ bool IOGuild::createGuild(Player* player)
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	player->setGuildId(result->getDataInt("id"));
-	player->setGuildLevel(GUILDLEVEL_LEADER);
+	const uint32_t guildId = result->getDataInt("id");
 	db->freeResult(result);
-	return true;
+	return joinGuild(player, guildId, true);
 }
 
-bool IOGuild::joinGuild(Player* player, uint32_t guildId)
+bool IOGuild::joinGuild(Player* player, uint32_t guildId, bool creation/* = false*/)
 {
 	Database* db = Database::getInstance();
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id`, `name` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `level` = 1";
+	query << "SELECT `id`, `name` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `level` = " << (creation ? "3" : "1");
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -176,13 +175,17 @@ bool IOGuild::joinGuild(Player* player, uint32_t guildId)
 	const std::string rankName = result->getDataString("name");
 	db->freeResult(result);
 
-	query.str("");
-	query << "SELECT `name` as `guildname` FROM `guilds` WHERE `id` = " << guildId;
-	if(!(result = db->storeQuery(query.str())))
-		return false;
+	std::string guildName;
+	if(!creation)
+	{
+		query.str("");
+		query << "SELECT `name` as `guildname` FROM `guilds` WHERE `id` = " << guildId;
+		if(!(result = db->storeQuery(query.str())))
+			return false;
 
-	const std::string guildName = result->getDataString("guildname");
-	db->freeResult(result);
+		guildName = result->getDataString("guildname");
+		db->freeResult(result);
+	}
 
 	query.str("");
 	query << "UPDATE `players` SET `rank_id` = " << rankId << " WHERE `id` = " << player->getGUID() << ";";
@@ -190,10 +193,15 @@ bool IOGuild::joinGuild(Player* player, uint32_t guildId)
 		return false;
 
 	player->setGuildId(guildId);
-	player->setGuildName(guildName);
+	GuildLevel_t level = GUILDLEVEL_MEMBER;
+	if(!creation)
+		player->setGuildName(guildName);
+	else
+		level = GUILDLEVEL_LEADER;
+
+	player->setGuildLevel(GUILDLEVEL_MEMBER);
 	player->setGuildRankId(rankId);
 	player->setGuildRank(rankName);
-	player->setGuildLevel(GUILDLEVEL_MEMBER);
 
 	player->invitedToGuildsList.clear();
 	return true;

@@ -4274,12 +4274,12 @@ int32_t LuaScriptInterface::luaGetTileInfo(lua_State* L)
 	if(Tile* tile = g_game.getMap()->getTile(pos))
 	{
 		lua_newtable(L);
-		setField(L, "protection", tile->hasFlag(TILESTATE_PROTECTIONZONE));
-		setField(L, "nopvp", tile->hasFlag(TILESTATE_NOPVPZONE));
-		setField(L, "nologout", tile->hasFlag(TILESTATE_NOLOGOUT));
-		setField(L, "pvp", tile->hasFlag(TILESTATE_PVPZONE));
-		setField(L, "refresh", tile->hasFlag(TILESTATE_REFRESH));
-		setField(L, "house", tile->hasFlag(TILESTATE_HOUSE));
+		setFieldBool(L, "protection", tile->hasFlag(TILESTATE_PROTECTIONZONE));
+		setFieldBool(L, "nopvp", tile->hasFlag(TILESTATE_NOPVPZONE));
+		setFieldBool(L, "nologout", tile->hasFlag(TILESTATE_NOLOGOUT));
+		setFieldBool(L, "pvp", tile->hasFlag(TILESTATE_PVPZONE));
+		setFieldBool(L, "refresh", tile->hasFlag(TILESTATE_REFRESH));
+		setFieldBool(L, "house", tile->hasFlag(TILESTATE_HOUSE));
 	}
 	else
 	{
@@ -6314,11 +6314,11 @@ int32_t LuaScriptInterface::luaGetMonsterInfo(lua_State* L)
 		setField(L, "race", mType->race);
 		setField(L, "skull", mType->skull);
 		setField(L, "partyShield", mType->partyShield);
-		setField(L, "summonable", mType->isSummonable);
-		setField(L, "illusionable", mType->isIllusionable);
-		setField(L, "convinceable", mType->isConvinceable);
-		setField(L, "attackable", mType->isAttackable);
-		setField(L, "hostile", mType->isHostile);
+		setFieldBool(L, "summonable", mType->isSummonable);
+		setFieldBool(L, "illusionable", mType->isIllusionable);
+		setFieldBool(L, "convinceable", mType->isConvinceable);
+		setFieldBool(L, "attackable", mType->isAttackable);
+		setFieldBool(L, "hostile", mType->isHostile);
 	}
 	else
 	{
@@ -6346,7 +6346,7 @@ int32_t LuaScriptInterface::luaGetMonsterHealingSpells(lua_State* L)
 		setField(L, "range", (*it).range);
 		setField(L, "minCombatValue", (*it).minCombatValue);
 		setField(L, "maxCombatValue", (*it).maxCombatValue);
-		setField(L, "isMelee", (*it).isMelee);
+		setFieldBool(L, "isMelee", (*it).isMelee);
 		lua_settable(L, -3);
 	}
 
@@ -6370,7 +6370,7 @@ int32_t LuaScriptInterface::luaGetMonsterAttackSpells(lua_State* L)
 		setField(L, "range", (*it).range);
 		setField(L, "minCombatValue", (*it).minCombatValue);
 		setField(L, "maxCombatValue", (*it).maxCombatValue);
-		setField(L, "isMelee", (*it).isMelee);
+		setFieldBool(L, "isMelee", (*it).isMelee);
 		lua_settable(L, -3);
 	}
 
@@ -8469,8 +8469,8 @@ int32_t LuaScriptInterface::luaGetVocationInfo(lua_State* L)
 	setField(L, "soul", voc->getSoulMax());
 	setField(L, "soulTicks", voc->getSoulGainTicks());
 	setField(L, "capacity", voc->getCapGain());
-	setField(L, "attackable", voc->isAttackable());
-	setField(L, "needPremium", voc->isPremiumNeeded());
+	setFieldBool(L, "attackable", voc->isAttackable());
+	setFieldBool(L, "needPremium", voc->isPremiumNeeded());
 	return 1;
 }
 
