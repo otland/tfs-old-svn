@@ -18252,7 +18252,9 @@
 		<attribute key="fluidSource" value="blood"/>
 	</item>
 	<item id="7932" article="a" name="burried hole"/>
-	<item id="7933" article="a" name="hole"/>
+	<item id="7933" article="a" name="hole">
+		<attribute key="floorchange" value="down"/>
+	</item>
 	<item id="7936" article="a" name="coal basin"/>
 	<item id="7938" article="a" name="weaved hole"/>
 	<item id="7939" article="a" name="mining helmet">

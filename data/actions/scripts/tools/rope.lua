@@ -1,4 +1,4 @@
-local holeId = {294, 369, 370, 383, 392, 408, 409, 427, 428, 430, 462, 469, 470, 482, 484, 485, 489, 924, 3135, 3136}
+local holeId = {294, 369, 370, 383, 392, 408, 409, 427, 428, 430, 462, 469, 470, 482, 484, 485, 489, 924, 3135, 3136, 7933}
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	local groundTile = getThingfromPos(toPosition)
 	if groundTile.itemid == 384 or groundTile.itemid == 418 or groundTile.itemid == 8278 then
