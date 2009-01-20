@@ -39,11 +39,6 @@ extern ConfigManager g_config;
 
 DatabaseMySQL::DatabaseMySQL()
 {
-	unsigned int readTimeout = 2;
-
-	myTrue = true;
-	myFalse = false;
-
 	m_connected = false;
 	if(!mysql_init(&m_handle))
 	{
@@ -51,12 +46,14 @@ DatabaseMySQL::DatabaseMySQL()
 		return;
 	}
 
-	mysql_options(&m_handle, MYSQL_OPT_RECONNECT, &myTrue);
-	mysql_options(&m_handle, MYSQL_OPT_READ_TIMEOUT, (const char*) &readTimeout);
+	my_bool reconnect = true;
+	mysql_options(&m_handle, MYSQL_OPT_RECONNECT, &reconnect);
+	uint32_t readTimeout = 2;
+	mysql_options(&m_handle, MYSQL_OPT_READ_TIMEOUT, (const char*)&readTimeout);
 
 	if(!mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(ConfigManager::SQL_USER).c_str(), g_config.getString(ConfigManager::SQL_PASS).c_str(), g_config.getString(ConfigManager::SQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), NULL, 0))
 	{
-		std::cout << "Failed connecting to database. MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
+		std::cout << "Failed connecting to database - MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
 		return;
 	}
 
@@ -64,13 +61,12 @@ DatabaseMySQL::DatabaseMySQL()
 	{
 		//MySQL servers < 5.0.19 has a bug where MYSQL_OPT_RECONNECT is (incorrectly) reset by mysql_real_connect calls
 		//See http://dev.mysql.com/doc/refman/5.0/en/mysql-options.html for more information.
-		std::cout << "[Warning] Outdated MySQL server detected. Consider upgrading to a newer version." << std::endl;
+		std::cout << "> WARNING: Outdated MySQL server detected, consider upgrading to a newer version." << std::endl;
 	}
 
-#ifndef __DISABLE_DIRTY_RECONNECT__
-	m_attempts = 0;
-#endif
 	m_connected = true;
+	m_attempts = 0;
+
 	uint32_t keepAlive = g_config.getNumber(ConfigManager::SQL_KEEPALIVE);
 	if(keepAlive)
 		Scheduler::getScheduler().addEvent(createSchedulerTask((keepAlive * 1000), boost::bind(&DatabaseMySQL::keepAlive, this)));
@@ -106,7 +102,7 @@ bool DatabaseMySQL::rollback()
 
 	if(mysql_rollback(&m_handle) != 0)
 	{
-		std::cout << "mysql_rollback(): MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
+		std::cout << "mysql_rollback() - MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
 		return false;
 	}
 
@@ -120,7 +116,7 @@ bool DatabaseMySQL::commit()
 
 	if(mysql_commit(&m_handle) != 0)
 	{
-		std::cout << "mysql_commit(): MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
+		std::cout << "mysql_commit() - MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
 		return false;
 	}
 
@@ -137,15 +133,11 @@ bool DatabaseMySQL::executeQuery(const std::string &query)
 		int32_t error = mysql_errno(&m_handle);
 		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
 		{
-#ifndef __DISABLE_DIRTY_RECONNECT__
 			if(reconnect())
 				return executeQuery(query);
-#else
-			m_connected = false;
-#endif
 		}
 
-		std::cout << "mysql_real_query(): " << query << ": MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
+		std::cout << "mysql_real_query(): " << query << " - MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
 		return false;
 
 	}
@@ -166,15 +158,8 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 		int32_t error = mysql_errno(&m_handle);
 		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
 		{
-#ifndef __DISABLE_DIRTY_RECONNECT__
 			if(reconnect())
 				return storeQuery(query);
-#else
-			// if auto reconnect is set, we need to send query again and it will reconnect :S
-			mysql_ping(&m_handle);
-			return storeQuery(query);
-			//m_connected = false;
-#endif
 		}
 
 		std::cout << "mysql_real_query(): " << query << ": MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
@@ -191,12 +176,8 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 	int32_t error = mysql_errno(&m_handle);
 	if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
 	{
-#ifndef __DISABLE_DIRTY_RECONNECT__
 		if(reconnect())
 			return storeQuery(query);
-#else
-		m_connected = false;
-#endif
 	}
 
 	std::cout << "mysql_store_result(): " << query << ": MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
@@ -241,22 +222,19 @@ void DatabaseMySQL::keepAlive()
 #ifndef __DISABLE_DIRTY_RECONNECT__
 bool DatabaseMySQL::reconnect()
 {
-	// if we want to know if we reconnect we can check mysql_thread_id() before and after mysql_ping
-
-	mysql_ping(&m_handle);
-	return true;
-	/*if(m_attempts > MAX_RECONNECT_ATTEMPTS)
+	if(m_attempts > MAX_RECONNECT_ATTEMPTS)
 	{
+		std::cout << "Failed reconnecting to database - MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
 		m_connected = false;
-		std::cout << "Failed reconnecting to database. MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
 		return false;
 	}
-	else if(mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(ConfigManager::SQL_USER).c_str(), g_config.getString(ConfigManager::SQL_PASS).c_str(), g_config.getString(ConfigManager::SQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), NULL, 0))
+
+	if(mysql_ping(&m_handle))
 		m_attempts = 0;
 	else
 		m_attempts++;
 
-	return true;*/
+	return true;
 }
 #endif
 

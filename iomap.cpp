@@ -73,11 +73,10 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 		return false;
 	}
 
-	PropStream propStream;
-
 	uint32_t type = 0;
-
 	NODE root = f.getChildNode((NODE)NULL, type);
+
+	PropStream propStream;
 	if(!f.getProps(root, propStream))
 	{
 		setLastErrorString("Could not read root property.");
