@@ -73,6 +73,12 @@
 					* Added alot of protocol 8.3 monsters
 					* Several protocol 8.4 monsters
 
+			movements/
+				scripts/
+					swimming/
+						*.lua
+							* Added swimming system
+
 			npc/
 				*.xml
 				lib/
@@ -130,17 +136,20 @@
 					* Added protocol 8.4 lamps
 					* Kits
 					* Fixes
+					* Fixed all holes, ladder, rope spots, etc.
 				scripts/
 					tools/
 						fishing.lua
 							* Fixed worms usage
 						rope.lua
 							* Protocol 8.2 rope spots
+							* Fixed all holes, ladder, rope spots, etc.
 						blessed_wooden_stake.lua
 						obsidian_knife.lua
 							* Optimalized and fixed script
 						shovel.lua
 							* Fixes
+							* Fixed all holes, ladder, rope spots, etc.
 					quests/
 						system.lua
 							* Fixed reported bugs
@@ -154,6 +163,9 @@
 							* Fixed special doors
 							* Fixed disappearing doors
 							* Applicated usage of engine-sided level doors detection
+						teleport.lua
+							* Fixes
+							* Fixed all holes, ladder, rope spots, etc.
 					liquids/
 						containers.lua
 							* Fixed few issues of fluids
@@ -161,6 +173,8 @@
 							* Level requirement fix
 						mastermind_potion.lua
 							* Fixed issue with not working condition
+						*.lua
+							* Exhaustion fixes
 
 			creaturescripts/
 				creaturescripts.xml
@@ -181,6 +195,7 @@
 					* Some 8.4 items
 					* More construction kits
 					* New attributes usage
+					* Fixed all holes, ladder, rope spots, etc.
 				items.otb
 					* Compatibility with protocol 8.22
 					* Compatibility with OTBv3
@@ -217,10 +232,10 @@
 					* Added items requiring vocation, level or magic level
 					* Added 'shield'/'hand' slot
 					* Added protocol 8.4 armory
+					* Fixed all holes, ladder, rope spots, etc.
 				scripts/
-					swimming/
-						*.lua
-							* Added swimming system
+					tiles.lua
+						* Rewrote how (depot and level) tiles work, depot tile does not need actionId anymore
 
 			npc/
 				*.xml
@@ -246,6 +261,7 @@
 					support/
 						magic rope.lua
 							* Protocol 8.2 rope spots
+							* Fixed all holes, ladder, rope spots, etc.
 						desintegrade rune.lua
 							* Fixed issue with possibility of removing items from depots when standing outside depot
 				spells.xml
