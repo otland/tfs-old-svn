@@ -420,24 +420,19 @@ void ScriptEnviroment::removeTempItem(Item* item)
 		m_tempItems.erase(it);
 }
 
-uint32_t ScriptEnviroment::addDBResult(DBResult* res)
+uint32_t ScriptEnviroment::addResult(DBResult* res)
 {
 	uint32_t lastId = 0;
-	while(true)
-	{
-		if(m_tempResults.find(lastId) == m_tempResults.end())
-			break;
-
+	while(m_tempResults.find(lastId) != m_tempResults.end())
 		lastId++;
-	}
 
 	m_tempResults[lastId] = res;
 	return lastId;
 }
 
-bool ScriptEnviroment::removeDBResult(uint32_t resId)
+bool ScriptEnviroment::removeResult(uint32_t rid)
 {
-	DBResMap::iterator it = m_tempResults.find(resId);
+	DBResMap::iterator it = m_tempResults.find(rid);
 	if(it != m_tempResults.end())
 	{
 		m_tempResults.erase(it);
@@ -447,9 +442,9 @@ bool ScriptEnviroment::removeDBResult(uint32_t resId)
 	return false;
 }
 
-DBResult* ScriptEnviroment::getDBResult(uint32_t resId)
+DBResult* ScriptEnviroment::getResult(uint32_t rid)
 {
-	DBResMap::iterator it = m_tempResults.find(resId);
+	DBResMap::iterator it = m_tempResults.find(rid);
 	if(it != m_tempResults.end())
 		return it->second;
 
@@ -2077,7 +2072,7 @@ void LuaScriptInterface::registerFunctions()
 	luaL_register(m_luaState, "db", LuaScriptInterface::luaDatabaseReg);
 
 	//result table
-	luaL_register(m_luaState, "result", LuaScriptInterface::luaDBResultReg);
+	luaL_register(m_luaState, "result", LuaScriptInterface::luaResultReg);
 
 	//bit table
 	luaL_register(m_luaState, "bit", LuaScriptInterface::luaBitReg);
@@ -9606,7 +9601,7 @@ int32_t LuaScriptInterface::luaDatabaseStoreQuery(lua_State *L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(DBResult* res = Database::getInstance()->storeQuery(popString(L)))
 	{
-		lua_pushnumber(L, env->addDBResult(res));
+		lua_pushnumber(L, env->addResult(res));
 		return 1;
 	}
 
@@ -9653,7 +9648,7 @@ int32_t LuaScriptInterface::luaResultGetDataInt(lua_State *L)
 	const std::string& s = popString(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	DBResult* res = env->getDBResult(popNumber(L));
+	DBResult* res = env->getResult(popNumber(L));
 	CHECK_RESULT()
 
 	lua_pushnumber(L, res->getDataInt(s));
@@ -9667,7 +9662,7 @@ int32_t LuaScriptInterface::luaResultGetDataLong(lua_State *L)
 	const std::string& s = popString(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	DBResult* res = env->getDBResult(popNumber(L));
+	DBResult* res = env->getResult(popNumber(L));
 	CHECK_RESULT()
 
 	lua_pushnumber(L, res->getDataLong(s));
@@ -9681,7 +9676,7 @@ int32_t LuaScriptInterface::luaResultGetDataString(lua_State *L)
 	const std::string& s = popString(L); 
 
 	ScriptEnviroment* env = getScriptEnv();
-	DBResult* res = env->getDBResult(popNumber(L));
+	DBResult* res = env->getResult(popNumber(L));
 	CHECK_RESULT()
 
 	lua_pushstring(L, res->getDataString(s).c_str());
@@ -9695,11 +9690,11 @@ int32_t LuaScriptInterface::luaResultGetDataStream(lua_State *L)
 	const std::string s = popString(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	DBResult* res = env->getDBResult(popNumber(L));
+	DBResult* res = env->getResult(popNumber(L));
 	CHECK_RESULT()
 
 	uint64_t length = 0;
-	lua_pushstring(L, res->getDataStream(s, length).c_str());
+	lua_pushstring(L, res->getDataStream(s, length));
 	lua_pushnumber(L, length);
 	return 2;
 }
@@ -9710,7 +9705,7 @@ int32_t LuaScriptInterface::luaResultNext(lua_State *L)
 	//Goes to the next result of the stored result
 	//Returns true if the next result exists, false otherwise
 	ScriptEnviroment* env = getScriptEnv();
-	DBResult* res = env->getDBResult(popNumber(L));
+	DBResult* res = env->getResult(popNumber(L));
 	CHECK_RESULT()
 
 	lua_pushboolean(L, res->next());
@@ -9721,12 +9716,14 @@ int32_t LuaScriptInterface::luaResultFree(lua_State *L)
 {
 	//result.free(res)
 	//Frees the memory of the result, and removes it from the server
+	uint32_t rid = popNumber(L);
+
 	ScriptEnviroment* env = getScriptEnv();
-	DBResult* res = env->getDBResult(resId);
+	DBResult* res = env->getResult(rid);
 	CHECK_RESULT()
 
 	Database* db = Database::getInstance();
-	bool ret = env->removeDBResult(popNumber(L));
+	bool ret = env->removeResult(rid);
 	db->freeResult(res);
 
 	lua_pushboolean(L, ret);

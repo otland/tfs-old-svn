@@ -121,9 +121,9 @@ class ScriptEnviroment
 		void addTempItem(Item* item);
 		void removeTempItem(Item* item);
 
-		uint32_t addDBResult(DBResult* res);
-		bool removeDBResult(uint32_t resId);
-		DBResult* getDBResult(uint32_t resId);
+		uint32_t addResult(DBResult* res);
+		bool removeResult(uint32_t rid);
+		DBResult* getResult(uint32_t rid);
 
 		void addGlobalStorageValue(const uint32_t key, const std::string& value);
 		bool getGlobalStorageValue(const uint32_t key, std::string& value) const;
