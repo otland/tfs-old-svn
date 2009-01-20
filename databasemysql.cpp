@@ -150,10 +150,8 @@ bool DatabaseMySQL::executeQuery(const std::string &query)
 
 	}
 
-	/*if(MYSQL_RES* m_res = mysql_store_result(&m_handle))
-		mysql_free_result(m_res);*/
-	
-	mysql_store_result(&m_handle);
+	if(MYSQL_RES* m_res = mysql_store_result(&m_handle))
+		mysql_free_result(m_res);
 
 	return true;
 }
