@@ -2103,25 +2103,25 @@ const luaL_Reg LuaScriptInterface::luaDatabaseReg[] =
 	{NULL,NULL}
 };
 
-const luaL_Reg LuaScriptInterface::luaDBResultReg[] =
+const luaL_Reg LuaScriptInterface::luaResultReg[] =
 {
 	//result.getDataInt(resId, s)
-	{"getDataInt", LuaScriptInterface::luaDBResultGetDataInt},
+	{"getDataInt", LuaScriptInterface::luaResultGetDataInt},
 
 	//result.getDataLong(resId, s)
-	{"getDataLong", LuaScriptInterface::luaDBResultGetDataLong},
+	{"getDataLong", LuaScriptInterface::luaResultGetDataLong},
 
 	//result.getDataString(resId, s)
-	{"getDataString", LuaScriptInterface::luaDBResultGetDataString},
+	{"getDataString", LuaScriptInterface::luaResultGetDataString},
 
 	//result.getDataStream(resId, s, length)
-	{"getDataStream", LuaScriptInterface::luaDBResultGetDataStream},
+	{"getDataStream", LuaScriptInterface::luaResultGetDataStream},
 
 	//result.next(resId)
-	{"next", LuaScriptInterface::luaDBResultNext},
+	{"next", LuaScriptInterface::luaResultNext},
 
 	//result.free(resId)
-	{"free", LuaScriptInterface::luaDBResultFree},
+	{"free", LuaScriptInterface::luaResultFree},
 
 	{NULL,NULL}
 };
@@ -9592,11 +9592,7 @@ int32_t LuaScriptInterface::luaDatabaseExecute(lua_State *L)
 	//executes the query on the database
 	//Same as Database::getInstance()->executeQuery(query) on C++
 	//returns true if worked, false otherwise, plus prints the SQL error on the console
-	std::string query = popString(L);
-
-	bool ret = Database::getInstance()->executeQuery(query);
-
-	lua_pushboolean(L, ret);
+	lua_pushboolean(L, Database::getInstance()->executeQuery(popString(L)));
 	return 1;
 }
 
@@ -9607,15 +9603,10 @@ int32_t LuaScriptInterface::luaDatabaseStoreQuery(lua_State *L)
 	//mainly used for SELECT queries
 	//Returns an integer; The internal ID of the stored result
 	//Returns LUA_ERROR if the result could not be stored, plus prints the SQL error on the console
-	std::string query = popString(L);
-
 	ScriptEnviroment* env = getScriptEnv();
-
-	DBResult* res = Database::getInstance()->storeQuery(query);
-	if(res)
+	if(DBResult* res = Database::getInstance()->storeQuery(popString(L)))
 	{
-		uint32_t resId = env->addDBResult(res);
-		lua_pushnumber(L, resId);
+		lua_pushnumber(L, env->addDBResult(res));
 		return 1;
 	}
 
@@ -9627,9 +9618,7 @@ int32_t LuaScriptInterface::luaDatabaseEscapeString(lua_State *L)
 {
 	//db.escapeString(str)
 	//Returns the escaped string ready to use on SQL queries
-	std::string str = popString(L);
-
-	lua_pushstring(L, Database::getInstance()->escapeString(str).c_str());
+	lua_pushstring(L, Database::getInstance()->escapeString(popString(L)).c_str());
 	return 1;
 }
 
@@ -9639,9 +9628,7 @@ int32_t LuaScriptInterface::luaDatabaseEscapeBlob(lua_State *L)
 	//returns the escaped BLOB string to use on SQL queries
 	//Used for conditions/item's attributes (un)serialization
 	uint32_t length = popNumber(L);
-	std::string s = popString(L);
-
-	lua_pushstring(L, Database::getInstance()->escapeBlob(s.c_str(), length).c_str());
+	lua_pushstring(L, Database::getInstance()->escapeBlob(popString(L), length).c_str());
 	return 1;
 }
 
@@ -9659,106 +9646,87 @@ int32_t LuaScriptInterface::luaDatabaseStringComparisonOperator(lua_State *L)
 		lua_pushnumber(L, LUA_ERROR); \
 		return 1; \
 	}
-
-int32_t LuaScriptInterface::luaDBResultGetDataInt(lua_State *L)
+int32_t LuaScriptInterface::luaResultGetDataInt(lua_State *L)
 {
 	//result.getDataInt(res, s)
 	//returns an integer
 	const std::string& s = popString(L);
-	uint32_t resId = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	DBResult* res = env->getDBResult(resId);
+	DBResult* res = env->getDBResult(popNumber(L));
 	CHECK_RESULT()
 
-	uint32_t n = res->getDataInt(s);
-	lua_pushnumber(L, n);
+	lua_pushnumber(L, res->getDataInt(s));
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDBResultGetDataLong(lua_State *L)
+int32_t LuaScriptInterface::luaResultGetDataLong(lua_State *L)
 {
 	//result.getDataLong(res, s)
 	//returns a long
 	const std::string& s = popString(L);
-	uint32_t resId = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	DBResult* res = env->getDBResult(resId);
+	DBResult* res = env->getDBResult(popNumber(L));
 	CHECK_RESULT()
 
-	uint32_t n = res->getDataLong(s);
-	lua_pushnumber(L, n);
+	lua_pushnumber(L, res->getDataLong(s));
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDBResultGetDataString(lua_State *L)
+int32_t LuaScriptInterface::luaResultGetDataString(lua_State *L)
 {
 	//result.getDataString(res, s)
 	//returns a string
 	const std::string& s = popString(L); 
-	uint32_t resId = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	DBResult* res = env->getDBResult(resId);
+	DBResult* res = env->getDBResult(popNumber(L));
 	CHECK_RESULT()
 
-	std::string str = res->getDataString(s);
-	lua_pushstring(L, str.c_str());
+	lua_pushstring(L, res->getDataString(s).c_str());
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDBResultGetDataStream(lua_State *L)
+int32_t LuaScriptInterface::luaResultGetDataStream(lua_State *L)
 {
 	//result.getDataStream(res, s)
 	//Returns a BLOB string and the length of it
 	const std::string s = popString(L);
-	uint32_t resId = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	DBResult* res = env->getDBResult(resId);
+	DBResult* res = env->getDBResult(popNumber(L));
 	CHECK_RESULT()
 
-	uint64_t length;
-	const char* str = res->getDataStream(s, length);
-	lua_pushstring(L, str);
+	uint64_t length = 0;
+	lua_pushstring(L, res->getDataStream(s, length).c_str());
 	lua_pushnumber(L, length);
 	return 2;
 }
 
-int32_t LuaScriptInterface::luaDBResultNext(lua_State *L)
+int32_t LuaScriptInterface::luaResultNext(lua_State *L)
 {
 	//result.next(res)
 	//Goes to the next result of the stored result
 	//Returns true if the next result exists, false otherwise
-	uint32_t resId = popNumber(L);
-
 	ScriptEnviroment* env = getScriptEnv();
-
-	DBResult* res = env->getDBResult(resId);
+	DBResult* res = env->getDBResult(popNumber(L));
 	CHECK_RESULT()
 
 	lua_pushboolean(L, res->next());
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDBResultFree(lua_State *L)
+int32_t LuaScriptInterface::luaResultFree(lua_State *L)
 {
 	//result.free(res)
 	//Frees the memory of the result, and removes it from the server
-	uint32_t resId = popNumber(L);
-
 	ScriptEnviroment* env = getScriptEnv();
-
 	DBResult* res = env->getDBResult(resId);
 	CHECK_RESULT()
 
 	Database* db = Database::getInstance();
-	bool ret = env->removeDBResult(resId);
+	bool ret = env->removeDBResult(popNumber(L));
 	db->freeResult(res);
 
 	lua_pushboolean(L, ret);

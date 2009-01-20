@@ -747,13 +747,13 @@ class LuaScriptInterface
 		static int32_t luaDatabaseEscapeBlob(lua_State *L);
 		static int32_t luaDatabaseStringComparisonOperator(lua_State *L);
 
-		static const luaL_Reg luaDBResultReg[7];
-		static int32_t luaDBResultGetDataInt(lua_State *L);
-		static int32_t luaDBResultGetDataLong(lua_State *L);
-		static int32_t luaDBResultGetDataString(lua_State *L);
-		static int32_t luaDBResultGetDataStream(lua_State *L);
-		static int32_t luaDBResultNext(lua_State *L);
-		static int32_t luaDBResultFree(lua_State *L);
+		static const luaL_Reg luaResultReg[7];
+		static int32_t luaResultGetDataInt(lua_State *L);
+		static int32_t luaResultGetDataLong(lua_State *L);
+		static int32_t luaResultGetDataString(lua_State *L);
+		static int32_t luaResultGetDataStream(lua_State *L);
+		static int32_t luaResultNext(lua_State *L);
+		static int32_t luaResultFree(lua_State *L);
 
 		static const luaL_Reg luaBitReg[13];
 		static int32_t luaBitNot(lua_State* L);
