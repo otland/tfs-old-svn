@@ -809,7 +809,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 		}
 	}
 
-	uint32_t conditionsSize;
+	uint32_t conditionsSize = 0;
 	const char* conditions = propWriteStream.getStream(conditionsSize);
 	query << "`conditions` = " << db->escapeBlob(conditions, conditionsSize) << ", ";
 	query << "`loss_experience` = " << (uint32_t)player->getLossPercent(LOSS_EXPERIENCE) << ", ";

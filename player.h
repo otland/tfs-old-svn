@@ -440,7 +440,7 @@ class Player : public Creature, public Cylinder
 		void addInFightTicks(bool pzLock = false);
 		void addDefaultRegeneration(uint32_t addTicks);
 
-		virtual uint64_t getGainedExperience(Creature* attacker) const;
+		virtual uint64_t getGainedExperience(Creature* attacker);
 
 		//combat event functions
 		virtual void onAddCondition(ConditionType_t type);

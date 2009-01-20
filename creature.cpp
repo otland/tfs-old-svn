@@ -1115,7 +1115,7 @@ uint32_t Creature::getStaminaRatio(Creature* attacker) const
 	return totalHits;
 }
 
-uint64_t Creature::getGainedExperience(Creature* attacker) const
+uint64_t Creature::getGainedExperience(Creature* attacker)
 {
 	uint64_t baseExperience = (uint64_t)std::floor(getDamageRatio(attacker) * getLostExperience());
 

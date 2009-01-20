@@ -383,7 +383,7 @@ void Chat::removeUserFromAllChannels(Player* player)
 bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& text, uint16_t channelId)
 {
 	ChatChannel* channel = getChannel(player, channelId);
-	if(!channel || !player)
+	if(!channel || !player || text.length() < 1)
 		return false;
 
 	if(!player->hasFlag(PlayerFlag_CannotBeMuted))
@@ -405,7 +405,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 	{
 		if(g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
 		{
-			if(text == "!disband" || text.substr(0, 7) == "!invite" || text == "!leave" || text.substr(0, 5) == "!kick" || text.substr(0, 7) == "!revoke" || text.substr(0, 7) == "!demote" || text.substr(0, 8) == "!promote" || text.substr(0, 15) == "!passleadership" || text.substr(0, 5) == "!nick" || text.substr(0, 12) == "!setrankname" || text.substr(0, 8) == "!setmotd" || text == "!cleanmotd" || text == "!commands")
+			if(text[0] == '!'/*todo: command modifiers*/)
 			{
 				if(player->getGuildId())
 				{
@@ -726,7 +726,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 							else
 								player->sendCancel("You are not the leader of your guild.");
 						}
-						else if(text.substr(0, 5) == "!nick")
+						else if(text.substr(0, 5) == "!nick" && text.length() > 7)
 						{
 							StringVec params = explodeString(text.substr(6), ",");
 							if(params.size() >= 2)
@@ -828,7 +828,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 							else
 								player->sendCancel("Invalid guildcommand parameters");
 						}
-						else if(text.substr(0, 12) == "!setrankname")
+						else if(text.substr(0, 12) == "!setrankname" && text.length() > 14)
 						{
 							StringVec params = explodeString(text.substr(13), ",");
 							if(params.size() >= 2)

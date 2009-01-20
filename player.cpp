@@ -3191,7 +3191,7 @@ void Player::doAttacking(uint32_t interval)
 		lastAttack = OTSYS_TIME();
 }
 
-uint64_t Player::getGainedExperience(Creature* attacker) const
+uint64_t Player::getGainedExperience(Creature* attacker)
 {
 	if(g_config.getBool(ConfigManager::EXPERIENCE_FROM_PLAYERS))
 	{
@@ -3214,7 +3214,11 @@ uint64_t Player::getGainedExperience(Creature* attacker) const
 				uint64_t c = getExperience();
 
 				uint64_t result = std::max((uint64_t)0, (uint64_t)std::floor(getDamageRatio(attacker) * std::max((double)0, ((double)(1 - (((double)a / b))))) * 0.05 * c));
-				return (result * (g_game.getExperienceStage(attackerPlayer->getLevel()) + attackerPlayer->extraExpRate));
+				uint64_t finalResult = (result * (g_game.getExperienceStage(attackerPlayer->getLevel()) + attackerPlayer->extraExpRate));
+				
+				uint64_t loss = getLostExperience();
+
+				return std::min(loss, finalResult);
 			}
 		}
 	}

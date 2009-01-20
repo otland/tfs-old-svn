@@ -39,6 +39,8 @@ extern ConfigManager g_config;
 
 DatabaseMySQL::DatabaseMySQL()
 {
+	unsigned int readTimeout = 2;
+
 	myTrue = true;
 	myFalse = false;
 
@@ -50,6 +52,8 @@ DatabaseMySQL::DatabaseMySQL()
 	}
 
 	mysql_options(&m_handle, MYSQL_OPT_RECONNECT, &myTrue);
+	mysql_options(&m_handle, MYSQL_OPT_READ_TIMEOUT, (const char*) &readTimeout);
+
 	if(!mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(ConfigManager::SQL_USER).c_str(), g_config.getString(ConfigManager::SQL_PASS).c_str(), g_config.getString(ConfigManager::SQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), NULL, 0))
 	{
 		std::cout << "Failed connecting to database. MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
@@ -146,8 +150,10 @@ bool DatabaseMySQL::executeQuery(const std::string &query)
 
 	}
 
-	if(MYSQL_RES* m_res = mysql_store_result(&m_handle))
-		mysql_free_result(m_res);
+	/*if(MYSQL_RES* m_res = mysql_store_result(&m_handle))
+		mysql_free_result(m_res);*/
+	
+	mysql_store_result(&m_handle);
 
 	return true;
 }
@@ -166,7 +172,10 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 			if(reconnect())
 				return storeQuery(query);
 #else
-			m_connected = false;
+			// if auto reconnect is set, we need to send query again and it will reconnect :S
+			mysql_ping(&m_handle);
+			return storeQuery(query);
+			//m_connected = false;
 #endif
 		}
 
@@ -226,7 +235,7 @@ void DatabaseMySQL::keepAlive()
 {
 	int32_t delay = g_config.getNumber(ConfigManager::SQL_KEEPALIVE);
 	if(time(NULL) > (m_lastUse + delay))
-		executeQuery("SHOW TABLES;");
+		mysql_ping(&m_handle);
 
 	Scheduler::getScheduler().addEvent(createSchedulerTask((delay * 1000), boost::bind(&DatabaseMySQL::keepAlive, this)));
 }
@@ -234,7 +243,11 @@ void DatabaseMySQL::keepAlive()
 #ifndef __DISABLE_DIRTY_RECONNECT__
 bool DatabaseMySQL::reconnect()
 {
-	if(m_attempts > MAX_RECONNECT_ATTEMPTS)
+	// if we want to know if we reconnect we can check mysql_thread_id() before and after mysql_ping
+
+	mysql_ping(&m_handle);
+	return true;
+	/*if(m_attempts > MAX_RECONNECT_ATTEMPTS)
 	{
 		m_connected = false;
 		std::cout << "Failed reconnecting to database. MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
@@ -245,7 +258,7 @@ bool DatabaseMySQL::reconnect()
 	else
 		m_attempts++;
 
-	return true;
+	return true;*/
 }
 #endif
 

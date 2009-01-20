@@ -280,7 +280,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool convinceCreature(Creature* creature) {return false;}
 
 		virtual bool onDeath();
-		virtual uint64_t getGainedExperience(Creature* attacker) const;
+		virtual uint64_t getGainedExperience(Creature* attacker);
 		void addDamagePoints(Creature* attacker, int32_t damagePoints);
 		void addHealPoints(Creature* caster, int32_t healthPoints);
 		bool hasBeenAttacked(uint32_t attackerId);
