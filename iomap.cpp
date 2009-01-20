@@ -74,6 +74,9 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 	}
 
 	PropStream propStream;
+
+	uint32_t type = 0;
+
 	NODE root = f.getChildNode((NODE)NULL, type);
 	if(!f.getProps(root, propStream))
 	{
@@ -128,7 +131,6 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 	map->mapWidth = rootHeader->width;
 	map->mapHeight = rootHeader->height;
 
-	uint32_t type;
 	NODE nodeMap = f.getChildNode(root, type);
 	if(type != OTBM_MAP_DATA)
 	{
@@ -236,13 +238,13 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					}
 
 					OTBM_Tile_coords* tileCoord;
-					if(!propStream.GET_STRUCT(tile_coord))
+					if(!propStream.GET_STRUCT(tileCoord))
 					{
 						setLastErrorString("Could not read tile position.");
 						return false;
 					}
 
-					uint16_t px = base_x + tile_coord->_x, py = base_y + tile_coord->_y;
+					uint16_t px = base_x + tileCoord->_x, py = base_y + tileCoord->_y;
 					uint8_t pz = base_z;
 
 					House* house = NULL;
@@ -452,7 +454,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 				nodeTown = f.getNextNode(nodeTown, type);
 			}
 		}
-		else if(type == OTBM_WAYPOINTS && root_header->version > 1)
+		else if(type == OTBM_WAYPOINTS && rootHeader->version > 1)
 		{
 			NODE nodeWaypoint = f.getChildNode(nodeMapData, type);
 			while(nodeWaypoint != NO_NODE)
