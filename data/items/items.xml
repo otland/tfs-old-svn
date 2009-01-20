@@ -16550,8 +16550,12 @@
 	<item id="7521" article="a" name="coffin"/>
 	<item id="7522" article="a" name="coffin"/>
 	<item id="7523" article="a" name="coffin"/>
-	<item id="7524" article="a" name="coffin"/>
-	<item id="7525" article="a" name="coffin"/>
+	<item id="7524" article="a" name="coffin">
+		<attribute key="floorchange" value="west"/>
+	</item>
+	<item id="7525" article="a" name="coffin">
+		<attribute key="floorchange" value="north"/>
+	</item>
 	<item id="7526" article="a" name="dwarven beard">
 		<attribute key="weight" value="1100"/>
 	</item>
@@ -18254,15 +18258,21 @@
 	<item id="7932" article="a" name="burried hole"/>
 	<item id="7933" article="a" name="hole">
 		<attribute key="floorchange" value="down"/>
+		<attribute key="decayTo" value="7932"/>
+		<attribute key="duration" value="600"/>
 	</item>
 	<item id="7936" article="a" name="coal basin"/>
-	<item id="7938" article="a" name="weaved hole"/>
+	<item id="7938" article="a" name="weaved hole">
+		<attribute key="floorchange" value="down"/>
+	</item>
 	<item id="7939" article="a" name="mining helmet">
 		<attribute key="weight" value="700"/>
 		<attribute key="armor" value="1"/>
 		<attribute key="slotType" value="head"/>
 	</item>
-	<item id="7940" name="cave entrance"/>
+	<item id="7940" name="cave entrance">
+		<attribute key="floorchange" value="west"/>
+	</item>
 	<item id="7943" name="shallow water">
 		<attribute key="allowpickupable" value="1"/>
 		<attribute key="fluidSource" value="water"/>
@@ -18516,8 +18526,12 @@
 	</item>
 	<item id="8190" article="a" name="spellbook"/>
 	<item id="8194" article="a" name="birthday cake"/>
-	<item id="8202" name="cave entrance"/>
-	<item id="8203" name="cave entrance"/>
+	<item id="8202" name="cave entrance">
+		<attribute key="floorchange" value="north"/>
+	</item>
+	<item id="8203" name="cave entrance">
+		<attribute key="floorchange" value="north"/>
+	</item>
 	<item id="8204" name="easily inflammable sulphur">
 		<attribute key="weight" value="50"/>
 	</item>
@@ -18529,10 +18543,18 @@
 		<attribute key="decayTo" value="0"/>
 		<attribute key="duration" value="120"/>
 	</item>
-	<item id="8210" name="cave entrance"/>
-	<item id="8211" name="cave entrance"/>
-	<item id="8212" name="cave entrance"/>
-	<item id="8213" name="cave entrance"/>
+	<item id="8210" name="cave entrance">
+		<attribute key="floorchange" value="north"/>
+	</item>
+	<item id="8211" name="cave entrance">
+		<attribute key="floorchange" value="west"/>
+	</item>
+	<item id="8212" name="cave entrance">
+		<attribute key="floorchange" value="west"/>
+	</item>
+	<item id="8213" name="cave entrance">
+		<attribute key="floorchange" value="west"/>
+	</item>
 	<item id="8233" name="dragon head"/>
 	<item id="8234" name="dragon head"/>
 	<item id="8235" name="dragon head"/>
@@ -18733,9 +18755,6 @@
 	<item id="8320" article="a" name="sand dune"/>
 	<item id="8321" article="a" name="sand dune"/>
 	<item id="8322" article="a" name="sand dune"/>
-	<item id="8323" article="a" name="hole">
-		<attribute key="floorchange" value="down"/>
-	</item>
 	<item id="8323" article="a" name="hole">
 		<attribute key="floorchange" value="down"/>
 	</item>
@@ -19094,6 +19113,8 @@
 	</item>
 	<item id="8585" article="a" name="hole">
 		<attribute key="floorchange" value="down"/>
+		<attribute key="decayTo" value="8579"/>
+		<attribute key="duration" value="600"/>
 	</item>
 	<item id="8586" name="dirt"/>
 	<item id="8587" article="a" name="chest">
@@ -20164,7 +20185,9 @@
 		<attribute key="description" value="It is the pheromone gland of a rotworm queen."/>
 		<attribute key="weight" value="050"/>
 	</item>
-	<item id="8972"/>
+	<item id="8972" article="a" name="hole">
+		<attribute key="floorchange" value="down"/>
+	</item>
 	<item id="8973" name="buttress"/>
 	<item id="8974" article="a" name="oracle figurine">
 	<attribute key="weight" value="800"/>
