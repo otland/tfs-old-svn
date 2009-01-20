@@ -264,8 +264,7 @@ class Map
 
 	protected:
 		uint32_t mapWidth, mapHeight;
-		std::string spawnfile;
-		std::string housefile;
+		std::string description, spawnfile, housefile;
 		SpectatorCache spectatorCache;
 
 		// Actually scans the map for spectators
@@ -298,7 +297,6 @@ class Map
 		TileMap refreshTileMap;
 
 		friend class Game;
-
 		friend class IOMap;
 };
 

@@ -55,7 +55,7 @@ enum OTBM_AttrTypes_t
 
 enum OTBM_NodeTypes_t
 {
-	OTBM_ROOTV1 = 1,
+	OTBM_ROOTV2 = 1,
 	OTBM_MAP_DATA = 2,
 	OTBM_ITEM_DEF = 3,
 	OTBM_TILE_AREA = 4,
@@ -78,29 +78,24 @@ enum OTBM_NodeTypes_t
 struct OTBM_root_header
 {
 	uint32_t version;
-	uint16_t width;
-	uint16_t height;
-	uint32_t majorVersionItems;
-	uint32_t minorVersionItems;
+	uint16_t width, height;
+	uint32_t majorVersionItems, minorVersionItems;
 };
 
 struct OTBM_Destination_coords
 {
-	uint16_t _x;
-	uint16_t _y;
+	uint16_t _x, _y;
 	uint8_t _z;
 };
 
 struct OTBM_Tile_coords
 {
-	uint8_t _x;
-	uint8_t _y;
+	uint8_t _x, _y;
 };
 
 struct OTBM_HouseTile_coords
 {
-	uint8_t _x;
-	uint8_t _y;
+	uint8_t _x, _y;
 	uint32_t _houseid;
 };
 
@@ -127,6 +122,7 @@ class IOMap
 				map->spawnfile = Status::getInstance()->getMapName();
 				map->spawnfile += "-spawn.xml";
 			}
+
 			return Spawns::getInstance()->loadFromXml(map->spawnfile);
 		}
 
@@ -143,6 +139,7 @@ class IOMap
 				map->housefile = Status::getInstance()->getMapName();
 				map->housefile += "-house.xml";
 			}
+
 			return Houses::getInstance().loadHousesXML(map->housefile);
 		}
 
