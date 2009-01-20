@@ -198,7 +198,6 @@ void Creature::onThink(uint32_t interval)
 		onCreatureDisappear(attackedCreature, false);
 
 	blockTicks += interval;
-
 	if(blockTicks >= 1000)
 	{
 		blockCount = std::min((uint32_t)blockCount + 1, (uint32_t)2);
@@ -223,10 +222,8 @@ void Creature::onThink(uint32_t interval)
 	}
 
 	onAttacking(interval);
-
 	//scripting event - onThink
-	CreatureEvent* eventThink = getCreatureEvent(CREATURE_EVENT_THINK);
-	if(eventThink)
+	if(CreatureEvent* eventThink = getCreatureEvent(CREATURE_EVENT_THINK))
 		eventThink->executeOnThink(this, interval);
 }
 
@@ -298,6 +295,7 @@ void Creature::onWalk(Direction& dir)
 				default:
 					break;
 			}
+
 			g_game.internalCreatureSay(this, SPEAK_MONSTER_SAY, "Hicks!");
 		}
 	}
@@ -312,6 +310,7 @@ bool Creature::getNextStep(Direction& dir)
 		onWalk(dir);
 		return true;
 	}
+
 	return false;
 }
 
@@ -332,8 +331,6 @@ void Creature::addEventWalk()
 {
 	if(eventWalk == 0)
 	{
-		//std::cout << "addEventWalk() - " << getName() << std::endl;
-
 		int64_t ticks = getEventStepTicks();
 		if(ticks > 0)
 		{
