@@ -497,7 +497,7 @@ class LuaScriptInterface
 		static int32_t luaGetHouseTown(lua_State* L);
 		static int32_t luaGetHouseAccessList(lua_State* L);
 		static int32_t luaGetHouseByPlayerGUID(lua_State* L);
-		static int32_t luaGetDepotId(lua_State* L);
+		static int32_t luaGetHouseFromPos(lua_State* L);
 		static int32_t luaSetHouseOwner(lua_State* L);
 		static int32_t luaSetHouseAccessList(lua_State* L);
 
@@ -547,6 +547,7 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerCustomFlagValue(lua_State* L);
 		static int32_t luaGetCreatureCondition(lua_State* L);
 
+		static int32_t luaGetDepotId(lua_State* L);
 		static int32_t luaGetVocationInfo(lua_State* L);
 		static int32_t luaGetMonsterInfo(lua_State* L);
 		static int32_t luaGetMonsterHealingSpells(lua_State* L);

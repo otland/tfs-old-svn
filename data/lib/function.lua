@@ -237,18 +237,18 @@ function doPlayerTransferAllMoneyTo(cid, target)
 end
 
 function playerExists(name)
-	return (getPlayerGUIDByName(name) ~= 0)
+	return getPlayerGUIDByName(name) ~= 0
 end
 
 function getTibiaTime()
-	local worldTime = getWorldTime()
+	local minutes = getWorldTime()
 	local hours = 0
-	while (worldTime > 60) do
+	while (minutes > 60) do
 		hours = hours + 1
-		worldTime = worldTime - 60
+		minutes = minutes - 60
 	end
 
-	return {hours = hours, minutes = worldTime}
+	return {hours = hours, minutes = minutes}
 end
 
 function doWriteLogFile(file, text)
@@ -258,13 +258,14 @@ function doWriteLogFile(file, text)
 end
 
 function isInArea(pos, fromPos, toPos)
-	if pos.x >= fromPos.x and pos.x <= toPos.x then
-		if pos.y >= fromPos.y and pos.y <= toPos.y then
-			if pos.z >= fromPos.z and pos.z <= toPos.z then
+	if(pos.x >= fromPos.x and pos.x <= toPos.x) then
+		if(pos.y >= fromPos.y and pos.y <= toPos.y) then
+			if(pos.z >= fromPos.z and pos.z <= toPos.z) then
 				return TRUE
 			end
 		end
 	end
+
 	return FALSE
 end
 
@@ -333,10 +334,6 @@ end
 
 function getTilePzInfo(pos)
 	return getTileInfo(pos).protection and TRUE or FALSE
-end
-
-function getTileHouseInfo(pos)
-	return getTileInfo(pos).house and TRUE or FALSE
 end
 
 function getTileZoneInfo(pos)

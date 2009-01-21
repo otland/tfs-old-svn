@@ -1566,6 +1566,9 @@ void LuaScriptInterface::registerFunctions()
 	//getHouseByPlayerGUID(playerGUID)
 	lua_register(m_luaState, "getHouseByPlayerGUID", LuaScriptInterface::luaGetHouseByPlayerGUID);
 
+	//getHouseFromPos(pos)
+	lua_register(m_luaState, "getHouseFromPos", LuaScriptInterface::luaGetHouseFromPos);
+
 	//getHouseTilesSize(houseid)
 	lua_register(m_luaState, "getHouseTilesSize", LuaScriptInterface::luaGetHouseTilesSize);
 
@@ -4275,6 +4278,32 @@ int32_t LuaScriptInterface::luaGetTileInfo(lua_State* L)
 		setFieldBool(L, "pvp", tile->hasFlag(TILESTATE_PVPZONE));
 		setFieldBool(L, "refresh", tile->hasFlag(TILESTATE_REFRESH));
 		setFieldBool(L, "house", tile->hasFlag(TILESTATE_HOUSE));
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_TILE_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetHouseFromPos(lua_State* L)
+{
+	//getHouseFromPos(pos)
+	PositionEx pos;
+
+	popPosition(L, pos);
+	if(Tile* tile = g_game.getMap()->getTile(pos))
+	{
+		uint32_t houseId = LUA_ERROR;
+		if(HouseTile* houseTile = dynamic_cast<HouseTile*>(tile))
+		{
+			if(House* house = houseTile->getHouse())
+				houseId = house->getHouseId();
+		}
+
+		lua_pushnumber(L, houseId);
 	}
 	else
 	{

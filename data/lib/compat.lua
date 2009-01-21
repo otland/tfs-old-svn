@@ -41,3 +41,4 @@ getPlayersByIPNumber = getPlayersByIp
 getAccountNumberByPlayerName = getAccountIdByName
 convertIntToIP = doConvertIntegerToIp
 queryTileAddThing = doTileQueryAdd
+getTileHouseInfo = getHouseFromPos
