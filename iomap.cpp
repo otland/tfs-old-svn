@@ -157,7 +157,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					return false;
 				}
 
-				map->description.push_back(tmp);
+				map->descriptions.push_back(tmp);
 				break;
 			}
 			case OTBM_ATTR_EXT_SPAWN_FILE:
@@ -193,7 +193,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 	}
 
 	std::cout << "> Map descriptions: " << tmp << std::endl;
-	for(StringVec::iterator it = map->description.begin(); it != map->description.end(); ++it)
+	for(StringVec::iterator it = map->descriptions.begin(); it != map->descriptions.end(); ++it)
 		std::cout << (*it) << std::endl;
 
 	Tile* tile = NULL;
