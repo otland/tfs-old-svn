@@ -282,14 +282,14 @@ class Map
 		// that calls clearSpectatorCache is called.
 		const SpectatorVec& getSpectators(const Position& centerPos);
 
-		typedef std::map<Tile*, RefreshBlock_t> TileMap;
-		TileMap refreshTileMap;
-
 		struct RefreshBlock_t
 		{
 			ItemVector list;
 			uint64_t lastRefresh;
 		};
+
+		typedef std::map<Tile*, RefreshBlock_t> TileMap;
+		TileMap refreshTileMap;
 
 		friend class Game;
 		friend class IOMap;
