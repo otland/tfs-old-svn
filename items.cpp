@@ -574,6 +574,8 @@ bool Items::loadFromXml()
 										it.corpseType = RACE_UNDEAD;
 									else if(tmpStrValue == "fire")
 										it.corpseType = RACE_FIRE;
+									else if(tmpStrValue == "energy")
+										it.corpseType = RACE_ENERGY;
 									else
 										std::cout << "Warning: [Items::loadFromXml] " << "Unknown corpseType " << strValue << std::endl;
 								}

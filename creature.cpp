@@ -823,6 +823,7 @@ void Creature::dropCorpse()
 
 			case RACE_UNDEAD:
 			case RACE_FIRE:
+			case RACE_ENERGY:
 			default:
 				break;
 		}

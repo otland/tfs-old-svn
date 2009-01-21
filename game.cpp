@@ -3949,6 +3949,11 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 								hitEffect = NM_ME_DRAW_BLOOD;
 								break;
 
+							case RACE_ENERGY:
+								textColor = TEXTCOLOR_PURPLE;
+								hitEffect = NM_ME_PURPLEENERGY;
+								break;
+
 							default:
 								break;
 						}

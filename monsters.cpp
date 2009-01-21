@@ -808,6 +808,8 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 				mType->race = RACE_UNDEAD;
 			else if(tmpStrValue == "fire" || atoi(strValue.c_str()) == 4)
 				mType->race = RACE_FIRE;
+			else if(tmpStrValue == "energy" || atoi(strValue.c_str()) == 5)
+				mType->race = RACE_ENERGY;
 			else
 				SHOW_XML_WARNING("Unknown race type " << strValue);
 		}
