@@ -1224,7 +1224,7 @@ bool IOLoginData::createCharacter(uint32_t accountNumber, std::string characterN
 
 	Vocation* vocation = g_vocations.getVocation(vocationId);
 	Vocation* rookVoc = g_vocations.getVocation(0);
-	uint16_t healthMax = 150, manaMax = 0, capMax = 400, lookType = 136, hpGain = vocation->getHPGain(), manaGain = vocation->getManaGain(), capGain = vocation->getCapGain(), rookHpGain = rookVoc->getHPGain(), rookManaGain = rookVoc->getManaGain(), rookCapGain = rookVoc->getCapGain();
+	uint16_t healthMax = 150, manaMax = 0, capMax = 400, lookType = 136;
 	if(sex == PLAYERSEX_MALE)
 		lookType = 128;
 	uint32_t level = g_config.getNumber(ConfigManager::START_LEVEL);
@@ -1234,19 +1234,23 @@ bool IOLoginData::createCharacter(uint32_t accountNumber, std::string characterN
 		exp = Player::getExpForLevel(level);
 
 	uint32_t tmpLevel = level - 1;
-	if(tmpLevel > 7)
-		tmpLevel = 7;
-
-	healthMax += rookHpGain * tmpLevel;
-	manaMax += rookManaGain * tmpLevel;
-	capMax += rookCapGain * tmpLevel;
-
-	if(level > 8)
+	if(tmpLevel > 0)
 	{
-		tmpLevel = level - 8;
-		healthMax += hpGain * tmpLevel;
-		manaMax += manaGain * tmpLevel;
-		capMax += capGain * tmpLevel;
+		if(tmpLevel > 7)
+			tmpLevel = 7;
+
+		healthMax += rookVoc->getHPGain() * tmpLevel;
+		manaMax += rookVoc->getManaGain() * tmpLevel;
+		capMax += rookVoc->getCapGain() * tmpLevel;
+
+		if(level > 8)
+		{
+			tmpLevel = level - 8;
+
+			healthMax += vocation->getHPGain() * tmpLevel;
+			manaMax += vocation->getManaGain() * tmpLevel;
+			capMax += vocation->getCapGain() * tmpLevel;
+		}
 	}
 
 	query << "INSERT INTO `players` (`id`, `name`, `group_id`, `account_id`, `level`, `vocation`, `health`, `healthmax`, `experience`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `maglevel`, `mana`, `manamax`, `manaspent`, `soul`, `town_id`, `posx`, `posy`, `posz`, `conditions`, `cap`, `sex`, `lastlogin`, `lastip`, `redskull`, `redskulltime`, `save`, `rank_id`, `guildnick`, `lastlogout`, `blessings`, `online`) VALUES (NULL, '" << Database::escapeString(characterName) << "', 1, " << accountNumber << ", " << level << ", " << vocationId << ", " << healthMax << ", " << healthMax << ", " << exp << ", 68, 76, 78, 39, " << lookType << ", 0, " << g_config.getNumber(ConfigManager::START_MAGICLEVEL) << ", " << manaMax << ", " << manaMax << ", 0, 100, " << g_config.getNumber(ConfigManager::SPAWNTOWN_ID) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_X) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_Y) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_Z) << ", 0, " << capMax << ", " << sex << ", 0, 0, 0, 0, 1, 0, '', 0, 0, 0);";
