@@ -78,6 +78,8 @@
 	<action fromid="7372" toid="7377" script="other/food.lua"/>
 
 	<!-- Increase/Decrease ItemId -->
+	<action itemid="461" function="increaseItemId"/>
+	<action itemid="462" function="decreaseItemId"/>
 	<action itemid="1873" function="increaseItemId"/>
 	<action itemid="1874" function="decreaseItemId"/>
 	<action itemid="1875" function="increaseItemId"/>
@@ -143,10 +145,18 @@
 	<action itemid="9580" function="decreaseItemId"/>
 	<action itemid="9581" function="increaseItemId"/>
 	<action itemid="9582" function="decreaseItemId"/>
+	<action itemid="9624" function="increaseItemId"/>
+	<action itemid="9625" function="decreaseItemId"/>
 	<action itemid="9747" function="increaseItemId"/>
 	<action itemid="9748" function="decreaseItemId"/>
 	<action itemid="9749" function="increaseItemId"/>
 	<action itemid="9750" function="decreaseItemId"/>
+	<action itemid="9825" function="increaseItemId"/>
+	<action itemid="9826" function="decreaseItemId"/>
+	<action itemid="9827" function="increaseItemId"/>
+	<action itemid="9828" function="decreaseItemId"/>
+	<action itemid="9973" function="increaseItemId"/>
+	<action itemid="9974" function="decreaseItemId"/>
 
 	<!-- Spellbooks -->
 	<action itemid="2175" script="other/spellbook.lua"/>

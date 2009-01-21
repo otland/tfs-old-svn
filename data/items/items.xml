@@ -20494,6 +20494,10 @@
 	<item id="9606" name="stairs">
 		<attribute key="floorchange" value="down"/>
 	</item>
+	<item id="9624" name="closed trapdoor"/>
+	<item id="9625" name="open trapdoor">
+		<attribute key="floorchange" value="down"/>
+	</item>
 	<item id="9654" article="a" name="slain vampire bride">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="9658"/>
