@@ -192,7 +192,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 		}
 	}
 
-	std::cout << "> Map descriptions: " << tmp << std::endl;
+	std::cout << "> Map descriptions: " << std::endl;
 	for(StringVec::iterator it = map->descriptions.begin(); it != map->descriptions.end(); ++it)
 		std::cout << (*it) << std::endl;
 
