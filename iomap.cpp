@@ -157,8 +157,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					return false;
 				}
 
-				std::cout << "> Map description: " << tmp << std::endl;
-				map->description = tmp;
+				map->description.push_back(tmp);
 				break;
 			}
 			case OTBM_ATTR_EXT_SPAWN_FILE:
@@ -192,6 +191,10 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 			}
 		}
 	}
+
+	std::cout << "> Map descriptions: " << tmp << std::endl;
+	for(StringVec::iterator it = map->description.begin(); it != map->description.end(); ++it)
+		std::cout << (*it) << std::endl;
 
 	Tile* tile = NULL;
 	NODE nodeMapData = f.getChildNode(nodeMap, type);

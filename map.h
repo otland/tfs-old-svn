@@ -32,19 +32,15 @@ using boost::shared_ptr;
 #include "item.h"
 #include "fileloader.h"
 #include "waypoints.h"
-
 #include "tools.h"
 #include "tile.h"
 
 class Creature;
 class Player;
 class Game;
-struct FindPathParams;
-
-#define MAP_MAX_LAYERS 16
-
 class Tile;
 class Map;
+struct FindPathParams;
 
 struct AStarNode
 {
@@ -53,6 +49,7 @@ struct AStarNode
 	int32_t f, g, h;
 };
 
+#define MAP_MAX_LAYERS 16
 #define MAX_NODES 512
 #define GET_NODE_INDEX(a) (a - &nodes[0])
 
@@ -63,21 +60,24 @@ class AStarNodes
 {
 	public:
 		AStarNodes();
-		virtual ~AStarNodes(){}
+		virtual ~AStarNodes() {}
 
-		AStarNode* createOpenNode();
 		AStarNode* getBestNode();
+		AStarNode* createOpenNode();
+
 		void closeNode(AStarNode* node);
 		void openNode(AStarNode* node);
+
 		uint32_t countClosedNodes();
 		uint32_t countOpenNodes();
+
 		bool isInList(int32_t x, int32_t y);
 		AStarNode* getNodeInList(int32_t x, int32_t y);
 
 		int32_t getMapWalkCost(const Creature* creature, AStarNode* node,
 			const Tile* neighbourTile, const Position& neighbourPos);
 		static int32_t getTileWalkCost(const Creature* creature, const Tile* tile);
-		int getEstimatedDistance(int32_t x, int32_t y, int32_t xGoal, int32_t yGoal);
+		int32_t getEstimatedDistance(int32_t x, int32_t y, int32_t xGoal, int32_t yGoal);
 
 	private:
 		AStarNode nodes[MAX_NODES];
@@ -88,7 +88,7 @@ class AStarNodes
 template<class T> class lessPointer : public std::binary_function<T*, T*, bool>
 {
 	public:
-		bool operator()(T*& t1, T*& t2) { return *t1 < *t2; }
+		bool operator()(T*& t1, T*& t2) {return *t1 < *t2;}
 };
 
 typedef std::list<Creature*> SpectatorVec;
@@ -183,15 +183,17 @@ class Map
 		bool saveMap();
 
 		/**
+		* Clean a map.
+		* \returns amount of removed items
+		*/
+		uint32_t clean();
+
+		/**
 		* Get a single tile.
 		* \returns A pointer to that tile.
 		*/
 		Tile* getTile(uint16_t x, uint16_t y, uint8_t z);
 		Tile* getTile(const Position& pos);
-
-		uint32_t clean();
-
-		QTreeLeafNode* getLeaf(uint16_t x, uint16_t y){ return root.getLeaf(x, y);}
 
 		/**
 		* Set a single tile.
@@ -241,8 +243,6 @@ class Map
 		bool isSightClear(const Position& fromPos, const Position& toPos, bool floorCheck) const;
 		bool checkSightLine(const Position& fromPos, const Position& toPos) const;
 
-		const Tile* canWalkTo(const Creature* creature, const Position& pos);
-
 		/**
 		* Get the path to a specific position on the map.
 		* \param creature The creature that wants a path
@@ -253,48 +253,43 @@ class Map
 		*/
 		bool getPathTo(const Creature* creature, const Position& destPos,
 			std::list<Direction>& listDir, int32_t maxDist = -1);
-
 		bool getPathMatching(const Creature* creature, std::list<Direction>& dirList,
 			const FrozenPathingConditionCall& pathCondition, const FindPathParams& fpp);
 
-		/**
-		* Waypoints
-		*/
+		QTreeLeafNode* getLeaf(uint16_t x, uint16_t y) {return root.getLeaf(x, y);}
+		const Tile* canWalkTo(const Creature* creature, const Position& pos);
 		Waypoints waypoints;
 
 	protected:
 		uint32_t mapWidth, mapHeight;
-		std::string description, spawnfile, housefile;
+		std::string spawnfile, housefile;
+		StringVec descriptions;
+		QTreeNode root;
 		SpectatorCache spectatorCache;
+
+		void clearSpectatorCache();
 
 		// Actually scans the map for spectators
 		void getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, bool checkforduplicate,
-			int32_t minRangeX, int32_t maxRangeX,
-			int32_t minRangeY, int32_t maxRangeY,
+			int32_t minRangeX, int32_t maxRangeX, int32_t minRangeY, int32_t maxRangeY,
 			int32_t minRangeZ, int32_t maxRangeZ);
-
 		// Use this when a custom spectator vector is needed, this support many
 		// more parameters than the heavily cached version below.
 		void getSpectators(SpectatorVec& list, const Position& centerPos, bool checkforduplicate = false, bool multifloor = false,
-			int32_t minRangeX = 0, int32_t maxRangeX = 0,
-			int32_t minRangeY = 0, int32_t maxRangeY = 0);
+			int32_t minRangeX = 0, int32_t maxRangeX = 0, int32_t minRangeY = 0, int32_t maxRangeY = 0);
 		// The returned SpectatorVec is a temporary and should not be kept around
 		// Take special heed in that the vector will be destroyed if any function
 		// that calls clearSpectatorCache is called.
 		const SpectatorVec& getSpectators(const Position& centerPos);
 
-		void clearSpectatorCache();
-
-		QTreeNode root;
+		typedef std::map<Tile*, RefreshBlock_t> TileMap;
+		TileMap refreshTileMap;
 
 		struct RefreshBlock_t
 		{
 			ItemVector list;
 			uint64_t lastRefresh;
 		};
-
-		typedef std::map<Tile*, RefreshBlock_t> TileMap;
-		TileMap refreshTileMap;
 
 		friend class Game;
 		friend class IOMap;
@@ -307,9 +302,9 @@ inline void QTreeLeafNode::addCreature(Creature* c)
 
 inline void QTreeLeafNode::removeCreature(Creature* c)
 {
-	CreatureVector::iterator iter = std::find(creature_list.begin(), creature_list.end(), c);
-	assert(iter != creature_list.end());
-	std::swap(*iter, creature_list.back());
+	CreatureVector::iterator it = std::find(creature_list.begin(), creature_list.end(), c);
+	assert(it != creature_list.end());
+	std::swap(*it, creature_list.back());
 	creature_list.pop_back();
 }
 
