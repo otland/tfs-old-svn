@@ -1233,20 +1233,20 @@ bool IOLoginData::createCharacter(uint32_t accountNumber, std::string characterN
 	if(level > 1)
 		exp = Player::getExpForLevel(level);
 
-	for(uint32_t i = 1; i < level; i++)
+	uint32_t tmpLevel = level - 1;
+	if(tmpLevel > 7)
+		tmpLevel = 7;
+
+	healthMax += rookHpGain * tmpLevel;
+	manaMax += rookManaGain * tmpLevel;
+	capMax += rookCapGain * tmpLevel;
+
+	if(level > 8)
 	{
-		if(i < 8)
-		{
-			healthMax += rookHpGain;
-			manaMax += rookManaGain;
-			capMax += rookCapGain;
-		}
-		else
-		{
-			healthMax += hpGain;
-			manaMax += manaGain;
-			capMax += capGain;
-		}
+		tmpLevel = level - 8;
+		healthMax += hpGain * tmpLevel;
+		manaMax += manaGain * tmpLevel;
+		capMax += capGain * tmpLevel;
 	}
 
 	query << "INSERT INTO `players` (`id`, `name`, `group_id`, `account_id`, `level`, `vocation`, `health`, `healthmax`, `experience`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `maglevel`, `mana`, `manamax`, `manaspent`, `soul`, `town_id`, `posx`, `posy`, `posz`, `conditions`, `cap`, `sex`, `lastlogin`, `lastip`, `redskull`, `redskulltime`, `save`, `rank_id`, `guildnick`, `lastlogout`, `blessings`, `online`) VALUES (NULL, '" << Database::escapeString(characterName) << "', 1, " << accountNumber << ", " << level << ", " << vocationId << ", " << healthMax << ", " << healthMax << ", " << exp << ", 68, 76, 78, 39, " << lookType << ", 0, " << g_config.getNumber(ConfigManager::START_MAGICLEVEL) << ", " << manaMax << ", " << manaMax << ", 0, 100, " << g_config.getNumber(ConfigManager::SPAWNTOWN_ID) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_X) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_Y) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_Z) << ", 0, " << capMax << ", " << sex << ", 0, 0, 0, 0, 1, 0, '', 0, 0, 0);";
