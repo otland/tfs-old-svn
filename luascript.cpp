@@ -7804,20 +7804,20 @@ int32_t LuaScriptInterface::luaHasProperty(lua_State* L)
 int32_t LuaScriptInterface::luaGetItemIdByName(lua_State* L)
 {
 	//getItemIdByName(name[, reportError])
-	bool reportError = true;
+	bool _reportError = true;
 	if(lua_gettop(L) >= 2)
-		reportError = popNumber(L) == LUA_TRUE;
+		_reportError = popNumber(L) == LUA_TRUE;
 
 	int32_t itemId = Item::items.getItemIdByName(popString(L));
 	if(itemId == -1)
 	{
-		if(reportError)
+		if(_reportError)
 			reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
 
 		lua_pushnumber(L, LUA_ERROR);
 	}
 	else
-		lua_pushnumber(L, itemid);
+		lua_pushnumber(L, itemId);
 
 	return 1;
 }

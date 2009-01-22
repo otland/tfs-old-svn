@@ -1303,14 +1303,14 @@ bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName,
 		if(tmpLevel > 7)
 			tmpLevel = 7;
 
-		healthMax += rookVoc->getHPGain() * tmpLevel;
+		healthMax += rookVoc->getHealthGain() * tmpLevel;
 		manaMax += rookVoc->getManaGain() * tmpLevel;
 		capMax += rookVoc->getCapGain() * tmpLevel;
 
 		if(level > 8)
 		{
 			tmpLevel = level - 8;
-			healthMax += vocation->getHPGain() * tmpLevel;
+			healthMax += vocation->getHealthGain() * tmpLevel;
 			manaMax += vocation->getManaGain() * tmpLevel;
 			capMax += vocation->getCapGain() * tmpLevel;
 		}

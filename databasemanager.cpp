@@ -242,6 +242,11 @@ uint32_t DatabaseManager::updateDatabase()
 				query << "CREATE TABLE IF NOT EXISTS `server_record` ( `record` INT NOT NULL, `timestamp` BIGINT NOT NULL, PRIMARY KEY (`timestamp`) ) ENGINE = InnoDB;";
 				db->executeQuery(query.str());
 
+				//Create server_reports table
+				query.str("");
+				query << "CREATE TABLE IF NOT EXISTS `server_reports` ( `id` INT NOT NULL AUTO_INCREMENT, `player_id` INT UNSIGNED NOT NULL DEFAULT 0, `posx` INT NOT NULL DEFAULT 0, `posy` INT NOT NULL DEFAULT 0, `posz` INT NOT NULL DEFAULT 0, `timestamp` BIGINT NOT NULL DEFAULT 0, `report` TEXT NOT NULL, `reads` INT NOT NULL DEFAULT 0, PRIMARY KEY (`id`), KEY (`player_id`), KEY (`reads`) ) ENGINE = InnoDB;";
+				db->executeQuery(query.str());
+
 				//Create server_motd table
 				query.str("");
 				query << "CREATE TABLE `server_motd` ( `id` INT NOT NULL AUTO_INCREMENT, `text` TEXT NOT NULL, PRIMARY KEY (`id`) ) ENGINE = InnoDB;";
@@ -812,7 +817,6 @@ uint32_t DatabaseManager::updateDatabase()
 						"ALTER TABLE `houses` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
 						"ALTER TABLE `houses` ADD UNIQUE (`id`, `world_id`);",
 						"ALTER TABLE `tiles` CHANGE `id` `id` INT NOT NULL;",
-						"ALTER TABLE `tiles` DROP PRIMARY KEY;",
 						"ALTER TABLE `tiles` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",
 						"ALTER TABLE `tiles` ADD UNIQUE (`id`, `world_id`);",
 						"ALTER TABLE `tile_items` ADD `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0;",

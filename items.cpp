@@ -1024,11 +1024,13 @@ bool Items::loadFromXml()
 								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
 									it.abilities.conditionSuppressions |= CONDITION_LIFEDRAIN;
 							}
+							/*
 							else if(tmpStrValue == "suppressmanadrain")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
 									it.abilities.conditionSuppressions |= CONDITION_MANADRAIN;
 							}
+							*/
 							else if(tmpStrValue == "suppresshaste")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
