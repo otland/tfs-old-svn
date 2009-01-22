@@ -10,7 +10,7 @@ function onSay(cid, words, param)
 
 	local id = tonumber(t[1])
 	if(not id) then
-		id = getItemIdByName(t[1])
+		id = getItemIdByName(t[1], FALSE)
 		if(id == LUA_ERROR) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Item wich such name does not exists.")
 			return TRUE

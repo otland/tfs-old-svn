@@ -1828,7 +1828,7 @@ void LuaScriptInterface::registerFunctions()
 	//hasProperty(uid)
 	lua_register(m_luaState, "hasProperty", LuaScriptInterface::luaHasProperty);
 
-	//getItemIdByName(name)
+	//getItemIdByName(name[, reportError])
 	lua_register(m_luaState, "getItemIdByName", LuaScriptInterface::luaGetItemIdByName);
 
 	//isSightClear(fromPos, toPos, floorCheck)
@@ -7803,17 +7803,22 @@ int32_t LuaScriptInterface::luaHasProperty(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetItemIdByName(lua_State* L)
 {
-	//getItemIdByName(name)
-	std::string name = popString(L);
+	//getItemIdByName(name[, reportError])
+	bool reportError = true;
+	if(lua_gettop(L) >= 2)
+		reportError = popNumber(L) == LUA_TRUE;
 
-	int32_t itemid = Item::items.getItemIdByName(name);
-	if(itemid == -1)
+	int32_t itemId = Item::items.getItemIdByName(popString(L));
+	if(itemId == -1)
 	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
+		if(reportError)
+			reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
+
 		lua_pushnumber(L, LUA_ERROR);
-		return 1;
 	}
-	lua_pushnumber(L, itemid);
+	else
+		lua_pushnumber(L, itemid);
+
 	return 1;
 }
 
