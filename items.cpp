@@ -984,50 +984,120 @@ bool Items::loadFromXml()
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.absorbPercent[COMBAT_UNDEFINEDDAMAGE] += intValue;
 							}
-							else if(tmpStrValue == "suppressdrunk")
+							else if(tmpStrValue == "suppressshock" || tmpStrValue == "suppressenergy")
 							{
-								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.abilities.conditionSuppressions |= CONDITION_DRUNK;
-							}
-							else if(tmpStrValue == "suppressenergy")
-							{
-								if(readXMLInteger(itemAttributesNode, "value", intValue))
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
 									it.abilities.conditionSuppressions |= CONDITION_ENERGY;
 							}
-							else if(tmpStrValue == "suppressfire")
+							else if(tmpStrValue == "suppressburn" || tmpStrValue == "suppressfire")
 							{
-								if(readXMLInteger(itemAttributesNode, "value", intValue))
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
 									it.abilities.conditionSuppressions |= CONDITION_FIRE;
 							}
-							else if(tmpStrValue == "suppresspoison")
+							else if(tmpStrValue == "suppresspoison" || tmpStrValue == "suppressearth")
 							{
-								if(readXMLInteger(itemAttributesNode, "value", intValue))
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
 									it.abilities.conditionSuppressions |= CONDITION_POISON;
 							}
-							else if(tmpStrValue == "suppresslifedrain")
-							{
-								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.abilities.conditionSuppressions |= CONDITION_LIFEDRAIN;
-							}
-							else if(tmpStrValue == "suppressdrown")
-							{
-								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.abilities.conditionSuppressions |= CONDITION_DROWN;
-							}
-							else if(tmpStrValue == "suppressfreeze")
+							else if(tmpStrValue == "suppressfreeze" || tmpStrValue == "suppressice")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
 									it.abilities.conditionSuppressions |= CONDITION_FREEZING;
 							}
-							else if(tmpStrValue == "suppressdazzle")
+							else if(tmpStrValue == "suppressdazzle" || tmpStrValue == "suppressholy")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
 									it.abilities.conditionSuppressions |= CONDITION_DAZZLED;
 							}
-							else if(tmpStrValue == "suppresscurse")
+							else if(tmpStrValue == "suppresscurse" || tmpStrValue == "suppressdeath")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
 									it.abilities.conditionSuppressions |= CONDITION_CURSED;
+							}
+							else if(tmpStrValue == "suppressdrown")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+									it.abilities.conditionSuppressions |= CONDITION_DROWN;
+							}
+							else if(tmpStrValue == "suppresslifedrain")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+									it.abilities.conditionSuppressions |= CONDITION_LIFEDRAIN;
+							}
+							else if(tmpStrValue == "suppressmanadrain")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+									it.abilities.conditionSuppressions |= CONDITION_MANADRAIN;
+							}
+							else if(tmpStrValue == "suppresshaste")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+									it.abilities.conditionSuppressions |= CONDITION_HASTE;
+							}
+							else if(tmpStrValue == "suppressparalyze")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+									it.abilities.conditionSuppressions |= CONDITION_PARALYZE;
+							}
+							else if(tmpStrValue == "suppressdrunk")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+									it.abilities.conditionSuppressions |= CONDITION_DRUNK;
+							}
+							else if(tmpStrValue == "suppressregeneration")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+									it.abilities.conditionSuppressions |= CONDITION_REGENERATION;
+							}
+							else if(tmpStrValue == "suppresssoul")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+									it.abilities.conditionSuppressions |= CONDITION_SOUL;
+							}
+							else if(tmpStrValue == "suppressoutfit")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+									it.abilities.conditionSuppressions |= CONDITION_OUTFIT;
+							}
+							else if(tmpStrValue == "suppressinvisible")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+									it.abilities.conditionSuppressions |= CONDITION_INVISIBLE;
+							}
+							else if(tmpStrValue == "suppressinfight")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+									it.abilities.conditionSuppressions |= CONDITION_INFIGHT;
+							}
+							else if(tmpStrValue == "suppressexhaust")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+									it.abilities.conditionSuppressions |= CONDITION_EXHAUST;
+							}
+							else if(tmpStrValue == "suppressmuted")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+									it.abilities.conditionSuppressions |= CONDITION_MUTED;
+							}
+							else if(tmpStrValue == "suppresspacified")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+									it.abilities.conditionSuppressions |= CONDITION_PACIFIED;
+							}
+							else if(tmpStrValue == "suppresslight")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+									it.abilities.conditionSuppressions |= CONDITION_LIGHT;
+							}
+							else if(tmpStrValue == "suppressattributes")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+									it.abilities.conditionSuppressions |= CONDITION_ATTRIBUTES;
+							}
+							else if(tmpStrValue == "suppressmanashield")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
+									it.abilities.conditionSuppressions |= CONDITION_MANASHIELD;
 							}
 							else if(tmpStrValue == "field")
 							{
@@ -1059,22 +1129,20 @@ bool Items::loadFromXml()
 										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_DROWN, false, 0);
 										combatType = COMBAT_DROWNDAMAGE;
 									}
-									/*else if(tmpStrValue == "physical")
+									else if(tmpStrValue == "physical")
 									{
-										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_PHYSICAL, false, 0);
+										//conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_PHYSICAL, false, 0);
 										combatType = COMBAT_PHYSICALDAMAGE;
-									}*/
+									}
 									else
-										std::cout << "[Warning - Items::loadFromXml] " << "Unknown field value " << strValue << std::endl;
+										std::cout << "[Warning - Items::loadFromXml] Unknown field value " << strValue << std::endl;
 
 									if(combatType != COMBAT_NONE)
 									{
 										it.combatType = combatType;
 										it.condition = conditionDamage;
 										uint32_t ticks = 0;
-										int32_t damage = 0;
-										int32_t start = 0;
-										int32_t count = 1;
+										int32_t damage = 0, start = 0, count = 1;
 
 										xmlNodePtr fieldAttributesNode = itemAttributesNode->children;
 										while(fieldAttributesNode)
