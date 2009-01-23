@@ -1129,9 +1129,9 @@ bool Items::loadFromXml()
 										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_POISON, false, 0);
 										combatType = COMBAT_EARTHDAMAGE;
 									}
-									else if(tmpStrValue == "ice" || tmpStrValue == "freeze")
+									else if(tmpStrValue == "ice" || tmpStrValue == "freezing")
 									{
-										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_FREEZE, false, 0);
+										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_FREEZING, false, 0);
 										combatType = COMBAT_ICEDAMAGE;
 									}
 									else if(tmpStrValue == "holy" || tmpStrValue == "dazzled")
