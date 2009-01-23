@@ -170,7 +170,7 @@ CombatType_t Combat::ConditionToDamageType(ConditionType_t type)
 			return COMBAT_DROWNDAMAGE;
 
 		case CONDITION_PHYSICAL:
-			return COMBAT_PHYSICAL;
+			return COMBAT_PHYSICALDAMAGE;
 
 		default:
 			break;
