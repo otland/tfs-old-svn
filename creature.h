@@ -289,7 +289,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual void onAddCondition(ConditionType_t type);
 		virtual void onAddCombatCondition(ConditionType_t type);
 		virtual void onEndCondition(ConditionType_t type);
-		virtual void onTickCondition(ConditionType_t type, bool& bRemove);
+		virtual void onTickCondition(ConditionType_t type, bool& _remove);
 		virtual void onCombatRemoveCondition(const Creature* attacker, Condition* condition);
 		virtual void onAttackedCreature(Creature* target);
 		virtual void onAttacked();

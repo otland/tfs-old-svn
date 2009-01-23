@@ -154,9 +154,6 @@ CombatType_t Combat::ConditionToDamageType(ConditionType_t type)
 		case CONDITION_ENERGY:
 			return COMBAT_ENERGYDAMAGE;
 
-		case CONDITION_DROWN:
-			return COMBAT_DROWNDAMAGE;
-
 		case CONDITION_POISON:
 			return COMBAT_EARTHDAMAGE;
 
@@ -168,6 +165,12 @@ CombatType_t Combat::ConditionToDamageType(ConditionType_t type)
 
 		case CONDITION_CURSED:
 			return COMBAT_DEATHDAMAGE;
+
+		case CONDITION_DROWN:
+			return COMBAT_DROWNDAMAGE;
+
+		case CONDITION_PHYSICAL:
+			return COMBAT_PHYSICAL;
 
 		default:
 			break;
@@ -186,9 +189,6 @@ ConditionType_t Combat::DamageToConditionType(CombatType_t type)
 		case COMBAT_ENERGYDAMAGE:
 			return CONDITION_ENERGY;
 
-		case COMBAT_DROWNDAMAGE:
-			return CONDITION_DROWN;
-
 		case COMBAT_EARTHDAMAGE:
 			return CONDITION_POISON;
 
@@ -200,6 +200,9 @@ ConditionType_t Combat::DamageToConditionType(CombatType_t type)
 
 		case COMBAT_DEATHDAMAGE:
 			return CONDITION_CURSED;
+
+		case COMBAT_PHYSICALDAMAGE:
+			return CONDITION_PHYSICAL;
 
 		default:
 			break;

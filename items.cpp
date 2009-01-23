@@ -615,6 +615,16 @@ bool Items::loadFromXml()
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.writeOnceItemId = intValue;
 							}
+							else if(tmpStrValue == "worth")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+									it.worth = intValue;
+							}
+							else if(tmpStrValue == "leveldoor")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+									it.levelDoor = intValue;
+							}
 							else if(tmpStrValue == "weapontype")
 							{
 								if(readXMLString(itemAttributesNode, "value", strValue))
@@ -1019,18 +1029,11 @@ bool Items::loadFromXml()
 								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
 									it.abilities.conditionSuppressions |= CONDITION_DROWN;
 							}
-							else if(tmpStrValue == "suppresslifedrain")
+							else if(tmpStrValue == "suppressphysical")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-									it.abilities.conditionSuppressions |= CONDITION_LIFEDRAIN;
+									it.abilities.conditionSuppressions |= CONDITION_PHYSICAL;
 							}
-							/*
-							else if(tmpStrValue == "suppressmanadrain")
-							{
-								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
-									it.abilities.conditionSuppressions |= CONDITION_MANADRAIN;
-							}
-							*/
 							else if(tmpStrValue == "suppresshaste")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue) && intValue != 0)
@@ -1126,6 +1129,21 @@ bool Items::loadFromXml()
 										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_POISON, false, 0);
 										combatType = COMBAT_EARTHDAMAGE;
 									}
+									else if(tmpStrValue == "ice" || tmpStrValue == "freeze")
+									{
+										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_FREEZE, false, 0);
+										combatType = COMBAT_ICEDAMAGE;
+									}
+									else if(tmpStrValue == "holy" || tmpStrValue == "dazzled")
+									{
+										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_DAZZLED, false, 0);
+										combatType = COMBAT_HOLYDAMAGE;
+									}
+									else if(tmpStrValue == "death" || tmpStrValue == "cursed")
+									{
+										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_CURSED, false, 0);
+										combatType = COMBAT_DEATHDAMAGE;
+									}
 									else if(tmpStrValue == "drown")
 									{
 										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_DROWN, false, 0);
@@ -1133,7 +1151,7 @@ bool Items::loadFromXml()
 									}
 									else if(tmpStrValue == "physical")
 									{
-										//conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_PHYSICAL, false, 0);
+										conditionDamage = new ConditionDamage(CONDITIONID_COMBAT, CONDITION_PHYSICAL, false, 0);
 										combatType = COMBAT_PHYSICALDAMAGE;
 									}
 									else
@@ -1199,6 +1217,94 @@ bool Items::loadFromXml()
 									}
 								}
 							}
+							else if(tmpStrValue == "elementphysical")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+								{
+									it.abilities.elementDamage = intValue;
+									it.abilities.elementType = COMBAT_PHYSICALDAMAGE;
+								}
+							}
+							else if(tmpStrValue == "elementfire")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+								{
+									it.abilities.elementDamage = intValue;
+									it.abilities.elementType = COMBAT_FIREDAMAGE;
+								}
+							}
+							else if(tmpStrValue == "elementenergy")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+								{
+									it.abilities.elementDamage = intValue;
+									it.abilities.elementType = COMBAT_ENERGYDAMAGE;
+								}
+							}
+							else if(tmpStrValue == "elementearth")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+								{
+									it.abilities.elementDamage = intValue;
+									it.abilities.elementType = COMBAT_EARTHDAMAGE;
+								}
+							}
+							else if(tmpStrValue == "elementice")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+								{
+									it.abilities.elementDamage = intValue;
+									it.abilities.elementType = COMBAT_ICEDAMAGE;
+								}
+							}
+							else if(tmpStrValue == "elementholy")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+								{
+									it.abilities.elementDamage = intValue;
+									it.abilities.elementType = COMBAT_HOLYDAMAGE;
+								}
+							}
+							else if(tmpStrValue == "elementdeath")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+								{
+									it.abilities.elementDamage = intValue;
+									it.abilities.elementType = COMBAT_DEATHDAMAGE;
+								}
+							}
+							else if(tmpStrValue == "elementlifedrain")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+								{
+									it.abilities.elementDamage = intValue;
+									it.abilities.elementType = COMBAT_LIFEDRAIN;
+								}
+							}
+							else if(tmpStrValue == "elementmanadrain")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+								{
+									it.abilities.elementDamage = intValue;
+									it.abilities.elementType = COMBAT_MANADRAIN;
+								}
+							}
+							else if(tmpStrValue == "elementhealing")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+								{
+									it.abilities.elementDamage = intValue;
+									it.abilities.elementType = COMBAT_HEALING;
+								}
+							}
+							else if(tmpStrValue == "elementundefined")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+								{
+									it.abilities.elementDamage = intValue;
+									it.abilities.elementType = COMBAT_UNDEFINEDDAMAGE;
+								}
+							}
 							else if(tmpStrValue == "replaceable" || tmpStrValue == "replacable")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
@@ -1239,48 +1345,6 @@ bool Items::loadFromXml()
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.transformToFree = intValue;
-							}
-							else if(tmpStrValue == "elementice")
-							{
-								if(readXMLInteger(itemAttributesNode, "value", intValue))
-								{
-									it.abilities.elementDamage = intValue;
-									it.abilities.elementType = COMBAT_ICEDAMAGE;
-								}
-							}
-							else if(tmpStrValue == "elementearth")
-							{
-								if(readXMLInteger(itemAttributesNode, "value", intValue))
-								{
-									it.abilities.elementDamage = intValue;
-									it.abilities.elementType = COMBAT_EARTHDAMAGE;
-								}
-							}
-							else if(tmpStrValue == "elementfire")
-							{
-								if(readXMLInteger(itemAttributesNode, "value", intValue))
-								{
-									it.abilities.elementDamage = intValue;
-									it.abilities.elementType = COMBAT_FIREDAMAGE;
-								}
-							}
-							else if(tmpStrValue == "elementenergy")
-							{
-								if(readXMLInteger(itemAttributesNode, "value", intValue))
-								{
-									it.abilities.elementDamage = intValue;
-									it.abilities.elementType = COMBAT_ENERGYDAMAGE;
-								}
-							}
-							else if(tmpStrValue == "worth")
-							{
-								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.worth = intValue;
-							}
-							else if(tmpStrValue == "leveldoor")
-							{
-								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.levelDoor = intValue;
 							}
 							else
 								std::cout << "[Warning - Items::loadFromXml] Unknown key value " << strValue << std::endl;

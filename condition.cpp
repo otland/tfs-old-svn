@@ -181,13 +181,14 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 {
 	switch((int32_t)_type)
 	{
-		case CONDITION_POISON:
 		case CONDITION_FIRE:
 		case CONDITION_ENERGY:
-		case CONDITION_DROWN:
+		case CONDITION_POISON:
 		case CONDITION_FREEZING:
 		case CONDITION_DAZZLED:
 		case CONDITION_CURSED:
+		case CONDITION_DROWN:
+		case CONDITION_PHYSICAL:
 			return new ConditionDamage(_id, _type, _buff, _subId);
 
 		case CONDITION_HASTE:
@@ -1280,9 +1281,6 @@ Icons_t ConditionDamage::getIcons() const
 		case CONDITION_ENERGY:
 			return ICON_ENERGY;
 
-		case CONDITION_DROWN:
-			return ICON_DROWNING;
-
 		case CONDITION_POISON:
 			return ICON_POISON;
 
@@ -1294,6 +1292,9 @@ Icons_t ConditionDamage::getIcons() const
 
 		case CONDITION_CURSED:
 			return ICON_CURSED;
+
+		case CONDITION_DROWN:
+			return ICON_DROWNING;
 
 		default:
 			break;
