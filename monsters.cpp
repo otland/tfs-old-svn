@@ -1199,10 +1199,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 						else if(readXMLInteger(tmpNode, "lifedrain", intValue))
 						{
 							if(intValue != 0)
-							{
 								mType->damageImmunities |= COMBAT_LIFEDRAIN;
-								mType->conditionImmunities |= CONDITION_LIFEDRAIN;
-							}
 						}
 						else if(readXMLInteger(tmpNode, "manadrain", intValue))
 						{
