@@ -3062,7 +3062,7 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 		ss << std::endl << "Position: [X: " << thingPos.x << "] [Y: " << thingPos.y << "] [Z: " << thingPos.z << "].";
 
 	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
-	CreatureEventList lookEvents = getCreatureEvents(CREATURE_EVENT_LOOK);
+	CreatureEventList lookEvents = player->getCreatureEvents(CREATURE_EVENT_LOOK);
 	for(CreatureEventList::iterator it = lookEvents.begin(); it != lookEvents.end(); ++it)
 		(*it)->executeOnLook(player, thingPos, stackPos);
 
@@ -3849,7 +3849,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			return false;
 
 		bool deny = false;
-		CreatureEventList statsChangeEvents = getCreatureEvents(CREATURE_EVENT_STATSCHANGE);
+		CreatureEventList statsChangeEvents = target->getCreatureEvents(CREATURE_EVENT_STATSCHANGE);
 		for(CreatureEventList::iterator it = statsChangeEvents.begin(); it != statsChangeEvents.end(); ++it)
 		{
 			if(!(*it)->executeOnStatsChange(target, attacker, STATSCHANGE_HEALTHGAIN, combatType, healthChange))
@@ -3895,7 +3895,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 				if(manaDamage != 0)
 				{
 					bool deny = false;
-					CreatureEventList statsChangeEvents = getCreatureEvents(CREATURE_EVENT_STATSCHANGE);
+					CreatureEventList statsChangeEvents = target->getCreatureEvents(CREATURE_EVENT_STATSCHANGE);
 					for(CreatureEventList::iterator it = statsChangeEvents.begin(); it != statsChangeEvents.end(); ++it)
 					{
 						if(!(*it)->executeOnStatsChange(target, attacker, STATSCHANGE_MANALOSS, combatType, manaDamage))
@@ -3918,7 +3918,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			if(damage > 0)
 			{
 				bool deny = false;
-				CreatureEventList statsChangeEvents = getCreatureEvents(CREATURE_EVENT_STATSCHANGE);
+				CreatureEventList statsChangeEvents = target->getCreatureEvents(CREATURE_EVENT_STATSCHANGE);
 				for(CreatureEventList::iterator it = statsChangeEvents.begin(); it != statsChangeEvents.end(); ++it)
 				{
 					if(!(*it)->executeOnStatsChange(target, attacker, STATSCHANGE_HEALTHLOSS, combatType, damage))
@@ -4060,7 +4060,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 	if(manaChange > 0)
 	{
 		bool deny = false;
-		CreatureEventList statsChangeEvents = getCreatureEvents(CREATURE_EVENT_STATSCHANGE);
+		CreatureEventList statsChangeEvents = target->getCreatureEvents(CREATURE_EVENT_STATSCHANGE);
 		for(CreatureEventList::iterator it = statsChangeEvents.begin(); it != statsChangeEvents.end(); ++it)
 		{
 			if(!(*it)->executeOnStatsChange(target, attacker, STATSCHANGE_MANAGAIN, COMBAT_HEALING, manaChange))
@@ -4104,7 +4104,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 		if(manaLoss > 0)
 		{
 			bool deny = false;
-			CreatureEventList statsChangeEvents = getCreatureEvents(CREATURE_EVENT_STATSCHANGE);
+			CreatureEventList statsChangeEvents = target->getCreatureEvents(CREATURE_EVENT_STATSCHANGE);
 			for(CreatureEventList::iterator it = statsChangeEvents.begin(); it != statsChangeEvents.end(); ++it)
 			{
 				if(!(*it)->executeOnStatsChange(target, attacker, STATSCHANGE_MANALOSS, COMBAT_UNDEFINEDDAMAGE, manaChange))
