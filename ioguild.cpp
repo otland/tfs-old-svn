@@ -199,7 +199,7 @@ bool IOGuild::joinGuild(Player* player, uint32_t guildId, bool creation/* = fals
 	else
 		level = GUILDLEVEL_LEADER;
 
-	player->setGuildLevel(GUILDLEVEL_MEMBER);
+	player->setGuildLevel(level);
 	player->setGuildRankId(rankId);
 	player->setGuildRank(rankName);
 
