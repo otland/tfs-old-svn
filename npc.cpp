@@ -1251,11 +1251,11 @@ void Npc::onThink(uint32_t interval)
 	int64_t now = OTSYS_TIME();
 	for(VoiceList::iterator it = voiceList.begin(); it != voiceList.end(); ++it)
 	{
-		if(now >= (lastVoice + (*it)->margin))
+		if(now >= (lastVoice + (*it).margin))
 		{
-			if(((uint32_t)MAX_RAND_RANGE * (EVENT_CREATURE_THINK_INTERVAL / 1000)) / (*it)->interval >= (uint32_t)random_range(0, MAX_RAND_RANGE))
+			if(((uint32_t)MAX_RAND_RANGE * (EVENT_CREATURE_THINK_INTERVAL / 1000)) / (*it).interval >= (uint32_t)random_range(0, MAX_RAND_RANGE))
 			{
-				doSay((*it)->text, NULL, true, (*it)->yell);
+				doSay((*it).text, NULL, true, (*it).yell);
 				lastVoice = now;
 				break;
 			}
