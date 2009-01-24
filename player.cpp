@@ -667,12 +667,11 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count)
 		char advMsg[45];
 		sprintf(advMsg, "You advanced in %s%s.", getSkillName(skill).c_str(), advMsgLvl);
 		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
-		sendSkills();
 
-		//scripting event - onAdvance
-		CreatureEvent* eventAdvance = getCreatureEvent(CREATURE_EVENT_ADVANCE);
-		if(eventAdvance)
-			eventAdvance->executeOnAdvance(this, skill, (skills[skill][SKILL_LEVEL] - 1), skills[skill][SKILL_LEVEL]);
+		sendSkills();
+		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
+		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
+			(*it)->executeOnAdvance(this, skill, (skills[skill][SKILL_LEVEL] - 1), skills[skill][SKILL_LEVEL]);
 	}
 	else
 	{
@@ -1874,10 +1873,9 @@ void Player::addManaSpent(uint64_t amount)
 				manaSpent = 0;
 
 			currReqMana = nextReqMana;
-			//scripting event - onAdvance
-			CreatureEvent* eventAdvance = getCreatureEvent(CREATURE_EVENT_ADVANCE);
-			if(eventAdvance)
-				eventAdvance->executeOnAdvance(this, (skills_t)MAGLEVEL, (magLevel - 1), magLevel);
+			CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
+			for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
+				(*it)->executeOnAdvance(this, (skills_t)MAGLEVEL, (magLevel - 1), magLevel);
 		}
 
 		nextReqMana = vocation->getReqMana(magLevel + 1);
@@ -1935,10 +1933,9 @@ void Player::addExperience(uint64_t exp)
 		sprintf(advMsg, "You advanced from Level %d to Level %d.", prevLevel, level);
 		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
 
-		//scripting event - onAdvance
-		CreatureEvent* eventAdvance = getCreatureEvent(CREATURE_EVENT_ADVANCE);
-		if(eventAdvance)
-			eventAdvance->executeOnAdvance(this, (skills_t)LEVEL, prevLevel, level);
+		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
+		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
+			(*it)->executeOnAdvance(this, (skills_t)LEVEL, prevLevel, level);
 	}
 
 	uint64_t currLevelExp = Player::getExpForLevel(level);

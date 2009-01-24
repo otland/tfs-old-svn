@@ -3062,11 +3062,9 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 		ss << std::endl << "Position: [X: " << thingPos.x << "] [Y: " << thingPos.y << "] [Z: " << thingPos.z << "].";
 
 	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
-
-	//scripting event - onLook
-	CreatureEvent* eventLook = player->getCreatureEvent(CREATURE_EVENT_LOOK);
-	if(eventLook)
-		eventLook->executeOnLook(player, thingPos, stackPos);
+	CreatureEventList lookEvents = getCreatureEvents(CREATURE_EVENT_LOOK);
+	for(CreatureEventList::iterator it = lookEvents.begin(); it != lookEvents.end(); ++it)
+		(*it)->executeOnLook(player, thingPos, stackPos);
 
 	return true;
 }
@@ -3850,11 +3848,16 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 		if(!force && target->getHealth() <= 0)
 			return false;
 
-		if(CreatureEvent* eventStats = target->getCreatureEvent(CREATURE_EVENT_STATSCHANGE))
+		bool deny = false;
+		CreatureEventList statsChangeEvents = getCreatureEvents(CREATURE_EVENT_STATSCHANGE);
+		for(CreatureEventList::iterator it = statsChangeEvents.begin(); it != statsChangeEvents.end(); ++it)
 		{
-			if(!eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_HEALTHGAIN, combatType, healthChange))
-				return false;
+			if(!(*it)->executeOnStatsChange(target, attacker, STATSCHANGE_HEALTHGAIN, combatType, healthChange))
+				deny = true;
 		}
+
+		if(deny)
+			return false;
 
 		target->gainHealth(attacker, healthChange);
 		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isInGhostMode())
@@ -3891,11 +3894,16 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 				damage = std::max((int32_t)0, damage - manaDamage);
 				if(manaDamage != 0)
 				{
-					if(CreatureEvent* eventStats = target->getCreatureEvent(CREATURE_EVENT_STATSCHANGE))
+					bool deny = false;
+					CreatureEventList statsChangeEvents = getCreatureEvents(CREATURE_EVENT_STATSCHANGE);
+					for(CreatureEventList::iterator it = statsChangeEvents.begin(); it != statsChangeEvents.end(); ++it)
 					{
-						if(!eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_MANALOSS, combatType, healthChange))
-							return false;
+						if(!(*it)->executeOnStatsChange(target, attacker, STATSCHANGE_MANALOSS, combatType, manaDamage))
+							deny = true;
 					}
+
+					if(deny)
+						return false;
 
 					target->drainMana(attacker, manaDamage);
 					char buffer[20];
@@ -3909,11 +3917,16 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			damage = std::min(target->getHealth(), damage);
 			if(damage > 0)
 			{
-				if(CreatureEvent* eventStats = target->getCreatureEvent(CREATURE_EVENT_STATSCHANGE))
+				bool deny = false;
+				CreatureEventList statsChangeEvents = getCreatureEvents(CREATURE_EVENT_STATSCHANGE);
+				for(CreatureEventList::iterator it = statsChangeEvents.begin(); it != statsChangeEvents.end(); ++it)
 				{
-					if(!eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_HEALTHLOSS, combatType, healthChange))
-						return false;
+					if(!(*it)->executeOnStatsChange(target, attacker, STATSCHANGE_HEALTHLOSS, combatType, damage))
+						deny = true;
 				}
+
+				if(deny)
+					return false;
 
 				target->drainHealth(attacker, combatType, damage);
 				addCreatureHealth(list, target);
@@ -4046,11 +4059,16 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 	const Position& targetPos = target->getPosition();
 	if(manaChange > 0)
 	{
-		if(CreatureEvent* eventStats = target->getCreatureEvent(CREATURE_EVENT_STATSCHANGE))
+		bool deny = false;
+		CreatureEventList statsChangeEvents = getCreatureEvents(CREATURE_EVENT_STATSCHANGE);
+		for(CreatureEventList::iterator it = statsChangeEvents.begin(); it != statsChangeEvents.end(); ++it)
 		{
-			if(!eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_MANAGAIN, COMBAT_HEALING, manaChange))
-				return false;
+			if(!(*it)->executeOnStatsChange(target, attacker, STATSCHANGE_MANAGAIN, COMBAT_HEALING, manaChange))
+				deny = true;
 		}
+
+		if(deny)
+			return false;
 
 		target->changeMana(manaChange);
 		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isInGhostMode())
@@ -4085,11 +4103,16 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 
 		if(manaLoss > 0)
 		{
-			if(CreatureEvent* eventStats = target->getCreatureEvent(CREATURE_EVENT_STATSCHANGE))
+			bool deny = false;
+			CreatureEventList statsChangeEvents = getCreatureEvents(CREATURE_EVENT_STATSCHANGE);
+			for(CreatureEventList::iterator it = statsChangeEvents.begin(); it != statsChangeEvents.end(); ++it)
 			{
-				if(!eventStats->executeOnStatsChange(target, attacker, STATSCHANGE_MANALOSS, COMBAT_UNDEFINEDDAMAGE, manaChange))
-					return false;
+				if(!(*it)->executeOnStatsChange(target, attacker, STATSCHANGE_MANALOSS, COMBAT_UNDEFINEDDAMAGE, manaChange))
+					deny = true;
 			}
+
+			if(deny)
+				return false;
 
 			target->drainMana(attacker, manaLoss);
 			char buffer[20];
