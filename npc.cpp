@@ -76,8 +76,8 @@ Npc* Npc::createNpc(const std::string& name)
 	return npc;
 }
 
-Npc::Npc(const std::string& _name) :
-	Creature()
+Npc::Npc(const std::string& _name):
+Creature()
 {
 	m_filename = getFilePath(FILE_TYPE_OTHER, "npc/" + _name + ".xml");
 	loaded = false;
@@ -105,7 +105,6 @@ bool Npc::load()
 		return true;
 
 	reset();
-
 	if(!m_scriptInterface)
 	{
 		m_scriptInterface = new NpcScriptInterface();
@@ -129,6 +128,7 @@ void Npc::reset()
 	talkRadius = 2;
 	idleTime = 0;
 	idleInterval = 5 * 60;
+	lastVoice = OTSYS_TIME();
 	defaultPublic = true;
 
 	delete m_npcEventHandler;
@@ -147,6 +147,7 @@ void Npc::reset()
 	itemListMap.clear();
 	responseScriptMap.clear();
 	shopPlayerList.clear();
+	voiceList.clear();
 }
 
 void Npc::reload()
@@ -169,7 +170,6 @@ bool Npc::loadFromXml(const std::string& filename)
 	{
 		xmlNodePtr root, p;
 		root = xmlDocGetRootElement(doc);
-
 		if(xmlStrcmp(root->name,(const xmlChar*)"npc") != 0)
 		{
 			std::cerr << "Malformed XML" << std::endl;
@@ -178,8 +178,6 @@ bool Npc::loadFromXml(const std::string& filename)
 
 		int32_t intValue;
 		std::string strValue;
-
-		p = root->children;
 
 		std::string scriptfile = "";
 		if(readXMLString(root, "script", strValue))
@@ -257,6 +255,7 @@ bool Npc::loadFromXml(const std::string& filename)
 				setShield(SHIELD_NONE);
 		}
 
+		p = root->children;
 		while(p)
 		{
 			if(xmlStrcmp(p->name, (const xmlChar*)"health") == 0)
@@ -297,6 +296,36 @@ bool Npc::loadFromXml(const std::string& filename)
 
 				currentOutfit = defaultOutfit;
 			}
+			else if(xmlStrcmp(p->name, (const xmlChar*)"voices") == 0)
+			{
+				for(xmlNodePtr q = p->children; q != NULL; q = q->next)
+				{
+					if(xmlStrcmp(q->name, (const xmlChar*)"voice") == 0)
+					{
+						if(!readXMLString(q, "text", strValue))
+							continue;
+
+						Voice voice;
+						voice.text = strValue;
+						if(readXMLInteger(q, "interval2", intValue))
+							voice.interval = intValue;
+						else
+							voice.interval = 60;
+
+						if(readXMLInteger(q, "margin", intValue))
+							voice.margin = intValue;
+						else
+							voice.margin = 0;
+
+						if(readXMLString(q, "yell", strValue))
+							voice.yell = booleanString(strValue);
+						else
+							voice.yell = false;
+
+						voiceList.push_back(voice);
+					}
+				}
+			}
 			else if(xmlStrcmp(p->name, (const xmlChar*)"parameters") == 0)
 			{
 				for(xmlNodePtr q = p->children; q != NULL; q = q->next)
@@ -330,19 +359,21 @@ bool Npc::loadFromXml(const std::string& filename)
 
 				responseList = loadInteraction(p->children);
 			}
+
 			p = p->next;
 		}
 
 		xmlFreeDoc(doc);
-
 		if(!scriptfile.empty())
 		{
 			m_npcEventHandler = new NpcScript(scriptfile, this);
 			if(!m_npcEventHandler->isLoaded())
 				return false;
 		}
+
 		return true;
 	}
+
 	return false;
 }
 
@@ -1217,30 +1248,39 @@ void Npc::onThink(uint32_t interval)
 	if(m_npcEventHandler)
 		m_npcEventHandler->onThink();
 
-	isIdle = true;
+	int64_t now = OTSYS_TIME();
+	for(VoiceList::iterator it = voiceList.begin(); it != voiceList.end(); ++it)
+	{
+		if(now >= (lastVoice + (*it)->margin))
+		{
+			if(((uint32_t)MAX_RAND_RANGE * (EVENT_CREATURE_THINK_INTERVAL / 1000)) / (*it)->interval >= (uint32_t)random_range(0, MAX_RAND_RANGE))
+			{
+				doSay((*it)->text, NULL, true, (*it)->yell);
+				lastVoice = now;
+				break;
+			}
+		}
+	}
+
 	bool idleResponse = false;
-	#define MAX_RAND_RANGE 10000000
 	if(((uint32_t)MAX_RAND_RANGE * (EVENT_CREATURE_THINK_INTERVAL / 1000)) / idleInterval >= (uint32_t)random_range(0, MAX_RAND_RANGE))
 		idleResponse = true;
 
+	isIdle = true;
 	for(StateList::iterator it = stateList.begin(); it != stateList.end();)
 	{
 		NpcState* npcState = *it;
-		const NpcResponse* response = NULL;
-
 		Player* player = g_game.getPlayerByID(npcState->respondToCreature);
-		bool closeConversation = false;
-		bool idleTimeout = false;
+
+		const NpcResponse* response = NULL;
+		bool closeConversation = false, idleTimeout = false;
 		if(!npcState->isQueued)
 		{
 			if(npcState->prevInteraction == 0)
 				npcState->prevInteraction = OTSYS_TIME();
 
 			if(idleTime > 0 && (OTSYS_TIME() - npcState->prevInteraction) > (uint64_t)(idleTime * 1000))
-			{
-				idleTimeout = true;
-				closeConversation = true;
-			}
+				idleTimeout = closeConversation = true;
 		}
 
 		if(idleResponse && player)
@@ -1262,24 +1302,22 @@ void Npc::onThink(uint32_t interval)
 				Player* nextPlayer = NULL;
 				while(!queueList.empty())
 				{
-					nextPlayer = g_game.getPlayerByID(*queueList.begin());
-					if(nextPlayer)
+					if((nextPlayer = g_game.getPlayerByID(*queueList.begin())))
 					{
-						NpcState* nextPlayerState = getState(nextPlayer, false);
-						if(nextPlayerState)
+						if(NpcState* nextPlayerState = getState(nextPlayer, false))
 						{
 							nextPlayerState->respondToText = nextPlayerState->prevRespondToText;
 							nextPlayerState->isQueued = false;
 							break;
 						}
 					}
+
 					queueList.erase(queueList.begin());
 				}
 			}
 
 			delete *it;
 			stateList.erase(it++);
-			//std::cout << "Closing conversation." << std::endl;
 			continue;
 		}
 
@@ -1288,8 +1326,7 @@ void Npc::onThink(uint32_t interval)
 			if(hasBusyReply && !isIdle)
 			{
 				//Check if we have a busy reply
-				response = getResponse(player, npcState, EVENT_BUSY);
-				if(response)
+				if((response = getResponse(player, npcState, EVENT_BUSY)))
 					executeResponse(player, npcState, response);
 			}
 			else
@@ -1317,14 +1354,13 @@ void Npc::onThink(uint32_t interval)
 
 		response = getResponse(player, npcState, EVENT_THINK);
 		executeResponse(player, npcState, response);
-
 		if(!npcState->isIdle)
 		{
 			isIdle = false;
-
 			if(hasBusyReply)
 				setCreatureFocus(player);
 		}
+
 		++it;
 	}
 
@@ -1692,7 +1728,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 				if(response->publicize())
 					g_game.internalCreatureSay(this, SPEAK_SAY, responseString);
 				else
-					g_game.npcSpeakToPlayer(this, player, responseString, false);
+					g_game.npcSpeakToPlayer(this, player, responseString, false, false);
 			}
 		}
 		else
@@ -1766,9 +1802,9 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 	}
 }
 
-void Npc::doSay(std::string msg, Player* focus /*= NULL*/, bool publicize /*= false*/)
+void Npc::doSay(std::string msg, Player* focus/* = NULL*/, bool publicize/* = false*/, bool yell/* = false*/)
 {
-	g_game.npcSpeakToPlayer(this, focus, msg, publicize);
+	g_game.npcSpeakToPlayer(this, focus, msg, publicize, yell);
 }
 
 void Npc::doMove(Direction dir)
@@ -1806,8 +1842,7 @@ void Npc::onPlayerTrade(Player* player, ShopEvent_t type, int32_t callback, uint
 {
 	if(type == SHOPEVENT_BUY)
 	{
-		NpcState* npcState = getState(player, true);
-		if(npcState)
+		if(NpcState* npcState = getState(player, true))
 		{
 			npcState->amount = amount;
 			npcState->subType = count;
@@ -1821,8 +1856,7 @@ void Npc::onPlayerTrade(Player* player, ShopEvent_t type, int32_t callback, uint
 	}
 	else if(type == SHOPEVENT_SELL)
 	{
-		NpcState* npcState = getState(player, true);
-		if(npcState)
+		if(NpcState* npcState = getState(player, true))
 		{
 			npcState->amount = amount;
 			npcState->subType = count;
@@ -1941,12 +1975,10 @@ void Npc::setCreatureFocus(Creature* creature)
 		focusCreature = creature->getID();
 		const Position& creaturePos = creature->getPosition();
 		const Position& myPos = getPosition();
-		int32_t dx = myPos.x - creaturePos.x;
-		int32_t dy = myPos.y - creaturePos.y;
+		int32_t dx = myPos.x - creaturePos.x, dy = myPos.y - creaturePos.y;
 
 		Direction dir = SOUTH;
 		float tan = 0;
-
 		if(dx != 0)
 			tan = dy/dx;
 		else
@@ -1966,6 +1998,7 @@ void Npc::setCreatureFocus(Creature* creature)
 			else
 				dir = SOUTH;
 		}
+
 		g_game.internalCreatureTurn(this, dir);
 	}
 	else
@@ -1977,14 +2010,12 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 {
 	std::string textString = asLowerCaseString(text);
 	StringVec wordList = explodeString(textString, " ");
-	NpcResponse* response = NULL;
-	int32_t bestMatchCount = 0;
-	int32_t totalMatchCount = 0;
 
+	NpcResponse* response = NULL;
+	int32_t bestMatchCount = 0, totalMatchCount = 0;
 	for(ResponseList::const_iterator it = list.begin(); it != list.end(); ++it)
 	{
 		int32_t matchCount = 0;
-
 		if((*it)->getParams() != RESPOND_DEFAULT)
 		{
 			uint32_t params = (*it)->getParams();
@@ -1992,6 +2023,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			{
 				if(!player->getSex() == PLAYERSEX_MALE)
 					continue;
+
 				++matchCount;
 			}
 
@@ -1999,6 +2031,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			{
 				if(!player->getSex() == PLAYERSEX_FEMALE)
 					continue;
+
 				++matchCount;
 			}
 
@@ -2006,6 +2039,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			{
 				if(!player->isPzLocked())
 					continue;
+
 				++matchCount;
 			}
 
@@ -2013,6 +2047,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			{
 				if(!player->isPremium())
 					continue;
+
 				++matchCount;
 			}
 
@@ -2020,6 +2055,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			{
 				if(player->getVocationId() != 2)
 					continue;
+
 				++matchCount;
 			}
 
@@ -2027,6 +2063,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			{
 				if(player->getVocationId() != 4)
 					continue;
+
 				++matchCount;
 			}
 
@@ -2034,6 +2071,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			{
 				if(player->getVocationId() != 3)
 					continue;
+
 				++matchCount;
 			}
 
@@ -2041,6 +2079,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			{
 				if(player->getVocationId() != 1)
 					continue;
+
 				++matchCount;
 			}
 
@@ -2048,6 +2087,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			{
 				if((int32_t)player->getLevel() > npcState->level)
 					continue;
+
 				++matchCount;
 			}
 
@@ -2056,6 +2096,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 				int32_t moneyCount = g_game.getMoney(player);
 				if(moneyCount >= npcState->price)
 					continue;
+
 				++matchCount;
 			}
 
@@ -2069,6 +2110,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 				{
 					if(npcState->amount == 1)
 						continue;
+
 					++matchCount;
 				}
 
@@ -2076,6 +2118,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 				{
 					if(npcState->amount > 1)
 						continue;
+
 					++matchCount;
 				}
 			}
@@ -2097,6 +2140,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 		{
 			if(!npcState->scriptVars.b1)
 				continue;
+
 			++matchCount;
 		}
 
@@ -2104,6 +2148,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 		{
 			if(!npcState->scriptVars.b2)
 				continue;
+
 			++matchCount;
 		}
 
@@ -2111,6 +2156,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 		{
 			if(!npcState->scriptVars.b3)
 				continue;
+
 			++matchCount;
 		}
 
@@ -2129,64 +2175,48 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 				{
 					if(tmp >= storageValue)
 						continue;
-					break;
 				}
 				case STORAGE_LESSOREQUAL:
 				{
 					if(tmp > storageValue)
 						continue;
-					break;
 				}
 				case STORAGE_EQUAL:
 				{
 					if(tmp != storageValue)
 						continue;
-					break;
 				}
 				case STORAGE_GREATEROREQUAL:
 				{
 					if(tmp < storageValue)
 						continue;
-					break;
 				}
 				case STORAGE_GREATER:
 				{
 					if(tmp <= storageValue)
 						continue;
-					break;
 				}
 				default:
 					break;
 			}
+
 			++matchCount;
 		}
 
 		if((*it)->getInteractType() == INTERACT_TEXT || (*it)->getFocusState() != -1)
 		{
-			if(npcState->isIdle && (*it)->getFocusState() != 1)
-			{
-				//We are idle, and this response does not activate the npc.
+			if(npcState->isIdle && (*it)->getFocusState() != 1) //We are idle, and this response does not activate the npc.
 				continue;
-			}
 
-			if(!npcState->isIdle && (*it)->getFocusState() == 1)
-			{
-				//We are not idle, and this response would activate us again.
+			if(!npcState->isIdle && (*it)->getFocusState() == 1) //We are not idle, and this response would activate us again.
 				continue;
-			}
 		}
 
-		if(npcState->topic == -1 && (*it)->getTopic() != -1)
-		{
-			//Not the right topic
+		if(npcState->topic == -1 && (*it)->getTopic() != -1) //Not the right topic
 			continue;
-		}
 
-		if(npcState->topic != -1 && npcState->topic == (*it)->getTopic())
-		{
-			//Topic is right
+		if(npcState->topic != -1 && npcState->topic == (*it)->getTopic()) //Topic is right
 			matchCount += 1000;
-		}
 
 		if((*it)->getInteractType() == INTERACT_EVENT)
 		{
@@ -2236,25 +2266,20 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 uint32_t Npc::getMatchCount(NpcResponse* response, StringVec wordList,
 	bool exactMatch, int32_t& matchAllCount, int32_t& totalKeywordCount)
 {
-	matchAllCount = 0;
-	totalKeywordCount = 0;
-	int32_t bestMatchCount = 0;
+	int32_t bestMatchCount = matchAllCount = totalKeywordCount = 0;
 
 	const std::list<std::string>& inputList = response->getInputList();
 	for(std::list<std::string>::const_iterator it = inputList.begin(); it != inputList.end(); ++it)
 	{
 		int32_t matchCount = 0;
 		StringVec::iterator lastWordMatchIter = wordList.begin();
+
 		std::string keywords = (*it);
 		StringVec keywordList = explodeString(keywords, ";");
-
 		for(StringVec::iterator keyIter = keywordList.begin(); keyIter != keywordList.end(); ++keyIter)
 		{
-			if(!exactMatch && (*keyIter) == "|*|")
-			{
-				//Match anything.
+			if(!exactMatch && (*keyIter) == "|*|") //Match anything.
 				matchAllCount++;
-			}
 			else if((*keyIter) == "|amount|")
 			{
 				//TODO: Should iterate through each word until a number or a new keyword is found.
@@ -2287,7 +2312,6 @@ uint32_t Npc::getMatchCount(NpcResponse* response, StringVec wordList,
 			}
 
 			++matchCount;
-
 			if(matchCount > bestMatchCount)
 			{
 				bestMatchCount = matchCount;
@@ -2298,6 +2322,7 @@ uint32_t Npc::getMatchCount(NpcResponse* response, StringVec wordList,
 				break;
 		}
 	}
+
 	return bestMatchCount;
 }
 
@@ -2341,17 +2366,28 @@ std::string Npc::getEventResponseName(NpcEvent_t eventType)
 {
 	switch(eventType)
 	{
-		case EVENT_BUSY: return "onBusy"; break;
-		case EVENT_THINK: return "onThink"; break;
-		case EVENT_IDLE: return "onIdle"; break;
-		case EVENT_PLAYER_ENTER: return "onPlayerEnter"; break;
-		case EVENT_PLAYER_MOVE: return "onPlayerMove"; break;
-		case EVENT_PLAYER_LEAVE: return "onPlayerLeave"; break;
-		case EVENT_PLAYER_SHOPSELL: return "onPlayerShopSell"; break;
-		case EVENT_PLAYER_SHOPBUY: return "onPlayerShopBuy"; break;
-		case EVENT_PLAYER_SHOPCLOSE: return "onPlayerShopClose"; break;
-		default: return ""; break;
+		case EVENT_BUSY:
+			return "onBusy";
+		case EVENT_THINK:
+			return "onThink";
+		case EVENT_IDLE:
+			return "onIdle";
+		case EVENT_PLAYER_ENTER:
+			return "onPlayerEnter";
+		case EVENT_PLAYER_MOVE:
+			return "onPlayerMove";
+		case EVENT_PLAYER_LEAVE:
+			return "onPlayerLeave";
+		case EVENT_PLAYER_SHOPSELL:
+			return "onPlayerShopSell";
+		case EVENT_PLAYER_SHOPBUY:
+			return "onPlayerShopBuy";
+		case EVENT_PLAYER_SHOPCLOSE:
+			return "onPlayerShopClose";
+		default:
+			break;
 	}
+
 	return "";
 }
 

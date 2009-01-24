@@ -43,17 +43,17 @@ struct MonsterSpawn
 	uint32_t maxAmount;
 };
 
-#define MAX_RAND_RANGE 10000000
-#define MAXIMUM_TRIES_PER_MONSTER 10
-#define CHECK_RAIDS_INTERVAL 60
-#define RAID_MINTICKS 1000
-
 class Raid;
 class RaidEvent;
 
 typedef std::list<Raid*> RaidList;
 typedef std::vector<RaidEvent*> RaidEventVector;
 typedef std::list<MonsterSpawn*> MonsterSpawnList;
+
+#define MAX_RAND_RANGE 10000000
+#define MAXIMUM_TRIES_PER_MONSTER 10
+#define CHECK_RAIDS_INTERVAL 60
+#define RAID_MINTICKS 1000
 
 class Raids
 {

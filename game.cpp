@@ -3423,7 +3423,7 @@ bool Game::playerSpeakToNpc(Player* player, const std::string& text)
 	return true;
 }
 
-void Game::npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, bool publicize)
+void Game::npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, bool publicize, bool yell)
 {
 	if(player != NULL)
 	{
@@ -3441,20 +3441,24 @@ void Game::npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, b
 		SpectatorVec list;
 		getSpectators(list, npc->getPosition());
 
+		SpeakClasses type = SPEAK_SAY;
+		if(yell)
+			type = SPEAK_YELL;
+
 		//send to client
 		Player* tmpPlayer = NULL;
 		for(it = list.begin(); it != list.end(); ++it)
 		{
 			tmpPlayer = (*it)->getPlayer();
 			if((tmpPlayer != NULL) && (tmpPlayer != player))
-				tmpPlayer->sendCreatureSay(npc, SPEAK_SAY, tmp);
+				tmpPlayer->sendCreatureSay(npc, type, tmp);
 		}
 
 		//event method
 		for(it = list.begin(); it != list.end(); ++it)
 		{
 			if((*it) != player)
-				(*it)->onCreatureSay(npc, SPEAK_SAY, tmp);
+				(*it)->onCreatureSay(npc, type, tmp);
 		}
 	}
 }

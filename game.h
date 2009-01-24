@@ -530,7 +530,7 @@ class Game
 
 		int32_t getLightHour() {return lightHour;}
 		void startDecay(Item* item);
-		void npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, bool publicize);
+		void npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, bool publicize, bool yell);
 
 	protected:
 		bool playerWhisper(Player* player, const std::string& text);
