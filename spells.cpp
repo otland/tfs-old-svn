@@ -553,15 +553,22 @@ bool Spell::playerSpellCheck(Player* player) const
 				return false;
 			}
 
+			std::cout << "player->hasCondition(CONDITION_EXHAUST_COMBAT) returns: " << player->hasCondition(CONDITION_EXHAUST_COMBAT) << std::endl;
+			std::cout << "(OTSYS_TIME() - player->getLastCombatExhaust()) returns: " << (OTSYS_TIME() - player->getLastCombatExhaust()) << std::endl;
 			if(player->hasCondition(CONDITION_EXHAUST_COMBAT) || (OTSYS_TIME() - player->getLastCombatExhaust()) <= 100)
 				exhaust = true;
 			else
 				player->setLastCombatExhaust(OTSYS_TIME());
 		}
-		else if(player->hasCondition(CONDITION_EXHAUST_HEAL) || (OTSYS_TIME() - player->getLastCombatExhaust()) <= 100)
-			exhaust = true;
 		else
-			player->setLastHealExhaust(OTSYS_TIME());
+		{
+			std::cout << "player->hasCondition(CONDITION_EXHAUST_HEAL) returns: " << player->hasCondition(CONDITION_EXHAUST_HEAL) << std::endl;
+			std::cout << "(OTSYS_TIME() - player->getLastHealExhaust()) returns: " << (OTSYS_TIME() - player->getLastHealExhaust()) << std::endl;
+			if(player->hasCondition(CONDITION_EXHAUST_HEAL) || (OTSYS_TIME() - player->getLastHealExhaust()) <= 100)
+				exhaust = true;
+			else
+				player->setLastHealExhaust(OTSYS_TIME());
+		}
 
 		if(exhaust)
 		{
@@ -654,9 +661,6 @@ bool Spell::playerSpellCheck(Player* player) const
 
 bool Spell::playerInstantSpellCheck(Player* player, const Position& toPos)
 {
-	if(!playerSpellCheck(player))
-		return false;
-
 	if(toPos.x != 0xFFFF)
 	{
 		const Position& playerPos = player->getPosition();
