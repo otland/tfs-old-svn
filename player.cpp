@@ -186,6 +186,9 @@ Creature()
 
 	groupId = 0;
 
+	lastCombatExhaust = 0;
+	lastHealExhaust = 0;
+
 	ghostMode = false;
 	requestedOutfit = false;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__

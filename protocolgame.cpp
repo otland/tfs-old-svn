@@ -568,6 +568,12 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
+	if(g_game.getGameState() == GAME_STATE_MAINTAIN)
+	{
+		disconnectClient(0x14, "Gameworld is under maintenance. Please re-connect in a while.");
+		return false;
+	}
+
 	if(g_bans.isIpDisabled(getIP()))
 	{
 		disconnectClient(0x14, "Too many connections attempts from this IP. Try again later.");

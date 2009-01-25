@@ -192,9 +192,7 @@ void Game::setGameState(GameState_t newState)
 					createTask(boost::bind(&Game::saveGameState, this, false)));
 				break;
 			}
-			case GAME_STATE_STARTUP:
-			case GAME_STATE_CLOSING:
-			case GAME_STATE_NORMAL:
+
 			default:
 				break;
 		}
@@ -203,6 +201,8 @@ void Game::setGameState(GameState_t newState)
 
 void Game::saveGameState(bool savePlayers)
 {
+	setGameState(GAME_STATE_MAINTAIN);
+
 	stateTime = 0;
 	std::cout << "Saving server..." << std::endl;
 	if(savePlayers)
@@ -218,6 +218,8 @@ void Game::saveGameState(bool savePlayers)
 	map->saveMap();
 	ScriptEnviroment::saveGameState();
 	stateTime = OTSYS_TIME() + STATE_TIME;
+
+	setGameState(GAME_STATE_NORMAL);
 }
 
 void Game::loadGameState()
