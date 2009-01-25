@@ -3231,19 +3231,16 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 		return false;
 	}
 
+	player->removeMessageBuffer();
 	if(player->isAccountManager())
-	{
-		player->removeMessageBuffer();
 		return internalCreatureSay(player, SPEAK_SAY, text);
-	}
-
-	if(g_talkActions->onPlayerSay(player, channelId, text))
-		return true;
 
 	if(g_spells->onPlayerSay(player, text))
 		return true;
 
-	player->removeMessageBuffer();
+	if(g_talkActions->onPlayerSay(player, channelId, text))
+		return true;
+
 	switch(type)
 	{
 		case SPEAK_SAY:
