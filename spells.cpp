@@ -668,9 +668,6 @@ bool Spell::playerSpellCheck(Player* player) const
 
 bool Spell::playerInstantSpellCheck(Player* player, const Position& toPos)
 {
-	if(!playerSpellCheck(player))
-		return false;
-
 	if(toPos.x != 0xFFFF)
 	{
 		const Position& playerPos = player->getPosition();
