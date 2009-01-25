@@ -553,11 +553,15 @@ bool Spell::playerSpellCheck(Player* player) const
 				return false;
 			}
 
-			if(player->hasCondition(CONDITION_EXHAUST_COMBAT))
+			if(player->hasCondition(CONDITION_EXHAUST_COMBAT) || (OTSYS_TIME() - player->getLastCombatExhaust()) <= 100)
 				exhaust = true;
+			else
+				player->setLastCombatExhaust(OTSYS_TIME());
 		}
-		else if(player->hasCondition(CONDITION_EXHAUST_HEAL))
+		else if(player->hasCondition(CONDITION_EXHAUST_HEAL) || (OTSYS_TIME() - player->getLastCombatExhaust()) <= 100)
 			exhaust = true;
+		else
+			player->setLastHealExhaust(OTSYS_TIME());
 
 		if(exhaust)
 		{

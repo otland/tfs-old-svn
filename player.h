@@ -152,6 +152,12 @@ class Player : public Creature, public Cylinder
 			return ((50ULL * level * level * level) - (150ULL * level * level) + (400ULL * level))/3ULL;
 		}
 
+		int64_t getLastCombatExhaust() const {return lastCombatExhaust;}
+		void setLastCombatExhaust(int64_t lastExhaust) {lastCombatExhaust = lastExhaust;}
+
+		int64_t getLastHealExhaust() const {return lastHealExhaust;}
+		void setLastHealExhaust(int64_t lastExhaust) {lastHealExhaust = lastExhaust;}
+
 		uint32_t getGuildId() const {return guildId;}
 		void setGuildId(uint32_t newGuildId) {guildId = newGuildId;}
 
@@ -738,6 +744,8 @@ class Player : public Creature, public Cylinder
 		uint32_t internalPing;
 		uint32_t npings;
 		int64_t nextAction;
+		int64_t lastCombatExhaust;
+		int64_t lastHealExhaust;
 
 		bool pzLocked;
 		bool isConnecting;
