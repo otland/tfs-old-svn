@@ -259,7 +259,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 						if(!propStream.GET_ULONG(_houseid))
 						{
 							std::stringstream ss;
-							ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] " << "Could not read house id.";
+							ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] Could not read house id.";
 							setLastErrorString(ss.str());
 							return false;
 						}
@@ -268,7 +268,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 						if(!house)
 						{
 							std::stringstream ss;
-							ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] " << "Could not create house id: " << _houseid;
+							ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] Could not create house id: " << _houseid;
 							setLastErrorString(ss.str());
 							return false;
 						}
@@ -322,7 +322,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 								if(isHouseTile && !item->isNotMoveable())
 								{
-									std::cout << "[Warning - IOMap::loadMap] Movable item in house: " << house->getHouseId() << ", item type: " << item->getID() << ", pos " << px << "/" << py << "/" << pz << std::endl;
+									std::cout << "[Warning - IOMap::loadMap] Movable item in house: " << house->getHouseId() << ", item type: " << item->getID() << ", at position " << px << "/" << py << "/" << pz << std::endl;
 									delete item;
 									item = NULL;
 								}

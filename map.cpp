@@ -182,7 +182,7 @@ void Map::setTile(uint16_t x, uint16_t y, uint8_t z, Tile* newTile)
 		newTile->qt_node = leaf;
 	}
 	else
-		std::cout << "[Error - Map::setTile()] Tile already exists." << std::endl;
+		std::cout << "[Error - Map::setTile] Tile already exists." << std::endl;
 
 	if(newTile->hasFlag(TILESTATE_REFRESH))
 	{
@@ -190,6 +190,7 @@ void Map::setTile(uint16_t x, uint16_t y, uint8_t z, Tile* newTile)
 		rb.lastRefresh = OTSYS_TIME();
 		for(ItemVector::iterator it = newTile->downItems.begin(); it != newTile->downItems.end(); ++it)
 			rb.list.push_back((*it)->clone());
+
 		refreshTileMap[newTile] = rb;
 	}
 }
