@@ -2018,45 +2018,81 @@
 	<item id="1854" article="a" name="picture">
 		<attribute key="weight" value="200"/>
 	</item>
-	<item id="1855" article="a" name="purple tapestry"/>
-	<item id="1856" article="a" name="purple tapestry"/>
+	<item id="1855" article="a" name="purple tapestry">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
+	<item id="1856" article="a" name="purple tapestry">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
 	<item id="1857" article="a" name="purple tapestry">
 		<attribute key="weight" value="1000"/>
 	</item>
-	<item id="1858" article="a" name="green tapestry"/>
-	<item id="1859" article="a" name="green tapestry"/>
+	<item id="1858" article="a" name="green tapestry">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
+	<item id="1859" article="a" name="green tapestry">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
 	<item id="1860" article="a" name="green tapestry">
 		<attribute key="weight" value="1000"/>
 	</item>
-	<item id="1861" article="a" name="yellow tapestry"/>
-	<item id="1862" article="a" name="yellow tapestry"/>
+	<item id="1861" article="a" name="yellow tapestry">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
+	<item id="1862" article="a" name="yellow tapestry">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
 	<item id="1863" article="a" name="yellow tapestry">
 		<attribute key="weight" value="1000"/>
 	</item>
-	<item id="1864" article="an" name="orange tapestry"/>
-	<item id="1865" article="an" name="orange tapestry"/>
+	<item id="1864" article="an" name="orange tapestry">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
+	<item id="1865" article="an" name="orange tapestry">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
 	<item id="1866" article="an" name="orange tapestry">
 		<attribute key="weight" value="1000"/>
 	</item>
-	<item id="1867" article="a" name="red tapestry"/>
-	<item id="1868" article="a" name="red tapestry"/>
+	<item id="1867" article="a" name="red tapestry">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
+	<item id="1868" article="a" name="red tapestry">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
 	<item id="1869" article="a" name="red tapestry">
 		<attribute key="weight" value="1000"/>
 	</item>
-	<item id="1870" article="a" name="blue tapestry"/>
-	<item id="1871" article="a" name="blue tapestry"/>
+	<item id="1870" article="a" name="blue tapestry">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
+	<item id="1871" article="a" name="blue tapestry">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
 	<item id="1872" article="a" name="blue tapestry">
 		<attribute key="weight" value="1000"/>
 	</item>
-	<item id="1873" article="a" name="cuckoo clock"/>
-	<item id="1874" article="a" name="cuckoo clock"/>
-	<item id="1875" article="a" name="cuckoo clock"/>
-	<item id="1876" article="a" name="cuckoo clock"/>
+	<item id="1873" article="a" name="cuckoo clock">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
+	<item id="1874" article="a" name="cuckoo clock">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
+	<item id="1875" article="a" name="cuckoo clock">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
+	<item id="1876" article="a" name="cuckoo clock">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
 	<item id="1877" article="a" name="cuckoo clock">
 		<attribute key="weight" value="1500"/>
 	</item>
-	<item id="1878" article="a" name="white tapestry"/>
-	<item id="1879" article="a" name="white tapestry"/>
+	<item id="1878" article="a" name="white tapestry">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
+	<item id="1879" article="a" name="white tapestry">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
 	<item id="1880" article="a" name="white tapestry">
 		<attribute key="weight" value="1000"/>
 	</item>
@@ -11548,8 +11584,12 @@
 	<item id="5611" article="a" name="catapult"/>
 	<item id="5612" article="a" name="catapult"/>
 	<item id="5613" article="a" name="catapult"/>
-	<item id="5614" article="a" name="pirate tapestry"/>
-	<item id="5615" article="a" name="pirate tapestry"/>
+	<item id="5614" article="a" name="pirate tapestry">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
+	<item id="5615" article="a" name="pirate tapestry">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
 	<item id="5616" article="a" name="pirate tapestry">
 		<attribute key="weight" value="1000"/>
 	</item>
@@ -14317,8 +14357,12 @@
 		<attribute key="description" value="Use it to learn how to make Gingerbreadman in the christmas bakery."/>
 		<attribute key="weight" value="200"/>
 	</item>
-	<item id="6524" article="a" name="skeleton decoration"/>
-	<item id="6525" article="a" name="skeleton decoration"/>
+	<item id="6524" article="a" name="skeleton decoration">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
+	<item id="6525" article="a" name="skeleton decoration">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
 	<item id="6526" article="a" name="skeleton decoration">
 		<attribute key="weight" value="1000"/>
 	</item>
@@ -20670,8 +20714,12 @@
 		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>	
-	<item id="9835" article="a" name="velvet tapestry"/>
-	<item id="9836" article="a" name="velvet tapestry"/>
+	<item id="9835" article="a" name="velvet tapestry">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
+	<item id="9836" article="a" name="velvet tapestry">
+		<attribute key="forceSerialize" value="1"/>
+	</item>
 	<item id="9837" article="a" name="velvet tapestry">
 		<attribute key="weight" value="1000"/>
 	</item>

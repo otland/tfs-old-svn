@@ -100,10 +100,10 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 		if(!item)
 			continue;
 
-		if(item->isNotMoveable() && !item->getDoor() && !item->getBed() && (!item->getContainer() || item->getContainer()->size() == 0) && !item->canWriteText())
+		if(item->isNotMoveable() && !item->forceSerialize())
 			continue;
 
-		uint32_t attributesSize;
+		uint32_t attributesSize = 0;
 		PropWriteStream propWriteStream;
 		item->serializeAttr(propWriteStream);
 		const char* attributes = propWriteStream.getStream(attributesSize);

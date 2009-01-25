@@ -50,6 +50,7 @@ ItemType::ItemType()
 	rotable = false;
 	rotateTo = 0;
 	hasHeight = false;
+	forceSerialize = false;
 
 	floorChangeDown = true;
 	floorChangeNorth = false;
@@ -136,7 +137,7 @@ ItemType::~ItemType()
 }
 
 Items::Items() :
-items(15000)
+items(19999)
 {
 	//
 }
@@ -148,15 +149,17 @@ Items::~Items()
 
 void Items::clear()
 {
-	//TODO. clear items?
+	//TODO: clear items?
 }
 
 bool Items::reload()
 {
-	//TODO?
+	//TODO
 	/*
-	for (ItemMap::iterator it = items.begin(); it != items.end(); it++)
+	for(ItemMap::iterator it = items.begin(); it != items.end(); ++it)
 		delete it->second->condition;
+
+	clear();
 	return loadFromXml();
 	*/
 	return false;
@@ -455,7 +458,7 @@ bool Items::loadFromXml()
 									else if(tmpStrValue == "bed")
 										it.type = ITEM_TYPE_BED;
 									else
-										std::cout << "Warning: [Items::loadFromXml] " << "Unknown type " << strValue << std::endl;
+										std::cout << "[Warning - Items::loadFromXml] Unknown type " << strValue << std::endl;
 								}
 							}
 							else if(tmpStrValue == "name")
@@ -577,7 +580,7 @@ bool Items::loadFromXml()
 									else if(tmpStrValue == "energy")
 										it.corpseType = RACE_ENERGY;
 									else
-										std::cout << "Warning: [Items::loadFromXml] " << "Unknown corpseType " << strValue << std::endl;
+										std::cout << "[Warning - Items::loadFromXml] Unknown corpseType " << strValue << std::endl;
 								}
 							}
 							else if(tmpStrValue == "containersize")
@@ -594,7 +597,7 @@ bool Items::loadFromXml()
 									if(fluid != FLUID_NONE)
 										it.fluidSource = fluid;
 									else
-										std::cout << "Warning: [Items::loadFromXml] " << "Unknown fluidSource " << strValue << std::endl;
+										std::cout << "[Warning - Items::loadFromXml] Unknown fluidSource " << strValue << std::endl;
 								}
 							}
 							else if(tmpStrValue == "writeable" || tmpStrValue == "writable")
@@ -619,6 +622,11 @@ bool Items::loadFromXml()
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.worth = intValue;
+							}
+							else if(tmpStrValue == "forceserialize" || tmpStrValue == "forceserialization" || tmpStrValue == "forcesave")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+									it.forceSerialize = (intValue != 0);
 							}
 							else if(tmpStrValue == "leveldoor")
 							{
@@ -647,7 +655,7 @@ bool Items::loadFromXml()
 									else if(tmpStrValue == "fist")
 										it.weaponType = WEAPON_FIST;
 									else
-										std::cout << "Warning: [Items::loadFromXml] " << "Unknown weaponType " << strValue << std::endl;
+										std::cout << "[Warning - Items::loadFromXml] Unknown weaponType " << strValue << std::endl;
 								}
 							}
 							else if(tmpStrValue == "slottype")
@@ -672,7 +680,7 @@ bool Items::loadFromXml()
 									else if(tmpStrValue == "ring")
 										it.slotPosition |= SLOTP_RING;
 									else
-										std::cout << "Warning: [Items::loadFromXml] " << "Unknown slotType " << strValue << std::endl;
+										std::cout << "[Warning - Items::loadFromXml] Unknown slotType " << strValue << std::endl;
 								}
 							}
 							else if(tmpStrValue == "ammotype")
@@ -681,7 +689,7 @@ bool Items::loadFromXml()
 								{
 									it.ammoType = getAmmoType(strValue);
 									if(it.ammoType == AMMO_NONE)
-										std::cout << "Warning: [Items::loadFromXml] " << "Unknown ammoType " << strValue << std::endl;
+										std::cout << "[Warning - Items::loadFromXml] Unknown ammoType " << strValue << std::endl;
 								}
 							}
 							else if(tmpStrValue == "shoottype")
@@ -692,7 +700,7 @@ bool Items::loadFromXml()
 									if(shoot != NM_SHOOT_UNK)
 										it.shootType = shoot;
 									else
-										std::cout << "Warning: [Items::loadFromXml] " << "Unknown shootType " << strValue << std::endl;
+										std::cout << "[Warning - Items::loadFromXml] Unknown shootType " << strValue << std::endl;
 								}
 							}
 							else if(tmpStrValue == "effect")
@@ -703,7 +711,7 @@ bool Items::loadFromXml()
 									if(effect != NM_ME_UNK)
 										it.magicEffect = effect;
 									else
-										std::cout << "Warning: [Items::loadFromXml] " << "Unknown effect " << strValue << std::endl;
+										std::cout << "[Warning - Items::loadFromXml] Unknown effect " << strValue << std::endl;
 								}
 							}
 							else if(tmpStrValue == "range")
@@ -764,7 +772,7 @@ bool Items::loadFromXml()
 									if(ammo != AMMOACTION_NONE)
 										it.ammoAction = ammo;
 									else
-										std::cout << "Warning: [Items::loadFromXml] " << "Unknown ammoAction " << strValue << std::endl;
+										std::cout << "[Warning - Items::loadFromXml] Unknown ammoAction " << strValue << std::endl;
 								}
 							}
 							else if(tmpStrValue == "hitchance")
@@ -1386,14 +1394,12 @@ ItemType& Items::getItemType(int32_t id)
 	ItemType* iType = items.getElement(id);
 	if(iType)
 		return *iType;
-	else
-	{
-		#ifdef __DEBUG__
-		std::cout << "WARNING! unknown itemtypeid " << id << ". using defaults." << std::endl;
-		#endif
-		static ItemType dummyItemType; // use this for invalid ids
-		return dummyItemType;
-	}
+
+	#ifdef __DEBUG__
+	std::cout << "WARNING! unknown itemtypeid " << id << ". using defaults." << std::endl;
+	#endif
+	static ItemType dummyItemType; // use this for invalid ids
+	return dummyItemType;
 }
 
 const ItemType& Items::getItemType(int32_t id) const
@@ -1401,11 +1407,9 @@ const ItemType& Items::getItemType(int32_t id) const
 	ItemType* iType = items.getElement(id);
 	if(iType)
 		return *iType;
-	else
-	{
-		static ItemType dummyItemType; // use this for invalid ids
-		return dummyItemType;
-	}
+
+	static ItemType dummyItemType; // use this for invalid ids
+	return dummyItemType;
 }
 
 const ItemType& Items::getItemIdByClientId(int32_t spriteId) const
@@ -1414,8 +1418,7 @@ const ItemType& Items::getItemIdByClientId(int32_t spriteId) const
 	ItemType* iType;
 	do
 	{
-		iType = items.getElement(i);
-		if(iType && iType->clientId == spriteId)
+		if((iType = items.getElement(i)) && iType->clientId == spriteId)
 			return *iType;
 
 		i++;
@@ -1434,12 +1437,8 @@ int32_t Items::getItemIdByName(const std::string& name)
 		ItemType* iType;
 		do
 		{
-			iType = items.getElement(i);
-			if(iType)
-			{
-				if(strcasecmp(name.c_str(), iType->name.c_str()) == 0)
-					return i;
-			}
+			if((iType = items.getElement(i)) && strcasecmp(name.c_str(), iType->name.c_str()) == 0)
+				return i;
 
 			i++;
 		}

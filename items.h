@@ -182,6 +182,7 @@ class ItemType
 		bool pickupable;
 		bool rotable;
 		int32_t rotateTo;
+		bool forceSerialize;
 
 		std::string runeSpellName;
 		int32_t runeLevel;

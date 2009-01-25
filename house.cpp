@@ -243,19 +243,13 @@ bool House::transferToDepot()
 		{
 			player = new Player(ownerName, NULL);
 			if(!IOLoginData::getInstance()->loadPlayer(player, ownerName))
-			{
-#ifdef __DEBUG__
-				std::cout << "Failure: [House::transferToDepot], can not load player: " << ownerName << std::endl;
-#endif
 				delete player;
-			}
 		}
 	}
 
-	std::list<Item*> moveItemList;
-	Container* tmpContainer = NULL;
+	ItemList moveItemList;
 	Item* item = NULL;
-
+	Container* tmpContainer = NULL;
 	for(HouseTileList::iterator it = houseTiles.begin(); it != houseTiles.end(); ++it)
 	{
 		for(uint32_t i = 0; i < (*it)->getThingCount(); ++i)
@@ -278,11 +272,8 @@ bool House::transferToDepot()
 	if(player)
 		depot = player->getDepot(townid, true);
 
-	for(std::list<Item*>::iterator it = moveItemList.begin(); it != moveItemList.end(); ++it)
-	{
-		g_game.internalMoveItem(NULL, (*it)->getParent(), depot, INDEX_WHEREEVER,
-			(*it), (*it)->getItemCount(), NULL, FLAG_NOLIMIT);
-	}
+	for(ItemList::iterator it = moveItemList.begin(); it != moveItemList.end(); ++it)
+		g_game.internalMoveItem(NULL, (*it)->getParent(), depot, INDEX_WHEREEVER, (*it), (*it)->getItemCount(), NULL, FLAG_NOLIMIT);
 
 	if(player && player->isVirtual())
 	{
