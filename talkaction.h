@@ -87,8 +87,7 @@ class TalkAction : public Event
 		static TalkFunction placeMonster;
 		static TalkFunction placeSummon;
 		static TalkFunction reloadInfo;
-		static TalkFunction closeServer;
-		static TalkFunction openServer;
+		static TalkFunction closeOpenServer;
 		static TalkFunction serverDiag;
 		static TalkFunction changeThingProporties;
 		static TalkFunction addSkill;

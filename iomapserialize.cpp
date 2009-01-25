@@ -174,11 +174,8 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 		Item* item = NULL;
 		do
 		{
-			int32_t sid = result->getDataInt("sid");
-			int32_t pid = result->getDataInt("pid");
-			int32_t type = result->getDataInt("itemtype");
-			int32_t count = result->getDataInt("count");
-
+			int32_t sid = result->getDataInt("sid"), pid = result->getDataInt("pid");
+			int32_t type = result->getDataInt("itemtype"), count = result->getDataInt("count");
 			item = NULL;
 
 			uint64_t attrSize = 0;
@@ -187,23 +184,21 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 			propStream.init(attr, attrSize);
 
 			const ItemType& iType = Item::items[type];
-			if(iType.moveable || /* or object in a container*/ pid != 0)
+			if(iType.moveable || iType.forceSerialize || pid != 0)
 			{
 				//create a new item
 				item = Item::CreateItem(type, count);
-				if(item)
-				{
-					if(!item->unserializeAttr(propStream))
-						std::cout << "WARNING: Serialize error in IOMapSerialize::loadTile() [1]" << std::endl;
-
-					if(pid == 0)
-					{
-						tile->__internalAddThing(item);
-						item->__startDecaying();
-					}
-				}
-				else
+				if(!item)
 					continue;
+
+				if(!item->unserializeAttr(propStream))
+					std::cout << "WARNING: Serialize error in IOMapSerialize::loadTile() [1]" << std::endl;
+
+				if(pid == 0)
+				{
+					tile->__internalAddThing(item);
+					item->__startDecaying();
+				}
 			}
 			else
 			{
@@ -229,9 +224,7 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 					std::cout << "WARNING: Serialize error in IOMapSerialize::loadTile() [0]" << std::endl;
 
 				item = g_game.transformItem(item, type);
-
-				std::pair<Item*, int32_t> myPair(item, pid);
-				itemMap[sid] = myPair;
+				itemMap[sid] = std::make_pair(item, pid);
 			}
 			else
 				std::cout << "WARNING: IOMapSerialize::loadTile() - NULL item at " << tile->getPosition() << " (type = " << type << ", sid = " << sid << ", pid = " << pid << ")." << std::endl;

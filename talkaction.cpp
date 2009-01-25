@@ -194,8 +194,7 @@ TalkFunction_t TalkAction::definedFunctions[] =
 	{"placemonster", &placeMonster},
 	{"placesummon", &placeSummon},
 	{"reloadinfo", &reloadInfo},
-	{"closeserver", &closeServer},
-	{"openserver", &openServer},
+	{"closeopenserver", &closeOpenServer},
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	{"serverdiag",&serverDiag},
 #endif
@@ -450,22 +449,14 @@ bool TalkAction::reloadInfo(Player* player, const std::string& cmd, const std::s
 	return true;
 }
 
-bool TalkAction::closeServer(Player* player, const std::string& cmd, const std::string& param)
+bool TalkAction::closeOpenServer(Player* player, const std::string& cmd, const std::string& param)
 {
-	Dispatcher::getDispatcher().addTask(
-		createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
+	GameState_t action = GAME_STATE_CLOSED;
+	if(cmd[1] == 'o')
+		action = GAME_STATE_NORMAL;
 
-
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Server is now closed.");
-	return true;
-}
-
-bool TalkAction::openServer(Player* player, const std::string& cmd, const std::string& param)
-{
-	Dispatcher::getDispatcher().addTask(
-		createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_NORMAL)));
-
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Server is now open.");
+	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, &g_game, action)));
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Action complete.");
 	return true;
 }
 
