@@ -8896,7 +8896,7 @@ int32_t LuaScriptInterface::luaSaveServer(lua_State* L)
 {
 	//saveServer()
 	g_game.setGameState(GAME_STATE_MAINTAIN);
-	g_game.saveGameState(true);
+	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::saveGameState, &g_game, true)));
 	g_game.setGameState(GAME_STATE_NORMAL);
 	return 1;
 }

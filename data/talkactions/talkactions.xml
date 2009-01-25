@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <talkactions>
 	<!-- Gods -->
-	<talkaction log="yes" words="/closeserver" access="5" function="closeServer"/>
-	<talkaction log="yes" words="/openserver" access="5" function="openServer"/>
+	<talkaction log="yes" words="/closeserver" access="5" function="closeOpenServer"/>
+	<talkaction log="yes" words="/openserver" access="5" function="closeOpenServer"/>
 	<talkaction log="yes" words="/addskill" access="5" function="addSkill"/>
 	<talkaction log="yes" words="/attr" access="5" function="changeThingProporties"/>
 	<talkaction log="yes" words="/serverdiag" access="5" function="serverDiag"/>

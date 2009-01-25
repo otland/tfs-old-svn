@@ -142,7 +142,8 @@ void signalHandler(int32_t sig)
 	{
 		case SIGHUP:
 			g_game.setGameState(GAME_STATE_MAINTAIN);
-			g_game.saveGameState(true);
+			Dispatcher::getDispatcher().addTask(createTask(
+				boost::bind(&Game::saveGameState, &g_game, true)));
 			g_game.setGameState(GAME_STATE_NORMAL);
 			break;
 		case SIGTRAP:
@@ -151,8 +152,8 @@ void signalHandler(int32_t sig)
 			g_game.setGameState(GAME_STATE_NORMAL);
 			break;
 		case SIGUSR1:
-			Dispatcher::getDispatcher().addTask(
-				createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
+			Dispatcher::getDispatcher().addTask(createTask(
+				boost::bind(&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
 			break;
 		case SIGUSR2:
 			g_game.setGameState(GAME_STATE_NORMAL);
@@ -161,12 +162,12 @@ void signalHandler(int32_t sig)
 			//TODO: reload all
 			break;
 		case SIGQUIT:
-			Dispatcher::getDispatcher().addTask(
-				createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
+			Dispatcher::getDispatcher().addTask(createTask(
+				boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
 			break;
 		case SIGTERM:
-                        Dispatcher::getDispatcher().addTask(
-                                createTask(boost::bind(&Game::shutdown, &g_game)));
+                        Dispatcher::getDispatcher().addTask(createTask(
+				boost::bind(&Game::shutdown, &g_game)));
 			break;
 		default:
 			break;
@@ -737,7 +738,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
 						g_game.setGameState(GAME_STATE_MAINTAIN);
-						g_game.saveGameState(true);
+						Dispatcher::getDispatcher().addTask(createTask(
+							boost::bind(&Game::saveGameState, &g_game, true)));
 						g_game.setGameState(GAME_STATE_NORMAL);
 						MessageBox(NULL, "Server has been saved.", "Save server", MB_OK);
 					}
@@ -770,8 +772,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP && GUI::getInstance()->m_connections)
 					{
-						Dispatcher::getDispatcher().addTask(
-							createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
+						Dispatcher::getDispatcher().addTask(createTask(
+							boost::bind(&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
 						ModifyMenu(GetMenu(hwnd), ID_MENU_SERVER_CLOSE, MF_STRING, ID_MENU_SERVER_OPEN, "&Open server");
 					}
 					break;
