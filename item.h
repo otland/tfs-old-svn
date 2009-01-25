@@ -370,7 +370,7 @@ class Item : virtual public Thing, public ItemAttributes
 
 		bool hasProperty(enum ITEMPROPERTY prop) const;
 		bool hasCharges() const {return items[id].charges != 0;}
-		bool forceSerialize() const {return items[id].forceSerialize || isBed() || isDoor() || canWriteText() || (getContainer() && getContainer()->size() > 0);}
+		bool forceSerialize() const {return items[id].forceSerialize || canWriteText() || isContainer() || isBed() || isDoor();}
 		bool isGroundTile() const {return items[id].isGroundTile();}
 		bool isContainer() const {return items[id].isContainer();}
 		bool isSplash() const {return items[id].isSplash();}
