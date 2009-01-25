@@ -430,7 +430,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 							{
 								if(text.length() > 8)
 								{
-									std::string param = text.substr(9);
+									std::string param = text.substr(8);
 									trimString(param);
 									Player* paramPlayer = NULL;
 									if(g_game.getPlayerByNameWildcard(param, paramPlayer) == RET_NOERROR)
@@ -500,7 +500,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 							{
 								if(text.length() > 8)
 								{
-									std::string param = text.substr(9);
+									std::string param = text.substr(8);
 									trimString(param);
 									Player* paramPlayer = NULL;
 									if(g_game.getPlayerByNameWildcard(param, paramPlayer) == RET_NOERROR)
