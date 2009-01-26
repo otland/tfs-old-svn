@@ -534,7 +534,7 @@ bool Spell::configureSpell(xmlNodePtr p)
 	return true;
 }
 
-bool Spell::playerSpellCheck(Player* player) const
+bool Spell::playerSpellCheck(Player* player, bool ignoreExhaust/* = false*/) const
 {
 	if(player->hasFlag(PlayerFlag_CannotUseSpells))
 		return false;
@@ -553,15 +553,21 @@ bool Spell::playerSpellCheck(Player* player) const
 				return false;
 			}
 
-			if(player->hasCondition(CONDITION_EXHAUST_COMBAT) || (OTSYS_TIME() - player->getLastCombatExhaust()) <= 100)
+			if(!ignoreExhaust)
+			{
+				if(player->hasCondition(CONDITION_EXHAUST_COMBAT) || (OTSYS_TIME() - player->getLastCombatExhaust()) <= 1000)
+					exhaust = true;
+				else
+					player->setLastCombatExhaust(OTSYS_TIME());
+			}
+		}
+		else if(!ignoreExhaust)
+		{
+			if(player->hasCondition(CONDITION_EXHAUST_HEAL) || (OTSYS_TIME() - player->getLastHealExhaust()) <= 1000)
 				exhaust = true;
 			else
-				player->setLastCombatExhaust(OTSYS_TIME());
+				player->setLastHealExhaust(OTSYS_TIME());
 		}
-		else if(player->hasCondition(CONDITION_EXHAUST_HEAL) || (OTSYS_TIME() - player->getLastHealExhaust()) <= 100)
-			exhaust = true;
-		else
-			player->setLastHealExhaust(OTSYS_TIME());
 
 		if(exhaust)
 		{
@@ -1776,9 +1782,6 @@ bool ConjureSpell::ConjureItem(const ConjureSpell* spell, Creature* creature, co
 
 		if(result1 == RET_NOERROR)
 		{
-			if(!spell->playerSpellCheck(player))
-				return false;
-
 			result1 = internalConjureItem(player, spell->getConjureId(), spell->getConjureCount(),
 				spell->getReagentId(), SLOT_LEFT);
 
@@ -1791,7 +1794,7 @@ bool ConjureSpell::ConjureItem(const ConjureSpell* spell, Creature* creature, co
 
 		if(result2 == RET_NOERROR)
 		{
-			if(!spell->playerSpellCheck(player))
+			if(!spell->playerSpellCheck(player, true))
 			{
 				spell->postCastSpell(player, true, false);
 				return false;

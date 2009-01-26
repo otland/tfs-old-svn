@@ -136,7 +136,7 @@ class Spell : public BaseSpell
 		static ReturnValue CreateIllusion(Creature* creature, uint32_t itemId, int32_t time);
 
 	protected:
-		bool playerSpellCheck(Player* player) const;
+		bool playerSpellCheck(Player* player, bool ignoreExhaust = false) const;
 		bool playerInstantSpellCheck(Player* player, const Position& toPos);
 		bool playerRuneSpellCheck(Player* player, const Position& toPos);
 
