@@ -661,7 +661,7 @@ bool Spell::playerSpellCheck(Player* player) const
 				return false;
 			}
 		}
-	}			
+	}
 
 	return true;
 }
@@ -1573,9 +1573,6 @@ bool ConjureSpell::ConjureItem(const ConjureSpell* spell, Creature* creature, co
 			true, spell->getReagentId(), SLOT_LEFT, true);
 		if(resLeft == RET_NOERROR)
 		{
-			if(!spell->playerSpellCheck(player))
-				return false;
-
 			resLeft = internalConjureItem(player, spell->getConjureId(), spell->getConjureCount(),
 				true, spell->getReagentId(), SLOT_LEFT);
 			if(resLeft == RET_NOERROR)
