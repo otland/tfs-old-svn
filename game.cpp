@@ -5176,49 +5176,92 @@ bool Game::loadExperienceStages()
 
 	if(xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "stages.xml").c_str()))
 	{
-		xmlNodePtr root, p;
+		xmlNodePtr root, q, p;
 		int32_t intVal, low, high, mult;
 		root = xmlDocGetRootElement(doc);
-		if(xmlStrcmp(root->name,(const xmlChar*)"stages"))
+		if(xmlStrcmp(root->name, (const xmlChar*)"stages"))
 		{
 			xmlFreeDoc(doc);
 			return false;
 		}
 
-		p = root->children;
-		while(p)
+		q = root->children;
+		while(q)
 		{
-			if(!xmlStrcmp(p->name, (const xmlChar*)"stage"))
+			if(!xmlStrcmp(q->name, (const xmlChar*)"world"))
 			{
-				if(readXMLInteger(p, "minlevel", intVal))
+				if(!readXMLInteger(q, "id", intVal) || intVal != g_config.getNumber(ConfigManager::WORLD_ID))
+					continue;
+
+				p = q->children;
+				while(p)
+				{
+					if(!xmlStrcmp(p->name, (const xmlChar*)"stage"))
+					{
+						lastStageLevel = 0;
+						if(readXMLInteger(p, "minlevel", intVal))
+							low = intVal;
+						else
+							low = 1;
+
+						if(readXMLInteger(p, "maxlevel", intVal))
+							high = intVal;
+						else
+						{
+							high = 0;
+							lastStageLevel = low;
+						}
+
+						if(readXMLInteger(p, "multiplier", intVal))
+							mult = intVal;
+						else
+							mult = 1;
+
+						if(lastStageLevel)
+							stages[lastStageLevel] = mult;
+						else
+						{
+							for(int32_t i = low; i <= high; i++)
+								stages[i] = mult;
+						}
+
+					}
+
+					p = p->next;
+				}
+			}
+
+			if(!xmlStrcmp(q->name, (const xmlChar*)"stage"))
+			{
+				lastStageLevel = 0;
+				if(readXMLInteger(q, "minlevel", intVal))
 					low = intVal;
 				else
 					low = 1;
 
-				if(readXMLInteger(p, "maxlevel", intVal))
+				if(readXMLInteger(q, "maxlevel", intVal))
 					high = intVal;
 				else
 				{
 					high = 0;
 					lastStageLevel = low;
-					useLastStageLevel = true;
 				}
 
-				if(readXMLInteger(p, "multiplier", intVal))
+				if(readXMLInteger(q, "multiplier", intVal))
 					mult = intVal;
 				else
 					mult = 1;
 
-				if(useLastStageLevel)
+				if(lastStageLevel)
 					stages[lastStageLevel] = mult;
 				else
 				{
-					for(int32_t iteratorValue = low; iteratorValue <= high; iteratorValue++)
-						stages[iteratorValue] = mult;
+					for(int32_t i = low; i <= high; i++)
+						stages[i] = mult;
 				}
 			}
 
-			p = p->next;
+			q = q->next;
 		}
 
 		xmlFreeDoc(doc);
