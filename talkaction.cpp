@@ -19,33 +19,17 @@
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 
-#include <string>
-#include <fstream>
-#include <utility>
-
 #include "player.h"
 #include "npc.h"
-#include "monsters.h"
 #include "game.h"
-#include "actions.h"
 #include "house.h"
 #include "iologindata.h"
 #include "tools.h"
 #include "ioban.h"
 #include "configmanager.h"
-#include "town.h"
-#include "spells.h"
 #include "talkaction.h"
-#include "movement.h"
-#include "spells.h"
-#include "weapons.h"
-#include "raids.h"
-#include "globalevent.h"
 #include "chat.h"
 #include "teleport.h"
-#ifdef __LOGIN_SERVER__
-#include "gameservers.h"
-#endif
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 #include "outputmessage.h"
 #include "connection.h"
@@ -54,21 +38,11 @@
 #include "protocollogin.h"
 #include "protocolold.h"
 #endif
-#include <libxml/xmlmemory.h>
-#include <libxml/parser.h>
 
 extern ConfigManager g_config;
-extern Actions* g_actions;
-extern Monsters g_monsters;
-extern Npcs g_npcs;
 extern TalkActions* g_talkActions;
-extern MoveEvents* g_moveEvents;
-extern Spells* g_spells;
-extern Weapons* g_weapons;
 extern Game g_game;
 extern Chat g_chat;
-extern CreatureEvents* g_creatureEvents;
-extern GlobalEvents* g_globalEvents;
 
 TalkActions::TalkActions() :
 m_scriptInterface("TalkAction Interface")
@@ -190,24 +164,20 @@ bool TalkActions::onPlayerSay(Player* player, uint16_t channelId, const std::str
 
 TalkFunction_t TalkAction::definedFunctions[] =
 {
-	{"placenpc", &placeNpc},
-	{"placemonster", &placeMonster},
 	{"placesummon", &placeSummon},
-	{"reloadinfo", &reloadInfo},
-	{"closeopenserver", &closeOpenServer},
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	{"serverdiag",&serverDiag},
 #endif
-	{"changethingproporties", &changeThingProporties},
-	{"addskill", &addSkill},
-	{"showbanishmentinfo", &showBanishmentInfo},
 	{"buyhouse", &buyHouse},
  	{"sellhouse", &sellHouse},
  	{"joinguild", &joinGuild},
  	{"createguild", &createGuild},
 	{"ghost", &ghost},
 	{"squelch", &squelch},
-	{"clickteleport", &clickTeleport}
+	{"clickteleport", &clickTeleport},
+	{"addskill", &addSkill},
+	{"changethingproporties", &changeThingProporties},
+	{"showbanishmentinfo", &showBanishmentInfo}
 };
 
 TalkAction::TalkAction(LuaScriptInterface* _interface):
@@ -318,46 +288,6 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, con
 	}
 }
 
-bool TalkAction::placeNpc(Player* player, const std::string& cmd, const std::string& param)
-{
-	Npc* npc = Npc::createNpc(param);
-	if(!npc)
-		return true;
-
-	if(g_game.placeCreature(npc, player->getPosition()))
-	{
-		g_game.addMagicEffect(player->getPosition(), NM_ME_MAGIC_BLOOD);
-		return true;
-	}
-
-	delete npc;
-	player->sendCancelMessage(RET_NOTENOUGHROOM);
-	g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
-	return true;
-}
-
-bool TalkAction::placeMonster(Player* player, const std::string& cmd, const std::string& param)
-{
-	Monster* monster = Monster::createMonster(param);
-	if(!monster)
-	{
-		player->sendCancelMessage(RET_NOTPOSSIBLE);
-		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
-		return true;
-	}
-
-	if(g_game.placeCreature(monster, player->getPosition()))
-	{
-		g_game.addMagicEffect(player->getPosition(), NM_ME_MAGIC_BLOOD);
-		return true;
-	}
-
-	delete monster;
-	player->sendCancelMessage(RET_NOTENOUGHROOM);
-	g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
-	return true;
-}
-
 bool TalkAction::placeSummon(Player* player, const std::string& cmd, const std::string& param)
 {
 	ReturnValue ret = g_game.placeSummon(player, param);
@@ -367,96 +297,6 @@ bool TalkAction::placeSummon(Player* player, const std::string& cmd, const std::
 		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 	}
 
-	return true;
-}
-
-bool TalkAction::reloadInfo(Player* player, const std::string& cmd, const std::string& param)
-{
-	std::string tmpParam = asLowerCaseString(param);
-	if(tmpParam == "action" || tmpParam == "actions")
-	{
-		g_actions->reload();
-		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded actions.");
-	}
-	else if(tmpParam == "config" || tmpParam == "configuration")
-	{
-		g_config.reload();
-		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded config.");
-	}
-	else if(tmpParam == "creaturescript" || tmpParam == "creaturescripts")
-	{
-		g_creatureEvents->reload();
-		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded creature scripts.");
-	}
-	#ifdef __LOGIN_SERVER__
-	else if(tmpParam == "gameserver" || tmpParam == "gameservers")
-	{
-		GameServers::getInstance()->reload();
-		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded game servers.");
-	}
-	#endif
-	else if(tmpParam == "globalevent" || tmpParam == "globalevents")
-	{
-		g_globalEvents->reload();
-		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded global events.");
-	}
-	else if(tmpParam == "highscore" || tmpParam == "highscores")
-	{
-		g_game.reloadHighscores();
-		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded highscores.");
-	}
-	else if(tmpParam == "houseprices" || tmpParam == "houseprice")
-	{
-		Houses::getInstance().reloadPrices();
-		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded house prices.");
-	}
-	else if(tmpParam == "monster" || tmpParam == "monsters")
-	{
-		g_monsters.reload();
-		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded monsters.");
-	}
-	else if(tmpParam == "move" || tmpParam == "movement" || tmpParam == "movements"
-		|| tmpParam == "moveevents" || tmpParam == "moveevent")
-	{
-		g_moveEvents->reload();
-		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded movements.");
-	}
-	else if(tmpParam == "npc" || tmpParam == "npcs")
-	{
-		g_npcs.reload();
-		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded npcs.");
-	}
-	else if(tmpParam == "raid" || tmpParam == "raids")
-	{
-		Raids::getInstance()->reload();
-		Raids::getInstance()->startup();
-		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded raids.");
-	}
-	else if(tmpParam == "spell" || tmpParam == "spells")
-	{
-		g_spells->reload();
-		g_monsters.reload();
-		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded spells.");
-	}
-	else if(tmpParam == "talk" || tmpParam == "talkaction" || tmpParam == "talkactions")
-	{
-		g_talkActions->reload();
-		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded talk actions.");
-	}
-	else
-		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reload type not found.");
-
-	return true;
-}
-
-bool TalkAction::closeOpenServer(Player* player, const std::string& cmd, const std::string& param)
-{
-	GameState_t action = GAME_STATE_CLOSED;
-	if(cmd[1] == 'o')
-		action = GAME_STATE_NORMAL;
-
-	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, &g_game, action)));
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Action complete.");
 	return true;
 }
 
@@ -507,249 +347,6 @@ bool TalkAction::serverDiag(Player* player, const std::string& cmd, const std::s
 	return true;
 }
 #endif
-
-bool TalkAction::changeThingProporties(Player* player, const std::string& cmd, const std::string& param)
-{
-	Position playerPos = player->getPosition();
-	Position pos = getNextPosition(player->getDirection(), playerPos);
-
-	Tile* tileInFront = g_game.getMap()->getTile(pos);
-	if(tileInFront)
-	{
-		if(Thing* thing = tileInFront->getTopThing())
-		{
-			boost::char_separator<char> sep(" ");
-			tokenizer cmdtokens(param, sep);
-
-			std::string tmp;
-			tokenizer::iterator cmdit = cmdtokens.begin();
-			while(cmdit != cmdtokens.end())
-			{
-				if(Item *item = thing->getItem())
-				{
-					tmp = parseParams(cmdit, cmdtokens.end());
-					if(strcasecmp(tmp.c_str(), "description") == 0)
-						item->setSpecialDescription(parseParams(cmdit, cmdtokens.end()));
-					else if(strcasecmp(tmp.c_str(), "count") == 0 || strcasecmp(tmp.c_str(), "fluidtype") == 0 || strcasecmp(tmp.c_str(), "charges") == 0)
-						item->setSubType(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "action") == 0 || strcasecmp(tmp.c_str(), "actionid") == 0 || strcasecmp(tmp.c_str(), "aid") == 0)
-						item->setActionId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "unique") == 0 || strcasecmp(tmp.c_str(), "uniqueid") == 0 || strcasecmp(tmp.c_str(), "uid") == 0)
-						item->setUniqueId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "duration") == 0)
-						item->setDuration(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "writer") == 0)
-						item->setWriter(parseParams(cmdit, cmdtokens.end()));
-					else if(strcasecmp(tmp.c_str(), "text") == 0)
-						item->setText(parseParams(cmdit, cmdtokens.end()));
-					else if(strcasecmp(tmp.c_str(), "name") == 0)
-						item->setName(parseParams(cmdit, cmdtokens.end()));
-					else if(strcasecmp(tmp.c_str(), "pluralname") == 0)
-						item->setPluralName(parseParams(cmdit, cmdtokens.end()));
-					else if(strcasecmp(tmp.c_str(), "article") == 0)
-						item->setArticle(parseParams(cmdit, cmdtokens.end()));
-					else if(strcasecmp(tmp.c_str(), "attack") == 0)
-						item->setAttack(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "extraattack") == 0)
-						item->setExtraAttack(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "defense") == 0)
-						item->setDefense(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "extradefense") == 0)
-						item->setExtraDefense(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "armor") == 0)
-						item->setArmor(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "attackspeed") == 0)
-						item->setAttackSpeed(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "hitchance") == 0)
-						item->setHitChance(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "shootrange") == 0)
-						item->setShootRange(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "depot") == 0 || strcasecmp(tmp.c_str(), "depotid") == 0)
-					{
-						if(item->getContainer() && item->getContainer()->getDepot())
-							item->getContainer()->getDepot()->setDepotId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					}
-					else if(strcasecmp(tmp.c_str(), "destination") == 0 || strcasecmp(tmp.c_str(), "position") == 0 || strcasecmp(tmp.c_str(), "pos") == 0) //FIXME
-					{
-						if(item->getTeleport())
-							item->getTeleport()->setDestPos(Position(atoi(parseParams(cmdit, cmdtokens.end()).c_str()), atoi(parseParams(cmdit, cmdtokens.end()).c_str()), atoi(parseParams(cmdit, cmdtokens.end()).c_str())));
-					}
-					else
-					{
-						player->sendTextMessage(MSG_STATUS_SMALL, "No valid action.");
-						g_game.addMagicEffect(playerPos, NM_ME_POFF);
-						return true;
-					}
-				}
-				else if(Creature* _creature = thing->getCreature())
-				{
-					tmp = parseParams(cmdit, cmdtokens.end());
-					if(strcasecmp(tmp.c_str(), "health") == 0)
-						_creature->changeHealth(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "maxhealth") == 0)
-						_creature->changeMaxHealth(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "mana") == 0)
-						_creature->changeMana(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "maxmana") == 0)
-						_creature->changeMaxMana(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "basespeed") == 0)
-						_creature->setBaseSpeed(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "droploot") == 0)
-						_creature->setDropLoot(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "lossskill") == 0)
-						_creature->setLossSkill(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "skull") == 0)
-						_creature->setSkull((Skulls_t)atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(Player* _player = _creature->getPlayer())
-					{
-						if(strcasecmp(tmp.c_str(), "fyi") == 0)
-							_player->sendFYIBox(parseParams(cmdit, cmdtokens.end()).c_str());
-						else if(strcasecmp(tmp.c_str(), "guildrank") == 0)
-							_player->setGuildRankId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-						else if(strcasecmp(tmp.c_str(), "guildnick") == 0)
-							_player->setGuildNick(parseParams(cmdit, cmdtokens.end()).c_str());
-						else if(strcasecmp(tmp.c_str(), "group") == 0)
-							_player->setGroupId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-						else if(strcasecmp(tmp.c_str(), "extrarate") == 0)
-							_player->setExtraExpRate(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-						else if(strcasecmp(tmp.c_str(), "vocation") == 0)
-							_player->setVocation(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-						else if(strcasecmp(tmp.c_str(), "sex") == 0)
-							_player->setSex((PlayerSex_t)atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-						else if(strcasecmp(tmp.c_str(), "stamina") == 0)
-							_player->setStaminaMinutes(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-						else if(strcasecmp(tmp.c_str(), "town") == 0) //FIXME
-							_player->setTown(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-						else if(strcasecmp(tmp.c_str(), "balance") == 0)
-							_player->balance = atoi(parseParams(cmdit, cmdtokens.end()).c_str());
-						else if(strcasecmp(tmp.c_str(), "marriage") == 0)
-							_player->marriage = atoi(parseParams(cmdit, cmdtokens.end()).c_str());
-						else if(strcasecmp(tmp.c_str(), "resetidle") == 0)
-							_player->resetIdleTime();
-						else if(strcasecmp(tmp.c_str(), "ghost") == 0)
-							_player->switchGhostMode();
-						else if(strcasecmp(tmp.c_str(), "squelch") == 0)
-							_player->switchPrivateIgnore();
-						else if(strcasecmp(tmp.c_str(), "cliport") == 0)
-							_player->switchClickTeleport();
-						else if(strcasecmp(tmp.c_str(), "saving") == 0)
-							_player->switchSaving();
-						else
-						{
-							player->sendTextMessage(MSG_STATUS_SMALL, "No valid action.");
-							g_game.addMagicEffect(playerPos, NM_ME_POFF);
-							return true;
-						}
-					}
-					/*else if(Npc* npc = _creature->getNpc())
-						//
-					else if(Monster* monster = _creature->getMonster())
-						//*/
-					else
-					{
-						player->sendTextMessage(MSG_STATUS_SMALL, "No valid action.");
-						g_game.addMagicEffect(playerPos, NM_ME_POFF);
-						return true;
-					}
-				}
-			}
-		}
-		else
-		{
-			player->sendTextMessage(MSG_STATUS_SMALL, "No object found.");
-			g_game.addMagicEffect(playerPos, NM_ME_POFF);
-			return true;
-		}
-
-		const Position& cylinderMapPos = tileInFront->getPosition();
-		const SpectatorVec& list = g_game.getSpectators(cylinderMapPos);
-		SpectatorVec::const_iterator it;
-
-		Player* tmpPlayer = NULL;
-		for(it = list.begin(); it != list.end(); ++it)
-		{
-			if((tmpPlayer = (*it)->getPlayer()))
-				tmpPlayer->sendUpdateTile(tileInFront, cylinderMapPos);
-		}
-
-		for(it = list.begin(); it != list.end(); ++it)
-			(*it)->onUpdateTile(tileInFront, cylinderMapPos);
-
-		g_game.addMagicEffect(pos, NM_ME_MAGIC_POISON);
-	}
-	else
-	{
-		player->sendTextMessage(MSG_STATUS_SMALL, "No tile found.");
-		g_game.addMagicEffect(playerPos, NM_ME_POFF);
-	}
-
-	return true;
-}
-
-bool TalkAction::addSkill(Player* player, const std::string& cmd, const std::string& param)
-{
-	StringVec params = explodeString(param, ",");
-	if(params.size() < 2)
-	{
-		player->sendTextMessage(MSG_STATUS_SMALL, "Command requires at least 2 parameters.");
-		return true;
-	}
-
-	std::string name = params[0], skill = params[1];
-	trimString(name);
-	trimString(skill);
-
-	Player* target = NULL;
-	ReturnValue ret = g_game.getPlayerByNameWildcard(name, target);
-	if(ret != RET_NOERROR)
-	{
-		player->sendCancelMessage(ret);
-		return true;
-	}
-
-	if(skill[0] == 'l' || skill[0] == 'e')
-		target->addExperience(Player::getExpForLevel(target->getLevel() + 1) - target->getExperience());
-	else if(skill[0] == 'm')
-		target->addManaSpent(target->getVocation()->getReqMana(target->getMagicLevel() + 1) - target->getSpentMana());
-	else
-	{
-		skills_t skillId = getSkillId(skill);
-		target->addSkillAdvance(skillId, target->getVocation()->getReqSkillTries(skillId, target->getSkill(skillId, SKILL_LEVEL) + 1));
-	}
-
-	return true;
-}
-
-bool TalkAction::showBanishmentInfo(Player* player, const std::string& cmd, const std::string& param)
-{
-	uint32_t accountId = atoi(param.c_str());
-	if(accountId == 0 && IOLoginData::getInstance()->playerExists(param, true))
-		accountId = IOLoginData::getInstance()->getAccountIdByName(param);
-
-	Ban ban;
-	if(IOBan::getInstance()->getData(accountId, ban) && (ban.type == BANTYPE_BANISHMENT || ban.type == BANTYPE_DELETION))
-	{
-		bool deletion = (ban.type == BANTYPE_DELETION);
-		std::string name = "Automatic ";
-		if(ban.adminid == 0)
-			name += (deletion ? "deletion" : "banishment");
-		else
-			IOLoginData::getInstance()->getNameByGuid(ban.adminid, name, true);
-
-		char date[16], date2[16], buffer[500 + ban.comment.length()];
-		formatDate2(ban.added, date);
-		formatDate2(ban.expires, date2);
-		sprintf(buffer, "Account has been %s at:\n%s by: %s,\nfor the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.\n%s%s.",
-			(deletion ? "deleted" : "banished"), date, name.c_str(), getReason(ban.reason).c_str(), getAction(ban.action, false).c_str(),
-			ban.comment.c_str(), (deletion ? "Account won't be undeleted" : "Banishment will be lifted at:\n"), (deletion ? "." : date));
-
-		player->sendFYIBox(buffer);
-	}
-	else
-		player->sendCancel("That player or account is not banished or deleted.");
-
-	return true;
-}
 
 bool TalkAction::buyHouse(Player* player, const std::string& cmd, const std::string& param)
 {
@@ -1074,6 +671,249 @@ bool TalkAction::clickTeleport(Player* player, const std::string& cmd, const std
 	char buffer[90];
 	sprintf(buffer, "You have %s click teleporting.", (player->isTeleportingByClick() ? "enabled" : "disabled"));
 	player->sendTextMessage(MSG_INFO_DESCR, buffer);
+
+	return true;
+}
+
+bool TalkAction::addSkill(Player* player, const std::string& cmd, const std::string& param)
+{
+	StringVec params = explodeString(param, ",");
+	if(params.size() < 2)
+	{
+		player->sendTextMessage(MSG_STATUS_SMALL, "Command requires at least 2 parameters.");
+		return true;
+	}
+
+	std::string name = params[0], skill = params[1];
+	trimString(name);
+	trimString(skill);
+
+	Player* target = NULL;
+	ReturnValue ret = g_game.getPlayerByNameWildcard(name, target);
+	if(ret != RET_NOERROR)
+	{
+		player->sendCancelMessage(ret);
+		return true;
+	}
+
+	if(skill[0] == 'l' || skill[0] == 'e')
+		target->addExperience(Player::getExpForLevel(target->getLevel() + 1) - target->getExperience());
+	else if(skill[0] == 'm')
+		target->addManaSpent(target->getVocation()->getReqMana(target->getMagicLevel() + 1) - target->getSpentMana());
+	else
+	{
+		skills_t skillId = getSkillId(skill);
+		target->addSkillAdvance(skillId, target->getVocation()->getReqSkillTries(skillId, target->getSkill(skillId, SKILL_LEVEL) + 1));
+	}
+
+	return true;
+}
+
+bool TalkAction::changeThingProporties(Player* player, const std::string& cmd, const std::string& param)
+{
+	Position playerPos = player->getPosition();
+	Position pos = getNextPosition(player->getDirection(), playerPos);
+
+	Tile* tileInFront = g_game.getMap()->getTile(pos);
+	if(tileInFront)
+	{
+		if(Thing* thing = tileInFront->getTopThing())
+		{
+			boost::char_separator<char> sep(" ");
+			tokenizer cmdtokens(param, sep);
+
+			std::string tmp;
+			tokenizer::iterator cmdit = cmdtokens.begin();
+			while(cmdit != cmdtokens.end())
+			{
+				if(Item *item = thing->getItem())
+				{
+					tmp = parseParams(cmdit, cmdtokens.end());
+					if(strcasecmp(tmp.c_str(), "description") == 0)
+						item->setSpecialDescription(parseParams(cmdit, cmdtokens.end()));
+					else if(strcasecmp(tmp.c_str(), "count") == 0 || strcasecmp(tmp.c_str(), "fluidtype") == 0 || strcasecmp(tmp.c_str(), "charges") == 0)
+						item->setSubType(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "action") == 0 || strcasecmp(tmp.c_str(), "actionid") == 0 || strcasecmp(tmp.c_str(), "aid") == 0)
+						item->setActionId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "unique") == 0 || strcasecmp(tmp.c_str(), "uniqueid") == 0 || strcasecmp(tmp.c_str(), "uid") == 0)
+						item->setUniqueId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "duration") == 0)
+						item->setDuration(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "writer") == 0)
+						item->setWriter(parseParams(cmdit, cmdtokens.end()));
+					else if(strcasecmp(tmp.c_str(), "text") == 0)
+						item->setText(parseParams(cmdit, cmdtokens.end()));
+					else if(strcasecmp(tmp.c_str(), "name") == 0)
+						item->setName(parseParams(cmdit, cmdtokens.end()));
+					else if(strcasecmp(tmp.c_str(), "pluralname") == 0)
+						item->setPluralName(parseParams(cmdit, cmdtokens.end()));
+					else if(strcasecmp(tmp.c_str(), "article") == 0)
+						item->setArticle(parseParams(cmdit, cmdtokens.end()));
+					else if(strcasecmp(tmp.c_str(), "attack") == 0)
+						item->setAttack(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "extraattack") == 0)
+						item->setExtraAttack(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "defense") == 0)
+						item->setDefense(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "extradefense") == 0)
+						item->setExtraDefense(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "armor") == 0)
+						item->setArmor(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "attackspeed") == 0)
+						item->setAttackSpeed(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "hitchance") == 0)
+						item->setHitChance(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "shootrange") == 0)
+						item->setShootRange(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "depot") == 0 || strcasecmp(tmp.c_str(), "depotid") == 0)
+					{
+						if(item->getContainer() && item->getContainer()->getDepot())
+							item->getContainer()->getDepot()->setDepotId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					}
+					else if(strcasecmp(tmp.c_str(), "destination") == 0 || strcasecmp(tmp.c_str(), "position") == 0 || strcasecmp(tmp.c_str(), "pos") == 0) //FIXME
+					{
+						if(item->getTeleport())
+							item->getTeleport()->setDestPos(Position(atoi(parseParams(cmdit, cmdtokens.end()).c_str()), atoi(parseParams(cmdit, cmdtokens.end()).c_str()), atoi(parseParams(cmdit, cmdtokens.end()).c_str())));
+					}
+					else
+					{
+						player->sendTextMessage(MSG_STATUS_SMALL, "No valid action.");
+						g_game.addMagicEffect(playerPos, NM_ME_POFF);
+						return true;
+					}
+				}
+				else if(Creature* _creature = thing->getCreature())
+				{
+					tmp = parseParams(cmdit, cmdtokens.end());
+					if(strcasecmp(tmp.c_str(), "health") == 0)
+						_creature->changeHealth(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "maxhealth") == 0)
+						_creature->changeMaxHealth(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "mana") == 0)
+						_creature->changeMana(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "maxmana") == 0)
+						_creature->changeMaxMana(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "basespeed") == 0)
+						_creature->setBaseSpeed(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "droploot") == 0)
+						_creature->setDropLoot(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "lossskill") == 0)
+						_creature->setLossSkill(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "skull") == 0)
+						_creature->setSkull((Skulls_t)atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(Player* _player = _creature->getPlayer())
+					{
+						if(strcasecmp(tmp.c_str(), "fyi") == 0)
+							_player->sendFYIBox(parseParams(cmdit, cmdtokens.end()).c_str());
+						else if(strcasecmp(tmp.c_str(), "guildrank") == 0)
+							_player->setGuildRankId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						else if(strcasecmp(tmp.c_str(), "guildnick") == 0)
+							_player->setGuildNick(parseParams(cmdit, cmdtokens.end()).c_str());
+						else if(strcasecmp(tmp.c_str(), "group") == 0)
+							_player->setGroupId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						else if(strcasecmp(tmp.c_str(), "extrarate") == 0)
+							_player->setExtraExpRate(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						else if(strcasecmp(tmp.c_str(), "vocation") == 0)
+							_player->setVocation(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						else if(strcasecmp(tmp.c_str(), "sex") == 0)
+							_player->setSex((PlayerSex_t)atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						else if(strcasecmp(tmp.c_str(), "stamina") == 0)
+							_player->setStaminaMinutes(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						else if(strcasecmp(tmp.c_str(), "town") == 0) //FIXME
+							_player->setTown(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+						else if(strcasecmp(tmp.c_str(), "balance") == 0)
+							_player->balance = atoi(parseParams(cmdit, cmdtokens.end()).c_str());
+						else if(strcasecmp(tmp.c_str(), "marriage") == 0)
+							_player->marriage = atoi(parseParams(cmdit, cmdtokens.end()).c_str());
+						else if(strcasecmp(tmp.c_str(), "resetidle") == 0)
+							_player->resetIdleTime();
+						else if(strcasecmp(tmp.c_str(), "ghost") == 0)
+							_player->switchGhostMode();
+						else if(strcasecmp(tmp.c_str(), "squelch") == 0)
+							_player->switchPrivateIgnore();
+						else if(strcasecmp(tmp.c_str(), "cliport") == 0)
+							_player->switchClickTeleport();
+						else if(strcasecmp(tmp.c_str(), "saving") == 0)
+							_player->switchSaving();
+						else
+						{
+							player->sendTextMessage(MSG_STATUS_SMALL, "No valid action.");
+							g_game.addMagicEffect(playerPos, NM_ME_POFF);
+							return true;
+						}
+					}
+					/*else if(Npc* npc = _creature->getNpc())
+						//
+					else if(Monster* monster = _creature->getMonster())
+						//*/
+					else
+					{
+						player->sendTextMessage(MSG_STATUS_SMALL, "No valid action.");
+						g_game.addMagicEffect(playerPos, NM_ME_POFF);
+						return true;
+					}
+				}
+			}
+		}
+		else
+		{
+			player->sendTextMessage(MSG_STATUS_SMALL, "No object found.");
+			g_game.addMagicEffect(playerPos, NM_ME_POFF);
+			return true;
+		}
+
+		const Position& cylinderMapPos = tileInFront->getPosition();
+		const SpectatorVec& list = g_game.getSpectators(cylinderMapPos);
+		SpectatorVec::const_iterator it;
+
+		Player* tmpPlayer = NULL;
+		for(it = list.begin(); it != list.end(); ++it)
+		{
+			if((tmpPlayer = (*it)->getPlayer()))
+				tmpPlayer->sendUpdateTile(tileInFront, cylinderMapPos);
+		}
+
+		for(it = list.begin(); it != list.end(); ++it)
+			(*it)->onUpdateTile(tileInFront, cylinderMapPos);
+
+		g_game.addMagicEffect(pos, NM_ME_MAGIC_POISON);
+	}
+	else
+	{
+		player->sendTextMessage(MSG_STATUS_SMALL, "No tile found.");
+		g_game.addMagicEffect(playerPos, NM_ME_POFF);
+	}
+
+	return true;
+}
+
+bool TalkAction::showBanishmentInfo(Player* player, const std::string& cmd, const std::string& param)
+{
+	uint32_t accountId = atoi(param.c_str());
+	if(accountId == 0 && IOLoginData::getInstance()->playerExists(param, true))
+		accountId = IOLoginData::getInstance()->getAccountIdByName(param);
+
+	Ban ban;
+	if(IOBan::getInstance()->getData(accountId, ban) && (ban.type == BANTYPE_BANISHMENT || ban.type == BANTYPE_DELETION))
+	{
+		bool deletion = (ban.type == BANTYPE_DELETION);
+		std::string name = "Automatic ";
+		if(ban.adminid == 0)
+			name += (deletion ? "deletion" : "banishment");
+		else
+			IOLoginData::getInstance()->getNameByGuid(ban.adminid, name, true);
+
+		char date[16], date2[16], buffer[500 + ban.comment.length()];
+		formatDate2(ban.added, date);
+		formatDate2(ban.expires, date2);
+		sprintf(buffer, "Account has been %s at:\n%s by: %s,\nfor the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.\n%s%s.",
+			(deletion ? "deleted" : "banished"), date, name.c_str(), getReason(ban.reason).c_str(), getAction(ban.action, false).c_str(),
+			ban.comment.c_str(), (deletion ? "Account won't be undeleted" : "Banishment will be lifted at:\n"), (deletion ? "." : date));
+
+		player->sendFYIBox(buffer);
+	}
+	else
+		player->sendCancel("That player or account is not banished or deleted.");
 
 	return true;
 }

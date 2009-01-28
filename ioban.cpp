@@ -104,7 +104,7 @@ bool IOBan::isDeleted(uint32_t account)
 	return true;
 }
 
-bool IOBan::addIpBanishment(uint32_t ip, time_t banTime, std::string comment, uint32_t gamemaster)
+bool IOBan::addIpBanishment(uint32_t ip, time_t banTime, std::string comment, uint32_t gamemaster, std::string statement/* = ""*/)
 {
 	if(isIpBanished(ip))
 		return false;
@@ -115,7 +115,7 @@ bool IOBan::addIpBanishment(uint32_t ip, time_t banTime, std::string comment, ui
 	return db->executeQuery(query.str());
 }
 
-bool IOBan::addNamelock(uint32_t playerId, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster)
+bool IOBan::addNamelock(uint32_t playerId, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster, std::string statement/* = ""*/)
 {
 	if(isNamelocked(playerId))
 		return false;
@@ -126,16 +126,16 @@ bool IOBan::addNamelock(uint32_t playerId, uint32_t reasonId, uint32_t actionId,
 	return db->executeQuery(query.str());
 }
 
-bool IOBan::addNamelock(std::string name, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster)
+bool IOBan::addNamelock(std::string name, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster, std::string statement/* = ""*/)
 {
 	uint32_t _guid;
 	if(!IOLoginData::getInstance()->getGuidByName(_guid, name))
 		return false;
 
-	return addNamelock(_guid, reasonId, actionId, comment, gamemaster);
+	return addNamelock(_guid, reasonId, actionId, comment, gamemaster, statement);
 }
 
-bool IOBan::addBanishment(uint32_t account, time_t banTime, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster)
+bool IOBan::addBanishment(uint32_t account, time_t banTime, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster, std::string statement/* = ""*/)
 {
 	if(isBanished(account) || isDeleted(account))
 		return false;
@@ -146,7 +146,7 @@ bool IOBan::addBanishment(uint32_t account, time_t banTime, uint32_t reasonId, u
 	return db->executeQuery(query.str());
 }
 
-bool IOBan::addDeletion(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster)
+bool IOBan::addDeletion(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster, std::string statement/* = ""*/)
 {
 	if(isDeleted(account))
 		return false;
@@ -163,7 +163,7 @@ bool IOBan::addDeletion(uint32_t account, uint32_t reasonId, uint32_t actionId, 
 	return db->executeQuery(query.str());
 }
 
-void IOBan::addNotation(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster)
+void IOBan::addNotation(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster, std::string statement/* = ""*/)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;

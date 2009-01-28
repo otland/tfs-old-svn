@@ -20,21 +20,20 @@
 
 #ifndef __OTSERV_GAME_H__
 #define __OTSERV_GAME_H__
+#include "otsystem.h"
 
 #include <queue>
-#include <vector>
 #include <set>
 
 #include "map.h"
 #include "position.h"
 #include "item.h"
-#include "container.h"
 #include "player.h"
-#include "spawn.h"
 #include "templates.h"
-#include "scheduler.h"
 #include "npc.h"
-#include "iologindata.h"
+#include "monster.h"
+#include "scheduler.h"
+#include "spawn.h"
 
 class Creature;
 class Monster;
@@ -78,6 +77,31 @@ enum LightState_t
 	LIGHT_STATE_NIGHT,
 	LIGHT_STATE_SUNSET,
 	LIGHT_STATE_SUNRISE
+};
+
+enum ReloadInfo_t
+{
+	RELOAD_FIRST = 1,
+	RELOAD_ACTIONS = RELOAD_FIRST,
+	RELOAD_CONFIG = 2,
+	RELOAD_CREATUREEVENTS = 3,
+	RELOAD_GAMESERVERS = 4,
+	RELOAD_GLOBALEVENTS = 5,
+	RELOAD_HIGHSCORES = 6,
+	RELOAD_HOUSEPRICES = 7,
+	RELOAD_ITEMS = 8,
+	RELOAD_MONSTERS = 9,
+	RELOAD_MOVEEVENTS = 10,
+	RELOAD_NPCS = 11,
+	RELOAD_OUTFITS = 12,
+	RELOAD_QUESTS = 13,
+	RELOAD_RAIDS = 14,
+	RELOAD_SPELLS = 15,
+	RELOAD_STAGES = 16,
+	RELOAD_TALKACTIONS = 17,
+	RELOAD_VOCATIONS = 18,
+	RELOAD_WEAPONS = 19,
+	RELOAD_LAST = RELOAD_WEAPONS
 };
 
 struct RuleViolation
@@ -141,7 +165,7 @@ class Game
 			return;
 		}
 
-		void setWorldType(WorldType_t type);
+		void setWorldType(WorldType_t type) {worldType = type;}
 		WorldType_t getWorldType() const {return worldType;}
 		int32_t getInFightTicks() const {return inFightTicks;}
 
@@ -454,6 +478,7 @@ class Game
 		bool playerLeaveParty(uint32_t playerId);
 		bool playerEnableSharedPartyExperience(uint32_t playerId, uint8_t sharedExpActive, uint8_t unknown);
 
+		bool reloadInfo(ReloadInfo_t reload);
 		void cleanup();
 		void shutdown();
 		void FreeThing(Thing* thing);
@@ -480,7 +505,7 @@ class Game
 
 		void sendPublicSquare(Player* sender, SquareColor_t color);
 
-		GameState_t getGameState();
+		GameState_t getGameState() const {return gameState;}
 		void setGameState(GameState_t newState);
 
 		void saveGameState(bool savePlayers);
@@ -597,6 +622,5 @@ class Game
 		typedef std::map<int32_t,int32_t> StageList;
 		StageList stages;
 		uint32_t lastStageLevel;
-		bool useLastStageLevel;
 };
 #endif

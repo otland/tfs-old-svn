@@ -1622,7 +1622,7 @@ void ProtocolGame::parseViolationWindow(NetworkMessage& msg)
 	uint8_t actionId = msg.GetByte();
 	std::string comment = msg.GetString();
 	std::string statement = msg.GetString();
-	msg.GetU16(); //TODO: Find out what is this byte
+	msg.SkipBytes(2); //TODO: Find out what is this U16
 	bool ipBanishment = msg.GetByte();
 	addGameTask(&Game::violationWindow, player->getID(), playerName, reasonId, actionId, comment, statement, ipBanishment);
 }

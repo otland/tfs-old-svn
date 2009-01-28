@@ -18,36 +18,37 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-
-#include "definitions.h"
-#include <boost/asio.hpp>
-#include "server.h"
+#include "otsystem.h"
 
 #include <string>
 #include <iostream>
 #include <iomanip>
+#include <boost/asio.hpp>
 
-#include "otsystem.h"
-#include "networkmessage.h"
-#include "protocolgame.h"
-
-#include <stdlib.h>
-#include <time.h>
-#include "game.h"
-
-#include "iologindata.h"
-
+#include "server.h"
 #include "status.h"
-#include "monsters.h"
-#include "outfit.h"
-#include "vocation.h"
+#include "networkmessage.h"
+#ifdef __LOGIN_SERVER__
+#include "gameservers.h"
+#endif
+#ifdef __REMOTE_CONTROL__
+#include "admin.h"
+#endif
+
+#include "game.h"
+#include "protocolgame.h"
+#include "tools.h"
+#include "rsa.h"
+
 #include "scriptmanager.h"
 #include "configmanager.h"
-#include "globalevent.h"
+#include "databasemanager.h"
 
-#include "tools.h"
+#include "iologindata.h"
 #include "ioban.h"
-#include "rsa.h"
+#include "outfit.h"
+#include "vocation.h"
+#include "monsters.h"
 
 #ifndef __CONSOLE__
 #ifdef WIN32
@@ -56,36 +57,20 @@
 #include "textlogger.h"
 #include "inputbox.h"
 #include "commctrl.h"
-#include "spells.h"
-#include "movement.h"
-#include "talkaction.h"
-#include "raids.h"
-#include "quests.h"
-#include "house.h"
 #endif
 #else
 #include "resources.h"
 #endif
 
-#include "networkmessage.h"
-#include "databasemanager.h"
-#ifdef __LOGIN_SERVER__
-#include "gameservers.h"
-#endif
-#ifdef __REMOTE_CONTROL__
-#include "admin.h"
-#endif
-
 #ifdef __OTSERV_ALLOCATOR__
 #include "allocator.h"
 #endif
-
 #ifdef __EXCEPTION_TRACER__
 #include "exception.h"
 #endif
-
 #ifdef BOOST_NO_EXCEPTIONS
 #include <exception>
+
 void boost::throw_exception(std::exception const & e)
 {
 	std::cout << "Boost exception: " << e.what() << std::endl;
@@ -96,7 +81,6 @@ IPList serverIPs;
 #ifdef __REMOTE_CONTROL__
 extern Admin* g_admin;
 #endif
-extern GlobalEvents* g_globalEvents;
 ConfigManager g_config;
 Game g_game;
 Monsters g_monsters;
@@ -106,11 +90,6 @@ Vocations g_vocations;
 #if defined(WIN32) && not defined(__CONSOLE__)
 NOTIFYICONDATA NID;
 TextLogger logger;
-extern Actions* g_actions;
-extern CreatureEvents* g_creatureEvents;
-extern MoveEvents* g_moveEvents;
-extern Spells* g_spells;
-extern TalkActions* g_talkActions;
 #endif
 
 RSA* g_otservRSA = NULL;
@@ -159,7 +138,11 @@ void signalHandler(int32_t sig)
 			g_game.setGameState(GAME_STATE_NORMAL);
 			break;
 		case SIGWINCH:
-			//TODO: reload all
+			std::cout << "Reloading all..." << std::endl;
+			for(uint32_t i = RELOAD_FIRST; i <= RELOAD_LAST; i++)
+				g_game.reloadInfo((ReloadInfo_t)i);
+
+			std::cout << "Reload complete!" << std::endl;
 			break;
 		case SIGQUIT:
 			Dispatcher::getDispatcher().addTask(createTask(
@@ -579,7 +562,6 @@ int argc, char *argv[]
 	}
 
 	serverIPs.push_back(std::make_pair(resolvedIp, 0));
-	g_globalEvents->startup();
 	g_game.setGameState(GAME_STATE_NORMAL);
 	OTSYS_THREAD_SIGNAL_SEND(g_loaderSignal);
 }
@@ -792,180 +774,147 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				case ID_MENU_RELOAD_ACTIONS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(g_actions->reload())
+						if(g_game.reloadInfo(RELOAD_ACTIONS))
 							std::cout << "Reloaded actions." << std::endl;
-						else
-							std::cout << "Failed to reload actions." << std::endl;
 					}
 					break;
 				case ID_MENU_RELOAD_CONFIG:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(g_config.reload())
+						if(g_game.reloadInfo(RELOAD_CONFIG))
 							std::cout << "Reloaded config." << std::endl;
-						else
-							std::cout << "Failed to reload config." << std::endl;
 					}
 					break;
 				case ID_MENU_RELOAD_CREATUREEVENTS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(g_creatureEvents->reload())
+						if(g_game.reloadInfo(RELOAD_CREATUREEVENTS))
 							std::cout << "Reloaded creature events." << std::endl;
-						else
-							std::cout << "Failed to reload creature events." << std::endl;
 					}
 					break;
 				#ifdef __LOGIN_SERVER__
 				case ID_MENU_RELOAD_GAMESERVERS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(GameServers::getInstance()->reload())
+						if(g_game.reloadInfo(RELOAD_GAMESERVERS))
 							std::cout << "Reloaded game servers." << std::endl;
-						else
-							std::cout << "Failed to reload game servers." << std::endl;
 					}
 					break;
 				#endif
 				case ID_MENU_RELOAD_GLOBALEVENTS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(g_globalEvents->reload())
+						if(g_game.reloadInfo(RELOAD_GLOBALEVENTS))
 							std::cout << "Reloaded global events." << std::endl;
-						else
-							std::cout << "Failed to reload global events." << std::endl;
 					}
 					break;
 				case ID_MENU_RELOAD_HIGHSCORES:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(g_game.reloadHighscores())
+						if(g_game.reloadInfo(RELOAD_HIGHSCORES))
 							std::cout << "Reloaded highscores." << std::endl;
-						else
-							std::cout << "Failed to reload highscores." << std::endl;
 					}
 					break;
 				case ID_MENU_RELOAD_HOUSEPRICES:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(Houses::getInstance().reloadPrices())
+						if(g_game.reloadInfo(RELOAD_HOUSEPRICES))
 							std::cout << "Reloaded house prices." << std::endl;
-						else
-							std::cout << "Failed to reload house prices." << std::endl;
+					}
+					break;
+				case ID_MENU_RELOAD_ITEMS:
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(g_game.reloadInfo(RELOAD_ITEMS))
+							std::cout << "Reloaded items." << std::endl;
 					}
 					break;
 				case ID_MENU_RELOAD_MONSTERS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(g_monsters.reload())
+						if(g_game.reloadInfo(RELOAD_MONSTERS))
 							std::cout << "Reloaded monsters." << std::endl;
-						else
-							std::cout << "Failed to reload monsters." << std::endl;
 					}
 					break;
 				case ID_MENU_RELOAD_MOVEMENTS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(g_moveEvents->reload())
+						if(g_game.reloadInfo(RELOAD_MOVEEVENTS))
 							std::cout << "Reloaded movements." << std::endl;
-						else
-							std::cout << "Failed to reload movements." << std::endl;
 					}
 					break;
 				case ID_MENU_RELOAD_NPCS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						g_npcs.reload();
-						std::cout << "Reloaded npcs." << std::endl;
+						if(g_game.reloadInfo(RELOAD_NPCS))
+							std::cout << "Reloaded npcs." << std::endl;
+					}
+					break;
+				case ID_MENU_RELOAD_OUTFITS:
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(g_game.reloadInfo(RELOAD_OUTFITS))
+							std::cout << "Reloaded outfits." << std::endl;
 					}
 					break;
 				case ID_MENU_RELOAD_QUESTS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(Quests::getInstance()->reload())
+						if(g_game.reloadInfo(RELOAD_QUESTS))
 							std::cout << "Reloaded quests." << std::endl;
-						else
-							std::cout << "Failed to reload quests." << std::endl;
 					}
 					break;
 				case ID_MENU_RELOAD_RAIDS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(Raids::getInstance()->reload() && Raids::getInstance()->startup())
+						if(g_game.reloadInfo(RELOAD_RAIDS))
 							std::cout << "Reloaded raids." << std::endl;
-						else
-							std::cout << "Failed to reload raids." << std::endl;
 					}
 					break;
 				case ID_MENU_RELOAD_SPELLS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(g_spells->reload() && g_monsters.reload())
+						if(g_game.reloadInfo(RELOAD_SPELLS))
 							std::cout << "Reloaded spells." << std::endl;
-						else
-							std::cout << "Failed to reload spells." << std::endl;
+					}
+					break;
+				case ID_MENU_RELOAD_STAGES:
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(g_game.reloadInfo(RELOAD_STAGES))
+							std::cout << "Reloaded stages." << std::endl;
 					}
 					break;
 				case ID_MENU_RELOAD_TALKACTIONS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						if(g_talkActions->reload())
+						if(g_game.reloadInfo(RELOAD_TALKACTIONS))
 							std::cout << "Reloaded talk actions." << std::endl;
-						else
-							std::cout << "Failed to reload talk actions." << std::endl;
+					}
+					break;
+				case ID_MENU_RELOAD_VOCATIONS:
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(g_game.reloadInfo(RELOAD_VOCATIONS))
+							std::cout << "Reloaded vocations." << std::endl;
+					}
+					break;
+				case ID_MENU_RELOAD_WEAPONS:
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(g_game.reloadInfo(RELOAD_WEAPONS))
+							std::cout << "Reloaded weapons." << std::endl;
 					}
 					break;
 				case ID_MENU_RELOAD_ALL:
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						std::stringstream ss;
-						if(!g_monsters.reload())
-							ss << "monsters, ";
+						std::cout << "Reloading all..." << std::endl;
+						for(uint32_t i = RELOAD_FIRST; i <= RELOAD_LAST; i++)
+							g_game.reloadInfo((ReloadInfo_t)i);
 
-						if(!Quests::getInstance()->reload())
-							ss << "quests, ";
-
-						if(!g_game.reloadHighscores())
-							ss << "highscores, ";
-
-						if(!g_config.reload())
-							ss << "config, ";
-
-						if(!g_actions->reload())
-							ss << "actions, ";
-
-						if(!g_moveEvents->reload())
-							ss << "move events, ";
-
-						if(!g_talkActions->reload())
-							ss << "talk actions, ";
-
-						if(!g_spells->reload())
-							ss << "spells, ";
-
-						if(!g_creatureEvents->reload())
-							ss << "creature events, ";
-
-						if(!g_globalEvents->reload())
-							ss << "global events, ";
-
-						#ifdef __LOGIN_SERVER__
-						if(!GameServers::getInstance()->reload())
-							ss << "game servers, ";
-						#endif
-
-						if(!Raids::getInstance()->reload() || !Raids::getInstance()->startup())
-							ss << "raids, ";
-
-						if(!Houses::getInstance().reloadPrices())
-							ss << "house prices, ";
-
-						g_npcs.reload();
-						if(!ss.str().length())
-							std::cout << "Reloaded all." << std::endl;
-						else
-							std::cout << "Failed to reload: " << ss.str() << " ..." << std::endl;
+						std::cout << "Reload complete!" << std::endl;
 					}
 					break;
 				}

@@ -19,37 +19,37 @@
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 
-#include "definitions.h"
-
-#include <string>
-#include <map>
-
 #include <boost/config.hpp>
 #include <boost/bind.hpp>
 
-#include "otsystem.h"
-#include "tasks.h"
-#include "items.h"
-#include "creature.h"
-#include "player.h"
-#include "monster.h"
 #include "game.h"
+#include "tasks.h"
+#include "configmanager.h"
+#include "creature.h"
+#include "items.h"
+#include "container.h"
 #include "tile.h"
 #include "house.h"
-#include "actions.h"
-#include "combat.h"
 #include "iologindata.h"
-#include "chat.h"
-#include "luascript.h"
-#include "talkaction.h"
-#include "spells.h"
-#include "configmanager.h"
-#include "ioban.h"
-#include "raids.h"
-#include "database.h"
-#include "server.h"
 #include "ioguild.h"
+#include "actions.h"
+#include "globalevent.h"
+#include "movement.h"
+#include "talkaction.h"
+#include "weapons.h"
+#include "combat.h"
+#include "spells.h"
+#include "ioban.h"
+#include "database.h"
+#include "luascript.h"
+#include "raids.h"
+#include "chat.h"
+#include "server.h"
 #include "quests.h"
+#include "monsters.h"
+#ifdef __LOGIN_SERVER__
+#include "gameservers.h"
+#endif
 
 #ifdef __EXCEPTION_TRACER__
 #include "exception.h"
@@ -59,10 +59,16 @@ extern OTSYS_THREAD_LOCKVAR maploadlock;
 extern ConfigManager g_config;
 extern Server* g_server;
 extern Actions* g_actions;
+extern Monsters g_monsters;
+extern Npcs g_npcs;
 extern Chat g_chat;
 extern TalkActions* g_talkActions;
 extern Spells* g_spells;
 extern Vocations g_vocations;
+extern MoveEvents* g_moveEvents;
+extern Weapons* g_weapons;
+extern CreatureEvents* g_creatureEvents;
+extern GlobalEvents* g_globalEvents;
 
 Game::Game()
 {
@@ -70,7 +76,6 @@ Game::Game()
 	worldType = WORLD_TYPE_PVP;
 	map = NULL;
 	lastPlayersRecord = lastStageLevel = 0;
-	useLastStageLevel = false;
 	stateDelay = OTSYS_TIME();
 	for(int8_t i = 0; i < 3; i++)
 		globalSaveMessage[i] = false;
@@ -103,16 +108,6 @@ Game::~Game()
 		delete map;
 }
 
-GameState_t Game::getGameState()
-{
-	return gameState;
-}
-
-void Game::setWorldType(WorldType_t type)
-{
-	worldType = type;
-}
-
 void Game::setGameState(GameState_t newState)
 {
 	if(gameState == GAME_STATE_SHUTDOWN)
@@ -130,8 +125,11 @@ void Game::setGameState(GameState_t newState)
 				Raids::getInstance()->startup();
 				Quests::getInstance()->loadFromXml();
 
-				IOBan::getInstance()->clearTemporials();
+				g_globalEvents->startup();
 				loadGameState();
+
+				IOBan::getInstance()->clearTemporials();
+				IOLoginData::getInstance()->resetOnlineStatus();
 				if(g_config.getBool(ConfigManager::REMOVE_PREMIUM_ON_INIT))
 					IOLoginData::getInstance()->updatePremiumDays();
 				break;
@@ -210,16 +208,15 @@ void Game::saveGameState(bool savePlayers)
 
 void Game::loadGameState()
 {
-	maxPlayers = g_config.getNumber(ConfigManager::MAX_PLAYERS);
 	inFightTicks = g_config.getNumber(ConfigManager::PZ_LOCKED);
+	maxPlayers = g_config.getNumber(ConfigManager::MAX_PLAYERS);
 	Player::maxMessageBuffer = g_config.getNumber(ConfigManager::MAX_MESSAGEBUFFER);
 	Monster::despawnRange = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRANGE);
 	Monster::despawnRadius = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRADIUS);
 
-	IOLoginData::getInstance()->resetOnlineStatus();
-	loadPlayersRecord();
 	ScriptEnviroment::loadGameState();
 	checkHighscores();
+	loadPlayersRecord();
 	loadMotd();
 }
 
@@ -4399,145 +4396,6 @@ bool Game::closeRuleViolation(Player* player)
 	return true;
 }
 
-void Game::shutdown()
-{
-	std::cout << "Preparing";
-	Spawns::getInstance()->clear();
-	std::cout << " shutdown";
-	Scheduler::getScheduler().shutdown();
-	std::cout << ".";
-	Dispatcher::getDispatcher().shutdown();
-	std::cout << ".";
-	if(g_server)
-		g_server->stop();
-
-	std::cout << "." << std::endl;
-	cleanup();
-	std::cout << "Exiting" << std::endl;
-	exit(-1);
-}
-
-void Game::cleanup()
-{
-	//free memory
-	for(std::vector<Thing*>::iterator it = ToReleaseThings.begin(); it != ToReleaseThings.end(); ++it)
-		(*it)->releaseThing2();
-
-	ToReleaseThings.clear();
-	for(DecayList::iterator it = toDecayItems.begin(); it != toDecayItems.end(); ++it)
-	{
-		int32_t dur = (*it)->getDuration();
-		if(dur >= EVENT_DECAYINTERVAL * EVENT_DECAYBUCKETS)
-			decayItems[lastBucket].push_back(*it);
-		else
-			decayItems[(lastBucket + 1 + (*it)->getDuration() / 1000) % EVENT_DECAYBUCKETS].push_back(*it);
-	}
-
-	toDecayItems.clear();
-}
-
-void Game::FreeThing(Thing* thing)
-{
-	ToReleaseThings.push_back(thing);
-}
-
-bool Game::broadcastMessage(const std::string& text, MessageClasses type)
-{
-	if(type <= MSG_CLASS_FIRST || type >= MSG_CLASS_LAST)
-		return false;
-
-	std::cout << "> Broadcasted message: \"" << text << "\"." << std::endl;
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		(*it).second->sendTextMessage(type, text);
-
-	return true;
-}
-
-bool Game::reloadHighscores()
-{
-	lastHighscoreCheck = time(NULL);
-	for(int16_t i = 0; i < 9; ++i)
-		highscoreStorage[i] = getHighscore(i);
-
-	return true;
-}
-
-void Game::checkHighscores()
-{
-	reloadHighscores();
-
-	uint32_t tmp = g_config.getNumber(ConfigManager::HIGHSCORES_UPDATETIME) * 60 * 1000;
-	if(tmp <= 0)
-		return;
-
-	Scheduler::getScheduler().addEvent(createSchedulerTask(tmp, boost::bind(&Game::checkHighscores, this)));
-}
-
-std::string Game::getHighscoreString(uint16_t skill)
-{
-	Highscore hs = highscoreStorage[skill];
-	std::stringstream ss;
-	ss << "Highscore for " << getSkillName(skill) << "\n\nRank Level - Player Name";
-	for(uint32_t i = 0; i < hs.size(); i++)
-		ss << "\n" << (i + 1) << ".  " << hs[i].second << "  -  " << hs[i].first;
-
-	ss << "\n\nLast updated on:\n" << std::ctime(&lastHighscoreCheck);
-	return ss.str();
-}
-
-Highscore Game::getHighscore(uint16_t skill)
-{
-	Database* db = Database::getInstance();
-	DBResult* result;
-
-	DBQuery query;
-	Highscore hs;
-
-	int32_t limit = g_config.getNumber(ConfigManager::HIGHSCORES_TOP);
-	if(skill >= 7)
-	{
-		if(skill == 7)
-			query << "SELECT `maglevel`, `name` FROM `players` ORDER BY `maglevel` DESC, `manaspent` DESC LIMIT " << limit;
-		else
-			query << "SELECT `level`, `name` FROM `players` ORDER BY `level` DESC, `experience` DESC LIMIT " << limit;
-
-		if((result = db->storeQuery(query.str())))
-		{
-			do
-			{
-				uint32_t level;
-				if(skill == 7)
-					level = result->getDataInt("maglevel");
-				else
-					level = result->getDataInt("level");
-
-				std::string name = result->getDataString("name");
-				if(name.length() > 0)
-					hs.push_back(std::make_pair(name, level));
-			}
-			while(result->next());
-			db->freeResult(result);
-		}
-	}
-	else
-	{
-		query << "SELECT `player_skills`.`value`, `players`.`name` FROM `player_skills`,`players` WHERE `player_skills`.`skillid`=" << skill << " AND `player_skills`.`player_id`=`players`.`id` ORDER BY `player_skills`.`value` DESC, `player_skills`.`count` DESC LIMIT " << limit;
-		if((result = db->storeQuery(query.str())))
-		{
-			do
-			{
-				uint32_t level = result->getDataInt("value");
-				std::string name = result->getDataString("name");
-				if(name.length() > 0)
-					hs.push_back(std::make_pair(name, level));
-			}
-			while(result->next());
-			db->freeResult(result);
-		}
-	}
-	return hs;
-}
-
 void Game::updateCreatureSkull(Creature* creature)
 {
 	const SpectatorVec& list = getSpectators(creature->getPosition());
@@ -4551,69 +4409,159 @@ void Game::updateCreatureSkull(Creature* creature)
 	}
 }
 
-void Game::prepareGlobalSave()
+bool Game::playerInviteToParty(uint32_t playerId, uint32_t invitedId)
 {
-	if(!globalSaveMessage[0])
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	Player* invitedPlayer = getPlayerByID(invitedId);
+	if(!invitedPlayer || invitedPlayer->isRemoved() || invitedPlayer->isInviting(player))
+		return false;
+
+	if(invitedPlayer->getParty())
 	{
-		globalSaveMessage[0] = true;
-		broadcastMessage("Server is going down for a global save within 5 minutes. Please logout.", MSG_STATUS_WARNING);
-		Scheduler::getScheduler().addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareGlobalSave, this)));
+		char buffer[90];
+		sprintf(buffer, "%s is already in a party.", invitedPlayer->getName().c_str());
+		player->sendTextMessage(MSG_INFO_DESCR, buffer);
+		return false;
 	}
-	else if(!globalSaveMessage[1])
-	{
-		globalSaveMessage[1] = true;
-		broadcastMessage("Server is going down for a global save within 3 minutes. Please logout.", MSG_STATUS_WARNING);
-		Scheduler::getScheduler().addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareGlobalSave, this)));
-	}
-	else if(!globalSaveMessage[2])
-	{
-		globalSaveMessage[2] = true;
-		broadcastMessage("Server is going down for a global save in one minute, please logout!", MSG_STATUS_WARNING);
-		Scheduler::getScheduler().addEvent(createSchedulerTask(60000, boost::bind(&Game::prepareGlobalSave, this)));
-	}
-	else
-		globalSave();
+
+	Party* party = player->getParty();
+	if(!party)
+		party = new Party(player);
+	else if(party->getLeader() != player)
+		return false;
+
+	return party->invitePlayer(invitedPlayer);
 }
 
-void Game::globalSave()
+bool Game::playerJoinParty(uint32_t playerId, uint32_t leaderId)
 {
-	if(g_config.getBool(ConfigManager::SHUTDOWN_AT_GLOBALSAVE))
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	Player* leader = getPlayerByID(leaderId);
+	if(!leader || leader->isRemoved() || !leader->isInviting(player))
+		return false;
+
+	if(!leader->getParty() || leader->getParty()->getLeader() != leader)
+		return false;
+
+	if(player->getParty())
 	{
-		//shutdown server
-		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_SHUTDOWN)));
+		player->sendTextMessage(MSG_INFO_DESCR, "You are already in a party.");
+		return false;
 	}
-	else
+
+	return leader->getParty()->joinParty(player);
+}
+
+bool Game::playerRevokePartyInvitation(uint32_t playerId, uint32_t invitedId)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved() || !player->getParty() || player->getParty()->getLeader() != player)
+		return false;
+
+	Player* invitedPlayer = getPlayerByID(invitedId);
+	if(!invitedPlayer || invitedPlayer->isRemoved() || !player->isInviting(invitedPlayer))
+		return false;
+
+	player->getParty()->revokeInvitation(invitedPlayer);
+	return true;
+}
+
+bool Game::playerPassPartyLeadership(uint32_t playerId, uint32_t newLeaderId)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved() || !player->getParty() || player->getParty()->getLeader() != player)
+		return false;
+
+	Player* newLeader = getPlayerByID(newLeaderId);
+	if(!newLeader || newLeader->isRemoved() || !player->isPartner(newLeader))
+		return false;
+
+	return player->getParty()->passPartyLeadership(newLeader);
+}
+
+bool Game::playerLeaveParty(uint32_t playerId)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	if(!player->getParty() || player->hasCondition(CONDITION_INFIGHT))
+		return false;
+
+	return player->getParty()->leaveParty(player);
+}
+
+bool Game::playerEnableSharedPartyExperience(uint32_t playerId, uint8_t sharedExpActive, uint8_t unknown)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	if(!player->getParty() || player->hasCondition(CONDITION_INFIGHT))
+		return false;
+
+	return player->getParty()->setSharedExperience(player, sharedExpActive == 1);
+}
+
+bool Game::playerReportBug(uint32_t playerId, std::string bug)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	Database* db = Database::getInstance();
+
+	DBQuery query;
+	query << "INSERT INTO `server_reports` (`id`, `world_id`, `player_id`, `posx`, `posy`, `posz`, `timestamp`, `report`) VALUES (NULL, ";
+	query << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << player->getGUID() << ", ";
+	Position pos = player->getPosition();
+	query << pos.x << ", " << pos.y << ", " << pos.z << ", ";
+	query << time(NULL) << ", " << db->escapeString(bug.c_str()) << ");";
+	if(!db->executeQuery(query.str()))
 	{
-		//close server
-		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_CLOSED)));
-
-		//clean map if configured to
-		if(g_config.getBool(ConfigManager::CLEAN_MAP_AT_GLOBALSAVE))
-			map->clean();
-
-		//clear temporial and expired bans
-		IOBan::getInstance()->clearTemporials();
-
-		//remove premium days globally if configured to
-		if(g_config.getBool(ConfigManager::REMOVE_PREMIUM_ON_INIT))
-			IOLoginData::getInstance()->updatePremiumDays();
-
-		//pay all houses
-		Houses::getInstance().payHouses();
-
-		//reload highscores
-		reloadHighscores();
-
-		//reset variables
-		for(int16_t i = 0; i < 3; i++)
-			setGlobalSaveMessage(i, false);
-
-		//prepare for next global save after 24 hours
-		Scheduler::getScheduler().addEvent(createSchedulerTask(86100000, boost::bind(&Game::prepareGlobalSave, this)));
-
-		//open server
-		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_NORMAL)));
+		query.str("");
+		return false;
 	}
+
+	query.str("");
+	player->sendTextMessage(MSG_EVENT_DEFAULT, "Your report has been sent to " + g_config.getString(ConfigManager::SERVER_NAME) + ".");
+	return true;
+}
+
+void Game::sendGuildMotd(uint32_t playerId, uint32_t guildId)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return;
+
+	player->sendChannelMessage("Message of the Day", IOGuild::getInstance()->getMotd(guildId), SPEAK_CHANNEL_R1, 0x00);
+}
+
+void Game::kickPlayer(uint32_t playerId, bool displayEffect)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return;
+
+	player->kickPlayer(displayEffect);
+}
+
+bool Game::broadcastMessage(const std::string& text, MessageClasses type)
+{
+	if(type <= MSG_CLASS_FIRST || type >= MSG_CLASS_LAST)
+		return false;
+
+	std::cout << "> Broadcasted message: \"" << text << "\"." << std::endl;
+	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		(*it).second->sendTextMessage(type, text);
+
+	return true;
 }
 
 Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extended/* = false*/, bool ignoreHouse/* = true*/)
@@ -4881,6 +4829,420 @@ std::string Game::getSearchString(const Position fromPos, const Position toPos, 
 	return ss.str();
 }
 
+bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int32_t reason, int32_t action,
+		std::string banComment, std::string statement, bool IPBanishment)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	if((0 == (violationActions[player->getViolationAccess()] & (1 << action))) || reason > violationReasons[player->getViolationAccess()]
+		|| (IPBanishment && (violationActions[player->getViolationAccess()] & Action_IpBan) != Action_IpBan))
+	{
+		player->sendCancel("You do not have authorization for this action.");
+		return false;
+	}
+
+	uint32_t commentSize = g_config.getNumber(ConfigManager::MAX_VIOLATIONCOMMENT_SIZE);
+	if(banComment.size() > commentSize)
+	{
+		char buffer[90];
+		sprintf(buffer, "The comment may not exceed limit of %d characters.", commentSize);
+		player->sendCancel(buffer);
+		return false;
+	}
+
+	//Statements cannot be this long, player has most likely faked the message.
+	if(statement.size() > 300)
+		return false;
+
+	bool playerExists = IOLoginData::getInstance()->playerExists(targetPlayerName);
+	toLowerCaseString(targetPlayerName);
+	if(!playerExists || targetPlayerName == "account manager")
+	{
+		player->sendCancel("A player with this name does not exist.");
+		return false;
+	}
+
+	Account account;
+	uint32_t guid, ip;
+	Player* targetPlayer = getPlayerByName(targetPlayerName);
+	if(targetPlayer)
+	{
+		if(targetPlayer->hasFlag(PlayerFlag_CannotBeBanned))
+		{
+			player->sendCancel("You do not have authorization for this action.");
+			return false;
+		}
+
+		account = IOLoginData::getInstance()->loadAccount(targetPlayer->getAccount(), true);
+		guid = targetPlayer->getGUID();
+		ip = targetPlayer->lastIP;
+	}
+	else
+	{
+		if(IOLoginData::getInstance()->hasFlag(targetPlayerName, PlayerFlag_CannotBeBanned))
+		{
+			player->sendCancel("You do not have authorization for this action.");
+			return false;
+		}
+
+		account = IOLoginData::getInstance()->loadAccount(IOLoginData::getInstance()->getAccountIdByName(targetPlayerName), true);
+		IOLoginData::getInstance()->getGuidByName(guid, targetPlayerName);
+		ip = IOLoginData::getInstance()->getLastIP(guid);
+	}
+
+	bool notation = false;
+	switch(action)
+	{
+		case 0:
+		{
+			IOBan::getInstance()->addNotation(account.number, reason, action, banComment, player->getGUID(), statement);
+			if(IOBan::getInstance()->getNotationsCount(account.number) >= (uint32_t)g_config.getNumber(ConfigManager::NOTATIONS_TO_BAN))
+			{
+				account.warnings++;
+				if(account.warnings >= (g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION)))
+				{
+					action = 7;
+					IOBan::getInstance()->addDeletion(account.number, reason, action, banComment, player->getGUID(), statement);
+				}
+				else if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
+					IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)),
+						reason, action, banComment, player->getGUID(), statement);
+				else
+					IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH)),
+						reason, action, banComment, player->getGUID(), statement);
+			}
+			else
+				notation = true;
+			break;
+		}
+
+		case 1:
+		{
+			IOBan::getInstance()->addNamelock(guid, reason, action, banComment, player->getGUID(), statement);
+			break;
+		}
+
+		case 3:
+		{
+			if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
+			{
+				action = 7;
+				IOBan::getInstance()->addDeletion(account.number, reason, action, banComment, player->getGUID(), statement);
+			}
+			else
+			{
+				account.warnings++;
+				if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
+					IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)),
+						reason, action, banComment, player->getGUID(), statement);
+				else
+					IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH)),
+						reason, action, banComment, player->getGUID(), statement);
+
+				IOBan::getInstance()->addNamelock(guid, reason, action, banComment, player->getGUID(), statement);
+			}
+			break;
+		}
+
+		case 4:
+		{
+			if(account.warnings < g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
+			{
+				account.warnings = g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION);
+				IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)),
+					reason, action, banComment, player->getGUID(), statement);
+			}
+			else
+			{
+				action = 7;
+				IOBan::getInstance()->addDeletion(account.number, reason, action, banComment, player->getGUID(), statement);
+			}
+			break;
+		}
+
+		case 5:
+		{
+			if(account.warnings < g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
+			{
+				account.warnings = g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION);
+				IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)),
+					reason, action, banComment, player->getGUID(), statement);
+				IOBan::getInstance()->addNamelock(guid, reason, action, banComment, player->getGUID(), statement);
+			}
+			else
+			{
+				action = 7;
+				IOBan::getInstance()->addDeletion(account.number, reason, action, banComment, player->getGUID(), statement);
+			}
+			break;
+		}
+
+		default:
+		{
+			account.warnings++;
+			if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
+			{
+				action = 7;
+				IOBan::getInstance()->addDeletion(account.number, reason, action, banComment, player->getGUID(), statement);
+			}
+			else
+			{
+				if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
+					IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)),
+						reason, action, banComment, player->getGUID(), statement);
+				else
+					IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH)),
+						reason, action, banComment, player->getGUID(), statement);
+			}
+			break;
+		}
+	}
+
+	if(IPBanishment && ip > 0)
+		IOBan::getInstance()->addIpBanishment(ip, (time(NULL) + g_config.getNumber(ConfigManager::IPBANISHMENT_LENGTH)),
+			banComment, player->getGUID(), statement);
+
+	if(!notation)
+		IOBan::getInstance()->removeNotations(account.number);
+
+	char buffer[800 + banComment.length()];
+	if(g_config.getBool(ConfigManager::BROADCAST_BANISHMENTS))
+	{
+		if(action == 6)
+			sprintf(buffer, "%s has taken the action \"%s\" for the statement: \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".",
+				player->getName().c_str(), getAction(action, IPBanishment).c_str(), statement.c_str(), targetPlayerName.c_str(),
+				account.warnings, getReason(reason).c_str(), banComment.c_str());
+		else
+			sprintf(buffer, "%s has taken the action \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".",
+				player->getName().c_str(), getAction(action, IPBanishment).c_str(), targetPlayerName.c_str(),
+				account.warnings, getReason(reason).c_str(), banComment.c_str());
+
+		broadcastMessage(buffer, MSG_STATUS_WARNING);
+	}
+	else
+	{
+		if(action == 6)
+			sprintf(buffer, "You have taken the action \"%s\" for the statement: \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".",
+				getAction(action, IPBanishment).c_str(), statement.c_str(), targetPlayerName.c_str(), account.warnings,
+				getReason(reason).c_str(), banComment.c_str());
+		else
+			sprintf(buffer, "You have taken the action \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".",
+				getAction(action, IPBanishment).c_str(), targetPlayerName.c_str(), account.warnings,
+				getReason(reason).c_str(), banComment.c_str());
+
+		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, buffer);
+	}
+
+	if(targetPlayer && !notation)
+	{
+		addMagicEffect(targetPlayer->getPosition(), NM_ME_MAGIC_POISON);
+		uint32_t playerId = targetPlayer->getID();
+		Scheduler::getScheduler().addEvent(createSchedulerTask(1000, boost::bind(&Game::kickPlayer, this, playerId, false)));
+	}
+
+	IOLoginData::getInstance()->saveAccount(account);
+	return true;
+}
+
+uint64_t Game::getExperienceStage(uint32_t level)
+{
+	if(!g_config.getBool(ConfigManager::EXPERIENCE_STAGES))
+		return g_config.getNumber(ConfigManager::RATE_EXPERIENCE);
+
+	if(lastStageLevel && level >= lastStageLevel)
+		return stages[lastStageLevel];
+		
+	return stages[level];	
+}
+
+bool Game::loadExperienceStages()
+{
+	if(!g_config.getBool(ConfigManager::EXPERIENCE_STAGES))
+		return true;
+
+	if(xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "stages.xml").c_str()))
+	{
+		xmlNodePtr root, q, p;
+		int32_t intValue, low, high, mult;
+		root = xmlDocGetRootElement(doc);
+		if(xmlStrcmp(root->name, (const xmlChar*)"stages"))
+		{
+			xmlFreeDoc(doc);
+			return false;
+		}
+
+		lastStageLevel = 0;
+		stages.clear();
+		q = root->children;
+		while(q)
+		{
+			if(!xmlStrcmp(q->name, (const xmlChar*)"world"))
+			{
+				if(!readXMLInteger(q, "id", intValue) || intValue != g_config.getNumber(ConfigManager::WORLD_ID))
+					continue;
+
+				p = q->children;
+				while(p)
+				{
+					if(!xmlStrcmp(p->name, (const xmlChar*)"stage"))
+					{
+						if(readXMLInteger(p, "minlevel", intValue))
+							low = intValue;
+						else
+							low = 1;
+
+						if(readXMLInteger(p, "maxlevel", intValue))
+							high = intValue;
+						else
+						{
+							high = 0;
+							lastStageLevel = low;
+						}
+
+						if(readXMLInteger(p, "multiplier", intValue))
+							mult = intValue;
+						else
+							mult = 1;
+
+						if(lastStageLevel && lastStageLevel == (uint32_t)low)
+							stages[lastStageLevel] = mult;
+						else
+						{
+							for(int32_t i = low; i <= high; i++)
+								stages[i] = mult;
+						}
+
+					}
+
+					p = p->next;
+				}
+			}
+
+			if(!xmlStrcmp(q->name, (const xmlChar*)"stage"))
+			{
+				if(readXMLInteger(q, "minlevel", intValue))
+					low = intValue;
+				else
+					low = 1;
+
+				if(readXMLInteger(q, "maxlevel", intValue))
+					high = intValue;
+				else
+				{
+					high = 0;
+					lastStageLevel = low;
+				}
+
+				if(readXMLInteger(q, "multiplier", intValue))
+					mult = intValue;
+				else
+					mult = 1;
+
+				if(lastStageLevel && lastStageLevel == (uint32_t)low)
+					stages[lastStageLevel] = mult;
+				else
+				{
+					for(int32_t i = low; i <= high; i++)
+						stages[i] = mult;
+				}
+			}
+
+			q = q->next;
+		}
+
+		xmlFreeDoc(doc);
+	}
+
+	return true;
+}
+
+bool Game::reloadHighscores()
+{
+	lastHighscoreCheck = time(NULL);
+	for(int16_t i = 0; i < 9; ++i)
+		highscoreStorage[i] = getHighscore(i);
+
+	return true;
+}
+
+void Game::checkHighscores()
+{
+	reloadHighscores();
+
+	uint32_t tmp = g_config.getNumber(ConfigManager::HIGHSCORES_UPDATETIME) * 60 * 1000;
+	if(tmp <= 0)
+		return;
+
+	Scheduler::getScheduler().addEvent(createSchedulerTask(tmp, boost::bind(&Game::checkHighscores, this)));
+}
+
+std::string Game::getHighscoreString(uint16_t skill)
+{
+	Highscore hs = highscoreStorage[skill];
+	std::stringstream ss;
+	ss << "Highscore for " << getSkillName(skill) << "\n\nRank Level - Player Name";
+	for(uint32_t i = 0; i < hs.size(); i++)
+		ss << "\n" << (i + 1) << ".  " << hs[i].second << "  -  " << hs[i].first;
+
+	ss << "\n\nLast updated on:\n" << std::ctime(&lastHighscoreCheck);
+	return ss.str();
+}
+
+Highscore Game::getHighscore(uint16_t skill)
+{
+	Database* db = Database::getInstance();
+	DBResult* result;
+
+	DBQuery query;
+	Highscore hs;
+
+	int32_t limit = g_config.getNumber(ConfigManager::HIGHSCORES_TOP);
+	if(skill >= 7)
+	{
+		if(skill == 7)
+			query << "SELECT `maglevel`, `name` FROM `players` ORDER BY `maglevel` DESC, `manaspent` DESC LIMIT " << limit;
+		else
+			query << "SELECT `level`, `name` FROM `players` ORDER BY `level` DESC, `experience` DESC LIMIT " << limit;
+
+		if((result = db->storeQuery(query.str())))
+		{
+			do
+			{
+				uint32_t level;
+				if(skill == 7)
+					level = result->getDataInt("maglevel");
+				else
+					level = result->getDataInt("level");
+
+				std::string name = result->getDataString("name");
+				if(name.length() > 0)
+					hs.push_back(std::make_pair(name, level));
+			}
+			while(result->next());
+			db->freeResult(result);
+		}
+	}
+	else
+	{
+		query << "SELECT `player_skills`.`value`, `players`.`name` FROM `player_skills`,`players` WHERE `player_skills`.`skillid`=" << skill << " AND `player_skills`.`player_id`=`players`.`id` ORDER BY `player_skills`.`value` DESC, `player_skills`.`count` DESC LIMIT " << limit;
+		if((result = db->storeQuery(query.str())))
+		{
+			do
+			{
+				uint32_t level = result->getDataInt("value");
+				std::string name = result->getDataString("name");
+				if(name.length() > 0)
+					hs.push_back(std::make_pair(name, level));
+			}
+			while(result->next());
+			db->freeResult(result);
+		}
+	}
+	return hs;
+}
+
 int32_t Game::getMotdNum()
 {
 	if(lastMotdText != g_config.getString(ConfigManager::MOTD))
@@ -4957,457 +5319,274 @@ void Game::loadPlayersRecord()
 	db->freeResult(result);
 }
 
-bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int32_t reason, int32_t action, std::string banComment, std::string statement, bool IPBanishment)
+bool Game::reloadInfo(ReloadInfo_t reload)
 {
-	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved())
-		return false;
-
-	if((0 == (violationActions[player->getViolationAccess()] & (1 << action)))
-		|| reason > violationReasons[player->getViolationAccess()]
-		|| (IPBanishment && (violationActions[player->getViolationAccess()] & Action_IpBan) != Action_IpBan))
+	switch(reload)
 	{
-		player->sendCancel("You do not have authorization for this action.");
-		return false;
-	}
-
-	uint32_t commentSize = g_config.getNumber(ConfigManager::MAX_VIOLATIONCOMMENT_SIZE);
-	if(banComment.size() > commentSize)
-	{
-		char buffer[90];
-		sprintf(buffer, "The comment may not exceed limit of %d characters.", commentSize);
-		player->sendCancel(buffer);
-		return false;
-	}
-
-	//Statements cannot be this long, player has most likely faked the message.
-	if(statement.size() > 300)
-		return false;
-
-	bool playerExists = IOLoginData::getInstance()->playerExists(targetPlayerName);
-	toLowerCaseString(targetPlayerName);
-	if(!playerExists || targetPlayerName == "account manager")
-	{
-		player->sendCancel("A player with this name does not exist.");
-		return false;
-	}
-
-	Account account;
-	uint32_t guid, ip;
-	Player* targetPlayer = getPlayerByName(targetPlayerName);
-	if(targetPlayer)
-	{
-		if(targetPlayer->hasFlag(PlayerFlag_CannotBeBanned))
+		case RELOAD_ACTIONS:
 		{
-			player->sendCancel("You do not have authorization for this action.");
-			return false;
-		}
+			if(g_actions->reload())
+				return true;
 
-		account = IOLoginData::getInstance()->loadAccount(targetPlayer->getAccount(), true);
-		guid = targetPlayer->getGUID();
-		ip = targetPlayer->lastIP;
-	}
-	else
-	{
-		if(IOLoginData::getInstance()->hasFlag(targetPlayerName, PlayerFlag_CannotBeBanned))
-		{
-			player->sendCancel("You do not have authorization for this action.");
-			return false;
-		}
-
-		account = IOLoginData::getInstance()->loadAccount(IOLoginData::getInstance()->getAccountIdByName(targetPlayerName), true);
-		IOLoginData::getInstance()->getGuidByName(guid, targetPlayerName);
-		ip = IOLoginData::getInstance()->getLastIP(guid);
-	}
-
-	bool notation = false;
-	switch(action)
-	{
-		case 0:
-		{
-			IOBan::getInstance()->addNotation(account.number, reason, action, banComment, player->getGUID());
-			if(IOBan::getInstance()->getNotationsCount(account.number) >= (uint32_t)g_config.getNumber(ConfigManager::NOTATIONS_TO_BAN))
-			{
-				account.warnings++;
-				if(account.warnings >= (g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION)))
-				{
-					action = 7;
-					IOBan::getInstance()->addDeletion(account.number, reason, action, banComment, player->getGUID());
-				}
-				else if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
-					IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), reason, action, banComment, player->getGUID());
-				else
-					IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH)), reason, action, banComment, player->getGUID());
-			}
-			else
-				notation = true;
+			std::cout << "[Error - Game::reloadInfo] Failed to reload actions." << std::endl;
 			break;
 		}
 
-		case 1:
+		case RELOAD_CONFIG:
 		{
-			IOBan::getInstance()->addNamelock(guid, reason, action, banComment, player->getGUID());
+			if(g_config.reload())
+				return true;
+
+			std::cout << "[Error - Game::reloadInfo] Failed to reload config." << std::endl;
 			break;
 		}
 
-		case 3:
+		case RELOAD_CREATUREEVENTS:
 		{
-			if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
-			{
-				action = 7;
-				IOBan::getInstance()->addDeletion(account.number, reason, action, banComment, player->getGUID());
-			}
-			else
-			{
-				account.warnings++;
-				if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
-					IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), reason, action, banComment, player->getGUID());
-				else
-					IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH)), reason, action, banComment, player->getGUID());
+			if(g_creatureEvents->reload())
+				return true;
 
-				IOBan::getInstance()->addNamelock(guid, reason, action, banComment, player->getGUID());
-			}
+			std::cout << "[Error - Game::reloadInfo] Failed to reload creature events." << std::endl;
 			break;
 		}
 
-		case 4:
+		#ifdef __LOGIN_SERVER__
+		case RELOAD_GAMESERVERS:
 		{
-			if(account.warnings < g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
-			{
-				account.warnings = g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION);
-				IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), reason, action, banComment, player->getGUID());
-			}
-			else
-			{
-				action = 7;
-				IOBan::getInstance()->addDeletion(account.number, reason, action, banComment, player->getGUID());
-			}
+			if(GameServers::getInstance()->reload())
+				return true;
+
+			std::cout << "[Error - Game::reloadInfo] Failed to reload game servers." << std::endl;
 			break;
 		}
 
-		case 5:
+		#endif
+		case RELOAD_GLOBALEVENTS:
 		{
-			if(account.warnings < g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
-			{
-				account.warnings = g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION);
-				IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), reason, action, banComment, player->getGUID());
-				IOBan::getInstance()->addNamelock(guid, reason, action, banComment, player->getGUID());
-			}
-			else
-			{
-				action = 7;
-				IOBan::getInstance()->addDeletion(account.number, reason, action, banComment, player->getGUID());
-			}
+			if(g_globalEvents->reload())
+				return true;
+
+			std::cout << "[Error - Game::reloadInfo] Failed to reload global events." << std::endl;
 			break;
 		}
 
-		default:
+		case RELOAD_HIGHSCORES:
 		{
-			account.warnings++;
-			if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
-			{
-				action = 7;
-				IOBan::getInstance()->addDeletion(account.number, reason, action, banComment, player->getGUID());
-			}
-			else
-			{
-				if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
-					IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), reason, action, banComment, player->getGUID());
-				else
-					IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH)), reason, action, banComment, player->getGUID());
-			}
+			if(reloadHighscores())
+				return true;
+
+			std::cout << "[Error - Game::reloadInfo] Failed to reload highscores." << std::endl;
 			break;
 		}
-	}
 
-	if(IPBanishment && ip > 0)
-		IOBan::getInstance()->addIpBanishment(ip, (time(NULL) + g_config.getNumber(ConfigManager::IPBANISHMENT_LENGTH)), banComment, player->getGUID());
+		case RELOAD_HOUSEPRICES:
+		{
+			if(Houses::getInstance().reloadPrices())
+				return true;
 
-	if(!notation)
-		IOBan::getInstance()->removeNotations(account.number);
+			std::cout << "[Error - Game::reloadInfo] Failed to reload house prices." << std::endl;
+			break;
+		}
 
-	char buffer[800 + banComment.length()];
-	if(g_config.getBool(ConfigManager::BROADCAST_BANISHMENTS))
-	{
-		if(action == 6)
-			sprintf(buffer, "%s has taken the action \"%s\" for the statement: \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".", player->getName().c_str(), getAction(action, IPBanishment).c_str(), statement.c_str(), targetPlayerName.c_str(), account.warnings, getReason(reason).c_str(), banComment.c_str());
-		else
-			sprintf(buffer, "%s has taken the action \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".", player->getName().c_str(), getAction(action, IPBanishment).c_str(), targetPlayerName.c_str(), account.warnings, getReason(reason).c_str(), banComment.c_str());
+		case RELOAD_ITEMS:
+			//TODO
+			return true;
 
-		broadcastMessage(buffer, MSG_STATUS_WARNING);
-	}
-	else
-	{
-		if(action == 6)
-			sprintf(buffer, "You have taken the action \"%s\" for the statement: \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".", getAction(action, IPBanishment).c_str(), statement.c_str(), targetPlayerName.c_str(), account.warnings, getReason(reason).c_str(), banComment.c_str());
-		else
-			sprintf(buffer, "You have taken the action \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".", getAction(action, IPBanishment).c_str(), targetPlayerName.c_str(), account.warnings, getReason(reason).c_str(), banComment.c_str());
+		case RELOAD_MONSTERS:
+		{
+			if(g_monsters.reload())
+				return true;
 
-		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, buffer);
-	}
+			std::cout << "[Error - Game::reloadInfo] Failed to reload monsters." << std::endl;
+			break;
+		}
 
-	if(targetPlayer && !notation)
-	{
-		addMagicEffect(targetPlayer->getPosition(), NM_ME_MAGIC_POISON);
+		case RELOAD_MOVEEVENTS:
+		{
+			if(g_moveEvents->reload())
+				return true;
 
-		uint32_t playerId = targetPlayer->getID();
-		Scheduler::getScheduler().addEvent(createSchedulerTask(1000, boost::bind(&Game::kickPlayer, this, playerId, false)));
-	}
+			std::cout << "[Error - Game::reloadInfo] Failed to reload move events." << std::endl;
+			break;
+		}
 
-	IOLoginData::getInstance()->saveAccount(account);
-	return true;
-}
+		case RELOAD_NPCS:
+			g_npcs.reload();
+			return true;
 
-uint64_t Game::getExperienceStage(uint32_t level)
-{
-	if(!g_config.getBool(ConfigManager::EXPERIENCE_STAGES))
-		return g_config.getNumber(ConfigManager::RATE_EXPERIENCE);
+		case RELOAD_OUTFITS:
+			//TODO
+			return true;
 
-	if(useLastStageLevel && level >= lastStageLevel)
-		return stages[lastStageLevel];
+		case RELOAD_QUESTS:
+		{
+			if(Quests::getInstance()->reload())
+				return true;
+
+			std::cout << "[Error - Game::reloadInfo] Failed to reload quests." << std::endl;
+			break;
+		}
+
+		case RELOAD_RAIDS:
+		{
+			if(Raids::getInstance()->reload() && Raids::getInstance()->startup())
+				return true;
+
+			std::cout << "[Error - Game::reloadInfo] Failed to reload raids." << std::endl;
+			break;
+		}
+
+		case RELOAD_SPELLS:
+		{
+			if(g_spells->reload())
+			{
+				if(g_monsters.reload())
+					return true;
+
+				std::cout << "[Error - Game::reloadInfo] Failed to reload monsters when reloading spells." << std::endl;
+			}
+
+			std::cout << "[Error - Game::reloadInfo] Failed to reload spells." << std::endl;
+			break;
+		}
+
+		case RELOAD_STAGES:
+		{
+			if(loadExperienceStages())
+				return true;
+
+			std::cout << "[Error - Game::reloadInfo] Failed to reload stages." << std::endl;
+			break;
+		}
+
+		case RELOAD_TALKACTIONS:
+		{
+			if(g_talkActions->reload())
+				return true;
+
+			std::cout << "[Error - Game::reloadInfo] Failed to reload talk actions." << std::endl;
+			break;
+		}
+
+		case RELOAD_VOCATIONS:
+			//TODO
+			return true;
+
+		case RELOAD_WEAPONS:
+			//TODO
+			return true;
 		
-	return stages[level];	
-}
-
-bool Game::loadExperienceStages()
-{
-	if(!g_config.getBool(ConfigManager::EXPERIENCE_STAGES))
-		return true;
-
-	if(xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "stages.xml").c_str()))
-	{
-		xmlNodePtr root, q, p;
-		int32_t intVal, low, high, mult;
-		root = xmlDocGetRootElement(doc);
-		if(xmlStrcmp(root->name, (const xmlChar*)"stages"))
-		{
-			xmlFreeDoc(doc);
-			return false;
-		}
-
-		q = root->children;
-		while(q)
-		{
-			if(!xmlStrcmp(q->name, (const xmlChar*)"world"))
-			{
-				if(!readXMLInteger(q, "id", intVal) || intVal != g_config.getNumber(ConfigManager::WORLD_ID))
-					continue;
-
-				p = q->children;
-				while(p)
-				{
-					if(!xmlStrcmp(p->name, (const xmlChar*)"stage"))
-					{
-						lastStageLevel = 0;
-						if(readXMLInteger(p, "minlevel", intVal))
-							low = intVal;
-						else
-							low = 1;
-
-						if(readXMLInteger(p, "maxlevel", intVal))
-							high = intVal;
-						else
-						{
-							high = 0;
-							lastStageLevel = low;
-						}
-
-						if(readXMLInteger(p, "multiplier", intVal))
-							mult = intVal;
-						else
-							mult = 1;
-
-						if(lastStageLevel)
-							stages[lastStageLevel] = mult;
-						else
-						{
-							for(int32_t i = low; i <= high; i++)
-								stages[i] = mult;
-						}
-
-					}
-
-					p = p->next;
-				}
-			}
-
-			if(!xmlStrcmp(q->name, (const xmlChar*)"stage"))
-			{
-				lastStageLevel = 0;
-				if(readXMLInteger(q, "minlevel", intVal))
-					low = intVal;
-				else
-					low = 1;
-
-				if(readXMLInteger(q, "maxlevel", intVal))
-					high = intVal;
-				else
-				{
-					high = 0;
-					lastStageLevel = low;
-				}
-
-				if(readXMLInteger(q, "multiplier", intVal))
-					mult = intVal;
-				else
-					mult = 1;
-
-				if(lastStageLevel)
-					stages[lastStageLevel] = mult;
-				else
-				{
-					for(int32_t i = low; i <= high; i++)
-						stages[i] = mult;
-				}
-			}
-
-			q = q->next;
-		}
-
-		xmlFreeDoc(doc);
-	}
-	return true;
-}
-
-bool Game::playerInviteToParty(uint32_t playerId, uint32_t invitedId)
-{
-	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved())
-		return false;
-
-	Player* invitedPlayer = getPlayerByID(invitedId);
-	if(!invitedPlayer || invitedPlayer->isRemoved() || invitedPlayer->isInviting(player))
-		return false;
-
-	if(invitedPlayer->getParty())
-	{
-		char buffer[90];
-		sprintf(buffer, "%s is already in a party.", invitedPlayer->getName().c_str());
-		player->sendTextMessage(MSG_INFO_DESCR, buffer);
-		return false;
+		default:
+			break;
 	}
 
-	Party* party = player->getParty();
-	if(!party)
-		party = new Party(player);
-	else if(party->getLeader() != player)
-		return false;
-
-	return party->invitePlayer(invitedPlayer);
+	std::cout << "[Warning - Game::reloadInfo] Reload type not found." << std::endl;
+	return false;
 }
 
-bool Game::playerJoinParty(uint32_t playerId, uint32_t leaderId)
+void Game::prepareGlobalSave()
 {
-	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved())
-		return false;
-
-	Player* leader = getPlayerByID(leaderId);
-	if(!leader || leader->isRemoved() || !leader->isInviting(player))
-		return false;
-
-	if(!leader->getParty() || leader->getParty()->getLeader() != leader)
-		return false;
-
-	if(player->getParty())
+	if(!globalSaveMessage[0])
 	{
-		player->sendTextMessage(MSG_INFO_DESCR, "You are already in a party.");
-		return false;
+		globalSaveMessage[0] = true;
+		broadcastMessage("Server is going down for a global save within 5 minutes. Please logout.", MSG_STATUS_WARNING);
+		Scheduler::getScheduler().addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareGlobalSave, this)));
+	}
+	else if(!globalSaveMessage[1])
+	{
+		globalSaveMessage[1] = true;
+		broadcastMessage("Server is going down for a global save within 3 minutes. Please logout.", MSG_STATUS_WARNING);
+		Scheduler::getScheduler().addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareGlobalSave, this)));
+	}
+	else if(!globalSaveMessage[2])
+	{
+		globalSaveMessage[2] = true;
+		broadcastMessage("Server is going down for a global save in one minute, please logout!", MSG_STATUS_WARNING);
+		Scheduler::getScheduler().addEvent(createSchedulerTask(60000, boost::bind(&Game::prepareGlobalSave, this)));
+	}
+	else
+		globalSave();
+}
+
+void Game::globalSave()
+{
+	if(g_config.getBool(ConfigManager::SHUTDOWN_AT_GLOBALSAVE))
+	{
+		//shutdown server
+		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_SHUTDOWN)));
+	}
+	else
+	{
+		//close server
+		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_CLOSED)));
+
+		//clean map if configured to
+		if(g_config.getBool(ConfigManager::CLEAN_MAP_AT_GLOBALSAVE))
+			map->clean();
+
+		//clear temporial and expired bans
+		IOBan::getInstance()->clearTemporials();
+
+		//remove premium days globally if configured to
+		if(g_config.getBool(ConfigManager::REMOVE_PREMIUM_ON_INIT))
+			IOLoginData::getInstance()->updatePremiumDays();
+
+		//pay all houses
+		Houses::getInstance().payHouses();
+
+		//reload highscores
+		reloadHighscores();
+
+		//reset variables
+		for(int16_t i = 0; i < 3; i++)
+			setGlobalSaveMessage(i, false);
+
+		//prepare for next global save after 24 hours
+		Scheduler::getScheduler().addEvent(createSchedulerTask(86100000, boost::bind(&Game::prepareGlobalSave, this)));
+
+		//open server
+		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_NORMAL)));
+	}
+}
+
+void Game::shutdown()
+{
+	std::cout << "Preparing";
+	Spawns::getInstance()->clear();
+	std::cout << " shutdown";
+	Scheduler::getScheduler().shutdown();
+	std::cout << ".";
+	Dispatcher::getDispatcher().shutdown();
+	std::cout << ".";
+	if(g_server)
+		g_server->stop();
+
+	std::cout << "." << std::endl;
+	cleanup();
+	std::cout << "Exiting" << std::endl;
+	exit(-1);
+}
+
+void Game::cleanup()
+{
+	//free memory
+	for(std::vector<Thing*>::iterator it = ToReleaseThings.begin(); it != ToReleaseThings.end(); ++it)
+		(*it)->releaseThing2();
+
+	ToReleaseThings.clear();
+	for(DecayList::iterator it = toDecayItems.begin(); it != toDecayItems.end(); ++it)
+	{
+		int32_t dur = (*it)->getDuration();
+		if(dur >= EVENT_DECAYINTERVAL * EVENT_DECAYBUCKETS)
+			decayItems[lastBucket].push_back(*it);
+		else
+			decayItems[(lastBucket + 1 + (*it)->getDuration() / 1000) % EVENT_DECAYBUCKETS].push_back(*it);
 	}
 
-	return leader->getParty()->joinParty(player);
+	toDecayItems.clear();
 }
 
-bool Game::playerRevokePartyInvitation(uint32_t playerId, uint32_t invitedId)
+void Game::FreeThing(Thing* thing)
 {
-	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved() || !player->getParty() || player->getParty()->getLeader() != player)
-		return false;
-
-	Player* invitedPlayer = getPlayerByID(invitedId);
-	if(!invitedPlayer || invitedPlayer->isRemoved() || !player->isInviting(invitedPlayer))
-		return false;
-
-	player->getParty()->revokeInvitation(invitedPlayer);
-	return true;
-}
-
-bool Game::playerPassPartyLeadership(uint32_t playerId, uint32_t newLeaderId)
-{
-	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved() || !player->getParty() || player->getParty()->getLeader() != player)
-		return false;
-
-	Player* newLeader = getPlayerByID(newLeaderId);
-	if(!newLeader || newLeader->isRemoved() || !player->isPartner(newLeader))
-		return false;
-
-	return player->getParty()->passPartyLeadership(newLeader);
-}
-
-bool Game::playerLeaveParty(uint32_t playerId)
-{
-	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved())
-		return false;
-
-	if(!player->getParty() || player->hasCondition(CONDITION_INFIGHT))
-		return false;
-
-	return player->getParty()->leaveParty(player);
-}
-
-bool Game::playerEnableSharedPartyExperience(uint32_t playerId, uint8_t sharedExpActive, uint8_t unknown)
-{
-	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved())
-		return false;
-
-	if(!player->getParty() || player->hasCondition(CONDITION_INFIGHT))
-		return false;
-
-	return player->getParty()->setSharedExperience(player, sharedExpActive == 1);
-}
-
-void Game::sendGuildMotd(uint32_t playerId, uint32_t guildId)
-{
-	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved())
-		return;
-
-	player->sendChannelMessage("Message of the Day", IOGuild::getInstance()->getMotd(guildId), SPEAK_CHANNEL_R1, 0x00);
-}
-
-void Game::kickPlayer(uint32_t playerId, bool displayEffect)
-{
-	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved())
-		return;
-
-	player->kickPlayer(displayEffect);
-}
-
-bool Game::playerReportBug(uint32_t playerId, std::string bug)
-{
-	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved())
-		return false;
-
-	Database* db = Database::getInstance();
-
-	DBQuery query;
-	query << "INSERT INTO `server_reports` (`id`, `world_id`, `player_id`, `posx`, `posy`, `posz`, `timestamp`, `report`) VALUES (NULL, ";
-	query << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << player->getGUID() << ", ";
-	Position pos = player->getPosition();
-	query << pos.x << ", " << pos.y << ", " << pos.z << ", ";
-	query << time(NULL) << ", " << db->escapeString(bug.c_str()) << ");";
-	if(!db->executeQuery(query.str()))
-	{
-		query.str("");
-		return false;
-	}
-
-	query.str("");
-	player->sendTextMessage(MSG_EVENT_DEFAULT, "Your report has been sent to " + g_config.getString(ConfigManager::SERVER_NAME) + ".");
-	return true;
+	ToReleaseThings.push_back(thing);
 }

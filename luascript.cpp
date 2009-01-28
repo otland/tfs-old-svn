@@ -1380,8 +1380,11 @@ void LuaScriptInterface::registerFunctions()
 	//doCreateTeleport(itemid, topos, createpos)
 	lua_register(m_luaState, "doCreateTeleport", LuaScriptInterface::luaDoCreateTeleport);
 
-	//doSummonCreature(name, pos)
-	lua_register(m_luaState, "doSummonCreature", LuaScriptInterface::luaDoSummonCreature);
+	//doCreateMonster(name, pos)
+	lua_register(m_luaState, "doCreateMonster", LuaScriptInterface::luaDoCreateMonster);
+
+	//doCreateNpc(name, pos)
+	lua_register(m_luaState, "doCreateNpc", LuaScriptInterface::luaDoCreateNpc);
 
 	//doConvinceCreature(cid, target)
 	lua_register(m_luaState, "doConvinceCreature", LuaScriptInterface::luaDoConvinceCreature);
@@ -2032,9 +2035,6 @@ void LuaScriptInterface::registerFunctions()
 	//getBanList(type[, value])
 	lua_register(m_luaState, "getBanList", LuaScriptInterface::luaGetBanList);
 
-	//debugPrint(text)
-	lua_register(m_luaState, "debugPrint", LuaScriptInterface::luaDebugPrint);
-
 	//getExperienceStage(level)
 	lua_register(m_luaState, "getExperienceStage", LuaScriptInterface::luaGetExperienceStage);
 
@@ -2056,20 +2056,26 @@ void LuaScriptInterface::registerFunctions()
 	//doWaypointAddTemporial(name, pos)
 	lua_register(m_luaState, "doWaypointAddTemporial", LuaScriptInterface::luaDoWaypointAddTemporial);
 
-	//executeRaid(name)
-	lua_register(m_luaState, "executeRaid", LuaScriptInterface::luaExecuteRaid);
+	//getGameState()
+	lua_register(m_luaState, "getGameState", LuaScriptInterface::luaGetGameState);
 
-	//saveServer()
-	lua_register(m_luaState, "saveServer", LuaScriptInterface::luaSaveServer);
+	//doChangeGameState(id)
+	lua_register(m_luaState, "doChangeGameState", LuaScriptInterface::luaDoChangeGameState);
 
-	//cleanHouse(houseId)
-	lua_register(m_luaState, "cleanHouse", LuaScriptInterface::luaCleanHouse);
+	//doExecuteRaid(name)
+	lua_register(m_luaState, "doExecuteRaid", LuaScriptInterface::luaDoExecuteRaid);
 
-	//cleanMap()
-	lua_register(m_luaState, "cleanMap", LuaScriptInterface::luaCleanMap);
+	//doReloadInfo(id)
+	lua_register(m_luaState, "doReloadInfo", LuaScriptInterface::luaDoReloadInfo);
 
-	//shutdown()
-	lua_register(m_luaState, "shutdown", LuaScriptInterface::luaShutdown);
+	//doSaveServer()
+	lua_register(m_luaState, "doSaveServer", LuaScriptInterface::luaDoSaveServer);
+
+	//doCleanHouse(houseId)
+	lua_register(m_luaState, "doCleanHouse", LuaScriptInterface::luaDoCleanHouse);
+
+	//doCleanMap()
+	lua_register(m_luaState, "doCleanMap", LuaScriptInterface::luaDoCleanMap);
 
 	//db table
 	luaL_register(m_luaState, "db", LuaScriptInterface::luaDatabaseReg);
@@ -4314,9 +4320,9 @@ int32_t LuaScriptInterface::luaGetHouseFromPos(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoSummonCreature(lua_State* L)
+int32_t LuaScriptInterface::luaDoCreateMonster(lua_State* L)
 {
-	//doSummonCreature(name, pos)
+	//doCreateMonster(name, pos)
 	PositionEx pos;
 	popPosition(L, pos);
 
@@ -4333,7 +4339,7 @@ int32_t LuaScriptInterface::luaDoSummonCreature(lua_State* L)
 	if(!g_game.placeCreature(monster, pos))
 	{
 		delete monster;
-		std::string tmp = (std::string)"Can not summon monster: " + name;
+		std::string tmp = (std::string)"Can not create monster: " + name;
 		reportErrorFunc(tmp);
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
@@ -4341,6 +4347,38 @@ int32_t LuaScriptInterface::luaDoSummonCreature(lua_State* L)
 
 	ScriptEnviroment* env = getScriptEnv();
 	uint32_t cid = env->addThing((Thing*)monster);
+
+	lua_pushnumber(L, cid);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoCreateNpc(lua_State* L)
+{
+	//doCreateNpc(name, pos)
+	PositionEx pos;
+	popPosition(L, pos);
+
+	std::string name = popString(L);
+	Npc* npc = Npc::createNpc(name.c_str());
+	if(!npc)
+	{
+		std::string tmp = (std::string)"Npc name(" + name + (std::string)") not found";
+		reportErrorFunc(tmp);
+		lua_pushnumber(L, LUA_ERROR);
+		return 1;
+	}
+
+	if(!g_game.placeCreature(npc, pos))
+	{
+		delete npc;
+		std::string tmp = (std::string)"Can not create npc: " + name;
+		reportErrorFunc(tmp);
+		lua_pushnumber(L, LUA_ERROR);
+		return 1;
+	}
+
+	ScriptEnviroment* env = getScriptEnv();
+	uint32_t cid = env->addThing((Thing*)npc);
 
 	lua_pushnumber(L, cid);
 	return 1;
@@ -6139,13 +6177,10 @@ int32_t LuaScriptInterface::luaDoChallengeCreature(lua_State* L)
 int32_t LuaScriptInterface::luaDoConvinceCreature(lua_State* L)
 {
 	//doConvinceCreature(cid, target)
-	uint32_t targetCid = popNumber(L);
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	Creature* creature = env->getCreatureByUID(cid);
-
+	Creature* creature = env->getCreatureByUID(popNumber(L));
 	if(!creature)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -6153,7 +6188,7 @@ int32_t LuaScriptInterface::luaDoConvinceCreature(lua_State* L)
 		return 1;
 	}
 
-	Creature* target = env->getCreatureByUID(targetCid);
+	Creature* target = env->getCreatureByUID(cid);
 	if(!target)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -8854,9 +8889,31 @@ int32_t LuaScriptInterface::luaDoWaypointAddTemporial(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaExecuteRaid(lua_State* L)
+int32_t LuaScriptInterface::luaGetGameState(lua_State* L)
 {
-	//executeRaid(name)
+	//getGameState()
+	lua_pushnumber(L, g_game.getGameState());
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoChangeGameState(lua_State* L)
+{
+	//doChangeGameState(id)
+	uint32_t id = popNumber(L);
+	if(id < GAME_STATE_FIRST || id > GAME_STATE_LAST)
+	{
+		lua_pushnumber(L, LUA_ERROR);
+		reportErrorFunc("Invalid game state id.");
+	}
+
+	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, &g_game, (GameState_t)id)));
+	lua_pushnumber(L, LUA_NO_ERROR);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoExecuteRaid(lua_State* L)
+{
+	//doExecuteRaid(name)
 	Raid* raid = Raids::getInstance()->getRaidByName(popString(L));
 	if(!raid || !raid->isLoaded())
 	{
@@ -8892,18 +8949,32 @@ int32_t LuaScriptInterface::luaExecuteRaid(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaSaveServer(lua_State* L)
+int32_t LuaScriptInterface::luaDoReloadInfo(lua_State* L)
 {
-	//saveServer()
+	//doReloadInfo(id)
+	uint32_t id = popNumber(L);
+	if(id < RELOAD_FIRST || id > RELOAD_LAST)
+	{
+		lua_pushnumber(L, LUA_ERROR);
+		reportErrorFunc("Invalid reload info id.");
+	}
+
+	lua_pushnumber(L, g_game.reloadInfo((ReloadInfo_t)id) ? LUA_TRUE : LUA_FALSE);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoSaveServer(lua_State* L)
+{
+	//DoSaveServer()
 	g_game.setGameState(GAME_STATE_MAINTAIN);
 	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::saveGameState, &g_game, true)));
 	g_game.setGameState(GAME_STATE_NORMAL);
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaCleanHouse(lua_State *L)
+int32_t LuaScriptInterface::luaDoCleanHouse(lua_State *L)
 {
-	//cleanHouse(houseId)
+	//doCleanHouse(houseId)
 	uint32_t houseId = popNumber(L);
 	if(House* house = Houses::getInstance().getHouse(houseId))
 	{
@@ -8918,21 +8989,14 @@ int32_t LuaScriptInterface::luaCleanHouse(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaCleanMap(lua_State* L)
+int32_t LuaScriptInterface::luaDoCleanMap(lua_State* L)
 {
-	//cleanMap()
+	//doCleanMap()
 	uint32_t count = 0;
 	g_game.setGameState(GAME_STATE_MAINTAIN);
 	g_game.cleanMap(count);
 	g_game.setGameState(GAME_STATE_NORMAL);
 	lua_pushnumber(L, count);
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaShutdown(lua_State* L)
-{
-	//shutdown()
-	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
 	return 1;
 }
 
@@ -9346,11 +9410,14 @@ int32_t LuaScriptInterface::luaIsAccountDeleted(lua_State *L)
 
 int32_t LuaScriptInterface::luaDoAddIpBanishment(lua_State *L)
 {
-	//doAddIpBanishment(ip[, length[, comment[, admin]]])
+	//doAddIpBanishment(ip[, length[, comment[, admin[, statement]]]])
 	int32_t parameters = lua_gettop(L);
 
 	uint32_t admin = 0, length = g_config.getNumber(ConfigManager::IPBANISHMENT_LENGTH);
-	std::string comment = "No comment.";
+	std::string statement, comment = "No comment.";
+
+	if(parameters > 4)
+		statement = popString(L);
 
 	if(parameters > 3)
 		admin = popNumber(L);
@@ -9362,17 +9429,20 @@ int32_t LuaScriptInterface::luaDoAddIpBanishment(lua_State *L)
 		length = popNumber(L);
 
 	uint32_t ip = popNumber(L);
-	lua_pushnumber(L, IOBan::getInstance()->addIpBanishment(ip, (time(NULL) + length), comment, admin) ? LUA_NO_ERROR : LUA_ERROR);
+	lua_pushnumber(L, IOBan::getInstance()->addIpBanishment(ip, (time(NULL) + length), comment, admin, statement) ? LUA_NO_ERROR : LUA_ERROR);
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaDoAddNamelock(lua_State *L)
 {
-	//doAddNamelock(name[, reason[, action[, comment[, admin]]]])
+	//doAddNamelock(name[, reason[, action[, comment[, admin[, statement]]]]])
 	int32_t parameters = lua_gettop(L);
 
 	uint32_t admin = 0, action = 0, reason = 0;
-	std::string comment = "No comment.";
+	std::string statement, comment = "No comment.";
+
+	if(parameters > 5)
+		statement = popString(L);
 
 	if(parameters > 4)
 		admin = popNumber(L);
@@ -9387,17 +9457,20 @@ int32_t LuaScriptInterface::luaDoAddNamelock(lua_State *L)
 		reason = popNumber(L);
 
 	std::string name = popString(L);
-	lua_pushnumber(L, IOBan::getInstance()->addNamelock(name, reason, action, comment, admin) ? LUA_NO_ERROR : LUA_ERROR);
+	lua_pushnumber(L, IOBan::getInstance()->addNamelock(name, reason, action, comment, admin, statement) ? LUA_NO_ERROR : LUA_ERROR);
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaDoAddBanishment(lua_State *L)
 {
-	//doAddBanishment(accId[, length[, reason[, action[, comment[, admin]]]]])
+	//doAddBanishment(accId[, length[, reason[, action[, comment[, admin[, statement]]]]]])
 	int32_t parameters = lua_gettop(L);
 
 	uint32_t admin = 0, action = 0, reason = 0, length = g_config.getNumber(ConfigManager::BAN_LENGTH);
-	std::string comment = "No comment.";
+	std::string statement, comment = "No comment.";
+
+	if(parameters > 6)
+		statement = popString(L);
 
 	if(parameters > 5)
 		admin = popNumber(L);
@@ -9415,17 +9488,20 @@ int32_t LuaScriptInterface::luaDoAddBanishment(lua_State *L)
 		length = popNumber(L);
 
 	uint32_t id = popNumber(L);
-	lua_pushnumber(L, IOBan::getInstance()->addBanishment(id, (time(NULL) + length), reason, action, comment, admin) ? LUA_NO_ERROR : LUA_ERROR);
+	lua_pushnumber(L, IOBan::getInstance()->addBanishment(id, (time(NULL) + length), reason, action, comment, admin, statement) ? LUA_NO_ERROR : LUA_ERROR);
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaDoAddDeletion(lua_State *L)
 {
-	//doAddDeletion(accId[, reason[, action[, comment[, admin]]]]])
+	//doAddDeletion(accId[, reason[, action[, comment[, admin[, statement]]]]]])
 	int32_t parameters = lua_gettop(L);
 
 	uint32_t admin = 0, action = 0, reason = 0;
-	std::string comment = "No comment.";
+	std::string statement, comment = "No comment.";
+
+	if(parameters > 5)
+		statement = popString(L);
 
 	if(parameters > 4)
 		admin = popNumber(L);
@@ -9440,17 +9516,20 @@ int32_t LuaScriptInterface::luaDoAddDeletion(lua_State *L)
 		reason = popNumber(L);
 
 	uint32_t id = popNumber(L);
-	lua_pushnumber(L, IOBan::getInstance()->addDeletion(id, reason, action, comment, admin) ? LUA_NO_ERROR : LUA_ERROR);
+	lua_pushnumber(L, IOBan::getInstance()->addDeletion(id, reason, action, comment, admin, statement) ? LUA_NO_ERROR : LUA_ERROR);
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaDoAddNotation(lua_State *L)
 {
-	//doAddNotation(accId[, reason[, action[, comment[, admin]]]]])
+	//doAddNotation(accId[, reason[, action[, comment[, admin[, statement]]]]]])
 	int32_t parameters = lua_gettop(L);
 
 	uint32_t admin = 0, action = 0, reason = 0;
-	std::string comment = "No comment.";
+	std::string statement, comment = "No comment.";
+
+	if(parameters > 5)
+		statement = popString(L);
 
 	if(parameters > 4)
 		admin = popNumber(L);
@@ -9465,7 +9544,7 @@ int32_t LuaScriptInterface::luaDoAddNotation(lua_State *L)
 		reason = popNumber(L);
 
 	uint32_t id = popNumber(L);
-	IOBan::getInstance()->addNotation(id, reason, action, comment, admin);
+	IOBan::getInstance()->addNotation(id, reason, action, comment, admin, statement);
 	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;
 }

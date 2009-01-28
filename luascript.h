@@ -370,7 +370,8 @@ class LuaScriptInterface
 		static int32_t luaDoCreateItem(lua_State* L);
 		static int32_t luaDoCreateItemEx(lua_State* L);
 		static int32_t luaDoCreateTeleport(lua_State* L);
-		static int32_t luaDoSummonCreature(lua_State* L);
+		static int32_t luaDoCreateMonster(lua_State* L);
+		static int32_t luaDoCreateNpc(lua_State* L);
 		static int32_t luaDoConvinceCreature(lua_State* L);
 		static int32_t luaGetMonsterTargetList(lua_State* L);
 		static int32_t luaGetMonsterFriendList(lua_State* L);
@@ -701,12 +702,14 @@ class LuaScriptInterface
 		static int32_t luaGetTownHouses(lua_State* L);
 
 		static int32_t luaGetSpectators(lua_State *L);
+		static int32_t luaGetGameState(lua_State* L);
+		static int32_t luaDoChangeGameState(lua_State* L);
 		static int32_t luaGetPlayersOnline(lua_State* L);
-		static int32_t luaExecuteRaid(lua_State* L);
-		static int32_t luaSaveServer(lua_State* L);
-		static int32_t luaCleanHouse(lua_State* L);
-		static int32_t luaCleanMap(lua_State* L);
-		static int32_t luaShutdown(lua_State* L);
+		static int32_t luaDoExecuteRaid(lua_State* L);
+		static int32_t luaDoReloadInfo(lua_State* L);
+		static int32_t luaDoSaveServer(lua_State* L);
+		static int32_t luaDoCleanHouse(lua_State* L);
+		static int32_t luaDoCleanMap(lua_State* L);
 
 		static int32_t luaGetItemDescriptionsById(lua_State* L);
 		static int32_t luaGetItemWeightById(lua_State* L);

@@ -62,12 +62,18 @@ class IOBan
 		bool isBanished(uint32_t account);
 		bool isDeleted(uint32_t account);
 
-		bool addIpBanishment(uint32_t ip, time_t banTime, std::string comment, uint32_t gamemaster);
-		bool addNamelock(uint32_t playerId, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster);
-		bool addNamelock(std::string name, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster);
-		bool addBanishment(uint32_t account, time_t banTime, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster);
-		bool addDeletion(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster);
-		void addNotation(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t gamemaster);
+		bool addIpBanishment(uint32_t ip, time_t banTime, std::string comment, uint32_t gamemaster,
+			std::string statement = "");
+		bool addNamelock(uint32_t playerId, uint32_t reasonId, uint32_t actionId, std::string comment,
+			uint32_t gamemaster, std::string statement = "");
+		bool addNamelock(std::string name, uint32_t reasonId, uint32_t actionId, std::string comment,
+			uint32_t gamemaster, std::string statement = "");
+		bool addBanishment(uint32_t account, time_t banTime, uint32_t reasonId, uint32_t actionId,
+			std::string comment, uint32_t gamemaster, std::string statement = "");
+		bool addDeletion(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment,
+			uint32_t gamemaster, std::string statement = "");
+		void addNotation(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment,
+			uint32_t gamemaster, std::string statement = "");
 
 		bool removeIpBanishment(uint32_t ip);
 		bool removeNamelock(uint32_t guid);

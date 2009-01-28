@@ -349,6 +349,24 @@ function getTileZoneInfo(pos)
 	return 0
 end
 
+function debugPrint(text)
+	return io.stdout:write(text)
+end
+
+function doShutdown()
+	return doChangeGameState(GAMESTATE_SHUTDOWN)
+end
+
+function doSummonCreature(name, pos)
+	local cid = doCreateMonster(name, pos)
+	if(cid ~= LUA_ERROR) then
+		return cid
+	end
+
+	cid = doCreateNpc(name, pos)
+	return cid
+end
+
 function getOnlinePlayers()
 	local tmp = getPlayersOnline()
 	local players = {}
