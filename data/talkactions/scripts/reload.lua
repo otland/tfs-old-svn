@@ -22,25 +22,31 @@ local reloadInfo = {
 
 function onSay(cid, words, param)
 	param = param:lower()
-	local str = "Reloaded " .. param .. " successfully"
+	local str = "Failed to reload"
 	if(param == "all") then
 		local tmp = true
 		for i = RELOAD_ACTIONS, RELOAD_WEAPONS do
 			if(doReloadInfo(table[1]) ~= TRUE) then
 				if(tmp) then
+					str = str .. ":"
 					tmp = false
-					str = "Failed to reload:"
 				end
 
 				str = str .. " " .. table[2]
 			end
 		end
+
+		if(tmp) then
+			str = "Reloaded everything successfully"
+		end
 	else
 		local tmp = true
-		for _, table in ipairs(reloadInfo) do
-			if(isInArray(table, param) == TRUE) then
-				if(doReloadInfo(table[1]) ~= TRUE) then
-					str = "Failed to reload " .. param
+		for _, v in ipairs(reloadInfo) do
+			if(table.isStrIn(param, v)) then
+				if(doReloadInfo(v[1]) == TRUE) then
+					str = "Reloaded " .. v[2] .. " successfully"
+				else
+					str = str .. " " .. v[2]
 				end
 
 				tmp = false
@@ -49,7 +55,7 @@ function onSay(cid, words, param)
 		end
 
 		if(tmp) then
-			str = "Reload type not found"
+			str = "Reload type '" .. param .. "' not found"
 		end
 	end
 
