@@ -110,7 +110,7 @@ void startupErrorMessage(std::string error)
 	#else
 	getchar();
 	#endif
-	exit(-1);
+	exit(1);
 }
 
 #ifndef WIN32

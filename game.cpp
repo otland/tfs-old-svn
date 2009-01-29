@@ -125,8 +125,8 @@ void Game::setGameState(GameState_t newState)
 				Raids::getInstance()->startup();
 				Quests::getInstance()->loadFromXml();
 
-				g_globalEvents->startup();
 				loadGameState();
+				g_globalEvents->startup();
 
 				IOBan::getInstance()->clearTemporials();
 				IOLoginData::getInstance()->resetOnlineStatus();
@@ -216,8 +216,8 @@ void Game::loadGameState()
 
 	ScriptEnviroment::loadGameState();
 	checkHighscores();
-	loadPlayersRecord();
 	loadMotd();
+	loadPlayersRecord();
 }
 
 int32_t Game::loadMap(std::string filename)
@@ -5564,7 +5564,7 @@ void Game::shutdown()
 	std::cout << "." << std::endl;
 	cleanup();
 	std::cout << "Exiting" << std::endl;
-	exit(-1);
+	exit(1);
 }
 
 void Game::cleanup()

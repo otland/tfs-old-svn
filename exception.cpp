@@ -320,14 +320,14 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 
 	MessageBoxA(NULL, "If you want developers review this crash log, please open a tracker ticket for the software at OtLand.net and attach the report.txt file.", "Error", MB_OK | MB_ICONERROR);
 	std::cout << "> Crash report generated, killing server." << std::endl;
-	exit(-1);
+	exit(1);
 	return ExceptionContinueSearch;
 }
 
 void printPointer(std::ostream* output,uint32_t p)
 {
 	*output << p;
-	if(IsBadReadPtr((void*)p,4) == 0)
+	if(IsBadReadPtr((void*)p, 4) == 0)
 		*output << " -> " << *(uint32_t*)p;
 }
 
@@ -351,7 +351,7 @@ bool ExceptionHandler::LoadMap()
 	{
 		MessageBoxA(NULL, "Failed loading symbols, forgottenserver.map file not found.", "Error", MB_OK | MB_ICONERROR);
 		std::cout << "Failed loading symbols, forgottenserver.map file not found. " << std::endl;
-		exit(-1);
+		exit(1);
 		return false;
 	}
 
