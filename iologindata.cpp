@@ -754,6 +754,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 
 	const bool save = result->getDataInt("save");
 	db->freeResult(result);
+
 	DBTransaction trans(db);
 	if(!trans.begin())
 		return false;
@@ -866,6 +867,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 
 	char buffer[280];
 	DBInsert query_insert(db);
+
 	query_insert.setQuery("INSERT INTO `player_spells` (`player_id`, `name`) VALUES ");
 	for(LearnedInstantSpellList::const_iterator it = player->learnedInstantSpellList.begin(); it != player->learnedInstantSpellList.end(); ++it)
 	{
@@ -930,7 +932,6 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 		//save guild invites
 		query.str("");
 		query << "DELETE FROM `guild_invites` WHERE player_id = " << player->getGUID();
-
 		if(!db->executeQuery(query.str()))
 			return false;
 
