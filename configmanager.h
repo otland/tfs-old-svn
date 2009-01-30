@@ -181,6 +181,7 @@ class ConfigManager
 			DISABLE_OUTFITS_PRIVILEGED,
 			OPTIMIZE_DB_AT_STARTUP,
 			OLD_CONDITION_ACCURACY,
+			STORE_TRASHED_TILES,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

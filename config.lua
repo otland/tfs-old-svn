@@ -109,6 +109,8 @@
 	mapAuthor = "Komic"
 	randomizeTiles = "yes"
 	cleanProtectedZones = "yes"
+	-- NOTE: This costs more memory resources but will perform map clean alot faster
+	storeTrashedTiles = "yes"
 
 	-- Miscellaneous
 	-- NOTE: defaultPriority works only on Windows

@@ -35,7 +35,9 @@
 #include "mailbox.h"
 #include "combat.h"
 #include "movement.h"
+#include "configmanager.h"
 
+extern ConfigManager g_config;
 extern Game g_game;
 extern MoveEvents* g_moveEvents;
 
@@ -593,10 +595,13 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, 
 
 		if(hasBitSet(FLAG_NOLIMIT, flags))
 		{
-			if(!stored)
+			if(g_config.getBool(ConfigManager::STORE_TRASHED_TILES))
 			{
-				g_game.pushTrashedTile(tilePos);
-				const_cast<Tile*>(this)->stored = true;
+				if(!stored)
+				{
+					g_game.pushTrashedTile(tilePos);
+					const_cast<Tile*>(this)->stored = true;
+				}
 			}
 			return RET_NOERROR;
 		}
@@ -642,13 +647,15 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, 
 		if(itemIsHangable && hasHangable && supportHangable)
 			return RET_NEEDEXCHANGE;
 
-		if(!stored)
+		if(g_config.getBool(ConfigManager::STORE_TRASHED_TILES))
 		{
-			g_game.pushTrashedTile(tilePos);
-			const_cast<Tile*>(this)->stored = true;
+			if(!stored)
+			{
+				g_game.pushTrashedTile(tilePos);
+				const_cast<Tile*>(this)->stored = true;
+			}
 		}
 	}
-
 	return RET_NOERROR;
 }
 
