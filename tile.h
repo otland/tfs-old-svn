@@ -153,7 +153,6 @@ class Tile : public Cylinder
 		bool hasHeight(uint32_t n) const;
 		uint32_t getHeight() const;
 
-		bool isStored() const {return stored;}
 		void setStored(bool b) {stored = b;}
 
 		virtual std::string getDescription(int32_t lookDistance) const;
