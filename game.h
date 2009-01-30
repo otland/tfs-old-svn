@@ -101,7 +101,8 @@ enum ReloadInfo_t
 	RELOAD_TALKACTIONS = 17,
 	RELOAD_VOCATIONS = 18,
 	RELOAD_WEAPONS = 19,
-	RELOAD_LAST = RELOAD_WEAPONS
+	RELOAD_LAST = RELOAD_WEAPONS,
+	RELOAD_ALL = 20
 };
 
 struct RuleViolation
@@ -121,7 +122,7 @@ struct RuleViolation
 
 typedef std::map< uint32_t, shared_ptr<RuleViolation> > RuleViolationsMap;
 typedef std::vector< std::pair<std::string, uint32_t> > Highscore;
-typedef std::list<Position> TrashedTiles;
+typedef std::vector<Position> Trash;
 
 #define EVENT_LIGHTINTERVAL 10000
 #define EVENT_DECAYINTERVAL 1000
@@ -144,9 +145,9 @@ class Game
 		void checkHighscores();
 		bool reloadHighscores();
 
-		TrashedTiles getTrashedTiles() const {return trashedTiles;}
-		void pushTrashedTile(Position pos) { trashedTiles.push_back(pos); }
-		void eraseTrashedTile(TrashedTiles::iterator it) { trashedTiles.erase(it); }
+		Trash getTrash() const {return trash;}
+		void addTrash(Position pos) {trash.push_back(pos);}
+		void removeTrash(Trash::iterator it) {trash.erase(it);}
 
 		void prepareGlobalSave();
 		void globalSave();
@@ -483,7 +484,7 @@ class Game
 		bool playerLeaveParty(uint32_t playerId);
 		bool playerEnableSharedPartyExperience(uint32_t playerId, uint8_t sharedExpActive, uint8_t unknown);
 
-		bool reloadInfo(ReloadInfo_t reload);
+		bool reloadInfo(ReloadInfo_t reload, uint32_t playerId = 0);
 		void cleanup();
 		void shutdown();
 		void FreeThing(Thing* thing);
@@ -624,7 +625,7 @@ class Game
 		int32_t lastMotdNum;
 		uint32_t lastPlayersRecord;
 
-		TrashedTiles trashedTiles;
+		Trash trash;
 
 		typedef std::map<int32_t,int32_t> StageList;
 		StageList stages;

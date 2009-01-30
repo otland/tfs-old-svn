@@ -84,9 +84,7 @@ class TalkAction : public Event
 
 	protected:
 		static TalkFunction placeSummon;
-#ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static TalkFunction serverDiag;
-#endif
 		static TalkFunction sellHouse;
 		static TalkFunction buyHouse;
 		static TalkFunction joinGuild;

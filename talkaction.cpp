@@ -165,9 +165,7 @@ bool TalkActions::onPlayerSay(Player* player, uint16_t channelId, const std::str
 TalkFunction_t TalkAction::definedFunctions[] =
 {
 	{"placesummon", &placeSummon},
-#ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	{"serverdiag",&serverDiag},
-#endif
 	{"buyhouse", &buyHouse},
  	{"sellhouse", &sellHouse},
  	{"joinguild", &joinGuild},
@@ -300,9 +298,9 @@ bool TalkAction::placeSummon(Player* player, const std::string& cmd, const std::
 	return true;
 }
 
-#ifdef __ENABLE_SERVER_DIAGNOSTIC__
 bool TalkAction::serverDiag(Player* player, const std::string& cmd, const std::string& param)
 {
+#ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	std::stringstream text;
 	text << "Server diagonostic:\n";
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
@@ -344,9 +342,9 @@ bool TalkAction::serverDiag(Player* player, const std::string& cmd, const std::s
 	text << "Lua: " << LUA_VERSION << "\n";
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
 
+#endif
 	return true;
 }
-#endif
 
 bool TalkAction::buyHouse(Player* player, const std::string& cmd, const std::string& param)
 {

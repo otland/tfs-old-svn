@@ -97,7 +97,7 @@ Cylinder* HouseTile::__queryDestination(int32_t& index, const Thing* thing, Item
 
 					destTile = g_game.getTile(player->getTemplePosition());
 					if(!destTile)
-						destTile = &(Tile::null_tile);
+						destTile = &(Tile::nullTile);
 				}
 
 				index = -1;

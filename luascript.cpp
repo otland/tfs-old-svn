@@ -2065,7 +2065,7 @@ void LuaScriptInterface::registerFunctions()
 	//doExecuteRaid(name)
 	lua_register(m_luaState, "doExecuteRaid", LuaScriptInterface::luaDoExecuteRaid);
 
-	//doReloadInfo(id)
+	//doReloadInfo(id[, cid])
 	lua_register(m_luaState, "doReloadInfo", LuaScriptInterface::luaDoReloadInfo);
 
 	//doSaveServer()
@@ -8951,7 +8951,11 @@ int32_t LuaScriptInterface::luaDoExecuteRaid(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoReloadInfo(lua_State* L)
 {
-	//doReloadInfo(id)
+	//doReloadInfo(id[, cid])
+	uint32_t cid = 0;
+	if(lua_gettop(L) >= 2)
+		cid = popNumber(L);
+
 	uint32_t id = popNumber(L);
 	if(id < RELOAD_FIRST || id > RELOAD_LAST)
 	{
@@ -8959,7 +8963,8 @@ int32_t LuaScriptInterface::luaDoReloadInfo(lua_State* L)
 		reportErrorFunc("Invalid reload info id.");
 	}
 
-	lua_pushnumber(L, g_game.reloadInfo((ReloadInfo_t)id) ? LUA_TRUE : LUA_FALSE);
+	Scheduler::getScheduler().addEvent(createSchedulerTask(SCHEDULER_MINTICKS,
+		boost::bind(&Game::reloadInfo, &g_game, (ReloadInfo_t)id, cid)));
 	return 1;
 }
 

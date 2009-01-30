@@ -41,7 +41,7 @@ enum tileflags_t
 {
 	TILESTATE_NONE = 0,
 	TILESTATE_PROTECTIONZONE = 1,
-	TILESTATE_DEPRECATED_HOUSE = 2,
+	TILESTATE_TRASHED = 2,
 	TILESTATE_NOPVPZONE = 4,
 	TILESTATE_NOLOGOUT = 8,
 	TILESTATE_PVPZONE = 16,
@@ -68,21 +68,16 @@ enum tileflags_t
 class Tile : public Cylinder
 {
 	public:
-		static Tile null_tile;
+		static Tile nullTile;
 		Tile(int32_t x, int32_t y, int32_t z)
 		{
-			tilePos.x = x;
-			tilePos.y = y;
-			tilePos.z = z;
+			tilePos = Position(x, y, z);
 			qt_node = NULL;
-
-			thingCount = 0;
-			m_flags = 0;
+			thingCount = m_flags = 0;
 			ground = NULL;
-			stored = false;
 		}
 
-		~Tile()
+		virtual ~Tile()
 		{
 			#ifdef _DEBUG
 			delete ground;
@@ -90,10 +85,11 @@ class Tile : public Cylinder
 			ItemVector::iterator it;
 			for(it = topItems.begin(); it != topItems.end(); ++it)
 				delete *it;
-			topItems.clear();
 
+			topItems.clear();
 			for(it = downItems.begin(); it != downItems.end(); ++it)
 				delete *it;
+
 			downItems.clear();
 			#endif // _DEBUG
 		}
@@ -120,8 +116,6 @@ class Tile : public Cylinder
 		Thing* getTopThing();
 		Item* getItemByTopOrder(int32_t topOrder);
 
-		uint32_t getThingCount() const {return thingCount;}
-
 		bool hasProperty(enum ITEMPROPERTY prop) const;
 		bool hasProperty(Item* exclude, enum ITEMPROPERTY prop) const;
 
@@ -129,9 +123,9 @@ class Tile : public Cylinder
 		void setFlag(tileflags_t flag) {m_flags |= (uint32_t)flag;}
 		void resetFlag(tileflags_t flag) {m_flags &= ~(uint32_t)flag;}
 
-		bool positionChange() const {return hasFlag(TILESTATE_POSITIONCHANGE);}
 		bool floorChange() const {return hasFlag(TILESTATE_FLOORCHANGE);}
 		bool floorChangeDown() const {return hasFlag(TILESTATE_FLOORCHANGE_DOWN);}
+		bool positionChange() const {return hasFlag(TILESTATE_POSITIONCHANGE);}
 		bool floorChange(Direction direction) const
 		{
 			switch(direction)
@@ -150,14 +144,13 @@ class Tile : public Cylinder
 
 			return false;
 		}
+
 		bool hasHeight(uint32_t n) const;
 		uint32_t getHeight() const;
 
-		void setStored(bool b) {stored = b;}
-
 		virtual std::string getDescription(int32_t lookDistance) const;
-
 		void moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport = false);
+		uint32_t getThingCount() const {return thingCount;}
 
 		//cylinder implementations
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
@@ -204,10 +197,8 @@ class Tile : public Cylinder
 		void updateTileFlags(Item* item, bool removing);
 
 	protected:
-		bool stored;
-
-		uint32_t thingCount;
 		Position tilePos;
+		uint32_t thingCount;
 		uint32_t m_flags;
 };
 

@@ -5319,168 +5319,224 @@ void Game::loadPlayersRecord()
 	db->freeResult(result);
 }
 
-bool Game::reloadInfo(ReloadInfo_t reload)
+bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 {
+	bool done = false;
 	switch(reload)
 	{
 		case RELOAD_ACTIONS:
 		{
 			if(g_actions->reload())
-				return true;
+				done = true;
+			else
+				std::cout << "[Error - Game::reloadInfo] Failed to reload actions." << std::endl;
 
-			std::cout << "[Error - Game::reloadInfo] Failed to reload actions." << std::endl;
 			break;
 		}
 
 		case RELOAD_CONFIG:
 		{
 			if(g_config.reload())
-				return true;
+				done = true;
+			else
+				std::cout << "[Error - Game::reloadInfo] Failed to reload config." << std::endl;
 
-			std::cout << "[Error - Game::reloadInfo] Failed to reload config." << std::endl;
 			break;
 		}
 
 		case RELOAD_CREATUREEVENTS:
 		{
 			if(g_creatureEvents->reload())
-				return true;
+				done = true;
+			else
+				std::cout << "[Error - Game::reloadInfo] Failed to reload creature events." << std::endl;
 
-			std::cout << "[Error - Game::reloadInfo] Failed to reload creature events." << std::endl;
 			break;
 		}
 
-		#ifdef __LOGIN_SERVER__
 		case RELOAD_GAMESERVERS:
 		{
+			#ifdef __LOGIN_SERVER__
 			if(GameServers::getInstance()->reload())
-				return true;
+				done = true;
+			else
+				std::cout << "[Error - Game::reloadInfo] Failed to reload game servers." << std::endl;
 
-			std::cout << "[Error - Game::reloadInfo] Failed to reload game servers." << std::endl;
+			#endif
 			break;
 		}
 
-		#endif
 		case RELOAD_GLOBALEVENTS:
 		{
 			if(g_globalEvents->reload())
-				return true;
+				done = true;
+			else
+				std::cout << "[Error - Game::reloadInfo] Failed to reload global events." << std::endl;
 
-			std::cout << "[Error - Game::reloadInfo] Failed to reload global events." << std::endl;
 			break;
 		}
 
 		case RELOAD_HIGHSCORES:
 		{
 			if(reloadHighscores())
-				return true;
+				done = true;
+			else
+				std::cout << "[Error - Game::reloadInfo] Failed to reload highscores." << std::endl;
 
-			std::cout << "[Error - Game::reloadInfo] Failed to reload highscores." << std::endl;
 			break;
 		}
 
 		case RELOAD_HOUSEPRICES:
 		{
 			if(Houses::getInstance().reloadPrices())
-				return true;
+				done = true;
+			else
+				std::cout << "[Error - Game::reloadInfo] Failed to reload house prices." << std::endl;
 
-			std::cout << "[Error - Game::reloadInfo] Failed to reload house prices." << std::endl;
 			break;
 		}
 
 		case RELOAD_ITEMS:
+		{
 			//TODO
-			return true;
+			done = true;
+		}
 
 		case RELOAD_MONSTERS:
 		{
 			if(g_monsters.reload())
-				return true;
+				done = true;
+			else
+				std::cout << "[Error - Game::reloadInfo] Failed to reload monsters." << std::endl;
 
-			std::cout << "[Error - Game::reloadInfo] Failed to reload monsters." << std::endl;
 			break;
 		}
 
 		case RELOAD_MOVEEVENTS:
 		{
 			if(g_moveEvents->reload())
-				return true;
+				done = true;
+			else
+				std::cout << "[Error - Game::reloadInfo] Failed to reload move events." << std::endl;
 
-			std::cout << "[Error - Game::reloadInfo] Failed to reload move events." << std::endl;
 			break;
 		}
 
 		case RELOAD_NPCS:
+		{
 			g_npcs.reload();
-			return true;
+			done = true;
+			break;
+		}
 
 		case RELOAD_OUTFITS:
+		{
 			//TODO
-			return true;
+			done = true;
+			break;
+		}
 
 		case RELOAD_QUESTS:
 		{
 			if(Quests::getInstance()->reload())
-				return true;
+				done = true;
+			else
+				std::cout << "[Error - Game::reloadInfo] Failed to reload quests." << std::endl;
 
-			std::cout << "[Error - Game::reloadInfo] Failed to reload quests." << std::endl;
 			break;
 		}
 
 		case RELOAD_RAIDS:
 		{
-			if(Raids::getInstance()->reload() && Raids::getInstance()->startup())
-				return true;
+			if(!Raids::getInstance()->reload())
+				std::cout << "[Error - Game::reloadInfo] Failed to reload raids." << std::endl;
+			else if(!Raids::getInstance()->startup())
+				std::cout << "[Error - Game::reloadInfo] Failed to startup raids when reloading." << std::endl;
+			else
+				done = true;
 
-			std::cout << "[Error - Game::reloadInfo] Failed to reload raids." << std::endl;
 			break;
 		}
 
 		case RELOAD_SPELLS:
 		{
-			if(g_spells->reload())
-			{
-				if(g_monsters.reload())
-					return true;
-
+			if(!g_spells->reload())
+				std::cout << "[Error - Game::reloadInfo] Failed to reload spells." << std::endl;
+			else if(!g_monsters.reload())
 				std::cout << "[Error - Game::reloadInfo] Failed to reload monsters when reloading spells." << std::endl;
-			}
+			else
+				done = true;
 
-			std::cout << "[Error - Game::reloadInfo] Failed to reload spells." << std::endl;
 			break;
 		}
 
 		case RELOAD_STAGES:
 		{
 			if(loadExperienceStages())
-				return true;
+				done = true;
+			else
+				std::cout << "[Error - Game::reloadInfo] Failed to reload stages." << std::endl;
 
-			std::cout << "[Error - Game::reloadInfo] Failed to reload stages." << std::endl;
 			break;
 		}
 
 		case RELOAD_TALKACTIONS:
 		{
 			if(g_talkActions->reload())
-				return true;
+				done = true;
+			else
+				std::cout << "[Error - Game::reloadInfo] Failed to reload talk actions." << std::endl;
 
-			std::cout << "[Error - Game::reloadInfo] Failed to reload talk actions." << std::endl;
 			break;
 		}
 
 		case RELOAD_VOCATIONS:
+		{
 			//TODO
-			return true;
+			done = true;
+			break;
+		}
 
 		case RELOAD_WEAPONS:
+		{
 			//TODO
-			return true;
+			done = true;
+			break;
+		}
+
+		case RELOAD_ALL:
+		{
+			done = true;
+			for(uint8_t i = RELOAD_FIRST; i <= RELOAD_LAST; i++)
+			{
+				if(!reloadInfo((ReloadInfo_t)i) && done)
+					done = false;
+			}
+
+			break;
+		}
 		
 		default:
+		{
+			std::cout << "[Warning - Game::reloadInfo] Reload type not found." << std::endl;
 			break;
+		}
 	}
 
-	std::cout << "[Warning - Game::reloadInfo] Reload type not found." << std::endl;
+	if(!playerId)
+		return done;
+
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return done;
+
+	if(done)
+	{
+		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded successfully.");
+		return true;
+	}
+
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Failed to reload.");
 	return false;
 }
 
