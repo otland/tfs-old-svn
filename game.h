@@ -121,6 +121,7 @@ struct RuleViolation
 
 typedef std::map< uint32_t, shared_ptr<RuleViolation> > RuleViolationsMap;
 typedef std::vector< std::pair<std::string, uint32_t> > Highscore;
+typedef std::list<Position> TrashedTiles;
 
 #define EVENT_LIGHTINTERVAL 10000
 #define EVENT_DECAYINTERVAL 1000
@@ -142,6 +143,10 @@ class Game
 		std::string getHighscoreString(uint16_t skill);
 		void checkHighscores();
 		bool reloadHighscores();
+
+		TrashedTiles getTrashedTiles() const {return trashedTiles;}
+		void pushTrashedTile(Position pos) { trashedTiles.push_back(pos); }
+		void eraseTrashedTile(TrashedTiles::iterator it) { trashedTiles.erase(it); }
 
 		void prepareGlobalSave();
 		void globalSave();
@@ -618,6 +623,8 @@ class Game
 		std::string lastMotdText;
 		int32_t lastMotdNum;
 		uint32_t lastPlayersRecord;
+
+		TrashedTiles trashedTiles;
 
 		typedef std::map<int32_t,int32_t> StageList;
 		StageList stages;

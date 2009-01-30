@@ -79,6 +79,7 @@ class Tile : public Cylinder
 			thingCount = 0;
 			m_flags = 0;
 			ground = NULL;
+			stored = false;
 		}
 
 		~Tile()
@@ -152,6 +153,9 @@ class Tile : public Cylinder
 		bool hasHeight(uint32_t n) const;
 		uint32_t getHeight() const;
 
+		bool isStored() const {return stored;}
+		void setStored(bool b) {stored = b;}
+
 		virtual std::string getDescription(int32_t lookDistance) const;
 
 		void moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport = false);
@@ -201,6 +205,8 @@ class Tile : public Cylinder
 		void updateTileFlags(Item* item, bool removing);
 
 	protected:
+		bool stored;
+
 		uint32_t thingCount;
 		Position tilePos;
 		uint32_t m_flags;

@@ -1251,56 +1251,67 @@ Floor* QTreeLeafNode::createFloor(uint32_t z)
 
 uint32_t Map::clean()
 {
-	Tile* tile = NULL;
+	Tile* cleanTile = NULL;
 	Item* item = NULL;
 
 	uint64_t start = OTSYS_TIME(), count = 0;
+
+	TrashedTiles tiles = g_game.getTrashedTiles();
+
+	TrashedTiles::iterator it = tiles.begin();
+	TrashedTiles::iterator itNext;
 	if(g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES))
 	{
-		for(int32_t z = 0; z <= MAP_MAX_LAYERS; z++)
+		while(it != tiles.end())
 		{
-			for(uint32_t y = 1; y <= mapHeight; y++)
+			itNext = it;
+			itNext++;
+
+			cleanTile = getTile(*it);
+			if(cleanTile && !cleanTile->hasFlag(TILESTATE_HOUSE))
 			{
-				for(uint32_t x = 1; x <= mapWidth; x++)
+				for(uint32_t i = 0; i < cleanTile->getThingCount(); ++i)
 				{
-					if((tile = getTile(x, y, (uint32_t)z)) && !tile->hasFlag(TILESTATE_HOUSE))
+					if((item = cleanTile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
 					{
-						for(uint32_t i = 0; i < tile->getThingCount(); ++i)
-						{
-							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
-							{
-								g_game.internalRemoveItem(NULL, item);
-								--i;
-								count++;
-							}
-						}
+						g_game.internalRemoveItem(NULL, item);
+						--i;
+						count++;
 					}
 				}
 			}
+
+			g_game.eraseTrashedTile(it);
+			cleanTile->setStored(false);
+
+			it = itNext;
 		}
 	}
 	else
 	{
-		for(int32_t z = 0; z <= MAP_MAX_LAYERS; z++)
+		while(it != tiles.end())
 		{
-			for(uint32_t y = 1; y <= mapHeight; y++)
+			itNext = it;
+			itNext++;
+
+			cleanTile = getTile(*it);
+			if(cleanTile && !cleanTile->hasFlag(TILESTATE_PROTECTIONZONE))
 			{
-				for(uint32_t x = 1; x <= mapWidth; x++)
+				for(uint32_t i = 0; i < cleanTile->getThingCount(); ++i)
 				{
-					if((tile = getTile(x, y, (uint32_t)z)) && !tile->hasFlag(TILESTATE_PROTECTIONZONE))
+					if((item = cleanTile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
 					{
-						for(uint32_t i = 0; i < tile->getThingCount(); ++i)
-						{
-							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
-							{
-								g_game.internalRemoveItem(NULL, item);
-								--i;
-								count++;
-							}
-						}
+						g_game.internalRemoveItem(NULL, item);
+						--i;
+						count++;
 					}
 				}
 			}
+
+			g_game.eraseTrashedTile(it);
+			cleanTile->setStored(false);
+
+			it = itNext;
 		}
 	}
 

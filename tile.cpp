@@ -592,7 +592,14 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, 
 #endif
 
 		if(hasBitSet(FLAG_NOLIMIT, flags))
+		{
+			if(!stored)
+			{
+				g_game.pushTrashedTile(tilePos);
+				const_cast<Tile*>(this)->stored = true;
+			}
 			return RET_NOERROR;
+		}
 
 		bool itemIsHangable = item->isHangable();
 
@@ -634,6 +641,12 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, 
 
 		if(itemIsHangable && hasHangable && supportHangable)
 			return RET_NEEDEXCHANGE;
+
+		if(!stored)
+		{
+			g_game.pushTrashedTile(tilePos);
+			const_cast<Tile*>(this)->stored = true;
+		}
 	}
 
 	return RET_NOERROR;
