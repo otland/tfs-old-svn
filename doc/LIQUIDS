@@ -1,0 +1,41 @@
+[ LIQUIDS
+	Project Name
+		The Forgotten Server
+
+	Version
+		0.3 Beta 3
+
+	Codenamed
+		\
+
+	License
+		GNU GPLv3
+
+	Forum
+		http://otland.net/
+]
+
+[ FLUIDTYPE		NAME			COLOR
+	2	blood			RED
+	10	lifefluid		RED
+	26	lava			RED
+
+	3	beer			BROWN
+	11	oil			BROWN
+	19	mud			BROWN
+	27	rum			BROWN
+
+	4	slime			GREEN
+
+	5	lemonade		YELLOW
+	13	urine			YELLOW
+	21	fruit juice		YELLOW
+
+	6	milk			WHITE
+	14	coconut milk		WHITE
+
+	7	manafluid		PURPLE
+	15	wine			PURPLE
+
+	1	water			BLUE
+]

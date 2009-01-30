@@ -1,0 +1,508 @@
+[ CHANGELOG
+	Project Name
+		The Forgotten Server
+
+	Version
+		0.3 Beta 3
+
+	Codenamed
+		\
+
+	License
+		GNU GPLv3
+
+	Forum
+		http://otland.net/
+]
+
+[ File changes:
+	D = Deleted,
+	M = Modified,
+	A = Added.
+
+	A...
+		data/
+			actions/
+				scripts/
+					liquids/
+						*.lua
+							* Added liquids files
+							* Added potions of 8.2 protocol
+					tools/
+						blessed_wooden_stake.lua
+						obsidian_knife.lua
+							* Added
+
+					other/
+						stuffeddragon.lua
+							* Added as example of position param for doCreatureSay function
+						highscores.lua
+							* Added due to hardcoded highscores function deprecation
+
+			creaturescripts/
+				scripts/
+					firstitems.lua
+						* Moved first items script to creature events instead of move events
+
+			globalevents/
+				globalevents.xml
+				lib/
+				scripts/
+					* Introduced global events
+				scripts/
+					*.lua
+						* Added basic scripts
+			lib/
+				data.lua
+				constant.lua
+				function.lua
+				compat.lua
+				database.lua
+				exhaustion.lua
+					* Added files created from global.lua (organized)
+				
+			logs/
+				server/
+					* Created directory for GUI logs
+
+			monsters/
+				*/*.xml
+					* Added most of 8.1 protocol monsters
+					* Added missing monsters and bosses
+					* Added few monsters of procotol 8.2
+					* Added alot of protocol 8.3 monsters
+					* Several protocol 8.4 monsters
+
+			movements/
+				scripts/
+					swimming/
+						*.lua
+							* Added swimming system
+
+			npc/
+				*.xml
+				lib/
+					*.xml
+						* Lightweight npc examples
+				scripts/
+					*.lua
+						* Added more NPC's examples
+
+			spells/
+				scripts/
+					support/
+						*.lua
+							* Added 8.4 profession (no party buffs yet) spells
+
+			talkactions/
+				scripts/
+					shutdown.lua
+					pvp.lua
+						* Talkaction based on new LUA function
+					position.lua
+					money.lua
+						* Talkaction deprecated from commands
+					online.lua
+					clean.lua
+					broadcast.lua
+						* Talkaction based on new LUA function, deprecated from commands
+					broadcastclass.lua
+					mode.lua
+					multicheck.lua
+					masskick.lua
+						* Added (...)
+					buypremium.lua
+						* File name change
+					*.lua
+						* Deprecated commands
+
+			weapons/
+				scripts/
+					burst_arrow.lua
+						* Moved explosive_arrow.lua
+
+			XML/
+				servers.xml
+					* GameServers class usage example
+
+	M...
+		data/
+			actions/
+				actions.xml
+					* Added obsidian knife and blessed wooden stake
+					* Added heavy machete
+					* Added stuffed dragon
+					* Added furnace
+					* Added protocol 8.4 lamps
+					* Kits
+					* Fixes
+					* Fixed all holes, ladder, rope spots, etc.
+				scripts/
+					tools/
+						fishing.lua
+							* Fixed worms usage
+						rope.lua
+							* Protocol 8.2 rope spots
+							* Fixed all holes, ladder, rope spots, etc.
+						blessed_wooden_stake.lua
+						obsidian_knife.lua
+							* Optimalized and fixed script
+						shovel.lua
+							* Fixes
+							* Fixed all holes, ladder, rope spots, etc.
+					quests/
+						system.lua
+							* Fixed reported bugs
+					other/
+						changegold.lua
+							* Textcolor fix
+						constructionkits.lua
+							* Fixed construction kits
+							* New kits
+						doors.lua
+							* Fixed special doors
+							* Fixed disappearing doors
+							* Applicated usage of engine-sided level doors detection
+						teleport.lua
+							* Fixes
+							* Fixed all holes, ladder, rope spots, etc.
+					liquids/
+						containers.lua
+							* Fixed few issues of fluids
+						great_health.lua
+							* Level requirement fix
+						mastermind_potion.lua
+							* Fixed issue with not working condition
+						*.lua
+							* Exhaustion fixes
+
+			creaturescripts/
+				creaturescripts.xml
+					* Moved first items script to creature events instead of move events
+				scripts/
+					playerdeath.lua
+						* Updated due to changed escapeString return
+						* mostHitCreatureKiller and lastHitKiller division
+
+			items/
+				items.xml
+					* Fixed formatting
+					* Corrected alot of attribute values
+					* Corrected alot of item names
+					* Compatibility with protocol 8.22
+					* Compatibility with OTBv3
+					* Fixed construction kits
+					* Some 8.4 items
+					* More construction kits
+					* New attributes usage
+					* Fixed all holes, ladder, rope spots, etc.
+				items.otb
+					* Compatibility with protocol 8.22
+					* Compatibility with OTBv3
+					* Compatibility with protocol 8.4
+
+			lib/
+				function.lua
+					* Fixes and optimializations
+				data.lua
+					* Inheritation
+				database.lua
+					* Usage of inheritation
+				constant.lua
+					* Added new constants
+					* Fixed some existing constants including 8.4 needs
+					* Deprecated levelDoors table
+
+			monster/
+				monsters.xml
+					* Added most 8.1 monsters
+					* Added some 8.2 monsters
+					* Added some 8.4 monsters
+				*/*.xml
+					* Fixed loots, voices, formating and introduced elemental weakness
+					* Updated experience as of Tibia 8.4 was introduced to some PoI monsters
+
+			movements/
+				movements.xml
+					* Added swimming system
+					* Moved first items script to creature events instead of move events
+					* Added protocol 8.1 elemental armory with limitations
+					* Added protocol 8.2 elemental armory with limitations
+					* Fixed protocol 8.2 elemental armory due to OTBv3 update
+					* Added items requiring vocation, level or magic level
+					* Added 'shield'/'hand' slot
+					* Added protocol 8.4 armory
+					* Fixed all holes, ladder, rope spots, etc.
+				scripts/
+					tiles.lua
+						* Rewrote how (depot and level) tiles work, depot tile does not need actionId anymore
+
+			npc/
+				*.xml
+					* Lightweight npc compatibility
+				lib/
+					npc.lua
+						* Protocol 8.22 npcsystem compatibility
+						* Fixed some functions and added keyword tables support for 'msgcontains' function
+					npcsystem/
+						* Full protocol 8.31 npcsystem
+				scripts/
+					*.lua
+						* 8.31 npcsystem compatibility
+
+			spells/
+				lib/
+					spells.lua
+						* Added all new corpses to the CORPSES array
+						* Fixed some spell areas
+				scripts/
+					*.lua
+						* Fixes
+					support/
+						magic rope.lua
+							* Protocol 8.2 rope spots
+							* Fixed all holes, ladder, rope spots, etc.
+						desintegrade rune.lua
+							* Fixed issue with possibility of removing items from depots when standing outside depot
+				spells.xml
+					* Added "exhaustion=" back to spells.xml
+					* Charges and names fixed
+					* Fixed spell range
+					* Fixed exhaustions
+					* Added runes division by vocations
+					* Vocation 8.4 spells
+
+			talkactions/
+				talkactions.xml
+					* Added all the new talkactions
+					* Added new access system tags (access="")
+					* Added log="" tags responsible for talkaction logging
+					* Added hardcoded functions
+				scripts/
+					*.lua
+						* Removed permission checking from access needing talkactions
+						* Fixed return values
+						* Fixes regarding params
+						* Fixed all talkactions, added access and ghost checks
+					changesex.lua
+						* Updated due to deprecated LUA function
+						* Added a check for gratis premium account
+					deathlist.lua
+						* Updated due to changed escapeString return
+
+			weapons/
+				weapons.xml
+					* Protocol 8.4 weapons
+
+			world/
+				*.xml
+				forgotten.otbm
+					* Placed some NPC's on the map
+					* Updated to OTBv3
+				forgotten-spawns.xml
+					* Fixed the spawns file
+
+			XML/
+				outfits.xml
+					* Example of quest outfits usage
+					* Protocol 8.4 outfits
+
+				stages.xml
+					* Deprecated configuration and moved to config.lua
+
+				servers.xml
+					* Changed 'ip' tag to 'address'
+
+	D...
+		data/
+			global.lua
+				* Moved to lib/ directory
+
+			actions/
+				scripts/
+					fluids.lua
+					potions.lua
+						* New liquids system
+
+			movements/
+				scripts/
+					firstitems.lua
+						* Moved first items script to creature events instead of move events
+
+			talkactions/
+				scripts/
+					buyprem.lua
+						* Renamed
+
+			weapons/
+				scripts/
+					explosive_arrow.lua
+						* Renamed
+]
+
+[ Milestone
+	[ Note
+		Some of the features were added to Mystic Spirit (0.2) due popularity of them.
+	]
+
+	Always up-to-date with OpenTibia branch, Avesta, changes (*)
+	Alot new configurables (*)
+	Replaced config manager values (mostly strings) used as booleans with new, boolean type (Elf, Talaturen)
+	White skull time configurable on config.lua (Talaturen)
+	Time to decrease frags on config.lua (Talaturen)
+	Added most of monsters of protocol 8.1 and some of 8.2 (OpenTibia SVN, Lithium)
+	Attackspeed for items in items.xml (Talaturen)
+	Basespeed in vocations.xml (Talaturen)
+	onLook(cid, pos) creaturescript event (Talaturen)
+	/pvp command to change worldtype (Talaturen)
+	/goto command (/goto x y z) (Talaturen)
+	Configurable level to form guild (Talaturen)
+	Replaced party system with the party system from OpenTibias avesta branch (Talaturen)
+	Added more NPC's and placed in the map (Lithium, Elf)
+	Swimming system (Lithium, OpenTibia SVN)
+	Global Storage values saving in database (Elf, OpenTibia SVN)
+	Configurable level to buy and sell house (Elf)
+	Configurable amount (0 to disable) of houses per each account (Elf)
+	/send command (/send player, x y z) (Elf)
+	Configurable permission for talkactions in talkactions.xml (Elf)
+	Ingame guild management 'switch' on config.lua (Elf)
+	House buying and selling disabling on config.lua (Elf)
+	Namelock Manager while Account Manager is disabled configurable in config.lua (Elf)
+	Dropped LuaSQL and replaced with LuaDatabase (Elf, OpenLua-Distro)
+	onKill(cid, target) creaturescript event (Elf)
+	onAdvance(cid, skill, oldlevel, newlevel) creaturescript event (Elf)
+	onThink creaturescript event for creatures (Elf)
+	onThink and onLook events aren't fired global anymore (Elf)
+	/squelch command to disable private messages receiving (Elf)
+	Dropped account types and replaced it with access levels (Elf, Talaturen)
+	Custom flags system (Elf, Talaturen)
+	Possibility to move items from far, push not pushable items and throw items anywhere (nfries88, Elf)
+	Configurable commands and talkactions logging (Elf)
+	Ghost Mode [with disabled effects] (Pedro B, Elf)
+	Cascading actions (Elf, OpenTibia SVN)
+	Rewritten ban class (Elf, Talaturen, OpenTibia SVN)
+	/baninfo command (Elf)
+	Advanced /unban command (Talaturen, Elf)
+	Bank system (OpenTibia SVN, Elf)
+	Stamina system (Elf)
+	Moved players record and motd to database (Elf)
+	Moved CTRL + Z bug reports to database, written /reports command (Elf)
+	Lighweight NPC system (Talaturen, OpenTibia SVN)
+	OTBv3 (OpenTibia SVN, Talaturen, Elf)
+	Monsters with elemental weaknesses (Marcinek Paladinek, Lithium)
+	Marriage 'system' (Elf)
+	Construction kits (Elf)
+	Global events (Elf)
+	Thing attribute changing (Kiper)
+	onAttack creaturescript (Elf)
+	Database Manager - http://otland.net/f123/built-database-manager-12642/ (Talaturen)
+	Autotools (Talaturen)
+	Filesystem Hierarchy Standard (Kiper)
+	Promotion levels (Kiper, Talaturen, Elf)
+	Account names (Elf)
+	Full protocol 8.31 NPC Shop window behaviour (Elf)
+	Group outfits (Elf)
+	Mapclick teleportation (Kiper)
+	MySQL keepalive for servers with timeout (Elf)
+	isValidName working Tibia-like (Talaturen)
+	Skulls and Shields for NPCs and Monsters (Elf)
+	doPlayerAddExperience supporting negative values (Elf)
+	House Kick supporting wildcards (Elf)
+	Deprecated most possible commands and rewritten them in Lua (Elf)
+	Raids position may be now stored under one tag, which will be exploded- *x"="10" *y="10" *z="7"; can be now added as *pos="10;10;7" (Elf)
+	Merged Commands class with TalkActions, hardcoded commands may be now used as functions (Elf)
+	House information being stored at database, houses table (Elf)
+	onDeath event has now also new parameter- creature, that did most damage to dying creature (Elf)
+	New icon! ;-) (Macroman)
+	DescriptionHideLevel flag replaced with HideLevel, which is used now also for hiding player level in chat (Elf)
+	Signal handler, basic control signals (Elf, Kiper)
+	Revamped talkactions- more errors printing, more checks, more compatibility (Elf)
+	New Quest System and core support of it (Elf)
+	getClosestFreeTile function bumps - possibility to check does destination tile belongs to a house and extended position addon (Elf)
+	Spell parameters working as in Tibia (Elf)
+	Quest outfits (Elf)
+	NPC descriptions (Elf)
+	New onPrepareDeath creature event- no overflows and FALSE return denies death (Elf)
+	onStatsChange creature event (Elf)
+	Player and Global Storage now supports strings as values (Elf)
+	Deprecated hardcoded highscores function and rewritten as Lua function (Elf)
+	Protocol 8.4 support (Talaturen, Elf, Kiper)
+	Multiworld system (Elf)
+	Possibility to choose config file path for console/non-windows versions by --config=%PATH% argument (Elf)
+	Bumped onKill, onDeath and onAttack creature events (Elf)
+	Party features of 8.4 (Elf)
+	New condition types and condition param 'buff' for buff icon (Elf)
+	All attributes displaying in item description (Elf)
+	Waypoints support (OpenTibia SVN, Elf)
+	Move (add and remove) items actor tracking, cid param for onAddItem/onRemoveItem move event (Elf [not from revscriptsys])
+	Protocol 8.4 related combat and conditions upgrades, party spells (Elf, OpenTibia SVN)
+	Rewritten so optimized map cleaning code (Elf)
+]
+
+[ Deprecated
+	[ Note
+		All deprecated Lua functions are stored in compat.lua and use their equivalents, nevertheless please use proper ones for new scripts.
+	]
+
+	LuaFunction: savePlayers(), use saveData().
+	LuaFunction: doPlayerAddMana(cid, mana), use doCreatureAddMana(cid, mana)
+	LuaFunction: broadcastMessage(cid, type), use doBroadcastMessage(cid, type)
+	LuaFunction: getPlayerPosition(cid), use getCreaturePosition(cid)
+	LuaFunction: getPlayerName(cid), use getCreatureName(cid)
+	LuaFunction: getCreaturePos(cid) [fake], use getCreaturePosition(cid)
+	LuaFunction: saveData(), use saveServer()
+	LuaFunction: doPlayerRemovePremiumDays(cid, days), use: doPlayerAddPremiumDays(cid, -days) [negative values]
+	LuaFunction: doPlayerRemOutfit(cid, looktype, addons), use: doPlayerRemoveOutfit(cid, looktype, addons)
+	LuaFunction: doSetCreatureDropLoot(cid, doDrop), use: doCreatureSetDropLoot(cid, doDrop)
+	LuaFunction: doPlayerAddManaSpent(cid, mana), use: doPlayerAddSpentMana(cid, amount)
+	LuaFunction: getPromotedVocation(vocId), use: getVocationInfo(id).promotedVocation
+]
+
+[ Fixed issues with...
+	House warnings (OpenTibia SVN, Elf)
+	High CPU usage (Everyone, OpenTibia SVN)
+	Skill loss and item drop in [pvp-]zone area (Talaturen, Elf, OpenTibia SVN)
+	Bed sleepers not being loaded (Elf)
+	Items with 0 charges acting infinite (Elf, Kiper)
+	Blessings (Talaturen, Elf)
+	Crash when saving non-existing VIP (Elf)
+	Huge writables crash-ability (Elf)
+	Custom item attributes not displayed and/or crashing server (Elf)
+	No timestamp in __GUI_LOGS__ (Elf)
+	Item absorb abilities (Elf, OpenTibia SVN, Gesior)
+	House Doors not being updated when player changes name (Elf)
+	MySQL reconnecting- dirty way... (Elf)
+	Brackets not being removed from publicized NPC speak (Elf)
+	Old protocols support (OpenTibia SVN, Elf)
+	Waterpolo Ball being removed from Trasholder (Elf)
+	Account Manager variables and return values (Elf)
+	Healing damage being displayed for Ghost player (Elf)
+	GUI logs date being saved unpropperly (Elf)
+	spellNameInsteadOfWords configurable working properly (Elf)
+	Shop goods being constantly updated no matter was it item or creature at post* (Elf)
+	BuyContainer fix (Elf, Gesior)
+	Guild name not being validated when creating guild (Elf)
+	Liquids issue (Elf)
+	No possibility to logout without account name and password when Account Manager was enabled (Elf)
+	Unaccurate conditions length (Elf, OpenTibia SVN)
+	Players being unable to throw items at borders (Elf, OpenTibia SVN)
+	Database manager automatic table optimization not working (Elf)
+	Empty containers not being dropped by monsters (Elf)
+	Possibility to track an invisible GM by re-adding to VIP (Elf)
+	NPCs walking on path blocking items (Elf)
+	Items from virtualcylinder being freed in internalAddItem causing crash (Elf)
+	Proper search string (Elf, TibiaWiki)
+	Fixed channels issues (Talaturen, Elf)
+	Fixed blockHit damage stacking (Elf)
+	Possibility to wear items even if movement does not allow it (Elf)
+	Guilds issues (Elf, Talaturen)
+	Not working vocation base speed XML configurable (Elf)
+	Possibility to track Ghost mode by re-adding player without 'specialVip' flag to viplist (Elf)
+	Engine not accepting negative values in scripting (Elf)
+	Not working configurables (Elf)
+	Possibility to wield two shields (Elf)
+	Certain conditions not working (Elf)
+	Shopping exploits (Elf, OpenTibia SVN)
+	Deletions being removed after restart (Elf)
+	Shutdown issue (Elf)
+]

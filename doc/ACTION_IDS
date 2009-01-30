@@ -1,0 +1,30 @@
+[ ACTION IDS
+	Project Name
+		The Forgotten Server
+
+	Version
+		0.3 Beta 3
+
+	Codenamed
+		\
+
+	License
+		GNU GPLv3
+
+	Forum
+		http://otland.net/
+]
+
+[ IDS
+	Depot Tile
+		100 + DepotID
+
+	Level Tile
+		1000 + Required Level
+
+	Level Door
+		1000 + Required Level
+
+	Quest Reward
+		2000
+]

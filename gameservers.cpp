@@ -1,0 +1,171 @@
+//////////////////////////////////////////////////////////////////////
+// OpenTibia - an opensource roleplaying game
+//////////////////////////////////////////////////////////////////////
+// Game Servers handler
+//////////////////////////////////////////////////////////////////////
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//////////////////////////////////////////////////////////////////////
+#include "otpch.h"
+
+#include <libxml/xmlmemory.h>
+#include <libxml/parser.h>
+
+#include "tools.h"
+#include "gameservers.h"
+
+#include <iostream>
+
+void GameServers::clear()
+{
+	for(GameServersMap::iterator it = serverList.begin(); it != serverList.end(); ++it)
+		delete it->second;
+
+	serverList.clear();
+}
+
+bool GameServers::reload(bool showResult/* = true*/)
+{
+	clear();
+	return loadFromXml(showResult);
+}
+
+bool GameServers::loadFromXml(bool showResult/* = true*/)
+{
+	if(xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "servers.xml").c_str()))
+	{
+		xmlNodePtr root, p;
+		root = xmlDocGetRootElement(doc);
+		if(xmlStrcmp(root->name,(const xmlChar*)"servers") != 0)
+		{
+			xmlFreeDoc(doc);
+			std::cout << "[Error - GameServers::loadFromXml] Malformed servers file" << std::endl;
+			return false;
+		}
+
+		std::string strValue;
+		int32_t intValue;
+		p = root->children;
+		while(p)
+		{
+			if(xmlStrcmp(p->name, (const xmlChar*)"server") != 0)
+			{
+				p = p->next;
+				continue;
+			}
+
+			std::string name, address;
+			uint32_t id, port;
+			if(readXMLInteger(p, "id", intValue))
+				id = intValue;
+			else
+			{
+				std::cout << "[Error - GameServers::loadFromXml] Missing id, skipping" << std::endl;
+				p = p->next;
+				continue;
+			}
+
+			if(getServerById(id))
+			{
+				std::cout << "[Error - GameServers::loadFromXml] Duplicate server id " << id << ", skipping" << std::endl;
+				p = p->next;
+				continue;
+			}
+
+			if(readXMLString(p, "name", strValue))
+				name = strValue;
+			else
+			{
+				name = "Server #" + id;
+				std::cout << "[Warning - GameServers::loadFromXml] Missing name for server " << id << ", using default" << std::endl;
+			}
+
+			if(readXMLString(p, "address", strValue))
+				address = strValue;
+			else
+			{
+				address = "localhost";
+				std::cout << "[Warning - GameServers::loadFromXml] Missing address for server " << id << ", using default" << std::endl;
+			}
+
+			if(readXMLInteger(p, "port", intValue))
+				port = intValue;
+			else
+			{
+				port = 7171;
+				std::cout << "[Warning - GameServers::loadFromXml] Missing port for server " << id << ", using default" << std::endl;
+			}
+
+			if(GameServer* server = new GameServer(name, address, port))
+				serverList[id] = server;
+			else
+				std::cout << "[Error - GameServers::loadFromXml] Couldn't add server " << name << std::endl;
+
+			p = p->next;
+		}
+
+		xmlFreeDoc(doc);
+	}
+
+	if(showResult)
+	{
+		std::cout << "> Servers loaded:" << std::endl;
+		for(GameServersMap::iterator it = serverList.begin(); it != serverList.end(); it++)
+			std::cout << it->second->getName() << " (" << it->second->getAddress() << ":" << it->second->getPort() << ")" << std::endl;
+	}
+
+	return true;
+}
+
+GameServer* GameServers::getServerById(uint32_t id) const
+{
+	GameServersMap::const_iterator it = serverList.find(id);
+	if(it != serverList.end())
+		return it->second;
+
+	return NULL;
+}
+
+GameServer* GameServers::getServerByName(std::string name) const
+{
+	for(GameServersMap::const_iterator it = serverList.begin(); it != serverList.end(); ++it)
+	{
+		if(it->second->getName() == name)
+			return it->second;
+	}
+
+	return NULL;
+}
+
+GameServer* GameServers::getServerByAddress(std::string address) const
+{
+	for(GameServersMap::const_iterator it = serverList.begin(); it != serverList.end(); ++it)
+	{
+		if(it->second->getAddress() == address)
+			return it->second;
+	}
+
+	return NULL;
+}
+
+GameServer* GameServers::getServerByPort(uint32_t port) const
+{
+	for(GameServersMap::const_iterator it = serverList.begin(); it != serverList.end(); ++it)
+	{
+		if(it->second->getPort() == port)
+			return it->second;
+	}
+
+	return NULL;
+}
