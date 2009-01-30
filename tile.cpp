@@ -35,11 +35,13 @@
 #include "mailbox.h"
 #include "combat.h"
 #include "movement.h"
+#include "configmanager.h"
 
+extern ConfigManager g_config;
 extern Game g_game;
 extern MoveEvents* g_moveEvents;
 
-Tile Tile::null_tile(0xFFFF, 0xFFFF, 0xFFFF);
+Tile Tile::nullTile(0xFFFF, 0xFFFF, 0xFFFF);
 
 bool Tile::hasProperty(enum ITEMPROPERTY prop) const
 {
@@ -162,6 +164,7 @@ TrashHolder* Tile::getTrashHolder() const
 		if(iiItem && (trashholder = iiItem->getTrashHolder()))
 			return trashholder;
 	}
+
 	return NULL;
 }
 
@@ -595,7 +598,6 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, 
 			return RET_NOERROR;
 
 		bool itemIsHangable = item->isHangable();
-
 		if(ground == NULL && !itemIsHangable)
 			return RET_NOTPOSSIBLE;
 
@@ -755,8 +757,13 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 			return /*RET_NOTPOSSIBLE*/;
 		}
 
-		item->setParent(this);
+		if(g_config.getBool(ConfigManager::STORE_TRASH) && !hasFlag(TILESTATE_TRASHED))
+		{
+			g_game.addTrash(tilePos);
+			setFlag(TILESTATE_TRASHED);
+		}
 
+		item->setParent(this);
 		if(item->isGroundTile())
 		{
 			if(ground == NULL)
@@ -774,6 +781,7 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 				Item* oldGround = ground;
 				ground->setParent(NULL);
 				g_game.FreeThing(ground);
+
 				ground = item;
 				onUpdateTileItem(index, oldGround, oldType, item, newType);
 			}
@@ -889,7 +897,6 @@ void Tile::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
 void Tile::__replaceThing(uint32_t index, Thing* thing)
 {
 	int32_t pos = index;
-
 	Item* item = thing->getItem();
 	if(item == NULL)
 	{
@@ -902,7 +909,6 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 
 	Item* oldItem = NULL;
 	bool isInserted = false;
-
 	if(!isInserted && ground)
 	{
 		if(pos == 0)
@@ -928,7 +934,6 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 	}
 
 	pos -= (uint32_t)topItems.size();
-
 	if(!isInserted && pos < (int32_t)creatures.size())
 	{
 #ifdef __DEBUG__MOVESYS__
@@ -939,7 +944,6 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 	}
 
 	pos -= (uint32_t)creatures.size();
-
 	if(!isInserted && pos < (int32_t)downItems.size())
 	{
 		ItemVector::iterator it = downItems.begin();
@@ -955,11 +959,10 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 	if(isInserted)
 	{
 		item->setParent(this);
-
 		const ItemType& oldType = Item::items[oldItem->getID()];
 		const ItemType& newType = Item::items[item->getID()];
-		onUpdateTileItem(index, oldItem, oldType, item, newType);
 
+		onUpdateTileItem(index, oldItem, oldType, item, newType);
 		oldItem->setParent(NULL);
 		return /*RET_NOERROR*/;
 	}
@@ -972,11 +975,9 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 
 void Tile::__removeThing(Thing* thing, uint32_t count)
 {
-	Creature* creature = thing->getCreature();
-	if(creature)
+	if(thing->getCreature())
 	{
 		CreatureVector::iterator it = std::find(creatures.begin(), creatures.end(), thing);
-
 		if(it == creatures.end())
 		{
 #ifdef __DEBUG__MOVESYS__
@@ -1039,14 +1040,13 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 		}
 		else
 		{
-			for (iit = downItems.begin(); iit != downItems.end(); ++iit)
+			for(iit = downItems.begin(); iit != downItems.end(); ++iit)
 			{
 				if(*iit == item)
 				{
 					if(item->isStackable() && count != item->getItemCount())
 					{
 						item->setItemCount(std::max(0, (int32_t)(item->getItemCount() - count)));
-
 						const ItemType& it = Item::items[item->getID()];
 						onUpdateTileItem(index, item, it, item, it);
 					}
@@ -1057,6 +1057,7 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 						--thingCount;
 						onRemoveTileItem(index, item);
 					}
+
 					return;
 				}
 			}
@@ -1171,7 +1172,6 @@ Thing* Tile::__getThing(uint32_t index) const
 void Tile::postAddNotification(Creature* actor, Thing* thing, int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
 {
 	const Position& cylinderMapPos = getPosition();
-
 	const SpectatorVec& list = g_game.getSpectators(cylinderMapPos);
 	SpectatorVec::const_iterator it;
 
@@ -1217,11 +1217,10 @@ void Tile::postAddNotification(Creature* actor, Thing* thing, int32_t index, cyl
 void Tile::postRemoveNotification(Creature* actor, Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
 {
 	const Position& cylinderMapPos = getPosition();
-
 	const SpectatorVec& list = g_game.getSpectators(cylinderMapPos);
 	SpectatorVec::const_iterator it;
 
-	if(/*isCompleteRemoval &&*/ getThingCount() > 8)
+	if(/*isCompleteRemoval && */getThingCount() > 8)
 		onUpdateTile();
 
 	Player* tmpPlayer = NULL;

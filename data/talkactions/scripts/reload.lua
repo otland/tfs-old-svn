@@ -17,48 +17,21 @@ local reloadInfo = {
 	{RELOAD_STAGES, "stages", "experience"},
 	{RELOAD_TALKACTIONS, "talkactions", "talk actions", "talk", "commands"},
 	{RELOAD_VOCATIONS, "vocations", "vocation"},
-	{RELOAD_WEAPONS, "weapons", "weapon"}
+	{RELOAD_WEAPONS, "weapons", "weapon"},
+	{RELOAD_ALL, "all", "everything"}
 }
 
 function onSay(cid, words, param)
 	param = param:lower()
-	local str = "Failed to reload"
-	if(param == "all") then
-		local tmp = true
-		for i = RELOAD_ACTIONS, RELOAD_WEAPONS do
-			if(doReloadInfo(table[1]) ~= TRUE) then
-				if(tmp) then
-					str = str .. ":"
-					tmp = false
-				end
-
-				str = str .. " " .. table[2]
-			end
-		end
-
-		if(tmp) then
-			str = "Reloaded everything successfully"
-		end
-	else
-		local tmp = true
-		for _, v in ipairs(reloadInfo) do
-			if(table.isStrIn(param, v)) then
-				if(doReloadInfo(v[1]) == TRUE) then
-					str = "Reloaded " .. v[2] .. " successfully"
-				else
-					str = str .. " " .. v[2]
-				end
-
-				tmp = false
-				break
-			end
-		end
-
-		if(tmp) then
-			str = "Reload type '" .. param .. "' not found"
+	local str = "Reload type not found."
+	for _, v in ipairs(reloadInfo) do
+		if(table.isStrIn(param, v)) then
+			doReloadInfo(v[1], cid)
+			str = "Reloading " .. v[2] .. "..."
+			break
 		end
 	end
 
-	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, str .. ".")
+	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, str)
 	return TRUE
 end

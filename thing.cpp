@@ -88,7 +88,7 @@ Tile* Thing::getTile()
 	if(!cylinder){
 		std::cout << "Failure: [Thing::getTile()],  NULL tile" << std::endl;
 		DEBUG_REPORT
-		return &(Tile::null_tile);
+		return &(Tile::nullTile);
 	}
 	#endif
 
@@ -107,7 +107,7 @@ const Tile* Thing::getTile() const
 	if(!cylinder){
 		std::cout << "Failure: [Thing::getTile() const],  NULL tile" << std::endl;
 		DEBUG_REPORT
-		return &(Tile::null_tile);
+		return &(Tile::nullTile);
 	}
 	#endif
 
@@ -129,7 +129,7 @@ const Position& Thing::getPosition() const
 		std::cout << "Failure: [Thing::getPosition],  NULL tile" << std::endl;
 		DEBUG_REPORT
 		#endif
-		return Tile::null_tile.getTilePosition();
+		return Tile::nullTile.getTilePosition();
 	}
 }
 

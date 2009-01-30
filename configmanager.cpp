@@ -72,6 +72,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confNumber[GLOBALSAVE_H] = getGlobalNumber(L, "globalSaveHour", 8);
 		m_confString[HOUSE_RENT_PERIOD] = getGlobalString(L, "houseRentPeriod", "monthly");
 		m_confNumber[WORLD_ID] = getGlobalNumber(L, "worldId", 0);
+		m_confBool[STORE_TRASH] = getGlobalBool(L, "storeTrash", "yes");
 	}
 
 	m_confString[LOGIN_MSG] = getGlobalString(L, "loginMessage", "Welcome to the Forgotten Server!");

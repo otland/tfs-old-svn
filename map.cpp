@@ -18,32 +18,27 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-
-#include "definitions.h"
+#include "otsystem.h"
 
 #include <string>
 #include <map>
 #include <algorithm>
+#include <iomanip>
 
 #include <boost/config.hpp>
 #include <boost/bind.hpp>
 
+#include "map.h"
 #include "iomap.h"
-
-#include "otsystem.h"
 #include "iomapserialize.h"
 
-#include <stdio.h>
-#include <iomanip>
-
 #include "items.h"
-#include "map.h"
 #include "tile.h"
-#include "combat.h"
 #include "creature.h"
-
 #include "player.h"
+
 #include "configmanager.h"
+#include "combat.h"
 #include "game.h"
 
 extern Game g_game;
@@ -1251,11 +1246,74 @@ Floor* QTreeLeafNode::createFloor(uint32_t z)
 
 uint32_t Map::clean()
 {
-	Tile* tile = NULL;
+	Tile* cleanTile = NULL;
 	Item* item = NULL;
 
-	uint64_t start = OTSYS_TIME(), count = 0;
-	if(g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES))
+	uint64_t start = OTSYS_TIME();
+	int32_t count = 0, tiles = -1;
+	if(g_config.getBool(ConfigManager::STORE_TRASH))
+	{
+		Trash trash = g_game.getTrash();
+		tiles = trash.size();
+
+		Trash::iterator it = trash.begin();
+		Trash::iterator nit;
+		if(g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES))
+		{
+			while(it != trash.end())
+			{
+				nit = it;
+				nit++;
+				if((cleanTile = getTile(*it)))
+				{
+					cleanTile->resetFlag(TILESTATE_TRASHED);
+					if(!cleanTile->hasFlag(TILESTATE_HOUSE))
+					{
+						for(uint32_t i = 0; i < cleanTile->getThingCount(); ++i)
+						{
+							if((item = cleanTile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
+							{
+								g_game.internalRemoveItem(NULL, item);
+								--i;
+								count++;
+							}
+						}
+					}
+				}
+
+				g_game.removeTrash(it);
+				it = nit;
+			}
+		}
+		else
+		{
+			while(it != trash.end())
+			{
+				nit = it;
+				nit++;
+				if((cleanTile = getTile(*it)))
+				{
+					cleanTile->resetFlag(TILESTATE_TRASHED);
+					if(!cleanTile->hasFlag(TILESTATE_PROTECTIONZONE))
+					{
+						for(uint32_t i = 0; i < cleanTile->getThingCount(); ++i)
+						{
+							if((item = cleanTile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
+							{
+								g_game.internalRemoveItem(NULL, item);
+								--i;
+								count++;
+							}
+						}
+					}
+				}
+
+				g_game.removeTrash(it);
+				it = nit;
+			}
+		}
+	}
+	else if(g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES))
 	{
 		for(int32_t z = 0; z <= MAP_MAX_LAYERS; z++)
 		{
@@ -1263,11 +1321,11 @@ uint32_t Map::clean()
 			{
 				for(uint32_t x = 1; x <= mapWidth; x++)
 				{
-					if((tile = getTile(x, y, (uint32_t)z)) && !tile->hasFlag(TILESTATE_HOUSE))
+					if((cleanTile = getTile(x, y, (uint32_t)z)) && !cleanTile->hasFlag(TILESTATE_HOUSE))
 					{
-						for(uint32_t i = 0; i < tile->getThingCount(); ++i)
+						for(uint32_t i = 0; i < cleanTile->getThingCount(); ++i)
 						{
-							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
+							if((item = cleanTile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
 							{
 								g_game.internalRemoveItem(NULL, item);
 								--i;
@@ -1287,11 +1345,11 @@ uint32_t Map::clean()
 			{
 				for(uint32_t x = 1; x <= mapWidth; x++)
 				{
-					if((tile = getTile(x, y, (uint32_t)z)) && !tile->hasFlag(TILESTATE_PROTECTIONZONE))
+					if((cleanTile = getTile(x, y, (uint32_t)z)) && !cleanTile->hasFlag(TILESTATE_PROTECTIONZONE))
 					{
-						for(uint32_t i = 0; i < tile->getThingCount(); ++i)
+						for(uint32_t i = 0; i < cleanTile->getThingCount(); ++i)
 						{
-							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
+							if((item = cleanTile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
 							{
 								g_game.internalRemoveItem(NULL, item);
 								--i;
@@ -1304,6 +1362,10 @@ uint32_t Map::clean()
 		}
 	}
 
-	std::cout << "> Cleaning time: " << (OTSYS_TIME() - start) / (1000.) << " seconds, collected " << count << " item" << (count != 1 ? "s" : "") << "." << std::endl;
+	std::cout << "> CLEAN: Removed " << count << " item" << (count != 1 ? "s" : "");
+	if(tiles > -1)
+		std::cout << " from " << tiles << " tile" << (tiles != 1 ? "s" : "");
+
+	std::cout << " in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 	return count;
 }

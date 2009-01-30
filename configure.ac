@@ -1,5 +1,5 @@
 AC_PREREQ([2.50])
-AC_INIT([TheForgottenServer], [0.3])
+AC_INIT([TheForgottenServer], [0.4])
 AM_INIT_AUTOMAKE([1.10 foreign])
 AC_CONFIG_SRCDIR([account.cpp])
 AM_CONFIG_HEADER([config.h])
@@ -31,7 +31,8 @@ AC_ARG_ENABLE(remote-control, [  --enable-remote-control   enable remote control
 	AM_CONDITIONAL(REMOTE_CONTROL, true)
 	remoteControl=yes
 )
-# check if we want otserv allocator enabled
+
+# check if we want otserv allocator enabled
 otservAllocator=no
 AC_ARG_ENABLE(otserv-allocator, [  --enable-otserv-allocator   enable otserv custom allocator],
 	[OPTIONAL_FLAGS="$OPTIONAL_FLAGS -D__OTSERV_ALLOCATOR__"]
@@ -217,7 +218,7 @@ AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
 
 echo
-#echo The Forgotten Server 0.3
+#echo The Forgotten Server 0.4
 echo $PACKAGE $VERSION
 echo
 echo Server diagnostics.......... : $serverDiag
@@ -233,10 +234,10 @@ echo Build with SQLite........... : $useSQLite
 echo Build with PostgreSQL....... : $usePostgreSQL
 echo Build with ODBC............. : $useODBC
 echo
-if test "x$useMySQL" = "xno" ; then
-	if test "x$useSQLite" = "xno" ; then
-		if test "x$usePostgreSQL" = "xno" ; then
-			if test "x$useODBC" = "xno" ; then
+if test "$useMySQL" = "no" ; then
+	if test "$useSQLite" = "no" ; then
+		if test "$usePostgreSQL" = "no" ; then
+			if test "$useODBC" = "no" ; then
 				echo Warning: no database driver was enabled! To enable a database driver, configure with --enable-\<dbdriver\> \(example: --enable-mysql\).
 				echo
 			fi
