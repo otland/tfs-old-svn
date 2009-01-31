@@ -2655,9 +2655,6 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 		std::list<Container*> containerList;
 		for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 		{
-			if(inventory[i] == tradeItem)
-				continue;
-
 			if(inventory[i] == NULL)
 			{
 				if(__queryAdd(i, item, item->getItemCount(), 0) == RET_NOERROR)
@@ -2665,8 +2662,14 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 					index = i;
 					return this;
 				}
+
+				continue;
 			}
-			else if(Container* subContainer = dynamic_cast<Container*>(inventory[i]))
+
+			if(inventory[i] == tradeItem)
+				continue;
+
+			if(Container* subContainer = dynamic_cast<Container*>(inventory[i]))
 				containerList.push_back(subContainer);
 		}
 
