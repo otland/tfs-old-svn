@@ -164,7 +164,6 @@ bool TalkActions::onPlayerSay(Player* player, uint16_t channelId, const std::str
 
 TalkFunction_t TalkAction::definedFunctions[] =
 {
-	{"placesummon", &placeSummon},
 	{"serverdiag",&serverDiag},
 	{"buyhouse", &buyHouse},
  	{"sellhouse", &sellHouse},
@@ -284,18 +283,6 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, con
 		std::cout << "[Error - TalkAction::executeSay] Call stack overflow." << std::endl;
 		return 0;
 	}
-}
-
-bool TalkAction::placeSummon(Player* player, const std::string& cmd, const std::string& param)
-{
-	ReturnValue ret = g_game.placeSummon(player, param);
-	if(ret != RET_NOERROR)
-	{
-		player->sendCancelMessage(ret);
-		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
-	}
-
-	return true;
 }
 
 bool TalkAction::serverDiag(Player* player, const std::string& cmd, const std::string& param)

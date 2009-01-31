@@ -845,6 +845,19 @@ uint32_t DatabaseManager::updateDatabase()
 			return 8;
 		}
 
+		case 8:
+		{
+			std::cout << "> Updating database to version: 9..." << std::endl;
+
+			DBQuery query;
+			query << "ALTER TABLE `bans` ADD `statement` VARCHAR(255) NOT NULL;";
+			db->executeQuery(query.str());
+
+			query.str("");
+			registerDatabaseConfig("db_version", 9);
+			return 9;
+		}
+
 		default:
 			break;
 	}

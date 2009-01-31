@@ -1386,6 +1386,9 @@ void LuaScriptInterface::registerFunctions()
 	//doCreateNpc(name, pos)
 	lua_register(m_luaState, "doCreateNpc", LuaScriptInterface::luaDoCreateNpc);
 
+	//doSummonMonster(cid, name)
+	lua_register(m_luaState, "doSummonMonster", LuaScriptInterface::luaDoSummonMonster);
+
 	//doConvinceCreature(cid, target)
 	lua_register(m_luaState, "doConvinceCreature", LuaScriptInterface::luaDoConvinceCreature);
 
@@ -6147,13 +6150,10 @@ int32_t LuaScriptInterface::luaDoTargetCombatDispel(lua_State* L)
 int32_t LuaScriptInterface::luaDoChallengeCreature(lua_State* L)
 {
 	//doChallengeCreature(cid, target)
-	uint32_t targetCid = popNumber(L);
+	ScriptEnviroment* env = getScriptEnv();
 	uint32_t cid = popNumber(L);
 
-	ScriptEnviroment* env = getScriptEnv();
-
-	Creature* creature = env->getCreatureByUID(cid);
-
+	Creature* creature = env->getCreatureByUID(popNumber(L));
 	if(!creature)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -6161,7 +6161,7 @@ int32_t LuaScriptInterface::luaDoChallengeCreature(lua_State* L)
 		return 1;
 	}
 
-	Creature* target = env->getCreatureByUID(targetCid);
+	Creature* target = env->getCreatureByUID(cid);
 	if(!target)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -6174,12 +6174,30 @@ int32_t LuaScriptInterface::luaDoChallengeCreature(lua_State* L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaDoSummonMonster(lua_State* L)
+{
+	//doSummonMonster(cid, name)
+	std::string name = popString(L);
+	ScriptEnviroment* env = getScriptEnv();
+
+	Creature* creature = env->getCreatureByUID(popNumber(L));
+	if(!creature)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+		return 1;
+	}
+
+	lua_pushnumber(L, g_game.placeSummon(creature, name));
+	return 1;
+}
+
 int32_t LuaScriptInterface::luaDoConvinceCreature(lua_State* L)
 {
 	//doConvinceCreature(cid, target)
 	uint32_t cid = popNumber(L);
-
 	ScriptEnviroment* env = getScriptEnv();
+
 	Creature* creature = env->getCreatureByUID(popNumber(L));
 	if(!creature)
 	{

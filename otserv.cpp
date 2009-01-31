@@ -137,12 +137,8 @@ void signalHandler(int32_t sig)
 		case SIGUSR2:
 			g_game.setGameState(GAME_STATE_NORMAL);
 			break;
-		case SIGWINCH:
-			std::cout << "Reloading all..." << std::endl;
-			for(uint32_t i = RELOAD_FIRST; i <= RELOAD_LAST; i++)
-				g_game.reloadInfo((ReloadInfo_t)i);
-
-			std::cout << "Reload complete!" << std::endl;
+		case SIGCONT:
+			g_game.reloadInfo((RELOAD_ALL);
 			break;
 		case SIGQUIT:
 			Dispatcher::getDispatcher().addTask(createTask(
@@ -204,7 +200,7 @@ void serverMain(void* param)
 	signal(SIGTRAP, signalHandler); //clean
 	signal(SIGUSR1, signalHandler); //close server
 	signal(SIGUSR2, signalHandler); //open server
-	signal(SIGWINCH, signalHandler); //reload all
+	signal(SIGCONT, signalHandler); //reload all
 	signal(SIGQUIT, signalHandler); //save & shutdown
 	signal(SIGTERM, signalHandler); //shutdown
 	#endif
@@ -574,8 +570,10 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 	{
 		case WM_CREATE:
 		{
-			GUI::getInstance()->m_logWindow = CreateWindow("edit", NULL, WS_CHILD | WS_VSCROLL | WS_HSCROLL | WS_VISIBLE | ES_MULTILINE | DS_CENTER, 0, 0, 700, 400, hwnd, (HMENU)ID_LOG, NULL, NULL);
-			GUI::getInstance()->m_statusBar = CreateWindowEx(0, STATUSCLASSNAME, NULL, WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP, 0, 0, 0, 0, hwnd, (HMENU)ID_STATUS_BAR, GetModuleHandle(NULL), NULL);
+			GUI::getInstance()->m_logWindow = CreateWindow("edit", NULL,
+				WS_CHILD | WS_VSCROLL | WS_HSCROLL | WS_VISIBLE | ES_MULTILINE | DS_CENTER, 0, 0, 700, 400, hwnd, (HMENU)ID_LOG, NULL, NULL);
+			GUI::getInstance()->m_statusBar = CreateWindowEx(0, STATUSCLASSNAME, NULL,
+				WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP, 0, 0, 0, 0, hwnd, (HMENU)ID_STATUS_BAR, GetModuleHandle(NULL), NULL);
 			int32_t statusBarWidthLine[] = {150, -1};
 			GUI::getInstance()->m_lineCount = 0;
 			SendMessage(GUI::getInstance()->m_statusBar, SB_SETPARTS, sizeof(statusBarWidthLine) / sizeof(int32_t), (LPARAM)statusBarWidthLine);
@@ -910,11 +908,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						std::cout << "Reloading all..." << std::endl;
-						for(uint32_t i = RELOAD_FIRST; i <= RELOAD_LAST; i++)
-							g_game.reloadInfo((ReloadInfo_t)i);
-
-						std::cout << "Reload complete!" << std::endl;
+						for(g_game.reloadInfo(RELOAD_ALL))
+							std::cout << "Reloaded all." << std::endl;
 					}
 					break;
 				}

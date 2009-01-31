@@ -35,7 +35,7 @@ bool IOBan::isIpBanished(uint32_t ip, uint32_t mask /*= 0xFFFFFFFF*/)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `expires` FROM `bans` WHERE `type` = " << (BanType_t)BANTYPE_IP_BANISHMENT << " AND ((" << ip << " & " << mask << " & `param`) = (`value` & `param` & " << mask << ")) AND `active` = 1";
+	query << "SELECT `expires` FROM `bans` WHERE `type` = " << (BanType_t)BANTYPE_IP_BANISHMENT << " AND ((" << ip << " & " << mask << " & `param`) = (`value` & `param` & " << mask << ")) AND `active` = 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -54,7 +54,7 @@ bool IOBan::isNamelocked(uint32_t guid)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `bans` WHERE `value` = " << guid << " AND `type` = " << (BanType_t)BANTYPE_NAMELOCK << " AND `active` = 1";
+	query << "SELECT `id` FROM `bans` WHERE `value` = " << guid << " AND `type` = " << (BanType_t)BANTYPE_NAMELOCK << " AND `active` = 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -77,7 +77,7 @@ bool IOBan::isBanished(uint32_t account)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `expires` FROM `bans` WHERE `value` = " << account << " AND `type` = " << (BanType_t)BANTYPE_BANISHMENT << " AND `active` = 1";
+	query << "SELECT `expires` FROM `bans` WHERE `value` = " << account << " AND `type` = " << (BanType_t)BANTYPE_BANISHMENT << " AND `active` = 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -96,7 +96,7 @@ bool IOBan::isDeleted(uint32_t account)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `bans` WHERE `value` = " << account << " AND `type` = " << (BanType_t)BANTYPE_DELETION << " AND `active` = 1";
+	query << "SELECT `id` FROM `bans` WHERE `value` = " << account << " AND `type` = " << (BanType_t)BANTYPE_DELETION << " AND `active` = 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -111,7 +111,9 @@ bool IOBan::addIpBanishment(uint32_t ip, time_t banTime, std::string comment, ui
 
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "INSERT INTO `bans` (`id`, `type`, `value`, `param`, `expires`, `added`, `admin_id`, `comment`) VALUES (NULL, " << (BanType_t)BANTYPE_IP_BANISHMENT << ", " << ip << ", 4294967295, " << banTime << ", " << time(NULL) << ", " << gamemaster << ", " << db->escapeString(comment.c_str()) << ")";
+	query << "INSERT INTO `bans` (`id`, `type`, `value`, `param`, `expires`, `added`, `admin_id`, `comment`, `statement`) ";
+	query << "VALUES (NULL, " << (BanType_t)BANTYPE_IP_BANISHMENT << ", " << ip << ", 4294967295, " << banTime << ", " << time(NULL) << ", ";
+	query << gamemaster << ", " << db->escapeString(comment.c_str()) << ", " << db->escapeString(statement.c_str()) << ");";
 	return db->executeQuery(query.str());
 }
 
@@ -122,7 +124,9 @@ bool IOBan::addNamelock(uint32_t playerId, uint32_t reasonId, uint32_t actionId,
 
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "INSERT INTO `bans` (`id`, `type`, `value`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action`) VALUES (NULL, " << (BanType_t)BANTYPE_NAMELOCK << ", " << playerId << ", '-1', " << time(NULL) << ", " << gamemaster << ", " << db->escapeString(comment.c_str()) << ", " << reasonId << ", " << actionId << ");";
+	query << "INSERT INTO `bans` (`id`, `type`, `value`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action`, `statement`) ";
+	query << "VALUES (NULL, " << (BanType_t)BANTYPE_NAMELOCK << ", " << playerId << ", '-1', " << time(NULL) << ", " << gamemaster << ", ";
+	query << db->escapeString(comment.c_str()) << ", " << reasonId << ", " << actionId << ", " << db->escapeString(statement.c_str()) << ");";
 	return db->executeQuery(query.str());
 }
 
@@ -142,7 +146,9 @@ bool IOBan::addBanishment(uint32_t account, time_t banTime, uint32_t reasonId, u
 
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "INSERT INTO `bans` (`id`, `type`, `value`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action`) VALUES (NULL, " << (BanType_t)BANTYPE_BANISHMENT << ", " << account << ", " << banTime << ", " << time(NULL) << ", " << gamemaster << ", " << db->escapeString(comment.c_str()) << ", " << reasonId << ", " << actionId << ");";
+	query << "INSERT INTO `bans` (`id`, `type`, `value`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action`, `statement`) ";
+	query << "VALUES (NULL, " << (BanType_t)BANTYPE_BANISHMENT << ", " << account << ", " << banTime << ", " << time(NULL) << ", " << gamemaster << ", ";
+	query << db->escapeString(comment.c_str()) << ", " << reasonId << ", " << actionId << ", " << db->escapeString(statement.c_str()) << ");";
 	return db->executeQuery(query.str());
 }
 
@@ -159,7 +165,9 @@ bool IOBan::addDeletion(uint32_t account, uint32_t reasonId, uint32_t actionId, 
 
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "INSERT INTO `bans` (`id`, `type`, `value`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action`) VALUES (NULL, " << (BanType_t)BANTYPE_DELETION << ", " << account << ", '-1', " << time(NULL) << ", " << gamemaster << ", " << db->escapeString(comment.c_str()) << ", " << reasonId << ", " << actionId << ");";
+	query << "INSERT INTO `bans` (`id`, `type`, `value`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action`, `statement`) ";
+	query << "VALUES (NULL, " << (BanType_t)BANTYPE_DELETION << ", " << account << ", '-1', " << time(NULL) << ", " << gamemaster << ", ";
+	query << db->escapeString(comment.c_str()) << ", " << reasonId << ", " << actionId << ", " << db->escapeString(statement.c_str()) << ");";
 	return db->executeQuery(query.str());
 }
 
@@ -167,7 +175,9 @@ void IOBan::addNotation(uint32_t account, uint32_t reasonId, uint32_t actionId, 
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "INSERT INTO `bans` (`id`, `type`, `value`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action`) VALUES (NULL, " << (BanType_t)BANTYPE_NOTATION << ", " << account << ", '-1', " << time(NULL) << ", " << gamemaster << ", " << db->escapeString(comment.c_str()) << ", " << reasonId << ", " << actionId << ");";
+	query << "INSERT INTO `bans` (`id`, `type`, `value`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action`, `statement`) ";
+	query << "VALUES (NULL, " << (BanType_t)BANTYPE_NOTATION << ", " << account << ", '-1', " << time(NULL) << ", " << gamemaster << ", ";
+	query << db->escapeString(comment.c_str()) << ", " << reasonId << ", " << actionId << ", " << db->escapeString(statement.c_str()) << ");";
 	db->executeQuery(query.str());
 }
 

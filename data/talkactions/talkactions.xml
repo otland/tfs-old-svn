@@ -10,9 +10,9 @@
 	<talkaction log="yes" access="5" words="/mode" script="mode.lua"/>
 
 	<!-- Community Managers -->
-	<talkaction log="yes" words="/s" access="4" function="placeSummon"/>
-	<talkaction log="yes" words="/n" access="4" script="createcreature.lua"/>
-	<talkaction log="yes" words="/m" access="4" script="createcreature.lua"/>
+	<talkaction log="yes" words="/s" access="4" script="summon.lua"/>
+	<talkaction log="yes" words="/n" access="4" script="creature.lua"/>
+	<talkaction log="yes" words="/m" access="4" script="creature.lua"/>
 	<talkaction log="yes" words="/reload" access="4" script="reload.lua"/>
 	<talkaction log="yes" words="/raid" access="4" script="raid.lua"/>
 	<talkaction log="yes" words="/newtype" access="4" script="newtype.lua"/>

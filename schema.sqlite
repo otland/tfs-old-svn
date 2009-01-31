@@ -4,7 +4,7 @@ CREATE TABLE "server_config" (
 	UNIQUE ("config")
 );
 
-INSERT INTO "server_config" VALUES ('db_version', 8);
+INSERT INTO "server_config" VALUES ('db_version', 9);
 
 CREATE TABLE "server_motd" (
 	"id" INTEGER NOT NULL,
@@ -281,15 +281,16 @@ CREATE TABLE "bans" (
 	"admin_id" INTEGER NOT NULL DEFAULT 0,
 	"comment" TEXT NOT NULL,
 	"reason" INTEGER NOT NULL DEFAULT 0,
-	"action" INTEGER  NOT NULL DEFAULT 0
+	"action" INTEGER  NOT NULL DEFAULT 0,
+	"statement" VARCHAR(255) NOT NULL DEFAULT ''
 );
 
 CREATE TRIGGER "oncreate_guilds"
 AFTER INSERT ON "guilds"
 BEGIN
-	INSERT INTO "guild_ranks" ("name", "level", "guild_id") VALUES ("the Leader", 3, NEW."id");
-	INSERT INTO "guild_ranks" ("name", "level", "guild_id") VALUES ("a Vice-Leader", 2, NEW."id");
-	INSERT INTO "guild_ranks" ("name", "level", "guild_id") VALUES ("a Member", 1, NEW."id");
+	INSERT INTO "guild_ranks" ("name", "level", "guild_id") VALUES ("Leader", 3, NEW."id");
+	INSERT INTO "guild_ranks" ("name", "level", "guild_id") VALUES ("Vice-Leader", 2, NEW."id");
+	INSERT INTO "guild_ranks" ("name", "level", "guild_id") VALUES ("Member", 1, NEW."id");
 END;
 
 CREATE TRIGGER "oncreate_players"
@@ -311,7 +312,7 @@ ON "accounts"
 FOR EACH ROW
 BEGIN
 	DELETE FROM "players" WHERE "account_id" = OLD."id";
-	DELETE FROM "bans" WHERE "type" != 1 AND "type" != 2 AND "value" = OLD."id";
+	DELETE FROM "bans" WHERE "type" NOT IN (1, 2) AND "value" = OLD."id";
 END;
 
 CREATE TRIGGER "ondelete_players"

@@ -16,9 +16,6 @@
 ]
 
 [ IDS
-	Depot Tile
-		100 + DepotID
-
 	Level Tile
 		1000 + Required Level
 
