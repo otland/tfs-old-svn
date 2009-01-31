@@ -138,7 +138,7 @@ void signalHandler(int32_t sig)
 			g_game.setGameState(GAME_STATE_NORMAL);
 			break;
 		case SIGCONT:
-			g_game.reloadInfo((RELOAD_ALL);
+			g_game.reloadInfo(RELOAD_ALL);
 			break;
 		case SIGQUIT:
 			Dispatcher::getDispatcher().addTask(createTask(
