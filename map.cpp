@@ -1255,15 +1255,12 @@ uint32_t Map::clean()
 	{
 		Trash trash = g_game.getTrash();
 		tiles = trash.size();
-
+;
 		Trash::iterator it = trash.begin();
-		Trash::iterator nit;
 		if(g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES))
 		{
 			while(it != trash.end())
 			{
-				nit = it;
-				nit++;
 				if((cleanTile = getTile(*it)))
 				{
 					cleanTile->resetFlag(TILESTATE_TRASHED);
@@ -1281,16 +1278,14 @@ uint32_t Map::clean()
 					}
 				}
 
-				g_game.removeTrash(it);
-				it = nit;
+				g_game.eraseTrash(it);
+				it++;
 			}
 		}
 		else
 		{
 			while(it != trash.end())
 			{
-				nit = it;
-				nit++;
 				if((cleanTile = getTile(*it)))
 				{
 					cleanTile->resetFlag(TILESTATE_TRASHED);
@@ -1308,8 +1303,8 @@ uint32_t Map::clean()
 					}
 				}
 
-				g_game.removeTrash(it);
-				it = nit;
+				g_game.eraseTrash(it);
+				it++;
 			}
 		}
 	}

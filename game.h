@@ -122,7 +122,7 @@ struct RuleViolation
 
 typedef std::map< uint32_t, shared_ptr<RuleViolation> > RuleViolationsMap;
 typedef std::vector< std::pair<std::string, uint32_t> > Highscore;
-typedef std::vector<Position> Trash;
+typedef std::list<Position> Trash;
 
 #define EVENT_LIGHTINTERVAL 10000
 #define EVENT_DECAYINTERVAL 1000
@@ -147,7 +147,7 @@ class Game
 
 		Trash getTrash() const {return trash;}
 		void addTrash(Position pos) {trash.push_back(pos);}
-		void removeTrash(Trash::iterator it) {trash.erase(it);}
+		void eraseTrash(Trash::iterator it) {trash.erase(it);}
 
 		void prepareGlobalSave();
 		void globalSave();
