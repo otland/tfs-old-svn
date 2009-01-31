@@ -78,6 +78,7 @@ void MonsterType::reset()
 	isConvinceable = false;
 	isAttackable = true;
 	isHostile = true;
+	isLureable = false;
 
 	lightLevel = 0;
 	lightColor = 0;
@@ -908,6 +909,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 								SHOW_XML_WARNING("staticattack greater than 100");
 								intValue = 100;
 							}
+
 							mType->staticAttackChance = intValue;
 						}
 
@@ -927,6 +929,9 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 
 						if(readXMLInteger(tmpNode, "runonhealth", intValue))
 							mType->runAwayHealth = intValue;
+
+						if(readXMLInteger(tmpNode, "lureable", intValue))
+							mType->isLureable = (intValue != 0);
 
 						if(readXMLString(tmpNode, "skull", strValue))
 						{
