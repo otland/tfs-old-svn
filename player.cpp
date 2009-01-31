@@ -2670,7 +2670,16 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 				continue;
 
 			if(Container* subContainer = dynamic_cast<Container*>(inventory[i]))
-				containerList.push_back(subContainer);
+			{
+				if(subContainer->__queryAdd(-1, item, item->getItemCount(), 0) == RET_NOERROR)
+				{
+					index = INDEX_WHEREEVER;
+					*destItem = NULL;
+					return subContainer;
+				}
+				else
+					containerList.push_back(subContainer);
+			}
 		}
 
 		//check the deep containers
