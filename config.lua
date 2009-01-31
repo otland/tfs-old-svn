@@ -105,12 +105,12 @@
 	timeBetweenExActions = 1000
 
 	-- Map
+	-- NOTE: storeTrash costs more memory, but will perform alot faster cleaning.
 	mapName = "forgotten"
 	mapAuthor = "Komic"
 	randomizeTiles = "yes"
+	storeTrash = "yes"
 	cleanProtectedZones = "yes"
-	-- NOTE: This costs more memory resources but will perform map clean alot faster
-	storeTrashedTiles = "yes"
 
 	-- Miscellaneous
 	-- NOTE: defaultPriority works only on Windows
@@ -161,8 +161,8 @@
 
 	-- Summons
 	maxPlayerSummons = 2
-	teleportAllSummons = "no" --FIXME: Doesn't work
-	teleportPlayerSummons = "no" --FIXME: Doesn't work
+	teleportAllSummons = "no"
+	teleportPlayerSummons = "no"
 
 	-- Status
 	ownerName = ""
