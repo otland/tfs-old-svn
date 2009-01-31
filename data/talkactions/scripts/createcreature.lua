@@ -5,9 +5,9 @@ function onSay(cid, words, param)
 	end
 
 	local position = getCreaturePosition(cid)
-	local effect = CONST_ME_POFF
-	if(func(param, position) ~= LUA_ERROR) then
-		effect = CONST_ME_MAGIC_RED
+	local effect = CONST_ME_MAGIC_RED
+	if(func(param, position) == LUA_ERROR) then
+		effect = CONST_ME_POFF
 		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTENOUGHROOM)
 	end
 
