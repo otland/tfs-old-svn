@@ -77,7 +77,7 @@ bool BedItem::readAttr(AttrTypes_t attr, PropStream& propStream)
 	return Item::readAttr(attr, propStream);
 }
 
-bool BedItem::serializeAttr(PropWriteStream& propWriteStream)
+bool BedItem::serializeAttr(PropWriteStream& propWriteStream) const
 {
 	if(sleeperGUID != 0)
 	{

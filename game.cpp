@@ -230,8 +230,9 @@ int32_t Game::loadMap(std::string filename)
 
 void Game::cleanMap(uint32_t& count)
 {
+	count = 0;
 	uint64_t start = OTSYS_TIME();
-	int32_t count = 0, tiles = -1;
+	int32_t tiles = -1;
 
 	Tile* tile = NULL;
 	Item* item = NULL;
@@ -248,11 +249,11 @@ void Game::cleanMap(uint32_t& count)
 					tile->resetFlag(TILESTATE_TRASHED);
 					if(!tile->hasFlag(TILESTATE_HOUSE))
 					{
-						for(uint32_t i = 0; i < cleanTile->getThingCount(); ++i)
+						for(uint32_t i = 0; i < tile->getThingCount(); ++i)
 						{
-							if((item = cleanTile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
+							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
 							{
-								g_game.internalRemoveItem(NULL, item);
+								internalRemoveItem(NULL, item);
 								--i;
 								count++;
 							}
@@ -273,11 +274,11 @@ void Game::cleanMap(uint32_t& count)
 					tile->resetFlag(TILESTATE_TRASHED);
 					if(!tile->hasFlag(TILESTATE_PROTECTIONZONE))
 					{
-						for(uint32_t i = 0; i < cleanTile->getThingCount(); ++i)
+						for(uint32_t i = 0; i < tile->getThingCount(); ++i)
 						{
-							if((item = cleanTile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
+							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
 							{
-								g_game.internalRemoveItem(NULL, item);
+								internalRemoveItem(NULL, item);
 								--i;
 								count++;
 							}
@@ -300,11 +301,11 @@ void Game::cleanMap(uint32_t& count)
 				{
 					if((tile = getTile(x, y, (uint32_t)z)) && !tile->hasFlag(TILESTATE_HOUSE))
 					{
-						for(uint32_t i = 0; i < cleanTile->getThingCount(); ++i)
+						for(uint32_t i = 0; i < tile->getThingCount(); ++i)
 						{
-							if((item = cleanTile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
+							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
 							{
-								g_game.internalRemoveItem(NULL, item);
+								internalRemoveItem(NULL, item);
 								--i;
 								count++;
 							}
@@ -324,11 +325,11 @@ void Game::cleanMap(uint32_t& count)
 				{
 					if((tile = getTile(x, y, (uint32_t)z)) && !tile->hasFlag(TILESTATE_PROTECTIONZONE))
 					{
-						for(uint32_t i = 0; i < cleanTile->getThingCount(); ++i)
+						for(uint32_t i = 0; i < tile->getThingCount(); ++i)
 						{
-							if((item = cleanTile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
+							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
 							{
-								g_game.internalRemoveItem(NULL, item);
+								internalRemoveItem(NULL, item);
 								--i;
 								count++;
 							}
@@ -350,7 +351,7 @@ void Game::refreshMap()
 {
 	Tile* tile = NULL;
 	Item* item = NULL;
-	for(RefreshMap::iterator it = refreshMap.begin(); it != refreshMap.end(); ++it)
+	for(RefreshTiles::iterator it = refreshTiles.begin(); it != refreshTiles.end(); ++it)
 	{
 		tile = it->first;
 		for(int32_t i = tile->downItems.size() - 1; i >= 0; --i)
@@ -2118,6 +2119,7 @@ bool Game::playerOpenPrivateChannel(uint32_t playerId, std::string& receiver)
 		player->sendOpenPrivateChannel(receiver);
 	else
 		player->sendCancel("A player with this name does not exist.");
+
 	return true;
 }
 
@@ -5688,7 +5690,10 @@ void Game::globalSave()
 
 		//clean map if configured to
 		if(g_config.getBool(ConfigManager::CLEAN_MAP_AT_GLOBALSAVE))
-			map->clean();
+		{
+			uint32_t dummy;
+			cleanMap(dummy);
+		}
 
 		//clear temporial and expired bans
 		IOBan::getInstance()->clearTemporials();

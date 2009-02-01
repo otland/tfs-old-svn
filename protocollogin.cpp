@@ -113,7 +113,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 			password = "1";
 		else
 		{
-			disconnectClient(0x0A, "You must enter your account name.");
+			disconnectClient(0x0A, "Invalid Account Name.");
 			return false;
 		}
 	}

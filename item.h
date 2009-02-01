@@ -72,18 +72,9 @@ enum ItemDecayState_t
 	DECAYING_PENDING
 };
 
-// from iomap.h
-#pragma pack(1)
-struct TeleportDest
-{
-	uint16_t _x;
-	uint16_t _y;
-	uint8_t _z;
-};
-#pragma pack()
-
 enum AttrTypes_t
 {
+	ATTR_END = 0,
 	//ATTR_DESCRIPTION = 1,
 	//ATTR_EXT_FILE = 2,
 	ATTR_TILE_FLAGS = 3,
@@ -106,6 +97,7 @@ enum AttrTypes_t
 	ATTR_SLEEPERGUID = 20,
 	ATTR_SLEEPSTART = 21,
 	ATTR_CHARGES = 22,
+	ATTR_CONTAINER_ITEMS = 23,
 	ATTR_NAME = 30,
 	ATTR_PLURALNAME = 31,
 	ATTR_ARTICLE = 32,
@@ -117,6 +109,18 @@ enum AttrTypes_t
 	ATTR_ATTACKSPEED = 38,
 	ATTR_HITCHANCE = 39,
 };
+
+// from iomap.h
+#pragma pack(1)
+struct TeleportDest
+{
+	uint16_t _x;
+	uint16_t _y;
+	uint8_t _z;
+};
+#pragma pack()
+
+typedef std::list<Item*> ItemList;
 
 class ItemAttributes
 {
@@ -312,7 +316,7 @@ class Item : virtual public Thing, public ItemAttributes
 		//serialization
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool unserializeAttr(PropStream& propStream);
-		virtual bool serializeAttr(PropWriteStream& propWriteStream);
+		virtual bool serializeAttr(PropWriteStream& propWriteStream) const;
 		virtual bool unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream);
 
 		virtual bool isPushable() const {return !isNotMoveable();}

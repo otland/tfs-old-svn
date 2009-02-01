@@ -521,7 +521,7 @@ class Game
 		void refreshMap();
 
 		void addTrash(Position pos) {trash.push_back(pos);}
-		void addRefreshTile(Tile* tile, RefreshBlock_t rb) {refreshTileMap[tile] = rb;}
+		void addRefreshTile(Tile* tile, RefreshBlock_t rb) {refreshTiles[tile] = rb;}
 
 		//Events
 		void checkCreatureWalk(uint32_t creatureId);
@@ -616,8 +616,8 @@ class Game
 		int64_t stateDelay;
 		bool globalSaveMessage[2];
 
-		typedef std::map<Tile*, RefreshBlock_t> RefreshMap;
-		RefreshMap refreshMap;
+		typedef std::map<Tile*, RefreshBlock_t> RefreshTiles;
+		RefreshTiles refreshTiles;
 
 		typedef std::list<Position> Trash;
 		Trash trash;

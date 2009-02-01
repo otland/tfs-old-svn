@@ -27,6 +27,7 @@
 #include <string>
 #include <list>
 
+typedef std::map<int32_t, std::pair<Item*, int32_t> > ItemMap;
 typedef std::list<std::pair<Container*, int32_t> > ContainerStackList;
 
 class IOMapSerialize
@@ -54,6 +55,9 @@ class IOMapSerialize
 		bool saveTile(Database* db, uint32_t tileId, const Tile* tile);
 
 		bool saveTile(PropWriteStream& stream, const Tile* tile);
+
+		bool loadItem(PropStream& propStream, Cylinder* parent);
+		bool saveItem(PropWriteStream& stream, const Item* item);
 };
 
 #endif

@@ -233,8 +233,7 @@ CREATE TABLE `house_lists`
 	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
 	`listid` INT NOT NULL,
 	`list` TEXT NOT NULL,
-	UNIQUE (`house_id`, `world_id`, `listid`),
-	FOREIGN KEY (`house_id`) REFERENCES `houses`(`id`) ON DELETE CASCADE
+	UNIQUE (`house_id`, `world_id`, `listid`)
 ) ENGINE = InnoDB;
 
 CREATE TABLE `house_storage`
@@ -242,8 +241,7 @@ CREATE TABLE `house_storage`
 	`house_id` INT UNSIGNED NOT NULL,
 	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
 	`data` BLOB NOT NULL,
-	UNIQUE (`house_id`, `world_id`),
-	FOREIGN KEY (`house_id`) REFERENCES `houses`(`id`) ON DELETE CASCADE
+	UNIQUE (`house_id`, `world_id`)
 ) ENGINE = InnoDB;
 
 CREATE TABLE `houses`

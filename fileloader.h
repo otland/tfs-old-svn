@@ -231,15 +231,14 @@ class PropStream
 
 		inline bool GET_STRING(std::string& ret)
 		{
-			char* str;
 			uint16_t strLen;
 			if(!GET_USHORT(strLen))
 				return false;
 
-			if(size() < strLen)
+			if(size() < (int32_t)strLen)
 				return false;
 
-			str = new char[strLen + 1];
+			char* str = new char[strLen + 1];
 			memcpy(str, p, strLen);
 			str[strLen] = 0;
 			ret.assign(str, strLen);
@@ -250,15 +249,14 @@ class PropStream
 
 		inline bool GET_LSTRING(std::string& ret)
 		{
-			char* str;
 			uint32_t strLen;
 			if(!GET_ULONG(strLen))
 				return false;
 
-			if(size() < strLen)
+			if(size() < (int32_t)strLen)
 				return false;
 
-			str = new char[strLen + 1];
+			char* str = new char[strLen + 1];
 			memcpy(str, p, strLen);
 			str[strLen] = 0;
 			ret.assign(str, strLen);
@@ -269,8 +267,7 @@ class PropStream
 
 		inline bool GET_NSTRING(uint16_t strLen, std::string& ret)
 		{
-			char* str;
-			if(size() < strLen)
+			if(size() < (int32_t)strLen)
 				return false;
 
 			char* str = new char[strLen + 1];
@@ -282,7 +279,7 @@ class PropStream
 			return true;
 		}
 
-		inline bool SKIP_N(uint16_t n)
+		inline bool SKIP_N(int16_t n)
 		{
 			if(size() < n)
 				return false;

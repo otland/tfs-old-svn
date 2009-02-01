@@ -646,8 +646,8 @@ bool Door::readAttr(AttrTypes_t attr, PropStream& propStream)
 		setDoorId(_doorId);
 		return true;
 	}
-	else
-		return Item::readAttr(attr, propStream);
+
+	return Item::readAttr(attr, propStream);
 }
 
 void Door::setHouse(House* _house)

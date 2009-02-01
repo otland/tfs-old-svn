@@ -245,15 +245,15 @@ bool IOMapSerialize::loadMapBinary(Map* map)
  
 	do
 	{
-		uint32_t attrSize = 0;
+		uint64_t attrSize = 0;
 		const char* attr = result->getDataStream("data", attrSize);
 
 		PropStream propStream;
 		propStream.init(attr, attrSize); 
 		while(propStream.size())
 		{
-			uint16_t x, y;
-			uint8_t z;
+			uint16_t x = 0, y = 0;
+			uint8_t z = 7;
 
 			propStream.GET_USHORT(x);
 			propStream.GET_USHORT(y);
@@ -263,77 +263,14 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 			if(!tile)
 			{
 				std::cout << "[Error - IOMapSerialize::loadMapBinary] Unserialization of invalid tile at position ";
-				std::cout << x << "/" << y << "/" << z << std::endl;
-				continue;
+				std::cout << (int32_t)x << "/" << (int32_t)y << "/" << (int32_t)z << std::endl;
+				break;
 			}
  
-			uint32_t itemCount;
+			uint32_t itemCount = 0;
 			propStream.GET_ULONG(itemCount);
 			while(itemCount--)
-			{
-				Item* item = NULL;	
-				uint16_t id;
-				propStream.GET_USHORT(id);
- 
-				const ItemType& iType = Item::items[id];
-				if(iType.moveable || iType.forceSerialize)
-				{
-					//create a new item
-					item = Item::CreateItem(id); 
-					if(!item)
-						continue;
-
-					if(!item->unserializeAttr(propStream))
-						std::cout << "[Warning - IOMapSerialize::loadMapBinary] Unserialization error [1]" << std::endl;
-
-					tile->__internalAddThing(item);
-					item->__startDecaying();
- 				}
- 				else
-				{
-					// A static item (bed)
-					// find this type in the tile
-					for(uint32_t i = 0; i < tile->getThingCount(); ++i)
-					{
-						Item* findItem = tile->__getThing(i)->getItem();
-						if(!findItem)
-							continue;
- 
-						if(findItem->getID() == id)
-						{
-							item = findItem;
-							break;
-						}
-
-						if(iType.isDoor() && findItem->getDoor())
-						{
-							item = findItem;
-							break;
-						}
-
-						if(iType.isBed() && findItem->getBed())
-						{
-							item = findItem;
-							break;
-						}
- 					}
-
-					if(item)
-					{
-						if(!item->unserializeAttr(propStream))
-							std::cout << "[Warning - IOMapSerialize::loadMapBinary] Unserialization error [0]" << std::endl;
-
-						item = g_game.transformItem(item, id);
- 					}
-					else
-					{
-						// We need to unserialize the attributes, but we have no item to do it on.
-						// Use a dummy item to unserialize.
-						Item dummy(0);
-						dummy.unserializeAttr(propStream);
- 					}
- 				}
- 			}
+				loadItem(propStream, tile);
  		}
 	}
 	while(result->next());
@@ -344,14 +281,14 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 
 bool IOMapSerialize::saveMapBinary(Map* map)
 {
- 	Database* db = Database::instance();
+ 	Database* db = Database::getInstance();
 	//Start the transaction
  	DBTransaction transaction(db);
  	if(!transaction.begin())
  		return false;
 
 	DBQuery query;
-	query << "DELETE FROM `house_storage` `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	query << "DELETE FROM `house_storage` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 	if(!db->executeQuery(query.str()))
  		return false;
 
@@ -361,7 +298,7 @@ bool IOMapSerialize::saveMapBinary(Map* map)
 	{
  		//save house items
 		PropWriteStream stream;
-		for(HouseTileList::iterator tit = house->getHouseTileBegin(); tit != house->getHouseTileEnd(); ++tit)
+		for(HouseTileList::iterator tit = it->second->getHouseTileBegin(); tit != it->second->getHouseTileEnd(); ++tit)
 		{
 			if(!saveTile(stream, *tit))
  				return false;
@@ -386,14 +323,11 @@ bool IOMapSerialize::saveMapBinary(Map* map)
 
 bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 {
-	typedef std::map<int32_t, std::pair<Item*, int32_t> > ItemMap;
+	const Position& tilePos = tile->getPosition();
+	DBResult* result;
 	ItemMap itemMap;
 
-	DBResult* result;
-	const Position& tilePos = tile->getPosition();
-
 	DBQuery query;
-	query.str("");
 	query << "SELECT `tiles`.`id` FROM `tiles` WHERE `x` = " << tilePos.x << " AND `y` = " << tilePos.y;
 	query << " AND `z` = " << tilePos.z << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 	if(!(result = db.storeQuery(query.str())))
@@ -401,6 +335,7 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 
 	int32_t tileId = result->getDataInt("id");
 	db.freeResult(result);
+
 	query.str("");
 	query << "SELECT * FROM `tile_items` WHERE `tile_id` = " << tileId << " AND `world_id` = ";
 	query << g_config.getNumber(ConfigManager::WORLD_ID) << " ORDER BY `sid` DESC;";
@@ -409,9 +344,9 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 		Item* item = NULL;
 		do
 		{
+			item = NULL;
 			int32_t sid = result->getDataInt("sid"), pid = result->getDataInt("pid");
 			int32_t type = result->getDataInt("itemtype"), count = result->getDataInt("count");
-			item = NULL;
 
 			uint64_t attrSize = 0;
 			const char* attr = result->getDataStream("attributes", attrSize);
@@ -462,20 +397,20 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 						break;
 					}
 				}
+			}
 
-				if(item)
-				{
-					if(!item->unserializeAttr(propStream))
-						std::cout << "[Warning - IOMapSerialize::loadTile] Unserialization error [0]" << std::endl;
+			if(item)
+			{
+				if(!item->unserializeAttr(propStream))
+					std::cout << "[Warning - IOMapSerialize::loadTile] Unserialization error [0]" << std::endl;
 
-					item = g_game.transformItem(item, type);
-					itemMap[sid] = std::make_pair(item, pid);
-				}
-				else
-				{
-					std::cout << "[Warning - IOMapSerialize::loadTile] NULL item at " << tile->getPosition() << ";
-					std::cout << " (type = " << type << ", sid = " << sid << ", pid = " << pid << ")" << std::endl;
-				}
+				item = g_game.transformItem(item, type);
+				itemMap[sid] = std::make_pair(item, pid);
+			}
+			else
+			{
+				std::cout << "[Warning - IOMapSerialize::loadTile] NULL item at " << tile->getPosition();
+				std::cout << " (type = " << type << ", sid = " << sid << ", pid = " << pid << ")" << std::endl;
 			}
 		}
 		while(result->next());
@@ -583,10 +518,14 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 
 bool IOMapSerialize::saveTile(PropWriteStream& stream, const Tile* tile)
 {
+	int32_t tileCount = tile->getThingCount();
+	if(!tileCount)
+		return true;
+
 	std::vector<Item*> items;
-	for(uint32_t i = 0; i < tile->getThingCount(); ++i)
+	for(; tileCount > 0; --tileCount)
 	{
-		Item* item = tile->__getThing(i)->getItem();
+		Item* item = tile->__getThing(tileCount - 1)->getItem();
 		if(!item)
 			continue;
 
@@ -596,20 +535,154 @@ bool IOMapSerialize::saveTile(PropWriteStream& stream, const Tile* tile)
 		items.push_back(item);
 	}
 
-	if(items.size() > 0)
+	tileCount = items.size(); //lame, but at least we don't need new variable
+	if(tileCount > 0)
 	{
 		stream.ADD_USHORT(tile->getPosition().x);
 		stream.ADD_USHORT(tile->getPosition().y);
 		stream.ADD_UCHAR(tile->getPosition().z);
-		stream.ADD_ULONG(items.size());
+
+		stream.ADD_ULONG(tileCount);
 		for(std::vector<Item*>::iterator it = items.begin(); it != items.end(); ++it)
+			saveItem(stream, (*it));
+	}
+
+	return true;
+}
+
+bool IOMapSerialize::loadItem(PropStream& propStream, Cylinder* parent)
+{
+	uint16_t id = 0;
+	propStream.GET_USHORT(id);
+
+	Item* item = NULL;
+	const ItemType& iType = Item::items[id];
+	if(iType.moveable || iType.forceSerialize)
+	{
+		//create a new item
+		item = Item::CreateItem(id);
+		if(!item)
+			return false;
+
+		bool ret = item->unserializeAttr(propStream);
+		item = g_game.transformItem(item, id);
+		if(!ret)
 		{
-			Item* item = *it;
-			stream.ADD_USHORT(item->getID());
-			item->serializeAttr(stream);
-			stream.ADD_UCHAR(0x00);
+			propStream.SKIP_N(-1);
+			uint8_t prop = 0;
+			propStream.GET_UCHAR(prop);
+			if(prop == ATTR_CONTAINER_ITEMS)
+			{
+				Container* container = item->getContainer();
+				uint32_t items = 0;
+				propStream.GET_ULONG(items);
+				while(items > 0)
+				{
+					loadItem(propStream, container);
+					--items;
+				}
+
+				ret = item->unserializeAttr(propStream);
+			}
+		}
+
+		if(!ret)
+			std::cout << "[Warning - IOMapSerialize::loadItem] Unserialization error [0]" << std::endl;
+
+		if(parent)
+		{
+			parent->__internalAddThing(item);
+			item->__startDecaying();
+		}
+		else
+			delete item;
+	}
+	else
+	{
+		// A static item (bed)
+		// find this type in the tile
+		Tile* tile = parent->getTile();
+		if(!tile)
+		{
+			std::cout << "[Warning - IOMapSerialize::loadItem] Unserialization error [1]" << std::endl;
+			return false;
+		}
+
+		for(uint32_t i = 0; i < tile->getThingCount(); ++i)
+		{
+			Item* findItem = tile->__getThing(i)->getItem();
+			if(!findItem)
+				continue;
+
+			if(findItem->getID() == id)
+			{
+				item = findItem;
+				break;
+			}
+
+			if(iType.isDoor() && findItem->getDoor())
+			{
+				item = findItem;
+				break;
+			}
+
+			if(iType.isBed() && findItem->getBed())
+			{
+				item = findItem;
+				break;
+			}
+		}
+
+		if(item)
+		{
+			bool ret = item->unserializeAttr(propStream);
+			item = g_game.transformItem(item, id);
+			if(!ret)
+			{
+				propStream.SKIP_N(-1);
+				uint8_t prop = 0;
+				propStream.GET_UCHAR(prop);
+				if(prop == ATTR_CONTAINER_ITEMS)
+				{
+					Container* container = item->getContainer();
+					uint32_t items = 0;
+					propStream.GET_ULONG(items);
+					while(items > 0)
+					{
+						loadItem(propStream, container);
+						--items;
+					}
+
+					ret = item->unserializeAttr(propStream);
+				}
+			}
+
+			if(!ret)
+				std::cout << "[Warning - IOMapSerialize::loadMapBinary] Unserialization error [2]" << std::endl;
+		}
+		else
+		{
+			std::cout << "[Warning - IOMapSerialize::loadItem] NULL item at " << tile->getPosition() << " with id " << id << std::endl;
+			Item dummy(0);
+			dummy.unserializeAttr(propStream);
 		}
 	}
 
+	return true;
+}
+
+bool IOMapSerialize::saveItem(PropWriteStream& stream, const Item* item)
+{
+	stream.ADD_USHORT(item->getID());
+	item->serializeAttr(stream);
+	if(const Container* container = item->getContainer())
+	{
+		stream.ADD_UCHAR(ATTR_CONTAINER_ITEMS);
+		stream.ADD_ULONG(container->size());
+		for(ItemList::const_reverse_iterator rit = container->getReversedItems(); rit != container->getReversedEnd(); ++rit)
+			saveItem(stream, (*rit));
+	}
+
+	stream.ADD_UCHAR(0x00);
 	return true;
 }

@@ -548,12 +548,14 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 
 bool Item::unserializeAttr(PropStream& propStream)
 {
-	uint8_t attr_type;
-	while(propStream.GET_UCHAR(attr_type))
+	uint8_t attrType;
+	while(propStream.GET_UCHAR(attrType) && attrType != ATTR_END)
 	{
-		if(!readAttr((AttrTypes_t)attr_type, propStream))
+		if(!readAttr((AttrTypes_t)attrType, propStream))
 		{
-			std::cout << "Failed to unserialize attr_type: " << (AttrTypes_t)attr_type << " for item: " << id << std::endl;
+			if(attrType != ATTR_CONTAINER_ITEMS)
+				std::cout << "Failed to unserialize attr_type: " << (AttrTypes_t)attrType << " for item: " << id << std::endl;
+
 			return false;
 		}
 	}
@@ -566,7 +568,7 @@ bool Item::unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream)
 	return unserializeAttr(propStream);
 }
 
-bool Item::serializeAttr(PropWriteStream& propWriteStream)
+bool Item::serializeAttr(PropWriteStream& propWriteStream) const
 {
 	if(isStackable() || isFluidContainer() || isSplash())
 	{

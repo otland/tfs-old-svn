@@ -34,7 +34,7 @@ class Teleport : public Item, public Cylinder
 
 		//serialization
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
-		virtual bool serializeAttr(PropWriteStream& propWriteStream);
+		virtual bool serializeAttr(PropWriteStream& propWriteStream) const;
 
 		void setDestPos(const Position& pos) {destPos = pos;}
 		const Position& getDestPos() const {return destPos;}
