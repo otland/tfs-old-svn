@@ -238,7 +238,7 @@ void Game::cleanMap(uint32_t& count)
 	Item* item = NULL;
 	if(g_config.getBool(ConfigManager::STORE_TRASH))
 	{
-		tiles = trash.size();;
+		tiles = trash.size();
 		Trash::iterator it = trash.begin();
 		if(g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES))
 		{
