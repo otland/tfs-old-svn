@@ -141,6 +141,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confString[REPLACE_KICK_ON_LOGIN] = getGlobalString(L, "replaceKickOnLogin", "yes");
 	m_confString[ENABLE_RULE_VIOLATION_REPORTS] = getGlobalString(L, "enableRuleViolationReports", "yes");
 	m_confString[OLD_CONDITION_ACCURACY] = getGlobalString(L, "oldConditionAccuracy", "no");
+	m_confInteger[ALTERNATIVE_EXHAUST] = getGlobalNumber(L, "alternativeExhaust", 1000);
 	m_isLoaded = true;
 
 	lua_close(L);

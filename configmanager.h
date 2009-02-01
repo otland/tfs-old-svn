@@ -136,6 +136,7 @@ class ConfigManager
 			FRAG_TIME,
 			WHITE_SKULL_TIME,
 			AUTO_SAVE_EACH_MINUTES,
+			ALTERNATIVE_EXHAUST,
 			LAST_INTEGER_CONFIG /* this must be the last one */
 		};
 

@@ -555,7 +555,7 @@ bool Spell::playerSpellCheck(Player* player, bool ignoreExhaust/* = false*/) con
 
 			if(!ignoreExhaust)
 			{
-				if(player->hasCondition(CONDITION_EXHAUST_COMBAT) || (OTSYS_TIME() - player->getLastCombatExhaust()) <= 1000)
+				if(player->hasCondition(CONDITION_EXHAUST_COMBAT) || (OTSYS_TIME() - player->getLastCombatExhaust()) <= g_config.getNumber(ConfigManager::ALTERNATIVE_EXHAUST))
 					exhaust = true;
 				else
 					player->setLastCombatExhaust(OTSYS_TIME());
@@ -563,7 +563,7 @@ bool Spell::playerSpellCheck(Player* player, bool ignoreExhaust/* = false*/) con
 		}
 		else if(!ignoreExhaust)
 		{
-			if(player->hasCondition(CONDITION_EXHAUST_HEAL) || (OTSYS_TIME() - player->getLastHealExhaust()) <= 1000)
+			if(player->hasCondition(CONDITION_EXHAUST_HEAL) || (OTSYS_TIME() - player->getLastHealExhaust()) <= g_config.getNumber(ConfigManager::ALTERNATIVE_EXHAUST))
 				exhaust = true;
 			else
 				player->setLastHealExhaust(OTSYS_TIME());

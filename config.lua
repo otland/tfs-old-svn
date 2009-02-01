@@ -29,6 +29,8 @@
 	removeChargesFromRunes = "yes"
 	timeToDecreaseFrags = 24 * 60 * 60 * 1000
 	whiteSkullTime = 15 * 60 * 1000
+	oldConditionAccuracy = "no"
+	alternativeExhaustion = 1000
 
 	-- Commands
 	displayGamemastersWithOnlineCommand = "no"
