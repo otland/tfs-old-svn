@@ -32,8 +32,9 @@
 	pzLocked = 60 * 1000
 	criticalHitChance = 7
 	displayCriticalHitNotify = "no"
-	removeAmmoWhenUsingDistanceWeapon = "yes"
-	removeChargesFromRunes = "yes"
+	removeWeaponAmmunition = "yes"
+	removeWeaponCharges = "yes"
+	removeRuneCharges = "yes"
 	timeToDecreaseFrags = 24 * 60 * 60 * 1000
 	whiteSkullTime = 15 * 60 * 1000
 	noDamageToSameLookfeet = "no"

@@ -37,20 +37,10 @@ bool IOMapSerialize::loadMap(Map* map)
 
 bool IOMapSerialize::saveMap(Map* map)
 {
-	int64_t start = OTSYS_TIME();
-	std::string storage = "relational";
-
-	bool s = false;
 	if(g_config.getBool(ConfigManager::HOUSE_STORAGE))
-	{
-		s = saveMapBinary(map);
-		storage = "binary";
-	}
-	else
-		s = saveMapRelational(map);
+		return saveMapBinary(map);
 
-	std::cout << "> SAVE: Performed in " << (OTSYS_TIME() - start) / (1000.) << " seconds using " << storage << " storage type." << std::endl;
-	return s;
+	return saveMapRelational(map);
 }
 
 
@@ -529,10 +519,8 @@ bool IOMapSerialize::saveTile(PropWriteStream& stream, const Tile* tile)
 		if(!item)
 			continue;
 
-		if(item->isNotMoveable() && !item->forceSerialize())
-			continue;
-
-		items.push_back(item);
+		if(item->isMoveable() && item->forceSerialize())
+			items.push_back(item);
 	}
 
 	tileCount = items.size(); //lame, but at least we don't need new variable
@@ -574,11 +562,14 @@ bool IOMapSerialize::loadItem(PropStream& propStream, Cylinder* parent)
 			if(prop == ATTR_CONTAINER_ITEMS)
 			{
 				Container* container = item->getContainer();
+
 				uint32_t items = 0;
 				propStream.GET_ULONG(items);
 				while(items > 0)
 				{
-					loadItem(propStream, container);
+					if(!loadItem(propStream, container))
+						std::cout << "[Warning - IOMapSerialize::loadItem] Unserialization error for container item [1]" << std::endl;
+
 					--items;
 				}
 
@@ -640,16 +631,20 @@ bool IOMapSerialize::loadItem(PropStream& propStream, Cylinder* parent)
 			if(!ret)
 			{
 				propStream.SKIP_N(-1);
+
 				uint8_t prop = 0;
 				propStream.GET_UCHAR(prop);
 				if(prop == ATTR_CONTAINER_ITEMS)
 				{
 					Container* container = item->getContainer();
+
 					uint32_t items = 0;
 					propStream.GET_ULONG(items);
 					while(items > 0)
 					{
-						loadItem(propStream, container);
+						if(!loadItem(propStream, container))
+							std::cout << "[Warning - IOMapSerialize::loadItem] Unserialization error for container item [0]" << std::endl;
+
 						--items;
 					}
 

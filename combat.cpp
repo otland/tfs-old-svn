@@ -91,7 +91,7 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 				if(const Weapon* weapon = g_weapons->getWeapon(tool))
 				{
 					max = (int32_t)(weapon->getWeaponDamage(player, target, tool, true) * maxa + maxb);
-					if(params.useCharges && tool->hasCharges())
+					if(params.useCharges && tool->hasCharges() && g_config.getBool(ConfigManager::REMOVE_WEAPON_CHARGES))
 						g_game.transformItem(tool, tool->getID(), std::max((int32_t)0, ((int32_t)tool->getCharges()) - 1));
 				}
 				else
@@ -914,7 +914,7 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 				if(tool)
 				{
 					attackValue = tool->getAttack();
-					if(useCharges && tool->hasCharges())
+					if(useCharges && tool->hasCharges() && g_config.getBool(ConfigManager::REMOVE_WEAPON_CHARGES))
 						g_game.transformItem(tool, tool->getID(), std::max(0, tool->getCharges() - 1));
 				}
 				float attackFactor = player->getAttackFactor();

@@ -13,6 +13,7 @@
 	<action itemid="2554" script="tools/shovel.lua"/>
 	<action itemid="5710" script="tools/shovel.lua"/>
 	<action itemid="2120" script="tools/rope.lua"/>
+	<action itemid="7731" script="tools/rope.lua"/>
 	<action itemid="2553" script="tools/pick.lua"/>
 	<action itemid="5908" script="tools/obsidian_knife.lua"/>
 	<action itemid="5942" script="tools/blessed_wooden_stake.lua"/>

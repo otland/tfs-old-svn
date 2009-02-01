@@ -392,6 +392,7 @@ class Item : virtual public Thing, public ItemAttributes
 		bool isStackable() const {return items[id].stackable;}
 		bool isAlwaysOnTop() const {return items[id].alwaysOnTop;}
 		bool isNotMoveable() const {return !items[id].moveable;}
+		bool isMoveable() const {return items[id].moveable;}
 		bool isPickupable() const {return items[id].pickupable;}
 		bool isUseable() const {return items[id].useable;}
 		bool isHangable() const {return items[id].isHangable;}

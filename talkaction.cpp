@@ -219,7 +219,7 @@ bool TalkAction::configureEvent(xmlNodePtr p)
 	if(readXMLString(p, "log", strValue))
 		m_logged = booleanString(asLowerCaseString(strValue));
 
-	if(readXMLString(p, "case-sensitive", strValue) || readXMLString(p, "casesensitive", strValue))
+	if(readXMLString(p, "case-sensitive", strValue) || readXMLString(p, "casesensitive", strValue) || readXMLString(p, "sensitive", strValue))
 		m_sensitive = booleanString(asLowerCaseString(strValue));
 
 	return true;

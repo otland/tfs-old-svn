@@ -4286,6 +4286,7 @@ int32_t LuaScriptInterface::luaGetTileInfo(lua_State* L)
 		setFieldBool(L, "nologout", tile->hasFlag(TILESTATE_NOLOGOUT));
 		setFieldBool(L, "pvp", tile->hasFlag(TILESTATE_PVPZONE));
 		setFieldBool(L, "refresh", tile->hasFlag(TILESTATE_REFRESH));
+		setFieldBool(L, "trashed", tile->hasFlag(TILESTATE_TRASHED));
 		setFieldBool(L, "house", tile->hasFlag(TILESTATE_HOUSE));
 	}
 	else

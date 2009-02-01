@@ -121,8 +121,9 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confNumber[MAX_MESSAGEBUFFER] = getGlobalNumber(L, "maxMessageBuffer", 4);
 	m_confNumber[CRITICAL_HIT_CHANCE] = getGlobalNumber(L, "criticalHitChance", 5);
 	m_confNumber[KICK_AFTER_MINUTES] = getGlobalNumber(L, "kickIdlePlayerAfterMinutes", 15);
-	m_confBool[REMOVE_AMMO] = getGlobalBool(L, "removeAmmoWhenUsingDistanceWeapon", "yes");
-	m_confBool[REMOVE_RUNE_CHARGES] = getGlobalBool(L, "removeChargesFromRunes", "yes");
+	m_confBool[REMOVE_WEAPON_AMMO] = getGlobalBool(L, "removeWeaponAmmunition", "yes");
+	m_confBool[REMOVE_WEAPON_CHARGES] = getGlobalBool(L, "removeWeaponCharges", "yes");
+	m_confBool[REMOVE_RUNE_CHARGES] = getGlobalBool(L, "removeRuneCharges", "yes");
 	m_confBool[RANDOMIZE_TILES] = getGlobalBool(L, "randomizeTiles", "yes");
 	m_confString[DEFAULT_PRIORITY] = getGlobalString(L, "defaultPriority", "high");
 	m_confBool[EXPERIENCE_FROM_PLAYERS] = getGlobalBool(L, "experienceByKillingPlayers", "no");
@@ -203,44 +204,36 @@ const std::string& ConfigManager::getString(uint32_t _what) const
 {
 	if(m_isLoaded && _what < LAST_STRING_CONFIG)
 		return m_confString[_what];
-	else
-	{
-		std::cout << "Warning: [ConfigManager::getString] " << _what << std::endl;
-		return m_confString[DUMMY_STR];
-	}
+
+	std::cout << "[Warning - ConfigManager::getString] " << _what << std::endl;
+	return m_confString[DUMMY_STR];
 }
 
 bool ConfigManager::getBool(uint32_t _what) const
 {
 	if(m_isLoaded && _what < LAST_BOOL_CONFIG)
 		return m_confBool[_what];
-	else
-	{
-		std::cout << "Warning: [ConfigManager::getBool] " << _what << std::endl;
-		return false;
-	}
+
+	std::cout << "[Warning - ConfigManager::getBool] " << _what << std::endl;
+	return false;
 }
 
 int32_t ConfigManager::getNumber(uint32_t _what) const
 {
 	if(m_isLoaded && _what < LAST_NUMBER_CONFIG)
 		return m_confNumber[_what];
-	else
-	{
-		std::cout << "Warning: [ConfigManager::getNumber] " << _what << std::endl;
-		return 0;
-	}
+
+	std::cout << "[Warning - ConfigManager::getNumber] " << _what << std::endl;
+	return 0;
 }
 
 double ConfigManager::getDouble(uint32_t _what) const
 {
 	if(m_isLoaded && _what < LAST_DOUBLE_CONFIG)
 		return m_confDouble[_what];
-	else
-	{
-		std::cout << "Warning: [ConfigManager::getDouble] " << _what << std::endl;
-		return 0;
-	}
+
+	std::cout << "[Warning - ConfigManager::getDouble] " << _what << std::endl;
+	return 0;
 }
 
 bool ConfigManager::setNumber(uint32_t _what, int32_t _value)
@@ -250,11 +243,9 @@ bool ConfigManager::setNumber(uint32_t _what, int32_t _value)
 		m_confNumber[_what] = _value;
 		return true;
 	}
-	else
-	{
-		std::cout << "Warning: [ConfigManager::setNumber] " << _what << std::endl;
-		return false;
-	}
+
+	std::cout << "[Warning - ConfigManager::setNumber] " << _what << std::endl;
+	return false;
 }
 
 std::string ConfigManager::getGlobalString(lua_State* _L, const std::string& _identifier, const std::string& _default /*= ""*/)
@@ -289,7 +280,6 @@ int32_t ConfigManager::getGlobalNumber(lua_State* _L, const std::string& _identi
 
 	int32_t val = (int32_t)lua_tonumber(_L, -1);
 	lua_pop(_L, 1);
-
 	return val;
 }
 
@@ -304,6 +294,5 @@ double ConfigManager::getGlobalDouble(lua_State* _L, const std::string& _identif
 
 	double val = (double)lua_tonumber(_L, -1);
 	lua_pop(_L, 1);
-
 	return val;
 }

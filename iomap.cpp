@@ -306,6 +306,14 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								if((flags & TILESTATE_NOLOGOUT) == TILESTATE_NOLOGOUT)
 									tile->setFlag(TILESTATE_NOLOGOUT);
 
+								if((flags & TILESTATE_REFRESH) == TILESTATE_REFRESH)
+								{
+									if(isHouseTile)
+										std::cout << "[x:" << px << ", y:" << py << ", z:" << pz << "] House tile flagged as refreshing!";
+
+									tile->setFlag(TILESTATE_REFRESH);
+								}
+
 								break;
 							}
 

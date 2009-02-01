@@ -193,6 +193,10 @@ void Game::setGameState(GameState_t newState)
 void Game::saveGameState(bool savePlayers)
 {
 	std::cout << "> Saving server..." << std::endl;
+	uint64_t start = OTSYS_TIME();
+	ScriptEnviroment::saveGameState();
+
+	map->saveMap();
 	if(savePlayers)
 	{
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
@@ -202,17 +206,20 @@ void Game::saveGameState(bool savePlayers)
 		}
 	}
 
-	map->saveMap();
-	ScriptEnviroment::saveGameState();
+	std::string storage = "relational";
+	if(g_config.getBool(ConfigManager::HOUSE_STORAGE))
+		storage = "binary";
+
+	std::cout << "> SAVE: Complete in " << (OTSYS_TIME() - start) / (1000.) << " seconds using " << storage << " house storage." << std::endl;
 }
 
 void Game::loadGameState()
 {
 	inFightTicks = g_config.getNumber(ConfigManager::PZ_LOCKED);
 	maxPlayers = g_config.getNumber(ConfigManager::MAX_PLAYERS);
-	Player::maxMessageBuffer = g_config.getNumber(ConfigManager::MAX_MESSAGEBUFFER);
 	Monster::despawnRange = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRANGE);
 	Monster::despawnRadius = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRADIUS);
+	Player::maxMessageBuffer = g_config.getNumber(ConfigManager::MAX_MESSAGEBUFFER);
 
 	ScriptEnviroment::loadGameState();
 	checkHighscores();

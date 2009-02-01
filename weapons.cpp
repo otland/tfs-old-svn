@@ -498,31 +498,31 @@ void Weapon::onUsedWeapon(Player* player, Item* item, Tile* destTile) const
 
 void Weapon::onUsedAmmo(Player* player, Item* item, Tile* destTile) const
 {
-	if(g_config.getBool(ConfigManager::REMOVE_AMMO))
+	if(g_config.getBool(ConfigManager::REMOVE_WEAPON_AMMO))
+		return;
+
+	switch(ammoAction)
 	{
-		switch(ammoAction)
-		{
-			case AMMOACTION_REMOVECOUNT:
-				g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getItemCount()) - 1));
-				break;
+		case AMMOACTION_REMOVECOUNT:
+			g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getItemCount()) - 1));
+			break;
 
-			case AMMOACTION_REMOVECHARGE:
+		case AMMOACTION_REMOVECHARGE:
+			g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getCharges()) - 1));
+			break;
+
+		case AMMOACTION_MOVE:
+			g_game.internalMoveItem(player, item->getParent(), destTile, INDEX_WHEREEVER, item, 1, NULL, FLAG_NOLIMIT);
+			break;
+
+		case AMMOACTION_MOVEBACK:
+			break;
+
+		default:
+			if(item->hasCharges())
 				g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getCharges()) - 1));
-				break;
 
-			case AMMOACTION_MOVE:
-				g_game.internalMoveItem(player, item->getParent(), destTile, INDEX_WHEREEVER, item, 1, NULL, FLAG_NOLIMIT);
-				break;
-
-			case AMMOACTION_MOVEBACK:
-				break;
-
-			default:
-				if(item->hasCharges())
-					g_game.transformItem(item, item->getID(), std::max((int32_t)0, ((int32_t)item->getCharges()) - 1));
-
-				break;
-		}
+			break;
 	}
 }
 
