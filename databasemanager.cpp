@@ -854,6 +854,15 @@ uint32_t DatabaseManager::updateDatabase()
 			db->executeQuery(query.str());
 
 			query.str("");
+			query << "CREATE TABLE `house_storage` (`house_id` INT UNSIGNED NOT NULL, `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0, ";
+			query << "`data` BLOB NOT NULL, UNIQUE (`house_id`, `world_id`), FOREIGN KEY (`house_id`) REFERENCES `houses` (`id`) ON DELETE CASCADE)";
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
+				query << " ENGINE = InnoDB";
+
+			query << ";";
+			db->executeQuery(query.str());
+
+			query.str("");
 			registerDatabaseConfig("db_version", 9);
 			return 9;
 		}

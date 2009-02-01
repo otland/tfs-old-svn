@@ -183,12 +183,6 @@ class Map
 		bool saveMap();
 
 		/**
-		* Clean a map.
-		* \returns amount of removed items
-		*/
-		uint32_t clean();
-
-		/**
 		* Get a single tile.
 		* \returns A pointer to that tile.
 		*/
@@ -281,15 +275,6 @@ class Map
 		// Take special heed in that the vector will be destroyed if any function
 		// that calls clearSpectatorCache is called.
 		const SpectatorVec& getSpectators(const Position& centerPos);
-
-		struct RefreshBlock_t
-		{
-			ItemVector list;
-			uint64_t lastRefresh;
-		};
-
-		typedef std::map<Tile*, RefreshBlock_t> TileMap;
-		TileMap refreshTileMap;
 
 		friend class Game;
 		friend class IOMap;

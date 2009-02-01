@@ -37,12 +37,10 @@
 #include "creature.h"
 #include "player.h"
 
-#include "configmanager.h"
 #include "combat.h"
 #include "game.h"
 
 extern Game g_game;
-extern ConfigManager g_config;
 IOMapSerialize IOMapSerialize;
 
 Map::Map()
@@ -186,7 +184,7 @@ void Map::setTile(uint16_t x, uint16_t y, uint8_t z, Tile* newTile)
 		for(ItemVector::iterator it = newTile->downItems.begin(); it != newTile->downItems.end(); ++it)
 			rb.list.push_back((*it)->clone());
 
-		refreshTileMap[newTile] = rb;
+		g_game.addRefreshTile(newTile, rb);
 	}
 }
 
@@ -1242,125 +1240,4 @@ Floor* QTreeLeafNode::createFloor(uint32_t z)
 		m_array[z] = new Floor();
 
 	return m_array[z];
-}
-
-uint32_t Map::clean()
-{
-	Tile* cleanTile = NULL;
-	Item* item = NULL;
-
-	uint64_t start = OTSYS_TIME();
-	int32_t count = 0, tiles = -1;
-	if(g_config.getBool(ConfigManager::STORE_TRASH))
-	{
-		Trash trash = g_game.getTrash();
-		tiles = trash.size();
-;
-		Trash::iterator it = trash.begin();
-		if(g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES))
-		{
-			while(it != trash.end())
-			{
-				if((cleanTile = getTile(*it)))
-				{
-					cleanTile->resetFlag(TILESTATE_TRASHED);
-					if(!cleanTile->hasFlag(TILESTATE_HOUSE))
-					{
-						for(uint32_t i = 0; i < cleanTile->getThingCount(); ++i)
-						{
-							if((item = cleanTile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
-							{
-								g_game.internalRemoveItem(NULL, item);
-								--i;
-								count++;
-							}
-						}
-					}
-				}
-
-				g_game.eraseTrash(it);
-				it++;
-			}
-		}
-		else
-		{
-			while(it != trash.end())
-			{
-				if((cleanTile = getTile(*it)))
-				{
-					cleanTile->resetFlag(TILESTATE_TRASHED);
-					if(!cleanTile->hasFlag(TILESTATE_PROTECTIONZONE))
-					{
-						for(uint32_t i = 0; i < cleanTile->getThingCount(); ++i)
-						{
-							if((item = cleanTile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
-							{
-								g_game.internalRemoveItem(NULL, item);
-								--i;
-								count++;
-							}
-						}
-					}
-				}
-
-				g_game.eraseTrash(it);
-				it++;
-			}
-		}
-	}
-	else if(g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES))
-	{
-		for(int32_t z = 0; z <= MAP_MAX_LAYERS; z++)
-		{
-			for(uint32_t y = 1; y <= mapHeight; y++)
-			{
-				for(uint32_t x = 1; x <= mapWidth; x++)
-				{
-					if((cleanTile = getTile(x, y, (uint32_t)z)) && !cleanTile->hasFlag(TILESTATE_HOUSE))
-					{
-						for(uint32_t i = 0; i < cleanTile->getThingCount(); ++i)
-						{
-							if((item = cleanTile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
-							{
-								g_game.internalRemoveItem(NULL, item);
-								--i;
-								count++;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	else
-	{
-		for(int32_t z = 0; z <= MAP_MAX_LAYERS; z++)
-		{
-			for(uint32_t y = 1; y <= mapHeight; y++)
-			{
-				for(uint32_t x = 1; x <= mapWidth; x++)
-				{
-					if((cleanTile = getTile(x, y, (uint32_t)z)) && !cleanTile->hasFlag(TILESTATE_PROTECTIONZONE))
-					{
-						for(uint32_t i = 0; i < cleanTile->getThingCount(); ++i)
-						{
-							if((item = cleanTile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
-							{
-								g_game.internalRemoveItem(NULL, item);
-								--i;
-								count++;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	std::cout << "> CLEAN: Removed " << count << " item" << (count != 1 ? "s" : "");
-	if(tiles > -1)
-		std::cout << " from " << tiles << " tile" << (tiles != 1 ? "s" : "");
-
-	std::cout << " in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
-	return count;
 }

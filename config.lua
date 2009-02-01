@@ -106,9 +106,11 @@
 
 	-- Map
 	-- NOTE: storeTrash costs more memory, but will perform alot faster cleaning.
+	-- useHouseDataStorage usage may be found at README.
 	mapName = "forgotten"
 	mapAuthor = "Komic"
 	randomizeTiles = "yes"
+	useHouseDataStorage = "no"
 	storeTrash = "yes"
 	cleanProtectedZones = "yes"
 

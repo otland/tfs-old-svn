@@ -184,6 +184,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBool[DISABLE_OUTFITS_PRIVILEGED] = getGlobalBool(L, "disableOutfitsForPrivilegedPlayers", "no");
 	m_confBool[OPTIMIZE_DB_AT_STARTUP] = getGlobalBool(L, "optimizeDatabaseAtStartup", "yes");
 	m_confBool[OLD_CONDITION_ACCURACY] = getGlobalBool(L, "oldConditionAccuracy", "no");
+	m_confBool[HOUSE_STORAGE] = getGlobalBool(L, "useHouseDataStorage", "no");
 	m_isLoaded = true;
 
 	lua_close(L);

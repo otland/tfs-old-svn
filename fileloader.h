@@ -39,9 +39,7 @@ struct NodeStruct
 
 	virtual ~NodeStruct() {}
 
-	uint32_t start;
-	uint32_t propsSize;
-	uint32_t type;
+	uint32_t start, propsSize, type;
 	NodeStruct* next;
 	NodeStruct* child;
 
@@ -98,7 +96,6 @@ enum FILELOADER_ERRORS
 };
 
 class PropStream;
-
 class FileLoader
 {
 	public:
@@ -158,6 +155,7 @@ class FileLoader
 					return false;
 				}
 			}
+
 			return true;
 		}
 
@@ -171,9 +169,7 @@ class FileLoader
 		bool m_use_cache;
 		struct _cache
 		{
-			uint32_t loaded;
-			uint32_t base;
-			uint32_t size;
+			uint32_t loaded, base, size;
 			uint8_t* data;
 		};
 
@@ -181,8 +177,7 @@ class FileLoader
 		uint32_t m_cache_size;
 		_cache m_cached_data[CACHE_BLOCKS];
 		#define NO_VALID_CACHE 0xFFFFFFFF
-		uint32_t m_cache_index;
-		uint32_t m_cache_offset;
+		uint32_t m_cache_index, m_cache_offset;
 		inline uint32_t getCacheBlock(uint32_t pos);
 		int32_t loadCacheBlock(uint32_t pos);
 };
@@ -191,7 +186,7 @@ class PropStream
 {
 	public:
 		PropStream() {end = NULL; p = NULL;}
-		~PropStream() {}
+		virtual ~PropStream() {}
 
 		void init(const char* a, uint32_t size)
 		{
@@ -199,10 +194,12 @@ class PropStream
 			end = a + size;
 		}
 
+		int32_t size() const {return end - p;}
+
 		template <typename T>
 		inline bool GET_STRUCT(T* &ret)
 		{
-			if(size() < (long)sizeof(T))
+			if(size() < (int32_t)sizeof(T))
 			{
 				ret = NULL;
 				return false;
@@ -216,7 +213,7 @@ class PropStream
 		template <typename T>
 		inline bool GET_VALUE(T &ret)
 		{
-			if(size() < (long)sizeof(T))
+			if(size() < (int32_t)sizeof(T))
 				return false;
 
 			ret = *((T*)p);
@@ -235,38 +232,57 @@ class PropStream
 		inline bool GET_STRING(std::string& ret)
 		{
 			char* str;
-			uint16_t str_len;
-
-			if(!GET_USHORT(str_len))
+			uint16_t strLen;
+			if(!GET_USHORT(strLen))
 				return false;
 
-			if(size() < str_len)
+			if(size() < strLen)
 				return false;
 
-			str = new char[str_len + 1];
-			memcpy(str, p, str_len);
-			str[str_len] = 0;
-			ret = str;
+			str = new char[strLen + 1];
+			memcpy(str, p, strLen);
+			str[strLen] = 0;
+			ret.assign(str, strLen);
 			delete[] str;
-			p += str_len;
+			p = p + strLen;
 			return true;
 		}
 
-		inline bool GET_NSTRING(unsigned short str_len, std::string& ret)
+		inline bool GET_LSTRING(std::string& ret)
 		{
-			if(size() < str_len)
+			char* str;
+			uint32_t strLen;
+			if(!GET_ULONG(strLen))
 				return false;
 
-			char* str = new char[str_len + 1];
-			memcpy(str, p, str_len);
-			str[str_len] = 0;
-			ret = str;
+			if(size() < strLen)
+				return false;
+
+			str = new char[strLen + 1];
+			memcpy(str, p, strLen);
+			str[strLen] = 0;
+			ret.assign(str, strLen);
 			delete[] str;
-			p += str_len;
+			p = p + strLen;
 			return true;
 		}
 
-		inline bool SKIP_N(unsigned short n)
+		inline bool GET_NSTRING(uint16_t strLen, std::string& ret)
+		{
+			char* str;
+			if(size() < strLen)
+				return false;
+
+			char* str = new char[strLen + 1];
+			memcpy(str, p, strLen);
+			str[strLen] = 0;
+			ret.assign(str, strLen);
+			delete[] str;
+			p += strLen;
+			return true;
+		}
+
+		inline bool SKIP_N(uint16_t n)
 		{
 			if(size() < n)
 				return false;
@@ -276,7 +292,6 @@ class PropStream
 		}
 
 	protected:
-		int32_t size() {return end - p;}
 		const char* p;
 		const char* end;
 };
@@ -286,13 +301,13 @@ class PropWriteStream
 	public:
 		PropWriteStream()
 		{
-			buffer = (char*)malloc(32*sizeof(char));
-			buffer_size = 32;
+			buffer = (char*)malloc(32 * sizeof(char));
+			bufferSize = 32;
 			size = 0;
-			memset(buffer, 0, 32*sizeof(char));
+			memset(buffer, 0, 32 * sizeof(char));
 		}
 
-		~PropWriteStream() {free(buffer);}
+		virtual ~PropWriteStream() {free(buffer);}
 
 		const char* getStream(uint32_t& _size) const
 		{
@@ -304,27 +319,27 @@ class PropWriteStream
 		template <typename T>
 		inline void ADD_TYPE(T* add)
 		{
-			if((buffer_size - size) < sizeof(T))
+			if((bufferSize - size) < sizeof(T))
 			{
-				buffer_size = buffer_size + ((sizeof(T) + 0x1F) & 0xFFFFFFE0);
-				buffer = (char*)realloc(buffer, buffer_size);
+				bufferSize += ((sizeof(T) + 0x1F) & 0xFFFFFFE0);
+				buffer = (char*)realloc(buffer, bufferSize);
 			}
 
 			memcpy(&buffer[size], (char*)add, sizeof(T));
-			size = size + sizeof(T);
+			size += sizeof(T);
 		}
 
 		template <typename T>
 		inline void ADD_VALUE(T add)
 		{
-			if((buffer_size - size) < sizeof(T))
+			if((bufferSize - size) < sizeof(T))
 			{
-				buffer_size = buffer_size + ((sizeof(T) + 0x1F) & 0xFFFFFFE0);
-				buffer = (char*)realloc(buffer,buffer_size);
+				bufferSize += ((sizeof(T) + 0x1F) & 0xFFFFFFE0);
+				buffer = (char*)realloc(buffer, bufferSize);
 			}
 
 			memcpy(&buffer[size], &add, sizeof(T));
-			size = size + sizeof(T);
+			size += sizeof(T);
 		}
 
 		inline void ADD_ULONG(uint32_t ret) {ADD_VALUE(ret);}
@@ -335,21 +350,36 @@ class PropWriteStream
 
 		inline void ADD_STRING(const std::string& add)
 		{
-			uint16_t str_len = add.size();
-			ADD_USHORT(str_len);
-			if((buffer_size - size) < str_len)
+			uint16_t strLen = add.size();
+			ADD_USHORT(strLen);
+			if((bufferSize - size) < strLen)
 			{
-				buffer_size += ((str_len + 0x1F) & 0xFFFFFFE0);
-				buffer = (char*)realloc(buffer, buffer_size);
+				bufferSize += ((strLen + 0x1F) & 0xFFFFFFE0);
+				buffer = (char*)realloc(buffer, bufferSize);
 			}
 
-			memcpy(&buffer[size], add.c_str(), str_len);
-			size = size + str_len;
+			memcpy(&buffer[size], add.c_str(), strLen);
+			size += strLen;
 		}
+
+		inline void ADD_LSTRING(const std::string& add)
+		{
+			uint16_t strLen = add.size();
+			ADD_USHORT(strLen);
+			if((bufferSize - size) < strLen)
+			{
+				bufferSize += ((strLen + 0x1F) & 0xFFFFFFE0);
+				buffer = (char*)realloc(buffer, bufferSize);
+			}
+
+			memcpy(&buffer[size], add.c_str(), strLen);
+			size += strLen;
+		}
+
 
 	protected:
 		char* buffer;
-		uint32_t buffer_size;
+		uint32_t bufferSize;
 		uint32_t size;
 };
 

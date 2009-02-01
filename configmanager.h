@@ -182,6 +182,7 @@ class ConfigManager
 			OPTIMIZE_DB_AT_STARTUP,
 			OLD_CONDITION_ACCURACY,
 			STORE_TRASH,
+			HOUSE_STORAGE,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

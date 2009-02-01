@@ -322,7 +322,9 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 								if(isHouseTile && !item->isNotMoveable())
 								{
-									std::cout << "[Warning - IOMap::loadMap] Movable item in house: " << house->getHouseId() << ", item type: " << item->getID() << ", at position " << px << "/" << py << "/" << pz << std::endl;
+									std::cout << "[Warning - IOMap::loadMap] Movable item in house: " << house->getHouseId();
+									std::cout << ", item type: " << item->getID() << ", at position " << px << "/" << py << "/";
+									std::cout << pz << std::endl;
 									delete item;
 									item = NULL;
 								}

@@ -120,9 +120,14 @@ struct RuleViolation
 		RuleViolation(const RuleViolation&);
 };
 
+struct RefreshBlock_t
+{
+	ItemVector list;
+	uint64_t lastRefresh;
+};
+
 typedef std::map< uint32_t, shared_ptr<RuleViolation> > RuleViolationsMap;
 typedef std::vector< std::pair<std::string, uint32_t> > Highscore;
-typedef std::list<Position> Trash;
 
 #define EVENT_LIGHTINTERVAL 10000
 #define EVENT_DECAYINTERVAL 1000
@@ -144,10 +149,6 @@ class Game
 		std::string getHighscoreString(uint16_t skill);
 		void checkHighscores();
 		bool reloadHighscores();
-
-		Trash getTrash() const {return trash;}
-		void addTrash(Position pos) {trash.push_back(pos);}
-		void eraseTrash(Trash::iterator it) {trash.erase(it);}
 
 		void prepareGlobalSave();
 		void globalSave();
@@ -503,12 +504,11 @@ class Game
 			uint32_t minTargetDist, uint32_t maxTargetDist, bool fullPathSearch = true,
 			bool clearSight = true, int32_t maxSearchDist = -1);
 
+		void changeLight(const Creature* creature);
 		void changeSpeed(Creature* creature, int32_t varSpeedDelta);
 		void internalCreatureChangeOutfit(Creature* creature, const Outfit_t& oufit);
 		void internalCreatureChangeVisible(Creature* creature, bool visible);
-		void changeLight(const Creature* creature);
 		void updateCreatureSkull(Creature* creature);
-
 		void sendPublicSquare(Player* sender, SquareColor_t color);
 
 		GameState_t getGameState() const {return gameState;}
@@ -517,8 +517,11 @@ class Game
 		void saveGameState(bool savePlayers);
 		void loadGameState();
 
+		void cleanMap(uint32_t& count);
 		void refreshMap();
-		void cleanMap(uint32_t& count) const {if(map) count = map->clean();}
+
+		void addTrash(Position pos) {trash.push_back(pos);}
+		void addRefreshTile(Tile* tile, RefreshBlock_t rb) {refreshTileMap[tile] = rb;}
 
 		//Events
 		void checkCreatureWalk(uint32_t creatureId);
@@ -572,30 +575,20 @@ class Game
 		bool playerReportRuleViolation(Player* player, const std::string& text);
 		bool playerContinueReport(Player* player, const std::string& text);
 
-		Highscore highscoreStorage[9];
-		time_t lastHighscoreCheck;
-		bool globalSaveMessage[2];
-		int64_t stateDelay;
-
-		std::vector<Thing*> ToReleaseThings;
-
-		//list of items that are in trading state, mapped to the player
-		std::map<Item*, uint32_t> tradeItems;
-
-		//list of reported rule violations, for correct channel listing
-		RuleViolationsMap ruleViolations;
-
-		AutoList<Creature> listCreature;
-
-		size_t checkCreatureLastIndex;
-		std::vector<Creature*> checkCreatureVectors[EVENT_CREATURECOUNT];
-
 		struct GameEvent
 		{
 			int64_t tick;
 			int32_t type;
 			void* data;
 		};
+
+		std::vector<Thing*> ToReleaseThings;
+		std::map<Item*, uint32_t> tradeItems;
+		AutoList<Creature> listCreature;
+		RuleViolationsMap ruleViolations;
+
+		size_t checkCreatureLastIndex;
+		std::vector<Creature*> checkCreatureVectors[EVENT_CREATURECOUNT];
 
 		void checkDecay();
 		void internalDecayItem(Item* item);
@@ -609,14 +602,10 @@ class Game
 		static const int32_t LIGHT_LEVEL_NIGHT = 40;
 		static const int32_t SUNSET = 1305;
 		static const int32_t SUNRISE = 430;
-		int32_t lightLevel;
+		int32_t lightLevel, lightHour, lightHourDelta;
 		LightState_t lightState;
-		int32_t lightHour;
-		int32_t lightHourDelta;
 
-		uint32_t maxPlayers;
-		uint32_t inFightTicks;
-
+		uint32_t maxPlayers, inFightTicks;
 		GameState_t gameState;
 		WorldType_t worldType;
 		Map* map;
@@ -624,11 +613,20 @@ class Game
 		std::string lastMotdText;
 		int32_t lastMotdNum;
 		uint32_t lastPlayersRecord;
+		int64_t stateDelay;
+		bool globalSaveMessage[2];
 
+		typedef std::map<Tile*, RefreshBlock_t> RefreshMap;
+		RefreshMap refreshMap;
+
+		typedef std::list<Position> Trash;
 		Trash trash;
 
-		typedef std::map<int32_t,int32_t> StageList;
+		typedef std::map<int32_t, int32_t> StageList;
 		StageList stages;
 		uint32_t lastStageLevel;
+
+		Highscore highscoreStorage[9];
+		time_t lastHighscoreCheck;
 };
 #endif
