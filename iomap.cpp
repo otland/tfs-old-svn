@@ -99,7 +99,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 		return false;
 	}
 
-	if(root_header->version > 1)
+	if(root_header->version > 2)
 	{
 		setLastErrorString("Unknown OTBM version detected.");
 		return false;
@@ -457,7 +457,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 				nodeTown = f.getNextNode(nodeTown, type);
 			}
 		}
-		else
+		else if(type != 15 && type != 16)
 		{
 			setLastErrorString("Unknown map node.");
 			return false;
