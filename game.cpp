@@ -358,18 +358,18 @@ void Game::cleanMap(uint32_t& count)
 	std::cout << " in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 }
 
-void Game::refreshMap(RefreshTiles::iterator it/* = NULL*/, uint32_t limit/* = 0*/)
+void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 0*/)
 {
 	RefreshTiles::iterator end = refreshTiles.end();
 	if(!it)
-		it = refreshTiles.begin();
+		it = &refreshTiles.begin();
 
 	uint32_t cleaned = 0;
 	Tile* tile = NULL;
 	Item* item = NULL;
-	for(; it != end; ++it)
+	for(; (*it) != end && (limit != 0 ? (cleaned < limit) : true); ++(*it), ++cleaned)
 	{
-		tile = it->first;
+		tile = (*it)->first;
 		for(int32_t i = tile->downItems.size() - 1; i >= 0; --i)
 		{
 			if((item = tile->downItems[i]))
@@ -384,7 +384,7 @@ void Game::refreshMap(RefreshTiles::iterator it/* = NULL*/, uint32_t limit/* = 0
 		}
 
 		cleanup();
-		ItemVector list = it->second.list;
+		ItemVector list = (*it)->second.list;
 		for(ItemVector::reverse_iterator it = list.rbegin(); it != list.rend(); ++it)
 		{
 			Item* item = (*it)->clone();
