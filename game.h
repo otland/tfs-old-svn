@@ -518,7 +518,8 @@ class Game
 		void loadGameState();
 
 		void cleanMap(uint32_t& count);
-		void refreshMap();
+		void refreshMap(RefreshTiles::iterator it = NULL, uint32_t limit = 0);
+		void proceduralRefresh(RefreshTiles::iterator* it = NULL)
 
 		void addTrash(Position pos) {trash.push_back(pos);}
 		void addRefreshTile(Tile* tile, RefreshBlock_t rb) {refreshTiles[tile] = rb;}

@@ -194,9 +194,10 @@ void Game::saveGameState(bool savePlayers)
 {
 	std::cout << "> Saving server..." << std::endl;
 	uint64_t start = OTSYS_TIME();
-	ScriptEnviroment::saveGameState();
+	setGameState(GAME_STATE_MAINTAIN);
 
 	map->saveMap();
+	ScriptEnviroment::saveGameState();
 	if(savePlayers)
 	{
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
@@ -210,21 +211,22 @@ void Game::saveGameState(bool savePlayers)
 	if(g_config.getBool(ConfigManager::HOUSE_STORAGE))
 		storage = "binary";
 
+	setGameState(GAME_STATE_NORMAL);
 	std::cout << "> SAVE: Complete in " << (OTSYS_TIME() - start) / (1000.) << " seconds using " << storage << " house storage." << std::endl;
 }
 
 void Game::loadGameState()
 {
-	inFightTicks = g_config.getNumber(ConfigManager::PZ_LOCKED);
 	maxPlayers = g_config.getNumber(ConfigManager::MAX_PLAYERS);
+	inFightTicks = g_config.getNumber(ConfigManager::PZ_LOCKED);
 	Monster::despawnRange = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRANGE);
 	Monster::despawnRadius = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRADIUS);
 	Player::maxMessageBuffer = g_config.getNumber(ConfigManager::MAX_MESSAGEBUFFER);
 
 	ScriptEnviroment::loadGameState();
-	checkHighscores();
 	loadMotd();
 	loadPlayersRecord();
+	checkHighscores();
 }
 
 int32_t Game::loadMap(std::string filename)
@@ -239,8 +241,9 @@ void Game::cleanMap(uint32_t& count)
 {
 	count = 0;
 	uint64_t start = OTSYS_TIME();
-	int32_t tiles = -1;
+	setGameState(GAME_STATE_MAINTAIN);
 
+	int32_t tiles = -1;
 	Tile* tile = NULL;
 	Item* item = NULL;
 	if(g_config.getBool(ConfigManager::STORE_TRASH))
@@ -347,6 +350,7 @@ void Game::cleanMap(uint32_t& count)
 		}
 	}
 
+	setGameState(GAME_STATE_NORMAL);
 	std::cout << "> CLEAN: Removed " << count << " item" << (count != 1 ? "s" : "");
 	if(tiles > -1)
 		std::cout << " from " << tiles << " tile" << (tiles != 1 ? "s" : "");
@@ -354,11 +358,16 @@ void Game::cleanMap(uint32_t& count)
 	std::cout << " in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 }
 
-void Game::refreshMap()
+void Game::refreshMap(RefreshTiles::iterator it/* = NULL*/, uint32_t limit/* = 0*/)
 {
+	RefreshTiles::iterator end = refreshTiles.end();
+	if(!it)
+		it = refreshTiles.begin();
+
+	uint32_t cleaned = 0;
 	Tile* tile = NULL;
 	Item* item = NULL;
-	for(RefreshTiles::iterator it = refreshTiles.begin(); it != refreshTiles.end(); ++it)
+	for(; it != end; ++it)
 	{
 		tile = it->first;
 		for(int32_t i = tile->downItems.size() - 1; i >= 0; --i)
@@ -393,6 +402,25 @@ void Game::refreshMap()
 			}
 		}
 	}
+}
+
+void Game::proceduralRefresh(RefreshTiles::iterator* it/* = NULL*/)
+{
+	if(!it)
+		it = new RefreshTiles::iterator(refreshTiles.begin());
+
+	// Refresh 250 tiles each cycle
+	refreshMap(it, 250);
+	if((*it) != refreshTiles.end())
+	{
+		delete it;
+		return;
+	}
+
+	// Refresh some items every 500 ms until all tiles has been checked
+	// For 100k tiles, this would take 100000/2500 = 40s = half a minute
+	Scheduler::getScheduler().addEvent(createSchedulerTask(500,
+		boost::bind(&Game::proceduralRefresh, this, it)));
 }
 
 Cylinder* Game::internalGetCylinder(Player* player, const Position& pos)

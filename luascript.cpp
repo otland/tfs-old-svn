@@ -2080,6 +2080,9 @@ void LuaScriptInterface::registerFunctions()
 	//doCleanMap()
 	lua_register(m_luaState, "doCleanMap", LuaScriptInterface::luaDoCleanMap);
 
+	//doRefreshMap()
+	lua_register(m_luaState, "doRefreshMap", LuaScriptInterface::luaDoRefreshMap);
+
 	//db table
 	luaL_register(m_luaState, "db", LuaScriptInterface::luaDatabaseReg);
 
@@ -8990,9 +8993,7 @@ int32_t LuaScriptInterface::luaDoReloadInfo(lua_State* L)
 int32_t LuaScriptInterface::luaDoSaveServer(lua_State* L)
 {
 	//DoSaveServer()
-	g_game.setGameState(GAME_STATE_MAINTAIN);
 	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::saveGameState, &g_game, true)));
-	g_game.setGameState(GAME_STATE_NORMAL);
 	return 1;
 }
 
@@ -9017,10 +9018,15 @@ int32_t LuaScriptInterface::luaDoCleanMap(lua_State* L)
 {
 	//doCleanMap()
 	uint32_t count = 0;
-	g_game.setGameState(GAME_STATE_MAINTAIN);
 	g_game.cleanMap(count);
-	g_game.setGameState(GAME_STATE_NORMAL);
 	lua_pushnumber(L, count);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoRefreshMap(lua_State* L)
+{
+	//doRefreshMap()
+	g_game.proceduralRefresh();
 	return 1;
 }
 

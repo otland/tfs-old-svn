@@ -120,15 +120,14 @@ void signalHandler(int32_t sig)
 	switch(sig)
 	{
 		case SIGHUP:
-			g_game.setGameState(GAME_STATE_MAINTAIN);
 			Dispatcher::getDispatcher().addTask(createTask(
 				boost::bind(&Game::saveGameState, &g_game, true)));
-			g_game.setGameState(GAME_STATE_NORMAL);
 			break;
 		case SIGTRAP:
-			g_game.setGameState(GAME_STATE_MAINTAIN);
 			g_game.cleanMap(tmp);
-			g_game.setGameState(GAME_STATE_NORMAL);
+			break;
+		case SIGCHLD:
+			g_game.proceduralRefresh();
 			break;
 		case SIGUSR1:
 			Dispatcher::getDispatcher().addTask(createTask(
@@ -198,6 +197,7 @@ void serverMain(void* param)
 	// register signals
 	signal(SIGHUP, signalHandler); //save
 	signal(SIGTRAP, signalHandler); //clean
+	signal(SIGCHLD, signalHandler); //refresh
 	signal(SIGUSR1, signalHandler); //close server
 	signal(SIGUSR2, signalHandler); //open server
 	signal(SIGCONT, signalHandler); //reload all
@@ -717,11 +717,9 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						g_game.setGameState(GAME_STATE_MAINTAIN);
 						Dispatcher::getDispatcher().addTask(createTask(
 							boost::bind(&Game::saveGameState, &g_game, true)));
-						g_game.setGameState(GAME_STATE_NORMAL);
-						MessageBox(NULL, "Server has been saved.", "Save server", MB_OK);
+						MessageBox(NULL, "Server has been saved.", "Server save", MB_OK);
 					}
 					break;
 				}
@@ -730,12 +728,20 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
 						uint32_t count = 0;
-						g_game.setGameState(GAME_STATE_MAINTAIN);
 						g_game.cleanMap(count);
-						g_game.setGameState(GAME_STATE_NORMAL);
+
 						char buffer[100];
 						sprintf(buffer, "Map has been cleaned, collected %u items.", count);
-						MessageBox(NULL, buffer, "Clean map", MB_OK);
+						MessageBox(NULL, buffer, "Map clean", MB_OK);
+					}
+					break;
+				}
+				case ID_MENU_SERVER_REFRESH:
+				{
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						g_game.proceduralRefresh();
+						MessageBox(NULL, "Map will now refresh in a while.", "Map refresh", MB_OK);
 					}
 					break;
 				}
