@@ -172,3 +172,8 @@
 	ownerEmail = "@otland.net"
 	url = "http://otland.net/"
 	location = "Europe"
+
+	-- Logs
+	outLogName = "server/out.log"
+	errorLogName = "server/error.log"
+	truncateLogsOnStartup = "yes"

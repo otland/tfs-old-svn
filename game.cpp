@@ -420,9 +420,9 @@ void Game::proceduralRefresh(RefreshTiles::iterator* it/* = NULL*/)
 		return;
 	}
 
-	// Refresh some items every 500 ms until all tiles has been checked
+	// Refresh some items every 100 ms until all tiles has been checked
 	// For 100k tiles, this would take 100000/2500 = 40s = half a minute
-	Scheduler::getScheduler().addEvent(createSchedulerTask(500,
+	Scheduler::getScheduler().addEvent(createSchedulerTask(100,
 		boost::bind(&Game::proceduralRefresh, this, it)));
 }
 

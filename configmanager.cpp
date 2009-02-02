@@ -73,6 +73,9 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confString[HOUSE_RENT_PERIOD] = getGlobalString(L, "houseRentPeriod", "monthly");
 		m_confNumber[WORLD_ID] = getGlobalNumber(L, "worldId", 0);
 		m_confBool[STORE_TRASH] = getGlobalBool(L, "storeTrash", "yes");
+		m_confString[OUT_LOG] = getGlobalString(L, "outLogName", "server/out.log");
+		m_confString[ERROR_LOG] = getGlobalString(L, "errorLogName", "server/error.log");
+		m_confBool[TRUNCATE_LOGS] = getGlobalBool(L, "truncateLogsOnStartup", "yes");
 	}
 
 	m_confString[LOGIN_MSG] = getGlobalString(L, "loginMessage", "Welcome to the Forgotten Server!");

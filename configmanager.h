@@ -63,6 +63,8 @@ class ConfigManager
 			SQL_FILE,
 			PASSWORD_TYPE,
 			MAP_AUTHOR,
+			OUT_LOG,
+			ERROR_LOG,
 			LAST_STRING_CONFIG /* this must be the last one */
 		};
 
@@ -184,6 +186,7 @@ class ConfigManager
 			OLD_CONDITION_ACCURACY,
 			STORE_TRASH,
 			HOUSE_STORAGE,
+			TRUNCATE_LOGS,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

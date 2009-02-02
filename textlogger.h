@@ -18,19 +18,20 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
-#ifndef FORGOTTENSERVER_TEXTLOGGER_H
-#define FORGOTTENSERVER_TEXTLOGGER_H
-#ifndef __CONSOLE__
+#ifndef __TEXTLOGGER_H__
+#define __TEXTLOGGER_H__
+#if defined(WIN32) && not defined(__CONSOLE__)
 #include <windows.h>
 #include <ostream>
 
 class TextLogger : public std::streambuf
 {
 	public:
-		std::streambuf* out;
-		std::streambuf* err;
 		TextLogger();
 		virtual ~TextLogger();
+
+		std::streambuf* out;
+		std::streambuf* err;
 
 	protected:
 		int32_t overflow(int32_t c);
