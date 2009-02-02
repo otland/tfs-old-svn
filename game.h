@@ -128,6 +128,8 @@ struct RefreshBlock_t
 
 typedef std::map< uint32_t, shared_ptr<RuleViolation> > RuleViolationsMap;
 typedef std::vector< std::pair<std::string, uint32_t> > Highscore;
+typedef std::map<Tile*, RefreshBlock_t> RefreshTiles;
+typedef std::list<Position> Trash;
 
 #define EVENT_LIGHTINTERVAL 10000
 #define EVENT_DECAYINTERVAL 1000
@@ -617,10 +619,7 @@ class Game
 		int64_t stateDelay;
 		bool globalSaveMessage[2];
 
-		typedef std::map<Tile*, RefreshBlock_t> RefreshTiles;
 		RefreshTiles refreshTiles;
-
-		typedef std::list<Position> Trash;
 		Trash trash;
 
 		typedef std::map<int32_t, int32_t> StageList;
