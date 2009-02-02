@@ -362,7 +362,10 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 {
 	RefreshTiles::iterator end = refreshTiles.end();
 	if(!it)
-		it = &refreshTiles.begin();
+	{
+		RefreshTiles::iterator begin = refreshTiles.begin();
+		it = &begin;
+	}
 
 	uint32_t cleaned = 0;
 	Tile* tile = NULL;
