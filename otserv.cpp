@@ -23,6 +23,8 @@
 #include <string>
 #include <iostream>
 #include <iomanip>
+#include <sstream>
+#include <fstream>
 #include <boost/asio.hpp>
 
 #include "server.h"
@@ -171,17 +173,18 @@ void serverMain(void* param)
 		outFile.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, g_config.getString(ConfigManager::OUT_LOG).c_str()).c_str(),
 			(g_config.getBool(ConfigManager::TRUNCATE_LOGS) ? std::ios::trunc : std::ios::app) | std::ios::out));
 		if(!outFile->is_open())
-			ErrorMessage("Could not open standard log file for writing!");
+			startupErrorMessage("Could not open standard log file for writing!");
 
 		std::cout.rdbuf(outFile->rdbuf());
 	}
 
 	boost::shared_ptr<std::ofstream> errorFile;
 	if(g_config.getString(ConfigManager::ERROR_LOG) != "")
+	{
 		errorFile.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, g_config.getString(ConfigManager::ERROR_LOG).c_str()).c_str(), 
 			(g_config.getBool(ConfigManager::TRUNCATE_LOGS) ? std::ios::trunc : std::ios::app) | std::ios::out));
 		if(!errorFile->is_open())
-			ErrorMessage("Could not open error log file for writing!");
+			startupErrorMessage("Could not open error log file for writing!");
 
 		std::cerr.rdbuf(errorFile->rdbuf());
 	}
