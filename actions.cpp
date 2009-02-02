@@ -434,7 +434,7 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 			player->onSendContainer(tmpContainer);
 		}
 
-		executed = true;
+		return RET_NOERROR;
 	}
 
 	if(item->isReadable())
@@ -450,7 +450,7 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 			player->sendTextWindow(item, 0, false);
 		}
 
-		executed = true;
+		return RET_NOERROR;
 	}
 
 	if(!executed)
