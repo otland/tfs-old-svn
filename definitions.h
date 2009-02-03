@@ -79,8 +79,14 @@
 
 #ifdef __GNUC__
 	#if __GNUC__ >= 4
-		#include <tr1/unordered_map>
-		#include <tr1/unordered_set>
+		#ifndef __GXX_EXPERIMENTAL_CXX0X__
+			#include <tr1/unordered_map>
+			#include <tr1/unordered_set>
+		#else
+			#include <unordered_map>
+			#include <unordered_set>
+		#endif
+
 		#define OTSERV_HASH_MAP std::tr1::unordered_map
 		#define OTSERV_HASH_SET std::tr1::unordered_set
 	#else
@@ -145,8 +151,14 @@
 	#include <stdint.h>
 	#include <string.h>
 	#if __GNUC__ >= 4
-		#include <tr1/unordered_map>
-		#include <tr1/unordered_set>
+		#ifndef __GXX_EXPERIMENTAL_CXX0X__
+			#include <tr1/unordered_map>
+			#include <tr1/unordered_set>
+		#else
+			#include <unordered_map>
+			#include <unordered_set>
+		#endif
+
 		#define OTSERV_HASH_MAP std::tr1::unordered_map
 		#define OTSERV_HASH_SET std::tr1::unordered_set
 	#else

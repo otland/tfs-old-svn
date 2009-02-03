@@ -586,3 +586,15 @@ enchantedItems = {
 	[2544] = {7840, 7839, 7850, 7838},
 	[8905] = {8906, 8907, 8909, 8908}
 }
+
+SKILLS = {
+	[SKILL_FIST] = "fist fighting",
+	[SKILL_CLUB] = "club fighting",
+	[SKILL_SWORD] = "sword fighting",
+	[SKILL_AXE] = "axe fighting",
+	[SKILL_DISTANCE] = "distance fighting",
+	[SKILL_SHIELD] = "shielding",
+	[SKILL_FISHING] = "fishing",
+	[SKILL__LEVEL] = "level",
+	[SKILL__MAGLEVEL] = "magic level"
+}
