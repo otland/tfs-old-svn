@@ -304,19 +304,19 @@ enum TextColor_t
 enum Icons_t
 {
 	ICON_NONE = 0,
-	ICON_POISON = 1,
-	ICON_BURN = 2,
-	ICON_ENERGY =  4,
-	ICON_DRUNK = 8,
-	ICON_MANASHIELD = 16,
-	ICON_PARALYZE = 32,
-	ICON_HASTE = 64,
-	ICON_SWORDS = 128,
-	ICON_DROWNING = 256,
-	ICON_FREEZING = 512,
-	ICON_DAZZLED = 1024,
-	ICON_CURSED = 2048,
-	ICON_BUFF = 4096
+	ICON_POISON = 1 << 0,
+	ICON_BURN = 1 << 1,
+	ICON_ENERGY =  1 << 2,
+	ICON_DRUNK = 1 << 3,
+	ICON_MANASHIELD = 1 << 4,
+	ICON_PARALYZE = 1 << 5,
+	ICON_HASTE = 1 << 6,
+	ICON_SWORDS = 1 << 7,
+	ICON_DROWNING = 1 << 8,
+	ICON_FREEZING = 1 << 9,
+	ICON_DAZZLED = 1 << 10,
+	ICON_CURSED = 1 << 11,
+	ICON_BUFF = 1 << 12
 };
 
 enum WeaponType_t
@@ -429,45 +429,45 @@ enum item_t
 
 enum PlayerFlags
 {
-	PlayerFlag_CannotUseCombat = 0,         //2^0 = 1
-	PlayerFlag_CannotAttackPlayer,          //2^1 = 2
-	PlayerFlag_CannotAttackMonster,         //2^2 = 4
-	PlayerFlag_CannotBeAttacked,            //2^3 = 8
-	PlayerFlag_CanConvinceAll,              //2^4 = 16
-	PlayerFlag_CanSummonAll,                //2^5 = 32
-	PlayerFlag_CanIllusionAll,              //2^6 = 64
-	PlayerFlag_CanSenseInvisibility,        //2^7 = 128
-	PlayerFlag_IgnoredByMonsters,           //2^8 = 256
-	PlayerFlag_NotGainInFight,              //2^9 = 512
-	PlayerFlag_HasInfiniteMana,             //2^10 = 1024
-	PlayerFlag_HasInfiniteSoul,             //2^11 = 2048
-	PlayerFlag_HasNoExhaustion,             //2^12 = 4096
-	PlayerFlag_CannotUseSpells,             //2^13 = 8192
-	PlayerFlag_CannotPickupItem,            //2^14 = 16384
-	PlayerFlag_CanAlwaysLogin,              //2^15 = 32768
-	PlayerFlag_CanBroadcast,                //2^16 = 65536
-	PlayerFlag_CanEditHouses,               //2^17 = 131072
-	PlayerFlag_CannotBeBanned,              //2^18 = 262144
-	PlayerFlag_CannotBePushed,              //2^19 = 524288
-	PlayerFlag_HasInfiniteCapacity,         //2^20 = 1048576
-	PlayerFlag_CanPushAllCreatures,         //2^21 = 2097152
-	PlayerFlag_CanTalkRedPrivate,           //2^22 = 4194304
-	PlayerFlag_CanTalkRedChannel,           //2^23 = 8388608
-	PlayerFlag_TalkOrangeHelpChannel,       //2^24 = 16777216
-	PlayerFlag_NotGainExperience,           //2^25 = 33554432
-	PlayerFlag_NotGainMana,                 //2^26 = 67108864
-	PlayerFlag_NotGainHealth,               //2^27 = 134217728
-	PlayerFlag_NotGainSkill,                //2^28 = 268435456
-	PlayerFlag_SetMaxSpeed,                 //2^29 = 536870912
-	PlayerFlag_SpecialVIP,                  //2^30 = 1073741824
-	PlayerFlag_NotGenerateLoot,             //2^31 = 2147483648
-	PlayerFlag_CanTalkRedChannelAnonymous,  //2^32 = 4294967296
-	PlayerFlag_IgnoreProtectionZone,        //2^33 = 8589934592
-	PlayerFlag_IgnoreSpellCheck,            //2^34 = 17179869184
-	PlayerFlag_IgnoreEquipCheck,           //2^35 = 34359738368
-	PlayerFlag_CannotBeMuted,               //2^36 = 68719476736
-	PlayerFlag_IsAlwaysPremium,             //2^37 = 137438953472
-	PlayerFlag_CanAnswerRuleViolations,     //2^38 = 274877906944
+	PlayerFlag_CannotUseCombat = 0,		//2^0 = 1
+	PlayerFlag_CannotAttackPlayer,		//2^1 = 2
+	PlayerFlag_CannotAttackMonster,		//2^2 = 4
+	PlayerFlag_CannotBeAttacked,		//2^3 = 8
+	PlayerFlag_CanConvinceAll,		//2^4 = 16
+	PlayerFlag_CanSummonAll,		//2^5 = 32
+	PlayerFlag_CanIllusionAll,		//2^6 = 64
+	PlayerFlag_CanSenseInvisibility,	//2^7 = 128
+	PlayerFlag_IgnoredByMonsters,		//2^8 = 256
+	PlayerFlag_NotGainInFight,		//2^9 = 512
+	PlayerFlag_HasInfiniteMana,		//2^10 = 1024
+	PlayerFlag_HasInfiniteSoul,		//2^11 = 2048
+	PlayerFlag_HasNoExhaustion,		//2^12 = 4096
+	PlayerFlag_CannotUseSpells,		//2^13 = 8192
+	PlayerFlag_CannotPickupItem,		//2^14 = 16384
+	PlayerFlag_CanAlwaysLogin,		//2^15 = 32768
+	PlayerFlag_CanBroadcast,		//2^16 = 65536
+	PlayerFlag_CanEditHouses,		//2^17 = 131072
+	PlayerFlag_CannotBeBanned,		//2^18 = 262144
+	PlayerFlag_CannotBePushed,		//2^19 = 524288
+	PlayerFlag_HasInfiniteCapacity,		//2^20 = 1048576
+	PlayerFlag_CanPushAllCreatures,		//2^21 = 2097152
+	PlayerFlag_CanTalkRedPrivate,		//2^22 = 4194304
+	PlayerFlag_CanTalkRedChannel,		//2^23 = 8388608
+	PlayerFlag_TalkOrangeHelpChannel,	//2^24 = 16777216
+	PlayerFlag_NotGainExperience,		//2^25 = 33554432
+	PlayerFlag_NotGainMana,			//2^26 = 67108864
+	PlayerFlag_NotGainHealth,		//2^27 = 134217728
+	PlayerFlag_NotGainSkill,		//2^28 = 268435456
+	PlayerFlag_SetMaxSpeed,			//2^29 = 536870912
+	PlayerFlag_SpecialVIP,			//2^30 = 1073741824
+	PlayerFlag_NotGenerateLoot,		//2^31 = 2147483648
+	PlayerFlag_CanTalkRedChannelAnonymous,	//2^32 = 4294967296
+	PlayerFlag_IgnoreProtectionZone,	//2^33 = 8589934592
+	PlayerFlag_IgnoreSpellCheck,		//2^34 = 17179869184
+	PlayerFlag_IgnoreEquipCheck,		//2^35 = 34359738368
+	PlayerFlag_CannotBeMuted,		//2^36 = 68719476736
+	PlayerFlag_IsAlwaysPremium,		//2^37 = 137438953472
+	PlayerFlag_CanAnswerRuleViolations,	//2^38 = 274877906944
 
 	PlayerFlag_LastFlag
 };
@@ -477,26 +477,26 @@ enum PlayerCustomFlags
 	PlayerCustomFlag_CanReportBugs = 0,			//2^0 = 1
 	PlayerCustomFlag_CanSeePosition,			//2^1 = 2
 	PlayerCustomFlag_CanSeeItemDetails,			//2^2 = 4
-	PlayerCustomFlag_CanSeeCreatureDetails,		//2^3 = 8
+	PlayerCustomFlag_CanSeeCreatureDetails,			//2^3 = 8
 	PlayerCustomFlag_NotSearchable,				//2^4 = 16
-	PlayerCustomFlag_GamemasterPrivileges,		//2^5 = 32
+	PlayerCustomFlag_GamemasterPrivileges,			//2^5 = 32
 	PlayerCustomFlag_CanThrowAnywhere,			//2^6 = 64
 	PlayerCustomFlag_CanPushAllItems,			//2^7 = 128
 	PlayerCustomFlag_CanMoveAnywhere,			//2^8 = 256
 	PlayerCustomFlag_CanMoveFromFar,			//2^9 = 512
-	PlayerCustomFlag_CanLoginMultipleCharacters,//2^10 = 1024 (account flag)
+	PlayerCustomFlag_CanLoginMultipleCharacters,		//2^10 = 1024 (account flag)
 	PlayerCustomFlag_HasFullLight,				//2^11 = 2048
 	PlayerCustomFlag_CanLogoutAnytime,			//2^12 = 4096 (account flag)
-	PlayerCustomFlag_HasInfiniteStamina,		//2^13 = 8192
+	PlayerCustomFlag_HasInfiniteStamina,			//2^13 = 8192
 	PlayerCustomFlag_IsProtected,				//2^14 = 16384
-	PlayerCustomFlag_IsImmune,					//2^15 = 32768
+	PlayerCustomFlag_IsImmune,				//2^15 = 32768
 	PlayerCustomFlag_NotGainSkull,				//2^16 = 65536
-	PlayerCustomFlag_NotGainUnjustified,		//2^17 = 131072
-	PlayerCustomFlag_CanSeeStaffChannel,				//2^18 = 262144
+	PlayerCustomFlag_NotGainUnjustified,			//2^17 = 131072
+	PlayerCustomFlag_CanSeeStaffChannel,			//2^18 = 262144
 	PlayerCustomFlag_CanSeeCounsellorChannel,		//2^19 = 524288
-	PlayerCustomFlag_DescriptionGroupInsteadVocation,				//2^20 = 1048576
-	PlayerCustomFlag_HideLevel,		//2^21 = 2097152
-	PlayerCustomFlag_IgnorePacification,		//2^22 = 4194304
+	PlayerCustomFlag_DescriptionGroupInsteadVocation	//2^20 = 1048576
+	PlayerCustomFlag_HideLevel,				//2^21 = 2097152
+	PlayerCustomFlag_IgnorePacification,			//2^22 = 4194304
 
 	PlayerCustomFlag_LastFlag
 };
@@ -504,14 +504,14 @@ enum PlayerCustomFlags
 enum ViolationActions_t
 {
 	Action_None			= 0,
-	Action_Notation			= 1,
-	Action_Namelock			= 2,
-	Action_Banishment		= 4,
-	Action_NamelockBan		= 8,
-	Action_BanFinalWarning		= 16,
-	Action_NamelockBanFinalWarning	= 32,
-	Action_StatementReport		= 64,
-	Action_IpBan			= 128
+	Action_Notation			= 1 << 0,
+	Action_Namelock			= 1 << 1,
+	Action_Banishment		= 1 << 2,
+	Action_NamelockBan		= 1 << 3,
+	Action_BanFinalWarning		= 1 << 4,
+	Action_NamelockBanFinalWarning	= 1 << 5,
+	Action_StatementReport		= 1 << 6,
+	Action_IpBan			= 1 << 7
 };
 
 const int32_t violationActions[4] =
