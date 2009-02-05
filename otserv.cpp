@@ -167,28 +167,6 @@ int main(int argc, char *argv[])
 void serverMain(void* param)
 #endif
 {
-	boost::shared_ptr<std::ofstream> outFile;
-	if(g_config.getString(ConfigManager::OUT_LOG) != "")
-	{
-		outFile.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, g_config.getString(ConfigManager::OUT_LOG).c_str()).c_str(),
-			(g_config.getBool(ConfigManager::TRUNCATE_LOGS) ? std::ios::trunc : std::ios::app) | std::ios::out));
-		if(!outFile->is_open())
-			startupErrorMessage("Could not open standard log file for writing!");
-
-		std::cout.rdbuf(outFile->rdbuf());
-	}
-
-	boost::shared_ptr<std::ofstream> errorFile;
-	if(g_config.getString(ConfigManager::ERROR_LOG) != "")
-	{
-		errorFile.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, g_config.getString(ConfigManager::ERROR_LOG).c_str()).c_str(), 
-			(g_config.getBool(ConfigManager::TRUNCATE_LOGS) ? std::ios::trunc : std::ios::app) | std::ios::out));
-		if(!errorFile->is_open())
-			startupErrorMessage("Could not open error log file for writing!");
-
-		std::cerr.rdbuf(errorFile->rdbuf());
-	}
-
 	#if defined(WIN32) && not defined(__CONSOLE__)
 	std::cout.rdbuf(&logger);
 	std::cerr.rdbuf(&logger);
@@ -231,17 +209,38 @@ void serverMain(void* param)
 
 	OTSYS_THREAD_LOCKVARINIT(g_loaderLock);
 	OTSYS_THREAD_SIGNALVARINIT(g_loaderSignal);
-
 	Dispatcher::getDispatcher().addTask(createTask(boost::bind(otserv
 	#if not defined(WIN32) || defined(__CONSOLE__)
 	, argc, argv
 	#endif
 	)));
 
+	boost::shared_ptr<std::ofstream> outFile;
+	if(g_config.getString(ConfigManager::OUT_LOG) != "")
+	{
+		outFile.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, g_config.getString(ConfigManager::OUT_LOG).c_str()).c_str(),
+			(g_config.getBool(ConfigManager::TRUNCATE_LOGS) ? std::ios::trunc : std::ios::app) | std::ios::out));
+		if(!outFile->is_open())
+			startupErrorMessage("Could not open standard log file for writing!");
+
+		std::cout.rdbuf(outFile->rdbuf());
+	}
+
+	boost::shared_ptr<std::ofstream> errorFile;
+	if(g_config.getString(ConfigManager::ERROR_LOG) != "")
+	{
+		errorFile.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, g_config.getString(ConfigManager::ERROR_LOG).c_str()).c_str(), 
+			(g_config.getBool(ConfigManager::TRUNCATE_LOGS) ? std::ios::trunc : std::ios::app) | std::ios::out));
+		if(!errorFile->is_open())
+			startupErrorMessage("Could not open error log file for writing!");
+
+		std::cerr.rdbuf(errorFile->rdbuf());
+	}
+
 	OTSYS_THREAD_LOCK(g_loaderLock, "main()");
 	OTSYS_THREAD_WAITSIGNAL(g_loaderSignal, g_loaderLock);
-
 	Server server(INADDR_ANY, g_config.getNumber(ConfigManager::PORT));
+
 	std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
 	#if defined(WIN32) && not defined(__CONSOLE__)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
@@ -250,8 +249,8 @@ void serverMain(void* param)
 
 	g_server = &server;
 	server.run();
-
 #ifdef __EXCEPTION_TRACER__
+
 	mainExceptionHandler.RemoveHandler();
 #endif
 #ifdef __CONSOLE__
