@@ -494,7 +494,7 @@ enum PlayerCustomFlags
 	PlayerCustomFlag_NotGainUnjustified,			//2^17 = 131072
 	PlayerCustomFlag_CanSeeStaffChannel,			//2^18 = 262144
 	PlayerCustomFlag_CanSeeCounsellorChannel,		//2^19 = 524288
-	PlayerCustomFlag_DescriptionGroupInsteadVocation	//2^20 = 1048576
+	PlayerCustomFlag_DescriptionGroupInsteadVocation,	//2^20 = 1048576
 	PlayerCustomFlag_HideLevel,				//2^21 = 2097152
 	PlayerCustomFlag_IgnorePacification,			//2^22 = 4194304
 
