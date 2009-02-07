@@ -125,9 +125,8 @@ void ProtocolStatus::deleteProtocolTask()
 
 Status::Status()
 {
-	m_playersOnline = 0;
-	m_playersMax = 0;
 	m_start = OTSYS_TIME();
+	m_playersOnline = m_playersMax = 0;
 }
 
 std::string Status::getStatusString() const
