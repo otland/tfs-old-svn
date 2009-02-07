@@ -246,8 +246,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 						return false;
 					}
 
-					uint16_t px = base_x + tileCoord->_x, py = base_y + tileCoord->_y;
-					uint8_t pz = base_z;
+					uint16_t px = base_x + tileCoord->_x, py = base_y + tileCoord->_y, pz = base_z;
 
 					House* house = NULL;
 					bool isHouseTile = false;
