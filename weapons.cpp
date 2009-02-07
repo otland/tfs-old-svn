@@ -498,7 +498,7 @@ void Weapon::onUsedWeapon(Player* player, Item* item, Tile* destTile) const
 
 void Weapon::onUsedAmmo(Player* player, Item* item, Tile* destTile) const
 {
-	if(g_config.getBool(ConfigManager::REMOVE_WEAPON_AMMO))
+	if(!g_config.getBool(ConfigManager::REMOVE_WEAPON_AMMO))
 		return;
 
 	switch(ammoAction)
