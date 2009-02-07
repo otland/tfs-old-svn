@@ -519,7 +519,7 @@ bool IOMapSerialize::saveTile(PropWriteStream& stream, const Tile* tile)
 		if(!item)
 			continue;
 
-		if(item->isMoveable() && item->forceSerialize())
+		if(item->isMoveable() || item->forceSerialize())
 			items.push_back(item);
 	}
 
