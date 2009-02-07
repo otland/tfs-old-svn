@@ -22,31 +22,28 @@
 
 #ifdef __EXCEPTION_TRACER__
 
+#include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <iomanip>
 #include <ctime>
-#include <stdlib.h>
 #include <map>
-
-#include "otsystem.h"
-#include "exception.h"
-
-#include "game.h"
-
-typedef std::map<uint32_t, char*> FunctionMap;
 
 #ifdef WIN32
 #include <excpt.h>
 #include <tlhelp32.h>
 #endif
 
-extern Game g_game;
+#include "otsystem.h"
+#include "exception.h"
+
 
 uint32_t max_off, min_off;
-FunctionMap functionMap;
 bool maploaded = false;
 OTSYS_THREAD_LOCKVAR maploadlock;
+
+typedef std::map<uint32_t, char*> FunctionMap;
+FunctionMap functionMap;
 
 #ifdef WIN32
 void printPointer(std::ostream* output,uint32_t p);
@@ -153,9 +150,6 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 	uint32_t nparameters = 0;
 	uint32_t file,foundRetAddress = 0;
 	_MEMORY_BASIC_INFORMATION mbi;
-
-	//We SHOULD NOT save at crash, as it may cause data loss
-	//g_game.saveGameState(true);
 
 	std::ostream *outdriver;
 	std::cout << ">> CRASH: Generating report file..." << std::endl;
