@@ -226,6 +226,10 @@ ReturnValue Combat::canDoCombat(const Creature* caster, const Tile* tile, bool i
 
 		if(const Player* player = caster->getPlayer())
 		{
+			if(time(NULL) < (player->getLastLoginSaved() + g_config.getNumber(ConfigManager::LOGIN_PROTECTION))
+				&& !player->hasCondition(CONDITION_INFIGHT))
+				return RET_NOTPOSSIBLE;
+
 			if(player->hasFlag(PlayerFlag_IgnoreProtectionZone))
 				return RET_NOERROR;
 		}
@@ -254,6 +258,10 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 			&& (attackerPlayer = attacker->getMaster()->getPlayer())))
 		{
 			checkZones = true;
+			if(time(NULL) < (attackerPlayer->getLastLoginSaved() + g_config.getNumber(ConfigManager::LOGIN_PROTECTION))
+				&& !attackerPlayer->hasCondition(CONDITION_INFIGHT))
+				return RET_NOTPOSSIBLE;
+
 			if((g_game.getWorldType() == WORLD_TYPE_NO_PVP && !Combat::isInPvpZone(attacker, target)) ||
 				isProtected(const_cast<Player*>(attackerPlayer), const_cast<Player*>(targetPlayer)))
 				return RET_YOUMAYNOTATTACKTHISPLAYER;

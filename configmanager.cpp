@@ -209,6 +209,7 @@ bool ConfigManager::load()
 	m_confBool[OLD_CONDITION_ACCURACY] = getGlobalBool(L, "oldConditionAccuracy", "no");
 	m_confBool[HOUSE_STORAGE] = getGlobalBool(L, "useHouseDataStorage", "no");
 	m_confBool[TRACER_BOX] = getGlobalBool(L, "promptExceptionTracerErrorBox", "yes");
+	m_confNumber[LOGIN_PROTECTION] = getGlobalNumber(L, "loginProtectionPeriod", 10);
 
 	m_loaded = true;
 	return true;

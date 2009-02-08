@@ -342,12 +342,10 @@ int32_t Weapon::playerWeaponCheck(Player* player, Creature* target) const
 {
 	const Position& playerPos = player->getPosition();
 	const Position& targetPos = target->getPosition();
-
 	if(playerPos.z != targetPos.z)
 		return 0;
 
 	const ItemType& it = Item::items[getID()];
-
 	int32_t range;
 	if(it.weaponType == WEAPON_AMMO)
 		range = player->getShootRange();

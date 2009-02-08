@@ -126,6 +126,7 @@ class ConfigManager
 			PARTY_RADIUS_X,
 			PARTY_RADIUS_Y,
 			PARTY_RADIUS_Z,
+			LOGIN_PROTECTION,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 
