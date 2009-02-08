@@ -1,5 +1,5 @@
 local config = {
-	rateExp = getConfigInfo('rateExp'),
+	rateExp = getConfigInfo('rateExperience'),
 	rateSkill = getConfigInfo('rateSkill'),
 	rateLoot = getConfigInfo('rateLoot'),
 	rateMagic = getConfigInfo('rateMagic'),

@@ -1,5 +1,5 @@
 function executeClean()
-	cleanMap()
+	doCleanMap()
 	doBroadcastMessage("Game map cleaned, next clean in 2 hours.")
 	return TRUE
 end

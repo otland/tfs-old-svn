@@ -1,6 +1,6 @@
 function onSay(cid, words, param)
 	if(param == "") then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Collected " .. cleanMap() .. " items.")
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Collected " .. doCleanMap() .. " items.")
 		return TRUE
 	end
 
@@ -15,7 +15,7 @@ end
 
 function prepareClean(minutes, cid)
 	if(minutes == 0) then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Cleaned " .. cleanMap() .. " items.")
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Cleaned " .. doCleanMap() .. " items.")
 		doBroadcastMessage("Game map cleaned.")
 	elseif(minutes > 0) then
 		if minutes == 1 then

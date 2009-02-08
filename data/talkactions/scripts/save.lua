@@ -5,13 +5,13 @@ function onSay(cid, words, param)
 		stopEvent(savingEvent)
 		save(tonumber(param) * 60 * 1000)
 	else
-		saveServer()
+		doSaveServer()
 	end
 	return TRUE
 end
 
 function save(delay)
-	saveServer()
+	doSaveServer()
 	if(delay > 0) then
 		savingEvent = addEvent(save, delay, delay)
 	end
