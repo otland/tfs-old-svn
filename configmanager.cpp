@@ -118,7 +118,7 @@ bool ConfigManager::load()
 	m_confNumber[PARTY_RADIUS_X] = getGlobalNumber(L, "experienceShareRadiusX", 30);
 	m_confNumber[PARTY_RADIUS_Y] = getGlobalNumber(L, "experienceShareRadiusY", 30);
 	m_confNumber[PARTY_RADIUS_Z] = getGlobalNumber(L, "experienceShareRadiusZ", 1);
-	m_confDouble[PARTY_DIFFERENCE] = getGlobalDouble(L, "experienceShareLevelDifference", 0.66666666666667f);
+	m_confDouble[PARTY_DIFFERENCE] = getGlobalDouble(L, "experienceShareLevelDifference", double(2 / 3));
 	m_confNumber[SPAWNPOS_X] = getGlobalNumber(L, "newPlayerSpawnPosX", 100);
 	m_confNumber[SPAWNPOS_Y] = getGlobalNumber(L, "newPlayerSpawnPosY", 100);
 	m_confNumber[SPAWNPOS_Z] = getGlobalNumber(L, "newPlayerSpawnPosZ", 7);
