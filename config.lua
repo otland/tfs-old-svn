@@ -24,6 +24,7 @@
 	maxViolationCommentSize = 200
 
 	-- Battle
+	-- NOTE: loginProtectionPeriod is the famous Tibia anti-magebomb system.
 	worldType = "pvp"
 	hotkeyAimbotEnabled = "yes"
 	protectionLevel = 1
@@ -43,6 +44,7 @@
 	fieldOwnershipDuration = 5 * 1000
 	stopAttackingAtExit = "no"
 	oldConditionAccuracy = "no"
+	loginProtectionPeriod = 10
 
 	-- Connection config
 	worldId = 0
