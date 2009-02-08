@@ -361,13 +361,12 @@ bool Party::canUseSharedExperience(const Player* player) const
 			highestLevel = (*it)->getLevel();
 	}
 
-	uint32_t minLevel = (int32_t)std::ceil(((float)(highestLevel) * 2) / 3);
+	uint32_t minLevel = (uint32_t)std::ceil((double)highestLevel * g_config.getDouble(ConfigManager::PARTY_DIFFERENCE));
 	if(player->getLevel() < minLevel)
 		return false;
 
-	const Position& leaderPos = getLeader()->getPosition();
-	const Position& memberPos = player->getPosition();
-	if(!Position::areInRange<30,30,1>(leaderPos, memberPos))
+	if(!Position::areInRange(Position(g_config.getNumber(ConfigManager::PARTY_RADIUS_X), g_config.getNumber(ConfigManager::PARTY_RADIUS_Y),
+		g_config.getNumber(ConfigManager::PARTY_RADIUS_Z)), getLeader()->getPosition(), player->getPosition()))
 		return false;
 
 	if(!player->hasFlag(PlayerFlag_NotGainInFight))

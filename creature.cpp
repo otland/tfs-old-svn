@@ -54,11 +54,12 @@ isInternalRemoved(false)
 	master = NULL;
 	lootDrop = true;
 	skillLoss = true;
+	cannotMove = false;
 	skull = SKULL_NONE;
 	partyShield = SHIELD_NONE;
 
-	health     = 1000;
-	healthMax  = 1000;
+	health = 1000;
+	healthMax = 1000;
 	mana = 0;
 	manaMax = 0;
 
@@ -1113,20 +1114,22 @@ uint32_t Creature::getStaminaRatio(Creature* attacker) const
 	return totalHits;
 }
 
-uint64_t Creature::getGainedExperience(Creature* attacker)
+uint64_t Creature::getGainedExperience(Creature* attacker, bool useMultiplier/* = true*/)
 {
-	uint64_t baseExperience = (uint64_t)std::floor(getDamageRatio(attacker) * getLostExperience());
-
 	Player* player = attacker->getPlayer();
 	if(!player && attacker->getMaster())
 		player = attacker->getMaster()->getPlayer();
 
+	uint64_t baseExperience = (uint64_t)std::floor(getDamageRatio(attacker) * getLostExperience());
 	if(player)
 	{
 		if(player->hasFlag(PlayerFlag_NotGainExperience))
 			return 0;
 
-		baseExperience *= uint64_t(g_game.getExperienceStage(player->getLevel()) + player->getExtraExpRate());
+		if(useMultiplier)
+			baseExperience = uint64_t((double)baseExperience * player->experienceRate);
+
+		baseExperience *= g_game.getExperienceStage(player->getLevel());
 		if(!player->hasCustomFlag(PlayerCustomFlag_HasInfiniteStamina))
 		{
 			player->useStamina((int64_t)getStaminaRatio(attacker), true);
@@ -1139,7 +1142,7 @@ uint64_t Creature::getGainedExperience(Creature* attacker)
 		return baseExperience;
 	}
 
-	return uint64_t(baseExperience * g_config.getNumber(ConfigManager::RATE_EXPERIENCE));
+	return uint64_t((double)baseExperience * g_config.getDouble(ConfigManager::RATE_EXPERIENCE));
 }
 
 void Creature::addDamagePoints(Creature* attacker, int32_t damagePoints)

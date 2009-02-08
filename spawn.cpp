@@ -19,15 +19,15 @@
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 
+#include <libxml/xmlmemory.h>
+#include <libxml/parser.h>
+
 #include "spawn.h"
 #include "game.h"
 #include "player.h"
 #include "npc.h"
 #include "tools.h"
 #include "configmanager.h"
-
-#include <libxml/xmlmemory.h>
-#include <libxml/parser.h>
 
 extern ConfigManager g_config;
 extern Monsters g_monsters;
@@ -38,13 +38,14 @@ extern Game g_game;
 
 Spawns::Spawns()
 {
-	loaded = started = false;
 	filename = "";
+	loaded = started = false;
 }
 
 Spawns::~Spawns()
 {
-	clear();
+	if(started)
+		clear();
 }
 
 bool Spawns::loadFromXml(const std::string& _filename)
@@ -172,10 +173,13 @@ bool Spawns::loadFromXml(const std::string& _filename)
 							continue;
 						}
 
-						if(interval > MINSPAWN_INTERVAL)
-							spawn->addMonster(name, pos, dir, interval);
+						if(interval <= MINSPAWN_INTERVAL)
+						{
+							std::cout << "[Warning - Spawns::loadFromXml] " << name << " " << pos << " spawntime can not";
+							std::cout << " be less than " << (MINSPAWN_INTERVAL / 1000) << " seconds." << std::endl;
+						}
 						else
-							std::cout << "[Warning] Spawns::loadFromXml " << name << " " << pos << " spawntime can not be less than " << MINSPAWN_INTERVAL / 1000 << " seconds." << std::endl;
+							spawn->addMonster(name, pos, dir, interval);
 					}
 					else if(xmlStrcmp(tmpNode->name, (const xmlChar*)"npc") == 0)
 					{
@@ -270,11 +274,12 @@ void Spawns::startup()
 
 void Spawns::clear()
 {
+	started = false;
 	for(SpawnList::iterator it= spawnList.begin(); it != spawnList.end(); ++it)
 		delete (*it);
 
 	spawnList.clear();
-	loaded = started = false;
+	loaded = false;
 	filename = "";
 }
 
@@ -310,7 +315,7 @@ Spawn::~Spawn()
 		spawnedMap.erase(it->first);
 
 		monster->setSpawn(NULL);
-		if(monster->isRemoved())
+		if(!monster->isRemoved())
 			g_game.FreeThing(monster);
 	}
 

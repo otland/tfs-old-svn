@@ -115,6 +115,48 @@ void startupErrorMessage(const std::string& error)
 	exit(1);
 }
 
+#if not defined(WIN32) || defined(__CONSOLE__)
+bool argumentsHandler(StringVec args)
+{
+	StringVec tmp;
+	for(StringVec::iterator it = args.begin(); it != args.end(); ++it)
+	{
+		if((*it) == "--help")
+		{
+			std::cout << "Usage:\n"
+			"\n"
+			"\t--config=$1\t\tAlternate configuration file path.\n"
+			"\t--ip=$1\t\t\tIP address of gameworld server.\n"
+			"\t\t\t\tShould be equal to the global IP.\n"
+			"\t--port=$1\t\tPort for server to listen on.\n"
+			"\t--output-log=$1\t\tAll standard output will be logged to\n"
+			"\t\t\t\tthis file.\n"
+			"\t--error-log=$1\t\tAll standard errors will be logged to\n"
+			"\t\t\t\tthis file.\n";
+			return false;
+		}
+
+		tmp = explodeString((*it), "=");
+		if(tmp[0] == "--config")
+			g_config.setString(ConfigManager::CONFIG_FILE, tmp[1]);
+
+		if(tmp[0] == "--ip")
+			g_config.setString(ConfigManager::IP, tmp[1]);
+
+		if(tmp[0] == "--port")
+			g_config.setNumber(ConfigManager::PORT, atoi(tmp[1].c_str()));
+
+		if(tmp[0] == "--output-log")
+			g_config.setString(ConfigManager::OUT_LOG, tmp[1]);
+
+		if(tmp[0] == "--error-log")
+			g_config.setString(ConfigManager::ERROR_LOG, tmp[1]);
+	}
+
+	return true;
+}
+#endif
+
 #ifndef WIN32
 void signalHandler(int32_t sig)
 {
@@ -163,29 +205,23 @@ int argc, char *argv[]
 
 #if not defined(WIN32) || defined(__CONSOLE__)
 int main(int argc, char *argv[])
+{
+	if(argc > 1 && !argumentsHandler(StringVec(argv, argv + argc)))
+		exit(1);
 #else
 void serverMain(void* param)
-#endif
 {
-	#if defined(WIN32) && not defined(__CONSOLE__)
 	std::cout.rdbuf(&logger);
 	std::cerr.rdbuf(&logger);
-	#else
-	if(argc > 1)
-	{
-		char buffer[200];
-		sscanf(argv[1], "--config=%s", buffer);
-		if(fileExists(buffer))
-			ConfigManager::filename = buffer;
-	}
+#endif
 
-	#endif
-	#ifdef __OTSERV_ALLOCATOR_STATS__
-	OTSYS_CREATE_THREAD(allocatorStatsThread, NULL);
-	#endif
+	g_config.startup();
 	#ifdef __EXCEPTION_TRACER__
 	ExceptionHandler mainExceptionHandler;
 	mainExceptionHandler.InstallHandler();
+	#endif
+	#ifdef __OTSERV_ALLOCATOR_STATS__
+	OTSYS_CREATE_THREAD(allocatorStatsThread, NULL);
 	#endif
 
 	#ifndef WIN32
@@ -214,14 +250,21 @@ void serverMain(void* param)
 	, argc, argv
 	#endif
 	)));
+	OTSYS_THREAD_LOCK(g_loaderLock, "otserv()");
+	OTSYS_THREAD_WAITSIGNAL(g_loaderSignal, g_loaderLock);
 
+	std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
+	#if defined(WIN32) && not defined(__CONSOLE__)
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
+	GUI::getInstance()->m_connections = true;
+	#else
 	boost::shared_ptr<std::ofstream> outFile;
 	if(g_config.getString(ConfigManager::OUT_LOG) != "")
 	{
-		outFile.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, g_config.getString(ConfigManager::OUT_LOG).c_str()).c_str(),
+		outFile.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, g_config.getString(ConfigManager::OUT_LOG)).c_str(),
 			(g_config.getBool(ConfigManager::TRUNCATE_LOGS) ? std::ios::trunc : std::ios::app) | std::ios::out));
 		if(!outFile->is_open())
-			startupErrorMessage("Could not open standard log file for writing!");
+			startupErrorMessage("Could not open output log file for writing!");
 
 		std::cout.rdbuf(outFile->rdbuf());
 	}
@@ -229,24 +272,16 @@ void serverMain(void* param)
 	boost::shared_ptr<std::ofstream> errorFile;
 	if(g_config.getString(ConfigManager::ERROR_LOG) != "")
 	{
-		errorFile.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, g_config.getString(ConfigManager::ERROR_LOG).c_str()).c_str(), 
+		errorFile.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, g_config.getString(ConfigManager::ERROR_LOG)).c_str(), 
 			(g_config.getBool(ConfigManager::TRUNCATE_LOGS) ? std::ios::trunc : std::ios::app) | std::ios::out));
 		if(!errorFile->is_open())
 			startupErrorMessage("Could not open error log file for writing!");
 
 		std::cerr.rdbuf(errorFile->rdbuf());
 	}
-
-	OTSYS_THREAD_LOCK(g_loaderLock, "main()");
-	OTSYS_THREAD_WAITSIGNAL(g_loaderSignal, g_loaderLock);
-	Server server(INADDR_ANY, g_config.getNumber(ConfigManager::PORT));
-
-	std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
-	#if defined(WIN32) && not defined(__CONSOLE__)
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
-	GUI::getInstance()->m_connections = true;
 	#endif
 
+	Server server(INADDR_ANY, g_config.getNumber(ConfigManager::PORT));
 	g_server = &server;
 	server.run();
 #ifdef __EXCEPTION_TRACER__
@@ -306,12 +341,12 @@ int argc, char *argv[]
 		std::cout << "> WARNING: " << STATUS_SERVER_NAME << " has been executed as root user! It is recommended to execute as a normal user." << std::endl;
 	#endif
 
-	std::cout << ">> Loading config (" << ConfigManager::filename << ")" << std::endl;
+	std::cout << ">> Loading config (" << g_config.getString(ConfigManager::CONFIG_FILE) << ")" << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading config");
 	#endif
-	if(!g_config.loadFile(ConfigManager::filename))
-		startupErrorMessage("Unable to load " + ConfigManager::filename + "!");
+	if(!g_config.load())
+		startupErrorMessage("Unable to load " + g_config.getString(ConfigManager::CONFIG_FILE) + "!");
 
 	#ifdef WIN32
 	std::string defaultPriority = asLowerCaseString(g_config.getString(ConfigManager::DEFAULT_PRIORITY));
@@ -937,7 +972,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						for(g_game.reloadInfo(RELOAD_ALL))
+						if(g_game.reloadInfo(RELOAD_ALL))
 							std::cout << "Reloaded all." << std::endl;
 					}
 					break;
@@ -948,9 +983,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 		case WM_DESTROY:
 			if(MessageBox(hwnd, "Are you sure you want to shutdown the server?", "Shutdown", MB_YESNO) == IDYES)
 			{
-				Dispatcher::getDispatcher().addTask(
-					createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
 				Shell_NotifyIcon(NIM_DELETE, &NID);
+				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
 			}
 			break;
 		break;

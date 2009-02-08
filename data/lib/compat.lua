@@ -47,3 +47,7 @@ saveServer = doSaveServer
 cleanHouse = doCleanHouse
 cleanMap = doCleanMap
 shutdown = doShutdown
+mayNotMove = doCreatureSetNoMove
+doPlayerSetNoMove = doCreatureSetNoMove
+getPlayerNoMove = getCreatureNoMove
+getConfigInfo = getConfigValue

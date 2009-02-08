@@ -235,9 +235,7 @@ enum PlayerInfo_t
 	PlayerInfoViolationAccess,
 	PlayerInfoStamina,
 	PlayerInfoGhostStatus,
-	PlayerInfoExtraExpRate,
 	PlayerInfoLossSkill,
-	PlayerInfoNoMove,
 	PlayerInfoMarriage,
 	PlayerInfoPzLock,
 	PlayerInfoSaving,
@@ -461,8 +459,10 @@ class LuaScriptInterface
 		static int32_t luaGetBanList(lua_State* L);
 
 		//custom modifiers
-		static int32_t luaSetPlayerExtraExpRate(lua_State* L);
-		static int32_t luaGetPlayerExtraExpRate(lua_State* L);
+		static int32_t luaGetPlayerRates(lua_State* L);
+		static int32_t luaDoPlayerSetExperienceRate(lua_State* L);
+		static int32_t luaDoPlayerSetMagicRate(lua_State* L);
+		static int32_t luaDoPlayerSetSkillRate(lua_State* L);
 		static int32_t luaDoCreatureSetDropLoot(lua_State* L);
 		static int32_t luaGetPlayerLossPercent(lua_State* L);
 		static int32_t luaDoPlayerSetLossPercent(lua_State* L);
@@ -694,8 +694,8 @@ class LuaScriptInterface
 		static int32_t luaDoPlayerAddMapMark(lua_State* L);
 		static int32_t luaDoPlayerAddPremiumDays(lua_State* L);
 		static int32_t luaGetPlayerPremiumDays(lua_State* L);
-		static int32_t luaDoPlayerSetNoMove(lua_State* L);
-		static int32_t luaGetPlayerNoMove(lua_State* L);
+		static int32_t luaDoCreatureSetNoMove(lua_State* L);
+		static int32_t luaGetCreatureNoMove(lua_State* L);
 
 		static int32_t luaGetTownId(lua_State* L);
 		static int32_t luaGetTownName(lua_State* L);
@@ -742,6 +742,7 @@ class LuaScriptInterface
 		static int32_t luaGetDataDir(lua_State* L);
 		static int32_t luaGetLogsDir(lua_State* L);
 		static int32_t luaGetConfigFile(lua_State* L);
+		static int32_t luaGetConfigValue(lua_State* L);
 		//
 
 		static int32_t internalGetPlayerInfo(lua_State* L, PlayerInfo_t info);

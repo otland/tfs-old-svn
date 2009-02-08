@@ -147,10 +147,10 @@ void Game::setGameState(GameState_t newState)
 
 				Houses::getInstance().payHouses();
 				saveGameState(false);
-				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, this)));
 
 				Scheduler::getScheduler().stop();
 				Dispatcher::getDispatcher().stop();
+				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, this)));
 				break;
 			}
 
@@ -903,9 +903,8 @@ bool Game::playerMoveThing(uint32_t playerId, const Position& fromPos,
 	{
 		if(Position::areInRange<1,1,0>(movingCreature->getPosition(), player->getPosition()))
 		{
-			SchedulerTask* task = createSchedulerTask(2000,
-				boost::bind(&Game::playerMoveCreature, this, player->getID(),
-				movingCreature->getID(), movingCreature->getPosition(), toCylinder->getPosition()));
+			SchedulerTask* task = createSchedulerTask(2000, boost::bind(&Game::playerMoveCreature, this,
+				player->getID(), movingCreature->getID(), movingCreature->getPosition(), toCylinder->getPosition()));
 			player->setNextActionTask(task);
 		}
 		else
@@ -933,18 +932,14 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 		return false;
 	}
 
-	player->setNextActionTask(NULL);
-
 	Creature* movingCreature = getCreatureByID(movingCreatureId);
 	if(!movingCreature || movingCreature->isRemoved())
 		return false;
 
-	if(movingCreature->getPlayer())
-	{
-		if(movingCreature->getPlayer()->getNoMove())
-			return false;
-	}
+	if(movingCreature->getNoMove())
+		return false;
 
+	player->setNextActionTask(NULL);
 	if(!Position::areInRange<1,1,0>(movingCreatureOrigPos, player->getPosition()) && !player->hasCustomFlag(PlayerCustomFlag_CanMoveFromFar))
 	{
 		//need to walk to the creature first before moving it
@@ -5196,15 +5191,15 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 	return true;
 }
 
-uint64_t Game::getExperienceStage(uint32_t level)
+double Game::getExperienceStage(uint32_t level)
 {
 	if(!g_config.getBool(ConfigManager::EXPERIENCE_STAGES))
-		return g_config.getNumber(ConfigManager::RATE_EXPERIENCE);
+		return g_config.getDouble(ConfigManager::RATE_EXPERIENCE);
 
 	if(lastStageLevel && level >= lastStageLevel)
 		return stages[lastStageLevel];
 		
-	return stages[level];	
+	return stages[level];
 }
 
 bool Game::loadExperienceStages()
@@ -5214,8 +5209,10 @@ bool Game::loadExperienceStages()
 
 	if(xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "stages.xml").c_str()))
 	{
+		int32_t intValue, low, high;
+		float floatValue, mul;
+
 		xmlNodePtr root, q, p;
-		int32_t intValue, low, high, mult;
 		root = xmlDocGetRootElement(doc);
 		if(xmlStrcmp(root->name, (const xmlChar*)"stages"))
 		{
@@ -5225,6 +5222,7 @@ bool Game::loadExperienceStages()
 
 		lastStageLevel = 0;
 		stages.clear();
+
 		q = root->children;
 		while(q)
 		{
@@ -5251,17 +5249,17 @@ bool Game::loadExperienceStages()
 							lastStageLevel = low;
 						}
 
-						if(readXMLInteger(p, "multiplier", intValue))
-							mult = intValue;
+						if(readXMLFloat(p, "multiplier", floatValue))
+							mul = floatValue;
 						else
-							mult = 1;
+							mul = 1.0f;
 
 						if(lastStageLevel && lastStageLevel == (uint32_t)low)
-							stages[lastStageLevel] = mult;
+							stages[lastStageLevel] = mul;
 						else
 						{
 							for(int32_t i = low; i <= high; i++)
-								stages[i] = mult;
+								stages[i] = mul;
 						}
 
 					}
@@ -5285,17 +5283,17 @@ bool Game::loadExperienceStages()
 					lastStageLevel = low;
 				}
 
-				if(readXMLInteger(q, "multiplier", intValue))
-					mult = intValue;
+				if(readXMLFloat(q, "multiplier", floatValue))
+					mul = floatValue;
 				else
-					mult = 1;
+					mul = 1.0f;
 
 				if(lastStageLevel && lastStageLevel == (uint32_t)low)
-					stages[lastStageLevel] = mult;
+					stages[lastStageLevel] = mul;
 				else
 				{
 					for(int32_t i = low; i <= high; i++)
-						stages[i] = mult;
+						stages[i] = mul;
 				}
 			}
 
@@ -5761,17 +5759,17 @@ void Game::globalSave()
 void Game::shutdown()
 {
 	std::cout << "Preparing";
-	Spawns::getInstance()->clear();
-	std::cout << " shutdown";
 	Scheduler::getScheduler().shutdown();
-	std::cout << ".";
+	std::cout << " shutdown";
 	Dispatcher::getDispatcher().shutdown();
 	std::cout << ".";
+	Spawns::getInstance()->clear();
+	std::cout << ".";
+	cleanup();
+	std::cout << "." << std::endl;
 	if(g_server)
 		g_server->stop();
 
-	std::cout << "." << std::endl;
-	cleanup();
 	std::cout << "Exiting" << std::endl;
 	exit(1);
 }

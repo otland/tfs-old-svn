@@ -554,7 +554,7 @@ class Game
 		bool closeRuleViolation(Player* player);
 
 		bool loadExperienceStages();
-		uint64_t getExperienceStage(uint32_t level);
+		double getExperienceStage(uint32_t level);
 
 		void setGlobalSaveMessage(int16_t key, bool value) {globalSaveMessage[key] = value;}
 		bool getGlobalSaveMessage(int16_t key) const {return globalSaveMessage[key];}
@@ -622,7 +622,7 @@ class Game
 		RefreshTiles refreshTiles;
 		Trash trash;
 
-		typedef std::map<int32_t, int32_t> StageList;
+		typedef std::map<int32_t, float> StageList;
 		StageList stages;
 		uint32_t lastStageLevel;
 

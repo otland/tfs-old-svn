@@ -3,10 +3,10 @@
 		The Forgotten Server
 
 	Version
-		0.3 Beta 3
+		0.3.1
 
 	Codenamed
-		\
+		Crying Damson
 
 	License
 		GNU GPLv3
@@ -137,6 +137,7 @@
 					* Kits
 					* Fixes
 					* Fixed all holes, ladder, rope spots, etc.
+					* More missing items
 				scripts/
 					tools/
 						fishing.lua
@@ -437,6 +438,11 @@
 	Move (add and remove) items actor tracking, cid param for onAddItem/onRemoveItem move event (Elf [not from revscriptsys])
 	Protocol 8.4 related combat and conditions upgrades, party spells (Elf, OpenTibia SVN)
 	Rewritten so optimized map cleaning code (Elf)
+	Once again rewritten map cleaning code (Talaturen, Elf)
+	Added support for house binary storage (OpenTibia SVN, Elf)
+	Added command line arguments support (Elf)
+	Output and error logging option (Elf, OpenTibia SVN)
+	Rates (multipliers) being now float numbers with possibility to set extra ones per player (Elf, OpenTibia SVN)
 ]
 
 [ Deprecated
@@ -456,6 +462,8 @@
 	LuaFunction: doSetCreatureDropLoot(cid, doDrop), use: doCreatureSetDropLoot(cid, doDrop)
 	LuaFunction: doPlayerAddManaSpent(cid, mana), use: doPlayerAddSpentMana(cid, amount)
 	LuaFunction: getPromotedVocation(vocId), use: getVocationInfo(id).promotedVocation
+
+	... and many, many more.
 ]
 
 [ Fixed issues with...
@@ -505,4 +513,5 @@
 	Shopping exploits (Elf, OpenTibia SVN)
 	Deletions being removed after restart (Elf)
 	Shutdown issue (Elf)
+	Lightweight NPCs interaction not working properly (Elf)
 ]

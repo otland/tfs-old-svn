@@ -126,8 +126,9 @@ Creature()
 	premiumDays = 0;
 
 	idleTime = 0;
-	extraExpRate = 0;
 	marriage = 0;
+	experienceRate = 1.0f;
+	magicRate = 1.0f;
 
 	chaseMode = CHASEMODE_STANDSTILL;
 	fightMode = FIGHTMODE_ATTACK;
@@ -152,6 +153,7 @@ Creature()
 		skills[i][SKILL_LEVEL]= 10;
 		skills[i][SKILL_TRIES]= 0;
 		skills[i][SKILL_PERCENT] = 0;
+		skillRate[i] = 1.0f;
 	}
 
 	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
@@ -184,7 +186,6 @@ Creature()
 
 	requestedOutfit = false;
 	saving = true;
-	mayNotMove = false;
 	ghostMode = false;
 	privateIgnore = false;
 	clickTeleport = false;
@@ -648,10 +649,12 @@ int32_t Player::getSkill(skills_t skilltype, skillsid_t skillinfo) const
 	return std::max((int32_t)0, (int32_t)n);
 }
 
-void Player::addSkillAdvance(skills_t skill, uint32_t count)
+void Player::addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier/* = true*/)
 {
-	skills[skill][SKILL_TRIES] += count * g_config.getNumber(ConfigManager::RATE_SKILL);
-	//Need skill up?
+	if(useMultiplier)
+		skills[skill][SKILL_TRIES] += uint32_t((double)count * skillRate[skill]);
+
+	skills[skill][SKILL_TRIES] += uint32_t((double)count * g_config.getDouble(ConfigManager::RATE_SKILL));
 	if(skills[skill][SKILL_TRIES] >= vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
 	{
 	 	skills[skill][SKILL_LEVEL]++;
@@ -1758,7 +1761,7 @@ void Player::onThink(uint32_t interval)
 		addMessageBuffer();
 	}
 
-	if(!getTile()->hasFlag(TILESTATE_NOLOGOUT) && !mayNotMove && !hasFlag(PlayerFlag_NotGainInFight))
+	if(!getTile()->hasFlag(TILESTATE_NOLOGOUT) && !getNoMove() && !hasFlag(PlayerFlag_NotGainInFight))
 	{
 		idleTime += interval;
 		if(idleTime > (g_config.getNumber(ConfigManager::KICK_AFTER_MINUTES) * 60000) + 60000)
@@ -1766,7 +1769,8 @@ void Player::onThink(uint32_t interval)
 		else if(client && idleTime == g_config.getNumber(ConfigManager::KICK_AFTER_MINUTES) * 60000)
 		{
 			char buffer[130];
-			sprintf(buffer, "You have been idle for %d minutes, you will be disconnected in one minute if you are still idle.", g_config.getNumber(ConfigManager::KICK_AFTER_MINUTES));
+			sprintf(buffer, "You have been idle for %d minutes, you will be disconnected in one minute if you are still idle.",
+				g_config.getNumber(ConfigManager::KICK_AFTER_MINUTES));
 			client->sendTextMessage(MSG_STATUS_WARNING, buffer);
 		}
 	}
@@ -1844,48 +1848,51 @@ void Player::drainMana(Creature* attacker, int32_t manaLoss)
 	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
 }
 
-void Player::addManaSpent(uint64_t amount)
+void Player::addManaSpent(uint64_t amount, bool useMultiplier/* = true*/)
 {
-	if(amount != 0 && !hasFlag(PlayerFlag_NotGainMana))
+	if(amount == 0 || hasFlag(PlayerFlag_NotGainMana))
+		return;
+
+	uint64_t currReqMana = vocation->getReqMana(magLevel);
+	uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
+	if(currReqMana > nextReqMana)
 	{
-		uint64_t currReqMana = vocation->getReqMana(magLevel);
-		uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
-		if(currReqMana > nextReqMana)
-		{
-			//player has reached max magic level
-			manaSpent = 0;
-			magLevelPercent = 0;
-			sendStats();
-			return;
-		}
-
-		manaSpent += amount * g_config.getNumber(ConfigManager::RATE_MAGIC);
-		if(manaSpent >= nextReqMana)
-		{
-			manaSpent -= nextReqMana;
-			magLevel++;
-			char advMsg[50];
-			sprintf(advMsg, "You advanced to magic level %d.", magLevel);
-			sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
-
-			//prevent player from getting a magic level everytime s/he casts a spell
-			if(manaSpent > vocation->getReqMana(magLevel + 1))
-				manaSpent = 0;
-
-			currReqMana = nextReqMana;
-			CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
-			for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
-				(*it)->executeOnAdvance(this, (skills_t)MAGLEVEL, (magLevel - 1), magLevel);
-		}
-
-		nextReqMana = vocation->getReqMana(magLevel + 1);
-		if(nextReqMana > currReqMana)
-			magLevelPercent = Player::getPercentLevel(manaSpent, nextReqMana);
-		else
-			magLevelPercent = 0;
-
+		//player has reached max magic level
+		manaSpent = 0;
+		magLevelPercent = 0;
 		sendStats();
+		return;
 	}
+
+	if(useMultiplier)
+		amount = uint64_t((double)amount * magicRate);
+
+	manaSpent += uint64_t((double)amount * g_config.getDouble(ConfigManager::RATE_MAGIC));
+	if(manaSpent >= nextReqMana)
+	{
+		manaSpent -= nextReqMana;
+		magLevel++;
+		char advMsg[50];
+		sprintf(advMsg, "You advanced to magic level %d.", magLevel);
+		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
+
+		//prevent player from getting a magic level everytime s/he casts a spell
+		if(manaSpent > vocation->getReqMana(magLevel + 1))
+			manaSpent = 0;
+
+		currReqMana = nextReqMana;
+		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
+		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
+			(*it)->executeOnAdvance(this, (skills_t)MAGLEVEL, (magLevel - 1), magLevel);
+	}
+
+	nextReqMana = vocation->getReqMana(magLevel + 1);
+	if(nextReqMana > currReqMana)
+		magLevelPercent = Player::getPercentLevel(manaSpent, nextReqMana);
+	else
+		magLevelPercent = 0;
+
+	sendStats();
 }
 
 void Player::addExperience(uint64_t exp)
@@ -3192,37 +3199,38 @@ void Player::doAttacking(uint32_t interval)
 		lastAttack = OTSYS_TIME();
 }
 
-uint64_t Player::getGainedExperience(Creature* attacker)
+uint64_t Player::getGainedExperience(Creature* attacker, bool useMultiplier/* = true*/)
 {
-	if(g_config.getBool(ConfigManager::EXPERIENCE_FROM_PLAYERS))
+	if(!g_config.getBool(ConfigManager::EXPERIENCE_FROM_PLAYERS))
+		return 0;
+
+	Player* attackerPlayer = attacker->getPlayer();
+	if(attackerPlayer && attackerPlayer != this && skillLoss)
 	{
-		Player* attackerPlayer = attacker->getPlayer();
-		if(attackerPlayer && attackerPlayer != this && skillLoss)
+		uint32_t a = (uint32_t)std::floor(attackerPlayer->getLevel() * 0.9);
+		if(getLevel() >= a)
 		{
-			uint32_t a = (uint32_t)std::floor(attackerPlayer->getLevel() * 0.9);
-			if(getLevel() >= a)
-			{
-				/*
-					Formula
-					a = attackers level * 0.9
-					b = victims level
-					c = victims experience
+			/*
+				Formula
+				a = attackers level * 0.9
+				b = victims level
+				c = victims experience
 
-					result = (1 - (a / b)) * 0.05 * c
-				*/
+				result = (1 - (a / b)) * 0.05 * c
+			*/
 
-				uint32_t b = getLevel();
-				uint64_t c = getExperience();
+			uint32_t b = getLevel();
+			uint64_t c = getExperience();
 
-				uint64_t result = std::max((uint64_t)0, (uint64_t)std::floor(getDamageRatio(attacker) * std::max((double)0, ((double)(1 - (((double)a / b))))) * 0.05 * c));
-				uint64_t finalResult = (result * (g_game.getExperienceStage(attackerPlayer->getLevel()) + attackerPlayer->extraExpRate));
-				
-				uint64_t loss = getLostExperience();
+			uint64_t result = std::max((uint64_t)0, (uint64_t)std::floor(getDamageRatio(attacker) * std::max((double)0,
+				((double)(1 - (((double)a / b))))) * 0.05 * c));
+			if(useMultiplier)
+				result = uint64_t((double)result * attackerPlayer->experienceRate);
 
-				return std::min(loss, finalResult);
-			}
+			return std::min((uint64_t)getLostExperience(), uint64_t(result * g_game.getExperienceStage(attackerPlayer->getLevel())));
 		}
 	}
+
 	return 0;
 }
 

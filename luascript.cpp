@@ -1927,20 +1927,26 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerAddStamina(cid, minutes)
 	lua_register(m_luaState, "doPlayerAddStamina", LuaScriptInterface::luaDoPlayerAddStamina);
 
-	//getPlayerNoMove(cid)
-	lua_register(m_luaState, "getPlayerNoMove", LuaScriptInterface::luaGetPlayerNoMove);
+	//getCreatureNoMove(cid)
+	lua_register(m_luaState, "getCreatureNoMove", LuaScriptInterface::luaGetCreatureNoMove);
 
-	//doPlayerSetNoMove(cid, cannotMove)
-	lua_register(m_luaState, "doPlayerSetNoMove", LuaScriptInterface::luaDoPlayerSetNoMove);
+	//doCreatureSetNoMove(cid, block)
+	lua_register(m_luaState, "doCreatureSetNoMove", LuaScriptInterface::luaDoCreatureSetNoMove);
 
 	//doPlayerResetIdleTime(cid)
 	lua_register(m_luaState, "doPlayerResetIdleTime", LuaScriptInterface::luaDoPlayerResetIdleTime);
 
-	//getPlayerExtraExpRate(cid)
-	lua_register(m_luaState, "getPlayerExtraExpRate", LuaScriptInterface::luaGetPlayerExtraExpRate);
+	//getPlayerRates(cid)
+	lua_register(m_luaState, "getPlayerRates", LuaScriptInterface::luaGetPlayerRates);
 
-	//setPlayerExtraExpRate(cid, value)
-	lua_register(m_luaState, "setPlayerExtraExpRate", LuaScriptInterface::luaSetPlayerExtraExpRate);
+	//doPlayerSetExperienceRate(cid, value)
+	lua_register(m_luaState, "doPlayerSetExperienceRate", LuaScriptInterface::luaDoPlayerSetExperienceRate);
+
+	//doPlayerSetMagicRate(cid, value)
+	lua_register(m_luaState, "doPlayerSetExperienceRate", LuaScriptInterface::luaDoPlayerSetMagicRate);
+
+	//doPlayerSetSkillRate(cid, skill, value)
+	lua_register(m_luaState, "doPlayerSetExperienceRate", LuaScriptInterface::luaDoPlayerSetSkillRate);
 
 	//getPlayerPartner(cid)
 	lua_register(m_luaState, "getPlayerPartner", LuaScriptInterface::luaGetPlayerPartner);
@@ -2049,6 +2055,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//getConfigFile()
 	lua_register(m_luaState, "getConfigFile", LuaScriptInterface::luaGetConfigFile);
+
+	//getConfigValue(key)
+	lua_register(m_luaState, "getConfigValue", LuaScriptInterface::luaGetConfigValue);
 
 	//getHighscoreString(skillId)
 	lua_register(m_luaState, "getHighscoreString", LuaScriptInterface::luaGetHighscoreString);
@@ -2257,14 +2266,8 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 			case PlayerInfoGhostStatus:
 				value = player->isInGhostMode();
 				break;
-			case PlayerInfoExtraExpRate:
-				value = player->getExtraExpRate();
-				break;
 			case PlayerInfoLossSkill:
 				value = player->getLossSkill();
-				break;
-			case PlayerInfoNoMove:
-				value = player->getNoMove();
 				break;
 			case PlayerInfoMarriage:
 				value = player->marriage;
@@ -2446,19 +2449,9 @@ int32_t LuaScriptInterface::luaIsPlayerGhost(lua_State* L)
 	return internalGetPlayerInfo(L, PlayerInfoGhostStatus);
 }
 
-int32_t LuaScriptInterface::luaGetPlayerExtraExpRate(lua_State* L)
-{
-	return internalGetPlayerInfo(L, PlayerInfoExtraExpRate);
-}
-
 int32_t LuaScriptInterface::luaGetPlayerLossSkill(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoLossSkill);
-}
-
-int32_t LuaScriptInterface::luaGetPlayerNoMove(lua_State* L)
-{
-	return internalGetPlayerInfo(L, PlayerInfoNoMove);
 }
 
 int32_t LuaScriptInterface::luaGetPlayerPartner(lua_State* L)
@@ -6380,33 +6373,31 @@ int32_t LuaScriptInterface::luaGetMonsterInfo(lua_State* L)
 {
 	//getMonsterInfo(name)
 	const MonsterType* mType = g_monsters.getMonsterType(popString(L));
-	if(mType)
-	{
-		lua_newtable(L);
-		setField(L, "name", mType->name.c_str());
-		setField(L, "experience", mType->experience);
-		setField(L, "health", mType->health);
-		setField(L, "healthMax", mType->health_max);
-		setField(L, "manaCost", mType->manaCost);
-		setField(L, "defense", mType->defense);
-		setField(L, "armor", mType->armor);
-		setField(L, "baseSpeed", mType->base_speed);
-		setField(L, "lookCorpse", mType->lookcorpse);
-		setField(L, "race", mType->race);
-		setField(L, "skull", mType->skull);
-		setField(L, "partyShield", mType->partyShield);
-		setFieldBool(L, "summonable", mType->isSummonable);
-		setFieldBool(L, "illusionable", mType->isIllusionable);
-		setFieldBool(L, "convinceable", mType->isConvinceable);
-		setFieldBool(L, "attackable", mType->isAttackable);
-		setFieldBool(L, "hostile", mType->isHostile);
-	}
-	else
+	if(!mType)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
+		return 1;
 	}
 
+	lua_newtable(L);
+	setField(L, "name", mType->name.c_str());
+	setField(L, "experience", mType->experience);
+	setField(L, "health", mType->health);
+	setField(L, "healthMax", mType->health_max);
+	setField(L, "manaCost", mType->manaCost);
+	setField(L, "defense", mType->defense);
+	setField(L, "armor", mType->armor);
+	setField(L, "baseSpeed", mType->base_speed);
+	setField(L, "lookCorpse", mType->lookcorpse);
+	setField(L, "race", mType->race);
+	setField(L, "skull", mType->skull);
+	setField(L, "partyShield", mType->partyShield);
+	setFieldBool(L, "summonable", mType->isSummonable);
+	setFieldBool(L, "illusionable", mType->isIllusionable);
+	setFieldBool(L, "convinceable", mType->isConvinceable);
+	setFieldBool(L, "attackable", mType->isAttackable);
+	setFieldBool(L, "hostile", mType->isHostile);
 	return 1;
 }
 
@@ -7919,18 +7910,30 @@ int32_t LuaScriptInterface::luaGetCreaturePosition(lua_State* L)
 int32_t LuaScriptInterface::luaGetCreatureName(lua_State* L)
 {
 	//getCreatureName(cid)
-	uint32_t cid = popNumber(L);
-
 	ScriptEnviroment* env = getScriptEnv();
-
-	Creature* creature = env->getCreatureByUID(cid);
-	if(creature)
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 		lua_pushstring(L, creature->getName().c_str());
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
 	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetCreatureNoMove(lua_State* L)
+{
+	//getCreatureNoMove(cid)
+	ScriptEnviroment* env = getScriptEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+		lua_pushnumber(L, creature->getNoMove() ? LUA_TRUE : LUA_FALSE);
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+
 	return 1;
 }
 
@@ -8695,38 +8698,64 @@ int32_t LuaScriptInterface::luaDoPlayerResetIdleTime(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoPlayerSetNoMove(lua_State* L)
+int32_t LuaScriptInterface::luaDoCreatureSetNoMove(lua_State* L)
 {
-	//doPlayerSetNoMove(cid, cannotMove)
-	bool cannotMove = popNumber(L) == 1;
-	uint32_t cid = popNumber(L);
+	//doCreatureSetNoMove(cid, block)
+	bool block = popNumber(L) == 1;
 
 	ScriptEnviroment* env = getScriptEnv();
-	Player* player = env->getPlayerByUID(cid);
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+	{
+		creature->setNoMove(block);
+		lua_pushnumber(L, LUA_NO_ERROR);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetPlayerRates(lua_State* L)
+{
+	//getPlayerRates(cid)
+	ScriptEnviroment* env = getScriptEnv();
+
+	Player* player = env->getPlayerByUID(popNumber(L));
 	if(!player)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
+		return 1;
 	}
 
-	player->mayNotMove = cannotMove;
-	lua_pushnumber(L, LUA_NO_ERROR);
+	lua_newtable(L);
+	setField(L, "experience", player->experienceRate);
+	setField(L, "magic", player->magicRate);
+
+	lua_newtable(L);
+	for(uint32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
+	{
+		lua_pushnumber(L, i);
+		lua_pushnumber(L, player->skillRate[(skills_t)i]);
+		lua_settable(L, -3);
+	}
+
+	lua_settable(L, -4);
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaSetPlayerExtraExpRate(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerSetExperienceRate(lua_State* L)
 {
-	//setPlayerExtraExpRate(cid, value)
-	int32_t value = (int32_t)popNumber(L);
-	uint32_t cid = popNumber(L);
+	//doPlayerSetExperienceRate(cid, value)
+	float value = popFloatNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	Player* player = env->getPlayerByUID(cid);
-	if(player)
+	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		if(value < 0)
-			value = std::max((int32_t)value, -int32_t(g_game.getExperienceStage(player->getLevel()) - 1));
-		player->setExtraExpRate(value);
+		player->experienceRate = value;
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else
@@ -8734,6 +8763,56 @@ int32_t LuaScriptInterface::luaSetPlayerExtraExpRate(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
 	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoPlayerSetMagicRate(lua_State* L)
+{
+	//doPlayerSetMagicRate(cid, value)
+	float value = popFloatNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	if(Player* player = env->getPlayerByUID(popNumber(L)))
+	{
+		player->magicRate = value;
+		lua_pushnumber(L, LUA_NO_ERROR);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoPlayerSetSkillRate(lua_State* L)
+{
+	//doPlayerSetSkillRate(cid, skill, value)
+	float value = popFloatNumber(L);
+	uint32_t skill = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	if(Player* player = env->getPlayerByUID(popNumber(L)))
+	{
+		if(skill > SKILL_LAST)
+		{
+			reportErrorFunc("Invalid skill");
+			lua_pushnumber(L, LUA_ERROR);
+		}
+		else
+		{
+			player->skillRate[(skills_t)skill] = value;
+			lua_pushnumber(L, LUA_NO_ERROR);
+		}
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+
 	return 1;
 }
 
@@ -9720,7 +9799,14 @@ int32_t LuaScriptInterface::luaGetLogsDir(lua_State* L)
 int32_t LuaScriptInterface::luaGetConfigFile(lua_State* L)
 {
 	//getConfigFile()
-	lua_pushstring(L, ConfigManager::filename.c_str());
+	lua_pushstring(L, g_config.getString(ConfigManager::CONFIG_FILE).c_str());
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetConfigValue(lua_State* L)
+{
+	//getConfigValue(key)
+	g_config.getValue(popString(L), L);
 	return 1;
 }
 

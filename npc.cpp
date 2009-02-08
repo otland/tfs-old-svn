@@ -18,14 +18,7 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-
 #include "definitions.h"
-#include "npc.h"
-#include "game.h"
-#include "tools.h"
-#include "configmanager.h"
-#include "position.h"
-#include "spells.h"
 
 #include <algorithm>
 #include <functional>
@@ -36,16 +29,23 @@
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 
+#include "npc.h"
 #include "luascript.h"
+#include "game.h"
+#include "tools.h"
+#include "configmanager.h"
+#include "position.h"
+#include "spells.h"
+#include "vocation.h"
 
 extern ConfigManager g_config;
 extern Game g_game;
 extern Spells* g_spells;
+extern Vocations g_vocations;
 
 AutoList<Npc> Npc::listNpc;
 
 NpcScriptInterface* Npc::m_scriptInterface = NULL;
-
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t Npc::npcCount = 0;
 #endif
@@ -603,8 +603,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 			{
 				if(xmlStrcmp(tmpNode->name, (const xmlChar*)"response") == 0)
 				{
-					prop.output = "";
-					prop.knowSpell = "";
+					prop.output = prop.knowSpell = "";
 					prop.params = interactParams | loadParams(tmpNode);
 					ScriptVars scriptVars;
 
@@ -1914,6 +1913,9 @@ bool Npc::getNextStep(Direction& dir)
 
 bool Npc::canWalkTo(const Position& fromPos, Direction dir)
 {
+	if(getNoMove())
+		return false;
+
 	Position toPos = fromPos;
 	toPos = getNextPosition(dir, toPos);
 
@@ -2053,7 +2055,11 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 
 			if(hasBitSet(RESPOND_DRUID, params))
 			{
-				if(player->getVocationId() != 2)
+				Vocation* tmpVoc = player->vocation;
+				for(uint32_t i = 0; i <= player->promotionLevel; i++)
+					tmpVoc = g_vocations.getVocation(tmpVoc->getFromVocation());
+
+				if(tmpVoc->getVocId() != 2)
 					continue;
 
 				++matchCount;
@@ -2061,7 +2067,11 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 
 			if(hasBitSet(RESPOND_KNIGHT, params))
 			{
-				if(player->getVocationId() != 4)
+				Vocation* tmpVoc = player->vocation;
+				for(uint32_t i = 0; i <= player->promotionLevel; i++)
+					tmpVoc = g_vocations.getVocation(tmpVoc->getFromVocation());
+
+				if(tmpVoc->getVocId() != 4)
 					continue;
 
 				++matchCount;
@@ -2069,7 +2079,11 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 
 			if(hasBitSet(RESPOND_PALADIN, params))
 			{
-				if(player->getVocationId() != 3)
+				Vocation* tmpVoc = player->vocation;
+				for(uint32_t i = 0; i <= player->promotionLevel; i++)
+					tmpVoc = g_vocations.getVocation(tmpVoc->getFromVocation());
+
+				if(tmpVoc->getVocId() != 3)
 					continue;
 
 				++matchCount;
@@ -2077,7 +2091,11 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 
 			if(hasBitSet(RESPOND_SORCERER, params))
 			{
-				if(player->getVocationId() != 1)
+				Vocation* tmpVoc = player->vocation;
+				for(uint32_t i = 0; i <= player->promotionLevel; i++)
+					tmpVoc = g_vocations.getVocation(tmpVoc->getFromVocation());
+
+				if(tmpVoc->getVocId() != 1)
 					continue;
 
 				++matchCount;
@@ -2160,41 +2178,51 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			++matchCount;
 		}
 
-		if((*it)->getStorageId() != -1)
+		int32_t storageId = (*it)->getStorageId();
+		if(storageId != -1)
 		{
-			int32_t storageValue = (*it)->getStorageValue();
 			std::string playerStorageValue;
-
 			int32_t tmp = -1;
-			if(player->getStorageValue((*it)->getStorageId(), playerStorageValue))
+			if(player->getStorageValue(storageId, playerStorageValue))
 				tmp = atoi(playerStorageValue.c_str());
 
+			int32_t storageValue = (*it)->getStorageValue();
 			switch((*it)->getStorageComp())
 			{
 				case STORAGE_LESS:
 				{
 					if(tmp >= storageValue)
 						continue;
+
+					break;
 				}
 				case STORAGE_LESSOREQUAL:
 				{
 					if(tmp > storageValue)
 						continue;
+
+					break;
 				}
 				case STORAGE_EQUAL:
 				{
 					if(tmp != storageValue)
 						continue;
+
+					break;
 				}
 				case STORAGE_GREATEROREQUAL:
 				{
 					if(tmp < storageValue)
 						continue;
+
+					break;
 				}
 				case STORAGE_GREATER:
 				{
 					if(tmp <= storageValue)
 						continue;
+
+					break;
 				}
 				default:
 					break;

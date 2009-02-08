@@ -24,11 +24,17 @@
 #include "tools.h"
 #include <iostream>
 
-std::string ConfigManager::filename = getFilePath(FILE_TYPE_CONFIG, "config.lua");
-
 ConfigManager::ConfigManager()
 {
-	m_isLoaded = false;
+	m_loaded = false;
+	m_startup = true;
+	m_confString[CONFIG_FILE] = getFilePath(FILE_TYPE_CONFIG, "config.lua");
+	m_confBool[LOGIN_ONLY_LOGINSERVER] = false;
+
+	m_confString[IP] = "";
+	m_confNumber[PORT] = 0;
+	m_confString[ERROR_LOG] = "";
+	m_confString[OUT_LOG] = "";
 }
 
 ConfigManager::~ConfigManager()
@@ -36,24 +42,37 @@ ConfigManager::~ConfigManager()
 	//
 }
 
-bool ConfigManager::loadFile(const std::string& _filename)
+bool ConfigManager::load()
 {
-	lua_State* L = lua_open();
+	if(L)
+		lua_close(L);
+
+	L = lua_open();
 	if(!L)
 		return false;
 
-	if(luaL_dofile(L, _filename.c_str()))
+	if(!fileExists(m_confString[CONFIG_FILE].c_str()) || luaL_dofile(L, m_confString[CONFIG_FILE].c_str()))
 	{
 		lua_close(L);
 		return false;
 	}
 
 	//parse config
-	if(!m_isLoaded) //info that must be loaded one time (unless we reset the modules involved)
+	if(!m_loaded) //info that must be loaded one time (unless we reset the modules involved)
 	{
-		m_confString[CONFIG_FILE] = _filename;
-		m_confString[IP] = getGlobalString(L, "ip", "127.0.0.1");
-		m_confNumber[PORT] = getGlobalNumber(L, "port", 7171);
+		if(m_confString[IP] == "")
+			m_confString[IP] = getGlobalString(L, "ip", "127.0.0.1");
+
+		if(m_confNumber[PORT] == 0)
+			m_confNumber[PORT] = getGlobalNumber(L, "port", 7171);
+
+		if(m_confString[OUT_LOG] == "")
+			m_confString[OUT_LOG] = getGlobalString(L, "outLogName", "");
+
+		if(m_confString[ERROR_LOG] == "")
+			m_confString[ERROR_LOG] = getGlobalString(L, "errorLogName", "");
+
+		m_confBool[TRUNCATE_LOGS] = getGlobalBool(L, "truncateLogsOnStartup", "yes");
 		#ifdef MULTI_SQL_DRIVERS
 		m_confString[SQL_TYPE] = getGlobalString(L, "sqlType", "sqlite");
 		#endif
@@ -64,6 +83,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confString[SQL_PASS] = getGlobalString(L, "sqlPass", "");
 		m_confString[SQL_FILE] = getGlobalString(L, "sqlFile", "forgottenserver.s3db");
 		m_confNumber[SQL_KEEPALIVE] = getGlobalNumber(L, "sqlKeepAlive", 60);
+		m_confNumber[MYSQL_READ_TIMEOUT] = getGlobalNumber(L, "mysqlReadTimeout", 3);
 		m_confString[PASSWORD_TYPE] = getGlobalString(L, "passwordType", "plain");
 		m_confNumber[PASSWORDTYPE] = PASSWORD_TYPE_PLAIN;
 		m_confString[MAP_NAME] = getGlobalString(L, "mapName", "forgotten");
@@ -73,9 +93,6 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confString[HOUSE_RENT_PERIOD] = getGlobalString(L, "houseRentPeriod", "monthly");
 		m_confNumber[WORLD_ID] = getGlobalNumber(L, "worldId", 0);
 		m_confBool[STORE_TRASH] = getGlobalBool(L, "storeTrash", "yes");
-		m_confString[OUT_LOG] = getGlobalString(L, "outLogName", "server/out.log");
-		m_confString[ERROR_LOG] = getGlobalString(L, "errorLogName", "server/error.log");
-		m_confBool[TRUNCATE_LOGS] = getGlobalBool(L, "truncateLogsOnStartup", "yes");
 	}
 
 	m_confString[LOGIN_MSG] = getGlobalString(L, "loginMessage", "Welcome to the Forgotten Server!");
@@ -93,11 +110,15 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confNumber[DEFAULT_DESPAWNRANGE] = getGlobalNumber(L, "deSpawnRange", 2);
 	m_confNumber[DEFAULT_DESPAWNRADIUS] = getGlobalNumber(L, "deSpawnRadius", 50);
 	m_confNumber[ALLOW_CLONES] = getGlobalNumber(L, "allowClones", 0);
-	m_confNumber[RATE_EXPERIENCE] = getGlobalNumber(L, "rateExp", 1);
-	m_confNumber[RATE_SKILL] = getGlobalNumber(L, "rateSkill", 1);
+	m_confDouble[RATE_EXPERIENCE] = getGlobalDouble(L, "rateExperience", 1.0f);
+	m_confDouble[RATE_SKILL] = getGlobalDouble(L, "rateSkill", 1.0f);
+	m_confDouble[RATE_MAGIC] = getGlobalDouble(L, "rateMagic", 1.0f);
 	m_confNumber[RATE_LOOT] = getGlobalNumber(L, "rateLoot", 1);
-	m_confNumber[RATE_MAGIC] = getGlobalNumber(L, "rateMagic", 1);
 	m_confNumber[RATE_SPAWN] = getGlobalNumber(L, "rateSpawn", 1);
+	m_confNumber[PARTY_RADIUS_X] = getGlobalNumber(L, "experienceShareRadiusX", 30);
+	m_confNumber[PARTY_RADIUS_Y] = getGlobalNumber(L, "experienceShareRadiusY", 30);
+	m_confNumber[PARTY_RADIUS_Z] = getGlobalNumber(L, "experienceShareRadiusZ", 1);
+	m_confDouble[PARTY_DIFFERENCE] = getGlobalDouble(L, "experienceShareLevelDifference", 0.66666666666667);
 	m_confNumber[SPAWNPOS_X] = getGlobalNumber(L, "newPlayerSpawnPosX", 100);
 	m_confNumber[SPAWNPOS_Y] = getGlobalNumber(L, "newPlayerSpawnPosY", 100);
 	m_confNumber[SPAWNPOS_Z] = getGlobalNumber(L, "newPlayerSpawnPosZ", 7);
@@ -180,68 +201,85 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBool[STOP_ATTACK_AT_EXIT] = getGlobalBool(L, "stopAttackingAtExit", "no");
 	#ifndef __LOGIN_SERVER__
 	m_confBool[LOGIN_ONLY_LOGINSERVER] = getGlobalBool(L, "loginOnlyWithLoginServer", "no");
-	#else
-	m_confBool[LOGIN_ONLY_LOGINSERVER] = false;
 	#endif
-	m_confNumber[EXTRA_PARTY_PERCENT] = getGlobalNumber(L, "extraPartyExpPercent", 5);
-	m_confNumber[EXTRA_PARTY_LIMIT] = getGlobalNumber(L, "extraPartyExpLimit", 20);
+	m_confNumber[EXTRA_PARTY_PERCENT] = getGlobalNumber(L, "extraPartyExperiencePercent", 5);
+	m_confNumber[EXTRA_PARTY_LIMIT] = getGlobalNumber(L, "extraPartyExperienceLimit", 20);
 	m_confBool[DISABLE_OUTFITS_PRIVILEGED] = getGlobalBool(L, "disableOutfitsForPrivilegedPlayers", "no");
 	m_confBool[OPTIMIZE_DB_AT_STARTUP] = getGlobalBool(L, "optimizeDatabaseAtStartup", "yes");
 	m_confBool[OLD_CONDITION_ACCURACY] = getGlobalBool(L, "oldConditionAccuracy", "no");
 	m_confBool[HOUSE_STORAGE] = getGlobalBool(L, "useHouseDataStorage", "no");
-	m_isLoaded = true;
 
-	lua_close(L);
+	m_loaded = true;
 	return true;
 }
 
 bool ConfigManager::reload()
 {
-	if(!m_isLoaded)
+	if(!m_loaded)
 		return false;
 
-	return loadFile(m_confString[CONFIG_FILE]);
+	return load();
 }
 
 const std::string& ConfigManager::getString(uint32_t _what) const
 {
-	if(m_isLoaded && _what < LAST_STRING_CONFIG)
+	if((m_loaded && _what < LAST_STRING_CONFIG) || _what <= CONFIG_FILE)
 		return m_confString[_what];
 
-	std::cout << "[Warning - ConfigManager::getString] " << _what << std::endl;
+	if(!m_startup)
+		std::cout << "[Warning - ConfigManager::getString] " << _what << std::endl;
+
 	return m_confString[DUMMY_STR];
 }
 
 bool ConfigManager::getBool(uint32_t _what) const
 {
-	if(m_isLoaded && _what < LAST_BOOL_CONFIG)
+	if(m_loaded && _what < LAST_BOOL_CONFIG)
 		return m_confBool[_what];
 
-	std::cout << "[Warning - ConfigManager::getBool] " << _what << std::endl;
+	if(!m_startup)
+		std::cout << "[Warning - ConfigManager::getBool] " << _what << std::endl;
+
 	return false;
 }
 
 int32_t ConfigManager::getNumber(uint32_t _what) const
 {
-	if(m_isLoaded && _what < LAST_NUMBER_CONFIG)
+	if(m_loaded && _what < LAST_NUMBER_CONFIG)
 		return m_confNumber[_what];
 
-	std::cout << "[Warning - ConfigManager::getNumber] " << _what << std::endl;
+	if(!m_startup)
+		std::cout << "[Warning - ConfigManager::getNumber] " << _what << std::endl;
+
 	return 0;
 }
 
 double ConfigManager::getDouble(uint32_t _what) const
 {
-	if(m_isLoaded && _what < LAST_DOUBLE_CONFIG)
+	if(m_loaded && _what < LAST_DOUBLE_CONFIG)
 		return m_confDouble[_what];
 
-	std::cout << "[Warning - ConfigManager::getDouble] " << _what << std::endl;
+	if(!m_startup)
+		std::cout << "[Warning - ConfigManager::getDouble] " << _what << std::endl;
+
 	return 0;
+}
+
+bool ConfigManager::setString(uint32_t _what, const std::string& _value)
+{
+	if(_what < LAST_STRING_CONFIG)
+	{
+		m_confString[_what] = _value;
+		return true;
+	}
+
+	std::cout << "[Warning - ConfigManager::setString] " << _what << std::endl;
+	return false;
 }
 
 bool ConfigManager::setNumber(uint32_t _what, int32_t _value)
 {
-	if(m_isLoaded && _what < LAST_NUMBER_CONFIG)
+	if(_what < LAST_NUMBER_CONFIG)
 	{
 		m_confNumber[_what] = _value;
 		return true;
@@ -262,8 +300,8 @@ std::string ConfigManager::getGlobalString(lua_State* _L, const std::string& _id
 
 	int32_t len = (int32_t)lua_strlen(_L, -1);
 	std::string ret(lua_tostring(_L, -1), len);
-	lua_pop(_L, 1);
 
+	lua_pop(_L, 1);
 	return ret;
 }
 
@@ -298,4 +336,57 @@ double ConfigManager::getGlobalDouble(lua_State* _L, const std::string& _identif
 	double val = (double)lua_tonumber(_L, -1);
 	lua_pop(_L, 1);
 	return val;
+}
+
+void ConfigManager::getValue(const std::string& key, lua_State* _L)
+{
+	lua_getglobal(L, key.c_str());
+	moveValue(L, _L);
+}
+
+void ConfigManager::moveValue(lua_State* from, lua_State* to)
+{
+	switch(lua_type(from, -1))
+	{
+		case LUA_TNIL:
+			lua_pushnil(to);
+			break;
+		case LUA_TBOOLEAN:
+			lua_pushboolean(to, lua_toboolean(from, -1));
+			break;
+		case LUA_TNUMBER:
+			lua_pushnumber(to, lua_tonumber(from, -1));
+			break;
+		case LUA_TSTRING:
+		{
+			size_t len;
+			const char* str = lua_tolstring(from, -1, &len);
+
+			lua_pushlstring(to, str, len);
+			break;
+		}
+		case LUA_TTABLE:
+		{
+			lua_newtable(to);		
+			lua_pushnil(from); // First key
+			while(lua_next(from, -2))
+			{
+				// Move value to the other state
+				moveValue(from, to); // Value is popped, key is left
+				// Move key to the other state
+				lua_pushvalue(from, -1); // Make a copy of the key to use for the next iteration
+				moveValue(from, to); // Key is in other state.
+				// We still have the key in the 'from' state ontop of the stack
+
+				lua_insert(to, -2); // Move key above value
+				lua_settable(to, -3); // Set the key
+			}
+
+			break;
+		}
+		default:
+			break;
+	}
+
+	lua_pop(from, 1); // Pop the value we just read
 }

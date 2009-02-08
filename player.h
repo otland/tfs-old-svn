@@ -234,10 +234,6 @@ class Player : public Creature, public Cylinder
 		void setGroupId(int32_t newId);
 		int32_t getGroupId() const {return groupId;}
 
-		void resetIdleTime() {idleTime = 0;}
-		int32_t getExtraExpRate() const {return extraExpRate;}
-		void setExtraExpRate(int32_t value) {extraExpRate = value;}
-
 		bool isInGhostMode() const {return ghostMode;}
 		void switchGhostMode() {ghostMode = !ghostMode;}
 		bool canSeeGhost(const Creature* creature) const
@@ -269,6 +265,7 @@ class Player : public Creature, public Cylinder
 		void setSex(PlayerSex_t);
 
 		virtual int32_t getSoul() const {return getPlayerInfo(PLAYERINFO_SOUL);}
+		void resetIdleTime() {idleTime = 0;}
 
 		uint64_t getStamina() const {return stamina;}
 		void setStamina(uint64_t _stamina) {stamina = _stamina;}
@@ -428,8 +425,8 @@ class Player : public Creature, public Cylinder
 
 		void addExperience(uint64_t exp);
 		void removeExperience(uint64_t exp, bool updateStats = true);
-		void addManaSpent(uint64_t amount);
-		void addSkillAdvance(skills_t skill, uint32_t count);
+		void addManaSpent(uint64_t amount, bool useMultiplier = true);
+		void addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier = true);
 
 		virtual int32_t getArmor() const;
 		virtual int32_t getDefense() const;
@@ -440,7 +437,7 @@ class Player : public Creature, public Cylinder
 		void addInFightTicks(bool pzLock = false);
 		void addDefaultRegeneration(uint32_t addTicks);
 
-		virtual uint64_t getGainedExperience(Creature* attacker);
+		virtual uint64_t getGainedExperience(Creature* attacker, bool useMultiplier = true);
 
 		//combat event functions
 		virtual void onAddCondition(ConditionType_t type);
@@ -463,8 +460,6 @@ class Player : public Creature, public Cylinder
 		virtual void onRemovedCreature();
 
 		virtual void getCreatureLight(LightInfo& light) const;
-		bool getNoMove() const {return mayNotMove;}
-
 		Skulls_t getSkull() const;
 		Skulls_t getSkullClient(const Creature* creature) const;
 
@@ -678,6 +673,10 @@ class Player : public Creature, public Cylinder
 		VIPListSet VIPList;
 		uint32_t maxVipLimit;
 
+		double experienceRate;
+		double magicRate;
+		double skillRate[SKILL_LAST + 1];
+
 		InvitedToGuildsList invitedToGuildsList;
 		ContainerVector containerVec;
 
@@ -765,9 +764,9 @@ class Player : public Creature, public Cylinder
 		std::string groupName;
 		uint16_t groupOutfit;
 		int32_t idleTime;
-		int32_t extraExpRate;
 		int32_t groupId;
 		OperatingSystem_t operatingSystem;
+		bool requestedOutfit;
 		bool ghostMode;
 		bool privateIgnore;
 		bool clickTeleport;
@@ -779,9 +778,6 @@ class Player : public Creature, public Cylinder
 		int32_t managerNumber, managerNumber2;
 		char managerChar[100];
 		std::string managerString, managerString2;
-
-		bool mayNotMove;
-		bool requestedOutfit;
 
 		double inventoryWeight;
 		double capacity;

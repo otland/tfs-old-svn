@@ -81,10 +81,7 @@ class ConfigManager
 			DEFAULT_DESPAWNRANGE,
 			DEFAULT_DESPAWNRADIUS,
 			ALLOW_CLONES,
-			RATE_EXPERIENCE,
-			RATE_SKILL,
 			RATE_LOOT,
-			RATE_MAGIC,
 			RATE_SPAWN,
 			SPAWNPOS_X,
 			SPAWNPOS_Y,
@@ -125,11 +122,19 @@ class ConfigManager
 			WORLD_ID,
 			EXTRA_PARTY_PERCENT,
 			EXTRA_PARTY_LIMIT,
+			MYSQL_READ_TIMEOUT,
+			PARTY_RADIUS_X,
+			PARTY_RADIUS_Y,
+			PARTY_RADIUS_Z,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 
 		enum double_config_t
 		{
+			RATE_EXPERIENCE,
+			RATE_SKILL,
+			RATE_MAGIC,
+			PARTY_DIFFERENCE,
 			LAST_DOUBLE_CONFIG /* this must be the last one */
 		};
 
@@ -190,15 +195,17 @@ class ConfigManager
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 
-		static std::string filename;
-		bool loadFile(const std::string& _filename);
+		bool load();
 		bool reload();
+		void startup() {m_startup = false;}
 
+		void getValue(const std::string& key, lua_State* _L);
 		const std::string& getString(uint32_t _what) const;
 		bool getBool(uint32_t _what) const;
 		int32_t getNumber(uint32_t _what) const;
 		double getDouble(uint32_t _what) const;
 
+		bool setString(uint32_t _what, const std::string& _value);
 		bool setNumber(uint32_t _what, int32_t _value);
 
 	private:
@@ -207,7 +214,10 @@ class ConfigManager
 		int32_t getGlobalNumber(lua_State* _L, const std::string& _identifier, const int32_t _default = 0);
 		double getGlobalDouble(lua_State* _L, const std::string& _identifier, const int32_t _default = 0);
 
-		bool m_isLoaded;
+		bool m_loaded, m_startup;
+		lua_State* L;
+		static void moveValue(lua_State* fromL, lua_State* toL);
+
 		std::string m_confString[LAST_STRING_CONFIG];
 		bool m_confBool[LAST_BOOL_CONFIG];
 		int32_t m_confNumber[LAST_NUMBER_CONFIG];

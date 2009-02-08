@@ -405,7 +405,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 	{
 		if(g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
 		{
-			if(text[0] == '!'/*TODO: command modifiers*/)
+			if(text[0] == '!' || text[0] == '/')
 			{
 				bool ret = true;
 				if(player->getGuildId())
@@ -424,11 +424,11 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 							else
 								player->sendCancel("You are not the leader of your guild.");
 						}
-						else if(text.substr(1, 7) == "invite")
+						else if(text.substr(1, 6) == "invite")
 						{
 							if(player->getGuildLevel() > GUILDLEVEL_MEMBER)
 							{
-								if(text.length() > 8)
+								if(text.length() > 7)
 								{
 									std::string param = text.substr(8);
 									trimString(param);
@@ -483,7 +483,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 							else
 								player->sendCancel("You don't have rights to invite players to your guild.");
 						}
-						else if(text.substr(1, 6) == "leave")
+						else if(text.substr(1, 5) == "leave")
 						{
 							if(player->getGuildLevel() < GUILDLEVEL_LEADER)
 							{
@@ -494,11 +494,11 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 							else
 								player->sendCancel("You cannot leave your guild because you are the leader of it, you have to pass the leadership to another member of your guild or disband the guild.");
 						}
-						else if(text.substr(1, 7) == "revoke")
+						else if(text.substr(1, 6) == "revoke")
 						{
 							if(player->getGuildLevel() > GUILDLEVEL_MEMBER)
 							{
-								if(text.length() > 8)
+								if(text.length() > 7)
 								{
 									std::string param = text.substr(8);
 									trimString(param);
@@ -550,28 +550,26 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 							else
 								player->sendCancel("You don't have rights to revoke an invite of someone in your guild.");
 						}
-						else if(text.substr(1, 8) == "promote" || text.substr(1, 7) == "demote" || text.substr(1, 15) == "passleadership" || text.substr(1, 5) == "kick")
+						else if(text.substr(1, 7) == "promote" || text.substr(1, 6) == "demote" || text.substr(1, 14) == "passleadership" || text.substr(1, 4) == "kick")
 						{
 							if(player->getGuildLevel() == GUILDLEVEL_LEADER)
 							{
 								std::string param;
 								uint32_t length = 0;
 								if(text[2] == 'r')
-									length = 10;
-								else if(text[2] == 'e')
 									length = 9;
-								else if(text[2] == 'a')
-									length = 17;
-								else
+								else if(text[2] == 'e')
 									length = 7;
+								else if(text[2] == 'a')
+									length = 16;
+								else
+									length = 6;
 
 								if(text.length() < length)
 								{
 									player->sendCancel("Invalid guildcommand parameters.");
 									return true;
 								}
-								else
-									length -= 1;
 
 								param = text.substr(length);
 								trimString(param);
@@ -719,7 +717,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 										}
 									}
 									else
-										player->sendCancel("A player with that name is not in a guild");
+										player->sendCancel("A player with that name is not in a guild.");
 								}
 								else
 									player->sendCancel("A player with that name does not exist.");
@@ -727,7 +725,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 							else
 								player->sendCancel("You are not the leader of your guild.");
 						}
-						else if(text.substr(1, 5) == "nick" && text.length() > 6)
+						else if(text.substr(1, 4) == "nick" && text.length() > 5)
 						{
 							StringVec params = explodeString(text.substr(6), ",");
 							if(params.size() >= 2)
@@ -740,9 +738,9 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 								{
 									if(paramPlayer->getGuildId())
 									{
-										if(param2.length() > 3)
+										if(param2.length() > 2)
 										{
-											if(param2.length() < 15)
+											if(param2.length() < 21)
 											{
 												if(isValidName(param2, false))
 												{
@@ -769,7 +767,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 														player->sendCancel("A player with that name's guild could not be found.");
 												}
 												else
-													player->sendCancel("That guildnick is not valid");
+													player->sendCancel("That guildnick is not valid.");
 											}
 											else
 												player->sendCancel("That guildnick is too long, please select a shorter one.");
@@ -786,9 +784,9 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 									IOLoginData::getInstance()->getGuidByName(guid, (std::string&)param1);
 									if(IOGuild::getInstance()->hasGuild(guid))
 									{
-										if(param2.length() > 3)
+										if(param2.length() > 2)
 										{
-											if(param2.length() < 15)
+											if(param2.length() < 21)
 											{
 												if(isValidName(param2, false))
 												{
@@ -812,7 +810,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 														player->sendCancel("A player with that name's guild could not be found.");
 												}
 												else
-													player->sendCancel("That guildnick is not valid");
+													player->sendCancel("That guildnick is not valid.");
 											}
 											else
 												player->sendCancel("That guildnick is too long, please select a shorter one.");
@@ -821,15 +819,15 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 											player->sendCancel("That guildnick is too short, please select a longer one.");
 									}
 									else
-										player->sendCancel("A player with that name is not in any guild");
+										player->sendCancel("A player with that name is not in any guild.");
 								}
 								else
 									player->sendCancel("A player with that name does not exist.");
 							}
 							else
-								player->sendCancel("Invalid guildcommand parameters");
+								player->sendCancel("Invalid guildcommand parameters.");
 						}
-						else if(text.substr(1, 12) == "setrankname" && text.length() > 13)
+						else if(text.substr(1, 11) == "setrankname" && text.length() > 12)
 						{
 							StringVec params = explodeString(text.substr(13), ",");
 							if(params.size() >= 2)
@@ -839,7 +837,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 								trimString(param2);
 								if(player->getGuildLevel() == GUILDLEVEL_LEADER)
 								{
-									if(param2.length() > 3)
+									if(param2.length() > 2)
 									{
 										if(param2.length() < 21)
 										{
@@ -854,13 +852,13 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 														channel->talk(player, SPEAK_CHANNEL_W, buffer);
 													}
 													else
-														player->sendCancel("There is already a rank in your guild with that name");
+														player->sendCancel("There is already a rank in your guild with that name.");
 												}
 												else
-													player->sendCancel("There is no such rankname in your guild");
+													player->sendCancel("There is no such rankname in your guild.");
 											}
 											else
-												player->sendCancel("The new guildrank contains invalid characters");
+												player->sendCancel("The new guildrank contains invalid characters.");
 										}
 										else
 											player->sendCancel("The new rankname is too long.");
@@ -874,15 +872,15 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 							else
 								player->sendCancel("Invalid guildcommand parameters");
 						}
-						else if(text.substr(1, 8) == "setmotd")
+						else if(text.substr(1, 7) == "setmotd")
 						{
 							if(player->getGuildLevel() == GUILDLEVEL_LEADER)
 							{
-								if(text.length() > 9)
+								if(text.length() > 8)
 								{
 									std::string param = text.substr(9);
 									trimString(param);
-									if(param.length() > 3)
+									if(param.length() > 2)
 									{
 										if(param.length() < 225)
 										{
@@ -897,12 +895,12 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 										player->sendCancel("That motd is too short.");
 								}
 								else
-									player->sendCancel("Invalid guildcommand parameters");
+									player->sendCancel("Invalid guildcommand parameters.");
 							}
 							else
 								player->sendCancel("Only the leader of your guild can set the guild motd.");
 						}
-						else if(text.substr(1, 10) == "cleanmotd")
+						else if(text.substr(1, 9) == "cleanmotd")
 						{
 							if(player->getGuildLevel() == GUILDLEVEL_LEADER)
 							{
@@ -913,7 +911,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 							else
 								player->sendCancel("Only the leader of your guild can clean the guild motd.");
 						}
-						else if(text.substr(1, 9) == "commands")
+						else if(text.substr(1, 8) == "commands")
 							player->sendToChannel(player, SPEAK_CHANNEL_W, "Guild commands with parameters: disband, invite[name], leave, kick[name], revoke[name], demote[name], promote[name], passleadership[name], nick[name, nick], setrankname[oldName, newName], setmotd[text] and cleanmotd.", 0x00);
 						else
 							ret = false;

@@ -18,14 +18,14 @@ function onSay(cid, words, param)
 	if(not tonumber(tmp)) then
 		tmp = getTownId(tmp)
 		if(tmp == 0) then
-			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Such town does not exists.")
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Town " .. t[1] .. " does not exists.")
 			return TRUE
 		end
 	end
 
 	local pos = getTownTemplePosition(tmp)
 	if(pos == LUA_ERROR or isInArray({pos.x, pos.y, pos.z}, 0) == TRUE) then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Wrong temple position for town " .. getTownName(tmp) .. ".")
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Town " .. t[1] .. " does not exists or has invalid temple position.")
 		return TRUE
 	end
 

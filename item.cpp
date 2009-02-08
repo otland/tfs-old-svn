@@ -813,9 +813,9 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		s << "Charges:" << subType << ")";
 		if(it.runeLevel > 0 || it.runeMagLevel > 0 || (it.vocationString != "" && it.wieldInfo == 0))
 		{
-			s << "." << std::endl << "It can only be used by ";
+			s << "." << std::endl << "It can only be used";
 			if(it.vocationString != "" && it.wieldInfo == 0)
-				s << it.vocationString;
+				s << " by " << it.vocationString;
 
 			bool begin = true;
 			if(it.runeLevel > 0)

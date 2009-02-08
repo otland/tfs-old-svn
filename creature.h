@@ -281,7 +281,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool convinceCreature(Creature* creature) {return false;}
 
 		virtual bool onDeath();
-		virtual uint64_t getGainedExperience(Creature* attacker);
+		virtual uint64_t getGainedExperience(Creature* attacker, bool useMultiplier = true);
 		void addDamagePoints(Creature* attacker, int32_t damagePoints);
 		void addHealPoints(Creature* caster, int32_t healthPoints);
 		bool hasBeenAttacked(uint32_t attackerId);
@@ -356,6 +356,8 @@ class Creature : public AutoID, virtual public Thing
 		bool getDropLoot() const {return lootDrop;}
 		void setLossSkill(bool _skillLoss) {skillLoss = _skillLoss;}
 		bool getLossSkill() const {return skillLoss;}
+		void setNoMove(bool _cannotMove) {cannotMove = _cannotMove;}
+		bool getNoMove() const {return cannotMove;}
 
 		//creature script events
 		bool registerCreatureEvent(const std::string& name);
@@ -405,6 +407,7 @@ class Creature : public AutoID, virtual public Thing
 		int32_t varSpeed;
 		bool skillLoss;
 		bool lootDrop;
+		bool cannotMove;
 		Skulls_t skull;
 		PartyShields_t partyShield;
 		Direction direction;

@@ -3,10 +3,10 @@
 		The Forgotten Server
 
 	Version
-		0.3 Beta 3
+		0.3.1
 
 	Codenamed
-		\
+		Crying Damson
 
 	License
 		GNU GPLv3
@@ -15,15 +15,10 @@
 		http://otland.net/
 ]
 
-[ BUGS
-	Finish boost_thread support (Scheduler, Tasks, Main[?])
-		Assigned to: Elf
-]
-
 [ TASKS
 	Deprecate guild management system from Chat class and rewrite it in TalkActions
 		Assigned to: Elf
 
-	Make more constant values configurable
-		Assigned to: *
+	Finish boost_thread support (Scheduler, Tasks, Main[?])
+		Assigned to: Elf
 ]

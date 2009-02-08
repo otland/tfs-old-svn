@@ -1,40 +1,41 @@
 local config = {
-	showGamemasters = getConfigInfo('displayGamemastersWithOnlineCommand')
+	showGamemasters = getBooleanFromString(getConfigInfo('displayGamemastersWithOnlineCommand'))
 }
 
 function onSay(cid, words, param)
 	local players = getPlayersOnline()
 	local strings = {}
-	local pos = 1
+	local position = 1
 	local count = 0
-	local tmp = TRUE
+
+	local tmp = false
 	for i, pid in ipairs(players) do
-		local line = ", "
-		if(tmp == TRUE) then
-			if(i > pos * 7) then
-				pos = pos + 1
-			end
+		if(strings[position] == nil) then
+			strings[position] = ""
+		end
 
-			if(strings[pos] == nil) then
-				strings[pos] = ""
-				line = ""
+		if(tmp) then
+			if(i > (position * 7)) then
+				strings[position] = strings[position] .. ","
+				position = position + 1
+			else
+				strings[position] = strings[position] .. ", "
 			end
 		end
 
-		tmp = TRUE
-		if((getBooleanFromString(config.showGamemasters) == FALSE and getPlayerCustomFlagValue(pid, PlayerCustomFlag_GamemasterPrivileges) == TRUE and getPlayerCustomFlagValue(cid, PlayerCustomFlag_GamemasterPrivileges) == FALSE) or (isPlayerGhost(pid) == TRUE and getPlayerAccess(pid) > getPlayerAccess(cid))) then
-			count = count + 1
-			tmp = FALSE
+		tmp = true
+		if((config.showGamemasters == TRUE or getPlayerCustomFlagValue(cid, PlayerCustomFlag_GamemasterPrivileges) == TRUE or getPlayerCustomFlagValue(pid, PlayerCustomFlag_GamemasterPrivileges) ~= TRUE) and (isPlayerGhost(pid) ~= TRUE or getPlayerAccess(cid) > getPlayerAccess(pid))) then
+			strings[position] = strings[position] .. getCreatureName(pid) .. " [" .. getPlayerLevel(pid) .. "]"
 		else
-			strings[pos] = strings[pos] .. line .. getCreatureName(pid) .. " [" .. getPlayerLevel(pid) .. "]"
+			count = count + 1
+			tmp = false
 		end
 	end
 
-	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, (#players - count) .. " player(s) online:")
+	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, (table.maxn(players) - count) .. " player(s) online:")
 	for i, string in ipairs(strings) do
-		if(string ~= "") then
-			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, string .. ".")
-		end
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, string .. ".")
 	end
+
 	return TRUE
 end

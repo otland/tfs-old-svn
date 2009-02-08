@@ -154,13 +154,6 @@ function isRookie(cid)
 	return (isInArray({0}, getPlayerVocation(cid)) == TRUE)
 end
 
-function getConfigInfo(info)
-	if(type(info) ~= 'string') then return nil end
-
-	dofile(getConfigFile())
-	return _G[info]
-end
-
 function getDirectionTo(pos1, pos2)
 	local dir = NORTH
 	if(pos1.x > pos2.x) then

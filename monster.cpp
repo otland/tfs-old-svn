@@ -39,7 +39,6 @@ AutoList<Monster>Monster::listMonster;
 
 int32_t Monster::despawnRange;
 int32_t Monster::despawnRadius;
-
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t Monster::monsterCount = 0;
 #endif
@@ -1125,6 +1124,9 @@ bool Monster::isInSpawnRange(const Position& toPos)
 
 bool Monster::canWalkTo(Position pos, Direction dir)
 {
+	if(getNoMove())
+		return false;
+
 	switch(dir)
 	{
 		case NORTH:
@@ -1152,6 +1154,7 @@ bool Monster::canWalkTo(Position pos, Direction dir)
 		if(tile && tile->__queryAdd(0, this, 1, FLAG_PATHFINDING) == RET_NOERROR)
 			return true;
 	}
+
 	return false;
 }
 

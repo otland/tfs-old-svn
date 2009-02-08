@@ -66,6 +66,14 @@ class Position
 			return true;
 		}
 
+		static bool areInRange(const Position& r, const Position& p1, const Position& p2)
+		{
+			if(std::abs(float(p1.x - p2.x)) > r.x || std::abs(float(p1.y - p2.y)) > r.y || std::abs(float(p1.z - p2.z)) > r.z)
+				return false;
+
+			return true;
+		}
+
 		Position(int32_t _x, int32_t _y, int32_t _z) : x(_x), y(_y), z(_z) {}
 		int32_t x, y, z;
 

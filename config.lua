@@ -66,7 +66,7 @@
 
 	-- Database
 	-- NOTE: sqlFile is used only by sqlite database, and sqlKeepAlive by mysql database.
-	-- To disable sqlKeepAlive use 0 value.
+	-- To disable sqlKeepAlive such as mysqlReadTimeout use 0 value.
 	sqlType = "sqlite"
 	sqlHost = "localhost"
 	sqlPort = 3306
@@ -75,6 +75,7 @@
 	sqlDatabase = "theforgottenserver"
 	sqlFile = "forgottenserver.s3db"
 	sqlKeepAlive = 60
+	mysqlReadTimeout = 3
 	optimizeDatabaseAtStartup = "yes"
 	passwordType = "plain"
 
@@ -141,14 +142,22 @@
 
 	-- Rates
 	-- NOTE: experienceStages configuration is located in data/XML/stages.xml.
-	rateExp = 5
-	rateSkill = 3
+	rateExperience = 5.0
+	rateSkill = 3.0
+	rateMagic = 3.0
 	rateLoot = 2
-	rateMagic = 3
 	rateSpawn = 1
-	extraPartyExpLimit = 20
-	extraPartyExpPercent = 5
 	experienceStages = "no"
+
+	-- Party
+	-- NOTE experienceShareLevelDifference is float number.
+	-- 0.66666666666667 is highestLevel * 2 / 3
+	experienceShareRadiusX = 30
+	experienceShareRadiusY = 30
+	experienceShareRadiusZ = 1
+	experienceShareLevelDifference = 0.66666666666667
+	extraPartyExperienceLimit = 20
+	extraPartyExperiencePercent = 5
 
 	-- Global save
 	-- NOTE: globalSaveHour means like 03:00, not that it will save every 3 hours,
@@ -174,6 +183,8 @@
 	location = "Europe"
 
 	-- Logs
+	-- NOTE: This kind of logging does not work in GUI version.
+	-- For such, please compile the software with __GUI_LOGS__ flag.
 	outLogName = "server/out.log"
 	errorLogName = "server/error.log"
 	truncateLogsOnStartup = "yes"
