@@ -79,7 +79,7 @@
 	sqlDatabase = "theforgottenserver"
 	sqlFile = "forgottenserver.s3db"
 	sqlKeepAlive = 60
-	mysqlReadTimeout = 3
+	mysqlReadTimeout = 10
 	optimizeDatabaseAtStartup = "yes"
 	passwordType = "plain"
 
@@ -158,11 +158,11 @@
 
 	-- Party
 	-- NOTE experienceShareLevelDifference is float number.
-	-- 0.66666666666667 is highestLevel * 2 / 3
+	-- experienceShareLevelDifference is highestLevel * value
 	experienceShareRadiusX = 30
 	experienceShareRadiusY = 30
 	experienceShareRadiusZ = 1
-	experienceShareLevelDifference = 0.66666666666667
+	experienceShareLevelDifference = 2 / 3
 	extraPartyExperienceLimit = 20
 	extraPartyExperiencePercent = 5
 
