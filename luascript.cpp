@@ -2078,8 +2078,8 @@ void LuaScriptInterface::registerFunctions()
 	//getGameState()
 	lua_register(m_luaState, "getGameState", LuaScriptInterface::luaGetGameState);
 
-	//doChangeGameState(id)
-	lua_register(m_luaState, "doChangeGameState", LuaScriptInterface::luaDoChangeGameState);
+	//doSetGameState(id)
+	lua_register(m_luaState, "doSetGameState", LuaScriptInterface::luaDoSetGameState);
 
 	//doExecuteRaid(name)
 	lua_register(m_luaState, "doExecuteRaid", LuaScriptInterface::luaDoExecuteRaid);
@@ -3048,6 +3048,7 @@ int32_t LuaScriptInterface::luaDoCreatureSay(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
 	}
+
 	return 1;
 }
 
@@ -3113,7 +3114,7 @@ int32_t LuaScriptInterface::luaDoSendDistanceShoot(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoChangeTypeItem(lua_State* L)
 {
-	//doChangeTypeItem(uid,new_type)
+	//doChangeTypeItem(uid, new_type)
 	int32_t subtype = (int32_t)popNumber(L);
 	uint32_t uid = popNumber(L);
 
@@ -8929,7 +8930,7 @@ int32_t LuaScriptInterface::luaGetSpectators(lua_State *L)
 	//getSpectators(centerPos, rangex, rangey[, multifloor])
 	bool multifloor = false;
 	if(lua_gettop(L) >= 4)
-		multifloor = popNumber(L) == 1;
+		multifloor = popNumber(L) == LUA_TRUE;
 
 	uint32_t rangey = popNumber(L);
 	uint32_t rangex = popNumber(L);
@@ -9004,9 +9005,9 @@ int32_t LuaScriptInterface::luaGetGameState(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoChangeGameState(lua_State* L)
+int32_t LuaScriptInterface::luaDoSetGameState(lua_State* L)
 {
-	//doChangeGameState(id)
+	//doSetGameState(id)
 	uint32_t id = popNumber(L);
 	if(id < GAME_STATE_FIRST || id > GAME_STATE_LAST)
 	{

@@ -240,7 +240,7 @@ CREATE TABLE `house_storage`
 (
 	`house_id` INT UNSIGNED NOT NULL,
 	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
-	`data` BLOB NOT NULL,
+	`data` LONGBLOB NOT NULL,
 	UNIQUE (`house_id`, `world_id`)
 ) ENGINE = InnoDB;
 

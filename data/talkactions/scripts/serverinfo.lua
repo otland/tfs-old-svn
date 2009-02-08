@@ -1,5 +1,5 @@
 local config = {
-	rateExp = getConfigInfo('rateExperience'),
+	rateExperience = getConfigInfo('rateExperience'),
 	rateSkill = getConfigInfo('rateSkill'),
 	rateLoot = getConfigInfo('rateLoot'),
 	rateMagic = getConfigInfo('rateMagic'),
@@ -8,6 +8,6 @@ local config = {
 }
 
 function onSay(cid, words, param)
-	doPlayerPopupFYI(cid, "Server Information:\n\nExperience rate: x" .. config.rateExp .. "\nSkills rate: x" .. config.rateSkill .. "\nLoot rate: x" .. config.rateLoot .. "\nMagic rate: x" .. config.rateMagic .. "\nSpawns rate: x" .. config.rateSpawn .. "\nProtection level: " .. config.protectionLevel)
+	doPlayerPopupFYI(cid, "Server Information:\n\nExperience rate: x" .. config.rateExperience .. "\nSkills rate: x" .. config.rateSkill .. "\nLoot rate: x" .. config.rateLoot .. "\nMagic rate: x" .. config.rateMagic .. "\nSpawns rate: x" .. config.rateSpawn .. "\nProtection level: " .. config.protectionLevel)
 	return TRUE
 end

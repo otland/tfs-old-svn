@@ -188,7 +188,7 @@ CREATE TABLE "house_lists" (
 CREATE TABLE "house_storage" (
 	"house_id" INTEGER NOT NULL,
 	"world_id" INTEGER NOT NULL DEFAULT 0,
-	"data" BLOB NOT NULL,
+	"data" LONGBLOB NOT NULL,
 	UNIQUE ("house_id", "world_id"),
 	FOREIGN KEY ("house_id") REFERENCES "houses" ("id")
 );

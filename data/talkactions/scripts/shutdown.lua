@@ -10,7 +10,7 @@ end
 
 function prepareShutdown(minutes)
 	if(minutes == 0) then
-		shutdown()
+		doSetGameState(GAMESTATE_SHUTDOWN)
 	else
 		if(minutes == 1) then
 			doBroadcastMessage("Server is going down in " .. minutes .. " minute, please log out now!")

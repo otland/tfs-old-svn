@@ -25,6 +25,7 @@
 
 	-- Battle
 	-- NOTE: loginProtectionPeriod is the famous Tibia anti-magebomb system.
+	-- deathLostPercent set to nil enables manual mode.
 	worldType = "pvp"
 	hotkeyAimbotEnabled = "yes"
 	protectionLevel = 1
@@ -45,6 +46,7 @@
 	stopAttackingAtExit = "no"
 	oldConditionAccuracy = "no"
 	loginProtectionPeriod = 10
+	deathLostPercent = 10
 
 	-- Connection config
 	worldId = 0

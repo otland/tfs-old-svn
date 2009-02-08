@@ -861,7 +861,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				s << "Atk:";
 				if(it.abilities.elementType != COMBAT_NONE && it.decayTo < 1)
 				{
-					s << std::max(0, int32_t((item ? item->getAttack() : it.attack) - it.abilities.elementDamage));
+					s << std::max((int32_t)0, int32_t((item ? item->getAttack() : it.attack) - it.abilities.elementDamage));
 					if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
 						s << " " << std::showpos << int32_t(item ? item->getExtraAttack() : it.extraAttack) << std::noshowpos;
 
@@ -1064,7 +1064,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 	if(it.abilities.elementType != COMBAT_NONE && it.decayTo > 0)
 	{
 		s << std::endl << "It is temporarily enchanted with " << getCombatName(it.abilities.elementType) << " (";
-		s << std::max(0, int32_t((item ? item->getAttack() : it.attack) - it.abilities.elementDamage));
+		s << std::max((int32_t)0, int32_t((item ? item->getAttack() : it.attack) - it.abilities.elementDamage));
 		if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
 			s << " " << std::showpos << int32_t(item ? item->getExtraAttack() : it.extraAttack) << std::noshowpos;
 

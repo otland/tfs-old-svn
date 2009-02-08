@@ -11,10 +11,10 @@ function onSay(cid, words, param)
 	end
 
 	t[1] = tonumber(t[1])
-	if(t[1] > 0 and t[1] < 255) then
+	if(t[1] > 0 and t[1] < 256) then
 		doSendAnimatedText(getCreaturePosition(cid), tmp, t[1])
 	else
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Typed color has to be between 0 and 255")
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Typed color has to be between 0 and 256")
 	end
 	return TRUE
 end

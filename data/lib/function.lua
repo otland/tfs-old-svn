@@ -347,7 +347,7 @@ function debugPrint(text)
 end
 
 function doShutdown()
-	return doChangeGameState(GAMESTATE_SHUTDOWN)
+	return doSetGameState(GAMESTATE_SHUTDOWN)
 end
 
 function doSummonCreature(name, pos)

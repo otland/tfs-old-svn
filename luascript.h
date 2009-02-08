@@ -705,7 +705,7 @@ class LuaScriptInterface
 
 		static int32_t luaGetSpectators(lua_State *L);
 		static int32_t luaGetGameState(lua_State* L);
-		static int32_t luaDoChangeGameState(lua_State* L);
+		static int32_t luaDoSetGameState(lua_State* L);
 		static int32_t luaGetPlayersOnline(lua_State* L);
 		static int32_t luaDoExecuteRaid(lua_State* L);
 		static int32_t luaDoReloadInfo(lua_State* L);
