@@ -212,7 +212,7 @@ class ConfigManager
 		std::string getGlobalString(lua_State* _L, const std::string& _identifier, const std::string& _default = "");
 		bool getGlobalBool(lua_State* _L, const std::string& _identifier, const std::string& _default = "no");
 		int32_t getGlobalNumber(lua_State* _L, const std::string& _identifier, const int32_t _default = 0);
-		double getGlobalDouble(lua_State* _L, const std::string& _identifier, const int32_t _default = 0);
+		double getGlobalDouble(lua_State* _L, const std::string& _identifier, const double _default = 0);
 
 		bool m_loaded, m_startup;
 		lua_State* L;
