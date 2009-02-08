@@ -10,6 +10,7 @@ setConditionParam(condition, CONDITION_PARAM_BUFF, TRUE)
 setConditionParam(condition, CONDITION_PARAM_TICKS, 2 * 60 * 1000)
 setConditionParam(condition, CONDITION_PARAM_STAT_MAGICLEVEL, 1)
 
+local baseMana = 120
 function onCastSpell(cid, var)
 	local pos = getCreaturePosition(cid)
 	if(getPlayerParty(cid) == nil) then
@@ -39,7 +40,7 @@ function onCastSpell(cid, var)
 		return LUA_ERROR
 	end
 
-	local mana = (tmp * 50)
+	local mana = math.ceil((0.9 ^ (tmp - 1) * baseMana) * tmp)
 	if(getCreatureMana(cid) < mana) then
 		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTENOUGHMANA)
 		doSendMagicEffect(pos, CONST_ME_POFF)
@@ -52,8 +53,8 @@ function onCastSpell(cid, var)
 		return LUA_ERROR
 	end
 
-	doCreatureAddMana(cid, -mana, FALSE)
-	doPlayerAddSpentMana(cid, mana)
+	doCreatureAddMana(cid, -(mana - baseMana), FALSE)
+	doPlayerAddSpentMana(cid, (mana - baseMana))
 	for _, pid in ipairs(affectedList) do
 		doAddCondition(pid, condition)
 	end
