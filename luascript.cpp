@@ -1018,6 +1018,13 @@ void LuaScriptInterface::setFieldBool(lua_State* L, const char* index, bool val)
 	lua_settable(L, -3);
 }
 
+void LuaScriptInterface::setFieldDouble(lua_State* L, const char* index, double val)
+{
+	lua_pushstring(L, index);
+	lua_pushnumber(L, val);
+	lua_settable(L, -3);
+}
+
 int32_t LuaScriptInterface::getField(lua_State* L, const char* key)
 {
 	int32_t result;
@@ -8732,8 +8739,8 @@ int32_t LuaScriptInterface::luaGetPlayerRates(lua_State* L)
 	}
 
 	lua_newtable(L);
-	setField(L, "experience", player->experienceRate);
-	setField(L, "magic", player->magicRate);
+	setFieldDouble(L, "experience", player->experienceRate);
+	setFieldDouble(L, "magic", player->magicRate);
 
 	lua_newtable(L);
 	for(uint32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)

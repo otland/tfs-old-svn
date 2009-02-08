@@ -1129,7 +1129,7 @@ uint64_t Creature::getGainedExperience(Creature* attacker, bool useMultiplier/* 
 		if(useMultiplier)
 			baseExperience = uint64_t((double)baseExperience * player->experienceRate);
 
-		baseExperience *= g_game.getExperienceStage(player->getLevel());
+		baseExperience = uint64_t((double)baseExperience * g_game.getExperienceStage(player->getLevel()));
 		if(!player->hasCustomFlag(PlayerCustomFlag_HasInfiniteStamina))
 		{
 			player->useStamina((int64_t)getStaminaRatio(attacker), true);

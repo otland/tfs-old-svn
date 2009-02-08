@@ -340,6 +340,7 @@ class LuaScriptInterface
 		static std::string getFieldString(lua_State* L, const char* key);
 		static void setFieldBool(lua_State* L, const char* index, bool val);
 		static bool getFieldBool(lua_State* L, const char* key);
+		static void setFieldDouble(lua_State* L, const char* index, double val);
 
 	protected:
 		virtual bool closeState();

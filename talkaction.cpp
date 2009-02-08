@@ -784,6 +784,8 @@ bool TalkAction::changeThingProporties(Player* player, const std::string& cmd, c
 						_creature->setDropLoot(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()));
 					else if(strcasecmp(tmp.c_str(), "lossskill") == 0)
 						_creature->setLossSkill(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()));
+					else if(strcasecmp(tmp.c_str(), "cannotmove") == 0)
+						_creature->setNoMove(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()));
 					else if(strcasecmp(tmp.c_str(), "skull") == 0)
 						_creature->setSkull((Skulls_t)atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 					else if(Player* _player = _creature->getPlayer())
@@ -796,8 +798,6 @@ bool TalkAction::changeThingProporties(Player* player, const std::string& cmd, c
 							_player->setGuildNick(parseParams(cmdit, cmdtokens.end()).c_str());
 						else if(strcasecmp(tmp.c_str(), "group") == 0)
 							_player->setGroupId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-						else if(strcasecmp(tmp.c_str(), "extrarate") == 0)
-							_player->setExtraExpRate(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 						else if(strcasecmp(tmp.c_str(), "vocation") == 0)
 							_player->setVocation(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 						else if(strcasecmp(tmp.c_str(), "sex") == 0)
@@ -810,6 +810,13 @@ bool TalkAction::changeThingProporties(Player* player, const std::string& cmd, c
 							_player->balance = atoi(parseParams(cmdit, cmdtokens.end()).c_str());
 						else if(strcasecmp(tmp.c_str(), "marriage") == 0)
 							_player->marriage = atoi(parseParams(cmdit, cmdtokens.end()).c_str());
+						else if(strcasecmp(tmp.c_str(), "experiencerate") == 0)
+							_player->experienceRate = atof(parseParams(cmdit, cmdtokens.end()).c_str());
+						else if(strcasecmp(tmp.c_str(), "magicrate") == 0)
+							_player->magicRate = atof(parseParams(cmdit, cmdtokens.end()).c_str());
+						else if(strcasecmp(tmp.c_str(), "skillrate") == 0)
+							_player->skillRate[atoi(parseParams(cmdit, cmdtokens.end()).c_str())] = atof(
+								parseParams(cmdit, cmdtokens.end()).c_str());
 						else if(strcasecmp(tmp.c_str(), "resetidle") == 0)
 							_player->resetIdleTime();
 						else if(strcasecmp(tmp.c_str(), "ghost") == 0)
