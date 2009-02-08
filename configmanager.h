@@ -192,6 +192,7 @@ class ConfigManager
 			STORE_TRASH,
 			HOUSE_STORAGE,
 			TRUNCATE_LOGS,
+			TRACER_BOX,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

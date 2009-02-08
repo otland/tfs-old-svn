@@ -208,6 +208,7 @@ bool ConfigManager::load()
 	m_confBool[OPTIMIZE_DB_AT_STARTUP] = getGlobalBool(L, "optimizeDatabaseAtStartup", "yes");
 	m_confBool[OLD_CONDITION_ACCURACY] = getGlobalBool(L, "oldConditionAccuracy", "no");
 	m_confBool[HOUSE_STORAGE] = getGlobalBool(L, "useHouseDataStorage", "no");
+	m_confBool[TRACER_BOX] = getGlobalBool(L, "promptExceptionTracerErrorBox", "yes");
 
 	m_loaded = true;
 	return true;

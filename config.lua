@@ -118,6 +118,8 @@
 
 	-- Miscellaneous
 	-- NOTE: defaultPriority works only on Windows
+	-- promptExceptionTracerErrorBox works only with precompiled support feature,
+	-- called "exception tracer" (__EXCEPTION_TRACER__ flag).
 	defaultPriority = "high"
 	maxMessageBuffer = 4
 	kickIdlePlayerAfterMinutes = 15
@@ -131,6 +133,7 @@
 	spellNameInsteadOfWords = "no"
 	emoteSpells = "no"
 	expireReportsAfterReads = 1
+	promptExceptionTracerErrorBox = "yes"
 
 	-- Premium account
 	freePremium = "no"

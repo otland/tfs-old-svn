@@ -19,6 +19,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "otpch.h"
+#include "otsystem.h"
 
 #ifdef __EXCEPTION_TRACER__
 
@@ -28,22 +29,21 @@
 #include <iomanip>
 #include <ctime>
 #include <map>
-
 #ifdef WIN32
 #include <excpt.h>
 #include <tlhelp32.h>
 #endif
 
-#include "otsystem.h"
 #include "exception.h"
+#include "configmanager.h"
 
+extern ConfigManager g_config;
+typedef std::map<uint32_t, char*> FunctionMap;
+FunctionMap functionMap;
 
 uint32_t max_off, min_off;
 bool maploaded = false;
 OTSYS_THREAD_LOCKVAR maploadlock;
-
-typedef std::map<uint32_t, char*> FunctionMap;
-FunctionMap functionMap;
 
 #ifdef WIN32
 void printPointer(std::ostream* output,uint32_t p);
@@ -312,7 +312,9 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 	if(file)
 		((std::ofstream*)outdriver)->close();
 
-	MessageBoxA(NULL, "If you want developers review this crash log, please open a tracker ticket for the software at OtLand.net and attach the report.txt file.", "Error", MB_OK | MB_ICONERROR);
+	if(g_config.getBool(ConfigManager::TRACER_BOX))
+		MessageBoxA(NULL, "If you want developers review this crash log, please open a tracker ticket for the software at OtLand.net and attach the report.txt file.", "Error", MB_OK | MB_ICONERROR);
+
 	std::cout << "> Crash report generated, killing server." << std::endl;
 	exit(1);
 	return ExceptionContinueSearch;

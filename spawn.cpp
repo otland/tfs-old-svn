@@ -309,16 +309,18 @@ Spawn::Spawn(const Position& _pos, int32_t _radius)
 Spawn::~Spawn()
 {
 	stopEvent();
+	Monster* monster = NULL;
 	for(SpawnedMap::iterator it = spawnedMap.begin(); it != spawnedMap.end(); ++it)
 	{
-		Monster* monster = it->second;
-		spawnedMap.erase(it->first);
+		monster = it->second;
+		it->second = NULL;
 
 		monster->setSpawn(NULL);
-		if(!monster->isRemoved())
+		if(monster->isRemoved())
 			g_game.FreeThing(monster);
 	}
 
+	spawnedMap.clear();
 	spawnMap.clear();
 }
 
