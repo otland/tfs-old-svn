@@ -192,6 +192,6 @@
 	-- Logs
 	-- NOTE: This kind of logging does not work in GUI version.
 	-- For such, please compile the software with __GUI_LOGS__ flag.
-	outLogName = "server/out.log"
-	errorLogName = "server/error.log"
-	truncateLogsOnStartup = "yes"
+	outLogName = ""
+	errorLogName = ""
+	truncateLogsOnStartup = "no"
