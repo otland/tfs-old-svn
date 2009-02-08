@@ -2147,8 +2147,6 @@ bool Game::playerOpenPrivateChannel(uint32_t playerId, std::string& receiver)
 	if(!player || player->isRemoved())
 		return false;
 
-	uint32_t guid;
-	IOLoginData::getInstance()->getGuidByName(guid, receiver);
 	if(IOLoginData::getInstance()->playerExists(receiver))
 		player->sendOpenPrivateChannel(receiver);
 	else

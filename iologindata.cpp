@@ -1118,6 +1118,10 @@ bool IOLoginData::isPremium(uint32_t guid)
 
 bool IOLoginData::playerExists(uint32_t guid, bool multiworld /*= false*/)
 {
+	NameCacheMap::iterator it = nameCacheMap.find(guid);
+	if(it != nameCacheMap.end())
+		return true;
+
 	Database* db = Database::getInstance();
 	DBResult* result;
 
@@ -1135,6 +1139,10 @@ bool IOLoginData::playerExists(uint32_t guid, bool multiworld /*= false*/)
 
 bool IOLoginData::playerExists(std::string name, bool multiworld /*= false*/)
 {
+	GuidCacheMap::iterator it = guidCacheMap.find(name);
+	if(it != guidCacheMap.end())
+		return true;
+
 	Database* db = Database::getInstance();
 	DBResult* result;
 
