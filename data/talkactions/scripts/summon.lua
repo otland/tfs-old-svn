@@ -5,6 +5,6 @@ function onSay(cid, words, param)
 		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTENOUGHROOM)
 	end
 
-	doSendMagicEffect(position, effect)
+	doSendMagicEffect(getCreaturePosition(cid), effect)
 	return TRUE
 end

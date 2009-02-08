@@ -855,7 +855,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 			query.str("");
 			query << "CREATE TABLE `house_storage` (`house_id` INT UNSIGNED NOT NULL, `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0, ";
-			query << "`data` BLOB NOT NULL, UNIQUE (`house_id`, `world_id`)";
+			query << "`data` LONGBLOB NOT NULL, UNIQUE (`house_id`, `world_id`)";
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
 				query << ", FOREIGN KEY (`house_id`) REFERENCES `houses` (`id`) ON DELETE CASCADE";
 
