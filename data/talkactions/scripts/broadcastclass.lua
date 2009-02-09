@@ -1,5 +1,5 @@
 local colors = {
-	["advance"] = ESSAGE_EVENT_ADVANCE,
+	["advance"] = MESSAGE_EVENT_ADVANCE,
 	["event"] = MESSAGE_EVENT_DEFAULT,
 	["orange"] = MESSAGE_STATUS_CONSOLE_ORANGE,
 	["info"] = MESSAGE_INFO_DESCR,

@@ -147,8 +147,8 @@ void Game::setGameState(GameState_t newState)
 
 				Houses::getInstance().payHouses();
 				saveGameState(false);
-
 				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, this)));
+
 				Scheduler::getScheduler().stop();
 				Dispatcher::getDispatcher().stop();
 				break;
