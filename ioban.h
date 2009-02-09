@@ -37,7 +37,7 @@ enum BanType_t
 struct Ban
 {
 	BanType_t type;
-	std::string comment, value, param;
+	std::string comment, value, param, statement;
 	uint32_t id, added, expires, adminid, reason, action;
 };
 
@@ -92,6 +92,7 @@ class IOBan
 		uint64_t getAddedTime(uint32_t id, bool player = false);
 		std::string getComment(uint32_t id, bool player = false);
 		uint32_t getAdminGUID(uint32_t id, bool player = false);
+		std::string getStatement(uint32_t id, bool player = false);
 
 		uint32_t getNotationsCount(uint32_t account);
 		bool clearTemporials();

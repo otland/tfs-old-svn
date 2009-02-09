@@ -3472,7 +3472,7 @@ int32_t LuaScriptInterface::luaDoPlayerSendTextMessage(lua_State* L)
 	uint32_t messageClass = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	const Player* player = env->getPlayerByUID(popNumber(L));
+	Player* player = env->getPlayerByUID(popNumber(L));
 	if(!player)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
@@ -3510,6 +3510,7 @@ int32_t LuaScriptInterface::luaDoPlayerSendChannelMessage(lua_State* L)
 int32_t LuaScriptInterface::luaDoPlayerSendToChannel(lua_State* L)
 {
 	//doPlayerSendToChannel(cid, targetId, SpeakClasses, message, channel[, time])
+	ScriptEnviroment* env = getScriptEnv();
 	uint32_t time = 0;
 	if(lua_gettop(L) >= 6)
 		time = popNumber(L);
@@ -3519,8 +3520,7 @@ int32_t LuaScriptInterface::luaDoPlayerSendToChannel(lua_State* L)
 	uint32_t speakClass = popNumber(L);
 	uint32_t targetId = popNumber(L);
 
-	ScriptEnviroment* env = getScriptEnv();
-	const Player* player = env->getPlayerByUID(popNumber(L));
+	Player* player = env->getPlayerByUID(popNumber(L));
 	if(!player)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));

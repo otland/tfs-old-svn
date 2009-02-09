@@ -882,7 +882,7 @@ bool TalkAction::changeThingProporties(Player* player, const std::string& cmd, c
 bool TalkAction::showBanishmentInfo(Player* player, const std::string& cmd, const std::string& param)
 {
 	uint32_t accountId = atoi(param.c_str());
-	if(accountId == 0 && IOLoginData::getInstance()->playerExists(param, true))
+	if(accountId == 0 && IOLoginData::getInstance()->playerExists((std::string&)param, true))
 		accountId = IOLoginData::getInstance()->getAccountIdByName(param);
 
 	Ban ban;

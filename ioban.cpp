@@ -336,6 +336,21 @@ uint32_t IOBan::getAdminGUID(uint32_t id, bool player /* = false */)
 	return value;
 }
 
+std::string IOBan::getStatement(uint32_t id, bool player /* = false */)
+{
+	Database* db = Database::getInstance();
+	DBResult* result;
+
+	DBQuery query;
+	query << "SELECT `statement` FROM `bans` WHERE `value` = " << id << " AND `type` = " << (player ? (BanType_t)BANTYPE_NAMELOCK : (BanType_t)BANTYPE_BANISHMENT)  << " AND `active` = 1";
+	if(!(result = db->storeQuery(query.str())))
+		return "";
+
+	const std::string value = result->getDataString("statement");
+	db->freeResult(result);
+	return value;
+}
+
 uint32_t IOBan::getNotationsCount(uint32_t account)
 {
 	Database* db = Database::getInstance();
@@ -371,6 +386,7 @@ bool IOBan::getData(uint32_t value, Ban& ban)
 	ban.comment = result->getDataString("comment");
 	ban.reason = result->getDataInt("reason");
 	ban.action = result->getDataInt("action");
+	ban.statement = result->getDataString("statement");
 
 	db->freeResult(result);
 	return true;
@@ -402,6 +418,7 @@ BansVec IOBan::getList(BanType_t type, uint32_t value/* = 0*/)
 			tmp.comment = result->getDataString("comment");
 			tmp.reason = result->getDataInt("reason");
 			tmp.action = result->getDataInt("action");
+			tmp.statement = result->getDataString("statement");
 			data.push_back(tmp);
 		}
 		while(result->next());
