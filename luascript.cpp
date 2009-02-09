@@ -9804,6 +9804,7 @@ int32_t LuaScriptInterface::luaGetBanData(lua_State *L)
 	setField(L, "reason", tmp.reason);
 	setField(L, "action", tmp.action);
 	setField(L, "comment", tmp.comment);
+	setField(L, "statement", tmp.statement);
 	return 1;
 }
 
@@ -9851,6 +9852,7 @@ int32_t LuaScriptInterface::luaGetBanList(lua_State *L)
 		setField(L, "reason", (*it).reason);
 		setField(L, "action", (*it).action);
 		setField(L, "comment", (*it).comment);
+		setField(L, "statement", (*it).statement);
 		lua_settable(L, -3);
 	}
 
