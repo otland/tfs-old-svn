@@ -398,6 +398,8 @@ class LuaScriptInterface
 		static int32_t luaDoAddContainerItemEx(lua_State* L);
 		static int32_t luaDoRelocate(lua_State* L);
 		static int32_t luaDoPlayerSendTextMessage(lua_State* L);
+		static int32_t luaDoPlayerSendChannelMessage(lua_State* L);
+		static int32_t luaDoPlayerSendToChannel(lua_State* L);
 		static int32_t luaDoPlayerAddMoney(lua_State* L);
 		static int32_t luaDoPlayerRemoveMoney(lua_State* L);
 		static int32_t luaDoPlayerWithdrawMoney(lua_State* L);
@@ -596,7 +598,9 @@ class LuaScriptInterface
 		static int32_t luaGetWorldUpTime(lua_State* L);
 		static int32_t luaDoBroadcastMessage(lua_State* L);
 		static int32_t luaDoPlayerBroadcastMessage(lua_State* L);
+
 		static int32_t luaGetGuildId(lua_State* L);
+		static int32_t luaGetGuildMotd(lua_State* L);
 
 		//type validation
 		static int32_t luaIsPlayer(lua_State* L);

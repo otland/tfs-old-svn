@@ -572,7 +572,7 @@ class Player : public Creature, public Cylinder
 			Item* newItem, const ItemType& newType);
 		void onRemoveInventoryItem(slots_t slot, Item* item);
 
-		void sendAnimatedText(const Position& pos, unsigned char color, std::string text) const
+		void sendAnimatedText(const Position& pos, uint8_t color, std::string text) const
 			{if(client) client->sendAnimatedText(pos,color,text);}
 		void sendCancel(const char* msg) const
 			{if(client) client->sendCancel(msg);}
@@ -585,7 +585,7 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendChangeSpeed(creature, newSpeed);}
 		void sendCreatureHealth(const Creature* creature) const
 			{if(client) client->sendCreatureHealth(creature);}
-		void sendDistanceShoot(const Position& from, const Position& to, unsigned char type) const
+		void sendDistanceShoot(const Position& from, const Position& to, uint8_t type) const
 			{if(client) client->sendDistanceShoot(from, to, type);}
 		void sendHouseWindow(House* house, uint32_t listId) const;
 		void sendOutfitWindow() const
@@ -605,8 +605,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendTextMessage(type, message);}
 		void sendReLoginWindow() const
 			{if(client) client->sendReLoginWindow();}
-		void sendTextWindow(Item* item, uint16_t maxlen, bool canWrite) const
-			{if(client) client->sendTextWindow(windowTextId, item, maxlen, canWrite);}
+		void sendTextWindow(Item* item, uint16_t maxLen, bool canWrite) const
+			{if(client) client->sendTextWindow(windowTextId, item, maxLen, canWrite);}
 		void sendTextWindow(uint32_t itemId, const std::string& text) const
 			{if(client) client->sendTextWindow(windowTextId, itemId, text);}
 		void sendToChannel(Creature* creature, SpeakClasses type, const std::string& text, uint16_t channelId, uint32_t time = 0) const

@@ -4684,7 +4684,7 @@ void Game::sendGuildMotd(uint32_t playerId, uint32_t guildId)
 	if(!player || player->isRemoved())
 		return;
 
-	player->sendChannelMessage("Message of the Day", IOGuild::getInstance()->getMotd(guildId), SPEAK_CHANNEL_R1, 0x00);
+	player->sendChannelMessage("Message of the Day", IOGuild::getInstance()->getMotd(guildId), SPEAK_CHANNEL_W, 0x00);
 }
 
 void Game::kickPlayer(uint32_t playerId, bool displayEffect)

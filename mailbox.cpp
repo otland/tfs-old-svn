@@ -108,7 +108,7 @@ void Mailbox::postRemoveNotification(Creature* actor, Thing* thing, int32_t inde
 
 bool Mailbox::sendItem(Creature* actor, Item* item)
 {
-	std::string receiver = std::string("");
+	std::string receiver = "";
 	uint32_t dp = 0;
 
 	if(!getReceiver(item, receiver, dp))
@@ -118,14 +118,10 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 	if(receiver == "" || dp == 0)
 		return false;
 
-	uint32_t guid;
-	if(!IOLoginData::getInstance()->getGuidByName(guid, receiver))
-		return false;
-
+	bool tmp = IOLoginData::getInstance()->playerExists(receiver);
 	if(Player* player = g_game.getPlayerByName(receiver))
 	{
-		Depot* depot = player->getDepot(dp, true);
-		if(depot)
+		if(Depot* depot = player->getDepot(dp, true))
 		{
 			if(g_game.internalMoveItem(actor, item->getParent(), depot, INDEX_WHEREEVER,
 				item, item->getItemCount(), NULL, FLAG_NOLIMIT) == RET_NOERROR)
@@ -135,7 +131,7 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 			}
 		}
 	}
-	else if(IOLoginData::getInstance()->playerExists(receiver))
+	else if(tmp)
 	{
 		Player* player = new Player(receiver, NULL);
 		if(!IOLoginData::getInstance()->loadPlayer(player, receiver))
@@ -147,18 +143,7 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 			return false;
 		}
 
-		#ifdef __DEBUG_MAILBOX__
-		std::string playerName = player->getName();
-		if(g_game.getPlayerByName(playerName))
-		{
-			std::cout << "Failure: [Mailbox::sendItem], receiver is online: " << receiver << "," << playerName << std::endl;
-			delete player;
-			return false;
-		}
-		#endif
-
-		Depot* depot = player->getDepot(dp, true);
-		if(depot)
+		if(Depot* depot = player->getDepot(dp, true))
 		{
 			if(g_game.internalMoveItem(actor, item->getParent(), depot, INDEX_WHEREEVER,
 				item, item->getItemCount(), NULL, FLAG_NOLIMIT) == RET_NOERROR)
@@ -203,17 +188,16 @@ bool Mailbox::getReceiver(Item* item, std::string& name, uint32_t& dp)
 	if(!item || item->getText() == "") /**No label/letter found or its empty.**/
 		return false;
 
-	std::string temp;
+	std::string tmp, strTown = "";
 	std::istringstream iss(item->getText(), std::istringstream::in);
-	std::string strTown = "";
-	uint32_t curLine = 1;
 
-	while(getline(iss, temp, '\n'))
+	uint32_t curLine = 1;
+	while(getline(iss, tmp, '\n'))
 	{
 		if(curLine == 1)
-			name = temp;
+			name = tmp;
 		else if(curLine == 2)
-			strTown = temp;
+			strTown = tmp;
 		else
 			break;
 
@@ -221,18 +205,9 @@ bool Mailbox::getReceiver(Item* item, std::string& name, uint32_t& dp)
 	}
 
 	Town* town = Towns::getInstance().getTown(strTown);
-	if(town)
-		dp = town->getTownID();
-	else
+	if(!town)
 		return false;
 
+	dp = town->getTownID();
 	return true;
-}
-
-bool Mailbox::canSend(const Item* item) const
-{
-	if(item->getID() == ITEM_PARCEL || item->getID() == ITEM_LETTER)
-		return true;
-
-	return false;
 }

@@ -30,6 +30,8 @@ enum CreatureEventType_t
 	CREATURE_EVENT_NONE,
 	CREATURE_EVENT_LOGIN,
 	CREATURE_EVENT_LOGOUT,
+	CREATURE_EVENT_CHANNEL_JOIN,
+	CREATURE_EVENT_CHANNEL_LEAVE,
 	CREATURE_EVENT_THINK,
 	CREATURE_EVENT_ADVANCE,
 	CREATURE_EVENT_LOOK,
@@ -94,6 +96,8 @@ class CreatureEvent : public Event
 		//scripting
 		uint32_t executeOnLogin(Player* player);
 		uint32_t executeOnLogout(Player* player);
+		uint32_t executeOnChannelJoin(Player* player, uint16_t channelId);
+		uint32_t executeOnChannelLeave(Player* player, uint16_t channelId);
 		uint32_t executeOnThink(Creature* creature, uint32_t interval);
 		uint32_t executeOnAdvance(Player* player, skills_t skill, uint32_t oldLevel, uint32_t newLevel);
 		uint32_t executeOnLook(Player* player, const Position& position, uint8_t stackpos);

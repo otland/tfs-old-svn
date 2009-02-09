@@ -3464,11 +3464,9 @@ int32_t LuaScriptInterface::luaDoPlayerSendTextMessage(lua_State* L)
 	//doPlayerSendTextMessage(cid, MessageClasses, message)
 	std::string text = popString(L);
 	uint32_t messageClass = popNumber(L);
-	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	const Player* player = env->getPlayerByUID(cid);
+	const Player* player = env->getPlayerByUID(popNumber(L));
 	if(!player)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
@@ -3477,6 +3475,62 @@ int32_t LuaScriptInterface::luaDoPlayerSendTextMessage(lua_State* L)
 	}
 
 	player->sendTextMessage((MessageClasses)messageClass, text);
+	lua_pushnumber(L, LUA_NO_ERROR);
+	return 1;
+}
+
+nt32_t LuaScriptInterface::luaDoPlayerSendChannelMessage(lua_State* L)
+{
+	//doPlayerSendChannelMessage(cid, author, message, SpeakClasses, channel)
+	uint16_t channelId = popNumber(L);
+	uint32_t speakClass = popNumber(L);
+	std::string text = popString(L);
+	std::string name = popString(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	const Player* player = env->getPlayerByUID(popNumber(L));
+	if(!player)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+		return 1;
+	}
+
+	player->sendChannelMessage(name, text, (SpeakClasses)speakClass, channelId);
+	lua_pushnumber(L, LUA_NO_ERROR);
+	return 1;
+}
+
+nt32_t LuaScriptInterface::luaDoPlayerSendToChannel(lua_State* L)
+{
+	//doPlayerSendToChannel(cid, targetId, SpeakClasses, message, channel[, time])
+	uint32_t time = 0;
+	if(lua_gettop(L) >= 6)
+		time = popNumber(L);
+
+	uint16_t channelId = popNumber(L);
+	std::string text = popString(L);
+	uint32_t speakClass = popNumber(L);
+	uint32_t targetId = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	const Player* player = env->getPlayerByUID(popNumber(L));
+	if(!player)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+		return 1;
+	}
+
+	Creature* creature = env->getCreatureByUID(targetId);
+	if(!creature)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+		return 1;
+	}
+
+	player->sendToChannel(creature, (SpeakClasses)speakClass, text, channelId, time);
 	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;
 }
@@ -6931,17 +6985,31 @@ int32_t LuaScriptInterface::luaDoPlayerSetGuildNick(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetGuildId(lua_State* L)
 {
-	//getGuildId(guild_name)
-	const char* name = popString(L);
-
+	//getGuildId(guildName)
 	uint32_t guildId;
-	if(IOGuild::getInstance()->getGuildIdByName(guildId, std::string(name)))
+	if(IOGuild::getInstance()->getGuildIdByName(guildId, popString(L)))
 		lua_pushnumber(L, guildId);
 	else
 	{
 		reportErrorFunc("Guild not found");
 		lua_pushnumber(L, LUA_ERROR);
 	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetGuildMotd(lua_State* L)
+{
+	//getGuildMotd(guildId)
+	uint32_t guildId = popNumber(L);
+	if(IOGuild::getInstance()->guildExists(guildId))
+		lua_pushstring(L, IOGuild::getInstance()->getMotd(guildId).c_str());
+	else
+	{
+		reportErrorFunc("Guild not found");
+		lua_pushnumber(L, LUA_ERROR);
+	}
+
 	return 1;
 }
 

@@ -1137,23 +1137,27 @@ bool IOLoginData::playerExists(uint32_t guid, bool multiworld /*= false*/)
 	return true;
 }
 
-bool IOLoginData::playerExists(std::string name, bool multiworld /*= false*/)
+bool IOLoginData::playerExists(std::string& name, bool multiworld /*= false*/)
 {
 	GuidCacheMap::iterator it = guidCacheMap.find(name);
 	if(it != guidCacheMap.end())
+	{
+		name = it->first;
 		return true;
+	}
 
 	Database* db = Database::getInstance();
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0";
+	query << "SELECT `name` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0";
 	if(!multiworld)
 		query << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
+	name = result->getDataString("name");
 	db->freeResult(result);
 	return true;
 }
@@ -1204,7 +1208,7 @@ bool IOLoginData::storeNameByGuid(uint32_t guid)
 	return true;
 }
 
-bool IOLoginData::getGuidByName(uint32_t &guid, std::string& name, bool multiworld /*= false*/)
+bool IOLoginData::getGuidByName(uint32_t& guid, std::string& name, bool multiworld /*= false*/)
 {
 	GuidCacheMap::iterator it = guidCacheMap.find(name);
 	if(it != guidCacheMap.end())
