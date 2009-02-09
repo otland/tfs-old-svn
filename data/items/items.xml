@@ -16270,8 +16270,12 @@
 		<attribute key="weaponType" value="club"/>
 		<attribute key="extradef" value="1"/>
 	</item>
-	<item id="7433" name="">
-		<attribute key="weight" value="0"/>
+	<item id="7433" article="a" name="ravenwing">
+		<attribute key="weight" value="5500"/>
+		<attribute key="defense" value="22"/>
+		<attribute key="attack" value="45"/>
+		<attribute key="weaponType" value="axe"/>
+		<attribute key="extradef" value="1"/>
 	</item>
 	<item id="7434" article="a" name="royal axe">
 		<attribute key="weight" value="9200"/>
@@ -19652,7 +19656,13 @@
 		<attribute key="absorbPercentIce" value="-12"/>
 		<attribute key="slotType" value="body"/>
 	</item>
-	<item id="8868"/>
+	<item id="8868" article="a" name="">
+		<attribute key="weight" value="2850"/>
+		<attribute key="armor" value="12"/>
+		<attribute key="absorbPercentEnergy" value="12"/>
+		<attribute key="absorbPercentEarth" value="-12"/>
+		<attribute key="slotType" value="body"/>
+	</item>
 	<item id="8869" article="a" name="greenwood coat">
 		<attribute key="weight" value="2850"/>
 		<attribute key="armor" value="12"/>
@@ -19763,7 +19773,13 @@
 		<attribute key="absorbPercentDeath" value="10"/>
 		<attribute key="absorbPercentHoly" value="-10"/>
 	</item>
-	<item id="8886"/>
+	<item id="8886" article="a" name="molten plate">
+		<attribute key="armor" value="13"/>
+		<attribute key="slotType" value="body"/>
+		<attribute key="weight" value="7500"/>
+		<attribute key="absorbPercentFire" value="7"/>
+		<attribute key="absorbPercentIce" value="-7"/>
+	</item>
 	<item id="8887" article="a" name="frozen plate">
 		<attribute key="armor" value="13"/>
 		<attribute key="slotType" value="body"/>
