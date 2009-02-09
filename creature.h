@@ -361,6 +361,7 @@ class Creature : public AutoID, virtual public Thing
 
 		//creature script events
 		bool registerCreatureEvent(const std::string& name);
+		CreatureEventList getCreatureEvents(CreatureEventType_t type);
 
 		virtual void setParent(Cylinder* cylinder)
 		{
@@ -375,7 +376,6 @@ class Creature : public AutoID, virtual public Thing
 
 		const Position& getLastPosition() {return lastPosition;}
 		void setLastPosition(Position newLastPos) {lastPosition = newLastPos;}
-
 		static bool canSee(const Position& myPos, const Position& pos, uint32_t viewRangeX, uint32_t viewRangeY);
 
 	protected:
@@ -446,12 +446,7 @@ class Creature : public AutoID, virtual public Thing
 		//creature script events
 		CreatureEventList eventsList;
 		uint32_t scriptEventsBitField;
-
-		CreatureEventList getCreatureEvents(CreatureEventType_t type);
-		bool hasEventRegistered(CreatureEventType_t event)
-		{
-			return (0 != (scriptEventsBitField & ((uint32_t)1 << event)));
-		}
+		bool hasEventRegistered(CreatureEventType_t event) const {return (0 != (scriptEventsBitField & ((uint32_t)1 << event)));}
 
 		void updateMapCache();
 		#ifdef __DEBUG__
