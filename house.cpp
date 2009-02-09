@@ -659,8 +659,8 @@ void Door::setHouse(House* _house)
 		#endif
 		return;
 	}
-	house = _house;
 
+	house = _house;
 	if(!accessList)
 		accessList = new AccessList();
 }
@@ -701,7 +701,6 @@ bool Door::getAccessList(std::string& list) const
 void Door::copyAttributes(Item* item)
 {
 	Item::copyAttributes(item);
-
 	if(Door* door = item->getDoor())
 	{
 		std::string list;
@@ -719,15 +718,14 @@ void Door::onRemoved()
 Houses::Houses()
 {
 	rentPeriod = RENTPERIOD_NEVER;
-
-	std::string strRentPeriod = asLowerCaseString(g_config.getString(ConfigManager::HOUSE_RENT_PERIOD));
-	if(strRentPeriod == "yearly")
+	std::string strValue = asLowerCaseString(g_config.getString(ConfigManager::HOUSE_RENT_PERIOD));
+	if(strValue == "yearly")
 		rentPeriod = RENTPERIOD_YEARLY;
-	else if(strRentPeriod == "monthly")
+	else if(strValue == "monthly")
 		rentPeriod = RENTPERIOD_MONTHLY;
-	else if(strRentPeriod == "weekly")
+	else if(strValue == "weekly")
 		rentPeriod = RENTPERIOD_WEEKLY;
-	else if(strRentPeriod == "daily")
+	else if(strValue == "daily")
 		rentPeriod = RENTPERIOD_DAILY;
 }
 
@@ -738,12 +736,10 @@ Houses::~Houses()
 
 bool Houses::loadHousesXML(std::string filename)
 {
-	xmlDocPtr doc = xmlParseFile(filename.c_str());
-	if(doc)
+	if(xmlDocPtr doc = xmlParseFile(filename.c_str()))
 	{
 		xmlNodePtr root, houseNode;
 		root = xmlDocGetRootElement(doc);
-
 		if(xmlStrcmp(root->name,(const xmlChar*)"houses") != 0)
 		{
 			xmlFreeDoc(doc);
@@ -790,7 +786,10 @@ bool Houses::loadHousesXML(std::string filename)
 
 				house->setEntryPos(entryPos);
 				if(entryPos.x == 0 || entryPos.y == 0)
-					std::cout << "[Warning - Houses::loadHousesXML] House entry not set for: " << house->getName() << " (" << _houseid << ")" << std::endl;
+				{
+					std::cout << "[Warning - Houses::loadHousesXML] House entry not set for: ";
+					std::cout << house->getName() << " (" << _houseid << ")" << std::endl;
+				}
 
 				if(readXMLInteger(houseNode, "rent", intValue))
 					house->setRent(intValue);
@@ -1010,6 +1009,7 @@ House* Houses::getHouseByPlayer(Player* player)
 				return house;
 		}
 	}
+
 	return NULL;
 }
 
@@ -1017,9 +1017,8 @@ House* Houses::getHouseByPlayerId(uint32_t playerId)
 {
 	for(HouseMap::iterator it = houseMap.begin(); it != houseMap.end(); ++it)
 	{
-		House* house = it->second;
-		if(house->getHouseOwner() == playerId)
-			return house;
+		if(it->second->getHouseOwner() == playerId)
+			return it->second;
 	}
 
 	return NULL;
@@ -1029,7 +1028,6 @@ uint32_t Houses::getHousesCount(uint32_t accId)
 {
 	Account account = IOLoginData::getInstance()->loadAccount(accId);
 	uint32_t guid, count = 0;
-
 	for(Characters::iterator it = account.charList.begin(); it != account.charList.end(); ++it)
 	{
 #ifndef __LOGIN_SERVER__
