@@ -83,7 +83,7 @@
 				<item id="7410" chance="600"/> <!-- queens sceptre -->
 				<item id="9969" chance="400"/> <!-- black skull -->
 				<item id="2436" chance="5000"/> <!-- skull staff -->
-				<item id="8092" chance="1300"/> <!-- spellbook of mind control -->
+				<item id="8902" chance="1300"/> <!-- spellbook of mind control -->
 			</inside>
 		</item>
 	</loot>
