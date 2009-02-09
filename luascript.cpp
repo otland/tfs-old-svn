@@ -1346,6 +1346,12 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerSendTextMessage(cid, MessageClasses, message)
 	lua_register(m_luaState, "doPlayerSendTextMessage", LuaScriptInterface::luaDoPlayerSendTextMessage);
 
+	//doPlayerSendChannelMessage(cid, author, message, SpeakClasses, channel)
+	lua_register(m_luaState, "doPlayerSendChannelMessage", LuaScriptInterface::luaDoPlayerSendChannelMessage);
+
+	//doPlayerSendToChannel(cid, targetId, SpeakClasses, message, channel[, time])
+	lua_register(m_luaState, "doPlayerSendToChannel", LuaScriptInterface::luaDoPlayerSendToChannel);
+
 	//doPlayerAddMoney(cid, money)
 	lua_register(m_luaState, "doPlayerAddMoney", LuaScriptInterface::luaDoPlayerAddMoney);
 
@@ -3479,7 +3485,7 @@ int32_t LuaScriptInterface::luaDoPlayerSendTextMessage(lua_State* L)
 	return 1;
 }
 
-nt32_t LuaScriptInterface::luaDoPlayerSendChannelMessage(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerSendChannelMessage(lua_State* L)
 {
 	//doPlayerSendChannelMessage(cid, author, message, SpeakClasses, channel)
 	uint16_t channelId = popNumber(L);
@@ -3501,7 +3507,7 @@ nt32_t LuaScriptInterface::luaDoPlayerSendChannelMessage(lua_State* L)
 	return 1;
 }
 
-nt32_t LuaScriptInterface::luaDoPlayerSendToChannel(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerSendToChannel(lua_State* L)
 {
 	//doPlayerSendToChannel(cid, targetId, SpeakClasses, message, channel[, time])
 	uint32_t time = 0;
