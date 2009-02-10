@@ -6,7 +6,7 @@ function onSay(cid, words, param)
 	local players = getPlayersOnline()
 	local strings = {}
 
-	local i = 0
+	local i = 1
 	local position = 1
 	for _, pid in ipairs(players) do
 		if(i > (position * 7)) then
@@ -14,7 +14,7 @@ function onSay(cid, words, param)
 			position = position + 1
 			strings[position] = ""
 		else
-			strings[position] = i == 0 and "" or strings[position] .. ", "
+			strings[position] = i == 1 and "" or strings[position] .. ", "
 		end
 
 		if((config.showGamemasters == TRUE or getPlayerCustomFlagValue(cid, PlayerCustomFlag_GamemasterPrivileges) == TRUE or getPlayerCustomFlagValue(pid, PlayerCustomFlag_GamemasterPrivileges) ~= TRUE) and (isPlayerGhost(pid) ~= TRUE or getPlayerAccess(cid) > getPlayerAccess(pid))) then
@@ -23,9 +23,13 @@ function onSay(cid, words, param)
 		end
 	end
 
-	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, i .. " player(s) online:")
-	for i, string in ipairs(strings) do
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, string .. ".")
+	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, (i - 1) .. " player(s) online:")
+	for i, str in ipairs(strings) do
+		if(str:sub(str:len()) ~= ",") then
+			str = str .. "."
+		end
+
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, string)
 	end
 
 	return TRUE
