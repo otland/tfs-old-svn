@@ -956,7 +956,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 	query_insert.setQuery("INSERT INTO `player_viplist` (`player_id`, `vip_id`) VALUES ");
 	for(VIPListSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); it++)
 	{
-		if(playerExists(*it))
+		if(playerExists(*it, false, false))
 		{
 			sprintf(buffer, "%d, %d", player->getGUID(), *it);
 			if(!query_insert.addRow(buffer))
@@ -988,13 +988,15 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 		item = it->second;
 		++runningId;
 
-		uint32_t attributesSize;
 		PropWriteStream propWriteStream;
 		item->serializeAttr(propWriteStream);
+
+		uint32_t attributesSize = 0;
 		const char* attributes = propWriteStream.getStream(attributesSize);
 
 		char buffer[attributesSize * 3 + 100]; //MUST be (size * 2), else people can crash server when filling writable with native characters
-		sprintf(buffer, "%d, %d, %d, %d, %d, %s", player->getGUID(), pid, runningId, item->getID(), (int32_t)item->getSubType(), db->escapeBlob(attributes, attributesSize).c_str());
+		sprintf(buffer, "%d, %d, %d, %d, %d, %s", player->getGUID(), pid, runningId, item->getID(),
+			(int32_t)item->getSubType(), db->escapeBlob(attributes, attributesSize).c_str());
 		if(!query_insert.addRow(buffer))
 			return false;
 
@@ -1016,13 +1018,15 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 			if(container)
 				stack.push_back(containerBlock(container, runningId));
 
-			uint32_t attributesSize;
 			PropWriteStream propWriteStream;
 			item->serializeAttr(propWriteStream);
+
+			uint32_t attributesSize = 0;
 			const char* attributes = propWriteStream.getStream(attributesSize);
 
 			char buffer[attributesSize * 3 + 100]; //MUST be (size * 2), else people can crash server when filling writable with native characters
-			sprintf(buffer, "%d, %d, %d, %d, %d, %s", player->getGUID(), parentId, runningId, item->getID(), (int32_t)item->getSubType(), db->escapeBlob(attributes, attributesSize).c_str());
+			sprintf(buffer, "%d, %d, %d, %d, %d, %s", player->getGUID(), parentId, runningId, item->getID(),
+				(int32_t)item->getSubType(), db->escapeBlob(attributes, attributesSize).c_str());
 			if(!query_insert.addRow(buffer))
 				return false;
 		}
@@ -1116,41 +1120,50 @@ bool IOLoginData::isPremium(uint32_t guid)
 	return premium;
 }
 
-bool IOLoginData::playerExists(uint32_t guid, bool multiworld /*= false*/)
+bool IOLoginData::playerExists(uint32_t guid, bool multiworld /*= false*/, bool checkCache /*= true*/)
 {
-	NameCacheMap::iterator it = nameCacheMap.find(guid);
-	if(it != nameCacheMap.end())
-		return true;
-
-	Database* db = Database::getInstance();
-	DBResult* result;
-
-	DBQuery query;
-	query << "SELECT `id` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0";
-	if(!multiworld)
-		query << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
-
-	if(!(result = db->storeQuery(query.str())))
-		return false;
-
-	db->freeResult(result);
-	return true;
-}
-
-bool IOLoginData::playerExists(std::string& name, bool multiworld /*= false*/)
-{
-	GuidCacheMap::iterator it = guidCacheMap.find(name);
-	if(it != guidCacheMap.end())
+	if(checkCache)
 	{
-		name = it->first;
-		return true;
+		NameCacheMap::iterator it = nameCacheMap.find(guid);
+		if(it != nameCacheMap.end())
+			return true;
 	}
 
 	Database* db = Database::getInstance();
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `name` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0";
+	query << "SELECT `name` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0";
+	if(!multiworld)
+		query << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	const std::string name = result->getDataString("name");
+	db->freeResult(result);
+
+	nameCacheMap[guid] = name;
+	return true;
+}
+
+bool IOLoginData::playerExists(std::string& name, bool multiworld /*= false*/, bool checkCache /*= true*/)
+{
+	if(checkCache)
+	{
+		GuidCacheMap::iterator it = guidCacheMap.find(name);
+		if(it != guidCacheMap.end())
+		{
+			name = it->first;
+			return true;
+		}
+	}
+
+	Database* db = Database::getInstance();
+	DBResult* result;
+
+	DBQuery query;
+	query << "SELECT `id`, `name` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0";
 	if(!multiworld)
 		query << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 
@@ -1158,6 +1171,8 @@ bool IOLoginData::playerExists(std::string& name, bool multiworld /*= false*/)
 		return false;
 
 	name = result->getDataString("name");
+	guidCacheMap[name] = result->getDataInt("id");
+
 	db->freeResult(result);
 	return true;
 }

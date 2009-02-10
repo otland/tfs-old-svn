@@ -5,7 +5,7 @@ function onSay(cid, words, param)
 	end
 
 	local str = "Failed to " .. (state == GAMESTATE_CLOSED and "close" or "open") .. " server."
-	if(doChangeGameState(state) ~= LUA_ERROR) then
+	if(doSetGameState(state) ~= LUA_ERROR) then
 		str = "Server has been " .. (state == GAMESTATE_CLOSED and "closed" or "opened") .. " successfully."
 	end
 
