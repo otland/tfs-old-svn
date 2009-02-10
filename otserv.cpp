@@ -408,7 +408,7 @@ int argc, char *argv[]
 
 				std::cout << "> Database has been updated to version: " << version << "." << std::endl;
 			}
-			while(version < LATEST_DB_VERSION);
+			while(version < VERSION_DATABASE);
 		}
 
 		DatabaseManager::getInstance()->checkTriggers();
@@ -416,13 +416,6 @@ int argc, char *argv[]
 		if(g_config.getBool(ConfigManager::OPTIMIZE_DB_AT_STARTUP) && !DatabaseManager::getInstance()->optimizeTables())
 			std::cout << "> No tables were optimized." << std::endl;
 	}
-
-	std::cout << ">> Loading vocations" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading vocations");
-	#endif
-	if(!g_vocations.loadFromXml())
-		startupErrorMessage("Unable to load vocations!");
 
 	std::cout << ">> Loading items" << std::endl;
 	#ifndef __CONSOLE__
@@ -443,12 +436,34 @@ int argc, char *argv[]
 			startupErrorMessage("Unable to load items (XML)!");
 	}
 
+	std::cout << ">> Loading vocations" << std::endl;
+	#ifndef __CONSOLE__
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading vocations");
+	#endif
+	if(!g_vocations.loadFromXml())
+		startupErrorMessage("Unable to load vocations!");
+
 	std::cout << ">> Loading script systems" << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading script systems");
 	#endif
 	if(!ScriptingManager::getInstance()->loadScriptSystems())
 		startupErrorMessage("");
+
+	std::cout << ">> Loading outfits" << std::endl;
+	#ifndef __CONSOLE__
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading outfits");
+	#endif
+	Outfits* outfits = Outfits::getInstance();
+	if(!outfits->loadFromXml())
+		startupErrorMessage("Unable to load outfits!");
+
+	std::cout << ">> Loading experience stages" << std::endl;
+	#ifndef __CONSOLE__
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading experience stages");
+	#endif
+	if(!g_game.loadExperienceStages())
+		startupErrorMessage("Unable to load experience stages!");
 
 	std::cout << ">> Loading monsters" << std::endl;
 	#ifndef __CONSOLE__
@@ -466,13 +481,21 @@ int argc, char *argv[]
 			startupErrorMessage("Unable to load monsters!");
 	}
 
-	std::cout << ">> Loading outfits" << std::endl;
+	std::cout << ">> Loading map and spawns..." << std::endl;
 	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading outfits");
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading map and spawns...");
 	#endif
-	Outfits* outfits = Outfits::getInstance();
-	if(!outfits->loadFromXml())
-		startupErrorMessage("Unable to load outfits!");
+	if(!g_game.loadMap(g_config.getString(ConfigManager::MAP_NAME)))
+		startupErrorMessage("");
+
+	#ifdef __LOGIN_SERVER__
+	std::cout << ">> Loading game servers" << std::endl;
+	#ifndef __CONSOLE__
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading game servers");
+	#endif
+	if(!GameServers::getInstance()->loadFromXml(true))
+		startupErrorMessage("Unable to load game servers!");
+	#endif
 
 	#ifdef __REMOTE_CONTROL__
 	g_admin = new Admin();
@@ -483,13 +506,6 @@ int argc, char *argv[]
 	if(!g_admin->loadXMLConfig())
 		startupErrorMessage("Unable to load administration protocol!");
 	#endif
-
-	std::cout << ">> Loading experience stages" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading experience stages");
-	#endif
-	if(!g_game.loadExperienceStages())
-		startupErrorMessage("Unable to load experience stages!");
 
 	std::cout << ">> Checking world type... ";
 	std::string worldType = asLowerCaseString(g_config.getString(ConfigManager::WORLD_TYPE));
@@ -514,21 +530,52 @@ int argc, char *argv[]
 		startupErrorMessage("Unknown world type: " + g_config.getString(ConfigManager::WORLD_TYPE));
 	}
 
-	std::cout << ">> Loading map and spawns..." << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading map and spawns...");
-	#endif
-	if(!g_game.loadMap(g_config.getString(ConfigManager::MAP_NAME)))
-		startupErrorMessage("");
+	std::cout << ">> Checking software version... ";
+	if(xmlDocPtr doc = xmlParseFile(VERSION_CHECK))
+	{
+		xmlNodePtr p, root = xmlDocGetRootElement(doc);
+		if(!xmlStrcmp(root->name, (const xmlChar*)"versions"))
+		{
+			p = root->children->next;
+			if(!xmlStrcmp(p->name, (const xmlChar*)"entry"))
+			{
+				std::string version;
+				int32_t patch, build, timestamp;
 
-	#ifdef __LOGIN_SERVER__
-	std::cout << ">> Loading game servers" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading game servers");
-	#endif
-	if(!GameServers::getInstance()->loadFromXml(true))
-		startupErrorMessage("Unable to load game servers!");
-	#endif
+				bool tmp = false;
+				if(readXMLString(p, "version", version) && version != STATUS_SERVER_VERSION)
+					tmp = true;
+
+				if(readXMLInteger(p, "patch", patch) && patch > VERSION_PATCH)
+					tmp = true;
+
+				if(readXMLInteger(p, "build", build) && build > VERSION_BUILD)
+					tmp = true;
+
+				if(readXMLInteger(p, "timestamp", timestamp) && timestamp > VERSION_TIMESTAMP)
+					tmp = true;
+
+				if(tmp)
+				{
+					std::cout << "outdated, please consider updating!" << std::endl;
+					std::cout << "> Current version information - version: " << STATUS_SERVER_VERSION << ", patch: " << VERSION_PATCH;
+					std::cout << ", build: " << VERSION_BUILD << ", timestamp: " << VERSION_TIMESTAMP << "." << std::endl;
+					std::cout << "> Latest version information - version: " << version << ", patch: " << patch;
+					std::cout << ", build: " << build << ", timestamp: " << timestamp << "." << std::endl;
+				}
+				else
+					std::cout << "up to date!" << std::endl;
+			}
+			else
+				std::cout << "failed checking - malformed entry." << std::endl;
+		}
+		else
+			std::cout << "failed checking - malformed file." << std::endl;
+
+		xmlFreeDoc(doc);
+	}
+	else
+		std::cout << "failed - could not parse remote file (are you connected to the internet?)" << std::endl;
 
 	if(Status* status = Status::getInstance())
 	{
