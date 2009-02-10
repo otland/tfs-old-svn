@@ -296,8 +296,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			else
 				isNamelocked = true;
 		}
-
-		if(player->getName() == "Account Manager" && g_config.getBool(ConfigManager::ACCOUNT_MANAGER) && !isNamelocked)
+		else if(player->getName() == "Account Manager" && g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
 		{
 			if(accnumber != 1)
 			{
@@ -1533,13 +1532,12 @@ void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
 	if(m_debugAssertSent)
 		return;
 
-	m_debugAssertSent = true;
-
 	std::string assertLine = msg.GetString();
 	std::string date = msg.GetString();
 	std::string description = msg.GetString();
 	std::string comment = msg.GetString();
 
+	m_debugAssertSent = true;
 	if(FILE* file = fopen(getFilePath(FILE_TYPE_LOG, "client_assertions.txt").c_str(), "a"))
 	{
 		char bufferDate[32], bufferIp[32];
@@ -1623,9 +1621,9 @@ void ProtocolGame::parseViolationWindow(NetworkMessage& msg)
 	uint8_t actionId = msg.GetByte();
 	std::string comment = msg.GetString();
 	std::string statement = msg.GetString();
-	msg.SkipBytes(2); //TODO: Find out what is this U16
+	uint16_t channelId = msg.GetU16();
 	bool ipBanishment = msg.GetByte();
-	addGameTask(&Game::violationWindow, player->getID(), playerName, reasonId, actionId, comment, statement, ipBanishment);
+	addGameTask(&Game::violationWindow, player->getID(), playerName, reasonId, actionId, comment, statement, channelId, ipBanishment);
 }
 
 //********************** Send methods *******************************//
@@ -2280,7 +2278,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, bool isLogin)
 					for(int32_t i = 0; i <= 22; i++)
 					{
 						if(i <= violationReasons[1])
-							msg->AddByte(violationNamelocks[player->getViolationAccess()]);
+							msg->AddByte(violationNames[player->getViolationAccess()]);
 						else if(i <= violationReasons[player->getViolationAccess()])
 							msg->AddByte(violationStatements[player->getViolationAccess()]);
 						else
@@ -2330,8 +2328,9 @@ void ProtocolGame::sendAddCreature(const Creature* creature, bool isLogin)
 
 							tempstring = "Your last visit was on ";
 							time_t lastLogin = player->getLastLoginSaved();
+
 							tempstring += ctime(&lastLogin);
-							tempstring.erase(tempstring.length() -1);
+							tempstring.erase(tempstring.length() - 1);
 							tempstring += ".";
 						}
 
@@ -2780,15 +2779,15 @@ void ProtocolGame::AddCreature(NetworkMessage* msg, const Creature* creature, bo
 void ProtocolGame::AddPlayerStats(NetworkMessage* msg)
 {
 	msg->AddByte(0xA0);
-
 	msg->AddU16(player->getHealth());
 	msg->AddU16(player->getPlayerInfo(PLAYERINFO_MAXHEALTH));
 	msg->AddU32(uint32_t(player->getFreeCapacity() * 100));
 	uint64_t experience = player->getExperience();
-	if(experience > 0x7FFFFFFF && player->getOperatingSystem() == CLIENTOS_WINDOWS) //Windows client debugs after 2,147,483,647 exp
+	if(experience > 0x7FFFFFFF) //Client debugs after 2,147,483,647 exp
 		msg->AddU32(0x7FFFFFFF);
 	else
 		msg->AddU32(experience);
+
 	msg->AddU16(player->getPlayerInfo(PLAYERINFO_LEVEL));
 	msg->AddByte(player->getPlayerInfo(PLAYERINFO_LEVELPERCENT));
 	msg->AddU16(player->getMana());

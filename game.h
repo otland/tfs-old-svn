@@ -289,7 +289,7 @@ class Game
 		void removeCreatureCheck(Creature* creature);
 
 		bool violationWindow(uint32_t playerId, std::string targetName, int32_t reason, int32_t action,
-			std::string comment, std::string statement, bool ipBanishment);
+			std::string comment, std::string statement, uint16_t channelId, bool ipBanishment);
 
 		uint32_t getPlayersOnline() {return (uint32_t)Player::listPlayer.list.size();}
 		uint32_t getMonstersOnline() {return (uint32_t)Monster::listMonster.list.size();}

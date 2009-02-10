@@ -964,14 +964,13 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 	}
 
 	Tile* toTile = map->getTile(toPos);
-	const Position& movingCreaturePos = movingCreature->getPosition();
-
 	if(!toTile)
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
 		return false;
 	}
 
+	const Position& movingCreaturePos = movingCreature->getPosition();
 	if((!movingCreature->isPushable() && !player->hasFlag(PlayerFlag_CanPushAllCreatures)) ||
 		(movingCreature->isInGhostMode() && !player->canSeeGhost(movingCreature)))
 	{
@@ -4965,16 +4964,17 @@ std::string Game::getSearchString(const Position fromPos, const Position toPos, 
 }
 
 bool Game::violationWindow(uint32_t playerId, std::string targetName, int32_t reason, int32_t action,
-		std::string comment, std::string statement, bool ipBanishment)
+		std::string comment, std::string statement, uint16_t channelId, bool ipBanishment)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
 
 	uint32_t access = player->getViolationAccess();
-	if((!hasBitSet(action, violationNamelocks[access]) && !hasBitSet(action, violationStatements[access])) ||
-		(ipBanishment && !hasBitSet(Action_IpBan, violationStatements[access])) || reason > violationReasons[access])
+	if((ipBanishment && !(violationStatements[access] & (1 << Action_IpBan))) || reason > violationReasons[access]
+		|| !(violationNames[access] & (1 << action) || violationStatements[access] & (1 << action)))		
 	{
+		// should check for IpBan at violationNames too, but since its only for last access on both cases...
 		player->sendCancel("You do not have authorization for this action.");
 		return false;
 	}
@@ -5130,6 +5130,10 @@ bool Game::violationWindow(uint32_t playerId, std::string targetName, int32_t re
 
 			break;
 		}
+
+		case 6:
+			// this is not banishment, and shouldn't perform default action
+			break;
 
 		default:
 		{

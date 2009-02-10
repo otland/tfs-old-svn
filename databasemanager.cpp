@@ -876,10 +876,6 @@ uint32_t DatabaseManager::updateDatabase()
 			std::cout << "> Updating database to version: 9..." << std::endl;
 
 			DBQuery query;
-			query << "UPDATE `groups` SET `violationaccess` = 2 WHERE `id` = 3;";
-			db->executeQuery(query.str());
-
-			query.str("");
 			query << "UPDATE `groups` SET `violationaccess` = 3 WHERE `id` = 4;";
 			db->executeQuery(query.str());
 

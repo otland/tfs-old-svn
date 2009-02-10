@@ -523,13 +523,13 @@ const int32_t violationReasons[5] =
 	22	//all reasons
 };
 
-const int32_t violationNamelocks[5] =
+const int32_t violationNames[5] =
 {
 	Action_None,
 	Action_Namelock,
 	Action_Namelock,
 	Action_Namelock | Action_NamelockBan,
-	Action_Namelock | Action_NamelockBan | Action_NamelockBanFinalWarning
+	Action_Namelock | Action_NamelockBan | Action_NamelockBanFinalWarning | Action_IpBan
 };
 
 const int32_t violationStatements[5] =
