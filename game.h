@@ -414,7 +414,6 @@ class Game
 		void loadPlayersRecord();
 		void checkPlayersRecord();
 
-		void sendGuildMotd(uint32_t playerId, uint32_t guildId);
 		void kickPlayer(uint32_t playerId, bool displayEffect);
 		bool playerReportBug(uint32_t playerId, std::string bug);
 

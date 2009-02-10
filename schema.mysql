@@ -35,7 +35,7 @@ CREATE TABLE `server_config`
 	UNIQUE (`config`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `server_config` VALUES ('db_version', 9);
+INSERT INTO `server_config` VALUES ('db_version', 10);
 
 CREATE TABLE `server_motd`
 (
@@ -88,10 +88,10 @@ CREATE TABLE `groups`
 
 INSERT INTO `groups` VALUES (1, 'Player', 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO `groups` VALUES (2, 'Tutor', 16809984, 524291, 1, 0, 0, 0, 0);
-INSERT INTO `groups` VALUES (3, 'Senior Tutor', 68736352256, 524303, 2, 1, 0, 0, 0);
-INSERT INTO `groups` VALUES (4, 'Gamemaster', 510024081247, 4189375, 3, 2, 4000, 200, 75);
-INSERT INTO `groups` VALUES (5, 'Community Manager', 542239465466, 4189695, 4, 3, 6000, 300, 266);
-INSERT INTO `groups` VALUES (6, 'God', 546534563834, 4194303, 5, 3, 8000, 400, 302);
+INSERT INTO `groups` VALUES (3, 'Senior Tutor', 68736352256, 524303, 2, 2, 0, 0, 0);
+INSERT INTO `groups` VALUES (4, 'Gamemaster', 510024081247, 4189375, 3, 3, 4000, 200, 75);
+INSERT INTO `groups` VALUES (5, 'Community Manager', 542239465466, 4189695, 4, 4, 6000, 300, 266);
+INSERT INTO `groups` VALUES (6, 'God', 546534563834, 4194303, 5, 4, 8000, 400, 302);
 
 CREATE TABLE `accounts`
 (

@@ -392,6 +392,16 @@ function isInParty(cid)
 	return type(getPartyMembers(cid)) == 'table' and TRUE or FALSE
 end
 
+function isPrivateChannel(channelId)
+	for i = CHANNEL_GUILD, CHANNEL_HELP do
+		if(channelId == i) then
+			return FALSE
+		end
+	end
+
+	return TRUE
+end
+
 function doConvertIntegerToIp(int, mask)
 	local b4 = bit.urshift(bit.uband(int, 4278190080), 24)
 	local b3 = bit.urshift(bit.uband(int, 16711680), 16)
@@ -413,6 +423,87 @@ function doConvertIntegerToIp(int, mask)
 	end
 	
 	return b1 .. "." .. b2 .. "." .. b3 .. "." .. b4
+end
+
+function doConvertIpToInteger(str)
+	local maskindex = str:find(":")
+	if(maskindex == nil) then
+		local ipint = 0
+		local maskint = 0
+
+		local index = 24		
+		for b in str:gmatch("([x%d]+)%.?") do
+			if(b ~= "x") then
+				if(b:find("x") ~= nil) then
+					return 0, 0
+				end
+
+				if(tonumber(b) > 255 or tonumber(b) < 0) then
+					return 0, 0
+				end
+
+				maskint = bit.ubor(maskint, bit.ulshift(255, index))
+				ipint = bit.ubor(ipint, bit.ulshift(b, index))
+			end
+
+			index = index - 8
+			if(index < 0) then
+				break
+			end
+		end
+
+		if(index ~= -8) then
+			return 0, 0
+		end
+
+		return ipint, maskint
+	end
+
+	if(maskindex <= 1) then
+		return 0, 0
+	end
+
+	local ipstring = str:sub(1, maskindex - 1)
+	local maskstring = str:sub(maskindex)
+			
+	local ipint = 0
+	local maskint = 0
+			
+	local index = 0
+	for b in ipstring:gmatch("(%d+).?") do
+		if(tonumber(b) > 255 or tonumber(b) < 0) then
+			return 0, 0
+		end
+
+		ipint = bit.ubor(ipint, bit.ulshift(b, index))
+		index = index + 8
+		if(index > 24) then
+			break
+		end
+	end
+
+	if(index ~= 32) then
+		return 0, 0
+	end
+			
+	index = 0
+	for b in maskstring:gmatch("(%d+)%.?") do
+		if(tonumber(b) > 255 or tonumber(b) < 0) then
+			return 0, 0
+		end
+
+		maskint = bit.ubor(maskint, bit.ulshift(b, index))
+		index = index + 8
+		if(index > 24) then
+			break
+		end
+	end
+
+	if(index ~= 32) then
+		return 0, 0
+	end
+			
+	return ipint, maskint
 end
 
 function getBooleanFromString(str)

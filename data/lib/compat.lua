@@ -40,6 +40,7 @@ getIPByPlayerName = getIpByName
 getPlayersByIPNumber = getPlayersByIp
 getAccountNumberByPlayerName = getAccountIdByName
 convertIntToIP = doConvertIntegerToIp
+convertIPToInt = doConvertIpToInteger
 queryTileAddThing = doTileQueryAdd
 getTileHouseInfo = getHouseFromPos
 executeRaid = doExecuteRaid

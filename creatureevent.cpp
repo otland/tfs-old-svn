@@ -326,9 +326,9 @@ uint32_t CreatureEvent::executeOnLogout(Player* player)
 	}
 }
 
-uint32_t CreatureEvent::executeOnChannelJoin(Player* player, uint16_t channelId)
+uint32_t CreatureEvent::executeOnChannelJoin(Player* player, uint16_t channelId, UsersList usersList)
 {
-	//onJoinChannel(cid, channelId)
+	//onJoinChannel(cid, channelId, users)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
@@ -348,8 +348,18 @@ uint32_t CreatureEvent::executeOnChannelJoin(Player* player, uint16_t channelId)
 		m_scriptInterface->pushFunction(m_scriptId);
 		lua_pushnumber(L, cid);
 		lua_pushnumber(L, channelId);
+		UsersList::iterator it = usersList.begin();
 
-		int32_t result = m_scriptInterface->callFunction(2);
+		lua_newtable(L);
+		for(int32_t i = 1; it != usersList.end(); ++it, ++i)
+		{
+			uint32_t uid = env->addThing(*it);
+			lua_pushnumber(L, i);
+			lua_pushnumber(L, uid);
+			lua_settable(L, -3);
+		}
+
+		int32_t result = m_scriptInterface->callFunction(3);
 		m_scriptInterface->releaseScriptEnv();
 
 		return (result == LUA_TRUE);
@@ -361,9 +371,9 @@ uint32_t CreatureEvent::executeOnChannelJoin(Player* player, uint16_t channelId)
 	}
 }
 
-uint32_t CreatureEvent::executeOnChannelLeave(Player* player, uint16_t channelId)
+uint32_t CreatureEvent::executeOnChannelLeave(Player* player, uint16_t channelId, UsersList usersList)
 {
-	//onLeaveChannel(cid, channelId)
+	//onLeaveChannel(cid, channelId, users)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
@@ -383,8 +393,18 @@ uint32_t CreatureEvent::executeOnChannelLeave(Player* player, uint16_t channelId
 		m_scriptInterface->pushFunction(m_scriptId);
 		lua_pushnumber(L, cid);
 		lua_pushnumber(L, channelId);
+		UsersList::iterator it = usersList.begin();
 
-		int32_t result = m_scriptInterface->callFunction(2);
+		lua_newtable(L);
+		for(int32_t i = 1; it != usersList.end(); ++it, ++i)
+		{
+			uint32_t uid = env->addThing(*it);
+			lua_pushnumber(L, i);
+			lua_pushnumber(L, uid);
+			lua_settable(L, -3);
+		}
+
+		int32_t result = m_scriptInterface->callFunction(3);
 		m_scriptInterface->releaseScriptEnv();
 
 		return (result == LUA_TRUE);

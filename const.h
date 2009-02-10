@@ -514,34 +514,31 @@ enum ViolationActions_t
 	Action_IpBan			= 1 << 7
 };
 
-const int32_t violationActions[4] =
+const int32_t violationReasons[5] =
 {
-	//ignore this
-	Action_None,
-
-	//all name reasons
-	Action_Namelock,
-
-	//all name, statement & cheating reasons
-	Action_Notation | Action_Namelock | Action_Banishment | Action_NamelockBan | Action_StatementReport,
-
-	//all reasons
-	Action_Notation | Action_Namelock | Action_Banishment | Action_NamelockBan | Action_BanFinalWarning | Action_NamelockBanFinalWarning | Action_StatementReport | Action_IpBan
+	0,	//ignore this
+	3,	//all name reasons
+	9,	//all name & statement reasons
+	18,	//all name, statement & cheating reasons
+	22	//all reasons
 };
 
-const int32_t violationReasons[4] =
+const int32_t violationNamelocks[5] =
 {
-	//ignore this
-	0,
+	Action_None,
+	Action_Namelock,
+	Action_Namelock,
+	Action_Namelock | Action_NamelockBan,
+	Action_Namelock | Action_NamelockBan | Action_NamelockBanFinalWarning
+}
 
-	// all name reasons
-	4,
-
-	// all name, statement & cheating reasons
-	18,
-
-	// all reasons
-	22
+const int32_t violationStatements[5] =
+{
+	Action_None,
+	Action_None,
+	Action_StatementReport,
+	Action_StatementReport | Action_Notation | Action_Banishment,
+	Action_StatementReport | Action_Notation | Action_Banishment | Action_BanFinalWarning | Action_IpBan
 };
 
 //Reserved player storage key ranges

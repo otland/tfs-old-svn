@@ -1625,8 +1625,11 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerBroadcastMessage(cid, message, <optional> type)
 	lua_register(m_luaState, "doPlayerBroadcastMessage", LuaScriptInterface::luaDoPlayerBroadcastMessage);
 
-	//getGuildId(guild_name)
+	//getGuildId(guildName)
 	lua_register(m_luaState, "getGuildId", LuaScriptInterface::luaGetGuildId);
+
+	//getGuildMotd(guildId)
+	lua_register(m_luaState, "getGuildMotd", LuaScriptInterface::luaGetGuildMotd);
 
 	//getPlayerSex(cid)
 	lua_register(m_luaState, "getPlayerSex", LuaScriptInterface::luaGetPlayerSex);
@@ -1956,10 +1959,10 @@ void LuaScriptInterface::registerFunctions()
 	lua_register(m_luaState, "doPlayerSetExperienceRate", LuaScriptInterface::luaDoPlayerSetExperienceRate);
 
 	//doPlayerSetMagicRate(cid, value)
-	lua_register(m_luaState, "doPlayerSetExperienceRate", LuaScriptInterface::luaDoPlayerSetMagicRate);
+	lua_register(m_luaState, "doPlayerSetMagicRate", LuaScriptInterface::luaDoPlayerSetMagicRate);
 
 	//doPlayerSetSkillRate(cid, skill, value)
-	lua_register(m_luaState, "doPlayerSetExperienceRate", LuaScriptInterface::luaDoPlayerSetSkillRate);
+	lua_register(m_luaState, "doPlayerSetSkillRate", LuaScriptInterface::luaDoPlayerSetSkillRate);
 
 	//getPlayerPartner(cid)
 	lua_register(m_luaState, "getPlayerPartner", LuaScriptInterface::luaGetPlayerPartner);
@@ -3494,7 +3497,7 @@ int32_t LuaScriptInterface::luaDoPlayerSendChannelMessage(lua_State* L)
 	std::string name = popString(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	const Player* player = env->getPlayerByUID(popNumber(L));
+	Player* player = env->getPlayerByUID(popNumber(L));
 	if(!player)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));

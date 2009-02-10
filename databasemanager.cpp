@@ -871,6 +871,31 @@ uint32_t DatabaseManager::updateDatabase()
 			return 9;
 		}
 
+		case 9:
+		{
+			std::cout << "> Updating database to version: 9..." << std::endl;
+
+			DBQuery query;
+			query << "UPDATE `groups` SET `violationaccess` = 2 WHERE `id` = 3;";
+			db->executeQuery(query.str());
+
+			query.str("");
+			query << "UPDATE `groups` SET `violationaccess` = 3 WHERE `id` = 4;";
+			db->executeQuery(query.str());
+
+			query.str("");
+			query << "UPDATE `groups` SET `violationaccess` = 4 WHERE `id` = 5;";
+			db->executeQuery(query.str());
+
+			query.str("");
+			query << "UPDATE `groups` SET `violationaccess` = 4 WHERE `id` = 6;";
+			db->executeQuery(query.str());
+
+			query.str("");
+			registerDatabaseConfig("db_version", 10);
+			return 9;
+		}
+
 		default:
 			break;
 	}

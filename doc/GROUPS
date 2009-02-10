@@ -26,7 +26,7 @@
 ]
 
 [ Violation Access
-	There are actually 3 access levels to the ingame Violaton Window.
+	There are actually 4 access levels to the ingame Violaton Window.
 
 	1...
 		* All name reasons (4)
@@ -34,11 +34,16 @@
 
 	2...
 		* All name reasons (4)
-		* All statement reasons (?)
-		* All cheating reasons (?)
-		Overally: 18
+		* All statement reasons (6)
+		Overally: 10
 
 	3...
-		* All reasons (22)
-		Overally: 22
+		* All name reasons (4)
+		* All statement reasons (6)
+		* All cheating reasons (9)
+		Overally: 19
+
+	4...
+		* All reasons (23)
+		Overally: 23
 ]

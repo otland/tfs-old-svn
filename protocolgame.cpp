@@ -2267,29 +2267,28 @@ void ProtocolGame::sendAddCreature(const Creature* creature, bool isLogin)
 			{
 				msg->AddByte(0x0A);
 				msg->AddU32(player->getID());
-
 				msg->AddByte(0x32);
 				msg->AddByte(0x00);
-
-				if(player->hasCustomFlag(PlayerCustomFlag_CanReportBugs))
-					msg->AddByte(0x01);
-				else
+				if(!player->hasCustomFlag(PlayerCustomFlag_CanReportBugs))
 					msg->AddByte(0x00);
+				else
+					msg->AddByte(0x01);
 
 				if(violationReasons[player->getViolationAccess()] > 0)
 				{
 					msg->AddByte(0x0B);
 					for(int32_t i = 0; i <= 22; i++)
 					{
-						if(i <= violationReasons[player->getViolationAccess()])
-							msg->AddByte(violationActions[player->getViolationAccess()]);
+						if(i <= violationReasons[1])
+							msg->AddByte(violationNamelocks[player->getViolationAccess()]);
+						else if(i <= violationReasons[player->getViolationAccess()])
+							msg->AddByte(violationStatements[player->getViolationAccess()]);
 						else
 							msg->AddByte(Action_None);
 					}
 				}
 
 				AddMapDescription(msg, player->getPosition());
-
 				if(isLogin)
 					AddMagicEffect(msg, player->getPosition(), NM_ME_TELEPORT);
 
@@ -2314,7 +2313,6 @@ void ProtocolGame::sendAddCreature(const Creature* creature, bool isLogin)
 
 				//player light level
 				AddCreatureLight(msg, creature);
-
 				if(isLogin)
 				{
 					std::string tempstring = g_config.getString(ConfigManager::LOGIN_MSG);
@@ -2336,6 +2334,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, bool isLogin)
 							tempstring.erase(tempstring.length() -1);
 							tempstring += ".";
 						}
+
 						AddTextMessage(msg, MSG_STATUS_DEFAULT, tempstring);
 					}
 					else
@@ -2359,11 +2358,11 @@ void ProtocolGame::sendAddCreature(const Creature* creature, bool isLogin)
 
 				for(VIPListSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); it++)
 				{
-					std::string vip_name;
-					if(IOLoginData::getInstance()->getNameByGuid((*it), vip_name))
+					std::string vipName;
+					if(IOLoginData::getInstance()->getNameByGuid((*it), vipName))
 					{
-						Player* tmpPlayer = g_game.getPlayerByName(vip_name);
-						sendVIP((*it), vip_name, (tmpPlayer && (!tmpPlayer->isInGhostMode() || player->canSeeGhost(tmpPlayer))));
+						Player* tmpPlayer = g_game.getPlayerByName(vipName);
+						sendVIP((*it), vipName, (tmpPlayer && (!tmpPlayer->isInGhostMode() || player->canSeeGhost(tmpPlayer))));
 					}
 				}
 			}
