@@ -530,7 +530,7 @@ const int32_t violationNamelocks[5] =
 	Action_Namelock,
 	Action_Namelock | Action_NamelockBan,
 	Action_Namelock | Action_NamelockBan | Action_NamelockBanFinalWarning
-}
+};
 
 const int32_t violationStatements[5] =
 {

@@ -353,9 +353,8 @@ uint32_t CreatureEvent::executeOnChannelJoin(Player* player, uint16_t channelId,
 		lua_newtable(L);
 		for(int32_t i = 1; it != usersList.end(); ++it, ++i)
 		{
-			uint32_t uid = env->addThing(*it);
 			lua_pushnumber(L, i);
-			lua_pushnumber(L, uid);
+			lua_pushnumber(L, (*it));
 			lua_settable(L, -3);
 		}
 
@@ -398,9 +397,8 @@ uint32_t CreatureEvent::executeOnChannelLeave(Player* player, uint16_t channelId
 		lua_newtable(L);
 		for(int32_t i = 1; it != usersList.end(); ++it, ++i)
 		{
-			uint32_t uid = env->addThing(*it);
 			lua_pushnumber(L, i);
-			lua_pushnumber(L, uid);
+			lua_pushnumber(L, (*it));
 			lua_settable(L, -3);
 		}
 

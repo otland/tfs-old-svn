@@ -893,7 +893,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 			query.str("");
 			registerDatabaseConfig("db_version", 10);
-			return 9;
+			return 10;
 		}
 
 		default:
