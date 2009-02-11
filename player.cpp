@@ -2705,8 +2705,8 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 						*destItem = NULL;
 						return subContainer;
 					}
-					else
-						containerList.push_back(subContainer);
+					/*else // it may be very intensive process...
+						containerList.push_back(subContainer);*/
 				}
 			}
 		}

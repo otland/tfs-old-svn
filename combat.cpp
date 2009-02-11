@@ -226,9 +226,6 @@ ReturnValue Combat::canDoCombat(const Creature* caster, const Tile* tile, bool i
 
 		if(const Player* player = caster->getPlayer())
 		{
-			/*if(isAggressive && time(NULL) < (player->getLastLoginSaved() + g_config.getNumber(
-				ConfigManager::LOGIN_PROTECTION)) && !player->hasCondition(CONDITION_INFIGHT))
-				return RET_NOTPOSSIBLE;*/ //TODO: Find out should it really be here
 			if(player->hasFlag(PlayerFlag_IgnoreProtectionZone))
 				return RET_NOERROR;
 		}
