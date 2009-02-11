@@ -4971,8 +4971,8 @@ bool Game::violationWindow(uint32_t playerId, std::string targetName, int32_t re
 		return false;
 
 	uint32_t access = player->getViolationAccess();
-	if((ipBanishment && !(violationStatements[access] & (1 << Action_IpBan))) || reason > violationReasons[access]
-		|| !(violationNames[access] & (1 << action) || violationStatements[access] & (1 << action)))		
+	if((ipBanishment && !hasBitSet(violationNames[access], Action_IpBan) && !hasBitSet(violationStatements[access], Action_IpBan)) ||
+		!(violationNames[access] & (1 << action) || violationStatements[access] & (1 << action)) || reason > violationReasons[access])
 	{
 		// should check for IpBan at violationNames too, but since its only for last access on both cases...
 		player->sendCancel("You do not have authorization for this action.");
