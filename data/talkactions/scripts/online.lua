@@ -29,7 +29,7 @@ function onSay(cid, words, param)
 			str = str .. "."
 		end
 
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, string)
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, str)
 	end
 
 	return TRUE
