@@ -118,6 +118,9 @@ bool Vocations::loadFromXml()
 					if(readXMLInteger(p, "fromvoc", intVal) || readXMLInteger(p, "fromvocation", intVal))
 						voc->fromVocation = intVal;
 
+					if(readXMLInteger(p, "lessloss", intVal))
+						voc->lessLoss = intVal;
+
 					configNode = p->children;
 					while(configNode)
 					{

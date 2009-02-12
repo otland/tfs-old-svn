@@ -35,9 +35,9 @@ class Vocation
 		const std::string& getVocName() const {return name;}
 		const std::string& getVocDescription() const {return description;}
 
+		int16_t getAbsorbPercent(CombatType_t combat) const {return absorbPercent[combat];}
 		uint32_t getReqSkillTries(int32_t skill, int32_t level);
 		uint64_t getReqMana(uint32_t magLevel);
-		int16_t getAbsorbPercent(CombatType_t combat) const {return absorbPercent[combat];}
 
 		uint32_t getHealthGain() const {return gainHP;}
 		uint32_t getHealthGainTicks() const {return gainHealthTicks;}
@@ -46,11 +46,13 @@ class Vocation
 		uint32_t getManaGainTicks() const {return gainManaTicks;}
 		uint32_t getManaGainAmount() const {return gainManaAmount;}
 
-		uint16_t getSoulMax() const {return std::min((uint32_t)soulMax, (uint32_t)255);}
 		uint16_t getSoulGainTicks() const {return gainSoulTicks;}
+		uint16_t getSoulMax() const {return std::min((uint32_t)soulMax, (uint32_t)255);}
 		uint32_t getCapGain() const {return gainCap;}
-		uint32_t getAttackSpeed() const {return attackSpeed;}
+
 		uint32_t getBaseSpeed() const {return baseSpeed;}
+		uint32_t getAttackSpeed() const {return attackSpeed;}
+		int32_t getLessLoss() const {return lessLoss;}
 
 		uint32_t getFromVocation() const {return fromVocation;}
 		bool isAttackable() const {return attackable;}
@@ -76,15 +78,18 @@ class Vocation
 		uint16_t gainSoulTicks;
 		uint16_t soulMax;
 		uint32_t gainCap;
-		uint32_t attackSpeed;
+
 		uint32_t baseSpeed;
+		uint32_t attackSpeed;
+		int32_t lessLoss;
 
 		uint32_t fromVocation;
 		bool attackable;
 		bool needPremium;
-		int16_t absorbPercent[COMBAT_LAST + 1];
 
+		int16_t absorbPercent[COMBAT_LAST + 1];
 		static uint32_t skillBase[SKILL_LAST + 1];
+
 		float skillMultipliers[SKILL_LAST + 1];
 		float manaMultiplier;
 
@@ -102,8 +107,10 @@ class Vocations
 		virtual ~Vocations();
 
 		bool loadFromXml();
+
 		Vocation* getVocation(uint32_t vocId);
 		int32_t getVocationId(const std::string& name);
+
 		int32_t getPromotedVocation(uint32_t vocationId);
 
 		VocationsMap::iterator getFirstVocation() {return vocationsMap.begin();}

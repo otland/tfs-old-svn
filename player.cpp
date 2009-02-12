@@ -3819,14 +3819,10 @@ void Player::setPromotionLevel(uint32_t pLevel)
 double Player::getLostPercent(lossTypes_t lossType)
 {
 	uint32_t lostPercent = lossPercent[lossType];
-	if(isPromoted())
-	{
-		if(lostPercent <= 3)
-			return 0;
+	if(lostPercent <= vocation->getLessLoss())
+		return 0;
 
-		lostPercent -= 3;
-	}
-
+	lostPercent -= vocation->getLessLoss();
 	if(isPremium() || !g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM))
 	{
 		for(int16_t i = 0; i < 16; i++)
