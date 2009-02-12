@@ -452,6 +452,7 @@
 	"voices" for NPCs (Elf)
 	Optimized, fixed crash-bug and added two-params support for guild commands (Elf, Kornholijo)
 	Reworked reloading- more detailed errors, new 'types' and signal support (Elf)
+	Per-vocation less loss configuration- the "3% promotion loss" (Elf)
 ]
 
 [ Deprecated
