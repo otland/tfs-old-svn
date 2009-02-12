@@ -274,6 +274,7 @@ Vocation::Vocation()
 	gainCap = 5;
 	gainMana = 5;
 	gainHP = 5;
+	lessLoss = 0;
 	attackSpeed = 1500;
 	baseSpeed = 220;
 	manaMultiplier = 4.0;
