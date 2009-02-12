@@ -234,7 +234,7 @@
 	<action fromid="7054" toid="7057" script="other/doors.lua"/>
 	<action fromid="8541" toid="8558" script="other/doors.lua"/>
 	<action fromid="9165" toid="9184" script="other/doors.lua"/>
-	<action fromid="9267" toid="9186" script="other/doors.lua"/>
+	<action fromid="9267" toid="9286" script="other/doors.lua"/>
 	<action itemid="1981" script="other/highscores.lua"/>
 
 	<action itemid="5791" script="other/stuffeddragon.lua"/>

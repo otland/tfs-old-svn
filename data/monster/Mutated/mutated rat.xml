@@ -54,7 +54,7 @@
 		<item id="2148" countmax="65" chance1="100000" chancemax="0"/> <!-- gps -->
 		<item id="2148" countmax="65" chance1="100000" chancemax="0"/> <!-- gps -->
 		<item id="2320" chance="10000"/> <!-- skull -->
-		<item id="2335" chance="13500"/> <!-- moldy cheese -->
+		<item id="2235" chance="13500"/> <!-- moldy cheese -->
 		<item id="2799" chance="12500"/> <!-- stone herb -->
 		<item id="2796" countmax="1" chance1="3000"/> <!-- green mushroom -->
 		<item id="7618" chance="1500"/> <!-- hp -->
