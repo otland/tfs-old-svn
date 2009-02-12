@@ -3357,12 +3357,10 @@ void Player::onEndCondition(ConditionType_t type)
 {
 	Creature::onEndCondition(type);
 	sendIcons();
-
 	if(type == CONDITION_INFIGHT)
 	{
 		onIdleStatus();
 		pzLocked = false;
-
 		if(getSkull() != SKULL_RED)
 		{
 			clearAttacked();
@@ -3429,6 +3427,7 @@ void Player::onAttackedCreature(Creature* target)
 				}
 			}
 		}
+
 		addInFightTicks();
 	}
 }
@@ -3504,13 +3503,9 @@ bool Player::onKilledCreature(Creature* target)
 		}
 		else if(!hasFlag(PlayerFlag_NotGainInFight))
 		{
-			if(!isPartner(targetPlayer) &&
-				!Combat::isInPvpZone(this, targetPlayer) &&
-				!targetPlayer->hasAttacked(this) &&
-				targetPlayer->getSkull() == SKULL_NONE)
-			{
+			if(!isPartner(targetPlayer) && !Combat::isInPvpZone(this, targetPlayer) &&
+				!targetPlayer->hasAttacked(this) && targetPlayer->getSkull() == SKULL_NONE)
 				addUnjustifiedDead(targetPlayer);
-			}
 
 			if(!Combat::isInPvpZone(this, targetPlayer) && hasCondition(CONDITION_INFIGHT))
 			{
@@ -3785,7 +3780,7 @@ void Player::addUnjustifiedDead(const Player* attacked)
 
 void Player::checkRedSkullTicks(int32_t ticks)
 {
-	if(redSkullTicks - ticks > 0)
+	if((redSkullTicks - ticks) > 0)
 		redSkullTicks -= ticks;
 
 	if(redSkullTicks < 1000 && !hasCondition(CONDITION_INFIGHT) && skull == SKULL_RED)
