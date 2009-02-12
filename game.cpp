@@ -146,7 +146,7 @@ void Game::setGameState(GameState_t newState)
 				}
 
 				Houses::getInstance().payHouses();
-				saveGameState(false);
+				saveGameState(false, false);
 				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, this)));
 
 				Scheduler::getScheduler().stop();
@@ -170,7 +170,7 @@ void Game::setGameState(GameState_t newState)
 				}
 
 				Houses::getInstance().payHouses();
-				saveGameState(false);
+				saveGameState(false, false);
 				break;
 			}
 
@@ -194,12 +194,9 @@ void Game::saveGameState(bool savePlayers)
 {
 	std::cout << "> Saving server..." << std::endl;
 	uint64_t start = OTSYS_TIME();
-	setGameState(GAME_STATE_MAINTAIN);
-
-	map->saveMap();
-	ScriptEnviroment::saveGameState();
 	if(savePlayers)
 	{
+		setGameState(GAME_STATE_MAINTAIN);
 		IOLoginData* io = IOLoginData::getInstance();
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 		{
@@ -212,7 +209,11 @@ void Game::saveGameState(bool savePlayers)
 	if(g_config.getBool(ConfigManager::HOUSE_STORAGE))
 		storage = "binary";
 
-	setGameState(GAME_STATE_NORMAL);
+	map->saveMap();
+	ScriptEnviroment::saveGameState();
+	if(savePlayers)
+		setGameState(GAME_STATE_NORMAL);
+
 	std::cout << "> SAVE: Complete in " << (OTSYS_TIME() - start) / (1000.) << " seconds using " << storage << " house storage." << std::endl;
 }
 
