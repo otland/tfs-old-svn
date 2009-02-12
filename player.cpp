@@ -3814,7 +3814,7 @@ void Player::setPromotionLevel(uint32_t pLevel)
 double Player::getLostPercent(lossTypes_t lossType)
 {
 	uint32_t lostPercent = lossPercent[lossType];
-	if(lostPercent <= vocation->getLessLoss())
+	if((int32_t)lostPercent <= vocation->getLessLoss())
 		return 0;
 
 	lostPercent -= vocation->getLessLoss();
