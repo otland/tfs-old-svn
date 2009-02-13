@@ -649,12 +649,23 @@ int32_t Player::getSkill(skills_t skilltype, skillsid_t skillinfo) const
 
 void Player::addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier/* = true*/)
 {
-	if(useMultiplier)
-		skills[skill][SKILL_TRIES] += uint32_t((double)count * skillRate[skill]);
-
-	skills[skill][SKILL_TRIES] += uint32_t((double)count * g_config.getDouble(ConfigManager::RATE_SKILL));
-	if(skills[skill][SKILL_TRIES] >= vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
+	if(vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]) > vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
 	{
+		//player has reached max skill
+		skills[skill][SKILL_TRIES] = 0;
+		skills[skill][SKILL_PERCENT] = 0;
+		sendSkills();
+		return;
+	}
+
+	if(useMultiplier)
+		count += uint32_t((double)count * skillRate[skill]);
+
+	bool advance = false;
+	count = count * uint32_t((double)count * g_config.getDouble(ConfigManager::RATE_SKILL));
+	while(skills[skill][SKILL_TRIES] + count >= vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
+	{
+		count -= vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1) - skills[skill][SKILL_TRIES];
 	 	skills[skill][SKILL_LEVEL]++;
 	 	skills[skill][SKILL_TRIES] = 0;
 		skills[skill][SKILL_PERCENT] = 0;
@@ -669,11 +680,18 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier/
 		sprintf(advMsg, "You advanced in %s%s.", getSkillName(skill).c_str(), advMsgLvl);
 		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
 
-		sendSkills();
+		advance = true;
 		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
 			(*it)->executeOnAdvance(this, skill, (skills[skill][SKILL_LEVEL] - 1), skills[skill][SKILL_LEVEL]);
+
+		if(vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]) > vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
+			break;
 	}
+	skills[skill][SKILL_TRIES] += count;
+
+	if(advance)
+		sendSkills();
 	else
 	{
 		//update percent
