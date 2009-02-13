@@ -795,7 +795,7 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
 		{
-			if(!ghost || (*it) == creature || !tmpPlayer->canSeeGhost(creature))
+			if(!ghost || (*it) == creature || tmpPlayer->canSeeGhost(creature))
 				tmpPlayer->sendCreatureAppear(creature, true);
 		}
 	}
