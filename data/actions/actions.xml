@@ -77,6 +77,8 @@
 	<action itemid="7158" script="other/food.lua"/>
 	<action itemid="7159" script="other/food.lua"/>
 	<action fromid="7372" toid="7377" script="other/food.lua"/>
+	<action fromid="8838" toid="8845" script="other/food.lua"/>
+	<action itemid="8847" script="other/food.lua"/>
 
 	<!-- Increase/Decrease ItemId -->
 	<action itemid="461" function="increaseItemId"/>
