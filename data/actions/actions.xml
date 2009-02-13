@@ -240,7 +240,6 @@
 	<action itemid="1981" event="buffer"><![CDATA[
 		if(item.actionid >= 150 and item.actionid <= 158) then
 			doShowTextDialog(cid, item.itemid, getHighscoreString((item.actionid - 150)))
-			_result = TRUE
 		else
 			_result = FALSE
 		end
