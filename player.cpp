@@ -652,9 +652,6 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier/
 	if(vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]) > vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
 	{
 		//player has reached max skill
-		skills[skill][SKILL_TRIES] = 0;
-		skills[skill][SKILL_PERCENT] = 0;
-		sendSkills();
 		return;
 	}
 
@@ -686,21 +683,22 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier/
 			(*it)->executeOnAdvance(this, skill, (skills[skill][SKILL_LEVEL] - 1), skills[skill][SKILL_LEVEL]);
 
 		if(vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]) > vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
+		{
+			count = 0;
 			break;
+		}
 	}
 
 	skills[skill][SKILL_TRIES] += count;
-	if(!advance)
+
+	//update percent
+	uint32_t newPercent = Player::getPercentLevel(skills[skill][SKILL_TRIES], vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1));
+ 	if(skills[skill][SKILL_PERCENT] != newPercent)
 	{
-		//update percent
-		uint32_t newPercent = Player::getPercentLevel(skills[skill][SKILL_TRIES], vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1));
-	 	if(skills[skill][SKILL_PERCENT] != newPercent)
-		{
-			skills[skill][SKILL_PERCENT] = newPercent;
-			sendSkills();
-	 	}
-	}
-	else
+		skills[skill][SKILL_PERCENT] = newPercent;
+		sendSkills();
+ 	}
+	else if(advance)
 		sendSkills();
 }
 
