@@ -5249,7 +5249,10 @@ bool Game::loadExperienceStages()
 			if(!xmlStrcmp(q->name, (const xmlChar*)"world"))
 			{
 				if(!readXMLInteger(q, "id", intValue) || intValue != g_config.getNumber(ConfigManager::WORLD_ID))
+				{
+					q = q->next;
 					continue;
+				}
 
 				p = q->children;
 				while(p)
