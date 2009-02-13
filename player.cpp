@@ -662,7 +662,7 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier/
 		count += uint32_t((double)count * skillRate[skill]);
 
 	bool advance = false;
-	count = count * uint32_t((double)count * g_config.getDouble(ConfigManager::RATE_SKILL));
+	count = uint32_t((double)count * g_config.getDouble(ConfigManager::RATE_SKILL));
 	while(skills[skill][SKILL_TRIES] + count >= vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
 	{
 		count -= vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1) - skills[skill][SKILL_TRIES];
@@ -670,14 +670,14 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier/
 	 	skills[skill][SKILL_TRIES] = 0;
 		skills[skill][SKILL_PERCENT] = 0;
 
-		char advMsgLvl[10];
+		char buffer[10];
 		if(g_config.getBool(ConfigManager::ADVANCING_SKILL_LEVEL))
-			sprintf(advMsgLvl, " [%u]", skills[skill][SKILL_LEVEL]);
+			sprintf(buffer, " [%u]", skills[skill][SKILL_LEVEL]);
 		else
-			sprintf(advMsgLvl, "%s", "");
+			sprintf(buffer, "%s", "");
 
 		char advMsg[45];
-		sprintf(advMsg, "You advanced in %s%s.", getSkillName(skill).c_str(), advMsgLvl);
+		sprintf(advMsg, "You advanced in %s%s.", getSkillName(skill).c_str(), buffer);
 		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
 
 		advance = true;
@@ -688,11 +688,9 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier/
 		if(vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]) > vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
 			break;
 	}
-	skills[skill][SKILL_TRIES] += count;
 
-	if(advance)
-		sendSkills();
-	else
+	skills[skill][SKILL_TRIES] += count;
+	if(!advance)
 	{
 		//update percent
 		uint32_t newPercent = Player::getPercentLevel(skills[skill][SKILL_TRIES], vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1));
@@ -702,6 +700,8 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier/
 			sendSkills();
 	 	}
 	}
+	else
+		sendSkills();
 }
 
 void Player::setVarStats(stats_t stat, int32_t modifier)
