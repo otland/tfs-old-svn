@@ -240,15 +240,6 @@ void serverMain(void* param)
 	#endif
 
 	#ifndef WIN32
-	std::string runPath = g_config.getString(ConfigManager::RUNFILE);
-	if(runPath != "" && runPath.length() > 2)
-	{
-		std::ofstream runFile(runPath.c_str(), std::ios::trunc | std::ios::out);
-		runFile << getpid();
-		runFile.close();
-		atexit(runfileHandler);
-	}
-
 	// ignore sigpipe...
 	struct sigaction sigh;
 	sigh.sa_handler = SIG_IGN;
@@ -276,6 +267,17 @@ void serverMain(void* param)
 	)));
 	OTSYS_THREAD_LOCK(g_loaderLock, "otserv()");
 	OTSYS_THREAD_WAITSIGNAL(g_loaderSignal, g_loaderLock);
+
+	#ifndef WIN32
+	std::string runPath = g_config.getString(ConfigManager::RUNFILE);
+	if(runPath != "" && runPath.length() > 2)
+	{
+		std::ofstream runFile(runPath.c_str(), std::ios::trunc | std::ios::out);
+		runFile << getpid();
+		runFile.close();
+		atexit(runfileHandler);
+	}
+	#endif
 
 	std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
 	#if defined(WIN32) && not defined(__CONSOLE__)
