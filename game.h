@@ -515,7 +515,7 @@ class Game
 		GameState_t getGameState() const {return gameState;}
 		void setGameState(GameState_t newState);
 
-		void saveGameState(bool savePlayers);
+		void saveGameState(bool maintainState);
 		void loadGameState();
 
 		void cleanMap(uint32_t& count);

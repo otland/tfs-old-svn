@@ -262,22 +262,20 @@ bool Map::placeCreature(const Position& centerPos, Creature* creature, bool exte
 		}
 	}
 
-	if(foundTile)
+	if(!foundTile)
+		return false;
+
+	int32_t index = 0;
+	Item* toItem = NULL;
+	uint32_t flags = 0;
+	if(Cylinder* toCylinder = tile->__queryDestination(index, creature, &toItem, flags))
 	{
-		int32_t index = 0;
-		Item* toItem = NULL;
-		uint32_t flags = 0;
-		Cylinder* toCylinder = tile->__queryDestination(index, creature, &toItem, flags);
 		toCylinder->__internalAddThing(creature);
-		Tile* toTile = toCylinder->getTile();
-		toTile->qt_node->addCreature(creature);
-		return true;
+		if(Tile* toTile = toCylinder->getTile())
+			toTile->qt_node->addCreature(creature);
 	}
 
-#ifdef __DEBUG__
-	std::cout << "Failed to place creature on map!" << std::endl;
-#endif
-	return false;
+	return true;
 }
 
 bool Map::removeCreature(Creature* creature)

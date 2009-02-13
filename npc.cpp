@@ -831,29 +831,8 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 										action.actionType = ACTION_SCRIPT;
 										action.strValue = strValue;
 									}
-									else
-									{
-										xmlNodePtr scriptNode = subNode->children;
-										while(scriptNode)
-										{
-											if(xmlStrcmp(scriptNode->name, (const xmlChar*)"text") == 0 ||
-												scriptNode->type == XML_CDATA_SECTION_NODE)
-											{
-												if(readXMLContentString(scriptNode, strValue))
-												{
-													trim_left(strValue, "\r");
-													trim_left(strValue, "\n");
-													trim_left(strValue, " ");
-													if(strValue.length() > action.strValue.length())
-													{
-														action.actionType = ACTION_SCRIPT;
-														action.strValue = strValue;
-													}
-												}
-											}
-											scriptNode = scriptNode->next;
-										}
-									}
+									else if(parseXMLContentString(subNode->children, action.strValue))
+										action.actionType = ACTION_SCRIPT;
 								}
 								else if(tmpStrValue == "scriptparam")
 								{
@@ -884,19 +863,13 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 								{
 									if(readXMLString(subNode, "value", strValue))
 									{
-										StringVec posList = explodeString(strValue, ";");
 										action.actionType = ACTION_SETTELEPORT;
 										action.strValue = strValue;
-										action.pos.x = 0;
-										action.pos.y = 0;
-										action.pos.z = 0;
+										action.pos = Position();
 
-										if(posList.size() == 3)
-										{
-											action.pos.x = atoi(posList[0].c_str());
-											action.pos.y = atoi(posList[1].c_str());
-											action.pos.z = atoi(posList[2].c_str());
-										}
+										IntegerVec posList = vectorAtoi(explodeString(strValue, ";"));
+										if(posList.size() > 2)
+											action.pos = Position(posList[0], posList[1], posList[2]);
 									}
 								}
 								else
@@ -1651,8 +1624,8 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 					if(scriptInterface.reserveScriptEnv())
 					{
 						ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
-
 						std::stringstream scriptstream;
+
 						//attach various variables that could be interesting
 						scriptstream << "cid = " << env->addThing(player) << std::endl;
 						scriptstream << "text = \"" << npcState->respondToText << "\"" << std::endl;
@@ -1702,20 +1675,19 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 						scriptstream << "}" << std::endl;
 
 						scriptstream << (*it).strValue;
-
-						//std::cout << scriptstream.str() << std::endl;
-
 						if(scriptInterface.loadBuffer(scriptstream.str(), this) != -1)
 						{
 							lua_State* L = scriptInterface.getLuaState();
 							lua_getglobal(L, "_state");
 							NpcScriptInterface::popState(L, npcState);
 						}
+
 						scriptInterface.releaseScriptEnv();
 					}
 					break;
 				}
-				default: break;
+				default:
+					break;
 			}
 		}
 
@@ -3275,7 +3247,7 @@ void NpcScript::onPlayerEndTrade(const Player* player)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
-		env->setScriptId(m_onPlayerCloseChannel, m_scriptInterface);
+		env->setScriptId(m_onPlayerEndTrade, m_scriptInterface);
 		env->setRealPos(m_npc->getPosition());
 		env->setNpc(m_npc);
 

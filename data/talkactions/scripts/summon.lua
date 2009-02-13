@@ -1,8 +1,9 @@
 function onSay(cid, words, param)
 	local effect = CONST_ME_MAGIC_RED
-	if(doSummonMonster(cid, param) ~= RETURNVALUE_NOERROR) then
+	local ret = doSummonMonster(cid, param)
+	if(ret ~= RETURNVALUE_NOERROR) then
 		effect = CONST_ME_POFF
-		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTENOUGHROOM)
+		doPlayerSendDefaultCancel(cid, ret)
 	end
 
 	doSendMagicEffect(getCreaturePosition(cid), effect)

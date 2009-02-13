@@ -164,7 +164,9 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool isPushable() const {return (getSleepTicks() <= 0);}
 		virtual bool isRemoved() const {return isInternalRemoved;}
 		virtual bool canSeeInvisibility() const {return false;}
+
 		virtual bool isInGhostMode() const {return false;}
+		virtual bool canSeeGhost(const Creature* creature) const {return false;}
 
 		int64_t getSleepTicks() const;
 		int32_t getWalkDelay(Direction dir) const;
@@ -284,7 +286,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual uint64_t getGainedExperience(Creature* attacker, bool useMultiplier = true);
 		void addDamagePoints(Creature* attacker, int32_t damagePoints);
 		void addHealPoints(Creature* caster, int32_t healthPoints);
-		bool hasBeenAttacked(uint32_t attackerId);
+		bool hasBeenAttacked(uint32_t attackerId) const;
 
 		//combat event functions
 		virtual void onAddCondition(ConditionType_t type);

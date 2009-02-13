@@ -483,7 +483,7 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 		{
 			item = (*it);
 
-			uint32_t attributesSize;
+			uint32_t attributesSize = 0;
 			PropWriteStream propWriteStream;
 			item->serializeAttr(propWriteStream);
 			const char* attributes = propWriteStream.getStream(attributesSize);

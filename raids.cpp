@@ -723,7 +723,7 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 	std::string strValue;
 	if(readXMLString(eventNode, "file", strValue))
 	{
-		if(!loadScript(getFilePath(FILE_TYPE_OTHER, "raids/scripts/" + strValue)))
+		if(!loadScript(getFilePath(FILE_TYPE_OTHER, "raids/scripts/" + strValue), true))
 		{
 			std::cout << "[Error ScriptEvent::configureRaidEvent]: Can not load raid script." << std::endl;
 			return false;

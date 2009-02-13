@@ -92,6 +92,7 @@ Creature()
 	violationAccess = 0;
 	groupName = "";
 	groupId = 0;
+	lastLogin = OTSYS_TIME();
 	lastLoginSaved = 0;
 	lastLogout = 0;
  	lastIP = 0;
@@ -186,9 +187,6 @@ Creature()
 
 	requestedOutfit = false;
 	saving = true;
-	ghostMode = false;
-	privateIgnore = false;
-	clickTeleport = false;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 
 	playerCount++;
@@ -1346,7 +1344,6 @@ void Player::onUpdateTile(const Tile* tile, const Position& pos)
 void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 {
 	Creature::onCreatureAppear(creature, isLogin);
-
 	if(isLogin && creature == this)
 	{
 		Item* item;
@@ -1359,15 +1356,7 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 			}
 		}
 
-		if(!storedConditionList.empty())
-		{
-			for(ConditionList::const_iterator it = storedConditionList.begin(); it != storedConditionList.end(); ++it)
-				addCondition(*it);
-			storedConditionList.clear();
-		}
-
-		BedItem* bed = Beds::getInstance().getBedBySleeper(getGUID());
-		if(bed)
+		if(BedItem* bed = Beds::getInstance().getBedBySleeper(getGUID()))
 		{
 			bed->wakeUp(this);
 			#ifdef __DEBUG__
@@ -2292,17 +2281,22 @@ void Player::addDefaultRegeneration(uint32_t addTicks)
 
 void Player::removeList()
 {
-	listPlayer.removeList(getID());
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		(*it).second->notifyLogOut(this);
-
 	Status::getInstance()->removePlayer();
+	listPlayer.removeList(getID());
+	if(!isInGhostMode())
+	{
+		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+			(*it).second->notifyLogOut(this);
+	}
 }
 
 void Player::addList()
 {
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		(*it).second->notifyLogIn(this);
+	if(!isInGhostMode())
+	{
+		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+			(*it).second->notifyLogIn(this);
+	}
 
 	listPlayer.addList(this);
 	Status::getInstance()->addPlayer();
@@ -3435,9 +3429,13 @@ void Player::onAttackedCreature(Creature* target)
 void Player::onAttacked()
 {
 	Creature::onAttacked();
-
 	if(!hasFlag(PlayerFlag_NotGainInFight))
 		addInFightTicks();
+}
+
+bool Player::checkLoginDelay(uint32_t playerId) const
+{
+	return (OTSYS_TIME() <= (lastLogin + g_config.getNumber(ConfigManager::LOGIN_PROTECTION)) && !hasBeenAttacked(playerId));
 }
 
 void Player::onIdleStatus()

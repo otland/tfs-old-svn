@@ -256,6 +256,33 @@ bool readXMLContentString(xmlNodePtr node, std::string& value)
 	return false;
 }
 
+bool parseXMLContentString(xmlNodePtr node, std::string& value)
+{
+	bool result = false;
+	std::string compareValue;
+	while(node)
+	{
+		if(!xmlStrcmp(node->name, (const xmlChar*)"text") || node->type == XML_CDATA_SECTION_NODE)
+		{
+			if(readXMLContentString(node, compareValue))
+			{
+				trim_left(compareValue, "\r");
+				trim_left(compareValue, "\n");
+				trim_left(compareValue, " ");
+				if(compareValue.length() > value.length())
+				{
+					value = compareValue;
+					result = true;
+				}
+			}
+		}
+
+		node = node->next;
+	}
+
+	return result;
+}
+
 StringVec explodeString(const std::string& string, const std::string& separator)
 {
 	StringVec returnVector;
@@ -283,6 +310,15 @@ IntegerVec vectorAtoi(StringVec stringVector)
 bool hasBitSet(uint32_t flag, uint32_t flags)
 {
 	return ((flags & flag) == flag);
+}
+
+int32_t round(float v)
+{
+	int32_t t = (long)std::floor(v);
+	if((v - t) > 0.5)
+		return t + 1;
+
+	return t;
 }
 
 uint32_t rand24b()

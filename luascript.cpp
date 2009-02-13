@@ -110,7 +110,7 @@ void ScriptEnviroment::resetEnv()
 		m_tempResults.clear();
 	}
 
-	m_realPos.x = m_realPos.y = m_realPos.z = 0;
+	m_realPos = Position();
 }
 
 bool ScriptEnviroment::saveGameState()
@@ -472,6 +472,97 @@ bool ScriptEnviroment::getGlobalStorageValue(const uint32_t key, std::string& va
 	}
 }
 
+void ScriptEnviroment::streamVariant(std::stringstream& stream, const std::string& local, const LuaVariant& var)
+{
+	stream << local << " = {" << std::endl;
+	stream << "type = " << var.type;
+	switch(var.type)
+	{
+		case VARIANT_NUMBER:
+			stream << "," << std::endl << "number = " << var.number;
+			break;
+		case VARIANT_STRING:
+			stream << "," << std::endl << "string = \"" << var.text << "\"";
+			break;
+		case VARIANT_TARGETPOSITION:
+		case VARIANT_POSITION:
+		{
+			stream << "," << std::endl;
+			streamPosition(stream, "pos", var.pos);
+			break;
+		}
+		case VARIANT_NONE:
+		default:
+			break;
+	}
+
+	stream << std::endl << "}" << std::endl;
+}
+
+void ScriptEnviroment::streamThing(std::stringstream& stream, const std::string& local, Thing* thing, uint32_t thingId)
+{
+	stream << local << " = {" << std::endl;
+	if(thing && thing->getItem())
+	{
+		const Item* item = thing->getItem();
+		stream << "uid = " << thingId << "," << std::endl;
+		stream << "itemid = " << item->getID() << "," << std::endl;
+
+		if(item->hasSubType())
+			stream << "type = " << item->getSubType() << "," << std::endl;
+		else
+			stream << "type = 0," << std::endl;
+
+		stream << "actionid = " << item->getActionId() << std::endl;
+	}
+	else if(thing && thing->getCreature())
+	{
+		const Creature* creature = thing->getCreature();
+		stream << "uid = " << thingId << "," << std::endl;
+		stream << "itemid = 1," << std::endl;
+
+		char type;
+		if(creature->getPlayer())
+			type = 1;
+		else if(creature->getMonster())
+			type = 2;
+		else
+			type = 3; //npc
+
+		stream << "type = " << type << "," << std::endl;
+		stream << "actionid = 0" << std::endl;
+	}
+	else
+	{
+		stream << "uid = 0," << std::endl;
+		stream << "itemid = 0," << std::endl;
+		stream << "type = 0," << std::endl;
+		stream << "actionid = 0" << std::endl;
+	}
+
+	stream << "}" << std::endl;
+}
+
+void ScriptEnviroment::streamPosition(std::stringstream& stream, const std::string& local, const PositionEx& position)
+{
+	stream << local << " = {" << std::endl;
+	stream << "x = " << position.x << "," << std::endl;
+	stream << "y = " << position.y << "," << std::endl;
+	stream << "z = " << position.z << "," << std::endl;
+	stream << "stackpos = " << position.stackpos << std::endl;
+	stream << "}" << std::endl;
+}
+
+void ScriptEnviroment::streamPosition(std::stringstream& stream, const std::string& local, const Position& position, uint32_t stackpos)
+{
+	stream << local << " = {" << std::endl;
+	stream << "x = " << position.x << "," << std::endl;
+	stream << "y = " << position.y << "," << std::endl;
+	stream << "z = " << position.z << "," << std::endl;
+	stream << "stackpos = " << stackpos << std::endl;
+	stream << "}" << std::endl;
+}
+
 std::string LuaScriptInterface::getErrorDesc(ErrorCode_t code)
 {
 	switch(code)
@@ -557,6 +648,7 @@ int32_t LuaScriptInterface::loadFile(const std::string& file, Npc* npc /* = NULL
 	if(ret != 0)
 	{
 		m_lastLuaError = popString(m_luaState);
+		reportError(NULL, m_lastLuaError);
 		return -1;
 	}
 
@@ -585,9 +677,9 @@ int32_t LuaScriptInterface::loadFile(const std::string& file, Npc* npc /* = NULL
 
 int32_t LuaScriptInterface::loadBuffer(const std::string& text, Npc* npc /* = NULL*/)
 {
-	//loads file as a chunk at stack top
+	//loads buffer as a chunk at stack top
 	const char* buffer = text.c_str();
-	int ret = luaL_loadbuffer(m_luaState, buffer, strlen(buffer), "loadBuffer");
+	int32_t ret = luaL_loadbuffer(m_luaState, buffer, strlen(buffer), "loadBuffer");
 	if(ret != 0)
 	{
 		m_lastLuaError = popString(m_luaState);
@@ -659,22 +751,22 @@ const std::string& LuaScriptInterface::getFileById(int32_t scriptId)
 		ScriptsCache::iterator it = m_cacheFiles.find(scriptId);
 		if(it != m_cacheFiles.end())
 			return it->second;
-		else
-			return unk;
+
+		return unk;
 	}
-	else
-		return m_loadingFile;
+
+	return m_loadingFile;
 }
 
-void LuaScriptInterface::reportError(const char* function, const std::string& error_desc)
+void LuaScriptInterface::reportError(const char* function, const std::string& errorDesc)
 {
 	ScriptEnviroment* env = getScriptEnv();
 	int32_t scriptId;
 	int32_t callbackId;
 	bool timerEvent;
-	std::string event_desc;
+	std::string eventDesc;
 	LuaScriptInterface* scriptInterface;
-	env->getEventInfo(scriptId, event_desc, scriptInterface, callbackId, timerEvent);
+	env->getEventInfo(scriptId, eventDesc, scriptInterface, callbackId, timerEvent);
 
 	std::cout << std::endl << "Lua Script Error: ";
 	if(scriptInterface)
@@ -684,13 +776,15 @@ void LuaScriptInterface::reportError(const char* function, const std::string& er
 			std::cout << "in a timer event called from: " << std::endl;
 		if(callbackId)
 			std::cout << "in callback: " << scriptInterface->getFileById(callbackId) << std::endl;
+
 		std::cout << scriptInterface->getFileById(scriptId) << std::endl;
 	}
-	std::cout << event_desc << std::endl;
+
+	std::cout << eventDesc << std::endl;
 	if(function)
 		std::cout << function << "(). ";
 
-	std::cout << error_desc << std::endl;
+	std::cout << errorDesc << std::endl;
 }
 
 bool LuaScriptInterface::pushFunction(int32_t functionId)
@@ -1435,7 +1529,7 @@ void LuaScriptInterface::registerFunctions()
 	//doRemoveCondition(cid, type[, subId])
 	lua_register(m_luaState, "doRemoveCondition", LuaScriptInterface::luaDoRemoveCondition);
 
-	//doRemoveConditions(cid)
+	//doRemoveConditions(cid[, onlyPersistent])
 	lua_register(m_luaState, "doRemoveConditions", LuaScriptInterface::luaDoRemoveConditions);
 
 	//doRemoveCreature(cid)
@@ -1506,9 +1600,6 @@ void LuaScriptInterface::registerFunctions()
 
 	//isPlayerPzLocked(cid)
 	lua_register(m_luaState, "isPlayerPzLocked", LuaScriptInterface::luaIsPlayerPzLocked);
-
-	//isPlayerGhost(cid)
-	lua_register(m_luaState, "isPlayerGhost", LuaScriptInterface::luaIsPlayerGhost);
 
 	//isPlayerSaving(cid)
 	lua_register(m_luaState, "isPlayerSaving", LuaScriptInterface::luaIsPlayerSaving);
@@ -1640,7 +1731,7 @@ void LuaScriptInterface::registerFunctions()
 	//createCombatArea( {area}, <optional> {extArea} )
 	lua_register(m_luaState, "createCombatArea", LuaScriptInterface::luaCreateCombatArea);
 
-	//createConditionObject(type)
+	//createConditionObject(type[, ticks[, buff[, subId]]])
 	lua_register(m_luaState, "createConditionObject", LuaScriptInterface::luaCreateConditionObject);
 
 	//setCombatArea(combat, area)
@@ -2279,9 +2370,6 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 			case PlayerInfoStamina:
 				value = player->getStaminaMinutes();
 				break;
-			case PlayerInfoGhostStatus:
-				value = player->isInGhostMode();
-				break;
 			case PlayerInfoLossSkill:
 				value = player->getLossSkill();
 				break;
@@ -2458,11 +2546,6 @@ int32_t LuaScriptInterface::luaGetPlayerViolationAccess(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerStamina(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoStamina);
-}
-
-int32_t LuaScriptInterface::luaIsPlayerGhost(lua_State* L)
-{
-	return internalGetPlayerInfo(L, PlayerInfoGhostStatus);
 }
 
 int32_t LuaScriptInterface::luaGetPlayerLossSkill(lua_State* L)
@@ -5408,9 +5491,20 @@ int32_t LuaScriptInterface::luaCreateCombatArea(lua_State* L)
 
 int32_t LuaScriptInterface::luaCreateConditionObject(lua_State* L)
 {
-	//createConditionObject(type)
-	ScriptEnviroment* env = getScriptEnv();
+	//createConditionObject(type[, ticks[, buff[, subId]]])
+	int32_t params = lua_gettop(L), ticks = 0;
+	if(params >= 4)
+		ticks = popNumber(L);
 
+	uint32_t subId = 0;
+	if(params >= 3)
+		subId = popNumber(L);
+
+	bool buff = false;
+	if(params >= 2)
+		buff = popNumber(L) == LUA_TRUE;
+
+	ScriptEnviroment* env = getScriptEnv();
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
 		reportError(__FUNCTION__, "This function can only be used while loading the script.");
@@ -5419,10 +5513,10 @@ int32_t LuaScriptInterface::luaCreateConditionObject(lua_State* L)
 	}
 
 	ConditionType_t type = (ConditionType_t)popNumber(L);
-	if(Condition* condition = Condition::createCondition(CONDITIONID_COMBAT, type, 0, 0))
+	if(Condition* condition = Condition::createCondition(CONDITIONID_COMBAT, type, ticks, 0, buff, subId))
 	{
-		uint32_t newConditionId = env->addConditionObject(condition);
-		lua_pushnumber(L, newConditionId);
+		uint32_t conditionId = env->addConditionObject(condition);
+		lua_pushnumber(L, conditionId);
 	}
 	else
 	{
@@ -6628,12 +6722,13 @@ int32_t LuaScriptInterface::luaDoRemoveCondition(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoRemoveConditions(lua_State* L)
 {
-	//doRemoveConditions(cid)
-	uint32_t cid = popNumber(L);
+	//doRemoveConditions(cid[, onlyPersistent])
+	bool onlyPersistent = true;
+	if(lua_gettop(L))
+		onlyPersistent = popNumber(L) == LUA_TRUE;
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	Creature* creature = env->getCreatureByUID(cid);
+	Creature* creature = env->getCreatureByUID(popNumber(L));
 	if(!creature)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -6641,7 +6736,7 @@ int32_t LuaScriptInterface::luaDoRemoveConditions(lua_State* L)
 		return 1;
 	}
 
-	creature->removeConditions(CONDITIONEND_ABORT, false);
+	creature->removeConditions(CONDITIONEND_ABORT, onlyPersistent);
 	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;
 }
@@ -8317,11 +8412,12 @@ int32_t LuaScriptInterface::luaStopEvent(lua_State* L)
 int32_t LuaScriptInterface::luaGetCreatureCondition(lua_State* L)
 {
 	//getCreatureCondition(cid, condition[, subId])
-	uint32_t subId = 0;
+	uint32_t subId = 0, condition, cid;
 	if(lua_gettop(L) >= 3)
 		subId = popNumber(L);
 
-	uint32_t condition = popNumber(L), cid = popNumber(L);
+	condition = popNumber(L);
+	cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(Creature* creature = env->getCreatureByUID(cid))

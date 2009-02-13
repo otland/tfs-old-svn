@@ -289,12 +289,31 @@ void Tile::onUpdateTileItem(uint32_t index, Item* oldItem,
 	const SpectatorVec& list = g_game.getSpectators(cylinderMapPos);
 	SpectatorVec::const_iterator it;
 
+	CreatureVector::iterator vit;
+	CreatureVector v;
+	for(vit = creatures.begin(); vit != creatures.end(); ++vit)
+	{
+		if((*vit)->isInGhostMode())
+			v.push_back((*vit));
+	}
+
 	//send to client
 	Player* tmpPlayer = NULL;
+	int32_t i = 0;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
+		{
+			//get the correct index
+			i = index;
+			for(vit = v.begin(); vit != v.end(); ++vit)
+			{
+				if((*vit)->isInGhostMode() && !tmpPlayer->canSeeGhost((*vit)))
+					i--;
+			}
+
 			tmpPlayer->sendUpdateTileItem(this, cylinderMapPos, index, oldItem, newItem);
+		}
 	}
 
 	//event methods
@@ -334,6 +353,7 @@ void Tile::onRemoveTileItem(uint32_t index, Item* item)
 				if((*vit)->isInGhostMode() && !tmpPlayer->canSeeGhost((*vit)))
 					i--;
 			}
+
 			tmpPlayer->sendRemoveTileItem(this, cylinderMapPos, i, item);
 		}
 	}
@@ -370,7 +390,6 @@ void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport 
 
 	//remove the creature
 	__removeThing(creature, 0);
-
 	// Switch the node ownership
 	if(qt_node != toTile->qt_node)
 	{
@@ -384,7 +403,6 @@ void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport 
 
 	Position fromPos = getPosition();
 	Position toPos = toTile->getPosition();
-
 	if(!teleport)
 	{
 		if(fromPos.y > toPos.y)
@@ -409,20 +427,21 @@ void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport 
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
 		{
-			//Use the correct stackpos
+			//use the correct stackpos
 			if(!creature->isInGhostMode() || tmpPlayer->canSeeGhost(creature))
 			{
 				int32_t i = 0;
 				for(CreatureVector::iterator it = creatures.begin(); it != creatures.end(); ++it)
 				{
-					int32_t itIndex = __getIndexOfThing((*it));
-					if(itIndex < oldStackPos)
+					int32_t j = __getIndexOfThing((*it));
+					if(j < oldStackPos)
 					{
 						if((*it)->isInGhostMode() && !tmpPlayer->canSeeGhost((*it)))
 							i++;
 					}
 				}
-				tmpPlayer->sendCreatureMove(creature, toTile, toPos, this, fromPos, oldStackPos - i, teleport);
+
+				tmpPlayer->sendCreatureMove(creature, toTile, toPos, this, fromPos, (oldStackPos - i), teleport);
 			}
 		}
 	}
@@ -671,14 +690,11 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 {
 	Tile* destTile = NULL;
 	*destItem = NULL;
-
 	if(floorChangeDown())
 	{
-		uint16_t dx = getTilePosition().x;
-		uint16_t dy = getTilePosition().y;
+		uint16_t dx = getTilePosition().x, dy = getTilePosition().y;
 		uint8_t dz = getTilePosition().z + 1;
-		Tile* downTile = g_game.getTile(dx, dy, dz);
-		if(downTile)
+		if(Tile* downTile = g_game.getTile(dx, dy, dz))
 		{
 			if(downTile->floorChange(NORTH))
 				dy += 1;
@@ -697,10 +713,8 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 	}
 	else if(floorChange())
 	{
-		uint16_t dx = getTilePosition().x;
-		uint16_t dy = getTilePosition().y;
+		uint16_t dx = getTilePosition().x, dy = getTilePosition().y;
 		uint8_t dz = getTilePosition().z - 1;
-
 		if(floorChange(NORTH))
 			dy -= 1;
 
@@ -723,10 +737,10 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 
 	if(destTile)
 	{
-		Thing* destThing = destTile->getTopDownItem();
-		if(destThing)
+		if(Thing* destThing = destTile->getTopDownItem())
 			*destItem = destThing->getItem();
 	}
+
 	return destTile;
 }
 

@@ -90,7 +90,8 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 		return false;
 	}
 
-	if(rootHeader->version <= 0)
+	uint32_t headerVersion = rootHeader->version;
+	if(headerVersion <= 0)
 	{
 		//In otbm version 1 the count variable after splashes/fluidcontainers and stackables
 		//are saved as attributes instead, this solves alot of problems with items
@@ -99,31 +100,33 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 		return false;
 	}
 
-	if(rootHeader->version > 2)
+	if(headerVersion > 2)
 	{
 		setLastErrorString("Unknown OTBM version detected.");
 		return false;
 	}
 
-	if(rootHeader->majorVersionItems < 3)
+	uint32_t headerMajorItems = rootHeader->majorVersionItems;
+	if(headerMajorItems < 3)
 	{
 		setLastErrorString("This map needs to be upgraded by using the latest map editor version to be able to load correctly.");
 		return false;
 	}
 
-	if(rootHeader->majorVersionItems > (uint32_t)Items::dwMajorVersion)
+	if(headerMajorItems > (uint32_t)Items::dwMajorVersion)
 	{
 		setLastErrorString("The map was saved with a different items.otb version, an upgraded items.otb is required.");
 		return false;
 	}
 
-	if(rootHeader->minorVersionItems < CLIENT_VERSION_810)
+	uint32_t headerMinorItems = rootHeader->minorVersionItems;
+	if(headerMinorItems < CLIENT_VERSION_810)
 	{
 		setLastErrorString("This map needs an updated items.otb.");
 		return false;
 	}
 
-	if(rootHeader->minorVersionItems > (uint32_t)Items::dwMinorVersion)
+	if(headerMinorItems > (uint32_t)Items::dwMinorVersion)
 		setLastErrorString("This map needs an updated items.otb.");
 
 	std::cout << "> Map size: " << rootHeader->width << "x" << rootHeader->height << "." << std::endl;
@@ -465,7 +468,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 				nodeTown = f.getNextNode(nodeTown, type);
 			}
 		}
-		else if(type == OTBM_WAYPOINTS && rootHeader->version > 1)
+		else if(type == OTBM_WAYPOINTS && headerVersion > 1)
 		{
 			NODE nodeWaypoint = f.getChildNode(nodeMapData, type);
 			while(nodeWaypoint != NO_NODE)

@@ -221,6 +221,7 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 		case CONDITION_EXHAUST:
 		case CONDITION_DRUNK:
 		case CONDITION_PACIFIED:
+		case CONDITION_GAMEMASTER:
 			return new ConditionGeneric(_id, _type, _ticks, _buff, _subId);
 
 		default:
@@ -269,17 +270,6 @@ Condition* Condition::createCondition(PropStream& propStream)
 		return NULL;
 
 	return createCondition((ConditionId_t)_id, (ConditionType_t)_type, _ticks, 0, _buff != 0, _subId);
-}
-
-bool Condition::isPersistent() const
-{
-	if(ticks == -1)
-		return false;
-
-	if(!(id == CONDITIONID_DEFAULT || id == CONDITIONID_COMBAT))
-		return false;
-
-	return true;
 }
 
 bool Condition::updateCondition(const Condition* addCondition)

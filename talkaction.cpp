@@ -170,8 +170,6 @@ TalkFunction_t TalkAction::definedFunctions[] =
  	{"joinguild", &joinGuild},
  	{"createguild", &createGuild},
 	{"ghost", &ghost},
-	{"squelch", &squelch},
-	{"clickteleport", &clickTeleport},
 	{"addskill", &addSkill},
 	{"changethingproporties", &changeThingProporties},
 	{"showbanishmentinfo", &showBanishmentInfo}
@@ -233,7 +231,7 @@ bool TalkAction::loadFunction(const std::string& functionName)
 		if(tmpFunctionName == definedFunctions[i].name)
 		{
 			function = definedFunctions[i].callback;
-			m_scripted = false;
+			m_scripted = EVENT_SCRIPT_FALSE;
 			return true;
 		}
 	}
@@ -247,36 +245,59 @@ std::string TalkAction::getScriptEventName()
 	return "onSay";
 }
 
-int32_t TalkAction::executeSay(Creature* creature, const std::string& words, const std::string& param, uint16_t channel)
+int32_t TalkAction::executeSay(Player* player, const std::string& words, const std::string& param, uint16_t channel)
 {
-	//onSay(cid, words, param)
+	//onSay(cid, words, param, channel)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		if(m_scripted == EVENT_SCRIPT_BUFFER)
+		{
+			env->setRealPos(player->getPosition());
 
-		#ifdef __DEBUG_LUASCRIPTS__
-		char desc[125];
-		sprintf(desc, "%s - %s- %s", creature->getName().c_str(), words.c_str(), param.c_str());
-		env->setEventDesc(desc);
-		#endif
+			std::stringstream scriptstream;
+			scriptstream << "cid = " << env->addThing(player) << std::endl;
+			scriptstream << "words = \"" << words << "\"" << std::endl;
+			scriptstream << "param = \"" << param << "\"" << std::endl;
+			scriptstream << "channel = " << channel << std::endl;
 
-		env->setScriptId(m_scriptId, m_scriptInterface);
-		env->setRealPos(creature->getPosition());
+			scriptstream << m_scriptData;
+			int32_t result = LUA_TRUE;
+			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			{
+				lua_State* L = m_scriptInterface->getLuaState();
+				result = m_scriptInterface->getField(L, "_result");
+			}
 
-		uint32_t cid = env->addThing(creature);
+			m_scriptInterface->releaseScriptEnv();
+			return result;
+		}
+		else
+		{
+			#ifdef __DEBUG_LUASCRIPTS__
+			char desc[125];
+			sprintf(desc, "%s - %s- %s", creature->getName().c_str(), words.c_str(), param.c_str());
+			env->setEventDesc(desc);
+			#endif
 
-		lua_State* L = m_scriptInterface->getLuaState();
+			env->setScriptId(m_scriptId, m_scriptInterface);
+			env->setRealPos(player->getPosition());
 
-		m_scriptInterface->pushFunction(m_scriptId);
-		lua_pushnumber(L, cid);
-		lua_pushstring(L, words.c_str());
-		lua_pushstring(L, param.c_str());
-		lua_pushnumber(L, channel);
+			uint32_t cid = env->addThing(player);
 
-		int32_t result = m_scriptInterface->callFunction(4);
-		m_scriptInterface->releaseScriptEnv();
+			lua_State* L = m_scriptInterface->getLuaState();
 
-		return (result == LUA_TRUE);
+			m_scriptInterface->pushFunction(m_scriptId);
+			lua_pushnumber(L, cid);
+			lua_pushstring(L, words.c_str());
+			lua_pushstring(L, param.c_str());
+			lua_pushnumber(L, channel);
+
+			int32_t result = m_scriptInterface->callFunction(4);
+			m_scriptInterface->releaseScriptEnv();
+
+			return (result == LUA_TRUE);
+		}
 	}
 	else
 	{
@@ -585,22 +606,34 @@ bool TalkAction::createGuild(Player* player, const std::string& cmd, const std::
 
 bool TalkAction::ghost(Player* player, const std::string& cmd, const std::string& param)
 {
-	player->switchGhostMode();
+	bool added = true;
+	Condition* condition = NULL;
+	if((condition = player->getCondition(CONDITION_GAMEMASTER, CONDITIONID_DEFAULT, GAMEMASTER_INVISIBLE)))
+	{
+		player->removeCondition(condition);
+		added = false;
+	}
+	else if((condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_GAMEMASTER, -1, 0, false, GAMEMASTER_INVISIBLE)))
+		player->addCondition(condition);
 
 	SpectatorVec list;
-	g_game.getSpectators(list, player->getPosition(), true);
-	int32_t index = player->getTopParent()->__getIndexOfThing(player);
-
 	SpectatorVec::const_iterator it;
+	g_game.getSpectators(list, player->getPosition(), true);
+
+	int32_t index = player->getTopParent()->__getIndexOfThing(player);
+	Player* tmpPlayer = NULL;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
-		if(Player* tmpPlayer = (*it)->getPlayer())
+		if((tmpPlayer = (*it)->getPlayer()))
 		{
-			tmpPlayer->sendCreatureChangeVisible(player, !player->isInGhostMode());
+			tmpPlayer->sendCreatureChangeVisible(player, !added);
 			if(tmpPlayer != player && !tmpPlayer->canSeeGhost(player))
 			{
-				if(player->isInGhostMode())
+				if(added)
+				{
 					tmpPlayer->sendCreatureDisappear(player, index, true);
+					tmpPlayer->sendMagicEffect(player->getPosition(), NM_ME_POFF);
+				}
 				else
 					tmpPlayer->sendCreatureAppear(player, true);
 
@@ -612,7 +645,7 @@ bool TalkAction::ghost(Player* player, const std::string& cmd, const std::string
 	for(it = list.begin(); it != list.end(); ++it)
 		(*it)->onUpdateTile(player->getTile(), player->getPosition());
 
-	if(player->isInGhostMode())
+	if(added)
 	{
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 		{
@@ -634,28 +667,6 @@ bool TalkAction::ghost(Player* player, const std::string& cmd, const std::string
 		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), true);
 		player->sendTextMessage(MSG_INFO_DESCR, "You are visible again.");
 	}
-
-	return true;
-}
-
-bool TalkAction::squelch(Player* player, const std::string& cmd, const std::string& param)
-{
-	player->switchPrivateIgnore();
-
-	char buffer[90];
-	sprintf(buffer, "You have %s private messages ignoring.", (player->isIgnoringPrivate() ? "enabled" : "disabled"));
-	player->sendTextMessage(MSG_INFO_DESCR, buffer);
-
-	return true;
-}
-
-bool TalkAction::clickTeleport(Player* player, const std::string& cmd, const std::string& param)
-{
-	player->switchClickTeleport();
-
-	char buffer[90];
-	sprintf(buffer, "You have %s click teleporting.", (player->isTeleportingByClick() ? "enabled" : "disabled"));
-	player->sendTextMessage(MSG_INFO_DESCR, buffer);
 
 	return true;
 }
@@ -819,12 +830,6 @@ bool TalkAction::changeThingProporties(Player* player, const std::string& cmd, c
 								parseParams(cmdit, cmdtokens.end()).c_str());
 						else if(strcasecmp(tmp.c_str(), "resetidle") == 0)
 							_player->resetIdleTime();
-						else if(strcasecmp(tmp.c_str(), "ghost") == 0)
-							_player->switchGhostMode();
-						else if(strcasecmp(tmp.c_str(), "squelch") == 0)
-							_player->switchPrivateIgnore();
-						else if(strcasecmp(tmp.c_str(), "cliport") == 0)
-							_player->switchClickTeleport();
 						else if(strcasecmp(tmp.c_str(), "saving") == 0)
 							_player->switchSaving();
 						else

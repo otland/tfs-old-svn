@@ -75,7 +75,6 @@ class Weapon : public Event
 		static bool useFist(Player* player, Creature* target);
 		virtual bool useWeapon(Player* player, Item* item, Creature* target) const;
 
-		void setCombatParam(const CombatParams& _params);
 		CombatParams getCombatParam() const {return params;}
 
 		uint16_t getID() const {return id;}

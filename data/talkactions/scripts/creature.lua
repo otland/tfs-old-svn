@@ -8,7 +8,7 @@ function onSay(cid, words, param)
 	local effect = CONST_ME_MAGIC_RED
 	if(func(param, position) == LUA_ERROR) then
 		effect = CONST_ME_POFF
-		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTENOUGHROOM)
+		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 	end
 
 	doSendMagicEffect(position, effect)

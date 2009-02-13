@@ -100,9 +100,9 @@ class CreatureEvent : public Event
 		uint32_t executeOnLogout(Player* player);
 		uint32_t executeOnChannelJoin(Player* player, uint16_t channelId, UsersList usersList);
 		uint32_t executeOnChannelLeave(Player* player, uint16_t channelId, UsersList usersList);
-		uint32_t executeOnThink(Creature* creature, uint32_t interval);
 		uint32_t executeOnAdvance(Player* player, skills_t skill, uint32_t oldLevel, uint32_t newLevel);
 		uint32_t executeOnLook(Player* player, const Position& position, uint8_t stackpos);
+		uint32_t executeOnThink(Creature* creature, uint32_t interval);
 		uint32_t executeOnStatsChange(Creature* creature, Creature* attacker, StatsChange_t type, CombatType_t combat, int32_t value);
 		uint32_t executeOnAttack(Creature* creature, Creature* target);
 		uint32_t executeOnKill(Creature* creature, Creature* target);

@@ -20590,6 +20590,9 @@
 	<item id="9690" article="a" name="gear wheel">
 		<attribute key="weight" value="5"/>
 	</item>
+	<item id="9746" article="a" name="box ramp">
+		<attribute key="floorchange" value="west"/>
+	</item>
 	<item id="9747" article="a" name="golden wall lamp"/>
 	<item id="9748" article="a" name="golden wall lamp"/>
 	<item id="9749" article="a" name="golden wall lamp"/>
@@ -20598,7 +20601,6 @@
 	<item id="9769" article="a" name="golden street lamp"/>
 	<item id="9770" article="a" name="golden wall lamp"/>
 	<item id="9771" article="a" name="golden wall lamp"/>
-	<item id="9779" article="an" name="energy pillar"/>
 	<item id="9774" article="a" name="brocade backpack">
 		<attribute key="weight" value="1800"/>
 		<attribute key="containerSize" value="20"/>
@@ -20628,6 +20630,7 @@
 		<attribute key="slotType" value="head"/>
 		<attribute key="magiclevelpoints" value="2"/>
 	</item>
+	<item id="9779" article="an" name="energy pillar"/>
 	<item id="9801" article="a" name="dead worker golem">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="9802"/>

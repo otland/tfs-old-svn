@@ -73,6 +73,7 @@ bool readXMLInteger64(xmlNodePtr node, const char* tag, uint64_t& value);
 bool readXMLFloat(xmlNodePtr node, const char* tag, float& value);
 bool readXMLString(xmlNodePtr node, const char* tag, std::string& value);
 bool readXMLContentString(xmlNodePtr node, std::string& value);
+bool parseXMLContentString(xmlNodePtr node, std::string& value);
 
 StringVec explodeString(const std::string& string, const std::string& separator);
 IntegerVec vectorAtoi(StringVec stringVector);
@@ -95,6 +96,10 @@ std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end);
 
 std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLength);
 int32_t random_range(int32_t lowest_number, int32_t highest_number, DistributionType_t type = DISTRO_UNIFORM);
+
+int32_t round(float v);
+uint32_t rand24b();
+float box_muller(float m, float s);
 
 Direction getDirection(std::string string);
 Direction getReverseDirection(Direction dir);

@@ -801,7 +801,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 	PropWriteStream propWriteStream;
 	for(ConditionList::const_iterator it = player->conditions.begin(); it != player->conditions.end(); ++it)
 	{
-		if((*it)->isPersistent())
+		if((*it)->isPersistent() || (*it)->getType() == CONDITION_GAMEMASTER)
 		{
 			if(!(*it)->serialize(propWriteStream))
 				return false;

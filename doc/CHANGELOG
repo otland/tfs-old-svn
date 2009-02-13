@@ -447,12 +447,14 @@
 	Remote version checking (Elf)
 	'Reworked' the Violation Window and related things (Elf)
 	New monsters race- energy (Elf)
-	Anti-magebomb 'system' (Elf)
+	Anti-magebomb 'system' (Elf, OpenTibia SVN)
 	Several one-type events support (Elf)
 	"voices" for NPCs (Elf)
 	Optimized, fixed crash-bug and added two-params support for guild commands (Elf, Kornholijo)
 	Reworked reloading- more detailed errors, new 'types' and signal support (Elf)
 	Per-vocation less loss configuration- the "3% promotion loss" (Elf)
+	Gamemaster "options" (ghost, squelch and cliport) are now stored as conditions and saved (Elf)
+	Added support for XML scripting under CDATA (Elf)
 ]
 
 [ Deprecated
@@ -527,4 +529,5 @@
 	MySQL connection losing (Elf, Kornholijo)
 	Server diagnostics command warning (Elf)
 	Player::__queryDestination- adding/giving items to player issues (Elf)
+	Saving players with CanAlwaysLogin flag at /close (Elf)
 ]

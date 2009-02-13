@@ -45,7 +45,7 @@
 	fieldOwnershipDuration = 5 * 1000
 	stopAttackingAtExit = "no"
 	oldConditionAccuracy = "no"
-	loginProtectionPeriod = 10
+	loginProtectionPeriod = 10 * 1000
 	deathLostPercent = 10
 
 	-- Connection config

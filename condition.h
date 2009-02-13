@@ -59,7 +59,8 @@ enum ConditionType_t
 	CONDITION_FREEZING = 1 << 18,
 	CONDITION_DAZZLED = 1 << 19,
 	CONDITION_CURSED = 1 << 20,
-	CONDITION_PACIFIED = 1 << 21
+	CONDITION_PACIFIED = 1 << 21,
+	CONDITION_GAMEMASTER = 1 << 22
 };
 
 enum ConditionEnd_t
@@ -141,7 +142,7 @@ class Condition
 		virtual bool serialize(PropWriteStream& propWriteStream);
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 
-		bool isPersistent() const;
+		bool isPersistent() const {return (ticks > 0 && (id == CONDITIONID_DEFAULT || id != CONDITIONID_COMBAT));}
 
 	protected:
 		ConditionId_t id;

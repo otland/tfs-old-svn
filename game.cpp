@@ -190,19 +190,18 @@ void Game::setGameState(GameState_t newState)
 	}
 }
 
-void Game::saveGameState(bool savePlayers)
+void Game::saveGameState(bool maintainState)
 {
 	std::cout << "> Saving server..." << std::endl;
 	uint64_t start = OTSYS_TIME();
-	if(savePlayers)
-	{
+	if(maintainState)
 		setGameState(GAME_STATE_MAINTAIN);
-		IOLoginData* io = IOLoginData::getInstance();
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		{
-			(*it).second->loginPosition = (*it).second->getPosition();
-			io->savePlayer((*it).second, false);
-		}
+
+	IOLoginData* io = IOLoginData::getInstance();
+	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	{
+		(*it).second->loginPosition = (*it).second->getPosition();
+		io->savePlayer((*it).second, false);
 	}
 
 	std::string storage = "relational";
@@ -211,7 +210,7 @@ void Game::saveGameState(bool savePlayers)
 
 	map->saveMap();
 	ScriptEnviroment::saveGameState();
-	if(savePlayers)
+	if(maintainState)
 		setGameState(GAME_STATE_NORMAL);
 
 	std::cout << "> SAVE: Complete in " << (OTSYS_TIME() - start) / (1000.) << " seconds using " << storage << " house storage." << std::endl;
@@ -772,38 +771,43 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 	if(!internalPlaceCreature(creature, pos, extendedPos, forced))
 		return false;
 
+	bool ghost = false;
+	Player* tmpPlayer = NULL;
+	if((tmpPlayer = creature->getPlayer()) && !tmpPlayer->storedConditionList.empty())
+	{
+		for(ConditionList::iterator it = tmpPlayer->storedConditionList.begin(); it != tmpPlayer->storedConditionList.end(); ++it)
+		{
+			if((*it)->getType() == CONDITION_MUTED && ((*it)->getTicks() - ((time(NULL) - tmpPlayer->getLastLogout()) * 1000)) <= 0)
+				continue;
+
+			tmpPlayer->addCondition(*it);
+		}
+
+		tmpPlayer->storedConditionList.clear();
+		ghost = tmpPlayer->isInGhostMode();
+	}
+
 	SpectatorVec list;
 	SpectatorVec::iterator it;
 	getSpectators(list, creature->getPosition(), false, true);
 
-	Player* tmpPlayer = NULL;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
-			tmpPlayer->sendCreatureAppear(creature, true);
+		{
+			if(!ghost || (*it) == creature || !tmpPlayer->canSeeGhost(creature))
+				tmpPlayer->sendCreatureAppear(creature, true);
+		}
 	}
 
 	for(it = list.begin(); it != list.end(); ++it)
-		(*it)->onCreatureAppear(creature, true);
+	{
+		if(!ghost || (*it) == creature || !(*it)->canSeeGhost(creature))
+			(*it)->onCreatureAppear(creature, true);
+	}
 
 	int32_t newStackPos = creature->getParent()->__getIndexOfThing(creature);
 	creature->getParent()->postAddNotification(NULL, creature, newStackPos);
-
-	if(Player* player = creature->getPlayer())
-	{
-		for(uint32_t i = 0; i < 4; ++i)
-		{
-			Condition* condition = player->getCondition(CONDITION_MUTED, CONDITIONID_DEFAULT, i);
-			if(condition && condition->getTicks() > 0)
-			{
-				condition->setTicks(condition->getTicks() - (time(NULL) - player->getLastLogout()) * 1000);
-				if(condition->getTicks() <= 0)
-					player->removeCondition(condition);
-				else
-					player->addCondition(condition->clone());
-			}
-		}
-	}
 
 	addCreatureCheck(creature);
 	creature->onPlacedCreature();
@@ -2250,7 +2254,7 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 		return false;
 
 	player->resetIdleTime();
-	if(player->isTeleportingByClick())
+	if(player->hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_TELEPORT))
 	{
 		Position pos = player->getPosition();
 		for(std::list<Direction>::iterator it = listDir.begin(); it != listDir.end(); ++it)
@@ -3480,7 +3484,9 @@ bool Game::playerSpeakTo(Player* player, SpeakClasses type, const std::string& r
 		return false;
 	}
 
-	if(toPlayer->isIgnoringPrivate() && !player->hasFlag(PlayerFlag_CannotBeMuted) && !player->canSeeGhost(toPlayer))
+	bool ghost = player->canSeeGhost(toPlayer);
+	if(toPlayer->hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_IGNORE) && !player->hasFlag(
+		PlayerFlag_CannotBeMuted) && !ghost)
 	{
 		char buffer[70];
 		if(toPlayer->isInGhostMode())
@@ -3498,14 +3504,15 @@ bool Game::playerSpeakTo(Player* player, SpeakClasses type, const std::string& r
 	toPlayer->sendCreatureSay(player, type, text);
 	toPlayer->onCreatureSay(player, type, text);
 
-	if(toPlayer->isInGhostMode() && !player->canSeeGhost(toPlayer))
-		player->sendTextMessage(MSG_STATUS_SMALL, "A player with this name is not online.");
-	else
+	if(toPlayer->isInGhostMode() && !ghost)
 	{
-		char buffer[80];
-		sprintf(buffer, "Message sent to %s.", toPlayer->getName().c_str());
-		player->sendTextMessage(MSG_STATUS_SMALL, buffer);
+		player->sendTextMessage(MSG_STATUS_SMALL, "A player with this name is not online.");
+		return false;
 	}
+
+	char buffer[80];
+	sprintf(buffer, "Message sent to %s.", toPlayer->getName().c_str());
+	player->sendTextMessage(MSG_STATUS_SMALL, buffer);
 	return true;
 }
 

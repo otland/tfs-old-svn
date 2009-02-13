@@ -128,8 +128,12 @@ bool argumentsHandler(StringVec args)
 			"\t--config=$1\t\tAlternate configuration file path.\n"
 			"\t--ip=$1\t\t\tIP address of gameworld server.\n"
 			"\t\t\t\tShould be equal to the global IP.\n"
-			"\t--port=$1\t\tPort for server to listen on.\n"
-			"\t--output-log=$1\t\tAll standard output will be logged to\n"
+			"\t--port=$1\t\tPort for server to listen on.\n";
+#ifndef WIN32
+			std::cout << "\t--runfile=$1\t\tSpecifies run file. Will contain the pid\n"
+			"\t\t\t\tof the server process as long as it is running.\n";
+#endif
+			std::cout << "\t--output-log=$1\t\tAll standard output will be logged to\n"
 			"\t\t\t\tthis file.\n"
 			"\t--error-log=$1\t\tAll standard errors will be logged to\n"
 			"\t\t\t\tthis file.\n";
@@ -146,6 +150,11 @@ bool argumentsHandler(StringVec args)
 		if(tmp[0] == "--port")
 			g_config.setNumber(ConfigManager::PORT, atoi(tmp[1].c_str()));
 
+#ifndef WIN32
+		if(tmp[0] == "--runfile")
+			g_config.setString(ConfigManager::RUNFILE, tmp[1]);
+#endif
+
 		if(tmp[0] == "--output-log")
 			g_config.setString(ConfigManager::OUT_LOG, tmp[1]);
 
@@ -158,6 +167,12 @@ bool argumentsHandler(StringVec args)
 #endif
 
 #ifndef WIN32
+void runfileHandler(void)
+{
+	std::ofstream runfile(g_config.getString(ConfigManager::RUNFILE).c_str(), std::ios::trunc | std::ios::out);
+	runfile.close();
+}
+
 void signalHandler(int32_t sig)
 {
 	uint32_t tmp = 0;
@@ -207,7 +222,7 @@ int argc, char *argv[]
 int main(int argc, char *argv[])
 {
 	if(argc > 1 && !argumentsHandler(StringVec(argv, argv + argc)))
-		exit(1);
+		return 0;
 #else
 void serverMain(void* param)
 {
@@ -225,6 +240,15 @@ void serverMain(void* param)
 	#endif
 
 	#ifndef WIN32
+	std::string runPath = g_config.getString(ConfigManager::RUNFILE);
+	if(runPath != "" && runPath.length() > 2)
+	{
+		std::ofstream runFile(runPath.c_str(), std::ios::trunc | std::ios::out);
+		runFile << getpid();
+		runFile.close();
+		atexit(runfileHandler);
+	}
+
 	// ignore sigpipe...
 	struct sigaction sigh;
 	sigh.sa_handler = SIG_IGN;
@@ -258,11 +282,16 @@ void serverMain(void* param)
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
 	GUI::getInstance()->m_connections = true;
 	#else
+	std::string outPath = g_config.getString(ConfigManager::OUT_LOG), errorPath = g_config.getString(ConfigManager::ERROR_LOG);
+
 	boost::shared_ptr<std::ofstream> outFile;
-	if(g_config.getString(ConfigManager::OUT_LOG) != "")
+	if(outPath != "" && outPath.length() > 2)
 	{
-		outFile.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, g_config.getString(ConfigManager::OUT_LOG)).c_str(),
-			(g_config.getBool(ConfigManager::TRUNCATE_LOGS) ? std::ios::trunc : std::ios::app) | std::ios::out));
+		if(outPath[0] != '/' && outPath[1] != ':')
+			outPath = getFilePath(FILE_TYPE_LOG, outPath);
+
+		outFile.reset(new std::ofstream(outPath.c_str(), (g_config.getBool(ConfigManager::TRUNCATE_LOGS) ?
+			std::ios::trunc : std::ios::app) | std::ios::out));
 		if(!outFile->is_open())
 			startupErrorMessage("Could not open output log file for writing!");
 
@@ -270,10 +299,13 @@ void serverMain(void* param)
 	}
 
 	boost::shared_ptr<std::ofstream> errorFile;
-	if(g_config.getString(ConfigManager::ERROR_LOG) != "")
+	if(errorPath != "" && errorPath.length() > 2)
 	{
-		errorFile.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, g_config.getString(ConfigManager::ERROR_LOG)).c_str(), 
-			(g_config.getBool(ConfigManager::TRUNCATE_LOGS) ? std::ios::trunc : std::ios::app) | std::ios::out));
+		if(errorPath[0] != '/' && errorPath[1] != ':')
+			errorPath = getFilePath(FILE_TYPE_LOG, errorPath);
+
+		errorFile.reset(new std::ofstream(errorPath.c_str(), (g_config.getBool(ConfigManager::TRUNCATE_LOGS) ?
+			std::ios::trunc : std::ios::app) | std::ios::out));
 		if(!errorFile->is_open())
 			startupErrorMessage("Could not open error log file for writing!");
 

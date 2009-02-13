@@ -659,7 +659,7 @@ bool Action::loadFunction(const std::string& functionName)
 		return false;
 	}
 
-	m_scripted = false;
+	m_scripted = EVENT_SCRIPT_FALSE;
 	return true;
 }
 
@@ -707,42 +707,71 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
-
-		#ifdef __DEBUG_LUASCRIPTS__
-		std::stringstream desc;
-		desc << player->getName() << " - " << item->getID() << " " << fromPos << "|" << toPos;
-		env->setEventDesc(desc.str());
-		#endif
-
-		env->setScriptId(m_scriptId, m_scriptInterface);
-		env->setRealPos(player->getPosition());
-
-		uint32_t cid = env->addThing(player);
-		uint32_t itemId = env->addThing(item);
-
-		lua_State* L = m_scriptInterface->getLuaState();
-
-		m_scriptInterface->pushFunction(m_scriptId);
-		lua_pushnumber(L, cid);
-		LuaScriptInterface::pushThing(L, item, itemId);
-		LuaScriptInterface::pushPosition(L, fromPos, fromPos.stackpos);
-
-		Thing* thing = g_game.internalGetThing(player, toPos, toPos.stackpos);
-		if(thing && (thing != item || !extendedUse))
+		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
-			uint32_t thingId = env->addThing(thing);
-			LuaScriptInterface::pushThing(L, thing, thingId);
-			LuaScriptInterface::pushPosition(L, toPos, toPos.stackpos);
+			env->setRealPos(player->getPosition());
+
+			std::stringstream scriptstream;
+			scriptstream << "cid = " << env->addThing(player) << std::endl;
+			env->streamThing(scriptstream, "item", item, env->addThing(item));
+			env->streamPosition(scriptstream, "fromPosition", fromPos, fromPos.stackpos);
+
+			Thing* thing = g_game.internalGetThing(player, toPos, toPos.stackpos);
+			if(thing && (thing != item || !extendedUse))
+			{
+				env->streamThing(scriptstream, "itemEx", thing, env->addThing(thing));
+				env->streamPosition(scriptstream, "toPosition", toPos, toPos.stackpos);
+			}
+
+			scriptstream << m_scriptData;
+			int32_t result = LUA_TRUE;
+			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			{
+				lua_State* L = m_scriptInterface->getLuaState();
+				result = m_scriptInterface->getField(L, "_result");
+			}
+
+			m_scriptInterface->releaseScriptEnv();
+			return result;
 		}
 		else
 		{
-			LuaScriptInterface::pushThing(L, NULL, 0);
-			LuaScriptInterface::pushPosition(L, fromPos, fromPos.stackpos);
-		}
+			#ifdef __DEBUG_LUASCRIPTS__
+			std::stringstream desc;
+			desc << player->getName() << " - " << item->getID() << " " << fromPos << "|" << toPos;
+			env->setEventDesc(desc.str());
+			#endif
 
-		int32_t result = m_scriptInterface->callFunction(5);
-		m_scriptInterface->releaseScriptEnv();
-		return (result == LUA_TRUE);
+			env->setScriptId(m_scriptId, m_scriptInterface);
+			env->setRealPos(player->getPosition());
+
+			uint32_t cid = env->addThing(player);
+			uint32_t itemId = env->addThing(item);
+
+			lua_State* L = m_scriptInterface->getLuaState();
+
+			m_scriptInterface->pushFunction(m_scriptId);
+			lua_pushnumber(L, cid);
+			LuaScriptInterface::pushThing(L, item, itemId);
+			LuaScriptInterface::pushPosition(L, fromPos, fromPos.stackpos);
+
+			Thing* thing = g_game.internalGetThing(player, toPos, toPos.stackpos);
+			if(thing && (thing != item || !extendedUse))
+			{
+				uint32_t thingId = env->addThing(thing);
+				LuaScriptInterface::pushThing(L, thing, thingId);
+				LuaScriptInterface::pushPosition(L, toPos, toPos.stackpos);
+			}
+			else
+			{
+				LuaScriptInterface::pushThing(L, NULL, 0);
+				LuaScriptInterface::pushPosition(L, fromPos, fromPos.stackpos);
+			}
+
+			int32_t result = m_scriptInterface->callFunction(5);
+			m_scriptInterface->releaseScriptEnv();
+			return (result == LUA_TRUE);
+		}
 	}
 	else
 	{

@@ -373,7 +373,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			needTarget = (intValue != 0);
 
 		combatSpell = new CombatSpell(NULL, needTarget, needDirection);
-		if(!combatSpell->loadScript(getFilePath(FILE_TYPE_OTHER, g_spells->getScriptBaseName() + "/scripts/" + scriptName)))
+		if(!combatSpell->loadScript(getFilePath(FILE_TYPE_OTHER, g_spells->getScriptBaseName() + "/scripts/" + scriptName), true))
 		{
 			delete combatSpell;
 			return false;

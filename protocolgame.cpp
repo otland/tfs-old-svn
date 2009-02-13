@@ -414,7 +414,9 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		}
 
 		player->lastIP = player->getIP();
+		player->lastLogin = OTSYS_TIME();
 		player->lastLoginSaved = std::max(time(NULL), player->lastLoginSaved + 1);
+
 		m_acceptPackets = true;
 		return true;
 	}
@@ -466,7 +468,9 @@ bool ProtocolGame::connect(uint32_t playerId)
 	player->sendIcons();
 
 	player->lastIP = player->getIP();
+	player->lastLogin = OTSYS_TIME();
 	player->lastLoginSaved = std::max(time(NULL), player->lastLoginSaved + 1);
+
 	m_acceptPackets = true;
 	return true;
 }
@@ -479,9 +483,7 @@ bool ProtocolGame::logout(bool displayEffect, bool forced)
 
 	if(!player->isRemoved())
 	{
-		if(forced)
-			g_creatureEvents->playerLogout(player);
-		else
+		if(!forced)
 		{
 			bool flag = IOLoginData::getInstance()->hasCustomFlag(player->getAccount(), PlayerCustomFlag_CanLogoutAnytime);
 			if(player->getTile()->hasFlag(TILESTATE_NOLOGOUT) && !flag)
@@ -496,19 +498,17 @@ bool ProtocolGame::logout(bool displayEffect, bool forced)
 				return false;
 			}
 
-			//scripting event - onLogout
-			if(!g_creatureEvents->playerLogout(player) && !flag)
-			{
-				//Let the script handle the error message
+			if(!g_creatureEvents->playerLogout(player) && !flag) //Let the script handle the error message
 				return false;
-			}
 		}
+		else
+			g_creatureEvents->playerLogout(player);
 	}
 
 	if(player->isRemoved() || player->getHealth() <= 0)
 		displayEffect = false;
 
-	if(displayEffect)
+	if(displayEffect && !player->isInGhostMode())
 		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 
 	if(Connection* connection = getConnection())
@@ -2377,7 +2377,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, bool isLogin)
 
 void ProtocolGame::sendRemoveCreature(const Creature* creature, const Position& pos, uint32_t stackpos, bool isLogout)
 {
-	if(!(creature->isInGhostMode() && !player->canSeeGhost(creature)) && canSee(pos))
+	if((!creature->isInGhostMode() || player->canSeeGhost(creature)) && canSee(pos))
 	{
 		NetworkMessage* msg = getOutputBuffer();
 		if(msg)

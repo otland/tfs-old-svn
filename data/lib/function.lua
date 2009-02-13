@@ -375,6 +375,10 @@ function getPlayerByName(name)
 	return isPlayer(cid) == TRUE and cid or nil
 end
 
+function isPlayerGhost(cid)
+	return isPlayer(cid) == TRUE and getCreatureCondition(cid, CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE) or FALSE
+end
+
 function getPlayerFrags(cid)
 	return math.ceil((getPlayerRedSkullTicks(cid) / getConfigInfo('timeToDecreaseFrags')) + 1)
 end

@@ -26,13 +26,16 @@
 
 ConfigManager::ConfigManager()
 {
+	L = NULL;
 	m_loaded = false;
 	m_startup = true;
+
 	m_confString[CONFIG_FILE] = getFilePath(FILE_TYPE_CONFIG, "config.lua");
 	m_confBool[LOGIN_ONLY_LOGINSERVER] = false;
 
 	m_confString[IP] = "";
 	m_confNumber[PORT] = 0;
+	m_confString[RUNFILE] = "";
 	m_confString[ERROR_LOG] = "";
 	m_confString[OUT_LOG] = "";
 }
@@ -51,9 +54,10 @@ bool ConfigManager::load()
 	if(!L)
 		return false;
 
-	if(!fileExists(m_confString[CONFIG_FILE].c_str()) || luaL_dofile(L, m_confString[CONFIG_FILE].c_str()))
+	if(luaL_dofile(L, m_confString[CONFIG_FILE].c_str()))
 	{
 		lua_close(L);
+		L = NULL;
 		return false;
 	}
 
@@ -65,6 +69,9 @@ bool ConfigManager::load()
 
 		if(m_confNumber[PORT] == 0)
 			m_confNumber[PORT] = getGlobalNumber(L, "port", 7171);
+
+		if(m_confString[RUNFILE] == "")
+			m_confString[RUNFILE] = getGlobalString(L, "runFile", "");
 
 		if(m_confString[OUT_LOG] == "")
 			m_confString[OUT_LOG] = getGlobalString(L, "outLogName", "");
@@ -209,7 +216,7 @@ bool ConfigManager::load()
 	m_confBool[OLD_CONDITION_ACCURACY] = getGlobalBool(L, "oldConditionAccuracy", "no");
 	m_confBool[HOUSE_STORAGE] = getGlobalBool(L, "useHouseDataStorage", "no");
 	m_confBool[TRACER_BOX] = getGlobalBool(L, "promptExceptionTracerErrorBox", "yes");
-	m_confNumber[LOGIN_PROTECTION] = getGlobalNumber(L, "loginProtectionPeriod", 10);
+	m_confNumber[LOGIN_PROTECTION] = getGlobalNumber(L, "loginProtectionPeriod", 10 * 1000);
 
 	m_loaded = true;
 	return true;

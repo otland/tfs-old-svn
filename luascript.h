@@ -128,6 +128,11 @@ class ScriptEnviroment
 		void addGlobalStorageValue(const uint32_t key, const std::string& value);
 		bool getGlobalStorageValue(const uint32_t key, std::string& value) const;
 
+		void streamVariant(std::stringstream& stream, const std::string& local, const LuaVariant& var);
+		void streamThing(std::stringstream& stream, const std::string& local, Thing* thing, uint32_t thingId);
+		void streamPosition(std::stringstream& stream, const std::string& local, const PositionEx& position);
+		void streamPosition(std::stringstream& stream, const std::string& local, const Position& position, uint32_t stackpos);
+
 		void setRealPos(const Position& realPos) {m_realPos = realPos;}
 		Position getRealPos() {return m_realPos;}
 
@@ -234,7 +239,6 @@ enum PlayerInfo_t
 	PlayerInfoBalance,
 	PlayerInfoViolationAccess,
 	PlayerInfoStamina,
-	PlayerInfoGhostStatus,
 	PlayerInfoLossSkill,
 	PlayerInfoMarriage,
 	PlayerInfoPzLock,
@@ -605,7 +609,6 @@ class LuaScriptInterface
 		//type validation
 		static int32_t luaIsPlayer(lua_State* L);
 		static int32_t luaIsPlayerPzLocked(lua_State* L);
-		static int32_t luaIsPlayerGhost(lua_State* L);
 		static int32_t luaIsPlayerSaving(lua_State* L);
 		static int32_t luaIsMonster(lua_State* L);
 		static int32_t luaIsNpc(lua_State* L);

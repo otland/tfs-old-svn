@@ -254,10 +254,6 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 			&& (attackerPlayer = attacker->getMaster()->getPlayer())))
 		{
 			checkZones = true;
-			if(time(NULL) < (attackerPlayer->getLastLoginSaved() + g_config.getNumber(ConfigManager::LOGIN_PROTECTION))
-				&& !attackerPlayer->hasCondition(CONDITION_INFIGHT))
-				return RET_YOUMAYNOTATTACKTHISPLAYER;
-
 			if((g_game.getWorldType() == WORLD_TYPE_NO_PVP && !Combat::isInPvpZone(attacker, target)) ||
 				isProtected(const_cast<Player*>(attackerPlayer), const_cast<Player*>(targetPlayer)))
 				return RET_YOUMAYNOTATTACKTHISPLAYER;
@@ -355,7 +351,7 @@ bool Combat::isProtected(Player* attacker, Player* target)
 	if(!attacker->getVocation()->isAttackable() || !target->getVocation()->isAttackable())
 		return true;
 
-	return false;
+	return attacker->checkLoginDelay(target->getID());
 }
 
 void Combat::setPlayerCombatValues(formulaType_t _type, double _mina, double _minb, double _maxa, double _maxb)
@@ -938,16 +934,16 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 			}
 		}
 
-		int32_t size0 = lua_gettop(L);
-		if(lua_pcall(L, parameters, 2 /*nReturnValues*/, 0) != 0)
-			LuaScriptInterface::reportError(NULL, std::string(LuaScriptInterface::popString(L)));
-		else
+		int32_t params = lua_gettop(L);
+		if(!lua_pcall(L, parameters, 2, 0))
 		{
 			max = LuaScriptInterface::popNumber(L);
 			min = LuaScriptInterface::popNumber(L);
 		}
+		else
+			LuaScriptInterface::reportError(NULL, std::string(LuaScriptInterface::popString(L)));
 
-		if((lua_gettop(L) + parameters /*nParams*/  + 1) != size0)
+		if((lua_gettop(L) + parameters + 1) != params)
 			LuaScriptInterface::reportError(NULL, "Stack size changed!");
 
 		env->resetCallback();
@@ -1099,15 +1095,6 @@ bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, s
 	return true;
 }
 
-int32_t round(float v)
-{
-	int32_t t = (long)std::floor(v);
-	if((v - t) > 0.5)
-		return t + 1;
-
-	return t;
-}
-
 void AreaCombat::copyArea(const MatrixArea* input, MatrixArea* output, MatrixOperation_t op) const
 {
 	uint32_t centerY, centerX;
@@ -1149,8 +1136,8 @@ void AreaCombat::copyArea(const MatrixArea* input, MatrixArea* output, MatrixOpe
 
 		int32_t rotateCenterX = (output->getCols() / 2) - 1;
 		int32_t rotateCenterY = (output->getRows() / 2) - 1;
-		int32_t angle = 0;
 
+		int32_t angle = 0;
 		switch(op)
 		{
 			case MATRIXOPERATION_ROTATE90:

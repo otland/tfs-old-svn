@@ -63,6 +63,7 @@ class ConfigManager
 			SQL_FILE,
 			PASSWORD_TYPE,
 			MAP_AUTHOR,
+			RUNFILE,
 			OUT_LOG,
 			ERROR_LOG,
 			LAST_STRING_CONFIG /* this must be the last one */
