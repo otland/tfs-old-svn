@@ -1863,35 +1863,37 @@ void Player::addManaSpent(uint64_t amount, bool useMultiplier/* = true*/)
 	if(currReqMana > nextReqMana)
 	{
 		//player has reached max magic level
-		manaSpent = 0;
-		magLevelPercent = 0;
-		sendStats();
 		return;
 	}
 
 	if(useMultiplier)
 		amount = uint64_t((double)amount * magicRate);
 
-	manaSpent += uint64_t((double)amount * g_config.getDouble(ConfigManager::RATE_MAGIC));
-	if(manaSpent >= nextReqMana)
+	amount = uint64_t((double)amount * g_config.getDouble(ConfigManager::RATE_MAGIC));
+	while(manaSpent + amount >= nextReqMana)
 	{
-		manaSpent -= nextReqMana;
+		amount -= nextReqMana - manaSpent;
 		magLevel++;
+
+		manaSpent = 0;
 		char advMsg[50];
 		sprintf(advMsg, "You advanced to magic level %d.", magLevel);
 		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
 
-		//prevent player from getting a magic level everytime s/he casts a spell
-		if(manaSpent > vocation->getReqMana(magLevel + 1))
-			manaSpent = 0;
-
 		currReqMana = nextReqMana;
+		nextReqMana = vocation->getReqMana(magLevel + 1);
 		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
 			(*it)->executeOnAdvance(this, (skills_t)MAGLEVEL, (magLevel - 1), magLevel);
-	}
 
-	nextReqMana = vocation->getReqMana(magLevel + 1);
+		if(currReqMana > nextReqMana)
+		{
+			amount = 0;
+			break;
+		}
+	}
+	manaSpent += amount;
+
 	if(nextReqMana > currReqMana)
 		magLevelPercent = Player::getPercentLevel(manaSpent, nextReqMana);
 	else
