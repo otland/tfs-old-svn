@@ -1873,27 +1873,27 @@ void Player::addManaSpent(uint64_t amount, bool useMultiplier/* = true*/)
 	while(manaSpent + amount >= nextReqMana)
 	{
 		amount -= nextReqMana - manaSpent;
+		manaSpent = 0;
 		magLevel++;
 
-		manaSpent = 0;
 		char advMsg[50];
 		sprintf(advMsg, "You advanced to magic level %d.", magLevel);
 		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
 
-		currReqMana = nextReqMana;
-		nextReqMana = vocation->getReqMana(magLevel + 1);
 		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
 			(*it)->executeOnAdvance(this, (skills_t)MAGLEVEL, (magLevel - 1), magLevel);
 
+		currReqMana = nextReqMana;
+		nextReqMana = vocation->getReqMana(magLevel + 1);
 		if(currReqMana > nextReqMana)
 		{
 			amount = 0;
 			break;
 		}
 	}
-	manaSpent += amount;
 
+	manaSpent += amount;
 	if(nextReqMana > currReqMana)
 		magLevelPercent = Player::getPercentLevel(manaSpent, nextReqMana);
 	else
@@ -1925,11 +1925,8 @@ void Player::addExperience(uint64_t exp)
 		capacity += vocation->getCapGain();
 
 		nextLevelExp = Player::getExpForLevel(level + 1);
-		if(Player::getExpForLevel(level) > nextLevelExp)
-		{
-			//player has reached max level
+		if(Player::getExpForLevel(level) > nextLevelExp) //player has reached max level
 			break;
-		}
 	}
 
 	if(prevLevel != level)
@@ -1955,10 +1952,7 @@ void Player::addExperience(uint64_t exp)
 	uint64_t currLevelExp = Player::getExpForLevel(level);
 	nextLevelExp = Player::getExpForLevel(level + 1);
 	if(nextLevelExp > currLevelExp)
-	{
-		uint32_t newPercent = Player::getPercentLevel(experience - currLevelExp, nextLevelExp - currLevelExp);
-		levelPercent = newPercent;
-	}
+		levelPercent = Player::getPercentLevel(experience - currLevelExp, nextLevelExp - currLevelExp);
 	else
 		levelPercent = 0;
 

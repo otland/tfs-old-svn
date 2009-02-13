@@ -1111,7 +1111,7 @@ uint32_t Creature::getStaminaRatio(Creature* attacker) const
 			totalHits += it->second.hits;
 	}
 
-	return totalHits;
+	return totalHits * g_config.getNumber(ConfigManager::STAMINA_PER_HIT);
 }
 
 uint64_t Creature::getGainedExperience(Creature* attacker, bool useMultiplier/* = true*/)

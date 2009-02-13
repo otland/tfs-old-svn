@@ -47,6 +47,7 @@
 	oldConditionAccuracy = "no"
 	loginProtectionPeriod = 10 * 1000
 	deathLostPercent = 10
+	staminaSecondsPerHit = 3
 
 	-- Connection config
 	worldId = 0
