@@ -47,7 +47,6 @@
 	oldConditionAccuracy = "no"
 	loginProtectionPeriod = 10 * 1000
 	deathLostPercent = 10
-	staminaSecondsPerHit = 3
 
 	-- Connection config
 	worldId = 0
@@ -153,6 +152,7 @@
 	rateExperience = 5.0
 	rateSkill = 3.0
 	rateMagic = 3.0
+	rateStaminaHits = 3
 	rateLoot = 2
 	rateSpawn = 1
 	experienceStages = "no"

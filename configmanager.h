@@ -128,7 +128,7 @@ class ConfigManager
 			PARTY_RADIUS_Y,
 			PARTY_RADIUS_Z,
 			LOGIN_PROTECTION,
-			STAMINA_PER_HIT,
+			RATE_STAMINA,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 

@@ -217,7 +217,7 @@ bool ConfigManager::load()
 	m_confBool[HOUSE_STORAGE] = getGlobalBool(L, "useHouseDataStorage", "no");
 	m_confBool[TRACER_BOX] = getGlobalBool(L, "promptExceptionTracerErrorBox", "yes");
 	m_confNumber[LOGIN_PROTECTION] = getGlobalNumber(L, "loginProtectionPeriod", 10 * 1000);
-	m_confNumber[STAMINA_PER_HIT] = getGlobalNumber(L, "staminaSecondsPerHit", 3);
+	m_confNumber[RATE_STAMINA] = getGlobalNumber(L, "rateStaminaHits", 3);
 
 	m_loaded = true;
 	return true;

@@ -453,10 +453,16 @@ void Spawn::checkSpawn()
 
 bool Spawn::addMonster(const std::string& _name, const Position& _pos, Direction _dir, uint32_t _interval)
 {
+	if(!g_game.getTile(_pos))
+	{
+		std::cout << "[Spawn::addMonster] NULL tile at spawn position (" << _pos << ")" << std::endl;
+		return false;
+	}
+
 	MonsterType* mType = g_monsters.getMonsterType(_name);
 	if(!mType)
 	{
-		std::cout << "[Spawn::addMonster] Can not find " << _name << std::endl;
+		std::cout << "[Spawn::addMonster] Cannot find \"" << _name << "\"" << std::endl;
 		return false;
 	}
 
