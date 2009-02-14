@@ -69,7 +69,6 @@ class Event
 		bool loadScript(const std::string& scriptBuffer, bool file);
 		virtual bool loadFunction(const std::string& functionName);
 
-		//virtual bool isScripted() {return m_scripted != EVENT_SCRIPT_FALSE;}
 		virtual bool isScripted() const {return m_scripted != EVENT_SCRIPT_FALSE;}
 
 	protected:

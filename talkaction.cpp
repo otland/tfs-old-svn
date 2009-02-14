@@ -270,7 +270,7 @@ int32_t TalkAction::executeSay(Player* player, const std::string& words, const s
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_TRUE);
 		}
 		else
 		{

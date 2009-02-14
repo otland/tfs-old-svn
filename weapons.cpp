@@ -160,7 +160,6 @@ int32_t Weapons::getMaxMeleeDamage(int32_t attackSkill, int32_t attackValue)
 
 int32_t Weapons::getMaxWeaponDamage(int32_t level, int32_t attackSkill, int32_t attackValue, float attackFactor)
 {
-	//return ((int32_t)std::ceil(((float)(attackSkill * (attackValue * 0.0425) + (attackValue * 0.2)) / attackFactor)) * 2);
 	return (int32_t)std::ceil((2 * (attackValue * (attackSkill + 5.8) / 25 + (level - 1) / 10.)) / attackFactor);
 }
 
@@ -553,7 +552,7 @@ bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_NO_ERROR);
 		}
 		else
 		{

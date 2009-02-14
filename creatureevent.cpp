@@ -278,7 +278,7 @@ uint32_t CreatureEvent::executeOnLogin(Player* player)
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_TRUE);
 		}
 		else
 		{
@@ -333,7 +333,7 @@ uint32_t CreatureEvent::executeOnLogout(Player* player)
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_TRUE);
 		}
 		else
 		{
@@ -392,7 +392,7 @@ uint32_t CreatureEvent::executeOnChannelJoin(Player* player, uint16_t channelId,
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_TRUE);
 		}
 		else
 		{
@@ -460,7 +460,7 @@ uint32_t CreatureEvent::executeOnChannelLeave(Player* player, uint16_t channelId
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_TRUE);
 		}
 		else
 		{
@@ -527,7 +527,7 @@ uint32_t CreatureEvent::executeOnAdvance(Player* player, skills_t skill, uint32_
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_TRUE);
 		}
 		else
 		{
@@ -585,7 +585,7 @@ uint32_t CreatureEvent::executeOnLook(Player* player, const Position& position, 
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_TRUE);
 		}
 		else
 		{
@@ -641,7 +641,7 @@ uint32_t CreatureEvent::executeOnThink(Creature* creature, uint32_t interval)
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_TRUE);
 		}
 		else
 		{
@@ -700,7 +700,7 @@ uint32_t CreatureEvent::executeOnStatsChange(Creature* creature, Creature* attac
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_TRUE);
 		}
 		else
 		{
@@ -760,7 +760,7 @@ uint32_t CreatureEvent::executeOnAttack(Creature* creature, Creature* target)
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_TRUE);
 		}
 		else
 		{
@@ -817,7 +817,7 @@ uint32_t CreatureEvent::executeOnKill(Creature* creature, Creature* target)
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_TRUE);
 		}
 		else
 		{
@@ -876,7 +876,7 @@ uint32_t CreatureEvent::executeOnDeath(Creature* creature, Item* corpse, Creatur
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_TRUE);
 		}
 		else
 		{
@@ -938,7 +938,7 @@ uint32_t CreatureEvent::executeOnPrepareDeath(Creature* creature, Creature* last
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_TRUE);
 		}
 		else
 		{

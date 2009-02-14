@@ -156,7 +156,7 @@ int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution)
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_TRUE);
 		}
 		else
 		{

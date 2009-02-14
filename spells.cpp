@@ -379,7 +379,7 @@ bool CombatSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_NO_ERROR);
 		}
 		else
 		{
@@ -1100,11 +1100,13 @@ bool InstantSpell::playerCastInstant(Player* player, const std::string& param)
 			return false;
 	}
 
-	bool result = internalCastSpell(player, var);
-	if(result)
+	if(internalCastSpell(player, var))
+	{
 		Spell::postCastSpell(player);
+		return true;
+	}
 
-	return result;
+	return false;
 }
 
 bool InstantSpell::canThrowSpell(const Creature* creature, const Creature* target) const
@@ -1197,7 +1199,7 @@ bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_NO_ERROR);
 		}
 		else
 		{
@@ -1675,13 +1677,14 @@ bool ConjureSpell::ConjureFood(const ConjureSpell* spell, Creature* creature, co
 		ITEM_BREAD
 	};
 
-	bool result = (internalConjureItem(player, foodType[random_range(0, 7)], 1) == RET_NOERROR);
-	if(result)
+	if(internalConjureItem(player, foodType[random_range(0, 7)], 1) == RET_NOERROR)
 	{
 		spell->postCastSpell(player);
 		g_game.addMagicEffect(player->getPosition(), NM_ME_MAGIC_POISON);
+		return true;
 	}
-	return result;
+
+	return false;
 }
 
 bool ConjureSpell::playerCastInstant(Player* player, const std::string& param)
@@ -1983,7 +1986,7 @@ bool RuneSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_NO_ERROR);
 		}
 		else
 		{

@@ -58,6 +58,7 @@ void MoveEvents::clear()
 			for(std::list<MoveEvent*>::iterator it = moveEventList.begin(); it != moveEventList.end(); ++it)
 				delete (*it);
 		}
+
 		m_itemIdMap.erase(it);
 		it = m_itemIdMap.begin();
 	}
@@ -71,6 +72,7 @@ void MoveEvents::clear()
 			for(std::list<MoveEvent*>::iterator it = moveEventList.begin(); it != moveEventList.end(); ++it)
 				delete (*it);
 		}
+
 		m_actionIdMap.erase(it);
 		it = m_actionIdMap.begin();
 	}
@@ -84,6 +86,7 @@ void MoveEvents::clear()
 			for(std::list<MoveEvent*>::iterator it = moveEventList.begin(); it != moveEventList.end(); ++it)
 				delete (*it);
 		}
+
 		m_uniqueIdMap.erase(it);
 		it = m_uniqueIdMap.begin();
 	}
@@ -91,12 +94,13 @@ void MoveEvents::clear()
 	MovePosListMap::iterator posIter = m_positionMap.begin();
 	while(posIter != m_positionMap.end())
 	{
-		for(int i = 0; i < MOVE_EVENT_LAST; ++i)
+		for(int32_t i = 0; i < MOVE_EVENT_LAST; ++i)
 		{
 			std::list<MoveEvent*>& moveEventList = posIter->second.moveEvent[i];
 			for(std::list<MoveEvent*>::iterator it = moveEventList.begin(); it != moveEventList.end(); ++it)
 				delete (*it);
 		}
+
 		m_positionMap.erase(posIter);
 		posIter = m_positionMap.begin();
 	}
@@ -128,14 +132,11 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 	if(!moveEvent)
 		return false;
 
-	bool success = true;
-	int32_t id, endId;
-	std::string strValue;
-
+	std::string strValue, endStrValue;
 	MoveEvent_t eventType = moveEvent->getEventType();
 	if(eventType == MOVE_EVENT_ADD_ITEM || eventType == MOVE_EVENT_REMOVE_ITEM)
 	{
-		if(readXMLInteger(p, "tileitem", id) && id == 1)
+		if(readXMLString(p, "tileitem", strValue) && booleanString(strValue))
 		{
 			switch(eventType)
 			{
@@ -151,73 +152,173 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 		}
 	}
 
-	if(readXMLInteger(p, "itemid", id))
+	StringVec strVector;
+	IntegerVec intVector;
+	IntegerVec endIntVector;
+
+	bool success = true;
+	if(readXMLString(p, "itemid", strValue))
 	{
-		addEvent(moveEvent, id, m_itemIdMap);
-		if(moveEvent->getEventType() == MOVE_EVENT_EQUIP)
+		strVector = explodeString(strValue, ";");
+		for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)
 		{
-			ItemType& it = Item::items.getItemType(id);
-			it.wieldInfo = moveEvent->getWieldInfo();
-			it.minReqLevel = moveEvent->getReqLevel();
-			it.minReqMagicLevel = moveEvent->getReqMagLv();
-			it.vocationString = moveEvent->getVocationString();
+			intVector = vectorAtoi(explodeString((*it), "-"));
+			if(!intVector[0])
+				continue;
+
+			bool equip = moveEvent->getEventType() == MOVE_EVENT_EQUIP;
+			addEvent(moveEvent, intVector[0], m_itemIdMap);
+			if(equip)
+			{
+				ItemType& it = Item::items.getItemType(intVector[0]);
+				it.wieldInfo = moveEvent->getWieldInfo();
+				it.minReqLevel = moveEvent->getReqLevel();
+				it.minReqMagicLevel = moveEvent->getReqMagLv();
+				it.vocationString = moveEvent->getVocationString();
+			}
+
+			if(intVector.size() > 1)
+			{
+				while(intVector[0] < intVector[1])
+				{
+					addEvent(new MoveEvent(moveEvent), ++intVector[0], m_itemIdMap);
+					if(equip)
+					{
+						ItemType& tit = Item::items.getItemType(intVector[0]);
+						tit.wieldInfo = moveEvent->getWieldInfo();
+						tit.minReqLevel = moveEvent->getReqLevel();
+						tit.minReqMagicLevel = moveEvent->getReqMagLv();
+						tit.vocationString = moveEvent->getVocationString();
+					}
+				}
+			}
 		}
 	}
-	else if(readXMLInteger(p, "fromid", id) && readXMLInteger(p, "toid", endId))
+	else if(readXMLString(p, "fromid", strValue) && readXMLString(p, "toid", endStrValue))
 	{
-		addEvent(moveEvent, id, m_itemIdMap);
-		if(moveEvent->getEventType() == MOVE_EVENT_EQUIP)
+		intVector = vectorAtoi(explodeString(strValue, ";"));
+		endIntVector = vectorAtoi(explodeString(endStrValue, ";"));
+		if(intVector[0] && endIntVector[0] && intVector.size() == endIntVector.size())
 		{
-			ItemType& it = Item::items.getItemType(id);
-			it.wieldInfo = moveEvent->getWieldInfo();
-			it.minReqLevel = moveEvent->getReqLevel();
-			it.minReqMagicLevel = moveEvent->getReqMagLv();
-			it.vocationString = moveEvent->getVocationString();
-
-			while(id < endId)
+			size_t size = intVector.size();
+			for(size_t i = 0; i < size; ++i)
 			{
-				id++;
-				addEvent(new MoveEvent(moveEvent), id, m_itemIdMap);
+				bool equip = moveEvent->getEventType() == MOVE_EVENT_EQUIP;
+				addEvent(moveEvent, intVector[i], m_itemIdMap);
+				if(equip)
+				{
+					ItemType& it = Item::items.getItemType(intVector[i]);
+					it.wieldInfo = moveEvent->getWieldInfo();
+					it.minReqLevel = moveEvent->getReqLevel();
+					it.minReqMagicLevel = moveEvent->getReqMagLv();
+					it.vocationString = moveEvent->getVocationString();
+				}
 
-				ItemType& tit = Item::items.getItemType(id);
-				tit.wieldInfo = moveEvent->getWieldInfo();
-				tit.minReqLevel = moveEvent->getReqLevel();
-				tit.minReqMagicLevel = moveEvent->getReqMagLv();
-				tit.vocationString = moveEvent->getVocationString();
+				if(intVector.size() > 1)
+				{
+					while(intVector[i] < endIntVector[i])
+					{
+						addEvent(new MoveEvent(moveEvent), ++intVector[i], m_itemIdMap);
+						if(equip)
+						{
+							ItemType& tit = Item::items.getItemType(intVector[i]);
+							tit.wieldInfo = moveEvent->getWieldInfo();
+							tit.minReqLevel = moveEvent->getReqLevel();
+							tit.minReqMagicLevel = moveEvent->getReqMagLv();
+							tit.vocationString = moveEvent->getVocationString();
+						}
+					}
+				}
 			}
 		}
 		else
+			std::cout << "[Warning - MoveEvents::registerEvent] Malformed entry (from: \"" << strValue << "\", to: \"" << endStrValue << "\")" << std::endl;
+	}
+	else if(readXMLString(p, "uniqueid", strValue))
+	{
+		strVector = explodeString(strValue, ";");
+		for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)
 		{
-			while(id < endId)
-				addEvent(new MoveEvent(moveEvent), ++id, m_itemIdMap);
+			intVector = vectorAtoi(explodeString((*it), "-"));
+			if(!intVector[0])
+				continue;
+
+			addEvent(moveEvent, intVector[0], m_uniqueIdMap);
+			if(intVector.size() > 1)
+			{
+				while(intVector[0] < intVector[1])
+					addEvent(new MoveEvent(moveEvent), ++intVector[0], m_uniqueIdMap);
+			}
 		}
 	}
-	else if(readXMLInteger(p, "uniqueid", id))
-		addEvent(moveEvent, id, m_uniqueIdMap);
-	else if(readXMLInteger(p, "fromuid", id) && readXMLInteger(p, "touid", endId))
+	else if(readXMLString(p, "fromuid", strValue) && readXMLString(p, "touid", endStrValue))
 	{
-		addEvent(moveEvent, id, m_uniqueIdMap);
-		while(id < endId)
-			addEvent(new MoveEvent(moveEvent), ++id, m_uniqueIdMap);
-	}
-	else if(readXMLInteger(p, "actionid", id))
-		addEvent(moveEvent, id, m_actionIdMap);
-	else if(readXMLInteger(p, "fromaid", id) && readXMLInteger(p, "toaid", endId))
-	{
-		addEvent(moveEvent, id, m_actionIdMap);
-		while(id < endId)
-			addEvent(new MoveEvent(moveEvent), ++id, m_actionIdMap);
-	}
-	else if(readXMLString(p, "pos", strValue))
-	{
-		IntegerVec posList = vectorAtoi(explodeString(strValue, ";"));
-		if(posList.size() >= 3)
+		intVector = vectorAtoi(explodeString(strValue, ";"));
+		endIntVector = vectorAtoi(explodeString(endStrValue, ";"));
+		if(intVector[0] && endIntVector[0] && intVector.size() == endIntVector.size())
 		{
-			Position pos(posList[0], posList[1], posList[2]);
-			addEvent(moveEvent, pos, m_positionMap);
+			size_t size = intVector.size();
+			for(size_t i = 0; i < size; ++i)
+			{
+				addEvent(moveEvent, intVector[i], m_uniqueIdMap);
+				if(intVector.size() > 1)
+				{
+					while(intVector[i] < endIntVector[i])
+						addEvent(new MoveEvent(moveEvent), ++intVector[i], m_uniqueIdMap);
+				}
+			}
 		}
 		else
-			success = false;
+			std::cout << "[Warning - MoveEvents::registerEvent] Malformed entry (from: \"" << strValue << "\", to: \"" << endStrValue << "\")" << std::endl;
+	}
+	else if(readXMLString(p, "actionid", strValue))
+	{
+		strVector = explodeString(strValue, ";");
+		for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)
+		{
+			intVector = vectorAtoi(explodeString((*it), "-"));
+			if(!intVector[0])
+				continue;
+
+			addEvent(moveEvent, intVector[0], m_actionIdMap);
+			if(intVector.size() > 1)
+			{
+				while(intVector[0] < intVector[1])
+					addEvent(new MoveEvent(moveEvent), ++intVector[0], m_actionIdMap);
+			}
+		}
+	}
+	else if(readXMLString(p, "fromaid", strValue) && readXMLString(p, "toaid", endStrValue))
+	{
+		intVector = vectorAtoi(explodeString(strValue, ";"));
+		endIntVector = vectorAtoi(explodeString(endStrValue, ";"));
+		if(intVector[0] && endIntVector[0] && intVector.size() == endIntVector.size())
+		{
+			size_t size = intVector.size();
+			for(size_t i = 0; i < size; ++i)
+			{
+				addEvent(moveEvent, intVector[i], m_actionIdMap);
+				if(intVector.size() > 1)
+				{
+					while(intVector[i] < endIntVector[i])
+						addEvent(new MoveEvent(moveEvent), ++intVector[i], m_actionIdMap);
+				}
+			}
+		}
+		else
+			std::cout << "[Warning - MoveEvents::registerEvent] Malformed entry (from: \"" << strValue << "\", to: \"" << endStrValue << "\")" << std::endl;
+	}
+	else if(readXMLString(p, "pos", strValue) || readXMLString(p, "pos", strValue))
+	{
+		strVector = explodeString(strValue, ";");
+		for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)
+		{
+			intVector = vectorAtoi(explodeString((*it), ","));
+			if(intVector.size() >= 3)
+				addEvent(moveEvent, Position(intVector[0], intVector[1], intVector[2]), m_positionMap);
+			else
+				success = false;
+		}
 	}
 	else
 		success = false;
@@ -940,7 +1041,7 @@ uint32_t MoveEvent::executeStep(Creature* creature, Item* item, const Position& 
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_TRUE);
 		}
 		else
 		{
@@ -1010,7 +1111,7 @@ uint32_t MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_TRUE);
 		}
 		else
 		{
@@ -1080,7 +1181,7 @@ uint32_t MoveEvent::executeAddRemItem(Creature* actor, Item* item, Item* tileIte
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return result;
+			return (result == LUA_TRUE);
 		}
 		else
 		{
