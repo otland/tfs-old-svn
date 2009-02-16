@@ -721,7 +721,7 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 	if(!RaidEvent::configureRaidEvent(eventNode))
 		return false;
 
-	std::string scriptsName = Raids::getScriptBaseName();
+	std::string scriptsName = Raids::getInstance()->getScriptBaseName();
 	if(m_scriptInterface.loadFile(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/" + scriptsName + ".lua"))) == -1)
 		std::cout << "[Warning - ScriptEvent::configureRaidEvent] Can not load " << scriptsName << "/lib/" << scriptsName << ".lua" << std::endl;
 

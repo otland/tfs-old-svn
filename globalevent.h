@@ -73,7 +73,7 @@ class GlobalEvent : public Event
 
 	protected:
 		virtual std::string getScriptEventName() const {return "onThink";}
-		virtual std::String getScriptEventParams() const {return "interval, lastExecution";}
+		virtual std::string getScriptEventParams() const {return "interval, lastExecution";}
 
 		std::string m_name;
 		uint32_t m_interval;
