@@ -177,19 +177,16 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 					it.vocationString = moveEvent->getVocationString();
 				}
 
-				if(intVector.size() > 1)
+				while(intVector[i] < endIntVector[i])
 				{
-					while(intVector[i] < endIntVector[i])
+					addEvent(new MoveEvent(moveEvent), ++intVector[i], m_itemIdMap);
+					if(equip)
 					{
-						addEvent(new MoveEvent(moveEvent), ++intVector[i], m_itemIdMap);
-						if(equip)
-						{
-							ItemType& tit = Item::items.getItemType(intVector[i]);
-							tit.wieldInfo = moveEvent->getWieldInfo();
-							tit.minReqLevel = moveEvent->getReqLevel();
-							tit.minReqMagicLevel = moveEvent->getReqMagLv();
-							tit.vocationString = moveEvent->getVocationString();
-						}
+						ItemType& tit = Item::items.getItemType(intVector[i]);
+						tit.wieldInfo = moveEvent->getWieldInfo();
+						tit.minReqLevel = moveEvent->getReqLevel();
+						tit.minReqMagicLevel = moveEvent->getReqMagLv();
+						tit.vocationString = moveEvent->getVocationString();
 					}
 				}
 			}
@@ -224,11 +221,8 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 			for(size_t i = 0; i < size; ++i)
 			{
 				addEvent(moveEvent, intVector[i], m_uniqueIdMap);
-				if(intVector.size() > 1)
-				{
-					while(intVector[i] < endIntVector[i])
-						addEvent(new MoveEvent(moveEvent), ++intVector[i], m_uniqueIdMap);
-				}
+				while(intVector[i] < endIntVector[i])
+					addEvent(new MoveEvent(moveEvent), ++intVector[i], m_uniqueIdMap);
 			}
 		}
 		else
@@ -261,11 +255,8 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 			for(size_t i = 0; i < size; ++i)
 			{
 				addEvent(moveEvent, intVector[i], m_actionIdMap);
-				if(intVector.size() > 1)
-				{
-					while(intVector[i] < endIntVector[i])
-						addEvent(new MoveEvent(moveEvent), ++intVector[i], m_actionIdMap);
-				}
+				while(intVector[i] < endIntVector[i])
+					addEvent(new MoveEvent(moveEvent), ++intVector[i], m_actionIdMap);
 			}
 		}
 		else
