@@ -184,6 +184,7 @@ bool Event::loadScript(const std::string& script, bool file)
 		}
 
 		result = m_scriptInterface->loadBuffer(script_);
+	}
 	else
 		result = m_scriptInterface->loadFile(script);
 
