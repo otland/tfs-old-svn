@@ -131,7 +131,7 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 				player->sendTextMessage(MSG_INFO_DESCR, "New mail has arrived.");
 
 			bool result = true;
-			if(Player* tmp = creature->getPlayer())
+			if(Player* tmp = actor->getPlayer())
 			{
 				CreatureEventList mailEvents = tmp->getCreatureEvents(CREATURE_EVENT_MAIL_SEND);
 				for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
@@ -161,12 +161,26 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 				NULL, FLAG_NOLIMIT) == RET_NOERROR && IOLoginData::getInstance()->savePlayer(player))
 			{
 				g_game.transformItem(item, item->getID() + 1);
-				CreatureEventList mailEvents = player->getCreatureEvents(CREATURE_EVENT_MAIL);
-				for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
-					(*it)->executeOnMail(player, actor, item);
+				bool result = true;
+				if(Player* tmp = actor->getPlayer())
+				{
+					CreatureEventList mailEvents = tmp->getCreatureEvents(CREATURE_EVENT_MAIL_SEND);
+					for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
+					{
+						if(!(*it)->executeOnMailSend(tmp, player, item) && result)
+							result = false;
+					}
+
+					mailEvents = player->getCreatureEvents(CREATURE_EVENT_MAIL_RECEIVE);
+					for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
+					{
+						if(!(*it)->executeOnMailReceive(player, tmp, item) && result)
+							result = false;
+					}
+				}
 
 				delete player;
-				return true;
+				return result;
 			}
 		}
 
