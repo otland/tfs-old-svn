@@ -34,7 +34,8 @@ enum CreatureEventType_t
 	CREATURE_EVENT_CHANNEL_LEAVE,
 	CREATURE_EVENT_ADVANCE,
 	CREATURE_EVENT_LOOK,
-	CREATURE_EVENT_MAIL,
+	CREATURE_EVENT_MAIL_SEND,
+	CREATURE_EVENT_MAIL_RECEIVE,
 	CREATURE_EVENT_THINK,
 	CREATURE_EVENT_STATSCHANGE,
 	CREATURE_EVENT_ATTACK,
@@ -104,7 +105,8 @@ class CreatureEvent : public Event
 		uint32_t executeOnChannelLeave(Player* player, uint16_t channelId, UsersList usersList);
 		uint32_t executeOnAdvance(Player* player, skills_t skill, uint32_t oldLevel, uint32_t newLevel);
 		uint32_t executeOnLook(Player* player, const Position& position, uint8_t stackpos);
-		uint32_t executeOnMail(Player* receiver, Creature* sender, Item* item);
+		uint32_t executeOnMailSend(Player* player, Creature* receiver, Item* item);
+		uint32_t executeOnMailReceive(Player* player, Creature* sender, Item* item);
 		uint32_t executeOnThink(Creature* creature, uint32_t interval);
 		uint32_t executeOnStatsChange(Creature* creature, Creature* attacker, StatsChange_t type, CombatType_t combat, int32_t value);
 		uint32_t executeOnAttack(Creature* creature, Creature* target);

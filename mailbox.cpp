@@ -130,11 +130,25 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 			if(player->getContainerID() != -1)
 				player->sendTextMessage(MSG_INFO_DESCR, "New mail has arrived.");
 
-			CreatureEventList mailEvents = player->getCreatureEvents(CREATURE_EVENT_MAIL);
-			for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
-				(*it)->executeOnMail(player, actor, item);
+			bool result = true;
+			if(Player* tmp = creature->getPlayer())
+			{
+				CreatureEventList mailEvents = tmp->getCreatureEvents(CREATURE_EVENT_MAIL_SEND);
+				for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
+				{
+					if(!(*it)->executeOnMailSend(tmp, player, item) && result)
+						result = false;
+				}
 
-			return true;
+				mailEvents = player->getCreatureEvents(CREATURE_EVENT_MAIL_RECEIVE);
+				for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
+				{
+					if(!(*it)->executeOnMailReceive(player, tmp, item) && result)
+						result = false;
+				}
+			}
+
+			return result;
 		}
 	}
 	else if(tmp)

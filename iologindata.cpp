@@ -788,11 +788,9 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 	query << "`manaspent` = " << player->manaSpent << ", ";
 	query << "`soul` = " << player->soul << ", ";
 	query << "`town_id` = " << player->town << ", ";
-
-	const Position& loginPos = player->getLoginPosition();
-	query << "`posx` = " << loginPos.x << ", ";
-	query << "`posy` = " << loginPos.y << ", ";
-	query << "`posz` = " << loginPos.z << ", ";
+	query << "`posx` = " << player->getLoginPosition().x << ", ";
+	query << "`posy` = " << player->getLoginPosition().y << ", ";
+	query << "`posz` = " << player->getLoginPosition().z << ", ";
 	query << "`cap` = " << player->getCapacity() << ", ";
 	query << "`sex` = " << player->sex << ", ";
 	query << "`balance` = " << player->balance << ", ";
