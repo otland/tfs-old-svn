@@ -591,7 +591,7 @@ uint32_t CreatureEvent::executeOnMailSend(Player* player, Player* receiver, Item
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
 			scriptstream << "receiver = " << env->addThing(receiver) << std::endl;
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
-			scriptstream << "openDepot = " << openDepot ? LUA_TRUE : LUA_FALSE << std::endl;
+			scriptstream << "openDepot = " << (openDepot ? LUA_TRUE : LUA_FALSE) << std::endl;
 
 			scriptstream << m_scriptData;
 			int32_t result = LUA_NO_ERROR;
@@ -649,7 +649,7 @@ uint32_t CreatureEvent::executeOnMailReceive(Player* player, Player* sender, Ite
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
 			scriptstream << "sender = " << env->addThing(sender) << std::endl;
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
-			scriptstream << "openDepot = " << openDepot ? LUA_TRUE : LUA_FALSE << std::endl;
+			scriptstream << "openDepot = " << (openDepot ? LUA_TRUE : LUA_FALSE) << std::endl;
 
 			scriptstream << m_scriptData;
 			int32_t result = LUA_NO_ERROR;
