@@ -172,23 +172,24 @@ bool Event::loadScript(const std::string& script, bool file)
 		return false;
 	}
 
-	std::string script_ = script;
-	if(script_.length() < 9 || script_.substr(0, 7) != "function")
-	{
-		std::stringstream scriptstream;
-		scriptstream << "function " << getScriptEventName() << "(" << getScriptEventParams() << ")" << std::endl << script_ << std::endl << "end";
-		script_ = scriptstream.str();
-	}
-
 	int32_t result = -1;
-	if(file)
-		result = m_scriptInterface->loadFile(script_);
-	else
+	if(!file)
+	{
+		std::string script_ = script;
+		if(script_.length() < 9 || script_.substr(0, 7) != "function")
+		{
+			std::stringstream scriptstream;
+			scriptstream << "function " << getScriptEventName() << "(" << getScriptEventParams() << ")" << std::endl << script_ << std::endl << "end";
+			script_ = scriptstream.str();
+		}
+
 		result = m_scriptInterface->loadBuffer(script_);
+	else
+		result = m_scriptInterface->loadFile(script);
 
 	if(result == -1)
 	{
-		std::cout << "[Warning - Event::loadScript] Can not load script (" << script_ << ")" << std::endl;
+		std::cout << "[Warning - Event::loadScript] Can not load script (" << script << ")" << std::endl;
 		std::cout << m_scriptInterface->getLastLuaError() << std::endl;
 		return false;
 	}
@@ -196,7 +197,7 @@ bool Event::loadScript(const std::string& script, bool file)
 	int32_t id = m_scriptInterface->getEvent(getScriptEventName());
 	if(id == -1)
 	{
-		std::cout << "[Warning - Event::loadScript] Event " << getScriptEventName() << " not found (" << script_ << ")" << std::endl;
+		std::cout << "[Warning - Event::loadScript] Event " << getScriptEventName() << " not found (" << script << ")" << std::endl;
 		return false;
 	}
 
