@@ -408,7 +408,7 @@ bool CombatSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. CombatSpell::executeCastSpell" << std::endl;
+		std::cout << "[Error - CombatSpell::executeCastSpell] Call stack overflow." << std::endl;
 		return false;
 	}
 }
@@ -925,11 +925,6 @@ InstantSpell::~InstantSpell()
 	//
 }
 
-std::string InstantSpell::getScriptEventName()
-{
-	return "onCastSpell";
-}
-
 bool InstantSpell::configureEvent(xmlNodePtr p)
 {
 	if(!Spell::configureSpell(p))
@@ -1137,9 +1132,11 @@ bool InstantSpell::castSpell(Creature* creature)
 			var.number = target->getID();
 			return internalCastSpell(creature, var);
 		}
+
 		return false;
 	}
-	else if(needDirection)
+		return castSpell(creature);
+	if(needDirection)
 	{
 		var.type = VARIANT_POSITION;
 		var.pos = Spells::getCasterPosition(creature, creature->getDirection());
@@ -1149,20 +1146,19 @@ bool InstantSpell::castSpell(Creature* creature)
 		var.type = VARIANT_POSITION;
 		var.pos = creature->getPosition();
 	}
+
 	return internalCastSpell(creature, var);
 }
 
 bool InstantSpell::castSpell(Creature* creature, Creature* target)
 {
-	if(needTarget)
-	{
-		LuaVariant var;
-		var.type = VARIANT_NUMBER;
-		var.number = target->getID();
-		return internalCastSpell(creature, var);
-	}
-	else
+	if(!needTarget)
 		return castSpell(creature);
+
+	LuaVariant var;
+	var.type = VARIANT_NUMBER;
+	var.number = target->getID();
+	return internalCastSpell(creature, var);
 }
 
 bool InstantSpell::internalCastSpell(Creature* creature, const LuaVariant& var)
@@ -1228,7 +1224,7 @@ bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. InstantSpell::executeCastSpell" << std::endl;
+		std::cout << "[Error - InstantSpell::executeCastSpell] Call stack overflow." << std::endl;
 		return false;
 	}
 }
@@ -1507,11 +1503,6 @@ ConjureSpell::~ConjureSpell()
 	//
 }
 
-std::string ConjureSpell::getScriptEventName()
-{
-	return "onCastSpell";
-}
-
 bool ConjureSpell::configureEvent(xmlNodePtr p)
 {
 	if(!InstantSpell::configureEvent(p))
@@ -1719,11 +1710,6 @@ Action(_interface)
 RuneSpell::~RuneSpell()
 {
 	//
-}
-
-std::string RuneSpell::getScriptEventName()
-{
-	return "onCastSpell";
 }
 
 bool RuneSpell::configureEvent(xmlNodePtr p)
@@ -2015,7 +2001,7 @@ bool RuneSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. RuneSpell::executeCastSpell" << std::endl;
+		std::cout << "[Error - RuneSpell::executeCastSpell] Call stack overflow." << std::endl;
 		return false;
 	}
 }

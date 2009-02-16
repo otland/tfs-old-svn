@@ -116,11 +116,10 @@ enum GamemasterCondition_t
 	GAMEMASTER_TELEPORT = 2
 };
 
-typedef std::pair<uint32_t, Container*> containervector_pair;
-typedef std::vector<containervector_pair> ContainerVector;
+typedef std::set<uint32_t> VIPListSet;
+typedef std::vector<std::pair<uint32_t, Container*> > ContainerVector;
 typedef std::map<uint32_t, Depot*> DepotMap;
 typedef std::map<uint32_t, std::string> StorageMap;
-typedef std::set<uint32_t> VIPListSet;
 typedef std::map<uint32_t, uint32_t> MuteCountMap;
 typedef std::list<std::string> LearnedInstantSpellList;
 typedef std::list<uint32_t> InvitedToGuildsList;
@@ -219,15 +218,17 @@ class Player : public Creature, public Cylinder
 		bool isVirtual() const {return (getID() == 0);}
 		void disconnect() {if(client) client->disconnect();}
 		uint32_t getIP() const;
-
-		int32_t getContainerID(const Container* container) const;
-		void addContainer(uint32_t cid, Container* container);
-		Container* getContainer(uint32_t cid);
-		void closeContainer(uint32_t cid);
 		bool canOpenCorpse(uint32_t ownerId);
 
-		void addStorageValue(const uint32_t key, const std::string& value);
+		Container* getContainer(uint32_t cid);
+		int32_t getContainerID(const Container* container) const;
+
+		void addContainer(uint32_t cid, Container* container);
+		void closeContainer(uint32_t cid);
+
 		bool getStorageValue(const uint32_t key, std::string& value) const;
+		bool addStorageValue(const uint32_t key, const std::string& value) const;
+		bool eraseStorageValue(const uint32_t key) const;
 		void genReservedStorageRange();
 
 		bool withdrawMoney(uint64_t amount);

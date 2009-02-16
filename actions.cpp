@@ -179,7 +179,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 	else if(readXMLString(p, "uniqueid", strValue))
 	{
 		strVector = explodeString(strValue, ";");
-		for(StringVec::iterator it = strVector.begin() + 1; it != strVector.end(); ++it)
+		for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)
 		{
 			intVector = vectorAtoi(explodeString((*it), "-"));
 			if(!intVector[0])
@@ -248,7 +248,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 	else if(readXMLString(p, "actionid", strValue))
 	{
 		strVector = explodeString(strValue, ";");
-		for(StringVec::iterator it = strVector.begin() + 1; it != strVector.end(); ++it)
+		for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)
 		{
 			intVector = vectorAtoi(explodeString((*it), "-"));
 			if(!intVector[0])
@@ -529,11 +529,14 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		Container* tmpContainer = NULL;
 		if(Depot* depot = container->getDepot())
 		{
-			Depot* tmpDepot = player->getDepot(depot->getDepotId(), true);
-			tmpDepot->setParent(depot->getParent());
-			tmpContainer = tmpDepot;
+			if(Depot* tmpDepot = player->getDepot(depot->getDepotId(), true))
+			{
+				tmpDepot->setParent(depot->getParent());
+				tmpContainer = tmpDepot;
+			}
 		}
-		else
+
+		if(!tmpContainer)
 			tmpContainer = container;
 
 		int32_t oldId = player->getContainerID(tmpContainer);
@@ -779,40 +782,28 @@ bool Action::loadFunction(const std::string& functionName)
 
 bool Action::increaseItemId(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
 {
-	if(player && item)
-	{
-		g_game.transformItem(item, item->getID() + 1);
-		return true;
-	}
+	if(!player || !item)
+		return false;
 
-	return false;
+	g_game.transformItem(item, item->getID() + 1);
+	return true;
 }
 
 bool Action::decreaseItemId(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId)
 {
-	if(player && item)
-	{
-		g_game.transformItem(item, item->getID() - 1);
-		return true;
-	}
+	if(!player || !item)
+		return false;
 
-	return false;
-}
-
-std::string Action::getScriptEventName()
-{
-	return "onUse";
+	g_game.transformItem(item, item->getID() - 1);
+	return true;
 }
 
 ReturnValue Action::canExecuteAction(const Player* player, const Position& toPos)
 {
-	ReturnValue ret = RET_NOERROR;
 	if(!getAllowFarUse())
-		ret = g_actions->canUse(player, toPos);
-	else
-		ret = g_actions->canUseFar(player, toPos, getCheckLineOfSight());
+		return g_actions->canUse(player, toPos);
 
-	return ret;
+	return g_actions->canUseFar(player, toPos, getCheckLineOfSight());
 }
 
 bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, const PositionEx& toPos, bool extendedUse, uint32_t creatureId)

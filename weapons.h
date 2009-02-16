@@ -49,16 +49,17 @@ class Weapons : public BaseEvents
 		static int32_t getMaxWeaponDamage(int32_t level, int32_t attackSkill, int32_t attackValue, float attackFactor);
 
 	protected:
+		virtual std::string getScriptBaseName() const;
 		virtual void clear();
-		virtual LuaScriptInterface& getScriptInterface();
-		virtual std::string getScriptBaseName();
+
 		virtual Event* getEvent(const std::string& nodeName);
 		virtual bool registerEvent(Event* event, xmlNodePtr p);
 
+		virtual LuaScriptInterface& getScriptInterface();
+		LuaScriptInterface m_scriptInterface;
+
 		typedef std::map<uint32_t, Weapon*> WeaponMap;
 		WeaponMap weapons;
-
-		LuaScriptInterface m_scriptInterface;
 };
 
 class Weapon : public Event
@@ -89,9 +90,11 @@ class Weapon : public Event
 		const bool isWieldedUnproperly() const {return wieldUnproperly;}
 
 	protected:
-		virtual std::string getScriptEventName();
+		virtual std::string getScriptEventName() const {return "onUseWeapon";}
+		virtual std::string getScriptEventParams() const {return "cid, var";}
 
 		bool executeUseWeapon(Player* player, const LuaVariant& var) const;
+
 		bool internalUseWeapon(Player* player, Item* item, Creature* target, int32_t damageModifier) const;
 		bool internalUseWeapon(Player* player, Item* item, Tile* tile) const;
 

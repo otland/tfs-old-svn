@@ -130,11 +130,6 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 	return true;
 }
 
-std::string GlobalEvent::getScriptEventName()
-{
-	return "onThink";
-}
-
 int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution)
 {
 	//onThink(interval, lastExecution)

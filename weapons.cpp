@@ -323,11 +323,6 @@ bool Weapon::configureWeapon(const ItemType& it)
 	return true;
 }
 
-std::string Weapon::getScriptEventName()
-{
-	return "onUseWeapon";
-}
-
 int32_t Weapon::playerWeaponCheck(Player* player, Creature* target) const
 {
 	const Position& playerPos = player->getPosition();

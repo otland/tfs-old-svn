@@ -272,7 +272,8 @@ bool parseXMLContentString(xmlNodePtr node, std::string& value)
 				if(compareValue.length() > value.length())
 				{
 					value = compareValue;
-					result = true;
+					if(!result)
+						result = true;
 				}
 			}
 		}

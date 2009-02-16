@@ -151,12 +151,7 @@ bool ScriptEnviroment::loadGameState()
 	if((result = db->storeQuery(query.str())))
 	{
 		do
-		{
-			int32_t key = result->getDataInt("key");
-			std::string value = result->getDataString("value");
-
-			m_globalStorageMap[key] = value;
-		}
+			m_globalStorageMap[result->getDataInt("key")] = result->getDataString("value");
 		while(result->next());
 		db->freeResult(result);
 	}
@@ -433,13 +428,11 @@ uint32_t ScriptEnviroment::addResult(DBResult* res)
 bool ScriptEnviroment::removeResult(uint32_t rid)
 {
 	DBResMap::iterator it = m_tempResults.find(rid);
-	if(it != m_tempResults.end())
-	{
-		m_tempResults.erase(it);
-		return true;
-	}
+	if(it == m_tempResults.end())
+		return false;
 
-	return false;
+	m_tempResults.erase(it);
+	return true;
 }
 
 DBResult* ScriptEnviroment::getResult(uint32_t rid)
@@ -451,25 +444,28 @@ DBResult* ScriptEnviroment::getResult(uint32_t rid)
 	return NULL;
 }
 
-void ScriptEnviroment::addGlobalStorageValue(const uint32_t key, const std::string& value)
-{
-	m_globalStorageMap[key] = value;
-}
-
 bool ScriptEnviroment::getGlobalStorageValue(const uint32_t key, std::string& value) const
 {
-	StorageMap::const_iterator it;
-	it = m_globalStorageMap.find(key);
+	StorageMap::const_iterator it = m_globalStorageMap.find(key);
 	if(it != m_globalStorageMap.end())
 	{
 		value = it->second;
 		return true;
 	}
-	else
-	{
-		value = "-1";
-		return false;
-	}
+
+	value = "-1";
+	return false;
+}
+
+bool ScriptEnviroment::addGlobalStorageValue(const uint32_t key, const std::string& value) const
+{
+	m_globalStorageMap[key] = value;
+	return true;
+}
+
+bool ScriptEnviroment::eraseGlobalStorageValue(const uint32_t key) const
+{
+	return m_globalStorageMap.erase(key);
 }
 
 void ScriptEnviroment::streamVariant(std::stringstream& stream, const std::string& local, const LuaVariant& var)
@@ -569,47 +565,35 @@ std::string LuaScriptInterface::getErrorDesc(ErrorCode_t code)
 	{
 		case LUA_ERROR_PLAYER_NOT_FOUND:
 			return "Player not found";
-			break;
 		case LUA_ERROR_CREATURE_NOT_FOUND:
 			return "Creature not found";
-			break;
 		case LUA_ERROR_ITEM_NOT_FOUND:
 			return "Item not found";
-			break;
 		case LUA_ERROR_THING_NOT_FOUND:
 			return "Thing not found";
-			break;
 		case LUA_ERROR_TILE_NOT_FOUND:
 			return "Tile not found";
-			break;
 		case LUA_ERROR_HOUSE_NOT_FOUND:
 			return "House not found";
-			break;
 		case LUA_ERROR_COMBAT_NOT_FOUND:
 			return "Combat not found";
-			break;
 		case LUA_ERROR_CONDITION_NOT_FOUND:
 			return "Condition not found";
-			break;
 		case LUA_ERROR_AREA_NOT_FOUND:
 			return "Area not found";
-			break;
 		case LUA_ERROR_CONTAINER_NOT_FOUND:
 			return "Container not found";
-			break;
 		case LUA_ERROR_VARIANT_NOT_FOUND:
 			return "Variant not found";
-			break;
 		case LUA_ERROR_VARIANT_UNKNOWN:
 			return "Unknown variant type";
-			break;
 		case LUA_ERROR_SPELL_NOT_FOUND:
 			return "Spell not found";
-			break;
 		default:
-			return "Wrong error code!";
 			break;
 	}
+
+	return "Wrong error code!";
 }
 
 ScriptEnviroment LuaScriptInterface::m_scriptEnv[16];
@@ -1313,16 +1297,16 @@ void LuaScriptInterface::registerFunctions()
 	//getInstantSpellInfo(cid, name)
 	lua_register(m_luaState, "getInstantSpellInfo", LuaScriptInterface::luaGetInstantSpellInfo);
 
-	//getPlayerStorageValue(uid, valueid)
+	//getPlayerStorageValue(uid, key)
 	lua_register(m_luaState, "getPlayerStorageValue", LuaScriptInterface::luaGetPlayerStorageValue);
 
-	//setPlayerStorageValue(uid, valueid, newvalue)
+	//setPlayerStorageValue(uid, key, value)
 	lua_register(m_luaState, "setPlayerStorageValue", LuaScriptInterface::luaSetPlayerStorageValue);
 
-	//getGlobalStorageValue(valueid)
+	//getGlobalStorageValue(key)
 	lua_register(m_luaState, "getGlobalStorageValue", LuaScriptInterface::luaGetGlobalStorageValue);
 
-	//setGlobalStorageValue(valueid, newvalue)
+	//setGlobalStorageValue(key, value)
 	lua_register(m_luaState, "setGlobalStorageValue", LuaScriptInterface::luaSetGlobalStorageValue);
 
 	//getPlayersOnline()
@@ -1952,6 +1936,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//isInArray(array, value)
 	lua_register(m_luaState, "isInArray", LuaScriptInterface::luaIsInArray);
+
+	//wait(delay)
+	lua_register(m_luaState, "wait", LuaScriptInterface::luaWait);
 
 	//addEvent(callback, delay, ...)
 	lua_register(m_luaState, "addEvent", LuaScriptInterface::luaAddEvent);
@@ -4289,11 +4276,11 @@ int32_t LuaScriptInterface::luaDoCreateTeleport(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetPlayerStorageValue(lua_State* L)
 {
-	//getPlayerStorageValue(cid, valueid)
+	//getPlayerStorageValue(cid, key)
 	uint32_t key = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	if(const Player* player = env->getPlayerByUID(popNumber(L)))
+	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
 		std::string strValue;
 		if(player->getStorageValue(key, strValue))
@@ -4312,34 +4299,51 @@ int32_t LuaScriptInterface::luaGetPlayerStorageValue(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
 	}
+
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaSetPlayerStorageValue(lua_State* L)
 {
-	//setPlayerStorageValue(cid, valueid, newvalue)
-	std::string value = popString(L);
+	//setPlayerStorageValue(cid, key, value)
+	std::string value;
+
+	bool nil = false;
+	if(lua_isnil(L, -1))
+	{
+		nil = true;
+		lua_pop(L, 1);
+	}
+	else
+		value = popString(L);
+
 	uint32_t key = popNumber(L), cid = popNumber(L);
 	if(IS_IN_KEYRANGE(key, RESERVED_RANGE))
 	{
 		char buffer[60];
 		sprintf(buffer, "Accessing reserved range: %d", key);
+
 		reportErrorFunc(buffer);
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
-	}
+	}		nil = true;
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(cid))
 	{
-		player->addStorageValue(key, value);
-		lua_pushnumber(L, LUA_NO_ERROR);
+		if(!nil)
+			nil = player->addStorageValue(key, value);
+		else
+			nil = player->eraseStorageValue(key);
+
+		lua_pushnumber(L, nil ? LUA_NO_ERROR : LUA_ERROR);
 	}
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
 	}
+
 	return 1;
 }
 
@@ -5492,17 +5496,17 @@ int32_t LuaScriptInterface::luaCreateCombatArea(lua_State* L)
 int32_t LuaScriptInterface::luaCreateConditionObject(lua_State* L)
 {
 	//createConditionObject(type[, ticks[, buff[, subId]]])
-	int32_t params = lua_gettop(L), ticks = 0;
+	uint32_t params = lua_gettop(L), subId = 0;
 	if(params >= 4)
-		ticks = popNumber(L);
-
-	uint32_t subId = 0;
-	if(params >= 3)
 		subId = popNumber(L);
 
 	bool buff = false;
-	if(params >= 2)
+	if(params >= 3)
 		buff = popNumber(L) == LUA_TRUE;
+
+	int32_t ticks = 0;
+	if(params >= 2)
+		ticks = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(env->getScriptId() != EVENT_ID_LOADING)
@@ -6964,7 +6968,7 @@ int32_t LuaScriptInterface::luaSetItemOutfit(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetGlobalStorageValue(lua_State* L)
 {
-	//getGlobalStorageValue(valueid)
+	//getGlobalStorageValue(key)
 	ScriptEnviroment* env = getScriptEnv();
 
 	std::string strValue;
@@ -6984,12 +6988,25 @@ int32_t LuaScriptInterface::luaGetGlobalStorageValue(lua_State* L)
 
 int32_t LuaScriptInterface::luaSetGlobalStorageValue(lua_State* L)
 {
-	//setGlobalStorageValue(valueid, newvalue)
-	ScriptEnviroment* env = getScriptEnv();
+	//setGlobalStorageValue(value, key)
+	std::string value;
 
-	std::string value = popString(L);
-	env->addGlobalStorageValue(popNumber(L), value);
-	lua_pushnumber(L, LUA_NO_ERROR);
+	bool nil = false;
+	if(lua_isnil(L, -1))
+	{
+		nil = true;
+		lua_pop(L, 1);
+	}
+	else
+		value = popString(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	if(!nil)
+		nil = env->addGlobalStorageValue(popNumber(L), value);
+	else
+		nil = env->eraseGlobalStorageValue(popNumber(L));
+
+	lua_pushnumber(L, nil ? LUA_NO_ERROR : LUA_ERROR);
 	return 1;
 }
 
@@ -8334,7 +8351,14 @@ int32_t LuaScriptInterface::luaIsItemMovable(lua_State* L)
 		lua_pushnumber(L, LUA_TRUE);
 	else
 		lua_pushnumber(L, LUA_FALSE);
+
 	return 1;
+}
+
+int32_t LuaScriptInterface::luaWait(lua_State* L)
+{
+	//wait(delay)
+	return lua_yield(L, 1);
 }
 
 int32_t LuaScriptInterface::luaAddEvent(lua_State* L)

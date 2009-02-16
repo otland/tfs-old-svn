@@ -240,11 +240,6 @@ bool TalkAction::loadFunction(const std::string& functionName)
 	return false;
 }
 
-std::string TalkAction::getScriptEventName()
-{
-	return "onSay";
-}
-
 int32_t TalkAction::executeSay(Player* player, const std::string& words, const std::string& param, uint16_t channel)
 {
 	//onSay(cid, words, param, channel)

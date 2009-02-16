@@ -736,20 +736,17 @@ int32_t Player::getDefaultStats(stats_t stat)
 	{
 		case STAT_MAXHEALTH:
 			return getMaxHealth() - getVarStats(STAT_MAXHEALTH);
-			break;
 		case STAT_MAXMANA:
 			return getMaxMana() - getVarStats(STAT_MAXMANA);
-			break;
 		case STAT_SOUL:
 			return getSoul() - getVarStats(STAT_SOUL);
-			break;
 		case STAT_MAGICLEVEL:
 			return getMagicLevel() - getVarStats(STAT_MAGICLEVEL);
-			break;
 		default:
-			return 0;
 			break;
 	}
+
+	return 0;
 }
 
 Container* Player::getContainer(uint32_t cid)
@@ -856,7 +853,20 @@ void Player::dropLoot(Container* corpse)
 	}
 }
 
-void Player::addStorageValue(const uint32_t key, const std::string& value)
+bool Player::getStorageValue(const uint32_t key, std::string& value) const
+{
+	StorageMap::const_iterator it = storageMap.find(key);
+	if(it != storageMap.end())
+	{
+		value = it->second;
+		return true;
+	}
+
+	value = "-1";
+	return false;
+}
+
+bool Player::addStorageValue(const uint32_t key, const std::string& value) const
 {
 	if(IS_IN_KEYRANGE(key, RESERVED_RANGE))
 	{
@@ -866,33 +876,31 @@ void Player::addStorageValue(const uint32_t key, const std::string& value)
 			outfit.looktype = atoi(value.c_str()) >> 16;
 			outfit.addons = atoi(value.c_str()) & 0xFF;
 			if(outfit.addons <= 3)
+			{
 				m_playerOutfits.addOutfit(outfit);
+				return true;
+			}
 			else
 				std::cout << "[Warning - Player::addStorageValue]: Invalid addons value key: " << key << ", value: " << value << " for player: " << getName() << std::endl;
 		}
 		else
 			std::cout << "[Warning - Player::addStorageValue]: Unknown reserved key: " << key << " for player: " << getName() << std::endl;
 	}
-	else if(atoi(value.c_str()) == -1)
-		storageMap.erase(key);
 	else
-		storageMap[key] = value;
-}
-
-bool Player::getStorageValue(const uint32_t key, std::string& value) const
-{
-	StorageMap::const_iterator it;
-	it = storageMap.find(key);
-	if(it != storageMap.end())
 	{
-		value = it->second;
+		storageMap[key] = value;
 		return true;
 	}
-	else
-	{
-		value = "-1";
-		return false;
-	}
+
+	return false;
+}
+
+bool Player::eraseStorageValue(const uint32_t key) const
+{
+	if(IS_IN_KEYRANGE(key, RESERVED_RANGE))
+		std::cout << "[Warning - Player::eraseStorageValue]: Unknown reserved key: " << key << " for player: " << getName() << std::endl;
+
+	return storageMap.erase(key);
 }
 
 bool Player::canSee(const Position& pos) const
@@ -2403,15 +2411,16 @@ void Player::autoCloseContainers(const Container* container)
 	CloseList closeList;
 	for(ContainerVector::iterator it = containerVec.begin(); it != containerVec.end(); ++it)
 	{
-		Container* tmpcontainer = it->second;
-		while(tmpcontainer != NULL)
+		Container* tmp = it->second;
+		while(tmp != NULL)
 		{
-			if(tmpcontainer->isRemoved() || tmpcontainer == container)
+			if(tmp->isRemoved() || tmp == container)
 			{
 				closeList.push_back(it->first);
 				break;
 			}
-			tmpcontainer = dynamic_cast<Container*>(tmpcontainer->getParent());
+
+			tmp = dynamic_cast<Container*>(tmp->getParent());
 		}
 	}
 

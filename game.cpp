@@ -2529,9 +2529,8 @@ bool Game::playerMoveUpContainer(uint32_t playerId, uint8_t cid)
 	if(!parentContainer)
 		return false;
 
-	bool hasParent = (dynamic_cast<const Container*>(parentContainer->getParent()) != NULL);
 	player->addContainer(cid, parentContainer);
-	player->sendContainer(cid, parentContainer, hasParent);
+	player->sendContainer(cid, parentContainer, (dynamic_cast<const Container*>(parentContainer->getParent()) != NULL));
 	return true;
 }
 
@@ -3431,10 +3430,10 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 bool Game::playerWhisper(Player* player, const std::string& text)
 {
 	SpectatorVec list;
+	SpectatorVec::const_iterator it;
 	getSpectators(list, player->getPosition(), false, false,
 		Map::maxClientViewportX, Map::maxClientViewportX,
 		Map::maxClientViewportY, Map::maxClientViewportY);
-	SpectatorVec::const_iterator it;
 
 	//send to client
 	Player* tmpPlayer = NULL;
@@ -3503,7 +3502,6 @@ bool Game::playerSpeakTo(Player* player, SpeakClasses type, const std::string& r
 
 	toPlayer->sendCreatureSay(player, type, text);
 	toPlayer->onCreatureSay(player, type, text);
-
 	if(toPlayer->isInGhostMode() && !ghost)
 	{
 		player->sendTextMessage(MSG_STATUS_SMALL, "A player with this name is not online.");
@@ -4337,8 +4335,8 @@ void Game::addDistanceEffect(const Position& fromPos, const Position& toPos, uin
 {
 	SpectatorVec list;
 
-	getSpectators(list, fromPos, false, true);
-	getSpectators(list, toPos, true, true);
+	getSpectators(list, fromPos, false, false);
+	getSpectators(list, toPos, true, false);
 
 	addDistanceEffect(list, fromPos, toPos, effect);
 }

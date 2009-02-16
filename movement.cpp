@@ -583,39 +583,58 @@ MoveEvent::~MoveEvent()
 	//
 }
 
-std::string MoveEvent::getScriptEventName()
+std::string MoveEvent::getScriptEventName() const
 {
 	switch(m_eventType)
 	{
 		case MOVE_EVENT_STEP_IN:
 			return "onStepIn";
-			break;
 
 		case MOVE_EVENT_STEP_OUT:
 			return "onStepOut";
-			break;
 
 		case MOVE_EVENT_EQUIP:
 			return "onEquip";
-			break;
 
 		case MOVE_EVENT_DEEQUIP:
 			return "onDeEquip";
-			break;
 
 		case MOVE_EVENT_ADD_ITEM:
 			return "onAddItem";
-			break;
 
 		case MOVE_EVENT_REMOVE_ITEM:
 			return "onRemoveItem";
-			break;
 
 		default:
-			std::cout << "[Error - MoveEvent::getScriptEventName] No valid event type." << std::endl;
-			return "";
 			break;
 	}
+
+	std::cout << "[Error - MoveEvent::getScriptEventName] No valid event type." << std::endl;
+	return "";
+}
+
+std::string MoveEvent::getScriptEventParams() const
+{
+	switch(m_eventType)
+	{
+		case MOVE_EVENT_STEP_IN:
+		case MOVE_EVENT_STEP_OUT:
+			return "cid, item, position, fromPosition";
+
+		case MOVE_EVENT_EQUIP:
+		case MOVE_EVENT_DEEQUIP:
+			return "cid, item, slot";
+
+		case MOVE_EVENT_ADD_ITEM:
+		case MOVE_EVENT_REMOVE_ITEM:
+			return "moveItem, tileItem, position, cid";
+
+		default:
+			break;
+	}
+
+	std::cout << "[Error - MoveEvent::getScriptEventParams] No valid event type." << std::endl;
+	return "";
 }
 
 bool MoveEvent::configureEvent(xmlNodePtr p)

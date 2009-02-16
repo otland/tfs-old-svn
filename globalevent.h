@@ -43,16 +43,17 @@ class GlobalEvents : public BaseEvents
 		void onThink(uint32_t interval);
 
 	protected:
-		virtual LuaScriptInterface& getScriptInterface();
-		virtual std::string getScriptBaseName();
-		virtual Event* getEvent(const std::string& nodeName);
-		virtual bool registerEvent(Event* event, xmlNodePtr p);
+		virtual std::string getScriptBaseName() const;
 		virtual void clear();
 
-		typedef std::list< std::pair<std::string, GlobalEvent* > > GlobalEventList;
-		GlobalEventList eventsMap;
+		virtual Event* getEvent(const std::string& nodeName);
+		virtual bool registerEvent(Event* event, xmlNodePtr p);
 
+		virtual LuaScriptInterface& getScriptInterface();
 		LuaScriptInterface m_scriptInterface;
+
+		typedef std::list< std::pair<std::string, GlobalEvent* > > GlobalEventList;
+		GlobalEventList eventsMap;
 };
 
 class GlobalEvent : public Event
@@ -62,6 +63,7 @@ class GlobalEvent : public Event
 		virtual ~GlobalEvent() {}
 
 		virtual bool configureEvent(xmlNodePtr p);
+		int32_t executeThink(uint32_t interval, uint32_t lastExecution);
 
 		std::string getName() const {return m_name;}
 		uint32_t getInterval() const {return m_interval;}
@@ -69,11 +71,9 @@ class GlobalEvent : public Event
 		uint32_t getLastExecution() const {return m_lastExecution;}
 		void setLastExecution(uint32_t time) {m_lastExecution = time;}
 
-		//scripting
-		int32_t executeThink(uint32_t interval, uint32_t lastExecution);
-
 	protected:
-		virtual std::string getScriptEventName();
+		virtual std::string getScriptEventName() const {return "onThink";}
+		virtual std::String getScriptEventParams() const {return "interval, lastExecution";}
 
 		std::string m_name;
 		uint32_t m_interval;

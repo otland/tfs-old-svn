@@ -46,12 +46,13 @@ class BaseEvents
 		bool isLoaded() const {return m_loaded;}
 
 	protected:
+		virtual std::string getScriptBaseName() const = 0;
+		virtual void clear() = 0;
+
 		virtual bool registerEvent(Event* event, xmlNodePtr p) = 0;
 		virtual Event* getEvent(const std::string& nodeName) = 0;
 
 		virtual LuaScriptInterface& getScriptInterface() = 0;
-		virtual std::string getScriptBaseName() = 0;
-		virtual void clear() = 0;
 
 		bool m_loaded;
 };
@@ -72,7 +73,8 @@ class Event
 		virtual bool isScripted() const {return m_scripted != EVENT_SCRIPT_FALSE;}
 
 	protected:
-		virtual std::string getScriptEventName() = 0;
+		virtual std::string getScriptEventName() const = 0;
+		virtual std::string getScriptEventParams() const = 0;
 
 		LuaScriptInterface* m_scriptInterface;
 		EventScript_t m_scripted;

@@ -63,31 +63,32 @@ class MoveEvents : public BaseEvents
 		MoveEvent* getEvent(Item* item, MoveEvent_t eventType);
 
 	protected:
-		typedef std::map<int32_t , MoveEventList> MoveListMap;
-		typedef std::map<Position, MoveEventList> MovePosListMap;
+		virtual std::string getScriptBaseName() const;
 		virtual void clear();
-		virtual LuaScriptInterface& getScriptInterface();
-		virtual std::string getScriptBaseName();
+
 		virtual Event* getEvent(const std::string& nodeName);
 		virtual bool registerEvent(Event* event, xmlNodePtr p);
+
+		virtual LuaScriptInterface& getScriptInterface();
+		LuaScriptInterface m_scriptInterface;
+
+		void addEvent(MoveEvent* moveEvent, int32_t id, MoveListMap& map);
+		void addEvent(MoveEvent* moveEvent, Position pos, MovePosListMap& map);
+
+		MoveEvent* getEvent(Item* item, MoveEvent_t eventType, slots_t slot);
+		MoveEvent* getEvent(Tile* tile, MoveEvent_t eventType);
 
 		void registerItemID(int32_t itemId, MoveEvent_t eventType);
 		void registerActionID(int32_t actionId, MoveEvent_t eventType);
 		void registerUniqueID(int32_t uniqueId, MoveEvent_t eventType);
 
-		void addEvent(MoveEvent* moveEvent, int32_t id, MoveListMap& map);
-
-		void addEvent(MoveEvent* moveEvent, Position pos, MovePosListMap& map);
-		MoveEvent* getEvent(Tile* tile, MoveEvent_t eventType);
-
-		MoveEvent* getEvent(Item* item, MoveEvent_t eventType, slots_t slot);
+		typedef std::map<int32_t, MoveEventList> MoveListMap;
+		typedef std::map<Position, MoveEventList> MovePosListMap;
 
 		MoveListMap m_uniqueIdMap;
 		MoveListMap m_actionIdMap;
 		MoveListMap m_itemIdMap;
 		MovePosListMap m_positionMap;
-
-		LuaScriptInterface m_scriptInterface;
 };
 
 typedef uint32_t (StepFunction)(Creature* creature, Item* item, const Position& pos);
@@ -128,11 +129,11 @@ class MoveEvent : public Event
 		const VocEquipMap& getVocEquipMap() const {return vocEquipMap;}
 
 	protected:
-		virtual std::string getScriptEventName();
+		virtual std::string getScriptEventName() const;
+		virtual std::string getScriptEventParams() const;
 
 		static StepFunction StepInField;
 		static StepFunction StepOutField;
-
 		static MoveFunction AddItemField;
 		static MoveFunction RemoveItemField;
 		static EquipFunction EquipItem;
@@ -142,15 +143,16 @@ class MoveEvent : public Event
 		StepFunction* stepFunction;
 		MoveFunction* moveFunction;
 		EquipFunction* equipFunction;
+
+		uint32_t wieldInfo;
 		uint32_t slot;
 
-		//onEquip information
 		int32_t reqLevel;
 		int32_t reqMagLevel;
 		bool premium;
-		std::string vocationString;
-		uint32_t wieldInfo;
+
 		VocEquipMap vocEquipMap;
+		std::string vocationString;
 };
 
 #endif

@@ -46,6 +46,7 @@ ReturnValue Mailbox::__queryAdd(int32_t index, const Thing* thing, uint32_t coun
 		if(canSend(item))
 			return RET_NOERROR;
 	}
+
 	return RET_NOTPOSSIBLE;
 }
 
@@ -121,14 +122,19 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 	bool tmp = IOLoginData::getInstance()->playerExists(receiver);
 	if(Player* player = g_game.getPlayerByName(receiver))
 	{
-		if(Depot* depot = player->getDepot(dp, true))
+		Depot* depot = player->getDepot(dp, true);
+		if(depot && g_game.internalMoveItem(actor, item->getParent(), depot, INDEX_WHEREEVER,
+			item, item->getItemCount(), NULL, FLAG_NOLIMIT) == RET_NOERROR)
 		{
-			if(g_game.internalMoveItem(actor, item->getParent(), depot, INDEX_WHEREEVER,
-				item, item->getItemCount(), NULL, FLAG_NOLIMIT) == RET_NOERROR)
-			{
-				g_game.transformItem(item, item->getID() + 1);
-				return true;
-			}
+			g_game.transformItem(item, item->getID() + 1)
+			if(player->getContainerID() != -1)
+				player->sendTextMessage(MSG_INFO_DESCR, "New mail has arrived.");
+
+			CreatureEventList mailEvents = player->getCreatureEvents(CREATURE_EVENT_MAIL);
+			for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
+				(*it)->executeOnMail(player, actor, item);
+
+			return true;
 		}
 	}
 	else if(tmp)
@@ -136,20 +142,15 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 		Player* player = new Player(receiver, NULL);
 		if(!IOLoginData::getInstance()->loadPlayer(player, receiver))
 		{
-			#ifdef __DEBUG_MAILBOX__
-			std::cout << "Failure: [Mailbox::sendItem], can not load player: " << receiver << std::endl;
-			#endif
-			delete player;
-			return false;
-		}
-
-		if(Depot* depot = player->getDepot(dp, true))
-		{
-			if(g_game.internalMoveItem(actor, item->getParent(), depot, INDEX_WHEREEVER,
-				item, item->getItemCount(), NULL, FLAG_NOLIMIT) == RET_NOERROR)
+			Depot* depot = player->getDepot(dp, true);
+			if(depot && g_game.internalMoveItem(actor, item->getParent(), depot, INDEX_WHEREEVER, item, item->getItemCount(),
+				NULL, FLAG_NOLIMIT) == RET_NOERROR && IOLoginData::getInstance()->savePlayer(player))
 			{
 				g_game.transformItem(item, item->getID() + 1);
-				IOLoginData::getInstance()->savePlayer(player);
+				CreatureEventList mailEvents = player->getCreatureEvents(CREATURE_EVENT_MAIL);
+				for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
+					(*it)->executeOnMail(player, actor, item);
+
 				delete player;
 				return true;
 			}
@@ -181,7 +182,7 @@ bool Mailbox::getReceiver(Item* item, std::string& name, uint32_t& dp)
 	}
 	else if(item->getID() != ITEM_LETTER) /**The item is somehow not a parcel or letter**/
 	{
-		std::cout << "Mailbox::getReciver error, trying to get reciecer from unkown item! ID:: " << item->getID() << "." << std::endl;
+		std::cout << "[Error - Mailbox::getReciver] Trying to get receiver from unkown item with id: " << item->getID() << "!" << std::endl;
 		return false;
 	}
 

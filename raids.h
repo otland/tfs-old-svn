@@ -58,22 +58,17 @@ typedef std::list<MonsterSpawn*> MonsterSpawnList;
 class Raids
 {
 	public:
+		virtual ~Raids();
 		static Raids* getInstance()
 		{
 			static Raids instance;
 			return &instance;
 		}
 
-		virtual ~Raids();
-
 		bool loadFromXml();
 		bool startup();
-
 		void clear();
 		bool reload();
-
-		bool isLoaded() const {return loaded;}
-		bool isStarted() const {return started;}
 
 		Raid* getRunning() const {return running;}
 		void setRunning(Raid* newRunning) {running = newRunning;}
@@ -81,16 +76,21 @@ class Raids
 		uint64_t getLastRaidEnd() const {return lastRaidEnd;}
 		void setLastRaidEnd(uint64_t newLastRaidEnd) {lastRaidEnd = newLastRaidEnd;}
 
+		bool isLoaded() const {return loaded;}
+		bool isStarted() const {return started;}
+
 		Raid* getRaidByName(const std::string& name);
 		void checkRaids();
 
 	private:
 		Raids();
-		RaidList raidList;
 		bool loaded, started;
+
+		RaidList raidList;
 		Raid* running;
-		uint64_t lastRaidEnd;
+
 		uint32_t checkRaidsEvent;
+		uint64_t lastRaidEnd;
 };
 
 class Raid
@@ -102,31 +102,34 @@ class Raid
 		bool loadFromXml(const std::string& _filename);
 
 		void startRaid();
-		void executeRaidEvent(RaidEvent* raidEvent);
 		void resetRaid();
 
-		bool isLoaded() const {return loaded;}
+		void executeRaidEvent(RaidEvent* raidEvent);
+		RaidEvent* getNextRaidEvent();
+		void stopEvents();
+
 		std::string getName() const {return name;}
+
 		uint64_t getMargin() const {return margin;}
 		uint32_t getInterval() const {return interval;}
+
+		bool isLoaded() const {return loaded;}
 		bool isEnabled() const {return enabled;}
 
-		RaidEvent* getNextRaidEvent();
 		void setState(RaidState_t newState) {state = newState;}
-		void stopEvents();
 
 	private:
 		bool loaded;
+		RaidState_t state;
 		RaidEventVector raidEvents;
+
+		uint32_t nextEvent;
+		uint32_t nextEventEvent;
 
 		std::string name;
 		uint32_t interval;
-		uint32_t nextEvent;
 		uint64_t margin;
 		bool enabled;
-
-		RaidState_t state;
-		uint32_t nextEventEvent;
 };
 
 class RaidEvent
@@ -136,8 +139,8 @@ class RaidEvent
 		virtual ~RaidEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
-
 		virtual bool executeEvent() const {return false;}
+
 		uint32_t getDelay() const {return m_delay;}
 		void setDelay(uint32_t newDelay) {m_delay = newDelay;}
 
@@ -207,7 +210,9 @@ class ScriptEvent : public RaidEvent, public Event
 		virtual bool configureEvent(xmlNodePtr p) {return false;}
 
 	protected:
-		virtual std::string getScriptEventName();
+		virtual std::string getScriptEventName() const {return "onRaid";}
+		virtual std::string getScriptEventParams() const {return "";}
+
 		static LuaScriptInterface m_scriptInterface;
 };
 

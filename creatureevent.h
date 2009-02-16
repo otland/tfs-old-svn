@@ -32,9 +32,10 @@ enum CreatureEventType_t
 	CREATURE_EVENT_LOGOUT,
 	CREATURE_EVENT_CHANNEL_JOIN,
 	CREATURE_EVENT_CHANNEL_LEAVE,
-	CREATURE_EVENT_THINK,
 	CREATURE_EVENT_ADVANCE,
 	CREATURE_EVENT_LOOK,
+	CREATURE_EVENT_MAIL,
+	CREATURE_EVENT_THINK,
 	CREATURE_EVENT_STATSCHANGE,
 	CREATURE_EVENT_ATTACK,
 	CREATURE_EVENT_KILL,
@@ -65,17 +66,18 @@ class CreatureEvents : public BaseEvents
 		CreatureEvent* getEventByName(const std::string& name, bool forceLoaded = true);
 
 	protected:
-		virtual LuaScriptInterface& getScriptInterface();
-		virtual std::string getScriptBaseName();
+		virtual std::string getScriptBaseName() const;
+		virtual void clear();
+
 		virtual Event* getEvent(const std::string& nodeName);
 		virtual bool registerEvent(Event* event, xmlNodePtr p);
-		virtual void clear();
+
+		virtual LuaScriptInterface& getScriptInterface();
+		LuaScriptInterface m_scriptInterface;
 
 		//creature events
 		typedef std::map<std::string, CreatureEvent*> CreatureEventList;
 		CreatureEventList m_creatureEvents;
-
-		LuaScriptInterface m_scriptInterface;
 };
 
 typedef std::list<uint32_t> UsersList;
@@ -88,12 +90,12 @@ class CreatureEvent : public Event
 
 		virtual bool configureEvent(xmlNodePtr p);
 
-		CreatureEventType_t getEventType() const {return m_type;}
-		const std::string& getName() const {return m_eventName;}
 		bool isLoaded() const {return m_isLoaded;}
+		const std::string& getName() const {return m_eventName;}
+		CreatureEventType_t getEventType() const {return m_type;}
 
-		void clearEvent();
 		void copyEvent(CreatureEvent* creatureEvent);
+		void clearEvent();
 
 		//scripting
 		uint32_t executeOnLogin(Player* player);
@@ -102,6 +104,7 @@ class CreatureEvent : public Event
 		uint32_t executeOnChannelLeave(Player* player, uint16_t channelId, UsersList usersList);
 		uint32_t executeOnAdvance(Player* player, skills_t skill, uint32_t oldLevel, uint32_t newLevel);
 		uint32_t executeOnLook(Player* player, const Position& position, uint8_t stackpos);
+		uint32_t executeOnMail(Player* receiver, Creature* sender, Item* item);
 		uint32_t executeOnThink(Creature* creature, uint32_t interval);
 		uint32_t executeOnStatsChange(Creature* creature, Creature* attacker, StatsChange_t type, CombatType_t combat, int32_t value);
 		uint32_t executeOnAttack(Creature* creature, Creature* target);
@@ -111,11 +114,12 @@ class CreatureEvent : public Event
 		//
 
 	protected:
-		virtual std::string getScriptEventName();
+		virtual std::string getScriptEventName() const;
+		virtual std::string getScriptEventParams() const;
 
+		bool m_isLoaded;
 		std::string m_eventName;
 		CreatureEventType_t m_type;
-		bool m_isLoaded;
 };
 
 #endif

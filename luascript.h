@@ -125,8 +125,9 @@ class ScriptEnviroment
 		bool removeResult(uint32_t rid);
 		DBResult* getResult(uint32_t rid);
 
-		void addGlobalStorageValue(const uint32_t key, const std::string& value);
 		bool getGlobalStorageValue(const uint32_t key, std::string& value) const;
+		bool addGlobalStorageValue(const uint32_t key, const std::string& value);
+		bool eraseGlobalStorageValue(const uint32_t key);
 
 		void streamVariant(std::stringstream& stream, const std::string& local, const LuaVariant& var);
 		void streamThing(std::stringstream& stream, const std::string& local, Thing* thing, uint32_t thingId);
@@ -691,6 +692,7 @@ class LuaScriptInterface
 		static int32_t luaGetFluidSourceType(lua_State* L);
 		static int32_t luaGetHighscoreString(lua_State* L);
 		static int32_t luaIsInArray(lua_State* L);
+		static int32_t luaWait(lua_State* L);
 		static int32_t luaAddEvent(lua_State* L);
 		static int32_t luaStopEvent(lua_State* L);
 		static int32_t luaRegisterCreatureEvent(lua_State* L);

@@ -20,13 +20,13 @@
 
 #ifndef __OTSERV_ACTIONS_H__
 #define __OTSERV_ACTIONS_H__
-
-#include "position.h"
-
 #include <map>
-#include "luascript.h"
+
 #include "baseevents.h"
+#include "luascript.h"
+
 #include "thing.h"
+#include "position.h"
 
 class Action;
 class Container;
@@ -58,20 +58,14 @@ class Actions : public BaseEvents
 		bool hasAction(const Item* item) const {return (getAction(item) != NULL);}
 
 	protected:
-		bool executeUse(Action* action, Player* player, Item* item, const PositionEx& posEx, uint32_t creatureId);
-		ReturnValue internalUseItem(Player* player, const Position& pos,
-			uint8_t index, Item* item, uint32_t creatureId);
-		bool executeUseEx(Action* action, Player* player, Item* item, const PositionEx& fromPosEx,
-			const PositionEx& toPosEx, bool isHotkey, uint32_t creatureId);
-		ReturnValue internalUseItemEx(Player* player, const PositionEx& fromPosEx, const PositionEx& toPosEx,
-			Item* item, bool isHotkey, uint32_t creatureId);
-		void showUseHotkeyMessage(Player* player, int32_t id, uint32_t count);
-
-		virtual void clear();
-		virtual LuaScriptInterface& getScriptInterface();
 		virtual std::string getScriptBaseName();
+		virtual void clear();
+
 		virtual Event* getEvent(const std::string& nodeName);
 		virtual bool registerEvent(Event* event, xmlNodePtr p);
+
+		virtual LuaScriptInterface& getScriptInterface();
+		LuaScriptInterface m_scriptInterface;
 
 		void registerItemID(int32_t itemId, Event* event);
 		void registerActionID(int32_t actionId, Event* event);
@@ -82,10 +76,18 @@ class Actions : public BaseEvents
 		ActionUseMap uniqueItemMap;
 		ActionUseMap actionItemMap;
 
-		Action* getAction(const Item* item, ActionType_t type = ACTION_ANY) const;
-		void clearMap(ActionUseMap& map);
+		bool executeUse(Action* action, Player* player, Item* item, const PositionEx& posEx, uint32_t creatureId);
+		ReturnValue internalUseItem(Player* player, const Position& pos,
+			uint8_t index, Item* item, uint32_t creatureId);
+		bool executeUseEx(Action* action, Player* player, Item* item, const PositionEx& fromPosEx,
+			const PositionEx& toPosEx, bool isHotkey, uint32_t creatureId);
+		ReturnValue internalUseItemEx(Player* player, const PositionEx& fromPosEx, const PositionEx& toPosEx,
+			Item* item, bool isHotkey, uint32_t creatureId);
 
-		LuaScriptInterface m_scriptInterface;
+		Action* getAction(const Item* item, ActionType_t type = ACTION_ANY) const;
+
+		void clearMap(ActionUseMap& map);
+		void showUseHotkeyMessage(Player* player, int32_t id, uint32_t count);
 };
 
 typedef bool (ActionFunction)(Player* player, Item* item, const PositionEx& posFrom, const PositionEx& posTo, bool extendedUse, uint32_t creatureId);
@@ -117,7 +119,8 @@ class Action : public Event
 		ActionFunction* function;
 
 	protected:
-		virtual std::string getScriptEventName();
+		virtual std::string getScriptEventName() const {return "onUse";}
+		virtual std::string getScriptEventParams() const {return "cid, item, fromPosition, itemEx, toPosition";}
 
 		static ActionFunction increaseItemId;
 		static ActionFunction decreaseItemId;

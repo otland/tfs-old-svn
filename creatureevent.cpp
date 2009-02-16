@@ -75,26 +75,22 @@ bool CreatureEvents::registerEvent(Event* event, xmlNodePtr p)
 
 	if(creatureEvent->getEventType() == CREATURE_EVENT_NONE)
 	{
-		std::cout << "[Error - CreatureEvents::registerEvent] Trying to register event without type!." << std::endl;
+		std::cout << "[Error - CreatureEvents::registerEvent] Trying to register event without type!" << std::endl;
 		return false;
 	}
 
-	CreatureEvent* oldEvent = getEventByName(creatureEvent->getName(), false);
-	if(oldEvent)
+	if(CreatureEvent* oldEvent = getEventByName(creatureEvent->getName(), false))
 	{
-		//if there was an event with the same that is not loaded
-		//(happens when realoading), it is reused
-		if(oldEvent->isLoaded() == false && oldEvent->getEventType() == creatureEvent->getEventType())
+		//if there was an event with the same that is not loaded (happens when realoading), it is reused
+		if(!oldEvent->isLoaded() && oldEvent->getEventType() == creatureEvent->getEventType())
 			oldEvent->copyEvent(creatureEvent);
 
 		return false;
 	}
-	else
-	{
-		//if not, register it normally
-		m_creatureEvents[creatureEvent->getName()] = creatureEvent;
-		return true;
-	}
+
+	//if not, register it normally
+	m_creatureEvents[creatureEvent->getName()] = creatureEvent;
+	return true;
 }
 
 CreatureEvent* CreatureEvents::getEventByName(const std::string& name, bool forceLoaded /*= true*/)
@@ -152,50 +148,49 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 {
 	std::string str;
 	//Name that will be used in monster xml files and lua function to register events to reference this event
-	if(readXMLString(p, "name", str))
-		m_eventName = str;
-	else
+	if(!readXMLString(p, "name", str))
 	{
 		std::cout << "[Error - CreatureEvent::configureEvent] No name for creature event." << std::endl;
 		return false;
 	}
 
-	if(readXMLString(p, "type", str))
-	{
-		std::string tmpStr = asLowerCaseString(str);
-		if(tmpStr == "login")
-			m_type = CREATURE_EVENT_LOGIN;
-		else if(tmpStr == "logout")
-			m_type = CREATURE_EVENT_LOGOUT;
-		else if(tmpStr == "joinchannel")
-			m_type = CREATURE_EVENT_CHANNEL_JOIN;
-		else if(tmpStr == "leavechannel")
-			m_type = CREATURE_EVENT_CHANNEL_LEAVE;
-		else if(tmpStr == "think")
-			m_type = CREATURE_EVENT_THINK;
-		else if(tmpStr == "advance")
-			m_type = CREATURE_EVENT_ADVANCE;
-		else if(tmpStr == "look")
-			m_type = CREATURE_EVENT_LOOK;
-		else if(tmpStr == "statschange")
-			m_type = CREATURE_EVENT_STATSCHANGE;
-		else if(tmpStr == "attack")
-			m_type = CREATURE_EVENT_ATTACK;
-		else if(tmpStr == "kill")
-			m_type = CREATURE_EVENT_KILL;
-		else if(tmpStr == "death")
-			m_type = CREATURE_EVENT_DEATH;
-		else if(tmpStr == "preparedeath")
-			m_type = CREATURE_EVENT_PREPAREDEATH;
-		else
-		{
-			std::cout << "[Error - CreatureEvent::configureEvent] No valid type for creature event." << str << std::endl;
-			return false;
-		}
-	}
-	else
+	m_eventName = str;
+	if(!readXMLString(p, "type", str))
 	{
 		std::cout << "[Error - CreatureEvent::configureEvent] No type for creature event."  << std::endl;
+		return false;
+	}
+
+	std::string tmpStr = asLowerCaseString(str);
+	if(tmpStr == "login")
+		m_type = CREATURE_EVENT_LOGIN;
+	else if(tmpStr == "logout")
+		m_type = CREATURE_EVENT_LOGOUT;
+	else if(tmpStr == "joinchannel")
+		m_type = CREATURE_EVENT_CHANNEL_JOIN;
+	else if(tmpStr == "leavechannel")
+		m_type = CREATURE_EVENT_CHANNEL_LEAVE;
+	else if(tmpStr == "advance")
+		m_type = CREATURE_EVENT_ADVANCE;
+	else if(tmpStr == "look")
+		m_type = CREATURE_EVENT_LOOK;
+	else if(tmpStr == "mail")
+		m_type = CREATURE_EVENT_MAIL;
+	else if(tmpStr == "think")
+		m_type = CREATURE_EVENT_THINK;
+	else if(tmpStr == "statschange")
+		m_type = CREATURE_EVENT_STATSCHANGE;
+	else if(tmpStr == "attack")
+		m_type = CREATURE_EVENT_ATTACK;
+	else if(tmpStr == "kill")
+		m_type = CREATURE_EVENT_KILL;
+	else if(tmpStr == "death")
+		m_type = CREATURE_EVENT_DEATH;
+	else if(tmpStr == "preparedeath")
+		m_type = CREATURE_EVENT_PREPAREDEATH;
+	else
+	{
+		std::cout << "[Error - CreatureEvent::configureEvent] No valid type for creature event." << str << std::endl;
 		return false;
 	}
 
@@ -203,9 +198,8 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 	return true;
 }
 
-std::string CreatureEvent::getScriptEventName()
+std::string CreatureEvent::getScriptEventName() const
 {
-	//Depending on the type script event name is different
 	switch(m_type)
 	{
 		case CREATURE_EVENT_LOGIN:
@@ -222,6 +216,8 @@ std::string CreatureEvent::getScriptEventName()
 			return "onAdvance";
 		case CREATURE_EVENT_LOOK:
 			return "onLook";
+		case CREATURE_EVENT_MAIL:
+			return "onMail";
 		case CREATURE_EVENT_STATSCHANGE:
 			return "onStatsChange";
 		case CREATURE_EVENT_ATTACK:
@@ -232,6 +228,41 @@ std::string CreatureEvent::getScriptEventName()
 			return "onDeath";
 		case CREATURE_EVENT_PREPAREDEATH:
 			return "onPrepareDeath";
+		case CREATURE_EVENT_NONE:
+		default:
+			break;
+	}
+
+	return "";
+}
+
+std::string CreatureEvent::getScriptEventParams() const
+{
+	switch(m_type)
+	{
+		case CREATURE_EVENT_LOGIN:
+		case CREATURE_EVENT_LOGOUT:
+			return "cid";
+		case CREATURE_EVENT_CHANNEL_JOIN:
+		case CREATURE_EVENT_CHANNEL_LEAVE:
+			return "cid, channel, users";
+		case CREATURE_EVENT_ADVANCE:
+			return "cid, skill, oldLevel, newLevel";
+		case CREATURE_EVENT_LOOK:
+			return "cid, position";
+		case CREATURE_EVENT_MAIL:
+			return "rid, sid, item";
+		case CREATURE_EVENT_THINK:
+			return "cid, interval";
+		case CREATURE_EVENT_STATSCHANGE:
+			return "cid, attacker, type, combat, value";
+		case CREATURE_EVENT_ATTACK:
+		case CREATURE_EVENT_KILL:
+			return "cid, target";
+		case CREATURE_EVENT_DEATH:
+			return "cid, corpse, lastHitKiller, mostDamageKiller";
+		case CREATURE_EVENT_PREPAREDEATH:
+			return "cid, lastHitKiller, mostDamageKiller";
 		case CREATURE_EVENT_NONE:
 		default:
 			break;
@@ -614,6 +645,65 @@ uint32_t CreatureEvent::executeOnLook(Player* player, const Position& position, 
 	else
 	{
 		std::cout << "[Error - CreatureEvent::executeOnLook] Call stack overflow." << std::endl;
+		return 0;
+	}
+}
+
+uint32_t CreatureEvent::executeOnMail(Player* receiver, Creature* sender, Item* item)
+{
+	//onMail(rid, sid, item)
+	if(m_scriptInterface->reserveScriptEnv())
+	{
+		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		if(m_scripted == EVENT_SCRIPT_BUFFER)
+		{
+			env->setRealPos(sender->getPosition());
+
+			std::stringstream scriptstream;
+			scriptstream << "rid = " << env->addThing(receiver) << std::endl;
+			scriptstream << "sid = " << env->addThing(sender) << std::endl;
+			env->streamThing(scriptstream, "item", item);
+
+			scriptstream << m_scriptData;
+			int32_t result = LUA_NO_ERROR;
+			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			{
+				lua_State* L = m_scriptInterface->getLuaState();
+				result = m_scriptInterface->getField(L, "_result");
+			}
+
+			m_scriptInterface->releaseScriptEnv();
+			return (result == LUA_TRUE);
+		}
+		else
+		{
+			#ifdef __DEBUG_LUASCRIPTS__
+			char desc[30];
+			sprintf(desc, "%s", sender->getName().c_str());
+			env->setEventDesc(desc);
+			#endif
+
+			env->setScriptId(m_scriptId, m_scriptInterface);
+			env->setRealPos(sender->getPosition());
+
+			uint32_t rid = env->addThing(receiver);
+			uint32_t sid = env->addThing(sender);
+			lua_State* L = m_scriptInterface->getLuaState();
+
+			m_scriptInterface->pushFunction(m_scriptId);
+			lua_pushnumber(L, rid);
+			lua_pushnumber(L, sid);
+			LuaScriptInterface::pushThing(L, item);
+
+			int32_t result = m_scriptInterface->callFunction(3);
+			m_scriptInterface->releaseScriptEnv();
+
+			return (result == LUA_TRUE);
+		}
+	}
+	else
+	{
+		std::cout << "[Error - CreatureEvent::executeOnMail] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
