@@ -245,9 +245,9 @@ std::string CreatureEvent::getScriptEventParams() const
 		case CREATURE_EVENT_LOOK:
 			return "cid, position";
 		case CREATURE_EVENT_MAIL_SEND:
-			return "cid, receiver, item";
+			return "cid, receiver, item, openDepot";
 		case CREATURE_EVENT_MAIL_RECEIVE:
-			return "cid, sender, item";
+			return "cid, sender, item, openDepot";
 		case CREATURE_EVENT_THINK:
 			return "cid, interval";
 		case CREATURE_EVENT_STATSCHANGE:
@@ -577,7 +577,7 @@ uint32_t CreatureEvent::executeOnAdvance(Player* player, skills_t skill, uint32_
 	}
 }
 
-uint32_t CreatureEvent::executeOnMailSend(Player* player, Player* receiver, Item* item)
+uint32_t CreatureEvent::executeOnMailSend(Player* player, Player* receiver, Item* item, bool openDepot)
 {
 	//onSendMail(cid, receiver, item)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -591,6 +591,7 @@ uint32_t CreatureEvent::executeOnMailSend(Player* player, Player* receiver, Item
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
 			scriptstream << "receiver = " << env->addThing(receiver) << std::endl;
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
+			scriptstream << "openDepot = " << openDepot ? LUA_TRUE : LUA_FALSE << std::endl;
 
 			scriptstream << m_scriptData;
 			int32_t result = LUA_NO_ERROR;
@@ -620,8 +621,9 @@ uint32_t CreatureEvent::executeOnMailSend(Player* player, Player* receiver, Item
 			lua_pushnumber(L, env->addThing(player));
 			lua_pushnumber(L, env->addThing(receiver));
 			LuaScriptInterface::pushThing(L, item, env->addThing(item));
+			lua_pushnumber(L, openDepot ? LUA_TRUE : LUA_FALSE);
 
-			int32_t result = m_scriptInterface->callFunction(3);
+			int32_t result = m_scriptInterface->callFunction(4);
 			m_scriptInterface->releaseScriptEnv();
 			return (result == LUA_TRUE);
 		}
@@ -633,7 +635,7 @@ uint32_t CreatureEvent::executeOnMailSend(Player* player, Player* receiver, Item
 	}
 }
 
-uint32_t CreatureEvent::executeOnMailReceive(Player* player, Player* sender, Item* item)
+uint32_t CreatureEvent::executeOnMailReceive(Player* player, Player* sender, Item* item, bool openDepot)
 {
 	//onReceiveMail(cid, sender, item)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -647,6 +649,7 @@ uint32_t CreatureEvent::executeOnMailReceive(Player* player, Player* sender, Ite
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
 			scriptstream << "sender = " << env->addThing(sender) << std::endl;
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
+			scriptstream << "openDepot = " << openDepot ? LUA_TRUE : LUA_FALSE << std::endl;
 
 			scriptstream << m_scriptData;
 			int32_t result = LUA_NO_ERROR;
@@ -676,8 +679,9 @@ uint32_t CreatureEvent::executeOnMailReceive(Player* player, Player* sender, Ite
 			lua_pushnumber(L, env->addThing(player));
 			lua_pushnumber(L, env->addThing(sender));
 			LuaScriptInterface::pushThing(L, item, env->addThing(item));
+			lua_pushnumber(L, openDepot ? LUA_TRUE : LUA_FALSE);
 
-			int32_t result = m_scriptInterface->callFunction(3);
+			int32_t result = m_scriptInterface->callFunction(4);
 			m_scriptInterface->releaseScriptEnv();
 			return (result == LUA_TRUE);
 		}

@@ -43,21 +43,20 @@ class Spells : public BaseEvents
 		virtual ~Spells();
 
 		Spell* getSpellByName(const std::string& name);
+
 		RuneSpell* getRuneSpell(uint32_t id);
 		RuneSpell* getRuneSpellByName(const std::string& name);
 
 		InstantSpell* getInstantSpell(const std::string words);
 		InstantSpell* getInstantSpellByName(const std::string& name);
-
-		uint32_t getInstantSpellCount(const Player* player);
 		InstantSpell* getInstantSpellByIndex(const Player* player, uint32_t index);
 
+		uint32_t getInstantSpellCount(const Player* player);
 		bool onPlayerSay(Player* player, const std::string& words);
-
+		virtual std::string getScriptBaseName() const {return "spells";}
 		static Position getCasterPosition(Creature* creature, Direction dir);
 
 	protected:
-		virtual std::string getScriptBaseName() const {return "spells";}
 		virtual void clear();
 
 		virtual Event* getEvent(const std::string& nodeName);

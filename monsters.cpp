@@ -298,9 +298,10 @@ ConditionDamage* Monsters::getDamageCondition(ConditionType_t conditionType,
 		condition->setParam(CONDITIONPARAM_MAXVALUE, maxDamage);
 		condition->setParam(CONDITIONPARAM_STARTVALUE, startDamage);
 		condition->setParam(CONDITIONPARAM_DELAYED, 1);
+		return condition;
 	}
 
-	return condition;
+	return NULL;
 }
 
 bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::string& description)
