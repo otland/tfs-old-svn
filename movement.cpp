@@ -268,7 +268,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 		for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)
 		{
 			intVector = vectorAtoi(explodeString((*it), ","));
-			if(intVector.size() >= 3)
+			if(intVector.size() > 2)
 				addEvent(moveEvent, Position(intVector[0], intVector[1], intVector[2]), m_positionMap);
 			else
 				success = false;
