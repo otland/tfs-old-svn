@@ -302,6 +302,42 @@ void MoveEvents::addEvent(MoveEvent* moveEvent, int32_t id, MoveListMap& map)
 	}
 }
 
+MoveEvent* MoveEvents::getEvent(Item* item, MoveEvent_t eventType)
+{
+	MoveListMap::iterator it;
+	if(item->getUniqueId() != 0)
+	{
+		it = m_uniqueIdMap.find(item->getUniqueId());
+		if(it != m_uniqueIdMap.end())
+		{
+			EventList& moveEventList = it->second.moveEvent[eventType];
+			if(!moveEventList.empty())
+				return *moveEventList.begin();
+		}
+	}
+
+	if(item->getActionId() != 0)
+	{
+		it = m_actionIdMap.find(item->getActionId());
+		if(it != m_actionIdMap.end())
+		{
+			EventList& moveEventList = it->second.moveEvent[eventType];
+			if(!moveEventList.empty())
+				return *moveEventList.begin();
+		}
+	}
+
+	it = m_itemIdMap.find(item->getID());
+	if(it != m_itemIdMap.end())
+	{
+		EventList& moveEventList = it->second.moveEvent[eventType];
+		if(!moveEventList.empty())
+			return *moveEventList.begin();
+	}
+
+	return NULL;
+}
+
 MoveEvent* MoveEvents::getEvent(Item* item, MoveEvent_t eventType, slots_t slot)
 {
 	uint32_t slotp = 0;
@@ -349,41 +385,6 @@ MoveEvent* MoveEvents::getEvent(Item* item, MoveEvent_t eventType, slots_t slot)
 		{
 			if(((*it)->getSlot() & slotp) != 0)
 				return *it;
-		}
-	}
-
-	return NULL;
-}
-
-MoveEvent* MoveEvents::getEvent(Item* item, MoveEvent_t eventType)
-{
-	MoveListMap::iterator it = m_itemIdMap.find(item->getID());
-	if(it != m_itemIdMap.end())
-	{
-		EventList& moveEventList = it->second.moveEvent[eventType];
-		if(!moveEventList.empty())
-			return *moveEventList.begin();
-	}
-
-	if(item->getUniqueId() != 0)
-	{
-		it = m_uniqueIdMap.find(item->getUniqueId());
-		if(it != m_uniqueIdMap.end())
-		{
-			EventList& moveEventList = it->second.moveEvent[eventType];
-			if(!moveEventList.empty())
-				return *moveEventList.begin();
-		}
-	}
-
-	if(item->getActionId() != 0)
-	{
-		it = m_actionIdMap.find(item->getActionId());
-		if(it != m_actionIdMap.end())
-		{
-			EventList& moveEventList = it->second.moveEvent[eventType];
-			if(!moveEventList.empty())
-				return *moveEventList.begin();
 		}
 	}
 

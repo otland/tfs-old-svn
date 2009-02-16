@@ -84,9 +84,9 @@ class MoveEvents : public BaseEvents
 		MovePosListMap m_positionMap;
 
 		void addEvent(MoveEvent* moveEvent, int32_t id, MoveListMap& map);
-		void addEvent(MoveEvent* moveEvent, Position pos, MovePosListMap& map);
-
 		MoveEvent* getEvent(Item* item, MoveEvent_t eventType, slots_t slot);
+
+		void addEvent(MoveEvent* moveEvent, Position pos, MovePosListMap& map);
 		MoveEvent* getEvent(Tile* tile, MoveEvent_t eventType);
 
 		void clearMap(MoveListMap& map);
