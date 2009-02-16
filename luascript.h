@@ -126,8 +126,8 @@ class ScriptEnviroment
 		DBResult* getResult(uint32_t rid);
 
 		bool getGlobalStorageValue(const uint32_t key, std::string& value) const;
-		bool addGlobalStorageValue(const uint32_t key, const std::string& value);
-		bool eraseGlobalStorageValue(const uint32_t key);
+		bool addGlobalStorageValue(const uint32_t key, const std::string& value) const;
+		bool eraseGlobalStorageValue(const uint32_t key) const;
 
 		void streamVariant(std::stringstream& stream, const std::string& local, const LuaVariant& var);
 		void streamThing(std::stringstream& stream, const std::string& local, Thing* thing, uint32_t thingId);
