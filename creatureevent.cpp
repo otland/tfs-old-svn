@@ -321,7 +321,7 @@ uint32_t CreatureEvent::executeOnLogin(Player* player)
 			lua_State* L = m_scriptInterface->getLuaState();
 			m_scriptInterface->pushFunction(m_scriptId);
 
-			lua_pushnumber(L, env->addThing(player););
+			lua_pushnumber(L, env->addThing(player));
 
 			int32_t result = m_scriptInterface->callFunction(1);
 			m_scriptInterface->releaseScriptEnv();
@@ -1007,7 +1007,7 @@ uint32_t CreatureEvent::executeOnDeath(Creature* creature, Item* corpse, Creatur
 			m_scriptInterface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(creature));
-			LuaScriptInterface::pushPosition(L, corpse, env->addThing(corpse));
+			LuaScriptInterface::pushThing(L, corpse, env->addThing(corpse));
 			lua_pushnumber(L, env->addThing(lastHitKiller));
 			lua_pushnumber(L, env->addThing(mostDamageKiller));
 
