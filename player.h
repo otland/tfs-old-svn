@@ -227,8 +227,8 @@ class Player : public Creature, public Cylinder
 		void closeContainer(uint32_t cid);
 
 		bool getStorageValue(const uint32_t key, std::string& value) const;
-		bool addStorageValue(const uint32_t key, const std::string& value) const;
-		bool eraseStorageValue(const uint32_t key) const;
+		bool addStorageValue(const uint32_t key, const std::string& value);
+		bool eraseStorageValue(const uint32_t key);
 		void genReservedStorageRange();
 
 		bool withdrawMoney(uint64_t amount);

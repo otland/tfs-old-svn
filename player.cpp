@@ -866,7 +866,7 @@ bool Player::getStorageValue(const uint32_t key, std::string& value) const
 	return false;
 }
 
-bool Player::addStorageValue(const uint32_t key, const std::string& value) const
+bool Player::addStorageValue(const uint32_t key, const std::string& value)
 {
 	if(IS_IN_KEYRANGE(key, RESERVED_RANGE))
 	{
@@ -895,7 +895,7 @@ bool Player::addStorageValue(const uint32_t key, const std::string& value) const
 	return false;
 }
 
-bool Player::eraseStorageValue(const uint32_t key) const
+bool Player::eraseStorageValue(const uint32_t key)
 {
 	if(IS_IN_KEYRANGE(key, RESERVED_RANGE))
 		std::cout << "[Warning - Player::eraseStorageValue]: Unknown reserved key: " << key << " for player: " << getName() << std::endl;

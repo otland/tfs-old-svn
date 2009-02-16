@@ -457,13 +457,13 @@ bool ScriptEnviroment::getGlobalStorageValue(const uint32_t key, std::string& va
 	return false;
 }
 
-bool ScriptEnviroment::addGlobalStorageValue(const uint32_t key, const std::string& value) const
+bool ScriptEnviroment::addGlobalStorageValue(const uint32_t key, const std::string& value)
 {
 	m_globalStorageMap[key] = value;
 	return true;
 }
 
-bool ScriptEnviroment::eraseGlobalStorageValue(const uint32_t key) const
+bool ScriptEnviroment::eraseGlobalStorageValue(const uint32_t key)
 {
 	return m_globalStorageMap.erase(key);
 }
