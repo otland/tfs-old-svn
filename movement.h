@@ -40,10 +40,10 @@ enum MoveEvent_t
 	MOVE_EVENT_NONE,
 };
 
-typedef std::list<MoveEvent*> EventList;
-typedef std::map<int32_t, bool> VocEquipMap;
-
 class MoveEvent;
+typedef std::list<MoveEvent*> EventList;
+
+typedef std::map<int32_t, bool> VocEquipMap;
 struct MoveEventList
 {
 	EventList moveEvent[MOVE_EVENT_LAST];
