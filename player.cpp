@@ -1970,7 +1970,10 @@ void Player::addExperience(uint64_t exp)
 void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 {
 	uint32_t prevLevel = level;
-	experience -= exp;
+	if(exp > experience)
+		exp = experience;
+
+	experience -= exp
 	while(level > 1 && experience < Player::getExpForLevel(level))
 	{
 		level--;

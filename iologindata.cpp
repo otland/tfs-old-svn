@@ -771,11 +771,11 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 	}
 
 	query << ", ";
-	query << "`level` = " << player->level << ", ";
+	query << "`level` = " << std::max((uint32_t)1, player->level) << ", ";
 	query << "`group_id` = " << player->groupId << ", ";
 	query << "`health` = " << player->health << ", ";
 	query << "`healthmax` = " << player->healthMax << ", ";
-	query << "`experience` = " << player->experience << ", ";
+	query << "`experience` = " << std::max((uint64_t)0, player->experience) << ", ";
 	query << "`lookbody` = " << (uint32_t)player->defaultOutfit.lookBody << ", ";
 	query << "`lookfeet` = " << (uint32_t)player->defaultOutfit.lookFeet << ", ";
 	query << "`lookhead` = " << (uint32_t)player->defaultOutfit.lookHead << ", ";
@@ -788,9 +788,11 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 	query << "`manaspent` = " << player->manaSpent << ", ";
 	query << "`soul` = " << player->soul << ", ";
 	query << "`town_id` = " << player->town << ", ";
-	query << "`posx` = " << player->getLoginPosition().x << ", ";
-	query << "`posy` = " << player->getLoginPosition().y << ", ";
-	query << "`posz` = " << player->getLoginPosition().z << ", ";
+
+	const Position& loginPos = player->getLoginPosition();
+	query << "`posx` = " << loginPos.x << ", ";
+	query << "`posy` = " << loginPos.y << ", ";
+	query << "`posz` = " << loginPos.z << ", ";
 	query << "`cap` = " << player->getCapacity() << ", ";
 	query << "`sex` = " << player->sex << ", ";
 	query << "`balance` = " << player->balance << ", ";
@@ -821,7 +823,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 	{
 		int32_t redSkullTime = 0;
 		if(player->redSkullTicks > 0)
-			redSkullTime = time(NULL) + player->redSkullTicks/1000;
+			redSkullTime = (time(NULL) + (player->redSkullTicks / 1000));
 
 		query << "`redskulltime` = " << redSkullTime << ", ";
 		int32_t redSkull = 0;

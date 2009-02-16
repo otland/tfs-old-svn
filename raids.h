@@ -67,6 +67,7 @@ class Raids
 
 		bool loadFromXml();
 		bool startup();
+
 		void clear();
 		bool reload();
 
@@ -79,6 +80,7 @@ class Raids
 		bool isLoaded() const {return loaded;}
 		bool isStarted() const {return started;}
 
+		static std::string getScriptBaseName() const {return "raids";}
 		Raid* getRaidByName(const std::string& name);
 		void checkRaids();
 

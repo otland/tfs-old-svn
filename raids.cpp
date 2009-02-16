@@ -176,14 +176,15 @@ void Raids::checkRaids()
 void Raids::clear()
 {
 	Scheduler::getScheduler().stopEvent(checkRaidsEvent);
+	running = NULL;
+
 	checkRaidsEvent = lastRaidEnd = 0;
 	loaded = started = false;
-
 	for(RaidList::iterator it = raidList.begin(); it != raidList.end(); ++it)
 		delete (*it);
 
 	raidList.clear();
-	running = NULL;
+	ScriptEvent::m_scriptInterface.reInitState();
 }
 
 bool Raids::reload()
@@ -720,15 +721,16 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 	if(!RaidEvent::configureRaidEvent(eventNode))
 		return false;
 
-	if(m_scriptInterface.loadFile(getFilePath(FILE_TYPE_OTHER, std::string("raids/lib/raids.lua"))) == -1)
-		std::cout << "[Warning - ScriptEvent::configureRaidEvent] Can not load raids/lib/raids.lua" << std::endl;
+	std::string scriptsName = Raids::getScriptBaseName();
+	if(m_scriptInterface.loadFile(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/" + scriptsName + ".lua"))) == -1)
+		std::cout << "[Warning - ScriptEvent::configureRaidEvent] Can not load " << scriptsName << "/lib/" << scriptsName << ".lua" << std::endl;
 
 	std::string strValue;
 	if(readXMLString(eventNode, "file", strValue))
 	{
-		if(!loadScript(getFilePath(FILE_TYPE_OTHER, "raids/scripts/" + strValue), true))
+		if(!loadScript(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/scripts/" + strValue), true))
 		{
-			std::cout << "[Error - ScriptEvent::configureRaidEvent]: Can not load raid script (file)." << std::endl;
+			std::cout << "[Error - ScriptEvent::configureRaidEvent]: Can not load raid script file (" << strValue << ")." << std::endl;
 			return false;
 		}
 	}
@@ -736,7 +738,7 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 	{
 		if(!loadBuffer(strValue))
 		{
-			std::cout << "[Error - ScriptEvent::configureRaidEvent]: Can not load raid script (buffer)." << std::endl;
+			std::cout << "[Error - ScriptEvent::configureRaidEvent]: Can not load raid script buffer." << std::endl;
 			return false;
 		}
 	}
