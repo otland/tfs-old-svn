@@ -585,7 +585,7 @@ uint32_t CreatureEvent::executeOnMailSend(Player* player, Player* receiver, Item
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
-			env->setRealPos(sender->getPosition());
+			env->setRealPos(player->getPosition());
 
 			std::stringstream scriptstream;
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
@@ -607,12 +607,12 @@ uint32_t CreatureEvent::executeOnMailSend(Player* player, Player* receiver, Item
 		{
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[30];
-			sprintf(desc, "%s", sender->getName().c_str());
+			sprintf(desc, "%s", player->getName().c_str());
 			env->setEventDesc(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_scriptInterface);
-			env->setRealPos(sender->getPosition());
+			env->setRealPos(player->getPosition());
 
 			lua_State* L = m_scriptInterface->getLuaState();
 			m_scriptInterface->pushFunction(m_scriptId);
@@ -633,7 +633,7 @@ uint32_t CreatureEvent::executeOnMailSend(Player* player, Player* receiver, Item
 	}
 }
 
-uint32_t CreatureEvent::executeOnMailReceive(Player* player, Creature* sender, Item* item)
+uint32_t CreatureEvent::executeOnMailReceive(Player* player, Player* sender, Item* item)
 {
 	//onReceiveMail(cid, sender, item)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -641,7 +641,7 @@ uint32_t CreatureEvent::executeOnMailReceive(Player* player, Creature* sender, I
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
-			env->setRealPos(sender->getPosition());
+			env->setRealPos(player->getPosition());
 
 			std::stringstream scriptstream;
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
@@ -663,12 +663,12 @@ uint32_t CreatureEvent::executeOnMailReceive(Player* player, Creature* sender, I
 		{
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[30];
-			sprintf(desc, "%s", sender->getName().c_str());
+			sprintf(desc, "%s", player->getName().c_str());
 			env->setEventDesc(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_scriptInterface);
-			env->setRealPos(sender->getPosition());
+			env->setRealPos(player->getPosition());
 
 			lua_State* L = m_scriptInterface->getLuaState();
 			m_scriptInterface->pushFunction(m_scriptId);
