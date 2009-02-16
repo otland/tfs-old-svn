@@ -126,7 +126,7 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 		if(depot && g_game.internalMoveItem(actor, item->getParent(), depot, INDEX_WHEREEVER,
 			item, item->getItemCount(), NULL, FLAG_NOLIMIT) == RET_NOERROR)
 		{
-			g_game.transformItem(item, item->getID() + 1)
+			g_game.transformItem(item, item->getID() + 1);
 			if(player->getContainerID() != -1)
 				player->sendTextMessage(MSG_INFO_DESCR, "New mail has arrived.");
 
