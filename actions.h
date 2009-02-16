@@ -58,13 +58,13 @@ class Actions : public BaseEvents
 		bool hasAction(const Item* item) const {return (getAction(item) != NULL);}
 
 	protected:
-		virtual std::string getScriptBaseName();
+		virtual std::string getScriptBaseName() const {return "actions";}
 		virtual void clear();
 
 		virtual Event* getEvent(const std::string& nodeName);
 		virtual bool registerEvent(Event* event, xmlNodePtr p);
 
-		virtual LuaScriptInterface& getScriptInterface();
+		virtual LuaScriptInterface& getScriptInterface() {return m_scriptInterface;}
 		LuaScriptInterface m_scriptInterface;
 
 		void registerItemID(int32_t itemId, Event* event);
@@ -85,7 +85,6 @@ class Actions : public BaseEvents
 			Item* item, bool isHotkey, uint32_t creatureId);
 
 		Action* getAction(const Item* item, ActionType_t type = ACTION_ANY) const;
-
 		void clearMap(ActionUseMap& map);
 		void showUseHotkeyMessage(Player* player, int32_t id, uint32_t count);
 };

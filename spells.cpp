@@ -115,16 +115,7 @@ void Spells::clear()
 		delete it->second;
 
 	instants.clear();
-}
-
-LuaScriptInterface& Spells::getScriptInterface()
-{
-	return m_scriptInterface;
-}
-
-std::string Spells::getScriptBaseName()
-{
-	return "spells";
+	m_scriptInterface.reInitState();
 }
 
 Event* Spells::getEvent(const std::string& nodeName)

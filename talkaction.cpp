@@ -57,33 +57,19 @@ TalkActions::~TalkActions()
 
 void TalkActions::clear()
 {
-	TalkActionsMap::iterator it = talksMap.begin();
-	while(it != talksMap.end())
-	{
+	for(TalkActionsMap::iterator it = talksMap.begin(); it != talksMap.end(); ++it)
 		delete it->second;
-		talksMap.erase(it);
-		it = talksMap.begin();
-	}
 
+	talksMap.clear();
 	m_scriptInterface.reInitState();
-}
-
-LuaScriptInterface& TalkActions::getScriptInterface()
-{
-	return m_scriptInterface;
-}
-
-std::string TalkActions::getScriptBaseName()
-{
-	return "talkactions";
 }
 
 Event* TalkActions::getEvent(const std::string& nodeName)
 {
 	if(asLowerCaseString(nodeName) == "talkaction")
 		return new TalkAction(&m_scriptInterface);
-	else
-		return NULL;
+
+	return NULL;
 }
 
 bool TalkActions::registerEvent(Event* event, xmlNodePtr p)

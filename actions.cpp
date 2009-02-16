@@ -57,13 +57,10 @@ Actions::~Actions()
 
 inline void Actions::clearMap(ActionUseMap& map)
 {
-	ActionUseMap::iterator it = map.begin();
-	while(it != map.end())
-	{
+	for(ActionUseMap::iterator it = map.begin(); it != map.end(); ++it)
 		delete it->second;
-		map.erase(it);
-		it = map.begin();
-	}
+
+	map.clear();
 }
 
 void Actions::clear()
@@ -71,18 +68,7 @@ void Actions::clear()
 	clearMap(useItemMap);
 	clearMap(uniqueItemMap);
 	clearMap(actionItemMap);
-
 	m_scriptInterface.reInitState();
-}
-
-LuaScriptInterface& Actions::getScriptInterface()
-{
-	return m_scriptInterface;
-}
-
-std::string Actions::getScriptBaseName()
-{
-	return "actions";
 }
 
 Event* Actions::getEvent(const std::string& nodeName)

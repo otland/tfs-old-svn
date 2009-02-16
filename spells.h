@@ -57,13 +57,13 @@ class Spells : public BaseEvents
 		static Position getCasterPosition(Creature* creature, Direction dir);
 
 	protected:
-		virtual std::string getScriptBaseName() const;
+		virtual std::string getScriptBaseName() const {return "spells";}
 		virtual void clear();
 
 		virtual Event* getEvent(const std::string& nodeName);
 		virtual bool registerEvent(Event* event, xmlNodePtr p);
 
-		virtual LuaScriptInterface& getScriptInterface();
+		virtual LuaScriptInterface& getScriptInterface() {return m_scriptInterface;}
 		LuaScriptInterface m_scriptInterface;
 
 		RunesMap runes;

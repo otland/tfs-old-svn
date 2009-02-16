@@ -49,13 +49,13 @@ class Weapons : public BaseEvents
 		static int32_t getMaxWeaponDamage(int32_t level, int32_t attackSkill, int32_t attackValue, float attackFactor);
 
 	protected:
-		virtual std::string getScriptBaseName() const;
+		virtual std::string getScriptBaseName() const {return "weapons";}
 		virtual void clear();
 
 		virtual Event* getEvent(const std::string& nodeName);
 		virtual bool registerEvent(Event* event, xmlNodePtr p);
 
-		virtual LuaScriptInterface& getScriptInterface();
+		virtual LuaScriptInterface& getScriptInterface() {return m_scriptInterface;}
 		LuaScriptInterface m_scriptInterface;
 
 		typedef std::map<uint32_t, Weapon*> WeaponMap;

@@ -46,13 +46,13 @@ class TalkActions : public BaseEvents
 		bool onPlayerSay(Player* player, uint16_t channelId, const std::string& words);
 
 	protected:
-		virtual std::string getScriptBaseName() const;
+		virtual std::string getScriptBaseName() const {return "talkactions";}
 		virtual void clear();
 
 		virtual Event* getEvent(const std::string& nodeName);
 		virtual bool registerEvent(Event* event, xmlNodePtr p);
 
-		virtual LuaScriptInterface& getScriptInterface();
+		virtual LuaScriptInterface& getScriptInterface() {return m_scriptInterface;}
 		LuaScriptInterface m_scriptInterface;
 
 		typedef std::map<std::string, TalkAction*> TalkActionsMap;

@@ -49,16 +49,6 @@ void CreatureEvents::clear()
 	m_scriptInterface.reInitState();
 }
 
-LuaScriptInterface& CreatureEvents::getScriptInterface()
-{
-	return m_scriptInterface;
-}
-
-std::string CreatureEvents::getScriptBaseName()
-{
-	return "creaturescripts";
-}
-
 Event* CreatureEvents::getEvent(const std::string& nodeName)
 {
 	if(asLowerCaseString(nodeName) == "event")

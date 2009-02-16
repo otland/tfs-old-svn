@@ -58,21 +58,11 @@ const Weapon* Weapons::getWeapon(const Item* item) const
 
 void Weapons::clear()
 {
-	WeaponMap::iterator it;
-	for(it = weapons.begin(); it != weapons.end(); ++it)
+	for(WeaponMap::iterator it = weapons.begin(); it != weapons.end(); ++it)
 		delete it->second;
 
 	weapons.clear();
-}
-
-LuaScriptInterface& Weapons::getScriptInterface()
-{
-	return m_scriptInterface;
-}
-
-std::string Weapons::getScriptBaseName()
-{
-	return "weapons";
+	m_scriptInterface.reInitState();
 }
 
 bool Weapons::loadDefaults()
@@ -80,7 +70,6 @@ bool Weapons::loadDefaults()
 	for(uint32_t i = 0; i < Item::items.size(); ++i)
 	{
 		const ItemType* it = Item::items.getElement(i);
-
 		if(!it || weapons.find(it->id) != weapons.end())
 			continue;
 

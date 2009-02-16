@@ -39,33 +39,19 @@ GlobalEvents::~GlobalEvents()
 
 void GlobalEvents::clear()
 {
-	GlobalEventList::iterator it = eventsMap.begin();
-	while(it != eventsMap.end())
-	{
+	for(GlobalEventList::iterator it = eventsMap.begin(); it != eventsMap.end(); ++it)
 		delete it->second;
-		eventsMap.erase(it);
-		it = eventsMap.begin();
-	}
 
+	eventsMap.clear();
 	m_scriptInterface.reInitState();
-}
-
-LuaScriptInterface& GlobalEvents::getScriptInterface()
-{
-	return m_scriptInterface;
-}
-
-std::string GlobalEvents::getScriptBaseName()
-{
-	return "globalevents";
 }
 
 Event* GlobalEvents::getEvent(const std::string& nodeName)
 {
 	if(asLowerCaseString(nodeName) == "globalevent")
 		return new GlobalEvent(&m_scriptInterface);
-	else
-		return NULL;
+
+	return NULL;
 }
 
 bool GlobalEvents::registerEvent(Event* event, xmlNodePtr p)
