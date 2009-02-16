@@ -632,7 +632,7 @@ int32_t LuaScriptInterface::loadFile(const std::string& file, Npc* npc /* = NULL
 	if(ret != 0)
 	{
 		m_lastLuaError = popString(m_luaState);
-		reportError(NULL, m_lastLuaError);
+		//reportError(NULL, m_lastLuaError);
 		return -1;
 	}
 
