@@ -184,7 +184,7 @@ void Raids::clear()
 		delete (*it);
 
 	raidList.clear();
-	ScriptEvent::m_scriptInterface.reInitState();
+	//ScriptEvent::m_scriptInterface.reInitState();
 }
 
 bool Raids::reload()
@@ -728,7 +728,7 @@ bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 	std::string strValue;
 	if(readXMLString(eventNode, "file", strValue))
 	{
-		if(!loadScript(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/scripts/" + strValue), true))
+		if(!loadScript(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/scripts/" + strValue)), true))
 		{
 			std::cout << "[Error - ScriptEvent::configureRaidEvent]: Can not load raid script file (" << strValue << ")." << std::endl;
 			return false;
