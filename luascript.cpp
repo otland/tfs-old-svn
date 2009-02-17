@@ -4326,7 +4326,7 @@ int32_t LuaScriptInterface::luaSetPlayerStorageValue(lua_State* L)
 		reportErrorFunc(buffer);
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
-	}		nil = true;
+	}
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(cid))
