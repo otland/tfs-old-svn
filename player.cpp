@@ -2688,29 +2688,29 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 				}
 			}
 			else if(Container* subContainer = dynamic_cast<Container*>(inventory[i]))
-				deepVector.insert(std::make_pair(0, subContainer));
+				deepVector.push_back(std::make_pair(0, subContainer));
 		}
 
 		//check the deep containers
 		uint32_t deepLevel = 1; //TODO: make it configurable? :)
 		for(ContainerVector::iterator it = deepVector.begin(); it != deepVector.end(); ++it)
 		{
-			if((*it)->second == tradeItem)
+			if((*it).second == tradeItem)
 				continue;
 
-			if((*it)->second->__queryAdd(-1, item, item->getItemCount(), 0) == RET_NOERROR)
+			if((*it).second->__queryAdd(-1, item, item->getItemCount(), 0) == RET_NOERROR)
 			{
 				index = INDEX_WHEREEVER;
 				*destItem = NULL;
-				return (*it)->second;
+				return (*it).second;
 			}
 
-			if((*it)->first <= deepLevel)
+			if((*it).first <= deepLevel)
 			{
-				for(ContainerIterator cit = (*it)->second->begin(); cit != (*it)->second->end(); ++cit)
+				for(ContainerIterator cit = (*it).second->begin(); cit != (*it).second->end(); ++cit)
 				{
 					if(Container* subContainer = dynamic_cast<Container*>(*cit))
-						deepVector.insert(std::make_pair(((*it)->first + 1), subContainer));
+						deepVector.push_back(std::make_pair(((*it).first + 1), subContainer));
 				}
 			}
 		}
@@ -2718,7 +2718,8 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 		return this;
 	}
 
-	if(Thing* destThing = __getThing(index))
+	Thing* destThing = __getThing(index);
+	if(destThing)
 		*destItem = destThing->getItem();
 
 	if(Cylinder* subCylinder = dynamic_cast<Cylinder*>(destThing))
