@@ -127,20 +127,20 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 			item, item->getItemCount(), NULL, FLAG_NOLIMIT) == RET_NOERROR)
 		{
 			g_game.transformItem(item, item->getID() + 1);
-			bool result = true, openDepot = (player->getContainerID(depot) != -1);
+			bool result = true, opened = (player->getContainerID(depot) != -1);
 			if(Player* tmp = actor->getPlayer())
 			{
 				CreatureEventList mailEvents = tmp->getCreatureEvents(CREATURE_EVENT_MAIL_SEND);
 				for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
 				{
-					if(!(*it)->executeOnMailSend(tmp, player, item, openDepot) && result)
+					if(!(*it)->executeOnMailSend(tmp, player, item, opened) && result)
 						result = false;
 				}
 
 				mailEvents = player->getCreatureEvents(CREATURE_EVENT_MAIL_RECEIVE);
 				for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
 				{
-					if(!(*it)->executeOnMailReceive(player, tmp, item, openDepot) && result)
+					if(!(*it)->executeOnMailReceive(player, tmp, item, opened) && result)
 						result = false;
 				}
 			}
