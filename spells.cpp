@@ -1126,7 +1126,7 @@ bool InstantSpell::castSpell(Creature* creature)
 
 		return false;
 	}
-		return castSpell(creature);
+
 	if(needDirection)
 	{
 		var.type = VARIANT_POSITION;
