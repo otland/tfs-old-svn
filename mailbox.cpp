@@ -151,7 +151,7 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 	else if(tmp)
 	{
 		Player* player = new Player(receiver, NULL);
-		if(!IOLoginData::getInstance()->loadPlayer(player, receiver))
+		if(IOLoginData::getInstance()->loadPlayer(player, receiver))
 		{
 			Depot* depot = player->getDepot(dp, true);
 			if(depot && g_game.internalMoveItem(actor, item->getParent(), depot, INDEX_WHEREEVER,
