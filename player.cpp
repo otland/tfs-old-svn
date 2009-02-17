@@ -2236,7 +2236,9 @@ Item* Player::getCorpse()
 	if(corpse && corpse->getContainer())
 	{
 		std::stringstream ss;
-		ss << "You recognize " << getNameDescription() << ". " << (getSex() == PLAYERSEX_FEMALE ? "She" : "He") << " was killed by ";
+		ss << "You recognize " << getNameDescription();
+		if(lastHitCreature || mostDamageCreature)
+			ss << ". " << (getSex() == PLAYERSEX_FEMALE ? "She" : "He") << " was killed by ";
 
 		Creature* lastHitCreatureMaster = NULL;
 		Creature* mostDamageCreatureMaster = NULL;
@@ -2670,58 +2672,45 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 	{
 		*destItem = NULL;
 		const Item* item = thing->getItem();
-		if(item == NULL)
+		if(!item)
 			return this;
 
 		//find a appropiate slot and list deep containers
-		std::list<Container*> containerList;
+		ContainerVector deepVector;
 		for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 		{
-			if(inventory[i] == NULL)
+			if(!inventory[i])
 			{
 				if(__queryAdd(i, item, item->getItemCount(), 0) == RET_NOERROR)
 				{
 					index = i;
 					return this;
 				}
-
-				continue;
 			}
-
-			if(inventory[i] == tradeItem)
-				continue;
-
-			if(Container* subContainer = dynamic_cast<Container*>(inventory[i]))
-			{
-				if(subContainer->__queryAdd(-1, item, item->getItemCount(), 0) == RET_NOERROR)
-				{
-					index = INDEX_WHEREEVER;
-					*destItem = NULL;
-					return subContainer;
-				}
-				else
-					containerList.push_back(subContainer);
-			}
+			else if(Container* subContainer = dynamic_cast<Container*>(inventory[i]))
+				deepVector.insert(std::make_pair(0, subContainer));
 		}
 
 		//check the deep containers
-		for(std::list<Container*>::iterator it = containerList.begin(); it != containerList.end(); ++it)
+		uint32_t deepLevel = 1; //TODO: make it configurable? :)
+		for(ContainerVector::iterator it = deepVector.begin(); it != deepVector.end(); ++it)
 		{
-			for(ContainerIterator iit = (*it)->begin(); iit != (*it)->end(); ++iit)
-			{
-				if((*iit) == tradeItem)
-					continue;
+			if((*it)->second == tradeItem)
+				continue;
 
-				if(Container* subContainer = dynamic_cast<Container*>(*iit))
+			if((*it)->second->__queryAdd(-1, item, item->getItemCount(), 0) == RET_NOERROR)
+			{
+				index = INDEX_WHEREEVER;
+				*destItem = NULL;
+				return (*it)->second;
+			}
+
+			if((*it)->first <= deepLevel)
+			{
+				for(ContainerIterator cit = (*it)->second->begin(); cit != (*it)->second->end(); ++cit)
 				{
-					if(subContainer->__queryAdd(-1, item, item->getItemCount(), 0) == RET_NOERROR)
-					{
-						index = INDEX_WHEREEVER;
-						*destItem = NULL;
-						return subContainer;
-					}
-					/*else // it may be very intensive process...
-						containerList.push_back(subContainer);*/
+					if(Container* subContainer = dynamic_cast<Container*>(*cit))
+						deepVector.insert(std::make_pair(((*it)->first + 1), subContainer));
 				}
 			}
 		}
@@ -2729,19 +2718,17 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 		return this;
 	}
 
-	Thing* destThing = __getThing(index);
-	if(destThing)
+	if(Thing* destThing = __getThing(index))
 		*destItem = destThing->getItem();
 
-	Cylinder* subCylinder = dynamic_cast<Cylinder*>(destThing);
-	if(subCylinder)
+	if(Cylinder* subCylinder = dynamic_cast<Cylinder*>(destThing))
 	{
 		index = INDEX_WHEREEVER;
 		*destItem = NULL;
 		return subCylinder;
 	}
-	else
-		return this;
+
+	return this;
 }
 
 void Player::__addThing(Creature* actor, Thing* thing)

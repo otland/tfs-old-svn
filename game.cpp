@@ -789,8 +789,8 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 
 	SpectatorVec list;
 	SpectatorVec::iterator it;
-	getSpectators(list, creature->getPosition(), false, true);
 
+	getSpectators(list, creature->getPosition(), false, true);
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
@@ -984,7 +984,9 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 	}
 
 	//check throw distance
-	if((std::abs(movingCreaturePos.x - toPos.x) > movingCreature->getThrowRange()) || (std::abs(movingCreaturePos.y - toPos.y) > movingCreature->getThrowRange()) || (std::abs(movingCreaturePos.z - toPos.z) * 4 > movingCreature->getThrowRange()))
+	if((std::abs(movingCreaturePos.x - toPos.x) > movingCreature->getThrowRange())
+		|| (std::abs(movingCreaturePos.y - toPos.y) > movingCreature->getThrowRange())
+		|| (std::abs(movingCreaturePos.z - toPos.z) * 4 > movingCreature->getThrowRange()))
 	{
 		player->sendCancelMessage(RET_DESTINATIONOUTOFREACH);
 		return false;
@@ -3936,8 +3938,8 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 
 	int32_t damage = -healthChange;
 	BlockType_t blockType = target->blockHit(attacker, combatType, damage, checkDefense, checkArmor);
-	healthChange = -damage;
 
+	healthChange = -damage;
 	if(blockType == BLOCK_DEFENSE)
 	{
 		addMagicEffect(list, targetPos, NM_ME_POFF);

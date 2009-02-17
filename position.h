@@ -45,36 +45,27 @@ typedef std::vector<Direction> DirVector;
 class Position
 {
 	public:
-		Position() : x(0), y(0), z(7) {}
+		Position(): x(0), y(0), z(7) {}
 		~Position() {}
 
 		template<int32_t deltax, int32_t deltay, int32_t deltaz>
 		inline static bool areInRange(const Position& p1, const Position& p2)
 		{
-			if(std::abs(float(p1.x - p2.x)) > deltax || std::abs(float(p1.y - p2.y)) > deltay || std::abs(float(p1.z - p2.z)) > deltaz)
-				return false;
-
-			return true;
+			return (!(std::abs(float(p1.x - p2.x)) > deltax || std::abs(float(p1.y - p2.y)) > deltay || std::abs(float(p1.z - p2.z)) > deltaz));
 		}
 
 		template<int32_t deltax, int32_t deltay>
 		inline static bool areInRange(const Position& p1, const Position& p2)
 		{
-			if(std::abs(float(p1.x - p2.x)) > deltax || std::abs(float(p1.y - p2.y)) > deltay)
-				return false;
-
-			return true;
+			return (!(std::abs(float(p1.x - p2.x)) > deltax || std::abs(float(p1.y - p2.y)) > deltay));
 		}
 
 		static bool areInRange(const Position& r, const Position& p1, const Position& p2)
 		{
-			if(std::abs(float(p1.x - p2.x)) > r.x || std::abs(float(p1.y - p2.y)) > r.y || std::abs(float(p1.z - p2.z)) > r.z)
-				return false;
-
-			return true;
+			return (!(std::abs(float(p1.x - p2.x)) > r.x || std::abs(float(p1.y - p2.y)) > r.y || std::abs(float(p1.z - p2.z)) > r.z));
 		}
 
-		Position(int32_t _x, int32_t _y, int32_t _z) : x(_x), y(_y), z(_z) {}
+		Position(int32_t _x, int32_t _y, int32_t _z): x(_x), y(_y), z(_z) {}
 		int32_t x, y, z;
 
 		bool operator<(const Position& p) const

@@ -123,7 +123,7 @@ class Spell : public BaseSpell
 		void postCastSpell(Player* player, uint32_t manaCost, uint32_t soulCost) const;
 
 		int32_t getManaCost(const Player* player) const;
-		int32_t getSoulCost() const;
+		int32_t getSoulCost() const {return soul;}
 		uint32_t getLevel() const {return level;}
 		uint32_t getMagicLevel() const {return magLevel;}
 		int32_t getMana() const {return mana;}
