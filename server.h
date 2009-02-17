@@ -51,6 +51,7 @@ class Server : boost::noncopyable
 		boost::asio::ip::tcp::acceptor* m_acceptor;
 
 		uint32_t m_listenErrors;
+		bool m_pendingStart;
 		bool m_shutdown;
 
 		uint32_t m_serverIp;

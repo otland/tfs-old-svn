@@ -22,6 +22,7 @@
 #include "server.h"
 #include "connection.h"
 #include "outputmessage.h"
+#include "scheduler.h"
 
 Server::Server(uint32_t serverip, uint16_t port):
 m_io_service()
@@ -31,6 +32,7 @@ m_io_service()
 	m_shutdown = false;
 	m_serverIp = serverip;
 	m_serverPort = port;
+	m_pendingStart = false;
 	openListenSocket();
 }
 
@@ -68,9 +70,13 @@ void Server::closeListenSocket()
 
 void Server::openListenSocket()
 {
+	closeListenSocket();
+
 	m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::address(
 		boost::asio::ip::address_v4(m_serverIp)), m_serverPort));
 	accept();
+
+	m_pendingStart = false;
 }
 
 void Server::onAccept(Connection* connection, const boost::system::error_code& error)
@@ -86,7 +92,13 @@ void Server::onAccept(Connection* connection, const boost::system::error_code& e
 	else if(error != boost::asio::error::operation_aborted)
 	{
 		PRINT_ASIO_ERROR("Accepting");
-		closeListenSocket();
+		if(!m_pendingStart)
+		{
+			m_pendingStart = true;
+			Scheduler::getScheduler().addEvent(createSchedulerTask(5000,
+				boost::bind(&Server::openListenSocket, this)));
+		}
+
 		if(m_listenErrors > 100)
 		{
 			#ifndef __ENABLE_LISTEN_ERROR__
@@ -99,7 +111,6 @@ void Server::onAccept(Connection* connection, const boost::system::error_code& e
 		}
 
 		m_listenErrors++;
-		openListenSocket();
 	}
 	#ifdef __DEBUG_NET__
 	else
