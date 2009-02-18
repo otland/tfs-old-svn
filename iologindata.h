@@ -118,6 +118,14 @@ class IOLoginData
 		bool resetGuildInformation(uint32_t guid);
 
 	protected:
+		struct StringCompareCase
+		{
+			bool operator()(const std::string& l, const std::string& r) const
+			{
+				return strcasecmp(l.c_str(), r.c_str()) < 0;
+			}
+		};
+
 		typedef std::map<int32_t, std::pair<Item*, int32_t> > ItemMap;
 		typedef std::map<uint32_t, std::string> NameCacheMap;
 		typedef std::map<std::string, uint32_t, StringCompareCase> GuidCacheMap;
