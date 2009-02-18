@@ -727,7 +727,7 @@ void IOLoginData::loadItems(ItemMap& itemMap, DBResult* result)
 		if(Item* item = Item::CreateItem(result->getDataInt("itemtype"), result->getDataInt("count")))
 		{
 			if(!item->unserializeAttr(propStream))
-				std::cout << "[Warning - IOLoginData::loadItems] Unserialize error" << std::endl;
+				std::cout << "[Warning - IOLoginData::loadItems] Unserialize error for item with id " << item->getID() << std::endl;
 
 			itemMap[result->getDataInt("sid")] = std::make_pair(item, result->getDataInt("pid"));
 		}
