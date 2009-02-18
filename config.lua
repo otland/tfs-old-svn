@@ -138,6 +138,8 @@
 	emoteSpells = "no"
 	expireReportsAfterReads = 1
 	promptExceptionTracerErrorBox = "yes"
+	storePlayerDirection = "no"
+	playerQueryDeepness = 1
 
 	-- Premium account
 	freePremium = "no"

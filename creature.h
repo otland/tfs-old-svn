@@ -127,8 +127,6 @@ class Creature : public AutoID, virtual public Thing
 		virtual Monster* getMonster() {return NULL;}
 		virtual const Monster* getMonster() const {return NULL;}
 
-		void getPathToFollowCreature();
-
 		virtual const std::string& getName() const = 0;
 		virtual const std::string& getNameDescription() const = 0;
 		virtual std::string getDescription(int32_t lookDistance) const;
@@ -144,6 +142,7 @@ class Creature : public AutoID, virtual public Thing
 				this->id = auto_id | this->idRange();
 		}
 		void setRemoved() {isInternalRemoved = true;}
+		void getPathToFollowCreature();
 
 		virtual uint32_t idRange() = 0;
 		uint32_t getID() const {return id;}

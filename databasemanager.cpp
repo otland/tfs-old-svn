@@ -19,11 +19,12 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "databasemanager.h"
-#include "configmanager.h"
-#include "enums.h"
-#include "tools.h"
 
 #include <iostream>
+#include "enums.h"
+
+#include "configmanager.h"
+#include "tools.h"
 
 extern ConfigManager g_config;
 
@@ -52,7 +53,6 @@ bool DatabaseManager::optimizeTables()
 				query.str("");
 			}
 			while(result->next());
-
 			db->freeResult(result);
 			return true;
 		}
@@ -60,23 +60,21 @@ bool DatabaseManager::optimizeTables()
 		case DATABASE_ENGINE_SQLITE:
 		{
 			query << "VACUUM;";
-			if(db->executeQuery(query.str()))
-			{
-				std::cout << "> Optimized database." << std::endl;
-				return true;
-			}
-			break;
+			if(!db->executeQuery(query.str()))
+				break;
+
+			std::cout << "> Optimized database." << std::endl;
+			return true;
 		}
 
 		case DATABASE_ENGINE_POSTGRESQL:
 		{
 			query << "VACUUM FULL;";
-			if(db->executeQuery(query.str()))
-			{
-				std::cout << "> Optimized database." << std::endl;
-				return true;
-			}
-			break;
+			if(!db->executeQuery(query.str()))
+				break;
+
+			std::cout << "> Optimized database." << std::endl;
+			return true;
 		}
 
 		default:
@@ -198,7 +196,6 @@ int32_t DatabaseManager::getDatabaseVersion()
 uint32_t DatabaseManager::updateDatabase()
 {
 	Database* db = Database::getInstance();
-
 	uint32_t version = getDatabaseVersion();
 	if(db->getDatabaseEngine() == DATABASE_ENGINE_ODBC)
 		return version;
@@ -873,7 +870,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 9:
 		{
-			std::cout << "> Updating database to version: 9..." << std::endl;
+			std::cout << "> Updating database to version: 10..." << std::endl;
 
 			DBQuery query;
 			query << "UPDATE `groups` SET `violationaccess` = 3 WHERE `id` = 4;";
@@ -890,6 +887,23 @@ uint32_t DatabaseManager::updateDatabase()
 			query.str("");
 			registerDatabaseConfig("db_version", 10);
 			return 10;
+		}
+
+		case 10:
+		{
+			std::cout << "> Updating database to version: 11..." << std::endl;
+
+			DBQuery query;
+			query << "ALTER TABLE `players` ADD `description` VARCHAR(255) NOT NULL;";
+			db->executeQuery(query.str());
+
+			query.str("");
+			query << "ALTER TABLE `house_storage` RENAME TO `house_data`;";
+			db->executeQuery(query.str());
+
+			query.str("");
+			registerDatabaseConfig("db_version", 11);
+			return 11;
 		}
 
 		default:

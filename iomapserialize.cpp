@@ -29,7 +29,7 @@ extern Game g_game;
 
 bool IOMapSerialize::loadMap(Map* map)
 {
-	if(g_config.getBool(ConfigManager::HOUSE_STORAGE))
+	if(g_config.getBool(ConfigManager::house_data))
 		return loadMapBinary(map);
 
 	return loadMapRelational(map);
@@ -37,7 +37,7 @@ bool IOMapSerialize::loadMap(Map* map)
 
 bool IOMapSerialize::saveMap(Map* map)
 {
-	if(g_config.getBool(ConfigManager::HOUSE_STORAGE))
+	if(g_config.getBool(ConfigManager::house_data))
 		return saveMapBinary(map);
 
 	return saveMapRelational(map);
@@ -229,7 +229,7 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `data` FROM `house_storage` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	query << "SELECT `data` FROM `house_data` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 	if(!(result = db->storeQuery(query.str())))
 		return false;
  
@@ -278,12 +278,12 @@ bool IOMapSerialize::saveMapBinary(Map* map)
  		return false;
 
 	DBQuery query;
-	query << "DELETE FROM `house_storage` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	query << "DELETE FROM `house_data` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 	if(!db->executeQuery(query.str()))
  		return false;
 
 	DBInsert stmt(db);
-	stmt.setQuery("INSERT INTO `house_storage` (`house_id`, `world_id`, `data`) VALUES ");
+	stmt.setQuery("INSERT INTO `house_data` (`house_id`, `world_id`, `data`) VALUES ");
  	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
 	{
  		//save house items

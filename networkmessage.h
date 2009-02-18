@@ -39,7 +39,7 @@ class NetworkMessage
 
 		// constructor/destructor
 		NetworkMessage() {Reset();}
-		virtual ~NetworkMessage(){}
+		virtual ~NetworkMessage() {}
 
 	protected:
 		// resets the internal buffer to an empty message

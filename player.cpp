@@ -50,12 +50,11 @@ extern Weapons* g_weapons;
 extern CreatureEvents* g_creatureEvents;
 
 AutoList<Player> Player::listPlayer;
-MuteCountMap Player::muteCountMap;
-int32_t Player::maxMessageBuffer;
-
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t Player::playerCount = 0;
 #endif
+MuteCountMap Player::muteCountMap;
+int32_t Player::maxMessageBuffer;
 
 Player::Player(const std::string& _name, ProtocolGame *p) :
 Creature()
@@ -2399,7 +2398,6 @@ bool Player::addVIP(uint32_t _guid, std::string& name, bool isOnline, bool inter
 	}
 
 	VIPList.insert(_guid);
-
 	if(client && !internal)
 		client->sendVIP(_guid, name, isOnline);
 
@@ -2692,7 +2690,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 		}
 
 		//check the deep containers
-		uint32_t deepLevel = 1; //TODO: make it configurable? :)
+		uint32_t deepLevel = g_config.getNumber(ConfigManager::PLAYER_DEEPNESS);
 		for(ContainerVector::iterator it = deepVector.begin(); it != deepVector.end(); ++it)
 		{
 			if((*it).second == tradeItem)

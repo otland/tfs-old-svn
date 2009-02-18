@@ -399,19 +399,17 @@ class Npc : public Creature
 		static uint32_t npcCount;
 #endif
 		virtual ~Npc();
+		static Npc* createNpc(const std::string& name);
 
 		virtual Npc* getNpc() {return this;}
 		virtual const Npc* getNpc() const {return this;}
-
-		virtual bool isPushable() const {return false;}
 
 		virtual uint32_t idRange() {return 0x80000000;}
 		static AutoList<Npc> listNpc;
 		void removeList() {listNpc.removeList(getID());}
 		void addList() {listNpc.addList(this);}
 
-		static Npc* createNpc(const std::string& name);
-
+		virtual bool isPushable() const {return false;}
 		virtual bool canSee(const Position& pos) const;
 
 		bool load();

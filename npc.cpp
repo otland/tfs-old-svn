@@ -44,11 +44,10 @@ extern Spells* g_spells;
 extern Vocations g_vocations;
 
 AutoList<Npc> Npc::listNpc;
-
-NpcScriptInterface* Npc::m_scriptInterface = NULL;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t Npc::npcCount = 0;
 #endif
+NpcScriptInterface* Npc::m_scriptInterface = NULL;
 
 void Npcs::reload()
 {
@@ -57,7 +56,6 @@ void Npcs::reload()
 
 	delete Npc::m_scriptInterface;
 	Npc::m_scriptInterface = NULL;
-
 	for(AutoList<Npc>::listiterator it = Npc::listNpc.list.begin(); it != Npc::listNpc.list.end(); ++it)
 		it->second->reload();
 }
@@ -68,23 +66,21 @@ Npc* Npc::createNpc(const std::string& name)
 	if(!npc)
 		return NULL;
 
-	if(!npc->load())
-	{
-		delete npc;
-		return NULL;
-	}
-	return npc;
+	if(npc->load())
+		return npc;
+
+	delete npc;
+	return NULL;
 }
 
 Npc::Npc(const std::string& _name):
 Creature()
 {
 	m_filename = getFilePath(FILE_TYPE_OTHER, "npc/" + _name + ".xml");
+	m_npcEventHandler = NULL;
 	loaded = false;
 
-	m_npcEventHandler = NULL;
 	reset();
-
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	npcCount++;
 #endif
@@ -93,7 +89,6 @@ Creature()
 Npc::~Npc()
 {
 	reset();
-
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	npcCount--;
 #endif
@@ -133,7 +128,6 @@ void Npc::reset()
 
 	delete m_npcEventHandler;
 	m_npcEventHandler = NULL;
-
 	for(ResponseList::iterator it = responseList.begin(); it != responseList.end(); ++it)
 		delete *it;
 
@@ -154,7 +148,6 @@ void Npc::reload()
 {
 	reset();
 	load();
-
 	//Simulate that the creature is placed on the map again.
 	if(m_npcEventHandler)
 		m_npcEventHandler->onCreatureAppear(this);
@@ -166,215 +159,207 @@ void Npc::reload()
 bool Npc::loadFromXml(const std::string& filename)
 {
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
-	if(doc)
+	if(!doc)
+		return false;
+
+	xmlNodePtr root, p;
+	root = xmlDocGetRootElement(doc);
+	if(xmlStrcmp(root->name,(const xmlChar*)"npc") != 0)
 	{
-		xmlNodePtr root, p;
-		root = xmlDocGetRootElement(doc);
-		if(xmlStrcmp(root->name,(const xmlChar*)"npc") != 0)
-		{
-			std::cerr << "Malformed XML" << std::endl;
-			return false;
-		}
-
-		int32_t intValue;
-		std::string strValue;
-
-		std::string scriptfile = "";
-		if(readXMLString(root, "script", strValue))
-			scriptfile = strValue;
-
-		if(readXMLString(root, "name", strValue))
-			name = strValue;
-		else
-			name = "";
-
-		if(readXMLString(root, "namedescription", strValue) || readXMLString(root, "nameDescription", strValue))
-			nameDescription = strValue;
-		else
-			nameDescription = name;
-
-		if(readXMLInteger(root, "speed", intValue))
-			baseSpeed = intValue;
-		else
-			baseSpeed = 110;
-
-		if(readXMLString(root, "attackable", strValue))
-			attackable = booleanString(strValue);
-
-		if(readXMLInteger(root, "walkinterval", intValue))
-			walkTicks = intValue;
-
-		if(readXMLInteger(root, "autowalk", intValue))
-		{
-			std::cout << "[Notice - Npc::Npc] NPC Name: " << name << " - autowalk has been deprecated, use walkinterval." << std::endl;
-			walkTicks = 2000;
-		}
-
-		if(readXMLString(root, "floorchange", strValue))
-			floorChange = booleanString(strValue);
-
-		if(readXMLString(root, "skull", strValue))
-		{
-			std::string tmpStrValue = asLowerCaseString(strValue);
-			if(tmpStrValue == "red" || tmpStrValue == "4")
-				setSkull(SKULL_RED);
-			else if(tmpStrValue == "white" || tmpStrValue == "3")
-				setSkull(SKULL_WHITE);
-			else if(tmpStrValue == "green" || tmpStrValue == "2")
-				setSkull(SKULL_GREEN);
-			else if(tmpStrValue == "yellow" || tmpStrValue == "1")
-				setSkull(SKULL_YELLOW);
-			else
-				setSkull(SKULL_NONE);
-		}
-
-		if(readXMLString(root, "shield", strValue))
-		{
-			std::string tmpStrValue = asLowerCaseString(strValue);
-			if(tmpStrValue == "whitenoshareoff" || tmpStrValue == "10")
-				setShield(SHIELD_YELLOW_NOSHAREDEXP);
-			else if(tmpStrValue == "blueshareoff" || tmpStrValue == "9")
-				setShield(SHIELD_BLUE_NOSHAREDEXP);
-			else if(tmpStrValue == "yellowshareblink" || tmpStrValue == "8")
-				setShield(SHIELD_YELLOW_NOSHAREDEXP_BLINK);
-			else if(tmpStrValue == "blueshareblink" || tmpStrValue == "7")
-				setShield(SHIELD_BLUE_NOSHAREDEXP_BLINK);
-			else if(tmpStrValue == "yellowshareon" || tmpStrValue == "6")
-				setShield(SHIELD_YELLOW_SHAREDEXP);
-			else if(tmpStrValue == "blueshareon" || tmpStrValue == "5")
-				setShield(SHIELD_BLUE_SHAREDEXP);
-			else if(tmpStrValue == "yellow" || tmpStrValue == "4")
-				setShield(SHIELD_YELLOW);
-			else if(tmpStrValue == "blue" || tmpStrValue == "3")
-				setShield(SHIELD_BLUE);
-			else if(tmpStrValue == "whiteyellow" || tmpStrValue == "2")
-				setShield(SHIELD_WHITEYELLOW);
-			else if(tmpStrValue == "whiteblue" || tmpStrValue == "1")
-				setShield(SHIELD_WHITEBLUE);
-			else
-				setShield(SHIELD_NONE);
-		}
-
-		p = root->children;
-		while(p)
-		{
-			if(xmlStrcmp(p->name, (const xmlChar*)"health") == 0)
-			{
-				if(readXMLInteger(p, "now", intValue))
-					health = intValue;
-				else
-					health = 100;
-
-				if(readXMLInteger(p, "max", intValue))
-					healthMax = intValue;
-				else
-					healthMax = 100;
-			}
-			else if(xmlStrcmp(p->name, (const xmlChar*)"look") == 0)
-			{
-				if(readXMLInteger(p, "type", intValue))
-				{
-					defaultOutfit.lookType = intValue;
-
-					if(readXMLInteger(p, "head", intValue))
-						defaultOutfit.lookHead = intValue;
-
-					if(readXMLInteger(p, "body", intValue))
-						defaultOutfit.lookBody = intValue;
-
-					if(readXMLInteger(p, "legs", intValue))
-						defaultOutfit.lookLegs = intValue;
-
-					if(readXMLInteger(p, "feet", intValue))
-						defaultOutfit.lookFeet = intValue;
-
-					if(readXMLInteger(p, "addons", intValue))
-						defaultOutfit.lookAddons = intValue;
-				}
-				else if(readXMLInteger(p, "typeex", intValue))
-					defaultOutfit.lookTypeEx = intValue;
-
-				currentOutfit = defaultOutfit;
-			}
-			else if(xmlStrcmp(p->name, (const xmlChar*)"voices") == 0)
-			{
-				for(xmlNodePtr q = p->children; q != NULL; q = q->next)
-				{
-					if(xmlStrcmp(q->name, (const xmlChar*)"voice") == 0)
-					{
-						if(!readXMLString(q, "text", strValue))
-							continue;
-
-						Voice voice;
-						voice.text = strValue;
-						if(readXMLInteger(q, "interval2", intValue))
-							voice.interval = intValue;
-						else
-							voice.interval = 60;
-
-						if(readXMLInteger(q, "margin", intValue))
-							voice.margin = intValue;
-						else
-							voice.margin = 0;
-
-						if(readXMLString(q, "yell", strValue))
-							voice.yell = booleanString(strValue);
-						else
-							voice.yell = false;
-
-						voiceList.push_back(voice);
-					}
-				}
-			}
-			else if(xmlStrcmp(p->name, (const xmlChar*)"parameters") == 0)
-			{
-				for(xmlNodePtr q = p->children; q != NULL; q = q->next)
-				{
-					if(xmlStrcmp(q->name, (const xmlChar*)"parameter") == 0)
-					{
-						std::string paramKey, paramValue;
-						if(!readXMLString(q, "key", paramKey))
-							continue;
-						if(!readXMLString(q, "value", paramValue))
-							continue;
-
-						m_parameters[paramKey] = paramValue;
-					}
-				}
-
-			}
-			else if(xmlStrcmp(p->name, (const xmlChar*)"interaction") == 0)
-			{
-				if(readXMLInteger(p, "talkradius", intValue))
-					talkRadius = intValue;
-
-				if(readXMLInteger(p, "idletime", intValue))
-					idleTime = intValue;
-
-				if(readXMLInteger(p, "idleinterval", intValue))
-					idleInterval = intValue;
-
-				if(readXMLInteger(p, "defaultpublic", intValue))
-					defaultPublic = intValue != 0;
-
-				responseList = loadInteraction(p->children);
-			}
-
-			p = p->next;
-		}
-
-		xmlFreeDoc(doc);
-		if(!scriptfile.empty())
-		{
-			m_npcEventHandler = new NpcScript(scriptfile, this);
-			if(!m_npcEventHandler->isLoaded())
-				return false;
-		}
-
-		return true;
+		std::cerr << "Malformed XML" << std::endl;
+		return false;
 	}
 
-	return false;
+	int32_t intValue;
+	std::string strValue;
+
+	std::string scriptfile = "";
+	if(readXMLString(root, "script", strValue))
+		scriptfile = strValue;
+
+	if(readXMLString(root, "name", strValue))
+		name = strValue;
+
+	if(readXMLString(root, "namedescription", strValue) || readXMLString(root, "nameDescription", strValue))
+		nameDescription = strValue;
+	else
+		nameDescription = name;
+
+	if(readXMLInteger(root, "speed", intValue))
+		baseSpeed = intValue;
+	else
+		baseSpeed = 110;
+
+	if(readXMLString(root, "attackable", strValue))
+		attackable = booleanString(strValue);
+
+	if(readXMLInteger(root, "walkinterval", intValue))
+		walkTicks = intValue;
+
+	if(readXMLInteger(root, "autowalk", intValue))
+	{
+		std::cout << "[Notice - Npc::Npc] NPC Name: " << name << " - autowalk has been deprecated, use walkinterval." << std::endl;
+		walkTicks = 2000;
+	}
+
+	if(readXMLString(root, "floorchange", strValue))
+		floorChange = booleanString(strValue);
+
+	if(readXMLString(root, "skull", strValue))
+	{
+		std::string tmpStrValue = asLowerCaseString(strValue);
+		if(tmpStrValue == "red" || tmpStrValue == "4")
+			setSkull(SKULL_RED);
+		else if(tmpStrValue == "white" || tmpStrValue == "3")
+			setSkull(SKULL_WHITE);
+		else if(tmpStrValue == "green" || tmpStrValue == "2")
+			setSkull(SKULL_GREEN);
+		else if(tmpStrValue == "yellow" || tmpStrValue == "1")
+			setSkull(SKULL_YELLOW);
+		else
+			setSkull(SKULL_NONE);
+	}
+
+	if(readXMLString(root, "shield", strValue))
+	{
+		std::string tmpStrValue = asLowerCaseString(strValue);
+		if(tmpStrValue == "whitenoshareoff" || tmpStrValue == "10")
+			setShield(SHIELD_YELLOW_NOSHAREDEXP);
+		else if(tmpStrValue == "blueshareoff" || tmpStrValue == "9")
+			setShield(SHIELD_BLUE_NOSHAREDEXP);
+		else if(tmpStrValue == "yellowshareblink" || tmpStrValue == "8")
+			setShield(SHIELD_YELLOW_NOSHAREDEXP_BLINK);
+		else if(tmpStrValue == "blueshareblink" || tmpStrValue == "7")
+			setShield(SHIELD_BLUE_NOSHAREDEXP_BLINK);
+		else if(tmpStrValue == "yellowshareon" || tmpStrValue == "6")
+			setShield(SHIELD_YELLOW_SHAREDEXP);
+		else if(tmpStrValue == "blueshareon" || tmpStrValue == "5")
+			setShield(SHIELD_BLUE_SHAREDEXP);
+		else if(tmpStrValue == "yellow" || tmpStrValue == "4")
+			setShield(SHIELD_YELLOW);
+		else if(tmpStrValue == "blue" || tmpStrValue == "3")
+			setShield(SHIELD_BLUE);
+		else if(tmpStrValue == "whiteyellow" || tmpStrValue == "2")
+			setShield(SHIELD_WHITEYELLOW);
+		else if(tmpStrValue == "whiteblue" || tmpStrValue == "1")
+			setShield(SHIELD_WHITEBLUE);
+		else
+			setShield(SHIELD_NONE);
+	}
+
+	p = root->children;
+	while(p)
+	{
+		if(xmlStrcmp(p->name, (const xmlChar*)"health") == 0)
+		{
+			if(readXMLInteger(p, "now", intValue))
+				health = intValue;
+			else
+				health = 100;
+
+			if(readXMLInteger(p, "max", intValue))
+				healthMax = intValue;
+			else
+				healthMax = 100;
+		}
+		else if(xmlStrcmp(p->name, (const xmlChar*)"look") == 0)
+		{
+			if(readXMLInteger(p, "type", intValue))
+			{
+				defaultOutfit.lookType = intValue;
+				if(readXMLInteger(p, "head", intValue))
+					defaultOutfit.lookHead = intValue;
+
+				if(readXMLInteger(p, "body", intValue))
+					defaultOutfit.lookBody = intValue;
+
+				if(readXMLInteger(p, "legs", intValue))
+					defaultOutfit.lookLegs = intValue;
+
+				if(readXMLInteger(p, "feet", intValue))
+					defaultOutfit.lookFeet = intValue;
+
+				if(readXMLInteger(p, "addons", intValue))
+					defaultOutfit.lookAddons = intValue;
+				}
+			else if(readXMLInteger(p, "typeex", intValue))
+				defaultOutfit.lookTypeEx = intValue;
+
+			currentOutfit = defaultOutfit;
+		}
+		else if(xmlStrcmp(p->name, (const xmlChar*)"voices") == 0)
+		{
+			for(xmlNodePtr q = p->children; q != NULL; q = q->next)
+			{
+				if(xmlStrcmp(q->name, (const xmlChar*)"voice") == 0)
+				{
+					if(!readXMLString(q, "text", strValue))
+						continue;
+
+					Voice voice;
+					voice.text = strValue;
+					if(readXMLInteger(q, "interval2", intValue))
+						voice.interval = intValue;
+					else
+						voice.interval = 60;
+
+					if(readXMLInteger(q, "margin", intValue))
+						voice.margin = intValue;
+					else
+						voice.margin = 0;
+
+					if(readXMLString(q, "yell", strValue))
+						voice.yell = booleanString(strValue);
+					else
+						voice.yell = false;
+
+					voiceList.push_back(voice);
+				}
+			}
+		}
+		else if(xmlStrcmp(p->name, (const xmlChar*)"parameters") == 0)
+		{
+			for(xmlNodePtr q = p->children; q != NULL; q = q->next)
+			{
+				if(xmlStrcmp(q->name, (const xmlChar*)"parameter") == 0)
+				{
+					std::string paramKey, paramValue;
+					if(!readXMLString(q, "key", paramKey))
+						continue;
+
+					if(!readXMLString(q, "value", paramValue))
+						continue;
+
+					m_parameters[paramKey] = paramValue;
+				}
+			}
+		}
+		else if(xmlStrcmp(p->name, (const xmlChar*)"interaction") == 0)
+		{
+			if(readXMLInteger(p, "talkradius", intValue))
+				talkRadius = intValue;
+
+			if(readXMLInteger(p, "idletime", intValue))
+					idleTime = intValue;
+
+			if(readXMLInteger(p, "idleinterval", intValue))
+				idleInterval = intValue;
+
+			if(readXMLInteger(p, "defaultpublic", intValue))
+				defaultPublic = intValue != 0;
+
+			responseList = loadInteraction(p->children);
+		}
+
+		p = p->next;
+	}
+
+	xmlFreeDoc(doc);
+	if(scriptfile.empty())
+		return true;
+
+	m_npcEventHandler = new NpcScript(scriptfile, this);
+	return m_npcEventHandler->isLoaded();
 }
 
 uint32_t Npc::loadParams(xmlNodePtr node)
@@ -431,17 +416,14 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 		{
 			if(readXMLString(node, "file", strValue))
 			{
-				std::string includeFilename = getFilePath(FILE_TYPE_OTHER, "npc/lib/" + strValue);
-				xmlDocPtr doc = xmlParseFile(includeFilename.c_str());
-				if(doc)
+				std::string included = getFilePath(FILE_TYPE_OTHER, "npc/lib/" + strValue);
+				if(xmlDocPtr doc = xmlParseFile(included.c_str()))
 				{
-					xmlNodePtr root;
-					root = xmlDocGetRootElement(doc);
-
+					xmlNodePtr root = xmlDocGetRootElement(doc);
 					if(xmlStrcmp(root->name,(const xmlChar*)"interaction") == 0)
 					{
-						ResponseList includeResponseList = loadInteraction(root->children);
-						_responseList.insert(_responseList.end(), includeResponseList.begin(), includeResponseList.end());
+						ResponseList includedResponses = loadInteraction(root->children);
+						_responseList.insert(_responseList.end(), includedResponses.begin(), includedResponses.end());
 					}
 					else
 						std::cerr << "Malformed XML" << std::endl;
@@ -1021,6 +1003,7 @@ NpcState* Npc::getState(const Player* player, bool makeNew /*= true*/)
 	state->respondToCreature = 0;
 	state->lastResponse = NULL;
 	state->prevRespondToText = "";
+
 	stateList.push_back(state);
 	return state;
 }

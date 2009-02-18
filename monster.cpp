@@ -36,12 +36,11 @@ extern ConfigManager g_config;
 extern Monsters g_monsters;
 
 AutoList<Monster>Monster::listMonster;
-
-int32_t Monster::despawnRange;
-int32_t Monster::despawnRadius;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t Monster::monsterCount = 0;
 #endif
+int32_t Monster::despawnRange;
+int32_t Monster::despawnRadius;
 
 Monster* Monster::createMonster(MonsterType* mType)
 {
@@ -86,9 +85,6 @@ Creature()
 	defenseTicks = 0;
 	yellTicks = 0;
 	extraMeleeAttack = false;
-
-	strDescription = mType->nameDescription;
-	toLowerCaseString(strDescription);
 
 	// register creature events
 	MonsterScriptList::iterator it;

@@ -3169,11 +3169,8 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 	}
 
 	Position playerPos = player->getPosition();
-
-	int32_t lookDistance = 0;
-	if(thing == player)
-		lookDistance = -1;
-	else
+	int32_t lookDistance = -1;
+	if(thing != player)
 	{
 		lookDistance = std::max(std::abs(playerPos.x - thingPos.x), std::abs(playerPos.y - thingPos.y));
 		if(playerPos.z != thingPos.z)

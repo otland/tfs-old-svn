@@ -147,18 +147,17 @@ class Player : public Creature, public Cylinder
 		virtual const std::string& getNameDescription() const {return nameDescription;}
 		virtual std::string getDescription(int32_t lookDistance) const;
 
-		void manageAccount(const std::string &text);
+		void manageAccount(const std::string& text);
 		bool isAccountManager() const {return (accountManager != MANAGER_NONE);}
+		void kickPlayer(bool displayEffect);
 
 		void setGUID(uint32_t _guid) {guid = _guid;}
 		uint32_t getGUID() const {return guid;}
 
 		static AutoList<Player> listPlayer;
 		virtual uint32_t idRange() {return 0x10000000;}
-
 		void addList();
 		void removeList();
-		void kickPlayer(bool displayEffect);
 
 		static uint64_t getExpForLevel(uint32_t lv)
 		{

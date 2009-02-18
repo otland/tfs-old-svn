@@ -246,7 +246,8 @@ enum PlayerInfo_t
 	PlayerInfoSaving,
 	PlayerInfoIp,
 	PlayerInfoRedSkullTicks,
-	PlayerInfoOutfitWindow
+	PlayerInfoOutfitWindow,
+	PlayerInfoNameDescription
 };
 
 #define reportErrorFunc(a) reportError(__FUNCTION__, a)
@@ -512,6 +513,8 @@ class LuaScriptInterface
 		static int32_t luaSetHouseAccessList(lua_State* L);
 
 		//get creature info functions
+		static int32_t luaDoPlayerSetNameDescription(lua_State* L);
+		static int32_t luaGetPlayerNameDescription(lua_State* L);
 		static int32_t luaGetPlayerFood(lua_State* L);
 		static int32_t luaGetPlayerAccess(lua_State* L);
 		static int32_t luaGetPlayerLevel(lua_State* L);

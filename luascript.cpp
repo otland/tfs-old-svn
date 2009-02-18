@@ -1252,6 +1252,12 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerGUID(cid)
 	lua_register(m_luaState, "getPlayerGUID", LuaScriptInterface::luaGetPlayerGUID);
 
+	//getPlayerNameDescription(cid)
+	lua_register(m_luaState, "getPlayerNameDescription", LuaScriptInterface::luaGetPlayerNameDescription);
+
+	//doPlayerSetNameDescription(cid, description)
+	lua_register(m_luaState, "doPlayerSetNameDescription", LuaScriptInterface::luaDoPlayerSetNameDescription);
+
 	//getPlayerAccountId(cid)
 	lua_register(m_luaState, "getPlayerAccountId", LuaScriptInterface::luaGetPlayerAccountId);
 
@@ -2272,6 +2278,9 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 		Position pos;
 		switch(info)
 		{
+			case PlayerInfoNameDescription:
+				lua_pushstring(L, player->getNameDescription().substr(player->getName().length()).c_str());
+				return 1;
 			case PlayerInfoAccess:
 				value = player->getAccessLevel();
 				break;
@@ -2400,6 +2409,11 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 }
 
 //getPlayer[Info](uid)
+int32_t LuaScriptInterface::luaGetPlayerNameDescription(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoNameDescription);
+}
+
 int32_t LuaScriptInterface::luaGetPlayerFood(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoFood);
@@ -2570,6 +2584,25 @@ int32_t LuaScriptInterface::luaDoPlayerSendOutfitWindow(lua_State* L)
 	return internalGetPlayerInfo(L, PlayerInfoOutfitWindow);
 }
 //
+
+int32_t LuaScriptInterface::luaDoPlayerSetNameDescription(lua_State* L)
+{
+	//doPlayerSetNameDescription(cid, description)
+	std::string description = popString(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	if(Player* player = env->getPlayerByUID(popNumber(L)))
+	{
+		player->nameDescription = player->getName() + description;
+		lua_pushnumber(L, LUA_NO_ERROR);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+	return 1;
+}
 
 int32_t LuaScriptInterface::luaGetPlayerMagLevel(lua_State* L)
 {
@@ -7137,35 +7170,17 @@ int32_t LuaScriptInterface::luaGetGuildMotd(lua_State* L)
 int32_t LuaScriptInterface::luaDoMoveCreature(lua_State* L)
 {
 	//doMoveCreature(cid, direction)
-	uint32_t direction = popNumber(L);
-	uint32_t cid = popNumber(L);
-
-	switch(direction)
+	uint32_t direction = popNumber(L), cid = popNumber(L);
+	if(direction < NORTH || direction > NORTHEAST)
 	{
-		case NORTH:
-		case SOUTH:
-		case WEST:
-		case EAST:
-		case SOUTHWEST:
-		case NORTHWEST:
-		case NORTHEAST:
-		case SOUTHEAST:
-			break;
-		default:
-			reportErrorFunc("No valid direction");
-			lua_pushnumber(L, LUA_ERROR);
-			return 1;
-			break;
+		reportErrorFunc("No valid direction");
+		lua_pushnumber(L, LUA_ERROR);
+		return 1;
 	}
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	Creature* creature = env->getCreatureByUID(cid);
-	if(creature)
-	{
-		ReturnValue ret = g_game.internalMoveCreature(creature, (Direction)direction, FLAG_NOLIMIT);
-		lua_pushnumber(L, ret);
-	}
+	if(Creature* creature = env->getCreatureByUID(cid))
+		lua_pushnumber(L, g_game.internalMoveCreature(creature, (Direction)direction, FLAG_NOLIMIT));
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -8154,10 +8169,9 @@ int32_t LuaScriptInterface::luaDoCreatureSetLookDir(lua_State* L)
 {
 	//doCreatureSetLookDir(cid, dir)
 	Direction dir = (Direction)popNumber(L);
-	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	if(Creature* creature = env->getCreatureByUID(cid))
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
 		g_game.internalCreatureTurn(creature, dir);
 		if(Player* player = creature->getPlayer())
