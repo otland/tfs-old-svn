@@ -29,7 +29,7 @@ extern Game g_game;
 
 bool IOMapSerialize::loadMap(Map* map)
 {
-	if(g_config.getBool(ConfigManager::house_data))
+	if(g_config.getBool(ConfigManager::HOUSE_STORAGE))
 		return loadMapBinary(map);
 
 	return loadMapRelational(map);
@@ -37,7 +37,7 @@ bool IOMapSerialize::loadMap(Map* map)
 
 bool IOMapSerialize::saveMap(Map* map)
 {
-	if(g_config.getBool(ConfigManager::house_data))
+	if(g_config.getBool(ConfigManager::HOUSE_STORAGE))
 		return saveMapBinary(map);
 
 	return saveMapRelational(map);
