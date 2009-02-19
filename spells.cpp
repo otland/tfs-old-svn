@@ -1019,7 +1019,7 @@ bool InstantSpell::playerCastInstant(Player* player, const std::string& param)
 			ReturnValue ret = g_game.getPlayerByNameWildcard(param, target_);
 
 			target = target_;
-			if(limitRange && target && Position::areInRange(Position(limitRange, limitRange, 0), target->getPosition(), player->getPosition()))
+			if(limitRange && target && !Position::areInRange(Position(limitRange, limitRange, 0), target->getPosition(), player->getPosition()))
 	    			useDirection = true;
 
 			if((!target || target->getHealth() <= 0) && !useDirection)
@@ -1037,7 +1037,7 @@ bool InstantSpell::playerCastInstant(Player* player, const std::string& param)
 		else
 		{
 			target = player->getAttackedCreature();
-			if(limitRange && target && Position::areInRange(Position(limitRange, limitRange, 0), target->getPosition(), player->getPosition()))
+			if(limitRange && target && !Position::areInRange(Position(limitRange, limitRange, 0), target->getPosition(), player->getPosition()))
 	    			useDirection = true;
 
 			if((!target || target->getHealth() <= 0) && !useDirection)
