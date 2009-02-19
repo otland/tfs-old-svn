@@ -2674,44 +2674,45 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 			return this;
 
 		//find a appropiate slot and list deep containers
-		ContainerVector deepVector;
+		std::list<Container*> containerList;
 		for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 		{
-			if(!inventory[i])
+			if(!inventory[i] && __queryAdd(i, item, item->getItemCount(), 0) == RET_NOERROR)
 			{
-				if(__queryAdd(i, item, item->getItemCount(), 0) == RET_NOERROR)
-				{
-					index = i;
-					return this;
-				}
+				index = i;
+				return this;
 			}
-			else if(Container* container = dynamic_cast<Container*>(inventory[i]))
-				deepVector.push_back(std::make_pair(0, container));
+
+			if(inventory[i] == tradeItem)
+				continue;
+
+			if(Container* container = dynamic_cast<Container*>(inventory[i]))
+				containerList.push_back(container);
 		}
 
 		//check the deep containers
-		uint32_t deepLevel = g_config.getNumber(ConfigManager::PLAYER_DEEPNESS);
-		for(ContainerVector::iterator it = deepVector.begin(); it != deepVector.end(); ++it)
+		for(std::list<Container*>::iterator it = containerList.begin(); it != containerList.end(); ++it)
 		{
-			Container* container = (*it).second;
-			if(!container || container == tradeItem)
-				continue;
-
-			if(container->__queryAdd(-1, item, item->getItemCount(), 0) == RET_NOERROR)
+			if((*it)->__queryAdd(-1, item, item->getItemCount(), 0) == RET_NOERROR)
 			{
 				index = INDEX_WHEREEVER;
 				*destItem = NULL;
-				return container;
+				return (*it);
 			}
 
-			uint32_t tmp = (*it).first;
-			if(tmp <= deepLevel)
+			for(ContainerIterator cit = (*it)->begin(); iit != (*it)->end(); ++cit)
 			{
-				tmp++;
-				for(ItemList::iterator lit = container->getItems(); lit != container->getEnd(); ++lit)
+				if((*cit) == tradeItem)
+					continue;
+
+				if(Container* subContainer = dynamic_cast<Container*>(*cit))
 				{
-					if(Container* subContainer = dynamic_cast<Container*>(*lit))
-						deepVector.push_back(std::make_pair(tmp, subContainer));
+					if(subContainer->__queryAdd(-1, item, item->getItemCount(), 0) == RET_NOERROR)
+					{
+						index = INDEX_WHEREEVER;
+						*destItem = NULL;
+						return subContainer;
+					}
 				}
 			}
 		}
