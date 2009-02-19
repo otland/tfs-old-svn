@@ -2700,7 +2700,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 				return (*it);
 			}
 
-			for(ContainerIterator cit = (*it)->begin(); iit != (*it)->end(); ++cit)
+			for(ContainerIterator cit = (*it)->begin(); cit != (*it)->end(); ++cit)
 			{
 				if((*cit) == tradeItem)
 					continue;
