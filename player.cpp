@@ -2278,6 +2278,9 @@ void Player::addExhaust(uint32_t ticks, uint32_t type)
 
 void Player::addInFightTicks(bool pzLock/* = false*/)
 {
+	if(hasFlag(PlayerFlag_NotGainInFight))
+		return;
+
 	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT, g_game.getInFightTicks(), 0))
 		addCondition(condition);
 
@@ -2325,13 +2328,13 @@ void Player::addList()
 
 void Player::kickPlayer(bool displayEffect)
 {
-	if(client)
-		client->logout(displayEffect, true);
-	else
+	if(!client)
 	{
 		g_creatureEvents->playerLogout(this);
 		g_game.removeCreature(this);
 	}
+	else
+		client->logout(displayEffect, true);
 }
 
 void Player::notifyLogIn(Player* login_player)
@@ -3410,38 +3413,33 @@ void Player::onCombatRemoveCondition(const Creature* attacker, Condition* condit
 void Player::onAttackedCreature(Creature* target)
 {
 	Creature::onAttackedCreature(target);
+	if(hasFlag(PlayerFlag_NotGainInFight) || taget == this)
+		return;
 
-	if(!hasFlag(PlayerFlag_NotGainInFight))
+	if(Player* targetPlayer = target->getPlayer())
 	{
-		if(target != this)
+		pzLocked = true;
+		if(!isPartner(targetPlayer) && !Combat::isInPvpZone(this, targetPlayer) && !targetPlayer->hasAttacked(this))
 		{
-			if(Player* targetPlayer = target->getPlayer())
+			addAttacked(targetPlayer);
+			if(targetPlayer->getSkull() == SKULL_NONE && getSkull() == SKULL_NONE && !hasCustomFlag(PlayerCustomFlag_NotGainSkull))
 			{
-				pzLocked = true;
-				if(!isPartner(targetPlayer) && !Combat::isInPvpZone(this, targetPlayer) && !targetPlayer->hasAttacked(this))
-				{
-					addAttacked(targetPlayer);
-					if(targetPlayer->getSkull() == SKULL_NONE && getSkull() == SKULL_NONE && !hasCustomFlag(PlayerCustomFlag_NotGainSkull))
-					{
-						setSkull(SKULL_WHITE);
-						g_game.updateCreatureSkull(this);
-					}
-
-					if(getSkull() == SKULL_NONE)
-						targetPlayer->sendCreatureSkull(this);
-				}
+				setSkull(SKULL_WHITE);
+				g_game.updateCreatureSkull(this);
 			}
-		}
 
-		addInFightTicks();
+			if(getSkull() == SKULL_NONE)
+				targetPlayer->sendCreatureSkull(this);
+		}
 	}
+
+	addInFightTicks();
 }
 
 void Player::onAttacked()
 {
 	Creature::onAttacked();
-	if(!hasFlag(PlayerFlag_NotGainInFight))
-		addInFightTicks();
+	addInFightTicks();
 }
 
 bool Player::checkLoginDelay(uint32_t playerId) const
@@ -3503,26 +3501,24 @@ bool Player::onKilledCreature(Creature* target)
 	if(!Creature::onKilledCreature(target))
 		return false;
 
-	if(Player* targetPlayer = target->getPlayer())
+	Player* targetPlayer = target->getPlayer();
+	if(targetPlayer && targetPlayer->getZone() == ZONE_PVP)
 	{
-		if(targetPlayer && targetPlayer->getZone() == ZONE_PVP)
-		{
-			targetPlayer->setDropLoot(false);
-			targetPlayer->setLossSkill(false);
-		}
-		else if(!hasFlag(PlayerFlag_NotGainInFight))
-		{
-			if(!isPartner(targetPlayer) && !Combat::isInPvpZone(this, targetPlayer) &&
-				!targetPlayer->hasAttacked(this) && targetPlayer->getSkull() == SKULL_NONE)
-				addUnjustifiedDead(targetPlayer);
+		targetPlayer->setDropLoot(false);
+		targetPlayer->setLossSkill(false);
+	}
+	else if(!hasFlag(PlayerFlag_NotGainInFight))
+	{
+		if(!isPartner(targetPlayer) && !Combat::isInPvpZone(this, targetPlayer) &&
+			!targetPlayer->hasAttacked(this) && targetPlayer->getSkull() == SKULL_NONE)
+			addUnjustifiedDead(targetPlayer);
 
-			if(!Combat::isInPvpZone(this, targetPlayer) && hasCondition(CONDITION_INFIGHT))
-			{
-				pzLocked = true;
-				if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT,
-					g_config.getNumber(ConfigManager::WHITE_SKULL_TIME), 0))
-					addCondition(condition);
-			}
+		if(!Combat::isInPvpZone(this, targetPlayer) && hasCondition(CONDITION_INFIGHT))
+		{
+			pzLocked = true;
+			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT,
+				g_config.getNumber(ConfigManager::WHITE_SKULL_TIME), 0))
+				addCondition(condition);
 		}
 	}
 
@@ -3626,16 +3622,7 @@ bool Player::canWear(uint32_t _looktype, uint32_t _addons)
 
 bool Player::canLogout()
 {
-	if(isConnecting)
-		return false;
-
-	if(hasCondition(CONDITION_INFIGHT))
-		return false;
-
-	if(getTile()->hasFlag(TILESTATE_NOLOGOUT))
-		return false;
-
-	return true;
+	return !isConnecting && !hasCondition(CONDITION_INFIGHT) && !getTile()->hasFlag(TILESTATE_NOLOGOUT);
 }
 
 void Player::genReservedStorageRange()
@@ -3751,7 +3738,8 @@ void Player::clearAttacked()
 
 void Player::addUnjustifiedDead(const Player* attacked)
 {
-	if(g_game.getWorldType() == WORLD_TYPE_PVP_ENFORCED || attacked == this || hasFlag(PlayerFlag_NotGainInFight) || hasCustomFlag(PlayerCustomFlag_NotGainSkull))
+	if(g_game.getWorldType() == WORLD_TYPE_PVP_ENFORCED || attacked == this || hasFlag(
+		PlayerFlag_NotGainInFight) || hasCustomFlag(PlayerCustomFlag_NotGainSkull))
 		return;
 
 	if(client)

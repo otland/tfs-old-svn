@@ -4333,10 +4333,8 @@ void Game::addMagicEffect(const SpectatorVec& list, const Position& pos, uint8_t
 void Game::addDistanceEffect(const Position& fromPos, const Position& toPos, uint8_t effect)
 {
 	SpectatorVec list;
-
-	getSpectators(list, fromPos, false, false);
-	getSpectators(list, toPos, true, false);
-
+	getSpectators(list, fromPos, false);
+	getSpectators(list, toPos, true);
 	addDistanceEffect(list, fromPos, toPos, effect);
 }
 

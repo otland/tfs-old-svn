@@ -770,9 +770,6 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 	}
 
 	query << ", ";
-	if(!player->isAccountManager())
-		query << "`name` = " << db->escapeString(player->getName()) << ", ";
-
 	query << "`level` = " << std::max((uint32_t)1, player->level) << ", ";
 	query << "`group_id` = " << player->groupId << ", ";
 	query << "`health` = " << player->health << ", ";
@@ -798,9 +795,15 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 	query << "`balance` = " << player->balance << ", ";
 	query << "`stamina` = " << player->getStamina() << ", ";
 	query << "`promotion` = " << player->promotionLevel << ", ";
-	query << "`description` = " << db->escapeString(player->getNameDescription().substr(player->getName().length())) << ", ";
 	if(g_config.getBool(ConfigManager::STORE_DIRECTION))
 		query << "`direction` = " << (uint32_t)player->getDirection() << ", ";
+
+	std::string name = player->getName(), nameDescription = player->getNameDescription();
+	if(!player->isAccountManager())
+		query << "`name` = " << db->escapeString(name) << ", ";
+
+	if(nameDescription.length() > name.length())
+		query << "`description` = " << db->escapeString(nameDescription.substr(name.length())) << ", ";
 
 	//serialize conditions
 	PropWriteStream propWriteStream;
