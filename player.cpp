@@ -3413,7 +3413,7 @@ void Player::onCombatRemoveCondition(const Creature* attacker, Condition* condit
 void Player::onAttackedCreature(Creature* target)
 {
 	Creature::onAttackedCreature(target);
-	if(hasFlag(PlayerFlag_NotGainInFight) || taget == this)
+	if(hasFlag(PlayerFlag_NotGainInFight) || target == this)
 		return;
 
 	if(Player* targetPlayer = target->getPlayer())
