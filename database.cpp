@@ -45,7 +45,6 @@ Database* _Database::_instance = NULL;
 
 Database* _Database::getInstance()
 {
-	use();
 	if(!_instance)
 	{
 #if defined MULTI_SQL_DRIVERS
@@ -72,6 +71,7 @@ Database* _Database::getInstance()
 		OTSYS_THREAD_LOCKVARINIT(DBQuery::databaseLock);
 	}
 
+	_instance->use();
 	return _instance;
 }
 
