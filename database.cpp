@@ -45,7 +45,7 @@ Database* _Database::_instance = NULL;
 
 Database* _Database::getInstance()
 {
-	m_lastUse = time(NULL);
+	use();
 	if(!_instance)
 	{
 #if defined MULTI_SQL_DRIVERS

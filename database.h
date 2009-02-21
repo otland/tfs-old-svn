@@ -108,6 +108,8 @@ class _Database
 		*/
 		DATABASE_VIRTUAL bool isConnected() { return m_connected; }
 
+		DATABASE_VIRTUAL void use() { m_use = time(NULL); }
+
 	protected:
 		/**
 		* Transaction related methods.
@@ -192,7 +194,7 @@ class _Database
 		DBResult* verifyResult(DBResult* result);
 
 		bool m_connected;
-		time_t m_lastUse;
+		time_t m_use;
 
 	private:
 		static Database* _instance;
