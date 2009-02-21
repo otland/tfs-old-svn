@@ -23,6 +23,7 @@
 #include "otsystem.h"
 
 #include "networkmessage.h"
+#include <boost/shared_ptr.hpp>
 #include "tools.h"
 #include <list>
 
@@ -139,6 +140,8 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 #endif
 };
 
+typedef boost::shared_ptr<OutputMessage> OutputMessage_ptr;
+
 class OutputMessagePool
 {
 	private:
@@ -153,13 +156,12 @@ class OutputMessagePool
 			return &instance;
 		}
 
-		OutputMessage* getOutputMessage(Protocol* protocol, bool autosend = true);
+		OutputMessage_ptr getOutputMessage(Protocol* protocol, bool autosend = true);
 
-		void send(OutputMessage* msg);
+		void send(OutputMessage_ptr msg);
 		void sendAll();
 
 		void startExecutionFrame();
-		void releaseMessage(OutputMessage* msg, bool sent = false);
 		void stop() {m_shutdown = true;}
 
 		size_t getTotalMessageCount() const {return m_allOutputMessages.size();}
@@ -167,13 +169,15 @@ class OutputMessagePool
 		size_t getAutoMessageCount() const {return m_autoSendOutputMessages.size();}
 
 	protected:
-		void configureOutputMessage(OutputMessage* msg, Protocol* protocol, bool autosend);
-		void internalReleaseMessage(OutputMessage* msg);
+		void configureOutputMessage(OutputMessage_ptr msg, Protocol* protocol, bool autosend);
+		void internalReleaseMessage(OutputMessage_ptr msg);
 
-		typedef std::list<OutputMessage*> OutputMessageVector;
-		OutputMessageVector m_outputMessages;
-		OutputMessageVector m_autoSendOutputMessages;
-		OutputMessageVector m_allOutputMessages;
+		typedef std::list<OutputMessage*> InternalOutputMessageList;
+		typedef std::list<OutputMessage_ptr> OutputMessageMessageList;
+
+		InternalOutputMessageList m_outputMessages;
+		InternalOutputMessageList m_allOutputMessages;
+		OutputMessageMessageList m_autoSendOutputMessages;
 
 		OTSYS_THREAD_LOCKVAR m_outputPoolLock;
 		uint64_t m_frameTime;

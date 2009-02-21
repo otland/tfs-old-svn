@@ -125,7 +125,7 @@ void ProtocolAdmin::onRecvFirstMessage(NetworkMessage& msg)
 	}
 
 	addLogLine(this, LOGTYPE_EVENT, 1, "sending HELLO");
-	if(OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
+	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 	{
 		TRACK_MESSAGE(output);
 		output->AddByte(AP_MSG_HELLO);
@@ -151,7 +151,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 {
 	uint8_t recvbyte = msg.GetByte();
 	OutputMessagePool* outputPool = OutputMessagePool::getInstance();
-	OutputMessage* output = outputPool->getOutputMessage(this, false);
+	OutputMessage_ptr output = outputPool->getOutputMessage(this, false);
 	if(!output)
 		return;
 
@@ -164,7 +164,6 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 			{
 				if((time(NULL) - m_startTime) > 30000)
 				{
-					outputPool->releaseMessage(output);
 					getConnection()->closeConnection();
 					addLogLine(this, LOGTYPE_WARNING, 1, "encryption timeout");
 					return;
@@ -193,7 +192,6 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				if((time(NULL) - m_startTime) > 30000)
 				{
 					//login timeout
-					outputPool->releaseMessage(output);
 					getConnection()->closeConnection();
 					addLogLine(this, LOGTYPE_WARNING, 1, "login timeout");
 					return;
@@ -230,7 +228,6 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 
 		default:
 		{
-			outputPool->releaseMessage(output);
 			getConnection()->closeConnection();
 			addLogLine(this, LOGTYPE_ERROR, 1, "no valid connection state!!!");
 			return;
@@ -457,13 +454,11 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 
 	if(output->getMessageLength() > 0)
 		outputPool->send(output);
-	else
-		outputPool->releaseMessage(output);
 }
 
 void ProtocolAdmin::adminCommandPayHouses()
 {
-	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	if(!output)
 		return;
 
@@ -485,7 +480,7 @@ void ProtocolAdmin::adminCommandPayHouses()
 
 void ProtocolAdmin::adminCommandKickPlayer(const std::string& name)
 {
-	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	if(!output)
 		return;
 
@@ -509,7 +504,7 @@ void ProtocolAdmin::adminCommandKickPlayer(const std::string& name)
 
 void ProtocolAdmin::adminCommandSetOwner(const std::string& param)
 {
-	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	if(!output)
 		return;
 

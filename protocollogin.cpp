@@ -55,7 +55,7 @@ void ProtocolLogin::deleteProtocolTask()
 
 void ProtocolLogin::disconnectClient(uint8_t error, const char* message)
 {
-	OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	if(output)
 	{
 		TRACK_MESSAGE(output);
@@ -182,7 +182,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	ConnectionManager::getInstance()->addAttempt(clientIP, true);
-	if(OutputMessage* output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
+	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 	{
 		TRACK_MESSAGE(output);
 

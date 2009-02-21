@@ -2,7 +2,7 @@ AC_PREREQ([2.50])
 AC_INIT([TheForgottenServer], [0.4])
 AM_INIT_AUTOMAKE([1.10 foreign])
 AC_CONFIG_SRCDIR([account.cpp])
-AM_CONFIG_HEADER([config.h])
+#AM_CONFIG_HEADER([config.h])
 
 AC_PROG_CXX
 AC_LANG(C++)
