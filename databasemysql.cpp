@@ -33,7 +33,6 @@
 #endif
 
 #include "scheduler.h"
-
 #include "configmanager.h"
 extern ConfigManager g_config;
 
@@ -68,7 +67,7 @@ DatabaseMySQL::DatabaseMySQL()
 	m_connected = true;
 	m_attempts = 0;
 
-	uint32_t keepAlive = g_config.getNumber(ConfigManager::SQL_KEEPALIVE);
+	int32_t keepAlive = g_config.getNumber(ConfigManager::SQL_KEEPALIVE);
 	if(keepAlive)
 		Scheduler::getScheduler().addEvent(createSchedulerTask((keepAlive * 1000), boost::bind(&DatabaseMySQL::keepAlive, this)));
 }
@@ -214,13 +213,15 @@ void DatabaseMySQL::freeResult(DBResult* res)
 void DatabaseMySQL::keepAlive()
 {
 	int32_t delay = g_config.getNumber(ConfigManager::SQL_KEEPALIVE);
-	if(time(NULL) > (m_lastUse + delay))
-		mysql_ping(&m_handle);
+	if(delay)
+	{
+		if(time(NULL) > (m_lastUse + delay))
+			mysql_ping(&m_handle);
 
-	Scheduler::getScheduler().addEvent(createSchedulerTask((delay * 1000), boost::bind(&DatabaseMySQL::keepAlive, this)));
+		Scheduler::getScheduler().addEvent(createSchedulerTask((delay * 1000), boost::bind(&DatabaseMySQL::keepAlive, this)));
+	}
 }
 
-#ifndef __DISABLE_DIRTY_RECONNECT__
 bool DatabaseMySQL::reconnect()
 {
 	if(m_attempts > MAX_RECONNECT_ATTEMPTS)
@@ -230,14 +231,13 @@ bool DatabaseMySQL::reconnect()
 		return false;
 	}
 
-	if(mysql_ping(&m_handle))
+	if(!mysql_ping(&m_handle))
 		m_attempts = 0;
 	else
 		m_attempts++;
 
 	return true;
 }
-#endif
 
 int32_t MySQLResult::getDataInt(const std::string &s)
 {

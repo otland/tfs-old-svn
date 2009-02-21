@@ -37,16 +37,15 @@
 
 #if defined MULTI_SQL_DRIVERS
 #include "configmanager.h"
-
 extern ConfigManager g_config;
 #endif
 
 OTSYS_THREAD_LOCKVAR DBQuery::databaseLock;
-
 Database* _Database::_instance = NULL;
 
 Database* _Database::getInstance()
 {
+	m_lastUse = time(NULL);
 	if(!_instance)
 	{
 #if defined MULTI_SQL_DRIVERS
