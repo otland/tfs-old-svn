@@ -770,11 +770,11 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 	}
 
 	query << ", ";
-	query << "`level` = " << std::max((uint32_t)1, player->level) << ", ";
+	query << "`level` = " << std::max((uint32_t)1, player->getLevel()) << ", ";
 	query << "`group_id` = " << player->groupId << ", ";
 	query << "`health` = " << player->health << ", ";
 	query << "`healthmax` = " << player->healthMax << ", ";
-	query << "`experience` = " << std::max((uint64_t)0, player->experience) << ", ";
+	query << "`experience` = " << std::max((uint64_t)0, player->getExperience()) << ", ";
 	query << "`lookbody` = " << (uint32_t)player->defaultOutfit.lookBody << ", ";
 	query << "`lookfeet` = " << (uint32_t)player->defaultOutfit.lookFeet << ", ";
 	query << "`lookhead` = " << (uint32_t)player->defaultOutfit.lookHead << ", ";
