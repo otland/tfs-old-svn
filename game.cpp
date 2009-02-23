@@ -4974,7 +4974,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetName, int32_t re
 		return false;
 
 	uint32_t access = player->getViolationAccess();
-	if((ipBanishment && !hasBitSet(violationNames[access], Action_IpBan) && !hasBitSet(violationStatements[access], Action_IpBan)) ||
+	if((ipBanishment && ((violationNames[access] & Action_IpBan) != Action_IpBan || (violationStatements[access] & Action_IpBan) != Action_IpBan)) ||
 		!(violationNames[access] & (1 << action) || violationStatements[access] & (1 << action)) || reason > violationReasons[access])
 	{
 		player->sendCancel("You do not have authorization for this action.");

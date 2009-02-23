@@ -26,8 +26,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/bind.hpp>
 #include "tools.h"
-#include <list>
 
+#include <list>
 #ifdef __TRACK_NETWORK__
 #include <iostream>
 #include <sstream>
@@ -171,7 +171,7 @@ class OutputMessagePool
 
 	protected:
 		void configureOutputMessage(OutputMessage_ptr msg, Protocol* protocol, bool autosend);
-		void internalReleaseMessage(OutputMessage_ptr msg);
+		void internalReleaseMessage(OutputMessage* msg);
 
 		typedef std::list<OutputMessage*> InternalOutputMessageList;
 		typedef std::list<OutputMessage_ptr> OutputMessageMessageList;

@@ -143,7 +143,7 @@ uint16_t Quest::getMissionsCount(Player* player)
 }
 
 
-void Quest::getMissionList(Player* player, NetworkMessage* msg)
+void Quest::getMissionList(Player* player, NetworkMessage_ptr msg)
 {
 	msg->AddByte(0xF1);
 	msg->AddU16(id);
@@ -299,7 +299,7 @@ uint16_t Quests::getQuestsCount(Player* player)
 	return count;
 }
 
-void Quests::getQuestsList(Player* player, NetworkMessage* msg)
+void Quests::getQuestsList(Player* player, NetworkMessage_ptr msg)
 {
 	msg->AddByte(0xF0);
 	msg->AddU16(getQuestsCount(player));

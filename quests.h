@@ -81,7 +81,7 @@ class Quest
 		std::string getName() const {return name;}
 
 		uint16_t getMissionsCount(Player* player);
-		void getMissionList(Player* player, NetworkMessage* msg);
+		void getMissionList(Player* player, NetworkMessage_ptr msg);
 
 		MissionsList missions;
 
@@ -108,7 +108,7 @@ class Quests
 		bool loadFromXml();
 
 		uint16_t getQuestsCount(Player* player);
-		void getQuestsList(Player* player, NetworkMessage* msg);
+		void getQuestsList(Player* player, NetworkMessage_ptr msg);
 
 		Quest* getQuestById(uint16_t id);
 		QuestsList quests;
