@@ -166,7 +166,6 @@ OutputMessage_ptr OutputMessagePool::getOutputMessage(Protocol* protocol, bool a
 	#ifdef __DEBUG_NET_DETAIL__
 	std::cout << "request output message - auto = " << autosend << std::endl;
 	#endif
-
 	if(m_shutdown)
 		return OutputMessage_ptr();
 
@@ -174,7 +173,7 @@ OutputMessage_ptr OutputMessagePool::getOutputMessage(Protocol* protocol, bool a
 	if(protocol->getConnection() == NULL)
 		return OutputMessage_ptr();
 
-	OutputMessage_ptr outputmessage;
+	OutputMessage_ptr omsg;
 	if(m_outputMessages.empty())
 	{
 #ifdef __TRACK_NETWORK__
@@ -183,26 +182,26 @@ OutputMessage_ptr OutputMessagePool::getOutputMessage(Protocol* protocol, bool a
 			std::cout << "High usage of outputmessages: " << std::endl;
 			m_allOutputMessages.back()->PrintTrace();
 		}
+
 #endif
-		outputmessage.reset(new OutputMessage,
-			boost::bind(&OutputMessagePool::internalReleaseMessage, this, _1));
+		omsg.reset(new OutputMessage, boost::bind(&OutputMessagePool::internalReleaseMessage, this, _1));
 #ifdef __TRACK_NETWORK__
-		m_allOutputMessages.push_back(outputmessage.get());
+		m_allOutputMessages.push_back(omsg.get());
 #endif
 	}
 	else
 	{
-		outputmessage.reset(m_outputMessages.back(),
-			boost::bind(&OutputMessagePool::internalReleaseMessage, this, _1));
+		omsg.reset(m_outputMessages.back(), boost::bind(&OutputMessagePool::internalReleaseMessage, this, _1));
 #ifdef __TRACK_NETWORK__
 		// Print message trace
-		if(outputmessage->getState() != OutputMessage::STATE_FREE)
+		if(omsg.get()->getState() != OutputMessage::STATE_FREE)
 		{
 			std::cout << "Using allocated message, message trace:" << std::endl;
-			outputmessage->PrintTrace();
+			omsg.get()->PrintTrace();
 		}
+
 #else
-		assert(outputmessage->getState() == OutputMessage::STATE_FREE);
+		assert(omsg.get()->getState() == OutputMessage::STATE_FREE);
 #endif
 		m_outputMessages.pop_back();
 	}

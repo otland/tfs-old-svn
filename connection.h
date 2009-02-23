@@ -21,18 +21,15 @@
 #ifndef __OTSERV_CONNECTION_H__
 #define __OTSERV_CONNECTION_H__
 
-#include "definitions.h"
+#include "otsystem.h"
 #include <boost/asio.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
-
-#include "otsystem.h"
 
 #include "networkmessage.h"
 
 class Protocol;
 class OutputMessage;
-typedef boost::shared_ptr<OutputMessage>OutputMessage_ptr;
 class Connection;
 
 #ifdef __DEBUG_NET__
@@ -43,10 +40,10 @@ class Connection;
 #define PRINT_ASIO_ERROR(desc)
 #endif
 
+typedef boost::shared_ptr<OutputMessage>OutputMessage_ptr;
 struct ConnectionBlock
 {
-	uint32_t lastLogin;
-	uint32_t loginsAmount;
+	uint32_t lastLogin, loginsAmount;
 };
 
 class ConnectionManager
