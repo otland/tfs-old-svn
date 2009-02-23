@@ -3416,26 +3416,25 @@ void Player::onAttackedCreature(Creature* target)
 	if(!hasFlag(PlayerFlag_NotGainInFight))
 	{
 		if(target != this)
-		{
-			if(Player* targetPlayer = target->getPlayer())
-			{
-				pzLocked = true;
-				if(!isPartner(targetPlayer) && !Combat::isInPvpZone(this, targetPlayer) && !targetPlayer->hasAttacked(this))
-				{
-					addAttacked(targetPlayer);
-					if(targetPlayer->getSkull() == SKULL_NONE && getSkull() == SKULL_NONE && !hasCustomFlag(PlayerCustomFlag_NotGainSkull))
-					{
-						setSkull(SKULL_WHITE);
-						g_game.updateCreatureSkull(this);
-					}
-
-					if(getSkull() == SKULL_NONE)
-						targetPlayer->sendCreatureSkull(this);
-				}
-			}
-		}
+			return;
 
 		addInFightTicks();
+		if(Player* targetPlayer = target->getPlayer())
+		{
+			pzLocked = true;
+			if(!isPartner(targetPlayer) && !Combat::isInPvpZone(this, targetPlayer) && !targetPlayer->hasAttacked(this))
+			{
+				addAttacked(targetPlayer);
+				if(targetPlayer->getSkull() == SKULL_NONE && getSkull() == SKULL_NONE && !hasCustomFlag(PlayerCustomFlag_NotGainSkull))
+				{
+					setSkull(SKULL_WHITE);
+					g_game.updateCreatureSkull(this);
+				}
+
+				if(getSkull() == SKULL_NONE)
+					targetPlayer->sendCreatureSkull(this);
+			}
+		}
 	}
 }
 
@@ -3713,13 +3712,13 @@ Skulls_t Player::getSkullClient(const Creature* creature) const
 
 bool Player::hasAttacked(const Player* attacked) const
 {
-	if(hasFlag(PlayerFlag_NotGainInFight) || !attacked)
+	if(hasFlag(PlayerFlag_NotGainInFight))
 		return false;
 
-	AttackedSet::const_iterator it;
-	uint32_t attackedId = attacked->getID();
-	it = attackedSet.find(attackedId);
-	return it != attackedSet.end();
+	 if(!attacked)
+		return false;
+
+	return attackedSet.find(attacked->getID()) != attackedSet.end();
 }
 
 void Player::addAttacked(const Player* attacked)
@@ -3727,10 +3726,7 @@ void Player::addAttacked(const Player* attacked)
 	if(hasFlag(PlayerFlag_NotGainInFight) || !attacked || attacked == this)
 		return;
 
-	AttackedSet::iterator it;
-	uint32_t attackedId = attacked->getID();
-	it = attackedSet.find(attackedId);
-	if(it == attackedSet.end())
+	if(attackedSet.find(attacked->getID()) == attackedSet.end())
 		attackedSet.insert(attackedId);
 }
 
