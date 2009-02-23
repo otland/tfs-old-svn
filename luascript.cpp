@@ -7946,7 +7946,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddMapMark(lua_State* L)
 	if(parameters > 3)
 		description = popString(L);
 
-	uint8_t type = (uint8_t)popNumber(L);
+	MapMarks_t type = (MapMarks_t)popNumber(L);
 	popPosition(L, pos, stackpos);
 	uint32_t cid = (uint32_t)popNumber(L);
 

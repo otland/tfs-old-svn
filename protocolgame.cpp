@@ -1750,7 +1750,7 @@ void ProtocolGame::sendTutorial(uint8_t tutorialId)
 	}
 }
 
-void ProtocolGame::sendAddMarker(const Position& pos, uint8_t markType, const std::string& desc)
+void ProtocolGame::sendAddMarker(const Position& pos, MapMarks_t markType, const std::string& desc)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
