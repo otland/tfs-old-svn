@@ -3413,27 +3413,30 @@ void Player::onCombatRemoveCondition(const Creature* attacker, Condition* condit
 void Player::onAttackedCreature(Creature* target)
 {
 	Creature::onAttackedCreature(target);
-	if(hasFlag(PlayerFlag_NotGainInFight) || target == this)
-		return;
-
-	if(Player* targetPlayer = target->getPlayer())
+	if(!hasFlag(PlayerFlag_NotGainInFight))
 	{
-		pzLocked = true;
-		if(!isPartner(targetPlayer) && !Combat::isInPvpZone(this, targetPlayer) && !targetPlayer->hasAttacked(this))
+		if(target != this)
 		{
-			addAttacked(targetPlayer);
-			if(targetPlayer->getSkull() == SKULL_NONE && getSkull() == SKULL_NONE && !hasCustomFlag(PlayerCustomFlag_NotGainSkull))
+			if(Player* targetPlayer = target->getPlayer())
 			{
-				setSkull(SKULL_WHITE);
-				g_game.updateCreatureSkull(this);
+				pzLocked = true;
+				if(!isPartner(targetPlayer) && !Combat::isInPvpZone(this, targetPlayer) && !targetPlayer->hasAttacked(this))
+				{
+					addAttacked(targetPlayer);
+					if(targetPlayer->getSkull() == SKULL_NONE && getSkull() == SKULL_NONE && !hasCustomFlag(PlayerCustomFlag_NotGainSkull))
+					{
+						setSkull(SKULL_WHITE);
+						g_game.updateCreatureSkull(this);
+					}
+
+					if(getSkull() == SKULL_NONE)
+						targetPlayer->sendCreatureSkull(this);
+				}
 			}
-
-			if(getSkull() == SKULL_NONE)
-				targetPlayer->sendCreatureSkull(this);
 		}
-	}
 
-	addInFightTicks();
+		addInFightTicks();
+	}
 }
 
 void Player::onAttacked()
