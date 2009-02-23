@@ -3726,7 +3726,8 @@ void Player::addAttacked(const Player* attacked)
 	if(hasFlag(PlayerFlag_NotGainInFight) || !attacked || attacked == this)
 		return;
 
-	if(attackedSet.find(attacked->getID()) == attackedSet.end())
+	uint32_t attackedId = attacked->getID();
+	if(attackedSet.find(attackedId) == attackedSet.end())
 		attackedSet.insert(attackedId);
 }
 
