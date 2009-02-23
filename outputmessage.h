@@ -23,17 +23,17 @@
 #include "otsystem.h"
 
 #include "networkmessage.h"
+#include "tools.h"
+
 #include <boost/shared_ptr.hpp>
 #include <boost/bind.hpp>
-#include "tools.h"
+#include <boost/utility.hpp>
 
 #include <list>
 #ifdef __TRACK_NETWORK__
 #include <iostream>
 #include <sstream>
 #endif
-
-#include <boost/utility.hpp>
 
 class Protocol;
 class Connection;
@@ -174,11 +174,11 @@ class OutputMessagePool
 		void internalReleaseMessage(OutputMessage* msg);
 
 		typedef std::list<OutputMessage*> InternalOutputMessageList;
-		typedef std::list<OutputMessage_ptr> OutputMessageMessageList;
+		typedef std::list<OutputMessage_ptr> OutputMessageList;
 
 		InternalOutputMessageList m_outputMessages;
 		InternalOutputMessageList m_allOutputMessages;
-		OutputMessageMessageList m_autoSendOutputMessages;
+		OutputMessageList m_autoSendOutputMessages;
 
 		OTSYS_THREAD_LOCKVAR m_outputPoolLock;
 		uint64_t m_frameTime;
