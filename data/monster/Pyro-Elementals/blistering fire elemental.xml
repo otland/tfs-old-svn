@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="Blistering fire elemental" nameDescription="a blistering fire elemental" race="fire" experience="1300" speed="230" manacost="850">
+<monster name="Blistering fire elemental" nameDescription="a blistering fire elemental" race="fire" experience="1300" speed="230" manacost="0">
   <health now="1500" max="1500"/>
   <look type="242" corpse="8964"/>
   <targetchange interval="5000" chance="8"/>
   <strategy attack="100" defense="0"/>
   <flags>
-    <flag summonable="1"/>
+    <flag summonable="0"/>
     <flag attackable="1"/>
     <flag hostile="1"/>
     <flag illusionable="1"/>
-    <flag convinceable="1"/>
+    <flag convinceable="0"/>
     <flag pushable="0"/>
     <flag canpushitems="1"/>
     <flag canpushcreatures="0"/>

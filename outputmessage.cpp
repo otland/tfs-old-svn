@@ -152,7 +152,9 @@ void OutputMessagePool::internalReleaseMessage(OutputMessage* msg)
 		std::cout << "[Warning - OutputMessagePool::internalReleaseMessage] connection not found." << std::endl;
 
 	msg->freeMessage();
+	OTSYS_THREAD_LOCK(m_outputPoolLock, "");	
 	m_outputMessages.push_back(msg);
+	OTSYS_THREAD_UNLOCK(m_outputPoolLock, "");
 }
 
 OutputMessage_ptr OutputMessagePool::getOutputMessage(Protocol* protocol, bool autosend /*= true*/)
