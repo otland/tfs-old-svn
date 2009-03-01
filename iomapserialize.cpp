@@ -67,11 +67,11 @@ bool IOMapSerialize::loadHouseInfo(Map* map)
 	while(result->next());
 	db->freeResult(result);
 
+	query.str("");
 	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
 	{
-		query.str("");
 		House* house = it->second;
-		if(house->getHouseOwner() != 0 && house->getHouseId() != 0)
+		if(house && house->getHouseOwner() && house->getHouseId())
 		{
 			query << "SELECT `listid`, `list` FROM `house_lists` WHERE `house_id` = " << house->getHouseId();
 			query << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
@@ -83,6 +83,8 @@ bool IOMapSerialize::loadHouseInfo(Map* map)
 				db->freeResult(result);
 			}
 		}
+
+		query.str("");
 	}
 
 	return true;

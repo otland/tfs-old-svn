@@ -66,8 +66,8 @@ typedef std::map<uint32_t, House*> HouseMap;
 class AccessList
 {
 	public:
-		AccessList();
-		virtual ~AccessList();
+		AccessList() {}
+		virtual ~AccessList() {}
 
 		bool parseList(const std::string& _list);
 		bool addPlayer(std::string& name);
@@ -132,7 +132,7 @@ class HouseTransferItem : public Item
 		static HouseTransferItem* createHouseTransferItem(House* house);
 
 		HouseTransferItem(House* _house) : Item(0) {house = _house;}
-		virtual ~HouseTransferItem(){}
+		virtual ~HouseTransferItem() {}
 
 		virtual bool onTradeEvent(TradeEvents_t event, Player* owner);
 
@@ -184,7 +184,6 @@ class House
 		void setAccessList(uint32_t listId, const std::string& textlist, bool teleport = true);
 		bool getAccessList(uint32_t listId, std::string& list) const;
 
-		Door* getDoorByNumber(uint32_t doorId);
 		Door* getDoorByNumber(uint32_t doorId) const;
 		Door* getDoorByPosition(const Position& pos);
 
@@ -234,25 +233,24 @@ class Houses
 {
 	public:
 		Houses();
-		virtual ~Houses();
+		virtual ~Houses() {}
 		static Houses& getInstance()
 		{
 			static Houses instance;
 			return instance;
 		}
 
-		bool loadHousesXML(std::string filename);
+		bool loadFromXml(std::string filename);
 		bool reloadPrices();
 		bool payHouses();
 
 		House* getHouse(uint32_t houseid, bool add = false);
-		House* getHouseByPlayer(Player* player);
-		House* getHouseByPlayerId(uint32_t playerId);
-
-		uint32_t getHousesCount(uint32_t accId);
-
 		HouseMap::iterator getHouseBegin() {return houseMap.begin();}
 		HouseMap::iterator getHouseEnd() {return houseMap.end();}
+
+		House* getHouseByPlayer(Player* player);
+		House* getHouseByPlayerId(uint32_t playerId);
+		uint32_t getHousesCount(uint32_t accId);
 
 	private:
 		RentPeriod_t rentPeriod;

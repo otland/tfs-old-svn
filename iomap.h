@@ -140,7 +140,7 @@ class IOMap
 				map->housefile += "-house.xml";
 			}
 
-			return Houses::getInstance().loadHousesXML(map->housefile);
+			return Houses::getInstance().loadFromXml(map->housefile);
 		}
 
 		const std::string& getLastErrorString() const

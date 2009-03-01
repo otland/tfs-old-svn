@@ -13,6 +13,7 @@ function doPlayerGiveItem(cid, itemid, amount, subType)
 			end
 		end
 	end
+
 	return LUA_NO_ERROR
 end
 
@@ -22,6 +23,7 @@ function doPlayerTakeItem(cid, itemid, amount)
 			return LUA_NO_ERROR
 		end
 	end
+
 	return LUA_ERROR
 end
 
@@ -29,6 +31,7 @@ function doPlayerBuyItem(cid, itemid, count, cost, charges)
 	if(doPlayerRemoveMoney(cid, cost) == TRUE) then
 		return doPlayerGiveItem(cid, itemid, count, charges)
 	end
+
 	return LUA_ERROR
 end
 
@@ -39,10 +42,13 @@ function doPlayerBuyItemContainer(cid, containerid, itemid, count, cost, charges
 			for x = 1, getContainerCapById(containerid) do
 				doAddContainerItem(container, itemid, charges)
 			end
+
 			doPlayerAddItemEx(cid, container)
 		end
+
 		return LUA_NO_ERROR
 	end
+
 	return LUA_ERROR
 end
 
@@ -51,8 +57,10 @@ function doPlayerSellItem(cid, itemid, count, cost)
 		if(doPlayerAddMoney(cid, cost) ~= TRUE) then
 			error('Could not add money to ' .. getPlayerName(cid) .. ' (' .. cost .. 'gp)')
 		end
+
 		return LUA_NO_ERROR
 	end
+
 	return LUA_ERROR
 end
 

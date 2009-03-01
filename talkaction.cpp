@@ -342,78 +342,81 @@ bool TalkAction::buyHouse(Player* player, const std::string& cmd, const std::str
 
 	if(Houses::getInstance().getHouseByPlayerId(player->getGUID()))
 	{
-		player->sendCancel("You are already owner of another house.");
+		player->sendCancel("You already own another house.");
 		return true;
 	}
 
-	uint16_t housesPerAccount = g_config.getNumber(ConfigManager::HOUSES_PER_ACCOUNT);
-	if(housesPerAccount > 0 && Houses::getInstance().getHousesCount(player->getAccount()) >= housesPerAccount)
+	uint16_t accountHouses = g_config.getNumber(ConfigManager::HOUSES_PER_ACCOUNT);
+	if(accountHouses > 0 && Houses::getInstance().getHousesCount(player->getAccount()) >= housesPerAccount)
 	{
 		char buffer[80];
-		sprintf(buffer, "You may own only %d house%s per account.", housesPerAccount, (housesPerAccount != 1 ? "s" : ""));
+		sprintf(buffer, "You may own only %d house%s per account.", accountHouses, (accountHouses != 1 ? "s" : ""));
 		player->sendCancel(buffer);
 		return true;
 	}
 
-	Position pos = getNextPosition(player->getDirection(), player->getPosition());
-	if(Tile* tile = g_game.getTile(pos.x, pos.y, pos.z))
+	const Position& pos = getNextPosition(player->getDirection(), player->getPosition());
+	Tile* tile = g_game.getTile();
+	if(!tile)
 	{
-		if(HouseTile* houseTile = dynamic_cast<HouseTile*>(tile))
-		{
-			if(House* house = houseTile->getHouse())
-			{
-				if(house->getDoorByPosition(pos))
-				{
-					if(!house->getHouseOwner())
-					{
-						if(!g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM) || player->isPremium())
-						{
-							uint32_t levelToBuyHouse = g_config.getNumber(ConfigManager::LEVEL_TO_BUY_HOUSE);
-							if(player->getLevel() >= levelToBuyHouse)
-							{
-								if(house->getPrice())
-								{
-									if(g_game.getMoney(player) >= house->getPrice() && g_game.removeMoney(player, house->getPrice()))
-									{
-										house->setHouseOwner(player->getGUID());
-										std::string ret = "You have successfully bought this house, remember to leave money at ";
-										if(g_config.getBool(ConfigManager::BANK_SYSTEM))
-											ret += "bank or ";
-
-										ret += "depot of this city for rent.";
-										player->sendTextMessage(MSG_INFO_DESCR, ret.c_str());
-									}
-									else
-										player->sendCancel("You do not have enough money.");
-								}
-								else
-									player->sendCancel("You can not buy this house.");
-							}
-							else
-							{
-								char buffer[90];
-								sprintf(buffer, "You have to be at least Level %d to buy house.", levelToBuyHouse);
-								player->sendCancel(buffer);
-							}
-						}
-						else
-							player->sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
-					}
-					else
-						player->sendCancel("This house alreadly has an owner.");
-				}
-				else
-					player->sendCancel("You have to be looking at the door of the house you would like to buy.");
-			}
-			else
-				player->sendCancel("You have to be looking at the door of the house you would like to buy.");
-		}
-		else
-			player->sendCancel("You have to be looking at the door of the house you would like to buy.");
+		player->sendCancel("You have to be looking at door of the house you would like to buy.");
+		return true;
 	}
-	else
-		player->sendCancel("You have to be looking at the door of the house you would like to buy.");
 
+	HouseTile* houseTile = dynamic_cast<HouseTile*>(tile);
+	if(!houseTile)
+	{
+		player->sendCancel("You have to be looking at door of the house you would like to buy.");
+		return true;
+	}
+
+	House* house = houseTile->getHouse();
+	if(!house)
+	{
+		player->sendCancel("You have to be looking at door of the house you would like to buy.");
+		return true;
+	}
+
+	if(!house->getDoorByPosition(pos))
+	{
+		player->sendCancel("You have to be looking at door of the house you would like to buy.");
+		return true;
+	}
+
+	if(house->getHouseOwner())
+	{
+		player->sendCancel("This house is already owned by someone else.");
+		return true;
+	}
+
+	if(g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM) && !player->isPremium())
+	{
+		player->sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
+		return true;
+	}
+
+	uint32_t levelToBuyHouse = g_config.getNumber(ConfigManager::LEVEL_TO_BUY_HOUSE);
+	if(player->getLevel() < levelToBuyHouse)
+	{
+		char buffer[90];
+		sprintf(buffer, "You have to be at least Level %d to buy a house.", levelToBuyHouse);
+		player->sendCancel(buffer);
+		return true;
+	}
+
+	if(g_game.getMoney(player) < house->getPrice() || !g_game.removeMoney(player, house->getPrice()))
+	{
+		player->sendCancel("You do not have enough money.");
+		return true;
+	}
+
+	house->setHouseOwner(player->getGUID());
+	std::string ret = "You have successfully bought this house, remember to leave money at ";
+	if(g_config.getBool(ConfigManager::BANK_SYSTEM))
+		ret += "bank or ";
+
+	ret += "depot of this city for rent.";
+	player->sendTextMessage(MSG_INFO_DESCR, ret.c_str());
 	return true;
 }
 
