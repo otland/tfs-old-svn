@@ -683,7 +683,7 @@ bool TalkAction::addSkill(Player* player, const std::string& cmd, const std::str
 	else
 	{
 		skills_t skillId = getSkillId(skill);
-		target->addSkillAdvance(skillId, target->getVocation()->getReqSkillTries(skillId, target->getSkill(skillId, SKILL_LEVEL) + 1));
+		target->addSkillAdvance(skillId, (uint32_t)floor((double)target->getVocation()->getReqSkillTries(skillId, target->getSkill(skillId, SKILL_LEVEL) + 1) / g_config.getDouble(ConfigManager::RATE_SKILL)));
 	}
 
 	return true;
