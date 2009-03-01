@@ -73,11 +73,12 @@ class Monster : public Creature
 		virtual MonsterType* getMonsterType() const {return mType;}
 		virtual bool isPushable() const {return mType->pushable && (baseSpeed > 0);}
 		virtual bool isAttackable() const {return mType->isAttackable;}
+		virtual bool isImmune(CombatType_t type) const;
 
 		bool canPushItems() const {return mType->canPushItems;}
 		bool canPushCreatures() const {return mType->canPushCreatures;}
 		bool isHostile() const {return mType->isHostile;}
-		virtual bool canSeeInvisibility() const {return isImmune(CONDITION_INVISIBLE);}
+		virtual bool canSeeInvisibility() const {return Creature::isImmune(CONDITION_INVISIBLE);}
 		uint32_t getManaCost() const {return mType->manaCost;}
 		void setSpawn(Spawn* _spawn) {spawn = _spawn;}
 

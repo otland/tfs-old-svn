@@ -20,12 +20,11 @@
 
 #ifndef __OTSERV_NETWORK_MESSAGE_H__
 #define __OTSERV_NETWORK_MESSAGE_H__
+#include "otsystem.h"
 #include <boost/shared_ptr.hpp>
 
-#include "otsystem.h"
-
-#include "const.h"
 #include <string>
+#include "const.h"
 
 class Item;
 class Creature;
@@ -135,6 +134,9 @@ class NetworkMessage
 		char* getBodyBuffer() {m_ReadPos = 2; return (char*)&m_MsgBuf[header_length];}
 
 		int32_t decodeHeader();
+#ifdef __TRACK_NETWORK__
+		virtual void Track(std::string file, long line, std::string func) {};
+#endif
 
 	protected:
 		inline bool canAdd(int32_t size)

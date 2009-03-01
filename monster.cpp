@@ -1296,6 +1296,15 @@ void Monster::dropLoot(Container* corpse)
 		mType->createLoot(corpse);
 }
 
+bool Monster::isImmune(CombatType_t type) const
+{
+	ElementMap::const_iterator it = mType->elementMap.find(type);
+	if(it == mType->elementMap.end())
+		return Creature::isImmune(type);
+
+	return it->second >= 100;
+}
+
 void Monster::setNormalCreatureLight()
 {
 	internalLight.level = mType->lightLevel;
