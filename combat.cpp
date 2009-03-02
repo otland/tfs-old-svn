@@ -512,21 +512,21 @@ bool Combat::CombatManaFunc(Creature* caster, Creature* target, const CombatPara
 
 bool Combat::CombatConditionFunc(Creature* caster, Creature* target, const CombatParams& params, void* data)
 {
-	bool result = true;
-	if(!params.conditionList.empty())
-	{
-		for(std::list<const Condition*>::const_iterator it = params.conditionList.begin(); it != params.conditionList.end(); ++it)
-		{
-			if(caster == target || !target->isImmune((*it)->getType()))
-			{
-				Condition* tmp = (*it)->clone();
-				if(caster)
-					tmp->setParam(CONDITIONPARAM_OWNER, caster->getID());
+	if(params.conditionList.empty())
+		return false;
 
-				//TODO: infight condition until all aggressive conditions has ended
-				if(!target->addCombatCondition(tmp))
-					result = false;
-			}
+	bool result = true;
+	for(std::list<const Condition*>::const_iterator it = params.conditionList.begin(); it != params.conditionList.end(); ++it)
+	{
+		if(caster == target || !target->isImmune((*it)->getType()))
+		{
+			Condition* tmp = (*it)->clone();
+			if(caster)
+				tmp->setParam(CONDITIONPARAM_OWNER, caster->getID());
+
+			//TODO: infight condition until all aggressive conditions has ended
+			if(!target->addCombatCondition(tmp) && result)
+				result = false;
 		}
 	}
 
@@ -675,7 +675,7 @@ void Combat::CombatFunc(Creature* caster, const Position& pos, const AreaCombat*
 
 	for(std::list<Tile*>::iterator it = tileList.begin(); it != tileList.end(); ++it)
 	{
-		if(!canDoCombat(caster, (*it), params.isAggressive) == RET_NOERROR)
+		if(canDoCombat(caster, (*it), params.isAggressive) != RET_NOERROR)
 			continue;
 
 		bool skip = true;
