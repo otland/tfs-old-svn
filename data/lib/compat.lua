@@ -52,3 +52,4 @@ mayNotMove = doCreatureSetNoMove
 doPlayerSetNoMove = doCreatureSetNoMove
 getPlayerNoMove = getCreatureNoMove
 getConfigInfo = getConfigValue
+doPlayerAddExp = doPlayerAddExperience

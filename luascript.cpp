@@ -1534,11 +1534,11 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerSetVocation(cid,voc)
 	lua_register(m_luaState, "doPlayerSetVocation", LuaScriptInterface::luaDoPlayerSetVocation);
 
-	//doPlayerRemoveItem(cid, itemid, count, <optional> subtype)
+	//doPlayerRemoveItem(cid, itemid, count, <optional> subType)
 	lua_register(m_luaState, "doPlayerRemoveItem", LuaScriptInterface::luaDoPlayerRemoveItem);
 
-	//doPlayerAddExp(cid, exp)
-	lua_register(m_luaState, "doPlayerAddExp", LuaScriptInterface::luaDoPlayerAddExp);
+	//doPlayerAddExperience(cid, amount)
+	lua_register(m_luaState, "doPlayerAddExperience", LuaScriptInterface::luaDoPlayerAddExperience);
 
 	//doPlayerSetGuildId(cid, id)
 	lua_register(m_luaState, "doPlayerSetGuildId", LuaScriptInterface::luaDoPlayerSetGuildId);
@@ -4489,7 +4489,6 @@ int32_t LuaScriptInterface::luaGetHouseFromPos(lua_State* L)
 {
 	//getHouseFromPos(pos)
 	PositionEx pos;
-
 	popPosition(L, pos);
 	if(Tile* tile = g_game.getMap()->getTile(pos))
 	{
@@ -4513,7 +4512,11 @@ int32_t LuaScriptInterface::luaGetHouseFromPos(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoCreateMonster(lua_State* L)
 {
-	//doCreateMonster(name, pos)
+	//doCreateMonster(name, pos[, displayError])
+	bool displayError = true;
+	if(lua_gettop(L) >= 3)
+		displayError = popNumber(L) == LUA_TRUE;
+
 	PositionEx pos;
 	popPosition(L, pos);
 
@@ -4521,8 +4524,12 @@ int32_t LuaScriptInterface::luaDoCreateMonster(lua_State* L)
 	Monster* monster = Monster::createMonster(name.c_str());
 	if(!monster)
 	{
-		std::string tmp = (std::string)"Monster name(" + name + (std::string)") not found";
-		reportErrorFunc(tmp);
+		if(displayError)
+		{
+			std::string tmp = (std::string)"Monster name(" + name + (std::string)") not found";
+			reportErrorFunc(tmp);
+		}
+
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
 	}
@@ -4530,22 +4537,28 @@ int32_t LuaScriptInterface::luaDoCreateMonster(lua_State* L)
 	if(!g_game.placeCreature(monster, pos))
 	{
 		delete monster;
-		std::string tmp = (std::string)"Can not create monster: " + name;
-		reportErrorFunc(tmp);
-		lua_pushnumber(L, LUA_ERROR);
+		if(displayError)
+		{
+			std::string tmp = (std::string)"Can not create monster: " + name;
+			reportErrorFunc(tmp);
+		}
+
+		lua_pushnumber(L, LUA_NO_ERROR); //for scripting compatibility
 		return 1;
 	}
 
 	ScriptEnviroment* env = getScriptEnv();
-	uint32_t cid = env->addThing((Thing*)monster);
-
-	lua_pushnumber(L, cid);
+	lua_pushnumber(L, env->addThing((Thing*)monster));
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaDoCreateNpc(lua_State* L)
 {
-	//doCreateNpc(name, pos)
+	//doCreateNpc(name, pos[, displayError])
+	bool displayError = true;
+	if(lua_gettop(L) >= 3)
+		displayError = popNumber(L) == LUA_TRUE;
+
 	PositionEx pos;
 	popPosition(L, pos);
 
@@ -4553,8 +4566,12 @@ int32_t LuaScriptInterface::luaDoCreateNpc(lua_State* L)
 	Npc* npc = Npc::createNpc(name.c_str());
 	if(!npc)
 	{
-		std::string tmp = (std::string)"Npc name(" + name + (std::string)") not found";
-		reportErrorFunc(tmp);
+		if(displayError)
+		{
+			std::string tmp = (std::string)"Npc name(" + name + (std::string)") not found";
+			reportErrorFunc(tmp);
+		}
+
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
 	}
@@ -4562,16 +4579,18 @@ int32_t LuaScriptInterface::luaDoCreateNpc(lua_State* L)
 	if(!g_game.placeCreature(npc, pos))
 	{
 		delete npc;
-		std::string tmp = (std::string)"Can not create npc: " + name;
-		reportErrorFunc(tmp);
-		lua_pushnumber(L, LUA_ERROR);
+		if(displayError)
+		{
+			std::string tmp = (std::string)"Can not create npc: " + name;
+			reportErrorFunc(tmp);
+		}
+
+		lua_pushnumber(L, LUA_NO_ERROR); //for scripting compatibility
 		return 1;
 	}
 
 	ScriptEnviroment* env = getScriptEnv();
-	uint32_t cid = env->addThing((Thing*)npc);
-
-	lua_pushnumber(L, cid);
+	lua_pushnumber(L, env->addThing((Thing*)npc));
 	return 1;
 }
 
@@ -5242,19 +5261,18 @@ int32_t LuaScriptInterface::luaGetPlayerLight(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoPlayerAddExp(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerAddExperience(lua_State* L)
 {
-	//doPlayerAddExp(cid, exp)
-	int64_t exp = popNumber(L);
-	uint32_t cid = popNumber(L);
+	//doPlayerAddExperience(cid, amount)
+	int64_t amount = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	if(Player* player = env->getPlayerByUID(cid))
+	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		if(exp > 0)
-			player->addExperience(exp);
-		else if(exp < 0)
-			player->removeExperience(exp);
+		if(amount > 0)
+			player->addExperience(amount);
+		else if(amount < 0)
+			player->removeExperience(std::abs(amount));
 		else
 		{
 			lua_pushnumber(L, LUA_FALSE);

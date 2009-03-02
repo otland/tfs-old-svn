@@ -380,13 +380,19 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 				int32_t currentSlot = WaitingList::getInstance()->getClientSlot(player);
 
 				std::stringstream ss;
-				ss << "Too many players online.\n" << "You are at ";
-				if(currentSlot > 0)
-					ss << currentSlot;
-				else
-					ss << "unknown";
+				ss << "Too many players online.\n" << "You are ";
+				if(currentSlot != 0)
+				{
+					ss << "at ";
+					if(currentSlot > 0)
+						ss << currentSlot;
+					else
+						ss << "unknown";
 
-				ss << " place on the waiting list.";
+					ss << " place on the waiting list.";
+				}
+				else
+					ss << "awaiting connection...";
 
 				output->AddByte(0x16);
 				output->AddString(ss.str());

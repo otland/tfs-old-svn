@@ -230,20 +230,23 @@ void Creature::onThink(uint32_t interval)
 
 void Creature::onAttacking(uint32_t interval)
 {
-	if(attackedCreature)
-	{
-		CreatureEventList attackEvents = getCreatureEvents(CREATURE_EVENT_ATTACK);
-		for(CreatureEventList::iterator it = attackEvents.begin(); it != attackEvents.end(); ++it)
-		{
-			if(!(*it)->executeOnAttack(this, attackedCreature))
-				setAttackedCreature(NULL);
-		}
+	if(!attackedCreature)
+		return;
 
-		onAttacked();
-		attackedCreature->onAttacked();
-		if(g_game.isSightClear(getPosition(), attackedCreature->getPosition(), true))
-			doAttacking(interval);
+	CreatureEventList attackEvents = getCreatureEvents(CREATURE_EVENT_ATTACK);
+	for(CreatureEventList::iterator it = attackEvents.begin(); it != attackEvents.end(); ++it)
+	{
+		if(!(*it)->executeOnAttack(this, attackedCreature) && attackedCreature)
+			setAttackedCreature(NULL);
 	}
+
+	if(!attackedCreature)
+		return;
+
+	onAttacked();
+	attackedCreature->onAttacked();
+	if(g_game.isSightClear(getPosition(), attackedCreature->getPosition(), true))
+		doAttacking(interval);
 }
 
 void Creature::onWalk()

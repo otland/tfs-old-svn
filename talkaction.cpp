@@ -127,12 +127,11 @@ bool TalkActions::onPlayerSay(Player* player, uint16_t channelId, const std::str
 
 	if(talkAction->isLogged())
 	{
-		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, words.c_str());
-
 		char buf[21], buffer[100];
 		formatDate(time(NULL), buf);
 		sprintf(buffer, "%s.log", getFilePath(FILE_TYPE_LOG, player->getName()).c_str());
 
+		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, words.c_str());
 		if(FILE* file = fopen(buffer, "a"))
 		{
 			fprintf(file, "[%s] %s\n", buf, words.c_str());
@@ -347,7 +346,7 @@ bool TalkAction::buyHouse(Player* player, const std::string& cmd, const std::str
 	}
 
 	uint16_t accountHouses = g_config.getNumber(ConfigManager::HOUSES_PER_ACCOUNT);
-	if(accountHouses > 0 && Houses::getInstance().getHousesCount(player->getAccount()) >= housesPerAccount)
+	if(accountHouses > 0 && Houses::getInstance().getHousesCount(player->getAccount()) >= accountHouses)
 	{
 		char buffer[80];
 		sprintf(buffer, "You may own only %d house%s per account.", accountHouses, (accountHouses != 1 ? "s" : ""));
@@ -356,7 +355,7 @@ bool TalkAction::buyHouse(Player* player, const std::string& cmd, const std::str
 	}
 
 	const Position& pos = getNextPosition(player->getDirection(), player->getPosition());
-	Tile* tile = g_game.getTile();
+	Tile* tile = g_game.getTile(pos);
 	if(!tile)
 	{
 		player->sendCancel("You have to be looking at door of the house you would like to buy.");
@@ -470,7 +469,7 @@ bool TalkAction::sellHouse(Player* player, const std::string& cmd, const std::st
 		return true;
 	}
 
-	if(!Position::areInRange<2,2,0>(tradePartner->getPosition(), player->getPosition()))
+	if(!Position::areInRange<3,3,0>(tradePartner->getPosition(), player->getPosition()))
 	{
 		player->sendCancel("Trade player is too far away.");
 		return true;
@@ -501,11 +500,12 @@ bool TalkAction::joinGuild(Player* player, const std::string& cmd, const std::st
 	if(!g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
 		return false;
 
-	trimString((std::string&)param);
+	std::string param_ = param;
+	trimString(param_);
 	if(player->getGuildId() == 0)
 	{	
 		uint32_t guildId;
-		if(IOGuild::getInstance()->getGuildIdByName(guildId, param))
+		if(IOGuild::getInstance()->getGuildIdByName(guildId, param_))
 		{
 			if(player->isInvitedToGuild(guildId))
 			{
@@ -536,28 +536,29 @@ bool TalkAction::createGuild(Player* player, const std::string& cmd, const std::
 
 	if(player->getGuildId() == 0)
 	{
-		trimString((std::string&)param);
-		if(isValidName(param))
+		std::string param_ = param;
+		trimString(param_);
+		if(isValidName(param_))
 		{
 			const uint32_t minLength = g_config.getNumber(ConfigManager::MIN_GUILDNAME);
 			const uint32_t maxLength = g_config.getNumber(ConfigManager::MAX_GUILDNAME);
-			if(param.length() >= minLength)
+			if(param_.length() >= minLength)
 			{
-				if(param.length() <= maxLength)
+				if(param_.length() <= maxLength)
 				{
 					uint32_t guildId;
-					if(!IOGuild::getInstance()->getGuildIdByName(guildId, param))
+					if(!IOGuild::getInstance()->getGuildIdByName(guildId, param_))
 					{
 						const uint32_t levelToFormGuild = g_config.getNumber(ConfigManager::LEVEL_TO_FORM_GUILD);
 						if(player->getLevel() >= levelToFormGuild)
 						{
 							if(player->isPremium())
 							{
-								player->setGuildName(param);
+								player->setGuildName(param_);
 								IOGuild::getInstance()->createGuild(player);
 
 								char buffer[50 + maxLength];
-								sprintf(buffer, "You have formed the guild: %s!", param.c_str());
+								sprintf(buffer, "You have formed the guild: %s!", param_.c_str());
 								player->sendTextMessage(MSG_INFO_DESCR, buffer);
 							}
 							else
@@ -664,6 +665,14 @@ bool TalkAction::addSkill(Player* player, const std::string& cmd, const std::str
 		return true;
 	}
 
+	uint32_t amount = 1;
+	if(params.size() > 2)
+	{
+		std::string tmp = params[2];
+		trimString(tmp);
+		amount = (uint32_t)std::max(1, atoi(tmp.c_str()));
+	}
+
 	std::string name = params[0], skill = params[1];
 	trimString(name);
 	trimString(skill);
@@ -677,13 +686,15 @@ bool TalkAction::addSkill(Player* player, const std::string& cmd, const std::str
 	}
 
 	if(skill[0] == 'l' || skill[0] == 'e')
-		target->addExperience(Player::getExpForLevel(target->getLevel() + 1) - target->getExperience());
+		target->addExperience(uint64_t(Player::getExpForLevel(target->getLevel() + amount) - target->getExperience()));
 	else if(skill[0] == 'm')
-		target->addManaSpent(target->getVocation()->getReqMana(target->getMagicLevel() + 1) - target->getSpentMana());
+		target->addManaSpent((uint64_t)std::ceil(double(target->getVocation()->getReqMana(target->getMagicLevel() +
+			amount) - target->getSpentMana()) / g_config.getDouble(ConfigManager::RATE_MAGIC)), true, false);
 	else
 	{
 		skills_t skillId = getSkillId(skill);
-		target->addSkillAdvance(skillId, (uint32_t)floor((double)target->getVocation()->getReqSkillTries(skillId, target->getSkill(skillId, SKILL_LEVEL) + 1) / g_config.getDouble(ConfigManager::RATE_SKILL)));
+		target->addSkillAdvance(skillId, (uint32_t)std::ceil(double(target->getVocation()->getReqSkillTries(skillId, (target->getSkill(skillId,
+			SKILL_LEVEL) + amount)) - target->getSkill(skillId, SKILL_TRIES)) / g_config.getDouble(ConfigManager::RATE_SKILL)), false);
 	}
 
 	return true;
@@ -870,9 +881,12 @@ bool TalkAction::changeThingProporties(Player* player, const std::string& cmd, c
 
 bool TalkAction::showBanishmentInfo(Player* player, const std::string& cmd, const std::string& param)
 {
-	uint32_t accountId = atoi(param.c_str());
-	if(accountId == 0 && IOLoginData::getInstance()->playerExists((std::string&)param, true))
-		accountId = IOLoginData::getInstance()->getAccountIdByName(param);
+	std::string param_ = param;
+	trimString(param_);
+
+	uint32_t accountId = atoi(param_.c_str());
+	if(accountId == 0 && IOLoginData::getInstance()->playerExists(param_, true))
+		accountId = IOLoginData::getInstance()->getAccountIdByName(param_);
 
 	Ban ban;
 	if(IOBan::getInstance()->getData(accountId, ban) && (ban.type == BANTYPE_BANISHMENT || ban.type == BANTYPE_DELETION))

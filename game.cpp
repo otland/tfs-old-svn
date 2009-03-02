@@ -693,7 +693,7 @@ ReturnValue Game::getPlayerByNameWildcard(const std::string& s, Player*& player)
 			if(name.substr(0, tmp.length()) == tmp)
 			{
 				if(lastFound)
-					return RET_NAMEISTOOAMBIGIOUS;
+					return RET_NAMEISTOOAMBIGUOUS;
 
 				lastFound = (*it).second;
 			}

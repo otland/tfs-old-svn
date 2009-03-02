@@ -235,7 +235,7 @@ class Game
 		  * Returns a player based on a string name identifier, with support for the "~" wildcard.
 		  * \param s is the name identifier, with or without wildcard
 		  * \param player will point to the found player (if any)
-		  * \return "RET_PLAYERWITHTHISNAMEISNOTONLINE" or "RET_NAMEISTOOAMBIGIOUS"
+		  * \return "RET_PLAYERWITHTHISNAMEISNOTONLINE" or "RET_NAMEISTOOAMBIGUOUS"
 		  */
 		ReturnValue getPlayerByNameWildcard(const std::string& s, Player*& player);
 

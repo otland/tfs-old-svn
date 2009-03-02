@@ -484,14 +484,12 @@ bool Combat::CombatHealthFunc(Creature* caster, Creature* target, const CombatPa
 			healthChange = healthChange / 2;
 	}
 
-	bool result = g_game.combatChangeHealth(params.combatType, caster, target, healthChange);
-	if(result)
-	{
-		CombatConditionFunc(caster, target, params, NULL);
-		CombatDispelFunc(caster, target, params, NULL);
-	}
+	if(!g_game.combatChangeHealth(params.combatType, caster, target, healthChange))
+		return false;
 
-	return result;
+	CombatConditionFunc(caster, target, params, NULL);
+	CombatDispelFunc(caster, target, params, NULL);
+	return true;
 }
 
 bool Combat::CombatManaFunc(Creature* caster, Creature* target, const CombatParams& params, void* data)
@@ -504,19 +502,17 @@ bool Combat::CombatManaFunc(Creature* caster, Creature* target, const CombatPara
 			manaChange = manaChange / 2;
 	}
 
-	bool result = g_game.combatChangeMana(caster, target, manaChange);
-	if(result)
-	{
-		CombatConditionFunc(caster, target, params, NULL);
-		CombatDispelFunc(caster, target, params, NULL);
-	}
+	if(!g_game.combatChangeMana(caster, target, manaChange))
+		return false;
 
-	return result;
+	CombatConditionFunc(caster, target, params, NULL);
+	CombatDispelFunc(caster, target, params, NULL);
+	return true;
 }
 
 bool Combat::CombatConditionFunc(Creature* caster, Creature* target, const CombatParams& params, void* data)
 {
-	bool result = false;
+	bool result = true;
 	if(!params.conditionList.empty())
 	{
 		for(std::list<const Condition*>::const_iterator it = params.conditionList.begin(); it != params.conditionList.end(); ++it)
@@ -528,10 +524,12 @@ bool Combat::CombatConditionFunc(Creature* caster, Creature* target, const Comba
 					tmp->setParam(CONDITIONPARAM_OWNER, caster->getID());
 
 				//TODO: infight condition until all aggressive conditions has ended
-				result = target->addCombatCondition(tmp);
+				if(!target->addCombatCondition(tmp))
+					result = false;
 			}
 		}
 	}
+
 	return result;
 }
 
@@ -650,7 +648,7 @@ void Combat::addDistanceEffect(Creature* caster, const Position& fromPos, const 
 }
 
 void Combat::CombatFunc(Creature* caster, const Position& pos, const AreaCombat* area,
-		const CombatParams& params, COMBATFUNC func, void* data)
+	const CombatParams& params, COMBATFUNC func, void* data)
 {
 	std::list<Tile*> tileList;
 	if(caster)
@@ -658,7 +656,6 @@ void Combat::CombatFunc(Creature* caster, const Position& pos, const AreaCombat*
 	else
 		getCombatArea(pos, pos, area, tileList);
 
-	SpectatorVec list;
 	uint32_t maxX = 0, maxY = 0, diff;
 	//calculate the max viewable range
 	for(std::list<Tile*>::iterator it = tileList.begin(); it != tileList.end(); ++it)
@@ -672,35 +669,37 @@ void Combat::CombatFunc(Creature* caster, const Position& pos, const AreaCombat*
 			maxY = diff;
 	}
 
+	SpectatorVec list;
 	g_game.getSpectators(list, pos, false, true, maxX + Map::maxViewportX, maxX + Map::maxViewportX,
 		maxY + Map::maxViewportY, maxY + Map::maxViewportY);
+
 	for(std::list<Tile*>::iterator it = tileList.begin(); it != tileList.end(); ++it)
 	{
-		if(canDoCombat(caster, *it, params.isAggressive) == RET_NOERROR)
+		if(!canDoCombat(caster, (*it), params.isAggressive) == RET_NOERROR)
+			continue;
+
+		bool skip = true;
+		for(CreatureVector::iterator cit = (*it)->creatures.begin(); skip && cit != (*it)->creatures.end(); ++cit)
 		{
-			bool skip = true;
-			for(CreatureVector::iterator cit = (*it)->creatures.begin(); skip && cit != (*it)->creatures.end(); ++cit)
+			if(params.targetCasterOrTopMost)
 			{
-				if(params.targetCasterOrTopMost)
+				if(caster && caster->getTile() == (*it))
 				{
-					if(caster && caster->getTile() == (*it))
-					{
-						if(*cit == caster)
-							skip = false;
-					}
-					else if(*cit == (*it)->getTopCreature())
+					if((*cit) == caster)
 						skip = false;
-
-					if(skip)
-						continue;
 				}
+				else if((*cit) == (*it)->getTopCreature())
+					skip = false;
 
-				if(!params.isAggressive || (caster != *cit && Combat::canDoCombat(caster, *cit) == RET_NOERROR))
-				{
-					func(caster, *cit, params, data);
-					if(params.targetCallback)
-						params.targetCallback->onTargetCombat(caster, *cit);
-				}
+				if(skip)
+					continue;
+			}
+
+			if(!params.isAggressive || (caster != *cit && Combat::canDoCombat(caster, *cit) == RET_NOERROR))
+			{
+				func(caster, *cit, params, data);
+				if(params.targetCallback)
+					params.targetCallback->onTargetCombat(caster, *cit);
 			}
 
 			combatTileEffects(list, caster, *it, params);
@@ -1105,10 +1104,7 @@ void AreaCombat::copyArea(const MatrixArea* input, MatrixArea* output, MatrixOpe
 		uint32_t centerX, centerY;
 		input->getCenter(centerY, centerX);
 
-		int32_t rotateCenterX = (output->getCols() / 2) - 1;
-		int32_t rotateCenterY = (output->getRows() / 2) - 1;
-
-		int32_t angle = 0;
+		int32_t rotateCenterX = (output->getCols() / 2) - 1, rotateCenterY = (output->getRows() / 2) - 1, angle = 0;
 		switch(op)
 		{
 			case MATRIXOPERATION_ROTATE90:
@@ -1131,7 +1127,6 @@ void AreaCombat::copyArea(const MatrixArea* input, MatrixArea* output, MatrixOpe
 		double angleRad = 3.1416 * angle / 180.0;
 		float a = std::cos(angleRad), b = -std::sin(angleRad);
 		float c = std::sin(angleRad), d = std::cos(angleRad);
-
 		for(int32_t x = 0; x < (long)input->getCols(); ++x)
 		{
 			for(int32_t y = 0; y < (long)input->getRows(); ++y)
@@ -1204,8 +1199,8 @@ void AreaCombat::setupArea(const std::list<uint32_t>& list, uint32_t rows)
 void AreaCombat::setupArea(int32_t length, int32_t spread)
 {
 	std::list<uint32_t> list;
-
 	uint32_t rows = length;
+
 	int32_t cols = 1;
 	if(spread != 0)
 		cols = ((length - length % spread) / spread) * 2 + 1;

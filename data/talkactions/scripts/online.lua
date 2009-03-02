@@ -17,7 +17,7 @@ function onSay(cid, words, param)
 			strings[position] = i == 1 and "" or strings[position] .. ", "
 		end
 
-		if((config.showGamemasters == TRUE or getPlayerCustomFlagValue(cid, PlayerCustomFlag_GamemasterPrivileges) == TRUE or getPlayerCustomFlagValue(pid, PlayerCustomFlag_GamemasterPrivileges) ~= TRUE) and (isPlayerGhost(pid) ~= TRUE or getPlayerAccess(cid) > getPlayerAccess(pid))) then
+		if((config.showGamemasters == TRUE or getPlayerCustomFlagValue(cid, PlayerCustomFlag_GamemasterPrivileges) == TRUE or getPlayerCustomFlagValue(pid, PlayerCustomFlag_GamemasterPrivileges) ~= TRUE) and (isPlayerGhost(pid) ~= TRUE or getPlayerAccess(cid) >= getPlayerAccess(pid))) then
 			strings[position] = strings[position] .. getCreatureName(pid) .. " [" .. getPlayerLevel(pid) .. "]"
 			i = i + 1
 		end

@@ -657,8 +657,8 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier/
 	if(useMultiplier)
 		count += uint32_t((double)count * skillRate[skill]);
 
-	bool advance = false;
 	count = uint32_t((double)count * g_config.getDouble(ConfigManager::RATE_SKILL));
+	bool advance = false;
 	while(skills[skill][SKILL_TRIES] + count >= vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
 	{
 		count -= vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1) - skills[skill][SKILL_TRIES];
@@ -1181,8 +1181,8 @@ void Player::sendCancelMessage(ReturnValue message) const
 			sendCancel("You need to split your spears first.");
 			break;
 
-		case RET_NAMEISTOOAMBIGIOUS:
-			sendCancel("Name is too ambigious.");
+		case RET_NAMEISTOOAMBIGUOUS:
+			sendCancel("Name is too ambiguous.");
 			break;
 
 		case RET_CANONLYUSEONESHIELD:
@@ -1860,9 +1860,9 @@ void Player::drainMana(Creature* attacker, int32_t manaLoss)
 	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
 }
 
-void Player::addManaSpent(uint64_t amount, bool useMultiplier/* = true*/)
+void Player::addManaSpent(uint64_t amount, bool ignoreFlag/* = false*/, bool useMultiplier/* = true*/)
 {
-	if(amount == 0 || hasFlag(PlayerFlag_NotGainMana))
+	if(amount == 0 || (!ignoreFlag && hasFlag(PlayerFlag_NotGainMana)))
 		return;
 
 	uint64_t currReqMana = vocation->getReqMana(magLevel);

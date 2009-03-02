@@ -943,8 +943,8 @@ bool Houses::payHouses()
 						s << "Warning!\nThe " << period << " rent of " << house->getRent() << " gold for your house \"" << house->getName();
 						s << "\" has to be paid. Have it within " << (warningsLimit - warnings) << " days or you will lose your house.";
 
-						if(letter->setText(s.str().c_str()))
-							g_game.internalAddItem(NULL, depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT);
+						letter->setText(s.str().c_str());
+						g_game.internalAddItem(NULL, depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT);
 					}
 
 					house->setPayRentWarnings(warnings++);
@@ -1033,4 +1033,4 @@ uint32_t Houses::getHousesCount(uint32_t accId)
 	}
 
 	return count;
-}]
+}

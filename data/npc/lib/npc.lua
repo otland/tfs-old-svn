@@ -82,6 +82,7 @@ function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, bac
 
 			if(isInArray({(getContainerCapById(backpack) * b), amount}, i) == TRUE) then
 				if(doPlayerAddItemEx(cid, container, ignoreCap) ~= RETURNVALUE_NOERROR) then
+					b = b - 1
 					break
 				end
 
