@@ -799,7 +799,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 		query << "`direction` = " << (uint32_t)player->getDirection() << ", ";
 
 	std::string name = player->getName(), nameDescription = player->getNameDescription();
-	if(nameDescription.length() > name.length())
+	if(!player->isAccountManager() && nameDescription.length() > name.length())
 		query << "`description` = " << db->escapeString(nameDescription.substr(name.length())) << ", ";
 
 	//serialize conditions
