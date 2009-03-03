@@ -233,7 +233,7 @@ bool House::transferToDepot()
 		return false;
 
 	Player* player = NULL;
-	if(houseOwner != 0)
+	if(houseOwner)
 	{
 		std::string ownerName;
 		if(IOLoginData::getInstance()->getNameByGuid(houseOwner, ownerName))

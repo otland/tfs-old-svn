@@ -83,15 +83,15 @@ const Cylinder* Thing::getTopParent() const
 Tile* Thing::getTile()
 {
 	Cylinder* cylinder = getTopParent();
-
 	#ifdef __DEBUG__MOVESYS__
-	if(!cylinder){
+	if(!cylinder)
+	{
 		std::cout << "Failure: [Thing::getTile()],  NULL tile" << std::endl;
 		DEBUG_REPORT
 		return &(Tile::nullTile);
 	}
-	#endif
 
+	#endif
 	//get root cylinder
 	if(cylinder->getParent())
 		cylinder = cylinder->getParent();

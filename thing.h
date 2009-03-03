@@ -119,7 +119,7 @@ class Thing
 
 		virtual void setParent(Cylinder* cylinder) {parent = cylinder;}
 
-		Cylinder* getTopParent(); //returns Tile/Container or a Player
+		Cylinder* getTopParent();
 		const Cylinder* getTopParent() const;
 
 		virtual Tile* getTile();

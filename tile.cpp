@@ -95,13 +95,13 @@ bool Tile::hasHeight(uint32_t n) const
 	for(uint32_t i = 0; i < getThingCount(); ++i)
 	{
 		iiItem = __getThing(i)->getItem();
-
 		if(iiItem && iiItem->hasProperty(HASHEIGHT))
 			++height;
 
 		if(n == height)
 			return true;
 	}
+
 	return false;
 }
 

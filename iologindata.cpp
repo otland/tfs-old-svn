@@ -798,9 +798,12 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 	if(g_config.getBool(ConfigManager::STORE_DIRECTION))
 		query << "`direction` = " << (uint32_t)player->getDirection() << ", ";
 
-	std::string name = player->getName(), nameDescription = player->getNameDescription();
-	if(!player->isAccountManager() && nameDescription.length() > name.length())
-		query << "`description` = " << db->escapeString(nameDescription.substr(name.length())) << ", ";
+	if(!player->isVirtual())
+	{
+		std::string name = player->getName(), nameDescription = player->getNameDescription();
+		if(!player->isAccountManager() && nameDescription.length() > name.length())
+			query << "`description` = " << db->escapeString(nameDescription.substr(name.length())) << ", ";
+	}
 
 	//serialize conditions
 	PropWriteStream propWriteStream;

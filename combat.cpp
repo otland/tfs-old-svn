@@ -387,6 +387,10 @@ bool Combat::setParam(CombatParam_t param, uint32_t value)
 			params.targetCasterOrTopMost = (value != 0);
 			return true;
 
+		case COMBATPARAM_TARGETPLAYERSORSUMMONS:
+			params.targetPlayersOrSummons = (value != 0);
+			return true;
+
 		case COMBATPARAM_CREATEITEM:
 			params.itemId = value;
 			return true;
@@ -672,37 +676,39 @@ void Combat::CombatFunc(Creature* caster, const Position& pos, const AreaCombat*
 	SpectatorVec list;
 	g_game.getSpectators(list, pos, false, true, maxX + Map::maxViewportX, maxX + Map::maxViewportX,
 		maxY + Map::maxViewportY, maxY + Map::maxViewportY);
-
 	for(std::list<Tile*>::iterator it = tileList.begin(); it != tileList.end(); ++it)
 	{
-		if(canDoCombat(caster, (*it), params.isAggressive) != RET_NOERROR)
-			continue;
-
-		bool skip = true;
-		for(CreatureVector::iterator cit = (*it)->creatures.begin(); skip && cit != (*it)->creatures.end(); ++cit)
+		if(canDoCombat(caster, (*it), params.isAggressive) == RET_NOERROR)
 		{
-			if(params.targetCasterOrTopMost)
+			bool skip = true;
+			for(CreatureVector::iterator cit = (*it)->creatures.begin(); skip && cit != (*it)->creatures.end(); ++cit)
 			{
-				if(caster && caster->getTile() == (*it))
-				{
-					if((*cit) == caster)
-						skip = false;
-				}
-				else if((*cit) == (*it)->getTopCreature())
-					skip = false;
-
-				if(skip)
+				if(params.targetPlayersOrSummons && !(*cit)->getPlayer() && (!(*cit)->getMaster() || !(*cit)->getMaster()->getPlayer()))
 					continue;
+
+				if(params.targetCasterOrTopMost)
+				{
+					if(caster && caster->getTile() == (*it))
+					{
+						if((*cit) == caster)
+							skip = false;
+					}
+					else if((*cit) == (*it)->getTopCreature())
+						skip = false;
+
+					if(skip)
+						continue;
+				}
+
+				if(!params.isAggressive || (caster != (*cit) && Combat::canDoCombat(caster, (*cit)) == RET_NOERROR))
+				{
+					func(caster, (*cit), params, data);
+					if(params.targetCallback)
+						params.targetCallback->onTargetCombat(caster, (*cit));
+				}
 			}
 
-			if(!params.isAggressive || (caster != *cit && Combat::canDoCombat(caster, *cit) == RET_NOERROR))
-			{
-				func(caster, *cit, params, data);
-				if(params.targetCallback)
-					params.targetCallback->onTargetCombat(caster, *cit);
-			}
-
-			combatTileEffects(list, caster, *it, params);
+			combatTileEffects(list, caster, (*it), params);
 		}
 	}
 
