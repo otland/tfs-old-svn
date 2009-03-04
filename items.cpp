@@ -73,11 +73,12 @@ ItemType::ItemType()
 	speed = 0;
 	id = 0;
 	clientId = 100;
-	maxItems = 8;  // maximum size if this is a container
-	weight = 0;  // weight of the item, e.g. throwing distance depends on it
+	maxItems = 8; //maximum size if this is a container
+	weight = 0; //weight of the item, e.g. throwing distance depends on it
 	showCount = true;
 	weaponType = WEAPON_NONE;
-	slotPosition = SLOTP_RIGHT | SLOTP_LEFT | SLOTP_AMMO;
+	slotPosition = SLOTP_HAND | SLOTP_AMMO;
+	wieldPosition = SLOT_HAND;
 	ammoType = AMMO_NONE;
 	ammoAction = AMMOACTION_NONE;
 	shootType = (ShootType_t)0;
@@ -154,14 +155,12 @@ void Items::clear()
 
 bool Items::reload()
 {
-	//TODO
-	/*
-	for(ItemMap::iterator it = items.begin(); it != items.end(); ++it)
+	//TODO: reload items?
+	/*for(ItemMap::iterator it = items.begin(); it != items.end(); ++it)
 		delete it->second->condition;
 
 	clear();
-	return loadFromXml();
-	*/
+	return loadFromXml();*/
 	return false;
 }
 
@@ -379,7 +378,6 @@ int32_t Items::loadFromOtb(std::string file)
 		}
 
 		reverseItemMap[iType->clientId] = iType->id;
-
 		// store the found item
 		items.addElement(iType, iType->id);
 		node = f.getNextNode(node, type);
@@ -664,21 +662,49 @@ bool Items::loadFromXml()
 								{
 									tmpStrValue = asLowerCaseString(strValue);
 									if(tmpStrValue == "head")
+									{
 										it.slotPosition |= SLOTP_HEAD;
+										it.wieldPosition = SLOT_HEAD;
+									}
 									else if(tmpStrValue == "body")
+									{
 										it.slotPosition |= SLOTP_ARMOR;
+										it.wieldPosition = SLOT_ARMOR;
+									}
 									else if(tmpStrValue == "legs")
+									{
 										it.slotPosition |= SLOTP_LEGS;
+										it.wieldPosition = SLOT_LEGS;
+									}
 									else if(tmpStrValue == "feet")
+									{
 										it.slotPosition |= SLOTP_FEET;
+										it.wieldPosition = SLOT_FEET;
+									}
 									else if(tmpStrValue == "backpack")
+									{
 										it.slotPosition |= SLOTP_BACKPACK;
+										it.wieldPosition = SLOT_BACKPACK;
+									}
 									else if(tmpStrValue == "two-handed")
+									{
 										it.slotPosition |= SLOTP_TWO_HAND;
+										it.wieldPosition = SLOT_TWO_HAND;
+									}
 									else if(tmpStrValue == "necklace")
+									{
 										it.slotPosition |= SLOTP_NECKLACE;
+										it.wieldPosition = SLOT_NECKLACE;
+									}
 									else if(tmpStrValue == "ring")
+									{
 										it.slotPosition |= SLOTP_RING;
+										it.wieldPosition = SLOT_RING;
+									}
+									else if(tmpStrValue == "ammo")
+										it.wieldPosition = SLOT_AMMO;
+									else if(tmpStrValue == "hand")
+										it.wieldPosition = SLOT_HAND;
 									else
 										std::cout << "[Warning - Items::loadFromXml] Unknown slotType " << strValue << std::endl;
 								}
@@ -789,6 +815,11 @@ bool Items::loadFromXml()
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 									it.abilities.preventLoss = (intValue != 0);
+							}
+							else if(tmpStrValue == "preventdrop")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+									it.abilities.preventDrop = (intValue != 0);
 							}
 							else if(tmpStrValue == "invisible")
 							{

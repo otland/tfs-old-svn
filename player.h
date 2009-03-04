@@ -161,10 +161,6 @@ class Player : public Creature, public Cylinder
 
 		static uint64_t getExpForLevel(uint32_t lv)
 		{
-			/* Talaturen's formula
-			  *uint64_t x = lv;
-			  *return (x > 1 ? ((50 * x / 3 - 100) * x + 850 / 3) * x - 200 : 0);
-			  */
 			lv--;
 			return ((50ULL * lv * lv * lv) - (150ULL * lv * lv) + (400ULL * lv)) / 3ULL;
 		}
@@ -314,6 +310,7 @@ class Player : public Creature, public Cylinder
 		int32_t getSoulMax() const {return soulMax;}
 
 		Item* getInventoryItem(slots_t slot) const;
+		Item* getEquippedItem(slots_t slot) const;
 
 		bool isItemAbilityEnabled(slots_t slot) const {return inventoryAbilities[slot];}
 		void setItemAbility(slots_t slot, bool enabled) {inventoryAbilities[slot] = enabled;}

@@ -41,6 +41,7 @@
 #define	SLOTP_AMMO 1 << 9
 #define	SLOTP_DEPOT 1 << 10
 #define	SLOTP_TWO_HAND 1 << 11
+#define SLOTP_HAND SLOTP_LEFT | SLOTP_RIGHT 
 
 enum ItemTypes_t
 {
@@ -74,7 +75,7 @@ struct Abilities
 		conditionImmunities = conditionSuppressions = 0;
 
 		speed = 0;
-		manaShield = invisible = regeneration = preventLoss = false;
+		manaShield = invisible = regeneration = preventLoss = preventDrop = false;
 	};
 
 	//extra skill modifiers
@@ -98,7 +99,7 @@ struct Abilities
 
 	//other
 	int32_t speed;
-	bool manaShield, invisible, regeneration, preventLoss;
+	bool manaShield, invisible, regeneration, preventLoss, preventDrop;
 };
 
 class Condition;
@@ -158,6 +159,7 @@ class ItemType
 		int32_t armor;
 		uint32_t attackSpeed;
 		uint16_t slotPosition;
+		uint16_t wieldPosition;
 		bool isVertical;
 		bool isHorizontal;
 		bool isHangable;

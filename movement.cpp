@@ -83,7 +83,8 @@ void MoveEvents::clear()
 
 Event* MoveEvents::getEvent(const std::string& nodeName)
 {
-	if(asLowerCaseString(nodeName) == "movevent")
+	std::string tmpNodeName = asLowerCaseString(nodeName);
+	if(tmpNodeName == "movevent" || tmpNodeName == "moveevent" || tmpNodeName == "movement")
 		return new MoveEvent(&m_scriptInterface);
 
 	return NULL;

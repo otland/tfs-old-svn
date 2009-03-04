@@ -325,10 +325,32 @@ std::string Player::getDescription(int32_t lookDistance) const
 
 Item* Player::getInventoryItem(slots_t slot) const
 {
-	if(slot > 0 && slot < 11)
+	if(slot > SLOT_WHEREEVER && slot < SLOT_LAST)
 		return inventory[slot];
 
+	if(slot == SLOT_HAND)
+		return inventory[SLOT_LEFT] ? inventory[SLOT_LEFT] : inventory[SLOT_RIGHT];
+
 	return NULL;
+}
+
+Item* Player::getEquippedItem(slots_t slot) const
+{
+	Item* item = getInventoryItem(slot);
+	if(!item)
+		return NULL;
+
+	switch(slot)
+	{
+		case SLOT_LEFT:
+		case SLOT_RIGHT:
+			return item->getWieldPosition() == SLOT_HAND ? item : NULL;
+
+		default:
+			break;
+	}
+
+	return slot == item->getWieldPosition() ? item : NULL;
 }
 
 void Player::setConditionSuppressions(uint32_t conditions, bool remove)
@@ -344,7 +366,7 @@ Item* Player::getWeapon(bool ignoreAmmo /*= false*/)
 	Item* item;
 	for(uint32_t slot = SLOT_RIGHT; slot <= SLOT_LEFT; slot++)
 	{
-		item = getInventoryItem((slots_t)slot);
+		item = getEquippedItem((slots_t)slot);
 		if(!item)
 			continue;
 
@@ -643,6 +665,7 @@ int32_t Player::getSkill(skills_t skilltype, skillsid_t skillinfo) const
 	int32_t n = skills[skilltype][skillinfo];
 	if(skillinfo == SKILL_LEVEL)
 		n += varSkills[skilltype];
+
 	return std::max((int32_t)0, (int32_t)n);
 }
 
@@ -821,33 +844,16 @@ uint16_t Player::getLookCorpse() const
 
 void Player::dropLoot(Container* corpse)
 {
-	if(corpse && lootDrop)
+	if(!corpse || !lootDrop)
+		return;
+
+	for(uint8_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 	{
-		Item* preventItem = NULL;
-		for(uint8_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
+		Item* item = inventory[i];
+		if(item && (item->getContainer() || (uint32_t)random_range(1, 100) <= uint32_t(getLostPercent(LOSS_ITEMS) * 100) || getSkull() == SKULL_RED))
 		{
-			if(!(preventItem = getInventoryItem((slots_t)i)))
-				continue;
-
-			if(Item::items[preventItem->getID()].abilities.preventLoss)
-				break;
-
-			preventItem = NULL;
-		}
-
-		if(preventItem && getSkull() != SKULL_RED && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
-			g_game.internalRemoveItem(NULL, preventItem, 1);
-		else
-		{
-			for(uint8_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
-			{
-				Item* item = inventory[i];
-				if(item && (item->getContainer() || (uint32_t)random_range(1, 100) <= uint32_t(getLostPercent(LOSS_ITEMS) * 100) || getSkull() == SKULL_RED))
-				{
-					g_game.internalMoveItem(NULL, this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
-					sendRemoveInventoryItem((slots_t)i, inventory[(slots_t)i]);
-				}
-			}
+			g_game.internalMoveItem(NULL, this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
+			sendRemoveInventoryItem((slots_t)i, inventory[(slots_t)i]);
 		}
 	}
 }
@@ -947,8 +953,7 @@ Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
 
 bool Player::addDepot(Depot* depot, uint32_t depotId)
 {
-	Depot* tmp = getDepot(depotId, false);
-	if(tmp)
+	if(getDepot(depotId, false))
 		return false;
 
 	depots[depotId] = depot;
@@ -1711,6 +1716,7 @@ void Player::checkTradeState(const Item* item)
 					g_game.internalCloseTrade(this);
 					break;
 				}
+
 				container = dynamic_cast<const Container*>(container->getParent());
 			}
 		}
@@ -1826,8 +1832,8 @@ void Player::removeMessageBuffer()
 
 			uint32_t muteTime = 5 * muteCount * muteCount;
 			muteCountMap[getGUID()] = muteCount + 1;
-			Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_MUTED, muteTime * 1000, 0);
-			addCondition(condition);
+			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_MUTED, muteTime * 1000, 0))
+				addCondition(condition);
 
 			char buffer[50];
 			sprintf(buffer, "You are muted for %d seconds.", muteTime);
@@ -1839,24 +1845,26 @@ void Player::removeMessageBuffer()
 void Player::drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage)
 {
 	Creature::drainHealth(attacker, combatType, damage);
-	sendStats();
 	char buffer[150];
 	if(attacker)
 		sprintf(buffer, "You lose %d hitpoint%s due to an attack by %s.", damage, (damage != 1 ? "s" : ""), attacker->getNameDescription().c_str());
 	else
 		sprintf(buffer, "You lose %d hitpoint%s.", damage, (damage != 1 ? "s" : ""));
+
+	sendStats();
 	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
 }
 
 void Player::drainMana(Creature* attacker, int32_t manaLoss)
 {
 	Creature::drainMana(attacker, manaLoss);
-	sendStats();
 	char buffer[150];
 	if(attacker)
 		sprintf(buffer, "You lose %d mana blocking an attack by %s.", manaLoss, attacker->getNameDescription().c_str());
 	else
 		sprintf(buffer, "You lose %d mana.", manaLoss);
+
+	sendStats();
 	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
 }
 
@@ -1865,8 +1873,7 @@ void Player::addManaSpent(uint64_t amount, bool ignoreFlag/* = false*/, bool use
 	if(amount == 0 || (!ignoreFlag && hasFlag(PlayerFlag_NotGainMana)))
 		return;
 
-	uint64_t currReqMana = vocation->getReqMana(magLevel);
-	uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
+	uint64_t currReqMana = vocation->getReqMana(magLevel), nextReqMana = vocation->getReqMana(magLevel + 1);
 	if(currReqMana > nextReqMana)
 	{
 		//player has reached max magic level
@@ -1882,7 +1889,6 @@ void Player::addManaSpent(uint64_t amount, bool ignoreFlag/* = false*/, bool use
 		amount -= nextReqMana - manaSpent;
 		manaSpent = 0;
 		magLevel++;
-
 		char advMsg[50];
 		sprintf(advMsg, "You advanced to magic level %d.", magLevel);
 		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
@@ -2135,8 +2141,46 @@ uint32_t Player::getIP() const
 
 bool Player::onDeath()
 {
+	Item* preventLoss = NULL;
+	Item* preventDrop = NULL;
+	if(getSkull() != SKULL_RED && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
+	{
+		for(uint8_t i = SLOT_FIRST; ((skillLoss || lootDrop) && i < SLOT_LAST); ++i)
+		{
+			if(Item* preventItem = getInventoryItem((slots_t)i))
+			{
+				const ItemType& it = Item::items[preventItem->getID()];
+				if(skillLoss && it.abilities.preventLoss)
+				{
+					preventLoss = preventItem;
+					setLossSkill(false);
+				}
+
+				if(lootDrop && it.abilities.preventDrop)
+				{
+					preventDrop = preventItem;
+					setDropLoot(false);
+				}
+			}
+		}
+	}
+
 	if(!Creature::onDeath())
+	{
+		if(preventLoss)
+			setLossSkill(true);
+
+		if(preventDrop)
+			setDropLoot(true);
+
 		return false;
+	}
+
+	if(preventLoss)
+		g_game.transformItem(preventLoss, preventItem->getID(), std::max(0, ((int32_t)preventItem->getCharges() - 1)));
+
+	if(preventDrop != preventLoss)
+		g_game.transformItem(preventDrop, preventDrop->getID(), std::max(0, ((int32_t)preventDrop->getCharges() - 1)));
 
 	removeConditions(CONDITIONEND_DEATH);
 	if(skillLoss)
@@ -2164,37 +2208,35 @@ bool Player::onDeath()
 			magLevelPercent = 0;
 
 		//Skill loss
-		uint32_t lostSkillTries;
-		uint32_t sumSkillTries;
+		uint32_t lostSkillTries, sumSkillTries;
 		for(int16_t i = 0; i < 7; ++i) //for each skill
 		{
-			lostSkillTries = 0;
-			sumSkillTries = 0;
+			lostSkillTries = sumSkillTries = 0;
 			for(uint32_t c = 11; c <= skills[i][SKILL_LEVEL]; ++c) //sum up all required tries for all skill levels
 				sumSkillTries += vocation->getReqSkillTries(i, c);
 
 			sumSkillTries += skills[i][SKILL_TRIES];
-			lostSkillTries = (uint32_t)(sumSkillTries * getLostPercent(LOSS_SKILLTRIES));
+			lostSkillTries = uint32_t(sumSkillTries * getLostPercent(LOSS_SKILLTRIES));
 			while(lostSkillTries > skills[i][SKILL_TRIES])
 			{
 				lostSkillTries -= skills[i][SKILL_TRIES];
 				skills[i][SKILL_TRIES] = vocation->getReqSkillTries(i, skills[i][SKILL_LEVEL]);
-				if(skills[i][SKILL_LEVEL] > 10)
-					skills[i][SKILL_LEVEL]--;
-				else
+				if(skills[i][SKILL_LEVEL] < 11)
 				{
 					skills[i][SKILL_LEVEL] = 10;
-					skills[i][SKILL_TRIES] = 0;
-					lostSkillTries = 0;
+					skills[i][SKILL_TRIES] = lostSkillTries = 0;
 					break;
 				}
+				else
+					skills[i][SKILL_LEVEL]--;
 			}
+
 			skills[i][SKILL_TRIES] = std::max((int32_t)0, (int32_t)(skills[i][SKILL_TRIES] - lostSkillTries));
 		}
 
-		removeExperience(getLostExperience(), false);
-		loginPosition = masterPos;
 		blessings = 0;
+		loginPosition = masterPos;
+		removeExperience(getLostExperience(), false);
 		if(!inventory[SLOT_BACKPACK])
 			__internalAddThing(SLOT_BACKPACK, Item::CreateItem(1987));
 
@@ -2204,17 +2246,24 @@ bool Player::onDeath()
 		g_game.removeCreature(this, false);
 	}
 	else
+	{
 		setLossSkill(true);
+		if(preventLoss)
+		{
+			sendReLoginWindow();
+			g_game.removeCreature(this, false);
+		}
+	}
 
 	return true;
 }
 
 void Player::dropCorpse()
 {
-	if(lootDrop)
-		Creature::dropCorpse();
-	else
+	if(!lootDrop)
 	{
+		setDropLoot(true);
+		onIdleStatus();
 		if(health <= 0)
 		{
 			health = healthMax;
@@ -2223,10 +2272,10 @@ void Player::dropCorpse()
 
 		sendStats();
 		onThink(EVENT_CREATURE_THINK_INTERVAL);
-		onIdleStatus();
-		setDropLoot(true);
 		g_game.internalTeleport(this, getTemplePosition(), true);
 	}
+	else
+		Creature::dropCorpse();
 }
 
 Item* Player::getCorpse()
