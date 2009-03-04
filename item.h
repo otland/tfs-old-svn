@@ -370,7 +370,7 @@ class Item : virtual public Thing, public ItemAttributes
 		int32_t getMaxWriteLength() const {return items[id].maxTextLen;}
 
 		int32_t getSlotPosition() const {return items[id].slotPosition;}
-		int32_t getWieldPosition() const {return items[id].wield_position;}
+		int32_t getWieldPosition() const {return items[id].wieldPosition;}
 		WeaponType_t getWeaponType() const {return items[id].weaponType;}
 		Ammo_t getAmmoType() const {return items[id].ammoType;}
 
