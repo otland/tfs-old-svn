@@ -1999,7 +1999,7 @@ void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 uint32_t Player::getPercentLevel(uint64_t count, uint64_t nextLevelCount)
 {
 	if(nextLevelCount > 0)
-		return std::min(100, std::max(0, (count * 100 / nextLevelCount)));
+		return std::min((uint32_t)100, std::max((uint32_t)0, uint32_t(count * 100 / nextLevelCount)));
 
 	return 0;
 }
