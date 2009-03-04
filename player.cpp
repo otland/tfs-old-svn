@@ -500,32 +500,32 @@ int32_t Player::getArmor() const
 void Player::getShieldAndWeapon(const Item* &shield, const Item* &weapon) const
 {
 	shield = weapon = NULL;
-
-	Item* item;
 	for(uint32_t slot = SLOT_RIGHT; slot <= SLOT_LEFT; slot++)
 	{
-		item = getInventoryItem((slots_t)slot);
-		if(item)
+		Item* item = getInventoryItem((slots_t)slot);
+		if(!item)
+			continue;
+
+		switch(item->getWeaponType())
 		{
-			switch(item->getWeaponType())
+			case WEAPON_NONE:
+				break;
+
+			case WEAPON_SHIELD:
 			{
-				case WEAPON_NONE:
-					break;
-				case WEAPON_SHIELD:
-				{
-					if(!shield || (shield && item->getDefense() > shield->getDefense()))
-						shield = item;
-					break;
-				}
-				default: // weapons that are not shields
-				{
-					weapon = item;
-					break;
-				}
+				if(!shield || (shield && item->getDefense() > shield->getDefense()))
+					shield = item;
+
+				break;
+			}
+
+			default: //weapons that are not shields
+			{
+				weapon = item;
+				break;
 			}
 		}
 	}
-	return;
 }
 
 int32_t Player::getDefense() const
@@ -712,7 +712,6 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier/
 	}
 
 	skills[skill][SKILL_TRIES] += count;
-
 	//update percent
 	uint32_t newPercent = Player::getPercentLevel(skills[skill][SKILL_TRIES], vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1));
  	if(skills[skill][SKILL_PERCENT] != newPercent)
@@ -746,9 +745,7 @@ void Player::setVarStats(stats_t stat, int32_t modifier)
 		}
 
 		default:
-		{
 			break;
-		}
 	}
 }
 
@@ -823,8 +820,8 @@ void Player::closeContainer(uint32_t cid)
 			break;
 		}
 	}
-
 #ifdef __DEBUG__
+
 	std::cout << getName() << ", closeContainer: " << (int32_t)cid << std::endl;
 #endif
 }
@@ -1449,25 +1446,19 @@ void Player::onAttackedCreatureChangeZone(ZoneType_t zone)
 	}
 	else if(zone == ZONE_NOPVP)
 	{
-		if(attackedCreature->getPlayer())
+		if(attackedCreature->getPlayer() && !hasFlag(PlayerFlag_IgnoreProtectionZone))
 		{
-			if(!hasFlag(PlayerFlag_IgnoreProtectionZone))
-			{
-				setAttackedCreature(NULL);
-				onAttackedCreatureDisappear(false);
-			}
+			setAttackedCreature(NULL);
+			onAttackedCreatureDisappear(false);
 		}
 	}
 	else if(zone == ZONE_NORMAL)
 	{
 		//attackedCreature can leave a pvp zone if not pzlocked
-		if(g_game.getWorldType() == WORLD_TYPE_NO_PVP)
+		if(g_game.getWorldType() == WORLD_TYPE_NO_PVP && attackedCreature->getPlayer())
 		{
-			if(attackedCreature->getPlayer())
-			{
-				setAttackedCreature(NULL);
-				onAttackedCreatureDisappear(false);
-			}
+			setAttackedCreature(NULL);
+			onAttackedCreatureDisappear(false);
 		}
 	}
 }
@@ -1475,70 +1466,70 @@ void Player::onAttackedCreatureChangeZone(ZoneType_t zone)
 void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bool isLogout)
 {
 	Creature::onCreatureDisappear(creature, stackpos, isLogout);
-	if(creature == this)
+	if(creature != this)
+		return;
+
+	if(isLogout)
 	{
-		if(isLogout)
+		loginPosition = getPosition();
+		lastLogout = time(NULL);
+	}
+
+	if(eventWalk != 0)
+		setFollowCreature(NULL);
+
+	if(tradePartner)
+		g_game.internalCloseTrade(this);
+
+	clearPartyInvitations();
+	if(getParty())
+		getParty()->leaveParty(this);
+
+	g_game.cancelRuleViolation(this);
+	if(hasFlag(PlayerFlag_CanAnswerRuleViolations))
+	{
+		PlayerVector closeReportList;
+		for(RuleViolationsMap::const_iterator it = g_game.getRuleViolations().begin(); it != g_game.getRuleViolations().end(); ++it)
 		{
-			loginPosition = getPosition();
-			lastLogout = time(NULL);
+			if(it->second->gamemaster == this)
+				closeReportList.push_back(it->second->reporter);
 		}
 
-		if(eventWalk != 0)
-			setFollowCreature(NULL);
+		for(PlayerVector::iterator it = closeReportList.begin(); it != closeReportList.end(); ++it)
+			g_game.closeRuleViolation(*it);
+	}
 
-		if(tradePartner)
-			g_game.internalCloseTrade(this);
+	g_chat.removeUserFromAllChannels(this);
+	IOLoginData::getInstance()->updateOnlineStatus(guid, false);
+	#ifndef __CONSOLE__
+	GUI::getInstance()->m_pBox.removePlayer(this);
+	#endif
+	std::cout << getName() << " has logged out." << std::endl;
 
-		clearPartyInvitations();
-		if(getParty())
-			getParty()->leaveParty(this);
-
-		g_game.cancelRuleViolation(this);
-		if(hasFlag(PlayerFlag_CanAnswerRuleViolations))
+	bool saved = false;
+	for(uint32_t tries = 0; tries < 3; ++tries)
+	{
+		if(IOLoginData::getInstance()->savePlayer(this))
 		{
-			PlayerVector closeReportList;
-			for(RuleViolationsMap::const_iterator it = g_game.getRuleViolations().begin(); it != g_game.getRuleViolations().end(); ++it)
-			{
-				if(it->second->gamemaster == this)
-					closeReportList.push_back(it->second->reporter);
-			}
-
-			for(PlayerVector::iterator it = closeReportList.begin(); it != closeReportList.end(); ++it)
-				g_game.closeRuleViolation(*it);
+			saved = true;
+			break;
 		}
-
-		g_chat.removeUserFromAllChannels(this);
-		IOLoginData::getInstance()->updateOnlineStatus(guid, false);
-		#ifndef __CONSOLE__
-		GUI::getInstance()->m_pBox.removePlayer(this);
-		#endif
-		std::cout << getName() << " has logged out." << std::endl;
-
-		bool saved = false;
-		for(uint32_t tries = 0; tries < 3; ++tries)
-		{
-			if(IOLoginData::getInstance()->savePlayer(this))
-			{
-				saved = true;
-				break;
-			}
 #ifdef __DEBUG__
-			else
-				std::cout << "Error while saving player: " << getName() << ", strike " << tries << std::endl;
-#endif
-		}
-
-		if(!saved)
-#ifndef __DEBUG__
-			std::cout << "Error while saving player: " << getName() << std::endl;
-#else
-			std::cout << "Player " << getName() << " couldn't be saved." << std::endl;
-#endif
-
-#ifdef __DEBUG__
-		std::cout << (uint32_t)g_game.getPlayersOnline() << " players online." << std::endl;
+		else
+			std::cout << "Error while saving player: " << getName() << ", strike " << tries << std::endl;
 #endif
 	}
+
+	if(!saved)
+#ifndef __DEBUG__
+		std::cout << "Error while saving player: " << getName() << std::endl;
+#else
+		std::cout << "Player " << getName() << " couldn't be saved." << std::endl;
+#endif
+
+#ifdef __DEBUG__
+	std::cout << (uint32_t)g_game.getPlayersOnline() << " players online." << std::endl;
+#endif
 }
 
 void Player::openShopWindow()
@@ -1593,27 +1584,21 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 	const Tile* oldTile, const Position& oldPos, uint32_t oldStackPos, bool teleport)
 {
 	Creature::onCreatureMove(creature, newTile, newPos, oldTile, oldPos, oldStackPos, teleport);
-	if(creature == this)
+	if(creature != this)
+		return;
+
+	if(tradeState != TRADE_TRANSFER)
 	{
-		if(tradeState != TRADE_TRANSFER)
-		{
-			//check if we should close trade
-			if(tradeItem)
-			{
-				if(!Position::areInRange<1,1,0>(tradeItem->getPosition(), getPosition()))
-					g_game.internalCloseTrade(this);
-			}
+		//check if we should close trade
+		if(tradeItem && !Position::areInRange<1,1,0>(tradeItem->getPosition(), getPosition()))
+			g_game.internalCloseTrade(this);
 
-			if(tradePartner)
-			{
-				if(!Position::areInRange<2,2,0>(tradePartner->getPosition(), getPosition()))
-					g_game.internalCloseTrade(this);
-			}
-		}
-
-		if(getParty())
-			getParty()->updateSharedExperience();
+		if(tradePartner && !Position::areInRange<2,2,0>(tradePartner->getPosition(), getPosition()))
+			g_game.internalCloseTrade(this);
 	}
+
+	if(getParty())
+		getParty()->updateSharedExperience();
 }
 
 //container
@@ -1647,26 +1632,26 @@ void Player::onRemoveContainerItem(const Container* container, uint8_t slot, con
 
 void Player::onCloseContainer(const Container* container)
 {
-	if(client)
+	if(!client)
+		return;
+
+	for(ContainerVector::const_iterator cl = containerVec.begin(); cl != containerVec.end(); ++cl)
 	{
-		for(ContainerVector::const_iterator cl = containerVec.begin(); cl != containerVec.end(); ++cl)
-		{
-			if(cl->second == container)
-				client->sendCloseContainer(cl->first);
-		}
+		if(cl->second == container)
+			client->sendCloseContainer(cl->first);
 	}
 }
 
 void Player::onSendContainer(const Container* container)
 {
-	if(client)
+	if(!client)
+		return;
+
+	bool hasParent = dynamic_cast<const Container*>(container->getParent()) != NULL;
+	for(ContainerVector::const_iterator cl = containerVec.begin(); cl != containerVec.end(); ++cl)
 	{
-		bool hasParent = dynamic_cast<const Container*>(container->getParent()) != NULL;
-		for(ContainerVector::const_iterator cl = containerVec.begin(); cl != containerVec.end(); ++cl)
-		{
-			if(cl->second == container)
-				client->sendContainer(cl->first, container, hasParent);
-		}
+		if(cl->second == container)
+			client->sendContainer(cl->first, container, hasParent);
 	}
 }
 
@@ -1688,39 +1673,39 @@ void Player::onUpdateInventoryItem(slots_t slot, Item* oldItem, const ItemType& 
 
 void Player::onRemoveInventoryItem(slots_t slot, Item* item)
 {
-	if(tradeState != TRADE_TRANSFER)
+	if(tradeState == TRADE_TRANSFER)
+		return;
+
+	checkTradeState(item);
+	if(tradeItem)
 	{
-		checkTradeState(item);
-		if(tradeItem)
-		{
-			const Container* container = item->getContainer();
-			if(container && container->isHoldingItem(tradeItem))
-				g_game.internalCloseTrade(this);
-		}
+		const Container* container = item->getContainer();
+		if(container && container->isHoldingItem(tradeItem))
+			g_game.internalCloseTrade(this);
 	}
 }
 
 void Player::checkTradeState(const Item* item)
 {
-	if(tradeItem && tradeState != TRADE_TRANSFER)
-	{
-		if(tradeItem == item)
-			g_game.internalCloseTrade(this);
-		else
-		{
-			const Container* container = dynamic_cast<const Container*>(item->getParent());
-			while(container != NULL)
-			{
-				if(container == tradeItem)
-				{
-					g_game.internalCloseTrade(this);
-					break;
-				}
+	if(!tradeItem || tradeState == TRADE_TRANSFER)
+		return;
 
-				container = dynamic_cast<const Container*>(container->getParent());
+	if(tradeItem != item)
+	{
+		const Container* container = dynamic_cast<const Container*>(item->getParent());
+		while(container != NULL)
+		{
+			if(container == tradeItem)
+			{
+				g_game.internalCloseTrade(this);
+				break;
 			}
+
+			container = dynamic_cast<const Container*>(container->getParent());
 		}
 	}
+	else
+		g_game.internalCloseTrade(this);
 }
 
 void Player::setNextWalkActionTask(SchedulerTask* task)
@@ -1730,6 +1715,7 @@ void Player::setNextWalkActionTask(SchedulerTask* task)
 		Scheduler::getScheduler().stopEvent(walkTaskEvent);
 		walkTaskEvent = 0;
 	}
+
 	delete walkTask;
 	walkTask = task;
 }
@@ -1949,7 +1935,6 @@ void Player::addExperience(uint64_t exp)
 
 		g_game.changeSpeed(this, 0);
 		g_game.addCreatureHealth(this);
-
 		if(getParty())
 			getParty()->updateSharedExperience();
 
@@ -2014,13 +1999,8 @@ void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 uint32_t Player::getPercentLevel(uint64_t count, uint64_t nextLevelCount)
 {
 	if(nextLevelCount > 0)
-	{
-		uint32_t result = (count * 100) / nextLevelCount;
-		if(result < 0 || result > 100)
-			return 0;
+		return std::min(100, std::max(0, (count * 100 / nextLevelCount)));
 
-		return result;
-	}
 	return 0;
 }
 
@@ -2177,7 +2157,7 @@ bool Player::onDeath()
 	}
 
 	if(preventLoss)
-		g_game.transformItem(preventLoss, preventItem->getID(), std::max(0, ((int32_t)preventItem->getCharges() - 1)));
+		g_game.transformItem(preventLoss, preventLoss->getID(), std::max(0, ((int32_t)preventLoss->getCharges() - 1)));
 
 	if(preventDrop != preventLoss)
 		g_game.transformItem(preventDrop, preventDrop->getID(), std::max(0, ((int32_t)preventDrop->getCharges() - 1)));
