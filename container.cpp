@@ -254,8 +254,7 @@ void Container::onRemoveContainerItem(uint32_t index, Item* item)
 ReturnValue Container::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 	uint32_t flags) const
 {
-	bool childIsOwner = ((flags & FLAG_CHILDISOWNER) == FLAG_CHILDISOWNER);
-	if(childIsOwner)
+	if(((flags & FLAG_CHILDISOWNER) == FLAG_CHILDISOWNER))
 	{
 		//a child container is querying, since we are the top container (not carried by a player)
 		//just return with no error.
@@ -281,18 +280,14 @@ ReturnValue Container::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 		cylinder = cylinder->getParent();
 	}
 
-	bool skipLimit = ((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT);
-	if(index == INDEX_WHEREEVER && !skipLimit)
-	{
-		if(size() >= capacity())
-			return RET_CONTAINERNOTENOUGHROOM;
-	}
+	if(index == INDEX_WHEREEVER && !((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT) && full())
+		return RET_CONTAINERNOTENOUGHROOM;
 
 	const Cylinder* topParent = getTopParent();
 	if(topParent != this)
 		return topParent->__queryAdd(INDEX_WHEREEVER, item, count, flags | FLAG_CHILDISOWNER);
-	else
-		return RET_NOERROR;
+
+	return RET_NOERROR;
 }
 
 ReturnValue Container::__queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
@@ -390,7 +385,6 @@ Cylinder* Container::__queryDestination(int32_t& index, const Thing* thing, Item
 			if you drop the item on that grey area
 			the client calculates the slot position as if the bag has 20 slots
 			*/
-
 			index = INDEX_WHEREEVER;
 		}
 
@@ -400,8 +394,7 @@ Cylinder* Container::__queryDestination(int32_t& index, const Thing* thing, Item
 			if(destThing)
 				*destItem = destThing->getItem();
 
-			Cylinder* subCylinder = dynamic_cast<Cylinder*>(*destItem);
-			if(subCylinder)
+			if(Cylinder* subCylinder = dynamic_cast<Cylinder*>(*destItem))
 			{
 				index = INDEX_WHEREEVER;
 				*destItem = NULL;
@@ -409,6 +402,7 @@ Cylinder* Container::__queryDestination(int32_t& index, const Thing* thing, Item
 			}
 		}
 	}
+
 	return this;
 }
 
@@ -842,12 +836,9 @@ ContainerIterator& ContainerIterator::operator++()
 	assert(base);
 	if(Item* item = *current)
 	{
-		if(Container* container = item->getContainer())
-		{
-			uint32_t count = container->size();
-			if(count > 0 && count < container->capacity())
-				over.push(container);
-		}
+		Container* container = item->getContainer();
+		if(container && !container->empty())
+			over.push(container);
 	}
 
 	++current;

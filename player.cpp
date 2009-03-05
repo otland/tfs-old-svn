@@ -2705,8 +2705,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 		if(!item)
 			return this;
 
-		//find a appropiate slot and list deep containers
-		std::list<Container*> containerList;
+		//find a appropiate slot
 		for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 		{
 			if(!inventory[i] && __queryAdd(i, item, item->getItemCount(), 0) == RET_NOERROR)
@@ -2714,37 +2713,43 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 				index = i;
 				return this;
 			}
+		}
 
+		//try containers
+		std::list<Container*> containerList;
+		for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
+		{
 			if(inventory[i] == tradeItem)
 				continue;
 
 			if(Container* container = dynamic_cast<Container*>(inventory[i]))
+			{
+				if(container->__queryAdd(-1, item, item->getItemCount(), 0) == RET_NOERROR)
+				{
+					index = INDEX_WHEREEVER;
+					*destItem = NULL;
+					return container;
+				}
+
 				containerList.push_back(container);
+			}
 		}
 
-		//check the deep containers
+		//check deeper in the containers
 		for(std::list<Container*>::iterator it = containerList.begin(); it != containerList.end(); ++it)
 		{
-			if((*it)->__queryAdd(-1, item, item->getItemCount(), 0) == RET_NOERROR)
-			{
-				index = INDEX_WHEREEVER;
-				*destItem = NULL;
-				return (*it);
-			}
-
 			for(ContainerIterator cit = (*it)->begin(); cit != (*it)->end(); ++cit)
 			{
 				if((*cit) == tradeItem)
 					continue;
 
-				if(Container* subContainer = dynamic_cast<Container*>(*cit))
+				Container* subContainer = dynamic_cast<Container*>(*cit);
+				if(subContainer && !subContainer->full() && subContainer->__queryAdd(
+					-1, item, item->getItemCount(), 0) == RET_NOERROR)
 				{
-					if(subContainer->__queryAdd(-1, item, item->getItemCount(), 0) == RET_NOERROR)
-					{
-						index = INDEX_WHEREEVER;
-						*destItem = NULL;
-						return subContainer;
-					}
+					index = INDEX_WHEREEVER;
+					*destItem = NULL;
+					return subContainer;
 				}
 			}
 		}
