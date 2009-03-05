@@ -219,6 +219,7 @@ bool ConfigManager::load()
 	m_confNumber[LOGIN_PROTECTION] = getGlobalNumber(L, "loginProtectionPeriod", 10 * 1000);
 	m_confNumber[RATE_STAMINA] = getGlobalNumber(L, "rateStaminaHits", 3);
 	m_confBool[STORE_DIRECTION] = getGlobalBool(L, "storePlayerDirection", "no");
+	m_confNumber[PLAYER_DEEPNESS] = getGlobalNumber(L, "playerQueryDeepness", 1);
 
 	m_loaded = true;
 	return true;

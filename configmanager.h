@@ -129,6 +129,7 @@ class ConfigManager
 			PARTY_RADIUS_Z,
 			LOGIN_PROTECTION,
 			RATE_STAMINA,
+			PLAYER_DEEPNESS,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 

@@ -2716,7 +2716,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 		}
 
 		//try containers
-		std::list<Container*> containerList;
+		ContainerVector deepVector;
 		for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 		{
 			if(inventory[i] == tradeItem)
@@ -2731,25 +2731,30 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 					return container;
 				}
 
-				containerList.push_back(container);
+				deepVector.insert(std::make_pair(0, container));
 			}
 		}
 
 		//check deeper in the containers
-		for(std::list<Container*>::iterator it = containerList.begin(); it != containerList.end(); ++it)
+		uint32_t deepness = g_config.getNumber(ConfigManager::PLAYER_DEEPNESS) + 1;
+		for(ContainerVector::iterator dit = deepVector.begin(); dit != deepVector.end(); ++dit)
 		{
-			for(ContainerIterator cit = (*it)->begin(); cit != (*it)->end(); ++cit)
+			for(ItemList::iterator it = (*dit).second->getItems(); it != (*dit).second->getEnd(); ++it)
 			{
-				if((*cit) == tradeItem)
+				if((*it) == tradeItem)
 					continue;
 
-				Container* subContainer = dynamic_cast<Container*>(*cit);
-				if(subContainer && !subContainer->full() && subContainer->__queryAdd(
-					-1, item, item->getItemCount(), 0) == RET_NOERROR)
+				if(Container* subContainer = dynamic_cast<Container*>(*it))
 				{
-					index = INDEX_WHEREEVER;
-					*destItem = NULL;
-					return subContainer;
+					if(subContainer->__queryAdd(-1, item, item->getItemCount(), 0) == RET_NOERROR)
+					{
+						index = INDEX_WHEREEVER;
+						*destItem = NULL;
+						return subContainer;
+					}
+
+					if((*dit).first < deepness)
+						deepVector.insert(std::make_pair(((*dit).first + 1), subContainer));
 				}
 			}
 		}
