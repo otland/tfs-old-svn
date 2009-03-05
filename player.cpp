@@ -2731,7 +2731,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 					return container;
 				}
 
-				deepVector.insert(std::make_pair(0, container));
+				deepVector.push_back(std::make_pair(0, container));
 			}
 		}
 
@@ -2739,7 +2739,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 		uint32_t deepness = g_config.getNumber(ConfigManager::PLAYER_DEEPNESS) + 1;
 		for(ContainerVector::iterator dit = deepVector.begin(); dit != deepVector.end(); ++dit)
 		{
-			for(ItemList::iterator it = (*dit).second->getItems(); it != (*dit).second->getEnd(); ++it)
+			for(ItemList::const_iterator it = (*dit).second->getItems(); it != (*dit).second->getEnd(); ++it)
 			{
 				if((*it) == tradeItem)
 					continue;
@@ -2754,7 +2754,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 					}
 
 					if((*dit).first < deepness)
-						deepVector.insert(std::make_pair(((*dit).first + 1), subContainer));
+						deepVector.push_back(std::make_pair(((*dit).first + 1), subContainer));
 				}
 			}
 		}
