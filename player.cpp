@@ -2736,7 +2736,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 		}
 
 		//check deeper in the containers
-		uint32_t deepness = g_config.getNumber(ConfigManager::PLAYER_DEEPNESS) + 1;
+		uint32_t deepness = g_config.getNumber(ConfigManager::PLAYER_DEEPNESS);
 		for(ContainerVector::iterator dit = deepVector.begin(); dit != deepVector.end(); ++dit)
 		{
 			for(ItemList::const_iterator it = (*dit).second->getItems(); it != (*dit).second->getEnd(); ++it)
