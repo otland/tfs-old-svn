@@ -2753,7 +2753,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 						return subContainer;
 					}
 
-					if(deepness == -1 || (*dit).first < (uint32_t)deepness)
+					if(deepness < 0 || (*dit).first < (uint32_t)deepness)
 						deepVector.push_back(std::make_pair(((*dit).first + 1), subContainer));
 				}
 			}
