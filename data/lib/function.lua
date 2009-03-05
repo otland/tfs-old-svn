@@ -2,13 +2,13 @@ function doPlayerGiveItem(cid, itemid, amount, subType)
 	local item = 0
 	if(isItemStackable(itemid) == TRUE) then
 		item = doCreateItemEx(itemid, amount)
-		if(doPlayerAddItemEx(cid, item) ~= RETURNVALUE_NOERROR) then
+		if(doPlayerAddItemEx(cid, item, TRUE) ~= RETURNVALUE_NOERROR) then
 			return LUA_ERROR
 		end
 	else
 		for i = 1, amount do
 			item = doCreateItemEx(itemid, subType)
-			if(doPlayerAddItemEx(cid, item) ~= RETURNVALUE_NOERROR) then
+			if(doPlayerAddItemEx(cid, item, TRUE) ~= RETURNVALUE_NOERROR) then
 				return LUA_ERROR
 			end
 		end
@@ -18,50 +18,50 @@ function doPlayerGiveItem(cid, itemid, amount, subType)
 end
 
 function doPlayerTakeItem(cid, itemid, amount)
-	if(getPlayerItemCount(cid, itemid) >= amount) then
-		if(doPlayerRemoveItem(cid, itemid, amount) == TRUE) then
-			return LUA_NO_ERROR
-		end
+	if(getPlayerItemCount(cid, itemid) < amount or doPlayerRemoveItem(cid, itemid, amount) ~= TRUE) then
+		return LUA_ERROR
 	end
 
-	return LUA_ERROR
+	return LUA_NO_ERROR
 end
 
 function doPlayerBuyItem(cid, itemid, count, cost, charges)
-	if(doPlayerRemoveMoney(cid, cost) == TRUE) then
-		return doPlayerGiveItem(cid, itemid, count, charges)
+	if(doPlayerRemoveMoney(cid, cost) ~= TRUE) then
+		return LUA_ERROR
 	end
 
-	return LUA_ERROR
+	return doPlayerGiveItem(cid, itemid, count, charges)
 end
 
 function doPlayerBuyItemContainer(cid, containerid, itemid, count, cost, charges)
-	if(doPlayerRemoveMoney(cid, cost) == TRUE) then
-		for i = 1, count do
-			local container = doCreateItemEx(containerid, 1)
-			for x = 1, getContainerCapById(containerid) do
-				doAddContainerItem(container, itemid, charges)
-			end
-
-			doPlayerAddItemEx(cid, container)
-		end
-
-		return LUA_NO_ERROR
+	if(doPlayerRemoveMoney(cid, cost) ~= TRUE) then
+		return LUA_ERROR
 	end
 
-	return LUA_ERROR
+	for i = 1, count do
+		local container = doCreateItemEx(containerid, 1)
+		for x = 1, getContainerCapById(containerid) do
+			doAddContainerItem(container, itemid, charges)
+		end
+
+		if(doPlayerAddItemEx(cid, container, TRUE) ~= RETURNVALUE_NOERROR) then
+			return LUA_ERROR
+		end
+	end
+
+	return LUA_NO_ERROR
 end
 
 function doPlayerSellItem(cid, itemid, count, cost)
-	if(doPlayerTakeItem(cid, itemid, count) == LUA_NO_ERROR) then
-		if(doPlayerAddMoney(cid, cost) ~= TRUE) then
-			error('Could not add money to ' .. getPlayerName(cid) .. ' (' .. cost .. 'gp)')
-		end
-
-		return LUA_NO_ERROR
+	if(doPlayerTakeItem(cid, itemid, count) ~= LUA_NO_ERROR) then
+		return LUA_ERROR
 	end
 
-	return LUA_ERROR
+	if(doPlayerAddMoney(cid, cost) ~= TRUE) then
+		error('Could not add money to: ' .. getPlayerName(cid) .. ' (' .. cost .. 'gp).')
+	end
+
+	return LUA_NO_ERROR
 end
 
 function isInRange(pos, fromPos, toPos)
