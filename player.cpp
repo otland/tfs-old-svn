@@ -2736,7 +2736,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 		}
 
 		//check deeper in the containers
-		uint32_t deepness = g_config.getNumber(ConfigManager::PLAYER_DEEPNESS);
+		int32_t deepness = g_config.getNumber(ConfigManager::PLAYER_DEEPNESS);
 		for(ContainerVector::iterator dit = deepVector.begin(); dit != deepVector.end(); ++dit)
 		{
 			for(ItemList::const_iterator it = (*dit).second->getItems(); it != (*dit).second->getEnd(); ++it)
@@ -2753,7 +2753,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 						return subContainer;
 					}
 
-					if((*dit).first < deepness)
+					if(deepness == -1 || (*dit).first < (uint32_t)deepness)
 						deepVector.push_back(std::make_pair(((*dit).first + 1), subContainer));
 				}
 			}
