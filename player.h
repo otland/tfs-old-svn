@@ -894,7 +894,7 @@ class Player : public Creature, public Cylinder
 
 		static uint32_t getPercentLevel(uint64_t count, uint64_t nextLevelCount);
 		double getLostPercent(lossTypes_t lossType);
-		virtual uint64_t getLostExperience() {return skillLoss ? uint64_t(experience * getLostPercent(LOSS_EXPERIENCE)) : 0;}
+		virtual uint64_t getLostExperience() {return skillLoss ? uint64_t((double)experience * getLostPercent(LOSS_EXPERIENCE)) : 0;}
 		virtual void dropLoot(Container* corpse);
 		virtual uint32_t getDamageImmunities() const {return damageImmunities;}
 		virtual uint32_t getConditionImmunities() const {return conditionImmunities;}
