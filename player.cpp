@@ -841,7 +841,7 @@ uint16_t Player::getLookCorpse() const
 
 void Player::dropLoot(Container* corpse)
 {
-	if(!corpse || !lootDrop)
+	if(!corpse || lootDrop != LOOT_DROP_FULL)
 		return;
 
 	for(uint8_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
@@ -2125,7 +2125,7 @@ bool Player::onDeath()
 	Item* preventDrop = NULL;
 	if(getSkull() != SKULL_RED && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
 	{
-		for(uint8_t i = SLOT_FIRST; ((skillLoss || lootDrop) && i < SLOT_LAST); ++i)
+		for(uint8_t i = SLOT_FIRST; ((skillLoss || lootDrop == LOOT_DROP_FULL) && i < SLOT_LAST); ++i)
 		{
 			if(Item* preventItem = getInventoryItem((slots_t)i))
 			{
@@ -2136,10 +2136,10 @@ bool Player::onDeath()
 					setLossSkill(false);
 				}
 
-				if(lootDrop && it.abilities.preventDrop)
+				if(lootDrop == LOOT_DROP_FULL && it.abilities.preventDrop)
 				{
 					preventDrop = preventItem;
-					setDropLoot(false);
+					setDropLoot(LOOT_DROP_PREVENT);
 				}
 			}
 		}
@@ -2151,7 +2151,7 @@ bool Player::onDeath()
 			setLossSkill(true);
 
 		if(preventDrop)
-			setDropLoot(true);
+			setDropLoot(LOOT_DROP_FULL);
 
 		return false;
 	}
@@ -2240,9 +2240,9 @@ bool Player::onDeath()
 
 void Player::dropCorpse()
 {
-	if(!lootDrop)
+	if(lootDrop == LOOT_DROP_NONE)
 	{
-		setDropLoot(true);
+		setDropLoot(LOOT_DROP_FULL);
 		onIdleStatus();
 		if(health <= 0)
 		{
@@ -3542,7 +3542,7 @@ void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)
 bool Player::onKilledCreature(Creature* target)
 {
 	if(hasFlag(PlayerFlag_NotGenerateLoot))
-		target->setDropLoot(false);
+		target->setDropLoot(LOOT_DROP_NONE);
 
 	if(!Creature::onKilledCreature(target))
 		return false;
@@ -3551,7 +3551,7 @@ bool Player::onKilledCreature(Creature* target)
 	{
 		if(targetPlayer->getZone() == ZONE_PVP)
 		{
-			targetPlayer->setDropLoot(false);
+			targetPlayer->setDropLoot(LOOT_DROP_NONE);
 			targetPlayer->setLossSkill(false);
 		}
 		else if(!hasFlag(PlayerFlag_NotGainInFight))

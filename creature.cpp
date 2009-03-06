@@ -52,7 +52,7 @@ isInternalRemoved(false)
 	_tile = NULL;
 	direction = SOUTH;
 	master = NULL;
-	lootDrop = true;
+	lootDrop = LOOT_DROP_FULL;
 	skillLoss = true;
 	cannotMove = false;
 	skull = SKULL_NONE;
@@ -1336,8 +1336,7 @@ void Creature::onBlockHit(BlockType_t blockType)
 
 void Creature::addSummon(Creature* creature)
 {
-	//std::cout << "addSummon: " << this << " summon=" << creature << std::endl;
-	creature->setDropLoot(false);
+	creature->setDropLoot(LOOT_DROP_NONE);
 	creature->setLossSkill(false);
 	creature->setMaster(this);
 	creature->useThing2();
@@ -1346,11 +1345,10 @@ void Creature::addSummon(Creature* creature)
 
 void Creature::removeSummon(const Creature* creature)
 {
-	//std::cout << "removeSummon: " << this << " summon=" << creature << std::endl;
 	std::list<Creature*>::iterator cit = std::find(summons.begin(), summons.end(), creature);
 	if(cit != summons.end())
 	{
-		(*cit)->setDropLoot(false);
+		(*cit)->setDropLoot(LOOT_DROP_NONE);
 		(*cit)->setLossSkill(false);
 		(*cit)->setMaster(NULL);
 		(*cit)->releaseThing2();

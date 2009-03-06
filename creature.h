@@ -57,6 +57,13 @@ enum slots_t
 	SLOT_LAST = SLOT_DEPOT
 };
 
+enum lootDrop_t
+{
+	LOOT_DROP_FULL,
+	LOOT_DROP_PREVENT,
+	LOOT_DROP_NONE
+};
+
 struct FindPathParams
 {
 	bool fullPathSearch, clearSight, allowDiagonal, keepDistance;
@@ -239,12 +246,13 @@ class Creature : public AutoID, virtual public Thing
 
 		void setMaster(Creature* creature) {master = creature;}
 		Creature* getMaster() {return master;}
-		bool isSummon() const {return master != NULL;}
 		const Creature* getMaster() const {return master;}
+		bool isSummon() const {return master != NULL;}
 
 		virtual void addSummon(Creature* creature);
 		virtual void removeSummon(const Creature* creature);
 		const std::list<Creature*>& getSummons() {return summons;}
+		uint32_t getSummonCount() const {return summons.size();}
 
 		virtual int32_t getArmor() const {return 0;}
 		virtual int32_t getDefense() const {return 0;}
@@ -354,9 +362,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual PartyShields_t getShield() const {return partyShield;}
 		virtual PartyShields_t getPartyShield(const Creature* creature) const {return creature->getShield();}
 
-		uint32_t getSummonCount() const {return summons.size();}
-		void setDropLoot(bool _lootDrop) {lootDrop = _lootDrop;}
-		bool getDropLoot() const {return lootDrop;}
+		void setDropLoot(lootDrop_t _lootDrop) {lootDrop = _lootDrop;}
 		void setLossSkill(bool _skillLoss) {skillLoss = _skillLoss;}
 		bool getLossSkill() const {return skillLoss;}
 		void setNoMove(bool _cannotMove) {cannotMove = _cannotMove;}

@@ -787,7 +787,7 @@ bool TalkAction::changeThingProporties(Player* player, const std::string& cmd, c
 					else if(strcasecmp(tmp.c_str(), "basespeed") == 0)
 						_creature->setBaseSpeed(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 					else if(strcasecmp(tmp.c_str(), "droploot") == 0)
-						_creature->setDropLoot(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()));
+						_creature->setDropLoot(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()) ? LOOT_DROP_FULL : LOOT_DROP_NONE);
 					else if(strcasecmp(tmp.c_str(), "lossskill") == 0)
 						_creature->setLossSkill(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()));
 					else if(strcasecmp(tmp.c_str(), "cannotmove") == 0)

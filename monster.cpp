@@ -951,7 +951,7 @@ void Monster::pushCreatures(Tile* tile)
 			else
 			{
 				monster->changeHealth(-monster->getHealth());
-				monster->setDropLoot(false);
+				monster->setDropLoot(LOOT_DROP_NONE);
 				removeCount++;
 			}
 		}
@@ -1292,7 +1292,7 @@ void Monster::updateLookDirection()
 
 void Monster::dropLoot(Container* corpse)
 {
-	if(corpse && lootDrop)
+	if(corpse && lootDrop == LOOT_DROP_FULL)
 		mType->createLoot(corpse);
 }
 

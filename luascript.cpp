@@ -3730,15 +3730,13 @@ int32_t LuaScriptInterface::luaGetPlayerSkillTries(lua_State* L)
 int32_t LuaScriptInterface::luaDoCreatureSetDropLoot(lua_State* L)
 {
 	//doCreatureSetDropLoot(cid, doDrop)
-	bool doDrop = popNumber(L) == 1;
+	bool doDrop = popNumber(L) == LUA_TRUE;
 	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	Creature* creature = env->getCreatureByUID(cid);
-	if(creature)
+	if(Creature* creature = env->getCreatureByUID(cid))
 	{
-		creature->setDropLoot(doDrop);
+		creature->setDropLoot(doDrop ? LOOT_DROP_FULL : LOOT_DROP_NONE);
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else
