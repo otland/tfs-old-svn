@@ -9,6 +9,7 @@ setConditionParam(condition, CONDITION_PARAM_SUBID, 1)
 setConditionParam(condition, CONDITION_PARAM_BUFF, TRUE)
 setConditionParam(condition, CONDITION_PARAM_TICKS, 2 * 60 * 1000)
 setConditionParam(condition, CONDITION_PARAM_SKILL_MELEE, 3)
+setConditionParam(condition, CONDITION_PARAM_SKILL_DISTANCE, 3)
 
 local baseMana = 60
 function onCastSpell(cid, var)
