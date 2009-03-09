@@ -2214,9 +2214,9 @@ bool Player::onDeath()
 			skills[i][SKILL_TRIES] = std::max((int32_t)0, (int32_t)(skills[i][SKILL_TRIES] - lostSkillTries));
 		}
 
-		blessings = 0;
 		loginPosition = masterPos;
 		removeExperience(getLostExperience(), false);
+		blessings = 0;
 		if(!inventory[SLOT_BACKPACK])
 			__internalAddThing(SLOT_BACKPACK, Item::CreateItem(1987));
 

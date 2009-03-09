@@ -245,6 +245,8 @@ bool House::transferToDepot()
 			if(!IOLoginData::getInstance()->loadPlayer(player, ownerName))
 				delete player;
 		}
+
+		player->useThing2();
 	}
 
 	ItemList moveItemList;
@@ -273,11 +275,9 @@ bool House::transferToDepot()
 			g_game.internalMoveItem(NULL, (*it)->getParent(), depot, INDEX_WHEREEVER, (*it), (*it)->getItemCount(), NULL, FLAG_NOLIMIT);
 
 		if(player->isVirtual())
-		{
 			IOLoginData::getInstance()->savePlayer(player);
-			delete player;
-		}
 
+		g_game.FreeThing(player);
 		return true;
 	}
 

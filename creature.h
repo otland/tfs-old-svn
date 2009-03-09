@@ -415,7 +415,7 @@ class Creature : public AutoID, virtual public Thing
 		uint32_t baseSpeed;
 		int32_t varSpeed;
 		bool skillLoss;
-		bool lootDrop;
+		lootDrop_t lootDrop;
 		bool cannotMove;
 		Skulls_t skull;
 		PartyShields_t partyShield;
