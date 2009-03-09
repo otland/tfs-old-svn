@@ -776,7 +776,13 @@ bool Houses::loadFromXml(std::string filename)
 					price += g_config.getNumber(ConfigManager::HOUSE_PRICE);
 
 				if(g_config.getBool(ConfigManager::HOUSE_RENTASPRICE))
-					house->setPrice(rent);
+				{
+					uint32_t tmp = rent;
+					if(!tmp)
+						tmp = price;
+
+					house->setPrice(tmp);
+				}
 				else
 					house->setPrice(price);
 

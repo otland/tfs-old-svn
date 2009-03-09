@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3.1
+		0.3.2
 
 	Codenamed
 		Crying Damson
@@ -94,7 +94,7 @@
 
 		Download sources
 			Launch a terminal, and paste in this command:
-				svn co http://svn.otland.net/public/forgottenserver/tags/0.3b1
+				svn co http://svn.otland.net/public/forgottenserver/tags/0.3.2
 
 		Compiling
 			Launch a terminal, and type this:

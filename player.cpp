@@ -2123,33 +2123,32 @@ bool Player::onDeath()
 {
 	Item* preventLoss = NULL;
 	Item* preventDrop = NULL;
-	if(getSkull() != SKULL_RED && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
+	if(getZone() == ZONE_PVP)
+	{
+		setDropLoot(LOOT_DROP_NONE);
+		setLossSkill(false);
+	}
+	else if(getSkull() != SKULL_RED && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
 	{
 		for(uint8_t i = SLOT_FIRST; ((skillLoss || lootDrop == LOOT_DROP_FULL) && i < SLOT_LAST); ++i)
 		{
-			if(Item* preventItem = getInventoryItem((slots_t)i))
+			if(Item* item = getInventoryItem((slots_t)i))
 			{
-				const ItemType& it = Item::items[preventItem->getID()];
-				if(skillLoss && it.abilities.preventLoss)
-				{
-					preventLoss = preventItem;
-					setLossSkill(false);
-				}
-
+				const ItemType& it = Item::items[item->getID()];
 				if(lootDrop == LOOT_DROP_FULL && it.abilities.preventDrop)
 				{
-					preventDrop = preventItem;
 					setDropLoot(LOOT_DROP_PREVENT);
+					preventDrop = item;
 				}
+
+				if(skillLoss && !preventLoss && it.abilities.preventLoss)
+					preventLoss = item;
 			}
 		}
 	}
 
 	if(!Creature::onDeath())
 	{
-		if(preventLoss)
-			setLossSkill(true);
-
 		if(preventDrop)
 			setDropLoot(LOOT_DROP_FULL);
 
@@ -2157,9 +2156,12 @@ bool Player::onDeath()
 	}
 
 	if(preventLoss)
+	{
 		g_game.transformItem(preventLoss, preventLoss->getID(), std::max(0, ((int32_t)preventLoss->getCharges() - 1)));
+		setLossSkill(false);
+	}
 
-	if(preventDrop != preventLoss)
+	if(preventDrop && preventDrop != preventLoss)
 		g_game.transformItem(preventDrop, preventDrop->getID(), std::max(0, ((int32_t)preventDrop->getCharges() - 1)));
 
 	removeConditions(CONDITIONEND_DEATH);
@@ -3547,26 +3549,18 @@ bool Player::onKilledCreature(Creature* target)
 	if(!Creature::onKilledCreature(target))
 		return false;
 
-	if(Player* targetPlayer = target->getPlayer())
+	Player* targetPlayer = target->getPlayer();
+	if(!hasFlag(PlayerFlag_NotGainInFight) && targetPlayer && !Combat::isInPvpZone(this, targetPlayer))
 	{
-		if(targetPlayer->getZone() == ZONE_PVP)
-		{
-			targetPlayer->setDropLoot(LOOT_DROP_NONE);
-			targetPlayer->setLossSkill(false);
-		}
-		else if(!hasFlag(PlayerFlag_NotGainInFight))
-		{
-			if(!isPartner(targetPlayer) && !Combat::isInPvpZone(this, targetPlayer) &&
-				!targetPlayer->hasAttacked(this) && targetPlayer->getSkull() == SKULL_NONE)
-				addUnjustifiedDead(targetPlayer);
+		if(!isPartner(targetPlayer) && !targetPlayer->hasAttacked(this) && targetPlayer->getSkull() == SKULL_NONE)
+			addUnjustifiedDead(targetPlayer);
 
-			if(!Combat::isInPvpZone(this, targetPlayer) && hasCondition(CONDITION_INFIGHT))
-			{
-				pzLocked = true;
-				if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT,
-					g_config.getNumber(ConfigManager::WHITE_SKULL_TIME), 0))
-					addCondition(condition);
-			}
+		if(hasCondition(CONDITION_INFIGHT))
+		{
+			pzLocked = true;
+			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT,
+				g_config.getNumber(ConfigManager::WHITE_SKULL_TIME), 0))
+				addCondition(condition);
 		}
 	}
 

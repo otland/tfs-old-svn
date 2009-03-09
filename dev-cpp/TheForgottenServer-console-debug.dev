@@ -1642,18 +1642,18 @@ BuildCmd=
 [VersionInfo]
 Major=0
 Minor=3
-Release=1
-Build=1231
+Release=2
+Build=1345
 LanguageID=1033
-CharsetID=1252
+CharsetID=1250
 CompanyName=
-FileVersion=0.3.1
+FileVersion=0.3.2
 FileDescription=The Forgotten Server
 InternalName=Crying Damson
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=TheForgottenServer.exe
 ProductName=The Forgotten Server
-ProductVersion=0.3.1
+ProductVersion=0.3.2
 AutoIncBuildNr=0
 
