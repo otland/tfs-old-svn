@@ -237,6 +237,7 @@ if(Modules == nil) then
 				end
 			end
 		end
+
 		return false
 	end
 
@@ -272,10 +273,9 @@ if(Modules == nil) then
 			local i = 1
 
 			local keywords = {}
-
 			for temp in string.gmatch(keys, '[^,]+') do
 				table.insert(keywords, temp)
-				i = i+1
+				i = i + 1
 			end
 
 			if(i ~= 1) then
@@ -288,6 +288,7 @@ if(Modules == nil) then
 			else
 				print('[Warning] NpcSystem:', 'No keywords found for keyword set #' .. n .. '. Skipping...')
 			end
+
 			n = n+1
 		end
 	end
@@ -707,6 +708,7 @@ if(Modules == nil) then
 				end
 			end
 		end
+
 		return false
 	end
 
@@ -1094,6 +1096,7 @@ if(Modules == nil) then
 			msg = module.npcHandler:parseMessage(msg, parseInfo)
 			module.npcHandler:say(msg, cid)
 		end
+
 		return true
 	end
 end

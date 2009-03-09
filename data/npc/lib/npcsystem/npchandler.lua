@@ -27,33 +27,33 @@ if(NpcHandler == nil) then
 	MESSAGE_SELL 			= 6 -- When the npc asks the player if he wants to sell something.
 	MESSAGE_ONSELL 			= 7 -- When the player successfully sells something via talk.
 	MESSAGE_SOLD			= 8 -- When the player sold something through the shop window.
-	MESSAGE_MISSINGMONEY	= 9 -- When the player does not have enough money.
+	MESSAGE_MISSINGMONEY		= 9 -- When the player does not have enough money.
 	MESSAGE_NEEDMONEY		= 10 -- Same as above, used for shop window.
 	MESSAGE_MISSINGITEM		= 11 -- When the player is trying to sell an item he does not have.
 	MESSAGE_NEEDITEM		= 12 -- Same as above, used for shop window.
 	MESSAGE_NEEDSPACE 		= 13 -- When the player don't have any space to buy an item
-	MESSAGE_NEEDMORESPACE	= 14 -- When the player has some space to buy an item, but not enough space
+	MESSAGE_NEEDMORESPACE		= 14 -- When the player has some space to buy an item, but not enough space
 	MESSAGE_IDLETIMEOUT		= 15 -- When the player has been idle for longer then idleTime allows.
 	MESSAGE_WALKAWAY		= 16 -- When the player walks out of the talkRadius of the npc.
 	MESSAGE_DECLINE			= 17 -- When the player says no to something.
 	MESSAGE_SENDTRADE		= 18 -- When the npc sends the trade window to the player
 	MESSAGE_NOSHOP			= 19 -- When the npc's shop is requested but he doesn't have any
 	MESSAGE_ONCLOSESHOP		= 20 -- When the player closes the npc's shop window
-	MESSAGE_ALREADYFOCUSED	= 21 -- When the player already has the focus of this npc.
-	MESSAGE_PLACEDINQUEUE	= 22 -- When the player has been placed in the costumer queue.
+	MESSAGE_ALREADYFOCUSED		= 21 -- When the player already has the focus of this npc.
+	MESSAGE_PLACEDINQUEUE		= 22 -- When the player has been placed in the costumer queue.
 
 	-- Constant indexes for callback functions. These are also used for module callback ids.
 	CALLBACK_CREATURE_APPEAR 	= 1
-	CALLBACK_CREATURE_DISAPPEAR = 2
+	CALLBACK_CREATURE_DISAPPEAR	= 2
 	CALLBACK_CREATURE_SAY 		= 3
-	CALLBACK_ONTHINK 			= 4
-	CALLBACK_GREET 				= 5
-	CALLBACK_FAREWELL 			= 6
+	CALLBACK_ONTHINK 		= 4
+	CALLBACK_GREET 			= 5
+	CALLBACK_FAREWELL 		= 6
 	CALLBACK_MESSAGE_DEFAULT 	= 7
 	CALLBACK_PLAYER_ENDTRADE 	= 8
-	CALLBACK_PLAYER_CLOSECHANNEL= 9
-	CALLBACK_ONBUY				= 10
-	CALLBACK_ONSELL				= 11
+	CALLBACK_PLAYER_CLOSECHANNEL	= 9
+	CALLBACK_ONBUY			= 10
+	CALLBACK_ONSELL			= 11
 
 	-- Addidional module callback ids
 	CALLBACK_MODULE_INIT		= 12
@@ -152,6 +152,7 @@ if(NpcHandler == nil) then
 		else
 			self.focuses = newFocus
 		end
+
 		self:updateFocus()
 	end
 	NpcHandler.changeFocus = NpcHandler.addFocus --"changeFocus" looks better for CONVERSATION_DEFAULT
@@ -164,8 +165,10 @@ if(NpcHandler == nil) then
 					return true
 				end
 			end
+
 			return false
 		end
+
 		return (self.focuses == focus)
 	end
 
@@ -179,6 +182,7 @@ if(NpcHandler == nil) then
 					return
 				end
 			end
+
 			doNpcSetCreatureFocus(0)
 		else
 			doNpcSetCreatureFocus(self.focuses)
@@ -214,6 +218,7 @@ if(NpcHandler == nil) then
 		if(self.callbackFunctions ~= nil) then
 			ret = self.callbackFunctions[id]
 		end
+
 		return ret
 	end
 
@@ -262,11 +267,13 @@ if(NpcHandler == nil) then
 			elseif(id == CALLBACK_MODULE_RESET and module.callbackOnModuleReset ~= nil) then
 				tmpRet = module:callbackOnModuleReset(unpack(arg))
 			end
+
 			if(not tmpRet) then
 				ret = false
 				break
 			end
 		end
+
 		return ret
 	end
 
@@ -276,6 +283,7 @@ if(NpcHandler == nil) then
 		if(self.messages ~= nil) then
 			ret = self.messages[id]
 		end
+
 		return ret
 	end
 
@@ -292,6 +300,7 @@ if(NpcHandler == nil) then
 		for search, replace in pairs(parseInfo) do
 			ret = string.gsub(ret, search, replace)
 		end
+
 		return ret
 	end
 
@@ -332,6 +341,7 @@ if(NpcHandler == nil) then
 				return
 			end
 		end
+
 		self:addFocus(cid)
 	end
 
@@ -502,6 +512,7 @@ if(NpcHandler == nil) then
 					if(not self.queue:isInQueue(cid)) then
 						self.queue:push(cid)
 					end
+
 					local msg = self:getMessage(MESSAGE_PLACEDINQUEUE)
 					local parseInfo = { [TAG_PLAYERNAME] = getCreatureName(cid), [TAG_QUEUESIZE] = self.queue:getSize() }
 					msg = self:parseMessage(msg, parseInfo)
@@ -537,7 +548,7 @@ if(NpcHandler == nil) then
 	-- Returns true if cid is within the talkRadius of this npc.
 	function NpcHandler:isInRange(cid)
 		local distance = getDistanceTo(cid) or -1
-		if distance == -1 then
+		if(distance == -1) then
 			return false
 		end
 
@@ -554,11 +565,12 @@ if(NpcHandler == nil) then
 
 	-- Makes the npc represented by this instance of NpcHandler say something.
 	--	This implements the currently set type of talkdelay.
-	--	shallDelay is a boolean value. If it is false, the message is not delayed. Default value is true.
+	--	shallDelay is a boolean value. If it is false, the message is not delayed. Default value is false.
 	function NpcHandler:say(message, focus, publicize, shallDelay)
 		if(shallDelay == nil) then
-			shallDelay = true
+			shallDelay = false
 		end
+
 		if(NPCHANDLER_TALKDELAY == TALKDELAY_NONE or shallDelay == false) then
 			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 				selfSay(message, focus, publicize and TRUE or FALSE)
@@ -568,6 +580,8 @@ if(NpcHandler == nil) then
 				return
 			end
 		end
+
+		-- TODO: Add an event handling method for delayed messages
 		if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 			self.talkDelay[focus] = {
 				message = message,
