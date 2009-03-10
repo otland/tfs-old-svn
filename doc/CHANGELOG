@@ -343,10 +343,136 @@
 	]
 	[ 0.3.2
 		A...
+			data/
+				creaturescripts/
+					scripts/
+						mail.lua
+							* 'New mail has arrived.' message
+
+				raids/
+					lib/
+						* Created
+						raids.lua
+							* Added
+
+				talkactions/
+					scripts/
+						gamemaster.lua
+							* Added two deprecated hardcoded commands
 
 		M...
+			data/
+				actions/
+					actions.xml
+						* Typo
+						* Added missing food IDs
+						* CDATA-related replacements
+						* Added highscores script as example of CDATA usage
+					scripts/
+						other/
+							constructionkits.lua
+								* Fixed
+
+				creaturescripts/
+					creaturescripts.xml
+						* CDATA-related replacements
+						* Mail event registration
+					scripts/
+						login.lua
+							* Mail event registration
+
+				globalevents/
+					globalevents.xml
+						* CDATA-related replacements
+
+				items/
+					items.xml
+						* Some new items
+						* Changed preventLoss to preventDrop
+						* slotType-related changes
+
+				lib/
+					compat.lua
+						* Added doPlayerAddExp
+					constant.lua
+						* Added reserved subIds
+						* Added map marks
+						* Renamed RETURNVALUE
+						* Added new combat parameter
+					function.lua
+						* isPlayerGhost(cid)
+						* Cleanups
+						* Shop-related functions fixes
+
+				monster/
+					Mutated/
+						mutated rat.xml
+							* Wrong drop
+					Pyro-Elementals/
+						blazing fire elemental.xml
+						blistering fire elemental.xml
+							* Being summonable and convincenable
+
+				movements/
+					movements.xml
+						* CDATA-related replacements
+
+				npc/
+					lib/
+						npc.lua
+							* Cleanup
+							* Fixed return of backpacks amount
+						npcsystem/
+							*.lua
+								* Bored-to-list "fixes"
+
+				spells/
+					spells.xml
+						* CDATA-related replacements
+					scripts/
+						healing/
+							light healing.lua
+								* Updated formula
+							mass healing.lua
+								* Added new combat parameter
+						party/
+							train.lua
+								* Added missing distance skill training
+							*.lua
+								* Cleanups
+								* Organized subIds as intended
+
+				talkactions/
+					talkactions.xml
+						* CDATA-related replacements
+						* Pointed /squelch and /cliport to gamemaster.lua
+					scripts/
+						creature.lua
+							* Set proper return message
+							* Disabled errors
+						online.lua
+							* Typo
+							* Fixed access being checked wrong
+						shutdown.lua
+							* "Shortened"
+						summon.lua
+							* Set proper return message
+
+				weapons/
+					weapons.xml
+						* CDATA-related replacements
+
+				XML/
+					vocations.xml
+						* Pre-configured per-vocation loss
 
 		D...
+			data/
+				actions/
+					scripts/
+						other/
+							highscores.lua
+								* Moved to actions.xml
 	]
 ]
 
@@ -455,18 +581,32 @@
 		Rates (multipliers) are now float numbers with possibility to set extra ones per player (Elf, OpenTibia SVN)
 		Advanced onJoinChannel and onLeaveChannel creature events (Elf)
 		Remote version checking (Elf)
-		'Reworked' the Violation Window and related things (Elf)
+		'Reworked' the banning through Violation Window and related things (Elf)
 		New monsters race- energy (Elf)
 		Anti-magebomb 'system' (Elf, OpenTibia SVN)
 		Several one-type events support (Elf)
 		"voices" for NPCs (Elf)
 		Optimized, fixed crash-bug and added two-params support for guild commands (Elf, Kornholijo)
 		Reworked reloading- more detailed errors, new 'types' and signal support (Elf)
+	]
+	[ 0.3.2
+		Version checking by reading remotely hosted versioning file (Elf)
 		Per-vocation less loss configuration- the "3% promotion loss" (Elf)
 		Gamemaster "options" (ghost, squelch and cliport) are now stored as conditions and saved (Elf)
 		Added support for XML scripting under CDATA (Elf)
-	]
-	[ 0.3.2
+		Skills and magic level advancing is now handled through loops- possible multi-advances (Talaturen)
+		Configurable stamina rate (Elf)
+		Actions and movements declarations improvements- eg. itemid="200-220;230-240" or fromid="200;230" touid="220;240" (Elf)
+		wait(delay) Lua function (Elf, revscriptsys)
+		New creature events: onSendMail, onReceiveMail (Elf)
+		Configurable direction storing (Elf)
+		nameDescription for players- give your players special titles! (Elf)
+		Output/NetworkMessage_ptr patch from OpenTibia SVN (Talaturen)
+		Map marks are now constant (Talaturen)
+		House warnings now depend on the rent period- daily = 1 day, weekly = 3 days, monthly = 7 days, yearly = 14 days (Elf)
+		New combat param- TARGETPLAYERSORSUMMONS, Mass Healing (exura gran mas res) spell should now affect only players with their summons (Elf)
+		New preventLoss Items attribute- avoids player skill loss [read Deprecated section below to know more about old preventLoss] (Elf)
+		Player::__queryDestination deepness is now configurable [configured enough well to avoid lags on slow machines] (Elf)
 	]
 ]
 
@@ -488,10 +628,15 @@
 		LuaFunction: doSetCreatureDropLoot(cid, doDrop), use: doCreatureSetDropLoot(cid, doDrop)
 		LuaFunction: doPlayerAddManaSpent(cid, mana), use: doPlayerAddSpentMana(cid, amount)
 		LuaFunction: getPromotedVocation(vocId), use: getVocationInfo(id).promotedVocation
+		LuaFunction: doPlayerAddExp(cid, exp), use: doPlayerAddExperience(cid, amount)
 
 		... and many, many more.
 	]
 	[ 0.3.2
+		Player and Global storages do not use -1 as eraser anymore, use 'nil' value
+		onDeath corpse passed parameter is now Thing (table with entries: uid, itemid, etc) instead lonely uid
+		house_storage database table, house_data is now used
+		Items attribute: preventLoss, use: preventDrop
 	]
 ]
 
@@ -550,5 +695,21 @@
 		Saving players with CanAlwaysLogin flag at /close (Elf)
 	]
 	[ 0.3.2
+		IPBanishment authorization error (Elf)
+		Instant open after closing server (Elf)
+		Players being able to stay logged in when server was closed not being saved (Elf)
+		Infinite loop when loading stages (Elf)
+		createConditionObject optional parameters wrong order (Elf)
+		Immediately opened socket after closing last one due to listen errors (Talaturen)
+		Privileged players gaining infight condition when throwing a field rune (Elf)
+		Database handler reconnection and keepalive method not working as intended (Elf)
+		Errors when upgrading from 0.2 to 0.3 (Talaturen)
+		Monsters being immune to combat type through elements map (Elf, OpenTibia SVN)
+		/addskill command issues (Elf, Talaturen)
+		doCreateNpc and doCreateMonster errors displaying when calling from command (Elf)
+		doPlayerAddExp not working as intended with negative values (Elf)
+		CreatureEvent onAttack crashbug (Elf)
+		Waiting list unknown place issue (Elf)
+		houseRentAsPrice, housePriceAsRent (Elf)
 	]
 ]

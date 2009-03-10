@@ -195,6 +195,7 @@
 	-- Logs
 	-- NOTE: This kind of logging does not work in GUI version.
 	-- For such, please compile the software with __GUI_LOGS__ flag.
+	runeFile = ""
 	outLogName = ""
 	errorLogName = ""
 	truncateLogsOnStartup = "no"

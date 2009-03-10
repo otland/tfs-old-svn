@@ -1396,12 +1396,14 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 				useStamina(-int64_t(period * 500), false);
 		}
 
-		IOLoginData::getInstance()->updateOnlineStatus(guid, true);
+		g_game.checkPlayersRecord();
+		if(!isInGhostMode())
+			IOLoginData::getInstance()->updateOnlineStatus(guid, true);
+
 		#ifndef __CONSOLE__
 		GUI::getInstance()->m_pBox.addPlayer(this);
 		#endif
 		std::cout << name << " has logged in." << std::endl;
-		g_game.checkPlayersRecord();
 	}
 }
 
@@ -1500,7 +1502,9 @@ void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bo
 	}
 
 	g_chat.removeUserFromAllChannels(this);
-	IOLoginData::getInstance()->updateOnlineStatus(guid, false);
+	if(!isInGhostMode())
+		IOLoginData::getInstance()->updateOnlineStatus(guid, false);
+
 	#ifndef __CONSOLE__
 	GUI::getInstance()->m_pBox.removePlayer(this);
 	#endif
@@ -1526,10 +1530,6 @@ void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bo
 #else
 		std::cout << "Player " << getName() << " couldn't be saved." << std::endl;
 #endif
-
-#ifdef __DEBUG__
-	std::cout << (uint32_t)g_game.getPlayersOnline() << " players online." << std::endl;
-#endif
 }
 
 void Player::openShopWindow()
@@ -1538,7 +1538,7 @@ void Player::openShopWindow()
 	{
 		if((*it).sellPrice > 0)
 		{
-			uint32_t itemCount = __getItemTypeCount((*it).itemId);
+			uint32_t itemCount = __getItemTypeCount((*it).itemId, ((*it).subType ? (*it).subType : -1));
 			if(itemCount > 0)
 				goodsMap[(*it).itemId] = itemCount;
 		}
@@ -3119,7 +3119,7 @@ void Player::postUpdateGoods(uint32_t itemId)
 	{
 		if((*it).sellPrice > 0 && (*it).itemId == itemId)
 		{
-			uint32_t itemCount = __getItemTypeCount((*it).itemId);
+			uint32_t itemCount = __getItemTypeCount((*it).itemId, ((*it).subType ? (*it).subType : -1));
 			if(itemCount > 0)
 				goodsMap[(*it).itemId] = itemCount;
 			else

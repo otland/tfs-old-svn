@@ -14,14 +14,9 @@ setConditionParam(condition, CONDITION_PARAM_HEALTHTICKS, 2000)
 local baseMana = 120
 function onCastSpell(cid, var)
 	local pos = getCreaturePosition(cid)
-	if(getPlayerParty(cid) == nil) then
-		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOPARTYMEMBERSINRANGE)
-		doSendMagicEffect(pos, CONST_ME_POFF)
-		return LUA_ERROR
-	end
 
 	local membersList = getPartyMembers(cid)
-	if(type(membersList) ~= 'table' or table.maxn(membersList) <= 1) then
+	if(membersList == nil or type(membersList) ~= 'table' or table.maxn(membersList) <= 1) then
 		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOPARTYMEMBERSINRANGE)
 		doSendMagicEffect(pos, CONST_ME_POFF)
 		return LUA_ERROR
