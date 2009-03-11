@@ -1393,7 +1393,7 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 		{
 			int32_t period = (int32_t)time(NULL) - lastLogout - 600;
 			if(period > 0)
-				useStamina(-std::min(getSpentStamina(), (uint64_t)period * g_config.getNumber(ConfigManager::RATE_STAMINA_GAIN)));
+				useStamina(-std::min(getSpentStamina(), (uint64_t)std::abs(period * g_config.getNumber(ConfigManager::RATE_STAMINA_GAIN))));
 		}
 
 		g_game.checkPlayersRecord();
