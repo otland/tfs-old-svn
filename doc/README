@@ -88,7 +88,7 @@
 			http://otland.net/f137/linux-ultimate-compile-guide-debian-ubuntu-included-2868/
 
 		Root
-			You need to get on root user or use sudo for almost all above operations.
+			You need to get on root user or use sudo for almost all below operations.
 
 		Download required packages
 			Launch a terminal, and paste in the following commands:
@@ -112,8 +112,7 @@
 				ln /usr/lib/libboost_regex-mt.a /usr/lib/libboost_regex.a
 				ln /usr/lib/libboost_thread-mt.so /usr/lib/libboost_thread.so
 				ln /usr/lib/libboost_thread-mt.a /usr/lib/libboost_thread.a
-				cd ..
-				rm -rf boost_asio_1_0_0
+				rm -rf boost_asio_1_0_0 boost_asio_1_0_0.tar.gz
 
 	Windows
 		Dev-Cpp
