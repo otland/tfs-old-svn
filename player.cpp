@@ -122,7 +122,7 @@ Creature()
 
 	blessings = 0;
 	balance = 0;
-	stamina = 201660000;
+	stamina = PLAYER_STAMINA;
 	premiumDays = 0;
 
 	idleTime = 0;
@@ -1391,9 +1391,9 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 
 		if(lastLogout)
 		{
-			uint32_t period = (time(NULL) - lastLogout) - 600;
-			if(period)
-				useStamina(-int64_t(period * 500), false);
+			int32_t period = (int32_t)time(NULL) - lastLogout - 600;
+			if(period > 0)
+				useStamina(-std::min(getSpentStamina(), (uint64_t)period * g_config.getNumber(ConfigManager::RATE_STAMINA_GAIN)));
 		}
 
 		g_game.checkPlayersRecord();
@@ -1856,7 +1856,7 @@ void Player::drainMana(Creature* attacker, int32_t manaLoss)
 
 void Player::addManaSpent(uint64_t amount, bool ignoreFlag/* = false*/, bool useMultiplier/* = true*/)
 {
-	if(amount == 0 || (!ignoreFlag && hasFlag(PlayerFlag_NotGainMana)))
+	if(!amount || (!ignoreFlag && hasFlag(PlayerFlag_NotGainMana)))
 		return;
 
 	uint64_t currReqMana = vocation->getReqMana(magLevel), nextReqMana = vocation->getReqMana(magLevel + 1);
@@ -4664,7 +4664,7 @@ void Player::useStamina(int64_t value, bool ticks)
 	if(ticks)
 		value *= (int64_t)getAttackSpeed();
 
-	stamina = std::min((uint64_t)201660000, (uint64_t)stamina - value);
+	stamina = std::min((int64_t)PLAYER_STAMINA, std::max((int64_t)0, ((int64_t)stamina - value));
 }
 
 void Player::sendCriticalHit() const

@@ -127,6 +127,7 @@ typedef std::list<Party*> PartyList;
 
 #define PLAYER_MAX_SPEED 1500
 #define PLAYER_MIN_SPEED 10
+#define PLAYER_STAMINA 201660000
 
 class Player : public Creature, public Cylinder
 {
@@ -264,10 +265,12 @@ class Player : public Creature, public Cylinder
 
 		uint64_t getStamina() const {return stamina;}
 		void setStamina(uint64_t _stamina) {stamina = _stamina;}
-		void useStamina(int64_t value, bool ticks);
-		uint32_t getStaminaMinutes() const {return (hasCustomFlag(PlayerCustomFlag_HasInfiniteStamina) ? 3360 :
-			std::min((uint64_t)3360, (uint64_t)std::floor(stamina / (1000 * 60))));}
+		uint32_t getStaminaMinutes() const {return (hasCustomFlag(PlayerCustomFlag_HasInfiniteStamina) ?
+			3360 : std::min((uint32_t)3360, (uint32_t)std::floor(stamina / (1000 * 60))));}
 		void setStaminaMinutes(uint32_t _stamina) {stamina = std::min((uint64_t)3360, (uint64_t)_stamina);}
+
+		uint64_t getSpentStamina() {return ((uint64_t)PLAYER_STAMINA - stamina);}
+		void useStamina(int64_t value, bool ticks);
 
 		time_t getLastLoginSaved() const {return lastLoginSaved;}
 		time_t getLastLogout() const {return lastLogout;}

@@ -217,7 +217,8 @@ bool ConfigManager::load()
 	m_confBool[HOUSE_STORAGE] = getGlobalBool(L, "useHouseDataStorage", "no");
 	m_confBool[TRACER_BOX] = getGlobalBool(L, "promptExceptionTracerErrorBox", "yes");
 	m_confNumber[LOGIN_PROTECTION] = getGlobalNumber(L, "loginProtectionPeriod", 10 * 1000);
-	m_confNumber[RATE_STAMINA] = getGlobalNumber(L, "rateStaminaHits", 3);
+	m_confNumber[RATE_STAMINA_HITS] = getGlobalNumber(L, "rateStaminaHits", 3);
+	m_confNumber[RATE_STAMINA_GAIN] = getGlobalNumber(L, "rateStaminaGain", 500);
 	m_confBool[STORE_DIRECTION] = getGlobalBool(L, "storePlayerDirection", "no");
 	m_confNumber[PLAYER_DEEPNESS] = getGlobalNumber(L, "playerQueryDeepness", 1);
 

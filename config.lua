@@ -155,6 +155,7 @@
 	rateSkill = 3.0
 	rateMagic = 3.0
 	rateStaminaHits = 3
+	rateStaminaGain = 500
 	rateLoot = 2
 	rateSpawn = 1
 	experienceStages = "no"

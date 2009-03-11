@@ -1065,7 +1065,7 @@ uint32_t Creature::getStaminaRatio(Creature* attacker) const
 			totalHits += it->second.hits;
 	}
 
-	return totalHits * g_config.getNumber(ConfigManager::RATE_STAMINA);
+	return totalHits * g_config.getNumber(ConfigManager::RATE_STAMINA_HITS);
 }
 
 uint64_t Creature::getGainedExperience(Creature* attacker, bool useMultiplier/* = true*/)
@@ -1087,7 +1087,7 @@ uint64_t Creature::getGainedExperience(Creature* attacker, bool useMultiplier/* 
 		if(!player->hasCustomFlag(PlayerCustomFlag_HasInfiniteStamina))
 		{
 			player->useStamina((int64_t)getStaminaRatio(attacker), true);
-			if(player->getStaminaMinutes() <= 840 && player->getStaminaMinutes() > 0)
+			if(player->getStaminaMinutes() < 841 && player->getStaminaMinutes() > 0)
 				baseExperience = (uint64_t)std::floor(baseExperience / 2);
 			else if(!player->getStaminaMinutes())
 				baseExperience = 0;
