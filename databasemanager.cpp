@@ -894,7 +894,7 @@ uint32_t DatabaseManager::updateDatabase()
 			std::cout << "> Updating database to version: 11..." << std::endl;
 
 			DBQuery query;
-			query << "ALTER TABLE `players` ADD `description` VARCHAR(255) NOT NULL;";
+			query << "ALTER TABLE `players` ADD `description` VARCHAR(255) NOT NULL DEFAULT '';";
 			db->executeQuery(query.str());
 
 			query.str("");

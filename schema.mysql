@@ -162,7 +162,7 @@ CREATE TABLE `players`
 	`marriage` INT UNSIGNED NOT NULL DEFAULT 0,
 	`promotion` INT NOT NULL DEFAULT 0,
 	`deleted` TINYINT(1) NOT NULL DEFAULT FALSE,
-	`description` VARCHAR(255) NOT NULL,
+	`description` VARCHAR(255) NOT NULL DEFAULT '',
 	PRIMARY KEY (`id`), UNIQUE (`name`, `deleted`),
 	KEY (`account_id`), KEY (`group_id`),
 	KEY (`online`), KEY (`deleted`),
