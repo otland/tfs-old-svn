@@ -536,9 +536,9 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 {
 	if(creature == this)
 	{
-		lastStep = OTSYS_TIME();
 		extraStepDuration = 0;
 		lastStepCost = 1;
+		lastStep = OTSYS_TIME();
 		if(!teleport)
 		{
 			if(oldPos.z != newPos.z)
@@ -583,7 +583,6 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 			else
 			{
 				const Position& myPos = getPosition();
-				Position pos;
 				if(oldPos.y > newPos.y) //north
 				{
 					//shift y south
