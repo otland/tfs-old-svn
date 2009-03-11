@@ -4665,7 +4665,7 @@ void Player::useStamina(int64_t value, bool ticks)
 	if(ticks)
 		value *= (int64_t)getAttackSpeed();
 
-	stamina = std::min((int64_t)PLAYER_STAMINA, std::max((int64_t)0, ((int64_t)stamina - value));
+	stamina = std::min((int64_t)PLAYER_STAMINA, std::max((int64_t)0, ((int64_t)stamina - value)));
 }
 
 void Player::sendCriticalHit() const
