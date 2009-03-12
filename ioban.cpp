@@ -42,9 +42,9 @@ bool IOBan::isIpBanished(uint32_t ip, uint32_t mask/* = 0xFFFFFFFF*/)
 	do
 	{
 		uint32_t value = result->getDataInt("value"), param = result->getDataInt("param");
-		if(ip & mask & param == value & param & mask)
+		if((ip & mask & param) == (value & param & mask))
 		{
-			if(result->getDataLong("expires") == 0 || result->getDataLong("expires") > (uint64_t)time(NULL))
+			if(result->getDataLong("expires") == 0 || result->getDataLong("expires") > (int64_t)time(NULL))
 				return true;
 
 			removeIpBanishment(value, param);
