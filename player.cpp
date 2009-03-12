@@ -2191,6 +2191,7 @@ bool Player::onDeath()
 			magLevelPercent = 0;
 
 		//Skill loss
+		removeExperience(getLostExperience(), false);
 		uint32_t lostSkillTries, sumSkillTries;
 		for(int16_t i = 0; i < 7; ++i) //for each skill
 		{
@@ -2217,9 +2218,8 @@ bool Player::onDeath()
 			skills[i][SKILL_TRIES] = std::max((int32_t)0, (int32_t)(skills[i][SKILL_TRIES] - lostSkillTries));
 		}
 
-		loginPosition = masterPos;
-		removeExperience(getLostExperience(), false);
 		blessings = 0;
+		loginPosition = masterPos;
 		if(!inventory[SLOT_BACKPACK])
 			__internalAddThing(SLOT_BACKPACK, Item::CreateItem(1987));
 

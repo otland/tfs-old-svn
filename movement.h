@@ -28,7 +28,9 @@
 
 enum MoveEvent_t
 {
-	MOVE_EVENT_STEP_IN = 0,
+	MOVE_EVENT_NONE = 0,
+	MOVE_EVENT_FIRST,
+	MOVE_EVENT_STEP_IN = MOVE_EVENT_FIRST,
 	MOVE_EVENT_STEP_OUT,
 	MOVE_EVENT_EQUIP,
 	MOVE_EVENT_DEEQUIP,
@@ -36,8 +38,7 @@ enum MoveEvent_t
 	MOVE_EVENT_REMOVE_ITEM,
 	MOVE_EVENT_ADD_ITEM_ITEMTILE,
 	MOVE_EVENT_REMOVE_ITEM_ITEMTILE,
-	MOVE_EVENT_LAST,
-	MOVE_EVENT_NONE,
+	MOVE_EVENT_LAST = MOVE_EVENT_REMOVE_ITEM_ITEMTILE
 };
 
 class MoveEvent;
@@ -46,7 +47,7 @@ typedef std::list<MoveEvent*> EventList;
 typedef std::map<int32_t, bool> VocEquipMap;
 struct MoveEventList
 {
-	EventList moveEvent[MOVE_EVENT_LAST];
+	EventList moveEvent[MOVE_EVENT_NONE];
 };
 
 class MoveEvents : public BaseEvents

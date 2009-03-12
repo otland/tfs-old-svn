@@ -63,7 +63,7 @@ class IOBan
 		bool isDeleted(uint32_t account);
 
 		bool addIpBanishment(uint32_t ip, time_t banTime, std::string comment, uint32_t gamemaster,
-			std::string statement = "");
+			std::string statement = "", uint32_t mask = 0xFFFFFFFF);
 		bool addNamelock(uint32_t playerId, uint32_t reasonId, uint32_t actionId, std::string comment,
 			uint32_t gamemaster, std::string statement = "");
 		bool addNamelock(std::string name, uint32_t reasonId, uint32_t actionId, std::string comment,
@@ -75,7 +75,7 @@ class IOBan
 		void addNotation(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment,
 			uint32_t gamemaster, std::string statement = "");
 
-		bool removeIpBanishment(uint32_t ip);
+		bool removeIpBanishment(uint32_t ip, uint32_t mask = 0xFFFFFFFF);
 		bool removeNamelock(uint32_t guid);
 		bool removeNamelock(std::string name);
 		bool removeBanishment(uint32_t account);
@@ -84,16 +84,6 @@ class IOBan
 
 		bool getData(uint32_t value, Ban& ban);
 		std::vector<Ban> getList(BanType_t type, uint32_t value = 0);
-
-		//id is account or guid, for guid needed player = true
-		uint32_t getAction(uint32_t id, bool player = false);
-		uint32_t getReason(uint32_t id, bool player = false);
-		uint64_t getExpireTime(uint32_t id, bool player = false);
-		uint64_t getAddedTime(uint32_t id, bool player = false);
-		std::string getComment(uint32_t id, bool player = false);
-		uint32_t getAdminGUID(uint32_t id, bool player = false);
-		std::string getStatement(uint32_t id, bool player = false);
-
 		uint32_t getNotationsCount(uint32_t account);
 		bool clearTemporials();
 };

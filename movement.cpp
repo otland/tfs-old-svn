@@ -51,7 +51,7 @@ inline void MoveEvents::clearMap(MoveListMap& map)
 {
 	for(MoveListMap::iterator it = map.begin(); it != map.end(); ++it)
 	{
-		for(int32_t i = 0; i < MOVE_EVENT_LAST; ++i)
+		for(int32_t i = MOVE_EVENT_FIRST; i <= MOVE_EVENT_LAST; ++i)
 		{
 			EventList& moveEventList = it->second.moveEvent[i];
 			for(EventList::iterator it = moveEventList.begin(); it != moveEventList.end(); ++it)
@@ -69,7 +69,7 @@ void MoveEvents::clear()
 	clearMap(m_uniqueIdMap);
 	for(MovePosListMap::iterator it = m_positionMap.begin(); it != m_positionMap.end(); ++it)
 	{
-		for(int32_t i = 0; i < MOVE_EVENT_LAST; ++i)
+		for(int32_t i = MOVE_EVENT_FIRST; i <= MOVE_EVENT_LAST; ++i)
 		{
 			EventList& moveEventList = it->second.moveEvent[i];
 			for(EventList::iterator it = moveEventList.begin(); it != moveEventList.end(); ++it)
