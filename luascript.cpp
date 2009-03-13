@@ -9159,9 +9159,7 @@ int32_t LuaScriptInterface::luaGetSpectators(lua_State *L)
 	if(lua_gettop(L) >= 4)
 		multifloor = popNumber(L) == LUA_TRUE;
 
-	uint32_t rangey = popNumber(L);
-	uint32_t rangex = popNumber(L);
-
+	uint32_t rangey = popNumber(L), rangex = popNumber(L);
 	PositionEx centerPos;
 	popPosition(L, centerPos);
 
@@ -9900,7 +9898,7 @@ int32_t LuaScriptInterface::luaDoRemoveIpBanishment(lua_State *L)
 int32_t LuaScriptInterface::luaDoRemoveNamelock(lua_State *L)
 {
 	//doRemoveNamelock(name)
-	lua_pushnumber(L, IOBan::getInstance()->removeNamelock
+	lua_pushnumber(L, IOBan::getInstance()->removeNamelock(
 		popString(L)) ? LUA_TRUE : LUA_FALSE);
 	return 1;
 }
