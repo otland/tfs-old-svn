@@ -26,16 +26,7 @@
 #include "enums.h"
 #include "creature.h"
 
-enum connectResult_t
-{
-	CONNECT_SUCCESS = 1,
-	CONNECT_TOMANYPLAYERS = 2,
-	CONNECT_MASTERPOSERROR = 3,
-	CONNECT_INTERNALERROR = 4
-};
-
 class NetworkMessage;
-typedef boost::shared_ptr<NetworkMessage> NetworkMessage_ptr;
 class Player;
 class Game;
 class House;
@@ -43,6 +34,7 @@ class Container;
 class Tile;
 class Connection;
 
+typedef boost::shared_ptr<NetworkMessage> NetworkMessage_ptr;
 class ProtocolGame : public Protocol
 {
 	public:
@@ -54,7 +46,8 @@ class ProtocolGame : public Protocol
 
 		virtual int32_t getProtocolId() {return 0x0A;}
 
-		bool login(const std::string& name, uint32_t accnumber, const std::string& password, uint16_t operatingSystem, uint8_t gamemasterLogin);
+		bool login(const std::string& name, uint32_t accnumber, const std::string& password,
+			OperatingSystem_t operatingSystem, bool gamemasterLogin);
 		bool logout(bool displayEffect, bool forced);
 
 		void setPlayer(Player* p);
@@ -69,9 +62,9 @@ class ProtocolGame : public Protocol
 		virtual void releaseProtocol();
 		virtual void deleteProtocolTask();
 
-		void checkCreatureAsKnown(uint32_t id, bool &known, uint32_t &removedKnown);
+		void checkCreatureAsKnown(uint32_t id, bool& known, uint32_t& removedKnown);
 
-		bool canSee(int32_t x, int32_t y, int32_t z) const;
+		bool canSee(int16_t x, int16_t y, int8_t z) const;
 		bool canSee(const Creature*) const;
 		bool canSee(const Position& pos) const;
 
@@ -242,8 +235,8 @@ class ProtocolGame : public Protocol
 		void GetTileDescription(const Tile* tile, NetworkMessage_ptr msg);
 
 		// translate a floor to clientreadable format
-		void GetFloorDescription(NetworkMessage_ptr msg, int x, int y, int z,
-			int width, int height, int offset, int& skip);
+		void GetFloorDescription(NetworkMessage_ptr msg, int16_t x, int16_t y, int8_t z,
+			int32_t width, int32_t height, int32_t offset, int32_t& skip);
 
 		// translate a map area to clientreadable format
 		void GetMapDescription(uint16_t x, uint16_t y, uint8_t z,
@@ -256,7 +249,8 @@ class ProtocolGame : public Protocol
 		void AddDistanceShoot(NetworkMessage_ptr msg, const Position& from, const Position& to, uint8_t type);
 		void AddCreature(NetworkMessage_ptr msg, const Creature* creature, bool known, uint32_t remove);
 		void AddPlayerStats(NetworkMessage_ptr msg);
-		void AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* creature, SpeakClasses type, std::string text, uint16_t channelId, uint32_t time = 0, Position* pos = NULL);
+		void AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* creature, SpeakClasses type,
+			std::string text, uint16_t channelId, uint32_t time = 0, Position* pos = NULL);
 		void AddCreatureHealth(NetworkMessage_ptr msg, const Creature* creature);
 		void AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* creature, const Outfit_t& outfit);
 		void AddCreatureInvisible(NetworkMessage_ptr msg, const Creature* creature);
@@ -327,13 +321,8 @@ class ProtocolGame : public Protocol
 
 		Player* player;
 
-		int64_t m_now;
-		int64_t m_nextTask;
-		int64_t m_nextPing;
-
-		int64_t m_lastTaskCheck;
-		int32_t m_messageCount;
-		int32_t m_rejectCount;
+		int64_t m_now, m_nextTask, m_nextPing, m_lastTaskCheck;
+		int32_t m_messageCount, m_rejectCount;
 		uint32_t eventConnect;
 
 		bool m_debugAssertSent;
