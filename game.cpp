@@ -2306,44 +2306,43 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 
 	if(ret != RET_NOERROR)
 	{
-		if(ret != RET_TOOFARAWAY)
+		if(ret == RET_TOOFARAWAY)
 		{
-			player->sendCancelMessage(ret);
-			return false;
-		}
-
-		Position itemPos = fromPos;
-		uint8_t itemStackPos = fromStackPos;
-		if(fromPos.x != 0xFFFF && toPos.x != 0xFFFF && Position::areInRange<1,1,0>(fromPos, player->getPosition()) &&
-			!Position::areInRange<1,1,0>(fromPos, toPos))
-		{
-			Item* moveItem = NULL;
-			ReturnValue ret = internalMoveItem(player, item->getParent(), player, INDEX_WHEREEVER,
-				item, item->getItemCount(), &moveItem);
-			if(ret != RET_NOERROR)
+			Position itemPos = fromPos;
+			uint8_t itemStackPos = fromStackPos;
+			if(fromPos.x != 0xFFFF && toPos.x != 0xFFFF && Position::areInRange<1,1,0>(fromPos,
+				player->getPosition()) && !Position::areInRange<1,1,0>(fromPos, toPos))
 			{
-				player->sendCancelMessage(ret);
-				return false;
+				Item* moveItem = NULL;
+				ReturnValue reti = internalMoveItem(player, item->getParent(), player,
+					INDEX_WHEREEVER, item, item->getItemCount(), &moveItem);
+				if(reti != RET_NOERROR)
+				{
+					player->sendCancelMessage(reti);
+					return false;
+				}
+
+				//changing the position since its now in the inventory of the player
+				internalGetPosition(moveItem, itemPos, itemStackPos);
 			}
 
-			//changing the position since its now in the inventory of the player
-			internalGetPosition(moveItem, itemPos, itemStackPos);
+			std::list<Direction> listDir;
+			if(getPathToEx(player, walkToPos, listDir, 0, 1, true, true, 10))
+			{
+				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerAutoWalk,
+					this, player->getID(), listDir)));
+				SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerUseItemEx, this,
+					playerId, itemPos, itemStackPos, fromSpriteId, toPos, toStackPos, toSpriteId, isHotkey));
+
+				player->setNextWalkActionTask(task);
+				return true;
+			}
+
+			ret = RET_THEREISNOWAY;
 		}
 
-		std::list<Direction> listDir;
-		if(!getPathToEx(player, walkToPos, listDir, 0, 1, true, true, 10))
-		{
-			player->sendCancelMessage(RET_THEREISNOWAY);
-			return false;
-		}
-
-		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerAutoWalk,
-			this, player->getID(), listDir)));
-		SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerUseItemEx, this,
-			playerId, itemPos, itemStackPos, fromSpriteId, toPos, toStackPos, toSpriteId, isHotkey));
-
-		player->setNextWalkActionTask(task);
-		return true;
+		player->sendCancelMessage(ret);
+		return false;
 	}
 
 	if(!player->canDoAction())

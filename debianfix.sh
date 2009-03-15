@@ -1,20 +1,16 @@
 #!/bin/sh
-
 #
-# Debian Lenny fix for OtServ 1.0
+# Debian Lenny fix for OTServ 1.0
 # Written by Ivan Vucica
 # This file is released into public domain.
-
+#
 # Only in areas where above statement is not legally applicable:
-# (c) 2007-2008 Ivan Vucica
+# (c) 2007-2009 Ivan Vucica
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law. 
+#
 
-# This file avoids the need to compile and install libraries that 
-# still do not ship in Debian Lenny as of March 19 2008.
-# Do not apply unless using Debian Lenny.
-
-echo "Debian fix for OtServ"
+echo "Debian fix for TheForgottenServer"
 echo "---------------------"
 
 echo "Replacing boost::system..."

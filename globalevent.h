@@ -53,7 +53,7 @@ class GlobalEvents : public BaseEvents
 		LuaScriptInterface m_scriptInterface;
 
 		typedef std::list< std::pair<std::string, GlobalEvent* > > GlobalEventList;
-		GlobalEventList eventsMap;
+		GlobalEventList eventsMap;
 };
 
 class GlobalEvent : public Event
