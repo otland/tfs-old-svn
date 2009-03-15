@@ -214,30 +214,50 @@ ReturnValue Combat::canDoCombat(const Creature* caster, const Tile* tile, bool i
 
 	if(caster)
 	{
+		bool success = true;
+		CreatureEventList areaCombatEvents = caster->getCreatureEvents(CREATURE_EVENT_AREA_COMBAT);
+		for(CreatureEventList::iterator it = areaCombatEvents.begin(); it != areaCombatEvents.end(); ++it)
+		{
+			if(!(*it)->executeAreaCombat(caster, tile, isAggressive) && success)
+				success = false;
+		}
+
+		if(!success)
+			return RET_NOTPOSSIBLE;
+
 		if(caster->getPosition().z < tile->getPosition().z)
 			return RET_FIRSTGODOWNSTAIRS;
 
 		if(caster->getPosition().z > tile->getPosition().z)
 			return RET_FIRSTGOUPSTAIRS;
 
-		if(const Player* player = caster->getPlayer())
-		{
-			if(player->hasFlag(PlayerFlag_IgnoreProtectionZone))
-				return RET_NOERROR;
-		}
+		if(!isAggressive)
+			return RET_NOERROR;
+
+		const Player* player = caster->getPlayer();
+		if(player && player->hasFlag(PlayerFlag_IgnoreProtectionZone))
+			return RET_NOERROR;
 	}
 
-	//pz-zone
-	if(isAggressive && tile->hasFlag(TILESTATE_PROTECTIONZONE))
-		return RET_ACTIONNOTPERMITTEDINPROTECTIONZONE;
-
-	return RET_NOERROR;
+	return isAggressive && tile->hasFlag(TILESTATE_PROTECTIONZONE) ?
+		RET_ACTIONNOTPERMITTEDINPROTECTIONZONE : RET_NOERROR;
 }
 
 ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target)
 {
 	if(!attacker)
 		return RET_NOERROR;
+
+	bool success = true;
+	CreatureEventList combatEvents = attacker->getCreatureEvents(CREATURE_EVENT_COMBAT);
+	for(CreatureEventList::iterator it = combatEvents.begin(); it != combatEvents.end(); ++it)
+	{
+		if(!(*it)->executeCombat(attacker, target) && success)
+			success = false;
+	}
+
+	if(!success)
+		return RET_NOTPOSSIBLE;
 
 	bool checkZones = false;
 	if(const Player* targetPlayer = target->getPlayer())

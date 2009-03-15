@@ -702,7 +702,7 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier/
 		advance = true;
 		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
-			(*it)->executeOnAdvance(this, skill, (skills[skill][SKILL_LEVEL] - 1), skills[skill][SKILL_LEVEL]);
+			(*it)->executeAdvance(this, skill, (skills[skill][SKILL_LEVEL] - 1), skills[skill][SKILL_LEVEL]);
 
 		if(vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]) > vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
 		{
@@ -1882,7 +1882,7 @@ void Player::addManaSpent(uint64_t amount, bool ignoreFlag/* = false*/, bool use
 
 		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
-			(*it)->executeOnAdvance(this, (skills_t)MAGLEVEL, (magLevel - 1), magLevel);
+			(*it)->executeAdvance(this, (skills_t)MAGLEVEL, (magLevel - 1), magLevel);
 
 		currReqMana = nextReqMana;
 		nextReqMana = vocation->getReqMana(magLevel + 1);
@@ -1945,7 +1945,7 @@ void Player::addExperience(uint64_t exp)
 
 		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
-			(*it)->executeOnAdvance(this, (skills_t)LEVEL, prevLevel, level);
+			(*it)->executeAdvance(this, (skills_t)LEVEL, prevLevel, level);
 	}
 
 	uint64_t currLevelExp = Player::getExpForLevel(level);
@@ -2158,12 +2158,20 @@ bool Player::onDeath()
 
 	if(preventLoss)
 	{
-		g_game.transformItem(preventLoss, preventLoss->getID(), std::max(0, ((int32_t)preventLoss->getCharges() - 1)));
 		setLossSkill(false);
+		if(preventLoss->getCharges() > 1) //weird, but transform failed to remove for some hosters
+			g_game.transformItem(preventLoss, preventLoss->getID(), std::max(0, ((int32_t)preventLoss->getCharges() - 1)));
+		else
+			g_game.internalRemoveItem(NULL, preventDrop);
 	}
 
 	if(preventDrop && preventDrop != preventLoss)
-		g_game.transformItem(preventDrop, preventDrop->getID(), std::max(0, ((int32_t)preventDrop->getCharges() - 1)));
+	{
+		if(preventDrop->getCharges() > 1) //weird, but transform failed to remve for some hosters
+			g_game.transformItem(preventDrop, preventDrop->getID(), std::max(0, ((int32_t)preventDrop->getCharges() - 1)));
+		else
+			g_game.internalRemoveItem(NULL, preventDrop);
+	}
 
 	removeConditions(CONDITIONEND_DEATH);
 	if(skillLoss)

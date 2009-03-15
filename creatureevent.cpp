@@ -100,11 +100,8 @@ uint32_t CreatureEvents::playerLogin(Player* player)
 	//fire global event if is registered
 	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 	{
-		if(it->second->getEventType() == CREATURE_EVENT_LOGIN)
-		{
-			if(!it->second->executeOnLogin(player))
-				return 0;
-		}
+		if(it->second->getEventType() == CREATURE_EVENT_LOGIN && !it->second->executeLogin(player))
+			return 0;
 	}
 
 	return 1;
@@ -115,11 +112,8 @@ uint32_t CreatureEvents::playerLogout(Player* player)
 	//fire global event if is registered
 	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 	{
-		if(it->second->getEventType() == CREATURE_EVENT_LOGOUT)
-		{
-			if(!it->second->executeOnLogout(player))
-				return 0;
-		}
+		if(it->second->getEventType() == CREATURE_EVENT_LOGOUT && !it->second->executeLogout(player))
+			return 0;
 	}
 
 	return 1;
@@ -171,8 +165,14 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 		m_type = CREATURE_EVENT_THINK;
 	else if(tmpStr == "statschange")
 		m_type = CREATURE_EVENT_STATSCHANGE;
+	else if(tmpStr == "areacombat")
+		m_type = CREATURE_EVENT_COMBAT_AREA;
+	else if(tmpStr == "combat")
+		m_type = CREATURE_EVENT_COMBAT;
 	else if(tmpStr == "attack")
 		m_type = CREATURE_EVENT_ATTACK;
+	else if(tmpStr == "cast")
+		m_type = CREATURE_EVENT_CAST;
 	else if(tmpStr == "kill")
 		m_type = CREATURE_EVENT_KILL;
 	else if(tmpStr == "death")
@@ -213,8 +213,14 @@ std::string CreatureEvent::getScriptEventName() const
 			return "onReceiveMail";
 		case CREATURE_EVENT_STATSCHANGE:
 			return "onStatsChange";
+		case CREATURE_EVENT_COMBAT_AREA:
+			return "onAreaCombat";
+		case CREATURE_EVENT_COMBAT:
+			return "onCombat";
 		case CREATURE_EVENT_ATTACK:
 			return "onAttack";
+		case CREATURE_EVENT_CAST:
+			return "onCast";
 		case CREATURE_EVENT_KILL:
 			return "onKill";
 		case CREATURE_EVENT_DEATH:
@@ -251,7 +257,11 @@ std::string CreatureEvent::getScriptEventParams() const
 			return "cid, interval";
 		case CREATURE_EVENT_STATSCHANGE:
 			return "cid, attacker, type, combat, value";
+		case CREATURE_EVENT_COMBAT_AREA:
+			return "cid, tileItem, tilePosition, isAggressive";
+		case CREATURE_EVENT_COMBAT:
 		case CREATURE_EVENT_ATTACK:
+		case CREATURE_EVENT_CAST:
 		case CREATURE_EVENT_KILL:
 			return "cid, target";
 		case CREATURE_EVENT_DEATH:
@@ -282,7 +292,7 @@ void CreatureEvent::clearEvent()
 	m_isLoaded = false;
 }
 
-uint32_t CreatureEvent::executeOnLogin(Player* player)
+uint32_t CreatureEvent::executeLogin(Player* player)
 {
 	//onLogin(cid)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -329,12 +339,12 @@ uint32_t CreatureEvent::executeOnLogin(Player* player)
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeOnLogin] Call stack overflow." << std::endl;
+		std::cout << "[Error - CreatureEvent::executeLogin] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
 
-uint32_t CreatureEvent::executeOnLogout(Player* player)
+uint32_t CreatureEvent::executeLogout(Player* player)
 {
 	//onLogout(cid)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -381,12 +391,12 @@ uint32_t CreatureEvent::executeOnLogout(Player* player)
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeOnLogout] Call stack overflow." << std::endl;
+		std::cout << "[Error - CreatureEvent::executeLogout] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
 
-uint32_t CreatureEvent::executeOnChannelJoin(Player* player, uint16_t channelId, UsersList usersList)
+uint32_t CreatureEvent::executeChannelJoin(Player* player, uint16_t channelId, UsersList usersList)
 {
 	//onJoinChannel(cid, channel, users)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -447,12 +457,12 @@ uint32_t CreatureEvent::executeOnChannelJoin(Player* player, uint16_t channelId,
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeOnChannelJoin] Call stack overflow." << std::endl;
+		std::cout << "[Error - CreatureEvent::executeChannelJoin] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
 
-uint32_t CreatureEvent::executeOnChannelLeave(Player* player, uint16_t channelId, UsersList usersList)
+uint32_t CreatureEvent::executeChannelLeave(Player* player, uint16_t channelId, UsersList usersList)
 {
 	//onLeaveChannel(cid, channel, users)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -513,12 +523,12 @@ uint32_t CreatureEvent::executeOnChannelLeave(Player* player, uint16_t channelId
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeOnChannelLeave] Call stack overflow." << std::endl;
+		std::cout << "[Error - CreatureEvent::executeChannelLeave] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
 
-uint32_t CreatureEvent::executeOnAdvance(Player* player, skills_t skill, uint32_t oldLevel, uint32_t newLevel)
+uint32_t CreatureEvent::executeAdvance(Player* player, skills_t skill, uint32_t oldLevel, uint32_t newLevel)
 {
 	//onAdvance(cid, skill, oldLevel, newLevel)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -571,12 +581,12 @@ uint32_t CreatureEvent::executeOnAdvance(Player* player, skills_t skill, uint32_
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeOnAdvance] Call stack overflow." << std::endl;
+		std::cout << "[Error - CreatureEvent::executeAdvance] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
 
-uint32_t CreatureEvent::executeOnMailSend(Player* player, Player* receiver, Item* item, bool openBox)
+uint32_t CreatureEvent::executeMailSend(Player* player, Player* receiver, Item* item, bool openBox)
 {
 	//onSendMail(cid, receiver, item, openBox)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -629,12 +639,12 @@ uint32_t CreatureEvent::executeOnMailSend(Player* player, Player* receiver, Item
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeOnMailSend] Call stack overflow." << std::endl;
+		std::cout << "[Error - CreatureEvent::executeMailSend] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
 
-uint32_t CreatureEvent::executeOnMailReceive(Player* player, Player* sender, Item* item, bool openBox)
+uint32_t CreatureEvent::executeMailReceive(Player* player, Player* sender, Item* item, bool openBox)
 {
 	//onReceiveMail(cid, sender, item, openBox)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -687,12 +697,12 @@ uint32_t CreatureEvent::executeOnMailReceive(Player* player, Player* sender, Ite
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeOnMailReceive] Call stack overflow." << std::endl;
+		std::cout << "[Error - CreatureEvent::executeMailReceive] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
 
-uint32_t CreatureEvent::executeOnLook(Player* player, const Position& position, uint8_t stackpos)
+uint32_t CreatureEvent::executeLook(Player* player, const Position& position, uint8_t stackpos)
 {
 	//onLook(cid, position)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -741,12 +751,12 @@ uint32_t CreatureEvent::executeOnLook(Player* player, const Position& position, 
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeOnLook] Call stack overflow." << std::endl;
+		std::cout << "[Error - CreatureEvent::executeLook] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
 
-uint32_t CreatureEvent::executeOnThink(Creature* creature, uint32_t interval)
+uint32_t CreatureEvent::executeThink(Creature* creature, uint32_t interval)
 {
 	//onThink(cid, interval)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -795,12 +805,12 @@ uint32_t CreatureEvent::executeOnThink(Creature* creature, uint32_t interval)
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeOnThink] Call stack overflow." << std::endl;
+		std::cout << "[Error - CreatureEvent::executeThink] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
 
-uint32_t CreatureEvent::executeOnStatsChange(Creature* creature, Creature* attacker, StatsChange_t type, CombatType_t combat, int32_t value)
+uint32_t CreatureEvent::executeStatsChange(Creature* creature, Creature* attacker, StatsChange_t type, CombatType_t combat, int32_t value)
 {
 	//onStatsChange(cid, attacker, type, combat, value)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -855,12 +865,124 @@ uint32_t CreatureEvent::executeOnStatsChange(Creature* creature, Creature* attac
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeOnStatsChange] Call stack overflow." << std::endl;
+		std::cout << "[Error - CreatureEvent::executeStatsChange] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
 
-uint32_t CreatureEvent::executeOnAttack(Creature* creature, Creature* target)
+uint32_t CreatureEvent::executeCombatArea(const Creature* creature, const Tile* tile, bool isAggressive)
+{
+	//onAreaCombat(cid, tileItem, tilePosition, isAggressive)
+	if(m_scriptInterface->reserveScriptEnv())
+	{
+		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		if(m_scripted == EVENT_SCRIPT_BUFFER)
+		{
+			env->setRealPos(creature->getPosition());
+
+			std::stringstream scriptstream;
+			scriptstream << "cid = " << env->addThing(creature) << std::endl;
+			env->streamThing(scriptstream, "tileItem", tile, env->addThing(tile));
+			env->streamPosition(scriptstream, "tilePosition", tile->getPosition(), 0);
+			scriptstream << "isAggressive = " << (isAggressive ? LUA_TRUE : LUA_FALSE) << std::endl;
+
+			scriptstream << m_scriptData;
+			int32_t result = LUA_NO_ERROR;
+			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			{
+				lua_State* L = m_scriptInterface->getLuaState();
+				result = m_scriptInterface->getField(L, "_result");
+			}
+
+			m_scriptInterface->releaseScriptEnv();
+			return (result == LUA_TRUE);
+		}
+		else
+		{
+			#ifdef __DEBUG_LUASCRIPTS__
+			std::stringstream desc;
+			desc << creature->getName();
+			env->setEventDesc(desc.str());
+			#endif
+
+			env->setScriptId(m_scriptId, m_scriptInterface);
+			env->setRealPos(creature->getPosition());
+
+			lua_State* L = m_scriptInterface->getLuaState();
+			m_scriptInterface->pushFunction(m_scriptId);
+
+			lua_pushnumber(L, env->addThing(creature));
+			LuaScriptInterface::pushThing(L, tile, env->addThing(tile));
+			LuaScriptInterface::pushPosition(L, tile->getPosition(), 0);
+			lua_pushnumber(L, isAggressive ? LUA_TRUE : LUA_FALSE);
+
+			int32_t result = m_scriptInterface->callFunction(4);
+			m_scriptInterface->releaseScriptEnv();
+			return (result == LUA_TRUE);
+		}
+	}
+	else
+	{
+		std::cout << "[Error - CreatureEvent::executeAreaCombat] Call stack overflow." << std::endl;
+		return 0;
+	}
+}
+
+uint32_t CreatureEvent::executeCombat(const Creature* creature, const Creature* target)
+{
+	//onCombat(cid, target)
+	if(m_scriptInterface->reserveScriptEnv())
+	{
+		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		if(m_scripted == EVENT_SCRIPT_BUFFER)
+		{
+			env->setRealPos(creature->getPosition());
+
+			std::stringstream scriptstream;
+			scriptstream << "cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "target = " << env->addThing(target) << std::endl;
+
+			scriptstream << m_scriptData;
+			int32_t result = LUA_NO_ERROR;
+			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			{
+				lua_State* L = m_scriptInterface->getLuaState();
+				result = m_scriptInterface->getField(L, "_result");
+			}
+
+			m_scriptInterface->releaseScriptEnv();
+			return (result == LUA_TRUE);
+		}
+		else
+		{
+			#ifdef __DEBUG_LUASCRIPTS__
+			std::stringstream desc;
+			desc << creature->getName();
+			env->setEventDesc(desc.str());
+			#endif
+
+			env->setScriptId(m_scriptId, m_scriptInterface);
+			env->setRealPos(creature->getPosition());
+
+			lua_State* L = m_scriptInterface->getLuaState();
+			m_scriptInterface->pushFunction(m_scriptId);
+
+			lua_pushnumber(L, env->addThing(creature));
+			lua_pushnumber(L, env->addThing(target));
+
+			int32_t result = m_scriptInterface->callFunction(2);
+			m_scriptInterface->releaseScriptEnv();
+			return (result == LUA_TRUE);
+		}
+	}
+	else
+	{
+		std::cout << "[Error - CreatureEvent::executeCombat] Call stack overflow." << std::endl;
+		return 0;
+	}
+}
+
+uint32_t CreatureEvent::executeAttack(Creature* creature, Creature* target)
 {
 	//onAttack(cid, target)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -909,12 +1031,70 @@ uint32_t CreatureEvent::executeOnAttack(Creature* creature, Creature* target)
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeOnAttack] Call stack overflow." << std::endl;
+		std::cout << "[Error - CreatureEvent::executeAttack] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
 
-uint32_t CreatureEvent::executeOnKill(Creature* creature, Creature* target)
+uint32_t CreatureEvent::executeCast(Creature* creature, Creature* target/* = NULL*/)
+{
+	//onCast(cid[, target])
+	if(m_scriptInterface->reserveScriptEnv())
+	{
+		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		if(m_scripted == EVENT_SCRIPT_BUFFER)
+		{
+			env->setRealPos(creature->getPosition());
+
+			std::stringstream scriptstream;
+			scriptstream << "cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "target = ";
+			if(target)
+				scriptstream << env->addThing(target);
+			else
+				scriptstream << "nil";
+
+			scriptstream << std::endl << m_scriptData;
+			int32_t result = LUA_NO_ERROR;
+			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			{
+				lua_State* L = m_scriptInterface->getLuaState();
+				result = m_scriptInterface->getField(L, "_result");
+			}
+
+			m_scriptInterface->releaseScriptEnv();
+			return (result == LUA_TRUE);
+		}
+		else
+		{
+			#ifdef __DEBUG_LUASCRIPTS__
+			std::stringstream desc;
+			desc << creature->getName();
+			env->setEventDesc(desc.str());
+			#endif
+
+			env->setScriptId(m_scriptId, m_scriptInterface);
+			env->setRealPos(creature->getPosition());
+
+			lua_State* L = m_scriptInterface->getLuaState();
+			m_scriptInterface->pushFunction(m_scriptId);
+
+			lua_pushnumber(L, env->addThing(creature));
+			lua_pushnumber(L, env->addThing(target));
+
+			int32_t result = m_scriptInterface->callFunction(2);
+			m_scriptInterface->releaseScriptEnv();
+			return (result == LUA_TRUE);
+		}
+	}
+	else
+	{
+		std::cout << "[Error - CreatureEvent::executeCast] Call stack overflow." << std::endl;
+		return 0;
+	}
+}
+
+uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target)
 {
 	//onKill(cid, target)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -963,12 +1143,12 @@ uint32_t CreatureEvent::executeOnKill(Creature* creature, Creature* target)
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeOnKill] Call stack overflow." << std::endl;
+		std::cout << "[Error - CreatureEvent::executeKill] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
 
-uint32_t CreatureEvent::executeOnDeath(Creature* creature, Item* corpse, Creature* lastHitKiller, Creature* mostDamageKiller)
+uint32_t CreatureEvent::executeDeath(Creature* creature, Item* corpse, Creature* lastHitKiller, Creature* mostDamageKiller)
 {
 	//onDeath(cid, corpse, lastHitKiller, mostDamageKiller)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -1022,12 +1202,12 @@ uint32_t CreatureEvent::executeOnDeath(Creature* creature, Item* corpse, Creatur
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeOnDeath] Call stack overflow." << std::endl;
+		std::cout << "[Error - CreatureEvent::executeDeath] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
 
-uint32_t CreatureEvent::executeOnPrepareDeath(Creature* creature, Creature* lastHitKiller, Creature* mostDamageKiller)
+uint32_t CreatureEvent::executePrepareDeath(Creature* creature, Creature* lastHitKiller, Creature* mostDamageKiller)
 {
 	//onPrepareDeath(cid, lastHitKiller, mostDamageKiller)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -1079,7 +1259,7 @@ uint32_t CreatureEvent::executeOnPrepareDeath(Creature* creature, Creature* last
 	}
 	else
 	{
-		std::cout << "[Error - CreatureEvent::executeOnPrepareDeath] Call stack overflow." << std::endl;
+		std::cout << "[Error - CreatureEvent::executePrepareDeath] Call stack overflow." << std::endl;
 		return 0;
 	}
 }

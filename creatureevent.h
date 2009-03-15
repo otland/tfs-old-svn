@@ -38,7 +38,10 @@ enum CreatureEventType_t
 	CREATURE_EVENT_MAIL_RECEIVE,
 	CREATURE_EVENT_THINK,
 	CREATURE_EVENT_STATSCHANGE,
+	CREATURE_EVENT_COMBAT_AREA,
+	CREATURE_EVENT_COMBAT,
 	CREATURE_EVENT_ATTACK,
+	CREATURE_EVENT_CAST,
 	CREATURE_EVENT_KILL,
 	CREATURE_EVENT_DEATH,
 	CREATURE_EVENT_PREPAREDEATH
@@ -99,20 +102,23 @@ class CreatureEvent : public Event
 		void clearEvent();
 
 		//scripting
-		uint32_t executeOnLogin(Player* player);
-		uint32_t executeOnLogout(Player* player);
-		uint32_t executeOnChannelJoin(Player* player, uint16_t channelId, UsersList usersList);
-		uint32_t executeOnChannelLeave(Player* player, uint16_t channelId, UsersList usersList);
-		uint32_t executeOnAdvance(Player* player, skills_t skill, uint32_t oldLevel, uint32_t newLevel);
-		uint32_t executeOnLook(Player* player, const Position& position, uint8_t stackpos);
-		uint32_t executeOnMailSend(Player* player, Player* receiver, Item* item, bool openBox);
-		uint32_t executeOnMailReceive(Player* player, Player* sender, Item* item, bool openBox);
-		uint32_t executeOnThink(Creature* creature, uint32_t interval);
-		uint32_t executeOnStatsChange(Creature* creature, Creature* attacker, StatsChange_t type, CombatType_t combat, int32_t value);
-		uint32_t executeOnAttack(Creature* creature, Creature* target);
-		uint32_t executeOnKill(Creature* creature, Creature* target);
-		uint32_t executeOnDeath(Creature* creature, Item* corpse, Creature* lastHitKiller, Creature* mostDamageKiller);
-		uint32_t executeOnPrepareDeath(Creature* creature, Creature* lastHitKiller, Creature* mostDamageKiller);
+		uint32_t executeLogin(Player* player);
+		uint32_t executeLogout(Player* player);
+		uint32_t executeChannelJoin(Player* player, uint16_t channelId, UsersList usersList);
+		uint32_t executeChannelLeave(Player* player, uint16_t channelId, UsersList usersList);
+		uint32_t executeAdvance(Player* player, skills_t skill, uint32_t oldLevel, uint32_t newLevel);
+		uint32_t executeLook(Player* player, const Position& position, uint8_t stackpos);
+		uint32_t executeMailSend(Player* player, Player* receiver, Item* item, bool openBox);
+		uint32_t executeMailReceive(Player* player, Player* sender, Item* item, bool openBox);
+		uint32_t executeThink(Creature* creature, uint32_t interval);
+		uint32_t executeStatsChange(Creature* creature, Creature* attacker, StatsChange_t type, CombatType_t combat, int32_t value);
+		uint32_t executeCombatArea(const Creature* creature, const Tile* tile, bool isAggressive);
+		uint32_t executeCombat(const Creature* creature, const Creature* target);
+		uint32_t executeAttack(Creature* creature, Creature* target);
+		uint32_t executeCast(Creature* creature, Creature* target = NULL);
+		uint32_t executeKill(Creature* creature, Creature* target);
+		uint32_t executeDeath(Creature* creature, Item* corpse, Creature* lastHitKiller, Creature* mostDamageKiller);
+		uint32_t executePrepareDeath(Creature* creature, Creature* lastHitKiller, Creature* mostDamageKiller);
 		//
 
 	protected:

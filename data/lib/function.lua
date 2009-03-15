@@ -258,18 +258,6 @@ function doWriteLogFile(file, text)
 	file:close()
 end
 
-function isInArea(pos, fromPos, toPos)
-	if(pos.x >= fromPos.x and pos.x <= toPos.x) then
-		if(pos.y >= fromPos.y and pos.y <= toPos.y) then
-			if(pos.z >= fromPos.z and pos.z <= toPos.z) then
-				return TRUE
-			end
-		end
-	end
-
-	return FALSE
-end
-
 function getExperienceForLevel(lv)
 	lv = lv - 1
 	return ((50 * lv * lv * lv) - (150 * lv * lv) + (400 * lv)) / 3

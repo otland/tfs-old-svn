@@ -133,14 +133,14 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 				CreatureEventList mailEvents = tmp->getCreatureEvents(CREATURE_EVENT_MAIL_SEND);
 				for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
 				{
-					if(!(*it)->executeOnMailSend(tmp, player, item, opened) && result)
+					if(!(*it)->executeMailSend(tmp, player, item, opened) && result)
 						result = false;
 				}
 
 				mailEvents = player->getCreatureEvents(CREATURE_EVENT_MAIL_RECEIVE);
 				for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
 				{
-					if(!(*it)->executeOnMailReceive(player, tmp, item, opened) && result)
+					if(!(*it)->executeMailReceive(player, tmp, item, opened) && result)
 						result = false;
 				}
 			}
@@ -164,14 +164,14 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 					CreatureEventList mailEvents = tmp->getCreatureEvents(CREATURE_EVENT_MAIL_SEND);
 					for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
 					{
-						if(!(*it)->executeOnMailSend(tmp, player, item, false) && result)
+						if(!(*it)->executeMailSend(tmp, player, item, false) && result)
 							result = false;
 					}
 
 					mailEvents = player->getCreatureEvents(CREATURE_EVENT_MAIL_RECEIVE);
 					for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
 					{
-						if(!(*it)->executeOnMailReceive(player, tmp, item, false) && result)
+						if(!(*it)->executeMailReceive(player, tmp, item, false) && result)
 							result = false;
 					}
 				}

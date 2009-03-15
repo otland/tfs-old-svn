@@ -79,10 +79,10 @@ class BaseSpell
 {
 	public:
 		BaseSpell() {}
-		virtual ~BaseSpell(){}
+		virtual ~BaseSpell() {}
 
-		virtual bool castSpell(Creature* creature) = 0;
-		virtual bool castSpell(Creature* creature, Creature* target) = 0;
+		virtual bool castSpell(Creature* creature);
+		virtual bool castSpell(Creature* creature, Creature* target);
 };
 
 class CombatSpell : public Event, public BaseSpell

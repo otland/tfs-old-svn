@@ -2909,7 +2909,7 @@
 		<attribute key="slotType" value="ring"/>
 		<attribute key="charges" value="20"/>
 		<attribute key="showcharges" value="1"/>
-		<attribute key="absorbPercentAll" value="25"/>
+		<attribute key="absorbPercentAll" value="20"/>
 	</item>
 	<item id="2165" article="a" name="stealth ring">
 		<attribute key="weight" value="100"/>
@@ -20554,7 +20554,7 @@
 	<item id="9564" article="a" name="large gem"/>
 	<item id="9565" article="a" name="large gem"/>
 	<item id="9573" name="corkscrew stairs">
-		<attribute key="floorchange" value="east"/>
+		<attribute key="floorchange" value="north"/>
 	</item>
 	<item id="9574" name="corkscrew stairs">
 		<attribute key="floorchange" value="down"/>
@@ -21098,6 +21098,11 @@
 		<attribute key="decayTo" value="0"/>
 		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
+	</item>
+	<item id="10015"> <!-- FIXME: article & name -->
+		<attribute key="containerSize" value="0"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="2"/>
 	</item>
 	<item id="10016" article="a" name="batwing hat">
 		<attribute key="weight" value="600"/>

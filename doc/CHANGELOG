@@ -390,10 +390,12 @@
 						* Some new items
 						* Changed preventLoss to preventDrop
 						* slotType-related changes
+						* Fixed reported bugs
 
 				lib/
 					compat.lua
 						* Added doPlayerAddExp
+						* Added isInArea
 					constant.lua
 						* Added reserved subIds
 						* Added map marks
@@ -403,6 +405,7 @@
 						* isPlayerGhost(cid)
 						* Cleanups
 						* Shop-related functions fixes
+						* Removed isInArea, as its same as isInRange
 
 				monster/
 					Mutated/

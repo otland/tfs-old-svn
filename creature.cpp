@@ -215,7 +215,7 @@ void Creature::onThink(uint32_t interval)
 	onAttacking(interval);
 	CreatureEventList thinkEvents = getCreatureEvents(CREATURE_EVENT_THINK);
 	for(CreatureEventList::iterator it = thinkEvents.begin(); it != thinkEvents.end(); ++it)
-		(*it)->executeOnThink(this, interval);
+		(*it)->executeThink(this, interval);
 }
 
 void Creature::onAttacking(uint32_t interval)
@@ -226,7 +226,7 @@ void Creature::onAttacking(uint32_t interval)
 	CreatureEventList attackEvents = getCreatureEvents(CREATURE_EVENT_ATTACK);
 	for(CreatureEventList::iterator it = attackEvents.begin(); it != attackEvents.end(); ++it)
 	{
-		if(!(*it)->executeOnAttack(this, attackedCreature) && attackedCreature)
+		if(!(*it)->executeAttack(this, attackedCreature) && attackedCreature)
 			setAttackedCreature(NULL);
 	}
 
@@ -733,7 +733,7 @@ bool Creature::onDeath()
 	CreatureEventList prepareDeathEvents = getCreatureEvents(CREATURE_EVENT_PREPAREDEATH);
 	for(CreatureEventList::iterator it = prepareDeathEvents.begin(); it != prepareDeathEvents.end(); ++it)
 	{
-		if(!(*it)->executeOnPrepareDeath(this, lastHitCreature, mostDamageCreature))
+		if(!(*it)->executePrepareDeath(this, lastHitCreature, mostDamageCreature))
 			deny = true;
 	}
 
@@ -801,7 +801,7 @@ void Creature::dropCorpse()
 
 	CreatureEventList deathEvents = getCreatureEvents(CREATURE_EVENT_DEATH);
 	for(CreatureEventList::iterator it = deathEvents.begin(); it != deathEvents.end(); ++it)
-		(*it)->executeOnDeath(this, corpse, lastHitCreature, mostDamageCreature);
+		(*it)->executeDeath(this, corpse, lastHitCreature, mostDamageCreature);
 }
 
 bool Creature::getKillers(Creature** _lastHitCreature, Creature** _mostDamageCreature)
@@ -1241,7 +1241,7 @@ bool Creature::onKilledCreature(Creature* target)
 	CreatureEventList killEvents = getCreatureEvents(CREATURE_EVENT_KILL);
 	for(CreatureEventList::iterator it = killEvents.begin(); it != killEvents.end(); ++it)
 	{
-		if(!(*it)->executeOnKill(this, target))
+		if(!(*it)->executeKill(this, target))
 			ret = false;
 	}
 

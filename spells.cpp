@@ -267,6 +267,38 @@ Position Spells::getCasterPosition(Creature* creature, Direction dir)
 	return pos;
 }
 
+bool BaseSpell::castSpell(Creature* creature)
+{
+	if(!creature)
+		return false;
+
+	bool success = true;
+	CreatureEventList castEvents = creature->getCreatureEvents(CREATURE_EVENT_CAST);
+	for(CreatureEventList::iterator it = castEvents.begin(); it != castEvents.end(); ++it)
+	{
+		if(!(*it)->executeCast(creature) && success)
+			success = false;
+	}
+
+	return success;
+}
+
+bool BaseSpell::castSpell(Creature* creature, Creature* target)
+{
+	if(!creature || !target)
+		return false;
+
+	bool success = true;
+	CreatureEventList castEvents = creature->getCreatureEvents(CREATURE_EVENT_CAST);
+	for(CreatureEventList::iterator it = castEvents.begin(); it != castEvents.end(); ++it)
+	{
+		if(!(*it)->executeCast(creature, target) && success)
+			success = false;
+	}
+
+	return success;
+}
+
 CombatSpell::CombatSpell(Combat* _combat, bool _needTarget, bool _needDirection) :
 	Event(&g_spells->getScriptInterface())
 {
@@ -297,6 +329,9 @@ bool CombatSpell::loadScriptCombat()
 
 bool CombatSpell::castSpell(Creature* creature)
 {
+	if(!BaseSpell::castSpell(creature))
+		return false;
+
 	if(isScripted())
 	{
 		LuaVariant var;
@@ -321,6 +356,9 @@ bool CombatSpell::castSpell(Creature* creature)
 
 bool CombatSpell::castSpell(Creature* creature, Creature* target)
 {
+	if(!BaseSpell::castSpell(creature, target))
+		return false;
+
 	if(isScripted())
 	{
 		LuaVariant var;
@@ -1109,6 +1147,9 @@ bool InstantSpell::canThrowSpell(const Creature* creature, const Creature* targe
 
 bool InstantSpell::castSpell(Creature* creature)
 {
+	if(!BaseSpell::castSpell(creature))
+		return false;
+
 	LuaVariant var;
 	if(casterTargetOrDirection)
 	{
@@ -1142,6 +1183,9 @@ bool InstantSpell::castSpell(Creature* creature)
 
 bool InstantSpell::castSpell(Creature* creature, Creature* target)
 {
+	if(!BaseSpell::castSpell(creature, target))
+		return false;
+
 	if(!needTarget)
 		return castSpell(creature);
 
@@ -1914,6 +1958,9 @@ bool RuneSpell::executeUse(Player* player, Item* item, const PositionEx& posFrom
 
 bool RuneSpell::castSpell(Creature* creature)
 {
+	if(!BaseSpell::castSpell(creature))
+		return false;
+
 	LuaVariant var;
 	var.type = VARIANT_NUMBER;
 	var.number = creature->getID();
@@ -1922,6 +1969,9 @@ bool RuneSpell::castSpell(Creature* creature)
 
 bool RuneSpell::castSpell(Creature* creature, Creature* target)
 {
+	if(!BaseSpell::castSpell(creature, target))
+		return false;
+
 	LuaVariant var;
 	var.type = VARIANT_NUMBER;
 	var.number = target->getID();

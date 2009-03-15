@@ -256,7 +256,7 @@ int32_t TalkAction::executeSay(Player* player, const std::string& words, const s
 		{
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[125];
-			sprintf(desc, "%s - %s- %s", creature->getName().c_str(), words.c_str(), param.c_str());
+			sprintf(desc, "%s - %s- %s", player->getName().c_str(), words.c_str(), param.c_str());
 			env->setEventDesc(desc);
 			#endif
 
