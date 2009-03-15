@@ -713,7 +713,7 @@ int32_t WeaponMelee::getElementDamage(const Player* player, const Item* item) co
 		maxValue *= vocation->meleeDamageMultipler;
 
 	maxValue = std::floor(maxValue);
-	return -random_range(0, (int32_t)ret, DISTRO_NORMAL);
+	return -random_range(0, (int32_t)maxValue, DISTRO_NORMAL);
 }
 
 WeaponDistance::WeaponDistance(LuaScriptInterface* _interface):
