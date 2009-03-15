@@ -140,6 +140,7 @@ class ConfigManager
 			RATE_SKILL,
 			RATE_MAGIC,
 			PARTY_DIFFERENCE,
+			CRITICAL_HIT_MUL,
 			LAST_DOUBLE_CONFIG /* this must be the last one */
 		};
 

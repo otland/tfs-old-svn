@@ -118,7 +118,7 @@ enum GamemasterCondition_t
 
 typedef std::set<uint32_t> VIPListSet;
 typedef std::vector<std::pair<uint32_t, Container*> > ContainerVector;
-typedef std::map<uint32_t, Depot*> DepotMap;
+typedef std::map<uint32_t, std::pair<Depot*, bool> > DepotMap;
 typedef std::map<uint32_t, std::string> StorageMap;
 typedef std::map<uint32_t, uint32_t> MuteCountMap;
 typedef std::list<std::string> LearnedInstantSpellList;
@@ -167,8 +167,6 @@ class Player : public Creature, public Cylinder
 		}
 
 		void setPromotionLevel(uint32_t pLevel);
-
-		void setDepotChange(bool b) {depotChange = b;}
 
 		bool hasRequestedOutfit() const {return requestedOutfit;}
 		void hasRequestedOutfit(bool newValue) {requestedOutfit = newValue;}
@@ -334,6 +332,7 @@ class Player : public Creature, public Cylinder
 
 		Depot* getDepot(uint32_t depotId, bool autoCreateDepot);
 		bool addDepot(Depot* depot, uint32_t depotId);
+		void useDepot(uint32_t depotId, bool value);
 
 		virtual bool canSee(const Position& pos) const;
 		virtual bool canSeeCreature(const Creature* creature) const;
@@ -774,7 +773,6 @@ class Player : public Creature, public Cylinder
 		OperatingSystem_t operatingSystem;
 		bool requestedOutfit;
 		bool saving;
-		bool depotChange;
 
 		bool talkState[13];
 		AccountManager_t accountManager;

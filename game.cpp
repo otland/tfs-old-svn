@@ -262,7 +262,8 @@ void Game::cleanMap(uint32_t& count)
 					{
 						for(uint32_t i = 0; i < tile->getThingCount(); ++i)
 						{
-							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
+							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap()
+								&& !item->isNotMoveable() && !item->isScriptProtected())
 							{
 								internalRemoveItem(NULL, item);
 								--i;
@@ -287,7 +288,8 @@ void Game::cleanMap(uint32_t& count)
 					{
 						for(uint32_t i = 0; i < tile->getThingCount(); ++i)
 						{
-							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
+							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap()
+								&& !item->isNotMoveable() && !item->isScriptProtected())
 							{
 								internalRemoveItem(NULL, item);
 								--i;
@@ -314,7 +316,8 @@ void Game::cleanMap(uint32_t& count)
 					{
 						for(uint32_t i = 0; i < tile->getThingCount(); ++i)
 						{
-							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
+							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap()
+								&& !item->isNotMoveable() && !item->isScriptProtected())
 							{
 								internalRemoveItem(NULL, item);
 								--i;
@@ -338,7 +341,8 @@ void Game::cleanMap(uint32_t& count)
 					{
 						for(uint32_t i = 0; i < tile->getThingCount(); ++i)
 						{
-							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap() && !item->isNotMoveable())
+							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap()
+								&& !item->isNotMoveable() && !item->isScriptProtected())
 							{
 								internalRemoveItem(NULL, item);
 								--i;
@@ -369,20 +373,21 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 	}
 
 	uint32_t cleaned = 0;
-	Tile* tile = NULL;
-	Item* item = NULL;
 	for(; (*it) != end && (limit != 0 ? (cleaned < limit) : true); ++(*it), ++cleaned)
 	{
-		tile = (*it)->first;
+		Tile* tile = (*it)->first;
 		for(int32_t i = tile->downItems.size() - 1; i >= 0; --i)
 		{
-			if((item = tile->downItems[i]))
+			if(Item* item = tile->downItems[i])
 			{
 				#ifndef __DEBUG__
 				internalRemoveItem(NULL, item);
 				#else
 				if(internalRemoveItem(NULL, item) != RET_NOERROR)
-					std::cout << "> WARNING: Could not refresh item: " << item->getID() << " at position: " << tile->getPosition() << std::endl;
+				{
+					std::cout << "> WARNING: Could not refresh item: " << item->getID();
+					std::cout << " at position: " << tile->getPosition() << std::endl;
+				}
 				#endif
 			}
 		}
@@ -401,7 +406,8 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 			}
 			else
 			{
-				std::cout << "> WARNING: Could not refresh item: " << item->getID() << " at position: " << tile->getPosition() << std::endl;
+				std::cout << "> WARNING: Could not refresh item: " << item->getID();
+				std::cout << " at position: " << tile->getPosition() << std::endl;
 				delete item;
 			}
 		}
@@ -1857,7 +1863,7 @@ void Game::addMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/)
 
 Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 {
-	if(item->getID() == newId && newCount != 0 && (newCount == -1 || newCount == item->getSubType()))
+	if(item->getID() == newId && (newCount == -1 || (newCount == item->getSubType() && newCount != 0)))
 		return item;
 
 	Cylinder* cylinder = item->getParent();
@@ -1903,22 +1909,19 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 	if(curType.type == newType.type)
 	{
 		//Both items has the same type so we can safely change id/subtype
-		if(newCount == 0 && (item->isStackable() || item->hasCharges()))
+		if(newCount == 0 && (item->isStackable() || item->hasCharges()) && (!getDefaultDuration() || item->getDuration() <= 0))
 		{
-			if(item->isStackable())
+			if(!item->isStackable())
 			{
-				internalRemoveItem(NULL, item);
-				return NULL;
-			}
+				int32_t newItemId = newId;
+				if(curType.id == newType.id)
+					newItemId = curType.decayTo;
 
-			int32_t newItemId = newId;
-			if(curType.id == newType.id)
-				newItemId = curType.decayTo;
-
-			if(newItemId != -1)
-			{
-				item = transformItem(item, newItemId);
-				return item;
+				if(newItemId != -1)
+				{
+					item = transformItem(item, newItemId);
+					return item;
+				}
 			}
 
 			internalRemoveItem(NULL, item);
@@ -1931,10 +1934,9 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 		cylinder->postRemoveNotification(NULL, item, itemIndex, false);
 		if(curType.id != newType.id)
 		{
+			itemId = newId;
 			if(newType.group != curType.group)
 				item->setDefaultSubtype();
-
-			itemId = newId;
 		}
 
 		if(newCount != -1 && newType.hasSubType())
@@ -4662,7 +4664,7 @@ void Game::kickPlayer(uint32_t playerId, bool displayEffect)
 
 bool Game::broadcastMessage(const std::string& text, MessageClasses type)
 {
-	if(type <= MSG_CLASS_FIRST || type >= MSG_CLASS_LAST)
+	if(type < MSG_CLASS_FIRST || type > MSG_CLASS_LAST)
 		return false;
 
 	std::cout << "> Broadcasted message: \"" << text << "\"." << std::endl;

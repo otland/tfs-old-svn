@@ -1522,7 +1522,7 @@ void Creature::setNormalCreatureLight()
 bool Creature::registerCreatureEvent(const std::string& name)
 {
 	CreatureEvent* event = g_creatureEvents->getEventByName(name);
-	if(event)
+	if(!event)
 		return false;
 
 	if(!hasEventRegistered(event->getEventType())) //wasn't added, so set the bit in the bitfield

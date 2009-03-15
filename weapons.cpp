@@ -383,7 +383,7 @@ bool Weapon::useFist(Player* player, Creature* target)
 		int32_t maxDamage = Weapons::getMaxWeaponDamage(player->getLevel(), attackSkill, attackValue, attackFactor);
 		if(random_range(1, 100) <= g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE))
 		{
-			maxDamage <<= 1;
+			maxDamage <<= g_config.getDouble(ConfigManager::CRITICAL_HIT_MUL);
 			player->sendCriticalHit();
 		}
 
@@ -678,7 +678,7 @@ int32_t WeaponMelee::getWeaponDamage(const Player* player, const Creature* targe
 	int32_t maxValue = Weapons::getMaxWeaponDamage(player->getLevel(), attackSkill, attackValue, attackFactor);
 	if(random_range(1, 100) <= g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE))
 	{
-		maxValue <<= 1;
+		maxValue <<= g_config.getDouble(ConfigManager::CRITICAL_HIT_MUL);
 		player->sendCriticalHit();
 	}
 
@@ -980,7 +980,7 @@ int32_t WeaponDistance::getWeaponDamage(const Player* player, const Creature* ta
 	int32_t maxValue = Weapons::getMaxWeaponDamage(player->getLevel(), attackSkill, attackValue, attackFactor);
 	if(random_range(1, 100) <= g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE))
 	{
-		maxValue <<= 1;
+		maxValue <<= g_config.getDouble(ConfigManager::CRITICAL_HIT_MUL);
 		player->sendCriticalHit();
 	}
 

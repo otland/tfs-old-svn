@@ -221,6 +221,7 @@ bool ConfigManager::load()
 	m_confNumber[RATE_STAMINA_GAIN] = getGlobalNumber(L, "rateStaminaGain", 500);
 	m_confBool[STORE_DIRECTION] = getGlobalBool(L, "storePlayerDirection", "no");
 	m_confNumber[PLAYER_DEEPNESS] = getGlobalNumber(L, "playerQueryDeepness", 1);
+	m_confDouble[CRITICAL_HIT_MUL] = getGlobalDouble(L, "criticalHitMultiplier", 1);
 
 	m_loaded = true;
 	return true;

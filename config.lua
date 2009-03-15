@@ -33,6 +33,7 @@
 	killsToRedSkull = 3
 	pzLocked = 60 * 1000
 	criticalHitChance = 7
+	criticalHitMultiplier = 1
 	displayCriticalHitNotify = "no"
 	removeWeaponAmmunition = "yes"
 	removeWeaponCharges = "yes"

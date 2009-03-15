@@ -187,11 +187,11 @@ ItemAttributes()
 	else if(it.charges != 0 && _count != 0)
 		setCharges(_count);
 
-	loadedFromMap = false;
+	loadedFromMap = scriptProtected = false;
 	setDefaultDuration();
 }
 
-Item::Item(const Item &i):
+Item::Item(const Item& i):
 Thing(), ItemAttributes()
 {
 	//std::cout << "Item copy constructor " << this << std::endl;
@@ -272,7 +272,8 @@ uint16_t Item::getSubType() const
 	const ItemType& it = items[getID()];
 	if(it.isFluidContainer() || it.isSplash())
 		return getFluidType();
-	else if(it.charges != 0)
+
+	if(it.charges != 0)
 		return getCharges();
 
 	return count;

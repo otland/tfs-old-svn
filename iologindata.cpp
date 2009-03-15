@@ -900,17 +900,28 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 	if(!saveItems(player, itemList, query_insert))
 		return false;
 
-	if(player->depotChange)
+	itemList.clear();
+	//save depot items
+	std::stringstream s;
+	for(DepotMap::iterator it = player->depots.begin(); it != player->depots.end(); ++it)
 	{
-		//save depot items
+		if(it->second.second)
+		{
+			s << it->first;
+			if(it != player->depots.back())
+				s << ",";
+
+			itemList.push_back(itemBlock(it->first, it->second.first));
+			it->second.second = false;
+		}
+	}
+
+	if(!itemList.empty())
+	{
 		query.str("");
-		query << "DELETE FROM `player_depotitems` WHERE `player_id` = " << player->getGUID();
+		query << "DELETE FROM `player_depotitems` WHERE `player_id` = " << player->getGUID() << " AND `pid` IN (" << s.str() << ")";
 		if(!db->executeQuery(query.str()))
 			return false;
-
-		itemList.clear();
-		for(DepotMap::iterator it = player->depots.begin(); it != player->depots.end(); ++it)
-			itemList.push_back(itemBlock(it->first, it->second));
 
 		query_insert.setQuery("INSERT INTO `player_depotitems` (`player_id`, `pid`, `sid`, `itemtype`, `count`, `attributes`) VALUES ");
 		if(!saveItems(player, itemList, query_insert))

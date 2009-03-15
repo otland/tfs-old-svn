@@ -186,7 +186,6 @@ Creature()
 
 	requestedOutfit = false;
 	saving = true;
-	depotChange = false;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 
 	playerCount++;
@@ -207,7 +206,7 @@ Player::~Player()
 	}
 
 	for(DepotMap::iterator it = depots.begin(); it != depots.end(); it++)
-		it->second->releaseThing2();
+		it->second.first->releaseThing2();
 
 	setWriteItem(NULL);
 	setEditHouse(NULL);
@@ -923,27 +922,25 @@ Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
 {
 	DepotMap::iterator it = depots.find(depotId);
 	if(it != depots.end())
-		return it->second;
+		return it->second.first;
 
 	//create a new depot?
 	if(autoCreateDepot)
 	{
-		Depot* depot = NULL;
-		Item* tmpDepot = Item::CreateItem(ITEM_LOCKER1);
-		if(tmpDepot->getContainer() && (depot = tmpDepot->getContainer()->getDepot()))
+		Item* locker = Item::CreateItem(ITEM_LOCKER1);
+		if(Container* container = locker->getContainer())
 		{
-			Item* depotChest = Item::CreateItem(ITEM_DEPOT);
-			depot->__internalAddThing(depotChest);
+			if(Depot* depot = container->getDepot())
+			{
+				container->__internalAddThing(Item::CreateItem(ITEM_DEPOT));
+				addDepot(depot, depotId);
+				return depot;
+			}
+		}
 
-			addDepot(depot, depotId);
-			return depot;
-		}
-		else
-		{
-			g_game.FreeThing(tmpDepot);
-			std::cout << "Failure: Creating a new depot with id: " << depotId <<
-				", for player: " << getName() << std::endl;
-		}
+		g_game.FreeThing(tmpDepot);
+		std::cout << "Failure: Creating a new depot with id: " << depotId <<
+			", for player: " << getName() << std::endl;
 	}
 
 	return NULL;
@@ -954,9 +951,16 @@ bool Player::addDepot(Depot* depot, uint32_t depotId)
 	if(getDepot(depotId, false))
 		return false;
 
-	depots[depotId] = depot;
+	depots[depotId] = std::make_pair(depot, false);
 	depot->setMaxDepotLimit(maxDepotLimit);
 	return true;
+}
+
+void Player::useDepot(uint32_t depotId, bool value)
+{
+	DepotMap::iterator it = depots.find(depotId);
+	if(it != depots.end())
+		depots[depotId] = std::make_pair(it->second.first, value);
 }
 
 void Player::sendCancelMessage(ReturnValue message) const
