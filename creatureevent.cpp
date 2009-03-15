@@ -870,7 +870,7 @@ uint32_t CreatureEvent::executeStatsChange(Creature* creature, Creature* attacke
 	}
 }
 
-uint32_t CreatureEvent::executeCombatArea(const Creature* creature, const Tile* tile, bool isAggressive)
+uint32_t CreatureEvent::executeCombatArea(Creature* creature, Tile* tile, bool isAggressive)
 {
 	//onAreaCombat(cid, tileItem, tilePosition, isAggressive)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -928,7 +928,7 @@ uint32_t CreatureEvent::executeCombatArea(const Creature* creature, const Tile* 
 	}
 }
 
-uint32_t CreatureEvent::executeCombat(const Creature* creature, const Creature* target)
+uint32_t CreatureEvent::executeCombat(Creature* creature, Creature* target)
 {
 	//onCombat(cid, target)
 	if(m_scriptInterface->reserveScriptEnv())

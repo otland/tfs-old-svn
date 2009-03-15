@@ -21,6 +21,7 @@
 #ifndef __OTSERV_CREATUREEVENT_H__
 #define __OTSERV_CREATUREEVENT_H__
 
+#include "tile.h"
 #include "enums.h"
 #include "luascript.h"
 #include "baseevents.h"
@@ -112,8 +113,8 @@ class CreatureEvent : public Event
 		uint32_t executeMailReceive(Player* player, Player* sender, Item* item, bool openBox);
 		uint32_t executeThink(Creature* creature, uint32_t interval);
 		uint32_t executeStatsChange(Creature* creature, Creature* attacker, StatsChange_t type, CombatType_t combat, int32_t value);
-		uint32_t executeCombatArea(const Creature* creature, const Tile* tile, bool isAggressive);
-		uint32_t executeCombat(const Creature* creature, const Creature* target);
+		uint32_t executeCombatArea(Creature* creature, Tile* tile, bool isAggressive);
+		uint32_t executeCombat(Creature* creature, Creature* target);
 		uint32_t executeAttack(Creature* creature, Creature* target);
 		uint32_t executeCast(Creature* creature, Creature* target = NULL);
 		uint32_t executeKill(Creature* creature, Creature* target);
