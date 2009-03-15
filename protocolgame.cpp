@@ -525,7 +525,8 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	OperatingSystem_t operatingSystem = msg.GetU16(), version = msg.GetU16();
+	OperatingSystem_t operatingSystem = (OperatingSystem_t)msg.GetU16();
+	uint16_t version = msg.GetU16();
 	if(!RSA_decrypt(g_otservRSA, msg))
 	{
 		getConnection()->closeConnection();
