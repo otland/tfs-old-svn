@@ -1909,7 +1909,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 	if(curType.type == newType.type)
 	{
 		//Both items has the same type so we can safely change id/subtype
-		if(newCount == 0 && (item->isStackable() || item->hasCharges()) && (!getDefaultDuration() || item->getDuration() <= 0))
+		if(newCount == 0 && (item->isStackable() || item->hasCharges()) && (!item->getDefaultDuration() || item->getDuration() <= 0))
 		{
 			if(!item->isStackable())
 			{
