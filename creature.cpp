@@ -575,9 +575,7 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 		//update map cache
 		if(isMapLoaded)
 		{
-			if(teleport || oldPos.z != newPos.z)
-				updateMapCache();
-			else
+			if(!teleport && oldPos.z == newPos.z)
 			{
 				const Position& myPos = getPosition();
 				if(oldPos.y > newPos.y) //north
@@ -657,6 +655,9 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 				validateMapCache();
 #endif
 			}
+			else
+				updateMapCache();
+
 		}
 	}
 	else if(isMapLoaded)
@@ -686,11 +687,10 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 	{
 		if(newPos.z == oldPos.z && canSee(attackedCreature->getPosition()))
 		{
+			onAttackedCreatureChangeZone(attackedCreature->getZone());
 			if(hasExtraSwing()) //our target is moving lets see if we can get in hit
 				Dispatcher::getDispatcher().addTask(createTask(
 					boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
-
-			onAttackedCreatureChangeZone(attackedCreature->getZone());
 		}
 		else
 			onCreatureDisappear(attackedCreature, false);
@@ -705,7 +705,6 @@ void Creature::onCreatureChangeVisible(const Creature* creature, bool visible)
 bool Creature::onDeath()
 {
 	Creature* lastHitCreatureMaster = NULL;
-	Creature* mostDamageCreatureMaster = NULL;
 	bool lastHitKiller = false, mostDamageKiller = false;
 	if(getKillers(&lastHitCreature, &mostDamageCreature))
 	{
@@ -715,15 +714,10 @@ bool Creature::onDeath()
 			lastHitKiller = true;
 		}
 
-		if(mostDamageCreature)
-		{
-			mostDamageCreatureMaster = mostDamageCreature->getMaster();
-			bool isNotLastHitMaster = (mostDamageCreature != lastHitCreatureMaster);
-			bool isNotMostDamageMaster = (lastHitCreature != mostDamageCreatureMaster);
-			bool isNotSameMaster = !lastHitCreatureMaster || (mostDamageCreatureMaster != lastHitCreatureMaster);
-			if(mostDamageCreature != lastHitCreature && isNotLastHitMaster && isNotMostDamageMaster && isNotSameMaster)
-				mostDamageKiller = true;
-		}
+		if(mostDamageCreature && mostDamageCreature != lastHitCreature && mostDamageCreature != lastHitCreatureMaster
+			&& lastHitCreature != mostDamageCreatureMaster && (!lastHitCreatureMaster ||
+			mostDamageCreature->getMaster() != lastHitCreatureMaster))
+			mostDamageKiller = true;
 	}
 
 	bool deny = false;
