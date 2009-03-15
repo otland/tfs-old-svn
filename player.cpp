@@ -186,6 +186,7 @@ Creature()
 
 	requestedOutfit = false;
 	saving = true;
+	depotChange = false;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 
 	playerCount++;

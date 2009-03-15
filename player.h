@@ -168,6 +168,8 @@ class Player : public Creature, public Cylinder
 
 		void setPromotionLevel(uint32_t pLevel);
 
+		void setDepotChange(bool b) {depotChange = b;}
+
 		bool hasRequestedOutfit() const {return requestedOutfit;}
 		void hasRequestedOutfit(bool newValue) {requestedOutfit = newValue;}
 
@@ -772,6 +774,7 @@ class Player : public Creature, public Cylinder
 		OperatingSystem_t operatingSystem;
 		bool requestedOutfit;
 		bool saving;
+		bool depotChange;
 
 		bool talkState[13];
 		AccountManager_t accountManager;
