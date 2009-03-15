@@ -938,7 +938,7 @@ Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
 			}
 		}
 
-		g_game.FreeThing(tmpDepot);
+		g_game.FreeThing(locker);
 		std::cout << "Failure: Creating a new depot with id: " << depotId <<
 			", for player: " << getName() << std::endl;
 	}
