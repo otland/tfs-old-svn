@@ -1076,25 +1076,27 @@ void DatabaseManager::checkTriggers()
 	{
 		case DATABASE_ENGINE_MYSQL:
 		{
-			std::string triggerName[5] =
+			std::string triggerName[6] =
 			{
 				"ondelete_accounts",
 				"oncreate_guilds",
 				"ondelete_guilds",
 				"oncreate_players",
-				"ondelete_players"
+				"ondelete_players",
+				"ondelete_player_depotitems"
 			};
 
-			std::string triggerStatement[5] =
+			std::string triggerStatement[6] =
 			{
 				"CREATE TRIGGER `ondelete_accounts` BEFORE DELETE ON `accounts` FOR EACH ROW BEGIN DELETE FROM `bans` WHERE `type` != 1 AND `type` != 2 AND `value` = OLD.`id`; END;",
 				"CREATE TRIGGER `oncreate_guilds` AFTER INSERT ON `guilds` FOR EACH ROW BEGIN INSERT INTO `guild_ranks` (`name`, `level`, `guild_id`) VALUES ('the Leader', 3, NEW.`id`); INSERT INTO `guild_ranks` (`name`, `level`, `guild_id`) VALUES ('a Vice-Leader', 2, NEW.`id`); INSERT INTO `guild_ranks` (`name`, `level`, `guild_id`) VALUES ('a Member', 1, NEW.`id`); END;",
 				"CREATE TRIGGER `ondelete_guilds` BEFORE DELETE ON `guilds` FOR EACH ROW BEGIN UPDATE `players` SET `guildnick` = '', `rank_id` = 0 WHERE `rank_id` IN (SELECT `id` FROM `guild_ranks` WHERE `guild_id` = OLD.`id`); END;",
 				"CREATE TRIGGER `oncreate_players` AFTER INSERT ON `players` FOR EACH ROW BEGIN INSERT INTO `player_skills` (`player_id`, `skillid`, `value`) VALUES (NEW.`id`, 0, 10); INSERT INTO `player_skills` (`player_id`, `skillid`, `value`) VALUES (NEW.`id`, 1, 10); INSERT INTO `player_skills` (`player_id`, `skillid`, `value`) VALUES (NEW.`id`, 2, 10); INSERT INTO `player_skills` (`player_id`, `skillid`, `value`) VALUES (NEW.`id`, 3, 10); INSERT INTO `player_skills` (`player_id`, `skillid`, `value`) VALUES (NEW.`id`, 4, 10); INSERT INTO `player_skills` (`player_id`, `skillid`, `value`) VALUES (NEW.`id`, 5, 10); INSERT INTO `player_skills` (`player_id`, `skillid`, `value`) VALUES (NEW.`id`, 6, 10); END;",
-				"CREATE TRIGGER `ondelete_players` BEFORE DELETE ON `players` FOR EACH ROW BEGIN DELETE FROM `bans` WHERE `type` = 2 AND `value` = OLD.`id`; UPDATE `houses` SET `owner` = 0 WHERE `owner` = OLD.`id`; END;"
+				"CREATE TRIGGER `ondelete_players` BEFORE DELETE ON `players` FOR EACH ROW BEGIN DELETE FROM `bans` WHERE `type` = 2 AND `value` = OLD.`id`; UPDATE `houses` SET `owner` = 0 WHERE `owner` = OLD.`id`; END;",
+				"CREATE TRIGGER `ondelete_player_depotitems` BEFORE DELETE ON `player_depotitems` FOR EACH ROW BEGIN DELETE FROM `player_depotitems` WHERE `pid` = OLD.`sid`; END;"
 			};
 
-			for(int32_t i = 0; i < 5; i++)
+			for(int32_t i = 0; i < 6; i++)
 			{
 				if(!triggerExists(triggerName[i]))
 				{
@@ -1108,8 +1110,9 @@ void DatabaseManager::checkTriggers()
 
 		case DATABASE_ENGINE_SQLITE:
 		{
-			std::string triggerName[28] =
+			std::string triggerName[29] =
 			{
+				"onupdate_player_depotitems",
 				"oncreate_guilds",
 				"oncreate_players",
 				"ondelete_accounts",
@@ -1140,8 +1143,9 @@ void DatabaseManager::checkTriggers()
 				"onupdate_player_spells"
 			};
 
-			std::string triggerStatement[28] =
+			std::string triggerStatement[29] =
 			{
+				"CREATE TRIGGER \"ondelete_player_depotitems\" BEFORE DELETE ON \"player_depotitems\" FOR EACH ROW BEGIN DELETE FROM \"player_depotitems\" WHERE \"pid\" = OLD.\"sid\"; END;",
 				"CREATE TRIGGER \"oncreate_guilds\" AFTER INSERT ON \"guilds\" BEGIN INSERT INTO \"guild_ranks\" (\"name\", \"level\", \"guild_id\") VALUES (\"the Leader\", 3, NEW.\"id\"); INSERT INTO \"guild_ranks\" (\"name\", \"level\", \"guild_id\") VALUES (\"a Vice-Leader\", 2, NEW.\"id\"); INSERT INTO \"guild_ranks\" (\"name\", \"level\", \"guild_id\") VALUES (\"a Member\", 1, NEW.\"id\"); END;",
 				"CREATE TRIGGER \"oncreate_players\" AFTER INSERT ON \"players\" BEGIN INSERT INTO \"player_skills\" (\"player_id\", \"skillid\", \"value\") VALUES (NEW.\"id\", 0, 10); INSERT INTO \"player_skills\" (\"player_id\", \"skillid\", \"value\") VALUES (NEW.\"id\", 1, 10); INSERT INTO \"player_skills\" (\"player_id\", \"skillid\", \"value\") VALUES (NEW.\"id\", 2, 10); INSERT INTO \"player_skills\" (\"player_id\", \"skillid\", \"value\") VALUES (NEW.\"id\", 3, 10); INSERT INTO \"player_skills\" (\"player_id\", \"skillid\", \"value\") VALUES (NEW.\"id\", 4, 10); INSERT INTO \"player_skills\" (\"player_id\", \"skillid\", \"value\") VALUES (NEW.\"id\", 5, 10); INSERT INTO \"player_skills\" (\"player_id\", \"skillid\", \"value\") VALUES (NEW.\"id\", 6, 10); END;",
 				"CREATE TRIGGER \"ondelete_accounts\" BEFORE DELETE ON \"accounts\" FOR EACH ROW BEGIN DELETE FROM \"players\" WHERE \"account_id\" = OLD.\"id\"; DELETE FROM \"bans\" WHERE \"type\" != 1 AND \"type\" != 2 AND \"value\" = OLD.\"id\"; END;",
@@ -1172,7 +1176,7 @@ void DatabaseManager::checkTriggers()
 				"CREATE TRIGGER \"onupdate_player_spells\" BEFORE UPDATE ON \"player_spells\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'UPDATE on table \"player_spells\" violates foreign: \"player_id\"') WHERE NEW.\"player_id\" IS NULL OR (SELECT \"id\" FROM \"players\" WHERE \"id\" = NEW.\"player_id\") IS NULL; END;"
 			};
 
-			for(int32_t i = 0; i < 28; i++)
+			for(int32_t i = 0; i < 29; i++)
 			{
 				if(!triggerExists(triggerName[i]))
 				{

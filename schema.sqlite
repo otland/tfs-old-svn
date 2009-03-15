@@ -294,6 +294,14 @@ CREATE TABLE "bans" (
 	"statement" VARCHAR(255) NOT NULL DEFAULT ''
 );
 
+CREATE TRIGGER "ondelete_player_depotitems"
+BEFORE DELETE
+ON "player_depotitems"
+FOR EACH ROW
+BEGIN
+	DELETE FROM "player_depotitems" WHERE "pid" = OLD."sid";
+END;
+
 CREATE TRIGGER "oncreate_guilds"
 AFTER INSERT ON "guilds"
 BEGIN
