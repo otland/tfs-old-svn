@@ -159,10 +159,10 @@ int64_t Creature::getTimeSinceLastMove() const
 
 int64_t Creature::getSleepTicks() const
 {
-	if(lastStep)
-		return (int64_t)getStepDuration() - (OTSYS_TIME() - lastStep) + extraStepDuration;
+	if(!lastStep)
+		return 0;
 
-	return 0;
+	return (int64_t)getStepDuration() - (OTSYS_TIME() - lastStep) + extraStepDuration;
 }
 
 int32_t Creature::getWalkDelay(Direction dir) const
@@ -244,11 +244,8 @@ void Creature::onWalk()
 	if(getSleepTicks() <= 0)
 	{
 		Direction dir;
-		if(getNextStep(dir))
-		{
-			if(g_game.internalMoveCreature(this, dir, FLAG_IGNOREFIELDDAMAGE) != RET_NOERROR)
-				forceUpdateFollowPath = true;
-		}
+		if(getNextStep(dir) && g_game.internalMoveCreature(this, dir, FLAG_IGNOREFIELDDAMAGE) != RET_NOERROR)
+			forceUpdateFollowPath = true;
 	}
 
 	if(listWalkDir.empty())
@@ -331,6 +328,7 @@ void Creature::stopEventWalk()
 	if(eventWalk != 0)
 	{
 		Scheduler::getScheduler().stopEvent(eventWalk);
+
 		eventWalk = 0;
 		if(!listWalkDir.empty())
 		{
@@ -347,7 +345,7 @@ void Creature::updateMapCache()
 	{
 		for(int32_t x = -((mapWalkWidth - 1) / 2); x <= ((mapWalkWidth - 1) / 2); ++x)
 		{
-			Position pos(myPos.x + x, myPos.y + y, myPos.z);
+			const Position& pos(myPos.x + x, myPos.y + y, myPos.z);
 			if(Tile* tile = g_game.getTile(pos))
 				updateTileCache(tile, pos);
 		}
@@ -368,10 +366,9 @@ void Creature::validateMapCache()
 
 void Creature::updateTileCache(const Tile* tile, int32_t dx, int32_t dy)
 {
-	if((std::abs(dx) <= (mapWalkWidth - 1) / 2) &&
-		(std::abs(dy) <= (mapWalkHeight - 1) / 2))
-		localMapCache[int32_t((mapWalkWidth - 1) / 2) + dx][int32_t((mapWalkHeight - 1) / 2) + dy] = (tile && tile->__queryAdd(
-			0, this, 1, FLAG_PATHFINDING | FLAG_IGNOREFIELDDAMAGE) == RET_NOERROR);
+	if((std::abs(dx) <= (mapWalkWidth - 1) / 2) && (std::abs(dy) <= (mapWalkHeight - 1) / 2))
+		localMapCache[int32_t((mapWalkWidth - 1) / 2) + dx][int32_t((mapWalkHeight - 1) / 2) + dy] = (tile
+			&& tile->__queryAdd(0, this, 1, FLAG_PATHFINDING | FLAG_IGNOREFIELDDAMAGE) == RET_NOERROR);
 #ifdef __DEBUG__
 	else
 		std::cout << "Creature::updateTileCache out of range." << std::endl;
