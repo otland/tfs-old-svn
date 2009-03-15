@@ -345,7 +345,7 @@ void Creature::updateMapCache()
 	{
 		for(int32_t x = -((mapWalkWidth - 1) / 2); x <= ((mapWalkWidth - 1) / 2); ++x)
 		{
-			const Position& pos(myPos.x + x, myPos.y + y, myPos.z);
+			const Position& pos = Position(myPos.x + x, myPos.y + y, myPos.z);
 			if(Tile* tile = g_game.getTile(pos))
 				updateTileCache(tile, pos);
 		}
@@ -704,20 +704,24 @@ void Creature::onCreatureChangeVisible(const Creature* creature, bool visible)
 
 bool Creature::onDeath()
 {
-	Creature* lastHitCreatureMaster = NULL;
 	bool lastHitKiller = false, mostDamageKiller = false;
 	if(getKillers(&lastHitCreature, &mostDamageCreature))
 	{
+		Creature* lastHitCreatureMaster = NULL;
 		if(lastHitCreature)
 		{
 			lastHitCreatureMaster = lastHitCreature->getMaster();
 			lastHitKiller = true;
 		}
 
-		if(mostDamageCreature && mostDamageCreature != lastHitCreature && mostDamageCreature != lastHitCreatureMaster
-			&& lastHitCreature != mostDamageCreatureMaster && (!lastHitCreatureMaster ||
-			mostDamageCreature->getMaster() != lastHitCreatureMaster))
-			mostDamageKiller = true;
+		if(mostDamageCreature)
+		{
+			Creature* mostDamageCreatureMaster = mostDamageCreature->getMaster();
+			if(mostDamageCreature != lastHitCreature && mostDamageCreature != lastHitCreatureMaster
+				&& lastHitCreature != mostDamageCreatureMaster && (!lastHitCreatureMaster ||
+				mostDamageCreatureMaster != lastHitCreatureMaster))
+				mostDamageKiller = true;
+		}
 	}
 
 	bool deny = false;
