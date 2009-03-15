@@ -902,26 +902,23 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 
 	itemList.clear();
 	//save depot items
-	std::stringstream s;
-	for(DepotMap::iterator it = player->depots.begin(); it != player->depots.end(); )
+	std::stringstream ss;
+	for(DepotMap::iterator it = player->depots.begin(); it != player->depots.end(); ++it)
 	{
-		bool saving = it->second.second;
-		if(saving)
+		if(it->second.second)
 		{
-			itemList.push_back(itemBlock(it->first, it->second.first));
-			s << it->first;
 			it->second.second = false;
+			ss << it->first << ",";
+			itemList.push_back(itemBlock(it->first, it->second.first));
 		}
-
-		++it;
-		if(saving && it != player->depots.end())
-			s << ",";
 	}
 
-	if(!itemList.empty())
+	std::string s = ss.str();
+	size_t size = s.length();
+	if(size > 0)
 	{
 		query.str("");
-		query << "DELETE FROM `player_depotitems` WHERE `player_id` = " << player->getGUID() << " AND `pid` IN (" << s.str() << ")";
+		query << "DELETE FROM `player_depotitems` WHERE `player_id` = " << player->getGUID() << " AND `pid` IN (" << s.substr(0, size) << ")";
 		if(!db->executeQuery(query.str()))
 			return false;
 
