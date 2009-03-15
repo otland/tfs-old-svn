@@ -905,16 +905,17 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 	std::stringstream s;
 	for(DepotMap::iterator it = player->depots.begin(); it != player->depots.end(); )
 	{
-		if(it->second.second)
+		bool saving = it->second.second;
+		if(saving)
 		{
 			itemList.push_back(itemBlock(it->first, it->second.first));
 			s << it->first;
-
 			it->second.second = false;
-			++it;
-			if(it != player->depots.end())
-				s << ",";
 		}
+
+		++it;
+		if(saving && it != player->depots.end())
+			s << ",";
 	}
 
 	if(!itemList.empty())
