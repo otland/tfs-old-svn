@@ -5382,16 +5382,18 @@ Highscore Game::getHighscore(uint16_t skill)
 
 int32_t Game::getMotdNum()
 {
-	if(lastMotdText == g_config.getString(ConfigManager::MOTD))
-		return lastMotdNum;
+	if(lastMotdText != g_config.getString(ConfigManager::MOTD))
+	{
+		Database* db = Database::getInstance();
+		lastMotdText = g_config.getString(ConfigManager::MOTD);
+		lastMotdNum++;
 
-	Database* db = Database::getInstance();
-	lastMotdText = g_config.getString(ConfigManager::MOTD);
-	lastMotdNum++;
+		DBQuery query;
+		query << "INSERT INTO `server_motd` (`id`, `world_id`, `text`) VALUES (" << lastMotdNum << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << db->escapeString(lastMotdText) << ");";
+		db->executeQuery(query.str());
+	}
 
-	DBQuery query;
-	query << "INSERT INTO `server_motd` (`id`, `world_id`, `text`) VALUES (" << lastMotdNum << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << db->escapeString(lastMotdText) << ");";
-	db->executeQuery(query.str());
+	return lastMotdNum;
 }
 
 void Game::loadMotd()
