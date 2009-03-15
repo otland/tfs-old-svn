@@ -215,10 +215,10 @@ ReturnValue Combat::canDoCombat(const Creature* caster, const Tile* tile, bool i
 	if(caster)
 	{
 		bool success = true;
-		CreatureEventList areaCombatEvents = caster->getCreatureEvents(CREATURE_EVENT_AREA_COMBAT);
-		for(CreatureEventList::iterator it = areaCombatEvents.begin(); it != areaCombatEvents.end(); ++it)
+		CreatureEventList combatAreaEvents = const_cast<Creature*>(caster)->getCreatureEvents(CREATURE_EVENT_COMBAT_AREA);
+		for(CreatureEventList::iterator it = combatAreaEvents.begin(); it != combatAreaEvents.end(); ++it)
 		{
-			if(!(*it)->executeAreaCombat(caster, tile, isAggressive) && success)
+			if(!(*it)->executeCombatArea(caster, tile, isAggressive) && success)
 				success = false;
 		}
 
@@ -249,7 +249,7 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 		return RET_NOERROR;
 
 	bool success = true;
-	CreatureEventList combatEvents = attacker->getCreatureEvents(CREATURE_EVENT_COMBAT);
+	CreatureEventList combatEvents = const_cast<Creature*>(attacker)->getCreatureEvents(CREATURE_EVENT_COMBAT);
 	for(CreatureEventList::iterator it = combatEvents.begin(); it != combatEvents.end(); ++it)
 	{
 		if(!(*it)->executeCombat(attacker, target) && success)
