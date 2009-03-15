@@ -320,9 +320,7 @@ void Creature::addEventWalk()
 	{
 		int64_t ticks = getEventStepTicks();
 		if(ticks > 0)
-		{
 			eventWalk = Scheduler::getScheduler().addEvent(createSchedulerTask(ticks, boost::bind(&Game::checkCreatureWalk, &g_game, getID())));
-		}
 	}
 }
 
