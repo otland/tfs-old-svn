@@ -38,7 +38,7 @@
 	<monster name="Avalanche" file="Arena/scrapper/avalanche.xml"/>
 	<monster name="Drasilla" file="Arena/scrapper/drasilla.xml"/>
 	<monster name="Grimgor Guteater" file="Arena/scrapper/grimgor guteater.xml"/>
-	<monster name="Keebosh the Exile" file="Arena/scrapper/kreebosh the exile.xml"/>
+	<monster name="Kreebosh the Exile" file="Arena/scrapper/kreebosh the exile.xml"/>
 	<monster name="Slim" file="Arena/scrapper/slim.xml"/>
 	<monster name="Spirit of Earth" file="Arena/scrapper/spirit of earth.xml"/>
 	<monster name="Spirit of Fire" file="Arena/scrapper/spirit of fire.xml"/>
