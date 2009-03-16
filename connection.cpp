@@ -384,7 +384,9 @@ bool Connection::send(OutputMessage_ptr msg)
 		return false;
 	}
 
-	msg->getProtocol()->onSendMessage(msg);
+	if(msg->getProtocol())
+		msg->getProtocol()->onSendMessage(msg);
+
 	if(m_pendingWrite == 0)
 	{
 		#ifdef __DEBUG_NET_DETAIL__
@@ -445,6 +447,7 @@ void Connection::onWriteOperation(OutputMessage_ptr msg, const boost::system::er
 			{
 				OutputMessage_ptr msg = m_outputQueue.front();
 				m_outputQueue.pop_front();
+
 				m_pendingWrite--;
 				internalSend(msg);
 				#ifdef __DEBUG_NET_DETAIL__
@@ -454,11 +457,8 @@ void Connection::onWriteOperation(OutputMessage_ptr msg, const boost::system::er
 
 			m_pendingWrite--;
 		}
-		else
-		{
+		else // Pending operations counter is 0, but we are getting a notification!
 			std::cout << "Error: [Connection::onWriteOperation] Getting unexpected notification!" << std::endl;
-			// Error. Pending operations counter is 0, but we are getting a notification!!
-		}
 	}
 	else
 	{
@@ -470,6 +470,7 @@ void Connection::onWriteOperation(OutputMessage_ptr msg, const boost::system::er
 	{
 		if(!closingConnection())
 			OTSYS_THREAD_UNLOCK(m_connectionLock, "");
+
 		return;
 	}
 
@@ -483,16 +484,10 @@ void Connection::handleWriteError(const boost::system::error_code& error)
 	#endif
 
 	if(error == boost::asio::error::operation_aborted)
-	{
-		//Operation aborted because connection will be closed
-		//Do NOT call closeConnection() from here
-	}
+		{} //Operation aborted because connection will be closed, do NOT call closeConnection() from here
 	else if(error == boost::asio::error::eof || error == boost::asio::error::connection_reset
-		|| error == boost::asio::error::connection_aborted)
-	{
-		//No more to read or connection closed remotely
+		|| error == boost::asio::error::connection_aborted) //No more to read or connection closed remotely
 		closeConnection();
-	}
 	else
 	{
 		PRINT_ASIO_ERROR("Writting");
