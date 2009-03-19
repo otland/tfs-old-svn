@@ -814,8 +814,8 @@ void Combat::doCombatMana(Creature* caster, Creature* target, int32_t minChange,
 	}
 }
 
-void Combat::doCombatMana(Creature* caster, const Position& pos,
-	const AreaCombat* area, int32_t minChange, int32_t maxChange, const CombatParams& params)
+void Combat::doCombatMana(Creature* caster, const Position& pos, const AreaCombat* area,
+	int32_t minChange, int32_t maxChange, const CombatParams& params)
 {
 	Combat2Var var;
 	var.minChange = minChange;

@@ -249,17 +249,18 @@ void Connection::acceptConnection()
 	m_pendingRead++;
 	if(ConnectionManager::getInstance()->checkLastProtocol(getIP(), 0x01)) //TODO: protocolId...
 	{
-		//write 14 841 bytes, where 6 of them will be later used by client in parseFirstPacket after sending password
-		//this is a very, very bad method now...
-		//we need to unset the lastProtocol from IpConnectionMap pool somewhere just after the connection gets closed
-		//@done, need testing.
-		//u16, u16, u32, u32, u16?
-		OutputMessage_ptr output;
+		/* this is a very, very bad method now...
+		 * we need to unset the lastProtocol from IpConnectionMap pool somewhere just after the connection gets closed
+		 * @done - need testing.
+		 * write length + 12 bytes, where 6 of them will be later sent back by client after sending password
+		 * @in progress - what are these bytes? :|
+		 */
+		/*OutputMessage_ptr output;
 		output->AddU16(12);
 		output->AddU32(0x00);
 		output->AddU32(0x00);
 		output->AddU32(0x00);
-		send(output);
+		send(output);*/
 	}
 
 	boost::asio::async_read(m_socket, boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),
@@ -307,8 +308,8 @@ void Connection::parsePacket(const boost::system::error_code& error)
 	if(!error)
 	{
 		// Checksum
-		uint32_t receivedChecksum = m_msg.PeekU32(), checksum = 0;
 		int32_t length = m_msg.getMessageLength() - m_msg.getReadPos() - 4;
+		uint32_t receivedChecksum = m_msg.PeekU32(), checksum = 0;
 		if(length)
 			checksum = adlerChecksum((uint8_t*)(m_msg.getBuffer() + m_msg.getReadPos() + 4), length);
 
