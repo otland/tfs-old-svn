@@ -44,8 +44,8 @@ ConnectionManager::ConnectionManager()
 	OTSYS_THREAD_LOCKVARINIT(m_connectionManagerLock);
 
 	maxLoginTries = g_config.getNumber(ConfigManager::LOGIN_TRIES);
-	retryTimeout = (uint32_t)g_config.getNumber(ConfigManager::RETRY_TIMEOUT) / 1000;
-	loginTimeout = (uint32_t)g_config.getNumber(ConfigManager::LOGIN_TIMEOUT) / 1000;
+	retryTimeout = (int32_t)g_config.getNumber(ConfigManager::RETRY_TIMEOUT) / 1000;
+	loginTimeout = (int32_t)g_config.getNumber(ConfigManager::LOGIN_TIMEOUT) / 1000;
 }
 
 Connection* ConnectionManager::createConnection(boost::asio::io_service& io_service)
@@ -67,6 +67,10 @@ void ConnectionManager::releaseConnection(Connection* connection)
 	#endif
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
 
+	IpConnectionMap::iterator it = ipConnectionMap.find(connection->getIP());
+	if(it != ipConnectionMap.end())
+		it->second.lastProtocol == 0x00; //TODO: protocolIds as constant enum?
+
 	std::list<Connection*>::iterator it = std::find(m_connections.begin(), m_connections.end(), connection);
 	if(it != m_connections.end())
 		m_connections.erase(it);
@@ -81,13 +85,8 @@ bool ConnectionManager::isDisabled(uint32_t clientIp)
 		return false;
 
 	IpConnectionMap::const_iterator it = ipConnectionMap.find(clientIp);
-	if(it != ipConnectionMap.end())
-	{
-		if((it->second.loginsAmount >= maxLoginTries) && ((uint64_t)time(NULL) < it->second.lastLogin + loginTimeout))
-			return true;
-	}
-
-	return false;
+	return it != ipConnectionMap.end() && it->second.loginsAmount >= maxLoginTries
+		&& (uint64_t)time(NULL) < it->second.lastLogin + loginTimeout;
 }
 
 void ConnectionManager::addAttempt(uint32_t clientIp, int32_t protocolId, bool success)
@@ -124,10 +123,7 @@ void ConnectionManager::addAttempt(uint32_t clientIp, int32_t protocolId, bool s
 bool ConnectionManager::checkLastProtocol(uint32_t clientIp, int32_t protocolId)
 {
 	IpConnectionMap::iterator it = ipConnectionMap.find(clientIp);
-	if(it != ipConnectionMap.end())
-		return it->second.lastProtocol == protocolId;
-
-	return false;
+	return it != ipConnectionMap.end() && it->second.lastProtocol == protocolId;
 }
 
 void ConnectionManager::closeAll()
@@ -242,7 +238,7 @@ void Connection::releaseConnection()
 
 void Connection::deleteConnectionTask()
 {
-	//dispather thread
+	//dispatcher thread
 	assert(m_refCount == 0);
 	delete this;
 }
@@ -256,6 +252,7 @@ void Connection::acceptConnection()
 		//write 14 841 bytes, where 6 of them will be later used by client in parseFirstPacket after sending password
 		//this is a very, very bad method now...
 		//we need to unset the lastProtocol from IpConnectionMap pool somewhere just after the connection gets closed
+		//@done, need testing.
 		//u16, u16, u32, u32, u16?
 	}
 
