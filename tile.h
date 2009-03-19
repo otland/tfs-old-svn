@@ -79,7 +79,6 @@ class Tile : public Cylinder
 
 		virtual ~Tile()
 		{
-			#ifdef _DEBUG
 			delete ground;
 
 			ItemVector::iterator it;
@@ -91,7 +90,6 @@ class Tile : public Cylinder
 				delete *it;
 
 			downItems.clear();
-			#endif // _DEBUG
 		}
 
 		virtual int32_t getThrowRange() const {return 0;}

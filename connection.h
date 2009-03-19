@@ -40,7 +40,6 @@ class Connection;
 #define PRINT_ASIO_ERROR(desc)
 #endif
 
-typedef boost::shared_ptr<OutputMessage>OutputMessage_ptr;
 struct ConnectionBlock
 {
 	int32_t lastLogin, lastProtocol, loginsAmount;
@@ -79,6 +78,8 @@ class ConnectionManager
 		std::list<Connection*> m_connections;
 		OTSYS_THREAD_LOCKVAR m_connectionManagerLock;
 };
+
+typedef boost::shared_ptr<OutputMessage>OutputMessage_ptr;
 
 class Connection : boost::noncopyable
 {

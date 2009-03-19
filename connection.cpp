@@ -67,9 +67,9 @@ void ConnectionManager::releaseConnection(Connection* connection)
 	#endif
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
 
-	IpConnectionMap::iterator it = ipConnectionMap.find(connection->getIP());
-	if(it != ipConnectionMap.end())
-		it->second.lastProtocol == 0x00; //TODO: protocolIds as constant enum?
+	IpConnectionMap::iterator mit = ipConnectionMap.find(connection->getIP());
+	if(mit != ipConnectionMap.end())
+		mit->second.lastProtocol = 0x00; //TODO: protocolIds as constant enum?
 
 	std::list<Connection*>::iterator it = std::find(m_connections.begin(), m_connections.end(), connection);
 	if(it != m_connections.end())
@@ -86,7 +86,7 @@ bool ConnectionManager::isDisabled(uint32_t clientIp)
 
 	IpConnectionMap::const_iterator it = ipConnectionMap.find(clientIp);
 	return it != ipConnectionMap.end() && it->second.loginsAmount >= maxLoginTries
-		&& (uint64_t)time(NULL) < it->second.lastLogin + loginTimeout;
+		&& (int32_t)time(NULL) < it->second.lastLogin + loginTimeout;
 }
 
 void ConnectionManager::addAttempt(uint32_t clientIp, int32_t protocolId, bool success)
@@ -95,7 +95,7 @@ void ConnectionManager::addAttempt(uint32_t clientIp, int32_t protocolId, bool s
 	if(clientIp == 0)
 		return;
 
-	uint32_t currentTime = time(NULL);
+	int32_t currentTime = time(NULL);
 	IpConnectionMap::iterator it = ipConnectionMap.find(clientIp);
 	if(it == ipConnectionMap.end())
 	{
@@ -247,13 +247,19 @@ void Connection::acceptConnection()
 {
 	// Read size of te first packet
 	m_pendingRead++;
-	if(ConnectionManager::getInstance()->checkLastProtocol(getIP(), 0x01)) //TODO: make protocolIds a constant enum
+	if(ConnectionManager::getInstance()->checkLastProtocol(getIP(), 0x01)) //TODO: protocolId...
 	{
 		//write 14 841 bytes, where 6 of them will be later used by client in parseFirstPacket after sending password
 		//this is a very, very bad method now...
 		//we need to unset the lastProtocol from IpConnectionMap pool somewhere just after the connection gets closed
 		//@done, need testing.
 		//u16, u16, u32, u32, u16?
+		OutputMessage_ptr output;
+		output->AddU16(12);
+		output->AddU32(0x00);
+		output->AddU32(0x00);
+		output->AddU32(0x00);
+		send(output);
 	}
 
 	boost::asio::async_read(m_socket, boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),

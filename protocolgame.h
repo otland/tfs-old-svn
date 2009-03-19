@@ -35,6 +35,7 @@ class Tile;
 class Connection;
 
 typedef boost::shared_ptr<NetworkMessage> NetworkMessage_ptr;
+
 class ProtocolGame : public Protocol
 {
 	public:
