@@ -90,7 +90,7 @@ bool ConnectionManager::isDisabled(uint32_t clientIp)
 	return false;
 }
 
-void ConnectionManager::addAttempt(uint32_t clientIp, bool success)
+void ConnectionManager::addAttempt(uint32_t clientIp, bool success, bool afterLogin)
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
 	if(clientIp == 0)
@@ -103,6 +103,7 @@ void ConnectionManager::addAttempt(uint32_t clientIp, bool success)
 		ConnectionBlock tmp;
 		tmp.lastLogin = 0;
 		tmp.loginsAmount = 0;
+		tmp.loginProtocol = afterLogin;
 
 		ipConnectionMap[clientIp] = tmp;
 		it = ipConnectionMap.find(clientIp);
@@ -117,6 +118,16 @@ void ConnectionManager::addAttempt(uint32_t clientIp, bool success)
 		it->second.loginsAmount = 0;
 
 	it->second.lastLogin = currentTime;
+}
+
+bool ConnectionManager::checkIsGameworld(uint32_t clientIp)
+{
+	IpConnectionMap::iterator it = ipConnectionMap.find(clientIp);
+	if(it == ipConnectionMap.end())
+	{
+		return false;
+	}
+	return it->second.loginProtocol;
 }
 
 void ConnectionManager::closeAll()
@@ -240,6 +251,10 @@ void Connection::acceptConnection()
 {
 	// Read size of te first packet
 	m_pendingRead++;
+	if(ConnectionManager::getInstance()->checkIsGameworld(getIP()))
+	{
+		//write those bytes
+	}
 	boost::asio::async_read(m_socket, boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),
 		boost::bind(&Connection::parseHeader, this, boost::asio::placeholders::error));
 }

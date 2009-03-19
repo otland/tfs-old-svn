@@ -43,7 +43,7 @@ class Connection;
 typedef boost::shared_ptr<OutputMessage>OutputMessage_ptr;
 struct ConnectionBlock
 {
-	uint32_t lastLogin, loginsAmount;
+	uint32_t lastLogin, loginsAmount, loginProtocol;
 };
 
 class ConnectionManager
@@ -64,7 +64,7 @@ class ConnectionManager
 		void releaseConnection(Connection* connection);
 
 		bool isDisabled(uint32_t clientIp);
-		void addAttempt(uint32_t clientIp, bool success);
+		void addAttempt(uint32_t clientIp, bool success, bool afterLogin = false);
 
 		void closeAll();
 
