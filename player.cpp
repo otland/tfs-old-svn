@@ -1399,17 +1399,17 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 			if(period - 600 > 0)
 			{
 				period = std::ceil(period * g_config.getDouble(ConfigManager::RATE_STAMINA_GAIN));
-				int64_t rated = stamina + period;
-				if(rated >= (g_config.getNumber(ConfigManager::STAMINA_THRESHOLD_MAX) * 60000))
-					rated -= g_config.getNumber(ConfigManager::STAMINA_THRESHOLD_MAX) * ;
+				int64_t rated = stamina + period, tmp = g_config.getNumber(
+					ConfigManager::STAMINA_THRESHOLD_MAX) * STAMINA_MUL;
+				if(rated >= tmp)
+					rated -= tmp;
 				else
 					rated = 0;
 
 				addStamina(period - rated);
 				if(rated > 0)
 				{
-					int64_t tmp = std::ceil((double)rated / g_config.getDouble(
-						ConfigManager::RATE_STAMINA_THRESHOLD));
+					tmp = std::ceil((double)rated / g_config.getDouble(ConfigManager::RATE_STAMINA_THRESHOLD));
 					if(stamina + tmp > STAMINA_MAX)
 						tmp -= ((stamina + tmp) - STAMINA_MAX);
 
@@ -1610,7 +1610,7 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 			addExhaust(g_config.getNumber(ConfigManager::STAIRHOP_DELAY), 1);
 			addExhaust(g_config.getNumber(ConfigManager::STAIRHOP_DELAY), 3);
 			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_PACIFIED,
-				g_config.getNumber(ConfigManager::STAIRHOP_DELAY), 0, false, type))
+				g_config.getNumber(ConfigManager::STAIRHOP_DELAY)))
 				addCondition(condition);
 		}
 	}
@@ -1833,7 +1833,7 @@ void Player::removeMessageBuffer()
 
 			uint32_t muteTime = 5 * muteCount * muteCount;
 			muteCountMap[getGUID()] = muteCount + 1;
-			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_MUTED, muteTime * 1000, 0))
+			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_MUTED, muteTime * 1000))
 				addCondition(condition);
 
 			char buffer[50];
@@ -2335,7 +2335,7 @@ void Player::addInFightTicks(bool pzLock/* = false*/)
 	if(hasFlag(PlayerFlag_NotGainInFight))
 		return;
 
-	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT, g_game.getInFightTicks(), 0))
+	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT, g_game.getInFightTicks()))
 		addCondition(condition);
 
 	if(pzLock)
@@ -2347,7 +2347,7 @@ void Player::addDefaultRegeneration(uint32_t addTicks)
 	Condition* condition = getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT);
 	if(condition)
 		condition->setTicks(condition->getTicks() + addTicks);
-	else if((condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_REGENERATION, addTicks, 0)))
+	else if((condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_REGENERATION, addTicks)))
 	{
 		condition->setParam(CONDITIONPARAM_HEALTHGAIN, vocation->getHealthGainAmount());
 		condition->setParam(CONDITIONPARAM_HEALTHTICKS, vocation->getHealthGainTicks() * 1000);
@@ -3582,7 +3582,7 @@ bool Player::onKilledCreature(Creature* target)
 		{
 			pzLocked = true;
 			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT,
-				g_config.getNumber(ConfigManager::WHITE_SKULL_TIME), 0))
+				g_config.getNumber(ConfigManager::WHITE_SKULL_TIME)))
 				addCondition(condition);
 		}
 	}
@@ -3597,7 +3597,7 @@ void Player::gainExperience(uint64_t gainExp)
 		//soul regeneration
 		if(gainExp >= getLevel())
 		{
-			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SOUL, 4 * 60 * 1000, 0))
+			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SOUL, 4 * 60 * 1000))
 			{
 				condition->setParam(CONDITIONPARAM_SOULGAIN, 1);
 				condition->setParam(CONDITIONPARAM_SOULTICKS, vocation->getSoulGainTicks() * 1000);

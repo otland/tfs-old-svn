@@ -291,7 +291,7 @@ bool Monsters::reload()
 ConditionDamage* Monsters::getDamageCondition(ConditionType_t conditionType,
 	int32_t maxDamage, int32_t minDamage, int32_t startDamage, uint32_t tickInterval)
 {
-	if(ConditionDamage* condition = dynamic_cast<ConditionDamage*>(Condition::createCondition(CONDITIONID_COMBAT, conditionType, 0, 0)))
+	if(ConditionDamage* condition = dynamic_cast<ConditionDamage*>(Condition::createCondition(CONDITIONID_COMBAT, conditionType, 0)))
 	{
 		condition->setParam(CONDITIONPARAM_TICKINTERVAL, tickInterval);
 		condition->setParam(CONDITIONPARAM_MINVALUE, minDamage);
@@ -576,8 +576,8 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			else
 				conditionType = CONDITION_PARALYZE;
 
-			ConditionSpeed* condition = dynamic_cast<ConditionSpeed*>(Condition::createCondition(CONDITIONID_COMBAT, conditionType, duration, 0));
-			if(condition)
+			if(ConditionSpeed* condition = dynamic_cast<ConditionSpeed*>(Condition::createCondition(
+				CONDITIONID_COMBAT, conditionType, duration)))
 			{
 				condition->setFormulaVars(speedChange / 1000.0, 0, speedChange / 1000.0, 0);
 				combat->setCondition(condition);
@@ -594,8 +594,8 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 				MonsterType* mType = g_monsters.getMonsterType(strValue);
 				if(mType)
 				{
-					ConditionOutfit* condition = dynamic_cast<ConditionOutfit*>(Condition::createCondition(CONDITIONID_COMBAT, CONDITION_OUTFIT, duration, 0));
-					if(condition)
+					if(ConditionOutfit* condition = dynamic_cast<ConditionOutfit*>(Condition::createCondition(
+						CONDITIONID_COMBAT, CONDITION_OUTFIT, duration)))
 					{
 						condition->addOutfit(mType->outfit);
 						combat->setParam(COMBATPARAM_AGGRESSIVE, 0);
@@ -608,8 +608,8 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 				Outfit_t outfit;
 				outfit.lookTypeEx = intValue;
 
-				ConditionOutfit* condition = dynamic_cast<ConditionOutfit*>(Condition::createCondition(CONDITIONID_COMBAT, CONDITION_OUTFIT, duration, 0));
-				if(condition)
+				if(ConditionOutfit* condition = dynamic_cast<ConditionOutfit*>(Condition::createCondition(
+					CONDITIONID_COMBAT, CONDITION_OUTFIT, duration)))
 				{
 					condition->addOutfit(outfit);
 					combat->setParam(COMBATPARAM_AGGRESSIVE, 0);
@@ -623,8 +623,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			if(readXMLInteger(node, "duration", intValue))
 				duration = intValue;
 
-			Condition* condition = Condition::createCondition(CONDITIONID_COMBAT, CONDITION_INVISIBLE, duration, 0);
-			if(condition)
+			if(Condition* condition = Condition::createCondition(CONDITIONID_COMBAT, CONDITION_INVISIBLE, duration))
 			{
 				combat->setParam(COMBATPARAM_AGGRESSIVE, 0);
 				combat->setCondition(condition);
@@ -636,8 +635,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			if(readXMLInteger(node, "duration", intValue))
 				duration = intValue;
 
-			Condition* condition = Condition::createCondition(CONDITIONID_COMBAT, CONDITION_DRUNK, duration, 0);
-			if(condition)
+			if(Condition* condition = Condition::createCondition(CONDITIONID_COMBAT, CONDITION_DRUNK, duration))
 				combat->setCondition(condition);
 		}
 		else if(tmpName == "firefield")

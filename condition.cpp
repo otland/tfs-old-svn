@@ -177,7 +177,7 @@ bool Condition::executeCondition(Creature* creature, int32_t interval)
 	return (endTime >= OTSYS_TIME());
 }
 
-Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, int32_t param, bool _buff/* = false*/, uint32_t _subId/* = 0*/)
+Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, int32_t param/* = 0*/, bool _buff/* = false*/, uint32_t _subId/* = 0*/)
 {
 	switch((int32_t)_type)
 	{

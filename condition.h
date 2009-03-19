@@ -132,7 +132,7 @@ class Condition
 		int32_t getTicks() const {return ticks;}
 		void setTicks(int32_t newTicks);
 
-		static Condition* createCondition(ConditionId_t _id, ConditionType_t _type, int32_t ticks, int32_t param, bool _buff = false, uint32_t _subId = 0);
+		static Condition* createCondition(ConditionId_t _id, ConditionType_t _type, int32_t ticks, int32_t param = 0, bool _buff = false, uint32_t _subId = 0);
 		static Condition* createCondition(PropStream& propStream);
 
 		virtual bool setParam(ConditionParam_t param, int32_t value);
