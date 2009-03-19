@@ -268,7 +268,7 @@ class Player : public Creature, public Cylinder
 		void setStamina(uint64_t _stamina) {stamina = std::min((uint64_t)STAMINA_MAX, _stamina);}
 		uint32_t getStaminaMinutes() const {return (uint32_t)getStamina() / STAMINA_MUL;}
 		void setStaminaMinutes(uint32_t _stamina) {setStamina(_stamina * STAMINA_MUL);}
-		void addStamina(int64_t value) {stamina = std::min((int64_t)STAMINA_MAX, (int64_t)std::max((int64_t)0, (stamina + value)));}
+		void addStamina(int64_t value) {stamina = std::min((int64_t)STAMINA_MAX, (int64_t)std::max((int64_t)0, int64_t(stamina + value)));}
 		void removeStamina(int64_t value) {addStamina(-value);}
 		uint64_t getSpentStamina() {return (uint64_t)STAMINA_MAX - stamina;}
 
