@@ -253,13 +253,17 @@ void Connection::acceptConnection()
 		 * we need to unset the lastProtocol from IpConnectionMap pool somewhere just after the connection gets closed
 		 * @done - need testing.
 		 * write length + 12 bytes, where 6 of them will be later sent back by client after sending password
-		 * @in progress - what are these bytes? :|
+		 * @in progress - how to send it? :|
 		 */
-		/*OutputMessage_ptr output;
-		output->AddU16(12);
-		output->AddU32(0x00);
-		output->AddU32(0x00);
-		output->AddU32(0x00);
+		/*output->AddU16(0x0C);
+		output->AddU32(adlerChecksum(0, 6));
+		output->AddByte(0x06);
+		output->AddU16(0x31);
+		output->AddByte(0x00);
+		output->AddByte(0x00);
+		output->AddByte(0x00);
+		output->AddByte(0x00);
+		output->AddByte(0x00);
 		send(output);*/
 	}
 
