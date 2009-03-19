@@ -168,7 +168,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	if(!account.number)
 	{
-		ConnectionManager::getInstance()->addAttempt(clientIP, false);
+		ConnectionManager::getInstance()->addAttempt(clientIP, getProtocolId(), false);
 		disconnectClient(0x0A, "Account name or password is not correct.");
 		return false;
 	}
@@ -181,7 +181,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	ConnectionManager::getInstance()->addAttempt(clientIP, true, true);
+	ConnectionManager::getInstance()->addAttempt(clientIP, getProtocolId(), true);
 	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 	{
 		TRACK_MESSAGE(output);

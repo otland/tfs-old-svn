@@ -542,6 +542,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	toLowerCaseString(accName);
 	const std::string name = msg.GetString();
 	std::string password = msg.GetString();
+	msg.SkipBytes(6); //841
 	uint32_t accId = 1;
 
 	if(version < CLIENT_VERSION_MIN || version > CLIENT_VERSION_MAX)
@@ -589,12 +590,12 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	if(((accName.length() && !IOLoginData::getInstance()->getAccountId(accName, accId)) ||
 		!IOLoginData::getInstance()->getPassword(accId, name, accPass) || !passwordTest(password, accPass)) && name != "Account Manager")
 	{
-		ConnectionManager::getInstance()->addAttempt(getIP(), false);
+		ConnectionManager::getInstance()->addAttempt(getIP(), getProtocolId(), false);
 		getConnection()->closeConnection();
 		return false;
 	}
 
-	ConnectionManager::getInstance()->addAttempt(getIP(), true);
+	ConnectionManager::getInstance()->addAttempt(getIP(), getProtocolId(), true);
 	Dispatcher::getDispatcher().addTask(
 		createTask(boost::bind(&ProtocolGame::login, this, name, accId, password, operatingSystem, gamemasterLogin)));
 

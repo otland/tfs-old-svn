@@ -90,7 +90,7 @@ bool ConnectionManager::isDisabled(uint32_t clientIp)
 	return false;
 }
 
-void ConnectionManager::addAttempt(uint32_t clientIp, bool success, bool afterLogin)
+void ConnectionManager::addAttempt(uint32_t clientIp, int32_t protocolId, bool success)
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
 	if(clientIp == 0)
@@ -102,8 +102,8 @@ void ConnectionManager::addAttempt(uint32_t clientIp, bool success, bool afterLo
 	{
 		ConnectionBlock tmp;
 		tmp.lastLogin = 0;
+		tmp.lastProtocol = protocolId;
 		tmp.loginsAmount = 0;
-		tmp.loginProtocol = afterLogin;
 
 		ipConnectionMap[clientIp] = tmp;
 		it = ipConnectionMap.find(clientIp);
@@ -118,16 +118,16 @@ void ConnectionManager::addAttempt(uint32_t clientIp, bool success, bool afterLo
 		it->second.loginsAmount = 0;
 
 	it->second.lastLogin = currentTime;
+	it->second.lastProtocol = protocolId;
 }
 
-bool ConnectionManager::checkIsGameworld(uint32_t clientIp)
+bool ConnectionManager::checkLastProtocol(uint32_t clientIp, int32_t protocolId)
 {
 	IpConnectionMap::iterator it = ipConnectionMap.find(clientIp);
-	if(it == ipConnectionMap.end())
-	{
-		return false;
-	}
-	return it->second.loginProtocol;
+	if(it != ipConnectionMap.end())
+		return it->second.lastProtocol == protocolId;
+
+	return false;
 }
 
 void ConnectionManager::closeAll()
@@ -251,10 +251,14 @@ void Connection::acceptConnection()
 {
 	// Read size of te first packet
 	m_pendingRead++;
-	if(ConnectionManager::getInstance()->checkIsGameworld(getIP()))
+	if(ConnectionManager::getInstance()->checkLastProtocol(getIP(), 0x01)) //TODO: make protocolIds a constant enum
 	{
-		//write those bytes
+		//write 14 841 bytes, where 6 of them will be later used by client in parseFirstPacket after sending password
+		//this is a very, very bad method now...
+		//we need to unset the lastProtocol from IpConnectionMap pool somewhere just after the connection gets closed
+		//u16, u16, u32, u32, u16?
 	}
+
 	boost::asio::async_read(m_socket, boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),
 		boost::bind(&Connection::parseHeader, this, boost::asio::placeholders::error));
 }

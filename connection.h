@@ -43,7 +43,7 @@ class Connection;
 typedef boost::shared_ptr<OutputMessage>OutputMessage_ptr;
 struct ConnectionBlock
 {
-	uint32_t lastLogin, loginsAmount, loginProtocol;
+	int32_t lastLogin, lastProtocol, loginsAmount;
 };
 
 class ConnectionManager
@@ -64,15 +64,16 @@ class ConnectionManager
 		void releaseConnection(Connection* connection);
 
 		bool isDisabled(uint32_t clientIp);
-		void addAttempt(uint32_t clientIp, bool success, bool afterLogin = false);
+		void addAttempt(uint32_t clientIp, int32_t protocolId, bool success);
+		bool checkLastProtocol(uint32_t clientIp, int32_t protocolId);
 
 		void closeAll();
 
 	protected:
 		ConnectionManager();
-		uint32_t loginTimeout, maxLoginTries, retryTimeout;
+		int32_t loginTimeout, retryTimeout, maxLoginTries;
 
-		typedef std::map<uint32_t, ConnectionBlock > IpConnectionMap;
+		typedef std::map<uint32_t, ConnectionBlock> IpConnectionMap;
 		IpConnectionMap ipConnectionMap;
 
 		std::list<Connection*> m_connections;
