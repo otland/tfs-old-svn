@@ -48,6 +48,7 @@
 	oldConditionAccuracy = "no"
 	loginProtectionPeriod = 10 * 1000
 	deathLostPercent = 10
+	stairhopDelay = 2 * 1000
 
 	-- Connection config
 	worldId = 0
@@ -152,17 +153,32 @@
 
 	-- Rates
 	-- NOTE: experienceStages configuration is located in data/XML/stages.xml.
+	experienceStages = "no"
 	rateExperience = 5.0
 	rateSkill = 3.0
 	rateMagic = 3.0
-	rateStaminaHits = 3
-	rateStaminaGain = 500
 	rateLoot = 2
 	rateSpawn = 1
-	experienceStages = "no"
+
+	-- Stamina
+	-- NOTE: Stamina is stored in miliseconds, so seconds are multiplied by 1000.
+	-- rateStaminaHits multiplies every hit done a creature, which are later
+	-- multiplied by player attack speed.
+	-- rateStaminaGain is multiplying every second of logged out time, eg:
+	-- 60 * 1000 / 3 = 20 seconds, what gives 1 stamina minute for 3 being logged off.
+	-- rateStaminaThresholdGain is dividing in case the normal gain (that is
+	-- multiplied by rateStaminaGain, btw.) passed above threshold, eg:
+	-- 60 * 1000 / 3 = 20 / 4 = 5 seconds (3 * 4 = 12 minutes for 1 stamina minute).
+	rateStaminaHits = 1
+	rateStaminaGain = 1000 / 3
+	rateStaminaThresholdGain = 4
+	staminaRatingThresholdMax = 41 * 60 * 60 * 1000
+	staminaRatingThresholdMin = 14 * 60 * 60 * 1000
+	rateAboveMaxThreshold = 1.5
+	rateUnderMinThreshold = 0.5
 
 	-- Party
-	-- NOTE experienceShareLevelDifference is float number.
+	-- NOTE: experienceShareLevelDifference is float number.
 	-- experienceShareLevelDifference is highestLevel * value
 	experienceShareRadiusX = 30
 	experienceShareRadiusY = 30

@@ -128,9 +128,11 @@ class ConfigManager
 			PARTY_RADIUS_Y,
 			PARTY_RADIUS_Z,
 			LOGIN_PROTECTION,
-			RATE_STAMINA_HITS,
-			RATE_STAMINA_GAIN,
 			PLAYER_DEEPNESS,
+			STAIRHOP_DELAY,
+			RATE_STAMINA_HITS,
+			STAMINA_THRESHOLD_MAX,
+			STAMINA_THRESHOLD_MIN,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 
@@ -141,6 +143,10 @@ class ConfigManager
 			RATE_MAGIC,
 			PARTY_DIFFERENCE,
 			CRITICAL_HIT_MUL,
+			RATE_STAMINA_GAIN,
+			RATE_STAMINA_THRESHOLD,
+			RATE_STAMINA_ABOVE,
+			RATE_STAMINA_UNDER,
 			LAST_DOUBLE_CONFIG /* this must be the last one */
 		};
 
@@ -200,6 +206,7 @@ class ConfigManager
 			TRUNCATE_LOGS,
 			TRACER_BOX,
 			STORE_DIRECTION,
+			DISPLAY_LOGGING,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

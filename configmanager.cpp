@@ -217,11 +217,18 @@ bool ConfigManager::load()
 	m_confBool[HOUSE_STORAGE] = getGlobalBool(L, "useHouseDataStorage", "no");
 	m_confBool[TRACER_BOX] = getGlobalBool(L, "promptExceptionTracerErrorBox", "yes");
 	m_confNumber[LOGIN_PROTECTION] = getGlobalNumber(L, "loginProtectionPeriod", 10 * 1000);
-	m_confNumber[RATE_STAMINA_HITS] = getGlobalNumber(L, "rateStaminaHits", 3);
-	m_confNumber[RATE_STAMINA_GAIN] = getGlobalNumber(L, "rateStaminaGain", 500);
 	m_confBool[STORE_DIRECTION] = getGlobalBool(L, "storePlayerDirection", "no");
 	m_confNumber[PLAYER_DEEPNESS] = getGlobalNumber(L, "playerQueryDeepness", 1);
 	m_confDouble[CRITICAL_HIT_MUL] = getGlobalDouble(L, "criticalHitMultiplier", 1);
+	m_confNumber[STAIRHOP_DELAY] = getGlobalNumber(L, "stairhopDelay", 2 * 1000);
+	m_confNumber[RATE_STAMINA_HITS] = getGlobalNumber(L, "rateStaminaHits", 1);
+	m_confDouble[RATE_STAMINA_GAIN] = getGlobalDouble(L, "rateStaminaGain", 1000 / 3);
+	m_confDouble[RATE_STAMINA_THRESHOLD] = getGlobalDouble(L, "rateStaminaThresholdGain", 4);
+	m_confDouble[RATE_STAMINA_ABOVE] = getGlobalDouble(L, "rateStaminaAbove", 1.5f);
+	m_confDouble[RATE_STAMINA_UNDER] = getGlobalDouble(L, "rateStaminaUnder", 0.5f);
+	m_confNumber[STAMINA_THRESHOLD_MAX] = getGlobalNumber(L, "staminaRatingThresholdMax", 41 * 60);
+	m_confNumber[STAMINA_THRESHOLD_MIN] = getGlobalNumber(L, "staminaRatingThresholdMin", 14 * 60);
+	m_confBool[DISPLAY_LOGGING] = getGlobalBool(L, "displayPlayersLogging", "yes");
 
 	m_loaded = true;
 	return true;

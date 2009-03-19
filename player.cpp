@@ -122,7 +122,7 @@ Creature()
 
 	blessings = 0;
 	balance = 0;
-	stamina = PLAYER_STAMINA;
+	stamina = STAMINA_MAX;
 	premiumDays = 0;
 
 	idleTime = 0;
@@ -1376,10 +1376,9 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 	Creature::onCreatureAppear(creature, isLogin);
 	if(isLogin && creature == this)
 	{
-		Item* item;
 		for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
 		{
-			if((item = getInventoryItem((slots_t)slot)))
+			if(Item* item = getInventoryItem((slots_t)slot))
 			{
 				item->__startDecaying();
 				g_moveEvents->onPlayerEquip(this, item, (slots_t)slot, false);
@@ -1396,10 +1395,28 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 
 		if(lastLogout)
 		{
-			int32_t period = (int32_t)time(NULL) - lastLogout - 600;
-			if(period > 0)
-				useStamina(-int64_t(std::min(getSpentStamina(), (uint64_t)std::abs((int64_t)period * g_config.getNumber(
-					ConfigManager::RATE_STAMINA_GAIN)))), false);
+			int64_t period = (int32_t)time(NULL) - lastLogout;
+			if(period - 600 > 0)
+			{
+				period = std::ceil(period * g_config.getDouble(ConfigManager::RATE_STAMINA_GAIN));
+				int64_t rated = stamina + period;
+				if(rated >= (g_config.getNumber(STAMINA_THRESHOLD_MAX) * 60000))
+					rated -= g_config.getNumber(STAMINA_THRESHOLD_MAX) * ;
+				else
+					rated = 0;
+
+				addStamina(period - rated);
+				if(rated > 0)
+				{
+					int64_t tmp = std::ceil((double)rated / g_config.getDouble(
+						ConfigManager::RATE_STAMINA_THRESHOLD));
+					if(stamina + tmp > STAMINA_MAX)
+						tmp -= ((stamina + tmp) - STAMINA_MAX);
+
+					addStamina(tmp);
+				}
+			}
+				
 		}
 
 		g_game.checkPlayersRecord();
@@ -1409,7 +1426,8 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 		#ifndef __CONSOLE__
 		GUI::getInstance()->m_pBox.addPlayer(this);
 		#endif
-		std::cout << name << " has logged in." << std::endl;
+		if(g_config.getBool(ConfigManager::DISPLAY_LOGGING))
+			std::cout << name << " has logged in." << std::endl;
 	}
 }
 
@@ -1429,45 +1447,30 @@ void Player::onFollowCreatureDisappear(bool isLogout)
 
 void Player::onChangeZone(ZoneType_t zone)
 {
-	if(attackedCreature)
+	if(attackedCreature && zone == ZONE_PROTECTION && !hasFlag(PlayerFlag_IgnoreProtectionZone))
 	{
-		if(zone == ZONE_PROTECTION)
-		{
-			if(!hasFlag(PlayerFlag_IgnoreProtectionZone))
-			{
-				setAttackedCreature(NULL);
-				onAttackedCreatureDisappear(false);
-			}
-		}
+		setAttackedCreature(NULL);
+		onAttackedCreatureDisappear(false);
 	}
 }
 
 void Player::onAttackedCreatureChangeZone(ZoneType_t zone)
 {
-	if(zone == ZONE_PROTECTION)
+	if(zone == ZONE_PROTECTION && !hasFlag(PlayerFlag_IgnoreProtectionZone))
 	{
-		if(!hasFlag(PlayerFlag_IgnoreProtectionZone))
-		{
-			setAttackedCreature(NULL);
-			onAttackedCreatureDisappear(false);
-		}
+		setAttackedCreature(NULL);
+		onAttackedCreatureDisappear(false);
 	}
-	else if(zone == ZONE_NOPVP)
+	else if(zone == ZONE_NOPVP && attackedCreature->getPlayer() && !hasFlag(PlayerFlag_IgnoreProtectionZone))
 	{
-		if(attackedCreature->getPlayer() && !hasFlag(PlayerFlag_IgnoreProtectionZone))
-		{
-			setAttackedCreature(NULL);
-			onAttackedCreatureDisappear(false);
-		}
+		setAttackedCreature(NULL);
+		onAttackedCreatureDisappear(false);
 	}
-	else if(zone == ZONE_NORMAL)
+	else if(zone == ZONE_NORMAL && g_game.getWorldType() == WORLD_TYPE_NO_PVP && attackedCreature->getPlayer())
 	{
 		//attackedCreature can leave a pvp zone if not pzlocked
-		if(g_game.getWorldType() == WORLD_TYPE_NO_PVP && attackedCreature->getPlayer())
-		{
-			setAttackedCreature(NULL);
-			onAttackedCreatureDisappear(false);
-		}
+		setAttackedCreature(NULL);
+		onAttackedCreatureDisappear(false);
 	}
 }
 
@@ -1514,25 +1517,23 @@ void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bo
 	#ifndef __CONSOLE__
 	GUI::getInstance()->m_pBox.removePlayer(this);
 	#endif
-	std::cout << getName() << " has logged out." << std::endl;
+	if(g_config.getBool(ConfigManager::DISPLAY_LOGGING))
+		std::cout << getName() << " has logged out." << std::endl;
 
 	bool saved = false;
-	for(uint32_t tries = 0; tries < 3; ++tries)
+	for(uint32_t tries = 0; !saved && tries < 3; ++tries)
 	{
 		if(IOLoginData::getInstance()->savePlayer(this))
-		{
 			saved = true;
-			break;
-		}
 #ifdef __DEBUG__
 		else
-			std::cout << "Error while saving player: " << getName() << ", strike " << tries << std::endl;
+			std::cout << "Error while saving player: " << getName() << ", strike " << tries << "." << std::endl;
 #endif
 	}
 
 	if(!saved)
 #ifndef __DEBUG__
-		std::cout << "Error while saving player: " << getName() << std::endl;
+		std::cout << "Error while saving player: " << getName() << "." << std::endl;
 #else
 		std::cout << "Player " << getName() << " couldn't be saved." << std::endl;
 #endif
@@ -1593,18 +1594,28 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 	if(creature != this)
 		return;
 
-	if(tradeState != TRADE_TRANSFER)
-	{
-		//check if we should close trade
-		if(tradeItem && !Position::areInRange<1,1,0>(tradeItem->getPosition(), getPosition()))
-			g_game.internalCloseTrade(this);
-
-		if(tradePartner && !Position::areInRange<2,2,0>(tradePartner->getPosition(), getPosition()))
-			g_game.internalCloseTrade(this);
-	}
-
 	if(getParty())
 		getParty()->updateSharedExperience();
+
+	//check if we should close trade
+	if(tradeState != TRADE_TRANSFER && ((tradeItem && !Position::areInRange<1,1,0>(tradeItem->getPosition(), getPosition()))
+		|| (tradePartner && !Position::areInRange<2,2,0>(tradePartner->getPosition(), getPosition()))))
+		g_game.internalCloseTrade(this);
+
+	if(teleport || oldPos.z != newPos.z)
+	{
+		int32_t ticks = g_config.getNumber(ConfigManager::STAIRHOP_DELAY);
+		if(ticks > 0)
+		{
+			Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_PACIFIED, ticks);
+			if(condition)
+				addCondition(condition);
+
+			condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST_COMBAT, ticks);
+			if(condition)
+				addCondition(condition);
+		}
+	}
 }
 
 //container
@@ -4671,14 +4682,6 @@ bool Player::transferMoneyTo(const std::string& name, uint64_t amount)
 	}
 
 	return true;
-}
-
-void Player::useStamina(int64_t value, bool ticks)
-{
-	if(ticks)
-		value *= (int64_t)getAttackSpeed();
-
-	stamina = std::min((int64_t)PLAYER_STAMINA, std::max((int64_t)0, ((int64_t)stamina - value)));
 }
 
 void Player::sendCriticalHit() const

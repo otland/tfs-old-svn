@@ -1028,7 +1028,7 @@ double Creature::getDamageRatio(Creature* attacker) const
 	return ((double)attackerDamage / totalDamage);
 }
 
-uint32_t Creature::getStaminaRatio(Creature* attacker) const
+int64_t Creature::getStaminaRatio(Creature* attacker) const
 {
 	uint32_t totalHits = 0;
 	for(CountMap::const_iterator it = damageMap.begin(); it != damageMap.end(); ++it)
@@ -1052,29 +1052,29 @@ uint64_t Creature::getGainedExperience(Creature* attacker, bool useMultiplier/* 
 	if(!player && attacker->getMaster())
 		player = attacker->getMaster()->getPlayer();
 
-	uint64_t baseExperience = (uint64_t)std::floor(getDamageRatio(attacker) * getLostExperience());
-	if(player)
-	{
-		if(player->hasFlag(PlayerFlag_NotGainExperience))
-			return 0;
+	double baseExperience = getDamageRatio(attacker) * getLostExperience();
+	if(!player)
+		return (uint64_t)std::floor(baseExperience * g_config.getDouble(ConfigManager::RATE_EXPERIENCE));
 
-		if(useMultiplier)
-			baseExperience = uint64_t((double)baseExperience * player->experienceRate);
+	if(player->hasFlag(PlayerFlag_NotGainExperience))
+		return 0;
 
-		baseExperience = uint64_t((double)baseExperience * g_game.getExperienceStage(player->getLevel()));
-		if(!player->hasCustomFlag(PlayerCustomFlag_HasInfiniteStamina))
-		{
-			player->useStamina((int64_t)getStaminaRatio(attacker), true);
-			if(player->getStaminaMinutes() <= 840 && player->getStaminaMinutes() > 0)
-				baseExperience = (uint64_t)std::floor(baseExperience / 2);
-			else if(!player->getStaminaMinutes())
-				baseExperience = 0;
-		}
+	if(useMultiplier)
+		baseExperience *= player->experienceRate;
 
-		return baseExperience;
-	}
+	baseExperience *= g_game.getExperienceStage(player->getLevel());
+	if(!player->hasCustomFlag(PlayerCustomFlag_HasInfiniteStamina))
+		player->removeStamina((getStaminaRatio(attacker) * player->getAttackSpeed()));
 
-	return uint64_t((double)baseExperience * g_config.getDouble(ConfigManager::RATE_EXPERIENCE));
+	uint32_t minutes = player->getStaminaMinutes();
+	if(!getPlayer() && minutes >= (g_config.getNumber(STAMINA_THRESHOLD_MAX)))
+		baseExperience *= g_config.getDouble(ConfigManager::RATE_STAMINA_ABOVE);
+	else if(minutes < (g_config.getNumber(STAMINA_THRESHOLD_MIN)) && minutes > 0)
+		baseExperience *= g_config.getDouble(ConfigManager::RATE_STAMINA_UNDER);
+	else if(minutes <= 0)
+		baseExperience = 0;
+
+	return (uint64_t)std::floor(baseExperience);
 }
 
 void Creature::addDamagePoints(Creature* attacker, int32_t damagePoints)

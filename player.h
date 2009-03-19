@@ -125,9 +125,10 @@ typedef std::list<std::string> LearnedInstantSpellList;
 typedef std::list<uint32_t> InvitedToGuildsList;
 typedef std::list<Party*> PartyList;
 
-#define PLAYER_MAX_SPEED 1500
-#define PLAYER_MIN_SPEED 10
-#define PLAYER_STAMINA 201660000
+#define SPEED_MAX 1500
+#define SPEED_MIN 10
+#define STAMINA_MAX (42 * 60 * 60 * 1000)
+#define STAMINA_MUL (60 * 1000)
 
 class Player : public Creature, public Cylinder
 {
@@ -263,14 +264,13 @@ class Player : public Creature, public Cylinder
 		PlayerSex_t getSex() const {return sex;}
 		void setSex(PlayerSex_t);
 
-		uint64_t getStamina() const {return stamina;}
-		void setStamina(uint64_t _stamina) {stamina = _stamina;}
-		uint32_t getStaminaMinutes() const {return (hasCustomFlag(PlayerCustomFlag_HasInfiniteStamina) ?
-			3360 : std::min((uint32_t)3360, (uint32_t)std::floor(stamina / (1000 * 60))));}
-		void setStaminaMinutes(uint32_t _stamina) {stamina = std::min((uint64_t)3360, (uint64_t)_stamina);}
-
-		uint64_t getSpentStamina() {return ((uint64_t)PLAYER_STAMINA - stamina);}
-		void useStamina(int64_t value, bool ticks);
+		uint64_t getStamina() const {return hasCustomFlag(PlayerCustomFlag_HasInfiniteStamina) ? STAMINA_MAX : stamina;}
+		void setStamina(uint64_t _stamina) {stamina = std::min((uint64_t)STAMINA_MAX, _stamina);}
+		uint32_t getStaminaMinutes() const {return (uint32_t)getStamina() / STAMINA_MUL;}
+		void setStaminaMinutes(uint32_t _stamina) {setStamina(_stamina * STAMINA_MUL);}
+		void addStamina(int64_t value) {stamina = std::min((int64_t)STAMINA_MAX, std::max((int64_t)0, ((int64_t)stamina + value)));}
+		void removeStamina(int64_t value) {addStamina(-value);}
+		uint64_t getSpentStamina() {return (uint64_t)STAMINA_MAX - stamina;}
 
 		time_t getLastLoginSaved() const {return lastLoginSaved;}
 		time_t getLastLogout() const {return lastLogout;}
@@ -651,9 +651,9 @@ class Player : public Creature, public Cylinder
 			{if (client) client->sendAddMarker(pos, markType, desc);}
 
 		void receivePing() {if(npings > 0) npings--;}
-
 		virtual void onThink(uint32_t interval);
 		void sendCriticalHit() const;
+		uint32_t getAttackSpeed();
 
 		virtual void postAddNotification(Creature* actor, Thing* thing, int32_t index, cylinderlink_t link = LINK_OWNER);
 		virtual void postRemoveNotification(Creature* actor, Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
@@ -733,46 +733,46 @@ class Player : public Creature, public Cylinder
 
 	protected:
 		ProtocolGame* client;
+		OperatingSystem_t operatingSystem;
 
 		uint32_t level;
 		uint32_t levelPercent;
 		uint32_t magLevel;
 		uint32_t magLevelPercent;
-		uint16_t accessLevel;
-		uint16_t violationAccess;
-		int32_t premiumDays;
 		uint64_t experience;
-		uint64_t stamina;
+		uint64_t manaSpent;
+
 		uint32_t damageImmunities;
 		uint32_t conditionImmunities;
 		uint32_t conditionSuppressions;
-		uint32_t condition;
-		uint64_t manaSpent;
-		int32_t vocation_id;
-		Vocation* vocation;
-		PlayerSex_t sex;
+		uint32_t condition; //?
+
+		int32_t premiumDays;
+		int16_t blessings;
+		uint64_t stamina;
 		int32_t soul;
 		int32_t soulMax;
-		uint64_t groupFlags;
-		uint64_t groupCustomFlags;
-		int16_t blessings;
-		uint32_t MessageBufferTicks;
-		int32_t MessageBufferCount;
-		uint32_t actionTaskEvent;
+
+		Vocation* vocation;
+		int32_t vocation_id;
+		PlayerSex_t sex;
+
 		uint32_t nextStepEvent;
+		uint32_t actionTaskEvent;
+		int64_t nextAction;
 		uint32_t walkTaskEvent;
 		SchedulerTask* walkTask;
 
 		Party* party;
 		PartyList invitePartyList;
 
+		int32_t groupId;
+		uint64_t groupFlags;
+		uint64_t groupCustomFlags;
+		uint16_t accessLevel;
+		uint16_t violationAccess;
 		std::string groupName;
 		uint16_t groupOutfit;
-		int32_t idleTime;
-		int32_t groupId;
-		OperatingSystem_t operatingSystem;
-		bool requestedOutfit;
-		bool saving;
 
 		bool talkState[13];
 		AccountManager_t accountManager;
@@ -784,12 +784,17 @@ class Player : public Creature, public Cylinder
 		double inventoryWeight;
 		double capacity;
 
+		uint32_t MessageBufferTicks;
+		int32_t MessageBufferCount;
 		uint32_t internalPing;
 		uint32_t npings;
-		int64_t nextAction;
+		int32_t idleTime;
 
 		bool pzLocked;
+		bool saving;
 		bool isConnecting;
+		bool requestedOutfit;
+
 		int32_t bloodHitCount;
 		int32_t shieldBlockCount;
 		BlockType_t lastAttackBlockType;
@@ -837,15 +842,14 @@ class Player : public Creature, public Cylinder
 		int32_t purchaseCallback;
 		int32_t saleCallback;
 		ShopInfoList shopOffer;
-
-		LearnedInstantSpellList learnedInstantSpellList;
 		std::map<uint32_t, uint32_t> goodsMap;
 
+		uint32_t guid;
 		std::string name;
 		std::string nameDescription;
-		uint32_t guid;
 
 		uint32_t promotionLevel;
+		int64_t redSkullTicks;
 		uint32_t town;
 
 		//guild variables
@@ -858,8 +862,8 @@ class Player : public Creature, public Cylinder
 
 		StorageMap storageMap;
 		LightInfo itemsLight;
-
 		OutfitList m_playerOutfits;
+		LearnedInstantSpellList learnedInstantSpellList;
 
 		//read/write storage data
 		uint32_t windowTextId;
@@ -868,18 +872,16 @@ class Player : public Creature, public Cylinder
 		House* editHouse;
 		uint32_t editListId;
 
-		int64_t redSkullTicks;
 		typedef std::set<uint32_t> AttackedSet;
 		AttackedSet attackedSet;
 
-		void updateItemsLight(bool internal = false);
 		virtual int32_t getStepSpeed() const
 		{
-			if(getSpeed() > PLAYER_MAX_SPEED)
-				return PLAYER_MAX_SPEED;
+			if(getSpeed() > SPEED_MAX)
+				return SPEED_MAX;
 
-			if(getSpeed() < PLAYER_MIN_SPEED)
-				return PLAYER_MIN_SPEED;
+			if(getSpeed() < SPEED_MIN)
+				return SPEED_MIN;
 
 			return getSpeed();
 		}
@@ -888,23 +890,25 @@ class Player : public Creature, public Cylinder
 			if(!hasFlag(PlayerFlag_SetMaxSpeed))
 				baseSpeed = vocation->getBaseSpeed() + (2 * (level - 1));
 			else
-				baseSpeed = PLAYER_MAX_SPEED;
+				baseSpeed = SPEED_MAX;
 		}
 
-		bool isPromoted(uint32_t pLevel = 1) const {return promotionLevel >= pLevel;}
-
-		uint32_t getVocAttackSpeed() const {return vocation->getAttackSpeed();}
-		uint32_t getAttackSpeed();
-
-		static uint32_t getPercentLevel(uint64_t count, uint64_t nextLevelCount);
-		double getLostPercent(lossTypes_t lossType);
-		virtual uint64_t getLostExperience() {return skillLoss ? uint64_t((double)experience * getLostPercent(LOSS_EXPERIENCE)) : 0;}
-		virtual void dropLoot(Container* corpse);
 		virtual uint32_t getDamageImmunities() const {return damageImmunities;}
 		virtual uint32_t getConditionImmunities() const {return conditionImmunities;}
 		virtual uint32_t getConditionSuppressions() const {return conditionSuppressions;}
-		virtual uint16_t getLookCorpse() const;
+
+		double getLostPercent(lossTypes_t lossType);
+		virtual uint64_t getLostExperience() {return skillLoss ? (uint64_t)std::floor(
+			(double)experience * getLostPercent(LOSS_EXPERIENCE)) : 0;}
+
 		virtual void getPathSearchParams(const Creature* creature, FindPathParams& fpp) const;
+		static uint32_t getPercentLevel(uint64_t count, uint64_t nextLevelCount);
+		uint32_t getVocAttackSpeed() const {return vocation->getAttackSpeed();}
+		virtual uint16_t getLookCorpse() const;
+
+		bool isPromoted(uint32_t pLevel = 1) const {return promotionLevel >= pLevel;}
+		void updateItemsLight(bool internal = false);
+		virtual void dropLoot(Container* corpse);
 
 		friend class Game;
 		friend class LuaScriptInterface;

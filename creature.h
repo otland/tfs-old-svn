@@ -469,7 +469,7 @@ class Creature : public AutoID, virtual public Thing
 
 		virtual uint64_t getLostExperience() const {return 0;}
 		virtual double getDamageRatio(Creature* attacker) const;
-		uint32_t getStaminaRatio(Creature* attacker) const;
+		int64_t getStaminaRatio(Creature* attacker) const;
 		bool getKillers(Creature** lastHitCreature, Creature** mostDamageCreature);
 		virtual void dropLoot(Container* corpse) {}
 		virtual uint16_t getLookCorpse() const {return 0;}
