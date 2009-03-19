@@ -1400,8 +1400,8 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 			{
 				period = std::ceil(period * g_config.getDouble(ConfigManager::RATE_STAMINA_GAIN));
 				int64_t rated = stamina + period;
-				if(rated >= (g_config.getNumber(STAMINA_THRESHOLD_MAX) * 60000))
-					rated -= g_config.getNumber(STAMINA_THRESHOLD_MAX) * ;
+				if(rated >= (g_config.getNumber(ConfigManager::STAMINA_THRESHOLD_MAX) * 60000))
+					rated -= g_config.getNumber(ConfigManager::STAMINA_THRESHOLD_MAX) * ;
 				else
 					rated = 0;
 
@@ -1607,12 +1607,10 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 		int32_t ticks = g_config.getNumber(ConfigManager::STAIRHOP_DELAY);
 		if(ticks > 0)
 		{
-			Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_PACIFIED, ticks);
-			if(condition)
-				addCondition(condition);
-
-			condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST_COMBAT, ticks);
-			if(condition)
+			addExhaust(g_config.getNumber(ConfigManager::STAIRHOP_DELAY), 1);
+			addExhaust(g_config.getNumber(ConfigManager::STAIRHOP_DELAY), 3);
+			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_PACIFIED,
+				g_config.getNumber(ConfigManager::STAIRHOP_DELAY), 0, false, type))
 				addCondition(condition);
 		}
 	}
