@@ -141,7 +141,8 @@
 	expireReportsAfterReads = 1
 	promptExceptionTracerErrorBox = "yes"
 	storePlayerDirection = "no"
-	playerQueryDeepness = 1
+	playerQueryDeepness = 2
+	displayPlayersLogging = "yes"
 
 	-- Premium account
 	freePremium = "no"
@@ -169,11 +170,12 @@
 	-- rateStaminaThresholdGain is dividing in case the normal gain (that is
 	-- multiplied by rateStaminaGain, btw.) passed above threshold, eg:
 	-- 60 * 1000 / 3 = 20 / 4 = 5 seconds (3 * 4 = 12 minutes for 1 stamina minute).
+	-- staminaRatingThreshold* is in minutes.
 	rateStaminaHits = 1
 	rateStaminaGain = 1000 / 3
 	rateStaminaThresholdGain = 4
-	staminaRatingThresholdMax = 41 * 60 * 60 * 1000
-	staminaRatingThresholdMin = 14 * 60 * 60 * 1000
+	staminaRatingThresholdMax = 41 * 60
+	staminaRatingThresholdMin = 14 * 60
 	rateAboveMaxThreshold = 1.5
 	rateUnderMinThreshold = 0.5
 
