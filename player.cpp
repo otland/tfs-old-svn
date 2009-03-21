@@ -1398,7 +1398,7 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 			int64_t period = (int32_t)time(NULL) - lastLogout;
 			if(period - 600 > 0)
 			{
-				period = std::ceil(period * g_config.getDouble(ConfigManager::RATE_STAMINA_GAIN));
+				period = std::ceil((double)period * g_config.getDouble(ConfigManager::RATE_STAMINA_GAIN));
 				int64_t rated = stamina + period, tmp = g_config.getNumber(
 					ConfigManager::STAMINA_THRESHOLD_MAX) * STAMINA_MUL;
 				if(rated >= tmp)
@@ -1411,7 +1411,7 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 				{
 					tmp = std::ceil((double)rated / g_config.getDouble(ConfigManager::RATE_STAMINA_THRESHOLD));
 					if(stamina + tmp > STAMINA_MAX)
-						tmp -= ((stamina + tmp) - STAMINA_MAX);
+						tmp = STAMINA_MAX;
 
 					addStamina(tmp);
 				}
