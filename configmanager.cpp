@@ -40,11 +40,6 @@ ConfigManager::ConfigManager()
 	m_confString[OUT_LOG] = "";
 }
 
-ConfigManager::~ConfigManager()
-{
-	//
-}
-
 bool ConfigManager::load()
 {
 	if(L)
@@ -244,7 +239,7 @@ bool ConfigManager::reload()
 
 const std::string& ConfigManager::getString(uint32_t _what) const
 {
-	if((m_loaded && _what < LAST_STRING_CONFIG) || _what <= CONFIG_FILE)
+	if(m_loaded && _what < LAST_STRING_CONFIG)
 		return m_confString[_what];
 
 	if(!m_startup)

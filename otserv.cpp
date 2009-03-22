@@ -285,7 +285,6 @@ void serverMain(void* param)
 	GUI::getInstance()->m_connections = true;
 	#else
 	std::string outPath = g_config.getString(ConfigManager::OUT_LOG), errorPath = g_config.getString(ConfigManager::ERROR_LOG);
-
 	boost::shared_ptr<std::ofstream> outFile;
 	if(outPath != "" && outPath.length() > 2)
 	{

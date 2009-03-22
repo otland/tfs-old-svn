@@ -34,7 +34,7 @@ class ConfigManager
 {
 	public:
 		ConfigManager();
-		virtual ~ConfigManager();
+		virtual ~ConfigManager() {}
 
 		enum string_config_t
 		{

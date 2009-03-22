@@ -119,14 +119,20 @@ void ConnectionManager::addAttempt(uint32_t clientIp, int32_t protocolId, bool s
 
 bool ConnectionManager::checkProtection(uint32_t clientIp) const
 {
+	if(g_config.getBool(ConfigManager::LOGIN_ONLY_LOGINSERVER))
+		return true;
+
 	IpConnectionMap::const_iterator it = ipConnectionMap.find(clientIp);
 	return it != ipConnectionMap.end() && it->second.addProtectionMessage;
 }
 
 void ConnectionManager::releaseProtection(uint32_t clientIp)
 {
-	IpConnectionMap::iterator it = ipConnectionMap.find(clientIp);
-	it->second.addProtectionMessage = false;
+	if(!g_config.getBool(ConfigManager::LOGIN_ONLY_LOGINSERVER))
+	{
+		IpConnectionMap::iterator it = ipConnectionMap.find(clientIp);
+		it->second.addProtectionMessage = false;
+	}
 }
 
 void ConnectionManager::closeAll()
