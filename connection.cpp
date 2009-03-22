@@ -67,10 +67,6 @@ void ConnectionManager::releaseConnection(Connection* connection)
 	#endif
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
 
-	IpConnectionMap::iterator mit = ipConnectionMap.find(connection->getIP());
-	if(mit != ipConnectionMap.end())
-		mit->second.lastProtocol = 0x00; //TODO: protocolIds as constant enum?
-
 	std::list<Connection*>::iterator it = std::find(m_connections.begin(), m_connections.end(), connection);
 	if(it != m_connections.end())
 		m_connections.erase(it);
@@ -78,15 +74,15 @@ void ConnectionManager::releaseConnection(Connection* connection)
 		std::cout << "[Error - ConnectionManager::releaseConnection] Connection not found" << std::endl;
 }
 
-bool ConnectionManager::isDisabled(uint32_t clientIp)
+bool ConnectionManager::isDisabled(uint32_t clientIp, int32_t protocolId)
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
 	if(maxLoginTries == 0 || clientIp == 0)
 		return false;
 
 	IpConnectionMap::const_iterator it = ipConnectionMap.find(clientIp);
-	return it != ipConnectionMap.end() && it->second.loginsAmount >= maxLoginTries
-		&& (int32_t)time(NULL) < it->second.lastLogin + loginTimeout;
+	return it != ipConnectionMap.end() && it->second.lastProtocol != protocolId &&
+		it->second.loginsAmount > maxLoginTries && (int32_t)time(NULL) < it->second.lastLogin + loginTimeout;
 }
 
 void ConnectionManager::addAttempt(uint32_t clientIp, int32_t protocolId, bool success)
@@ -95,22 +91,21 @@ void ConnectionManager::addAttempt(uint32_t clientIp, int32_t protocolId, bool s
 	if(clientIp == 0)
 		return;
 
-	int32_t currentTime = time(NULL);
 	IpConnectionMap::iterator it = ipConnectionMap.find(clientIp);
 	if(it == ipConnectionMap.end())
 	{
 		ConnectionBlock tmp;
-		tmp.lastLogin = 0;
-		tmp.lastProtocol = protocolId;
-		tmp.loginsAmount = 0;
+		tmp.lastLogin = tmp.loginsAmount = 0;
+		tmp.addProtectionMessage = false;
 
 		ipConnectionMap[clientIp] = tmp;
 		it = ipConnectionMap.find(clientIp);
 	}
 
-	if(it->second.loginsAmount >= maxLoginTries)
+	if(it->second.loginsAmount > maxLoginTries)
 		it->second.loginsAmount = 0;
 
+	int32_t currentTime = time(NULL);
 	if(!success || (currentTime < it->second.lastLogin + retryTimeout))
 		it->second.loginsAmount++;
 	else
@@ -118,12 +113,14 @@ void ConnectionManager::addAttempt(uint32_t clientIp, int32_t protocolId, bool s
 
 	it->second.lastLogin = currentTime;
 	it->second.lastProtocol = protocolId;
+	if(protocolId == 0x01) //0x01 = Login Protocol
+		it->second.addProtectionMessage = true;
 }
 
-bool ConnectionManager::checkLastProtocol(uint32_t clientIp, int32_t protocolId)
+bool ConnectionManager::checkProtection(uint32_t clientIp) const
 {
-	IpConnectionMap::iterator it = ipConnectionMap.find(clientIp);
-	return it != ipConnectionMap.end() && it->second.lastProtocol == protocolId;
+	IpConnectionMap::const_iterator it = ipConnectionMap.find(clientIp);
+	return it != ipConnectionMap.end() && it->second.addProtectionMessage;
 }
 
 void ConnectionManager::closeAll()
@@ -179,10 +176,15 @@ void Connection::closeConnectionTask()
 	m_closeState = CLOSE_STATE_CLOSING;
 	if(m_protocol)
 	{
+		if(m_protocol->getId() == 0x02) //0x02 = Game Protocol
+			ConnectionManager::getInstance()->releaseProtection(getIP());
+
 		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Protocol::releaseProtocol, m_protocol)));
 		m_protocol->setConnection(NULL);
 		m_protocol = NULL;
 	}
+	else
+		ConnectionManager::getInstance()->releaseProtection(getIP());
 
 	if(!closingConnection())
 		OTSYS_THREAD_UNLOCK(m_connectionLock, "");
@@ -247,15 +249,8 @@ void Connection::acceptConnection()
 {
 	// Read size of te first packet
 	m_pendingRead++;
-	if(ConnectionManager::getInstance()->checkLastProtocol(getIP(), 0x01)) //TODO: protocolId...
+	if(ConnectionManager::getInstance()->checkProtection(getIP())
 	{
-		/* this is a very, very bad method now...
-		 * we need to unset the lastProtocol from IpConnectionMap pool somewhere just after the connection gets closed
-		 * @done - need testing.
-		 * write length + 12 bytes, where 6 of them will be later sent back by client after sending password
-		 * @in progress - how to send it? :|
-		 * NOTE: This way is too much bugged, TODO: find out other way.
-		 */
 		OutputMessage_ptr output(new OutputMessage);
 		output->AddU16(0x06);
 		output->AddByte(0x1F);

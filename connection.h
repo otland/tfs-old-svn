@@ -43,6 +43,7 @@ class Connection;
 struct ConnectionBlock
 {
 	int32_t lastLogin, lastProtocol, loginsAmount;
+	bool addProtectionMessage;
 };
 
 class ConnectionManager
@@ -64,7 +65,9 @@ class ConnectionManager
 
 		bool isDisabled(uint32_t clientIp);
 		void addAttempt(uint32_t clientIp, int32_t protocolId, bool success);
-		bool checkLastProtocol(uint32_t clientIp, int32_t protocolId);
+
+		bool checkProtection(uint32_t clientIp) const;
+		void releaseProtection(uint32_t clientIp) {ipConnectionMap.erase(ipConnectionMap.find(clientIp));}
 
 		void closeAll();
 
