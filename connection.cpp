@@ -125,7 +125,7 @@ bool ConnectionManager::checkProtection(uint32_t clientIp) const
 
 void ConnectionManager::releaseProtection(uint32_t clientIp)
 {
-	IpConnectionMap::const_iterator it = ipConnectionMap.find(clientIp);
+	IpConnectionMap::iterator it = ipConnectionMap.find(clientIp);
 	it->second.addProtectionMessage = false;
 }
 
