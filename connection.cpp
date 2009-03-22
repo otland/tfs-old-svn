@@ -123,6 +123,12 @@ bool ConnectionManager::checkProtection(uint32_t clientIp) const
 	return it != ipConnectionMap.end() && it->second.addProtectionMessage;
 }
 
+void ConnectionManager::releaseProtection(uint32_t clientIp)
+{
+	IpConnectionMap::const_iterator it = ipConnectionMap.find(clientIp);
+	it->second.addProtectionMessage = false;
+}
+
 void ConnectionManager::closeAll()
 {
 	#ifdef __DEBUG_NET_DETAIL__
@@ -176,15 +182,10 @@ void Connection::closeConnectionTask()
 	m_closeState = CLOSE_STATE_CLOSING;
 	if(m_protocol)
 	{
-		if(m_protocol->getProtocolId() == 0x02) //0x02 = Game Protocol
-			ConnectionManager::getInstance()->releaseProtection(getIP());
-
 		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Protocol::releaseProtocol, m_protocol)));
 		m_protocol->setConnection(NULL);
 		m_protocol = NULL;
 	}
-	else
-		ConnectionManager::getInstance()->releaseProtection(getIP());
 
 	if(!closingConnection())
 		OTSYS_THREAD_UNLOCK(m_connectionLock, "");
@@ -258,7 +259,9 @@ void Connection::acceptConnection()
 		output->AddU16(0x00);
 		output->AddByte(random_range(0, 255));
 		output->addCryptoHeader(true);
+
 		internalSend(output);
+		ConnectionManager::getInstance()->releaseProtection(getIP());
 	}
 
 	boost::asio::async_read(m_socket, boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),

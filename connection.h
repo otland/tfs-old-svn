@@ -67,7 +67,7 @@ class ConnectionManager
 		void addAttempt(uint32_t clientIp, int32_t protocolId, bool success);
 
 		bool checkProtection(uint32_t clientIp) const;
-		void releaseProtection(uint32_t clientIp) {ipConnectionMap.erase(ipConnectionMap.find(clientIp));}
+		void releaseProtection(uint32_t clientIp);
 
 		void closeAll();
 
