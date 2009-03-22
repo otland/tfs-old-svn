@@ -136,7 +136,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	if(ConnectionManager::getInstance()->isDisabled(clientIP))
+	if(ConnectionManager::getInstance()->isDisabled(clientIP, getProtocolId()))
 	{
 		disconnectClient(0x0A, "Too many connections attempts from this IP. Please try again later.");
 		return false;

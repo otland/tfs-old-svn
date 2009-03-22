@@ -63,7 +63,7 @@ class ConnectionManager
 		Connection* createConnection(boost::asio::io_service& io_service);
 		void releaseConnection(Connection* connection);
 
-		bool isDisabled(uint32_t clientIp);
+		bool isDisabled(uint32_t clientIp, int32_t protocolId);
 		void addAttempt(uint32_t clientIp, int32_t protocolId, bool success);
 
 		bool checkProtection(uint32_t clientIp) const;

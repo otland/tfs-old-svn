@@ -574,7 +574,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	if(ConnectionManager::getInstance()->isDisabled(getIP()))
+	if(ConnectionManager::getInstance()->isDisabled(getIP(), getProtocolId()))
 	{
 		disconnectClient(0x14, "Too many connections attempts from this IP. Try again later.");
 		return false;

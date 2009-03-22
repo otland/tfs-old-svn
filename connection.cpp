@@ -176,7 +176,7 @@ void Connection::closeConnectionTask()
 	m_closeState = CLOSE_STATE_CLOSING;
 	if(m_protocol)
 	{
-		if(m_protocol->getId() == 0x02) //0x02 = Game Protocol
+		if(m_protocol->getProtocolId() == 0x02) //0x02 = Game Protocol
 			ConnectionManager::getInstance()->releaseProtection(getIP());
 
 		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Protocol::releaseProtocol, m_protocol)));
