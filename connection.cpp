@@ -249,7 +249,7 @@ void Connection::acceptConnection()
 {
 	// Read size of te first packet
 	m_pendingRead++;
-	if(ConnectionManager::getInstance()->checkProtection(getIP())
+	if(ConnectionManager::getInstance()->checkProtection(getIP()))
 	{
 		OutputMessage_ptr output(new OutputMessage);
 		output->AddU16(0x06);
