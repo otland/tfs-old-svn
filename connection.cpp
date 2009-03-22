@@ -254,17 +254,16 @@ void Connection::acceptConnection()
 		 * @done - need testing.
 		 * write length + 12 bytes, where 6 of them will be later sent back by client after sending password
 		 * @in progress - how to send it? :|
+		 * NOTE: This way is too much bugged, TODO: find out other way.
 		 */
-		/*output->AddU16(0x0C);
-		output->AddU32(adlerChecksum(0, 6));
-		output->AddByte(0x06);
-		output->AddU16(0x31);
-		output->AddByte(0x00);
-		output->AddByte(0x00);
-		output->AddByte(0x00);
-		output->AddByte(0x00);
-		output->AddByte(0x00);
-		send(output);*/
+		/*OutputMessage_ptr output(new OutputMessage);
+		output->AddU16(0x06);
+		output->AddByte(0x31);
+		output->AddU16(0x23A);
+		output->AddU16(0x00);
+		output->AddByte(171);
+		output->addCryptoHeader(true);
+		internalSend(output);*/
 	}
 
 	boost::asio::async_read(m_socket, boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),
