@@ -256,14 +256,14 @@ void Connection::acceptConnection()
 		 * @in progress - how to send it? :|
 		 * NOTE: This way is too much bugged, TODO: find out other way.
 		 */
-		/*OutputMessage_ptr output(new OutputMessage);
+		OutputMessage_ptr output(new OutputMessage);
 		output->AddU16(0x06);
-		output->AddByte(0x31);
-		output->AddU16(0x23A);
+		output->AddByte(0x1F);
+		output->AddU16(random_range(0, 65535));
 		output->AddU16(0x00);
-		output->AddByte(171);
+		output->AddByte(random_range(0, 255));
 		output->addCryptoHeader(true);
-		internalSend(output);*/
+		internalSend(output);
 	}
 
 	boost::asio::async_read(m_socket, boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),

@@ -2939,6 +2939,7 @@ void ProtocolGame::AddTileItem(NetworkMessage_ptr msg, const Position& pos, cons
 {
 	msg->AddByte(0x6A);
 	msg->AddPosition(pos);
+	msg->AddByte(item->getParent()->__getIndexOfThing(item));
 	msg->AddItem(item);
 }
 
@@ -2946,7 +2947,7 @@ void ProtocolGame::AddTileCreature(NetworkMessage_ptr msg, const Position& pos, 
 {
 	msg->AddByte(0x6A);
 	msg->AddPosition(pos);
-
+	msg->AddByte(creature->getParent()->__getIndexOfThing(creature));
 	bool known;
 	uint32_t removedKnown;
 	checkCreatureAsKnown(creature->getID(), known, removedKnown);

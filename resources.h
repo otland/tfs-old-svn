@@ -53,12 +53,12 @@
 	#define ID_MENU_RELOAD_ALL 234
 #endif
 
-/*#define CLIENT_VERSION_MIN 841
+#define CLIENT_VERSION_MIN 841
 #define CLIENT_VERSION_MAX 841
-#define CLIENT_VERSION_STRING "Only clients with protocol 8.41 allowed!"*/
+#define CLIENT_VERSION_STRING "Only clients with protocol 8.41 allowed!"/*
 #define CLIENT_VERSION_MIN 840
 #define CLIENT_VERSION_MAX 840
-#define CLIENT_VERSION_STRING "Only clients with protocol 8.4 allowed!"
+#define CLIENT_VERSION_STRING "Only clients with protocol 8.4 allowed!"*/
 #define STATUS_SERVER_NAME "The Forgotten Server"
 #define STATUS_SERVER_VERSION "0.3.2"
 #define STATUS_SERVER_CODENAME "Crying Damson"

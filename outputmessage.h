@@ -43,9 +43,10 @@ class Connection;
 class OutputMessage : public NetworkMessage, boost::noncopyable
 {
 	private:
-		OutputMessage();
+		//OutputMessage();
 
 	public:
+		OutputMessage();
 		virtual ~OutputMessage(){}
 
 		char* getOutputBuffer() {return (char*)&m_MsgBuf[m_outputBufferStart];}
