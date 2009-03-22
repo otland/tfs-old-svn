@@ -113,7 +113,7 @@ void ConnectionManager::addAttempt(uint32_t clientIp, int32_t protocolId, bool s
 
 	it->second.lastLogin = currentTime;
 	it->second.lastProtocol = protocolId;
-	if(protocolId == 0x01) //0x01 = Login Protocol
+	if(protocolId == 0x01)
 		it->second.addProtectionMessage = true;
 }
 
@@ -159,6 +159,9 @@ void Connection::closeConnection()
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionLock);
 	if(m_closeState != CLOSE_STATE_NONE)
 		return;
+
+	if(!m_protocol || m_protocol->getProtocolId() == 0x0A)
+		ConnectionManager::getInstance()->releaseProtection(getIP());
 
 	m_closeState = CLOSE_STATE_REQUESTED;
 	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Connection::closeConnectionTask, this)));
@@ -259,9 +262,7 @@ void Connection::acceptConnection()
 		output->AddU16(0x00);
 		output->AddByte(random_range(0, 255));
 		output->addCryptoHeader(true);
-
 		internalSend(output);
-		ConnectionManager::getInstance()->releaseProtection(getIP());
 	}
 
 	boost::asio::async_read(m_socket, boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),
