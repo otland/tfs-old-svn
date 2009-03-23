@@ -678,7 +678,7 @@ bool Admin::allowIP(uint32_t ip)
 		return false;
 	}
 	else
-		return !ConnectionManager::getInstance()->isDisabled(ip, getProtocolId());
+		return !ConnectionManager::getInstance()->isDisabled(ip, 0xFE);
 }
 
 uint16_t Admin::getProtocolPolicy()
