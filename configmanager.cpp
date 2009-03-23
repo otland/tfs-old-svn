@@ -84,8 +84,8 @@ bool ConfigManager::load()
 		m_confString[SQL_USER] = getGlobalString(L, "sqlUser", "root");
 		m_confString[SQL_PASS] = getGlobalString(L, "sqlPass", "");
 		m_confString[SQL_FILE] = getGlobalString(L, "sqlFile", "forgottenserver.s3db");
-		m_confNumber[SQL_KEEPALIVE] = getGlobalNumber(L, "sqlKeepAlive", 60);
-		m_confNumber[MYSQL_READ_TIMEOUT] = getGlobalNumber(L, "mysqlReadTimeout", 3);
+		m_confNumber[SQL_KEEPALIVE] = getGlobalNumber(L, "sqlKeepAlive", 0);
+		m_confNumber[MYSQL_READ_TIMEOUT] = getGlobalNumber(L, "mysqlReadTimeout", 10);
 		m_confString[PASSWORD_TYPE] = getGlobalString(L, "passwordType", "plain");
 		m_confNumber[PASSWORDTYPE] = PASSWORD_TYPE_PLAIN;
 		m_confString[MAP_NAME] = getGlobalString(L, "mapName", "forgotten");

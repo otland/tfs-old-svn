@@ -80,7 +80,7 @@
 	sqlPass = ""
 	sqlDatabase = "theforgottenserver"
 	sqlFile = "forgottenserver.s3db"
-	sqlKeepAlive = 60
+	sqlKeepAlive = 0
 	mysqlReadTimeout = 10
 	optimizeDatabaseAtStartup = "yes"
 	passwordType = "plain"
