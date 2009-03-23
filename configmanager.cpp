@@ -239,7 +239,7 @@ bool ConfigManager::reload()
 
 const std::string& ConfigManager::getString(uint32_t _what) const
 {
-	if(m_loaded && _what < LAST_STRING_CONFIG)
+	if((m_loaded && _what < LAST_STRING_CONFIG) || _what <= CONFIG_FILE)
 		return m_confString[_what];
 
 	if(!m_startup)
