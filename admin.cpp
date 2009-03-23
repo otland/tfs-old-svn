@@ -671,16 +671,14 @@ bool Admin::allowIP(uint32_t ip)
 	{
 		if(ip == 0x0100007F) //127.0.0.1
 			return true;
-		else
-		{
-			char buffer[32];
-			formatIP(ip, buffer);
-			addLogLine(NULL, LOGTYPE_WARNING, 1, std::string("forbidden connection try from ") + buffer);
-			return false;
-		}
+
+		char buffer[32];
+		formatIP(ip, buffer);
+		addLogLine(NULL, LOGTYPE_WARNING, 1, std::string("forbidden connection try from ") + buffer);
+		return false;
 	}
 	else
-		return !ConnectionManager::getInstance()->isDisabled(ip);
+		return !ConnectionManager::getInstance()->isDisabled(ip, getProtocolId());
 }
 
 uint16_t Admin::getProtocolPolicy()
