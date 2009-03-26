@@ -21,15 +21,17 @@
 
 #ifndef __OTSERV_WEAPONS_H__
 #define __OTSERV_WEAPONS_H__
+#include "otsystem.h"
+#include "const.h"
 
 #include "game.h"
+#include "baseevents.h"
 #include "luascript.h"
 #include "player.h"
+
 #include "actions.h"
 #include "talkaction.h"
-#include "baseevents.h"
 #include "combat.h"
-#include "const.h"
 
 class Weapon;
 class WeaponMelee;

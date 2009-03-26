@@ -53,7 +53,10 @@
 	-- Connection config
 	worldId = 0
 	ip = "127.0.0.1"
-	port = 7171
+	loginPort = 7171
+	gamePort = 7172
+	adminPort = 7171
+	statusPort = 7171
 	loginTries = 10
 	retryTimeout = 5 * 1000
 	loginTimeout = 60 * 1000

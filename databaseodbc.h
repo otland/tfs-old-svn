@@ -39,7 +39,6 @@
 #else
 #include <sqltypes.h>
 #endif
-
 #include <sql.h>
 #include <sqlext.h>
 

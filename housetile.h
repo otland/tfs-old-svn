@@ -20,7 +20,6 @@
 
 #ifndef __HOUSETILE_H__
 #define __HOUSETILE_H__
-
 #include "tile.h"
 
 class House;

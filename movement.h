@@ -20,11 +20,7 @@
 
 #ifndef __MOVEMENT_H__
 #define __MOVEMENT_H__
-
-
-#include "luascript.h"
 #include "baseevents.h"
-#include <map>
 
 enum MoveEvent_t
 {

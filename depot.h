@@ -20,7 +20,6 @@
 
 #ifndef __OTSERV_DEPOT_H__
 #define __OTSERV_DEPOT_H__
-
 #include "container.h"
 
 class Depot : public Container

@@ -20,16 +20,15 @@
 
 #ifndef __OTSERV_PROTOCOL_H__
 #define __OTSERV_PROTOCOL_H__
-
-#include <stdio.h>
-#include <boost/utility.hpp>
-#include <boost/shared_ptr.hpp>
+#include "otsystem.h"
 
 class NetworkMessage;
 class OutputMessage;
-typedef boost::shared_ptr<OutputMessage> OutputMessage_ptr;
+
 class Connection;
 class RSA;
+
+typedef boost::shared_ptr<OutputMessage> OutputMessage_ptr;
 
 class Protocol : boost::noncopyable
 {
@@ -37,35 +36,44 @@ class Protocol : boost::noncopyable
 		Protocol(Connection* connection)
 		{
 			m_connection = connection;
-			m_encryptionEnabled = false;
-			m_checksumEnabled = true;
-			m_rawMessages = false;
-			m_key[0] = 0;
-			m_key[1] = 0;
-			m_key[2] = 0;
-			m_key[3] = 0;
 			m_refCount = 0;
+
+			m_rawMessages = m_encryptionEnabled = false;
+			m_checksumEnabled = true;
+			for(int8_t i = 0; i < 4; ++i)
+				m_key[i] = 0;
 		}
 		virtual ~Protocol() {}
-		virtual int32_t getProtocolId() {return 0x00;}
 
-		virtual void parsePacket(NetworkMessage& msg){}
+		static virtual std::string getProtocolName() {return "Internal Protocol";}
+		static virtual uint8_t getProtocolId() {return 0x00;}
 
-		void onSendMessage(OutputMessage_ptr msg);
-		void onRecvMessage(NetworkMessage& msg);
+		static virtual bool isSingleSocket() {return false;}
+		static virtual bool hasChecksum() {return false;}
+
+		virtual void onConnect() {}
 		virtual void onRecvFirstMessage(NetworkMessage& msg) = 0;
+
+		void onRecvMessage(NetworkMessage& msg);
+		void onSendMessage(OutputMessage_ptr msg);
+
+		virtual void parsePacket(NetworkMessage& msg) {}
+		uint32_t getIP() const;
 
 		Connection* getConnection() {return m_connection;}
 		const Connection* getConnection() const {return m_connection;}
 		void setConnection(Connection* connection) {m_connection = connection;}
 
-		uint32_t getIP() const;
 		int32_t addRef() {return ++m_refCount;}
 		int32_t unRef() {return --m_refCount;}
 
 	protected:
 		//Use this function for autosend messages only
 		OutputMessage_ptr getOutputBuffer();
+
+		void setRawMessages(bool value) {m_rawMessages = value;}
+		void enableChecksum() {m_checksumEnabled = true;}
+		void disableChecksum() {m_checksumEnabled = false;}
 
 		void enableXTEAEncryption() {m_encryptionEnabled = true;}
 		void disableXTEAEncryption() {m_encryptionEnabled = false;}
@@ -75,23 +83,18 @@ class Protocol : boost::noncopyable
 		bool XTEA_decrypt(NetworkMessage& msg);
 		bool RSA_decrypt(RSA* rsa, NetworkMessage& msg);
 
-		void enableChecksum() {m_checksumEnabled = true;}
-		void disableChecksum() {m_checksumEnabled = false;}
-
-		void setRawMessages(bool value) {m_rawMessages = value;}
-
 		virtual void releaseProtocol();
 		virtual void deleteProtocolTask();
+
 		friend class Connection;
 
 	private:
 		OutputMessage_ptr m_outputBuffer;
 		Connection* m_connection;
-		bool m_encryptionEnabled;
-		bool m_checksumEnabled;
-		bool m_rawMessages;
-		uint32_t m_key[4];
 		uint32_t m_refCount;
+
+		bool m_rawMessages, m_encryptionEnabled, m_checksumEnabled;
+		uint32_t m_key[4];
 };
 
 #endif

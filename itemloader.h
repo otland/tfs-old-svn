@@ -20,9 +20,7 @@
 
 #ifndef __OTSERV_ITEMLOADER_H__
 #define __OTSERV_ITEMLOADER_H__
-
 #include "fileloader.h"
-#include "definitions.h"
 
 typedef uint8_t attribute_t;
 typedef uint16_t datasize_t;

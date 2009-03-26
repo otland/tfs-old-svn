@@ -18,12 +18,12 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
+#ifndef __CONSOLE__
 #ifndef __INPUTBOX_H__
 #define __INPUTBOX_H__
-#ifndef __CONSOLE__
+#include <stdlib.h>
 #include <tchar.h>
 #include <windows.h>
-#include <stdlib.h>
 
 #define INPUTBOX_WIDTH 400
 #define INPUTBOX_HEIGHT 125

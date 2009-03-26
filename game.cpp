@@ -19,9 +19,6 @@
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 
-#include <boost/config.hpp>
-#include <boost/bind.hpp>
-
 #include "game.h"
 #include "tasks.h"
 #include "configmanager.h"
@@ -57,7 +54,6 @@ extern OTSYS_THREAD_LOCKVAR maploadlock;
 #endif
 
 extern ConfigManager g_config;
-extern Server* g_server;
 extern Actions* g_actions;
 extern Monsters g_monsters;
 extern Npcs g_npcs;
@@ -90,22 +86,86 @@ Game::Game()
 	lightHour = SUNRISE + (SUNSET - SUNRISE) / 2;
 	lightLevel = LIGHT_LEVEL_DAY;
 	lightState = LIGHT_STATE_DAY;
-	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
-		boost::bind(&Game::checkLight, this)));
 
-	lastBucket = 0;
-	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
-		boost::bind(&Game::checkDecay, this)));
-
-	checkCreatureLastIndex = 0;
-	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_CREATURE_THINK_INTERVAL,
-		boost::bind(&Game::checkCreatures, this)));
+	lastBucket = checkCreatureLastIndex = 0;
 }
 
 Game::~Game()
 {
 	if(map)
 		delete map;
+}
+
+void Game::start(ServiceManager* servicer)
+{
+	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
+		boost::bind(&Game::checkDecay, this)));
+	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_CREATURE_THINK_INTERVAL,
+		boost::bind(&Game::checkCreatures, this)));
+	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
+		boost::bind(&Game::checkLight, this)));
+
+	services = servicer;
+	if(g_config.getBool(ConfigManager::GLOBALSAVE_ENABLED) && g_config.getNumber(ConfigManager::GLOBALSAVE_H) >= 1
+		&& g_config.getNumber(ConfigManager::GLOBALSAVE_H) <= 24)
+	{
+		int32_t prepareGlobalSaveHour = g_config.getNumber(ConfigManager::GLOBALSAVE_H) - 1, hoursLeft = 0, minutesLeft = 0, minutesToRemove = 0;
+		bool ignoreEvent = false;
+
+		time_t timeNow = time(NULL);
+		const tm* theTime = localtime(&timeNow);
+		if(theTime->tm_hour > prepareGlobalSaveHour)
+		{
+			hoursLeft = 24 - (theTime->tm_hour - prepareGlobalSaveHour);
+			if(theTime->tm_min > 55 && theTime->tm_min <= 59)
+				minutesToRemove = theTime->tm_min - 55;
+			else
+				minutesLeft = 55 - theTime->tm_min;
+		}
+		else if(theTime->tm_hour == prepareGlobalSaveHour)
+		{
+			if(theTime->tm_min >= 55 && theTime->tm_min <= 59)
+			{
+				if(theTime->tm_min >= 57)
+					setGlobalSaveMessage(0, true);
+
+				if(theTime->tm_min == 59)
+					setGlobalSaveMessage(1, true);
+
+				prepareGlobalSave();
+				ignoreEvent = true;
+			}
+			else
+				minutesLeft = 55 - theTime->tm_min;
+		}
+		else
+		{
+			hoursLeft = prepareGlobalSaveHour - theTime->tm_hour;
+			if(theTime->tm_min > 55 && theTime->tm_min <= 59)
+				minutesToRemove = theTime->tm_min - 55;
+			else
+				minutesLeft = 55 - theTime->tm_min;
+		}
+
+		uint32_t hoursLeftInMs = 60000 * 60 * hoursLeft, minutesLeftInMs = 60000 * (minutesLeft - minutesToRemove);
+		if(!ignoreEvent && (hoursLeftInMs + minutesLeftInMs) > 0)
+			Scheduler::getScheduler().addEvent(createSchedulerTask(hoursLeftInMs + minutesLeftInMs,
+				boost::bind(&Game::prepareGlobalSave, this)));
+	}
+}
+
+void Game::loadGameState()
+{
+	maxPlayers = g_config.getNumber(ConfigManager::MAX_PLAYERS);
+	inFightTicks = g_config.getNumber(ConfigManager::PZ_LOCKED);
+	Monster::despawnRange = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRANGE);
+	Monster::despawnRadius = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRADIUS);
+	Player::maxMessageBuffer = g_config.getNumber(ConfigManager::MAX_MESSAGEBUFFER);
+
+	ScriptEnviroment::loadGameState();
+	loadMotd();
+	loadPlayersRecord();
+	checkHighscores();
 }
 
 void Game::setGameState(GameState_t newState)
@@ -214,20 +274,6 @@ void Game::saveGameState(bool maintainState)
 		setGameState(GAME_STATE_NORMAL);
 
 	std::cout << "> SAVE: Complete in " << (OTSYS_TIME() - start) / (1000.) << " seconds using " << storage << " house storage." << std::endl;
-}
-
-void Game::loadGameState()
-{
-	maxPlayers = g_config.getNumber(ConfigManager::MAX_PLAYERS);
-	inFightTicks = g_config.getNumber(ConfigManager::PZ_LOCKED);
-	Monster::despawnRange = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRANGE);
-	Monster::despawnRadius = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRADIUS);
-	Player::maxMessageBuffer = g_config.getNumber(ConfigManager::MAX_MESSAGEBUFFER);
-
-	ScriptEnviroment::loadGameState();
-	loadMotd();
-	loadPlayersRecord();
-	checkHighscores();
 }
 
 int32_t Game::loadMap(std::string filename)
@@ -363,6 +409,25 @@ void Game::cleanMap(uint32_t& count)
 	std::cout << " in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 }
 
+void Game::proceduralRefresh(RefreshTiles::iterator* it/* = NULL*/)
+{
+	if(!it)
+		it = new RefreshTiles::iterator(refreshTiles.begin());
+
+	// Refresh 250 tiles each cycle
+	refreshMap(it, 250);
+	if((*it) != refreshTiles.end())
+	{
+		delete it;
+		return;
+	}
+
+	// Refresh some items every 100 ms until all tiles has been checked
+	// For 100k tiles, this would take 100000/2500 = 40s = half a minute
+	Scheduler::getScheduler().addEvent(createSchedulerTask(100,
+		boost::bind(&Game::proceduralRefresh, this, it)));
+}
+
 void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 0*/)
 {
 	RefreshTiles::iterator end = refreshTiles.end();
@@ -412,25 +477,6 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 			}
 		}
 	}
-}
-
-void Game::proceduralRefresh(RefreshTiles::iterator* it/* = NULL*/)
-{
-	if(!it)
-		it = new RefreshTiles::iterator(refreshTiles.begin());
-
-	// Refresh 250 tiles each cycle
-	refreshMap(it, 250);
-	if((*it) != refreshTiles.end())
-	{
-		delete it;
-		return;
-	}
-
-	// Refresh some items every 100 ms until all tiles has been checked
-	// For 100k tiles, this would take 100000/2500 = 40s = half a minute
-	Scheduler::getScheduler().addEvent(createSchedulerTask(100,
-		boost::bind(&Game::proceduralRefresh, this, it)));
 }
 
 Cylinder* Game::internalGetCylinder(Player* player, const Position& pos)
@@ -5761,8 +5807,8 @@ void Game::shutdown()
 	std::cout << ".";
 	cleanup();
 	std::cout << "." << std::endl;
-	if(g_server)
-		g_server->stop();
+	if(services)
+		services->stop();
 
 	std::cout << "Exiting" << std::endl;
 	exit(1);

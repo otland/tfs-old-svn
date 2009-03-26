@@ -18,12 +18,13 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
+#ifndef __CONSOLE__
 #ifndef __FORGOTTENSERVER_PLAYERBOX__
 #define __FORGOTTENSERVER_PLAYERBOX__
-#ifndef __CONSOLE__
+#include <stdlib.h>
 #include <tchar.h>
 #include <windows.h>
-#include <stdlib.h>
+
 #include "player.h"
 
 class PlayerBox

@@ -20,11 +20,8 @@
 
 #ifndef __OTSERV_VOCATION_H__
 #define __OTSERV_VOCATION_H__
-
-#include "enums.h"
-#include <string>
-#include <map>
 #include "item.h"
+#include "enums.h"
 
 class Vocation
 {

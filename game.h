@@ -21,21 +21,20 @@
 #ifndef __OTSERV_GAME_H__
 #define __OTSERV_GAME_H__
 #include "otsystem.h"
-
-#include <queue>
-#include <set>
+#include "templates.h"
+#include "scheduler.h"
 
 #include "map.h"
-#include "position.h"
-#include "item.h"
-#include "player.h"
-#include "templates.h"
-#include "npc.h"
-#include "monster.h"
-#include "scheduler.h"
 #include "spawn.h"
 
+#include "item.h"
+#include "player.h"
+#include "npc.h"
+#include "monster.h"
+
+class ServiceManager;
 class Creature;
+class Player;
 class Monster;
 class Npc;
 class CombatInfo;
@@ -147,6 +146,7 @@ class Game
 	public:
 		Game();
 		virtual ~Game();
+		void start(ServiceManager* servicer);
 
 		Highscore getHighscore(uint16_t skill);
 		std::string getHighscoreString(uint16_t skill);
@@ -611,6 +611,8 @@ class Game
 		uint32_t maxPlayers, inFightTicks;
 		GameState_t gameState;
 		WorldType_t worldType;
+
+		ServiceManager* services;
 		Map* map;
 
 		std::string lastMotdText;

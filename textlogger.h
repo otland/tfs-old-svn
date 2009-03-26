@@ -21,7 +21,6 @@
 #ifndef __TEXTLOGGER_H__
 #define __TEXTLOGGER_H__
 #if defined(WIN32) && not defined(__CONSOLE__)
-#include <windows.h>
 #include <ostream>
 
 class TextLogger : public std::streambuf

@@ -20,13 +20,8 @@
 
 #ifndef __TOWN_H__
 #define __TOWN_H__
-
-#include <string>
-#include <list>
-#include <map>
-
+#include "otsystem.h"
 #include "position.h"
-#include "definitions.h"
 
 class Town
 {

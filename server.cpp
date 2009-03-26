@@ -18,39 +18,44 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
+#if defined __WINDOWS__ || defined WIN32
+#include <winerror.h>
+#endif
 
 #include "server.h"
 #include "connection.h"
 #include "outputmessage.h"
-#include "scheduler.h"
 
-Server::Server(uint32_t serverip, uint16_t port):
-m_io_service()
+bool ServicePort::add(Service_ptr newService)
 {
-	m_acceptor = NULL;
-	m_listenErrors = 0;
-	m_shutdown = false;
-	m_serverIp = serverip;
+	for(ServiceVec::const_iterator it = m_services.begin(); it != m_services.end(); ++it)
+	{
+		if((*it)->isSingleSocket())
+			return false;
+	}
+
+	m_services.push_back(newService);
+	return true;
+}
+
+void ServicePort::open(uint16_t port)
+{
 	m_serverPort = port;
-	openListenSocket();
+	try
+	{
+		m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
+			boost::asio::ip::address(boost::asio::ip::address_v4(INADDR_ANY)), m_serverPort), false);
+	}
+	catch(boost::system::system_error& error)
+	{
+		std::cout << "> ERROR: Can bind only one socket to a specific port (" << m_serverPort << ")." << std::endl;
+		std::cout << "The exact error was: " << error.what() << std::endl;
+	}
+
+	accept();
 }
 
-Server::~Server()
-{
-	closeListenSocket();
-}
-
-void Server::accept()
-{
-	if(m_shutdown || !m_acceptor)
-		return;
-
-	Connection* connection = ConnectionManager::getInstance()->createConnection(m_io_service);
-	if(connection)
-		m_acceptor->async_accept(connection->getHandle(), boost::bind(&Server::onAccept, this, connection, boost::asio::placeholders::error));
-}
-
-void Server::closeListenSocket()
+void ServicePort::close()
 {
 	if(m_acceptor)
 	{
@@ -60,6 +65,7 @@ void Server::closeListenSocket()
 			m_acceptor->close(error);
 			if(error)
 				PRINT_ASIO_ERROR("Closing listen socket");
+
 		}
 
 		delete m_acceptor;
@@ -67,63 +73,86 @@ void Server::closeListenSocket()
 	}
 }
 
-void Server::openListenSocket()
+void ServicePort::accept()
 {
-	closeListenSocket();
-	m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
-		boost::asio::ip::address(boost::asio::ip::address_v4(m_serverIp)), m_serverPort));
-	accept();
-	m_pendingStart = false;
+	if(!m_acceptor)
+	{
+#ifdef __DEBUG_NET__
+		std::cout << "[Error - ServerPort::accept] NULL m_acceptor." << std::endl;
+#endif
+		return;
+	}
+
+	if(Connection* connection = ConnectionManager::getInstance()->createConnection(m_io_service, shared_from_this()))
+		m_acceptor->async_accept(connection->getHandle(), boost::bind(&ServicePort::handle, this, connection,
+			boost::asio::placeholders::error));
 }
 
-void Server::onAccept(Connection* connection, const boost::system::error_code& error)
+void ServicePort::handle(Connection* connection, const boost::system::error_code& error)
 {
 	if(!error)
 	{
-		#ifdef __DEBUG_NET_DETAIL__
-		std::cout << "[Notice - Server::onAccept] Accepted connection." << std::endl;
-		#endif
-		connection->acceptConnection();
+		if(m_services.empty())
+		{
+#ifdef __DEBUG_NET__
+			std::cout << "[Error - ServerPort::handle] No services running!" << std::endl;
+#endif
+			return;
+		}
+
+		if(m_services.front()->isSingleSocket())
+			connection->handle(m_services.front()->makeProtocol(connection));
+		else
+			connection->accept();
+
+#ifdef __DEBUG_NET_DETAIL__
+		std::cout << "handle - OK" << std::endl;
+#endif
 		accept();
 	}
 	else if(error != boost::asio::error::operation_aborted)
 	{
-		PRINT_ASIO_ERROR("Accepting");
-		if(m_listenErrors > 100)
-		{
-			#ifndef __ENABLE_LISTEN_ERROR__
-			m_listenErrors = 0;
-			std::cout << "[Warning - Server::onAccept] More than 100 listen errors." << std::endl;
-			#else
-			closeListenSocket();
-			std::cout << "[Error - Server::onAccept] More than 100 listen errors." << std::endl;
-			return;
-			#endif
-		}
-
 		m_listenErrors++;
-		if(!m_pendingStart)
-		{
-			m_pendingStart = true;
-			Scheduler::getScheduler().addEvent(createSchedulerTask(5000,
-				boost::bind(&Server::openListenSocket, this)));
-		}
+		close();
+
+		std::cout << "[Warning - ServerPort::handle] Listener error occured, total " << m_listenErrors << "." << std::endl;
+		open(m_serverPort);
 	}
-	#ifdef __DEBUG_NET__
+#ifdef __DEBUG_NET__
 	else
-		std::cout << "[Error - Server::onAccept] Operation aborted." << std::endl;
-	#endif
+		std::cout << "[Error - ServerPort::handle] Operation aborted." << std::endl;
+#endif
 }
 
-void Server::stop()
+Protocol* ServicePort::makeProtocol(bool checksum, NetworkMessage& msg) const
 {
-	m_shutdown = true;
+	uint8_t protocolId = msg.GetByte();
+	for(ServiceVec::const_iterator it = m_services.begin(); it != m_services.end(); ++it)
+	{
+		Service_ptr service = (*it);
+		if(checksum && service->hasChecksum() && protocolId == service->getProtocolId())
+			return service->makeProtocol(NULL);
+		else if(!service->hasChecksum())
+			return service->makeProtocol(NULL);
+	}
+
+	return NULL;
+}
+
+void ServiceManager::stop()
+{
+	for(AcceptorsMap::iterator it = m_acceptors.begin(); it != m_acceptors.end(); ++it)
+		m_io_service.post(boost::bind(&ServicePort::close, it->second.get()));
+
 	OutputMessagePool::getInstance()->stop();
-	m_io_service.post(boost::bind(&Server::onStopServer, this));
 }
 
-void Server::onStopServer()
+std::list<uint16_t> ServiceManager::getPorts() const
 {
-	closeListenSocket();
-	//ConnectionManager::getInstance()->closeAll();
+	std::list<uint16_t> ports;
+	for(AcceptorsMap::const_iterator it = m_acceptors.begin(); it != m_acceptors.end(); ++it)
+		ports.push_back(it->first);
+
+	ports.unique();
+	return ports;
 }

@@ -21,9 +21,8 @@
 
 #ifndef __OTSERV_TASKS_H__
 #define __OTSERV_TASKS_H__
-
-#include <boost/function.hpp>
 #include "otsystem.h"
+#include <boost/function.hpp>
 
 class Task
 {

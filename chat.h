@@ -20,13 +20,9 @@
 
 #ifndef __OTSERV_CHAT_H__
 #define __OTSERV_CHAT_H__
-
-#include <map>
-#include <list>
-#include <string>
-
+#include "otsystem.h"
 #include "const.h"
-#include "definitions.h"
+
 #include "party.h"
 
 class Player;

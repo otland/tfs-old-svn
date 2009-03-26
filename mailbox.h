@@ -20,7 +20,6 @@
 
 #ifndef __OTSERV_MAILBOX_H__
 #define __OTSERV_MAILBOX_H__
-
 #include "item.h"
 #include "cylinder.h"
 #include "const.h"

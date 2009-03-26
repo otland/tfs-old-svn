@@ -18,17 +18,14 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
-
 #ifndef __OTSERV_SPAWN_H__
 #define __OTSERV_SPAWN_H__
-
-#include "tile.h"
-#include "position.h"
-#include "monster.h"
+#include "otsystem.h"
 #include "templates.h"
 
-#include <vector>
-#include <map>
+#include "position.h"
+#include "tile.h"
+#include "monster.h"
 
 class Spawn;
 typedef std::list<Spawn*> SpawnList;

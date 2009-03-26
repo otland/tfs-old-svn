@@ -19,14 +19,12 @@
 //////////////////////////////////////////////////////////////////////
 #ifndef __GAMESERVER_H__
 #define __GAMESERVER_H__
-
-#include <string>
-#include <map>
+#include "otsystem.h"
 
 class GameServer
 {
 	public:
-		GameServer() : name("TheForgottenServer"), address("localhost"), port(7171) {}
+		GameServer() : name("TheForgottenServer"), address("localhost"), port(7172) {}
 		GameServer(std::string _name, std::string _address, uint32_t _port) : name(_name), address(_address), port(_port) {}
 		virtual ~GameServer() {}
 

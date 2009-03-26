@@ -20,17 +20,17 @@
 
 #ifndef __OTSERV_CONNECTION_H__
 #define __OTSERV_CONNECTION_H__
-
 #include "otsystem.h"
-#include <boost/asio.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/utility.hpp>
-
 #include "networkmessage.h"
 
+class Connection;
 class Protocol;
 class OutputMessage;
-class Connection;
+typedef boost::shared_ptr<OutputMessage>OutputMessage_ptr;
+class ServiceBase;
+typedef boost::shared_ptr<ServiceBase> Service_ptr;
+class ServicePort;
+typedef boost::shared_ptr<ServicePort> ServicePort_ptr;
 
 #ifdef __DEBUG_NET__
 #define PRINT_ASIO_ERROR(desc) \
@@ -43,7 +43,6 @@ class Connection;
 struct ConnectionBlock
 {
 	int32_t lastLogin, lastProtocol, loginsAmount;
-	bool addProtectionMessage;
 };
 
 class ConnectionManager
@@ -60,14 +59,11 @@ class ConnectionManager
 			return &instance;
 		}
 
-		Connection* createConnection(boost::asio::io_service& io_service);
+		Connection* createConnection(boost::asio::io_service& io_service, ServicePort_ptr servicer);
 		void releaseConnection(Connection* connection);
 
 		bool isDisabled(uint32_t clientIp, int32_t protocolId);
 		void addAttempt(uint32_t clientIp, int32_t protocolId, bool success);
-
-		bool checkProtection(uint32_t clientIp) const;
-		void releaseProtection(uint32_t clientIp);
 
 		void closeAll();
 
@@ -82,15 +78,12 @@ class ConnectionManager
 		OTSYS_THREAD_LOCKVAR m_connectionManagerLock;
 };
 
-typedef boost::shared_ptr<OutputMessage>OutputMessage_ptr;
-
 class Connection : boost::noncopyable
 {
 	public:
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t connectionCount;
 #endif
-
 		enum
 		{
 			CLOSE_STATE_NONE = 0,
@@ -99,16 +92,14 @@ class Connection : boost::noncopyable
 		};
 
 	private:
-		Connection(boost::asio::io_service& io_service) : m_socket(io_service)
+		Connection(boost::asio::io_service& io_service, ServicePort_ptr servicer) : m_socket(io_service), m_port(servicer)
 		{
-			m_refCount = 0;
 			m_protocol = NULL;
-			m_pendingWrite = m_pendingRead = 0;
 			m_closeState = CLOSE_STATE_NONE;
-			m_socketClosed = false;
-			m_writeError = m_readError = false;
-			OTSYS_THREAD_LOCKVARINIT(m_connectionLock);
+			m_refCount = m_pendingWrite = m_pendingRead = 0;
+			m_receivedFirst = m_socketClosed = m_writeError = m_readError = false;
 
+			OTSYS_THREAD_LOCKVARINIT(m_connectionLock);
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			connectionCount++;
 #endif
@@ -130,44 +121,46 @@ class Connection : boost::noncopyable
 		boost::asio::ip::tcp::socket& getHandle() {return m_socket;}
 		uint32_t getIP() const;
 
-		void closeConnection();
-		void acceptConnection();
+		void handle(Protocol* protocol);
+		void accept();
 
+		void close();	
 		bool send(OutputMessage_ptr msg);
+
 		int32_t addRef() {return ++m_refCount;}
 		int32_t unRef() {return --m_refCount;}
 
 	private:
+		void internalSend(OutputMessage_ptr msg);
+
+		void closeConnection();
+		void releaseConnection();
+		void deleteConnection();
+
 		void parseHeader(const boost::system::error_code& error);
 		void parsePacket(const boost::system::error_code& error);
 
-		void onWriteOperation(OutputMessage_ptr msg, const boost::system::error_code& error);
+		bool write();
+		void onWrite(OutputMessage_ptr msg, const boost::system::error_code& error);
 
 		void handleReadError(const boost::system::error_code& error);
 		void handleWriteError(const boost::system::error_code& error);
 
-		bool closingConnection();
-		void closeConnectionTask();
-		void deleteConnectionTask();
-		void releaseConnection();
-
-		void internalSend(OutputMessage_ptr msg);
-
 		NetworkMessage m_msg;
+		Protocol* m_protocol;
+
 		boost::asio::ip::tcp::socket m_socket;
-		bool m_socketClosed;
+		ServicePort_ptr m_port;
 
-		bool m_writeError;
-		bool m_readError;
+		bool m_receivedFirst, m_socketClosed, m_writeError, m_readError;
 
-		int32_t m_pendingWrite;
-		std::list<OutputMessage_ptr> m_outputQueue;
-		int32_t m_pendingRead;
-		uint32_t m_closeState;
-		uint32_t m_refCount;
+		uint32_t m_closeState, m_refCount;
+		int32_t m_pendingWrite, m_pendingRead;
+
+		typedef std::list<OutputMessage_ptr> OutputQueue;
+		OutputQueue m_outputQueue;
 
 		OTSYS_THREAD_LOCKVAR m_connectionLock;
-		Protocol* m_protocol;
 };
 
 #endif

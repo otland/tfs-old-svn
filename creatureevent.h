@@ -20,11 +20,9 @@
 
 #ifndef __OTSERV_CREATUREEVENT_H__
 #define __OTSERV_CREATUREEVENT_H__
-
-#include "tile.h"
-#include "enums.h"
-#include "luascript.h"
 #include "baseevents.h"
+#include "enums.h"
+#include "tile.h"
 
 enum CreatureEventType_t
 {

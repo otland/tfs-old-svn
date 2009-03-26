@@ -45,13 +45,13 @@ extern Game g_game;
 uint32_t ProtocolLogin::protocolLoginCount = 0;
 #endif
 
-#ifdef __DEBUG_NET_DETAIL__
 void ProtocolLogin::deleteProtocolTask()
 {
+#ifdef __DEBUG_NET_DETAIL__
 	std::cout << "Deleting ProtocolLogin" << std::endl;
+#endif
 	Protocol::deleteProtocolTask();
 }
-#endif
 
 void ProtocolLogin::disconnectClient(uint8_t error, const char* message)
 {
@@ -93,14 +93,6 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	uint32_t key[4] = {msg.GetU32(), msg.GetU32(), msg.GetU32(), msg.GetU32()};
 	enableXTEAEncryption();
 	setXTEAKey(key);
-
-	#ifndef __LOGIN_SERVER__
-	if(g_config.getBool(ConfigManager::LOGIN_ONLY_LOGINSERVER))
-	{
-		disconnectClient(0x0A, "Please re-connect using port 7171.");
-		return false;
-	}
-	#endif
 
 	std::string name = msg.GetString();
 	toLowerCaseString(name);
@@ -200,7 +192,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 			output->AddString("Account Manager");
 			output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
 			output->AddU32(serverIP);
-			output->AddU16(g_config.getNumber(ConfigManager::PORT));
+			output->AddU16(g_config.getNumber(ConfigManager::GAME_PORT));
 		}
 		else
 			output->AddByte((uint8_t)account.charList.size());
@@ -220,7 +212,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 				output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
 
 			output->AddU32(serverIP);
-			output->AddU16(g_config.getNumber(ConfigManager::PORT));
+			output->AddU16(g_config.getNumber(ConfigManager::GAME_PORT));
 			#else
 			output->AddString(it->first);
 			output->AddString(it->second->getName());
@@ -240,9 +232,4 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	getConnection()->closeConnection();
 	return true;
-}
-
-void ProtocolLogin::onRecvFirstMessage(NetworkMessage& msg)
-{
-	parseFirstPacket(msg);
 }

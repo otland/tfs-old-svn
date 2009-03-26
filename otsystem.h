@@ -18,25 +18,34 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
-#ifndef __OTSERV_OTTHREAD_H__
-#define __OTSERV_OTTHREAD_H__
-
+#ifndef __OTSERV_OTSYSTEM_H__
+#define __OTSERV_OTSYSTEM_H__
 #include "definitions.h"
-#include <list>
-#include <vector>
+
+#include <string>
 #include <algorithm>
+#include <bitset>
+#include <queue>
+#include <set>
+#include <vector>
+#include <list>
+#include <map>
+
+#include <boost/utility.hpp>
+#include <boost/asio.hpp>
 #ifdef __USE_BOOST_THREAD__
 #include <boost/thread.hpp>
 #endif
+#include <boost/shared_ptr.hpp>
 typedef std::vector<std::pair<uint32_t, uint32_t> > IPList;
 
+#include <stddef.h>
+#include <stdlib.h>
+#include <sys/timeb.h>
 #ifdef WIN32
 #ifdef __WIN_LOW_FRAG_HEAP__
 #define _WIN32_WINNT 0x0501
 #endif
-#include <stddef.h>
-#include <stdlib.h>
-#include <sys/timeb.h>
 #include <process.h>
 #include <windows.h>
 
@@ -96,16 +105,15 @@ inline int OTSYS_THREAD_WAITSIGNAL_TIMED(OTSYS_THREAD_SIGNALVAR& signal, OTSYS_T
 }
 #endif
 #else
+#include <stdint.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <time.h>
 #include <pthread.h>
 #include <semaphore.h>
-#include <time.h>
-#include <sys/types.h>
-#include <sys/timeb.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#include <stdint.h>
 #include <errno.h>
 
 #ifndef __USE_BOOST_THREAD__

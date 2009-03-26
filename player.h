@@ -20,23 +20,20 @@
 
 #ifndef __OTSERV_PLAYER_H__
 #define __OTSERV_PLAYER_H__
-
-#include "otsystem.h"
 #include "creature.h"
+#include "enums.h"
+
 #include "container.h"
 #include "depot.h"
 #include "cylinder.h"
 #include "outfit.h"
-#include "enums.h"
 #include "vocation.h"
 #include "protocolgame.h"
 #include "ioguild.h"
 #include "party.h"
 #include "npc.h"
 
-#include <vector>
 #include <ctime>
-#include <algorithm>
 
 class House;
 class NetworkMessage;

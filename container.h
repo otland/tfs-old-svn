@@ -20,10 +20,8 @@
 
 #ifndef __OTSERV_CONTAINER_H__
 #define __OTSERV_CONTAINER_H__
+#include "otsystem.h"
 
-#include <queue>
-
-#include "definitions.h"
 #include "cylinder.h"
 #include "item.h"
 

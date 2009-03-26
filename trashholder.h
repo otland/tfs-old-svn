@@ -20,9 +20,7 @@
 
 #ifndef __TRASHHOLDER_H__
 #define __TRASHHOLDER_H__
-
-#include "item.h"
-#include "cylinder.h"
+#include "tile.h"
 #include "const.h"
 
 class TrashHolder : public Item, public Cylinder

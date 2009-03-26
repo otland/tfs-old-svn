@@ -57,10 +57,6 @@ extern RSA* g_otservRSA;
 extern CreatureEvents* g_creatureEvents;
 Chat g_chat;
 
-#ifdef __ENABLE_SERVER_DIAGNOSTIC__
-uint32_t ProtocolGame::protocolGameCount = 0;
-#endif
-
 #ifdef __SERVER_PROTECTION__
 #error "You should not use __SERVER_PROTECTION__"
 #define ADD_TASK_INTERVAL 40
@@ -218,24 +214,9 @@ void ProtocolGame::addGameTask(r (Game::*f)(f1, f2, f3, f4, f5, f6, f7, f8), T1 
 	}
 }
 
-ProtocolGame::ProtocolGame(Connection* connection):
-Protocol(connection)
-{
-	player = NULL;
-	m_nextTask = m_nextPing = m_lastTaskCheck = m_messageCount = m_rejectCount = eventConnect = 0;
-	m_debugAssertSent = m_acceptPackets = false;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
-	protocolGameCount++;
+uint32_t ProtocolGame::protocolGameCount = 0;
 #endif
-}
-
-ProtocolGame::~ProtocolGame()
-{
-	player = NULL;
-#ifdef __ENABLE_SERVER_DIAGNOSTIC__
-	protocolGameCount--;
-#endif
-}
 
 void ProtocolGame::setPlayer(Player* p)
 {
@@ -448,33 +429,6 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 	return false;
 }
 
-bool ProtocolGame::connect(uint32_t playerId)
-{
-	unRef();
-	eventConnect = 0;
-
-	Player* _player = g_game.getPlayerByID(playerId);
-	if(!_player || _player->isRemoved() || _player->client)
-	{
-		disconnectClient(0x14, "You are already logged in.");
-		return false;
-	}
-
-	player = _player;
-	player->useThing2();
-	player->isConnecting = false;
-	player->client = this;
-	player->client->sendAddCreature(player, false);
-	player->sendIcons();
-
-	player->lastIP = player->getIP();
-	player->lastLogin = OTSYS_TIME();
-	player->lastLoginSaved = std::max(time(NULL), player->lastLoginSaved + 1);
-
-	m_acceptPackets = true;
-	return true;
-}
-
 bool ProtocolGame::logout(bool displayEffect, bool forced)
 {
 	//dispatcher thread
@@ -515,6 +469,74 @@ bool ProtocolGame::logout(bool displayEffect, bool forced)
 		connection->closeConnection();
 
 	return g_game.removeCreature(player);
+}
+
+bool ProtocolGame::connect(uint32_t playerId)
+{
+	unRef();
+	eventConnect = 0;
+
+	Player* _player = g_game.getPlayerByID(playerId);
+	if(!_player || _player->isRemoved() || _player->client)
+	{
+		disconnectClient(0x14, "You are already logged in.");
+		return false;
+	}
+
+	player = _player;
+	player->useThing2();
+	player->isConnecting = false;
+	player->client = this;
+	player->client->sendAddCreature(player, false);
+	player->sendIcons();
+
+	player->lastIP = player->getIP();
+	player->lastLogin = OTSYS_TIME();
+	player->lastLoginSaved = std::max(time(NULL), player->lastLoginSaved + 1);
+
+	m_acceptPackets = true;
+	return true;
+}
+
+void ProtocolGame::disconnect()
+{
+	if(getConnection())
+		getConnection()->closeConnection();
+}
+
+void ProtocolGame::disconnectClient(uint8_t error, const char* message)
+{
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	if(output)
+	{
+		TRACK_MESSAGE(output);
+		output->AddByte(error);
+		output->AddString(message);
+		OutputMessagePool::getInstance()->send(output);
+	}
+
+	disconnect();
+}
+
+void ProtocolGame::onConnect()
+{
+	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
+	{
+		TRACK_MESSAGE(output);
+		output->AddU16(0x06);
+		output->AddByte(0x1F);
+		output->AddU16(random_range(0, 65535));
+		output->AddU16(0x00);
+		output->AddByte(random_range(0, 255));
+		output->addCryptoHeader(true);
+
+		OutputMessagePool::getInstance()->send(output);
+	}
+}
+
+void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)
+{
+	parseFirstPacket(msg);
 }
 
 bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
@@ -600,31 +622,6 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 		createTask(boost::bind(&ProtocolGame::login, this, name, accId, password, operatingSystem, gamemasterLogin)));
 
 	return true;
-}
-
-void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)
-{
-	parseFirstPacket(msg);
-}
-
-void ProtocolGame::disconnectClient(uint8_t error, const char* message)
-{
-	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
-	if(output)
-	{
-		TRACK_MESSAGE(output);
-		output->AddByte(error);
-		output->AddString(message);
-		OutputMessagePool::getInstance()->send(output);
-	}
-
-	disconnect();
-}
-
-void ProtocolGame::disconnect()
-{
-	if(getConnection())
-		getConnection()->closeConnection();
 }
 
 void ProtocolGame::parsePacket(NetworkMessage &msg)

@@ -18,16 +18,14 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
-
 #ifndef __TALKACTION_H__
 #define __TALKACTION_H__
-
-#include <map>
-#include <string>
-#include "luascript.h"
-#include "baseevents.h"
-#include "creature.h"
+#include "otsystem.h"
 #include "enums.h"
+
+#include "baseevents.h"
+#include "luascript.h"
+#include "player.h"
 
 enum TalkActionFilter
 {

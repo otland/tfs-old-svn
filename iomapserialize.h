@@ -20,12 +20,9 @@
 
 #ifndef __IOMAPSERIALIZE_H__
 #define __IOMAPSERIALIZE_H__
-
+#include "otsystem.h"
 #include "database.h"
 #include "map.h"
-
-#include <string>
-#include <list>
 
 typedef std::map<int32_t, std::pair<Item*, int32_t> > ItemMap;
 typedef std::list<std::pair<Container*, int32_t> > ContainerStackList;

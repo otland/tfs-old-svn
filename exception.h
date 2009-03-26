@@ -19,7 +19,6 @@
 //////////////////////////////////////////////////////////////////////
 
 #ifdef __EXCEPTION_TRACER__
-
 #ifndef __EXCEPTION_H__
 #define __EXCEPTION_H__
 
@@ -27,22 +26,26 @@ class ExceptionHandler
 {
 	public:
 		ExceptionHandler();
-		~ExceptionHandler();
+		virtual ~ExceptionHandler();
+
 		bool InstallHandler();
 		bool RemoveHandler();
+
 		static void dumpStack();
 
 	private:
+		bool LoadMap();
+
+		struct SEHChain;
+		SEHChain chain;
+		bool installed;
+
 		struct SEHChain
 		{
 			SEHChain *prev;
 			void *SEHfunction;
 		};
-		bool LoadMap();
-		bool installed;
-		SEHChain chain;
 };
 
 #endif  // #ifndef __EXCEPTION_H__
-
 #endif

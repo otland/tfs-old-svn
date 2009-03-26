@@ -38,7 +38,7 @@ Admin* g_admin = NULL;
 
 Logger::Logger()
 {
-	m_file = fopen(getFilePath(FILE_TYPE_LOG, "OTAdmin.log").c_str(), "a");
+	m_file = fopen(getFilePath(FILE_TYPE_LOG, "ForgottenAdmin.log").c_str(), "a");
 }
 
 Logger::~Logger()
@@ -47,29 +47,30 @@ Logger::~Logger()
 		fclose(m_file);
 }
 
-void Logger::logMessage(const char* channel, eLogType type, int32_t level, std::string message, const char* func)
+void Logger::logMessage(const char* channel, LogType_t type, int32_t level, std::string message, const char* func)
 {
 	char buffer[32];
 	formatDate(time(NULL), buffer);
 	fprintf(m_file, "%s", buffer);
-
 	if(channel)
 		fprintf(m_file, " [%s] ", channel);
 
-	std::string typeStr;
+	std::string typeStr = "unknown";
 	switch(type)
 	{
 		case LOGTYPE_EVENT:
 			typeStr = "event";
 			break;
+
 		case LOGTYPE_WARNING:
 			typeStr = "warning";
 			break;
+
 		case LOGTYPE_ERROR:
 			typeStr = "error";
 			break;
+
 		default:
-			typeStr = "unknown";
 			break;
 	}
 
@@ -78,28 +79,10 @@ void Logger::logMessage(const char* channel, eLogType type, int32_t level, std::
 	fflush(m_file);
 }
 
-static void addLogLine(ProtocolAdmin* protocol, eLogType type, int32_t level, std::string message);
+static void addLogLine(ProtocolAdmin* protocol, LogType_t type, int32_t level, std::string message);
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t ProtocolAdmin::protocolAdminCount = 0;
 #endif
-
-ProtocolAdmin::ProtocolAdmin(Connection* connection) :
-Protocol(connection)
-{
-	m_state = NO_CONNECTED;
-	m_loginTries = m_lastCommand = 0;
-	m_startTime = time(NULL);
-#ifdef __ENABLE_SERVER_DIAGNOSTIC__
-	protocolAdminCount++;
-#endif
-}
-
-ProtocolAdmin::~ProtocolAdmin()
-{
-#ifdef __ENABLE_SERVER_DIAGNOSTIC__
-	protocolAdminCount--;
-#endif
-}
 
 void ProtocolAdmin::onRecvFirstMessage(NetworkMessage& msg)
 {
@@ -140,18 +123,10 @@ void ProtocolAdmin::onRecvFirstMessage(NetworkMessage& msg)
 	m_state = ENCRYPTION_NO_SET;
 }
 
-void ProtocolAdmin::deleteProtocolTask()
-{
-	addLogLine(NULL, LOGTYPE_EVENT, 1, "end connection");
-	g_admin->removeConnection();
-	Protocol::deleteProtocolTask();
-}
-
 void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 {
 	uint8_t recvbyte = msg.GetByte();
-	OutputMessagePool* outputPool = OutputMessagePool::getInstance();
-	OutputMessage_ptr output = outputPool->getOutputMessage(this, false);
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	if(!output)
 		return;
 
@@ -453,7 +428,14 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 	}
 
 	if(output->getMessageLength() > 0)
-		outputPool->send(output);
+		OutputMessagePool::getInstance()->send(output);
+}
+
+void ProtocolAdmin::deleteProtocolTask()
+{
+	addLogLine(NULL, LOGTYPE_EVENT, 1, "end connection");
+	g_admin->removeConnection();
+	Protocol::deleteProtocolTask();
 }
 
 void ProtocolAdmin::adminCommandPayHouses()
@@ -540,24 +522,7 @@ void ProtocolAdmin::adminCommandSetOwner(const std::string& param)
 	OutputMessagePool::getInstance()->send(output);
 }
 
-/////////////////////////////////////////////
-
-Admin::Admin()
-{
-	m_enabled = m_onlyLocalHost = m_requireLogin = true;
-	m_requireEncryption = false;
-	m_currrentConnections = 0;
-	m_key_RSA1024XTEA = NULL;
-	m_maxConnections = 1;
-	m_password = "";
-}
-
-Admin::~Admin()
-{
-	delete m_key_RSA1024XTEA;
-}
-
-bool Admin::loadXMLConfig()
+bool Admin::loadFromXml()
 {
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "admin.xml").c_str());
 	if(!doc)
@@ -653,34 +618,6 @@ void Admin::removeConnection()
 		m_currrentConnections--;
 }
 
-bool Admin::passwordMatch(std::string& password)
-{
-	//prevent empty password login
-	if(!m_password.length())
-		return false;
-
-	if(password == m_password)
-		return true;
-
-	return false;
-}
-
-bool Admin::allowIP(uint32_t ip)
-{
-	if(m_onlyLocalHost)
-	{
-		if(ip == 0x0100007F) //127.0.0.1
-			return true;
-
-		char buffer[32];
-		formatIP(ip, buffer);
-		addLogLine(NULL, LOGTYPE_WARNING, 1, std::string("forbidden connection try from ") + buffer);
-		return false;
-	}
-	else
-		return !ConnectionManager::getInstance()->isDisabled(ip, 0xFE);
-}
-
 uint16_t Admin::getProtocolPolicy()
 {
 	uint16_t policy = 0;
@@ -707,6 +644,7 @@ RSA* Admin::getRSAKey(uint8_t type)
 	{
 		case ENCRYPTION_RSA1024XTEA:
 			return m_key_RSA1024XTEA;
+
 		default:
 			break;
 	}
@@ -714,22 +652,50 @@ RSA* Admin::getRSAKey(uint8_t type)
 	return NULL;
 }
 
-static void addLogLine(ProtocolAdmin* protocol, eLogType type, int32_t level, std::string message)
+bool Admin::allowIP(uint32_t ip)
+{
+	if(m_onlyLocalHost)
+	{
+		if(ip == 0x0100007F) //127.0.0.1
+			return true;
+
+		char buffer[32];
+		formatIP(ip, buffer);
+		addLogLine(NULL, LOGTYPE_WARNING, 1, std::string("forbidden connection try from ") + buffer);
+		return false;
+	}
+	else
+		return !ConnectionManager::getInstance()->isDisabled(ip, 0xFE);
+}
+
+bool Admin::passwordMatch(std::string& password)
+{
+	//prevent empty password login
+	if(!m_password.length())
+		return false;
+
+	if(password == m_password)
+		return true;
+
+	return false;
+}
+
+static void addLogLine(ProtocolAdmin* protocol, LogType_t type, int32_t level, std::string message)
 {
 	if(g_config.getBool(ConfigManager::ADMIN_LOGS_ENABLED))
-	{
-		std::string tmp;
-		if(protocol)
-		{
-			char buffer[32];
-			formatIP(protocol->getIP(), buffer);
-			tmp += "[";
-			tmp += buffer;
-			tmp += "] - ";
-		}
+		return;
 
-		tmp += message;
-		LOG_MESSAGE("OTADMIN", type, level, tmp);
+	std::string tmp;
+	if(protocol)
+	{
+		char buffer[32];
+		formatIP(protocol->getIP(), buffer);
+		tmp += "[";
+		tmp += buffer;
+		tmp += "] - ";
 	}
+
+	tmp += message;
+	LOG_MESSAGE("OTADMIN", type, level, tmp);
 }
 #endif

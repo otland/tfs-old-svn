@@ -20,11 +20,7 @@
 
 #ifndef __OTSERV_OUTFIT_H__
 #define __OTSERV_OUTFIT_H__
-
-#include <list>
-#include <vector>
-#include <string>
-#include <map>
+#include "otsystem.h"
 #include "enums.h"
 
 #define OUTFITS_QUEST_VALUE 1

@@ -20,7 +20,6 @@
 
 #ifndef __OTSERV_POS_H
 #define __OTSERV_POS_H
-
 #include <stdlib.h>
 #include <cmath>
 #include <iostream>

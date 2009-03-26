@@ -20,9 +20,9 @@
 
 #ifndef __OTSERV_DATABASE_H__
 #define __OTSERV_DATABASE_H__
-
 #include "otsystem.h"
 #include "enums.h"
+
 #include <sstream>
 
 #ifdef MULTI_SQL_DRIVERS

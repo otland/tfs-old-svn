@@ -20,9 +20,7 @@
 
 #ifndef __OTSERV_BAN_H__
 #define __OTSERV_BAN_H__
-
 #include "otsystem.h"
-#include <list>
 #include "player.h"
 
 enum BanType_t

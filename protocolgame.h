@@ -20,10 +20,10 @@
 
 #ifndef __OTSERV_PROTOCOLGAME_H__
 #define __OTSERV_PROTOCOLGAME_H__
-
-#include <string>
-#include "protocol.h"
+#include "otsystem.h"
 #include "enums.h"
+
+#include "protocol.h"
 #include "creature.h"
 
 class NetworkMessage;
@@ -42,10 +42,29 @@ class ProtocolGame : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolGameCount;
 #endif
-		ProtocolGame(Connection* connection);
-		virtual ~ProtocolGame();
+		ProtocolGame(Connection* connection): Protocol(connection)
+		{
+#ifdef __ENABLE_SERVER_DIAGNOSTIC__
+			protocolGameCount++;
+#endif
+			player = NULL;
+			m_nextTask = m_nextPing = m_lastTaskCheck = m_messageCount = m_rejectCount = eventConnect = 0;
+			m_debugAssertSent = m_acceptPackets = false;
+		}
 
-		virtual int32_t getProtocolId() {return 0x0A;}
+		virtual ~ProtocolGame()
+		{
+#ifdef __ENABLE_SERVER_DIAGNOSTIC__
+			protocolGameCount--;
+#endif
+			player = NULL;
+		}
+
+		static std::string getProtocolName() {return "Game Protocol";}
+		static uint8_t getProtocolId() {return 0x0A;}
+
+		static bool isSingleSocket() {return true;}
+		static bool hasChecksum() {return true;}
 
 		bool login(const std::string& name, uint32_t accnumber, const std::string& password,
 			OperatingSystem_t operatingSystem, bool gamemasterLogin);
@@ -54,25 +73,26 @@ class ProtocolGame : public Protocol
 		void setPlayer(Player* p);
 
 	private:
+		void disconnectClient(uint8_t error, const char* message);
+
 		std::list<uint32_t> knownCreatureList;
+		void checkCreatureAsKnown(uint32_t id, bool& known, uint32_t& removedKnown);
 
 		bool connect(uint32_t playerId);
 		void disconnect();
-		void disconnectClient(uint8_t error, const char* message);
 
 		virtual void releaseProtocol();
 		virtual void deleteProtocolTask();
-
-		void checkCreatureAsKnown(uint32_t id, bool& known, uint32_t& removedKnown);
 
 		bool canSee(int16_t x, int16_t y, int8_t z) const;
 		bool canSee(const Creature*) const;
 		bool canSee(const Position& pos) const;
 
-		// we have all the parse methods
-		virtual void parsePacket(NetworkMessage& msg);
+		virtual void onConnect();
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
+
 		bool parseFirstPacket(NetworkMessage& msg);
+		virtual void parsePacket(NetworkMessage& msg);
 
 		//Parse methods
 		void parseLogout(NetworkMessage& msg);

@@ -21,9 +21,7 @@
 #ifndef __OTSERV_LUASCRIPT_H__
 #define __OTSERV_LUASCRIPT_H__
 
-#include <string>
-#include <map>
-#include <list>
+#include "otsystem.h"
 
 extern "C"
 {
@@ -33,7 +31,6 @@ extern "C"
 }
 
 #include "position.h"
-#include "definitions.h"
 #include "database.h"
 
 class Thing;

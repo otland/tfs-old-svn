@@ -20,12 +20,22 @@
 
 #ifndef __OTSERV_STATUS_H
 #define __OTSERV_STATUS_H
-
-#include "definitions.h"
-#include "networkmessage.h"
+#include "otsystem.h"
 #include "protocol.h"
-#include <string>
-#include <map>
+
+enum RequestedInfo_t
+{
+	REQUEST_BASIC_SERVER_INFO = 0x01,
+	REQUEST_OWNER_SERVER_INFO = 0x02,
+	REQUEST_MISC_SERVER_INFO = 0x04,
+	REQUEST_PLAYERS_INFO = 0x08,
+	REQUEST_MAP_INFO = 0x10,
+	REQUEST_EXT_PLAYERS_INFO = 0x20,
+	REQUEST_PLAYER_STATUS_INFO = 0x40,
+	REQUEST_SERVER_SOFTWARE_INFO = 0x80
+};
+
+typedef std::map<uint32_t, int64_t> IpConnectMap;
 
 class ProtocolStatus : public Protocol
 {
@@ -33,7 +43,7 @@ class ProtocolStatus : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolStatusCount;
 #endif
-		ProtocolStatus(Connection* connection) : Protocol(connection)
+		ProtocolStatus(Connection* connection): Protocol(connection)
 		{
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			protocolStatusCount++;
@@ -46,16 +56,18 @@ class ProtocolStatus : public Protocol
 #endif
 		}
 
-		virtual int32_t getProtocolId() {return 0xFF;}
+		static std::string getProtocolName() {return "Status Protocol";}
+		static uint8_t getProtocolId() {return 0xFF;}
+
+		static bool isSingleSocket() {return false;}
+		static bool hasChecksum() {return false;}
 
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
 
 	protected:
-		static std::map<uint32_t, int64_t> ipConnectMap;
+		static IpConnectMap ipConnectMap;
 
-		#ifdef __DEBUG_NET_DETAIL__
 		virtual void deleteProtocolTask();
-		#endif
 };
 
 class Status
@@ -86,7 +98,11 @@ class Status
 		uint64_t getUptime() const {return (OTSYS_TIME() - m_start) / 1000;}
 
 	protected:
-		Status();
+		Status()
+		{
+			m_start = OTSYS_TIME();
+			m_playersOnline = m_playersMax = 0;
+		}
 
 	private:
 		uint64_t m_start;

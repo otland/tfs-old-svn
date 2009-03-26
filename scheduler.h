@@ -20,12 +20,6 @@
 
 #ifndef __OTSERV_SCHEDULER_H__
 #define __OTSERV_SCHEDULER_H__
-
-#include <boost/bind.hpp>
-#include <vector>
-#include <queue>
-#include <set>
-
 #include "otsystem.h"
 #include "tasks.h"
 

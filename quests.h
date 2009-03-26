@@ -20,11 +20,10 @@
 
 #ifndef _QUESTS_H_
 #define _QUESTS_H_
+#include "otsystem.h"
 
-#include <list>
-#include <string>
-#include "player.h"
 #include "networkmessage.h"
+#include "player.h"
 
 class MissionState;
 class Mission;

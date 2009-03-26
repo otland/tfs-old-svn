@@ -20,11 +20,11 @@
 
 #ifndef __IOLOGINDATA_H
 #define __IOLOGINDATA_H
-
-#include <string>
-#include "account.h"
-#include "player.h"
+#include "otsystem.h"
 #include "database.h"
+
+#include "player.h"
+#include "account.h"
 
 enum DeleteCharacter_t
 {

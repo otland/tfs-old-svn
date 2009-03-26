@@ -20,14 +20,11 @@
 
 #ifndef __OTSERV_COMBAT_H__
 #define __OTSERV_COMBAT_H__
-
-#include "thing.h"
-#include "condition.h"
-#include "map.h"
-#include "baseevents.h"
 #include "otsystem.h"
 
-#include <vector>
+#include "baseevents.h"
+#include "condition.h"
+#include "map.h"
 
 class Condition;
 class Creature;

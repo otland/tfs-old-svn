@@ -21,7 +21,6 @@
 #ifdef __REMOTE_CONTROL__
 #ifndef __OTSERV_ADMIN_H__
 #define __OTSERV_ADMIN_H__
-
 // -> server
 // command(1 byte) | size(2 bytes) | parameters(size bytes)
 // commands:
@@ -76,16 +75,13 @@
 //  error
 //		message(string)
 //
-
 #include "otsystem.h"
 #include "player.h"
-#include <string>
-#include <map>
 
 class NetworkMessage;
 class RSA;
 
-enum eLogType
+enum LogType_t
 {
 	LOGTYPE_EVENT,
 	LOGTYPE_WARNING,
@@ -153,11 +149,11 @@ class Logger
 			return &instance;
 		}
 
-		void logMessage(const char* channel, eLogType type, int32_t level, std::string message, const char* func);
+		void logMessage(const char* channel, LogType_t type, int32_t level, std::string message, const char* func);
 
 	private:
-		FILE* m_file;
 		Logger();
+		FILE* m_file;
 };
 
 #define LOG_MESSAGE(channel, type, level, message) \
@@ -166,27 +162,37 @@ class Logger
 class Admin
 {
 	public:
-		Admin();
-		virtual ~Admin();
+		Admin()
+		{
+			m_enabled = m_onlyLocalHost = m_requireLogin = true;
+			m_requireEncryption = false;
+			m_currrentConnections = 0;
+			m_key_RSA1024XTEA = NULL;
+			m_maxConnections = 1;
+			m_password = "";
+		}
 
-		bool loadXMLConfig();
+		virtual ~Admin()
+		{
+			delete m_key_RSA1024XTEA;
+		}
+
+		bool loadFromXml();
 
 		bool addConnection();
 		void removeConnection();
 
 		uint16_t getProtocolPolicy();
 		uint32_t getProtocolOptions();
-
-		bool isEnabled() const {return m_enabled;}
-		bool onlyLocalHost() const {return m_onlyLocalHost;}
-
-		bool requireLogin() const {return m_requireLogin;}
-		bool requireEncryption() const {return m_requireEncryption;}
-
-		bool passwordMatch(std::string& password);
 		RSA* getRSAKey(uint8_t type);
 
 		bool allowIP(uint32_t ip);
+		bool passwordMatch(std::string& password);
+
+		bool enabled() const {return m_enabled;}
+		bool onlyLocalHost() const {return m_onlyLocalHost;}
+		bool requireLogin() const {return m_requireLogin;}
+		bool requireEncryption() const {return m_requireEncryption;}
 
 	protected:
 		int32_t m_maxConnections, m_currrentConnections;
@@ -203,16 +209,34 @@ class ProtocolAdmin : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolAdminCount;
 #endif
-		ProtocolAdmin(Connection* connection);
-		virtual ~ProtocolAdmin();
+#endif
+		ProtocolAdmin(Connection* connection): Protocol(connection)
+		{
+			m_state = NO_CONNECTED;
+			m_loginTries = m_lastCommand = 0;
+			m_startTime = time(NULL);
+#ifdef __ENABLE_SERVER_DIAGNOSTIC__
+			protocolAdminCount++;
+#endif
+		}
 
-		virtual int32_t getProtocolId() {return 0xFE;}
+		virtual ~ProtocolAdmin()
+		{
+#ifdef __ENABLE_SERVER_DIAGNOSTIC__
+			protocolAdminCount--;
+#endif
+		}
 
-		virtual void parsePacket(NetworkMessage& msg);
+		static std::string getProtocolName() {return "Admin Protocol";}
+		static uint8_t getProtocolId() {return 0xFE;}
+
+		static bool isSingleSocket() {return false;}
+		static bool hasChecksum() {return false;}
 
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
 
 	protected:
+		virtual bool parsePacket(NetworkMessage& msg);
 		virtual void deleteProtocolTask();
 
 		void adminCommandPayHouses();

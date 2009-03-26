@@ -25,11 +25,6 @@
 #include "networkmessage.h"
 #include "tools.h"
 
-#include <boost/shared_ptr.hpp>
-#include <boost/bind.hpp>
-#include <boost/utility.hpp>
-
-#include <list>
 #ifdef __TRACK_NETWORK__
 #include <iostream>
 #include <sstream>

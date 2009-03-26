@@ -20,10 +20,9 @@
 
 #ifndef __OTSERV_NPC_H__
 #define __OTSERV_NPC_H__
-
 #include "creature.h"
-#include "luascript.h"
 #include "templates.h"
+#include "luascript.h"
 
 class Npc;
 class Player;

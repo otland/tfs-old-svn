@@ -20,7 +20,6 @@
 
 #ifndef __OTSERV_PROTOCOL_OLD_H__
 #define __OTSERV_PROTOCOL_OLD_H__
-
 #include "protocol.h"
 
 class NetworkMessage;
@@ -32,7 +31,7 @@ class ProtocolOld : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolOldCount;
 #endif
-		ProtocolOld(Connection* connection) : Protocol(connection)
+		ProtocolOld(Connection* connection): Protocol(connection)
 		{
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			protocolOldCount++;
@@ -46,18 +45,35 @@ class ProtocolOld : public Protocol
 #endif
 		}
 
-		virtual int32_t getProtocolId() {return 0x00;}
+		static bool isSingleSocket() {return false;}
+		static bool hasChecksum() {return false;}
 
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
 
 	protected:
 		void disconnectClient(uint8_t error, const char* message);
-
 		bool parseFirstPacket(NetworkMessage& msg);
-
 		#ifdef __DEBUG_NET_DETAIL__
 		virtual void deleteProtocolTask();
 		#endif
+};
+
+class ProtocolOldLogin : public ProtocolOld
+{
+	public:
+		ProtocolOldLogin(Connection* connection) : ProtocolOld(connection) {}
+
+		static std::string getProtocolName() {return "Old Login Protocol";}
+		static uint8_t getProtocolId() {return 0x01;}
+};
+
+class ProtocolOldGame : public ProtocolOld
+{
+	public:
+		ProtocolOldGame(Connection* connection) : ProtocolOld(connection) {}
+
+		static std::string getProtocolName() {return "Old Game Protocol";}
+		static uint8_t getProtocolId() {return 0x0A;}
 };
 
 #endif

@@ -16,9 +16,7 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
-#include <string>
-#include <map>
-#include <boost/shared_ptr.hpp>
+#include "otsystem.h"
 
 class Waypoint
 {

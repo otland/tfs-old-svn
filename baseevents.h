@@ -18,10 +18,9 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
-
 #ifndef __BASEEVENTS_H__
 #define __BASEEVENTS_H__
-
+#include "otsystem.h"
 #include "luascript.h"
 #include <libxml/parser.h>
 

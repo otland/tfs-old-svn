@@ -20,7 +20,7 @@
 
 #ifndef __OTSERV_IOGUILD_H__
 #define __OTSERV_IOGUILD_H__
-
+#include "otsystem.h"
 #include "player.h"
 
 class IOGuild

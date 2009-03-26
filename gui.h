@@ -18,12 +18,11 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
+#ifndef __CONSOLE__
 #ifndef __FORGOTTENSERVER_GUI_H__
 #define __FORGOTTENSERVER_GUI_H__
-
-#ifndef __CONSOLE__
-#include "playerbox.h"
 #include "resources.h"
+#include "playerbox.h"
 
 class GUI
 {

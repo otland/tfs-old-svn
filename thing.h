@@ -20,7 +20,6 @@
 
 #ifndef __THING_H__
 #define __THING_H__
-
 #include "position.h"
 
 /*Notice: remember to add new error codes to global.lua*/

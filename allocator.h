@@ -18,10 +18,9 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
+#ifdef __OTSERV_ALLOCATOR__
 #ifndef __OTSERV_ALLOCATOR_H
 #define __OTSERV_ALLOCATOR_H
-
-#ifdef __OTSERV_ALLOCATOR__
 #include "otsystem.h"
 
 #include <memory>
@@ -30,9 +29,8 @@
 #include <fstream>
 #include <ctime>
 #include <limits>
-#include <boost/pool/pool.hpp>
 
-#include "definitions.h"
+#include <boost/pool/pool.hpp>
 
 template<typename T>
 class dummyallocator

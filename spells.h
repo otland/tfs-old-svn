@@ -20,13 +20,15 @@
 
 #ifndef __OTSERV_SPELLS_H__
 #define __OTSERV_SPELLS_H__
+#include "otsystem.h"
+#include "enums.h"
 
+#include "baseevents.h"
 #include "luascript.h"
 #include "player.h"
+
 #include "actions.h"
 #include "talkaction.h"
-#include "enums.h"
-#include "baseevents.h"
 
 class InstantSpell;
 class ConjureSpell;

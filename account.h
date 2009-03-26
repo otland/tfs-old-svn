@@ -20,15 +20,11 @@
 
 #ifndef __OTSERV_ACCOUNT_H__
 #define __OTSERV_ACCOUNT_H__
-
-#include "definitions.h"
-#include <string>
+#include "otsystem.h"
 #ifndef __LOGIN_SERVER__
-#include <list>
 
 typedef std::list<std::string> Characters;
 #else
-#include <map>
 #include "gameservers.h"
 
 typedef std::map<std::string, GameServer*> Characters;

@@ -21,9 +21,6 @@
 #ifndef __OTSERV_NETWORK_MESSAGE_H__
 #define __OTSERV_NETWORK_MESSAGE_H__
 #include "otsystem.h"
-#include <boost/shared_ptr.hpp>
-
-#include <string>
 #include "const.h"
 
 class Item;

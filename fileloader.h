@@ -20,13 +20,11 @@
 
 #ifndef __OTSERV_FILELOADER_H__
 #define __OTSERV_FILELOADER_H__
-
-#include <string>
+#include "otsystem.h"
 #include <stdio.h>
 #include <stdlib.h>
 
 struct NodeStruct;
-
 typedef NodeStruct* NODE;
 
 struct NodeStruct

@@ -20,16 +20,14 @@
 
 #ifndef __OTSERV_RSA_H__
 #define __OTSERV_RSA_H__
-
 #include "otsystem.h"
-
 #include "gmp.h"
 
 class RSA
 {
 	public:
 		RSA();
-		~RSA();
+		virtual ~RSA();
 		void setKey(const char* p, const char* q, const char* d);
 		bool setKey(const std::string& file);
 		void decrypt(char* msg, int32_t size);

@@ -20,13 +20,10 @@
 
 #ifndef __OTS_BEDS_H__
 #define __OTS_BEDS_H__
-
 #include "item.h"
 #include "position.h"
-#include "definitions.h"
 
 #include <ctime>
-#include <list>
 
 class House;
 class Player;

@@ -20,19 +20,14 @@
 
 #ifndef __OTSERV_CREATURE_H__
 #define __OTSERV_CREATURE_H__
-
-#include "definitions.h"
-
+#include "otsystem.h"
 #include "templates.h"
-#include "map.h"
-#include "position.h"
-#include "condition.h"
 #include "const.h"
-#include "tile.h"
 #include "enums.h"
-#include "creatureevent.h"
 
-#include <list>
+#include "map.h"
+#include "condition.h"
+#include "creatureevent.h"
 
 typedef std::list<Condition*> ConditionList;
 typedef std::list<CreatureEvent*> CreatureEventList;

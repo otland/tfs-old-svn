@@ -33,11 +33,8 @@ ConfigManager::ConfigManager()
 	m_confString[CONFIG_FILE] = getFilePath(FILE_TYPE_CONFIG, "config.lua");
 	m_confBool[LOGIN_ONLY_LOGINSERVER] = false;
 
-	m_confString[IP] = "";
-	m_confNumber[PORT] = 0;
-	m_confString[RUNFILE] = "";
-	m_confString[ERROR_LOG] = "";
-	m_confString[OUT_LOG] = "";
+	m_confNumber[LOGIN_PORT] = m_confNumber[GAME_PORT] = m_confNumber[ADMIN_PORT] = m_confNumber[STATUS_PORT] = 0;
+	m_confString[IP] = m_confString[RUNFILE] = m_confString[ERROR_LOG] = m_confString[OUT_LOG] = "";
 }
 
 bool ConfigManager::load()
@@ -62,8 +59,17 @@ bool ConfigManager::load()
 		if(m_confString[IP] == "")
 			m_confString[IP] = getGlobalString(L, "ip", "127.0.0.1");
 
-		if(m_confNumber[PORT] == 0)
-			m_confNumber[PORT] = getGlobalNumber(L, "port", 7171);
+		if(m_confNumber[LOGIN_PORT] == 0)
+			m_confNumber[LOGIN_PORT] = getGlobalNumber(L, "loginPort", 7171);
+
+		if(m_confNumber[GAME_PORT] == 0)
+			m_confNumber[GAME_PORT] = getGlobalNumber(L, "gamePort", 7172);
+
+		if(m_confNumber[ADMIN_PORT] == 0)
+			m_confNumber[ADMIN_PORT] = getGlobalNumber(L, "adminPort", 7171);
+
+		if(m_confNumber[STATUS_PORT] == 0)
+			m_confNumber[STATUS_PORT] = getGlobalNumber(L, "statusPort", 7171);
 
 		if(m_confString[RUNFILE] == "")
 			m_confString[RUNFILE] = getGlobalString(L, "runFile", "");

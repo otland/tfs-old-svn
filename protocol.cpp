@@ -18,9 +18,6 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-
-#include "definitions.h"
-
 #if defined WIN32
 #include <winerror.h>
 #endif
@@ -74,13 +71,13 @@ OutputMessage_ptr Protocol::getOutputBuffer()
 	if(m_outputBuffer)
 		return m_outputBuffer;
 
-	else if(m_connection)
+	if(m_connection)
 	{
 		m_outputBuffer = OutputMessagePool::getInstance()->getOutputMessage(this);
 		return m_outputBuffer;
 	}
-	else
-		return OutputMessage_ptr();
+
+	return OutputMessage_ptr();
 }
 
 void Protocol::releaseProtocol()
@@ -139,7 +136,7 @@ bool Protocol::XTEA_decrypt(NetworkMessage& msg)
 {
 	if((msg.getMessageLength() - 6) % 8 != 0)
 	{
-		std::cout << "Failure: [Protocol::XTEA_decrypt]. Not valid encrypted message size" << std::endl;
+		std::cout << "[Failure - Protocol::XTEA_decrypt] Not valid encrypted message size" << std::endl;
 		return false;
 	}
 
@@ -171,7 +168,7 @@ bool Protocol::XTEA_decrypt(NetworkMessage& msg)
 	int32_t tmp = msg.GetU16();
 	if(tmp > msg.getMessageLength() - 8)
 	{
-		std::cout << "Failure: [Protocol::XTEA_decrypt]. Not valid unencrypted message size" << std::endl;
+		std::cout << "[Failure - Protocol::XTEA_decrypt] Not valid unencrypted message size" << std::endl;
 		return false;
 	}
 
@@ -183,14 +180,14 @@ bool Protocol::RSA_decrypt(RSA* rsa, NetworkMessage& msg)
 {
 	if(msg.getMessageLength() - msg.getReadPos() != 128)
 	{
-		std::cout << "Warning: [Protocol::RSA_decrypt]. Not valid packet size" << std::endl;
+		std::cout << "[Warning - Protocol::RSA_decrypt] Not valid packet size" << std::endl;
 		return false;
 	}
 
 	rsa->decrypt((char*)(msg.getBuffer() + msg.getReadPos()), 128);
 	if(msg.GetByte() != 0)
 	{
-		std::cout << "Warning: [Protocol::RSA_decrypt]. First byte != 0" << std::endl;
+		std::cout << "[Warning - Protocol::RSA_decrypt] First byte != 0" << std::endl;
 		return false;
 	}
 

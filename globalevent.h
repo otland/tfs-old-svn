@@ -18,14 +18,8 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
-
 #ifndef __GLOBALEVENT_H__
 #define __GLOBALEVENT_H__
-#endif
-
-#include <list>
-#include <string>
-#include "luascript.h"
 #include "baseevents.h"
 #include "const.h"
 #include "scheduler.h"
@@ -80,3 +74,5 @@ class GlobalEvent : public Event
 
 		uint32_t m_lastExecution;
 };
+
+#endif

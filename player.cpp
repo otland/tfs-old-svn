@@ -2190,6 +2190,8 @@ bool Player::onDeath()
 	removeConditions(CONDITIONEND_DEATH);
 	if(skillLoss)
 	{
+		removeExperience(getLostExperience(), false);
+
 		//Magic level loss
 		uint32_t sumMana = 0;
 		uint64_t lostMana = 0;
@@ -2213,7 +2215,6 @@ bool Player::onDeath()
 			magLevelPercent = 0;
 
 		//Skill loss
-		removeExperience(getLostExperience(), false);
 		uint32_t lostSkillTries, sumSkillTries;
 		for(int16_t i = 0; i < 7; ++i) //for each skill
 		{

@@ -20,12 +20,8 @@
 
 #ifndef __TEMPLATES_H__
 #define __TEMPLATES_H__
-
-#include <set>
-#include <map>
-
-#include "creature.h"
 #include "otsystem.h"
+#include "creature.h"
 
 template<class T> class AutoList
 {

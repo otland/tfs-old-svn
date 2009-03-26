@@ -20,17 +20,14 @@
 
 #ifndef __OTSERV_TOOLS_H__
 #define __OTSERV_TOOLS_H__
-
 #include "otsystem.h"
-#include "position.h"
-#include "const.h"
 #include "enums.h"
-
-#include <string>
-#include <algorithm>
+#include "const.h"
 
 #include <libxml/parser.h>
 #include <boost/tokenizer.hpp>
+
+#include "position.h"
 
 typedef std::vector<std::string> StringVec;
 typedef std::vector<int32_t> IntegerVec;

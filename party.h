@@ -20,10 +20,7 @@
 
 #ifndef __PARTY_H__
 #define __PARTY_H__
-
 #include "player.h"
-#include <map>
-#include <vector>
 
 typedef std::vector<Player*> PlayerVector;
 typedef std::vector<Item*> ItemVector;
