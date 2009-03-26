@@ -60,8 +60,8 @@ class Service : public ServiceBase
 class ServicePort : boost::noncopyable, public boost::enable_shared_from_this<ServicePort>
 {
 	public:
-		ServicePort(boost::asio::io_service& io_service):
-			m_io_service(io_service), m_acceptor(NULL), m_listenErrors(0), m_serverPort(0) {}
+		ServicePort(boost::asio::io_service& io_service): m_io_service(io_service),
+			m_acceptor(NULL), m_serverPort(0), m_listenErrors(0), m_pendingStart(false) {}
 		virtual ~ServicePort() {close();}
 
 		bool add(Service_ptr);
@@ -84,6 +84,7 @@ class ServicePort : boost::noncopyable, public boost::enable_shared_from_this<Se
 
 		uint16_t m_serverPort;
 		uint32_t m_listenErrors;
+		bool m_pendingStart;
 };
 
 typedef boost::shared_ptr<ServicePort> ServicePort_ptr;

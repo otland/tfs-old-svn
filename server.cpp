@@ -41,6 +41,9 @@ bool ServicePort::add(Service_ptr newService)
 void ServicePort::open(uint16_t port)
 {
 	m_serverPort = port;
+	if(m_pendingStart)
+		m_pendingStart = false;
+
 	try
 	{
 		m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
@@ -112,11 +115,26 @@ void ServicePort::handle(Connection* connection, const boost::system::error_code
 	}
 	else if(error != boost::asio::error::operation_aborted)
 	{
-		m_listenErrors++;
-		close();
+		PRINT_ASIO_ERROR("Handling");
+		if(m_listenErrors > 99)
+		{
+#ifndef __ENABLE_LISTEN_ERROR__
+			m_listenErrors = 0;
+			std::cout << "[Warning - Server::handle] More than 100 listen errors." << std::endl;
+#else
+			close();
+			std::cout << "[Error - Server::handle] More than 100 listen errors." << std::endl;
+			return;
+#endif
+		}
 
-		std::cout << "[Warning - ServerPort::handle] Listener error occured, total " << m_listenErrors << "." << std::endl;
-		open(m_serverPort);
+		m_listenErrors++;
+		if(!m_pendingStart)
+		{
+			m_pendingStart = true;
+			Scheduler::getScheduler().addEvent(createSchedulerTask(5000,
+				boost::bind(&Server::open, this, m_serverPort)));
+		}
 	}
 #ifdef __DEBUG_NET__
 	else
