@@ -65,6 +65,7 @@ void OutputMessagePool::send(OutputMessage_ptr msg)
 	OTSYS_THREAD_LOCK(m_outputPoolLock, "");
 	OutputMessage::OutputMessageState state = msg->getState();
 	OTSYS_THREAD_UNLOCK(m_outputPoolLock, "");
+
 	if(state == OutputMessage::STATE_ALLOCATED_NO_AUTOSEND)
 	{
 		#ifdef __DEBUG_NET_DETAIL__
@@ -72,31 +73,18 @@ void OutputMessagePool::send(OutputMessage_ptr msg)
 		#endif
 		if(msg->getConnection())
 		{
-			if(msg->getConnection()->send(msg))
-			{
-				//Note: if we ever decide to change how the pool works this will have to change
-				OTSYS_THREAD_LOCK(m_outputPoolLock, "");
-				if(msg->getState() != OutputMessage::STATE_FREE)
-					msg->setState(OutputMessage::STATE_WAITING);
-
-				OTSYS_THREAD_UNLOCK(m_outputPoolLock, "");
-			}
-			else
+			if(!msg->getConnection()->send(msg) && msg->getProtocol())
 				msg->getProtocol()->onSendMessage(msg);
 		}
-		else
-		{
-			#ifdef __DEBUG_NET__
-			std::cout << "Error: [OutputMessagePool::send] NULL connection." << std::endl;
-			#endif
-		}
-	}
-	else
-	{
 		#ifdef __DEBUG_NET__
-		std::cout << "Warning: [OutputMessagePool::send] State != STATE_ALLOCATED_NO_AUTOSEND" << std::endl;
+		else
+			std::cout << "Error: [OutputMessagePool::send] NULL connection." << std::endl;
 		#endif
 	}
+	#ifdef __DEBUG_NET__
+	else
+		std::cout << "Warning: [OutputMessagePool::send] State != STATE_ALLOCATED_NO_AUTOSEND" << std::endl;
+	#endif
 }
 
 void OutputMessagePool::sendAll()
@@ -118,13 +106,7 @@ void OutputMessagePool::sendAll()
 			#endif
 			if(omsg->getConnection())
 			{
-				if(omsg->getConnection()->send(omsg))
-				{
-					// Note: if we ever decide to change how the pool works this will have to change
-					if(omsg->getState() != OutputMessage::STATE_FREE)
-						omsg->setState(OutputMessage::STATE_WAITING);
-				}
-				else
+				if(!omsg->getConnection()->send(omsg) && omsg->getProtocol())
 					omsg->getProtocol()->onSendMessage(omsg);
 			}
 			#ifdef __DEBUG_NET__

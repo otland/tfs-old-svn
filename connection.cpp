@@ -402,7 +402,7 @@ void Connection::onWrite(OutputMessage_ptr msg, const boost::system::error_code&
 		{
 			if(!m_outputQueue.empty())
 			{
-				OutputMessage_ptr msg = m_outputQueue.front();
+				msg = m_outputQueue.front();
 				m_outputQueue.pop_front();
 
 				m_pendingWrite--;
