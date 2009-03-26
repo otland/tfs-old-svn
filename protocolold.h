@@ -45,8 +45,8 @@ class ProtocolOld : public Protocol
 #endif
 		}
 
-		static bool isSingleSocket() {return false;}
-		static bool hasChecksum() {return false;}
+		enum {isSingleSocket = false};
+		enum {hasChecksum = false};
 
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
 
@@ -62,18 +62,14 @@ class ProtocolOldLogin : public ProtocolOld
 {
 	public:
 		ProtocolOldLogin(Connection* connection) : ProtocolOld(connection) {}
-
-		static std::string getProtocolName() {return "Old Login Protocol";}
-		static uint8_t getProtocolId() {return 0x01;}
+		enum {protocolId = 0x01};
 };
 
 class ProtocolOldGame : public ProtocolOld
 {
 	public:
 		ProtocolOldGame(Connection* connection) : ProtocolOld(connection) {}
-
-		static std::string getProtocolName() {return "Old Game Protocol";}
-		static uint8_t getProtocolId() {return 0x0A;}
+		enum {protocolId = 0x0A};
 };
 
 #endif

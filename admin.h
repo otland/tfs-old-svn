@@ -209,7 +209,6 @@ class ProtocolAdmin : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolAdminCount;
 #endif
-#endif
 		ProtocolAdmin(Connection* connection): Protocol(connection)
 		{
 			m_state = NO_CONNECTED;
@@ -227,16 +226,14 @@ class ProtocolAdmin : public Protocol
 #endif
 		}
 
-		static std::string getProtocolName() {return "Admin Protocol";}
-		static uint8_t getProtocolId() {return 0xFE;}
-
-		static bool isSingleSocket() {return false;}
-		static bool hasChecksum() {return false;}
+		enum {protocolId = 0xFE};
+		enum {isSingleSocket = false};
+		enum {hasChecksum = false};
 
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
 
 	protected:
-		virtual bool parsePacket(NetworkMessage& msg);
+		virtual void parsePacket(NetworkMessage& msg);
 		virtual void deleteProtocolTask();
 
 		void adminCommandPayHouses();

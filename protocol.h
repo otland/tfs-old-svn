@@ -21,6 +21,7 @@
 #ifndef __OTSERV_PROTOCOL_H__
 #define __OTSERV_PROTOCOL_H__
 #include "otsystem.h"
+#include "rsa.h"
 
 class NetworkMessage;
 class OutputMessage;
@@ -45,11 +46,9 @@ class Protocol : boost::noncopyable
 		}
 		virtual ~Protocol() {}
 
-		static virtual std::string getProtocolName() {return "Internal Protocol";}
-		static virtual uint8_t getProtocolId() {return 0x00;}
-
-		static virtual bool isSingleSocket() {return false;}
-		static virtual bool hasChecksum() {return false;}
+		enum {protocolId = 0x00};
+		enum {isSingleSocket = false};
+		enum {hasChecksum = false};
 
 		virtual void onConnect() {}
 		virtual void onRecvFirstMessage(NetworkMessage& msg) = 0;

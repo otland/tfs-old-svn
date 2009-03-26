@@ -38,8 +38,6 @@ class ServiceBase : boost::noncopyable
 		virtual Protocol* makeProtocol(Connection* connection) const = 0;
 
 		virtual uint8_t getProtocolId() const = 0;
-		virtual std::string getProtocolName() const = 0;
-
 		virtual bool isSingleSocket() const = 0;
 		virtual bool hasChecksum() const = 0;
 };
@@ -50,11 +48,9 @@ class Service : public ServiceBase
 	public:
 		Protocol* makeProtocol(Connection* connection) const {return new ProtocolType(connection);}
 
-		uint8_t getProtocolId() const {return ProtocolType::getProtocolId();}
-		std::string getProtocolName() const {return ProtocolType::getProtocolName();}
-
-		bool isSingleSocket() const {return ProtocolType::isSingleSocket();}
-		bool hasChecksum() const {return ProtocolType::hasChecksum();}
+		uint8_t getProtocolId() const {return ProtocolType::protocolId;}
+		bool isSingleSocket() const {return ProtocolType::isSingleSocket;}
+		bool hasChecksum() const {return ProtocolType::hasChecksum;}
 };
 
 class ServicePort : boost::noncopyable, public boost::enable_shared_from_this<ServicePort>
@@ -76,8 +72,8 @@ class ServicePort : boost::noncopyable, public boost::enable_shared_from_this<Se
 	protected:
 		void accept();
 
-		typedef std::vector<Service_ptr> ServicesVec;
-		ServicesVec m_services;
+		typedef std::vector<Service_ptr> ServiceVec;
+		ServiceVec m_services;
 
 		boost::asio::io_service& m_io_service;
 		boost::asio::ip::tcp::acceptor* m_acceptor;
@@ -94,7 +90,7 @@ class ServiceManager : boost::noncopyable
 	ServiceManager(const ServiceManager&);
 
 	public:
-		ServiceManager::ServiceManager(): m_io_service() {}
+		ServiceManager(): m_io_service() {}
 		virtual ~ServiceManager() {stop();}
 
 		template <typename ProtocolType>

@@ -21,5 +21,3 @@
 
 //otserv
 #include "thing.h"
-
-#endif

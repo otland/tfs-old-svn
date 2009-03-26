@@ -49,7 +49,7 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 	IpConnectMap::const_iterator it = ipConnectMap.find(getIP());
 	if(it != ipConnectMap.end() && OTSYS_TIME() < it->second + g_config.getNumber(ConfigManager::STATUSQUERY_TIMEOUT))
 	{
-		getConnection()->closeConnection();
+		getConnection()->close();
 		return;
 	}
 
@@ -96,7 +96,7 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 			break;
 	}
 
-	getConnection()->closeConnection();
+	getConnection()->close();
 }
 
 void ProtocolStatus::deleteProtocolTask()

@@ -64,7 +64,7 @@ void ProtocolLogin::disconnectClient(uint8_t error, const char* message)
 		OutputMessagePool::getInstance()->send(output);
 	}
 
-	getConnection()->closeConnection();
+	getConnection()->close();
 }
 
 bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
@@ -75,7 +75,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 #endif
 		g_game.getGameState() == GAME_STATE_SHUTDOWN)
 	{
-		getConnection()->closeConnection();
+		getConnection()->close();
 		return false;
 	}
 
@@ -86,7 +86,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	if(!RSA_decrypt(g_otservRSA, msg))
 	{
-		getConnection()->closeConnection();
+		getConnection()->close();
 		return false;
 	}
 
@@ -128,7 +128,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	if(ConnectionManager::getInstance()->isDisabled(clientIP, getProtocolId()))
+	if(ConnectionManager::getInstance()->isDisabled(clientIP, protocolId))
 	{
 		disconnectClient(0x0A, "Too many connections attempts from this IP. Please try again later.");
 		return false;
@@ -160,7 +160,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	if(!account.number)
 	{
-		ConnectionManager::getInstance()->addAttempt(clientIP, getProtocolId(), false);
+		ConnectionManager::getInstance()->addAttempt(clientIP, protocolId, false);
 		disconnectClient(0x0A, "Account name or password is not correct.");
 		return false;
 	}
@@ -173,7 +173,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	ConnectionManager::getInstance()->addAttempt(clientIP, getProtocolId(), true);
+	ConnectionManager::getInstance()->addAttempt(clientIP, protocolId, true);
 	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 	{
 		TRACK_MESSAGE(output);
@@ -230,6 +230,6 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		OutputMessagePool::getInstance()->send(output);
 	}
 
-	getConnection()->closeConnection();
+	getConnection()->close();
 	return true;
 }

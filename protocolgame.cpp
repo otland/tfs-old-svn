@@ -375,7 +375,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 				OutputMessagePool::getInstance()->send(output);
 			}
 
-			getConnection()->closeConnection();
+			getConnection()->close();
 			return false;
 		}
 
@@ -466,7 +466,7 @@ bool ProtocolGame::logout(bool displayEffect, bool forced)
 		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 
 	if(Connection* connection = getConnection())
-		connection->closeConnection();
+		connection->close();
 
 	return g_game.removeCreature(player);
 }
@@ -501,7 +501,7 @@ bool ProtocolGame::connect(uint32_t playerId)
 void ProtocolGame::disconnect()
 {
 	if(getConnection())
-		getConnection()->closeConnection();
+		getConnection()->close();
 }
 
 void ProtocolGame::disconnectClient(uint8_t error, const char* message)
@@ -543,7 +543,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 {
 	if(g_game.getGameState() == GAME_STATE_SHUTDOWN)
 	{
-		getConnection()->closeConnection();
+		getConnection()->close();
 		return false;
 	}
 
@@ -551,7 +551,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	uint16_t version = msg.GetU16();
 	if(!RSA_decrypt(g_otservRSA, msg))
 	{
-		getConnection()->closeConnection();
+		getConnection()->close();
 		return false;
 	}
 
@@ -596,7 +596,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	if(ConnectionManager::getInstance()->isDisabled(getIP(), getProtocolId()))
+	if(ConnectionManager::getInstance()->isDisabled(getIP(), protocolId))
 	{
 		disconnectClient(0x14, "Too many connections attempts from this IP. Try again later.");
 		return false;
@@ -612,12 +612,12 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	if(((accName.length() && !IOLoginData::getInstance()->getAccountId(accName, accId)) ||
 		!IOLoginData::getInstance()->getPassword(accId, name, accPass) || !passwordTest(password, accPass)) && name != "Account Manager")
 	{
-		ConnectionManager::getInstance()->addAttempt(getIP(), getProtocolId(), false);
-		getConnection()->closeConnection();
+		ConnectionManager::getInstance()->addAttempt(getIP(), protocolId, false);
+		getConnection()->close();
 		return false;
 	}
 
-	ConnectionManager::getInstance()->addAttempt(getIP(), getProtocolId(), true);
+	ConnectionManager::getInstance()->addAttempt(getIP(), protocolId, true);
 	Dispatcher::getDispatcher().addTask(
 		createTask(boost::bind(&ProtocolGame::login, this, name, accId, password, operatingSystem, gamemasterLogin)));
 
@@ -643,7 +643,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 	{
 		m_messageCount++;
 		if((interval > 800 && interval / m_messageCount < 25))
-			getConnection()->closeConnection();
+			getConnection()->close();
 	}
 	#endif
 

@@ -19,18 +19,21 @@
 //////////////////////////////////////////////////////////////////////
 #ifdef __REMOTE_CONTROL__
 #include "otpch.h"
+#include "admin.h"
 
 #include <iostream>
-#include "admin.h"
+
+#include "configmanager.h"
 #include "game.h"
+#include "tools.h"
+#include "rsa.h"
+
 #include "connection.h"
 #include "outputmessage.h"
 #include "networkmessage.h"
-#include "configmanager.h"
+
 #include "house.h"
 #include "iologindata.h"
-#include "tools.h"
-#include "rsa.h"
 
 extern Game g_game;
 extern ConfigManager g_config;
@@ -86,9 +89,9 @@ uint32_t ProtocolAdmin::protocolAdminCount = 0;
 
 void ProtocolAdmin::onRecvFirstMessage(NetworkMessage& msg)
 {
-	if(!g_admin->isEnabled())
+	if(!g_admin->enabled())
 	{
-		getConnection()->closeConnection();
+		getConnection()->close();
 		return;
 	}
 
@@ -96,14 +99,14 @@ void ProtocolAdmin::onRecvFirstMessage(NetworkMessage& msg)
 	if(!g_admin->allowIP(getIP()))
 	{
 		addLogLine(this, LOGTYPE_EVENT, 1, "ip not allowed");
-		getConnection()->closeConnection();
+		getConnection()->close();
 		return;
 	}
 
 	if(!g_admin->addConnection())
 	{
 		addLogLine(this, LOGTYPE_EVENT, 1, "cannot add new connection");
-		getConnection()->closeConnection();
+		getConnection()->close();
 		return;
 	}
 
@@ -139,7 +142,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 			{
 				if((time(NULL) - m_startTime) > 30000)
 				{
-					getConnection()->closeConnection();
+					getConnection()->close();
 					addLogLine(this, LOGTYPE_WARNING, 1, "encryption timeout");
 					return;
 				}
@@ -148,15 +151,16 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				{
 					output->AddByte(AP_MSG_ERROR);
 					output->AddString("encryption needed");
-					outputPool->send(output);
-					getConnection()->closeConnection();
+					OutputMessagePool::getInstance()->send(output);
+
+					getConnection()->close();
 					addLogLine(this, LOGTYPE_WARNING, 1, "wrong command while ENCRYPTION_NO_SET");
 					return;
 				}
-				break;
 			}
 			else
 				m_state = NO_LOGGED_IN;
+
 			break;
 		}
 
@@ -167,7 +171,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				if((time(NULL) - m_startTime) > 30000)
 				{
 					//login timeout
-					getConnection()->closeConnection();
+					getConnection()->close();
 					addLogLine(this, LOGTYPE_WARNING, 1, "login timeout");
 					return;
 				}
@@ -176,8 +180,9 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				{
 					output->AddByte(AP_MSG_ERROR);
 					output->AddString("too many login tries");
-					outputPool->send(output);
-					getConnection()->closeConnection();
+					OutputMessagePool::getInstance()->send(output);
+
+					getConnection()->close();
 					addLogLine(this, LOGTYPE_WARNING, 1, "too many login tries");
 					return;
 				}
@@ -186,15 +191,16 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				{
 					output->AddByte(AP_MSG_ERROR);
 					output->AddString("you are not logged in");
-					outputPool->send(output);
-					getConnection()->closeConnection();
+					OutputMessagePool::getInstance()->send(output);
+
+					getConnection()->close();
 					addLogLine(this, LOGTYPE_WARNING, 1, "wrong command while NO_LOGGED_IN");
 					return;
 				}
-				break;
 			}
 			else
 				m_state = LOGGED_IN;
+
 			break;
 		}
 
@@ -203,7 +209,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 
 		default:
 		{
-			getConnection()->closeConnection();
+			getConnection()->close();
 			addLogLine(this, LOGTYPE_ERROR, 1, "no valid connection state!!!");
 			return;
 		}
@@ -237,6 +243,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				output->AddString("can not login");
 				addLogLine(this, LOGTYPE_WARNING, 1, "wrong state at login");
 			}
+
 			break;
 		}
 
@@ -275,6 +282,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 							output->AddString("wrong encrypted packet");
 							addLogLine(this, LOGTYPE_WARNING, 1, "wrong encrypted packet");
 						}
+
 						break;
 					}
 
@@ -282,6 +290,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 					{
 						output->AddByte(AP_MSG_ENCRYPTION_FAILED);
 						output->AddString("no valid key type");
+
 						addLogLine(this, LOGTYPE_WARNING, 1, "no valid client key type");
 						break;
 					}
@@ -293,6 +302,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				output->AddString("can not set encryption");
 				addLogLine(this, LOGTYPE_EVENT, 1, "can not set encryption");
 			}
+
 			break;
 		}
 
@@ -318,6 +328,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 
 						char RSAPublicKey[128];
 						rsa->getPublicKey(RSAPublicKey);
+
 						output->AddBytes(RSAPublicKey, 128);
 						break;
 					}
@@ -336,6 +347,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				output->AddString("can not get public key");
 				addLogLine(this, LOGTYPE_WARNING, 1, "can not get public key");
 			}
+
 			break;
 		}
 
@@ -352,9 +364,11 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 			{
 				case CMD_BROADCAST:
 				{
-					const std::string message = msg.GetString();
-					addLogLine(this, LOGTYPE_EVENT, 1, "broadcasting: " + message);
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::broadcastMessage, &g_game, message, MSG_STATUS_WARNING)));
+					const std::string param = msg.GetString();
+					addLogLine(this, LOGTYPE_EVENT, 1, "broadcasting: " + param);
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+						&Game::broadcastMessage, &g_game, param, MSG_STATUS_WARNING)));
+
 					output->AddByte(AP_MSG_COMMAND_OK);
 					break;
 				}
@@ -363,6 +377,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				{
 					addLogLine(this, LOGTYPE_EVENT, 1, "closing server");
 					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
+
 					output->AddByte(AP_MSG_COMMAND_OK);
 					break;
 				}
@@ -377,6 +392,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				{
 					addLogLine(this, LOGTYPE_EVENT, 1, "opening server");
 					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_NORMAL)));
+
 					output->AddByte(AP_MSG_COMMAND_OK);
 					break;
 				}
@@ -385,22 +401,25 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				{
 					addLogLine(this, LOGTYPE_EVENT, 1, "starting server shutdown");
 					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
+
 					output->AddByte(AP_MSG_COMMAND_OK);
-					getConnection()->closeConnection();
+					getConnection()->close();
 					break;
 				}
 
 				case CMD_KICK:
 				{
-					const std::string name = msg.GetString();
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandKickPlayer, this, name)));
+					const std::string param = msg.GetString();
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+						&ProtocolAdmin::adminCommandKickPlayer, this, param)));
 					break;
 				}
 
 				case CMD_SETOWNER:
 				{
 					const std::string param = msg.GetString();
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandSetOwner, this, param)));
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+						&ProtocolAdmin::adminCommandSetOwner, this, param)));
 					break;
 				}
 
@@ -422,6 +441,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 		{
 			output->AddByte(AP_MSG_ERROR);
 			output->AddString("not known command byte");
+
 			addLogLine(this, LOGTYPE_WARNING, 1, "not known command byte");
 			break;
 		}
@@ -493,9 +513,9 @@ void ProtocolAdmin::adminCommandSetOwner(const std::string& param)
 	TRACK_MESSAGE(output);
 	StringVec params = explodeString(param, ";");
 	std::string houseId = params[0], name = params[1];
+	
 	trimString(houseId);
 	trimString(name);
-
 	if(House* house = Houses::getInstance().getHouse(atoi(houseId.c_str())))
 	{
 		uint32_t guid;
@@ -554,11 +574,8 @@ bool Admin::loadFromXml()
 				m_requireLogin = booleanString(strValue);
 			if(readXMLString(p, "loginpassword", strValue))
 				m_password = strValue;
-			else
-			{
-				if(m_requireLogin)
-					std::cout << "[Warning - Admin::loadXMLConfig]: Login required, but no password specified - using default." << std::endl;
-			}
+			else if(m_requireLogin)
+				std::cout << "[Warning - Admin::loadFromXml]: Login required, but no password specified - using default." << std::endl;
 		}
 		else if(xmlStrEqual(p->name, (const xmlChar*)"encryption"))
 		{
@@ -581,14 +598,14 @@ bool Admin::loadFromXml()
 								{
 									delete m_key_RSA1024XTEA;
 									m_key_RSA1024XTEA = NULL;
-									std::cout << "[Error - Admin::loadXMLConfig]: Could not load RSA key from file " << getFilePath(FILE_TYPE_XML, strValue) << std::endl;
+									std::cout << "[Error - Admin::loadFromXml]: Could not load RSA key from file " << getFilePath(FILE_TYPE_XML, strValue) << std::endl;
 								}
 							}
 							else
-								std::cout << "[Error - Admin::loadXMLConfig]: Missing file for RSA1024XTEA key." << std::endl;
+								std::cout << "[Error - Admin::loadFromXml]: Missing file for RSA1024XTEA key." << std::endl;
 						}
 						else
-							std::cout << "[Warning - Admin::loadXMLConfig]: " << strValue << " is not a valid key type." << std::endl;
+							std::cout << "[Warning - Admin::loadFromXml]: " << strValue << " is not a valid key type." << std::endl;
 					}
 				}
 

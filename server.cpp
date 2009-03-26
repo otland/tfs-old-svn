@@ -23,6 +23,8 @@
 #endif
 
 #include "server.h"
+#include "scheduler.h"
+
 #include "connection.h"
 #include "outputmessage.h"
 
@@ -44,13 +46,10 @@ void ServicePort::open(uint16_t port)
 	if(m_pendingStart)
 		m_pendingStart = false;
 
-	try
-	{
+	try {
 		m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
 			boost::asio::ip::address(boost::asio::ip::address_v4(INADDR_ANY)), m_serverPort), false);
-	}
-	catch(boost::system::system_error& error)
-	{
+	} catch(boost::system::system_error& error) {
 		std::cout << "> ERROR: Can bind only one socket to a specific port (" << m_serverPort << ")." << std::endl;
 		std::cout << "The exact error was: " << error.what() << std::endl;
 	}
@@ -133,7 +132,7 @@ void ServicePort::handle(Connection* connection, const boost::system::error_code
 		{
 			m_pendingStart = true;
 			Scheduler::getScheduler().addEvent(createSchedulerTask(5000,
-				boost::bind(&Server::open, this, m_serverPort)));
+				boost::bind(&ServicePort::open, this, m_serverPort)));
 		}
 	}
 #ifdef __DEBUG_NET__

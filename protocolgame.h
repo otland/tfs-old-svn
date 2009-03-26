@@ -60,11 +60,9 @@ class ProtocolGame : public Protocol
 			player = NULL;
 		}
 
-		static std::string getProtocolName() {return "Game Protocol";}
-		static uint8_t getProtocolId() {return 0x0A;}
-
-		static bool isSingleSocket() {return true;}
-		static bool hasChecksum() {return true;}
+		enum {protocolId = 0x0A};
+		enum {isSingleSocket = true};
+		enum {hasChecksum = true};
 
 		bool login(const std::string& name, uint32_t accnumber, const std::string& password,
 			OperatingSystem_t operatingSystem, bool gamemasterLogin);

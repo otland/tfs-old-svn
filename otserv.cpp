@@ -117,9 +117,9 @@ bool argumentsHandler(StringVec args)
 			"\t--config=$1\t\tAlternate configuration file path.\n"
 			"\t--ip=$1\t\t\tIP address of gameworld server.\n"
 			"\t\t\t\tShould be equal to the global IP.\n"
-			"\t--login-port=$1\tPort for login server to listen on.\n";
-			"\t--game-port=$1\tPort for game server to listen on.\n";
-			"\t--admin-port=$1\tPort for admin server to listen on.\n";
+			"\t--login-port=$1\tPort for login server to listen on.\n"
+			"\t--game-port=$1\tPort for game server to listen on.\n"
+			"\t--admin-port=$1\tPort for admin server to listen on.\n"
 			"\t--status-port=$1\tPort for status server to listen on.\n";
 #ifndef WIN32
 			std::cout << "\t--runfile=$1\t\tSpecifies run file. Will contain the pid\n"
@@ -221,11 +221,26 @@ void runfileHandler(void)
 }
 #endif
 
+void startupErrorMessage(const std::string& error)
+{
+	if(error.length() > 0)
+		std::cout << std::endl << "> ERROR: " << error << std::endl;
+
+	#ifdef WIN32
+	#ifndef __CONSOLE__
+	system("pause");
+	#endif
+	#else
+	getchar();
+	#endif
+	exit(1);
+}
+
 void otserv(
 #if not defined(WIN32) || defined(__CONSOLE__)
-args, ServiceManager* services
+StringVec args,
 #endif
-);
+ServiceManager* services);
 
 #if not defined(WIN32) || defined(__CONSOLE__)
 int main(int argc, char *argv[])
@@ -339,26 +354,11 @@ void serverMain(void* param)
 #endif
 }
 
-void startupErrorMessage(const std::string& error)
-{
-	if(error.length() > 0)
-		std::cout << std::endl << "> ERROR: " << error << std::endl;
-
-	#ifdef WIN32
-	#ifndef __CONSOLE__
-	system("pause");
-	#endif
-	#else
-	getchar();
-	#endif
-	exit(1);
-}
-
 void otserv(
 #if not defined(WIN32) || defined(__CONSOLE__)
-StringVec args, ServiceManager* services
+StringVec args,
 #endif
-)
+ServiceManager* services)
 {
 	srand((uint32_t)OTSYS_TIME());
 	#ifdef WIN32
@@ -379,6 +379,7 @@ StringVec args, ServiceManager* services
 		char buffer = getchar();
 		if(buffer == 10 || (buffer != 121 && buffer != 89))
 			startupErrorMessage("Aborted.");
+	}
 	#endif
 
 	std::cout << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl;

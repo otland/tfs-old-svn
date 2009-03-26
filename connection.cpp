@@ -159,7 +159,7 @@ void Connection::close()
 {
 	//any thread
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Connection::closeConnection" << std::endl;
+	std::cout << "Connection::close" << std::endl;
 	#endif
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionLock);
 	if(m_closeState != CLOSE_STATE_NONE)
@@ -222,13 +222,13 @@ void Connection::closeConnection()
 {
 	//dispatcher thread
 	#ifdef __DEBUG_NET_DETAIL__
-	std::cout << "Connection::closeConnectionTask" << std::endl;
+	std::cout << "Connection::closeConnection" << std::endl;
 	#endif
 
 	OTSYS_THREAD_LOCK(m_connectionLock, "");
 	if(m_closeState != CLOSE_STATE_REQUESTED)
 	{
-		std::cout << "[Error - Connection::closeConnectionTask] m_closeState = " << m_closeState << std::endl;
+		std::cout << "[Error - Connection::closeConnection] m_closeState = " << m_closeState << std::endl;
 		OTSYS_THREAD_UNLOCK(m_connectionLock, "");
 		return;
 	}
@@ -241,7 +241,7 @@ void Connection::closeConnection()
 		m_protocol = NULL;
 	}
 
-	if(!closingConnection())
+	if(!write())
 		OTSYS_THREAD_UNLOCK(m_connectionLock, "");
 }
 
@@ -320,7 +320,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 			m_receivedFirst = true;
 			if(!m_protocol)
 			{
-				m_protocol = m_service_port->make_protocol(checksumEnabled, m_msg);
+				m_protocol = m_port->makeProtocol(checksumEnabled, m_msg);
 				m_protocol->setConnection(this);
 				if(!m_protocol)
 				{

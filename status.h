@@ -56,11 +56,9 @@ class ProtocolStatus : public Protocol
 #endif
 		}
 
-		static std::string getProtocolName() {return "Status Protocol";}
-		static uint8_t getProtocolId() {return 0xFF;}
-
-		static bool isSingleSocket() {return false;}
-		static bool hasChecksum() {return false;}
+		enum {protocolId = 0xFF};
+		enum {isSingleSocket = false};
+		enum {hasChecksum = false};
 
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
 

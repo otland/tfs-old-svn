@@ -21,13 +21,11 @@
 #ifndef __TEMPLATES_H__
 #define __TEMPLATES_H__
 #include "otsystem.h"
-#include "creature.h"
 
 template<class T> class AutoList
 {
 	public:
 		AutoList() {}
-
 		virtual ~AutoList()
 		{
 			list.clear();

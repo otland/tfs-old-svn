@@ -44,11 +44,9 @@ class ProtocolLogin : public Protocol
 #endif
 		}
 
-		static std::string getProtocolName() {return "Login Protocol";}
-		static uint8_t getProtocolId() {return 0x01;}
-
-		static bool isSingleSocket() {return false;}
-		static bool hasChecksum() {return true;}
+		enum {protocolId = 0x01};
+		enum {isSingleSocket = false};
+		enum {hasChecksum = true};
 
 		virtual void onRecvFirstMessage(NetworkMessage& msg) {parseFirstPacket(msg);}
 

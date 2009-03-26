@@ -56,7 +56,7 @@ void ProtocolOld::disconnectClient(uint8_t error, const char* message)
 		OutputMessagePool::getInstance()->send(output);
 	}
 
-	getConnection()->closeConnection();
+	getConnection()->close();
 }
 
 bool ProtocolOld::parseFirstPacket(NetworkMessage& msg)
@@ -67,7 +67,7 @@ bool ProtocolOld::parseFirstPacket(NetworkMessage& msg)
 #endif
 		g_game.getGameState() == GAME_STATE_SHUTDOWN)
 	{
-		getConnection()->closeConnection();
+		getConnection()->close();
 		return false;
 	}
 
@@ -79,7 +79,7 @@ bool ProtocolOld::parseFirstPacket(NetworkMessage& msg)
 
 	if(!RSA_decrypt(g_otservRSA, msg))
 	{
-		getConnection()->closeConnection();
+		getConnection()->close();
 		return false;
 	}
 

@@ -24,6 +24,7 @@
 #include "item.h"
 #include "house.h"
 #include "spawn.h"
+#include "status.h"
 
 enum OTBM_AttrTypes_t
 {

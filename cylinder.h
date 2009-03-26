@@ -21,6 +21,7 @@
 #ifndef __OTSERV_CYLINDER_H__
 #define __OTSERV_CYLINDER_H__
 #include "otsystem.h"
+#include "thing.h"
 
 class Item;
 class Creature;
