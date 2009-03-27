@@ -271,7 +271,9 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 		{
 			checkZones = true;
 			if((g_game.getWorldType() == WORLD_TYPE_NO_PVP && !Combat::isInPvpZone(attacker, target)) ||
-				isProtected(const_cast<Player*>(attackerPlayer), const_cast<Player*>(targetPlayer)))
+				isProtected(const_cast<Player*>(attackerPlayer), const_cast<Player*>(targetPlayer))
+				|| (g_config.getBool(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) &&
+				attackerPlayer->defaultOutfit.lookFeet == targetPlayer->defaultOutfit.lookFeet))
 				return RET_YOUMAYNOTATTACKTHISPLAYER;
 		}
 	}

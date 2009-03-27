@@ -4056,10 +4056,6 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			return true;
 		}
 
-		if(!force && g_config.getBool(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attacker && target &&
-			attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && combatType != COMBAT_HEALING)
-			return false;
-
 		int32_t damage = -healthChange;
 		if(damage != 0)
 		{
@@ -4263,10 +4259,6 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			addMagicEffect(list, targetPos, NM_ME_POFF);
 			return false;
 		}
-
-		if(g_config.getBool(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && attacker && target
-			&& attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet)
-			return false;
 
 		int32_t manaLoss = std::min(target->getMana(), -manaChange);
 		BlockType_t blockType = target->blockHit(attacker, COMBAT_MANADRAIN, manaLoss);
