@@ -321,13 +321,14 @@ void Connection::parsePacket(const boost::system::error_code& error)
 			if(!m_protocol)
 			{
 				m_protocol = m_port->makeProtocol(checksumEnabled, m_msg);
-				m_protocol->setConnection(this);
 				if(!m_protocol)
 				{
 					close();
 					OTSYS_THREAD_UNLOCK(m_connectionLock, "");
 					return;
 				}
+
+				m_protocol->setConnection(this);
 			}
 			else
 				m_msg.SkipBytes(1);

@@ -85,9 +85,9 @@ void ServicePort::accept()
 		return;
 	}
 
-	if(Connection* connection = ConnectionManager::getInstance()->createConnection(m_io_service, shared_from_this()))
-		m_acceptor->async_accept(connection->getHandle(), boost::bind(&ServicePort::handle, this, connection,
-			boost::asio::placeholders::error));
+	Connection* connection = ConnectionManager::getInstance()->createConnection(m_io_service, shared_from_this());
+	m_acceptor->async_accept(connection->getHandle(), boost::bind(
+		&ServicePort::handle, this, connection, boost::asio::placeholders::error));
 }
 
 void ServicePort::handle(Connection* connection, const boost::system::error_code& error)
@@ -147,8 +147,11 @@ Protocol* ServicePort::makeProtocol(bool checksum, NetworkMessage& msg) const
 	for(ServiceVec::const_iterator it = m_services.begin(); it != m_services.end(); ++it)
 	{
 		Service_ptr service = (*it);
-		if(checksum && service->hasChecksum() && protocolId == service->getProtocolId())
-			return service->makeProtocol(NULL);
+		if(checksum)
+		{
+			if(service->hasChecksum() && protocolId == service->getProtocolId())
+				return service->makeProtocol(NULL);
+		}
 		else if(!service->hasChecksum())
 			return service->makeProtocol(NULL);
 	}

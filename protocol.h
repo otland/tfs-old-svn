@@ -46,10 +46,6 @@ class Protocol : boost::noncopyable
 		}
 		virtual ~Protocol() {}
 
-		enum {protocolId = 0x00};
-		enum {isSingleSocket = false};
-		enum {hasChecksum = false};
-
 		virtual void onConnect() {}
 		virtual void onRecvFirstMessage(NetworkMessage& msg) = 0;
 
