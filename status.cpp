@@ -196,24 +196,42 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		sprintf(buffer, "%d", g_config.getNumber(ConfigManager::LOGIN_PORT));
 		output->AddString(buffer);
   	}
-
-	if(requestedInfo & REQUEST_OWNER_SERVER_INFO)
+ 
+	if(requestedInfo & REQUEST_SERVER_SOFTWARE_INFO)
 	{
 		output->AddByte(0x11);
+		output->AddString(STATUS_SERVER_NAME);
+		output->AddString(STATUS_SERVER_VERSION);
+		output->AddString(STATUS_SERVER_PROTOCOL);
+	}
+
+  	if(requestedInfo & REQUEST_SERVER_MAP_INFO)
+	{
+		output->AddByte(0x12);
+		output->AddString(m_mapName.c_str());
+		output->AddString(m_mapAuthor.c_str());
+		uint32_t mapWidth, mapHeight;
+		g_game.getMapDimensions(mapWidth, mapHeight);
+		output->AddU16(mapWidth);
+		output->AddU16(mapHeight);
+  	}
+
+	if(requestedInfo & REQUEST_SERVER_OWNER_INFO)
+	{
+		output->AddByte(0x13);
 		output->AddString(g_config.getString(ConfigManager::OWNER_NAME).c_str());
 		output->AddString(g_config.getString(ConfigManager::OWNER_EMAIL).c_str());
   	}
 
 	if(requestedInfo & REQUEST_MISC_SERVER_INFO)
 	{
-		output->AddByte(0x12);
+		output->AddByte(0x14);
 		output->AddString(g_config.getString(ConfigManager::MOTD).c_str());
 		output->AddString(g_config.getString(ConfigManager::LOCATION).c_str());
 		output->AddString(g_config.getString(ConfigManager::URL).c_str());
 		uint64_t uptime = getUptime();
 		output->AddU32((uint32_t)(uptime >> 32));
 		output->AddU32((uint32_t)(uptime));
-		output->AddString(STATUS_SERVER_VERSION);
   	}
 
 	if(requestedInfo & REQUEST_PLAYERS_INFO)
@@ -226,11 +244,10 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 
 	if(requestedInfo & REQUEST_EXT_PLAYERS_INFO)
 	{
-		output->AddByte(0x21); // players info - online players list
+		output->AddByte(0x21);
 		output->AddU32(m_playersOnline);
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 		{
-			//Send the most common info
 			output->AddString(it->second->getName());
 			output->AddU32(it->second->getLevel());
 		}
@@ -238,32 +255,13 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 
 	if(requestedInfo & REQUEST_PLAYER_STATUS_INFO)
 	{
-		output->AddByte(0x22); // players info - online status info of a player
+		output->AddByte(0x30);
 		const std::string name = msg.GetString();
 		if(g_game.getPlayerByName(name) != NULL)
 			output->AddByte(0x01);
 		else
 			output->AddByte(0x00);
 	}
-
-	if(requestedInfo & REQUEST_SERVER_SOFTWARE_INFO)
-	{
-		output->AddByte(0x30); // server software info
-		output->AddString(STATUS_SERVER_NAME);
-		output->AddString(STATUS_SERVER_VERSION);
-		output->AddString(STATUS_SERVER_PROTOCOL);
-	}
-
-  	if(requestedInfo & REQUEST_MAP_INFO)
-	{
-		output->AddByte(0x31);
-		output->AddString(m_mapName.c_str());
-		output->AddString(m_mapAuthor.c_str());
-		uint32_t mapWidth, mapHeight;
-		g_game.getMapDimensions(mapWidth, mapHeight);
-		output->AddU16(mapWidth);
-		output->AddU16(mapHeight);
-  	}
 
 	return;
 }
