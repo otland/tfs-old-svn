@@ -39,6 +39,7 @@
 #include "protocollogin.h"
 #include "protocolgame.h"
 #include "protocolold.h"
+#include "protocolhttp.h"
 #include "status.h"
 #ifdef __REMOTE_CONTROL__
 #include "admin.h"
@@ -714,6 +715,9 @@ ServiceManager* services)
 		services->add<ProtocolLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT));
 		services->add<ProtocolOldLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT));
 	}
+
+	//httpd
+	services->add<ProtocolHTTP>(8080);
 
 	std::cout << "> Local ports:" << std::endl;
 	std::list<uint16_t> ports = services->getPorts();
