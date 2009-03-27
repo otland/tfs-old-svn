@@ -4,6 +4,7 @@ local reloadInfo = {
 	{RELOAD_CREATUREEVENTS, "creatureevents", "creature events", "creaturescripts", "creature scripts"},
 	{RELOAD_GAMESERVERS, "gameservers", "game servers", "servers"},
 	{RELOAD_GLOBALEVENTS, "globalevents", "global events"},
+	{RELOAD_GROUPS, "groups"},
 	{RELOAD_HIGHSCORES, "highscores", "scores"},
 	{RELOAD_HOUSEPRICES, "houseprices", "house prices", "prices"},
 	{RELOAD_ITEMS, "items", "item"},

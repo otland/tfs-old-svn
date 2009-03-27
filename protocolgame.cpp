@@ -416,8 +416,8 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			_player->disconnect();
 			_player->isConnecting = true;
 			addRef();
-			eventConnect = Scheduler::getScheduler().addEvent(
-				createSchedulerTask(1000, boost::bind(&ProtocolGame::connect, this, _player->getID())));
+			eventConnect = Scheduler::getScheduler().addEvent(createSchedulerTask(
+				1000, boost::bind(&ProtocolGame::connect, this, _player->getID())));
 
 			return true;
 		}
