@@ -5041,7 +5041,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetName, int32_t re
 		ip = IOLoginData::getInstance()->getLastIP(guid);
 	}
 
-	int8_t removeNotations = 0;
+	int16_t removeNotations = 0;
 	switch(action)
 	{
 		case 0:
@@ -5175,7 +5175,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetName, int32_t re
 		IOBan::getInstance()->addIpBanishment(ip, (time(NULL) + g_config.getNumber(ConfigManager::IPBANISHMENT_LENGTH)),
 			comment, player->getGUID(), statement);
 
-	if(removeNotations > 0)
+	if(removeNotations > 1)
 		IOBan::getInstance()->removeNotations(account.number);
 
 	char buffer[800 + comment.length()];
@@ -5206,7 +5206,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetName, int32_t re
 		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, buffer);
 	}
 
-	if(targetPlayer && removeNotations > 1)
+	if(targetPlayer && removeNotations > 0)
 	{
 		addMagicEffect(targetPlayer->getPosition(), NM_ME_MAGIC_POISON);
 		uint32_t playerId = targetPlayer->getID();
