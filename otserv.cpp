@@ -703,9 +703,13 @@ ServiceManager* services)
 
 	services->add<ProtocolGame>(g_config.getNumber(ConfigManager::GAME_PORT));
 	services->add<ProtocolOldGame>(g_config.getNumber(ConfigManager::LOGIN_PORT));
-#ifndef __LOGIN_SERVER__
-	if(g_config.getBool(ConfigManager::LOGIN_ONLY_LOGINSERVER))
+	if(
+#ifdef __LOGIN_SERVER__
+	true
+#else
+	!g_config.getBool(ConfigManager::LOGIN_ONLY_LOGINSERVER)
 #endif
+	)
 	{
 		services->add<ProtocolLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT));
 		services->add<ProtocolOldLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT));

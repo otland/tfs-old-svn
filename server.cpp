@@ -146,14 +146,8 @@ Protocol* ServicePort::makeProtocol(bool checksum, NetworkMessage& msg) const
 	uint8_t protocolId = msg.GetByte();
 	for(ServiceVec::const_iterator it = m_services.begin(); it != m_services.end(); ++it)
 	{
-		Service_ptr service = (*it);
-		if(checksum)
-		{
-			if(service->hasChecksum() && protocolId == service->getProtocolId())
-				return service->makeProtocol(NULL);
-		}
-		else if(!service->hasChecksum())
-			return service->makeProtocol(NULL);
+		if((*it)->getProtocolId() == protocolId && ((checksum && (*it)->hasChecksum()) || !(*it)->hasChecksum()))
+			return (*it)->makeProtocol(NULL);
 	}
 
 	return NULL;

@@ -520,18 +520,14 @@ void ProtocolGame::disconnectClient(uint8_t error, const char* message)
 
 void ProtocolGame::onConnect()
 {
-	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
-	{
-		TRACK_MESSAGE(output);
-		output->AddU16(0x06);
-		output->AddByte(0x1F);
-		output->AddU16(random_range(0, 65535));
-		output->AddU16(0x00);
-		output->AddByte(random_range(0, 255));
-		output->addCryptoHeader(true);
-
-		OutputMessagePool::getInstance()->send(output);
-	}
+	OutputMessage_ptr output(new OutputMessage);
+	output->AddU16(0x06);
+	output->AddByte(0x1F);
+	output->AddU16(random_range(0, 65535));
+	output->AddU16(0x00);
+	output->AddByte(random_range(0, 255));
+	output->addCryptoHeader(true);
+	getConnection()->send(output);
 }
 
 void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)
@@ -2945,7 +2941,6 @@ void ProtocolGame::AddTileCreature(NetworkMessage_ptr msg, const Position& pos, 
 	msg->AddByte(0x6A);
 	msg->AddPosition(pos);
 	msg->AddByte(creature->getParent()->__getIndexOfThing(creature));
-
 	bool known;
 	uint32_t removedKnown;
 	checkCreatureAsKnown(creature->getID(), known, removedKnown);
