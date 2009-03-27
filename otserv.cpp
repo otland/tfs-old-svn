@@ -665,7 +665,7 @@ ServiceManager* services)
 	g_game.setGameState(GAME_STATE_INIT);
 
 	std::string ip = g_config.getString(ConfigManager::IP);
-	std::cout << ">> Global address: " << ip << std::endl;
+	std::cout << "> Global address: " << ip << std::endl;
 	serverIPs.push_back(std::make_pair(inet_addr("127.0.0.1"), 0xFFFFFFFF));
 
 	char hostName[128];
@@ -715,7 +715,7 @@ ServiceManager* services)
 		services->add<ProtocolOldLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT));
 	}
 
-	std::cout << ">> Local ports:" << std::endl << "> ";
+	std::cout << "> Local ports:" << std::endl;
 	std::list<uint16_t> ports = services->getPorts();
 	for(std::list<uint16_t>::iterator it = ports.begin(); it != ports.end(); ++it)
 		std::cout << (*it) << "\t";
