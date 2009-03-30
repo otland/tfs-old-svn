@@ -816,7 +816,7 @@ bool TalkAction::changeThingProporties(Player* player, const std::string& cmd, c
 							_player->balance = atoi(parseParams(cmdit, cmdtokens.end()).c_str());
 						else if(strcasecmp(tmp.c_str(), "marriage") == 0)
 							_player->marriage = atoi(parseParams(cmdit, cmdtokens.end()).c_str());
-						else if(strcasecmp(tmp.c_str(), "ratesss") == 0)
+						else if(strcasecmp(tmp.c_str(), "rates") == 0)
 							_player->rates[atoi(parseParams(cmdit, cmdtokens.end()).c_str())] = atof(
 								parseParams(cmdit, cmdtokens.end()).c_str());
 						else if(strcasecmp(tmp.c_str(), "resetidle") == 0)
