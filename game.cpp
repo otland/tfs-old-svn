@@ -5041,7 +5041,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetName, int32_t re
 		ip = IOLoginData::getInstance()->getLastIP(guid);
 	}
 
-	int16_t removeNotations = 0;
+	int16_t removeNotations = 2;
 	switch(action)
 	{
 		case 0:
@@ -5069,7 +5069,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetName, int32_t re
 				}
 			}
 			else
-				removeNotations = 2;
+				removeNotations = 0;
 
 			break;
 		}
