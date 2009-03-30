@@ -2039,14 +2039,8 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerRates(cid)
 	lua_register(m_luaState, "getPlayerRates", LuaScriptInterface::luaGetPlayerRates);
 
-	//doPlayerSetExperienceRate(cid, value)
-	lua_register(m_luaState, "doPlayerSetExperienceRate", LuaScriptInterface::luaDoPlayerSetExperienceRate);
-
-	//doPlayerSetMagicRate(cid, value)
-	lua_register(m_luaState, "doPlayerSetMagicRate", LuaScriptInterface::luaDoPlayerSetMagicRate);
-
-	//doPlayerSetSkillRate(cid, skill, value)
-	lua_register(m_luaState, "doPlayerSetSkillRate", LuaScriptInterface::luaDoPlayerSetSkillRate);
+	//doPlayerSetRate(cid, type, value)
+	lua_register(m_luaState, "doPlayerSetRate", LuaScriptInterface::luaDoPlayerSetRate);
 
 	//getPlayerPartner(cid)
 	lua_register(m_luaState, "getPlayerPartner", LuaScriptInterface::luaGetPlayerPartner);
@@ -8967,78 +8961,33 @@ int32_t LuaScriptInterface::luaGetPlayerRates(lua_State* L)
 	}
 
 	lua_newtable(L);
-	setFieldDouble(L, "experience", player->experienceRate);
-	setFieldDouble(L, "magic", player->magicRate);
-
-	lua_newtable(L);
-	for(uint32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
+	for(uint32_t i = SKILL_FIRST; i <= SKILL__LAST; ++i)
 	{
 		lua_pushnumber(L, i);
-		lua_pushnumber(L, player->skillRate[(skills_t)i]);
+		lua_pushnumber(L, player->rates[(skills_t)i]);
 		lua_settable(L, -3);
 	}
 
-	lua_settable(L, -4);
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoPlayerSetExperienceRate(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerSetRate(lua_State* L)
 {
-	//doPlayerSetExperienceRate(cid, value)
+	//doPlayerSetRate(cid, type, value)
 	float value = popFloatNumber(L);
+	uint32_t type = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		player->experienceRate = value;
-		lua_pushnumber(L, LUA_NO_ERROR);
-	}
-	else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushnumber(L, LUA_ERROR);
-	}
-
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaDoPlayerSetMagicRate(lua_State* L)
-{
-	//doPlayerSetMagicRate(cid, value)
-	float value = popFloatNumber(L);
-
-	ScriptEnviroment* env = getScriptEnv();
-	if(Player* player = env->getPlayerByUID(popNumber(L)))
-	{
-		player->magicRate = value;
-		lua_pushnumber(L, LUA_NO_ERROR);
-	}
-	else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushnumber(L, LUA_ERROR);
-	}
-
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaDoPlayerSetSkillRate(lua_State* L)
-{
-	//doPlayerSetSkillRate(cid, skill, value)
-	float value = popFloatNumber(L);
-	uint32_t skill = popNumber(L);
-
-	ScriptEnviroment* env = getScriptEnv();
-	if(Player* player = env->getPlayerByUID(popNumber(L)))
-	{
-		if(skill > SKILL_LAST)
+		if(type > SKILL__LAST)
 		{
-			reportErrorFunc("Invalid skill");
+			reportErrorFunc("Invalid type");
 			lua_pushnumber(L, LUA_ERROR);
 		}
 		else
 		{
-			player->skillRate[(skills_t)skill] = value;
+			player->rates[(skills_t)type] = value;
 			lua_pushnumber(L, LUA_NO_ERROR);
 		}
 	}

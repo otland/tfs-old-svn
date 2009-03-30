@@ -466,9 +466,7 @@ class LuaScriptInterface
 
 		//custom modifiers
 		static int32_t luaGetPlayerRates(lua_State* L);
-		static int32_t luaDoPlayerSetExperienceRate(lua_State* L);
-		static int32_t luaDoPlayerSetMagicRate(lua_State* L);
-		static int32_t luaDoPlayerSetSkillRate(lua_State* L);
+		static int32_t luaDoPlayerSetRate(lua_State* L);
 		static int32_t luaDoCreatureSetDropLoot(lua_State* L);
 		static int32_t luaGetPlayerLossPercent(lua_State* L);
 		static int32_t luaDoPlayerSetLossPercent(lua_State* L);

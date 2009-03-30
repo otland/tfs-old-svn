@@ -127,8 +127,7 @@ Creature()
 
 	idleTime = 0;
 	marriage = 0;
-	experienceRate = 1.0f;
-	magicRate = 1.0f;
+	rates[SKILL__MAGLEVEL] = rates[SKILL__LEVEL] = 1.0f;
 
 	chaseMode = CHASEMODE_STANDSTILL;
 	fightMode = FIGHTMODE_ATTACK;
@@ -153,7 +152,7 @@ Creature()
 		skills[i][SKILL_LEVEL]= 10;
 		skills[i][SKILL_TRIES]= 0;
 		skills[i][SKILL_PERCENT] = 0;
-		skillRate[i] = 1.0f;
+		rates[i] = 1.0f;
 	}
 
 	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
@@ -432,47 +431,28 @@ int32_t Player::getWeaponSkill(const Item* item) const
 	if(!item)
 		return getSkill(SKILL_FIST, SKILL_LEVEL);
 
-	WeaponType_t weaponType = item->getWeaponType();
-	int32_t attackSkill;
-	switch(weaponType)
+	switch(item->getWeaponType())
 	{
 		case WEAPON_SWORD:
-		{
-			attackSkill = getSkill(SKILL_SWORD, SKILL_LEVEL);
-			break;
-		}
+			return getSkill(SKILL_SWORD, SKILL_LEVEL);
 
 		case WEAPON_CLUB:
-		{
-			attackSkill = getSkill(SKILL_CLUB, SKILL_LEVEL);
-			break;
-		}
+			return getSkill(SKILL_CLUB, SKILL_LEVEL);
 
 		case WEAPON_AXE:
-		{
-			attackSkill = getSkill(SKILL_AXE, SKILL_LEVEL);
-			break;
-		}
+			return getSkill(SKILL_AXE, SKILL_LEVEL);
 
 		case WEAPON_FIST:
-		{
-			attackSkill = getSkill(SKILL_FIST, SKILL_LEVEL);
-			break;
-		}
+			return getSkill(SKILL_FIST, SKILL_LEVEL);
 
 		case WEAPON_DIST:
-		{
-			attackSkill = getSkill(SKILL_DIST, SKILL_LEVEL);
-			break;
-		}
+			return getSkill(SKILL_DIST, SKILL_LEVEL);
 
 		default:
-		{
-			attackSkill = 0;
 			break;
-		}
 	}
-	return attackSkill;
+
+	return 0;
 }
 
 int32_t Player::getArmor() const
@@ -662,20 +642,19 @@ int32_t Player::getPlayerInfo(playerinfo_t playerinfo) const
 
 int32_t Player::getSkill(skills_t skilltype, skillsid_t skillinfo) const
 {
-	int32_t n = skills[skilltype][skillinfo];
+	int32_t ret = skills[skilltype][skillinfo];
 	if(skillinfo == SKILL_LEVEL)
-		n += varSkills[skilltype];
+		ret += varSkills[skilltype];
 
-	return std::max((int32_t)0, (int32_t)n);
+	return std::max((int32_t)0, ret);
 }
 
 void Player::addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier/* = true*/)
 {
-	if(vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]) > vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
-	{
-		//player has reached max skill
+	//player has reached max skill
+	if(vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]) > vocation->getReqSkillTries(
+		skill, skills[skill][SKILL_LEVEL] + 1))
 		return;
-	}
 
 	if(useMultiplier)
 		count += uint32_t((double)count * skillRate[skill]);
@@ -1882,7 +1861,7 @@ void Player::addManaSpent(uint64_t amount, bool ignoreFlag/* = false*/, bool use
 	}
 
 	if(useMultiplier)
-		amount = uint64_t((double)amount * magicRate);
+		amount = uint64_t((double)amount * rates[SKILL__MAGLEVEL]);
 
 	amount = uint64_t((double)amount * g_config.getDouble(ConfigManager::RATE_MAGIC));
 	while(manaSpent + amount >= nextReqMana)
@@ -1896,7 +1875,7 @@ void Player::addManaSpent(uint64_t amount, bool ignoreFlag/* = false*/, bool use
 
 		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
-			(*it)->executeAdvance(this, (skills_t)MAGLEVEL, (magLevel - 1), magLevel);
+			(*it)->executeAdvance(this, SKILL__MAGLEVEL, (magLevel - 1), magLevel);
 
 		currReqMana = nextReqMana;
 		nextReqMana = vocation->getReqMana(magLevel + 1);
@@ -1959,7 +1938,7 @@ void Player::addExperience(uint64_t exp)
 
 		CreatureEventList advanceEvents = getCreatureEvents(CREATURE_EVENT_ADVANCE);
 		for(CreatureEventList::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
-			(*it)->executeAdvance(this, (skills_t)LEVEL, prevLevel, level);
+			(*it)->executeAdvance(this, SKILL__LEVEL, prevLevel, level);
 	}
 
 	uint64_t currLevelExp = Player::getExpForLevel(level);
@@ -3303,7 +3282,7 @@ uint64_t Player::getGainedExperience(Creature* attacker, bool useMultiplier/* = 
 			uint64_t result = std::max((uint64_t)0, (uint64_t)std::floor(getDamageRatio(attacker) * std::max((double)0,
 				((double)(1 - (((double)a / b))))) * 0.05 * c));
 			if(useMultiplier)
-				result = uint64_t((double)result * attackerPlayer->experienceRate);
+				result = uint64_t((double)result * attackerPlayer->rates[SKILL__LEVEL]);
 
 			return std::min((uint64_t)getLostExperience(), uint64_t(result * g_game.getExperienceStage(attackerPlayer->getLevel())));
 		}
@@ -3869,9 +3848,9 @@ void Player::setPromotionLevel(uint32_t pLevel)
 	promotionLevel += tmpLevel;
 }
 
-double Player::getLostPercent(lossTypes_t lossType)
+double Player::getLostPercent(lossTypes_t lossType) const
 {
-	uint32_t lostPercent = lossPercent[lossType];
+	double lostPercent = lossPercent[lossType];
 	if((int32_t)lostPercent <= vocation->getLessLoss())
 		return 0;
 
@@ -3884,11 +3863,11 @@ double Player::getLostPercent(lossTypes_t lossType)
 				return 0;
 
 			if(hasBlessing(i))
-				lostPercent--;
+				lostPercent -= 10;
 		}
 	}
 
-	return (double)lostPercent / 100.;
+	return lostPercent / 1000.;
 }
 
 uint32_t Player::getAttackSpeed()

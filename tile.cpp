@@ -237,8 +237,7 @@ Item* Tile::getTopTopItem()
 
 Thing* Tile::getTopThing()
 {
-	Thing* thing = NULL;
-	thing = getTopCreature();
+	Thing* thing = getTopCreature();
 	if(thing != NULL)
 		return thing;
 

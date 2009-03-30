@@ -35,7 +35,7 @@ CREATE TABLE `server_config`
 	UNIQUE (`config`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `server_config` VALUES ('db_version', 11);
+INSERT INTO `server_config` VALUES ('db_version', 12);
 
 CREATE TABLE `server_motd`
 (
@@ -151,12 +151,12 @@ CREATE TABLE `players`
 	`lastlogout` BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	`blessings` TINYINT(2) NOT NULL DEFAULT 0,
 	`balance` BIGINT NOT NULL DEFAULT 0 COMMENT 'player money in bank',
-	`stamina` BIGINT NOT NULL DEFAULT 201660000,
+	`stamina` BIGINT NOT NULL DEFAULT 151200000,
 	`direction` INT NOT NULL DEFAULT 2 COMMENT 'NOT IN USE BY THE SERVER',
-	`loss_experience` INT NOT NULL DEFAULT 10,
-	`loss_mana` INT NOT NULL DEFAULT 10,
-	`loss_skills` INT NOT NULL DEFAULT 10,
-	`loss_items` INT NOT NULL DEFAULT 10,
+	`loss_experience` INT NOT NULL DEFAULT 100,
+	`loss_mana` INT NOT NULL DEFAULT 100,
+	`loss_skills` INT NOT NULL DEFAULT 100,
+	`loss_items` INT NOT NULL DEFAULT 100,
 	`premend` INT NOT NULL DEFAULT 0 COMMENT 'NOT IN USE BY THE SERVER',
 	`online` TINYINT(1) NOT NULL DEFAULT 0,
 	`marriage` INT UNSIGNED NOT NULL DEFAULT 0,

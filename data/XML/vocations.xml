@@ -50,7 +50,7 @@
 		<skill id="5" multiplier="1.1"/>
 		<skill id="6" multiplier="1.1"/>
 	</vocation>
-	<vocation id="5" name="Master Sorcerer" description="a master sorcerer" needpremium="1" gaincap="10" gainhp="5" gainmana="30" gainhpticks="4" gainhpamount="10" gainmanaticks="2" gainmanaamount="10" manamultiplier="1.1" attackspeed="2000" soulmax="200" gainsoulticks="15" fromvoc="1" lessloss="3">
+	<vocation id="5" name="Master Sorcerer" description="a master sorcerer" needpremium="1" gaincap="10" gainhp="5" gainmana="30" gainhpticks="4" gainhpamount="10" gainmanaticks="2" gainmanaamount="10" manamultiplier="1.1" attackspeed="2000" soulmax="200" gainsoulticks="15" fromvoc="1" lessloss="30">
 		<formula meleeDamage="1.0" distDamage="1.0" defense="1.0" armor="1.0"/>
 		<skill id="0" multiplier="1.5"/>
 		<skill id="1" multiplier="2.0"/>
@@ -60,7 +60,7 @@
 		<skill id="5" multiplier="1.5"/>
 		<skill id="6" multiplier="1.1"/>
 	</vocation>
-	<vocation id="6" name="Elder Druid" description="an elder druid" needpremium="1" gaincap="10" gainhp="5" gainmana="30" gainhpticks="4" gainhpamount="10" gainmanaticks="2" gainmanaamount="10" manamultiplier="1.1" attackspeed="2000" soulmax="200" gainsoulticks="15" fromvoc="2" lessloss="3">
+	<vocation id="6" name="Elder Druid" description="an elder druid" needpremium="1" gaincap="10" gainhp="5" gainmana="30" gainhpticks="4" gainhpamount="10" gainmanaticks="2" gainmanaamount="10" manamultiplier="1.1" attackspeed="2000" soulmax="200" gainsoulticks="15" fromvoc="2" lessloss="30">
 		<formula meleeDamage="1.0" distDamage="1.0" defense="1.0" armor="1.0"/>
 		<skill id="0" multiplier="1.5"/>
 		<skill id="1" multiplier="1.8"/>
@@ -70,7 +70,7 @@
 		<skill id="5" multiplier="1.5"/>
 		<skill id="6" multiplier="1.1"/>
 	</vocation>
-	<vocation id="7" name="Royal Paladin" description="a royal paladin" needpremium="1" gaincap="20" gainhp="10" gainmana="15" gainhpticks="3" gainhpamount="10" gainmanaticks="3" gainmanaamount="10" manamultiplier="1.4" attackspeed="2000" soulmax="200" gainsoulticks="15" fromvoc="3" lessloss="3">
+	<vocation id="7" name="Royal Paladin" description="a royal paladin" needpremium="1" gaincap="20" gainhp="10" gainmana="15" gainhpticks="3" gainhpamount="10" gainmanaticks="3" gainmanaamount="10" manamultiplier="1.4" attackspeed="2000" soulmax="200" gainsoulticks="15" fromvoc="3" lessloss="30">
 		<formula meleeDamage="1.0" distDamage="1.0" defense="1.0" armor="1.0"/>
 		<skill id="0" multiplier="1.2"/>
 		<skill id="1" multiplier="1.2"/>
@@ -80,7 +80,7 @@
 		<skill id="5" multiplier="1.1"/>
 		<skill id="6" multiplier="1.1"/>
 	</vocation>
-	<vocation id="8" name="Elite Knight" description="an elite knight" needpremium="1" gaincap="25" gainhp="15" gainmana="5" gainhpticks="2" gainhpamount="10" gainmanaticks="4" gainmanaamount="10" manamultiplier="3.0" attackspeed="2000" soulmax="200" gainsoulticks="15" fromvoc="4" lessloss="3">
+	<vocation id="8" name="Elite Knight" description="an elite knight" needpremium="1" gaincap="25" gainhp="15" gainmana="5" gainhpticks="2" gainhpamount="10" gainmanaticks="4" gainmanaamount="10" manamultiplier="3.0" attackspeed="2000" soulmax="200" gainsoulticks="15" fromvoc="4" lessloss="30">
 		<formula meleeDamage="1.0" distDamage="1.0" defense="1.0" armor="1.0"/>
 		<skill id="0" multiplier="1.1"/>
 		<skill id="1" multiplier="1.1"/>
@@ -91,7 +91,7 @@
 		<skill id="6" multiplier="1.1"/>
 	</vocation>
 <!--
-	<vocation id="9" name="Epic Master Sorcerer" description="an epic master sorcerer" needpremium="0" gaincap="10" gainhp="5" gainmana="30" gainhpticks="4" gainhpamount="10" gainmanaticks="2" gainmanaamount="10" manamultiplier="1.1" attackspeed="2000" soulmax="200" gainsoulticks="15" fromvoc="5" lessloss="5">
+	<vocation id="9" name="Epic Master Sorcerer" description="an epic master sorcerer" needpremium="0" gaincap="10" gainhp="5" gainmana="30" gainhpticks="4" gainhpamount="10" gainmanaticks="2" gainmanaamount="10" manamultiplier="1.1" attackspeed="2000" soulmax="200" gainsoulticks="15" fromvoc="5" lessloss="50">
 		<formula meleeDamage="1.0" distDamage="1.0" defense="1.0" armor="1.0"/>
 		<skill id="0" multiplier="1.5"/>
 		<skill id="1" multiplier="2.0"/>
@@ -101,7 +101,7 @@
 		<skill id="5" multiplier="1.5"/>
 		<skill id="6" multiplier="1.1"/>
 	</vocation>
-	<vocation id="10" name="Epic Elder Druid" description="an epic elder druid" needpremium="0" gaincap="10" gainhp="5" gainmana="30" gainhpticks="4" gainhpamount="10" gainmanaticks="2" gainmanaamount="10" manamultiplier="1.1" attackspeed="2000" soulmax="200" gainsoulticks="15" fromvoc="6" lessloss="5">
+	<vocation id="10" name="Epic Elder Druid" description="an epic elder druid" needpremium="0" gaincap="10" gainhp="5" gainmana="30" gainhpticks="4" gainhpamount="10" gainmanaticks="2" gainmanaamount="10" manamultiplier="1.1" attackspeed="2000" soulmax="200" gainsoulticks="15" fromvoc="6" lessloss="50">
 		<formula meleeDamage="1.0" distDamage="1.0" defense="1.0" armor="1.0"/>
 		<skill id="0" multiplier="1.5"/>
 		<skill id="1" multiplier="1.8"/>
@@ -111,7 +111,7 @@
 		<skill id="5" multiplier="1.5"/>
 		<skill id="6" multiplier="1.1"/>
 	</vocation>
-	<vocation id="11" name="Epic Royal Paladin" description="an epic royal paladin" needpremium="0" gaincap="20" gainhp="10" gainmana="15" gainhpticks="3" gainhpamount="10" gainmanaticks="3" gainmanaamount="10" manamultiplier="1.4" attackspeed="2000" soulmax="200" gainsoulticks="15" fromvoc="7" lessloss="5">
+	<vocation id="11" name="Epic Royal Paladin" description="an epic royal paladin" needpremium="0" gaincap="20" gainhp="10" gainmana="15" gainhpticks="3" gainhpamount="10" gainmanaticks="3" gainmanaamount="10" manamultiplier="1.4" attackspeed="2000" soulmax="200" gainsoulticks="15" fromvoc="7" lessloss="50">
 		<formula meleeDamage="1.0" distDamage="1.0" defense="1.0" armor="1.0"/>
 		<skill id="0" multiplier="1.2"/>
 		<skill id="1" multiplier="1.2"/>
@@ -121,7 +121,7 @@
 		<skill id="5" multiplier="1.1"/>
 		<skill id="6" multiplier="1.1"/>
 	</vocation>
-	<vocation id="12" name="Epic Elite Knight" description="an epic elite knight" needpremium="0" gaincap="25" gainhp="15" gainmana="5" gainhpticks="8" gainhpamount="10" gainmanaticks="4" gainmanaamount="10" manamultiplier="3.0" attackspeed="2000" soulmax="200" gainsoulticks="15" fromvoc="8" lessloss="5">
+	<vocation id="12" name="Epic Elite Knight" description="an epic elite knight" needpremium="0" gaincap="25" gainhp="15" gainmana="5" gainhpticks="8" gainhpamount="10" gainmanaticks="4" gainmanaamount="10" manamultiplier="3.0" attackspeed="2000" soulmax="200" gainsoulticks="15" fromvoc="8" lessloss="50">
 		<formula meleeDamage="1.0" distDamage="1.0" defense="1.0" armor="1.0"/>
 		<skill id="0" multiplier="1.1"/>
 		<skill id="1" multiplier="1.1"/>

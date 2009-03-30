@@ -45,6 +45,8 @@ void Protocol::onSendMessage(OutputMessage_ptr msg)
 			msg->addCryptoHeader(m_checksumEnabled);
 		}
 	}
+	else if(m_checksumEnabled)
+		msg->addCryptoHeader(true);
 
 	if(msg == m_outputBuffer)
 		m_outputBuffer.reset();

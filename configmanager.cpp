@@ -230,6 +230,7 @@ bool ConfigManager::load()
 	m_confNumber[STAMINA_THRESHOLD_MAX] = getGlobalNumber(L, "staminaRatingThresholdMax", 41 * 60);
 	m_confNumber[STAMINA_THRESHOLD_MIN] = getGlobalNumber(L, "staminaRatingThresholdMin", 14 * 60);
 	m_confBool[DISPLAY_LOGGING] = getGlobalBool(L, "displayPlayersLogging", "yes");
+	m_confBool[STAMINA_BONUS_PREMIUM] = getGlobalBool(L, "staminaExperienceBonusOnlyPremium", "yes");
 
 	m_loaded = true;
 	return true;

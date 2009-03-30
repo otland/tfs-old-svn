@@ -210,6 +210,7 @@ class ConfigManager
 			TRACER_BOX,
 			STORE_DIRECTION,
 			DISPLAY_LOGGING,
+			STAMINA_BONUS_PREMIUM,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

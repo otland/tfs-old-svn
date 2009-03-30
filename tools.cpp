@@ -1066,9 +1066,9 @@ std::string getSkillName(uint16_t skillId, bool suffix/* = true*/)
 			return "shielding";
 		case SKILL_FISH:
 			return "fishing";
-		case MAGLEVEL:
+		case SKILL__MAGLEVEL:
 			return "magic level";
-		case LEVEL:
+		case SKILL__LEVEL:
 			return "level";
 		default:
 			break;

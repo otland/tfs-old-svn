@@ -702,8 +702,7 @@ ServiceManager* services)
 		services->add<ProtocolStatus>(g_config.getNumber(ConfigManager::STATUS_PORT));
 	}
 
-	services->add<ProtocolGame>(g_config.getNumber(ConfigManager::GAME_PORT));
-	services->add<ProtocolOldGame>(g_config.getNumber(ConfigManager::LOGIN_PORT));
+	//services->add<ProtocolHTTP>(8080);
 	if(
 #ifdef __LOGIN_SERVER__
 	true
@@ -716,10 +715,10 @@ ServiceManager* services)
 		services->add<ProtocolOldLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT));
 	}
 
-	//httpd
-	services->add<ProtocolHTTP>(8080);
-
+	services->add<ProtocolGame>(g_config.getNumber(ConfigManager::GAME_PORT));
+	services->add<ProtocolOldGame>(g_config.getNumber(ConfigManager::LOGIN_PORT));
 	std::cout << "> Local ports:" << std::endl;
+
 	std::list<uint16_t> ports = services->getPorts();
 	for(std::list<uint16_t>::iterator it = ports.begin(); it != ports.end(); ++it)
 		std::cout << (*it) << "\t";

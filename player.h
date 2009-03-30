@@ -325,7 +325,7 @@ class Player : public Creature, public Cylinder
 		void setConditionSuppressions(uint32_t conditions, bool remove);
 
 		uint32_t getLossPercent(lossTypes_t lossType) const {return lossPercent[lossType];}
-		void setLossPercent(lossTypes_t lossType, uint32_t newPercent) {lossPercent[lossType] = std::min((uint32_t)100, newPercent);}
+		void setLossPercent(lossTypes_t lossType, uint32_t newPercent) {lossPercent[lossType] = newPercent;}
 
 		Depot* getDepot(uint32_t depotId, bool autoCreateDepot);
 		bool addDepot(Depot* depot, uint32_t depotId);
@@ -674,14 +674,11 @@ class Player : public Creature, public Cylinder
 		VIPListSet VIPList;
 		uint32_t maxVipLimit;
 
-		double experienceRate;
-		double magicRate;
-		double skillRate[SKILL_LAST + 1];
-
 		InvitedToGuildsList invitedToGuildsList;
 		ConditionList storedConditionList;
 		ContainerVector containerVec;
 
+		double rates[SKILL__LAST + 1];
 		uint32_t marriage;
 		uint64_t balance;
 
@@ -894,8 +891,8 @@ class Player : public Creature, public Cylinder
 		virtual uint32_t getConditionImmunities() const {return conditionImmunities;}
 		virtual uint32_t getConditionSuppressions() const {return conditionSuppressions;}
 
-		double getLostPercent(lossTypes_t lossType);
-		virtual uint64_t getLostExperience() {return skillLoss ? (uint64_t)std::floor(
+		double getLostPercent(lossTypes_t lossType) const;
+		virtual uint64_t getLostExperience() const {return skillLoss ? (uint64_t)std::floor(
 			(double)experience * getLostPercent(LOSS_EXPERIENCE)) : 0;}
 
 		virtual void getPathSearchParams(const Creature* creature, FindPathParams& fpp) const;

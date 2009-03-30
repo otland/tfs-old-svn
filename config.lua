@@ -181,6 +181,7 @@
 	staminaRatingThresholdMin = 14 * 60
 	rateAboveMaxThreshold = 1.5
 	rateUnderMinThreshold = 0.5
+	staminaExperienceBonusOnlyPremium = "yes"
 
 	-- Party
 	-- NOTE: experienceShareLevelDifference is float number.
