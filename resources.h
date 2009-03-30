@@ -59,7 +59,7 @@
 #define CLIENT_VERSION_STRING "Only clients with protocol 8.41 allowed!"
 
 #define STATUS_SERVER_NAME "The Forgotten Server"
-#define STATUS_SERVER_VERSION "0.3.3_SVN"
+#define STATUS_SERVER_VERSION "0.3.2"
 #define STATUS_SERVER_CODENAME "Crying Damson"
 #define STATUS_SERVER_PROTOCOL "8.41"
 

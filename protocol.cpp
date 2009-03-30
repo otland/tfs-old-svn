@@ -42,11 +42,16 @@ void Protocol::onSendMessage(OutputMessage_ptr msg)
 			std::cout << "Protocol::onSendMessage - encrypt" << std::endl;
 			#endif
 			XTEA_encrypt(*msg);
+		}
+
+		if(m_checksumEnabled)
+		{
+			#ifdef __DEBUG_NET_DETAIL__
+			std::cout << "Protocol::onSendMessage - crypto header" << std::endl;
+			#endif
 			msg->addCryptoHeader(m_checksumEnabled);
 		}
 	}
-	else if(m_checksumEnabled)
-		msg->addCryptoHeader(true);
 
 	if(msg == m_outputBuffer)
 		m_outputBuffer.reset();

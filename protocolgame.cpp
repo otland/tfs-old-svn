@@ -523,14 +523,13 @@ void ProtocolGame::onConnect()
 	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 	{
 		TRACK_MESSAGE(output);
-		output->AddByte(0x1F);
+		enableChecksum();
 
-		output->AddByte(random_range(0, 0xFF));
-		output->AddByte(random_range(0, 0xFF));
+		output->AddByte(0x1F);
+		output->AddU16(random_range(0, 0xFFFF));
 		output->AddU16(0x00);
 		output->AddByte(random_range(0, 0xFF));
 
-		enableChecksum();
 		OutputMessagePool::getInstance()->send(output);
 	}
 }

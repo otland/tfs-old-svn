@@ -38,18 +38,16 @@ class Connection;
 class OutputMessage : public NetworkMessage, boost::noncopyable
 {
 	private:
-		//OutputMessage();
+		OutputMessage();
 
 	public:
-		OutputMessage();
-		virtual ~OutputMessage(){}
+		virtual ~OutputMessage() {}
 
 		char* getOutputBuffer() {return (char*)&m_MsgBuf[m_outputBufferStart];}
 		Protocol* getProtocol() const {return m_protocol;}
 		Connection* getConnection() const {return m_connection;}
 
 		void writeMessageLength() {addHeader((uint16_t)(m_MsgSize));}
-
 		void addCryptoHeader(bool addChecksum)
 		{
 			if(addChecksum)
@@ -65,7 +63,7 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 				lastUses.pop_front();
 
 			std::ostringstream os;
-			os << /*file << ":"*/ "line " << line << " " << func;
+			os << /*file << ":" */"line " << line << " " << func;
 			lastUses.push_back(os.str());
 		}
 
@@ -95,9 +93,9 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 				return;
 			}
 
-			m_outputBufferStart = m_outputBufferStart - sizeof(T);
+			m_outputBufferStart -= sizeof(T);
 			*(T*)(m_MsgBuf + m_outputBufferStart) = value;
-			m_MsgSize = m_MsgSize + sizeof(T);
+			m_MsgSize += sizeof(T);
 		}
 
 		void freeMessage()
@@ -105,12 +103,11 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 			setConnection(NULL);
 			setProtocol(NULL);
 			m_frame = 0;
-			//allocate enough size for headers
-			//2 bytes for unencrypted message
-			//4 bytes for checksum
-			//2 bytes for encrypted message
+			//allocate enough size for headers:
+			// 2 bytes for unencrypted message
+			// 4 bytes for checksum
+			// 2 bytes for encrypted message
 			m_outputBufferStart = 8;
-			//setState have to be the last one
 			setState(OutputMessage::STATE_FREE);
 		}
 
@@ -131,7 +128,6 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		OutputMessageState m_state;
 		uint64_t m_frame;
 		uint32_t m_outputBufferStart;
-
 #ifdef __TRACK_NETWORK__
 		std::list<std::string> lastUses;
 #endif
