@@ -189,7 +189,7 @@ enum skills_t
 	SKILL__MAGLEVEL = 7,
 	SKILL__LEVEL = 8,
 	SKILL_LAST = SKILL_FISH,
-	SKILL__LAST = SKILL_LEVEL
+	SKILL__LAST = SKILL__LEVEL
 };
 
 enum stats_t
