@@ -657,7 +657,7 @@ void Player::addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier/
 		return;
 
 	if(useMultiplier)
-		count += uint32_t((double)count * skillRate[skill]);
+		count += uint32_t((double)count * rates[skill]);
 
 	count = uint32_t((double)count * g_config.getDouble(ConfigManager::RATE_SKILL));
 	bool advance = false;
