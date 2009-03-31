@@ -85,7 +85,6 @@ class ODBCResult : public _DBResult
 		DATABASE_VIRTUAL const char* getDataStream(const std::string& s, uint64_t& size);
 
 		DATABASE_VIRTUAL bool next();
-		DATABASE_VIRTUAL void free() {delete *this;}
 
 	protected:
 		ODBCResult(SQLHSTMT stmt);

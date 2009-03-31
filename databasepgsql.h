@@ -66,14 +66,13 @@ class PgSQLResult : public _DBResult
 		DATABASE_VIRTUAL const char* getDataStream(const std::string& s, uint64_t& size);
 
 		DATABASE_VIRTUAL bool next();
-		DATABASE_VIRTUAL void free() {delete *this;}
 
 	protected:
 		PgSQLResult(PGresult* results);
 		DATABASE_VIRTUAL ~PgSQLResult() {PQclear(m_handle);}
 
-		int32_t m_rows, m_cursor;
 		PGresult* m_handle;
+		int32_t m_rows, m_cursor;
 };
 
 #endif

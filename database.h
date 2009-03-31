@@ -230,7 +230,7 @@ class _DBResult
 		* @return true if moved, false if there are no more results.
 		*/
 		DATABASE_VIRTUAL bool next() {return false;}
-		DATABASE_VIRTUAL void free() {}
+		DATABASE_VIRTUAL void free() {delete this;}
 
 	protected:
 		_DBResult() {}
