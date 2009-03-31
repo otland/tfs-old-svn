@@ -1,5 +1,5 @@
 if(result == nil) then
-	print("> Warning: Couldn't load database class.")
+	print("> WARNING: Couldn't load database lib.")
 	return
 end
 
@@ -21,10 +21,10 @@ function Result:getRows(free)
 		error("[Result:getRows]: Result not set!")
 	end
 
-	local c = 1
-	while(self:next()) do
+	local c = 0
+	repeat
 		c = c + 1
-	end
+	until not self:next()
 
 	if(free) then
 		self:free()
@@ -32,7 +32,6 @@ function Result:getRows(free)
 
 	return c
 end
-Result.numRows = Result.getRows
 
 function Result:getDataInt(s)
 	if(self:getID() == -1) then
@@ -84,6 +83,7 @@ function Result:free()
 	return ret
 end
 
+Result.numRows = Result.getRows
 function db.getResult(query)
 	if(type(query) ~= 'string') then
 		return nil

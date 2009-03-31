@@ -36,6 +36,8 @@ class ProtocolHTTP : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			protocolHTTPCount++;
 #endif
+			disableXTEAEncryption();
+			disableChecksum();
 		}
 		virtual ~ProtocolHTTP()
 		{
@@ -44,8 +46,8 @@ class ProtocolHTTP : public Protocol
 #endif
 		}
 
-		enum {protocolId = 0x07};
-		enum {isSingleSocket = false};
+		enum {protocolId = 0x00};
+		enum {isSingleSocket = true};
 		enum {hasChecksum = false};
 
 		virtual void onRecvFirstMessage(NetworkMessage& msg) {parseFirstPacket(msg);}

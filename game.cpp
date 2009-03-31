@@ -5041,7 +5041,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetName, int32_t re
 		ip = IOLoginData::getInstance()->getLastIP(guid);
 	}
 
-	int16_t removeNotations = 2;
+	int16_t removeNotations = 2; //2 - remove notations & kick, 1 - kick, 0 - nothing
 	switch(action)
 	{
 		case 0:
@@ -5399,7 +5399,7 @@ Highscore Game::getHighscore(uint16_t skill)
 					hs.push_back(std::make_pair(name, level));
 			}
 			while(result->next());
-			db->freeResult(result);
+			result->free();
 		}
 	}
 	else
@@ -5414,7 +5414,7 @@ Highscore Game::getHighscore(uint16_t skill)
 					hs.push_back(std::make_pair(name, result->getDataInt("value")));
 			}
 			while(result->next());
-			db->freeResult(result);
+			result->free();
 		}
 	}
 
@@ -5453,7 +5453,7 @@ void Game::loadMotd()
 
 	lastMotdNum = result->getDataInt("id");
 	lastMotdText = result->getDataString("text");
-	db->freeResult(result);
+	result->free();
 }
 
 void Game::checkPlayersRecord()
@@ -5487,7 +5487,7 @@ void Game::loadPlayersRecord()
 	}
 
 	lastPlayersRecord = result->getDataInt("record");
-	db->freeResult(result);
+	result->free();
 }
 
 bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
@@ -5791,17 +5791,17 @@ void Game::globalSave()
 void Game::shutdown()
 {
 	std::cout << "Preparing";
-	Scheduler::getScheduler().shutdown();
-	std::cout << " shutdown";
-	Dispatcher::getDispatcher().shutdown();
-	std::cout << ".";
-	Spawns::getInstance()->clear();
-	std::cout << ".";
-	cleanup();
-	std::cout << "." << std::endl;
 	if(services)
 		services->stop();
 
+	std::cout << " shutdown";
+	Scheduler::getScheduler().shutdown();
+	std::cout << ".";
+	Dispatcher::getDispatcher().shutdown();
+	std::cout << ".";
+	Spawns::getInstance()->clear();
+	std::cout << "." << std::endl;
+	cleanup();
 	std::cout << "Exiting" << std::endl;
 	exit(1);
 }

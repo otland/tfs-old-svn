@@ -76,10 +76,11 @@ class MySQLResult : public _DBResult
 		DATABASE_VIRTUAL const char* getDataStream(const std::string &s, uint64_t &size);
 
 		DATABASE_VIRTUAL bool next();
+		DATABASE_VIRTUAL void free() {delete *this;}
 
 	protected:
 		MySQLResult(MYSQL_RES* res);
-		DATABASE_VIRTUAL ~MySQLResult();
+		DATABASE_VIRTUAL ~MySQLResult() {mysql_free_result(m_handle);}
 
 		typedef std::map<const std::string, uint32_t> listNames_t;
 		listNames_t m_listNames;

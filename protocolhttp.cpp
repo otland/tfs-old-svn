@@ -20,17 +20,9 @@
 #include "otpch.h"
 
 #include "protocolhttp.h"
-#include "resources.h"
 
 #include "outputmessage.h"
 #include "connection.h"
-
-#include "configmanager.h"
-#include "tools.h"
-#include "iologindata.h"
-#include "ioban.h"
-#include <iomanip>
-#include "game.h"
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t ProtocolHTTP::protocolHTTPCount = 0;
@@ -51,22 +43,8 @@ void ProtocolHTTP::disconnectClient()
 
 bool ProtocolHTTP::parseFirstPacket(NetworkMessage& msg)
 {
-	uint32_t clientIP = getConnection()->getIP();
-	std::string getRequest = msg.GetString();
-	std::cout << getRequest << std::endl;
-
-	if (ConnectionManager::getInstance()->isDisabled(clientIP, protocolId)) {
-		disconnectClient();
-		return false;
-	}
-
-	if (IOBan::getInstance()->isIpBanished(clientIP)) {
-		disconnectClient();
-		return false;
-	}
-
-	ConnectionManager::getInstance()->addAttempt(clientIP, protocolId, true);
-	if (OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false)) {
+	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
+	{
 		TRACK_MESSAGE(output);
 
 		output->AddString("HTTP/1.1 200 OK");

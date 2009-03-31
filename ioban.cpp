@@ -51,7 +51,7 @@ bool IOBan::isIpBanished(uint32_t ip, uint32_t mask/* = 0xFFFFFFFF*/)
 		}
 	}
 	while(result->next());
-	db->freeResult(result);
+	result->free();
 
 	return false;
 }
@@ -66,7 +66,7 @@ bool IOBan::isNamelocked(uint32_t guid)
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	db->freeResult(result);
+	result->free();
 	return true;
 }
 
@@ -90,7 +90,7 @@ bool IOBan::isBanished(uint32_t account)
 		return false;
 
 	const uint64_t expires = result->getDataInt("expires");
-	db->freeResult(result);
+	result->free();
 	if(expires == 0 || expires > (uint64_t)time(NULL))
 		return true;
 
@@ -108,7 +108,7 @@ bool IOBan::isDeleted(uint32_t account)
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	db->freeResult(result);
+	result->free();
 	return true;
 }
 
@@ -254,7 +254,7 @@ uint32_t IOBan::getNotationsCount(uint32_t account)
 		return 0;
 
 	const uint32_t count = result->getDataInt("count");
-	db->freeResult(result);
+	result->free();
 	return count;
 }
 
@@ -281,7 +281,7 @@ bool IOBan::getData(uint32_t value, Ban& ban)
 	ban.action = result->getDataInt("action");
 	ban.statement = result->getDataString("statement");
 
-	db->freeResult(result);
+	result->free();
 	return true;
 }
 
@@ -315,7 +315,7 @@ BansVec IOBan::getList(BanType_t type, uint32_t value/* = 0*/)
 			data.push_back(tmp);
 		}
 		while(result->next());
-		db->freeResult(result);
+		result->free();
 	}
 
 	return data;

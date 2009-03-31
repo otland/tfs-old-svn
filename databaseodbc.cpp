@@ -121,12 +121,11 @@ bool DatabaseODBC::getParam(DBParam_t param)
 	switch(param)
 	{
 		case DBPARAM_MULTIINSERT:
-			return false;
-			break;
-
 		default:
-			return false;
+			break;
 	}
+
+	return false;
 }
 
 bool DatabaseODBC::beginTransaction()
@@ -158,10 +157,7 @@ bool DatabaseODBC::executeQuery(const std::string& query)
 	std::cout << "ODBC QUERY: " << query << std::endl;
 	#endif
 
-	std::string buf = _parse(query);
-
 	SQLHSTMT stmt;
-
 	SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, m_handle, &stmt);
 	if(!RETURN_SUCCESS(ret))
 	{
@@ -169,8 +165,8 @@ bool DatabaseODBC::executeQuery(const std::string& query)
 		return false;
 	}
 
+	std::string buf = _parse(query);
 	ret = SQLExecDirect(stmt, (SQLCHAR*)buf.c_str(), buf.length());
-
 	if(!RETURN_SUCCESS(ret))
 	{
 		std::cout << "SQLExecDirect(): " << query << ": ODBC ERROR." << std::endl;
@@ -189,10 +185,7 @@ DBResult* DatabaseODBC::storeQuery(const std::string& query)
 	std::cout << "ODBC QUERY: " << query << std::endl;
 	#endif
 
-	std::string buf = _parse(query);
-
 	SQLHSTMT stmt;
-
 	SQLRETURN ret = SQLAllocHandle(SQL_HANDLE_STMT, m_handle, &stmt);
 	if(!RETURN_SUCCESS(ret))
 	{
@@ -200,8 +193,8 @@ DBResult* DatabaseODBC::storeQuery(const std::string& query)
 		return NULL;
 	}
 
+	std::string buf = _parse(query);
 	ret = SQLExecDirect(stmt, (SQLCHAR*)buf.c_str(), buf.length() );
-
 	if(!RETURN_SUCCESS(ret))
 	{
 		std::cout << "SQLExecDirect(): " << query << ": ODBC ERROR." << std::endl;
@@ -214,13 +207,12 @@ DBResult* DatabaseODBC::storeQuery(const std::string& query)
 
 std::string DatabaseODBC::escapeString(const std::string& s)
 {
-	return escapeBlob( s.c_str(), s.length() );
+	return escapeBlob(s.c_str(), s.length());
 }
 
 std::string DatabaseODBC::escapeBlob(const char *s, uint32_t length)
 {
 	std::string buf = "'";
-
 	for(uint32_t i = 0; i < length; i++)
 	{
 		switch(s[i])
@@ -257,14 +249,12 @@ std::string DatabaseODBC::escapeBlob(const char *s, uint32_t length)
 std::string DatabaseODBC::_parse(const std::string& s)
 {
 	std::string query = "";
-
 	query.reserve(s.size());
+
 	bool inString = false;
-	uint8_t ch;
 	for(uint32_t a = 0; a < s.length(); a++)
 	{
-		ch = s[a];
-
+		uint8_t ch = s[a];
 		if(ch == '\'')
 		{
 			if(inString && s[a + 1] != '\'')
@@ -373,19 +363,13 @@ bool ODBCResult::next()
 ODBCResult::ODBCResult(SQLHSTMT stmt)
 {
 	m_handle = stmt;
+	int16_t numCols = 0;
 
-	int16_t numCols;
 	SQLNumResultCols(m_handle, &numCols);
-
 	for(int32_t i = 1; i <= numCols; i++)
 	{
 		char* name = new char[129];
 		SQLDescribeCol(m_handle, i, (SQLCHAR*)name, 129, NULL, NULL, NULL, NULL, NULL);
 		m_listNames[name] = i;
 	}
-}
-
-ODBCResult::~ODBCResult()
-{
-	SQLFreeHandle(SQL_HANDLE_STMT, m_handle);
 }

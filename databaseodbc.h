@@ -85,10 +85,11 @@ class ODBCResult : public _DBResult
 		DATABASE_VIRTUAL const char* getDataStream(const std::string& s, uint64_t& size);
 
 		DATABASE_VIRTUAL bool next();
+		DATABASE_VIRTUAL void free() {delete *this;}
 
 	protected:
 		ODBCResult(SQLHSTMT stmt);
-		DATABASE_VIRTUAL ~ODBCResult();
+		DATABASE_VIRTUAL ~ODBCResult() {SQLFreeHandle(SQL_HANDLE_STMT, m_handle);}
 
 		typedef std::map<const std::string, uint32_t> listNames_t;
 		listNames_t m_listNames;

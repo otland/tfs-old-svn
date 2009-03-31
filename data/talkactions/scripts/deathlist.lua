@@ -9,18 +9,17 @@ function onSay(cid, words, param)
 		local deaths = db.getResult("SELECT `time`, `level`, `killed_by`, `altkilled_by` FROM `player_deaths` WHERE `player_id` = " .. targetGUID .. " ORDER BY `time` DESC;")
 		if(deaths:getID() ~= -1) then
 			local breakline = ""
-
-			while(true) do
+			repeat
 				if(str ~= "") then
 					breakline = "\n"
 				end
 
 				local time = os.date("%d %B %Y %X ", deaths:getDataInt("time"))
 				local level = deaths:getDataInt("level")
-				local killed = ""
 				local lastHitKiller = deaths:getDataString("killed_by")
 				local mostDamageKiller = deaths:getDataString("altkilled_by")
 
+				local killed = ""
 				if(tonumber(lastHitKiller)) then
 					killed = getPlayerNameByGUID(tonumber(lastHitKiller))
 				else
@@ -36,14 +35,12 @@ function onSay(cid, words, param)
 				end
 
 				str = str .. breakline .. " " .. time .. "  Died at Level " .. level .. " by " .. killed .. "."
-				if not(deaths:next()) then
-					break
-				end
-			end
+			until not deaths:next()
 			deaths:free()
 		else
 			str = "No deaths recorded."
 		end
+
 		doPlayerPopupFYI(cid, "Deathlist for player: " .. targetName .. ".\n\n" .. str)
 	else
 		doPlayerSendCancel(cid, "A player with that name does not exist.")

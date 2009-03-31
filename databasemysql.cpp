@@ -131,7 +131,7 @@ bool DatabaseMySQL::executeQuery(const std::string &query)
 	if(mysql_real_query(&m_handle, query.c_str(), query.length()) != 0)
 	{
 		int32_t error = mysql_errno(&m_handle);
-		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
+		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR || error == CR_MALFORMED_PACKET)
 		{
 			if(reconnect())
 				return executeQuery(query);
@@ -156,7 +156,7 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 	if(mysql_real_query(&m_handle, query.c_str(), query.length()) != 0)
 	{
 		int32_t error = mysql_errno(&m_handle);
-		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
+		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR || error == CR_MALFORMED_PACKET)
 		{
 			if(reconnect())
 				return storeQuery(query);
@@ -322,9 +322,4 @@ MySQLResult::MySQLResult(MYSQL_RES* res)
 		m_listNames[field->name] = i;
 		i++;
 	}
-}
-
-MySQLResult::~MySQLResult()
-{
-	mysql_free_result(m_handle);
 }

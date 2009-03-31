@@ -103,9 +103,8 @@ void ScriptEnviroment::resetEnv()
 	m_tempItems.clear();
 	if(m_loaded)
 	{
-		Database* db = Database::getInstance();
 		for(DBResMap::iterator it = m_tempResults.begin(); it != m_tempResults.end(); ++it)
-			db->freeResult(it->second);
+			it->second->free();
 
 		m_tempResults.clear();
 	}
@@ -153,7 +152,7 @@ bool ScriptEnviroment::loadGameState()
 		do
 			m_globalStorageMap[result->getDataInt("key")] = result->getDataString("value");
 		while(result->next());
-		db->freeResult(result);
+		result->free();
 	}
 
 	query.str("");
@@ -10136,9 +10135,8 @@ int32_t LuaScriptInterface::luaResultFree(lua_State *L)
 	DBResult* res = env->getResult(rid);
 	CHECK_RESULT()
 
-	Database* db = Database::getInstance();
 	bool ret = env->removeResult(rid);
-	db->freeResult(res);
+	res->free();
 
 	lua_pushboolean(L, ret);
 	return 1;

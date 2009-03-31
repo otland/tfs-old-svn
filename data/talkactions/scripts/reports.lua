@@ -14,16 +14,12 @@ function onSay(cid, words, param)
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Report with no. " .. reportId .. " does not exists.")
 		end
 	else
-		local list = db.getResult("SELECT `id`, `player_id` FROM `server_reports` WHERE `reads` < " .. tonumber(config.expireReportsAfterReads))
+		local list = db.getResult("SELECT `id`, `player_id` FROM `server_reports` WHERE `reads` < " .. config.expireReportsAfterReads)
 		if(list:getID() ~= -1) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "New reports:")
-			while(true) do
+			repeat
 				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, list:getDataInt("id") .. ", by " .. getPlayerNameByGUID(list:getDataInt("player_id")) .. ".")
-				if not(list:next()) then
-					break
-				end
-			end
-
+			until not list:next()
 			list:free()
 		else
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "There are no active reports.")

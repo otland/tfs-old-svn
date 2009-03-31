@@ -450,7 +450,7 @@ void Connection::handleReadError(const boost::system::error_code& error)
 		close();
 	else
 	{
-		PRINT_ASIO_ERROR("Writing");
+		PRINT_ASIO_ERROR("Reading");
 		close();
 	}
 

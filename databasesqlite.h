@@ -71,10 +71,11 @@ class SQLiteResult : public _DBResult
 		DATABASE_VIRTUAL const char* getDataStream(const std::string &s, uint64_t &size);
 
 		DATABASE_VIRTUAL bool next();
+		DATABASE_VIRTUAL void free() {delete *this;}
 
 	protected:
 		SQLiteResult(sqlite3_stmt* stmt);
-		DATABASE_VIRTUAL ~SQLiteResult();
+		DATABASE_VIRTUAL ~SQLiteResult() {sqlite3_finalize(m_handle);}
 
 		typedef std::map<const std::string, uint32_t> listNames_t;
 		listNames_t m_listNames;

@@ -53,7 +53,7 @@ bool DatabaseManager::optimizeTables()
 				query.str("");
 			}
 			while(result->next());
-			db->freeResult(result);
+			result->free();
 			return true;
 		}
 
@@ -111,7 +111,7 @@ bool DatabaseManager::triggerExists(std::string trigger)
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	db->freeResult(result);
+	result->free();
 	return true;
 }
 
@@ -142,7 +142,7 @@ bool DatabaseManager::tableExists(std::string table)
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	db->freeResult(result);
+	result->free();
 	return true;
 }
 
@@ -160,7 +160,7 @@ bool DatabaseManager::isDatabaseSetup()
 			if(!(result = db->storeQuery(query.str())))
 				return false;
 
-			db->freeResult(result);
+			result->free();
 			return true;
 		}
 
@@ -323,7 +323,7 @@ uint32_t DatabaseManager::updateDatabase()
 						db->executeQuery(query.str());
 					}
 					while(result->next());
-					db->freeResult(result);
+					result->free();
 				}
 
 				if(!imported[1])
@@ -454,7 +454,7 @@ uint32_t DatabaseManager::updateDatabase()
 								db->executeQuery(query.str());
 						}
 						while(result->next());
-						db->freeResult(result);
+						result->free();
 					}
 					query.str("");
 					query << "DROP TABLE `bans`;";
@@ -509,7 +509,7 @@ uint32_t DatabaseManager::updateDatabase()
 					db->executeQuery(query.str());
 				}
 				while(result->next());
-				db->freeResult(result);
+				result->free();
 			}
 
 			query.str("");
@@ -531,7 +531,7 @@ uint32_t DatabaseManager::updateDatabase()
 					db->executeQuery(query.str());
 				}
 				while(result->next());
-				db->freeResult(result);
+				result->free();
 			}
 
 			query.str("");
@@ -591,7 +591,7 @@ uint32_t DatabaseManager::updateDatabase()
 						db->executeQuery(query.str());
 				}
 				while(result->next());
-				db->freeResult(result);
+				result->free();
 			}
 
 			query.str("");
@@ -620,7 +620,7 @@ uint32_t DatabaseManager::updateDatabase()
 			if((result = db->storeQuery(query.str())) && result->getDataInt("count"))
 			{
 				std::cout << "[Warning] There are still " << result->getDataInt("count") << " players with vocation above 4, please mind to update them manually." << std::endl;
-				db->freeResult(result);
+				result->free();
 			}
 
 			query.str("");
@@ -778,7 +778,7 @@ uint32_t DatabaseManager::updateDatabase()
 						db->executeQuery(query.str());
 					}
 					while(result->next());
-					db->freeResult(result);
+					result->free();
 				}
 
 				query.str("");
@@ -991,7 +991,7 @@ bool DatabaseManager::getDatabaseConfig(std::string config, int32_t &value)
 		return false;
 
 	value = result->getDataInt("value");
-	db->freeResult(result);
+	result->free();
 	return true;
 }
 
@@ -1049,7 +1049,7 @@ void DatabaseManager::checkPasswordType()
 								db->executeQuery(query.str());
 							}
 							while(result->next());
-							db->freeResult(result);
+							result->free();
 						}
 					}
 
@@ -1087,7 +1087,7 @@ void DatabaseManager::checkPasswordType()
 								db->executeQuery(query.str());
 							}
 							while(result->next());
-							db->freeResult(result);
+							result->free();
 						}
 					}
 

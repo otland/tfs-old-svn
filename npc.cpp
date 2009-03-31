@@ -1637,6 +1637,8 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 						scriptstream << "topic = " << npcState->topic << ',' << std::endl;
 						scriptstream << "itemid = " << npcState->itemId << ',' << std::endl;
 						scriptstream << "subtype = " << npcState->subType << ',' << std::endl;
+						scriptstream << "ignorecap = " << npcState->ignoreCap << ',' << std::endl;
+						scriptstream << "inbackpacks = " << npcState->inBackpacks << ',' << std::endl;
 						scriptstream << "amount = " << npcState->amount << ',' << std::endl;
 						scriptstream << "price = " << npcState->price << ',' << std::endl;
 						scriptstream << "level = " << npcState->level << ',' << std::endl;
@@ -1907,13 +1909,12 @@ bool Npc::getRandomStep(Direction& dir)
 	if(canWalkTo(creaturePos, WEST))
 		dirList.push_back(WEST);
 
-	if(!dirList.empty())
-	{
-		std::random_shuffle(dirList.begin(), dirList.end());
-		dir = dirList[random_range(0, dirList.size() - 1)];
-		return true;
-	}
-	return false;
+	if(dirList.empty())
+		return false;
+
+	std::random_shuffle(dirList.begin(), dirList.end());
+	dir = dirList[random_range(0, dirList.size() - 1)];
+	return true;
 }
 
 void Npc::doMoveTo(Position target)
@@ -2848,6 +2849,8 @@ void NpcScriptInterface::pushState(lua_State* L, NpcState* state)
 	setField(L, "amount", state->amount);
 	setField(L, "itemid", state->itemId);
 	setField(L, "subtype", state->subType);
+	setFieldBool(L, "ignorecap", state->ignoreCap);
+	setFieldBool(L, "inbackpacks", state->inBackpacks);
 	setField(L, "topic", state->topic);
 	setField(L, "level", state->level);
 	setField(L, "spellname", state->spellName);
@@ -2874,6 +2877,8 @@ void NpcScriptInterface::popState(lua_State* L, NpcState* &state)
 	state->amount = getField(L, "amount");
 	state->itemId = getField(L, "itemid");
 	state->subType = getField(L, "subtype");
+	state->ignoreCap = getFieldBool(L, "ignorecap");
+	state->inBackpacks = getFieldBool(L, "inbackpacks");
 	state->topic = getField(L, "topic");
 	state->level = getField(L, "level");
 	state->spellName = getFieldString(L, "spellname");

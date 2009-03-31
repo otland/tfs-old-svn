@@ -79,11 +79,11 @@ DBResult* _Database::verifyResult(DBResult* result)
 {
 	if(!result->next())
 	{
-		_instance->freeResult(result);
+		result->free();
 		return NULL;
 	}
-	else
-		return result;
+
+	return result;
 }
 
 DBQuery::DBQuery()

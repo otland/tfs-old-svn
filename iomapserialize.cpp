@@ -65,7 +65,7 @@ bool IOMapSerialize::loadHouseInfo(Map* map)
 		}
 	}
 	while(result->next());
-	db->freeResult(result);
+	result->free();
 
 	query.str("");
 	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
@@ -80,7 +80,7 @@ bool IOMapSerialize::loadHouseInfo(Map* map)
 				do
 					house->setAccessList(result->getDataInt("listid"), result->getDataString("list"));
 				while(result->next());
-				db->freeResult(result);
+				result->free();
 			}
 		}
 
@@ -266,7 +266,7 @@ bool IOMapSerialize::loadMapBinary(Map* map)
  		}
 	}
 	while(result->next());
-	db->freeResult(result);
+	result->free();
 
  	return true;
 }
@@ -326,7 +326,7 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 		return false;
 
 	int32_t tileId = result->getDataInt("id");
-	db.freeResult(result);
+	result->free();
 
 	query.str("");
 	query << "SELECT * FROM `tile_items` WHERE `tile_id` = " << tileId << " AND `world_id` = ";

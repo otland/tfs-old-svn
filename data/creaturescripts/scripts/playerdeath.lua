@@ -27,7 +27,7 @@ function onDeath(cid, corpse, lastHitKiller, mostDamageKiller)
 		db.executeQuery("INSERT INTO `player_deaths` (`player_id`, `time`, `level`, `killed_by`, `altkilled_by`) VALUES (" .. getPlayerGUID(cid) .. ", " .. os.time() .. ", " .. getPlayerLevel(cid) .. ", " .. db.escapeString(hitKillerName) .. ", " .. db.escapeString(damageKillerName) .. ");")
 		local rows = db.getResult("SELECT `player_id` FROM `player_deaths` WHERE `player_id` = " .. getPlayerGUID(cid) .. ";")
 		if(rows:getID() ~= -1) then
-			local amount = (rows:numRows(true) - config.maxDeathRecords)
+			local amount = rows:getRows(true) - config.maxDeathRecords
 			if(amount > 0) then
 				if(config.sqlType == "sqlite") then
 					for i = 1, amount do

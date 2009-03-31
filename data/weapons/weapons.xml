@@ -373,13 +373,18 @@
 	<distance id="2545" event="script" value="poison_arrow.lua"/>
 	<distance id="2546" event="script" value="burst_arrow.lua"/>
 	<distance id="7366" event="script" value="viper_star.lua"/>
-	<distance id="3965" level="20" event="function" value="default"/>	<!-- Hunting Spear -->
-	<distance id="7378" level="25" event="function" value="default"/>	<!-- Royal Spear -->
-	<distance id="7367" level="42" event="function" value="default"/>	<!-- Enchanted Spear -->
-	<distance id="7368" level="80" event="function" value="default"/>	<!-- Assassin Star -->
-	<distance id="7364" level="20" event="function" value="default"/>	<!-- Sniper Arrow -->
-	<distance id="7365" level="40" event="function" value="default"/>	<!-- Onyx Arrow -->
-	<distance id="7363" level="30" event="function" value="default"/>	<!-- Piercing Bolt -->
-	<distance id="2547" level="55" event="function" value="default"/>	<!-- Power Bolt -->
-	<distance id="6529" level="70" event="function" value="default"/>	<!-- Infernal Bolt -->
+	<distance id="7838" type="energy" event="function" value="default"/>
+	<distance id="7839" type="ice" event="function" value="default"/>
+	<distance id="7840" type="fire" event="function" value="default"/>
+	<distance id="7850" type="earth" event="function" value="default"/>
+	<distance id="3965" level="20" event="function" value="default"/>
+	<distance id="3965" level="20" event="function" value="default"/> <!-- Hunting Spear -->
+	<distance id="7378" level="25" event="function" value="default"/> <!-- Royal Spear -->
+	<distance id="7367" level="42" event="function" value="default"/> <!-- Enchanted Spear -->
+	<distance id="7368" level="80" event="function" value="default"/> <!-- Assassin Star -->
+	<distance id="7364" level="20" event="function" value="default"/> <!-- Sniper Arrow -->
+	<distance id="7365" level="40" event="function" value="default"/> <!-- Onyx Arrow -->
+	<distance id="7363" level="30" event="function" value="default"/> <!-- Piercing Bolt -->
+	<distance id="2547" level="55" event="function" value="default"/> <!-- Power Bolt -->
+	<distance id="6529" level="70" event="function" value="default"/> <!-- Infernal Bolt -->
 </weapons>

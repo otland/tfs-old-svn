@@ -99,8 +99,8 @@ std::string DatabaseSQLite::_parse(const std::string &s)
 	bool inString = false;
 	for(uint32_t i = 0; i < s.length(); i++)
 	{
-		uint8_t c = s[i];
-		if(c == '\'')
+		uint8_t ch = s[i];
+		if(ch == '\'')
 		{
 			if(inString && s[i + 1] != '\'')
 				inString = false;
@@ -108,10 +108,10 @@ std::string DatabaseSQLite::_parse(const std::string &s)
 				inString = true;
 		}
 
-		if(c == '`' && !inString)
-			c = '"';
+		if(ch == '`' && !inString)
+			ch = '"';
 
-		query += c;
+		query += ch;
 	}
 
 	return query;
@@ -184,9 +184,9 @@ std::string DatabaseSQLite::escapeString(const std::string &s)
 
 	// the worst case is 2n + 3
 	char* output = new char[s.length() * 2 + 3];
-
 	// quotes escaped string and frees temporary buffer
 	sqlite3_snprintf(s.length() * 2 + 1, output, "%Q", s.c_str());
+
 	std::string r(output);
 	delete[] output;
 
@@ -282,9 +282,4 @@ SQLiteResult::SQLiteResult(sqlite3_stmt* stmt)
 	int32_t fields = sqlite3_column_count(m_handle);
 	for(int32_t i = 0; i < fields; i++)
 		m_listNames[sqlite3_column_name(m_handle, i)] = i;
-}
-
-SQLiteResult::~SQLiteResult()
-{
-	sqlite3_finalize(m_handle);
 }
