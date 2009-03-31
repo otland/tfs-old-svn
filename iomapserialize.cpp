@@ -406,7 +406,7 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 			}
 		}
 		while(result->next());
-		db.freeResult(result);
+		result->free();
 	}
 
 	ItemMap::reverse_iterator rit;
