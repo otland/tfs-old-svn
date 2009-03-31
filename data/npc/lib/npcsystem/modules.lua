@@ -168,7 +168,7 @@ if(Modules == nil) then
 				npcHandler:say('You must reach level ' .. parameters.level .. ' before I can let you go there.', cid)
 			elseif(doPlayerRemoveMoney(cid, parameters.cost) ~= TRUE) then
 				npcHandler:say('You do not have enough money!', cid)
-			elseif(isPlayerPzLocked(cid) ~= FALSE)
+			elseif(isPlayerPzLocked(cid) ~= FALSE) then
 				npcHandler:say('Get out of there with this blood.', cid)
 			else
 				doTeleportThing(cid, parameters.destination, 0)
@@ -427,7 +427,7 @@ if(Modules == nil) then
 		if(isPlayerPremiumCallback(cid) or parameters.premium ~= true) then
 			if(doPlayerRemoveMoney(cid, cost) ~= TRUE) then
 				npcHandler:say('You do not have enough money!', cid)
-			elseif(isPlayerPzLocked(cid) ~= FALSE)
+			elseif(isPlayerPzLocked(cid) ~= FALSE) then
 				npcHandler:say('Get out of there with this blood.', cid)
 			else
 				npcHandler:say('It was a pleasure doing business with you.', cid)
