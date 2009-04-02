@@ -1463,9 +1463,9 @@ bool IOLoginData::updatePremiumDays()
 			removePremium(loadAccount(result->getDataInt("id"), true));
 		while(result->next());
 		result->free();
-		query.str("");
 	}
 
+	query.str("");
 	return trans.commit();
 }
 
