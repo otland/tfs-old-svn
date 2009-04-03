@@ -137,13 +137,18 @@ if(Modules == nil) then
 		end
 
 		if(isPlayerPremiumCallback(cid) or getBooleanFromString(getConfigInfo('blessingsOnlyPremium')) ~= TRUE or not(parameters.premium)) then
-			if getPlayerBlessing(cid, parameters.bless) then
+			local price = parameters.baseCost
+			if(getPlayerLevel(cid) > parameters.startLevel) then
+				price = (price + ((math.min(parameters.startLevel, getPlayerLevel(cid)) - parameters.startLevel) * parameters.levelCost))
+			end
+
+			if(getPlayerBlessing(cid, parameters.number)) then
 				npcHandler:say("Gods have already blessed you with this blessing!", cid)
-			elseif doPlayerRemoveMoney(cid, parameters.cost) == FALSE then
+			elseif doPlayerRemoveMoney(cid, price) == FALSE then
 				npcHandler:say("You don't have enough money for blessing.", cid)
 			else
 				npcHandler:say("You have been blessed by one of the five gods!", cid)
-				doPlayerAddBlessing(cid, parameters.bless)
+				doPlayerAddBlessing(cid, parameters.number)
 			end
 		else
 			npcHandler:say('You need a premium account in order to be blessed.', cid)
