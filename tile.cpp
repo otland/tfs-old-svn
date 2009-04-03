@@ -283,33 +283,17 @@ void Tile::onUpdateTileItem(uint32_t index, Item* oldItem, const ItemType& oldTy
 	updateTileFlags(oldItem, true);
 	updateTileFlags(newItem, false);
 
-	CreatureVector v;
-	CreatureVector::iterator vit;
-	for(vit = creatures.begin(); vit != creatures.end(); ++vit)
-	{
-		if((*vit)->isInGhostMode())
-			v.push_back((*vit));
-	}
-
 	const Position& cylinderMapPos = getPosition();
+
 	const SpectatorVec& list = g_game.getSpectators(cylinderMapPos);
-	SpectatorVec::const_iterator it = list.begin();
+	SpectatorVec::const_iterator it;
 
 	//send to client
 	Player* tmpPlayer = NULL;
-	for(int32_t i = 0; it != list.end(); ++it)
+	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
-		{
-			i = index; //get the correct index
-			for(vit = v.begin(); vit != v.end(); ++vit)
-			{
-				if((*vit)->isInGhostMode() && !tmpPlayer->canSeeGhost((*vit)))
-					i--;
-			}
-
 			tmpPlayer->sendUpdateTileItem(this, cylinderMapPos, index, oldItem, newItem);
-		}
 	}
 
 	//event methods
@@ -342,7 +326,7 @@ void Tile::onRemoveTileItem(uint32_t index, Item* item)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
 		{
-			//Get the correct index
+			//get the correct index
 			i = index;
 			for(vit = v.begin(); vit != v.end(); ++vit)
 			{

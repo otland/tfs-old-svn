@@ -205,6 +205,7 @@ class Player : public Creature, public Cylinder
 
 		void addBlessing(int16_t blessing) {blessings += blessing;}
 		bool hasBlessing(int16_t value) const {return (blessings & ((int16_t)1 << value));}
+		uint16_t getBlessings() const;
 
 		OperatingSystem_t getOperatingSystem() const {return operatingSystem;}
 		void setOperatingSystem(OperatingSystem_t clientOs) {operatingSystem = clientOs;}
@@ -540,12 +541,10 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendRemoveInventoryItem(slot);}
 
 		//event methods
-		virtual void onAddTileItem(const Tile* tile, const Position& pos, const Item* item);
 		virtual void onUpdateTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
 			const Item* oldItem, const ItemType& oldType, const Item* newItem, const ItemType& newType);
 		virtual void onRemoveTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
 			const ItemType& iType, const Item* item);
-		virtual void onUpdateTile(const Tile* tile, const Position& pos);
 
 		virtual void onCreatureAppear(const Creature* creature, bool isLogin);
 		virtual void onCreatureDisappear(const Creature* creature, uint32_t stackpos, bool isLogout);
@@ -685,11 +684,10 @@ class Player : public Creature, public Cylinder
 	protected:
 		void checkTradeState(const Item* item);
 		bool hasCapacity(const Item* item, uint32_t count) const;
-
 		void gainExperience(uint64_t exp);
 
 		void updateInventoryWeigth();
-		void postUpdateGoods(uint32_t itemId);
+		void updateInventoryGoods(uint32_t itemId);
 
 		void setNextWalkActionTask(SchedulerTask* task);
 		void setNextWalkTask(SchedulerTask* task);
@@ -891,18 +889,15 @@ class Player : public Creature, public Cylinder
 		virtual uint32_t getConditionImmunities() const {return conditionImmunities;}
 		virtual uint32_t getConditionSuppressions() const {return conditionSuppressions;}
 
-		double getLostPercent(lossTypes_t lossType) const;
-		virtual uint64_t getLostExperience() const {return skillLoss ? (uint64_t)std::floor(
-			(double)experience * getLostPercent(LOSS_EXPERIENCE)) : 0;}
-
+		virtual uint16_t getLookCorpse() const;
+		virtual uint64_t getLostExperience() const;
 		virtual void getPathSearchParams(const Creature* creature, FindPathParams& fpp) const;
 		static uint32_t getPercentLevel(uint64_t count, uint64_t nextLevelCount);
 		uint32_t getVocAttackSpeed() const {return vocation->getAttackSpeed();}
-		virtual uint16_t getLookCorpse() const;
 
-		bool isPromoted(uint32_t pLevel = 1) const {return promotionLevel >= pLevel;}
-		void updateItemsLight(bool internal = false);
 		virtual void dropLoot(Container* corpse);
+		void updateItemsLight(bool internal = false);
+		bool isPromoted(uint32_t pLevel = 1) const {return promotionLevel >= pLevel;}
 
 		friend class Game;
 		friend class LuaScriptInterface;

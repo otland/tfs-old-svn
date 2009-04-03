@@ -611,6 +611,34 @@ void Player::updateInventoryWeigth()
 	}
 }
 
+void Player::updateInventoryGoods(uint32_t itemId)
+{
+	if(Item::items[itemId].worth)
+	{
+		sendGoods();
+		return;
+	}
+
+	bool send = false;
+	for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
+	{
+		if((*it).sellPrice > 0 && (*it).itemId == itemId)
+		{
+			uint32_t itemCount = __getItemTypeCount((*it).itemId, ((*it).subType ? (*it).subType : -1));
+			if(itemCount > 0)
+				goodsMap[(*it).itemId] = itemCount;
+			else
+				goodsMap.erase((*it).itemId);
+
+			if(!send)
+				send = true;
+		}
+	}
+
+	if(send)
+		sendGoods();
+}
+
 int32_t Player::getPlayerInfo(playerinfo_t playerinfo) const
 {
 	switch(playerinfo)
@@ -823,10 +851,25 @@ void Player::dropLoot(Container* corpse)
 	if(!corpse || lootDrop != LOOT_DROP_FULL)
 		return;
 
+	uint32_t loss = 0, itemLoss = 0;
+	if(dropLoot)
+	{
+		loss = lossPercent[LOSS_ITEMS];
+		uint32_t bless = getBlessings(), start = 30; //TODO: configurable, as we allow more than 5 blessings
+		while(bless > 0 && loss > 0)
+		{
+			loss -= start;
+			start -= 5; //TODO
+			bless--;
+		}
+	}
+
+	itemLoss = std::floor((loss + 5) / 10);
 	for(uint8_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 	{
 		Item* item = inventory[i];
-		if(item && (item->getContainer() || (uint32_t)random_range(1, 100) <= uint32_t(getLostPercent(LOSS_ITEMS) * 100) || getSkull() == SKULL_RED))
+		if(getSkull() == SKULL_RED || (item && ((item->getContainer() && (uint32_t)random_range(1, 100) <= loss)
+			|| (!item->getContainer() && (uint32_t)random_range(1, 100) <= itemLoss))))
 		{
 			g_game.internalMoveItem(NULL, this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
 			sendRemoveInventoryItem((slots_t)i, inventory[(slots_t)i]);
@@ -1308,31 +1351,21 @@ void Player::sendRemoveContainerItem(const Container* container, uint8_t slot, c
 	}
 }
 
-void Player::onAddTileItem(const Tile* tile, const Position& pos, const Item* item)
-{
-	Creature::onAddTileItem(tile, pos, item);
-}
-
 void Player::onUpdateTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
 	const Item* oldItem, const ItemType& oldType, const Item* newItem, const ItemType& newType)
 {
 	Creature::onUpdateTileItem(tile, pos, stackpos, oldItem, oldType, newItem, newType);
-
 	if(oldItem != newItem)
 		onRemoveTileItem(tile, pos, stackpos, oldType, oldItem);
 
-	if(tradeState != TRADE_TRANSFER)
-	{
-		if(tradeItem && oldItem == tradeItem)
-			g_game.internalCloseTrade(this);
-	}
+	if(tradeState != TRADE_TRANSFER && tradeItem && oldItem == tradeItem)
+		g_game.internalCloseTrade(this);
 }
 
 void Player::onRemoveTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
 	const ItemType& iType, const Item* item)
 {
 	Creature::onRemoveTileItem(tile, pos, stackpos, iType, item);
-
 	if(tradeState != TRADE_TRANSFER)
 	{
 		checkTradeState(item);
@@ -1343,11 +1376,6 @@ void Player::onRemoveTileItem(const Tile* tile, const Position& pos, uint32_t st
 				g_game.internalCloseTrade(this);
 		}
 	}
-}
-
-void Player::onUpdateTile(const Tile* tile, const Position& pos)
-{
-	Creature::onUpdateTile(tile, pos);
 }
 
 void Player::onCreatureAppear(const Creature* creature, bool isLogin)
@@ -2011,7 +2039,6 @@ void Player::onBlockHit(BlockType_t blockType)
 void Player::onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType)
 {
 	Creature::onAttackedCreatureBlockHit(target, blockType);
-
 	lastAttackBlockType = blockType;
 	switch(blockType)
 	{
@@ -2169,7 +2196,9 @@ bool Player::onDeath()
 	removeConditions(CONDITIONEND_DEATH);
 	if(skillLoss)
 	{
-		removeExperience(getLostExperience(), false);
+		double lostPercent = getLostExperience();
+		removeExperience((uint64_t)lostPercent, false);
+		lostPercent = 1. - (experience - lostPercent) / double(experience);
 
 		//Magic level loss
 		uint32_t sumMana = 0;
@@ -2178,8 +2207,8 @@ bool Player::onDeath()
 			sumMana += vocation->getReqMana(i);
 
 		sumMana += manaSpent;
-		lostMana = (int32_t)(sumMana * getLostPercent(LOSS_MANASPENT));
-		while((uint64_t)lostMana > manaSpent && magLevel > 0)
+		lostMana = (uint64_t)std::ceil(sumMana * (lostPercent * (double)lossPercent[LOSS_MANASPENT] / 100.));
+		while(lostMana > manaSpent && magLevel > 0)
 		{
 			lostMana -= manaSpent;
 			manaSpent = vocation->getReqMana(magLevel);
@@ -2202,7 +2231,7 @@ bool Player::onDeath()
 				sumSkillTries += vocation->getReqSkillTries(i, c);
 
 			sumSkillTries += skills[i][SKILL_TRIES];
-			lostSkillTries = uint32_t(sumSkillTries * getLostPercent(LOSS_SKILLTRIES));
+			lostSkillTries = (uint32_t)std::ceil(sumSkillTries * (lostPercent * (double)lossPercent[LOSS_SKILLTRIES] / 100.));
 			while(lostSkillTries > skills[i][SKILL_TRIES])
 			{
 				lostSkillTries -= skills[i][SKILL_TRIES];
@@ -2227,6 +2256,7 @@ bool Player::onDeath()
 
 		sendStats();
 		sendSkills();
+
 		sendReLoginWindow();
 		g_game.removeCreature(this, false);
 	}
@@ -3061,7 +3091,7 @@ void Player::postAddNotification(Creature* actor, Thing* thing, int32_t index, c
 			onSendContainer(container);
 
 		if(shopOwner)
-			postUpdateGoods(item->getID());
+			updateInventoryGoods(item->getID());
 	}
 	else if(const Creature* creature = thing->getCreature())
 	{
@@ -3105,36 +3135,8 @@ void Player::postRemoveNotification(Creature* actor, Thing* thing, int32_t index
 		}
 
 		if(shopOwner)
-			postUpdateGoods(item->getID());
+			updateInventoryGoods(item->getID());
 	}
-}
-
-void Player::postUpdateGoods(uint32_t itemId)
-{
-	if(Item::items[itemId].worth)
-	{
-		sendGoods();
-		return;
-	}
-
-	bool send = false;
-	for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
-	{
-		if((*it).sellPrice > 0 && (*it).itemId == itemId)
-		{
-			uint32_t itemCount = __getItemTypeCount((*it).itemId, ((*it).subType ? (*it).subType : -1));
-			if(itemCount > 0)
-				goodsMap[(*it).itemId] = itemCount;
-			else
-				goodsMap.erase((*it).itemId);
-
-			if(!send)
-				send = true;
-		}
-	}
-
-	if(send)
-		sendGoods();
 }
 
 void Player::__internalAddThing(Thing* thing)
@@ -3848,38 +3850,53 @@ void Player::setPromotionLevel(uint32_t pLevel)
 	promotionLevel += tmpLevel;
 }
 
-double Player::getLostPercent(lossTypes_t lossType) const
+uint16_t Player::getBlessings() const
 {
-	double lostPercent = lossPercent[lossType];
-	if((int32_t)lostPercent <= vocation->getLessLoss())
+	if(!isPremium() && g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM))
 		return 0;
 
-	lostPercent -= vocation->getLessLoss();
-	if(isPremium() || !g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM))
+	uint16_t count = 0;
+	for(int16_t i = 0; i < 16; ++i)
 	{
-		for(int16_t i = 0; i < 16; i++)
-		{
-			if(lostPercent <= 0)
-				return 0;
-
-			if(hasBlessing(i))
-				lostPercent -= 10;
-		}
+		if(hasBlessing(i))
+			count++;
 	}
 
-	return lostPercent / 1000.;
+	return count;
+}
+
+uint64_t Player::getLostExperience() const
+{
+	if(!skillLoss)
+		return 0;
+
+	uint32_t percent = std::floor((lossPercent[LOSS_EXPERIENCE] - vocation->getLessLoss() - (getBlessings() * 8)) / 1000);
+	if(level < 25)
+		return experience * percent;
+
+	int32_t base = getLevel();
+	double levels = (base + 50) / 100.;
+
+	uint64_t lost = 0;
+	while(levels > 1.0)
+	{
+		lost += getExpForLevel(base);
+		base--;
+		levels -= 1.0;
+	}
+
+	if(levels > 0.0)
+		lost += (uint64_t)std::floor(getExpForLevel(base) * levels);
+
+	return lost * percent;
 }
 
 uint32_t Player::getAttackSpeed()
 {
-	uint32_t attackSpeed = vocation->getAttackSpeed();
-	if(Item* weapon = getWeapon())
-	{
-		if(weapon->getAttackSpeed() != 0)
-			attackSpeed = weapon->getAttackSpeed();
-	}
+	if(getWeapon() && getWeapon()->getAttackSpeed() != 0)
+		return weapon->getAttackSpeed();
 
-	return attackSpeed;
+	return vocation->getAttackSpeed();
 }
 
 void Player::learnInstantSpell(const std::string& name)
