@@ -852,7 +852,7 @@ void Player::dropLoot(Container* corpse)
 		return;
 
 	uint32_t loss = 0, itemLoss = 0;
-	if(dropLoot)
+	if(lootDrop)
 	{
 		loss = lossPercent[LOSS_ITEMS];
 		uint32_t bless = getBlessings(), start = 30; //TODO: configurable, as we allow more than 5 blessings
@@ -3893,7 +3893,8 @@ uint64_t Player::getLostExperience() const
 
 uint32_t Player::getAttackSpeed()
 {
-	if(getWeapon() && getWeapon()->getAttackSpeed() != 0)
+	Item* weapon = getWeapon();
+	if(weapon && weapon->getAttackSpeed() != 0)
 		return weapon->getAttackSpeed();
 
 	return vocation->getAttackSpeed();
