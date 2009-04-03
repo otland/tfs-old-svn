@@ -50,9 +50,9 @@ INSERT INTO `server_motd` VALUES (1, 0, 'Welcome to The Forgotten Server!');
 CREATE TABLE `server_record`
 (
 	`record` INT NOT NULL,
-	`timestamp` BIGINT NOT NULL,
 	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
-	UNIQUE (`timestamp`, `record`, `world_id`)
+	`timestamp` BIGINT NOT NULL,
+	UNIQUE (`record`, `world_id`, `timestamp`)
 ) ENGINE = InnoDB;
 
 INSERT INTO `server_record` VALUES (0, 0, 0);

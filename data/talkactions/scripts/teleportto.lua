@@ -16,7 +16,7 @@ function onSay(cid, words, param)
 		pos = getCreaturePosition(creature)
 	elseif(type(waypoint) == 'table' and waypoint.x ~= 0 and waypoint.y ~= 0) then
 		pos = waypoint
-	elseif(tile[3]) then
+	elseif(tile[2] and tile[3]) then
 		pos = {x = tile[1], y = tile[2], z = tile[3]}
 	else
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Invalid param specified.")

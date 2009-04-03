@@ -5464,7 +5464,7 @@ void Game::checkPlayersRecord()
 		Database* db = Database::getInstance();
 
 		DBQuery query;
-		query << "INSERT INTO `server_record` (`record`, `timestamp`, `world_id`) VALUES (" << lastPlayersRecord << ", " << time(NULL) << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ");";
+		query << "INSERT INTO `server_record` (`record`, `world_id`, `timestamp`) VALUES (" << lastPlayersRecord << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << time(NULL) << ");";
 		db->executeQuery(query.str());
 
 		char buffer[50];

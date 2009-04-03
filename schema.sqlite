@@ -17,9 +17,9 @@ INSERT INTO "server_motd" VALUES (1, 0, 'Welcome to The Forgotten Server!');
 
 CREATE TABLE "server_record" (
 	"record" INTEGER NOT NULL,
-	"timestamp" INTEGER NOT NULL,
 	"world_id" INTEGER NOT NULL DEFAULT 0,
-	UNIQUE ("timestamp", "record", "world_id")
+	"timestamp" INTEGER NOT NULL,
+	UNIQUE ("record", "world_id", "timestamp")
 );
 
 INSERT INTO "server_record" VALUES (0, 0, 0);

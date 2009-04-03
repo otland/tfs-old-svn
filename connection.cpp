@@ -175,7 +175,6 @@ bool Connection::send(OutputMessage_ptr msg)
 	std::cout << "Connection::send init" << std::endl;
 	#endif
 	OTSYS_THREAD_LOCK(m_connectionLock, "");
-
 	if(m_closeState == CLOSE_STATE_CLOSING || m_writeError)
 	{
 		OTSYS_THREAD_UNLOCK(m_connectionLock, "");
