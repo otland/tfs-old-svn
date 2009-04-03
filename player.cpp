@@ -3875,7 +3875,7 @@ uint64_t Player::getLostExperience() const
 		return (uint64_t)std::floor(experience * percent);
 
 	int32_t base = level;
-	float levels = ((float)base + 50) / 100.;
+	float levels = ((float)base + 50) / 100.0f;
 
 	uint64_t lost = 0;
 	while(levels > 1.0)
