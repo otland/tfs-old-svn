@@ -855,7 +855,7 @@ void Player::dropLoot(Container* corpse)
 	if(lootDrop)
 	{
 		loss = lossPercent[LOSS_ITEMS];
-		uint32_t bless = getBlessings(), start = 30; //TODO: configurable, as we allow more than 5 blessings
+		int32_t bless = getBlessings(), start = 30; //TODO: configurable, as we allow more than 5 blessings
 		while(bless > 0 && loss > 0)
 		{
 			loss -= start;
@@ -3878,14 +3878,14 @@ uint64_t Player::getLostExperience() const
 	float levels = ((float)base + 50) / 100.0f;
 
 	uint64_t lost = 0;
-	while(levels > 1.0)
+	while(levels > 1.0f)
 	{
 		lost += getExpForLevel(base);
 		base--;
-		levels -= 1.0;
+		levels -= 1.0f;
 	}
 
-	if(levels > 0.0)
+	if(levels > 0.0f)
 		lost += (uint64_t)std::floor((float)getExpForLevel(base) * levels);
 
 	return (uint64_t)std::floor(lost * percent);
