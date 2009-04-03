@@ -2196,9 +2196,9 @@ bool Player::onDeath()
 	removeConditions(CONDITIONEND_DEATH);
 	if(skillLoss)
 	{
-		double lostPercent = getLostExperience();
+		float lostPercent = getLostExperience();
 		removeExperience((uint64_t)lostPercent, false);
-		lostPercent = 1. - (experience - lostPercent) / double(experience);
+		lostPercent = 1.0f - (((float)experience - lostPercent) / (float)experience);
 
 		//Magic level loss
 		uint32_t sumMana = 0;
@@ -2207,7 +2207,7 @@ bool Player::onDeath()
 			sumMana += vocation->getReqMana(i);
 
 		sumMana += manaSpent;
-		lostMana = (uint64_t)std::ceil(sumMana * (lostPercent * (double)lossPercent[LOSS_MANASPENT] / 100.));
+		lostMana = (uint64_t)std::ceil(sumMana * (lostPercent * (float)lossPercent[LOSS_MANASPENT] / 100.));
 		while(lostMana > manaSpent && magLevel > 0)
 		{
 			lostMana -= manaSpent;
@@ -2231,7 +2231,7 @@ bool Player::onDeath()
 				sumSkillTries += vocation->getReqSkillTries(i, c);
 
 			sumSkillTries += skills[i][SKILL_TRIES];
-			lostSkillTries = (uint32_t)std::ceil(sumSkillTries * (lostPercent * (double)lossPercent[LOSS_SKILLTRIES] / 100.));
+			lostSkillTries = (uint32_t)std::ceil(sumSkillTries * (lostPercent * (float)lossPercent[LOSS_SKILLTRIES] / 100.));
 			while(lostSkillTries > skills[i][SKILL_TRIES])
 			{
 				lostSkillTries -= skills[i][SKILL_TRIES];
@@ -3870,12 +3870,12 @@ uint64_t Player::getLostExperience() const
 	if(!skillLoss)
 		return 0;
 
-	uint32_t percent = std::floor((lossPercent[LOSS_EXPERIENCE] - vocation->getLessLoss() - (getBlessings() * 8)) / 1000);
-	if(level < 25)
-		return experience * percent;
+	float percent = ((float)lossPercent[LOSS_EXPERIENCE] - vocation->getLessLoss() - (getBlessings() * 8)) / 1000.0f;
+	if(level <= 25)
+		return (uint64_t)std::floor(experience * percent);
 
-	int32_t base = getLevel();
-	double levels = (base + 50) / 100.;
+	int32_t base = level;
+	float levels = ((float)base + 50) / 100.;
 
 	uint64_t lost = 0;
 	while(levels > 1.0)
@@ -3886,9 +3886,9 @@ uint64_t Player::getLostExperience() const
 	}
 
 	if(levels > 0.0)
-		lost += (uint64_t)std::floor(getExpForLevel(base) * levels);
+		lost += (uint64_t)std::floor((float)getExpForLevel(base) * levels);
 
-	return lost * percent;
+	return (uint64_t)std::floor(lost * percent);
 }
 
 uint32_t Player::getAttackSpeed()
