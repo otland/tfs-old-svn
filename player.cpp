@@ -3872,7 +3872,7 @@ uint64_t Player::getLostExperience() const
 	if(!skillLoss)
 		return 0;
 
-	float percent = (float)(lossPercent[LOSS_EXPERIENCE] - vocation->getLessLoss() - (getBlessings() * 8)) / 1000.0f;
+	float percent = (float)(lossPercent[LOSS_EXPERIENCE] - vocation->getLessLoss() - (getBlessings() * 8)) / 10000.0f;
 	if(level <= 25)
 		return (uint64_t)experience * percent;
 
