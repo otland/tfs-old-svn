@@ -2198,9 +2198,9 @@ bool Player::onDeath()
 	removeConditions(CONDITIONEND_DEATH);
 	if(skillLoss)
 	{
-		uint64_t lostExperience = getLostExperience();
-		removeExperience(lostExperience, false);
-		float lostPercent = 1.0f - ((float)(experience - lostPercent) / (float)experience);
+		uint64_t lossExperience = getLostExperience();
+		removeExperience(lossExperience, false);
+		float percent = 1.0f - ((float)(experience - lossExperience) / (float)experience);
 
 		//Magic level loss
 		uint32_t sumMana = 0;
@@ -2209,7 +2209,7 @@ bool Player::onDeath()
 			sumMana += vocation->getReqMana(i);
 
 		sumMana += manaSpent;
-		lostMana = (uint64_t)std::ceil(sumMana * (lostPercent * (float)lossPercent[LOSS_MANASPENT] / 100.0f));
+		lostMana = (uint64_t)std::ceil(sumMana * (percent * (float)lossPercent[LOSS_MANASPENT] / 100.0f));
 		while(lostMana > manaSpent && magLevel > 0)
 		{
 			lostMana -= manaSpent;
@@ -2233,7 +2233,7 @@ bool Player::onDeath()
 				sumSkillTries += vocation->getReqSkillTries(i, c);
 
 			sumSkillTries += skills[i][SKILL_TRIES];
-			lostSkillTries = (uint32_t)std::ceil(sumSkillTries * (lostPercent * (float)lossPercent[LOSS_SKILLTRIES] / 100.0f));
+			lostSkillTries = (uint32_t)std::ceil(sumSkillTries * (percent * (float)lossPercent[LOSS_SKILLTRIES] / 100.0f));
 			while(lostSkillTries > skills[i][SKILL_TRIES])
 			{
 				lostSkillTries -= skills[i][SKILL_TRIES];
