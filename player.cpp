@@ -867,12 +867,14 @@ void Player::dropLoot(Container* corpse)
 	itemLoss = std::floor((loss + 5) / 10);
 	for(uint8_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 	{
-		Item* item = inventory[i];
-		if(getSkull() == SKULL_RED || (item && ((item->getContainer() && (uint32_t)random_range(1, 100) <= loss)
-			|| (!item->getContainer() && (uint32_t)random_range(1, 100) <= itemLoss))))
+		if(Item* item = inventory[i])
 		{
-			g_game.internalMoveItem(NULL, this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
-			sendRemoveInventoryItem((slots_t)i, inventory[(slots_t)i]);
+			if(getSkull() == SKULL_RED || (item->getContainer() && (uint32_t)random_range(1, 100) <= loss)
+				|| (!item->getContainer() && (uint32_t)random_range(1, 100) <= itemLoss))
+			{
+				g_game.internalMoveItem(NULL, this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
+				sendRemoveInventoryItem((slots_t)i, inventory[(slots_t)i]);
+			}
 		}
 	}
 }
@@ -2196,9 +2198,9 @@ bool Player::onDeath()
 	removeConditions(CONDITIONEND_DEATH);
 	if(skillLoss)
 	{
-		float lostPercent = getLostExperience();
+		double lostPercent = getLostExperience();
 		removeExperience((uint64_t)lostPercent, false);
-		lostPercent = 1.0f - (((float)experience - lostPercent) / (float)experience);
+		lostPercent = 1. - (((double)experience - lostPercent) / (double)experience);
 
 		//Magic level loss
 		uint32_t sumMana = 0;
@@ -2207,7 +2209,7 @@ bool Player::onDeath()
 			sumMana += vocation->getReqMana(i);
 
 		sumMana += manaSpent;
-		lostMana = (uint64_t)std::ceil(sumMana * (lostPercent * (float)lossPercent[LOSS_MANASPENT] / 100.));
+		lostMana = (uint64_t)std::ceil(sumMana * (lostPercent * (double)lossPercent[LOSS_MANASPENT] / 100.));
 		while(lostMana > manaSpent && magLevel > 0)
 		{
 			lostMana -= manaSpent;
@@ -2231,7 +2233,7 @@ bool Player::onDeath()
 				sumSkillTries += vocation->getReqSkillTries(i, c);
 
 			sumSkillTries += skills[i][SKILL_TRIES];
-			lostSkillTries = (uint32_t)std::ceil(sumSkillTries * (lostPercent * (float)lossPercent[LOSS_SKILLTRIES] / 100.));
+			lostSkillTries = (uint32_t)std::ceil(sumSkillTries * (lostPercent * (double)lossPercent[LOSS_SKILLTRIES] / 100.));
 			while(lostSkillTries > skills[i][SKILL_TRIES])
 			{
 				lostSkillTries -= skills[i][SKILL_TRIES];
@@ -3870,23 +3872,27 @@ uint64_t Player::getLostExperience() const
 	if(!skillLoss)
 		return 0;
 
-	float percent = ((float)lossPercent[LOSS_EXPERIENCE] - vocation->getLessLoss() - (getBlessings() * 8)) / 1000.0f;
+	double percent = lossPercent[LOSS_EXPERIENCE];
+	percent -= vocation->getLessLoss() + (getBlessings() * 8);
+
+	percent = percent / 1000.;
 	if(level <= 25)
 		return (uint64_t)std::floor(experience * percent);
 
 	int32_t base = level;
-	float levels = ((float)base + 50) / 100.0f;
+	double levels = base + 50;
 
+	levels = levels / 100.;
 	uint64_t lost = 0;
-	while(levels > 1.0f)
+	while(levels > 1)
 	{
 		lost += getExpForLevel(base);
 		base--;
-		levels -= 1.0f;
+		levels -= 1.;
 	}
 
-	if(levels > 0.0f)
-		lost += (uint64_t)std::floor((float)getExpForLevel(base) * levels);
+	if(levels > 0)
+		lost += (uint64_t)std::floor((double)getExpForLevel(base) * levels);
 
 	return (uint64_t)std::floor(lost * percent);
 }
