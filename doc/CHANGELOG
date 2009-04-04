@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3.2
+		0.3.3
 
 	Codenamed
 		Crying Damson
@@ -341,7 +341,7 @@
 						explosive_arrow.lua
 							* Renamed
 	]
-	[ 0.3.2
+	[ 0.3.3
 		A...
 			data/
 				creaturescripts/
@@ -390,12 +390,10 @@
 						* Some new items
 						* Changed preventLoss to preventDrop
 						* slotType-related changes
-						* Fixed reported bugs
 
 				lib/
 					compat.lua
 						* Added doPlayerAddExp
-						* Added isInArea
 					constant.lua
 						* Added reserved subIds
 						* Added map marks
@@ -405,7 +403,6 @@
 						* isPlayerGhost(cid)
 						* Cleanups
 						* Shop-related functions fixes
-						* Removed isInArea, as its same as isInRange
 
 				monster/
 					Mutated/
@@ -476,6 +473,69 @@
 						other/
 							highscores.lua
 								* Moved to actions.xml
+	]
+	[ 0.3.3
+		A...
+
+		M...
+			data/
+				creaturescripts/
+					scripts/
+						login.lua
+							* Changed deathLostPercent method
+						playerdeath.lua
+							* Typo
+
+				items/
+					items.xml
+						* Fixed reported bugs
+
+				lib/
+					compat.lua
+						* Added isInArea
+					constant.lua
+						* Reload constant for groups
+					database.lua
+						* Changed result loop
+					function.lua
+						* Removed isInArea, as its same as isInRange
+
+				monster/
+					monsters.xml
+						* Fixed monster name
+
+				npc/
+					lib/
+						npcsystem/
+							modules.lua
+								* Players with pzLock cannot travel through travel module anymore
+								* New bless prices calculating
+						scripts/
+							bless.lua
+								* Updated to changes in modules.lua
+
+				talkactions/
+					scripts/
+						deathlist.lua
+						reports.lua
+							* Changed result loop
+						reload.lua
+							* Groups reloading
+						teleportsend.lua
+							* Supports for player wildcards, creatures, waypoints and direct positions
+						teleportto.lua
+							* ...
+
+				weapons/
+					weapons.xml
+						* Added elemental arrows
+
+				XML/
+					vocations.xml
+						* Multiplied lessLoss values due to players loss_* fields changes
+
+		D...
+
 	]
 ]
 
@@ -592,7 +652,7 @@
 		Optimized, fixed crash-bug and added two-params support for guild commands (Elf, Kornholijo)
 		Reworked reloading- more detailed errors, new 'types' and signal support (Elf)
 	]
-	[ 0.3.2
+	[ 0.3.3
 		Version checking by reading remotely hosted versioning file (Elf)
 		Per-vocation less loss configuration- the "3% promotion loss" (Elf)
 		Gamemaster "options" (ghost, squelch and cliport) are now stored as conditions and saved (Elf)
@@ -610,6 +670,15 @@
 		New combat param- TARGETPLAYERSORSUMMONS, Mass Healing (exura gran mas res) spell should now affect only players with their summons (Elf)
 		New preventLoss Items attribute- avoids player skill loss [read Deprecated section below to know more about old preventLoss] (Elf)
 		Player::__queryDestination deepness is now configurable [configured enough well to avoid lags on slow machines] (Elf)
+	]
+	[ 0.3.3
+		Protocol 8.41 support (Kiper)
+		Service Manager (OpenTibia SVN, Elf)
+		Protocol 8.41 features (OpenTibia SVN, Elf)
+		Groups reloading (Elf)
+		Configurable critical hit multiplier (Elf)
+		Clean/Refresh "scriptProtection" for items (Elf)
+		Added two new creature events: onCast, onCombat and onAreaCombat (Elf)
 	]
 ]
 
@@ -635,11 +704,14 @@
 
 		... and many, many more.
 	]
-	[ 0.3.2
+	[ 0.3.3
 		Player and Global storages do not use -1 as eraser anymore, use 'nil' value
 		onDeath corpse passed parameter is now Thing (table with entries: uid, itemid, etc) instead lonely uid
 		house_storage database table, house_data is now used
 		Items attribute: preventLoss, use: preventDrop
+	]
+	[ 0.3.3
+		LuaFunction: doPlayerSetExperienceRate, doPlayerSetMagicRate, use: doPlayerSetRate(... __LEVEL/__MAGLEVEL ...)
 	]
 ]
 
@@ -697,7 +769,7 @@
 		Player::__queryDestination- adding/giving items to player issues (Elf)
 		Saving players with CanAlwaysLogin flag at /close (Elf)
 	]
-	[ 0.3.2
+	[ 0.3.3
 		IPBanishment authorization error (Elf)
 		Instant open after closing server (Elf)
 		Players being able to stay logged in when server was closed not being saved (Elf)
@@ -714,5 +786,15 @@
 		CreatureEvent onAttack crashbug (Elf)
 		Waiting list unknown place issue (Elf)
 		houseRentAsPrice, housePriceAsRent (Elf)
+	]
+	[ 0.3.3
+		IPBanishment checking MySQL server hang (Elf)
+		OutputMessage crash (Elf, OpenTibia SVN)
+		Fixed Amuet of Loss being not always dropped (Elf)
+		CANNOT_ATTACK_SAME_LOOKFEET working only for melee (Elf)
+		Ghost mode causing client assertions due to some old Tile class changes (Elf)
+		Namelocking removing notations (Elf)
+		Possibility to change the ip/port using NG script and login to different world than character in fact "comes from" (Elf)
+		"Decaying items transforming when used" (Elf)
 	]
 ]

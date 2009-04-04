@@ -23,10 +23,13 @@
 #endif
 
 #include "server.h"
+#include "game.h"
 #include "scheduler.h"
 
 #include "connection.h"
 #include "outputmessage.h"
+
+extern Game g_game;
 
 bool ServicePort::add(Service_ptr newService)
 {
@@ -46,12 +49,17 @@ void ServicePort::open(uint16_t port)
 	if(m_pendingStart)
 		m_pendingStart = false;
 
-	try {
+	try
+	{
 		m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
 			boost::asio::ip::address(boost::asio::ip::address_v4(INADDR_ANY)), m_serverPort), false);
-	} catch(boost::system::system_error& error) {
+	}
+	catch(boost::system::system_error& error)
+	{
 		std::cout << "> ERROR: Can bind only one socket to a specific port (" << m_serverPort << ")." << std::endl;
 		std::cout << "The exact error was: " << error.what() << std::endl;
+		if(g_config.getBool(ConfigManager::ABORT_SOCKET_FAIL))
+			Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, &g_game)));
 	}
 
 	accept();

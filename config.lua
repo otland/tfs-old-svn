@@ -86,7 +86,6 @@
 	sqlFile = "forgottenserver.s3db"
 	sqlKeepAlive = 0
 	mysqlReadTimeout = 10
-	optimizeDatabaseAtStartup = "yes"
 	passwordType = "plain"
 
 	-- Deathlist
@@ -128,17 +127,21 @@
 	storeTrash = "yes"
 	cleanProtectedZones = "yes"
 
-	-- Miscellaneous
+	-- Startup
 	-- NOTE: defaultPriority works only on Windows
-	-- promptExceptionTracerErrorBox works only with precompiled support feature,
-	-- called "exception tracer" (__EXCEPTION_TRACER__ flag).
 	defaultPriority = "high"
+	optimizeDatabaseAtStartup = "yes"
+	removePremiumOnInit = "yes"
+	abortOnSocketFailure = "yes"
+
+	-- Miscellaneous
+	-- NOTE: promptExceptionTracerErrorBox works only with precompiled support feature,
+	-- called "exception tracer" (__EXCEPTION_TRACER__ flag).
 	maxMessageBuffer = 4
 	kickIdlePlayerAfterMinutes = 15
 	allowChangeOutfit = "yes"
 	allowChangeColors = "yes"
 	disableOutfitsForPrivilegedPlayers = "no"
-	displayGamemastersWithOnlineCommand = "no"
 	bankSystem = "yes"
 	saveGlobalStorage = "yes"
 	displaySkillLevelOnAdvance = "no"
@@ -148,11 +151,9 @@
 	promptExceptionTracerErrorBox = "yes"
 	storePlayerDirection = "no"
 	playerQueryDeepness = 2
-	displayPlayersLogging = "yes"
 
 	-- Premium-related
 	freePremium = "no"
-	removePremiumOnInit = "yes"
 	premiumForPromotion = "yes"
 
 	-- Blessings
@@ -178,12 +179,12 @@
 	-- rateStaminaThresholdGain is dividing in case the normal gain (that is
 	-- multiplied by rateStaminaGain, btw.) passed above threshold, eg:
 	-- 60 * 1000 / 3 = 20 / 4 = 5 seconds (3 * 4 = 12 minutes for 1 stamina minute).
-	-- staminaRatingThreshold* is in minutes.
+	-- staminaRatingLimit* is in minutes.
 	rateStaminaHits = 1
 	rateStaminaGain = 1000 / 3
 	rateStaminaThresholdGain = 4
-	staminaRatingTopLimit = 41 * 60
-	staminaRatingBottomLimit = 14 * 60
+	staminaRatingLimitTop = 41 * 60
+	staminaRatingLimitBottom = 14 * 60
 	rateStaminaAboveNormal = 1.5
 	rateStaminaUnderNormal = 0.5
 	staminaThresholdOnlyPremium = "yes"
@@ -220,10 +221,12 @@
 	ownerEmail = "@otland.net"
 	url = "http://otland.net/"
 	location = "Europe"
+	displayGamemastersWithOnlineCommand = "no"
 
 	-- Logs
 	-- NOTE: This kind of logging does not work in GUI version.
 	-- For such, please compile the software with __GUI_LOGS__ flag.
+	displayPlayersLogging = "yes"
 	runeFile = ""
 	outLogName = ""
 	errorLogName = ""

@@ -92,15 +92,31 @@ bool ConfigManager::load()
 		m_confString[SQL_FILE] = getGlobalString(L, "sqlFile", "forgottenserver.s3db");
 		m_confNumber[SQL_KEEPALIVE] = getGlobalNumber(L, "sqlKeepAlive", 0);
 		m_confNumber[MYSQL_READ_TIMEOUT] = getGlobalNumber(L, "mysqlReadTimeout", 10);
-		m_confString[PASSWORD_TYPE] = getGlobalString(L, "passwordType", "plain");
-		m_confNumber[PASSWORDTYPE] = PASSWORD_TYPE_PLAIN;
+		m_confBool[OPTIMIZE_DB_AT_STARTUP] = getGlobalBool(L, "optimizeDatabaseAtStartup", "yes");
 		m_confString[MAP_NAME] = getGlobalString(L, "mapName", "forgotten");
 		m_confString[MAP_AUTHOR] = getGlobalString(L, "mapAuthor", "Unknown");
 		m_confBool[GLOBALSAVE_ENABLED] = getGlobalBool(L, "globalSaveEnabled", "yes");
 		m_confNumber[GLOBALSAVE_H] = getGlobalNumber(L, "globalSaveHour", 8);
 		m_confString[HOUSE_RENT_PERIOD] = getGlobalString(L, "houseRentPeriod", "monthly");
 		m_confNumber[WORLD_ID] = getGlobalNumber(L, "worldId", 0);
+		m_confBool[RANDOMIZE_TILES] = getGlobalBool(L, "randomizeTiles", "yes");
 		m_confBool[STORE_TRASH] = getGlobalBool(L, "storeTrash", "yes");
+		m_confNumber[LOGIN_TRIES] = getGlobalNumber(L, "loginTries", 3);
+		m_confNumber[RETRY_TIMEOUT] = getGlobalNumber(L, "retryTimeout", 30 * 1000);
+		m_confNumber[LOGIN_TIMEOUT] = getGlobalNumber(L, "loginTimeout", 5 * 1000);
+		m_confNumber[MAX_MESSAGEBUFFER] = getGlobalNumber(L, "maxMessageBuffer", 4);
+		m_confNumber[MAX_PLAYERS] = getGlobalNumber(L, "maxPlayers");
+		m_confNumber[DEFAULT_DESPAWNRANGE] = getGlobalNumber(L, "deSpawnRange", 2);
+		m_confNumber[DEFAULT_DESPAWNRADIUS] = getGlobalNumber(L, "deSpawnRadius", 50);
+		m_confNumber[PZ_LOCKED] = getGlobalNumber(L, "pzLocked", 0);
+		m_confBool[EXPERIENCE_STAGES] = getGlobalBool(L, "experienceStages", "no");
+		m_confString[DEFAULT_PRIORITY] = getGlobalString(L, "defaultPriority", "high");
+		m_confBool[ABORT_SOCKET_FAIL] = getGlobalBool(L, "abortOnSocketFailure", "yes");
+		#ifndef __LOGIN_SERVER__
+		m_confBool[LOGIN_ONLY_LOGINSERVER] = getGlobalBool(L, "loginOnlyWithLoginServer", "no");
+		#endif
+		m_confString[PASSWORD_TYPE] = getGlobalString(L, "passwordType", "plain");
+		m_confNumber[PASSWORDTYPE] = PASSWORD_TYPE_PLAIN;
 	}
 
 	m_confString[LOGIN_MSG] = getGlobalString(L, "loginMessage", "Welcome to the Forgotten Server!");
@@ -109,14 +125,7 @@ bool ConfigManager::load()
 	m_confString[OWNER_EMAIL] = getGlobalString(L, "ownerEmail");
 	m_confString[URL] = getGlobalString(L, "url");
 	m_confString[LOCATION] = getGlobalString(L, "location");
-	m_confNumber[LOGIN_TRIES] = getGlobalNumber(L, "loginTries", 3);
-	m_confNumber[RETRY_TIMEOUT] = getGlobalNumber(L, "retryTimeout", 30 * 1000);
-	m_confNumber[LOGIN_TIMEOUT] = getGlobalNumber(L, "loginTimeout", 5 * 1000);
 	m_confString[MOTD] = getGlobalString(L, "motd");
-	m_confNumber[MAX_PLAYERS] = getGlobalNumber(L, "maxPlayers");
-	m_confNumber[PZ_LOCKED] = getGlobalNumber(L, "pzLocked", 0);
-	m_confNumber[DEFAULT_DESPAWNRANGE] = getGlobalNumber(L, "deSpawnRange", 2);
-	m_confNumber[DEFAULT_DESPAWNRADIUS] = getGlobalNumber(L, "deSpawnRadius", 50);
 	m_confNumber[ALLOW_CLONES] = getGlobalNumber(L, "allowClones", 0);
 	m_confDouble[RATE_EXPERIENCE] = getGlobalDouble(L, "rateExperience", 1.0f);
 	m_confDouble[RATE_SKILL] = getGlobalDouble(L, "rateSkill", 1.0f);
@@ -150,14 +159,11 @@ bool ConfigManager::load()
 	m_confBool[AIMBOT_HOTKEY_ENABLED] = getGlobalBool(L, "hotkeyAimbotEnabled", "yes");
 	m_confNumber[ACTIONS_DELAY_INTERVAL] = getGlobalNumber(L, "timeBetweenActions", 200);
 	m_confNumber[EX_ACTIONS_DELAY_INTERVAL] = getGlobalNumber(L, "timeBetweenExActions", 1000);
-	m_confNumber[MAX_MESSAGEBUFFER] = getGlobalNumber(L, "maxMessageBuffer", 4);
 	m_confNumber[CRITICAL_HIT_CHANCE] = getGlobalNumber(L, "criticalHitChance", 5);
 	m_confNumber[KICK_AFTER_MINUTES] = getGlobalNumber(L, "kickIdlePlayerAfterMinutes", 15);
 	m_confBool[REMOVE_WEAPON_AMMO] = getGlobalBool(L, "removeWeaponAmmunition", "yes");
 	m_confBool[REMOVE_WEAPON_CHARGES] = getGlobalBool(L, "removeWeaponCharges", "yes");
 	m_confBool[REMOVE_RUNE_CHARGES] = getGlobalBool(L, "removeRuneCharges", "yes");
-	m_confBool[RANDOMIZE_TILES] = getGlobalBool(L, "randomizeTiles", "yes");
-	m_confString[DEFAULT_PRIORITY] = getGlobalString(L, "defaultPriority", "high");
 	m_confBool[EXPERIENCE_FROM_PLAYERS] = getGlobalBool(L, "experienceByKillingPlayers", "no");
 	m_confBool[SHUTDOWN_AT_GLOBALSAVE] = getGlobalBool(L, "shutdownAtGlobalSave", "no");
 	m_confBool[CLEAN_MAP_AT_GLOBALSAVE] = getGlobalBool(L, "cleanMapAtGlobalSave", "yes");
@@ -201,19 +207,14 @@ bool ConfigManager::load()
 	m_confNumber[MAX_PLAYER_SUMMONS] = getGlobalNumber(L, "maxPlayerSummons", 2);
 	m_confBool[SAVE_GLOBAL_STORAGE] = getGlobalBool(L, "saveGlobalStorage", "yes");
 	m_confBool[FORCE_CLOSE_SLOW_CONNECTION] = getGlobalBool(L, "forceSlowConnectionsToDisconnect", "no");
-	m_confBool[EXPERIENCE_STAGES] = getGlobalBool(L, "experienceStages", "no");
 	m_confBool[BLESSING_ONLY_PREMIUM] = getGlobalBool(L, "blessingsOnlyPremium", "yes");
 	m_confBool[BED_REQUIRE_PREMIUM] = getGlobalBool(L, "bedsRequirePremium", "yes");
 	m_confNumber[FIELD_OWNERSHIP] = getGlobalNumber(L, "fieldOwnershipDuration", 5 * 1000);
 	m_confBool[ALLOW_CHANGECOLORS] = getGlobalBool(L, "allowChangeColors", "yes");
 	m_confBool[STOP_ATTACK_AT_EXIT] = getGlobalBool(L, "stopAttackingAtExit", "no");
-	#ifndef __LOGIN_SERVER__
-	m_confBool[LOGIN_ONLY_LOGINSERVER] = getGlobalBool(L, "loginOnlyWithLoginServer", "no");
-	#endif
 	m_confNumber[EXTRA_PARTY_PERCENT] = getGlobalNumber(L, "extraPartyExperiencePercent", 5);
 	m_confNumber[EXTRA_PARTY_LIMIT] = getGlobalNumber(L, "extraPartyExperienceLimit", 20);
 	m_confBool[DISABLE_OUTFITS_PRIVILEGED] = getGlobalBool(L, "disableOutfitsForPrivilegedPlayers", "no");
-	m_confBool[OPTIMIZE_DB_AT_STARTUP] = getGlobalBool(L, "optimizeDatabaseAtStartup", "yes");
 	m_confBool[OLD_CONDITION_ACCURACY] = getGlobalBool(L, "oldConditionAccuracy", "no");
 	m_confBool[HOUSE_STORAGE] = getGlobalBool(L, "useHouseDataStorage", "no");
 	m_confBool[TRACER_BOX] = getGlobalBool(L, "promptExceptionTracerErrorBox", "yes");
@@ -227,8 +228,8 @@ bool ConfigManager::load()
 	m_confDouble[RATE_STAMINA_THRESHOLD] = getGlobalDouble(L, "rateStaminaThresholdGain", 4);
 	m_confDouble[RATE_STAMINA_ABOVE] = getGlobalDouble(L, "rateStaminaAboveNormal", 1.5f);
 	m_confDouble[RATE_STAMINA_UNDER] = getGlobalDouble(L, "rateStaminaUnderNormal", 0.5f);
-	m_confNumber[STAMINA_LIMIT_TOP] = getGlobalNumber(L, "staminaRatingTopLimit", 41 * 60);
-	m_confNumber[STAMINA_LIMIT_BOTTOM] = getGlobalNumber(L, "staminaRatingBottomLimit", 14 * 60);
+	m_confNumber[STAMINA_LIMIT_TOP] = getGlobalNumber(L, "staminaRatingLimitTop", 41 * 60);
+	m_confNumber[STAMINA_LIMIT_BOTTOM] = getGlobalNumber(L, "staminaRatingLimitLimit", 14 * 60);
 	m_confBool[DISPLAY_LOGGING] = getGlobalBool(L, "displayPlayersLogging", "yes");
 	m_confBool[STAMINA_BONUS_PREMIUM] = getGlobalBool(L, "staminaThresholdOnlyPremium", "yes");
 	m_confBool[BAN_UNKNOWN_BYTES] = getGlobalBool(L, "autoBanishUnknownBytes", "no");
