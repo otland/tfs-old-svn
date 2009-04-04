@@ -851,26 +851,21 @@ void Player::dropLoot(Container* corpse)
 	if(!corpse || lootDrop != LOOT_DROP_FULL)
 		return;
 
-	int32_t loss = 0, itemLoss = 0;
-	if(lootDrop)
+	uint32_t loss = lossPercent[LOSS_ITEMS], bless = getBlessings(), start = 30; //TODO: configurable, as we allow more than 5 blessings
+	while(bless > 0 && loss > 0)
 	{
-		loss = lossPercent[LOSS_ITEMS];
-		int32_t bless = getBlessings(), start = 30; //TODO: configurable, as we allow more than 5 blessings
-		while(bless > 0 && loss > 0)
-		{
-			loss -= start;
-			start -= 5; //TODO
-			bless--;
-		}
+		loss -= start;
+		start -= 5; //TODO
+		bless--;
 	}
 
-	itemLoss = std::floor((loss + 5) / 10);
+	uint32_t containerLoss = std::floor((loss + 5) / 10);
 	for(uint8_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 	{
 		if(Item* item = inventory[i])
 		{
-			if(getSkull() == SKULL_RED || (item->getContainer() && (int32_t)random_range(1, 100) <= loss)
-				|| (!item->getContainer() && (int32_t)random_range(1, 100) <= itemLoss))
+			if(getSkull() == SKULL_RED || (!item->getContainer() && (uint32_t)random_range(1, 100) <= loss)
+				|| (item->getContainer() && (uint32_t)random_range(1, 100) <= containerLoss))
 			{
 				g_game.internalMoveItem(NULL, this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
 				sendRemoveInventoryItem((slots_t)i, inventory[(slots_t)i]);
