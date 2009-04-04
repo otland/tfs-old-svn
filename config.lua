@@ -180,7 +180,7 @@
 	-- multiplied by rateStaminaGain, btw.) passed above threshold, eg:
 	-- 60 * 1000 / 3 = 20 / 4 = 5 seconds (3 * 4 = 12 minutes for 1 stamina minute).
 	-- staminaRatingLimit* is in minutes.
-	rateStaminaHits = 1
+	rateStaminaLoss = 1
 	rateStaminaGain = 1000 / 3
 	rateStaminaThresholdGain = 4
 	staminaRatingLimitTop = 41 * 60

@@ -223,7 +223,7 @@ bool ConfigManager::load()
 	m_confNumber[PLAYER_DEEPNESS] = getGlobalNumber(L, "playerQueryDeepness", 1);
 	m_confDouble[CRITICAL_HIT_MUL] = getGlobalDouble(L, "criticalHitMultiplier", 1);
 	m_confNumber[STAIRHOP_DELAY] = getGlobalNumber(L, "stairhopDelay", 2 * 1000);
-	m_confNumber[RATE_STAMINA_HITS] = getGlobalNumber(L, "rateStaminaHits", 1);
+	m_confNumber[RATE_STAMINA_LOSS] = getGlobalNumber(L, "rateStaminaLoss", 1);
 	m_confDouble[RATE_STAMINA_GAIN] = getGlobalDouble(L, "rateStaminaGain", 1000 / 3);
 	m_confDouble[RATE_STAMINA_THRESHOLD] = getGlobalDouble(L, "rateStaminaThresholdGain", 4);
 	m_confDouble[RATE_STAMINA_ABOVE] = getGlobalDouble(L, "rateStaminaAboveNormal", 1.5f);

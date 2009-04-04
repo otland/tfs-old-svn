@@ -1028,24 +1028,6 @@ double Creature::getDamageRatio(Creature* attacker) const
 	return ((double)attackerDamage / totalDamage);
 }
 
-int64_t Creature::getStaminaRatio(Creature* attacker) const
-{
-	uint32_t totalHits = 0;
-	for(CountMap::const_iterator it = damageMap.begin(); it != damageMap.end(); ++it)
-	{
-		if(it->first == attacker->getID())
-			totalHits += it->second.hits;
-	}
-
-	for(CountMap::const_iterator it = healMap.begin(); it != healMap.end(); ++it)
-	{
-		if(it->first == attacker->getID())
-			totalHits += it->second.hits;
-	}
-
-	return totalHits * g_config.getNumber(ConfigManager::RATE_STAMINA_HITS);
-}
-
 uint64_t Creature::getGainedExperience(Creature* attacker, bool useMultiplier/* = true*/)
 {
 	Player* player = attacker->getPlayer();
@@ -1064,7 +1046,16 @@ uint64_t Creature::getGainedExperience(Creature* attacker, bool useMultiplier/* 
 
 	baseExperience *= g_game.getExperienceStage(player->getLevel());
 	if(!player->hasCustomFlag(PlayerCustomFlag_HasInfiniteStamina))
-		player->removeStamina((getStaminaRatio(attacker) * player->getAttackSpeed()));
+	{
+		int64_t totalTime = 0;
+		for(CountMap::const_iterator it = damageMap.begin(); it != damageMap.end(); ++it)
+		{
+			if(it->first == attacker->getID())
+				totalTime += it->second.ticks - it->second.start;
+		}
+
+		player->removeStamina(totalTime * g_config.getNumber(ConfigManager::RATE_STAMINA_LOSS));
+	}
 
 	int32_t minutes = player->getStaminaMinutes();
 	if(!getPlayer() && minutes >= g_config.getNumber(ConfigManager::STAMINA_LIMIT_TOP) &&
@@ -1085,15 +1076,13 @@ void Creature::addDamagePoints(Creature* attacker, int32_t damagePoints)
 	if(it == damageMap.end())
 	{
 		CountBlock_t cb;
-		cb.ticks = OTSYS_TIME();
-		cb.total = damagePoints;
-		cb.hits = 1;
+		cb.ticks = cb.start = OTSYS_TIME();
 
+		cb.total = damagePoints;
 		damageMap[attackerId] = cb;
 	}
 	else
 	{
-		it->second.hits++;
 		it->second.ticks = OTSYS_TIME();
 		if(damagePoints > 0)
 			it->second.total += damagePoints;
@@ -1112,15 +1101,13 @@ void Creature::addHealPoints(Creature* caster, int32_t healthPoints)
 		if(it == healMap.end())
 		{
 			CountBlock_t cb;
-			cb.ticks = OTSYS_TIME();
-			cb.total = healthPoints;
-			cb.hits = 0;
+			cb.ticks = cb.start = OTSYS_TIME();
 
+			cb.total = healthPoints;
 			healMap[casterId] = cb;
 		}
 		else
 		{
-			it->second.hits++;
 			it->second.ticks = OTSYS_TIME();
 			it->second.total += healthPoints;
 		}
