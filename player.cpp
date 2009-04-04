@@ -859,13 +859,13 @@ void Player::dropLoot(Container* corpse)
 		bless--;
 	}
 
-	uint32_t containerLoss = std::floor((loss + 5) / 10);
+	uint32_t itemLoss = std::floor((loss + 5) / 10);
 	for(uint8_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 	{
 		if(Item* item = inventory[i])
 		{
-			if(getSkull() == SKULL_RED || (!item->getContainer() && (uint32_t)random_range(1, 100) <= loss)
-				|| (item->getContainer() && (uint32_t)random_range(1, 100) <= containerLoss))
+			if(getSkull() == SKULL_RED || (item->getContainer() && (uint32_t)random_range(1, 100) <= loss)
+				|| (!item->getContainer() && (uint32_t)random_range(1, 100) <= itemLoss))
 			{
 				g_game.internalMoveItem(NULL, this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
 				sendRemoveInventoryItem((slots_t)i, inventory[(slots_t)i]);
