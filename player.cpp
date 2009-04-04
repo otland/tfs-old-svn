@@ -162,7 +162,7 @@ Creature()
 		varStats[i] = 0;
 
 	for(int32_t i = LOSS_FIRST; i <= LOSS_LAST; ++i)
-		lossPercent[i] = 10;
+		lossPercent[i] = 100;
 
 	maxDepotLimit = 1000;
 	maxVipLimit = 20;
@@ -851,21 +851,21 @@ void Player::dropLoot(Container* corpse)
 	if(!corpse || lootDrop != LOOT_DROP_FULL)
 		return;
 
-	uint32_t loss = lossPercent[LOSS_ITEMS], bless = getBlessings(), start = 30; //TODO: configurable, as we allow more than 5 blessings
+	uint32_t start = g_config.getNumber(ConfigManager::BLESS_REDUCTION_BASE), loss = lossPercent[LOSS_CONTAINERS], bless = getBlessings();
 	while(bless > 0 && loss > 0)
 	{
 		loss -= start;
-		start -= 5; //TODO
+		start -= g_config.getNumber(ConfigManager::BLESS_REDUCTION_DECREAMENT);
 		bless--;
 	}
 
-	uint32_t itemLoss = std::floor((loss + 5) / 10);
+	uint32_t itemLoss = std::floor((float)(loss + 5) * lossPercent[LOSS_ITEMS] / 1000.);
 	for(uint8_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 	{
 		if(Item* item = inventory[i])
 		{
-			if(getSkull() == SKULL_RED || (item->getContainer() && (uint32_t)random_range(1, 100) <= loss)
-				|| (!item->getContainer() && (uint32_t)random_range(1, 100) <= itemLoss))
+			uint32_t rand = random_range(1, 100);
+			if(getSkull() == SKULL_RED || (item->getContainer() && rand <= loss) || (!item->getContainer() && rand <= itemLoss))
 			{
 				g_game.internalMoveItem(NULL, this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
 				sendRemoveInventoryItem((slots_t)i, inventory[(slots_t)i]);
@@ -1404,7 +1404,7 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 			{
 				period = std::ceil((double)period * g_config.getDouble(ConfigManager::RATE_STAMINA_GAIN));
 				int64_t rated = stamina + period, tmp = g_config.getNumber(
-					ConfigManager::STAMINA_THRESHOLD_MAX) * STAMINA_MUL;
+					ConfigManager::STAMINA_LIMIT_TOP) * STAMINA_MUL;
 				if(rated >= tmp)
 					rated -= tmp;
 				else
@@ -2204,7 +2204,7 @@ bool Player::onDeath()
 			sumMana += vocation->getReqMana(i);
 
 		sumMana += manaSpent;
-		lostMana = (uint64_t)std::ceil(sumMana * (percent * (float)lossPercent[LOSS_MANASPENT] / 100.0f));
+		lostMana = (uint64_t)std::ceil(sumMana * (percent * (float)lossPercent[LOSS_MANA] / 100.0f));
 		while(lostMana > manaSpent && magLevel > 0)
 		{
 			lostMana -= manaSpent;
@@ -2228,7 +2228,7 @@ bool Player::onDeath()
 				sumSkillTries += vocation->getReqSkillTries(i, c);
 
 			sumSkillTries += skills[i][SKILL_TRIES];
-			lostSkillTries = (uint32_t)std::ceil(sumSkillTries * (percent * (float)lossPercent[LOSS_SKILLTRIES] / 100.0f));
+			lostSkillTries = (uint32_t)std::ceil(sumSkillTries * (percent * (float)lossPercent[LOSS_SKILLS] / 100.0f));
 			while(lostSkillTries > skills[i][SKILL_TRIES])
 			{
 				lostSkillTries -= skills[i][SKILL_TRIES];

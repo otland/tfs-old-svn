@@ -1067,10 +1067,10 @@ uint64_t Creature::getGainedExperience(Creature* attacker, bool useMultiplier/* 
 		player->removeStamina((getStaminaRatio(attacker) * player->getAttackSpeed()));
 
 	int32_t minutes = player->getStaminaMinutes();
-	if(!getPlayer() && minutes >= g_config.getNumber(ConfigManager::STAMINA_THRESHOLD_MAX) &&
+	if(!getPlayer() && minutes >= g_config.getNumber(ConfigManager::STAMINA_LIMIT_TOP) &&
 		(player->isPremium() || !g_config.getNumber(ConfigManager::STAMINA_BONUS_PREMIUM)))
 		baseExperience *= g_config.getDouble(ConfigManager::RATE_STAMINA_ABOVE);
-	else if(minutes < (g_config.getNumber(ConfigManager::STAMINA_THRESHOLD_MIN)) && minutes > 0)
+	else if(minutes < (g_config.getNumber(ConfigManager::STAMINA_LIMIT_BOTTOM)) && minutes > 0)
 		baseExperience *= g_config.getDouble(ConfigManager::RATE_STAMINA_UNDER);
 	else if(minutes <= 0)
 		baseExperience = 0;

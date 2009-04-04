@@ -928,8 +928,30 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				break;
 
 			default:
-				std::cout << "[Notice - ProtocolGame::parsePacket] Player: " << player->getName() << " has sent unknown byte: 0x" << std::hex << (int16_t)recvbyte << std::dec << "!" << std::endl;
+			{
+				bool success = false;
+				if(g_config.getBool(ConfigManager::BAN_UNKNOWN_BYTES))
+				{
+					int32_t warnings = IOLoginData::getInstance()->loadAccount(accountId, true).warnings;
+					if(warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
+						success = IOBan::getInstance()->addDeletion(player->getAccount(), 13, 7,
+							"Sending unknown packets to the server.", 0);
+					else if(warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
+						success = IOBan::getInstance()->addBanishment(player->getAccount(), (time(NULL) + g_config.getNumber(
+							ConfigManager::FINALBAN_LENGTH)), 13, 4, "Sending unknown packets to the server.", 0);
+					else
+						success = IOBan::getInstance()->addBanishment(player->getAccount(), (time(NULL) + g_config.getNumber(
+							ConfigManager::BAN_LENGTH)), 13, 2, "Sending unknown packets to the server.", 0);
+
+					if(success)
+						std::cout << "[Notice - ProtocolGame::parsePacket] " << player->getName() << " has been banished for sending unknown byte (0x" << std::hex << (int16_t)recvbyte << std::dec << ")." << std::endl;
+				}
+
+				if(!success)
+					std::cout << "[Notice - ProtocolGame::parsePacket] " << player->getName() << " has sent unknown byte: 0x" << std::hex << (int16_t)recvbyte << std::dec << "!" << std::endl;
+				
 				break;
+			}
 		}
 	}
 }

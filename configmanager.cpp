@@ -137,7 +137,7 @@ bool ConfigManager::load()
 	m_confNumber[START_LEVEL] = getGlobalNumber(L, "newPlayerLevel", 1);
 	m_confNumber[START_MAGICLEVEL] = getGlobalNumber(L, "newPlayerMagicLevel", 0);
 	m_confBool[START_CHOOSEVOC] = getGlobalBool(L, "newPlayerChooseVoc", "no");
-	m_confNumber[HOUSE_PRICE] = getGlobalNumber(L, "housePriceEachSQM", 1000);
+	m_confNumber[HOUSE_PRICE] = getGlobalNumber(L, "housePriceEachSquare", 1000);
 	m_confNumber[WHITE_SKULL_TIME] = getGlobalNumber(L, "whiteSkullTime", 15 * 60 * 1000);
 	m_confNumber[KILLS_TO_RED] = getGlobalNumber(L, "killsToRedSkull", 3);
 	m_confNumber[KILLS_TO_BAN] = getGlobalNumber(L, "killsToBan", 5);
@@ -225,12 +225,15 @@ bool ConfigManager::load()
 	m_confNumber[RATE_STAMINA_HITS] = getGlobalNumber(L, "rateStaminaHits", 1);
 	m_confDouble[RATE_STAMINA_GAIN] = getGlobalDouble(L, "rateStaminaGain", 1000 / 3);
 	m_confDouble[RATE_STAMINA_THRESHOLD] = getGlobalDouble(L, "rateStaminaThresholdGain", 4);
-	m_confDouble[RATE_STAMINA_ABOVE] = getGlobalDouble(L, "rateStaminaAbove", 1.5f);
-	m_confDouble[RATE_STAMINA_UNDER] = getGlobalDouble(L, "rateStaminaUnder", 0.5f);
-	m_confNumber[STAMINA_THRESHOLD_MAX] = getGlobalNumber(L, "staminaRatingThresholdMax", 41 * 60);
-	m_confNumber[STAMINA_THRESHOLD_MIN] = getGlobalNumber(L, "staminaRatingThresholdMin", 14 * 60);
+	m_confDouble[RATE_STAMINA_ABOVE] = getGlobalDouble(L, "rateStaminaAboveNormal", 1.5f);
+	m_confDouble[RATE_STAMINA_UNDER] = getGlobalDouble(L, "rateStaminaUnderNormal", 0.5f);
+	m_confNumber[STAMINA_LIMIT_TOP] = getGlobalNumber(L, "staminaRatingTopLimit", 41 * 60);
+	m_confNumber[STAMINA_LIMIT_BOTTOM] = getGlobalNumber(L, "staminaRatingBottomLimit", 14 * 60);
 	m_confBool[DISPLAY_LOGGING] = getGlobalBool(L, "displayPlayersLogging", "yes");
-	m_confBool[STAMINA_BONUS_PREMIUM] = getGlobalBool(L, "staminaExperienceBonusOnlyPremium", "yes");
+	m_confBool[STAMINA_BONUS_PREMIUM] = getGlobalBool(L, "staminaThresholdOnlyPremium", "yes");
+	m_confBool[BAN_UNKNOWN_BYTES] = getGlobalBool(L, "autoBanishUnknownBytes", "no");
+	m_confNumber[BLESS_REDUCTION_BASE] = getGlobalNumber(L, "blessingReductionBase", 30);
+	m_confNumber[BLESS_REDUCTION_DECREAMENT] = getGlobalNumber(L, "blessingReductionDecreament", 5);
 
 	m_loaded = true;
 	return true;

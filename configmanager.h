@@ -136,6 +136,8 @@ class ConfigManager
 			RATE_STAMINA_HITS,
 			STAMINA_THRESHOLD_MAX,
 			STAMINA_THRESHOLD_MIN,
+			BLESS_REDUCTION_BASE,
+			BLESS_REDUCTION_DECREAMENT,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 
@@ -211,6 +213,7 @@ class ConfigManager
 			STORE_DIRECTION,
 			DISPLAY_LOGGING,
 			STAMINA_BONUS_PREMIUM,
+			BAN_UNKNOWN_BYTES,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

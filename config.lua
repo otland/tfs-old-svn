@@ -22,6 +22,7 @@
 	broadcastBanishments = "yes"
 	killsToBan = 5
 	maxViolationCommentSize = 200
+	autoBanishUnknownBytes = "no"
 
 	-- Battle
 	-- NOTE: loginProtectionPeriod is the famous Tibia anti-magebomb system.
@@ -104,11 +105,13 @@
 
 	-- Houses
 	buyableAndSellableHouses = "yes"
-	housesPerAccount = 0
+	houseNeedPremium = "yes"
+	bedsRequirePremium = "yes"
 	levelToBuyHouse = 1
+	housesPerAccount = 0
 	houseRentAsPrice = "no"
 	housePriceAsRent = "no"
-	housePriceEachSQM = 1000
+	housePriceEachSquare = 1000
 	houseRentPeriod = "never"
 
 	-- Item usage
@@ -147,13 +150,15 @@
 	playerQueryDeepness = 2
 	displayPlayersLogging = "yes"
 
-	-- Premium account
+	-- Premium-related
 	freePremium = "no"
 	removePremiumOnInit = "yes"
 	premiumForPromotion = "yes"
+
+	-- Blessings
 	blessingsOnlyPremium = "yes"
-	houseNeedPremium = "yes"
-	bedsRequirePremium = "yes"
+	blessingReductionBase = 30
+	blessingReductionDecreament = 5
 
 	-- Rates
 	-- NOTE: experienceStages configuration is located in data/XML/stages.xml.
@@ -177,11 +182,11 @@
 	rateStaminaHits = 1
 	rateStaminaGain = 1000 / 3
 	rateStaminaThresholdGain = 4
-	staminaRatingThresholdMax = 41 * 60
-	staminaRatingThresholdMin = 14 * 60
-	rateAboveMaxThreshold = 1.5
-	rateUnderMinThreshold = 0.5
-	staminaExperienceBonusOnlyPremium = "yes"
+	staminaRatingTopLimit = 41 * 60
+	staminaRatingBottomLimit = 14 * 60
+	rateStaminaAboveNormal = 1.5
+	rateStaminaUnderNormal = 0.5
+	staminaThresholdOnlyPremium = "yes"
 
 	-- Party
 	-- NOTE: experienceShareLevelDifference is float number.

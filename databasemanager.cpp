@@ -949,6 +949,10 @@ uint32_t DatabaseManager::updateDatabase()
 
 					query.str("");
 					query << "ALTER TABLE `players` CHANGE `loss_items` `loss_items` INT NOT NULL DEFAULT 100;";
+					db->executeQuery(query.str());
+
+					query.str("");
+					query << "ALTER TABLE `players` ADD `loss_containers` INT NOT NULL DEFAULT 100 AFTER `loss_skills`;";
 					break;
 				}
 

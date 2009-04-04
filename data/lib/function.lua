@@ -375,6 +375,14 @@ function isPlayerGhost(cid)
 	return isPlayer(cid) == TRUE and getCreatureCondition(cid, CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE) or FALSE
 end
 
+function doPlayerSetExperienceRate(cid, value)
+	return doPlayerSetRate(cid, SKILL__LEVEL, value)
+end
+
+function doPlayerSetMagicRate(cid, value)
+	return doPlayerSetRate(cid, SKILL__MAGLEVEL, value)
+end
+
 function getPlayerFrags(cid)
 	return math.ceil((getPlayerRedSkullTicks(cid) / getConfigInfo('timeToDecreaseFrags')) + 1)
 end

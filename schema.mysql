@@ -75,7 +75,7 @@ CREATE TABLE `server_reports`
 CREATE TABLE `groups`
 (
 	`id` INT NOT NULL AUTO_INCREMENT,
-	`name` VARCHAR(255) NOT NULL COMMENT 'group name',
+	`name` VARCHAR(255) NOT NULL,
 	`flags` BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	`customflags` BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	`access` INT NOT NULL,
@@ -102,7 +102,7 @@ CREATE TABLE `accounts`
 	`lastday` INT UNSIGNED NOT NULL DEFAULT 0,
 	`email` VARCHAR(255) NOT NULL DEFAULT '',
 	`key` VARCHAR(20) NOT NULL DEFAULT '0',
-	`blocked` TINYINT(1) NOT NULL DEFAULT FALSE,
+	`blocked` TINYINT(1) NOT NULL DEFAULT FALSE COMMENT 'internal usage',
 	`warnings` INT NOT NULL DEFAULT 0,
 	`group_id` INT NOT NULL DEFAULT 1,
 	PRIMARY KEY (`id`), UNIQUE (`name`),
@@ -150,12 +150,13 @@ CREATE TABLE `players`
 	`guildnick` VARCHAR(255) NOT NULL DEFAULT '',
 	`lastlogout` BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	`blessings` TINYINT(2) NOT NULL DEFAULT 0,
-	`balance` BIGINT NOT NULL DEFAULT 0 COMMENT 'player money in bank',
-	`stamina` BIGINT NOT NULL DEFAULT 151200000,
-	`direction` INT NOT NULL DEFAULT 2 COMMENT 'NOT IN USE BY THE SERVER',
+	`balance` BIGINT NOT NULL DEFAULT 0,
+	`stamina` BIGINT NOT NULL DEFAULT 151200000 COMMENT 'stored in miliseconds',
+	`direction` INT NOT NULL DEFAULT 2,
 	`loss_experience` INT NOT NULL DEFAULT 100,
 	`loss_mana` INT NOT NULL DEFAULT 100,
 	`loss_skills` INT NOT NULL DEFAULT 100,
+	`loss_containers` INT NOT NULL DEFAULT 100,
 	`loss_items` INT NOT NULL DEFAULT 100,
 	`premend` INT NOT NULL DEFAULT 0 COMMENT 'NOT IN USE BY THE SERVER',
 	`online` TINYINT(1) NOT NULL DEFAULT 0,
@@ -170,14 +171,14 @@ CREATE TABLE `players`
 	FOREIGN KEY (`group_id`) REFERENCES `groups`(`id`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `players` VALUES (1, 'Account Manager', 0, 1, 1, 1, 0, 150, 150, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 50, 50, 7, '', 400, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 201660000, 0, 10, 10, 10, 10, 0, 0, 0, 0, 0, '');
+INSERT INTO `players` VALUES (1, 'Account Manager', 0, 1, 1, 1, 0, 150, 150, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 50, 50, 7, '', 400, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 201660000, 0, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, '');
 
 CREATE TABLE `bans`
 (
 	`id` INT UNSIGNED NOT NULL auto_increment,
-	`type` TINYINT(1) NOT NULL COMMENT 'this field defines if its ip, account, player, or any else ban',
-	`value` INT UNSIGNED NOT NULL COMMENT 'ip, player guid, account number',
-	`param` INT UNSIGNED NOT NULL DEFAULT 4294967295 COMMENT 'mask',
+	`type` TINYINT(1) NOT NULL COMMENT '1 - ip banishment, 2 - namelock, 3 - account banishment, 4 - notation, 5 - deletion',
+	`value` INT UNSIGNED NOT NULL COMMENT 'ip address (integer), player guid or account number',
+	`param` INT UNSIGNED NOT NULL DEFAULT 4294967295 COMMENT 'used only for ip banishment mask (integer)',
 	`active` TINYINT(1) NOT NULL DEFAULT TRUE,
 	`expires` INT NOT NULL,
 	`added` INT UNSIGNED NOT NULL,
@@ -203,7 +204,7 @@ CREATE TABLE `guilds`
 (
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
-	`name` VARCHAR(255) NOT NULL COMMENT 'guild name - nothing else needed here',
+	`name` VARCHAR(255) NOT NULL,
 	`ownerid` INT NOT NULL,
 	`creationdata` INT NOT NULL,
 	`motd` VARCHAR(255) NOT NULL,
@@ -221,9 +222,9 @@ CREATE TABLE `guild_invites`
 CREATE TABLE `guild_ranks`
 (
 	`id` INT NOT NULL AUTO_INCREMENT,
-	`guild_id` INT NOT NULL COMMENT 'guild',
-	`name` VARCHAR(255) NOT NULL COMMENT 'rank name',
-	`level` INT NOT NULL COMMENT 'rank level - leader, vice, member, maybe something else',
+	`guild_id` INT NOT NULL,
+	`name` VARCHAR(255) NOT NULL,
+	`level` INT NOT NULL COMMENT '1 - leader, 2 - vice leader, 3 - member',
 	PRIMARY KEY (`id`),
 	FOREIGN KEY (`guild_id`) REFERENCES `guilds`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
@@ -266,8 +267,8 @@ CREATE TABLE `player_deaths`
 	`player_id` INT NOT NULL,
 	`time` BIGINT UNSIGNED NOT NULL DEFAULT 0,
 	`level` INT NOT NULL DEFAULT 1,
-	`killed_by` VARCHAR(255) NOT NULL,
-	`altkilled_by` VARCHAR(255) NOT NULL,
+	`killed_by` VARCHAR(255) NOT NULL COMMENT 'last hit killer',
+	`altkilled_by` VARCHAR(255) NOT NULL COMMENT 'most damage killer',
 	KEY (`player_id`),
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
@@ -275,8 +276,8 @@ CREATE TABLE `player_deaths`
 CREATE TABLE `player_depotitems`
 (
 	`player_id` INT NOT NULL,
-	`depot_id` INT NOT NULL DEFAULT 0,
-	`sid` INT NOT NULL COMMENT 'any given range eg 0-100 will be reserved for depot lockers and all > 100 will be then normal items inside depots',
+	`depot_id` INT NOT NULL DEFAULT 0 COMMENT 'NOT IN USE BY THE SERVER',
+	`sid` INT NOT NULL COMMENT 'any given range, eg. 0-100 is reserved for depot lockers and all above 100 will be normal items inside depots',
 	`pid` INT NOT NULL DEFAULT 0,
 	`itemtype` INT NOT NULL,
 	`count` INT NOT NULL DEFAULT 0,
@@ -328,8 +329,8 @@ CREATE TABLE `player_storage`
 
 CREATE TABLE `player_viplist`
 (
-	`player_id` INT NOT NULL COMMENT 'id of player whose viplist entry it is',
-	`vip_id` INT NOT NULL COMMENT 'id of target player of viplist entry',
+	`player_id` INT NOT NULL,
+	`vip_id` INT NOT NULL,
 	KEY (`player_id`), KEY (`vip_id`), UNIQUE (`player_id`, `vip_id`),
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
 	FOREIGN KEY (`vip_id`) REFERENCES `players`(`id`) ON DELETE CASCADE

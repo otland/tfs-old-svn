@@ -114,7 +114,7 @@
 						3 = Axe Fighting
 						4 = Distance Fighting
 						5 = Shielding
-						5 = Fishing
+						6 = Fishing
 
 			Returns
 				Player skill value.
