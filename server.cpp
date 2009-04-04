@@ -24,12 +24,13 @@
 
 #include "server.h"
 #include "game.h"
-#include "scheduler.h"
+#include "configmanager.h"
 
 #include "connection.h"
 #include "outputmessage.h"
 
 extern Game g_game;
+extern ConfigManager g_config;
 
 bool ServicePort::add(Service_ptr newService)
 {
