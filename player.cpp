@@ -851,7 +851,7 @@ void Player::dropLoot(Container* corpse)
 	if(!corpse || lootDrop != LOOT_DROP_FULL)
 		return;
 
-	uint32_t loss = 0, itemLoss = 0;
+	int32_t loss = 0, itemLoss = 0;
 	if(lootDrop)
 	{
 		loss = lossPercent[LOSS_ITEMS];
@@ -869,8 +869,8 @@ void Player::dropLoot(Container* corpse)
 	{
 		if(Item* item = inventory[i])
 		{
-			if(getSkull() == SKULL_RED || (item->getContainer() && (uint32_t)random_range(1, 100) <= loss)
-				|| (!item->getContainer() && (uint32_t)random_range(1, 100) <= itemLoss))
+			if(getSkull() == SKULL_RED || (item->getContainer() && (int32_t)random_range(1, 100) <= loss)
+				|| (!item->getContainer() && (int32_t)random_range(1, 100) <= itemLoss))
 			{
 				g_game.internalMoveItem(NULL, this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
 				sendRemoveInventoryItem((slots_t)i, inventory[(slots_t)i]);
@@ -3872,29 +3872,25 @@ uint64_t Player::getLostExperience() const
 	if(!skillLoss)
 		return 0;
 
-	double percent = lossPercent[LOSS_EXPERIENCE];
-	percent -= vocation->getLessLoss() + (getBlessings() * 8);
-
-	percent = percent / 1000.;
+	double percent = ((double)lossPercent[LOSS_EXPERIENCE] - vocation->getLessLoss() - (getBlessings() * 8)) / 1000.;
 	if(level <= 25)
-		return (uint64_t)std::floor(experience * percent);
+		return (uint64_t)std::floor((double)experience * percent);
 
 	int32_t base = level;
-	double levels = base + 50;
+	double levels = ((double)base + 50) / 100.;
 
-	levels = levels / 100.;
 	uint64_t lost = 0;
-	while(levels > 1)
+	while(levels > 1.)
 	{
 		lost += getExpForLevel(base);
 		base--;
 		levels -= 1.;
 	}
 
-	if(levels > 0)
+	if(levels > 0.)
 		lost += (uint64_t)std::floor((double)getExpForLevel(base) * levels);
 
-	return (uint64_t)std::floor(lost * percent);
+	return (uint64_t)std::floor((double)lost * percent);
 }
 
 uint32_t Player::getAttackSpeed()
