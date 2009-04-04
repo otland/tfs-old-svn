@@ -932,7 +932,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				bool success = false;
 				if(g_config.getBool(ConfigManager::BAN_UNKNOWN_BYTES))
 				{
-					int32_t warnings = IOLoginData::getInstance()->loadAccount(accountId, true).warnings;
+					int32_t warnings = IOLoginData::getInstance()->loadAccount(player->getAccount(), true).warnings;
 					if(warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
 						success = IOBan::getInstance()->addDeletion(player->getAccount(), 13, 7,
 							"Sending unknown packets to the server.", 0);

@@ -3795,13 +3795,14 @@ void Player::addUnjustifiedDead(const Player* attacked)
 		setSkull(SKULL_RED);
 		g_game.updateCreatureSkull(this);
 	}
-	else if(g_config.getNumber(ConfigManager::KILLS_TO_BAN) != 0 && redSkullTicks >= (g_config.getNumber(ConfigManager::KILLS_TO_BAN) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME))
+	else if(g_config.getNumber(ConfigManager::KILLS_TO_BAN) != 0 && redSkullTicks >= (g_config.getNumber(
+		ConfigManager::KILLS_TO_BAN) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME))
 	{
-		Account account = IOLoginData::getInstance()->loadAccount(accountId, true);
+		int32_t warnings = IOLoginData::getInstance()->loadAccount(accountId, true).warnings;
 		bool success = false;
-		if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
+		if(warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
 			success = IOBan::getInstance()->addDeletion(accountId, 20, 7, "Unjustified player killing.", 0);
-		else if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
+		else if(warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
 			success = IOBan::getInstance()->addBanishment(accountId, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), 20, 4, "Unjustified player killing.", 0);
 		else
 			success = IOBan::getInstance()->addBanishment(accountId, (time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH)), 20, 2, "Unjustified player killing.", 0);
