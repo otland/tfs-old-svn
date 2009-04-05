@@ -377,7 +377,6 @@
 	<distance id="7839" type="ice" event="function" value="default"/>
 	<distance id="7840" type="fire" event="function" value="default"/>
 	<distance id="7850" type="earth" event="function" value="default"/>
-	<distance id="3965" level="20" event="function" value="default"/>
 	<distance id="3965" level="20" event="function" value="default"/> <!-- Hunting Spear -->
 	<distance id="7378" level="25" event="function" value="default"/> <!-- Royal Spear -->
 	<distance id="7367" level="42" event="function" value="default"/> <!-- Enchanted Spear -->

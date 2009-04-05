@@ -859,7 +859,7 @@ void Player::dropLoot(Container* corpse)
 		bless--;
 	}
 
-	uint32_t itemLoss = std::floor((float)(loss + 5) * lossPercent[LOSS_ITEMS] / 1000.);
+	uint32_t itemLoss = (uint32_t)std::floor((float)(loss + 5) * lossPercent[LOSS_ITEMS] / 1000.);
 	for(uint8_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 	{
 		if(Item* item = inventory[i])
@@ -1402,7 +1402,7 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 			int64_t period = (int32_t)time(NULL) - lastLogout;
 			if(period - 600 > 0)
 			{
-				period = std::ceil((double)period * g_config.getDouble(ConfigManager::RATE_STAMINA_GAIN));
+				period = (int64_t)std::ceil((double)period * g_config.getDouble(ConfigManager::RATE_STAMINA_GAIN));
 				int64_t rated = stamina + period, tmp = g_config.getNumber(
 					ConfigManager::STAMINA_LIMIT_TOP) * STAMINA_MUL;
 				if(rated >= tmp)
@@ -1413,7 +1413,7 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 				addStamina(period - rated);
 				if(rated > 0)
 				{
-					tmp = std::ceil((double)rated / g_config.getDouble(ConfigManager::RATE_STAMINA_THRESHOLD));
+					tmp = (int64_t)std::ceil((double)rated / g_config.getDouble(ConfigManager::RATE_STAMINA_THRESHOLD));
 					if(stamina + tmp > STAMINA_MAX)
 						tmp = STAMINA_MAX;
 

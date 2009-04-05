@@ -689,7 +689,7 @@ int32_t WeaponMelee::getWeaponDamage(const Player* player, const Creature* targe
 	if(vocation && vocation->meleeDamageMultipler != 1.0)
 		maxValue *= vocation->meleeDamageMultipler;
 
-	int32_t ret = std::floor(maxValue);
+	int32_t ret = (int32_t)std::floor(maxValue);
 	if(maxDamage)
 		return -ret;
 
@@ -999,7 +999,7 @@ int32_t WeaponDistance::getWeaponDamage(const Player* player, const Creature* ta
 	if(vocation && vocation->distDamageMultipler != 1.0)
 		maxValue *= vocation->distDamageMultipler;
 
-	int32_t ret = std::floor(maxValue);
+	int32_t ret = (int32_t)std::floor(maxValue);
 	if(maxDamage)
 		return -ret;
 

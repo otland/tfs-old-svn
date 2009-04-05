@@ -26,7 +26,8 @@
   <defenses armor="30" defense="30">
     <defense name="healing" interval="1000" chance="25" min="100" max="195">
       <attribute key="areaEffect" value="blueshimmer"/>
-    </defense>    <defense name="invisible" interval="3000" chance="30" duration="6000">
+    </defense>
+    <defense name="invisible" interval="3000" chance="30" duration="6000">
       <attribute key="areaEffect" value="blueshimmer"/>
     </defense>
   </defenses>
