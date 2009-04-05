@@ -789,7 +789,7 @@ void Creature::dropCorpse()
 
 bool Creature::getKillers(Creature** _lastHitCreature, Creature** _mostDamageCreature)
 {
-	int32_t mostDamage = 0;
+	uint32_t mostDamage = 0;
 	for(CountMap::iterator it = damageMap.begin(); it != damageMap.end(); ++it)
 	{
 		CountBlock_t cb = it->second;
