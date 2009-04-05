@@ -476,6 +476,7 @@ class LuaScriptInterface
 		//get item info
 		static int32_t luaGetItemWeaponType(lua_State* L);
 		static int32_t luaGetItemRWInfo(lua_State* L);
+		static int32_t luaGetItemProtection(lua_State* L);
 		static int32_t luaGetThingFromPos(lua_State* L);
 		static int32_t luaGetThing(lua_State* L);
 		static int32_t luaGetThingPos(lua_State* L);
@@ -489,6 +490,7 @@ class LuaScriptInterface
 		static int32_t luaDoSetItemActionId(lua_State* L);
 		static int32_t luaDoSetItemText(lua_State* L);
 		static int32_t luaDoSetItemSpecialDescription(lua_State* L);
+		static int32_t luaDoSetItemProtection(lua_State* L);
 
 		//get tile info
 		static int32_t luaGetTileInfo(lua_State* L);

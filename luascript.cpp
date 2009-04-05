@@ -1816,6 +1816,12 @@ void LuaScriptInterface::registerFunctions()
 	//doSetItemOutfit(cid, item, time)
 	lua_register(m_luaState, "doSetItemOutfit", LuaScriptInterface::luaSetItemOutfit);
 
+	//getItemProtection(uid)
+	lua_register(m_luaState, "getItemProtection", LuaScriptInterface::luaGetItemProtection);
+
+	//doSetItemProtection(uid, value)
+	lua_register(m_luaState, "doSetItemProtection", LuaScriptInterface::luaDoSetItemProtection);
+
 	//doSetCreatureOutfit(cid, outfit, time)
 	lua_register(m_luaState, "doSetCreatureOutfit", LuaScriptInterface::luaSetCreatureOutfit);
 
@@ -6987,15 +6993,11 @@ int32_t LuaScriptInterface::luaSetItemOutfit(lua_State* L)
 	//doSetItemOutfit(cid, item, time)
 	int32_t time = (int32_t)popNumber(L);
 	uint32_t item = (uint32_t)popNumber(L);
-	uint32_t cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	Creature* creature = env->getCreatureByUID(cid);
-	if(creature)
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
-		ReturnValue ret = Spell::CreateIllusion(creature, item, time);
-		if(ret == RET_NOERROR)
+		if(Spell::CreateIllusion(creature, item, time) == RET_NOERROR)
 			lua_pushnumber(L, LUA_NO_ERROR);
 		else
 			lua_pushnumber(L, LUA_ERROR);
@@ -7005,6 +7007,44 @@ int32_t LuaScriptInterface::luaSetItemOutfit(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
 	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetItemProtection(lua_State* L)
+{
+	//getItemProtection(uid)
+	ScriptEnviroment* env = getScriptEnv();
+
+	Item* item = env->getItemByUID(popNumber(L));
+	if(!item)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+		return 1;
+	}
+
+	lua_pushnumber(L, (item->isScriptProtected() ? LUA_TRUE : LUA_FALSE));
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoSetItemProtection(lua_State* L)
+{
+	//doSetItemProtection(uid, value)
+	bool value = popNumber(L) == LUA_TRUE;
+
+	ScriptEnviroment* env = getScriptEnv();
+	if(Item* item = env->getItemByUID(popNumber(L)))
+	{
+		item->setScriptProtected(value);
+		lua_pushnumber(L, LUA_NO_ERROR);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+
 	return 1;
 }
 
@@ -7278,12 +7318,8 @@ int32_t LuaScriptInterface::luaIsContainer(lua_State* L)
 int32_t LuaScriptInterface::luaIsCorpse(lua_State* L)
 {
 	//isCorpse(uid)
-	uint32_t uid = popNumber(L);
-
 	ScriptEnviroment* env = getScriptEnv();
-
-	Item* item = env->getItemByUID(uid);
-	if(item)
+	if(Item* item = env->getItemByUID(popNumber(L)))
 	{
 		const ItemType& it = Item::items[item->getID()];
 		lua_pushnumber(L, (it.corpseType != RACE_NONE ? LUA_TRUE : LUA_FALSE));
@@ -7570,14 +7606,11 @@ int32_t LuaScriptInterface::luaGetContainerItem(lua_State* L)
 {
 	//getContainerItem(uid, slot)
 	uint32_t slot = popNumber(L);
-	uint32_t uid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
-	if(Container* container = env->getContainerByUID(uid))
+	if(Container* container = env->getContainerByUID(popNumber(L)))
 	{
-		Item* item = container->getItem(slot);
-		if(item)
+		if(Item* item = container->getItem(slot))
 		{
 			uint32_t uid = env->addThing(item);
 			pushThing(L, item, uid);

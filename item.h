@@ -430,7 +430,7 @@ class Item : virtual public Thing, public ItemAttributes
 		virtual bool canTransform() const {return true;}
 
 		virtual void onRemoved() {}
-		virtual bool onTradeEvent(TradeEvents_t event, Player* owner){return true;}
+		virtual bool onTradeEvent(TradeEvents_t event, Player* owner) {return true;}
 
 		bool isLoadedFromMap() const {return loadedFromMap;}
 		void setLoadedFromMap(bool value) {loadedFromMap = value;}
