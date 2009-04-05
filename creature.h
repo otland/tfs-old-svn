@@ -446,6 +446,8 @@ class Creature : public AutoID, virtual public Thing
 		#ifdef __DEBUG__
 		void validateMapCache();
 		#endif
+		void updateMapCache();
+
 		void updateTileCache(const Tile* tile, int32_t dx, int32_t dy);
 		void updateTileCache(const Tile* tile, const Position& pos);
 
