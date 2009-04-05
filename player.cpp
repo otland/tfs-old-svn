@@ -3868,9 +3868,9 @@ uint64_t Player::getLostExperience() const
 	if(!skillLoss)
 		return 0;
 
-	float percent = (float)(lossPercent[LOSS_EXPERIENCE] - vocation->getLessLoss() - (getBlessings() * 8)) / 10000.0f;
+	float percent = (float)(lossPercent[LOSS_EXPERIENCE] - vocation->getLessLoss() - (getBlessings() * 8)) / 100.0f;
 	if(level <= 25)
-		return (uint64_t)experience * percent;
+		return (uint64_t)std::floor((float)experience * (percent / 10.0f));
 
 	int32_t base = level;
 	float levels = (float)(base + 50) / 100.0f;
@@ -3878,15 +3878,15 @@ uint64_t Player::getLostExperience() const
 	uint64_t lost = 0;
 	while(levels > 1.0f)
 	{
-		lost += getExpForLevel(base);
+		lost += (getExpForLevel(base) - getExpForLevel(base - 1));
 		base--;
 		levels -= 1.0f;
 	}
 
 	if(levels > 0.0f)
-		lost += (uint64_t)getExpForLevel(base) * levels;
+		lost += (uint64_t)std::floor((float)(getExpForLevel(base) - getExpForLevel(base - 1)) * levels);
 
-	return (uint64_t)lost * percent;
+	return (uint64_t)std::floor((float)lost * percent);
 }
 
 uint32_t Player::getAttackSpeed()
