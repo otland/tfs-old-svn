@@ -235,6 +235,7 @@ bool ConfigManager::load()
 	m_confBool[BAN_UNKNOWN_BYTES] = getGlobalBool(L, "autoBanishUnknownBytes", "no");
 	m_confNumber[BLESS_REDUCTION_BASE] = getGlobalNumber(L, "blessingReductionBase", 30);
 	m_confNumber[BLESS_REDUCTION_DECREAMENT] = getGlobalNumber(L, "blessingReductionDecreament", 5);
+	m_confBool[ALLOW_CHANGEADDONS] = getGlobalBool(L, "allowChangeAddons", "yes");
 
 	m_loaded = true;
 	return true;

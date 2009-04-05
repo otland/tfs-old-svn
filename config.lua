@@ -141,6 +141,7 @@
 	kickIdlePlayerAfterMinutes = 15
 	allowChangeOutfit = "yes"
 	allowChangeColors = "yes"
+	allowChangeAddons = "yes"
 	disableOutfitsForPrivilegedPlayers = "no"
 	bankSystem = "yes"
 	saveGlobalStorage = "yes"

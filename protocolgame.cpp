@@ -888,8 +888,9 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				break;
 
 			case 0xD2: // request outfit
-				if((!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) || !g_config.getBool(ConfigManager::DISABLE_OUTFITS_PRIVILEGED))
-					&& (g_config.getBool(ConfigManager::ALLOW_CHANGECOLORS) || g_config.getBool(ConfigManager::ALLOW_CHANGEOUTFIT)))
+				if((!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) || !g_config.getBool(
+					ConfigManager::DISABLE_OUTFITS_PRIVILEGED)) && (g_config.getBool(ConfigManager::ALLOW_CHANGEOUTFIT)
+					|| g_config.getBool(ConfigManager::ALLOW_CHANGECOLORS) || g_config.getBool(ConfigManager::ALLOW_CHANGEADDONS)))
 					parseRequestOutfit(msg);
 				break;
 
@@ -1300,10 +1301,14 @@ void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 		newOutfit.lookBody = msg.GetByte();
 		newOutfit.lookLegs = msg.GetByte();
 		newOutfit.lookFeet = msg.GetByte();
-		newOutfit.lookAddons = msg.GetByte();
 	}
 	else
-		msg.SkipBytes(5);
+		msg.SkipBytes(4);
+
+	if(g_config.getBool(ConfigManager::ALLOW_CHANGEADDONS))
+		newOutfit.lookAddons = msg.GetByte();
+	else
+		msg.SkipBytes(1);
 
 	addGameTask(&Game::playerChangeOutfit, player->getID(), newOutfit);
 }

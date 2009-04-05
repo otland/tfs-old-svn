@@ -215,6 +215,7 @@ class ConfigManager
 			STAMINA_BONUS_PREMIUM,
 			BAN_UNKNOWN_BYTES,
 			ABORT_SOCKET_FAIL,
+			ALLOW_CHANGEADDONS,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 
