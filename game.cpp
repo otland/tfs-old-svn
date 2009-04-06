@@ -1058,9 +1058,10 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 {
 	creature->setLastPosition(creature->getPosition());
 	Cylinder* fromTile = creature->getTile();
-
 	Cylinder* toTile = NULL;
-	Position destPos = getNextPosition(direction, creature->getPosition());
+
+	const Position& currentPos = creature->getPosition();
+	Position destPos = getNextPosition(direction, currentPos);
 	if(direction < SOUTHWEST && creature->getPlayer())
 	{
 		//try go up
