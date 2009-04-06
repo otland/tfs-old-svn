@@ -82,7 +82,7 @@ class ProtocolGame : public Protocol
 		virtual void releaseProtocol();
 		virtual void deleteProtocolTask();
 
-		bool canSee(int16_t x, int16_t y, int8_t z) const;
+		bool canSee(int32_t x, int32_t y, int32_t z) const;
 		bool canSee(const Creature*) const;
 		bool canSee(const Position& pos) const;
 
@@ -254,7 +254,7 @@ class ProtocolGame : public Protocol
 		void GetTileDescription(const Tile* tile, NetworkMessage_ptr msg);
 
 		// translate a floor to clientreadable format
-		void GetFloorDescription(NetworkMessage_ptr msg, int16_t x, int16_t y, int8_t z,
+		void GetFloorDescription(NetworkMessage_ptr msg, int32_t x, int32_t y, int32_t z,
 			int32_t width, int32_t height, int32_t offset, int32_t& skip);
 
 		// translate a map area to clientreadable format
@@ -304,8 +304,6 @@ class ProtocolGame : public Protocol
 		//shop
 		void AddShopItem(NetworkMessage_ptr msg, const ShopInfo item);
 
-		friend class Player;
-
 		template<class T1, class f1, class r>
 		void addGameTask(r (Game::*f)(f1), T1 p1);
 
@@ -338,14 +336,13 @@ class ProtocolGame : public Protocol
 		class f6, class f7, class f8, class r>
 		void addGameTask(r (Game::*f)(f1, f2, f3, f4, f5, f6, f7, f8), T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8);
 
+		friend class Player;
 		Player* player;
 
 		int64_t m_now, m_nextTask, m_nextPing, m_lastTaskCheck;
 		int32_t m_messageCount, m_rejectCount;
 		uint32_t eventConnect;
-
-		bool m_debugAssertSent;
-		bool m_acceptPackets;
+		bool m_debugAssertSent, m_acceptPackets;
 };
 
 #endif

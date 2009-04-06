@@ -1024,15 +1024,13 @@ void ProtocolGame::GetMapDescription(uint16_t x, uint16_t y, uint8_t z,
 	}
 }
 
-void ProtocolGame::GetFloorDescription(NetworkMessage_ptr msg, int16_t x, int16_t y, int8_t z, int32_t width, int32_t height, int32_t offset, int32_t& skip)
+void ProtocolGame::GetFloorDescription(NetworkMessage_ptr msg, int32_t x, int32_t y, int32_t z, int32_t width, int32_t height, int32_t offset, int32_t& skip)
 {
-	Tile* tile;
 	for(int32_t nx = 0; nx < width; nx++)
 	{
 		for(int32_t ny = 0; ny < height; ny++)
 		{
-			tile = g_game.getTile(x + nx + offset, y + ny + offset, z);
-			if(tile)
+			if(Tile* tile = g_game.getTile(x + nx + offset, y + ny + offset, z))
 			{
 				if(skip >= 0)
 				{
@@ -1116,7 +1114,7 @@ bool ProtocolGame::canSee(const Position& pos) const
 	return canSee(pos.x, pos.y, pos.z);
 }
 
-bool ProtocolGame::canSee(int16_t x, int16_t y, int8_t z) const
+bool ProtocolGame::canSee(int32_t x, int32_t y, int32_t z) const
 {
 #ifdef __DEBUG__
 	if(z < 0 || z >= MAP_MAX_LAYERS)
@@ -2963,7 +2961,11 @@ void ProtocolGame::AddTileItem(NetworkMessage_ptr msg, const Position& pos, cons
 {
 	msg->AddByte(0x6A);
 	msg->AddPosition(pos);
-	msg->AddByte(item->getParent()->__getIndexOfThing(item));
+	if(const Tile* tile = item->getTile())
+		msg->AddByte(tile->__getIndexOfThing(item));
+	else
+		msg->AddByte(0x00);
+
 	msg->AddItem(item);
 }
 
@@ -2971,7 +2973,10 @@ void ProtocolGame::AddTileCreature(NetworkMessage_ptr msg, const Position& pos, 
 {
 	msg->AddByte(0x6A);
 	msg->AddPosition(pos);
-	msg->AddByte(creature->getParent()->__getIndexOfThing(creature));
+	if(const Tile* tile = creature->getTile())
+		msg->AddByte(tile->__getIndexOfThing(creature));
+	else
+		msg->AddByte(0x00);
 
 	bool known;
 	uint32_t removedKnown;
