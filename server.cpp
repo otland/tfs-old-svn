@@ -60,7 +60,7 @@ void ServicePort::open(uint16_t port)
 		std::cout << "> ERROR: Can bind only one socket to a specific port (" << m_serverPort << ")." << std::endl;
 		std::cout << "The exact error was: " << error.what() << std::endl;
 		if(g_config.getBool(ConfigManager::ABORT_SOCKET_FAIL))
-			Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, &g_game)));
+			exit(1);
 	}
 
 	accept();
