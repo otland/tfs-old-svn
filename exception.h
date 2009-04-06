@@ -36,15 +36,14 @@ class ExceptionHandler
 	private:
 		bool LoadMap();
 
-		struct SEHChain;
-		SEHChain chain;
-		bool installed;
-
 		struct SEHChain
 		{
 			SEHChain *prev;
 			void *SEHfunction;
 		};
+
+		SEHChain chain;
+		bool installed;
 };
 
 #endif  // #ifndef __EXCEPTION_H__
