@@ -158,9 +158,12 @@
 	premiumForPromotion = "yes"
 
 	-- Blessings
+	-- NOTE: blessingReduction* regards items/containers loss.
+	-- eachBlessReduction is how much each bless reduces the experience/magic/skills loss.
 	blessingsOnlyPremium = "yes"
 	blessingReductionBase = 30
 	blessingReductionDecreament = 5
+	eachBlessReduction = 8
 
 	-- Rates
 	-- NOTE: experienceStages configuration is located in data/XML/stages.xml.

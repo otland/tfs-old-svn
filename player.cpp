@@ -1404,7 +1404,7 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 			{
 				period = (int64_t)std::ceil((double)period * g_config.getDouble(ConfigManager::RATE_STAMINA_GAIN));
 				int64_t rated = stamina + period, tmp = g_config.getNumber(
-					ConfigManager::STAMINA_LIMIT_TOP) * STAMINA_MUL;
+					ConfigManager::STAMINA_LIMIT_TOP) * STAMINA_MULTIPLIER;
 				if(rated >= tmp)
 					rated -= tmp;
 				else
@@ -3868,7 +3868,8 @@ uint64_t Player::getLostExperience() const
 	if(!skillLoss)
 		return 0;
 
-	float percent = (float)(lossPercent[LOSS_EXPERIENCE] - vocation->getLessLoss() - (getBlessings() * 8)) / 100.0f;
+	float percent = (float)(lossPercent[LOSS_EXPERIENCE] - vocation->getLessLoss() - (getBlessings() * g_config.getNumber(
+		ConfigManager::BLESS_REDUCTION))) / 100.0f;
 	if(level <= 25)
 		return (uint64_t)std::floor((float)experience * (percent / 10.0f));
 

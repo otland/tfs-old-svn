@@ -138,6 +138,7 @@ class ConfigManager
 			STAMINA_LIMIT_BOTTOM,
 			BLESS_REDUCTION_BASE,
 			BLESS_REDUCTION_DECREAMENT,
+			BLESS_REDUCTION,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 
