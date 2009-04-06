@@ -71,7 +71,7 @@ class Tile : public Cylinder
 		{
 			tilePos = Position(x, y, z);
 			qt_node = NULL;
-			thingCount = m_flags = 0;
+			m_flags = thingCount = 0;
 			ground = NULL;
 		}
 
@@ -94,10 +94,10 @@ class Tile : public Cylinder
 		virtual bool isPushable() const {return false;}
 
 		Item* ground;
+		QTreeLeafNode* qt_node;
+		ItemVector downItems;
 		ItemVector topItems;
 		CreatureVector creatures;
-		ItemVector downItems;
-		QTreeLeafNode* qt_node;
 
 		MagicField* getFieldItem() const;
 		Teleport* getTeleportItem() const;
@@ -188,14 +188,14 @@ class Tile : public Cylinder
 		void onUpdateTileItem(uint32_t index, Item* oldItem,
 			const ItemType& oldType, Item* newItem, const ItemType& newType);
 		void onRemoveTileItem(uint32_t index, Item* item);
-		void onUpdateTile();
 
+		void onUpdateTile();
 		void updateTileFlags(Item* item, bool removing);
 
 	protected:
 		Position tilePos;
-		uint32_t thingCount;
 		uint32_t m_flags;
+		uint32_t thingCount;
 };
 
 #endif

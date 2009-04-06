@@ -483,26 +483,22 @@ Cylinder* Game::internalGetCylinder(Player* player, const Position& pos)
 {
 	if(pos.x != 0xFFFF)
 		return getTile(pos.x, pos.y, pos.z);
-	else
+
+	//container
+	if(pos.y & 0x40)
 	{
-		//container
-		if(pos.y & 0x40)
-		{
-			uint8_t from_cid = pos.y & 0x0F;
-			return player->getContainer(from_cid);
-		}
-		//inventory
-		else
-			return player;
+		uint8_t fromCid = pos.y & 0x0F;
+		return player->getContainer(fromCid);
 	}
+
+	return player;
 }
 
 Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index, uint32_t spriteId /*= 0*/, stackPosType_t type /*= STACKPOS_NORMAL*/)
 {
 	if(pos.x != 0xFFFF)
 	{
-		Tile* tile = getTile(pos.x, pos.y, pos.z);
-		if(tile)
+		if(Tile* tile = getTile(pos.x, pos.y, pos.z))
 		{
 			/*look at*/
 			if(type == STACKPOS_LOOK)
@@ -600,38 +596,28 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 			return thing;
 		}
 	}
+	else if(pos.y & 0x40)
+	{
+		uint8_t fromCid = pos.y & 0x0F, slot = pos.z;
+		if(Container* parentcontainer = player->getContainer(fromCid))
+			return parentcontainer->getItem(slot);
+	}
+	else if(pos.y == 0 && pos.z == 0)
+	{
+		const ItemType& it = Item::items.getItemIdByClientId(spriteId);
+		if(it.id == 0)
+			return NULL;
+
+		int32_t subType = -1;
+		if(it.isFluidContainer() && index < int32_t(sizeof(reverseFluidMap) / sizeof(int32_t)))
+			subType = reverseFluidMap[index];
+
+		return findItemOfType(player, it.id, true, subType);
+	}
 	else
 	{
-		//container
-		if(pos.y & 0x40)
-		{
-			uint8_t fromCid = pos.y & 0x0F;
-			uint8_t slot = pos.z;
-
-			Container* parentcontainer = player->getContainer(fromCid);
-			if(!parentcontainer)
-				return NULL;
-
-			return parentcontainer->getItem(slot);
-		}
-		else if(pos.y == 0 && pos.z == 0)
-		{
-			const ItemType& it = Item::items.getItemIdByClientId(spriteId);
-			if(it.id == 0)
-				return NULL;
-
-			int32_t subType = -1;
-			if(it.isFluidContainer() && index < int32_t(sizeof(reverseFluidMap) / sizeof(int32_t)))
-				subType = reverseFluidMap[index];
-
-			return findItemOfType(player, it.id, true, subType);
-		}
-		//inventory
-		else
-		{
-			slots_t slot = (slots_t)static_cast<uint8_t>(pos.y);
-			return player->getInventoryItem(slot);
-		}
+		slots_t slot = (slots_t)static_cast<uint8_t>(pos.y);
+		return player->getInventoryItem(slot);
 	}
 
 	return NULL;
@@ -640,9 +626,7 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 void Game::internalGetPosition(Item* item, Position& pos, uint8_t& stackpos)
 {
 	pos.x = pos.y = pos.z = stackpos = 0;
-
-	Cylinder* topParent = item->getTopParent();
-	if(topParent)
+	if(Cylinder* topParent = item->getTopParent())
 	{
 		if(Player* player = dynamic_cast<Player*>(topParent))
 		{
@@ -1066,6 +1050,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 		player->sendCancelMessage(ret);
 		return false;
 	}
+
 	return true;
 }
 
@@ -1073,12 +1058,9 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 {
 	creature->setLastPosition(creature->getPosition());
 	Cylinder* fromTile = creature->getTile();
+
 	Cylinder* toTile = NULL;
-
-	const Position& currentPos = creature->getPosition();
-	Position destPos = currentPos;
-	destPos = getNextPosition(direction, destPos);
-
+	Position destPos = getNextPosition(direction, creature->getPosition());
 	if(direction < SOUTHWEST && creature->getPlayer())
 	{
 		//try go up
