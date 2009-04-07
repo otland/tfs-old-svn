@@ -2067,7 +2067,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 
 			if(hasBitSet(RESPOND_LOWMONEY, params))
 			{
-				if((unsigned)g_game.getMoney(player) >= npcState->price)
+				if(g_game.getMoney(player) >= (unsigned)npcState->price)
 					continue;
 
 				++matchCount;
@@ -2075,7 +2075,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 
 			if(hasBitSet(RESPOND_LOWAMOUNT, params) || hasBitSet(RESPOND_NOAMOUNT, params))
 			{
-				if((unsigned)player->__getItemTypeCount(npcState->itemId) >= npcState->amount)
+				if(player->__getItemTypeCount(npcState->itemId) >= (unsigned)npcState->amount)
 					continue;
 
 				if(hasBitSet(RESPOND_LOWAMOUNT, params))
