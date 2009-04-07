@@ -2253,15 +2253,16 @@ uint32_t Npc::getMatchCount(NpcResponse* response, StringVec wordList,
 	for(std::list<std::string>::const_iterator it = inputList.begin(); it != inputList.end(); ++it)
 	{
 		int32_t matchCount = 0;
-		StringVec::iterator lastWordMatchIter = wordList.begin();
+		StringVec::iterator lastWordMatch = wordList.begin();
+		std::string keywords = (*it), tmpKit;
 
-		std::string keywords = (*it);
 		StringVec keywordList = explodeString(keywords, ";");
 		for(StringVec::iterator kit = keywordList.begin(); kit != keywordList.end(); ++kit)
 		{
+			tmpKit = asLowerCaseString(*kit);
 			if(!exactMatch && (*kit) == "|*|") //Match anything.
 				matchAllCount++;
-			else if((*kit) == "|amount|")
+			else if(tmpKit == "|amount|")
 			{
 				//TODO: Should iterate through each word until a number or a new keyword is found.
 				int32_t amount = atoi((*lastWordMatch).c_str());
