@@ -723,11 +723,17 @@ bool Creature::onDeath()
 	if(deny)
 		return false;
 
-	if(lastHitKiller && !lastHitCreature->onKilledCreature(this))
-		deny = true;
+	if(lastHitKiller && lastHitCreature)
+	{
+		if(!lastHitCreature->onKilledCreature(this))
+			deny = true;
+	}
 
-	if(mostDamageKiller && !mostDamageCreature->onKilledCreature(this))
-		deny = true;
+	if(mostDamageKiller && mostDamageCreature)
+	{
+		if(!mostDamageCreature->onKilledCreature(this))
+			deny = true;
+	}
 
 	if(deny)
 		return false;
