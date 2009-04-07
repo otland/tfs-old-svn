@@ -116,6 +116,7 @@ bool argumentsHandler(StringVec args)
 			std::cout << "Usage:\n"
 			"\n"
 			"\t--config=$1\t\tAlternate configuration file path.\n"
+			"\t--data-directory=$1\tAlternate data directory path.\n"
 			"\t--ip=$1\t\t\tIP address of gameworld server.\n"
 			"\t\t\t\tShould be equal to the global IP.\n"
 			"\t--login-port=$1\tPort for login server to listen on.\n"
@@ -136,31 +137,25 @@ bool argumentsHandler(StringVec args)
 		tmp = explodeString((*it), "=");
 		if(tmp[0] == "--config")
 			g_config.setString(ConfigManager::CONFIG_FILE, tmp[1]);
-
-		if(tmp[0] == "--ip")
+		else if(tmp[0] == "--data-directory")
+			g_config.setString(ConfigManager::DATA_DIRECTORY, tmp[1]);
+		else if(tmp[0] == "--ip")
 			g_config.setString(ConfigManager::IP, tmp[1]);
-
-		if(tmp[0] == "--login-port")
+		else if(tmp[0] == "--login-port")
 			g_config.setNumber(ConfigManager::LOGIN_PORT, atoi(tmp[1].c_str()));
-
-		if(tmp[0] == "--game-port")
+		else if(tmp[0] == "--game-port")
 			g_config.setNumber(ConfigManager::GAME_PORT, atoi(tmp[1].c_str()));
-
-		if(tmp[0] == "--admin-port")
+		else if(tmp[0] == "--admin-port")
 			g_config.setNumber(ConfigManager::ADMIN_PORT, atoi(tmp[1].c_str()));
-
-		if(tmp[0] == "--status-port")
+		else if(tmp[0] == "--status-port")
 			g_config.setNumber(ConfigManager::STATUS_PORT, atoi(tmp[1].c_str()));
 #ifndef WIN32
-
-		if(tmp[0] == "--runfile")
+		else if(tmp[0] == "--runfile")
 			g_config.setString(ConfigManager::RUNFILE, tmp[1]);
 #endif
-
-		if(tmp[0] == "--output-log")
+		else if(tmp[0] == "--output-log")
 			g_config.setString(ConfigManager::OUT_LOG, tmp[1]);
-
-		if(tmp[0] == "--error-log")
+		else if(tmp[0] == "--error-log")
 			g_config.setString(ConfigManager::ERROR_LOG, tmp[1]);
 	}
 

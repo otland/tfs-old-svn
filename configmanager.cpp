@@ -34,7 +34,7 @@ ConfigManager::ConfigManager()
 	m_confBool[LOGIN_ONLY_LOGINSERVER] = false;
 
 	m_confNumber[LOGIN_PORT] = m_confNumber[GAME_PORT] = m_confNumber[ADMIN_PORT] = m_confNumber[STATUS_PORT] = 0;
-	m_confString[IP] = m_confString[RUNFILE] = m_confString[ERROR_LOG] = m_confString[OUT_LOG] = "";
+	m_confString[DATA_DIRECTORY] = m_confString[IP] = m_confString[RUNFILE] = m_confString[ERROR_LOG] = m_confString[OUT_LOG] = "";
 }
 
 bool ConfigManager::load()
@@ -56,6 +56,9 @@ bool ConfigManager::load()
 	//parse config
 	if(!m_loaded) //info that must be loaded one time (unless we reset the modules involved)
 	{
+		if(m_confString[DATA_DIRECTORY] == "")
+			m_confString[DATA_DIRECTORY] = getGlobalString(L, "dataDirectory", "data/");
+
 		if(m_confString[IP] == "")
 			m_confString[IP] = getGlobalString(L, "ip", "127.0.0.1");
 

@@ -1229,12 +1229,12 @@ uint32_t adlerChecksum(uint8_t *data, size_t length)
 
 std::string getFilePath(FileType_t filetype, std::string filename)
 {
-	#ifndef __FILESYSTEM_HIERARCHY_STANDARD__
-	std::string path = "data/";
-	#else
-	std::string path = "/usr/share/tfs/";
-	#endif 
+	std::string path = "";
+#ifdef __FILESYSTEM_HIERARCHY_STANDARD__
+	path = "/usr/share/tfs/";
 
+#endif
+	path += g_config.getString(ConfigManager::DATA_DIRECTORY);
 	switch(filetype)
 	{
 		case FILE_TYPE_XML:

@@ -214,6 +214,9 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 			output->AddU32(serverIP);
 			output->AddU16(g_config.getNumber(ConfigManager::GAME_PORT));
 			#else
+			if(version < it->second->getVersionMin() || version > it->second->getVersionMax())
+				continue;
+
 			output->AddString(it->first);
 			output->AddString(it->second->getName());
 			output->AddU32(inet_addr(it->second->getAddress().c_str()));

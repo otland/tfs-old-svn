@@ -20,22 +20,27 @@
 #ifndef __GAMESERVER_H__
 #define __GAMESERVER_H__
 #include "otsystem.h"
+#include "resources.h"
 
 class GameServer
 {
 	public:
-		GameServer() : name("TheForgottenServer"), address("localhost"), port(7172) {}
-		GameServer(std::string _name, std::string _address, uint32_t _port) : name(_name), address(_address), port(_port) {}
+		GameServer(): name("TheForgottenServer"), versionMin(CLIENT_VERSION_MIN), versionMax(CLIENT_VERSION_MAX),
+			address("localhost"), port(7172) {}
+		GameServer(std::string _name, uint32_t _versionMin, uint32_t _versionMax, std::string _address, uint32_t _port):
+			name(_name), versionMin(_versionMin), versionMax(_versionMax), address(_address), port(_port) {}
 		virtual ~GameServer() {}
 
 		std::string getName() const {return name;}
+		uint32_t getVersionMin() const {return versionMin;}
+		uint32_t getVersionMax() const {return versionMax;}
+
 		std::string getAddress() const {return address;}
 		uint32_t getPort() const {return port;}
 
 	protected:
-		std::string name;
-		std::string address;
-		uint32_t port;
+		std::string name, address;
+		uint32_t versionMin, versionMax, port;
 };
 
 typedef std::map<uint32_t, GameServer*> GameServersMap;
