@@ -1154,10 +1154,9 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 	}
 
 	player->setNextActionTask(NULL);
-
 	Cylinder* fromCylinder = internalGetCylinder(player, fromPos);
-	uint8_t fromIndex = 0;
 
+	uint8_t fromIndex = 0;
 	if(fromPos.x == 0xFFFF)
 	{
 		if(fromPos.y & 0x40)
@@ -3174,7 +3173,7 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 	}
 
 	Position thingPos = pos;
-	if(pos.x == 0xFFFF || pos.y & 0x40)
+	if(pos.x == 0xFFFF)
 		thingPos = thing->getPosition();
 
 	if(!player->canSee(thingPos))
