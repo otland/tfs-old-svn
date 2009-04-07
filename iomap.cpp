@@ -399,13 +399,12 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 							}
 							else
 							{
-								delete item;
-								item = NULL;
-
 								std::stringstream ss;
 								ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] Failed to load item " << item->getID() << ".";
-
 								setLastErrorString(ss.str());
+
+								delete item;
+								item = NULL;
 								return false;
 							}
 						}
