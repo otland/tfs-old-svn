@@ -403,6 +403,7 @@ class Item : virtual public Thing, public ItemAttributes
 		bool floorChangeSouth() const {return items[id].floorChangeSouth;}
 		bool floorChangeEast() const {return items[id].floorChangeEast;}
 		bool floorChangeWest() const {return items[id].floorChangeWest;}
+		bool floorChange() const {return floorChangeDown() || floorChangeNorth() || floorChangeSouth() || floorChangeEast() || floorChangeWest();}
 
 		// get the number of items
 		uint16_t getItemCount() const {return count;}

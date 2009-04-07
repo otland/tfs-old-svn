@@ -250,9 +250,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 					}
 
 					uint16_t px = base_x + tileCoord->_x, py = base_y + tileCoord->_y, pz = base_z;
-
 					House* house = NULL;
-					bool isHouseTile = false;
 					if(type == OTBM_TILE)
 						tile = new Tile(px, py, pz);
 					else if(type == OTBM_HOUSETILE)
@@ -262,6 +260,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 						{
 							std::stringstream ss;
 							ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] Could not read house id.";
+
 							setLastErrorString(ss.str());
 							return false;
 						}
@@ -271,13 +270,13 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 						{
 							std::stringstream ss;
 							ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] Could not create house id: " << _houseid;
+
 							setLastErrorString(ss.str());
 							return false;
 						}
 
 						tile = new HouseTile(px, py, pz, house);
 						house->addTile(static_cast<HouseTile*>(tile));
-						isHouseTile = true;
 					}
 
 					map->setTile(px, py, pz, tile);
@@ -294,6 +293,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								{
 									std::stringstream ss;
 									ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] Failed to read tile flags.";
+
 									setLastErrorString(ss.str());
 									return false;
 								}
@@ -310,7 +310,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 								if((flags & TILESTATE_REFRESH) == TILESTATE_REFRESH)
 								{
-									if(isHouseTile)
+									if(house)
 										std::cout << "[x:" << px << ", y:" << py << ", z:" << pz << "] House tile flagged as refreshing!";
 
 									tile->setFlag(TILESTATE_REFRESH);
@@ -326,33 +326,38 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								{
 									std::stringstream ss;
 									ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] Failed to create item.";
+
 									setLastErrorString(ss.str());
 									return false;
 								}
 
-								if(isHouseTile && !item->isNotMoveable())
+								if(house && !item->isNotMoveable())
 								{
 									std::cout << "[Warning - IOMap::loadMap] Movable item in house: " << house->getHouseId();
 									std::cout << ", item type: " << item->getID() << ", at position " << px << "/" << py << "/";
 									std::cout << pz << std::endl;
+
 									delete item;
 									item = NULL;
 								}
 								else
 								{
-									tile->__internalAddThing(item);
 									item->__startDecaying();
 									item->setLoadedFromMap(true);
+									tile->__internalAddThing(item);
 								}
+
 								break;
 							}
 
 							default:
+							{
 								std::stringstream ss;
 								ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] Unknown tile attribute.";
+
 								setLastErrorString(ss.str());
 								return false;
-								break;
+							}
 						}
 					}
 
@@ -369,30 +374,38 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 							{
 								std::stringstream ss;
 								ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] Failed to create item.";
+
 								setLastErrorString(ss.str());
 								return false;
 							}
 
 							if(item->unserializeItemNode(f, nodeItem, propStream))
 							{
-								if(isHouseTile && !item->isNotMoveable())
+								if(house && !item->isNotMoveable())
 								{
-									std::cout << "[Warning - IOMap::loadMap] Movable item in house: " << house->getHouseId() << ", item type: " << item->getID() << ", pos " << px << "/" << py << "/" << pz << std::endl;
+									std::cout << "[Warning - IOMap::loadMap] Movable item in house: ";
+									std::cout << house->getHouseId() << ", item type: " << item->getID();
+									std::cout << ", pos " << px << "/" << py << "/" << pz << std::endl;
+
 									delete item;
+									item = NULL;
 								}
 								else
 								{
-									tile->__internalAddThing(item);
 									item->__startDecaying();
 									item->setLoadedFromMap(true);
+									tile->__internalAddThing(item);
 								}
 							}
 							else
 							{
+								delete item;
+								item = NULL;
+
 								std::stringstream ss;
 								ss << "[x:" << px << ", y:" << py << ", z:" << pz << "] Failed to load item " << item->getID() << ".";
+
 								setLastErrorString(ss.str());
-								delete item;
 								return false;
 							}
 						}

@@ -41,7 +41,7 @@ extern ConfigManager g_config;
 extern Game g_game;
 extern MoveEvents* g_moveEvents;
 
-Tile Tile::nullTile(0xFFFF, 0xFFFF, 0xFFFF);
+Tile Tile::nullTile(0xFFFF, 0xFFFF, 0xFF);
 
 bool Tile::hasProperty(enum ITEMPROPERTY prop) const
 {
@@ -591,8 +591,8 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, 
 #ifdef __DEBUG__
 		if(thing->getParent() == NULL && !hasBitSet(FLAG_NOLIMIT, flags))
 			std::cout << "Notice: Tile::__queryAdd() - thing->getParent() == NULL" << std::endl;
-#endif
 
+#endif
 		if(hasBitSet(FLAG_NOLIMIT, flags))
 			return RET_NOERROR;
 
@@ -731,8 +731,7 @@ void Tile::__addThing(Creature* actor, Thing* thing)
 
 void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 {
-	Creature* creature = thing->getCreature();
-	if(creature)
+	if(Creature* creature = thing->getCreature())
 	{
 		g_game.clearSpectatorCache();
 		creature->setParent(this);
@@ -785,13 +784,13 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 			if(item->isSplash())
 			{
 				//remove old splash if exists
-				ItemVector::iterator iit;
-				for(iit = topItems.begin(); iit != topItems.end(); ++iit)
+				for(ItemVector::iterator iit = topItems.begin(); iit != topItems.end(); ++iit)
 				{
 					if((*iit)->isSplash())
 					{
-						Item* oldSplash = *iit;
+						Item* oldSplash = (*iit);
 						__removeThing(oldSplash, 1);
+
 						oldSplash->setParent(NULL);
 						g_game.FreeThing(oldSplash);
 						break;
@@ -800,14 +799,14 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 			}
 
 			bool isInserted = false;
-			ItemVector::iterator iit;
-			for(iit = topItems.begin(); iit != topItems.end(); ++iit)
+			for(ItemVector::iterator iit = topItems.begin(); iit != topItems.end(); ++iit)
 			{
 				//Note: this is different from internalAddThing
 				if(Item::items[item->getID()].alwaysOnTopOrder <= Item::items[(*iit)->getID()].alwaysOnTopOrder)
 				{
 					topItems.insert(iit, item);
 					++thingCount;
+
 					isInserted = true;
 					break;
 				}
@@ -827,8 +826,7 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 			{
 				//remove old field item if exists
 				MagicField* oldField = NULL;
-				ItemVector::iterator iit;
-				for(iit = downItems.begin(); iit != downItems.end(); ++iit)
+				for(ItemVector::iterator iit = downItems.begin(); iit != downItems.end(); ++iit)
 				{
 					if((oldField = (*iit)->getMagicField()))
 					{
@@ -902,20 +900,18 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 	}
 
 	Item* oldItem = NULL;
-	bool isInserted = false;
-	if(!isInserted && ground)
+	if(ground)
 	{
 		if(pos == 0)
 		{
 			oldItem = ground;
 			ground = item;
-			isInserted = true;
 		}
 
 		--pos;
 	}
 
-	if(!isInserted && pos < (int32_t)topItems.size())
+	if(!oldItem && pos < (int32_t)topItems.size())
 	{
 		ItemVector::iterator it = topItems.begin();
 		it += pos;
@@ -924,11 +920,10 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 		oldItem = (*it);
 		it = topItems.erase(it);
 		topItems.insert(it, item);
-		isInserted = true;
 	}
 
 	pos -= (uint32_t)topItems.size();
-	if(!isInserted && pos < (int32_t)creatures.size())
+	if(!oldItem && pos < (int32_t)creatures.size())
 	{
 #ifdef __DEBUG__MOVESYS__
 		std::cout << "Failure: [Tile::__updateThing] Update object is a creature" << std::endl;
@@ -938,7 +933,7 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 	}
 
 	pos -= (uint32_t)creatures.size();
-	if(!isInserted && pos < (int32_t)downItems.size())
+	if(!oldItem && pos < (int32_t)downItems.size())
 	{
 		ItemVector::iterator it = downItems.begin();
 		it += pos;
@@ -947,10 +942,9 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 		oldItem = (*it);
 		it = downItems.erase(it);
 		downItems.insert(it, item);
-		isInserted = true;
 	}
 
-	if(isInserted)
+	if(oldItem)
 	{
 		item->setParent(this);
 		const ItemType& oldType = Item::items[oldItem->getID()];
@@ -1013,6 +1007,7 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 			ground->setParent(NULL);
 			ground = NULL;
 			--thingCount;
+
 			onRemoveTileItem(index, item);
 			return;
 		}
@@ -1027,6 +1022,7 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 					(*iit)->setParent(NULL);
 					topItems.erase(iit);
 					--thingCount;
+
 					onRemoveTileItem(index, item);
 					return;
 				}
@@ -1049,6 +1045,7 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 						(*iit)->setParent(NULL);
 						downItems.erase(iit);
 						--thingCount;
+
 						onRemoveTileItem(index, item);
 					}
 
@@ -1058,6 +1055,7 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 		}
 	}
 #ifdef __DEBUG__MOVESYS__
+
 	std::cout << "Failure: [Tile::__removeThing] thing not found" << std::endl;
 	DEBUG_REPORT
 #endif
@@ -1066,7 +1064,6 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 int32_t Tile::__getIndexOfThing(const Thing* thing) const
 {
 	int32_t n = -1;
-
 	if(ground)
 	{
 		if(ground == thing)
@@ -1083,8 +1080,7 @@ int32_t Tile::__getIndexOfThing(const Thing* thing) const
 			return n;
 	}
 
-	CreatureVector::const_iterator cit;
-	for(cit = creatures.begin(); cit != creatures.end(); ++cit)
+	for(CreatureVector::const_iterator cit = creatures.begin(); cit != creatures.end(); ++cit)
 	{
 		++n;
 		if((*cit) == thing)
@@ -1097,6 +1093,7 @@ int32_t Tile::__getIndexOfThing(const Thing* thing) const
 		if((*iit) == thing)
 			return n;
 	}
+
 	return -1;
 }
 
@@ -1113,11 +1110,9 @@ int32_t Tile::__getLastIndex() const
 uint32_t Tile::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, bool itemCount /*= true*/) const
 {
 	uint32_t count = 0;
-	Thing* thing = NULL;
 	for(uint32_t i = 0; i < getThingCount(); ++i)
 	{
-		thing = __getThing(i);
-
+		Thing* thing = __getThing(i);
 		if(const Item* item = thing->getItem())
 		{
 			if(item->getID() == itemId && (subType == -1 || subType == item->getSubType()))
@@ -1134,6 +1129,7 @@ uint32_t Tile::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, boo
 			}
 		}
 	}
+
 	return count;
 }
 

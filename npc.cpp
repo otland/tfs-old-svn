@@ -2059,7 +2059,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 
 			if(hasBitSet(RESPOND_LOWLEVEL, params))
 			{
-				if((int32_t)player->getLevel() > npcState->level)
+				if((int32_t)player->getLevel() >= npcState->level)
 					continue;
 
 				++matchCount;
@@ -2067,8 +2067,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 
 			if(hasBitSet(RESPOND_LOWMONEY, params))
 			{
-				int32_t moneyCount = g_game.getMoney(player);
-				if(moneyCount >= npcState->price)
+				if(g_game.getMoney(player) >= npcState->price)
 					continue;
 
 				++matchCount;
@@ -2076,8 +2075,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 
 			if(hasBitSet(RESPOND_LOWAMOUNT, params) || hasBitSet(RESPOND_NOAMOUNT, params))
 			{
-				int32_t itemCount = player->__getItemTypeCount(npcState->itemId);
-				if(itemCount >= npcState->amount)
+				if(player->__getItemTypeCount(npcState->itemId) >= npcState->amount)
 					continue;
 
 				if(hasBitSet(RESPOND_LOWAMOUNT, params))
@@ -2251,7 +2249,6 @@ uint32_t Npc::getMatchCount(NpcResponse* response, StringVec wordList,
 	bool exactMatch, int32_t& matchAllCount, int32_t& totalKeywordCount)
 {
 	int32_t bestMatchCount = matchAllCount = totalKeywordCount = 0;
-
 	const std::list<std::string>& inputList = response->getInputList();
 	for(std::list<std::string>::const_iterator it = inputList.begin(); it != inputList.end(); ++it)
 	{
@@ -2260,14 +2257,14 @@ uint32_t Npc::getMatchCount(NpcResponse* response, StringVec wordList,
 
 		std::string keywords = (*it);
 		StringVec keywordList = explodeString(keywords, ";");
-		for(StringVec::iterator keyIter = keywordList.begin(); keyIter != keywordList.end(); ++keyIter)
+		for(StringVec::iterator kit = keywordList.begin(); kit != keywordList.end(); ++kit)
 		{
-			if(!exactMatch && (*keyIter) == "|*|") //Match anything.
+			if(!exactMatch && (*kit) == "|*|") //Match anything.
 				matchAllCount++;
-			else if((*keyIter) == "|amount|")
+			else if((*kit) == "|amount|")
 			{
 				//TODO: Should iterate through each word until a number or a new keyword is found.
-				int32_t amount = atoi((*lastWordMatchIter).c_str());
+				int32_t amount = atoi((*lastWordMatch).c_str());
 				if(amount > 0)
 					response->setAmount(amount);
 				else
@@ -2278,21 +2275,21 @@ uint32_t Npc::getMatchCount(NpcResponse* response, StringVec wordList,
 			}
 			else
 			{
-				StringVec::iterator wordIter = wordList.end();
-				for(wordIter = lastWordMatchIter; wordIter != wordList.end(); ++wordIter)
+				StringVec::iterator wit = wordList.end();
+				for(wit = lastWordMatch; wit != wordList.end(); ++wit)
 				{
-					size_t pos = (*wordIter).find_first_of("!\"#�%&/()=?`{[]}\\^*><,.-_'~");
+					size_t pos = (*wit).find_first_of("!\"#�%&/()=?`{[]}\\^*><,.-_~");
 					if(pos == std::string::npos)
 						pos = 0;
 
-					if((*wordIter).find((*keyIter), pos) == pos)
+					if((*wit).find((*kit), pos) == pos)
 						break;
 				}
 
-				if(wordIter == wordList.end())
+				if(wit == wordList.end())
 					continue;
 
-				lastWordMatchIter = wordIter + 1;
+				lastWordMatch = wit + 1;
 			}
 
 			++matchCount;
@@ -2302,7 +2299,7 @@ uint32_t Npc::getMatchCount(NpcResponse* response, StringVec wordList,
 				totalKeywordCount = keywordList.size();
 			}
 
-			if(lastWordMatchIter == wordList.end())
+			if(lastWordMatch == wordList.end())
 				break;
 		}
 	}

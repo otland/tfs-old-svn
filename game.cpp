@@ -3173,7 +3173,10 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 		return false;
 	}
 
-	Position thingPos = thing->getPosition();
+	Position thingPos = pos;
+	if(pos.x == 0xFFFF || pos.y & 0x40)
+		thingPos = thing->getPosition();
+
 	if(!player->canSee(thingPos))
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
