@@ -406,9 +406,9 @@ bool Items::loadFromXml()
 		{
 			if(xmlStrcmp(itemNode->name,(const xmlChar*)"item") == 0)
 			{
-				if(readXMLInteger(itemNode, "id", intValue)){
+				if(readXMLInteger(itemNode, "id", intValue))
+				{
 					id = intValue;
-
 					if(id > 20000 && id < 20100)
 					{
 						id = id - 20000;
