@@ -147,6 +147,11 @@ std::string Status::getStatusString() const
 	xmlSetProp(p, (const xmlChar*)"max", (const xmlChar*)buffer);
 	sprintf(buffer, "%d", g_game.getLastPlayersRecord());
 	xmlSetProp(p, (const xmlChar*)"peak", (const xmlChar*)buffer);
+	std::stringstream ss;
+	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+                ss << (*it).second->getName() << "," << (*it).second->getVocationId() << "," << (*it).second->getLevel() << ";";
+
+	xmlNodeSetContent(p, (const xmlChar*)ss.str().c_str());
 	xmlAddChild(root, p);
 
 	p = xmlNewNode(NULL,(const xmlChar*)"monsters");
@@ -167,6 +172,7 @@ std::string Status::getStatusString() const
 	sprintf(buffer, "%u", mapWidth);
 	xmlSetProp(p, (const xmlChar*)"width", (const xmlChar*)buffer);
 	sprintf(buffer, "%u", mapHeight);
+
 	xmlSetProp(p, (const xmlChar*)"height", (const xmlChar*)buffer);
 	xmlAddChild(root, p);
 
