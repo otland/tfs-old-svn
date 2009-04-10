@@ -55,13 +55,14 @@ enum
 	EVENT_ID_USER = 1000,
 };
 
-ScriptEnviroment::ThingMap ScriptEnviroment::m_globalMap;
 ScriptEnviroment::AreaMap ScriptEnviroment::m_areaMap;
 uint32_t ScriptEnviroment::m_lastAreaId = 0;
 ScriptEnviroment::CombatMap ScriptEnviroment::m_combatMap;
 uint32_t ScriptEnviroment::m_lastCombatId = 0;
 ScriptEnviroment::ConditionMap ScriptEnviroment::m_conditionMap;
 uint32_t ScriptEnviroment::m_lastConditionId = 0;
+
+ScriptEnviroment::ThingMap ScriptEnviroment::m_globalMap;
 ScriptEnviroment::StorageMap ScriptEnviroment::m_globalStorageMap;
 
 ScriptEnviroment::ScriptEnviroment()
@@ -73,26 +74,23 @@ ScriptEnviroment::ScriptEnviroment()
 
 ScriptEnviroment::~ScriptEnviroment()
 {
-	resetEnv();
-
 	for(CombatMap::iterator it = m_combatMap.begin(); it != m_combatMap.end(); ++it)
 		delete it->second;
 
 	m_combatMap.clear();
-
 	for(AreaMap::iterator it = m_areaMap.begin(); it != m_areaMap.end(); ++it)
 		delete it->second;
 
 	m_areaMap.clear();
+	resetEnv();
 }
 
 void ScriptEnviroment::resetEnv()
 {
-	m_scriptId = 0;
-	m_callbackId = 0;
+	m_scriptId = m_callbackId = 0;
 	m_timerEvent = false;
+	m_realPos = Position();
 	m_interface = NULL;
-	m_localMap.clear();
 
 	for(std::list<Item*>::iterator it = m_tempItems.begin(); it != m_tempItems.end(); ++it)
 	{
@@ -101,15 +99,11 @@ void ScriptEnviroment::resetEnv()
 	}
 
 	m_tempItems.clear();
-	if(m_loaded)
-	{
-		for(DBResMap::iterator it = m_tempResults.begin(); it != m_tempResults.end(); ++it)
-			it->second->free();
+	for(DBResMap::iterator it = m_tempResults.begin(); it != m_tempResults.end(); ++it)
+		it->second->free();
 
-		m_tempResults.clear();
-	}
-
-	m_realPos = Position();
+	m_tempResults.clear();
+	m_localMap.clear();
 }
 
 bool ScriptEnviroment::saveGameState()
@@ -430,6 +424,7 @@ bool ScriptEnviroment::removeResult(uint32_t rid)
 	if(it == m_tempResults.end())
 		return false;
 
+	it->free();
 	m_tempResults.erase(it);
 	return true;
 }

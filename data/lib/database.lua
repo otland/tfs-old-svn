@@ -78,7 +78,8 @@ function Result:free()
 		error("[Result:free]: Result not set!")
 	end
 
-	local ret = result.free(self:getID())
+	--local ret = result.free(self:getID()) //enviroment automaticly frees all stored results when script is finished
+	local ret = LUA_NO_ERROR
 	self:setID(-1)
 	return ret
 end
