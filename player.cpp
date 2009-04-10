@@ -1794,7 +1794,7 @@ void Player::onThink(uint32_t interval)
 			char buffer[130];
 			sprintf(buffer, "You have been idle for %d minutes, you will be disconnected in one minute if you are still idle.",
 				g_config.getNumber(ConfigManager::KICK_AFTER_MINUTES));
-			client->sendTextMessage(MSG_STATUS_WARNING, buffer);
+			sendTextMessage(MSG_STATUS_WARNING, buffer);
 		}
 	}
 

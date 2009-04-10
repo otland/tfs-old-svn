@@ -47,7 +47,7 @@ class DatabaseSQLite : public _Database
 		DATABASE_VIRTUAL std::string escapeString(const std::string &s);
 		DATABASE_VIRTUAL std::string escapeBlob(const char* s, uint32_t length);
 
-		DATABASE_VIRTUAL void freeResult(DBResult *res);
+		DATABASE_VIRTUAL void freeResult(DBResult* res);
 
 		DATABASE_VIRTUAL std::string getStringComparisonOperator() { return "LIKE"; }
 

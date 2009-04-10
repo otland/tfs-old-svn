@@ -175,7 +175,7 @@ class _Database
 		*
 		* @param DBResult* resource to be freed
 		*/
-		DATABASE_VIRTUAL void freeResult(DBResult *res);
+		DATABASE_VIRTUAL void freeResult(DBResult* res);
 
 		/**
 		* Get case insensitive string comparison operator

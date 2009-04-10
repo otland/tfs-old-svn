@@ -130,7 +130,7 @@ class IOLoginData
 		bool storeNameByGuid(uint32_t guid);
 		typedef std::map<int32_t, std::pair<Item*, int32_t> > ItemMap;
 
-		void loadItems(ItemMap& itemMap, DBResult *result);
+		void loadItems(ItemMap& itemMap, DBResult* result);
 		bool saveItems(const Player* player, const ItemBlockList& itemList, DBInsert& query_insert);
 
 		bool internalHasFlag(uint32_t groupId, PlayerFlags value);
