@@ -187,7 +187,13 @@ std::string DatabasePgSQL::_parse(const std::string& s)
 
 void DatabasePgSQL::freeResult(DBResult* res)
 {
-	delete (PgSQLResult*)res;
+	if(res)
+	{
+		delete (PgSQLResult*)res;
+		res = NULL;
+	}
+	else
+		std::cout << "[Warning - DatabasePgSQL::freeResult] Trying to free already freed result." << std::endl;
 }
 
 /** PgSQLResult definitions */

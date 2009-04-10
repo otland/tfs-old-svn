@@ -207,7 +207,13 @@ std::string DatabaseMySQL::escapeBlob(const char* s, uint32_t length)
 
 void DatabaseMySQL::freeResult(DBResult* res)
 {
-	delete (MySQLResult*)res;
+	if(res)
+	{
+		delete (MySQLResult*)res;
+		res = NULL;
+	}
+	else
+		std::cout << "[Warning - DatabaseMySQL::freeResult] Trying to free already freed result." << std::endl;
 }
 
 void DatabaseMySQL::keepAlive()

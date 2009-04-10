@@ -75,6 +75,17 @@ Database* _Database::getInstance()
 	return _instance;
 }
 
+void _Database::freeResult(DBResult *res)
+{
+	if(res)
+	{
+		delete res;
+		res = NULL;
+	}
+	else
+		std::cout << "[Warning - Database::freeResult] Trying to free already freed result." << std::endl;	
+}
+
 DBResult* _Database::verifyResult(DBResult* result)
 {
 	if(!result->next())
@@ -84,16 +95,6 @@ DBResult* _Database::verifyResult(DBResult* result)
 	}
 
 	return result;
-}
-
-DBQuery::DBQuery()
-{
-	OTSYS_THREAD_LOCK(databaseLock, "");
-}
-
-DBQuery::~DBQuery()
-{
-	OTSYS_THREAD_UNLOCK(databaseLock, "");
 }
 
 DBInsert::DBInsert(Database* db)

@@ -274,7 +274,13 @@ std::string DatabaseODBC::_parse(const std::string& s)
 
 void DatabaseODBC::freeResult(DBResult* res)
 {
-	delete (ODBCResult*)res;
+	if(res)
+	{
+		delete (ODBCResult*)res;
+		res = NULL;
+	}
+	else
+		std::cout << "[Warning - DatabaseODBC::freeResult] Trying to free already freed result." << std::endl;
 }
 
 /** ODBCResult definitions */

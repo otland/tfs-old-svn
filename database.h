@@ -108,6 +108,9 @@ class _Database
 		*/
 		DATABASE_VIRTUAL bool isConnected() {return m_connected;}
 
+		/**
+		* Database ...
+		*/
 		DATABASE_VIRTUAL void use() {m_use = time(NULL);}
 
 	protected:
@@ -121,6 +124,7 @@ class _Database
 		*	If your database system doesn't support transactions you should return true - it's not feature test, code should work without transaction, just will lack integrity.
 		*/
 		friend class DBTransaction;
+
 		DATABASE_VIRTUAL bool beginTransaction() {return 0;}
 		DATABASE_VIRTUAL bool rollback() {return 0;}
 		DATABASE_VIRTUAL bool commit() {return 0;}
@@ -171,7 +175,7 @@ class _Database
 		*
 		* @param DBResult* resource to be freed
 		*/
-		DATABASE_VIRTUAL void freeResult(DBResult *res) {}
+		DATABASE_VIRTUAL void freeResult(DBResult *res);
 
 		/**
 		* Get case insensitive string comparison operator
@@ -247,8 +251,8 @@ class DBQuery : public std::stringstream
 	friend class _Database;
 
 	public:
-		DBQuery();
-		virtual ~DBQuery();
+		DBQuery() {OTSYS_THREAD_LOCK(databaseLock, "");}
+		virtual ~DBQuery() {OTSYS_THREAD_UNLOCK(databaseLock, "");}
 
 	protected:
 		static OTSYS_THREAD_LOCKVAR databaseLock;

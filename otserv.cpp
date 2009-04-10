@@ -382,29 +382,56 @@ ServiceManager* services)
 	std::cout << "A server developed by Elf, Talaturen, Lithium, Kiper, Kornholijo, Jonern & Nightmare." << std::endl;
 	std::cout << "Visit our forum for updates, support and resources: http://otland.net." << std::endl;
 	std::cout << std::endl;
-	#if defined __DEBUG__MOVESYS__ || defined __DEBUG_HOUSES__ || defined __DEBUG_MAILBOX__ || defined __DEBUG_LUASCRIPTS__ || defined __DEBUG_RAID__ || defined __DEBUG_NET__
-	std::cout << ">> Debugging:";
-	#ifdef __DEBUG__MOVESYS__
-	std::cout << " MOVESYS";
+
+	std::stringstream ss;
+	#ifdef __DEBUG__
+	ss << " GLOBAL";
 	#endif
-	#ifdef __DEBUG_MAILBOX__
-	std::cout << " MAILBOX";
+	#ifdef __DEBUG__MOVESYS__
+	ss << " MOVESYS";
+	#endif
+	#ifdef __DEBUG_CHAT__
+	ss << " CHAT";
+	#endif
+	#ifdef __DEBUG_EXCEPTION_REPORT__
+	ss << " EXCEPTION-REPORT";
 	#endif
 	#ifdef __DEBUG_HOUSES__
-	std::cout << " HOUSES";
+	ss << " HOUSES";
 	#endif
 	#ifdef __DEBUG_LUASCRIPTS__
-	std::cout << " LUA-SCRIPTS";
+	ss << " LUA-SCRIPTS";
 	#endif
-	#ifdef __DEBUG_RAID__
-	std::cout << " RAIDS";
+	#ifdef __DEBUG_MAILBOX__
+	ss << " MAILBOX";
 	#endif
 	#ifdef __DEBUG_NET__
-	std::cout << " NET-ASIO";
+	ss << " NET";
 	#endif
-	std::cout << std::endl;
+	#ifdef __DEBUG_NET_DETAIL__
+	ss << " NET-DETAIL";
+	#endif
+	#ifdef __DEBUG_RAID__
+	ss << " RAIDS";
+	#endif
+	#ifdef __DEBUG_SCHEDULER__
+	ss << " SCHEDULER";
+	#endif
+	#ifdef __DEBUG_SPAWN__
+	ss << " SPAWNS";
+	#endif
+	#ifdef __SQL_QUERY_DEBUG__
+	ss << " SQL-QUERIES";
 	#endif
 
+	std::string debug = ss.str();
+	std::cout << ">> Debugging:";
+	if(debug.empty())
+		std::cout << " nothing";
+	else
+		std::cout << ss.str();
+	
+	std::cout << "." << std::endl;
 	std::cout << ">> Checking software version... ";
 	if(xmlDocPtr doc = xmlParseFile(VERSION_CHECK))
 	{

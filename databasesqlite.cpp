@@ -216,7 +216,13 @@ std::string DatabaseSQLite::escapeBlob(const char* s, uint32_t length)
 
 void DatabaseSQLite::freeResult(DBResult* res)
 {
-	delete (SQLiteResult*)res;
+	if(res)
+	{
+		delete (SQLiteResult*)res;
+		res = NULL;
+	}
+	else
+		std::cout << "[Warning - DatabaseSQLite::freeResult] Trying to free already freed result." << std::endl;
 }
 
 /** SQLiteResult definitions */
