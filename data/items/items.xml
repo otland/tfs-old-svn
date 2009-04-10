@@ -14289,6 +14289,7 @@
 	<item id="6500" name="demonic essence" plural="demonic essence">
 		<attribue key="description" value="Someone might be interested in trading this."/>
 		<attribute key="weight" value="100"/>
+		<attribute key="showcount" value="0"/>
 	</item>
 	<item id="6501" article="a" name="gingerbread man">
 		<attribute key="weight" value="500"/>
