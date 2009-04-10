@@ -33,7 +33,7 @@
 #include <sstream>
 #include <map>
 
-#define MAX_RECONNECT_ATTEMPTS 3
+#define MAX_RECONNECT_ATTEMPTS 10
 
 class DatabaseMySQL : public _Database
 {

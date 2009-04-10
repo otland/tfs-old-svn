@@ -57,7 +57,7 @@ DatabaseMySQL::DatabaseMySQL()
 		return;
 	}
 
-	if(MYSQL_VERSION_ID < 50019)
+	if(mysql_get_server_version(&m_handle) < 50019)
 	{
 		//MySQL servers < 5.0.19 has a bug where MYSQL_OPT_RECONNECT is (incorrectly) reset by mysql_real_connect calls
 		//See http://dev.mysql.com/doc/refman/5.0/en/mysql-options.html for more information.
