@@ -149,7 +149,10 @@ std::string Status::getStatusString() const
 	xmlSetProp(p, (const xmlChar*)"peak", (const xmlChar*)buffer);
 	std::stringstream ss;
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-                ss << (*it).second->getName() << "," << (*it).second->getVocationId() << "," << (*it).second->getLevel() << ";";
+	{
+		if(!it->second->isInGhostMode())
+	                ss << it->second->getName() << "," << it->second->getVocationId() << "," << it->second->getLevel() << ";";
+	}
 
 	xmlNodeSetContent(p, (const xmlChar*)ss.str().c_str());
 	xmlAddChild(root, p);
@@ -246,11 +249,18 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 	if(requestedInfo & REQUEST_EXT_PLAYERS_INFO)
 	{
 		output->AddByte(0x21);
-		output->AddU32(m_playersOnline);
+		std::list<std::pair<std::string, uint32_t> > players;
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 		{
-			output->AddString(it->second->getName());
-			output->AddU32(it->second->getLevel());
+			if(!it->second->isInGhostMode())
+				players.push_back(std::make_pair(it->second->getName(), it->second->getLevel()));
+		}
+
+		output->AddU32(players.size());
+		for(std::list<std::pair<std::string, uint32_t> >::iterator it = players.begin(); it != players.end(); ++it)
+		{
+			output->AddString(it->first);
+			output->AddU32(it->second);
 		}
 	}
 
@@ -258,7 +268,9 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 	{
 		output->AddByte(0x22);
 		const std::string name = msg.GetString();
-		if(g_game.getPlayerByName(name) != NULL)
+
+		Player* p = NULL;
+		if(g_game.getPlayerByNameWildcard(name, p) == RET_NOERROR && !p->isInGhostMode())
 			output->AddByte(0x01);
 		else
 			output->AddByte(0x00);
