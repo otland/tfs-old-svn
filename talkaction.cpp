@@ -30,11 +30,11 @@
 #include "talkaction.h"
 #include "chat.h"
 #include "teleport.h"
+#include "status.h"
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 #include "outputmessage.h"
 #include "connection.h"
 #include "admin.h"
-#include "status.h"
 #include "protocollogin.h"
 #include "protocolold.h"
 #endif
@@ -638,6 +638,7 @@ bool TalkAction::ghost(Player* player, const std::string& cmd, const std::string
 				it->second->notifyLogOut(player);
 		}
 
+		Status::getInstance()->removePlayer();
 		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), false);
 		player->sendTextMessage(MSG_INFO_DESCR, "You are now invisible.");
 	}
@@ -649,6 +650,7 @@ bool TalkAction::ghost(Player* player, const std::string& cmd, const std::string
 				it->second->notifyLogIn(player);
 		}
 
+		Status::getInstance()->addPlayer();
 		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), true);
 		player->sendTextMessage(MSG_INFO_DESCR, "You are visible again.");
 	}
