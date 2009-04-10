@@ -11,7 +11,7 @@ function onTargetTile(cid, pos)
 	if item.itemid > 0 then
 		if isInArray(CORPSES, item.itemid) == TRUE then
 			doRemoveItem(item.uid,1)
-			local creature = doSummonCreature("Skeleton", pos)
+			local creature = doCreateMonster("Skeleton", pos)
 			doConvinceCreature(cid, creature)
 			doSendMagicEffect(pos, CONST_ME_POFF)
 		end

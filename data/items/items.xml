@@ -5271,29 +5271,30 @@
 		<attribute key="armor" value="1"/>
 		<attribute key="slotType" value="head"/>
 	</item>
-	<item id="2666" name="meat" plural="meat">
+	<item id="2666" name="meat">
 		<attribute key="weight" value="1300"/>
 		<attribute key="showcount" value="0"/>
 	</item>
-	<item id="2667" article="a" name="fish" plural="fish">
+	<item id="2667" article="a" name="fish">
 		<attribute key="weight" value="520"/>
+		<attribute key="showcount" value="0"/>
 	</item>
-	<item id="2668" article="a" name="salmon" plural="salmon">
+	<item id="2668" article="a" name="salmon">
 		<attribute key="weight" value="320"/>
 		<attribute key="showcount" value="0"/>
 	</item>
 	<item id="2669" article="a" name="northern pike" plural="northern pikes">
 		<attribute key="weight" value="120"/>
 	</item>
-	<item id="2670" name="shrimp" plural="shrimp">
+	<item id="2670" name="shrimp">
 		<attribute key="weight" value="30"/>
 		<attribute key="showcount" value="0"/>
 	</item>
-	<item id="2671" name="ham" plural="ham">
+	<item id="2671" name="ham">
 		<attribute key="weight" value="2000"/>
 		<attribute key="showcount" value="0"/>
 	</item>
-	<item id="2672" name="dragon ham" plural="dragon ham">
+	<item id="2672" name="dragon ham">
 		<attribute key="description" value="It still contains a small part of the power of a dragon."/>
 		<attribute key="weight" value="3000"/>
 		<attribute key="showcount" value="0"/>
@@ -5346,17 +5347,20 @@
 	<item id="2688" article="a" name="candy cane" plural="candy canes">
 		<attribute key="weight" value="50"/>
 	</item>
-	<item id="2689" name="bread" plural="bread">
+	<item id="2689" name="bread">
 		<attribute key="weight" value="500"/>
+		<attribute key="showcount" value="0"/>
 	</item>
 	<item id="2690" article="a" name="roll" plural="rolls">
 		<attribute key="weight" value="80"/>
 	</item>
-	<item id="2691" article="a" name="brown bread" plural="brown breads">
+	<item id="2691" name="brown bread">
 		<attribute key="weight" value="400"/>
+		<attribute key="showcount" value="0"/>
 	</item>
-	<item id="2692" name="flour" plural="flour">
+	<item id="2692" name="flour">
 		<attribute key="weight" value="500"/>
+		<attribute key="showcount" value="0"/>
 	</item>
 	<item id="2693" article="a" name="lump of dough" plural="lumps of dough">
 		<attribute key="weight" value="500"/>
@@ -10293,8 +10297,9 @@
 		<attribute key="decayTo" value="0"/>
 		<attribute key="duration" value="600"/>
 	</item>
-	<item id="4849" name="flour" plural="flour">
+	<item id="4849" name="flour"/>
 		<attribute key="weight" value="500"/>
+		<attribute key="showcount" value="0"/>
 	</item>
 	<item id="4850" article="a" name="hydra egg">
 		<attribute key="weight" value="500"/>
@@ -12148,8 +12153,9 @@
 		<attribute key="description" value="It was once worn proudly by a dwarfish warrior - or maiden."/>
 		<attribute key="weight" value="50"/>
 	</item>
-	<item id="5901" name="wood" plural="wood">
+	<item id="5901" name="wood">
 		<attribute key="weight" value="500"/>
+		<attribute key="showcount" value="0"/>
 	</item>
 	<item id="5902" article="a" name="honeycomb" plural="honeycombs">
 		<attribute key="weight" value="80"/>
@@ -14286,7 +14292,7 @@
 	<item id="6499" article="a" name="diploma">
 		<attribute key="weight" value="1000"/>
 	</item>
-	<item id="6500" name="demonic essence" plural="demonic essence">
+	<item id="6500" name="demonic essence">
 		<attribue key="description" value="Someone might be interested in trading this."/>
 		<attribute key="weight" value="100"/>
 		<attribute key="showcount" value="0"/>
@@ -17759,7 +17765,7 @@
 		<attribute key="decayTo" value="7743"/>
 		<attribute key="duration" value="600"/>
 	</item>
-	<item id="7850" article="an" name="earth arrow" plural="earth arrow">
+	<item id="7850" article="an" name="earth arrow" plural="earth arrows">
 		<attribute key="weight" value="70"/>
 		<attribute key="slotType" value="ammo"/>
 		<attribute key="attack" value="25"/>
@@ -19356,8 +19362,9 @@
 	<item id="8712" article="a" name="glowing rope">
 		<attribute key="weight" value="1800"/>
 	</item>
-	<item id="8713" article="a" name="glowing fish" plural="glowing fish">
+	<item id="8713" article="a" name="glowing fish">
 		<attribute key="weight" value="520"/>
+		<attribute key="showcount" value="0"/>
 	</item>
 	<item id="8715" name="stairs">
 		<attribute key="floorchange" value="west"/>
@@ -20258,9 +20265,10 @@
 		<attribute key="corpseType" value="fire"/>
 	</item>
 	<item id="8970" article="a" name="piano"/>
-	<item id="8971" article="a" name="gland" plural="gland">
+	<item id="8971" article="a" name="gland">
 		<attribute key="description" value="It is the pheromone gland of a rotworm queen."/>
-		<attribute key="weight" value="050"/>
+		<attribute key="weight" value="50"/>
+		<attribute key="showcount" value="0"/>
 	</item>
 	<item id="8972" article="a" name="hole">
 		<attribute key="floorchange" value="down"/>

@@ -4,7 +4,7 @@ local function doTargetCorpse(cid, pos)
 	corpse = getThingfromPos(getPos)
 	if(corpse.uid > 0 and isCreature(corpse.uid) == FALSE and isInArray(CORPSES, corpse.itemid) == TRUE) then
 		doRemoveItem(corpse.uid)
-		local creature = doSummonCreature(cid, "Skeleton", pos)
+		local creature = doCreateMonster(cid, "Skeleton", pos)
 		doConvinceCreature(cid, creature)
 		doSendMagicEffect(pos, CONST_ME_MAGIC_BLUE)
 		return LUA_NO_ERROR
