@@ -424,7 +424,9 @@ bool ScriptEnviroment::removeResult(uint32_t rid)
 	if(it == m_tempResults.end())
 		return false;
 
-	it->free();
+	if(it->second)
+		it->second->free();
+
 	m_tempResults.erase(it);
 	return true;
 }
