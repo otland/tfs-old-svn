@@ -75,7 +75,7 @@ Database* _Database::getInstance()
 	return _instance;
 }
 
-void _Database::freeResult(DBResult *res)
+void _Database::freeResult(DBResult* res)
 {
 	if(res)
 	{

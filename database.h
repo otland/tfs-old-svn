@@ -207,6 +207,7 @@ class _Database
 class _DBResult
 {
 	public:
+		DATABASE_VIRTUAL ~_DBResult() {}
 		/** Get the Integer value of a field in database
 		*\returns The Integer value of the selected field and row
 		*\param s The name of the field
@@ -238,7 +239,6 @@ class _DBResult
 
 	protected:
 		_DBResult() {}
-		DATABASE_VIRTUAL ~_DBResult() {}
 };
 
 /**

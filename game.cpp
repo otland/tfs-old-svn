@@ -5778,17 +5778,19 @@ void Game::shutdown()
 	std::cout << "Preparing";
 	if(services)
 		services->stop();
-
-	std::cout << " shutdown";
+	
+	std::cout << " to";
 	Scheduler::getScheduler().shutdown();
-	std::cout << ".";
+	std::cout << " shutdown";
 	Dispatcher::getDispatcher().shutdown();
 	std::cout << ".";
 	Spawns::getInstance()->clear();
 	std::cout << "." << std::endl;
+	Raids::getInstance()->clear();
+	std::cout << "." << std::endl;
 	cleanup();
 	std::cout << "Exiting" << std::endl;
-	exit(1);
+	exit(1); 
 }
 
 void Game::cleanup()
