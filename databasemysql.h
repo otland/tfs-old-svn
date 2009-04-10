@@ -70,6 +70,8 @@ class MySQLResult : public _DBResult
 	friend class DatabaseMySQL;
 
 	public:
+		DATABASE_VIRTUAL ~MySQLResult() {mysql_free_result(m_handle);}
+
 		DATABASE_VIRTUAL int32_t getDataInt(const std::string &s);
 		DATABASE_VIRTUAL int64_t getDataLong(const std::string &s);
 		DATABASE_VIRTUAL std::string getDataString(const std::string &s);
@@ -79,7 +81,6 @@ class MySQLResult : public _DBResult
 
 	protected:
 		MySQLResult(MYSQL_RES* res);
-		DATABASE_VIRTUAL ~MySQLResult() {mysql_free_result(m_handle);}
 
 		typedef std::map<const std::string, uint32_t> listNames_t;
 		listNames_t m_listNames;

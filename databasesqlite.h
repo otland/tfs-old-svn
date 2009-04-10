@@ -65,6 +65,8 @@ class SQLiteResult : public _DBResult
 	friend class DatabaseSQLite;
 
 	public:
+		DATABASE_VIRTUAL ~SQLiteResult() {sqlite3_finalize(m_handle);}
+
 		DATABASE_VIRTUAL int32_t getDataInt(const std::string &s);
 		DATABASE_VIRTUAL int64_t getDataLong(const std::string &s);
 		DATABASE_VIRTUAL std::string getDataString(const std::string &s);
@@ -74,7 +76,6 @@ class SQLiteResult : public _DBResult
 
 	protected:
 		SQLiteResult(sqlite3_stmt* stmt);
-		DATABASE_VIRTUAL ~SQLiteResult() {sqlite3_finalize(m_handle);}
 
 		typedef std::map<const std::string, uint32_t> listNames_t;
 		listNames_t m_listNames;

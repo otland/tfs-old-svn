@@ -60,6 +60,8 @@ class PgSQLResult : public _DBResult
 	friend class DatabasePgSQL;
 
 	public:
+		DATABASE_VIRTUAL ~PgSQLResult() {PQclear(m_handle);}
+
 		DATABASE_VIRTUAL int32_t getDataInt(const std::string& s);
 		DATABASE_VIRTUAL int64_t getDataLong(const std::string& s);
 		DATABASE_VIRTUAL std::string getDataString(const std::string& s);
@@ -69,7 +71,6 @@ class PgSQLResult : public _DBResult
 
 	protected:
 		PgSQLResult(PGresult* results);
-		DATABASE_VIRTUAL ~PgSQLResult() {PQclear(m_handle);}
 
 		PGresult* m_handle;
 		int32_t m_rows, m_cursor;
