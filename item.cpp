@@ -1094,13 +1094,8 @@ std::string Item::getNameDescription(const ItemType& it, const Item* item /*= NU
 	std::stringstream s;
 	if(it.name.length() || (item && item->getName().length()))
 	{
-		if(it.stackable && subType > 1)
-		{
-			if(it.showCount)
-				s << subType << " ";
-
-			s << (item ? item->getPluralName() : it.pluralName);
-		}
+		if(subType > 1 && it.stackable && it.showCount)
+			s << subType << " " << (item ? item->getPluralName() : it.pluralName);
 		else
 		{
 			if(addArticle)

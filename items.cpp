@@ -532,17 +532,17 @@ bool Items::loadFromXml()
 							else if(tmpStrValue == "moveable" || tmpStrValue == "movable")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.moveable = (intValue == 1);
+									it.moveable = (intValue != 0);
 							}
 							else if(tmpStrValue == "blockprojectile")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.blockProjectile = (intValue == 1);
+									it.blockProjectile = (intValue != 0);
 							}
 							else if(tmpStrValue == "allowpickupable")
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
-									it.allowPickupable = (intValue == 1);
+									it.allowPickupable = (intValue != 0);
 							}
 							else if(tmpStrValue == "floorchange")
 							{
@@ -1392,8 +1392,12 @@ bool Items::loadFromXml()
 						itemAttributesNode = itemAttributesNode->next;
 					}
 
-					if(it.pluralName.size() == 0 && it.name.size() != 0)
-						it.pluralName = it.name + "s";
+					if(it.pluralName.empty() && !it.name.empty())
+					{
+						it.pluralName = it.name;
+						if(it.showCount)
+							it.pluralName += "s";
+					}
 				}
 				else
 					std::cout << "[Warning - Items::loadFromXml] No itemid found" << std::endl;
