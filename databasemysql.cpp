@@ -133,7 +133,6 @@ bool DatabaseMySQL::executeQuery(const std::string &query)
 		int32_t error = mysql_errno(&m_handle);
 		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR || error == CR_MALFORMED_PACKET)
 		{
-			while(!reconnect() && m_attempts < MAX_RECONNECT_ATTEMPTS)
 				if(reconnect())
 					return executeQuery(query);
 		}
@@ -159,7 +158,6 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 		int32_t error = mysql_errno(&m_handle);
 		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR || error == CR_MALFORMED_PACKET)
 		{
-			while(!reconnect() && m_attempts < MAX_RECONNECT_ATTEMPTS)
 				if(reconnect())
 					return storeQuery(query);
 		}
@@ -178,7 +176,6 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 	int32_t error = mysql_errno(&m_handle);
 	if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
 	{
-		while(!reconnect() && m_attempts < MAX_RECONNECT_ATTEMPTS)
 			if(reconnect())
 				return storeQuery(query);
 	}
@@ -233,19 +230,23 @@ void DatabaseMySQL::keepAlive()
 
 bool DatabaseMySQL::reconnect()
 {
-	if(m_attempts > MAX_RECONNECT_ATTEMPTS)
+	bool next = true; // I'm not 100% sure if `while` breaks after function returns value, almost surely yes but just in case	
+	while(m_attempts < MAX_RECONNECT_ATTEMPTS && next)
 	{
-		std::cout << "Failed reconnecting to database - MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
-		m_connected = false;
-		return false;
+		if(mysql_ping(&m_handle))
+		{
+			m_attempts = 0;
+			next = false;
+			return true;
+		}
+		else
+		{
+			m_attempts++;
+			std::cout << "Failed reconnecting to database - unable to reconnect, attempt no " << m_attempts << std::endl;
+		}
 	}
-
-	if(!mysql_ping(&m_handle))
-		m_attempts = 0;
-	else
-		m_attempts++;
-
-	return true;
+	std::cout << "Failed reconnecting to database - too many attempts, limit exceeded" << std::endl;
+	return false;
 }
 
 int32_t MySQLResult::getDataInt(const std::string &s)
