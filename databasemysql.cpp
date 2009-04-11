@@ -134,12 +134,14 @@ bool DatabaseMySQL::executeQuery(const std::string &query)
 		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR || error == CR_MALFORMED_PACKET)
 		{
 				if(reconnect())
-					return executeQuery(query);
+					return executeQuery(query);	
 		}
 
+		if(MYSQL_RES* m_res = mysql_store_result(&m_handle))
+			mysql_free_result(m_res);
+			
 		std::cout << "mysql_real_query(): " << query << " - MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
 		return false;
-
 	}
 
 	if(MYSQL_RES* m_res = mysql_store_result(&m_handle))
@@ -230,13 +232,11 @@ void DatabaseMySQL::keepAlive()
 
 bool DatabaseMySQL::reconnect()
 {
-	bool next = true; // I'm not 100% sure if `while` breaks after function returns value, almost surely yes but just in case	
-	while(m_attempts < MAX_RECONNECT_ATTEMPTS && next)
+	while(m_attempts < MAX_RECONNECT_ATTEMPTS)
 	{
 		if(mysql_ping(&m_handle))
 		{
 			m_attempts = 0;
-			next = false;
 			return true;
 		}
 		else
