@@ -253,7 +253,10 @@ void SQLiteResult::free()
 SQLiteResult::SQLiteResult(sqlite3_stmt* stmt)
 {
 	if(!res)
+	{
+		delete this;
 		return;
+	}
 
 	m_handle = stmt;
 	m_listNames.clear();

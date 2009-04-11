@@ -309,13 +309,16 @@ bool MySQLResult::next()
 MySQLResult::MySQLResult(MYSQL_RES* res)
 {
 	if(!res)
+	{
+		delete this;
 		return;
+	}
 
 	m_handle = res;
 	m_listNames.clear();
 
 	MYSQL_FIELD* field;
-	int32_t i = -1;
+	int32_t i = 0;
 	while((field = mysql_fetch_field(m_handle)))
 		m_listNames[field->name] = i++;
 }

@@ -197,7 +197,10 @@ bool PgSQLResult::next()
 PgSQLResult::PgSQLResult(PGresult* results)
 {
 	if(!res)
+	{
+		delete this;
 		return;
+	}
 
 	m_handle = results;
 	m_cursor = -1;

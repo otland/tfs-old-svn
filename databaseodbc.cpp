@@ -357,7 +357,10 @@ bool ODBCResult::next()
 ODBCResult::ODBCResult(SQLHSTMT stmt)
 {
 	if(!res)
+	{
+		delete this;
 		return;
+	}
 
 	m_handle = stmt;
 	int16_t numCols = 0;
