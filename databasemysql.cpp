@@ -82,7 +82,7 @@ bool DatabaseMySQL::rollback()
 
 	if(mysql_rollback(&m_handle))
 	{
-		std::cout << "mysql_rollback() - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << error << ")" << std::endl;
+		std::cout << "mysql_rollback() - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << mysql_errorno(&m_handle) << ")" << std::endl;
 		return false;
 	}
 
@@ -96,7 +96,7 @@ bool DatabaseMySQL::commit()
 
 	if(mysql_commit(&m_handle))
 	{
-		std::cout << "mysql_commit() - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << error << ")" << std::endl;
+		std::cout << "mysql_commit() - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << mysql_errorno(&m_handle) << ")" << std::endl;
 		return false;
 	}
 
@@ -201,7 +201,7 @@ bool DatabaseMySQL::connect()
 
 	if(!mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(ConfigManager::SQL_USER).c_str(), g_config.getString(ConfigManager::SQL_PASS).c_str(), g_config.getString(ConfigManager::SQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), NULL, CLIENT_REMEMBER_OPTIONS))
 	{
-		std::cout << "Failed connecting to database - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << error << ")" << std::endl;
+		std::cout << "Failed connecting to database - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << mysql_errorno(&m_handle) << ")" << std::endl;
 		return false;
 	}
 
