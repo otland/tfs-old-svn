@@ -266,7 +266,7 @@ std::string MySQLResult::getDataString(const std::string &s)
 	}
 
 	std::cout << "Error during getDataString(" << s << ")." << std::endl;
-	return std::string(""); // Failed
+	return ""; // Failed
 }
 
 const char* MySQLResult::getDataStream(const std::string &s, uint64_t &size)
@@ -286,7 +286,7 @@ const char* MySQLResult::getDataStream(const std::string &s, uint64_t &size)
 
 	std::cout << "Error during getDataStream(" << s << ")." << std::endl;
 	size = 0;
-	return NULL;
+	return "";
 }
 
 void MySQLResult::free()
