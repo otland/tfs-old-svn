@@ -335,10 +335,8 @@ MySQLResult::MySQLResult(MYSQL_RES* res)
 	m_handle = res;
 	m_listNames.clear();
 
-	int32_t i = 0;
-	while((MYSQL_FIELD* field = mysql_fetch_field(m_handle)))
-	{
-		m_listNames[field->name] = i;
-		i++;
-	}
+	MYSQL_FIELD* field;
+	int32_t i = -1;
+	while((field = mysql_fetch_field(m_handle)))
+		m_listNames[field->name] = i++;
 }
