@@ -124,6 +124,7 @@ Outfits::Outfits()
 	Outfit outfit;
 	outfit.premium = false;
 	outfit.addons = outfit.quest = 0;
+
 	for(int32_t i = PLAYER_FEMALE_1; i <= PLAYER_FEMALE_7; i++)
 	{
 		outfit.looktype = i;
@@ -179,7 +180,7 @@ bool Outfits::loadFromXml()
 			}
 
 			OutfitList* list;
-			if(std::find(m_list.begin(), m_list.end(), intValue) == m_list.end())
+			if(!m_list[intValue])
 			{
 				list = new OutfitList;
 				m_list[intValue] = list;
