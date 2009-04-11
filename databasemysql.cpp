@@ -49,23 +49,13 @@ DatabaseMySQL::DatabaseMySQL()
 	if(readTimeout)
 		mysql_options(&m_handle, MYSQL_OPT_READ_TIMEOUT, (const char*)&readTimeout);
 
-	my_bool reconnect = true;
-	mysql_options(&m_handle, MYSQL_OPT_RECONNECT, &reconnect);
-	if(!mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(ConfigManager::SQL_USER).c_str(), g_config.getString(ConfigManager::SQL_PASS).c_str(), g_config.getString(ConfigManager::SQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), NULL, 0))
-	{
-		std::cout << "Failed connecting to database - MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
-		return;
-	}
-
+	connect();
 	if(mysql_get_server_version(&m_handle) < 50019)
 	{
 		//MySQL servers < 5.0.19 has a bug where MYSQL_OPT_RECONNECT is (incorrectly) reset by mysql_real_connect calls
 		//See http://dev.mysql.com/doc/refman/5.0/en/mysql-options.html for more information.
 		std::cout << "> WARNING: Outdated MySQL server detected, consider upgrading to a newer version." << std::endl;
 	}
-
-	m_connected = true;
-	m_attempts = 0;
 
 	int32_t keepAlive = g_config.getNumber(ConfigManager::SQL_KEEPALIVE);
 	if(keepAlive)
@@ -144,8 +134,8 @@ bool DatabaseMySQL::executeQuery(const std::string &query)
 		return false;
 	}
 
-	if(MYSQL_RES* m_res = mysql_store_result(&m_handle))
-		mysql_free_result(m_res);
+	if(MYSQL_RES* tmp = mysql_store_result(&m_handle))
+		mysql_free_result(tmp);
 
 	return true;
 }
@@ -176,7 +166,7 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 	}
 
 	int32_t error = mysql_errno(&m_handle);
-	if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
+	if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR || error == CR_MALFORMED_PACKET)
 	{
 			if(reconnect())
 				return storeQuery(query);
@@ -230,22 +220,36 @@ void DatabaseMySQL::keepAlive()
 	}
 }
 
+bool DatabaseMySQL::connect()
+{
+	if(m_connected)
+	{
+		m_connected = false;
+		mysql_close(&m_handle);
+	}
+
+	if(!mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(ConfigManager::SQL_USER).c_str(), g_config.getString(ConfigManager::SQL_PASS).c_str(), g_config.getString(ConfigManager::SQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), NULL, CLIENT_REMEMBER_OPTIONS))
+	{
+		std::cout << "Failed connecting to database - MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
+		return false;
+	}
+
+	m_connected = true;
+	m_attempts = 0;
+	return true;
+}
+
 bool DatabaseMySQL::reconnect()
 {
 	while(m_attempts < MAX_RECONNECT_ATTEMPTS)
 	{
-		if(mysql_ping(&m_handle))
-		{
-			m_attempts = 0;
+		if(connect())
 			return true;
-		}
 		else
-		{
 			m_attempts++;
-			std::cout << "Failed reconnecting to database - unable to reconnect, attempt no " << m_attempts << std::endl;
-		}
 	}
-	std::cout << "Failed reconnecting to database - too many attempts, limit exceeded" << std::endl;
+
+	std::cout << "Failed reconnecting to database - too many attempts, limit exceeded!" << std::endl;
 	return false;
 }
 

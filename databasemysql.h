@@ -59,7 +59,9 @@ class DatabaseMySQL : public _Database
 
 	protected:
 		DATABASE_VIRTUAL void keepAlive();
-		DATABASE_VIRTUAL bool reconnect();
+
+		bool connect();
+		bool reconnect();
 
 		MYSQL m_handle;
 		uint32_t m_attempts;
