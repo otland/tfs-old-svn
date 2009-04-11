@@ -55,6 +55,7 @@ void OutfitList::addOutfit(const Outfit& outfit)
 		newOutfit->addons = outfit.addons;
 		newOutfit->quest = outfit.quest;
 		newOutfit->premium = outfit.premium;
+
 		m_list.push_back(newOutfit);
 	}
 }
@@ -178,32 +179,32 @@ bool Outfits::loadFromXml()
 			}
 
 			OutfitList* list;
-			if(m_list[intValue] != NULL)
-				list = m_list[intValue];
-			else
+			if(std::find(m_list.begin(), m_list.end(), intValue) == m_list.end())
 			{
 				list = new OutfitList;
 				m_list[intValue] = list;
 			}
+			else
+				list = m_list[intValue];
 
 			Outfit outfit;
-			if(readXMLInteger(p, "looktype", intValue))
-				outfit.looktype = intValue;
-			else
+			if(!readXMLInteger(p, "looktype", intValue))
 			{
 				std::cout << "[Error - Outfits::loadFromXml] Missing looktype, skipping" << std::endl;
 				p = p->next;
 				continue;
 			}
+			else
+				outfit.looktype = intValue;
 
 			std::string name;
-			if(readXMLString(p, "name", strValue))
-				name = strValue;
-			else
+			if(!readXMLString(p, "name", strValue))
 			{
 				std::cout << "[Warning - Outfits::loadFromXml] Missing name for outfit " << outfit.looktype << ", using default" << std::endl;
 				name = "Outfit #" + outfit.looktype;
 			}
+			else
+				name = strValue;
 
 			outfitNamesMap[outfit.looktype] = name;
 			if(readXMLInteger(p, "addons", intValue))

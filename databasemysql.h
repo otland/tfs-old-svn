@@ -34,6 +34,7 @@
 #include <map>
 
 #define MAX_RECONNECT_ATTEMPTS 10
+#define MAX_REFETCH_ATTEMPTS 3
 
 class DatabaseMySQL : public _Database
 {
@@ -79,14 +80,18 @@ class MySQLResult : public _DBResult
 		DATABASE_VIRTUAL bool next();
 
 	protected:
-		MySQLResult(MYSQL_RES* res);
+		MySQLResult(MYSQL_RES* result);
 		DATABASE_VIRTUAL ~MySQLResult() {}
+
+		void fetch();
+		bool refetch();
 
 		typedef std::map<const std::string, uint32_t> listNames_t;
 		listNames_t m_listNames;
 
 		MYSQL_RES* m_handle;
 		MYSQL_ROW m_row;
+		uint32_t m_attempts;
 };
 
 #endif

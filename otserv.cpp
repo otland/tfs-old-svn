@@ -692,23 +692,21 @@ ServiceManager* services)
 	serverIPs.push_back(std::make_pair(inet_addr("127.0.0.1"), 0xFFFFFFFF));
 
 	char hostName[128];
-	if(gethostname(hostName, 128) == 0)
+	hostent* host = NULL;
+	if(!gethostname(hostName, 128) && (host = gethostbyname(hostName)))
 	{
-		if(hostent* host = gethostbyname(hostName))
+		uint8_t** address = (uint8_t**)host->h_addr_list;
+		while(address[0] != NULL)
 		{
-			uint8_t** address = (uint8_t**)host->h_addr_list;
-			while(address[0] != NULL)
-			{
-				serverIPs.push_back(std::make_pair(*(uint32_t*)(*address), 0x0000FFFF));
-				address++;
-			}
+			serverIPs.push_back(std::make_pair(*(uint32_t*)(*address), 0x0000FFFF));
+			address++;
 		}
 	}
 
 	uint32_t resolvedIp = inet_addr(ip.c_str());
 	if(resolvedIp == INADDR_NONE)
 	{
-		if(hostent* host = gethostbyname(ip.c_str()))
+		if((host = gethostbyname(ip.c_str())))
 			resolvedIp = *(uint32_t*)host->h_addr;
 		else
 			startupErrorMessage("Cannot resolve " + ip + "!");

@@ -94,14 +94,14 @@ class Outfits
 	private:
 		Outfits();
 
+		OutfitList m_femaleList;
+		OutfitList m_maleList;
+
 		typedef std::vector<OutfitList*> OutfitsListVector;
 		OutfitsListVector m_list;
 
 		typedef std::map<uint32_t, std::string> OutfitNamesMap;
 		OutfitNamesMap outfitNamesMap;
-
-		OutfitList m_femaleList;
-		OutfitList m_maleList;
 };
 
 #endif

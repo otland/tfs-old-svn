@@ -220,7 +220,7 @@ bool DatabaseMySQL::reconnect()
 			m_attempts++;
 	}
 
-	std::cout << "Failed reconnecting to database - too many attempts, limit exceeded!" << std::endl;
+	std::cout << "Unable to reconnect - too many attempts, limit exceeded!" << std::endl;
 	return false;
 }
 
@@ -234,6 +234,9 @@ int32_t MySQLResult::getDataInt(const std::string &s)
 
 		return atoi(m_row[it->second]);
 	}
+
+	if(refetch())
+		return getDataInt(s);
 
 	std::cout << "Error during getDataInt(" << s << ")." << std::endl;
 	return 0; // Failed
@@ -250,6 +253,9 @@ int64_t MySQLResult::getDataLong(const std::string &s)
 		return ATOI64(m_row[it->second]);
 	}
 
+	if(refetch())
+		return getDataLong(s);
+
 	std::cout << "Error during getDataLong(" << s << ")." << std::endl;
 	return 0; // Failed
 }
@@ -264,6 +270,9 @@ std::string MySQLResult::getDataString(const std::string &s)
 
 		return std::string(m_row[it->second]);
 	}
+
+	if(refetch())
+		return getDataString(s);
 
 	std::cout << "Error during getDataString(" << s << ")." << std::endl;
 	return ""; // Failed
@@ -284,9 +293,12 @@ const char* MySQLResult::getDataStream(const std::string &s, uint64_t &size)
 		return m_row[it->second];
 	}
 
+	if(refetch())
+		return getDataStream(s, size);
+
 	std::cout << "Error during getDataStream(" << s << ")." << std::endl;
 	size = 0;
-	return "";
+	return ""; // Failed
 }
 
 void MySQLResult::free()
@@ -294,6 +306,7 @@ void MySQLResult::free()
 	if(m_handle)
 	{
 		mysql_free_result(m_handle);
+		m_listNames.clear();
 		delete this;
 	}
 	else
@@ -306,19 +319,34 @@ bool MySQLResult::next()
 	return m_row != NULL;
 }
 
-MySQLResult::MySQLResult(MYSQL_RES* res)
+void MySQLResult::fetch()
 {
-	if(!res)
-	{
-		delete this;
-		return;
-	}
-
-	m_handle = res;
 	m_listNames.clear();
-
-	MYSQL_FIELD* field;
 	int32_t i = 0;
+
+	MYSQL_FIELD* field;	
 	while((field = mysql_fetch_field(m_handle)))
 		m_listNames[field->name] = i++;
+}
+
+bool MySQLResult::refetch()
+{
+	if(m_attempts >= MAX_REFETCH_ATTEMPTS)
+		return false;
+
+	fetch();
+	m_attempts++;
+	return true;
+}
+
+MySQLResult::MySQLResult(MYSQL_RES* result)
+{
+	m_attempts = 0;
+	if(result)
+	{
+		m_handle = result;
+		fetch();
+	}
+	else
+		delete this;
 }
