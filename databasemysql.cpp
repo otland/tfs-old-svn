@@ -133,8 +133,9 @@ bool DatabaseMySQL::executeQuery(const std::string &query)
 		int32_t error = mysql_errno(&m_handle);
 		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR || error == CR_MALFORMED_PACKET)
 		{
-			if(reconnect())
-				return executeQuery(query);
+			while(!reconnect() && m_attempts < MAX_RECONNECT_ATTEMPTS)
+				if(reconnect())
+					return executeQuery(query);
 		}
 
 		std::cout << "mysql_real_query(): " << query << " - MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
@@ -158,8 +159,9 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 		int32_t error = mysql_errno(&m_handle);
 		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR || error == CR_MALFORMED_PACKET)
 		{
-			if(reconnect())
-				return storeQuery(query);
+			while(!reconnect() && m_attempts < MAX_RECONNECT_ATTEMPTS)
+				if(reconnect())
+					return storeQuery(query);
 		}
 
 		std::cout << "mysql_real_query(): " << query << ": MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
@@ -176,8 +178,9 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 	int32_t error = mysql_errno(&m_handle);
 	if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
 	{
-		if(reconnect())
-			return storeQuery(query);
+		while(!reconnect() && m_attempts < MAX_RECONNECT_ATTEMPTS)
+			if(reconnect())
+				return storeQuery(query);
 	}
 
 	std::cout << "mysql_store_result(): " << query << ": MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
