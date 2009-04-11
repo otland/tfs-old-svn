@@ -38,8 +38,6 @@
 #include "configmanager.h"
 extern ConfigManager g_config;
 
-/** DatabaseODBC definitions */
-
 DatabaseODBC::DatabaseODBC()
 {
 	m_connected = false;
@@ -272,19 +270,6 @@ std::string DatabaseODBC::_parse(const std::string& s)
 	return query;
 }
 
-void DatabaseODBC::freeResult(DBResult* res)
-{
-	if(res)
-	{
-		delete (ODBCResult*)res;
-		res = NULL;
-	}
-	else
-		std::cout << "[Warning - DatabaseODBC::freeResult] Trying to free already freed result." << std::endl;
-}
-
-/** ODBCResult definitions */
-
 int32_t ODBCResult::getDataInt(const std::string& s)
 {
 	listNames_t::iterator it = m_listNames.find(s);
@@ -348,16 +333,24 @@ const char* ODBCResult::getDataStream(const std::string& s, uint64_t& size)
 	if(it != m_listNames.end())
 	{
 		char* value = new char[1024];
-		SQLRETURN ret = SQLGetData(m_handle, it->second, SQL_C_BINARY, value, 1024, (SQLLEN*)&size);
-
-		if( RETURN_SUCCESS(ret))
+		if(RETURN_SUCCESS(SQLGetData(m_handle, it->second, SQL_C_BINARY, value, 1024, (SQLLEN*)&size)))
 			return value;
-		else
-			std::cout << "Error during getDataStream(" << s << ")." << std::endl;
 	}
 
 	std::cout << "Error during getDataStream(" << s << ")." << std::endl;
+	size = 0;
 	return 0; // Failed
+}
+
+void ODBCResult::free()
+{
+	if(m_handle)
+	{
+		SQLFreeHandle(SQL_HANDLE_STMT, m_handle);
+		delete this;
+	}
+	else
+		std::cout << "[Warning - ODBCResult::free] Trying to free already freed result." << std::endl;
 }
 
 bool ODBCResult::next()
@@ -368,6 +361,12 @@ bool ODBCResult::next()
 
 ODBCResult::ODBCResult(SQLHSTMT stmt)
 {
+	if(!res)
+	{
+		delete this;
+		return;
+	}
+
 	m_handle = stmt;
 	int16_t numCols = 0;
 

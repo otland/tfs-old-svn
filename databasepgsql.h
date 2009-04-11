@@ -45,13 +45,10 @@ class DatabasePgSQL : public _Database
 		DATABASE_VIRTUAL std::string escapeString(const std::string& s);
 		DATABASE_VIRTUAL std::string escapeBlob(const char *s, uint32_t length);
 
-		DATABASE_VIRTUAL void freeResult(DBResult* res);
-
-		DATABASE_VIRTUAL DatabaseEngine_t getDatabaseEngine() { return DATABASE_ENGINE_POSTGRESQL; }
+		DATABASE_VIRTUAL DatabaseEngine_t getDatabaseEngine() {return DATABASE_ENGINE_POSTGRESQL;}
 
 	protected:
 		std::string _parse(const std::string& s);
-
 		PGconn* m_handle;
 };
 
@@ -60,17 +57,17 @@ class PgSQLResult : public _DBResult
 	friend class DatabasePgSQL;
 
 	public:
-		DATABASE_VIRTUAL ~PgSQLResult() {PQclear(m_handle);}
-
 		DATABASE_VIRTUAL int32_t getDataInt(const std::string& s);
 		DATABASE_VIRTUAL int64_t getDataLong(const std::string& s);
 		DATABASE_VIRTUAL std::string getDataString(const std::string& s);
 		DATABASE_VIRTUAL const char* getDataStream(const std::string& s, uint64_t& size);
 
+		DATABASE_VIRTUAL void free();
 		DATABASE_VIRTUAL bool next();
 
 	protected:
 		PgSQLResult(PGresult* results);
+		DATABASE_VIRTUAL ~PgSQLResult() {}
 
 		PGresult* m_handle;
 		int32_t m_rows, m_cursor;

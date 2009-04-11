@@ -47,16 +47,13 @@ class DatabaseSQLite : public _Database
 		DATABASE_VIRTUAL std::string escapeString(const std::string &s);
 		DATABASE_VIRTUAL std::string escapeBlob(const char* s, uint32_t length);
 
-		DATABASE_VIRTUAL void freeResult(DBResult* res);
-
-		DATABASE_VIRTUAL std::string getStringComparisonOperator() { return "LIKE"; }
-
-		DATABASE_VIRTUAL DatabaseEngine_t getDatabaseEngine() { return DATABASE_ENGINE_SQLITE; }
+		DATABASE_VIRTUAL std::string getStringComparisonOperator() {return "LIKE";}
+		DATABASE_VIRTUAL DatabaseEngine_t getDatabaseEngine() {return DATABASE_ENGINE_SQLITE;}
 
 	protected:
-		std::string _parse(const std::string &s);
-
 		OTSYS_THREAD_LOCKVAR sqliteLock;
+
+		std::string _parse(const std::string &s);
 		sqlite3* m_handle;
 };
 
@@ -65,17 +62,17 @@ class SQLiteResult : public _DBResult
 	friend class DatabaseSQLite;
 
 	public:
-		DATABASE_VIRTUAL ~SQLiteResult() {sqlite3_finalize(m_handle);}
-
 		DATABASE_VIRTUAL int32_t getDataInt(const std::string &s);
 		DATABASE_VIRTUAL int64_t getDataLong(const std::string &s);
 		DATABASE_VIRTUAL std::string getDataString(const std::string &s);
 		DATABASE_VIRTUAL const char* getDataStream(const std::string &s, uint64_t &size);
 
+		DATABASE_VIRTUAL void free();
 		DATABASE_VIRTUAL bool next();
 
 	protected:
 		SQLiteResult(sqlite3_stmt* stmt);
+		DATABASE_VIRTUAL ~SQLiteResult() {}
 
 		typedef std::map<const std::string, uint32_t> listNames_t;
 		listNames_t m_listNames;

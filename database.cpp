@@ -75,12 +75,12 @@ Database* _Database::getInstance()
 	return _instance;
 }
 
-void _Database::freeResult(DBResult* res)
+void _Database::freeResult(DBResult* result)
 {
-	if(res)
+	if(result)
 	{
-		delete res;
-		res = NULL;
+		result->free();
+		result = NULL;
 	}
 	else
 		std::cout << "[Warning - Database::freeResult] Trying to free already freed result." << std::endl;	

@@ -159,6 +159,7 @@ class _Database
 		* @return quoted string
 		*/
 		DATABASE_VIRTUAL std::string escapeString(const std::string &s) {return "''";}
+
 		/**
 		* Escapes binary stream for query.
 		*
@@ -175,7 +176,7 @@ class _Database
 		*
 		* @param DBResult* resource to be freed
 		*/
-		DATABASE_VIRTUAL void freeResult(DBResult* res);
+		DATABASE_VIRTUAL void freeResult(DBResult* result);
 
 		/**
 		* Get case insensitive string comparison operator
@@ -207,38 +208,42 @@ class _Database
 class _DBResult
 {
 	public:
-		DATABASE_VIRTUAL ~_DBResult() {}
 		/** Get the Integer value of a field in database
 		*\returns The Integer value of the selected field and row
 		*\param s The name of the field
 		*/
 		DATABASE_VIRTUAL int32_t getDataInt(const std::string &s) {return 0;}
+
 		/** Get the Long value of a field in database
 		*\returns The Long value of the selected field and row
 		*\param s The name of the field
 		*/
 		DATABASE_VIRTUAL int64_t getDataLong(const std::string &s) {return 0;}
+
 		/** Get the String of a field in database
 		*\returns The String of the selected field and row
 		*\param s The name of the field
 		*/
 		DATABASE_VIRTUAL std::string getDataString(const std::string &s) {return "''";}
+
 		/** Get the blob of a field in database
 		*\returns a PropStream that is initiated with the blob data field, if not exist it returns NULL.
 		*\param s The name of the field
 		*/
 		DATABASE_VIRTUAL const char* getDataStream(const std::string &s, uint64_t &size) {return 0;}
 
-		/**
-		* Moves to next result in set.
-		*
-		* @return true if moved, false if there are no more results.
+		/** Result freeing
+		*/
+		DATABASE_VIRTUAL void free() {/*delete this;*/}
+
+		/** Moves to next result in set
+		*\returns true if moved, false if there are no more results.
 		*/
 		DATABASE_VIRTUAL bool next() {return false;}
-		DATABASE_VIRTUAL void free() {delete this;}
 
 	protected:
 		_DBResult() {}
+		DATABASE_VIRTUAL ~_DBResult() {}
 };
 
 /**
@@ -300,13 +305,11 @@ class DBInsert
 		bool execute();
 
 	protected:
-		bool m_multiLine;
-
-		uint32_t m_rows;
-		std::string m_query;
-		std::string m_buf;
-
 		Database* m_db;
+
+		bool m_multiLine;
+		uint32_t m_rows;
+		std::string m_query, m_buf;
 };
 
 
@@ -345,13 +348,11 @@ class DBTransaction
 
 		bool commit()
 		{
-			if(m_state == STATE_START)
-			{
-				m_state = STEATE_COMMIT;
-				return m_database->commit();
-			}
-			else
+			if(m_state != STATE_START)
 				return false;
+
+			m_state = STEATE_COMMIT;
+			return m_database->commit();
 		}
 
 	private:

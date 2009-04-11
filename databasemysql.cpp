@@ -197,17 +197,6 @@ std::string DatabaseMySQL::escapeBlob(const char* s, uint32_t length)
 	return res;
 }
 
-void DatabaseMySQL::freeResult(DBResult* res)
-{
-	if(res)
-	{
-		delete (MySQLResult*)res;
-		res = NULL;
-	}
-	else
-		std::cout << "[Warning - DatabaseMySQL::freeResult] Trying to free already freed result." << std::endl;
-}
-
 void DatabaseMySQL::keepAlive()
 {
 	int32_t delay = g_config.getNumber(ConfigManager::SQL_KEEPALIVE);
@@ -318,6 +307,17 @@ const char* MySQLResult::getDataStream(const std::string &s, uint64_t &size)
 	return NULL;
 }
 
+void MySQLResult::free()
+{
+	if(m_handle)
+	{
+		mysql_free_result(m_handle);
+		delete this;
+	}
+	else
+		std::cout << "[Warning - MySQLResult::free] Trying to free already freed result." << std::endl;
+}
+
 bool MySQLResult::next()
 {
 	m_row = mysql_fetch_row(m_handle);
@@ -326,12 +326,17 @@ bool MySQLResult::next()
 
 MySQLResult::MySQLResult(MYSQL_RES* res)
 {
+	if(!res)
+	{
+		delete this;
+		return;
+	}
+
 	m_handle = res;
 	m_listNames.clear();
 
-	MYSQL_FIELD* field;
 	int32_t i = 0;
-	while((field = mysql_fetch_field(m_handle)))
+	while((MYSQL_FIELD* field = mysql_fetch_field(m_handle)))
 	{
 		m_listNames[field->name] = i;
 		i++;

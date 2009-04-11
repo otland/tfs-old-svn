@@ -26,11 +26,8 @@
 #include "configmanager.h"
 extern ConfigManager g_config;
 
-/** DatabasePgSQL definitions */
-
 DatabasePgSQL::DatabasePgSQL()
 {
-	// load connection parameters
 	std::stringstream dns;
 	dns << "host='" << g_config.getString(ConfigManager::SQL_HOST) << "' dbname='" << g_config.getString(ConfigManager::SQL_DB) << "' user='" << g_config.getString(ConfigManager::SQL_USER) << "' password='" << g_config.getString(ConfigManager::SQL_PASS) << "' port='" << g_config.getNumber(ConfigManager::SQL_PORT) << "'";
 
@@ -185,19 +182,6 @@ std::string DatabasePgSQL::_parse(const std::string& s)
 	return query;
 }
 
-void DatabasePgSQL::freeResult(DBResult* res)
-{
-	if(res)
-	{
-		delete (PgSQLResult*)res;
-		res = NULL;
-	}
-	else
-		std::cout << "[Warning - DatabasePgSQL::freeResult] Trying to free already freed result." << std::endl;
-}
-
-/** PgSQLResult definitions */
-
 int32_t PgSQLResult::getDataInt(const std::string& s)
 {
 	return atoi(PQgetvalue(m_handle, m_cursor, PQfnumber(m_handle, s.c_str())));
@@ -225,6 +209,17 @@ const char* PgSQLResult::getDataStream(const std::string& s, uint64_t& size)
 	return value;
 }
 
+void PgSQLResult::free()
+{
+	if(m_handle)
+	{
+		PQclear(m_handle);
+		delete this;
+	}
+	else
+		std::cout << "[Warning - PgSQLResult::free] Trying to free already freed result." << std::endl;
+}
+
 bool PgSQLResult::next()
 {
 	if(m_cursor >= m_rows)
@@ -236,6 +231,12 @@ bool PgSQLResult::next()
 
 PgSQLResult::PgSQLResult(PGresult* results)
 {
+	if(!res)
+	{
+		delete this;
+		return;
+	}
+
 	m_handle = results;
 	m_cursor = -1;
 	m_rows = PQntuples(m_handle) - 1;

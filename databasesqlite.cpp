@@ -37,8 +37,6 @@ extern ConfigManager g_config;
 #define OTSYS_SQLITE3_PREPARE sqlite3_prepare_v2
 #endif
 
-/** DatabaseSQLite definitions */
-
 DatabaseSQLite::DatabaseSQLite()
 {
 	OTSYS_THREAD_LOCKVARINIT(sqliteLock);
@@ -214,19 +212,6 @@ std::string DatabaseSQLite::escapeBlob(const char* s, uint32_t length)
 	return buf;
 }
 
-void DatabaseSQLite::freeResult(DBResult* res)
-{
-	if(res)
-	{
-		delete (SQLiteResult*)res;
-		res = NULL;
-	}
-	else
-		std::cout << "[Warning - DatabaseSQLite::freeResult] Trying to free already freed result." << std::endl;
-}
-
-/** SQLiteResult definitions */
-
 int32_t SQLiteResult::getDataInt(const std::string &s)
 {
 	listNames_t::iterator it = m_listNames.find(s);
@@ -274,6 +259,17 @@ const char* SQLiteResult::getDataStream(const std::string &s, uint64_t &size)
 	return NULL; // Failed
 }
 
+void SQLiteResult::free()
+{
+	if(m_handle)
+	{
+		sqlite3_finalize(m_handle);
+		delete this;
+	}
+	else
+		std::cout << "[Warning - SQLiteResult::free] Trying to free already freed result." << std::endl;
+}
+
 bool SQLiteResult::next()
 {
 	// checks if after moving to next step we have a row result
@@ -282,6 +278,12 @@ bool SQLiteResult::next()
 
 SQLiteResult::SQLiteResult(sqlite3_stmt* stmt)
 {
+	if(!res)
+	{
+		delete this;
+		return;
+	}
+
 	m_handle = stmt;
 	m_listNames.clear();
 
