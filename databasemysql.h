@@ -39,15 +39,15 @@ class DatabaseMySQL : public _Database
 {
 	public:
 		DatabaseMySQL();
-		DATABASE_VIRTUAL ~DatabaseMySQL();
+		DATABASE_VIRTUAL ~DatabaseMySQL() {mysql_close(&m_handle);}
 
 		DATABASE_VIRTUAL bool getParam(DBParam_t param);
 
-		DATABASE_VIRTUAL bool beginTransaction();
+		DATABASE_VIRTUAL bool beginTransaction() {return executeQuery("BEGIN");}
 		DATABASE_VIRTUAL bool rollback();
 		DATABASE_VIRTUAL bool commit();
 
-		DATABASE_VIRTUAL bool executeQuery(const std::string &query);
+		DATABASE_VIRTUAL bool executeQuery(const std::string &query) {return escapeBlob(s.c_str(), s.length());}
 		DATABASE_VIRTUAL DBResult* storeQuery(const std::string &query);
 
 		DATABASE_VIRTUAL std::string escapeString(const std::string &s);

@@ -62,11 +62,6 @@ DatabaseMySQL::DatabaseMySQL()
 		Scheduler::getScheduler().addEvent(createSchedulerTask((keepAlive * 1000), boost::bind(&DatabaseMySQL::keepAlive, this)));
 }
 
-DatabaseMySQL::~DatabaseMySQL()
-{
-	mysql_close(&m_handle);
-}
-
 bool DatabaseMySQL::getParam(DBParam_t param)
 {
 	switch(param)
@@ -80,19 +75,14 @@ bool DatabaseMySQL::getParam(DBParam_t param)
 	return false;
 }
 
-bool DatabaseMySQL::beginTransaction()
-{
-	return executeQuery("BEGIN");
-}
-
 bool DatabaseMySQL::rollback()
 {
 	if(!m_connected)
 		return false;
 
-	if(mysql_rollback(&m_handle) != 0)
+	if(mysql_rollback(&m_handle))
 	{
-		std::cout << "mysql_rollback() - MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
+		std::cout << "mysql_rollback() - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << error << ")" << std::endl;
 		return false;
 	}
 
@@ -104,9 +94,9 @@ bool DatabaseMySQL::commit()
 	if(!m_connected)
 		return false;
 
-	if(mysql_commit(&m_handle) != 0)
+	if(mysql_commit(&m_handle))
 	{
-		std::cout << "mysql_commit() - MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
+		std::cout << "mysql_commit() - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << error << ")" << std::endl;
 		return false;
 	}
 
@@ -123,14 +113,11 @@ bool DatabaseMySQL::executeQuery(const std::string &query)
 		int32_t error = mysql_errno(&m_handle);
 		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR || error == CR_MALFORMED_PACKET)
 		{
-				if(reconnect())
-					return executeQuery(query);	
+			if(reconnect())
+				return executeQuery(query);	
 		}
 
-		if(MYSQL_RES* m_res = mysql_store_result(&m_handle))
-			mysql_free_result(m_res);
-			
-		std::cout << "mysql_real_query(): " << query << " - MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
+		std::cout << "mysql_real_query(): " << query << " - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << error << ")" << std::endl;
 		return false;
 	}
 
@@ -148,37 +135,32 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 	if(mysql_real_query(&m_handle, query.c_str(), query.length()) != 0)
 	{
 		int32_t error = mysql_errno(&m_handle);
-		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR || error == CR_MALFORMED_PACKET)
+		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
 		{
-				if(reconnect())
-					return storeQuery(query);
+			if(reconnect())
+				return storeQuery(query);
 		}
 
-		std::cout << "mysql_real_query(): " << query << ": MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
+		std::cout << "mysql_real_query(): " << query << ": MYSQL ERROR: " << mysql_error(&m_handle) << " (" << error << ")" << std::endl;
 		return NULL;
 
 	}
 
-	if(MYSQL_RES* m_res = mysql_store_result(&m_handle))
+	if(MYSQL_RES* tmp = mysql_store_result(&m_handle))
 	{
-		DBResult* res = (DBResult*)new MySQLResult(m_res);
+		DBResult* res = (DBResult*)new MySQLResult(tmp);
 		return verifyResult(res);
 	}
 
 	int32_t error = mysql_errno(&m_handle);
-	if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR || error == CR_MALFORMED_PACKET)
+	if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
 	{
-			if(reconnect())
-				return storeQuery(query);
+		if(reconnect())
+			return storeQuery(query);
 	}
 
-	std::cout << "mysql_store_result(): " << query << ": MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
+	std::cout << "mysql_store_result(): " << query << ": MYSQL ERROR: " << mysql_error(&m_handle) << " (" << error << ")" << std::endl;
 	return NULL;
-}
-
-std::string DatabaseMySQL::escapeString(const std::string &s)
-{
-	return escapeBlob(s.c_str(), s.length());
 }
 
 std::string DatabaseMySQL::escapeBlob(const char* s, uint32_t length)
@@ -219,7 +201,7 @@ bool DatabaseMySQL::connect()
 
 	if(!mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(ConfigManager::SQL_USER).c_str(), g_config.getString(ConfigManager::SQL_PASS).c_str(), g_config.getString(ConfigManager::SQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), NULL, CLIENT_REMEMBER_OPTIONS))
 	{
-		std::cout << "Failed connecting to database - MYSQL ERROR: " << mysql_error(&m_handle) << std::endl;
+		std::cout << "Failed connecting to database - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << error << ")" << std::endl;
 		return false;
 	}
 
