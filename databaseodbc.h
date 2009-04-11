@@ -60,7 +60,7 @@ class DatabaseODBC : public _Database
 		DATABASE_VIRTUAL bool executeQuery(const std::string& query);
 		DATABASE_VIRTUAL DBResult* storeQuery(const std::string& query);
 
-		DATABASE_VIRTUAL std::string escapeString(const std::string& s);
+		DATABASE_VIRTUAL std::string escapeString(const std::string& s) {return escapeBlob(s.c_str(), s.length());}
 		DATABASE_VIRTUAL std::string escapeBlob(const char *s, uint32_t length);
 
 		DATABASE_VIRTUAL DatabaseEngine_t getDatabaseEngine() {return DATABASE_ENGINE_ODBC;}

@@ -309,10 +309,7 @@ bool MySQLResult::next()
 MySQLResult::MySQLResult(MYSQL_RES* res)
 {
 	if(!res)
-	{
-		delete this;
 		return;
-	}
 
 	m_handle = res;
 	m_listNames.clear();

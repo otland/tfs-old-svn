@@ -57,11 +57,6 @@ DatabaseSQLite::DatabaseSQLite()
 		m_connected = true;
 }
 
-DatabaseSQLite::~DatabaseSQLite()
-{
-	sqlite3_close(m_handle);
-}
-
 bool DatabaseSQLite::getParam(DBParam_t param)
 {
 	switch(param)
@@ -72,21 +67,6 @@ bool DatabaseSQLite::getParam(DBParam_t param)
 	}
 
 	return false;
-}
-
-bool DatabaseSQLite::beginTransaction()
-{
-	return executeQuery("BEGIN");
-}
-
-bool DatabaseSQLite::rollback()
-{
-	return executeQuery("ROLLBACK");
-}
-
-bool DatabaseSQLite::commit()
-{
-	return executeQuery("COMMIT");
 }
 
 std::string DatabaseSQLite::_parse(const std::string &s)
@@ -270,19 +250,10 @@ void SQLiteResult::free()
 		std::cout << "[Warning - SQLiteResult::free] Trying to free already freed result." << std::endl;
 }
 
-bool SQLiteResult::next()
-{
-	// checks if after moving to next step we have a row result
-	return sqlite3_step(m_handle) == SQLITE_ROW;
-}
-
 SQLiteResult::SQLiteResult(sqlite3_stmt* stmt)
 {
 	if(!res)
-	{
-		delete this;
 		return;
-	}
 
 	m_handle = stmt;
 	m_listNames.clear();

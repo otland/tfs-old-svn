@@ -37,11 +37,6 @@ DatabasePgSQL::DatabasePgSQL()
 		std::cout << "Failed to estabilish PostgreSQL database connection: " << PQerrorMessage(m_handle) << std::endl;
 }
 
-DatabasePgSQL::~DatabasePgSQL()
-{
-	PQfinish(m_handle);
-}
-
 bool DatabasePgSQL::getParam(DBParam_t param)
 {
 	switch(param)
@@ -54,21 +49,6 @@ bool DatabasePgSQL::getParam(DBParam_t param)
 	}
 
 	return false;
-}
-
-bool DatabasePgSQL::beginTransaction()
-{
-	return executeQuery("BEGIN");
-}
-
-bool DatabasePgSQL::rollback()
-{
-	return executeQuery("ROLLBACK");
-}
-
-bool DatabasePgSQL::commit()
-{
-	return executeQuery("COMMIT");
 }
 
 bool DatabasePgSQL::executeQuery(const std::string& query)
@@ -182,21 +162,6 @@ std::string DatabasePgSQL::_parse(const std::string& s)
 	return query;
 }
 
-int32_t PgSQLResult::getDataInt(const std::string& s)
-{
-	return atoi(PQgetvalue(m_handle, m_cursor, PQfnumber(m_handle, s.c_str())));
-}
-
-int64_t PgSQLResult::getDataLong(const std::string& s)
-{
-	return ATOI64(PQgetvalue(m_handle, m_cursor, PQfnumber(m_handle, s.c_str())));
-}
-
-std::string PgSQLResult::getDataString(const std::string& s)
-{
-	return std::string(PQgetvalue(m_handle, m_cursor, PQfnumber(m_handle, s.c_str())));
-}
-
 const char* PgSQLResult::getDataStream(const std::string& s, uint64_t& size)
 {
 	std::string buf = PQgetvalue(m_handle, m_cursor, PQfnumber(m_handle, s.c_str()));
@@ -232,10 +197,7 @@ bool PgSQLResult::next()
 PgSQLResult::PgSQLResult(PGresult* results)
 {
 	if(!res)
-	{
-		delete this;
 		return;
-	}
 
 	m_handle = results;
 	m_cursor = -1;

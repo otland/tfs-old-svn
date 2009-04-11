@@ -33,13 +33,13 @@ class DatabaseSQLite : public _Database
 {
 	public:
 		DatabaseSQLite();
-		DATABASE_VIRTUAL ~DatabaseSQLite();
+		DATABASE_VIRTUAL ~DatabaseSQLite() {sqlite3_close(m_handle);}
 
 		DATABASE_VIRTUAL bool getParam(DBParam_t param);
 
-		DATABASE_VIRTUAL bool beginTransaction();
-		DATABASE_VIRTUAL bool rollback();
-		DATABASE_VIRTUAL bool commit();
+		DATABASE_VIRTUAL bool beginTransaction() {return executeQuery("BEGIN");}
+		DATABASE_VIRTUAL bool rollback() {return executeQuery("ROLLBACK");}
+		DATABASE_VIRTUAL bool commit() {return executeQuery("COMMIT");}
 
 		DATABASE_VIRTUAL bool executeQuery(const std::string &query);
 		DATABASE_VIRTUAL DBResult* storeQuery(const std::string &query);
@@ -68,7 +68,7 @@ class SQLiteResult : public _DBResult
 		DATABASE_VIRTUAL const char* getDataStream(const std::string &s, uint64_t &size);
 
 		DATABASE_VIRTUAL void free();
-		DATABASE_VIRTUAL bool next();
+		DATABASE_VIRTUAL bool next() {return sqlite3_step(m_handle) == SQLITE_ROW;}
 
 	protected:
 		SQLiteResult(sqlite3_stmt* stmt);

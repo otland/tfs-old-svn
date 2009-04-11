@@ -203,11 +203,6 @@ DBResult* DatabaseODBC::storeQuery(const std::string& query)
 	return verifyResult(results);
 }
 
-std::string DatabaseODBC::escapeString(const std::string& s)
-{
-	return escapeBlob(s.c_str(), s.length());
-}
-
 std::string DatabaseODBC::escapeBlob(const char *s, uint32_t length)
 {
 	std::string buf = "'";
@@ -362,10 +357,7 @@ bool ODBCResult::next()
 ODBCResult::ODBCResult(SQLHSTMT stmt)
 {
 	if(!res)
-	{
-		delete this;
 		return;
-	}
 
 	m_handle = stmt;
 	int16_t numCols = 0;
