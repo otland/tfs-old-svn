@@ -213,8 +213,8 @@ void DatabaseMySQL::keepAlive()
 	int32_t delay = g_config.getNumber(ConfigManager::SQL_KEEPALIVE);
 	if(delay)
 	{
-		if(time(NULL) > (m_use + delay))
-			mysql_ping(&m_handle);
+		if(time(NULL) > (m_use + delay) && mysql_ping(&m_handle))
+			reconnect();
 
 		Scheduler::getScheduler().addEvent(createSchedulerTask((delay * 1000), boost::bind(&DatabaseMySQL::keepAlive, this)));
 	}
