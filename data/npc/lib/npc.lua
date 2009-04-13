@@ -40,8 +40,7 @@ function getDistanceToCreature(id)
 		selfGotoIdle()
 	end
 
-	local c = {}
-	c.x, c.y, c.z = getCreaturePosition(id)
+	local c = getCreaturePosition(id)
 	if(c.x == nil) then
 		return nil
 	end

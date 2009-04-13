@@ -67,9 +67,9 @@ ScriptEnviroment::StorageMap ScriptEnviroment::m_globalStorageMap;
 
 ScriptEnviroment::ScriptEnviroment()
 {
-	resetEnv();
 	m_lastUID = 70000;
 	m_loaded = true;
+	resetEnv();
 }
 
 ScriptEnviroment::~ScriptEnviroment()
@@ -100,7 +100,10 @@ void ScriptEnviroment::resetEnv()
 
 	m_tempItems.clear();
 	for(DBResMap::iterator it = m_tempResults.begin(); it != m_tempResults.end(); ++it)
+	{
 		it->second->free();
+		delete *it;
+	}
 
 	m_tempResults.clear();
 	m_localMap.clear();
@@ -778,6 +781,7 @@ bool LuaScriptInterface::pushFunction(int32_t functionId)
 		if(lua_isfunction(m_luaState, -1) != 0)
 			return true;
 	}
+
 	return false;
 }
 
@@ -808,8 +812,8 @@ bool LuaScriptInterface::closeState()
 		{
 			for(std::list<int32_t>::iterator lt = it->second.parameters.begin(); lt != it->second.parameters.end(); ++lt)
 				luaL_unref(m_luaState, LUA_REGISTRYINDEX, *lt);
-			it->second.parameters.clear();
 
+			it->second.parameters.clear();
 			luaL_unref(m_luaState, LUA_REGISTRYINDEX, it->second.function);
 		}
 

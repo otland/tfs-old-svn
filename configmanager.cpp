@@ -95,6 +95,7 @@ bool ConfigManager::load()
 		m_confString[SQL_FILE] = getGlobalString(L, "sqlFile", "forgottenserver.s3db");
 		m_confNumber[SQL_KEEPALIVE] = getGlobalNumber(L, "sqlKeepAlive", 0);
 		m_confNumber[MYSQL_READ_TIMEOUT] = getGlobalNumber(L, "mysqlReadTimeout", 10);
+		m_confNumber[MYSQL_WRITE_TIMEOUT] = getGlobalNumber(L, "mysqlWriteTimeout", 10);
 		m_confBool[OPTIMIZE_DB_AT_STARTUP] = getGlobalBool(L, "optimizeDatabaseAtStartup", "yes");
 		m_confString[MAP_NAME] = getGlobalString(L, "mapName", "forgotten");
 		m_confString[MAP_AUTHOR] = getGlobalString(L, "mapAuthor", "Unknown");
