@@ -107,7 +107,7 @@ bool DatabaseMySQL::executeQuery(const std::string &query)
 	if(mysql_real_query(&m_handle, query.c_str(), query.length()))
 	{
 		int32_t error = mysql_errno(&m_handle);
-		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR || error == CR_MALFORMED_PACKET)
+		if(error != 0)
 		{
 			if(reconnect())
 				return executeQuery(query);	
@@ -131,7 +131,7 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 	if(mysql_real_query(&m_handle, query.c_str(), query.length()))
 	{
 		int32_t error = mysql_errno(&m_handle);
-		if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
+		if(error != 0)
 		{
 			if(reconnect())
 				return storeQuery(query);
@@ -149,7 +149,7 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 	}
 
 	int32_t error = mysql_errno(&m_handle);
-	if(error == CR_SERVER_LOST || error == CR_SERVER_GONE_ERROR)
+	if(error != 0)
 	{
 		if(reconnect())
 			return storeQuery(query);
@@ -273,7 +273,7 @@ std::string MySQLResult::getDataString(const std::string &s)
 	if(it != m_listNames.end())
 	{
 		if(m_row[it->second] == NULL)
-			return std::string("");
+			return "";
 
 		return std::string(m_row[it->second]);
 	}
@@ -305,7 +305,7 @@ const char* MySQLResult::getDataStream(const std::string &s, uint64_t &size)
 
 	std::cout << "Error during getDataStream(" << s << ")." << std::endl;
 	size = 0;
-	return ""; // Failed
+	return NULL; // Failed
 }
 
 void MySQLResult::free()
