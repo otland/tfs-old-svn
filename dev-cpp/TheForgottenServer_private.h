@@ -5,11 +5,11 @@
 #define THEFORGOTTENSERVER_PRIVATE_H
 
 /* VERSION DEFINITIONS */
-#define VER_STRING	"0.3.3.1521"
+#define VER_STRING	"0.3.3.1523"
 #define VER_MAJOR	0
 #define VER_MINOR	3
 #define VER_RELEASE	3
-#define VER_BUILD	1521
+#define VER_BUILD	1523
 #define COMPANY_NAME	""
 #define FILE_VERSION	"0.3.3"
 #define FILE_DESCRIPTION	"The Forgotten Server"
