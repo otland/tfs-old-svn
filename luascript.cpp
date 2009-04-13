@@ -100,10 +100,7 @@ void ScriptEnviroment::resetEnv()
 
 	m_tempItems.clear();
 	for(DBResMap::iterator it = m_tempResults.begin(); it != m_tempResults.end(); ++it)
-	{
 		it->second->free();
-		delete *it;
-	}
 
 	m_tempResults.clear();
 	m_localMap.clear();
@@ -595,7 +592,7 @@ std::string LuaScriptInterface::getErrorDesc(ErrorCode_t code)
 	return "Wrong error code!";
 }
 
-ScriptEnviroment LuaScriptInterface::m_scriptEnv[16];
+ScriptEnviroment LuaScriptInterface::m_scriptEnv[21];
 int32_t LuaScriptInterface::m_scriptEnvIndex = -1;
 
 LuaScriptInterface::LuaScriptInterface(std::string interfaceName)
