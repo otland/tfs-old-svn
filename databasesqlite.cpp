@@ -252,7 +252,7 @@ void SQLiteResult::free()
 
 SQLiteResult::SQLiteResult(sqlite3_stmt* stmt)
 {
-	if(!res)
+	if(!stmt)
 	{
 		delete this;
 		return;
