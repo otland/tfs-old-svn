@@ -191,7 +191,7 @@ void DatabaseMySQL::keepAlive()
 
 bool DatabaseMySQL::connect()
 {
-	uint32_t readTimeout = g_config.getNumber(ConfigManager::MYSQL_READ_TIMEOUT), writeTimeout = g_config.getNumber(ConfigManager::MYSQL_WRITE_TIMEOUT);
+	uint32_t readTimeout = g_config.getNumber(ConfigManager::MYSQL_READ_TIMEOUT)/*, writeTimeout = g_config.getNumber(ConfigManager::MYSQL_WRITE_TIMEOUT)*/;
 	if(m_connected)
 	{
 		m_connected = false;
@@ -202,8 +202,8 @@ bool DatabaseMySQL::connect()
 	if(readTimeout)
 		mysql_options(&m_handle, MYSQL_OPT_READ_TIMEOUT, (const char*)&readTimeout);
 
-	if(writeTimeout)
-		mysql_options(&m_handle, MYSQL_OPT_WRITE_TIMEOUT, (const char*)&writeTimeout);
+	/*if(writeTimeout)
+		mysql_options(&m_handle, MYSQL_OPT_WRITE_TIMEOUT, (const char*)&writeTimeout);*/
 
 	if(!mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(ConfigManager::SQL_USER).c_str(), g_config.getString(ConfigManager::SQL_PASS).c_str(), g_config.getString(ConfigManager::SQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), NULL, CLIENT_REMEMBER_OPTIONS))
 	{
