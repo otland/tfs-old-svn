@@ -107,7 +107,7 @@ bool DatabaseMySQL::executeQuery(const std::string &query)
 	if(mysql_real_query(&m_handle, query.c_str(), query.length()))
 	{
 		int32_t error = mysql_errno(&m_handle);
-		if(error != 0)
+		if(error)
 		{
 			if(reconnect())
 				return executeQuery(query);	
@@ -128,10 +128,12 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 	if(!m_connected)
 		return NULL;
 
+	int32_t error = 0;
+	
 	if(mysql_real_query(&m_handle, query.c_str(), query.length()))
 	{
-		int32_t error = mysql_errno(&m_handle);
-		if(error != 0)
+		error = mysql_errno(&m_handle);
+		if(error)
 		{
 			if(reconnect())
 				return storeQuery(query);
@@ -148,8 +150,8 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 		return verifyResult(res);
 	}
 
-	int32_t error = mysql_errno(&m_handle);
-	if(error != 0)
+	error = mysql_errno(&m_handle);
+	if(error)
 	{
 		if(reconnect())
 			return storeQuery(query);
@@ -194,7 +196,7 @@ bool DatabaseMySQL::connect()
 	{
 		m_connected = false;
 		mysql_close(&m_handle);
-		OTSYS_SLEEP(1000);
+		OTSYS_SLEEP(100);
 	}
 
 	if(readTimeout)
@@ -218,11 +220,9 @@ bool DatabaseMySQL::reconnect()
 {
 	while(m_attempts < MAX_RECONNECT_ATTEMPTS)
 	{
+		m_attempts++;
 		if(!connect())
-		{
-			m_attempts++;
-			OTSYS_SLEEP(1000);
-		}
+			OTSYS_SLEEP(100);
 		else
 			return true;
 	}
@@ -315,6 +315,7 @@ void MySQLResult::free()
 		mysql_free_result(m_handle);
 		m_listNames.clear();
 		delete this;
+		m_handle = NULL;
 	}
 	else
 		std::cout << "[Warning - MySQLResult::free] Trying to free already freed result." << std::endl;
