@@ -10297,7 +10297,7 @@
 		<attribute key="decayTo" value="0"/>
 		<attribute key="duration" value="600"/>
 	</item>
-	<item id="4849" name="flour"/>
+	<item id="4849" name="flour">
 		<attribute key="weight" value="500"/>
 		<attribute key="showcount" value="0"/>
 	</item>
