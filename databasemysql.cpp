@@ -107,11 +107,8 @@ bool DatabaseMySQL::executeQuery(const std::string &query)
 	if(mysql_real_query(&m_handle, query.c_str(), query.length()))
 	{
 		int32_t error = mysql_errno(&m_handle);
-		if(error)
-		{
-			if(reconnect())
-				return executeQuery(query);	
-		}
+		if(error && reconnect())
+			return executeQuery(query);
 
 		std::cout << "mysql_real_query(): " << query << " - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << error << ")" << std::endl;
 		return false;
@@ -128,16 +125,12 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 	if(!m_connected)
 		return NULL;
 
-	int32_t error = 0;
-	
+	int32_t error = 0;	
 	if(mysql_real_query(&m_handle, query.c_str(), query.length()))
 	{
 		error = mysql_errno(&m_handle);
-		if(error)
-		{
-			if(reconnect())
-				return storeQuery(query);
-		}
+		if(error && reconnect())
+			return storeQuery(query);
 
 		std::cout << "mysql_real_query(): " << query << " - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << error << ")" << std::endl;
 		return NULL;
@@ -151,11 +144,8 @@ DBResult* DatabaseMySQL::storeQuery(const std::string &query)
 	}
 
 	error = mysql_errno(&m_handle);
-	if(error)
-	{
-		if(reconnect())
-			return storeQuery(query);
-	}
+	if(error && reconnect())
+		return storeQuery(query);
 
 	std::cout << "mysql_store_result(): " << query << " - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << error << ")" << std::endl;
 	return NULL;
@@ -205,7 +195,9 @@ bool DatabaseMySQL::connect()
 	/*if(writeTimeout)
 		mysql_options(&m_handle, MYSQL_OPT_WRITE_TIMEOUT, (const char*)&writeTimeout);*/
 
-	if(!mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(ConfigManager::SQL_USER).c_str(), g_config.getString(ConfigManager::SQL_PASS).c_str(), g_config.getString(ConfigManager::SQL_DB).c_str(), g_config.getNumber(ConfigManager::SQL_PORT), NULL, CLIENT_REMEMBER_OPTIONS))
+	if(!mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(ConfigManager::SQL_USER).c_str(),
+		g_config.getString(ConfigManager::SQL_PASS).c_str(), g_config.getString(ConfigManager::SQL_DB).c_str(), g_config.getNumber(
+		ConfigManager::SQL_PORT), NULL, CLIENT_REMEMBER_OPTIONS))
 	{
 		std::cout << "Failed connecting to database - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << mysql_errno(&m_handle) << ")" << std::endl;
 		return false;
@@ -218,12 +210,10 @@ bool DatabaseMySQL::connect()
 
 bool DatabaseMySQL::reconnect()
 {
-	while(m_attempts < MAX_RECONNECT_ATTEMPTS)
+	while(m_attempts <= MAX_RECONNECT_ATTEMPTS)
 	{
 		m_attempts++;
-		if(!connect())
-			OTSYS_SLEEP(100);
-		else
+		if(connect())
 			return true;
 	}
 
@@ -313,9 +303,10 @@ void MySQLResult::free()
 	if(m_handle)
 	{
 		mysql_free_result(m_handle);
+		m_handle = NULL;
+
 		m_listNames.clear();
 		delete this;
-		m_handle = NULL;
 	}
 	else
 		std::cout << "[Warning - MySQLResult::free] Trying to free already freed result." << std::endl;
