@@ -26,6 +26,7 @@
 #include "baseevents.h"
 #include "luascript.h"
 #include "player.h"
+#include "tools.h"
 
 enum TalkActionFilter
 {
@@ -102,6 +103,7 @@ class TalkAction : public Event
 		uint32_t m_access;
 		int32_t m_channel;
 		bool m_logged, m_sensitive;
+		StringVec m_exception;
 };
 
 struct TalkFunction_t

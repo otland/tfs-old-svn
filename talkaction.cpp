@@ -24,7 +24,6 @@
 #include "game.h"
 #include "house.h"
 #include "iologindata.h"
-#include "tools.h"
 #include "ioban.h"
 #include "configmanager.h"
 #include "talkaction.h"
@@ -114,7 +113,8 @@ bool TalkActions::onPlayerSay(Player* player, uint16_t channelId, const std::str
 	if(!talkAction || (talkAction->getChannel() != -1 && talkAction->getChannel() != channelId))
 		return false;
 
-	if(talkAction->getAccess() > player->getAccessLevel() || player->isAccountManager())
+	if((std::find(m_exception.begin(), m_exception.end(), asLowerCaseString(player->getName())) == m_exception.end()
+		&& talkAction->getAccess() > player->getAccessLevel()) || player->isAccountManager())
 	{
 		if(player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
 		{
@@ -204,6 +204,9 @@ bool TalkAction::configureEvent(xmlNodePtr p)
 
 	if(readXMLString(p, "case-sensitive", strValue) || readXMLString(p, "casesensitive", strValue) || readXMLString(p, "sensitive", strValue))
 		m_sensitive = booleanString(asLowerCaseString(strValue));
+
+	if(readXMLString(p, "exception", strValue))
+		m_exception = explodeString(asLowerCaseString(strValue), ";");
 
 	return true;
 }
