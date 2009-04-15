@@ -113,7 +113,8 @@ bool TalkActions::onPlayerSay(Player* player, uint16_t channelId, const std::str
 	if(!talkAction || (talkAction->getChannel() != -1 && talkAction->getChannel() != channelId))
 		return false;
 
-	if((std::find(m_exception.begin(), m_exception.end(), asLowerCaseString(player->getName())) == m_exception.end()
+	StringVec exceptions = talkAction->getExceptions();
+	if((std::find(exceptions.begin(), exceptions.end(), asLowerCaseString(player->getName())) == exceptions.end()
 		&& talkAction->getAccess() > player->getAccessLevel()) || player->isAccountManager())
 	{
 		if(player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
@@ -206,7 +207,7 @@ bool TalkAction::configureEvent(xmlNodePtr p)
 		m_sensitive = booleanString(asLowerCaseString(strValue));
 
 	if(readXMLString(p, "exception", strValue))
-		m_exception = explodeString(asLowerCaseString(strValue), ";");
+		m_exceptions = explodeString(asLowerCaseString(strValue), ";");
 
 	return true;
 }

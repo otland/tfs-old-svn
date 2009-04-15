@@ -77,6 +77,7 @@ class TalkAction : public Event
 		TalkActionFilter getFilter() const {return m_filter;}
 
 		uint32_t getAccess() const {return m_access;}
+		StringVec getExceptions() {return m_exceptions;}
 		int32_t getChannel() const {return m_channel;}
 
 		bool isLogged() const {return m_logged;}
@@ -103,7 +104,7 @@ class TalkAction : public Event
 		uint32_t m_access;
 		int32_t m_channel;
 		bool m_logged, m_sensitive;
-		StringVec m_exception;
+		StringVec m_exceptions;
 };
 
 struct TalkFunction_t
