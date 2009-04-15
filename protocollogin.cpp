@@ -140,16 +140,6 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	uint32_t serverIP = serverIPs[0].first;
-	for(uint32_t i = 0; i < serverIPs.size(); i++)
-	{
-		if((serverIPs[i].first & serverIPs[i].second) == (clientIP & serverIPs[i].second))
-		{
-			serverIP = serverIPs[i].first;
-			break;
-		}
-	}
-
 	Account account;
 	if(IOLoginData::getInstance()->getAccountId(name, id) || (!name.length() && g_config.getBool(ConfigManager::ACCOUNT_MANAGER)))
 	{
@@ -183,6 +173,16 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		char motd[1300];
 		sprintf(motd, "%d\n%s", g_game.getMotdNum(), g_config.getString(ConfigManager::MOTD).c_str());
 		output->AddString(motd);
+
+		uint32_t serverIP = serverIPs[0].first;
+		for(uint32_t i = 0; i < serverIPs.size(); i++)
+		{
+			if((serverIPs[i].first & serverIPs[i].second) == (clientIP & serverIPs[i].second))
+			{
+				serverIP = serverIPs[i].first;
+				break;
+			}
+		}
 
 		//Add char list
 		output->AddByte(0x64);
