@@ -65,7 +65,11 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 					TRACK_MESSAGE(output);
 					if(Status* status = Status::getInstance())
 					{
-						std::string str = status->getStatusString();
+						bool sendPlayers = false;
+						if(msg.getMessageLength() > msg.getReadPos())
+							sendPlayers = msg.GetByte() == 0x01;
+
+						std::string str = status->getStatusString(sendPlayers);
 						output->AddBytes(str.c_str(), str.size());
 					}
 
@@ -107,7 +111,7 @@ void ProtocolStatus::deleteProtocolTask()
 	Protocol::deleteProtocolTask();
 }
 
-std::string Status::getStatusString() const
+std::string Status::getStatusString(bool sendPlayers) const
 {
 	std::string xml;
 	char buffer[90];
@@ -147,6 +151,18 @@ std::string Status::getStatusString() const
 	xmlSetProp(p, (const xmlChar*)"max", (const xmlChar*)buffer);
 	sprintf(buffer, "%d", g_game.getLastPlayersRecord());
 	xmlSetProp(p, (const xmlChar*)"peak", (const xmlChar*)buffer);
+	if(sendPlayers)
+	{
+		std::stringstream ss;
+		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		{
+			if(!it->second->isInGhostMode())
+			        ss << it->second->getName() << "," << it->second->getVocationId() << "," << it->second->getLevel() << ";";
+		}
+
+		xmlNodeSetContent(p, (const xmlChar*)ss.str().c_str());
+	}
+
 	xmlAddChild(root, p);
 
 	p = xmlNewNode(NULL,(const xmlChar*)"monsters");

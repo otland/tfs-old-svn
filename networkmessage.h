@@ -53,6 +53,7 @@ class NetworkMessage
 
 		// simply read functions for incoming message
 		uint8_t GetByte() {return m_MsgBuf[m_ReadPos++];}
+		uint8_t PeekByte() {return m_MsgBuf[m_ReadPos];}
 		uint16_t GetU16()
 		{
 			uint16_t v = *(uint16_t*)(m_MsgBuf + m_ReadPos);
@@ -136,15 +137,9 @@ class NetworkMessage
 #endif
 
 	protected:
-		inline bool canAdd(int32_t size)
-		{
-			return (size + m_ReadPos < NETWORKMESSAGE_MAXSIZE - 16);
-		};
-
-		int32_t m_MsgSize;
-		int32_t m_ReadPos;
-
+		inline bool canAdd(int32_t size) {return (size + m_ReadPos < NETWORKMESSAGE_MAXSIZE - 16);}
 		uint8_t m_MsgBuf[NETWORKMESSAGE_MAXSIZE];
+		int32_t m_MsgSize, m_ReadPos;
 };
 
 typedef boost::shared_ptr<NetworkMessage> NetworkMessage_ptr;
