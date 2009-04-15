@@ -49,6 +49,7 @@ class ProtocolHTTP : public Protocol
 		enum {protocolId = 0x00};
 		enum {isSingleSocket = true};
 		enum {hasChecksum = false};
+		static const char* protocolName() {return "http protocol";}
 
 		virtual void onRecvFirstMessage(NetworkMessage& msg) {parseFirstPacket(msg);}
 

@@ -334,18 +334,28 @@ void serverMain(void* param)
 	}
 	#endif
 
-	std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
-	#if defined(WIN32) && not defined(__CONSOLE__)
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
-	GUI::getInstance()->m_connections = true;
+	if(servicer.isRunning())
+	{
+		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
+		#if defined(WIN32) && not defined(__CONSOLE__)
+		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
+		GUI::getInstance()->m_connections = true;
+		#endif
+		servicer.run();
+	}
+	else
+	{
+		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Offline! No services available..." << std::endl << std::endl;
+		#if defined(WIN32) && not defined(__CONSOLE__)
+		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Offline!");
+		GUI::getInstance()->m_connections = true;
+		#endif
+	}
 
-	#endif
-	servicer.run();
 #ifdef __EXCEPTION_TRACER__
 	mainExceptionHandler.RemoveHandler();
 #endif
 #ifdef __CONSOLE__
-
 	return 0;
 #endif
 }

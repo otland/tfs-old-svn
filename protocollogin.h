@@ -47,6 +47,7 @@ class ProtocolLogin : public Protocol
 		enum {protocolId = 0x01};
 		enum {isSingleSocket = false};
 		enum {hasChecksum = true};
+		static const char* protocolName() {return "login protocol";}
 
 		virtual void onRecvFirstMessage(NetworkMessage& msg) {parseFirstPacket(msg);}
 

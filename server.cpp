@@ -50,28 +50,8 @@ void ServicePort::open(uint16_t port)
 	if(m_pendingStart)
 		m_pendingStart = false;
 
-	try
-	{
-		m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
-			boost::asio::ip::address(boost::asio::ip::address_v4(INADDR_ANY)), m_serverPort), false);
-	}
-	catch(boost::system::system_error& error)
-	{
-		std::cout << "> ERROR: Can bind only one socket to a specific port (" << m_serverPort << ")." << std::endl;
-		std::cout << "The exact error was: " << error.what() << std::endl;
-		if(g_game.getGameState() == GAME_STATE_INIT && g_config.getBool(ConfigManager::ABORT_SOCKET_FAIL))
-		{
-			std::cout << "Exiting..." << std::endl;
-			exit(1);
-		}
-		else if(!m_pendingStart)
-		{
-			m_pendingStart = true;
-			Scheduler::getScheduler().addEvent(createSchedulerTask(5000,
-				boost::bind(&ServicePort::open, this, m_serverPort)));
-		}
-	}
-
+	m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
+		boost::asio::ip::address(boost::asio::ip::address_v4(INADDR_ANY)), m_serverPort));
 	accept();
 }
 
@@ -157,6 +137,21 @@ void ServicePort::handle(Connection* connection, const boost::system::error_code
 	else
 		std::cout << "[Error - ServerPort::handle] Operation aborted." << std::endl;
 #endif
+}
+
+std::string ServicePort::getProtocolNames() const
+{
+	if(m_services.empty())
+		return "";
+
+	std::string str = m_services.front()->getProtocolName();
+	for(int32_t i = 1; i < m_services.size(); ++i)
+	{
+		str += ", ";
+		str += m_services[i]->getProtocolName();
+	}
+
+	return str;
 }
 
 Protocol* ServicePort::makeProtocol(bool checksum, NetworkMessage& msg) const

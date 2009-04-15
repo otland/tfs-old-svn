@@ -133,7 +133,6 @@
 	defaultPriority = "high"
 	optimizeDatabaseAtStartup = "yes"
 	removePremiumOnInit = "yes"
-	abortOnSocketFailure = "yes"
 
 	-- Miscellaneous
 	-- NOTE: promptExceptionTracerErrorBox works only with precompiled support feature,

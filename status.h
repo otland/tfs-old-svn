@@ -59,6 +59,7 @@ class ProtocolStatus : public Protocol
 		enum {protocolId = 0xFF};
 		enum {isSingleSocket = false};
 		enum {hasChecksum = false};
+		static const char* protocolName() {return "status protocol";}
 
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
 

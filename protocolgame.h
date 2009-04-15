@@ -63,6 +63,7 @@ class ProtocolGame : public Protocol
 		enum {protocolId = 0x0A};
 		enum {isSingleSocket = true};
 		enum {hasChecksum = true};
+		static const char* protocolName() {return "game protocol";}
 
 		bool login(const std::string& name, uint32_t accnumber, const std::string& password,
 			OperatingSystem_t operatingSystem, bool gamemasterLogin);

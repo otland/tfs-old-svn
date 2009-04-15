@@ -87,7 +87,7 @@ Game::Game()
 	lightLevel = LIGHT_LEVEL_DAY;
 	lightState = LIGHT_STATE_DAY;
 
-	lastBucket = checkCreatureLastIndex = 0;
+	lastBucket = checkCreatureLastIndex = checkLightEvent = checkCreatureEvent = checkDecayEvent = saveEvent = 0;
 }
 
 Game::~Game()
@@ -98,11 +98,11 @@ Game::~Game()
 
 void Game::start(ServiceManager* servicer)
 {
-	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
+	checkDecayEvent = Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
 		boost::bind(&Game::checkDecay, this)));
-	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_CREATURE_THINK_INTERVAL,
+	checkCreatureEvent = Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_CREATURE_THINK_INTERVAL,
 		boost::bind(&Game::checkCreatures, this)));
-	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
+	checkLightEvent = Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
 		boost::bind(&Game::checkLight, this)));
 
 	services = servicer;
@@ -149,7 +149,7 @@ void Game::start(ServiceManager* servicer)
 
 		uint32_t hoursLeftInMs = 60000 * 60 * hoursLeft, minutesLeftInMs = 60000 * (minutesLeft - minutesToRemove);
 		if(!ignoreEvent && (hoursLeftInMs + minutesLeftInMs) > 0)
-			Scheduler::getScheduler().addEvent(createSchedulerTask(hoursLeftInMs + minutesLeftInMs,
+			saveEvent = Scheduler::getScheduler().addEvent(createSchedulerTask(hoursLeftInMs + minutesLeftInMs,
 				boost::bind(&Game::prepareGlobalSave, this)));
 	}
 }
@@ -5775,13 +5775,20 @@ void Game::globalSave()
 
 void Game::shutdown()
 {
-	std::cout << "Preparing";
+	std::cout << "Pre";
+	Scheduler::getScheduler().stopEvent(checkLightEvent);
+	std::cout << "pa";
+	Scheduler::getScheduler().stopEvent(checkCreatureEvent);
+	std::cout << "ring";
+	Scheduler::getScheduler().stopEvent(checkDecayEvent);
+	std::cout << " to";
+	Scheduler::getScheduler().stopEvent(saveEvent);
+	std::cout << " shutdown";
 	if(services)
 		services->stop();
-	
-	std::cout << " to";
+
 	Scheduler::getScheduler().shutdown();
-	std::cout << " shutdown";
+	std::cout << " server";
 	Dispatcher::getDispatcher().shutdown();
 	std::cout << ".";
 	Spawns::getInstance()->clear();

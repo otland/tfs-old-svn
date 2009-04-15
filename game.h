@@ -618,6 +618,7 @@ class Game
 		std::string lastMotdText;
 		int32_t lastMotdNum;
 		uint32_t lastPlayersRecord;
+		uint32_t checkLightEvent, checkCreatureEvent, checkDecayEvent, saveEvent;
 		int64_t stateDelay;
 		bool globalSaveMessage[2];
 

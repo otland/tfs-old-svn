@@ -229,6 +229,7 @@ class ProtocolAdmin : public Protocol
 		enum {protocolId = 0xFE};
 		enum {isSingleSocket = false};
 		enum {hasChecksum = false};
+		static const char* protocolName() {return "admin protocol";}
 
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
 

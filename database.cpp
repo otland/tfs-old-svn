@@ -91,7 +91,7 @@ DBResult* _Database::verifyResult(DBResult* result)
 	if(!result->next())
 	{
 		result->free();
-		return NULL;
+		result = NULL;
 	}
 
 	return result;

@@ -115,7 +115,6 @@ bool ConfigManager::load()
 		m_confNumber[PZ_LOCKED] = getGlobalNumber(L, "pzLocked", 0);
 		m_confBool[EXPERIENCE_STAGES] = getGlobalBool(L, "experienceStages", "no");
 		m_confString[DEFAULT_PRIORITY] = getGlobalString(L, "defaultPriority", "high");
-		m_confBool[ABORT_SOCKET_FAIL] = getGlobalBool(L, "abortOnSocketFailure", "yes");
 		#ifndef __LOGIN_SERVER__
 		m_confBool[LOGIN_ONLY_LOGINSERVER] = getGlobalBool(L, "loginOnlyWithLoginServer", "no");
 		#endif
