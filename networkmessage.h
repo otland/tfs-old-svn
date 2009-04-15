@@ -77,8 +77,8 @@ class NetworkMessage
 			return v;
 		}
 
-		std::string GetString();
-		std::string GetRaw();
+		std::string GetString(uint16_t stringLen = 0);
+		std::string GetRaw() {return GetString(m_MsgSize - m_ReadPos);}
 
 		Position GetPosition();
 		uint16_t GetSpriteId() {return GetU16();}

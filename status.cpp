@@ -58,7 +58,7 @@ void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 	{
 		case 0xFF:
 		{
-			if(msg.GetRaw() == "info")
+			if(msg.GetString(4) == "info")
 			{
 				if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 				{

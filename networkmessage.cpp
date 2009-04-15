@@ -39,20 +39,11 @@ int32_t NetworkMessage::decodeHeader()
 }
 
 /******************************************************************************/
-std::string NetworkMessage::GetString()
+std::string NetworkMessage::GetString(uint16_t stringLen/* = 0*/)
 {
-	uint16_t stringLen = GetU16();
-	if(stringLen >= (NETWORKMESSAGE_MAXSIZE - m_ReadPos))
-		return std::string();
+	if(!stringLen)
+		stringLen = GetU16();
 
-	char* v = (char*)(m_MsgBuf + m_ReadPos);
-	m_ReadPos += stringLen;
-	return std::string(v, stringLen);
-}
-
-std::string NetworkMessage::GetRaw()
-{
-	uint16_t stringLen = (m_MsgSize - m_ReadPos);
 	if(stringLen >= (NETWORKMESSAGE_MAXSIZE - m_ReadPos))
 		return std::string();
 
