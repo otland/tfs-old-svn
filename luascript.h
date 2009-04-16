@@ -517,6 +517,7 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerVocation(lua_State* L);
 		static int32_t luaGetPlayerTown(lua_State* L);
 		static int32_t luaGetPlayerItemCount(lua_State* L);
+		static int32_t luaGetPlayerMoney(lua_State* L);
 		static int32_t luaGetPlayerSoul(lua_State* L);
 		static int32_t luaGetPlayerStamina(lua_State* L);
 		static int32_t luaGetPlayerFreeCap(lua_State* L);

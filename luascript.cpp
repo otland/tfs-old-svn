@@ -1201,6 +1201,9 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerItemCount(cid, itemid)
 	lua_register(m_luaState, "getPlayerItemCount", LuaScriptInterface::luaGetPlayerItemCount);
 
+	//getPlayerMoney(cid)
+	lua_register(m_luaState, "getPlayerMoney", LuaScriptInterface::luaGetPlayerMoney);
+
 	//getPlayerSoul(cid)
 	lua_register(m_luaState, "getPlayerSoul", LuaScriptInterface::luaGetPlayerSoul);
 
@@ -4851,6 +4854,20 @@ int32_t LuaScriptInterface::luaGetPlayerItemCount(lua_State* L)
 		uint32_t n = player->__getItemTypeCount(itemId);
 		lua_pushnumber(L, n);
 	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnumber(L, LUA_ERROR);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetPlayerMoney(lua_State* L)
+{
+	//getPlayerMoney(cid)
+	ScriptEnviroment* env = getScriptEnv();
+	if(Player* player = env->getPlayerByUID(popNumber(L)))
+		lua_pushnumber(L, g_game.getMoney(player));
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));

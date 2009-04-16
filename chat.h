@@ -32,7 +32,11 @@ typedef std::list<uint32_t> UsersList;
 class ChatChannel
 {
 	public:
-		ChatChannel(uint16_t channelId, std::string channelName);
+		ChatChannel(uint16_t channelId, std::string channelName)
+		{
+			m_id = channelId;
+			m_name = channelName;
+		}
 		virtual ~ChatChannel() {}
 
 		bool addUser(Player* player);

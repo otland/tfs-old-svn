@@ -67,7 +67,7 @@ class dummyallocator
 		}
 
 		size_type max_size() const throw()
-		{\
+		{
 			return std::numeric_limits<size_type>::max() / sizeof(T);
 		}
 
