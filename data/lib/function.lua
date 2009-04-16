@@ -253,9 +253,14 @@ function getTibiaTime()
 end
 
 function doWriteLogFile(file, text)
-	local file = io.open(file, "a+")
-	file:write("[" .. os.date("%d/%m/%Y  %H:%M:%S") .. "] " .. text .. "\n")
-	file:close()
+	local f = io.open(file, "a+")
+	if(not f) then
+		return false
+	end
+
+	f:write("[" .. os.date("%d/%m/%Y %H:%M:%S") .. "] " .. text .. "\n")
+	f:close()
+	return true
 end
 
 function getExperienceForLevel(lv)
@@ -385,6 +390,10 @@ end
 
 function getPlayerFrags(cid)
 	return math.ceil((getPlayerRedSkullTicks(cid) / getConfigInfo('timeToDecreaseFrags')) + 1)
+end
+
+function doPlayerAddFrags(cid, amount)
+	return doPlayerSetRedSkullTicks(cid, getPlayerRedSkullTicks(cid) + getConfigInfo('timeToDecreaseFrags') * amount)
 end
 
 function getPartyLeader(cid)

@@ -736,24 +736,19 @@ ReturnValue Game::getPlayerByNameWildcard(const std::string& s, Player*& player)
 		}
 	}
 
-	if(lastFound != NULL)
-	{
-		player = lastFound;
-		return RET_NOERROR;
-	}
+	if(!lastFound)
+		return RET_PLAYERWITHTHISNAMEISNOTONLINE;
 
-	return RET_PLAYERWITHTHISNAMEISNOTONLINE;
+	player = lastFound;
+	return RET_NOERROR;
 }
 
 Player* Game::getPlayerByAccount(uint32_t acc)
 {
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		if(!it->second->isRemoved())
-		{
-			if(it->second->getAccount() == acc)
-				return it->second;
-		}
+		if(!it->second->isRemoved() && it->second->getAccount() == acc)
+			return it->second;
 	}
 	return NULL;
 }
@@ -763,11 +758,8 @@ PlayerVector Game::getPlayersByAccount(uint32_t acc)
 	PlayerVector players;
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		if(!it->second->isRemoved())
-		{
-			if(it->second->getAccount() == acc)
-				players.push_back(it->second);
-		}
+		if(!it->second->isRemoved() && it->second->getAccount() == acc)
+			players.push_back(it->second);
 	}
 	return players;
 }
@@ -945,7 +937,8 @@ bool Game::playerMoveThing(uint32_t playerId, const Position& fromPos,
 	{
 		if(Position::areInRange<1,1,0>(movingCreature->getPosition(), player->getPosition()))
 		{
-			SchedulerTask* task = createSchedulerTask(2000, boost::bind(&Game::playerMoveCreature, this,
+			SchedulerTask* task = createSchedulerTask(g_config.getNumber(ConfigManager::MOVE_CREATURE_DELAY),
+				boost::bind(&Game::playerMoveCreature, this,
 				player->getID(), movingCreature->getID(), movingCreature->getPosition(), toCylinder->getPosition()));
 			player->setNextActionTask(task);
 		}
@@ -1849,43 +1842,28 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 
 void Game::addMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/)
 {
-	int32_t crys = money / 10000;
-	money -= crys * 10000;
-	int32_t plat = money / 100;
-	money -= plat * 100;
-	int32_t gold = money;
-
-	if(crys != 0)
+	MoneyMap moneyMap = Item::items.moneyMap;
+	MoneyMap::reverse_iterator it;
+	int32_t tmp;
+	for(it = moneyMap.rbegin(); it != moneyMap.rend();  it++)
 	{
-		do
+		MoneyStruct moneyList = (*it).second;
+		tmp = money / moneyList.worth;
+		money -= tmp * moneyList.worth;
+		if(tmp != 0)
 		{
-			Item* remaindItem = Item::CreateItem(ITEM_COINS_CRYSTAL, std::min(100, crys));
+			do
+			{
+				Item* remaindItem = Item::CreateItem(moneyList.id, std::min(100, tmp));
 
-			ReturnValue ret = internalAddItem(NULL, cylinder, remaindItem, INDEX_WHEREEVER, flags);
-			if(ret != RET_NOERROR)
-				internalAddItem(NULL, cylinder->getTile(), remaindItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
+				ReturnValue ret = internalAddItem(NULL, cylinder, remaindItem, INDEX_WHEREEVER, flags);
+				if(ret != RET_NOERROR)
+					internalAddItem(NULL, cylinder->getTile(), remaindItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
 
-			crys -= std::min(100, crys);
+				tmp -= std::min(100, tmp);
+			}
+			while(tmp > 0);
 		}
-		while(crys > 0);
-	}
-
-	if(plat != 0)
-	{
-		Item* remaindItem = Item::CreateItem(ITEM_COINS_PLATINUM, plat);
-
-		ReturnValue ret = internalAddItem(NULL, cylinder, remaindItem, INDEX_WHEREEVER, flags);
-		if(ret != RET_NOERROR)
-			internalAddItem(NULL, cylinder->getTile(), remaindItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
-	}
-
-	if(gold != 0)
-	{
-		Item* remaindItem = Item::CreateItem(ITEM_COINS_GOLD, gold);
-
-		ReturnValue ret = internalAddItem(NULL, cylinder, remaindItem, INDEX_WHEREEVER, flags);
-		if(ret != RET_NOERROR)
-			internalAddItem(NULL, cylinder->getTile(), remaindItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
 	}
 }
 
@@ -4868,7 +4846,7 @@ std::string Game::getSearchString(const Position fromPos, const Position toPos, 
 
 					break;
 				}
-			
+
 				case LEVEL_LOWER:
 				{
 					ss << "is below ";
@@ -5797,7 +5775,7 @@ void Game::shutdown()
 	std::cout << "." << std::endl;
 	cleanup();
 	std::cout << "Exiting" << std::endl;
-	exit(1); 
+	exit(1);
 }
 
 void Game::cleanup()

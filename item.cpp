@@ -263,8 +263,7 @@ void Item::setID(uint16_t newid)
 
 bool Item::hasSubType() const
 {
-	const ItemType& it = items[id];
-	return it.hasSubType();
+	return items[id].hasSubType();
 }
 
 uint16_t Item::getSubType() const
@@ -1193,7 +1192,7 @@ void ItemAttributes::setStrAttr(itemAttrTypes type, const std::string& value)
 	if(!validateStrAttrType(type))
 		return;
 
-	if(value.length() == 0)
+	if(!value.length())
 		return;
 
 	if(Attribute* attr = getAttr(type))

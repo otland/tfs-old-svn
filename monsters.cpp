@@ -1449,14 +1449,16 @@ bool Monsters::loadLootItem(xmlNodePtr node, LootBlock& lootBlock)
 		loadLootContainer(node, lootBlock);
 
 	//optional
-	if(readXMLInteger(node, "subtype", intValue))
+	if(readXMLInteger(node, "subtype", intValue) || readXMLInteger(node, "subType", intValue))
 		lootBlock.subType = intValue;
 
-	if(readXMLInteger(node, "actionId", intValue))
-		lootBlock.actionId = intValue;
+	if(readXMLInteger(node, "actionId", intValue) || readXMLInteger(node, "actionid", intValue)
+		|| readXMLInteger(node, "aid", intValue))
+			lootBlock.actionId = intValue;
 
-	if(readXMLInteger(node, "uniqueId", intValue))
-		lootBlock.uniqueId = intValue;
+	if(readXMLInteger(node, "uniqueId", intValue) || readXMLInteger(node, "uniqueid", intValue)
+		|| readXMLInteger(node, "uid", intValue))
+			lootBlock.uniqueId = intValue;
 
 	if(readXMLString(node, "text", strValue))
 		lootBlock.text = strValue;

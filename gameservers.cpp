@@ -107,7 +107,7 @@ bool GameServers::loadFromXml(bool showResult/* = true*/)
 				std::cout << "[Warning - GameServers::loadFromXml] Missing versionMax for server " << id << ", using default" << std::endl;
 			}
 
-			if(readXMLString(p, "address", strValue))
+			if(readXMLString(p, "address", strValue) || readXMLString(p, "ip", strValue))
 				address = strValue;
 			else
 			{

@@ -134,9 +134,6 @@ bool ChatChannel::addUser(Player* player)
 			}
 			break;
 		}
-
-		default:
-			break;
 	}
 
 	m_users.push_back(player->getID());
@@ -957,18 +954,14 @@ ChannelList Chat::getChannelList(Player* player)
 	if(player->getGuildId() && player->getGuildName().length())
 	{
 		ChatChannel* channel = getChannel(player, CHANNEL_GUILD);
-		if(channel)
-			list.push_back(channel);
-		else if((channel = createChannel(player, CHANNEL_GUILD)))
+		if(channel || (channel = createChannel(player, CHANNEL_GUILD)))
 			list.push_back(channel);
 	}
 
 	if(player->getParty())
 	{
 		ChatChannel* channel = getChannel(player, CHANNEL_PARTY);
-		if(channel)
-			list.push_back(channel);
-		else if((channel = createChannel(player, CHANNEL_PARTY)))
+		if(channel || (channel = createChannel(player, CHANNEL_PARTY)))
 			list.push_back(channel);
 	}
 

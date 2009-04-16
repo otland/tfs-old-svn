@@ -79,7 +79,7 @@ void GlobalEvents::onThink(uint32_t interval)
 		if(timeNow > (globalEvent->getLastExecution() + globalEvent->getInterval()))
 		{
 			globalEvent->setLastExecution(timeNow);
-			if(!globalEvent->executeThink(interval, timeNow))
+			if(!globalEvent->executeThink(globalEvent->getInterval(), timeNow))
 				std::cout << "[Error - GlobalEvents::onThink] Couldn't execute event: " << globalEvent->getName() << std::endl;
 		}
 	}

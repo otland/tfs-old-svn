@@ -736,16 +736,10 @@ bool Action::configureEvent(xmlNodePtr p)
 {
 	std::string strValue;
 	if(readXMLString(p, "allowfaruse", strValue))
-	{
-		if(booleanString(strValue))
-			setAllowFarUse(true);
-	}
+		setAllowFarUse(booleanString(strValue));
 
 	if(readXMLString(p, "blockwalls", strValue))
-	{
-		if(!booleanString(strValue))
-			setCheckLineOfSight(false);
-	}
+		setCheckLineOfSight(booleanString(strValue));
 
 	return true;
 }

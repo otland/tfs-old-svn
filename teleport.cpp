@@ -97,16 +97,17 @@ void Teleport::__addThing(Creature* actor, Thing* thing)
 
 void Teleport::__addThing(Creature* actor, int32_t index, Thing* thing)
 {
-	if(Tile* destTile = g_game.getTile(getDestPos().x, getDestPos().y, getDestPos().z))
+	Tile* destTile = g_game.getTile(getDestPos());
+	if(!destTile)
+		return;
+
+	if(Creature* creature = thing->getCreature())
 	{
-		if(Creature* creature = thing->getCreature())
-		{
-			getTile()->moveCreature(creature, destTile, true);
-			g_game.addMagicEffect(destTile->getPosition(), NM_ME_TELEPORT, creature->isInGhostMode());
-		}
-		else if(Item* item = thing->getItem())
-			g_game.internalMoveItem(actor, getTile(), destTile, INDEX_WHEREEVER, item, item->getItemCount(), NULL);
+		getTile()->moveCreature(creature, destTile, true);
+		g_game.addMagicEffect(destTile->getPosition(), NM_ME_TELEPORT, creature->isInGhostMode());
 	}
+	else if(Item* item = thing->getItem())
+		g_game.internalMoveItem(actor, getTile(), destTile, INDEX_WHEREEVER, item, item->getItemCount(), NULL);
 }
 
 void Teleport::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)

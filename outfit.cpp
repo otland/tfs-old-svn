@@ -104,7 +104,7 @@ bool OutfitList::isInList(int32_t playerId, uint32_t looktype, uint32_t addons) 
 
 			if((*git)->premium && !player->isPremium())
 				return false;
-					
+
 			if((*git)->quest)
 			{
 				std::string value;

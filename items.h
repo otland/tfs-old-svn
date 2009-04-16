@@ -40,7 +40,7 @@
 #define	SLOTP_AMMO 1 << 9
 #define	SLOTP_DEPOT 1 << 10
 #define	SLOTP_TWO_HAND 1 << 11
-#define SLOTP_HAND SLOTP_LEFT | SLOTP_RIGHT 
+#define SLOTP_HAND SLOTP_LEFT | SLOTP_RIGHT
 
 enum ItemTypes_t
 {
@@ -293,6 +293,13 @@ void Array<A>::addElement(A a, uint32_t pos)
 	m_data[pos] = a;
 }
 
+//MoneyMap
+struct MoneyStruct
+{
+	int32_t id, worth;
+};
+typedef std::map<int32_t, MoneyStruct> MoneyMap;
+
 class Items
 {
 	public:
@@ -322,6 +329,8 @@ class Items
 		const ItemType* getElement(uint32_t id) const {return items.getElement(id);}
 		uint32_t size() {return items.size();}
 
+		//money map
+		MoneyMap moneyMap;
 	protected:
 		typedef std::map<int32_t, int32_t> ReverseItemMap;
 		ReverseItemMap reverseItemMap;

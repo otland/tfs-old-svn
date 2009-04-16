@@ -77,21 +77,16 @@ bool passwordTest(const std::string &plain, std::string &hash)
 		{
 			std::transform(hash.begin(), hash.end(), hash.begin(), upchar);
 			return transformToMD5(plain, true) == hash;
-			break;
 		}
 
 		case PASSWORD_TYPE_SHA1:
 		{
 			std::transform(hash.begin(), hash.end(), hash.begin(), upchar);
 			return transformToSHA1(plain, true) == hash;
-			break;
 		}
 
 		default:
-		{
 			return plain == hash;
-			break;
-		}
 	}
 	return false;
 }

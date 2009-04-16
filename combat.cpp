@@ -605,8 +605,6 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 					case ITEM_ENERGYFIELD_PVP:
 						itemId = ITEM_ENERGYFIELD_NOPVP;
 						break;
-					default:
-						break;
 				}
 			}
 			else if(params.isAggressive && !Item::items[itemId].blockSolid)
@@ -972,14 +970,10 @@ void TileCallback::onTileCombat(Creature* creature, Tile* tile) const
 		if(!env->setCallbackId(m_scriptId, m_scriptInterface))
 			return;
 
-		uint32_t cid = 0;
-		if(creature)
-			cid = env->addThing(creature);
-
 		m_scriptInterface->pushFunction(m_scriptId);
 		lua_State* L = m_scriptInterface->getLuaState();
 
-		lua_pushnumber(L, cid);
+		lua_pushnumber(L, creature ? env->addThing(creature) : 0);
 		m_scriptInterface->pushPosition(L, tile->getPosition(), 0);
 
 		m_scriptInterface->callFunction(2);

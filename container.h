@@ -34,7 +34,7 @@ class ContainerIterator
 		ContainerIterator();
 		ContainerIterator(const ContainerIterator& rhs);
 		virtual ~ContainerIterator() {}
-	
+
 		ContainerIterator& operator=(const ContainerIterator& rhs);
 		bool operator==(const ContainerIterator& rhs);
 		bool operator!=(const ContainerIterator& rhs);
@@ -42,10 +42,10 @@ class ContainerIterator
 		ContainerIterator operator++(int32_t);
 		Item* operator*();
 		Item* operator->();
-	
+
 	protected:
 		ContainerIterator(Container* _base);
-	
+
 		Container* base;
 		std::queue<Container*> over;
 		ItemList::iterator current;

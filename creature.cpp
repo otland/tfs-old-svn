@@ -280,9 +280,6 @@ void Creature::onWalk(Direction& dir)
 				case 4:
 					dir = EAST;
 					break;
-
-				default:
-					break;
 			}
 
 			g_game.internalCreatureSay(this, SPEAK_MONSTER_SAY, "Hicks!");

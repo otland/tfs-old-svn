@@ -91,7 +91,7 @@ Creature()
 	violationAccess = 0;
 	groupName = "";
 	groupId = 0;
-	lastLogin = OTSYS_TIME();
+//	lastLogin = OTSYS_TIME();
 	lastLoginSaved = 0;
 	lastLogout = 0;
  	lastIP = 0;
@@ -232,11 +232,10 @@ void Player::setVocation(uint32_t vocId)
 
 bool Player::isPushable() const
 {
-	bool ret = Creature::isPushable();
 	if(hasFlag(PlayerFlag_CannotBePushed))
 		return false;
 
-	return ret;
+	return Creature::isPushable();
 }
 
 std::string Player::getDescription(int32_t lookDistance) const
@@ -258,11 +257,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 		if(!hasCustomFlag(PlayerCustomFlag_HideLevel))
 			s << " (Level " << level << ")";
 
-		s << ".";
-		if(sex == PLAYERSEX_FEMALE)
-			s << " She";
-		else
-			s << " He";
+		s << ". " << (sex == PLAYERSEX_FEMALE ? "She" : "He");
 
 		if(hasCustomFlag(PlayerCustomFlag_DescriptionGroupInsteadVocation))
 			s << " is " << groupName;
@@ -286,12 +281,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 			s << " ";
 		}
 
-		if(sex == PLAYERSEX_FEMALE)
-			s << "wife";
-		else
-			s << "husband";
-
-		s << " of " << tmp;
+		s << (sex == PLAYERSEX_FEMALE ? "wife" : "husband") << " of " << tmp;
 	}
 
 	s << ".";
@@ -300,19 +290,9 @@ std::string Player::getDescription(int32_t lookDistance) const
 		if(lookDistance == -1)
 			s << " You are ";
 		else
-		{
-			if(sex == PLAYERSEX_FEMALE)
-				s << " She is ";
-			else
-				s << " He is ";
-		}
+			s << " " << (sex == PLAYERSEX_FEMALE ? "She" : "He") << " is ";
 
-		if(guildRank.length())
-			s << guildRank;
-		else
-			s << "a member";
-
-		s << " of the " << guildName;
+		s << (guildRank.length() ? guildRank : "a member")<< " of the " << guildName;
 		if(guildNick.length())
 			s << " (" << guildNick << ")";
 
@@ -585,29 +565,29 @@ float Player::getDefenseFactor() const
 
 void Player::sendIcons() const
 {
-	if(client)
-	{
-		int32_t icons = 0;
-		for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
-		{
-			if(!isSuppress((*it)->getType()))
-				icons |= (*it)->getIcons();
-		}
+	if(!client)
+		return;
 
-		client->sendIcons(icons);
+	int32_t icons = 0;
+	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
+	{
+		if(!isSuppress((*it)->getType()))
+			icons |= (*it)->getIcons();
 	}
+
+	client->sendIcons(icons);
 }
 
 void Player::updateInventoryWeigth()
 {
 	inventoryWeight = 0.00;
-	if(!hasFlag(PlayerFlag_HasInfiniteCapacity))
+	if(hasFlag(PlayerFlag_HasInfiniteCapacity))
+		return;
+
+	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 	{
-		for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
-		{
-			if(Item* item = getInventoryItem((slots_t)i))
-				inventoryWeight += item->getWeight();
-		}
+		if(Item* item = getInventoryItem((slots_t)i))
+			inventoryWeight += item->getWeight();
 	}
 }
 
@@ -1303,48 +1283,48 @@ void Player::setEditHouse(House* house, uint32_t listId /*= 0*/)
 
 void Player::sendHouseWindow(House* house, uint32_t listId) const
 {
-	if(client)
-	{
-		std::string text;
-		if(house->getAccessList(listId, text))
-			client->sendHouseWindow(windowTextId, house, listId, text);
-	}
+	if(!client)
+		return;
+
+	std::string text;
+	if(house->getAccessList(listId, text))
+		client->sendHouseWindow(windowTextId, house, listId, text);
 }
 
 //container
 void Player::sendAddContainerItem(const Container* container, const Item* item)
 {
-	if(client)
+	if(!client)
+		return;
+
+	for(ContainerVector::const_iterator cl = containerVec.begin(); cl != containerVec.end(); ++cl)
 	{
-		for(ContainerVector::const_iterator cl = containerVec.begin(); cl != containerVec.end(); ++cl)
-		{
-			if(cl->second == container)
-				client->sendAddContainerItem(cl->first, item);
-		}
+		if(cl->second == container)
+			client->sendAddContainerItem(cl->first, item);
 	}
 }
 
 void Player::sendUpdateContainerItem(const Container* container, uint8_t slot, const Item* oldItem, const Item* newItem)
 {
-	if(client)
+	if(!client)
+		return;
+
+	for(ContainerVector::const_iterator cl = containerVec.begin(); cl != containerVec.end(); ++cl)
 	{
-		for(ContainerVector::const_iterator cl = containerVec.begin(); cl != containerVec.end(); ++cl)
-		{
-			if(cl->second == container)
-				client->sendUpdateContainerItem(cl->first, slot, newItem);
-		}
+		if(cl->second == container)
+			client->sendUpdateContainerItem(cl->first, slot, newItem);
 	}
 }
 
 void Player::sendRemoveContainerItem(const Container* container, uint8_t slot, const Item* item)
 {
-	if(client)
+	if(!client)
+		return;
+
+	for(ContainerVector::const_iterator cl = containerVec.begin(); cl != containerVec.end(); ++cl)
 	{
-		for(ContainerVector::const_iterator cl = containerVec.begin(); cl != containerVec.end(); ++cl)
-		{
-			if(cl->second == container)
-				client->sendRemoveContainerItem(cl->first, slot);
-		}
+		if(cl->second == container)
+			client->sendRemoveContainerItem(cl->first, slot);
 	}
 }
 
@@ -1363,15 +1343,15 @@ void Player::onRemoveTileItem(const Tile* tile, const Position& pos, uint32_t st
 	const ItemType& iType, const Item* item)
 {
 	Creature::onRemoveTileItem(tile, pos, stackpos, iType, item);
-	if(tradeState != TRADE_TRANSFER)
+	if(tradeState == TRADE_TRANSFER)
+		return;
+
+	checkTradeState(item);
+	if(tradeItem)
 	{
-		checkTradeState(item);
-		if(tradeItem)
-		{
-			const Container* container = item->getContainer();
-			if(container && container->isHoldingItem(tradeItem))
-				g_game.internalCloseTrade(this);
-		}
+		const Container* container = item->getContainer();
+		if(container && container->isHoldingItem(tradeItem))
+			g_game.internalCloseTrade(this);
 	}
 }
 
@@ -1451,11 +1431,11 @@ void Player::onFollowCreatureDisappear(bool isLogout)
 
 void Player::onChangeZone(ZoneType_t zone)
 {
-	if(attackedCreature && zone == ZONE_PROTECTION && !hasFlag(PlayerFlag_IgnoreProtectionZone))
-	{
-		setAttackedCreature(NULL);
-		onAttackedCreatureDisappear(false);
-	}
+	if(!attackedCreature || zone != ZONE_PROTECTION || hasFlag(PlayerFlag_IgnoreProtectionZone))
+		return;
+
+	setAttackedCreature(NULL);
+	onAttackedCreatureDisappear(false);
 }
 
 void Player::onAttackedCreatureChangeZone(ZoneType_t zone)
@@ -1638,14 +1618,14 @@ void Player::onUpdateContainerItem(const Container* container, uint8_t slot,
 
 void Player::onRemoveContainerItem(const Container* container, uint8_t slot, const Item* item)
 {
-	if(tradeState != TRADE_TRANSFER)
+	if(tradeState == TRADE_TRANSFER)
+		return;
+
+	checkTradeState(item);
+	if(tradeItem)
 	{
-		checkTradeState(item);
-		if(tradeItem)
-		{
-			if(tradeItem->getParent() != container && container->isHoldingItem(tradeItem))
-				g_game.internalCloseTrade(this);
-		}
+		if(tradeItem->getParent() != container && container->isHoldingItem(tradeItem))
+			g_game.internalCloseTrade(this);
 	}
 }
 
@@ -1968,10 +1948,9 @@ void Player::addExperience(uint64_t exp)
 
 	uint64_t currLevelExp = Player::getExpForLevel(level);
 	nextLevelExp = Player::getExpForLevel(level + 1);
+	levelPercent = 0;
 	if(nextLevelExp > currLevelExp)
 		levelPercent = Player::getPercentLevel(experience - currLevelExp, nextLevelExp - currLevelExp);
-	else
-		levelPercent = 0;
 
 	sendStats();
 }
@@ -2400,27 +2379,27 @@ void Player::kickPlayer(bool displayEffect)
 
 void Player::notifyLogIn(Player* login_player)
 {
-	if(client)
+	if(!client)
+		return;
+
+	VIPListSet::iterator it = VIPList.find(login_player->getGUID());
+	if(it != VIPList.end())
 	{
-		VIPListSet::iterator it = VIPList.find(login_player->getGUID());
-		if(it != VIPList.end())
-		{
-			client->sendVIPLogIn(login_player->getGUID());
-			client->sendTextMessage(MSG_STATUS_SMALL, (login_player->getName() + " has logged in."));
-		}
+		client->sendVIPLogIn(login_player->getGUID());
+		client->sendTextMessage(MSG_STATUS_SMALL, (login_player->getName() + " has logged in."));
 	}
 }
 
 void Player::notifyLogOut(Player* logout_player)
 {
-	if(client)
+	if(!client)
+		return;
+
+	VIPListSet::iterator it = VIPList.find(logout_player->getGUID());
+	if(it != VIPList.end())
 	{
-		VIPListSet::iterator it = VIPList.find(logout_player->getGUID());
-		if(it != VIPList.end())
-		{
-			client->sendVIPLogOut(logout_player->getGUID());
-			client->sendTextMessage(MSG_STATUS_SMALL, (logout_player->getName() + " has logged out."));
-		}
+		client->sendVIPLogOut(logout_player->getGUID());
+		client->sendTextMessage(MSG_STATUS_SMALL, (logout_player->getName() + " has logged out."));
 	}
 }
 
@@ -3413,16 +3392,16 @@ void Player::onEndCondition(ConditionType_t type)
 {
 	Creature::onEndCondition(type);
 	sendIcons();
-	if(type == CONDITION_INFIGHT)
+	if(type != CONDITION_INFIGHT)
+		return;
+
+	onIdleStatus();
+	pzLocked = false;
+	if(getSkull() != SKULL_RED)
 	{
-		onIdleStatus();
-		pzLocked = false;
-		if(getSkull() != SKULL_RED)
-		{
-			clearAttacked();
-			setSkull(SKULL_NONE);
-			g_game.updateCreatureSkull(this);
-		}
+		clearAttacked();
+		setSkull(SKULL_NONE);
+		g_game.updateCreatureSkull(this);
 	}
 }
 
@@ -3571,7 +3550,7 @@ bool Player::onKilledCreature(Creature* target)
 
 void Player::gainExperience(uint64_t gainExp)
 {
-	if(!hasFlag(PlayerFlag_NotGainExperience) && gainExp > 0)
+	if(hasFlag(PlayerFlag_NotGainExperience) || !gainExp)
 	{
 		//soul regeneration
 		if(gainExp >= getLevel())

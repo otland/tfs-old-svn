@@ -296,11 +296,11 @@ void Party::broadcastPartyLoot(const std::string& monster, const ItemVector& ite
 		s << "none";
 
 	s << ".";
-	getLeader()->sendChannelMessage("", s.str().c_str(), SPEAK_CHANNEL_W, 0x08);
+	getLeader()->sendChannelMessage("", s.str().c_str(), SPEAK_CHANNEL_W, CHANNEL_PARTY);
 	if(!memberList.empty())
 	{
 		for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
-			(*it)->sendChannelMessage("", s.str().c_str(), SPEAK_CHANNEL_W, 0x08);
+			(*it)->sendChannelMessage("", s.str().c_str(), SPEAK_CHANNEL_W, CHANNEL_PARTY);
 	}
 }
 

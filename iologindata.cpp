@@ -554,9 +554,9 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 			player->guildRank = result->getDataString("rank");
 			player->guildRankId = rankId;
 			player->guildNick = nick;
-		}
 
-		result->free();
+			result->free();
+		}
 	}
 	else if(g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
 	{

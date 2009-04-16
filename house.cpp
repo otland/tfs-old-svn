@@ -439,8 +439,6 @@ bool HouseTransferItem::onTradeEvent(TradeEvents_t event, Player* owner)
 
 			return true;
 		}
-		default:
-			break;
 	}
 
 	return false;
@@ -897,8 +895,6 @@ bool Houses::payHouses()
 					case RENTPERIOD_YEARLY:
 						paidUntil += 12 * 30 * 24 * 60 * 60;
 						break;
-					default:
-						break;
 				}
 
 				house->setPaidUntil(paidUntil);
@@ -916,8 +912,6 @@ bool Houses::payHouses()
 						break;
 					case RENTPERIOD_YEARLY:
 						warningsLimit = 14;
-						break;
-					default:
 						break;
 				}
 
@@ -937,8 +931,6 @@ bool Houses::payHouses()
 							break;
 						case RENTPERIOD_YEARLY:
 							period = "annual";
-							break;
-						default:
 							break;
 					}
 
@@ -964,10 +956,7 @@ bool Houses::payHouses()
 			}
 		}
 		else
-		{
 			house->setHouseOwner(0);
-			savePlayer = false;
-		}
 
 		if(player->isVirtual())
 		{

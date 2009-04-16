@@ -154,7 +154,7 @@ void BedItem::sleep(Player* player)
 		Beds::getInstance().setBedSleeper(this, player->getGUID());
 		BedItem* nextBedItem = getNextBedItem();
 
-		internalSetSleeper(player);		
+		internalSetSleeper(player);
 		if(nextBedItem)
 			nextBedItem->internalSetSleeper(player);
 
@@ -226,7 +226,7 @@ void BedItem::regeneratePlayer(Player* player) const
 			{
 				player->removeCondition(condition);
 				condition = NULL;
-			}				
+			}
 		}
 		else
 			amount = sleptTime / 30;

@@ -134,9 +134,9 @@ class Creature : public AutoID, virtual public Thing
 		void setID()
 		{
 			/*
-			 * 0x20000000 - Player
-			 * 0x30000000 - NPC
+			 * 0x10000000 - Player
 			 * 0x40000000 - Monster
+			 * 0x80000000 - NPC
 			 */
 			if(this->id == 0)
 				this->id = auto_id | this->idRange();

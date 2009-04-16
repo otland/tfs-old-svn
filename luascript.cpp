@@ -7369,10 +7369,7 @@ int32_t LuaScriptInterface::luaGetPlayerByNameWildcard(lua_State* L)
 	Player* player = NULL;
 	ScriptEnviroment* env = getScriptEnv();
 	if(g_game.getPlayerByNameWildcard(name, player) == RET_NOERROR)
-	{
-		uint32_t cid = env->addThing(player);
-		lua_pushnumber(L, cid);
-	}
+		lua_pushnumber(L, env->addThing(player));
 	else
 		lua_pushnumber(L, LUA_NULL);
 
@@ -7432,9 +7429,8 @@ int32_t LuaScriptInterface::luaGetPlayersByAccountId(lua_State *L)
 	lua_newtable(L);
 	for(uint32_t i = 1; it != players.end(); ++it, ++i)
 	{
-		uint32_t cid = env->addThing(*it);
 		lua_pushnumber(L, i);
-		lua_pushnumber(L, cid);
+		lua_pushnumber(L, env->addThing(*it));
 		lua_settable(L, -3);
 	}
 
@@ -7470,9 +7466,8 @@ int32_t LuaScriptInterface::luaGetPlayersByIp(lua_State *L)
 	lua_newtable(L);
 	for(uint32_t i = 1; it != players.end(); ++it, ++i)
 	{
-		uint32_t cid = env->addThing(*it);
 		lua_pushnumber(L, i);
-		lua_pushnumber(L, cid);
+		lua_pushnumber(L, env->addThing(*it));
 		lua_settable(L, -3);
 	}
 
@@ -7710,17 +7705,11 @@ int32_t LuaScriptInterface::luaDoAddContainerItem(lua_State* L)
 				if(subCount == 0)
 				{
 					if(newItem->getParent())
-					{
-						uint32_t uid = env->addThing((Thing*)newItem);
-						lua_pushnumber(L, uid);
-						return 1;
-					}
-					else
-					{
-						//stackable item stacked with existing object, newItem will be released
+						lua_pushnumber(L, env->addThing((Thing*)newItem));
+					else //stackable item stacked with existing object, newItem will be released
 						lua_pushnumber(L, LUA_NULL);
-						return 1;
-					}
+
+					return 1;
 				}
 			}
 		}
@@ -7736,17 +7725,11 @@ int32_t LuaScriptInterface::luaDoAddContainerItem(lua_State* L)
 			}
 
 			if(newItem->getParent())
-			{
-				uint32_t new_uid = env->addThing((Thing*)newItem);
-				lua_pushnumber(L, new_uid);
-				return 1;
-			}
-			else
-			{
-				//stackable item stacked with existing object, newItem will be released
+				lua_pushnumber(L, env->addThing((Thing*)newItem));
+			else //stackable item stacked with existing object, newItem will be released
 				lua_pushnumber(L, LUA_NULL);
-				return 1;
-			}
+
+			return 1;
 		}
 	}
 	else
@@ -7871,7 +7854,7 @@ int32_t LuaScriptInterface::luaCanPlayerWearOutfit(lua_State* L)
 	Player* player = env->getPlayerByUID(cid);
 	if(player)
 	{
-		lua_pushnumber(L, (player->canWear(looktype, addon) ? LUA_TRUE : LUA_FALSE));
+		lua_pushnumber(L, player->canWear(looktype, addon) ? LUA_TRUE : LUA_FALSE);
 		return 1;
 	}
 
@@ -8213,6 +8196,12 @@ int32_t LuaScriptInterface::luaDoCreatureSetLookDir(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
+		if(dir < NORTH || dir > WEST)
+		{
+			lua_pushnumber(L, LUA_ERROR);
+			return 1;
+		}
+
 		g_game.internalCreatureTurn(creature, dir);
 		if(Player* player = creature->getPlayer())
 			player->resetIdleTime();
@@ -8237,6 +8226,7 @@ int32_t LuaScriptInterface::luaDoCreatureSetSkullType(lua_State* L)
 	if(Creature* creature = env->getCreatureByUID(cid))
 	{
 		creature->setSkull(skull);
+		g_game.updateCreatureSkull(creature);
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else
@@ -8314,13 +8304,7 @@ int32_t LuaScriptInterface::luaGetCreatureTarget(lua_State* L)
 	if(creature)
 	{
 		Creature* target = creature->getAttackedCreature();
-		if(target)
-		{
-			uint32_t targetCid = env->addThing(target);
-			lua_pushnumber(L, targetCid);
-		}
-		else
-			lua_pushnumber(L, 0);
+		lua_pushnumber(L, target ? env->addThing(target) : 0);
 	}
 	else
 	{
@@ -8335,10 +8319,7 @@ int32_t LuaScriptInterface::luaIsItemStackable(lua_State* L)
 	//isItemStackable(itemid)
 	uint32_t itemid = popNumber(L);
 	const ItemType& it = Item::items[itemid];
-	if(it.stackable)
-		lua_pushnumber(L, LUA_TRUE);
-	else
-		lua_pushnumber(L, LUA_FALSE);
+	lua_pushnumber(L, it.stackable ? LUA_TRUE : LUA_FALSE);
 	return 1;
 }
 
@@ -8347,10 +8328,7 @@ int32_t LuaScriptInterface::luaIsItemRune(lua_State* L)
 	//isItemRune(itemid)
 	uint32_t itemid = popNumber(L);
 	const ItemType& it = Item::items[itemid];
-	if(it.isRune())
-		lua_pushnumber(L, LUA_TRUE);
-	else
-		lua_pushnumber(L, LUA_FALSE);
+	lua_pushnumber(L, it.isRune() ? LUA_TRUE : LUA_FALSE);
 	return 1;
 }
 
@@ -8359,10 +8337,7 @@ int32_t LuaScriptInterface::luaIsItemDoor(lua_State* L)
 	//isItemDoor(itemid)
 	uint32_t itemid = popNumber(L);
 	const ItemType& it = Item::items[itemid];
-	if(it.isDoor())
-		lua_pushnumber(L, LUA_TRUE);
-	else
-		lua_pushnumber(L, LUA_FALSE);
+	lua_pushnumber(L, it.isDoor() ? LUA_TRUE : LUA_FALSE);
 	return 1;
 }
 
@@ -8378,10 +8353,7 @@ int32_t LuaScriptInterface::luaIsItemContainer(lua_State* L)
 	//isItemContainer(itemid)
 	uint32_t itemid = popNumber(L);
 	const ItemType& it = Item::items[itemid];
-	if(it.isContainer())
-		lua_pushnumber(L, LUA_TRUE);
-	else
-		lua_pushnumber(L, LUA_FALSE);
+	lua_pushnumber(L, it.isContainer() ? LUA_TRUE : LUA_FALSE);
 	return 1;
 }
 
@@ -8390,10 +8362,7 @@ int32_t LuaScriptInterface::luaIsItemFluidContainer(lua_State* L)
 	//isItemFluidContainer(itemid)
 	uint32_t itemid = popNumber(L);
 	const ItemType& it = Item::items[itemid];
-	if(it.isFluidContainer())
-		lua_pushnumber(L, LUA_TRUE);
-	else
-		lua_pushnumber(L, LUA_FALSE);
+	lua_pushnumber(L, it.isFluidContainer() ? LUA_TRUE : LUA_FALSE);
 	return 1;
 }
 
@@ -8401,10 +8370,7 @@ int32_t LuaScriptInterface::luaIsItemMovable(lua_State* L)
 {
 	uint32_t itemid = popNumber(L);
 	const ItemType& it = Item::items[itemid];
-	if(it.moveable)
-		lua_pushnumber(L, LUA_TRUE);
-	else
-		lua_pushnumber(L, LUA_FALSE);
+	lua_pushnumber(L, it.moveable ? LUA_TRUE : LUA_FALSE);
 
 	return 1;
 }
@@ -8438,7 +8404,7 @@ int32_t LuaScriptInterface::luaAddEvent(lua_State* L)
 
 	LuaTimerEventDesc eventDesc;
 	std::list<int32_t> params;
-	for(int32_t i = 0; i < parameters-2; ++i) //-2 because addEvent needs at least two parameters
+	for(int32_t i = 0; i < parameters - 2; ++i) //-2 because addEvent needs at least two parameters
 		params.push_back(luaL_ref(L, LUA_REGISTRYINDEX));
 
 	eventDesc.parameters = params;
@@ -8490,21 +8456,15 @@ int32_t LuaScriptInterface::luaStopEvent(lua_State* L)
 int32_t LuaScriptInterface::luaGetCreatureCondition(lua_State* L)
 {
 	//getCreatureCondition(cid, condition[, subId])
-	uint32_t subId = 0, condition, cid;
+	uint32_t subId = 0, condition;
 	if(lua_gettop(L) >= 3)
 		subId = popNumber(L);
 
 	condition = popNumber(L);
-	cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	if(Creature* creature = env->getCreatureByUID(cid))
-	{
-		if(creature->hasCondition((ConditionType_t)condition, subId))
-			lua_pushnumber(L, LUA_TRUE);
-		else
-			lua_pushnumber(L, LUA_FALSE);
-	}
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+		lua_pushnumber(L, creature->hasCondition((ConditionType_t)condition, subId) ? LUA_TRUE : LUA_FALSE);
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -8585,6 +8545,13 @@ int32_t LuaScriptInterface::luaSetPlayerGroupId(lua_State* L)
 	Player* player = env->getPlayerByUID(cid);
 	if(player)
 	{
+		const PlayerGroup* group = IOLoginData::getInstance()->getPlayerGroup(groupId);
+		if(!group)
+		{
+			lua_pushnumber(L, LUA_ERROR);
+			return 1;
+		}
+
 		player->setGroupId(groupId);
 		lua_pushboolean(L, true);
 	}
@@ -8727,10 +8694,7 @@ int32_t LuaScriptInterface::luaGetPlayerParty(lua_State* L)
 	if(Player* player = env->getPlayerByUID(cid))
 	{
 		if(Party* party = player->getParty())
-		{
-			uint32_t cid = env->addThing(party->getLeader());
-			lua_pushnumber(L, cid);
-		}
+			lua_pushnumber(L, env->addThing(party->getLeader()));
 		else
 			lua_pushnumber(L, LUA_NULL);
 	}
@@ -8800,8 +8764,14 @@ int32_t LuaScriptInterface::luaGetVocationInfo(lua_State* L)
 	//getVocationInfo(id)
 	uint32_t id = popNumber(L);
 	Vocation* voc = g_vocations.getVocation(id);
+	if(!voc)
+	{
+		lua_pushnumber(L, LUA_FALSE);
+		return 1;
+	}
 
 	lua_newtable(L);
+	setField(L, "id", voc->getId());
 	setField(L, "name", voc->getVocName().c_str());
 	setField(L, "description", voc->getVocDescription().c_str());
 	setField(L, "healthGain", voc->getHealthGain());
@@ -8831,9 +8801,8 @@ int32_t LuaScriptInterface::luaGetPlayersOnline(lua_State* L)
 	lua_newtable(L);
 	for(int32_t i = 1; it != Player::listPlayer.list.end(); ++it, ++i)
 	{
-		uint32_t cid = env->addThing(it->second);
 		lua_pushnumber(L, i);
-		lua_pushnumber(L, cid);
+		lua_pushnumber(L, env->addThing(it->second));
 		lua_settable(L, -3);
 	}
 	return 1;
@@ -8891,7 +8860,7 @@ int32_t LuaScriptInterface::luaGetCreatureMaster(lua_State *L)
 	Creature* creature = env->getCreatureByUID(cid);
 	if(!creature)
 	{
-	        reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
 	}
@@ -8903,8 +8872,7 @@ int32_t LuaScriptInterface::luaGetCreatureMaster(lua_State *L)
 		return 1;
 	}
 
-	uint32_t masterId = env->addThing(master);
-	lua_pushnumber(L, masterId);
+	lua_pushnumber(L, env->addThing(master));
 	return 1;
 }
 
@@ -8928,9 +8896,8 @@ int32_t LuaScriptInterface::luaGetCreatureSummons(lua_State *L)
 	lua_newtable(L);
 	for(uint32_t i = 1; it != summons.end(); ++it, ++i)
 	{
-		uint32_t sid = env->addThing(*it);
 		lua_pushnumber(L, i);
-		lua_pushnumber(L, sid);
+		lua_pushnumber(L, env->addThing(*it));
 		lua_settable(L, -3);
 	}
 
@@ -9127,7 +9094,7 @@ int32_t LuaScriptInterface::luaGetTownHouses(lua_State* L)
 		lua_pushnumber(L, it->second->getHouseId());
 		lua_settable(L, -3);
 	}
-		
+
 	return 1;
 }
 
@@ -9156,9 +9123,8 @@ int32_t LuaScriptInterface::luaGetSpectators(lua_State *L)
 	lua_newtable(L);
 	for(uint32_t i = 1; it != list.end(); ++it, ++i)
 	{
-		uint32_t cid = env->addThing(*it);
 		lua_pushnumber(L, i);
-		lua_pushnumber(L, cid);
+		lua_pushnumber(L, env->addThing(*it));
 		lua_settable(L, -3);
 	}
 
@@ -9217,6 +9183,7 @@ int32_t LuaScriptInterface::luaDoSetGameState(lua_State* L)
 	{
 		lua_pushnumber(L, LUA_ERROR);
 		reportErrorFunc("Invalid game state id.");
+		return 1;
 	}
 
 	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, &g_game, (GameState_t)id)));
@@ -10117,7 +10084,7 @@ int32_t LuaScriptInterface::luaResultGetDataString(lua_State *L)
 {
 	//result.getDataString(res, s)
 	//returns a string
-	const std::string& s = popString(L); 
+	const std::string& s = popString(L);
 
 	ScriptEnviroment* env = getScriptEnv();
 	DBResult* res = env->getResult(popNumber(L));

@@ -796,7 +796,7 @@ bool ContainerIterator::operator!=(const ContainerIterator& rhs)
 	assert(base);
 	if(base != rhs.base)
 		return true;
-		
+
 	if(over.empty() && rhs.over.empty())
 		return false;
 
@@ -808,11 +808,11 @@ bool ContainerIterator::operator!=(const ContainerIterator& rhs)
 
 	if(over.front() != rhs.over.front())
 		return true;
-	
+
 	return current != rhs.current;
 }
 
-ContainerIterator& ContainerIterator::operator=(const ContainerIterator& rhs) 
+ContainerIterator& ContainerIterator::operator=(const ContainerIterator& rhs)
 {
 	this->base = rhs.base;
 	this->current = rhs.current;
@@ -820,18 +820,18 @@ ContainerIterator& ContainerIterator::operator=(const ContainerIterator& rhs)
 	return *this;
 }
 
-Item* ContainerIterator::operator*() 
+Item* ContainerIterator::operator*()
 {
 	assert(base);
 	return *current;
 }
 
-Item* ContainerIterator::operator->() 
+Item* ContainerIterator::operator->()
 {
 	return *(*this);
 }
 
-ContainerIterator& ContainerIterator::operator++() 
+ContainerIterator& ContainerIterator::operator++()
 {
 	assert(base);
 	if(Item* item = *current)

@@ -90,8 +90,8 @@ Tile* Thing::getTile()
 		DEBUG_REPORT
 		return &(Tile::nullTile);
 	}
-
 	#endif
+
 	//get root cylinder
 	if(cylinder->getParent())
 		cylinder = cylinder->getParent();
