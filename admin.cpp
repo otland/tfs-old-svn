@@ -513,7 +513,7 @@ void ProtocolAdmin::adminCommandSetOwner(const std::string& param)
 	TRACK_MESSAGE(output);
 	StringVec params = explodeString(param, ";");
 	std::string houseId = params[0], name = params[1];
-	
+
 	trimString(houseId);
 	trimString(name);
 	if(House* house = Houses::getInstance().getHouse(atoi(houseId.c_str())))
@@ -639,9 +639,9 @@ uint16_t Admin::getProtocolPolicy()
 {
 	uint16_t policy = 0;
 	if(requireLogin())
-		policy = policy | REQUIRE_LOGIN;
+		policy |= REQUIRE_LOGIN;
 	if(requireEncryption())
-		policy = policy | REQUIRE_ENCRYPTION;
+		policy |= REQUIRE_ENCRYPTION;
 
 	return policy;
 }
@@ -699,7 +699,7 @@ bool Admin::passwordMatch(std::string& password)
 
 static void addLogLine(ProtocolAdmin* protocol, LogType_t type, int32_t level, std::string message)
 {
-	if(g_config.getBool(ConfigManager::ADMIN_LOGS_ENABLED))
+	if(!g_config.getBool(ConfigManager::ADMIN_LOGS_ENABLED))
 		return;
 
 	std::string tmp;
