@@ -791,7 +791,7 @@ bool LuaScriptInterface::initState()
 	luaL_openlibs(m_luaState);
 	registerFunctions();
 	if(loadFile(getFilePath(FILE_TYPE_OTHER, "lib/data.lua")) == -1)
-		std::cout << "Warning: [LuaScriptInterface::initState] Can not load " << getFilePath(FILE_TYPE_OTHER, "lib/data.lua") << "." << std::endl;
+		std::cout << "Warning: [LuaScriptInterface::initState] Cannot load " << getFilePath(FILE_TYPE_OTHER, "lib/data.lua") << "." << std::endl;
 
 	lua_newtable(m_luaState);
 	lua_setfield(m_luaState, LUA_REGISTRYINDEX, "EVENTS");
@@ -4200,7 +4200,7 @@ int32_t LuaScriptInterface::luaDoCreateItem(lua_State* L)
 		if(ret != RET_NOERROR)
 		{
 			delete newItem;
-			reportErrorFunc("Can not add Item");
+			reportErrorFunc("Cannot add Item");
 			lua_pushnumber(L, LUA_ERROR);
 			return 1;
 		}
@@ -4287,7 +4287,7 @@ int32_t LuaScriptInterface::luaDoCreateTeleport(lua_State* L)
 	if(ret != RET_NOERROR)
 	{
 		delete newItem;
-		reportErrorFunc("Can not add Item");
+		reportErrorFunc("Cannot add Item");
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
 	}
@@ -4537,7 +4537,7 @@ int32_t LuaScriptInterface::luaDoCreateMonster(lua_State* L)
 		delete monster;
 		if(displayError)
 		{
-			std::string tmp = (std::string)"Can not create monster: " + name;
+			std::string tmp = (std::string)"Cannot create monster: " + name;
 			reportErrorFunc(tmp);
 		}
 
@@ -4579,7 +4579,7 @@ int32_t LuaScriptInterface::luaDoCreateNpc(lua_State* L)
 		delete npc;
 		if(displayError)
 		{
-			std::string tmp = (std::string)"Can not create npc: " + name;
+			std::string tmp = (std::string)"Cannot create npc: " + name;
 			reportErrorFunc(tmp);
 		}
 
@@ -5827,7 +5827,7 @@ int32_t LuaScriptInterface::luaSetCombatCallBack(lua_State* L)
 
 	if(!callback->loadCallBack(scriptInterface, function_str))
 	{
-		reportError(__FUNCTION__, "Can not load callback");
+		reportError(__FUNCTION__, "Cannot load callback");
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
 	}

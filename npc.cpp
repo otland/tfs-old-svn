@@ -2483,7 +2483,7 @@ bool NpcScriptInterface::loadNpcLib(std::string file)
 
 	if(loadFile(file) == -1)
 	{
-		std::cout << "Warning: [NpcScriptInterface::loadNpcLib] Can not load " << file << std::endl;
+		std::cout << "Warning: [NpcScriptInterface::loadNpcLib] Cannot load " << file << std::endl;
 		return false;
 	}
 
@@ -3013,7 +3013,7 @@ NpcScript::NpcScript(std::string file, Npc* npc) :
 
 	if(m_scriptInterface->loadFile(file, npc) == -1)
 	{
-		std::cout << "[Warning - NpcScript::NpcScript] Can not load script: " << file << std::endl;
+		std::cout << "[Warning - NpcScript::NpcScript] Cannot load script: " << file << std::endl;
 		std::cout << m_scriptInterface->getLastLuaError() << std::endl;
 		m_loaded = false;
 		return;

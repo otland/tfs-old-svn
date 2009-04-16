@@ -175,7 +175,7 @@ bool Spawns::loadFromXml(const std::string& _filename)
 
 						if(interval <= MINSPAWN_INTERVAL)
 						{
-							std::cout << "[Warning - Spawns::loadFromXml] " << name << " " << pos << " spawntime can not";
+							std::cout << "[Warning - Spawns::loadFromXml] " << name << " " << pos << " spawntime cannot";
 							std::cout << " be less than " << (MINSPAWN_INTERVAL / 1000) << " seconds." << std::endl;
 						}
 						else

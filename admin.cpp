@@ -240,7 +240,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 			else
 			{
 				output->AddByte(AP_MSG_LOGIN_FAILED);
-				output->AddString("can not login");
+				output->AddString("cannot login");
 				addLogLine(this, LOGTYPE_WARNING, 1, "wrong state at login");
 			}
 
@@ -299,8 +299,8 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 			else
 			{
 				output->AddByte(AP_MSG_ENCRYPTION_FAILED);
-				output->AddString("can not set encryption");
-				addLogLine(this, LOGTYPE_EVENT, 1, "can not set encryption");
+				output->AddString("cannot set encryption");
+				addLogLine(this, LOGTYPE_EVENT, 1, "cannot set encryption");
 			}
 
 			break;
@@ -344,8 +344,8 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 			else
 			{
 				output->AddByte(AP_MSG_KEY_EXCHANGE_FAILED);
-				output->AddString("can not get public key");
-				addLogLine(this, LOGTYPE_WARNING, 1, "can not get public key");
+				output->AddString("cannot get public key");
+				addLogLine(this, LOGTYPE_WARNING, 1, "cannot get public key");
 			}
 
 			break;

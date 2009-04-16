@@ -1040,7 +1040,7 @@ void Player::sendCancelMessage(ReturnValue message) const
 			break;
 
 		case RET_PLAYERISPZLOCKED:
-			sendCancel("You can not enter a protection zone after attacking another player.");
+			sendCancel("You cannot enter a protection zone after attacking another player.");
 			break;
 
 		case RET_PLAYERISNOTINVITED:
@@ -1056,7 +1056,7 @@ void Player::sendCancelMessage(ReturnValue message) const
 			break;
 
 		case RET_CANNOTUSETHISOBJECT:
-			sendCancel("You can not use this object.");
+			sendCancel("You cannot use this object.");
 			break;
 
 		case RET_PLAYERWITHTHISNAMEISNOTONLINE:
@@ -1160,11 +1160,11 @@ void Player::sendCancelMessage(ReturnValue message) const
 			break;
 
 		case RET_PLAYERISPZLOCKEDLEAVEPVPZONE:
-			sendCancel("You can not leave a pvp zone after attacking another player.");
+			sendCancel("You cannot leave a pvp zone after attacking another player.");
 			break;
 
 		case RET_PLAYERISPZLOCKEDENTERPVPZONE:
-			sendCancel("You can not enter a pvp zone after attacking another player.");
+			sendCancel("You cannot enter a pvp zone after attacking another player.");
 			break;
 
 		case RET_ACTIONNOTPERMITTEDINANOPVPZONE:
@@ -1172,7 +1172,7 @@ void Player::sendCancelMessage(ReturnValue message) const
 			break;
 
 		case RET_YOUCANNOTLOGOUTHERE:
-			sendCancel("You can not logout here.");
+			sendCancel("You cannot logout here.");
 			break;
 
 		case RET_YOUNEEDAMAGICITEMTOCASTSPELL:
@@ -4640,7 +4640,7 @@ bool Player::transferMoneyTo(const std::string& name, uint64_t amount)
 		if(!IOLoginData::getInstance()->loadPlayer(target, name))
 		{
 #ifdef __DEBUG__
-			std::cout << "Failure: [Player::transferMoneyTo], can not load player: " << name << std::endl;
+			std::cout << "Failure: [Player::transferMoneyTo], cannot load player: " << name << std::endl;
 #endif
 			delete target;
 			return false;

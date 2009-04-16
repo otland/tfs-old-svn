@@ -1027,7 +1027,7 @@ void DatabaseManager::checkPasswordType()
 				{
 					if((PasswordType_t)value != PASSWORD_TYPE_PLAIN)
 					{
-						std::cout << "> WARNING: You can not change the passwordType to MD5, change it back in config.lua to \"sha1\"." << std::endl;
+						std::cout << "> WARNING: You cannot change the passwordType to MD5, change it back in config.lua to \"sha1\"." << std::endl;
 						return;
 					}
 
@@ -1065,7 +1065,7 @@ void DatabaseManager::checkPasswordType()
 				{
 					if((PasswordType_t)value != PASSWORD_TYPE_PLAIN)
 					{
-						std::cout << "> WARNING: You can not change the passwordType to SHA1, change it back in config.lua to \"md5\"." << std::endl;
+						std::cout << "> WARNING: You cannot change the passwordType to SHA1, change it back in config.lua to \"md5\"." << std::endl;
 						return;
 					}
 
@@ -1101,7 +1101,7 @@ void DatabaseManager::checkPasswordType()
 
 				default:
 				{
-					std::cout << "> WARNING: You can not switch from hashed passwords to plain text, change back the passwordType in config.lua to the passwordType you were previously using." << std::endl;
+					std::cout << "> WARNING: You cannot switch from hashed passwords to plain text, change back the passwordType in config.lua to the passwordType you were previously using." << std::endl;
 					break;
 				}
 			}

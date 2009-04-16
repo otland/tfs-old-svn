@@ -648,7 +648,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 	#endif
 
 	uint8_t recvbyte = msg.GetByte();
-	//a dead player can not performs actions
+	//a dead player cannot performs actions
 	if((player->isRemoved() || player->getHealth() <= 0) && recvbyte != 0x14)
 		return;
 

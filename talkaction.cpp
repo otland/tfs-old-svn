@@ -494,7 +494,7 @@ bool TalkAction::sellHouse(Player* player, const std::string& cmd, const std::st
 	Item* transferItem = house->getTransferItem();
 	if(!transferItem)
 	{
-		player->sendCancel("You can not trade this house.");
+		player->sendCancel("You cannot trade this house.");
 		return true;
 	}
 

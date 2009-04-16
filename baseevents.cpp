@@ -44,12 +44,12 @@ bool BaseEvents::loadFromXml()
 
 	std::string scriptsName = getScriptBaseName();
 	if(getScriptInterface().loadFile(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/" + scriptsName + ".lua"))) == -1)
-		std::cout << "[Warning - BaseEvents::loadFromXml] Can not load " << scriptsName << "/lib/" << scriptsName << ".lua" << std::endl;
+		std::cout << "[Warning - BaseEvents::loadFromXml] Cannot load " << scriptsName << "/lib/" << scriptsName << ".lua" << std::endl;
 
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/" + scriptsName + ".xml")).c_str());
 	if(!doc)
 	{
-		std::cout << "[Warning - BaseEvents::loadFromXml] Can not open " << scriptsName << ".xml" << std::endl;
+		std::cout << "[Warning - BaseEvents::loadFromXml] Cannot open " << scriptsName << ".xml" << std::endl;
 		return false;
 	}
 
@@ -123,7 +123,7 @@ bool BaseEvents::loadFromXml()
 				}
 				else
 				{
-					std::cout << "[Warning - BaseEvents::loadFromXml] Can not configure event" << std::endl;
+					std::cout << "[Warning - BaseEvents::loadFromXml] Cannot configure event" << std::endl;
 					delete event;
 				}
 			}
@@ -190,7 +190,7 @@ bool Event::loadScript(const std::string& script, bool file)
 
 	if(result == -1)
 	{
-		std::cout << "[Warning - Event::loadScript] Can not load script (" << script << ")" << std::endl;
+		std::cout << "[Warning - Event::loadScript] Cannot load script (" << script << ")" << std::endl;
 		std::cout << m_scriptInterface->getLastLuaError() << std::endl;
 		return false;
 	}

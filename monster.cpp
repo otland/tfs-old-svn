@@ -893,7 +893,7 @@ bool Monster::pushItem(Item* item, int32_t radius)
 void Monster::pushItems(Tile* tile)
 {
 	uint32_t moveCount = 0, removeCount = 0;
-	//We can not use iterators here since we can push the item to another tile
+	//We cannot use iterators here since we can push the item to another tile
 	//which will invalidate the iterator.
 	//start from the end to minimize the amount of traffic
 	int32_t downItemSize = tile->downItems.size();
@@ -939,7 +939,7 @@ bool Monster::pushCreature(Creature* creature)
 void Monster::pushCreatures(Tile* tile)
 {
 	uint32_t removeCount = 0;
-	//We can not use iterators here since we can push a creature to another tile
+	//We cannot use iterators here since we can push a creature to another tile
 	//which will invalidate the iterator.
 	for(uint32_t i = 0; i < tile->creatures.size();)
 	{

@@ -2758,7 +2758,7 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, uint8_t st
 	if(!tradeContainer || tradeContainer->getItemHoldingCount() + 1 < 101)
 		return internalStartTrade(player, tradePartner, tradeItem);
 
-	player->sendTextMessage(MSG_INFO_DESCR, "You can not trade more than 100 items.");
+	player->sendTextMessage(MSG_INFO_DESCR, "You cannot trade more than 100 items.");
 	return false;
 }
 
@@ -3293,7 +3293,7 @@ bool Game::playerRequestAddVip(uint32_t playerId, const std::string& vipName)
 
 	if(specialVip && !player->hasFlag(PlayerFlag_SpecialVIP))
 	{
-		player->sendTextMessage(MSG_STATUS_SMALL, "You can not add this player.");
+		player->sendTextMessage(MSG_STATUS_SMALL, "You cannot add this player.");
 		return false;
 	}
 
