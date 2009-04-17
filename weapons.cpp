@@ -188,15 +188,14 @@ bool Weapon::configureEvent(xmlNodePtr p)
 	}
 
 	id = intValue;
-
-	if(readXMLInteger(p, "lvl", intValue) || readXMLInteger(p, "level", intValue))
+	if(readXMLInteger(p, "lv", intValue) || readXMLInteger(p, "lvl", intValue) || readXMLInteger(p, "level", intValue))
 	{
 	 	level = intValue;
 		if(level > 0)
 			wieldInfo |= WIELDINFO_LEVEL;
 	}
 
-	if(readXMLInteger(p, "maglv", intValue) || readXMLInteger(p, "maglevel", intValue))
+	if(readXMLInteger(p, "maglv", intValue) || readXMLInteger(p, "maglvl", intValue) || readXMLInteger(p, "maglevel", intValue))
 	{
 	 	magLevel = intValue;
 		if(magLevel > 0)
@@ -212,7 +211,7 @@ bool Weapon::configureEvent(xmlNodePtr p)
 	if(readXMLInteger(p, "soul", intValue))
 	 	soul = intValue;
 
-	if(readXMLInteger(p, "exhaustion", intValue))
+	if(readXMLInteger(p, "exhaust", intValue) || readXMLInteger(p, "exhaustion", intValue))
 		exhaustion = intValue;
 
 	if(readXMLInteger(p, "prem", intValue) || readXMLInteger(p, "premium", intValue))

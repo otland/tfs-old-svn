@@ -135,9 +135,7 @@ Event* Spells::getEvent(const std::string& nodeName)
 
 bool Spells::registerEvent(Event* event, xmlNodePtr p)
 {
-	InstantSpell* instant = dynamic_cast<InstantSpell*>(event);
-	RuneSpell* rune = dynamic_cast<RuneSpell*>(event);
-	if(instant)
+	if(InstantSpell* instant = dynamic_cast<InstantSpell*>(event))
 	{
 		if(instants.find(instant->getWords()) != instants.end())
 		{
@@ -148,7 +146,8 @@ bool Spells::registerEvent(Event* event, xmlNodePtr p)
 		instants[instant->getWords()] = instant;
 		return true;
 	}
-	else if(rune)
+
+	if(RuneSpell* rune = dynamic_cast<RuneSpell*>(event))
 	{
 		if(runes.find(rune->getRuneItemId()) != runes.end())
 		{
@@ -166,10 +165,7 @@ bool Spells::registerEvent(Event* event, xmlNodePtr p)
 Spell* Spells::getSpellByName(const std::string& name)
 {
 	Spell* spell;
-	if((spell = getRuneSpellByName(name)))
-		return spell;
-
-	if((spell = getInstantSpellByName(name)))
+	if((spell = getRuneSpellByName(name)) || (spell = getInstantSpellByName(name)))
 		return spell;
 
 	return NULL;
@@ -322,7 +318,7 @@ bool CombatSpell::loadScriptCombat()
 		m_scriptInterface->releaseScriptEnv();
 	}
 
-	return (combat != NULL);
+	return combat != NULL;
 }
 
 bool CombatSpell::castSpell(Creature* creature)
@@ -477,39 +473,15 @@ bool Spell::configureSpell(xmlNodePtr p)
 		name = strValue;
 		const char* reservedList[] =
 		{
-			"melee",
-			"physical",
-			"poison",
-			"earth",
-			"fire",
-			"ice",
-			"freeze",
-			"energy",
-			"drown",
-			"death",
-			"curse",
-			"holy",
-			"lifedrain",
-			"manadrain",
-			"healing",
-			"speed",
-			"outfit",
-			"invisible",
-			"drunk",
-			"firefield",
-			"poisonfield",
-			"energyfield",
-			"firecondition",
-			"poisoncondition",
-			"energycondition",
-			"drowncondition",
-			"freezecondition",
+			"melee", "physical", "poison", "earth", "fire", "ice", "freeze", "energy", "drown", "death", "curse", "holy",
+			"lifedrain", "manadrain", "healing", "speed", "outfit", "invisible", "drunk", "firefield", "poisonfield",
+			"energyfield", "firecondition", "poisoncondition", "energycondition", "drowncondition", "freezecondition",
 			"cursecondition"
 		};
 
 		for(uint32_t i = 0; i < sizeof(reservedList) / sizeof(const char*); ++i)
 		{
-			if(strcasecmp(reservedList[i], name.c_str()) == 0)
+			if(!strcasecmp(reservedList[i], name.c_str()))
 			{
 				std::cout << "Error: [Spell::configureSpell] Spell is using a reserved name: " << reservedList[i] << std::endl;
 				return false;
@@ -900,11 +872,8 @@ ReturnValue Spell::CreateIllusion(Creature* creature, const std::string& name, i
 		return RET_CREATUREDOESNOTEXIST;
 
 	Player* player = creature->getPlayer();
-	if(player && !player->hasFlag(PlayerFlag_CanIllusionAll))
-	{
-		if(!mType->isIllusionable)
-			return RET_NOTPOSSIBLE;
-	}
+	if(player && !player->hasFlag(PlayerFlag_CanIllusionAll) && !mType->isIllusionable)
+		return RET_NOTPOSSIBLE;
 
 	return CreateIllusion(creature, mType->outfit, time);
 }

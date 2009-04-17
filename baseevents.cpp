@@ -24,16 +24,6 @@
 
 #include "baseevents.h"
 
-BaseEvents::BaseEvents()
-{
-	m_loaded = false;
-}
-
-BaseEvents::~BaseEvents()
-{
-	//
-}
-
 bool BaseEvents::loadFromXml()
 {
 	if(m_loaded)
@@ -49,13 +39,15 @@ bool BaseEvents::loadFromXml()
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/" + scriptsName + ".xml")).c_str());
 	if(!doc)
 	{
-		std::cout << "[Warning - BaseEvents::loadFromXml] Cannot open " << scriptsName << ".xml" << std::endl;
+		std::cout << "[Warning - BaseEvents::loadFromXml] Cannot open " << scriptsName << ".xml file." << std::endl;
+		std::cout << getLastXMLError() << std::endl;
 		return false;
 	}
 
 	xmlNodePtr p, root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)scriptsName.c_str()))
 	{
+		std::cout << "[Error - BaseEvents::loadFromXml] Malformed " << scriptsName << ".xml file." << std::endl;
 		xmlFreeDoc(doc);
 		return false;
 	}
@@ -144,24 +136,12 @@ bool BaseEvents::reload()
 	return loadFromXml();
 }
 
-Event::Event(LuaScriptInterface* _interface)
-{
-	m_scriptInterface = _interface;
-	m_scripted = EVENT_SCRIPT_FALSE;
-	m_scriptId = 0;
-}
-
 Event::Event(const Event* copy)
 {
 	m_scriptInterface = copy->m_scriptInterface;
 	m_scripted = copy->m_scripted;
 	m_scriptId = copy->m_scriptId;
 	m_scriptData = copy->m_scriptData;
-}
-
-Event::~Event()
-{
-	//
 }
 
 bool Event::loadScript(const std::string& script, bool file)

@@ -56,6 +56,7 @@ void Npcs::reload()
 
 	delete Npc::m_scriptInterface;
 	Npc::m_scriptInterface = NULL;
+
 	for(AutoList<Npc>::listiterator it = Npc::listNpc.list.begin(); it != Npc::listNpc.list.end(); ++it)
 		it->second->reload();
 }
@@ -160,13 +161,17 @@ bool Npc::loadFromXml(const std::string& filename)
 {
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 	if(!doc)
-		return false;
-
-	xmlNodePtr root, p;
-	root = xmlDocGetRootElement(doc);
-	if(xmlStrcmp(root->name,(const xmlChar*)"npc") != 0)
 	{
-		std::cerr << "Malformed XML" << std::endl;
+		std::cout << "[Warning - Npc::loadFromXml] Cannot load npc file (" << filename << ")." << std::endl;
+		std::cout << getLastXMLError() << std::endl;
+		return false;
+	}
+
+	xmlNodePtr p, root = xmlDocGetRootElement(doc);
+	if(xmlStrcmp(root->name,(const xmlChar*)"npc"))
+	{
+		std::cout << "[Error - Npc::loadFromXml] Malformed npc file (" << filename << ")." << std::endl;
+		xmlFreeDoc(doc);
 		return false;
 	}
 
@@ -362,9 +367,9 @@ bool Npc::loadFromXml(const std::string& filename)
 
 uint32_t Npc::loadParams(xmlNodePtr node)
 {
-	uint32_t params = RESPOND_DEFAULT;
 	std::string strValue;
 
+	uint32_t params = RESPOND_DEFAULT;
 	if(readXMLString(node, "param", strValue))
 	{
 		StringVec paramList = explodeString(strValue, ";");
@@ -399,34 +404,39 @@ uint32_t Npc::loadParams(xmlNodePtr node)
 				std::cout << "[Warning - Npc::loadParams] NPC Name: " << name << " - Unknown param " << (*it) << std::endl;
 		}
 	}
+
 	return params;
 }
 
 ResponseList Npc::loadInteraction(xmlNodePtr node)
 {
-	ResponseList _responseList;
 	std::string strValue;
 	int32_t intValue;
 
+	ResponseList _responseList;
 	while(node)
 	{
 		if(xmlStrcmp(node->name, (const xmlChar*)"include") == 0)
 		{
 			if(readXMLString(node, "file", strValue))
 			{
-				std::string included = getFilePath(FILE_TYPE_OTHER, "npc/lib/" + strValue);
-				if(xmlDocPtr doc = xmlParseFile(included.c_str()))
+				if(xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, "npc/lib/" + strValue).c_str()))
 				{
 					xmlNodePtr root = xmlDocGetRootElement(doc);
-					if(xmlStrcmp(root->name,(const xmlChar*)"interaction") == 0)
+					if(xmlStrcmp(root->name,(const xmlChar*)"interaction"))
 					{
 						ResponseList includedResponses = loadInteraction(root->children);
 						_responseList.insert(_responseList.end(), includedResponses.begin(), includedResponses.end());
 					}
 					else
-						std::cerr << "Malformed XML" << std::endl;
+						std::cout << "[Error - Npc::loadInteraction] Malformed interaction file (" << strValue << ")." << std::endl;
 
 					xmlFreeDoc(doc);
+				}
+				else
+				{
+					std::cout << "[Warning - Npc::loadInteraction] Cannot load interaction file (" << strValue << ")." << std::endl;
+					std::cout << getLastXMLError() << std::endl;
 				}
 			}
 		}

@@ -55,7 +55,7 @@ extern ConfigManager g_config;
 extern Actions actions;
 extern RSA* g_otservRSA;
 extern CreatureEvents* g_creatureEvents;
-Chat g_chat;
+extern Chat g_chat;
 
 #ifdef __SERVER_PROTECTION__
 #error "You should not use __SERVER_PROTECTION__"
@@ -2195,9 +2195,9 @@ void ProtocolGame::sendCreatureHealth(const Creature* creature)
 
 void ProtocolGame::sendFYIBox(const std::string& message)
 {
-	if(message.empty()/* || message.length() > 1018*/) ///Prevent client debug or length is > 1018 (This last not confirmed)
+	if(message.empty()/* || message.length() > 1018*/) //Prevent client debug or length is > 1018 (not confirmed)
 	{
-		std::cout << "[Warning - ProtocolGame::sendFYIBox] Trying to send empty message." << std::endl;
+		std::cout << "[Warning - ProtocolGame::sendFYIBox] Trying to send an empty message." << std::endl;
 		return;
 	}
 

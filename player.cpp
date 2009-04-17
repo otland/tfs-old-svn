@@ -426,6 +426,9 @@ int32_t Player::getWeaponSkill(const Item* item) const
 
 		case WEAPON_DIST:
 			return getSkill(SKILL_DIST, SKILL_LEVEL);
+
+		default:
+			break;
 	}
 
 	return 0;

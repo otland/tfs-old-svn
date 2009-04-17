@@ -161,14 +161,12 @@ bool ScriptEnviroment::setCallbackId(int32_t callbackId, LuaScriptInterface* scr
 		m_interface = scriptInterface;
 		return true;
 	}
-	else
-	{
-		//nested callbacks are not allowed
-		if(m_interface)
-			m_interface->reportError(__FUNCTION__, "Nested callbacks!");
 
-		return false;
-	}
+	//nested callbacks are not allowed
+	if(m_interface)
+		m_interface->reportError(__FUNCTION__, "Nested callbacks!");
+
+	return false;
 }
 
 void ScriptEnviroment::getEventInfo(int32_t& scriptId, std::string& desc, LuaScriptInterface*& scriptInterface, int32_t& callbackId, bool& timerEvent)
@@ -1155,21 +1153,12 @@ std::string LuaScriptInterface::getGlobalString(lua_State* L, const std::string&
 
 bool LuaScriptInterface::getGlobalBool(lua_State* L, const std::string& _identifier, const std::string& _default /*= "no"*/)
 {
-	return booleanString(getGlobalString(L, _identifier, _default));
+	return booleanString(LuaScriptInterface::getGlobalString(L, _identifier, _default));
 }
 
 int32_t LuaScriptInterface::getGlobalNumber(lua_State* L, const std::string& _identifier, const int32_t _default /*= 0*/)
 {
-	lua_getglobal(L, _identifier.c_str());
-	if(!lua_isnumber(L, -1))
-	{
-		lua_pop(L, 1);
-		return _default;
-	}
-
-	int32_t val = (int32_t)lua_tonumber(L, -1);
-	lua_pop(L, 1);
-	return val;
+	return (int32_t)LuaScriptInterface::getGlobalDouble(L, _identifier, _default);
 }
 
 double LuaScriptInterface::getGlobalDouble(lua_State* L, const std::string& _identifier, const double _default /*= 0*/)
@@ -1817,7 +1806,7 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerSetSex(cid, newSex)
 	lua_register(m_luaState, "doPlayerSetSex", LuaScriptInterface::luaDoPlayerSetSex);
 
-	//createCombatArea( {area}[, {extArea}])
+	//createCombatArea({area}[, {extArea}])
 	lua_register(m_luaState, "createCombatArea", LuaScriptInterface::luaCreateCombatArea);
 
 	//createConditionObject(type[, ticks[, buff[, subId]]])

@@ -178,13 +178,16 @@ bool Quests::loadFromXml()
 {
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "quests.xml").c_str());
 	if(!doc)
-		return false;
-
-	xmlNodePtr root, p;
-	root = xmlDocGetRootElement(doc);
-	if(xmlStrcmp(root->name,(const xmlChar*)"quests") != 0)
 	{
-		std::cout << "[Error - Quests::loadFromXml] Malformed quests file" << std::endl;
+		std::cout << "[Warning - Quests::loadFromXml] Cannot load quests file." << std::endl;
+		std::cout << getLastXMLError() << std::endl;
+		return false;
+	}
+
+	xmlNodePtr p, root = xmlDocGetRootElement(doc);
+	if(xmlStrcmp(root->name,(const xmlChar*)"quests"))
+	{
+		std::cout << "[Error - Quests::loadFromXml] Malformed quests file." << std::endl;
 		xmlFreeDoc(doc);
 		return false;
 	}
@@ -196,7 +199,7 @@ bool Quests::loadFromXml()
 	p = root->children;
 	while(p)
 	{
-		if(xmlStrcmp(p->name, (const xmlChar*)"quest") != 0)
+		if(xmlStrcmp(p->name, (const xmlChar*)"quest"))
 		{
 			p = p->next;
 			continue;

@@ -36,8 +36,8 @@ class Event;
 class BaseEvents
 {
 	public:
-		BaseEvents();
-		virtual ~BaseEvents();
+		BaseEvents(): m_loaded(false) {}
+		virtual ~BaseEvents() {}
 
 		bool loadFromXml();
 		bool reload();
@@ -59,9 +59,10 @@ class BaseEvents
 class Event
 {
 	public:
-		Event(LuaScriptInterface* _interface);
+		Event(LuaScriptInterface* _interface): m_scriptInterface(_interface),
+			m_scripted(EVENT_SCRIPT_FALSE), m_scriptId(0) {}
 		Event(const Event* copy);
-		virtual ~Event();
+		virtual ~Event() {}
 
 		virtual bool configureEvent(xmlNodePtr p) = 0;
 

@@ -57,7 +57,7 @@ class GlobalEvent : public Event
 		virtual ~GlobalEvent() {}
 
 		virtual bool configureEvent(xmlNodePtr p);
-		int32_t executeThink(uint32_t interval, uint32_t lastExecution);
+		int32_t executeThink(uint32_t interval, uint32_t lastExecution, uint32_t thinkInterval);
 
 		std::string getName() const {return m_name;}
 		uint32_t getInterval() const {return m_interval;}
@@ -67,7 +67,7 @@ class GlobalEvent : public Event
 
 	protected:
 		virtual std::string getScriptEventName() const {return "onThink";}
-		virtual std::string getScriptEventParams() const {return "interval, lastExecution";}
+		virtual std::string getScriptEventParams() const {return "interval, lastExecution, thinkInterval";}
 
 		std::string m_name;
 		uint32_t m_interval;

@@ -33,8 +33,10 @@
 #include "networkmessage.h"
 
 #include "game.h"
+#include "chat.h"
 #include "tools.h"
 #include "rsa.h"
+#include "textlogger.h"
 
 #include "protocollogin.h"
 #include "protocolgame.h"
@@ -67,7 +69,6 @@
 #ifdef WIN32
 #include "shellapi.h"
 #include "gui.h"
-#include "textlogger.h"
 #include "inputbox.h"
 #include "commctrl.h"
 #endif
@@ -75,7 +76,7 @@
 #include "resources.h"
 #endif
 
-#ifdef BOOST_NO_EXCEPTIONS
+#ifdef __NO_BOOST_EXCEPTIONS__
 #include <exception>
 
 void boost::throw_exception(std::exception const & e)
@@ -84,24 +85,22 @@ void boost::throw_exception(std::exception const & e)
 }
 #endif
 
-IPList serverIPs;
 ConfigManager g_config;
 Game g_game;
-
+Chat g_chat;
 Monsters g_monsters;
 Npcs g_npcs;
-
 Vocations g_vocations;
+#if defined(WIN32) && not defined(__CONSOLE__)
+TextLogger g_logger;
+NOTIFYICONDATA NID;
+#endif
+
+IPList serverIPs;
 RSA* g_otservRSA = NULL;
 #ifdef __REMOTE_CONTROL__
 extern Admin* g_admin;
 #endif
-
-#if defined(WIN32) && not defined(__CONSOLE__)
-NOTIFYICONDATA NID;
-TextLogger logger;
-#endif
-
 OTSYS_THREAD_LOCKVAR_PTR g_loaderLock;
 OTSYS_THREAD_SIGNALVAR g_loaderSignal;
 
@@ -244,22 +243,24 @@ int main(int argc, char *argv[])
 	StringVec args = StringVec(argv, argv + argc);
 	if(argc > 1 && !argumentsHandler(args))
 		return 0;
+
 #else
 void serverMain(void* param)
 {
-	std::cout.rdbuf(&logger);
-	std::cerr.rdbuf(&logger);
+	std::cout.rdbuf(&g_logger);
+	std::cerr.rdbuf(&g_logger);
 #endif
-
+	ServiceManager servicer;
 	g_config.startup();
+	#ifdef __OTSERV_ALLOCATOR_STATS__
+	OTSYS_CREATE_THREAD(allocatorStatsThread, NULL);
+
+	#endif
 	#ifdef __EXCEPTION_TRACER__
 	ExceptionHandler mainExceptionHandler;
 	mainExceptionHandler.InstallHandler();
-	#endif
-	#ifdef __OTSERV_ALLOCATOR_STATS__
-	OTSYS_CREATE_THREAD(allocatorStatsThread, NULL);
-	#endif
 
+	#endif
 	#ifndef WIN32
 	// ignore sigpipe...
 	struct sigaction sigh;
@@ -281,14 +282,11 @@ void serverMain(void* param)
 
 	OTSYS_THREAD_LOCKVARINIT(g_loaderLock);
 	OTSYS_THREAD_SIGNALVARINIT(g_loaderSignal);
-
-	ServiceManager servicer;
 	Dispatcher::getDispatcher().addTask(createTask(boost::bind(otserv,
 	#if not defined(WIN32) || defined(__CONSOLE__)
 	args,
 	#endif
 	&servicer)));
-
 	OTSYS_THREAD_LOCK(g_loaderLock, "otserv()");
 	OTSYS_THREAD_WAITSIGNAL(g_loaderSignal, g_loaderLock);
 
@@ -322,7 +320,7 @@ void serverMain(void* param)
 		std::cerr.rdbuf(errorFile->rdbuf());
 	}
 	#endif
-	
+
 	#ifndef WIN32
 	std::string runPath = g_config.getString(ConfigManager::RUNFILE);
 	if(runPath != "" && runPath.length() > 2)
@@ -608,12 +606,18 @@ ServiceManager* services)
 	if(!ScriptingManager::getInstance()->loadScriptSystems())
 		startupErrorMessage("");
 
+	std::cout << ">> Loading chat channels" << std::endl;
+	#ifndef __CONSOLE__
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading chat channels");
+	#endif
+	if(!g_chat.loadFromXml())
+		startupErrorMessage("Unable to load chat channels!");
+
 	std::cout << ">> Loading outfits" << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading outfits");
 	#endif
-	Outfits* outfits = Outfits::getInstance();
-	if(!outfits->loadFromXml())
+	if(!Outfits::getInstance()->loadFromXml())
 		startupErrorMessage("Unable to load outfits!");
 
 	std::cout << ">> Loading experience stages" << std::endl;

@@ -19,15 +19,15 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "otpch.h"
-
 #include "tools.h"
+
 #include "configmanager.h"
+#include "vocation.h"
 #include "md5.h"
 #include "sha1.h"
+
 #include <sstream>
 #include <iomanip>
-
-#include "vocation.h"
 
 extern ConfigManager g_config;
 extern Vocations g_vocations;
@@ -198,32 +198,6 @@ bool readXMLFloat(xmlNodePtr node, const char* tag, float& value)
 	return false;
 }
 
-bool utf8ToLatin1(char* intext, std::string& outtext)
-{
-	outtext = "";
-
-	if(intext == NULL)
-		return false;
-
-	int32_t inlen  = strlen(intext);
-	if(inlen == 0)
-		return false;
-
-	int32_t outlen = inlen * 2;
-	uint8_t* outbuf = new uint8_t[outlen];
-	int32_t res = UTF8Toisolat1(outbuf, &outlen, (uint8_t*)intext, &inlen);
-	if(res < 0)
-	{
-		delete[] outbuf;
-		return false;
-	}
-
-	outbuf[outlen] = '\0';
-	outtext = (char*)outbuf;
-	delete[] outbuf;
-	return true;
-}
-
 bool readXMLString(xmlNodePtr node, const char* tag, std::string& value)
 {
 	char* nodeValue = (char*)xmlGetProp(node, (xmlChar*)tag);
@@ -280,6 +254,43 @@ bool parseXMLContentString(xmlNodePtr node, std::string& value)
 	}
 
 	return result;
+}
+
+std::string getLastXMLError()
+{
+	std::stringstream ss;
+	xmlErrorPtr lastError = xmlGetLastError();
+	if(lastError->line)
+		ss << "Line: " << lastError->line << ", ";
+
+	ss << "Info: " << lastError->message << std::endl;
+	return ss.str();
+}
+
+bool utf8ToLatin1(char* intext, std::string& outtext)
+{
+	outtext = "";
+
+	if(intext == NULL)
+		return false;
+
+	int32_t inlen  = strlen(intext);
+	if(inlen == 0)
+		return false;
+
+	int32_t outlen = inlen * 2;
+	uint8_t* outbuf = new uint8_t[outlen];
+	int32_t res = UTF8Toisolat1(outbuf, &outlen, (uint8_t*)intext, &inlen);
+	if(res < 0)
+	{
+		delete[] outbuf;
+		return false;
+	}
+
+	outbuf[outlen] = '\0';
+	outtext = (char*)outbuf;
+	delete[] outbuf;
+	return true;
 }
 
 StringVec explodeString(const std::string& string, const std::string& separator)
@@ -618,10 +629,9 @@ void formatDate2(time_t time, char* buffer/* atleast 16 */)
 		sprintf(buffer, "UNIX Time: %d", (int32_t)time);
 }
 
-Skulls_t getSkull(std::string string)
+Skulls_t getSkull(std::string strValue)
 {
 	Skulls_t skull = SKULL_NONE;
-
 	std::string tmpStrValue = asLowerCaseString(strValue);
 	if(tmpStrValue == "red" || tmpStrValue == "4")
 		skull = SKULL_RED;
@@ -635,10 +645,9 @@ Skulls_t getSkull(std::string string)
 	return skull;
 }
 
-PartyShields_t getPartyShield(str::string string)
+PartyShields_t getPartyShield(std::string strValue)
 {
 	PartyShields_t partyShield = SHIELD_NONE;
-
 	std::string tmpStrValue = asLowerCaseString(strValue);
 	if(tmpStrValue == "whitenoshareoff" || tmpStrValue == "10")
 		partyShield = SHIELD_YELLOW_NOSHAREDEXP;
@@ -649,7 +658,7 @@ PartyShields_t getPartyShield(str::string string)
 	else if(tmpStrValue == "blueshareblink" || tmpStrValue == "7")
 		partyShield = SHIELD_BLUE_NOSHAREDEXP_BLINK;
 	else if(tmpStrValue == "yellowshareon" || tmpStrValue == "6")
-		artyShield = SHIELD_YELLOW_SHAREDEXP;
+		partyShield = SHIELD_YELLOW_SHAREDEXP;
 	else if(tmpStrValue == "blueshareon" || tmpStrValue == "5")
 		partyShield = SHIELD_BLUE_SHAREDEXP;
 	else if(tmpStrValue == "yellow" || tmpStrValue == "4")
@@ -661,7 +670,7 @@ PartyShields_t getPartyShield(str::string string)
 	else if(tmpStrValue == "whiteblue" || tmpStrValue == "1")
 		partyShield = SHIELD_WHITEBLUE;
 
-	return shield;
+	return partyShield;
 }
 
 Direction getDirection(std::string string)
@@ -1282,15 +1291,15 @@ std::string parseVocationString(StringVec vocStringVec)
 			str += "s";
 		}
 	}
+
 	return str;
 }
 
 bool parseVocationNode(xmlNodePtr vocationNode, VocationMap& vocationMap, StringVec& vocStringVec, std::string& errorStr)
 {
 	int32_t intValue;
-	std::string strValue;
-
-	if(xmlStrcmp(vocationNode->name,(const xmlChar*)"vocation") == 0)
+	std::string strValue, tmpStrValue;
+	if(!xmlStrcmp(vocationNode->name,(const xmlChar*)"vocation"))
 	{
 		int32_t vocationId = -1;
 		if(readXMLString(vocationNode, "name", strValue))
@@ -1311,12 +1320,12 @@ bool parseVocationNode(xmlNodePtr vocationNode, VocationMap& vocationMap, String
 		}
 		else if(readXMLInteger(vocationNode, "id", intValue))
 		{
-			bool success = true;
-			Vocation* vocation = g_vocations.getVocation(intValue, success);
-			if(success)
+			Vocation* vocation = g_vocations.getVocation(intValue);
+			if(vocation && vocation->getName() != "")
 			{
 				vocationId = vocation->getId();
 				strValue = vocation->getName();
+
 				vocationMap[vocationId] = true;
 				int32_t promotedVocation = g_vocations.getPromotedVocation(vocationId);
 				if(promotedVocation != -1)
@@ -1324,23 +1333,16 @@ bool parseVocationNode(xmlNodePtr vocationNode, VocationMap& vocationMap, String
 			}
 			else
 			{
-				std::stringstream s;
-				s << intValue;
-				errorStr += "Wrong vocation id: " + s.str();
+				std::stringstream ss;
+				ss << "Wrong vocation id: " << intValue;
+
+				errorStr += ss.str();
 				return false;
 			}
 		}
 
-		if(vocationId != -1)
-		{
-			std::string strValue2;
-			bool show = true;
-			if(readXMLString(vocationNode, "showInDescription", strValue2))
-				show = booleanString(strValue2);
-
-			if(show)
-				vocStringVec.push_back(asLowerCaseString(strValue));
-		}
+		if(vocationId != -1 && readXMLString(vocationNode, "showInDescription", tmpStrValue) && booleanString(tmpStrValue))
+			vocStringVec.push_back(asLowerCaseString(strValue));
 	}
 
 	return true;
@@ -1348,13 +1350,12 @@ bool parseVocationNode(xmlNodePtr vocationNode, VocationMap& vocationMap, String
 
 bool fileExists(const char* filename)
 {
-	if(FILE* f = fopen(filename, "rb"))
-	{
-		fclose(f);
-		return true;
-	}
+	FILE* f = fopen(filename, "rb");
+	if(!f)
+		return false;
 
-	return false;
+	fclose(f);
+	return true;
 }
 
 uint32_t adlerChecksum(uint8_t *data, size_t length)
@@ -1405,6 +1406,7 @@ std::string getFilePath(FileType_t filetype, std::string filename)
 			path += filename;
 			break;
 		case FILE_TYPE_CONFIG:
+		{
 			#if defined(__FILESYSTEM_HIERARCHY_STANDARD__) && defined(__HOMEDIR_CONF__)
 			if(fileExists("~/.tfs/" + filename))
 				path = "~/.tfs/" + filename;
@@ -1415,7 +1417,9 @@ std::string getFilePath(FileType_t filetype, std::string filename)
 			#else
 				path = filename;
 			#endif
+
 			break;
+		}
 		default:
 			std::cout << "ERROR: Wrong file type!" << std::endl;
 			break;

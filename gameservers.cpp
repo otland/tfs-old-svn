@@ -45,14 +45,17 @@ bool GameServers::loadFromXml(bool showResult/* = true*/)
 {
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "servers.xml").c_str());
 	if(!doc)
-		return false;
-
-	xmlNodePtr root, p;
-	root = xmlDocGetRootElement(doc);
-	if(xmlStrcmp(root->name,(const xmlChar*)"servers") != 0)
 	{
+		std::cout << "[Warning - GameServers::loadFromXml] Cannot load servers file." << std::endl;
+		std::cout << getLastXMLError() << std::endl;
+		return false;
+	}
+
+	xmlNodePtr p, root = xmlDocGetRootElement(doc);
+	if(xmlStrcmp(root->name,(const xmlChar*)"servers"))
+	{
+		std::cout << "[Error - GameServers::loadFromXml] Malformed servers file." << std::endl;
 		xmlFreeDoc(doc);
-		std::cout << "[Error - GameServers::loadFromXml] Malformed servers file" << std::endl;
 		return false;
 	}
 
@@ -61,7 +64,7 @@ bool GameServers::loadFromXml(bool showResult/* = true*/)
 	p = root->children;
 	while(p)
 	{
-		if(xmlStrcmp(p->name, (const xmlChar*)"server") != 0)
+		if(xmlStrcmp(p->name, (const xmlChar*)"server"))
 		{
 			p = p->next;
 			continue;

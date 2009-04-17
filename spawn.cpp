@@ -56,13 +56,16 @@ bool Spawns::loadFromXml(const std::string& _filename)
 	filename = _filename;
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 	if(!doc)
-		return false;
-
-	xmlNodePtr root, spawnNode;
-	root = xmlDocGetRootElement(doc);
-
-	if(xmlStrcmp(root->name,(const xmlChar*)"spawns") != 0)
 	{
+		std::cout << "[Warning - Spawns::loadFromXml] Cannot open spawns file." << std::endl;
+		std::cout << getLastXMLError() << std::endl;
+		return false;
+	}
+
+	xmlNodePtr spawnNode, root = xmlDocGetRootElement(doc);
+	if(xmlStrcmp(root->name,(const xmlChar*)"spawns"))
+	{
+		std::cout << "[Error - Spawns::loadFromXml] Malformed spawns file." << std::endl;
 		xmlFreeDoc(doc);
 		return false;
 	}
@@ -73,7 +76,7 @@ bool Spawns::loadFromXml(const std::string& _filename)
 	spawnNode = root->children;
 	while(spawnNode)
 	{
-		if(xmlStrcmp(spawnNode->name, (const xmlChar*)"spawn") == 0)
+		if(!xmlStrcmp(spawnNode->name, (const xmlChar*)"spawn"))
 		{
 			Position centerPos;
 			int32_t radius = -1;
@@ -116,13 +119,9 @@ bool Spawns::loadFromXml(const std::string& _filename)
 			xmlNodePtr tmpNode = spawnNode->children;
 			while(tmpNode)
 			{
-				if(xmlStrcmp(tmpNode->name, (const xmlChar*)"monster") == 0)
+				if(!xmlStrcmp(tmpNode->name, (const xmlChar*)"monster"))
 				{
-					std::string name = "";
-					Position pos = centerPos;
-					Direction dir = NORTH;
-					uint32_t interval = 0;
-
+					std::string name;
 					if(readXMLString(tmpNode, "name", strValue))
 						name = strValue;
 					else
@@ -131,13 +130,11 @@ bool Spawns::loadFromXml(const std::string& _filename)
 						continue;
 					}
 
+					Direction dir = NORTH;
 					if(readXMLInteger(tmpNode, "direction", intValue))
 					{
 						switch(intValue)
 						{
-							case 0:
-								dir = NORTH;
-								break;
 							case 1:
 								dir = EAST;
 								break;
@@ -150,6 +147,7 @@ bool Spawns::loadFromXml(const std::string& _filename)
 						}
 					}
 
+					Position pos = centerPos;
 					if(readXMLInteger(tmpNode, "x", intValue))
 						pos.x += intValue;
 					else
@@ -166,6 +164,7 @@ bool Spawns::loadFromXml(const std::string& _filename)
 						continue;
 					}
 
+					uint32_t interval = 0;
 					if(readXMLInteger(tmpNode, "spawntime", intValue) || readXMLInteger(tmpNode, "interval", intValue))
 						interval = intValue * 1000;
 					else
@@ -182,12 +181,9 @@ bool Spawns::loadFromXml(const std::string& _filename)
 					else
 						spawn->addMonster(name, pos, dir, interval);
 				}
-				else if(xmlStrcmp(tmpNode->name, (const xmlChar*)"npc") == 0)
+				else if(!xmlStrcmp(tmpNode->name, (const xmlChar*)"npc"))
 				{
-					Direction direction = NORTH;
-					std::string name = "";
-					Position placePos = centerPos;
-
+					std::string name;
 					if(readXMLString(tmpNode, "name", strValue))
 						name = strValue;
 					else
@@ -196,13 +192,11 @@ bool Spawns::loadFromXml(const std::string& _filename)
 						continue;
 					}
 
+					Direction direction = NORTH;
 					if(readXMLInteger(tmpNode, "direction", intValue))
 					{
 						switch(intValue)
 						{
-							case 0:
-								direction = NORTH;
-								break;
 							case 1:
 								direction = EAST;
 								break;
@@ -215,6 +209,7 @@ bool Spawns::loadFromXml(const std::string& _filename)
 						}
 					}
 
+					Position placePos = centerPos;
 					if(readXMLInteger(tmpNode, "x", intValue))
 						placePos.x += intValue;
 					else

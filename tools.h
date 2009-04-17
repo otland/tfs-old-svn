@@ -31,7 +31,9 @@
 
 typedef std::vector<std::string> StringVec;
 typedef std::vector<int32_t> IntegerVec;
+
 typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+typedef std::map<int32_t, bool> VocationMap;
 
 enum DistributionType_t
 {
@@ -61,7 +63,6 @@ std::string asLowerCaseString(const std::string& source);
 std::string asUpperCaseString(const std::string& source);
 bool booleanString(std::string source);
 
-bool utf8ToLatin1(char* intext, std::string& outtext);
 bool readXMLInteger(xmlNodePtr node, const char* tag, int& value);
 #if (defined __WINDOWS__ || defined WIN32) && !defined __GNUC__
 bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value);
@@ -71,6 +72,8 @@ bool readXMLFloat(xmlNodePtr node, const char* tag, float& value);
 bool readXMLString(xmlNodePtr node, const char* tag, std::string& value);
 bool readXMLContentString(xmlNodePtr node, std::string& value);
 bool parseXMLContentString(xmlNodePtr node, std::string& value);
+std::string getLastXMLError();
+bool utf8ToLatin1(char* intext, std::string& outtext);
 
 StringVec explodeString(const std::string& string, const std::string& separator);
 IntegerVec vectorAtoi(StringVec stringVector);
@@ -98,8 +101,8 @@ int32_t round(float v);
 uint32_t rand24b();
 float box_muller(float m, float s);
 
-Skulls_t getSkull(std::string string);
-PartyShields_t getPartyShield(str::string string);
+Skulls_t getSkull(std::string strValue);
+PartyShields_t getPartyShield(std::string strValue);
 
 Direction getDirection(std::string string);
 Direction getDirectionTo(Position pos1, Position pos2, bool extended = true);

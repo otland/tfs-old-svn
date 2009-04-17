@@ -708,11 +708,16 @@ bool Houses::loadFromXml(std::string filename)
 {
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 	if(!doc)
+	{
+		std::cout << "[Warning - Houses::loadFromXml] Cannot load houses file." << std::endl;
+		std::cout << getLastXMLError() << std::endl;
 		return false;
+	}
 
 	xmlNodePtr houseNode, root = xmlDocGetRootElement(doc);
-	if(xmlStrcmp(root->name,(const xmlChar*)"houses") != 0)
+	if(xmlStrcmp(root->name,(const xmlChar*)"houses"))
 	{
+		std::cout << "[Error - Houses::loadFromXml] Malformed houses file." << std::endl;
 		xmlFreeDoc(doc);
 		return false;
 	}
@@ -723,7 +728,7 @@ bool Houses::loadFromXml(std::string filename)
 	houseNode = root->children;
 	while(houseNode)
 	{
-		if(xmlStrcmp(houseNode->name,(const xmlChar*)"house") != 0)
+		if(xmlStrcmp(houseNode->name,(const xmlChar*)"house"))
 		{
 			houseNode = houseNode->next;
 			continue;
@@ -896,6 +901,8 @@ bool Houses::payHouses()
 					case RENTPERIOD_YEARLY:
 						paidUntil += 12 * 30 * 24 * 60 * 60;
 						break;
+					default:
+						break;
 				}
 
 				house->setPaidUntil(paidUntil);
@@ -908,11 +915,16 @@ bool Houses::payHouses()
 					case RENTPERIOD_DAILY:
 						warningsLimit = 1;
 						break;
+					case RENTPERIOD_WEEKLY:
+						warningsLimit = 3;
+						break;
 					case RENTPERIOD_MONTHLY:
 						warningsLimit = 7;
 						break;
 					case RENTPERIOD_YEARLY:
 						warningsLimit = 14;
+						break;
+					default:
 						break;
 				}
 
@@ -932,6 +944,8 @@ bool Houses::payHouses()
 							break;
 						case RENTPERIOD_YEARLY:
 							period = "annual";
+							break;
+						default:
 							break;
 					}
 

@@ -55,7 +55,6 @@ getConfigInfo = getConfigValue
 doPlayerAddExp = doPlayerAddExperience
 isInArea = isInRange
 doPlayerSetSkillRate = doPlayerSetRate
-
 getCreatureLookDir = getCreatureLookDirection
 getPlayerLookDir = getCreatureLookDirection
 getPlayerLookDirection = getCreatureLookDirection

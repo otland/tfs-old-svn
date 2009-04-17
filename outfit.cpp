@@ -152,19 +152,23 @@ bool Outfits::loadFromXml()
 {
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "outfits.xml").c_str());
 	if(!doc)
+	{
+		std::cout << "[Warning - Outfits::loadFromXml] Cannot load outfits file, using defaults." << std::endl;
+		std::cout << getLastXMLError() << std::endl;
 		return false;
+	}
 
-	xmlNodePtr root, p;
-	root = xmlDocGetRootElement(doc);
+	xmlNodePtr p, root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"outfits") != 0)
 	{
+		std::cout << "[Error - Outfits::loadFromXml] Malformed outfits file, using defaults." << std::endl;
 		xmlFreeDoc(doc);
-		std::cout << "[Warning - Outfits::loadFromXml] Malformed outfits file, using defaults." << std::endl;
 		return true;
 	}
 
 	std::string strValue;
 	int32_t intValue;
+
 	p = root->children;
 	while(p)
 	{

@@ -19,19 +19,14 @@
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 
-#include "definitions.h"
 #include "vocation.h"
-#include <iostream>
-#include <libxml/xmlmemory.h>
-#include <libxml/parser.h>
-#include <cmath>
-
 #include "tools.h"
 
-Vocations::Vocations()
-{
-	//
-}
+#include <iostream>
+#include <cmath>
+
+#include <libxml/xmlmemory.h>
+#include <libxml/parser.h>
 
 Vocations::~Vocations()
 {
@@ -45,23 +40,27 @@ bool Vocations::loadFromXml()
 {
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML,"vocations.xml").c_str());
 	if(!doc)
-		return false;
-
-	xmlNodePtr root, p;
-	root = xmlDocGetRootElement(doc);
-	if(xmlStrcmp(root->name,(const xmlChar*)"vocations") != 0)
 	{
+		std::cout << "[Warning - Vocations::loadFromXml] Cannot load vocations file." << std::endl;
+		std::cout << getLastXMLError() << std::endl;
+		return false;
+	}
+
+	xmlNodePtr p, root = xmlDocGetRootElement(doc);
+	if(xmlStrcmp(root->name,(const xmlChar*)"vocations"))
+	{
+		std::cout << "[Error - Vocations::loadFromXml] Malformed vocations file." << std::endl;
 		xmlFreeDoc(doc);
 		return false;
 	}
 
+	std::string strVal;
+	int32_t intVal;
+	float floatVal;
+
 	p = root->children;
 	while(p)
 	{
-		std::string strVal;
-		int32_t intVal;
-		float floatVal;
-
 		if(xmlStrcmp(p->name, (const xmlChar*)"vocation") != 0)
 		{
 			p = p->next;
@@ -231,7 +230,7 @@ Vocation* Vocations::getVocation(uint32_t vocId)
 	if(it != vocationsMap.end())
 		return it->second;
 
-	std::cout << "Warning: [Vocations::getVocation] Vocation " << vocId << " not found." << std::endl;
+	std::cout << "[Warning - Vocations::getVocation] Vocation " << vocId << " not found." << std::endl;
 	return &defVoc;
 }
 
@@ -239,7 +238,7 @@ int32_t Vocations::getVocationId(const std::string& name)
 {
 	for(VocationsMap::iterator it = vocationsMap.begin(); it != vocationsMap.end(); ++it)
 	{
-		if(strcasecmp(it->second->name.c_str(), name.c_str()) == 0)
+		if(!strcasecmp(it->second->name.c_str(), name.c_str()))
 			return it->first;
 	}
 
@@ -261,7 +260,7 @@ uint32_t Vocation::skillBase[SKILL_LAST + 1] = {50, 50, 50, 50, 30, 100, 20};
 
 Vocation::Vocation()
 {
-	name = "none";
+	name = "";
 	description = "";
 	needPremium = false;
 	gainHealthTicks = 6;

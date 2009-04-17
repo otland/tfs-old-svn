@@ -79,7 +79,7 @@ void GlobalEvents::onThink(uint32_t interval)
 		if(timeNow > (globalEvent->getLastExecution() + globalEvent->getInterval()))
 		{
 			globalEvent->setLastExecution(timeNow);
-			if(!globalEvent->executeThink(globalEvent->getInterval(), timeNow))
+			if(!globalEvent->executeThink(globalEvent->getInterval(), timeNow, interval))
 				std::cout << "[Error - GlobalEvents::onThink] Couldn't execute event: " << globalEvent->getName() << std::endl;
 		}
 	}
@@ -116,9 +116,9 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 	return true;
 }
 
-int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution)
+int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution, uint32_t thinkInterval)
 {
-	//onThink(interval, lastExecution)
+	//onThink(interval, lastExecution, thinkInterval)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
@@ -127,6 +127,7 @@ int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution)
 			std::stringstream scriptstream;
 			scriptstream << "interval = " << interval << std::endl;
 			scriptstream << "lastExecution = " << lastExecution << std::endl;
+			scriptstream << "thinkInterval = " << thinkInterval << std::endl;
 
 			scriptstream << m_scriptData;
 			int32_t result = LUA_TRUE;
@@ -154,8 +155,9 @@ int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution)
 			m_scriptInterface->pushFunction(m_scriptId);
 			lua_pushnumber(L, interval);
 			lua_pushnumber(L, lastExecution);
+			lua_pushnumber(L, thinkInterval);
 
-			int32_t result = m_scriptInterface->callFunction(2);
+			int32_t result = m_scriptInterface->callFunction(3);
 			m_scriptInterface->releaseScriptEnv();
 
 			return (result == LUA_TRUE);

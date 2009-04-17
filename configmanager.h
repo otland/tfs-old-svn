@@ -22,6 +22,7 @@
 #define _CONFIG_MANAGER_H
 
 #include <string>
+#include "luascript.h"
 
 extern "C"
 {
@@ -236,10 +237,22 @@ class ConfigManager
 		void getValue(const std::string& key, lua_State* _L) {LuaScriptInterface::getValue(key, L, _L);}
 
 	private:
-		std::string getGlobalString(const std::string& _identifier, const std::string& _default = "") {return LuaScriptInterface::getGlobalString(L, _identifier, _default);}
-		bool getGlobalBool(const std::string& _identifier, const std::string& _default = "no") {return LuaScriptInterface::getGlobalBool(L, _identifier, _default);}
-		int32_t getGlobalNumber(const std::string& _identifier, const int32_t _default = 0) {return LuaScriptInterface::getGlobalNumber(L, _identifier, _default);}
-		double getGlobalDouble(const std::string& _identifier, const double _default = 0) {return LuaScriptInterface::getGlobalDouble(L, _identifier, _default);}
+		std::string getGlobalString(const std::string& _identifier, const std::string& _default = "")
+		{
+			return LuaScriptInterface::getGlobalString(L, _identifier, _default);
+		}
+		bool getGlobalBool(const std::string& _identifier, const std::string& _default = "no")
+		{
+			return LuaScriptInterface::getGlobalBool(L, _identifier, _default);
+		}
+		int32_t getGlobalNumber(const std::string& _identifier, const int32_t _default = 0)
+		{
+			return LuaScriptInterface::getGlobalNumber(L, _identifier, _default);
+		}
+		double getGlobalDouble(const std::string& _identifier, const double _default = 0)
+		{
+			return LuaScriptInterface::getGlobalDouble(L, _identifier, _default);
+		}
 
 		bool m_loaded, m_startup;
 		lua_State* L;

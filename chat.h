@@ -37,6 +37,7 @@ class ChatChannel
 			m_id = channelId;
 			m_name = channelName;
 			m_logged = false;
+			m_enabled = true;
 			m_access = 0;
 		}
 		virtual ~ChatChannel() {}
@@ -50,6 +51,7 @@ class ChatChannel
 
 		uint16_t getAccess() const {return m_access;}
 		bool isLogged() const {return m_logged;}
+		bool isEnabled() const {return m_enabled;}
 
 		bool addUser(Player* player);
 		bool removeUser(Player* player);
@@ -57,9 +59,9 @@ class ChatChannel
 		bool talk(Player* player, SpeakClasses type, const std::string& text, uint32_t time = 0);
 
 	protected:
-		bool m_logged;
-		std::string m_name;
+		bool m_logged, m_enabled;
 		uint16_t m_id, m_access;
+		std::string m_name;
 		UsersList m_users;
 };
 
@@ -95,6 +97,7 @@ class Chat
 		Chat();
 		virtual ~Chat();
 
+		void reload();
 		bool loadFromXml();
 		bool parseChannelNode(xmlNodePtr p);
 
@@ -115,16 +118,19 @@ class Chat
 		PrivateChatChannel* getPrivateChannel(Player* player);
 
 	private:
-		typedef std::map<uint16_t, ChatChannel*> NormalChannelMap;
-		typedef std::map<uint16_t, PrivateChatChannel*> PrivateChannelMap;
-		typedef std::map<Party*, ChatChannel*> PartyChannelMap;
-		typedef std::map<uint32_t, ChatChannel*> GuildChannelMap;
-		NormalChannelMap m_normalChannels;
-		PrivateChannelMap m_privateChannels;
-		PartyChannelMap m_partyChannels;
-		GuildChannelMap m_guildChannels;
-
 		ChatChannel* dummyPrivate;
+
+		typedef std::map<uint16_t, ChatChannel*> NormalChannelMap;
+		NormalChannelMap m_normalChannels;
+
+		typedef std::map<uint16_t, PrivateChatChannel*> PrivateChannelMap;
+		PrivateChannelMap m_privateChannels;
+
+		typedef std::map<Party*, ChatChannel*> PartyChannelMap;
+		PartyChannelMap m_partyChannels;
+
+		typedef std::map<uint32_t, ChatChannel*> GuildChannelMap;
+		GuildChannelMap m_guildChannels;
 };
 
 #endif

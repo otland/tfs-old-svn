@@ -248,7 +248,7 @@ std::string CreatureEvent::getScriptEventParams() const
 		case CREATURE_EVENT_ADVANCE:
 			return "cid, skill, oldLevel, newLevel";
 		case CREATURE_EVENT_LOOK:
-			return "cid, position";
+			return "cid, thing, position";
 		case CREATURE_EVENT_MAIL_SEND:
 			return "cid, receiver, item, openBox";
 		case CREATURE_EVENT_MAIL_RECEIVE:
@@ -702,9 +702,9 @@ uint32_t CreatureEvent::executeMailReceive(Player* player, Player* sender, Item*
 	}
 }
 
-uint32_t CreatureEvent::executeLook(Player* player, const Position& position, uint8_t stackpos)
+uint32_t CreatureEvent::executeLook(Player* player, Thing* thing, const Position& position, uint8_t stackpos)
 {
-	//onLook(cid, position)
+	//onLook(cid, thing, position)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
@@ -714,6 +714,7 @@ uint32_t CreatureEvent::executeLook(Player* player, const Position& position, ui
 
 			std::stringstream scriptstream;
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
+			scriptstream << "thing = " << env->addThing(thing) << std::endl;
 			env->streamPosition(scriptstream, "position", position, stackpos);
 
 			scriptstream << m_scriptData;
@@ -742,9 +743,10 @@ uint32_t CreatureEvent::executeLook(Player* player, const Position& position, ui
 			m_scriptInterface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(player));
+			lua_pushnumber(L, env->addThing(thing));
 			LuaScriptInterface::pushPosition(L, position, stackpos);
 
-			int32_t result = m_scriptInterface->callFunction(2);
+			int32_t result = m_scriptInterface->callFunction(3);
 			m_scriptInterface->releaseScriptEnv();
 			return (result == LUA_TRUE);
 		}

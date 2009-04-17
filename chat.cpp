@@ -30,10 +30,7 @@ extern Game g_game;
 extern Chat g_chat;
 
 PrivateChatChannel::PrivateChatChannel(uint16_t channelId, std::string channelName):
-ChatChannel(channelId, channelName)
-{
-	m_owner = 0;
-}
+ChatChannel(channelId, channelName), m_owner(0) {}
 
 bool PrivateChatChannel::isInvited(const Player* player)
 {
@@ -153,8 +150,13 @@ bool ChatChannel::removeUser(Player* player)
 
 bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& text, uint32_t time /*= 0*/)
 {
-//	if(m_logged)
-//		std::cout << "Logged channel ;-)" << std::endl;
+	if(m_enabled)
+		return true;
+
+	if(m_logged)
+	{
+		//TODO: do the job
+	}
 
 	if((m_id == CHANNEL_TRADE || m_id == CHANNEL_TRADEROOK) && !player->hasFlag(PlayerFlag_CannotBeMuted))
 	{
@@ -187,77 +189,16 @@ bool ChatChannel::configure(xmlNodePtr p)
 	if(readXMLInteger(p, "access", intValue))
 		m_access = intValue;
 
+	if(readXMLString(p, "enabled", strValue));
+		m_enabled = booleanString(strValue);
+
 	return true;
 }
 
 Chat::Chat()
 {
-	loadFromXml();
-	ChatChannel* newChannel = new PrivateChatChannel(CHANNEL_PRIVATE, "Private Chat Channel");
-	if(newChannel)
+	if(ChatChannel* newChannel = new PrivateChatChannel(CHANNEL_PRIVATE, "Private Chat Channel"))
 		dummyPrivate = newChannel;
-}
-
-bool Chat::parseChannelNode(xmlNodePtr p)
-{
-	int32_t intValue;
-	std::string strValue;
-
-	if(xmlStrcmp(p->name, (const xmlChar*)"channel") != 0)
-		return false;
-
-	if(!readXMLInteger(p, "id", intValue) || !readXMLString(p, "name", strValue))
-	{
-		std::cout << "[Warning - Chat::loadFromXml] Channel id or name not specified." << std::endl;
-		return false;
-	}
-
-	if(intValue < 1 || intValue == 3)
-	{
-		std::cout << "[Warning - Chat::loadFromXml] Invalid id specified. (Id must be highter than 0 and != 3)" << std::endl;
-		return false;
-	}
-
-	if(m_normalChannels[intValue])
-	{
-		std::cout << "[Warning - Chat::loadFromXml] Duplicated channel with id " << intValue << std::endl;
-		return false;
-	}
-
-	ChatChannel* newChannel = new ChatChannel(intValue, strValue);
-	if(newChannel && newChannel->configure(p))
-		m_normalChannels[intValue] = newChannel;
-
-	return true;
-}
-
-bool Chat::loadFromXml()
-{
-	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "channels.xml").c_str());
-	if(!doc)
-	{
-		std::cout << "[Warning - Chat::loadFromXml] Can not load channels.xml." << std::endl;
-		std::cout << getLastXMLError() << std::endl;
-		return false;
-	}
-
-	xmlNodePtr root, p;
-	root = xmlDocGetRootElement(doc);
-	if(xmlStrcmp(root->name,(const xmlChar*)"channels") != 0)
-	{
-		std::cerr << "[channels.xml] Malformed XML" << std::endl;
-		return false;
-	}
-
-	p = root->children;
-	while(p)
-	{
-		parseChannelNode(p);
-		p = p->next;
-	}
-
-	xmlFreeDoc(doc);
-	return true;
 }
 
 Chat::~Chat()
@@ -279,6 +220,76 @@ Chat::~Chat()
 
 	m_privateChannels.clear();
 	delete dummyPrivate;
+}
+
+void Chat::reload()
+{
+	for(NormalChannelMap::iterator it = m_normalChannels.begin(); it != m_normalChannels.end(); ++it)
+		delete it->second;
+
+	m_normalChannels.clear();
+	loadFromXml();
+}
+
+bool Chat::loadFromXml()
+{
+	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "channels.xml").c_str());
+	if(!doc)
+	{
+		std::cout << "[Warning - Chat::loadFromXml] Cannot load channels file." << std::endl;
+		std::cout << getLastXMLError() << std::endl;
+		return false;
+	}
+
+	xmlNodePtr p, root = xmlDocGetRootElement(doc);
+	if(xmlStrcmp(root->name,(const xmlChar*)"channels"))
+	{
+		std::cout << "[Error - Chat::loadFromXml] Malformed channels file" << std::endl;
+		xmlFreeDoc(doc);
+		return false;
+	}
+
+	p = root->children;
+	while(p)
+	{
+		parseChannelNode(p);
+		p = p->next;
+	}
+
+	xmlFreeDoc(doc);
+	return true;
+}
+
+bool Chat::parseChannelNode(xmlNodePtr p)
+{
+	int32_t intValue;
+	std::string strValue;
+	if(xmlStrcmp(p->name, (const xmlChar*)"channel"))
+		return false;
+
+	if(!readXMLInteger(p, "id", intValue) || !readXMLString(p, "name", strValue))
+	{
+		std::cout << "[Warning - Chat::loadFromXml] Channel id or name not specified." << std::endl;
+		return false;
+	}
+
+	if(intValue < 1)
+	{
+		std::cout << "[Warning - Chat::loadFromXml] Invalid id specified." << std::endl;
+		return false;
+	}
+
+	if(m_normalChannels.find(intValue) != m_normalChannels.end())
+	{
+		std::cout << "[Warning - Chat::loadFromXml] Duplicated channel with id " << intValue << "." << std::endl;
+		return false;
+	}
+
+	ChatChannel* newChannel = new ChatChannel(intValue, strValue);
+	if(newChannel && newChannel->configure(p))
+		m_normalChannels[intValue] = newChannel;
+
+	return true;
 }
 
 ChatChannel* Chat::createChannel(Player* player, uint16_t channelId)
@@ -485,7 +496,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 					{
 						if(!paramPlayer->isInvitedToGuild(player->getGuildId()))
 						{
-							sprintf(buffer, "%s has invited you to join the guild, %s. You can join this guild by writing: !joinguild %s", player->getName().c_str(), player->getGuildName().c_str(), player->getGuildName().c_str());
+							sprintf(buffer, "%s has invited you to join the guild, %s. You may join this guild by writing: !joinguild %s", player->getName().c_str(), player->getGuildName().c_str(), player->getGuildName().c_str());
 							paramPlayer->sendTextMessage(MSG_INFO_DESCR, buffer);
 							sprintf(buffer, "%s has invited %s to the guild.", player->getName().c_str(), paramPlayer->getName().c_str());
 							channel->talk(player, SPEAK_CHANNEL_W, buffer);
@@ -1052,7 +1063,7 @@ ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 	if(nit != m_normalChannels.end())
 	{
 		ChatChannel* tmpChannel = nit->second;
-		if(!tmpChannel || player->getAccess() < tmpChannel->getAccess())
+		if(!tmpChannel || !tmpChannel->isEnabled() || player->getAccessLevel() < tmpChannel->getAccess())
 			return NULL;
 
 		switch(channelId)

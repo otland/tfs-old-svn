@@ -3091,15 +3091,15 @@
 		<attribute key="slotType" value="necklace"/>
 		<attribute key="charges" value="5"/>
 		<attribute key="showcharges" value="1"/>
-		<attribute key="absorbPercentAll" value="80"/>
+		<attribute key="absorbPercentPhysical" value="80"/>
+		<attribute key="absorbPercentDeath" value="80"/>
 	</item>
 	<item id="2198" article="an" name="elven amulet">
 		<attribute key="weight" value="270"/>
 		<attribute key="slotType" value="necklace"/>
 		<attribute key="charges" value="50"/>
 		<attribute key="showcharges" value="1"/>
-		<attribute key="absorbPercentPhysical" value="10"/>
-		<attribute key="absorbPercentElements" value="10"/>
+		<attribute key="absorbPercentAll" value="5"/>
 	</item>
 	<item id="2199" article="a" name="garlic necklace">
 		<attribute key="weight" value="380"/>
@@ -3113,14 +3113,14 @@
 		<attribute key="slotType" value="necklace"/>
 		<attribute key="charges" value="250"/>
 		<attribute key="showcharges" value="1"/>
-		<attribute key="absorbPercentPhysical" value="10"/>
+		<attribute key="absorbPercentPhysical" value="6"/>
 	</item>
 	<item id="2201" article="a" name="dragon necklace">
 		<attribute key="weight" value="630"/>
 		<attribute key="slotType" value="necklace"/>
 		<attribute key="charges" value="200"/>
 		<attribute key="showcharges" value="1"/>
-		<attribute key="absorbPercentFire" value="10"/>
+		<attribute key="absorbPercentFire" value="8"/>
 	</item>
 	<item id="2202" article="a" name="stealth ring">
 		<attribute key="weight" value="100"/>
@@ -4622,6 +4622,7 @@
 	<item id="2500" article="an" name="amazon armor">
 		<attribute key="weight" value="9900"/>
 		<attribute key="armor" value="13"/>
+		<attribute key="skillDist" value="3"/>
 		<attribute key="slotType" value="body"/>
 	</item>
 	<item id="2501" article="a" name="ceremonial mask">
@@ -13639,7 +13640,7 @@
 		<attribute key="slotType" value="ring"/>
 		<attribute key="transformEquipTo" value="6301"/>
 		<attribute key="stopduration" value="1"/>
-		<attribute key="showduration" value="1"/>
+		<attribute key="showduration" value="0"/>
 	</item>
 	<item id="6301" article="a" name="death ring">
 		<attribute key="weight" value="80"/>
@@ -13647,7 +13648,8 @@
 		<attribute key="decayTo" value="0"/>
 		<attribute key="transformDeEquipTo" value="6300"/>
 		<attribute key="duration" value="480"/>
-		<attribute key="skillShield" value="-11"/>
+		<attribute key="armor" value="1"/>
+		<attribute key="skillShield" value="-10"/>
 		<attribute key="showduration" value="1"/>
 	</item>
 	<item id="6302" article="a" name="dead wyvern">
@@ -16432,6 +16434,7 @@
 		<attribute key="weight" value="5100"/>
 		<attribute key="armor" value="6"/>
 		<attribute key="slotType" value="head"/>
+		<attribute key="absorbPercentIce" value="2"/>
 	</item>
 	<item id="7462" article="a" name="ragnir helmet">
 		<attribute key="weight" value="3100"/>
@@ -18136,18 +18139,24 @@
 		<attribute key="slotType" value="necklace"/>
 		<attribute key="absorbPercentIce" value="20"/>
 		<attribute key="absorbPercentEnergy" value="-10"/>
+		<attribute key="charges" value="200"/>
+		<attribute key="showcharges" value="1"/>
 	</item>
 	<item id="7889" article="a" name="lightning pendant">
 		<attribute key="weight" value="500"/>
 		<attribute key="slotType" value="necklace"/>
 		<attribute key="absorbPercentEnergy" value="20"/>
 		<attribute key="absorbPercentEarth" value="-10"/>
+		<attribute key="charges" value="200"/>
+		<attribute key="showcharges" value="1"/>
 	</item>
 	<item id="7890" article="a" name="magma amulet">
 		<attribute key="weight" value="500"/>
 		<attribute key="slotType" value="necklace"/>
 		<attribute key="absorbPercentFire" value="20"/>
 		<attribute key="absorbPercentIce" value="-10"/>
+		<attribute key="charges" value="200"/>
+		<attribute key="showcharges" value="1"/>
 	</item>
 	<item id="7891" name="magma boots">
 		<attribute key="weight" value="750"/>
@@ -19787,6 +19796,7 @@
 		<attribute key="absorbPercentIce" value="5"/>
 		<attribute key="absorbPercentEnergy" value="-5"/>
 		<attribute key="slotType" value="body"/>
+		<attribute key="skillShield" value="1"/>
 	</item>
 	<item id="8885" article="a" name="divine plate">
 		<attribute key="armor" value="13"/>
@@ -19896,7 +19906,7 @@
 		<attribute key="weaponType" value="shield"/>
 		<attribute key="duration" value="1200"/>
 		<attribute key="decayTo" value="8905"/>
-		<attribute key="skillShield" value="2"/>
+		<attribute key="skillShield" value="3"/>
 	</item>
 	<item id="8907" article="an" name="icy rainbow shield">
 		<attribute key="description" value="It has been temporarily imbued with ice magic and has a greatly increased shielding value."/>

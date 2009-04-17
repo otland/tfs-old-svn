@@ -77,7 +77,7 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p)
 	if(!talkAction)
 		return false;
 
-	if(talksMap[talkAction->getWords()] && !override)
+	if(talksMap.find(talkAction->getWords()) != talksMap.end())
 	{
 		std::cout << "[Warning - TalkAction::configureEvent] Duplicate registered talkaction with words: " << talkAction->getWords() << std::endl;
 		return false;
@@ -588,17 +588,17 @@ bool TalkAction::createGuild(Player* player, const std::string& cmd, const std::
 		return true;
 	}
 
-	if(g_config.getNumber(ConfigManager::GUILD_NEED_PREMIUM) && !player->isPremium())
+	/*if(g_config.getNumber(ConfigManager::GUILD_NEED_PREMIUM) && !player->isPremium())
 	{
 		player->sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
 		return true;
-	}
+	}*/
 
 	player->setGuildName(param_);
 	IOGuild::getInstance()->createGuild(player);
 
 	char buffer[50 + maxLength];
-	sprintf(buffer, "You have formed the guild: %s!", param_.c_str());
+	sprintf(buffer, "You have formed guild \"%s\"!", param_.c_str());
 	player->sendTextMessage(MSG_INFO_DESCR, buffer);
 	return true;
 }

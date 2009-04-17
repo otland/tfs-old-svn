@@ -139,25 +139,25 @@ enum
 	ENCRYPTION_RSA1024XTEA = 1,
 };
 
-class Logger
+class Loggar
 {
 	public:
-		virtual ~Logger();
-		static Logger* getInstance()
+		virtual ~Loggar();
+		static Loggar* getInstance()
 		{
-			static Logger instance;
+			static Loggar instance;
 			return &instance;
 		}
 
 		void logMessage(const char* channel, LogType_t type, int32_t level, std::string message, const char* func);
 
 	private:
-		Logger();
+		Loggar();
 		FILE* m_file;
 };
 
 #define LOG_MESSAGE(channel, type, level, message) \
-	Logger::getInstance()->logMessage(channel, type, level, message, __OTSERV_PRETTY_FUNCTION__);
+	Loggar::getInstance()->logMessage(channel, type, level, message, __OTSERV_PRETTY_FUNCTION__);
 
 class Admin
 {

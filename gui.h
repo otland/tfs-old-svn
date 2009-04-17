@@ -18,7 +18,7 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
-#ifndef __CONSOLE__
+#if defined(WIN32) && not defined(__CONSOLE__)
 #ifndef __FORGOTTENSERVER_GUI_H__
 #define __FORGOTTENSERVER_GUI_H__
 #include "resources.h"
@@ -27,22 +27,24 @@
 class GUI
 {
 	public:
-		void initTrayMenu();
-		void initFont();
-
 		static GUI* getInstance()
 		{
 			static GUI instance;
 			return &instance;
 		}
 
+		void initTrayMenu();
+		void initFont();
+
+		uint64_t m_lineCount;
+		std::string m_logText;
+
 		bool m_connections, m_minimized;
 		HWND m_mainWindow, m_statusBar, m_logWindow;
-		uint64_t m_lineCount;
-		PlayerBox m_pBox;
+
 		HFONT m_font;
+		PlayerBox m_pBox;
 		HMENU m_trayMenu;
-		std::string m_logText;
 };
 
 #endif

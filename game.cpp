@@ -290,9 +290,10 @@ void Game::cleanMap(uint32_t& count)
 	uint64_t start = OTSYS_TIME();
 	setGameState(GAME_STATE_MAINTAIN);
 
-	int32_t tiles = -1;
 	Tile* tile = NULL;
 	Item* item = NULL;
+
+	int32_t tiles = -1;
 	if(g_config.getBool(ConfigManager::STORE_TRASH))
 	{
 		tiles = trash.size();
@@ -437,9 +438,10 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 		it = &begin;
 	}
 
-	uint32_t cleaned = 0;
 	Tile* tile = NULL;
 	Item* item = NULL;
+
+	uint32_t cleaned = 0;
 	for(; (*it) != end && (limit != 0 ? (cleaned < limit) : true); ++(*it), ++cleaned)
 	{
 		tile = (*it)->first;
@@ -944,8 +946,7 @@ bool Game::playerMoveThing(uint32_t playerId, const Position& fromPos,
 	{
 		if(Position::areInRange<1,1,0>(movingCreature->getPosition(), player->getPosition()))
 		{
-			SchedulerTask* task = createSchedulerTask(g_config.getNumber(ConfigManager::MOVE_CREATURE_DELAY),
-				boost::bind(&Game::playerMoveCreature, this,
+			SchedulerTask* task = createSchedulerTask(2000, boost::bind(&Game::playerMoveCreature, this,
 				player->getID(), movingCreature->getID(), movingCreature->getPosition(), toCylinder->getPosition()));
 			player->setNextActionTask(task);
 		}
@@ -2237,7 +2238,6 @@ bool Game::playerCloseNpcChannel(uint32_t playerId)
 	SpectatorVec::iterator it;
 
 	getSpectators(list, player->getPosition());
-
 	Npc* npc = NULL;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
@@ -2948,8 +2948,8 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int32_t
 
 	int32_t lookDistance = std::max(std::abs(player->getPosition().x - tradeItem->getPosition().x),
 		std::abs(player->getPosition().y - tradeItem->getPosition().y));
-
 	std::stringstream ss;
+
 	ss << "You see ";
 	if(index == 0)
 	{
@@ -5221,105 +5221,102 @@ bool Game::loadExperienceStages()
 	if(!g_config.getBool(ConfigManager::EXPERIENCE_STAGES))
 		return true;
 
-	if(xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "stages.xml").c_str()))
+	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "stages.xml").c_str());
+	if(!doc)
 	{
-		int32_t intValue, low, high;
-		float floatValue, mul;
-
-		xmlNodePtr root, q, p;
-		root = xmlDocGetRootElement(doc);
-		if(xmlStrcmp(root->name, (const xmlChar*)"stages"))
-		{
-			xmlFreeDoc(doc);
-			return false;
-		}
-
-		lastStageLevel = 0;
-		stages.clear();
-
-		q = root->children;
-		while(q)
-		{
-			if(!xmlStrcmp(q->name, (const xmlChar*)"world"))
-			{
-				if(!readXMLInteger(q, "id", intValue) || intValue != g_config.getNumber(ConfigManager::WORLD_ID))
-				{
-					q = q->next;
-					continue;
-				}
-
-				p = q->children;
-				while(p)
-				{
-					if(!xmlStrcmp(p->name, (const xmlChar*)"stage"))
-					{
-						if(readXMLInteger(p, "minlevel", intValue))
-							low = intValue;
-						else
-							low = 1;
-
-						if(readXMLInteger(p, "maxlevel", intValue))
-							high = intValue;
-						else
-						{
-							high = 0;
-							lastStageLevel = low;
-						}
-
-						if(readXMLFloat(p, "multiplier", floatValue))
-							mul = floatValue;
-						else
-							mul = 1.0f;
-
-						if(lastStageLevel && lastStageLevel == (uint32_t)low)
-							stages[lastStageLevel] = mul;
-						else
-						{
-							for(int32_t i = low; i <= high; i++)
-								stages[i] = mul;
-						}
-
-					}
-
-					p = p->next;
-				}
-			}
-
-			if(!xmlStrcmp(q->name, (const xmlChar*)"stage"))
-			{
-				if(readXMLInteger(q, "minlevel", intValue))
-					low = intValue;
-				else
-					low = 1;
-
-				if(readXMLInteger(q, "maxlevel", intValue))
-					high = intValue;
-				else
-				{
-					high = 0;
-					lastStageLevel = low;
-				}
-
-				if(readXMLFloat(q, "multiplier", floatValue))
-					mul = floatValue;
-				else
-					mul = 1.0f;
-
-				if(lastStageLevel && lastStageLevel == (uint32_t)low)
-					stages[lastStageLevel] = mul;
-				else
-				{
-					for(int32_t i = low; i <= high; i++)
-						stages[i] = mul;
-				}
-			}
-
-			q = q->next;
-		}
-
-		xmlFreeDoc(doc);
+		std::cout << "[Warning - Game::loadExperienceStages] Cannot load stages file." << std::endl;
+		std::cout << getLastXMLError() << std::endl;
+		return false;
 	}
 
+	
+	int32_t intValue, low = 0, high = 0;
+	float floatValue, mul = 1.0f;
+
+	xmlNodePtr q, p, root = xmlDocGetRootElement(doc);
+	if(xmlStrcmp(root->name, (const xmlChar*)"stages"))
+	{
+		std::cout << "[Error - Game::loadExperienceStages] Malformed stages file" << std::endl;
+		xmlFreeDoc(doc);
+		return false;
+	}
+
+	lastStageLevel = 0;
+	stages.clear();
+
+	q = root->children;
+	while(q)
+	{
+		if(!xmlStrcmp(q->name, (const xmlChar*)"world"))
+		{
+			if(!readXMLInteger(q, "id", intValue) || intValue != g_config.getNumber(ConfigManager::WORLD_ID))
+			{
+				q = q->next;
+				continue;
+			}
+
+			p = q->children;
+			while(p)
+			{
+				if(!xmlStrcmp(p->name, (const xmlChar*)"stage"))
+				{
+					low = 1;
+					if(readXMLInteger(p, "minlevel", intValue))
+						low = intValue;
+
+					high = 0;
+					if(readXMLInteger(p, "maxlevel", intValue))
+						high = intValue;
+					else
+						lastStageLevel = low;
+
+					mul = 1.0f;
+					if(readXMLFloat(p, "multiplier", floatValue))
+						mul = floatValue;
+
+					if(lastStageLevel && lastStageLevel == (uint32_t)low)
+						stages[lastStageLevel] = mul;
+					else
+					{
+						for(int32_t i = low; i <= high; i++)
+							stages[i] = mul;
+					}
+				}
+
+				p = p->next;
+			}
+		}
+
+		if(!xmlStrcmp(q->name, (const xmlChar*)"stage"))
+		{
+			low = 1;
+			if(readXMLInteger(q, "minlevel", intValue))
+				low = intValue;
+			else
+
+			high = 0;
+			if(readXMLInteger(q, "maxlevel", intValue))
+				high = intValue;
+			else
+				lastStageLevel = low;
+
+			mul = 1.0f;
+			if(readXMLFloat(q, "multiplier", floatValue))
+				mul = floatValue;
+
+			if(lastStageLevel && lastStageLevel == (uint32_t)low)
+				stages[lastStageLevel] = mul;
+			else
+			{
+				for(int32_t i = low; i <= high; i++)
+					stages[i] = mul;
+			}
+		}
+
+		q = q->next;
+	}
+
+	xmlFreeDoc(doc);
 	return true;
 }
 
@@ -5489,6 +5486,13 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			else
 				std::cout << "[Error - Game::reloadInfo] Failed to reload actions." << std::endl;
 
+			break;
+		}
+
+		case RELOAD_CHAT:
+		{
+			g_chat.reload();
+			done = true;
 			break;
 		}
 

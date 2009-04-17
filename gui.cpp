@@ -18,8 +18,7 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 
-#ifndef __CONSOLE__
-#ifdef WIN32
+#if defined(WIN32) && not defined(__CONSOLE__)
 #include "gui.h"
 
 void GUI::initTrayMenu()
@@ -48,5 +47,4 @@ void GUI::initFont()
 	m_font = CreateFontIndirect(&lFont);
 }
 
-#endif
 #endif

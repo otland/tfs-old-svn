@@ -388,20 +388,28 @@ int32_t Items::loadFromOtb(std::string file)
 
 bool Items::loadFromXml()
 {
-	if(xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, "items/items.xml").c_str()))
+	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, "items/items.xml").c_str());
+	if(!doc)
 	{
-		int32_t intValue;
-		std::string strValue;
-		uint32_t id = 0;
+		std::cout << "[Warning - Items::loadFromXml] Cannot load items file." << std::endl;
+		std::cout << getLastXMLError() << std::endl;
+		return false;
+	}
 
-		xmlNodePtr root = xmlDocGetRootElement(doc);
-		if(xmlStrcmp(root->name,(const xmlChar*)"items") != 0)
+	//TODO: someone really brave untab this, please
+		xmlNodePtr itemNode, root = xmlDocGetRootElement(doc);
+		if(xmlStrcmp(root->name,(const xmlChar*)"items"))
 		{
+			std::cout << "[Warning - Items::loadFromXml] Malformed items file." << std::endl;
 			xmlFreeDoc(doc);
 			return false;
 		}
 
-		xmlNodePtr itemNode = root->children;
+		int32_t intValue;
+		std::string strValue;
+
+		uint32_t id = 0;
+		itemNode = root->children;
 		while(itemNode)
 		{
 			if(xmlStrcmp(itemNode->name,(const xmlChar*)"item") == 0)
@@ -1418,11 +1426,8 @@ bool Items::loadFromXml()
 			itemNode = itemNode->next;
 		}
 
-		xmlFreeDoc(doc);
-	}
-
-	//Lets do some checks...
-	for(uint32_t i = 0; i < Item::items.size(); ++i)
+	xmlFreeDoc(doc);
+	for(uint32_t i = 0; i < Item::items.size(); ++i) //lets do some checks...
 	{
 		const ItemType* it = Item::items.getElement(i);
 		if(!it)

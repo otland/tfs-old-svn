@@ -39,18 +39,18 @@ extern Game g_game;
 extern ConfigManager g_config;
 Admin* g_admin = NULL;
 
-Logger::Logger()
+Loggar::Loggar()
 {
 	m_file = fopen(getFilePath(FILE_TYPE_LOG, "ForgottenAdmin.log").c_str(), "a");
 }
 
-Logger::~Logger()
+Loggar::~Loggar()
 {
 	if(m_file)
 		fclose(m_file);
 }
 
-void Logger::logMessage(const char* channel, LogType_t type, int32_t level, std::string message, const char* func)
+void Loggar::logMessage(const char* channel, LogType_t type, int32_t level, std::string message, const char* func)
 {
 	char buffer[32];
 	formatDate(time(NULL), buffer);
@@ -546,12 +546,16 @@ bool Admin::loadFromXml()
 {
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "admin.xml").c_str());
 	if(!doc)
-		return false;
-
-	xmlNodePtr root, p, q;
-	root = xmlDocGetRootElement(doc);
-	if(!xmlStrEqual(root->name,(const xmlChar*)"otadmin"))
 	{
+		std::cout << "[Warning - Admin::loadFromXml] Cannot load admin file." << std::endl;
+		std::cout << getLastXMLError() << std::endl;
+		return false;
+	}
+
+	xmlNodePtr p, q, root = xmlDocGetRootElement(doc);
+	if(xmlStrcmp(root->name,(const xmlChar*)"otadmin"))
+	{
+		std::cout << "[Error - Admin::loadFromXml] Malformed admin file" << std::endl;
 		xmlFreeDoc(doc);
 		return false;
 	}

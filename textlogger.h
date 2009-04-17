@@ -39,3 +39,4 @@ class TextLogger : public std::streambuf
 
 #endif
 #endif
+

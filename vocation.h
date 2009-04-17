@@ -100,7 +100,7 @@ typedef std::map<uint32_t, Vocation*> VocationsMap;
 class Vocations
 {
 	public:
-		Vocations();
+		Vocations() {}
 		virtual ~Vocations();
 
 		bool loadFromXml();
