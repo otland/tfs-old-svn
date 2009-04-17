@@ -1,0 +1,44 @@
+[
+	0.4
+
+	Pozwole sobie pisac po polsku, bo z angielskim u mnie s³abo :P a i tak prawie sami tu jesteœmy
+	Piszcie swoje propozycje co do 0.4
+	Narazie wypisze wszystko co przysz³o mi do g³owy, albo ustaliliœmy z elfem.
+
+	TODO:
+	*GUI w QT
+	*System modów/pluginów
+	*Reorganizacja wszystkich funkcji LUA, nie bazowanie na LUA_TRUE, LUA_FALSE, LUA_ERROR, LUA_NOERROR itd, tylko true/false
+	*Wyrzucenie z source wszystkich tekstów/ RET_ itd. Wszystko ustawiane w jednym pliku? (multilang)
+	*Ca³kowite po¿egniane z compat.lua, i starymi funkcjami.
+	*Nowy plik config_help, pomoc dot. wartoœci w configu. Du¿o z tym problemów jest, proponuje krótko opisaæ ka¿d¹ zmienn¹, do czego s³u¿y, jakie przyjmuje wartoœci, co powoduje.
+	*Manual do komend. Parametry, przyk³adowe u¿ycie, mo¿liwe wartoœci. U¿ywane w grze, mo¿liwoœæ deaktywacji w configu. Przyk³ad /man serverinfo, /man /goto, /a man
+	*Przy parsowaniu XML, wyœwietlanie b³êdów sk³adniowych.. To ju¿ nawet w 0.3 proponuje. Jak jeszcze by³em ma³o obeznany to zdarza³o siê przekopywaæ ca³y plik np. spells.xml w poszukiwaniu jednego braku cudzys³owia -.-
+
+	*Nowy podzia³ plików.
+		*Server
+			*config/
+				*main.lua (Tutaj dane do bazy, ip, nazwa serwera i wszystko co jeszcze mo¿e byæ wspólne dla wszystkich œwiatów)
+				*config.lua (..)
+				* .. I ewentualnie pare plików z XML/ czyli, admin.xml stages.xml worlds.xml i ew. quests.xml + vocations.xml
+			*logs/
+				*otadmin.log
+				*crash.log
+				*client_assertions.log
+				*bots/
+				*commands/
+				*channels/
+				*server/
+			*mods/
+				Miejsce dla modów. Wszystkie nowe modyfikacje, skrypty, itp tutaj. Takie miejsce dla w³asnych zmian.
+				Przyk³adowe:
+					http://wklej.to/w4SP
+					http://wklej.to/aHnl
+			*world/
+				World bym tutaj przeniós³, ¿eby nikt nie musia³ grzebaæ w data/, czyli przy aktualizacji by³by zastêpowany tylko folder /data, binarka.
+			*langs/
+				T³umaczenia
+				polish.lua, english.lua etc
+			*data/
+				Po staremu, oprócz world, i jeszcze pare plików bym przerzuci³ st¹d do folderu /config (Tj. admin.xml, stages.xml, worlds.xml, i ew. quests.xml + vocations.xml)
+]
