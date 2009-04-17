@@ -215,7 +215,6 @@ enum PlayerInfo_t
 	PlayerInfoGuildLevel,
 	PlayerInfoGuildNick,
 	PlayerInfoSex,
-	PlayerInfoLookDirection,
 	PlayerInfoGroupId,
 	PlayerInfoGroupName,
 	PlayerInfoGUID,
@@ -238,6 +237,8 @@ enum PlayerInfo_t
 enum ErrorCode_t
 {
 	LUA_ERROR_PLAYER_NOT_FOUND,
+	LUA_ERROR_MONSTER_NOT_FOUND,
+	LUA_ERROR_NPC_NOT_FOUND,
 	LUA_ERROR_CREATURE_NOT_FOUND,
 	LUA_ERROR_ITEM_NOT_FOUND,
 	LUA_ERROR_THING_NOT_FOUND,
@@ -332,6 +333,13 @@ class LuaScriptInterface
 		static bool getFieldBool(lua_State* L, const char* key);
 		static void setFieldDouble(lua_State* L, const char* index, double val);
 
+		static std::string getGlobalString(lua_State* L, const std::string& _identifier, const std::string& _default = "");
+		static bool getGlobalBool(lua_State* L, const std::string& _identifier, const std::string& _default = "no");
+		static int32_t getGlobalNumber(lua_State* L, const std::string& _identifier, const int32_t _default = 0);
+		static double getGlobalDouble(lua_State* L, const std::string& _identifier, const double _default = 0);
+		static void getValue(const std::string& key, lua_State* L, lua_State* _L);
+		static void moveValue(lua_State* from, lua_State* to);
+
 	protected:
 		virtual bool closeState();
 
@@ -375,7 +383,7 @@ class LuaScriptInterface
 		static int32_t luaGetHouseTilesSize(lua_State* L);
 
 		static int32_t luaDoCreatureSay(lua_State* L);
-		
+
 		static int32_t luaDoPlayerAddSkillTry(lua_State* L);
 		static int32_t luaDoCreatureAddHealth(lua_State* L);
 		static int32_t luaDoCreatureAddMana(lua_State* L);
@@ -512,6 +520,7 @@ class LuaScriptInterface
 		static int32_t luaGetCreatureSpeed(lua_State* L);
 		static int32_t luaGetCreatureBaseSpeed(lua_State* L);
 		static int32_t luaGetCreatureTarget(lua_State* L);
+		static int32_t luaGetCreatureLookDirection(lua_State* L);
 		static int32_t luaGetPlayerSkillLevel(lua_State* L);
 		static int32_t luaGetPlayerSkillTries(lua_State* L);
 		static int32_t luaGetPlayerVocation(lua_State* L);
@@ -539,7 +548,6 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerGuildLevel(lua_State* L);
 		static int32_t luaGetPlayerGuildNick(lua_State* L);
 		static int32_t luaGetPlayerSex(lua_State* L);
-		static int32_t luaGetPlayerLookDir(lua_State* L);
 		static int32_t luaGetPlayerGUID(lua_State* L);
 		static int32_t luaGetPlayerFlagValue(lua_State* L);
 		static int32_t luaGetPlayerCustomFlagValue(lua_State* L);

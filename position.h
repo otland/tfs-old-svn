@@ -50,18 +50,18 @@ class Position
 		template<int32_t deltax, int32_t deltay, int32_t deltaz>
 		inline static bool areInRange(const Position& p1, const Position& p2)
 		{
-			return (!(std::abs(float(p1.x - p2.x)) > deltax || std::abs(float(p1.y - p2.y)) > deltay || std::abs(float(p1.z - p2.z)) > deltaz));
+			return !(std::abs(float(p1.x - p2.x)) > deltax || std::abs(float(p1.y - p2.y)) > deltay || std::abs(float(p1.z - p2.z)) > deltaz);
 		}
 
 		template<int32_t deltax, int32_t deltay>
 		inline static bool areInRange(const Position& p1, const Position& p2)
 		{
-			return (!(std::abs(float(p1.x - p2.x)) > deltax || std::abs(float(p1.y - p2.y)) > deltay));
+			return !(std::abs(float(p1.x - p2.x)) > deltax || std::abs(float(p1.y - p2.y)) > deltay);
 		}
 
 		static bool areInRange(const Position& r, const Position& p1, const Position& p2)
 		{
-			return (!(std::abs(float(p1.x - p2.x)) > r.x || std::abs(float(p1.y - p2.y)) > r.y || std::abs(float(p1.z - p2.z)) > r.z));
+			return !(std::abs(float(p1.x - p2.x)) > r.x || std::abs(float(p1.y - p2.y)) > r.y || std::abs(float(p1.z - p2.z)) > r.z);
 		}
 
 		Position(int32_t _x, int32_t _y, int32_t _z): x(_x), y(_y), z(_z) {}
@@ -97,18 +97,12 @@ class Position
 
 		bool operator==(const Position p) const
 		{
-			if(p.x == x && p.y == y && p.z == z)
-				return true;
-
-			return false;
+			return (p.x == x && p.y == y && p.z == z);
 		}
 
 		bool operator!=(const Position p) const
 		{
-			if(p.x == x && p.y == y && p.z == z)
-				return false;
-
-			return true;
+			return !(*this == p);
 		}
 
 		Position operator-(const Position p1)
@@ -136,18 +130,12 @@ class PositionEx : public Position
 
 		bool operator==(const PositionEx p)  const
 		{
-			if(p.x == x && p.y == y && p.z == z && p.stackpos == stackpos)
-				return true;
-
-			return false;
+			return (p.x == x && p.y == y && p.z == z && p.stackpos == stackpos);
 		}
 
 		bool operator!=(const PositionEx p)  const
 		{
-			if(p.x == x && p.y == y && p.z == z && p.stackpos != stackpos)
-				return false;
-
-			return true;
+			return !(p.x == x && p.y == y && p.z == z && p.stackpos != stackpos);
 		}
 };
 

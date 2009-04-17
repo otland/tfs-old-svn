@@ -140,7 +140,7 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 	m_eventName = str;
 	if(!readXMLString(p, "type", str))
 	{
-		std::cout << "[Error - CreatureEvent::configureEvent] No type for creature event."  << std::endl;
+		std::cout << "[Error - CreatureEvent::configureEvent] No type for creature event." << std::endl;
 		return false;
 	}
 

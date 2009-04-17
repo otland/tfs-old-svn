@@ -261,30 +261,30 @@ void Creature::onWalk()
 
 void Creature::onWalk(Direction& dir)
 {
-	if(hasCondition(CONDITION_DRUNK))
-	{
-		uint32_t r = random_range(0, 16);
-		if(r <= 4)
-		{
-			switch(r)
-			{
-				case 0:
-					dir = NORTH;
-					break;
-				case 1:
-					dir = WEST;
-					break;
-				case 3:
-					dir = SOUTH;
-					break;
-				case 4:
-					dir = EAST;
-					break;
-			}
+	if(!hasCondition(CONDITION_DRUNK))
+		return;
 
-			g_game.internalCreatureSay(this, SPEAK_MONSTER_SAY, "Hicks!");
-		}
+	uint32_t r = random_range(0, 16);
+	if(r > 4)
+		return;
+
+	switch(r)
+	{
+		case 0:
+			dir = NORTH;
+			break;
+		case 1:
+			dir = WEST;
+			break;
+		case 3:
+			dir = SOUTH;
+			break;
+		case 4:
+			dir = EAST;
+			break;
 	}
+
+	g_game.internalCreatureSay(this, SPEAK_MONSTER_SAY, "Hicks!");
 }
 
 bool Creature::getNextStep(Direction& dir)
@@ -313,26 +313,27 @@ bool Creature::startAutoWalk(std::list<Direction>& listDir)
 
 void Creature::addEventWalk()
 {
-	if(eventWalk == 0)
-	{
-		int64_t ticks = getEventStepTicks();
-		if(ticks > 0)
-			eventWalk = Scheduler::getScheduler().addEvent(createSchedulerTask(ticks, boost::bind(&Game::checkCreatureWalk, &g_game, getID())));
-	}
+	if(eventWalk != 0)
+		return;
+
+	int64_t ticks = getEventStepTicks();
+	if(ticks > 0)
+		eventWalk = Scheduler::getScheduler().addEvent(createSchedulerTask(ticks,
+			boost::bind(&Game::checkCreatureWalk, &g_game, getID())));
 }
 
 void Creature::stopEventWalk()
 {
-	if(eventWalk != 0)
-	{
-		Scheduler::getScheduler().stopEvent(eventWalk);
-		eventWalk = 0;
+	if(eventWalk == 0)
+		return;
 
-		if(!listWalkDir.empty())
-		{
-			listWalkDir.clear();
-			onWalkAborted();
-		}
+	Scheduler::getScheduler().stopEvent(eventWalk);
+	eventWalk = 0;
+
+	if(!listWalkDir.empty())
+	{
+		listWalkDir.clear();
+		onWalkAborted();
 	}
 }
 
@@ -341,13 +342,15 @@ void Creature::updateMapCache()
 	const Position& myPos = getPosition();
 	Position pos(0, 0, myPos.z);
 
+	Tile* tile;
 	for(int32_t y = -((mapWalkHeight - 1) / 2); y <= ((mapWalkHeight - 1) / 2); ++y)
 	{
 		for(int32_t x = -((mapWalkWidth - 1) / 2); x <= ((mapWalkWidth - 1) / 2); ++x)
 		{
 			pos.x = myPos.x + x;
 			pos.y = myPos.y + y;
-			if(Tile* tile = g_game.getTile(pos.x, pos.y, myPos.z))
+			tile = g_game.getTile(pos.x, pos.y, myPos.z);
+			if(tile)
 				updateTileCache(tile, pos);
 		}
 	}
@@ -525,9 +528,8 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 		extraStepDuration = 0;
 		if(!teleport)
 		{
-			if(oldPos.z != newPos.z)
-				lastStepCost = 2;
-			else if(std::abs(newPos.x - oldPos.x) >=1 && std::abs(newPos.y - oldPos.y) >= 1)
+			if(oldPos.z != newPos.z ||
+				(std::abs(newPos.x - oldPos.x) >=1 && std::abs(newPos.y - oldPos.y) >= 1))
 				lastStepCost = 2;
 		}
 		else
@@ -720,17 +722,13 @@ bool Creature::onDeath()
 	if(deny)
 		return false;
 
-	if(lastHitKiller && lastHitCreature)
-	{
-		if(!lastHitCreature->onKilledCreature(this))
+	if(lastHitKiller && lastHitCreature &&
+		!lastHitCreature->onKilledCreature(this))
 			deny = true;
-	}
 
-	if(mostDamageKiller && mostDamageCreature)
-	{
-		if(!mostDamageCreature->onKilledCreature(this))
+	if(mostDamageKiller && mostDamageCreature &&
+		!mostDamageCreature->onKilledCreature(this))
 			deny = true;
-	}
 
 	if(deny)
 		return false;
@@ -793,9 +791,11 @@ void Creature::dropCorpse()
 bool Creature::getKillers(Creature** _lastHitCreature, Creature** _mostDamageCreature)
 {
 	uint32_t mostDamage = 0;
+
+	CountBlock_t cb;
 	for(CountMap::iterator it = damageMap.begin(); it != damageMap.end(); ++it)
 	{
-		CountBlock_t cb = it->second;
+		cb = it->second;
 		if((cb.total > mostDamage && (OTSYS_TIME() - cb.ticks <= g_game.getInFightTicks())))
 		{
 			if((*_mostDamageCreature = g_game.getCreatureByID((*it).first)))
@@ -1570,12 +1570,7 @@ bool FrozenPathingConditionCall::operator()(const Position& startPos, const Posi
 
 	int32_t testDist = std::max(std::abs(targetPos.x - testPos.x), std::abs(targetPos.y - testPos.y));
 	if(fpp.maxTargetDist == 1)
-	{
-		if(testDist < fpp.minTargetDist || testDist > fpp.maxTargetDist)
-			return false;
-
-		return true;
-	}
+		return (testDist > fpp.minTargetDist && testDist < fpp.maxTargetDist);
 
 	if(testDist <= fpp.maxTargetDist)
 	{

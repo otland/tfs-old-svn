@@ -91,7 +91,6 @@ Creature()
 	violationAccess = 0;
 	groupName = "";
 	groupId = 0;
-//	lastLogin = OTSYS_TIME();
 	lastLoginSaved = 0;
 	lastLogout = 0;
  	lastIP = 0;
@@ -247,7 +246,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 		if(hasCustomFlag(PlayerCustomFlag_DescriptionGroupInsteadVocation))
 			s << " You are " << groupName;
 		else if(vocation_id != 0)
-			s << " You are " << vocation->getVocDescription();
+			s << " You are " << vocation->getDescription();
 		else
 			s << " You have no vocation";
 	}
@@ -262,7 +261,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 		if(hasCustomFlag(PlayerCustomFlag_DescriptionGroupInsteadVocation))
 			s << " is " << groupName;
 		else if(vocation_id != 0)
-			s << " is " << vocation->getVocDescription();
+			s << " is " << vocation->getDescription();
 		else
 			s << " has no vocation";
 	}
@@ -427,9 +426,6 @@ int32_t Player::getWeaponSkill(const Item* item) const
 
 		case WEAPON_DIST:
 			return getSkill(SKILL_DIST, SKILL_LEVEL);
-
-		default:
-			break;
 	}
 
 	return 0;
@@ -460,9 +456,11 @@ int32_t Player::getArmor() const
 void Player::getShieldAndWeapon(const Item* &shield, const Item* &weapon) const
 {
 	shield = weapon = NULL;
+
+	Item* item = NULL;
 	for(uint32_t slot = SLOT_RIGHT; slot <= SLOT_LEFT; slot++)
 	{
-		Item* item = getInventoryItem((slots_t)slot);
+		item = getInventoryItem((slots_t)slot);
 		if(!item)
 			continue;
 
@@ -869,29 +867,28 @@ bool Player::getStorageValue(const uint32_t key, std::string& value) const
 
 bool Player::addStorageValue(const uint32_t key, const std::string& value)
 {
-	if(IS_IN_KEYRANGE(key, RESERVED_RANGE))
-	{
-		if(IS_IN_KEYRANGE(key, OUTFITS_RANGE))
-		{
-			Outfit outfit;
-			outfit.looktype = atoi(value.c_str()) >> 16;
-			outfit.addons = atoi(value.c_str()) & 0xFF;
-			if(outfit.addons <= 3)
-			{
-				m_playerOutfits.addOutfit(outfit);
-				return true;
-			}
-			else
-				std::cout << "[Warning - Player::addStorageValue]: Invalid addons value key: " << key << ", value: " << value << " for player: " << getName() << std::endl;
-		}
-		else
-			std::cout << "[Warning - Player::addStorageValue]: Unknown reserved key: " << key << " for player: " << getName() << std::endl;
-	}
-	else
+	if(!IS_IN_KEYRANGE(key, RESERVED_RANGE))
 	{
 		storageMap[key] = value;
 		return true;
 	}
+
+	if(!IS_IN_KEYRANGE(key, OUTFITS_RANGE))
+	{
+		std::cout << "[Warning - Player::addStorageValue]: Unknown reserved key: " << key << " for player: " << getName() << std::endl;
+		return false;
+	}
+
+	Outfit outfit;
+	outfit.looktype = atoi(value.c_str()) >> 16;
+	outfit.addons = atoi(value.c_str()) & 0xFF;
+	if(outfit.addons <= 3)
+	{
+		m_playerOutfits.addOutfit(outfit);
+		return true;
+	}
+	else
+		std::cout << "[Warning - Player::addStorageValue]: Invalid addons value key: " << key << ", value: " << value << " for player: " << getName() << std::endl;
 
 	return false;
 }
@@ -1358,61 +1355,62 @@ void Player::onRemoveTileItem(const Tile* tile, const Position& pos, uint32_t st
 void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 {
 	Creature::onCreatureAppear(creature, isLogin);
-	if(isLogin && creature == this)
+	if(!isLogin || creature != this)
+		return;
+
+	Item* item;
+	for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
 	{
-		for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
-		{
-			if(Item* item = getInventoryItem((slots_t)slot))
-			{
-				item->__startDecaying();
-				g_moveEvents->onPlayerEquip(this, item, (slots_t)slot, false);
-			}
-		}
+		item = getInventoryItem((slots_t)slot);
+		if(!item)
+			return;
 
-		if(BedItem* bed = Beds::getInstance().getBedBySleeper(getGUID()))
-		{
-			bed->wakeUp(this);
-			#ifdef __DEBUG__
-			std::cout << "Player " << getName() << " waking up." << std::endl;
-			#endif
-		}
-
-		if(lastLogout)
-		{
-			int64_t period = (int32_t)time(NULL) - lastLogout;
-			if(period - 600 > 0)
-			{
-				period = (int64_t)std::ceil((double)period * g_config.getDouble(ConfigManager::RATE_STAMINA_GAIN));
-				int64_t rated = stamina + period, tmp = g_config.getNumber(
-					ConfigManager::STAMINA_LIMIT_TOP) * STAMINA_MULTIPLIER;
-				if(rated >= tmp)
-					rated -= tmp;
-				else
-					rated = 0;
-
-				addStamina(period - rated);
-				if(rated > 0)
-				{
-					tmp = (int64_t)std::ceil((double)rated / g_config.getDouble(ConfigManager::RATE_STAMINA_THRESHOLD));
-					if(stamina + tmp > STAMINA_MAX)
-						tmp = STAMINA_MAX;
-
-					addStamina(tmp);
-				}
-			}
-				
-		}
-
-		g_game.checkPlayersRecord();
-		if(!isInGhostMode())
-			IOLoginData::getInstance()->updateOnlineStatus(guid, true);
-
-		#ifndef __CONSOLE__
-		GUI::getInstance()->m_pBox.addPlayer(this);
-		#endif
-		if(g_config.getBool(ConfigManager::DISPLAY_LOGGING))
-			std::cout << name << " has logged in." << std::endl;
+		item->__startDecaying();
+		g_moveEvents->onPlayerEquip(this, item, (slots_t)slot, false);
 	}
+
+	if(BedItem* bed = Beds::getInstance().getBedBySleeper(getGUID()))
+	{
+		bed->wakeUp(this);
+		#ifdef __DEBUG__
+		std::cout << "Player " << getName() << " waking up." << std::endl;
+		#endif
+	}
+
+	if(lastLogout)
+	{
+		int64_t period = (int32_t)time(NULL) - lastLogout;
+		if(period - 600 > 0)
+		{
+			period = (int64_t)std::ceil((double)period * g_config.getDouble(ConfigManager::RATE_STAMINA_GAIN));
+			int64_t rated = stamina + period, tmp = g_config.getNumber(
+				ConfigManager::STAMINA_LIMIT_TOP) * STAMINA_MULTIPLIER;
+			if(rated >= tmp)
+				rated -= tmp;
+			else
+				rated = 0;
+
+			addStamina(period - rated);
+			if(rated > 0)
+			{
+				tmp = (int64_t)std::ceil((double)rated / g_config.getDouble(ConfigManager::RATE_STAMINA_THRESHOLD));
+				if(stamina + tmp > STAMINA_MAX)
+					tmp = STAMINA_MAX;
+
+				addStamina(tmp);
+			}
+		}
+	}
+
+	g_game.checkPlayersRecord();
+	if(!isInGhostMode())
+		IOLoginData::getInstance()->updateOnlineStatus(guid, true);
+
+	#ifndef __CONSOLE__
+	GUI::getInstance()->m_pBox.addPlayer(this);
+	#endif
+	if(g_config.getBool(ConfigManager::DISPLAY_LOGGING))
+		std::cout << name << " has logged in." << std::endl;
 }
 
 void Player::onAttackedCreatureDisappear(bool isLogout)
@@ -3551,20 +3549,20 @@ bool Player::onKilledCreature(Creature* target)
 void Player::gainExperience(uint64_t gainExp)
 {
 	if(hasFlag(PlayerFlag_NotGainExperience) || !gainExp)
-	{
-		//soul regeneration
-		if(gainExp >= getLevel())
-		{
-			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SOUL, 4 * 60 * 1000))
-			{
-				condition->setParam(CONDITIONPARAM_SOULGAIN, 1);
-				condition->setParam(CONDITIONPARAM_SOULTICKS, vocation->getSoulGainTicks() * 1000);
-				addCondition(condition);
-			}
-		}
+		return;
 
-		addExperience(gainExp);
+	//soul regeneration
+	if(gainExp >= getLevel())
+	{
+		if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SOUL, 4 * 60 * 1000))
+		{
+			condition->setParam(CONDITIONPARAM_SOULGAIN, 1);
+			condition->setParam(CONDITIONPARAM_SOULTICKS, vocation->getSoulGainTicks() * 1000);
+			addCondition(condition);
+		}
 	}
+
+	addExperience(gainExp);
 }
 
 void Player::onGainExperience(uint64_t gainExp)
@@ -3576,8 +3574,7 @@ void Player::onGainExperience(uint64_t gainExp)
 	if(party && party->isSharedExperienceActive() && party->isSharedExperienceEnabled())
 	{
 		party->shareExperience(gainExp);
-		//We will get a share of the experience through the sharing mechanism
-		gainExp = 0;
+		gainExp = 0; //We will get a share of the experience through the sharing mechanism
 	}
 
 	Creature::onGainExperience(gainExp);
@@ -4176,13 +4173,13 @@ void Player::manageAccount(const std::string &text)
 						{
 							if(firstPart)
 							{
-								msg << "What do you want to be... " << it->second->getVocDescription();
+								msg << "What do you want to be... " << it->second->getDescription();
 								firstPart = false;
 							}
 							else if(it->first - 1 != 0)
-								msg << ", " << it->second->getVocDescription();
+								msg << ", " << it->second->getDescription();
 							else
-								msg << " or " << it->second->getVocDescription() << ".";
+								msg << " or " << it->second->getDescription() << ".";
 						}
 					}
 				}
@@ -4211,10 +4208,10 @@ void Player::manageAccount(const std::string &text)
 			{
 				for(VocationsMap::iterator it = g_vocations.getFirstVocation(); it != g_vocations.getLastVocation(); ++it)
 				{
-					std::string tmp = asLowerCaseString(it->second->getVocName());
+					std::string tmp = asLowerCaseString(it->second->getName());
 					if(checkText(text, tmp) && it != g_vocations.getLastVocation() && it->first == it->second->getFromVocation() && it->first != 0)
 					{
-						msg << "So you would like to be " << it->second->getVocDescription() << "... are you sure?";
+						msg << "So you would like to be " << it->second->getDescription() << "... are you sure?";
 						managerNumber2 = it->first;
 						talkState[11] = false;
 						talkState[12] = true;

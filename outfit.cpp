@@ -150,89 +150,88 @@ Outfits::~Outfits()
 
 bool Outfits::loadFromXml()
 {
-	if(xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "outfits.xml").c_str()))
+	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "outfits.xml").c_str());
+	if(!doc)
+		return false;
+
+	xmlNodePtr root, p;
+	root = xmlDocGetRootElement(doc);
+	if(xmlStrcmp(root->name,(const xmlChar*)"outfits") != 0)
 	{
-		xmlNodePtr root, p;
-		root = xmlDocGetRootElement(doc);
-		if(xmlStrcmp(root->name,(const xmlChar*)"outfits") != 0)
-		{
-			xmlFreeDoc(doc);
-			std::cout << "[Warning - Outfits::loadFromXml] Malformed outfits file, using defaults." << std::endl;
-			return true;
-		}
-
-		std::string strValue;
-		int32_t intValue;
-		p = root->children;
-		while(p)
-		{
-			if(xmlStrcmp(p->name, (const xmlChar*)"outfit") != 0)
-			{
-				p = p->next;
-				continue;
-			}
-
-			if(!readXMLInteger(p, "type", intValue) || intValue > 9 || intValue < 0)
-			{
-				std::cout << "[Warning - Outfits::loadFromXml] No valid outfit type " << intValue << std::endl;
-				p = p->next;
-				continue;
-			}
-
-			OutfitList* list;
-			if(!m_list[intValue])
-			{
-				list = new OutfitList;
-				m_list[intValue] = list;
-			}
-			else
-				list = m_list[intValue];
-
-			Outfit outfit;
-			if(!readXMLInteger(p, "looktype", intValue))
-			{
-				std::cout << "[Error - Outfits::loadFromXml] Missing looktype, skipping" << std::endl;
-				p = p->next;
-				continue;
-			}
-			else
-				outfit.looktype = intValue;
-
-			std::string name;
-			if(!readXMLString(p, "name", strValue))
-			{
-				std::cout << "[Warning - Outfits::loadFromXml] Missing name for outfit " << outfit.looktype << ", using default" << std::endl;
-				name = "Outfit #" + outfit.looktype;
-			}
-			else
-				name = strValue;
-
-			outfitNamesMap[outfit.looktype] = name;
-			if(readXMLInteger(p, "addons", intValue))
-				outfit.addons = intValue;
-			else
-				outfit.addons = 0;
-
-			if(readXMLInteger(p, "quest", intValue))
-				outfit.quest = intValue;
-			else
-				outfit.quest = 0;
-
-			if(readXMLString(p, "premium", strValue))
-				outfit.premium = booleanString(strValue);
-
-			bool enabled = true;
-			if(readXMLString(p, "enabled", strValue))
-				enabled = booleanString(strValue);
-
-			if(enabled) //This way you can add names for outfits without adding them to default list
-				list->addOutfit(outfit);
-
-			p = p->next;
-		}
-
 		xmlFreeDoc(doc);
+		std::cout << "[Warning - Outfits::loadFromXml] Malformed outfits file, using defaults." << std::endl;
+		return true;
 	}
 
+	std::string strValue;
+	int32_t intValue;
+	p = root->children;
+	while(p)
+	{
+		if(xmlStrcmp(p->name, (const xmlChar*)"outfit") != 0)
+		{
+			p = p->next;
+			continue;
+		}
+
+		if(!readXMLInteger(p, "type", intValue) || intValue > 9 || intValue < 0)
+		{
+			std::cout << "[Warning - Outfits::loadFromXml] No valid outfit type " << intValue << std::endl;
+			p = p->next;
+			continue;
+		}
+
+		OutfitList* list;
+		if(!m_list[intValue])
+		{
+			list = new OutfitList;
+			m_list[intValue] = list;
+		}
+		else
+			list = m_list[intValue];
+
+		if(!readXMLInteger(p, "looktype", intValue))
+		{
+			std::cout << "[Error - Outfits::loadFromXml] Missing looktype, skipping" << std::endl;
+			p = p->next;
+			continue;
+		}
+
+		Outfit outfit;
+		outfit.looktype = intValue;
+
+		std::string name;
+		if(!readXMLString(p, "name", strValue))
+		{
+			std::cout << "[Warning - Outfits::loadFromXml] Missing name for outfit " << outfit.looktype << ", using default" << std::endl;
+			name = "Outfit #" + outfit.looktype;
+		}
+		else
+			name = strValue;
+
+		outfitNamesMap[outfit.looktype] = name;
+
+		outfit.addons = 0;
+		if(readXMLInteger(p, "addons", intValue))
+			outfit.addons = intValue;
+
+		outfit.quest = 0;
+		if(readXMLInteger(p, "quest", intValue) || readXMLInteger(p, "storage", intValue))
+			outfit.quest = intValue;
+
+		if(readXMLString(p, "premium", strValue))
+			outfit.premium = booleanString(strValue);
+
+		bool enabled = true;
+		if(readXMLString(p, "enabled", strValue))
+			enabled = booleanString(strValue);
+
+		if(enabled) //This way we can add names for outfits without adding them to default list
+			list->addOutfit(outfit);
+
+		p = p->next;
+	}
+
+	xmlFreeDoc(doc);
 	return true;
 }

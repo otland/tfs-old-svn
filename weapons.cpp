@@ -181,13 +181,13 @@ bool Weapon::configureEvent(xmlNodePtr p)
 	int32_t intValue, wieldInfo = 0;
 	std::string strValue;
 
-	if(readXMLInteger(p, "id", intValue))
-	 	id = intValue;
-	else
+	if(!readXMLInteger(p, "id", intValue))
 	{
 		std::cout << "Error: [Weapon::configureEvent] Weapon without id." << std::endl;
 		return false;
 	}
+
+	id = intValue;
 
 	if(readXMLInteger(p, "lvl", intValue) || readXMLInteger(p, "level", intValue))
 	{
@@ -231,32 +231,13 @@ bool Weapon::configureEvent(xmlNodePtr p)
 	if(readXMLString(p, "type", strValue))
 		params.combatType = getCombatType(strValue);
 
+	std::string error = "";
 	StringVec vocStringVec;
 	xmlNodePtr vocationNode = p->children;
 	while(vocationNode)
 	{
-		if(xmlStrcmp(vocationNode->name,(const xmlChar*)"vocation") == 0)
-		{
-			if(readXMLString(vocationNode, "name", strValue))
-			{
-				int32_t vocationId = g_vocations.getVocationId(strValue);
-				if(vocationId != -1)
-				{
-					vocWeaponMap[vocationId] = true;
-					int32_t promotedVocation = g_vocations.getPromotedVocation(vocationId);
-					if(promotedVocation != -1)
-						vocWeaponMap[promotedVocation] = true;
-
-					intValue = 1;
-					readXMLInteger(vocationNode, "showInDescription", intValue);
-					if(intValue != 0)
-					{
-						toLowerCaseString(strValue);
-						vocStringVec.push_back(strValue);
-					}
-				}
-			}
-		}
+		if(!parseVocationNode(vocationNode, vocWeaponMap, vocStringVec, error))
+			std::cout << "[Warning - Weapon::configureEvent] " << error << std::endl;
 
 		vocationNode = vocationNode->next;
 	}
@@ -264,31 +245,13 @@ bool Weapon::configureEvent(xmlNodePtr p)
 	if(!vocWeaponMap.empty())
 		wieldInfo |= WIELDINFO_VOCREQ;
 
-	std::string vocationString;
-	if(!vocStringVec.empty())
-	{
-		for(StringVec::iterator it = vocStringVec.begin(); it != vocStringVec.end(); ++it)
-		{
-			if((*it) != vocStringVec.front())
-			{
-				if((*it) != vocStringVec.back())
-					vocationString += ", ";
-				else
-					vocationString += " and ";
-			}
-
-			vocationString += (*it);
-			vocationString += "s";
-		}
-	}
-
 	if(wieldInfo != 0)
 	{
 		ItemType& it = Item::items.getItemType(id);
 		it.wieldInfo = wieldInfo;
 		it.minReqLevel = getReqLevel();
 		it.minReqMagicLevel = getReqMagLv();
-		it.vocationString = vocationString;
+		it.vocationString = parseVocationString(vocStringVec);
 	}
 
 	return configureWeapon(Item::items[getID()]);
@@ -712,8 +675,7 @@ int32_t WeaponMelee::getElementDamage(const Player* player, const Item* item) co
 	if(vocation && vocation->meleeDamageMultipler != 1.0)
 		maxValue *= vocation->meleeDamageMultipler;
 
-	maxValue = std::floor(maxValue);
-	return -random_range(0, (int32_t)maxValue, DISTRO_NORMAL);
+	return -random_range(0, (int32_t)std::floor(maxValue), DISTRO_NORMAL);
 }
 
 WeaponDistance::WeaponDistance(LuaScriptInterface* _interface):

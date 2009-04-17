@@ -142,7 +142,6 @@ uint16_t Quest::getMissionsCount(Player* player)
 	return count;
 }
 
-
 void Quest::getMissionList(Player* player, NetworkMessage_ptr msg)
 {
 	msg->AddByte(0xF1);
@@ -177,114 +176,113 @@ bool Quests::reload()
 
 bool Quests::loadFromXml()
 {
-	if(xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "quests.xml").c_str()))
+	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "quests.xml").c_str());
+	if(!doc)
+		return false;
+
+	xmlNodePtr root, p;
+	root = xmlDocGetRootElement(doc);
+	if(xmlStrcmp(root->name,(const xmlChar*)"quests") != 0)
 	{
-		xmlNodePtr root, p;
-		root = xmlDocGetRootElement(doc);
-		if(xmlStrcmp(root->name,(const xmlChar*)"quests") != 0)
-		{
-			std::cout << "[Error - Quests::loadFromXml] Malformed quests file" << std::endl;
-			xmlFreeDoc(doc);
-			return false;
-		}
-
-		int32_t intValue;
-		std::string strValue;
-
-		uint16_t id = 0;
-		p = root->children;
-		while(p)
-		{
-			if(xmlStrcmp(p->name, (const xmlChar*)"quest") != 0)
-			{
-				p = p->next;
-				continue;
-			}
-
-			std::string name;
-			uint32_t startStorageId = 0;
-			int32_t startStorageValue = 0;
-			if(readXMLString(p, "name", strValue))
-				name = strValue;
-
-			if(readXMLInteger(p, "startstorageid", intValue))
-				startStorageId = intValue;
-
-			if(readXMLInteger(p, "startstoragevalue", intValue))
-				startStorageValue = intValue;
-
-			if(Quest* quest = new Quest(name, ++id, startStorageId, startStorageValue))
-			{
-				xmlNodePtr missionNode = p->children;
-				while(missionNode)
-				{
-					if(xmlStrcmp(missionNode->name, (const xmlChar*)"mission") != 0)
-					{
-						missionNode = missionNode->next;
-						continue;
-					}
-
-					std::string missionName;
-					uint32_t storageId = 0;
-					int32_t startValue = 0, endValue = 0;
-					if(readXMLString(missionNode, "name", strValue))
-						missionName = strValue;
-
-					if(readXMLInteger(missionNode, "storageid", intValue))
-						storageId = intValue;
-
-					if(readXMLInteger(missionNode, "startvalue", intValue))
-						startValue = intValue;
-
-					if(readXMLInteger(missionNode, "endvalue", intValue))
-						endValue = intValue;
-
-					if(Mission *mission = new Mission(missionName, storageId, startValue, endValue))
-					{
-						xmlNodePtr stateNode = missionNode->children;
-						while(stateNode)
-						{
-							if(xmlStrcmp(stateNode->name, (const xmlChar*)"missionstate") != 0)
-							{
-								stateNode = stateNode->next;
-								continue;
-							}
-
-							uint32_t missionId;
-							if(readXMLInteger(stateNode, "id", intValue))
-								missionId = intValue;
-							else
-							{
-								std::cout << "[Warning - Quests::loadFromXml]: Missing missionId for mission state" << std::endl;
-								stateNode = stateNode->next;
-								continue;
-							}
-
-							std::string description;
-							if(readXMLString(stateNode, "description", strValue))
-								description = strValue;
-
-							mission->state[missionId] = new MissionState(description, missionId);
-							stateNode = stateNode->next;
-						}
-
-						quest->missions.push_back(mission);
-					}
-
-					missionNode = missionNode->next;
-				}
-
-				quests.push_back(quest);
-			}
-
-			p = p->next;
-		}
-
+		std::cout << "[Error - Quests::loadFromXml] Malformed quests file" << std::endl;
 		xmlFreeDoc(doc);
-		return true;
+		return false;
 	}
 
-	return false;
+	int32_t intValue;
+	std::string strValue;
+
+	uint16_t id = 0;
+	p = root->children;
+	while(p)
+	{
+		if(xmlStrcmp(p->name, (const xmlChar*)"quest") != 0)
+		{
+			p = p->next;
+			continue;
+		}
+
+		std::string name;
+		uint32_t startStorageId = 0;
+		int32_t startStorageValue = 0;
+		if(readXMLString(p, "name", strValue))
+			name = strValue;
+
+		if(readXMLInteger(p, "startstorageid", intValue))
+			startStorageId = intValue;
+
+		if(readXMLInteger(p, "startstoragevalue", intValue))
+			startStorageValue = intValue;
+
+		if(Quest* quest = new Quest(name, ++id, startStorageId, startStorageValue))
+		{
+			xmlNodePtr missionNode = p->children;
+			while(missionNode)
+			{
+				if(xmlStrcmp(missionNode->name, (const xmlChar*)"mission") != 0)
+				{
+					missionNode = missionNode->next;
+					continue;
+				}
+
+				std::string missionName;
+				uint32_t storageId = 0;
+				int32_t startValue = 0, endValue = 0;
+				if(readXMLString(missionNode, "name", strValue))
+					missionName = strValue;
+
+				if(readXMLInteger(missionNode, "storageid", intValue))
+					storageId = intValue;
+
+				if(readXMLInteger(missionNode, "startvalue", intValue))
+					startValue = intValue;
+
+				if(readXMLInteger(missionNode, "endvalue", intValue))
+					endValue = intValue;
+
+				if(Mission *mission = new Mission(missionName, storageId, startValue, endValue))
+				{
+					xmlNodePtr stateNode = missionNode->children;
+					while(stateNode)
+					{
+						if(xmlStrcmp(stateNode->name, (const xmlChar*)"missionstate") != 0)
+						{
+							stateNode = stateNode->next;
+							continue;
+						}
+
+						uint32_t missionId;
+						if(readXMLInteger(stateNode, "id", intValue))
+							missionId = intValue;
+						else
+						{
+							std::cout << "[Warning - Quests::loadFromXml]: Missing missionId for mission state" << std::endl;
+							stateNode = stateNode->next;
+							continue;
+						}
+
+						std::string description;
+						if(readXMLString(stateNode, "description", strValue))
+							description = strValue;
+
+						mission->state[missionId] = new MissionState(description, missionId);
+						stateNode = stateNode->next;
+					}
+
+					quest->missions.push_back(mission);
+				}
+
+				missionNode = missionNode->next;
+			}
+
+			quests.push_back(quest);
+		}
+
+		p = p->next;
+	}
+
+	xmlFreeDoc(doc);
+	return true;
 }
 
 uint16_t Quests::getQuestsCount(Player* player)

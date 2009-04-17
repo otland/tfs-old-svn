@@ -852,7 +852,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 	for(uint32_t i = 0; i <= player->promotionLevel; i++)
 		tmpVoc = g_vocations.getVocation(tmpVoc->getFromVocation());
 
-	query << "`vocation` = " << tmpVoc->getVocId() << " WHERE `id` = " << player->getGUID();
+	query << "`vocation` = " << tmpVoc->getId() << " WHERE `id` = " << player->getGUID();
 	if(!db->executeQuery(query.str()))
 		return false;
 
@@ -998,10 +998,12 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 	typedef std::pair<Container*, uint32_t> Stack;
 	std::list<Stack> stackList;
 
+	Item* item = NULL;
 	int32_t runningId = 101;
 	for(ItemBlockList::const_iterator it = itemList.begin(); it != itemList.end(); ++it, ++runningId)
 	{
-		Item* item = it->second;
+		item = it->second;
+
 		PropWriteStream propWriteStream;
 		item->serializeAttr(propWriteStream);
 
@@ -1026,7 +1028,7 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 		Container* container = stack.first;
 		for(uint32_t i = 0; i < container->size(); ++i, ++runningId)
 		{
-			Item* item = container->getItem(i);
+			item = container->getItem(i);
 			if(Container* subContainer = item->getContainer())
 				stackList.push_back(Stack(subContainer, runningId));
 

@@ -108,7 +108,7 @@ bool TalkActions::onPlayerSay(Player* player, uint16_t channelId, const std::str
 	TalkAction* talkAction = NULL;
 	for(TalkActionsMap::iterator it = talksMap.begin(); it != talksMap.end(); ++it)
 	{
-		if(it->first == cmdstring[it->second->getFilter()] || (!it->second->isSensitive() && 
+		if(it->first == cmdstring[it->second->getFilter()] || (!it->second->isSensitive() &&
 			strcasecmp(it->first.c_str(), cmdstring[it->second->getFilter()].c_str()) == 0))
 		{
 			talkAction = it->second;

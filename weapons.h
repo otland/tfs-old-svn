@@ -120,8 +120,7 @@ class Weapon : public Event
 		CombatParams params;
 
 	private:
-		typedef std::map<int32_t, bool> VocWeaponMap;
-		VocWeaponMap vocWeaponMap;
+		VocationMap vocWeaponMap;
 };
 
 class WeaponMelee : public Weapon

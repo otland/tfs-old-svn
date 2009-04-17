@@ -674,32 +674,12 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 			}
 
 			StringVec vocStringVec;
-
+			std::string error = "";
 			xmlNodePtr vocationNode = p->children;
 			while(vocationNode)
 			{
-				if(xmlStrcmp(vocationNode->name,(const xmlChar*)"vocation") == 0)
-				{
-					if(readXMLString(vocationNode, "name", strValue))
-					{
-						int32_t vocationId = g_vocations.getVocationId(strValue);
-						if(vocationId != -1)
-						{
-							vocEquipMap[vocationId] = true;
-							int32_t promotedVocation = g_vocations.getPromotedVocation(vocationId);
-							if(promotedVocation != -1)
-								vocEquipMap[promotedVocation] = true;
-
-							intValue = 1;
-							readXMLInteger(vocationNode, "showInDescription", intValue);
-							if(intValue != 0)
-							{
-								toLowerCaseString(strValue);
-								vocStringVec.push_back(strValue);
-							}
-						}
-					}
-				}
+				if(!parseVocationNode(vocationNode, vocEquipMap, vocStringVec, error))
+					std::cout << "[Warning - MoveEvent::configureEvent] " << error << std::endl;
 
 				vocationNode = vocationNode->next;
 			}
@@ -707,22 +687,7 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 			if(!vocEquipMap.empty())
 				wieldInfo |= WIELDINFO_VOCREQ;
 
-			if(!vocStringVec.empty())
-			{
-				for(StringVec::iterator it = vocStringVec.begin(); it != vocStringVec.end(); ++it)
-				{
-					if((*it) != vocStringVec.front())
-					{
-						if((*it) != vocStringVec.back())
-							vocationString += ", ";
-						else
-							vocationString += " and ";
-					}
-
-					vocationString += (*it);
-					vocationString += "s";
-				}
-			}
+			vocationString = parseVocationString(vocStringVec);
 		}
 	}
 	else
@@ -1172,18 +1137,14 @@ uint32_t MoveEvent::executeAddRemItem(Creature* actor, Item* item, Item* tileIte
 			env->setScriptId(m_scriptId, m_scriptInterface);
 			env->setRealPos(pos);
 
-			uint32_t itemidMoved = env->addThing(item);
-			uint32_t itemidTile = env->addThing(tileItem);
-
 			lua_State* L = m_scriptInterface->getLuaState();
 
 			m_scriptInterface->pushFunction(m_scriptId);
-			LuaScriptInterface::pushThing(L, item, itemidMoved);
-			LuaScriptInterface::pushThing(L, tileItem, itemidTile);
+			LuaScriptInterface::pushThing(L, item, env->addThing(item));
+			LuaScriptInterface::pushThing(L, tileItem, env->addThing(tileItem));
 			LuaScriptInterface::pushPosition(L, pos, 0);
 
-			uint32_t cid = env->addThing(actor);
-			lua_pushnumber(L, cid);
+			lua_pushnumber(L, env->addThing(actor));
 
 			int32_t result = m_scriptInterface->callFunction(4);
 			m_scriptInterface->releaseScriptEnv();

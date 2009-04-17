@@ -28,9 +28,9 @@ class Vocation
 	public:
 		virtual ~Vocation();
 
-		uint32_t getVocId() const {return id;}
-		const std::string& getVocName() const {return name;}
-		const std::string& getVocDescription() const {return description;}
+		uint32_t getId() const {return id;}
+		const std::string& getName() const {return name;}
+		const std::string& getDescription() const {return description;}
 
 		int16_t getAbsorbPercent(CombatType_t combat) const {return absorbPercent[combat];}
 		uint32_t getReqSkillTries(int32_t skill, int32_t level);

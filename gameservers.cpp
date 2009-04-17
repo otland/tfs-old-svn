@@ -43,96 +43,97 @@ bool GameServers::reload(bool showResult/* = true*/)
 
 bool GameServers::loadFromXml(bool showResult/* = true*/)
 {
-	if(xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "servers.xml").c_str()))
+	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML, "servers.xml").c_str());
+	if(!doc)
+		return false;
+
+	xmlNodePtr root, p;
+	root = xmlDocGetRootElement(doc);
+	if(xmlStrcmp(root->name,(const xmlChar*)"servers") != 0)
 	{
-		xmlNodePtr root, p;
-		root = xmlDocGetRootElement(doc);
-		if(xmlStrcmp(root->name,(const xmlChar*)"servers") != 0)
-		{
-			xmlFreeDoc(doc);
-			std::cout << "[Error - GameServers::loadFromXml] Malformed servers file" << std::endl;
-			return false;
-		}
-
-		std::string strValue;
-		int32_t intValue;
-		p = root->children;
-		while(p)
-		{
-			if(xmlStrcmp(p->name, (const xmlChar*)"server") != 0)
-			{
-				p = p->next;
-				continue;
-			}
-
-			std::string name, address;
-			uint32_t id, versionMin, versionMax, port;
-			if(readXMLInteger(p, "id", intValue))
-				id = intValue;
-			else
-			{
-				std::cout << "[Error - GameServers::loadFromXml] Missing id, skipping" << std::endl;
-				p = p->next;
-				continue;
-			}
-
-			if(getServerById(id))
-			{
-				std::cout << "[Error - GameServers::loadFromXml] Duplicate server id " << id << ", skipping" << std::endl;
-				p = p->next;
-				continue;
-			}
-
-			if(readXMLString(p, "name", strValue))
-				name = strValue;
-			else
-			{
-				name = "Server #" + id;
-				std::cout << "[Warning - GameServers::loadFromXml] Missing name for server " << id << ", using default" << std::endl;
-			}
-
-			if(readXMLInteger(p, "versionMin", intValue))
-				versionMin = intValue;
-			else
-			{
-				versionMin = CLIENT_VERSION_MIN;
-				std::cout << "[Warning - GameServers::loadFromXml] Missing versionMin for server " << id << ", using default" << std::endl;
-			}
-
-			if(readXMLInteger(p, "versionMax", intValue))
-				versionMax = intValue;
-			else
-			{
-				versionMax = CLIENT_VERSION_MAX;
-				std::cout << "[Warning - GameServers::loadFromXml] Missing versionMax for server " << id << ", using default" << std::endl;
-			}
-
-			if(readXMLString(p, "address", strValue) || readXMLString(p, "ip", strValue))
-				address = strValue;
-			else
-			{
-				address = "localhost";
-				std::cout << "[Warning - GameServers::loadFromXml] Missing address for server " << id << ", using default" << std::endl;
-			}
-
-			if(readXMLInteger(p, "port", intValue))
-				port = intValue;
-			else
-			{
-				port = 7171;
-				std::cout << "[Warning - GameServers::loadFromXml] Missing port for server " << id << ", using default" << std::endl;
-			}
-
-			if(GameServer* server = new GameServer(name, versionMin, versionMax, address, port))
-				serverList[id] = server;
-			else
-				std::cout << "[Error - GameServers::loadFromXml] Couldn't add server " << name << std::endl;
-
-			p = p->next;
-		}
-
 		xmlFreeDoc(doc);
+		std::cout << "[Error - GameServers::loadFromXml] Malformed servers file" << std::endl;
+		return false;
 	}
+
+	std::string strValue;
+	int32_t intValue;
+	p = root->children;
+	while(p)
+	{
+		if(xmlStrcmp(p->name, (const xmlChar*)"server") != 0)
+		{
+			p = p->next;
+			continue;
+		}
+
+		std::string name, address;
+		uint32_t id, versionMin, versionMax, port;
+		if(readXMLInteger(p, "id", intValue))
+			id = intValue;
+		else
+		{
+			std::cout << "[Error - GameServers::loadFromXml] Missing id, skipping" << std::endl;
+			p = p->next;
+			continue;
+		}
+
+		if(getServerById(id))
+		{
+			std::cout << "[Error - GameServers::loadFromXml] Duplicate server id " << id << ", skipping" << std::endl;
+			p = p->next;
+			continue;
+		}
+
+		if(readXMLString(p, "name", strValue))
+			name = strValue;
+		else
+		{
+			name = "Server #" + id;
+			std::cout << "[Warning - GameServers::loadFromXml] Missing name for server " << id << ", using default" << std::endl;
+		}
+
+		if(readXMLInteger(p, "versionMin", intValue))
+			versionMin = intValue;
+		else
+		{
+			versionMin = CLIENT_VERSION_MIN;
+			std::cout << "[Warning - GameServers::loadFromXml] Missing versionMin for server " << id << ", using default" << std::endl;
+		}
+
+		if(readXMLInteger(p, "versionMax", intValue))
+			versionMax = intValue;
+		else
+		{
+			versionMax = CLIENT_VERSION_MAX;
+			std::cout << "[Warning - GameServers::loadFromXml] Missing versionMax for server " << id << ", using default" << std::endl;
+		}
+
+		if(readXMLString(p, "address", strValue) || readXMLString(p, "ip", strValue))
+			address = strValue;
+		else
+		{
+			address = "localhost";
+			std::cout << "[Warning - GameServers::loadFromXml] Missing address for server " << id << ", using default" << std::endl;
+		}
+
+		if(readXMLInteger(p, "port", intValue))
+			port = intValue;
+		else
+		{
+			port = 7171;
+			std::cout << "[Warning - GameServers::loadFromXml] Missing port for server " << id << ", using default" << std::endl;
+		}
+
+		if(GameServer* server = new GameServer(name, versionMin, versionMax, address, port))
+			serverList[id] = server;
+		else
+			std::cout << "[Error - GameServers::loadFromXml] Couldn't add server " << name << std::endl;
+
+		p = p->next;
+	}
+
+	xmlFreeDoc(doc);
 
 	if(showResult)
 	{

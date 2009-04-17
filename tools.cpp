@@ -27,7 +27,10 @@
 #include <sstream>
 #include <iomanip>
 
+#include "vocation.h"
+
 extern ConfigManager g_config;
+extern Vocations g_vocations;
 
 std::string transformToSHA1(std::string plainText, bool upperCase /*= false*/)
 {
@@ -615,6 +618,52 @@ void formatDate2(time_t time, char* buffer/* atleast 16 */)
 		sprintf(buffer, "UNIX Time: %d", (int32_t)time);
 }
 
+Skulls_t getSkull(std::string string)
+{
+	Skulls_t skull = SKULL_NONE;
+
+	std::string tmpStrValue = asLowerCaseString(strValue);
+	if(tmpStrValue == "red" || tmpStrValue == "4")
+		skull = SKULL_RED;
+	else if(tmpStrValue == "white" || tmpStrValue == "3")
+		skull = SKULL_WHITE;
+	else if(tmpStrValue == "green" || tmpStrValue == "2")
+		skull = SKULL_GREEN;
+	else if(tmpStrValue == "yellow" || tmpStrValue == "1")
+		skull = SKULL_YELLOW;
+
+	return skull;
+}
+
+PartyShields_t getPartyShield(str::string string)
+{
+	PartyShields_t partyShield = SHIELD_NONE;
+
+	std::string tmpStrValue = asLowerCaseString(strValue);
+	if(tmpStrValue == "whitenoshareoff" || tmpStrValue == "10")
+		partyShield = SHIELD_YELLOW_NOSHAREDEXP;
+	else if(tmpStrValue == "blueshareoff" || tmpStrValue == "9")
+		partyShield = SHIELD_BLUE_NOSHAREDEXP;
+	else if(tmpStrValue == "yellowshareblink" || tmpStrValue == "8")
+		partyShield = SHIELD_YELLOW_NOSHAREDEXP_BLINK;
+	else if(tmpStrValue == "blueshareblink" || tmpStrValue == "7")
+		partyShield = SHIELD_BLUE_NOSHAREDEXP_BLINK;
+	else if(tmpStrValue == "yellowshareon" || tmpStrValue == "6")
+		artyShield = SHIELD_YELLOW_SHAREDEXP;
+	else if(tmpStrValue == "blueshareon" || tmpStrValue == "5")
+		partyShield = SHIELD_BLUE_SHAREDEXP;
+	else if(tmpStrValue == "yellow" || tmpStrValue == "4")
+		partyShield = SHIELD_YELLOW;
+	else if(tmpStrValue == "blue" || tmpStrValue == "3")
+		partyShield = SHIELD_BLUE;
+	else if(tmpStrValue == "whiteyellow" || tmpStrValue == "2")
+		partyShield = SHIELD_WHITEYELLOW;
+	else if(tmpStrValue == "whiteblue" || tmpStrValue == "1")
+		partyShield = SHIELD_WHITEBLUE;
+
+	return shield;
+}
+
 Direction getDirection(std::string string)
 {
 	Direction direction = SOUTH;
@@ -634,6 +683,42 @@ Direction getDirection(std::string string)
 		direction = NORTHWEST;
 	else if(string == "northeast" || string == "north east" || string == "north-east" || string == "ne" || string == "7")
 		direction = NORTHEAST;
+
+	return direction;
+}
+
+Direction getDirectionTo(Position pos1, Position pos2, bool extended/* = true*/)
+{
+	Direction direction = NORTH;
+	if(pos1.x > pos2.x)
+	{
+		direction = WEST;
+		if(extended)
+		{
+			if(pos1.y > pos2.y)
+				direction = NORTHWEST;
+			else if(pos1.y < pos2.y)
+				direction = SOUTHWEST;
+		}
+	}
+	else if(pos1.x < pos2.x)
+	{
+		direction = EAST;
+		if(extended)
+		{
+			if(pos1.y > pos2.y)
+				direction = NORTHEAST;
+			else if(pos1.y < pos2.y)
+				direction = SOUTHEAST;
+		}
+	}
+	else
+	{
+		if(pos1.y > pos2.y)
+			direction = NORTH;
+		else if(pos1.y < pos2.y)
+			direction = SOUTH;
+	}
 
 	return direction;
 }
@@ -666,8 +751,6 @@ Direction getReverseDirection(Direction dir)
 			break;
 		case SOUTHEAST:
 			_dir = NORTHWEST;
-			break;
-		default:
 			break;
 	}
 
@@ -705,8 +788,6 @@ Position getNextPosition(Direction direction, Position pos)
 		case NORTHEAST:
 			pos.x++;
 			pos.y--;
-			break;
-		default:
 			break;
 	}
 
@@ -1065,8 +1146,6 @@ std::string getSkillName(uint16_t skillId, bool suffix/* = true*/)
 			return "magic level";
 		case SKILL__LEVEL:
 			return "level";
-		default:
-			break;
 	}
 
 	return "unknown";
@@ -1142,8 +1221,6 @@ std::string getReason(int32_t reasonId)
 			return "Invalid Payment";
 		case 22:
 			return "Spoiling Auction";
-		default:
-			break;
 	}
 
 	return "Unknown Reason";
@@ -1186,6 +1263,89 @@ std::string getAction(int32_t actionId, bool ipBanishment)
 	return action;
 }
 
+std::string parseVocationString(StringVec vocStringVec)
+{
+	std::string str = "";
+	if(!vocStringVec.empty())
+	{
+		for(StringVec::iterator it = vocStringVec.begin(); it != vocStringVec.end(); ++it)
+		{
+			if((*it) != vocStringVec.front())
+			{
+				if((*it) != vocStringVec.back())
+					str += ", ";
+				else
+					str += " and ";
+			}
+
+			str += (*it);
+			str += "s";
+		}
+	}
+	return str;
+}
+
+bool parseVocationNode(xmlNodePtr vocationNode, VocationMap& vocationMap, StringVec& vocStringVec, std::string& errorStr)
+{
+	int32_t intValue;
+	std::string strValue;
+
+	if(xmlStrcmp(vocationNode->name,(const xmlChar*)"vocation") == 0)
+	{
+		int32_t vocationId = -1;
+		if(readXMLString(vocationNode, "name", strValue))
+		{
+			vocationId = g_vocations.getVocationId(strValue);
+			if(vocationId != -1)
+			{
+				vocationMap[vocationId] = true;
+				int32_t promotedVocation = g_vocations.getPromotedVocation(vocationId);
+				if(promotedVocation != -1)
+					vocationMap[promotedVocation] = true;
+			}
+			else
+			{
+				errorStr += "Wrong vocation name: " + strValue;
+				return false;
+			}
+		}
+		else if(readXMLInteger(vocationNode, "id", intValue))
+		{
+			bool success = true;
+			Vocation* vocation = g_vocations.getVocation(intValue, success);
+			if(success)
+			{
+				vocationId = vocation->getId();
+				strValue = vocation->getName();
+				vocationMap[vocationId] = true;
+				int32_t promotedVocation = g_vocations.getPromotedVocation(vocationId);
+				if(promotedVocation != -1)
+					vocationMap[promotedVocation] = true;
+			}
+			else
+			{
+				std::stringstream s;
+				s << intValue;
+				errorStr += "Wrong vocation id: " + s.str();
+				return false;
+			}
+		}
+
+		if(vocationId != -1)
+		{
+			std::string strValue2;
+			bool show = true;
+			if(readXMLString(vocationNode, "showInDescription", strValue2))
+				show = booleanString(strValue2);
+
+			if(show)
+				vocStringVec.push_back(asLowerCaseString(strValue));
+		}
+	}
+
+	return true;
+}
+
 bool fileExists(const char* filename)
 {
 	if(FILE* f = fopen(filename, "rb"))
@@ -1225,10 +1385,9 @@ uint32_t adlerChecksum(uint8_t *data, size_t length)
 std::string getFilePath(FileType_t filetype, std::string filename)
 {
 	std::string path = "";
-#ifdef __FILESYSTEM_HIERARCHY_STANDARD__
+	#ifdef __FILESYSTEM_HIERARCHY_STANDARD__
 	path = "/usr/share/tfs/";
-
-#endif
+	#endif
 	path += g_config.getString(ConfigManager::DATA_DIRECTORY);
 	switch(filetype)
 	{

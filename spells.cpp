@@ -262,9 +262,7 @@ InstantSpell* Spells::getInstantSpellByName(const std::string& name)
 
 Position Spells::getCasterPosition(Creature* creature, Direction dir)
 {
-	Position pos = creature->getPosition();
-	pos = getNextPosition(dir, pos);
-	return pos;
+	return getNextPosition(dir, creature->getPosition());
 }
 
 bool BaseSpell::castSpell(Creature* creature)
@@ -582,33 +580,12 @@ bool Spell::configureSpell(xmlNodePtr p)
 	if(readXMLString(p, "aggressive", strValue))
 		isAggressive = booleanString(strValue);
 
+	std::string error = "";
 	xmlNodePtr vocationNode = p->children;
 	while(vocationNode)
 	{
-		if(xmlStrcmp(vocationNode->name,(const xmlChar*)"vocation") == 0)
-		{
-			if(readXMLString(vocationNode, "name", strValue))
-			{
-				int32_t vocationId = g_vocations.getVocationId(strValue);
-				if(vocationId != -1)
-				{
-					vocSpellMap[vocationId] = true;
-					int32_t promotedVocation = g_vocations.getPromotedVocation(vocationId);
-					if(promotedVocation != -1)
-						vocSpellMap[promotedVocation] = true;
-
-					intValue = 1;
-					readXMLInteger(vocationNode, "showInDescription", intValue);
-					if(intValue != 0)
-					{
-						toLowerCaseString(strValue);
-						vocStringVec.push_back(strValue);
-					}
-				}
-				else
-					std::cout << "[Warning - Spell::configureSpell] Wrong vocation name: " << strValue << std::endl;
-			}
-		}
+		if(!parseVocationNode(vocationNode, vocSpellMap, vocStringVec, error))
+			std::cout << "[Warning - Spell::configureSpell] " << error << std::endl;
 
 		vocationNode = vocationNode->next;
 	}
@@ -1771,23 +1748,7 @@ bool RuneSpell::configureEvent(xmlNodePtr p)
 	if(magLevel != 0 && magLevel != it.runeMagLevel)
 		it.runeMagLevel = magLevel;
 
-	if(!vocStringVec.empty())
-	{
-		for(VocStringVec::iterator vit = vocStringVec.begin(); vit != vocStringVec.end(); ++vit)
-		{
-			if((*vit) != vocStringVec.front())
-			{
-				if((*vit) != vocStringVec.back())
-					it.vocationString += ", ";
-				else
-					it.vocationString += " and ";
-			}
-
-			it.vocationString += (*vit);
-			it.vocationString += "s";
-		}
-	}
-
+	it.vocationString = parseVocationString(vocStringVec);
 	return true;
 }
 

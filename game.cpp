@@ -438,12 +438,14 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 	}
 
 	uint32_t cleaned = 0;
+	Tile* tile = NULL;
+	Item* item = NULL;
 	for(; (*it) != end && (limit != 0 ? (cleaned < limit) : true); ++(*it), ++cleaned)
 	{
-		Tile* tile = (*it)->first;
+		tile = (*it)->first;
 		for(int32_t i = tile->downItems.size() - 1; i >= 0; --i)
 		{
-			if(Item* item = tile->downItems[i])
+			if((item = tile->downItems[i]))
 			{
 				#ifndef __DEBUG__
 				internalRemoveItem(NULL, item);
@@ -664,6 +666,7 @@ Creature* Game::getCreatureByID(uint32_t id)
 		if(!(*it).second->isRemoved())
 			return (*it).second;
 	}
+
 	return NULL; //just in case the player doesnt exist
 }
 
@@ -690,6 +693,7 @@ Creature* Game::getCreatureByName(const std::string& s)
 		if(!(*it).second->isRemoved() && tmp == asLowerCaseString((*it).second->getName()))
 			return it->second;
 	}
+
 	return NULL; //just in case the creature doesnt exist
 }
 
@@ -701,6 +705,7 @@ Player* Game::getPlayerByName(const std::string& s)
 		if(!(*it).second->isRemoved() && tmp == asLowerCaseString((*it).second->getName()))
 			return it->second;
 	}
+
 	return NULL; //just in case the player doesnt exist
 }
 
@@ -750,6 +755,7 @@ Player* Game::getPlayerByAccount(uint32_t acc)
 		if(!it->second->isRemoved() && it->second->getAccount() == acc)
 			return it->second;
 	}
+
 	return NULL;
 }
 
@@ -761,6 +767,7 @@ PlayerVector Game::getPlayersByAccount(uint32_t acc)
 		if(!it->second->isRemoved() && it->second->getAccount() == acc)
 			players.push_back(it->second);
 	}
+
 	return players;
 }
 
@@ -1765,6 +1772,7 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 {
 	if(cylinder == NULL)
 		return false;
+
 	if(money <= 0)
 		return true;
 
@@ -2229,9 +2237,11 @@ bool Game::playerCloseNpcChannel(uint32_t playerId)
 	SpectatorVec::iterator it;
 
 	getSpectators(list, player->getPosition());
+
+	Npc* npc = NULL;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
-		if(Npc* npc = (*it)->getNpc())
+		if((npc = (*it)->getNpc()))
 			npc->onPlayerCloseChannel(player);
 	}
 
@@ -2260,7 +2270,8 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 		Position pos = player->getPosition();
 		for(std::list<Direction>::iterator it = listDir.begin(); it != listDir.end(); ++it)
 			pos = getNextPosition((*it), pos);
-		
+
+		internalCreatureTurn(player, getDirectionTo(player->getPosition(), pos, false));
 		internalTeleport(player, pos, false);
 		return true;
 	}
@@ -2339,6 +2350,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 			{
 				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 					this, player->getID(), listDir)));
+
 				SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerUseItemEx, this,
 					playerId, itemPos, itemStackPos, fromSpriteId, toPos, toStackPos, toSpriteId, isHotkey));
 
@@ -2590,6 +2602,7 @@ bool Game::playerRotateItem(uint32_t playerId, const Position& pos, uint8_t stac
 		{
 			Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 				this, player->getID(), listDir)));
+
 			SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerRotateItem, this,
 				playerId, pos, stackPos, spriteId));
 
@@ -2714,23 +2727,27 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, uint8_t st
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
 		return false;
 	}
-	else if(player->getPosition().z > tradeItem->getPosition().z)
+
+	if(player->getPosition().z > tradeItem->getPosition().z)
 	{
 		player->sendCancelMessage(RET_FIRSTGOUPSTAIRS);
 		return false;
 	}
-	else if(player->getPosition().z < tradeItem->getPosition().z)
+
+	if(player->getPosition().z < tradeItem->getPosition().z)
 	{
 		player->sendCancelMessage(RET_FIRSTGODOWNSTAIRS);
 		return false;
 	}
-	else if(!Position::areInRange<1,1,0>(tradeItem->getPosition(), player->getPosition()))
+
+	if(!Position::areInRange<1,1,0>(tradeItem->getPosition(), player->getPosition()))
 	{
 		std::list<Direction> listDir;
 		if(getPathToEx(player, pos, listDir, 0, 1, true, true))
 		{
 			Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 				this, player->getID(), listDir)));
+
 			SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerRequestTrade, this,
 				playerId, pos, stackPos, tradePlayerId, spriteId));
 
@@ -2929,10 +2946,10 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int32_t
 	if(!tradeItem)
 		return false;
 
-	std::stringstream ss;
 	int32_t lookDistance = std::max(std::abs(player->getPosition().x - tradeItem->getPosition().x),
 		std::abs(player->getPosition().y - tradeItem->getPosition().y));
 
+	std::stringstream ss;
 	ss << "You see ";
 	if(index == 0)
 	{
@@ -3169,6 +3186,17 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 			lookDistance = lookDistance + 9 + 6;
 	}
 
+	bool deny = false;
+	CreatureEventList lookEvents = player->getCreatureEvents(CREATURE_EVENT_LOOK);
+	for(CreatureEventList::iterator it = lookEvents.begin(); it != lookEvents.end(); ++it)
+	{
+		if(!(*it)->executeLook(player, thing, thingPos, stackPos))
+			deny = true;
+	}
+
+	if(deny)
+		return false;
+
 	std::stringstream ss;
 	ss << "You see " << thing->getDescription(lookDistance);
 	if(player->hasCustomFlag(PlayerCustomFlag_CanSeeItemDetails))
@@ -3196,10 +3224,6 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 		ss << std::endl << "Position: [X: " << thingPos.x << "] [Y: " << thingPos.y << "] [Z: " << thingPos.z << "].";
 
 	player->sendTextMessage(MSG_INFO_DESCR, ss.str());
-	CreatureEventList lookEvents = player->getCreatureEvents(CREATURE_EVENT_LOOK);
-	for(CreatureEventList::iterator it = lookEvents.begin(); it != lookEvents.end(); ++it)
-		(*it)->executeLook(player, thingPos, stackPos);
-
 	return true;
 }
 
@@ -3280,7 +3304,7 @@ bool Game::playerRequestAddVip(uint32_t playerId, const std::string& vipName)
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
-  
+
 	uint32_t guid;
 	bool specialVip;
 
@@ -5188,7 +5212,7 @@ double Game::getExperienceStage(uint32_t level)
 
 	if(lastStageLevel && level >= lastStageLevel)
 		return stages[lastStageLevel];
-		
+
 	return stages[level];
 }
 
@@ -5661,7 +5685,7 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 
 			break;
 		}
-		
+
 		default:
 		{
 			std::cout << "[Warning - Game::reloadInfo] Reload type not found." << std::endl;

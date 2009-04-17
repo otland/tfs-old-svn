@@ -180,15 +180,13 @@ bool Npc::loadFromXml(const std::string& filename)
 	if(readXMLString(root, "name", strValue))
 		name = strValue;
 
+	nameDescription = name;
 	if(readXMLString(root, "namedescription", strValue) || readXMLString(root, "nameDescription", strValue))
 		nameDescription = strValue;
-	else
-		nameDescription = name;
 
+	baseSpeed = 110;
 	if(readXMLInteger(root, "speed", intValue))
 		baseSpeed = intValue;
-	else
-		baseSpeed = 110;
 
 	if(readXMLString(root, "attackable", strValue))
 		attackable = booleanString(strValue);
@@ -281,7 +279,7 @@ bool Npc::loadFromXml(const std::string& filename)
 
 				if(readXMLInteger(p, "addons", intValue))
 					defaultOutfit.lookAddons = intValue;
-				}
+			}
 			else if(readXMLInteger(p, "typeex", intValue))
 				defaultOutfit.lookTypeEx = intValue;
 
@@ -340,7 +338,7 @@ bool Npc::loadFromXml(const std::string& filename)
 				talkRadius = intValue;
 
 			if(readXMLInteger(p, "idletime", intValue))
-					idleTime = intValue;
+				idleTime = intValue;
 
 			if(readXMLInteger(p, "idleinterval", intValue))
 				idleInterval = intValue;
@@ -1719,10 +1717,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 						if((*it).actionType == ACTION_SCRIPTPARAM)
 						{
 							if((*it).strValue == "|PLAYER|")
-							{
-								uint32_t cid = env->addThing(player);
-								lua_pushnumber(L, cid);
-							}
+								lua_pushnumber(L, env->addThing(player));
 							else if((*it).strValue == "|TEXT|")
 								lua_pushstring(L, npcState->respondToText.c_str());
 							else
@@ -2015,7 +2010,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 				for(uint32_t i = 0; i <= player->promotionLevel; i++)
 					tmpVoc = g_vocations.getVocation(tmpVoc->getFromVocation());
 
-				if(tmpVoc->getVocId() != 2)
+				if(tmpVoc->getId() != 2)
 					continue;
 
 				++matchCount;
@@ -2027,7 +2022,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 				for(uint32_t i = 0; i <= player->promotionLevel; i++)
 					tmpVoc = g_vocations.getVocation(tmpVoc->getFromVocation());
 
-				if(tmpVoc->getVocId() != 4)
+				if(tmpVoc->getId() != 4)
 					continue;
 
 				++matchCount;
@@ -2039,7 +2034,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 				for(uint32_t i = 0; i <= player->promotionLevel; i++)
 					tmpVoc = g_vocations.getVocation(tmpVoc->getFromVocation());
 
-				if(tmpVoc->getVocId() != 3)
+				if(tmpVoc->getId() != 3)
 					continue;
 
 				++matchCount;
@@ -2051,7 +2046,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 				for(uint32_t i = 0; i <= player->promotionLevel; i++)
 					tmpVoc = g_vocations.getVocation(tmpVoc->getFromVocation());
 
-				if(tmpVoc->getVocId() != 1)
+				if(tmpVoc->getId() != 1)
 					continue;
 
 				++matchCount;
@@ -2794,10 +2789,7 @@ int32_t NpcScriptInterface::luaGetNpcCid(lua_State* L)
 
 	Npc* npc = env->getNpc();
 	if(npc)
-	{
-		uint32_t cid = env->addThing(npc);
-		lua_pushnumber(L, cid);
-	}
+		lua_pushnumber(L, env->addThing(npc));
 	else
 		lua_pushnil(L);
 
@@ -3056,10 +3048,8 @@ void NpcScript::onCreatureAppear(const Creature* creature)
 		env->setRealPos(m_npc->getPosition());
 		env->setNpc(m_npc);
 
-		uint32_t cid = env->addThing(const_cast<Creature*>(creature));
-
 		m_scriptInterface->pushFunction(m_onCreatureAppear);
-		lua_pushnumber(L, cid);
+		lua_pushnumber(L, env->addThing(const_cast<Creature*>(creature)));
 		m_scriptInterface->callFunction(1);
 		m_scriptInterface->releaseScriptEnv();
 	}
@@ -3089,10 +3079,8 @@ void NpcScript::onCreatureDisappear(const Creature* creature)
 		env->setRealPos(m_npc->getPosition());
 		env->setNpc(m_npc);
 
-		uint32_t cid = env->addThing(const_cast<Creature*>(creature));
-
 		m_scriptInterface->pushFunction(m_onCreatureDisappear);
-		lua_pushnumber(L, cid);
+		lua_pushnumber(L, env->addThing(const_cast<Creature*>(creature)));
 		m_scriptInterface->callFunction(1);
 		m_scriptInterface->releaseScriptEnv();
 	}
@@ -3122,10 +3110,8 @@ void NpcScript::onCreatureMove(const Creature* creature, const Position& oldPos,
 		env->setRealPos(m_npc->getPosition());
 		env->setNpc(m_npc);
 
-		uint32_t cid = env->addThing(const_cast<Creature*>(creature));
-
 		m_scriptInterface->pushFunction(m_onCreatureMove);
-		lua_pushnumber(L, cid);
+		lua_pushnumber(L, env->addThing(const_cast<Creature*>(creature)));
 		LuaScriptInterface::pushPosition(L, oldPos, 0);
 		LuaScriptInterface::pushPosition(L, newPos, 0);
 		m_scriptInterface->callFunction(3);
@@ -3155,11 +3141,9 @@ void NpcScript::onCreatureSay(const Creature* creature, SpeakClasses type, const
 		env->setRealPos(m_npc->getPosition());
 		env->setNpc(m_npc);
 
-		uint32_t cid = env->addThing(const_cast<Creature*>(creature));
-
 		lua_State* L = m_scriptInterface->getLuaState();
 		m_scriptInterface->pushFunction(m_onCreatureSay);
-		lua_pushnumber(L, cid);
+		lua_pushnumber(L, env->addThing(const_cast<Creature*>(creature)));
 		lua_pushnumber(L, type);
 		lua_pushstring(L, text.c_str());
 		m_scriptInterface->callFunction(3);
@@ -3212,11 +3196,9 @@ void NpcScript::onPlayerCloseChannel(const Player* player)
 		env->setRealPos(m_npc->getPosition());
 		env->setNpc(m_npc);
 
-		uint32_t cid = env->addThing(const_cast<Player*>(player));
-
 		lua_State* L = m_scriptInterface->getLuaState();
 		m_scriptInterface->pushFunction(m_onPlayerCloseChannel);
-		lua_pushnumber(L, cid);
+		lua_pushnumber(L, env->addThing(const_cast<Player*>(player)));
 		m_scriptInterface->callFunction(1);
 		m_scriptInterface->releaseScriptEnv();
 	}
@@ -3237,11 +3219,9 @@ void NpcScript::onPlayerEndTrade(const Player* player)
 		env->setRealPos(m_npc->getPosition());
 		env->setNpc(m_npc);
 
-		uint32_t cid = env->addThing(const_cast<Player*>(player));
-
 		lua_State* L = m_scriptInterface->getLuaState();
 		m_scriptInterface->pushFunction(m_onPlayerEndTrade);
-		lua_pushnumber(L, cid);
+		lua_pushnumber(L, env->addThing(const_cast<Player*>(player)));
 		m_scriptInterface->callFunction(1);
 		m_scriptInterface->releaseScriptEnv();
 	}

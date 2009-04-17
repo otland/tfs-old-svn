@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channels>
+	<!--README:
+		Channel with id 0 is reserved for guilds
+		Channel with id 3 is reserved for rule-violations
+		Channel with id 8 is reserved for party
+		Channel with id 9 is reserved for Help 
+	-->
+	<channel id="1" name="Staff"/>
+	<channel id="2" name="Counselor"/>
+	<channel id="3" name="Rule Violations"/>	<!-- DONT MODIFY -->
+	<channel id="4" name="Game-Chat"/>
+	<channel id="5" name="Trade"/>
+	<channel id="6" name="RL-Chat"/>
+	<channel id="7" name="Trade-Rookgaard"/>
+	<channel id="9" name="Help"/>				<!-- DONT MODIFY -->
+
+	<!--channel id="9" name="My Custom Channel 1"/-->
+</channels>

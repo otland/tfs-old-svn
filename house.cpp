@@ -113,7 +113,7 @@ void House::setPrice(uint32_t _price, bool update /*= false*/)
 		updateDoorDescription();
 }
 
-void House::setHouseOwner(uint32_t guid, bool cleaned/* = true*/)
+void House::setHouseOwner(uint32_t guid, bool _clean/* = true*/)
 {
 	if(isLoaded && houseOwner == guid)
 		return;
@@ -121,11 +121,11 @@ void House::setHouseOwner(uint32_t guid, bool cleaned/* = true*/)
 	isLoaded = true;
 	if(houseOwner)
 	{
-		if(cleaned)
+		if(_clean)
 			clean();
 
-		setAccessList(SUBOWNER_LIST, "", !cleaned);
-		setAccessList(GUEST_LIST, "", !cleaned);
+		setAccessList(SUBOWNER_LIST, "", !_clean);
+		setAccessList(GUEST_LIST, "", !_clean);
 		for(HouseDoorList::iterator it = doorList.begin(); it != doorList.end(); ++it)
 			(*it)->setAccessList("");
 
@@ -376,7 +376,7 @@ void House::setAccessList(uint32_t listId, const std::string& textlist, bool tel
 
 HouseTransferItem* House::getTransferItem()
 {
-	if(transferItem != NULL)
+	if(transferItem)
 		return NULL;
 
 	transferContainer.setParent(NULL);
@@ -706,100 +706,101 @@ Houses::Houses()
 
 bool Houses::loadFromXml(std::string filename)
 {
-	if(xmlDocPtr doc = xmlParseFile(filename.c_str()))
+	xmlDocPtr doc = xmlParseFile(filename.c_str());
+	if(!doc)
+		return false;
+
+	xmlNodePtr houseNode, root = xmlDocGetRootElement(doc);
+	if(xmlStrcmp(root->name,(const xmlChar*)"houses") != 0)
 	{
-		xmlNodePtr houseNode, root = xmlDocGetRootElement(doc);
-		if(xmlStrcmp(root->name,(const xmlChar*)"houses") != 0)
+		xmlFreeDoc(doc);
+		return false;
+	}
+
+	int32_t intValue;
+	std::string strValue;
+
+	houseNode = root->children;
+	while(houseNode)
+	{
+		if(xmlStrcmp(houseNode->name,(const xmlChar*)"house") != 0)
 		{
+			houseNode = houseNode->next;
+			continue;
+		}
+
+		int32_t houseId = 0;
+		if(!readXMLInteger(houseNode, "houseid", houseId))
+		{
+			std::cout << "[Error - Houses::loadFromXml] Could not read houseId" << std::endl;
 			xmlFreeDoc(doc);
 			return false;
 		}
 
-		int32_t intValue;
-		std::string strValue;
-
-		houseNode = root->children;
-		while(houseNode)
+		House* house = Houses::getInstance().getHouse(houseId);
+		if(!house)
 		{
-			if(xmlStrcmp(houseNode->name,(const xmlChar*)"house") == 0)
-			{
-				int32_t houseId = 0;
-				if(!readXMLInteger(houseNode, "houseid", houseId))
-				{
-					std::cout << "[Error - Houses::loadFromXml] Could not read houseId" << std::endl;
-					xmlFreeDoc(doc);
-					return false;
-				}
-
-				House* house = Houses::getInstance().getHouse(houseId);
-				if(!house)
-				{
-					std::cout << "[Error - Houses::loadFromXml] Unknown house with id: " << houseId << std::endl;
-					xmlFreeDoc(doc);
-					return false;
-				}
-
-				if(readXMLString(houseNode, "name", strValue))
-					house->setName(strValue);
-
-				Position entryPos(0, 0, 0);
-				if(readXMLInteger(houseNode, "entryx", intValue))
-					entryPos.x = intValue;
-
-				if(readXMLInteger(houseNode, "entryy", intValue))
-					entryPos.y = intValue;
-
-				if(readXMLInteger(houseNode, "entryz", intValue))
-					entryPos.z = intValue;
-
-				house->setEntryPos(entryPos);
-				if(entryPos.x == 0 || entryPos.y == 0)
-				{
-					std::cout << "[Warning - Houses::loadFromXml] House entry not set for: ";
-					std::cout << house->getName() << " (" << houseId << ")" << std::endl;
-				}
-
-				if(readXMLInteger(houseNode, "townid", intValue))
-					house->setTownId(intValue);
-
-				if(readXMLInteger(houseNode, "size", intValue))
-					house->setSize(intValue);
-
-				uint32_t rent = 0;
-				if(readXMLInteger(houseNode, "rent", intValue))
-					rent = intValue;
-
-				uint32_t price = 0;
-				for(HouseTileList::iterator it = house->getHouseTileBegin(); it != house->getHouseTileEnd(); it++)
-					price += g_config.getNumber(ConfigManager::HOUSE_PRICE);
-
-				if(g_config.getBool(ConfigManager::HOUSE_RENTASPRICE))
-				{
-					uint32_t tmp = rent;
-					if(!tmp)
-						tmp = price;
-
-					house->setPrice(tmp);
-				}
-				else
-					house->setPrice(price);
-
-				if(g_config.getBool(ConfigManager::HOUSE_PRICEASRENT))
-					house->setRent(price);
-				else
-					house->setRent(rent);
-
-				house->setHouseOwner(0);
-			}
-
-			houseNode = houseNode->next;
+			std::cout << "[Error - Houses::loadFromXml] Unknown house with id: " << houseId << std::endl;
+			xmlFreeDoc(doc);
+			return false;
 		}
 
-		xmlFreeDoc(doc);
-		return true;
+		if(readXMLString(houseNode, "name", strValue))
+			house->setName(strValue);
+
+		Position entryPos(0, 0, 0);
+		if(readXMLInteger(houseNode, "entryx", intValue))
+			entryPos.x = intValue;
+
+		if(readXMLInteger(houseNode, "entryy", intValue))
+			entryPos.y = intValue;
+
+		if(readXMLInteger(houseNode, "entryz", intValue))
+			entryPos.z = intValue;
+
+		house->setEntryPos(entryPos);
+		if(entryPos.x == 0 || entryPos.y == 0)
+		{
+			std::cout << "[Warning - Houses::loadFromXml] House entry not set for: ";
+			std::cout << house->getName() << " (" << houseId << ")" << std::endl;
+		}
+
+		if(readXMLInteger(houseNode, "townid", intValue))
+			house->setTownId(intValue);
+
+		if(readXMLInteger(houseNode, "size", intValue))
+			house->setSize(intValue);
+
+		uint32_t rent = 0;
+		if(readXMLInteger(houseNode, "rent", intValue))
+			rent = intValue;
+
+		uint32_t price = 0;
+		for(HouseTileList::iterator it = house->getHouseTileBegin(); it != house->getHouseTileEnd(); it++)
+			price += g_config.getNumber(ConfigManager::HOUSE_PRICE);
+
+		if(g_config.getBool(ConfigManager::HOUSE_RENTASPRICE))
+		{
+			uint32_t tmp = rent;
+			if(!tmp)
+				tmp = price;
+
+			house->setPrice(tmp);
+		}
+		else
+			house->setPrice(price);
+
+		if(g_config.getBool(ConfigManager::HOUSE_PRICEASRENT))
+			house->setRent(price);
+		else
+			house->setRent(rent);
+
+		house->setHouseOwner(0);
+		houseNode = houseNode->next;
 	}
 
-	return false;
+	xmlFreeDoc(doc);
+	return true;
 }
 
 bool Houses::reloadPrices()

@@ -638,9 +638,11 @@ int32_t Container::__getLastIndex() const
 uint32_t Container::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, bool itemCount /*= true*/) const
 {
 	uint32_t count = 0;
+
+	Item* item = NULL;
 	for(ItemList::const_iterator it = itemlist.begin(); it != itemlist.end(); ++it)
 	{
-		Item* item = (*it);
+		item = (*it);
 		if(item && item->getID() == itemId && (subType == -1 || subType == item->getSubType()))
 		{
 			if(!itemCount)

@@ -238,48 +238,46 @@ bool Monsters::loadFromXml(bool reloading /*= false*/)
 	std::string filename = getFilePath(FILE_TYPE_OTHER, "monster/monsters.xml");
 
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
-	if(doc)
+	if(!doc)
+		return loaded;
+
+	loaded = true;
+	xmlNodePtr root, p;
+	root = xmlDocGetRootElement(doc);
+
+	if(xmlStrcmp(root->name,(const xmlChar*)"monsters") != 0)
 	{
-		loaded = true;
-		xmlNodePtr root, p;
-		root = xmlDocGetRootElement(doc);
-
-		if(xmlStrcmp(root->name,(const xmlChar*)"monsters") != 0)
-		{
-			xmlFreeDoc(doc);
-			loaded = false;
-			return false;
-		}
-
-		p = root->children;
-		while(p)
-		{
-			if(p->type != XML_ELEMENT_NODE)
-			{
-				p = p->next;
-				continue;
-			}
-
-			if(xmlStrcmp(p->name, (const xmlChar*)"monster") == 0)
-			{
-				std::string file;
-				std::string name;
-
-				if(readXMLString(p, "file", file) && readXMLString(p, "name", name))
-				{
-					file = getFilePath(FILE_TYPE_OTHER, "monster/" + file);
-					loadMonster(file, name, reloading);
-				}
-			}
-			else
-				std::cout << "[Warning - Monsters::loadFromXml]. Unknown node name. " << p->name << std::endl;
-
-			p = p->next;
-		}
-
 		xmlFreeDoc(doc);
+		loaded = false;
+		return false;
 	}
 
+	p = root->children;
+	while(p)
+	{
+		if(p->type != XML_ELEMENT_NODE)
+		{
+			p = p->next;
+			continue;
+		}
+
+		if(xmlStrcmp(p->name, (const xmlChar*)"monster") != 0)
+		{
+			std::cout << "[Warning - Monsters::loadFromXml]. Unknown node name. " << p->name << std::endl;
+			p = p->next;
+			continue;
+		}
+
+		std::string file, name;
+		if(readXMLString(p, "file", file) && readXMLString(p, "name", name))
+		{
+			file = getFilePath(FILE_TYPE_OTHER, "monster/" + file);
+			loadMonster(file, name, reloading);
+		}
+		p = p->next;
+	}
+
+	xmlFreeDoc(doc);
 	return loaded;
 }
 
@@ -799,8 +797,6 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 		int32_t intValue;
 		std::string strValue;
 
-		p = root->children;
-
 		if(readXMLString(root, "name", strValue))
 			mType->name = strValue;
 		else
@@ -840,6 +836,13 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 		if(readXMLInteger(root, "manacost", intValue))
 			mType->manaCost = intValue;
 
+		if(readXMLString(root, "skull", strValue))
+			mType->skull = getSkull(strValue);
+
+		if(readXMLString(root, "shield", strValue))
+			mType->partyShield = getPartyShield(strValue);
+
+		p = root->children;
 		while(p)
 		{
 			if(p->type != XML_ELEMENT_NODE)
@@ -935,46 +938,10 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 							mType->isLureable = (intValue != 0);
 
 						if(readXMLString(tmpNode, "skull", strValue))
-						{
-							std::string tmpStrValue = asLowerCaseString(strValue);
-							if(tmpStrValue == "red" || tmpStrValue == "4")
-								mType->skull = SKULL_RED;
-							else if(tmpStrValue == "white" || tmpStrValue == "3")
-								mType->skull = SKULL_WHITE;
-							else if(tmpStrValue == "green" || tmpStrValue == "2")
-								mType->skull = SKULL_GREEN;
-							else if(tmpStrValue == "yellow" || tmpStrValue == "1")
-								mType->skull = SKULL_YELLOW;
-							else
-								mType->skull = SKULL_NONE;
-						}
+							mType->skull = getSkull(strValue);
 
 						if(readXMLString(tmpNode, "shield", strValue))
-						{
-							std::string tmpStrValue = asLowerCaseString(strValue);
-							if(tmpStrValue == "whitenoshareoff" || tmpStrValue == "10")
-								mType->partyShield = SHIELD_YELLOW_NOSHAREDEXP;
-							else if(tmpStrValue == "blueshareoff" || tmpStrValue == "9")
-								mType->partyShield = SHIELD_BLUE_NOSHAREDEXP;
-							else if(tmpStrValue == "yellowshareblink" || tmpStrValue == "8")
-								mType->partyShield = SHIELD_YELLOW_NOSHAREDEXP_BLINK;
-							else if(tmpStrValue == "blueshareblink" || tmpStrValue == "7")
-								mType->partyShield = SHIELD_BLUE_NOSHAREDEXP_BLINK;
-							else if(tmpStrValue == "yellowshareon" || tmpStrValue == "6")
-								mType->partyShield = SHIELD_YELLOW_SHAREDEXP;
-							else if(tmpStrValue == "blueshareon" || tmpStrValue == "5")
-								mType->partyShield = SHIELD_BLUE_SHAREDEXP;
-							else if(tmpStrValue == "yellow" || tmpStrValue == "4")
-								mType->partyShield = SHIELD_YELLOW;
-							else if(tmpStrValue == "blue" || tmpStrValue == "3")
-								mType->partyShield = SHIELD_BLUE;
-							else if(tmpStrValue == "whiteyellow" || tmpStrValue == "2")
-								mType->partyShield = SHIELD_WHITEYELLOW;
-							else if(tmpStrValue == "whiteblue" || tmpStrValue == "1")
-								mType->partyShield = SHIELD_WHITEBLUE;
-							else
-								mType->partyShield = SHIELD_NONE;
-						}
+							mType->partyShield = getPartyShield(strValue);
 					}
 					tmpNode = tmpNode->next;
 				}

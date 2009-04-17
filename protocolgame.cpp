@@ -1815,7 +1815,7 @@ void ProtocolGame::sendClosePrivate(uint16_t channelId)
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		if(channelId == 0x00 || channelId == 0x08)
+		if(channelId == CHANNEL_GUILD || channelId == CHANNEL_PARTY)
 			g_chat.removeUserFromChannel(player, channelId);
 
 		msg->AddByte(0xB3);
@@ -2159,27 +2159,27 @@ void ProtocolGame::sendDistanceShoot(const Position& from, const Position& to, u
 
 void ProtocolGame::sendMagicEffect(const Position& pos, uint8_t type)
 {
-	if(canSee(pos) && type <= 66)
+	if(!canSee(pos) || type > 66)
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
 	{
-		NetworkMessage_ptr msg = getOutputBuffer();
-		if(msg)
-		{
-			TRACK_MESSAGE(msg);
-			AddMagicEffect(msg, pos, type);
-		}
+		TRACK_MESSAGE(msg);
+		AddMagicEffect(msg, pos, type);
 	}
 }
 
 void ProtocolGame::sendAnimatedText(const Position& pos, uint8_t color, std::string text)
 {
-	if(canSee(pos))
+	if(!canSee(pos))
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
 	{
-		NetworkMessage_ptr msg = getOutputBuffer();
-		if(msg)
-		{
-			TRACK_MESSAGE(msg);
-			AddAnimatedText(msg, pos, color, text);
-		}
+		TRACK_MESSAGE(msg);
+		AddAnimatedText(msg, pos, color, text);
 	}
 }
 
@@ -2195,6 +2195,12 @@ void ProtocolGame::sendCreatureHealth(const Creature* creature)
 
 void ProtocolGame::sendFYIBox(const std::string& message)
 {
+	if(message.empty()/* || message.length() > 1018*/) ///Prevent client debug or length is > 1018 (This last not confirmed)
+	{
+		std::cout << "[Warning - ProtocolGame::sendFYIBox] Trying to send empty message." << std::endl;
+		return;
+	}
+
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
@@ -2207,186 +2213,186 @@ void ProtocolGame::sendFYIBox(const std::string& message)
 //tile
 void ProtocolGame::sendAddTileItem(const Tile* tile, const Position& pos, const Item* item)
 {
-	if(canSee(pos))
+	if(!canSee(pos))
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
 	{
-		NetworkMessage_ptr msg = getOutputBuffer();
-		if(msg)
-		{
-			TRACK_MESSAGE(msg);
-			AddTileItem(msg, pos, item);
-		}
+		TRACK_MESSAGE(msg);
+		AddTileItem(msg, pos, item);
 	}
 }
 
 void ProtocolGame::sendUpdateTileItem(const Tile* tile, const Position& pos, uint32_t stackpos, const Item* item)
 {
-	if(canSee(pos))
+	if(!canSee(pos))
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
 	{
-		NetworkMessage_ptr msg = getOutputBuffer();
-		if(msg)
-		{
-			TRACK_MESSAGE(msg);
-			UpdateTileItem(msg, pos, stackpos, item);
-		}
+		TRACK_MESSAGE(msg);
+		UpdateTileItem(msg, pos, stackpos, item);
 	}
 }
 
 void ProtocolGame::sendRemoveTileItem(const Tile* tile, const Position& pos, uint32_t stackpos)
 {
-	if(canSee(pos))
+	if(!canSee(pos))
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
 	{
-		NetworkMessage_ptr msg = getOutputBuffer();
-		if(msg)
-		{
-			TRACK_MESSAGE(msg);
-			RemoveTileItem(msg, pos, stackpos);
-		}
+		TRACK_MESSAGE(msg);
+		RemoveTileItem(msg, pos, stackpos);
 	}
 }
 
 void ProtocolGame::sendUpdateTile(const Tile* tile, const Position& pos)
 {
-	if(canSee(pos))
+	if(!canSee(pos))
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
 	{
-		NetworkMessage_ptr msg = getOutputBuffer();
-		if(msg)
+		TRACK_MESSAGE(msg);
+		msg->AddByte(0x69);
+		msg->AddPosition(pos);
+		if(tile)
 		{
-			TRACK_MESSAGE(msg);
-			msg->AddByte(0x69);
-			msg->AddPosition(pos);
-			if(tile)
-			{
-				GetTileDescription(tile, msg);
-				msg->AddByte(0x00);
-				msg->AddByte(0xFF);
-			}
-			else
-			{
-				msg->AddByte(0x01);
-				msg->AddByte(0xFF);
-			}
+			GetTileDescription(tile, msg);
+			msg->AddByte(0x00);
+			msg->AddByte(0xFF);
+		}
+		else
+		{
+			msg->AddByte(0x01);
+			msg->AddByte(0xFF);
 		}
 	}
 }
 
 void ProtocolGame::sendAddCreature(const Creature* creature, bool isLogin)
 {
-	if(canSee(creature->getPosition()))
+	if(!canSee(creature->getPosition()))
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
 	{
-		NetworkMessage_ptr msg = getOutputBuffer();
-		if(msg)
+		TRACK_MESSAGE(msg);
+		if(creature == player)
 		{
-			TRACK_MESSAGE(msg);
-			if(creature == player)
-			{
-				msg->AddByte(0x0A);
-				msg->AddU32(player->getID());
-				msg->AddByte(0x32);
+			msg->AddByte(0x0A);
+			msg->AddU32(player->getID());
+			msg->AddByte(0x32);
+			msg->AddByte(0x00);
+			if(!player->hasCustomFlag(PlayerCustomFlag_CanReportBugs))
 				msg->AddByte(0x00);
-				if(!player->hasCustomFlag(PlayerCustomFlag_CanReportBugs))
-					msg->AddByte(0x00);
-				else
-					msg->AddByte(0x01);
+			else
+				msg->AddByte(0x01);
 
-				if(violationReasons[player->getViolationAccess()] > 0)
+			if(violationReasons[player->getViolationAccess()] > 0)
+			{
+				msg->AddByte(0x0B);
+				for(int32_t i = 0; i <= 22; i++)
 				{
-					msg->AddByte(0x0B);
-					for(int32_t i = 0; i <= 22; i++)
-					{
-						if(i <= violationReasons[1])
-							msg->AddByte(violationNames[player->getViolationAccess()]);
-						else if(i <= violationReasons[player->getViolationAccess()])
-							msg->AddByte(violationStatements[player->getViolationAccess()]);
-						else
-							msg->AddByte(Action_None);
-					}
+					if(i <= violationReasons[1])
+						msg->AddByte(violationNames[player->getViolationAccess()]);
+					else if(i <= violationReasons[player->getViolationAccess()])
+						msg->AddByte(violationStatements[player->getViolationAccess()]);
+					else
+						msg->AddByte(Action_None);
 				}
+			}
 
-				AddMapDescription(msg, player->getPosition());
-				if(isLogin)
-					AddMagicEffect(msg, player->getPosition(), NM_ME_TELEPORT);
+			AddMapDescription(msg, player->getPosition());
+			if(isLogin)
+				AddMagicEffect(msg, player->getPosition(), NM_ME_TELEPORT);
 
-				AddInventoryItem(msg, SLOT_HEAD, player->getInventoryItem(SLOT_HEAD));
-				AddInventoryItem(msg, SLOT_NECKLACE, player->getInventoryItem(SLOT_NECKLACE));
-				AddInventoryItem(msg, SLOT_BACKPACK, player->getInventoryItem(SLOT_BACKPACK));
-				AddInventoryItem(msg, SLOT_ARMOR, player->getInventoryItem(SLOT_ARMOR));
-				AddInventoryItem(msg, SLOT_RIGHT, player->getInventoryItem(SLOT_RIGHT));
-				AddInventoryItem(msg, SLOT_LEFT, player->getInventoryItem(SLOT_LEFT));
-				AddInventoryItem(msg, SLOT_LEGS, player->getInventoryItem(SLOT_LEGS));
-				AddInventoryItem(msg, SLOT_FEET, player->getInventoryItem(SLOT_FEET));
-				AddInventoryItem(msg, SLOT_RING, player->getInventoryItem(SLOT_RING));
-				AddInventoryItem(msg, SLOT_AMMO, player->getInventoryItem(SLOT_AMMO));
+			AddInventoryItem(msg, SLOT_HEAD, player->getInventoryItem(SLOT_HEAD));
+			AddInventoryItem(msg, SLOT_NECKLACE, player->getInventoryItem(SLOT_NECKLACE));
+			AddInventoryItem(msg, SLOT_BACKPACK, player->getInventoryItem(SLOT_BACKPACK));
+			AddInventoryItem(msg, SLOT_ARMOR, player->getInventoryItem(SLOT_ARMOR));
+			AddInventoryItem(msg, SLOT_RIGHT, player->getInventoryItem(SLOT_RIGHT));
+			AddInventoryItem(msg, SLOT_LEFT, player->getInventoryItem(SLOT_LEFT));
+			AddInventoryItem(msg, SLOT_LEGS, player->getInventoryItem(SLOT_LEGS));
+			AddInventoryItem(msg, SLOT_FEET, player->getInventoryItem(SLOT_FEET));
+			AddInventoryItem(msg, SLOT_RING, player->getInventoryItem(SLOT_RING));
+			AddInventoryItem(msg, SLOT_AMMO, player->getInventoryItem(SLOT_AMMO));
 
-				AddPlayerStats(msg);
-				AddPlayerSkills(msg);
+			AddPlayerStats(msg);
+			AddPlayerSkills(msg);
 
-				//gameworld light-settings
-				LightInfo lightInfo;
-				g_game.getWorldLightInfo(lightInfo);
-				AddWorldLight(msg, lightInfo);
+			//gameworld light-settings
+			LightInfo lightInfo;
+			g_game.getWorldLightInfo(lightInfo);
+			AddWorldLight(msg, lightInfo);
 
-				//player light level
-				AddCreatureLight(msg, creature);
-				if(isLogin)
+			//player light level
+			AddCreatureLight(msg, creature);
+			if(isLogin)
+			{
+				std::string tempstring = g_config.getString(ConfigManager::LOGIN_MSG);
+				if(!player->isAccountManager())
 				{
-					std::string tempstring = g_config.getString(ConfigManager::LOGIN_MSG);
-					if(!player->isAccountManager())
+					if(!player->getLastLoginSaved() > 0)
 					{
-						if(!player->getLastLoginSaved() > 0)
-						{
-							tempstring += " Please choose your outfit.";
-							sendOutfitWindow();
-						}
-						else
-						{
-							if(tempstring.size())
-								AddTextMessage(msg, MSG_STATUS_DEFAULT, tempstring.c_str());
-
-							tempstring = "Your last visit was on ";
-							time_t lastLogin = player->getLastLoginSaved();
-
-							tempstring += ctime(&lastLogin);
-							tempstring.erase(tempstring.length() - 1);
-							tempstring += ".";
-						}
-
-						AddTextMessage(msg, MSG_STATUS_DEFAULT, tempstring);
+						tempstring += " Please choose your outfit.";
+						sendOutfitWindow();
 					}
 					else
 					{
-						switch(player->accountManager)
-						{
-							case MANAGER_NAMELOCK:
-								AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, it appears that your character has been namelocked, what would you like as your new name?");
-								break;
-							case MANAGER_ACCOUNT:							
-								AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, type 'account' to manage your account and if you want to start over then type 'cancel'.");
-								break;
-							case MANAGER_NEW:
-								AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, type 'account' to create an account or type 'recover' to recover an account.");
-								break;
-							default:
-								break;
-						}
-					}
-				}
+						if(tempstring.size())
+							AddTextMessage(msg, MSG_STATUS_DEFAULT, tempstring.c_str());
 
-				for(VIPListSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); it++)
+						tempstring = "Your last visit was on ";
+						time_t lastLogin = player->getLastLoginSaved();
+
+						tempstring += ctime(&lastLogin);
+						tempstring.erase(tempstring.length() - 1);
+						tempstring += ".";
+					}
+
+					AddTextMessage(msg, MSG_STATUS_DEFAULT, tempstring);
+				}
+				else
 				{
-					std::string vipName;
-					if(IOLoginData::getInstance()->getNameByGuid((*it), vipName))
+					switch(player->accountManager)
 					{
-						Player* tmpPlayer = g_game.getPlayerByName(vipName);
-						sendVIP((*it), vipName, (tmpPlayer && (!tmpPlayer->isInGhostMode() || player->canSeeGhost(tmpPlayer))));
+						case MANAGER_NAMELOCK:
+							AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, it appears that your character has been namelocked, what would you like as your new name?");
+							break;
+						case MANAGER_ACCOUNT:							
+							AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, type 'account' to manage your account and if you want to start over then type 'cancel'.");
+							break;
+						case MANAGER_NEW:
+							AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, type 'account' to create an account or type 'recover' to recover an account.");
+							break;
+						default:
+							break;
 					}
 				}
 			}
-			else
+
+			for(VIPListSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); it++)
 			{
-				AddTileCreature(msg, creature->getPosition(), creature);
-				if(isLogin)
-					AddMagicEffect(msg, creature->getPosition(), NM_ME_TELEPORT);
+				std::string vipName;
+				if(IOLoginData::getInstance()->getNameByGuid((*it), vipName))
+				{
+					Player* tmpPlayer = g_game.getPlayerByName(vipName);
+					sendVIP((*it), vipName, (tmpPlayer && (!tmpPlayer->isInGhostMode() || player->canSeeGhost(tmpPlayer))));
+				}
 			}
+		}
+		else
+		{
+			AddTileCreature(msg, creature->getPosition(), creature);
+			if(isLogin)
+				AddMagicEffect(msg, creature->getPosition(), NM_ME_TELEPORT);
 		}
 	}
 }
@@ -2779,7 +2785,7 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 	if(creature->isInvisible() || creature->isInGhostMode())
 		AddCreatureInvisible(msg, creature);
 	else
-		AddCreatureOutfit(msg, creature, creature->getCurrentOutfit());		
+		AddCreatureOutfit(msg, creature, creature->getCurrentOutfit());
 
 	LightInfo lightInfo;
 	creature->getCreatureLight(lightInfo);

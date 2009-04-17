@@ -98,7 +98,11 @@ int32_t round(float v);
 uint32_t rand24b();
 float box_muller(float m, float s);
 
+Skulls_t getSkull(std::string string);
+PartyShields_t getPartyShield(str::string string);
+
 Direction getDirection(std::string string);
+Direction getDirectionTo(Position pos1, Position pos2, bool extended = true);
 Direction getReverseDirection(Direction dir);
 Position getNextPosition(Direction direction, Position pos);
 
@@ -120,6 +124,9 @@ skills_t getSkillId(std::string param);
 
 std::string getReason(int32_t reasonId);
 std::string getAction(int32_t actionId, bool ipBanishment);
+
+std::string parseVocationString(StringVec vocStringVec);
+bool parseVocationNode(xmlNodePtr vocationNode, VocationMap& vocationMap, StringVec& vocStringMap, std::string& errorStr);
 
 bool fileExists(const char* filename);
 uint32_t adlerChecksum(uint8_t *data, size_t length);

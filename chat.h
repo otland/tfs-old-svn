@@ -36,23 +36,30 @@ class ChatChannel
 		{
 			m_id = channelId;
 			m_name = channelName;
+			m_logged = false;
+			m_access = 0;
 		}
 		virtual ~ChatChannel() {}
+
+		bool configure(xmlNodePtr p);
+		const uint16_t getId() {return m_id;}
+		const std::string& getName() {return m_name;}
+
+		const UsersList& getUsers() {return m_users;}
+		virtual const uint32_t getOwner() {return 0;}
+
+		uint16_t getAccess() const {return m_access;}
+		bool isLogged() const {return m_logged;}
 
 		bool addUser(Player* player);
 		bool removeUser(Player* player);
 
 		bool talk(Player* player, SpeakClasses type, const std::string& text, uint32_t time = 0);
 
-		const std::string& getName() {return m_name;}
-		const uint16_t getId() {return m_id;}
-		const UsersList& getUsers() {return m_users;}
-
-		virtual const uint32_t getOwner() {return 0;}
-
 	protected:
+		bool m_logged;
 		std::string m_name;
-		uint16_t m_id;
+		uint16_t m_id, m_access;
 		UsersList m_users;
 };
 
@@ -87,6 +94,9 @@ class Chat
 	public:
 		Chat();
 		virtual ~Chat();
+
+		bool loadFromXml();
+		bool parseChannelNode(xmlNodePtr p);
 
 		ChatChannel* createChannel(Player* player, uint16_t channelId);
 		bool deleteChannel(Player* player, uint16_t channelId);
