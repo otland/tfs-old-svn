@@ -38,42 +38,42 @@
 		*Creatures (means, that these are accessible for all players, monsters, npcs)
 			getCreatureName(cid)
 				Info
-					This function checks for creature name.
+					This function checks creature name.
 
 				Returns
 					Creature name.
 
 			getCreatureHealth(cid)
 				Info
-					This function checks for creature current health points.
+					This function checks creature current health points.
 
 				Returns
 					Creature current health points.
 
 			getCreatureMaxHealth(cid)
 				Info
-					This function checks for creature max health points.
+					This function checks creature max health points.
 
 				Returns
 					Creature max health points.
 
 			getCreatureMana(cid)
 				Info
-					This function checks for creature current mana points.
+					This function checks creature current mana points.
 
 				Returns
 					Creature current mana points.
 
 			getCreatureMaxMana(cid)
 				Info
-					This function checks for creature max mana points.
+					This function checks creature max mana points.
 
 				Returns
 					Creature max mana points.
 
 			getCreaturePosition(cid)
 				Info
-					This function checks for creature current position.
+					This function checks creature current position.
 
 				Returns
 					Creature position.
@@ -87,7 +87,7 @@
 
 			getCreatureLookDirection(cid)
 				Info
-					This function checks for creature direction.
+					This function checks creature direction.
 
 				Returns
 					Creature direction.
@@ -111,7 +111,7 @@
 
 			getCreatureSkullType(cid)
 				Info
-					This function checks for creature current skull.
+					This function checks creature current skull.
 
 				Returns
 					Creature skull.
@@ -133,14 +133,14 @@
 
 			getCreatureMaster(cid)
 				Info
-					This function checks for creature master. Its used for summoned creatures, to check who has summoned it.
+					This function checks creature master. Its used for summoned creatures, to check who has summoned it.
 
 				Returns
 					Creature master cid if found, otherwise self cid.
 
 			getCreatureOutfit(cid)
 				Info
-					This function checks for creature current outfit.
+					This function checks creature current outfit.
 
 				Returns
 					Creature outfit in array.
@@ -169,7 +169,7 @@
 		*Players
 			getPlayerExperience(cid)
 				Info
-					This function checks for player experience points.
+					This function checks player experience points.
 
 				Returns
 					Player experience points.
@@ -179,14 +179,14 @@
 
 			getPlayerLevel(cid)
 				Info
-					This function checks for player level.
+					This function checks player level.
 
 				Returns
 					Player level.
 
 			getPlayerMagLevel(cid)
 				Info
-					This function checks for player magic level.
+					This function checks player magic level.
 
 				Returns
 					Player magic level.
@@ -201,14 +201,14 @@
 
 			getPlayerAccess(cid)
 				Info
-					This function checks for player access.
+					This function checks player access.
 
 				Returns
 					Player access.
 
 			getPlayerSkillLevel(cid, skillid)
 				Info
-					This function checks for player actually position.
+					This function checks player actually position.
 						Skillid can be:
 							SKILL_FIST (0) = Fist Fighting
 							SKILL_CLUB (1) = Club Fighting
@@ -325,7 +325,7 @@
 
 			getPlayerLight(cid)
 				Info
-					This function checks for player actually light.
+					This function checks player actually light.
 
 				Returns
 					Player actually light.
@@ -396,17 +396,17 @@
 
 				Example
 					local playerPos = getCreaturePosition(cid)
-					if getPlayerSex(cid) then --when female
+					if getPlayerSex(cid) then --female
 						doSendAnimatedText(playerPos, 'GiRl :*:*', TEXTCOLOR_GOLD)
 					elseif getPlayerSex(cid) then --male
 						doSendAnimatedText(playerPos, 'Wtf? I aM BoY.', TEXTCOLOR_GOLD)
-					else -- dont know how it is in english, but in polish = obojniak - something between boy and girl :P
-						doSendAnimatedText(playerPos, 'Wtf? I aM BoY.', TEXTCOLOR_GOLD)
+					else --hermaphrodite
+						doSendAnimatedText(playerPos, 'Who am I? :(', TEXTCOLOR_GOLD)
 					end
 
 			getPlayerGUID(cid)
 				Info
-					This function checks for player guid.
+					This function checks player guid.
 
 				Returns
 					Player id. When checked creature isn't player then returns false.
@@ -468,7 +468,7 @@
 
 			getPlayerGuildId(cid)
 				Info
-					This function returns the players guild id.
+					This function returns player's guild id.
 
 				Returns
 					Players guild id.
@@ -485,7 +485,7 @@
 
 			getPlayerGuildName(cid)
 				Info
-					Used to get a players guild name.
+					Used to get player's guild name.
 
 				Returns
 					Players guild name in a string.
@@ -498,7 +498,7 @@
 
 			getPlayerGuildRank(cid)
 				Info
-					Used to get a players rank name in a guild.
+					Used to get player's rank name in a guild.
 
 				Returns
 					The players current rank in his guild in a string
@@ -511,7 +511,7 @@
 
 			getPlayerGuildNick(cid)
 				Info
-					Used to get a players nick in his guild.
+					Used to get player's nick in his guild.
 
 				Returns
 					The players current nick in a string.
@@ -533,14 +533,14 @@
 					This function changes creature max health.
 
 				Returns
-					Return true - if creature found and max health changed, otherwise return false
+					Returns true - if creature found and max health changed, otherwise return false
 
 			setCreatureMaxMana(cid, mana)
 				Info
 					This function changes creature max mana.
 
 				Returns
-					Return true - if creature found and max mana changed, otherwise return false
+					Returns true - if creature found and max mana changed, otherwise return false
 
 		*Players
 			doPlayerSendCancel(cid, text)
@@ -548,7 +548,7 @@
 					This function will send cancel message do player (visible in bottom of a screen)
 
 				Returns
-					Return true - when msg was sent, false - when it was impossible.
+					Returns true - when msg was sent, false - when it was impossible.
 
 				Example
 					if getPlayerLevel(cid) >= 10 then --checking level
