@@ -1,8 +1,8 @@
-TRUE = 1
-FALSE = 0
+TRUE = true
+FALSE = false
 
-LUA_ERROR = -1
-LUA_NO_ERROR = 0
+LUA_ERROR = false
+LUA_NO_ERROR = true
 
 NORTH = 0
 EAST = 1

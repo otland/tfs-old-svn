@@ -45,11 +45,10 @@ class Npc;
 
 enum LUA_RET_CODE
 {
-	LUA_NO_ERROR = 0,
-	LUA_ERROR = -1,
-	LUA_TRUE = 1,
-	LUA_FALSE = 0,
-	LUA_NULL = 0,
+	LUA_NO_ERROR = true,
+	LUA_ERROR = false,
+	LUA_TRUE = true,
+	LUA_FALSE = false
 };
 
 enum LuaVariantType_t
@@ -58,7 +57,7 @@ enum LuaVariantType_t
 	VARIANT_NUMBER,
 	VARIANT_POSITION,
 	VARIANT_TARGETPOSITION,
-	VARIANT_STRING,
+	VARIANT_STRING
 };
 
 struct LuaVariant

@@ -3480,7 +3480,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddItem(lua_State* L)
 				if(newItem->getParent())
 					lua_pushnumber(L, env->addThing((Thing*)newItem));
 				else //stackable item stacked with existing object, newItem will be released
-					lua_pushnumber(L, LUA_NULL);
+					lua_pushnil(L);
 
 				return 1;
 			}
@@ -3507,7 +3507,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddItem(lua_State* L)
 		if(newItem->getParent())
 			lua_pushnumber(L, env->addThing((Thing*)newItem));
 		else //stackable item stacked with existing object, newItem will be released
-			lua_pushnumber(L, LUA_NULL);
+			lua_pushnil(L);
 
 		return 1;
 	}
@@ -4243,7 +4243,7 @@ int32_t LuaScriptInterface::luaDoCreateItem(lua_State* L)
 				if(newItem->getParent())
 					lua_pushnumber(L, env->addThing((Thing*)newItem));
 				else //stackable item stacked with existing object, newItem will be released
-					lua_pushnumber(L, LUA_NULL);
+					lua_pushnil(L);
 
 				return 1;
 			}
@@ -4265,7 +4265,7 @@ int32_t LuaScriptInterface::luaDoCreateItem(lua_State* L)
 		if(newItem->getParent())
 			lua_pushnumber(L, env->addThing(newItem));
 		else //stackable item stacked with existing object, newItem will be released
-			lua_pushnumber(L, LUA_NULL);
+			lua_pushnil(L);
 
 		return 1;
 	}
@@ -4347,7 +4347,7 @@ int32_t LuaScriptInterface::luaDoCreateTeleport(lua_State* L)
 	else
 	{
 		//stackable item stacked with existing object, newItem will be released
-		lua_pushnumber(L, LUA_NULL);
+		lua_pushnil(L);
 	}
 	return 1;
 }
@@ -5368,7 +5368,7 @@ int32_t LuaScriptInterface::luaGetPlayerWeapon(lua_State* L)
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushnumber(L, LUA_NULL);
+		lua_pushnil(L);
 	}
 	return 1;
 }
@@ -7389,7 +7389,7 @@ int32_t LuaScriptInterface::luaGetCreatureByName(lua_State* L)
 		lua_pushnumber(L, cid);
 	}
 	else
-		lua_pushnumber(L, LUA_NULL);
+		lua_pushnil(L);
 
 	return 1;
 }
@@ -7404,7 +7404,7 @@ int32_t LuaScriptInterface::luaGetPlayerByNameWildcard(lua_State* L)
 	if(g_game.getPlayerByNameWildcard(name, player) == RET_NOERROR)
 		lua_pushnumber(L, env->addThing(player));
 	else
-		lua_pushnumber(L, LUA_NULL);
+		lua_pushnil(L);
 
 	return 1;
 }
@@ -7443,7 +7443,7 @@ int32_t LuaScriptInterface::luaGetPlayerNameByGUID(lua_State* L)
 	if(!IOLoginData::getInstance()->getNameByGuid(guid, name, multiworld))
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushnumber(L, LUA_NULL);
+		lua_pushnil(L);
 	}
 
 	lua_pushstring(L, name.c_str());
@@ -7737,7 +7737,7 @@ int32_t LuaScriptInterface::luaDoAddContainerItem(lua_State* L)
 					if(newItem->getParent())
 						lua_pushnumber(L, env->addThing((Thing*)newItem));
 					else //stackable item stacked with existing object, newItem will be released
-						lua_pushnumber(L, LUA_NULL);
+						lua_pushnil(L);
 
 					return 1;
 				}
@@ -7757,7 +7757,7 @@ int32_t LuaScriptInterface::luaDoAddContainerItem(lua_State* L)
 			if(newItem->getParent())
 				lua_pushnumber(L, env->addThing((Thing*)newItem));
 			else //stackable item stacked with existing object, newItem will be released
-				lua_pushnumber(L, LUA_NULL);
+				lua_pushnil(L);
 
 			return 1;
 		}
@@ -8511,11 +8511,11 @@ int32_t LuaScriptInterface::luaGetPlayerBlessing(lua_State* L)
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
-		lua_pushboolean(L, player->hasBlessing(blessing));
+		lua_pushnumber(L, (player->hasBlessing(blessing) ? LUA_TRUE : LUA_FALSE));
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushboolean(L, false);
+		lua_pushnumber(L, LUA_ERROR);
 	}
 	return 1;
 }
@@ -8530,15 +8530,15 @@ int32_t LuaScriptInterface::luaDoPlayerAddBlessing(lua_State* L)
 		if(!player->hasBlessing(blessing))
 		{
 			player->addBlessing(1 << blessing);
-			lua_pushboolean(L, true);
+			lua_pushnumber(L, LUA_TRUE);
 		}
 		else
-			lua_pushboolean(L, false);
+			lua_pushnumber(L, LUA_FALSE);
 	}
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushboolean(L, false);
+		lua_pushnumber(L, LUA_ERROR);
 	}
 	return 1;
 }
@@ -8551,12 +8551,12 @@ int32_t LuaScriptInterface::luaSetPlayerPromotionLevel(lua_State* L)
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
 		player->setPromotionLevel(level);
-		lua_pushboolean(L, true);
+		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushboolean(L, false);
+		lua_pushnumber(L, LUA_ERROR);
 	}
 	return 1;
 }
@@ -8576,12 +8576,12 @@ int32_t LuaScriptInterface::luaSetPlayerGroupId(lua_State* L)
 		}
 
 		player->setGroupId(groupId);
-		lua_pushboolean(L, true);
+		lua_pushnumber(L, LUA_TRUE);
 	}
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushboolean(L, false);
+		lua_pushnumber(L, LUA_FALSE);
 	}
 	return 1;
 }
@@ -8730,7 +8730,7 @@ int32_t LuaScriptInterface::luaGetPlayerParty(lua_State* L)
 		if(Party* party = player->getParty())
 			lua_pushnumber(L, env->addThing(party->getLeader()));
 		else
-			lua_pushnumber(L, LUA_NULL);
+			lua_pushnil(L);
 	}
 	else
 	{
@@ -9057,11 +9057,11 @@ int32_t LuaScriptInterface::luaDoPlayerSave(lua_State* L)
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(cid))
-		lua_pushboolean(L, IOLoginData::getInstance()->savePlayer(player, false));
+		lua_pushnumber(L, (IOLoginData::getInstance()->savePlayer(player, false) ? LUA_TRUE : LUA_FALSE));
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushboolean(L, false);
+		lua_pushnumber(L, LUA_ERROR);
 	}
 	return 1;
 }
@@ -9302,12 +9302,12 @@ int32_t LuaScriptInterface::luaDoCleanHouse(lua_State *L)
 	if(House* house = Houses::getInstance().getHouse(houseId))
 	{
 		house->clean();
-		lua_pushboolean(L, 1);
+		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else
 	{
 		reportErrorFunc("House not found.");
-		lua_pushboolean(L, 0);
+		lua_pushnumber(L, LUA_ERROR);
 	}
 	return 1;
 }
@@ -10038,7 +10038,7 @@ int32_t LuaScriptInterface::luaDatabaseExecute(lua_State *L)
 	//executes the query on the database
 	//Same as Database::getInstance()->executeQuery(query) on C++
 	//returns true if worked, false otherwise, plus prints the SQL error on the console
-	lua_pushboolean(L, Database::getInstance()->executeQuery(popString(L)));
+	lua_pushnumber(L, (Database::getInstance()->executeQuery(popString(L)) ? LUA_TRUE : LUA_FALSE));
 	return 1;
 }
 
@@ -10159,7 +10159,7 @@ int32_t LuaScriptInterface::luaResultNext(lua_State *L)
 	DBResult* res = env->getResult(popNumber(L));
 	CHECK_RESULT()
 
-	lua_pushboolean(L, res->next());
+	lua_pushnumber(L, (res->next() ? LUA_TRUE : LUA_FALSE));
 	return 1;
 }
 
@@ -10176,7 +10176,7 @@ int32_t LuaScriptInterface::luaResultFree(lua_State *L)
 	bool ret = env->removeResult(rid);
 	res->free();
 
-	lua_pushboolean(L, ret);
+	lua_pushnumber(L, (ret ? LUA_TRUE : LUA_FALSE));
 	return 1;
 }
 #undef CHECK_RESULT
