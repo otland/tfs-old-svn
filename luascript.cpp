@@ -877,25 +877,18 @@ int32_t LuaScriptInterface::luaErrorHandler(lua_State* L)
 
 int32_t LuaScriptInterface::callFunction(uint32_t nParams)
 {
-	int32_t result = LUA_NO_ERROR;
-
-	int32_t size0 = lua_gettop(m_luaState);
-	int32_t error_index = lua_gettop(m_luaState) - nParams;
+	int32_t result = LUA_ERROR, size = lua_gettop(m_luaState), errorIndex = lua_gettop(m_luaState) - nParams;
 	lua_pushcfunction(m_luaState, luaErrorHandler);
 	lua_insert(m_luaState, error_index);
 
-	int32_t ret = lua_pcall(m_luaState, nParams, 1, error_index);
+	int32_t ret = lua_pcall(m_luaState, nParams, 1, errorIndex);
 	if(ret != 0)
-	{
 		LuaScriptInterface::reportError(NULL, std::string(LuaScriptInterface::popString(m_luaState)));
-		result = LUA_ERROR;
-	}
 	else
 		result = (int32_t)LuaScriptInterface::popNumber(m_luaState);
 
-	lua_remove(m_luaState, error_index);
-
-	if((lua_gettop(m_luaState) + (int32_t)nParams  + 1) != size0)
+	lua_remove(m_luaState, errorIndex);
+	if((lua_gettop(m_luaState) + (int32_t)nParams  + 1) != size)
 		LuaScriptInterface::reportError(NULL, "Stack size changed!");
 
 	return result;
