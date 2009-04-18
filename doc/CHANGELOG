@@ -61,7 +61,7 @@
 					database.lua
 					exhaustion.lua
 						* Added files created from global.lua (organized)
-				
+
 				logs/
 					server/
 						* Created directory for GUI logs
@@ -537,6 +537,81 @@
 		D...
 
 	]
+	[ 0.3.4
+		A...
+			data/
+				XML/
+					channels.xml
+						* Added chat channels configuration
+
+					groups.xml
+						* Moved groups configuration to this file
+
+		M...
+			data/
+				actions/
+					scripts/
+						quests/
+							system.lua
+							annihilator.lua
+								* Changes due player storage compatibility
+						other/
+							doors.lua
+								* Changes due player storage compatibility
+
+				creaturescripts/
+					scripts/
+						firstitems.lua
+						playerdeath.lua
+							* Fixes
+							* Fixes
+
+				items/
+					items.xml
+						* Fixed few issues, and added new items
+
+				lib/
+					exhaustion.lua
+						* Fixes + changes due player storage compatibility
+					function.lua
+						* Added new function: doPlayerAddFrags(cid, amount)
+						* Moved getPlayerMoney to sources
+						* doWriteLogFile fix
+					compat.lua
+						* Added doCreatureSetLookDirection
+					constant.lua
+						* Changes due true/false returing
+						* Reload constant for chat
+
+				logs/
+					chat/
+						* Created chat directory, for channels logging
+
+				npc/
+					scripts/
+						runes.lua
+							* Changes due player storage compatibility
+
+				spells/
+					scripts/
+						summon/
+							*.lua
+								* Deprecated functions replaced
+
+				talkactions/
+					scripts/
+						teleportsend.lua
+						teleportto.lua
+							* Fixes
+						reload.lua
+							* Channels reloading
+
+				XML/
+					servers.xml
+						* versionMin / versionMax
+
+		D...
+	]
 ]
 
 [ Milestone
@@ -680,14 +755,18 @@
 		Clean/Refresh "scriptProtection" for items (Elf)
 		Added three new creature events: onCast, onCombat and onAreaCombat (Elf)
 	]
+	[ 0.3.4
+		Chat channels configuration in .xml file (Elf, slawkens)
+		Groups moved to groups.xml file + changed way, how are they working (Elf)
+	]
 ]
 
 [ Deprecated
-	[ 0.3.1
-		[ Note
-			All deprecated Lua functions are stored in compat.lua and use their equivalents, nevertheless please use proper ones for new scripts.
-		]
+	[ NOTE
+		All deprecated Lua functions are stored in compat.lua and use their equivalents, nevertheless please use proper ones for new scripts.
+	]
 
+	[ 0.3.1
 		LuaFunction: savePlayers(), use saveData().
 		LuaFunction: doPlayerAddMana(cid, mana), use doCreatureAddMana(cid, mana)
 		LuaFunction: broadcastMessage(cid, type), use doBroadcastMessage(cid, type)
