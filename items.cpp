@@ -628,17 +628,13 @@ bool Items::loadFromXml()
 							{
 								if(readXMLInteger(itemAttributesNode, "value", intValue))
 								{
-									it.worth = intValue;
-									if(moneyMap[intValue].id > 0)
+									if(moneyMap.find(id) == moneyMap.end())
 									{
-										std::cout << "Warning: [Items::loadFromXml] Duplicate money item with id: " << id << std::endl;
-										return false;
+										it.worth = intValue;
+										moneyMap[id] = intValue;
 									}
-				
-									MoneyStruct money;
-									money.id = id;
-									money.worth = intValue;
-									moneyMap[intValue] = money;
+									else
+										std::cout << "[Warning - Items::loadFromXml] Duplicate money item with id: " << id << std::endl;
 								}
 							}
 							else if(tmpStrValue == "forceserialize" || tmpStrValue == "forceserialization" || tmpStrValue == "forcesave")

@@ -293,12 +293,7 @@ void Array<A>::addElement(A a, uint32_t pos)
 	m_data[pos] = a;
 }
 
-//MoneyMap
-struct MoneyStruct
-{
-	int32_t id, worth;
-};
-typedef std::map<int32_t, MoneyStruct> MoneyMap;
+typedef std::map<int32_t, int32_t> MoneyMap;
 
 class Items
 {
@@ -310,32 +305,29 @@ class Items
 		void clear();
 
 		int32_t loadFromOtb(std::string);
+		bool loadFromXml();
 
-		const ItemType& operator[](int32_t id) const {return getItemType(id);}
-		const ItemType& getItemType(int32_t id) const;
 		ItemType& getItemType(int32_t id);
+		const ItemType& getItemType(int32_t id) const;
 		const ItemType& getItemIdByClientId(int32_t spriteId) const;
+		const ItemType& operator[](int32_t id) const {return getItemType(id);}
+		const ItemType* getElement(uint32_t id) const {return items.getElement(id);}
 
 		int32_t getItemIdByName(const std::string& name);
+		void addItemType(ItemType* iType);
+		uint32_t size() {return items.size();}
+		MoneyMap getMoneyMap() {return moneyMap;}
 
 		static uint32_t dwMajorVersion;
 		static uint32_t dwMinorVersion;
 		static uint32_t dwBuildNumber;
 
-		bool loadFromXml();
-
-		void addItemType(ItemType* iType);
-
-		const ItemType* getElement(uint32_t id) const {return items.getElement(id);}
-		uint32_t size() {return items.size();}
-
-		//money map
-		MoneyMap moneyMap;
 	protected:
+		Array<ItemType*> items;
+		MoneyMap moneyMap;
+
 		typedef std::map<int32_t, int32_t> ReverseItemMap;
 		ReverseItemMap reverseItemMap;
-
-		Array<ItemType*> items;
 };
 
 #endif

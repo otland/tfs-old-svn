@@ -1772,22 +1772,23 @@ uint32_t Game::getMoney(const Cylinder* cylinder)
 
 bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/)
 {
-	if(cylinder == NULL)
+	if(!cylinder)
 		return false;
 
 	if(money <= 0)
 		return true;
 
-	typedef std::multimap<int32_t, Item*, std::less<int32_t> > MoneyMap;
-	typedef MoneyMap::value_type MoneyPair;
+	typedef std::multimap<int32_t, Item*, std::less<int32_t> > MoneyMultiMap;
+	typedef MoneyMultiMap::value_type MoneyPair;
 
-	MoneyMap moneyMap;
-	std::list<Container*> listContainer;
-	Container* tmpContainer = NULL;
-	Thing* thing = NULL;
-	Item* item = NULL;
+	MoneyMultiMap moneyMap;
 	int32_t moneyCount = 0;
 
+	std::list<Container*> listContainer;
+	Container* tmpContainer = NULL;
+
+	Thing* thing = NULL;
+	Item* item = NULL;
 	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex() && money > 0; ++i)
 	{
 		if(!(thing = cylinder->__getThing(i)))
@@ -1812,7 +1813,7 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 		for(int32_t i = 0; i < (int32_t)container->size() && money > 0; i++)
 		{
 			Item* item = container->getItem(i);
-			if(((tmpContainer = item->getContainer())))
+			if((tmpContainer = item->getContainer()))
 				listContainer.push_back(tmpContainer);
 			else if(item->getWorth() != 0)
 			{
@@ -1826,7 +1827,7 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 	if(moneyCount < money)
 		return false;
 
-	for(MoneyMap::iterator mit = moneyMap.begin(); mit != moneyMap.end() && money > 0; ++mit)
+	for(MoneyMultiMap::iterator mit = moneyMap.begin(); mit != moneyMap.end() && money > 0; ++mit)
 	{
 		Item* item = mit->second;
 		if(!item)
@@ -1852,22 +1853,17 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 
 void Game::addMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/)
 {
-	MoneyMap moneyMap = Item::items.moneyMap;
-	MoneyMap::reverse_iterator it;
-	int32_t tmp;
-	for(it = moneyMap.rbegin(); it != moneyMap.rend();  it++)
+	int32_t tmp = 0;
+	for(MoneyMap::reverse_iterator it = Item::items.getMoneyMap().rbegin(); it != Item::items.getMoneyMap().rend();  it++)
 	{
-		MoneyStruct moneyList = (*it).second;
-		tmp = money / moneyList.worth;
-		money -= tmp * moneyList.worth;
+		tmp = money / it->second;
+		money -= tmp * it->second;
 		if(tmp != 0)
 		{
 			do
 			{
-				Item* remaindItem = Item::CreateItem(moneyList.id, std::min(100, tmp));
-
-				ReturnValue ret = internalAddItem(NULL, cylinder, remaindItem, INDEX_WHEREEVER, flags);
-				if(ret != RET_NOERROR)
+				Item* remaindItem = Item::CreateItem(it->first, std::min(100, tmp));
+				if(internalAddItem(NULL, cylinder, remaindItem, INDEX_WHEREEVER, flags) != RET_NOERROR)
 					internalAddItem(NULL, cylinder->getTile(), remaindItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
 
 				tmp -= std::min(100, tmp);
