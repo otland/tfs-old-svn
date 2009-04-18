@@ -75,15 +75,17 @@ local food =
 }
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if(food[item.itemid] ~= nil) then
-		if(getPlayerFood(cid) + food[item.itemid][1]) >= 400 then
-			doPlayerSendCancel(cid, "You are full.")
-		else
-			doPlayerFeed(cid, food[item.itemid][1] * 4)
-			doCreatureSay(cid, food[item.itemid][2], TALKTYPE_ORANGE_1)
-			doRemoveItem(item.uid, 1)
-		end
-		return TRUE
+	if(not food[item.itemid]) then
+		return FALSE
 	end
-	return FALSE
+
+	if(getPlayerFood(cid) + food[item.itemid][1]) >= 400 then
+		doPlayerSendCancel(cid, "You are full.")
+	else
+		doPlayerFeed(cid, food[item.itemid][1] * 4)
+		doCreatureSay(cid, food[item.itemid][2], TALKTYPE_ORANGE_1)
+		doRemoveItem(item.uid, 1)
+	end
+
+	return TRUE
 end

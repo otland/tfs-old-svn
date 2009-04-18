@@ -19,7 +19,7 @@ function onSay(cid, words, param)
 	end
 
 	pos = getClosestFreeTile(cid, pos, FALSE, FALSE)
-	if(pos == LUA_ERROR or isInArray({pos.x, pos.y, pos.z}, 0) == TRUE) then
+	if(pos == LUA_ERROR or isInArray({pos.x, pos.y}, 0) == TRUE) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Destination not reachable.")
 		return TRUE
 	end

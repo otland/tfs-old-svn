@@ -1,4 +1,8 @@
 function onStepOut(cid, item, position, fromPosition)
+	if isPlayerGhost(cid) == TRUE then
+		return TRUE
+	end
+
 	addEvent(transformBack, 10000, {oldItemID = item.itemid, _position = position})
 	if item.itemid == 670 then
 		doTransformItem(item.uid, 6594)

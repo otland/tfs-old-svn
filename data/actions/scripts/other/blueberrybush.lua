@@ -13,13 +13,9 @@ function transformBack(parameters)
 	if topThing.itemid == ITEM_BLUEBERRY then
 		addEvent(transformBack, 300000, parameters)
 	else
-		for i = STACKPOS_FIRST_ITEM_ABOVE_GROUNDTILE, STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE do
-			parameters.position.stackpos = i
-			topThing = getThingfromPos(parameters.position)
-			if topThing.itemid == ITEM_BUSH then
-				doTransformItem(topThing.uid, ITEM_BLUEBERRYBUSH)
-				break
-			end
+		topThing = getTileItemById(parameters.position, ITEM_BUSH)
+		if(topThing ~= nil) then
+			doTransformItem(topThing.uid, ITEM_BLUEBERRYBUSH)
 		end
 	end
 end

@@ -1,6 +1,9 @@
-local nopvpWords = {"1", "nopvp", "nonpvp", "no-pvp", "non-pvp", "safe"}
-local pvpWords = {"2", "pvp", "normal"}
-local pvpenforcedWords = {"3", "pvpe", "pvpenforced", "pvp-enforced", "war"}
+local words = {
+	nopvp = {"1", "nopvp", "nonpvp", "no-pvp", "non-pvp", "safe"},
+	pvp = {"2", "pvp", "normal"},
+	pvpenforced = {"3", "pvpe", "pvpenforced", "pvp-enforced", "war"}
+}
+
 
 function onSay(cid, words, param)
 	if(param == "") then
@@ -10,14 +13,14 @@ function onSay(cid, words, param)
 
 	local world = getWorldType()
 
-	param = string.lower(param)
-	if table.isStrIn(param, nopvpWords) then
+	param = param:lower()
+	if table.isStrIn(param, words.nopvp) then
 		setWorldType(WORLD_TYPE_NO_PVP)
 		world = "No-PVP"
-	elseif table.isStrIn(param, pvpWords) then
+	elseif table.isStrIn(param, words.pvp) then
 		setWorldType(WORLD_TYPE_PVP)
 		world = "PVP"
-	elseif table.isStrIn(param, pvpenforcedWords) then
+	elseif table.isStrIn(param, words.pvpenforced) then
 		setWorldType(WORLD_TYPE_PVP_ENFORCED)
 		world = "PVP-Enforced"
 	else

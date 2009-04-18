@@ -1,6 +1,8 @@
+local jungleGrass = {2782, 3985}
+
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if(itemEx.itemid == 2782) then
-		doTransformItem(itemEx.uid, 2781)
+	if(isInArray(jungleGrass, itemEx.itemid) == TRUE) then
+		doTransformItem(itemEx.uid, itemEx.itemid - 1)
 		doDecayItem(itemEx.uid)
 		return TRUE
 	elseif(isInArray({7538, 7539}, itemEx.itemid) == TRUE) then

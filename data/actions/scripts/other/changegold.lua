@@ -15,8 +15,6 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		doChangeTypeItem(item.uid, item.type - 1)
 		doPlayerAddItem(cid, ITEM_PLATINUM_COIN, ITEMCOUNT_MAX)
 		doSendAnimatedText(fromPosition, "$$$", TEXTCOLOR_LIGHTBLUE)
-	else
-		return FALSE
 	end
 	return TRUE
 end

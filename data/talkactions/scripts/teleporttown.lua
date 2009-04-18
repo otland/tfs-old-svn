@@ -24,13 +24,13 @@ function onSay(cid, words, param)
 	end
 
 	local pos = getTownTemplePosition(tmp)
-	if(pos == LUA_ERROR or isInArray({pos.x, pos.y, pos.z}, 0) == TRUE) then
+	if(pos == LUA_ERROR or isInArray({pos.x, pos.y}, 0) == TRUE) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Town " .. t[1] .. " does not exists or has invalid temple position.")
 		return TRUE
 	end
 
 	pos = getClosestFreeTile(tid, pos)
-	if(pos == LUA_ERROR or isInArray({pos.x, pos.y, pos.z}, 0) == TRUE) then
+	if(pos == LUA_ERROR or isInArray({pos.x, pos.y}, 0) == TRUE) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Destination not reachable.")
 		return TRUE
 	end

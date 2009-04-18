@@ -5,6 +5,16 @@
 	<action actionid="2001" event="script" value="quests/system.lua"/>
 	<action uniqueid="30015" event="script" value="quests/annihilator.lua"/>
 
+	<!-- Weapons enchanting (Gems) -->
+	<action itemid="2146" script="other/enchanting.lua" />
+	<action itemid="2147" script="other/enchanting.lua" />
+	<action itemid="2150" script="other/enchanting.lua" />
+	<action itemid="2149" script="other/enchanting.lua" />
+	<action itemid="7759" script="other/enchanting.lua" />
+	<action itemid="7760" script="other/enchanting.lua" />
+	<action itemid="7761" script="other/enchanting.lua" />
+	<action itemid="7762" script="other/enchanting.lua" />
+
 	<!-- Tools -->
 	<action itemid="2420" event="script" value="tools/machete.lua"/>
 	<action itemid="2442" event="script" value="tools/machete.lua"/>
@@ -167,19 +177,12 @@
 	<action fromid="8900" toid="8904" event="script" value="other/spellbook.lua"/>
 	<action itemid="8918" event="script" value="other/spellbook.lua"/>
 
-	<!-- Other -->
-	<action itemid="6578" event="script" value="other/partyhat.lua"/>
-	<action itemid="2114" event="script" value="other/piggybank.lua"/>
-	<action fromid="6570" toid="6571" event="script" value="other/surprisebag.lua"/>
-	<action itemid="6576" event="script" value="other/fireworksrocket.lua"/>
-	<action itemid="2036" event="script" value="other/watch.lua"/>
-	<action fromid="1728" toid="1731" event="script" value="other/watch.lua"/>
-	<action itemid="6572" event="script" value="other/partytrumpet.lua"/>
-	<action itemid="2785" event="script" value="other/blueberrybush.lua"/>
-	<action itemid="2579" event="script" value="other/trap.lua"/>
+	<!-- Change gold -->
 	<action itemid="2148" event="script" value="other/changegold.lua"/>
 	<action itemid="2152" event="script" value="other/changegold.lua"/>
 	<action itemid="2160" event="script" value="other/changegold.lua"/>
+
+	<!-- Construction kits -->
 	<action fromid="3901" toid="3938" event="script" value="other/constructionkits.lua"/>
 	<action fromid="5086" toid="5088" event="script" value="other/constructionkits.lua"/>
 	<action fromid="6114" toid="6115" event="script" value="other/constructionkits.lua"/>
@@ -188,34 +191,44 @@
 	<action fromid="8692" toid="8693" event="script" value="other/constructionkits.lua"/>
 	<action itemid="7503" event="script" value="other/constructionkits.lua"/>
 	<action itemid="7700" event="script" value="other/constructionkits.lua"/>
+
+	<!-- Bed construction kits -->
+	<action fromid="7904" toid="7907" event="script" script="other/furniturebeds.lua"/>
+
+	<!-- Music, instruments -->
 	<action fromid="2070" toid="2078" event="script" value="other/music.lua"/>
 	<action fromid="2080" toid="2085" event="script" value="other/music.lua"/>
 	<action itemid="2332" event="script" value="other/music.lua"/>
 	<action itemid="2364" event="script" value="other/music.lua"/>
 	<action fromid="2367" toid="2368" event="script" value="other/music.lua"/>
 	<action fromid="2370" toid="2373" event="script" value="other/music.lua"/>
-	<action fromid="2041" toid="2042" event="script" value="other/decayto.lua"/>
-	<action fromid="2044" toid="2045" event="script" value="other/decayto.lua"/>
-	<action fromid="2047" toid="2048" event="script" value="other/decayto.lua"/>
-	<action fromid="2050" toid="2055" event="script" value="other/decayto.lua"/>
-	<action itemid="430" event="script" value="other/teleport.lua"/>
+
+	<!-- Teleport (stairs, ladders) -->
 	<action itemid="1369" event="script" value="other/teleport.lua"/>
 	<action itemid="1386" event="script" value="other/teleport.lua"/>
 	<action itemid="3678" event="script" value="other/teleport.lua"/>
 	<action itemid="5543" event="script" value="other/teleport.lua"/>
 	<action itemid="8580" event="script" value="other/teleport.lua"/>
 	<action itemid="8599" event="script" value="other/teleport.lua"/>
+	<action itemid="430" event="script" value="other/teleport.lua"/>
+
+	<!-- Destroy -->
 	<action fromid="2376" toid="2404" event="script" value="other/destroy.lua"/>
 	<action fromid="2406" toid="2419" event="script" value="other/destroy.lua"/>
 	<action fromid="2421" toid="2441" event="script" value="other/destroy.lua"/>
 	<action fromid="2443" toid="2453" event="script" value="other/destroy.lua"/>
-	<action fromid="5792" toid="5797" event="script" value="other/dice.lua"/>
+
+	<!-- Bread Creating -->
 	<action itemid="2692" event="script" value="other/createbread.lua"/>
 	<action itemid="2694" event="script" value="other/createbread.lua"/>
+
+	<!-- Windows -->
 	<action fromid="6436" toid="6447" event="script" value="other/windows.lua"/>
 	<action fromid="6450" toid="6473" event="script" value="other/windows.lua"/>
 	<action fromid="6788" toid="6791" event="script" value="other/windows.lua"/>
 	<action fromid="7025" toid="7032" event="script" value="other/windows.lua"/>
+
+	<!-- Doors -->
 	<action fromid="1209" toid="1214" event="script" value="other/doors.lua"/>
 	<action fromid="1219" toid="1262" event="script" value="other/doors.lua"/>
 	<action fromid="1539" toid="1542" event="script" value="other/doors.lua"/>
@@ -237,6 +250,27 @@
 	<action fromid="8541" toid="8558" event="script" value="other/doors.lua"/>
 	<action fromid="9165" toid="9184" event="script" value="other/doors.lua"/>
 	<action fromid="9267" toid="9286" event="script" value="other/doors.lua"/>
+
+	<!-- Watch -->
+	<action itemid="2036" event="script" value="other/watch.lua"/>
+	<action fromid="1728" toid="1731" event="script" value="other/watch.lua"/>
+	<action itemid="1877" event="script" value="other/watch.lua"/>
+
+	<!-- Decay To -->
+	<action fromid="2041" toid="2042" event="script" value="other/decayto.lua"/>
+	<action fromid="2044" toid="2045" event="script" value="other/decayto.lua"/>
+	<action fromid="2047" toid="2048" event="script" value="other/decayto.lua"/>
+	<action fromid="2050" toid="2055" event="script" value="other/decayto.lua"/>
+
+	<!-- Other -->
+	<action itemid="6578" event="script" value="other/partyhat.lua"/>
+	<action itemid="2114" event="script" value="other/piggybank.lua"/>
+	<action fromid="6570" toid="6571" event="script" value="other/surprisebag.lua"/>
+	<action itemid="6576" event="script" value="other/fireworksrocket.lua"/>
+	<action itemid="6572" event="script" value="other/partytrumpet.lua"/>
+	<action itemid="2785" event="script" value="other/blueberrybush.lua"/>
+	<action itemid="2579" event="script" value="other/trap.lua"/>
+	<action fromid="5792" toid="5797" event="script" value="other/dice.lua"/>
 	<action itemid="1981" event="buffer"><![CDATA[
 		if(item.actionid >= 150 and item.actionid <= 158) then
 			doShowTextDialog(cid, item.itemid, getHighscoreString((item.actionid - 150)))
@@ -247,5 +281,4 @@
 
 	<action itemid="5791" event="script" value="other/stuffeddragon.lua"/>
 	<action itemid="6566" event="script" value="other/stuffeddragon.lua"/>
-	<action itemid="1877" event="script" value="other/watch.lua"/>
 </actions>

@@ -24,7 +24,7 @@ function onSay(cid, words, param)
 	if(getPlayerViolationAccess(cid) > 2) then
 		local ip = getIpByName(param)
 		if(isIpBanished(ip) == TRUE and doRemoveIpBanishment(ip) == TRUE) then
-			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "IpBanishment on " .. doConvertIntegerToIp(ip) .. " has been lifted.")
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "IP Banishment on " .. doConvertIntegerToIp(ip) .. " has been lifted.")
 		end
 
 		if(isPlayerNamelocked(param) == TRUE and doRemoveNamelock(param) == TRUE) then
