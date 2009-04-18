@@ -632,7 +632,10 @@ bool Items::loadFromXml()
 									if(moneyMap.find(id) != moneyMap.end())
 										std::cout << "[Warning - Items::loadFromXml] Duplicate money item with id: " << id << std::endl;
 									else
-										moneyMap[id] = it.worth = intValue;
+									{
+										moneyMap[id] = intValue;
+										it.worth = intValue;
+									}
 								}
 							}
 							else if(tmpStrValue == "forceserialize" || tmpStrValue == "forceserialization" || tmpStrValue == "forcesave")

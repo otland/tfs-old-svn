@@ -1595,9 +1595,9 @@ Item* Game::findItemOfType(Cylinder* cylinder, uint16_t itemId,
 
 	std::list<Container*> listContainer;
 	Container* tmpContainer = NULL;
+
 	Thing* thing = NULL;
 	Item* item = NULL;
-
 	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex();)
 	{
 		if((thing = cylinder->__getThing(i)) && (item = thing->getItem()))
@@ -1646,9 +1646,9 @@ bool Game::removeItemOfType(Cylinder* cylinder, uint16_t itemId, int32_t count, 
 
 	std::list<Container*> listContainer;
 	Container* tmpContainer = NULL;
+
 	Thing* thing = NULL;
 	Item* item = NULL;
-
 	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex() && count > 0;)
 	{
 		if((thing = cylinder->__getThing(i)) && (item = thing->getItem()))
@@ -1727,11 +1727,10 @@ bool Game::removeItemOfType(Cylinder* cylinder, uint16_t itemId, int32_t count, 
 
 uint32_t Game::getMoney(const Cylinder* cylinder)
 {
-	if(cylinder == NULL)
+	if(!cylinder)
 		return 0;
 
 	std::list<Container*> listContainer;
-	ItemList::const_iterator it;
 	Container* tmpContainer = NULL;
 
 	Thing* thing = NULL;
@@ -1756,10 +1755,9 @@ uint32_t Game::getMoney(const Cylinder* cylinder)
 	{
 		Container* container = listContainer.front();
 		listContainer.pop_front();
-
-		for(it = container->getItems(); it != container->getEnd(); ++it)
+		for(ItemList::const_iterator it = container->getItems(); it != container->getEnd(); ++it)
 		{
-			Item* item = *it;
+			item = *it;
 			if((tmpContainer = item->getContainer()))
 				listContainer.push_back(tmpContainer);
 			else if(item->getWorth() != 0)
@@ -1781,14 +1779,14 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 	typedef std::multimap<int32_t, Item*, std::less<int32_t> > MoneyMultiMap;
 	typedef MoneyMultiMap::value_type MoneyPair;
 
-	MoneyMultiMap moneyMap;
-	int32_t moneyCount = 0;
-
 	std::list<Container*> listContainer;
 	Container* tmpContainer = NULL;
 
 	Thing* thing = NULL;
 	Item* item = NULL;
+
+	MoneyMultiMap moneyMap;
+	int32_t moneyCount = 0;
 	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex() && money > 0; ++i)
 	{
 		if(!(thing = cylinder->__getThing(i)))
