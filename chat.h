@@ -23,6 +23,7 @@
 #include "otsystem.h"
 #include "const.h"
 
+#include <fstream>
 #include "party.h"
 
 class Player;
@@ -59,10 +60,13 @@ class ChatChannel
 		bool talk(Player* player, SpeakClasses type, const std::string& text, uint32_t time = 0);
 
 	protected:
+		std::string m_name;
+
 		bool m_logged, m_enabled;
 		uint16_t m_id, m_access;
-		std::string m_name;
+
 		UsersList m_users;
+		boost::shared_ptr<std::ofstream> m_file;
 };
 
 class PrivateChatChannel : public ChatChannel

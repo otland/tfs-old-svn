@@ -131,6 +131,9 @@ bool ChatChannel::addUser(Player* player)
 	for(CreatureEventList::iterator it = joinEvents.begin(); it != joinEvents.end(); ++it)
 		(*it)->executeChannelJoin(player, m_id, m_users);
 
+	if(m_logged)
+		player->sendChannelMessage("", "*** Please note channel is logged! ***", SPEAK_CHANNEL_W, m_id);
+
 	return true;
 }
 
@@ -150,12 +153,17 @@ bool ChatChannel::removeUser(Player* player)
 
 bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& text, uint32_t time /*= 0*/)
 {
-	if(m_enabled)
+	if(!m_enabled)
 		return true;
 
-	if(m_logged)
+	if(m_logged && m_file->is_open())
 	{
-		//TODO: do the job
+		char date[21];
+		std::stringstream ss;
+
+		formatDate(time(NULL), date);
+		ss << "[" << date << "] " << text << std::endl;
+		m_file.write(ss.str(), ss.str().lenght());
 	}
 
 	if((m_id == CHANNEL_TRADE || m_id == CHANNEL_TRADEROOK) && !player->hasFlag(PlayerFlag_CannotBeMuted))
@@ -184,7 +192,11 @@ bool ChatChannel::configure(xmlNodePtr p)
 	std::string strValue;
 	int32_t intValue;
 	if(readXMLString(p, "logged", strValue) || readXMLString(p, "log", strValue))
+	{
 		m_logged = booleanString(strValue);
+		m_file.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, std::string("chat/") + m_name).c_str(), (g_config.getBool(
+			ConfigManager::TRUNCATE_CHAT_LOGS) ? std::ios::trunc : std::ios::app) | std::ios::out));
+	}
 
 	if(readXMLInteger(p, "access", intValue))
 		m_access = intValue;
