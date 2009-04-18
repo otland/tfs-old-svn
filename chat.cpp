@@ -130,7 +130,12 @@ bool ChatChannel::addUser(Player* player)
 				#endif
 				return false;
 			}
+
+			break;
 		}
+
+		default:
+			break;
 	}
 
 	m_users.push_back(player->getID());
@@ -372,6 +377,9 @@ ChatChannel* Chat::createChannel(Player* player, uint16_t channelId)
 				}
 			}
 		}
+
+		default:
+			break;
 	}
 
 	return NULL;
@@ -469,21 +477,12 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 			player->sendCancel("You may only place one offer in two minutes.");
 			return true;
 		}
-		else if(player->getLevel() < 2 && channelId > CHANNEL_GUILD && channelId < CHANNEL_PARTY)
+		else if(player->getLevel() < 2 && channelId > CHANNEL_GUILD && channelId < CHANNEL_PARTY
+			&& channelId > CHANNEL_HELP && channelId < CHANNEL_PRIVATE)
 		{
 			player->sendCancel("You may not speak into channels as long as you are on level 1.");
 			return true;
 		}
-	}
-
-	switch(player->getGuildLevel())
-	{
-		case GUILDLEVEL_VICE:
-			type = SPEAK_CHANNEL_O;
-			break;
-		case GUILDLEVEL_LEADER:
-			type = SPEAK_CHANNEL_R1;
-			break;
 	}
 
 	if(channelId != CHANNEL_GUILD || !g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT) || (text[0] != '!' && text[0] != '/'))
@@ -1009,6 +1008,18 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 	if(ret)
 		return true;
 
+	switch(player->getGuildLevel())
+	{
+		case GUILDLEVEL_VICE:
+			return channel->talk(player, SPEAK_CHANNEL_O, text);
+
+		case GUILDLEVEL_LEADER:
+			return channel->talk(player, SPEAK_CHANNEL_R1, text);
+
+		default:
+			break;
+	}
+
 	return channel->talk(player, type, text);
 }
 
@@ -1125,6 +1136,9 @@ ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 
 				break;
 			}
+
+			default:
+				break;
 		}
 
 		return tmpChannel;
