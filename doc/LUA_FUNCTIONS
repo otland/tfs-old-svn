@@ -16,17 +16,17 @@
 ]
 
 [ ABOUT
-	List with all Lua functions available.
-	You can read a short instructions for all the functions;
-		how to use, what it returns and an usage example.
+	List with all available Lua functions.
+	You can read a short instruction for all of them;
+		how to use them, what they return and see an usage examples.
 
-	If some function parameters is in bracker ([]) - it means, that this parameters is optional
+	If some function parameters is in bracket ([]) - it means this parameters are optional
 	E.g.
 		doPlayerAddItem(uid, itemid[, count/subtype[, canDropOnMap]])
-		Means that count/subtype + canDropOnMap parameters could, but don't must be specified
+		Means that count/subtype + canDropOnMap parameters can but don't have to be specified
 		Example:
-			doPlayerAddItem(cid, 2160) --add 1 crystal coin
-			doPlayerAddItem(cid, 2160, 10, TRUE) --add 10 crystal coins, and allow to item be dropped on map if player can't handle it.
+			doPlayerAddItem(cid, 2160) --adds 1 crystal coin
+			doPlayerAddItem(cid, 2160, 10, TRUE) --adds 10 crystal coins and allow item to be dropped on map if player can't lift it
 ]
 
 [ "get" functions
@@ -38,42 +38,42 @@
 		*Creatures (means, that these are accessible for all players, monsters, npcs)
 			getCreatureName(cid)
 				Info
-					This function will check for creature name.
+					This function checks for creature name.
 
 				Returns
 					Creature name.
 
 			getCreatureHealth(cid)
 				Info
-					This function will check for creature current health points.
+					This function checks for creature current health points.
 
 				Returns
 					Creature current health points.
 
 			getCreatureMaxHealth(cid)
 				Info
-					This function will check for creature max health points.
+					This function checks for creature max health points.
 
 				Returns
 					Creature max health points.
 
 			getCreatureMana(cid)
 				Info
-					This function will check for creature current mana points.
+					This function checks for creature current mana points.
 
 				Returns
 					Creature current mana points.
 
 			getCreatureMaxMana(cid)
 				Info
-					This function will check for creature max mana points.
+					This function checks for creature max mana points.
 
 				Returns
 					Creature max mana points.
 
 			getCreaturePosition(cid)
 				Info
-					This function will check for creature current position.
+					This function checks for creature current position.
 
 				Returns
 					Creature position.
@@ -87,7 +87,7 @@
 
 			getCreatureLookDirection(cid)
 				Info
-					This function will check for creature direction.
+					This function checks for creature direction.
 
 				Returns
 					Creature direction.
@@ -100,18 +100,18 @@
 				Example
 					local direction = getCreatureLookDirection(cid)
 					if direction == NORTH then
-						doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are looking to north")
+						doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are looking to north.")
 					elseif direction == EAST then
-						doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are looking to east")
+						doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are looking to east.")
 					elseif direction == SOUTH then
-						doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are looking to south")
+						doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are looking to south.")
 					else --when west
-						doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are looking to west")
+						doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are looking to west.")
 					end
 
 			getCreatureSkullType(cid)
 				Info
-					This function will check for creature current skull.
+					This function checks for creature current skull.
 
 				Returns
 					Creature skull.
@@ -133,19 +133,19 @@
 
 			getCreatureMaster(cid)
 				Info
-					This function will check for creature master. Its used for summoned creatures, to check who has summoned it.
+					This function checks for creature master. Its used for summoned creatures, to check who has summoned it.
 
 				Returns
 					Creature master cid if found, otherwise self cid.
 
 			getCreatureOutfit(cid)
 				Info
-					This function will check for creature current outfit.
+					This function checks for creature current outfit.
 
 				Returns
 					Creature outfit in array.
 					For example:
-						{lookType = 266, lookHead = 0, lookAddons = 0, lookLegs = 0, lookBody = 0, lookFeet = 0} - My current God outfit
+						{lookType = 266, lookHead = 0, lookAddons = 0, lookLegs = 0, lookBody = 0, lookFeet = 0} --my current God outfit
 
 				Example
 					local myOutfit = getCreatureOutfit(cid)
@@ -169,7 +169,7 @@
 		*Players
 			getPlayerExperience(cid)
 				Info
-					This function will check for player experience points.
+					This function checks for player experience points.
 
 				Returns
 					Player experience points.
@@ -179,21 +179,21 @@
 
 			getPlayerLevel(cid)
 				Info
-					This function will check for player level.
+					This function checks for player level.
 
 				Returns
 					Player level.
 
 			getPlayerMagLevel(cid)
 				Info
-					This function will check for player magic level.
+					This function checks for player magic level.
 
 				Returns
 					Player magic level.
 
 			getPlayerFood(cid)
 				Info
-					This function will check how many seconds a player is full.
+					This function checks how many seconds a player is full.
 
 				Returns
 					Time in second for which player is full: 360.
@@ -201,14 +201,14 @@
 
 			getPlayerAccess(cid)
 				Info
-					This function will check for player access.
+					This function checks for player access.
 
 				Returns
 					Player access.
 
 			getPlayerSkillLevel(cid, skillid)
 				Info
-					This function will check for player actually position.
+					This function checks for player actually position.
 						Skillid can be:
 							SKILL_FIST (0) = Fist Fighting
 							SKILL_CLUB (1) = Club Fighting
@@ -225,15 +225,15 @@
 						10
 
 				Example
-					if getPlayerSkillLevel(cid, SKILL_SWORD) >= 20 then --Checking for sword skill value
-						doPlayerAddItem(cid, 2376) --give sword, when skill >= 20
+					if getPlayerSkillLevel(cid, SKILL_SWORD) >= 20 then --checking for sword skill value
+						doPlayerAddItem(cid, 2376) --gives sword, when skill >= 20
 					else
 						doPlayerSendCancel(cid, "Sorry, your sword skill is not high enough.")
 					end
 
 			getPlayerTown(cid)
 				Info
-					This function will check player actually Town ID.
+					This function checks player actually Town ID.
 
 				Returns
 					Player Town ID.
@@ -245,14 +245,14 @@
 					local playerTown = getPlayerTown(cid)
 					local playerPos = getCreaturePosition(cid)
 					if playerTown == 1 then
-						doSendAnimatedText(playerPos, 'I am leaving in town with id: 1 (Main City)! :)', TEXTCOLOR_GOLD)
+						doSendAnimatedText(playerPos, 'I am living in a town with id 1 (Main City)! :)', TEXTCOLOR_GOLD)
 					elseif playerTown == 2 then
-						doSendAnimatedText(playerPos, 'I am leaving in town with id: 2 (Desert City)! :)', TEXTCOLOR_GOLD)
+						doSendAnimatedText(playerPos, 'I am living in a town with id 2 (Desert City)! :)', TEXTCOLOR_GOLD)
 					end
 
 			getPlayerVocation(cid)
 				Info
-					This function will check player Vocation ID.
+					This function checks player Vocation ID.
 
 				Returns
 					Player Vocation ID.
@@ -271,14 +271,14 @@
 					elseif playerVoc == 4 or playerVoc == 8 then --If Voc == Knight or Elite Knight then weapon = Sword
 						weapon == 2412 --Katana
 					end
-					doPlayerAddItem(cid, weapon,)
+					doPlayerAddItem(cid, weapon)
 
 			getPlayerItemCount(cid, itemid)
 				Info
-					This function will check how much items with specified id is player holding.
+					This function checks how much items with specified id is player holding.
 
 				Returns
-					Count of itemid.
+					A count of itemid.
 						For Example:
 							2 - when player have 2x royal spear
 							73 - when player have 73 platinum coins
@@ -292,7 +292,7 @@
 
 			getPlayerSoul(cid)
 				Info
-					This function will check how much soul points player actually have.
+					This function checks how much soul points player actually have.
 
 				Returns
 					Player actually soul points.
@@ -305,7 +305,7 @@
 
 			getPlayerFreeCap(cid)
 				Info
-					This function will check how much free cap points player actually have.
+					This function checks how much free cap points player actually have.
 
 				Returns
 					Player actually cap points.
@@ -325,7 +325,7 @@
 
 			getPlayerLight(cid)
 				Info
-					This function will check for player actually light.
+					This function checks for player actually light.
 
 				Returns
 					Player actually light.
@@ -334,7 +334,7 @@
 
 			getPlayerSlotItem(cid, slot)
 				Info
-					This function will check what item player have actually in slot.
+					This function checks what item player have actually in slot.
 					Slot can be:
 					CONST_SLOT_HEAD (1) = helmet
 					CONST_SLOT_NECKLACE (2) = necklace slot (amulet of loss etc.)
@@ -362,7 +362,7 @@
 
 			getPlayerDepotItems(cid, depotid)
 				Info
-					This function will check how much items (slots reserved, becouse 10cc = 1 slot) player have in depo.
+					This function checks how much items (slots reserved, becouse 10cc = 1 slot) player have in depo.
 						Depotid = number, which depo we want to check.
 
 				Returns
@@ -386,7 +386,7 @@
 
 			getPlayerSex(cid)
 				Info
-					This function will check player sex.
+					This function checks player sex.
 
 				Returns
 					Player sex.
@@ -406,7 +406,7 @@
 
 			getPlayerGUID(cid)
 				Info
-					This function will check for player guid.
+					This function checks for player guid.
 
 				Returns
 					Player id. When checked creature isn't player then returns false.
@@ -419,7 +419,7 @@
 
 			getPlayerFlagValue(cid, flag)
 				Info
-					This function will check player flag value.
+					This function checks player flag value.
 
 				Returns
 					Return true if player have specified flag, otherwise false
@@ -437,7 +437,7 @@
 			getPlayerCustomFlagValue(cid, flag)
 				Info
 					Same as getPlayerFlagValue, but there are checked custom flags, which was introduced in TFS 0.3
-					This function will check player custom flag value.
+					This function checks player custom flag value.
 
 				Returns
 					Return true if player have specified custom flag, otherwise false
@@ -447,7 +447,7 @@
 
 			getPlayerGroupId(cid)
 				Info
-					This function will check player group ID.
+					This function checks player group ID.
 
 				Returns
 					Player group id.
@@ -468,7 +468,7 @@
 
 			getPlayerGuildId(cid)
 				Info
-					This function will return the players guild id.
+					This function returns the players guild id.
 
 				Returns
 					Players guild id.
@@ -530,14 +530,14 @@
 		*Creatures
 			setCreatureMaxHealth(cid, health)
 				Info
-					This function will change creature max health.
+					This function changes creature max health.
 
 				Returns
 					Return true - if creature found and max health changed, otherwise return false
 
 			setCreatureMaxMana(cid, mana)
 				Info
-					This function will change creature max mana.
+					This function changes creature max mana.
 
 				Returns
 					Return true - if creature found and max mana changed, otherwise return false
@@ -545,7 +545,7 @@
 		*Players
 			doPlayerSendCancel(cid, text)
 				Info
-					This function will send cancel message do player (visible in bottom of screen)
+					This function will send cancel message do player (visible in bottom of a screen)
 
 				Returns
 					Return true - when msg was sent, false - when it was impossible.
