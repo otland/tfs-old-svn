@@ -138,9 +138,6 @@ bool ChatChannel::addUser(Player* player)
 	for(CreatureEventList::iterator it = joinEvents.begin(); it != joinEvents.end(); ++it)
 		(*it)->executeChannelJoin(player, m_id, m_users);
 
-	if(m_logged)
-		player->sendChannelMessage("", "*** Please note channel is logged! ***", SPEAK_CHANNEL_W, m_id);
-
 	return true;
 }
 
@@ -160,18 +157,8 @@ bool ChatChannel::removeUser(Player* player)
 
 bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& text, uint32_t _time /*= 0*/)
 {
-	if(!m_enabled)
+	if(!m_enabled || player->getAccessLevel() < m_access)
 		return true;
-
-	if(m_logged && m_file->is_open())
-	{
-		char date[21];
-		std::stringstream ss;
-
-		formatDate(time(NULL), date);
-		ss << "[" << date << "] " << text << std::endl;
-		m_file->write(ss.str().c_str(), (uint32_t)ss.str().length());
-	}
 
 	if((m_id == CHANNEL_TRADE || m_id == CHANNEL_TRADEROOK) && !player->hasFlag(PlayerFlag_CannotBeMuted))
 	{
@@ -180,10 +167,11 @@ bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& tex
 	}
 
 	bool success = false;
+	ChatChannel* channel = NULL;
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		ChatChannel* channel = g_chat.getChannel((*it).second, m_id);
-		if(channel && channel == this && std::find(m_users.begin(), m_users.end(), (*it).second->getID()) != m_users.end())
+		if((channel = g_chat.getChannel((*it).second, m_id)) && channel == this && std::find(m_users.begin(),
+			m_users.end(), (*it).second->getID()) != m_users.end())
 		{
 			(*it).second->sendToChannel(player, type, text, m_id, _time);
 			if(!success)
@@ -191,7 +179,22 @@ bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& tex
 		}
 	}
 
-	return success;
+	if(success)
+	{
+		if(m_logged && m_file->is_open())
+		{
+			char date[21];
+			std::stringstream ss;
+
+			formatDate(time(NULL), date);
+			ss << "[" << date << "] " << text << std::endl;
+			m_file->write(ss.str().c_str(), (uint32_t)ss.str().length());
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 Chat::~Chat()
@@ -1089,10 +1092,11 @@ ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 		return NULL;
 	}
 
+	ChatChannel* tmpChannel = NULL;
 	NormalChannelMap::iterator nit = m_normalChannels.find(channelId);
 	if(nit != m_normalChannels.end())
 	{
-		ChatChannel* tmpChannel = nit->second;
+		tmpChannel = nit->second;
 		if(!tmpChannel || !tmpChannel->isEnabled() || player->getAccessLevel() < tmpChannel->getAccess())
 			return NULL;
 

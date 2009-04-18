@@ -2411,7 +2411,7 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 				value = player->getSoul();
 				break;
 			case PlayerInfoFreeCap:
-				value = (int64_t)player->getFreeCapacity();
+				value = player->getFreeCapacity();
 				break;
 			case PlayerInfoGuildId:
 				value = player->getGuildId();
@@ -2450,17 +2450,17 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 				value = player->getStaminaMinutes();
 				break;
 			case PlayerInfoLossSkill:
-				value = player->getLossSkill();
-				break;
+				lua_pushboolean(L, player->getLossSkill() ? LUA_TRUE : LUA_FALSE);
+				return 1;
 			case PlayerInfoMarriage:
 				value = player->marriage;
 				break;
 			case PlayerInfoPzLock:
-				value = player->isPzLocked();
-				break;
+				lua_pushboolean(L, player->isPzLocked() ? LUA_TRUE : LUA_FALSE);
+				return 1;
 			case PlayerInfoSaving:
-				value = player->isSaving();
-				break;
+				lua_pushboolean(L, player->isSaving() ? LUA_TRUE : LUA_FALSE);
+				return 1;
 			case PlayerInfoIp:
 				value = player->getIP();
 				break;
@@ -2469,8 +2469,8 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 				break;
 			case PlayerInfoOutfitWindow:
 				player->sendOutfitWindow();
-				value = LUA_TRUE;
-				break;
+				lua_pushboolean(L, LUA_NO_ERROR);
+				return 1;
 			default:
 				std::string tmp = "Unknown player info - " + info;
 				reportErrorFunc(tmp);
