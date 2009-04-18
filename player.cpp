@@ -221,10 +221,7 @@ void Player::setVocation(uint32_t vocId)
 
 bool Player::isPushable() const
 {
-	if(hasFlag(PlayerFlag_CannotBePushed))
-		return false;
-
-	return Creature::isPushable();
+	return !hasFlag(PlayerFlag_CannotBePushed) && Creature::isPushable();
 }
 
 std::string Player::getDescription(int32_t lookDistance) const
@@ -233,7 +230,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 	if(lookDistance == -1)
 	{
 		s << "yourself.";
-		if(hasFlag(PlayerFlag_ShowGroupNameInsteadOfVocation) && group)
+		if(hasFlag(PlayerFlag_ShowGroupNameInsteadOfVocation))
 			s << " You are " << group->getName();
 		else if(vocation_id != 0)
 			s << " You are " << vocation->getDescription();
@@ -248,7 +245,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 
 		s << ". " << (sex == PLAYERSEX_FEMALE ? "She" : "He");
 
-		if(hasFlag(PlayerFlag_ShowGroupNameInsteadOfVocation) && group)
+		if(hasFlag(PlayerFlag_ShowGroupNameInsteadOfVocation))
 			s << " is " << group->getName();
 		else if(vocation_id != 0)
 			s << " is " << vocation->getDescription();
@@ -941,7 +938,7 @@ bool Player::addDepot(Depot* depot, uint32_t depotId)
 		return false;
 
 	depots[depotId] = std::make_pair(depot, false);
-	depot->setMaxDepotLimit((group ? group->getDepotLimit(isPremium()) : 1000));
+	depot->setMaxDepotLimit((group != NULL ? group->getDepotLimit(isPremium()) : 1000));
 	return true;
 }
 
@@ -2414,7 +2411,7 @@ bool Player::addVIP(uint32_t _guid, std::string& name, bool isOnline, bool inter
 		return false;
 	}
 
-	if(VIPList.size() > (group ? group->getMaxVips(isPremium()) : 20))
+	if(VIPList.size() > (group != NULL ? group->getMaxVips(isPremium()) : 20))
 	{
 		if(!internal)
 			sendTextMessage(MSG_STATUS_SMALL, "You cannot add more buddies.");
@@ -4449,18 +4446,18 @@ void Player::setGuildLevel(GuildLevel_t newGuildLevel)
 
 void Player::setGroupId(int32_t newId)
 {
-	if(Group* _group = Groups::getInstance()->getGroup(newId))
+	if(Group* tmp = Groups::getInstance()->getGroup(newId))
 	{
 		groupId = newId;
-		group = _group;
+		group = tmp;
 	}
 }
 
-void Player::setGroup(Group* _group)
+void Player::setGroup(Group* newGroup)
 {
-	if(_group)
+	if(newGroup)
 	{
-		group = _group;
+		group = newGroup;
 		groupId = group->getId();
 	}
 }

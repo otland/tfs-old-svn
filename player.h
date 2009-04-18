@@ -200,9 +200,9 @@ class Player : public Creature, public Cylinder
 		void resetGuildInformation();
 
 		void setFlags(uint64_t flags) {if(group) group->setFlags(flags);}
-		bool hasFlag(PlayerFlags value) const {return group && group->hasFlag(value);}
+		bool hasFlag(PlayerFlags value) const {return group != NULL && group->hasFlag(value);}
 		void setCustomFlags(uint64_t flags) {if(group) group->setCustomFlags(flags);}
-		bool hasCustomFlag(PlayerCustomFlags value) const {return group && group->hasCustomFlag(value);}
+		bool hasCustomFlag(PlayerCustomFlags value) const {return group != NULL && group->hasCustomFlag(value);}
 
 		void addBlessing(int16_t blessing) {blessings += blessing;}
 		bool hasBlessing(int16_t value) const {return (blessings & ((int16_t)1 << value));}
@@ -236,7 +236,7 @@ class Player : public Creature, public Cylinder
 
 		void setGroupId(int32_t newId);
 		int32_t getGroupId() const {return groupId;}
-		void setGroup(Group* _group);
+		void setGroup(Group* newGroup);
 		Group* getGroup() const {return group;}
 
 		bool isInGhostMode() const {return hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE);}

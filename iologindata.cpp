@@ -356,9 +356,10 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->accountId = accId;
 	player->account = acc.name;
 
-	player->setGUID(result->getDataInt("id"));
 	Group* group = Groups::getInstance()->getGroup(result->getDataInt("group_id"));
 	player->setGroup(group);
+
+	player->setGUID(result->getDataInt("id"));
 	player->premiumDays = acc.premiumDays;
 
 	nameCacheMap[player->getGUID()] = name;
