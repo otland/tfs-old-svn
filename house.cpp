@@ -420,7 +420,7 @@ HouseTransferItem* HouseTransferItem::createHouseTransferItem(House* house)
 	return transferItem;
 }
 
-bool HouseTransferItem::onTradeEvent(TradeEvents_t event, Player* owner)
+bool HouseTransferItem::onTradeEvent(TradeEvents_t event, Player* owner, Player* seller)
 {
 	switch(event)
 	{

@@ -129,7 +129,7 @@ class HouseTransferItem : public Item
 		HouseTransferItem(House* _house) : Item(0) {house = _house;}
 		virtual ~HouseTransferItem() {}
 
-		virtual bool onTradeEvent(TradeEvents_t event, Player* owner);
+		virtual bool onTradeEvent(TradeEvents_t event, Player* owner, Player* seller);
 
 		House* getHouse() {return house;}
 		virtual bool canTransform() const {return false;}
