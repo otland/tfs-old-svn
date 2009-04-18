@@ -879,13 +879,13 @@ int32_t LuaScriptInterface::callFunction(uint32_t nParams)
 {
 	int32_t result = LUA_ERROR, size = lua_gettop(m_luaState), errorIndex = lua_gettop(m_luaState) - nParams;
 	lua_pushcfunction(m_luaState, luaErrorHandler);
-	lua_insert(m_luaState, error_index);
+	lua_insert(m_luaState, errorIndex);
 
 	int32_t ret = lua_pcall(m_luaState, nParams, 1, errorIndex);
 	if(ret != 0)
 		LuaScriptInterface::reportError(NULL, std::string(LuaScriptInterface::popString(m_luaState)));
 	else
-		result = (int32_t)LuaScriptInterface::popNumber(m_luaState);
+		result = (int32_t)LuaScriptInterface::popBoolean(m_luaState);
 
 	lua_remove(m_luaState, errorIndex);
 	if((lua_gettop(m_luaState) + (int32_t)nParams  + 1) != size)
@@ -1030,6 +1030,12 @@ void LuaScriptInterface::popPosition(lua_State* L, Position& position, uint32_t&
 	position.x = getField(L, "x");
 	stackpos = getField(L, "stackpos");
 	lua_pop(L, 1); //table
+}
+
+bool LuaScriptInterface::popBoolean(lua_State* L)
+{
+	lua_pop(L, 1);
+	return (bool)lua_toboolean(L, 0);
 }
 
 int64_t LuaScriptInterface::popNumber(lua_State* L)
