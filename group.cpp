@@ -98,7 +98,7 @@ bool Groups::loadFromXml()
 		if(readXMLInteger(p, "violationAccess", intValue))
 			group->setViolationAccess(intValue);
 
-		if(readXMLInteger(p, "maxDepotItems", intValue))
+		if(readXMLInteger(p, "depotLimit", intValue))
 			group->setDepotLimit(intValue);
 
 		if(readXMLInteger(p, "maxVips", intValue))
