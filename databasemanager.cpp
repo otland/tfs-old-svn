@@ -979,7 +979,15 @@ uint32_t DatabaseManager::updateDatabase()
 		case 12:
 		{
 			DBQuery query;
-			query << "DROP TABLE `groups`;";
+			query << "ALTER TABLE `accounts` DROP KEY `group_id`;";
+			db->executeQuery(query.str());
+
+			query.str("");
+			query << "ALTER TABLE `players` DROP KEY `group_id`;";
+			db->executeQuery(query.str());
+
+			query.str("");
+			query << "DROP TABLE `groups`;";";
 			db->executeQuery(query.str());
 
 			registerDatabaseConfig("db_version", 13);
@@ -1188,7 +1196,7 @@ void DatabaseManager::checkTriggers()
 
 		case DATABASE_ENGINE_SQLITE:
 		{
-			std::string triggerName[28] =
+			std::string triggerName[27] =
 			{
 				"oncreate_guilds",
 				"oncreate_players",
@@ -1197,7 +1205,6 @@ void DatabaseManager::checkTriggers()
 				"ondelete_guilds",
 				"oninsert_players",
 				"onupdate_players",
-				"ondelete_groups",
 				"oninsert_guilds",
 				"onupdate_guilds",
 				"ondelete_houses",
@@ -1227,9 +1234,8 @@ void DatabaseManager::checkTriggers()
 				"CREATE TRIGGER \"ondelete_accounts\" BEFORE DELETE ON \"accounts\" FOR EACH ROW BEGIN DELETE FROM \"players\" WHERE \"account_id\" = OLD.\"id\"; DELETE FROM \"bans\" WHERE \"type\" != 1 AND \"type\" != 2 AND \"value\" = OLD.\"id\"; END;",
 				"CREATE TRIGGER \"ondelete_players\" BEFORE DELETE ON \"players\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'DELETE on table \"players\" violates foreign: \"ownerid\" from table \"guilds\"') WHERE (SELECT \"id\" FROM \"guilds\" WHERE \"ownerid\" = OLD.\"id\") IS NOT NULL; DELETE FROM \"player_viplist\" WHERE \"player_id\" = OLD.\"id\" OR \"vip_id\" = OLD.\"id\"; DELETE FROM \"player_storage\" WHERE \"player_id\" = OLD.\"id\"; DELETE FROM \"player_skills\" WHERE \"player_id\" = OLD.\"id\"; DELETE FROM \"player_items\" WHERE \"player_id\" = OLD.\"id\"; DELETE FROM \"player_depotitems\" WHERE \"player_id\" = OLD.\"id\"; DELETE FROM \"player_spells\" WHERE \"player_id\" = OLD.\"id\"; DELETE FROM \"bans\" WHERE \"type\" = 2 AND \"value\" = OLD.\"id\"; UPDATE \"houses\" SET \"owner\" = 0 WHERE \"owner\" = OLD.\"id\"; END;",
 				"CREATE TRIGGER \"ondelete_guilds\" BEFORE DELETE ON \"guilds\" FOR EACH ROW BEGIN UPDATE \"players\" SET \"guildnick\" = '', \"rank_id\" = 0 WHERE \"rank_id\" IN (SELECT \"id\" FROM \"guild_ranks\" WHERE \"guild_id\" = OLD.\"id\"); DELETE FROM \"guild_ranks\" WHERE \"guild_id\" = OLD.\"id\"; END;",
-				"CREATE TRIGGER \"oninsert_players\" BEFORE INSERT ON \"players\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'INSERT on table \"players\" violates foreign: \"account_id\"') WHERE NEW.\"account_id\" IS NULL OR (SELECT \"id\" FROM \"accounts\" WHERE \"id\" = NEW.\"account_id\") IS NULL; SELECT RAISE(ROLLBACK, 'INSERT on table \"players\" violates foreign: \"group_id\"') WHERE NEW.\"group_id\" IS NULL OR (SELECT \"id\" FROM \"groups\" WHERE \"id\" = NEW.\"group_id\") IS NULL; END;",
-				"CREATE TRIGGER \"onupdate_players\" BEFORE UPDATE ON \"players\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'UPDATE on table \"players\" violates foreign: \"account_id\"') WHERE NEW.\"account_id\" IS NULL OR (SELECT \"id\" FROM \"accounts\" WHERE \"id\" = NEW.\"account_id\") IS NULL; SELECT RAISE(ROLLBACK, 'UPDATE on table \"players\" violates foreign: \"group_id\"') WHERE NEW.\"group_id\" IS NULL OR (SELECT \"id\" FROM \"groups\" WHERE \"id\" = NEW.\"group_id\") IS NULL; END;",
-				"CREATE TRIGGER \"ondelete_groups\" BEFORE DELETE ON \"groups\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'DELETE on table \"groups\" violates foreign: \"group_id\" from table \"players\"') WHERE (SELECT \"id\" FROM \"players\" WHERE \"group_id\" = OLD.\"id\") IS NOT NULL; END;",
+				"CREATE TRIGGER \"oninsert_players\" BEFORE INSERT ON \"players\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'INSERT on table \"players\" violates foreign: \"account_id\"') WHERE NEW.\"account_id\" IS NULL OR (SELECT \"id\" FROM \"accounts\" WHERE \"id\" = NEW.\"account_id\") IS NULL; END;",
+				"CREATE TRIGGER \"onupdate_players\" BEFORE UPDATE ON \"players\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'UPDATE on table \"players\" violates foreign: \"account_id\"') WHERE NEW.\"account_id\" IS NULL OR (SELECT \"id\" FROM \"accounts\" WHERE \"id\" = NEW.\"account_id\") IS NULL; END;",
 				"CREATE TRIGGER \"oninsert_guilds\" BEFORE INSERT ON \"guilds\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'INSERT on table \"guilds\" violates foreign: \"ownerid\"') WHERE NEW.\"ownerid\" IS NULL OR (SELECT \"id\" FROM \"players\" WHERE \"id\" = NEW.\"ownerid\") IS NULL; END;",
 				"CREATE TRIGGER \"onupdate_guilds\" BEFORE UPDATE ON \"guilds\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'UPDATE on table \"guilds\" violates foreign: \"ownerid\"') WHERE NEW.\"ownerid\" IS NULL OR (SELECT \"id\" FROM \"players\" WHERE \"id\" = NEW.\"ownerid\") IS NULL; END;",
 				"CREATE TRIGGER \"ondelete_houses\" BEFORE DELETE ON \"houses\" FOR EACH ROW BEGIN DELETE FROM \"house_lists\" WHERE \"house_id\" = OLD.\"id\"; END;",
