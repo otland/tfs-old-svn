@@ -88,10 +88,10 @@ bool Groups::loadFromXml()
 		}
 
 		if(readXMLInteger64(p, "flags", int64Value))
-			group->setFlags(intValue);
+			group->setFlags(int64Value);
 
 		if(readXMLInteger64(p, "customFlags", int64Value))
-			group->setCustomFlags(intValue);
+			group->setCustomFlags(int64Value);
 
 		if(readXMLInteger(p, "access", intValue))
 			group->setAccess(intValue);
