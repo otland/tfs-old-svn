@@ -4362,7 +4362,7 @@ int32_t LuaScriptInterface::luaGetPlayerStorageValue(lua_State* L)
 		if(player->getStorageValue(key, strValue))
 		{
 			int32_t intValue = atoi(strValue.c_str());
-			if(intValue == -1
+			if(intValue == -1)
 				lua_pushnil(L);
 			else if(intValue || strValue == "0")
 				lua_pushnumber(L, intValue);

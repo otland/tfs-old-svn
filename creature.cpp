@@ -252,7 +252,7 @@ void Creature::onWalk()
 	if(listWalkDir.empty())
 		onWalkComplete();
 
-	if(eventWalk != 0)
+	if(eventWalk)
 	{
 		eventWalk = 0;
 		addEventWalk();
@@ -313,7 +313,7 @@ bool Creature::startAutoWalk(std::list<Direction>& listDir)
 
 void Creature::addEventWalk()
 {
-	if(eventWalk != 0)
+	if(eventWalk)
 		return;
 
 	int64_t ticks = getEventStepTicks();
@@ -324,12 +324,11 @@ void Creature::addEventWalk()
 
 void Creature::stopEventWalk()
 {
-	if(eventWalk == 0)
+	if(!eventWalk)
 		return;
 
 	Scheduler::getScheduler().stopEvent(eventWalk);
 	eventWalk = 0;
-
 	if(!listWalkDir.empty())
 	{
 		listWalkDir.clear();
@@ -349,8 +348,7 @@ void Creature::updateMapCache()
 		{
 			pos.x = myPos.x + x;
 			pos.y = myPos.y + y;
-			tile = g_game.getTile(pos.x, pos.y, myPos.z);
-			if(tile)
+			if((tile = g_game.getTile(pos.x, pos.y, myPos.z)))
 				updateTileCache(tile, pos);
 		}
 	}
@@ -528,8 +526,7 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 		extraStepDuration = 0;
 		if(!teleport)
 		{
-			if(oldPos.z != newPos.z ||
-				(std::abs(newPos.x - oldPos.x) >=1 && std::abs(newPos.y - oldPos.y) >= 1))
+			if(oldPos.z != newPos.z || (std::abs(newPos.x - oldPos.x) >=1 && std::abs(newPos.y - oldPos.y) >= 1))
 				lastStepCost = 2;
 		}
 		else
@@ -1570,7 +1567,7 @@ bool FrozenPathingConditionCall::operator()(const Position& startPos, const Posi
 
 	int32_t testDist = std::max(std::abs(targetPos.x - testPos.x), std::abs(targetPos.y - testPos.y));
 	if(fpp.maxTargetDist == 1)
-		return (testDist > fpp.minTargetDist && testDist < fpp.maxTargetDist);
+		return (testDist >= fpp.minTargetDist && testDist <= fpp.maxTargetDist);
 
 	if(testDist <= fpp.maxTargetDist)
 	{
