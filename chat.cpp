@@ -182,7 +182,7 @@ bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& tex
 			std::stringstream ss;
 
 			formatDate(time(NULL), date);
-			ss << "[" << date << "] " << player->getName << ": " << text << std::endl;
+			ss << "[" << date << "] " << player->getName() << ": " << text << std::endl;
 			m_file->write(ss.str().c_str(), (uint32_t)ss.str().length());
 		}
 
@@ -287,7 +287,7 @@ bool Chat::parseChannelNode(xmlNodePtr p)
 	if(readXMLInteger(p, "access", intValue))
 		access = intValue;
 
-	if(readXMLString(p, "enabled", strValue));
+	if(readXMLString(p, "enabled", strValue))
 		enabled = booleanString(strValue);
 
 	switch(intValue)
