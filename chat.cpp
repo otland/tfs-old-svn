@@ -278,15 +278,15 @@ bool Chat::parseChannelNode(xmlNodePtr p)
 	if(xmlStrcmp(p->name, (const xmlChar*)"channel"))
 		return false;
 
-	if(!readXMLInteger(p, "id", intValue) || !readXMLString(p, "name", strValue))
+	if(!readXMLInteger(p, "id", intValue) || (intValue > CHANNEL_GUILD && intValue != CHANNEL_PARTY && intValue < CHANNEL_PRIVATE))
 	{
-		std::cout << "[Warning - Chat::loadFromXml] Channel id or name not specified." << std::endl;
+		std::cout << "[Warning - Chat::loadFromXml] Invalid or not specified channel id." << std::endl;
 		return false;
 	}
 
-	if(intValue < 1)
+	if(!readXMLString(p, "name", strValue))
 	{
-		std::cout << "[Warning - Chat::loadFromXml] Invalid id specified." << std::endl;
+		std::cout << "[Warning - Chat::loadFromXml] Missing name for channel with id: " << intValue << "." << std::endl;
 		return false;
 	}
 
