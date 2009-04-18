@@ -151,7 +151,7 @@ bool ChatChannel::removeUser(Player* player)
 	return true;
 }
 
-bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& text, uint32_t time /*= 0*/)
+bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& text, uint32_t _time /*= 0*/)
 {
 	if(!m_enabled)
 		return true;
@@ -163,7 +163,7 @@ bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& tex
 
 		formatDate(time(NULL), date);
 		ss << "[" << date << "] " << text << std::endl;
-		m_file.write(ss.str(), ss.str().lenght());
+		m_file->write(ss.str().c_str(), (uint32_t)ss.str().length());
 	}
 
 	if((m_id == CHANNEL_TRADE || m_id == CHANNEL_TRADEROOK) && !player->hasFlag(PlayerFlag_CannotBeMuted))
@@ -178,7 +178,7 @@ bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& tex
 		ChatChannel* channel = g_chat.getChannel((*it).second, m_id);
 		if(channel && channel == this && std::find(m_users.begin(), m_users.end(), (*it).second->getID()) != m_users.end())
 		{
-			(*it).second->sendToChannel(player, type, text, m_id, time);
+			(*it).second->sendToChannel(player, type, text, m_id, _time);
 			if(!success)
 				success = true;
 		}
@@ -194,8 +194,7 @@ bool ChatChannel::configure(xmlNodePtr p)
 	if(readXMLString(p, "logged", strValue) || readXMLString(p, "log", strValue))
 	{
 		m_logged = booleanString(strValue);
-		m_file.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, std::string("chat/") + m_name).c_str(), (g_config.getBool(
-			ConfigManager::TRUNCATE_CHAT_LOGS) ? std::ios::trunc : std::ios::app) | std::ios::out));
+		m_file.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, std::string("chat/") + m_name).c_str(), std::ios::app | std::ios::out));
 	}
 
 	if(readXMLInteger(p, "access", intValue))
