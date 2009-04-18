@@ -107,7 +107,8 @@ m_name(name), m_logged(logged), m_enabled(enabled), m_id(id), m_access(access)
 {
 	if(logged)
 	{
-		m_file.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, (std::string)"chat/" + m_name).c_str(), std::ios::app | std::ios::out));
+		m_file.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, (std::string)"chat/" + m_name + (
+			std::string)".log").c_str(), std::ios::app | std::ios::out));
 		if(!m_file->is_open())
 			m_logged = false;
 	}
@@ -118,28 +119,13 @@ bool ChatChannel::addUser(Player* player)
 	if(std::find(m_users.begin(), m_users.end(), player->getID()) != m_users.end())
 		return false;
 
-	switch(m_id)
+	ChatChannel* channel = g_chat.getChannel(player, m_id);
+	if(!channel)
 	{
-		case CHANNEL_STAFF:
-		case CHANNEL_COUNSELOR:
-		case CHANNEL_RVR:
-		case CHANNEL_TRADE:
-		case CHANNEL_TRADEROOK:
-		{
-			ChatChannel* channel = g_chat.getChannel(player, m_id);
-			if(!channel)
-			{
-				#ifdef __DEBUG_CHAT__
-				std::cout << "ChatChannel::addUser - failed retrieving channel." << std::endl;
-				#endif
-				return false;
-			}
-
-			break;
-		}
-
-		default:
-			break;
+		#ifdef __DEBUG_CHAT__
+		std::cout << "ChatChannel::addUser - failed retrieving channel." << std::endl;
+		#endif
+		return false;
 	}
 
 	m_users.push_back(player->getID());
@@ -269,9 +255,9 @@ bool Chat::loadFromXml()
 
 bool Chat::parseChannelNode(xmlNodePtr p)
 {
-	int32_t intValue, id = 0, access = 0;
 	std::string strValue, name;
 	bool logged = false, enabled = true;
+	int32_t intValue, id = 0, access = 0;
 	if(xmlStrcmp(p->name, (const xmlChar*)"channel"))
 		return false;
 
