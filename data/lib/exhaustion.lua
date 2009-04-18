@@ -2,21 +2,23 @@ exhaustion =
 {
 	check = function (cid, storage)
 		local exhaust = getPlayerStorageValue(cid, storage)
-		if (os.time(t) >= exhaust) then
-			return FALSE
-		else
+		if(exhaust ~= nil and exhaust >= os.time(t)) then
 			return TRUE
 		end
+
+		return FALSE
 	end,
 
 	get = function (cid, storage)
 		local exhaust = getPlayerStorageValue(cid, storage)
-		local left = exhaust - os.time(t)
-		if (left >= 0) then
-			return left
-		else
-			return FALSE
+		if(exhaust ~= nil) then
+			local left = exhaust - os.time(t)
+			if(left >= 0) then
+				return left
+			end
 		end
+
+		return FALSE
 	end,
 
 	set = function (cid, storage, time)
@@ -25,11 +27,11 @@ exhaustion =
 
 	make = function (cid, storage, time)
 		local exhaust = exhaustion.get(cid, storage)
-		if (exhaust > 0) then
-			return FALSE
-		else
+		if(not exhaust) then
 			exhaustion.set(cid, storage, time)
 			return TRUE
 		end
+
+		return FALSE
 	end
 }
