@@ -106,7 +106,11 @@ ChatChannel::ChatChannel(uint16_t id, std::string name, bool logged/* = false*/,
 m_name(name), m_logged(logged), m_enabled(enabled), m_id(id), m_access(access)
 {
 	if(logged)
+	{
 		m_file.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, (std::string)"chat/" + m_name).c_str(), std::ios::app | std::ios::out));
+		if(!m_file->is_open())
+			m_logged = false;
+	}
 }
 
 bool ChatChannel::addUser(Player* player)
@@ -485,8 +489,28 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 		}
 	}
 
-	if(channelId != CHANNEL_GUILD || !g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT) || (text[0] != '!' && text[0] != '/'))
+	if(channelId != CHANNEL_GUILD || !g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT)
+		|| (text[0] != '!' && text[0] != '/'))
+	{
+		if(channelId == CHANNEL_GUILD)
+		{
+			switch(player->getGuildLevel())
+			{
+				case GUILDLEVEL_VICE:
+					type = SPEAK_CHANNEL_O;
+					break;
+
+				case GUILDLEVEL_LEADER:
+					type = SPEAK_CHANNEL_R1;
+					break;
+
+				default:
+					break;
+			}
+		}
+
 		return channel->talk(player, type, text);
+	}
 
 	if(!player->getGuildId())
 	{
@@ -500,7 +524,6 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 		return true;
 	}
 
-	bool ret = true;
 	char buffer[350];
 	if(text.substr(1) == "disband")
 	{
@@ -1003,24 +1026,9 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 	else if(text.substr(1, 8) == "commands")
 		player->sendToChannel(player, SPEAK_CHANNEL_W, "Guild commands with parameters: disband, invite[name], leave, kick[name], revoke[name], demote[name], promote[name], passleadership[name], nick[name, nick], setrankname[oldName, newName], setmotd[text] and cleanmotd.", CHANNEL_GUILD);
 	else
-		ret = false;
+		return false;
 
-	if(ret)
-		return true;
-
-	switch(player->getGuildLevel())
-	{
-		case GUILDLEVEL_VICE:
-			return channel->talk(player, SPEAK_CHANNEL_O, text);
-
-		case GUILDLEVEL_LEADER:
-			return channel->talk(player, SPEAK_CHANNEL_R1, text);
-
-		default:
-			break;
-	}
-
-	return channel->talk(player, type, text);
+	return true;
 }
 
 std::string Chat::getChannelName(Player* player, uint16_t channelId)
