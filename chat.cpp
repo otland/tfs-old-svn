@@ -497,12 +497,10 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 			switch(player->getGuildLevel())
 			{
 				case GUILDLEVEL_VICE:
-					type = SPEAK_CHANNEL_O;
-					break;
+					return channel->talk(player, SPEAK_CHANNEL_O, text);
 
 				case GUILDLEVEL_LEADER:
-					type = SPEAK_CHANNEL_R1;
-					break;
+					return channel->talk(player, SPEAK_CHANNEL_R1, text);
 
 				default:
 					break;
