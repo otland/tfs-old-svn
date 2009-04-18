@@ -29,8 +29,8 @@ extern ConfigManager g_config;
 extern Game g_game;
 extern Chat g_chat;
 
-PrivateChatChannel::PrivateChatChannel(uint16_t channelId, std::string channelName):
-ChatChannel(channelId, channelName), m_owner(0) {}
+PrivateChatChannel::PrivateChatChannel(uint16_t id, std::string name, bool logged):
+ChatChannel(id, name, logged), m_owner(0) {}
 
 bool PrivateChatChannel::isInvited(const Player* player)
 {
@@ -100,6 +100,13 @@ void PrivateChatChannel::closeChannel()
 		if(channel && channel == this && std::find(m_users.begin(), m_users.end(), (*it).second->getGUID()) != m_users.end())
 			(*it).second->sendClosePrivate(getId());
 	}
+}
+
+ChatChannel::ChatChannel(uint16_t id, std::string name, bool logged/* = false*/, uint32_t access/* = 0*/, bool enabled/* = true*/):
+m_name(name), m_logged(logged), m_enabled(enabled), m_id(id), m_access(access)
+{
+	if(logged)
+		m_file.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, (std::string)"chat/" + m_name).c_str(), std::ios::app | std::ios::out));
 }
 
 bool ChatChannel::addUser(Player* player)
@@ -187,41 +194,21 @@ bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& tex
 	return success;
 }
 
-bool ChatChannel::configure(xmlNodePtr p)
-{
-	std::string strValue;
-	int32_t intValue;
-	if(readXMLString(p, "logged", strValue) || readXMLString(p, "log", strValue))
-	{
-		m_logged = booleanString(strValue);
-		m_file.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, std::string("chat/") + m_name).c_str(), std::ios::app | std::ios::out));
-	}
-
-	if(readXMLInteger(p, "access", intValue))
-		m_access = intValue;
-
-	if(readXMLString(p, "enabled", strValue));
-		m_enabled = booleanString(strValue);
-
-	return true;
-}
-
-Chat::Chat()
-{
-	if(ChatChannel* newChannel = new PrivateChatChannel(CHANNEL_PRIVATE, "Private Chat Channel"))
-		dummyPrivate = newChannel;
-}
-
 Chat::~Chat()
+{
+	for(GuildChannelMap::iterator it = m_guildChannels.begin(); it != m_guildChannels.end(); ++it)
+		delete it->second;
+
+	m_guildChannels.clear();
+	clear();
+}
+
+void Chat::clear()
 {
 	for(NormalChannelMap::iterator it = m_normalChannels.begin(); it != m_normalChannels.end(); ++it)
 		delete it->second;
 
 	m_normalChannels.clear();
-	for(GuildChannelMap::iterator it = m_guildChannels.begin(); it != m_guildChannels.end(); ++it)
-		delete it->second;
-
-	m_guildChannels.clear();
 	for(PartyChannelMap::iterator it = m_partyChannels.begin(); it != m_partyChannels.end(); ++it)
 		delete it->second;
 
@@ -233,13 +220,10 @@ Chat::~Chat()
 	delete dummyPrivate;
 }
 
-void Chat::reload()
+bool Chat::reload()
 {
-	for(NormalChannelMap::iterator it = m_normalChannels.begin(); it != m_normalChannels.end(); ++it)
-		delete it->second;
-
-	m_normalChannels.clear();
-	loadFromXml();
+	clear();
+	return loadFromXml();
 }
 
 bool Chat::loadFromXml()
@@ -273,32 +257,66 @@ bool Chat::loadFromXml()
 
 bool Chat::parseChannelNode(xmlNodePtr p)
 {
-	int32_t intValue;
-	std::string strValue;
+	int32_t intValue, id = 0, access = 0;
+	std::string strValue, name;
+	bool logged = false, enabled = true;
 	if(xmlStrcmp(p->name, (const xmlChar*)"channel"))
 		return false;
 
-	if(!readXMLInteger(p, "id", intValue) || (intValue > CHANNEL_GUILD && intValue != CHANNEL_PARTY && intValue < CHANNEL_PRIVATE))
+	if(!readXMLInteger(p, "id", intValue) || intValue <= CHANNEL_GUILD)
 	{
 		std::cout << "[Warning - Chat::loadFromXml] Invalid or not specified channel id." << std::endl;
 		return false;
 	}
 
+	id = intValue;
+	if(m_normalChannels.find(id) != m_normalChannels.end())
+	{
+		std::cout << "[Warning - Chat::loadFromXml] Duplicated channel with id: " << id << "." << std::endl;
+		return false;
+	}
+
 	if(!readXMLString(p, "name", strValue))
 	{
-		std::cout << "[Warning - Chat::loadFromXml] Missing name for channel with id: " << intValue << "." << std::endl;
+		std::cout << "[Warning - Chat::loadFromXml] Missing name for channel with id: " << id << "." << std::endl;
 		return false;
 	}
 
-	if(m_normalChannels.find(intValue) != m_normalChannels.end())
+	name = strValue;
+	if(readXMLString(p, "logged", strValue) || readXMLString(p, "log", strValue))
+		logged = booleanString(strValue);
+
+	if(readXMLInteger(p, "access", intValue))
+		access = intValue;
+
+	if(readXMLString(p, "enabled", strValue));
+		enabled = booleanString(strValue);
+
+	switch(intValue)
 	{
-		std::cout << "[Warning - Chat::loadFromXml] Duplicated channel with id " << intValue << "." << std::endl;
-		return false;
-	}
+		case CHANNEL_PARTY:
+		{
+			partyName = name;
+			partyLogged = logged;
+			break;
+		}
 
-	ChatChannel* newChannel = new ChatChannel(intValue, strValue);
-	if(newChannel && newChannel->configure(p))
-		m_normalChannels[intValue] = newChannel;
+		case CHANNEL_PRIVATE:
+		{
+			if(ChatChannel* newChannel = new PrivateChatChannel(CHANNEL_PRIVATE, name, logged))
+				dummyPrivate = newChannel;
+
+			break;
+		}
+
+		default:
+		{
+			if(ChatChannel* newChannel = new ChatChannel(id, name, logged, access, enabled))
+				m_normalChannels[id] = newChannel;
+
+			break;
+		}
+	}
 
 	return true;
 }
@@ -322,7 +340,7 @@ ChatChannel* Chat::createChannel(Player* player, uint16_t channelId)
 		case CHANNEL_PARTY:
 		{
 			ChatChannel* newChannel = NULL;
-			if(player->getParty() && (newChannel = new ChatChannel(channelId, "Party")))
+			if(player->getParty() && (newChannel = new ChatChannel(channelId, partyName)))
 				m_partyChannels[player->getParty()] = newChannel;
 
 			return newChannel;
@@ -340,7 +358,8 @@ ChatChannel* Chat::createChannel(Player* player, uint16_t channelId)
 				if(m_privateChannels.find(i) == m_privateChannels.end())
 				{
 					PrivateChatChannel* newChannel = NULL;
-					if((newChannel = new PrivateChatChannel(i, player->getName() + "'s Channel")))
+					if((newChannel = new PrivateChatChannel(i, player->getName() + "'s Channel",
+						(dummyPrivate && dummyPrivate->isLogged()))))
 					{
 						newChannel->setOwner(player->getGUID());
 						m_privateChannels[i] = newChannel;
@@ -1079,30 +1098,29 @@ ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 
 		switch(channelId)
 		{
-			case CHANNEL_STAFF:
-				if(!player->hasCustomFlag(PlayerCustomFlag_CanSeeStaffChannel))
-					return NULL;
-				break;
-
-			case CHANNEL_COUNSELOR:
-				if(!player->hasCustomFlag(PlayerCustomFlag_CanSeeCounsellorChannel))
-					return NULL;
-				break;
-
 			case CHANNEL_RVR:
+			{
 				if(!player->hasFlag(PlayerFlag_CanAnswerRuleViolations))
 					return NULL;
+
 				break;
+			}
 
 			case CHANNEL_TRADE:
+			{
 				if(!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) && player->getVocationId() == 0)
 					return NULL;
+
 				break;
+			}
 
 			case CHANNEL_TRADEROOK:
+			{
 				if(!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) && player->getVocationId() != 0)
 					return NULL;
+
 				break;
+			}
 		}
 
 		return tmpChannel;

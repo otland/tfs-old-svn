@@ -1048,7 +1048,7 @@ uint64_t Creature::getGainedExperience(Creature* attacker, bool useMultiplier/* 
 		baseExperience *= player->rates[SKILL__LEVEL];
 
 	baseExperience *= g_game.getExperienceStage(player->getLevel());
-	if(!player->hasCustomFlag(PlayerCustomFlag_HasInfiniteStamina))
+	if(!player->hasFlag(PlayerFlag_HasInfiniteStamina))
 	{
 		int64_t totalTime = 0;
 		for(CountMap::const_iterator it = damageMap.begin(); it != damageMap.end(); ++it)

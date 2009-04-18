@@ -31,6 +31,7 @@
 #include "protocolgame.h"
 #include "ioguild.h"
 #include "party.h"
+#include "group.h"
 #include "npc.h"
 
 #include <ctime>
@@ -198,10 +199,10 @@ class Player : public Creature, public Cylinder
 		bool isInvitedToGuild(uint32_t guild_id) const;
 		void resetGuildInformation();
 
-		void setFlags(uint64_t flags) {groupFlags = flags;}
-		bool hasFlag(PlayerFlags value) const {return (groupFlags & ((uint64_t)1 << value));}
-		void setCustomFlags(uint64_t flags) {groupCustomFlags = flags;}
-		bool hasCustomFlag(PlayerCustomFlags value) const {return (groupCustomFlags & ((uint64_t)1 << value));}
+		void setFlags(uint64_t flags) {group->setFlags(flags);}
+		bool hasFlag(PlayerFlags value) const {return group->hasFlag(value);}
+		void setCustomFlags(uint64_t flags) {group->setCustomFlags(flags);}
+		bool hasCustomFlag(PlayerCustomFlags value) const {return group->hasCustomFlag(value);}
 
 		void addBlessing(int16_t blessing) {blessings += blessing;}
 		bool hasBlessing(int16_t value) const {return (blessings & ((int16_t)1 << value));}
@@ -235,10 +236,12 @@ class Player : public Creature, public Cylinder
 
 		void setGroupId(int32_t newId);
 		int32_t getGroupId() const {return groupId;}
+		void setGroup(Group* _group);
+		Group* getGroup() const {return group;}
 
 		bool isInGhostMode() const {return hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE);}
 		bool canSeeGhost(const Creature* creature) const
-			{return (creature->getPlayer() && creature->getPlayer()->getAccessLevel() <= accessLevel);}
+			{return (creature->getPlayer() && creature->getPlayer()->getAccessLevel() <= group->getAccess());}
 
 		void switchSaving() {saving = !saving;}
 		bool isSaving() const {return saving;}
@@ -248,8 +251,8 @@ class Player : public Creature, public Cylinder
 
 		uint32_t getAccount() const {return accountId;}
 		std::string getAccountName() const {return account;}
-		uint16_t getAccessLevel() const {return accessLevel;}
-		uint16_t getViolationAccess() const {return violationAccess;}
+		uint16_t getAccessLevel() const {return group->getAccess();}
+		uint16_t getViolationAccess() const {return group->getViolationAccess();}
 		bool isPremium() const;
 
 		uint32_t getLevel() const {return level;}
@@ -262,7 +265,7 @@ class Player : public Creature, public Cylinder
 		PlayerSex_t getSex() const {return sex;}
 		void setSex(PlayerSex_t);
 
-		uint64_t getStamina() const {return hasCustomFlag(PlayerCustomFlag_HasInfiniteStamina) ? STAMINA_MAX : stamina;}
+		uint64_t getStamina() const {return hasFlag(PlayerFlag_HasInfiniteStamina) ? STAMINA_MAX : stamina;}
 		void setStamina(uint64_t _stamina) {stamina = std::min((uint64_t)STAMINA_MAX, _stamina);}
 		uint32_t getStaminaMinutes() const {return (uint32_t)getStamina() / STAMINA_MULTIPLIER;}
 		void setStaminaMinutes(uint32_t _stamina) {setStamina(_stamina * STAMINA_MULTIPLIER);}
@@ -669,9 +672,7 @@ class Player : public Creature, public Cylinder
 		bool hasLearnedInstantSpell(const std::string& name) const;
 
 		DepotMap depots;
-		uint32_t maxDepotLimit;
 		VIPListSet VIPList;
-		uint32_t maxVipLimit;
 
 		InvitedToGuildsList invitedToGuildsList;
 		ConditionList storedConditionList;
@@ -759,12 +760,7 @@ class Player : public Creature, public Cylinder
 		PartyList invitePartyList;
 
 		int32_t groupId;
-		uint64_t groupFlags;
-		uint64_t groupCustomFlags;
-		uint16_t accessLevel;
-		uint16_t violationAccess;
-		std::string groupName;
-		uint16_t groupOutfit;
+		Group* group;
 
 		bool talkState[13];
 		AccountManager_t accountManager;

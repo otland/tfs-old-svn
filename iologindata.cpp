@@ -18,26 +18,25 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-
 #include "iologindata.h"
-#include <algorithm>
-#include <functional>
-#include "item.h"
+
 #include "configmanager.h"
-#include "tools.h"
-#include "town.h"
-#include "definitions.h"
 #include "game.h"
-#include "vocation.h"
+#include "tools.h"
+
+#include "item.h"
+#include "town.h"
 #include "house.h"
+
+#include "vocation.h"
 #ifdef __LOGIN_SERVER__
 #include "gameservers.h"
 #endif
+
 #include <iostream>
 #include <iomanip>
 
 extern ConfigManager g_config;
-extern Vocations g_vocations;
 extern Game g_game;
 
 #ifndef __GNUC__
@@ -156,9 +155,9 @@ bool IOLoginData::hasFlag(uint32_t accId, PlayerFlags value)
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	const uint32_t group = result->getDataInt("group_id");
+	Group* group = Groups::getInstance()->getGroup(result->getDataInt("group_id"));
 	result->free();
-	return internalHasFlag(group, value);
+	return group && group->hasFlag(value);
 }
 
 bool IOLoginData::hasCustomFlag(uint32_t accId, PlayerCustomFlags value)
@@ -171,9 +170,9 @@ bool IOLoginData::hasCustomFlag(uint32_t accId, PlayerCustomFlags value)
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	const uint32_t group = result->getDataInt("group_id");
+	Group* group = Groups::getInstance()->getGroup(result->getDataInt("group_id"));
 	result->free();
-	return internalHasCustomFlag(group, value);
+	return group && group->hasCustomFlag(value);
 }
 
 bool IOLoginData::accountExists(uint32_t accId)
@@ -321,88 +320,19 @@ void IOLoginData::removePremium(Account account)
 		std::cout << "> ERROR: Failed to save account: " << account.name << "!" << std::endl;
 }
 
-const PlayerGroup* IOLoginData::getPlayerGroup(uint32_t groupId)
-{
-	PlayerGroupMap::const_iterator it = playerGroupMap.find(groupId);
-	if(it != playerGroupMap.end())
-		return it->second;
-
-	Database* db = Database::getInstance();
-	DBResult* result;
-
-	DBQuery query;
-	query << "SELECT `name`, `flags`, `customflags`, `access`, `violationaccess`, `maxdepotitems`, `maxviplist`, `outfit` FROM `groups` WHERE `id` = " << groupId;
-	if(!(result = db->storeQuery(query.str())))
-		return NULL;
-
-	PlayerGroup* group = new PlayerGroup;
-	group->m_name = result->getDataString("name");
-	group->m_flags = result->getDataLong("flags");
-	group->m_customflags = result->getDataLong("customflags");
-	group->m_access = result->getDataInt("access");
-	group->m_violationaccess = result->getDataInt("violationaccess");
-	group->m_maxdepotitems = result->getDataInt("maxdepotitems");
-	group->m_maxviplist = result->getDataInt("maxviplist");
-	group->m_outfit = result->getDataInt("outfit");
-
-	playerGroupMap[groupId] = group;
-	result->free();
-	return group;
-}
-
-const PlayerGroup* IOLoginData::getPlayerGroupByAccount(uint32_t accId)
+const Group* IOLoginData::getPlayerGroupByAccount(uint32_t accId)
 {
 	Database* db = Database::getInstance();
 	DBResult* result;
 
 	DBQuery query;
 	query << "SELECT `group_id` FROM `accounts` WHERE `id` = " << accId;
-	if((result = db->storeQuery(query.str())))
-	{
-		const uint32_t groupId = result->getDataInt("group_id");
-		result->free();
-		return getPlayerGroup(groupId);
-	}
-
-	return NULL;
-}
-
-bool IOLoginData::internalHasFlag(uint32_t groupId, PlayerFlags value)
-{
-	PlayerGroupMap::const_iterator it = playerGroupMap.find(groupId);
-	if(it != playerGroupMap.end())
-		return (0 != (it->second->m_flags & ((uint64_t)1 << value)));
-
-	Database* db = Database::getInstance();
-	DBResult* result;
-
-	DBQuery query;
-	query << "SELECT `flags` FROM `groups` WHERE `id` = " << groupId;
 	if(!(result = db->storeQuery(query.str())))
-		return false;
+		return NULL;
 
-	uint64_t flags = result->getDataLong("flags");
+	Group* group = Groups::getInstance()->getGroup(result->getDataInt("group_id"));
 	result->free();
-	return (0 != (flags & ((uint64_t)1 << value)));
-}
-
-bool IOLoginData::internalHasCustomFlag(uint32_t groupId, PlayerCustomFlags value)
-{
-	PlayerGroupMap::const_iterator it = playerGroupMap.find(groupId);
-	if(it != playerGroupMap.end())
-		return (0 != (it->second->m_customflags & ((uint64_t)1 << value)));
-
-	Database* db = Database::getInstance();
-	DBResult* result;
-
-	DBQuery query;
-	query << "SELECT `customflags` FROM `groups` WHERE `id` = " << groupId;
-	if(!(result = db->storeQuery(query.str())))
-		return false;
-
-	uint64_t flags = result->getDataLong("customflags");
-	result->free();
-	return (0 != (flags & ((uint64_t)1 << value)));
+	return group;
 }
 
 bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLoad /*= false*/)
@@ -427,7 +357,8 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->account = acc.name;
 
 	player->setGUID(result->getDataInt("id"));
-	player->setGroupId(result->getDataInt("group_id"));
+	Group* group = Groups::getInstance()->getGroup(result->getDataInt("group_id"));
+	player->setGroup(group);
 	player->premiumDays = acc.premiumDays;
 
 	nameCacheMap[player->getGUID()] = name;
@@ -502,10 +433,10 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->defaultOutfit.lookLegs = result->getDataInt("looklegs");
 	player->defaultOutfit.lookFeet = result->getDataInt("lookfeet");
 	player->defaultOutfit.lookAddons = result->getDataInt("lookaddons");
-	if(!player->groupOutfit)
+	if(!group || !group->getOutfit())
 		player->defaultOutfit.lookType = result->getDataInt("looktype");
 	else
-		player->defaultOutfit.lookType = player->groupOutfit;
+		player->defaultOutfit.lookType = group->getOutfit();
 
 	player->currentOutfit = player->defaultOutfit;
 	if(g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
@@ -850,7 +781,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 
 	Vocation* tmpVoc = player->vocation;
 	for(uint32_t i = 0; i <= player->promotionLevel; i++)
-		tmpVoc = g_vocations.getVocation(tmpVoc->getFromVocation());
+		tmpVoc = Vocations::getInstance()->getVocation(tmpVoc->getFromVocation());
 
 	query << "`vocation` = " << tmpVoc->getId() << " WHERE `id` = " << player->getGUID();
 	if(!db->executeQuery(query.str()))
@@ -1083,9 +1014,9 @@ bool IOLoginData::hasFlag(std::string name, PlayerFlags value)
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	const uint32_t group = result->getDataInt("group_id");
+	Group* group = Groups::getInstance()->getGroup(result->getDataInt("group_id"));
 	result->free();
-	return internalHasFlag(group, value);
+	return group && group->hasFlag(value);
 }
 
 bool IOLoginData::hasCustomFlag(std::string name, PlayerCustomFlags value)
@@ -1098,9 +1029,9 @@ bool IOLoginData::hasCustomFlag(std::string name, PlayerCustomFlags value)
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	const uint32_t group = result->getDataInt("group_id");
+	Group* group = Groups::getInstance()->getGroup(result->getDataInt("group_id"));
 	result->free();
-	return internalHasCustomFlag(group, value);
+	return group && group->hasCustomFlag(value);
 }
 
 bool IOLoginData::isPremium(uint32_t guid)
@@ -1116,9 +1047,11 @@ bool IOLoginData::isPremium(uint32_t guid)
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	const uint32_t account = result->getDataInt("account_id"), group = result->getDataInt("group_id");
+	Group* group = Groups::getInstance()->getGroup(result->getDataInt("group_id"));
+	const uint32_t account = result->getDataInt("account_id");
+
 	result->free();
-	if(internalHasFlag(group, PlayerFlag_IsAlwaysPremium))
+	if(group && group->hasCustomFlag(PlayerFlag_IsAlwaysPremium))
 		return true;
 
 	query.str("");
@@ -1274,8 +1207,9 @@ bool IOLoginData::getGuidByNameEx(uint32_t& guid, bool &specialVip, std::string&
 		return false;
 
 	guid = result->getDataInt("id");
-	specialVip = internalHasFlag(result->getDataInt("group_id"), PlayerFlag_SpecialVIP);
 	name = result->getDataString("name");
+	if(Group* group = Groups::getInstance()->getGroup(result->getDataInt("group_id")))
+		specialVip = group->hasFlag(PlayerFlag_SpecialVIP);
 
 	result->free();
 	return true;
@@ -1325,8 +1259,8 @@ bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName,
 
 	Database* db = Database::getInstance();
 
-	Vocation* vocation = g_vocations.getVocation(vocationId);
-	Vocation* rookVoc = g_vocations.getVocation(0);
+	Vocation* vocation = Vocations::getInstance()->getVocation(vocationId);
+	Vocation* rookVoc = Vocations::getInstance()->getVocation(0);
 	uint16_t healthMax = 150, manaMax = 0, capMax = 400, lookType = 136;
 	if(sex == PLAYERSEX_MALE)
 		lookType = 128;

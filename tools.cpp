@@ -30,7 +30,6 @@
 #include <iomanip>
 
 extern ConfigManager g_config;
-extern Vocations g_vocations;
 
 std::string transformToSHA1(std::string plainText, bool upperCase /*= false*/)
 {
@@ -1304,11 +1303,11 @@ bool parseVocationNode(xmlNodePtr vocationNode, VocationMap& vocationMap, String
 		int32_t vocationId = -1;
 		if(readXMLString(vocationNode, "name", strValue))
 		{
-			vocationId = g_vocations.getVocationId(strValue);
+			vocationId = Vocations::getInstance()->getVocationId(strValue);
 			if(vocationId != -1)
 			{
 				vocationMap[vocationId] = true;
-				int32_t promotedVocation = g_vocations.getPromotedVocation(vocationId);
+				int32_t promotedVocation = Vocations::getInstance()->getPromotedVocation(vocationId);
 				if(promotedVocation != -1)
 					vocationMap[promotedVocation] = true;
 			}
@@ -1320,14 +1319,14 @@ bool parseVocationNode(xmlNodePtr vocationNode, VocationMap& vocationMap, String
 		}
 		else if(readXMLInteger(vocationNode, "id", intValue))
 		{
-			Vocation* vocation = g_vocations.getVocation(intValue);
+			Vocation* vocation = Vocations::getInstance()->getVocation(intValue);
 			if(vocation && vocation->getName() != "")
 			{
 				vocationId = vocation->getId();
 				strValue = vocation->getName();
 
 				vocationMap[vocationId] = true;
-				int32_t promotedVocation = g_vocations.getPromotedVocation(vocationId);
+				int32_t promotedVocation = Vocations::getInstance()->getPromotedVocation(vocationId);
 				if(promotedVocation != -1)
 					vocationMap[promotedVocation] = true;
 			}

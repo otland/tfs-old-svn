@@ -46,7 +46,6 @@
 extern Game g_game;
 extern Monsters g_monsters;
 extern ConfigManager g_config;
-extern Vocations g_vocations;
 extern Spells* g_spells;
 
 enum
@@ -2440,7 +2439,7 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 				value = player->getGroupId();
 				break;
 			case PlayerInfoGroupName:
-				lua_pushstring(L, player->groupName.c_str());
+				lua_pushstring(L, player->getGroup()->getName().c_str());
 				return 1;
 			case PlayerInfoBalance:
 				value = (g_config.getBool(ConfigManager::BANK_SYSTEM) ? player->balance : 0);
@@ -8565,15 +8564,13 @@ int32_t LuaScriptInterface::luaSetPlayerGroupId(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		const PlayerGroup* group = IOLoginData::getInstance()->getPlayerGroup(groupId);
-		if(!group)
+		if(Group* group = Groups::getInstance()->getGroup(groupId))
 		{
-			lua_pushboolean(L, LUA_ERROR);
-			return 1;
+			player->setGroup(group);
+			lua_pushboolean(L, LUA_TRUE);
 		}
-
-		player->setGroupId(groupId);
-		lua_pushboolean(L, LUA_TRUE);
+		else
+			lua_pushboolean(L, LUA_ERROR);
 	}
 	else
 	{
@@ -8794,7 +8791,7 @@ int32_t LuaScriptInterface::luaGetVocationInfo(lua_State* L)
 {
 	//getVocationInfo(id)
 	uint32_t id = popNumber(L);
-	Vocation* voc = g_vocations.getVocation(id);
+	Vocation* voc = Vocations::getInstance()->getVocation(id);
 	if(!voc)
 	{
 		lua_pushboolean(L, LUA_ERROR);
@@ -8814,7 +8811,7 @@ int32_t LuaScriptInterface::luaGetVocationInfo(lua_State* L)
 	setField(L, "attackSpeed", voc->getAttackSpeed());
 	setField(L, "baseSpeed", voc->getBaseSpeed());
 	setField(L, "fromVocation", voc->getFromVocation());
-	setField(L, "promotedVocation", g_vocations.getPromotedVocation(id));
+	setField(L, "promotedVocation", Vocations::getInstance()->getPromotedVocation(id));
 	setField(L, "soul", voc->getSoulMax());
 	setField(L, "soulTicks", voc->getSoulGainTicks());
 	setField(L, "capacity", voc->getCapGain());

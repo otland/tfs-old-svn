@@ -43,6 +43,8 @@
 #include "chat.h"
 #include "server.h"
 #include "quests.h"
+#include "vocation.h"
+#include "group.h"
 #include "monsters.h"
 #ifdef __LOGIN_SERVER__
 #include "gameservers.h"
@@ -60,7 +62,6 @@ extern Npcs g_npcs;
 extern Chat g_chat;
 extern TalkActions* g_talkActions;
 extern Spells* g_spells;
-extern Vocations g_vocations;
 extern MoveEvents* g_moveEvents;
 extern Weapons* g_weapons;
 extern CreatureEvents* g_creatureEvents;
@@ -963,7 +964,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 	const Position& movingCreatureOrigPos, const Position& toPos)
 {
 	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved())
+	if(!player || player->isRemoved() || player->hasFlag(PlayerFlag_CannotMoveCreatures))
 		return false;
 
 	if(!player->canDoAction())
@@ -1142,7 +1143,7 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 	uint16_t spriteId, uint8_t fromStackPos, const Position& toPos, uint8_t count)
 {
 	Player* player = getPlayerByID(playerId);
-	if(!player || player->isRemoved())
+	if(!player || player->isRemoved() || player->hasFlag(PlayerFlag_CannotMoveItems))
 		return false;
 
 	if(!player->canDoAction())
@@ -5332,7 +5333,6 @@ bool Game::reloadHighscores()
 void Game::checkHighscores()
 {
 	reloadHighscores();
-
 	uint32_t tmp = g_config.getNumber(ConfigManager::HIGHSCORES_UPDATETIME) * 60 * 1000;
 	if(tmp <= 0)
 		return;
@@ -5491,8 +5491,11 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 
 		case RELOAD_CHAT:
 		{
-			g_chat.reload();
-			done = true;
+			if(g_chat.reload())
+				done = true;
+			else
+				std::cout << "[Error - Game::reloadInfo] Failed to reload chat." << std::endl;
+
 			break;
 		}
 
@@ -5540,8 +5543,11 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 
 		case RELOAD_GROUPS:
 		{
-			IOLoginData::getInstance()->resetGroups();
-			done = true;
+			if(Groups::getInstance()->reload())
+				done = true;
+			else
+				std::cout << "[Error - Game::reloadInfo] Failed to reload groups." << std::endl;
+
 			break;
 		}
 
@@ -5664,9 +5670,11 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 
 		case RELOAD_VOCATIONS:
 		{
-			//TODO
-			std::cout << "[Notice - Game::reloadInfo] Reload type does not work." << std::endl;
-			done = true;
+			if(Vocations::getInstance()->reload())
+				done = true;
+			else
+				std::cout << "[Notice - Game::reloadInfo] Reload type does not work." << std::endl;
+
 			break;
 		}
 

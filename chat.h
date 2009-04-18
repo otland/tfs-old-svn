@@ -33,17 +33,9 @@ typedef std::list<uint32_t> UsersList;
 class ChatChannel
 {
 	public:
-		ChatChannel(uint16_t channelId, std::string channelName)
-		{
-			m_id = channelId;
-			m_name = channelName;
-			m_logged = false;
-			m_enabled = true;
-			m_access = 0;
-		}
+		ChatChannel(uint16_t id, std::string name, bool logged = false, uint32_t access = 0, bool enabled = true);
 		virtual ~ChatChannel() {}
 
-		bool configure(xmlNodePtr p);
 		const uint16_t getId() {return m_id;}
 		const std::string& getName() {return m_name;}
 
@@ -57,7 +49,7 @@ class ChatChannel
 		bool addUser(Player* player);
 		bool removeUser(Player* player);
 
-		bool talk(Player* player, SpeakClasses type, const std::string& text, uint32_t time = 0);
+		bool talk(Player* player, SpeakClasses type, const std::string& text, uint32_t _time = 0);
 
 	protected:
 		std::string m_name;
@@ -72,8 +64,8 @@ class ChatChannel
 class PrivateChatChannel : public ChatChannel
 {
 	public:
-		PrivateChatChannel(uint16_t channelId, std::string channelName);
-		virtual ~PrivateChatChannel(){}
+		PrivateChatChannel(uint16_t id, std::string name, bool logged);
+		virtual ~PrivateChatChannel() {}
 
 		virtual const uint32_t getOwner() {return m_owner;}
 		void setOwner(uint32_t id) {m_owner = id;}
@@ -98,12 +90,11 @@ typedef std::list<ChatChannel*> ChannelList;
 class Chat
 {
 	public:
-		Chat();
+		Chat(): dummyPrivate(NULL), partyName("Party"), partyLogged(false) {}
 		virtual ~Chat();
 
-		void reload();
+		bool reload();
 		bool loadFromXml();
-		bool parseChannelNode(xmlNodePtr p);
 
 		ChatChannel* createChannel(Player* player, uint16_t channelId);
 		bool deleteChannel(Player* player, uint16_t channelId);
@@ -124,6 +115,9 @@ class Chat
 	private:
 		ChatChannel* dummyPrivate;
 
+		void clear();
+		bool parseChannelNode(xmlNodePtr p);
+
 		typedef std::map<uint16_t, ChatChannel*> NormalChannelMap;
 		NormalChannelMap m_normalChannels;
 
@@ -135,6 +129,9 @@ class Chat
 
 		typedef std::map<uint32_t, ChatChannel*> GuildChannelMap;
 		GuildChannelMap m_guildChannels;
+
+		std::string partyName;
+		bool partyLogged;
 };
 
 #endif

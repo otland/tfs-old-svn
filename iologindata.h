@@ -25,6 +25,7 @@
 
 #include "player.h"
 #include "account.h"
+#include "group.h"
 
 enum DeleteCharacter_t
 {
@@ -35,31 +36,13 @@ enum DeleteCharacter_t
 	DELETE_SUCCESS
 };
 
-class PlayerGroup
-{
-	public:
-		PlayerGroup() {}
-		virtual ~PlayerGroup() {}
-
-		std::string m_name;
-		uint64_t m_flags;
-		uint64_t m_customflags;
-		uint16_t m_access;
-		uint16_t m_violationaccess;
-		uint32_t m_maxdepotitems;
-		uint32_t m_maxviplist;
-		uint16_t m_outfit;
-};
-
 typedef std::pair<int32_t, Item*> itemBlock;
 typedef std::list<itemBlock> ItemBlockList;
 
 class IOLoginData
 {
 	public:
-		IOLoginData(){}
 		virtual ~IOLoginData() {}
-
 		static IOLoginData* getInstance()
 		{
 			static IOLoginData instance;
@@ -90,8 +73,7 @@ class IOLoginData
 		bool savePlayer(Player* player, bool preSave = true);
 		bool updateOnlineStatus(uint32_t guid, bool login);
 
-		const PlayerGroup* getPlayerGroup(uint32_t groupId);
-		const PlayerGroup* getPlayerGroupByAccount(uint32_t accId);
+		const Group* getPlayerGroupByAccount(uint32_t accId);
 		uint32_t getLastIPByName(std::string name);
 
 		bool hasFlag(std::string name, PlayerFlags value);
@@ -116,9 +98,9 @@ class IOLoginData
 		bool updatePremiumDays();
 		bool resetOnlineStatus();
 		bool resetGuildInformation(uint32_t guid);
-		void resetGroups() {playerGroupMap.clear();}
 
 	protected:
+		IOLoginData() {}
 		struct StringCompareCase
 		{
 			bool operator()(const std::string& l, const std::string& r) const
@@ -132,12 +114,6 @@ class IOLoginData
 
 		void loadItems(ItemMap& itemMap, DBResult* result);
 		bool saveItems(const Player* player, const ItemBlockList& itemList, DBInsert& query_insert);
-
-		bool internalHasFlag(uint32_t groupId, PlayerFlags value);
-		bool internalHasCustomFlag(uint32_t groupId, PlayerCustomFlags value);
-
-		typedef std::map<uint32_t, PlayerGroup*> PlayerGroupMap;
-		PlayerGroupMap playerGroupMap;
 
 		typedef std::map<uint32_t, std::string> NameCacheMap;
 		NameCacheMap nameCacheMap;

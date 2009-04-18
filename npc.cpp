@@ -41,7 +41,6 @@
 extern ConfigManager g_config;
 extern Game g_game;
 extern Spells* g_spells;
-extern Vocations g_vocations;
 
 AutoList<Npc> Npc::listNpc;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -2018,7 +2017,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			{
 				Vocation* tmpVoc = player->vocation;
 				for(uint32_t i = 0; i <= player->promotionLevel; i++)
-					tmpVoc = g_vocations.getVocation(tmpVoc->getFromVocation());
+					tmpVoc = Vocations::getInstance()->getVocation(tmpVoc->getFromVocation());
 
 				if(tmpVoc->getId() != 2)
 					continue;
@@ -2030,7 +2029,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			{
 				Vocation* tmpVoc = player->vocation;
 				for(uint32_t i = 0; i <= player->promotionLevel; i++)
-					tmpVoc = g_vocations.getVocation(tmpVoc->getFromVocation());
+					tmpVoc = Vocations::getInstance()->getVocation(tmpVoc->getFromVocation());
 
 				if(tmpVoc->getId() != 4)
 					continue;
@@ -2042,7 +2041,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			{
 				Vocation* tmpVoc = player->vocation;
 				for(uint32_t i = 0; i <= player->promotionLevel; i++)
-					tmpVoc = g_vocations.getVocation(tmpVoc->getFromVocation());
+					tmpVoc = Vocations::getInstance()->getVocation(tmpVoc->getFromVocation());
 
 				if(tmpVoc->getId() != 3)
 					continue;
@@ -2054,7 +2053,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			{
 				Vocation* tmpVoc = player->vocation;
 				for(uint32_t i = 0; i <= player->promotionLevel; i++)
-					tmpVoc = g_vocations.getVocation(tmpVoc->getFromVocation());
+					tmpVoc = Vocations::getInstance()->getVocation(tmpVoc->getFromVocation());
 
 				if(tmpVoc->getId() != 1)
 					continue;

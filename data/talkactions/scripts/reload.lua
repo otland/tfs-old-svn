@@ -1,5 +1,6 @@
 local reloadInfo = {
 	{RELOAD_ACTIONS, "actions", "action"},
+	{RELOAD_CHAT, "chat", "channels"},
 	{RELOAD_CONFIG, "config", "configuration"},
 	{RELOAD_CREATUREEVENTS, "creatureevents", "creature events", "creaturescripts", "creature scripts"},
 	{RELOAD_GAMESERVERS, "gameservers", "game servers", "servers"},

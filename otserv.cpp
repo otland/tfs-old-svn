@@ -90,7 +90,6 @@ Game g_game;
 Chat g_chat;
 Monsters g_monsters;
 Npcs g_npcs;
-Vocations g_vocations;
 #if defined(WIN32) && not defined(__CONSOLE__)
 TextLogger g_logger;
 NOTIFYICONDATA NID;
@@ -596,7 +595,7 @@ ServiceManager* services)
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading vocations");
 	#endif
-	if(!g_vocations.loadFromXml())
+	if(!Vocations::getInstance()->loadFromXml())
 		startupErrorMessage("Unable to load vocations!");
 
 	std::cout << ">> Loading script systems" << std::endl;

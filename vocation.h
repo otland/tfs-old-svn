@@ -20,7 +20,7 @@
 
 #ifndef __OTSERV_VOCATION_H__
 #define __OTSERV_VOCATION_H__
-#include "item.h"
+#include "otsystem.h"
 #include "enums.h"
 
 class Vocation
@@ -28,71 +28,136 @@ class Vocation
 	public:
 		virtual ~Vocation();
 
+		Vocation()
+		{
+			needPremium = false;
+			attackable = true;
+			skillMultipliers[6] = 1.1f;
+			manaMultiplier = 4.0;
+			soulMax = 100;
+			soulGainTicks = 120;
+			baseSpeed = 220;
+			attackSpeed = 1500;
+			name = description = "";
+			lessLoss = fromVocation = 0;
+			gainHealthAmount = gainManaAmount = 1;
+			skillMultipliers[0] = skillMultipliers[5] = 1.5f;
+			gainHealth = gainMana = gainCap = 5;
+			gainHealthTicks = gainManaTicks = 6;
+			meleeMultiplier = distanceMultiplier = magicMultiplier = defenseMultiplier = armorMultiplier = 1.0;
+			skillMultipliers[1] = skillMultipliers[2] = skillMultipliers[3] = skillMultipliers[4] = 2.0f;
+			memset(absorbPercent, 0, sizeof(absorbPercent));
+		}
+		Vocation(uint32_t _id): id(_id)
+		{
+			needPremium = false;
+			attackable = true;
+			skillMultipliers[6] = 1.1f;
+			manaMultiplier = 4.0;
+			soulMax = 100;
+			soulGainTicks = 120;
+			baseSpeed = 220;
+			attackSpeed = 1500;
+			name = description = "";
+			lessLoss = fromVocation = 0;
+			gainHealthAmount = gainManaAmount = 1;
+			skillMultipliers[0] = skillMultipliers[5] = 1.5f;
+			gainHealth = gainMana = gainCap = 5;
+			gainHealthTicks = gainManaTicks = 6;
+			meleeMultiplier = distanceMultiplier = magicMultiplier = defenseMultiplier = armorMultiplier = 1.0;
+			skillMultipliers[1] = skillMultipliers[2] = skillMultipliers[3] = skillMultipliers[4] = 2.0f;
+			memset(absorbPercent, 0, sizeof(absorbPercent));
+		}
+
 		uint32_t getId() const {return id;}
+		void setId(int32_t v) {id = v;}
+
 		const std::string& getName() const {return name;}
+		void setName(const std::string& v) {name = v;}
 		const std::string& getDescription() const {return description;}
+		void setDescription(const std::string& v) {description = v;}
 
-		int16_t getAbsorbPercent(CombatType_t combat) const {return absorbPercent[combat];}
-		uint32_t getReqSkillTries(int32_t skill, int32_t level);
-		uint64_t getReqMana(uint32_t magLevel);
+		uint32_t getHealthGain() const {return gainHealth;}
+		void setGainHealth(uint32_t v) {gainHealth = v;}
 
-		uint32_t getHealthGain() const {return gainHP;}
 		uint32_t getHealthGainTicks() const {return gainHealthTicks;}
-		uint32_t getHealthGainAmount() const {return gainHealthAmount;}
-		uint32_t getManaGain() const {return gainMana;}
-		uint32_t getManaGainTicks() const {return gainManaTicks;}
-		uint32_t getManaGainAmount() const {return gainManaAmount;}
+		void setGainHealthTicks(uint32_t v) {gainHealthTicks = v;}
 
-		uint16_t getSoulGainTicks() const {return gainSoulTicks;}
+		uint32_t getHealthGainAmount() const {return gainHealthAmount;}
+		void setGainHealthAmount(uint32_t v) {gainHealthAmount = v;}
+
+		uint32_t getManaGain() const {return gainMana;}
+		void setGainMana(uint32_t v) {gainMana = v;}
+
+		uint32_t getManaGainTicks() const {return gainManaTicks;}
+		void setGainManaTicks(uint32_t v) {gainManaTicks = v;}
+
+		uint32_t getManaGainAmount() const {return gainManaAmount;}
+		void setGainManaAmount(uint32_t v) {gainManaAmount = v;}
+
+		uint16_t getSoulGainTicks() const {return soulGainTicks;}
+		void setSoulGainTicks(uint16_t v) {soulGainTicks = v;}
+
 		uint16_t getSoulMax() const {return std::min((uint32_t)soulMax, (uint32_t)255);}
+		void setSoulMax(uint16_t v) {soulMax = std::min((uint32_t)v, (uint32_t)255);}
+
 		uint32_t getCapGain() const {return gainCap;}
+		void setGainCap(uint32_t v) {gainCap = v;}
 
 		uint32_t getBaseSpeed() const {return baseSpeed;}
+		void setBaseSpeed(uint32_t v) {baseSpeed = v;}
+
 		uint32_t getAttackSpeed() const {return attackSpeed;}
-		int32_t getLessLoss() const {return lessLoss;}
+		void setAttackSpeed(uint32_t v) {attackSpeed = v;}
 
 		uint32_t getFromVocation() const {return fromVocation;}
+		void setFromVocation(int32_t v) {fromVocation = v;}
+
+		int32_t getLessLoss() const {return lessLoss;}
+		void setLessLoss(int32_t v) {lessLoss = v;}
+
 		bool isAttackable() const {return attackable;}
+		void setAttackable(bool v) {attackable = v;}
+
 		bool isPremiumNeeded() const {return needPremium;}
+		void setNeedPremium(bool v) {needPremium = v;}
 
-		float meleeDamageMultipler, distDamageMultipler, defenseMultipler, armorMultipler;
+		int16_t getAbsorbPercent(CombatType_t combat) const {return absorbPercent[combat];}
+		void increaseAbsorbPercent(CombatType_t c, int16_t v) {absorbPercent[c] += v;}
 
-	protected:
-		friend class Vocations;
-		Vocation();
+		float getManaMultiplier() const {return manaMultiplier;}
+		void setManaMultiplier(float v) {manaMultiplier = v;}
+		float getMeleeMultiplier() const {return meleeMultiplier;}
+		void setMeleeMultiplier(float v) {meleeMultiplier = v;}
+		float getDistanceMultiplier() const {return distanceMultiplier;}
+		void setDistanceMultiplier(float v) {distanceMultiplier = v;}
+		float getMagicMultiplier() const {return magicMultiplier;}
+		void setMagicMultiplier(float v) {magicMultiplier = v;}
+		float getDefenseMultiplier() const {return defenseMultiplier;}
+		void setDefenseMultiplier(float v) {defenseMultiplier = v;}
+		float getArmorMultiplier() const {return armorMultiplier;}
+		void setArmorMultiplier(float v) {armorMultiplier = v;}		
 
-		uint32_t id;
-		std::string name;
-		std::string description;
-
-		uint32_t gainHP;
-		uint32_t gainHealthTicks;
-		uint32_t gainHealthAmount;
-		uint32_t gainMana;
-		uint32_t gainManaTicks;
-		uint32_t gainManaAmount;
-
-		uint16_t gainSoulTicks;
-		uint16_t soulMax;
-		uint32_t gainCap;
-
-		uint32_t baseSpeed;
-		uint32_t attackSpeed;
-		int32_t lessLoss;
-
-		uint32_t fromVocation;
-		bool attackable;
-		bool needPremium;
-
-		int16_t absorbPercent[COMBAT_LAST + 1];
+		uint32_t getReqSkillTries(int32_t skill, int32_t level);
+		uint64_t getReqMana(uint32_t magLevel);
+		void setSkillMultiplier(skills_t s, float v) {skillMultipliers[s] = v;}
 		static uint32_t skillBase[SKILL_LAST + 1];
 
-		float skillMultipliers[SKILL_LAST + 1];
-		float manaMultiplier;
-
+	private:
+		int32_t lessLoss;
 		typedef std::map<uint32_t, uint32_t> cacheMap;
 		cacheMap cacheSkill[SKILL_LAST + 1];
 		cacheMap cacheMana;
+
+		bool attackable, needPremium;
+		uint16_t soulGainTicks, soulMax;
+		uint32_t id, fromVocation, gainHealth, gainHealthTicks, gainHealthAmount, gainMana,
+			gainManaTicks, gainManaAmount, gainCap, baseSpeed, attackSpeed;
+		float manaMultiplier, meleeMultiplier, distanceMultiplier, magicMultiplier, defenseMultiplier, armorMultiplier;
+		std::string name, description;
+
+		int16_t absorbPercent[COMBAT_LAST + 1];
+		float skillMultipliers[SKILL_LAST + 1];
 };
 
 typedef std::map<uint32_t, Vocation*> VocationsMap;
@@ -100,9 +165,14 @@ typedef std::map<uint32_t, Vocation*> VocationsMap;
 class Vocations
 {
 	public:
-		Vocations() {}
-		virtual ~Vocations();
+		virtual ~Vocations() {clear();}
+		static Vocations* getInstance()
+		{
+			static Vocations instance;
+			return &instance;
+		}
 
+		bool reload();
 		bool loadFromXml();
 
 		Vocation* getVocation(uint32_t vocId);
@@ -114,8 +184,11 @@ class Vocations
 		VocationsMap::iterator getLastVocation() {return vocationsMap.end();}
 
 	private:
+		static Vocation defVoc;
 		VocationsMap vocationsMap;
-		Vocation defVoc;
+
+		Vocations() {}
+		void clear();
 };
 
 #endif

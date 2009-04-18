@@ -36,7 +36,7 @@ theforgottenserver_SOURCES = account.cpp account.h actions.cpp actions.h \
 	databasemanager.h $(MAYBE_MYSQL) $(MAYBE_SQLITE) $(MAYBE_PGSQL) \
 	$(MAYBE_ODBC) depot.cpp depot.h exception.cpp exception.h \
 	fileloader.cpp fileloader.h game.cpp game.h $(MAYBE_LOGIN) \
-	globalevent.cpp globalevent.h gui.cpp gui.h house.cpp \
+	globalevent.cpp globalevent.h group.cpp group.h gui.cpp gui.h house.cpp \
 	house.h housetile.cpp housetile.h inputbox.cpp inputbox.h ioban.cpp \
 	ioban.h ioguild.cpp ioguild.h iologindata.cpp iologindata.h iomap.cpp \
 	iomapserialize.cpp iomapserialize.h item.cpp item.h items.cpp items.h \

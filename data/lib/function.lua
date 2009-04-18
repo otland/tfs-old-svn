@@ -406,13 +406,7 @@ function isInParty(cid)
 end
 
 function isPrivateChannel(channelId)
-	for i = CHANNEL_GUILD, CHANNEL_HELP do
-		if(channelId == i) then
-			return FALSE
-		end
-	end
-
-	return TRUE
+	return channelId >= 65535 and TRUE or FALSE
 end
 
 function doConvertIntegerToIp(int, mask)

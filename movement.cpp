@@ -33,7 +33,6 @@
 #include "movement.h"
 
 extern Game g_game;
-extern Vocations g_vocations;
 extern MoveEvents* g_moveEvents;
 
 MoveEvents::MoveEvents() :

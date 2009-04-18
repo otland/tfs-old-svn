@@ -44,7 +44,6 @@
 extern ConfigManager g_config;
 extern Game g_game;
 extern Chat g_chat;
-extern Vocations g_vocations;
 extern MoveEvents* g_moveEvents;
 extern Weapons* g_weapons;
 extern CreatureEvents* g_creatureEvents;
@@ -87,10 +86,8 @@ Creature()
 	damageImmunities = 0;
 	conditionImmunities = 0;
 	conditionSuppressions = 0;
-	accessLevel = 0;
-	violationAccess = 0;
-	groupName = "";
 	groupId = 0;
+	group = NULL;
 	lastLoginSaved = 0;
 	lastLogout = 0;
  	lastIP = 0;
@@ -163,19 +160,12 @@ Creature()
 	for(int32_t i = LOSS_FIRST; i <= LOSS_LAST; ++i)
 		lossPercent[i] = 100;
 
-	maxDepotLimit = 1000;
-	maxVipLimit = 20;
-	groupFlags = 0;
-	groupCustomFlags = 0;
-
 	accountManager = MANAGER_NONE;
 	managerNumber2 = 0;
 	managerString2 = "";
 	for(int8_t i = 0; i <= 13; i++)
 		talkState[i] = false;
 
-	groupId = 0;
-	groupOutfit = 0;
  	vocation_id = 0;
  	town = 0;
 
@@ -217,7 +207,7 @@ Player::~Player()
 void Player::setVocation(uint32_t vocId)
 {
 	vocation_id = vocId;
-	vocation = g_vocations.getVocation(vocId);
+	vocation = Vocations::getInstance()->getVocation(vocId);
 	if(Condition* condition = getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT))
 	{
 		condition->setParam(CONDITIONPARAM_HEALTHGAIN, vocation->getHealthGainAmount());
@@ -243,8 +233,8 @@ std::string Player::getDescription(int32_t lookDistance) const
 	if(lookDistance == -1)
 	{
 		s << "yourself.";
-		if(hasCustomFlag(PlayerCustomFlag_DescriptionGroupInsteadVocation))
-			s << " You are " << groupName;
+		if(hasFlag(PlayerFlag_ShowGroupNameInsteadOfVocation))
+			s << " You are " << group->getName();
 		else if(vocation_id != 0)
 			s << " You are " << vocation->getDescription();
 		else
@@ -258,8 +248,8 @@ std::string Player::getDescription(int32_t lookDistance) const
 
 		s << ". " << (sex == PLAYERSEX_FEMALE ? "She" : "He");
 
-		if(hasCustomFlag(PlayerCustomFlag_DescriptionGroupInsteadVocation))
-			s << " is " << groupName;
+		if(hasFlag(PlayerFlag_ShowGroupNameInsteadOfVocation))
+			s << " is " << group->getName();
 		else if(vocation_id != 0)
 			s << " is " << vocation->getDescription();
 		else
@@ -450,8 +440,8 @@ int32_t Player::getArmor() const
 	if(getInventoryItem(SLOT_RING))
 		armor += getInventoryItem(SLOT_RING)->getArmor();
 
-	if(vocation->armorMultipler != 1.0)
-		return int32_t(armor * vocation->armorMultipler);
+	if(vocation->getArmorMultiplier() != 1.0)
+		return int32_t(armor * vocation->getArmorMultiplier());
 
 	return armor;
 }
@@ -517,8 +507,8 @@ int32_t Player::getDefense() const
 		return 0;
 
 	defenseValue += extraDefense;
-	if(vocation->defenseMultipler != 1.0)
-		defenseValue = int32_t(defenseValue * vocation->defenseMultipler);
+	if(vocation->getDefenseMultiplier() != 1.0)
+		defenseValue = int32_t(defenseValue * vocation->getDefenseMultiplier());
 
 	return ((int32_t)std::ceil(((float)(defenseSkill * (defenseValue * 0.015)) + (defenseValue * 0.1)) * defenseFactor));
 }
@@ -951,7 +941,7 @@ bool Player::addDepot(Depot* depot, uint32_t depotId)
 		return false;
 
 	depots[depotId] = std::make_pair(depot, false);
-	depot->setMaxDepotLimit(maxDepotLimit);
+	depot->setMaxDepotLimit(group->getDepotLimit(isPremium()));
 	return true;
 }
 
@@ -1587,7 +1577,7 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 		|| (tradePartner && !Position::areInRange<2,2,0>(tradePartner->getPosition(), getPosition()))))
 		g_game.internalCloseTrade(this);
 
-	if(teleport || oldPos.z != newPos.z)
+	if((teleport || oldPos.z != newPos.z) && !hasCustomFlag(PlayerCustomFlag_CanStairhop))
 	{
 		int32_t ticks = g_config.getNumber(ConfigManager::STAIRHOP_DELAY);
 		if(ticks > 0)
@@ -2424,7 +2414,7 @@ bool Player::addVIP(uint32_t _guid, std::string& name, bool isOnline, bool inter
 		return false;
 	}
 
-	if(VIPList.size() > maxVipLimit)
+	if(VIPList.size() > group->getMaxVips(isPremium()))
 	{
 		if(!internal)
 			sendTextMessage(MSG_STATUS_SMALL, "You cannot add more buddies.");
@@ -3474,7 +3464,8 @@ void Player::onAttacked()
 
 bool Player::checkLoginDelay(uint32_t playerId) const
 {
-	return (OTSYS_TIME() <= (lastLogin + g_config.getNumber(ConfigManager::LOGIN_PROTECTION)) && !hasBeenAttacked(playerId));
+	return (!hasCustomFlag(PlayerCustomFlag_IgnoreLoginDelay) && OTSYS_TIME() <= (lastLogin + g_config.getNumber(
+		ConfigManager::LOGIN_PROTECTION)) && !hasBeenAttacked(playerId));
 }
 
 void Player::onIdleStatus()
@@ -3811,12 +3802,12 @@ void Player::setPromotionLevel(uint32_t pLevel)
 	uint32_t tmpLevel = 0, currentVoc = vocation_id;
 	for(uint32_t i = promotionLevel; i < pLevel; i++)
 	{
-		currentVoc = g_vocations.getPromotedVocation(currentVoc);
+		currentVoc = Vocations::getInstance()->getPromotedVocation(currentVoc);
 		if(currentVoc == 0)
 			break;
 
 		tmpLevel++;
-		Vocation *voc = g_vocations.getVocation(currentVoc);
+		Vocation *voc = Vocations::getInstance()->getVocation(currentVoc);
 		if(voc->isPremiumNeeded() && !isPremium() && g_config.getBool(ConfigManager::PREMIUM_FOR_PROMOTION))
 			continue;
 
@@ -4170,7 +4161,7 @@ void Player::manageAccount(const std::string &text)
 					talkState[11] = true;
 
 					bool firstPart = true;
-					for(VocationsMap::iterator it = g_vocations.getFirstVocation(); it != g_vocations.getLastVocation(); ++it)
+					for(VocationsMap::iterator it = Vocations::getInstance()->getFirstVocation(); it != Vocations::getInstance()->getLastVocation(); ++it)
 					{
 						if(it->first == it->second->getFromVocation() && it->first != 0)
 						{
@@ -4209,10 +4200,10 @@ void Player::manageAccount(const std::string &text)
 			}
 			else if(talkState[11])
 			{
-				for(VocationsMap::iterator it = g_vocations.getFirstVocation(); it != g_vocations.getLastVocation(); ++it)
+				for(VocationsMap::iterator it = Vocations::getInstance()->getFirstVocation(); it != Vocations::getInstance()->getLastVocation(); ++it)
 				{
 					std::string tmp = asLowerCaseString(it->second->getName());
-					if(checkText(text, tmp) && it != g_vocations.getLastVocation() && it->first == it->second->getFromVocation() && it->first != 0)
+					if(checkText(text, tmp) && it != Vocations::getInstance()->getLastVocation() && it->first == it->second->getFromVocation() && it->first != 0)
 					{
 						msg << "So you would like to be " << it->second->getDescription() << "... are you sure?";
 						managerNumber2 = it->first;
@@ -4458,32 +4449,20 @@ void Player::setGuildLevel(GuildLevel_t newGuildLevel)
 
 void Player::setGroupId(int32_t newId)
 {
-	const PlayerGroup* group = IOLoginData::getInstance()->getPlayerGroup(newId);
-	if(group)
+	if(Group* group = Groups::getInstance()->getGroup(newId))
 	{
 		groupId = newId;
-		groupName = asLowerCaseString(group->m_name);
-		groupOutfit = group->m_outfit;
-		setFlags(group->m_flags);
-		setCustomFlags(group->m_customflags);
-		accessLevel = group->m_access;
-		violationAccess = group->m_violationaccess;
-
-		if(group->m_maxdepotitems > 0)
-			maxDepotLimit = group->m_maxdepotitems;
-		else if(isPremium())
-			maxDepotLimit = 2000;
-
-		if(group->m_maxviplist > 0)
-			maxVipLimit = group->m_maxviplist;
-		else if(isPremium())
-			maxVipLimit = 100;
+		group = group;
 	}
-	else if(isPremium())
-	{
-		maxDepotLimit = 2000;
-		maxVipLimit = 100;
-	}
+}
+
+void Player::setGroup(Group* _group)
+{
+	if(!_group)
+		return;
+
+	groupId = group->getId();
+	group = group;
 }
 
 PartyShields_t Player::getPartyShield(const Creature* creature) const

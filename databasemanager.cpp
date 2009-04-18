@@ -976,6 +976,16 @@ uint32_t DatabaseManager::updateDatabase()
 			return 12;
 		}
 
+		case 12:
+		{
+			DBQuery query;
+			query << "DROP TABLE `groups`;";
+			db->executeQuery(query.str());
+
+			registerDatabaseConfig("db_version", 13);
+			return 13;
+		}
+
 		default:
 			break;
 	}

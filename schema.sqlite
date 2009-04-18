@@ -36,25 +36,6 @@ CREATE TABLE "server_reports" (
 	"reads" INTEGER NOT NULL DEFAULT 0
 );
 
-CREATE TABLE "groups" (
-	"id" INTEGER PRIMARY KEY,
-	"name" VARCHAR(255) NOT NULL,
-	"flags" INTEGER NOT NULL DEFAULT 0,
-	"customflags" INTEGER NOT NULL DEFAULT 0,
-	"access" INTEGER NOT NULL,
-	"violationaccess" INTEGER NOT NULL,
-	"maxdepotitems" INTEGER NOT NULL,
-	"maxviplist" INTEGER NOT NULL,
-	"outfit" INTEGER NOT NULL DEFAULT 0
-);
-
-INSERT INTO "groups" VALUES (1, 'Player', 0, 0, 0, 0, 0, 0, 0);
-INSERT INTO "groups" VALUES (2, 'Tutor', 16809984, 524291, 1, 0, 0, 0, 0);
-INSERT INTO "groups" VALUES (3, 'Senior Tutor', 68736352256, 524303, 2, 1, 0, 0, 0);
-INSERT INTO "groups" VALUES (4, 'Gamemaster', 510024081247, 4189375, 3, 3, 6000, 300, 75);
-INSERT INTO "groups" VALUES (5, 'Community Manager', 542239465466, 4189695, 4, 4, 6000, 400, 266);
-INSERT INTO "groups" VALUES (6, 'God', 546534563834, 4194303, 5, 4, 10000, 500, 302);
-
 CREATE TABLE "accounts" (
 	"id" INTEGER PRIMARY KEY NOT NULL,
 	"name" VARCHAR(255) NOT NULL,
@@ -66,8 +47,7 @@ CREATE TABLE "accounts" (
 	"blocked" BOOLEAN NOT NULL DEFAULT 0,
 	"warnings" INTEGER NOT NULL DEFAULT 0,
 	"group_id" INTEGER NOT NULL DEFAULT 1,
-	UNIQUE ("name"),
-	FOREIGN KEY ("group_id") REFERENCES "groups" ("id")
+	UNIQUE ("name")
 );
 
 INSERT INTO "accounts" VALUES (1, '1', '1', 65535, 0, '', '0', 0, 0, 1);
@@ -125,8 +105,7 @@ CREATE TABLE "players" (
 	"deleted" BOOLEAN NOT NULL DEFAULT 0,
 	"description" VARCHAR(255) NOT NULL DEFAULT '',
 	UNIQUE ("name", "deleted"),
-	FOREIGN KEY ("account_id") REFERENCES "accounts" ("id"),
-	FOREIGN KEY ("group_id") REFERENCES "groups" ("id")
+	FOREIGN KEY ("account_id") REFERENCES "accounts" ("id")
 );
 
 INSERT INTO "players" VALUES (1, 'Account Manager', 0, 1, 1, 1, 0, 150, 150, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 50, 50, 7, '', 400, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 201660000, 0, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, '');
@@ -360,10 +339,6 @@ BEGIN
 	SELECT RAISE(ROLLBACK, 'INSERT on table "players" violates foreign: "account_id"')
 	WHERE NEW."account_id" IS NULL
 		OR (SELECT "id" FROM "accounts" WHERE "id" = NEW."account_id") IS NULL;
-
-	SELECT RAISE(ROLLBACK, 'INSERT on table "players" violates foreign: "group_id"')
-	WHERE NEW."group_id" IS NULL
-		OR (SELECT "id" FROM "groups" WHERE "id" = NEW."group_id") IS NULL;
 END;
 
 CREATE TRIGGER "onupdate_players"
@@ -374,19 +349,6 @@ BEGIN
 	SELECT RAISE(ROLLBACK, 'UPDATE on table "players" violates foreign: "account_id"')
 	WHERE NEW."account_id" IS NULL
 		OR (SELECT "id" FROM "accounts" WHERE "id" = NEW."account_id") IS NULL;
-
-	SELECT RAISE(ROLLBACK, 'UPDATE on table "players" violates foreign: "group_id"')
-	WHERE NEW."group_id" IS NULL
-		OR (SELECT "id" FROM "groups" WHERE "id" = NEW."group_id") IS NULL;
-END;
-
-CREATE TRIGGER "ondelete_groups"
-BEFORE DELETE
-ON "groups"
-FOR EACH ROW
-BEGIN
-	SELECT RAISE(ROLLBACK, 'DELETE on table "groups" violates foreign: "group_id" from table "players"')
-	WHERE (SELECT "id" FROM "players" WHERE "group_id" = OLD."id") IS NOT NULL;
 END;
 
 CREATE TRIGGER "oninsert_guilds"

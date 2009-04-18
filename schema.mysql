@@ -22,7 +22,6 @@ DROP TABLE IF EXISTS `guild_invites`;
 DROP TABLE IF EXISTS `global_storage`;
 DROP TABLE IF EXISTS `players`;
 DROP TABLE IF EXISTS `accounts`;
-DROP TABLE IF EXISTS `groups`;
 DROP TABLE IF EXISTS `server_record`;
 DROP TABLE IF EXISTS `server_motd`;
 DROP TABLE IF EXISTS `server_reports`;
@@ -72,27 +71,6 @@ CREATE TABLE `server_reports`
 	KEY (`world_id`), KEY (`reads`)
 ) ENGINE = InnoDB;
 
-CREATE TABLE `groups`
-(
-	`id` INT NOT NULL AUTO_INCREMENT,
-	`name` VARCHAR(255) NOT NULL,
-	`flags` BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	`customflags` BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	`access` INT NOT NULL,
-	`violationaccess` INT NOT NULL,
-	`maxdepotitems` INT NOT NULL,
-	`maxviplist` INT NOT NULL,
-	`outfit` INT NOT NULL DEFAULT 0,
-	PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-
-INSERT INTO `groups` VALUES (1, 'Player', 0, 0, 0, 0, 0, 0, 0);
-INSERT INTO `groups` VALUES (2, 'Tutor', 16809984, 524291, 1, 0, 0, 0, 0);
-INSERT INTO `groups` VALUES (3, 'Senior Tutor', 68736352256, 524303, 2, 1, 0, 0, 0);
-INSERT INTO `groups` VALUES (4, 'Gamemaster', 510024081247, 4189375, 3, 3, 4000, 200, 75);
-INSERT INTO `groups` VALUES (5, 'Community Manager', 542239465466, 4189695, 4, 4, 6000, 300, 266);
-INSERT INTO `groups` VALUES (6, 'God', 546534563834, 4194303, 5, 4, 8000, 400, 302);
-
 CREATE TABLE `accounts`
 (
 	`id` INT NOT NULL AUTO_INCREMENT,
@@ -105,8 +83,7 @@ CREATE TABLE `accounts`
 	`blocked` TINYINT(1) NOT NULL DEFAULT FALSE COMMENT 'internal usage',
 	`warnings` INT NOT NULL DEFAULT 0,
 	`group_id` INT NOT NULL DEFAULT 1,
-	PRIMARY KEY (`id`), UNIQUE (`name`),
-	FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`)
+	PRIMARY KEY (`id`), UNIQUE (`name`)
 ) ENGINE = InnoDB;
 
 INSERT INTO `accounts` VALUES (1, '1', '1', 65535, 0, '', '0', 0, 0, 1);
@@ -167,8 +144,7 @@ CREATE TABLE `players`
 	PRIMARY KEY (`id`), UNIQUE (`name`, `deleted`),
 	KEY (`account_id`), KEY (`group_id`),
 	KEY (`online`), KEY (`deleted`),
-	FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE,
-	FOREIGN KEY (`group_id`) REFERENCES `groups`(`id`)
+	FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 INSERT INTO `players` VALUES (1, 'Account Manager', 0, 1, 1, 1, 0, 150, 150, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 50, 50, 7, '', 400, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 201660000, 0, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, '');

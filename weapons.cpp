@@ -29,7 +29,6 @@
 #include <libxml/parser.h>
 
 extern Game g_game;
-extern Vocations g_vocations;
 extern ConfigManager g_config;
 extern Weapons* g_weapons;
 
@@ -351,8 +350,8 @@ bool Weapon::useFist(Player* player, Creature* target)
 	}
 
 	Vocation* vocation = player->getVocation();
-	if(vocation && vocation->meleeDamageMultipler != 1.0)
-		maxDamage *= vocation->meleeDamageMultipler;
+	if(vocation && vocation->getMeleeMultiplier() != 1.0)
+		maxDamage *= vocation->getMeleeMultiplier();
 
 	maxDamage = std::floor(maxDamage);
 	int32_t damage = -random_range(0, (int32_t)maxDamage, DISTRO_NORMAL);
@@ -648,8 +647,8 @@ int32_t WeaponMelee::getWeaponDamage(const Player* player, const Creature* targe
 	}
 
 	Vocation* vocation = player->getVocation();
-	if(vocation && vocation->meleeDamageMultipler != 1.0)
-		maxValue *= vocation->meleeDamageMultipler;
+	if(vocation && vocation->getMeleeMultiplier() != 1.0)
+		maxValue *= vocation->getMeleeMultiplier();
 
 	int32_t ret = (int32_t)std::floor(maxValue);
 	if(maxDamage)
@@ -671,8 +670,8 @@ int32_t WeaponMelee::getElementDamage(const Player* player, const Item* item) co
 	}
 
 	Vocation* vocation = player->getVocation();
-	if(vocation && vocation->meleeDamageMultipler != 1.0)
-		maxValue *= vocation->meleeDamageMultipler;
+	if(vocation && vocation->getMeleeMultiplier() != 1.0)
+		maxValue *= vocation->getMeleeMultiplier();
 
 	return -random_range(0, (int32_t)std::floor(maxValue), DISTRO_NORMAL);
 }
@@ -957,8 +956,8 @@ int32_t WeaponDistance::getWeaponDamage(const Player* player, const Creature* ta
 	}
 
 	Vocation* vocation = player->getVocation();
-	if(vocation && vocation->distDamageMultipler != 1.0)
-		maxValue *= vocation->distDamageMultipler;
+	if(vocation && vocation->getDistanceMultiplier() != 1.0)
+		maxValue *= vocation->getDistanceMultiplier();
 
 	int32_t ret = (int32_t)std::floor(maxValue);
 	if(maxDamage)
