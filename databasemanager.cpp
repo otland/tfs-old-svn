@@ -987,7 +987,7 @@ uint32_t DatabaseManager::updateDatabase()
 			db->executeQuery(query.str());
 
 			query.str("");
-			query << "DROP TABLE `groups`;";";
+			query << "DROP TABLE `groups`;";
 			db->executeQuery(query.str());
 
 			registerDatabaseConfig("db_version", 13);
