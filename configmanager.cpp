@@ -240,6 +240,7 @@ bool ConfigManager::load()
 	m_confNumber[BLESS_REDUCTION_DECREAMENT] = getGlobalNumber("blessingReductionDecreament", 5);
 	m_confBool[ALLOW_CHANGEADDONS] = getGlobalBool("allowChangeAddons", "yes");
 	m_confNumber[BLESS_REDUCTION] = getGlobalNumber("eachBlessReduction", 8);
+	m_confString[PREFIX_CHANNEL_LOGS] = getGlobalString("prefixChannelLogs", "");
 
 	m_loaded = true;
 	return true;

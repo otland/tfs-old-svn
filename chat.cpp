@@ -107,8 +107,8 @@ m_name(name), m_logged(logged), m_enabled(enabled), m_id(id), m_access(access)
 {
 	if(logged)
 	{
-		m_file.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, (std::string)"chat/" + m_name + (
-			std::string)".log").c_str(), std::ios::app | std::ios::out));
+		m_file.reset(new std::ofstream(getFilePath(FILE_TYPE_LOG, (std::string)"chat/" + g_config.getString(
+			ConfigManager::PREFIX_CHANNEL_LOGS) + m_name + (std::string)".log").c_str(), std::ios::app | std::ios::out));
 		if(!m_file->is_open())
 			m_logged = false;
 	}
@@ -182,7 +182,7 @@ bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& tex
 			std::stringstream ss;
 
 			formatDate(time(NULL), date);
-			ss << "[" << date << "] " << text << std::endl;
+			ss << "[" << date << "] " << player->getName << ": " << text << std::endl;
 			m_file->write(ss.str().c_str(), (uint32_t)ss.str().length());
 		}
 
@@ -1062,6 +1062,9 @@ ChannelList Chat::getChannelList(Player* player)
 
 ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 {
+	#ifdef __DEBUG_CHAT__
+	std::cout << "Chat::getChannel - getChannel id " << channelId << std::endl;
+	#endif
 	if(channelId == CHANNEL_GUILD)
 	{
 		GuildChannelMap::iterator git = m_guildChannels.find(player->getGuildId());
@@ -1087,9 +1090,17 @@ ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 	NormalChannelMap::iterator nit = m_normalChannels.find(channelId);
 	if(nit != m_normalChannels.end())
 	{
+		#ifdef __DEBUG_CHAT__
+		std::cout << "Chat::getChannel - found normal channel" << std::endl;
+		#endif
 		tmpChannel = nit->second;
 		if(!tmpChannel || !tmpChannel->isEnabled() || player->getAccessLevel() < tmpChannel->getAccess())
+		{
+			#ifdef __DEBUG_CHAT__
+			std::cout << "Chat::getChannel - cannot access normal channel" << std::endl;
+			#endif
 			return NULL;
+		}
 
 		switch(channelId)
 		{
@@ -1121,6 +1132,9 @@ ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 				break;
 		}
 
+		#ifdef __DEBUG_CHAT__
+		std::cout << "Chat::getChannel - endpoint return" << std::endl;
+		#endif
 		return tmpChannel;
 	}
 

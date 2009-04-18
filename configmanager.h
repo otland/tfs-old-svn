@@ -68,6 +68,7 @@ class ConfigManager
 			OUT_LOG,
 			ERROR_LOG,
 			DATA_DIRECTORY,
+			PREFIX_CHANNEL_LOGS,
 			LAST_STRING_CONFIG /* this must be the last one */
 		};
 
