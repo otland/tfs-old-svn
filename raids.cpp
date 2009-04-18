@@ -88,7 +88,6 @@ bool Raids::loadFromXml()
 		}
 
 		name = strValue;
-
 		if(readXMLString(raidNode, "file", strValue))
 			file = strValue;
 		else
