@@ -5539,10 +5539,10 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 
 		case RELOAD_GROUPS:
 		{
-			if(Groups::getInstance()->reload())
+			//if(Groups::getInstance()->reload())
 				done = true;
-			else
-				std::cout << "[Error - Game::reloadInfo] Failed to reload groups." << std::endl;
+			//else
+			//	std::cout << "[Error - Game::reloadInfo] Failed to reload groups." << std::endl;
 
 			break;
 		}
@@ -5666,10 +5666,10 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 
 		case RELOAD_VOCATIONS:
 		{
-			if(Vocations::getInstance()->reload())
+			//if(Vocations::getInstance()->reload())
 				done = true;
-			else
-				std::cout << "[Notice - Game::reloadInfo] Reload type does not work." << std::endl;
+			//else
+			//	std::cout << "[Notice - Game::reloadInfo] Reload type does not work." << std::endl;
 
 			break;
 		}
