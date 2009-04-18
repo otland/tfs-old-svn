@@ -16,21 +16,21 @@
 ]
 
 [ ABOUT
-	List with all config values, possible to use in config.lua file.
-	It contains info, possible values, and default value.
+	List with all, possible to use in config.lua file, config values.
+	It contains info, possible and default value.
 ]
 
 [ LIST
 	*ACCOUNT MANAGER
 		accountManager
 			Defines if account manager should be enabled.
-			Disable if you're using website, and don't need such feature.
+			Disable it if you're using website and don't need such feature (it's a part of AAC).
 			Default: yes
 
 		namelockManager
 			Defines if namelock manager should be enabled.
-			If you'll enable this feature, player who has been previously namelocked
-				will be able to login on account manager, and change their names.
+			If you enable this feature, player who has been namelocked
+				will be able to login on account manager and change their names.
 			Default: no
 
 		newPlayerChooseVoc
@@ -66,7 +66,7 @@
 
 	*BANISHMENTS
 		notationsToBan
-			After how much notations received, player will be auto banned.
+			Amount of notations to receive by player to be banned automatically.
 			Default: 3
 
 		warningsToFinalBan
@@ -86,19 +86,19 @@
 			Default: 1 * 24 * 60 * 60 (1 day)
 
 		broadcastBanishments
-			Specify if every banishment should be broadcasted in red color.
+			Specify if every banishment should be broadcasted (red message).
 			Default: yes
 
 		killsToBan
-			After how much unjustified kills player will be banned.
+			Amount of kills to receive by player to be banned automatically.
 			Default: 5
 
 		maxViolationCommentSize
 			Default: 200
 
 		autoBanishUnknownBytes
-			Specify if player should be auto banned, if his client have sent unknown byte to server.
-			It happens in most cases, when player is using unofficial software to play.
+			Specify if player should be banned automatically in case his client send unknown byte to server.
+			It happens mostly when player use unofficial software to play.
 			Default: no
 
 	*BATTLE
@@ -111,40 +111,40 @@
 			Default: yes
 
 		protectionLevel
-			To this level, player are protected,
-				means that they cannot be attacked by players, and noone can attack them.
+			To this level players are protected.
+				It means they cannot be attacked by players neither anyone can attack them.
 			Default: 1 (Means, that there is no level protection!)
 
 		pvpTileIgnoreLevelAndVocationProtection
-			Specify, if tiles with pvp-zone flag, are ignoring protection checks.
-			If its enabled, and players are fighting on pvpTiles:
-				Some of them has lower level than protectionLevel - they're able to fight.
-				Some of them has protected vocation (E.q. none vocation) - they're able to fight.
+			Specify if tiles with pvp-zone flag are ignoring protection checks.
+			If it's enabled and players are fighting on pvpTiles:
+				Some of them have lower level than protectionLevel - they're able to fight.
+				Some of them have protected vocation (E.q. none vocation) - they're able to fight.
 			Default: yes
 
 		killsToRedSkull
-			After how much unjustified kills player will gain red skull.
+			After how many unjustified kills player gains red skull.
 			Default: 3
 
 		pzLocked
-			Time needed to wait, after attacking player.
+			Time needed to wait after attacking a player.
 			In miliseconds.
 			Default: 60 * 1000 (60 seconds)
 
 		criticalHitChance
-			Percent chance, to get a critical hit.
+			Chance in percent to inflict a critical hit.
 			Default: 7
 
 		criticalHitMultiplier
-			If critical hit will occur, strength will be multiplied by this value.
+			If critical hit occurs, its strength will be multiplied by this value.
 			Default: 1
 
 		displayCriticalHitNotify
-			Display text effect when critical hit occur? ("CRITICAL!")
+			Display text effect when critical hit occurs? ("CRITICAL!")
 			Default: no
 
 		removeWeaponAmmunition
-			Should player ammunition be removed? Ex. bolts, should remove their charges when used?
+			Should player ammunition be removed? Ex. bolts - should remove their charges when used?
 			Default: yes
 
 		removeWeaponCharges
@@ -168,23 +168,23 @@
 			Default: no
 
 		experienceByKillingPlayers
-			System, used in global tibia, on pvp-enforced servers.
+			System, used in global Tibia, on pvp-enforced servers.
 			Specify if player should receive experience by killing other player.
 			Experience is only received if _killer_ level is lower than _killed_ level.
 			Default: no
 
 		showHealingDamage
-			Display effect when creature was healed?
+			Display effect with health points gained when creature was healed?
 			Default: no
 
 		fieldOwnershipDuration
-			How long, creature is owner of field item created by him.
+			How long a creature is an owner of a field item created by him.
 			In miliseconds.
 			Default: 5 * 1000
 
 		stopAttackingAtExit
-			If enabled, when player will exit from game, without logout - he'll stop attacking previously attacked creatures.
-			Good feature when you have trainers, and want disable that player can exit, and still skill.
+			If enabled, when player exits the game without logout, he'll stop attacking already attacked creatures.
+			Good feature when you have trainers and want to disable a possibilty to train after closing Tibia by exit.
 			Default: no
 
 		oldConditionAccuracy
@@ -192,7 +192,7 @@
 
 		loginProtectionPeriod
 			The famous Tibia anti-magebomb system
-			Time for which player will be unable to attack other players after LOGGING IN.
+			Amount of time during which player is unable to attack other players after his login.
 			In miliseconds.
 			Default: 10 * 1000 (10 seconds)
 
@@ -211,7 +211,7 @@
 			Default: 0
 
 		ip
-			ip address used by server.
+			ip address of a server.
 			Default: 127.0.0.1
 
 		loginPort
@@ -227,7 +227,7 @@
 			Default: 7171
 
 		loginTries
-			Means, how much tries have specified IP address to login.
+			How much tries specified IP address has to login.
 			E.g. after 10 wrong passwords, IP will be blocked until next server restart.
 			Default: 10
 
@@ -246,22 +246,22 @@
 		motd
 			Message Of The Day.
 			This message in sent to client before displaying characters list.
-			NOTE: Its displayed only once, or if you change this message, it will be displayed one more time.
+			NOTE: Its displayed only once but when you change this message it will be displayed more than once.
 			Default: Welcome to the Forgotten Server!
 
 		displayOnOrOffAtCharlist
-			Should character status be specified when displaying character list? (Online/Offline)
+			Should character status be specified when displaying characters list? (Online/Offline)
 			If enabled, serverName won't be displayed on list.
 			Default: no
 
 		onePlayerOnlinePerAccount
-			If enabled, only one player will be able to login per account.
+			If enabled, only one player per account will be able to login.
 			Default: yes
 
 		allowClones
-			How much clients can login on one character.
-			Mostly used on pvp-enfo servers, where you have few characters,
-				and all players are able to login on one character, e.g 'Master Sorcerer'
+			How many clients can login on one character.
+			Mostly used on pvp-enfo servers where you have a few characters
+				and all of them are able to login on one character, e.g 'Master Sorcerer'
 			0 to disable clones.
 			Default: 0
 
@@ -269,7 +269,7 @@
 			Default: Forgotten
 
 		loginMessage
-			Message displayed when characters have appear in game.
+			Message displayed when characters appear in game.
 			Default: Welcome to the Forgotten Server!
 
 		statusTimeout
