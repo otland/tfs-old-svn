@@ -24,7 +24,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			player[i] = getThingfromPos(playerPosition[i])
 			if player[i].itemid > 0 then
 				if isPlayer(player[i].uid) == TRUE then
-					if getPlayerStorageValue(player[i].uid, 30015) == -1 then
+					if getPlayerStorageValue(player[i].uid, 30015) == nil then
 						if getPlayerLevel(player[i].uid) >= 100 then
 							failed = FALSE
 						end

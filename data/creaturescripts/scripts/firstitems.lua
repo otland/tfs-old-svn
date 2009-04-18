@@ -5,7 +5,7 @@ local firstItems =
 }
 
 function onLogin(cid)
-	if getPlayerStorageValue(cid, 30001) == -1 then
+	if getPlayerStorageValue(cid, 30001) == nil then
 		for i = 1, table.maxn(firstItems) do
 			doPlayerAddItem(cid, firstItems[i], 1)
 		end

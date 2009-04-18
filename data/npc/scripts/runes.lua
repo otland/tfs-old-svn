@@ -92,17 +92,16 @@ shopModule:addSellableItem({'hailstorm rod', 'hailstorm'}, 2183, 7500, 'hailstor
 shopModule:addSellableItem({'springsprout rod', 'springsprout'}, 8912, 9000, 'springsprout rod')
 shopModule:addSellableItem({'underworld rod', 'underworld'}, 8910, 11000, 'underworld rod')
 
+local items = {[1] = 2190, [2] = 2182, [5] = 2190, [6] = 2182}
 function creatureSayCallback(cid, type, msg)
 	if(not npcHandler:isFocused(cid)) then
 		return false
 	end
 
 	local talkUser = NPCHANDLER_CONVBEHAVIOR == CONVERSATION_DEFAULT and 0 or cid
-	local items = {[1] = 2190, [2] = 2182, [5] = 2190, [6] = 2182}
-
 	if(msgcontains(msg, 'first rod') or msgcontains(msg, 'first wand')) then
 		if(isSorcerer(cid) or isDruid(cid)) then
-			if(getPlayerStorageValue(cid, 30002) == -1) then
+			if(getPlayerStorageValue(cid, 30002) == nil) then
 				selfSay('So you ask me for a {' .. getItemNameById(items[getPlayerVocation(cid)]) .. '} to begin your advanture?', cid)
 				talkState[talkUser] = 1
 			else
