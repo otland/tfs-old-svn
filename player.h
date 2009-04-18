@@ -251,8 +251,8 @@ class Player : public Creature, public Cylinder
 
 		uint32_t getAccount() const {return accountId;}
 		std::string getAccountName() const {return account;}
-		uint16_t getAccessLevel() const {return group && group->getAccess();}
-		uint16_t getViolationAccess() const {return group && group->getViolationAccess();}
+		uint16_t getAccessLevel() const {if(!group) return 0; return group->getAccess();}
+		uint16_t getViolationAccess() const {if(!group) return 0; return group->getViolationAccess();}
 		bool isPremium() const;
 
 		uint32_t getLevel() const {return level;}
