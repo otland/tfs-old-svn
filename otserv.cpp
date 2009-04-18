@@ -56,6 +56,7 @@
 
 #include "outfit.h"
 #include "vocation.h"
+#include "group.h"
 
 #include "monsters.h"
 #ifdef __OTSERV_ALLOCATOR__
@@ -590,6 +591,13 @@ ServiceManager* services)
 		#endif
 			startupErrorMessage("Unable to load items (XML)!");
 	}
+
+	std::cout << ">> Loading groups" << std::endl;
+	#ifndef __CONSOLE__
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading groups");
+	#endif
+	if(!Groups::getInstance()->loadFromXml())
+		startupErrorMessage("Unable to load groups!");
 
 	std::cout << ">> Loading vocations" << std::endl;
 	#ifndef __CONSOLE__

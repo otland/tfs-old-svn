@@ -233,7 +233,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 	if(lookDistance == -1)
 	{
 		s << "yourself.";
-		if(hasFlag(PlayerFlag_ShowGroupNameInsteadOfVocation))
+		if(hasFlag(PlayerFlag_ShowGroupNameInsteadOfVocation) && group)
 			s << " You are " << group->getName();
 		else if(vocation_id != 0)
 			s << " You are " << vocation->getDescription();
@@ -248,7 +248,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 
 		s << ". " << (sex == PLAYERSEX_FEMALE ? "She" : "He");
 
-		if(hasFlag(PlayerFlag_ShowGroupNameInsteadOfVocation))
+		if(hasFlag(PlayerFlag_ShowGroupNameInsteadOfVocation) && group)
 			s << " is " << group->getName();
 		else if(vocation_id != 0)
 			s << " is " << vocation->getDescription();
@@ -941,7 +941,7 @@ bool Player::addDepot(Depot* depot, uint32_t depotId)
 		return false;
 
 	depots[depotId] = std::make_pair(depot, false);
-	depot->setMaxDepotLimit(group->getDepotLimit(isPremium()));
+	depot->setMaxDepotLimit((group ? group->getDepotLimit(isPremium()) : 1000));
 	return true;
 }
 
@@ -2414,7 +2414,7 @@ bool Player::addVIP(uint32_t _guid, std::string& name, bool isOnline, bool inter
 		return false;
 	}
 
-	if(VIPList.size() > group->getMaxVips(isPremium()))
+	if(VIPList.size() > (group ? group->getMaxVips(isPremium()) : 20))
 	{
 		if(!internal)
 			sendTextMessage(MSG_STATUS_SMALL, "You cannot add more buddies.");
