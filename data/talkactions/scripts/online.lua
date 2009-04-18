@@ -4,7 +4,7 @@ local config = {
 
 function onSay(cid, words, param)
 	local players = getPlayersOnline()
-	local strings = {}
+	local strings = {""}
 
 	local i = 1
 	local position = 1
