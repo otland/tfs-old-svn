@@ -381,6 +381,7 @@ HouseTransferItem* House::getTransferItem()
 
 	transferContainer.setParent(NULL);
 	transferItem = HouseTransferItem::createHouseTransferItem(this);
+
 	transferContainer.__addThing(NULL, transferItem);
 	return transferItem;
 }
@@ -401,6 +402,7 @@ void House::resetTransferItem()
 	{
 		Item* tmpItem = transferItem;
 		transferItem = NULL;
+
 		transferContainer.setParent(NULL);
 		transferContainer.__removeThing(tmpItem, tmpItem->getItemCount());
 		g_game.FreeThing(tmpItem);
@@ -412,11 +414,12 @@ HouseTransferItem* HouseTransferItem::createHouseTransferItem(House* house)
 	HouseTransferItem* transferItem = new HouseTransferItem(house);
 	transferItem->useThing2();
 	transferItem->setID(ITEM_HOUSE_TRANSFER);
-	transferItem->setSubType(1);
 
 	char buffer[150];
 	sprintf(buffer, "It is a house transfer document for '%s'.", house->getName().c_str());
 	transferItem->setSpecialDescription(buffer);
+
+	transferItem->setSubType(1);
 	return transferItem;
 }
 
