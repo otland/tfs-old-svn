@@ -62,6 +62,7 @@ bool Groups::loadFromXml()
 
 	std::string strValue;
 	int32_t intValue;
+	int64_t int64Value;
 
 	p = root->children;
 	while(p)
@@ -86,10 +87,10 @@ bool Groups::loadFromXml()
 			group->setName(asLowerCaseString(strValue));
 		}
 
-		if(readXMLInteger(p, "flags", intValue))
+		if(readXMLInteger64(p, "flags", intValue))
 			group->setFlags(intValue);
 
-		if(readXMLInteger(p, "customFlags", intValue))
+		if(readXMLInteger64(p, "customFlags", intValue))
 			group->setCustomFlags(intValue);
 
 		if(readXMLInteger(p, "access", intValue))

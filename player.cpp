@@ -4458,11 +4458,11 @@ void Player::setGroupId(int32_t newId)
 
 void Player::setGroup(Group* _group)
 {
-	if(!_group)
-		return;
-
-	group = _group;
-	groupId = group->getId();
+	if(_group)
+	{
+		group = _group;
+		groupId = group->getId();
+	}
 }
 
 PartyShields_t Player::getPartyShield(const Creature* creature) const
