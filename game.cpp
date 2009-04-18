@@ -1853,8 +1853,9 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 
 void Game::addMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/)
 {
+	MoneyMap moneyMap = Item::items.getMoneyMap();
 	int32_t tmp = 0;
-	for(MoneyMap::reverse_iterator it = Item::items.getMoneyMap().rbegin(); it != Item::items.getMoneyMap().rend(); ++it)
+	for(MoneyMap::reverse_iterator it = moneyMap.rbegin(); it != moneyMap.rend(); ++it)
 	{
 		tmp = money / it->second;
 		money -= tmp * it->second;

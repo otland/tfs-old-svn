@@ -138,7 +138,7 @@ ItemType::~ItemType()
 }
 
 Items::Items() :
-items(19999)
+items(11000)
 {
 	//
 }
@@ -151,6 +151,7 @@ Items::~Items()
 void Items::clear()
 {
 	//TODO: clear items?
+	moneyMap.clear();
 }
 
 bool Items::reload()
