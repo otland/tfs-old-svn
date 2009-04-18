@@ -7,7 +7,7 @@ function onSay(cid, words, param)
 	local position = getCreaturePosition(cid)
 	local effect = CONST_ME_MAGIC_RED
 	local ret = func(param, position, FALSE)
-	if(ret <= LUA_NO_ERROR) then
+	if(tonumber(ret) == nil) then
 		effect = CONST_ME_POFF
 		doPlayerSendDefaultCancel(cid, (ret == LUA_ERROR and RETURNVALUE_NOTPOSSIBLE or RETURNVALUE_NOTENOUGHROOM))
 	end

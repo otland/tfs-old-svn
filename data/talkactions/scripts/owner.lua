@@ -15,5 +15,6 @@ function onSay(cid, words, param)
 	if(hid and guid) then
 		setHouseOwner(hid, guid, clean)
 	end
+
 	return TRUE
 end

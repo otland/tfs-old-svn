@@ -14,5 +14,6 @@ function onSay(cid, words, param)
 	else
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You do not have any unjustified frag.")	
 	end
+
 	return TRUE
 end
