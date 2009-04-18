@@ -1,0 +1,691 @@
+[ CONFIG HELP
+	Project Name
+		The Forgotten Server
+
+	Version
+		0.3.4
+
+	Codenamed
+		Crying Damson
+
+	License
+		GNU GPLv3
+
+	Forum
+		http://otland.net/
+]
+
+[ ABOUT
+	List with all config values, possible to use in config.lua file.
+	It contains info, possible values, and default value.
+]
+
+[ LIST
+	*ACCOUNT MANAGER
+		accountManager
+			Defines if account manager should be enabled.
+			Disable if you're using website, and don't need such feature.
+			Default: yes
+
+		namelockManager
+			Defines if namelock manager should be enabled.
+			If you'll enable this feature, player who has been previously namelocked
+				will be able to login on account manager, and change their names.
+			Default: no
+
+		newPlayerChooseVoc
+			Ignore if your account manager is disabled.
+			Default: no
+
+		newPlayerSpawnPosX
+			Ignore if your account manager is disabled.
+			Default: 100
+
+		newPlayerSpawnPosY
+			Ignore if your account manager is disabled.
+			Default: 100
+
+		newPlayerSpawnPosZ
+			Ignore if your account manager is disabled.
+			Default: 7
+
+		newPlayerTownId
+			Ignore if your account manager is disabled.
+			Default: 1
+
+		newPlayerLevel
+			Ignore if your account manager is disabled.
+			Default: 1
+
+		newPlayerMagicLevel
+			Ignore if your account manager is disabled.
+			Default: 0
+
+		generateAccountNumber
+			Default: yes
+
+	*BANISHMENTS
+		notationsToBan
+			After how much notations received, player will be auto banned.
+			Default: 3
+
+		warningsToFinalBan
+			Default: 4
+
+		warningsToDeletion
+			Default: 5
+
+		banLength
+			Ban length in seconds.
+			Default: 7 * 24 * 60 * 60 (7 days)
+
+		finalBanLength
+			Default: 30 * 24 * 60 * 60 (30 days)
+
+		ipBanishmentLength
+			Default: 1 * 24 * 60 * 60 (1 day)
+
+		broadcastBanishments
+			Specify if every banishment should be broadcasted in red color.
+			Default: yes
+
+		killsToBan
+			After how much unjustified kills player will be banned.
+			Default: 5
+
+		maxViolationCommentSize
+			Default: 200
+
+		autoBanishUnknownBytes
+			Specify if player should be auto banned, if his client have sent unknown byte to server.
+			It happens in most cases, when player is using unofficial software to play.
+			Default: no
+
+	*BATTLE
+		worldType
+			Values: pvp, no-pvp, pvp-enforced
+			Default: pvp
+
+		hotkeyAimbotEnabled
+			Should system with attacking via hotkeys and battle window be enabled? (Cipsoft antibot features)
+			Default: yes
+
+		protectionLevel
+			To this level, player are protected,
+				means that they cannot be attacked by players, and noone can attack them.
+			Default: 1 (Means, that there is no level protection!)
+
+		pvpTileIgnoreLevelAndVocationProtection
+			Specify, if tiles with pvp-zone flag, are ignoring protection checks.
+			If its enabled, and players are fighting on pvpTiles:
+				Some of them has lower level than protectionLevel - they're able to fight.
+				Some of them has protected vocation (E.q. none vocation) - they're able to fight.
+			Default: yes
+
+		killsToRedSkull
+			After how much unjustified kills player will gain red skull.
+			Default: 3
+
+		pzLocked
+			Time needed to wait, after attacking player.
+			In miliseconds.
+			Default: 60 * 1000 (60 seconds)
+
+		criticalHitChance
+			Percent chance, to get a critical hit.
+			Default: 7
+
+		criticalHitMultiplier
+			If critical hit will occur, strength will be multiplied by this value.
+			Default: 1
+
+		displayCriticalHitNotify
+			Display text effect when critical hit occur? ("CRITICAL!")
+			Default: no
+
+		removeWeaponAmmunition
+			Should player ammunition be removed? Ex. bolts, should remove their charges when used?
+			Default: yes
+
+		removeWeaponCharges
+			Default: yes
+
+		removeRuneCharges
+			Should rune charges be removed when using? No, means that they will have infinite charges.
+			Default: yes
+
+		timeToDecreaseFrags
+			In miliseconds.
+			Default: 24 * 60 * 60 * 1000 (24 hours)
+
+		whiteSkullTime
+			In miliseconds.
+			Default: 15 * 60 * 1000 (15 minutes)
+
+		noDamageToSameLookfeet
+			If enabled, players with same outfit feet color will be unable to attack themselfes.
+			It works only for melee attacks.
+			Default: no
+
+		experienceByKillingPlayers
+			System, used in global tibia, on pvp-enforced servers.
+			Specify if player should receive experience by killing other player.
+			Experience is only received if _killer_ level is lower than _killed_ level.
+			Default: no
+
+		showHealingDamage
+			Display effect when creature was healed?
+			Default: no
+
+		fieldOwnershipDuration
+			How long, creature is owner of field item created by him.
+			In miliseconds.
+			Default: 5 * 1000
+
+		stopAttackingAtExit
+			If enabled, when player will exit from game, without logout - he'll stop attacking previously attacked creatures.
+			Good feature when you have trainers, and want disable that player can exit, and still skill.
+			Default: no
+
+		oldConditionAccuracy
+			Default: no
+
+		loginProtectionPeriod
+			The famous Tibia anti-magebomb system
+			Time for which player will be unable to attack other players after LOGGING IN.
+			In miliseconds.
+			Default: 10 * 1000 (10 seconds)
+
+		deathLostPercent
+			deathLostPercent set to nil enables manual mode.
+			Default: 10
+
+		stairhopDelay
+			Feature introduced in 8.41 global tibia update.
+			Specify time, which player need to wait after changing floor/teleport etc, before he is able to attack monster.
+			Default: 2 * 1000
+
+	*CONNECTION
+		worldId
+			Change only if you want to use multiworld feature.
+			Default: 0
+
+		ip
+			ip address used by server.
+			Default: 127.0.0.1
+
+		loginPort
+			Default: 7171
+
+		gamePort
+			Default: 7172
+
+		adminPort
+			Default: 7171
+
+		statusPort
+			Default: 7171
+
+		loginTries
+			Means, how much tries have specified IP address to login.
+			E.g. after 10 wrong passwords, IP will be blocked until next server restart.
+			Default: 10
+
+		retryTimeout
+			In miliseconds.
+			Default: 5 * 1000
+
+		loginTimeout
+			In miliseconds.
+			Default: 60 * 1000
+
+		maxPlayers
+			Online players limit.
+			Default: 1000
+
+		motd
+			Message Of The Day.
+			This message in sent to client before displaying characters list.
+			NOTE: Its displayed only once, or if you change this message, it will be displayed one more time.
+			Default: Welcome to the Forgotten Server!
+
+		displayOnOrOffAtCharlist
+			Should character status be specified when displaying character list? (Online/Offline)
+			If enabled, serverName won't be displayed on list.
+			Default: no
+
+		onePlayerOnlinePerAccount
+			If enabled, only one player will be able to login per account.
+			Default: yes
+
+		allowClones
+			How much clients can login on one character.
+			Mostly used on pvp-enfo servers, where you have few characters,
+				and all players are able to login on one character, e.g 'Master Sorcerer'
+			0 to disable clones.
+			Default: 0
+
+		serverName
+			Default: Forgotten
+
+		loginMessage
+			Message displayed when characters have appear in game.
+			Default: Welcome to the Forgotten Server!
+
+		statusTimeout
+			Time, after which specified IP address can request server status.
+			Use lower value, if you use website which is requesting status frequently.
+			In miliseconds.
+			Default: 5 * 60 * 1000 (5 hours)
+
+		replaceKickOnLogin
+			If player is online, and other player tries to connect,
+				should player in game be kicked, and new client be able to connect?
+			Default: yes
+
+		forceSlowConnectionsToDisconnect
+			Clients, with slow connection will be auto disconnected.
+			Default: no
+
+		loginOnlyWithLoginServer
+			Enable only if you're using multi world system. And this is just game server, and you won't enable to get characters list.
+			Default: no
+
+	*DATABASE
+		NOTE: sqlFile is used only by sqlite database, and sqlKeepAlive by mysql database.
+		To disable sqlKeepAlive such as mysqlReadTimeout use 0 value.
+
+		sqlType
+			Database storage engine.
+			Values: mysql, odbc, sqlite, pgsql
+			Default: sqlite
+
+		sqlHost
+			Default: localhost
+
+		sqlPort
+			Default: 3306
+
+		sqlUser
+			Default: root
+
+		sqlPass
+			Default: ""
+
+		sqlDatabase
+			Default: theforgottenserver
+
+		sqlFile
+			Used only by sqlite database.
+			Default: forgottenserver.s3db
+
+		sqlKeepAlive
+			Used only by mysql database.
+			Use 0 to disable.
+			Default: 0
+
+		mysqlReadTimeout
+			Use 0 to disable.
+			Default: 10
+
+		mysqlWriteTimeout
+			Use 0 to disable.
+			Default: 10
+
+		passwordType
+			Defines how password should be stored in database.
+			*WARNING: Using plain passwords is not recommented!*
+			Values: plain, md5, sha1
+			Default: plain
+
+	*DEATHLIST
+		deathListEnabled
+			Should player deaths be storage in database?
+			Default: yes
+
+		maxDeathRecords
+			Player deathlist limit.
+			Ignored if deathList is disabled.
+			Default: 5
+
+	*GUILDS
+		ingameGuildManagement
+			Default: "yes"
+
+		levelToFormGuild
+			Level required to form a guild.
+			Default: 8
+
+		guildNameMinLength
+			Minimum length of guild name.
+			Default: 4
+
+		guildNameMaxLength = 20
+			Maximum length of guild name.
+			Default: 20
+
+	*HIGHSCORES
+		highscoreDisplayPlayers
+			Default: 15
+
+		updateHighscoresAfterMinutes
+			In minutes.
+			Default: 60
+
+	*HOUSES
+		buyableAndSellableHouses
+			Default: yes
+
+		houseNeedPremium
+			Is premium needed for buying house?
+			NOTE: Houses for are cleaned everytime server start,
+				so if option is enabled, and player don't have premium - house will be removed. (If houseRentPeriod != never)
+			Default: yes
+
+		bedsRequirePremium
+			Player need premium account to use beds?
+			Default: yes
+
+		levelToBuyHouse
+			Default: 1
+
+		housesPerAccount
+			How much houses can be bought per account.
+			Default: 0 (Means, no limit!)
+
+		houseRentAsPrice
+			Default: no
+
+		housePriceAsRent
+			Default: no
+
+		housePriceEachSquare
+			House price
+			Default: 1000
+
+		houseRentPeriod
+			Values: yearly, monthly, weekly, daily, never
+			Default: never
+
+	*ITEM USAGE EXHAUSTION
+		timeBetweenActions
+			Default: 200
+
+		timeBetweenExActions
+			Default: 1000
+
+	*MAP
+		mapName
+			Default: forgotten
+
+		mapAuthor
+			Default: Unknown
+
+		randomizeTiles
+			Specify if all items should be randomized while creating.
+			You can configure this in data/XML/randomization.xml file.
+			Default: yes
+
+		useHouseDataStorage
+			New house data storage system. Perform much faster map saving. (60x faster!)
+			Usage may be found at README
+			Default: no
+
+		storeTrash
+			Define if trash items should be stored in memory.
+			It costs more memory, but will perform alot faster cleaning.
+			Otherwise, if you disable this option - at cleaning, all map tiles will be searched for trash. (Which of course will consumpt more CPU usage)
+			Default: yes
+
+		cleanProtectedZones
+			Should protection zone tiles be cleaned at server clean?
+			Default: yes
+
+	*STARTUP
+		defaultPriority
+			Works only on Windows
+			Values: high, higher, realtime
+			Default: high
+
+		optimizeDatabaseAtStartup
+			Should be database optimized at server startup?
+			Recommended - yes!
+			Default: yes
+
+		removePremiumOnInit
+			Should accounts be updated their premium time at start?
+			Default: yes
+
+	*MISCELLANEOUS
+		dataDirectory
+			Default: data/
+
+		maxMessageBuffer
+			Default: 4
+
+		kickIdlePlayerAfterMinutes
+			Default: 15
+
+		allowChangeOutfit
+			Default: yes
+
+		allowChangeColors
+			Default: yes
+
+		allowChangeAddons
+			Default: yes
+
+		disableOutfitsForPrivilegedPlayers
+			Are privileged player able to change their outfits?
+			E.g gamemasters have default outfits, and shouldn't be able to change them.
+			Default: no
+
+		bankSystem
+			Use bank system? E.g if enabled, rent for house will be takken from player bank.
+			Default: yes
+
+		saveGlobalStorage
+			Default: yes
+
+		displaySkillLevelOnAdvance
+			Default: no
+
+		spellNameInsteadOfWords
+			Default: no
+
+		emoteSpells
+			Default: no
+
+		expireReportsAfterReads
+			Default: 1
+
+		promptExceptionTracerErrorBox
+			Works only on Windows, with with precompiled support feature,
+				"exception tracer" (__EXCEPTION_TRACER__ flag)
+			Default: "yes"
+
+		storePlayerDirection
+			Should player look direction be saved and restored while logging?
+			In real tibia, its disabled.
+			Default: no
+
+		playerQueryDeepness
+			Default: 2
+
+		displayGamemastersWithOnlineCommand
+			Should gamemasters being online be displayed in /online command?
+			Default: no
+
+	*PREMIUM-RELATED
+		freePremium
+			Should all players have free premium accounts?
+			NOTE: Its just enabling it in game, without changes in database.
+			Default: no
+
+		premiumForPromotion
+			Player need premium to buy promotion?
+			Default: yes
+
+	*BLESSINGS
+		blessingsOnlyPremium
+			Default: yes
+
+		blessingReductionBase
+			Default: 30
+
+		blessingReductionDecreament
+			Default: 5
+
+		eachBlessReduction
+			NOTE: blessingReduction* regards items/containers loss.
+			eachBlessReduction is how much each bless reduces the experience/magic/skills loss.
+			Default: 8
+
+	*RATES
+		experienceStages
+			If you enable this option, you can edit experience stages in file data/XML/stages.xml
+			Default: no
+
+		rateExperience
+			This option is ignored, if experienceStages are enabled.
+			Default: 5.0
+
+		rateSkill
+			Default: 3.0
+
+		rateMagic
+			Default: 3.0
+
+		rateLoot
+			Default: 2.0
+
+		rateSpawn
+			Default: 1
+
+	*STAMINA
+		NOTE: Stamina is stored in miliseconds, so seconds are multiplied by 1000.
+		rateStaminaHits multiplies every hit done a creature, which are later
+		multiplied by player attack speed.
+		rateStaminaGain is multiplying every second of logged out time, eg:
+		60 * 1000 / 3 = 20 seconds, what gives 1 stamina minute for 3 being logged off.
+		rateStaminaThresholdGain is dividing in case the normal gain (that is
+		 multiplied by rateStaminaGain, btw.) passed above threshold, eg:
+		60 * 1000 / 3 = 20 / 4 = 5 seconds (3 * 4 = 12 minutes for 1 stamina minute).
+		staminaRatingLimit* is in minutes.
+
+		rateStaminaLoss
+			Default: 1
+
+		rateStaminaGain
+			Default: 1000 / 3
+
+		rateStaminaThresholdGain
+			Default: 4
+
+		staminaRatingLimitTop
+			Default: 41 * 60
+
+		staminaRatingLimitBottom
+			Default: 14 * 60
+
+		rateStaminaAboveNormal
+			Default: 1.5
+
+		rateStaminaUnderNormal
+			Default: 0.5
+
+		staminaThresholdOnlyPremium
+			Default: yes
+
+	*PARTY
+		experienceShareRadiusX
+			Default: 30
+
+		experienceShareRadiusY
+			Default: 30
+
+		experienceShareRadiusZ
+			Default: 1
+
+		experienceShareLevelDifference
+			NOTE: float number, highestLevel * value
+			Default: 2 / 3
+
+		extraPartyExperienceLimit
+			Default: 20
+
+		extraPartyExperiencePercent
+			Default: 5
+
+	*GLOBAL SAVE
+		NOTE: globalSaveHour means like 03:00, not that it will save every 3 hours,
+		if you want such a system please check out data/globalevents/globalevents.xml.
+
+		globalSaveEnabled
+			Default: no
+
+		globalSaveHour
+			Default: 8
+
+		shutdownAtGlobalSave
+			Default: yes
+
+		cleanMapAtGlobalSave
+			Default: no
+
+	*SPAWNS
+		deSpawnRange
+			Default: 2
+
+		deSpawnRadius
+			Default: 50
+
+	*SUMMONS
+		maxPlayerSummons
+			How much summons player can have.
+			Default: 2
+
+		teleportAllSummons
+			Shoul summons be teleported to monsters?
+			Default: no
+
+		teleportPlayerSummons
+			Should summons be teleported to player? (E.g. if player will change floor)
+			Default: no
+
+	*STATUS
+		ownerName
+			Default: ""
+
+		ownerEmail
+			Default: @otland.net
+
+		url
+			Default: http://otland.net/
+
+		location
+			Default: Europe
+
+	*LOGS
+		displayPlayersLogging
+			Should message in console be displayed, everytime player log in/out?
+			Default: yes
+
+		adminLogsEnabled
+			Display logs from remote control tool.
+			Default: no
+
+		NOTE: This kind of logging (bottom) does not work in GUI version.
+		For such, please compile the software with __GUI_LOGS__ flag.
+
+		runeFile
+			Default: ""
+
+		outLogName
+			Default: ""
+
+		errorLogName
+			Default: ""
+
+		truncateLogsOnStartup
+			Default: no

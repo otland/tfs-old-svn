@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3.3
+		0.3.4
 
 	Codenamed
 		Crying Damson
@@ -713,6 +713,9 @@
 	[ 0.3.3
 		LuaFunction: doPlayerSetExperienceRate, doPlayerSetMagicRate, use: doPlayerSetRate(... __LEVEL/__MAGLEVEL ...)
 	]
+	[ 0.3.4
+		LuaFunction: getPlayerLookDir(cid), use getCreatureLookDirection(cid)
+	]
 ]
 
 [ Fixed issues with...
@@ -796,5 +799,8 @@
 		Namelocking removing notations (Elf)
 		Possibility to change the ip/port using NG script and login to different world than character in fact "comes from" (Elf)
 		"Decaying items transforming when used" (Elf)
+	]
+	[ 0.3.4
+		//TODO
 	]
 ]
