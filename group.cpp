@@ -87,10 +87,10 @@ bool Groups::loadFromXml()
 			group->setName(asLowerCaseString(strValue));
 		}
 
-		if(readXMLInteger64(p, "flags", intValue))
+		if(readXMLInteger64(p, "flags", int64Value))
 			group->setFlags(intValue);
 
-		if(readXMLInteger64(p, "customFlags", intValue))
+		if(readXMLInteger64(p, "customFlags", int64Value))
 			group->setCustomFlags(intValue);
 
 		if(readXMLInteger(p, "access", intValue))
