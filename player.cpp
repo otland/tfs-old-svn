@@ -4449,10 +4449,10 @@ void Player::setGuildLevel(GuildLevel_t newGuildLevel)
 
 void Player::setGroupId(int32_t newId)
 {
-	if(Group* group = Groups::getInstance()->getGroup(newId))
+	if(Group* _group = Groups::getInstance()->getGroup(newId))
 	{
 		groupId = newId;
-		group = group;
+		group = _group;
 	}
 }
 
@@ -4461,8 +4461,8 @@ void Player::setGroup(Group* _group)
 	if(!_group)
 		return;
 
+	group = _group;
 	groupId = group->getId();
-	group = group;
 }
 
 PartyShields_t Player::getPartyShield(const Creature* creature) const

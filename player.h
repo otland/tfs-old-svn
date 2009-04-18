@@ -199,10 +199,10 @@ class Player : public Creature, public Cylinder
 		bool isInvitedToGuild(uint32_t guild_id) const;
 		void resetGuildInformation();
 
-		void setFlags(uint64_t flags) {group->setFlags(flags);}
-		bool hasFlag(PlayerFlags value) const {return group->hasFlag(value);}
-		void setCustomFlags(uint64_t flags) {group->setCustomFlags(flags);}
-		bool hasCustomFlag(PlayerCustomFlags value) const {return group->hasCustomFlag(value);}
+		void setFlags(uint64_t flags) {if(group) group->setFlags(flags);}
+		bool hasFlag(PlayerFlags value) const {return group && group->hasFlag(value);}
+		void setCustomFlags(uint64_t flags) {if(group) group->setCustomFlags(flags);}
+		bool hasCustomFlag(PlayerCustomFlags value) const {return group && group->hasCustomFlag(value);}
 
 		void addBlessing(int16_t blessing) {blessings += blessing;}
 		bool hasBlessing(int16_t value) const {return (blessings & ((int16_t)1 << value));}
@@ -241,7 +241,7 @@ class Player : public Creature, public Cylinder
 
 		bool isInGhostMode() const {return hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE);}
 		bool canSeeGhost(const Creature* creature) const
-			{return (creature->getPlayer() && creature->getPlayer()->getAccessLevel() <= group->getAccess());}
+			{return (creature->getPlayer() && creature->getPlayer()->getAccessLevel() <= getAccessLevel());}
 
 		void switchSaving() {saving = !saving;}
 		bool isSaving() const {return saving;}
@@ -251,8 +251,8 @@ class Player : public Creature, public Cylinder
 
 		uint32_t getAccount() const {return accountId;}
 		std::string getAccountName() const {return account;}
-		uint16_t getAccessLevel() const {return group->getAccess();}
-		uint16_t getViolationAccess() const {return group->getViolationAccess();}
+		uint16_t getAccessLevel() const {return group && group->getAccess();}
+		uint16_t getViolationAccess() const {return group && group->getViolationAccess();}
 		bool isPremium() const;
 
 		uint32_t getLevel() const {return level;}

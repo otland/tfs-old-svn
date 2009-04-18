@@ -125,6 +125,8 @@ bool Raids::loadFromXml()
 			delete newRaid;
 			std::cout << "[Error - Raids::loadFromXml] failed to load raid " << name << std::endl;
 		}
+
+		raidNode = raidNode->next;
 	}
 
 	xmlFreeDoc(doc);
