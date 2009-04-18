@@ -1,8 +1,7 @@
 exhaustion =
 {
 	check = function (cid, storage)
-		local exhaust = getPlayerStorageValue(cid, storage)
-		if(exhaust ~= nil and exhaust >= os.time(t)) then
+		if(getPlayerStorageValue(cid, storage) >= os.time(t)) then
 			return TRUE
 		end
 
@@ -11,7 +10,7 @@ exhaustion =
 
 	get = function (cid, storage)
 		local exhaust = getPlayerStorageValue(cid, storage)
-		if(exhaust ~= nil) then
+		if(exhaust > 0) then
 			local left = exhaust - os.time(t)
 			if(left >= 0) then
 				return left

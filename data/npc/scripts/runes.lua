@@ -101,7 +101,7 @@ function creatureSayCallback(cid, type, msg)
 	local talkUser = NPCHANDLER_CONVBEHAVIOR == CONVERSATION_DEFAULT and 0 or cid
 	if(msgcontains(msg, 'first rod') or msgcontains(msg, 'first wand')) then
 		if(isSorcerer(cid) or isDruid(cid)) then
-			if(getPlayerStorageValue(cid, 30002) == nil) then
+			if(getPlayerStorageValue(cid, 30002) <= 0) then
 				selfSay('So you ask me for a {' .. getItemNameById(items[getPlayerVocation(cid)]) .. '} to begin your advanture?', cid)
 				talkState[talkUser] = 1
 			else

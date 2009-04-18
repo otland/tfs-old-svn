@@ -4362,15 +4362,13 @@ int32_t LuaScriptInterface::luaGetPlayerStorageValue(lua_State* L)
 		if(player->getStorageValue(key, strValue))
 		{
 			int32_t intValue = atoi(strValue.c_str());
-			if(intValue == -1)
-				lua_pushnil(L);
-			else if(intValue || strValue == "0")
+			if(intValue || strValue == "0")
 				lua_pushnumber(L, intValue);
 			else
 				lua_pushstring(L, strValue.c_str());
 		}
 		else
-			lua_pushnil(L);
+			lua_pushnumber(L, -1);
 	}
 	else
 	{
@@ -4385,7 +4383,6 @@ int32_t LuaScriptInterface::luaSetPlayerStorageValue(lua_State* L)
 {
 	//setPlayerStorageValue(cid, key, value)
 	std::string value;
-
 	bool nil = false;
 	if(lua_isnil(L, -1))
 	{
@@ -7094,15 +7091,13 @@ int32_t LuaScriptInterface::luaGetGlobalStorageValue(lua_State* L)
 	if(env->getGlobalStorageValue(popNumber(L), strValue))
 	{
 		int32_t intValue = atoi(strValue.c_str());
-		if(intValue == -1)
-			lua_pushnil(L);
-		else if(intValue || strValue == "0")
+		if(intValue || strValue == "0")
 			lua_pushnumber(L, intValue);
 		else
 			lua_pushstring(L, strValue.c_str());
 	}
 	else
-		lua_pushnil(L);
+		lua_pushnumber(L, -1);
 
 	return 1;
 }
@@ -7111,7 +7106,6 @@ int32_t LuaScriptInterface::luaSetGlobalStorageValue(lua_State* L)
 {
 	//setGlobalStorageValue(value, key)
 	std::string value;
-
 	bool nil = false;
 	if(lua_isnil(L, -1))
 	{
