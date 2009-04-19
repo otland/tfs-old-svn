@@ -314,6 +314,10 @@ function getItemText(uid)
 	return getItemDescriptions(uid).text
 end
 
+function getItemSpecialDescription(uid)
+	return getItemDescriptions(uid).special
+end
+
 function getItemWriter(uid)
 	return getItemDescriptions(uid).writer
 end

@@ -881,8 +881,7 @@ int32_t LuaScriptInterface::callFunction(uint32_t nParams)
 	lua_pushcfunction(m_luaState, luaErrorHandler);
 	lua_insert(m_luaState, errorIndex);
 
-	int32_t ret = lua_pcall(m_luaState, nParams, 1, errorIndex);
-	if(ret != 0)
+	if(lua_pcall(m_luaState, nParams, 1, errorIndex) != 0)
 		LuaScriptInterface::reportError(NULL, std::string(LuaScriptInterface::popString(m_luaState)));
 	else
 		result = (int32_t)LuaScriptInterface::popBoolean(m_luaState);
@@ -2181,6 +2180,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//getVocationInfo(id)
 	lua_register(m_luaState, "getVocationInfo", LuaScriptInterface::luaGetVocationInfo);
+
+	//getGroupInfo(id)
+	lua_register(m_luaState, "getGroupInfo", LuaScriptInterface::luaGetGroupInfo);
 
 	//isIpBanished(ip[, mask])
 	lua_register(m_luaState, "isIpBanished", LuaScriptInterface::luaIsIpBanished);
@@ -8861,6 +8863,29 @@ int32_t LuaScriptInterface::luaGetVocationInfo(lua_State* L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaGetGroupInfo(lua_State* L)
+{
+	//getGroupInfo(id)
+	uint32_t id = popNumber(L);
+	Group* group = Groups::getInstance()->getGroup(id);
+	if(!group)
+	{
+		lua_pushboolean(L, LUA_FALSE);
+		return 1;
+	}
+
+	lua_newtable(L);
+	setField(L, "id", id);
+	setField(L, "name", group->getName().c_str());
+	setField(L, "access", group->getAccess());
+	setField(L, "ghostaccess", group->getGhostAccess());
+	setField(L, "violationAccess", group->getViolationAccess());
+	setField(L, "depotLimit", group->getDepotLimit());
+	setField(L, "maxVips", group->getMaxVips());
+	setField(L, "outfit", group->getOutfit());
+	return 1;
+}
+
 int32_t LuaScriptInterface::luaGetPlayersOnline(lua_State* L)
 {
 	//getPlayersOnline()
@@ -9380,6 +9405,7 @@ int32_t LuaScriptInterface::luaGetItemDescriptions(lua_State* L)
 	setField(L, "article", item->getArticle().c_str());
 	setField(L, "plural", item->getPluralName().c_str());
 	setField(L, "text", item->getText().c_str());
+	setField(L, "special", item->getSpecialDescription().c_str());
 	setField(L, "writer", item->getWriter().c_str());
 	setField(L, "date", item->getDate());
 	return 1;
