@@ -722,7 +722,7 @@ bool Item::serializeAttr(PropWriteStream& propWriteStream) const
 	if(hasAttribute(ATTR_ITEM_SCRIPTPROTECTED))
 	{
 		propWriteStream.ADD_UCHAR(ATTR_SCRIPTPROTECTED);
-		propWriteStream.ADD_ULONG(isScriptProtected() ? 1 : 0);
+		propWriteStream.ADD_UCHAR(isScriptProtected() ? 1 : 0);
 	}
 
 	return true;

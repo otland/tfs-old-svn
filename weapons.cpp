@@ -1042,7 +1042,7 @@ int32_t WeaponWand::getWeaponDamage(const Player* player, const Creature* target
 	Vocation* vocation = player->getVocation();
 	if(vocation && vocation->getWandMultiplier() != 1.0)
 	{
-        minValue *= vocation->getWandMultiplier();
+		minValue *= vocation->getWandMultiplier();
 		maxValue *= vocation->getWandMultiplier();
 	}
 
