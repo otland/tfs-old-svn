@@ -224,10 +224,9 @@ void startupErrorMessage(const std::string& error)
 	if(error.length() > 0)
 		std::cout << std::endl << "> ERROR: " << error << std::endl;
 
-	#ifdef WIN32
-	#ifndef __CONSOLE__
+	#if defined(WIN32) && not defined(__CONSOLE__)
+	MessageBox(hWnd, error, "Error", MB_OK);
 	system("pause");
-	#endif
 	#else
 	getchar();
 	#endif

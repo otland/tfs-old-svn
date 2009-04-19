@@ -2264,7 +2264,13 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 		for(std::list<Direction>::iterator it = listDir.begin(); it != listDir.end(); ++it)
 			pos = getNextPosition((*it), pos);
 
-		internalCreatureTurn(player, getDirectionTo(player->getPosition(), pos, false));
+		pos = getClosestFreeTile(player, pos, true);
+		if(pos.x == 0 || pos.y == 0)
+		{
+			internalCreatureTurn(player, getDirectionTo(player->getPosition(), pos, false));
+			pos = player->getLastPosition();
+		}
+
 		internalTeleport(player, pos, false);
 		return true;
 	}
