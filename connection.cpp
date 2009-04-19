@@ -247,7 +247,8 @@ void Connection::closeConnection()
 void Connection::releaseConnection()
 {
 	if(m_refCount > 0) //Reschedule it and try again.
-		Scheduler::getScheduler().addEvent(createSchedulerTask(SCHEDULER_MINTICKS, boost::bind(&Connection::releaseConnection, this)));
+		Scheduler::getScheduler().addEvent(createSchedulerTask(SCHEDULER_MINTICKS,
+			boost::bind(&Connection::releaseConnection, this)));
 	else
 		deleteConnection();
 }

@@ -837,21 +837,17 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 			env->setScriptId(m_scriptId, m_scriptInterface);
 			env->setRealPos(player->getPosition());
 
-			uint32_t cid = env->addThing(player);
-			uint32_t itemId = env->addThing(item);
-
 			lua_State* L = m_scriptInterface->getLuaState();
-
 			m_scriptInterface->pushFunction(m_scriptId);
-			lua_pushnumber(L, cid);
-			LuaScriptInterface::pushThing(L, item, itemId);
+
+			lua_pushnumber(L, env->addThing(player));
+			LuaScriptInterface::pushThing(L, item, env->addThing(item));
 			LuaScriptInterface::pushPosition(L, fromPos, fromPos.stackpos);
 
 			Thing* thing = g_game.internalGetThing(player, toPos, toPos.stackpos);
 			if(thing && (thing != item || !extendedUse))
 			{
-				uint32_t thingId = env->addThing(thing);
-				LuaScriptInterface::pushThing(L, thing, thingId);
+				LuaScriptInterface::pushThing(L, thing, env->addThing(thing));
 				LuaScriptInterface::pushPosition(L, toPos, toPos.stackpos);
 			}
 			else
