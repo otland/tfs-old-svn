@@ -1855,13 +1855,13 @@ void Game::addMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/)
 	int32_t tmp = 0;
 	for(MoneyMap::reverse_iterator it = moneyMap.rbegin(); it != moneyMap.rend(); ++it)
 	{
-		tmp = money / it->second;
-		money -= tmp * it->second;
+		tmp = money / it->first;
+		money -= tmp * it->first;
 		if(tmp != 0)
 		{
 			do
 			{
-				Item* remaindItem = Item::CreateItem(it->first, std::min(100, tmp));
+				Item* remaindItem = Item::CreateItem(it->second, std::min(100, tmp));
 				if(internalAddItem(NULL, cylinder, remaindItem, INDEX_WHEREEVER, flags) != RET_NOERROR)
 					internalAddItem(NULL, cylinder->getTile(), remaindItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
 

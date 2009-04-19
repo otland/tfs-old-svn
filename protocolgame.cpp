@@ -1026,11 +1026,12 @@ void ProtocolGame::GetMapDescription(uint16_t x, uint16_t y, uint8_t z,
 
 void ProtocolGame::GetFloorDescription(NetworkMessage_ptr msg, int32_t x, int32_t y, int32_t z, int32_t width, int32_t height, int32_t offset, int32_t& skip)
 {
+	Tile* tile;
 	for(int32_t nx = 0; nx < width; nx++)
 	{
 		for(int32_t ny = 0; ny < height; ny++)
 		{
-			if(Tile* tile = g_game.getTile(x + nx + offset, y + ny + offset, z))
+			if((tile = g_game.getTile(x + nx + offset, y + ny + offset, z)))
 			{
 				if(skip >= 0)
 				{
@@ -1656,47 +1657,47 @@ void ProtocolGame::sendOpenPrivateChannel(const std::string& receiver)
 
 void ProtocolGame::sendCreatureOutfit(const Creature* creature, const Outfit_t& outfit)
 {
-	if(canSee(creature))
+	if(!canSee(creature))
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
 	{
-		NetworkMessage_ptr msg = getOutputBuffer();
-		if(msg)
-		{
-			TRACK_MESSAGE(msg);
-			msg->AddByte(0x8E);
-			msg->AddU32(creature->getID());
-			if(creature->isInGhostMode())
-				AddCreatureInvisible(msg, creature);
-			else
-				AddCreatureOutfit(msg, creature, outfit);
-		}
+		TRACK_MESSAGE(msg);
+		msg->AddByte(0x8E);
+		msg->AddU32(creature->getID());
+		if(creature->isInGhostMode())
+			AddCreatureInvisible(msg, creature);
+		else
+			AddCreatureOutfit(msg, creature, outfit);
 	}
 }
 
 void ProtocolGame::sendCreatureInvisible(const Creature* creature)
 {
-	if(canSee(creature))
+	if(!canSee(creature))
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
 	{
-		NetworkMessage_ptr msg = getOutputBuffer();
-		if(msg)
-		{
-			TRACK_MESSAGE(msg);
-			msg->AddByte(0x8E);
-			msg->AddU32(creature->getID());
-			AddCreatureInvisible(msg, creature);
-		}
+		TRACK_MESSAGE(msg);
+		msg->AddByte(0x8E);
+		msg->AddU32(creature->getID());
+		AddCreatureInvisible(msg, creature);
 	}
 }
 
 void ProtocolGame::sendCreatureLight(const Creature* creature)
 {
-	if(canSee(creature))
+	if(!canSee(creature))
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
 	{
-		NetworkMessage_ptr msg = getOutputBuffer();
-		if(msg)
-		{
-			TRACK_MESSAGE(msg);
-			AddCreatureLight(msg, creature);
-		}
+		TRACK_MESSAGE(msg);
+		AddCreatureLight(msg, creature);
 	}
 }
 
@@ -1712,46 +1713,46 @@ void ProtocolGame::sendWorldLight(const LightInfo& lightInfo)
 
 void ProtocolGame::sendCreatureShield(const Creature* creature)
 {
-	if(canSee(creature))
+	if(!canSee(creature))
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
 	{
-		NetworkMessage_ptr msg = getOutputBuffer();
-		if(msg)
-		{
-			TRACK_MESSAGE(msg);
-			msg->AddByte(0x91);
-			msg->AddU32(creature->getID());
-			msg->AddByte(player->getPartyShield(creature));
-		}
+		TRACK_MESSAGE(msg);
+		msg->AddByte(0x91);
+		msg->AddU32(creature->getID());
+		msg->AddByte(player->getPartyShield(creature));
 	}
 }
 
 void ProtocolGame::sendCreatureSkull(const Creature* creature)
 {
-	if(canSee(creature))
+	if(!canSee(creature))
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
 	{
-		NetworkMessage_ptr msg = getOutputBuffer();
-		if(msg)
-		{
-			TRACK_MESSAGE(msg);
-			msg->AddByte(0x90);
-			msg->AddU32(creature->getID());
-			msg->AddByte(player->getSkullClient(creature));
-		}
+		TRACK_MESSAGE(msg);
+		msg->AddByte(0x90);
+		msg->AddU32(creature->getID());
+		msg->AddByte(player->getSkullClient(creature));
 	}
 }
 
 void ProtocolGame::sendCreatureSquare(const Creature* creature, SquareColor_t color)
 {
-	if(canSee(creature))
+	if(!canSee(creature))
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
 	{
-		NetworkMessage_ptr msg = getOutputBuffer();
-		if(msg)
-		{
-			TRACK_MESSAGE(msg);
-			msg->AddByte(0x86);
-			msg->AddU32(creature->getID());
-			msg->AddByte((uint8_t)color);
-		}
+		TRACK_MESSAGE(msg);
+		msg->AddByte(0x86);
+		msg->AddU32(creature->getID());
+		msg->AddByte((uint8_t)color);
 	}
 }
 
