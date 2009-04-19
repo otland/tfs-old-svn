@@ -2932,7 +2932,6 @@ void ProtocolGame::AddCreatureInvisible(NetworkMessage_ptr msg, const Creature* 
 void ProtocolGame::AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* creature, const Outfit_t& outfit)
 {
 	msg->AddU16(outfit.lookType);
-
 	if(outfit.lookType != 0)
 	{
 		msg->AddByte(outfit.lookHead);

@@ -1035,18 +1035,27 @@ void LuaScriptInterface::popPosition(lua_State* L, Position& position, uint32_t&
 bool LuaScriptInterface::popBoolean(lua_State* L)
 {
 	lua_pop(L, 1);
+	if(lua_isnumber(L, -1) == 1)
+		return (bool)lua_tonumber(L, 0);
+
 	return (bool)lua_toboolean(L, 0);
 }
 
 int64_t LuaScriptInterface::popNumber(lua_State* L)
 {
 	lua_pop(L, 1);
+	if(lua_isboolean(L, -1) == 1)
+		return (int64_t)lua_toboolean(L, 0);
+
 	return (int64_t)lua_tonumber(L, 0);
 }
 
 double LuaScriptInterface::popFloatNumber(lua_State* L)
 {
 	lua_pop(L, 1);
+	if(lua_isboolean(L, -1) == 1)
+		return (int64_t)lua_toboolean(L, 0);
+
 	return (double)lua_tonumber(L, 0);
 }
 
@@ -7775,15 +7784,36 @@ int32_t LuaScriptInterface::luaGetFluidSourceType(lua_State* L)
 
 int32_t LuaScriptInterface::luaIsInArray(lua_State* L)
 {
-	//isInArray(array, value)
-	int32_t value = (int32_t)popNumber(L);
-	if(lua_istable(L, -1) == 0)
+	//isInArray(array, value[, toLower])
+	bool toLower = true;
+	if(lua_gettop(L) >= 3)
+		toLower = popNumber(L);
+
+	std::string value;
+	if(lua_isnil(L, -1) == 1)
+		lua_pop(L, 1);
+	else if(lua_isnumber(L, -1) == 1)
+	{
+		char tmp[40];
+		sprintf(tmp, "%d", (int32_t)popNumber(L));
+		value = tmp;
+	}
+	else if(lua_isboolean(L, -1) == 1)
+	{
+		char tmp[3];
+		sprintf(tmp, "%d", (int32_t)popBoolean(L));
+		value = tmp;
+	}
+	else if(lua_isstring(L, -1) == 1)
+		value = popString(L);
+	else
 	{
 		lua_pop(L, 1);
 		lua_pushboolean(L, LUA_ERROR);
 		return 1;
 	}
 
+	toLowerCaseString(value);
 	int32_t i = 1;
 	while(true)
 	{
@@ -7791,14 +7821,41 @@ int32_t LuaScriptInterface::luaIsInArray(lua_State* L)
 		lua_gettable(L, -2);
 		if(lua_isnil(L, -1) == 1)
 		{
-			lua_pop(L, 2);
-			lua_pushboolean(L, LUA_FALSE);
-			return 1;
+			lua_pop(L, 1);
+			if(value.empty())
+			{
+				lua_pop(L, 1);
+				lua_pushboolean(L, LUA_TRUE);
+				return 1;
+			}
 		}
 		else if(lua_isnumber(L, -1) == 1)
 		{
-			int32_t array_value = (int32_t)popNumber(L);
-			if(array_value == value)
+			int32_t arrayValue = (int32_t)popNumber(L);
+			if(arrayValue == atoi(value.c_str()))
+			{
+				lua_pop(L, 1);
+				lua_pushboolean(L, LUA_TRUE);
+				return 1;
+			}
+		}
+		else if(lua_isboolean(L, -1) == 1)
+		{
+			int32_t arrayValue = (int32_t)popBoolean(L);
+			if(arrayValue == atoi(value.c_str()))
+			{
+				lua_pop(L, 1);
+				lua_pushboolean(L, LUA_TRUE);
+				return 1;
+			}
+		}
+		else if(lua_isstring(L, -1) == 1)
+		{
+			std::string arrayValue = popString(L);
+			if(toLower)
+				toLowerCaseString(arrayValue);
+
+			if(arrayValue == value)
 			{
 				lua_pop(L, 1);
 				lua_pushboolean(L, LUA_TRUE);
@@ -7806,13 +7863,13 @@ int32_t LuaScriptInterface::luaIsInArray(lua_State* L)
 			}
 		}
 		else
-		{
 			lua_pop(L, 2);
-			lua_pushboolean(L, LUA_ERROR);
-			return 1;
-		}
+
 		++i;
 	}
+
+	lua_pushboolean(L, LUA_FALSE);
+	return 1;
 }
 
 int32_t LuaScriptInterface::luaDoPlayerAddOutfit(lua_State* L)
