@@ -7865,14 +7865,16 @@ int32_t LuaScriptInterface::luaIsInArray(lua_State* L)
 			}
 		}
 		else
-			break;
+		{
+			lua_pop(L, 2);
+			lua_pushboolean(L, LUA_FALSE);
+			return 1;
+		}
 
 		++i;
 	}
 
-	lua_pop(L, 2);
-	lua_pushboolean(L, LUA_FALSE);
-	return 1;
+	return 0;
 }
 
 int32_t LuaScriptInterface::luaDoPlayerAddOutfit(lua_State* L)
