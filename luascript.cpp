@@ -1035,7 +1035,7 @@ void LuaScriptInterface::popPosition(lua_State* L, Position& position, uint32_t&
 bool LuaScriptInterface::popBoolean(lua_State* L)
 {
 	lua_pop(L, 1);
-	if(lua_isnumber(L, -1) == 1)
+	if(lua_isnumber(L, 0) == 1)
 		return (bool)lua_tonumber(L, 0);
 
 	return (bool)lua_toboolean(L, 0);
@@ -1044,7 +1044,7 @@ bool LuaScriptInterface::popBoolean(lua_State* L)
 int64_t LuaScriptInterface::popNumber(lua_State* L)
 {
 	lua_pop(L, 1);
-	if(lua_isboolean(L, -1) == 1)
+	if(lua_isboolean(L, 0) == 1)
 		return (int64_t)lua_toboolean(L, 0);
 
 	return (int64_t)lua_tonumber(L, 0);
@@ -1053,7 +1053,7 @@ int64_t LuaScriptInterface::popNumber(lua_State* L)
 double LuaScriptInterface::popFloatNumber(lua_State* L)
 {
 	lua_pop(L, 1);
-	if(lua_isboolean(L, -1) == 1)
+	if(lua_isboolean(L, 0) == 1)
 		return (int64_t)lua_toboolean(L, 0);
 
 	return (double)lua_tonumber(L, 0);
@@ -7784,10 +7784,10 @@ int32_t LuaScriptInterface::luaGetFluidSourceType(lua_State* L)
 
 int32_t LuaScriptInterface::luaIsInArray(lua_State* L)
 {
-	//isInArray(array, value[, toLower])
-	bool toLower = true;
+	//isInArray(array, value[, lower])
+	bool lower = true;
 	if(lua_gettop(L) >= 3)
-		toLower = popNumber(L);
+		lower = (bool)popNumber(L);
 
 	std::string value;
 	if(lua_isnil(L, -1) == 1)
