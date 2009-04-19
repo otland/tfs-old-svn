@@ -6,6 +6,7 @@ end
 Result = createClass(nil)
 Result:setAttributes({
 	id = -1
+	query = ""
 })
 
 function Result:getID()
@@ -16,7 +17,26 @@ function Result:setID(_id)
 	self.id = _id
 end
 
+function Result:getQuery()
+	return self.query
+end
+
+function Result:setQuery(_query)
+	self.query = _query
+end
+
+function Result:create(_query)
+	self:setQuery(_query)
+	local _id = db.storeQuery(self:getQuery())
+	if(_id) then
+		self:setID(_id)
+	end
+
+	return self:getID()
+end
+
 function Result:getRows(free)
+	local free = free or false
 	if(self:getID() == -1) then
 		error("[Result:getRows]: Result not set!")
 	end
@@ -26,8 +46,10 @@ function Result:getRows(free)
 		c = c + 1
 	until not self:next()
 
-	if(free) then
-		self:free()
+	local _query = self:getQuery()
+	self:free()
+	if(not free) then
+		self:create(_query)
 	end
 
 	return c
@@ -73,13 +95,14 @@ function Result:next()
 	return result.next(self:getID())
 end
 
-function Result:free()
+function Result:free(real)
+	local real = real or false
 	if(self:getID() == -1) then
 		error("[Result:free]: Result not set!")
 	end
 
-	--local ret = result.free(self:getID()) //enviroment automaticly frees all stored results when script is finished
-	local ret = LUA_NO_ERROR
+	self:setQuery("")
+	local ret = result.free(self:getID())
 	self:setID(-1)
 	return ret
 end
@@ -90,7 +113,5 @@ function db.getResult(query)
 		return nil
 	end
 
-	local res = Result:new()
-	res:setID(db.storeQuery(query))
-	return res
+	return Result:new():create(query)
 end
