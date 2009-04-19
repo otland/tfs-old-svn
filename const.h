@@ -94,6 +94,7 @@ enum MagicEffectClasses
 	NM_ME_STEPSVERTICAL	= 0x40, //64
 	NM_ME_YALAHARIGHOST	= 0x41, //65
 	NM_ME_BATS		= 0x42, //66
+	NM_ME_LAST = NM_ME_BATS,
 
 	//for internal use, dont send to client
 	NM_ME_NONE             = 0xFF,
@@ -144,6 +145,7 @@ enum ShootType_t
 	NM_SHOOT_EARTHARROW	= 0x27, //39
 	NM_SHOOT_EXPLOSION	= 0x28, //40
 	NM_SHOOT_CAKE		= 0x29, //41
+	NM_SHOOT_LAST = NM_SHOOT_CAKE,
 
 	//for internal use, dont send to client
 	NM_SHOOT_WEAPONTYPE	= 0xFE, //254

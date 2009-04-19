@@ -779,11 +779,8 @@ PlayerVector Game::getPlayersByIP(uint32_t ip, uint32_t mask)
 	PlayerVector players;
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		if(!it->second->isRemoved())
-		{
-			if((it->second->getIP() & mask) == (ip & mask))
-				players.push_back(it->second);
-		}
+		if(!it->second->isRemoved() && (it->second->getIP() & mask) == (ip & mask))
+			players.push_back(it->second);
 	}
 
 	return players;
@@ -2944,8 +2941,8 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int32_t
 
 	int32_t lookDistance = std::max(std::abs(player->getPosition().x - tradeItem->getPosition().x),
 		std::abs(player->getPosition().y - tradeItem->getPosition().y));
-	std::stringstream ss;
 
+	std::stringstream ss;
 	ss << "You see ";
 	if(index == 0)
 	{
@@ -3186,7 +3183,7 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 	CreatureEventList lookEvents = player->getCreatureEvents(CREATURE_EVENT_LOOK);
 	for(CreatureEventList::iterator it = lookEvents.begin(); it != lookEvents.end(); ++it)
 	{
-		if(!(*it)->executeLook(player, thing, thingPos, stackPos))
+		if(!(*it)->executeLook(player, thing, thingPos, stackPos, lookDistance))
 			deny = true;
 	}
 
@@ -3495,9 +3492,9 @@ bool Game::playerSpeakTo(Player* player, SpeakClasses type, const std::string& r
 		return false;
 	}
 
-	bool ghost = player->canSeeGhost(toPlayer);
+	bool canSeeGhost = player->canSeeGhost(toPlayer);
 	if(toPlayer->hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_IGNORE) && !player->hasFlag(
-		PlayerFlag_CannotBeMuted) && !ghost)
+		PlayerFlag_CannotBeMuted) && !canSeeGhost)
 	{
 		char buffer[70];
 		if(toPlayer->isInGhostMode())
@@ -3514,7 +3511,7 @@ bool Game::playerSpeakTo(Player* player, SpeakClasses type, const std::string& r
 
 	toPlayer->sendCreatureSay(player, type, text);
 	toPlayer->onCreatureSay(player, type, text);
-	if(toPlayer->isInGhostMode() && !ghost)
+	if(toPlayer->isInGhostMode() && !canSeeGhost)
 	{
 		player->sendTextMessage(MSG_STATUS_SMALL, "A player with this name is not online.");
 		return false;
@@ -3998,7 +3995,8 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 	return false;
 }
 
-bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creature* target, int32_t healthChange, bool force/* = false*/)
+bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creature* target,
+	int32_t healthChange, bool force/* = false*/)
 {
 	const Position& targetPos = target->getPosition();
 	if(healthChange > 0)
@@ -4388,6 +4386,7 @@ void Game::checkDecay()
 {
 	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_DECAYINTERVAL,
 		boost::bind(&Game::checkDecay, this)));
+
 	size_t bucket = (lastBucket + 1) % EVENT_DECAYBUCKETS;
 	for(DecayList::iterator it = decayItems[bucket].begin(); it != decayItems[bucket].end();)
 	{
@@ -4436,6 +4435,7 @@ void Game::checkLight()
 {
 	Scheduler::getScheduler().addEvent(createSchedulerTask(EVENT_LIGHTINTERVAL,
 		boost::bind(&Game::checkLight, this)));
+
 	lightHour = lightHour + lightHourDelta;
 	if(lightHour > 1440)
 		lightHour = lightHour - 1440;
@@ -5257,11 +5257,11 @@ bool Game::loadExperienceStages()
 				if(!xmlStrcmp(p->name, (const xmlChar*)"stage"))
 				{
 					low = 1;
-					if(readXMLInteger(p, "minlevel", intValue))
+					if(readXMLInteger(p, "minlevel", intValue) || readXMLInteger(p, "minLevel", intValue))
 						low = intValue;
 
 					high = 0;
-					if(readXMLInteger(p, "maxlevel", intValue))
+					if(readXMLInteger(p, "maxlevel", intValue) || readXMLInteger(p, "maxLevel", intValue))
 						high = intValue;
 					else
 						lastStageLevel = low;

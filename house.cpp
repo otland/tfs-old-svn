@@ -233,7 +233,7 @@ bool House::transferToDepot()
 		std::string ownerName;
 		if(IOLoginData::getInstance()->getNameByGuid(houseOwner, ownerName))
 			player = g_game.getPlayerByName(ownerName);
-		
+
 		if(!player)
 		{
 			player = new Player(ownerName, NULL);
@@ -245,17 +245,19 @@ bool House::transferToDepot()
 	}
 
 	ItemList moveItemList;
+	Item* item = NULL;
+	Container* tmpContainer = NULL;
 	for(HouseTileList::iterator it = houseTiles.begin(); it != houseTiles.end(); ++it)
 	{
 		for(uint32_t i = 0; i < (*it)->getThingCount(); ++i)
 		{
-			Item* item = (*it)->__getThing(i)->getItem();
+			item = (*it)->__getThing(i)->getItem();
 			if(!item)
 				continue;
 
 			if(item->isPickupable())
 				moveItemList.push_back(item);
-			else if(Container* tmpContainer = item->getContainer())
+			else if((tmpContainer = item->getContainer()))
 			{
 				for(ItemList::const_iterator it = tmpContainer->getItems(); it != tmpContainer->getEnd(); ++it)
 					moveItemList.push_back(*it);

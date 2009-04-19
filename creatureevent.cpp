@@ -248,7 +248,7 @@ std::string CreatureEvent::getScriptEventParams() const
 		case CREATURE_EVENT_ADVANCE:
 			return "cid, skill, oldLevel, newLevel";
 		case CREATURE_EVENT_LOOK:
-			return "cid, thing, position";
+			return "cid, thing, position, lookDistance";
 		case CREATURE_EVENT_MAIL_SEND:
 			return "cid, receiver, item, openBox";
 		case CREATURE_EVENT_MAIL_RECEIVE:
@@ -702,9 +702,9 @@ uint32_t CreatureEvent::executeMailReceive(Player* player, Player* sender, Item*
 	}
 }
 
-uint32_t CreatureEvent::executeLook(Player* player, Thing* thing, const Position& position, uint8_t stackpos)
+uint32_t CreatureEvent::executeLook(Player* player, Thing* thing, const Position& position, uint8_t stackpos, int32_t lookDistance)
 {
-	//onLook(cid, thing, position)
+	//onLook(cid, thing, position, lookDistance)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
@@ -743,10 +743,11 @@ uint32_t CreatureEvent::executeLook(Player* player, Thing* thing, const Position
 			m_scriptInterface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(player));
-			lua_pushnumber(L, env->addThing(thing));
+			LuaScriptInterface::pushThing(L, thing, env->addThing(thing));
 			LuaScriptInterface::pushPosition(L, position, stackpos);
+			lua_pushnumber(L, lookDistance);
 
-			int32_t result = m_scriptInterface->callFunction(3);
+			int32_t result = m_scriptInterface->callFunction(4);
 			m_scriptInterface->releaseScriptEnv();
 			return (result == LUA_TRUE);
 		}
@@ -1200,7 +1201,6 @@ uint32_t CreatureEvent::executeDeath(Creature* creature, Item* corpse, Creature*
 			m_scriptInterface->releaseScriptEnv();
 			return (result == LUA_TRUE);
 		}
-
 	}
 	else
 	{

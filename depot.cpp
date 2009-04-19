@@ -46,8 +46,8 @@ bool Depot::readAttr(AttrTypes_t attr, PropStream& propStream)
 		setDepotId(_depotId);
 		return true;
 	}
-	else
-		return Item::readAttr(attr, propStream);
+
+	return Item::readAttr(attr, propStream);
 }
 
 ReturnValue Depot::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
@@ -75,6 +75,7 @@ ReturnValue Depot::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 		if(getItemHoldingCount() + addCount > maxDepotLimit)
 			return RET_DEPOTISFULL;
 	}
+
 	return Container::__queryAdd(index, thing, count, flags);
 }
 
