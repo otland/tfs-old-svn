@@ -516,10 +516,9 @@ ServiceManager* services)
 		SetProcessAffinityMask(GetCurrentProcess(), mask); //someone test it, please
 	}
 
-	HANDLE win_mutex;
-	win_mutex = CreateMutex(NULL, TRUE, "theforgottenserver_" + g_config.getNumber(ConfigManager::WORLD_ID));
+	CreateMutex(NULL, true, "theforgottenserver_" + g_config.getNumber(ConfigManager::WORLD_ID));
 	if(GetLastError() == ERROR_ALREADY_EXISTS)
-		startupErrorMessage("Other instance of The Forgotten Server is already running.\nPlease check if there is no same process with same name before trying again.\nIf you want to use multiworld you need to change worldId!");
+		startupErrorMessage("Another instance of The Forgotten Server is already running with the same worldId.\nIf you want to run multiple servers, please change the worldId in config.lua.");
 
 	std::string defaultPriority = asLowerCaseString(g_config.getString(ConfigManager::DEFAULT_PRIORITY));
 	if(defaultPriority == "realtime")
