@@ -7813,7 +7813,9 @@ int32_t LuaScriptInterface::luaIsInArray(lua_State* L)
 		return 1;
 	}
 
-	toLowerCaseString(value);
+	if(lower)
+		toLowerCaseString(value);
+
 	int32_t i = 1;
 	while(true)
 	{
@@ -7852,7 +7854,7 @@ int32_t LuaScriptInterface::luaIsInArray(lua_State* L)
 		else if(lua_isstring(L, -1) == 1)
 		{
 			std::string arrayValue = popString(L);
-			if(toLower)
+			if(lower)
 				toLowerCaseString(arrayValue);
 
 			if(arrayValue == value)
