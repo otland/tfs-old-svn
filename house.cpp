@@ -392,6 +392,9 @@ bool House::executeTransfer(HouseTransferItem* item, Player* newOwner)
 		return false;
 
 	setHouseOwner(newOwner->getGUID());
+	if(transferItem->getParent())
+		transferItem->getParent()->setParent(NULL);
+
 	transferItem = NULL;
 	return true;
 }
