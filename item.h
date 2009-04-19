@@ -201,9 +201,9 @@ class ItemAttributes
 			ATTR_ITEM_DEFENSE = 1 << 10,
 			ATTR_ITEM_EXTRADEFENSE = 1 << 11,
 			ATTR_ITEM_ARMOR = 1 << 12,
-			ATTR_ITEM_ATTACKSPEED = 1 << 13,
-			ATTR_ITEM_HITCHANCE = 1 << 14,
-			ATTR_ITEM_SHOOTRANGE = 1 << 15,
+			ATTR_ITEM_HITCHANCE = 1 << 13,
+			ATTR_ITEM_SHOOTRANGE = 1 << 14,
+			ATTR_ITEM_SCRIPTPROTECTED = 1 << 15,
 
 			// compatibility with previous versions
 			ATTR_ITEM_OWNER = 1 << 16,
@@ -216,9 +216,7 @@ class ItemAttributes
 
 			// advanced item modifiers
 			ATTR_ITEM_ARTICLE = 1 << 23,
-
-			// script, clean protection
-			ATTR_ITEM_SCRIPTPROTECTED = 1 << 24,
+			ATTR_ITEM_ATTACKSPEED = 1 << 14,
 		};
 
 		bool hasAttribute(itemAttrTypes type) const;
@@ -313,15 +311,15 @@ class Item : virtual public Thing, public ItemAttributes
 		static std::string getNameDescription(const ItemType& it, const Item* item = NULL, int32_t subType = -1, bool addArticle = true);
 		static std::string getWeightDescription(const ItemType& it, double weight, uint32_t count = 1);
 
-		virtual std::string getDescription(int32_t lookDistance) const;
-		std::string getNameDescription() const;
+		virtual std::string getDescription(int32_t lookDistance) const {return getDescription(items[id], lookDistance, this);}
+		std::string getNameDescription() const {return getNameDescription(items[id], this);}
 		std::string getWeightDescription() const;
 
 		//serialization
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool unserializeAttr(PropStream& propStream);
 		virtual bool serializeAttr(PropWriteStream& propWriteStream) const;
-		virtual bool unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream);
+		virtual bool unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream) {return unserializeAttr(propStream);}
 
 		uint16_t getID() const {return id;}
 		uint16_t getClientID() const {return items[id].clientId;}
@@ -360,6 +358,9 @@ class Item : virtual public Thing, public ItemAttributes
 		const std::string& getArticle() const {return getStrAttr(ATTR_ITEM_ARTICLE) != "" ? getStrAttr(ATTR_ITEM_ARTICLE) : items[id].article;}
 		void setArticle(std::string article) {setStrAttr(ATTR_ITEM_ARTICLE, article);}
 
+		bool isScriptProtected() const {return hasAttribute(ATTR_ITEM_SCRIPTPROTECTED) ? (bool)getIntAttr(ATTR_ITEM_SCRIPTPROTECTED) : false;}
+		void setScriptProtected(bool value) {setIntAttr(ATTR_ITEM_SCRIPTPROTECTED, value) ? 1 : 0);}
+
 		int32_t getSlotPosition() const {return items[id].slotPosition;}
 		int32_t getWieldPosition() const {return items[id].wieldPosition;}
 		WeaponType_t getWeaponType() const {return items[id].weaponType;}
@@ -375,6 +376,7 @@ class Item : virtual public Thing, public ItemAttributes
 		bool forceSerialize() const {return items[id].forceSerialize || canWriteText() || isContainer() || isBed() || isDoor();}
 
 		bool hasProperty(enum ITEMPROPERTY prop) const;
+		bool hasSubType() const {return items[id].hasSubType();}
 		bool hasCharges() const {return items[id].charges != 0;}
 		virtual bool isPushable() const {return !isNotMoveable();}
 		bool isGroundTile() const {return items[id].isGroundTile();}
@@ -409,13 +411,14 @@ class Item : virtual public Thing, public ItemAttributes
 		bool floorChangeWest() const {return items[id].floorChangeWest;}
 		bool floorChange() const {return floorChangeDown() || floorChangeNorth() || floorChangeSouth() || floorChangeEast() || floorChangeWest();}
 
-		// get the number of items
 		uint16_t getItemCount() const {return count;}
 		void setItemCount(uint16_t n) {count = n;}
 
-		bool hasSubType() const;
 		uint16_t getSubType() const;
 		void setSubType(uint16_t n);
+
+		bool isLoadedFromMap() const {return loadedFromMap;}
+		void setLoadedFromMap(bool value) {loadedFromMap = value;}
 
 		void setDefaultSubtype();
 		void setUniqueId(uint16_t n);
@@ -437,19 +440,12 @@ class Item : virtual public Thing, public ItemAttributes
 		virtual void onRemoved() {}
 		virtual bool onTradeEvent(TradeEvents_t event, Player* owner, Player* seller) {return true;}
 
-		bool isLoadedFromMap() const {return loadedFromMap;}
-		void setLoadedFromMap(bool value) {loadedFromMap = value;}
-
-		bool isScriptProtected() const {return hasAttribute(ATTR_ITEM_SCRIPTPROTECTED) ? (bool)getIntAttr(ATTR_ITEM_SCRIPTPROTECTED) : false;}
-		void setScriptProtected(bool value) {setIntAttr(ATTR_ITEM_SCRIPTPROTECTED, value) ? 1 : 0);}
-
 	protected:
-		std::string getWeightDescription(double weight) const;
-		uint16_t id;  // the same id as in ItemType
-		uint8_t count; // number of stacked items
+		std::string getWeightDescription(double weight) const {return getWeightDescription(Item::items[id], weight, count);}
 
+		uint16_t id;
+		uint8_t count;
 		bool loadedFromMap;
-		//Don't add variables here, use the ItemAttribute class.
 };
 
 #endif

@@ -231,7 +231,6 @@ Item::~Item()
 void Item::setDefaultSubtype()
 {
 	count = 1;
-
 	const ItemType& it = items[id];
 	if(it.charges != 0)
 		setCharges(it.charges);
@@ -259,11 +258,6 @@ void Item::setID(uint16_t newid)
 		setDecaying(DECAYING_FALSE);
 		setDuration(newDuration);
 	}
-}
-
-bool Item::hasSubType() const
-{
-	return items[id].hasSubType();
 }
 
 uint16_t Item::getSubType() const
@@ -571,11 +565,6 @@ bool Item::unserializeAttr(PropStream& propStream)
 	}
 
 	return true;
-}
-
-bool Item::unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream)
-{
-	return unserializeAttr(propStream);
 }
 
 bool Item::serializeAttr(PropWriteStream& propWriteStream) const
@@ -1096,11 +1085,6 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 	return s.str();
 }
 
-std::string Item::getDescription(int32_t lookDistance) const
-{
-	return getDescription(items[id], lookDistance, this);
-}
-
 std::string Item::getNameDescription(const ItemType& it, const Item* item /*= NULL*/, int32_t subType /*= -1*/, bool addArticle /*= true*/)
 {
 	if(item)
@@ -1130,11 +1114,6 @@ std::string Item::getNameDescription(const ItemType& it, const Item* item /*= NU
 	return s.str();
 }
 
-std::string Item::getNameDescription() const
-{
-	return getNameDescription(items[id], this);
-}
-
 std::string Item::getWeightDescription(const ItemType& it, double weight, uint32_t count /*= 1*/)
 {
 	std::stringstream s;
@@ -1144,11 +1123,6 @@ std::string Item::getWeightDescription(const ItemType& it, double weight, uint32
 		s << "It weighs " << std::fixed << std::setprecision(2) << weight << " oz.";
 
 	return s.str();
-}
-
-std::string Item::getWeightDescription(double weight) const
-{
-	return getWeightDescription(Item::items[id], weight, count);
 }
 
 std::string Item::getWeightDescription() const

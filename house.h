@@ -142,7 +142,7 @@ class House
 {
 	public:
 		House(uint32_t _houseid);
-		virtual ~House();
+		virtual ~House() {}
 		uint32_t getHouseId() const {return houseid;}
 
 		void setEntryPos(const Position& pos) {posEntry = pos;}

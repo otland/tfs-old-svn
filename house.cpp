@@ -32,7 +32,7 @@
 extern ConfigManager g_config;
 extern Game g_game;
 
-House::House(uint32_t _houseid) :
+House::House(uint32_t _houseid):
 transferContainer(ITEM_LOCKER1)
 {
 	isLoaded = false;
@@ -47,11 +47,6 @@ transferContainer(ITEM_LOCKER1)
 	price = 0;
 	townid = 0;
 	transferItem = NULL;
-}
-
-House::~House()
-{
-	//
 }
 
 void House::addTile(HouseTile* tile)
@@ -382,7 +377,9 @@ HouseTransferItem* House::getTransferItem()
 	if(transferContainer.getParent() != NULL)
 		transferContainer.setParent(NULL);
 
-	transferItem = HouseTransferItem::createHouseTransferItem(this);
+	if(!(transferItem = HouseTransferItem::createHouseTransferItem(this)))
+		return NULL;
+
 	transferContainer.__addThing(NULL, transferItem);
 	return transferItem;
 }
@@ -392,11 +389,10 @@ bool House::executeTransfer(HouseTransferItem* item, Player* newOwner)
 	if(transferItem != item)
 		return false;
 
-	setHouseOwner(newOwner->getGUID());
-	if(transferItem->getParent())
-		transferItem->getParent()->setParent(NULL);
-
 	transferItem = NULL;
+	transferContainer.setParent(NULL);
+
+	setHouseOwner(newOwner->getGUID());
 	return true;
 }
 
