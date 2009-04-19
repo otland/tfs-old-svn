@@ -1286,10 +1286,10 @@ bool ItemAttributes::validateIntAttrType(itemAttrTypes type)
 		case ATTR_ITEM_DEFENSE:
 		case ATTR_ITEM_EXTRADEFENSE:
 		case ATTR_ITEM_ARMOR:
-		case ATTR_ITEM_ATTACKSPEED:
+		case ATTR_ITEM_SCRIPTPROTECTED:
 		case ATTR_ITEM_HITCHANCE:
 		case ATTR_ITEM_SHOOTRANGE:
-		case ATTR_ITEM_SCRIPTPROTECTED:
+		case ATTR_ITEM_ATTACKSPEED:
 			return true;
 
 		default:
