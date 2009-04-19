@@ -313,7 +313,7 @@ void serverMain(void* param)
 
 	#if not defined(WIN32) || defined(__CONSOLE__)
 	std::string outPath = g_config.getString(ConfigManager::OUT_LOG), errPath = g_config.getString(ConfigManager::ERROR_LOG);
-	if(outPath == "" && outPath.length() < 3)
+	if(outPath == "" || outPath.length() < 3)
 		outPath = "";
 	else if(outPath[0] != '/' && outPath[1] != ':')
 	{
@@ -321,7 +321,7 @@ void serverMain(void* param)
 		std::cout << "> Logging output to file: " << outPath << std::endl;
 	}
 
-	if(errPath == "" && errPath.length() < 3)
+	if(errPath == "" || errPath.length() < 3)
 		errPath = "";
 	else if(errPath[0] != '/' && errPath[1] != ':')
 	{
