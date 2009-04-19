@@ -341,7 +341,7 @@ class Item : virtual public Thing, public ItemAttributes
 		void setDefense(int32_t defense) {setIntAttr(ATTR_ITEM_DEFENSE, defense);}
 
 		int32_t getExtraDefense() const {return hasAttribute(ATTR_ITEM_EXTRADEFENSE) ? getIntAttr(ATTR_ITEM_EXTRADEFENSE) : items[id].extraDefense;}
-		void setExtraDefense(int32_t extradefense) { setIntAttr(ATTR_ITEM_EXTRADEFENSE, extradefense);}
+		void setExtraDefense(int32_t extradefense) {setIntAttr(ATTR_ITEM_EXTRADEFENSE, extradefense);}
 
 		int32_t getArmor() const {return hasAttribute(ATTR_ITEM_ARMOR) ? getIntAttr(ATTR_ITEM_ARMOR) : items[id].armor;}
 		void setArmor(int32_t armor) {setIntAttr(ATTR_ITEM_ARMOR, armor);}
@@ -359,7 +359,7 @@ class Item : virtual public Thing, public ItemAttributes
 		void setArticle(std::string article) {setStrAttr(ATTR_ITEM_ARTICLE, article);}
 
 		bool isScriptProtected() const {return hasAttribute(ATTR_ITEM_SCRIPTPROTECTED) ? (bool)getIntAttr(ATTR_ITEM_SCRIPTPROTECTED) : false;}
-		void setScriptProtected(bool value) {setIntAttr(ATTR_ITEM_SCRIPTPROTECTED, value) ? 1 : 0);}
+		void setScriptProtected(bool value) {setIntAttr(ATTR_ITEM_SCRIPTPROTECTED, (value ? 1 : 0));}
 
 		int32_t getSlotPosition() const {return items[id].slotPosition;}
 		int32_t getWieldPosition() const {return items[id].wieldPosition;}
