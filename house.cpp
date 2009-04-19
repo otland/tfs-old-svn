@@ -379,9 +379,10 @@ HouseTransferItem* House::getTransferItem()
 	if(transferItem)
 		return NULL;
 
-	transferContainer.setParent(NULL);
-	transferItem = HouseTransferItem::createHouseTransferItem(this);
+	if(transferContainer.getParent() != NULL)
+		transferContainer.setParent(NULL);
 
+	transferItem = HouseTransferItem::createHouseTransferItem(this);
 	transferContainer.__addThing(NULL, transferItem);
 	return transferItem;
 }
