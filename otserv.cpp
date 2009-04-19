@@ -312,13 +312,26 @@ void serverMain(void* param)
 	}
 
 	#if not defined(WIN32) || defined(__CONSOLE__)
-	std::string outPath = g_config.getString(ConfigManager::OUT_LOG), errorPath = g_config.getString(ConfigManager::ERROR_LOG);
-	boost::shared_ptr<std::ofstream> outFile;
-	if(outPath != "" && outPath.length() > 2)
+	std::string outPath = g_config.getString(ConfigManager::OUT_LOG), errPath = g_config.getString(ConfigManager::ERROR_LOG);
+	if(outPath == "" && outPath.length() < 3)
+		outPath = "";
+	else if(outPath[0] != '/' && outPath[1] != ':')
 	{
-		if(outPath[0] != '/' && outPath[1] != ':')
-			outPath = getFilePath(FILE_TYPE_LOG, outPath);
+		outPath = getFilePath(FILE_TYPE_LOG, outPath);
+		std::cout << "> Logging output to file: " << outPath << std::endl;
+	}
 
+	if(errPath == "" && errPath.length() < 3)
+		errPath = "";
+	else if(errPath[0] != '/' && errPath[1] != ':')
+	{
+		errPath = getFilePath(FILE_TYPE_LOG, errPath);
+		std::cout << "> Logging errors to file: " << errPath << std::endl;
+	}
+
+	if(outPath != "")
+	{
+		boost::shared_ptr<std::ofstream> outFile;
 		outFile.reset(new std::ofstream(outPath.c_str(), (g_config.getBool(ConfigManager::TRUNCATE_LOGS) ?
 			std::ios::trunc : std::ios::app) | std::ios::out));
 		if(!outFile->is_open())
@@ -327,18 +340,15 @@ void serverMain(void* param)
 		std::cout.rdbuf(outFile->rdbuf());
 	}
 
-	boost::shared_ptr<std::ofstream> errorFile;
-	if(errorPath != "" && errorPath.length() > 2)
+	if(errPath != "")
 	{
-		if(errorPath[0] != '/' && errorPath[1] != ':')
-			errorPath = getFilePath(FILE_TYPE_LOG, errorPath);
-
-		errorFile.reset(new std::ofstream(errorPath.c_str(), (g_config.getBool(ConfigManager::TRUNCATE_LOGS) ?
+		boost::shared_ptr<std::ofstream> errFile;
+		errFile.reset(new std::ofstream(errPath.c_str(), (g_config.getBool(ConfigManager::TRUNCATE_LOGS) ?
 			std::ios::trunc : std::ios::app) | std::ios::out));
-		if(!errorFile->is_open())
+		if(!errFile->is_open())
 			startupErrorMessage("Could not open error log file for writing!");
 
-		std::cerr.rdbuf(errorFile->rdbuf());
+		std::cerr.rdbuf(errFile->rdbuf());
 	}
 	#endif
 
