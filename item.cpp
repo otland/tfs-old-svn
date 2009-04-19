@@ -187,7 +187,7 @@ ItemAttributes()
 	else if(it.charges != 0 && _count != 0)
 		setCharges(_count);
 
-	loadedFromMap = scriptProtected = false;
+	loadedFromMap = false;
 	setDefaultDuration();
 }
 
@@ -1098,8 +1098,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 
 std::string Item::getDescription(int32_t lookDistance) const
 {
-	const ItemType& it = items[id];
-	return getDescription(it, lookDistance, this);
+	return getDescription(items[id], lookDistance, this);
 }
 
 std::string Item::getNameDescription(const ItemType& it, const Item* item /*= NULL*/, int32_t subType /*= -1*/, bool addArticle /*= true*/)
@@ -1133,8 +1132,7 @@ std::string Item::getNameDescription(const ItemType& it, const Item* item /*= NU
 
 std::string Item::getNameDescription() const
 {
-	const ItemType& it = items[id];
-	return getNameDescription(it, this);
+	return getNameDescription(items[id], this);
 }
 
 std::string Item::getWeightDescription(const ItemType& it, double weight, uint32_t count /*= 1*/)
@@ -1150,8 +1148,7 @@ std::string Item::getWeightDescription(const ItemType& it, double weight, uint32
 
 std::string Item::getWeightDescription(double weight) const
 {
-	const ItemType& it = Item::items[id];
-	return getWeightDescription(it, weight, count);
+	return getWeightDescription(Item::items[id], weight, count);
 }
 
 std::string Item::getWeightDescription() const

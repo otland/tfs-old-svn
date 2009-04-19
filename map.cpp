@@ -1185,7 +1185,7 @@ QTreeLeafNode* QTreeNode::getLeafStatic(QTreeNode* root, uint32_t x, uint32_t y)
 
 		currentNode = currentNode->m_child[index];
 		currentX = currentX * 2;
-		currentY = currentY * 2;	
+		currentY = currentY * 2;
 	}
 
 	return NULL;

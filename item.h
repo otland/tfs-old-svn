@@ -440,15 +440,15 @@ class Item : virtual public Thing, public ItemAttributes
 		bool isLoadedFromMap() const {return loadedFromMap;}
 		void setLoadedFromMap(bool value) {loadedFromMap = value;}
 
-		bool isScriptProtected() const {return hasAttribute(ATTR_ITEM_SCRIPTPROTECTED) ? getIntAttr(ATTR_ITEM_SCRIPTPROTECTED) != 0 : scriptProtected;}
-		void setScriptProtected(bool value) {setIntAttr(ATTR_ITEM_SCRIPTPROTECTED, value ? 1 : 0);}
+		bool isScriptProtected() const {return hasAttribute(ATTR_ITEM_SCRIPTPROTECTED) ? (bool)getIntAttr(ATTR_ITEM_SCRIPTPROTECTED) : false;}
+		void setScriptProtected(bool value) {setIntAttr(ATTR_ITEM_SCRIPTPROTECTED, value) ? 1 : 0);}
 
 	protected:
 		std::string getWeightDescription(double weight) const;
 		uint16_t id;  // the same id as in ItemType
 		uint8_t count; // number of stacked items
 
-		bool loadedFromMap, scriptProtected;
+		bool loadedFromMap;
 		//Don't add variables here, use the ItemAttribute class.
 };
 
