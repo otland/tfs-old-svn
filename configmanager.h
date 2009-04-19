@@ -220,6 +220,7 @@ class ConfigManager
 			STAMINA_BONUS_PREMIUM,
 			BAN_UNKNOWN_BYTES,
 			ALLOW_CHANGEADDONS,
+			GHOST_INVISIBLE_EFFECT,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

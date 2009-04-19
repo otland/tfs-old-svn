@@ -1,16 +1,16 @@
 function onSay(cid, words, param)
-	param = math.abs(math.ceil(tonumber(param))) 
+	param = tonumber(param)
 	if(param == nil or param < 0) then
 		doPlayerSendCancel(cid, "Numeric param may not be lower than 0.")
 		return TRUE
 	end
 
-	prepareShutdown(param)
+	prepareShutdown(math.abs(math.ceil(param)))
 	return TRUE
 end
 
 function prepareShutdown(minutes)
-	if(minutes == 0) then
+	if(minutes <= 0) then
 		doSetGameState(GAMESTATE_SHUTDOWN)
 	else
 		addEvent(prepareShutdown, 60000, minutes - 1)

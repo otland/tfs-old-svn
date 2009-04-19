@@ -241,6 +241,7 @@ bool ConfigManager::load()
 	m_confBool[ALLOW_CHANGEADDONS] = getGlobalBool("allowChangeAddons", "yes");
 	m_confNumber[BLESS_REDUCTION] = getGlobalNumber("eachBlessReduction", 8);
 	m_confString[PREFIX_CHANNEL_LOGS] = getGlobalString("prefixChannelLogs", "");
+	m_confBool[GHOST_INVISIBLE_EFFECT] = getGlobalBool("ghostModeInvisibleEffect", "no");
 
 	m_loaded = true;
 	return true;

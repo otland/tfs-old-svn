@@ -112,7 +112,7 @@
 
 		protectionLevel
 			To this level players are protected.
-				It means they cannot be attacked by players neither anyone can attack them.
+			It means they cannot be attacked by players neither anyone can attack them.
 			Default: 1 (Means, that there is no level protection!)
 
 		pvpTileIgnoreLevelAndVocationProtection
@@ -489,6 +489,11 @@
 		saveGlobalStorage
 			Default: yes
 
+		ghostModeInvisibleEffect
+			Should invisible gamemaster be visible to other gamemasters with invisible effect? (Like, utana vid spell)
+			If you disable this, you'll see all ghost gamemasters in normal outfits.
+			Default: no
+
 		displaySkillLevelOnAdvance
 			Default: no
 
@@ -671,6 +676,11 @@
 		displayPlayersLogging
 			Should message in console be displayed everytime player logs in/out?
 			Default: yes
+
+		prefixChannelLogs
+			Defines channel logs file prefix,
+			Usable if you have multiworld, and want to have channels from all worlds in different files.
+			Default: ""
 
 		adminLogsEnabled
 			Create logs from remote control tool.

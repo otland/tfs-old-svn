@@ -146,6 +146,7 @@
 	disableOutfitsForPrivilegedPlayers = "no"
 	bankSystem = "yes"
 	saveGlobalStorage = "yes"
+	ghostModeInvisibleEffect = "no"
 	displaySkillLevelOnAdvance = "no"
 	spellNameInsteadOfWords = "no"
 	emoteSpells = "no"
