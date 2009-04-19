@@ -7823,13 +7823,9 @@ int32_t LuaScriptInterface::luaIsInArray(lua_State* L)
 		lua_gettable(L, -2);
 		if(lua_isnil(L, -1) == 1)
 		{
-			lua_pop(L, 1);
-			if(value.empty())
-			{
-				lua_pop(L, 1);
-				lua_pushboolean(L, LUA_TRUE);
-				return 1;
-			}
+			lua_pop(L, 2);
+			lua_pushboolean(L, LUA_FALSE);
+			return 1;
 		}
 		else if(lua_isnumber(L, -1) == 1)
 		{
@@ -7865,16 +7861,14 @@ int32_t LuaScriptInterface::luaIsInArray(lua_State* L)
 			}
 		}
 		else
-		{
-			lua_pop(L, 2);
-			lua_pushboolean(L, LUA_FALSE);
-			return 1;
-		}
+			break;
 
 		++i;
 	}
 
-	return 0;
+	lua_pop(L, 2);
+	lua_pushboolean(L, LUA_ERROR);
+	return 1;
 }
 
 int32_t LuaScriptInterface::luaDoPlayerAddOutfit(lua_State* L)
