@@ -483,11 +483,11 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 			switch(player->getGuildLevel())
 			{
 				case GUILDLEVEL_VICE:
-					return channel->talk(player, SPEAK_CHANNEL_O, text);
-
+					type = SPEAK_CHANNEL_O;
+					break;
 				case GUILDLEVEL_LEADER:
-					return channel->talk(player, SPEAK_CHANNEL_R1, text);
-
+					type = SPEAK_CHANNEL_R1;
+					break;
 				default:
 					break;
 			}
@@ -1086,14 +1086,13 @@ ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 		return NULL;
 	}
 
-	ChatChannel* tmpChannel = NULL;
 	NormalChannelMap::iterator nit = m_normalChannels.find(channelId);
 	if(nit != m_normalChannels.end())
 	{
 		#ifdef __DEBUG_CHAT__
 		std::cout << "Chat::getChannel - found normal channel" << std::endl;
 		#endif
-		tmpChannel = nit->second;
+		ChatChannel* tmpChannel = nit->second;
 		if(!tmpChannel || !tmpChannel->isEnabled() || player->getAccessLevel() < tmpChannel->getAccess())
 		{
 			#ifdef __DEBUG_CHAT__
