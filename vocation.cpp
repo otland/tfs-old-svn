@@ -163,8 +163,14 @@ bool Vocations::loadFromXml()
 				if(readXMLFloat(configNode, "distDamage", floatValue) || readXMLFloat(configNode, "distanceDamage", floatValue))
 					voc->setDistanceMultiplier(floatValue);
 
+				if(readXMLFloat(configNode, "wandDamage", floatValue) || readXMLFloat(configNode, "rodDamage", floatValue))
+					voc->setWandMultiplier(floatValue);
+
 				if(readXMLFloat(configNode, "magDamage", floatValue) || readXMLFloat(configNode, "magicDamage", floatValue))
 					voc->setMagicMultiplier(floatValue);
+
+				if(readXMLFloat(configNode, "magHealingDamage", floatValue) || readXMLFloat(configNode, "magicHealingDamage", floatValue))
+					voc->setMagicHealingMultiplier(floatValue);
 
 				if(readXMLFloat(configNode, "defense", floatValue))
 					voc->setDefenseMultiplier(floatValue);

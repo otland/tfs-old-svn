@@ -78,6 +78,24 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 			{
 				min = (int32_t)((player->getLevel() + player->getMagicLevel() * 4) * 1. * mina + minb);
 				max = (int32_t)((player->getLevel() + player->getMagicLevel() * 4) * 1. * maxa + maxb);
+
+				Vocation* vocation = player->getVocation();
+				if(max > 0) // Healing multipler
+				{
+					if(vocation && vocation->getMagicHealingMultiplier() != 1.0)
+					{
+						min *= vocation->getMagicHealingMultiplier();
+						max *= vocation->getMagicHealingMultiplier();
+					}
+				}
+				else //Attack multipler
+				{
+					if(vocation && vocation->getMagicMultiplier() != 1.0)
+					{
+						min *= vocation->getMagicMultiplier();
+						max *= vocation->getMagicMultiplier();
+					}
+				}
 				return true;
 			}
 
@@ -1324,36 +1342,36 @@ void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 	}
 
 	const ItemType& it = items[getID()];
-	if(it.condition)
+	if(!it.condition)
+		return;
+
+	Condition* conditionCopy = it.condition->clone();
+	uint32_t owner = getOwner();
+	if(purposeful && owner != 0)
 	{
-		Condition* conditionCopy = it.condition->clone();
-		uint32_t owner = getOwner();
-		if(purposeful && owner != 0)
+		bool harmfulField = true;
+		if(g_game.getWorldType() == WORLD_TYPE_NO_PVP || getTile()->hasFlag(TILESTATE_NOPVPZONE))
 		{
-			bool harmfulField = true;
-			if(g_game.getWorldType() == WORLD_TYPE_NO_PVP || getTile()->hasFlag(TILESTATE_NOPVPZONE))
+			if(Creature* creature = g_game.getCreatureByID(owner))
 			{
-				if(Creature* creature = g_game.getCreatureByID(owner))
-				{
-					if(creature->getPlayer() || (creature->isSummon() && creature->getMaster()->getPlayer()))
-						harmfulField = false;
-				}
+				if(creature->getPlayer() || (creature->isSummon() && creature->getMaster()->getPlayer()))
+					harmfulField = false;
 			}
-
-			if(Player* targetPlayer = creature->getPlayer())
-			{
-				if(Player* attackerPlayer = g_game.getPlayerByID(owner))
-				{
-					if(Combat::isProtected(attackerPlayer, targetPlayer))
-						harmfulField = false;
-				}
-			}
-
-			if(!harmfulField || (OTSYS_TIME() - createTime) <= (uint32_t)g_config.getNumber(ConfigManager::FIELD_OWNERSHIP)
-				|| creature->hasBeenAttacked(owner))
-				conditionCopy->setParam(CONDITIONPARAM_OWNER, owner);
 		}
 
-		creature->addCondition(conditionCopy);
+		if(Player* targetPlayer = creature->getPlayer())
+		{
+			if(Player* attackerPlayer = g_game.getPlayerByID(owner))
+			{
+				if(Combat::isProtected(attackerPlayer, targetPlayer))
+					harmfulField = false;
+			}
+		}
+
+		if(!harmfulField || (OTSYS_TIME() - createTime) <= (uint32_t)g_config.getNumber(ConfigManager::FIELD_OWNERSHIP)
+			|| creature->hasBeenAttacked(owner))
+			conditionCopy->setParam(CONDITIONPARAM_OWNER, owner);
 	}
+
+	creature->addCondition(conditionCopy);
 }

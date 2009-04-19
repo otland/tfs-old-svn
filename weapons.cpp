@@ -515,10 +515,8 @@ bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
 
 			lua_State* L = m_scriptInterface->getLuaState();
 
-			uint32_t cid = env->addThing(player);
-
 			m_scriptInterface->pushFunction(m_scriptId);
-			lua_pushnumber(L, cid);
+			lua_pushnumber(L, env->addThing(player));
 			m_scriptInterface->pushVariant(L, var);
 
 			int32_t result = m_scriptInterface->callFunction(2);
@@ -1040,5 +1038,13 @@ int32_t WeaponWand::getWeaponDamage(const Player* player, const Creature* target
 		return -maxChange;
 	}
 
-	return random_range(-minChange, -maxChange, DISTRO_NORMAL);
+	int32_t minValue = minChange, maxValue = maxChange;
+	Vocation* vocation = player->getVocation();
+	if(vocation && vocation->getWandMultiplier() != 1.0)
+	{
+        minValue *= vocation->getWandMultiplier();
+		maxValue *= vocation->getWandMultiplier();
+	}
+
+	return random_range(-minValue, -maxValue, DISTRO_NORMAL);
 }

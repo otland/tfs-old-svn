@@ -105,6 +105,7 @@ enum AttrTypes_t
 	ATTR_HITCHANCE = 39,
 	ATTR_SHOOTRANGE = 40,
 	ATTR_ARTICLE = 41,
+	ATTR_SCRIPTPROTECTED = 42
 };
 
 // from iomap.h
@@ -214,7 +215,10 @@ class ItemAttributes
 			ATTR_ITEM_DOORID = 1 << 22,
 
 			// advanced item modifiers
-			ATTR_ITEM_ARTICLE = 1 << 23
+			ATTR_ITEM_ARTICLE = 1 << 23,
+
+			// script, clean protection
+			ATTR_ITEM_SCRIPTPROTECTED = 1 << 24,
 		};
 
 		bool hasAttribute(itemAttrTypes type) const;
@@ -436,8 +440,8 @@ class Item : virtual public Thing, public ItemAttributes
 		bool isLoadedFromMap() const {return loadedFromMap;}
 		void setLoadedFromMap(bool value) {loadedFromMap = value;}
 
-		bool isScriptProtected() const {return scriptProtected;}
-		void setScriptProtected(bool value) {scriptProtected = value;}
+		bool isScriptProtected() const {return hasAttribute(ATTR_ITEM_SCRIPTPROTECTED) ? getIntAttr(ATTR_ITEM_SCRIPTPROTECTED) != 0 : scriptProtected;}
+		void setScriptProtected(bool value) {setIntAttr(ATTR_ITEM_SCRIPTPROTECTED, value ? 1 : 0);}
 
 	protected:
 		std::string getWeightDescription(double weight) const;

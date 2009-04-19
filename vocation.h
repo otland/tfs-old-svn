@@ -44,7 +44,7 @@ class Vocation
 			skillMultipliers[0] = skillMultipliers[5] = 1.5f;
 			gainHealth = gainMana = gainCap = 5;
 			gainHealthTicks = gainManaTicks = 6;
-			meleeMultiplier = distanceMultiplier = magicMultiplier = defenseMultiplier = armorMultiplier = 1.0;
+			meleeMultiplier = distanceMultiplier = wandMultiplier = magicMultiplier = magicHealingMultiplier = defenseMultiplier = armorMultiplier = 1.0;
 			skillMultipliers[1] = skillMultipliers[2] = skillMultipliers[3] = skillMultipliers[4] = 2.0f;
 			memset(absorbPercent, 0, sizeof(absorbPercent));
 		}
@@ -64,7 +64,7 @@ class Vocation
 			skillMultipliers[0] = skillMultipliers[5] = 1.5f;
 			gainHealth = gainMana = gainCap = 5;
 			gainHealthTicks = gainManaTicks = 6;
-			meleeMultiplier = distanceMultiplier = magicMultiplier = defenseMultiplier = armorMultiplier = 1.0;
+			meleeMultiplier = distanceMultiplier = wandMultiplier = magicMultiplier = magicHealingMultiplier = defenseMultiplier = armorMultiplier = 1.0;
 			skillMultipliers[1] = skillMultipliers[2] = skillMultipliers[3] = skillMultipliers[4] = 2.0f;
 			memset(absorbPercent, 0, sizeof(absorbPercent));
 		}
@@ -136,7 +136,7 @@ class Vocation
 		float getDefenseMultiplier() const {return defenseMultiplier;}
 		void setDefenseMultiplier(float v) {defenseMultiplier = v;}
 		float getArmorMultiplier() const {return armorMultiplier;}
-		void setArmorMultiplier(float v) {armorMultiplier = v;}		
+		void setArmorMultiplier(float v) {armorMultiplier = v;}
 
 		uint32_t getReqSkillTries(int32_t skill, int32_t level);
 		uint64_t getReqMana(uint32_t magLevel);
@@ -153,7 +153,7 @@ class Vocation
 		uint16_t soulGainTicks, soulMax;
 		uint32_t id, fromVocation, gainHealth, gainHealthTicks, gainHealthAmount, gainMana,
 			gainManaTicks, gainManaAmount, gainCap, baseSpeed, attackSpeed;
-		float manaMultiplier, meleeMultiplier, distanceMultiplier, magicMultiplier, defenseMultiplier, armorMultiplier;
+		float manaMultiplier, meleeMultiplier, distanceMultiplier, wandMultiplier, magicMultiplier, magicHealingMultiplier, defenseMultiplier, armorMultiplier;
 		std::string name, description;
 
 		int16_t absorbPercent[COMBAT_LAST + 1];

@@ -2472,8 +2472,7 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 				lua_pushboolean(L, LUA_NO_ERROR);
 				return 1;
 			default:
-				std::string tmp = "Unknown player info - " + info;
-				reportErrorFunc(tmp);
+				reportErrorFunc("Unknown player info - " + info);
 				value = 0;
 				break;
 		}
@@ -8691,7 +8690,9 @@ int32_t LuaScriptInterface::luaSetPlayerPartner(lua_State* L)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, LUA_ERROR);
+		return 1;
 	}
+
 	player->marriage = guid;
 	lua_pushboolean(L, LUA_NO_ERROR);
 	return 1;
@@ -9035,7 +9036,7 @@ int32_t LuaScriptInterface::luaDoPlayerSave(lua_State* L)
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(cid))
-		lua_pushboolean(L, (IOLoginData::getInstance()->savePlayer(player, false) ? LUA_TRUE : LUA_FALSE));
+		lua_pushboolean(L, IOLoginData::getInstance()->savePlayer(player, false) ? LUA_TRUE : LUA_FALSE);
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
@@ -9259,6 +9260,7 @@ int32_t LuaScriptInterface::luaDoReloadInfo(lua_State* L)
 	{
 		lua_pushboolean(L, LUA_ERROR);
 		reportErrorFunc("Invalid reload info id.");
+		return 1;
 	}
 
 	Scheduler::getScheduler().addEvent(createSchedulerTask(SCHEDULER_MINTICKS,

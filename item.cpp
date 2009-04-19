@@ -423,6 +423,16 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			break;
 		}
 
+		case ATTR_SCRIPTPROTECTED:
+		{
+			uint8_t _scriptProtected = 0;
+			if(!propStream.GET_UCHAR(_scriptProtected))
+				return false;
+
+			setScriptProtected(_scriptProtected != 0);
+			break;
+		}
+
 		case ATTR_TEXT:
 		{
 			std::string _text;
@@ -709,6 +719,12 @@ bool Item::serializeAttr(PropWriteStream& propWriteStream) const
 		propWriteStream.ADD_ULONG(getHitChance());
 	}
 
+	if(hasAttribute(ATTR_ITEM_SCRIPTPROTECTED))
+	{
+		propWriteStream.ADD_UCHAR(ATTR_SCRIPTPROTECTED);
+		propWriteStream.ADD_ULONG(isScriptProtected() ? 1 : 0);
+	}
+
 	return true;
 }
 
@@ -796,7 +812,8 @@ double Item::getWeight() const
 	return items[id].weight;
 }
 
-std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const Item* item /*= NULL*/, int32_t subType /*= -1*/, bool addArticle /*= true*/)
+std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const Item* item /*= NULL*/,
+	int32_t subType /*= -1*/, bool addArticle /*= true*/)
 {
 	std::stringstream s;
 	s << getNameDescription(it, item, subType, addArticle);
@@ -1210,10 +1227,7 @@ bool ItemAttributes::hasAttribute(itemAttrTypes type) const
 		return false;
 
 	Attribute* attr = getAttrConst(type);
-	if(attr)
-		return true;
-
-	return false;
+	return attr != NULL;
 }
 
 void ItemAttributes::removeAttribute(itemAttrTypes type)
@@ -1304,6 +1318,7 @@ bool ItemAttributes::validateIntAttrType(itemAttrTypes type)
 		case ATTR_ITEM_ATTACKSPEED:
 		case ATTR_ITEM_HITCHANCE:
 		case ATTR_ITEM_SHOOTRANGE:
+		case ATTR_ITEM_SCRIPTPROTECTED:
 			return true;
 
 		default:
@@ -1395,18 +1410,18 @@ ItemAttributes::Attribute* ItemAttributes::getAttr(itemAttrTypes type)
 
 void ItemAttributes::deleteAttrs(Attribute* attr)
 {
-	if(attr)
-	{
-		if(validateStrAttrType(attr->type))
-			delete (std::string*)attr->value;
+	if(!attr)
+		return;
 
-		Attribute* next_attr = attr->next;
-		attr->next = NULL;
-		if(next_attr)
-			deleteAttrs(next_attr);
+	if(validateStrAttrType(attr->type))
+		delete (std::string*)attr->value;
 
-		delete attr;
-	}
+	Attribute* next_attr = attr->next;
+	attr->next = NULL;
+	if(next_attr)
+		deleteAttrs(next_attr);
+
+	delete attr;
 }
 
 void Item::__startDecaying()
