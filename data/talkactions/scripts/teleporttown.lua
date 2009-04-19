@@ -23,7 +23,7 @@ function onSay(cid, words, param)
 		end
 	end
 
-	local pos = getTownTemplePosition(tmp)
+	local pos = getTownTemplePosition(tmp, FALSE)
 	if(pos == LUA_ERROR or isInArray({pos.x, pos.y}, 0) == TRUE) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Town " .. t[1] .. " does not exists or has invalid temple position.")
 		return TRUE

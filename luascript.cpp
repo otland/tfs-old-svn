@@ -9158,7 +9158,7 @@ int32_t LuaScriptInterface::luaGetTownTemplePosition(lua_State* L)
 {
 	//getTownTemplePosition(townId[, displayError])
 	bool displayError = true;
-	if(lua_gettop(L) >= 3)
+	if(lua_gettop(L) >= 2)
 		displayError = popNumber(L) == LUA_TRUE;
 
 	uint32_t townId = popNumber(L);
