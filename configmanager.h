@@ -145,6 +145,7 @@ class ConfigManager
 			BLESS_REDUCTION_DECREAMENT,
 			BLESS_REDUCTION,
 			NICE_LEVEL,
+			EXPERIENCE_COLOR,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 

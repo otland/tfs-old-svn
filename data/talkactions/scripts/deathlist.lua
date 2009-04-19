@@ -1,6 +1,6 @@
 function onSay(cid, words, param)
 	local target = db.getResult("SELECT `name`, `id` FROM `players` WHERE `name` = " .. db.escapeString(param) .. ";")
-	if(target:getID() == -1) then
+	if(target:getID() == LUA_ERROR) then
 		doPlayerSendCancel(cid, "A player with that name does not exist.")
 		return TRUE
 	end
@@ -11,7 +11,7 @@ function onSay(cid, words, param)
 
 	local str = ""
 	local deaths = db.getResult("SELECT `time`, `level`, `killed_by`, `altkilled_by` FROM `player_deaths` WHERE `player_id` = " .. targetGUID .. " ORDER BY `time` DESC;")
-	if(deaths:getID() ~= -1) then
+	if(deaths:getID() ~= LUA_ERROR) then
 		local breakline = ""
 		repeat
 			if(str ~= "") then

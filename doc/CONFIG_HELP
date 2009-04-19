@@ -503,6 +503,11 @@
 		emoteSpells
 			Default: no
 
+		gainExperienceColor
+			Color used when creature gain experience.
+			Values: From 0 to 255.
+			Default: 215
+
 		expireReportsAfterReads
 			Default: 1
 

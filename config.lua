@@ -154,6 +154,7 @@
 	displaySkillLevelOnAdvance = "no"
 	spellNameInsteadOfWords = "no"
 	emoteSpells = "no"
+	gainExperienceColor = 215
 	expireReportsAfterReads = 1
 	promptExceptionTracerErrorBox = "yes"
 	storePlayerDirection = "no"

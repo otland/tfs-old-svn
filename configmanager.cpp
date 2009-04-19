@@ -244,6 +244,7 @@ bool ConfigManager::load()
 	m_confBool[GHOST_INVISIBLE_EFFECT] = getGlobalBool("ghostModeInvisibleEffect", "no");
 	m_confString[CORES_USED] = getGlobalString("coresUsed", "-1");
 	m_confNumber[NICE_LEVEL] = getGlobalNumber("niceLevel", 5);
+	m_confNumber[EXPERIENCE_COLOR] = getGlobalNumber("gainExperienceColor", TEXTCOLOR_WHITE);
 
 	m_loaded = true;
 	return true;
