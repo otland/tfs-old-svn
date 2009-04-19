@@ -1,7 +1,7 @@
 function onSay(cid, words, param)
-	param = tonumber(param)
-	if(param == nil or param <= 0) then
-		doPlayerSendCancel(cid, "Command requires numeric param above 0.")
+	param = math.abs(math.ceil(tonumber(param))) 
+	if(param == nil or param < 0) then
+		doPlayerSendCancel(cid, "Numeric param may not be lower than 0.")
 		return TRUE
 	end
 
