@@ -200,13 +200,15 @@ class Creature : public AutoID, virtual public Thing
 		bool isInvisible() const {return hasCondition(CONDITION_INVISIBLE);}
 		ZoneType_t getZone() const
 		{
-			const Tile* tile = getTile();
-			if(tile->hasFlag(TILESTATE_PROTECTIONZONE))
-				return ZONE_PROTECTION;
-			else if(tile->hasFlag(TILESTATE_NOPVPZONE))
-				return ZONE_NOPVP;
-			else if(tile->hasFlag(TILESTATE_PVPZONE))
-				return ZONE_PVP;
+			if(const Tile* tile = getTile())
+			{
+				if(tile->hasFlag(TILESTATE_PROTECTIONZONE))
+					return ZONE_PROTECTION;
+				else if(tile->hasFlag(TILESTATE_NOPVPZONE))
+					return ZONE_NOPVP;
+				else if(tile->hasFlag(TILESTATE_PVPZONE))
+					return ZONE_PVP;
+			}
 
 			return ZONE_NORMAL;
 		}
