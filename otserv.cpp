@@ -25,6 +25,9 @@
 #include <sstream>
 #include <fstream>
 #include <iomanip>
+#ifndef WIN32
+#include <unistd.h>
+#endif
 
 #include "server.h"
 #ifdef __LOGIN_SERVER__
@@ -287,8 +290,26 @@ void serverMain(void* param)
 	args,
 	#endif
 	&servicer)));
+
 	OTSYS_THREAD_LOCK(g_loaderLock, "otserv()");
 	OTSYS_THREAD_WAITSIGNAL(g_loaderSignal, g_loaderLock);
+	if(servicer.isRunning())
+	{
+		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
+		#if defined(WIN32) && not defined(__CONSOLE__)
+		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
+		GUI::getInstance()->m_connections = true;
+		#endif
+		servicer.run();
+	}
+	else
+	{
+		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Offline! No services available..." << std::endl << std::endl;
+		#if defined(WIN32) && not defined(__CONSOLE__)
+		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Offline!");
+		GUI::getInstance()->m_connections = true;
+		#endif
+	}
 
 	#if not defined(WIN32) || defined(__CONSOLE__)
 	std::string outPath = g_config.getString(ConfigManager::OUT_LOG), errorPath = g_config.getString(ConfigManager::ERROR_LOG);
@@ -320,35 +341,6 @@ void serverMain(void* param)
 		std::cerr.rdbuf(errorFile->rdbuf());
 	}
 	#endif
-
-	#ifndef WIN32
-	std::string runPath = g_config.getString(ConfigManager::RUNFILE);
-	if(runPath != "" && runPath.length() > 2)
-	{
-		std::ofstream runFile(runPath.c_str(), std::ios::trunc | std::ios::out);
-		runFile << getpid();
-		runFile.close();
-		atexit(runfileHandler);
-	}
-	#endif
-
-	if(servicer.isRunning())
-	{
-		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
-		#if defined(WIN32) && not defined(__CONSOLE__)
-		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
-		GUI::getInstance()->m_connections = true;
-		#endif
-		servicer.run();
-	}
-	else
-	{
-		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Offline! No services available..." << std::endl << std::endl;
-		#if defined(WIN32) && not defined(__CONSOLE__)
-		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Offline!");
-		GUI::getInstance()->m_connections = true;
-		#endif
-	}
 
 #ifdef __EXCEPTION_TRACER__
 	mainExceptionHandler.RemoveHandler();
@@ -503,7 +495,17 @@ ServiceManager* services)
 	if(!g_config.load())
 		startupErrorMessage("Unable to load " + g_config.getString(ConfigManager::CONFIG_FILE) + "!");
 
-	#ifdef WIN32
+	IntegerVec cores = vectorAtoi(explodeString(g_config.getString(ConfigManager::CORES_USED), ","));
+	if(cores[0] != -1)
+	{
+#ifdef WIN32
+		int32_t mask = 0;
+		for(IntegerVec::iterator it = cores.begin(); it != cores.end(); ++it)
+			mask += 1 << (*it);
+
+		SetProcessAffinityMask(GetCurrentProcess(), mask); //someone test it, please
+	}
+
 	std::string defaultPriority = asLowerCaseString(g_config.getString(ConfigManager::DEFAULT_PRIORITY));
 	if(defaultPriority == "realtime")
 		SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
@@ -511,8 +513,27 @@ ServiceManager* services)
   	 	SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
   	else if(defaultPriority == "higher")
   		SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
-  	#endif
 
+  	#else
+		cpu_set_t mask;
+		CPU_ZERO(&mask);
+		for(IntegerVec::iterator it = cores.begin(); it != cores.end(); ++it)
+			CPU_SET((*it), &mask);
+
+		sched_setaffinity(getpid(), (int32_t)sizeof(mask), &mask);
+	}
+
+	std::string runPath = g_config.getString(ConfigManager::RUNFILE);
+	if(runPath != "" && runPath.length() > 2)
+	{
+		std::ofstream runFile(runPath.c_str(), std::ios::trunc | std::ios::out);
+		runFile << getpid();
+		runFile.close();
+		atexit(runfileHandler);
+	}
+
+	nice(g_config.getNumber(ConfigManager::NICE_LEVEL));
+	#endif
 	std::string passwordType = asLowerCaseString(g_config.getString(ConfigManager::PASSWORD_TYPE));
 	if(passwordType == "md5")
 	{

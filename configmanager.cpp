@@ -242,6 +242,8 @@ bool ConfigManager::load()
 	m_confNumber[BLESS_REDUCTION] = getGlobalNumber("eachBlessReduction", 8);
 	m_confString[PREFIX_CHANNEL_LOGS] = getGlobalString("prefixChannelLogs", "");
 	m_confBool[GHOST_INVISIBLE_EFFECT] = getGlobalBool("ghostModeInvisibleEffect", "no");
+	m_confString[CORES_USED] = getGlobalString("coresUsed", "-1");
+	m_confNumber[NICE_LEVEL] = getGlobalNumber("niceLevel", 5);
 
 	m_loaded = true;
 	return true;

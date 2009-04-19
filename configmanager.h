@@ -69,6 +69,7 @@ class ConfigManager
 			ERROR_LOG,
 			DATA_DIRECTORY,
 			PREFIX_CHANNEL_LOGS,
+			CORES_USED,
 			LAST_STRING_CONFIG /* this must be the last one */
 		};
 
@@ -143,6 +144,7 @@ class ConfigManager
 			BLESS_REDUCTION_BASE,
 			BLESS_REDUCTION_DECREAMENT,
 			BLESS_REDUCTION,
+			NICE_LEVEL,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 

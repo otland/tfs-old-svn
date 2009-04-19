@@ -120,6 +120,7 @@ bool DatabaseMySQL::executeQuery(const std::string &query)
 			return executeQuery(query);
 
 		state = false;
+		std::cout << "mysql_real_query(): " << query << " - MYSQL ERROR: " << mysql_error(&m_handle) << " (" << error << ")" << std::endl;
 	}
 
 	if(MYSQL_RES* tmp = mysql_store_result(&m_handle))

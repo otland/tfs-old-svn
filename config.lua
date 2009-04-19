@@ -129,8 +129,12 @@
 	cleanProtectedZones = "yes"
 
 	-- Startup
-	-- NOTE: defaultPriority works only on Windows
+	-- NOTE: defaultPriority works only on Windows and niceLevel on *nix
+	-- coresUsed are seperated by comma cores ids used by server process,
+	-- default is -1, so it stays untouched (automaticaly assigned by OS).
 	defaultPriority = "high"
+	niceLevel = 5
+	coresUsed = "-1"
 	optimizeDatabaseAtStartup = "yes"
 	removePremiumOnInit = "yes"
 
