@@ -429,7 +429,10 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 			return RET_CANNOTUSETHISOBJECT;
 	}
 
-	int32_t tmp = item->getParent()->__getIndexOfThing(item);
+	int32_t tmp = 0;
+	if(item->getParent())
+		tmp = item->getParent()->__getIndexOfThing(item);
+
 	PositionEx posEx(pos, tmp);
 
 	bool executed = false;
@@ -684,7 +687,10 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 		itemId = item->getID();
 	}
 
-	int32_t fromStackPos = item->getParent()->__getIndexOfThing(item);
+	int32_t fromStackPos = 0;
+	if(item->getParent())
+		fromStackPos = item->getParent()->__getIndexOfThing(item);
+
 	PositionEx fromPosEx(fromPos, fromStackPos);
 	PositionEx toPosEx(toPos, toStackPos);
 
