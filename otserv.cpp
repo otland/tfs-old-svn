@@ -255,16 +255,16 @@ void serverMain(void* param)
 #endif
 	ServiceManager servicer;
 	g_config.startup();
+
 	#ifdef __OTSERV_ALLOCATOR_STATS__
 	OTSYS_CREATE_THREAD(allocatorStatsThread, NULL);
-
 	#endif
 	#ifdef __EXCEPTION_TRACER__
 	ExceptionHandler mainExceptionHandler;
 	mainExceptionHandler.InstallHandler();
-
 	#endif
 	#ifndef WIN32
+
 	// ignore sigpipe...
 	struct sigaction sigh;
 	sigh.sa_handler = SIG_IGN;
@@ -508,13 +508,18 @@ ServiceManager* services)
 	IntegerVec cores = vectorAtoi(explodeString(g_config.getString(ConfigManager::CORES_USED), ","));
 	if(cores[0] != -1)
 	{
-#ifdef WIN32
+	#ifdef WIN32
 		int32_t mask = 0;
 		for(IntegerVec::iterator it = cores.begin(); it != cores.end(); ++it)
 			mask += 1 << (*it);
 
 		SetProcessAffinityMask(GetCurrentProcess(), mask); //someone test it, please
 	}
+
+	HANDLE win_mutex;
+	win_mutex = CreateMutex(NULL, TRUE, "theforgottenserver_" + g_config.getNumber(ConfigManager::WORLD_ID));
+	if(GetLastError() == ERROR_ALREADY_EXISTS)
+		startupErrorMessage("Other instance of The Forgotten Server is already running.\nPlease check if there is no same process with same name before trying again.\nIf you want to use multiworld you need to change worldId!");
 
 	std::string defaultPriority = asLowerCaseString(g_config.getString(ConfigManager::DEFAULT_PRIORITY));
 	if(defaultPriority == "realtime")
@@ -524,7 +529,7 @@ ServiceManager* services)
   	else if(defaultPriority == "higher")
   		SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
 
-  	#else
+	#else
 		cpu_set_t mask;
 		CPU_ZERO(&mask);
 		for(IntegerVec::iterator it = cores.begin(); it != cores.end(); ++it)
