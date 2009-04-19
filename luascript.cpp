@@ -7865,11 +7865,12 @@ int32_t LuaScriptInterface::luaIsInArray(lua_State* L)
 			}
 		}
 		else
-			lua_pop(L, 2);
+			break;
 
 		++i;
 	}
 
+	lua_pop(L, 2);
 	lua_pushboolean(L, LUA_FALSE);
 	return 1;
 }
