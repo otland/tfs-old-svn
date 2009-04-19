@@ -4,7 +4,6 @@ local config = {
 }
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-
 	if(item.itemid == 2147 and itemEx.itemid == 2342) then
 		doTransformItem(itemEx.uid, 2343)
 		doRemoveItem(item.uid, 1)
@@ -61,7 +60,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			end
 		end
 
-		doTransformItem(itemEx.uid, enchantedItems[itemEx.itemid][b], 1000)
+		if(isInArray({2544, 8905}, itemEx.itemid) ~= TRUE) then
+			itemEx.type = 1000
+		end
+
+		doTransformItem(itemEx.uid, enchantedItems[itemEx.itemid][b], itemEx.type)
 		doSendMagicEffect(getThingPos(itemEx.uid), CONST_ME_HOLYDAMAGE)
 		doRemoveItem(item.uid, 1)
 		return TRUE
