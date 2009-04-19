@@ -540,6 +540,13 @@
 	[ 0.3.4
 		A...
 			data/
+				actions/
+					scripts/
+						other/
+							enchanting.lua
+								* Added enchanting system
+							furniturebeds.lua
+								* Added furniture beds (packages with beds)
 				XML/
 					channels.xml
 						* Added chat channels configuration
@@ -550,20 +557,34 @@
 		M...
 			data/
 				actions/
+					actions.xml
+						* Added furniture beds (packages with beds)
+						* Reorganization
 					scripts/
 						quests/
 							system.lua
 							annihilator.lua
 								* Changes due player storage compatibility
 						other/
+							blueberrybush.lua
+							changegold.lua
+							constructionkits.lua
+							food.lua
+								* Fixes & formatting
 							doors.lua
 								* Changes due player storage compatibility
+							machete.lua
+								* Added jungle grass
+							pick.lua
+								* Fragile ice 'picking'
+							rope.lua
+								* Fixed error in console
 
 				creaturescripts/
 					scripts/
 						firstitems.lua
 						playerdeath.lua
-							* Fixes
+						guildmotd.lua
 							* Fixes
 
 				items/
@@ -582,11 +603,18 @@
 					constant.lua
 						* Changes due true/false returing
 						* Reload constant for chat
+						* Player sex constants
 
 				logs/
 					chat/
 						* Created chat directory, for channels logging
 
+				movements/
+					scripts/
+						dough.lua
+							* ...
+						snow.lua
+							* Invisible GM won't show snow foot prints
 				npc/
 					scripts/
 						runes.lua
@@ -600,11 +628,30 @@
 
 				talkactions/
 					scripts/
+						mode.lua
+						teleportfloor.lua
+						teleporthere.lua
+						teleportmaster.lua
 						teleportsend.lua
+						teleporttiles.lua
 						teleportto.lua
+						teleporttown.lua
+						unban.lua
+						online.lua
+						broadcastclass.lua
+						buypremium.lua
+						creature.lua
+						animatedtext.lua
+						frags.lua
+						serverinfo.lua
+						animationeffect.lua
+						leavehouse.lua
+						owner.lua
 							* Fixes
 						reload.lua
 							* Channels reloading
+						changender.lua
+							* Configurable premium days cost
 
 				XML/
 					servers.xml
@@ -757,7 +804,10 @@
 	]
 	[ 0.3.4
 		Chat channels configuration in .xml file (Elf, slawkens)
-		Groups moved to groups.xml file + changed way, how are they working (Elf)
+		Groups moved to groups.xml file + changed way, how they works (Elf)
+		Displaying XML parser errors (Elf, slawkens)
+		New CONFIG_HELP file, with config values description (slawkens, KaczooH)
+		Possiblity to use <vocation id=""/> in movements, spells etc. (slawkens)
 	]
 ]
 
@@ -880,6 +930,6 @@
 		"Decaying items transforming when used" (Elf)
 	]
 	[ 0.3.4
-		//TODO
+		?
 	]
 ]

@@ -512,10 +512,6 @@
 		playerQueryDeepness
 			Default: 2
 
-		displayGamemastersWithOnlineCommand
-			Should gamemasters being online be displayed in /online command?
-			Default: no
-
 	*PREMIUM-RELATED
 		freePremium
 			Should all players have free premium accounts?
@@ -666,6 +662,9 @@
 		location
 			Default: Europe
 
+		displayGamemastersWithOnlineCommand
+			Should gamemasters being online be displayed in /online command?
+			Default: no
 	*LOGS
 		displayPlayersLogging
 			Should message in console be displayed, everytime player log in/out?
