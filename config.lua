@@ -52,6 +52,7 @@
 	loginProtectionPeriod = 10 * 1000
 	deathLostPercent = 10
 	stairhopDelay = 2 * 1000
+	gainExperienceColor = 215
 
 	-- Connection config
 	worldId = 0
@@ -116,9 +117,10 @@
 	housePriceEachSquare = 1000
 	houseRentPeriod = "never"
 
-	-- Item usage
+	-- Items
 	timeBetweenActions = 200
 	timeBetweenExActions = 1000
+	checkCorpseOwner = "yes"
 
 	-- Map
 	-- NOTE: storeTrash costs more memory, but will perform alot faster cleaning.
@@ -156,7 +158,6 @@
 	displaySkillLevelOnAdvance = "no"
 	spellNameInsteadOfWords = "no"
 	emoteSpells = "no"
-	gainExperienceColor = 215
 	expireReportsAfterReads = 1
 	promptExceptionTracerErrorBox = "yes"
 	storePlayerDirection = "no"
