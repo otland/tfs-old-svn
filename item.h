@@ -359,7 +359,7 @@ class Item : virtual public Thing, public ItemAttributes
 		void setArticle(std::string article) {setStrAttr(ATTR_ITEM_ARTICLE, article);}
 
 		bool isScriptProtected() const {return hasAttribute(ATTR_ITEM_SCRIPTPROTECTED) ? (bool)getIntAttr(ATTR_ITEM_SCRIPTPROTECTED) : false;}
-		void setScriptProtected(bool value) {setIntAttr(ATTR_ITEM_SCRIPTPROTECTED, (value ? 1 : 0));}
+		void setScriptProtected(bool value) {setIntAttr(ATTR_ITEM_SCRIPTPROTECTED, value ? 1 : 0);}
 
 		int32_t getSlotPosition() const {return items[id].slotPosition;}
 		int32_t getWieldPosition() const {return items[id].wieldPosition;}

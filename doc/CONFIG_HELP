@@ -177,6 +177,10 @@
 			Display effect with health points gained when creature was healed?
 			Default: no
 
+		showHealingDamageForMonster
+			Should healing effect was also displayed for monsters?
+			Default: yes
+
 		fieldOwnershipDuration
 			How long a creature is an owner of a field item created by him.
 			In miliseconds.
@@ -204,6 +208,11 @@
 			Feature introduced in 8.41 global tibia update.
 			Specify time, which player need to wait after changing floor/teleport etc, before he is able to attack monster.
 			Default: 2 * 1000
+
+		checkCorpseOwner
+			Defines if corpse should be checked for owner before opening.
+			So for first x seconds, only creature killer is able to open it.
+			Default: yes
 
 	*CONNECTION
 		worldId
@@ -459,6 +468,7 @@
 
 	*MISCELLANEOUS
 		dataDirectory
+			Directory, from where all data used be server is loaded.
 			Default: data/
 
 		maxMessageBuffer
@@ -468,9 +478,11 @@
 			Default: 15
 
 		allowChangeOutfit
+			Should player's be able to change their outfits?
 			Default: yes
 
 		allowChangeColors
+			Should player's be able to change their outfit colors?
 			Default: yes
 
 		allowChangeAddons
@@ -483,7 +495,7 @@
 
 		bankSystem
 			Use bank system?
-			E.g if enabled, rent for a house will be taken from players' bank account.
+			E.g if enabled, rent for a house will be taken from player's bank account.
 			Default: yes
 
 		saveGlobalStorage
@@ -498,6 +510,7 @@
 			Default: no
 
 		spellNameInsteadOfWords
+			E.g if you use 'exura', it will show 'Light Healing'.
 			Default: no
 
 		emoteSpells
@@ -555,6 +568,7 @@
 			Default: no
 
 		rateExperience
+			How much multiplied will be experience gained from monsters.
 			This option is ignored, if experienceStages are enabled.
 			Default: 5.0
 
@@ -565,6 +579,7 @@
 			Default: 3.0
 
 		rateLoot
+			How much faster loot will be dropped from monsters.
 			Default: 2.0
 
 		rateSpawn
@@ -607,12 +622,15 @@
 
 	*PARTY
 		experienceShareRadiusX
+			Max range (X) between players, to be experience sharing could be active.
 			Default: 30
 
 		experienceShareRadiusY
+			Max range (Y) between players, to be experience sharing could be active.
 			Default: 30
 
 		experienceShareRadiusZ
+			Max range (Z) between players, to be experience sharing could be active.
 			Default: 1
 
 		experienceShareLevelDifference

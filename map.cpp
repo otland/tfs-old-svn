@@ -175,7 +175,7 @@ void Map::setTile(uint16_t x, uint16_t y, uint8_t z, Tile* newTile)
 		newTile->qt_node = leaf;
 	}
 	else
-		std::cout << "[Error - Map::setTile] Tile already exists." << std::endl;
+		std::cout << "[Error - Map::setTile] Tile already exists - pos " << offsetX << "/" << offsetY << "/" << z << std::endl;
 
 	if(newTile->hasFlag(TILESTATE_REFRESH))
 	{

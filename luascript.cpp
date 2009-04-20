@@ -2379,7 +2379,7 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 				lua_pushstring(L, player->getNameDescription().substr(player->getName().length()).c_str());
 				return 1;
 			case PlayerInfoAccess:
-				value = player->getAccessLevel();
+				value = player->getAccess();
 				break;
 			case PlayerInfoLevel:
 				value = player->getLevel();

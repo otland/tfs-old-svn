@@ -28,27 +28,10 @@ class Vocation
 	public:
 		virtual ~Vocation();
 
-		Vocation()
-		{
-			needPremium = false;
-			attackable = true;
-			skillMultipliers[6] = 1.1f;
-			manaMultiplier = 4.0;
-			soulMax = 100;
-			soulGainTicks = 120;
-			baseSpeed = 220;
-			attackSpeed = 1500;
-			name = description = "";
-			lessLoss = fromVocation = 0;
-			gainHealthAmount = gainManaAmount = 1;
-			skillMultipliers[0] = skillMultipliers[5] = 1.5f;
-			gainHealth = gainMana = gainCap = 5;
-			gainHealthTicks = gainManaTicks = 6;
-			meleeMultiplier = distanceMultiplier = wandMultiplier = magicMultiplier = magicHealingMultiplier = defenseMultiplier = armorMultiplier = 1.0;
-			skillMultipliers[1] = skillMultipliers[2] = skillMultipliers[3] = skillMultipliers[4] = 2.0f;
-			memset(absorbPercent, 0, sizeof(absorbPercent));
-		}
-		Vocation(uint32_t _id): id(_id)
+		Vocation() {init();}
+		Vocation(uint32_t _id): id(_id) {init();}
+
+		void init()
 		{
 			needPremium = false;
 			attackable = true;
@@ -175,6 +158,7 @@ class Vocations
 		bool reload();
 		bool loadFromXml();
 
+		bool parseVocationNode(xmlNodePtr p);
 		Vocation* getVocation(uint32_t vocId);
 		int32_t getVocationId(const std::string& name);
 

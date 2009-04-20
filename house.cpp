@@ -835,6 +835,8 @@ bool Houses::payHouses()
 	if(rentPeriod == RENTPERIOD_NEVER)
 		return true;
 
+	std::cout << "> Paying houses..." << std::endl;
+	uint64_t start = OTSYS_TIME();
 	uint32_t currentTime = time(NULL);
 	for(HouseMap::iterator it = houseMap.begin(); it != houseMap.end(); ++it)
 	{
@@ -987,6 +989,7 @@ bool Houses::payHouses()
 		}
 	}
 
+	std::cout << "> PAYHOUSES: Complete in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 	return true;
 }
 

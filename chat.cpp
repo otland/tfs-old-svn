@@ -152,7 +152,7 @@ bool ChatChannel::removeUser(Player* player)
 
 bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& text, uint32_t _time /*= 0*/)
 {
-	if(!m_enabled || player->getAccessLevel() < m_access)
+	if(!m_enabled || player->getAccess() < m_access)
 		return true;
 
 	if((m_id == CHANNEL_TRADE || m_id == CHANNEL_TRADEROOK) && !player->hasFlag(PlayerFlag_CannotBeMuted))
@@ -1091,7 +1091,7 @@ ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 		std::cout << "Chat::getChannel - found normal channel" << std::endl;
 		#endif
 		ChatChannel* tmpChannel = nit->second;
-		if(!tmpChannel || !tmpChannel->isEnabled() || player->getAccessLevel() < tmpChannel->getAccess())
+		if(!tmpChannel || !tmpChannel->isEnabled() || player->getAccess() < tmpChannel->getAccess())
 		{
 			#ifdef __DEBUG_CHAT__
 			std::cout << "Chat::getChannel - cannot access normal channel" << std::endl;

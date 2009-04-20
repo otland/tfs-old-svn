@@ -113,7 +113,6 @@ void ProtocolStatus::deleteProtocolTask()
 
 std::string Status::getStatusString(bool sendPlayers) const
 {
-	std::string xml;
 	char buffer[90];
 
 	xmlDocPtr doc;
@@ -192,10 +191,9 @@ std::string Status::getStatusString(bool sendPlayers) const
 	xmlChar* s = NULL;
 	int32_t len = 0;
 	xmlDocDumpMemory(doc, (xmlChar**)&s, &len);
+	std::string xml;
 	if(s)
 		xml = std::string((char*)s, len);
-	else
-		xml = "";
 
 	xmlFreeOTSERV(s);
 	xmlFreeDoc(doc);

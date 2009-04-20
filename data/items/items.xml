@@ -16,25 +16,11 @@
 		<attribute key="decayTo" value="293"/>
 		<attribute key="duration" value="300"/>
 	</item>
-	<item id="351" name="dirt"/>
-	<item id="352" name="dirt"/>
-	<item id="353" name="dirt"/>
-	<item id="354" name="dirt"/>
+	<item fromid="351" toid="354" name="dirt"/>
 	<item id="355" article="a" name="muddy floor">
 		<attribute key="fluidSource" value="mud"/>
 	</item>
-	<item id="356" article="a" name="dirt wall"/>
-	<item id="357" article="a" name="dirt wall"/>
-	<item id="358" article="a" name="dirt wall"/>
-	<item id="359" article="a" name="dirt wall"/>
-	<item id="360" article="a" name="dirt wall"/>
-	<item id="361" article="a" name="dirt wall"/>
-	<item id="362" article="a" name="dirt wall"/>
-	<item id="363" article="a" name="dirt wall"/>
-	<item id="364" article="a" name="dirt wall"/>
-	<item id="365" article="a" name="dirt wall"/>
-	<item id="366" article="a" name="dirt wall"/>
-	<item id="367" article="a" name="dirt wall"/>
+	<item fromid="356" toid="367" article="a" name="dirt wall"/>
 	<item id="368" name="ground"/>
 	<item id="369" article="a" name="trapdoor">
 		<attribute key="floorchange" value="down"/>
@@ -42,18 +28,7 @@
 	<item id="370" article="a" name="trapdoor">
 		<attribute key="floorchange" value="down"/>
 	</item>
-	<item id="371" article="a" name="stone wall"/>
-	<item id="372" article="a" name="stone wall"/>
-	<item id="373" article="a" name="stone wall"/>
-	<item id="374" article="a" name="stone wall"/>
-	<item id="375" article="a" name="stone wall"/>
-	<item id="376" article="a" name="stone wall"/>
-	<item id="377" article="a" name="stone wall"/>
-	<item id="378" article="a" name="stone wall"/>
-	<item id="379" article="a" name="stone wall"/>
-	<item id="380" article="a" name="stone wall"/>
-	<item id="381" article="a" name="stone wall"/>
-	<item id="382" article="a" name="stone wall"/>
+	<item fromid="371" toid="382" article="a" name="stone wall"/>
 	<item id="383" article="a" name="hole">
 		<attribute key="floorchange" value="down"/>
 	</item>
@@ -137,33 +112,14 @@
 	<item id="433" name="stairs">
 		<attribute key="floorchange" value="down"/>
 	</item>
-	<item id="434" name="wooden flooring"/>
-	<item id="435" name="wooden flooring"/>
-	<item id="436" name="wooden flooring"/>
-	<item id="437" name="wooden flooring"/>
-	<item id="438" name="wooden flooring"/>
-	<item id="439" name="wooden flooring"/>
-	<item id="440" name="wooden flooring"/>
-	<item id="441" name="wooden flooring"/>
-	<item id="442" name="wooden flooring"/>
-	<item id="443" name="wooden flooring"/>
-	<item id="444" name="wooden flooring"/>
-	<item id="445" name="wooden flooring"/>
+	<item fromid="434" toid="445" name="wooden flooring"/>
 	<item id="446" name="wooden flooring">
 		<attribute key="description" value="It seems to be a switch."/>
 	</item>
 	<item id="447" name="wooden flooring">
 		<attribute key="description" value="It seems to be a switch."/>
 	</item>
-	<item id="448" name="wooden flooring"/>
-	<item id="449" name="wooden flooring"/>
-	<item id="450" name="wooden flooring"/>
-	<item id="451" name="wooden flooring"/>
-	<item id="452" name="wooden flooring"/>
-	<item id="453" name="wooden flooring"/>
-	<item id="454" name="wooden flooring"/>
-	<item id="455" name="wooden flooring"/>
-	<item id="456" name="wooden flooring"/>
+	<item fromid="448" toid="456" name="wooden flooring"/>
 	<item id="457" article="a" name="white stone tile"/>
 	<item id="458" name="wooden flooring"/>
 	<item id="459" name="stairs">
@@ -20412,11 +20368,7 @@
 	<item id="9065" name="wooden wall"/>
 	<item id="9066" name="wooden wall"/>
 	<item id="9067" name="wooden floor"/>
-	<item id="9068" name="frozen mud"/>
-	<item id="9069" name="frozen mud"/>
-	<item id="9070" name="frozen mud"/>
-	<item id="9071" name="frozen mud"/>
-	<item id="9072" name="frozen mud"/>
+	<item fromid="9068" toid="9072" name="frozen mud"/>
 	<item id="9107" article="a" name="dead mutated human">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="10007"/>
@@ -20428,6 +20380,7 @@
 		<attribute key="description" value="It has the power to store magic energy."/>
 		<attribute key="weight" value="890"/>
 	</item>
+	<item fromid="9159" toid="9164" article="an" name="archway"/>
 	<item id="9165" article="a" name="closed door">
 		<attribute key="type" value="door"/>
 		<attribute key="blockprojectile" value="1"/>
@@ -20500,6 +20453,7 @@
 	<item id="9236" article="a" name="sun clock"/>
 	<item id="9237" article="a" name="sun clock"/>
 	<item id="9238" article="a" name="sun clock"/>
+	<item fromid="9252" toid="9262" article="a" name="copper pipes"/>
 	<item id="9267" article="a" name="closed door">
 		<attribute key="type" value="door"/>
 		<attribute key="blockprojectile" value="1"/>
@@ -20568,10 +20522,10 @@
 	<item id="9284" article="a" name="gate of expertise">
 		<attribute key="type" value="door"/>
 	</item>
-	<item id="9562" article="a" name="large gem"/>
-	<item id="9563" article="a" name="large gem"/>
-	<item id="9564" article="a" name="large gem"/>
-	<item id="9565" article="a" name="large gem"/>
+	<item fromid="9320" toid="9326" article="an" name="archway"/>
+	<item id="9531" article="a" name="mechanism"/>
+	<item id="9534" article="a" name="mechanism"/>
+	<item fromid="9562" toid="9565" article="a" name="large gem"/>
 	<item id="9573" name="corkscrew stairs">
 		<attribute key="floorchange" value="north"/>
 	</item>
@@ -20599,6 +20553,7 @@
 		<attribute key="duration" value="900"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
+	<item id="9655" article="a" name="wooden pole"/>
 	<item id="9658" article="a" name="slain vampire bride">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="9659"/>
@@ -20623,6 +20578,7 @@
 	<item id="9690" article="a" name="gear wheel">
 		<attribute key="weight" value="5"/>
 	</item>
+	<item fromid="9708" toid="9713" name="burnt wall"/>
 	<item id="9746" article="a" name="box ramp">
 		<attribute key="floorchange" value="west"/>
 	</item>

@@ -121,7 +121,7 @@ bool TalkActions::onPlayerSay(Player* player, uint16_t channelId, const std::str
 
 	StringVec exceptions = talkAction->getExceptions();
 	if((std::find(exceptions.begin(), exceptions.end(), asLowerCaseString(player->getName())) == exceptions.end()
-		&& talkAction->getAccess() > player->getAccessLevel()) || player->isAccountManager())
+		&& talkAction->getAccess() > player->getAccess()) || player->isAccountManager())
 	{
 		if(player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
 		{
@@ -273,12 +273,10 @@ int32_t TalkAction::executeSay(Player* player, const std::string& words, const s
 			env->setScriptId(m_scriptId, m_scriptInterface);
 			env->setRealPos(player->getPosition());
 
-			uint32_t cid = env->addThing(player);
-
 			lua_State* L = m_scriptInterface->getLuaState();
-
 			m_scriptInterface->pushFunction(m_scriptId);
-			lua_pushnumber(L, cid);
+
+			lua_pushnumber(L, env->addThing(player));
 			lua_pushstring(L, words.c_str());
 			lua_pushstring(L, param.c_str());
 			lua_pushnumber(L, channel);

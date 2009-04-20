@@ -142,15 +142,8 @@ class IOMap
 			return Houses::getInstance().loadFromXml(map->housefile);
 		}
 
-		const std::string& getLastErrorString() const
-		{
-			return errorString;
-		}
-
-		void setLastErrorString(const std::string& _errorString)
-		{
-			errorString = _errorString;
-		}
+		const std::string& getLastErrorString() const {return errorString;}
+		void setLastErrorString(const std::string& _errorString) {errorString = _errorString;}
 
 	protected:
 		std::string errorString;

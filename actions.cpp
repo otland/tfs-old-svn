@@ -512,7 +512,9 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 
 	if(Container* container = item->getContainer())
 	{
-		if(container->getCorpseOwner() != 0 && !player->canOpenCorpse(container->getCorpseOwner()))
+		if(container->getCorpseOwner() && !player->canOpenCorpse(container->getCorpseOwner())
+			&& g_config.getBool(ConfigManager::CHECK_CORPSE_OWNER)
+		)
 			return RET_YOUARENOTTHEOWNER;
 
 		Container* tmpContainer = NULL;

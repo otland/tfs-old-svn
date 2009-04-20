@@ -27,6 +27,8 @@
 #include "itemloader.h"
 #include "position.h"
 
+#include <libxml/parser.h>
+
 #define SLOTP_WHEREEVER 0xFFFFFFFF
 #define SLOTP_HEAD 1 << 0
 #define	SLOTP_NECKLACE 1 << 1
@@ -293,6 +295,11 @@ void Array<A>::addElement(A a, uint32_t pos)
 	m_data[pos] = a;
 }
 
+struct RandomizationBlock
+{
+	int32_t fromRange, toRange, chance;
+};
+
 typedef std::map<int32_t, int32_t> MoneyMap;
 
 class Items
@@ -306,6 +313,7 @@ class Items
 
 		int32_t loadFromOtb(std::string);
 		bool loadFromXml();
+		bool loadRandomization();
 
 		ItemType& getItemType(int32_t id);
 		const ItemType& getItemType(int32_t id) const;
@@ -322,12 +330,22 @@ class Items
 		static uint32_t dwMinorVersion;
 		static uint32_t dwBuildNumber;
 
+		bool parseItemNode(xmlNodePtr itemNode, uint32_t id);
+		bool loadRandomizationBlock(int32_t id, int32_t fromId, int32_t toId, int32_t chance);
+
+		int32_t getRandomizationChance() const {return m_randomizationChance;}
+
+		typedef std::map<int32_t, RandomizationBlock> RandomizationMap;
+		RandomizationMap randomizationMap;
+
 	protected:
 		Array<ItemType*> items;
 		MoneyMap moneyMap;
 
 		typedef std::map<int32_t, int32_t> ReverseItemMap;
 		ReverseItemMap reverseItemMap;
+
+		int32_t m_randomizationChance;
 };
 
 #endif

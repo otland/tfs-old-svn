@@ -42,6 +42,65 @@ Raids::~Raids()
 	clear();
 }
 
+bool Raids::parseRaidNode(xmlNodePtr raidNode)
+{
+	if(xmlStrcmp(raidNode->name, (const xmlChar*)"raid"))
+		return false;
+
+	int32_t intValue;
+	std::string strValue;
+
+	std::string name, file;
+	uint32_t interval;
+	uint64_t margin;
+	bool enabled = true;
+
+	if(!readXMLString(raidNode, "name", strValue))
+	{
+		std::cout << "[Error - Raids::parseRaidNode] name tag missing for raid." << std::endl;
+		return false;
+	}
+
+	name = strValue;
+	if(readXMLString(raidNode, "file", strValue))
+		file = strValue;
+	else
+	{
+		file = "raids/" + name + ".xml";
+		std::cout << "[Warning - Raids::parseRaidNode]: file tag missing for raid " << name << ", using default: " << file << std::endl;
+	}
+
+	if(readXMLInteger(raidNode, "interval2", intValue) && intValue > 0)
+		interval = intValue * 60;
+	else
+	{
+		std::cout << "[Error - Raids::parseRaidNode] interval2 tag missing or divided by 0 for raid " << name << std::endl;
+		return false;
+	}
+
+	if(readXMLInteger(raidNode, "margin", intValue))
+		margin = intValue * 60 * 1000;
+	else
+	{
+		margin = 0;
+		std::cout << "[Warning - Raids::parseRaidNode] margin tag missing for raid " << name << ", using default: " << margin << std::endl;
+	}
+
+	if(readXMLString(raidNode, "enabled", strValue))
+		enabled = booleanString(strValue);
+
+	Raid* newRaid = new Raid(name, interval, margin, enabled);
+	if(!newRaid || !newRaid->loadFromXml(getFilePath(FILE_TYPE_OTHER, "raids/" + file)))
+	{
+		delete newRaid;
+		std::cout << "[Error - Raids::parseEventNode] failed to load raid " << name << std::endl;
+		return false;
+	}
+
+	raidList.push_back(newRaid);
+	return true;
+}
+
 bool Raids::loadFromXml()
 {
 	if(isLoaded())
@@ -63,68 +122,10 @@ bool Raids::loadFromXml()
 		return false;
 	}
 
-	int32_t intValue;
-	std::string strValue;
-
 	raidNode = root->children;
 	while(raidNode)
 	{
-		if(xmlStrcmp(raidNode->name, (const xmlChar*)"raid"))
-		{
-			raidNode = raidNode->next;
-			continue;
-		}
-
-		std::string name, file;
-		uint32_t interval;
-		uint64_t margin;
-		bool enabled = true;
-
-		if(!readXMLString(raidNode, "name", strValue))
-		{
-			std::cout << "[Error - Raids::loadFromXml] name tag missing for raid." << std::endl;
-			raidNode = raidNode->next;
-			continue;
-		}
-
-		name = strValue;
-		if(readXMLString(raidNode, "file", strValue))
-			file = strValue;
-		else
-		{
-			file = "raids/" + name + ".xml";
-			std::cout << "[Warning - Raids::loadFromXml] file tag missing for raid " << name << ", using default: " << file << std::endl;
-		}
-
-		if(readXMLInteger(raidNode, "interval2", intValue) && intValue > 0)
-			interval = intValue * 60;
-		else
-		{
-			std::cout << "[Error - Raids::loadFromXml] interval2 tag missing or divided by 0 for raid " << name << std::endl;
-			raidNode = raidNode->next;
-			continue;
-		}
-
-		if(readXMLInteger(raidNode, "margin", intValue))
-			margin = intValue * 60 * 1000;
-		else
-		{
-			margin = 0;
-			std::cout << "[Warning - Raids::loadFromXml] margin tag missing for raid " << name << ", using default: " << margin << std::endl;
-		}
-
-		if(readXMLString(raidNode, "enabled", strValue))
-			enabled = booleanString(strValue);
-
-		Raid* newRaid = new Raid(name, interval, margin, enabled);
-		if(newRaid && newRaid->loadFromXml(getFilePath(FILE_TYPE_OTHER, "raids/" + file)))
-			raidList.push_back(newRaid);
-		else
-		{
-			delete newRaid;
-			std::cout << "[Error - Raids::loadFromXml] failed to load raid " << name << std::endl;
-		}
-
+		parseRaidNode(raidNode);
 		raidNode = raidNode->next;
 	}
 
@@ -278,9 +279,9 @@ bool Raid::loadFromXml(const std::string& _filename)
 
 	//sort by delay time
 	std::sort(raidEvents.begin(), raidEvents.end(), RaidEvent::compareEvents);
-	loaded = true;
 
 	xmlFreeDoc(doc);
+	loaded = true;
 	return true;
 }
 

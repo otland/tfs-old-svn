@@ -96,6 +96,8 @@ class Chat
 		bool reload();
 		bool loadFromXml();
 
+		bool parseChannelNode(xmlNodePtr p);
+
 		ChatChannel* createChannel(Player* player, uint16_t channelId);
 		bool deleteChannel(Player* player, uint16_t channelId);
 
@@ -116,7 +118,6 @@ class Chat
 		ChatChannel* dummyPrivate;
 
 		void clear();
-		bool parseChannelNode(xmlNodePtr p);
 
 		typedef std::map<uint16_t, ChatChannel*> NormalChannelMap;
 		NormalChannelMap m_normalChannels;

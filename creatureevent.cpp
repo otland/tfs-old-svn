@@ -157,6 +157,8 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 		m_type = CREATURE_EVENT_ADVANCE;
 	else if(tmpStr == "sendmail")
 		m_type = CREATURE_EVENT_MAIL_SEND;
+	else if(tmpStr == "textedit")
+		m_type = CREATURE_EVENT_TEXTEDIT;
 	else if(tmpStr == "receivemail")
 		m_type = CREATURE_EVENT_MAIL_RECEIVE;
 	else if(tmpStr == "look")
@@ -179,6 +181,7 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 		m_type = CREATURE_EVENT_DEATH;
 	else if(tmpStr == "preparedeath")
 		m_type = CREATURE_EVENT_PREPAREDEATH;
+
 	else
 	{
 		std::cout << "[Error - CreatureEvent::configureEvent] No valid type for creature event." << str << std::endl;
@@ -211,6 +214,8 @@ std::string CreatureEvent::getScriptEventName() const
 			return "onSendMail";
 		case CREATURE_EVENT_MAIL_RECEIVE:
 			return "onReceiveMail";
+		case CREATURE_EVENT_TEXTEDIT:
+			return "onTextEdit";
 		case CREATURE_EVENT_STATSCHANGE:
 			return "onStatsChange";
 		case CREATURE_EVENT_COMBAT_AREA:
@@ -227,6 +232,7 @@ std::string CreatureEvent::getScriptEventName() const
 			return "onDeath";
 		case CREATURE_EVENT_PREPAREDEATH:
 			return "onPrepareDeath";
+
 		case CREATURE_EVENT_NONE:
 		default:
 			break;
@@ -253,6 +259,8 @@ std::string CreatureEvent::getScriptEventParams() const
 			return "cid, receiver, item, openBox";
 		case CREATURE_EVENT_MAIL_RECEIVE:
 			return "cid, sender, item, openBox";
+		case CREATURE_EVENT_TEXTEDIT:
+			return "cid, item, newText";
 		case CREATURE_EVENT_THINK:
 			return "cid, interval";
 		case CREATURE_EVENT_STATSCHANGE:
@@ -1262,6 +1270,62 @@ uint32_t CreatureEvent::executePrepareDeath(Creature* creature, Creature* lastHi
 	else
 	{
 		std::cout << "[Error - CreatureEvent::executePrepareDeath] Call stack overflow." << std::endl;
+		return 0;
+	}
+}
+
+uint32_t CreatureEvent::executeTextEdit(Player* player, Item* item, std::string newText)
+{
+	//onTextEdit(cid, item, newText)
+	if(m_scriptInterface->reserveScriptEnv())
+	{
+		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		if(m_scripted == EVENT_SCRIPT_BUFFER)
+		{
+			env->setRealPos(player->getPosition());
+
+			std::stringstream scriptstream;
+			scriptstream << "cid = " << env->addThing(player) << std::endl;
+			env->streamThing(scriptstream, "item", item, env->addThing(item));
+			scriptstream << "newText = " << newText.c_str() << std::endl;
+
+			scriptstream << m_scriptData;
+			int32_t result = LUA_NO_ERROR;
+			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			{
+				lua_State* L = m_scriptInterface->getLuaState();
+				result = m_scriptInterface->getField(L, "_result");
+			}
+
+			m_scriptInterface->releaseScriptEnv();
+			return (result == LUA_TRUE);
+		}
+		else
+		{
+			#ifdef __DEBUG_LUASCRIPTS__
+			char desc[35];
+			sprintf(desc, "%s", player->getName().c_str());
+			env->setEventDesc(desc);
+			#endif
+
+			env->setScriptId(m_scriptId, m_scriptInterface);
+			env->setRealPos(player->getPosition());
+
+			lua_State* L = m_scriptInterface->getLuaState();
+			m_scriptInterface->pushFunction(m_scriptId);
+
+			lua_pushnumber(L, env->addThing(player));
+			LuaScriptInterface::pushThing(L, item, env->addThing(item));
+			lua_pushstring(L, newText.c_str());
+
+			int32_t result = m_scriptInterface->callFunction(3);
+			m_scriptInterface->releaseScriptEnv();
+			return (result == LUA_TRUE);
+		}
+	}
+	else
+	{
+		std::cout << "[Error - CreatureEvent::executeTextEdit] Call stack overflow." << std::endl;
 		return 0;
 	}
 }

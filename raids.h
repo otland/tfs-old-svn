@@ -61,6 +61,8 @@ class Raids
 			return &instance;
 		}
 
+		bool parseRaidNode(xmlNodePtr raidNode);
+
 		bool loadFromXml();
 		bool startup();
 

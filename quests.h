@@ -94,7 +94,7 @@ class Quest
 class Quests
 {
 	public:
-		Quests() {}
+		Quests() {m_lastId = 0;}
 		virtual ~Quests();
 
 		static Quests* getInstance()
@@ -106,11 +106,16 @@ class Quests
 		bool reload();
 		bool loadFromXml();
 
+		bool parseQuestNode(xmlNodePtr p);
+
 		uint16_t getQuestsCount(Player* player);
 		void getQuestsList(Player* player, NetworkMessage_ptr msg);
 
 		Quest* getQuestById(uint16_t id);
 		QuestsList quests;
+
+	private:
+		uint16_t m_lastId;
 };
 
 #endif

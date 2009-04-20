@@ -42,6 +42,174 @@ bool Vocations::reload()
 	return loadFromXml();
 }
 
+bool Vocations::parseVocationNode(xmlNodePtr p)
+{
+	std::string strValue;
+	int32_t intValue;
+	float floatValue;
+	if(xmlStrcmp(p->name, (const xmlChar*)"vocation") != 0)
+		return false;
+
+	if(!readXMLInteger(p, "id", intValue))
+	{
+		std::cout << "Missing vocation id." << std::endl;
+		return false;
+	}
+
+	Vocation* voc = new Vocation(intValue);
+	if(readXMLString(p, "name", strValue))
+		voc->setName(strValue);
+
+	if(readXMLString(p, "description", strValue))
+		voc->setDescription(strValue);
+
+	if(readXMLString(p, "needpremium", strValue))
+		voc->setNeedPremium(booleanString(strValue));
+
+	if(readXMLInteger(p, "gaincap", intValue) || readXMLInteger(p, "gaincapacity", intValue))
+		voc->setGainCap(intValue);
+
+	if(readXMLInteger(p, "gainhp", intValue) || readXMLInteger(p, "gainhealth", intValue))
+		voc->setGainHealth(intValue);
+
+	if(readXMLInteger(p, "gainmana", intValue))
+		voc->setGainMana(intValue);
+
+	if(readXMLInteger(p, "gainhpticks", intValue) || readXMLInteger(p, "gainhealthticks", intValue))
+		voc->setGainHealthTicks(intValue);
+
+	if(readXMLInteger(p, "gainhpamount", intValue) || readXMLInteger(p, "gainhealthamount", intValue))
+		voc->setGainHealthAmount(intValue);
+
+	if(readXMLInteger(p, "gainmanaticks", intValue))
+		voc->setGainManaTicks(intValue);
+
+	if(readXMLInteger(p, "gainmanaamount", intValue))
+		voc->setGainManaAmount(intValue);
+
+	if(readXMLFloat(p, "manamultiplier", floatValue))
+		voc->setManaMultiplier(floatValue);
+
+	if(readXMLInteger(p, "attackspeed", intValue))
+		voc->setAttackSpeed(intValue);
+
+	if(readXMLInteger(p, "basespeed", intValue))
+		voc->setBaseSpeed(intValue);
+
+	if(readXMLInteger(p, "soulmax", intValue))
+		voc->setSoulMax(intValue);
+
+	if(readXMLInteger(p, "gainsoulticks", intValue))
+		voc->setSoulGainTicks(intValue);
+
+	if(readXMLString(p, "attackable", strValue))
+		voc->setAttackable(booleanString(strValue));
+
+	if(readXMLInteger(p, "fromvoc", intValue) || readXMLInteger(p, "fromvocation", intValue))
+		voc->setFromVocation(intValue);
+
+	if(readXMLInteger(p, "lessloss", intValue))
+		voc->setLessLoss(intValue);
+
+	xmlNodePtr configNode = p->children;
+	while(configNode)
+	{
+		if(!xmlStrcmp(configNode->name, (const xmlChar*)"skill"))
+		{
+			uint32_t skillId;
+			if(readXMLInteger(configNode, "id", intValue))
+			{
+				skillId = intValue;
+				if(skillId < SKILL_FIRST || skillId > SKILL_LAST)
+					std::cout << "No valid skill id. " << skillId << std::endl;
+				else
+				{
+					if(readXMLFloat(configNode, "multiplier", floatValue))
+						voc->setSkillMultiplier((skills_t)skillId, floatValue);
+				}
+			}
+			else
+				std::cout << "Missing skill id." << std::endl;
+		}
+		else if(!xmlStrcmp(configNode->name, (const xmlChar*)"formula"))
+		{
+			if(readXMLFloat(configNode, "meleeDamage", floatValue))
+				voc->setMeleeMultiplier(floatValue);
+
+			if(readXMLFloat(configNode, "distDamage", floatValue) || readXMLFloat(configNode, "distanceDamage", floatValue))
+				voc->setDistanceMultiplier(floatValue);
+
+			if(readXMLFloat(configNode, "wandDamage", floatValue) || readXMLFloat(configNode, "rodDamage", floatValue))
+				voc->setWandMultiplier(floatValue);
+
+			if(readXMLFloat(configNode, "magDamage", floatValue) || readXMLFloat(configNode, "magicDamage", floatValue))
+				voc->setMagicMultiplier(floatValue);
+
+			if(readXMLFloat(configNode, "magHealingDamage", floatValue) || readXMLFloat(configNode, "magicHealingDamage", floatValue))
+				voc->setMagicHealingMultiplier(floatValue);
+
+			if(readXMLFloat(configNode, "defense", floatValue))
+				voc->setDefenseMultiplier(floatValue);
+
+			if(readXMLFloat(configNode, "armor", floatValue))
+				voc->setArmorMultiplier(floatValue);
+		}
+		else if(!xmlStrcmp(configNode->name, (const xmlChar*)"absorb"))
+		{
+			if(readXMLInteger(configNode, "percentAll", intValue))
+			{
+				for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+					voc->increaseAbsorbPercent((CombatType_t)i, intValue);
+			}
+			else if(readXMLInteger(configNode, "percentElements", intValue))
+			{
+				voc->increaseAbsorbPercent(COMBAT_ENERGYDAMAGE, intValue);
+				voc->increaseAbsorbPercent(COMBAT_FIREDAMAGE, intValue);
+				voc->increaseAbsorbPercent(COMBAT_EARTHDAMAGE, intValue);
+				voc->increaseAbsorbPercent(COMBAT_ICEDAMAGE, intValue);
+			}
+			else if(readXMLInteger(configNode, "percentMagic", intValue))
+			{
+				voc->increaseAbsorbPercent(COMBAT_ENERGYDAMAGE, intValue);
+				voc->increaseAbsorbPercent(COMBAT_FIREDAMAGE, intValue);
+				voc->increaseAbsorbPercent(COMBAT_EARTHDAMAGE, intValue);
+				voc->increaseAbsorbPercent(COMBAT_ICEDAMAGE, intValue);
+				voc->increaseAbsorbPercent(COMBAT_HOLYDAMAGE, intValue);
+				voc->increaseAbsorbPercent(COMBAT_DEATHDAMAGE, intValue);
+			}
+			else if(readXMLInteger(configNode, "percentEnergy", intValue))
+				voc->increaseAbsorbPercent(COMBAT_ENERGYDAMAGE, intValue);
+			else if(readXMLInteger(configNode, "percentFire", intValue))
+				voc->increaseAbsorbPercent(COMBAT_FIREDAMAGE, intValue);
+			else if(readXMLInteger(configNode, "percentPoison", intValue) || readXMLInteger(configNode, "percentEarth", intValue))
+				voc->increaseAbsorbPercent(COMBAT_EARTHDAMAGE, intValue);
+			else if(readXMLInteger(configNode, "percentIce", intValue))
+				voc->increaseAbsorbPercent(COMBAT_ICEDAMAGE, intValue);
+			else if(readXMLInteger(configNode, "percentHoly", intValue))
+				voc->increaseAbsorbPercent(COMBAT_HOLYDAMAGE, intValue);
+			else if(readXMLInteger(configNode, "percentDeath", intValue))
+				voc->increaseAbsorbPercent(COMBAT_DEATHDAMAGE, intValue);
+			else if(readXMLInteger(configNode, "percentLifeDrain", intValue))
+				voc->increaseAbsorbPercent(COMBAT_LIFEDRAIN, intValue);
+			else if(readXMLInteger(configNode, "percentManaDrain", intValue))
+				voc->increaseAbsorbPercent(COMBAT_MANADRAIN, intValue);
+			else if(readXMLInteger(configNode, "percentDrown", intValue))
+				voc->increaseAbsorbPercent(COMBAT_DROWNDAMAGE, intValue);
+			else if(readXMLInteger(configNode, "percentPhysical", intValue))
+				voc->increaseAbsorbPercent(COMBAT_PHYSICALDAMAGE, intValue);
+			else if(readXMLInteger(configNode, "percentHealing", intValue))
+				voc->increaseAbsorbPercent(COMBAT_HEALING, intValue);
+			else if(readXMLInteger(configNode, "percentUndefined", intValue))
+				voc->increaseAbsorbPercent(COMBAT_UNDEFINEDDAMAGE, intValue);
+		}
+
+		configNode = configNode->next;
+	}
+
+	vocationsMap[voc->getId()] = voc;
+	return true;
+}
+
 bool Vocations::loadFromXml()
 {
 	xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_XML,"vocations.xml").c_str());
@@ -60,177 +228,10 @@ bool Vocations::loadFromXml()
 		return false;
 	}
 
-	std::string strValue;
-	int32_t intValue;
-	float floatValue;
-
 	p = root->children;
 	while(p)
 	{
-		if(xmlStrcmp(p->name, (const xmlChar*)"vocation"))
-		{
-			p = p->next;
-			continue;
-		}
-
-		if(!readXMLInteger(p, "id", intValue))
-		{
-			std::cout << "Missing vocation id." << std::endl;
-			p = p->next;
-			continue;
-		}
-
-		Vocation* voc = new Vocation(intValue);
-		if(readXMLString(p, "name", strValue))
-			voc->setName(strValue);
-
-		if(readXMLString(p, "description", strValue))
-			voc->setDescription(strValue);
-
-		if(readXMLString(p, "needpremium", strValue))
-			voc->setNeedPremium(booleanString(strValue));
-
-		if(readXMLInteger(p, "gaincap", intValue) || readXMLInteger(p, "gaincapacity", intValue))
-			voc->setGainCap(intValue);
-
-		if(readXMLInteger(p, "gainhp", intValue) || readXMLInteger(p, "gainhealth", intValue))
-			voc->setGainHealth(intValue);
-
-		if(readXMLInteger(p, "gainmana", intValue))
-			voc->setGainMana(intValue);
-
-		if(readXMLInteger(p, "gainhpticks", intValue) || readXMLInteger(p, "gainhealthticks", intValue))
-			voc->setGainHealthTicks(intValue);
-
-		if(readXMLInteger(p, "gainhpamount", intValue) || readXMLInteger(p, "gainhealthamount", intValue))
-			voc->setGainHealthAmount(intValue);
-
-		if(readXMLInteger(p, "gainmanaticks", intValue))
-			voc->setGainManaTicks(intValue);
-
-		if(readXMLInteger(p, "gainmanaamount", intValue))
-			voc->setGainManaAmount(intValue);
-
-		if(readXMLFloat(p, "manamultiplier", floatValue))
-			voc->setManaMultiplier(floatValue);
-
-		if(readXMLInteger(p, "attackspeed", intValue))
-			voc->setAttackSpeed(intValue);
-
-		if(readXMLInteger(p, "basespeed", intValue))
-			voc->setBaseSpeed(intValue);
-
-		if(readXMLInteger(p, "soulmax", intValue))
-			voc->setSoulMax(intValue);
-
-		if(readXMLInteger(p, "gainsoulticks", intValue))
-			voc->setSoulGainTicks(intValue);
-
-		if(readXMLString(p, "attackable", strValue))
-			voc->setAttackable(booleanString(strValue));
-
-		if(readXMLInteger(p, "fromvoc", intValue) || readXMLInteger(p, "fromvocation", intValue))
-			voc->setFromVocation(intValue);
-
-		if(readXMLInteger(p, "lessloss", intValue))
-			voc->setLessLoss(intValue);
-
-		xmlNodePtr configNode = p->children;
-		while(configNode)
-		{
-			if(!xmlStrcmp(configNode->name, (const xmlChar*)"skill"))
-			{
-				uint32_t skillId;
-				if(readXMLInteger(configNode, "id", intValue))
-				{
-					skillId = intValue;
-					if(skillId < SKILL_FIRST || skillId > SKILL_LAST)
-						std::cout << "No valid skill id. " << skillId << std::endl;
-					else
-					{
-						if(readXMLFloat(configNode, "multiplier", floatValue))
-							voc->setSkillMultiplier((skills_t)skillId, floatValue);
-					}
-				}
-				else
-					std::cout << "Missing skill id." << std::endl;
-			}
-			else if(!xmlStrcmp(configNode->name, (const xmlChar*)"formula"))
-			{
-				if(readXMLFloat(configNode, "meleeDamage", floatValue))
-					voc->setMeleeMultiplier(floatValue);
-
-				if(readXMLFloat(configNode, "distDamage", floatValue) || readXMLFloat(configNode, "distanceDamage", floatValue))
-					voc->setDistanceMultiplier(floatValue);
-
-				if(readXMLFloat(configNode, "wandDamage", floatValue) || readXMLFloat(configNode, "rodDamage", floatValue))
-					voc->setWandMultiplier(floatValue);
-
-				if(readXMLFloat(configNode, "magDamage", floatValue) || readXMLFloat(configNode, "magicDamage", floatValue))
-					voc->setMagicMultiplier(floatValue);
-
-				if(readXMLFloat(configNode, "magHealingDamage", floatValue) || readXMLFloat(configNode, "magicHealingDamage", floatValue))
-					voc->setMagicHealingMultiplier(floatValue);
-
-				if(readXMLFloat(configNode, "defense", floatValue))
-					voc->setDefenseMultiplier(floatValue);
-
-				if(readXMLFloat(configNode, "armor", floatValue))
-					voc->setArmorMultiplier(floatValue);
-			}
-			else if(!xmlStrcmp(configNode->name, (const xmlChar*)"absorb"))
-			{
-				if(readXMLInteger(configNode, "percentAll", intValue))
-				{
-					for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
-						voc->increaseAbsorbPercent((CombatType_t)i, intValue);
-				}
-				else if(readXMLInteger(configNode, "percentElements", intValue))
-				{
-					voc->increaseAbsorbPercent(COMBAT_ENERGYDAMAGE, intValue);
-					voc->increaseAbsorbPercent(COMBAT_FIREDAMAGE, intValue);
-					voc->increaseAbsorbPercent(COMBAT_EARTHDAMAGE, intValue);
-					voc->increaseAbsorbPercent(COMBAT_ICEDAMAGE, intValue);
-				}
-				else if(readXMLInteger(configNode, "percentMagic", intValue))
-				{
-					voc->increaseAbsorbPercent(COMBAT_ENERGYDAMAGE, intValue);
-					voc->increaseAbsorbPercent(COMBAT_FIREDAMAGE, intValue);
-					voc->increaseAbsorbPercent(COMBAT_EARTHDAMAGE, intValue);
-					voc->increaseAbsorbPercent(COMBAT_ICEDAMAGE, intValue);
-					voc->increaseAbsorbPercent(COMBAT_HOLYDAMAGE, intValue);
-					voc->increaseAbsorbPercent(COMBAT_DEATHDAMAGE, intValue);
-				}
-				else if(readXMLInteger(configNode, "percentEnergy", intValue))
-					voc->increaseAbsorbPercent(COMBAT_ENERGYDAMAGE, intValue);
-				else if(readXMLInteger(configNode, "percentFire", intValue))
-					voc->increaseAbsorbPercent(COMBAT_FIREDAMAGE, intValue);
-				else if(readXMLInteger(configNode, "percentPoison", intValue) || readXMLInteger(configNode, "percentEarth", intValue))
-					voc->increaseAbsorbPercent(COMBAT_EARTHDAMAGE, intValue);
-				else if(readXMLInteger(configNode, "percentIce", intValue))
-					voc->increaseAbsorbPercent(COMBAT_ICEDAMAGE, intValue);
-				else if(readXMLInteger(configNode, "percentHoly", intValue))
-					voc->increaseAbsorbPercent(COMBAT_HOLYDAMAGE, intValue);
-				else if(readXMLInteger(configNode, "percentDeath", intValue))
-					voc->increaseAbsorbPercent(COMBAT_DEATHDAMAGE, intValue);
-				else if(readXMLInteger(configNode, "percentLifeDrain", intValue))
-					voc->increaseAbsorbPercent(COMBAT_LIFEDRAIN, intValue);
-				else if(readXMLInteger(configNode, "percentManaDrain", intValue))
-					voc->increaseAbsorbPercent(COMBAT_MANADRAIN, intValue);
-				else if(readXMLInteger(configNode, "percentDrown", intValue))
-					voc->increaseAbsorbPercent(COMBAT_DROWNDAMAGE, intValue);
-				else if(readXMLInteger(configNode, "percentPhysical", intValue))
-					voc->increaseAbsorbPercent(COMBAT_PHYSICALDAMAGE, intValue);
-				else if(readXMLInteger(configNode, "percentHealing", intValue))
-					voc->increaseAbsorbPercent(COMBAT_HEALING, intValue);
-				else if(readXMLInteger(configNode, "percentUndefined", intValue))
-					voc->increaseAbsorbPercent(COMBAT_UNDEFINEDDAMAGE, intValue);
-			}
-
-			configNode = configNode->next;
-		}
-
-		vocationsMap[voc->getId()] = voc;
+		parseVocationNode(p);
 		p = p->next;
 	}
 

@@ -165,8 +165,7 @@ class Spell : public BaseSpell
 		bool selfTarget;
 		bool isAggressive;
 
-		typedef std::map<int32_t, bool> VocSpellMap;
-		VocSpellMap vocSpellMap;
+		VocationMap vocSpellMap;
 		typedef std::vector<std::string> VocStringVec;
 		VocStringVec vocStringVec;
 

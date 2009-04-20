@@ -1278,7 +1278,28 @@ void ProtocolGame::parseMove(NetworkMessage& msg, Direction dir)
 
 void ProtocolGame::parseTurn(NetworkMessage& msg, Direction dir)
 {
-	addGameTask(&Game::playerTurn, player->getID(), dir);
+	if(dir != player->getDirection() || !player->hasCustomFlag(PlayerCustomFlag_CanTurnHop))
+	{
+		addGameTask(&Game::playerTurn, player->getID(), dir);
+		return;
+	}
+
+	Position pos = player->getPosition();
+	if(dir == EAST)
+		pos.x++;
+	else if(dir == NORTH)
+		pos.y--;
+	else if(dir == WEST)
+		pos.x--;
+	else if(dir == SOUTH)
+		pos.y++;
+
+	if(Tile* tile = g_game.getTile(pos))
+	{
+		pos = g_game.getClosestFreeTile(player, pos, true);
+		if(pos.x != 0 && pos.y != 0)
+			addGameTask(&Game::internalTeleport, player, pos);
+	}
 }
 
 void ProtocolGame::parseRequestOutfit(NetworkMessage& msg)
@@ -2043,22 +2064,20 @@ void ProtocolGame::sendCloseContainer(uint32_t cid)
 
 void ProtocolGame::sendCreatureTurn(const Creature* creature, uint8_t stackPos)
 {
-	if(stackPos < 10)
+	if(stackPos >= 10 || !canSee(creature))
+		return;
+
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
 	{
-		if(canSee(creature))
-		{
-			NetworkMessage_ptr msg = getOutputBuffer();
-			if(msg)
-			{
-				TRACK_MESSAGE(msg);
-				msg->AddByte(0x6B);
-				msg->AddPosition(creature->getPosition());
-				msg->AddByte(stackPos);
-				msg->AddU16(0x63); /*99*/
-				msg->AddU32(creature->getID());
-				msg->AddByte(creature->getDirection());
-			}
-		}
+		TRACK_MESSAGE(msg);
+		msg->AddByte(0x6B);
+		msg->AddPosition(creature->getPosition());
+		msg->AddByte(stackPos);
+		msg->AddU16(0x63); /*99*/
+		msg->AddU32(creature->getID());
+		msg->AddByte(creature->getDirection());
 	}
 }
 
@@ -2147,20 +2166,20 @@ void ProtocolGame::sendPing()
 
 void ProtocolGame::sendDistanceShoot(const Position& from, const Position& to, uint8_t type)
 {
-	if((canSee(from) || canSee(to)) && type <= 41)
+	if(type > NM_SHOOT_LAST || (!canSee(from) && !canSee(to)))
+		return;
+
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
 	{
-		NetworkMessage_ptr msg = getOutputBuffer();
-		if(msg)
-		{
-			TRACK_MESSAGE(msg);
-			AddDistanceShoot(msg, from, to, type);
-		}
+		TRACK_MESSAGE(msg);
+		AddDistanceShoot(msg, from, to, type);
 	}
 }
 
 void ProtocolGame::sendMagicEffect(const Position& pos, uint8_t type)
 {
-	if(!canSee(pos) || type > 66)
+	if(type > NM_ME_LAST || !canSee(pos))
 		return;
 
 	NetworkMessage_ptr msg = getOutputBuffer();
@@ -3107,7 +3126,7 @@ void ProtocolGame::MoveDownCreature(NetworkMessage_ptr msg, const Creature* crea
 //inventory
 void ProtocolGame::AddInventoryItem(NetworkMessage_ptr msg, slots_t slot, const Item* item)
 {
-	if(item == NULL)
+	if(!item)
 	{
 		msg->AddByte(0x79);
 		msg->AddByte(slot);
@@ -3122,7 +3141,7 @@ void ProtocolGame::AddInventoryItem(NetworkMessage_ptr msg, slots_t slot, const 
 
 void ProtocolGame::UpdateInventoryItem(NetworkMessage_ptr msg, slots_t slot, const Item* item)
 {
-	if(item == NULL)
+	if(!item)
 	{
 		msg->AddByte(0x79);
 		msg->AddByte(slot);

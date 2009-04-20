@@ -199,6 +199,7 @@ bool ConfigManager::load()
 	m_confBool[PREMIUM_FOR_PROMOTION] = getGlobalBool("premiumForPromotion", "yes");
 	m_confBool[REMOVE_PREMIUM_ON_INIT] = getGlobalBool("removePremiumOnInit", "yes");
 	m_confBool[SHOW_HEALING_DAMAGE] = getGlobalBool("showHealingDamage", "no");
+	m_confBool[SHOW_HEALING_DAMAGE_FOR_MONSTER] = getGlobalBool("showHealingDamageForMonsters", "no");
 	m_confBool[TELEPORT_SUMMONS] = getGlobalBool("teleportAllSummons", "no");
 	m_confBool[TELEPORT_PLAYER_SUMMONS] = getGlobalBool("teleportPlayerSummons", "no");
 	m_confBool[PVP_TILE_IGNORE_PROTECTION] = getGlobalBool("pvpTileIgnoreLevelAndVocationProtection", "yes");
@@ -245,6 +246,7 @@ bool ConfigManager::load()
 	m_confString[CORES_USED] = getGlobalString("coresUsed", "-1");
 	m_confNumber[NICE_LEVEL] = getGlobalNumber("niceLevel", 5);
 	m_confNumber[EXPERIENCE_COLOR] = getGlobalNumber("gainExperienceColor", TEXTCOLOR_WHITE);
+	m_confBool[CHECK_CORPSE_OWNER] = getGlobalBool("checkCorpseOwner ", "yes");
 
 	m_loaded = true;
 	return true;

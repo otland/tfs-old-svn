@@ -53,9 +53,9 @@ class Group
 
 		uint32_t getId() const {return m_id;}
 		void setId(uint32_t v) {m_id = v;}
-		uint32_t getDepotLimit(bool premium) const;
+		uint32_t getDepotLimit(bool premium = false) const;
 		void setDepotLimit(uint32_t v) {m_depotLimit = v;}
-		uint32_t getMaxVips(bool premium) const;
+		uint32_t getMaxVips(bool premium = false) const;
 		void setMaxVips(uint32_t v) {m_maxVips = v;}
 
 		uint64_t getFlags() const {return m_flags;}

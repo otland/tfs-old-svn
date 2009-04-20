@@ -2261,16 +2261,15 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 	if(player->hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_TELEPORT))
 	{
 		Position pos = player->getPosition();
+		player->setLastPosition(pos);
 		for(std::list<Direction>::iterator it = listDir.begin(); it != listDir.end(); ++it)
 			pos = getNextPosition((*it), pos);
 
 		pos = getClosestFreeTile(player, pos, true);
 		if(pos.x == 0 || pos.y == 0)
-		{
-			internalCreatureTurn(player, getDirectionTo(player->getPosition(), pos, false));
 			pos = player->getLastPosition();
-		}
 
+		internalCreatureTurn(player, getDirectionTo(player->getPosition(), pos, false));
 		internalTeleport(player, pos, false);
 		return true;
 	}
@@ -2653,6 +2652,17 @@ bool Game::playerWriteItem(uint32_t playerId, uint32_t windowTextId, const std::
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
 		return false;
 	}
+
+	bool deny = false;
+	CreatureEventList textEditEvents = player->getCreatureEvents(CREATURE_EVENT_TEXTEDIT);
+	for(CreatureEventList::iterator it = textEditEvents.begin(); it != textEditEvents.end(); ++it)
+	{
+		if(!(*it)->executeTextEdit(player, writeItem, text))
+			deny = true;
+	}
+
+	if(deny)
+		return false;
 
 	if(!text.empty())
 	{
@@ -3216,6 +3226,12 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 		{
 			ss << std::endl << "Health: [" << creature->getHealth() << " / " << creature->getMaxHealth() << "].";
 			ss << std::endl << "Mana: [" << creature->getMana() << " / " << creature->getMaxMana() << "].";
+			if(Player* destPlayer = creature->getPlayer())
+			{
+				char bufferIP[40];
+				formatIP(destPlayer->getIP(), bufferIP);
+				ss << std::endl << "IP: " << bufferIP;
+			}
 		}
 	}
 
@@ -3528,7 +3544,12 @@ bool Game::playerSpeakTo(Player* player, SpeakClasses type, const std::string& r
 	}
 
 	char buffer[80];
-	sprintf(buffer, "Message sent to %s.", toPlayer->getName().c_str());
+	if(type != SPEAK_RVR_ANSWER && player->hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_IGNORE)
+		&& !toPlayer->hasFlag(PlayerFlag_CannotBeMuted) && !toPlayer->canSeeGhost(player))
+			sprintf(buffer, "You're ignoring private messages, so %s will be unable to respond.", toPlayer->getName().c_str());
+	else
+		sprintf(buffer, "Message sent to %s.", toPlayer->getName().c_str());
+
 	player->sendTextMessage(MSG_STATUS_SMALL, buffer);
 	return true;
 }
@@ -4028,14 +4049,17 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 		target->gainHealth(attacker, healthChange);
 		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isInGhostMode())
 		{
-			char buffer[20];
-			sprintf(buffer, "+%d", healthChange);
+			if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_FOR_MONSTER) || !target->getMonster())
+			{
+				char buffer[20];
+				sprintf(buffer, "+%d", healthChange);
 
-			const SpectatorVec& list = getSpectators(targetPos);
-			if(combatType != COMBAT_HEALING)
-				addMagicEffect(list, targetPos, NM_ME_MAGIC_ENERGY);
+				const SpectatorVec& list = getSpectators(targetPos);
+				if(combatType != COMBAT_HEALING)
+					addMagicEffect(list, targetPos, NM_ME_MAGIC_ENERGY);
 
-			addAnimatedText(list, targetPos, TEXTCOLOR_GREEN, buffer);
+				addAnimatedText(list, targetPos, TEXTCOLOR_GREEN, buffer);
+			}
 		}
 	}
 	else
@@ -4235,11 +4259,14 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 		target->changeMana(manaChange);
 		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isInGhostMode())
 		{
-			char buffer[20];
-			sprintf(buffer, "+%d", manaChange);
+			if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_FOR_MONSTER) || !target->getMonster())
+			{
+				char buffer[20];
+				sprintf(buffer, "+%d", manaChange);
 
-			const SpectatorVec& list = getSpectators(targetPos);
-			addAnimatedText(list, targetPos, TEXTCOLOR_DARKPURPLE, buffer);
+				const SpectatorVec& list = getSpectators(targetPos);
+				addAnimatedText(list, targetPos, TEXTCOLOR_DARKPURPLE, buffer);
+			}
 		}
 	}
 	else
@@ -5235,9 +5262,8 @@ bool Game::loadExperienceStages()
 		return false;
 	}
 
-	
 	int32_t intValue, low = 0, high = 0;
-	float floatValue, mul = 1.0f;
+	float floatValue, mul = 1.0f, defStageMultiplier;
 
 	xmlNodePtr q, p, root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name, (const xmlChar*)"stages"))
@@ -5261,6 +5287,10 @@ bool Game::loadExperienceStages()
 				continue;
 			}
 
+			defStageMultiplier = 1.0f;
+			if(readXMLFloat(q, "multiplier", floatValue))
+				defStageMultiplier = floatValue;
+
 			p = q->children;
 			while(p)
 			{
@@ -5280,6 +5310,7 @@ bool Game::loadExperienceStages()
 					if(readXMLFloat(p, "multiplier", floatValue))
 						mul = floatValue;
 
+					mul *= defStageMultiplier;
 					if(lastStageLevel && lastStageLevel == (uint32_t)low)
 						stages[lastStageLevel] = mul;
 					else

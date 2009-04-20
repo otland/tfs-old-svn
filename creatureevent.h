@@ -35,6 +35,7 @@ enum CreatureEventType_t
 	CREATURE_EVENT_LOOK,
 	CREATURE_EVENT_MAIL_SEND,
 	CREATURE_EVENT_MAIL_RECEIVE,
+	CREATURE_EVENT_TEXTEDIT,
 	CREATURE_EVENT_THINK,
 	CREATURE_EVENT_STATSCHANGE,
 	CREATURE_EVENT_COMBAT_AREA,
@@ -109,6 +110,7 @@ class CreatureEvent : public Event
 		uint32_t executeLook(Player* player, Thing* thing, const Position& position, uint8_t stackpos, int32_t lookDistance);
 		uint32_t executeMailSend(Player* player, Player* receiver, Item* item, bool openBox);
 		uint32_t executeMailReceive(Player* player, Player* sender, Item* item, bool openBox);
+		uint32_t executeTextEdit(Player* player, Item *item, std::string newText);
 		uint32_t executeThink(Creature* creature, uint32_t interval);
 		uint32_t executeStatsChange(Creature* creature, Creature* attacker, StatsChange_t type, CombatType_t combat, int32_t value);
 		uint32_t executeCombatArea(Creature* creature, Tile* tile, bool isAggressive);

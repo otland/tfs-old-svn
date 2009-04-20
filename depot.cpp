@@ -54,7 +54,7 @@ ReturnValue Depot::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 	uint32_t flags) const
 {
 	const Item* item = thing->getItem();
-	if(item == NULL)
+	if(!item)
 		return RET_NOTPOSSIBLE;
 
 	bool skipLimit = ((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT);

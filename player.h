@@ -241,7 +241,7 @@ class Player : public Creature, public Cylinder
 
 		bool isInGhostMode() const {return hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE);}
 		bool canSeeGhost(const Creature* creature) const
-			{return (creature->getPlayer() && creature->getPlayer()->getAccessLevel() <= getAccessLevel());}
+			{return (creature->getPlayer() && creature->getPlayer()->getAccess() <= getAccess());}
 
 		void switchSaving() {saving = !saving;}
 		bool isSaving() const {return saving;}
@@ -251,8 +251,9 @@ class Player : public Creature, public Cylinder
 
 		uint32_t getAccount() const {return accountId;}
 		std::string getAccountName() const {return account;}
-		uint16_t getAccessLevel() const {if(!group) return 0; return group->getAccess();}
-		uint16_t getViolationAccess() const {if(!group) return 0; return group->getViolationAccess();}
+		uint16_t getAccess() const {return group ? group->getAccess() : 0;}
+		uint16_t getAccessLevel() const {return getAccess();}
+		uint16_t getViolationAccess() const {return group ? group->getViolationAccess() : 0;}
 		bool isPremium() const;
 
 		uint32_t getLevel() const {return level;}

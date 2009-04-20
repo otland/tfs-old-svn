@@ -100,70 +100,11 @@ Item* Item::CreateItem(PropStream& propStream)
 
 	if(g_config.getBool(ConfigManager::RANDOMIZE_TILES))
 	{
-		if(_id == 352 || _id == 353)
-			_id = 351;
-		else if(_id >= 709 && _id <= 711)
-			_id = 708;
-		else if(_id >= 3154 && _id <= 3157)
-			_id = 3153;
-		else if((_id >= 4527 && _id <= 4541) || _id == 4756)
-			_id = 4526;
-		else if(_id >= 4609 && _id <= 4619)
-			_id = 4608;
-		else if(_id >= 4692 && _id <= 4701)
-			_id = 4691;
-		else if(_id >= 5711 && _id <= 5726)
-			_id = 101;
-		else if(_id >= 6580 && _id <= 6593)
-			_id = 670;
-		else if(_id >= 6683 && _id <= 6686)
-			_id = 671;
-		else if(_id >= 5406 && _id <= 5410)
-			_id = 5405;
-		else if(_id >= 6805 && _id <= 6809)
-			_id = 6804;
-		else if(_id >= 7063 && _id <= 7066)
-			_id = 7062;
-
-		if((bool)random_range(0, 1))
-		{
-			switch(_id)
-			{
-				case 101:
-					_id = random_range(5711, 5726);
-					break;
-				case 351:
-				case 708:
-					_id += random_range(1, 3);
-					break;
-				case 3153:
-				case 7062:
-					_id += random_range(1, 4);
-					break;
-				case 670:
-					_id = random_range(6580, 6593);
-					break;
-				case 671:
-					_id = random_range(6683, 6686);
-					break;
-				case 4405:
-				case 4422:
-					_id += random_range(1, 16);
-					break;
-				case 4526:
-					_id += random_range(1, 15);
-					break;
-				case 4608:
-					_id += random_range(1, 11);
-					break;
-				case 4691:
-					_id += random_range(1, 10);
-					break;
-				case 5405:
-				case 6804:
-					_id += random_range(1, 5);
-					break;
-			}
+        RandomizationBlock randomize = items.randomizationMap[_id];
+        if(randomize.chance > 0)
+        {
+	    	if(random_range(0, 100) <= randomize.chance)
+				_id = random_range(randomize.fromRange, randomize.toRange);
 		}
 	}
 

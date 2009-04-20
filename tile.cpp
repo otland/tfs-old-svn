@@ -121,8 +121,7 @@ uint32_t Tile::getHeight() const
 
 std::string Tile::getDescription(int32_t lookDistance) const
 {
-	std::string ret = "You dont know why, but you cant see anything!";
-	return ret;
+	return "You dont know why, but you cant see anything!";
 }
 
 Teleport* Tile::getTeleportItem() const
@@ -511,7 +510,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, 
 							return RET_NOTPOSSIBLE;
 
 						if(!monster->canPushItems() && !monster->hasCondition(Combat::DamageToConditionType(combatType)))
-							return RET_NOTPOSSIBLE;	
+							return RET_NOTPOSSIBLE;
 					}
 				}
 			}
@@ -696,16 +695,16 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 		uint16_t dx = getTilePosition().x, dy = getTilePosition().y;
 		uint8_t dz = getTilePosition().z - 1;
 		if(floorChange(NORTH))
-			dy -= 1;
+			dy--;
 
 		if(floorChange(SOUTH))
-			dy += 1;
+			dy++;
 
 		if(floorChange(EAST))
-			dx += 1;
+			dx++;
 
 		if(floorChange(WEST))
-			dx -= 1;
+			dx--;
 
 		destTile = g_game.getTile(dx, dy, dz);
 	}
@@ -737,122 +736,121 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 		creature->setParent(this);
 		creatures.insert(creatures.begin(), creature);
 		++thingCount;
+		return;
 	}
-	else
+
+	Item* item = thing->getItem();
+	if(item == NULL)
 	{
-		Item* item = thing->getItem();
-		if(item == NULL)
-		{
 #ifdef __DEBUG__MOVESYS__
-			std::cout << "Failure: [Tile::__addThing] item == NULL" << std::endl;
-			DEBUG_REPORT
+		std::cout << "Failure: [Tile::__addThing] item == NULL" << std::endl;
+		DEBUG_REPORT
 #endif
-			return /*RET_NOTPOSSIBLE*/;
-		}
+		return /*RET_NOTPOSSIBLE*/;
+	}
 
-		if(g_config.getBool(ConfigManager::STORE_TRASH) && !hasFlag(TILESTATE_TRASHED))
+	if(g_config.getBool(ConfigManager::STORE_TRASH) && !hasFlag(TILESTATE_TRASHED))
+	{
+		g_game.addTrash(tilePos);
+		setFlag(TILESTATE_TRASHED);
+	}
+
+	item->setParent(this);
+	if(item->isGroundTile())
+	{
+		if(ground == NULL)
 		{
-			g_game.addTrash(tilePos);
-			setFlag(TILESTATE_TRASHED);
-		}
-
-		item->setParent(this);
-		if(item->isGroundTile())
-		{
-			if(ground == NULL)
-			{
-				ground = item;
-				++thingCount;
-				onAddTileItem(item);
-			}
-			else
-			{
-				int32_t index = __getIndexOfThing(ground);
-				const ItemType& oldType = Item::items[ground->getID()];
-				const ItemType& newType = Item::items[item->getID()];
-
-				Item* oldGround = ground;
-				ground->setParent(NULL);
-				g_game.FreeThing(ground);
-
-				ground = item;
-				onUpdateTileItem(index, oldGround, oldType, item, newType);
-			}
-		}
-		else if(item->isAlwaysOnTop())
-		{
-			if(item->isSplash())
-			{
-				//remove old splash if exists
-				for(ItemVector::iterator iit = topItems.begin(); iit != topItems.end(); ++iit)
-				{
-					if((*iit)->isSplash())
-					{
-						Item* oldSplash = (*iit);
-						__removeThing(oldSplash, 1);
-
-						oldSplash->setParent(NULL);
-						g_game.FreeThing(oldSplash);
-						break;
-					}
-				}
-			}
-
-			bool isInserted = false;
-			for(ItemVector::iterator iit = topItems.begin(); iit != topItems.end(); ++iit)
-			{
-				//Note: this is different from internalAddThing
-				if(Item::items[item->getID()].alwaysOnTopOrder <= Item::items[(*iit)->getID()].alwaysOnTopOrder)
-				{
-					topItems.insert(iit, item);
-					++thingCount;
-
-					isInserted = true;
-					break;
-				}
-			}
-
-			if(!isInserted)
-			{
-				topItems.push_back(item);
-				++thingCount;
-			}
-
+			ground = item;
+			++thingCount;
 			onAddTileItem(item);
 		}
 		else
 		{
-			if(item->isMagicField())
-			{
-				//remove old field item if exists
-				MagicField* oldField = NULL;
-				for(ItemVector::iterator iit = downItems.begin(); iit != downItems.end(); ++iit)
-				{
-					if((oldField = (*iit)->getMagicField()))
-					{
-						if(oldField->isReplaceable())
-						{
-							__removeThing(oldField, 1);
+			int32_t index = __getIndexOfThing(ground);
+			const ItemType& oldType = Item::items[ground->getID()];
+			const ItemType& newType = Item::items[item->getID()];
 
-							oldField->setParent(NULL);
-							g_game.FreeThing(oldField);
-							break;
-						}
-						else
-						{
-							//This magic field cannot be replaced.
-							item->setParent(NULL);
-							g_game.FreeThing(item);
-							return;
-						}
+			Item* oldGround = ground;
+			ground->setParent(NULL);
+			g_game.FreeThing(ground);
+
+			ground = item;
+			onUpdateTileItem(index, oldGround, oldType, item, newType);
+		}
+	}
+	else if(item->isAlwaysOnTop())
+	{
+		if(item->isSplash())
+		{
+			//remove old splash if exists
+			for(ItemVector::iterator iit = topItems.begin(); iit != topItems.end(); ++iit)
+			{
+				if((*iit)->isSplash())
+				{
+					Item* oldSplash = (*iit);
+					__removeThing(oldSplash, 1);
+
+					oldSplash->setParent(NULL);
+					g_game.FreeThing(oldSplash);
+					break;
+				}
+			}
+		}
+
+		bool isInserted = false;
+		for(ItemVector::iterator iit = topItems.begin(); iit != topItems.end(); ++iit)
+		{
+			//Note: this is different from internalAddThing
+			if(Item::items[item->getID()].alwaysOnTopOrder <= Item::items[(*iit)->getID()].alwaysOnTopOrder)
+			{
+				topItems.insert(iit, item);
+				++thingCount;
+
+				isInserted = true;
+				break;
+			}
+		}
+
+		if(!isInserted)
+		{
+			topItems.push_back(item);
+			++thingCount;
+		}
+
+		onAddTileItem(item);
+	}
+	else
+	{
+		if(item->isMagicField())
+		{
+			//remove old field item if exists
+			MagicField* oldField = NULL;
+			for(ItemVector::iterator iit = downItems.begin(); iit != downItems.end(); ++iit)
+			{
+				if((oldField = (*iit)->getMagicField()))
+				{
+					if(oldField->isReplaceable())
+					{
+						__removeThing(oldField, 1);
+
+						oldField->setParent(NULL);
+						g_game.FreeThing(oldField);
+						break;
+					}
+					else
+					{
+						//This magic field cannot be replaced.
+						item->setParent(NULL);
+						g_game.FreeThing(item);
+						return;
 					}
 				}
 			}
-
-			downItems.insert(downItems.begin(), item);
-			++thingCount;
-			onAddTileItem(item);
 		}
+
+		downItems.insert(downItems.begin(), item);
+		++thingCount;
+		onAddTileItem(item);
 	}
 }
 
@@ -1110,9 +1108,10 @@ int32_t Tile::__getLastIndex() const
 uint32_t Tile::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, bool itemCount /*= true*/) const
 {
 	uint32_t count = 0;
+	Thing* thing = NULL;
 	for(uint32_t i = 0; i < getThingCount(); ++i)
 	{
-		Thing* thing = __getThing(i);
+		thing = __getThing(i);
 		if(const Item* item = thing->getItem())
 		{
 			if(item->getID() == itemId && (subType == -1 || subType == item->getSubType()))
@@ -1243,55 +1242,54 @@ void Tile::__internalAddThing(uint32_t index, Thing* thing)
 		g_game.clearSpectatorCache();
 		creatures.insert(creatures.begin(), creature);
 		++thingCount;
+		return;
+	}
+
+	Item* item = thing->getItem();
+	if(!item)
+		return;
+
+	if(item->isGroundTile())
+	{
+		if(ground == NULL)
+		{
+			ground = item;
+			++thingCount;
+		}
+	}
+	else if(item->isAlwaysOnTop())
+	{
+		bool isInserted = false;
+		ItemVector::iterator iit;
+		for(iit = topItems.begin(); iit != topItems.end(); ++iit)
+		{
+			if(Item::items[(*iit)->getID()].alwaysOnTopOrder > Item::items[item->getID()].alwaysOnTopOrder)
+			{
+				topItems.insert(iit, item);
+				++thingCount;
+				isInserted = true;
+				break;
+			}
+		}
+
+		if(!isInserted)
+		{
+			topItems.push_back(item);
+			++thingCount;
+		}
 	}
 	else
 	{
-		Item* item = thing->getItem();
-		if(!item)
-			return;
-
-		if(item->isGroundTile())
-		{
-			if(ground == NULL)
-			{
-				ground = item;
-				++thingCount;
-			}
-		}
-		else if(item->isAlwaysOnTop())
-		{
-			bool isInserted = false;
-			ItemVector::iterator iit;
-			for(iit = topItems.begin(); iit != topItems.end(); ++iit)
-			{
-				if(Item::items[(*iit)->getID()].alwaysOnTopOrder > Item::items[item->getID()].alwaysOnTopOrder)
-				{
-					topItems.insert(iit, item);
-					++thingCount;
-					isInserted = true;
-					break;
-				}
-			}
-
-			if(!isInserted)
-			{
-				topItems.push_back(item);
-				++thingCount;
-			}
-		}
+		if(!downItems.empty())
+			downItems.insert(downItems.begin(), item);
 		else
-		{
-			if(!downItems.empty())
-				downItems.insert(downItems.begin(), item);
-			else
-				downItems.push_back(item);
+			downItems.push_back(item);
 
-			++thingCount;
-		}
-
-		//update floor change flags
-		updateTileFlags(item, false);
+		++thingCount;
 	}
+
+	//update floor change flags
+	updateTileFlags(item, false);
 }
 
 void Tile::updateTileFlags(Item* item, bool removing)
