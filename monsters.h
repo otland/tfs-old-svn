@@ -113,8 +113,8 @@ class MonsterType
 class Monsters
 {
 	public:
-		Monsters();
-		virtual ~Monsters() {loaded = false;}
+		Monsters(): loaded(false) {}
+		virtual ~Monsters();
 
 		bool reload() {return loadFromXml(true);}
 		bool loadFromXml(bool reloading = false);

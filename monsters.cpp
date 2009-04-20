@@ -43,6 +43,7 @@ void MonsterType::reset()
 	canPushItems = canPushCreatures = isSummonable = isIllusionable = isConvinceable = isLureable = false;
 	pushable = isAttackable = isHostile = true;
 
+	outfit.lookHead = outfit.lookBody = outfit.lookLegs = outfit.lookFeet = outfit.lookType = outfit.lookTypeEx = outfit.lookAddons = 0;
 	experience = defense = armor = lookcorpse = conditionImmunities = damageImmunities = 0;
 	maxSummons = runAwayHealth = manaCost = lightLevel = lightColor = 0;
 	yellSpeedTicks = yellChance = changeTargetSpeed = changeTargetChance = 0;
@@ -52,7 +53,6 @@ void MonsterType::reset()
 	health = health_max = 100;
 	base_speed = 200;
 
-	outfit = Outfit();
 	race = RACE_BLOOD;
 	skull = SKULL_NONE;
 	partyShield = SHIELD_NONE;
@@ -1395,6 +1395,7 @@ uint32_t Monsters::getIdByName(const std::string& name)
 
 Monsters::~Monsters()
 {
+	loaded = false;
 	for(MonsterMap::iterator it = monsters.begin(); it != monsters.end(); it++)
 		delete it->second;
 }

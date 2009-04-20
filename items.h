@@ -70,7 +70,7 @@ struct Abilities
 
 		elementType = COMBAT_NONE;
 		manaShield = invisible = regeneration = preventLoss = preventDrop = false;
-		speed = healthGain = healthTicks = manaGain = manaTicks = elementDamage = conditionImmunities = conditionSuppressions = 0
+		speed = healthGain = healthTicks = manaGain = manaTicks = elementDamage = conditionImmunities = conditionSuppressions = 0;
 	};
 
 	bool manaShield, invisible, regeneration, preventLoss, preventDrop;
@@ -90,7 +90,7 @@ class ItemType
 
 	public:
 		ItemType();
-		virtual ~ItemType() {delete condition;}
+		virtual ~ItemType();
 
 		bool isGroundTile() const {return (group == ITEM_GROUP_GROUND);}
 		bool isContainer() const {return (group == ITEM_GROUP_CONTAINER);}
@@ -125,7 +125,7 @@ class ItemType
 		ShootType_t shootType;
 		Ammo_t ammoType;
 
-		uint16_t transformToOnUse[2], transformToFree, transformEquipTo, transformDeEquipTo;
+		uint16_t transformToOnUse[2], transformToFree, transformEquipTo, transformDeEquipTo,
 			id, clientId, maxItems, slotPosition, wieldPosition, speed, maxTextLen, writeOnceItemId;
 
 		int32_t attack, extraAttack, defense, extraDefense, armor, breakChance, hitChance, maxHitChance,
@@ -233,10 +233,10 @@ class Items
 		const ItemType& getItemIdByClientId(int32_t spriteId) const;
 
 		int32_t getRandomizationChance() const {return m_randomizationChance;}
-		int16_t getRandomization(int16_t id) {return randomizationMap[id];}
+		RandomizationBlock getRandomization(int16_t id) {return randomizationMap[id];}
 
 		uint32_t size() {return items.size();}
-		MoneyMap getMoneyMap() {return moneyMap;}
+		IntegerMap getMoneyMap() {return moneyMap;}
 		const ItemType* getElement(uint32_t id) const {return items.getElement(id);}
 
 		static uint32_t dwMajorVersion;
@@ -247,8 +247,8 @@ class Items
 		int32_t m_randomizationChance;
 		void clear();
 
-		bool parseItemNode(xmlNodePtr itemNode, uint32_t id);
-		bool parseRandomizationBlock(int32_t id, int32_t fromId, int32_t toId, int32_t chance);
+		void parseItemNode(xmlNodePtr itemNode, uint32_t id);
+		void parseRandomizationBlock(int32_t id, int32_t fromId, int32_t toId, int32_t chance);
 
 		Array<ItemType*> items;
 		RandomizationMap randomizationMap;

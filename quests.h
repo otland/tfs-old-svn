@@ -103,7 +103,7 @@ class Quests
 
 		bool reload();
 		bool loadFromXml();
-		static bool parseQuestNode(xmlNodePtr p);
+		bool parseQuestNode(xmlNodePtr p);
 
 		uint16_t getQuestsCount(Player* player);
 		void getQuestsList(Player* player, NetworkMessage_ptr msg);

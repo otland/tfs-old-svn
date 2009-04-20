@@ -95,8 +95,12 @@ class Vocation
 		void setMeleeMultiplier(float v) {meleeMultiplier = v;}
 		float getDistanceMultiplier() const {return distanceMultiplier;}
 		void setDistanceMultiplier(float v) {distanceMultiplier = v;}
+		float getWandMultiplier() const {return wandMultiplier;}
+		void setWandMultiplier(float v) {wandMultiplier = v;}
 		float getMagicMultiplier() const {return magicMultiplier;}
 		void setMagicMultiplier(float v) {magicMultiplier = v;}
+		float getMagicHealingMultiplier() const {return magicHealingMultiplier;}
+		void setMagicHealingMultiplier(float v) {magicHealingMultiplier = v;}
 		float getDefenseMultiplier() const {return defenseMultiplier;}
 		void setDefenseMultiplier(float v) {defenseMultiplier = v;}
 		float getArmorMultiplier() const {return armorMultiplier;}
@@ -117,7 +121,8 @@ class Vocation
 		uint16_t soulGainTicks, soulMax;
 		uint32_t id, fromVocation, gainHealth, gainHealthTicks, gainHealthAmount, gainMana,
 			gainManaTicks, gainManaAmount, gainCap, baseSpeed, attackSpeed;
-		float manaMultiplier, meleeMultiplier, distanceMultiplier, wandMultiplier, magicMultiplier, magicHealingMultiplier, defenseMultiplier, armorMultiplier;
+		float manaMultiplier, meleeMultiplier, distanceMultiplier, wandMultiplier, magicMultiplier,
+			magicHealingMultiplier, defenseMultiplier, armorMultiplier;
 		std::string name, description;
 
 		int16_t absorbPercent[COMBAT_LAST + 1];
@@ -138,7 +143,7 @@ class Vocations
 
 		bool reload();
 		bool loadFromXml();
-		static bool parseVocationNode(xmlNodePtr p);
+		bool parseVocationNode(xmlNodePtr p);
 
 		Vocation* getVocation(uint32_t vocId);
 		int32_t getVocationId(const std::string& name);

@@ -18,14 +18,13 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-
 #include "items.h"
+
 #include "spells.h"
 #include "condition.h"
 #include "weapons.h"
 
 #include <libxml/xmlmemory.h>
-
 #include <iostream>
 #include <string>
 
@@ -129,6 +128,11 @@ ItemType::ItemType()
 	transformToOnUse[PLAYERSEX_FEMALE] = 0;
 	transformToFree = 0;
 	levelDoor = 0;
+}
+
+ItemType::~ItemType()
+{
+	delete condition;
 }
 
 void Items::clear()
@@ -376,7 +380,7 @@ int32_t Items::loadFromOtb(std::string file)
 bool Items::loadFromXml()
 {
 	xmlDocPtr itemDoc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, "items/items.xml").c_str()),
-		palleteDoc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, "items/randomization.xml").c_str());
+		paletteDoc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, "items/randomization.xml").c_str());
 	if(!itemDoc)
 	{
 		std::cout << "[Warning - Items::loadFromXml] Cannot load items file." << std::endl;
@@ -384,33 +388,33 @@ bool Items::loadFromXml()
 		return false;
 	}
 
-	if(!palleteDoc)
+	if(!paletteDoc)
 	{
 		std::cout << "[Warning - Items::loadFromXml] Cannot load randomization file." << std::endl;
 		std::cout << getLastXMLError() << std::endl;
 		return false;
 	}
 
-	xmlNodePtr itemNode, palleteNode, itemRoot = xmlDocGetRootElement(itemDoc), palleteRoot = xmlDocGetRootElement(palleteDoc);
+	xmlNodePtr itemNode, paletteNode, itemRoot = xmlDocGetRootElement(itemDoc), paletteRoot = xmlDocGetRootElement(paletteDoc);
 	if(xmlStrcmp(itemRoot->name,(const xmlChar*)"items"))
 	{
 		xmlFreeDoc(itemDoc);
-		xmlFreeDoc(palleteDoc);
+		xmlFreeDoc(paletteDoc);
 
 		std::cout << "[Warning - Items::loadFromXml] Malformed items file." << std::endl;
 		return false;
 	}
 
-	if(xmlStrcmp(palleteRoot->name,(const xmlChar*)"randomization"))
+	if(xmlStrcmp(paletteRoot->name,(const xmlChar*)"randomization"))
 	{
 		xmlFreeDoc(itemDoc);
-		xmlFreeDoc(palleteDoc);
+		xmlFreeDoc(paletteDoc);
 
 		std::cout << "[Warning - Items::loadFromXml] Malformed randomization file." << std::endl;
 		return false;
 	}
 
-	int32_t intValue, id, endId, fromId, toId;
+	int32_t intValue, id = 0, endId = 0, fromId = 0, toId = 0;
 	IntegerVec intVector, endIntVector;
 	std::string strValue, endStrValue;
 	StringVec strVector;
@@ -461,7 +465,7 @@ bool Items::loadFromXml()
 			std::cout << "[Warning - Items::loadFromXml] Item " << it->id << " is not set as a bed-type." << std::endl;
 	}
 
-	paletteNode = palleteRoot->children;
+	paletteNode = paletteRoot->children;
 	while(paletteNode)
 	{
 		if(!xmlStrcmp(paletteNode->name, (const xmlChar*)"config"))
@@ -521,11 +525,11 @@ bool Items::loadFromXml()
 		paletteNode = paletteNode->next;
 	}
 
-	xmlFreeDoc(palleteDoc);
+	xmlFreeDoc(paletteDoc);
 	return true;
 }
 
-bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
+void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 {
 	int32_t intValue;
 	std::string strValue;
@@ -1529,13 +1533,13 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 	}
 }
 
-bool Items::parseRandomizationBlock(int32_t id, int32_t fromId, int32_t toId, int32_t chance)
+void Items::parseRandomizationBlock(int32_t id, int32_t fromId, int32_t toId, int32_t chance)
 {
 	RandomizationMap::iterator it = randomizationMap.find(id);
 	if(it != randomizationMap.end())
 	{
 		std::cout << "[Warning - Items::parseRandomizationBlock] Duplicated item with id: " << id << std::endl;
-		return false;
+		return;
 	}
 
 	RandomizationBlock rand;
@@ -1544,7 +1548,6 @@ bool Items::parseRandomizationBlock(int32_t id, int32_t fromId, int32_t toId, in
 	rand.toRange = toId;
 
 	randomizationMap[id] = rand;
-	return true;
 }
 
 ItemType& Items::getItemType(int32_t id)

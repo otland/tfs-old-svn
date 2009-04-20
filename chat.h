@@ -50,6 +50,7 @@ class ChatChannel
 		bool removeUser(Player* player);
 
 		bool talk(Player* player, SpeakClasses type, const std::string& text, uint32_t _time = 0);
+		bool talk(std::string nick, SpeakClasses type, std::string text); //Elf
 
 	protected:
 		std::string m_name;
@@ -95,7 +96,7 @@ class Chat
 
 		bool reload();
 		bool loadFromXml();
-		static bool parseChannelNode(xmlNodePtr p);
+		bool parseChannelNode(xmlNodePtr p);
 
 		ChatChannel* createChannel(Player* player, uint16_t channelId);
 		bool deleteChannel(Player* player, uint16_t channelId);
