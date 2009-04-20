@@ -3358,16 +3358,15 @@ bool Game::playerTurn(uint32_t playerId, Direction dir)
 		return false;
 
 	player->resetIdleTime();
-	
 	if(dir != player->getDirection() || !player->hasCustomFlag(PlayerCustomFlag_CanTurnHop))
 		return internalCreatureTurn(player, dir);
 
 	Position pos = getNextPosition(dir, player->getPosition());
-	if(Tile* tile = g_game.getTile(pos))
+	if(map->getTile(pos))
 	{
-		pos = g_game.getClosestFreeTile(player, pos, true);
+		pos = getClosestFreeTile(player, pos, true);
 		if(pos.x != 0 && pos.y != 0)
-			return internalTeleport(player, pos);
+			return internalTeleport(player, pos, true);
 	}
 }
 
@@ -4055,19 +4054,17 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			return false;
 
 		target->gainHealth(attacker, healthChange);
-		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isInGhostMode())
+		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isInGhostMode() &&
+			(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_MONSTER) || !target->getMonster()))
 		{
-			if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_MONSTER) || !target->getMonster())
-			{
-				char buffer[20];
-				sprintf(buffer, "+%d", healthChange);
+			char buffer[20];
+			sprintf(buffer, "+%d", healthChange);
 
-				const SpectatorVec& list = getSpectators(targetPos);
-				if(combatType != COMBAT_HEALING)
-					addMagicEffect(list, targetPos, NM_ME_MAGIC_ENERGY);
+			const SpectatorVec& list = getSpectators(targetPos);
+			if(combatType != COMBAT_HEALING)
+				addMagicEffect(list, targetPos, NM_ME_MAGIC_ENERGY);
 
-				addAnimatedText(list, targetPos, TEXTCOLOR_GREEN, buffer);
-			}
+			addAnimatedText(list, targetPos, TEXTCOLOR_GREEN, buffer);
 		}
 	}
 	else
@@ -4265,16 +4262,14 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			return false;
 
 		target->changeMana(manaChange);
-		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isInGhostMode())
+		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isInGhostMode() && 
+			(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_MONSTER) || !target->getMonster()))
 		{
-			if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_FOR_MONSTER) || !target->getMonster())
-			{
-				char buffer[20];
-				sprintf(buffer, "+%d", manaChange);
+			char buffer[20];
+			sprintf(buffer, "+%d", manaChange);
 
-				const SpectatorVec& list = getSpectators(targetPos);
-				addAnimatedText(list, targetPos, TEXTCOLOR_DARKPURPLE, buffer);
-			}
+			const SpectatorVec& list = getSpectators(targetPos);
+			addAnimatedText(list, targetPos, TEXTCOLOR_DARKPURPLE, buffer);
 		}
 	}
 	else

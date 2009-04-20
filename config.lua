@@ -27,6 +27,7 @@
 	-- Battle
 	-- NOTE: loginProtectionPeriod is the famous Tibia anti-magebomb system.
 	-- deathLostPercent set to nil enables manual mode.
+	-- showHealingDamageForMonsters inheritates from showHealingDamage.
 	worldType = "pvp"
 	hotkeyAimbotEnabled = "yes"
 	protectionLevel = 1
@@ -44,6 +45,7 @@
 	noDamageToSameLookfeet = "no"
 	experienceByKillingPlayers = "no"
 	showHealingDamage = "no"
+	showHealingDamageForMonsters = "no"
 	fieldOwnershipDuration = 5 * 1000
 	stopAttackingAtExit = "no"
 	oldConditionAccuracy = "no"
