@@ -3360,7 +3360,19 @@ bool Game::playerTurn(uint32_t playerId, Direction dir)
 		return false;
 
 	player->resetIdleTime();
-	return internalCreatureTurn(player, dir);
+	
+	if(dir != player->getDirection() || !player->hasCustomFlag(PlayerCustomFlag_CanTurnHop))
+	{
+		return internalCreatureTurn(player, dir);
+	}
+
+	Position pos = getNextPosition(dir, player->getPosition());
+	if(Tile* tile = g_game.getTile(pos))
+	{
+		pos = g_game.getClosestFreeTile(player, pos, true);
+		if(pos.x != 0 && pos.y != 0)
+			return internalTeleport(player, pos);
+	}
 }
 
 bool Game::playerRequestOutfit(uint32_t playerId)

@@ -1278,28 +1278,7 @@ void ProtocolGame::parseMove(NetworkMessage& msg, Direction dir)
 
 void ProtocolGame::parseTurn(NetworkMessage& msg, Direction dir)
 {
-	if(dir != player->getDirection() || !player->hasCustomFlag(PlayerCustomFlag_CanTurnHop))
-	{
 		addGameTask(&Game::playerTurn, player->getID(), dir);
-		return;
-	}
-
-	Position pos = player->getPosition();
-	if(dir == EAST)
-		pos.x++;
-	else if(dir == NORTH)
-		pos.y--;
-	else if(dir == WEST)
-		pos.x--;
-	else if(dir == SOUTH)
-		pos.y++;
-
-	if(Tile* tile = g_game.getTile(pos))
-	{
-		pos = g_game.getClosestFreeTile(player, pos, true);
-		if(pos.x != 0 && pos.y != 0)
-			addGameTask(&Game::internalTeleport, player, pos);
-	}
 }
 
 void ProtocolGame::parseRequestOutfit(NetworkMessage& msg)

@@ -434,7 +434,7 @@ bool Items::loadRandomization()
 				if(intValue > 100)
 				{
                 	intValue = 100;
-					std::cout << "[Warning: Items::loadPalette] Randomize chance cannot be higher than 100." << std::endl;
+					std::cout << "[Warning: Items::loadRandomization] Randomize chance cannot be higher than 100." << std::endl;
 				}
 
 				m_randomizationChance = intValue;
