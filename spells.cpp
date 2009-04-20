@@ -49,14 +49,14 @@ Spells::~Spells()
 	clear();
 }
 
-bool Spells::onPlayerSay(Player* player, const std::string& words)
+TalkResult_t Spells::onPlayerSay(Player* player, const std::string& words)
 {
 	std::string reWords = words;
 	trimString(reWords);
 
 	InstantSpell* instantSpell = getInstantSpell(reWords);
 	if(!instantSpell)
-		return false;
+		return RET_NOTPOSSIBLE;
 
 	size_t size = instantSpell->getWords().length();
 	std::string param = reWords.substr(size, reWords.length() - size), reParam = "";
@@ -78,14 +78,14 @@ bool Spells::onPlayerSay(Player* player, const std::string& words)
 	}
 
 	if(!instantSpell->playerCastInstant(player, reParam))
-		return true;
+		return RET_NEEDEXCHANGE;
 
 	SpeakClasses type = SPEAK_SAY;
 	if(g_config.getBool(ConfigManager::EMOTE_SPELLS))
 		type = SPEAK_MONSTER_SAY;
 
 	if(!g_config.getBool(ConfigManager::SPELL_NAME_INSTEAD_WORDS))
-		return g_game.internalCreatureSay(player, type, reWords);
+		return g_game.internalCreatureSay(player, type, reWords) ? RET_NOERROR : RET_NOTPOSSIBLE;
 
 	std::string ret = instantSpell->getName();
 	if(param.length())
@@ -101,7 +101,7 @@ bool Spells::onPlayerSay(Player* player, const std::string& words)
 		ret += ": " + param.substr(tmp, rtmp);
 	}
 
-	return g_game.internalCreatureSay(player, type, ret);
+	return g_game.internalCreatureSay(player, type, ret) ? RET_NOERROR : RET_NOTPOSSIBLE;
 }
 
 void Spells::clear()

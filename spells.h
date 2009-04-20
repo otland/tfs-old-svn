@@ -54,7 +54,7 @@ class Spells : public BaseEvents
 		InstantSpell* getInstantSpellByIndex(const Player* player, uint32_t index);
 
 		uint32_t getInstantSpellCount(const Player* player);
-		bool onPlayerSay(Player* player, const std::string& words);
+		ReturnValue onPlayerSay(Player* player, const std::string& words);
 		virtual std::string getScriptBaseName() const {return "spells";}
 		static Position getCasterPosition(Creature* creature, Direction dir);
 

@@ -3396,10 +3396,14 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 		return internalCreatureSay(player, SPEAK_SAY, text);
 	}
 
-	if(g_spells->onPlayerSay(player, text))
+	ReturnValue ret = g_spells->onPlayerSay(player, text);
+	if(ret == RET_NOERROR)
 		return true;
 
 	player->removeMessageBuffer();
+	if(ret == RET_NEEDEXCHANGE)
+		return true;
+
 	if(g_talkActions->onPlayerSay(player, channelId, text))
 		return true;
 
