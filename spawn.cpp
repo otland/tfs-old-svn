@@ -268,8 +268,11 @@ void Spawns::startup()
 void Spawns::clear()
 {
 	started = false;
-	for(SpawnList::iterator it= spawnList.begin(); it != spawnList.end(); ++it)
-		delete (*it);
+	for(SpawnList::iterator it = spawnList.begin(); it != spawnList.end(); ++it)
+	{
+		if((*it))
+			delete (*it);
+	}
 
 	spawnList.clear();
 	loaded = false;
