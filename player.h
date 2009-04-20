@@ -674,16 +674,16 @@ class Player : public Creature, public Cylinder
 		void unlearnInstantSpell(const std::string& name);
 		bool hasLearnedInstantSpell(const std::string& name) const;
 
-		DepotMap depots;
 		VIPListSet VIPList;
-
 		ContainerVector containerVec;
 		InvitedToGuildsList invitedToGuildsList;
 		ConditionList storedConditionList;
+		DepotMap depots;
 
-		double rates[SKILL__LAST + 1];
 		uint32_t marriage;
 		uint64_t balance;
+		double rates[SKILL__LAST + 1];
+		Container transferContainer;
 
 	protected:
 		void checkTradeState(const Item* item);
@@ -845,7 +845,6 @@ class Player : public Creature, public Cylinder
 
 		Position loginPosition;
 		LightInfo itemsLight;
-		Container transferContainer;
 
 		Vocation* vocation;
 		ProtocolGame* client;
