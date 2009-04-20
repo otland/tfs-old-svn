@@ -32,8 +32,7 @@
 extern ConfigManager g_config;
 extern Game g_game;
 
-House::House(uint32_t _houseid):
-transferContainer(ITEM_LOCKER1)
+House::House(uint32_t _houseid)
 {
 	isLoaded = false;
 	houseName = "Forgotten headquarter (Flat 1, Area 42)";
@@ -46,7 +45,6 @@ transferContainer(ITEM_LOCKER1)
 	rent = 0;
 	price = 0;
 	townid = 0;
-	transferItem = NULL;
 }
 
 void House::addTile(HouseTile* tile)

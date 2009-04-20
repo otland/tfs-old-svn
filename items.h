@@ -211,7 +211,7 @@ struct RandomizationBlock
 	int32_t fromRange, toRange, chance;
 };
 
-typedef std::map<int32_t, RandomizationBlock> RandomizationMap;
+typedef std::map<int16_t, RandomizationBlock> RandomizationMap;
 typedef std::map<int32_t, int32_t> IntegerMap;
 
 class Items
@@ -227,16 +227,17 @@ class Items
 		void addItemType(ItemType* iType);
 		ItemType& getItemType(int32_t id);
 		const ItemType& getItemType(int32_t id) const;
-
 		const ItemType& operator[](int32_t id) const {return getItemType(id);}
-		const ItemType* getElement(uint32_t id) const {return items.getElement(id);}
 
 		int32_t getItemIdByName(const std::string& name);
 		const ItemType& getItemIdByClientId(int32_t spriteId) const;
 
 		int32_t getRandomizationChance() const {return m_randomizationChance;}
+		int16_t getRandomization(int16_t id) {return randomizationMap[id];}
+
 		uint32_t size() {return items.size();}
 		MoneyMap getMoneyMap() {return moneyMap;}
+		const ItemType* getElement(uint32_t id) const {return items.getElement(id);}
 
 		static uint32_t dwMajorVersion;
 		static uint32_t dwMinorVersion;

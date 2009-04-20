@@ -100,8 +100,8 @@ Item* Item::CreateItem(PropStream& propStream)
 
 	if(g_config.getBool(ConfigManager::RANDOMIZE_TILES))
 	{
-	        RandomizationBlock randomize = items.randomizationMap[_id];
-	        if(randomize.chance > 0 && random_range(0, 100) <= randomize.chance)
+		RandomizationBlock randomize = items.getRandomization(_id);
+		if(randomize.chance > 0 && random_range(0, 100) <= randomize.chance)
 			_id = random_range(randomize.fromRange, randomize.toRange);
 	}
 
