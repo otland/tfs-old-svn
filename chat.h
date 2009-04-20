@@ -50,7 +50,6 @@ class ChatChannel
 		bool removeUser(Player* player);
 
 		bool talk(Player* player, SpeakClasses type, const std::string& text, uint32_t _time = 0);
-		bool talk(std::string nick, SpeakClasses type, std::string text); //Elf
 
 	protected:
 		std::string m_name;
