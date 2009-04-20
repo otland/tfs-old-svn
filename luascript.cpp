@@ -8878,7 +8878,7 @@ int32_t LuaScriptInterface::luaGetGroupInfo(lua_State* L)
 	}
 
 	lua_newtable(L);
-	setField(L, "id", id);
+	setField(L, "id", group->getId());
 	setField(L, "name", group->getName().c_str());
 	setField(L, "access", group->getAccess());
 	setField(L, "violationAccess", group->getViolationAccess());
