@@ -138,11 +138,10 @@ class Vocations
 
 		bool reload();
 		bool loadFromXml();
+		static bool parseVocationNode(xmlNodePtr p);
 
-		bool parseVocationNode(xmlNodePtr p);
 		Vocation* getVocation(uint32_t vocId);
 		int32_t getVocationId(const std::string& name);
-
 		int32_t getPromotedVocation(uint32_t vocationId);
 
 		VocationsMap::iterator getFirstVocation() {return vocationsMap.begin();}

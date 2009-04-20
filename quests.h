@@ -43,8 +43,8 @@ class MissionState
 		std::string getMissionDescription() const {return description;}
 
 	private:
-		std::string description;
 		uint32_t missionId;
+		std::string description;
 };
 
 class Mission
@@ -62,9 +62,9 @@ class Mission
 		StateList state;
 
 	private:
-		std::string missionName;
-		uint32_t storageId;
 		int32_t startValue, endValue;
+		uint32_t storageId;
+		std::string missionName;
 };
 
 class Quest
@@ -94,9 +94,7 @@ class Quest
 class Quests
 {
 	public:
-		Quests() {m_lastId = 0;}
 		virtual ~Quests();
-
 		static Quests* getInstance()
 		{
 			static Quests instance;
@@ -105,16 +103,16 @@ class Quests
 
 		bool reload();
 		bool loadFromXml();
-
-		bool parseQuestNode(xmlNodePtr p);
+		static bool parseQuestNode(xmlNodePtr p);
 
 		uint16_t getQuestsCount(Player* player);
 		void getQuestsList(Player* player, NetworkMessage_ptr msg);
-
 		Quest* getQuestById(uint16_t id);
+
 		QuestsList quests;
 
 	private:
+		Quests() {m_lastId = 0;}
 		uint16_t m_lastId;
 };
 

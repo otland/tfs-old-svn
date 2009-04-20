@@ -28,9 +28,7 @@
 
 struct Outfit
 {
-	uint32_t looktype;
-	uint32_t addons;
-	uint32_t quest;
+	uint32_t looktype, addons, quest;
 	bool premium;
 };
 

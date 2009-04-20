@@ -61,9 +61,8 @@ class Raids
 			return &instance;
 		}
 
-		bool parseRaidNode(xmlNodePtr raidNode);
-
 		bool loadFromXml();
+		static bool parseRaidNode(xmlNodePtr raidNode);
 		bool startup();
 
 		void clear();

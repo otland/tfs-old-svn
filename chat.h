@@ -95,7 +95,6 @@ class Chat
 
 		bool reload();
 		bool loadFromXml();
-
 		static bool parseChannelNode(xmlNodePtr p);
 
 		ChatChannel* createChannel(Player* player, uint16_t channelId);
