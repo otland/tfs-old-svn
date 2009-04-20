@@ -8865,9 +8865,12 @@ int32_t LuaScriptInterface::luaGetVocationInfo(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetGroupInfo(lua_State* L)
 {
-	//getGroupInfo(id)
-	uint32_t id = popNumber(L);
-	Group* group = Groups::getInstance()->getGroup(id);
+	//getGroupInfo(id[, premium])
+	bool premium = false;
+	if(lua_gettop(L) >= 2)
+		premium = popNumber(L);
+
+	Group* group = Groups::getInstance()->getGroup(popNumber(L));
 	if(!group)
 	{
 		lua_pushboolean(L, LUA_FALSE);
@@ -8878,10 +8881,9 @@ int32_t LuaScriptInterface::luaGetGroupInfo(lua_State* L)
 	setField(L, "id", id);
 	setField(L, "name", group->getName().c_str());
 	setField(L, "access", group->getAccess());
-	setField(L, "ghostaccess", group->getGhostAccess());
 	setField(L, "violationAccess", group->getViolationAccess());
-	setField(L, "depotLimit", group->getDepotLimit());
-	setField(L, "maxVips", group->getMaxVips());
+	setField(L, "depotLimit", group->getDepotLimit(premium));
+	setField(L, "maxVips", group->getMaxVips(premium));
 	setField(L, "outfit", group->getOutfit());
 	return 1;
 }
