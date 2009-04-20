@@ -3360,9 +3360,7 @@ bool Game::playerTurn(uint32_t playerId, Direction dir)
 	player->resetIdleTime();
 	
 	if(dir != player->getDirection() || !player->hasCustomFlag(PlayerCustomFlag_CanTurnHop))
-	{
 		return internalCreatureTurn(player, dir);
-	}
 
 	Position pos = getNextPosition(dir, player->getPosition());
 	if(Tile* tile = g_game.getTile(pos))
