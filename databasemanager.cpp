@@ -978,6 +978,8 @@ uint32_t DatabaseManager::updateDatabase()
 
 		case 12:
 		{
+			std::cout << "> Updating database to version: 13..." << std::endl;
+
 			DBQuery query;
 			query << "ALTER TABLE `accounts` DROP KEY `group_id`;";
 			db->executeQuery(query.str());
