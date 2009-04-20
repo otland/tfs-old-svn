@@ -371,46 +371,6 @@ void House::setAccessList(uint32_t listId, const std::string& textlist, bool tel
 		removePlayers(false);
 }
 
-HouseTransferItem* House::getTransferItem()
-{
-	if(transferItem)
-		return NULL;
-
-	if(transferContainer.getParent() != NULL)
-		transferContainer.setParent(NULL);
-
-	if(!(transferItem = HouseTransferItem::createHouseTransferItem(this)))
-		return NULL;
-
-	transferContainer.__addThing(NULL, transferItem);
-	return transferItem;
-}
-
-bool House::executeTransfer(HouseTransferItem* item, Player* newOwner)
-{
-	if(transferItem != item)
-		return false;
-
-	transferItem = NULL;
-	transferContainer.setParent(NULL);
-
-	setHouseOwner(newOwner->getGUID());
-	return true;
-}
-
-void House::resetTransferItem()
-{
-	if(transferItem)
-	{
-		Item* tmpItem = transferItem;
-		transferItem = NULL;
-
-		transferContainer.setParent(NULL);
-		transferContainer.__removeThing(tmpItem, tmpItem->getItemCount());
-		g_game.FreeThing(tmpItem);
-	}
-}
-
 HouseTransferItem* HouseTransferItem::createHouseTransferItem(House* house)
 {
 	HouseTransferItem* transferItem = new HouseTransferItem(house);
@@ -431,22 +391,27 @@ bool HouseTransferItem::onTradeEvent(TradeEvents_t event, Player* owner, Player*
 	{
 		case ON_TRADE_TRANSFER:
 		{
-			if(House* house = getHouse())
-				house->executeTransfer(this, owner);
+			if(house)
+				house->setHouseOwner(owner->getGUID());
 
 			g_game.internalRemoveItem(NULL, this, 1);
-			return true;
+			seller->transferContainer.setParent(NULL);
+			break;
 		}
+
 		case ON_TRADE_CANCEL:
 		{
-			if(House* house = getHouse())
-				house->resetTransferItem();
-
-			return true;
+			owner->transferContainer.setParent(NULL);
+			owner->transferContainer.__removeThing(this, getItemCount());
+			g_game.FreeThing(this);
+			break;
 		}
+
+		default:
+			return false;
 	}
 
-	return false;
+	return true;
 }
 
 void AccessList::getList(std::string& _list) const
@@ -835,8 +800,9 @@ bool Houses::payHouses()
 	if(rentPeriod == RENTPERIOD_NEVER)
 		return true;
 
-	std::cout << "> Paying houses..." << std::endl;
 	uint64_t start = OTSYS_TIME();
+	std::cout << "> Paying houses..." << std::endl;
+
 	uint32_t currentTime = time(NULL);
 	for(HouseMap::iterator it = houseMap.begin(); it != houseMap.end(); ++it)
 	{
@@ -989,7 +955,7 @@ bool Houses::payHouses()
 		}
 	}
 
-	std::cout << "> PAYHOUSES: Complete in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
+	std::cout << "> PayHouses: Completed in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 	return true;
 }
 

@@ -18,25 +18,26 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-
 #include <iostream>
-#include <algorithm>
-
-#include <stdlib.h>
 
 #include "player.h"
+#include "configmanager.h"
+
 #include "iologindata.h"
+#include "ioban.h"
+
+#include "creatureevent.h"
 #include "chat.h"
+
+#include "town.h"
 #include "house.h"
+#include "beds.h"
+
 #include "combat.h"
 #include "movement.h"
 #include "weapons.h"
-#include "town.h"
-#include "ioban.h"
-#include "configmanager.h"
-#include "creatureevent.h"
+
 #include "status.h"
-#include "beds.h"
 #ifndef __CONSOLE__
 #include "gui.h"
 #endif
@@ -56,7 +57,7 @@ MuteCountMap Player::muteCountMap;
 int32_t Player::maxMessageBuffer;
 
 Player::Player(const std::string& _name, ProtocolGame *p) :
-Creature()
+Creature(), transferContainer(ITEM_LOCKER1)
 {
 	client = p;
 	isConnecting = false;
@@ -171,6 +172,7 @@ Creature()
 
 	redSkullTicks = 0;
 	setParty(NULL);
+	transferContainer.setParent(NULL);
 
 	requestedOutfit = false;
 	saving = true;

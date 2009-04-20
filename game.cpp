@@ -1774,8 +1774,6 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 		return true;
 
 	typedef std::multimap<int32_t, Item*, std::less<int32_t> > MoneyMultiMap;
-	typedef MoneyMultiMap::value_type MoneyPair;
-
 	std::list<Container*> listContainer;
 	Container* tmpContainer = NULL;
 
@@ -1797,7 +1795,7 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 		else if(item->getWorth() != 0)
 		{
 			moneyCount += item->getWorth();
-			moneyMap.insert(MoneyPair(item->getWorth(), item));
+			moneyMap.insert(std::make_pair(item->getWorth(), item));
 		}
 	}
 
@@ -1813,7 +1811,7 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 			else if(item->getWorth() != 0)
 			{
 				moneyCount += item->getWorth();
-				moneyMap.insert(MoneyPair(item->getWorth(), item));
+				moneyMap.insert(std::make_pair(item->getWorth(), item));
 			}
 		}
 	}
@@ -1848,9 +1846,9 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 
 void Game::addMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/)
 {
-	MoneyMap moneyMap = Item::items.getMoneyMap();
+	IntegerMap moneyMap = Item::items.getMoneyMap();
 	int32_t tmp = 0;
-	for(MoneyMap::reverse_iterator it = moneyMap.rbegin(); it != moneyMap.rend(); ++it)
+	for(IntegerMap::reverse_iterator it = moneyMap.rbegin(); it != moneyMap.rend(); ++it)
 	{
 		tmp = money / it->first;
 		money -= tmp * it->first;
@@ -4061,7 +4059,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 		target->gainHealth(attacker, healthChange);
 		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isInGhostMode())
 		{
-			if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_FOR_MONSTER) || !target->getMonster())
+			if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_MONSTER) || !target->getMonster())
 			{
 				char buffer[20];
 				sprintf(buffer, "+%d", healthChange);

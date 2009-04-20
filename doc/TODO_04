@@ -1,0 +1,40 @@
+[
+	0.4
+
+	Pozwolę sobie napisac po polsku, bo z angielskim u mnie słabo, a i tak prawie sami tu jesteśmy...
+	Piszcie swoje propozycje co do 0.4- narazie wypiszę wszystko co przyszło mi do glowy, albo ustaliliśmy z Elfem.
+
+	TODO:
+	* GUI w QT/wxWidgets
+	* Multilanguage (szczególnie RET_* i możliwie wszystko pozostałe)
+	* Manual do komend- przykładowe użycie, możliwe wartości, używane w grze, możliwość deaktywacji w configu- przykład: /man serverinfo, /man /goto, /a man, itd.
+	* Stabilność :D!
+	* Nowy podział plików:
+		* configs/
+			* config.lua/.xml
+			* Przeniesione data/XML/
+		* logs/
+			* tfadmin.log
+			* crash.log
+			* client_assertions.log
+			* bots/
+			* talkactions/
+			* chat/
+			* server/
+		* mods/
+			Miejsce dla modów- wszystkie nowe modyfikacje, skrypty, itp tutaj, bo bezsensowne jest obecne pieprzenie się z 32894732893 plikami, by coś dodać.
+			Przykłady:
+				http://wklej.to/w4SP
+				http://wklej.to/aHnl
+		* world/
+			data/world/ - łatwiejsza podmiana data/
+		* languages/
+			Tłumaczenia: polish.lua, english.lua, etc
+		* schemas/
+			mysql.sql, sqlite.sql, postgresql.sql
+		* data/
+			Po staremu prócz world/, XML/ i logs/
+		* doc/
+		* TheForgottenServer.exe
+		* forgottenserver.s3db
+]

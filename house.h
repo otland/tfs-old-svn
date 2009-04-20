@@ -126,13 +126,13 @@ class HouseTransferItem : public Item
 	public:
 		static HouseTransferItem* createHouseTransferItem(House* house);
 
-		HouseTransferItem(House* _house) : Item(0) {house = _house;}
+		HouseTransferItem(House* _house): Item(0) {house = _house;}
 		virtual ~HouseTransferItem() {}
 
 		virtual bool onTradeEvent(TradeEvents_t event, Player* owner, Player* seller);
+		virtual bool canTransform() const {return false;}
 
 		House* getHouse() {return house;}
-		virtual bool canTransform() const {return false;}
 
 	protected:
 		House* house;
@@ -182,14 +182,10 @@ class House
 		Door* getDoorByNumber(uint32_t doorId) const;
 		Door* getDoorByPosition(const Position& pos);
 
-		HouseTransferItem* getTransferItem();
-		void resetTransferItem();
-		bool executeTransfer(HouseTransferItem* item, Player* player);
-
-		bool kickPlayer(Player* player, Player* target);
-		bool isInvited(const Player* player);
 		AccessHouseLevel_t getHouseAccessLevel(const Player* player);
 		uint32_t getHouseTileSize() {return houseTiles.size();}
+		bool isInvited(const Player* player);
+		bool kickPlayer(Player* player, Player* target);
 		void updateDoorDescription(std::string name = "");
 		void clean();
 
@@ -212,16 +208,14 @@ class House
 		void removePlayers(bool ignoreInvites);
 
 		bool isLoaded;
-		std::string houseName;
 		uint32_t houseid, houseOwner, paidUntil, rentWarnings, lastWarning, rent, price, townid, size;
-		AccessList guestList, subOwnerList;
+		std::string houseName;
 		Position posEntry;
+
+		AccessList guestList, subOwnerList;
 		HouseTileList houseTiles;
 		HouseDoorList doorList;
 		HouseBedItemList bedsList;
-
-		HouseTransferItem* transferItem;
-		Container transferContainer;
 };
 
 class Houses

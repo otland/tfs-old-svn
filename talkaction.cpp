@@ -489,16 +489,17 @@ bool TalkAction::sellHouse(Player* player, const std::string& cmd, const std::st
 		return true;
 	}
 
-	Item* transferItem = house->getTransferItem();
+	Item* transferItem = HouseTransferItem::createHouseTransferItem(house);
 	if(!transferItem)
 	{
 		player->sendCancel("You cannot trade this house.");
 		return true;
 	}
 
-	transferItem->getParent()->setParent(player);
+	player->transferContainer.__addThing(NULL, transferItem);
+	player->transferContainer.setParent(player);
 	if(!g_game.internalStartTrade(player, tradePartner, transferItem))
-		house->resetTransferItem();
+		transferItem->onTradeEvent(ON_TRADE_CANCEL, player, NULL);
 
 	return true;
 }
@@ -889,7 +890,6 @@ bool TalkAction::changeThingProporties(Player* player, const std::string& cmd, c
 		(*it)->onUpdateTile(tileInFront, cylinderMapPos);
 
 	g_game.addMagicEffect(pos, NM_ME_MAGIC_POISON);
-
 	return true;
 }
 

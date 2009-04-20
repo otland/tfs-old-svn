@@ -28,29 +28,10 @@ class Vocation
 	public:
 		virtual ~Vocation();
 
-		Vocation() {init();}
-		Vocation(uint32_t _id): id(_id) {init();}
+		Vocation() {reset();}
+		Vocation(uint32_t _id): id(_id) {reset();}
 
-		void init()
-		{
-			needPremium = false;
-			attackable = true;
-			skillMultipliers[6] = 1.1f;
-			manaMultiplier = 4.0;
-			soulMax = 100;
-			soulGainTicks = 120;
-			baseSpeed = 220;
-			attackSpeed = 1500;
-			name = description = "";
-			lessLoss = fromVocation = 0;
-			gainHealthAmount = gainManaAmount = 1;
-			skillMultipliers[0] = skillMultipliers[5] = 1.5f;
-			gainHealth = gainMana = gainCap = 5;
-			gainHealthTicks = gainManaTicks = 6;
-			meleeMultiplier = distanceMultiplier = wandMultiplier = magicMultiplier = magicHealingMultiplier = defenseMultiplier = armorMultiplier = 1.0;
-			skillMultipliers[1] = skillMultipliers[2] = skillMultipliers[3] = skillMultipliers[4] = 2.0f;
-			memset(absorbPercent, 0, sizeof(absorbPercent));
-		}
+		void reset();
 
 		uint32_t getId() const {return id;}
 		void setId(int32_t v) {id = v;}

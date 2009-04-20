@@ -24,11 +24,11 @@
 #include "const.h"
 #include "enums.h"
 
-#include "itemloader.h"
 #include "position.h"
-
+#include "itemloader.h"
 #include <libxml/parser.h>
 
+#define ITEMS 10500
 #define SLOTP_WHEREEVER 0xFFFFFFFF
 #define SLOTP_HEAD 1 << 0
 #define	SLOTP_NECKLACE 1 << 1
@@ -68,39 +68,17 @@ struct Abilities
 		memset(statsPercent, 0, sizeof(statsPercent));
 		memset(absorbPercent, 0, sizeof(absorbPercent));
 
-		healthGain = healthTicks = manaGain = manaTicks = 0;
-
 		elementType = COMBAT_NONE;
-		elementDamage = 0;
-
-		conditionImmunities = conditionSuppressions = 0;
-
-		speed = 0;
 		manaShield = invisible = regeneration = preventLoss = preventDrop = false;
+		speed = healthGain = healthTicks = manaGain = manaTicks = elementDamage = conditionImmunities = conditionSuppressions = 0
 	};
 
-	//extra skill modifiers
-	int32_t skills[SKILL_LAST + 1];
-
-	//stats modifiers
-	int32_t stats[STAT_LAST + 1], statsPercent[STAT_LAST + 1];
-
-	//damage abilities modifiers
-	int16_t absorbPercent[COMBAT_LAST + 1];
-
-	//regeneration
-	uint32_t healthGain, healthTicks, manaGain, manaTicks;
-
-	//elements
-	CombatType_t elementType;
-	int16_t elementDamage;
-
-	//conditions
-	uint32_t conditionImmunities, conditionSuppressions;
-
-	//other
-	int32_t speed;
 	bool manaShield, invisible, regeneration, preventLoss, preventDrop;
+	int16_t elementDamage, absorbPercent[COMBAT_LAST + 1];
+	int32_t speed, skills[SKILL_LAST + 1], stats[STAT_LAST + 1], statsPercent[STAT_LAST + 1],
+		healthGain, healthTicks, manaGain, manaTicks, conditionImmunities, conditionSuppressions;
+
+	CombatType_t elementType;
 };
 
 class Condition;
@@ -112,10 +90,7 @@ class ItemType
 
 	public:
 		ItemType();
-		virtual ~ItemType();
-
-		itemgroup_t group;
-		ItemTypes_t type;
+		virtual ~ItemType() {delete condition;}
 
 		bool isGroundTile() const {return (group == ITEM_GROUP_GROUND);}
 		bool isContainer() const {return (group == ITEM_GROUP_CONTAINER);}
@@ -134,101 +109,37 @@ class ItemType
 		bool isRune() const {return clientCharges;}
 		bool hasSubType() const {return (isFluidContainer() || isSplash() || stackable || charges != 0);}
 
-		Direction bedPartnerDir;
-		uint16_t transformToOnUse[2];
-		uint16_t transformToFree;
-		uint32_t levelDoor;
+		bool stopTime, showCount, clientCharges, stackable, showDuration, showCharges,
+			allowDistRead, canReadText, canWriteText, forceSerialize, isVertical, isHorizontal, isHangable,
+			useable, moveable, pickupable, rotable, replaceable,
+			floorChangeDown, floorChangeNorth, floorChangeSouth, floorChangeEast, floorChangeWest,
+			hasHeight, blockSolid, blockPickupable, blockProjectile, blockPathFind, allowPickupable, alwaysOnTop;
 
-		uint16_t id;
-		uint16_t clientId;
-
-		std::string name;
-		std::string article;
-		std::string pluralName;
-		std::string description;
-		uint16_t maxItems;
-		float weight;
-		bool showCount;
-		WeaponType_t weaponType;
-		Ammo_t ammoType;
-		ShootType_t shootType;
 		MagicEffectClasses magicEffect;
-		int32_t attack;
-		int32_t extraAttack;
-		int32_t defense;
-		int32_t extraDefense;
-		int32_t armor;
-		uint32_t attackSpeed;
-		uint16_t slotPosition;
-		uint16_t wieldPosition;
-		bool isVertical;
-		bool isHorizontal;
-		bool isHangable;
-		bool allowDistRead;
-		bool clientCharges;
-		uint16_t speed;
-		int32_t decayTo;
-		uint32_t decayTime;
-		bool stopTime;
-		RaceType_t corpseType;
-
-		bool canReadText;
-		bool canWriteText;
-		uint16_t maxTextLen;
-		uint16_t writeOnceItemId;
-
-		bool stackable;
-		bool useable;
-		bool moveable;
-		bool alwaysOnTop;
-		int32_t alwaysOnTopOrder;
-		bool pickupable;
-		bool rotable;
-		int32_t rotateTo;
-		bool forceSerialize;
-
-		std::string runeSpellName;
-		int32_t runeLevel;
-		int32_t runeMagLevel;
-		std::string vocationString;
-		uint32_t wieldInfo;
-		uint32_t minReqLevel;
-		uint32_t minReqMagicLevel;
-
-		int32_t lightLevel;
-		int32_t lightColor;
-
-		bool floorChangeDown;
-		bool floorChangeNorth;
-		bool floorChangeSouth;
-		bool floorChangeEast;
-		bool floorChangeWest;
-		bool hasHeight;
-
-		bool blockSolid;
-		bool blockPickupable;
-		bool blockProjectile;
-		bool blockPathFind;
-		bool allowPickupable;
-
-		uint16_t transformEquipTo;
-		uint16_t transformDeEquipTo;
-		bool showDuration;
-		bool showCharges;
-		uint32_t charges;
-		int32_t breakChance;
-		int32_t hitChance;
-		int32_t maxHitChance;
-		uint32_t shootRange;
-		AmmoAction_t ammoAction;
 		FluidTypes_t fluidSource;
+		WeaponType_t weaponType;
+		Direction bedPartnerDir;
+		AmmoAction_t ammoAction;
+		CombatType_t combatType;
+		RaceType_t corpseType;
+		ShootType_t shootType;
+		Ammo_t ammoType;
 
-		uint32_t worth;
-		Abilities abilities;
+		uint16_t transformToOnUse[2], transformToFree, transformEquipTo, transformDeEquipTo;
+			id, clientId, maxItems, slotPosition, wieldPosition, speed, maxTextLen, writeOnceItemId;
+
+		int32_t attack, extraAttack, defense, extraDefense, armor, breakChance, hitChance, maxHitChance,
+			runeLevel, runeMagLevel, lightLevel, lightColor, decayTo, rotateTo, alwaysOnTopOrder;
+		uint32_t shootRange, charges, decayTime, attackSpeed, wieldInfo, minReqLevel, minReqMagicLevel,
+			worth, levelDoor;
+
+		std::string name, pluralName, article, description, runeSpellName, vocationString;
 
 		Condition* condition;
-		CombatType_t combatType;
-		bool replaceable;
+		Abilities abilities;
+		itemgroup_t group;
+		ItemTypes_t type;
+		float weight;
 };
 
 template<typename A>
@@ -300,29 +211,30 @@ struct RandomizationBlock
 	int32_t fromRange, toRange, chance;
 };
 
-typedef std::map<int32_t, int32_t> MoneyMap;
+typedef std::map<int32_t, RandomizationBlock> RandomizationMap;
+typedef std::map<int32_t, int32_t> IntegerMap;
 
 class Items
 {
 	public:
-		Items();
-		virtual ~Items();
+		Items(): m_randomizationChance(50), items(ITEMS) {}
+		virtual ~Items() {clear();}
 
 		bool reload();
-		void clear();
-
 		int32_t loadFromOtb(std::string);
 		bool loadFromXml();
-		bool loadRandomization();
 
+		void addItemType(ItemType* iType);
 		ItemType& getItemType(int32_t id);
 		const ItemType& getItemType(int32_t id) const;
-		const ItemType& getItemIdByClientId(int32_t spriteId) const;
+
 		const ItemType& operator[](int32_t id) const {return getItemType(id);}
 		const ItemType* getElement(uint32_t id) const {return items.getElement(id);}
 
 		int32_t getItemIdByName(const std::string& name);
-		void addItemType(ItemType* iType);
+		const ItemType& getItemIdByClientId(int32_t spriteId) const;
+
+		int32_t getRandomizationChance() const {return m_randomizationChance;}
 		uint32_t size() {return items.size();}
 		MoneyMap getMoneyMap() {return moneyMap;}
 
@@ -330,22 +242,18 @@ class Items
 		static uint32_t dwMinorVersion;
 		static uint32_t dwBuildNumber;
 
+	private:
+		int32_t m_randomizationChance;
+		void clear();
+
 		bool parseItemNode(xmlNodePtr itemNode, uint32_t id);
-		bool loadRandomizationBlock(int32_t id, int32_t fromId, int32_t toId, int32_t chance);
+		bool parseRandomizationBlock(int32_t id, int32_t fromId, int32_t toId, int32_t chance);
 
-		int32_t getRandomizationChance() const {return m_randomizationChance;}
-
-		typedef std::map<int32_t, RandomizationBlock> RandomizationMap;
+		Array<ItemType*> items;
 		RandomizationMap randomizationMap;
 
-	protected:
-		Array<ItemType*> items;
-		MoneyMap moneyMap;
-
-		typedef std::map<int32_t, int32_t> ReverseItemMap;
-		ReverseItemMap reverseItemMap;
-
-		int32_t m_randomizationChance;
+		IntegerMap moneyMap;
+		IntegerMap reverseItemMap;
 };
 
 #endif

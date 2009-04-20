@@ -280,6 +280,27 @@ Vocation::~Vocation()
 		cacheSkill[i].clear();
 }
 
+void Vocation::reset()
+{
+	needPremium = false;
+	attackable = true;
+	skillMultipliers[6] = 1.1f;
+	manaMultiplier = 4.0;
+	soulMax = 100;
+	soulGainTicks = 120;
+	baseSpeed = 220;
+	attackSpeed = 1500;
+	name = description = "";
+	lessLoss = fromVocation = 0;
+	gainHealthAmount = gainManaAmount = 1;
+	gainHealth = gainMana = gainCap = 5;
+	gainHealthTicks = gainManaTicks = 6;
+	meleeMultiplier = distanceMultiplier = wandMultiplier = magicMultiplier = magicHealingMultiplier = defenseMultiplier = armorMultiplier = 1.0;
+	memset(skillMultipliers, 2.0f, sizeof(skillMultipliers) - 1);
+	skillMultipliers[0] = 1.5f;
+	memset(absorbPercent, 0, sizeof(absorbPercent));
+}
+
 uint32_t Vocation::getReqSkillTries(int32_t skill, int32_t level)
 {
 	if(skill < SKILL_FIRST || skill > SKILL_LAST)

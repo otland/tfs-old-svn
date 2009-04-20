@@ -38,57 +38,24 @@ extern Spells* g_spells;
 extern Monsters g_monsters;
 extern ConfigManager g_config;
 
-MonsterType::MonsterType()
-{
-	reset();
-}
-
 void MonsterType::reset()
 {
-	experience = 0;
+	canPushItems = canPushCreatures = isSummonable = isIllusionable = isConvinceable = isLureable = false;
+	pushable = isAttackable = isHostile = true;
 
-	defense = 0;
-	armor = 0;
+	experience = defense = armor = lookcorpse = conditionImmunities = damageImmunities = 0;
+	maxSummons = runAwayHealth = manaCost = lightLevel = lightColor = 0;
+	yellSpeedTicks = yellChance = changeTargetSpeed = changeTargetChance = 0;
 
-	canPushItems = false;
-	canPushCreatures = false;
-	staticAttackChance = 95;
-	maxSummons = 0;
 	targetDistance = 1;
-	runAwayHealth = 0;
-	pushable = true;
+	staticAttackChance = 95;
+	health = health_max = 100;
 	base_speed = 200;
-	health = 100;
-	health_max = 100;
 
-	outfit.lookHead = 0;
-	outfit.lookBody = 0;
-	outfit.lookLegs = 0;
-	outfit.lookFeet = 0;
-	outfit.lookType = 0;
-	outfit.lookTypeEx = 0;
-	outfit.lookAddons = 0;
-	lookcorpse = 0;
-
-	conditionImmunities = 0;
-	damageImmunities = 0;
+	outfit = Outfit();
 	race = RACE_BLOOD;
-	isSummonable = false;
-	isIllusionable = false;
-	isConvinceable = false;
-	isAttackable = true;
-	isHostile = true;
-	isLureable = false;
-
-	lightLevel = 0;
-	lightColor = 0;
 	skull = SKULL_NONE;
 	partyShield = SHIELD_NONE;
-
-	manaCost = 0;
-	summonList.clear();
-	lootItems.clear();
-	elementMap.clear();
 
 	for(SpellList::iterator it = spellAttackList.begin(); it != spellAttackList.end(); ++it)
 	{
@@ -110,23 +77,16 @@ void MonsterType::reset()
 	}
 
 	spellDefenseList.clear();
-	yellSpeedTicks = 0;
-	yellChance = 0;
 	voiceVector.clear();
-
-	changeTargetSpeed = 0;
-	changeTargetChance = 0;
 	scriptList.clear();
-}
-
-MonsterType::~MonsterType()
-{
-	reset();
+	summonList.clear();
+	lootItems.clear();
+	elementMap.clear();
 }
 
 uint32_t Monsters::getLootRandom()
 {
-	return uint32_t(random_range(0, MAX_LOOTCHANCE) / g_config.getDouble(ConfigManager::RATE_LOOT));
+	return (uint32_t)std::ceil((double)random_range(0, MAX_LOOTCHANCE) / g_config.getDouble(ConfigManager::RATE_LOOT));
 }
 
 void MonsterType::createLoot(Container* corpse)
@@ -227,11 +187,6 @@ bool MonsterType::createLootContainer(Container* parent, const LootBlock& lootbl
 	return parent->size() != 0;
 }
 
-Monsters::Monsters()
-{
-	loaded = false;
-}
-
 bool Monsters::loadFromXml(bool reloading /*= false*/)
 {
 	loaded = false;
@@ -280,11 +235,6 @@ bool Monsters::loadFromXml(bool reloading /*= false*/)
 	xmlFreeDoc(doc);
 	loaded = true;
 	return loaded;
-}
-
-bool Monsters::reload()
-{
-	return loadFromXml(true);
 }
 
 ConditionDamage* Monsters::getDamageCondition(ConditionType_t conditionType,
