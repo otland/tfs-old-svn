@@ -44,12 +44,7 @@ m_scriptInterface("Spell Interface")
 	m_scriptInterface.initState();
 }
 
-Spells::~Spells()
-{
-	clear();
-}
-
-TalkResult_t Spells::onPlayerSay(Player* player, const std::string& words)
+ReturnValue Spells::onPlayerSay(Player* player, const std::string& words)
 {
 	std::string reWords = words;
 	trimString(reWords);

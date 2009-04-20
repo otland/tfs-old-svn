@@ -42,7 +42,7 @@ class Spells : public BaseEvents
 {
 	public:
 		Spells();
-		virtual ~Spells();
+		virtual ~Spells() {clear();}
 
 		Spell* getSpellByName(const std::string& name);
 
@@ -116,7 +116,7 @@ class Spell : public BaseSpell
 {
 	public:
 		Spell();
-		virtual ~Spell(){}
+		virtual ~Spell() {}
 
 		bool configureSpell(xmlNodePtr xmlspell);
 		const std::string& getName() const {return name;}
