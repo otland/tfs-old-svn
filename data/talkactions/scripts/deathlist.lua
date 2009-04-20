@@ -11,7 +11,7 @@ function onSay(cid, words, param)
 
 	local str = ""
 	local deaths = db.getResult("SELECT `time`, `level`, `killed_by`, `altkilled_by` FROM `player_deaths` WHERE `player_id` = " .. targetGUID .. " ORDER BY `time` DESC;")
-	if(deaths:getID() ~= LUA_ERROR) then
+	if(deaths:getID() ~= -1) then
 		local breakline = ""
 		repeat
 			if(str ~= "") then
