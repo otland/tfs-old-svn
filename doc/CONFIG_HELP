@@ -227,6 +227,10 @@
 			Default: 7171
 
 		gamePort
+			Game service requires to run on seperated port!
+			DO NOT run this service with ANY other on SAME PORT.
+			Any merging with other ports will end with services not working properly,
+			so please keep in mind the default configuration that is easy and works.
 			Default: 7172
 
 		adminPort
