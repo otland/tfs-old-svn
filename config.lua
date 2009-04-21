@@ -29,7 +29,6 @@
 	-- deathLostPercent set to nil enables manual mode.
 	-- showHealingDamageForMonsters inheritates from showHealingDamage.
 	worldType = "pvp"
-	hotkeyAimbotEnabled = "yes"
 	protectionLevel = 1
 	pvpTileIgnoreLevelAndVocationProtection = "yes"
 	killsToRedSkull = 3
@@ -71,7 +70,6 @@
 	allowClones = 0
 	serverName = "Forgotten"
 	loginMessage = "Welcome to the Forgotten Server!"
-	adminLogsEnabled = "no"
 	statusTimeout = 5 * 60 * 1000
 	replaceKickOnLogin = "yes"
 	forceSlowConnectionsToDisconnect = "no"
@@ -117,10 +115,11 @@
 	housePriceEachSquare = 1000
 	houseRentPeriod = "never"
 
-	-- Items
+	-- Item usage
 	timeBetweenActions = 200
 	timeBetweenExActions = 1000
 	checkCorpseOwner = "yes"
+	hotkeyAimbotEnabled = "yes"
 
 	-- Map
 	-- NOTE: storeTrash costs more memory, but will perform alot faster cleaning.
@@ -240,6 +239,7 @@
 	-- Logs
 	-- NOTE: This kind of logging does not work in GUI version.
 	-- For such, please compile the software with __GUI_LOGS__ flag.
+	adminLogsEnabled = "no"
 	displayPlayersLogging = "yes"
 	prefixChannelLogs = ""
 	runeFile = ""
