@@ -33,23 +33,14 @@ extern ConfigManager g_config;
 uint32_t Connection::connectionCount = 0;
 #endif
 
-ConnectionManager::ConnectionManager()
-{
-	OTSYS_THREAD_LOCKVARINIT(m_connectionManagerLock);
-
-	maxLoginTries = g_config.getNumber(ConfigManager::LOGIN_TRIES);
-	retryTimeout = (int32_t)g_config.getNumber(ConfigManager::RETRY_TIMEOUT) / 1000;
-	loginTimeout = (int32_t)g_config.getNumber(ConfigManager::LOGIN_TIMEOUT) / 1000;
-}
-
-Connection* ConnectionManager::createConnection(boost::asio::io_service& io_service, ServicePort_ptr servicer)
+Connection* ConnectionManager::createConnection(boost::asio::ip::tcp::socket* socket, ServicePort_ptr servicer)
 {
 	#ifdef __DEBUG_NET_DETAIL__
 	std::cout << "Creating new connection" << std::endl;
 	#endif
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
 
-	Connection* connection = new Connection(io_service, servicer);
+	Connection* connection = new Connection(socket, servicer);
 	m_connections.push_back(connection);
 	return connection;
 }
@@ -71,42 +62,82 @@ void ConnectionManager::releaseConnection(Connection* connection)
 bool ConnectionManager::isDisabled(uint32_t clientIp, int32_t protocolId)
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
+	int32_t maxLoginTries = g_config.getNumber(ConfigManager::LOGIN_TRIES);
 	if(maxLoginTries == 0 || clientIp == 0)
 		return false;
 
-	IpConnectionMap::const_iterator it = ipConnectionMap.find(clientIp);
-	return it != ipConnectionMap.end() && it->second.lastProtocol != protocolId &&
-		it->second.loginsAmount > maxLoginTries && (int32_t)time(NULL) < it->second.lastLogin + loginTimeout;
+	IpLoginMap::const_iterator it = ipLoginMap.find(clientIp);
+	return it != ipLoginMap.end() && it->second.lastProtocol != protocolId && it->second.loginsAmount > maxLoginTries
+		&& (int32_t)time(NULL) < it->second.lastLogin + g_config.getNumber(ConfigManager::LOGIN_TIMEOUT) / 1000;
 }
 
 void ConnectionManager::addAttempt(uint32_t clientIp, int32_t protocolId, bool success)
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
-	if(clientIp == 0)
+	if(!clientIp)
 		return;
 
-	IpConnectionMap::iterator it = ipConnectionMap.find(clientIp);
-	if(it == ipConnectionMap.end())
+	IpLoginMap::iterator it = ipLoginMap.find(clientIp);
+	if(it == ipLoginMap.end())
 	{
-		ConnectionBlock tmp;
+		LoginBlock tmp;
 		tmp.lastLogin = tmp.loginsAmount = 0;
 		tmp.lastProtocol = 0x00;
 
-		ipConnectionMap[clientIp] = tmp;
-		it = ipConnectionMap.find(clientIp);
+		ipLoginMap[clientIp] = tmp;
+		it = ipLoginMap.find(clientIp);
 	}
 
-	if(it->second.loginsAmount > maxLoginTries)
+	if(it->second.loginsAmount > g_config.getNumber(ConfigManager::LOGIN_TRIES))
 		it->second.loginsAmount = 0;
 
 	int32_t currentTime = time(NULL);
-	if(!success || (currentTime < it->second.lastLogin + retryTimeout))
+	if(!success || (currentTime < it->second.lastLogin + (int32_t)g_config.getNumber(ConfigManager::RETRY_TIMEOUT) / 1000))
 		it->second.loginsAmount++;
 	else
 		it->second.loginsAmount = 0;
 
 	it->second.lastLogin = currentTime;
 	it->second.lastProtocol = protocolId;
+}
+
+bool ConnectionManager::acceptConnection(uint32_t clientIp)
+{
+	if(!clientip)
+		return false;
+
+	OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
+	uint64_t currentTime = OTSYS_TIME();
+
+	IpConnectMap::iterator it = ipConnectMap.find(clientIp);
+	if(it == ipConnectMap.end())
+	{
+		ConnectBlock tmp;
+		tmp.startTime = currentTime;
+		tmp.blockTime = 0;
+		tmp.count = 1;
+
+		ipConnectMap[clientIp] = tmp;
+		return true;
+	}
+
+	it->second.count++;
+	if(it->second.blockTime > currentTime)
+		return false;
+
+	if(currentTime - it->second.startTime > 1000)
+	{
+		uint32_t tmp = it->second.count;
+		it->second.startTime = currentTime;
+		it->second.count = it->second.blockTime = 0;
+		if(tmp > 10)
+		{
+			it->second.blockTime = currentTime + 10000;
+			return false;
+		}
+	}
+
+	return true;
 }
 
 void ConnectionManager::closeAll()
@@ -120,8 +151,8 @@ void ConnectionManager::closeAll()
 	while(it != m_connections.end())
 	{
 		boost::system::error_code error;
-		(*it)->m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
-		(*it)->m_socket.close(error);
+		(*it)->m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+		(*it)->m_socket->close(error);
 		++it;
 	}
 
@@ -132,7 +163,7 @@ uint32_t Connection::getIP() const
 {
 	//Ip is expressed in network byte order
 	boost::system::error_code error;
-	const boost::asio::ip::tcp::endpoint endpoint = m_socket.remote_endpoint(error);
+	const boost::asio::ip::tcp::endpoint endpoint = m_socket->remote_endpoint(error);
 	if(!error)
 		return htonl(endpoint.address().to_v4().to_ulong());
 
@@ -151,7 +182,7 @@ void Connection::accept()
 {
 	// Read size of the first packet
 	m_pendingRead++;
-	boost::asio::async_read(m_socket, boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),
+	boost::asio::async_read(getHandle(), boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),
 		boost::bind(&Connection::parseHeader, this, boost::asio::placeholders::error));
 }
 
@@ -213,7 +244,7 @@ bool Connection::send(OutputMessage_ptr msg)
 void Connection::internalSend(OutputMessage_ptr msg)
 {
 	m_pendingWrite++;
-	boost::asio::async_write(m_socket, boost::asio::buffer(msg->getOutputBuffer(), msg->getMessageLength()),
+	boost::asio::async_write(getHandle(), boost::asio::buffer(msg->getOutputBuffer(), msg->getMessageLength()),
 		boost::bind(&Connection::onWrite, this, msg, boost::asio::placeholders::error));
 }
 
@@ -278,7 +309,7 @@ void Connection::parseHeader(const boost::system::error_code& error)
 		// Read packet content
 		m_pendingRead++;
 		m_msg.setMessageLength(size + NetworkMessage::header_length);
-		boost::asio::async_read(m_socket, boost::asio::buffer(m_msg.getBodyBuffer(), size),
+		boost::asio::async_read(getHandle(), boost::asio::buffer(m_msg.getBodyBuffer(), size),
 			boost::bind(&Connection::parsePacket, this, boost::asio::placeholders::error));
 	}
 	else
@@ -340,7 +371,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 
 		// Wait to the next packet
 		m_pendingRead++;
-		boost::asio::async_read(m_socket, boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),
+		boost::asio::async_read(getHandle(), boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),
 			boost::bind(&Connection::parseHeader, this, boost::asio::placeholders::error));
 	}
 	else
@@ -364,11 +395,11 @@ bool Connection::write()
 			#endif
 
 			boost::system::error_code error;
-			m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+			m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
 			if(error && error != boost::asio::error::not_connected)
 				PRINT_ASIO_ERROR("Shutdown");
 
-			m_socket.close(error);
+			m_socket->close(error);
 			m_socketClosed = true;
 			if(error)
 				PRINT_ASIO_ERROR("Close");

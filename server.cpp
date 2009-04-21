@@ -83,12 +83,11 @@ void ServicePort::accept()
 		return;
 	}
 
-	Connection* connection = ConnectionManager::getInstance()->createConnection(m_io_service, shared_from_this());
-	m_acceptor->async_accept(connection->getHandle(), boost::bind(
-		&ServicePort::handle, this, connection, boost::asio::placeholders::error));
+	boost::asio::ip::tcp::socket* socket = new boost::asio::ip::tcp::socket(m_io_service);
+	m_acceptor->async_accept(*socket, &ServicePort::handle, this, socket, boost::asio::placeholders::error));
 }
 
-void ServicePort::handle(Connection* connection, const boost::system::error_code& error)
+void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::system::error_code& error)
 {
 	if(!error)
 	{
@@ -100,10 +99,29 @@ void ServicePort::handle(Connection* connection, const boost::system::error_code
 			return;
 		}
 
-		if(m_services.front()->isSingleSocket())
-			connection->handle(m_services.front()->makeProtocol(connection));
-		else
-			connection->accept();
+		boost::system::error_code error;
+		const boost::asio::ip::tcp::endpoint endpoint = socket->remote_endpoint(error);
+
+		uint32_t remoteIp = 0;
+		if(!error)
+			remoteIp = htonl(endpoint.address().to_v4().to_ulong());
+
+		Connection* connection = NULL;
+		if(remoteIp != 0 && ConnectionManager::getInstance()->acceptConnection(remoteIp) &&
+			(connection = ConnectionManager::getInstance()->createConnection(socket, shared_from_this())))
+		{
+			if(m_services.front()->isSingleSocket())
+				connection->handle(m_services.front()->makeProtocol(connection));
+			else
+				connection->accept();
+		}
+		else if(socket->is_open())
+		{
+			boost::system::error_code error;
+			socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+			socket->close(error);
+			delete socket;
+		}
 
 #ifdef __DEBUG_NET_DETAIL__
 		std::cout << "handle - OK" << std::endl;

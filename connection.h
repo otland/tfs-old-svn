@@ -40,18 +40,21 @@ typedef boost::shared_ptr<ServicePort> ServicePort_ptr;
 #define PRINT_ASIO_ERROR(desc)
 #endif
 
-struct ConnectionBlock
+struct LoginBlock
 {
 	int32_t lastLogin, lastProtocol, loginsAmount;
+};
+
+struct ConnectBlock
+{
+	uint32_t count;
+	uint64_t startTime, blockTime;
 };
 
 class ConnectionManager
 {
 	public:
-		virtual ~ConnectionManager()
-		{
-			OTSYS_THREAD_LOCKVARRELEASE(m_connectionManagerLock);
-		}
+		virtual ~ConnectionManager() {OTSYS_THREAD_LOCKVARRELEASE(m_connectionManagerLock);}
 
 		static ConnectionManager* getInstance()
 		{
@@ -59,20 +62,23 @@ class ConnectionManager
 			return &instance;
 		}
 
-		Connection* createConnection(boost::asio::io_service& io_service, ServicePort_ptr servicer);
+		Connection* createConnection(boost::asio::ip::tcp::socket* socket, ServicePort_ptr servicer);
 		void releaseConnection(Connection* connection);
 
 		bool isDisabled(uint32_t clientIp, int32_t protocolId);
 		void addAttempt(uint32_t clientIp, int32_t protocolId, bool success);
 
+		bool acceptConnection(uint32_t clientIp);
 		void closeAll();
 
 	protected:
-		ConnectionManager();
-		int32_t loginTimeout, retryTimeout, maxLoginTries;
+		ConnectionManager() {OTSYS_THREAD_LOCKVARINIT(m_connectionManagerLock);}
 
-		typedef std::map<uint32_t, ConnectionBlock> IpConnectionMap;
-		IpConnectionMap ipConnectionMap;
+		typedef std::map<uint32_t, LoginBlock> IpLoginMap;
+		IpLoginMap ipLoginMap;
+
+		typedef std::map<uint32_t, ConnectBlock> IpConnectMap;
+		IpConnectMap ipConnectMap;
 
 		std::list<Connection*> m_connections;
 		OTSYS_THREAD_LOCKVAR m_connectionManagerLock;
@@ -92,7 +98,7 @@ class Connection : boost::noncopyable
 		};
 
 	private:
-		Connection(boost::asio::io_service& io_service, ServicePort_ptr servicer) : m_socket(io_service), m_port(servicer)
+		Connection(boost::asio::ip::tcp::socket* socket, ServicePort_ptr servicer): m_socket(socket), m_port(servicer)
 		{
 			m_protocol = NULL;
 			m_closeState = CLOSE_STATE_NONE;
@@ -112,13 +118,14 @@ class Connection : boost::noncopyable
 		{
 			ConnectionManager::getInstance()->releaseConnection(this);
 			OTSYS_THREAD_LOCKVARRELEASE(m_connectionLock);
-
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
+
 			connectionCount--;
 #endif
+			delete m_socket;
 		}
 
-		boost::asio::ip::tcp::socket& getHandle() {return m_socket;}
+		boost::asio::ip::tcp::socket& getHandle() {return *m_socket;}
 		uint32_t getIP() const;
 
 		void handle(Protocol* protocol);
@@ -149,7 +156,7 @@ class Connection : boost::noncopyable
 		NetworkMessage m_msg;
 		Protocol* m_protocol;
 
-		boost::asio::ip::tcp::socket m_socket;
+		boost::asio::ip::tcp::socket* m_socket;
 		ServicePort_ptr m_port;
 
 		bool m_receivedFirst, m_socketClosed, m_writeError, m_readError;

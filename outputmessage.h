@@ -38,7 +38,7 @@ class Connection;
 class OutputMessage : public NetworkMessage, boost::noncopyable
 {
 	private:
-		OutputMessage();
+		OutputMessage() {freeMessage();}
 
 	public:
 		virtual ~OutputMessage() {}
@@ -163,14 +163,16 @@ class OutputMessagePool
 
 	protected:
 		void configureOutputMessage(OutputMessage_ptr msg, Protocol* protocol, bool autosend);
+
+		void releaseMessage(OutputMessage* msg);
 		void internalReleaseMessage(OutputMessage* msg);
 
-		typedef std::list<OutputMessage*> InternalOutputMessageList;
 		typedef std::list<OutputMessage_ptr> OutputMessageList;
+		OutputMessageList m_autoSendOutputMessages;
 
+		typedef std::list<OutputMessage*> InternalOutputMessageList;
 		InternalOutputMessageList m_outputMessages;
 		InternalOutputMessageList m_allOutputMessages;
-		OutputMessageList m_autoSendOutputMessages;
 
 		OTSYS_THREAD_LOCKVAR m_outputPoolLock;
 		uint64_t m_frameTime;

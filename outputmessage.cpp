@@ -18,15 +18,11 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-
 #include "outputmessage.h"
+
 #include "connection.h"
 #include "protocol.h"
-
-OutputMessage::OutputMessage()
-{
-	freeMessage();
-}
+#include "scheduler.h"
 
 //*********** OutputMessagePool ****************//
 
@@ -65,7 +61,6 @@ void OutputMessagePool::send(OutputMessage_ptr msg)
 	OTSYS_THREAD_LOCK(m_outputPoolLock, "");
 	OutputMessage::OutputMessageState state = msg->getState();
 	OTSYS_THREAD_UNLOCK(m_outputPoolLock, "");
-
 	if(state == OutputMessage::STATE_ALLOCATED_NO_AUTOSEND)
 	{
 		#ifdef __DEBUG_NET_DETAIL__
@@ -121,6 +116,12 @@ void OutputMessagePool::sendAll()
 	}
 }
 
+void OutputMessagePool::releaseMessage(OutputMessage* msg)
+{
+	Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+		&OutputMessagePool::internalReleaseMessage, this, msg)));
+}
+
 void OutputMessagePool::internalReleaseMessage(OutputMessage* msg)
 {
 	if(msg->getProtocol())
@@ -162,14 +163,16 @@ OutputMessage_ptr OutputMessagePool::getOutputMessage(Protocol* protocol, bool a
 		}
 
 #endif
-		omsg.reset(new OutputMessage, boost::bind(&OutputMessagePool::internalReleaseMessage, this, _1));
+		omsg.reset(new OutputMessage, boost::bind(
+			&OutputMessagePool::releaseMessage, this, _1));
 #ifdef __TRACK_NETWORK__
 		m_allOutputMessages.push_back(omsg.get());
 #endif
 	}
 	else
 	{
-		omsg.reset(m_outputMessages.back(), boost::bind(&OutputMessagePool::internalReleaseMessage, this, _1));
+		omsg.reset(m_outputMessages.back(), boost::bind(
+			&OutputMessagePool::releaseMessage, this, _1));
 #ifdef __TRACK_NETWORK__
 		// Print message trace
 		if(omsg->getState() != OutputMessage::STATE_FREE)
