@@ -618,8 +618,8 @@ int32_t Container::__getIndexOfThing(const Thing* thing, const Creature* seeker/
 	{
 		if(*cit == thing)
 			return index;
-		else
-			++index;
+
+		++index;
 	}
 
 	return -1;

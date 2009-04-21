@@ -2967,7 +2967,7 @@ void Player::__removeThing(Thing* thing, uint32_t count)
 	}
 }
 
-int32_t Player::__getIndexOfThing(const Thing* thing) const
+int32_t Player::__getIndexOfThing(const Thing* thing, const Creature* seeker/* = NULL*/) const
 {
 	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 	{
@@ -3056,7 +3056,7 @@ void Player::postAddNotification(Creature* actor, Thing* thing, int32_t index, c
 		if(const Container* container = item->getContainer())
 			onSendContainer(container);
 
-		if(shopOwner)
+		if(link < LINK_NEAR && shopOwner)
 			updateInventoryGoods(item->getID());
 	}
 	else if(const Creature* creature = thing->getCreature())
@@ -3100,7 +3100,7 @@ void Player::postRemoveNotification(Creature* actor, Thing* thing, int32_t index
 				autoCloseContainers(container);
 		}
 
-		if(shopOwner)
+		if(link < LINK_NEAR && shopOwner)
 			updateInventoryGoods(item->getID());
 	}
 }
