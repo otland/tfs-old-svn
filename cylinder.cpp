@@ -23,7 +23,7 @@
 
 VirtualCylinder* VirtualCylinder::virtualCylinder = new VirtualCylinder;
 
-int32_t Cylinder::__getIndexOfThing(const Thing* thing) const
+int32_t Cylinder::__getIndexOfThing(const Thing* thing, const Creature* seeker/* = NULL*/) const
 {
 	return -1;
 }

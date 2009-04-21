@@ -978,9 +978,9 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 		CreatureVector::const_iterator itc;
 		for(itc = tile->creatures.begin(); ((itc != tile->creatures.end()) && (count < 10)); ++itc)
 		{
-			if(((*itc)->isInvisible() && !(*itc)->getPlayer() && !player->canSeeInvisibility())
-				|| ((*itc)->isInGhostMode() && !player->canSeeGhost((*itc))))
-				continue;
+//			if(((*itc)->isInvisible() && !(*itc)->getPlayer() && !player->canSeeInvisibility())
+//				|| ((*itc)->isInGhostMode() && !player->canSeeGhost((*itc))))
+//				continue;
 
 			bool known;
 			uint32_t removedKnown;
@@ -2967,7 +2967,7 @@ void ProtocolGame::AddTileItem(NetworkMessage_ptr msg, const Position& pos, cons
 	msg->AddByte(0x6A);
 	msg->AddPosition(pos);
 	if(const Tile* tile = item->getTile())
-		msg->AddByte(tile->__getIndexOfThing(item));
+		msg->AddByte(tile->__getIndexOfThing(item, player));
 	else
 		msg->AddByte(0x00);
 
@@ -2976,14 +2976,14 @@ void ProtocolGame::AddTileItem(NetworkMessage_ptr msg, const Position& pos, cons
 
 void ProtocolGame::AddTileCreature(NetworkMessage_ptr msg, const Position& pos, const Creature* creature)
 {
-	if((creature->isInvisible() && !creature->getPlayer() && !player->canSeeInvisibility())
-		|| (creature->isInGhostMode() && !player->canSeeGhost(creature)))
-		return;
+//	if((creature->isInvisible() && !creature->getPlayer() && !player->canSeeInvisibility())
+//		|| (creature->isInGhostMode() && !player->canSeeGhost(creature)))
+//		return;
 
 	msg->AddByte(0x6A);
 	msg->AddPosition(pos);
 	if(const Tile* tile = creature->getTile())
-		msg->AddByte(tile->__getIndexOfThing(creature));
+		msg->AddByte(tile->__getIndexOfThing(creature, player));
 	else
 		msg->AddByte(0x00);
 
