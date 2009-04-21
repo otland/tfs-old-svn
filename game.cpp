@@ -4410,17 +4410,17 @@ void Game::startDecay(Item* item)
 
 void Game::internalDecayItem(Item* item)
 {
-	const ItemType& it = Item::items[item->getID()];
+	const ItemType& it = Item::items.getItemType(item->getID());
 	if(it.decayTo != 0)
 	{
-		Item* newItem = transformItem(item, it.decayTo);
-		startDecay(newItem);
+		if(Item* newItem = transformItem(item, it.decayTo))
+			startDecay(newItem);
 	}
 	else
 	{
 		ReturnValue ret = internalRemoveItem(NULL, item);
 		if(ret != RET_NOERROR)
-			std::cout << "> DEBUG: internalDecayItem failed, error code: " << (int32_t)ret << "item id: " << item->getID() << std::endl;
+			std::cout << "> DEBUG: internalDecayItem failed, error code: " << (int32_t)ret << ", item id: " << item->getID() << std::endl;
 	}
 }
 
