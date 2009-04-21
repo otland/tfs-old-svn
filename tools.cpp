@@ -454,7 +454,7 @@ bool isValidPassword(std::string text)
 
 bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 {
-	uint32_t textLength = text.length(), lenBeforeSpace = 1, lenBeforeQuote = 1, lenBeforeDash = 1, repeatedCharacter = 0;
+	uint32_t textLength = text.length(), lenBeforeSpace = 1/*, lenBeforeQuote = 1*/, lenBeforeDash = 1, repeatedCharacter = 0; //Elf
 	char lastChar = 32;
 
 	if(forceUppercaseOnFirstLetter)
@@ -471,7 +471,8 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 		{
 			lenBeforeSpace++;
 
-			if(text[size] != 39)
+			// [START] Elf
+			/*if(text[size] != 39)
 				lenBeforeQuote++;
 			else
 			{
@@ -479,7 +480,8 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 					return false;
 
 				lenBeforeQuote = 0;
-			}
+			}*/
+			// [END] Elf
 
 			if(text[size] != 45)
 				lenBeforeDash++;
@@ -507,10 +509,10 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 			if(lenBeforeSpace <= 1 || size == textLength - 1 || text[size + 1] == 32)
 				return false;
 
-			lenBeforeSpace = lenBeforeQuote = lenBeforeDash = 0;
+			lenBeforeSpace = /*lenBeforeQuote = */lenBeforeDash = 0; //Elf
 		}
 
-		if(!(isLowercaseLetter(text[size]) || text[size] == 32 || text[size] == 39 || text[size] == 45
+		if(!(isLowercaseLetter(text[size]) || text[size] == 32/* || text[size] == 39*/ || text[size] == 45
 			|| (isUppercaseLetter(text[size]) && text[size - 1] == 32)))
 			return false;
 	}
@@ -1340,7 +1342,7 @@ bool parseVocationNode(xmlNodePtr vocationNode, VocationMap& vocationMap, String
 			}
 		}
 
-		if(vocationId != -1 && readXMLString(vocationNode, "showInDescription", tmpStrValue) && booleanString(tmpStrValue))
+		if(vocationId != -1 && (!readXMLString(vocationNode, "showInDescription", tmpStrValue) || booleanString(tmpStrValue)))
 			vocStringVec.push_back(asLowerCaseString(strValue));
 	}
 
