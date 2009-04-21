@@ -291,7 +291,8 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 			if((g_game.getWorldType() == WORLD_TYPE_NO_PVP && !Combat::isInPvpZone(attacker, target)) ||
 				isProtected(const_cast<Player*>(attackerPlayer), const_cast<Player*>(targetPlayer))
 				|| (g_config.getBool(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) &&
-				attackerPlayer->getDefaultOutfit().lookFeet == targetPlayer->getDefaultOutfit().lookFeet))
+				attackerPlayer->getDefaultOutfit().lookFeet == targetPlayer->getDefaultOutfit().lookFeet)
+				|| (targetPlayer->isInGhostMode() && !attackerPlayer->canSeeGhost(targetPlayer)))
 				return RET_YOUMAYNOTATTACKTHISPLAYER;
 		}
 	}
@@ -1035,7 +1036,7 @@ void TargetCallback::onTargetCombat(Creature* creature, Creature* target) const
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. TargetCallback::onTargetCombat" << std::endl;
+		std::cout << "[Error - TargetCallback::onTargetCombat] Call stack overflow." << std::endl;
 		return;
 	}
 }
