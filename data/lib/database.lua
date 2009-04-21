@@ -5,7 +5,7 @@ end
 
 Result = createClass(nil)
 Result:setAttributes({
-	id = -1
+	id = -1,
 	query = ""
 })
 
