@@ -377,8 +377,10 @@ bool CombatSpell::castSpell(Creature* creature, Creature* target)
 
 		combat->doCombat(creature, target->getPosition());
 	}
-	else
+	else if(!target->isInGhostMode() || creature->canSeeGhost(target))
 		combat->doCombat(creature, target);
+	else
+		return false;
 
 	return true;
 }

@@ -5981,8 +5981,7 @@ int32_t LuaScriptInterface::luaDoCombat(lua_State* L)
 		case VARIANT_NUMBER:
 		{
 			Creature* target = g_game.getCreatureByID(var.number);
-
-			if(!target)
+			if(!target || (target->isInGhostMode() && !creature->canSeeGhost(target)))
 			{
 				lua_pushboolean(L, LUA_ERROR);
 				return 1;
@@ -6021,7 +6020,7 @@ int32_t LuaScriptInterface::luaDoCombat(lua_State* L)
 		case VARIANT_STRING:
 		{
 			Player* target = g_game.getPlayerByName(var.text);
-			if(!target)
+			if(!target || (target->isInGhostMode() && !creature->canSeeGhost(target)))
 			{
 				lua_pushboolean(L, LUA_ERROR);
 				return 1;
@@ -6036,7 +6035,6 @@ int32_t LuaScriptInterface::luaDoCombat(lua_State* L)
 			reportErrorFunc(getErrorDesc(LUA_ERROR_VARIANT_UNKNOWN));
 			lua_pushboolean(L, LUA_ERROR);
 			return 1;
-			break;
 		}
 	}
 
