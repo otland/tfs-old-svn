@@ -3422,11 +3422,11 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 	}
 
 	ReturnValue ret = g_spells->onPlayerSay(player, text);
-	if(ret == RET_NOERROR)
+	if(ret == RET_NOERROR || (ret == RET_NEEDEXCHANGE && !g_config.getBool(ConfigManager::BUFFER_SPELL_FAILURE)))
 		return true;
 
 	player->removeMessageBuffer();
-	if(ret == RET_NEEDEXCHANGE && g_config.getBool(ConfigManager::BUFFER_SPELL_FAILURE))
+	if(ret == RET_NEEDEXCHANGE)
 		return true;
 
 	if(g_talkActions->onPlayerSay(player, channelId, text))
