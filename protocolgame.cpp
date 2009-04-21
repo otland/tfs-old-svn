@@ -2976,9 +2976,9 @@ void ProtocolGame::AddTileItem(NetworkMessage_ptr msg, const Position& pos, cons
 
 void ProtocolGame::AddTileCreature(NetworkMessage_ptr msg, const Position& pos, const Creature* creature)
 {
-//	if((creature->isInvisible() && !creature->getPlayer() && !player->canSeeInvisibility())
-//		|| (creature->isInGhostMode() && !player->canSeeGhost(creature)))
-//		return;
+	if((creature->isInvisible() && !creature->getPlayer() && !player->canSeeInvisibility())
+		|| (creature->isInGhostMode() && !player->canSeeGhost(creature)))
+		return;
 
 	msg->AddByte(0x6A);
 	msg->AddPosition(pos);
