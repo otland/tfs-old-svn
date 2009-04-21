@@ -423,7 +423,7 @@ void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport 
 	Player* tmpPlayer = NULL;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
-		if((tmpPlayer = (*it)->getPlayer()) && !creature->isInGhostMode() || tmpPlayer->canSeeGhost(creature))
+		if((tmpPlayer = (*it)->getPlayer()) && (!creature->isInGhostMode() || tmpPlayer->canSeeGhost(creature)))
 		{
 			int32_t i = 0;
 			for(CreatureVector::iterator it = creatures.begin(); it != creatures.end(); ++it)
