@@ -545,7 +545,7 @@ ServiceManager* services)
 		atexit(runfileHandler);
 	}
 
-	nice(g_config.getNumber(ConfigManager::NICE_LEVEL));
+	if(!nice(g_config.getNumber(ConfigManager::NICE_LEVEL))) {}
 	#endif
 	std::string passwordType = asLowerCaseString(g_config.getString(ConfigManager::PASSWORD_TYPE));
 	if(passwordType == "md5")

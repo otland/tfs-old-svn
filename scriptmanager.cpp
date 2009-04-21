@@ -45,25 +45,6 @@ MoveEvents* g_moveEvents = NULL;
 Weapons* g_weapons = NULL;
 GlobalEvents* g_globalEvents = NULL;
 
-ScriptingManager* ScriptingManager::_instance = NULL;
-
-ScriptingManager::ScriptingManager()
-{
-	//
-}
-
-ScriptingManager::~ScriptingManager()
-{
-	//
-}
-
-ScriptingManager* ScriptingManager::getInstance()
-{
-	if(_instance == NULL)
-		_instance = new ScriptingManager();
-	return _instance;
-}
-
 bool ScriptingManager::loadScriptSystems()
 {
 	g_weapons = new Weapons();
@@ -72,8 +53,8 @@ bool ScriptingManager::loadScriptSystems()
 		std::cout << "> ERROR: Unable to load Weapons!" << std::endl;
 		return false;
 	}
-	g_weapons->loadDefaults();
 
+	g_weapons->loadDefaults();
 	g_spells = new Spells();
 	if(!g_spells->loadFromXml())
 	{
@@ -115,5 +96,6 @@ bool ScriptingManager::loadScriptSystems()
 		std::cout << "> ERROR: Unable to load GlobalEvents!" << std::endl;
 		return false;
 	}
+
 	return true;
 }

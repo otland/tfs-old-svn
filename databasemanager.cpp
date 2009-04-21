@@ -264,128 +264,12 @@ uint32_t DatabaseManager::updateDatabase()
 				query << "INSERT INTO `server_motd` VALUES (1, 'Welcome to The Forgotten Server!');";
 				db->executeQuery(query.str());
 
-				//Update groups
-				query.str("");
-				query << "ALTER TABLE `groups` ADD `customflags` BIGINT UNSIGNED NOT NULL DEFAULT 0 AFTER `flags`;";
-				db->executeQuery(query.str());
-				query.str("");
-				query << "ALTER TABLE `groups` ADD `violationaccess` INT NOT NULL DEFAULT 0 AFTER `access`;";
-				db->executeQuery(query.str());
-
-				/**
-				 * We cannot use TRUNCATE because of the foreign keys,
-				 * so we'll be using UPDATE method instead.
-				 */
-
-				bool imported[7] = {false, false, false, false, false, false, false};
-				query.str("");
-				query << "SELECT `id` FROM `groups`;";
-				if((result = db->storeQuery(query.str())))
-				{
-					do
-					{
-						uint32_t type = result->getDataInt("id");
-						if(type >= 1 && type <= 6)
-							imported[type] = true;
-						else if(!imported[0])
-							imported[0] = true;
-
-						query.str("");
-						switch(type)
-						{
-							case 1:
-								query << "UPDATE `groups` SET `name` = 'Player', `flags` = 0, `access` = 0, `maxdepotitems` = 0, `maxviplist` = 0 WHERE `id` = 1;";
-								break;
-
-							case 2:
-								query << "UPDATE `groups` SET `name` = 'Tutor', `flags` = 16809984, `customflags` = 1, `access` = 1, `maxdepotitems` = 0, `maxviplist` = 0 WHERE `id` = 2;";
-								break;
-
-							case 3:
-								query << "UPDATE `groups` SET `name` = 'Senior Tutor', `flags` = 68736352256, `customflags` = 3, `access` = 2, `violationaccess` = 1, `maxdepotitems` = 0, `maxviplist` = 0 WHERE `id` = 3;";
-								break;
-
-							case 4:
-								query << "UPDATE `groups` SET `name` = 'Game Master', `flags` = 492842123151, `customflags` = 63, `access` = 3, `violationaccess` = 2, `maxdepotitems` = 4000, `maxviplist` = 200 WHERE `id` = 4;";
-								break;
-
-							case 5:
-								query << "UPDATE `groups` SET `name` = 'Community Manager', `flags` = 542239465466, `customflags` = 1279, `access` = 4, `violationaccess` = 3, `maxdepotitems` = 6000, `maxviplist` = 300 WHERE `id` = 5;";
-								break;
-
-							case 6:
-								query << "UPDATE `groups` SET `name` = 'God', `flags` = 546534563834, `customflags` = 2047, `access` = 5, `violationaccess` = 3, `maxdepotitems` = 8000, `maxviplist` = 400 WHERE `id` = 6;";
-								break;
-
-							default:
-								break;
-						}
-						db->executeQuery(query.str());
-					}
-					while(result->next());
-					result->free();
-				}
-
-				if(!imported[1])
-				{
-					query.str("");
-					query << "INSERT INTO `groups` VALUES (1, 'Player', 0, 0, 0, 0, 0, 0);";
-					db->executeQuery(query.str());
-				}
-
-				if(!imported[2])
-				{
-					query.str("");
-					query << "INSERT INTO `groups` VALUES (2, 'Tutor', 16809984, 1, 1, 0, 0, 0);";
-					db->executeQuery(query.str());
-				}
-
-				if(!imported[3])
-				{
-					query.str("");
-					query << "INSERT INTO `groups` VALUES (3, 'Senior Tutor', 68736352256, 3, 2, 1, 0, 0);";
-					db->executeQuery(query.str());
-				}
-
-				if(!imported[4])
-				{
-					query.str("");
-					query << "INSERT INTO `groups` VALUES (4, 'Game Master', 492842123151, 63, 3, 2, 4000, 200);";
-					db->executeQuery(query.str());
-				}
-
-				if(!imported[5])
-				{
-					query.str("");
-					query << "INSERT INTO `groups` VALUES (5, 'Community Manager', 542239465466, 1279, 4, 3, 6000, 300);";
-					db->executeQuery(query.str());
-				}
-
-				if(!imported[6])
-				{
-					query.str("");
-					query << "INSERT INTO `groups` VALUES (6, 'God', 546534563834, 2047, 5, 3, 8000, 400);";
-					db->executeQuery(query.str());
-				}
-
-				if(imported[0])
-					std::cout << "WARNING: It appears that you have more than 6 groups, there is nothing wrong with that you have more that, but they weren't updated with the new settings from 0.3 so you might want to take a look at them!" << std::endl;
-
 				//Update players table
 				query.str("");
 				query << "ALTER TABLE `players` ADD `balance` BIGINT UNSIGNED NOT NULL DEFAULT 0 AFTER `blessings`;";
 				db->executeQuery(query.str());
 				query.str("");
 				query << "ALTER TABLE `players` ADD `stamina` BIGINT UNSIGNED NOT NULL DEFAULT 201660000 AFTER `balance`;";
-				db->executeQuery(query.str());
-				query.str("");
-				query << "ALTER TABLE `players` CHANGE `loss_experience` `loss_experience` INT NOT NULL DEFAULT 10;";
-				db->executeQuery(query.str());
-				query.str("");
-				query << "ALTER TABLE `players` CHANGE `loss_mana` `loss_mana` INT NOT NULL DEFAULT 10;";
-				db->executeQuery(query.str());
-				query.str("");
-				query << "ALTER TABLE `players` CHANGE `loss_skills` `loss_skills` INT NOT NULL DEFAULT 10;";
 				db->executeQuery(query.str());
 				query.str("");
 				query << "ALTER TABLE `players` ADD `loss_items` INT NOT NULL DEFAULT 10 AFTER `loss_skills`;";
@@ -536,64 +420,11 @@ uint32_t DatabaseManager::updateDatabase()
 
 			query.str("");
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
-			{
-				query << "ALTER TABLE `groups` ADD `outfit` INTEGER NOT NULL DEFAULT 0;";
-				db->executeQuery(query.str());
-
-				query.str("");
 				query << "ALTER TABLE `players` ADD `deleted` BOOLEAN NOT NULL DEFAULT 0;";
-			}
 			else
-			{
-				query << "ALTER TABLE `groups` ADD `outfit` INT NOT NULL DEFAULT 0;";
-				db->executeQuery(query.str());
-
-				query.str("");
 				query << "ALTER TABLE `players` ADD `deleted` TINYINT(1) NOT NULL DEFAULT 0;";
-			}
 
 			db->executeQuery(query.str());
-			query.str("");
-
-			query << "SELECT `id` FROM `groups`;";
-			if((result = db->storeQuery(query.str())))
-			{
-				do
-				{
-					query.str("");
-					switch(result->getDataInt("id"))
-					{
-						case 2:
-							query << "UPDATE `groups` SET `customflags` = 524291 WHERE `id` = 2;";
-							break;
-
-						case 3:
-							query << "UPDATE `groups` SET `customflags` = 524303 WHERE `id` = 3;";
-							break;
-
-						case 4:
-							query << "UPDATE `groups` SET `name` = 'Gamemaster', `flags` = 510024081247, `customflags` = 4189375, `outfit` = 75 WHERE `id` = 4;";
-							break;
-
-						case 5:
-							query << "UPDATE `groups` SET `customflags` = 4189695, `outfit` = 266 WHERE `id` = 5;";
-							break;
-
-						case 6:
-							query << "UPDATE `groups` SET `customflags` = 4194303, `outfit` = 302 WHERE `id` = 6;";
-							break;
-
-						default:
-							break;
-					}
-
-					if(query.str() != "")
-						db->executeQuery(query.str());
-				}
-				while(result->next());
-				result->free();
-			}
-
 			query.str("");
 			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
 			{
@@ -858,19 +689,6 @@ uint32_t DatabaseManager::updateDatabase()
 			db->executeQuery(query.str());
 
 			query.str("");
-			query << "CREATE TABLE `house_storage` (`house_id` INT UNSIGNED NOT NULL, `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0, ";
-			query << "`data` LONGBLOB NOT NULL, UNIQUE (`house_id`, `world_id`)";
-			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
-				query << ", FOREIGN KEY (`house_id`) REFERENCES `houses` (`id`) ON DELETE CASCADE";
-
-			query << ")";
-			if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
-				query << " ENGINE = InnoDB";
-
-			query << ";";
-			db->executeQuery(query.str());
-
-			query.str("");
 			registerDatabaseConfig("db_version", 9);
 			return 9;
 		}
@@ -878,20 +696,6 @@ uint32_t DatabaseManager::updateDatabase()
 		case 9:
 		{
 			std::cout << "> Updating database to version: 10..." << std::endl;
-
-			DBQuery query;
-			query << "UPDATE `groups` SET `violationaccess` = 3 WHERE `id` = 4;";
-			db->executeQuery(query.str());
-
-			query.str("");
-			query << "UPDATE `groups` SET `violationaccess` = 4 WHERE `id` = 5;";
-			db->executeQuery(query.str());
-
-			query.str("");
-			query << "UPDATE `groups` SET `violationaccess` = 4 WHERE `id` = 6;";
-			db->executeQuery(query.str());
-
-			query.str("");
 			registerDatabaseConfig("db_version", 10);
 			return 10;
 		}
@@ -905,10 +709,25 @@ uint32_t DatabaseManager::updateDatabase()
 			db->executeQuery(query.str());
 
 			query.str("");
-			query << "ALTER TABLE `house_storage` RENAME TO `house_data`;";
-			db->executeQuery(query.str());
+			if(!tableExists("house_storage"))
+			{
+				query << "CREATE TABLE `house_data` (`house_id` INT UNSIGNED NOT NULL, `world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0, ";
+				query << "`data` LONGBLOB NOT NULL, UNIQUE (`house_id`, `world_id`)";
+				if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
+					query << ", FOREIGN KEY (`house_id`) REFERENCES `houses` (`id`) ON DELETE CASCADE";
 
+				query << ")";
+				if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL)
+					query << " ENGINE = InnoDB";
+
+				query << ";";
+			}
+			else
+				query << "ALTER TABLE `house_storage` RENAME TO `house_data`;";
+
+			db->executeQuery(query.str());
 			query.str("");
+
 			registerDatabaseConfig("db_version", 11);
 			return 11;
 		}
@@ -1229,38 +1048,51 @@ void DatabaseManager::checkTriggers()
 				"onupdate_player_spells"
 			};
 
-			std::string triggerStatement[28] =
+			std::string triggerStatement[27] =
 			{
 				"CREATE TRIGGER \"oncreate_guilds\" AFTER INSERT ON \"guilds\" BEGIN INSERT INTO \"guild_ranks\" (\"name\", \"level\", \"guild_id\") VALUES (\"the Leader\", 3, NEW.\"id\"); INSERT INTO \"guild_ranks\" (\"name\", \"level\", \"guild_id\") VALUES (\"a Vice-Leader\", 2, NEW.\"id\"); INSERT INTO \"guild_ranks\" (\"name\", \"level\", \"guild_id\") VALUES (\"a Member\", 1, NEW.\"id\"); END;",
+
 				"CREATE TRIGGER \"oncreate_players\" AFTER INSERT ON \"players\" BEGIN INSERT INTO \"player_skills\" (\"player_id\", \"skillid\", \"value\") VALUES (NEW.\"id\", 0, 10); INSERT INTO \"player_skills\" (\"player_id\", \"skillid\", \"value\") VALUES (NEW.\"id\", 1, 10); INSERT INTO \"player_skills\" (\"player_id\", \"skillid\", \"value\") VALUES (NEW.\"id\", 2, 10); INSERT INTO \"player_skills\" (\"player_id\", \"skillid\", \"value\") VALUES (NEW.\"id\", 3, 10); INSERT INTO \"player_skills\" (\"player_id\", \"skillid\", \"value\") VALUES (NEW.\"id\", 4, 10); INSERT INTO \"player_skills\" (\"player_id\", \"skillid\", \"value\") VALUES (NEW.\"id\", 5, 10); INSERT INTO \"player_skills\" (\"player_id\", \"skillid\", \"value\") VALUES (NEW.\"id\", 6, 10); END;",
 				"CREATE TRIGGER \"ondelete_accounts\" BEFORE DELETE ON \"accounts\" FOR EACH ROW BEGIN DELETE FROM \"players\" WHERE \"account_id\" = OLD.\"id\"; DELETE FROM \"bans\" WHERE \"type\" != 1 AND \"type\" != 2 AND \"value\" = OLD.\"id\"; END;",
+
 				"CREATE TRIGGER \"ondelete_players\" BEFORE DELETE ON \"players\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'DELETE on table \"players\" violates foreign: \"ownerid\" from table \"guilds\"') WHERE (SELECT \"id\" FROM \"guilds\" WHERE \"ownerid\" = OLD.\"id\") IS NOT NULL; DELETE FROM \"player_viplist\" WHERE \"player_id\" = OLD.\"id\" OR \"vip_id\" = OLD.\"id\"; DELETE FROM \"player_storage\" WHERE \"player_id\" = OLD.\"id\"; DELETE FROM \"player_skills\" WHERE \"player_id\" = OLD.\"id\"; DELETE FROM \"player_items\" WHERE \"player_id\" = OLD.\"id\"; DELETE FROM \"player_depotitems\" WHERE \"player_id\" = OLD.\"id\"; DELETE FROM \"player_spells\" WHERE \"player_id\" = OLD.\"id\"; DELETE FROM \"bans\" WHERE \"type\" = 2 AND \"value\" = OLD.\"id\"; UPDATE \"houses\" SET \"owner\" = 0 WHERE \"owner\" = OLD.\"id\"; END;",
 				"CREATE TRIGGER \"ondelete_guilds\" BEFORE DELETE ON \"guilds\" FOR EACH ROW BEGIN UPDATE \"players\" SET \"guildnick\" = '', \"rank_id\" = 0 WHERE \"rank_id\" IN (SELECT \"id\" FROM \"guild_ranks\" WHERE \"guild_id\" = OLD.\"id\"); DELETE FROM \"guild_ranks\" WHERE \"guild_id\" = OLD.\"id\"; END;",
+
 				"CREATE TRIGGER \"oninsert_players\" BEFORE INSERT ON \"players\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'INSERT on table \"players\" violates foreign: \"account_id\"') WHERE NEW.\"account_id\" IS NULL OR (SELECT \"id\" FROM \"accounts\" WHERE \"id\" = NEW.\"account_id\") IS NULL; END;",
 				"CREATE TRIGGER \"onupdate_players\" BEFORE UPDATE ON \"players\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'UPDATE on table \"players\" violates foreign: \"account_id\"') WHERE NEW.\"account_id\" IS NULL OR (SELECT \"id\" FROM \"accounts\" WHERE \"id\" = NEW.\"account_id\") IS NULL; END;",
+
 				"CREATE TRIGGER \"oninsert_guilds\" BEFORE INSERT ON \"guilds\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'INSERT on table \"guilds\" violates foreign: \"ownerid\"') WHERE NEW.\"ownerid\" IS NULL OR (SELECT \"id\" FROM \"players\" WHERE \"id\" = NEW.\"ownerid\") IS NULL; END;",
 				"CREATE TRIGGER \"onupdate_guilds\" BEFORE UPDATE ON \"guilds\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'UPDATE on table \"guilds\" violates foreign: \"ownerid\"') WHERE NEW.\"ownerid\" IS NULL OR (SELECT \"id\" FROM \"players\" WHERE \"id\" = NEW.\"ownerid\") IS NULL; END;",
+
 				"CREATE TRIGGER \"ondelete_houses\" BEFORE DELETE ON \"houses\" FOR EACH ROW BEGIN DELETE FROM \"house_lists\" WHERE \"house_id\" = OLD.\"id\"; END;",
 				"CREATE TRIGGER \"ondelete_tiles\" BEFORE DELETE ON \"tiles\" FOR EACH ROW BEGIN DELETE FROM \"tile_items\" WHERE \"tile_id\" = OLD.\"id\"; END;",
+
 				"CREATE TRIGGER \"oninsert_guild_ranks\" BEFORE INSERT ON \"guild_ranks\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'INSERT on table \"guild_ranks\" violates foreign: \"guild_id\"') WHERE NEW.\"guild_id\" IS NULL OR (SELECT \"id\" FROM \"guilds\" WHERE \"id\" = NEW.\"guild_id\") IS NULL; END;",
 				"CREATE TRIGGER \"onupdate_guild_ranks\" BEFORE UPDATE ON \"guild_ranks\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'UPDATE on table \"guild_ranks\" violates foreign: \"guild_id\"') WHERE NEW.\"guild_id\" IS NULL OR (SELECT \"id\" FROM \"guilds\" WHERE \"id\" = NEW.\"guild_id\") IS NULL; END;",
+
 				"CREATE TRIGGER \"oninsert_house_lists\" BEFORE INSERT ON \"house_lists\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'INSERT on table \"house_lists\" violates foreign: \"house_id\"') WHERE NEW.\"house_id\" IS NULL OR (SELECT \"id\" FROM \"houses\" WHERE \"id\" = NEW.\"house_id\") IS NULL; END;",
 				"CREATE TRIGGER \"onupdate_house_lists\" BEFORE UPDATE ON \"house_lists\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'UPDATE on table \"house_lists\" violates foreign: \"house_id\"') WHERE NEW.\"house_id\" IS NULL OR (SELECT \"id\" FROM \"houses\" WHERE \"id\" = NEW.\"house_id\") IS NULL; END;",
+
 				"CREATE TRIGGER \"oninsert_player_depotitems\" BEFORE INSERT ON \"player_depotitems\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'INSERT on table \"player_depotitems\" violates foreign: \"player_id\"') WHERE NEW.\"player_id\" IS NULL OR (SELECT \"id\" FROM \"players\" WHERE \"id\" = NEW.\"player_id\") IS NULL; END;",
 				"CREATE TRIGGER \"onupdate_player_depotitems\" BEFORE UPDATE ON \"player_depotitems\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'UPDATE on table \"player_depotitems\" violates foreign: \"player_id\"') WHERE NEW.\"player_id\" IS NULL OR (SELECT \"id\" FROM \"players\" WHERE \"id\" = NEW.\"player_id\") IS NULL; END;",
+
 				"CREATE TRIGGER \"oninsert_player_skills\" BEFORE INSERT ON \"player_skills\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'INSERT on table \"player_skills\" violates foreign: \"player_id\"') WHERE NEW.\"player_id\" IS NULL OR (SELECT \"id\" FROM \"players\" WHERE \"id\" = NEW.\"player_id\") IS NULL; END;",
 				"CREATE TRIGGER \"onupdate_player_skills\" BEFORE UPDATE ON \"player_skills\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'UPDATE on table \"player_skills\" violates foreign: \"player_id\"') WHERE NEW.\"player_id\" IS NULL OR (SELECT \"id\" FROM \"players\" WHERE \"id\" = NEW.\"player_id\") IS NULL; END;",
+
 				"CREATE TRIGGER \"oninsert_player_storage\" BEFORE INSERT ON \"player_storage\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'INSERT on table \"player_storage\" violates foreign: \"player_id\"') WHERE NEW.\"player_id\" IS NULL OR (SELECT \"id\" FROM \"players\" WHERE \"id\" = NEW.\"player_id\") IS NULL; END;",
 				"CREATE TRIGGER \"onupdate_player_storage\" BEFORE UPDATE ON \"player_storage\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'UPDATE on table \"player_storage\" violates foreign: \"player_id\"') WHERE NEW.\"player_id\" IS NULL OR (SELECT \"id\" FROM \"players\" WHERE \"id\" = NEW.\"player_id\") IS NULL; END;",
+
 				"CREATE TRIGGER \"oninsert_player_viplist\" BEFORE INSERT ON \"player_viplist\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'INSERT on table \"player_viplist\" violates foreign: \"player_id\"') WHERE NEW.\"player_id\" IS NULL OR (SELECT \"id\" FROM \"players\" WHERE \"id\" = NEW.\"player_id\") IS NULL; SELECT RAISE(ROLLBACK, 'INSERT on table \"player_viplist\" violates foreign: \"vip_id\"') WHERE NEW.\"vip_id\" IS NULL OR (SELECT \"id\" FROM \"players\" WHERE \"id\" = NEW.\"vip_id\") IS NULL; END;",
 				"CREATE TRIGGER \"onupdate_player_viplist\" BEFORE UPDATE ON \"player_viplist\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'UPDATE on table \"player_viplist\" violates foreign: \"vip_id\"') WHERE NEW.\"vip_id\" IS NULL OR (SELECT \"id\" FROM \"players\" WHERE \"id\" = NEW.\"vip_id\") IS NULL; END;",
+
 				"CREATE TRIGGER \"oninsert_tile_items\" BEFORE INSERT ON \"tile_items\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'INSERT on table \"tile_items\" violates foreign: \"tile_id\"') WHERE NEW.\"tile_id\" IS NULL OR (SELECT \"id\" FROM \"tiles\" WHERE \"id\" = NEW.\"tile_id\") IS NULL; END;",
 				"CREATE TRIGGER \"onupdate_tile_items\" BEFORE UPDATE ON \"tile_items\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'UPDATE on table \"tile_items\" violates foreign: \"tile_id\"') WHERE NEW.\"tile_id\" IS NULL OR (SELECT \"id\" FROM \"tiles\" WHERE \"id\" = NEW.\"tile_id\") IS NULL; END;",
+
 				"CREATE TRIGGER \"oninsert_player_spells\" BEFORE INSERT ON \"player_spells\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'INSERT on table \"player_spells\" violates foreign: \"player_id\"') WHERE NEW.\"player_id\" IS NULL OR (SELECT \"id\" FROM \"players\" WHERE \"id\" = NEW.\"player_id\") IS NULL; END;",
 				"CREATE TRIGGER \"onupdate_player_spells\" BEFORE UPDATE ON \"player_spells\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'UPDATE on table \"player_spells\" violates foreign: \"player_id\"') WHERE NEW.\"player_id\" IS NULL OR (SELECT \"id\" FROM \"players\" WHERE \"id\" = NEW.\"player_id\") IS NULL; END;"
 			};
 
-			for(int32_t i = 0; i < 28; i++)
+			for(int32_t i = 0; i < 27; i++)
 			{
 				if(!triggerExists(triggerName[i]))
 				{

@@ -56,9 +56,9 @@
 	<action itemid="6558" event="script" value="liquids/demonic_blood.lua"/>
 
 	<!-- Potions -->
-	<action itemid="7439" event="script" value="liquids/berserk_potion.lua"/>
-	<action itemid="7440" event="script" value="liquids/mastermind_potion.lua"/>
-	<action itemid="7443" event="script" value="liquids/bullseye_potion.lua"/>
+	<action itemid="7439" event="script" value="liquids/berserk_potion.lua" allowfaruse="1"/>
+	<action itemid="7440" event="script" value="liquids/mastermind_potion.lua" allowfaruse="1"/>
+	<action itemid="7443" event="script" value="liquids/bullseye_potion.lua" allowfaruse="1"/>
 	<action itemid="7588" event="script" value="liquids/strong_health.lua" allowfaruse="1"/>
 	<action itemid="7589" event="script" value="liquids/strong_mana.lua" allowfaruse="1"/>
 	<action itemid="7590" event="script" value="liquids/great_mana.lua" allowfaruse="1"/>
@@ -193,7 +193,7 @@
 	<action itemid="7700" event="script" value="other/constructionkits.lua"/>
 
 	<!-- Bed construction kits -->
-	<action fromid="7904" toid="7907" event="script" script="other/furniturebeds.lua"/>
+	<action fromid="7904" toid="7907" event="script" value="other/furniturebeds.lua"/>
 
 	<!-- Music, instruments -->
 	<action fromid="2070" toid="2078" event="script" value="other/music.lua"/>

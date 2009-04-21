@@ -10,9 +10,9 @@ local BEDS = {
 	[KIT_REMOVAL] =	{{1754, 1755}, {1760, 1761}}
 }
 
-local function internalBedTransform(item, itemEx, toPosition, id1, id2)
-	doTransformItem(itemEx.uid, id1)
-	doTransformItem(getThingfromPos(toPosition).uid, id2)
+local function internalBedTransform(item, itemEx, toPosition, ids)
+	doTransformItem(itemEx.uid, ids[1])
+	doTransformItem(getThingfromPos(toPosition).uid, ids[2])
 
 	doSendMagicEffect(getThingPos(itemEx.uid), CONST_ME_POFF)
 	doSendMagicEffect(toPosition, CONST_ME_POFF)
@@ -36,11 +36,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	for kit, bed in pairs(BEDS) do
 		if bed[1][1] == itemEx.itemid or itemEx.itemid == 1758 then
 			toPosition.y = toPosition.y + 1
-			internalBedTransform(item, itemEx, toPosition, newBed[1][1], newBed[1][2])
+			internalBedTransform(item, itemEx, toPosition, newBed[1])
 			break
 		elseif bed[2][1] == itemEx.itemid or itemEx.itemid == 1756 then
 			toPosition.x = toPosition.x + 1
-			internalBedTransform(item, itemEx, toPosition, newBed[2][1], newBed[2][2])
+			internalBedTransform(item, itemEx, toPosition, newBed[2])
 			break
 		end
 	end
