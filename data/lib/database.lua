@@ -113,5 +113,7 @@ function db.getResult(query)
 		return nil
 	end
 
-	return Result:new():create(query)
+	local ret = Result:new()
+	ret:create(query)
+	return ret
 end
