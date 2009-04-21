@@ -978,9 +978,9 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 		CreatureVector::const_iterator itc;
 		for(itc = tile->creatures.begin(); ((itc != tile->creatures.end()) && (count < 10)); ++itc)
 		{
-//			if(((*itc)->isInvisible() && !(*itc)->getPlayer() && !player->canSeeInvisibility())
-//				|| ((*itc)->isInGhostMode() && !player->canSeeGhost((*itc))))
-//				continue;
+			if(((*itc)->isInvisible() && !(*itc)->getPlayer() && !player->canSeeInvisibility())
+				|| ((*itc)->isInGhostMode() && !player->canSeeGhost((*itc))))
+				continue;
 
 			bool known;
 			uint32_t removedKnown;
