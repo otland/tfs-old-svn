@@ -4,10 +4,14 @@ setConditionParam(condition, CONDITION_PARAM_SKILL_MELEE, 5)
 setConditionParam(condition, CONDITION_PARAM_SKILL_SHIELD, -10)
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if doTargetCombatCondition(0, cid, condition, CONST_ME_MAGIC_RED) == LUA_ERROR then
-		return FALSE
+	if(isPlayer(itemEx.uid) ~= TRUE) then
+		return TRUE
 	end
 
-	doRemoveItem(item.uid)
+	if(doAddCondition(itemEx.uid, condition) ~= LUA_ERROR) then
+		doSendMagicEffect(getCreaturePosition(itemEx.uid), CONST_ME_MAGIC_RED)
+		doRemoveItem(item.uid)
+	end
+
 	return TRUE
 end

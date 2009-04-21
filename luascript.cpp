@@ -6288,7 +6288,6 @@ int32_t LuaScriptInterface::luaDoTargetCombatCondition(lua_State* L)
 	if(cid != 0)
 	{
 		creature = env->getCreatureByUID(cid);
-
 		if(!creature)
 		{
 			reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
