@@ -141,11 +141,14 @@
 	optimizeDatabaseAtStartup = "yes"
 	removePremiumOnInit = "yes"
 
+	-- Muted buffer
+	maxMessageBuffer = 4
+	bufferMutedOnSpellFailure = "no"
+
 	-- Miscellaneous
 	-- NOTE: promptExceptionTracerErrorBox works only with precompiled support feature,
 	-- called "exception tracer" (__EXCEPTION_TRACER__ flag).
 	dataDirectory = "data/"
-	maxMessageBuffer = 4
 	kickIdlePlayerAfterMinutes = 15
 	allowChangeOutfit = "yes"
 	allowChangeColors = "yes"

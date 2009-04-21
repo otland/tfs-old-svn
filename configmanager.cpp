@@ -247,6 +247,7 @@ bool ConfigManager::load()
 	m_confNumber[EXPERIENCE_COLOR] = getGlobalNumber("gainExperienceColor", TEXTCOLOR_WHITE);
 	m_confBool[SHOW_HEALING_DAMAGE_MONSTER] = getGlobalBool("showHealingDamageForMonsters", "no");
 	m_confBool[CHECK_CORPSE_OWNER] = getGlobalBool("checkCorpseOwner ", "yes");
+	m_confBool[BUFFER_SPELL_FAILURE] = getGlobalBool("bufferMutedOnSpellFailure", "no");
 
 	m_loaded = true;
 	return true;

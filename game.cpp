@@ -3426,7 +3426,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 		return true;
 
 	player->removeMessageBuffer();
-	if(ret == RET_NEEDEXCHANGE)
+	if(ret == RET_NEEDEXCHANGE && g_config.getBool(ConfigManager::BUFFER_SPELL_FAILURE))
 		return true;
 
 	if(g_talkActions->onPlayerSay(player, channelId, text))

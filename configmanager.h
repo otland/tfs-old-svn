@@ -226,6 +226,7 @@ class ConfigManager
 			GHOST_INVISIBLE_EFFECT,
 			SHOW_HEALING_DAMAGE_MONSTER,
 			CHECK_CORPSE_OWNER,
+			BUFFER_SPELL_FAILURE,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 
