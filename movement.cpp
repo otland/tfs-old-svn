@@ -133,7 +133,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 			addEvent(moveEvent, intVector[0], m_itemIdMap);
 			if(equip)
 			{
-				ItemType& it = Item::items.getItemType(intVector[0]);
+				ItemType& it = Item::items[intVector[0]];
 				it.wieldInfo = moveEvent->getWieldInfo();
 				it.minReqLevel = moveEvent->getReqLevel();
 				it.minReqMagicLevel = moveEvent->getReqMagLv();
@@ -147,7 +147,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 					addEvent(new MoveEvent(moveEvent), ++intVector[0], m_itemIdMap);
 					if(equip)
 					{
-						ItemType& tit = Item::items.getItemType(intVector[0]);
+						ItemType& tit = Item::items[intVector[0]];
 						tit.wieldInfo = moveEvent->getWieldInfo();
 						tit.minReqLevel = moveEvent->getReqLevel();
 						tit.minReqMagicLevel = moveEvent->getReqMagLv();
@@ -170,7 +170,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 				addEvent(moveEvent, intVector[i], m_itemIdMap);
 				if(equip)
 				{
-					ItemType& it = Item::items.getItemType(intVector[i]);
+					ItemType& it = Item::items[intVector[i]];
 					it.wieldInfo = moveEvent->getWieldInfo();
 					it.minReqLevel = moveEvent->getReqLevel();
 					it.minReqMagicLevel = moveEvent->getReqMagLv();
@@ -182,7 +182,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 					addEvent(new MoveEvent(moveEvent), ++intVector[i], m_itemIdMap);
 					if(equip)
 					{
-						ItemType& tit = Item::items.getItemType(intVector[i]);
+						ItemType& tit = Item::items[intVector[i]];
 						tit.wieldInfo = moveEvent->getWieldInfo();
 						tit.minReqLevel = moveEvent->getReqLevel();
 						tit.minReqMagicLevel = moveEvent->getReqMagLv();
@@ -815,12 +815,10 @@ uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, 
 		player->addCondition(condition);
 	}
 
-	if(it.abilities.speed != 0)
-	{
+	if(it.abilities.speed)
 		g_game.changeSpeed(player, it.abilities.speed);
-	}
 
-	if(it.abilities.conditionSuppressions != 0)
+	if(it.abilities.conditionSuppressions)
 	{
 		player->setConditionSuppressions(it.abilities.conditionSuppressions, false);
 		player->sendIcons();
@@ -829,16 +827,16 @@ uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, 
 	if(it.abilities.regeneration)
 	{
 		Condition* condition = Condition::createCondition((ConditionId_t)slot, CONDITION_REGENERATION, -1, 0);
-		if(it.abilities.healthGain != 0)
+		if(it.abilities.healthGain)
 			condition->setParam(CONDITIONPARAM_HEALTHGAIN, it.abilities.healthGain);
 
-		if(it.abilities.healthTicks != 0)
+		if(it.abilities.healthTicks)
 			condition->setParam(CONDITIONPARAM_HEALTHTICKS, it.abilities.healthTicks);
 
-		if(it.abilities.manaGain != 0)
+		if(it.abilities.manaGain)
 			condition->setParam(CONDITIONPARAM_MANAGAIN, it.abilities.manaGain);
 
-		if(it.abilities.manaTicks != 0)
+		if(it.abilities.manaTicks)
 			condition->setParam(CONDITIONPARAM_MANATICKS, it.abilities.manaTicks);
 
 		player->addCondition(condition);
