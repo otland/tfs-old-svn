@@ -133,7 +133,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 			addEvent(moveEvent, intVector[0], m_itemIdMap);
 			if(equip)
 			{
-				ItemType& it = Item::items[intVector[0]];
+				ItemType& it = Item::items.getItemType(intVector[0]);
 				it.wieldInfo = moveEvent->getWieldInfo();
 				it.minReqLevel = moveEvent->getReqLevel();
 				it.minReqMagicLevel = moveEvent->getReqMagLv();
@@ -147,7 +147,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 					addEvent(new MoveEvent(moveEvent), ++intVector[0], m_itemIdMap);
 					if(equip)
 					{
-						ItemType& tit = Item::items[intVector[0]];
+						ItemType& tit = Item::items.getItemType(intVector[0]);
 						tit.wieldInfo = moveEvent->getWieldInfo();
 						tit.minReqLevel = moveEvent->getReqLevel();
 						tit.minReqMagicLevel = moveEvent->getReqMagLv();
@@ -170,7 +170,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 				addEvent(moveEvent, intVector[i], m_itemIdMap);
 				if(equip)
 				{
-					ItemType& it = Item::items[intVector[i]];
+					ItemType& it = Item::items.getItemType(intVector[i]);
 					it.wieldInfo = moveEvent->getWieldInfo();
 					it.minReqLevel = moveEvent->getReqLevel();
 					it.minReqMagicLevel = moveEvent->getReqMagLv();
@@ -182,7 +182,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 					addEvent(new MoveEvent(moveEvent), ++intVector[i], m_itemIdMap);
 					if(equip)
 					{
-						ItemType& tit = Item::items[intVector[i]];
+						ItemType& tit = Item::items.getItemType(intVector[i]);
 						tit.wieldInfo = moveEvent->getWieldInfo();
 						tit.minReqLevel = moveEvent->getReqLevel();
 						tit.minReqMagicLevel = moveEvent->getReqMagLv();
