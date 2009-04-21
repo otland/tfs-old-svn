@@ -377,10 +377,8 @@ bool CombatSpell::castSpell(Creature* creature, Creature* target)
 
 		combat->doCombat(creature, target->getPosition());
 	}
-	else if(!target->isInGhostMode() || creature->canSeeGhost(target))
-		combat->doCombat(creature, target);
 	else
-		return false;
+		combat->doCombat(creature, target);
 
 	return true;
 }
@@ -1079,9 +1077,11 @@ bool InstantSpell::playerCastInstant(Player* player, const std::string& param)
 
 bool InstantSpell::canThrowSpell(const Creature* creature, const Creature* target) const
 {
+	if(target->isInGhostMode() && !creature->canSeeGhost(target))
+		return false;
+
 	const Position& fromPos = creature->getPosition();
 	const Position& toPos = target->getPosition();
-
 	return (!(fromPos.z != toPos.z ||
 	(range == -1 && !g_game.canThrowObjectTo(fromPos, toPos, checkLineOfSight)) ||
 	(range != -1 && !g_game.canThrowObjectTo(fromPos, toPos, checkLineOfSight, range, range))));
