@@ -103,7 +103,7 @@ void ConnectionManager::addAttempt(uint32_t clientIp, int32_t protocolId, bool s
 
 bool ConnectionManager::acceptConnection(uint32_t clientIp)
 {
-	if(!clientip)
+	if(!clientIp)
 		return false;
 
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);

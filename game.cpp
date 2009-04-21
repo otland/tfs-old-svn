@@ -3362,12 +3362,14 @@ bool Game::playerTurn(uint32_t playerId, Direction dir)
 		return internalCreatureTurn(player, dir);
 
 	Position pos = getNextPosition(dir, player->getPosition());
-	if(map->getTile(pos))
-	{
-		pos = getClosestFreeTile(player, pos, true);
-		if(pos.x != 0 && pos.y != 0)
-			return internalTeleport(player, pos, true);
-	}
+	if(!map->getTile(pos))
+		return false;
+
+	pos = getClosestFreeTile(player, pos, true);
+	if(pos.x != 0 && pos.y != 0)
+		return internalTeleport(player, pos, true);
+
+	return false;
 }
 
 bool Game::playerRequestOutfit(uint32_t playerId)
