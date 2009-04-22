@@ -57,6 +57,8 @@ class IOLoginData
 
 		bool hasFlag(uint32_t accId, PlayerFlags value);
 		bool hasCustomFlag(uint32_t accId, PlayerCustomFlags value);
+		bool hasFlag(PlayerFlags value, const std::string& accName);
+		bool hasCustomFlag(PlayerCustomFlags value, const std::string& accName);
 
 		bool accountExists(uint32_t accId);
 		bool accountNameExists(const std::string& name);
@@ -76,8 +78,10 @@ class IOLoginData
 		const Group* getPlayerGroupByAccount(uint32_t accId);
 		uint32_t getLastIPByName(std::string name);
 
-		bool hasFlag(std::string name, PlayerFlags value);
-		bool hasCustomFlag(std::string name, PlayerCustomFlags value);
+		bool hasFlag(const std::string& name, PlayerFlags value);
+		bool hasCustomFlag(const std::string& name, PlayerCustomFlags value);
+		bool hasFlag(PlayerFlags value, uint32_t guid);
+		bool hasCustomFlag(PlayerCustomFlags value, uint32_t guid);
 
 		bool isPremium(uint32_t guid);
 		uint32_t getAccountIdByName(std::string name);

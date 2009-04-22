@@ -568,26 +568,13 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 	return RET_NOERROR;
 }
 
-bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* item, bool isHotkey)
+bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* item)
 {
 	if(!player->canDoAction())
 		return false;
 
 	player->setNextActionTask(NULL);
 	player->stopWalk();
-
-	int32_t itemId = 0;
-	uint32_t itemCount = 0;
-
-	if(isHotkey)
-	{
-		int32_t subType = -1;
-		if(item->hasSubType() && !item->hasCharges())
-			subType = item->getSubType();
-
-		itemCount = player->__getItemTypeCount(item->getID(), subType, false);
-		itemId = item->getID();
-	}
 
 	ReturnValue ret = internalUseItem(player, pos, index, item, 0);
 	if(ret != RET_NOERROR)
@@ -596,21 +583,18 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 		return false;
 	}
 
-	if(isHotkey)
-		showUseHotkeyMessage(player, itemId, itemCount);
-
 	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::ACTIONS_DELAY_INTERVAL));
 	return true;
 }
 
 bool Actions::executeUseEx(Action* action, Player* player, Item* item, const PositionEx& fromPosEx,
-	const PositionEx& toPosEx, bool isHotkey, uint32_t creatureId)
+	const PositionEx& toPosEx, uint32_t creatureId)
 {
-	return (action->executeUse(player, item, fromPosEx, toPosEx, isHotkey, creatureId) || action->hasOwnErrorHandler());
+	return (action->executeUse(player, item, fromPosEx, toPosEx, creatureId) || action->hasOwnErrorHandler());
 }
 
 ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPosEx, const PositionEx& toPosEx,
-	Item* item, bool isHotkey, uint32_t creatureId)
+	Item* item, uint32_t creatureId)
 {
 	Action* action = NULL;
 	if((action = getAction(item, ACTION_UNIQUEID)))
@@ -620,7 +604,7 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 			return ret;
 
 		//only continue with next action in the list if the previous returns false
-		if(executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
+		if(executeUseEx(action, player, item, fromPosEx, toPosEx, creatureId))
 			return RET_NOERROR;
 	}
 
@@ -631,7 +615,7 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 			return ret;
 
 		//only continue with next action in the list if the previous returns false
-		if(executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
+		if(executeUseEx(action, player, item, fromPosEx, toPosEx, creatureId))
 			return RET_NOERROR;
 	}
 
@@ -642,7 +626,7 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 			return ret;
 
 		//only continue with next action in the list if the previous returns false
-		if(executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
+		if(executeUseEx(action, player, item, fromPosEx, toPosEx, creatureId))
 			return RET_NOERROR;
 	}
 
@@ -653,7 +637,7 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 			return ret;
 
 		//only continue with next action in the list if the previous returns false
-		if(executeUseEx(action, player, item, fromPosEx, toPosEx, isHotkey, creatureId))
+		if(executeUseEx(action, player, item, fromPosEx, toPosEx, creatureId))
 			return RET_NOERROR;
 	}
 
@@ -661,7 +645,7 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 }
 
 bool Actions::useItemEx(Player* player, const Position& fromPos, const Position& toPos,
-	uint8_t toStackPos, Item* item, bool isHotkey, uint32_t creatureId /* = 0*/)
+	uint8_t toStackPos, Item* item, uint32_t creatureId /* = 0*/)
 {
 	if(!player->canDoAction())
 		return false;
@@ -676,19 +660,6 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 		return false;
 	}
 
-	int32_t itemId = 0;
-	uint32_t itemCount = 0;
-
-	if(isHotkey)
-	{
-		int32_t subType = -1;
-		if(item->hasSubType() && !item->hasCharges())
-			subType = item->getSubType();
-
-		itemCount = player->__getItemTypeCount(item->getID(), subType, false);
-		itemId = item->getID();
-	}
-
 	int32_t fromStackPos = 0;
 	if(item->getParent())
 		fromStackPos = item->getParent()->__getIndexOfThing(item);
@@ -696,30 +667,15 @@ bool Actions::useItemEx(Player* player, const Position& fromPos, const Position&
 	PositionEx fromPosEx(fromPos, fromStackPos);
 	PositionEx toPosEx(toPos, toStackPos);
 
-	ReturnValue ret = internalUseItemEx(player, fromPosEx, toPosEx, item, isHotkey, creatureId);
+	ReturnValue ret = internalUseItemEx(player, fromPosEx, toPosEx, item, creatureId);
 	if(ret != RET_NOERROR)
 	{
 		player->sendCancelMessage(ret);
 		return false;
 	}
 
-	if(isHotkey)
-		showUseHotkeyMessage(player, itemId, itemCount);
-
 	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::EX_ACTIONS_DELAY_INTERVAL));
 	return true;
-}
-
-void Actions::showUseHotkeyMessage(Player* player, int32_t id, uint32_t count)
-{
-	const ItemType& it = Item::items[id];
-	char buffer[40 + it.name.size()];
-	if(count == 1)
-		sprintf(buffer, "Using the last %s...", it.name.c_str());
-	else
-		sprintf(buffer, "Using one of %d %s...", count, it.pluralName.c_str());
-
-	player->sendTextMessage(MSG_INFO_DESCR, buffer);
 }
 
 Action::Action(LuaScriptInterface* _interface):

@@ -71,7 +71,6 @@ typedef DATABASE_CLASS Database;
 typedef DBRES_CLASS DBResult;
 
 class DBQuery;
-
 enum DBParam_t
 {
 	DBPARAM_MULTIINSERT = 1
@@ -254,10 +253,9 @@ class _DBResult
 class DBQuery : public std::stringstream
 {
 	friend class _Database;
-
 	public:
 		DBQuery() {OTSYS_THREAD_LOCK(databaseLock, "");}
-		virtual ~DBQuery() {OTSYS_THREAD_UNLOCK(databaseLock, "");}
+		virtual ~DBQuery() {str(""); OTSYS_THREAD_UNLOCK(databaseLock, "");}
 
 	protected:
 		static OTSYS_THREAD_LOCKVAR databaseLock;

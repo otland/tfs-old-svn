@@ -1236,34 +1236,35 @@ std::string getReason(int32_t reasonId)
 	return "Unknown Reason";
 }
 
-std::string getAction(int32_t actionId, bool ipBanishment)
+std::string getAction(ViolationAction_t actionId, bool ipBanishment)
 {
 	std::string action;
 	switch(actionId)
 	{
-		case 0:
+		case ACTION_NOTATION:
 			action = "Notation";
 			break;
-		case 1:
+		case ACTION_NAMEREPORT:
 			action = "Name Report";
 			break;
-		case 2:
-			action = "Banishment";
-			break;
-		case 3:
+		case ACTION_BANREPORT:
 			action = "Name Report + Banishment";
 			break;
-		case 4:
+		case ACTION_BANFINAL:
 			action = "Banishment + Final Warning";
 			break;
-		case 5:
+		case ACTION_BANREPORTFINAL:
 			action = "Name Report + Banishment + Final Warning";
 			break;
-		case 6:
+		case ACTION_STATEMENT:
 			action = "Statement Report";
 			break;
-		default:
+		case ACTION_DELETION
 			action = "Deletion";
+			break;
+		case ACTION_BANISHMENT:
+		default:
+			action = "Banishment";
 			break;
 	}
 

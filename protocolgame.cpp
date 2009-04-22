@@ -1627,14 +1627,14 @@ void ProtocolGame::parseQuestLine(NetworkMessage& msg)
 
 void ProtocolGame::parseViolationWindow(NetworkMessage& msg)
 {
-	std::string playerName = msg.GetString();
-	uint8_t reasonId = msg.GetByte();
-	uint8_t actionId = msg.GetByte();
+	std::string target = msg.GetString();
+	uint8_t reason = msg.GetByte();
+	ViolationAction_t action = (ViolationAction_t)msg.GetByte();
 	std::string comment = msg.GetString();
 	std::string statement = msg.GetString();
 	uint16_t channelId = msg.GetU16();
 	bool ipBanishment = msg.GetByte();
-	addGameTask(&Game::violationWindow, player->getID(), playerName, reasonId, actionId, comment, statement, channelId, ipBanishment);
+	addGameTask(&Game::violationWindow, player->getID(), target, reason, action, comment, statement, channelId, ipBanishment);
 }
 
 //********************** Send methods *******************************//

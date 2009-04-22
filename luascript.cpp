@@ -9804,12 +9804,9 @@ int32_t LuaScriptInterface::luaIsAccountDeleted(lua_State *L)
 
 int32_t LuaScriptInterface::luaDoAddIpBanishment(lua_State *L)
 {
-	//doAddIpBanishment(ip[, mask[, length[, comment[, admin[, statement]]]]])
+	//doAddIpBanishment(ip[, mask[, length[, comment[, admin]]]])
 	uint32_t admin = 0, mask = 0xFFFFFFFF, params = lua_gettop(L), length = g_config.getNumber(ConfigManager::IPBANISHMENT_LENGTH);
-	std::string statement, comment = "No comment.";
-	if(params > 5)
-		statement = popString(L);
-
+	std::string comment = "No comment.";
 	if(params > 4)
 		admin = popNumber(L);
 
@@ -9823,7 +9820,7 @@ int32_t LuaScriptInterface::luaDoAddIpBanishment(lua_State *L)
 		mask = popNumber(L);
 
 	lua_pushboolean(L, IOBan::getInstance()->addIpBanishment(
-		(uint32_t)popNumber(L), (time(NULL) + length), comment, admin, statement, mask) ? LUA_NO_ERROR : LUA_ERROR);
+		(uint32_t)popNumber(L), (time(NULL) + length), comment, admin, mask) ? LUA_NO_ERROR : LUA_ERROR);
 	return 1;
 }
 
@@ -10011,7 +10008,7 @@ int32_t LuaScriptInterface::luaGetBanData(lua_State *L)
 int32_t LuaScriptInterface::luaGetBanReason(lua_State *L)
 {
 	//getBanReason(id)
-	lua_pushstring(L, getReason(popNumber(L)).c_str());
+	lua_pushstring(L, getReason((ViolationAction_t)popNumber(L)).c_str());
 	return 1;
 }
 

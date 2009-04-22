@@ -21,6 +21,8 @@
 #ifndef __OTSERV_GAME_H__
 #define __OTSERV_GAME_H__
 #include "otsystem.h"
+#include "enums.h"
+
 #include "templates.h"
 #include "scheduler.h"
 
@@ -290,9 +292,6 @@ class Game
 		void addCreatureCheck(Creature* creature);
 		void removeCreatureCheck(Creature* creature);
 
-		bool violationWindow(uint32_t playerId, std::string targetName, int32_t reason, int32_t action,
-			std::string comment, std::string statement, uint16_t channelId, bool ipBanishment);
-
 		uint32_t getPlayersOnline() {return (uint32_t)Player::listPlayer.list.size();}
 		uint32_t getMonstersOnline() {return (uint32_t)Monster::listMonster.list.size();}
 		uint32_t getNpcsOnline() {return (uint32_t)Npc::listNpc.list.size();}
@@ -416,13 +415,16 @@ class Game
 		void loadPlayersRecord();
 		void checkPlayersRecord();
 
-		void kickPlayer(uint32_t playerId, bool displayEffect);
+		bool playerBroadcastMessage(Player* player, const std::string& text, SpeakClasses type);
 		bool playerReportBug(uint32_t playerId, std::string bug);
+		bool playerViolationWindow(uint32_t playerId, std::string targetName, uint8_t reason, ViolationAction_t action,
+			std::string comment, std::string statement, uint16_t channelId, bool ipBanishment);
+
+		void kickPlayer(uint32_t playerId, bool displayEffect);
+		bool broadcastMessage(const std::string& text, MessageClasses type);
 
 		bool internalStartTrade(Player* player, Player* partner, Item* tradeItem);
 		bool internalCloseTrade(Player* player);
-		bool playerBroadcastMessage(Player* player, const std::string& text, SpeakClasses type);
-		bool broadcastMessage(const std::string& text, MessageClasses type);
 
 		//Implementation of player invoked events
 		bool playerMoveThing(uint32_t playerId, const Position& fromPos, uint16_t spriteId, uint8_t fromStackPos,

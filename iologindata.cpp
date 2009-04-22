@@ -175,6 +175,36 @@ bool IOLoginData::hasCustomFlag(uint32_t accId, PlayerCustomFlags value)
 	return group && group->hasCustomFlag(value);
 }
 
+bool IOLoginData::hasFlag(PlayerFlags value, const std::string& accName)
+{
+	Database* db = Database::getInstance();
+	DBResult* result;
+
+	DBQuery query;
+	query << "SELECT `group_id` FROM `accounts` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(accName);
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	Group* group = Groups::getInstance()->getGroup(result->getDataInt("group_id"));
+	result->free();
+	return group && group->hasFlag(value);
+}
+
+bool IOLoginData::hasCustomFlag(PlayerCustomFlags value, const std::string& accName)
+{
+	Database* db = Database::getInstance();
+	DBResult* result;
+
+	DBQuery query;
+	query << "SELECT `group_id` FROM `accounts` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(accName);
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	Group* group = Groups::getInstance()->getGroup(result->getDataInt("group_id"));
+	result->free();
+	return group && group->hasCustomFlag(value);
+}
+
 bool IOLoginData::accountExists(uint32_t accId)
 {
 	Database* db = Database::getInstance();
@@ -1027,6 +1057,36 @@ bool IOLoginData::hasCustomFlag(std::string name, PlayerCustomFlags value)
 
 	DBQuery query;
 	query << "SELECT `group_id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	Group* group = Groups::getInstance()->getGroup(result->getDataInt("group_id"));
+	result->free();
+	return group && group->hasCustomFlag(value);
+}
+
+bool IOLoginData::hasFlag(PlayerFlags value, uint32_t guid)
+{
+	Database* db = Database::getInstance();
+	DBResult* result;
+
+	DBQuery query;
+	query << "SELECT `group_id` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0;";
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	Group* group = Groups::getInstance()->getGroup(result->getDataInt("group_id"));
+	result->free();
+	return group && group->hasFlag(value);
+}
+
+bool IOLoginData::hasCustomFlag(PlayerCustomFlags value, uint32_t guid)
+{
+	Database* db = Database::getInstance();
+	DBResult* result;
+
+	DBQuery query;
+	query << "SELECT `group_id` FROM `players` WHERE `id` = " << guid << " AND `deleted` = 0;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 

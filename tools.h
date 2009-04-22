@@ -26,7 +26,6 @@
 
 #include <libxml/parser.h>
 #include <boost/tokenizer.hpp>
-
 #include "position.h"
 
 typedef std::vector<std::string> StringVec;
@@ -126,7 +125,7 @@ std::string getSkillName(uint16_t skillid, bool suffix = true);
 skills_t getSkillId(std::string param);
 
 std::string getReason(int32_t reasonId);
-std::string getAction(int32_t actionId, bool ipBanishment);
+std::string getAction(ViolationAction_t actionId, bool ipBanishment);
 
 std::string parseVocationString(StringVec vocStringVec);
 bool parseVocationNode(xmlNodePtr vocationNode, VocationMap& vocationMap, StringVec& vocStringMap, std::string& errorStr);

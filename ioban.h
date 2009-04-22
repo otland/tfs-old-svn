@@ -21,7 +21,7 @@
 #ifndef __OTSERV_BAN_H__
 #define __OTSERV_BAN_H__
 #include "otsystem.h"
-#include "player.h"
+#include "enums.h"
 
 enum BanType_t
 {
@@ -35,8 +35,9 @@ enum BanType_t
 struct Ban
 {
 	BanType_t type;
+	ViolationAction_t action;
+	uint32_t id, added, expires, adminid, reason;
 	std::string comment, value, param, statement;
-	uint32_t id, added, expires, adminid, reason, action;
 };
 
 typedef std::vector<Ban> BansVec;
@@ -54,36 +55,36 @@ class IOBan
 			return &instance;
 		}
 
-		bool isIpBanished(uint32_t ip, uint32_t mask = 0xFFFFFFFF);
-		bool isNamelocked(uint32_t guid);
-		bool isNamelocked(std::string name);
-		bool isBanished(uint32_t account);
-		bool isDeleted(uint32_t account);
+		bool isIpBanished(uint32_t ip, uint32_t mask = 0xFFFFFFFF) const;
+		bool isNamelocked(uint32_t guid) const;
+		bool isNamelocked(std::string name) const;
+		bool isBanished(uint32_t account) const;
+		bool isDeleted(uint32_t account) const;
 
 		bool addIpBanishment(uint32_t ip, time_t banTime, std::string comment, uint32_t gamemaster,
-			std::string statement = "", uint32_t mask = 0xFFFFFFFF);
+			uint32_t mask = 0xFFFFFFFF) const;
 		bool addNamelock(uint32_t playerId, uint32_t reasonId, uint32_t actionId, std::string comment,
-			uint32_t gamemaster, std::string statement = "");
+			uint32_t gamemaster, std::string statement = "") const;
 		bool addNamelock(std::string name, uint32_t reasonId, uint32_t actionId, std::string comment,
-			uint32_t gamemaster, std::string statement = "");
+			uint32_t gamemaster, std::string statement = "") const;
 		bool addBanishment(uint32_t account, time_t banTime, uint32_t reasonId, uint32_t actionId,
-			std::string comment, uint32_t gamemaster, std::string statement = "");
+			std::string comment, uint32_t gamemaster, std::string statement = "") const;
 		bool addDeletion(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment,
-			uint32_t gamemaster, std::string statement = "");
-		void addNotation(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment,
-			uint32_t gamemaster, std::string statement = "");
+			uint32_t gamemaster, std::string statement = "") const;
+		bool addNotation(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment,
+			uint32_t gamemaster, std::string statement = "") const;
 
-		bool removeIpBanishment(uint32_t ip, uint32_t mask = 0xFFFFFFFF);
-		bool removeNamelock(uint32_t guid);
-		bool removeNamelock(std::string name);
-		bool removeBanishment(uint32_t account);
-		bool removeDeletion(uint32_t account);
-		void removeNotations(uint32_t account);
+		bool removeIpBanishment(uint32_t ip, uint32_t mask = 0xFFFFFFFF) const;
+		bool removeNamelock(uint32_t guid) const;
+		bool removeNamelock(std::string name) const;
+		bool removeBanishment(uint32_t account) const;
+		bool removeDeletion(uint32_t account) const;
+		bool removeNotations(uint32_t account) const;
 
-		bool getData(uint32_t value, Ban& ban);
+		bool getData(uint32_t value, Ban& ban) const;
 		std::vector<Ban> getList(BanType_t type, uint32_t value = 0);
-		uint32_t getNotationsCount(uint32_t account);
-		bool clearTemporials();
+		uint32_t getNotationsCount(uint32_t account) const;
+		bool clearTemporials() const;
 };
 
 #endif
