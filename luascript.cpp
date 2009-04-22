@@ -10008,7 +10008,7 @@ int32_t LuaScriptInterface::luaGetBanData(lua_State *L)
 int32_t LuaScriptInterface::luaGetBanReason(lua_State *L)
 {
 	//getBanReason(id)
-	lua_pushstring(L, getReason((ViolationAction_t)popNumber(L)).c_str());
+	lua_pushstring(L, getReason((ViolationActions_t)popNumber(L)).c_str());
 	return 1;
 }
 

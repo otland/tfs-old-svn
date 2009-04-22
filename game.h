@@ -417,7 +417,7 @@ class Game
 
 		bool playerBroadcastMessage(Player* player, const std::string& text, SpeakClasses type);
 		bool playerReportBug(uint32_t playerId, std::string bug);
-		bool playerViolationWindow(uint32_t playerId, std::string targetName, uint8_t reason, ViolationAction_t action,
+		bool playerViolationWindow(uint32_t playerId, std::string targetName, uint8_t reason, ViolationActions_t action,
 			std::string comment, std::string statement, uint16_t channelId, bool ipBanishment);
 
 		void kickPlayer(uint32_t playerId, bool displayEffect);

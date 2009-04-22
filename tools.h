@@ -125,7 +125,7 @@ std::string getSkillName(uint16_t skillid, bool suffix = true);
 skills_t getSkillId(std::string param);
 
 std::string getReason(int32_t reasonId);
-std::string getAction(ViolationAction_t actionId, bool ipBanishment);
+std::string getAction(ViolationActions_t actionId, bool ipBanishment);
 
 std::string parseVocationString(StringVec vocStringVec);
 bool parseVocationNode(xmlNodePtr vocationNode, VocationMap& vocationMap, StringVec& vocStringMap, std::string& errorStr);

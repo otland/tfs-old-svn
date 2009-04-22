@@ -1236,7 +1236,7 @@ std::string getReason(int32_t reasonId)
 	return "Unknown Reason";
 }
 
-std::string getAction(ViolationAction_t actionId, bool ipBanishment)
+std::string getAction(ViolationActions_t actionId, bool ipBanishment)
 {
 	std::string action;
 	switch(actionId)
