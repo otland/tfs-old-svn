@@ -1082,9 +1082,8 @@ bool InstantSpell::canThrowSpell(const Creature* creature, const Creature* targe
 
 	const Position& fromPos = creature->getPosition();
 	const Position& toPos = target->getPosition();
-	return (!(fromPos.z != toPos.z ||
-	(range == -1 && !g_game.canThrowObjectTo(fromPos, toPos, checkLineOfSight)) ||
-	(range != -1 && !g_game.canThrowObjectTo(fromPos, toPos, checkLineOfSight, range, range))));
+	return (!(fromPos.z != toPos.z || (range == -1 && !g_game.canThrowObjectTo(fromPos, toPos, checkLineOfSight))
+		|| (range != -1 && !g_game.canThrowObjectTo(fromPos, toPos, checkLineOfSight, range, range))));
 }
 
 bool InstantSpell::castSpell(Creature* creature)
