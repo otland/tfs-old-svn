@@ -978,8 +978,7 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 		CreatureVector::const_iterator itc;
 		for(itc = tile->creatures.begin(); ((itc != tile->creatures.end()) && (count < 10)); ++itc)
 		{
-			if(((*itc)->isInvisible() && !(*itc)->getPlayer() && !player->canSeeInvisibility())
-				|| ((*itc)->isInGhostMode() && !player->canSeeGhost((*itc))))
+			if((*itc)->isInGhostMode() && !player->canSeeGhost(*itc))
 				continue;
 
 			bool known;
@@ -1102,13 +1101,7 @@ void ProtocolGame::checkCreatureAsKnown(uint32_t id, bool& known, uint32_t& remo
 
 bool ProtocolGame::canSee(const Creature* c) const
 {
-	if(c->isRemoved())
-		return false;
-
-	if(c->isInGhostMode() && !player->canSeeGhost(c))
-		return false;
-
-	return canSee(c->getPosition());
+	return !c->isRemoved() && (!c->isInGhostMode() || player->canSeeGhost(c)) && canSee(c->getPosition());
 }
 
 bool ProtocolGame::canSee(const Position& pos) const
@@ -2966,8 +2959,17 @@ void ProtocolGame::AddTileItem(NetworkMessage_ptr msg, const Position& pos, cons
 {
 	msg->AddByte(0x6A);
 	msg->AddPosition(pos);
-	if(const Tile* tile = item->getTile())
-		msg->AddByte(tile->__getIndexOfThing(item));
+	if(const Tile* tile = creature->getTile())
+	{
+		int32_t index = tile->__getIndexOfThing(item), i = index;
+		for(CreatureVector::iterator it = tile->creatures.begin(); it != tile->creatures.end(); ++it)
+		{
+			if(tile->__getIndexOfThing(*it) < i && (*it)->isInGhostMode() && !player->canSeeGhost(*it))
+				index--;
+		}
+
+		msg->AddByte(index);
+	}
 	else
 		msg->AddByte(0x00);
 
@@ -2976,14 +2978,19 @@ void ProtocolGame::AddTileItem(NetworkMessage_ptr msg, const Position& pos, cons
 
 void ProtocolGame::AddTileCreature(NetworkMessage_ptr msg, const Position& pos, const Creature* creature)
 {
-	if((creature->isInvisible() && !creature->getPlayer() && !player->canSeeInvisibility())
-		|| (creature->isInGhostMode() && !player->canSeeGhost(creature)))
-		return;
-
 	msg->AddByte(0x6A);
 	msg->AddPosition(pos);
 	if(const Tile* tile = creature->getTile())
-		msg->AddByte(tile->__getIndexOfThing(creature));
+	{
+		int32_t index = tile->__getIndexOfThing(creature), i = index;
+		for(CreatureVector::iterator it = tile->creatures.begin(); it != tile->creatures.end(); ++it)
+		{
+			if(tile->__getIndexOfThing(*it) < i && (*it)->isInGhostMode() && !player->canSeeGhost(*it))
+				index--;
+		}
+
+		msg->AddByte(index);
+	}
 	else
 		msg->AddByte(0x00);
 
