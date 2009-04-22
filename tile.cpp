@@ -297,7 +297,7 @@ void Tile::onUpdateTileItem(uint32_t index, Item* oldItem, const ItemType& oldTy
 
 	//send to client
 	Player* tmpPlayer = NULL;
-	int32_t = 0;
+	int32_t i = 0;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
