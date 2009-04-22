@@ -292,12 +292,11 @@ void Tile::onUpdateTileItem(uint32_t index, Item* oldItem, const ItemType& oldTy
 	for(vit = creatures.begin(); vit != creatures.end(); ++vit)
 	{
 		if((*vit)->isInGhostMode())
-			v.push_back((*vit));
+			v.push_back(*vit);
 	}
 
 	//send to client
 	Player* tmpPlayer = NULL;
-	int32_t i = 0;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
@@ -306,7 +305,7 @@ void Tile::onUpdateTileItem(uint32_t index, Item* oldItem, const ItemType& oldTy
 			i = index;
 			for(vit = v.begin(); vit != v.end(); ++vit)
 			{
-				if(!tmpPlayer->canSeeGhost((*vit)))
+				if(!tmpPlayer->canSeeGhost(*vit))
 					i--;
 			}
 
@@ -334,7 +333,7 @@ void Tile::onRemoveTileItem(uint32_t index, Item* item)
 	for(vit = creatures.begin(); vit != creatures.end(); ++vit)
 	{
 		if((*vit)->isInGhostMode())
-			v.push_back((*vit));
+			v.push_back(*vit);
 	}
 
 	//send to client
@@ -348,7 +347,7 @@ void Tile::onRemoveTileItem(uint32_t index, Item* item)
 			i = index;
 			for(vit = v.begin(); vit != v.end(); ++vit)
 			{
-				if(!tmpPlayer->canSeeGhost((*vit)))
+				if(!tmpPlayer->canSeeGhost(*vit))
 					i--;
 			}
 
@@ -383,11 +382,11 @@ void Tile::onUpdateTile()
 
 void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport /* = false*/)
 {
-	Tile* toTile = toCylinder->getTile();
 	int32_t oldStackPos = __getIndexOfThing(creature);
-
 	//remove the creature
 	__removeThing(creature, 0);
+
+	Tile* toTile = toCylinder->getTile();
 	// Switch the node ownership
 	if(qt_node != toTile->qt_node)
 	{
@@ -419,24 +418,32 @@ void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport 
 	g_game.getSpectators(list, fromPos, false, true);
 	g_game.getSpectators(list, toPos, true, true);
 
+	CreatureVector::iterator vit;
+	CreatureVector v;
+	for(vit = creatures.begin(); vit != creatures.end(); ++vit)
+	{
+		if((*vit)->isInGhostMode())
+			v.push_back(*vit);
+	}
+
 	//send to client
 	Player* tmpPlayer = NULL;
+	int32_t i = 0;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()) && (!creature->isInGhostMode() || tmpPlayer->canSeeGhost(creature)))
 		{
-			int32_t i = 0;
-			for(CreatureVector::iterator it = creatures.begin(); it != creatures.end(); ++it)
+			i = oldStackPos;
+			for(vit = v.begin(); vit != v.end(); ++vit)
 			{
-				int32_t j = __getIndexOfThing((*it));
-				if(j < oldStackPos)
+				if(__getIndexOfThing(*vit) < oldStackPos)
 				{
-					if((*it)->isInGhostMode() && !tmpPlayer->canSeeGhost((*it)))
-						i++;
+					if(!tmpPlayer->canSeeGhost(*it))
+						i--;
 				}
 			}
 
-			tmpPlayer->sendCreatureMove(creature, toTile, toPos, this, fromPos, (oldStackPos - i), teleport);
+			tmpPlayer->sendCreatureMove(creature, toTile, toPos, this, fromPos, i, teleport);
 		}
 	}
 
@@ -1074,7 +1081,7 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 #endif
 }
 
-int32_t Tile::__getIndexOfThing(const Thing* thing, const Creature* seeker/* = NULL*/) const
+int32_t Tile::__getIndexOfThing(const Thing* thing) const
 {
 	int32_t n = -1;
 	if(ground)
@@ -1095,10 +1102,6 @@ int32_t Tile::__getIndexOfThing(const Thing* thing, const Creature* seeker/* = N
 
 	for(CreatureVector::const_iterator cit = creatures.begin(); cit != creatures.end(); ++cit)
 	{
-		if(seeker && (((*cit)->isInvisible() && !(*cit)->getPlayer() && !seeker->canSeeInvisibility())
-			|| ((*cit)->isInGhostMode() && !seeker->canSeeGhost((*cit)))))
-			continue;
-
 		++n;
 		if((*cit) == thing)
 			return n;

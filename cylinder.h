@@ -157,10 +157,9 @@ class Cylinder : virtual public Thing
 		/**
 		  * Gets the index of an object
 		  * \param thing the object to get the index value from
-		  * \param seeker is the creature seeking the index (can be NULL)
 		  * \returns the index of the object, returns -1 if not found
 		  */
-		virtual int32_t __getIndexOfThing(const Thing* thing, const Creature* seeker = NULL) const;
+		virtual int32_t __getIndexOfThing(const Thing* thing) const;
 
 		/**
 		  * Returns the first index

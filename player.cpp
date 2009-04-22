@@ -1350,12 +1350,11 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 	if(!isLogin || creature != this)
 		return;
 
-	Item* item;
+	Item* item = NULL;
 	for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
 	{
-		item = getInventoryItem((slots_t)slot);
-		if(!item)
-			return;
+		if(!(item = getInventoryItem((slots_t)slot)))
+			continue;
 
 		item->__startDecaying();
 		g_moveEvents->onPlayerEquip(this, item, (slots_t)slot, false);
@@ -2967,7 +2966,7 @@ void Player::__removeThing(Thing* thing, uint32_t count)
 	}
 }
 
-int32_t Player::__getIndexOfThing(const Thing* thing, const Creature* seeker/* = NULL*/) const
+int32_t Player::__getIndexOfThing(const Thing* thing) const
 {
 	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 	{

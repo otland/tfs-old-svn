@@ -611,15 +611,15 @@ void Container::__removeThing(Thing* thing, uint32_t count)
 	}
 }
 
-int32_t Container::__getIndexOfThing(const Thing* thing, const Creature* seeker/* = NULL*/) const
+int32_t Container::__getIndexOfThing(const Thing* thing) const
 {
 	uint32_t index = 0;
 	for(ItemList::const_iterator cit = getItems(); cit != getEnd(); ++cit)
 	{
 		if(*cit == thing)
 			return index;
-
-		++index;
+		else
+			++index;
 	}
 
 	return -1;

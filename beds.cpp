@@ -214,11 +214,10 @@ void BedItem::regeneratePlayer(Player* player) const
 	int32_t sleptTime = int32_t(time(NULL) - sleepStart);
 	if(Condition* condition = player->getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT))
 	{
-		int32_t amount = 0;
+		int32_t amount = sleptTime / 30;
 		if(condition->getTicks() != -1)
 		{
 			amount = std::min((condition->getTicks()/1000), sleptTime) / 30;
-
 			int32_t tmp = condition->getTicks() - (amount * 30000);
 			if(tmp > 0)
 				condition->setTicks(tmp);
@@ -228,8 +227,6 @@ void BedItem::regeneratePlayer(Player* player) const
 				condition = NULL;
 			}
 		}
-		else
-			amount = sleptTime / 30;
 
 		player->changeHealth(amount);
 		player->changeMana(amount);

@@ -2967,7 +2967,7 @@ void ProtocolGame::AddTileItem(NetworkMessage_ptr msg, const Position& pos, cons
 	msg->AddByte(0x6A);
 	msg->AddPosition(pos);
 	if(const Tile* tile = item->getTile())
-		msg->AddByte(tile->__getIndexOfThing(item, player));
+		msg->AddByte(tile->__getIndexOfThing(item));
 	else
 		msg->AddByte(0x00);
 
@@ -2983,7 +2983,7 @@ void ProtocolGame::AddTileCreature(NetworkMessage_ptr msg, const Position& pos, 
 	msg->AddByte(0x6A);
 	msg->AddPosition(pos);
 	if(const Tile* tile = creature->getTile())
-		msg->AddByte(tile->__getIndexOfThing(creature, player));
+		msg->AddByte(tile->__getIndexOfThing(creature));
 	else
 		msg->AddByte(0x00);
 
