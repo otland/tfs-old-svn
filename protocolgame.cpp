@@ -2959,10 +2959,10 @@ void ProtocolGame::AddTileItem(NetworkMessage_ptr msg, const Position& pos, cons
 {
 	msg->AddByte(0x6A);
 	msg->AddPosition(pos);
-	if(const Tile* tile = creature->getTile())
+	if(const Tile* tile = item->getTile())
 	{
 		int32_t index = tile->__getIndexOfThing(item), i = index;
-		for(CreatureVector::iterator it = tile->creatures.begin(); it != tile->creatures.end(); ++it)
+		for(CreatureVector::const_iterator it = tile->creatures.begin(); it != tile->creatures.end(); ++it)
 		{
 			if(tile->__getIndexOfThing(*it) < i && (*it)->isInGhostMode() && !player->canSeeGhost(*it))
 				index--;
@@ -2983,7 +2983,7 @@ void ProtocolGame::AddTileCreature(NetworkMessage_ptr msg, const Position& pos, 
 	if(const Tile* tile = creature->getTile())
 	{
 		int32_t index = tile->__getIndexOfThing(creature), i = index;
-		for(CreatureVector::iterator it = tile->creatures.begin(); it != tile->creatures.end(); ++it)
+		for(CreatureVector::const_iterator it = tile->creatures.begin(); it != tile->creatures.end(); ++it)
 		{
 			if(tile->__getIndexOfThing(*it) < i && (*it)->isInGhostMode() && !player->canSeeGhost(*it))
 				index--;
