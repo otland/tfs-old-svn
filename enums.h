@@ -67,7 +67,7 @@ enum Channels_t
 	CHANNEL_PRIVATE = 0xFFFF
 };
 
-enum ViolationActions_t
+enum ViolationAction_t
 {
 	ACTION_NOTATION = 0,
 	ACTION_NAMEREPORT,

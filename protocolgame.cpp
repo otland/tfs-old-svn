@@ -1629,12 +1629,12 @@ void ProtocolGame::parseViolationWindow(NetworkMessage& msg)
 {
 	std::string target = msg.GetString();
 	uint8_t reason = msg.GetByte();
-	ViolationActions_t action = (ViolationActions_t)msg.GetByte();
+	ViolationAction_t action = (ViolationAction_t)msg.GetByte();
 	std::string comment = msg.GetString();
 	std::string statement = msg.GetString();
 	uint16_t channelId = msg.GetU16();
 	bool ipBanishment = msg.GetByte();
-	addGameTask(&Game::violationWindow, player->getID(), target, reason, action, comment, statement, channelId, ipBanishment);
+	addGameTask(&Game::playerViolationWindow, player->getID(), target, reason, action, comment, statement, channelId, ipBanishment);
 }
 
 //********************** Send methods *******************************//

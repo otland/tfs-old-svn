@@ -10008,7 +10008,7 @@ int32_t LuaScriptInterface::luaGetBanData(lua_State *L)
 int32_t LuaScriptInterface::luaGetBanReason(lua_State *L)
 {
 	//getBanReason(id)
-	lua_pushstring(L, getReason((ViolationActions_t)popNumber(L)).c_str());
+	lua_pushstring(L, getReason((ViolationAction_t)popNumber(L)).c_str());
 	return 1;
 }
 
@@ -10019,7 +10019,7 @@ int32_t LuaScriptInterface::luaGetBanAction(lua_State *L)
 	if(lua_gettop(L) > 1)
 		ipBanishment = popNumber(L) == LUA_TRUE;
 
-	lua_pushstring(L, getAction(popNumber(L), ipBanishment).c_str());
+	lua_pushstring(L, getAction((ViolationAction_t)popNumber(L), ipBanishment).c_str());
 	return 1;
 }
 

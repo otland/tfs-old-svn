@@ -35,7 +35,7 @@ enum BanType_t
 struct Ban
 {
 	BanType_t type;
-	ViolationActions_t action;
+	ViolationAction_t action;
 	uint32_t id, added, expires, adminid, reason;
 	std::string comment, value, param, statement;
 };

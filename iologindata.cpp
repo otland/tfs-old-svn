@@ -1035,7 +1035,7 @@ bool IOLoginData::updateOnlineStatus(uint32_t guid, bool login)
 	return db->executeQuery(query.str());
 }
 
-bool IOLoginData::hasFlag(std::string name, PlayerFlags value)
+bool IOLoginData::hasFlag(const std::string& name, PlayerFlags value)
 {
 	Database* db = Database::getInstance();
 	DBResult* result;
@@ -1050,7 +1050,7 @@ bool IOLoginData::hasFlag(std::string name, PlayerFlags value)
 	return group && group->hasFlag(value);
 }
 
-bool IOLoginData::hasCustomFlag(std::string name, PlayerCustomFlags value)
+bool IOLoginData::hasCustomFlag(const std::string& name, PlayerCustomFlags value)
 {
 	Database* db = Database::getInstance();
 	DBResult* result;

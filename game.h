@@ -407,26 +407,14 @@ class Game
 		  */
 		bool internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text, Position* pos = NULL);
 
-		Position getClosestFreeTile(Creature* creature, Position pos, bool extended = false, bool ignoreHouse = true);
-		std::string getSearchString(const Position fromPos, const Position toPos, bool fromIsCreature = false, bool toIsCreature = false);
-
-		int32_t getMotdNum();
-		void loadMotd();
-		void loadPlayersRecord();
-		void checkPlayersRecord();
-
-		bool playerBroadcastMessage(Player* player, const std::string& text, SpeakClasses type);
-		bool playerReportBug(uint32_t playerId, std::string bug);
-		bool playerViolationWindow(uint32_t playerId, std::string targetName, uint8_t reason, ViolationActions_t action,
-			std::string comment, std::string statement, uint16_t channelId, bool ipBanishment);
-
-		void kickPlayer(uint32_t playerId, bool displayEffect);
-		bool broadcastMessage(const std::string& text, MessageClasses type);
-
 		bool internalStartTrade(Player* player, Player* partner, Item* tradeItem);
 		bool internalCloseTrade(Player* player);
 
 		//Implementation of player invoked events
+		bool playerBroadcastMessage(Player* player, const std::string& text, SpeakClasses type);
+		bool playerReportBug(uint32_t playerId, std::string bug);
+		bool playerViolationWindow(uint32_t playerId, std::string targetName, uint8_t reason, ViolationAction_t action,
+			std::string comment, std::string statement, uint16_t channelId, bool ipBanishment);
 		bool playerMoveThing(uint32_t playerId, const Position& fromPos, uint16_t spriteId, uint8_t fromStackPos,
 			const Position& toPos, uint8_t count);
 		bool playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
@@ -490,6 +478,15 @@ class Game
 		bool playerLeaveParty(uint32_t playerId);
 		bool playerEnableSharedPartyExperience(uint32_t playerId, uint8_t sharedExpActive, uint8_t unknown);
 
+		void kickPlayer(uint32_t playerId, bool displayEffect);
+		bool broadcastMessage(const std::string& text, MessageClasses type);
+		void showHotkeyUseMessage(Player* player, Item* item);
+
+		int32_t getMotdNum();
+		void loadMotd();
+		void loadPlayersRecord();
+		void checkPlayersRecord();
+
 		bool reloadInfo(ReloadInfo_t reload, uint32_t playerId = 0);
 		void cleanup();
 		void shutdown();
@@ -508,6 +505,9 @@ class Game
 		bool getPathToEx(const Creature* creature, const Position& targetPos, std::list<Direction>& dirList,
 			uint32_t minTargetDist, uint32_t maxTargetDist, bool fullPathSearch = true,
 			bool clearSight = true, int32_t maxSearchDist = -1);
+
+		Position getClosestFreeTile(Creature* creature, Position pos, bool extended = false, bool ignoreHouse = true);
+		std::string getSearchString(const Position fromPos, const Position toPos, bool fromIsCreature = false, bool toIsCreature = false);
 
 		void changeLight(const Creature* creature);
 		void changeSpeed(Creature* creature, int32_t varSpeedDelta);

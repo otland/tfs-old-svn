@@ -281,7 +281,7 @@ bool IOBan::getData(uint32_t value, Ban& ban) const
 	ban.adminid = result->getDataInt("admin_id");
 	ban.comment = result->getDataString("comment");
 	ban.reason = result->getDataInt("reason");
-	ban.action = (ViolationActions_t)result->getDataInt("action");
+	ban.action = (ViolationAction_t)result->getDataInt("action");
 	ban.statement = result->getDataString("statement");
 
 	result->free();
@@ -313,7 +313,7 @@ BansVec IOBan::getList(BanType_t type, uint32_t value/* = 0*/)
 			tmp.adminid = result->getDataInt("admin_id");
 			tmp.comment = result->getDataString("comment");
 			tmp.reason = result->getDataInt("reason");
-			tmp.action = (ViolationActions_t)result->getDataInt("action");
+			tmp.action = (ViolationAction_t)result->getDataInt("action");
 			tmp.statement = result->getDataString("statement");
 			data.push_back(tmp);
 		}

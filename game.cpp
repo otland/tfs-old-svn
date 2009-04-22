@@ -2378,7 +2378,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 
 	player->setNextActionTask(NULL);
 	player->resetIdleTime();
-	return g_actions->useItemEx(player, fromPos, toPos, toStackPos, item);
+	return g_actions->useItemEx(player, fromPos, toPos, toStackPos, item, isHotkey);
 }
 
 bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPos,
@@ -2437,7 +2437,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 	{
 		uint32_t delay = player->getNextActionTime();
 		SchedulerTask* task = createSchedulerTask(delay, boost::bind(&Game::playerUseItem, this,
-			playerId, pos, stackPos, index, spriteId));
+			playerId, pos, stackPos, index, spriteId, isHotkey));
 
 		player->setNextActionTask(task);
 		return false;
@@ -2445,7 +2445,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 
 	player->setNextActionTask(NULL);
 	player->resetIdleTime();
-	return g_actions->useItem(player, pos, index, item, isHotkey);
+	return g_actions->useItem(player, pos, index, item);
 }
 
 bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, uint8_t fromStackPos,
@@ -2523,7 +2523,7 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, uin
 	player->setNextActionTask(NULL);
 	player->resetIdleTime();
 	return g_actions->useItemEx(player, fromPos, creature->getPosition(),
-		creature->getParent()->__getIndexOfThing(creature), item, creatureId);
+		creature->getParent()->__getIndexOfThing(creature), item, isHotkey, creatureId);
 }
 
 bool Game::playerCloseContainer(uint32_t playerId, uint8_t cid)
@@ -3334,7 +3334,7 @@ bool Game::playerRequestAddVip(uint32_t playerId, const std::string& vipName)
 	bool specialVip;
 
 	std::string name = vipName;
-	if(!IOLoginData::getInstance()->getGuidByNameEx(guid, vipName, PlayerFlag_SpecialVIP, specialVip))
+	if(!IOLoginData::getInstance()->getGuidByNameEx(guid, specialVip, name))
 	{
 		player->sendTextMessage(MSG_STATUS_SMALL, "A player with that name does not exist.");
 		return false;
@@ -4722,7 +4722,7 @@ bool Game::playerReportBug(uint32_t playerId, std::string bug)
 	return true;
 }
 
-bool Game::playerViolationWindow(uint32_t playerId, std::string targetName, uint8_t reason, ViolationAccess_t action,
+bool Game::playerViolationWindow(uint32_t playerId, std::string targetName, uint8_t reason, ViolationAction_t action,
 		std::string comment, std::string statement, uint16_t channelId, bool ipBanishment)
 {
 	Player* player = getPlayerByID(playerId);
@@ -4953,7 +4953,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string targetName, uint
 	if(targetPlayer && removeNotations > 0)
 	{
 		char buffer[30];
-		sprintf(buffer, "You have been %s.", (removeNotations > 1 ? "banished" : "namelocked"))
+		sprintf(buffer, "You have been %s.", (removeNotations > 1 ? "banished" : "namelocked"));
 		targetPlayer->sendTextMessage(MSG_INFO_DESCR, buffer);
 
 		addMagicEffect(targetPlayer->getPosition(), NM_ME_MAGIC_POISON);
@@ -5887,7 +5887,7 @@ void Game::FreeThing(Thing* thing)
 	ToReleaseThings.push_back(thing);
 }
 
-void Game::showUseHotkeyMessage(Player* player, Item* item)
+void Game::showHotkeyUseMessage(Player* player, Item* item)
 {
 	int32_t subType = -1;
 	if(item->hasSubType() && !item->hasCharges())
