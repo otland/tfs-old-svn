@@ -1,6 +1,6 @@
 local shutdownEvent = 0
 
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	if(param == "") then
 		doSetGameState(GAMESTATE_SHUTDOWN)
 		return TRUE

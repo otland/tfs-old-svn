@@ -547,12 +547,17 @@
 								* Added enchanting system
 							furniturebeds.lua
 								* Added furniture beds (packages with beds)
+
+				items/
+					randomization.xml
+						* Moved item randomization configuration here
+
 				XML/
 					channels.xml
-						* Added chat channels configuration
+						* Moved chat channels configuration here
 
 					groups.xml
-						* Moved groups configuration to this file
+						* Moved groups configuration here
 
 		M...
 			data/
@@ -571,8 +576,6 @@
 							constructionkits.lua
 							food.lua
 								* Fixes & formatting
-							doors.lua
-								* Changes due player storage compatibility
 							machete.lua
 								* Added jungle grass
 							pick.lua
@@ -612,9 +615,10 @@
 				movements/
 					scripts/
 						dough.lua
-							* ...
+							* Param added
 						snow.lua
 							* Invisible GM won't show snow foot prints
+
 				npc/
 					scripts/
 						runes.lua
@@ -628,34 +632,18 @@
 
 				talkactions/
 					scripts/
-						mode.lua
-						teleportfloor.lua
-						teleporthere.lua
-						teleportmaster.lua
-						teleportsend.lua
-						teleporttiles.lua
-						teleportto.lua
-						teleporttown.lua
-						unban.lua
-						online.lua
-						broadcastclass.lua
-						buypremium.lua
-						creature.lua
-						animatedtext.lua
-						frags.lua
-						serverinfo.lua
-						animationeffect.lua
-						leavehouse.lua
-						owner.lua
+						*.lua
 							* Fixes
-						reload.lua
 							* Channels reloading
-						changender.lua
 							* Configurable premium days cost
+							* New param: channel (was always possible to use, but noone knew about it..)
 
 				XML/
 					servers.xml
-						* versionMin / versionMax
+						* versionMin / versionMax attributes
+
+					stages.xml
+						* default multiplier attribute, NOTE: only in 'world' node
 
 		D...
 	]
@@ -675,7 +663,7 @@
 		Added most of monsters of protocol 8.1 and some of 8.2 (OpenTibia SVN, Lithium)
 		Attackspeed for items in items.xml (Talaturen)
 		Basespeed in vocations.xml (Talaturen)
-		onLook(cid, pos) creaturescript event (Talaturen)
+		onLook(cid, pos) creature event (Talaturen)
 		/pvp command to change worldtype (Talaturen)
 		/goto command (/goto x y z) (Talaturen)
 		Configurable level to form guild (Talaturen)
@@ -691,7 +679,7 @@
 		House buying and selling disabling on config.lua (Elf)
 		Namelock Manager while Account Manager is disabled configurable in config.lua (Elf)
 		Dropped LuaSQL and replaced with LuaDatabase (Elf, OpenLua-Distro)
-		onKill(cid, target) creaturescript event (Elf)
+		onKill(cid, target) creature event (Elf)
 		onAdvance(cid, skill, oldlevel, newlevel) creaturescript event (Elf)
 		onThink creaturescript event for creatures (Elf)
 		onThink and onLook events aren't fired global anymore (Elf)
@@ -716,7 +704,7 @@
 		Construction kits (Elf)
 		Global events (Elf)
 		Thing attribute changing (Kiper)
-		onAttack creaturescript (Elf)
+		onAttack creature event (Elf)
 		Database Manager - http://otland.net/f123/built-database-manager-12642/ (Talaturen)
 		Autotools (Talaturen)
 		Filesystem Hierarchy Standard (Kiper)
@@ -808,6 +796,11 @@
 		Displaying XML parser errors (Elf, slawkens)
 		New CONFIG_HELP file, with config values description (slawkens, KaczooH)
 		Possiblity to use <vocation id=""/> in movements, spells etc. (slawkens)
+		onTextEdit creature event (slawkens)
+		Turn click (aka CTRL + key) teleportation (slawkens, Kiper)
+		New configurables: ghostModeInvisibleEffect, gainExperienceColor, checkCorpseOwner, showHealingDamageForMonsters (slawkens)
+		Moved items randomization to randomization.xml file (slawkens, Elf)
+		Furniture beds (packages with beds) + enchanting system (slawkens)
 	]
 ]
 

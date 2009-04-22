@@ -1,4 +1,4 @@
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	local n = 1
 	if(param ~= "" and tonumber(param)) then
 		n = math.max(0, tonumber(param))

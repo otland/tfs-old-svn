@@ -1,6 +1,6 @@
 local savingEvent = 0
 
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	if(isNumber(param) == TRUE) then
 		stopEvent(savingEvent)
 		save(tonumber(param) * 60 * 1000)

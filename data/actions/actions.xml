@@ -6,14 +6,14 @@
 	<action uniqueid="30015" event="script" value="quests/annihilator.lua"/>
 
 	<!-- Weapons enchanting (Gems) -->
-	<action itemid="2146" script="other/enchanting.lua" />
-	<action itemid="2147" script="other/enchanting.lua" />
-	<action itemid="2150" script="other/enchanting.lua" />
-	<action itemid="2149" script="other/enchanting.lua" />
-	<action itemid="7759" script="other/enchanting.lua" />
-	<action itemid="7760" script="other/enchanting.lua" />
-	<action itemid="7761" script="other/enchanting.lua" />
-	<action itemid="7762" script="other/enchanting.lua" />
+	<action itemid="2146" script="other/enchanting.lua"/>
+	<action itemid="2147" script="other/enchanting.lua"/>
+	<action itemid="2150" script="other/enchanting.lua"/>
+	<action itemid="2149" script="other/enchanting.lua"/>
+	<action itemid="7759" script="other/enchanting.lua"/>
+	<action itemid="7760" script="other/enchanting.lua"/>
+	<action itemid="7761" script="other/enchanting.lua"/>
+	<action itemid="7762" script="other/enchanting.lua"/>
 
 	<!-- Tools -->
 	<action itemid="2420" event="script" value="tools/machete.lua"/>

@@ -1,4 +1,4 @@
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	if getTileHouseInfo(getPlayerPosition(cid)) ~= FALSE then
 		if getHouseOwner(getTileHouseInfo(getPlayerPosition(cid))) == getPlayerGUID(cid) then
 			setHouseOwner(getTileHouseInfo(getPlayerPosition(cid)), 0)

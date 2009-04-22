@@ -2,7 +2,7 @@ local config = {
 	expireReportsAfterReads = getConfigInfo('expireReportsAfterReads')
 }
 
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	if(isNumber(param) == TRUE) then
 		local reportId = tonumber(param)
 		local report = db.getResult("SELECT * FROM `server_reports` WHERE `id` = " .. reportId)

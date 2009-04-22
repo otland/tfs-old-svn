@@ -1,4 +1,4 @@
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	local state = GAMESTATE_CLOSED
 	if(words:sub(2, 2) == "o") then
 		state = GAMESTATE_OPEN

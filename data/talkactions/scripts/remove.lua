@@ -1,4 +1,4 @@
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	local amount = 1
 	param = tonumber(param)
 	if(param) then

@@ -1,0 +1,160 @@
+[ SCRIPTSYSTEM_HELP
+	Project Name
+		The Forgotten Server
+
+	Version
+		0.3.4
+
+	Codenamed
+		Crying Damson
+
+	License
+		GNU GPLv3
+
+	Forum
+		http://otland.net/
+]
+
+[ ABOUT
+	Few things, about scriptsystem, attributes possible to use in .xml declaration file.
+]
+
+[ LIST
+	*ACTIONS
+		File: actions/actions.xml
+		Attributes
+			actionid
+			uniqueid
+			itemid
+			fromid,toid
+				Defined in which situations action should be triggered.
+				Execution order: unique, action, id, runeid
+			allowfaruse
+				ItemEx can be used from far?
+				Only for items with option 'Use with'.
+			blockwalls
+				Defines if item will ignore walls and other blocking items.
+				Only for items with option 'Use with'.
+			function
+				Default hardcoded functions.
+				Values: increaseItemId, deincreaseItemId
+
+	*CREATURESCRIPTS
+		File: creaturescripts/creaturescripts.xml
+		Attributes
+			type
+				Event type
+				Values:
+					login, logout
+					advance, statschange
+					sendmail, receivemail
+					joinchannel, leavechannel
+					look, think, textedit
+					attack, combat, areacombat, cast
+					kill, death, preparedeath
+		Functions:
+			onLogin(cid)
+			onLogout(cid)
+			onAdvance(cid, skill, oldLevel, newLevel)
+			onStatsChange(cid, attacker, type, combat, value)
+			onSendMail(cid, receiver, item, openBox)
+			onReceiveMail(cid, sender, item, openBox)
+			onJoinChannel(cid, channel, users)
+			onLeaveChannel (cid, channel, users)
+			onLook(cid, thing, position, lookDistance)
+			onThink(cid, interval)
+			onTextEdit(cid, item, newText)
+			onAreaCombat(cid, tileItem, tilePosition, isAggressive)
+			onCombat(cid, target)
+			onAttack(cid, target)
+			onCast(cid, target)
+			onKill(cid, target)
+			onDeath(cid, corpse, lastHitKiller, mostDamageKiller)
+			onPrepareDeath(cid, lastHitKiller, mostDamageKiller)
+
+	*GLOBALEVENTS
+		File: globalevents/globalevents.xml
+		Attributes
+			type
+				Not done yet.
+
+			interval
+				Script will be executed every x seconds.
+
+	*MOVEMENTS
+		File: movements/movements.xml
+		Attributes
+			type/event
+				Values:
+					StepIn, StepOut
+					Equip, DeEquip
+					AddItem, RemoveItem
+			slot
+				Values:
+					head
+					necklace
+					backpack
+					armor
+					right-hand, left-hand
+					two-handed, hand/shield
+					legs
+					feet
+					ring
+					ammo
+			tileitem
+				Defines if it is a tile item.
+			level
+				You can specify level required to use this item.
+			maglevel
+				Magic level required.
+			premium
+				Premium needed?
+				Values: yes/no
+			function
+				Default hardcoded functions.
+				Values:
+					onStepInField
+					onStepOutField
+					onAddField
+					onRemoveField
+					onEquipItem
+					onDeEquipItem
+
+	*SPELLS
+		File: spells/spells.xml
+		Attributes
+			//TODO :()
+		Function: onCastSpell(cid, var)
+
+	*TALKACTIONS
+		File: talkactions/talkactions.xml
+		Attributes
+			words
+				Words used to execute this talkaction.
+			access
+				Access required.
+			channel
+				Will work only on specified channel.
+			filter
+				How params should be parsed.
+				E.q
+					If you use 'quotation' - you will need to write /goto "PlayerName
+					If you use 'word' - you will need to write /goto PlayerName
+				Values: quotation/word
+			log
+				Defines if talkaction should be logged.
+				Default: no
+			case-sensitive
+				Defines if talkaction should be case sensitive. Is 'no' - then /command will be same as /CoMmAnD
+				Default: yes
+			exception
+				List of players, who can't use this talkaction.
+				Example: "GM John;GM 2;Maatt"
+		Function: onSay(cid, words, param, channel)
+
+	*WEAPONS
+		File: weapons/weapons.xml
+		Attributes
+			//TODO
+		Function: onUseWeapon(cid, var)
+]

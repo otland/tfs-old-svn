@@ -8,7 +8,7 @@ local config = {
 	stages = getBooleanFromString(getConfigInfo('experienceStages'))
 }
 
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	local exp = config.rateExperience
 	if(config.stages == TRUE) then
 		exp = getExperienceStage(getPlayerLevel(cid))

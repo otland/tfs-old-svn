@@ -23,7 +23,7 @@ local reloadInfo = {
 	{RELOAD_ALL, "all", "everything"}
 }
 
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	param = param:lower()
 	local str = "Reload type not found."
 	for _, v in ipairs(reloadInfo) do

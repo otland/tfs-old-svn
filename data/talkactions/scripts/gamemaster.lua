@@ -1,7 +1,7 @@
 local ignore = createConditionObject(CONDITION_GAMEMASTER, -1, FALSE, GAMEMASTER_IGNORE)
 local teleport = createConditionObject(CONDITION_GAMEMASTER, -1, FALSE, GAMEMASTER_TELEPORT)
 
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	local condition = ignore
 	local subId = GAMEMASTER_IGNORE
 	local name = "private messages ignoring"

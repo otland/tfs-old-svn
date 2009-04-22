@@ -1,4 +1,4 @@
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	local tmp = getWorldType()
 
 	local msg = ""	

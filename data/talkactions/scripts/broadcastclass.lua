@@ -10,7 +10,7 @@ local colors = {
 	["status"] = MESSAGE_STATUS_DEFAULT
 }
 
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	if(param == "") then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
 		return TRUE

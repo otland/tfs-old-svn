@@ -2,7 +2,7 @@ local config = {
 	showGamemasters = getBooleanFromString(getConfigInfo('displayGamemastersWithOnlineCommand'))
 }
 
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	local players = getPlayersOnline()
 	local strings = {""}
 

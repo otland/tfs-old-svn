@@ -1,4 +1,4 @@
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	local target = db.getResult("SELECT `name`, `id` FROM `players` WHERE `name` = " .. db.escapeString(param) .. ";")
 	if(target:getID() == LUA_ERROR) then
 		doPlayerSendCancel(cid, "A player with that name does not exist.")

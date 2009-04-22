@@ -2,7 +2,7 @@ local config = {
 	costPremiumDays = 3 
 }
 
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	if(getPlayerSex(cid) >= 2) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You cannot change your gender.")
 		return TRUE

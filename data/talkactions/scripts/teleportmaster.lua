@@ -1,4 +1,4 @@
-function onSay(cid, words, param)
+function onSay(cid, words, param, channel)
 	local tid = cid
 	if(param ~= "") then
 		tid = getPlayerByNameWildcard(param)
