@@ -6646,12 +6646,12 @@ int32_t LuaScriptInterface::luaGetMonsterInfo(lua_State* L)
 	setField(L, "name", mType->name.c_str());
 	setField(L, "experience", mType->experience);
 	setField(L, "health", mType->health);
-	setField(L, "healthMax", mType->health_max);
+	setField(L, "healthMax", mType->healthMax);
 	setField(L, "manaCost", mType->manaCost);
 	setField(L, "defense", mType->defense);
 	setField(L, "armor", mType->armor);
-	setField(L, "baseSpeed", mType->base_speed);
-	setField(L, "lookCorpse", mType->lookcorpse);
+	setField(L, "baseSpeed", mType->baseSpeed);
+	setField(L, "lookCorpse", mType->lookCorpse);
 	setField(L, "race", mType->race);
 	setField(L, "skull", mType->skull);
 	setField(L, "partyShield", mType->partyShield);
