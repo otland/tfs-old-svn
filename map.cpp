@@ -112,7 +112,7 @@ bool Map::saveMap()
 	return saved;
 }
 
-Tile* Map::getTile(uint16_t x, uint16_t y, uint8_t z)
+Tile* Map::getTile(uint16_t x, uint16_t y, uint16_t z)
 {
 	if(z < MAP_MAX_LAYERS)
 	{
@@ -133,7 +133,7 @@ Tile* Map::getTile(const Position& pos)
 	return getTile(pos.x, pos.y, pos.z);
 }
 
-void Map::setTile(uint16_t x, uint16_t y, uint8_t z, Tile* newTile)
+void Map::setTile(uint16_t x, uint16_t y, uint16_t z, Tile* newTile)
 {
 	if(z >= MAP_MAX_LAYERS)
 	{
@@ -554,9 +554,9 @@ bool Map::checkSightLine(const Position& fromPos, const Position& toPos) const
 			//x -> z
 			//y -> y
 			//z -> x
-			std::swap(start.x, (int16_t&)start.z);
-			std::swap(end.x, (int16_t&)end.z);
-			std::swap(dx, (int32_t&)dz);
+			std::swap(start.x, start.z);
+			std::swap(end.x, end.z);
+			std::swap(dx, dz);
 			break;
 		default:
 			//x -> x
@@ -1232,7 +1232,7 @@ QTreeLeafNode::~QTreeLeafNode()
 		delete m_array[i];
 }
 
-Floor* QTreeLeafNode::createFloor(uint8_t z)
+Floor* QTreeLeafNode::createFloor(uint16_t z)
 {
 	if(!m_array[z])
 		m_array[z] = new Floor();

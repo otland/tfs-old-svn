@@ -185,7 +185,7 @@ class ProtocolGame : public Protocol
 		void sendCreatureHealth(const Creature* creature);
 		void sendSkills();
 		void sendPing();
-		void sendCreatureTurn(const Creature* creature, uint8_t stackpos);
+		void sendCreatureTurn(const Creature* creature, int16_t stackpos);
 		void sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos = NULL);
 
 		void sendCancel(const std::string& message);
@@ -259,11 +259,11 @@ class ProtocolGame : public Protocol
 			int32_t width, int32_t height, int32_t offset, int32_t& skip);
 
 		// translate a map area to clientreadable format
-		void GetMapDescription(uint16_t x, uint16_t y, uint8_t z,
+		void GetMapDescription(int16_t x, int16_t y, int16_t z,
 			uint16_t width, uint16_t height, NetworkMessage_ptr msg);
 
 		void AddMapDescription(NetworkMessage_ptr msg, const Position& pos);
-		void AddTextMessage(NetworkMessage_ptr msg,MessageClasses mclass, const std::string& message);
+		void AddTextMessage(NetworkMessage_ptr msg, MessageClasses mclass, const std::string& message);
 		void AddAnimatedText(NetworkMessage_ptr msg, const Position& pos, uint8_t color, const std::string& text);
 		void AddMagicEffect(NetworkMessage_ptr msg, const Position& pos, uint8_t type);
 		void AddDistanceShoot(NetworkMessage_ptr msg, const Position& from, const Position& to, uint8_t type);

@@ -244,8 +244,7 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 		propStream.init(attr, attrSize); 
 		while(propStream.size())
 		{
-			uint16_t x = 0, y = 0;
-			uint8_t z = 7;
+			uint16_t x = 0, y = 0, z = 0;
 
 			propStream.GET_USHORT(x);
 			propStream.GET_USHORT(y);

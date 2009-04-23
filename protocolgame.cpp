@@ -996,7 +996,7 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 	}
 }
 
-void ProtocolGame::GetMapDescription(uint16_t x, uint16_t y, uint8_t z,
+void ProtocolGame::GetMapDescription(int16_t x, int16_t y, int16_t z,
 	uint16_t width, uint16_t height, NetworkMessage_ptr msg)
 {
 	int32_t skip = -1, startz, endz, zstep = 0;
@@ -1310,7 +1310,7 @@ void ProtocolGame::parseUseItem(NetworkMessage& msg)
 {
 	Position pos = msg.GetPosition();
 	uint16_t spriteId = msg.GetSpriteId();
-	uint8_t stackpos = msg.GetByte();
+	int16_t stackpos = msg.GetByte();
 	uint8_t index = msg.GetByte();
 	bool isHotkey = (pos.x == 0xFFFF && pos.y == 0 && pos.z == 0);
 	addGameTask(&Game::playerUseItem, player->getID(), pos, stackpos, index, spriteId, isHotkey);
@@ -1320,10 +1320,10 @@ void ProtocolGame::parseUseItemEx(NetworkMessage& msg)
 {
 	Position fromPos = msg.GetPosition();
 	uint16_t fromSpriteId = msg.GetSpriteId();
-	uint8_t fromStackpos = msg.GetByte();
+	int16_t fromStackpos = msg.GetByte();
 	Position toPos = msg.GetPosition();
 	uint16_t toSpriteId = msg.GetU16();
-	uint8_t toStackpos = msg.GetByte();
+	int16_t toStackpos = msg.GetByte();
 	bool isHotkey = (fromPos.x == 0xFFFF && fromPos.y == 0 && fromPos.z == 0);
 	addGameTask(&Game::playerUseItemEx, player->getID(), fromPos, fromStackpos, fromSpriteId, toPos, toStackpos, toSpriteId, isHotkey);
 }
@@ -1332,7 +1332,7 @@ void ProtocolGame::parseBattleWindow(NetworkMessage& msg)
 {
 	Position fromPos = msg.GetPosition();
 	uint16_t spriteId = msg.GetSpriteId();
-	uint8_t fromStackpos = msg.GetByte();
+	int16_t fromStackpos = msg.GetByte();
 	uint32_t creatureId = msg.GetU32();
 	bool isHotkey = (fromPos.x == 0xFFFF && fromPos.y == 0 && fromPos.z == 0);
 	addGameTask(&Game::playerUseBattleWindow, player->getID(), fromPos, fromStackpos, creatureId, spriteId, isHotkey);
@@ -1366,7 +1366,7 @@ void ProtocolGame::parseThrow(NetworkMessage& msg)
 {
 	Position fromPos = msg.GetPosition();
 	uint16_t spriteId = msg.GetSpriteId();
-	uint8_t fromStackpos = msg.GetByte();
+	int16_t fromStackpos = msg.GetByte();
 	Position toPos = msg.GetPosition();
 	uint8_t count = msg.GetByte();
 	if(toPos != fromPos)
@@ -1378,7 +1378,7 @@ void ProtocolGame::parseLookAt(NetworkMessage& msg)
 {
 	Position pos = msg.GetPosition();
 	uint16_t spriteId = msg.GetSpriteId();
-	uint8_t stackpos = msg.GetByte();
+	int16_t stackpos = msg.GetByte();
 	addGameTask(&Game::playerLookAt, player->getID(), pos, spriteId, stackpos);
 }
 
@@ -1493,7 +1493,7 @@ void ProtocolGame::parseRequestTrade(NetworkMessage& msg)
 {
 	Position pos = msg.GetPosition();
 	uint16_t spriteId = msg.GetSpriteId();
-	uint8_t stackpos = msg.GetByte();
+	int16_t stackpos = msg.GetByte();
 	uint32_t playerId = msg.GetU32();
 	addGameTask(&Game::playerRequestTrade, player->getID(), pos, stackpos, playerId, spriteId);
 }
@@ -1534,7 +1534,7 @@ void ProtocolGame::parseRotateItem(NetworkMessage& msg)
 {
 	Position pos = msg.GetPosition();
 	uint16_t spriteId = msg.GetSpriteId();
-	uint8_t stackpos = msg.GetByte();
+	int16_t stackpos = msg.GetByte();
 	addGameTask(&Game::playerRotateItem, player->getID(), pos, stackpos, spriteId);
 }
 
@@ -2035,7 +2035,7 @@ void ProtocolGame::sendCloseContainer(uint32_t cid)
 	}
 }
 
-void ProtocolGame::sendCreatureTurn(const Creature* creature, uint8_t stackpos)
+void ProtocolGame::sendCreatureTurn(const Creature* creature, int16_t stackpos)
 {
 	if(stackpos >= 10 || !canSee(creature))
 		return;

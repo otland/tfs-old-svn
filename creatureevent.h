@@ -108,7 +108,7 @@ class CreatureEvent : public Event
 		uint32_t executeChannelJoin(Player* player, uint16_t channelId, UsersMap usersMap);
 		uint32_t executeChannelLeave(Player* player, uint16_t channelId, UsersMap usersMap);
 		uint32_t executeAdvance(Player* player, skills_t skill, uint32_t oldLevel, uint32_t newLevel);
-		uint32_t executeLook(Player* player, Thing* thing, const Position& position, uint8_t stackpos, int32_t lookDistance);
+		uint32_t executeLook(Player* player, Thing* thing, const Position& position, int16_t stackpos, int32_t lookDistance);
 		uint32_t executeMailSend(Player* player, Player* receiver, Item* item, bool openBox);
 		uint32_t executeMailReceive(Player* player, Player* sender, Item* item, bool openBox);
 		uint32_t executeTextEdit(Player* player, Item *item, std::string newText);

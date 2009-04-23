@@ -112,8 +112,7 @@ enum AttrTypes_t
 #pragma pack(1)
 struct TeleportDest
 {
-	uint16_t _x;
-	uint16_t _y;
+	uint16_t _x, _y;
 	uint8_t _z;
 };
 #pragma pack()
@@ -216,7 +215,7 @@ class ItemAttributes
 
 			// advanced item modifiers
 			ATTR_ITEM_ARTICLE = 1 << 23,
-			ATTR_ITEM_ATTACKSPEED = 1 << 24,z
+			ATTR_ITEM_ATTACKSPEED = 1 << 24
 		};
 
 		bool hasAttribute(itemAttrTypes type) const;

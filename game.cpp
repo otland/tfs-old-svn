@@ -499,7 +499,7 @@ Cylinder* Game::internalGetCylinder(Player* player, const Position& pos)
 	return player;
 }
 
-Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index, uint32_t spriteId /*= 0*/, stackPosType_t type /*= STACKPOS_NORMAL*/)
+Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index, uint32_t spriteId /*= 0*/, stackposType_t type /*= STACKPOS_NORMAL*/)
 {
 	if(pos.x != 0xFFFF)
 	{
@@ -629,7 +629,7 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 	return NULL;
 }
 
-void Game::internalGetPosition(Item* item, Position& pos, uint8_t& stackpos)
+void Game::internalGetPosition(Item* item, Position& pos, int16_t& stackpos)
 {
 	pos.x = pos.y = pos.z = stackpos = 0;
 	if(Cylinder* topParent = item->getTopParent())
@@ -842,8 +842,8 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 			(*it)->onCreatureAppear(creature, true);
 	}
 
-	int32_t newStackPos = creature->getParent()->__getIndexOfThing(creature);
-	creature->getParent()->postAddNotification(NULL, creature, newStackPos);
+	int32_t newStackpos = creature->getParent()->__getIndexOfThing(creature);
+	creature->getParent()->postAddNotification(NULL, creature, newStackpos);
 
 	addCreatureCheck(creature);
 	creature->onPlacedCreature();
@@ -914,7 +914,7 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 }
 
 bool Game::playerMoveThing(uint32_t playerId, const Position& fromPos,
-	uint16_t spriteId, uint8_t fromStackPos, const Position& toPos, uint8_t count)
+	uint16_t spriteId, int16_t fromStackpos, const Position& toPos, uint8_t count)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
@@ -929,7 +929,7 @@ bool Game::playerMoveThing(uint32_t playerId, const Position& fromPos,
 			fromIndex = static_cast<uint8_t>(fromPos.y);
 	}
 	else
-		fromIndex = fromStackPos;
+		fromIndex = fromStackpos;
 
 	Thing* thing = internalGetThing(player, fromPos, fromIndex, spriteId, STACKPOS_MOVE);
 
@@ -953,7 +953,7 @@ bool Game::playerMoveThing(uint32_t playerId, const Position& fromPos,
 			playerMoveCreature(playerId, movingCreature->getID(), movingCreature->getPosition(), toCylinder->getPosition());
 	}
 	else if(thing->getItem())
-		playerMoveItem(playerId, fromPos, spriteId, fromStackPos, toPos, count);
+		playerMoveItem(playerId, fromPos, spriteId, fromStackpos, toPos, count);
 
 	return true;
 }
@@ -1139,7 +1139,7 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Cylinder* fromCylinde
 }
 
 bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
-	uint16_t spriteId, uint8_t fromStackPos, const Position& toPos, uint8_t count)
+	uint16_t spriteId, int16_t fromStackpos, const Position& toPos, uint8_t count)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved() || player->hasFlag(PlayerFlag_CannotMoveItems))
@@ -1149,7 +1149,7 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 	{
 		uint32_t delay = player->getNextActionTime();
 		SchedulerTask* task = createSchedulerTask(delay, boost::bind(&Game::playerMoveItem, this,
-			playerId, fromPos, spriteId, fromStackPos, toPos, count));
+			playerId, fromPos, spriteId, fromStackpos, toPos, count));
 		player->setNextActionTask(task);
 		return false;
 	}
@@ -1166,7 +1166,7 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 			fromIndex = static_cast<uint8_t>(fromPos.y);
 	}
 	else
-		fromIndex = fromStackPos;
+		fromIndex = fromStackpos;
 
 	Thing* thing = internalGetThing(player, fromPos, fromIndex, spriteId, STACKPOS_MOVE);
 	if(!thing || !thing->getItem())
@@ -1176,10 +1176,9 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 	}
 
 	Item* item = thing->getItem();
-
 	Cylinder* toCylinder = internalGetCylinder(player, toPos);
-	uint8_t toIndex = 0;
 
+	uint8_t toIndex = 0;
 	if(toPos.x == 0xFFFF)
 	{
 		if(toPos.y & 0x40)
@@ -1227,7 +1226,7 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 				this, player->getID(), listDir)));
 
 			SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerMoveItem, this,
-				playerId, fromPos, spriteId, fromStackPos, toPos, count));
+				playerId, fromPos, spriteId, fromStackpos, toPos, count));
 
 			player->setNextWalkActionTask(task);
 			return true;
@@ -1270,8 +1269,7 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 				walkPos.y -= -1;
 
 			Position itemPos = fromPos;
-			uint8_t itemStackPos = fromStackPos;
-
+			int16_t itemStackpos = fromStackpos;
 			if(fromPos.x != 0xFFFF && Position::areInRange<1,1,0>(mapFromPos, player->getPosition())
 				&& !Position::areInRange<1,1,0>(mapFromPos, walkPos))
 			{
@@ -1286,7 +1284,7 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 				}
 
 				//changing the position since its now in the inventory of the player
-				internalGetPosition(moveItem, itemPos, itemStackPos);
+				internalGetPosition(moveItem, itemPos, itemStackpos);
 			}
 
 			std::list<Direction> listDir;
@@ -1296,7 +1294,7 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 					this, player->getID(), listDir)));
 
 				SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerMoveItem, this,
-					playerId, itemPos, spriteId, itemStackPos, toPos, count));
+					playerId, itemPos, spriteId, itemStackpos, toPos, count));
 
 				player->setNextWalkActionTask(task);
 				return true;
@@ -2285,8 +2283,8 @@ bool Game::playerStopAutoWalk(uint32_t playerId)
 	return true;
 }
 
-bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t fromStackPos, uint16_t fromSpriteId,
-	const Position& toPos, uint8_t toStackPos, uint16_t toSpriteId, bool isHotkey)
+bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, int16_t fromStackpos, uint16_t fromSpriteId,
+	const Position& toPos, int16_t toStackpos, uint16_t toSpriteId, bool isHotkey)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
@@ -2295,7 +2293,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 	if(isHotkey && !g_config.getBool(ConfigManager::AIMBOT_HOTKEY_ENABLED))
 		return false;
 
-	Thing* thing = internalGetThing(player, fromPos, fromStackPos, fromSpriteId, STACKPOS_USEITEM);
+	Thing* thing = internalGetThing(player, fromPos, fromStackpos, fromSpriteId, STACKPOS_USEITEM);
 	if(!thing)
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
@@ -2323,7 +2321,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 		if(ret == RET_TOOFARAWAY)
 		{
 			Position itemPos = fromPos;
-			uint8_t itemStackPos = fromStackPos;
+			int16_t itemStackpos = fromStackpos;
 			if(fromPos.x != 0xFFFF && toPos.x != 0xFFFF && Position::areInRange<1,1,0>(fromPos,
 				player->getPosition()) && !Position::areInRange<1,1,0>(fromPos, toPos))
 			{
@@ -2337,7 +2335,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 				}
 
 				//changing the position since its now in the inventory of the player
-				internalGetPosition(moveItem, itemPos, itemStackPos);
+				internalGetPosition(moveItem, itemPos, itemStackpos);
 			}
 
 			std::list<Direction> listDir;
@@ -2347,7 +2345,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 					this, player->getID(), listDir)));
 
 				SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerUseItemEx, this,
-					playerId, itemPos, itemStackPos, fromSpriteId, toPos, toStackPos, toSpriteId, isHotkey));
+					playerId, itemPos, itemStackpos, fromSpriteId, toPos, toStackpos, toSpriteId, isHotkey));
 
 				player->setNextWalkActionTask(task);
 				return true;
@@ -2367,7 +2365,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 	{
 		uint32_t delay = player->getNextActionTime();
 		SchedulerTask* task = createSchedulerTask(delay, boost::bind(&Game::playerUseItemEx, this,
-			playerId, fromPos, fromStackPos, fromSpriteId, toPos, toStackPos, toSpriteId, isHotkey));
+			playerId, fromPos, fromStackpos, fromSpriteId, toPos, toStackpos, toSpriteId, isHotkey));
 
 		player->setNextActionTask(task);
 		return false;
@@ -2375,10 +2373,10 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 
 	player->setNextActionTask(NULL);
 	player->resetIdleTime();
-	return g_actions->useItemEx(player, fromPos, toPos, toStackPos, item, isHotkey);
+	return g_actions->useItemEx(player, fromPos, toPos, toStackpos, item, isHotkey);
 }
 
-bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPos,
+bool Game::playerUseItem(uint32_t playerId, const Position& pos, int16_t stackpos,
 	uint8_t index, uint16_t spriteId, bool isHotkey)
 {
 	Player* player = getPlayerByID(playerId);
@@ -2388,7 +2386,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 	if(isHotkey && !g_config.getBool(ConfigManager::AIMBOT_HOTKEY_ENABLED))
 		return false;
 
-	Thing* thing = internalGetThing(player, pos, stackPos, spriteId, STACKPOS_USEITEM);
+	Thing* thing = internalGetThing(player, pos, stackpos, spriteId, STACKPOS_USEITEM);
 	if(!thing)
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
@@ -2414,7 +2412,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 					this, player->getID(), listDir)));
 
 				SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerUseItem, this,
-					playerId, pos, stackPos, index, spriteId, isHotkey));
+					playerId, pos, stackpos, index, spriteId, isHotkey));
 
 				player->setNextWalkActionTask(task);
 				return true;
@@ -2434,7 +2432,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 	{
 		uint32_t delay = player->getNextActionTime();
 		SchedulerTask* task = createSchedulerTask(delay, boost::bind(&Game::playerUseItem, this,
-			playerId, pos, stackPos, index, spriteId, isHotkey));
+			playerId, pos, stackpos, index, spriteId, isHotkey));
 
 		player->setNextActionTask(task);
 		return false;
@@ -2445,7 +2443,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 	return g_actions->useItem(player, pos, index, item);
 }
 
-bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, uint8_t fromStackPos,
+bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, int16_t fromStackpos,
 	uint32_t creatureId, uint16_t spriteId, bool isHotkey)
 {
 	Player* player = getPlayerByID(playerId);
@@ -2465,7 +2463,7 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, uin
 		return false;
 	}
 
-	Thing* thing = internalGetThing(player, fromPos, fromStackPos, spriteId, STACKPOS_USE);
+	Thing* thing = internalGetThing(player, fromPos, fromStackpos, spriteId, STACKPOS_USE);
 	if(!thing)
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
@@ -2491,7 +2489,7 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, uin
 					this, player->getID(), listDir)));
 
 				SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerUseBattleWindow, this,
-					playerId, fromPos, fromStackPos, creatureId, spriteId, isHotkey));
+					playerId, fromPos, fromStackpos, creatureId, spriteId, isHotkey));
 
 				player->setNextWalkActionTask(task);
 				return true;
@@ -2511,7 +2509,7 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, uin
 	{
 		uint32_t delay = player->getNextActionTime();
 		SchedulerTask* task = createSchedulerTask(delay, boost::bind(&Game::playerUseBattleWindow, this,
-			playerId, fromPos, fromStackPos, creatureId, spriteId, isHotkey));
+			playerId, fromPos, fromStackpos, creatureId, spriteId, isHotkey));
 
 		player->setNextActionTask(task);
 		return false;
@@ -2582,13 +2580,13 @@ bool Game::playerUpdateContainer(uint32_t playerId, uint8_t cid)
 	return true;
 }
 
-bool Game::playerRotateItem(uint32_t playerId, const Position& pos, uint8_t stackPos, const uint16_t spriteId)
+bool Game::playerRotateItem(uint32_t playerId, const Position& pos, int16_t stackpos, const uint16_t spriteId)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
 
-	Thing* thing = internalGetThing(player, pos, stackPos);
+	Thing* thing = internalGetThing(player, pos, stackpos);
 	if(!thing)
 		return false;
 
@@ -2609,7 +2607,7 @@ bool Game::playerRotateItem(uint32_t playerId, const Position& pos, uint8_t stac
 				this, player->getID(), listDir)));
 
 			SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerRotateItem, this,
-				playerId, pos, stackPos, spriteId));
+				playerId, pos, stackpos, spriteId));
 
 			player->setNextWalkActionTask(task);
 			return true;
@@ -2714,7 +2712,7 @@ bool Game::playerUpdateHouseWindow(uint32_t playerId, uint8_t listId, uint32_t w
 	return true;
 }
 
-bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, uint8_t stackPos,
+bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, int16_t stackpos,
 	uint32_t tradePlayerId, uint16_t spriteId)
 {
 	Player* player = getPlayerByID(playerId);
@@ -2736,7 +2734,7 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, uint8_t st
 		return false;
 	}
 
-	Item* tradeItem = dynamic_cast<Item*>(internalGetThing(player, pos, stackPos, spriteId, STACKPOS_USE));
+	Item* tradeItem = dynamic_cast<Item*>(internalGetThing(player, pos, stackpos, spriteId, STACKPOS_USE));
 	if(!tradeItem || tradeItem->getClientID() != spriteId || !tradeItem->isPickupable() || (tradeItem->isLoadedFromMap() &&
 		(tradeItem->getUniqueId() != 0 || (tradeItem->getActionId() != 0 && tradeItem->getContainer()))))
 	{
@@ -2765,7 +2763,7 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, uint8_t st
 				this, player->getID(), listDir)));
 
 			SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerRequestTrade, this,
-				playerId, pos, stackPos, tradePlayerId, spriteId));
+				playerId, pos, stackpos, tradePlayerId, spriteId));
 
 			player->setNextWalkActionTask(task);
 			return true;
@@ -3170,13 +3168,13 @@ bool Game::playerLookInShop(uint32_t playerId, uint16_t spriteId, uint8_t count)
 	return true;
 }
 
-bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteId, uint8_t stackPos)
+bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteId, uint8_t stackpos)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
 
-	Thing* thing = internalGetThing(player, pos, stackPos, spriteId, STACKPOS_LOOK);
+	Thing* thing = internalGetThing(player, pos, stackpos, spriteId, STACKPOS_LOOK);
 	if(!thing)
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
@@ -3206,7 +3204,7 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 	CreatureEventList lookEvents = player->getCreatureEvents(CREATURE_EVENT_LOOK);
 	for(CreatureEventList::iterator it = lookEvents.begin(); it != lookEvents.end(); ++it)
 	{
-		if(!(*it)->executeLook(player, thing, thingPos, stackPos, lookDistance))
+		if(!(*it)->executeLook(player, thing, thingPos, stackpos, lookDistance))
 			deny = true;
 	}
 
@@ -4008,25 +4006,25 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 			case COMBAT_ICEDAMAGE:
 			case COMBAT_DEATHDAMAGE:
 			{
-				hitEffect = NM_ME_BLOCKHIT;
+				hitEffect = (uint8_t)NM_ME_BLOCKHIT;
 				break;
 			}
 
 			case COMBAT_EARTHDAMAGE:
 			{
-				hitEffect = NM_ME_POISON_RINGS;
+				hitEffect = (uint8_t)NM_ME_POISON_RINGS;
 				break;
 			}
 
 			case COMBAT_HOLYDAMAGE:
 			{
-				hitEffect = NM_ME_HOLYDAMAGE;
+				hitEffect = (uint8_t)NM_ME_HOLYDAMAGE;
 				break;
 			}
 
 			default:
 			{
-				hitEffect = NM_ME_POFF;
+				hitEffect = (uint8_t)NM_ME_POFF;
 				break;
 			}
 		}

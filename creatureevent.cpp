@@ -710,7 +710,7 @@ uint32_t CreatureEvent::executeMailReceive(Player* player, Player* sender, Item*
 	}
 }
 
-uint32_t CreatureEvent::executeLook(Player* player, Thing* thing, const Position& position, uint8_t stackpos, int32_t lookDistance)
+uint32_t CreatureEvent::executeLook(Player* player, Thing* thing, const Position& position, int16_t stackpos, int32_t lookDistance)
 {
 	//onLook(cid, thing, position, lookDistance)
 	if(m_scriptInterface->reserveScriptEnv())

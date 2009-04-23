@@ -41,7 +41,7 @@ class Monster;
 class Npc;
 class CombatInfo;
 
-enum stackPosType_t
+enum stackposType_t
 {
 	STACKPOS_NORMAL,
 	STACKPOS_MOVE,
@@ -184,8 +184,8 @@ class Game
 
 		Cylinder* internalGetCylinder(Player* player, const Position& pos);
 		Thing* internalGetThing(Player* player, const Position& pos, int32_t index,
-			uint32_t spriteId = 0, stackPosType_t type = STACKPOS_NORMAL);
-		void internalGetPosition(Item* item, Position& pos, uint8_t& stackpos);
+			uint32_t spriteId = 0, stackposType_t type = STACKPOS_NORMAL);
+		void internalGetPosition(Item* item, Position& pos, int16_t& stackpos);
 
 		std::string getTradeErrorDescription(ReturnValue ret, Item* item);
 
@@ -193,7 +193,7 @@ class Game
 		  * Get a single tile of the map.
 		  * \returns A pointer to the tile
 		  */
-		Tile* getTile(uint16_t x, uint16_t y, uint8_t z) {return map->getTile(x, y, z);}
+		Tile* getTile(uint16_t x, uint16_t y, int16_t z) {return map->getTile(x, y, z);}
 		Tile* getTile(const Position& pos) {return map->getTile(pos);}
 
 		/**
@@ -415,12 +415,12 @@ class Game
 		bool playerReportBug(uint32_t playerId, std::string bug);
 		bool playerViolationWindow(uint32_t playerId, std::string targetName, uint8_t reason, ViolationAction_t action,
 			std::string comment, std::string statement, uint16_t channelId, bool ipBanishment);
-		bool playerMoveThing(uint32_t playerId, const Position& fromPos, uint16_t spriteId, uint8_t fromStackPos,
+		bool playerMoveThing(uint32_t playerId, const Position& fromPos, uint16_t spriteId, int16_t fromStackpos,
 			const Position& toPos, uint8_t count);
 		bool playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 			const Position& movingCreatureOrigPos, const Position& toPos);
 		bool playerMoveItem(uint32_t playerId, const Position& fromPos,
-			uint16_t spriteId, uint8_t fromStackPos, const Position& toPos, uint8_t count);
+			uint16_t spriteId, int16_t fromStackpos, const Position& toPos, uint8_t count);
 		bool playerMove(uint32_t playerId, Direction direction);
 		bool playerCreatePrivateChannel(uint32_t playerId);
 		bool playerChannelInvite(uint32_t playerId, const std::string& name);
@@ -436,20 +436,20 @@ class Game
 		bool playerReceivePing(uint32_t playerId);
 		bool playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir);
 		bool playerStopAutoWalk(uint32_t playerId);
-		bool playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t fromStackPos,
-			uint16_t fromSpriteId, const Position& toPos, uint8_t toStackPos, uint16_t toSpriteId, bool isHotkey);
-		bool playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPos,
+		bool playerUseItemEx(uint32_t playerId, const Position& fromPos, int16_t fromStackpos,
+			uint16_t fromSpriteId, const Position& toPos, int16_t toStackpos, uint16_t toSpriteId, bool isHotkey);
+		bool playerUseItem(uint32_t playerId, const Position& pos, int16_t stackpos,
 			uint8_t index, uint16_t spriteId, bool isHotkey);
 		bool playerUseBattleWindow(uint32_t playerId, const Position& fromPos,
-			uint8_t fromStackPos, uint32_t creatureId, uint16_t spriteId, bool isHotkey);
+			int16_t fromStackpos, uint32_t creatureId, uint16_t spriteId, bool isHotkey);
 		bool playerCloseContainer(uint32_t playerId, uint8_t cid);
 		bool playerMoveUpContainer(uint32_t playerId, uint8_t cid);
 		bool playerUpdateContainer(uint32_t playerId, uint8_t cid);
 		bool playerUpdateTile(uint32_t playerId, const Position& pos);
-		bool playerRotateItem(uint32_t playerId, const Position& pos, uint8_t stackPos, const uint16_t spriteId);
+		bool playerRotateItem(uint32_t playerId, const Position& pos, int16_t stackpos, const uint16_t spriteId);
 		bool playerWriteItem(uint32_t playerId, uint32_t windowTextId, const std::string& text);
 		bool playerUpdateHouseWindow(uint32_t playerId, uint8_t listId, uint32_t windowTextId, const std::string& text);
-		bool playerRequestTrade(uint32_t playerId, const Position& pos, uint8_t stackPos,
+		bool playerRequestTrade(uint32_t playerId, const Position& pos, int16_t stackpos,
 			uint32_t tradePlayerId, uint16_t spriteId);
 		bool playerAcceptTrade(uint32_t playerId);
 		bool playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int index);
@@ -463,7 +463,7 @@ class Game
 		bool playerFollowCreature(uint32_t playerId, uint32_t creatureId);
 		bool playerCancelAttackAndFollow(uint32_t playerId);
 		bool playerSetFightModes(uint32_t playerId, fightMode_t fightMode, chaseMode_t chaseMode, secureMode_t secureMode);
-		bool playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteId, uint8_t stackPos);
+		bool playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteId, int16_t stackpos);
 		bool playerRequestAddVip(uint32_t playerId, const std::string& name);
 		bool playerRequestRemoveVip(uint32_t playerId, uint32_t guid);
 		bool playerTurn(uint32_t playerId, Direction dir);
