@@ -24,7 +24,7 @@
 #include "enums.h"
 
 #include "tile.h"
-#include "chat.h"
+#include "player.h"
 
 enum CreatureEventType_t
 {
@@ -85,6 +85,8 @@ class CreatureEvents : public BaseEvents
 		typedef std::map<std::string, CreatureEvent*> CreatureEventList;
 		CreatureEventList m_creatureEvents;
 };
+
+typedef std::map<uint32_t, Player*> UsersMap;
 
 class CreatureEvent : public Event
 {

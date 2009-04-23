@@ -148,7 +148,7 @@ bool ChatChannel::removeUser(Player* player)
 
 bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& text, uint32_t _time /*= 0*/)
 {
-	UsersMap::iterator it = m_users.find(fromPlayer->getID());
+	UsersMap::iterator it = m_users.find(player->getID());
 	if(it == m_users.end() || !m_enabled || player->getAccess() < m_access)
 		return false;
 
@@ -445,8 +445,8 @@ void Chat::removeUserFromAllChannels(Player* player)
 	for(PrivateChannelMap::iterator it = m_privateChannels.begin(); it != m_privateChannels.end(); ++it)
 	{
 		it->second->removeUser(player);
-		if(player && channel->getOwner() == player->getGUID())
-			deleteChannel(player, channel->getId());
+		if(player && it->second->getOwner() == player->getGUID())
+			deleteChannel(player, it->second->getId());
 	}
 }
 
