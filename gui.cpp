@@ -20,6 +20,7 @@
 
 #if defined(WIN32) && not defined(__CONSOLE__)
 #include "gui.h"
+#include <tchar.h>
 
 void GUI::initTrayMenu()
 {
@@ -35,7 +36,7 @@ void GUI::initFont()
 {
 	LOGFONT lFont;
 	memset(&lFont, 0, sizeof(lFont));
-	lstrcpy(lFont.lfFaceName, _T("Arial"));
+	lstrcpy(lFont.lfFaceName, _T("Tahoma"));
 	lFont.lfHeight = 14;
 	lFont.lfWeight = FW_NORMAL;
 	lFont.lfItalic = FALSE;

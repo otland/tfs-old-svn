@@ -21,9 +21,8 @@
 #ifndef __CONSOLE__
 #ifndef __INPUTBOX_H__
 #define __INPUTBOX_H__
-#include <stdlib.h>
+#include "otsystem.h"
 #include <tchar.h>
-#include <windows.h>
 
 #define INPUTBOX_WIDTH 400
 #define INPUTBOX_HEIGHT 125
