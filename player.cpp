@@ -3103,7 +3103,7 @@ void Player::postRemoveNotification(Creature* actor, Thing* thing, int32_t index
 					bool isOwner = false;
 					for(DepotMap::iterator it = depots.begin(); it != depots.end(); ++it)
 					{
-						if(it->second != depot)
+						if(it->second.first != depot)
 							continue;
 
 						isOwner = true;
