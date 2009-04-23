@@ -388,7 +388,7 @@ ServiceManager* services)
 	#endif
 
 	std::cout << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl;
-	std::cout << "A server developed by Elf, Talaturen, lithium, Kiper, Kornholijo, KaczooH, slawkens & Macroman." << std::endl;
+	std::cout << "A server developed by Elf, Talaturen, Lithium, Kiper, Kornholijo, KaczooH, slawkens & Macroman." << std::endl;
 	std::cout << "Visit our forum for updates, support and resources: http://otland.net." << std::endl;
 	std::cout << std::endl;
 
@@ -916,7 +916,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						GUI::getInstance()->m_logText = "";
 						GUI::getInstance()->m_lineCount = 0;
 						std::cout << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl;
-						std::cout << "A server developed by Elf, Talaturen, lithium, Kiper, Kornholijo, KaczooH, slawkens & Macroman." << std::endl;
+						std::cout << "A server developed by Elf, Talaturen, Lithium, Kiper, Kornholijo, KaczooH, slawkens & Macroman." << std::endl;
 						std::cout << "Visit our forum for updates, support and resources: http://otland.net." << std::endl;
 						std::cout << std::endl;
 					}
