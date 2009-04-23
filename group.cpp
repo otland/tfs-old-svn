@@ -123,7 +123,7 @@ Group* Groups::getGroup(uint32_t groupId)
 		return it->second;
 
 	std::cout << "[Warning - Groups::getGroup] Group " << groupId << " not found." << std::endl;
-	return NULL;
+	return defGroup;
 }
 
 int32_t Groups::getGroupId(const std::string& name)
