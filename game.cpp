@@ -503,104 +503,84 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 {
 	if(pos.x != 0xFFFF)
 	{
-		if(Tile* tile = getTile(pos.x, pos.y, pos.z))
+		Tile* tile = getTile(pos.x, pos.y, pos.z);
+		if(!tile)
+			return NULL;
+
+		/*look at*/
+		if(type == STACKPOS_LOOK)
 		{
-			/*look at*/
-			if(type == STACKPOS_LOOK)
-			{
-				Creature* c;
-				if(tile->getTopThing() && (c = tile->getTopThing()->getCreature()))
-				{
-					if(c && c->isInGhostMode() && !player->canSeeGhost(c))
-					{
-						CreatureVector v;
-						CreatureVector::iterator it;
-
-						Creature* ghostCreature = NULL;
-						for(it = tile->creatures.begin(); it != tile->creatures.end(); ++it)
-						{
-							if(!(*it)->isInGhostMode() || player->canSeeGhost((*it)))
-							{
-								ghostCreature = (*it);
-								break;
-							}
-						}
-
-						if(ghostCreature)
-							return ghostCreature;
-
-						if(tile->getTopDownItem())
-							return tile->getTopDownItem();
-
-						if(tile->getTopTopItem())
-							return tile->getTopTopItem();
-
-						return tile->ground;
-					}
-
-					return c;
-				}
-
+			Creature* c;
+			if(!tile->getTopThing() || !(c = tile->getTopThing()->getCreature()))
 				return tile->getTopThing();
-			}
 
-			Thing* thing = NULL;
-			switch(type)
+			if(!c->isInGhostMode() || player->canSeeGhost(c))
+				return c;
+
+			for(CreatureVector::iterator it = tile->creatures.begin(); it != tile->creatures.end(); ++it)
 			{
-				case STACKPOS_MOVE: /*for move operations*/
-				{
-					Item* item = tile->getTopDownItem();
-					if(item && !item->isNotMoveable())
-						thing = item;
-					else
-						thing = tile->getTopCreature();
-					break;
-				}
-
-				case STACKPOS_USE: /*use item*/
-					thing = tile->getTopDownItem();
-					break;
-
-				case STACKPOS_USEITEM:
-				{
-					Item* item = tile->getItemByTopOrder(2); //First check items with topOrder 2 (ladders, signs, splashes)
-					if(!item || !g_actions->hasAction(item))
-					{
-						thing = tile->getTopDownItem(); //then down items
-						if(!thing)
-							thing = tile->getTopTopItem(); //then last we check items with topOrder 3 (doors etc)
-					}
-					else
-						thing = item;
-
-					break;
-				}
-
-				default:
-					thing = tile->__getThing(index);
-					break;
+				if(!(*it)->isInGhostMode() || player->canSeeGhost((*it)))
+					return (*it);
 			}
 
-			if(player)
-			{
-				//do extra checks here if the thing is accessable
-				if(thing && thing->getItem())
-				{
-					if(tile->hasProperty(ISVERTICAL))
-					{
-						if(player->getPosition().x + 1 == tile->getPosition().x)
-							thing = NULL;
-					}
-					else if(tile->hasProperty(ISHORIZONTAL))
-					{
-						if(player->getPosition().y + 1 == tile->getPosition().y)
-							thing = NULL;
-					}
-				}
-			}
+			if(tile->getTopDownItem())
+				return tile->getTopDownItem();
 
-			return thing;
+			if(tile->getTopTopItem())
+				return tile->getTopTopItem();
+
+			return tile->ground;
 		}
+
+		Thing* thing = NULL;
+		switch(type)
+		{
+			case STACKPOS_MOVE: /*for move operations*/
+			{
+				Item* item = tile->getTopDownItem();
+				if(item && !item->isNotMoveable())
+					thing = item;
+				else
+					thing = tile->getTopCreature();
+
+				break;
+			}
+
+			case STACKPOS_USE: /*use item*/
+				thing = tile->getTopDownItem();
+				break;
+
+			case STACKPOS_USEITEM:
+			{
+				Item* item = tile->getItemByTopOrder(2);
+				if(!item || !g_actions->hasAction(item))
+				{
+					if(!(thing = tile->getTopDownItem()))
+						thing = tile->getTopTopItem();
+				}
+					else
+						thing = item;
+
+					break;
+			}
+
+			default:
+				thing = tile->__getThing(index);
+				break;
+		}
+
+		if(player && thing && thing->getItem())
+		{
+			if(tile->hasProperty(ISVERTICAL))
+			{
+				if(player->getPosition().x + 1 == tile->getPosition().x)
+					thing = NULL;
+			}
+			else if(tile->hasProperty(ISHORIZONTAL) && player->getPosition().y + 1 == tile->getPosition().y)
+				thing = NULL;
+		}
+
+		return thing;
 	}
 	else if(pos.y & 0x40)
 	{
