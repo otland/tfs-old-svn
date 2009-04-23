@@ -10151,6 +10151,7 @@ int32_t LuaScriptInterface::luaDatabaseStringComparisonOperator(lua_State *L)
 		lua_pushboolean(L, LUA_ERROR); \
 		return 1; \
 	}
+
 int32_t LuaScriptInterface::luaResultGetDataInt(lua_State *L)
 {
 	//result.getDataInt(res, s)
@@ -10206,7 +10207,7 @@ int32_t LuaScriptInterface::luaResultGetDataStream(lua_State *L)
 	uint64_t length = 0;
 	lua_pushstring(L, res->getDataStream(s, length));
 	lua_pushnumber(L, length);
-	return 2;
+	return 1;
 }
 
 int32_t LuaScriptInterface::luaResultNext(lua_State *L)
