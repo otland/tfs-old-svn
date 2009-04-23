@@ -3168,7 +3168,7 @@ bool Game::playerLookInShop(uint32_t playerId, uint16_t spriteId, uint8_t count)
 	return true;
 }
 
-bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteId, uint8_t stackpos)
+bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteId, int16_t stackpos)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
