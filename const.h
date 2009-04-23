@@ -256,7 +256,7 @@ enum FluidTypes_t
 	FLUID_SWAMP		= FLUID_GREEN + 24,
 };
 
-const int32_t reverseFluidMap[] =
+const uint8_t reverseFluidMap[] =
 {
 	FLUID_EMPTY,
 	FLUID_WATER,
@@ -284,7 +284,7 @@ enum ClientFluidTypes_t
 	CLIENTFLUID_WHITE	= 0x09
 };
 
-const int32_t fluidMap[] =
+const uint8_t fluidMap[] =
 {
 	CLIENTFLUID_EMPTY,
 	CLIENTFLUID_BLUE,

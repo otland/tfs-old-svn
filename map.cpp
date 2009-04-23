@@ -1232,7 +1232,7 @@ QTreeLeafNode::~QTreeLeafNode()
 		delete m_array[i];
 }
 
-Floor* QTreeLeafNode::createFloor(uint32_t z)
+Floor* QTreeLeafNode::createFloor(uint8_t z)
 {
 	if(!m_array[z])
 		m_array[z] = new Floor();

@@ -216,7 +216,7 @@ class ItemAttributes
 
 			// advanced item modifiers
 			ATTR_ITEM_ARTICLE = 1 << 23,
-			ATTR_ITEM_ATTACKSPEED = 1 << 24,
+			ATTR_ITEM_ATTACKSPEED = 1 << 24,z
 		};
 
 		bool hasAttribute(itemAttrTypes type) const;

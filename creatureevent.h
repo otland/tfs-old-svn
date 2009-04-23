@@ -22,7 +22,9 @@
 #define __OTSERV_CREATUREEVENT_H__
 #include "baseevents.h"
 #include "enums.h"
+
 #include "tile.h"
+#include "chat.h"
 
 enum CreatureEventType_t
 {
@@ -84,8 +86,6 @@ class CreatureEvents : public BaseEvents
 		CreatureEventList m_creatureEvents;
 };
 
-typedef std::list<uint32_t> UsersList;
-
 class CreatureEvent : public Event
 {
 	public:
@@ -104,8 +104,8 @@ class CreatureEvent : public Event
 		//scripting
 		uint32_t executeLogin(Player* player);
 		uint32_t executeLogout(Player* player);
-		uint32_t executeChannelJoin(Player* player, uint16_t channelId, UsersList usersList);
-		uint32_t executeChannelLeave(Player* player, uint16_t channelId, UsersList usersList);
+		uint32_t executeChannelJoin(Player* player, uint16_t channelId, UsersMap usersMap);
+		uint32_t executeChannelLeave(Player* player, uint16_t channelId, UsersMap usersMap);
 		uint32_t executeAdvance(Player* player, skills_t skill, uint32_t oldLevel, uint32_t newLevel);
 		uint32_t executeLook(Player* player, Thing* thing, const Position& position, uint8_t stackpos, int32_t lookDistance);
 		uint32_t executeMailSend(Player* player, Player* receiver, Item* item, bool openBox);

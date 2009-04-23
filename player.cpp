@@ -3092,9 +3092,30 @@ void Player::postRemoveNotification(Creature* actor, Thing* thing, int32_t index
 	{
 		if(const Container* container = item->getContainer())
 		{
-			if(!container->isRemoved() && (container->getTopParent() == this || (dynamic_cast<const Container*>(container->getTopParent())))
-				&& Position::areInRange<1,1,0>(getPosition(), container->getPosition()))
+			if(container->isRemoved() || !Position::areInRange<1,1,0>(getPosition(), container->getPosition()))
+				autoCloseContainers(container);
+			else if(container->getTopParent() == this)
 				onSendContainer(container);
+			else if(const Container* topContainer = dynamic_cast<const Container*>(container->getTopParent()))
+			{
+				if(const Depot* depot = dynamic_cast<const Depot*>(topContainer))
+				{
+					bool isOwner = false;
+					for(DepotMap::iterator it = depots.begin(); it != depots.end(); ++it)
+					{
+						if(it->second != depot)
+							continue;
+
+						isOwner = true;
+						onSendContainer(container);
+					}
+
+					if(!isOwner)
+						autoCloseContainers(container);
+				}
+				else
+					onSendContainer(container);
+			}
 			else
 				autoCloseContainers(container);
 		}

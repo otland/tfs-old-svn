@@ -34,7 +34,7 @@ class Depot : public Container
 		//serialization
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
 
-		uint32_t getDepotId() {return depotId;}
+		uint32_t getDepotId() const {return depotId;}
 		void setMaxDepotLimit(uint32_t maxitems) {maxDepotLimit = maxitems;}
 		void setDepotId(uint32_t id) {depotId = id;}
 
@@ -52,8 +52,7 @@ class Depot : public Container
 		virtual bool canRemove() const {return false;}
 
 	private:
-		uint32_t maxDepotLimit;
-		uint32_t depotId;
+		uint32_t maxDepotLimit, depotId;
 };
 
 #endif

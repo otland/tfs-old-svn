@@ -2188,12 +2188,9 @@ bool Game::playerProcessRuleViolation(uint32_t playerId, const std::string& name
 	rvr.gamemaster = player;
 	if(ChatChannel* channel = g_chat.getChannelById(CHANNEL_RVR))
 	{
-		UsersList tmpList = channel->getUsers();
-		for(AutoList<Player>::listiterator pt = Player::listPlayer.list.begin(); pt != Player::listPlayer.list.end(); ++pt)
-		{
-			if(std::find(tmpList.begin(), tmpList.end(), (*pt).second->getID()) != tmpList.end())
-				(*pt).second->sendRemoveReport(reporter->getName());
-		}
+		UsersMap tmpMap = channel->getUsers();
+		for(UsersMap::iterator tit = tmpMap.begin(); tit != tmpMap.end(); ++tit)
+			tit->second->sendRemoveReport(reporter->getName());
 	}
 
 	return true;
@@ -4552,12 +4549,9 @@ bool Game::cancelRuleViolation(Player* player)
 		gamemaster->sendRuleViolationCancel(player->getName());
 	else if(ChatChannel* channel = g_chat.getChannelById(CHANNEL_RVR))
 	{
-		UsersList tmpList = channel->getUsers();
-		for(AutoList<Player>::listiterator pt = Player::listPlayer.list.begin(); pt != Player::listPlayer.list.end(); ++pt)
-		{
-			if(std::find(tmpList.begin(), tmpList.end(), (*pt).second->getID()) != tmpList.end())
-				(*pt).second->sendRemoveReport(player->getName());
-		}
+		UsersMap tmpMap = channel->getUsers();
+		for(UsersMap::iterator tit = tmpMap.begin(); tit != tmpMap.end(); ++tit)
+			tit->second->sendRemoveReport(player->getName());
 	}
 
 	//Now erase it
@@ -4575,12 +4569,9 @@ bool Game::closeRuleViolation(Player* player)
 	player->sendLockRuleViolation();
 	if(ChatChannel* channel = g_chat.getChannelById(CHANNEL_RVR))
 	{
-		UsersList tmpList = channel->getUsers();
-		for(AutoList<Player>::listiterator pt = Player::listPlayer.list.begin(); pt != Player::listPlayer.list.end(); ++pt)
-		{
-			if(std::find(tmpList.begin(), tmpList.end(), (*pt).second->getID()) != tmpList.end())
-				(*pt).second->sendRemoveReport(player->getName());
-		}
+		UsersMap tmpMap = channel->getUsers();
+		for(UsersMap::iterator tit = tmpMap.begin(); tit != tmpMap.end(); ++tit)
+			tit->second->sendRemoveReport(player->getName());
 	}
 
 	return true;

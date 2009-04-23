@@ -44,14 +44,14 @@ void MonsterType::reset()
 	pushable = isAttackable = isHostile = true;
 
 	outfit.lookHead = outfit.lookBody = outfit.lookLegs = outfit.lookFeet = outfit.lookType = outfit.lookTypeEx = outfit.lookAddons = 0;
-	experience = defense = armor = lookcorpse = conditionImmunities = damageImmunities = 0;
+	experience = defense = armor = lookCorpse = conditionImmunities = damageImmunities = 0;
 	maxSummons = runAwayHealth = manaCost = lightLevel = lightColor = 0;
 	yellSpeedTicks = yellChance = changeTargetSpeed = changeTargetChance = 0;
 
 	targetDistance = 1;
 	staticAttackChance = 95;
-	health = health_max = 100;
-	base_speed = 200;
+	health = healthMax = 100;
+	baseSpeed = 200;
 
 	race = RACE_BLOOD;
 	skull = SKULL_NONE;
@@ -788,7 +788,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 		mType->experience = intValue;
 
 	if(readXMLInteger(root, "speed", intValue))
-		mType->base_speed = intValue;
+		mType->baseSpeed = intValue;
 
 	if(readXMLInteger(root, "manacost", intValue))
 		mType->manaCost = intValue;
@@ -819,7 +819,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 			}
 
 			if(readXMLInteger(p, "max", intValue))
-				mType->health_max = intValue;
+				mType->healthMax = intValue;
 			else
 			{
 				SHOW_XML_ERROR("Missing health.max");
@@ -948,7 +948,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 				SHOW_XML_WARNING("Missing look type/typeex");
 
 			if(readXMLInteger(p, "corpse", intValue))
-				mType->lookcorpse = intValue;
+				mType->lookCorpse = intValue;
 		}
 		else if(!xmlStrcmp(p->name, (const xmlChar*)"attacks"))
 		{

@@ -167,8 +167,9 @@ class FileLoader
 		bool m_use_cache;
 		struct _cache
 		{
-			uint32_t loaded, base, size;
+			uint32_t loaded, base;
 			uint8_t* data;
+			size_t size;
 		};
 
 		#define CACHE_BLOCKS 3

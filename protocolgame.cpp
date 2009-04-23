@@ -1320,22 +1320,22 @@ void ProtocolGame::parseUseItemEx(NetworkMessage& msg)
 {
 	Position fromPos = msg.GetPosition();
 	uint16_t fromSpriteId = msg.GetSpriteId();
-	uint8_t fromStackPos = msg.GetByte();
+	uint8_t fromStackpos = msg.GetByte();
 	Position toPos = msg.GetPosition();
 	uint16_t toSpriteId = msg.GetU16();
-	uint8_t toStackPos = msg.GetByte();
+	uint8_t toStackpos = msg.GetByte();
 	bool isHotkey = (fromPos.x == 0xFFFF && fromPos.y == 0 && fromPos.z == 0);
-	addGameTask(&Game::playerUseItemEx, player->getID(), fromPos, fromStackPos, fromSpriteId, toPos, toStackPos, toSpriteId, isHotkey);
+	addGameTask(&Game::playerUseItemEx, player->getID(), fromPos, fromStackpos, fromSpriteId, toPos, toStackpos, toSpriteId, isHotkey);
 }
 
 void ProtocolGame::parseBattleWindow(NetworkMessage& msg)
 {
 	Position fromPos = msg.GetPosition();
 	uint16_t spriteId = msg.GetSpriteId();
-	uint8_t fromStackPos = msg.GetByte();
+	uint8_t fromStackpos = msg.GetByte();
 	uint32_t creatureId = msg.GetU32();
 	bool isHotkey = (fromPos.x == 0xFFFF && fromPos.y == 0 && fromPos.z == 0);
-	addGameTask(&Game::playerUseBattleWindow, player->getID(), fromPos, fromStackPos, creatureId, spriteId, isHotkey);
+	addGameTask(&Game::playerUseBattleWindow, player->getID(), fromPos, fromStackpos, creatureId, spriteId, isHotkey);
 }
 
 void ProtocolGame::parseCloseContainer(NetworkMessage& msg)
@@ -2035,9 +2035,9 @@ void ProtocolGame::sendCloseContainer(uint32_t cid)
 	}
 }
 
-void ProtocolGame::sendCreatureTurn(const Creature* creature, uint8_t stackPos)
+void ProtocolGame::sendCreatureTurn(const Creature* creature, uint8_t stackpos)
 {
-	if(stackPos >= 10 || !canSee(creature))
+	if(stackpos >= 10 || !canSee(creature))
 		return;
 
 
@@ -2047,7 +2047,7 @@ void ProtocolGame::sendCreatureTurn(const Creature* creature, uint8_t stackPos)
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0x6B);
 		msg->AddPosition(creature->getPosition());
-		msg->AddByte(stackPos);
+		msg->AddByte(stackpos);
 		msg->AddU16(0x63); /*99*/
 		msg->AddU32(creature->getID());
 		msg->AddByte(creature->getDirection());
@@ -2404,7 +2404,7 @@ void ProtocolGame::sendRemoveCreature(const Creature* creature, const Position& 
 }
 
 void ProtocolGame::sendMoveCreature(const Creature* creature, const Tile* newTile, const Position& newPos,
-	const Tile* oldTile, const Position& oldPos, uint32_t oldStackPos, bool teleport)
+	const Tile* oldTile, const Position& oldPos, uint32_t oldStackpos, bool teleport)
 {
 	if(creature == player)
 	{
@@ -2412,27 +2412,27 @@ void ProtocolGame::sendMoveCreature(const Creature* creature, const Tile* newTil
 		if(msg)
 		{
 			TRACK_MESSAGE(msg);
-			if(teleport || oldStackPos >= 10)
+			if(teleport || oldStackpos >= 10)
 			{
-				RemoveTileItem(msg, oldPos, oldStackPos);
+				RemoveTileItem(msg, oldPos, oldStackpos);
 				AddMapDescription(msg, newPos);
 			}
 			else
 			{
 				if(oldPos.z == 7 && newPos.z >= 8)
-					RemoveTileItem(msg, oldPos, oldStackPos);
+					RemoveTileItem(msg, oldPos, oldStackpos);
 				else
 				{
 					msg->AddByte(0x6D);
 					msg->AddPosition(oldPos);
-					msg->AddByte(oldStackPos);
+					msg->AddByte(oldStackpos);
 					msg->AddPosition(newPos);
 				}
 
 				if(newPos.z > oldPos.z)
-					MoveDownCreature(msg, creature, newPos, oldPos, oldStackPos);
+					MoveDownCreature(msg, creature, newPos, oldPos, oldStackpos);
 				else if(newPos.z < oldPos.z)
-					MoveUpCreature(msg, creature, newPos, oldPos, oldStackPos);
+					MoveUpCreature(msg, creature, newPos, oldPos, oldStackpos);
 
 				if(oldPos.y > newPos.y) // north, for old x
 				{
@@ -2460,9 +2460,9 @@ void ProtocolGame::sendMoveCreature(const Creature* creature, const Tile* newTil
 	}
 	else if(canSee(oldPos) && canSee(creature->getPosition()))
 	{
-		if(teleport || (oldPos.z == 7 && newPos.z >= 8) || oldStackPos >= 10)
+		if(teleport || (oldPos.z == 7 && newPos.z >= 8) || oldStackpos >= 10)
 		{
-			sendRemoveCreature(creature, oldPos, oldStackPos, false);
+			sendRemoveCreature(creature, oldPos, oldStackpos, false);
 			sendAddCreature(creature, false);
 		}
 		else
@@ -2473,13 +2473,13 @@ void ProtocolGame::sendMoveCreature(const Creature* creature, const Tile* newTil
 				TRACK_MESSAGE(msg);
 				msg->AddByte(0x6D);
 				msg->AddPosition(oldPos);
-				msg->AddByte(oldStackPos);
+				msg->AddByte(oldStackpos);
 				msg->AddPosition(creature->getPosition());
 			}
 		}
 	}
 	else if(canSee(oldPos))
-		sendRemoveCreature(creature, oldPos, oldStackPos, false);
+		sendRemoveCreature(creature, oldPos, oldStackpos, false);
 	else if(canSee(creature->getPosition()))
 		sendAddCreature(creature, false);
 }
@@ -3022,7 +3022,7 @@ void ProtocolGame::RemoveTileItem(NetworkMessage_ptr msg, const Position& pos, u
 }
 
 void ProtocolGame::MoveUpCreature(NetworkMessage_ptr msg, const Creature* creature,
-	const Position& newPos, const Position& oldPos, uint32_t oldStackPos)
+	const Position& newPos, const Position& oldPos, uint32_t oldStackpos)
 {
 	if(creature == player)
 	{
@@ -3070,7 +3070,7 @@ void ProtocolGame::MoveUpCreature(NetworkMessage_ptr msg, const Creature* creatu
 }
 
 void ProtocolGame::MoveDownCreature(NetworkMessage_ptr msg, const Creature* creature,
-	const Position& newPos, const Position& oldPos, uint32_t oldStackPos)
+	const Position& newPos, const Position& oldPos, uint32_t oldStackpos)
 {
 	if(creature == player)
 	{

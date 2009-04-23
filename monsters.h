@@ -93,7 +93,7 @@ class MonsterType
 		Skulls_t skull;
 		PartyShields_t partyShield;
 
-		int32_t defense, armor, health, health_max, base_speed, lookcorpse, maxSummons, targetDistance, runAwayHealth,
+		int32_t defense, armor, health, healthMax, baseSpeed, lookCorpse, maxSummons, targetDistance, runAwayHealth,
 			conditionImmunities, damageImmunities, lightLevel, lightColor, changeTargetSpeed, changeTargetChance;
 		uint32_t yellChance, yellSpeedTicks, staticAttackChance, manaCost;
 		uint64_t experience;

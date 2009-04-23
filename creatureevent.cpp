@@ -18,10 +18,9 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-
 #include "creatureevent.h"
+
 #include "tools.h"
-#include "player.h"
 #ifdef __DEBUG_LUASCRIPTS__
 #include <sstream>
 #endif
@@ -404,7 +403,7 @@ uint32_t CreatureEvent::executeLogout(Player* player)
 	}
 }
 
-uint32_t CreatureEvent::executeChannelJoin(Player* player, uint16_t channelId, UsersList usersList)
+uint32_t CreatureEvent::executeChannelJoin(Player* player, uint16_t channelId, UsersMap usersMap)
 {
 	//onJoinChannel(cid, channel, users)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -418,8 +417,8 @@ uint32_t CreatureEvent::executeChannelJoin(Player* player, uint16_t channelId, U
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
 			scriptstream << "channel = " << channelId << std::endl;
 			scriptstream << "users = {}" << std::endl;
-			for(UsersList::iterator it = usersList.begin(); it != usersList.end(); ++it)
-				scriptstream << "table.insert(users, " << (*it) << ")" << std::endl;
+			for(UsersMap::iterator it = usersMap.begin(); it != usersMap.end(); ++it)
+				scriptstream << "table.insert(users, " << env->addThing(it->second) << ")" << std::endl;
 
 			scriptstream << m_scriptData;
 			int32_t result = LUA_NO_ERROR;
@@ -448,13 +447,13 @@ uint32_t CreatureEvent::executeChannelJoin(Player* player, uint16_t channelId, U
 
 			lua_pushnumber(L, env->addThing(player));
 			lua_pushnumber(L, channelId);
-			UsersList::iterator it = usersList.begin();
+			UsersMap::iterator it = usersMap.begin();
 
 			lua_newtable(L);
-			for(int32_t i = 1; it != usersList.end(); ++it, ++i)
+			for(int32_t i = 1; it != usersMap.end(); ++it, ++i)
 			{
 				lua_pushnumber(L, i);
-				lua_pushnumber(L, (*it));
+				lua_pushnumber(L, env->addThing(it->second));
 				lua_settable(L, -3);
 			}
 
@@ -470,7 +469,7 @@ uint32_t CreatureEvent::executeChannelJoin(Player* player, uint16_t channelId, U
 	}
 }
 
-uint32_t CreatureEvent::executeChannelLeave(Player* player, uint16_t channelId, UsersList usersList)
+uint32_t CreatureEvent::executeChannelLeave(Player* player, uint16_t channelId, UsersMap usersMap)
 {
 	//onLeaveChannel(cid, channel, users)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -484,8 +483,8 @@ uint32_t CreatureEvent::executeChannelLeave(Player* player, uint16_t channelId, 
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
 			scriptstream << "channel = " << channelId << std::endl;
 			scriptstream << "users = {}" << std::endl;
-			for(UsersList::iterator it = usersList.begin(); it != usersList.end(); ++it)
-				scriptstream << "table.insert(users, " << (*it) << ")" << std::endl;
+			for(UsersMap::iterator it = usersMap.begin(); it != usersMap.end(); ++it)
+				scriptstream << "table.insert(users, " << env->addThing(it->second) << ")" << std::endl;
 
 			scriptstream << m_scriptData;
 			int32_t result = LUA_NO_ERROR;
@@ -514,13 +513,13 @@ uint32_t CreatureEvent::executeChannelLeave(Player* player, uint16_t channelId, 
 
 			lua_pushnumber(L, env->addThing(player));
 			lua_pushnumber(L, channelId);
-			UsersList::iterator it = usersList.begin();
+			UsersMap::iterator it = usersMap.begin();
 
 			lua_newtable(L);
-			for(int32_t i = 1; it != usersList.end(); ++it, ++i)
+			for(int32_t i = 1; it != usersMap.end(); ++it, ++i)
 			{
 				lua_pushnumber(L, i);
-				lua_pushnumber(L, (*it));
+				lua_pushnumber(L, env->addThing(it->second));
 				lua_settable(L, -3);
 			}
 

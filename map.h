@@ -126,8 +126,8 @@ class QTreeLeafNode : public QTreeNode
 		QTreeLeafNode();
 		virtual ~QTreeLeafNode();
 
-		Floor* createFloor(uint32_t z);
-		Floor* getFloor(uint32_t z){return m_array[z];}
+		Floor* createFloor(uint8_t z);
+		Floor* getFloor(uint8_t z){return m_array[z];}
 
 		QTreeLeafNode* stepSouth(){return m_leafS;}
 		QTreeLeafNode* stepEast(){return m_leafE;}

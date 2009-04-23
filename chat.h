@@ -28,7 +28,8 @@
 
 class Player;
 
-typedef std::list<uint32_t> UsersList;
+typedef std::map<uint32_t, Player*> UsersMap;
+typedef std::list<uint32_t> InviteList;
 
 class ChatChannel
 {
@@ -39,7 +40,7 @@ class ChatChannel
 		const uint16_t getId() {return m_id;}
 		const std::string& getName() {return m_name;}
 
-		const UsersList& getUsers() {return m_users;}
+		const UsersMap& getUsers() {return m_users;}
 		virtual const uint32_t getOwner() {return 0;}
 
 		uint16_t getAccess() const {return m_access;}
@@ -57,7 +58,7 @@ class ChatChannel
 		bool m_logged, m_enabled;
 		uint16_t m_id, m_access;
 
-		UsersList m_users;
+		UsersMap m_users;
 		boost::shared_ptr<std::ofstream> m_file;
 };
 
@@ -81,7 +82,7 @@ class PrivateChatChannel : public ChatChannel
 		void closeChannel();
 
 	protected:
-		UsersList m_invites;
+		InviteList m_invites;
 		uint32_t m_owner;
 };
 
@@ -114,8 +115,6 @@ class Chat
 		PrivateChatChannel* getPrivateChannel(Player* player);
 
 	private:
-		ChatChannel* dummyPrivate;
-
 		void clear();
 
 		typedef std::map<uint16_t, ChatChannel*> NormalChannelMap;
@@ -130,6 +129,7 @@ class Chat
 		typedef std::map<uint32_t, ChatChannel*> GuildChannelMap;
 		GuildChannelMap m_guildChannels;
 
+		ChatChannel* dummyPrivate;
 		std::string partyName;
 		bool partyLogged;
 };
