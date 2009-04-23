@@ -244,17 +244,18 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 		propStream.init(attr, attrSize); 
 		while(propStream.size())
 		{
-			uint16_t x = 0, y = 0, z = 0;
+			uint16_t x = 0, y = 0;
+			uint8_t z = 0;
 
 			propStream.GET_USHORT(x);
 			propStream.GET_USHORT(y);
 			propStream.GET_UCHAR(z);
  
-			Tile* tile = map->getTile(x, y, z);
+			Tile* tile = map->getTile(x, y, (int16_t)z);
 			if(!tile)
 			{
 				std::cout << "[Error - IOMapSerialize::loadMapBinary] Unserialization of invalid tile at position ";
-				std::cout << (int32_t)x << "/" << (int32_t)y << "/" << (int32_t)z << std::endl;
+				std::cout << x << "/" << y << "/" << (int16_t)z << std::endl;
 				break;
 			}
  
