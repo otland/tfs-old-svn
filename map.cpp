@@ -546,16 +546,16 @@ bool Map::checkSightLine(const Position& fromPos, const Position& toPos) const
 			//x -> y
 			//y -> x
 			//z -> z
-			std::swap(start.x, start.y);
-			std::swap(end.x, end.y);
+			std::swap(start.x, (int32_t&)start.y);
+			std::swap(end.x, (int32_t&)end.y);
 			std::swap(dx, dy);
 			break;
 		case 2:
 			//x -> z
 			//y -> y
 			//z -> x
-			std::swap(start.x, start.z);
-			std::swap(end.x, end.z);
+			std::swap(start.x, (int32_t&)start.z);
+			std::swap(end.x, (int32_t&)end.z);
 			std::swap(dx, dz);
 			break;
 		default:

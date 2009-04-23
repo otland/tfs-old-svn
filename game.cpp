@@ -501,6 +501,7 @@ Cylinder* Game::internalGetCylinder(Player* player, const Position& pos)
 
 Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index, uint32_t spriteId /*= 0*/, stackposType_t type /*= STACKPOS_NORMAL*/)
 {
+std::cout << pos.x << std::endl;
 	if(pos.x != 0xFFFF)
 	{
 		Tile* tile = getTile(pos.x, pos.y, pos.z);
