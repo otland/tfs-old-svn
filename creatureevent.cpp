@@ -18,14 +18,15 @@
 // Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-#include "creatureevent.h"
-
-#include "tools.h"
 #ifdef __DEBUG_LUASCRIPTS__
 #include <sstream>
 #endif
 
-CreatureEvents::CreatureEvents() :
+#include "creatureevent.h"
+#include "tools.h"
+#include "player.h"
+
+CreatureEvents::CreatureEvents():
 m_scriptInterface("CreatureScript Interface")
 {
 	m_scriptInterface.initState();
@@ -120,7 +121,7 @@ uint32_t CreatureEvents::playerLogout(Player* player)
 
 /////////////////////////////////////
 
-CreatureEvent::CreatureEvent(LuaScriptInterface* _interface) :
+CreatureEvent::CreatureEvent(LuaScriptInterface* _interface):
 Event(_interface)
 {
 	m_type = CREATURE_EVENT_NONE;

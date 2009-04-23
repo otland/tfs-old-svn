@@ -24,7 +24,6 @@
 #include "enums.h"
 
 #include "tile.h"
-#include "player.h"
 
 enum CreatureEventType_t
 {
