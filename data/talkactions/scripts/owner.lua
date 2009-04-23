@@ -1,5 +1,5 @@
 local NO_OWNER_PHRASE = {"none", "nobody", "0"}
-function onSay(cid, words, param, channel)
+function onSay(cid, words, param)
 	if(param == "") then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command requires param.")
 		return TRUE
@@ -11,8 +11,9 @@ function onSay(cid, words, param, channel)
 		clean = getBooleanFromString(t[2])
 	end
 
+	local name = tostring(t[1])
 	local guid = 0
-	if(not table.isStrIn(NO_OWNER_PHRASE, t[2]:lower())) then
+	if(not name or not table.isStrIn(NO_OWNER_PHRASE, name:lower())) then
 		guid = getPlayerGUIDByName(t[1])
 	end
 
