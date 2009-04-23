@@ -1,5 +1,6 @@
 local NO_OWNER_PHRASE = {"none", "nobody", "0"}
-function onSay(cid, words, param)
+
+function onSay(cid, words, param, channel)
 	if(param == "") then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command requires param.")
 		return TRUE
@@ -12,9 +13,14 @@ function onSay(cid, words, param)
 	end
 
 	local name = tostring(t[1])
+	if(not name) then
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Invalid name specified.")
+		return TRUE
+	end
+
 	local guid = 0
-	if(not name or not table.isStrIn(NO_OWNER_PHRASE, name:lower())) then
-		guid = getPlayerGUIDByName(t[1])
+	if(not table.isStrIn(NO_OWNER_PHRASE, name:lower())) then
+		guid = getPlayerGUIDByName(name)
 	end
 
 	if(not guid) then
