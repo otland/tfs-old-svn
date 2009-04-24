@@ -1551,10 +1551,11 @@ void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
 	m_debugAssertSent = true;
 	if(FILE* file = fopen(getFilePath(FILE_TYPE_LOG, "client_assertions.txt").c_str(), "a"))
 	{
-		char bufferDate[32], bufferIp[32];
-		uint64_t tmp = time(NULL);
+		char bufferDate[21], bufferIp[17];
+		time_t tmp = time(NULL);
 		formatIP(getIP(), bufferIp);
 		formatDate(tmp, bufferDate);
+
 		fprintf(file, "----- %s - %s (%s) -----\n", bufferDate, player->getName().c_str(), bufferIp);
 		fprintf(file, "%s\n%s\n%s\n%s\n", assertLine.c_str(), date.c_str(), description.c_str(), comment.c_str());
 		fclose(file);
@@ -1563,8 +1564,8 @@ void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
 
 void ProtocolGame::parseBugReport(NetworkMessage& msg)
 {
-	std::string bug = msg.GetString();
-	addGameTask(&Game::playerReportBug, player->getID(), bug);
+	std::string comment = msg.GetString();
+	addGameTask(&Game::playerReportBug, player->getID(), comment);
 }
 
 void ProtocolGame::parseInviteToParty(NetworkMessage& msg)
@@ -2283,20 +2284,18 @@ void ProtocolGame::sendAddCreature(const Creature* creature, bool isLogin)
 			msg->AddU32(player->getID());
 			msg->AddByte(0x32);
 			msg->AddByte(0x00);
-			if(!player->hasCustomFlag(PlayerCustomFlag_CanReportBugs))
-				msg->AddByte(0x00);
-			else
-				msg->AddByte(0x01);
+			msg->AddByte(player->hasFlag(PlayerFlag_CanReportBugs));
 
-			if(violationReasons[player->getViolationAccess()] > 0)
+			int16_t access = player->getViolationAccess();
+			if(violationReasons[access] > 0)
 			{
 				msg->AddByte(0x0B);
 				for(int32_t i = 0; i <= 22; i++)
 				{
 					if(i <= violationReasons[1])
-						msg->AddByte(violationNames[player->getViolationAccess()]);
-					else if(i <= violationReasons[player->getViolationAccess()])
-						msg->AddByte(violationStatements[player->getViolationAccess()]);
+						msg->AddByte(violationNames[access]);
+					else if(i <= violationReasons[access])
+						msg->AddByte(violationStatements[access]);
 					else
 						msg->AddByte(Action_None);
 				}

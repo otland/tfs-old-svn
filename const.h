@@ -495,13 +495,14 @@ enum PlayerFlags
 	PlayerFlag_HasInfiniteStamina,			//2^41 = 2199023255552
 	PlayerFlag_CannotMoveItems,			//2^42 = 4398046511104
 	PlayerFlag_CannotMoveCreatures,			//2^43 = 8796093020000
+	PlayerFlag_CanReportBugs,			//2^44 = 17592186040000
 
 	PlayerFlag_LastFlag
 };
 
 enum PlayerCustomFlags
 {
-	PlayerCustomFlag_CanReportBugs = 0,			//2^0 = 1
+	PlayerCustomFlag_UnusedAndToReplace = 0,		//2^0 = 1
 	PlayerCustomFlag_CanSeePosition,			//2^1 = 2
 	PlayerCustomFlag_CanSeeItemDetails,			//2^2 = 4
 	PlayerCustomFlag_CanSeeCreatureDetails,			//2^3 = 8
@@ -522,7 +523,7 @@ enum PlayerCustomFlags
 	PlayerCustomFlag_IgnorePacification,			//2^18 = 262144
 	PlayerCustomFlag_IgnoreLoginDelay,			//2^19 = 524288
 	PlayerCustomFlag_CanStairhop,				//2^20 = 1048576
-	PlayerCustomFlag_CanTurnHop,				//2^21 = 2097152
+	PlayerCustomFlag_CanTurnhop,				//2^21 = 2097152
 	PlayerCustomFlag_LastFlag
 };
 

@@ -501,7 +501,6 @@ Cylinder* Game::internalGetCylinder(Player* player, const Position& pos)
 
 Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index, uint32_t spriteId /*= 0*/, stackposType_t type /*= STACKPOS_NORMAL*/)
 {
-std::cout << pos.x << std::endl;
 	if(pos.x != 0xFFFF)
 	{
 		Tile* tile = getTile(pos.x, pos.y, pos.z);
@@ -4667,28 +4666,34 @@ bool Game::playerEnableSharedPartyExperience(uint32_t playerId, uint8_t sharedEx
 	return player->getParty()->setSharedExperience(player, sharedExpActive == 1);
 }
 
-bool Game::playerReportBug(uint32_t playerId, std::string bug)
+bool Game::playerReportBug(uint32_t playerId, std::string comment)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
 
+	if(!player->hasFlag(PlayerFlag_CanReportBugs))
+		return false;
+
 	Database* db = Database::getInstance();
+	const Position& pos = player->getPosition();
 
 	DBQuery query;
 	query << "INSERT INTO `server_reports` (`id`, `world_id`, `player_id`, `posx`, `posy`, `posz`, `timestamp`, `report`) VALUES (NULL, ";
 	query << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << player->getGUID() << ", ";
-	Position pos = player->getPosition();
 	query << pos.x << ", " << pos.y << ", " << pos.z << ", ";
-	query << time(NULL) << ", " << db->escapeString(bug.c_str()) << ");";
+	query << time(NULL) << ", " << db->escapeString(comment.c_str()) << ");";
 	if(!db->executeQuery(query.str()))
 	{
 		query.str("");
+		player->sendTextMessage(MSG_EVENT_DEFAULT, g_config.getString(
+			ConfigManager::SERVER_NAME) + (std::string)" couldn't save your report, please contact with gamemaster.");
 		return false;
 	}
 
 	query.str("");
-	player->sendTextMessage(MSG_EVENT_DEFAULT, "Your report has been sent to " + g_config.getString(ConfigManager::SERVER_NAME) + ".");
+	player->sendTextMessage(MSG_EVENT_DEFAULT, "Your report has been sent to " + g_config.getString(
+		ConfigManager::SERVER_NAME) + (std::string)".");
 	return true;
 }
 
@@ -4739,7 +4744,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string targetName, uint
 		}
 
 		accountId = targetPlayer->getAccount();
-		ip = targetPlayer->lastIP;
+		ip = targetPlayer->getIP();
 	}
 	else
 	{
