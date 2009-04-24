@@ -47,13 +47,13 @@ class Position
 		Position(): x(0), y(0), z(0) {}
 		~Position() {}
 
-		template<int16_t deltax, int16_t deltay, int16_t deltaz>
+		template<int32_t deltax, int32_t deltay, int16_t deltaz>
 		inline static bool areInRange(const Position& p1, const Position& p2)
 		{
 			return !(std::abs(float(p1.x - p2.x)) > deltax || std::abs(float(p1.y - p2.y)) > deltay || std::abs(float(p1.z - p2.z)) > deltaz);
 		}
 
-		template<int16_t deltax, int16_t deltay>
+		template<int32_t deltax, int32_t deltay>
 		inline static bool areInRange(const Position& p1, const Position& p2)
 		{
 			return !(std::abs(float(p1.x - p2.x)) > deltax || std::abs(float(p1.y - p2.y)) > deltay);
@@ -64,8 +64,9 @@ class Position
 			return !(std::abs(float(p1.x - p2.x)) > r.x || std::abs(float(p1.y - p2.y)) > r.y || std::abs(float(p1.z - p2.z)) > r.z);
 		}
 
-		Position(int16_t _x, int16_t _y, int16_t _z): x(_x), y(_y), z(_z) {}
-		int16_t x, y, z;
+		Position(int32_t _x, int32_t _y, int16_t _z): x(_x), y(_y), z(_z) {}
+		int32_t x, y;
+		int16_t z;
 
 		bool operator<(const Position& p) const
 		{
@@ -120,8 +121,8 @@ class PositionEx : public Position
 		PositionEx() {}
 		~PositionEx() {}
 
-		PositionEx(int16_t _x, int16_t _y, int16_t _z, int16_t _stackpos): Position(_x,_y,_z), stackpos(_stackpos) {}
-		PositionEx(int16_t _x, int16_t _y, int16_t _z): Position(_x,_y,_z), stackpos(0) {}
+		PositionEx(int32_t _x, int32_t _y, int16_t _z, int16_t _stackpos): Position(_x,_y,_z), stackpos(_stackpos) {}
+		PositionEx(int32_t _x, int32_t _y, int16_t _z): Position(_x,_y,_z), stackpos(0) {}
 
 		PositionEx(Position p): Position(p.x, p.y, p.z), stackpos(0) {}
 		PositionEx(Position p, int32_t _stackpos): Position(p.x, p.y, p.z), stackpos(_stackpos) {}
