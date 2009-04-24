@@ -83,7 +83,7 @@ class ProtocolGame : public Protocol
 		virtual void releaseProtocol();
 		virtual void deleteProtocolTask();
 
-		bool canSee(int32_t x, int32_t y, int32_t z) const;
+		bool canSee(uint16_t x, uint16_t y, uint16_t z) const;
 		bool canSee(const Creature*) const;
 		bool canSee(const Position& pos) const;
 
@@ -211,7 +211,7 @@ class ProtocolGame : public Protocol
 		void sendTradeItemRequest(const Player* player, const Item* item, bool ack);
 		void sendCloseTrade();
 
-		void sendTextWindow(uint32_t windowTextId, Item* item, uint16_t maxlen, bool canWrite);
+		void sendTextWindow(uint32_t windowTextId, Item* item, uint16_t maxLen, bool canWrite);
 		void sendTextWindow(uint32_t windowTextId, uint32_t itemId, const std::string& text);
 		void sendHouseWindow(uint32_t windowTextId, House* house, uint32_t listId, const std::string& text);
 		void sendOutfitWindow();
@@ -255,12 +255,12 @@ class ProtocolGame : public Protocol
 		void GetTileDescription(const Tile* tile, NetworkMessage_ptr msg);
 
 		// translate a floor to clientreadable format
-		void GetFloorDescription(NetworkMessage_ptr msg, int32_t x, int32_t y, int32_t z,
+		void GetFloorDescription(NetworkMessage_ptr msg, uint16_t x, uint16_t y, uint16_t z,
 			int32_t width, int32_t height, int32_t offset, int32_t& skip);
 
 		// translate a map area to clientreadable format
-		void GetMapDescription(int16_t x, int16_t y, int16_t z,
-			uint16_t width, uint16_t height, NetworkMessage_ptr msg);
+		void GetMapDescription(uint16_t x, uint16_t y, uint16_t z,
+			int32_t width, int32_t height, NetworkMessage_ptr msg);
 
 		void AddMapDescription(NetworkMessage_ptr msg, const Position& pos);
 		void AddTextMessage(NetworkMessage_ptr msg, MessageClasses mclass, const std::string& message);

@@ -996,8 +996,8 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 	}
 }
 
-void ProtocolGame::GetMapDescription(int16_t x, int16_t y, int16_t z,
-	uint16_t width, uint16_t height, NetworkMessage_ptr msg)
+void ProtocolGame::GetMapDescription(uint16_t x, uint16_t y, uint16_t z,
+	int32_t width, int32_t height, NetworkMessage_ptr msg)
 {
 	int32_t skip = -1, startz, endz, zstep = 0;
 	if(z > 7)
@@ -1024,7 +1024,8 @@ void ProtocolGame::GetMapDescription(int16_t x, int16_t y, int16_t z,
 	}
 }
 
-void ProtocolGame::GetFloorDescription(NetworkMessage_ptr msg, int32_t x, int32_t y, int32_t z, int32_t width, int32_t height, int32_t offset, int32_t& skip)
+void ProtocolGame::GetFloorDescription(NetworkMessage_ptr msg, uint16_t x, uint16_t y, uint16_t z,
+		int32_t width, int32_t height, int32_t offset, int32_t& skip)
 {
 	Tile* tile;
 	for(int32_t nx = 0; nx < width; nx++)
@@ -1109,11 +1110,11 @@ bool ProtocolGame::canSee(const Position& pos) const
 	return canSee(pos.x, pos.y, pos.z);
 }
 
-bool ProtocolGame::canSee(int32_t x, int32_t y, int32_t z) const
+bool ProtocolGame::canSee(uint16_t x, uint16_t y, uint16_t z) const
 {
 #ifdef __DEBUG__
 	if(z < 0 || z >= MAP_MAX_LAYERS)
-		std::cout << "WARNING! ProtocolGame::canSee() Z-value is out of range!" << std::endl;
+		std::cout << "> WARNING: ProtocolGame::canSee() Z-value is out of range!" << std::endl;
 #endif
 
 	const Position& myPos = player->getPosition();
@@ -1795,7 +1796,7 @@ void ProtocolGame::sendStats()
 	}
 }
 
-void ProtocolGame::sendTextMessage(MessageClasses mclass, const std::string& message)
+void ProtocolGame::sendTextMessage(MessageClasses mClass, const std::string& message)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
@@ -2545,7 +2546,7 @@ void ProtocolGame::sendRemoveContainerItem(uint8_t cid, uint8_t slot)
 	}
 }
 
-void ProtocolGame::sendTextWindow(uint32_t windowTextId, Item* item, uint16_t maxlen, bool canWrite)
+void ProtocolGame::sendTextWindow(uint32_t windowTextId, Item* item, uint16_t maxLen, bool canWrite)
 {
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
@@ -2556,7 +2557,7 @@ void ProtocolGame::sendTextWindow(uint32_t windowTextId, Item* item, uint16_t ma
 		msg->AddItemId(item);
 		if(canWrite)
 		{
-			msg->AddU16(maxlen);
+			msg->AddU16(maxLen);
 			msg->AddString(item->getText());
 		}
 		else

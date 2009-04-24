@@ -37,7 +37,7 @@ struct FindPathParams;
 
 struct AStarNode
 {
-	int32_t x, y;
+	uint16_t x, y;
 	AStarNode* parent;
 	int32_t f, g, h;
 };
@@ -64,13 +64,13 @@ class AStarNodes
 		uint32_t countClosedNodes();
 		uint32_t countOpenNodes();
 
-		bool isInList(int32_t x, int32_t y);
+		bool isInList(uint16_t x, uint16_t y);
 		AStarNode* getNodeInList(int32_t x, int32_t y);
 
 		int32_t getMapWalkCost(const Creature* creature, AStarNode* node,
 			const Tile* neighbourTile, const Position& neighbourPos);
 		static int32_t getTileWalkCost(const Creature* creature, const Tile* tile);
-		int32_t getEstimatedDistance(int32_t x, int32_t y, int32_t xGoal, int32_t yGoal);
+		int32_t getEstimatedDistance(uint16_t x, uint16_t y, uint16_t xGoal, uint16_t yGoal);
 
 	private:
 		AStarNode nodes[MAX_NODES];
@@ -109,8 +109,8 @@ class QTreeNode
 
 		bool isLeaf(){return m_isLeaf;}
 		QTreeLeafNode* getLeaf(uint32_t x, uint32_t y);
-		static QTreeLeafNode* getLeafStatic(QTreeNode* root, uint32_t x, uint32_t y);
-		QTreeLeafNode* createLeaf(uint32_t x, uint32_t y, uint32_t level);
+		static QTreeLeafNode* getLeafStatic(QTreeNode* root, uint16_t x, uint16_t y);
+		QTreeLeafNode* createLeaf(uint16_t x, uint16_t y, uint16_t level);
 
 	protected:
 		bool m_isLeaf;
@@ -155,7 +155,7 @@ class Map
 {
 	public:
 		Map();
-		virtual ~Map();
+		virtual ~Map() {}
 
 		static const int32_t maxViewportX = 11;         //min value: maxClientViewportX + 1
 		static const int32_t maxViewportY = 11;         //min value: maxClientViewportY + 1
@@ -180,17 +180,14 @@ class Map
 		* \returns A pointer to that tile.
 		*/
 		Tile* getTile(uint16_t x, uint16_t y, uint16_t z);
-		Tile* getTile(const Position& pos);
+		Tile* getTile(const Position& pos) {return getTile(pos.x, pos.y, pos.z);}
 
 		/**
 		* Set a single tile.
 		* \param a tile to set for the position
 		*/
 		void setTile(uint16_t _x, uint16_t _y, uint16_t _z, Tile* newTile);
-		void setTile(const Position& pos, Tile* newTile)
-		{
-			setTile(pos.x, pos.y, pos.z, newTile);
-		}
+		void setTile(const Position& pos, Tile* newTile) {setTile(pos.x, pos.y, pos.z, newTile);}
 
 		/**
 		* Place a creature on the map
@@ -254,7 +251,7 @@ class Map
 		QTreeNode root;
 		SpectatorCache spectatorCache;
 
-		void clearSpectatorCache();
+		void clearSpectatorCache() {spectatorCache.clear();}
 
 		// Actually scans the map for spectators
 		void getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, bool checkforduplicate,
