@@ -19,7 +19,7 @@ function onSay(cid, words, param, channel)
 	end
 
 	local guid = 0
-	if(not table.isStrIn(NO_OWNER_PHRASE, name:lower())) then
+	if(not table.isStrIn(name:lower(), NO_OWNER_PHRASE)) then
 		guid = getPlayerGUIDByName(name)
 	end
 
