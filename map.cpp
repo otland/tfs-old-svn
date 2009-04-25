@@ -170,10 +170,13 @@ void Map::setTile(uint16_t x, uint16_t y, uint16_t z, Tile* newTile)
 	if(newTile->hasFlag(TILESTATE_REFRESH))
 	{
 		RefreshBlock_t rb;
-		rb.lastRefresh = OTSYS_TIME();
-		for(ItemVector::iterator it = newTile->downItems.begin(); it != newTile->downItems.end(); ++it)
-			rb.list.push_back((*it)->clone());
+		if(newTile->downItems)
+		{
+			for(ItemVector::iterator it = newTile->downItems->begin(); it != newTile->downItems->end(); ++it)
+				rb.list.push_back((*it)->clone());
+		}
 
+		rb.lastRefresh = OTSYS_TIME();
 		g_game.addRefreshTile(newTile, rb);
 	}
 }
@@ -1083,7 +1086,7 @@ int32_t AStarNodes::getMapWalkCost(const Creature* creature, AStarNode* node,
 int32_t AStarNodes::getTileWalkCost(const Creature* creature, const Tile* tile)
 {
 	int32_t cost = 0;
-	if(!tile->creatures.empty()) //destroy creature cost
+	if(tile->creatures && !tile->creatures->empty()) //destroy creature cost
 		cost += MAP_NORMALWALKCOST * 3;
 
 	if(const MagicField* field = tile->getFieldItem())

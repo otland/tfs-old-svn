@@ -67,27 +67,34 @@ class Tile : public Cylinder
 {
 	public:
 		static Tile nullTile;
-		Tile(int32_t x, int32_t y, int32_t z)
+		Tile(uint16_t x, uint16_t y, uint16_t z)
 		{
 			tilePos = Position(x, y, z);
-			qt_node = NULL;
 			m_flags = thingCount = 0;
+			qt_node = NULL;
 			ground = NULL;
+			downItems = NULL;
+			topItems = NULL;
+			creatures = NULL;
 		}
 
 		virtual ~Tile()
 		{
 			delete ground;
+			if(topItems)
+			{
+				for(ItemVector::iterator it = topItems->begin(); it != topItems->end(); ++it)
+					delete *it;
+			}
 
-			ItemVector::iterator it;
-			for(it = topItems.begin(); it != topItems.end(); ++it)
-				delete *it;
+			topItems->clear();
+			if(downItems)
+			{
+				for(ItemVector::iterator it = downItems->begin(); it != downItems->end(); ++it)
+					delete *it;
+			}
 
-			topItems.clear();
-			for(it = downItems.begin(); it != downItems.end(); ++it)
-				delete *it;
-
-			downItems.clear();
+			downItems->clear();
 		}
 
 		virtual int32_t getThrowRange() const {return 0;}
@@ -95,9 +102,9 @@ class Tile : public Cylinder
 
 		Item* ground;
 		QTreeLeafNode* qt_node;
-		ItemVector downItems;
-		ItemVector topItems;
-		CreatureVector creatures;
+		ItemVector* downItems;
+		ItemVector* topItems;
+		CreatureVector* creatures;
 
 		MagicField* getFieldItem() const;
 		Teleport* getTeleportItem() const;

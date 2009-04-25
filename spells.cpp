@@ -702,7 +702,7 @@ bool Spell::playerInstantSpellCheck(Player* player, const Position& toPos)
 				return false;
 			}
 
-			if(blockingCreature && !tile->creatures.empty())
+			if(blockingCreature && tile->creatures && !tile->creatures->empty())
 			{
 				player->sendCancelMessage(RET_NOTENOUGHROOM);
 				g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
@@ -751,14 +751,11 @@ bool Spell::playerRuneSpellCheck(Player* player, const Position& toPos)
 				return false;
 			}
 
-			if(range != -1)
+			if(range != -1 && !g_game.canThrowObjectTo(playerPos, toPos, true, range, range))
 			{
-				if(!g_game.canThrowObjectTo(playerPos, toPos, true, range, range))
-				{
-					player->sendCancelMessage(RET_DESTINATIONOUTOFREACH);
-					g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
-					return false;
-				}
+				player->sendCancelMessage(RET_DESTINATIONOUTOFREACH);
+				g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+				return false;
 			}
 
 			ReturnValue ret;
@@ -769,7 +766,7 @@ bool Spell::playerRuneSpellCheck(Player* player, const Position& toPos)
 				return false;
 			}
 
-			if(blockingCreature && !tile->creatures.empty())
+			if(blockingCreature && tile->creatures && !tile->creatures->empty())
 			{
 				player->sendCancelMessage(RET_NOTENOUGHROOM);
 				g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
@@ -782,14 +779,15 @@ bool Spell::playerRuneSpellCheck(Player* player, const Position& toPos)
 				return false;
 			}
 
-			if(needTarget && tile->creatures.empty())
+			if(needTarget && (!tile->creatures || tile->creatures->empty()))
 			{
 				player->sendCancelMessage(RET_CANONLYUSETHISRUNEONCREATURES);
 				g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 				return false;
 			}
 
-			if(isAggressive && needTarget && player->getSecureMode() == SECUREMODE_ON && !tile->creatures.empty())
+			if(isAggressive && needTarget && player->getSecureMode() == SECUREMODE_ON
+				&& tile->creatures && !tile->creatures->empty())
 			{
 				Player* targetPlayer = tile->getTopCreature()->getPlayer();
 				if(targetPlayer && targetPlayer != player && targetPlayer->getSkull() == SKULL_NONE && !Combat::isInPvpZone(player, targetPlayer))

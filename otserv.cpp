@@ -354,6 +354,7 @@ void serverMain(void* param)
 #ifdef __EXCEPTION_TRACER__
 	mainExceptionHandler.RemoveHandler();
 #endif
+	exit(0);
 #ifdef __CONSOLE__
 	return 0;
 #endif

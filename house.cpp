@@ -167,10 +167,10 @@ void House::removePlayers(bool ignoreInvites)
 	PlayerVector kickList;
 	for(HouseTileList::iterator it = houseTiles.begin(); it != houseTiles.end(); ++it)
 	{
-		if(!(*it)->creatures.size())
+		if(!(*it)->creatures && (*it)->creatures->empty())
 			continue;
 
-		for(CreatureVector::iterator cit = (*it)->creatures.begin(); cit != (*it)->creatures.end(); ++cit)
+		for(CreatureVector::iterator cit = (*it)->creatures->begin(); cit != (*it)->creatures->end(); ++cit)
 		{
 			Player* player = (*cit)->getPlayer();
 			if(player && !player->isRemoved() && (ignoreInvites || !isInvited(player)))

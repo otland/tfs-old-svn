@@ -53,7 +53,7 @@ class Position
 			return !(std::abs(float(p1.x - p2.x)) > deltax || std::abs(float(p1.y - p2.y)) > deltay || std::abs(float(p1.z - p2.z)) > deltaz);
 		}
 
-		template<uiny16_t deltax, uint16_t deltay>
+		template<uint16_t deltax, uint16_t deltay>
 		inline static bool areInRange(const Position& p1, const Position& p2)
 		{
 			return !(std::abs(float(p1.x - p2.x)) > deltax || std::abs(float(p1.y - p2.y)) > deltay);

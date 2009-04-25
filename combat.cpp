@@ -144,13 +144,13 @@ void Combat::getCombatArea(const Position& centerPos, const Position& targetPos,
 {
 	if(area)
 		area->getList(centerPos, targetPos, list);
-	else if(targetPos.x >= 0 && targetPos.y >= 0 && targetPos.z >= 0 &&
-		targetPos.x <= 0xFFFF && targetPos.y <= 0xFFFF && targetPos.z < MAP_MAX_LAYERS)
+	else if((uint32_t)targetPos.x >= 0 && (uint32_t)targetPos.y >= 0 && (uint32_t)targetPos.z >= 0 &&
+		(uint32_t)targetPos.x <= 0xFFFF && (uint32_t)targetPos.y <= 0xFFFF && (uint32_t)targetPos.z < MAP_MAX_LAYERS)
 	{
 		Tile* tile = g_game.getTile(targetPos);
 		if(!tile)
 		{
-			tile = new Tile(targetPos.x, targetPos.y, targetPos.z);
+			tile = new Tile(targetPos);
 			g_game.setTile(tile);
 		}
 
@@ -720,30 +720,33 @@ void Combat::CombatFunc(Creature* caster, const Position& pos, const AreaCombat*
 		if(canDoCombat(caster, (*it), params.isAggressive) == RET_NOERROR)
 		{
 			bool skip = true;
-			for(CreatureVector::iterator cit = (*it)->creatures.begin(); skip && cit != (*it)->creatures.end(); ++cit)
+			if((*it)->creatures)
 			{
-				if(params.targetPlayersOrSummons && !(*cit)->getPlayer() && (!(*cit)->getMaster() || !(*cit)->getMaster()->getPlayer()))
-					continue;
-
-				if(params.targetCasterOrTopMost)
+				for(CreatureVector::iterator cit = (*it)->creatures->begin(); skip && cit != (*it)->creatures->end(); ++cit)
 				{
-					if(caster && caster->getTile() == (*it))
-					{
-						if((*cit) == caster)
-							skip = false;
-					}
-					else if((*cit) == (*it)->getTopCreature())
-						skip = false;
-
-					if(skip)
+					if(params.targetPlayersOrSummons && !(*cit)->getPlayer() && (!(*cit)->getMaster() || !(*cit)->getMaster()->getPlayer()))
 						continue;
-				}
 
-				if(!params.isAggressive || (caster != (*cit) && Combat::canDoCombat(caster, (*cit)) == RET_NOERROR))
-				{
-					func(caster, (*cit), params, data);
-					if(params.targetCallback)
-						params.targetCallback->onTargetCombat(caster, (*cit));
+					if(params.targetCasterOrTopMost)
+					{
+						if(caster && caster->getTile() == (*it))
+						{
+							if((*cit) == caster)
+								skip = false;
+						}
+						else if((*cit) == (*it)->getTopCreature())
+							skip = false;
+
+						if(skip)
+							continue;
+					}
+
+					if(!params.isAggressive || (caster != (*cit) && Combat::canDoCombat(caster, (*cit)) == RET_NOERROR))
+					{
+						func(caster, (*cit), params, data);
+						if(params.targetCallback)
+							params.targetCallback->onTargetCombat(caster, (*cit));
+					}
 				}
 			}
 
@@ -1061,7 +1064,6 @@ AreaCombat::AreaCombat(const AreaCombat& rhs)
 bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, std::list<Tile*>& list) const
 {
 	Tile* tile = g_game.getTile(targetPos);
-
 	const MatrixArea* area = getArea(centerPos, targetPos);
 	if(!area)
 		return false;
@@ -1069,26 +1071,25 @@ bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, s
 	Position tmpPos = targetPos;
 	size_t cols = area->getCols(), rows = area->getRows();
 
-	uint32_t centerY, centerX;
+	uint16_t centerY, centerX;
 	area->getCenter(centerY, centerX);
 
 	tmpPos.x -= centerX;
 	tmpPos.y -= centerY;
-
 	for(size_t y = 0; y < rows; ++y)
 	{
 		for(size_t x = 0; x < cols; ++x)
 		{
 			if(area->getValue(y, x) != 0)
 			{
-				if(tmpPos.x >= 0 && tmpPos.y >= 0 && tmpPos.z >= 0 &&
-					tmpPos.x <= 0xFFFF && tmpPos.y <= 0xFFFF && tmpPos.z < MAP_MAX_LAYERS
-					&& g_game.isSightClear(targetPos, tmpPos, true))
+				if((uint32_t)tmpPos.x >= 0 && (uint32_t)tmpPos.y >= 0 && (uint32_t)tmpPos.z >= 0 &&
+					(uint32_t)tmpPos.x <= 0xFFFF && (uint32_t)tmpPos.y <= 0xFFFF &&
+					(uint32_t)tmpPos.z < MAP_MAX_LAYERS && g_game.isSightClear(targetPos, tmpPos, true))
 				{
 					tile = g_game.getTile(tmpPos);
 					if(!tile)
 					{
-						tile = new Tile(tmpPos.x, tmpPos.y, tmpPos.z);
+						tile = new Tile(tmpPos);
 						g_game.setTile(tile);
 					}
 
@@ -1108,7 +1109,7 @@ bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, s
 
 void AreaCombat::copyArea(const MatrixArea* input, MatrixArea* output, MatrixOperation_t op) const
 {
-	uint32_t centerY, centerX;
+	uint16_t centerY, centerX;
 	input->getCenter(centerY, centerX);
 	if(op == MATRIXOPERATION_COPY)
 	{
@@ -1117,6 +1118,7 @@ void AreaCombat::copyArea(const MatrixArea* input, MatrixArea* output, MatrixOpe
 			for(uint32_t x = 0; x < input->getCols(); ++x)
 				(*output)[y][x] = (*input)[y][x];
 		}
+
 		output->setCenter(centerY, centerX);
 	}
 	else if(op == MATRIXOPERATION_MIRROR)
@@ -1127,6 +1129,7 @@ void AreaCombat::copyArea(const MatrixArea* input, MatrixArea* output, MatrixOpe
 			for(int32_t x = input->getCols() - 1; x >= 0; --x)
 				(*output)[y][rx++] = (*input)[y][x];
 		}
+
 		output->setCenter(centerY, (input->getRows() - 1) - centerX);
 	}
 	else if(op == MATRIXOPERATION_FLIP)
@@ -1137,12 +1140,13 @@ void AreaCombat::copyArea(const MatrixArea* input, MatrixArea* output, MatrixOpe
 			for(int32_t y = input->getRows() - 1; y >= 0; --y)
 				(*output)[ry++][x] = (*input)[y][x];
 		}
+
 		output->setCenter((input->getCols() - 1) - centerY, centerX);
 	}
 	//rotation
 	else
 	{
-		uint32_t centerX, centerY;
+		uint16_t centerX, centerY;
 		input->getCenter(centerY, centerX);
 
 		int32_t rotateCenterX = (output->getCols() / 2) - 1, rotateCenterY = (output->getRows() / 2) - 1, angle = 0;
@@ -1193,7 +1197,7 @@ MatrixArea* AreaCombat::createArea(const std::list<uint32_t>& list, uint32_t row
 	uint32_t cols = list.size() / rows;
 	MatrixArea* area = new MatrixArea(rows, cols);
 
-	uint32_t x = 0, y = 0;
+	uint16_t x = 0, y = 0;
 	for(std::list<uint32_t>::const_iterator it = list.begin(); it != list.end(); ++it)
 	{
 		if(*it == 1 || *it == 3)
@@ -1203,7 +1207,6 @@ MatrixArea* AreaCombat::createArea(const std::list<uint32_t>& list, uint32_t row
 			area->setCenter(y, x);
 
 		++x;
-
 		if(cols == x)
 		{
 			x = 0;

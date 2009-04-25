@@ -185,12 +185,27 @@ Protocol* ServicePort::makeProtocol(bool checksum, NetworkMessage& msg) const
 	return NULL;
 }
 
+void ServiceManager::run()
+{
+	assert(!running);
+	running = true;
+	m_io_service.run();
+}
+
 void ServiceManager::stop()
 {
-	for(AcceptorsMap::iterator it = m_acceptors.begin(); it != m_acceptors.end(); ++it)
-		m_io_service.post(boost::bind(&ServicePort::close, it->second.get()));
+	if(!running)
+		return;
 
+	running = false;
+	for(AcceptorsMap::iterator it = m_acceptors.begin(); it != m_acceptors.end(); ++it)
+		m_io_service.post(boost::bind(&ServicePort::close, it->second));
+
+	m_acceptors.clear();
 	OutputMessagePool::getInstance()->stop();
+
+	deathTimer.expires_from_now(boost::posix_time::seconds(3));
+	deathTimer.async_wait(boost::bind(&ServiceManager::die, this));
 }
 
 std::list<uint16_t> ServiceManager::getPorts() const

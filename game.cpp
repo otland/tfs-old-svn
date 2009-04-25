@@ -446,19 +446,22 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 	for(; (*it) != end && (limit != 0 ? (cleaned < limit) : true); ++(*it), ++cleaned)
 	{
 		tile = (*it)->first;
-		for(int32_t i = tile->downItems.size() - 1; i >= 0; --i)
+		if(tile->downItems)
 		{
-			if((item = tile->downItems[i]))
+			for(int32_t i = tile->downItems->size() - 1; i >= 0; --i)
 			{
-				#ifndef __DEBUG__
-				internalRemoveItem(NULL, item);
-				#else
-				if(internalRemoveItem(NULL, item) != RET_NOERROR)
+				if((item = tile->downItems->at(i)))
 				{
-					std::cout << "> WARNING: Could not refresh item: " << item->getID();
-					std::cout << " at position: " << tile->getPosition() << std::endl;
+					#ifndef __DEBUG__
+					internalRemoveItem(NULL, item);
+					#else
+					if(internalRemoveItem(NULL, item) != RET_NOERROR)
+					{
+						std::cout << "> WARNING: Could not refresh item: " << item->getID();
+						std::cout << " at position: " << tile->getPosition() << std::endl;
+					}
+					#endif
 				}
-				#endif
 			}
 		}
 
@@ -517,10 +520,13 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 			if(!c->isInGhostMode() || player->canSeeGhost(c))
 				return c;
 
-			for(CreatureVector::iterator it = tile->creatures.begin(); it != tile->creatures.end(); ++it)
+			if(tile->creatures)
 			{
-				if(!(*it)->isInGhostMode() || player->canSeeGhost((*it)))
-					return (*it);
+				for(CreatureVector::iterator it = tile->creatures->begin(); it != tile->creatures->end(); ++it)
+				{
+					if(!(*it)->isInGhostMode() || player->canSeeGhost((*it)))
+						return (*it);
+				}
 			}
 
 			if(tile->getTopDownItem())
@@ -3345,7 +3351,7 @@ bool Game::playerTurn(uint32_t playerId, Direction dir)
 		return false;
 
 	player->resetIdleTime();
-	if(dir != player->getDirection() || !player->hasCustomFlag(PlayerCustomFlag_CanTurnHop))
+	if(dir != player->getDirection() || !player->hasCustomFlag(PlayerCustomFlag_CanTurnhop))
 		return internalCreatureTurn(player, dir);
 
 	Position pos = getNextPosition(dir, player->getPosition());
@@ -3718,12 +3724,15 @@ bool Game::internalCreatureTurn(Creature* creature, Direction dir)
 			if(!creature->isInGhostMode() || tmpPlayer->canSeeGhost(creature))
 			{
 				Tile* t = creature->getTile();
-				for(CreatureVector::iterator it = t->creatures.begin(); it != t->creatures.end(); ++it)
+				if(t->creatures)
 				{
-					if(t->__getIndexOfThing((*it)) < stackpos)
+					for(CreatureVector::iterator it = t->creatures->begin(); it != t->creatures->end(); ++it)
 					{
-						if((*it)->isInGhostMode() && !tmpPlayer->canSeeGhost((*it)))
-							i++;
+						if(t->__getIndexOfThing((*it)) < stackpos)
+						{
+							if((*it)->isInGhostMode() && !tmpPlayer->canSeeGhost((*it)))
+								i++;
+						}
 					}
 				}
 			}

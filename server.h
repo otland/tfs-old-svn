@@ -95,20 +95,24 @@ class ServiceManager : boost::noncopyable
 	ServiceManager(const ServiceManager&);
 
 	public:
-		ServiceManager(): m_io_service() {}
+		ServiceManager(): m_io_service(), deathTimer(m_io_service), running(false) {}
 		virtual ~ServiceManager() {stop();}
 
 		template <typename ProtocolType>
 		bool add(uint16_t port);
 
-		void run() {m_io_service.run();}
+		void run();
 		void stop();
 
 		bool isRunning() const {return !m_acceptors.empty();}
 		std::list<uint16_t> getPorts() const;
 
 	protected:
+		void die() {m_io_service.stop();}
+
 		boost::asio::io_service m_io_service;
+		boost::asio::deadline_timer deathTimer;
+		bool running;
 
 		typedef std::map<uint16_t, ServicePort_ptr> AcceptorsMap;
 		AcceptorsMap m_acceptors;

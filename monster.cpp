@@ -892,22 +892,23 @@ bool Monster::pushItem(Item* item, int32_t radius)
 
 void Monster::pushItems(Tile* tile)
 {
-	uint32_t moveCount = 0, removeCount = 0;
+	if(!tile->downItems)
+		return;
 	//We cannot use iterators here since we can push the item to another tile
 	//which will invalidate the iterator.
 	//start from the end to minimize the amount of traffic
-	int32_t downItemSize = tile->downItems.size();
+	int32_t moveCount = 0, removeCount = 0, downItemSize = tile->downItems->size();
 	for(int32_t i = downItemSize - 1; i >= 0; --i)
 	{
-		assert(i >= 0 && i < (int32_t)tile->downItems.size());
-		Item* item = tile->downItems[i];
+		assert(i >= 0 && i < (int32_t)tile->downItems->size());
+		Item* item = tile->downItems->at(i);
 		if(item && item->hasProperty(MOVEABLE) && (item->hasProperty(BLOCKPATH)
 			|| item->hasProperty(BLOCKSOLID)))
 		{
-				if(moveCount < 20 && pushItem(item, 1))
-					moveCount++;
-				else if(g_game.internalRemoveItem(this, item) == RET_NOERROR)
-					++removeCount;
+			if(moveCount < 20 && pushItem(item, 1))
+				moveCount++;
+			else if(g_game.internalRemoveItem(this, item) == RET_NOERROR)
+				++removeCount;
 		}
 	}
 
@@ -928,7 +929,7 @@ bool Monster::pushCreature(Creature* creature)
 	for(DirVector::iterator it = dirVector.begin(); it != dirVector.end(); ++it)
 	{
 		const Position& tryPos = Spells::getCasterPosition(creature, *it);
-		Tile* toTile = g_game.getTile(tryPos.x, tryPos.y, tryPos.z);
+		Tile* toTile = g_game.getTile(tryPos);
 		if(toTile && !toTile->hasProperty(BLOCKPATH) && g_game.internalMoveCreature(creature, *it) == RET_NOERROR)
 			return true;
 	}
@@ -938,12 +939,13 @@ bool Monster::pushCreature(Creature* creature)
 
 void Monster::pushCreatures(Tile* tile)
 {
+	if(!tile->creatures || tile->creatures->empty())
+		return;
+
 	uint32_t removeCount = 0;
-	//We cannot use iterators here since we can push a creature to another tile
-	//which will invalidate the iterator.
-	for(uint32_t i = 0; i < tile->creatures.size();)
+	for(uint32_t i = 0; i < tile->creatures->size();)
 	{
-		Monster* monster = tile->creatures[i]->getMonster();
+		Monster* monster = tile->creatures->at(i)->getMonster();
 		if(monster && monster->isPushable())
 		{
 			if(pushCreature(monster))
@@ -955,6 +957,7 @@ void Monster::pushCreatures(Tile* tile)
 				removeCount++;
 			}
 		}
+
 		++i;
 	}
 

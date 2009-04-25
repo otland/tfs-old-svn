@@ -65,7 +65,7 @@ class AStarNodes
 		uint32_t countOpenNodes();
 
 		bool isInList(uint16_t x, uint16_t y);
-		AStarNode* getNodeInList(int32_t x, int32_t y);
+		AStarNode* getNodeInList(uint16_t x, uint16_t y);
 
 		int32_t getMapWalkCost(const Creature* creature, AStarNode* node,
 			const Tile* neighbourTile, const Position& neighbourPos);
@@ -108,7 +108,7 @@ class QTreeNode
 		virtual ~QTreeNode();
 
 		bool isLeaf(){return m_isLeaf;}
-		QTreeLeafNode* getLeaf(uint32_t x, uint32_t y);
+		QTreeLeafNode* getLeaf(uint16_t x, uint16_t y);
 		static QTreeLeafNode* getLeafStatic(QTreeNode* root, uint16_t x, uint16_t y);
 		QTreeLeafNode* createLeaf(uint16_t x, uint16_t y, uint16_t level);
 
