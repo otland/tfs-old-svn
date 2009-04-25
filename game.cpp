@@ -4941,8 +4941,9 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string targetName, uint
 		targetPlayer->sendTextMessage(MSG_INFO_DESCR, buffer);
 
 		addMagicEffect(targetPlayer->getPosition(), NM_ME_MAGIC_POISON);
+		int32_t targetId = targetPlayer->getID();
 		Scheduler::getScheduler().addEvent(createSchedulerTask(1000, boost::bind(
-			&Game::kickPlayer, this, targetPlayer->getID(), false)));
+			&Game::kickPlayer, this, targetId, false)));
 	}
 
 	IOLoginData::getInstance()->saveAccount(account);

@@ -63,15 +63,15 @@ class IOBan
 
 		bool addIpBanishment(uint32_t ip, time_t banTime, std::string comment, uint32_t gamemaster,
 			uint32_t mask = 0xFFFFFFFF) const;
-		bool addNamelock(uint32_t playerId, uint32_t reasonId, uint32_t actionId, std::string comment,
+		bool addNamelock(uint32_t playerId, uint32_t reasonId, ViolationAction_t actionId, std::string comment,
 			uint32_t gamemaster, std::string statement = "") const;
-		bool addNamelock(std::string name, uint32_t reasonId, uint32_t actionId, std::string comment,
+		bool addNamelock(std::string name, uint32_t reasonId, ViolationAction_t actionId, std::string comment,
 			uint32_t gamemaster, std::string statement = "") const;
-		bool addBanishment(uint32_t account, time_t banTime, uint32_t reasonId, uint32_t actionId,
+		bool addBanishment(uint32_t account, time_t banTime, uint32_t reasonId, ViolationAction_t actionId,
 			std::string comment, uint32_t gamemaster, std::string statement = "") const;
-		bool addDeletion(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment,
+		bool addDeletion(uint32_t account, uint32_t reasonId, ViolationAction_t actionId, std::string comment,
 			uint32_t gamemaster, std::string statement = "") const;
-		bool addNotation(uint32_t account, uint32_t reasonId, uint32_t actionId, std::string comment,
+		bool addNotation(uint32_t account, uint32_t reasonId, ViolationAction_t actionId, std::string comment,
 			uint32_t gamemaster, std::string statement = "") const;
 
 		bool removeIpBanishment(uint32_t ip, uint32_t mask = 0xFFFFFFFF) const;
