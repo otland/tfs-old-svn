@@ -80,7 +80,7 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 				max = (int32_t)((player->getLevel() + player->getMagicLevel() * 4) * 1. * maxa + maxb);
 
 				Vocation* vocation = player->getVocation();
-				if(max > 0) // Healing multipler
+				if(max > 0) //Healing multipler
 				{
 					if(vocation && vocation->getMagicHealingMultiplier() != 1.0)
 					{
@@ -96,6 +96,7 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 						max *= (int32_t)vocation->getMagicMultiplier();
 					}
 				}
+
 				return true;
 			}
 

@@ -5947,11 +5947,9 @@ int32_t LuaScriptInterface::luaDoCombat(lua_State* L)
 	uint32_t cid = (uint32_t)popNumber(L);
 
 	Creature* creature = NULL;
-
 	if(cid != 0)
 	{
 		creature = env->getCreatureByUID(cid);
-
 		if(!creature)
 		{
 			reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -5961,7 +5959,6 @@ int32_t LuaScriptInterface::luaDoCombat(lua_State* L)
 	}
 
 	const Combat* combat = env->getCombatObject(combatId);
-
 	if(!combat)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_COMBAT_NOT_FOUND));
@@ -5981,7 +5978,7 @@ int32_t LuaScriptInterface::luaDoCombat(lua_State* L)
 		case VARIANT_NUMBER:
 		{
 			Creature* target = g_game.getCreatureByID(var.number);
-			if(!target || (target->isInGhostMode() && !creature->canSeeGhost(target)))
+			if(!target || (target->isInGhostMode() && (!creature || !creature->canSeeGhost(target))))
 			{
 				lua_pushboolean(L, LUA_ERROR);
 				return 1;
