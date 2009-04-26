@@ -357,6 +357,7 @@ CONST_PROP_SUPPORTHANGABLE = 8
 
 PLAYERSEX_FEMALE = 0
 PLAYERSEX_MALE = 1
+PLAYERSEX_GAMEMASTER = 2
 
 PLAYERLOSS_EXPERIENCE = 0
 PLAYERLOSS_MANA = 1
@@ -460,6 +461,15 @@ WEAPON_DIST = 5
 WEAPON_WAND = 6
 WEAPON_AMMO = 7
 WEAPON_FIST = 8
+
+ACTION_NOTATION = 0
+ACTION_NAMEREPORT = 1
+ACTION_BANISHMENT = 2
+ACTION_BANREPORT = 3
+ACTION_BANFINAL = 4
+ACTION_BANREPORTFINAL = 5
+ACTION_STATEMENT = 6
+ACTION_DELETION = 7
 
 ITEM_GOLD_COIN = 2148
 ITEM_PLATINUM_COIN = 2152
@@ -579,8 +589,14 @@ PlayerFlag_IgnoreWeaponCheck = 35
 PlayerFlag_CannotBeMuted = 36
 PlayerFlag_IsAlwaysPremium = 37
 PlayerFlag_CanAnswerRuleViolations = 38
+PlayerFlag_39 = 39 -- ignore
+PlayerFlag_ShowGroupNameInsteadOfVocation = 40
+PlayerFlag_HasInfiniteStamina = 41
+PlayerFlag_CannotMoveItems = 42
+PlayerFlag_CannotMoveCreatures = 43
+PlayerFlag_CanReportBugs = 44
 
-PlayerCustomFlag_CanReportBugs = 0
+PlayerCustomFlag_UnusedAndToReplace = 0
 PlayerCustomFlag_CanSeePosition	= 1
 PlayerCustomFlag_CanSeeItemDetails = 2
 PlayerCustomFlag_CanSeeCreatureDetails = 3
@@ -593,16 +609,16 @@ PlayerCustomFlag_CanMoveFromFar = 9
 PlayerCustomFlag_CanLoginMultipleCharacters = 10
 PlayerCustomFlag_HasFullLight = 11
 PlayerCustomFlag_CanLogoutAnytime = 12
-PlayerCustomFlag_HasInfiniteStamina = 13
+PlayerCustomFlag_HideLevel = 13
 PlayerCustomFlag_IsProtected = 14
 PlayerCustomFlag_IsImmune = 15
 PlayerCustomFlag_NotGainSkull = 16
 PlayerCustomFlag_NotGainUnjustified = 17
-PlayerCustomFlag_CanSeeStaffChannel = 18
-PlayerCustomFlag_CanSeeCounsellorChannel = 19
-PlayerCustomFlag_DescriptionGroupInsteadVocation = 20
-PlayerCustomFlag_HideLevel = 21
-PlayerCustomFlag_IgnorePacification = 22
+PlayerCustomFlag_HideLevel = 18
+PlayerCustomFlag_IgnorePacification = 19
+PlayerCustomFlag_CanStairhop = 20
+PlayerCustomFlag_CanTurnhop = 21
+
 
 maleOutfits = {128, 129, 130, 131, 132, 133, 134, 143, 144, 145, 146, 151, 152, 153, 154, 251, 268, 273, 278, 289, 325}
 femaleOutfits = {136, 137, 138, 139, 140, 141, 142, 147, 148, 149, 150, 155, 156, 157, 158, 252, 269, 270, 279, 288, 324}

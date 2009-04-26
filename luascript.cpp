@@ -9827,8 +9827,9 @@ int32_t LuaScriptInterface::luaDoAddIpBanishment(lua_State *L)
 int32_t LuaScriptInterface::luaDoAddNamelock(lua_State *L)
 {
 	//doAddNamelock(name[, reason[, action[, comment[, admin[, statement]]]]])
-	uint32_t admin = 0, action = 0, reason = 0, params = lua_gettop(L);
+	uint32_t admin = 0, reason = 0, params = lua_gettop(L);
 	std::string statement, comment = "No comment.";
+	ViolationAction_t action;
 	if(params > 5)
 		statement = popString(L);
 
@@ -9839,7 +9840,7 @@ int32_t LuaScriptInterface::luaDoAddNamelock(lua_State *L)
 		comment = popString(L);
 
 	if(params > 2)
-		action = popNumber(L);
+		action = (ViolationAction_t)popNumber(L);
 
 	if(params > 1)
 		reason = popNumber(L);
@@ -9852,8 +9853,9 @@ int32_t LuaScriptInterface::luaDoAddNamelock(lua_State *L)
 int32_t LuaScriptInterface::luaDoAddBanishment(lua_State *L)
 {
 	//doAddBanishment(accId[, length[, reason[, action[, comment[, admin[, statement]]]]]])
-	uint32_t admin = 0, action = 0, reason = 0, params = lua_gettop(L), length = g_config.getNumber(ConfigManager::BAN_LENGTH);
+	uint32_t admin = 0, reason = 0, params = lua_gettop(L), length = g_config.getNumber(ConfigManager::BAN_LENGTH);
 	std::string statement, comment = "No comment.";
+	ViolationAction_t action;
 	if(params > 6)
 		statement = popString(L);
 
@@ -9864,7 +9866,7 @@ int32_t LuaScriptInterface::luaDoAddBanishment(lua_State *L)
 		comment = popString(L);
 
 	if(params > 3)
-		action = popNumber(L);
+		action = (ViolationAction_t)popNumber(L);
 
 	if(params > 2)
 		reason = popNumber(L);
@@ -9880,8 +9882,9 @@ int32_t LuaScriptInterface::luaDoAddBanishment(lua_State *L)
 int32_t LuaScriptInterface::luaDoAddDeletion(lua_State *L)
 {
 	//doAddDeletion(accId[, reason[, action[, comment[, admin[, statement]]]]]])
-	uint32_t admin = 0, action = 0, reason = 0, params = lua_gettop(L);
+	uint32_t admin = 0, reason = 0, params = lua_gettop(L);
 	std::string statement, comment = "No comment.";
+	ViolationAction_t action;
 	if(params > 5)
 		statement = popString(L);
 
@@ -9892,7 +9895,7 @@ int32_t LuaScriptInterface::luaDoAddDeletion(lua_State *L)
 		comment = popString(L);
 
 	if(params > 2)
-		action = popNumber(L);
+		action = (ViolationAction_t)popNumber(L);
 
 	if(params > 1)
 		reason = popNumber(L);
@@ -9905,8 +9908,9 @@ int32_t LuaScriptInterface::luaDoAddDeletion(lua_State *L)
 int32_t LuaScriptInterface::luaDoAddNotation(lua_State *L)
 {
 	//doAddNotation(accId[, reason[, action[, comment[, admin[, statement]]]]]])
-	uint32_t admin = 0, action = 0, reason = 0, params = lua_gettop(L);
+	uint32_t admin = 0, reason = 0, params = lua_gettop(L);
 	std::string statement, comment = "No comment.";
+	ViolationAction_t action;
 	if(params > 5)
 		statement = popString(L);
 
@@ -9917,7 +9921,7 @@ int32_t LuaScriptInterface::luaDoAddNotation(lua_State *L)
 		comment = popString(L);
 
 	if(params > 2)
-		action = popNumber(L);
+		action = (ViolationAction_t)popNumber(L);
 
 	if(params > 1)
 		reason = popNumber(L);

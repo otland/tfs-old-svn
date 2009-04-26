@@ -524,6 +524,7 @@ enum PlayerCustomFlags
 	PlayerCustomFlag_IgnoreLoginDelay,			//2^19 = 524288
 	PlayerCustomFlag_CanStairhop,				//2^20 = 1048576
 	PlayerCustomFlag_CanTurnhop,				//2^21 = 2097152
+
 	PlayerCustomFlag_LastFlag
 };
 
