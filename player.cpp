@@ -3250,33 +3250,31 @@ uint64_t Player::getGainedExperience(Creature* attacker, bool useMultiplier/* = 
 		return 0;
 
 	Player* attackerPlayer = attacker->getPlayer();
-	if(attackerPlayer && attackerPlayer != this && skillLoss)
+	if(!attackerPlayer || attackerPlayer == this || !skillLoss)
+		return 0;
+
+	uint32_t a = (uint32_t)std::floor(attackerPlayer->getLevel() * 0.9);
+	if(getLevel() >= a)
 	{
-		uint32_t a = (uint32_t)std::floor(attackerPlayer->getLevel() * 0.9);
-		if(getLevel() >= a)
-		{
-			/*
-				Formula
-				a = attackers level * 0.9
-				b = victims level
-				c = victims experience
+		/*
+			Formula
+			a = attackers level * 0.9
+			b = victims level
+			c = victims experience
 
-				result = (1 - (a / b)) * 0.05 * c
-			*/
+			result = (1 - (a / b)) * 0.05 * c
+		*/
 
-			uint32_t b = getLevel();
-			uint64_t c = getExperience();
+		uint32_t b = getLevel();
+		uint64_t c = getExperience();
 
-			uint64_t result = std::max((uint64_t)0, (uint64_t)std::floor(getDamageRatio(attacker) * std::max((double)0,
-				((double)(1 - (((double)a / b))))) * 0.05 * c));
-			if(useMultiplier)
-				result = uint64_t((double)result * attackerPlayer->rates[SKILL__LEVEL]);
+		uint64_t result = std::max((uint64_t)0, (uint64_t)std::floor(getDamageRatio(attacker) * std::max((double)0,
+			((double)(1 - (((double)a / b))))) * 0.05 * c));
+		if(useMultiplier)
+			result = uint64_t((double)result * attackerPlayer->rates[SKILL__LEVEL]);
 
-			return std::min((uint64_t)getLostExperience(), uint64_t(result * g_game.getExperienceStage(attackerPlayer->getLevel())));
-		}
+		return std::min((uint64_t)getLostExperience(), uint64_t(result * g_game.getExperienceStage(attackerPlayer->getLevel())));
 	}
-
-	return 0;
 }
 
 void Player::onFollowCreature(const Creature* creature)
@@ -3290,21 +3288,21 @@ void Player::setChaseMode(chaseMode_t mode)
 	chaseMode_t prevChaseMode = chaseMode;
 	chaseMode = mode;
 
-	if(prevChaseMode != chaseMode)
+	if(prevChaseMode == chaseMode)
+		return;
+
+	if(chaseMode == CHASEMODE_FOLLOW)
 	{
-		if(chaseMode == CHASEMODE_FOLLOW)
+		if(!followCreature && attackedCreature)
 		{
-			if(!followCreature && attackedCreature)
-			{
-				//chase opponent
-				setFollowCreature(attackedCreature);
-			}
+			//chase opponent
+			setFollowCreature(attackedCreature);
 		}
-		else if(attackedCreature)
-		{
-			setFollowCreature(NULL);
-			stopEventWalk();
-		}
+	}
+	else if(attackedCreature)
+	{
+		setFollowCreature(NULL);
+		stopEventWalk();
 	}
 }
 
@@ -3316,20 +3314,20 @@ void Player::onWalkAborted()
 
 void Player::onWalkComplete()
 {
-	if(walkTask)
-	{
-		walkTaskEvent = Scheduler::getScheduler().addEvent(walkTask);
-		walkTask = NULL;
-	}
+	if(!walkTask)
+		return;
+
+	walkTaskEvent = Scheduler::getScheduler().addEvent(walkTask);
+	walkTask = NULL;
 }
 
 void Player::stopWalk()
 {
-	if(!listWalkDir.empty())
-	{
-		extraStepDuration = getStepDuration();
-		stopEventWalk();
-	}
+	if(listWalkDir.empty())
+		return;
+
+	extraStepDuration = getStepDuration();
+	stopEventWalk();
 }
 
 void Player::getCreatureLight(LightInfo& light) const
@@ -3346,8 +3344,7 @@ void Player::updateItemsLight(bool internal /*=false*/)
 	LightInfo curLight;
 	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 	{
-		Item* item = getInventoryItem((slots_t)i);
-		if(item)
+		if(Item* item = getInventoryItem((slots_t)i))
 		{
 			item->getLight(curLight);
 			if(curLight.level > maxLight.level)
@@ -3450,28 +3447,26 @@ void Player::onCombatRemoveCondition(const Creature* attacker, Condition* condit
 void Player::onAttackedCreature(Creature* target)
 {
 	Creature::onAttackedCreature(target);
-	if(target == this)
+	if(target == this || hasFlag(PlayerFlag_NotGainInFight))
 		return;
 
-	if(!hasFlag(PlayerFlag_NotGainInFight))
-	{
-		addInFightTicks();
-		if(Player* targetPlayer = target->getPlayer())
-		{
-			pzLocked = true;
-			if(!isPartner(targetPlayer) && !Combat::isInPvpZone(this, targetPlayer) && !targetPlayer->hasAttacked(this))
-			{
-				addAttacked(targetPlayer);
-				if(targetPlayer->getSkull() == SKULL_NONE && getSkull() == SKULL_NONE && !hasCustomFlag(PlayerCustomFlag_NotGainSkull))
-				{
-					setSkull(SKULL_WHITE);
-					g_game.updateCreatureSkull(this);
-				}
+	addInFightTicks();
+	Player* targetPlayer = target->getPlayer();
+	if(!targetPlayer)
+		return;
 
-				if(getSkull() == SKULL_NONE)
-					targetPlayer->sendCreatureSkull(this);
-			}
+	pzLocked = true;
+	if(!isPartner(targetPlayer) && !Combat::isInPvpZone(this, targetPlayer) && !targetPlayer->hasAttacked(this))
+	{
+		addAttacked(targetPlayer);
+		if(targetPlayer->getSkull() == SKULL_NONE && getSkull() == SKULL_NONE && !hasCustomFlag(PlayerCustomFlag_NotGainSkull))
+		{
+			setSkull(SKULL_WHITE);
+			g_game.updateCreatureSkull(this);
 		}
+
+		if(getSkull() == SKULL_NONE)
+			targetPlayer->sendCreatureSkull(this);
 	}
 }
 

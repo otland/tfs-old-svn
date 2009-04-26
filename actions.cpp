@@ -328,37 +328,29 @@ ReturnValue Actions::canUse(const Player* player, const Position& pos, const Ite
 	if((action = getAction(item, ACTION_UNIQUEID)))
 	{
 		ReturnValue ret = action->canExecuteAction(player, pos);
-		if(ret != RET_NOERROR)
-			return ret;
-
-		return RET_NOERROR;
+		return ret != RET_NOERROR ?
+			ret : RET_NOERROR;
 	}
 
 	if((action = getAction(item, ACTION_ACTIONID)))
 	{
 		ReturnValue ret = action->canExecuteAction(player, pos);
-		if(ret != RET_NOERROR)
-			return ret;
-
-		return RET_NOERROR;
+		return ret != RET_NOERROR ?
+			ret : RET_NOERROR;
 	}
 
 	if((action = getAction(item, ACTION_ITEMID)))
 	{
 		ReturnValue ret = action->canExecuteAction(player, pos);
-		if(ret != RET_NOERROR)
-			return ret;
-
-		return RET_NOERROR;
+		return ret != RET_NOERROR ?
+			ret : RET_NOERROR;
 	}
 
 	if((action = getAction(item, ACTION_RUNEID)))
 	{
 		ReturnValue ret = action->canExecuteAction(player, pos);
-		if(ret != RET_NOERROR)
-			return ret;
-
-		return RET_NOERROR;
+		return ret != RET_NOERROR ?
+			ret : RET_NOERROR;
 	}
 
 	return RET_NOERROR;
@@ -372,9 +364,11 @@ ReturnValue Actions::canUseFar(const Creature* creature, const Position& toPos, 
 	const Position& creaturePos = creature->getPosition();
 	if(creaturePos.z > toPos.z)
 		return RET_FIRSTGOUPSTAIRS;
-	else if(creaturePos.z < toPos.z)
+
+	if(creaturePos.z < toPos.z)
 		return RET_FIRSTGODOWNSTAIRS;
-	else if(!Position::areInRange<7,5,0>(toPos, creaturePos))
+
+	if(!Position::areInRange<7,5,0>(toPos, creaturePos))
 		return RET_TOOFARAWAY;
 
 	if(checkLineOfSight && !g_game.canThrowObjectTo(creaturePos, toPos))
@@ -690,11 +684,6 @@ Action::Action(const Action* copy) : Event(copy)
 {
 	allowFarUse = copy->allowFarUse;
 	checkLineOfSight = copy->checkLineOfSight;
-}
-
-Action::~Action()
-{
-	//
 }
 
 bool Action::configureEvent(xmlNodePtr p)

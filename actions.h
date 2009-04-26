@@ -91,7 +91,7 @@ class Action : public Event
 	public:
 		Action(const Action* copy);
 		Action(LuaScriptInterface* _interface);
-		virtual ~Action();
+		virtual ~Action() {};
 
 		virtual bool configureEvent(xmlNodePtr p);
 		virtual bool loadFunction(const std::string& functionName);
@@ -124,4 +124,3 @@ class Action : public Event
 };
 
 #endif
-

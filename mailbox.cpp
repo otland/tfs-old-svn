@@ -116,7 +116,7 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 		return false;
 
 	/**No need to continue if its still empty**/
-	if(receiver == "" || dp == 0)
+	if(receiver.empty() || dp == 0)
 		return false;
 
 	bool tmp = IOLoginData::getInstance()->playerExists(receiver);

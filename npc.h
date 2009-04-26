@@ -63,7 +63,7 @@ class NpcScriptInterface : public LuaScriptInterface
 		static int32_t luaCreatureGetName2(lua_State* L);
 		static int32_t luaCreatureGetPos(lua_State* L);
 		static int32_t luaSelfGetPos(lua_State* L);
-		static int32_t luagetDistanceTo(lua_State* L);
+		static int32_t luaGetDistanceTo(lua_State* L);
 		static int32_t luaSetNpcFocus(lua_State* L);
 		static int32_t luaGetNpcCid(lua_State* L);
 		static int32_t luaGetNpcPos(lua_State* L);
@@ -85,7 +85,7 @@ class NpcEventsHandler
 {
 	public:
 		NpcEventsHandler(Npc* npc);
-		virtual ~NpcEventsHandler();
+		virtual ~NpcEventsHandler() {};
 
 		virtual void onCreatureAppear(const Creature* creature) {}
 		virtual void onCreatureDisappear(const Creature* creature) {}
@@ -108,7 +108,7 @@ class NpcScript : public NpcEventsHandler
 {
 	public:
 		NpcScript(std::string file, Npc* npc);
-		virtual ~NpcScript();
+		virtual ~NpcScript() {};
 
 		virtual void onCreatureAppear(const Creature* creature);
 		virtual void onCreatureDisappear(const Creature* creature);

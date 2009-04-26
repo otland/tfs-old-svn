@@ -29,11 +29,6 @@ TrashHolder::TrashHolder(uint16_t _type, MagicEffectClasses _effect /*= NM_ME_NO
 	effect = _effect;
 }
 
-TrashHolder::~TrashHolder()
-{
-	//
-}
-
 ReturnValue TrashHolder::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 	uint32_t flags) const
 {
@@ -65,17 +60,18 @@ void TrashHolder::__addThing(Creature* actor, Thing* thing)
 
 void TrashHolder::__addThing(Creature* actor, int32_t index, Thing* thing)
 {
-	if(Item* item = thing->getItem())
-	{
-		if(item->getID() == ITEM_WATERBALL)
-			return;
+	Item* item = thing->getItem();
+	if(!item)
+		return;
 
-		if(item != this && item->hasProperty(MOVEABLE))
-		{
-			g_game.internalRemoveItem(actor, item);
-			if(effect != NM_ME_NONE)
-				g_game.addMagicEffect(getPosition(), effect);
-		}
+	if(item->getID() == ITEM_WATERBALL)
+		return;
+
+	if(item != this && item->hasProperty(MOVEABLE))
+	{
+		g_game.internalRemoveItem(actor, item);
+		if(effect != NM_ME_NONE)
+			g_game.addMagicEffect(getPosition(), effect);
 	}
 }
 

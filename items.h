@@ -223,6 +223,7 @@ class Items
 		bool reload();
 		int32_t loadFromOtb(std::string);
 		bool loadFromXml();
+		void parseItemNode(xmlNodePtr itemNode, uint32_t id);
 
 		void addItemType(ItemType* iType);
 		ItemType& getItemType(int32_t id);
@@ -247,7 +248,6 @@ class Items
 		int32_t m_randomizationChance;
 		void clear();
 
-		void parseItemNode(xmlNodePtr itemNode, uint32_t id);
 		void parseRandomizationBlock(int32_t id, int32_t fromId, int32_t toId, int32_t chance);
 
 		Array<ItemType*> items;

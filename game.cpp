@@ -828,8 +828,8 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 			(*it)->onCreatureAppear(creature, true);
 	}
 
-	int32_t newStackpos = creature->getParent()->__getIndexOfThing(creature);
-	creature->getParent()->postAddNotification(NULL, creature, newStackpos);
+	creature->getParent()->postAddNotification(NULL, creature,
+		creature->getParent()->__getIndexOfThing(creature));
 
 	addCreatureCheck(creature);
 	creature->onPlacedCreature();
@@ -2829,75 +2829,73 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 
 	player->setTradeState(TRADE_ACCEPT);
 	Player* tradePartner = player->tradePartner;
-	if(tradePartner && tradePartner->getTradeState() == TRADE_ACCEPT)
+	if(!tradePartner || tradePartner->getTradeState() != TRADE_ACCEPT)
+		return false;
+
+	Item* tradeItem1 = player->tradeItem;
+	Item* tradeItem2 = tradePartner->tradeItem;
+
+	player->setTradeState(TRADE_TRANSFER);
+	tradePartner->setTradeState(TRADE_TRANSFER);
+
+	std::map<Item*, uint32_t>::iterator it = tradeItems.find(tradeItem1);
+	if(it != tradeItems.end())
 	{
-		Item* tradeItem1 = player->tradeItem;
-		Item* tradeItem2 = tradePartner->tradeItem;
-
-		player->setTradeState(TRADE_TRANSFER);
-		tradePartner->setTradeState(TRADE_TRANSFER);
-
-		std::map<Item*, uint32_t>::iterator it = tradeItems.find(tradeItem1);
-		if(it != tradeItems.end())
-		{
-			FreeThing(it->first);
-			tradeItems.erase(it);
-		}
-
-		it = tradeItems.find(tradeItem2);
-		if(it != tradeItems.end())
-		{
-			FreeThing(it->first);
-			tradeItems.erase(it);
-		}
-
-		ReturnValue ret1 = internalAddItem(player, tradePartner, tradeItem1, INDEX_WHEREEVER, 0, true);
-		ReturnValue ret2 = internalAddItem(tradePartner, player, tradeItem2, INDEX_WHEREEVER, 0, true);
-
-		bool isSuccess = false;
-		if(ret1 == RET_NOERROR && ret2 == RET_NOERROR)
-		{
-			ret1 = internalRemoveItem(tradePartner, tradeItem1, tradeItem1->getItemCount(), true);
-			ret2 = internalRemoveItem(player, tradeItem2, tradeItem2->getItemCount(), true);
-			if(ret1 == RET_NOERROR && ret2 == RET_NOERROR)
-			{
-				Cylinder* cylinder1 = tradeItem1->getParent();
-				Cylinder* cylinder2 = tradeItem2->getParent();
-
-				internalMoveItem(player, cylinder1, tradePartner, INDEX_WHEREEVER, tradeItem1, tradeItem1->getItemCount(), NULL);
-				internalMoveItem(tradePartner, cylinder2, player, INDEX_WHEREEVER, tradeItem2, tradeItem2->getItemCount(), NULL);
-
-				tradeItem1->onTradeEvent(ON_TRADE_TRANSFER, tradePartner, player);
-				tradeItem2->onTradeEvent(ON_TRADE_TRANSFER, player, tradePartner);
-
-				isSuccess = true;
-			}
-		}
-
-		if(!isSuccess)
-		{
-			std::string errorDescription = getTradeErrorDescription(ret1, tradeItem1);
-			tradePartner->sendTextMessage(MSG_INFO_DESCR, errorDescription);
-			tradeItem2->onTradeEvent(ON_TRADE_CANCEL, tradePartner, NULL);
-
-			errorDescription = getTradeErrorDescription(ret2, tradeItem2);
-			player->sendTextMessage(MSG_INFO_DESCR, errorDescription);
-			tradeItem1->onTradeEvent(ON_TRADE_CANCEL, player, NULL);
-		}
-
-		player->setTradeState(TRADE_NONE);
-		player->tradeItem = NULL;
-		player->tradePartner = NULL;
-		player->sendTradeClose();
-
-		tradePartner->setTradeState(TRADE_NONE);
-		tradePartner->tradeItem = NULL;
-		tradePartner->tradePartner = NULL;
-		tradePartner->sendTradeClose();
-		return isSuccess;
+		FreeThing(it->first);
+		tradeItems.erase(it);
 	}
 
-	return false;
+	it = tradeItems.find(tradeItem2);
+	if(it != tradeItems.end())
+	{
+		FreeThing(it->first);
+		tradeItems.erase(it);
+	}
+
+	ReturnValue ret1 = internalAddItem(player, tradePartner, tradeItem1, INDEX_WHEREEVER, 0, true);
+	ReturnValue ret2 = internalAddItem(tradePartner, player, tradeItem2, INDEX_WHEREEVER, 0, true);
+
+	bool isSuccess = false;
+	if(ret1 == RET_NOERROR && ret2 == RET_NOERROR)
+	{
+		ret1 = internalRemoveItem(tradePartner, tradeItem1, tradeItem1->getItemCount(), true);
+		ret2 = internalRemoveItem(player, tradeItem2, tradeItem2->getItemCount(), true);
+		if(ret1 == RET_NOERROR && ret2 == RET_NOERROR)
+		{
+			Cylinder* cylinder1 = tradeItem1->getParent();
+			Cylinder* cylinder2 = tradeItem2->getParent();
+
+			internalMoveItem(player, cylinder1, tradePartner, INDEX_WHEREEVER, tradeItem1, tradeItem1->getItemCount(), NULL);
+			internalMoveItem(tradePartner, cylinder2, player, INDEX_WHEREEVER, tradeItem2, tradeItem2->getItemCount(), NULL);
+
+			tradeItem1->onTradeEvent(ON_TRADE_TRANSFER, tradePartner, player);
+			tradeItem2->onTradeEvent(ON_TRADE_TRANSFER, player, tradePartner);
+
+			isSuccess = true;
+		}
+	}
+
+	if(!isSuccess)
+	{
+		std::string errorDescription = getTradeErrorDescription(ret1, tradeItem1);
+		tradePartner->sendTextMessage(MSG_INFO_DESCR, errorDescription);
+		tradeItem2->onTradeEvent(ON_TRADE_CANCEL, tradePartner, NULL);
+
+		errorDescription = getTradeErrorDescription(ret2, tradeItem2);
+		player->sendTextMessage(MSG_INFO_DESCR, errorDescription);
+		tradeItem1->onTradeEvent(ON_TRADE_CANCEL, player, NULL);
+	}
+
+	player->setTradeState(TRADE_NONE);
+	player->tradeItem = NULL;
+	player->tradePartner = NULL;
+	player->sendTradeClose();
+
+	tradePartner->setTradeState(TRADE_NONE);
+	tradePartner->tradeItem = NULL;
+	tradePartner->tradePartner = NULL;
+	tradePartner->sendTradeClose();
+	return isSuccess;
 }
 
 std::string Game::getTradeErrorDescription(ReturnValue ret, Item* item)
@@ -3216,7 +3214,9 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 		if(Creature* creature = thing->getCreature())
 		{
 			ss << std::endl << "Health: [" << creature->getHealth() << " / " << creature->getMaxHealth() << "].";
-			ss << std::endl << "Mana: [" << creature->getMana() << " / " << creature->getMaxMana() << "].";
+			if(creature->getMaxMana() > 0)
+				ss << std::endl << "Mana: [" << creature->getMana() << " / " << creature->getMaxMana() << "].";
+
 			if(Player* destPlayer = creature->getPlayer())
 			{
 				char bufferIP[40];
@@ -4254,7 +4254,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			return false;
 
 		target->changeMana(manaChange);
-		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isInGhostMode() && 
+		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isInGhostMode() &&
 			(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_MONSTER) || !target->getMonster()))
 		{
 			char buffer[20];

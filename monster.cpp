@@ -894,6 +894,7 @@ void Monster::pushItems(Tile* tile)
 {
 	if(!tile->downItems)
 		return;
+
 	//We cannot use iterators here since we can push the item to another tile
 	//which will invalidate the iterator.
 	//start from the end to minimize the amount of traffic

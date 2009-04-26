@@ -1281,7 +1281,7 @@ void ProtocolGame::parseMove(NetworkMessage& msg, Direction dir)
 
 void ProtocolGame::parseTurn(NetworkMessage& msg, Direction dir)
 {
-		addGameTask(&Game::playerTurn, player->getID(), dir);
+	addGameTask(&Game::playerTurn, player->getID(), dir);
 }
 
 void ProtocolGame::parseRequestOutfit(NetworkMessage& msg)

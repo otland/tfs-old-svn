@@ -1009,8 +1009,6 @@ void AStarNodes::closeNode(AStarNode* node)
 	assert(pos >= MAX_NODES);
 	std::cout << "AStarNodes. trying to close node out of range" << std::endl;
 	return;
-
-	
 }
 
 void AStarNodes::openNode(AStarNode* node)
