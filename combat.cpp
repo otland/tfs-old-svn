@@ -150,7 +150,7 @@ void Combat::getCombatArea(const Position& centerPos, const Position& targetPos,
 		Tile* tile = g_game.getTile(targetPos);
 		if(!tile)
 		{
-			tile = new Tile(targetPos);
+			tile = new Tile(targetPos.x, targetPos.y, targetPos.z);
 			g_game.setTile(tile);
 		}
 
@@ -1089,7 +1089,7 @@ bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, s
 					tile = g_game.getTile(tmpPos);
 					if(!tile)
 					{
-						tile = new Tile(tmpPos);
+						tile = new Tile(tmpPos.x, tmpPos.y, tmpPos.z);
 						g_game.setTile(tile);
 					}
 

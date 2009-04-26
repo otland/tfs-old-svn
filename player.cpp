@@ -3790,11 +3790,13 @@ void Player::addUnjustifiedDead(const Player* attacked)
 		int32_t warnings = IOLoginData::getInstance()->loadAccount(accountId, true).warnings;
 		bool success = false;
 		if(warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
-			success = IOBan::getInstance()->addDeletion(accountId, 20, 7, "Unjustified player killing.", 0);
+			success = IOBan::getInstance()->addDeletion(accountId, 20, ACTION_DELETION, "Unjustified player killing.", 0);
 		else if(warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
-			success = IOBan::getInstance()->addBanishment(accountId, (time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH)), 20, 4, "Unjustified player killing.", 0);
+			success = IOBan::getInstance()->addBanishment(accountId, (time(NULL) + g_config.getNumber(
+				ConfigManager::FINALBAN_LENGTH)), 20, ACTION_BANFINAL, "Unjustified player killing.", 0);
 		else
-			success = IOBan::getInstance()->addBanishment(accountId, (time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH)), 20, 2, "Unjustified player killing.", 0);
+			success = IOBan::getInstance()->addBanishment(accountId, (time(NULL) + g_config.getNumber(
+				ConfigManager::BAN_LENGTH)), 20, ACTION_BANISHMENT, "Unjustified player killing.", 0);
 
 		if(success)
 		{
