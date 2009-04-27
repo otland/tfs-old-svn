@@ -939,7 +939,7 @@ void Monster::pushCreatures(Tile* tile)
 	Monster* monster = NULL;
 	for(uint32_t i = 0; creatures->size();)
 	{
-		if((monster = creatures->at(i)->getMonster()) && monster->isPushable())
+		if(creatures->at(i) && (monster = creatures->at(i)->getMonster()) && monster->isPushable())
 		{
 			if(!pushCreature(monster))
 			{
