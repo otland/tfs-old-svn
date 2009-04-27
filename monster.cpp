@@ -470,14 +470,8 @@ BlockType_t Monster::blockHit(Creature* attacker, CombatType_t combatType, int32
 
 bool Monster::isTarget(Creature* creature)
 {
-	if(creature->isRemoved() || !creature->isAttackable() ||
-		creature->getZone() == ZONE_PROTECTION || !canSeeCreature(creature))
-		return false;
-
-	if(creature->getPosition().z != getPosition().z)
-		return false;
-
-	return true;
+	return (!creature->isRemoved() && creature->isAttackable() && creature->getZone() != ZONE_PROTECTION
+		&& canSeeCreature(creature) && creature->getPosition().z == getPosition().z)
 }
 
 bool Monster::selectTarget(Creature* creature)
@@ -485,7 +479,6 @@ bool Monster::selectTarget(Creature* creature)
 #ifdef __DEBUG__
 	std::cout << "Selecting target... " << std::endl;
 #endif
-
 	if(!isTarget(creature))
 		return false;
 
@@ -940,29 +933,34 @@ bool Monster::pushCreature(Creature* creature)
 
 void Monster::pushCreatures(Tile* tile)
 {
-	if(!tile || !tile->creatures)
+	if(!tile)
 		return;
 
-	uint32_t count = 0;
+	CreatureVector* creatures = tile->creatures;
+	if(!creatures)
+		return;
+
+	bool effect = false;
 	Monster* monster = NULL;
-	for(uint32_t i = 0; (tile->creatures && i < tile->creatures->size());)
+	for(uint32_t i = 0; creatures->size();)
 	{
-		if((monster = tile->creatures->at(i)->getMonster()) && monster->isPushable())
+		if((monster = creatures->at(i)->getMonster()) && monster->isPushable())
 		{
-			if(pushCreature(monster))
-				continue;
-			else
+			if(!pushCreature(monster))
 			{
 				monster->changeHealth(-monster->getHealth());
 				monster->setDropLoot(LOOT_DROP_NONE);
-				count++;
+				if(!effect)
+					effect = true;
 			}
 		}
+		else
+			continue;
 
 		++i;
 	}
 
-	if(count > 0)
+	if(effect)
 		g_game.addMagicEffect(tile->getPosition(), NM_ME_BLOCKHIT);
 }
 
@@ -1145,17 +1143,11 @@ bool Monster::canWalkTo(Position pos, Direction dir)
 			break;
 	}
 
-	if(isInSpawnRange(pos))
-	{
-		if(getWalkCache(pos) == 0)
-			return false;
+	if(!isInSpawnRange(pos) || !getWalkCache(pos))
+		return false;
 
-		Tile* tile = g_game.getTile(pos.x, pos.y, pos.z);
-		if(tile && tile->__queryAdd(0, this, 1, FLAG_PATHFINDING) == RET_NOERROR)
-			return true;
-	}
-
-	return false;
+	Tile* tile = g_game.getTile(pos);
+	return tile && tile->__queryAdd(0, this, 1, FLAG_PATHFINDING) == RET_NOERROR;
 }
 
 bool Monster::onDeath()
@@ -1224,7 +1216,7 @@ bool Monster::despawn()
 
 bool Monster::getCombatValues(int32_t& min, int32_t& max)
 {
-	if(minCombatValue == 0 && maxCombatValue == 0)
+	if(!minCombatValue && !maxCombatValue)
 		return false;
 
 	min = minCombatValue;

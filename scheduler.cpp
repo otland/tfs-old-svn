@@ -104,9 +104,9 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 uint32_t Scheduler::addEvent(SchedulerTask* task)
 {
 	bool signal = false;
+	OTSYS_THREAD_LOCK(m_eventLock, "");
 	if(Scheduler::m_threadState == Scheduler::STATE_RUNNING)
 	{
-		OTSYS_THREAD_LOCK(m_eventLock, "");
 		// check if the event has a valid id
 		if(task->getEventId() == 0)
 		{
@@ -122,17 +122,16 @@ uint32_t Scheduler::addEvent(SchedulerTask* task)
 		m_eventIds.insert(task->getEventId());
 		// add the event to the queue
 		m_eventList.push(task);
-
 		// if the list was empty or this event is the top in the list
 		// we have to signal it
 		signal = (task == m_eventList.top());
-		OTSYS_THREAD_UNLOCK(m_eventLock, "");
 	}
 #ifdef __DEBUG_SCHEDULER__
 	else
 		std::cout << "[Error - Scheduler::addTask] Scheduler thread is terminated." << std::endl;
 #endif
 
+	OTSYS_THREAD_UNLOCK(m_eventLock, "");
 	if(signal)
 		OTSYS_THREAD_SIGNAL_SEND(m_eventSignal);
 
@@ -141,7 +140,7 @@ uint32_t Scheduler::addEvent(SchedulerTask* task)
 
 bool Scheduler::stopEvent(uint32_t eventid)
 {
-	if(eventid == 0)
+	if(!eventid)
 		return false;
 
 	OTSYS_THREAD_LOCK(m_eventLock, "")
@@ -154,12 +153,10 @@ bool Scheduler::stopEvent(uint32_t eventid)
 		OTSYS_THREAD_UNLOCK(m_eventLock, "");
 		return true;
 	}
-	else
-	{
-		// this eventid is not valid
-		OTSYS_THREAD_UNLOCK(m_eventLock, "");
-		return false;
-	}
+
+	// this eventid is not valid
+	OTSYS_THREAD_UNLOCK(m_eventLock, "");
+	return false;
 }
 
 void Scheduler::stop()

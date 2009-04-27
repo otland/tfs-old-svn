@@ -48,6 +48,7 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 	#endif
 	srand((uint32_t)OTSYS_TIME());
 
+	OutputMessagePool outputPool = NULL;
 	while(Dispatcher::m_threadState != Dispatcher::STATE_TERMINATED)
 	{
 		Task* task = NULL;
@@ -68,14 +69,19 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 
 		OTSYS_THREAD_UNLOCK(getDispatcher().m_taskLock, "");
 		// finally execute the task...
-		if(task)
-		{
-			OutputMessagePool::getInstance()->startExecutionFrame();
-			(*task)();
-			delete task;
-			OutputMessagePool::getInstance()->sendAll();
-			g_game.clearSpectatorCache();
-		}
+		if(!task)
+			continue;
+
+		outputPool = OutputMessagePool::getInstance();
+		if(outputPool)
+			outputPool->startExecutionFrame();
+
+		(*task)();
+		delete task;
+		if(outputPool)
+			outputPool->sendAll();
+
+		g_game.clearSpectatorCache();
 	}
 
 	#if defined __EXCEPTION_TRACER__
@@ -89,18 +95,18 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 void Dispatcher::addTask(Task* task)
 {
 	bool signal = false;
+	OTSYS_THREAD_LOCK(m_taskLock, "");
 	if(Dispatcher::m_threadState == Dispatcher::STATE_RUNNING)
 	{
-		OTSYS_THREAD_LOCK(m_taskLock, "");
 		signal = m_taskList.empty();
 		m_taskList.push_back(task);
-		OTSYS_THREAD_UNLOCK(m_taskLock, "");
 	}
 	#ifdef __DEBUG_SCHEDULER__
 	else
 		std::cout << "[Error - Dispatcher::addTask] Dispatcher thread is terminated." << std::endl;
 	#endif
 
+	OTSYS_THREAD_UNLOCK(m_taskLock, "");
 	// send a signal if the list was empty
 	if(signal)
 		OTSYS_THREAD_SIGNAL_SEND(m_taskSignal);
@@ -109,13 +115,19 @@ void Dispatcher::addTask(Task* task)
 void Dispatcher::flush()
 {
 	Task* task = NULL;
+	OutputMessagePool outputPool = NULL;
 	while(!m_taskList.empty())
 	{
 		task = getDispatcher().m_taskList.front();
 		m_taskList.pop_front();
+
 		(*task)();
 		delete task;
-		OutputMessagePool::getInstance()->sendAll();
+
+		outputPool = OutputMessagePool::getInstance();
+		if(outputPool)
+			outputPool->sendAll();
+
 		g_game.clearSpectatorCache();
 	}
 }
