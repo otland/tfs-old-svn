@@ -85,16 +85,17 @@ class Tile : public Cylinder
 			{
 				for(ItemVector::iterator it = topItems->begin(); it != topItems->end(); ++it)
 					delete *it;
+
+				topItems->clear();
 			}
 
-			topItems->clear();
 			if(downItems)
 			{
 				for(ItemVector::iterator it = downItems->begin(); it != downItems->end(); ++it)
 					delete *it;
-			}
 
-			downItems->clear();
+				downItems->clear();
+			}
 		}
 
 		virtual int32_t getThrowRange() const {return 0;}
