@@ -6324,7 +6324,7 @@ int32_t LuaScriptInterface::luaGetMonsterFriendList(lua_State* L)
 int32_t LuaScriptInterface::luaDoMonsterSetTarget(lua_State* L)
 {
 	//doMonsterSetTarget(cid, target)
-	uint32_t target = popNumber(L);
+	uint32_t targetId = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 
 	Creature* creature = env->getCreatureByUID(popNumber(L));
@@ -6343,7 +6343,7 @@ int32_t LuaScriptInterface::luaDoMonsterSetTarget(lua_State* L)
 		return 1;
 	}
 
-	Creature* target = env->getCreatureByUID(target);
+	Creature* target = env->getCreatureByUID(targetId);
 	if(!target)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
