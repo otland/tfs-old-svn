@@ -20,14 +20,14 @@
 #include "otpch.h"
 
 #include "tasks.h"
+#if defined __EXCEPTION_TRACER__
+#include "exception.h"
+#endif
+
 #include "outputmessage.h"
 #include "game.h"
 
 extern Game g_game;
-
-#if defined __EXCEPTION_TRACER__
-#include "exception.h"
-#endif
 
 Dispatcher::DispatcherState Dispatcher::m_threadState = Dispatcher::STATE_TERMINATED;
 
@@ -35,6 +35,7 @@ Dispatcher::Dispatcher()
 {
 	m_taskList.clear();
 	Dispatcher::m_threadState = Dispatcher::STATE_RUNNING;
+
 	OTSYS_THREAD_LOCKVARINIT(m_taskLock);
 	OTSYS_THREAD_SIGNALVARINIT(m_taskSignal);
 	OTSYS_CREATE_THREAD(Dispatcher::dispatcherThread, NULL);
@@ -48,16 +49,32 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 	#endif
 	srand((uint32_t)OTSYS_TIME());
 
-	OutputMessagePool outputPool = NULL;
+	OutputMessagePool* outputPool = NULL;
+	#ifdef __USE_BOOST_THREAD__
+	OTSYS_THREAD_UNIQUE taskLockUnique(getDispatcher().m_taskLock, OTSYS_THREAD_UNIQUE_VAL);
+	#endif
 	while(Dispatcher::m_threadState != Dispatcher::STATE_TERMINATED)
 	{
 		Task* task = NULL;
+		OTSYS_THREAD_LOCK(
+		#ifdef __USE_BOOST_THREAD__
+		taskLockUnique
+		#else
+		getScheduler().m_taskLock
+		#endif
+		, "");
+
 		// check if there are tasks waiting
-		OTSYS_THREAD_LOCK(getDispatcher().m_taskLock, "")
 		if(getDispatcher().m_taskList.empty())
 		{
 			//if the list is empty wait for signal
-			OTSYS_THREAD_WAITSIGNAL(getDispatcher().m_taskSignal, getDispatcher().m_taskLock);
+			OTSYS_THREAD_WAITSIGNAL(getDispatcher().m_taskSignal, 
+			#ifdef __USE_BOOST_THREAD__
+			getDispatcher().m_taskLock
+			#else
+			taskLockUnique
+			#endif
+			);
 		}
 
 		if(!getDispatcher().m_taskList.empty() && Dispatcher::m_threadState != Dispatcher::STATE_TERMINATED)
@@ -67,7 +84,13 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 			getDispatcher().m_taskList.pop_front();
 		}
 
-		OTSYS_THREAD_UNLOCK(getDispatcher().m_taskLock, "");
+		OTSYS_THREAD_LOCK(
+		#ifdef __USE_BOOST_THREAD__
+		taskLockUnique
+		#else
+		getScheduler().m_taskLock
+		#endif
+		, "");
 		// finally execute the task...
 		if(!task)
 			continue;
@@ -115,7 +138,7 @@ void Dispatcher::addTask(Task* task)
 void Dispatcher::flush()
 {
 	Task* task = NULL;
-	OutputMessagePool outputPool = NULL;
+	OutputMessagePool* outputPool = NULL;
 	while(!m_taskList.empty())
 	{
 		task = getDispatcher().m_taskList.front();

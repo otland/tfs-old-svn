@@ -106,6 +106,9 @@ extern Admin* g_admin;
 #endif
 OTSYS_THREAD_LOCKVAR_PTR g_loaderLock;
 OTSYS_THREAD_SIGNALVAR g_loaderSignal;
+#ifdef __USE_BOOST_THREAD__
+OTSYS_THREAD_UNIQUE g_loaderUniqueLock(g_loaderLock);
+#endif
 
 #if not defined(WIN32) || defined(__CONSOLE__)
 bool argumentsHandler(StringVec args)
@@ -290,8 +293,16 @@ void serverMain(void* param)
 	#endif
 	&servicer)));
 
-	OTSYS_THREAD_LOCK(g_loaderLock, "otserv()");
-	OTSYS_THREAD_WAITSIGNAL(g_loaderSignal, g_loaderLock);
+	#ifndef __USE_BOOST_THREAD__
+	OTSYS_THREAD_LOCK(g_loaderLock, "");
+	#endif
+	OTSYS_THREAD_WAITSIGNAL(g_loaderSignal,
+	#ifdef __USE_BOOST_THREAD__
+	g_loaderUniqueLock
+	#else
+	g_loaderLock
+	#endif
+	);
 	if(servicer.isRunning())
 	{
 		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
@@ -806,7 +817,7 @@ ServiceManager* services)
 	g_game.setGameState(GAME_STATE_NORMAL);
 
 	g_game.start(services);
-	OTSYS_THREAD_SIGNAL_SEND(g_loaderSignal);
+	OTSYS_THREAD_SIGNAL_SEND_ALL(g_loaderSignal);
 }
 
 #ifndef __CONSOLE__

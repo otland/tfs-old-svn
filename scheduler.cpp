@@ -20,8 +20,6 @@
 #include "otpch.h"
 
 #include "scheduler.h"
-#include <iostream>
-
 #if defined __EXCEPTION_TRACER__
 #include "exception.h"
 #endif
@@ -32,6 +30,7 @@ Scheduler::Scheduler()
 {
 	m_lastEventId = 0;
 	Scheduler::m_threadState = STATE_RUNNING;
+
 	OTSYS_THREAD_LOCKVARINIT(m_eventLock);
 	OTSYS_THREAD_SIGNALVARINIT(m_eventSignal);
 	OTSYS_CREATE_THREAD(Scheduler::schedulerThread, NULL);
@@ -45,26 +44,47 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 	#endif
 	srand((uint32_t)OTSYS_TIME());
 
+	#ifdef __USE_BOOST_THREAD__
+	OTSYS_THREAD_UNIQUE eventLockUnique(getScheduler().m_eventLock, OTSYS_THREAD_UNIQUE_VAL);
+	#endif
 	while(Scheduler::m_threadState != Scheduler::STATE_TERMINATED)
 	{
 		SchedulerTask* task = NULL;
-		bool runTask = false;
-		int32_t ret;
+		OTSYS_THREAD_LOCK(
+		#ifdef __USE_BOOST_THREAD__
+		eventLockUnique
+		#else
+		getScheduler().m_eventLock
+		#endif
+		, "");
 
 		// check if there are events waiting...
-		OTSYS_THREAD_LOCK(getScheduler().m_eventLock, "schedulerThread()")
+		OTSYS_THREAD_SIGNAL_RETURN ret = (OTSYS_THREAD_SIGNAL_RETURN)0;
 		if(getScheduler().m_eventList.empty())
 		{
 			// unlock mutex and wait for signal
-			ret = OTSYS_THREAD_WAITSIGNAL(getScheduler().m_eventSignal, getScheduler().m_eventLock);
+			ret = OTSYS_THREAD_WAITSIGNAL(getScheduler().m_eventSignal,
+			#ifdef __USE_BOOST_THREAD__
+			m_eventLockUnique
+			#else
+			getScheduler().m_eventLock
+			#endif
+			);
 		}
 		else
 		{
 			// unlock mutex and wait for signal or timeout
-			ret = OTSYS_THREAD_WAITSIGNAL_TIMED(getScheduler().m_eventSignal, getScheduler().m_eventLock, getScheduler().m_eventList.top()->getCycle());
+			ret = OTSYS_THREAD_WAITSIGNAL_TIMED(getScheduler().m_eventSignal,
+			#ifdef __USE_BOOST_THREAD__
+			eventLockUnique
+			#else
+			getScheduler().m_eventLock
+			#endif
+			, getScheduler().m_eventList.top()->getCycle());
 		}
 
 		// the mutex is locked again now...
+		bool runTask = false;
 		if(ret == OTSYS_THREAD_TIMEOUT && Scheduler::m_threadState != Scheduler::STATE_TERMINATED)
 		{
 			// ok we had a timeout, so there has to be an event we have to execute...
@@ -81,7 +101,13 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 			}
 		}
 
-		OTSYS_THREAD_UNLOCK(getScheduler().m_eventLock, "schedulerThread()");
+		OTSYS_THREAD_UNLOCK(
+		#ifdef __USE_BOOST_THREAD__
+		eventLockUnique
+		#else
+		getScheduler().m_eventLock
+		#endif
+		, "");
 		// add task to dispatcher
 		if(task)
 		{

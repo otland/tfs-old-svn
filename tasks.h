@@ -29,16 +29,10 @@ class Task
 	public:
 		virtual ~Task() {}
 
-		void operator()()
-		{
-			m_f();
-		}
+		void operator()() {m_f();}
 
 	protected:
-		Task(boost::function<void (void)> f)
-		{
-			m_f = f;
-		}
+		Task(boost::function<void (void)> f) {m_f = f;}
 
 		boost::function<void (void)> m_f;
 
