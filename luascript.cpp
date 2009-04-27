@@ -8091,7 +8091,7 @@ int32_t LuaScriptInterface::luaAddEvent(lua_State* L)
 	eventDesc.scriptId = env->getScriptId();
 
 	scriptInterface->m_lastEventTimerId++;
-	scriptInterface->m_timerEvents[script_interface->m_lastEventTimerId] = eventDesc;
+	scriptInterface->m_timerEvents[scriptInterface->m_lastEventTimerId] = eventDesc;
 	Scheduler::getScheduler().addEvent(createSchedulerTask(delay, boost::bind(&LuaScriptInterface::executeTimerEvent,
 		scriptInterface, scriptInterface->m_lastEventTimerId)));
 
@@ -8105,23 +8105,23 @@ int32_t LuaScriptInterface::luaStopEvent(lua_State* L)
 	uint32_t eventId = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 
-	LuaScriptInterface* script_interface = env->getScriptInterface();
-	if(!script_interface)
+	LuaScriptInterface* scriptInterface = env->getScriptInterface();
+	if(!scriptInterface)
 	{
 		reportErrorFunc("No valid script interface!");
 		lua_pushboolean(L, LUA_ERROR);
 		return 1;
 	}
 
-	LuaTimerEvents::iterator it = script_interface->m_timerEvents.find(eventId);
-	if(it != script_interface->m_timerEvents.end())
+	LuaTimerEvents::iterator it = scriptInterface->m_timerEvents.find(eventId);
+	if(it != scriptInterface->m_timerEvents.end())
 	{
 		for(std::list<int32_t>::iterator lt = it->second.parameters.begin(); lt != it->second.parameters.end(); ++lt)
-			luaL_unref(script_interface->m_luaState, LUA_REGISTRYINDEX, *lt);
+			luaL_unref(scriptInterface->m_luaState, LUA_REGISTRYINDEX, *lt);
 		it->second.parameters.clear();
 
-		luaL_unref(script_interface->m_luaState, LUA_REGISTRYINDEX, it->second.function);
-		script_interface->m_timerEvents.erase(it);
+		luaL_unref(scriptInterface->m_luaState, LUA_REGISTRYINDEX, it->second.function);
+		scriptInterface->m_timerEvents.erase(it);
 		lua_pushboolean(L, LUA_NO_ERROR);
 	}
 	else
