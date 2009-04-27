@@ -928,25 +928,27 @@ bool Monster::pushCreature(Creature* creature)
 
 void Monster::pushCreatures(Tile* tile)
 {
-	if(!tile || !tile->creatures)
+	if(!tile)
+		return;
+
+	CreatureVector* creatures = tile->creatures;
+	if(!creatures || creatures->empty())
 		return;
 
 	bool effect = false;
 	Monster* monster = NULL;
-	for(uint32_t i = 0; (tile->creatures && i < tile->creatures->size());)
+	for(uint32_t i = 0; i < creatures->size();)
 	{
-		if((monster = tile->creatures->at(i)->getMonster()) && monster->isPushable())
+		if(creatures->at(i) && (monster = creatures->at(i)->getMonster()) && monster->isPushable())
 		{
-			if(!pushCreature(monster))
-			{
-				monster->changeHealth(-monster->getHealth());
-				monster->setDropLoot(LOOT_DROP_NONE);
-				if(!effect)
-					effect = true;
-			}
+			if(pushCreature(monster))
+				continue;
+
+			monster->changeHealth(-monster->getHealth());
+			monster->setDropLoot(LOOT_DROP_NONE);
+			if(!effect)
+				effect = true;
 		}
-		else
-			continue;
 
 		++i;
 	}
