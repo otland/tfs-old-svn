@@ -928,18 +928,14 @@ bool Monster::pushCreature(Creature* creature)
 
 void Monster::pushCreatures(Tile* tile)
 {
-	if(!tile)
-		return;
-
-	CreatureVector* creatures = tile->creatures;
-	if(!creatures)
+	if(!tile || !tile->creatures)
 		return;
 
 	bool effect = false;
 	Monster* monster = NULL;
-	for(uint32_t i = 0; creatures->size();)
+	for(uint32_t i = 0; (tile->creatures && i < tile->creatures->size());)
 	{
-		if(creatures->at(i) && (monster = creatures->at(i)->getMonster()) && monster->isPushable())
+		if((monster = tile->creatures->at(i)->getMonster()) && monster->isPushable())
 		{
 			if(!pushCreature(monster))
 			{
