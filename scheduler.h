@@ -33,23 +33,18 @@ class SchedulerTask : public Task
 		void setEventId(uint32_t eventid) {m_eventid = eventid;}
 		uint32_t getEventId() const {return m_eventid;}
 
-		OTSYS_THREAD_CYCLE getCycle() const {return m_cycle;}
-
-		bool operator<(const SchedulerTask& other) const
-		{
-			return getCycle() > other.getCycle();
-		}
+		uint64_t getCycle() const {return m_cycle;}
+		bool operator<(const SchedulerTask& other) const {return getCycle() > other.getCycle();}
 
 	protected:
-		SchedulerTask(uint32_t delay, boost::function<void (void)> f): Task(f)
+		SchedulerTask(uint32_t delay, boost::function<void (void)> f) : Task(f)
 		{
-			m_cycle = OTSYS_THREAD_DELAY(delay);
+			m_cycle = OTSYS_TIME() + delay;
 			m_eventid = 0;
 		}
 
-		OTSYS_THREAD_CYCLE m_cycle;
+		uint64_t m_cycle;
 		uint32_t m_eventid;
-
 		friend SchedulerTask* createSchedulerTask(uint32_t, boost::function<void (void)>);
 };
 
@@ -68,11 +63,12 @@ class lessSchedTask : public std::binary_function<SchedulerTask*&, SchedulerTask
 		bool operator()(SchedulerTask*& t1, SchedulerTask*& t2) {return (*t1) < (*t2);}
 };
 
+typedef std::set<uint32_t> EventIdSet;
+
 class Scheduler
 {
 	public:
 		virtual ~Scheduler() {}
-
 		static Scheduler& getScheduler()
 		{
 			static Scheduler scheduler;
@@ -89,11 +85,6 @@ class Scheduler
 
 	protected:
 		Scheduler();
-
-		uint32_t m_lastEventId;
-		typedef std::set<uint32_t> EventIdSet;
-		EventIdSet m_eventIds;
-
 		enum SchedulerState
 		{
 			STATE_RUNNING,
@@ -101,11 +92,13 @@ class Scheduler
 			STATE_TERMINATED
 		};
 
+		uint32_t m_lastEventId;
+		EventIdSet m_eventIds;
+
 		OTSYS_THREAD_LOCKVAR_PTR m_eventLock;
 		OTSYS_THREAD_SIGNALVAR m_eventSignal;
 
 		std::priority_queue<SchedulerTask*, std::vector<SchedulerTask*>, lessSchedTask > m_eventList;
 		static SchedulerState m_threadState;
 };
-
 #endif

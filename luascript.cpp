@@ -1,47 +1,48 @@
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-//////////////////////////////////////////////////////////////////////
-// Lua script interface
-//////////////////////////////////////////////////////////////////////
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+////////////////////////////////////////////////////////////////////////
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-//////////////////////////////////////////////////////////////////////
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-
-#include <string>
 #include <iostream>
 #include <iomanip>
 
 #include "luascript.h"
+#include "status.h"
+
 #include "player.h"
+#include "vocation.h"
+
 #include "item.h"
-#include "game.h"
+#include "teleport.h"
+
+#include "town.h"
 #include "house.h"
 #include "housetile.h"
-#include "status.h"
-#include "combat.h"
-#include "spells.h"
-#include "condition.h"
-#include "monsters.h"
-#include "baseevents.h"
+
 #include "iologindata.h"
-#include "configmanager.h"
-#include "town.h"
-#include "vocation.h"
-#include "teleport.h"
 #include "ioban.h"
+
+#include "baseevents.h"
 #include "raids.h"
+#include "spells.h"
+#include "combat.h"
+#include "condition.h"
+
+#include "monsters.h"
+#include "configmanager.h"
+#include "game.h"
 
 extern Game g_game;
 extern Monsters g_monsters;
@@ -3796,14 +3797,14 @@ int32_t LuaScriptInterface::luaDoPlayerSetLossPercent(lua_State *L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		if(lossType <= LOSS_LAST && newPercent <= 100)
+		if(lossType <= LOSS_LAST)
 		{
 			player->setLossPercent((lossTypes_t)lossType, newPercent);
 			lua_pushboolean(L, LUA_NO_ERROR);
 		}
 		else
 		{
-			reportErrorFunc("No valid lossType or lossPercent value higher than 100");
+			reportErrorFunc("No valid lossType");
 			lua_pushboolean(L, LUA_ERROR);
 		}
 	}

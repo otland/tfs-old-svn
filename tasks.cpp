@@ -1,32 +1,28 @@
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-//////////////////////////////////////////////////////////////////////
-//
-//////////////////////////////////////////////////////////////////////
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+////////////////////////////////////////////////////////////////////////
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-//////////////////////////////////////////////////////////////////////
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-
 #include "tasks.h"
+
+#include "outputmessage.h"
 #if defined __EXCEPTION_TRACER__
 #include "exception.h"
 #endif
 
-#include "outputmessage.h"
 #include "game.h"
-
 extern Game g_game;
 
 Dispatcher::DispatcherState Dispatcher::m_threadState = Dispatcher::STATE_TERMINATED;
@@ -35,7 +31,6 @@ Dispatcher::Dispatcher()
 {
 	m_taskList.clear();
 	Dispatcher::m_threadState = Dispatcher::STATE_RUNNING;
-
 	OTSYS_THREAD_LOCKVARINIT(m_taskLock);
 	OTSYS_THREAD_SIGNALVARINIT(m_taskSignal);
 	OTSYS_CREATE_THREAD(Dispatcher::dispatcherThread, NULL);
@@ -49,33 +44,14 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 	#endif
 	srand((uint32_t)OTSYS_TIME());
 
-	OutputMessagePool* outputPool = NULL;
-	#ifdef __USE_BOOST_THREAD__
-	OTSYS_THREAD_UNIQUE taskLockUnique(getDispatcher().m_taskLock, OTSYS_THREAD_UNIQUE_VAL);
-	#endif
+	OutputMessagePool outputPool = NULL;
 	while(Dispatcher::m_threadState != Dispatcher::STATE_TERMINATED)
 	{
 		Task* task = NULL;
-		OTSYS_THREAD_LOCK(
-		#ifdef __USE_BOOST_THREAD__
-		taskLockUnique
-		#else
-		getDispatcher().m_taskLock
-		#endif
-		, "");
-
 		// check if there are tasks waiting
-		if(getDispatcher().m_taskList.empty())
-		{
-			//if the list is empty wait for signal
-			OTSYS_THREAD_WAITSIGNAL(getDispatcher().m_taskSignal, 
-			#ifdef __USE_BOOST_THREAD__
-			taskLockUnique
-			#else
-			getDispatcher().m_taskLock
-			#endif
-			);
-		}
+		OTSYS_THREAD_LOCK(getDispatcher().m_taskLock, "")
+		if(getDispatcher().m_taskList.empty()) //if the list is empty wait for signal
+			OTSYS_THREAD_WAITSIGNAL(getDispatcher().m_taskSignal, getDispatcher().m_taskLock);
 
 		if(!getDispatcher().m_taskList.empty() && Dispatcher::m_threadState != Dispatcher::STATE_TERMINATED)
 		{
@@ -84,13 +60,7 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 			getDispatcher().m_taskList.pop_front();
 		}
 
-		OTSYS_THREAD_LOCK(
-		#ifdef __USE_BOOST_THREAD__
-		taskLockUnique
-		#else
-		getDispatcher().m_taskLock
-		#endif
-		, "");
+		OTSYS_THREAD_UNLOCK(getDispatcher().m_taskLock, "");
 		// finally execute the task...
 		if(!task)
 			continue;
@@ -138,7 +108,7 @@ void Dispatcher::addTask(Task* task)
 void Dispatcher::flush()
 {
 	Task* task = NULL;
-	OutputMessagePool* outputPool = NULL;
+	OutputMessagePool outputPool = NULL;
 	while(!m_taskList.empty())
 	{
 		task = getDispatcher().m_taskList.front();

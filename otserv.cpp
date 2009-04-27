@@ -1,28 +1,23 @@
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-//////////////////////////////////////////////////////////////////////
-// otserv main. The only place where things get instantiated.
-//////////////////////////////////////////////////////////////////////
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+////////////////////////////////////////////////////////////////////////
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-//////////////////////////////////////////////////////////////////////
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 #include "otsystem.h"
 
-#include <string>
 #include <iostream>
-#include <sstream>
 #include <fstream>
 #include <iomanip>
 #ifndef WIN32
@@ -106,9 +101,6 @@ extern Admin* g_admin;
 #endif
 OTSYS_THREAD_LOCKVAR_PTR g_loaderLock;
 OTSYS_THREAD_SIGNALVAR g_loaderSignal;
-#ifdef __USE_BOOST_THREAD__
-OTSYS_THREAD_UNIQUE g_loaderUniqueLock(g_loaderLock);
-#endif
 
 #if not defined(WIN32) || defined(__CONSOLE__)
 bool argumentsHandler(StringVec args)
@@ -293,16 +285,8 @@ void serverMain(void* param)
 	#endif
 	&servicer)));
 
-	#ifndef __USE_BOOST_THREAD__
-	OTSYS_THREAD_LOCK(g_loaderLock, "");
-	#endif
-	OTSYS_THREAD_WAITSIGNAL(g_loaderSignal,
-	#ifdef __USE_BOOST_THREAD__
-	g_loaderUniqueLock
-	#else
-	g_loaderLock
-	#endif
-	);
+	OTSYS_THREAD_LOCK(g_loaderLock, "otserv()");
+	OTSYS_THREAD_WAITSIGNAL(g_loaderSignal, g_loaderLock);
 	if(servicer.isRunning())
 	{
 		std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " server Online!" << std::endl << std::endl;
@@ -817,7 +801,7 @@ ServiceManager* services)
 	g_game.setGameState(GAME_STATE_NORMAL);
 
 	g_game.start(services);
-	OTSYS_THREAD_SIGNAL_SEND_ALL(g_loaderSignal);
+	OTSYS_THREAD_SIGNAL_SEND(g_loaderSignal);
 }
 
 #ifndef __CONSOLE__

@@ -1,24 +1,20 @@
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-//////////////////////////////////////////////////////////////////////
-// Scheduler-Objects for OpenTibia
-//////////////////////////////////////////////////////////////////////
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+////////////////////////////////////////////////////////////////////////
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-//////////////////////////////////////////////////////////////////////
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-
 #include "scheduler.h"
 #if defined __EXCEPTION_TRACER__
 #include "exception.h"
@@ -30,7 +26,6 @@ Scheduler::Scheduler()
 {
 	m_lastEventId = 0;
 	Scheduler::m_threadState = STATE_RUNNING;
-
 	OTSYS_THREAD_LOCKVARINIT(m_eventLock);
 	OTSYS_THREAD_SIGNALVARINIT(m_eventSignal);
 	OTSYS_CREATE_THREAD(Scheduler::schedulerThread, NULL);
@@ -44,47 +39,20 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 	#endif
 	srand((uint32_t)OTSYS_TIME());
 
-	#ifdef __USE_BOOST_THREAD__
-	OTSYS_THREAD_UNIQUE eventLockUnique(getScheduler().m_eventLock, OTSYS_THREAD_UNIQUE_VAL);
-	#endif
 	while(Scheduler::m_threadState != Scheduler::STATE_TERMINATED)
 	{
 		SchedulerTask* task = NULL;
-		OTSYS_THREAD_LOCK(
-		#ifdef __USE_BOOST_THREAD__
-		eventLockUnique
-		#else
-		getScheduler().m_eventLock
-		#endif
-		, "");
+		bool runTask = false;
+		int32_t ret = 0;
 
 		// check if there are events waiting...
-		OTSYS_THREAD_SIGNAL_RETURN ret = (OTSYS_THREAD_SIGNAL_RETURN)0;
-		if(getScheduler().m_eventList.empty())
-		{
-			// unlock mutex and wait for signal
-			ret = OTSYS_THREAD_WAITSIGNAL(getScheduler().m_eventSignal,
-			#ifdef __USE_BOOST_THREAD__
-			eventLockUnique
-			#else
-			getScheduler().m_eventLock
-			#endif
-			);
-		}
-		else
-		{
-			// unlock mutex and wait for signal or timeout
-			ret = OTSYS_THREAD_WAITSIGNAL_TIMED(getScheduler().m_eventSignal,
-			#ifdef __USE_BOOST_THREAD__
-			eventLockUnique
-			#else
-			getScheduler().m_eventLock
-			#endif
-			, getScheduler().m_eventList.top()->getCycle());
-		}
+		OTSYS_THREAD_LOCK(getScheduler().m_eventLock, "schedulerThread()")
+		if(getScheduler().m_eventList.empty()) // unlock mutex and wait for signal
+			ret = OTSYS_THREAD_WAITSIGNAL(getScheduler().m_eventSignal, getScheduler().m_eventLock);
+		else // unlock mutex and wait for signal or timeout
+			ret = OTSYS_THREAD_WAITSIGNAL_TIMED(getScheduler().m_eventSignal, getScheduler().m_eventLock, getScheduler().m_eventList.top()->getCycle());
 
 		// the mutex is locked again now...
-		bool runTask = false;
 		if(ret == OTSYS_THREAD_TIMEOUT && Scheduler::m_threadState != Scheduler::STATE_TERMINATED)
 		{
 			// ok we had a timeout, so there has to be an event we have to execute...
@@ -101,13 +69,7 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 			}
 		}
 
-		OTSYS_THREAD_UNLOCK(
-		#ifdef __USE_BOOST_THREAD__
-		eventLockUnique
-		#else
-		getScheduler().m_eventLock
-		#endif
-		, "");
+		OTSYS_THREAD_UNLOCK(getScheduler().m_eventLock, "schedulerThread()");
 		// add task to dispatcher
 		if(task)
 		{
@@ -169,7 +131,7 @@ bool Scheduler::stopEvent(uint32_t eventid)
 	if(!eventid)
 		return false;
 
-	OTSYS_THREAD_LOCK(m_eventLock, "");
+	OTSYS_THREAD_LOCK(m_eventLock, "")
 	// search the event id...
 	EventIdSet::iterator it = m_eventIds.find(eventid);
 	if(it != m_eventIds.end())

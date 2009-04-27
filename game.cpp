@@ -1,55 +1,59 @@
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-//////////////////////////////////////////////////////////////////////
-// class representing the gamestate
-//////////////////////////////////////////////////////////////////////
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+////////////////////////////////////////////////////////////////////////
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-//////////////////////////////////////////////////////////////////////
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
+
+#include "configmanager.h"
 #include "game.h"
 
-#include "tasks.h"
-#include "configmanager.h"
-#include "creature.h"
-#include "items.h"
-#include "container.h"
-#include "tile.h"
-#include "house.h"
-#include "iologindata.h"
-#include "ioguild.h"
-#include "actions.h"
-#include "globalevent.h"
-#include "movement.h"
-#include "talkaction.h"
-#include "weapons.h"
-#include "combat.h"
-#include "spells.h"
-#include "ioban.h"
-#include "database.h"
-#include "luascript.h"
-#include "raids.h"
-#include "chat.h"
-#include "server.h"
-#include "quests.h"
-#include "vocation.h"
-#include "group.h"
-#include "monsters.h"
 #ifdef __LOGIN_SERVER__
 #include "gameservers.h"
 #endif
+#include "server.h"
+#include "chat.h"
 
+#include "creature.h"
+#include "tile.h"
+
+#include "database.h"
+#include "iologindata.h"
+#include "ioban.h"
+#include "ioguild.h"
+
+#include "items.h"
+#include "monsters.h"
+#include "luascript.h"
+#include "house.h"
+
+#include "actions.h"
+#include "globalevent.h"
+#include "movement.h"
+#include "quests.h"
+#include "raids.h"
+#include "spells.h"
+#include "talkaction.h"
+#include "weapons.h"
+
+#include "vocation.h"
+#include "group.h"
+
+#include "container.h"
+#include "combat.h"
+
+#include "tasks.h"
 #ifdef __EXCEPTION_TRACER__
 #include "exception.h"
 extern OTSYS_THREAD_LOCKVAR maploadlock;

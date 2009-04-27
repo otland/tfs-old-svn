@@ -1,43 +1,34 @@
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-//////////////////////////////////////////////////////////////////////
-// Exception Handler class
-//////////////////////////////////////////////////////////////////////
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+////////////////////////////////////////////////////////////////////////
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-//////////////////////////////////////////////////////////////////////
-
-#include "otpch.h"
-#include "otsystem.h"
-
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////
 #ifdef __EXCEPTION_TRACER__
+#include "otpch.h"
+#include "exception.h"
 
-#include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include <ctime>
-#include <map>
 #ifdef WIN32
 #include <excpt.h>
 #include <tlhelp32.h>
 #endif
 
-#include "exception.h"
 #include "configmanager.h"
-
 extern ConfigManager g_config;
+
 typedef std::map<uint32_t, char*> FunctionMap;
 FunctionMap functionMap;
 
