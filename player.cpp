@@ -3275,6 +3275,8 @@ uint64_t Player::getGainedExperience(Creature* attacker, bool useMultiplier/* = 
 
 		return std::min((uint64_t)getLostExperience(), uint64_t(result * g_game.getExperienceStage(attackerPlayer->getLevel())));
 	}
+
+	return 0;
 }
 
 void Player::onFollowCreature(const Creature* creature)
