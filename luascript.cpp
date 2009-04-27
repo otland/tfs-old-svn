@@ -4112,12 +4112,7 @@ int32_t LuaScriptInterface::luaDoCreateItem(lua_State* L)
 	PositionEx pos;
 	popPosition(L, pos);
 
-	uint32_t count = 0;
-	if(lua_gettop(L) > 2)
-		count = popNumber(L);
-
-	uint32_t itemId = (uint32_t)popNumber(L);
-
+	uint32_t count = popNumber(L), itemId = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 
 	Tile* tile = g_game.getTile(pos.x, pos.y, pos.z);
