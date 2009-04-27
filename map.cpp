@@ -1074,7 +1074,6 @@ AStarNode* AStarNodes::getNodeInList(uint16_t x, uint16_t y)
 int32_t AStarNodes::getMapWalkCost(const Creature* creature, AStarNode* node,
 	const Tile* neighbourTile, const Position& neighbourPos)
 {
-	int32_t cost = 0;
 	if(std::abs(node->x - neighbourPos.x) == std::abs(node->y - neighbourPos.y)) //diagonal movement extra cost
 		return MAP_DIAGONALWALKCOST;
 

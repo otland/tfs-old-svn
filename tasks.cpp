@@ -60,7 +60,7 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 		#ifdef __USE_BOOST_THREAD__
 		taskLockUnique
 		#else
-		getScheduler().m_taskLock
+		getDispatcher().m_taskLock
 		#endif
 		, "");
 
@@ -70,9 +70,9 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 			//if the list is empty wait for signal
 			OTSYS_THREAD_WAITSIGNAL(getDispatcher().m_taskSignal, 
 			#ifdef __USE_BOOST_THREAD__
-			getDispatcher().m_taskLock
-			#else
 			taskLockUnique
+			#else
+			getDispatcher().m_taskLock
 			#endif
 			);
 		}
@@ -88,7 +88,7 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 		#ifdef __USE_BOOST_THREAD__
 		taskLockUnique
 		#else
-		getScheduler().m_taskLock
+		getDispatcher().m_taskLock
 		#endif
 		, "");
 		// finally execute the task...

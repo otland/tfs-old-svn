@@ -65,7 +65,7 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 			// unlock mutex and wait for signal
 			ret = OTSYS_THREAD_WAITSIGNAL(getScheduler().m_eventSignal,
 			#ifdef __USE_BOOST_THREAD__
-			m_eventLockUnique
+			eventLockUnique
 			#else
 			getScheduler().m_eventLock
 			#endif
@@ -169,7 +169,7 @@ bool Scheduler::stopEvent(uint32_t eventid)
 	if(!eventid)
 		return false;
 
-	OTSYS_THREAD_LOCK(m_eventLock, "")
+	OTSYS_THREAD_LOCK(m_eventLock, "");
 	// search the event id...
 	EventIdSet::iterator it = m_eventIds.find(eventid);
 	if(it != m_eventIds.end())
