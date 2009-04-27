@@ -46,7 +46,7 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 		int32_t ret = 0;
 
 		// check if there are events waiting...
-		OTSYS_THREAD_LOCK(getScheduler().m_eventLock, "schedulerThread()")
+		OTSYS_THREAD_LOCK(getScheduler().m_eventLock, "schedulerThread()");
 		if(getScheduler().m_eventList.empty()) // unlock mutex and wait for signal
 			ret = OTSYS_THREAD_WAITSIGNAL(getScheduler().m_eventSignal, getScheduler().m_eventLock);
 		else // unlock mutex and wait for signal or timeout
@@ -131,7 +131,7 @@ bool Scheduler::stopEvent(uint32_t eventid)
 	if(!eventid)
 		return false;
 
-	OTSYS_THREAD_LOCK(m_eventLock, "")
+	OTSYS_THREAD_LOCK(m_eventLock, "");
 	// search the event id...
 	EventIdSet::iterator it = m_eventIds.find(eventid);
 	if(it != m_eventIds.end())

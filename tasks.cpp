@@ -44,12 +44,12 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 	#endif
 	srand((uint32_t)OTSYS_TIME());
 
-	OutputMessagePool outputPool = NULL;
+	OutputMessagePool* outputPool = NULL;
 	while(Dispatcher::m_threadState != Dispatcher::STATE_TERMINATED)
 	{
 		Task* task = NULL;
 		// check if there are tasks waiting
-		OTSYS_THREAD_LOCK(getDispatcher().m_taskLock, "")
+		OTSYS_THREAD_LOCK(getDispatcher().m_taskLock, "");
 		if(getDispatcher().m_taskList.empty()) //if the list is empty wait for signal
 			OTSYS_THREAD_WAITSIGNAL(getDispatcher().m_taskSignal, getDispatcher().m_taskLock);
 
@@ -108,7 +108,7 @@ void Dispatcher::addTask(Task* task)
 void Dispatcher::flush()
 {
 	Task* task = NULL;
-	OutputMessagePool outputPool = NULL;
+	OutputMessagePool* outputPool = NULL;
 	while(!m_taskList.empty())
 	{
 		task = getDispatcher().m_taskList.front();

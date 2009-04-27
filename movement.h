@@ -21,6 +21,7 @@
 #ifndef __MOVEMENT_H__
 #define __MOVEMENT_H__
 #include "baseevents.h"
+#include "creature.h"
 
 enum MoveEvent_t
 {
