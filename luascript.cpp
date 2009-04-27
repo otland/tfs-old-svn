@@ -9449,9 +9449,9 @@ int32_t LuaScriptInterface::luaDoAddIpBanishment(lua_State *L)
 int32_t LuaScriptInterface::luaDoAddNamelock(lua_State *L)
 {
 	//doAddNamelock(name[, reason[, action[, comment[, admin[, statement]]]]])
-	uint32_t admin = 0, reason = 0, params = lua_gettop(L);
+	uint32_t admin = 0, reason = 23, params = lua_gettop(L);
 	std::string statement, comment = "No comment.";
-	ViolationAction_t action;
+	ViolationAction_t action = ACTION_NAMEREPORT;
 	if(params > 5)
 		statement = popString(L);
 
@@ -9475,9 +9475,9 @@ int32_t LuaScriptInterface::luaDoAddNamelock(lua_State *L)
 int32_t LuaScriptInterface::luaDoAddBanishment(lua_State *L)
 {
 	//doAddBanishment(accId[, length[, reason[, action[, comment[, admin[, statement]]]]]])
-	uint32_t admin = 0, reason = 0, params = lua_gettop(L), length = g_config.getNumber(ConfigManager::BAN_LENGTH);
+	uint32_t admin = 0, reason = 23, params = lua_gettop(L), length = g_config.getNumber(ConfigManager::BAN_LENGTH);
 	std::string statement, comment = "No comment.";
-	ViolationAction_t action;
+	ViolationAction_t action = ACTION_BANISHMENT;
 	if(params > 6)
 		statement = popString(L);
 
@@ -9504,9 +9504,9 @@ int32_t LuaScriptInterface::luaDoAddBanishment(lua_State *L)
 int32_t LuaScriptInterface::luaDoAddDeletion(lua_State *L)
 {
 	//doAddDeletion(accId[, reason[, action[, comment[, admin[, statement]]]]]])
-	uint32_t admin = 0, reason = 0, params = lua_gettop(L);
+	uint32_t admin = 0, reason = 23, params = lua_gettop(L);
 	std::string statement, comment = "No comment.";
-	ViolationAction_t action;
+	ViolationAction_t action = ACTION_DELETION;
 	if(params > 5)
 		statement = popString(L);
 
@@ -9530,9 +9530,9 @@ int32_t LuaScriptInterface::luaDoAddDeletion(lua_State *L)
 int32_t LuaScriptInterface::luaDoAddNotation(lua_State *L)
 {
 	//doAddNotation(accId[, reason[, action[, comment[, admin[, statement]]]]]])
-	uint32_t admin = 0, reason = 0, params = lua_gettop(L);
+	uint32_t admin = 0, reason = 23, params = lua_gettop(L);
 	std::string statement, comment = "No comment.";
-	ViolationAction_t action;
+	ViolationAction_t action = ACTION_NOTATION;
 	if(params > 5)
 		statement = popString(L);
 
