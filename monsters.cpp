@@ -98,7 +98,10 @@ void MonsterType::createLoot(Container* corpse)
 			if(Container* container = tmpItem->getContainer())
 			{
 				if(createLootContainer(container, (*it), itemVector))
+				{
 					corpse->__internalAddThing(tmpItem);
+					itemVector.push_back(tmpItem);
+				}
 				else
 					delete container;
 			}
@@ -112,11 +115,11 @@ void MonsterType::createLoot(Container* corpse)
 
 	corpse->__startDecaying();
 	uint32_t ownerId = corpse->getCorpseOwner();
-	if(ownerId && itemVector.size())
+	if(ownerId)
 	{
 		Player* owner = NULL;
 		if((owner = g_game.getPlayerByID(ownerId)) && owner->getParty())
-			owner->getParty()->broadcastPartyLoot(name, itemVector);
+			owner->getParty()->broadcastPartyLoot(nameDescription, itemVector);
 	}
 }
 
@@ -171,7 +174,10 @@ bool MonsterType::createLootContainer(Container* parent, const LootBlock& lootbl
 			if(Container* container = tmpItem->getContainer())
 			{
 				if(createLootContainer(container, (*it), itemVector))
+				{
 					parent->__internalAddThing(container);
+					itemVector.push_back(tmpItem);
+				}
 				else
 					delete container;
 			}
