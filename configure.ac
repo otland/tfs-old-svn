@@ -1,7 +1,7 @@
 AC_PREREQ([2.50])
-AC_INIT([TheForgottenServer], [0.3.3])
+AC_INIT([TheForgottenServer], [0.3.4])
 AM_INIT_AUTOMAKE([1.10 foreign])
-AC_CONFIG_SRCDIR([account.cpp])
+AC_CONFIG_SRCDIR([account.h])
 AM_CONFIG_HEADER([config.h])
 
 AC_PROG_CXX
@@ -236,7 +236,7 @@ echo Home-directory configuration : $homedirConf
 echo OTServ custom allocator..... : $otservAllocator
 echo Debug build................. : $debugBuild
 echo
-echo Build with libboost_thread.. : $boostThread
+echo Build with libboost_thread.. : $boostThread (not finished!)
 echo Build with MySQL............ : $useMySQL
 echo Build with SQLite........... : $useSQLite
 echo Build with PostgreSQL....... : $usePostgreSQL

@@ -141,15 +141,15 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 
 void Combat::getCombatArea(const Position& centerPos, const Position& targetPos, const AreaCombat* area, std::list<Tile*>& list)
 {
+	uint16_t tmpX = targetPos.x, tmpY = targetPos.y;
 	if(area)
 		area->getList(centerPos, targetPos, list);
-	else if((uint32_t)targetPos.x >= 0 && (uint32_t)targetPos.y >= 0 && (uint32_t)targetPos.z >= 0 &&
-		(uint32_t)targetPos.x <= 0xFFFF && (uint32_t)targetPos.y <= 0xFFFF && (uint32_t)targetPos.z < MAP_MAX_LAYERS)
+	else if(tmpX >= 0 && tmpY >= 0 && targetPos.z >= 0 && tmpX <= 0xFFFF && tmpY <= 0xFFFF && targetPos.z < MAP_MAX_LAYERS)
 	{
-		Tile* tile = g_game.getTile(targetPos);
+		Tile* tile = g_game.getTile(tmpX, tmpY, targetPos.z);
 		if(!tile)
 		{
-			tile = new Tile(targetPos.x, targetPos.y, targetPos.z);
+			tile = new Tile(tmpX, tmpY, targetPos.z);
 			g_game.setTile(tile);
 		}
 
@@ -1067,28 +1067,25 @@ bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, s
 	if(!area)
 		return false;
 
-	Position tmpPos = targetPos;
+	uint16_t tmpX = targetPos.x, tmpY = targetPos.y, centerY = 0, centerX = 0;
 	size_t cols = area->getCols(), rows = area->getRows();
-
-	uint16_t centerY, centerX;
 	area->getCenter(centerY, centerX);
 
-	tmpPos.x -= centerX;
-	tmpPos.y -= centerY;
+	tmpX -= centerX;
+	tmpY -= centerY;
 	for(size_t y = 0; y < rows; ++y)
 	{
 		for(size_t x = 0; x < cols; ++x)
 		{
 			if(area->getValue(y, x) != 0)
 			{
-				if((uint32_t)tmpPos.x >= 0 && (uint32_t)tmpPos.y >= 0 && (uint32_t)tmpPos.z >= 0 &&
-					(uint32_t)tmpPos.x <= 0xFFFF && (uint32_t)tmpPos.y <= 0xFFFF &&
-					(uint32_t)tmpPos.z < MAP_MAX_LAYERS && g_game.isSightClear(targetPos, tmpPos, true))
+				if(tmpX >= 0 && tmpY >= 0 && tmpPos.z >= 0 && tmpX <= 0xFFFF && tmpY <= 0xFFFF &&
+					tmpPos.z < MAP_MAX_LAYERS && g_game.isSightClear(targetPos, tmpPos, true))
 				{
-					tile = g_game.getTile(tmpPos);
+					tile = g_game.getTile(tmpX, tmpY, tmpPos.z);
 					if(!tile)
 					{
-						tile = new Tile(tmpPos.x, tmpPos.y, tmpPos.z);
+						tile = new Tile(tmpX, tmpY, tmpPos.z);
 						g_game.setTile(tile);
 					}
 
@@ -1096,11 +1093,11 @@ bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, s
 				}
 			}
 
-			tmpPos.x++;
+			tmpX++;
 		}
 
-		tmpPos.x -= cols;
-		tmpPos.y++;
+		tmpX -= cols;
+		tmpY++;
 	}
 
 	return true;

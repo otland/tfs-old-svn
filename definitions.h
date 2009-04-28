@@ -142,11 +142,7 @@
 #endif
 //*nix systems
 #else
-	#ifndef __USE_BOOST_THREAD__
 	#define OTSYS_THREAD_RETURN void*
-	#else
-	#define OTSYS_THREAD_RETURN void
-	#endif
 
 	#include <stdint.h>
 	#include <string.h>
