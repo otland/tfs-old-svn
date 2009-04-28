@@ -451,6 +451,12 @@ bool TalkAction::sellHouse(Creature* creature, const std::string& cmd, const std
 		return true;
 	}
 
+	if(!Houses::getInstance().payRent(player, house))
+	{
+		player->sendCancel("You have to pay the rent first.");
+		return true;
+	}
+
 	Player* tradePartner = NULL;
 	ReturnValue ret = g_game.getPlayerByNameWildcard(param, tradePartner);
 	if(ret != RET_NOERROR)

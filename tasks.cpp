@@ -88,18 +88,19 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 void Dispatcher::addTask(Task* task)
 {
 	bool signal = false;
-	OTSYS_THREAD_LOCK(m_taskLock, "");
 	if(Dispatcher::m_threadState == Dispatcher::STATE_RUNNING)
 	{
+		OTSYS_THREAD_LOCK(m_taskLock, "");
 		signal = m_taskList.empty();
+
 		m_taskList.push_back(task);
+		OTSYS_THREAD_UNLOCK(m_taskLock, "");
 	}
 	#ifdef __DEBUG_SCHEDULER__
 	else
 		std::cout << "[Error - Dispatcher::addTask] Dispatcher thread is terminated." << std::endl;
 	#endif
 
-	OTSYS_THREAD_UNLOCK(m_taskLock, "");
 	// send a signal if the list was empty
 	if(signal)
 		OTSYS_THREAD_SIGNAL_SEND(m_taskSignal);

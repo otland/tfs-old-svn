@@ -790,168 +790,180 @@ bool Houses::reloadPrices()
 	return true;
 }
 
-bool Houses::payHouses()
+void Houses::payHouses()
 {
 	if(rentPeriod == RENTPERIOD_NEVER)
-		return true;
+		return;
 
 	uint64_t start = OTSYS_TIME();
 	std::cout << "> Paying houses..." << std::endl;
 
-	uint32_t currentTime = time(NULL);
+	time_t currentTime = time(NULL);
 	for(HouseMap::iterator it = houseMap.begin(); it != houseMap.end(); ++it)
+		payHouse(it->second, currentTime);
+
+	std::cout << "> Houses paid in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
+}
+
+bool Houses::payRent(Player* player, House* house, time_t _time/* = 0*/)
+{
+	if(!_time)
+		_time = time(NULL);
+
+	if(rentPeriod == RENTPERIOD_NEVER || !house->getHouseOwner() ||
+                house->getPaidUntil() >= _time || !house->getRent())
+                return true;
+
+	Town* town = Towns::getInstance().getTown(house->getTownId());
+	if(!town)
+		return false;
+
+	bool paid = false;
+	if(Depot* depot = player->getDepot(town->getTownID(), true))
 	{
-		House* house = it->second;
-		if(!house->getHouseOwner() || house->getPaidUntil() >= currentTime || !house->getRent())
-			continue;
-
-		Town* town = Towns::getInstance().getTown(house->getTownId());
-		if(!town)
+		if(g_config.getBool(ConfigManager::BANK_SYSTEM) && player->balance >= house->getRent())
 		{
-			#ifdef __DEBUG_HOUSES__
-			std::cout << "[Warning - Houses::payHouses]: town = NULL, townid = " <<
-				house->getTownId() << ", houseid = " << house->getHouseId() << std::endl;
-			#endif
-			continue;
-		}
-
-		std::string name;
-		if(!IOLoginData::getInstance()->getNameByGuid(house->getHouseOwner(), name))
-		{
-			house->setHouseOwner(0);
-			continue;
-		}
-
-		Player* player = g_game.getPlayerByName(name);
-		if(!player)
-		{
-			player = new Player(name, NULL);
-			if(!IOLoginData::getInstance()->loadPlayer(player, name))
-			{
-				#ifdef __DEBUG_HOUSES__
-				std::cout << "[Failure - Houses::payHouses]: Cannot load player " << name << std::endl;
-				#endif
-				delete player;
-				continue;
-			}
-		}
-
-		bool savePlayer = true;
-		if(Depot* depot = player->getDepot(town->getTownID(), true))
-		{
-			bool paid = false;
-			if(player->isPremium() || !g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM))
-			{
-				//get money from bank then from depot
-				if(g_config.getBool(ConfigManager::BANK_SYSTEM) && player->balance >= house->getRent())
-				{
-					player->balance -= house->getRent();
-					paid = true;
-				}
-				else if(g_game.removeMoney(depot, house->getRent(), FLAG_NOLIMIT))
-					paid = true;
-			}
-
-			if(paid)
-			{
-				uint32_t paidUntil = currentTime;
-				switch(rentPeriod)
-				{
-					case RENTPERIOD_DAILY:
-						paidUntil += 24 * 60 * 60;
-						break;
-					case RENTPERIOD_WEEKLY:
-						paidUntil += 7 * 24 * 60 * 60;
-						break;
-					case RENTPERIOD_MONTHLY:
-						paidUntil += 30 * 24 * 60 * 60;
-						break;
-					case RENTPERIOD_YEARLY:
-						paidUntil += 12 * 30 * 24 * 60 * 60;
-						break;
-					default:
-						break;
-				}
-
-				house->setPaidUntil(paidUntil);
-			}
-			else if(currentTime >= (house->getLastWarning() + (24 * 60 * 60)))
-			{
-				uint32_t warningsLimit = 7;
-				switch(rentPeriod)
-				{
-					case RENTPERIOD_DAILY:
-						warningsLimit = 1;
-						break;
-					case RENTPERIOD_WEEKLY:
-						warningsLimit = 3;
-						break;
-					case RENTPERIOD_MONTHLY:
-						warningsLimit = 7;
-						break;
-					case RENTPERIOD_YEARLY:
-						warningsLimit = 14;
-						break;
-					default:
-						break;
-				}
-
-				if(house->getPayRentWarnings() < warningsLimit)
-				{
-					std::string period = "";
-					switch(rentPeriod)
-					{
-						case RENTPERIOD_DAILY:
-							period = "daily";
-							break;
-						case RENTPERIOD_WEEKLY:
-							period = "weekly";
-							break;
-						case RENTPERIOD_MONTHLY:
-							period = "monthly";
-							break;
-						case RENTPERIOD_YEARLY:
-							period = "annual";
-							break;
-						default:
-							break;
-					}
-
-					uint32_t warnings = house->getPayRentWarnings();
-					if(Item* letter = Item::CreateItem(ITEM_LETTER_STAMPED))
-					{
-						std::stringstream s;
-						s << "Warning!\nThe " << period << " rent of " << house->getRent() << " gold for your house \"" << house->getName();
-						s << "\" has to be paid. Have it within " << (warningsLimit - warnings) << " days or you will lose your house.";
-
-						letter->setText(s.str().c_str());
-						g_game.internalAddItem(NULL, depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT);
-					}
-
-					house->setPayRentWarnings(warnings++);
-					house->setLastWarning(currentTime);
-				}
-				else
-				{
-					house->setHouseOwner(0);
-					savePlayer = false;
-				}
-			}
+			player->balance -= house->getRent();
+			paid = true;
 		}
 		else
-			house->setHouseOwner(0);
+			paid = g_game.removeMoney(depot, house->getRent(), FLAG_NOLIMIT);
+	}
 
-		if(player->isVirtual())
+	if(!paid)
+		return false;
+
+	uint32_t paidUntil = _time;
+	switch(rentPeriod)
+	{
+		case RENTPERIOD_DAILY:
+			paidUntil += 86400;
+			break;
+		case RENTPERIOD_WEEKLY:
+			paidUntil += 7 * 86400;
+			break;
+		case RENTPERIOD_MONTHLY:
+			paidUntil += 30 * 86400;
+			break;
+		case RENTPERIOD_YEARLY:
+			paidUntil += 365 * 86400;
+			break;
+		default:
+			break;
+	}
+
+	house->setPaidUntil(paidUntil);
+	return true;
+}
+
+bool Houses::payHouse(House* house, time_t _time)
+{
+	if(rentPeriod == RENTPERIOD_NEVER || !house->getHouseOwner() ||
+		house->getPaidUntil() >= _time || !house->getRent())
+		return true;
+
+	Town* town = Towns::getInstance().getTown(house->getTownId());
+	if(!town)
+		return false;
+
+	std::string name;
+	if(!IOLoginData::getInstance()->getNameByGuid(house->getHouseOwner(), name))
+	{
+		house->setHouseOwner(0);
+		return false;
+	}
+
+	Player* player = g_game.getPlayerByName(name);
+	if(!player)
+	{
+		player = new Player(name, NULL);
+		if(!IOLoginData::getInstance()->loadPlayer(player, name))
 		{
-			if(savePlayer)
-				IOLoginData::getInstance()->savePlayer(player);
-
+			#ifdef __DEBUG_HOUSES__
+			std::cout << "[Failure - Houses::payHouse] Cannot load player: " << name << std::endl;
+			#endif
 			delete player;
+			return false;
 		}
 	}
 
-	std::cout << "> PayHouses: Completed in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
-	return true;
+	bool paid = payRent(player, house, _time), savePlayer = false;
+	if(!paid && _time >= (house->getLastWarning() + 86400))
+	{
+		uint32_t warningsLimit = 7;
+		switch(rentPeriod)
+		{
+			case RENTPERIOD_DAILY:
+				warningsLimit = 1;
+				break;
+			case RENTPERIOD_WEEKLY:
+				warningsLimit = 3;
+				break;
+			case RENTPERIOD_MONTHLY:
+				warningsLimit = 7;
+				break;
+			case RENTPERIOD_YEARLY:
+				warningsLimit = 14;
+				break;
+			default:
+				break;
+		}
+
+		if(house->getPayRentWarnings() < warningsLimit)
+		{
+			Depot* depot = player->getDepot(town->getTownID(), true);
+			Item* letter = Item::CreateItem(ITEM_LETTER_STAMPED);
+
+			uint32_t warnings = house->getPayRentWarnings();
+			if(depot && letter)
+			{
+				std::string period;
+				switch(rentPeriod)
+				{
+					case RENTPERIOD_DAILY:
+						period = "daily";
+						break;
+					case RENTPERIOD_WEEKLY:
+						period = "weekly";
+						break;
+					case RENTPERIOD_MONTHLY:
+						period = "monthly";
+						break;
+					case RENTPERIOD_YEARLY:
+						period = "annual";
+						break;
+					default:
+						break;
+				}
+
+				std::stringstream s;
+				s << "Warning!\nThe " << period << " rent of " << house->getRent() << " gold for your house \"" << house->getName();
+				s << "\" has to be paid. Have it within " << (warningsLimit - warnings) << " days or you will lose your house.";
+
+				letter->setText(s.str().c_str());
+				if(g_game.internalAddItem(NULL, depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
+					g_game.FreeThing(item);
+				else
+					savePlayer = true;
+			}
+
+			house->setPayRentWarnings(warnings++);
+			house->setLastWarning(_time);
+		}
+		else
+			house->setHouseOwner(0);
+	}
+
+	if(player->isVirtual())
+	{
+		if(savePlayer)
+			IOLoginData::getInstance()->savePlayer(player);
+
+		delete player;
+		player = NULL;
+	}
+
+	return paid;
 }
 
 House* Houses::getHouse(uint32_t houseId, bool add/*= false*/)
