@@ -91,6 +91,9 @@ bool Container::unserializeItemNode(FileLoader& f, NODE node, PropStream& propSt
 					return false;
 
 				addItem(item);
+				totalWeight += item->getWeight();
+				if(Container* parent = getParentContainer())
+					parent->updateItemWeight(item->getWeight());
 			}
 			else/*unknown type*/
 				return false;

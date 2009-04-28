@@ -424,6 +424,7 @@ class LuaScriptInterface
 		static int32_t luaDoPlayerSwitchSaving(lua_State* L);
 		static int32_t luaDoPlayerSave(lua_State* L);
 		static int32_t luaDoPlayerSendOutfitWindow(lua_State* L);
+		static int32_t luaDoCreatureExecuteTalkAction(lua_State* L);
 
 		//queries
 		static int32_t luaGetCreatureByName(lua_State* L);

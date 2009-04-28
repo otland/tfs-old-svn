@@ -35,6 +35,7 @@
 #include "ioban.h"
 
 #include "baseevents.h"
+#include "talkaction.h"
 #include "raids.h"
 #include "spells.h"
 #include "combat.h"
@@ -48,6 +49,7 @@ extern Game g_game;
 extern Monsters g_monsters;
 extern ConfigManager g_config;
 extern Spells* g_spells;
+extern TalkActions* g_talkActions;
 
 enum
 {
@@ -100,7 +102,10 @@ void ScriptEnviroment::resetEnv()
 
 	m_tempItems.clear();
 	for(DBResMap::iterator it = m_tempResults.begin(); it != m_tempResults.end(); ++it)
-		it->second->free();
+	{
+		if(it->second)
+			it->second->free();
+	}
 
 	m_tempResults.clear();
 	m_localMap.clear();
@@ -2274,6 +2279,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//doExecuteRaid(name)
 	lua_register(m_luaState, "doExecuteRaid", LuaScriptInterface::luaDoExecuteRaid);
+
+	//doCreatureExecuteTalkAction(cid, text[, ignoreAccess[, channelId]])
+	lua_register(m_luaState, "doCreatureExecuteTalkAction", LuaScriptInterface::luaDoCreatureExecuteTalkAction);
 
 	//doReloadInfo(id[, cid])
 	lua_register(m_luaState, "doReloadInfo", LuaScriptInterface::luaDoReloadInfo);
@@ -8887,6 +8895,30 @@ int32_t LuaScriptInterface::luaDoSetGameState(lua_State* L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaDoCreatureExecuteTalkAction(lua_State* L)
+{
+	//doCreatureExecuteTalkAction(cid, text[, ignoreAccess[, channelId]])
+	uint32_t params = lua_gettop(L), channelId = 0;
+	if(params > 3)
+		channelId = popNumber(L);
+
+	bool ignoreAccess = false;
+	if(params > 2)
+		ignoreAccess = popNumber(L) == LUA_TRUE;
+
+	std::string text = popString(L);
+	ScriptEnviroment* env = getScriptEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+		lua_pushboolean(L, g_talkActions->onPlayerSay(creature, channelId, text, ignoreAccess) ? LUA_TRUE : LUA_FALSE);
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, LUA_ERROR);
+	}
+
+	return 1;
+}
+
 int32_t LuaScriptInterface::luaDoExecuteRaid(lua_State* L)
 {
 	//doExecuteRaid(name)
@@ -9744,12 +9776,12 @@ int32_t LuaScriptInterface::luaDatabaseStringComparisonOperator(lua_State *L)
 	return 1;
 }
 
-#define CHECK_RESULT() \
-	if(!res) \
-	{ \
-		reportErrorFunc("Result not found."); \
-		lua_pushboolean(L, LUA_ERROR); \
-		return 1; \
+#define CHECK_RESULT()\
+	if(!res)\
+	{\
+		reportErrorFunc("Result not found.");\
+		lua_pushboolean(L, LUA_ERROR);\
+		return 1;\
 	}
 
 int32_t LuaScriptInterface::luaResultGetDataInt(lua_State *L)
@@ -9806,6 +9838,7 @@ int32_t LuaScriptInterface::luaResultGetDataStream(lua_State *L)
 
 	uint64_t length = 0;
 	lua_pushstring(L, res->getDataStream(s, length));
+
 	lua_pushnumber(L, length);
 	return 1;
 }
@@ -9815,6 +9848,7 @@ int32_t LuaScriptInterface::luaResultNext(lua_State *L)
 	//result.next(res)
 	//Goes to the next result of the stored result
 	//Returns true if the next result exists, false otherwise
+
 	ScriptEnviroment* env = getScriptEnv();
 	DBResult* res = env->getResult(popNumber(L));
 	CHECK_RESULT()
@@ -9833,10 +9867,7 @@ int32_t LuaScriptInterface::luaResultFree(lua_State *L)
 	DBResult* res = env->getResult(rid);
 	CHECK_RESULT()
 
-	bool ret = env->removeResult(rid);
-	res->free();
-
-	lua_pushboolean(L, (ret ? LUA_TRUE : LUA_FALSE));
+	lua_pushboolean(L, (env->removeResult(rid) ? LUA_TRUE : LUA_FALSE));
 	return 1;
 }
 #undef CHECK_RESULT

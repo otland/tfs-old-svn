@@ -3426,7 +3426,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 	if(ret == RET_NEEDEXCHANGE)
 		return true;
 
-	if(g_talkActions->onPlayerSay(player, channelId, text))
+	if(g_talkActions->onPlayerSay(player, channelId, text, false))
 		return true;
 
 	switch(type)

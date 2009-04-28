@@ -88,7 +88,7 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p)
 	return true;
 }
 
-bool TalkActions::onPlayerSay(Player* player, uint16_t channelId, const std::string& words)
+bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std::string& words, bool ignoreAccess)
 {
 	std::string cmdstring[TALKFILTER_LAST] = words, paramstring[TALKFILTER_LAST] = "";
 	size_t loc = words.find('"', 0);
@@ -120,9 +120,11 @@ bool TalkActions::onPlayerSay(Player* player, uint16_t channelId, const std::str
 	if(!talkAction || (talkAction->getChannel() != -1 && talkAction->getChannel() != channelId))
 		return false;
 
+	Player* player = creature->getPlayer();
 	StringVec exceptions = talkAction->getExceptions();
-	if((std::find(exceptions.begin(), exceptions.end(), asLowerCaseString(player->getName())) == exceptions.end()
-		&& talkAction->getAccess() > player->getAccess()) || player->isAccountManager())
+	if(player && ((!ignoreAccess && std::find(exceptions.begin(), exceptions.end(), asLowerCaseString(
+		player->getName())) == exceptions.end() && talkAction->getAccess() > player->getAccess())
+		|| player->isAccountManager()))
 	{
 		if(player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges))
 		{
@@ -135,11 +137,13 @@ bool TalkActions::onPlayerSay(Player* player, uint16_t channelId, const std::str
 
 	if(talkAction->isLogged())
 	{
+		if(player)
+			player->sendTextMessage(MSG_STATUS_CONSOLE_RED, words.c_str());
+
 		char buf[21], buffer[100];
 		formatDate(time(NULL), buf);
-		sprintf(buffer, "%s.log", getFilePath(FILE_TYPE_LOG, player->getName()).c_str());
 
-		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, words.c_str());
+		sprintf(buffer, "%s.log", getFilePath(FILE_TYPE_LOG, creature->getName()).c_str());
 		if(FILE* file = fopen(buffer, "a"))
 		{
 			fprintf(file, "[%s] %s\n", buf, words.c_str());
@@ -148,9 +152,10 @@ bool TalkActions::onPlayerSay(Player* player, uint16_t channelId, const std::str
 	}
 
 	if(talkAction->isScripted())
-		return talkAction->executeSay(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()], channelId);
-	else if(talkAction->function)
-		return talkAction->function(player, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]);
+		return talkAction->executeSay(creature, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()], channelId);
+
+	if(talkAction->function)
+		return talkAction->function(creature, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]);
 
 	return false;
 }
@@ -236,7 +241,7 @@ bool TalkAction::loadFunction(const std::string& functionName)
 	return false;
 }
 
-int32_t TalkAction::executeSay(Player* player, const std::string& words, const std::string& param, uint16_t channel)
+int32_t TalkAction::executeSay(Creature* creature, const std::string& words, const std::string& param, uint16_t channel)
 {
 	//onSay(cid, words, param, channel)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -244,10 +249,10 @@ int32_t TalkAction::executeSay(Player* player, const std::string& words, const s
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
-			env->setRealPos(player->getPosition());
+			env->setRealPos(creature->getPosition());
 
 			std::stringstream scriptstream;
-			scriptstream << "cid = " << env->addThing(player) << std::endl;
+			scriptstream << "cid = " << env->addThing(creature) << std::endl;
 			scriptstream << "words = \"" << words << "\"" << std::endl;
 			scriptstream << "param = \"" << param << "\"" << std::endl;
 			scriptstream << "channel = " << channel << std::endl;
@@ -267,17 +272,17 @@ int32_t TalkAction::executeSay(Player* player, const std::string& words, const s
 		{
 			#ifdef __DEBUG_LUASCRIPTS__
 			char desc[125];
-			sprintf(desc, "%s - %s- %s", player->getName().c_str(), words.c_str(), param.c_str());
+			sprintf(desc, "%s - %s- %s", creature->getName().c_str(), words.c_str(), param.c_str());
 			env->setEventDesc(desc);
 			#endif
 
 			env->setScriptId(m_scriptId, m_scriptInterface);
-			env->setRealPos(player->getPosition());
+			env->setRealPos(creature->getPosition());
 
 			lua_State* L = m_scriptInterface->getLuaState();
 			m_scriptInterface->pushFunction(m_scriptId);
 
-			lua_pushnumber(L, env->addThing(player));
+			lua_pushnumber(L, env->addThing(creature));
 			lua_pushstring(L, words.c_str());
 			lua_pushstring(L, param.c_str());
 			lua_pushnumber(L, channel);
@@ -295,8 +300,12 @@ int32_t TalkAction::executeSay(Player* player, const std::string& words, const s
 	}
 }
 
-bool TalkAction::serverDiag(Player* player, const std::string& cmd, const std::string& param)
+bool TalkAction::serverDiag(Creature* creature, const std::string& cmd, const std::string& param)
 {
+	Player* player = creature->getPlayer();
+	if(!player)
+		return false;
+
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	std::stringstream text;
 	text << "Server diagonostic:\n";
@@ -343,9 +352,10 @@ bool TalkAction::serverDiag(Player* player, const std::string& cmd, const std::s
 	return true;
 }
 
-bool TalkAction::buyHouse(Player* player, const std::string& cmd, const std::string& param)
+bool TalkAction::buyHouse(Creature* creature, const std::string& cmd, const std::string& param)
 {
-	if(!g_config.getBool(ConfigManager::HOUSE_BUY_AND_SELL))
+	Player* player = creature->getPlayer();
+	if(!player || !g_config.getBool(ConfigManager::HOUSE_BUY_AND_SELL))
 		return false;
 
 	if(Houses::getInstance().getHouseByPlayerId(player->getGUID()))
@@ -428,9 +438,10 @@ bool TalkAction::buyHouse(Player* player, const std::string& cmd, const std::str
 	return true;
 }
 
-bool TalkAction::sellHouse(Player* player, const std::string& cmd, const std::string& param)
+bool TalkAction::sellHouse(Creature* creature, const std::string& cmd, const std::string& param)
 {
-	if(!g_config.getBool(ConfigManager::HOUSE_BUY_AND_SELL))
+	Player* player = creature->getPlayer();
+	if(!player || !g_config.getBool(ConfigManager::HOUSE_BUY_AND_SELL))
 		return false;
 
 	House* house = Houses::getInstance().getHouseByPlayerId(player->getGUID());
@@ -505,9 +516,10 @@ bool TalkAction::sellHouse(Player* player, const std::string& cmd, const std::st
 	return true;
 }
 
-bool TalkAction::joinGuild(Player* player, const std::string& cmd, const std::string& param)
+bool TalkAction::joinGuild(Creature* creature, const std::string& cmd, const std::string& param)
 {
-	if(!g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
+	Player* player = creature->getPlayer();
+	if(!player || !g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
 		return false;
 
 	std::string param_ = param;
@@ -539,12 +551,13 @@ bool TalkAction::joinGuild(Player* player, const std::string& cmd, const std::st
 	return true;
 }
 
-bool TalkAction::createGuild(Player* player, const std::string& cmd, const std::string& param)
+bool TalkAction::createGuild(Creature* creature, const std::string& cmd, const std::string& param)
 {
-	if(!g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
+	Player* player = creature->getPlayer();
+	if(!player || !g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
 		return false;
 
-	if(player->getGuildId() != 0)
+	if(player->getGuildId())
 	{
 		player->sendCancel("You are already in a guild.");
 		return true;
@@ -603,8 +616,12 @@ bool TalkAction::createGuild(Player* player, const std::string& cmd, const std::
 	return true;
 }
 
-bool TalkAction::ghost(Player* player, const std::string& cmd, const std::string& param)
+bool TalkAction::ghost(Creature* creature, const std::string& cmd, const std::string& param)
 {
+	Player* player = creature->getPlayer();
+	if(!player)
+		return false;
+
 	bool added = true;
 	Condition* condition = NULL;
 	if((condition = player->getCondition(CONDITION_GAMEMASTER, CONDITIONID_DEFAULT, GAMEMASTER_INVISIBLE)))
@@ -672,8 +689,12 @@ bool TalkAction::ghost(Player* player, const std::string& cmd, const std::string
 	return true;
 }
 
-bool TalkAction::addSkill(Player* player, const std::string& cmd, const std::string& param)
+bool TalkAction::addSkill(Creature* creature, const std::string& cmd, const std::string& param)
 {
+	Player* player = creature->getPlayer();
+	if(!player)
+		return false;
+
 	StringVec params = explodeString(param, ",");
 	if(params.size() < 2)
 	{
@@ -716,12 +737,16 @@ bool TalkAction::addSkill(Player* player, const std::string& cmd, const std::str
 	return true;
 }
 
-bool TalkAction::changeThingProporties(Player* player, const std::string& cmd, const std::string& param)
+bool TalkAction::changeThingProporties(Creature* creature, const std::string& cmd, const std::string& param)
 {
+	Player* player = creature->getPlayer();
+	if(!player)
+		return false;
+
 	Position playerPos = player->getPosition();
 	Position pos = getNextPosition(player->getDirection(), playerPos);
 
-	Tile* tileInFront = g_game.getMap()->getTile(pos);
+	Tile* tileInFront = g_game.getTile(pos);
 	if(!tileInFront)
 	{
 		player->sendTextMessage(MSG_STATUS_SMALL, "No tile found.");
@@ -738,7 +763,7 @@ bool TalkAction::changeThingProporties(Player* player, const std::string& cmd, c
 		tokenizer::iterator cmdit = cmdtokens.begin();
 		while(cmdit != cmdtokens.end())
 		{
-			if(Item *item = thing->getItem())
+			if(Item* item = thing->getItem())
 			{
 				tmp = parseParams(cmdit, cmdtokens.end());
 				if(strcasecmp(tmp.c_str(), "description") == 0 || strcasecmp(tmp.c_str(), "desc") == 0)
@@ -856,9 +881,9 @@ bool TalkAction::changeThingProporties(Player* player, const std::string& cmd, c
 						return true;
 					}
 				}
-				/*else if(Npc* npc = _creature->getNpc())
+				/*else if(Npc* _npc = _creature->getNpc())
 					//
-				else if(Monster* monster = _creature->getMonster())
+				else if(Monster* _monster = _creature->getMonster())
 					//*/
 				else
 				{
@@ -894,8 +919,12 @@ bool TalkAction::changeThingProporties(Player* player, const std::string& cmd, c
 	return true;
 }
 
-bool TalkAction::showBanishmentInfo(Player* player, const std::string& cmd, const std::string& param)
+bool TalkAction::showBanishmentInfo(Creature* creature, const std::string& cmd, const std::string& param)
 {
+	Player* player = creature->getPlayer();
+	if(!player)
+		return false;
+
 	std::string param_ = param;
 	trimString(param_);
 

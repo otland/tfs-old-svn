@@ -42,7 +42,7 @@ class TalkActions : public BaseEvents
 		TalkActions();
 		virtual ~TalkActions();
 
-		bool onPlayerSay(Player* player, uint16_t channelId, const std::string& words);
+		bool onPlayerSay(Creature* creature, uint16_t channelId, const std::string& words, bool ignoreAccess);
 
 	protected:
 		virtual std::string getScriptBaseName() const {return "talkactions";}
@@ -58,7 +58,7 @@ class TalkActions : public BaseEvents
 		TalkActionsMap talksMap;
 };
 
-typedef bool (TalkFunction)(Player* player, const std::string& words, const std::string& param);
+typedef bool (TalkFunction)(Creature* creature, const std::string& words, const std::string& param);
 struct TalkFunction_t;
 
 class TalkAction : public Event
