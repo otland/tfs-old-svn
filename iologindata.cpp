@@ -456,15 +456,18 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->manaSpent = manaSpent;
 	player->magLevelPercent = Player::getPercentLevel(player->manaSpent, nextManaCount);
 
-	player->defaultOutfit.lookHead = result->getDataInt("lookhead");
-	player->defaultOutfit.lookBody = result->getDataInt("lookbody");
-	player->defaultOutfit.lookLegs = result->getDataInt("looklegs");
-	player->defaultOutfit.lookFeet = result->getDataInt("lookfeet");
-	player->defaultOutfit.lookAddons = result->getDataInt("lookaddons");
+	Outfit_t outfit;
 	if(!group || !group->getOutfit())
-		player->defaultOutfit.lookType = result->getDataInt("looktype");
+		outfit.lookType = result->getDataInt("looktype");
 	else
-		player->defaultOutfit.lookType = group->getOutfit();
+		outfit.lookType = group->getOutfit();
+
+	outfit.lookHead = result->getDataInt("lookhead");
+	outfit.lookBody = result->getDataInt("lookbody");
+	outfit.lookLegs = result->getDataInt("looklegs");
+	outfit.lookFeet = result->getDataInt("lookfeet");
+	outfit.lookAddons = result->getDataInt("lookaddons");
+	player->changeOutfit(outfit, true);
 
 	player->currentOutfit = player->defaultOutfit;
 	if(g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)

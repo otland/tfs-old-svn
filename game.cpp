@@ -3385,7 +3385,7 @@ bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 	if(!player || player->isRemoved())
 		return false;
 
-	if(!player->changeOutfit(outfit))
+	if(!player->changeOutfit(outfit, false))
 		return false;
 
 	player->resetIdleTime();
