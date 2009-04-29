@@ -52,6 +52,9 @@ void OutfitList::addOutfit(const Outfit& outfit)
 		newOutfit->quest = outfit.quest;
 		newOutfit->premium = outfit.premium;
 
+		for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+			newOutfit->absorbPercent[(CombatType_t)i] = outfit.absorbPercent[(CombatType_t)i];
+
 		m_list.push_back(newOutfit);
 	}
 }
@@ -77,7 +80,7 @@ bool OutfitList::remOutfit(const Outfit& outfit)
 	return false;
 }
 
-bool OutfitList::isInList(int32_t playerId, uint32_t looktype, uint32_t addons) const
+bool OutfitList::isInList(uint32_t playerId, uint32_t lookType, uint32_t addons) const
 {
 	Player* player = g_game.getPlayerByID(playerId);
 	if(!player || player->isRemoved())
@@ -87,18 +90,15 @@ bool OutfitList::isInList(int32_t playerId, uint32_t looktype, uint32_t addons) 
 	const OutfitListType& globalOutfits = Outfits::getInstance()->getOutfits(player->getSex());
 	for(git = globalOutfits.begin(); git != globalOutfits.end(); ++git)
 	{
-		if((*git)->looktype != looktype)
+		if((*git)->looktype != lookType)
 			continue;
 
 		for(it = m_list.begin(); it != m_list.end(); ++it)
 		{
-			if((*it)->looktype != looktype)
+			if((*it)->looktype != lookType)
 				continue;
 
-			if(((*it)->addons & addons) != addons)
-				return false;
-
-			if((*git)->premium && !player->isPremium())
+			if(((*it)->addons & addons) != addons || ((*git)->premium && !player->isPremium()))
 				return false;
 
 			if((*git)->quest)
@@ -120,6 +120,7 @@ Outfits::Outfits()
 	Outfit outfit;
 	outfit.premium = false;
 	outfit.addons = outfit.quest = 0;
+	memset(outfit.absorbPercent, 0, sizeof(outfit.absorbPercent));
 
 	for(int32_t i = PLAYER_FEMALE_1; i <= PLAYER_FEMALE_7; i++)
 	{
@@ -154,7 +155,7 @@ bool Outfits::loadFromXml()
 		return false;
 	}
 
-	xmlNodePtr p, root = xmlDocGetRootElement(doc);
+	xmlNodePtr p, configNode, root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"outfits") != 0)
 	{
 		std::cout << "[Error - Outfits::loadFromXml] Malformed outfits file, using defaults." << std::endl;
@@ -210,23 +211,73 @@ bool Outfits::loadFromXml()
 			name = strValue;
 
 		outfitNamesMap[outfit.looktype] = name;
+		outfit.addons = outfit.quest = 0;
 
-		outfit.addons = 0;
 		if(readXMLInteger(p, "addons", intValue))
 			outfit.addons = intValue;
 
-		outfit.quest = 0;
 		if(readXMLInteger(p, "quest", intValue) || readXMLInteger(p, "storage", intValue))
 			outfit.quest = intValue;
 
 		if(readXMLString(p, "premium", strValue))
 			outfit.premium = booleanString(strValue);
 
-		bool enabled = true;
-		if(readXMLString(p, "enabled", strValue))
-			enabled = booleanString(strValue);
+		configNode = p->children;
+		while(configNode)
+		{
+			if(!xmlStrcmp(configNode->name, (const xmlChar*)"absorb"))
+			{
+				if(readXMLInteger(configNode, "percentAll", intValue))
+				{
+					for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+						outfit.absorbPercent[(CombatType_t)i] += intValue;
+				}
+				else if(readXMLInteger(configNode, "percentElements", intValue))
+				{
+					outfit.absorbPercent[COMBAT_ENERGYDAMAGE] += intValue;
+					outfit.absorbPercent[COMBAT_FIREDAMAGE] += intValue;
+					outfit.absorbPercent[COMBAT_EARTHDAMAGE] += intValue;
+					outfit.absorbPercent[COMBAT_ICEDAMAGE] += intValue;
+				}
+				else if(readXMLInteger(configNode, "percentMagic", intValue))
+				{
+					outfit.absorbPercent[COMBAT_ENERGYDAMAGE] += intValue;
+					outfit.absorbPercent[COMBAT_FIREDAMAGE] += intValue;
+					outfit.absorbPercent[COMBAT_EARTHDAMAGE] += intValue;
+					outfit.absorbPercent[COMBAT_ICEDAMAGE] += intValue;
+					outfit.absorbPercent[COMBAT_HOLYDAMAGE] += intValue;
+					outfit.absorbPercent[COMBAT_DEATHDAMAGE] += intValue;
+				}
+				else if(readXMLInteger(configNode, "percentEnergy", intValue))
+					outfit.absorbPercent[COMBAT_ENERGYDAMAGE] += intValue;
+				else if(readXMLInteger(configNode, "percentFire", intValue))
+					outfit.absorbPercent[COMBAT_FIREDAMAGE] += intValue;
+				else if(readXMLInteger(configNode, "percentPoison", intValue) || readXMLInteger(configNode, "percentEarth", intValue))
+					outfit.absorbPercent[COMBAT_EARTHDAMAGE] += intValue;
+				else if(readXMLInteger(configNode, "percentIce", intValue))
+					outfit.absorbPercent[COMBAT_ICEDAMAGE] += intValue;
+				else if(readXMLInteger(configNode, "percentHoly", intValue))
+					outfit.absorbPercent[COMBAT_HOLYDAMAGE] += intValue;
+				else if(readXMLInteger(configNode, "percentDeath", intValue))
+					outfit.absorbPercent[COMBAT_DEATHDAMAGE] += intValue;
+				else if(readXMLInteger(configNode, "percentLifeDrain", intValue))
+					outfit.absorbPercent[COMBAT_LIFEDRAIN] += intValue;
+				else if(readXMLInteger(configNode, "percentManaDrain", intValue))
+					outfit.absorbPercent[COMBAT_MANADRAIN] += intValue;
+				else if(readXMLInteger(configNode, "percentDrown", intValue))
+					outfit.absorbPercent[COMBAT_DROWNDAMAGE] += intValue;
+				else if(readXMLInteger(configNode, "percentPhysical", intValue))
+					outfit.absorbPercent[COMBAT_PHYSICALDAMAGE] += intValue;
+				else if(readXMLInteger(configNode, "percentHealing", intValue))
+					outfit.absorbPercent[COMBAT_HEALING] += intValue;
+				else if(readXMLInteger(configNode, "percentUndefined", intValue))
+					outfit.absorbPercent[COMBAT_UNDEFINEDDAMAGE] += intValue;
+			}
 
-		if(enabled) //This way we can add names for outfits without adding them to default list
+			configNode = configNode->next;
+		}
+
+		if(readXMLString(p, "enabled", strValue) && booleanString(strValue))
 			list->addOutfit(outfit);
 
 		p = p->next;
@@ -234,4 +285,28 @@ bool Outfits::loadFromXml()
 
 	xmlFreeDoc(doc);
 	return true;
+}
+
+void Outfits::addAttributes(uint32_t playerId, uint32_t lookType)
+{
+	//TODO
+}
+
+void Outfits::removeAttributes(uint32_t playerId, uint32_t lookType)
+{
+	//TODO
+}
+
+int16_t Outfits::getOutfitAbsorb(uint32_t lookType, uint32_t type, CombatType_t combat)
+{
+	const OutfitListType& globalOutfits = Outfits::getInstance()->getOutfits(type);
+	for(OutfitListType::const_iterator it = globalOutfits.begin(); it != globalOutfits.end(); ++it)
+	{
+		if((*it)->looktype != lookType)
+			continue;
+
+		return (*it)->absorbPercent[combat];
+	}
+
+	return 0;
 }

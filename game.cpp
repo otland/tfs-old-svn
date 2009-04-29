@@ -3388,13 +3388,12 @@ bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 	if(!player->canWear(outfit.lookType, outfit.lookAddons) || !player->hasRequestedOutfit())
 		return false;
 
-	player->hasRequestedOutfit(false);
-	player->defaultOutfit = outfit;
+	player->changeOutfit(outfit);
+	player->resetIdleTime();
 	if(player->hasCondition(CONDITION_OUTFIT))
 		return false;
 
 	internalCreatureChangeOutfit(player, outfit);
-	player->resetIdleTime();
 	return true;
 }
 

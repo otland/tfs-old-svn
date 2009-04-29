@@ -2079,6 +2079,13 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 			}
 		}
 
+		if(defaultOutfit.lookAddons == OUTFITS_ADDON_BONUS)
+		{
+			uint32_t tmp = Outfits::getInstance()->getOutfitAbsorb(defaultOutfit.lookType, (uint32_t)sex, combatType);
+			if(tmp != 0)
+				blocked += (int32_t)std::ceil((float)damage * tmp / 100);
+		}
+
 		if(vocation->getAbsorbPercent(combatType) != 0)
 			blocked += (int32_t)std::ceil((float)damage * vocation->getAbsorbPercent(combatType) / 100);
 
@@ -3659,18 +3666,18 @@ void Player::genReservedStorageRange()
 	const OutfitList& globalOutfits = Outfits::getInstance()->getOutfitList(sex);
 	for(OutfitListType::const_iterator it = outfits.begin(); it != outfits.end(); ++it)
 	{
-		if(!globalOutfits.isInList(getID(), (*it)->looktype, (*it)->addons))
-		{
-			std::stringstream ss;
-			ss << (int64_t((*it)->looktype << 16) | ((*it)->addons & 0xFF));
-			storageMap[baseKey] = ss.str();
+		if(globalOutfits.isInList(getID(), (*it)->looktype, (*it)->addons))
+			continue;
 
-			baseKey++;
-			if(baseKey > PSTRG_OUTFITS_RANGE_START + PSTRG_OUTFITS_RANGE_SIZE)
-			{
-				std::cout << "[Warning - Player::genReservedStorageRange] Player " << getName() << " with more than 500 outfits!." << std::endl;
-				break;
-			}
+		std::stringstream ss;
+		ss << (int64_t((*it)->looktype << 16) | ((*it)->addons & 0xFF));
+		storageMap[baseKey] = ss.str();
+
+		baseKey++;
+		if(baseKey > PSTRG_OUTFITS_RANGE_START + PSTRG_OUTFITS_RANGE_SIZE)
+		{
+			std::cout << "[Warning - Player::genReservedStorageRange] Player " << getName() << " with more than 500 outfits!." << std::endl;
+			break;
 		}
 	}
 }
@@ -3691,19 +3698,31 @@ bool Player::remOutfit(uint32_t _looktype, uint32_t _addons)
 	return m_playerOutfits.remOutfit(outfit);
 }
 
+bool Player::changeOutfit(Outfit_t outfit) const
+{
+	hasRequestedOutfit = false;
+	if(defaultOutfit.lookAddons == OUTFITS_ADDON_BONUS)
+		outfits->removeAttributes(getID(), defaultOutfit.lookType)
+
+	defaultOutfit = outfit;
+	if(defaultOutfit.lookAddons == OUTFITS_ADDON_BONUS)
+		outfits->addAttributes(getID(), defaultOutfit.lookType)
+}
+
 void Player::setSex(PlayerSex_t newSex)
 {
 	sex = newSex;
 	if(Outfits* outfits = Outfits::getInstance())
 	{
-		const OutfitListType& global_outfits = outfits->getOutfits(sex);
+		const OutfitListType& globalOutfits = outfits->getOutfits(sex);
 		Outfit outfit;
-		for(OutfitListType::const_iterator it = global_outfits.begin(); it != global_outfits.end(); ++it)
+		for(OutfitListType::const_iterator it = globalOutfits.begin(); it != globalOutfits.end(); ++it)
 		{
 			outfit.looktype = (*it)->looktype;
 			outfit.addons = (*it)->addons;
 			outfit.quest = (*it)->quest;
 			outfit.premium = (*it)->premium;
+
 			m_playerOutfits.addOutfit(outfit);
 		}
 	}

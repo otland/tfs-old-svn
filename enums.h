@@ -276,24 +276,30 @@ enum CharacterTypes_t
 
 struct Outfit_t
 {
-	Outfit_t()
-	{
-		lookHead = lookBody = lookLegs = lookFeet = lookType = lookTypeEx = lookAddons = 0;
-	}
+	Outfit_t() {lookHead = lookBody = lookLegs = lookFeet = lookType = lookTypeEx = lookAddons = 0;}
 
-	uint16_t lookType, lookTypeEx;
-	uint8_t lookHead, lookBody, lookLegs, lookFeet, lookAddons;
+	uint16_t lookType;
+	union
+	{
+		uint16_t lookTypeEx;
+		union
+		{
+			struct
+			{
+				uint8_t lookHead, lookBody, lookLegs, lookFeet;
+			} lookColorsStruct;
+			uint32_t lookColors;
+		};
+	};
+
+	uint8_t lookAddons;
 };
 
 struct LightInfo
 {
 	uint32_t level, color;
 
-	LightInfo()
-	{
-		level = color = 0;
-	}
-
+	LightInfo() {level = color = 0;}
 	LightInfo(uint32_t _level, uint32_t _color):
 		level(_level), color(_color) {}
 };
@@ -311,7 +317,6 @@ struct ShopInfo
 		buyPrice = sellPrice = -1;
 		itemName = "";
 	}
-
 	ShopInfo(uint32_t _itemId, int32_t _subType = 1, int32_t _buyPrice = -1, int32_t _sellPrice = -1,
 		const std::string& _itemName = ""): itemId(_itemId), subType(_subType), buyPrice(_buyPrice),
 		sellPrice(_sellPrice), itemName(_itemName) {}

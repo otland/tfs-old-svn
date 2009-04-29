@@ -197,6 +197,7 @@ class Creature : public AutoID, virtual public Thing
 		const Outfit_t getCurrentOutfit() const {return currentOutfit;}
 		const void setCurrentOutfit(Outfit_t outfit) {currentOutfit = outfit;}
 		const Outfit_t getDefaultOutfit() const {return defaultOutfit;}
+
 		bool isInvisible() const {return hasCondition(CONDITION_INVISIBLE);}
 		ZoneType_t getZone() const
 		{
