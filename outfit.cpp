@@ -63,7 +63,7 @@ void OutfitList::addOutfit(const Outfit& outfit)
 		newOutfit->manaTicks = outfit.manaTicks;
 		newOutfit->conditionSuppressions = outfit.conditionSuppressions;
 
-		for(uint32_t i = SKILL_FIRST; i <= SKILL_LAST, i++)
+		for(uint32_t i = SKILL_FIRST; i <= SKILL_LAST; i++)
 			newOutfit->skills[(skills_t)i] = outfit.skills[(skills_t)i];
 
 		for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
@@ -171,7 +171,7 @@ bool Outfits::loadFromXml()
 		return false;
 	}
 
-	xmlNodePtr p, configNode, root = xmlDocGetRootElement(doc);
+	xmlNodePtr p, configNode = NULL, root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name,(const xmlChar*)"outfits") != 0)
 	{
 		std::cout << "[Error - Outfits::loadFromXml] Malformed outfits file, using defaults." << std::endl;
@@ -388,58 +388,58 @@ bool Outfits::loadFromXml()
 	return true;
 }
 
-bool Outfits::addAttributes(uint32_t playerId, uint32_t lookType) const
+bool Outfits::addAttributes(uint32_t playerId, uint32_t lookType)
 {
 	Player* player = g_game.getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
 
-	Outfit outfit;
-	const OutfitListType& globalOutfits = getOutfitList(player->getSex()).getOutfits();
+	Outfit* outfit = NULL;
+	const OutfitListType& globalOutfits = getOutfits((uint32_t)player->getSex());
 	for(OutfitListType::const_iterator it = globalOutfits.begin(); it != globalOutfits.end(); ++it)
 	{
 		if((*it)->looktype == lookType)
 			outfit = (*it);
 	}
 
-	if(!outfit.looktype)
+	if(!outfit || !outfit->looktype)
 		return false;
 
-	if(outfit.invisible)
+	if(outfit->invisible)
 	{
 		Condition* condition = Condition::createCondition(CONDITIONID_OUTFIT, CONDITION_INVISIBLE, -1, 0);
 		player->addCondition(condition);
 	}
 
-	if(outfit.manaShield)
+	if(outfit->manaShield)
 	{
 		Condition* condition = Condition::createCondition(CONDITIONID_OUTFIT, CONDITION_MANASHIELD, -1, 0);
 		player->addCondition(condition);
 	}
 
-	if(outfit.speed)
-		g_game.changeSpeed(player, outfit.speed);
+	if(outfit->speed)
+		g_game.changeSpeed(player, outfit->speed);
 
-	if(outfit.conditionSuppressions)
+	if(outfit->conditionSuppressions)
 	{
-		player->setConditionSuppressions(outfit.conditionSuppressions, false);
+		player->setConditionSuppressions(outfit->conditionSuppressions, false);
 		player->sendIcons();
 	}
 
-	if(outfit.regeneration)
+	if(outfit->regeneration)
 	{
 		Condition* condition = Condition::createCondition(CONDITIONID_OUTFIT, CONDITION_REGENERATION, -1, 0);
-		if(outfit.healthGain)
-			condition->setParam(CONDITIONPARAM_HEALTHGAIN, outfit.healthGain);
+		if(outfit->healthGain)
+			condition->setParam(CONDITIONPARAM_HEALTHGAIN, outfit->healthGain);
 
-		if(outfit.healthTicks)
-			condition->setParam(CONDITIONPARAM_HEALTHTICKS, outfit.healthTicks);
+		if(outfit->healthTicks)
+			condition->setParam(CONDITIONPARAM_HEALTHTICKS, outfit->healthTicks);
 
-		if(outfit.manaGain)
-			condition->setParam(CONDITIONPARAM_MANAGAIN, outfit.manaGain);
+		if(outfit->manaGain)
+			condition->setParam(CONDITIONPARAM_MANAGAIN, outfit->manaGain);
 
-		if(outfit.manaTicks)
-			condition->setParam(CONDITIONPARAM_MANATICKS, outfit.manaTicks);
+		if(outfit->manaTicks)
+			condition->setParam(CONDITIONPARAM_MANATICKS, outfit->manaTicks);
 
 		player->addCondition(condition);
 	}
@@ -447,16 +447,16 @@ bool Outfits::addAttributes(uint32_t playerId, uint32_t lookType) const
 	bool needUpdateSkills = false;
 	for(uint32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 	{
-		if(outfit.skills[i])
+		if(outfit->skills[i])
 		{
 			needUpdateSkills = true;
-			player->setVarSkill((skills_t)i, outfit.skills[i]);
+			player->setVarSkill((skills_t)i, outfit->skills[i]);
 		}
 
-		if(it.abilities.skillsPercent[i])
+		if(outfit->skillsPercent[i])
 		{
 			needUpdateSkills = true;
-			player->setVarSkill((skills_t)i, (int32_t)(player->getSkill((skills_t)i, SKILL_LEVEL) * ((outfit.skillsPercent[i] - 100) / 100.f)));
+			player->setVarSkill((skills_t)i, (int32_t)(player->getSkill((skills_t)i, SKILL_LEVEL) * ((outfit->skillsPercent[i] - 100) / 100.f)));
 		}
 	}
 
@@ -466,16 +466,16 @@ bool Outfits::addAttributes(uint32_t playerId, uint32_t lookType) const
 	bool needUpdateStats = false;
 	for(uint32_t s = STAT_FIRST; s <= STAT_LAST; ++s)
 	{
-		if(outfit.stats[s])
+		if(outfit->stats[s])
 		{
 			needUpdateStats = true;
-			player->setVarStats((stats_t)s, outfit.stats[s]);
+			player->setVarStats((stats_t)s, outfit->stats[s]);
 		}
 
-		if(outfit.statsPercent[s])
+		if(outfit->statsPercent[s])
 		{
 			needUpdateStats = true;
-			player->setVarStats((stats_t)s, (int32_t)(player->getDefaultStats((stats_t)s) * ((outfit.statsPercent[s] - 100) / 100.f)));
+			player->setVarStats((stats_t)s, (int32_t)(player->getDefaultStats((stats_t)s) * ((outfit->statsPercent[s] - 100) / 100.f)));
 		}
 	}
 
@@ -485,54 +485,54 @@ bool Outfits::addAttributes(uint32_t playerId, uint32_t lookType) const
 	return true;
 }
 
-bool Outfits::removeAttributes(uint32_t playerId, uint32_t lookType) const
+bool Outfits::removeAttributes(uint32_t playerId, uint32_t lookType)
 {
 	Player* player = g_game.getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
 
-	Outfit outfit;
-	const OutfitListType& globalOutfits = getOutfitList(player->getSex()).getOutfits();
+	Outfit* outfit = NULL;
+	const OutfitListType& globalOutfits = getOutfits((uint32_t)player->getSex());
 	for(OutfitListType::const_iterator it = globalOutfits.begin(); it != globalOutfits.end(); ++it)
 	{
 		if((*it)->looktype == lookType)
 			outfit = (*it);
 	}
 
-	if(!outfit.looktype)
+	if(!outfit || !outfit->looktype)
 		return false;
 
-	if(outfit.invisible)
+	if(outfit->invisible)
 		player->removeCondition(CONDITION_INVISIBLE, CONDITIONID_OUTFIT);
 
-	if(outfit.manaShield)
+	if(outfit->manaShield)
 		player->removeCondition(CONDITION_MANASHIELD, CONDITIONID_OUTFIT);
 
-	if(outfit.speed)
-		g_game.changeSpeed(player, -outfit.speed);
+	if(outfit->speed)
+		g_game.changeSpeed(player, -outfit->speed);
 
-	if(outfit.conditionSuppressions)
+	if(outfit->conditionSuppressions)
 	{
-		player->setConditionSuppressions(outfit.conditionSuppressions, true);
+		player->setConditionSuppressions(outfit->conditionSuppressions, true);
 		player->sendIcons();
 	}
 
-	if(outfit.regeneration)
+	if(outfit->regeneration)
 		player->removeCondition(CONDITION_REGENERATION, CONDITIONID_OUTFIT);
 
 	bool needUpdateSkills = false;
 	for(uint32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 	{
-		if(outfit.skills[i])
+		if(outfit->skills[i])
 		{
 			needUpdateSkills = true;
-			player->setVarSkill((skills_t)i, -outfit.skills[i]);
+			player->setVarSkill((skills_t)i, -outfit->skills[i]);
 		}
 
-		if(it.abilities.skillsPercent[i])
+		if(outfit->skillsPercent[i])
 		{
 			needUpdateSkills = true;
-			player->setVarSkill((skills_t)i, -(int32_t)(player->getSkill((skills_t)i, SKILL_LEVEL) * ((outfit.skillsPercent[i] - 100) / 100.f)));
+			player->setVarSkill((skills_t)i, -(int32_t)(player->getSkill((skills_t)i, SKILL_LEVEL) * ((outfit->skillsPercent[i] - 100) / 100.f)));
 		}
 	}
 
@@ -542,16 +542,16 @@ bool Outfits::removeAttributes(uint32_t playerId, uint32_t lookType) const
 	bool needUpdateStats = false;
 	for(uint32_t s = STAT_FIRST; s <= STAT_LAST; ++s)
 	{
-		if(outfit.stats[s])
+		if(outfit->stats[s])
 		{
 			needUpdateStats = true;
-			player->setVarStats((stats_t)s, -outfit.stats[s]);
+			player->setVarStats((stats_t)s, -outfit->stats[s]);
 		}
 
-		if(outfit.statsPercent[s])
+		if(outfit->statsPercent[s])
 		{
 			needUpdateStats = true;
-			player->setVarStats((stats_t)s, -(int32_t)(player->getDefaultStats((stats_t)s) * ((outfit.statsPercent[s] - 100) / 100.f)));
+			player->setVarStats((stats_t)s, -(int32_t)(player->getDefaultStats((stats_t)s) * ((outfit->statsPercent[s] - 100) / 100.f)));
 		}
 	}
 
@@ -579,5 +579,6 @@ const std::string& Outfits::getOutfitName(uint32_t lookType) const
 	if(it != outfitNamesMap.end())
 		return it->second;
 
-	return "Outfit";
+	const std::string& tmp = "Outfit";
+	return tmp;
 }
