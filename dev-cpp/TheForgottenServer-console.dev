@@ -1,7 +1,7 @@
 [Project]
 FileName=TheForgottenServer-console.dev
 Name=TheForgottenServer
-UnitCount=169
+UnitCount=171
 Type=1
 Ver=1
 ObjFiles=
@@ -1711,6 +1711,26 @@ BuildCmd=
 
 [Unit1]
 FileName=..\waypoints.h
+CompileCpp=1
+Folder=TheForgottenServer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit170]
+FileName=..\group.cpp
+CompileCpp=1
+Folder=TheForgottenServer
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit171]
+FileName=..\group.h
 CompileCpp=1
 Folder=TheForgottenServer
 Compile=1
