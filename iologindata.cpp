@@ -467,9 +467,6 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	outfit.lookLegs = result->getDataInt("looklegs");
 	outfit.lookFeet = result->getDataInt("lookfeet");
 	outfit.lookAddons = result->getDataInt("lookaddons");
-	player->changeOutfit(outfit, true);
-
-	player->currentOutfit = player->defaultOutfit;
 	if(g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
 	{
 		int32_t redSkullSeconds = result->getDataInt("redskulltime") - time(NULL);
@@ -675,6 +672,9 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->updateBaseSpeed();
 	player->updateItemsLight(true);
 	player->updateInventoryWeigth();
+
+	player->changeOutfit(outfit, true);
+	player->currentOutfit = player->defaultOutfit;
 	return true;
 }
 
