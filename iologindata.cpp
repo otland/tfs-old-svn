@@ -455,18 +455,18 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 
 	player->manaSpent = manaSpent;
 	player->magLevelPercent = Player::getPercentLevel(player->manaSpent, nextManaCount);
-
-	Outfit_t outfit;
 	if(!group || !group->getOutfit())
-		outfit.lookType = result->getDataInt("looktype");
+		player->defaultOutfit.lookType = result->getDataInt("looktype");
 	else
-		outfit.lookType = group->getOutfit();
+		player->defaultOutfit.lookType = group->getOutfit();
 
-	outfit.lookHead = result->getDataInt("lookhead");
-	outfit.lookBody = result->getDataInt("lookbody");
-	outfit.lookLegs = result->getDataInt("looklegs");
-	outfit.lookFeet = result->getDataInt("lookfeet");
-	outfit.lookAddons = result->getDataInt("lookaddons");
+	player->defaultOutfit.lookHead = result->getDataInt("lookhead");
+	player->defaultOutfit.lookBody = result->getDataInt("lookbody");
+	player->defaultOutfit.lookLegs = result->getDataInt("looklegs");
+	player->defaultOutfit.lookFeet = result->getDataInt("lookfeet");
+	player->defaultOutfit.lookAddons = result->getDataInt("lookaddons");
+
+	player->currentOutfit = player->defaultOutfit;
 	if(g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
 	{
 		int32_t redSkullSeconds = result->getDataInt("redskulltime") - time(NULL);
@@ -474,7 +474,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		{
 			//ensure that we round up the number of ticks
 			player->redSkullTicks = (redSkullSeconds + 2) * 1000;
-			if(result->getDataInt("redskull") == 1)
+			if(result->getDataInt("redskull"))
 				player->skull = SKULL_RED;
 		}
 	}
@@ -669,12 +669,9 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		result->free();
 	}
 
-	player->updateBaseSpeed();
-	player->updateItemsLight(true);
 	player->updateInventoryWeigth();
-
-	player->changeOutfit(outfit, true);
-	player->currentOutfit = player->defaultOutfit;
+	player->updateItemsLight(true);
+	player->updateBaseSpeed();
 	return true;
 }
 
