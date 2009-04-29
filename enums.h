@@ -277,22 +277,8 @@ enum CharacterTypes_t
 struct Outfit_t
 {
 	Outfit_t() {lookHead = lookBody = lookLegs = lookFeet = lookType = lookTypeEx = lookAddons = 0;}
-
-	uint16_t lookType;
-	union
-	{
-		uint16_t lookTypeEx;
-		union
-		{
-			struct
-			{
-				uint8_t lookHead, lookBody, lookLegs, lookFeet;
-			} lookColorsStruct;
-			uint32_t lookColors;
-		};
-	};
-
-	uint8_t lookAddons;
+	uint16_t lookType, lookTypeEx;
+	uint8_t lookHead, lookBody, lookLegs, lookFeet, lookAddons;
 };
 
 struct LightInfo
