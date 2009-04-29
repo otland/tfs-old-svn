@@ -225,7 +225,7 @@ AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
 
 echo
-#echo The Forgotten Server 0.3.3
+#echo The Forgotten Server 0.3.4
 echo $PACKAGE $VERSION
 echo
 echo Server diagnostics.......... : $serverDiag
@@ -236,7 +236,7 @@ echo Home-directory configuration : $homedirConf
 echo OTServ custom allocator..... : $otservAllocator
 echo Debug build................. : $debugBuild
 echo
-echo Build with libboost_thread.. : $boostThread (not finished!)
+#echo Build with libboost_thread.. : $boostThread
 echo Build with MySQL............ : $useMySQL
 echo Build with SQLite........... : $useSQLite
 echo Build with PostgreSQL....... : $usePostgreSQL
