@@ -169,7 +169,7 @@ class Player : public Creature, public Cylinder
 
 		void setPromotionLevel(uint32_t pLevel);
 
-		bool changeOutfit(Outfit_t outfit, bool loading);
+		bool changeOutfit(Outfit_t outfit);
 		void hasRequestedOutfit(bool v) {requestedOutfit = v;}
 
 		Vocation* getVocation() const {return vocation;}

@@ -1364,7 +1364,9 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 		#endif
 	}
 
-	changeOutfit(defaultOutfit, true);
+	if(defaultOutfit.lookAddons == OUTFITS_ADDON_BONUS)
+		outfitAttributes = Outfits::getInstance()->addAttributes(getID(), defaultOutfit.lookType);
+
 	if(lastLogout)
 	{
 		int64_t period = (int32_t)time(NULL) - lastLogout;
@@ -3699,20 +3701,16 @@ bool Player::remOutfit(uint32_t _looktype, uint32_t _addons)
 	return m_playerOutfits.remOutfit(outfit);
 }
 
-bool Player::changeOutfit(Outfit_t outfit, bool loading)
+bool Player::changeOutfit(Outfit_t outfit)
 {
-	if(!loading)
-	{
-		if(!m_playerOutfits.isInList(getID(), outfit.lookType, outfit.lookAddons) || !requestedOutfit)
-			return false;
+	if(!m_playerOutfits.isInList(getID(), outfit.lookType, outfit.lookAddons) || !requestedOutfit)
+		return false;
 
-		requestedOutfit = false;
-		if(outfitAttributes)
-			outfitAttributes = !Outfits::getInstance()->removeAttributes(getID(), defaultOutfit.lookType);
+	requestedOutfit = false;
+	if(outfitAttributes)
+		outfitAttributes = !Outfits::getInstance()->removeAttributes(getID(), defaultOutfit.lookType);
 
-		defaultOutfit = outfit;
-	}
-
+	defaultOutfit = outfit;
 	if(defaultOutfit.lookAddons == OUTFITS_ADDON_BONUS)
 		outfitAttributes = Outfits::getInstance()->addAttributes(getID(), defaultOutfit.lookType);
 
