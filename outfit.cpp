@@ -22,6 +22,8 @@
 #include "tools.h"
 
 #include "player.h"
+#include "condition.h"
+
 #include "game.h"
 extern Game g_game;
 
@@ -51,9 +53,27 @@ void OutfitList::addOutfit(const Outfit& outfit)
 		newOutfit->addons = outfit.addons;
 		newOutfit->quest = outfit.quest;
 		newOutfit->premium = outfit.premium;
+		newOutfit->manaShield = outfit.manaShield;
+		newOutfit->invisible = outfit.invisible;
+		newOutfit->regeneration = outfit.regeneration;
+		newOutfit->speed = outfit.speed;
+		newOutfit->healthGain = outfit.healthGain;
+		newOutfit->healthTicks = outfit.healthTicks;
+		newOutfit->manaGain = outfit.manaGain;
+		newOutfit->manaTicks = outfit.manaTicks;
+		newOutfit->conditionSuppressions = outfit.conditionSuppressions;
+
+		for(uint32_t i = SKILL_FIRST; i <= SKILL_LAST, i++)
+			newOutfit->skills[(skills_t)i] = outfit.skills[(skills_t)i];
 
 		for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
 			newOutfit->absorbPercent[(CombatType_t)i] = outfit.absorbPercent[(CombatType_t)i];
+
+		for(uint32_t i = STAT_FIRST; i <= STAT_LAST; i++)
+		{
+			newOutfit->stats[(stats_t)i] = outfit.stats[(stats_t)i];
+			newOutfit->statsPercent[(stats_t)i] = outfit.stats[(stats_t)i];
+		}
 
 		m_list.push_back(newOutfit);
 	}
@@ -118,10 +138,6 @@ bool OutfitList::isInList(uint32_t playerId, uint32_t lookType, uint32_t addons)
 Outfits::Outfits()
 {
 	Outfit outfit;
-	outfit.premium = false;
-	outfit.addons = outfit.quest = 0;
-	memset(outfit.absorbPercent, 0, sizeof(outfit.absorbPercent));
-
 	for(int32_t i = PLAYER_FEMALE_1; i <= PLAYER_FEMALE_7; i++)
 	{
 		outfit.looktype = i;
@@ -222,6 +238,39 @@ bool Outfits::loadFromXml()
 		if(readXMLString(p, "premium", strValue))
 			outfit.premium = booleanString(strValue);
 
+		if(readXMLString(configNode, "manaShield", strValue))
+			outfit.manaShield = booleanString(strValue);
+
+		if(readXMLString(configNode, "invisible", strValue))
+			outfit.invisible = booleanString(strValue);
+
+		if(readXMLInteger(configNode, "healthGain", intValue))
+		{
+			outfit.healthGain = intValue;
+			outfit.regeneration = true;
+		}
+
+		if(readXMLInteger(configNode, "healthTicks", intValue))
+		{
+			outfit.healthTicks = intValue;
+			outfit.regeneration = true;
+		}
+
+		if(readXMLInteger(configNode, "manaGain", intValue))
+		{
+			outfit.manaGain = intValue;
+			outfit.regeneration = true;
+		}
+
+		if(readXMLInteger(configNode, "manaTicks", intValue))
+		{
+			outfit.manaTicks = intValue;
+			outfit.regeneration = true;
+		}
+
+		if(readXMLInteger(configNode, "speed", intValue))
+			outfit.speed = intValue;
+
 		configNode = p->children;
 		while(configNode)
 		{
@@ -273,6 +322,58 @@ bool Outfits::loadFromXml()
 				else if(readXMLInteger(configNode, "percentUndefined", intValue))
 					outfit.absorbPercent[COMBAT_UNDEFINEDDAMAGE] += intValue;
 			}
+			else if(!xmlStrcmp(configNode->name, (const xmlChar*)"skills"))
+			{
+				if(readXMLInteger(configNode, "fist", intValue))
+					outfit.skills[SKILL_FIST] += intValue;
+				else if(readXMLInteger(configNode, "club", intValue))
+					outfit.skills[SKILL_CLUB] += intValue;
+				else if(readXMLInteger(configNode, "sword", intValue))
+					outfit.skills[SKILL_SWORD] += intValue;
+				else if(readXMLInteger(configNode, "axe", intValue))
+					outfit.skills[SKILL_AXE] += intValue;
+				else if(readXMLInteger(configNode, "distance", intValue) || readXMLInteger(configNode, "dist", intValue))
+					outfit.skills[SKILL_DIST] += intValue;
+				else if(readXMLInteger(configNode, "shielding", intValue) || readXMLInteger(configNode, "shield", intValue))
+					outfit.skills[SKILL_SHIELD] = intValue;
+				else if(readXMLInteger(configNode, "fishing", intValue) || readXMLInteger(configNode, "fish", intValue))
+					outfit.skills[SKILL_FISH] = intValue;
+				else if(readXMLInteger(configNode, "melee", intValue))
+				{
+					outfit.skills[SKILL_FIST] += intValue;
+					outfit.skills[SKILL_CLUB] += intValue;
+					outfit.skills[SKILL_SWORD] += intValue;
+					outfit.skills[SKILL_AXE] += intValue;
+				}
+				else if(readXMLInteger(configNode, "weapon", intValue) || readXMLInteger(configNode, "weapons", intValue))
+				{
+					outfit.skills[SKILL_CLUB] += intValue;
+					outfit.skills[SKILL_SWORD] += intValue;
+					outfit.skills[SKILL_AXE] += intValue;
+					outfit.skills[SKILL_DIST] += intValue;
+				}
+
+				//TODO: percents
+			}
+			else if(!xmlStrcmp(configNode->name, (const xmlChar*)"stats"))
+			{
+				if(readXMLInteger(configNode, "maxHealth", intValue))
+					outfit.stats[STAT_MAXHEALTH] = intValue;
+				else if(readXMLInteger(configNode, "maxMana", intValue))
+					outfit.stats[STAT_MAXMANA] = intValue;
+				else if(readXMLInteger(configNode, "soul", intValue))
+					outfit.stats[STAT_SOUL] = intValue;
+				else if(readXMLInteger(configNode, "level", intValue))
+					outfit.stats[STAT_LEVEL] = intValue;
+				else if(readXMLInteger(configNode, "magLevel", intValue))
+					outfit.stats[STAT_MAGICLEVEL] = intValue;
+
+				//TODO: percents
+			}
+			else if(!xmlStrcmp(configNode->name, (const xmlChar*)"suppress"))
+			{
+				//TODO
+			}
 
 			configNode = configNode->next;
 		}
@@ -287,26 +388,196 @@ bool Outfits::loadFromXml()
 	return true;
 }
 
-void Outfits::addAttributes(uint32_t playerId, uint32_t lookType)
+bool Outfits::addAttributes(uint32_t playerId, uint32_t lookType) const
 {
-	//TODO
+	Player* player = g_game.getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	Outfit outfit;
+	const OutfitListType& globalOutfits = getOutfitList(player->getSex()).getOutfits();
+	for(OutfitListType::const_iterator it = globalOutfits.begin(); it != globalOutfits.end(); ++it)
+	{
+		if((*it)->looktype == lookType)
+			outfit = (*it);
+	}
+
+	if(!outfit.looktype)
+		return false;
+
+	if(outfit.invisible)
+	{
+		Condition* condition = Condition::createCondition(CONDITIONID_OUTFIT, CONDITION_INVISIBLE, -1, 0);
+		player->addCondition(condition);
+	}
+
+	if(outfit.manaShield)
+	{
+		Condition* condition = Condition::createCondition(CONDITIONID_OUTFIT, CONDITION_MANASHIELD, -1, 0);
+		player->addCondition(condition);
+	}
+
+	if(outfit.speed)
+		g_game.changeSpeed(player, outfit.speed);
+
+	if(outfit.conditionSuppressions)
+	{
+		player->setConditionSuppressions(outfit.conditionSuppressions, false);
+		player->sendIcons();
+	}
+
+	if(outfit.regeneration)
+	{
+		Condition* condition = Condition::createCondition(CONDITIONID_OUTFIT, CONDITION_REGENERATION, -1, 0);
+		if(outfit.healthGain)
+			condition->setParam(CONDITIONPARAM_HEALTHGAIN, outfit.healthGain);
+
+		if(outfit.healthTicks)
+			condition->setParam(CONDITIONPARAM_HEALTHTICKS, outfit.healthTicks);
+
+		if(outfit.manaGain)
+			condition->setParam(CONDITIONPARAM_MANAGAIN, outfit.manaGain);
+
+		if(outfit.manaTicks)
+			condition->setParam(CONDITIONPARAM_MANATICKS, outfit.manaTicks);
+
+		player->addCondition(condition);
+	}
+
+	bool needUpdateSkills = false;
+	for(uint32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
+	{
+		if(outfit.skills[i])
+		{
+			needUpdateSkills = true;
+			player->setVarSkill((skills_t)i, outfit.skills[i]);
+		}
+
+		if(it.abilities.skillsPercent[i])
+		{
+			needUpdateSkills = true;
+			player->setVarSkill((skills_t)i, (int32_t)(player->getSkill((skills_t)i, SKILL_LEVEL) * ((outfit.skillsPercent[i] - 100) / 100.f)));
+		}
+	}
+
+	if(needUpdateSkills)
+		player->sendSkills();
+
+	bool needUpdateStats = false;
+	for(uint32_t s = STAT_FIRST; s <= STAT_LAST; ++s)
+	{
+		if(outfit.stats[s])
+		{
+			needUpdateStats = true;
+			player->setVarStats((stats_t)s, outfit.stats[s]);
+		}
+
+		if(outfit.statsPercent[s])
+		{
+			needUpdateStats = true;
+			player->setVarStats((stats_t)s, (int32_t)(player->getDefaultStats((stats_t)s) * ((outfit.statsPercent[s] - 100) / 100.f)));
+		}
+	}
+
+	if(needUpdateStats)
+		player->sendStats();
+
+	return true;
 }
 
-void Outfits::removeAttributes(uint32_t playerId, uint32_t lookType)
+bool Outfits::removeAttributes(uint32_t playerId, uint32_t lookType) const
 {
-	//TODO
+	Player* player = g_game.getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	Outfit outfit;
+	const OutfitListType& globalOutfits = getOutfitList(player->getSex()).getOutfits();
+	for(OutfitListType::const_iterator it = globalOutfits.begin(); it != globalOutfits.end(); ++it)
+	{
+		if((*it)->looktype == lookType)
+			outfit = (*it);
+	}
+
+	if(!outfit.looktype)
+		return false;
+
+	if(outfit.invisible)
+		player->removeCondition(CONDITION_INVISIBLE, CONDITIONID_OUTFIT);
+
+	if(outfit.manaShield)
+		player->removeCondition(CONDITION_MANASHIELD, CONDITIONID_OUTFIT);
+
+	if(outfit.speed)
+		g_game.changeSpeed(player, -outfit.speed);
+
+	if(outfit.conditionSuppressions)
+	{
+		player->setConditionSuppressions(outfit.conditionSuppressions, true);
+		player->sendIcons();
+	}
+
+	if(outfit.regeneration)
+		player->removeCondition(CONDITION_REGENERATION, CONDITIONID_OUTFIT);
+
+	bool needUpdateSkills = false;
+	for(uint32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
+	{
+		if(outfit.skills[i])
+		{
+			needUpdateSkills = true;
+			player->setVarSkill((skills_t)i, -outfit.skills[i]);
+		}
+
+		if(it.abilities.skillsPercent[i])
+		{
+			needUpdateSkills = true;
+			player->setVarSkill((skills_t)i, -(int32_t)(player->getSkill((skills_t)i, SKILL_LEVEL) * ((outfit.skillsPercent[i] - 100) / 100.f)));
+		}
+	}
+
+	if(needUpdateSkills)
+		player->sendSkills();
+
+	bool needUpdateStats = false;
+	for(uint32_t s = STAT_FIRST; s <= STAT_LAST; ++s)
+	{
+		if(outfit.stats[s])
+		{
+			needUpdateStats = true;
+			player->setVarStats((stats_t)s, -outfit.stats[s]);
+		}
+
+		if(outfit.statsPercent[s])
+		{
+			needUpdateStats = true;
+			player->setVarStats((stats_t)s, -(int32_t)(player->getDefaultStats((stats_t)s) * ((outfit.statsPercent[s] - 100) / 100.f)));
+		}
+	}
+
+	if(needUpdateStats)
+		player->sendStats();
+
+	return true;
 }
 
 int16_t Outfits::getOutfitAbsorb(uint32_t lookType, uint32_t type, CombatType_t combat)
 {
-	const OutfitListType& globalOutfits = Outfits::getInstance()->getOutfits(type);
+	const OutfitListType& globalOutfits = getOutfitList(type).getOutfits();
 	for(OutfitListType::const_iterator it = globalOutfits.begin(); it != globalOutfits.end(); ++it)
 	{
-		if((*it)->looktype != lookType)
-			continue;
-
-		return (*it)->absorbPercent[combat];
+		if((*it)->looktype == lookType)
+			return (*it)->absorbPercent[combat];
 	}
 
 	return 0;
+}
+
+const std::string& Outfits::getOutfitName(uint32_t lookType) const
+{
+	OutfitNamesMap::const_iterator it = outfitNamesMap.find(lookType);
+	if(it != outfitNamesMap.end())
+		return it->second;
+
+	return "Outfit";
 }

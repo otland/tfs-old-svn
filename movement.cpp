@@ -796,7 +796,7 @@ uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, 
 		return 1;
 
 	const ItemType& it = Item::items[item->getID()];
-	if(it.transformEquipTo != 0)
+	if(it.transformEquipTo)
 	{
 		Item* newItem = g_game.transformItem(item, it.transformEquipTo);
 		g_game.startDecay(newItem);
@@ -844,12 +844,18 @@ uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, 
 	}
 
 	bool needUpdateSkills = false;
-	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
+	for(uint32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 	{
 		if(it.abilities.skills[i])
 		{
 			needUpdateSkills = true;
 			player->setVarSkill((skills_t)i, it.abilities.skills[i]);
+		}
+
+		if(it.abilities.skillsPercent[i])
+		{
+			needUpdateSkills = true;
+			player->setVarSkill((skills_t)i, (int32_t)(player->getSkill((skills_t)i, SKILL_LEVEL) * ((it.abilities.skillsPercent[i] - 100) / 100.f)));
 		}
 	}
 
@@ -857,7 +863,7 @@ uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, 
 		player->sendSkills();
 
 	bool needUpdateStats = false;
-	for(int32_t s = STAT_FIRST; s <= STAT_LAST; ++s)
+	for(uint32_t s = STAT_FIRST; s <= STAT_LAST; ++s)
 	{
 		if(it.abilities.stats[s])
 		{
@@ -886,7 +892,7 @@ uint32_t MoveEvent::DeEquipItem(MoveEvent* moveEvent, Player* player, Item* item
 	player->setItemAbility(slot, false);
 
 	const ItemType& it = Item::items[item->getID()];
-	if(isRemoval && it.transformDeEquipTo != 0)
+	if(isRemoval && it.transformDeEquipTo)
 	{
 		g_game.transformItem(item, it.transformDeEquipTo);
 		g_game.startDecay(item);
@@ -898,10 +904,10 @@ uint32_t MoveEvent::DeEquipItem(MoveEvent* moveEvent, Player* player, Item* item
 	if(it.abilities.manaShield)
 		player->removeCondition(CONDITION_MANASHIELD, (ConditionId_t)slot);
 
-	if(it.abilities.speed != 0)
+	if(it.abilities.speed)
 		g_game.changeSpeed(player, -it.abilities.speed);
 
-	if(it.abilities.conditionSuppressions != 0)
+	if(it.abilities.conditionSuppressions)
 	{
 		player->setConditionSuppressions(it.abilities.conditionSuppressions, true);
 		player->sendIcons();
@@ -911,12 +917,18 @@ uint32_t MoveEvent::DeEquipItem(MoveEvent* moveEvent, Player* player, Item* item
 		player->removeCondition(CONDITION_REGENERATION, (ConditionId_t)slot);
 
 	bool needUpdateSkills = false;
-	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
+	for(uint32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 	{
-		if(it.abilities.skills[i] != 0)
+		if(it.abilities.skills[i])
 		{
 			needUpdateSkills = true;
 			player->setVarSkill((skills_t)i, -it.abilities.skills[i]);
+		}
+
+		if(it.abilities.skillsPercent[i])
+		{
+			needUpdateSkills = true;
+			player->setVarSkill((skills_t)i, -(int32_t)(player->getSkill((skills_t)i, SKILL_LEVEL) * ((it.abilities.skillsPercent[i] - 100) / 100.f)));
 		}
 	}
 
@@ -924,7 +936,7 @@ uint32_t MoveEvent::DeEquipItem(MoveEvent* moveEvent, Player* player, Item* item
 		player->sendSkills();
 
 	bool needUpdateStats = false;
-	for(int32_t s = STAT_FIRST; s <= STAT_LAST; ++s)
+	for(uint32_t s = STAT_FIRST; s <= STAT_LAST; ++s)
 	{
 		if(it.abilities.stats[s])
 		{

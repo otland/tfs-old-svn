@@ -3700,13 +3700,13 @@ bool Player::remOutfit(uint32_t _looktype, uint32_t _addons)
 
 bool Player::changeOutfit(Outfit_t outfit) const
 {
-	hasRequestedOutfit = false;
-	if(defaultOutfit.lookAddons == OUTFITS_ADDON_BONUS)
-		outfits->removeAttributes(getID(), defaultOutfit.lookType)
+	requestedOutfit = false;
+	if(outfitAttributes)
+		outfitAttributes = !outfits->removeAttributes(getID(), defaultOutfit.lookType)
 
 	defaultOutfit = outfit;
 	if(defaultOutfit.lookAddons == OUTFITS_ADDON_BONUS)
-		outfits->addAttributes(getID(), defaultOutfit.lookType)
+		outfitAttributes = outfits->addAttributes(getID(), defaultOutfit.lookType)
 }
 
 void Player::setSex(PlayerSex_t newSex)

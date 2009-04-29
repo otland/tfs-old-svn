@@ -29,9 +29,24 @@
 
 struct Outfit
 {
-	bool premium;
+	Outfit()
+	{
+		memset(skills, 0, sizeof(skills));
+		memset(skillsPercent, 0, sizeof(skillsPercent));
+		memset(stats, 0 , sizeof(stats));
+		memset(statsPercent, 0, sizeof(statsPercent));
+
+		memset(absorbPercent, 0, sizeof(absorbPercent));
+		premium = manaShield = invisible = regeneration = false;
+		looktype = addons = quest = speed = healthGain = healthTicks = manaGain = manaTicks = conditionSuppressions = 0;
+	}
+
+	bool premium, manaShield, invisible, regeneration;
 	int16_t absorbPercent[COMBAT_LAST + 1];
+
 	uint32_t looktype, addons, quest;
+	int32_t skills[SKILL_LAST + 1], skillsPercent[SKILL_LAST + 1], stats[STAT_LAST + 1], statsPercent[STAT_LAST + 1],
+		speed, healthGain, healthTicks, manaGain, manaTicks, conditionSuppressions;
 };
 
 typedef std::list<Outfit*> OutfitListType;
@@ -79,18 +94,10 @@ class Outfits
 			return m_maleList;
 		}
 
-		void addAttributes(uint32_t playerId, uint32_t lookType);
-		void removeAttributes(uint32_t playerId, uint32_t lookType);
+		bool addAttributes(uint32_t playerId, uint32_t lookType) const;
+		bool removeAttributes(uint32_t playerId, uint32_t lookType) const;
 
-		const std::string& getOutfitName(uint32_t lookType) const
-		{
-			OutfitNamesMap::const_iterator it = outfitNamesMap.find(lookType);
-			if(it != outfitNamesMap.end())
-				return it->second;
-
-			static const std::string ret = "Outfit";
-			return ret;
-		}
+		const std::string& getOutfitName(uint32_t lookType) const;
 		int16_t getOutfitAbsorb(uint32_t lookType, uint32_t type, CombatType_t combat);
 
 	private:

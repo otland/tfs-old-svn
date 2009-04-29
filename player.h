@@ -767,6 +767,7 @@ class Player : public Creature, public Cylinder
 		bool saving;
 		bool isConnecting;
 		bool requestedOutfit;
+		bool outfitAttributes;
 		bool addAttackSkillPoint;
 
 		PlayerSex_t sex;

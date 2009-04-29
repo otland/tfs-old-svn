@@ -64,21 +64,22 @@ struct Abilities
 	Abilities()
 	{
 		memset(skills, 0, sizeof(skills));
+		memset(skillsPercent, 0, sizeof(skillsPercent));
 		memset(stats, 0 , sizeof(stats));
 		memset(statsPercent, 0, sizeof(statsPercent));
 		memset(absorbPercent, 0, sizeof(absorbPercent));
 
 		elementType = COMBAT_NONE;
 		manaShield = invisible = regeneration = preventLoss = preventDrop = false;
-		speed = healthGain = healthTicks = manaGain = manaTicks = elementDamage = conditionImmunities = conditionSuppressions = 0;
+		speed = healthGain = healthTicks = manaGain = manaTicks = elementDamage = conditionSuppressions = 0;
 	};
 
 	bool manaShield, invisible, regeneration, preventLoss, preventDrop;
-	int16_t elementDamage, absorbPercent[COMBAT_LAST + 1];
-	int32_t speed, skills[SKILL_LAST + 1], stats[STAT_LAST + 1], statsPercent[STAT_LAST + 1],
-		healthGain, healthTicks, manaGain, manaTicks, conditionImmunities, conditionSuppressions;
-
 	CombatType_t elementType;
+
+	int16_t elementDamage, absorbPercent[COMBAT_LAST + 1];
+	int32_t skills[SKILL_LAST + 1], skillsPercent[SKILL_LAST + 1], stats[STAT_LAST + 1], statsPercent[STAT_LAST + 1],
+		speed, healthGain, healthTicks, manaGain, manaTicks, conditionSuppressions;
 };
 
 class Condition;
