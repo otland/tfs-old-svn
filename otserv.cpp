@@ -220,7 +220,7 @@ void startupErrorMessage(const std::string& error)
 		std::cout << std::endl << "> ERROR: " << error << std::endl;
 
 	#if defined(WIN32) && not defined(__CONSOLE__)
-	MessageBox(hWnd, error, "Error", MB_OK);
+	MessageBox(GUI::getInstance()->m_mainWindow, error.c_str(), "Error", MB_OK);
 	system("pause");
 	#else
 	getchar();

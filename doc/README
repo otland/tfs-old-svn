@@ -23,10 +23,9 @@
 		http://sourceforge.net/project/memberlist.php?group_id=32523
 
 	.. also a thanks to the following people who has helped this
-	project by contributing something:
-		Cayan, TheMask, slawkens, Rafael Hamdan,
-		Fare-Fray, Kiwi Dan, Piotrek1447, Hermes,
-		Gesior.pl, Macroman, KaczooH, levandi,
+	project by contributing something: Cayan, TheMask,
+		Rafael Hamdan, Fare-Fray, Kiwi Dan,
+		Piotrek1447, Hermes, Gesior.pl, levandi,
 		Casa, Winghawk, Nexoz, Godely, buzzbuzz2.
 ]
 
@@ -54,22 +53,22 @@
 		Elf
 		Talaturen
 		Jonern
-		Kaczooh
+		Macroman
 		slawkens
 
 	PHP Programmer(s)
 		Talaturen
 		Kornholijo
+		Macroman
 		Elf
 
 	DATA Directory Manager(s)
 		Lithium
+		KaczooH
 		Elf
-		Kaczooh
-		slawkens
 
-	INACTIVE:
-		Nightmare
+	Documentation Manager(s)
+		KaczooH
 ]
 
 [ FORUM
@@ -98,15 +97,15 @@
 
 		Download required packages
 			Launch a terminal, and paste in the following commands:
-				apt-get install libboost1.35-dev liblua5.1-0 liblua5.1-0-dev liblua50 liblua50-dev liblualib50 liblualib50-dev lua50 libsqlite0 libsqlite0-dev libsqlite3-0 libsqlite3-dev sqlite3 lua5.1 libmysql++-dev libgmp3-dev subversion make g++ libxml2 libxml2-dev libxml++2.6-dev libmysqlclient15-dev mysql-client-5.0 mysql-common mysql-server-5.0 gcc cpp automake autoconf pkg-config
+				apt-get install libboost1.37-dev liblua5.1-0 liblua5.1-0-dev liblua50 liblua50-dev liblualib50 liblualib50-dev lua50 libsqlite0 libsqlite0-dev libsqlite3-0 libsqlite3-dev sqlite3 lua5.1 libmysql++-dev libgmp3-dev subversion make g++ libxml2 libxml2-dev libxml++2.6-dev libmysqlclient15-dev mysql-client-5.0 mysql-common mysql-server-5.0 gcc cpp automake autoconf pkg-config
 
 		Download sources
 			Launch a terminal, and paste in this command:
-				svn co http://svn.otland.net/public/forgottenserver/tags/0.3.3
+				svn co http://svn.otland.net/public/forgottenserver/tags/0.3.4
 
 		Compiling
 			Launch a terminal, and type this:
-				cd 0.3.3 && ./autogen.sh && ./configure --enable-mysql --enable-server-diag && make
+				cd 0.3.4 && ./autogen.sh && ./configure --enable-sqlite --enable-server-diag && make
 
 		Linker error
 			If you receive a linker error saying something with 'libboost', try pasting the following commands to terminal and then move back to compiling again:

@@ -42,6 +42,9 @@
 	TRAP
 		* Cleans map
 
+	CHLD
+		* Refreshes map
+
 	USR1
 		* Closes server
 

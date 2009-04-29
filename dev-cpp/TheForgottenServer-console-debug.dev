@@ -1,7 +1,7 @@
 [Project]
 FileName=TheForgottenServer-console-debug.dev
 Name=TheForgottenServer
-UnitCount=170
+UnitCount=169
 Type=1
 Ver=1
 ObjFiles=
@@ -28,16 +28,6 @@ IncludeVersionInfo=1
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000001100000000000
-
-[Unit1]
-FileName=..\account.cpp
-CompileCpp=1
-Folder=TheForgottenServer
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
 
 [Unit2]
 FileName=..\account.h
@@ -1719,7 +1709,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit170]
+[Unit1]
 FileName=..\waypoints.h
 CompileCpp=1
 Folder=TheForgottenServer
@@ -1732,18 +1722,18 @@ BuildCmd=
 [VersionInfo]
 Major=0
 Minor=3
-Release=3
-Build=1523
+Release=4
+Build=1756
 LanguageID=1033
 CharsetID=1250
 CompanyName=
-FileVersion=0.3.3
+FileVersion=0.3.4
 FileDescription=The Forgotten Server
 InternalName=Crying Damson
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=TheForgottenServer.exe
 ProductName=The Forgotten Server
-ProductVersion=0.3.3
+ProductVersion=0.3.4
 AutoIncBuildNr=0
 

@@ -801,6 +801,8 @@
 		New configurables: ghostModeInvisibleEffect, gainExperienceColor, checkCorpseOwner, showHealingDamageForMonsters (slawkens)
 		Moved items randomization to randomization.xml file (slawkens, Elf)
 		Furniture beds (packages with beds) + enchanting system (slawkens)
+		Outfit attributes (Elf)
+		Proccess priority and affinity assinging for both Windows and *nix systems (Elf)
 	]
 ]
 
@@ -837,6 +839,7 @@
 	]
 	[ 0.3.4
 		LuaFunction: getPlayerLookDir(cid), use getCreatureLookDirection(cid)
+		Integer return values of Lua functions, use booleans
 	]
 ]
 
@@ -923,6 +926,13 @@
 		"Decaying items transforming when used" (Elf)
 	]
 	[ 0.3.4
-		?
+		High memory usage (partially from OpenTibia SVN, Elf)
+		OutputMessage (fe. spells) crash (OpenTibia SVN, Elf)
+		MySQL crash, freeing issue (Elf)
+		Abusable sellhouse (OpenTibia SVN, Elf)
+		Gamemasters crashing client when on ghost mode (Elf)
+		Containers loaded from map having unproper weight (OpenTibia SVN)
+		Players being able to track gamemasters on ghost mode with EXURA SIO spell (Elf)
+		... and few more.
 	]
 ]
