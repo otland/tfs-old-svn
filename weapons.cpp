@@ -1040,8 +1040,8 @@ int32_t WeaponWand::getWeaponDamage(const Player* player, const Creature* target
 	Vocation* vocation = player->getVocation();
 	if(vocation && vocation->getWandMultiplier() != 1.0)
 	{
-		minValue *= (int32_t)vocation->getWandMultiplier();
-		maxValue *= (int32_t)vocation->getWandMultiplier();
+		minValue = (int32_t)(minValue * vocation->getWandMultiplier());
+		maxValue = (int32_t)(maxValue * vocation->getWandMultiplier());
 	}
 
 	return random_range(-minValue, -maxValue, DISTRO_NORMAL);

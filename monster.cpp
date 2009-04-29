@@ -917,8 +917,7 @@ bool Monster::pushCreature(Creature* creature)
 	std::random_shuffle(dirVector.begin(), dirVector.end());
 	for(DirVector::iterator it = dirVector.begin(); it != dirVector.end(); ++it)
 	{
-		const Position& tryPos = Spells::getCasterPosition(creature, *it);
-		Tile* toTile = g_game.getTile(tryPos);
+		Tile* toTile = g_game.getTile(Spells::getCasterPosition(creature, *it));
 		if(toTile && !toTile->hasProperty(BLOCKPATH) && g_game.internalMoveCreature(creature, *it) == RET_NOERROR)
 			return true;
 	}
@@ -993,8 +992,7 @@ bool Monster::getNextStep(Direction& dir)
 
 	if(result && (canPushItems() || canPushCreatures()))
 	{
-		const Position& pos = Spells::getCasterPosition(this, dir);
-		if(Tile* tile = g_game.getTile(pos.x, pos.y, pos.z))
+		if(Tile* tile = g_game.getTile(Spells::getCasterPosition(this, dir)))
 		{
 			if(canPushItems())
 				pushItems(tile);
@@ -1004,7 +1002,7 @@ bool Monster::getNextStep(Direction& dir)
 		}
 #ifdef __DEBUG__
 		else
-			std::cout << "getNextStep - no tile." << std::endl;
+			std::cout << "[Warning - Monster::getNextStep] no tile found." << std::endl;
 #endif
 	}
 
