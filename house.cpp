@@ -239,15 +239,15 @@ bool House::transferToDepot()
 		player->useThing2();
 	}
 
-	ItemList moveItemList;
 	Item* item = NULL;
 	Container* tmpContainer = NULL;
+
+	ItemList moveItemList;
 	for(HouseTileList::iterator it = houseTiles.begin(); it != houseTiles.end(); ++it)
 	{
 		for(uint32_t i = 0; i < (*it)->getThingCount(); ++i)
 		{
-			item = (*it)->__getThing(i)->getItem();
-			if(!item)
+			if(!(item = (*it)->__getThing(i)->getItem())
 				continue;
 
 			if(item->isPickupable())
@@ -942,7 +942,7 @@ bool Houses::payHouse(House* house, time_t _time)
 
 				letter->setText(s.str().c_str());
 				if(g_game.internalAddItem(NULL, depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
-					g_game.FreeThing(item);
+					g_game.FreeThing(letter);
 				else
 					savePlayer = true;
 			}
