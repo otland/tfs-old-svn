@@ -169,9 +169,8 @@ class Player : public Creature, public Cylinder
 
 		void setPromotionLevel(uint32_t pLevel);
 
-		bool changeOutfit(Outfit_t outfit) const;
-		bool hasRequestedOutfit() const {return requestedOutfit;}
-		void hasRequestedOutfit(bool newValue) {requestedOutfit = newValue;}
+		bool changeOutfit(Outfit_t outfit);
+		void hasRequestedOutfit(bool v) {requestedOutfit = v;}
 
 		Vocation* getVocation() const {return vocation;}
 		int32_t getPlayerInfo(playerinfo_t playerinfo) const;

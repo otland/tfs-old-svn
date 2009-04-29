@@ -3698,15 +3698,20 @@ bool Player::remOutfit(uint32_t _looktype, uint32_t _addons)
 	return m_playerOutfits.remOutfit(outfit);
 }
 
-bool Player::changeOutfit(Outfit_t outfit) const
+bool Player::changeOutfit(Outfit_t outfit)
 {
-	hasRequestedOutfit(false);
+	if(!m_playerOutfits.isInList(getID(), outfit.lookType, outfit.lookAddons) || !requestedOutfit)
+		return false;
+
+	requestedOutfit = false;
 	if(outfitAttributes)
-		outfitAttributes = !Outfits::getInstance()->removeAttributes(getID(), defaultOutfit.lookType)
+		outfitAttributes = !Outfits::getInstance()->removeAttributes(getID(), defaultOutfit.lookType);
 
 	defaultOutfit = outfit;
 	if(defaultOutfit.lookAddons == OUTFITS_ADDON_BONUS)
-		outfitAttributes = Outfits::getInstance()->addAttributes(getID(), defaultOutfit.lookType)
+		outfitAttributes = Outfits::getInstance()->addAttributes(getID(), defaultOutfit.lookType);
+
+	return true;
 }
 
 void Player::setSex(PlayerSex_t newSex)
