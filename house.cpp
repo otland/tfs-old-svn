@@ -247,7 +247,7 @@ bool House::transferToDepot()
 	{
 		for(uint32_t i = 0; i < (*it)->getThingCount(); ++i)
 		{
-			if(!(item = (*it)->__getThing(i)->getItem())
+			if(!(item = (*it)->__getThing(i)->getItem()))
 				continue;
 
 			if(item->isPickupable())
