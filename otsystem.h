@@ -74,6 +74,13 @@ inline int OTSYS_THREAD_WAITSIGNAL(OTSYS_THREAD_SIGNALVAR& signal, OTSYS_THREAD_
 	return -0x4711;
 }
 
+inline int64_t OTSYS_TIME()
+{
+	_timeb t;
+	_ftime(&t);
+	return ((int64_t)t.millitm) + ((int64_t)t.time) * 1000;
+}
+
 inline int OTSYS_THREAD_WAITSIGNAL_TIMED(OTSYS_THREAD_SIGNALVAR& signal, OTSYS_THREAD_LOCKVAR& lock, int64_t cycle)
 {
 	int64_t tout64 = (cycle - OTSYS_TIME());
@@ -89,12 +96,6 @@ inline int OTSYS_THREAD_WAITSIGNAL_TIMED(OTSYS_THREAD_SIGNALVAR& signal, OTSYS_T
 	return ret;
 }
 
-inline int64_t OTSYS_TIME()
-{
-	_timeb t;
-	_ftime(&t);
-	return ((int64_t)t.millitm) + ((int64_t)t.time) * 1000;
-}
 #else
 #include <sys/types.h>
 #include <sys/socket.h>
