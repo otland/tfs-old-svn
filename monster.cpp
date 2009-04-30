@@ -542,11 +542,19 @@ bool Monster::deactivate(bool forced /*= false*/)
 
 void Monster::onAddCondition(ConditionType_t type)
 {
+	//the walkCache need to be updated if the monster becomes "resistent" to the damage, see Tile::__queryAdd()
+	if(type == CONDITION_FIRE || type == CONDITION_ENERGY || type == CONDITION_POISON)
+		updateMapCache();
+
 	activate();
 }
 
 void Monster::onEndCondition(ConditionType_t type)
 {
+	//the walkCache need to be updated if the monster loose the "resistent" to the damage, see Tile::__queryAdd()
+	if(type == CONDITION_FIRE || type == CONDITION_ENERGY || type == CONDITION_POISON)
+		updateMapCache();
+
 	deactivate();
 }
 
@@ -930,30 +938,32 @@ void Monster::pushCreatures(Tile* tile)
 	if(!tile)
 		return;
 
-	CreatureVector* creatures = tile->creatures;
-	if(!creatures || creatures->empty())
-		return;
-
-	bool effect = false;
-	Monster* monster = NULL;
-	for(uint32_t i = 0; i < creatures->size();)
+	if(CreatureVector* creatures = tile->creatures)
 	{
-		if(creatures->at(i) && (monster = creatures->at(i)->getMonster()) && monster->isPushable())
+		if(!creatures || creatures->empty())
+			return;
+	
+		bool effect = false;
+		Monster* monster = NULL;
+		for(uint32_t i = 0; i < creatures->size();)
 		{
-			if(pushCreature(monster))
-				continue;
-
-			monster->changeHealth(-monster->getHealth());
-			monster->setDropLoot(LOOT_DROP_NONE);
-			if(!effect)
-				effect = true;
+			if(creatures->at(i) && (monster = creatures->at(i)->getMonster()) && monster->isPushable())
+			{
+				if(pushCreature(monster))
+					continue;
+	
+				monster->changeHealth(-monster->getHealth());
+				monster->setDropLoot(LOOT_DROP_NONE);
+				if(!effect)
+					effect = true;
+			}
+	
+			++i;
 		}
-
-		++i;
+	
+		if(effect)
+			g_game.addMagicEffect(tile->getPosition(), NM_ME_BLOCKHIT);
 	}
-
-	if(effect)
-		g_game.addMagicEffect(tile->getPosition(), NM_ME_BLOCKHIT);
 }
 
 bool Monster::getNextStep(Direction& dir)
