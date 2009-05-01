@@ -947,21 +947,21 @@ void Monster::pushCreatures(Tile* tile)
 	for(uint32_t i = 0; i < creatures->size(); ++i)
 	{
 		Creature* creature = creatures->at(i);
-		if(!creature)
-			return;
-			
-		monster = creature->getMonster();
-		if(monster)
+		if(creature)
 		{
-			if(monster->isPushable())
+			if(creature->getMonster())
 			{
-				if(pushCreature(monster))
-					continue;
-			
-				monster->changeHealth(-monster->getHealth());
-				monster->setDropLoot(LOOT_DROP_NONE);
-				if(!effect)
-					effect = true;
+				monster = creature->getMonster();
+				if(monster->isPushable())
+				{
+					if(pushCreature(monster))
+						continue;
+				
+					monster->changeHealth(-monster->getHealth());
+					monster->setDropLoot(LOOT_DROP_NONE);
+					if(!effect)
+						effect = true;
+				}
 			}
 		}
 	}
