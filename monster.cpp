@@ -944,23 +944,26 @@ void Monster::pushCreatures(Tile* tile)
 
 	bool effect = false;
 	Monster* monster = NULL;
-	for(uint32_t i = 0; i < creatures->size();)
+	for(uint32_t i = 0; i < creatures->size(); ++i)
 	{
-		if(creatures->at(i))
+		Creature* creature = creatures->at(i)
+		if(!creature || creature->empty())
+			return;
+			
+		monster = creature->getMonster();
+		if(monster)
 		{
-			monster = creatures->at(i)->getMonster();
-			if(monster && monster->isPushable())
+			if(monster->isPushable())
 			{
 				if(pushCreature(monster))
 					continue;
-		
+			
 				monster->changeHealth(-monster->getHealth());
 				monster->setDropLoot(LOOT_DROP_NONE);
 				if(!effect)
 					effect = true;
 			}
 		}
-		++i;
 	}
 	
 	if(effect)
