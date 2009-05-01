@@ -469,15 +469,18 @@ ServiceManager* services)
 					std::cout << ", build: " << VERSION_BUILD << ", timestamp: " << VERSION_TIMESTAMP << "." << std::endl;
 					std::cout << "> Latest version information - version: " << version << ", patch: " << patch;
 					std::cout << ", build: " << build << ", timestamp: " << timestamp << "." << std::endl;
-					#ifndef __CONSOLE__
-					if(MessageBox(GUI::getInstance()->m_mainWindow, "Continue?", "Outdated software", MB_YESNO) == IDNO)
-					#else
-					std::cout << "Continue? (y/N)" << std::endl;
-
-					char buffer = getchar();
-					if(buffer == 10 || (buffer != 121 && buffer != 89))
-					#endif
-						startupErrorMessage("Aborted.");
+					if(g_config.getBool(ConfigManager::CONFIM_OUTDATED_VERSION))
+					{
+						#ifndef __CONSOLE__
+						if(MessageBox(GUI::getInstance()->m_mainWindow, "Continue?", "Outdated software", MB_YESNO) == IDNO)
+						#else
+						std::cout << "Continue? (y/N)" << std::endl;
+	
+						char buffer = getchar();
+						if(buffer == 10 || (buffer != 121 && buffer != 89))
+						#endif
+							startupErrorMessage("Aborted.");
+					}
 				}
 				else
 					std::cout << "up to date!" << std::endl;

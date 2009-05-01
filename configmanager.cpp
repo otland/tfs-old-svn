@@ -194,6 +194,7 @@ bool ConfigManager::load()
 	m_confBool[BANK_SYSTEM] = getGlobalBool("bankSystem", "yes");
 	m_confBool[PREMIUM_FOR_PROMOTION] = getGlobalBool("premiumForPromotion", "yes");
 	m_confBool[REMOVE_PREMIUM_ON_INIT] = getGlobalBool("removePremiumOnInit", "yes");
+	m_confBool[CONFIM_OUTDATED_VERSION] = getGlobalBool("confirmOutdatedVersion", "yes");
 	m_confBool[SHOW_HEALING_DAMAGE] = getGlobalBool("showHealingDamage", "no");
 	m_confBool[TELEPORT_SUMMONS] = getGlobalBool("teleportAllSummons", "no");
 	m_confBool[TELEPORT_PLAYER_SUMMONS] = getGlobalBool("teleportPlayerSummons", "no");

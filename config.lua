@@ -140,6 +140,7 @@
 	coresUsed = "-1"
 	optimizeDatabaseAtStartup = "yes"
 	removePremiumOnInit = "yes"
+	confirmOutdatedVersion = "yes"
 
 	-- Muted buffer
 	maxMessageBuffer = 4

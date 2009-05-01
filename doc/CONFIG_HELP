@@ -470,6 +470,12 @@
 			Should accounts premium time be updated at server start-up?
 			Default: yes
 
+		confirmOutdatedVersion
+			Decides if server should display a box (GUI) or a message (console)
+			while starting up when current version is not up-to-date
+			and wait for user interaction (yes/no) until continuing start-up.
+			Default: yes
+			
 	*MISCELLANEOUS
 		dataDirectory
 			Directory, from where all data used be server is loaded.
