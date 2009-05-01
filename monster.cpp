@@ -947,7 +947,7 @@ void Monster::pushCreatures(Tile* tile)
 	for(uint32_t i = 0; i < creatures->size(); ++i)
 	{
 		Creature* creature = creatures->at(i);
-		if(!creature || creature->empty())
+		if(!creature)
 			return;
 			
 		monster = creature->getMonster();
