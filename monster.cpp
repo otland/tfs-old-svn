@@ -954,6 +954,7 @@ void Monster::pushCreatures(Tile* tile)
 				Monster* monster = creature->getMonster();
 				if(monster->isPushable())
 				{
+					found = true;
 					if(pushCreature(monster))
 						continue;
 				
@@ -961,7 +962,6 @@ void Monster::pushCreatures(Tile* tile)
 					monster->setDropLoot(LOOT_DROP_NONE);
 					if(!effect)
 						effect = true;
-					found = true;
 				}
 			}
 		}
