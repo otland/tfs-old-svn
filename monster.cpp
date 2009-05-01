@@ -943,6 +943,7 @@ void Monster::pushCreatures(Tile* tile)
 		return;
 
 	bool effect = false;
+	bool found = false; // temp
 	for(uint32_t i = 0; i < creatures->size(); ++i)
 	{
 		Creature* creature = creatures->at(i);
@@ -960,14 +961,14 @@ void Monster::pushCreatures(Tile* tile)
 					monster->setDropLoot(LOOT_DROP_NONE);
 					if(!effect)
 						effect = true;
+					found = true;
 				}
 			}
 		}
 		if(effect)
-		{
-			g_game.addMagicEffect(tile->getPosition(), NM_ME_BLOCKHIT);		
+			g_game.addMagicEffect(tile->getPosition(), NM_ME_BLOCKHIT);
+		if(found)
 			break;
-		}
 	}
 }
 
