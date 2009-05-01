@@ -8885,8 +8885,10 @@ int32_t LuaScriptInterface::luaDoSetGameState(lua_State* L)
 	uint32_t id = popNumber(L);
 	if(id < GAME_STATE_FIRST || id > GAME_STATE_LAST)
 	{
+		std::stringstream ss;
+		ss << id;
+		reportErrorFunc("Gamestate with id " + ss.str() + " not found.");
 		lua_pushboolean(L, LUA_ERROR);
-		reportErrorFunc("Invalid game state id.");
 		return 1;
 	}
 
