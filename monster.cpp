@@ -938,32 +938,33 @@ void Monster::pushCreatures(Tile* tile)
 	if(!tile)
 		return;
 
-	if(CreatureVector* creatures = tile->creatures)
+	CreatureVector* creatures = tile->creatures;
+	if(!creatures || creatures->empty()) 	 
+		return;
+
+	bool effect = false;
+	Monster* monster = NULL;
+	for(uint32_t i = 0; i < creatures->size();)
 	{
-		bool effect = false;
-		Monster* monster = NULL;
-		for(uint32_t i = 0; i < creatures->size();)
+		if(creatures->at(i))
 		{
-			if(creatures->at(i))
+			monster = creatures->at(i)->getMonster();
+			if(monster && monster->isPushable())
 			{
-				monster = creatures->at(i)->getMonster();
-				if(monster && monster->isPushable())
-				{
-					if(pushCreature(monster))
-						continue;
+				if(pushCreature(monster))
+					continue;
 		
-					monster->changeHealth(-monster->getHealth());
-					monster->setDropLoot(LOOT_DROP_NONE);
-					if(!effect)
-						effect = true;
-				}
+				monster->changeHealth(-monster->getHealth());
+				monster->setDropLoot(LOOT_DROP_NONE);
+				if(!effect)
+					effect = true;
 			}
-			++i;
 		}
-	
-		if(effect)
-			g_game.addMagicEffect(tile->getPosition(), NM_ME_BLOCKHIT);
+		++i;
 	}
+	
+	if(effect)
+		g_game.addMagicEffect(tile->getPosition(), NM_ME_BLOCKHIT);
 }
 
 bool Monster::getNextStep(Direction& dir)
