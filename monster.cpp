@@ -940,7 +940,7 @@ bool Monster::pushCreature(Creature* creature)
 	{
 		Tile* toTile = g_game.getTile(Spells::getCasterPosition(creature, *it));
 		if(toTile && !toTile->hasProperty(BLOCKPATH) && g_game.internalMoveCreature(creature, *it) == RET_NOERROR)
-			return true;
+			return true; //TODO: internalMoveCreature is always returning RET_NOERROR, but creature is really not moved = CRASH
 	}
 
 	return false;
@@ -956,33 +956,25 @@ void Monster::pushCreatures(Tile* tile)
 		return;
 
 	bool effect = false;
-	bool found = false; // temp
-	for(uint32_t i = 0; i < creatures->size(); ++i)
+	Monster* monster = NULL;
+	for(uint32_t i = 0; i < creatures->size();)
 	{
-		Creature* creature = creatures->at(i);
-		if(creature)
+		if(creatures->at(i) && (monster = creatures->at(i)->getMonster()) && monster->isPushable())
 		{
-			if(creature->getMonster())
-			{
-				Monster* monster = creature->getMonster();
-				if(monster->isPushable())
-				{
-					found = true;
-					if(pushCreature(monster))
-						continue;
+//			if(pushCreature(monster)) //TODO: Crashbug
+//				continue;
 
-					monster->changeHealth(-monster->getHealth());
-					monster->setDropLoot(LOOT_DROP_NONE);
-					if(!effect)
-						effect = true;
-				}
-			}
+			monster->setDropLoot(LOOT_DROP_NONE);
+			monster->changeHealth(-monster->getHealth());
+			if(!effect)
+				effect = true;
 		}
-		if(effect)
-			g_game.addMagicEffect(tile->getPosition(), NM_ME_BLOCKHIT);
-		if(found)
-			break;
+
+		++i;
 	}
+
+	if(effect)
+		g_game.addMagicEffect(tile->getPosition(), NM_ME_BLOCKHIT);
 }
 
 bool Monster::getNextStep(Direction& dir)

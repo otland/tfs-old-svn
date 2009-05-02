@@ -631,7 +631,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, 
 	{
 #ifdef __DEBUG__
 		if(!thing->getParent() && !hasBitSet(FLAG_NOLIMIT, flags))
-			std::cout << "Notice: Tile::__queryAdd() - thing->getParent() == NULL" << std::endl;
+			std::cout << "[Notice - Tile::__queryAdd] thing->getParent() == NULL" << std::endl;
 
 #endif
 		if(hasBitSet(FLAG_NOLIMIT, flags))
