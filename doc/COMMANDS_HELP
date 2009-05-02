@@ -16,8 +16,8 @@
 ]
 
 [ ABOUT
-	List with all commands 'aka talkactions.
-	Parameters, possible usage, etc.
+	List of all commands 'aka talkactions.
+	Parameters, values, possible usage, etc.
 ]
 
 [ LIST
@@ -25,6 +25,14 @@
 		Adds player a specified amount of a skill.
 		Parameters
 			playerName, skillType, <optional>amount
+
+		Values
+			skillType
+				level/magic/fist/club/sword/axe/distance/shielding/fishing
+
+		Examples
+			/addskill Eternal Oblivion, sword (+1 sword skill)
+			/addskill GM Test, level, 30 (+30 levels)
 
 	/attr
 		Changes thing properties.
@@ -110,11 +118,10 @@
 		Changes world's pvp type.
 		Parameters
 			pvpType
+				nopvp/pvp/pvpenforced
 
-		Examples
+		Example
 			/mode nopvp
-			/mode pvp
-			/mode pvpenforced
 
 	/s
 		Summons a monster.
@@ -146,11 +153,15 @@
 		Reloads selected values/scripts.
 		Parameters:
 			what (What should be reloaded)
+				actions/channels/config/creatureevents/gameservers/globalevents
+				groups/highscores/houseprices/items/monsters/moveevents/npcs
+				outfits/quests/raids/spells/stages/talkactions/vocations/weapons
+				all
 
 		Examples
-			/reload actions
+			/reload spells
 			/reload houseprices
-			/reload talkactions
+			/reload all
 
 	/raid
 		Executes a raid.
@@ -177,7 +188,7 @@
 		Parameters
 			newOwnerName
 				Values: player name, or 'none/nobody/0' (Clear owner)
-		
+
 		Examples
 			/owner none
 			/owner Eternal Oblivion
@@ -316,6 +327,13 @@
 
 	/clean
 		Cleans map.
+		Parameters
+			<optional>time
+				Time in minutes to clean.
+
+		Examples
+			/clean 5 (Clean after 5 minutes)
+			/clean (Suddenly)
 
 	/reports
 		Displays server reports.
@@ -337,7 +355,7 @@
 	/info
 		Displays detailed info about a player
 		Parameters
-			playerName		
+			playerName
 
 	/gethouse
 		Display player house.
@@ -345,62 +363,64 @@
 			playerName
 
 	/b
+		Broadcast message in red color.
 
 	/baninfo
 		Displays detailed banishment info about a player
 		Parameters
 			playerName	
-			
+
 	!pos
 		Displays player's current position.
 
-	@Players
 	!buyhouse
 		Buys a house.
 		Notice: You need to stay in front of the house's door.
-		
+
 	!sellhouse
 		Sells your house to somebody else.
-		
+
 	!createguild
 		Creates a guild.
 		Parameters
 			guildName
-			
+
 	!joinguild
 		Joins you to a guild once you have been invited to it.
-		
+
 	!frags
 		Display a numer of your unjustificated kills (frags) and a time
 		for one to decrease.
-		
+
 	!buypremium
 		Buys a premium.
-		
+
 	!leavehouse
 		Leaves a house.
 		Notice: You aren't getting money out of it.
-		
+
 	/online
 		Displays a list of online players.
-		
+
 	!changender
 		Changes your gender to opposite one.
-		
+
 	/uptime
 		Displayes an uptime of a server.
 		It's a time for which server has been online since it's last start-up
-		
+
 	/deathlist
 		Displays a death list of specificated player.
 		Parameters
 			playerName
-			
+
 	/pvp
+		Displays world type.
+
 	!q
 		Checks money value in your inventory.
 		Notice: It isn't counting the money in depots/houses.
-		
+
 	/serverinfo
 		Displays server information such as experience rate and loot rate.
 ]
