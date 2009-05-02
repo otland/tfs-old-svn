@@ -234,7 +234,8 @@ class Items
 		int32_t getItemIdByName(const std::string& name);
 		const ItemType& getItemIdByClientId(int32_t spriteId) const;
 
-		int32_t getRandomizationChance() const {return m_randomizationChance;}
+		uint16_t getRandomizedItem(uint16_t id);
+		uint8_t getRandomizationChance() const {return m_randomizationChance;}
 		RandomizationBlock getRandomization(int16_t id) {return randomizationMap[id];}
 
 		uint32_t size() {return items.size();}
@@ -246,7 +247,7 @@ class Items
 		static uint32_t dwBuildNumber;
 
 	private:
-		int32_t m_randomizationChance;
+		uint8_t m_randomizationChance;
 		void clear();
 
 		void parseRandomizationBlock(int32_t id, int32_t fromId, int32_t toId, int32_t chance);

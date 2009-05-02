@@ -145,6 +145,9 @@ class ConfigManager
 			BLESS_REDUCTION,
 			NICE_LEVEL,
 			EXPERIENCE_COLOR,
+			GUILD_PREMIUM_DAYS,
+			PUSH_CREATURE_DELAY,
+			DEATH_CONTAINER,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 

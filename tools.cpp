@@ -616,11 +616,17 @@ void formatDate(time_t time, char* buffer/* atleast 21 */)
 		sprintf(buffer, "UNIX Time: %d", (int32_t)time);
 }
 
-void formatDate2(time_t time, char* buffer/* atleast 16 */)
+void formatDate2(time_t time, char* buffer/* atleast 16 */, bool detailed/* = false */)
 {
 	const tm* tms = localtime(&time);
 	if(tms)
-		strftime(buffer, 12, "%d %b %Y", tms);
+	{
+		std::string format = "%d %b %Y";
+		if(detailed)
+			format += " %H:%M:%S";
+
+		strftime(buffer, 25, format.c_str(), tms);
+	}
 	else
 		sprintf(buffer, "UNIX Time: %d", (int32_t)time);
 }
@@ -1172,8 +1178,8 @@ skills_t getSkillId(std::string param)
 		return SKILL_SHIELD;
 	else if(param == "fishing" || param == "fish")
 		return SKILL_FISH;
-	else
-		return SKILL_FIST;
+
+	return SKILL_FIST;
 }
 
 std::string getReason(int32_t reasonId)

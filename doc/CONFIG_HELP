@@ -106,10 +106,6 @@
 			Values: pvp, no-pvp, pvp-enforced
 			Default: pvp
 
-		hotkeyAimbotEnabled
-			Should system with attacking via hotkeys and battle window be enabled? (Cipsoft antibot features)
-			Default: yes
-
 		protectionLevel
 			To this level players are protected.
 			It means they cannot be attacked by players neither anyone can attack them.
@@ -207,12 +203,17 @@
 		stairhopDelay
 			Feature introduced in 8.41 global tibia update.
 			Specify time, which player need to wait after changing floor/teleport etc, before he is able to attack monster.
+			In miliseconds.
 			Default: 2 * 1000
 
-		checkCorpseOwner
-			Defines if corpse should be checked for owner before opening.
-			So for first x seconds, only creature killer is able to open it.
-			Default: yes
+		pushCreatureDelay
+			How fast creatures are pushed.
+			In miliseconds.
+			Default: 2 * 1000
+
+		deathContainerId
+			Default container player gets after death, when he have empty container slot.
+			Default: 1987
 
 	*CONNECTION
 		worldId
@@ -369,6 +370,10 @@
 			Level required to form a guild.
 			Default: 8
 
+		premiumDaysToFormGuild
+			Premium days required to form a guild.
+			Default: 0
+
 		guildNameMinLength
 			Minimum length of a guild name.
 			Default: 4
@@ -420,12 +425,21 @@
 			Values: yearly, monthly, weekly, daily, never
 			Default: never
 
-	*ITEM USAGE EXHAUSTION
+	*ITEM USAGE
 		timeBetweenActions
 			Default: 200
 
 		timeBetweenExActions
 			Default: 1000
+
+		hotkeyAimbotEnabled
+			Should system with attacking via hotkeys and battle window be enabled? (Cipsoft antibot features)
+			Default: yes
+
+		checkCorpseOwner
+			Defines if corpse should be checked for owner before opening.
+			So for first x seconds, only creature killer is able to open it.
+			Default: yes
 
 	*MAP
 		mapName

@@ -607,11 +607,14 @@ bool TalkAction::createGuild(Creature* creature, const std::string& cmd, const s
 		return true;
 	}
 
-	/*if(g_config.getNumber(ConfigManager::GUILD_NEED_PREMIUM) && !player->isPremium())
+	const uint32_t premiumDays = g_config.getNumber(ConfigManager::GUILD_PREMIUM_DAYS);
+	if(player->getPremiumDays() < premiumDays)
 	{
-		player->sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
+		char buffer[70 + premiumDays];
+		sprintf(buffer, "You need to have at least %d premium days to form a guild.", premiumDays);
+		player->sendCancel(buffer);
 		return true;
-	}*/
+	}
 
 	player->setGuildName(param_);
 	IOGuild::getInstance()->createGuild(player);
@@ -949,10 +952,10 @@ bool TalkAction::showBanishmentInfo(Creature* creature, const std::string& cmd, 
 
 		char date[16], date2[16], buffer[500 + ban.comment.length()];
 		formatDate2(ban.added, date);
-		formatDate2(ban.expires, date2);
+		formatDate2(ban.expires, date2, true);
 		sprintf(buffer, "Account has been %s at:\n%s by: %s,\nfor the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.\n%s%s.",
 			(deletion ? "deleted" : "banished"), date, name.c_str(), getReason(ban.reason).c_str(), getAction(ban.action, false).c_str(),
-			ban.comment.c_str(), (deletion ? "Account won't be undeleted" : "Banishment will be lifted at:\n"), (deletion ? "." : date));
+			ban.comment.c_str(), (deletion ? "Account won't be undeleted" : "Banishment will be lifted at:\n"), (deletion ? "." : date2));
 
 		player->sendFYIBox(buffer);
 	}

@@ -96,14 +96,7 @@ Item* Item::CreateItem(PropStream& propStream)
 	if(!propStream.GET_USHORT(_id))
 		return NULL;
 
-	if(g_config.getBool(ConfigManager::RANDOMIZE_TILES))
-	{
-		RandomizationBlock randomize = items.getRandomization(_id);
-		if(randomize.chance > 0 && random_range(0, 100) <= randomize.chance)
-			_id = random_range(randomize.fromRange, randomize.toRange);
-	}
-
-	return Item::CreateItem(_id, 0);
+	return Item::CreateItem(items.getRandomizedItem(_id), 0);
 }
 
 Item::Item(const uint16_t _type, uint16_t _count /*= 0*/):
@@ -1045,7 +1038,7 @@ std::string Item::getNameDescription(const ItemType& it, const Item* item /*= NU
 		}
 	}
 	else
-		s << "an item of type " << it.id;
+		s << "an item of type " << it.id << ". Please report it to gamemaster.";
 
 	return s.str();
 }

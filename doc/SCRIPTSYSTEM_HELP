@@ -50,6 +50,7 @@
 					sendmail, receivemail
 					joinchannel, leavechannel
 					look, think, textedit
+					target, follow
 					attack, combat, areacombat, cast
 					kill, death, preparedeath
 		Functions:
@@ -65,6 +66,8 @@
 			onThink(cid, interval)
 			onTextEdit(cid, item, newText)
 			onAreaCombat(cid, tileItem, tilePosition, isAggressive)
+			onTarget(cid, target)
+			onFollow(cid, target)
 			onCombat(cid, target)
 			onAttack(cid, target)
 			onCast(cid, target)
@@ -76,7 +79,7 @@
 		File: globalevents/globalevents.xml
 		Attributes
 			type
-				Not done yet.
+				Not done yet. IGNORE.
 
 			interval
 				Script will be executed every x seconds.

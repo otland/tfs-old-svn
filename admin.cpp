@@ -643,7 +643,7 @@ uint32_t Admin::getProtocolOptions()
 {
 	uint32_t ret = 0;
 	if(requireEncryption() && m_key_RSA1024XTEA)
-		ret = ret | ENCRYPTION_RSA1024XTEA;
+		ret |= ENCRYPTION_RSA1024XTEA;
 
 	return ret;
 }

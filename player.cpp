@@ -1185,6 +1185,9 @@ void Player::sendCancelMessage(ReturnValue message) const
 			sendCancel("No party members in range.");
 			break;
 
+		case RET_DONTSHOWMESSAGE:
+			break;
+
 		case RET_NOTPOSSIBLE:
 		default:
 			sendCancel("Sorry, not possible.");
@@ -2049,7 +2052,7 @@ bool Player::hasShield() const
 }
 
 BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
-	bool checkDefense /* = false*/, bool checkArmor /* = false*/)
+	bool checkDefense/* = false*/, bool checkArmor/* = false*/)
 {
 	BlockType_t blockType = Creature::blockHit(attacker, combatType, damage, checkDefense, checkArmor);
 	if(attacker)
@@ -2220,7 +2223,7 @@ bool Player::onDeath()
 		blessings = 0;
 		loginPosition = masterPos;
 		if(!inventory[SLOT_BACKPACK])
-			__internalAddThing(SLOT_BACKPACK, Item::CreateItem(1987));
+			__internalAddThing(SLOT_BACKPACK, Item::CreateItem(g_config.getNumber(ConfigManager::DEATH_CONTAINER)));
 
 		sendStats();
 		sendSkills();
@@ -2358,15 +2361,16 @@ void Player::addList()
 	Status::getInstance()->addPlayer();
 }
 
-void Player::kickPlayer(bool displayEffect)
+void Player::kickPlayer(bool displayEffect, bool executeLogout/* = true*/)
 {
 	if(!client)
 	{
-		g_creatureEvents->playerLogout(this);
+		if(executeLogout)
+			g_creatureEvents->playerLogout(this);
 		g_game.removeCreature(this);
 	}
 	else
-		client->logout(displayEffect, true);
+		client->logout(displayEffect, true, executeLogout);
 }
 
 void Player::notifyLogIn(Player* login_player)
@@ -3176,12 +3180,22 @@ void Player::__internalAddThing(uint32_t index, Thing* thing)
 
 bool Player::setFollowCreature(Creature* creature, bool fullPathSearch /*= false*/)
 {
-	if(!Creature::setFollowCreature(creature, fullPathSearch))
+	bool deny = false;
+	CreatureEventList followEvents = getCreatureEvents(CREATURE_EVENT_FOLLOW);
+	for(CreatureEventList::iterator it = followEvents.begin(); it != followEvents.end(); ++it)
+	{
+		if(creature && !(*it)->executeFollow(this, creature))
+			deny = true;
+	}
+
+	if(deny || !Creature::setFollowCreature(creature, fullPathSearch))
 	{
 		setFollowCreature(NULL);
 		setAttackedCreature(NULL);
 
-		sendCancelMessage(RET_THEREISNOWAY);
+		if(!deny)
+			sendCancelMessage(RET_THEREISNOWAY);
+
 		sendCancelTarget();
 		stopEventWalk();
 		return false;

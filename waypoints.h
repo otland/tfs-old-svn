@@ -29,6 +29,7 @@ class Waypoint
 };
 
 typedef boost::shared_ptr<Waypoint> WaypointPtr;
+typedef std::map<std::string, WaypointPtr> WaypointMap;
 
 class Waypoints
 {
@@ -36,9 +37,9 @@ class Waypoints
 		// Does not require either constructor nor destructor
 		void addWaypoint(WaypointPtr waypoint);
 		WaypointPtr getWaypointByName(const std::string& name) const;
+		const WaypointMap& getWaypointsMap() const {return waypoints;}
 
 	protected:
-		typedef std::map<std::string, WaypointPtr> WaypointMap;
 		WaypointMap waypoints;
 };
 

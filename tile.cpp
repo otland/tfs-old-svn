@@ -392,7 +392,7 @@ void Tile::onUpdateTile()
 		(*it)->onUpdateTile(this, cylinderMapPos);
 }
 
-void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport /* = false*/)
+void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport/* = false*/)
 {
 	int32_t oldStackPos = __getIndexOfThing(creature);
 	//remove the creature

@@ -109,7 +109,7 @@ Direction getReverseDirection(Direction dir);
 Position getNextPosition(Direction direction, Position pos);
 
 void formatDate(time_t time, char* buffer);
-void formatDate2(time_t time, char* buffer);
+void formatDate2(time_t time, char* buffer, bool detailed = false);
 void formatIP(uint32_t ip, char* buffer);
 std::string formatTime(int32_t hours, int32_t minutes);
 

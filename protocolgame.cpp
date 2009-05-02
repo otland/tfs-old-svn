@@ -296,7 +296,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 
 			char date[16], date2[16], buffer[500 + ban.comment.length()];
 			formatDate2(ban.added, date);
-			formatDate2(ban.expires, date2);
+			formatDate2(ban.expires, date2, true);
 			sprintf(buffer, "Your account has been %s at:\n%s by: %s,\nfor the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.\nYour %s%s.",
 				(deletion ? "deleted" : "banished"), date, name_.c_str(), getReason(ban.reason).c_str(), getAction(ban.action, false).c_str(),
 				ban.comment.c_str(), (deletion ? "account won't be undeleted" : "banishment will be lifted at:\n"), (deletion ? "." : date2));
@@ -423,7 +423,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 	return false;
 }
 
-bool ProtocolGame::logout(bool displayEffect, bool forced)
+bool ProtocolGame::logout(bool displayEffect, bool forced, bool executeLogout/* = true*/)
 {
 	//dispatcher thread
 	if(!player)
@@ -446,10 +446,10 @@ bool ProtocolGame::logout(bool displayEffect, bool forced)
 				return false;
 			}
 
-			if(!g_creatureEvents->playerLogout(player) && !flag) //Let the script handle the error message
+			if(executeLogout && !g_creatureEvents->playerLogout(player) && !flag) //Let the script handle the error message
 				return false;
 		}
-		else
+		else if(executeLogout)
 			g_creatureEvents->playerLogout(player);
 	}
 
@@ -500,8 +500,7 @@ void ProtocolGame::disconnect()
 
 void ProtocolGame::disconnectClient(uint8_t error, const char* message)
 {
-	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
-	if(output)
+	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 	{
 		TRACK_MESSAGE(output);
 		output->AddByte(error);
@@ -953,47 +952,47 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 
 void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 {
-	if(tile)
+	if(!tile)
+		return;
+
+	int32_t count = 0;
+	if(tile->ground)
 	{
-		int32_t count = 0;
-		if(tile->ground)
+		msg->AddItem(tile->ground);
+		count++;
+	}
+
+	if(tile->topItems)
+	{
+		for(ItemVector::const_iterator it = tile->topItems->begin(); ((it != tile->topItems->end()) && (count < 10)); ++it)
 		{
-			msg->AddItem(tile->ground);
+			msg->AddItem(*it);
 			count++;
 		}
+	}
 
-		if(tile->topItems)
+	if(tile->creatures)
+	{
+		for(CreatureVector::const_iterator cit = tile->creatures->begin(); ((cit != tile->creatures->end()) && (count < 10)); ++cit)
 		{
-			for(ItemVector::const_iterator it = tile->topItems->begin(); ((it != tile->topItems->end()) && (count < 10)); ++it)
-			{
-				msg->AddItem(*it);
-				count++;
-			}
+			if((*cit)->isInGhostMode() && !player->canSeeGhost(*cit))
+				continue;
+
+			bool known;
+			uint32_t removedKnown;
+
+			checkCreatureAsKnown((*cit)->getID(), known, removedKnown);
+			AddCreature(msg, (*cit), known, removedKnown);
+			count++;
 		}
+	}
 
-		if(tile->creatures)
+	if(tile->downItems)
+	{
+		for(ItemVector::const_iterator it = tile->downItems->begin(); ((it != tile->downItems->end()) && (count < 10)); ++it)
 		{
-			for(CreatureVector::const_iterator cit = tile->creatures->begin(); ((cit != tile->creatures->end()) && (count < 10)); ++cit)
-			{
-				if((*cit)->isInGhostMode() && !player->canSeeGhost(*cit))
-					continue;
-
-				bool known;
-				uint32_t removedKnown;
-
-				checkCreatureAsKnown((*cit)->getID(), known, removedKnown);
-				AddCreature(msg, (*cit), known, removedKnown);
-				count++;
-			}
-		}
-
-		if(tile->downItems)
-		{
-			for(ItemVector::const_iterator it = tile->downItems->begin(); ((it != tile->downItems->end()) && (count < 10)); ++it)
-			{
-				msg->AddItem(*it);
-				count++;
-			}
+			msg->AddItem(*it);
+			count++;
 		}
 	}
 }
@@ -1116,7 +1115,7 @@ bool ProtocolGame::canSee(uint16_t x, uint16_t y, uint16_t z) const
 {
 #ifdef __DEBUG__
 	if(z < 0 || z >= MAP_MAX_LAYERS)
-		std::cout << "> WARNING: ProtocolGame::canSee() Z-value is out of range!" << std::endl;
+		std::cout << "[Warning - ProtocolGame::canSee] Z-value is out of range!" << std::endl;
 #endif
 
 	const Position& myPos = player->getPosition();
@@ -1145,7 +1144,7 @@ bool ProtocolGame::canSee(uint16_t x, uint16_t y, uint16_t z) const
 void ProtocolGame::parseLogout(NetworkMessage& msg)
 {
 	Dispatcher::getDispatcher().addTask(
-		createTask(boost::bind(&ProtocolGame::logout, this, true, false)));
+		createTask(boost::bind(&ProtocolGame::logout, this, true, false, true)));
 }
 
 void ProtocolGame::parseCreatePrivateChannel(NetworkMessage& msg)
@@ -2192,7 +2191,7 @@ void ProtocolGame::sendCreatureHealth(const Creature* creature)
 
 void ProtocolGame::sendFYIBox(const std::string& message)
 {
-	if(message.empty()/* || message.length() > 1018*/) //Prevent client debug or length is > 1018 (not confirmed)
+	if(message.empty()/* || message.length() > 1018*/) //Prevent client debug when message is empty or length is > 1018 (not confirmed)
 	{
 		std::cout << "[Warning - ProtocolGame::sendFYIBox] Trying to send an empty message." << std::endl;
 		return;
@@ -2840,7 +2839,7 @@ void ProtocolGame::AddPlayerSkills(NetworkMessage_ptr msg)
 }
 
 void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* creature, SpeakClasses type,
-	std::string text, uint16_t channelId, uint32_t time /*= 0*/, Position* pos/* = NULL*/)
+	std::string text, uint16_t channelId, uint32_t time/*= 0*/, Position* pos/* = NULL*/)
 {
 	msg->AddByte(0xAA);
 	msg->AddU32(0x00000000);

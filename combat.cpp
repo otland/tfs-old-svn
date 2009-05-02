@@ -331,6 +331,19 @@ ReturnValue Combat::canTargetCreature(const Player* player, const Creature* targ
 	if(player == target)
 		return RET_YOUMAYNOTATTACKTHISPLAYER;
 
+	Player* tmpPlayer = const_cast<Player*>(player);
+	Creature* tmpTarget = const_cast<Creature*>(target);
+	bool deny = false;
+	CreatureEventList targetEvents = tmpPlayer->getCreatureEvents(CREATURE_EVENT_TARGET);
+	for(CreatureEventList::iterator it = targetEvents.begin(); it != targetEvents.end(); ++it)
+	{
+		if(!(*it)->executeTarget(tmpPlayer, tmpTarget))
+			deny = true;
+	}
+
+	if(deny)
+		return RET_DONTSHOWMESSAGE;
+
 	if(!player->hasFlag(PlayerFlag_IgnoreProtectionZone))
 	{
 		if(player->getZone() == ZONE_PROTECTION)

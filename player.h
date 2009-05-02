@@ -151,7 +151,7 @@ class Player : public Creature, public Cylinder
 
 		void manageAccount(const std::string& text);
 		bool isAccountManager() const {return (accountManager != MANAGER_NONE);}
-		void kickPlayer(bool displayEffect);
+		void kickPlayer(bool displayEffect, bool executeLogout = true);
 
 		void setGUID(uint32_t _guid) {guid = _guid;}
 		uint32_t getGUID() const {return guid;}
@@ -167,6 +167,7 @@ class Player : public Creature, public Cylinder
 			return ((50ULL * lv * lv * lv) - (150ULL * lv * lv) + (400ULL * lv)) / 3ULL;
 		}
 
+		uint32_t getPromotionLevel() const {return promotionLevel;}
 		void setPromotionLevel(uint32_t pLevel);
 
 		bool changeOutfit(Outfit_t outfit);
@@ -266,8 +267,10 @@ class Player : public Creature, public Cylinder
 		uint32_t getMagicLevel() const {return getPlayerInfo(PLAYERINFO_MAGICLEVEL);}
 		uint64_t getSpentMana() const {return manaSpent;}
 
-		void setVocation(uint32_t vocId);
+		int32_t getPremiumDays() const {return premiumDays;}
+
 		uint32_t getVocationId() const {return vocation_id;}
+		void setVocation(uint32_t vocId);
 		PlayerSex_t getSex() const {return sex;}
 		void setSex(PlayerSex_t);
 
@@ -279,6 +282,7 @@ class Player : public Creature, public Cylinder
 		void removeStamina(int64_t value) {addStamina(-value);}
 		uint64_t getSpentStamina() {return (uint64_t)STAMINA_MAX - stamina;}
 
+		int64_t getLastLogin() const {return lastLogin;}
 		time_t getLastLoginSaved() const {return lastLoginSaved;}
 		time_t getLastLogout() const {return lastLogout;}
 
@@ -414,6 +418,7 @@ class Player : public Creature, public Cylinder
 		void changeSoul(int32_t soulChange);
 
 		bool isPzLocked() const {return pzLocked;}
+		void setPzLocked(bool v) {pzLocked = v;}
 		virtual BlockType_t blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
 			bool checkDefense = false, bool checkArmor = false);
 		virtual void doAttacking(uint32_t interval);

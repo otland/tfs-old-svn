@@ -51,6 +51,8 @@
 	loginProtectionPeriod = 10 * 1000
 	deathLostPercent = 10
 	stairhopDelay = 2 * 1000
+	pushCreatureDelay = 2 * 1000
+	deathContainerId = 1987
 	gainExperienceColor = 215
 
 	-- Connection config
@@ -97,6 +99,7 @@
 	-- Guilds
 	ingameGuildManagement = "yes"
 	levelToFormGuild = 8
+	premiumDaysToFormGuild = 0
 	guildNameMinLength = 4
 	guildNameMaxLength = 20
 

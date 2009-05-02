@@ -29,15 +29,8 @@ typedef std::map<std::string, GameServer*> Characters;
 class Account
 {
 	public:
-		Account()
-		{
-			number = premiumDays = lastDay = warnings = 0;
-		}
-
-		virtual ~Account()
-		{
-			charList.clear();
-		}
+		Account() {number = premiumDays = lastDay = warnings = 0;}
+		virtual ~Account() {charList.clear();}
 
 		uint32_t number, premiumDays, lastDay;
 		int32_t warnings;

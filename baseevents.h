@@ -88,7 +88,7 @@ class CallBack
 {
 	public:
 		CallBack();
-		virtual ~CallBack();
+		virtual ~CallBack() {};
 
 		bool loadCallBack(LuaScriptInterface* _interface, std::string name);
 

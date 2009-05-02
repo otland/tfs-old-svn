@@ -935,7 +935,8 @@ bool Game::playerMoveThing(uint32_t playerId, const Position& fromPos,
 	{
 		if(Position::areInRange<1,1,0>(movingCreature->getPosition(), player->getPosition()))
 		{
-			SchedulerTask* task = createSchedulerTask(2000, boost::bind(&Game::playerMoveCreature, this,
+			SchedulerTask* task = createSchedulerTask(g_config.getNumber(ConfigManager::PUSH_CREATURE_DELAY),
+				boost::bind(&Game::playerMoveCreature, this,
 				player->getID(), movingCreature->getID(), movingCreature->getPosition(), toCylinder->getPosition()));
 			player->setNextActionTask(task);
 		}
@@ -3213,23 +3214,33 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 				ss << std::endl << "ActionID: [" << item->getActionId() << "].";
 			if(item->getUniqueId() > 0)
 				ss << std::endl << "UniqueID: [" << item->getUniqueId() << "].";
+
+			const ItemType& it = Item::items[item->getID()];
+			if(it.transformEquipTo)
+				ss << std::endl << "TransformTo: [" << it.transformEquipTo << "]. (onEquip).";
+			else if(it.transformDeEquipTo)
+				ss << std::endl << "TransformTo: [" << it.transformDeEquipTo << "]. (onDeEquip)";
+			else if(it.decayTo)
+				ss << std::endl << "DecayTo: [" << it.decayTo << "].";
 		}
 	}
 
 	if(player->hasCustomFlag(PlayerCustomFlag_CanSeeCreatureDetails))
 	{
-		if(Creature* creature = thing->getCreature())
+		if(const Creature* creature = thing->getCreature())
 		{
 			ss << std::endl << "Health: [" << creature->getHealth() << " / " << creature->getMaxHealth() << "].";
 			if(creature->getMaxMana() > 0)
 				ss << std::endl << "Mana: [" << creature->getMana() << " / " << creature->getMaxMana() << "].";
 
-			if(Player* destPlayer = creature->getPlayer())
+			if(const Player* destPlayer = creature->getPlayer())
 			{
 				ss << std::endl << "Client: " << destPlayer->getClientVersion();
 				char bufferIP[40];
 				formatIP(destPlayer->getIP(), bufferIP);
 				ss << std::endl << "IP: " << bufferIP;
+				if(destPlayer->isInGhostMode())
+					ss << std::endl << "*Ghost mode*";
 			}
 		}
 	}
@@ -3259,7 +3270,7 @@ bool Game::playerSetAttackedCreature(uint32_t playerId, uint32_t creatureId)
 	if(!player || player->isRemoved())
 		return false;
 
-	if(player->getAttackedCreature() && creatureId == 0)
+	if(player->getAttackedCreature() && !creatureId)
 	{
 		player->setAttackedCreature(NULL);
 		player->sendCancelTarget();
@@ -3376,6 +3387,7 @@ bool Game::playerTurn(uint32_t playerId, Direction dir)
 			return false;
 		}
 
+		player->setLastPosition(player->getPosition());
 		return internalTeleport(player, pos, true);
 	}
 
@@ -3504,23 +3516,24 @@ bool Game::playerWhisper(Player* player, const std::string& text)
 
 bool Game::playerYell(Player* player, const std::string& text)
 {
-	if(player->getLevel() > 1)
+	if(player->getLevel() <= 1)
 	{
-		if(!player->hasCondition(CONDITION_MUTED, 1))
-		{
-			if(!player->hasFlag(PlayerFlag_CannotBeMuted))
-			{
-				if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_MUTED, 30000, 0, false, 1))
-					player->addCondition(condition);
-			}
+		player->sendTextMessage(MSG_STATUS_SMALL, "You may not yell as long as you are on level 1.");
+		return true;
+	}
 
-			internalCreatureSay(player, SPEAK_YELL, asUpperCaseString(text));
+	if(!player->hasCondition(CONDITION_MUTED, 1))
+	{
+		if(!player->hasFlag(PlayerFlag_CannotBeMuted))
+		{
+			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_MUTED, 30000, 0, false, 1))
+				player->addCondition(condition);
 		}
-		else
-			player->sendCancelMessage(RET_YOUAREEXHAUSTED);
+
+		internalCreatureSay(player, SPEAK_YELL, asUpperCaseString(text));
 	}
 	else
-		player->sendTextMessage(MSG_STATUS_SMALL, "You may not yell as long as you are on level 1.");
+		player->sendCancelMessage(RET_YOUAREEXHAUSTED);
 
 	return true;
 }
@@ -3767,38 +3780,39 @@ bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std:
 {
 	Player* player = creature->getPlayer();
 	if(player && player->isAccountManager())
-		player->manageAccount(text);
-	else
 	{
-		Position destPos = creature->getPosition();
-		if(pos)
-			destPos = (*pos);
-
-		// This somewhat complex construct ensures that the cached SpectatorVec
-		// is used if available and if it can be used, else a local vector is
-		// used. (Hopefully the compiler will optimize away the construction of
-		// the temporary when it's not used.
-		SpectatorVec list;
-		SpectatorVec::const_iterator it;
-		if(type == SPEAK_YELL || type == SPEAK_MONSTER_YELL)
-			getSpectators(list, destPos, false, true, 18, 18, 14, 14);
-		else
-			getSpectators(list, destPos, false, false,
-				Map::maxClientViewportX, Map::maxClientViewportX,
-				Map::maxClientViewportY, Map::maxClientViewportY);
-
-		//send to client
-		Player* tmpPlayer = NULL;
-		for(it = list.begin(); it != list.end(); ++it)
-		{
-			if((tmpPlayer = (*it)->getPlayer()))
-				tmpPlayer->sendCreatureSay(creature, type, text, &destPos);
-		}
-
-		//event method
-		for(it = list.begin(); it != list.end(); ++it)
-			(*it)->onCreatureSay(creature, type, text, &destPos);
+		player->manageAccount(text);
+		return true;
 	}
+
+	Position destPos = creature->getPosition();
+	if(pos)
+		destPos = (*pos);
+
+	// This somewhat complex construct ensures that the cached SpectatorVec
+	// is used if available and if it can be used, else a local vector is
+	// used. (Hopefully the compiler will optimize away the construction of
+	// the temporary when it's not used.
+	SpectatorVec list;
+	SpectatorVec::const_iterator it;
+	if(type == SPEAK_YELL || type == SPEAK_MONSTER_YELL)
+		getSpectators(list, destPos, false, true, 18, 18, 14, 14);
+	else
+		getSpectators(list, destPos, false, false,
+			Map::maxClientViewportX, Map::maxClientViewportX,
+			Map::maxClientViewportY, Map::maxClientViewportY);
+
+	//send to client
+	Player* tmpPlayer = NULL;
+	for(it = list.begin(); it != list.end(); ++it)
+	{
+		if((tmpPlayer = (*it)->getPlayer()))
+			tmpPlayer->sendCreatureSay(creature, type, text, &destPos);
+	}
+
+	//event method
+	for(it = list.begin(); it != list.end(); ++it)
+		(*it)->onCreatureSay(creature, type, text, &destPos);
 
 	return true;
 }
@@ -4363,7 +4377,7 @@ void Game::addMagicEffect(const Position& pos, uint8_t effect, bool ghostMode /*
 	addMagicEffect(list, pos, effect);
 }
 
-void Game::addMagicEffect(const SpectatorVec& list, const Position& pos, uint8_t effect, bool ghostMode /* = false */)
+void Game::addMagicEffect(const SpectatorVec& list, const Position& pos, uint8_t effect, bool ghostMode/* = false*/)
 {
 	if(ghostMode)
 		return;

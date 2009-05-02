@@ -625,7 +625,7 @@ void LuaScriptInterface::dumpLuaStack()
 		std::cout << lua_typename(m_luaState, lua_type(m_luaState,-i)) << " " << lua_topointer(m_luaState, -i) << std::endl;
 }
 
-int32_t LuaScriptInterface::loadFile(const std::string& file, Npc* npc /* = NULL*/)
+int32_t LuaScriptInterface::loadFile(const std::string& file, Npc* npc/* = NULL*/)
 {
 	//loads file as a chunk at stack top
 	int32_t ret = luaL_loadfile(m_luaState, file.c_str());
@@ -659,7 +659,7 @@ int32_t LuaScriptInterface::loadFile(const std::string& file, Npc* npc /* = NULL
 	return 0;
 }
 
-int32_t LuaScriptInterface::loadBuffer(const std::string& text, Npc* npc /* = NULL*/)
+int32_t LuaScriptInterface::loadBuffer(const std::string& text, Npc* npc/* = NULL*/)
 {
 	//loads buffer as a chunk at stack top
 	const char* buffer = text.c_str();
@@ -1625,11 +1625,14 @@ void LuaScriptInterface::registerFunctions()
 	//doRemoveConditions(cid[, onlyPersistent])
 	lua_register(m_luaState, "doRemoveConditions", LuaScriptInterface::luaDoRemoveConditions);
 
-	//doRemoveCreature(cid)
+	//doRemoveCreature(cid[, executeLogout = true])
 	lua_register(m_luaState, "doRemoveCreature", LuaScriptInterface::luaDoRemoveCreature);
 
 	//doMoveCreature(cid, direction)
 	lua_register(m_luaState, "doMoveCreature", LuaScriptInterface::luaDoMoveCreature);
+
+	//doPlayerSetPzLocked(cid, locked)
+	lua_register(m_luaState, "doPlayerSetPzLocked", LuaScriptInterface::luaDoPlayerSetPzLocked);
 
 	//doPlayerSetTown(cid, townid)
 	lua_register(m_luaState, "doPlayerSetTown", LuaScriptInterface::luaDoPlayerSetTown);
@@ -2190,6 +2193,9 @@ void LuaScriptInterface::registerFunctions()
 	//getGroupInfo(id)
 	lua_register(m_luaState, "getGroupInfo", LuaScriptInterface::luaGetGroupInfo);
 
+	//getWaypointsList()
+	lua_register(m_luaState, "getWaypointsList", LuaScriptInterface::luaGetWaypointsList);
+
 	//isIpBanished(ip[, mask])
 	lua_register(m_luaState, "isIpBanished", LuaScriptInterface::luaIsIpBanished);
 
@@ -2412,7 +2418,7 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 			value = player->getTown();
 			break;
 		case PlayerInfoPromotionLevel:
-			value = player->promotionLevel;
+			value = player->getPromotionLevel();
 			break;
 		case PlayerInfoGUID:
 			value = player->getGUID();
@@ -2424,7 +2430,7 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 			lua_pushstring(L, player->getAccountName().c_str());
 			return 1;
 		case PlayerInfoPremiumDays:
-			value = player->premiumDays;
+			value = player->getPremiumDays();
 			break;
 		case PlayerInfoFood:
 		{
@@ -3965,10 +3971,9 @@ int32_t LuaScriptInterface::luaGetThingFromPos(lua_State* L)
 	}
 
 	if(displayError)
-	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_TILE_NOT_FOUND));
-		pushThing(L, NULL, 0);
-	}
+
+	pushThing(L, NULL, 0);
 	return 1;
 }
 
@@ -4112,13 +4117,20 @@ int32_t LuaScriptInterface::luaDoCreateItem(lua_State* L)
 {
 	//doCreateItem(itemid[, type/count], pos)
 	//Returns uid of the created item, only works on tiles.
+	uint32_t parameters = lua_gettop(L);
+
 	PositionEx pos;
 	popPosition(L, pos);
 
-	uint32_t count = popNumber(L), itemId = popNumber(L);
+	uint32_t count = 0;
+	if(parameters > 2)
+		count = popNumber(L);
+
+	uint32_t itemId = popNumber(L);
+
 	ScriptEnviroment* env = getScriptEnv();
 
-	Tile* tile = g_game.getTile(pos.x, pos.y, pos.z);
+	Tile* tile = g_game.getTile(pos);
 	if(!tile)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_TILE_NOT_FOUND));
@@ -4477,10 +4489,7 @@ int32_t LuaScriptInterface::luaDoCreateMonster(lua_State* L)
 	if(!monster)
 	{
 		if(displayError)
-		{
-			std::string tmp = (std::string)"Monster name(" + name + (std::string)") not found";
-			reportErrorFunc(tmp);
-		}
+			reportErrorFunc("Monster with name '" + name + "' not found");
 
 		lua_pushboolean(L, LUA_ERROR);
 		return 1;
@@ -4490,12 +4499,9 @@ int32_t LuaScriptInterface::luaDoCreateMonster(lua_State* L)
 	{
 		delete monster;
 		if(displayError)
-		{
-			std::string tmp = (std::string)"Cannot create monster: " + name;
-			reportErrorFunc(tmp);
-		}
+			reportErrorFunc("Cannot create monster: " + name);
 
-		lua_pushboolean(L, LUA_NO_ERROR); //for scripting compatibility
+		lua_pushboolean(L, LUA_NO_ERROR);
 		return 1;
 	}
 
@@ -4548,12 +4554,16 @@ int32_t LuaScriptInterface::luaDoCreateNpc(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoRemoveCreature(lua_State* L)
 {
-	//doRemoveCreature(cid)
+	//doRemoveCreature(cid[, executeLogout = true])
+	bool executeLogout = true;
+	if(lua_gettop(L) > 1)
+		executeLogout = popNumber(L) == LUA_TRUE;
+
 	ScriptEnviroment* env = getScriptEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
 		if(Player* player = creature->getPlayer())
-			player->kickPlayer(true); //Players will get kicked without restrictions
+			player->kickPlayer(true, executeLogout); //Players will get kicked without restrictions
 		else
 			g_game.removeCreature(creature); //Monsters/NPCs will get removed
 
@@ -4646,6 +4656,25 @@ int32_t LuaScriptInterface::luaDoPlayerTransferMoneyTo(lua_State *L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 		lua_pushboolean(L, player->transferMoneyTo(target, money) ? LUA_TRUE : LUA_FALSE);
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushboolean(L, LUA_ERROR);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoPlayerSetPzLocked(lua_State* L)
+{
+	//doPlayerSetPzLocked(cid, locked)
+	bool locked = popNumber(L) == LUA_TRUE;
+
+	ScriptEnviroment* env = getScriptEnv();
+	if(Player* player = env->getPlayerByUID(popNumber(L)))
+	{
+		player->setPzLocked(locked);
+		lua_pushboolean(L, LUA_NO_ERROR);
+	}
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
@@ -6385,7 +6414,7 @@ int32_t LuaScriptInterface::luaGetMonsterInfo(lua_State* L)
 	const MonsterType* mType = g_monsters.getMonsterType(popString(L));
 	if(!mType)
 	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		reportErrorFunc(getErrorDesc(LUA_ERROR_MONSTER_NOT_FOUND));
 		lua_pushboolean(L, LUA_ERROR);
 		return 1;
 	}
@@ -8851,6 +8880,25 @@ int32_t LuaScriptInterface::luaGetHighscoreString(lua_State* L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaGetWaypointsList(lua_State* L)
+{
+	//getWaypointsList()
+	WaypointMap waypointsMap = g_game.getMap()->waypoints.getWaypointsMap();
+	WaypointMap::iterator it = waypointsMap.begin();
+
+	lua_createtable(L, waypointsMap.size(), 0);
+	for(uint32_t i = 1; it != waypointsMap.end(); ++it, ++i)
+	{
+		lua_pushnumber(L, i);
+		lua_createtable(L, 2, 0);
+
+		setField(L, "name", it->first);
+		setField(L, "pos", it->second->pos.x);
+		lua_settable(L, -3);
+	}
+	return 1;
+}
+
 int32_t LuaScriptInterface::luaGetWaypointPosition(lua_State* L)
 {
 	//getWaypointPosition(name)
@@ -8925,10 +8973,11 @@ int32_t LuaScriptInterface::luaDoCreatureExecuteTalkAction(lua_State* L)
 int32_t LuaScriptInterface::luaDoExecuteRaid(lua_State* L)
 {
 	//doExecuteRaid(name)
-	Raid* raid = Raids::getInstance()->getRaidByName(popString(L));
+	std::string raidName = popString(L);
+	Raid* raid = Raids::getInstance()->getRaidByName(raidName);
 	if(!raid || !raid->isLoaded())
 	{
-		reportErrorFunc("Such raid does not exists.");
+		reportErrorFunc("Raid with name " + raidName + " does not exists.");
 		lua_pushboolean(L, LUA_ERROR);
 		return 1;
 	}
@@ -8970,8 +9019,10 @@ int32_t LuaScriptInterface::luaDoReloadInfo(lua_State* L)
 	uint32_t id = popNumber(L);
 	if(id < RELOAD_FIRST || id > RELOAD_LAST)
 	{
+		std::stringstream ss;
+		ss << id;
+		reportErrorFunc("Reload info with id " + ss.str() + " not found.");
 		lua_pushboolean(L, LUA_ERROR);
-		reportErrorFunc("Invalid reload info id.");
 		return 1;
 	}
 

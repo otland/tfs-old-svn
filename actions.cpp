@@ -641,7 +641,7 @@ ReturnValue Actions::internalUseItemEx(Player* player, const PositionEx& fromPos
 }
 
 bool Actions::useItemEx(Player* player, const Position& fromPos, const Position& toPos,
-	uint8_t toStackPos, Item* item, bool isHotkey, uint32_t creatureId /* = 0*/)
+	uint8_t toStackPos, Item* item, bool isHotkey, uint32_t creatureId/* = 0*/)
 {
 	if(!player->canDoAction())
 		return false;
