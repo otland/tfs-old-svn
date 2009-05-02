@@ -1,7 +1,7 @@
 function onSay(cid, words, param, channel)
 	local state = GAMESTATE_CLOSED
 	if(words:sub(2, 2) == "o") then
-		state = GAMESTATE_OPEN
+		state = GAMESTATE_NORMAL
 	end
 
 	local str = "Failed to " .. (state == GAMESTATE_CLOSED and "close" or "open") .. " server."
