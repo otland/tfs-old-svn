@@ -22,12 +22,12 @@
 
 [ LIST
 	/addskill
-		Add player specified skill amount.
+		Adds player a specified amount of a skill.
 		Parameters
 			playerName, skillType, <optional>amount
 
 	/attr
-		Change thing properties.
+		Changes thing properties.
 		Parameters
 			type, value
 
@@ -87,17 +87,17 @@
 
 	/serverdiag
 		Works only if software is precompiled with __ENABLE_SERVER_DIAGNOSTIC__
-		Display diagnostic informations.
+		Displays diagnostic informations.
 
 	/closeserver
-		Close server.
+		Closes server.
 		All players without proper access will be kicked.
 
 	/openserver
-		Open server.
+		Opens server.
 
 	/shutdown
-		Save & Shutdown server.
+		Saves & Shutdowns server.
 		Parameters
 			<optional>time
 				Time in seconds, to shutdown server.
@@ -107,7 +107,7 @@
 			/shutdown (Suddenly)
 
 	/mode
-		Change world pvp type.
+		Changes world's pvp type.
 		Parameters
 			pvpType
 
@@ -117,7 +117,7 @@
 			/mode pvpenforced
 
 	/s
-		Summon monster.
+		Summons a monster.
 		Parameters
 			monsterName
 
@@ -126,7 +126,7 @@
 			/s rat
 
 	/n
-		Create NPC.
+		Creates a NPC.
 		Parameters
 			npcName
 
@@ -134,7 +134,7 @@
 			/n Eryn
 
 	/m
-		Create monster.
+		Creates a monster.
 		Parameters
 			monsterName
 
@@ -143,7 +143,7 @@
 			/m Rotworm
 
 	/reload
-		Reload info.
+		Reloads selected values/scripts.
 		Parameters:
 			what (What should be reloaded)
 
@@ -153,7 +153,7 @@
 			/reload talkactions
 
 	/raid
-		Execute raid.
+		Executes a raid.
 		Parameters
 			raidName
 
@@ -170,10 +170,10 @@
 			/newtype 13, Eternal Oblivion
 
 	/r
-		Remove item from tile.
+		Removes an item from a tile.
 
 	/owner
-		Change house owner.
+		Changes house owner.
 		Parameters
 			newOwnerName
 				Values: player name, or 'none/nobody/0' (Clear owner)
@@ -183,7 +183,7 @@
 			/owner Eternal Oblivion
 
 	/i
-		Create item.
+		Creates an item.
 		Parameters
 			id/name
 			<optional>count
@@ -199,7 +199,7 @@
 			/i 2160, 50, yes, yes (Will be created at ground, where player is looking)
 
 	!z
-		Magic effect.
+		Displays magic effect.
 		Parameters
 			effectId
 
@@ -207,7 +207,7 @@
 			!z 4
 
 	!x
-		Animation effect.
+		Displays animation effect.
 		Parameters
 			animationId
 
@@ -215,7 +215,7 @@
 			!x 29
 
 	!y
-		Animated text.
+		Displays animated text.
 
 	/bc
 		Broadcast.
@@ -224,18 +224,18 @@
 		Mass kick.
 
 	/ghost
-		Enable/disable ghost mode.
-		You'll be invisible for other players.
+		Enables/disables ghost mode.
+		You're invisible for other players, if enabled.
 
 	/squelch
-		Enable/disable private messages ignoring.
-		Player won't be able to message you, if enabled.
+		Enables/disables private messages ignoring.
+		Player aren't be able to message you, if enabled.
 
 	/cliport
-		Enable/disable map click teleportation.
+		Enables/disables map click teleportation.
 
 	/t
-		Teleport temple.
+		Teleports to a temple.
 		Parameters
 			<optional>playerName
 
@@ -244,12 +244,15 @@
 			/t Eternal Oblivion
 
 	/c
-		Teleport creature to you.
+		Teleports a creature to you.
+		Notice: Player is a creature so you may use it
+		with players
 
 		Example
 			/c Demon
 
 	/goto
+		Teleports you to creature/place/position
 		Parameters
 			creatureName/waypointName/position
 
@@ -260,14 +263,14 @@
 			/goto GM Tester
 
 	/a
-		Teleport n tiles.
+		Teleports you n tiles forward (direction same as looking at).
 		Examples
 			/a 3
 			/a
 			/a 58
 
 	/kick
-		Kick creature.
+		Kicks a creature.
 		Parameters
 			playerName
 
@@ -277,12 +280,12 @@
 	/send
 
 	/unban
-		Unban by account or player name.
+		Unbans by account or player name.
 		Parameters
 			account/playerName
 
 	/town
-		Teleport town.
+		Teleports to a town.
 		Parameters
 			townName, <optional>playerName
 
@@ -291,7 +294,7 @@
 			/town desert city, Test Player Name Here
 
 	/up
-		Teleport up.
+		Teleports up.
 		Parameters
 			<optional>floors
 
@@ -300,7 +303,7 @@
 			/up 3 (3 floors up)
 
 	/down
-		Teleport down.
+		Teleports down.
 		Parameters
 			<optional>floors
 
@@ -309,13 +312,13 @@
 			/down 2 (2 floors down)
 
 	/save
-		Save server.
+		Saves server.
 
 	/clean
-		Clean map.
+		Cleans map.
 
 	/reports
-		View server reports.
+		Displays server reports.
 		Parameters
 			<optional>reportId
 
@@ -324,11 +327,17 @@
 			/reports 52 (Display detailed info about report with id 52)
 
 	/mc
-		Check multiclients.
+		Checks for multiclients.
 
 	/notations
+		Display notation informations.
+		Parameters
+			playerName
 
 	/info
+		Displays detailed info about a player
+		Parameters
+			playerName		
 
 	/gethouse
 		Display player house.
@@ -338,23 +347,60 @@
 	/b
 
 	/baninfo
-
+		Displays detailed banishment info about a player
+		Parameters
+			playerName	
+			
 	!pos
-		Display player current position.
+		Displays player's current position.
 
 	@Players
 	!buyhouse
+		Buys a house.
+		Notice: You need to stay in front of the house's door.
+		
 	!sellhouse
+		Sells your house to somebody else.
+		
 	!createguild
+		Creates a guild.
+		Parameters
+			guildName
+			
 	!joinguild
+		Joins you to a guild once you have been invited to it.
+		
 	!frags
+		Display a numer of your unjustificated kills (frags) and a time
+		for one to decrease.
+		
 	!buypremium
+		Buys a premium.
+		
 	!leavehouse
+		Leaves a house.
+		Notice: You aren't getting money out of it.
+		
 	/online
+		Displays a list of online players.
+		
 	!changender
+		Changes your gender to opposite one.
+		
 	/uptime
+		Displayes an uptime of a server.
+		It's a time for which server has been online since it's last start-up
+		
 	/deathlist
+		Displays a death list of specificated player.
+		Parameters
+			playerName
+			
 	/pvp
 	!q
+		Checks money value in your inventory.
+		Notice: It isn't counting the money in depots/houses.
+		
 	/serverinfo
+		Displays server information such as experience rate and loot rate.
 ]
