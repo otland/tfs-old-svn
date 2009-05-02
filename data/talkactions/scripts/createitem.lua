@@ -28,7 +28,7 @@ function onSay(cid, words, param, channel)
 			tmp = getPlayerLookPos(cid)
 		end
 
-		ret = doTileAddItemEx(tmp, item)	
+		ret = doTileAddItemEx(tmp, item)
 	else
 		ret = doPlayerAddItemEx(cid, item, TRUE)
 	end

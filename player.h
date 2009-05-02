@@ -212,6 +212,8 @@ class Player : public Creature, public Cylinder
 
 		OperatingSystem_t getOperatingSystem() const {return operatingSystem;}
 		void setOperatingSystem(OperatingSystem_t clientOs) {operatingSystem = clientOs;}
+		uint32_t getClientVersion() const {return clientVersion;}
+		void setClientVersion(uint32_t version) {clientVersion = version;}
 
 		bool isVirtual() const {return (getID() == 0);}
 		void disconnect() {if(client) client->disconnect();}
@@ -243,7 +245,7 @@ class Player : public Creature, public Cylinder
 
 		bool isInGhostMode() const {return hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE);}
 		bool canSeeGhost(const Creature* creature) const
-			{return (creature->getPlayer() && creature->getPlayer()->getAccess() <= getAccess());}
+			{return (creature->getPlayer() && creature->getPlayer()->getGhostAccess() <= getGhostAccess());}
 
 		void switchSaving() {saving = !saving;}
 		bool isSaving() const {return saving;}
@@ -256,6 +258,7 @@ class Player : public Creature, public Cylinder
 		uint16_t getAccess() const {return group ? group->getAccess() : 0;}
 		uint16_t getAccessLevel() const {return getAccess();}
 		uint16_t getViolationAccess() const {return group ? group->getViolationAccess() : 0;}
+		uint16_t getGhostAccess() const {return group ? group->getGhostAccess() : 0;}
 		bool isPremium() const;
 
 		uint32_t getLevel() const {return level;}
@@ -799,6 +802,7 @@ class Player : public Creature, public Cylinder
 		int32_t shieldBlockCount;
 		int32_t shootRange;
 
+		uint32_t clientVersion;
 		uint32_t MessageBufferTicks;
 		uint32_t internalPing;
 		uint32_t npings;

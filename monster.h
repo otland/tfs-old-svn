@@ -143,6 +143,7 @@ class Monster : public Creature
 		virtual void onCreatureLeave(Creature* creature);
 		void onCreatureFound(Creature* creature, bool pushFront = false);
 
+		bool doTeleportToMaster();
 		void updateLookDirection();
 
 		void updateTargetList();

@@ -1280,6 +1280,9 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerAccess(cid)
 	lua_register(m_luaState, "getPlayerAccess", LuaScriptInterface::luaGetPlayerAccess);
 
+	//getPlayerGhostAccess(cid)
+	lua_register(m_luaState, "getPlayerGhostAccess", LuaScriptInterface::luaGetPlayerGhostAccess);
+
 	//getPlayerSkillLevel(cid, skillid)
 	lua_register(m_luaState, "getPlayerSkillLevel", LuaScriptInterface::luaGetPlayerSkillLevel);
 
@@ -2115,9 +2118,6 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerViolationAccess(cid)
 	lua_register(m_luaState, "getPlayerViolationAccess", LuaScriptInterface::luaGetPlayerViolationAccess);
 
-	//getPlayerGroupName(cid)
-	lua_register(m_luaState, "getPlayerGroupName", LuaScriptInterface::luaGetPlayerGroupName);
-
 	//getPlayerBlessing(cid, blessing)
 	lua_register(m_luaState, "getPlayerBlessing", LuaScriptInterface::luaGetPlayerBlessing);
 
@@ -2396,6 +2396,9 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 		case PlayerInfoAccess:
 			value = player->getAccess();
 			break;
+		case PlayerInfoGhostAccess:
+			value = player->getGhostAccess();
+			break;
 		case PlayerInfoLevel:
 			value = player->getLevel();
 			break;
@@ -2463,9 +2466,6 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 		case PlayerInfoGroupId:
 			value = player->getGroupId();
 			break;
-		case PlayerInfoGroupName:
-			lua_pushstring(L, player->getGroup()->getName().c_str());
-			return 1;
 		case PlayerInfoBalance:
 			value = (g_config.getBool(ConfigManager::BANK_SYSTEM) ? player->balance : 0);
 			break;
@@ -2521,6 +2521,11 @@ int32_t LuaScriptInterface::luaGetPlayerFood(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerAccess(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoAccess);
+}
+
+int32_t LuaScriptInterface::luaGetPlayerGhostAccess(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoGhostAccess);
 }
 
 int32_t LuaScriptInterface::luaGetPlayerLevel(lua_State* L)
@@ -2601,11 +2606,6 @@ int32_t LuaScriptInterface::luaGetPlayerPromotionLevel(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerGroupId(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoGroupId);
-}
-
-int32_t LuaScriptInterface::luaGetPlayerGroupName(lua_State* L)
-{
-	return internalGetPlayerInfo(L, PlayerInfoGroupName);
 }
 
 int32_t LuaScriptInterface::luaGetPlayerGUID(lua_State* L)
@@ -8491,6 +8491,7 @@ int32_t LuaScriptInterface::luaGetGroupInfo(lua_State* L)
 	setField(L, "id", group->getId());
 	setField(L, "name", group->getName().c_str());
 	setField(L, "access", group->getAccess());
+	setField(L, "ghostAccess", group->getGhostAccess());
 	setField(L, "violationAccess", group->getViolationAccess());
 	setField(L, "depotLimit", group->getDepotLimit(premium));
 	setField(L, "maxVips", group->getMaxVips(premium));

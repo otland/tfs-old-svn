@@ -263,7 +263,7 @@ ReturnValue Container::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 	}
 
 	const Item* item = thing->getItem();
-	if(item == NULL)
+	if(!item)
 		return RET_NOTPOSSIBLE;
 
 	if(!item->isPickupable())
@@ -295,7 +295,7 @@ ReturnValue Container::__queryMaxCount(int32_t index, const Thing* thing, uint32
 	uint32_t& maxQueryCount, uint32_t flags) const
 {
 	const Item* item = thing->getItem();
-	if(item == NULL)
+	if(!item)
 	{
 		maxQueryCount = 0;
 		return RET_NOTPOSSIBLE;

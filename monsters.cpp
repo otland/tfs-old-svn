@@ -39,7 +39,7 @@ extern ConfigManager g_config;
 
 void MonsterType::reset()
 {
-	canPushItems = canPushCreatures = isSummonable = isIllusionable = isConvinceable = isLureable = false;
+	canPushItems = canPushCreatures = isSummonable = isIllusionable = isConvinceable = isLureable = hideName = hideHealth = false;
 	pushable = isAttackable = isHostile = true;
 
 	outfit.lookHead = outfit.lookBody = outfit.lookLegs = outfit.lookFeet = outfit.lookType = outfit.lookTypeEx = outfit.lookAddons = 0;
@@ -861,6 +861,12 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 
 					if(readXMLString(tmpNode, "canpushcreatures", strValue))
 						mType->canPushCreatures = booleanString(strValue);
+
+					if(readXMLString(tmpNode, "hidename", strValue))
+						mType->hideName = booleanString(strValue);
+
+					if(readXMLString(tmpNode, "hidehealth", strValue))
+						mType->hideHealth = booleanString(strValue);
 
 					if(readXMLInteger(tmpNode, "staticattack", intValue))
 					{

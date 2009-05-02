@@ -66,13 +66,10 @@ Creature(), transferContainer(ITEM_LOCKER1)
 	setVocation(0);
 	promotionLevel = 0;
 	capacity = 400.00;
-	mana = 0;
-	manaMax = 0;
-	manaSpent = 0;
+	mana = manaMax = manaSpent = 0;
 	soul = 0;
 	soulMax = 100;
-	guildId = 0;
-	guildLevel = 0;
+	guildId = guildLevel = 0;
 
 	level = 1;
 	levelPercent = 0;
@@ -3375,32 +3372,36 @@ void Player::onAddCondition(ConditionType_t type)
 
 void Player::onAddCombatCondition(ConditionType_t type)
 {
+	std::string tmp = "";
 	switch(type)
 	{
 		case CONDITION_POISON:
-			sendTextMessage(MSG_STATUS_DEFAULT, "You are poisoned.");
+			tmp += "poisoned";
 			break;
 		case CONDITION_DROWN:
-			sendTextMessage(MSG_STATUS_DEFAULT, "You are drowning.");
+			tmp += "drowning";
 			break;
 		case CONDITION_PARALYZE:
-			sendTextMessage(MSG_STATUS_DEFAULT, "You are paralyzed.");
+			tmp += "paralyzed";
 			break;
 		case CONDITION_DRUNK:
-			sendTextMessage(MSG_STATUS_DEFAULT, "You are drunk.");
+			tmp += "drunk";
 			break;
 		case CONDITION_CURSED:
-			sendTextMessage(MSG_STATUS_DEFAULT, "You are cursed.");
+			tmp += "cursed";
 			break;
 		case CONDITION_FREEZING:
-			sendTextMessage(MSG_STATUS_DEFAULT, "You are freezing.");
+			tmp += "freezing";
 			break;
 		case CONDITION_DAZZLED:
-			sendTextMessage(MSG_STATUS_DEFAULT, "You are dazzled.");
+			tmp += "dazzled";
 			break;
 		default:
 			break;
 	}
+
+	if(!tmp.empty())
+		sendTextMessage(MSG_STATUS_DEFAULT, "You are " + tmp + ".");
 }
 
 void Player::onEndCondition(ConditionType_t type)

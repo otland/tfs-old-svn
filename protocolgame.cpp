@@ -235,7 +235,7 @@ void ProtocolGame::deleteProtocolTask()
 }
 
 bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std::string& password,
-	OperatingSystem_t operatingSystem, bool gamemasterLogin)
+	OperatingSystem_t operatingSystem, uint32_t version, bool gamemasterLogin)
 {
 	//dispatcher thread
 	Player* _player = g_game.getPlayerByName(name);
@@ -275,6 +275,8 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		}
 
 		player->setOperatingSystem(operatingSystem);
+		player->setClientVersion(version);
+
 		if(gamemasterLogin && !player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) && !player->isAccountManager())
 		{
 			disconnectClient(0x14, "You are not a gamemaster!");
@@ -611,7 +613,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 	ConnectionManager::getInstance()->addAttempt(getIP(), protocolId, true);
 	Dispatcher::getDispatcher().addTask(
-		createTask(boost::bind(&ProtocolGame::login, this, name, accId, password, operatingSystem, gamemasterLogin)));
+		createTask(boost::bind(&ProtocolGame::login, this, name, accId, password, operatingSystem, version, gamemasterLogin)));
 
 	return true;
 }
@@ -2769,10 +2771,14 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 		msg->AddU16(0x61);
 		msg->AddU32(remove);
 		msg->AddU32(creature->getID());
-		msg->AddString(creature->getName());
+		msg->AddString(creature->getHideName() ? "" : creature->getName());
 	}
 
-	msg->AddByte((int32_t)std::ceil(((float)creature->getHealth()) * 100 / std::max(creature->getMaxHealth(), (int32_t)1)));
+	if(creature->getHideHealth())
+		msg->AddByte(0x00);
+	else
+		msg->AddByte((int32_t)std::ceil(((float)creature->getHealth()) * 100 / std::max(creature->getMaxHealth(), (int32_t)1)));
+
 	msg->AddByte((uint8_t)creature->getDirection());
 
 	if(creature->isInvisible() || creature->isInGhostMode())
@@ -2849,7 +2855,7 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 				msg->AddString("Gamemaster");
 				break;
 			default:
-				msg->AddString(creature->getName());
+				msg->AddString(creature->getHideName() ? "" : creature->getName());
 				break;
 		}
 
@@ -2911,7 +2917,10 @@ void ProtocolGame::AddCreatureHealth(NetworkMessage_ptr msg,const Creature* crea
 {
 	msg->AddByte(0x8C);
 	msg->AddU32(creature->getID());
-	msg->AddByte((int32_t)std::ceil(((float)creature->getHealth()) * 100 / std::max(creature->getMaxHealth(), (int32_t)1)));
+	if(creature->getHideHealth())
+	    msg->AddByte(0x00);
+	else
+		msg->AddByte((int32_t)std::ceil(((float)creature->getHealth()) * 100 / std::max(creature->getMaxHealth(), (int32_t)1)));
 }
 
 void ProtocolGame::AddCreatureInvisible(NetworkMessage_ptr msg, const Creature* creature)

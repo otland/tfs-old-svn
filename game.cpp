@@ -1085,9 +1085,8 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 		}
 	}
 
-	toTile = map->getTile(destPos);
 	ReturnValue ret = RET_NOTPOSSIBLE;
-	if(toTile != NULL)
+	if((toTile = map->getTile(destPos)))
 		ret = internalMoveCreature(creature, fromTile, toTile, flags);
 
 	if(ret != RET_NOERROR)
@@ -1976,7 +1975,7 @@ ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pu
 	if(thing->isRemoved())
 		return RET_NOTPOSSIBLE;
 
-	if(Tile* toTile = getTile(newPos.x, newPos.y, newPos.z))
+	if(Tile* toTile = getTile(newPos))
 	{
 		if(Creature* creature = thing->getCreature())
 		{
@@ -2242,7 +2241,6 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 	if(!player || player->isRemoved())
 		return false;
 
-	player->resetIdleTime();
 	if(player->hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_TELEPORT))
 	{
 		Position pos = player->getPosition();
@@ -2250,15 +2248,20 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 		for(std::list<Direction>::iterator it = listDir.begin(); it != listDir.end(); ++it)
 			pos = getNextPosition((*it), pos);
 
-		pos = getClosestFreeTile(player, pos, true);
-		if(pos.x == 0 || pos.y == 0)
-			pos = player->getLastPosition();
+		pos = getClosestFreeTile(player, pos, true, false);
+		if(pos.x == 0)
+		{
+			player->sendCancelWalk();
+			return false;
+		}
 
+		player->resetIdleTime();
 		internalCreatureTurn(player, getDirectionTo(player->getPosition(), pos, false));
 		internalTeleport(player, pos, false);
 		return true;
 	}
 
+	player->resetIdleTime();
 	player->setNextWalkTask(NULL);
 	return player->startAutoWalk(listDir);
 }
@@ -3223,6 +3226,7 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 
 			if(Player* destPlayer = creature->getPlayer())
 			{
+				ss << std::endl << "Client: " << destPlayer->getClientVersion();
 				char bufferIP[40];
 				formatIP(destPlayer->getIP(), bufferIP);
 				ss << std::endl << "IP: " << bufferIP;
@@ -3359,12 +3363,21 @@ bool Game::playerTurn(uint32_t playerId, Direction dir)
 		return internalCreatureTurn(player, dir);
 
 	Position pos = getNextPosition(dir, player->getPosition());
-	if(!map->getTile(pos))
-		return false;
+	if(Tile* tile = map->getTile(pos))
+	{
+		if(!tile->ground)
+			return false;
 
-	pos = getClosestFreeTile(player, pos, true);
-	if(pos.x != 0 && pos.y != 0)
+		ReturnValue ret = tile->__queryAdd(0, player, 1, FLAG_IGNOREBLOCKITEM);
+		if(ret == RET_NOTENOUGHROOM || (ret == RET_NOTPOSSIBLE && !player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere))
+			|| (ret == RET_PLAYERISNOTINVITED && !player->hasFlag(PlayerFlag_CanEditHouses)))
+		{
+			player->sendCancelMessage(ret);
+			return false;
+		}
+
 		return internalTeleport(player, pos, true);
+	}
 
 	return false;
 }
@@ -3388,11 +3401,11 @@ bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 	if(!player->changeOutfit(outfit))
 		return false;
 
-	player->resetIdleTime();
 	if(player->hasCondition(CONDITION_OUTFIT))
 		return true;
 
 	internalCreatureChangeOutfit(player, outfit);
+	player->resetIdleTime();
 	return true;
 }
 
@@ -5882,7 +5895,7 @@ void Game::showHotkeyUseMessage(Player* player, Item* item)
 
 	const ItemType& it = Item::items[item->getID()];
 	uint32_t count = player->__getItemTypeCount(item->getID(), subType, false);
-	
+
 	char buffer[40 + it.name.size()];
 	if(count == 1)
 		sprintf(buffer, "Using the last %s...", it.name.c_str());

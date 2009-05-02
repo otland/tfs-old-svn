@@ -70,6 +70,8 @@ Creature()
 	setSkull(mType->skull);
 	setShield(mType->partyShield);
 
+	hideName = mType->hideName, hideHealth = mType->hideHealth;
+
 	minCombatValue = 0;
 	maxCombatValue = 0;
 
@@ -325,6 +327,19 @@ bool Monster::isOpponent(const Creature* creature)
 	return false;
 }
 
+bool Monster::doTeleportToMaster()
+{
+	const Position& tmp = getPosition();
+	if(g_game.internalTeleport(this, g_game.getClosestFreeTile(this, getMaster()->getPosition(), true), false) == RET_NOERROR)
+	{
+		g_game.addMagicEffect(tmp, NM_ME_POFF);
+		g_game.addMagicEffect(getPosition(), NM_ME_TELEPORT);
+		return true;
+	}
+
+	return false;
+}
+
 void Monster::onCreatureLeave(Creature* creature)
 {
 	//std::cout << "onCreatureLeave - " << creature->getName() << std::endl;
@@ -337,7 +352,10 @@ void Monster::onCreatureLeave(Creature* creature)
 			deactivate();
 		}
 		else
-			teleportToMaster = true;
+		{
+			if(!doTeleportToMaster())
+				teleportToMaster = true;
+		}
 	}
 
 	//update friendList
@@ -420,21 +438,21 @@ bool Monster::searchTarget(TargetSearchType_t searchType /*= TARGETSEARCH_DEFAUL
 
 void Monster::onFollowCreatureComplete(const Creature* creature)
 {
-	if(creature)
-	{
-		CreatureList::iterator it = std::find(targetList.begin(), targetList.end(), creature);
-		if(it != targetList.end())
-		{
-			Creature* target = (*it);
-			targetList.erase(it);
+	if(!creature)
+		return;
 
-			if(hasFollowPath) //push target we have found a path to the front
-				targetList.push_front(target);
-			else if(!isSummon()) //push target we have not found a path to the back
-				targetList.push_back(target);
-			else //Since we removed the creature from the targetList (and not put it back) we have to release it too
-				target->releaseThing2();
-		}
+	CreatureList::iterator it = std::find(targetList.begin(), targetList.end(), creature);
+	if(it != targetList.end())
+	{
+		Creature* target = (*it);
+		targetList.erase(it);
+
+		if(hasFollowPath) //push target we have found a path to the front
+			targetList.push_front(target);
+		else if(!isSummon()) //push target we have not found a path to the back
+			targetList.push_back(target);
+		else //Since we removed the creature from the targetList (and not put it back) we have to release it too
+			target->releaseThing2();
 	}
 }
 
@@ -570,13 +588,8 @@ void Monster::onThink(uint32_t interval)
 	{
 		if(teleportToMaster)
 		{
-			const Position& tmp = getPosition();
-			if(g_game.internalTeleport(this, g_game.getClosestFreeTile(this, getMaster()->getPosition(), true), false) == RET_NOERROR)
-			{
-				g_game.addMagicEffect(tmp, NM_ME_POFF);
-				g_game.addMagicEffect(getPosition(), NM_ME_TELEPORT);
+			if(doTeleportToMaster())
 				teleportToMaster = false;
-			}
 		}
 
 		addEventWalk();
@@ -939,7 +952,7 @@ void Monster::pushCreatures(Tile* tile)
 		return;
 
 	CreatureVector* creatures = tile->creatures;
-	if(!creatures || creatures->empty()) 	 
+	if(!creatures || creatures->empty())
 		return;
 
 	bool effect = false;
@@ -957,7 +970,7 @@ void Monster::pushCreatures(Tile* tile)
 					found = true;
 					if(pushCreature(monster))
 						continue;
-				
+
 					monster->changeHealth(-monster->getHealth());
 					monster->setDropLoot(LOOT_DROP_NONE);
 					if(!effect)

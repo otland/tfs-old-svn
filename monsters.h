@@ -86,7 +86,7 @@ class MonsterType
 		Item* createLootItem(const LootBlock& lootblock);
 
 		bool isSummonable, isIllusionable, isConvinceable, isAttackable, isHostile, isLureable,
-			canPushItems, canPushCreatures, pushable;
+			canPushItems, canPushCreatures, pushable, hideName, hideHealth;
 
 		Outfit_t outfit;
 		RaceType_t race;

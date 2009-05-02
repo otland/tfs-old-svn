@@ -993,7 +993,7 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 		pos -= (uint32_t)creatures->size();
 	}
 
-	if(downItems && !oldItem &&  pos < (int32_t)downItems->size())
+	if(downItems && !oldItem && pos < (int32_t)downItems->size())
 	{
 		ItemVector::iterator it = downItems->begin();
 		it += pos;

@@ -46,6 +46,8 @@ class Group
 
 		uint16_t getAccess() const {return m_access;}
 		void setAccess(uint16_t v) {m_access = v;}
+		uint16_t getGhostAccess() const {return m_ghostAccess;}
+		void setGhostAccess(uint16_t v) {m_ghostAccess = v;}
 		uint16_t getViolationAccess() const {return m_violationAccess;}
 		void setViolationAccess(uint16_t v) {m_violationAccess = v;}
 		uint16_t getOutfit() const {return m_outfit;}
@@ -68,7 +70,7 @@ class Group
 
 	private:
 		std::string m_name, m_fullName;
-		uint16_t m_access, m_violationAccess, m_outfit;
+		uint16_t m_access, m_ghostAccess, m_violationAccess, m_outfit;
 		uint32_t m_id, m_depotLimit, m_maxVips;
 		uint64_t m_flags, m_customFlags;
 };

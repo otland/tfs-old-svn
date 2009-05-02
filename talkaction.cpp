@@ -760,151 +760,150 @@ bool TalkAction::changeThingProporties(Creature* creature, const std::string& cm
 		return true;
 	}
 
-	if(Thing* thing = tileInFront->getTopThing())
-	{
-		boost::char_separator<char> sep(" ");
-		tokenizer cmdtokens(param, sep);
-
-		std::string tmp;
-		tokenizer::iterator cmdit = cmdtokens.begin();
-		while(cmdit != cmdtokens.end())
-		{
-			if(Item* item = thing->getItem())
-			{
-				tmp = parseParams(cmdit, cmdtokens.end());
-				if(strcasecmp(tmp.c_str(), "description") == 0 || strcasecmp(tmp.c_str(), "desc") == 0)
-					item->setSpecialDescription(parseParams(cmdit, cmdtokens.end()));
-				else if(strcasecmp(tmp.c_str(), "count") == 0 || strcasecmp(tmp.c_str(), "fluidtype") == 0 || strcasecmp(tmp.c_str(), "charges") == 0)
-					item->setSubType(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "action") == 0 || strcasecmp(tmp.c_str(), "actionid") == 0 || strcasecmp(tmp.c_str(), "aid") == 0)
-					item->setActionId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "unique") == 0 || strcasecmp(tmp.c_str(), "uniqueid") == 0 || strcasecmp(tmp.c_str(), "uid") == 0)
-					item->setUniqueId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "duration") == 0)
-					item->setDuration(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "writer") == 0)
-					item->setWriter(parseParams(cmdit, cmdtokens.end()));
-				else if(strcasecmp(tmp.c_str(), "text") == 0)
-					item->setText(parseParams(cmdit, cmdtokens.end()));
-				else if(strcasecmp(tmp.c_str(), "name") == 0)
-					item->setName(parseParams(cmdit, cmdtokens.end()));
-				else if(strcasecmp(tmp.c_str(), "pluralname") == 0)
-					item->setPluralName(parseParams(cmdit, cmdtokens.end()));
-				else if(strcasecmp(tmp.c_str(), "article") == 0)
-					item->setArticle(parseParams(cmdit, cmdtokens.end()));
-				else if(strcasecmp(tmp.c_str(), "attack") == 0)
-					item->setAttack(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "extraattack") == 0)
-					item->setExtraAttack(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "defense") == 0)
-					item->setDefense(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "extradefense") == 0)
-					item->setExtraDefense(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "armor") == 0)
-					item->setArmor(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "attackspeed") == 0)
-					item->setAttackSpeed(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "hitchance") == 0)
-					item->setHitChance(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "shootrange") == 0)
-					item->setShootRange(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "depot") == 0 || strcasecmp(tmp.c_str(), "depotid") == 0)
-				{
-					if(item->getContainer() && item->getContainer()->getDepot())
-						item->getContainer()->getDepot()->setDepotId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				}
-				else if(strcasecmp(tmp.c_str(), "destination") == 0 || strcasecmp(tmp.c_str(), "position") == 0 || strcasecmp(tmp.c_str(), "pos") == 0 || strcasecmp(tmp.c_str(), "destpos") == 0) //FIXME
-				{
-					if(item->getTeleport())
-						item->getTeleport()->setDestPos(Position(atoi(parseParams(cmdit, cmdtokens.end()).c_str()), atoi(parseParams(cmdit, cmdtokens.end()).c_str()), atoi(parseParams(cmdit, cmdtokens.end()).c_str())));
-				}
-				else
-				{
-					player->sendTextMessage(MSG_STATUS_SMALL, "No valid action.");
-					g_game.addMagicEffect(playerPos, NM_ME_POFF);
-					return true;
-				}
-			}
-			else if(Creature* _creature = thing->getCreature())
-			{
-				tmp = parseParams(cmdit, cmdtokens.end());
-				if(strcasecmp(tmp.c_str(), "health") == 0)
-					_creature->changeHealth(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "maxhealth") == 0)
-					_creature->changeMaxHealth(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "mana") == 0)
-					_creature->changeMana(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "maxmana") == 0)
-					_creature->changeMaxMana(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "basespeed") == 0)
-					_creature->setBaseSpeed(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "droploot") == 0)
-					_creature->setDropLoot(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()) ? LOOT_DROP_FULL : LOOT_DROP_NONE);
-				else if(strcasecmp(tmp.c_str(), "lossskill") == 0)
-					_creature->setLossSkill(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "cannotmove") == 0)
-					_creature->setNoMove(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "skull") == 0)
-				{
-					_creature->setSkull((Skulls_t)atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					g_game.updateCreatureSkull(_creature);
-				}
-				else if(Player* _player = _creature->getPlayer())
-				{
-					if(strcasecmp(tmp.c_str(), "fyi") == 0)
-						_player->sendFYIBox(parseParams(cmdit, cmdtokens.end()).c_str());
-					else if(strcasecmp(param.c_str(), "tutorial") == 0)
-						_player->sendTutorial(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "guildrank") == 0)
-						_player->setGuildRankId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "guildnick") == 0)
-						_player->setGuildNick(parseParams(cmdit, cmdtokens.end()).c_str());
-					else if(strcasecmp(tmp.c_str(), "group") == 0)
-						_player->setGroupId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "vocation") == 0)
-						_player->setVocation(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "sex") == 0 || strcasecmp(tmp.c_str(), "gender") == 0)
-						_player->setSex((PlayerSex_t)atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "stamina") == 0)
-						_player->setStaminaMinutes(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "town") == 0) //FIXME
-						_player->setTown(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-					else if(strcasecmp(tmp.c_str(), "balance") == 0)
-						_player->balance = atoi(parseParams(cmdit, cmdtokens.end()).c_str());
-					else if(strcasecmp(tmp.c_str(), "marriage") == 0)
-						_player->marriage = atoi(parseParams(cmdit, cmdtokens.end()).c_str());
-					else if(strcasecmp(tmp.c_str(), "rates") == 0)
-						_player->rates[atoi(parseParams(cmdit, cmdtokens.end()).c_str())] = atof(
-							parseParams(cmdit, cmdtokens.end()).c_str());
-					else if(strcasecmp(tmp.c_str(), "resetidle") == 0)
-						_player->resetIdleTime();
-					else if(strcasecmp(tmp.c_str(), "saving") == 0)
-						_player->switchSaving();
-					else
-					{
-						player->sendTextMessage(MSG_STATUS_SMALL, "No valid action.");
-						g_game.addMagicEffect(playerPos, NM_ME_POFF);
-						return true;
-					}
-				}
-				/*else if(Npc* _npc = _creature->getNpc())
-					//
-				else if(Monster* _monster = _creature->getMonster())
-					//*/
-				else
-				{
-					player->sendTextMessage(MSG_STATUS_SMALL, "No valid action.");
-					g_game.addMagicEffect(playerPos, NM_ME_POFF);
-					return true;
-				}
-			}
-		}
-	}
-	else
+	Thing* thing = tileInFront->getTopThing();
+	if(!thing)
 	{
 		player->sendTextMessage(MSG_STATUS_SMALL, "No object found.");
 		g_game.addMagicEffect(playerPos, NM_ME_POFF);
 		return true;
+	}
+
+	boost::char_separator<char> sep(" ");
+	tokenizer cmdtokens(param, sep);
+
+	std::string tmp;
+	tokenizer::iterator cmdit = cmdtokens.begin();
+	while(cmdit != cmdtokens.end())
+	{
+		if(Item* item = thing->getItem())
+		{
+			tmp = parseParams(cmdit, cmdtokens.end());
+			if(strcasecmp(tmp.c_str(), "description") == 0 || strcasecmp(tmp.c_str(), "desc") == 0)
+				item->setSpecialDescription(parseParams(cmdit, cmdtokens.end()));
+			else if(strcasecmp(tmp.c_str(), "count") == 0 || strcasecmp(tmp.c_str(), "fluidtype") == 0 || strcasecmp(tmp.c_str(), "charges") == 0)
+				item->setSubType(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+			else if(strcasecmp(tmp.c_str(), "action") == 0 || strcasecmp(tmp.c_str(), "actionid") == 0 || strcasecmp(tmp.c_str(), "aid") == 0)
+				item->setActionId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+			else if(strcasecmp(tmp.c_str(), "unique") == 0 || strcasecmp(tmp.c_str(), "uniqueid") == 0 || strcasecmp(tmp.c_str(), "uid") == 0)
+				item->setUniqueId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+			else if(strcasecmp(tmp.c_str(), "duration") == 0)
+				item->setDuration(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+			else if(strcasecmp(tmp.c_str(), "writer") == 0)
+				item->setWriter(parseParams(cmdit, cmdtokens.end()));
+			else if(strcasecmp(tmp.c_str(), "text") == 0)
+				item->setText(parseParams(cmdit, cmdtokens.end()));
+			else if(strcasecmp(tmp.c_str(), "name") == 0)
+				item->setName(parseParams(cmdit, cmdtokens.end()));
+			else if(strcasecmp(tmp.c_str(), "pluralname") == 0)
+				item->setPluralName(parseParams(cmdit, cmdtokens.end()));
+			else if(strcasecmp(tmp.c_str(), "article") == 0)
+				item->setArticle(parseParams(cmdit, cmdtokens.end()));
+			else if(strcasecmp(tmp.c_str(), "attack") == 0)
+				item->setAttack(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+			else if(strcasecmp(tmp.c_str(), "extraattack") == 0)
+				item->setExtraAttack(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+			else if(strcasecmp(tmp.c_str(), "defense") == 0)
+				item->setDefense(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+			else if(strcasecmp(tmp.c_str(), "extradefense") == 0)
+				item->setExtraDefense(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+			else if(strcasecmp(tmp.c_str(), "armor") == 0)
+				item->setArmor(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+			else if(strcasecmp(tmp.c_str(), "attackspeed") == 0)
+				item->setAttackSpeed(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+			else if(strcasecmp(tmp.c_str(), "hitchance") == 0)
+				item->setHitChance(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+			else if(strcasecmp(tmp.c_str(), "shootrange") == 0)
+				item->setShootRange(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+			else if(strcasecmp(tmp.c_str(), "depot") == 0 || strcasecmp(tmp.c_str(), "depotid") == 0)
+			{
+				if(item->getContainer() && item->getContainer()->getDepot())
+					item->getContainer()->getDepot()->setDepotId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+			}
+			else if(strcasecmp(tmp.c_str(), "destination") == 0 || strcasecmp(tmp.c_str(), "position") == 0 || strcasecmp(tmp.c_str(), "pos") == 0 || strcasecmp(tmp.c_str(), "destpos") == 0) //FIXME
+			{
+				if(item->getTeleport())
+					item->getTeleport()->setDestPos(Position(atoi(parseParams(cmdit, cmdtokens.end()).c_str()), atoi(parseParams(cmdit, cmdtokens.end()).c_str()), atoi(parseParams(cmdit, cmdtokens.end()).c_str())));
+			}
+			else
+			{
+				player->sendTextMessage(MSG_STATUS_SMALL, "No valid action.");
+				g_game.addMagicEffect(playerPos, NM_ME_POFF);
+				return true;
+			}
+		}
+		else if(Creature* _creature = thing->getCreature())
+		{
+			tmp = parseParams(cmdit, cmdtokens.end());
+			if(strcasecmp(tmp.c_str(), "health") == 0)
+				_creature->changeHealth(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+			else if(strcasecmp(tmp.c_str(), "maxhealth") == 0)
+				_creature->changeMaxHealth(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+			else if(strcasecmp(tmp.c_str(), "mana") == 0)
+				_creature->changeMana(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+			else if(strcasecmp(tmp.c_str(), "maxmana") == 0)
+				_creature->changeMaxMana(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+			else if(strcasecmp(tmp.c_str(), "basespeed") == 0)
+				_creature->setBaseSpeed(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+			else if(strcasecmp(tmp.c_str(), "droploot") == 0)
+				_creature->setDropLoot(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()) ? LOOT_DROP_FULL : LOOT_DROP_NONE);
+			else if(strcasecmp(tmp.c_str(), "lossskill") == 0)
+				_creature->setLossSkill(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()));
+			else if(strcasecmp(tmp.c_str(), "cannotmove") == 0)
+				_creature->setNoMove(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()));
+			else if(strcasecmp(tmp.c_str(), "skull") == 0)
+			{
+				_creature->setSkull((Skulls_t)atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+				g_game.updateCreatureSkull(_creature);
+			}
+			else if(Player* _player = _creature->getPlayer())
+			{
+				if(strcasecmp(tmp.c_str(), "fyi") == 0)
+					_player->sendFYIBox(parseParams(cmdit, cmdtokens.end()).c_str());
+				else if(strcasecmp(param.c_str(), "tutorial") == 0)
+					_player->sendTutorial(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+				else if(strcasecmp(tmp.c_str(), "guildrank") == 0)
+					_player->setGuildRankId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+				else if(strcasecmp(tmp.c_str(), "guildnick") == 0)
+					_player->setGuildNick(parseParams(cmdit, cmdtokens.end()).c_str());
+				else if(strcasecmp(tmp.c_str(), "group") == 0)
+					_player->setGroupId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+				else if(strcasecmp(tmp.c_str(), "vocation") == 0)
+					_player->setVocation(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+				else if(strcasecmp(tmp.c_str(), "sex") == 0 || strcasecmp(tmp.c_str(), "gender") == 0)
+					_player->setSex((PlayerSex_t)atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+				else if(strcasecmp(tmp.c_str(), "stamina") == 0)
+					_player->setStaminaMinutes(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+				else if(strcasecmp(tmp.c_str(), "town") == 0) //FIXME
+					_player->setTown(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+				else if(strcasecmp(tmp.c_str(), "balance") == 0)
+					_player->balance = atoi(parseParams(cmdit, cmdtokens.end()).c_str());
+				else if(strcasecmp(tmp.c_str(), "marriage") == 0)
+					_player->marriage = atoi(parseParams(cmdit, cmdtokens.end()).c_str());
+				else if(strcasecmp(tmp.c_str(), "rates") == 0)
+					_player->rates[atoi(parseParams(cmdit, cmdtokens.end()).c_str())] = atof(
+						parseParams(cmdit, cmdtokens.end()).c_str());
+				else if(strcasecmp(tmp.c_str(), "resetidle") == 0)
+					_player->resetIdleTime();
+				else if(strcasecmp(tmp.c_str(), "saving") == 0)
+					_player->switchSaving();
+				else
+				{
+					player->sendTextMessage(MSG_STATUS_SMALL, "No valid action.");
+					g_game.addMagicEffect(playerPos, NM_ME_POFF);
+					return true;
+				}
+			}
+			/*else if(Npc* _npc = _creature->getNpc())
+				//
+			else if(Monster* _monster = _creature->getMonster())
+				//*/
+			else
+			{
+				player->sendTextMessage(MSG_STATUS_SMALL, "No valid action.");
+				g_game.addMagicEffect(playerPos, NM_ME_POFF);
+				return true;
+			}
+		}
 	}
 
 	const Position& cylinderMapPos = tileInFront->getPosition();

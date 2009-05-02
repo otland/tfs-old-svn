@@ -93,6 +93,11 @@ bool Groups::loadFromXml()
 		if(readXMLInteger(p, "access", intValue))
 			group->setAccess(intValue);
 
+		if(readXMLInteger(p, "ghostAccess", intValue))
+			group->setGhostAccess(intValue);
+		else
+			group->setGhostAccess(group->getAccess());
+
 		if(readXMLInteger(p, "violationAccess", intValue))
 			group->setViolationAccess(intValue);
 

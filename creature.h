@@ -156,6 +156,11 @@ class Creature : public AutoID, virtual public Thing
 		Direction getDirection() const {return direction;}
 		void setDirection(Direction dir) {direction = dir;}
 
+		bool getHideName() const {return hideName;}
+		void setHideName(bool v) {hideName = v;}
+		bool getHideHealth() const {return hideHealth;}
+		void setHideHealth(bool v) {hideHealth = v;}
+
 		const Position& getMasterPos() const {return masterPos;}
 		void setMasterPos(const Position& pos, uint32_t radius = 1) {masterPos = pos; masterRadius = radius;}
 
@@ -397,6 +402,7 @@ class Creature : public AutoID, virtual public Thing
 		int32_t health, healthMax;
 		int32_t mana, manaMax;
 
+		bool hideName, hideHealth, cannotMove;
 		Outfit_t currentOutfit;
 		Outfit_t defaultOutfit;
 
@@ -410,7 +416,6 @@ class Creature : public AutoID, virtual public Thing
 		int32_t varSpeed;
 		bool skillLoss;
 		lootDrop_t lootDrop;
-		bool cannotMove;
 		Skulls_t skull;
 		PartyShields_t partyShield;
 		Direction direction;

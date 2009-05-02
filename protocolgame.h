@@ -66,7 +66,7 @@ class ProtocolGame : public Protocol
 		static const char* protocolName() {return "game protocol";}
 
 		bool login(const std::string& name, uint32_t accnumber, const std::string& password,
-			OperatingSystem_t operatingSystem, bool gamemasterLogin);
+			OperatingSystem_t operatingSystem, uint32_t version, bool gamemasterLogin);
 		bool logout(bool displayEffect, bool forced);
 
 		void setPlayer(Player* p);

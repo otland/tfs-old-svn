@@ -199,6 +199,7 @@ enum PlayerInfo_t
 {
 	PlayerInfoFood,
 	PlayerInfoAccess,
+	PlayerInfoGhostAccess,
 	PlayerInfoLevel,
 	PlayerInfoExperience,
 	PlayerInfoManaSpent,
@@ -215,7 +216,6 @@ enum PlayerInfo_t
 	PlayerInfoGuildNick,
 	PlayerInfoSex,
 	PlayerInfoGroupId,
-	PlayerInfoGroupName,
 	PlayerInfoGUID,
 	PlayerInfoAccountId,
 	PlayerInfoAccount,
@@ -510,6 +510,7 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerNameDescription(lua_State* L);
 		static int32_t luaGetPlayerFood(lua_State* L);
 		static int32_t luaGetPlayerAccess(lua_State* L);
+		static int32_t luaGetPlayerGhostAccess(lua_State* L);
 		static int32_t luaGetPlayerLevel(lua_State* L);
 		static int32_t luaGetPlayerExperience(lua_State* L);
 		static int32_t luaGetPlayerMagLevel(lua_State* L);
@@ -566,7 +567,6 @@ class LuaScriptInterface
 		static int32_t luaSetPlayerPromotionLevel(lua_State* L);
 		static int32_t luaGetPlayerGroupId(lua_State* L);
 		static int32_t luaSetPlayerGroupId(lua_State* L);
-		static int32_t luaGetPlayerGroupName(lua_State* L);
 
 		static int32_t luaDoPlayerLearnInstantSpell(lua_State* L);
 		static int32_t luaDoPlayerUnlearnInstantSpell(lua_State* L);

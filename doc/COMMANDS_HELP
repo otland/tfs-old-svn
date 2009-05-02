@@ -1,0 +1,360 @@
+[ COMMANDS HELP
+	Project Name
+		The Forgotten Server
+
+	Version
+		0.3.4
+
+	Codenamed
+		Crying Damson
+
+	License
+		GNU GPLv3
+
+	Forum
+		http://otland.net/
+]
+
+[ ABOUT
+	List with all commands 'aka talkactions.
+	Parameters, possible usage, etc.
+]
+
+[ LIST
+	/addskill
+		Add player specified skill amount.
+		Parameters
+			playerName, skillType, <optional>amount
+
+	/attr
+		Change thing properties.
+		Parameters
+			type, value
+
+		Values
+			type
+				* Items
+					description/desc
+					count/fluidtype/charges
+					action/actionid/aid
+					unique/uniqueid/uid
+					duration
+					writer
+					text
+					name
+					pluralname
+					article
+					attack
+					extraattack
+					defense
+					extradefense
+					armor
+					attackspeed
+					hitchance
+					shootrange
+					depot/depotid
+					destination/position/pos/destpos
+				* Creatures
+					health
+					maxhealth
+					mana
+					maxmana
+					basespeed
+					droploot
+					lossskill
+					cannotmove
+					skull
+				* Players
+					fyi
+					tutorial
+					guildrank
+					guildnick
+					group
+					vocation
+					sex
+					stamina
+					town
+					balance
+					marriage
+					rates
+					resetidle
+					saving
+
+		Examples
+			/attr aid 300
+			/attr text "Hello guys"
+			/attr skull 2
+
+	/serverdiag
+		Works only if software is precompiled with __ENABLE_SERVER_DIAGNOSTIC__
+		Display diagnostic informations.
+
+	/closeserver
+		Close server.
+		All players without proper access will be kicked.
+
+	/openserver
+		Open server.
+
+	/shutdown
+		Save & Shutdown server.
+		Parameters
+			<optional>time
+				Time in seconds, to shutdown server.
+
+		Examples
+			/shutdown 3 (Shutdown after 3 minutes)
+			/shutdown (Suddenly)
+
+	/mode
+		Change world pvp type.
+		Parameters
+			pvpType
+
+		Examples
+			/mode nopvp
+			/mode pvp
+			/mode pvpenforced
+
+	/s
+		Summon monster.
+		Parameters
+			monsterName
+
+		Examples
+			/s Dragon
+			/s rat
+
+	/n
+		Create NPC.
+		Parameters
+			npcName
+
+		Example
+			/n Eryn
+
+	/m
+		Create monster.
+		Parameters
+			monsterName
+
+		Examples
+			/m Orshabaal
+			/m Rotworm
+
+	/reload
+		Reload info.
+		Parameters:
+			what (What should be reloaded)
+
+		Examples
+			/reload actions
+			/reload houseprices
+			/reload talkactions
+
+	/raid
+		Execute raid.
+		Parameters
+			raidName
+
+		Examples
+			/raid orshabaal
+
+	/newtype
+		Outfit changer.
+		Parameters
+			lookType, <optional>playerName
+
+		Examples
+			/newtype 266
+			/newtype 13, Eternal Oblivion
+
+	/r
+		Remove item from tile.
+
+	/owner
+		Change house owner.
+		Parameters
+			newOwnerName
+				Values: player name, or 'none/nobody/0' (Clear owner)
+		
+		Examples
+			/owner none
+			/owner Eternal Oblivion
+
+	/i
+		Create item.
+		Parameters
+			id/name
+			<optional>count
+			<optional>onGround
+				Should item be created on ground?
+			<optional>lookDir
+				Should item be created on player looking pos?
+
+		Examples
+			/i magic plate armor
+			/i 2160, 50 (50 crystal coins)
+			/i 2160, 50, yes (Will be created under player)
+			/i 2160, 50, yes, yes (Will be created at ground, where player is looking)
+
+	!z
+		Magic effect.
+		Parameters
+			effectId
+
+		Example
+			!z 4
+
+	!x
+		Animation effect.
+		Parameters
+			animationId
+
+		Example
+			!x 29
+
+	!y
+		Animated text.
+
+	/bc
+		Broadcast.
+
+	/mkick
+		Mass kick.
+
+	/ghost
+		Enable/disable ghost mode.
+		You'll be invisible for other players.
+
+	/squelch
+		Enable/disable private messages ignoring.
+		Player won't be able to message you, if enabled.
+
+	/cliport
+		Enable/disable map click teleportation.
+
+	/t
+		Teleport temple.
+		Parameters
+			<optional>playerName
+
+		Examples
+			/t
+			/t Eternal Oblivion
+
+	/c
+		Teleport creature to you.
+
+		Example
+			/c Demon
+
+	/goto
+		Parameters
+			creatureName/waypointName/position
+
+		Examples
+			/goto 123,60,7
+			/goto eryn
+			/goto dragon
+			/goto GM Tester
+
+	/a
+		Teleport n tiles.
+		Examples
+			/a 3
+			/a
+			/a 58
+
+	/kick
+		Kick creature.
+		Parameters
+			playerName
+
+		Example
+			/kick Taifun Devilry
+
+	/send
+
+	/unban
+		Unban by account or player name.
+		Parameters
+			account/playerName
+
+	/town
+		Teleport town.
+		Parameters
+			townName, <optional>playerName
+
+		Examples
+			/town main city
+			/town desert city, Test Player Name Here
+
+	/up
+		Teleport up.
+		Parameters
+			<optional>floors
+
+		Examples
+			/up
+			/up 3 (3 floors up)
+
+	/down
+		Teleport down.
+		Parameters
+			<optional>floors
+
+		Examples
+			/down
+			/down 2 (2 floors down)
+
+	/save
+		Save server.
+
+	/clean
+		Clean map.
+
+	/reports
+		View server reports.
+		Parameters
+			<optional>reportId
+
+		Examples
+			/reports (Display all reports)
+			/reports 52 (Display detailed info about report with id 52)
+
+	/mc
+		Check multiclients.
+
+	/notations
+
+	/info
+
+	/gethouse
+		Display player house.
+		Parameters
+			playerName
+
+	/b
+
+	/baninfo
+
+	!pos
+		Display player current position.
+
+	@Players
+	!buyhouse
+	!sellhouse
+	!createguild
+	!joinguild
+	!frags
+	!buypremium
+	!leavehouse
+	/online
+	!changender
+	/uptime
+	/deathlist
+	/pvp
+	!q
+	/serverinfo
+]

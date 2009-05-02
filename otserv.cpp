@@ -496,7 +496,7 @@ ServiceManager* services)
 	else
 		std::cout << "failed - could not parse remote file (are you connected to the internet?)" << std::endl;
 
-	std::cout << ">> Loading config (" << g_config.getString(ConfigManager::CONFIG_FILE) << ")" << std::endl;
+	std::cout << std::endl << ">> Loading config (" << g_config.getString(ConfigManager::CONFIG_FILE) << ")" << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading config");
 	#endif

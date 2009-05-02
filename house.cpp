@@ -33,15 +33,9 @@ House::House(uint32_t _houseid)
 {
 	isLoaded = false;
 	houseName = "Forgotten headquarter (Flat 1, Area 42)";
-	houseOwner = 0;
 	posEntry = Position();
-	paidUntil = 0;
 	houseid = _houseid;
-	rentWarnings = 0;
-	lastWarning = 0;
-	rent = 0;
-	price = 0;
-	townid = 0;
+	rent = price = townid = paidUntil = houseOwner = rentWarnings = lastWarning = 0;
 }
 
 void House::addTile(HouseTile* tile)
@@ -134,7 +128,7 @@ void House::updateDoorDescription(std::string name/* = ""*/)
 	char houseDescription[200];
 	if(houseOwner != 0)
 	{
-		if(name == "")
+		if(name.empty())
 			IOLoginData::getInstance()->getNameByGuid(houseOwner, name);
 
 		sprintf(houseDescription, "It belongs to house '%s'. %s owns this house.", houseName.c_str(), name.c_str());
@@ -152,7 +146,8 @@ void House::removePlayer(Player* player, bool ignoreRights)
 		return;
 
 	Position tmp = player->getPosition();
-	if(g_game.internalTeleport(player, g_game.getClosestFreeTile(player, getEntryPosition()), true) == RET_NOERROR && !player->isInGhostMode())
+	Position toPos = g_game.getClosestFreeTile(player, getEntryPosition(), false, false);
+	if(toPos.x != 0 && g_game.internalTeleport(player, toPos, true) == RET_NOERROR && !player->isInGhostMode())
 	{
 		g_game.addMagicEffect(tmp, NM_ME_POFF);
 		g_game.addMagicEffect(player->getPosition(), NM_ME_TELEPORT);
@@ -184,23 +179,23 @@ void House::removePlayers(bool ignoreInvites)
 
 bool House::kickPlayer(Player* player, Player* target)
 {
-	if(target && !target->isRemoved())
-	{
-		HouseTile* houseTile = dynamic_cast<HouseTile*>(target->getTile());
-		if(houseTile && houseTile->getHouse() == this)
-		{
-			if(player == target)
-			{
-				removePlayer(target, false);
-				return true;
-			}
+	if(!target || target->isRemoved())
+		return false;
 
-			if(getHouseAccessLevel(player) >= getHouseAccessLevel(target))
-			{
-				removePlayer(target, true);
-				return true;
-			}
-		}
+	HouseTile* houseTile = dynamic_cast<HouseTile*>(target->getTile());
+	if(!houseTile || houseTile->getHouse() != this)
+		return false;
+
+	if(player == target)
+	{
+		removePlayer(target, false);
+		return true;
+	}
+
+	if(getHouseAccessLevel(player) >= getHouseAccessLevel(target))
+	{
+		removePlayer(target, true);
+		return true;
 	}
 
 	return false;
@@ -326,21 +321,19 @@ bool House::getAccessList(uint32_t listId, std::string& list) const
 		guestList.getList(list);
 		return true;
 	}
-	else if(listId == SUBOWNER_LIST)
+
+	if(listId == SUBOWNER_LIST)
 	{
 		subOwnerList.getList(list);
 		return true;
 	}
-	else
-	{
-		if(Door* door = getDoorByNumber(listId))
-			return door->getAccessList(list);
-		#ifdef __DEBUG_HOUSES__
-		else
-			std::cout << "Failure: [House::getAccessList] door == NULL, listId = " << listId <<std::endl;
-		#endif
-	}
 
+	if(Door* door = getDoorByNumber(listId))
+		return door->getAccessList(list);
+	#ifdef __DEBUG_HOUSES__
+	else
+		std::cout << "[Failure - House::getAccessList] door == NULL, listId = " << listId <<std::endl;
+	#endif
 	return false;
 }
 
@@ -420,8 +413,9 @@ bool AccessList::parseList(const std::string& _list)
 	guildList.clear();
 	expressionList.clear();
 	regExList.clear();
+
 	list = _list;
-	if(_list == "")
+	if(_list.empty())
 		return true;
 
 	std::stringstream listStream(_list);
@@ -496,29 +490,29 @@ bool AccessList::addPlayer(std::string& name)
 bool AccessList::addGuild(const std::string& guildName, const std::string& rankName)
 {
 	uint32_t guildId;
-	if(IOGuild::getInstance()->getGuildIdByName(guildId, guildName))
+	if(!IOGuild::getInstance()->getGuildIdByName(guildId, guildName))
+		return false;
+
+	std::string tmp = rankName;
+
+	int32_t rankId;
+	if(!IOGuild::getInstance()->getRankIdByGuildIdAndName((uint32_t&)rankId, tmp, guildId) &&
+		(tmp.find("?") == std::string::npos || tmp.find("!") == std::string::npos ||
+		tmp.find("*") == std::string::npos))
 	{
-		std::string tmp = rankName;
+		rankId = -1;
+	}
 
-		int32_t rankId;
-		if(!IOGuild::getInstance()->getRankIdByGuildIdAndName((uint32_t&)rankId, tmp, guildId) &&
-			(tmp.find("?") == std::string::npos || tmp.find("!") == std::string::npos ||
-			tmp.find("*") == std::string::npos))
+	if(rankId != 0)
+	{
+		for(GuildList::iterator git = guildList.begin(); git != guildList.end(); ++git)
 		{
-			rankId = -1;
+			if(git->first == guildId && git->second == rankId)
+				return true;
 		}
 
-		if(rankId != 0)
-		{
-			for(GuildList::iterator git = guildList.begin(); git != guildList.end(); ++git)
-			{
-				if(git->first == guildId && git->second == rankId)
-					return true;
-			}
-
-			guildList.push_back(std::make_pair(guildId, rankId));
-			return true;
-		}
+		guildList.push_back(std::make_pair(guildId, rankId));
+		return true;
 	}
 
 	return false;
@@ -623,7 +617,7 @@ void Door::setHouse(House* _house)
 	if(house != NULL)
 	{
 		#ifdef __DEBUG_HOUSES__
-		std::cout << "Warning: [Door::setHouse] house != NULL" << std::endl;
+		std::cout << "[Warning - Door::setHouse] house != NULL" << std::endl;
 		#endif
 		return;
 	}
@@ -638,7 +632,7 @@ bool Door::getAccessList(std::string& list) const
 	if(!house)
 	{
 		#ifdef __DEBUG_HOUSES__
-		std::cout << "Failure: [Door::getAccessList] house == NULL" << std::endl;
+		std::cout << "[Failure - Door::getAccessList] house == NULL" << std::endl;
 		#endif
 		return false;
 	}
@@ -775,17 +769,12 @@ bool Houses::loadFromXml(std::string filename)
 
 bool Houses::reloadPrices()
 {
+	if(g_config.getBool(ConfigManager::HOUSE_RENTASPRICE))
+		return true;
+
+	const uint32_t tilePrice = g_config.getNumber(ConfigManager::HOUSE_PRICE);
 	for(HouseMap::iterator it = houseMap.begin(); it != houseMap.end(); ++it)
-	{
-		if(g_config.getBool(ConfigManager::HOUSE_RENTASPRICE))
-			continue;
-
-		uint32_t price = 0;
-		for(HouseTileList::iterator tit = it->second->getHouseTileBegin(); tit != it->second->getHouseTileEnd(); tit++)
-			price += g_config.getNumber(ConfigManager::HOUSE_PRICE);
-
-		it->second->setPrice(price, true);
-	}
+		it->second->setPrice(tilePrice * it->second->getHouseTileSize(), true);
 
 	return true;
 }
@@ -972,14 +961,12 @@ House* Houses::getHouse(uint32_t houseId, bool add/*= false*/)
 	if(it != houseMap.end())
 		return it->second;
 
-	if(add)
-	{
-		House* house = new House(houseId);
-		houseMap[houseId] = house;
-		return house;
-	}
+	if(!add)
+		return NULL;
 
-	return NULL;
+	House* house = new House(houseId);
+	houseMap[houseId] = house;
+	return house;
 }
 
 House* Houses::getHouseByPlayer(Player* player)
@@ -991,11 +978,10 @@ House* Houses::getHouseByPlayer(Player* player)
 	if(!houseTile)
 		return NULL;
 
-	House* house = houseTile->getHouse();
-	if(!house)
-		return NULL;
+	if(House* house = houseTile->getHouse())
+		return house;
 
-	return house;
+	return NULL;
 }
 
 House* Houses::getHouseByPlayerId(uint32_t playerId)

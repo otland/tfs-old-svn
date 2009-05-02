@@ -94,11 +94,7 @@ bool BedItem::serializeAttr(PropWriteStream& propWriteStream) const
 
 BedItem* BedItem::getNextBedItem()
 {
-	Direction dir = Item::items[getID()].bedPartnerDir;
-	Position targetPos = getNextPosition(dir, getPosition());
-
-	Tile* tile = g_game.getMap()->getTile(targetPos);
-	if(tile != NULL)
+	if(Tile* tile = g_game.getMap()->getTile(getNextPosition(Item::items[getID()].bedPartnerDir, getPosition())))
 		return tile->getBedItem();
 
 	return NULL;
@@ -236,20 +232,20 @@ void BedItem::regeneratePlayer(Player* player) const
 void BedItem::updateAppearance(const Player* player)
 {
 	const ItemType& it = Item::items[getID()];
-	if(it.type == ITEM_TYPE_BED)
+	if(it.type != ITEM_TYPE_BED)
+		return;
+
+	if(player && it.transformToOnUse[player->getSex()] != 0)
 	{
-		if(player && it.transformToOnUse[player->getSex()] != 0)
-		{
-			const ItemType& newType = Item::items[it.transformToOnUse[player->getSex()]];
-			if(newType.type == ITEM_TYPE_BED)
-				g_game.transformItem(this, it.transformToOnUse[player->getSex()]);
-		}
-		else if(it.transformToFree != 0)
-		{
-			const ItemType& newType = Item::items[it.transformToFree];
-			if(newType.type == ITEM_TYPE_BED)
-				g_game.transformItem(this, it.transformToFree);
-		}
+		const ItemType& newType = Item::items[it.transformToOnUse[player->getSex()]];
+		if(newType.type == ITEM_TYPE_BED)
+			g_game.transformItem(this, it.transformToOnUse[player->getSex()]);
+	}
+	else if(it.transformToFree != 0)
+	{
+		const ItemType& newType = Item::items[it.transformToFree];
+		if(newType.type == ITEM_TYPE_BED)
+			g_game.transformItem(this, it.transformToFree);
 	}
 }
 

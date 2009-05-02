@@ -270,6 +270,10 @@ function doMutePlayer(cid, time)
 	return doAddCondition(cid, condition)
 end
 
+function getPlayerGroupName(cid)
+	return getGroupInfo(getPlayerGroupId(cid)).name
+end
+
 function getPlayerVocationName(cid)
 	return getVocationInfo(getPlayerVocation(cid)).name
 end
