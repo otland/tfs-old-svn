@@ -50,7 +50,6 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	{
 		m_confString[CONFIG_FILE] = _filename;
 		m_confString[IP] = getGlobalString(L, "ip", "127.0.0.1");
-		m_confInteger[PORT] = getGlobalNumber(L, "port", 7171);
 		m_confInteger[SQL_PORT] = getGlobalNumber(L, "mysqlPort", 3306);
 		m_confString[MAP_NAME] = getGlobalString(L, "mapName", "forgotten");
 		m_confString[MAP_AUTHOR] = getGlobalString(L, "mapAuthor", "Unknown");

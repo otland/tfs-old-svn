@@ -96,7 +96,6 @@ class ConfigManager
 			LOGIN_TRIES = 0,
 			RETRY_TIMEOUT,
 			LOGIN_TIMEOUT,
-			PORT,
 			SQL_PORT,
 			MAX_PLAYERS,
 			PZ_LOCKED,

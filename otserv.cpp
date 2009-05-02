@@ -480,7 +480,7 @@ void mainLoader(ServiceManager* service_manager)
 	service_manager->add<ProtocolOldLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT));
 	service_manager->add<ProtocolOldGame>(g_config.getNumber(ConfigManager::LOGIN_PORT));
 
-	//g_game.timedHighscoreUpdate();
+	g_game.timedHighscoreUpdate();
 
 	int32_t autoSaveEachMinutes = g_config.getNumber(ConfigManager::AUTO_SAVE_EACH_MINUTES);
 	if(autoSaveEachMinutes > 0)
