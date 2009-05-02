@@ -199,6 +199,8 @@ class PropStream
 			end = a + size;
 		}
 
+		int16_t size(){return end-p;}
+
 		template <typename T>
 		inline bool GET_STRUCT(T* &ret)
 		{
@@ -240,13 +242,33 @@ class PropStream
 			if(!GET_USHORT(str_len))
 				return false;
 
-			if(size() < str_len)
+			if(size() < (int32_t)str_len)
 				return false;
 
 			str = new char[str_len + 1];
 			memcpy(str, p, str_len);
 			str[str_len] = 0;
-			ret = str;
+			ret.assign(str, str_len);
+			delete[] str;
+			p += str_len;
+			return true;
+		}
+
+		inline bool GET_LSTRING(std::string& ret)
+		{
+			char* str;
+			uint32_t str_len;
+
+			if(!GET_ULONG(str_len))
+				return false;
+
+			if(size() < (int32_t)str_len)
+				return false;
+
+			str = new char[str_len + 1];
+			memcpy(str, p, str_len);
+			str[str_len] = 0;
+			ret.assign(str, str_len);
 			delete[] str;
 			p += str_len;
 			return true;
@@ -254,19 +276,19 @@ class PropStream
 
 		inline bool GET_NSTRING(unsigned short str_len, std::string& ret)
 		{
-			if(size() < str_len)
+			if(size() < (int32_t)str_len)
 				return false;
 
 			char* str = new char[str_len + 1];
 			memcpy(str, p, str_len);
 			str[str_len] = 0;
-			ret = str;
+			ret.assign(str, str_len); // String can contain 0s
 			delete[] str;
 			p += str_len;
 			return true;
 		}
 
-		inline bool SKIP_N(unsigned short n)
+		inline bool SKIP_N(int32_t n)
 		{
 			if(size() < n)
 				return false;
@@ -276,7 +298,6 @@ class PropStream
 		}
 
 	protected:
-		int32_t size() {return end - p;}
 		const char* p;
 		const char* end;
 };
@@ -335,11 +356,27 @@ class PropWriteStream
 
 		inline void ADD_STRING(const std::string& add)
 		{
-			uint16_t str_len = add.size();
+			uint16_t str_len = (uint16_t)add.size();
 			ADD_USHORT(str_len);
 			if((buffer_size - size) < str_len)
 			{
 				buffer_size += ((str_len + 0x1F) & 0xFFFFFFE0);
+				buffer = (char*)realloc(buffer, buffer_size);
+			}
+
+			memcpy(&buffer[size], add.c_str(), str_len);
+			size = size + str_len;
+		}
+
+		inline void ADD_LSTRING(const std::string& add)
+		{
+			uint32_t str_len = (uint32_t)add.size();
+
+			ADD_ULONG(str_len);
+
+			if((buffer_size - size) < str_len)
+			{
+				buffer_size = buffer_size + ((str_len + 0x1F) & 0xFFFFFFE0);
 				buffer = (char*)realloc(buffer, buffer_size);
 			}
 

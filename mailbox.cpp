@@ -131,6 +131,7 @@ bool Mailbox::sendItem(Item* item)
 				item, item->getItemCount(), NULL, FLAG_NOLIMIT) == RET_NOERROR)
 			{
 				g_game.transformItem(item, item->getID() + 1);
+				player->setDepotChange(true);
 				return true;
 			}
 		}
@@ -164,6 +165,7 @@ bool Mailbox::sendItem(Item* item)
 				item, item->getItemCount(), NULL, FLAG_NOLIMIT) == RET_NOERROR)
 			{
 				g_game.transformItem(item, item->getID() + 1);
+				player->setDepotChange(true);
 				IOLoginData::getInstance()->savePlayer(player, true);
 				delete player;
 				return true;

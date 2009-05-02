@@ -87,7 +87,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	msg.SkipBytes(12);
 
 	if(version <= 760)
-		disconnectClient(0x0A, "Only clients with protocol 8.4 allowed!");
+		disconnectClient(0x0A, "Only clients with protocol 8.42 allowed!");
 
 	if(!RSA_decrypt(g_otservRSA, msg))
 	{
@@ -120,9 +120,9 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		}
 	}
 
-	if(version < 840)
+	if(version < 842)
 	{
-		disconnectClient(0x0A, "Only clients with protocol 8.4 allowed!");
+		disconnectClient(0x0A, "Only clients with protocol 8.42 allowed!");
 		return false;
 	}
 
@@ -193,7 +193,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 			output->AddString("Account Manager");
 			output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
 			output->AddU32(serverip);
-			output->AddU16(g_config.getNumber(ConfigManager::PORT));
+			output->AddU16(g_config.getNumber(ConfigManager::GAME_PORT));
 		}
 		else
 			output->AddByte((uint8_t)account.charList.size());
@@ -213,7 +213,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 				output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
 
 			output->AddU32(serverip);
-			output->AddU16(g_config.getNumber(ConfigManager::PORT));
+			output->AddU16(g_config.getNumber(ConfigManager::GAME_PORT));
 		}
 
 		//Add premium days

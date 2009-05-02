@@ -114,7 +114,7 @@ class MonsterType
 		int32_t health_max;
 
 		Outfit_t outfit;
-		int32_t lookcorpse;
+		uint16_t lookcorpse;
 		int32_t conditionImmunities;
 		int32_t damageImmunities;
 		RaceType_t race;

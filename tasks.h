@@ -52,19 +52,14 @@ inline Task* createTask(boost::function<void (void)> f)
 class Dispatcher
 {
 	public:
+		Dispatcher();
 		~Dispatcher() {}
 
-		static Dispatcher& getDispatcher()
-		{
-			static Dispatcher dispatcher;
-			return dispatcher;
-		}
-
 		void addTask(Task* task);
+
+		void start();
 		void stop();
 		void shutdown();
-
-		static OTSYS_THREAD_RETURN dispatcherThread(void* p);
 
 		enum DispatcherState
 		{
@@ -74,14 +69,17 @@ class Dispatcher
 		};
 
 	protected:
-		Dispatcher();
+		static OTSYS_THREAD_RETURN dispatcherThread(void* p);
+
 		void flush();
 
 		OTSYS_THREAD_LOCKVAR m_taskLock;
 		OTSYS_THREAD_SIGNALVAR m_taskSignal;
 
 		std::list<Task*> m_taskList;
-		static DispatcherState m_threadState;
+		DispatcherState m_threadState;
 };
+
+extern Dispatcher g_dispatcher;
 
 #endif

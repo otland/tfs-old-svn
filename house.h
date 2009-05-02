@@ -79,7 +79,7 @@ class Door : public Item
 		virtual xmlNodePtr serialize();
 
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
-		virtual bool serializeAttr(PropWriteStream& propWriteStream);
+		virtual bool serializeAttr(PropWriteStream& propWriteStream) const;
 
 		void setDoorId(uint32_t _doorId){ setIntAttr(ATTR_ITEM_DOORID, (uint32_t)_doorId); }
 		uint32_t getDoorId() const{ return getIntAttr(ATTR_ITEM_DOORID); }
@@ -192,7 +192,7 @@ class House
 
 		HouseTileList::iterator getHouseTileBegin() {return houseTiles.begin();}
 		HouseTileList::iterator getHouseTileEnd() {return houseTiles.end();}
-		uint32_t getHouseTileSize() {return houseTiles.size();}
+		size_t getHouseTileSize() {return houseTiles.size();}
 
 		HouseDoorList::iterator getHouseDoorBegin() {return doorList.begin();}
 		HouseDoorList::iterator getHouseDoorEnd() {return doorList.end();}

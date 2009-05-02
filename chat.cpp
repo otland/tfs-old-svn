@@ -123,7 +123,7 @@ bool ChatChannel::addUser(Player* player)
 	{
 		uint32_t playerId = player->getID();
 		uint32_t guildId = player->getGuildId();
-		Scheduler::getScheduler().addEvent(createSchedulerTask(150, boost::bind(
+		g_scheduler.addEvent(createSchedulerTask(150, boost::bind(
 			&Game::sendGuildMotd, &g_game, playerId, guildId)));
 	}
 
@@ -143,20 +143,28 @@ bool ChatChannel::removeUser(Player* player)
 
 bool ChatChannel::talk(Player* fromPlayer, SpeakClasses type, const std::string& text, uint32_t time /*= 0*/)
 {
+	bool success = false;
+	UsersMap::iterator it;
+
+	if(m_id != 0x03)
+	{
+		UsersMap::const_iterator iter = m_users.find(fromPlayer->getID());
+		if(iter == m_users.end())
+			return false;
+	}
+
 	if(!fromPlayer->hasFlag(PlayerFlag_CannotBeMuted) && (m_id == 0x05 || m_id == 0x07))
 	{
 		Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_TRADETICKS, 120000, 0);
 		fromPlayer->addCondition(condition);
 	}
 
-	ChatChannel* channel = NULL;
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	for(it = m_users.begin(); it != m_users.end(); ++it)
 	{
-		channel = g_chat.getChannel((*it).second, m_id);
-		if(channel && m_users.find((*it).second->getID()) != m_users.end() && channel == this)
-			(*it).second->sendToChannel(fromPlayer, type, text, m_id, time);
+		it->second->sendToChannel(fromPlayer, type, text, getId(), time);
+		success = true;
 	}
-	return true;
+	return success;
 }
 
 Chat::Chat()
@@ -343,17 +351,20 @@ bool Chat::removeUserFromChannel(Player* player, uint16_t channelId)
 
 void Chat::removeUserFromAllChannels(Player* player)
 {
-	ChannelList list = getChannelList(player);
-	while(list.size())
-	{
-		if(ChatChannel* channel = list.front())
-		{
-			channel->removeUser(player);
-			if(channel->getOwner() == player->getGUID())
-				deleteChannel(player, channel->getId());
-		}
+	for(NormalChannelMap::iterator it = m_normalChannels.begin(); it != m_normalChannels.end(); ++it)
+		it->second->removeUser(player);
 
-		list.pop_front();
+	for(PartyChannelMap::iterator it = m_partyChannels.begin(); it != m_partyChannels.end(); ++it)
+		it->second->removeUser(player);
+
+	for(GuildChannelMap::iterator it = m_guildChannels.begin(); it != m_guildChannels.end(); ++it)
+		it->second->removeUser(player);
+
+	for(PrivateChannelMap::iterator it = m_privateChannels.begin(); it != m_privateChannels.end(); ++it)
+	{
+		it->second->removeUser(player);
+		if(it->second->getOwner() == player->getGUID())
+			deleteChannel(player, it->second->getId());
 	}
 }
 
@@ -379,7 +390,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 
 	if(channelId == 0x00 && g_config.getString(ConfigManager::INGAME_GUILD_SYSTEM) == "yes")
 	{
-		if(text == "!disband" || text.substr(0, 7) == "!invite" || text == "!leave" || text.substr(0, 5) == "!kick" || text.substr(0, 7) == "!revoke" || text.substr(0, 7) == "!demote" || text.substr(0, 8) == "!promote" || text.substr(0, 15) == "!passleadership" || text.substr(0, 5) == "!nick" || text.substr(0, 12) == "!setrankname" || text.substr(0, 8) == "!setmotd" || text == "!cleanmotd" || text == "!commands")
+		if(text == "!disband" || text == "!guildonline" || text.substr(0, 7) == "!invite" || text == "!leave" || text.substr(0, 5) == "!kick" || text.substr(0, 7) == "!revoke" || text.substr(0, 7) == "!demote" || text.substr(0, 8) == "!promote" || text.substr(0, 15) == "!passleadership" || text.substr(0, 5) == "!nick" || text.substr(0, 12) == "!setrankname" || text.substr(0, 8) == "!setmotd" || text == "!cleanmotd" || text == "!commands")
 		{
 			if(player->getGuildId())
 			{
@@ -400,6 +411,36 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 						}
 						else
 							player->sendCancel("You are not the leader of your guild.");
+					}
+					else if(text == "!guildonline")
+					{
+						std::stringstream ss;
+						ss << "Players online in your guild:" << std::endl;
+						uint32_t i = 0;
+						AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
+						while(it != Player::listPlayer.list.end())
+						{
+							if((*it).second->getGuildId() == player->getGuildId())
+							{
+								ss << (i > 0 ? ", " : "") << (*it).second->getName() << " [" << (*it).second->getLevel() << "]";
+								i++;
+							}
+							it++;
+
+							if(i == 10)
+							{
+								ss << (it != Player::listPlayer.list.end() ? "," : ".");
+								player->sendToChannel(player, SPEAK_CHANNEL_R2, ss.str(), 0x00);
+								ss.str();
+								i = 0;
+							}
+						}
+
+						if(i > 0)
+						{
+							ss << ".";
+							player->sendToChannel(player, SPEAK_CHANNEL_R2, ss.str(), 0x00);
+						}
 					}
 					else if(text.substr(0, 7) == "!invite")
 					{
@@ -541,6 +582,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 								length = 18;
 							else
 								length = 8;
+
 							if(text.length() < length)
 							{
 								player->sendCancel("Invalid guildcommand parameters.");
@@ -548,6 +590,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 							}
 							else
 								length -= 2;
+
 							param = text.substr(length);
 							trimString(param);
 							Player* paramPlayer = g_game.getPlayerByName(param);
@@ -891,7 +934,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 							player->sendCancel("Only the leader of your guild can clean the guild motd.");
 					}
 					else if(text == "!commands")
-						player->sendToChannel(player, SPEAK_CHANNEL_R2, "The guild commands are: <!disband>, <!invite playerName>, <!leave>, <!kick playerName>, <!revoke playerName>, <!demote playerName>, <!promote playerName>, <!passleadership playerName>, <!nick playerName, nick>, <!setrankname oldRankName, newRankName>, <!setmotd newMotd> and <!cleanmotd>.", 0x00);
+						player->sendToChannel(player, SPEAK_CHANNEL_R2, "The guild commands are: <!disband>, <!invite playerName>, <!leave>, <!kick playerName>, <!revoke playerName>, <!demote playerName>, <!promote playerName>, <!passleadership playerName>, <!nick playerName, nick>, <!setrankname oldRankName, newRankName>, <!setmotd newMotd>, <!guildonline> and <!cleanmotd>.", 0x00);
 				}
 				else
 					player->sendCancel("It seems like your guild does not exist anymore.");
@@ -1025,7 +1068,6 @@ ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 			default:
 				break;
 		}
-
 		return nit->second;
 	}
 

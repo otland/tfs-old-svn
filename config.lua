@@ -37,7 +37,10 @@
 
 	-- Connection Config
 	ip = "127.0.0.1"
-	port = 7171
+	loginProtocolPort = 7171
+	gameProtocolPort = 7172
+	adminProtocolPort = 7171
+	statusProtocolPort = 7171
 	loginTries = 10
 	retryTimeout = 5 * 1000
 	loginTimeout = 60 * 1000
@@ -77,6 +80,7 @@
 	mapName = "forgotten"
 	mapAuthor = "Komic"
 	randomizeTiles = "yes"
+	mapStorageType = "relational"
 
 	-- Messaging
 	enableRuleViolationReports = "yes"
@@ -131,6 +135,9 @@
 
 	-- Startup
 	defaultPriority = "high"
+
+	-- Shutdown
+	freeMemoryAtShutdown = "yes"
 
 	-- Status
 	ownerName = ""

@@ -132,6 +132,8 @@ class Player : public Creature, public Cylinder
 		virtual const std::string& getNameDescription() const {return name;}
 		virtual std::string getDescription(int32_t lookDistance) const;
 
+		void setDepotChange(bool b) {depotChange = b;}
+
 		void manageAccount(const std::string &text);
 
 		void sendFYIBox(std::string message)
@@ -449,8 +451,8 @@ class Player : public Creature, public Cylinder
 
 		//tile
 		//send methods
-		void sendAddTileItem(const Tile* tile, const Position& pos, const Item* item)
-			{if(client) client->sendAddTileItem(tile, pos, item);}
+		void sendAddTileItem(const Tile* tile, const Position& pos, uint32_t stackpos, const Item* item)
+			{if(client) client->sendAddTileItem(tile, pos, stackpos, item);}
 		void sendUpdateTileItem(const Tile* tile, const Position& pos,
 			uint32_t stackpos, const Item* olditem, const Item* newitem)
 			{if(client) client->sendUpdateTileItem(tile, pos, stackpos, newitem);}
@@ -461,13 +463,13 @@ class Player : public Creature, public Cylinder
 
 		void sendChannelMessage(std::string author, std::string text, SpeakClasses type, unsigned char channel)
 			{if(client) client->sendChannelMessage(author, text, type, channel);}
-		void sendCreatureAppear(const Creature* creature, bool isLogin)
-			{if(client) client->sendAddCreature(creature, isLogin);}
+		void sendCreatureAppear(const Creature* creature, const Position& pos, uint32_t stackpos, bool isLogin)
+			{if(client) client->sendAddCreature(creature, pos, stackpos, isLogin);}
 		void sendCreatureDisappear(const Creature* creature, uint32_t stackpos, bool isLogout)
 			{if(client) client->sendRemoveCreature(creature, creature->getPosition(), stackpos, isLogout);}
-		void sendCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
+		void sendCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos, uint32_t stackpos,
 		const Tile* oldTile, const Position& oldPos, uint32_t oldStackPos, bool teleport)
-			{if(client) client->sendMoveCreature(creature, newTile, newPos, oldTile, oldPos, oldStackPos, teleport);}
+			{if(client) client->sendMoveCreature(creature, newTile, newPos, stackpos, oldTile, oldPos, oldStackPos, teleport);}
 
 		void sendCreatureTurn(const Creature* creature, uint32_t stackpos)
 			{if(client) client->sendCreatureTurn(creature, stackpos);}
@@ -727,6 +729,7 @@ class Player : public Creature, public Cylinder
 		int32_t groupId;
 		OperatingSystem_t operatingSystem;
 		bool ghostMode;
+		bool depotChange;
 
 		bool talkState[13], accountManager;
 		int32_t newVocation;

@@ -73,6 +73,7 @@ Creature()
 	if(client)
 		client->setPlayer(this);
 
+	depotChange = false;
 	accountNumber = 0;
 	name = _name;
 	setVocation(0);
@@ -636,39 +637,46 @@ int32_t Player::getSkill(skills_t skilltype, skillsid_t skillinfo) const
 
 void Player::addSkillAdvance(skills_t skill, uint32_t count)
 {
-	uint64_t currReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]);
-	uint64_t nextReqTries = vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1);
-	if(currReqTries > nextReqTries)
-	{
-		//player has reached max skill
-		skills[skill][SKILL_TRIES] = 0;
-		skills[skill][SKILL_PERCENT] = 0;
-		sendSkills();
-		return;
-	}
+        if(count == 0)
+                return;
 
-	//Need skill up?
-	skills[skill][SKILL_TRIES] += count * g_config.getNumber(ConfigManager::RATE_SKILL);
-	if(skills[skill][SKILL_TRIES] >= vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
-	{
-	 	skills[skill][SKILL_LEVEL]++;
-	 	skills[skill][SKILL_TRIES] = 0;
-		skills[skill][SKILL_PERCENT] = 0;
-		char advMsg[50];
-		sprintf(advMsg, "You advanced in %s.", getSkillName(skill).c_str());
-		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
-		sendSkills();
-	}
-	else
-	{
-		//update percent
-		uint32_t newPercent = Player::getPercentLevel(skills[skill][SKILL_TRIES], vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1));
-	 	if(skills[skill][SKILL_PERCENT] != newPercent)
-		{
-			skills[skill][SKILL_PERCENT] = newPercent;
-			sendSkills();
-	 	}
-	}
+        if(vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]) > vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
+        {
+                //player has reached max skill
+                return;
+        }
+
+        bool advance = false;
+        count = count * g_config.getNumber(ConfigManager::RATE_SKILL);
+        while(skills[skill][SKILL_TRIES] + count >= vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
+        {
+                count -= vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1) - skills[skill][SKILL_TRIES];
+                skills[skill][SKILL_LEVEL]++;
+                skills[skill][SKILL_TRIES] = 0;
+                skills[skill][SKILL_PERCENT] = 0;
+                char advMsg[50];
+                sprintf(advMsg, "You advanced in %s.", getSkillName(skill).c_str());
+                sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
+                advance = true;
+
+                if(vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]) > vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
+                {
+                        count = 0;
+                        break;
+                }
+        }
+        skills[skill][SKILL_TRIES] += count;
+
+        if(advance)
+                sendSkills();
+
+        //update percent
+        uint32_t newPercent = Player::getPercentLevel(skills[skill][SKILL_TRIES], vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1));
+        if(skills[skill][SKILL_PERCENT] != newPercent)
+        {
+                skills[skill][SKILL_PERCENT] = newPercent;
+                sendSkills();
+        }
 }
 
 void Player::setVarStats(stats_t stat, int32_t modifier)
@@ -1680,7 +1688,7 @@ void Player::setNextWalkActionTask(SchedulerTask* task)
 {
 	if(walkTaskEvent != 0)
 	{
-		Scheduler::getScheduler().stopEvent(walkTaskEvent);
+		g_scheduler.stopEvent(walkTaskEvent);
 		walkTaskEvent = 0;
 	}
 	delete walkTask;
@@ -1691,24 +1699,24 @@ void Player::setNextWalkTask(SchedulerTask* task)
 {
 	if(nextStepEvent != 0)
 	{
-		Scheduler::getScheduler().stopEvent(nextStepEvent);
+		g_scheduler.stopEvent(nextStepEvent);
 		nextStepEvent = 0;
 	}
 
 	if(task)
-		nextStepEvent = Scheduler::getScheduler().addEvent(task);
+		nextStepEvent = g_scheduler.addEvent(task);
 }
 
 void Player::setNextActionTask(SchedulerTask* task)
 {
 	if(actionTaskEvent != 0)
 	{
-		Scheduler::getScheduler().stopEvent(actionTaskEvent);
+		g_scheduler.stopEvent(actionTaskEvent);
 		actionTaskEvent = 0;
 	}
 
 	if(task)
-		actionTaskEvent = Scheduler::getScheduler().addEvent(task);
+		actionTaskEvent = g_scheduler.addEvent(task);
 }
 
 uint32_t Player::getNextActionTime() const
@@ -1819,44 +1827,44 @@ void Player::drainMana(Creature* attacker, int32_t manaLoss)
 
 void Player::addManaSpent(uint64_t amount)
 {
-	if(amount != 0 && !hasFlag(PlayerFlag_NotGainMana))
-	{
-		uint64_t currReqMana = vocation->getReqMana(magLevel);
-		uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
-		if(currReqMana > nextReqMana)
-		{
-			//player has reached max magic level
-			manaSpent = 0;
-			magLevelPercent = 0;
-			sendStats();
-			return;
-		}
+        if(amount != 0 && !hasFlag(PlayerFlag_NotGainMana))
+        {
+                uint64_t currReqMana = vocation->getReqMana(magLevel);
+                uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
+                if(currReqMana > nextReqMana)
+                {
+                        //player has reached max magic level
+                        return;
+                }
 
-		manaSpent += amount * g_config.getNumber(ConfigManager::RATE_MAGIC);
-		if(manaSpent >= nextReqMana)
-		{
-			manaSpent -= nextReqMana;
-			magLevel++;
-			char MaglvMsg[50];
-			sprintf(MaglvMsg, "You advanced to magic level %d.", magLevel);
-			sendTextMessage(MSG_EVENT_ADVANCE, MaglvMsg);
+                amount = amount * g_config.getNumber(ConfigManager::RATE_MAGIC);
+                while(manaSpent + amount >= nextReqMana)
+                {
+                        amount -= nextReqMana - manaSpent;
 
-			if(manaSpent > vocation->getReqMana(magLevel + 1))
-			{
-				//prevent player from getting a magic level everytime s/he casts a spell
-				manaSpent = 0;
-			}
-			currReqMana = nextReqMana;
-		}
+                        magLevel++;
+                        manaSpent = 0;
+                        char MaglvMsg[50];
+                        sprintf(MaglvMsg, "You advanced to magic level %d.", magLevel);
+                        sendTextMessage(MSG_EVENT_ADVANCE, MaglvMsg);
 
-		nextReqMana = vocation->getReqMana(magLevel + 1);
-		if(nextReqMana > currReqMana)
-			magLevelPercent = Player::getPercentLevel(manaSpent, nextReqMana);
-		else
-			magLevelPercent = 0;
+                        currReqMana = nextReqMana;
+                        nextReqMana = vocation->getReqMana(magLevel + 1);
+                        if(currReqMana > nextReqMana)
+                        {
+                                amount = 0;
+                                return;
+                        }
+                }
+                manaSpent += amount;
 
-		sendStats();
-	}
+                if(nextReqMana > currReqMana)
+                        magLevelPercent = Player::getPercentLevel(manaSpent, nextReqMana);
+                else
+                        magLevelPercent = 0;
+
+                sendStats();
+        }
 }
 
 void Player::addExperience(uint64_t exp)
@@ -2833,7 +2841,7 @@ void Player::__removeThing(Thing* thing, uint32_t count)
 		}
 		else
 		{
-			int newCount = std::max(0, (int32_t)(item->getItemCount() - count));
+			uint8_t newCount = (uint8_t)std::max((int32_t)0, (int32_t)(item->getItemCount() - count));
 			item->setItemCount(newCount);
 
 			const ItemType& it = Item::items[item->getID()];
@@ -2990,11 +2998,29 @@ void Player::postRemoveNotification(Thing* thing, int32_t index, bool isComplete
 	{
 		if(const Container* container = item->getContainer())
 		{
-			if(!container->isRemoved() &&
-					(container->getTopParent() == this || (dynamic_cast<const Container*>(container->getTopParent()))) &&
-					Position::areInRange<1,1,0>(getPosition(), container->getPosition()))
-			{
+			if(container->isRemoved() || !Position::areInRange<1,1,0>(getPosition(), container->getPosition()))
+				autoCloseContainers(container);
+			else if(container->getTopParent() == this)
 				onSendContainer(container);
+			else if(const Container* topContainer = dynamic_cast<const Container*>(container->getTopParent()))
+			{
+				if(const Depot* depot = dynamic_cast<const Depot*>(topContainer))
+				{
+					bool isOwner = false;
+					for(DepotMap::iterator it = depots.begin(); it != depots.end(); ++it)
+					{
+						if(it->second == depot)
+						{
+							isOwner = true;
+							onSendContainer(container);
+						}
+					}
+
+					if(!isOwner)
+						autoCloseContainers(container);
+				}
+				else
+					onSendContainer(container);
 			}
 			else
 				autoCloseContainers(container);
@@ -3119,7 +3145,7 @@ bool Player::setAttackedCreature(Creature* creature)
 
 	if(creature)
 	{
-		Dispatcher::getDispatcher().addTask(createTask(
+		g_dispatcher.addTask(createTask(
 			boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
 	}
 	return true;
@@ -3240,7 +3266,7 @@ void Player::onWalkComplete()
 {
 	if(walkTask)
 	{
-		walkTaskEvent = Scheduler::getScheduler().addEvent(walkTask);
+		walkTaskEvent = g_scheduler.addEvent(walkTask);
 		walkTask = NULL;
 	}
 }
@@ -3747,7 +3773,7 @@ void Player::addUnjustifiedDead(const Player* attacked)
 
 		uint32_t playerId = getID();
 		g_game.addMagicEffect(getPosition(), NM_ME_MAGIC_POISON);
-		Scheduler::getScheduler().addEvent(createSchedulerTask(500,
+		g_scheduler.addEvent(createSchedulerTask(500,
 			boost::bind(&Game::kickPlayer, &g_game, playerId, false)));
 	}
 }

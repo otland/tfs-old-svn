@@ -1962,7 +1962,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 
 			if(hasBitSet(RESPOND_LOWLEVEL, params))
 			{
-				if((int32_t)player->getLevel() > npcState->level)
+				if((int32_t)player->getLevel() >= npcState->level)
 					continue;
 				++matchCount;
 			}
@@ -2185,7 +2185,7 @@ uint32_t Npc::getMatchCount(NpcResponse* response, std::vector<std::string> word
 				std::vector<std::string>::iterator wordIter = wordList.end();
 				for(wordIter = lastWordMatchIter; wordIter != wordList.end(); ++wordIter)
 				{
-					size_t pos = (*wordIter).find_first_of("!\"#�%&/()=?`{[]}\\^*><,.-_'~");
+					size_t pos = (*wordIter).find_first_of("!\"#�%&/()=?`{[]}\\^*><,.-_~");
 					if(pos == std::string::npos)
 						pos = 0;
 

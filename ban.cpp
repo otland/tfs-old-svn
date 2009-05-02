@@ -222,12 +222,6 @@ void Ban::addPlayerNamelock(uint32_t playerId)
 void Ban::addAccountNotation(uint32_t account, uint64_t time, std::string comment, uint32_t bannedBy)
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(banLock);
-	for(AccountNotationList::iterator it = accountNotationList.begin(); it != accountNotationList.end(); ++it)
-	{
-		if(it->id == account)
-			return;
-	}
-
 	AccountNotationStruct accountNotationStruct(account, time, comment, bannedBy);
 	accountNotationList.push_back(accountNotationStruct);
 }

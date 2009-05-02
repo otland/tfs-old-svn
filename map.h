@@ -134,7 +134,7 @@ class QTreeLeafNode : public QTreeNode
 		virtual ~QTreeLeafNode();
 
 		Floor* createFloor(uint32_t z);
-		Floor* getFloor(uint32_t z){return m_array[z];}
+		Floor* getFloor(uint16_t z){return m_array[z];}
 
 		QTreeLeafNode* stepSouth(){return m_leafS;}
 		QTreeLeafNode* stepEast(){return m_leafE;}
@@ -186,7 +186,7 @@ class Map
 		  * Get a single tile.
 		  * \returns A pointer to that tile.
 		  */
-		Tile* getTile(uint16_t x, uint16_t y, uint8_t z);
+		Tile* getTile(uint16_t x, uint16_t y, uint16_t z);
 		Tile* getTile(const Position& pos);
 
 		uint32_t clean();
@@ -197,7 +197,7 @@ class Map
 		  * Set a single tile.
 		  * \param a tile to set for the position
 		  */
-		void setTile(uint16_t _x, uint16_t _y, uint8_t _z, Tile* newTile);
+		void setTile(uint16_t _x, uint16_t _y, uint16_t _z, Tile* newTile);
 		void setTile(const Position& pos, Tile* newTile)
 		{
 			setTile(pos.x, pos.y, pos.z, newTile);
@@ -285,7 +285,7 @@ class Map
 
 		struct RefreshBlock_t
 		{
-			ItemVector list;
+			TileItemVector list;
 			uint64_t lastRefresh;
 		};
 

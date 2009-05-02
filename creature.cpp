@@ -327,7 +327,7 @@ void Creature::addEventWalk()
 		int64_t ticks = getEventStepTicks();
 		if(ticks > 0)
 		{
-			eventWalk = Scheduler::getScheduler().addEvent(createSchedulerTask(
+			eventWalk = g_scheduler.addEvent(createSchedulerTask(
 				ticks, boost::bind(&Game::checkCreatureWalk, &g_game, getID())));
 		}
 	}
@@ -337,7 +337,7 @@ void Creature::stopEventWalk()
 {
 	if(eventWalk != 0)
 	{
-		Scheduler::getScheduler().stopEvent(eventWalk);
+		g_scheduler.stopEvent(eventWalk);
 		eventWalk = 0;
 
 		if(!listWalkDir.empty())
@@ -479,7 +479,7 @@ void Creature::onRemoveTileItem(const Tile* tile, const Position& pos, uint32_t 
 {
 	if(isMapLoaded)
 	{
-		if(iType.blockSolid || iType.blockPathFind)
+		if(iType.blockSolid || iType.blockPathFind || iType.isGroundTile())
 		{
 			if(pos.z == getPosition().z)
 				updateTileCache(tile, pos);
@@ -715,7 +715,7 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 		if(hasFollowPath)
 		{
 			isUpdatingPath = true;
-			Dispatcher::getDispatcher().addTask(createTask(
+			g_dispatcher.addTask(createTask(
 				boost::bind(&Game::updateCreatureWalk, &g_game, getID())));
 		}
 
@@ -732,7 +732,7 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 			if(hasExtraSwing())
 			{
 				//our target is moving lets see if we can get in hit
-				Dispatcher::getDispatcher().addTask(createTask(
+				g_dispatcher.addTask(createTask(
 					boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
 			}
 			onAttackedCreatureChangeZone(attackedCreature->getZone());
@@ -1072,7 +1072,7 @@ double Creature::getDamageRatio(Creature* attacker) const
 	return ((double)attackerDamage / totalDamage);
 }
 
-uint64_t Creature::getGainedExperience(Creature* attacker) const
+uint64_t Creature::getGainedExperience(Creature* attacker)
 {
 	uint64_t lostExperience = getLostExperience();
 	return attacker->getPlayer() ? ((uint64_t)std::floor(getDamageRatio(attacker) * lostExperience * g_game.getExperienceStage(attacker->getPlayer()->getLevel()))) : ((uint64_t)std::floor(getDamageRatio(attacker) * lostExperience * g_config.getNumber(ConfigManager::RATE_EXPERIENCE)));
@@ -1405,6 +1405,9 @@ void Creature::executeConditions(uint32_t interval)
 
 bool Creature::hasCondition(ConditionType_t type) const
 {
+	if(type == CONDITION_EXHAUST_COMBAT && g_game.getStateTime() == 0)
+		return true;
+
 	if(isSuppress(type))
 		return false;
 

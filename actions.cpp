@@ -319,6 +319,7 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos,
 			Depot* myDepot = player->getDepot(depot->getDepotId(), true);
 			myDepot->setParent(depot->getParent());
 			openContainer = myDepot;
+			player->setDepotChange(true);
 		}
 		else
 			openContainer = container;

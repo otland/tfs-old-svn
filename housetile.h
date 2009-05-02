@@ -25,7 +25,7 @@
 
 class House;
 
-class HouseTile : public Tile
+class HouseTile : public DynamicTile
 {
 	public:
 		HouseTile(int32_t x, int32_t y, int32_t z, House* _house);

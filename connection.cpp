@@ -22,27 +22,24 @@
 #include "connection.h"
 #include "protocol.h"
 #include "outputmessage.h"
-#include "protocolgame.h"
-#include "protocollogin.h"
-#include "protocolold.h"
-#include "admin.h"
-#include "status.h"
 #include "tasks.h"
 #include "scheduler.h"
 #include "tools.h"
+#include "server.h"
 
 #include <boost/bind.hpp>
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t Connection::connectionCount = 0;
 #endif
-Connection* ConnectionManager::createConnection(boost::asio::io_service& io_service)
+Connection* ConnectionManager::createConnection(boost::asio::ip::tcp::socket* socket,
+	boost::asio::io_service& io_service, ServicePort_ptr servicer)
 {
 	#ifdef __DEBUG_NET_DETAIL__
 	std::cout << "Create new Connection" << std::endl;
 	#endif
 	OTSYS_THREAD_LOCK_CLASS(m_connectionManagerLock, "");
-	Connection* connection = new Connection(io_service);
+	Connection* connection = new Connection(socket, io_service, servicer);
 	m_connections.push_back(connection);
 	return connection;
 }
@@ -72,8 +69,8 @@ void ConnectionManager::closeAll()
 	while(it != m_connections.end())
 	{
 		boost::system::error_code error;
-		(*it)->m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
-		(*it)->m_socket.close(error);
+		(*it)->m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+		(*it)->m_socket->close(error);
 		++it;
 	}
 	m_connections.clear();
@@ -93,7 +90,7 @@ void Connection::closeConnection()
 
 	m_closeState = CLOSE_STATE_REQUESTED;
 
-	Dispatcher::getDispatcher().addTask(
+	g_dispatcher.addTask(
 		createTask(boost::bind(&Connection::closeConnectionTask, this)));
 }
 
@@ -116,7 +113,7 @@ void Connection::closeConnectionTask()
 
 	if(m_protocol)
 	{
-		Dispatcher::getDispatcher().addTask(
+		g_dispatcher.addTask(
 			createTask(boost::bind(&Protocol::releaseProtocol, m_protocol)));
 		m_protocol->setConnection(NULL);
 		m_protocol = NULL;
@@ -142,7 +139,7 @@ bool Connection::closingConnection()
 			#endif
 
 			boost::system::error_code error;
-			m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+			m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
 			if(error)
 			{
 				if(error == boost::asio::error::not_connected)
@@ -152,7 +149,7 @@ bool Connection::closingConnection()
 				else
 					PRINT_ASIO_ERROR("Shutdown");
 			}
-			m_socket.close(error);
+			m_socket->close(error);
 			m_socketClosed = true;
 			if(error)
 				PRINT_ASIO_ERROR("Close");
@@ -166,7 +163,7 @@ bool Connection::closingConnection()
 
 			OTSYS_THREAD_UNLOCK(m_connectionLock, "");
 
-			Dispatcher::getDispatcher().addTask(
+			g_dispatcher.addTask(
 				createTask(boost::bind(&Connection::releaseConnection, this)));
 
 			return true;
@@ -180,11 +177,30 @@ void Connection::releaseConnection()
 	if(m_refCount > 0)
 	{
 		//Reschedule it and try again.
-		Scheduler::getScheduler().addEvent( createSchedulerTask(SCHEDULER_MINTICKS,
+		g_scheduler.addEvent( createSchedulerTask(SCHEDULER_MINTICKS,
 			boost::bind(&Connection::releaseConnection, this)));
 	}
 	else
 		deleteConnectionTask();
+}
+
+void Connection::onStopOperation()
+{
+	//io_service thread
+	OTSYS_THREAD_LOCK(m_connectionLock, "");
+	m_timer.cancel();
+	ConnectionManager::getInstance()->releaseConnection(this);
+
+	if(m_socket->is_open())
+	{
+		m_socket->cancel();
+		m_socket->close();
+	}
+
+	delete m_socket;
+
+	OTSYS_THREAD_UNLOCK(m_connectionLock, "");
+	delete this;
 }
 
 void Connection::deleteConnectionTask()
@@ -198,14 +214,25 @@ void Connection::deleteConnectionTask()
 		m_outputQueue.pop_back();
 	}
 
-	delete this;
+	m_io_service.dispatch(boost::bind(&Connection::onStopOperation, this));
+}
+
+void Connection::acceptConnection(Protocol* protocol)
+{
+	m_protocol = protocol;
+	m_protocol->onConnect();
+	acceptConnection();
 }
 
 void Connection::acceptConnection()
 {
-	// Read size of te first packet
+	// Read size of the first packet
 	m_pendingRead++;
-	boost::asio::async_read(m_socket,
+
+	m_timer.expires_from_now(boost::posix_time::seconds(10));
+	m_timer.async_wait(boost::bind(&Connection::handleTimeout, this, boost::asio::placeholders::error));
+
+	boost::asio::async_read(getHandle(),
 		boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),
 		boost::bind(&Connection::parseHeader, this, boost::asio::placeholders::error));
 }
@@ -213,6 +240,7 @@ void Connection::acceptConnection()
 void Connection::parseHeader(const boost::system::error_code& error)
 {
 	OTSYS_THREAD_LOCK(m_connectionLock, "");
+	m_timer.cancel();
 	m_pendingRead--;
 	if(m_closeState == CLOSE_STATE_CLOSING)
 	{
@@ -227,7 +255,7 @@ void Connection::parseHeader(const boost::system::error_code& error)
 		// Read packet content
 		m_pendingRead++;
 		m_msg.setMessageLength(size + NetworkMessage::header_length);
-		boost::asio::async_read(m_socket, boost::asio::buffer(m_msg.getBodyBuffer(), size),
+		boost::asio::async_read(getHandle(), boost::asio::buffer(m_msg.getBodyBuffer(), size),
 			boost::bind(&Connection::parsePacket, this, boost::asio::placeholders::error));
 	}
 	else
@@ -256,73 +284,35 @@ void Connection::parsePacket(const boost::system::error_code& error)
 		if(len > 0)
 			checksum = adlerChecksum((uint8_t*)(m_msg.getBuffer() + m_msg.getReadPos() + 4), len);
 
-		if(!m_protocol)
+		if(recvChecksum == checksum)
+			m_msg.GetU32();
+
+		if(!m_receivedFirst)
 		{
-			if(recvChecksum == checksum)
+			m_receivedFirst = true;
+			if(!m_protocol)
 			{
-				// remove the checksum
-				m_msg.GetU32();
-
-				// Protocol depends on the first byte of the packet
-				uint8_t protocolId = m_msg.GetByte();
-				switch(protocolId)
+				m_protocol = m_service_port->make_protocol(recvChecksum == checksum, m_msg);
+				if(!m_protocol)
 				{
-					case 0x01: // Login server protocol
-						m_protocol = new ProtocolLogin(this);
-						break;
-
-					case 0x0A: // World server protocol
-						m_protocol = new ProtocolGame(this);
-						break;
-
-					default:
-						// No valid protocol
-						closeConnection();
-						OTSYS_THREAD_UNLOCK(m_connectionLock, "");
-						return;
+					closeConnection();
+					OTSYS_THREAD_UNLOCK(m_connectionLock, "");
+					return;
 				}
-				m_protocol->onRecvFirstMessage(m_msg);
+
+				m_protocol->setConnection(this);
 			}
 			else
-			{
-				//Protocols without checksum
-				uint8_t protocolId = m_msg.GetByte();
-				switch(protocolId)
-				{
-					case 0x01: // Old Login server protocol
-					case 0x0A: // Old World server protocol
-						//This occurs if you try login with an old client version ( < 8.3)
-						m_protocol = new ProtocolOld(this);
-						break;
+				m_msg.GetByte();
 
-					case 0xFE: // Admin protocol
-						m_protocol = new ProtocolAdmin(this);
-						break;
-
-					case 0xFF: // Status protocol
-						m_protocol = new ProtocolStatus(this);
-						break;
-
-					default:
-						closeConnection();
-						OTSYS_THREAD_UNLOCK(m_connectionLock, "");
-						return;
-				}
-				m_protocol->onRecvFirstMessage(m_msg);
-			}
+			m_protocol->onRecvFirstMessage(m_msg);
 		}
 		else
-		{
-			if(recvChecksum == checksum)
-				m_msg.GetU32();
-
-			// Send the packet to the current protocol
 			m_protocol->onRecvMessage(m_msg);
-		}
 
 		// Wait to the next packet
 		m_pendingRead++;
-		boost::asio::async_read(m_socket,
+		boost::asio::async_read(getHandle(),
 			boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),
 			boost::bind(&Connection::parseHeader, this, boost::asio::placeholders::error));
 	}
@@ -330,6 +320,20 @@ void Connection::parsePacket(const boost::system::error_code& error)
 		handleReadError(error);
 
 	OTSYS_THREAD_UNLOCK(m_connectionLock, "");
+}
+
+void Connection::handleTimeout(const boost::system::error_code& error)
+{
+	if(!error)
+	{
+		OTSYS_THREAD_LOCK(m_connectionLock, "");
+		if(m_pendingRead > 0)
+		{
+			//cancel all asynchronous operations associated with the socket
+			getHandle().cancel();
+		}
+		OTSYS_THREAD_UNLOCK(m_connectionLock, "");
+	}
 }
 
 void Connection::handleReadError(const boost::system::error_code& error)
@@ -398,7 +402,7 @@ bool Connection::send(OutputMessage* msg)
 void Connection::internalSend(OutputMessage* msg)
 {
 	m_pendingWrite++;
-	boost::asio::async_write(m_socket,
+	boost::asio::async_write(getHandle(),
 		boost::asio::buffer(msg->getOutputBuffer(), msg->getMessageLength()),
 		boost::bind(&Connection::onWriteOperation, this, msg, boost::asio::placeholders::error));
 }
@@ -407,7 +411,7 @@ uint32_t Connection::getIP() const
 {
 	//Ip is expressed in network byte order
 	boost::system::error_code error;
-	const boost::asio::ip::tcp::endpoint endpoint = m_socket.remote_endpoint(error);
+	const boost::asio::ip::tcp::endpoint endpoint = m_socket->remote_endpoint(error);
 	if(!error)
 		return htonl(endpoint.address().to_v4().to_ulong());
 	else
@@ -489,7 +493,7 @@ void Connection::handleWriteError(const boost::system::error_code& error)
 	}
 	else
 	{
-		PRINT_ASIO_ERROR("Writting");
+		PRINT_ASIO_ERROR("Writing");
 		closeConnection();
 	}
 	m_writeError = true;

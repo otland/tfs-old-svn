@@ -102,10 +102,12 @@ s_defcommands Commands::defined_commands[] =
 	{"/unban", &Commands::unban},
 	{"/ghost", &Commands::ghost},
 	{"/clean", &Commands::clean},
+	{"/mccheck", &Commands::multiClientCheck},
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 	{"/serverdiag", &Commands::serverDiag},
 #endif
-	//player commands - TODO: make them talkactions
+
+	// player commands - TODO: make them talkactions
 	{"!online", &Commands::whoIsOnline},
 	{"!buyhouse", &Commands::buyHouse},
  	{"!sellhouse", &Commands::sellHouse},
@@ -740,12 +742,12 @@ bool Commands::closeServer(Creature* creature, const std::string& cmd, const std
 {
 	if(param == "shutdown")
 	{
-		Dispatcher::getDispatcher().addTask(
+		g_dispatcher.addTask(
 			createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
 	}
 	else
 	{
-		Dispatcher::getDispatcher().addTask(
+		g_dispatcher.addTask(
 			createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
 
 		if(creature->getPlayer())
@@ -756,7 +758,7 @@ bool Commands::closeServer(Creature* creature, const std::string& cmd, const std
 
 bool Commands::openServer(Creature* creature, const std::string& cmd, const std::string& param)
 {
-	Dispatcher::getDispatcher().addTask(
+	g_dispatcher.addTask(
 		createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_NORMAL)));
 
 	if(creature->getPlayer())
@@ -1199,10 +1201,10 @@ bool Commands::forceRaid(Creature* creature, const std::string& cmd, const std::
 
 	uint32_t ticks = event->getDelay();
 	if(ticks > 0)
-		Scheduler::getScheduler().addEvent(createSchedulerTask(ticks,
+		g_scheduler.addEvent(createSchedulerTask(ticks,
 			boost::bind(&Raid::executeRaidEvent, raid, event)));
 	else
-		Dispatcher::getDispatcher().addTask(createTask(
+		g_dispatcher.addTask(createTask(
 			boost::bind(&Raid::executeRaidEvent, raid, event)));
 
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Raid started.");
@@ -1490,7 +1492,7 @@ bool Commands::ghost(Creature* creature, const std::string& cmd, const std::stri
 				if(player->isInGhostMode())
 					tmpPlayer->sendCreatureDisappear(player, index, true);
 				else
-					tmpPlayer->sendCreatureAppear(player, true);
+					tmpPlayer->sendCreatureAppear(player, creature->getPosition(), creature->getParent()->__getIndexOfThing(creature), true);
 
 				tmpPlayer->sendUpdateTile(player->getTile(), player->getPosition());
 			}
@@ -1522,5 +1524,55 @@ bool Commands::ghost(Creature* creature, const std::string& cmd, const std::stri
 		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), true);
 		player->sendTextMessage(MSG_INFO_DESCR, "You are visible again.");
 	}
+	return true;
+}
+
+bool Commands::multiClientCheck(Creature* creature, const std::string& cmd, const std::string& param)
+{
+	Player* player = creature->getPlayer();
+	if(!player)
+		return false;
+
+	std::list<uint32_t> ipList;
+
+	std::stringstream text;
+	text << "Multiclient Check List:\n";
+
+	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	{
+		if(it->second->isRemoved() || it->second->getIP() == 0 || std::find(ipList.begin(), ipList.end(), it->second->getIP()) != ipList.end())
+			continue;
+
+		std::list< std::pair<std::string, uint32_t> > playerList;
+		for(AutoList<Player>::listiterator it2 = Player::listPlayer.list.begin(); it2 != Player::listPlayer.list.end(); ++it2)
+		{
+			if(it->second == it2->second || it2->second->isRemoved())
+				continue;
+
+			if(it->second->getIP() == it2->second->getIP())
+				playerList.push_back(make_pair(it2->second->getName(), it2->second->getLevel()));
+		}
+
+		if(!playerList.empty())
+		{
+			uint8_t ip[4];
+			*(uint32_t*)&ip = it->second->getIP();
+			text << ipText(ip) << ":\n";
+			text << it->second->getName() << " [" << it->second->getLevel() << "], ";
+			uint32_t tmp = 0;
+			for(std::list< std::pair<std::string, uint32_t> >::const_iterator p = playerList.begin(); p != playerList.end(); p++)
+			{
+				tmp++;
+				if(tmp != playerList.size())
+					text << p->first << " [" << p->second << "], ";
+				else
+					text << p->first << " [" << p->second << "].\n";
+			}
+
+			ipList.push_back(it->second->getIP());
+		}
+	}
+
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
 	return true;
 }

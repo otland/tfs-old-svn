@@ -45,6 +45,12 @@ class Connection;
 class ProtocolGame : public Protocol
 {
 	public:
+		// static protocol information
+		enum {server_sends_first = true};
+		enum {protocol_identifier = 0}; // Not required as we send first
+		enum {use_checksum = true};
+		static const char* protocol_name() {return "gameworld protocol";}
+
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolGameCount;
 #endif
@@ -77,6 +83,7 @@ class ProtocolGame : public Protocol
 		// we have all the parse methods
 		virtual void parsePacket(NetworkMessage& msg);
 		virtual void onRecvFirstMessage(NetworkMessage& msg);
+		virtual void onConnect();
 		bool parseFirstPacket(NetworkMessage& msg);
 
 		//Parse methods
@@ -171,7 +178,7 @@ class ProtocolGame : public Protocol
 		void sendCreatureHealth(const Creature* creature);
 		void sendSkills();
 		void sendPing();
-		void sendCreatureTurn(const Creature* creature, uint8_t stackpos);
+		void sendCreatureTurn(const Creature* creature, uint32_t stackpos);
 		void sendCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text);
 
 		void sendCancel(const std::string& message);
@@ -212,14 +219,14 @@ class ProtocolGame : public Protocol
 		void sendCreatureSquare(const Creature* creature, SquareColor_t color);
 
 		//tiles
-		void sendAddTileItem(const Tile* tile, const Position& pos, const Item* item);
+		void sendAddTileItem(const Tile* tile, const Position& pos, uint32_t stackpos, const Item* item);
 		void sendUpdateTileItem(const Tile* tile, const Position& pos, uint32_t stackpos, const Item* item);
 		void sendRemoveTileItem(const Tile* tile, const Position& pos, uint32_t stackpos);
 		void sendUpdateTile(const Tile* tile, const Position& pos);
 
-		void sendAddCreature(const Creature* creature, bool isLogin);
+		void sendAddCreature(const Creature* creature, const Position& pos, uint32_t stackpos, bool isLogin);
 		void sendRemoveCreature(const Creature* creature, const Position& pos, uint32_t stackpos, bool isLogout);
-		void sendMoveCreature(const Creature* creature, const Tile* newTile, const Position& newPos,
+		void sendMoveCreature(const Creature* creature, const Tile* newTile, const Position& newPos, uint32_t newStackPos,
 			const Tile* oldTile, const Position& oldPos, uint32_t oldStackPos, bool teleport);
 
 		//containers
@@ -264,8 +271,8 @@ class ProtocolGame : public Protocol
 		void AddCreatureLight(NetworkMessage* msg, const Creature* creature);
 
 		//tiles
-		void AddTileItem(NetworkMessage* msg, const Position& pos, const Item* item);
-		void AddTileCreature(NetworkMessage* msg, const Position& pos, const Creature* creature);
+		void AddTileItem(NetworkMessage* msg, const Position& pos, uint32_t stackpos, const Item* item);
+		void AddTileCreature(NetworkMessage* msg, const Position& pos, uint32_t stackpos, const Creature* creature);
 		void UpdateTileItem(NetworkMessage* msg, const Position& pos, uint32_t stackpos, const Item* item);
 		void RemoveTileItem(NetworkMessage* msg, const Position& pos, uint32_t stackpos);
 

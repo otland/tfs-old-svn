@@ -26,70 +26,74 @@
 #include "exception.h"
 #endif
 
-Scheduler::SchedulerState Scheduler::m_threadState = Scheduler::STATE_TERMINATED;
-
 Scheduler::Scheduler()
 {
 	OTSYS_THREAD_LOCKVARINIT(m_eventLock);
 	OTSYS_THREAD_SIGNALVARINIT(m_eventSignal);
 	m_lastEventId = 0;
-	Scheduler::m_threadState = STATE_RUNNING;
-	OTSYS_CREATE_THREAD(Scheduler::schedulerThread, NULL);
+	m_threadState = STATE_TERMINATED;
+}
+
+void Scheduler::start()
+{
+	m_threadState = STATE_RUNNING;
+	OTSYS_CREATE_THREAD(Scheduler::schedulerThread, this);
 }
 
 OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 {
+	Scheduler* scheduler = (Scheduler*)p;
 	#if defined __EXCEPTION_TRACER__
 	ExceptionHandler schedulerExceptionHandler;
 	schedulerExceptionHandler.InstallHandler();
 	#endif
 	srand((unsigned int)OTSYS_TIME());
 
-	while(Scheduler::m_threadState != Scheduler::STATE_TERMINATED)
+	while(scheduler->m_threadState != Scheduler::STATE_TERMINATED)
 	{
 		SchedulerTask* task = NULL;
 		bool runTask = false;
 		int ret;
 
 		// check if there are events waiting...
-		OTSYS_THREAD_LOCK(getScheduler().m_eventLock, "eventThread()")
+		OTSYS_THREAD_LOCK(scheduler->m_eventLock, "eventThread()")
 
-		if(getScheduler().m_eventList.empty())
+		if(scheduler->m_eventList.empty())
 		{
 			// unlock mutex and wait for signal
-			ret = OTSYS_THREAD_WAITSIGNAL(getScheduler().m_eventSignal, getScheduler().m_eventLock);
+			ret = OTSYS_THREAD_WAITSIGNAL(scheduler->m_eventSignal, scheduler->m_eventLock);
 		}
 		else
 		{
 			// unlock mutex and wait for signal or timeout
-			ret = OTSYS_THREAD_WAITSIGNAL_TIMED(getScheduler().m_eventSignal, getScheduler().m_eventLock, getScheduler().m_eventList.top()->getCycle());
+			ret = OTSYS_THREAD_WAITSIGNAL_TIMED(scheduler->m_eventSignal, scheduler->m_eventLock, scheduler->m_eventList.top()->getCycle());
 		}
 
 		// the mutex is locked again now...
-		if(ret == OTSYS_THREAD_TIMEOUT && (Scheduler::m_threadState != Scheduler::STATE_TERMINATED))
+		if(ret == OTSYS_THREAD_TIMEOUT && (scheduler->m_threadState != STATE_TERMINATED))
 		{
 			// ok we had a timeout, so there has to be an event we have to execute...
-			task = getScheduler().m_eventList.top();
-			getScheduler().m_eventList.pop();
+			task = scheduler->m_eventList.top();
+			scheduler->m_eventList.pop();
 
 			// check if the event was stopped
-			EventIdSet::iterator it = getScheduler().m_eventIds.find(task->getEventId());
-			if(it != getScheduler().m_eventIds.end())
+			EventIdSet::iterator it = scheduler->m_eventIds.find(task->getEventId());
+			if(it != scheduler->m_eventIds.end())
 			{
 				// was not stopped so we should run it
 				runTask = true;
-				getScheduler().m_eventIds.erase(it);
+				scheduler->m_eventIds.erase(it);
 			}
 		}
 
-		OTSYS_THREAD_UNLOCK(getScheduler().m_eventLock, "eventThread()");
+		OTSYS_THREAD_UNLOCK(scheduler->m_eventLock, "eventThread()");
 
 		// add task to dispatcher
 		if(task)
 		{
 			// if it was not stopped
 			if(runTask)
-				Dispatcher::getDispatcher().addTask(task);
+				g_dispatcher.addTask(task);
 			else
 			{
 				// was stopped, have to be deleted here
@@ -97,6 +101,7 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 			}
 		}
 	}
+
 	#if defined __EXCEPTION_TRACER__
 	schedulerExceptionHandler.RemoveHandler();
 	#endif
@@ -108,10 +113,11 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 uint32_t Scheduler::addEvent(SchedulerTask* task)
 {
 	bool do_signal = false;
+
+	OTSYS_THREAD_LOCK(m_eventLock, "");
+
 	if(Scheduler::m_threadState == Scheduler::STATE_RUNNING)
 	{
-		OTSYS_THREAD_LOCK(m_eventLock, "");
-
 		// check if the event has a valid id
 		if(task->getEventId() == 0)
 		{
@@ -131,13 +137,13 @@ uint32_t Scheduler::addEvent(SchedulerTask* task)
 		// if the list was empty or this event is the top in the list
 		// we have to signal it
 		do_signal = (task == m_eventList.top());
-
-		OTSYS_THREAD_UNLOCK(m_eventLock, "");
 	}
 #ifdef __DEBUG_SCHEDULER__
 	else
 		std::cout << "Error: [Scheduler::addTask] Scheduler thread is terminated." << std::endl;
 #endif
+
+	OTSYS_THREAD_UNLOCK(m_eventLock, "");
 
 	if(do_signal)
 		OTSYS_THREAD_SIGNAL_SEND(m_eventSignal);

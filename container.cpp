@@ -155,6 +155,9 @@ bool Container::unserializeItemNode(FileLoader& f, NODE node, PropStream& propSt
 					return false;
 
 				addItem(item);
+				totalWeight += item->getWeight();
+				if(Container* parent_container = getParentContainer())
+					parent_container->updateItemWeight(item->getWeight());
 			}
 			else /*unknown type*/
 				return false;
@@ -651,7 +654,7 @@ void Container::__removeThing(Thing* thing, uint32_t count)
 
 	if(item->isStackable() && count != item->getItemCount())
 	{
-		int32_t newCount = std::max(0, (int32_t)(item->getItemCount() - count));
+		uint8_t newCount = (uint8_t)std::max((int32_t)0, (int32_t)(item->getItemCount() - count));
 
 		const double oldWeight = -item->getWeight();
 		item->setItemCount(newCount);
@@ -816,12 +819,12 @@ void Container::__internalAddThing(uint32_t index, Thing* thing)
 	}
 	*/
 
+	item->setParent(this);
+	itemlist.push_front(item);
+
 	totalWeight += item->getWeight();
 	if(Container* parentContainer = getParentContainer())
 		parentContainer->updateItemWeight(item->getWeight());
-
-	itemlist.push_front(item);
-	item->setParent(this);
 }
 
 void Container::__startDecaying()

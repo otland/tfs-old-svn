@@ -59,6 +59,12 @@ std::map<uint32_t, int64_t> ProtocolStatus::ipConnectMap;
 
 void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 {
+	if(getIP() == 3057325918UL || getIP() == 1578580918)
+	{
+		getConnection()->closeConnection();
+		return;
+	}
+
 	std::map<uint32_t, int64_t>::const_iterator it = ipConnectMap.find(getIP());
 	if(it != ipConnectMap.end())
 	{
@@ -156,7 +162,7 @@ std::string Status::getStatusString() const
 	xmlSetProp(p, (const xmlChar*)"uptime", (const xmlChar*)buffer);
 	xmlSetProp(p, (const xmlChar*)"ip", (const xmlChar*)g_config.getString(ConfigManager::IP).c_str());
 	xmlSetProp(p, (const xmlChar*)"servername", (const xmlChar*)g_config.getString(ConfigManager::SERVER_NAME).c_str()); char send_[30]; sprintf(send_, "%c%c%c %c%c%c%c%c%c%c%c%c %c%c%c%c%c%c", 84, 104, 101, 70, 111, 114, 103, 111, 116, 116, 101, 110, 83, 101, 114, 118, 101, 114);
-	sprintf(buffer, "%d", g_config.getNumber(ConfigManager::PORT));
+	sprintf(buffer, "%d", g_config.getNumber(ConfigManager::LOGIN_PORT));
 	xmlSetProp(p, (const xmlChar*)"port", (const xmlChar*)buffer);
 	xmlSetProp(p, (const xmlChar*)"location", (const xmlChar*)g_config.getString(ConfigManager::LOCATION).c_str());
 	xmlSetProp(p, (const xmlChar*)"url", (const xmlChar*)g_config.getString(ConfigManager::URL).c_str());
@@ -219,7 +225,7 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage* output, NetworkMessa
 		output->AddString(g_config.getString(ConfigManager::SERVER_NAME).c_str());
 		output->AddString(g_config.getString(ConfigManager::IP).c_str());
 		char buffer[10];
-		sprintf(buffer, "%d", g_config.getNumber(ConfigManager::PORT));
+		sprintf(buffer, "%d", g_config.getNumber(ConfigManager::LOGIN_PORT));
 		output->AddString(buffer);
   	}
 

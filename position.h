@@ -40,7 +40,7 @@ enum Direction
 class Position
 {
 	public:
-		Position() : x(31), y(31), z(7) {}
+		Position() : x(0), y(0), z(0) {}
 		~Position() {}
 
 		template<int32_t deltax, int32_t deltay, int32_t deltaz>
@@ -59,10 +59,10 @@ class Position
 			return true;
 		}
 
-		Position(int32_t _x, int32_t _y, int32_t _z)
+		Position(uint16_t _x, uint16_t _y, uint16_t _z)
 		: x(_x), y(_y), z(_z) {}
 
-		int32_t x, y, z;
+		uint16_t x, y, z;
 
 		bool operator<(const Position& p) const
 		{
@@ -118,16 +118,19 @@ class PositionEx : public Position
 		PositionEx(){}
 		~PositionEx(){}
 
-		PositionEx(int32_t _x, int32_t _y, int32_t _z, int32_t _stackpos)
+		PositionEx(uint16_t _x, uint16_t _y, uint16_t _z, int32_t _stackpos)
 		: Position(_x,_y,_z), stackpos(_stackpos) {}
 
-		PositionEx(int32_t _x, int32_t _y, int32_t _z)
+		PositionEx(uint16_t _x, uint16_t _y, uint16_t _z)
 		: Position(_x,_y,_z), stackpos(0) {}
 
-		PositionEx(Position p)
+		PositionEx(const Position& p)
 		: Position(p.x,p.y,p.z), stackpos(0) {}
 
-		PositionEx(Position p,int32_t _stackpos)
+		PositionEx(const PositionEx& p)
+		: Position(p.x,p.y,p.z), stackpos(p.stackpos) {}
+
+		PositionEx(const Position& p, int32_t _stackpos)
 		: Position(p.x,p.y,p.z), stackpos(_stackpos) {}
 
 		int32_t stackpos;

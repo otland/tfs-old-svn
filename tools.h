@@ -21,7 +21,7 @@
 #ifndef __OTSERV_TOOLS_H__
 #define __OTSERV_TOOLS_H__
 
-#include "otsystem.h"
+#include "definitions.h"
 #include "position.h"
 #include "const.h"
 #include "enums.h"

@@ -80,20 +80,15 @@ class lessSchedTask : public std::binary_function<SchedulerTask*&, SchedulerTask
 class Scheduler
 {
 	public:
+		Scheduler();
 		~Scheduler() {}
-
-		static Scheduler& getScheduler()
-		{
-			static Scheduler scheduler;
-			return scheduler;
-		}
 
 		uint32_t addEvent(SchedulerTask* task);
 		bool stopEvent(uint32_t eventId);
+
+		void start();
 		void stop();
 		void shutdown();
-
-		static OTSYS_THREAD_RETURN schedulerThread(void* p);
 
 		enum SchedulerState
 		{
@@ -103,7 +98,7 @@ class Scheduler
 		};
 
 	protected:
-		Scheduler();
+		static OTSYS_THREAD_RETURN schedulerThread(void* p);
 
 		OTSYS_THREAD_LOCKVAR m_eventLock;
 		OTSYS_THREAD_SIGNALVAR m_eventSignal;
@@ -112,7 +107,9 @@ class Scheduler
 		std::priority_queue<SchedulerTask*, std::vector<SchedulerTask*>, lessSchedTask > m_eventList;
 		typedef std::set<uint32_t> EventIdSet;
 		EventIdSet m_eventIds;
-		static SchedulerState m_threadState;
+		SchedulerState m_threadState;
 };
+
+extern Scheduler g_scheduler;
 
 #endif

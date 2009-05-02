@@ -284,7 +284,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool convinceCreature(Creature* creature) {return false;}
 
 		virtual void onDeath();
-		virtual uint64_t getGainedExperience(Creature* attacker) const;
+		virtual uint64_t getGainedExperience(Creature* attacker);
 		bool addDamagePoints(Creature* attacker, int32_t damagePoints);
 		void addHealPoints(Creature* caster, int32_t healthPoints);
 		bool hasBeenAttacked(uint32_t attackerId);
@@ -345,7 +345,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual WeaponType_t getWeaponType() {return WEAPON_NONE;}
 		virtual bool getCombatValues(int32_t& min, int32_t& max) {return false;}
 
-		uint32_t getSummonCount() const {return summons.size();}
+		size_t getSummonCount() const {return summons.size();}
 		void setDropLoot(bool _lootDrop) {lootDrop = _lootDrop;}
 		void setLossSkill(bool _skillLoss) {skillLoss = _skillLoss;}
 

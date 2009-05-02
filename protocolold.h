@@ -28,35 +28,57 @@ class OutputMessage;
 
 class ProtocolOld : public Protocol
 {
-public:
+	public:
+		// static protocol information
+		enum {server_sends_first = false};
+		enum {use_checksum = false};
+
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
-	static uint32_t protocolOldCount;
+		static uint32_t protocolOldCount;
 #endif
 
-	ProtocolOld(Connection* connection) : Protocol(connection)
-	{
+		ProtocolOld(Connection* connection) : Protocol(connection)
+		{
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
-		protocolOldCount++;
+			protocolOldCount++;
 #endif
-	}
+		}
 
-	virtual ~ProtocolOld()
-	{
+		virtual ~ProtocolOld()
+		{
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
-		protocolOldCount--;
+			protocolOldCount--;
 #endif
-	}
+		}
 
-	virtual void onRecvFirstMessage(NetworkMessage& msg);
+		virtual void onRecvFirstMessage(NetworkMessage& msg);
 
-protected:
-	void disconnectClient(uint8_t error, const char* message);
+	protected:
+		void disconnectClient(uint8_t error, const char* message);
 
-	bool parseFirstPacket(NetworkMessage& msg);
+		bool parseFirstPacket(NetworkMessage& msg);
 
 	#ifdef __DEBUG_NET_DETAIL__
-	virtual void deleteProtocolTask();
+		virtual void deleteProtocolTask();
 	#endif
+};
+
+class ProtocolOldLogin : public ProtocolOld
+{
+	public:
+		enum {protocol_identifier = 0x01};
+		static const char* protocol_name() {return "old login protocol";}
+
+		ProtocolOldLogin(Connection* connection) : ProtocolOld(connection) {}
+};
+
+class ProtocolOldGame : public ProtocolOld
+{
+	public:
+		enum {protocol_identifier = 0x0A};
+		static const char* protocol_name() {return "old gameworld protocol";}
+
+		ProtocolOldGame(Connection* connection) : ProtocolOld(connection) {}
 };
 
 #endif

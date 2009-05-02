@@ -179,8 +179,14 @@ class AdminProtocolConfig
 class ProtocolAdmin : public Protocol
 {
 	public:
+		// static protocol information
+		enum {server_sends_first = false};
+		enum {protocol_identifier = 0xFE}; // Not required as we send first
+		enum {use_checksum = false};
+		static const char* protocol_name() {return "admin protocol";}
+
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
-	static uint32_t protocolAdminCount;
+		static uint32_t protocolAdminCount;
 #endif
 		ProtocolAdmin(Connection* connection);
 		virtual ~ProtocolAdmin();
@@ -215,8 +221,8 @@ class ProtocolAdmin : public Protocol
 	private:
 		int32_t m_loginTries;
 		ConnectionState_t m_state;
-		uint32_t m_lastCommand;
-		uint32_t m_startTime;
+		time_t m_lastCommand;
+		time_t m_startTime;
 };
 
 #endif

@@ -820,18 +820,21 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	if(!saveItems(player, itemList, query_insert))
 		return false;
 
-	//save depot items
-	query << "DELETE FROM `player_depotitems` WHERE `player_id` = " << player->getGUID();
-	if(!db->executeQuery(query))
-		return false;
+	if(player->depotChange)
+	{
+		//save depot items
+		query << "DELETE FROM `player_depotitems` WHERE `player_id` = " << player->getGUID();
+		if(!db->executeQuery(query))
+			return false;
 
-	query_insert.setQuery("INSERT INTO `player_depotitems` (`player_id`, `pid`, `sid`, `itemtype`, `count`, `attributes`) VALUES ");
-	itemList.clear();
-	for(DepotMap::iterator it = player->depots.begin(); it !=player->depots.end() ;++it)
-		itemList.push_back(itemBlock(it->first, it->second));
+		query_insert.setQuery("INSERT INTO `player_depotitems` (`player_id`, `pid`, `sid`, `itemtype`, `count`, `attributes`) VALUES ");
+		itemList.clear();
+		for(DepotMap::iterator it = player->depots.begin(); it !=player->depots.end() ;++it)
+			itemList.push_back(itemBlock(it->first, it->second));
 
-	if(!saveItems(player, itemList, query_insert))
-		return false;
+		if(!saveItems(player, itemList, query_insert))
+			return false;
+	}
 
 	query.reset();
 	query << "DELETE FROM `player_storage` WHERE `player_id` = " << player->getGUID();

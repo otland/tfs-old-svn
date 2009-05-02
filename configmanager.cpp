@@ -72,8 +72,14 @@ bool ConfigManager::loadFile(const std::string& _filename)
 		m_confInteger[SERVERSAVE_H] = getGlobalNumber(L, "serverSaveHour", 3);
 		m_confString[SAVE_GLOBAL_STORAGE] = getGlobalString(L, "saveGlobalStorage", "no");
 		m_confString[INGAME_GUILD_SYSTEM] = getGlobalString(L, "ingameGuildSystem", "yes");
+		m_confInteger[ADMIN_PORT] = getGlobalNumber(L, "adminProtocolPort", 7171);
+		m_confInteger[GAME_PORT] = getGlobalNumber(L, "gameProtocolPort", 7172);
+		m_confInteger[LOGIN_PORT] = getGlobalNumber(L, "loginProtocolPort", 7171);
+		m_confInteger[STATUS_PORT] = getGlobalNumber(L, "statusProtocolPort", 7171);
 	}
 
+	m_confString[FREE_MEMORY_AT_SHUTDOWN] = getGlobalString(L, "freeMemoryAtShutdown", "yes");
+	m_confString[MAP_STORAGE_TYPE] = getGlobalString(L, "mapStorageType", "normal");
 	m_confString[LOGIN_MSG] = getGlobalString(L, "loginMessage", "Welcome to the Forgotten Server!");
 	m_confString[SERVER_NAME] = getGlobalString(L, "serverName");
 	m_confString[OWNER_NAME] = getGlobalString(L, "ownerName");
@@ -139,7 +145,6 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confInteger[WHITE_SKULL_TIME] = getGlobalNumber(L, "whiteSkullTime", 15 * 60 * 1000);
 	m_confInteger[AUTO_SAVE_EACH_MINUTES] = getGlobalNumber(L, "autoSaveEachMinutes", 0);
 	m_confString[REPLACE_KICK_ON_LOGIN] = getGlobalString(L, "replaceKickOnLogin", "yes");
-	m_confString[ENABLE_RULE_VIOLATION_REPORTS] = getGlobalString(L, "enableRuleViolationReports", "yes");
 	m_confString[OLD_CONDITION_ACCURACY] = getGlobalString(L, "oldConditionAccuracy", "no");
 	m_confInteger[ALTERNATIVE_EXHAUST] = getGlobalNumber(L, "alternativeExhaust", 1000);
 	m_isLoaded = true;

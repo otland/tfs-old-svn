@@ -137,13 +137,12 @@ void Combat::getCombatArea(const Position& centerPos, const Position& targetPos,
 {
 	if(area)
 		area->getList(centerPos, targetPos, list);
-	else if(targetPos.x >= 0 && targetPos.y >= 0 && targetPos.z >= 0 &&
-		targetPos.x <= 0xFFFF && targetPos.y <= 0xFFFF && targetPos.z < MAP_MAX_LAYERS)
+	else if(targetPos.z < MAP_MAX_LAYERS)
 	{
 		Tile* tile = g_game.getTile(targetPos.x, targetPos.y, targetPos.z);
 		if(!tile)
 		{
-			tile = new Tile(targetPos.x, targetPos.y, targetPos.z);
+			tile = new StaticTile(targetPos.x, targetPos.y, targetPos.z);
 			g_game.setTile(tile);
 		}
 		list.push_back(tile);
@@ -432,70 +431,60 @@ bool Combat::setParam(CombatParam_t param, uint32_t value)
 		{
 			params.combatType = (CombatType_t)value;
 			return true;
-			break;
 		}
 
 		case COMBATPARAM_EFFECT:
 		{
-			params.impactEffect = value;
+			params.impactEffect = (uint8_t)value;
 			return true;
-			break;
 		}
 
 		case COMBATPARAM_DISTANCEEFFECT:
 		{
-			params.distanceEffect = value;
+			params.distanceEffect = (uint8_t)value;
 			return true;
-			break;
 		}
 
 		case COMBATPARAM_BLOCKEDBYARMOR:
 		{
 			params.blockedByArmor = (value != 0);
 			return true;
-			break;
 		}
 
 		case COMBATPARAM_BLOCKEDBYSHIELD:
 		{
 			params.blockedByShield = (value != 0);
 			return true;
-			break;
 		}
 
 		case COMBATPARAM_TARGETCASTERORTOPMOST:
 		{
 			params.targetCasterOrTopMost = (value != 0);
 			return true;
-			break;
 		}
 
 		case COMBATPARAM_CREATEITEM:
 		{
 			params.itemId = value;
 			return true;
-			break;
 		}
 
 		case COMBATPARAM_AGGRESSIVE:
 		{
 			params.isAggressive = (value != 0);
 			return true;
-			break;
 		}
 
 		case COMBATPARAM_DISPEL:
 		{
 			params.dispelType = (ConditionType_t)value;
 			return true;
-			break;
 		}
 
 		case COMBATPARAM_USECHARGES:
 		{
 			params.useCharges = (value != 0);
 			return true;
-			break;
 		}
 
 		default:
@@ -758,33 +747,39 @@ void Combat::CombatFunc(Creature* caster, const Position& pos,
 
 	for(std::list<Tile*>::iterator it = tileList.begin(); it != tileList.end(); ++it)
 	{
+		Tile* iter_tile = *it;
 		bool bContinue = true;
-		if(canDoCombat(caster, *it, params.isAggressive) == RET_NOERROR)
+		if(canDoCombat(caster, iter_tile, params.isAggressive) == RET_NOERROR)
 		{
-			for(CreatureVector::iterator cit = (*it)->creatures.begin(); bContinue && cit != (*it)->creatures.end(); ++cit)
+			if(iter_tile->getCreatures())
 			{
-				if(params.targetCasterOrTopMost)
+				for(CreatureVector::iterator cit = iter_tile->getCreatures()->begin(),
+					cend = iter_tile->getCreatures()->end();
+					bContinue && cit != cend; ++cit)
 				{
-					if(caster && caster->getTile() == (*it))
+					if(params.targetCasterOrTopMost)
 					{
-						if(*cit == caster)
+						if(caster && caster->getTile() == iter_tile)
+						{
+							if(*cit == caster)
+								bContinue = false;
+						}
+						else if(*cit == iter_tile->getTopCreature())
 							bContinue = false;
+
+						if(bContinue)
+							continue;
 					}
-					else if(*cit == (*it)->getTopCreature())
-						bContinue = false;
 
-					if(bContinue)
-						continue;
-				}
-
-				if(!params.isAggressive || (caster != *cit && Combat::canDoCombat(caster, *cit) == RET_NOERROR))
-				{
-					func(caster, *cit, params, data);
-					if(params.targetCallback)
-						params.targetCallback->onTargetCombat(caster, *cit);
+					if(!params.isAggressive || (caster != *cit && Combat::canDoCombat(caster, *cit) == RET_NOERROR))
+					{
+						func(caster, *cit, params, data);
+						if(params.targetCallback)
+							params.targetCallback->onTargetCombat(caster, *cit);
+					}
 				}
 			}
-			combatTileEffects(list, caster, *it, params);
+			combatTileEffects(list, caster, iter_tile, params);
 		}
 	}
 	postCombatEffects(caster, pos, params);
@@ -1126,7 +1121,9 @@ bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, s
 	if(!area)
 		return false;
 
-	Position tmpPos = targetPos;
+	int32_t tmpPosX = targetPos.x;
+	int32_t tmpPosY = targetPos.y;
+	int32_t tmpPosZ = targetPos.z;
 
 	size_t cols = area->getCols();
 	size_t rows = area->getRows();
@@ -1134,8 +1131,8 @@ bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, s
 	uint32_t centerY, centerX;
 	area->getCenter(centerY, centerX);
 
-	tmpPos.x -= centerX;
-	tmpPos.y -= centerY;
+	tmpPosX -= centerX;
+	tmpPosY -= centerY;
 
 	for(size_t y = 0; y < rows; ++y)
 	{
@@ -1143,25 +1140,25 @@ bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, s
 		{
 			if(area->getValue(y, x) != 0)
 			{
-				if(tmpPos.x >= 0 && tmpPos.y >= 0 && tmpPos.z >= 0 &&
-					tmpPos.x <= 0xFFFF && tmpPos.y <= 0xFFFF && tmpPos.z < MAP_MAX_LAYERS)
+				if(tmpPosX >= 0 && tmpPosY >= 0 && tmpPosZ >= 0 &&
+					tmpPosX <= 0xFFFF && tmpPosY <= 0xFFFF && tmpPosZ < MAP_MAX_LAYERS)
 				{
-					if(g_game.isSightClear(targetPos, tmpPos, true))
+					if(g_game.isSightClear(targetPos, Position(tmpPosX, tmpPosY, tmpPosZ), true))
 					{
-						tile = g_game.getTile(tmpPos.x, tmpPos.y, tmpPos.z);
+						tile = g_game.getTile(tmpPosX, tmpPosY, tmpPosZ);
 						if(!tile)
 						{
-							tile = new Tile(tmpPos.x, tmpPos.y, tmpPos.z);
+							tile = new StaticTile(tmpPosX, tmpPosY, tmpPosZ);
 							g_game.setTile(tile);
 						}
 						list.push_back(tile);
 					}
 				}
 			}
-			tmpPos.x++;
+			tmpPosX++;
 		}
-		tmpPos.x -= cols;
-		tmpPos.y++;
+		tmpPosX -= cols;
+		tmpPosY++;
 	}
 	return true;
 }

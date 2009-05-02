@@ -37,7 +37,6 @@
 
 #include "iologindata.h"
 
-#include "status.h"
 #include "monsters.h"
 #include "commands.h"
 #include "outfit.h"
@@ -66,6 +65,10 @@
 #include "resources.h"
 #endif
 
+#include "protocolgame.h"
+#include "protocolold.h"
+#include "protocollogin.h"
+#include "status.h"
 #include "admin.h"
 
 #ifdef __OTSERV_ALLOCATOR__
@@ -79,6 +82,9 @@
 		std::cout << "Boost exception: " << e.what() << std::endl;
 	}
 #endif
+
+Dispatcher g_dispatcher;
+Scheduler g_scheduler;
 
 IPList serverIPs;
 
@@ -105,7 +111,6 @@ extern TalkActions* g_talkActions;
 #endif
 
 RSA* g_otservRSA = NULL;
-Server* g_server = NULL;
 
 OTSYS_THREAD_LOCKVAR g_loaderLock;
 OTSYS_THREAD_SIGNALVAR g_loaderSignal;
@@ -132,8 +137,9 @@ void startupErrorMessage(std::string errorStr)
 
 void mainLoader(
 #ifdef __CONSOLE__
-	int argc, char *argv[]
+	int argc, char *argv[],
 #endif
+	ServiceManager* servicer
 );
 
 #ifndef __CONSOLE__
@@ -170,37 +176,45 @@ int main(int argc, char *argv[])
 	OTSYS_THREAD_LOCKVARINIT(g_loaderLock);
 	OTSYS_THREAD_SIGNALVARINIT(g_loaderSignal);
 
-	Dispatcher::getDispatcher().addTask(createTask(boost::bind(mainLoader
+	ServiceManager servicer;
+
+	g_dispatcher.start();
+	g_scheduler.start();
+
+	g_dispatcher.addTask(createTask(boost::bind(mainLoader,
 #ifdef __CONSOLE__
-	, argc, argv
+		argc, argv,
 #endif
-	)));
+		&servicer)));
 
 	OTSYS_THREAD_LOCK(g_loaderLock, "main()");
 	OTSYS_THREAD_WAITSIGNAL(g_loaderSignal, g_loaderLock);
 
-	Server server(INADDR_ANY, g_config.getNumber(ConfigManager::PORT));
 	std::cout << ">> " << g_config.getString(ConfigManager::SERVER_NAME) << " Server Online!" << std::endl << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(gui.m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Status: Online!");
 	gui.m_connections = true;
 	#endif
 
-	g_server = &server;
-	server.run();
+	if(servicer.is_running())
+		servicer.run();
+	else
+		std::cout << "No services running. The server is NOT online." << std::endl;
 
 #ifdef __EXCEPTION_TRACER__
 	mainExceptionHandler.RemoveHandler();
 #endif
-#ifdef __CONSOLE__
+#ifndef __CONSOLE__
+	exit(0);
+#else
 	return 0;
 #endif
 }
 
 #ifdef __CONSOLE__
-void mainLoader(int argc, char *argv[])
+void mainLoader(int argc, char *argv[], ServiceManager* service_manager)
 #else
-void mainLoader()
+void mainLoader(ServiceManager* service_manager)
 #endif
 {
 	//dispatcher thread
@@ -454,11 +468,23 @@ void mainLoader()
 	std::cout << ">> Setting gamestate to: GAME_STATE_INIT" << std::endl;
 	g_game.setGameState(GAME_STATE_INIT);
 
-	g_game.timedHighscoreUpdate();
+	// Tibia protocols
+	service_manager->add<ProtocolGame>(g_config.getNumber(ConfigManager::GAME_PORT));
+	service_manager->add<ProtocolLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT));
+
+	// OT protocols
+	service_manager->add<ProtocolAdmin>(g_config.getNumber(ConfigManager::ADMIN_PORT));
+	service_manager->add<ProtocolStatus>(g_config.getNumber(ConfigManager::STATUS_PORT));
+
+	// Legacy protocols
+	service_manager->add<ProtocolOldLogin>(g_config.getNumber(ConfigManager::LOGIN_PORT));
+	service_manager->add<ProtocolOldGame>(g_config.getNumber(ConfigManager::LOGIN_PORT));
+
+	//g_game.timedHighscoreUpdate();
 
 	int32_t autoSaveEachMinutes = g_config.getNumber(ConfigManager::AUTO_SAVE_EACH_MINUTES);
 	if(autoSaveEachMinutes > 0)
-		Scheduler::getScheduler().addEvent(createSchedulerTask(autoSaveEachMinutes * 1000 * 60, boost::bind(&Game::autoSave, &g_game)));
+		g_scheduler.addEvent(createSchedulerTask(autoSaveEachMinutes * 1000 * 60, boost::bind(&Game::autoSave, &g_game)));
 
 	if(g_config.getString(ConfigManager::SERVERSAVE_ENABLED) == "yes" && g_config.getNumber(ConfigManager::SERVERSAVE_H) >= 0 && g_config.getNumber(ConfigManager::SERVERSAVE_H) <= 24)
 	{
@@ -503,7 +529,7 @@ void mainLoader()
 		int32_t hoursLeftInMS = 60000 * 60 * hoursLeft;
 		uint32_t minutesLeftInMS = 60000 * (minutesLeft - minutesToRemove);
 		if(!ignoreEvent && (hoursLeftInMS + minutesLeftInMS) > 0)
-			Scheduler::getScheduler().addEvent(createSchedulerTask(hoursLeftInMS + minutesLeftInMS, boost::bind(&Game::prepareServerSave, &g_game)));
+			g_scheduler.addEvent(createSchedulerTask(hoursLeftInMS + minutesLeftInMS, boost::bind(&Game::prepareServerSave, &g_game)));
 	}
 
 	std::cout << ">> All modules has been loaded, server starting up..." << std::endl;
@@ -556,6 +582,7 @@ void mainLoader()
 
 	IOLoginData::getInstance()->resetOnlineStatus();
 	g_game.setGameState(GAME_STATE_NORMAL);
+	g_game.start(service_manager);
 	OTSYS_THREAD_SIGNAL_SEND(g_loaderSignal);
 }
 
@@ -852,7 +879,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				case ID_MENU_FILE_SHUTDOWN:
 					if(MessageBoxA(hwnd, "Are you sure you want to shutdown the server?", "Shutdown", MB_YESNO) == IDYES)
 					{
-						Dispatcher::getDispatcher().addTask(
+						g_dispatcher.addTask(
 							createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
 						Shell_NotifyIcon(NIM_DELETE, &NID);
 					}
@@ -873,8 +900,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
-						Dispatcher::getDispatcher().addTask(
-							createTask(boost::bind(&Game::saveGameState, &g_game, true)));
+						g_dispatcher.addTask(
+							createTask(boost::bind(&Game::saveGameState, &g_game, true, false)));
 						MessageBoxA(NULL, "The players online has been saved.", "Save players", MB_OK);
 					}
 				}
@@ -885,7 +912,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 		case WM_DESTROY:
 			if(MessageBoxA(hwnd, "Are you sure you want to shutdown the server?", "Shutdown", MB_YESNO) == IDYES)
 			{
-				Dispatcher::getDispatcher().addTask(
+				g_dispatcher.addTask(
 					createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
 				Shell_NotifyIcon(NIM_DELETE, &NID);
 			}

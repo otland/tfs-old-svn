@@ -7,6 +7,7 @@ DROP TRIGGER IF EXISTS `ondelete_accounts`;
 DROP TABLE IF EXISTS `player_depotitems`;
 DROP TABLE IF EXISTS `tile_items`;
 DROP TABLE IF EXISTS `tiles`;
+DROP TABLE IF EXISTS `map_store`;
 DROP TABLE IF EXISTS `bans`;
 DROP TABLE IF EXISTS `house_lists`;
 DROP TABLE IF EXISTS `houses`;
@@ -237,6 +238,13 @@ CREATE TABLE `player_viplist`
 	`vip_id` INT NOT NULL COMMENT 'id of target player of viplist entry',
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE,
 	FOREIGN KEY (`vip_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
+) ENGINE = InnoDB;
+
+CREATE TABLE `map_store`
+(
+	`house_id` int(10) unsigned NOT NULL,
+	`data` blob NOT NULL,
+	KEY `house_id` (`house_id`)
 ) ENGINE = InnoDB;
 
 CREATE TABLE `tiles`

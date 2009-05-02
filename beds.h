@@ -44,7 +44,7 @@ class BedItem : public Item
 		virtual xmlNodePtr serialize(){ return xmlNewNode(NULL,(const xmlChar*)"item");}
 
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
-		virtual bool serializeAttr(PropWriteStream& propWriteStream);
+		virtual bool serializeAttr(PropWriteStream& propWriteStream) const;
 
 		virtual bool canRemove() const {return (house == NULL);}
 

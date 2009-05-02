@@ -38,6 +38,16 @@ class IOMapSerialize
 		bool saveHouseInfo(Map* map);
 
 	protected:
+		// Relational storage uses a row for each item/tile
+		bool loadMapRelational(Map* map);
+		bool saveMapRelational(Map* map);
+
+		bool loadMapBinary(Map* map);
+		bool saveMapBinary(Map* map);
+
+		bool saveItem(PropWriteStream& stream, const Item* item);
+		bool saveTile(PropWriteStream& stream, const Tile* tile);
+		bool loadItem(PropStream& propStream, Cylinder* parent);
 		bool saveTile(Database* db, uint32_t tileId, const Tile* tile);
 		bool loadTile(Database& db, Tile* tile);
 };

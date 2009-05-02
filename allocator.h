@@ -117,8 +117,12 @@ class PoolManager
 			{
 				if(it->first >= size + sizeof(poolTag))
 				{
-					//poolTag* tag = reinterpret_cast<poolTag*>(it->second->ordered_malloc());
 					poolTag* tag = reinterpret_cast<poolTag*>(it->second->malloc());
+					#ifdef __OTSERV_ALLOCATOR_STATS__
+					if(!tag){
+						dumpStats();
+					}
+					#endif
 					tag->poolbytes = it->first;
 					#ifdef __OTSERV_ALLOCATOR_STATS__
 					poolsStats[it->first]->allocations++;
@@ -219,14 +223,21 @@ class PoolManager
 		PoolManager()
 		{
 			OTSYS_THREAD_LOCKVARINIT(poolLock);
-			addPool(32, 32768);
-			addPool(48, 32768);
-			addPool(96, 16384);
-			addPool(128, 1024);
-			addPool(384, 2048);
-			addPool(1024, 128);
-			addPool(8192, 128);
-			addPool(16384, 128);
+			addPool(4 + sizeof(poolTag), 32768);
+			addPool(20 + sizeof(poolTag), 32768);
+			addPool(32 + sizeof(poolTag), 32768);
+			addPool(48 + sizeof(poolTag), 32768);
+			addPool(96 + sizeof(poolTag), 16384);
+			addPool(128 + sizeof(poolTag), 1024);
+			addPool(384 + sizeof(poolTag), 2048);
+			addPool(512 + sizeof(poolTag), 128);
+			addPool(1024 + sizeof(poolTag), 128);
+			addPool(8192 + sizeof(poolTag), 128);
+			addPool(16384 + sizeof(poolTag), 128);
+
+			addPool(60 + sizeof(poolTag), 10000); //Tile class
+			addPool(36 + sizeof(poolTag), 10000); //Item class
+
 			#ifdef __OTSERV_ALLOCATOR_STATS__
 			t_PoolStats * tmp = new(0) t_PoolStats;
 			tmp->unused = 0;

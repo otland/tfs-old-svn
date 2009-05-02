@@ -127,11 +127,11 @@ void House::updateDoorDescription()
 		sprintf(houseDescription, "It belongs to house '%s'. %s owns this house.", houseName.c_str(), houseOwnerName.c_str());
 	else
 	{
-		int32_t price = 0;
+		int32_t housePrice = 0;
 		for(HouseTileList::iterator it = getHouseTileBegin(); it != getHouseTileEnd(); it++)
-			price += g_config.getNumber(ConfigManager::HOUSE_PRICE);
+			housePrice += g_config.getNumber(ConfigManager::HOUSE_PRICE);
 
-		sprintf(houseDescription, "It belongs to house '%s'. Nobody owns this house. It costs %d gold coins.", houseName.c_str(), price);
+		sprintf(houseDescription, "It belongs to house '%s'. Nobody owns this house. It costs %d gold coins.", houseName.c_str(), housePrice);
 	}
 
 	HouseDoorList::iterator it;
@@ -170,8 +170,7 @@ bool House::kickPlayer(Player* player, const std::string& name)
 			if(getHouseAccessLevel(player) >= getHouseAccessLevel(kickingPlayer) && !kickingPlayer->hasFlag(PlayerFlag_CanEditHouses))
 			{
 				Position oldPosition = kickingPlayer->getPosition();
-				if(g_game.internalTeleport(kickingPlayer, g_game.getClosestFreeTile(
-					player, NULL, getEntryPosition(), true), true) == RET_NOERROR)
+				if(g_game.internalTeleport(kickingPlayer, getEntryPosition(), true) == RET_NOERROR)
 				{
 					g_game.addMagicEffect(oldPosition, NM_ME_POFF);
 					g_game.addMagicEffect(getEntryPosition(), NM_ME_TELEPORT);
@@ -211,10 +210,10 @@ void House::setAccessList(uint32_t listId, const std::string& textlist)
 	for(it = houseTiles.begin(); it != houseTiles.end(); ++it)
 	{
 		HouseTile* hTile = *it;
-		if(hTile->creatures.size() > 0)
+		if(CreatureVector* creatures = hTile->getCreatures())
 		{
 			CreatureVector::iterator cit;
-			for(cit = hTile->creatures.begin(); cit != hTile->creatures.end(); ++cit)
+			for(cit = creatures->begin(); cit != creatures->end(); ++cit)
 			{
 				Player* player = (*cit)->getPlayer();
 				if(player && isInvited(player) == false)
@@ -281,6 +280,7 @@ bool House::transferToDepot()
 
 	for(std::list<Item*>::iterator it = moveItemList.begin(); it != moveItemList.end(); ++it)
 	{
+		player->setDepotChange(true);
 		g_game.internalMoveItem((*it)->getParent(), depot, INDEX_WHEREEVER,
 			(*it), (*it)->getItemCount(), NULL, FLAG_NOLIMIT);
 	}
@@ -671,7 +671,7 @@ bool Door::readAttr(AttrTypes_t attr, PropStream& propStream)
 		return Item::readAttr(attr, propStream);
 }
 
-bool Door::serializeAttr(PropWriteStream& propWriteStream)
+bool Door::serializeAttr(PropWriteStream& propWriteStream) const
 {
 	return true;
 }
@@ -891,12 +891,18 @@ bool Houses::payHouses()
 				}
 			}
 
+			int32_t housePrice = 0;
+			for(HouseTileList::iterator it = house->getHouseTileBegin(); it != house->getHouseTileEnd(); it++)
+				housePrice += g_config.getNumber(ConfigManager::HOUSE_PRICE);
+
 			Depot* depot = player->getDepot(town->getTownID(), true);
 			bool savePlayerHere = true;
 			if(depot)
 			{
+				player->setDepotChange(true);
+
 				//get money from depot
-				if(g_game.removeMoney(depot, house->getRent(), FLAG_NOLIMIT))
+				if(g_game.removeMoney(depot, housePrice, FLAG_NOLIMIT))
 				{
 					uint32_t paidUntil = currentTime;
 					switch(rentPeriod)
@@ -955,7 +961,7 @@ bool Houses::payHouses()
 						}
 
 						char warningText[300];
-						sprintf(warningText, "Warning! \nThe %s rent of %d gold for your house \"%s\" is payable. Have it within %d days or you will lose this house.", period.c_str(), house->getRent(), house->getName().c_str(), daysLeft);
+						sprintf(warningText, "Warning! \nThe %s rent of %d gold for your house \"%s\" is payable. Have it within %d days or you will lose this house.", period.c_str(), housePrice, house->getName().c_str(), daysLeft);
 						letter->setText(warningText);
 						g_game.internalAddItem(depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT);
 						house->setPayRentWarnings(house->getPayRentWarnings() + 1);

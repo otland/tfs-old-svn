@@ -36,6 +36,7 @@
 #include "npc.h"
 #include "iologindata.h"
 
+class ServiceManager;
 class Creature;
 class Monster;
 class Npc;
@@ -117,6 +118,8 @@ class Game
 	public:
 		Game();
 		~Game();
+
+		void start(ServiceManager* servicer);
 
 		Highscore getHighscore(unsigned short skill);
 		void timedHighscoreUpdate();
@@ -487,7 +490,7 @@ class Game
 
 		GameState_t getGameState();
 		void setGameState(GameState_t newState);
-		void saveGameState(bool savePlayers);
+		void saveGameState(bool savePlayers, bool shutdown = false);
 		void loadGameState();
 		void refreshMap();
 
@@ -558,6 +561,10 @@ class Game
 
 		std::vector<Thing*> ToReleaseThings;
 
+		uint32_t checkLightEvent;
+		uint32_t checkCreatureEvent;
+		uint32_t checkDecayEvent;
+
 		//list of items that are in trading state, mapped to the player
 		std::map<Item*, uint32_t> tradeItems;
 
@@ -598,6 +605,8 @@ class Game
 
 		GameState_t gameState;
 		WorldType_t worldType;
+
+		ServiceManager* service_manager;
 		Map* map;
 
 		void savePlayersRecord();

@@ -52,6 +52,22 @@ bool IOGuild::getGuildIdByName(uint32_t& guildId, const std::string& guildName)
 	return true;
 }
 
+std::string IOGuild::getGuildNameById(uint32_t id)
+{
+	Database* db = Database::getInstance();
+	if(!db->connect())
+		return false;
+
+	DBQuery query;
+	DBResult result;
+
+	query << "SELECT `name` FROM `guilds` WHERE `id` = " << id;
+	if(db->storeQuery(query, result))
+		return result.getDataString("name");
+
+	return "";
+}
+
 bool IOGuild::guildExists(uint32_t guildId)
 {
 	Database* db = Database::getInstance();
@@ -201,11 +217,7 @@ bool IOGuild::joinGuild(Player* player, uint32_t guildId)
 	if(!db->executeQuery(query))
 		return false;
 
-	query << "SELECT `name` AS `guildname` FROM `guilds` WHERE `id` = " << guildId;
-	if(!db->storeQuery(query, result))
-		return false;
-
-	player->setGuildName(result.getDataString("guildname"));
+	player->setGuildName(getGuildNameById(guildId));
 	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `level` = 1";
 	if(!db->storeQuery(query, result))
 		return false;

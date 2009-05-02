@@ -42,6 +42,7 @@
 #include "teleport.h"
 #include "ban.h"
 
+extern Ban g_bans;
 extern Game g_game;
 extern Monsters g_monsters;
 extern ConfigManager g_config;
@@ -1184,6 +1185,12 @@ void LuaScriptInterface::registerFunctions()
 
 	//getOnlinePlayers()
 	lua_register(m_luaState, "getOnlinePlayers", LuaScriptInterface::luaGetOnlinePlayers);
+
+	//isAccountBanned(accId)
+	lua_register(m_luaState, "isAccountBanned", LuaScriptInterface::luaIsAccountBanned);
+
+	//removeAccountBan(accId)
+	lua_register(m_luaState, "removeAccountBan", LuaScriptInterface::luaRemoveAccountBan);
 
 	//getTilePzInfo(pos)
 	//1 is pz. 0 no pz.
@@ -4722,10 +4729,10 @@ int32_t LuaScriptInterface::luaSetCombatFormula(lua_State* L)
 		return 1;
 	}
 
-	double maxb = popFloatNumber(L);
-	double maxa = popFloatNumber(L);
-	double minb = popFloatNumber(L);
-	double mina = popFloatNumber(L);
+	float maxb = (float)popFloatNumber(L);
+	float maxa = (float)popFloatNumber(L);
+	float minb = (float)popFloatNumber(L);
+	float mina = (float)popFloatNumber(L);
 
 	formulaType_t type = (formulaType_t)popNumber(L);
 	uint32_t combatId = popNumber(L);
@@ -7000,7 +7007,7 @@ int32_t LuaScriptInterface::luaAddEvent(lua_State* L)
 	script_interface->m_lastEventTimerId++;
 	script_interface->m_timerEvents[script_interface->m_lastEventTimerId] = eventDesc;
 
-	Scheduler::getScheduler().addEvent(createSchedulerTask(delay, boost::bind(&LuaScriptInterface::executeTimerEvent, script_interface, script_interface->m_lastEventTimerId)));
+	g_scheduler.addEvent(createSchedulerTask(delay, boost::bind(&LuaScriptInterface::executeTimerEvent, script_interface, script_interface->m_lastEventTimerId)));
 	lua_pushnumber(L, script_interface->m_lastEventTimerId);
 	return 1;
 }
@@ -7161,8 +7168,8 @@ int32_t LuaScriptInterface::luaGetCreatureMaxHealth(lua_State* L)
 
 int32_t LuaScriptInterface::luaSaveData(lua_State* L)
 {
-	Dispatcher::getDispatcher().addTask(
-		createTask(boost::bind(&Game::saveGameState, &g_game, true)));
+	g_dispatcher.addTask(
+		createTask(boost::bind(&Game::saveGameState, &g_game, true, false)));
 	return 1;
 }
 
@@ -7185,6 +7192,36 @@ int32_t LuaScriptInterface::luaGetOnlinePlayers(lua_State* L)
 		lua_pushstring(L, (*it).second->getName().c_str());
 		lua_settable(L, -3);
 	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaRemoveAccountBan(lua_State* L)
+{
+	//removeAccountBan(accountId)
+	uint32_t accountId = popNumber(L);
+	g_bans.removeAccountBan(accountId);
+	lua_pushnumber(L, LUA_TRUE);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaIsAccountBanned(lua_State* L)
+{
+	//isAccountBanned(accountId)
+	uint32_t accountId = popNumber(L);
+	bool deleted = false;
+	uint32_t bannedBy = 0, banTime = 0;
+	int32_t reason = 0, action = 0;
+	std::string comment = "";
+	if(g_bans.getBanInformation(accountId, bannedBy, banTime, reason, action, comment, deleted))
+	{
+		if(!deleted)
+		{
+			lua_pushnumber(L, LUA_TRUE);
+			return 1;
+		}
+	}
+
+	lua_pushnumber(L, LUA_FALSE);
 	return 1;
 }
 

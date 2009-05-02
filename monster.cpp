@@ -513,7 +513,7 @@ bool Monster::selectTarget(Creature* creature)
 	{
 		if(setAttackedCreature(creature) && !isSummon())
 		{
-			Dispatcher::getDispatcher().addTask(createTask(
+			g_dispatcher.addTask(createTask(
 				boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
 		}
 	}
@@ -544,7 +544,7 @@ bool Monster::deactivate(bool forced /*= false*/)
 	if(isSummon())
 	{
 		if(!isMasterInRange || getMaster()->isIdle() || forced)
-			isActivated = false;
+			isActivated = true;
 	}
 	else
 	{
@@ -562,11 +562,17 @@ bool Monster::deactivate(bool forced /*= false*/)
 
 void Monster::onAddCondition(ConditionType_t type)
 {
+	if(type == CONDITION_FIRE || type == CONDITION_ENERGY || type == CONDITION_POISON)
+		updateMapCache();
+
 	activate();
 }
 
 void Monster::onEndCondition(ConditionType_t type)
 {
+	if(type == CONDITION_FIRE || type == CONDITION_ENERGY || type == CONDITION_POISON)
+		updateMapCache();
+
 	deactivate();
 }
 
@@ -896,29 +902,32 @@ bool Monster::pushItem(Item* item, int32_t radius)
 
 void Monster::pushItems(Tile* tile)
 {
-	uint32_t moveCount = 0;
-	uint32_t removeCount = 0;
-
 	//We can not use iterators here since we can push the item to another tile
 	//which will invalidate the iterator.
 	//start from the end to minimize the amount of traffic
-	int32_t downItemSize = tile->downItems.size();
-	for(int32_t i = downItemSize - 1; i >= 0; --i)
+	if(TileItemVector* items = tile->getItemList())
 	{
-		assert(i >= 0 && i < (int32_t)tile->downItems.size());
-		Item* item = tile->downItems[i];
-		if(item && item->hasProperty(MOVEABLE) && (item->hasProperty(BLOCKPATH)
-			|| item->hasProperty(BLOCKSOLID)))
-		{
-				if(moveCount < 20 && pushItem(item, 1))
-					moveCount++;
-				else if(g_game.internalRemoveItem(item) == RET_NOERROR)
-					++removeCount;
-		}
-	}
+		uint32_t moveCount = 0;
+		uint32_t removeCount = 0;
 
-	if(removeCount > 0)
-		g_game.addMagicEffect(tile->getPosition(), NM_ME_POFF);
+		int32_t downItemSize = tile->getDownItemCount();
+		for(int32_t i = downItemSize - 1; i >= 0; --i)
+		{
+			assert(i >= 0 && i < downItemSize);
+			Item* item = items->at(i);
+			if(item && item->hasProperty(MOVEABLE) && (item->hasProperty(BLOCKPATH)
+				|| item->hasProperty(BLOCKSOLID)))
+			{
+					if(moveCount < 20 && pushItem(item, 1))
+						moveCount++;
+					else if(g_game.internalRemoveItem(item) == RET_NOERROR)
+						++removeCount;
+			}
+		}
+
+		if(removeCount > 0)
+			g_game.addMagicEffect(tile->getPosition(), NM_ME_POFF);
+	}
 }
 
 bool Monster::pushCreature(Creature* creature)
@@ -948,29 +957,31 @@ bool Monster::pushCreature(Creature* creature)
 
 void Monster::pushCreatures(Tile* tile)
 {
-	uint32_t removeCount = 0;
 	//We can not use iterators here since we can push a creature to another tile
 	//which will invalidate the iterator.
-	for(uint32_t i = 0; i < tile->creatures.size();)
+	if(CreatureVector* creatures = tile->getCreatures())
 	{
-		Monster* monster = tile->creatures[i]->getMonster();
-
-		if(monster && monster->isPushable())
+		uint32_t removeCount = 0;
+		for(uint32_t i = 0; i < creatures->size();)
 		{
-			if(pushCreature(monster))
-				continue;
-			else
+			Monster* monster = creatures->at(i)->getMonster();
+			if(monster && monster->isPushable())
 			{
-				monster->changeHealth(-monster->getHealth());
-				monster->setDropLoot(false);
-				removeCount++;
+				if(pushCreature(monster))
+					continue;
+				else
+				{
+					monster->changeHealth(-monster->getHealth());
+					monster->setDropLoot(false);
+					removeCount++;
+				}
 			}
+			++i;
 		}
-		++i;
-	}
 
-	if(removeCount > 0)
-		g_game.addMagicEffect(tile->getPosition(), NM_ME_BLOCKHIT);
+		if(removeCount > 0)
+			g_game.addMagicEffect(tile->getPosition(), NM_ME_BLOCKHIT);
+	}
 }
 
 bool Monster::getNextStep(Direction& dir)
@@ -1153,7 +1164,7 @@ bool Monster::canWalkTo(Position pos, Direction dir)
 			return false;
 
 		Tile* tile = g_game.getTile(pos.x, pos.y, pos.z);
-		if(tile && tile->creatures.empty() && tile->__queryAdd(0, this, 1, FLAG_PATHFINDING) == RET_NOERROR)
+		if(tile && tile->getCreatureCount() == 0 && tile->__queryAdd(0, this, 1, FLAG_PATHFINDING) == RET_NOERROR)
 			return true;
 	}
 	return false;

@@ -680,7 +680,7 @@ bool Spell::playerInstantSpellCheck(Player* player, const Position& toPos)
 			Tile* tile = g_game.getTile(toPos.x, toPos.y, toPos.z);
 			if(!tile)
 			{
-				tile = new Tile(toPos.x, toPos.y, toPos.z);
+				tile = new StaticTile(toPos.x, toPos.y, toPos.z);
 				g_game.setTile(tile);
 			}
 
@@ -692,7 +692,7 @@ bool Spell::playerInstantSpellCheck(Player* player, const Position& toPos)
 				return false;
 			}
 
-			if(blockingCreature && !tile->creatures.empty())
+			if(blockingCreature && tile->getCreatureCount() != 0)
 			{
 				player->sendCancelMessage(RET_NOTENOUGHROOM);
 				g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
@@ -758,7 +758,7 @@ bool Spell::playerRuneSpellCheck(Player* player, const Position& toPos)
 				return false;
 			}
 
-			if(blockingCreature && !tile->creatures.empty())
+			if(blockingCreature && tile->getCreatureCount() != 0)
 			{
 				player->sendCancelMessage(RET_NOTENOUGHROOM);
 				g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
@@ -771,14 +771,14 @@ bool Spell::playerRuneSpellCheck(Player* player, const Position& toPos)
 				return false;
 			}
 
-			if(needTarget && tile->creatures.empty())
+			if(needTarget && tile->getCreatureCount() == 0)
 			{
 				player->sendCancelMessage(RET_CANONLYUSETHISRUNEONCREATURES);
 				g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 				return false;
 			}
 
-			if(isAggressive && needTarget && player->getSecureMode() == SECUREMODE_ON && !tile->creatures.empty())
+			if(isAggressive && needTarget && player->getSecureMode() == SECUREMODE_ON && tile->getCreatureCount() > 0)
 			{
 				Player* targetPlayer = tile->getTopCreature()->getPlayer();
 				if(targetPlayer && targetPlayer != player && targetPlayer->getSkull() == SKULL_NONE && !Combat::isInPvpZone(player, targetPlayer))

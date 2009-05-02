@@ -59,6 +59,26 @@ extern Game g_game;
 	|--- OTBM_ITEM_DEF (not implemented)
 */
 
+Tile* IOMap::createTile(Item*& ground, Item* item, int px, int py, int pz)
+{
+	Tile* tile;
+	if(ground)
+	{
+		if((item && item->isBlocking()) || ground->isBlocking())
+			tile = new StaticTile(px, py, pz);
+		else
+			tile = new DynamicTile(px, py, pz);
+
+		tile->__internalAddThing(ground);
+		ground->__startDecaying();
+		ground = NULL;
+	}
+	else
+		tile = new StaticTile(px, py, pz);
+
+	return tile;
+}
+
 bool IOMap::loadMap(Map* map, const std::string& identifier)
 {
 	int64_t start = OTSYS_TIME();
@@ -183,8 +203,6 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 		}
 	}
 
-	Tile* tile = NULL;
-
 	NODE nodeMapData = f.getChildNode(nodeMap, type);
 	while(nodeMapData != NO_NODE)
 	{
@@ -245,10 +263,11 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 					bool isHouseTile = false;
 					House* house = NULL;
+					Tile* tile = NULL;
+					Item* ground_item = NULL;
+					uint32_t tileflags = TILESTATE_NONE;
 
-					if(type == OTBM_TILE)
-						tile = new Tile(px, py, pz);
-					else if(type == OTBM_HOUSETILE)
+					if(type == OTBM_HOUSETILE)
 					{
 						uint32_t _houseid;
 						if(!propStream.GET_ULONG(_houseid))
@@ -273,8 +292,6 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 						isHouseTile = true;
 					}
 
-					map->setTile(px, py, pz, tile);
-
 					//read tile attributes
 					unsigned char attribute;
 					while(propStream.GET_UCHAR(attribute))
@@ -293,14 +310,14 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								}
 
 								if((flags & TILESTATE_PROTECTIONZONE) == TILESTATE_PROTECTIONZONE)
-									tile->setFlag(TILESTATE_PROTECTIONZONE);
+									tileflags |= TILESTATE_PROTECTIONZONE;
 								else if((flags & TILESTATE_NOPVPZONE) == TILESTATE_NOPVPZONE)
-									tile->setFlag(TILESTATE_NOPVPZONE);
+									tileflags |= TILESTATE_NOPVPZONE;
 								else if((flags & TILESTATE_PVPZONE) == TILESTATE_PVPZONE)
-									tile->setFlag(TILESTATE_PVPZONE);
+									tileflags |= TILESTATE_PVPZONE;
 
 								if((flags & TILESTATE_NOLOGOUT) == TILESTATE_NOLOGOUT)
-									tile->setFlag(TILESTATE_NOLOGOUT);
+									tileflags |= TILESTATE_NOLOGOUT;
 
 								break;
 							}
@@ -324,9 +341,26 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								}
 								else
 								{
-									tile->__internalAddThing(item);
-									item->__startDecaying();
-									item->setLoadedFromMap(true);
+									if(tile)
+									{
+										tile->__internalAddThing(item);
+										item->__startDecaying();
+										item->setLoadedFromMap(true);
+									}
+									else if(item->isGroundTile())
+									{
+										if(ground_item)
+											delete ground_item;
+
+										ground_item = item;
+									}
+									else
+									{
+										tile = createTile(ground_item, item, px, py, pz);
+										tile->__internalAddThing(item);
+										item->__startDecaying();
+										item->setLoadedFromMap(true);
+									}
 								}
 								break;
 							}
@@ -366,9 +400,26 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 								}
 								else
 								{
-									tile->__internalAddThing(item);
-									item->__startDecaying();
-									item->setLoadedFromMap(true);
+									if(tile)
+									{
+										tile->__internalAddThing(item);
+										item->__startDecaying();
+										item->setLoadedFromMap(true);
+									}
+									else if(item->isGroundTile())
+									{
+										if(ground_item)
+											delete ground_item;
+
+										ground_item = item;
+									}
+									else
+									{
+										tile = createTile(ground_item, item, px, py, pz);
+										tile->__internalAddThing(item);
+										item->__startDecaying();
+										item->setLoadedFromMap(true);
+									}
 								}
 							}
 							else
@@ -389,6 +440,13 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 						nodeItem = f.getNextNode(nodeItem, type);
 					}
+
+					if(!tile)
+						tile = createTile(ground_item, NULL, px, py, pz);
+
+					tile->setFlag((tileflags_t)tileflags);
+
+					map->setTile(px, py, pz, tile);
 				}
 				else
 				{

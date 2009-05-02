@@ -173,7 +173,7 @@ Item* MonsterType::createLootItem(const LootBlock& lootBlock)
 		uint32_t randvalue = Monsters::getLootRandom();
 		if(randvalue < lootBlock.chance)
 		{
-			uint32_t n = randvalue % lootBlock.countmax + 1;
+			uint16_t n = randvalue % lootBlock.countmax + 1;
 			tmpItem = Item::CreateItem(lootBlock.id, n);
 		}
 	}

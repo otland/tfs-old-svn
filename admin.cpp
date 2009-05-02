@@ -352,32 +352,32 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 					{
 						const std::string message = msg.GetString();
 						addLogLine(this, LOGTYPE_EVENT, 1, "broadcast: " + message);
-						Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::broadcastMessage, &g_game, message, MSG_STATUS_WARNING)));
+						g_dispatcher.addTask(createTask(boost::bind(&Game::broadcastMessage, &g_game, message, MSG_STATUS_WARNING)));
 						output->AddByte(AP_MSG_COMMAND_OK);
 						break;
 					}
 
 					case CMD_CLOSE_SERVER:
 					{
-						Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandCloseServer, this)));
+						g_dispatcher.addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandCloseServer, this)));
 						break;
 					}
 
 					case CMD_PAY_HOUSES:
 					{
-						Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandPayHouses, this)));
+						g_dispatcher.addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandPayHouses, this)));
 						break;
 					}
 
 					case CMD_OPEN_SERVER:
 					{
-						Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandOpenServer, this)));
+						g_dispatcher.addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandOpenServer, this)));
 						break;
 					}
 
 					case CMD_SHUTDOWN_SERVER:
 					{
-						Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandShutdownServer, this)));
+						g_dispatcher.addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandShutdownServer, this)));
 						outputPool->releaseMessage(output);
 						getConnection()->closeConnection();
 						return;
@@ -387,14 +387,14 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 					case CMD_KICK:
 					{
 						const std::string name = msg.GetString();
-						Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandKickPlayer, this, name)));
+						g_dispatcher.addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandKickPlayer, this, name)));
 						break;
 					}
 
 					case CMD_SETOWNER:
 					{
 						const std::string param = msg.GetString();
-						Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandSetOwner, this, param)));
+						g_dispatcher.addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandSetOwner, this, param)));
 						break;
 					}
 

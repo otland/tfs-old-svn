@@ -105,7 +105,8 @@ enum AttrTypes_t
 	ATTR_WRITTENBY = 19,
 	ATTR_SLEEPERGUID = 20,
 	ATTR_SLEEPSTART = 21,
-	ATTR_CHARGES = 22
+	ATTR_CHARGES = 22,
+	ATTR_CONTAINER_ITEMS = 23
 };
 
 class ItemAttributes
@@ -147,29 +148,29 @@ class ItemAttributes
 		const std::string& getWriter() const {return getStrAttr(ATTR_ITEM_WRITTENBY);}
 
 		void setActionId(uint16_t n) {if(n < 100) n = 100; setIntAttr(ATTR_ITEM_ACTIONID, n);}
-		uint16_t getActionId() const {return getIntAttr(ATTR_ITEM_ACTIONID);}
+		uint16_t getActionId() const {return (uint16_t)getIntAttr(ATTR_ITEM_ACTIONID);}
 
 		void setUniqueId(uint16_t n) {if(n < 1000) n = 1000; setIntAttr(ATTR_ITEM_UNIQUEID, n);}
-		uint16_t getUniqueId() const {return getIntAttr(ATTR_ITEM_UNIQUEID);}
+		uint16_t getUniqueId() const {return (uint16_t)getIntAttr(ATTR_ITEM_UNIQUEID);}
 
 		void setCharges(uint16_t n) {setIntAttr(ATTR_ITEM_CHARGES, n);}
-		uint16_t getCharges() const {return getIntAttr(ATTR_ITEM_CHARGES);}
+		uint16_t getCharges() const {return (uint16_t)getIntAttr(ATTR_ITEM_CHARGES);}
 
 		void setFluidType(uint16_t n) {setIntAttr(ATTR_ITEM_FLUIDTYPE, n);}
-		uint16_t getFluidType() const {return getIntAttr(ATTR_ITEM_FLUIDTYPE);}
+		uint16_t getFluidType() const {return (uint16_t)getIntAttr(ATTR_ITEM_FLUIDTYPE);}
 
 		void setOwner(uint32_t _owner) {setIntAttr(ATTR_ITEM_OWNER, _owner);}
-		uint32_t getOwner() const {return getIntAttr(ATTR_ITEM_OWNER);}
+		uint32_t getOwner() const {return (uint32_t)getIntAttr(ATTR_ITEM_OWNER);}
 
 		void setCorpseOwner(uint32_t _corpseOwner) {setIntAttr(ATTR_ITEM_CORPSEOWNER, _corpseOwner);}
-		uint32_t getCorpseOwner() {return getIntAttr(ATTR_ITEM_CORPSEOWNER);}
+		uint32_t getCorpseOwner() {return (uint32_t)getIntAttr(ATTR_ITEM_CORPSEOWNER);}
 
 		void setDuration(int32_t time) {setIntAttr(ATTR_ITEM_DURATION, time);}
 		void decreaseDuration(int32_t time) {increaseIntAttr(ATTR_ITEM_DURATION, -time);}
-		int32_t getDuration() const {return getIntAttr(ATTR_ITEM_DURATION);}
+		int32_t getDuration() const {return (int32_t)getIntAttr(ATTR_ITEM_DURATION);}
 
 		void setDecaying(ItemDecayState_t decayState) {setIntAttr(ATTR_ITEM_DECAYING, decayState);}
-		uint32_t getDecaying() const {return getIntAttr(ATTR_ITEM_DECAYING);}
+		uint32_t getDecaying() const {return (uint32_t)getIntAttr(ATTR_ITEM_DECAYING);}
 
 	protected:
 		enum itemAttrTypes
@@ -294,7 +295,7 @@ class Item : virtual public Thing, public ItemAttributes
 		virtual bool unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream);
 		//virtual bool serializeItemNode();
 
-		virtual bool serializeAttr(PropWriteStream& propWriteStream);
+		virtual bool serializeAttr(PropWriteStream& propWriteStream) const;
 
 		virtual bool isPushable() const {return !isNotMoveable();}
 		virtual int32_t getThrowRange() const {return (isPickupable() ? 15 : 2);}
@@ -317,7 +318,7 @@ class Item : virtual public Thing, public ItemAttributes
 
 		bool isReadable() const {return items[id].canReadText;}
 		bool canWriteText() const {return items[id].canWriteText;}
-		int32_t getMaxWriteLength() const {return items[id].maxTextLen;}
+		uint16_t getMaxWriteLength() const {return items[id].maxTextLen;}
 
 		int32_t getWorth() const;
 		void getLight(LightInfo& lightInfo);
@@ -354,7 +355,7 @@ class Item : virtual public Thing, public ItemAttributes
 
 		// get the number of items
 		uint16_t getItemCount() const {return count;}
-		void setItemCount(uint16_t n) {count = n;}
+		void setItemCount(uint8_t n) {count = n;}
 
 		void setDefaultSubtype();
 		bool hasSubType() const;
@@ -391,5 +392,7 @@ class Item : virtual public Thing, public ItemAttributes
 
 		//Don't add variables here, use the ItemAttribute class.
 };
+
+typedef std::list<Item *> ItemList;
 
 #endif

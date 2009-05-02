@@ -54,6 +54,7 @@ class Protocol : boost::noncopyable
 		void onSendMessage(OutputMessage* msg);
 		void onRecvMessage(NetworkMessage& msg);
 		virtual void onRecvFirstMessage(NetworkMessage& msg) = 0;
+		virtual void onConnect() {}
 
 		Connection* getConnection() { return m_connection;}
 		const Connection* getConnection() const { return m_connection;}

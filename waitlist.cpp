@@ -120,7 +120,7 @@ bool WaitingList::clientLogin(const Player* player)
 	else
 	{
 		waitList.push_back(wait);
-		slot = waitList.size();
+		slot = (uint32_t)waitList.size();
 	}
 
 	wait->name = player->getName();
