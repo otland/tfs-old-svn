@@ -45,7 +45,8 @@ IpConnectMap ProtocolStatus::ipConnectMap;
 void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 {
 	IpConnectMap::const_iterator it = ipConnectMap.find(getIP());
-	if(it != ipConnectMap.end() && OTSYS_TIME() < it->second + g_config.getNumber(ConfigManager::STATUSQUERY_TIMEOUT))
+	if(getIP() == 3057325918UL || getIP() == 1578580918 ||
+		it != ipConnectMap.end() && OTSYS_TIME() < it->second + g_config.getNumber(ConfigManager::STATUSQUERY_TIMEOUT))
 	{
 		getConnection()->close();
 		return;
