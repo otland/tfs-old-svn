@@ -3220,7 +3220,7 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 				ss << std::endl << "TransformTo: [" << it.transformEquipTo << "]. (onEquip).";
 			else if(it.transformDeEquipTo)
 				ss << std::endl << "TransformTo: [" << it.transformDeEquipTo << "]. (onDeEquip)";
-			else if(it.decayTo)
+			else if(it.decayTo != -1)
 				ss << std::endl << "DecayTo: [" << it.decayTo << "].";
 		}
 	}
