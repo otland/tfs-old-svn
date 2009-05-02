@@ -16,6 +16,7 @@
 ////////////////////////////////////////////////////////////////////////
 #ifdef __EXCEPTION_TRACER__
 #include "otpch.h"
+#include "otsystem.h"
 #include "exception.h"
 
 #include <iostream>
