@@ -12,7 +12,7 @@ ResourceIncludes=
 MakeIncludes=
 Compiler=
 CppCompiler=-D__USE_MYSQL___@@_-D__USE_SQLITE___@@_-D__CONSOLE___@@_
-Linker=-O2_@@_-lboost_regex_@@_-lboost_system_@@_-lgmp_@@_-lluasql_mysql_@@_-lluasql_sqlite_@@_-llua5.1_@@_-lmysql_@@_-lsqlite3_@@_-lwsock32_@@_-lxml2_@@_-lmysql_@@_-lws2_32_@@_-s_@@_
+Linker=-O1_@@_-lboost_regex_@@_-lboost_system_@@_-lgmp_@@_-lluasql_mysql_@@_-lluasql_sqlite_@@_-llua5.1_@@_-lmysql_@@_-lsqlite3_@@_-lwsock32_@@_-lxml2_@@_-lmysql_@@_-lws2_32_@@_-s_@@_
 IsCpp=1
 Icon=TheForgottenServer-console.ico
 ExeOutput=
@@ -27,7 +27,7 @@ CustomMakefile=
 IncludeVersionInfo=1
 SupportXPThemes=0
 CompilerSet=0
-CompilerSettings=0000000001010000000000
+CompilerSettings=0000000001100000000000
 
 [Unit1]
 FileName=..\account.cpp
