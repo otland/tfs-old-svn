@@ -45,7 +45,7 @@ function onSay(cid, words, param, channel)
 
 			str = str .. breakline .. " " .. time .. "  Died at Level " .. level .. " by " .. killed .. "."
 			n = n + 1
-			if(n > config.displayLimit) then
+			if(n >= config.displayLimit) then
 				break
 			end
 		until not deaths:next()
