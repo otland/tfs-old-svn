@@ -2639,6 +2639,9 @@ void ProtocolGame::sendOutfitWindow()
 			if((*git)->premium && !player->isPremium())
 				tmpList.insert((*git)->looktype);
 
+			if(player->getAccess() < (*git)->access)
+				tmpList.insert((*git)->looktype);
+
 			if((*git)->quest)
 			{
 				std::string value;

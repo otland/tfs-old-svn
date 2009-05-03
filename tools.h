@@ -129,6 +129,7 @@ std::string getAction(ViolationAction_t actionId, bool ipBanishment);
 
 std::string parseVocationString(StringVec vocStringVec);
 bool parseVocationNode(xmlNodePtr vocationNode, VocationMap& vocationMap, StringVec& vocStringMap, std::string& errorStr);
+bool parseIntegerVec(std::string str, IntegerVec& intVector);
 
 bool fileExists(const char* filename);
 uint32_t adlerChecksum(uint8_t *data, size_t length);

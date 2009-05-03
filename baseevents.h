@@ -42,6 +42,7 @@ class BaseEvents
 		bool loadFromXml();
 		bool reload();
 
+		bool parseEventNode(xmlNodePtr p, std::string scriptsPath);
 		bool isLoaded() const {return m_loaded;}
 
 	protected:

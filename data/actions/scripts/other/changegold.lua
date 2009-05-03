@@ -1,20 +1,29 @@
+local coins = {
+	[ITEM_GOLD_COIN] = {
+		to = ITEM_PLATINUM_COIN, effect = TEXTCOLOR_YELLOW
+	},
+	[ITEM_PLATINUM_COIN] = {
+		from = ITEM_GOLD_COIN, to = ITEM_CRYSTAL_COIN, effect = TEXTCOLOR_LIGHTBLUE
+	},
+	[ITEM_CRYSTAL_COIN] = {
+		from = ITEM_PLATINUM_COIN, effect = TEXTCOLOR_TEAL
+	}
+}
+
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if item.itemid == ITEM_GOLD_COIN and item.type == ITEMCOUNT_MAX then
+	local coin = coins[item.itemid]
+	if(not coin) then
+		return FALSE
+	end
+
+	if(coin.to ~= nil and item.type == ITEMCOUNT_MAX) then
 		doChangeTypeItem(item.uid, item.type - item.type)
-		doPlayerAddItem(cid, ITEM_PLATINUM_COIN, 1)
-		doSendAnimatedText(fromPosition, "$$$", TEXTCOLOR_LIGHTBLUE)
-	elseif item.itemid == ITEM_PLATINUM_COIN and item.type == ITEMCOUNT_MAX then
-		doChangeTypeItem(item.uid, item.type - item.type)
-		doPlayerAddItem(cid, ITEM_CRYSTAL_COIN, 1)
-		doSendAnimatedText(fromPosition, "$$$", TEXTCOLOR_TEAL)
-	elseif item.itemid == ITEM_PLATINUM_COIN and item.type < ITEMCOUNT_MAX then
+		doPlayerAddItem(cid, coin.to, 1)
+		doSendAnimatedText(fromPosition, "$$$", coins[coin.to].effect)
+	elseif(coin.from ~= nil) then
 		doChangeTypeItem(item.uid, item.type - 1)
-		doPlayerAddItem(cid, ITEM_GOLD_COIN, ITEMCOUNT_MAX)
-		doSendAnimatedText(fromPosition, "$$$", TEXTCOLOR_YELLOW)
-	elseif item.itemid == ITEM_CRYSTAL_COIN then
-		doChangeTypeItem(item.uid, item.type - 1)
-		doPlayerAddItem(cid, ITEM_PLATINUM_COIN, ITEMCOUNT_MAX)
-		doSendAnimatedText(fromPosition, "$$$", TEXTCOLOR_LIGHTBLUE)
+		doPlayerAddItem(cid, coin.from, ITEMCOUNT_MAX)
+		doSendAnimatedText(fromPosition, "$$$", coins[coin.from].effect)
 	end
 	return TRUE
 end

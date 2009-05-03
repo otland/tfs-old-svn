@@ -67,7 +67,7 @@ class ProtocolGame : public Protocol
 
 		bool login(const std::string& name, uint32_t accnumber, const std::string& password,
 			OperatingSystem_t operatingSystem, uint32_t version, bool gamemasterLogin);
-		bool logout(bool displayEffect, bool forced, bool executeOnLogout = true);
+		bool logout(bool displayEffect, bool forced, bool executeLogout = true);
 
 		void setPlayer(Player* p);
 

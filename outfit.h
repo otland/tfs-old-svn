@@ -38,12 +38,13 @@ struct Outfit
 
 		memset(absorbPercent, 0, sizeof(absorbPercent));
 		premium = manaShield = invisible = regeneration = false;
-		looktype = addons = quest = speed = healthGain = healthTicks = manaGain = manaTicks = conditionSuppressions = 0;
+		looktype = addons = access = quest = speed = healthGain = healthTicks = manaGain = manaTicks = conditionSuppressions = 0;
 	}
 
 	bool premium, manaShield, invisible, regeneration;
 	int16_t absorbPercent[COMBAT_LAST + 1];
 
+	uint16_t access;
 	uint32_t looktype, addons, quest;
 	int32_t skills[SKILL_LAST + 1], skillsPercent[SKILL_LAST + 1], stats[STAT_LAST + 1], statsPercent[STAT_LAST + 1],
 		speed, healthGain, healthTicks, manaGain, manaTicks, conditionSuppressions;
@@ -78,15 +79,12 @@ class Outfits
 		}
 
 		bool loadFromXml();
-		const OutfitListType& getOutfits(uint32_t type)
-		{
-			return getOutfitList(type).getOutfits();
-		}
+		bool parseOutfitNode(xmlNodePtr p);
+		const OutfitListType& getOutfits(uint32_t type) {return getOutfitList(type).getOutfits();}
 		const OutfitList& getOutfitList(uint32_t type)
 		{
 			if(type < m_list.size())
 				return *m_list[type];
-
 
 			if(type == PLAYERSEX_FEMALE)
 				return m_femaleList;
@@ -103,8 +101,7 @@ class Outfits
 	private:
 		Outfits();
 
-		OutfitList m_femaleList;
-		OutfitList m_maleList;
+		OutfitList m_femaleList, m_maleList;
 
 		typedef std::vector<OutfitList*> OutfitsListVector;
 		OutfitsListVector m_list;

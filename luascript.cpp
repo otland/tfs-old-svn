@@ -1560,7 +1560,7 @@ void LuaScriptInterface::registerFunctions()
 	//doDecayItem(uid)
 	lua_register(m_luaState, "doDecayItem", LuaScriptInterface::luaDoDecayItem);
 
-	//doCreateItem(itemid, type/count, pos)
+	//doCreateItem(itemid[, type/count], pos)
 	//Returns uid of the created item, only works on tiles.
 	lua_register(m_luaState, "doCreateItem", LuaScriptInterface::luaDoCreateItem);
 
@@ -1937,6 +1937,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//getCreaturePosition(cid)
 	lua_register(m_luaState, "getCreaturePosition", LuaScriptInterface::luaGetCreaturePosition);
+
+	//getCreatureLastPosition(cid)
+	lua_register(m_luaState, "getCreatureLastPosition", LuaScriptInterface::luaGetCreatureLastPosition);
 
 	//getCreatureName(cid)
 	lua_register(m_luaState, "getCreatureName", LuaScriptInterface::luaGetCreatureName);
@@ -7142,17 +7145,25 @@ int32_t LuaScriptInterface::luaGetPlayerGUIDByName(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetPlayerNameByGUID(lua_State* L)
 {
-	//getPlayerNameByGUID(guid[, multiworld])
-	bool multiworld = false;
-	if(lua_gettop(L) > 1)
+	//getPlayerNameByGUID(guid[, multiworld[, displayError]])
+	int32_t parameters = lua_gettop(L);
+	bool multiworld = false, displayError = true;
+
+	if(parameters > 2)
+		displayError = popNumber(L) == LUA_TRUE;
+
+	if(parameters > 1)
 		multiworld = popNumber(L) == LUA_TRUE;
 
 	uint32_t guid = popNumber(L);
 	std::string name;
 	if(!IOLoginData::getInstance()->getNameByGuid(guid, name, multiworld))
 	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		if(displayError)
+			reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+
 		lua_pushnil(L);
+		return 1;
 	}
 
 	lua_pushstring(L, name.c_str());
@@ -7879,6 +7890,21 @@ int32_t LuaScriptInterface::luaGetCreaturePosition(lua_State* L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaGetCreatureLastPosition(lua_State* L)
+{
+	//getCreatureLastPosition(cid)
+	ScriptEnviroment* env = getScriptEnv();
+
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+		pushPosition(L, creature->getLastPosition(), 0);
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, LUA_ERROR);
+	}
+	return 1;
+}
+
 int32_t LuaScriptInterface::luaGetCreatureName(lua_State* L)
 {
 	//getCreatureName(cid)
@@ -7933,6 +7959,9 @@ int32_t LuaScriptInterface::luaDoCreatureSetLookDir(lua_State* L)
 	{
 		if(dir < NORTH || dir > WEST)
 		{
+			std::stringstream ss;
+			ss << dir;
+			reportErrorFunc("Invalid direction " + ss.str());
 			lua_pushboolean(L, LUA_ERROR);
 			return 1;
 		}
@@ -8038,24 +8067,21 @@ int32_t LuaScriptInterface::luaGetCreatureTarget(lua_State* L)
 int32_t LuaScriptInterface::luaIsItemStackable(lua_State* L)
 {
 	//isItemStackable(itemid)
-	const ItemType& it = Item::items[popNumber(L)];
-	lua_pushboolean(L, it.stackable ? LUA_TRUE : LUA_FALSE);
+	lua_pushboolean(L, Item::items[popNumber(L)].stackable ? LUA_TRUE : LUA_FALSE);
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaIsItemRune(lua_State* L)
 {
 	//isItemRune(itemid)
-	const ItemType& it = Item::items[popNumber(L)];
-	lua_pushboolean(L, it.isRune() ? LUA_TRUE : LUA_FALSE);
+	lua_pushboolean(L, Item::items[popNumber(L)].isRune() ? LUA_TRUE : LUA_FALSE);
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaIsItemDoor(lua_State* L)
 {
 	//isItemDoor(itemid)
-	const ItemType& it = Item::items[popNumber(L)];
-	lua_pushboolean(L, it.isDoor() ? LUA_TRUE : LUA_FALSE);
+	lua_pushboolean(L, Item::items[popNumber(L)].isDoor() ? LUA_TRUE : LUA_FALSE);
 	return 1;
 }
 
@@ -8069,23 +8095,20 @@ int32_t LuaScriptInterface::luaGetItemLevelDoor(lua_State* L)
 int32_t LuaScriptInterface::luaIsItemContainer(lua_State* L)
 {
 	//isItemContainer(itemid)
-	const ItemType& it = Item::items[popNumber(L)];
-	lua_pushboolean(L, it.isContainer() ? LUA_TRUE : LUA_FALSE);
+	lua_pushboolean(L, Item::items[popNumber(L)].isContainer() ? LUA_TRUE : LUA_FALSE);
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaIsItemFluidContainer(lua_State* L)
 {
 	//isItemFluidContainer(itemid)
-	const ItemType& it = Item::items[popNumber(L)];
-	lua_pushboolean(L, it.isFluidContainer() ? LUA_TRUE : LUA_FALSE);
+	lua_pushboolean(L, Item::items[popNumber(L)].isFluidContainer() ? LUA_TRUE : LUA_FALSE);
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaIsItemMovable(lua_State* L)
 {
-	const ItemType& it = Item::items[popNumber(L)];
-	lua_pushboolean(L, it.moveable ? LUA_TRUE : LUA_FALSE);
+	lua_pushboolean(L, Item::items[popNumber(L)].moveable ? LUA_TRUE : LUA_FALSE);
 	return 1;
 }
 
@@ -8598,13 +8621,7 @@ int32_t LuaScriptInterface::luaGetCreatureMaster(lua_State *L)
 	}
 
 	Creature* master = creature->getMaster();
-	if(!master)
-	{
-		lua_pushnumber(L, cid);
-		return 1;
-	}
-
-	lua_pushnumber(L, env->addThing(master));
+	lua_pushnumber(L, master ? env->addThing(master) : cid);
 	return 1;
 }
 

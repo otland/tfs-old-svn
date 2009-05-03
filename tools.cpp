@@ -633,69 +633,66 @@ void formatDate2(time_t time, char* buffer/* atleast 16 */, bool detailed/* = fa
 
 Skulls_t getSkull(std::string strValue)
 {
-	Skulls_t skull = SKULL_NONE;
 	std::string tmpStrValue = asLowerCaseString(strValue);
 	if(tmpStrValue == "red" || tmpStrValue == "4")
-		skull = SKULL_RED;
+		return SKULL_RED;
 	else if(tmpStrValue == "white" || tmpStrValue == "3")
-		skull = SKULL_WHITE;
+		return SKULL_WHITE;
 	else if(tmpStrValue == "green" || tmpStrValue == "2")
-		skull = SKULL_GREEN;
+		return SKULL_GREEN;
 	else if(tmpStrValue == "yellow" || tmpStrValue == "1")
-		skull = SKULL_YELLOW;
+		return SKULL_YELLOW;
 
-	return skull;
+	return SKULL_NONE;
 }
 
 PartyShields_t getPartyShield(std::string strValue)
 {
-	PartyShields_t partyShield = SHIELD_NONE;
 	std::string tmpStrValue = asLowerCaseString(strValue);
 	if(tmpStrValue == "whitenoshareoff" || tmpStrValue == "10")
-		partyShield = SHIELD_YELLOW_NOSHAREDEXP;
+		return SHIELD_YELLOW_NOSHAREDEXP;
 	else if(tmpStrValue == "blueshareoff" || tmpStrValue == "9")
-		partyShield = SHIELD_BLUE_NOSHAREDEXP;
+		return SHIELD_BLUE_NOSHAREDEXP;
 	else if(tmpStrValue == "yellowshareblink" || tmpStrValue == "8")
-		partyShield = SHIELD_YELLOW_NOSHAREDEXP_BLINK;
+		return SHIELD_YELLOW_NOSHAREDEXP_BLINK;
 	else if(tmpStrValue == "blueshareblink" || tmpStrValue == "7")
-		partyShield = SHIELD_BLUE_NOSHAREDEXP_BLINK;
+		return SHIELD_BLUE_NOSHAREDEXP_BLINK;
 	else if(tmpStrValue == "yellowshareon" || tmpStrValue == "6")
-		partyShield = SHIELD_YELLOW_SHAREDEXP;
+		return SHIELD_YELLOW_SHAREDEXP;
 	else if(tmpStrValue == "blueshareon" || tmpStrValue == "5")
-		partyShield = SHIELD_BLUE_SHAREDEXP;
+		return SHIELD_BLUE_SHAREDEXP;
 	else if(tmpStrValue == "yellow" || tmpStrValue == "4")
-		partyShield = SHIELD_YELLOW;
+		return SHIELD_YELLOW;
 	else if(tmpStrValue == "blue" || tmpStrValue == "3")
-		partyShield = SHIELD_BLUE;
+		return SHIELD_BLUE;
 	else if(tmpStrValue == "whiteyellow" || tmpStrValue == "2")
-		partyShield = SHIELD_WHITEYELLOW;
+		return SHIELD_WHITEYELLOW;
 	else if(tmpStrValue == "whiteblue" || tmpStrValue == "1")
-		partyShield = SHIELD_WHITEBLUE;
+		return SHIELD_WHITEBLUE;
 
-	return partyShield;
+	return SHIELD_NONE;
 }
 
 Direction getDirection(std::string string)
 {
-	Direction direction = SOUTH;
 	if(string == "north" || string == "n" || string == "0")
-		direction = NORTH;
+		return NORTH;
 	else if(string == "east" || string == "e" || string == "1")
-		direction = EAST;
+		return EAST;
 	else if(string == "south" || string == "s" || string == "2")
-		direction = SOUTH;
+		return SOUTH;
 	else if(string == "west" || string == "w" || string == "3")
-		direction = WEST;
+		return WEST;
 	else if(string == "southwest" || string == "south west" || string == "south-west" || string == "sw" || string == "4")
-		direction = SOUTHWEST;
+		return SOUTHWEST;
 	else if(string == "southeast" || string == "south east" || string == "south-east" || string == "se" || string == "5")
-		direction = SOUTHEAST;
+		return SOUTHEAST;
 	else if(string == "northwest" || string == "north west" || string == "north-west" || string == "nw" || string == "6")
-		direction = NORTHWEST;
+		return NORTHWEST;
 	else if(string == "northeast" || string == "north east" || string == "north-east" || string == "ne" || string == "7")
-		direction = NORTHEAST;
+		return NORTHEAST;
 
-	return direction;
+	return SOUTH;
 }
 
 Direction getDirectionTo(Position pos1, Position pos2, bool extended/* = true*/)
@@ -736,36 +733,27 @@ Direction getDirectionTo(Position pos1, Position pos2, bool extended/* = true*/)
 
 Direction getReverseDirection(Direction dir)
 {
-	Direction _dir = SOUTH;
 	switch(dir)
 	{
 		case NORTH:
-			_dir = SOUTH;
-			break;
+			return SOUTH;
 		case SOUTH:
-			_dir = NORTH;
-			break;
+			return NORTH;
 		case WEST:
-			_dir = EAST;
-			break;
+			return EAST;
 		case EAST:
-			_dir = WEST;
-			break;
+			return WEST;
 		case SOUTHWEST:
-			_dir = NORTHEAST;
-			break;
+			return NORTHEAST;
 		case NORTHWEST:
-			_dir = SOUTHEAST;
-			break;
+			return SOUTHEAST;
 		case NORTHEAST:
-			_dir = SOUTHWEST;
-			break;
+			return SOUTHWEST;
 		case SOUTHEAST:
-			_dir = NORTHWEST;
-			break;
+			return NORTHWEST;
 	}
 
-	return _dir;
+	return SOUTH;
 }
 
 Position getNextPosition(Direction direction, Position pos)
@@ -1317,7 +1305,7 @@ bool parseVocationNode(xmlNodePtr vocationNode, VocationMap& vocationMap, String
 			}
 			else
 			{
-				errorStr += "Wrong vocation name: " + strValue;
+				errorStr = "Wrong vocation name: " + strValue;
 				return false;
 			}
 		}
@@ -1339,13 +1327,37 @@ bool parseVocationNode(xmlNodePtr vocationNode, VocationMap& vocationMap, String
 				std::stringstream ss;
 				ss << "Wrong vocation id: " << intValue;
 
-				errorStr += ss.str();
+				errorStr = ss.str();
 				return false;
 			}
 		}
 
 		if(vocationId != -1 && (!readXMLString(vocationNode, "showInDescription", tmpStrValue) || booleanString(tmpStrValue)))
 			vocStringVec.push_back(asLowerCaseString(strValue));
+	}
+
+	return true;
+}
+
+bool parseIntegerVec(std::string str, IntegerVec& intVector)
+{
+	StringVec strVector = explodeString(str, ";");
+	IntegerVec tmpIntVector;
+	for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)
+	{
+		tmpIntVector = vectorAtoi(explodeString((*it), "-"));
+		if(!tmpIntVector[0] && tmpIntVector[0] != 0)
+			continue;
+
+		intVector.push_back(tmpIntVector[0]);
+		if(tmpIntVector.size() > 1)
+		{
+			while(tmpIntVector[0] < tmpIntVector[1])
+			{
+				tmpIntVector[0]++;
+				intVector.push_back(tmpIntVector[0]);
+			}
+		}
 	}
 
 	return true;

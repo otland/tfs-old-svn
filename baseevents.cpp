@@ -48,81 +48,89 @@ bool BaseEvents::loadFromXml()
 		return false;
 	}
 
+	std::string scriptsPath = getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/scripts/"));
 	p = root->children;
 	while(p)
 	{
-		if(p->name)
-		{
-			if(Event* event = getEvent((const char*)p->name))
-			{
-				if(event->configureEvent(p))
-				{
-					bool success = false;
-
-					std::string strValue, tmpStrValue;
-					if(readXMLString(p, "event", strValue))
-					{
-						tmpStrValue = asLowerCaseString(strValue);
-						if(tmpStrValue == "script")
-						{
-							bool file = readXMLString(p, "value", strValue);
-							if(file)
-								strValue = getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/scripts/" + strValue));
-							else
-								parseXMLContentString(p->children, strValue);
-
-							success = event->loadScript(strValue, file);
-						}
-						else if(tmpStrValue == "buffer")
-						{
-							if(!readXMLString(p, "value", strValue))
-								parseXMLContentString(p->children, strValue);
-
-							success = event->loadBuffer(strValue);
-						}
-						else if(tmpStrValue == "function")
-						{
-							if(readXMLString(p, "value", strValue))
-								success = event->loadFunction(strValue);
-						}
-					}
-					else if(readXMLString(p, "script", strValue))
-					{
-						bool file = asLowerCaseString(strValue) != "cdata";
-						if(file)
-							strValue = getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/scripts/" + strValue));
-						else
-							parseXMLContentString(p->children, strValue);
-
-						success = event->loadScript(strValue, file);
-					}
-					else if(readXMLString(p, "buffer", strValue))
-					{
-						if(asLowerCaseString(strValue) == "cdata")
-							parseXMLContentString(p->children, strValue);
-
-						success = event->loadBuffer(strValue);
-					}
-					else if(readXMLString(p, "function", strValue))
-						success = event->loadFunction(strValue);
-
-					if(success && !registerEvent(event, p))
-						delete event;
-				}
-				else
-				{
-					std::cout << "[Warning - BaseEvents::loadFromXml] Cannot configure event" << std::endl;
-					delete event;
-				}
-			}
-		}
-
+		parseEventNode(p, scriptsPath);
 		p = p->next;
 	}
 
 	xmlFreeDoc(doc);
 	m_loaded = true;
-	return true;
+
+	return m_loaded;
+}
+
+bool BaseEvents::parseEventNode(xmlNodePtr p, std::string scriptsPath)
+{
+	if(p->name)
+	{
+		if(Event* event = getEvent((const char*)p->name))
+		{
+			if(event->configureEvent(p))
+			{
+				bool success = false;
+
+				std::string strValue, tmpStrValue;
+				if(readXMLString(p, "event", strValue))
+				{
+					tmpStrValue = asLowerCaseString(strValue);
+					if(tmpStrValue == "script")
+					{
+						bool file = readXMLString(p, "value", strValue);
+						if(file)
+							strValue = scriptsPath + strValue;
+						else
+							parseXMLContentString(p->children, strValue);
+
+						success = event->loadScript(strValue, file);
+					}
+					else if(tmpStrValue == "buffer")
+					{
+						if(!readXMLString(p, "value", strValue))
+							parseXMLContentString(p->children, strValue);
+
+						success = event->loadBuffer(strValue);
+					}
+					else if(tmpStrValue == "function")
+					{
+						if(readXMLString(p, "value", strValue))
+							success = event->loadFunction(strValue);
+					}
+				}
+				else if(readXMLString(p, "script", strValue))
+				{
+					bool file = asLowerCaseString(strValue) != "cdata";
+					if(file)
+						strValue = scriptsPath + strValue;
+					else
+						parseXMLContentString(p->children, strValue);
+
+					success = event->loadScript(strValue, file);
+				}
+				else if(readXMLString(p, "buffer", strValue))
+				{
+					if(asLowerCaseString(strValue) == "cdata")
+						parseXMLContentString(p->children, strValue);
+
+					success = event->loadBuffer(strValue);
+				}
+				else if(readXMLString(p, "function", strValue))
+					success = event->loadFunction(strValue);
+
+				if(success && !registerEvent(event, p))
+					delete event;
+			}
+			else
+			{
+				std::cout << "[Warning - BaseEvents::loadFromXml] Cannot configure event" << std::endl;
+				delete event;
+			}
+		}
+	}
+
+	return false;
 }
 
 bool BaseEvents::reload()

@@ -511,7 +511,7 @@ ServiceManager* services)
 		for(IntegerVec::iterator it = cores.begin(); it != cores.end(); ++it)
 			mask += 1 << (*it);
 
-		SetProcessAffinityMask(GetCurrentProcess(), mask); //someone test it, please
+		SetProcessAffinityMask(GetCurrentProcess(), mask);
 	}
 
 	CreateMutex(NULL, true, "forgottenserver_" + g_config.getNumber(ConfigManager::WORLD_ID));
@@ -1060,6 +1060,17 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					{
 						if(g_game.reloadInfo(RELOAD_ACTIONS))
 							std::cout << "Reloaded actions." << std::endl;
+					}
+
+					break;
+				}
+
+				case ID_MENU_RELOAD_CHAT:
+				{
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(g_game.reloadInfo(RELOAD_CHAT))
+							std::cout << "Reloaded chat channels." << std::endl;
 					}
 
 					break;

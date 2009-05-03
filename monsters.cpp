@@ -721,6 +721,12 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 
 bool Monsters::loadMonster(const std::string& file, const std::string& monsterName, bool reloading /*= false*/)
 {
+	if(getIdByName(monsterName) != 0 && !reloading)
+	{
+		std::cout << "[Warning - Monsters::loadMonster] Duplicated registered monster with name " << monsterName << std::endl;
+		return true;
+	}
+
 	bool monsterLoad, new_mType = true;
 	MonsterType* mType = NULL;
 	if(reloading)

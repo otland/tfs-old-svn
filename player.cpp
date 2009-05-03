@@ -2347,6 +2347,14 @@ void Player::removeList()
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 			(*it).second->notifyLogOut(this);
 	}
+	else
+	{
+		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		{
+			if((*it).second->canSeeGhost(this))
+				(*it).second->notifyLogOut(this);
+		}
+	}
 }
 
 void Player::addList()
@@ -2355,6 +2363,14 @@ void Player::addList()
 	{
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 			(*it).second->notifyLogIn(this);
+	}
+	else
+	{
+		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		{
+			if((*it).second->canSeeGhost(this))
+				(*it).second->notifyLogIn(this);
+		}
 	}
 
 	listPlayer.addList(this);
@@ -3743,6 +3759,7 @@ void Player::setSex(PlayerSex_t newSex)
 		{
 			outfit.looktype = (*it)->looktype;
 			outfit.addons = (*it)->addons;
+			outfit.access = (*it)->access;
 			outfit.quest = (*it)->quest;
 			outfit.premium = (*it)->premium;
 

@@ -506,11 +506,11 @@ Cylinder* Game::internalGetCylinder(Player* player, const Position& pos)
 	return player;
 }
 
-Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index, uint32_t spriteId /*= 0*/, stackposType_t type /*= STACKPOS_NORMAL*/)
+Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index, uint32_t spriteId/*= 0*/, stackposType_t type/*= STACKPOS_NORMAL*/)
 {
 	if(pos.x != 0xFFFF)
 	{
-		Tile* tile = getTile(pos.x, pos.y, pos.z);
+		Tile* tile = getTile(pos);
 		if(!tile)
 			return NULL;
 
@@ -611,10 +611,7 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 		return findItemOfType(player, it.id, true, subType);
 	}
 	else
-	{
-		slots_t slot = (slots_t)static_cast<uint8_t>(pos.y);
-		return player->getInventoryItem(slot);
-	}
+		return player->getInventoryItem((slots_t)static_cast<uint8_t>(pos.y));
 
 	return NULL;
 }
@@ -1101,7 +1098,7 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 	return ret;
 }
 
-ReturnValue Game::internalMoveCreature(Creature* creature, Cylinder* fromCylinder, Cylinder* toCylinder, uint32_t flags /*= 0*/)
+ReturnValue Game::internalMoveCreature(Creature* creature, Cylinder* fromCylinder, Cylinder* toCylinder, uint32_t flags/*= 0*/)
 {
 	//check if we can move the creature to the destination
 	ReturnValue ret = toCylinder->__queryAdd(0, creature, 1, flags);
@@ -5289,9 +5286,6 @@ bool Game::loadExperienceStages()
 		return false;
 	}
 
-	int32_t intValue, low = 0, high = 0;
-	float floatValue, mul = 1.0f, defStageMultiplier;
-
 	xmlNodePtr q, p, root = xmlDocGetRootElement(doc);
 	if(xmlStrcmp(root->name, (const xmlChar*)"stages"))
 	{
@@ -5299,6 +5293,10 @@ bool Game::loadExperienceStages()
 		xmlFreeDoc(doc);
 		return false;
 	}
+
+	int32_t intValue, low = 0, high = 0;
+	float floatValue, mul = 1.0f, defStageMultiplier;
+	std::string strValue;
 
 	lastStageLevel = 0;
 	stages.clear();
@@ -5308,10 +5306,15 @@ bool Game::loadExperienceStages()
 	{
 		if(!xmlStrcmp(q->name, (const xmlChar*)"world"))
 		{
-			if(!readXMLInteger(q, "id", intValue) || intValue != g_config.getNumber(ConfigManager::WORLD_ID))
+			if(readXMLString(q, "id", strValue))
 			{
-				q = q->next;
-				continue;
+				IntegerVec intVector;
+				if(!parseIntegerVec(strValue, intVector) || std::find(intVector.begin(),
+					intVector.end(), g_config.getNumber(ConfigManager::WORLD_ID)) == intVector.end())
+				{
+					q = q->next;
+					continue;
+				}
 			}
 
 			defStageMultiplier = 1.0f;

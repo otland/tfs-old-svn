@@ -78,22 +78,14 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 				max = (int32_t)((player->getLevel() + player->getMagicLevel() * 4) * 1. * maxa + maxb);
 
 				Vocation* vocation = player->getVocation();
+				float multiplier = 1.0f;
 				if(max > 0)
-				{
-					if(vocation && vocation->getMagicHealingMultiplier() != 1.0)
-					{
-						min = (int32_t)(min * vocation->getMagicHealingMultiplier());
-						max = (int32_t)(max * vocation->getMagicHealingMultiplier());
-					}
-				}
+					multiplier = vocation->getMagicHealingMultiplier();
 				else
-				{
-					if(vocation && vocation->getMagicMultiplier() != 1.0)
-					{
-						min = (int32_t)(min * vocation->getMagicMultiplier());
-						max = (int32_t)(max * vocation->getMagicMultiplier());
-					}
-				}
+					multiplier = vocation->getMagicMultiplier();
+
+				min = (int32_t)(min * multiplier);
+				max = (int32_t)(max * multiplier);
 
 				return true;
 			}
@@ -979,6 +971,15 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 		{
 			max = LuaScriptInterface::popNumber(L);
 			min = LuaScriptInterface::popNumber(L);
+			Vocation* vocation = player->getVocation();
+			float multiplier = 1.0;
+			if(max > 0)
+				multiplier = vocation->getMagicHealingMultiplier();
+			else
+				multiplier = vocation->getMagicMultiplier();
+
+			min = (int32_t)(min * multiplier);
+			max = (int32_t)(max * multiplier);
 		}
 		else
 			LuaScriptInterface::reportError(NULL, std::string(LuaScriptInterface::popString(L)));
