@@ -571,8 +571,9 @@
 							annihilator.lua
 								* Changes due player storage compatibility
 						other/
-							blueberrybush.lua
 							changegold.lua
+								* Rewritten, easiest way to add new coins
+							blueberrybush.lua
 							constructionkits.lua
 							food.lua
 								* Fixes & formatting
@@ -599,6 +600,7 @@
 						* Fixes + changes due player storage compatibility
 					function.lua
 						* Added new function: doPlayerAddFrags(cid, amount)
+						* Deprecated getPlayerGroupName(cid), use getGroupInfo(id).name
 						* Moved getPlayerMoney to sources
 						* doWriteLogFile fix
 					compat.lua
@@ -612,17 +614,29 @@
 					chat/
 						* Created chat directory, for channels logging
 
+				monsters/
+					Traps/
+						*.xml
+							hidehealth & hidename flags for throwers
+
 				movements/
 					scripts/
 						dough.lua
 							* Param added
 						snow.lua
 							* Invisible GM won't show snow foot prints
+						swimming/*.lua
+							* dataDirectory fixes
 
 				npc/
 					scripts/
 						runes.lua
 							* Changes due player storage compatibility
+					lib/
+						npc.lua
+						npcsystem/
+							npcsystem.lua
+								* dataDirectory fixes
 
 				spells/
 					scripts/
@@ -644,6 +658,10 @@
 
 					stages.xml
 						* default multiplier attribute, NOTE: only in 'world' node
+						* Possiblity to use e.g. id="0;1;2" & id="0-5' to use same stages on more servers
+
+					outfits.xml
+						* Possiblity to use type="0;1;2" or type="0-2" to use for both genders
 
 		D...
 	]
@@ -794,15 +812,19 @@
 		Chat channels configuration in .xml file (Elf, slawkens)
 		Groups moved to groups.xml file + changed way, how they works (Elf)
 		Displaying XML parser errors (Elf, slawkens)
-		New CONFIG_HELP file, with config values description (slawkens, KaczooH)
+		New doc files: CONFIG_HELP, COMMANDS_HELP, SCRIPTSYSTEM_HELP (slawkens, KaczooH)
 		Possiblity to use <vocation id=""/> in movements, spells etc. (slawkens)
-		onTextEdit creature event (slawkens)
+		onTextEdit, onFollow(cid, target), onTarget(cid, target) creature events (slawkens)
 		Turn click (aka CTRL + key) teleportation (slawkens, Kiper)
-		New configurables: ghostModeInvisibleEffect, gainExperienceColor, checkCorpseOwner, showHealingDamageForMonsters (slawkens)
+		New configurables: ghostModeInvisibleEffect, gainExperienceColor, checkCorpseOwner, showHealingDamageForMonsters
+			premiumDaysToFormGuild, pushCreatureDelay, deathContainerId (slawkens)
 		Moved items randomization to randomization.xml file (slawkens, Elf)
 		Furniture beds (packages with beds) + enchanting system (slawkens)
 		Outfit attributes (Elf)
 		Proccess priority and affinity assinging for both Windows and *nix systems (Elf)
+		'hidename' & 'hidehealth' flags for monsters & npcs (slawkens)
+		Few more options displayed onLook like ghostMode, decayTo, clientVersion, equipTo (slawkens)
+		New LUA functions: setPlayerPZLocked(cid, locked), getCreatureLastPosition(cid), getWaypointsList(), getGroupInfo(id), doPlayerAddFrags(cid, amount) (slawkens)
 	]
 ]
 
@@ -933,6 +955,10 @@
 		Gamemasters crashing client when on ghost mode (Elf)
 		Containers loaded from map having unproper weight (OpenTibia SVN)
 		Players being able to track gamemasters on ghost mode with EXURA SIO spell (Elf)
+		Premium account being always removed while logging in (thanks Faramir)
+		Summon teleporting, doCreateItem fix, GUI disappearing, temporary fix to Monster::pushCreatures,
+			missing CHAT reload in GUI, outfits attributes fix, ghost login fix,
+			vocation magDamage/magHealingDamage not working onGetFormulaValues callback (slawkens)
 		... and few more.
 	]
 ]
