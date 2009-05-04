@@ -184,7 +184,7 @@ int32_t Items::loadFromOtb(std::string file)
 		std::cout << "[Error - Items::loadFromOtb] New version detected, an older version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
 	}
-	else if(Items::dwMinorVersion != CLIENT_VERSION_840)
+	else if(Items::dwMinorVersion != CLIENT_VERSION_842)
 	{
 		std::cout << "[Error - Items::loadFromOtb] Another (client) version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
@@ -544,6 +544,8 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 						it.type = ITEM_TYPE_KEY;
 					else if(tmpStrValue == "magicfield")
 						it.type = ITEM_TYPE_MAGICFIELD;
+					else if(asLowerCaseString(strValue) == "container")
+					it.type = ITEM_TYPE_CONTAINER;
 					else if(tmpStrValue == "depot")
 						it.type = ITEM_TYPE_DEPOT;
 					else if(tmpStrValue == "mailbox")
