@@ -616,7 +616,7 @@ void formatDate(time_t time, char* buffer/* atleast 21 */)
 		sprintf(buffer, "UNIX Time: %d", (int32_t)time);
 }
 
-void formatDate2(time_t time, char* buffer/* atleast 16 */, bool detailed/* = false */)
+void formatDate2(time_t time, char* buffer/* atleast 16 */, bool detailed/* = false*/)
 {
 	const tm* tms = localtime(&time);
 	if(tms)

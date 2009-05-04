@@ -362,6 +362,9 @@ bool Npc::loadFromXml(const std::string& filename)
 	if(scriptfile.empty())
 		return true;
 
+	if(scriptfile.find("/") == std::string::npos)
+		scriptfile = getFilePath(FILE_TYPE_OTHER, "npc/scripts/" + scriptfile);
+
 	m_npcEventHandler = new NpcScript(scriptfile, this);
 	return m_npcEventHandler->isLoaded();
 }

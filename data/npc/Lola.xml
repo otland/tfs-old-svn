@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<npc name="Lola" script="data/npc/scripts/furniture.lua" walkinterval="2000" floorchange="0">
+<npc name="Lola" script="furniture.lua" walkinterval="2000" floorchange="0">
 	<health now="150" max="150"/>
 	<look type="142" head="114" body="0" legs="95" feet="114" corpse="2212"/>
 	<parameters>

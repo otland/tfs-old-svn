@@ -371,7 +371,6 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 		OutfitList* list;
 		if(!m_list[intValue])
 		{
-			std::cout << "#SlawDebug new outfitlist = " << intValue << std::endl;
 			list = new OutfitList;
 			m_list[intValue] = list;
 		}

@@ -3,10 +3,10 @@
 
 if(NpcSystem == nil) then
 	-- Loads the underlying classes of the npcsystem.
-	dofile('data/npc/lib/npcsystem/keywordhandler.lua')
-	dofile('data/npc/lib/npcsystem/queue.lua')
-	dofile('data/npc/lib/npcsystem/npchandler.lua')
-	dofile('data/npc/lib/npcsystem/modules.lua')
+	dofile(getDataDir() .. 'npc/lib/npcsystem/keywordhandler.lua')
+	dofile(getDataDir() .. 'npc/lib/npcsystem/queue.lua')
+	dofile(getDataDir() .. 'npc/lib/npcsystem/npchandler.lua')
+	dofile(getDataDir() .. 'npc/lib/npcsystem/modules.lua')
 
 	-- Global npc constants:
 

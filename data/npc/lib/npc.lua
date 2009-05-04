@@ -1,5 +1,5 @@
 -- Include the Advanced NPC System
-dofile('data/npc/lib/npcsystem/npcsystem.lua')
+dofile(getDataDir() .. 'npc/lib/npcsystem/npcsystem.lua')
 
 function doMessageCheck(message, keyword)
 	if(type(keyword) == "table") then
