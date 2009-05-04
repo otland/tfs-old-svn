@@ -170,23 +170,14 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 	if(xmlStrcmp(p->name, (const xmlChar*)"outfit"))
 		return false;
 
-	std::string strValue;
+	std::string strValue, strTypes;
 	int32_t intValue;
 
-	if(!readXMLInteger(p, "type", intValue) || intValue > 9 || intValue < 0)
+	if(!readXMLString(p, "type", strTypes))
 	{
-		std::cout << "[Warning - Outfits::loadFromXml] No valid outfit type " << intValue << std::endl;
+		std::cout << "[Warning - Outfits::loadFromXml] Outfit type not specified" << std::endl;
 		return false;
 	}
-
-	OutfitList* list;
-	if(!m_list[intValue])
-	{
-		list = new OutfitList;
-		m_list[intValue] = list;
-	}
-	else
-		list = m_list[intValue];
 
 	if(!readXMLInteger(p, "looktype", intValue))
 	{
@@ -360,8 +351,35 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 		configNode = configNode->next;
 	}
 
-	if(readXMLString(p, "enabled", strValue) && booleanString(strValue))
+	if(!readXMLString(p, "enabled", strValue) || !booleanString(strValue))
+		return true;
+
+	IntegerVec intVector;
+	if(!parseIntegerVec(strTypes, intVector))
+		return false;
+
+	size_t size = intVector.size();
+	for(size_t i = 0; i < size; ++i)
+	{
+		intValue = intVector[i];
+		if(intValue > 9 || intValue < 0)
+		{
+			std::cout << "[Warning - Outfits::loadFromXml] No valid outfit type " << intValue << std::endl;
+			continue;
+		}
+
+		OutfitList* list;
+		if(!m_list[intValue])
+		{
+			std::cout << "#SlawDebug new outfitlist = " << intValue << std::endl;
+			list = new OutfitList;
+			m_list[intValue] = list;
+		}
+		else
+			list = m_list[intValue];
+
 		list->addOutfit(outfit);
+	}
 
 	return true;
 }
