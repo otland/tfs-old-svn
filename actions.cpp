@@ -103,7 +103,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 
 		if(useItemMap.find(intVector[0]) != useItemMap.end())
 		{
-			std::cout << "[Warning - Actions::registerEvent] Duplicate registered item id: " << intVector[0];
+			std::cout << "[Warning - Actions::registerEvent] Duplicate registered item id: " << intVector[0] << std::endl;
 			success = false;
 		}
 		else
@@ -114,7 +114,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 		{
 			if(useItemMap.find(intVector[i]) != useItemMap.end())
 			{
-				std::cout << "[Warning - Actions::registerEvent] Duplicate registered item id: " << intVector[i];
+				std::cout << "[Warning - Actions::registerEvent] Duplicate registered item id: " << intVector[i] << std::endl;
 				success = false;
 			}
 			else
@@ -133,7 +133,8 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 				tmp = intVector[i];
 				if(useItemMap.find(intVector[i]) != useItemMap.end())
 				{
-					std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with id: " << tmp << ", in fromid: " << tmp << " and toid: " << endIntVector[i] << std::endl;
+					std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with id: " << tmp <<
+						", in fromid: " << tmp << " and toid: " << endIntVector[i] << std::endl;
 					success = false;
 				}
 				else
@@ -144,7 +145,8 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 					intVector[i]++;
 					if(useItemMap.find(intVector[i]) != useItemMap.end())
 					{
-						std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with id: " << intVector[i] << ", in fromid: " << tmp << " and toid: " << endIntVector[i] << std::endl;
+						std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with id: " << intVector[i] <<
+							", in fromid: " << tmp << " and toid: " << endIntVector[i] << std::endl;
 						continue;
 					}
 
@@ -153,7 +155,8 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 			}
 		}
 		else
-			std::cout << "[Warning - Actions::registerEvent] Malformed entry (from: \"" << strValue << "\", to: \"" << endStrValue << "\")" << std::endl;
+			std::cout << "[Warning - Actions::registerEvent] Malformed entry (from: \"" << strValue <<
+				"\", to: \"" << endStrValue << "\")" << std::endl;
 	}
 	else if(readXMLString(p, "uniqueid", strValue))
 	{
@@ -165,7 +168,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 
 		if(uniqueItemMap.find(intVector[0]) != uniqueItemMap.end())
 		{
-			std::cout << "[Warning - Actions::registerEvent] Duplicate registered item uniqueid: " << intVector[0];
+			std::cout << "[Warning - Actions::registerEvent] Duplicate registered item uniqueid: " << intVector[0] << std::endl;
 			success = false;
 		}
 		else
@@ -176,7 +179,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 		{
 			if(uniqueItemMap.find(intVector[i]) != uniqueItemMap.end())
 			{
-				std::cout << "[Warning - Actions::registerEvent] Duplicate registered item uniqueid: " << intVector[i];
+				std::cout << "[Warning - Actions::registerEvent] Duplicate registered item uniqueid: " << intVector[i] << std::endl;
 				success = false;
 			}
 			else
@@ -195,7 +198,8 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 				tmp = intVector[i];
 				if(uniqueItemMap.find(intVector[i]) != uniqueItemMap.end())
 				{
-					std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with uid: " << tmp << ", in fromuid: " << tmp << " and touid: " << endIntVector[i] << std::endl;
+					std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with uid: " << tmp <<
+						", in fromuid: " << tmp << " and touid: " << endIntVector[i] << std::endl;
 					success = false;
 				}
 				else
@@ -206,7 +210,8 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 					intVector[i]++;
 					if(uniqueItemMap.find(intVector[i]) != uniqueItemMap.end())
 					{
-						std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with uid: " << intVector[i] << ", in fromuid: " << tmp << " and touid: " << endIntVector[i] << std::endl;
+						std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with uid: " << intVector[i] <<
+							", in fromuid: " << tmp << " and touid: " << endIntVector[i] << std::endl;
 						continue;
 					}
 
@@ -215,7 +220,8 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 			}
 		}
 		else
-			std::cout << "[Warning - Actions::registerEvent] Malformed entry (from: \"" << strValue << "\", to: \"" << endStrValue << "\")" << std::endl;
+			std::cout << "[Warning - Actions::registerEvent] Malformed entry (from: \"" << strValue <<
+				"\", to: \"" << endStrValue << "\")" << std::endl;
 	}
 	else if(readXMLString(p, "actionid", strValue))
 	{
@@ -227,7 +233,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 
 		if(actionItemMap.find(intVector[0]) != actionItemMap.end())
 		{
-			std::cout << "[Warning - Actions::registerEvent] Duplicate registered item actionid: " << intVector[0];
+			std::cout << "[Warning - Actions::registerEvent] Duplicate registered item actionid: " << intVector[0] << std::endl;
 			success = false;
 		}
 		else
@@ -238,7 +244,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 		{
 			if(actionItemMap.find(intVector[i]) != actionItemMap.end())
 			{
-				std::cout << "[Warning - Actions::registerEvent] Duplicate registered item actionid: " << intVector[i];
+				std::cout << "[Warning - Actions::registerEvent] Duplicate registered item actionid: " << intVector[i] << std::endl;
 				success = false;
 			}
 			else
@@ -257,7 +263,8 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 				tmp = intVector[i];
 				if(actionItemMap.find(intVector[i]) != actionItemMap.end())
 				{
-					std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with aid: " << tmp << ", in fromaid: " << tmp << " and toaid: " << endIntVector[i] << std::endl;
+					std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with aid: " << tmp <<
+						", in fromaid: " << tmp << " and toaid: " << endIntVector[i] << std::endl;
 					success = false;
 				}
 				else
@@ -268,7 +275,8 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 					intVector[i]++;
 					if(actionItemMap.find(intVector[i]) != actionItemMap.end())
 					{
-						std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with aid: " << intVector[i] << ", in fromaid: " << tmp << " and toaid: " << endIntVector[i] << std::endl;
+						std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with aid: " << intVector[i] <<
+							", in fromaid: " << tmp << " and toaid: " << endIntVector[i] << std::endl;
 						continue;
 					}
 
@@ -277,7 +285,8 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p)
 			}
 		}
 		else
-			std::cout << "[Warning - Actions::registerEvent] Malformed entry (from: \"" << strValue << "\", to: \"" << endStrValue << "\")" << std::endl;
+			std::cout << "[Warning - Actions::registerEvent] Malformed entry (from: \"" << strValue <<
+				"\", to: \"" << endStrValue << "\")" << std::endl;
 	}
 	else
 		success = false;
