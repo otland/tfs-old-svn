@@ -67,12 +67,10 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 
 		if(!task->hasExpired())
 		{
-			outputPool = OutputMessagePool::getInstance();
-			if(outputPool)
+			if((outputPool = OutputMessagePool::getInstance()))
 				outputPool->startExecutionFrame();
 
 			(*task)();
-			delete task;
 			if(outputPool)
 				outputPool->sendAll();
 
