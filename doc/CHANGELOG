@@ -551,11 +551,13 @@
 				items/
 					randomization.xml
 						* Moved item randomization configuration here
+					items.xml
+					items.otb
+						* Fixes + 8.42
 
 				XML/
 					channels.xml
 						* Moved chat channels configuration here
-
 					groups.xml
 						* Moved groups configuration here
 
