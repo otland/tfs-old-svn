@@ -1194,7 +1194,8 @@ void ProtocolGame::parseUseItemEx(NetworkMessage& msg)
 	uint16_t toSpriteId = msg.GetU16();
 	int16_t toStackpos = msg.GetByte();
 	bool isHotkey = (fromPos.x == 0xFFFF && fromPos.y == 0 && fromPos.z == 0);
-	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerUseItemEx, player->getID(), fromPos, fromStackPos, fromSpriteId, toPos, toStackPos, toSpriteId, isHotkey);
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerUseItemEx, player->getID(),
+		fromPos, fromStackpos, fromSpriteId, toPos, toStackpos, toSpriteId, isHotkey);
 }
 
 void ProtocolGame::parseBattleWindow(NetworkMessage& msg)
@@ -1204,7 +1205,7 @@ void ProtocolGame::parseBattleWindow(NetworkMessage& msg)
 	int16_t fromStackpos = msg.GetByte();
 	uint32_t creatureId = msg.GetU32();
 	bool isHotkey = (fromPos.x == 0xFFFF && fromPos.y == 0 && fromPos.z == 0);
-	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerUseBattleWindow, player->getID(), fromPos, fromStackPos, creatureId, spriteId, isHotkey);
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerUseBattleWindow, player->getID(), fromPos, fromStackpos, creatureId, spriteId, isHotkey);
 }
 
 void ProtocolGame::parseCloseContainer(NetworkMessage& msg)
@@ -1298,7 +1299,7 @@ void ProtocolGame::parseFightModes(NetworkMessage& msg)
 	if(rawSecureMode == 1)
 		secureMode = SECUREMODE_ON;
 
-	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerSetFightModes, player->getID(), fightMode, chaseMode, safeMode);
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerSetFightModes, player->getID(), fightMode, chaseMode, secureMode);
 }
 
 void ProtocolGame::parseAttack(NetworkMessage& msg)
@@ -1376,7 +1377,7 @@ void ProtocolGame::parseLookInTrade(NetworkMessage& msg)
 {
 	bool counterOffer = (msg.GetByte() == 0x01);
 	int32_t index = msg.GetByte();
-	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerLookInTrade, player->getID(), counterOffer, index)
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerLookInTrade, player->getID(), counterOffer, index);
 }
 
 void ProtocolGame::parseCloseTrade()
