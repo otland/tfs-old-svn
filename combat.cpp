@@ -324,7 +324,7 @@ ReturnValue Combat::canTargetCreature(const Player* player, const Creature* targ
 		return RET_YOUMAYNOTATTACKTHISPLAYER;
 
 	bool deny = false;
-	CreatureEventList targetEvents = tmpPlayer->getCreatureEvents(CREATURE_EVENT_TARGET);
+	CreatureEventList targetEvents = player->getCreatureEvents(CREATURE_EVENT_TARGET);
 	for(CreatureEventList::iterator it = targetEvents.begin(); it != targetEvents.end(); ++it)
 	{
 		if(!(*it)->executeTarget(const_cast<Player*>(player), const_cast<Creature*>(target)))

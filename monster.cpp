@@ -949,8 +949,8 @@ void Monster::pushCreatures(Tile* tile)
 			if(pushCreature(monster))
 				continue;
 
-			monster->changeHealth(-monster->getHealth());
 			monster->setDropLoot(LOOT_DROP_NONE);
+			monster->changeHealth(-monster->getHealth());
 			if(!effect)
 				effect = true;
 		}
