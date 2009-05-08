@@ -323,13 +323,11 @@ ReturnValue Combat::canTargetCreature(const Player* player, const Creature* targ
 	if(player == target)
 		return RET_YOUMAYNOTATTACKTHISPLAYER;
 
-	Player* tmpPlayer = const_cast<Player*>(player);
-	Creature* tmpTarget = const_cast<Creature*>(target);
 	bool deny = false;
 	CreatureEventList targetEvents = tmpPlayer->getCreatureEvents(CREATURE_EVENT_TARGET);
 	for(CreatureEventList::iterator it = targetEvents.begin(); it != targetEvents.end(); ++it)
 	{
-		if(!(*it)->executeTarget(tmpPlayer, tmpTarget))
+		if(!(*it)->executeTarget(const_cast<Player*>(player), const_cast<Creature*>(target)))
 			deny = true;
 	}
 

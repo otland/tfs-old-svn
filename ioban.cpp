@@ -34,20 +34,17 @@ bool IOBan::isIpBanished(uint32_t ip, uint32_t mask/* = 0xFFFFFFFF*/) const
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	bool banned = false;
+	bool result = false;
 	do
 	{
 		uint32_t value = result->getDataInt("value"), param = result->getDataInt("param");
 		if((ip & mask & param) == (value & param & mask))
 		{
 			int32_t expires = result->getDataLong("expires");
-			if(expires <= 0 || expires > (int64_t)time(NULL))
-			{
-				banned = true;
-				break;
-			}
-
-			removeIpBanishment(value, param);
+			if(expires > 0 && expires <= (int32_t)time(NULL))
+				removeIpBanishment(value, param);
+			else if(!result)
+				result = true;
 		}
 	}
 	while(result->next());
@@ -196,7 +193,6 @@ bool IOBan::addNotation(uint32_t account, uint32_t reasonId, ViolationAction_t a
 bool IOBan::removeIpBanishment(uint32_t ip, uint32_t mask/* = 0xFFFFFFFF*/) const
 {
 	Database* db = Database::getInstance();
-
 	DBQuery query;
 	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << ip << " AND `param` = " << mask << " AND `type` = " << BANTYPE_IP_BANISHMENT;
 	return db->executeQuery(query.str());
@@ -205,7 +201,6 @@ bool IOBan::removeIpBanishment(uint32_t ip, uint32_t mask/* = 0xFFFFFFFF*/) cons
 bool IOBan::removeNamelock(uint32_t guid) const
 {
 	Database* db = Database::getInstance();
-
 	DBQuery query;
 	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << guid << " AND `type` = " << BANTYPE_NAMELOCK;
 	return db->executeQuery(query.str());
@@ -232,7 +227,6 @@ bool IOBan::removeBanishment(uint32_t account) const
 bool IOBan::removeDeletion(uint32_t account) const
 {
 	Database* db = Database::getInstance();
-
 	DBQuery query;
 	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << account << " AND `type` = " << BANTYPE_DELETION;
 	return db->executeQuery(query.str());

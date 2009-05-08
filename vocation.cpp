@@ -295,6 +295,7 @@ void Vocation::reset()
 	meleeMultiplier = distanceMultiplier = wandMultiplier = magicMultiplier = magicHealingMultiplier = defenseMultiplier = armorMultiplier = 1.0;
 	for(uint8_t i = 1; i < 6; ++i)
 		skillMultipliers[i] = 2.0f;
+
 	skillMultipliers[0] = 1.5f;
 	memset(absorbPercent, 0, sizeof(absorbPercent));
 }

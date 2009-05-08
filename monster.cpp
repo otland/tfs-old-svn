@@ -586,35 +586,23 @@ void Monster::onThink(uint32_t interval)
 	}
 	else if(!deactivate())
 	{
-		if(teleportToMaster)
-		{
-			if(doTeleportToMaster())
-				teleportToMaster = false;
-		}
+		if(teleportToMaster && doTeleportToMaster())
+			teleportToMaster = false;
 
 		addEventWalk();
 		if(isSummon())
 		{
 			if(!attackedCreature)
 			{
-				if(getMaster() && getMaster()->getAttackedCreature())
-				{
-					///This happens if the monster is summoned during combat
+				if(getMaster() && getMaster()->getAttackedCreature()) //This happens if the monster is summoned during combat
 					selectTarget(getMaster()->getAttackedCreature());
-				}
-				else if(getMaster() != followCreature)
-				{
-					//Our master has not ordered us to attack anything, lets follow him around instead.
+				else if(getMaster() != followCreature) //Our master has not ordered us to attack anything, lets follow him around instead.
 					setFollowCreature(getMaster());
-				}
 			}
 			else if(attackedCreature == this)
 				setFollowCreature(NULL);
-			else if(followCreature != attackedCreature)
-			{
-				//This happens just after a master orders an attack, so lets follow it aswell.
+			else if(followCreature != attackedCreature) //This happens just after a master orders an attack, so lets follow it aswell.
 				setFollowCreature(attackedCreature);
-			}
 		}
 		else if(!targetList.empty())
 		{
@@ -959,18 +947,21 @@ void Monster::pushCreatures(Tile* tile)
 	Monster* monster = NULL;
 	for(uint32_t i = 0; i < creatures->size();)
 	{
-		if(creatures->at(i) && (monster = creatures->at(i)->getMonster()) && monster->isPushable())
+		if(creatures->at(i))
 		{
-//			if(pushCreature(monster)) //TODO: Crashbug
-//				continue;
+			if((monster = creatures->at(i)->getMonster()) && monster->isPushable())
+			{
+				if(pushCreature(monster))
+					continue;
 
-			monster->setDropLoot(LOOT_DROP_NONE);
-			monster->changeHealth(-monster->getHealth());
-			if(!effect)
-				effect = true;
+				monster->setDropLoot(LOOT_DROP_NONE);
+				monster->changeHealth(-monster->getHealth());
+				if(!effect)
+					effect = true;
+			}
+
+			++i;
 		}
-
-		++i;
 	}
 
 	if(effect)

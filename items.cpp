@@ -544,8 +544,8 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 						it.type = ITEM_TYPE_KEY;
 					else if(tmpStrValue == "magicfield")
 						it.type = ITEM_TYPE_MAGICFIELD;
-					else if(asLowerCaseString(strValue) == "container")
-					it.type = ITEM_TYPE_CONTAINER;
+					else if(tmpStrValue == "container")
+						it.type = ITEM_TYPE_CONTAINER;
 					else if(tmpStrValue == "depot")
 						it.type = ITEM_TYPE_DEPOT;
 					else if(tmpStrValue == "mailbox")

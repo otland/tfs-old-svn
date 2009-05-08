@@ -40,7 +40,7 @@ int32_t TextLogger::overflow(int32_t c)
 	formatDate(time(NULL), date);
 
 	formatDate2(time(NULL), buf);
-	sprintf(buffer, "%s%s.log", "data/logs/server/" /*getFilePath(FILE_TYPE_LOG, "server/").c_str()*/, buf);
+	sprintf(buffer, "%s%s.log", getFilePath(FILE_TYPE_LOG, "server/").c_str(), buf);
 	if(FILE* file = fopen(buffer, "a"))
 	{
 		if(displayDate)

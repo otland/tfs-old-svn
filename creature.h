@@ -398,9 +398,7 @@ class Creature : public AutoID, virtual public Thing
 		bool isInternalRemoved;
 		bool isMapLoaded;
 		bool isUpdatingPath;
-		// The creature onThink event vector this creature belongs to
-		// -1 represents that the creature isn't in any vector
-		// 0 represents it's going to be added in the next checkCreature call
+
 		int32_t checkCreatureVectorIndex;
 		int32_t health, healthMax;
 		int32_t mana, manaMax;

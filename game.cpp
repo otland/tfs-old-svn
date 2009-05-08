@@ -1083,8 +1083,9 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 		}
 	}
 
+	toTile = map->getTile(destPos);
 	ReturnValue ret = RET_NOTPOSSIBLE;
-	if((toTile = map->getTile(destPos)))
+	if(toTile)
 		ret = internalMoveCreature(creature, fromTile, toTile, flags);
 
 	if(ret != RET_NOERROR)
@@ -1973,7 +1974,7 @@ ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pu
 	if(thing->isRemoved())
 		return RET_NOTPOSSIBLE;
 
-	if(Tile* toTile = getTile(newPos))
+	if(Tile* toTile = map->getTile(newPos))
 	{
 		if(Creature* creature = thing->getCreature())
 		{
@@ -2253,9 +2254,10 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 			return false;
 		}
 
-		player->resetIdleTime();
 		internalCreatureTurn(player, getDirectionTo(player->getPosition(), pos, false));
 		internalTeleport(player, pos, false);
+
+		player->resetIdleTime();
 		return true;
 	}
 
@@ -3206,17 +3208,19 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 	{
 		if(Item* item = thing->getItem())
 		{
-			ss << std::endl << "ItemID: [" << item->getID() << "].";
+			ss << std::endl << "ItemID: [" << item->getID() << "]";
 			if(item->getActionId() > 0)
-				ss << std::endl << "ActionID: [" << item->getActionId() << "].";
-			if(item->getUniqueId() > 0)
-				ss << std::endl << "UniqueID: [" << item->getUniqueId() << "].";
+				ss << ", ActionID: [" << item->getActionId() << "]";
 
+			if(item->getUniqueId() > 0)
+				ss << ", UniqueID: [" << item->getUniqueId() << "]";
+
+			ss << ".";
 			const ItemType& it = Item::items[item->getID()];
 			if(it.transformEquipTo)
-				ss << std::endl << "TransformTo: [" << it.transformEquipTo << "]. (onEquip).";
+				ss << std::endl << "TransformTo: [" << it.transformEquipTo << "] (onEquip).";
 			else if(it.transformDeEquipTo)
-				ss << std::endl << "TransformTo: [" << it.transformDeEquipTo << "]. (onDeEquip)";
+				ss << std::endl << "TransformTo: [" << it.transformDeEquipTo << "] (onDeEquip).";
 			else if(it.decayTo != -1)
 				ss << std::endl << "DecayTo: [" << it.decayTo << "].";
 		}
@@ -3226,18 +3230,18 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 	{
 		if(const Creature* creature = thing->getCreature())
 		{
-			ss << std::endl << "Health: [" << creature->getHealth() << " / " << creature->getMaxHealth() << "].";
+			ss << std::endl << "Health: [" << creature->getHealth() << " / " << creature->getMaxHealth() << "]";
 			if(creature->getMaxMana() > 0)
-				ss << std::endl << "Mana: [" << creature->getMana() << " / " << creature->getMaxMana() << "].";
+				ss << ", Mana: [" << creature->getMana() << " / " << creature->getMaxMana() << "]";
 
+			ss << ".";
 			if(const Player* destPlayer = creature->getPlayer())
 			{
-				ss << std::endl << "Client: " << destPlayer->getClientVersion();
 				char bufferIP[40];
 				formatIP(destPlayer->getIP(), bufferIP);
-				ss << std::endl << "IP: " << bufferIP;
+				ss << std::endl << "IP: " << bufferIP << ", Client: " << destPlayer->getClientVersion() << ".";
 				if(destPlayer->isInGhostMode())
-					ss << std::endl << "*Ghost mode*";
+					ss << std::endl << "* Ghost mode *";
 			}
 		}
 	}
@@ -3410,11 +3414,11 @@ bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 	if(!player->changeOutfit(outfit))
 		return false;
 
+	player->resetIdleTime();
 	if(player->hasCondition(CONDITION_OUTFIT))
 		return true;
 
 	internalCreatureChangeOutfit(player, outfit);
-	player->resetIdleTime();
 	return true;
 }
 
@@ -3865,7 +3869,7 @@ void Game::checkCreatureAttack(uint32_t creatureId)
 
 void Game::addCreatureCheck(Creature* creature)
 {
-	if(creature->checkCreatureVectorIndex >= 0) // Already in a vector, or about to be added
+	if(creature->checkCreatureVectorIndex >= 0) //already in a vector, or about to be added
 		return;
 
 	toAddCheckCreatureVector.push_back(creature);
@@ -3875,7 +3879,7 @@ void Game::addCreatureCheck(Creature* creature)
 
 void Game::removeCreatureCheck(Creature* creature)
 {
-	if(creature->checkCreatureVectorIndex == -1) // Not in any vector
+	if(creature->checkCreatureVectorIndex == -1) //not in any vector
 		return;
 
 	creature->checkCreatureVectorIndex = -1;
@@ -3883,21 +3887,19 @@ void Game::removeCreatureCheck(Creature* creature)
 
 void Game::checkCreatures()
 {
-	Scheduler::getScheduler().addEvent(createSchedulerTask(
-		EVENT_CHECK_CREATURE_INTERVAL, boost::bind(&Game::checkCreatures, this)));
-
 	Creature* creature;
 	std::vector<Creature*>::iterator it;
 
-	//add any new creatures
-	for(it = toAddCheckCreatureVector.begin(); it != toAddCheckCreatureVector.end();)
+	Scheduler::getScheduler().addEvent(createSchedulerTask(
+		EVENT_CHECK_CREATURE_INTERVAL, boost::bind(&Game::checkCreatures, this)));
+	for(it = toAddCheckCreatureVector.begin(); it != toAddCheckCreatureVector.end();) //add any new creatures
 	{
 		creature = (*it);
 		if(creature->checkCreatureVectorIndex != -1)
 		{
-			int next_vector = (checkCreatureLastIndex + 1) % EVENT_CREATURECOUNT;
-			checkCreatureVectors[next_vector].push_back(creature);
-			creature->checkCreatureVectorIndex = next_vector + 1;
+			int32_t nextVector = (checkCreatureLastIndex + 1) % EVENT_CREATURECOUNT;
+			checkCreatureVectors[nextVector].push_back(creature);
+			creature->checkCreatureVectorIndex = nextVector + 1;
 			++it;
 		}
 		else
@@ -3906,23 +3908,20 @@ void Game::checkCreatures()
 			it = toAddCheckCreatureVector.erase(it);
 		}
 	}
-	toAddCheckCreatureVector.clear();
 
+	toAddCheckCreatureVector.clear();
 	checkCreatureLastIndex++;
 	if(checkCreatureLastIndex == EVENT_CREATURECOUNT)
 		checkCreatureLastIndex = 0;
 
 	std::vector<Creature*>& checkCreatureVector = checkCreatureVectors[checkCreatureLastIndex];
-
 	for(it = checkCreatureVector.begin(); it != checkCreatureVector.end();)
 	{
 		creature = (*it);
 		if(creature->checkCreatureVectorIndex != -1)
 		{
-			if(creature->getHealth() > 0)
+			if(creature->getHealth() > 0 || !creature->onDeath())
 				creature->onThink(EVENT_CREATURE_THINK_INTERVAL);
-			else
-				creature->onDeath();
 
 			++it;
 		}

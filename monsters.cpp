@@ -723,7 +723,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 {
 	if(getIdByName(monsterName) != 0 && !reloading)
 	{
-		std::cout << "[Warning - Monsters::loadMonster] Duplicated registered monster with name " << monsterName << std::endl;
+		std::cout << "[Warning - Monsters::loadMonster] Duplicate registered monster with name: " << monsterName << std::endl;
 		return true;
 	}
 

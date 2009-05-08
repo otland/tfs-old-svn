@@ -2342,35 +2342,19 @@ void Player::removeList()
 {
 	Status::getInstance()->removePlayer();
 	listPlayer.removeList(getID());
-	if(!isInGhostMode())
+	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		if((*it).second->canSeeGhost(this))
 			(*it).second->notifyLogOut(this);
-	}
-	else
-	{
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		{
-			if((*it).second->canSeeGhost(this))
-				(*it).second->notifyLogOut(this);
-		}
 	}
 }
 
 void Player::addList()
 {
-	if(!isInGhostMode())
+	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		if((*it).second->canSeeGhost(this))
 			(*it).second->notifyLogIn(this);
-	}
-	else
-	{
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		{
-			if((*it).second->canSeeGhost(this))
-				(*it).second->notifyLogIn(this);
-		}
 	}
 
 	listPlayer.addList(this);
@@ -2383,6 +2367,7 @@ void Player::kickPlayer(bool displayEffect, bool executeLogout/* = true*/)
 	{
 		if(executeLogout)
 			g_creatureEvents->playerLogout(this);
+
 		g_game.removeCreature(this);
 	}
 	else
@@ -3208,7 +3193,6 @@ bool Player::setFollowCreature(Creature* creature, bool fullPathSearch /*= false
 	{
 		setFollowCreature(NULL);
 		setAttackedCreature(NULL);
-
 		if(!deny)
 			sendCancelMessage(RET_THEREISNOWAY);
 
@@ -3406,25 +3390,25 @@ void Player::onAddCombatCondition(ConditionType_t type)
 	switch(type)
 	{
 		case CONDITION_POISON:
-			tmp += "poisoned";
+			tmp = "poisoned";
 			break;
 		case CONDITION_DROWN:
-			tmp += "drowning";
+			tmp = "drowning";
 			break;
 		case CONDITION_PARALYZE:
-			tmp += "paralyzed";
+			tmp = "paralyzed";
 			break;
 		case CONDITION_DRUNK:
-			tmp += "drunk";
+			tmp = "drunk";
 			break;
 		case CONDITION_CURSED:
-			tmp += "cursed";
+			tmp = "cursed";
 			break;
 		case CONDITION_FREEZING:
-			tmp += "freezing";
+			tmp = "freezing";
 			break;
 		case CONDITION_DAZZLED:
-			tmp += "dazzled";
+			tmp = "dazzled";
 			break;
 		default:
 			break;
