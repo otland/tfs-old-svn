@@ -45,15 +45,14 @@ class Task
 		}
 
 	protected:
-		Task(boost::function<void (void)> f) {m_f = f;}
 		uint64_t m_expiration;
 		boost::function<void (void)> m_f;
 };
-/* ?
+
 inline Task* createTask(boost::function<void (void)> f)
 {
 	return new Task(f);
-}*/
+}
 
 inline Task* createTask(uint32_t expiration, boost::function<void (void)> f)
 {

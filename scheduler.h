@@ -33,7 +33,6 @@ class SchedulerTask : public Task
 		void setEventId(uint32_t eventid) {m_eventid = eventid;}
 		uint32_t getEventId() const {return m_eventid;}
 
-
 		uint64_t getCycle() const {return m_expiration;}
 		bool operator<(const SchedulerTask& other) const {return getCycle() > other.getCycle();}
 
