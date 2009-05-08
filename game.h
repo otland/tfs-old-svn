@@ -595,6 +595,7 @@ class Game
 
 		size_t checkCreatureLastIndex;
 		std::vector<Creature*> checkCreatureVectors[EVENT_CREATURECOUNT];
+		std::vector<Creature*> toAddCheckCreatureVector;
 
 		void checkDecay();
 		void internalDecayItem(Item* item);

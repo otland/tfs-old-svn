@@ -84,7 +84,7 @@ isInternalRemoved(false)
 	blockCount = 0;
 	blockTicks = 0;
 	walkUpdateTicks = 0;
-	checkCreatureVectorIndex = 0;
+	checkCreatureVectorIndex = -1;
 
 	scriptEventsBitField = 0;
 	onIdleStatus();
