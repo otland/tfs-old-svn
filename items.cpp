@@ -712,6 +712,11 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 					it.canReadText = (intValue != 0);
 				}
 			}
+			else if(tmpStrValue == "readable")
+			{
+				if(readXMLInteger(itemAttributesNode, "value", intValue))
+					it.canReadText = (intValue != 0);
+			}
 			else if(tmpStrValue == "maxtextlen" || tmpStrValue == "maxtextlength")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
