@@ -34,7 +34,7 @@ bool IOBan::isIpBanished(uint32_t ip, uint32_t mask/* = 0xFFFFFFFF*/) const
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	bool result = false;
+	bool b_result = false;
 	do
 	{
 		uint32_t value = result->getDataInt("value"), param = result->getDataInt("param");
@@ -43,13 +43,13 @@ bool IOBan::isIpBanished(uint32_t ip, uint32_t mask/* = 0xFFFFFFFF*/) const
 			int32_t expires = result->getDataLong("expires");
 			if(expires > 0 && expires <= (int32_t)time(NULL))
 				removeIpBanishment(value, param);
-			else if(!result)
-				result = true;
+			else if(!b_result)
+				b_result = true;
 		}
 	}
 	while(result->next());
 	result->free();
-	return banned;
+	return b_result;
 }
 
 bool IOBan::isNamelocked(uint32_t guid) const
