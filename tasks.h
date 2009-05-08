@@ -24,21 +24,40 @@
 #include "otsystem.h"
 #include <boost/function.hpp>
 
+const int DISPATCHER_TASK_EXPIRATION = 2000;
+
 class Task
 {
 	public:
+		Task(uint32_t ms, const boost::function<void (void)>& f) : m_f(f) {m_expiration = OTSYS_TIME() + ms;}
+		Task(const boost::function<void (void)>& f) : m_expiration(boost::date_time::not_a_date_time), m_f(f) {}
+
 		virtual ~Task() {}
 		void operator()() {m_f();}
 
+		void setDontExpire() {m_expiration = boost::date_time::not_a_date_time;}
+		bool hasExpired() const
+		{
+			if(m_expiration == boost::date_time::not_a_date_time)
+				return false;
+
+			return m_expiration < OTSYS_TIME();
+		}
+
 	protected:
 		Task(boost::function<void (void)> f) {m_f = f;}
+		uint64_t m_expiration;
 		boost::function<void (void)> m_f;
-		friend Task* createTask(boost::function<void (void)>);
 };
-
+/* ?
 inline Task* createTask(boost::function<void (void)> f)
 {
 	return new Task(f);
+}*/
+
+inline Task* createTask(uint32_t expiration, boost::function<void (void)> f)
+{
+	return new Task(expiration, f);
 }
 
 class Dispatcher

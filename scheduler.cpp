@@ -75,7 +75,10 @@ OTSYS_THREAD_RETURN Scheduler::schedulerThread(void* p)
 		{
 			// if it was not stopped
 			if(runTask)
+			{
+				task->setDontExpire();
 				Dispatcher::getDispatcher().addTask(task);
+			}
 			else
 				delete task; // was stopped, have to be deleted here
 		}

@@ -65,16 +65,21 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 		if(!task)
 			continue;
 
-		outputPool = OutputMessagePool::getInstance();
-		if(outputPool)
-			outputPool->startExecutionFrame();
+		if(!task->hasExpired())
+		{
+			outputPool = OutputMessagePool::getInstance();
+			if(outputPool)
+				outputPool->startExecutionFrame();
 
-		(*task)();
+			(*task)();
+			delete task;
+			if(outputPool)
+				outputPool->sendAll();
+
+			g_game.clearSpectatorCache();
+		}
+
 		delete task;
-		if(outputPool)
-			outputPool->sendAll();
-
-		g_game.clearSpectatorCache();
 	}
 
 	#if defined __EXCEPTION_TRACER__

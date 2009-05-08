@@ -58,152 +58,20 @@ extern Chat g_chat;
 #endif
 
 // Helping templates to add dispatcher tasks
-template<class T1, class f1, class r>
-void ProtocolGame::addGameTask(r (Game::*f)(f1), T1 p1)
+template<class FunctionType>
+void ProtocolGame::addGameTaskInternal(bool droppable, uint32_t delay, const FunctionType& func)
 {
 	if(m_now > m_nextTask || m_messageCount < 5)
 	{
-		Dispatcher::getDispatcher().addTask(
-			createTask(boost::bind(f, &g_game, p1)));
+		if(droppable)
+			g_dispatcher.addTask(createTask(delay, func));
+		else
+			g_dispatcher.addTask(createTask(func));
 
 		m_nextTask = m_now + ADD_TASK_INTERVAL;
 	}
 	else
-	{
 		m_rejectCount++;
-		//std::cout << "reject task" << std::endl;
-	}
-}
-
-template<class T1, class T2, class f1, class f2, class r>
-void ProtocolGame::addGameTask(r (Game::*f)(f1, f2), T1 p1, T2 p2)
-{
-	if(m_now > m_nextTask || m_messageCount < 5)
-	{
-		Dispatcher::getDispatcher().addTask(
-			createTask(boost::bind(f, &g_game, p1, p2)));
-
-		m_nextTask = m_now + ADD_TASK_INTERVAL;
-	}
-	else
-	{
-		m_rejectCount++;
-		//std::cout << "reject task" << std::endl;
-	}
-}
-
-template<class T1, class T2, class T3,
-class f1, class f2, class f3,
-class r>
-void ProtocolGame::addGameTask(r (Game::*f)(f1, f2, f3), T1 p1, T2 p2, T3 p3)
-{
-	if(m_now > m_nextTask || m_messageCount < 5)
-	{
-		Dispatcher::getDispatcher().addTask(
-			createTask(boost::bind(f, &g_game, p1, p2, p3)));
-
-		m_nextTask = m_now + ADD_TASK_INTERVAL;
-	}
-	else
-	{
-		m_rejectCount++;
-		//std::cout << "reject task" << std::endl;
-	}
-}
-
-template<class T1, class T2, class T3, class T4,
-class f1, class f2, class f3, class f4,
-class r>
-void ProtocolGame::addGameTask(r (Game::*f)(f1, f2, f3, f4), T1 p1, T2 p2, T3 p3, T4 p4)
-{
-	if(m_now > m_nextTask || m_messageCount < 5)
-	{
-		Dispatcher::getDispatcher().addTask(
-			createTask(boost::bind(f, &g_game, p1, p2, p3, p4)));
-
-		m_nextTask = m_now + ADD_TASK_INTERVAL;
-	}
-	else
-	{
-		m_rejectCount++;
-		//std::cout << "reject task" << std::endl;
-	}
-}
-
-template<class T1, class T2, class T3, class T4, class T5,
-class f1, class f2, class f3, class f4, class f5,
-class r>
-void ProtocolGame::addGameTask(r (Game::*f)(f1, f2, f3, f4, f5), T1 p1, T2 p2, T3 p3, T4 p4, T5 p5)
-{
-	if(m_now > m_nextTask || m_messageCount < 5)
-	{
-		Dispatcher::getDispatcher().addTask(
-			createTask(boost::bind(f, &g_game, p1, p2, p3, p4, p5)));
-
-		m_nextTask = m_now + ADD_TASK_INTERVAL;
-	}
-	else
-	{
-		m_rejectCount++;
-		//std::cout << "reject task" << std::endl;
-	}
-}
-
-template<class T1, class T2, class T3, class T4, class T5, class T6,
-class f1, class f2, class f3, class f4, class f5, class f6,
-class r>
-void ProtocolGame::addGameTask(r (Game::*f)(f1, f2, f3, f4, f5, f6), T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6)
-{
-	if(m_now > m_nextTask || m_messageCount < 5)
-	{
-		Dispatcher::getDispatcher().addTask(
-			createTask(boost::bind(f, &g_game, p1, p2, p3, p4, p5, p6)));
-
-		m_nextTask = m_now + ADD_TASK_INTERVAL;
-	}
-	else
-	{
-		m_rejectCount++;
-		//std::cout << "reject task" << std::endl;
-	}
-}
-
-template<class T1, class T2, class T3, class T4, class T5, class T6, class T7,
-class f1, class f2, class f3, class f4, class f5, class f6, class f7,
-class r>
-void ProtocolGame::addGameTask(r (Game::*f)(f1, f2, f3, f4, f5, f6, f7), T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7)
-{
-	if(m_now > m_nextTask || m_messageCount < 5)
-	{
-		Dispatcher::getDispatcher().addTask(
-			createTask(boost::bind(f, &g_game, p1, p2, p3, p4, p5, p6, p7)));
-
-		m_nextTask = m_now + ADD_TASK_INTERVAL;
-	}
-	else
-	{
-		m_rejectCount++;
-		//std::cout << "reject task" << std::endl;
-	}
-}
-
-template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8,
-class f1, class f2, class f3, class f4, class f5, class f6, class f7, class f8,
-class r>
-void ProtocolGame::addGameTask(r (Game::*f)(f1, f2, f3, f4, f5, f6, f7, f8), T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8)
-{
-	if(m_now > m_nextTask || m_messageCount < 5)
-	{
-		Dispatcher::getDispatcher().addTask(
-			createTask(boost::bind(f, &g_game, p1, p2, p3, p4, p5, p6, p7, p8)));
-
-		m_nextTask = m_now + ADD_TASK_INTERVAL;
-	}
-	else
-	{
-		m_rejectCount++;
-		//std::cout << "reject task" << std::endl;
-	}
 }
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -1143,8 +1011,7 @@ bool ProtocolGame::canSee(uint16_t x, uint16_t y, uint16_t z) const
 //********************** Parse methods *******************************//
 void ProtocolGame::parseLogout(NetworkMessage& msg)
 {
-	Dispatcher::getDispatcher().addTask(
-		createTask(boost::bind(&ProtocolGame::logout, this, true, false, true)));
+	g_dispatcher.addTask(createTask(boost::bind(&ProtocolGame::logout, this, true, false, true)));
 }
 
 void ProtocolGame::parseCreatePrivateChannel(NetworkMessage& msg)
@@ -1274,7 +1141,7 @@ void ProtocolGame::parseMove(NetworkMessage& msg, Direction dir)
 
 void ProtocolGame::parseTurn(NetworkMessage& msg, Direction dir)
 {
-	addGameTask(&Game::playerTurn, player->getID(), dir);
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerTurn, player->getID(), dir);
 }
 
 void ProtocolGame::parseRequestOutfit(NetworkMessage& msg)
@@ -1315,7 +1182,7 @@ void ProtocolGame::parseUseItem(NetworkMessage& msg)
 	int16_t stackpos = msg.GetByte();
 	uint8_t index = msg.GetByte();
 	bool isHotkey = (pos.x == 0xFFFF && pos.y == 0 && pos.z == 0);
-	addGameTask(&Game::playerUseItem, player->getID(), pos, stackpos, index, spriteId, isHotkey);
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerUseItem, player->getID(), pos, stackpos, index, spriteId, isHotkey);
 }
 
 void ProtocolGame::parseUseItemEx(NetworkMessage& msg)
@@ -1327,7 +1194,7 @@ void ProtocolGame::parseUseItemEx(NetworkMessage& msg)
 	uint16_t toSpriteId = msg.GetU16();
 	int16_t toStackpos = msg.GetByte();
 	bool isHotkey = (fromPos.x == 0xFFFF && fromPos.y == 0 && fromPos.z == 0);
-	addGameTask(&Game::playerUseItemEx, player->getID(), fromPos, fromStackpos, fromSpriteId, toPos, toStackpos, toSpriteId, isHotkey);
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerUseItemEx, player->getID(), fromPos, fromStackPos, fromSpriteId, toPos, toStackPos, toSpriteId, isHotkey);
 }
 
 void ProtocolGame::parseBattleWindow(NetworkMessage& msg)
@@ -1337,7 +1204,7 @@ void ProtocolGame::parseBattleWindow(NetworkMessage& msg)
 	int16_t fromStackpos = msg.GetByte();
 	uint32_t creatureId = msg.GetU32();
 	bool isHotkey = (fromPos.x == 0xFFFF && fromPos.y == 0 && fromPos.z == 0);
-	addGameTask(&Game::playerUseBattleWindow, player->getID(), fromPos, fromStackpos, creatureId, spriteId, isHotkey);
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerUseBattleWindow, player->getID(), fromPos, fromStackPos, creatureId, spriteId, isHotkey);
 }
 
 void ProtocolGame::parseCloseContainer(NetworkMessage& msg)
@@ -1372,8 +1239,8 @@ void ProtocolGame::parseThrow(NetworkMessage& msg)
 	Position toPos = msg.GetPosition();
 	uint8_t count = msg.GetByte();
 	if(toPos != fromPos)
-		addGameTask(&Game::playerMoveThing, player->getID(), fromPos, spriteId,
-			fromStackpos, toPos, count);
+		addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerMoveThing,
+			player->getID(), fromPos, spriteId, fromStackpos, toPos, count);
 }
 
 void ProtocolGame::parseLookAt(NetworkMessage& msg)
@@ -1381,7 +1248,7 @@ void ProtocolGame::parseLookAt(NetworkMessage& msg)
 	Position pos = msg.GetPosition();
 	uint16_t spriteId = msg.GetSpriteId();
 	int16_t stackpos = msg.GetByte();
-	addGameTask(&Game::playerLookAt, player->getID(), pos, spriteId, stackpos);
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerLookAt, player->getID(), pos, spriteId, stackpos);
 }
 
 void ProtocolGame::parseSay(NetworkMessage& msg)
@@ -1408,7 +1275,7 @@ void ProtocolGame::parseSay(NetworkMessage& msg)
 	}
 
 	const std::string text = msg.GetString();
-	addGameTask(&Game::playerSay, player->getID(), channelId, type, receiver, text);
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerSay, player->getID(), channelId, type, receiver, text);
 }
 
 void ProtocolGame::parseFightModes(NetworkMessage& msg)
@@ -1431,7 +1298,7 @@ void ProtocolGame::parseFightModes(NetworkMessage& msg)
 	if(rawSecureMode == 1)
 		secureMode = SECUREMODE_ON;
 
-	addGameTask(&Game::playerSetFightModes, player->getID(), fightMode, chaseMode, secureMode);
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerSetFightModes, player->getID(), fightMode, chaseMode, safeMode);
 }
 
 void ProtocolGame::parseAttack(NetworkMessage& msg)
@@ -1465,7 +1332,7 @@ void ProtocolGame::parseLookInShop(NetworkMessage &msg)
 {
 	uint16_t id = msg.GetU16();
 	uint16_t count = msg.GetByte();
-	addGameTask(&Game::playerLookInShop, player->getID(), id, count);
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerLookInShop, player->getID(), id, count);
 }
 
 void ProtocolGame::parsePlayerPurchase(NetworkMessage &msg)
@@ -1473,9 +1340,9 @@ void ProtocolGame::parsePlayerPurchase(NetworkMessage &msg)
 	uint16_t id = msg.GetU16();
 	uint16_t count = msg.GetByte();
 	uint16_t amount = msg.GetByte();
-	bool ignoreCap = msg.GetByte();
-	bool inBackpacks = msg.GetByte();
-	addGameTask(&Game::playerPurchaseItem, player->getID(), id, count, amount, ignoreCap, inBackpacks);
+	bool ignoreCap = msg.GetByte() == 0x01;
+	bool inBackpacks = msg.GetByte() == 0x01;
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerPurchaseItem, player->getID(), id, count, amount, ignoreCap, inBackpacks);
 }
 
 void ProtocolGame::parsePlayerSale(NetworkMessage &msg)
@@ -1483,7 +1350,7 @@ void ProtocolGame::parsePlayerSale(NetworkMessage &msg)
 	uint16_t id = msg.GetU16();
 	uint16_t count = msg.GetByte();
 	uint16_t amount = msg.GetByte();
-	addGameTask(&Game::playerSellItem, player->getID(), id, count, amount);
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerSellItem, player->getID(), id, count, amount);
 }
 
 void ProtocolGame::parseCloseShop(NetworkMessage &msg)
@@ -1509,7 +1376,7 @@ void ProtocolGame::parseLookInTrade(NetworkMessage& msg)
 {
 	bool counterOffer = (msg.GetByte() == 0x01);
 	int32_t index = msg.GetByte();
-	addGameTask(&Game::playerLookInTrade, player->getID(), counterOffer, index);
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerLookInTrade, player->getID(), counterOffer, index)
 }
 
 void ProtocolGame::parseCloseTrade()
@@ -1537,7 +1404,7 @@ void ProtocolGame::parseRotateItem(NetworkMessage& msg)
 	Position pos = msg.GetPosition();
 	uint16_t spriteId = msg.GetSpriteId();
 	int16_t stackpos = msg.GetByte();
-	addGameTask(&Game::playerRotateItem, player->getID(), pos, stackpos, spriteId);
+	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerRotateItem, player->getID(), pos, stackpos, spriteId);
 }
 
 void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
