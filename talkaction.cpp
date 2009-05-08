@@ -607,7 +607,7 @@ bool TalkAction::createGuild(Creature* creature, const std::string& cmd, const s
 		return true;
 	}
 
-	const uint32_t premiumDays = g_config.getNumber(ConfigManager::GUILD_PREMIUM_DAYS);
+	const int32_t premiumDays = g_config.getNumber(ConfigManager::GUILD_PREMIUM_DAYS);
 	if(player->getPremiumDays() < premiumDays)
 	{
 		char buffer[70 + premiumDays];
