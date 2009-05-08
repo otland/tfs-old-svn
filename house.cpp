@@ -228,10 +228,14 @@ bool House::transferToDepot()
 		{
 			player = new Player(ownerName, NULL);
 			if(!IOLoginData::getInstance()->loadPlayer(player, ownerName))
+			{
 				delete player;
+				player = NULL;
+			}
 		}
 
-		player->useThing2();
+		if(player)
+			player->useThing2();
 	}
 
 	Item* item = NULL;
