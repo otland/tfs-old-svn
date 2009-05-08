@@ -51,13 +51,13 @@ extern Chat g_chat;
 
 #ifdef __SERVER_PROTECTION__
 #error "You should not use __SERVER_PROTECTION__"
+
 #define ADD_TASK_INTERVAL 40
 #define CHECK_TASK_INTERVAL 5000
 #else
 #define ADD_TASK_INTERVAL -1
 #endif
 
-// Helping templates to add dispatcher tasks
 template<class FunctionType>
 void ProtocolGame::addGameTaskInternal(bool droppable, uint32_t delay, const FunctionType& func)
 {
