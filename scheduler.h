@@ -30,7 +30,7 @@ class SchedulerTask : public Task
 	public:
 		virtual ~SchedulerTask() {}
 
-		void setEventId(uint32_t eventid) {m_eventId = eventId;}
+		void setEventId(uint32_t eventId) {m_eventId = eventId;}
 		uint32_t getEventId() const {return m_eventId;}
 
 		int64_t getCycle() const {return m_expiration;}
