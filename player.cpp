@@ -2158,7 +2158,7 @@ bool Player::onDeath()
 
 	if(preventDrop && preventDrop != preventLoss)
 	{
-		if(preventDrop->getCharges() > 1) //weird, but transform failed to remve for some hosters
+		if(preventDrop->getCharges() > 1) //weird, but transform failed to remove for some hosters
 			g_game.transformItem(preventDrop, preventDrop->getID(), std::max(0, ((int32_t)preventDrop->getCharges() - 1)));
 		else
 			g_game.internalRemoveItem(NULL, preventDrop);
@@ -2342,19 +2342,35 @@ void Player::removeList()
 {
 	Status::getInstance()->removePlayer();
 	listPlayer.removeList(getID());
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	if(!isInGhostMode())
 	{
-		if((*it).second->canSeeGhost(this))
+		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 			(*it).second->notifyLogOut(this);
+	}
+	else
+	{
+		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		{
+			if((*it).second->canSeeGhost(this))
+				(*it).second->notifyLogOut(this);
+		}
 	}
 }
 
 void Player::addList()
 {
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	if(!isInGhostMode())
 	{
-		if((*it).second->canSeeGhost(this))
+		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 			(*it).second->notifyLogIn(this);
+	}
+	else
+	{
+		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		{
+			if((*it).second->canSeeGhost(this))
+				(*it).second->notifyLogIn(this);
+		}
 	}
 
 	listPlayer.addList(this);

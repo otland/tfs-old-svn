@@ -250,9 +250,9 @@ std::string CreatureEvent::getScriptEventParams() const
 	switch(m_type)
 	{
 		case CREATURE_EVENT_LOGIN:
-			return "cid";
-		case CREATURE_EVENT_LOGOUT:
 			return "cid, lastLogin";
+		case CREATURE_EVENT_LOGOUT:
+			return "cid";
 		case CREATURE_EVENT_CHANNEL_JOIN:
 		case CREATURE_EVENT_CHANNEL_LEAVE:
 			return "cid, channel, users";

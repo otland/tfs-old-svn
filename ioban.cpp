@@ -167,7 +167,7 @@ bool IOBan::addDeletion(uint32_t account, uint32_t reasonId, ViolationAction_t a
 
 	if(!removeBanishment(account))
 	{
-		std::cout << "[Error - IOBan::addDeletion]: Couldn't remove banishment(s)" << std::endl;
+		std::cout << "[Error - IOBan::addDeletion] Couldn't remove banishment(s)" << std::endl;
 		return false;
 	}
 

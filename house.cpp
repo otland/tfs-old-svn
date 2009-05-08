@@ -812,16 +812,13 @@ bool Houses::payRent(Player* player, House* house, time_t _time/* = 0*/)
 		return false;
 
 	bool paid = false;
-	if(Depot* depot = player->getDepot(town->getTownID(), true))
+	if(g_config.getBool(ConfigManager::BANK_SYSTEM) && player->balance >= house->getRent())
 	{
-		if(g_config.getBool(ConfigManager::BANK_SYSTEM) && player->balance >= house->getRent())
-		{
-			player->balance -= house->getRent();
-			paid = true;
-		}
-		else
-			paid = g_game.removeMoney(depot, house->getRent(), FLAG_NOLIMIT);
+		player->balance -= house->getRent();
+		paid = true;
 	}
+	else if(Depot* depot = player->getDepot(town->getTownID(), true))
+		paid = g_game.removeMoney(depot, house->getRent(), FLAG_NOLIMIT);
 
 	if(!paid)
 		return false;

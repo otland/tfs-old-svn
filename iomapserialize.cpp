@@ -224,21 +224,21 @@ bool IOMapSerialize::saveMapRelational(Map* map)
 
 bool IOMapSerialize::loadMapBinary(Map* map)
 {
-	Database* db = Database::getInstance(); 
+	Database* db = Database::getInstance();
 	DBResult* result;
 
 	DBQuery query;
 	query << "SELECT `data` FROM `house_data` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 	if(!(result = db->storeQuery(query.str())))
 		return false;
- 
+
 	do
 	{
 		uint64_t attrSize = 0;
 		const char* attr = result->getDataStream("data", attrSize);
 
 		PropStream propStream;
-		propStream.init(attr, attrSize); 
+		propStream.init(attr, attrSize);
 		while(propStream.size())
 		{
 			uint16_t x = 0, y = 0;
@@ -247,7 +247,7 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 			propStream.GET_USHORT(x);
 			propStream.GET_USHORT(y);
 			propStream.GET_UCHAR(z);
- 
+
 			Tile* tile = map->getTile(x, y, (int16_t)z);
 			if(!tile)
 			{
@@ -255,7 +255,7 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 				std::cout << x << "/" << y << "/" << (int16_t)z << std::endl;
 				break;
 			}
- 
+
 			uint32_t itemCount = 0;
 			propStream.GET_ULONG(itemCount);
 			while(itemCount--)

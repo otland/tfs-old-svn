@@ -960,7 +960,6 @@ void Monster::pushCreatures(Tile* tile)
 
 	if(effect)
 		g_game.addMagicEffect(tile->getPosition(), NM_ME_BLOCKHIT);
-
 }
 
 bool Monster::getNextStep(Direction& dir)
