@@ -1347,43 +1347,39 @@ void AreaCombat::setupExtArea(const std::list<uint32_t>& list, uint32_t rows)
 
 void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 {
-	//remove magic walls/wild growth
 	if(isBlocking())
 	{
 		g_game.internalRemoveItem(creature, this, 1);
 		return;
 	}
 
+	if(!purposeful)
+		return;
+
 	const ItemType& it = items[getID()];
 	if(!it.condition)
 		return;
 
 	Condition* conditionCopy = it.condition->clone();
-	uint32_t owner = getOwner();
-	if(purposeful && owner != 0)
+	uint32_t ownerId = getOwner();
+	if(ownerId && !getTile()->hasFlag(TILESTATE_PVPZONE))
 	{
-		bool harmfulField = true;
-		if(g_game.getWorldType() == WORLD_TYPE_NO_PVP || getTile()->hasFlag(TILESTATE_NOPVPZONE))
+		if(Creature* owner = g_game.getCreatureByID(ownerId))
 		{
-			if(Creature* creature = g_game.getCreatureByID(owner))
+			bool harmful = true;
+			if((g_game.getWorldType() == WORLD_TYPE_NO_PVP || getTile()->hasFlag(TILESTATE_NOPVPZONE)) &&
+				(owner->getPlayer() || (owner->isSummon() && owner->getMaster()->getPlayer())))
+				harmful = false;
+			else if(Player* targetPlayer = creature->getPlayer())
 			{
-				if(creature->getPlayer() || (creature->isSummon() && creature->getMaster()->getPlayer()))
-					harmfulField = false;
+				if(owner->getPlayer() && Combat::isProtected(owner->getPlayer(), targetPlayer))
+					harmful = false;
 			}
-		}
 
-		if(Player* targetPlayer = creature->getPlayer())
-		{
-			if(Player* attackerPlayer = g_game.getPlayerByID(owner))
-			{
-				if(Combat::isProtected(attackerPlayer, targetPlayer))
-					harmfulField = false;
-			}
+			if(!harmful || (OTSYS_TIME() - createTime) <= (uint32_t)g_config.getNumber(
+				ConfigManager::FIELD_OWNERSHIP) || creature->hasBeenAttacked(ownerId))
+				conditionCopy->setParam(CONDITIONPARAM_OWNER, ownerId);
 		}
-
-		if(!harmfulField || (OTSYS_TIME() - createTime) <= (uint32_t)g_config.getNumber(ConfigManager::FIELD_OWNERSHIP)
-			|| creature->hasBeenAttacked(owner))
-			conditionCopy->setParam(CONDITIONPARAM_OWNER, owner);
 	}
 
 	creature->addCondition(conditionCopy);
