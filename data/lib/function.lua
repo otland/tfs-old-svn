@@ -58,7 +58,7 @@ function doPlayerSellItem(cid, itemid, count, cost)
 	end
 
 	if(doPlayerAddMoney(cid, cost) ~= TRUE) then
-		error('Could not add money to: ' .. getPlayerName(cid) .. ' (' .. cost .. 'gp).')
+		error('[doPlayerSellItem] Could not add money to: ' .. getPlayerName(cid) .. ' (' .. cost .. 'gp).')
 	end
 
 	return LUA_NO_ERROR

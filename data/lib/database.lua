@@ -38,7 +38,7 @@ end
 function Result:getRows(free)
 	local free = free or false
 	if(self:getID() == -1) then
-		error("[Result:getRows]: Result not set!")
+		error("[Result:getRows] Result not set!")
 	end
 
 	local c = 0
@@ -57,7 +57,7 @@ end
 
 function Result:getDataInt(s)
 	if(self:getID() == -1) then
-		error("[Result:getDataInt]: Result not set!")
+		error("[Result:getDataInt] Result not set!")
 	end
 
 	return result.getDataInt(self:getID(), s)
@@ -65,7 +65,7 @@ end
 
 function Result:getDataLong(s)
 	if(self:getID() == -1) then
-		error("[Result:getDataLong]: Result not set!")
+		error("[Result:getDataLong] Result not set!")
 	end
 
 	return result.getDataLong(self:getID(), s)
@@ -73,7 +73,7 @@ end
 
 function Result:getDataString(s)
 	if(self:getID() == -1) then
-		error("[Result:getDataString]: Result not set!")
+		error("[Result:getDataString] Result not set!")
 	end
 
 	return result.getDataString(self:getID(), s)
@@ -81,7 +81,7 @@ end
 
 function Result:getDataStream(s)
 	if(self:getID() == -1) then
-		error("[Result:getDataStream]: Result not set!")
+		error("[Result:getDataStream] Result not set!")
 	end
 
 	return result.getDataStream(self:getID(), s)
@@ -89,7 +89,7 @@ end
 
 function Result:next()
 	if(self:getID() == -1) then
-		error("[Result:next]: Result not set!")
+		error("[Result:next] Result not set!")
 	end
 
 	return result.next(self:getID())
@@ -97,7 +97,7 @@ end
 
 function Result:free()
 	if(self:getID() == -1) then
-		error("[Result:free]: Result not set!")
+		error("[Result:free] Result not set!")
 	end
 
 	self:setQuery("")
