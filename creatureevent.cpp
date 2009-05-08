@@ -319,6 +319,7 @@ uint32_t CreatureEvent::executeLogin(Player* player)
 
 			std::stringstream scriptstream;
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
+			scriptstream << "lastLogin = " << player->getLastLoginSaved() << std::endl;
 
 			scriptstream << m_scriptData;
 			int32_t result = LUA_NO_ERROR;

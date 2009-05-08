@@ -42,6 +42,5 @@ function onDeath(cid, corpse, lastHitKiller, mostDamageKiller)
 				db.executeQuery("DELETE FROM `player_deaths` WHERE `player_id` = " .. getPlayerGUID(cid) .. " ORDER BY `time` LIMIT " .. amount .. ";")
 			end
 		end
-		rows:free()
 	end
 end
