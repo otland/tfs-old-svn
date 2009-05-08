@@ -4,6 +4,8 @@ local config = {
 	maxDeathRecords = getConfigInfo('maxDeathRecords')
 }
 
+config.sqlType = config.sqlType == "sqlite" and DATABASE_ENGINE_SQLITE or DATABASE_ENGINE_MYSQL
+
 function onDeath(cid, corpse, lastHitKiller, mostDamageKiller)
 	if(config.deathListEnabled ~= TRUE) then
 		return
@@ -32,7 +34,7 @@ function onDeath(cid, corpse, lastHitKiller, mostDamageKiller)
 	if(rows:getID() ~= -1) then
 		local amount = rows:getRows(true) - config.maxDeathRecords
 		if(amount > 0) then
-			if(config.sqlType == "sqlite") then
+			if(config.sqlType == DATABASE_ENGINE_SQLITE) then
 				for i = 1, amount do
 					db.executeQuery("DELETE FROM `player_deaths` WHERE `rowid` = (SELECT `rowid` FROM `player_deaths` WHERE `player_id` = " .. getPlayerGUID(cid) .. " ORDER BY `time` LIMIT 1);")
 				end
@@ -40,5 +42,6 @@ function onDeath(cid, corpse, lastHitKiller, mostDamageKiller)
 				db.executeQuery("DELETE FROM `player_deaths` WHERE `player_id` = " .. getPlayerGUID(cid) .. " ORDER BY `time` LIMIT " .. amount .. ";")
 			end
 		end
+		rows:free()
 	end
 end

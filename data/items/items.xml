@@ -231,20 +231,7 @@
 		<attribute key="allowpickupable" value="1"/>
 	</item>
 	<item id="724" name="cobbled pavement"/>
-	<item id="777" name="sandstone"/>
-	<item id="778" name="sandstone"/>
-	<item id="779" name="sandstone"/>
-	<item id="780" name="sandstone"/>
-	<item id="781" name="sandstone"/>
-	<item id="782" name="sandstone"/>
-	<item id="783" name="sandstone"/>
-	<item id="784" name="sandstone"/>
-	<item id="785" name="sandstone"/>
-	<item id="786" name="sandstone"/>
-	<item id="787" name="sandstone"/>
-	<item id="788" name="sandstone"/>
-	<item id="789" name="sandstone"/>
-	<item id="790" name="sandstone"/>
+	<item fromid="777" toid="790" name="sandstone"/>
 	<item id="791" name="grass"/>
 	<item id="804" name="dirt"/>
 	<item id="806" name="dirt"/>
@@ -20527,7 +20514,7 @@
 	<item id="9534" article="a" name="mechanism"/>
 	<item fromid="9562" toid="9565" article="a" name="large gem"/>
 	<item id="9573" name="corkscrew stairs">
-		<attribute key="floorchange" value="north"/>
+		<attribute key="floorchange" value="east"/>
 	</item>
 	<item id="9574" name="corkscrew stairs">
 		<attribute key="floorchange" value="down"/>

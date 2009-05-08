@@ -59,3 +59,4 @@ getCreatureLookDir = getCreatureLookDirection
 getPlayerLookDir = getCreatureLookDirection
 getPlayerLookDirection = getCreatureLookDirection
 doCreatureSetLookDir = doCreatureSetLookDirection
+SKILLS = SKILL_NAMES

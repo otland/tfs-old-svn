@@ -10,7 +10,7 @@ function onLogin(cid)
 			doPlayerAddItem(cid, firstItems[i], 1)
 		end
 
-		if getPlayerSex(cid) == 0 then
+		if getPlayerSex(cid) == PLAYERSEX_FEMALE then
 			doPlayerAddItem(cid, 2651, 1)
 		else
 			doPlayerAddItem(cid, 2650, 1)
