@@ -64,9 +64,9 @@ void ProtocolGame::addGameTaskInternal(bool droppable, uint32_t delay, const Fun
 	if(m_now > m_nextTask || m_messageCount < 5)
 	{
 		if(droppable)
-			g_dispatcher.addTask(createTask(delay, func));
+			Dispatcher::getDispatcher().addTask(createTask(delay, func));
 		else
-			g_dispatcher.addTask(createTask(func));
+			Dispatcher::getDispatcher().addTask(createTask(func));
 
 		m_nextTask = m_now + ADD_TASK_INTERVAL;
 	}
@@ -1011,7 +1011,7 @@ bool ProtocolGame::canSee(uint16_t x, uint16_t y, uint16_t z) const
 //********************** Parse methods *******************************//
 void ProtocolGame::parseLogout(NetworkMessage& msg)
 {
-	g_dispatcher.addTask(createTask(boost::bind(&ProtocolGame::logout, this, true, false, true)));
+	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolGame::logout, this, true, false, true)));
 }
 
 void ProtocolGame::parseCreatePrivateChannel(NetworkMessage& msg)
