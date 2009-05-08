@@ -184,10 +184,10 @@ bool Npc::loadFromXml(const std::string& filename)
 	if(readXMLString(root, "namedescription", strValue) || readXMLString(root, "nameDescription", strValue))
 		nameDescription = strValue;
 
-	if(readXMLString(root, "hidename", strValue))
+	if(readXMLString(root, "hidename", strValue) || readXMLString(root, "hideName", strValue))
 		hideName = booleanString(strValue);
 
-	if(readXMLString(root, "hidehealth", strValue))
+	if(readXMLString(root, "hidehealth", strValue) || readXMLString(root, "hideHealth", strValue))
 		hideHealth = booleanString(strValue);
 
 	baseSpeed = 110;

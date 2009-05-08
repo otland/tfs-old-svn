@@ -58,7 +58,6 @@ bool BaseEvents::loadFromXml()
 
 	xmlFreeDoc(doc);
 	m_loaded = true;
-
 	return m_loaded;
 }
 
