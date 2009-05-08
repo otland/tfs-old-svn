@@ -95,8 +95,7 @@ function Result:next()
 	return result.next(self:getID())
 end
 
-function Result:free(real)
-	local real = real or false
+function Result:free()
 	if(self:getID() == -1) then
 		error("[Result:free]: Result not set!")
 	end
