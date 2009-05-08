@@ -919,9 +919,7 @@ bool Game::playerMoveThing(uint32_t playerId, const Position& fromPos,
 		fromIndex = fromStackpos;
 
 	Thing* thing = internalGetThing(player, fromPos, fromIndex, spriteId, STACKPOS_MOVE);
-
 	Cylinder* toCylinder = internalGetCylinder(player, toPos);
-
 	if(!thing || !toCylinder)
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
@@ -1107,6 +1105,8 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Cylinder* fromCylinde
 		return ret;
 
 	fromCylinder->getTile()->moveCreature(creature, toCylinder);
+	if(creature->getParent() != toCylinder)
+		return RET_NOERROR;
 
 	int32_t index = 0;
 	Item* toItem = NULL;
@@ -1117,12 +1117,12 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Cylinder* fromCylinde
 	{
 		toCylinder->getTile()->moveCreature(creature, subCylinder);
 		toCylinder = subCylinder;
-		flags = 0;
 
-		//to prevent infinite loop
-		if(++n >= MAP_MAX_LAYERS)
+		flags = 0;
+		if(++n >= MAP_MAX_LAYERS) //to prevent infinite loop
 			break;
 	}
+
 	return RET_NOERROR;
 }
 
@@ -1893,7 +1893,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 			newItem = Item::CreateItem(newId, newCount);
 
 		newItem->copyAttributes(item);
-		if(internalAddItem(NULL, cylinder, newItem, INDEX_WHEREEVER) == RET_NOERROR)
+		if(internalAddItem(NULL, cylinder, newItem, INDEX_WHEREEVER, FLAG_NOLIMIT) == RET_NOERROR)
 			return newItem;
 
 		delete newItem;

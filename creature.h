@@ -267,7 +267,7 @@ class Creature : public AutoID, virtual public Thing
 		void removeConditions(ConditionEnd_t reason, bool onlyPersistent = true);
 		Condition* getCondition(ConditionType_t type, ConditionId_t id, uint32_t subId = 0) const;
 		void executeConditions(uint32_t interval);
-		bool hasCondition(ConditionType_t type, uint32_t subId = 0) const;
+		bool hasCondition(ConditionType_t type, uint32_t subId = 0, bool checkTime = true) const;
 		virtual bool isImmune(ConditionType_t type) const;
 		virtual bool isImmune(CombatType_t type) const;
 		virtual bool isSuppress(ConditionType_t type) const;

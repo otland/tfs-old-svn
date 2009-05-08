@@ -427,11 +427,8 @@ int32_t Creature::getWalkCache(const Position& pos) const
 
 void Creature::onAddTileItem(const Tile* tile, const Position& pos, const Item* item)
 {
-	if(isMapLoaded)
-	{
-		if(pos.z == getPosition().z)
-			updateTileCache(tile, pos);
-	}
+	if(isMapLoaded && pos.z == getPosition().z)
+		updateTileCache(tile, pos);
 }
 
 void Creature::onUpdateTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
@@ -445,7 +442,8 @@ void Creature::onUpdateTileItem(const Tile* tile, const Position& pos, uint32_t 
 void Creature::onRemoveTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
 	const ItemType& iType, const Item* item)
 {
-	if(isMapLoaded && (iType.blockSolid || iType.blockPathFind) && pos.z == getPosition().z)
+	if(isMapLoaded && (iType.blockSolid || iType.blockPathFind ||
+		iType.isGroundTile()) && pos.z == getPosition().z)
 		updateTileCache(tile, pos);
 }
 
@@ -1413,7 +1411,7 @@ void Creature::executeConditions(uint32_t interval)
 	}
 }
 
-bool Creature::hasCondition(ConditionType_t type, uint32_t subId/* = 0*/) const
+bool Creature::hasCondition(ConditionType_t type, uint32_t subId/* = 0*/, bool checkTime/* = true*/) const
 {
 	if(type == CONDITION_EXHAUST && g_game.getStateDelay() == 0)
 		return true;
@@ -1426,7 +1424,7 @@ bool Creature::hasCondition(ConditionType_t type, uint32_t subId/* = 0*/) const
 		if((*it)->getType() != type || (*it)->getSubId() != subId)
 			continue;
 
-		if(g_config.getBool(ConfigManager::OLD_CONDITION_ACCURACY))
+		if(!checkTime || g_config.getBool(ConfigManager::OLD_CONDITION_ACCURACY))
 			return true;
 
 		if((*it)->getEndTime() == 0)
