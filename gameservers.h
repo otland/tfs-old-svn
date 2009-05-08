@@ -25,10 +25,11 @@
 class GameServer
 {
 	public:
-		GameServer(): name("TheForgottenServer"), versionMin(CLIENT_VERSION_MIN), versionMax(CLIENT_VERSION_MAX),
-			address("localhost"), port(7172) {}
+		GameServer(): name("TheForgottenServer"), address("localhost"),
+			versionMin(CLIENT_VERSION_MIN), versionMax(CLIENT_VERSION_MAX),
+			port(7172) {}
 		GameServer(std::string _name, uint32_t _versionMin, uint32_t _versionMax, std::string _address, uint32_t _port):
-			name(_name), versionMin(_versionMin), versionMax(_versionMax), address(_address), port(_port) {}
+			name(_name), address(_address), versionMin(_versionMin), versionMax(_versionMax), port(_port) {}
 		virtual ~GameServer() {}
 
 		std::string getName() const {return name;}
