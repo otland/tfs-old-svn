@@ -36,7 +36,8 @@ struct Ban
 {
 	BanType_t type;
 	ViolationAction_t action;
-	uint32_t id, added, expires, adminid, reason;
+	uint32_t id, added, adminid, reason;
+	int32_t expires;
 	std::string comment, value, param, statement;
 };
 

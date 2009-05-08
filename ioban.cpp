@@ -40,7 +40,8 @@ bool IOBan::isIpBanished(uint32_t ip, uint32_t mask/* = 0xFFFFFFFF*/) const
 		uint32_t value = result->getDataInt("value"), param = result->getDataInt("param");
 		if((ip & mask & param) == (value & param & mask))
 		{
-			if(result->getDataLong("expires") <= 0 || result->getDataLong("expires") > (int64_t)time(NULL))
+			int32_t expires = result->getDataLong("expires");
+			if(expires <= 0 || expires > (int64_t)time(NULL))
 			{
 				banned = true;
 				break;
@@ -276,7 +277,7 @@ bool IOBan::getData(uint32_t value, Ban& ban) const
 	ban.id = result->getDataInt("id");
 	ban.type = (BanType_t)result->getDataInt("type");
 	ban.param = result->getDataString("param");
-	ban.expires = (uint32_t)result->getDataLong("expires");
+	ban.expires = result->getDataLong("expires");
 	ban.added = (uint32_t)result->getDataLong("added");
 	ban.adminid = result->getDataInt("admin_id");
 	ban.comment = result->getDataString("comment");
@@ -309,7 +310,7 @@ BansVec IOBan::getList(BanType_t type, uint32_t value/* = 0*/)
 			tmp.id = result->getDataInt("id");
 			tmp.value = result->getDataString("value");
 			tmp.param = result->getDataString("param");
-			tmp.expires = (uint32_t)result->getDataLong("expires");
+			tmp.expires = result->getDataLong("expires");
 			tmp.added = (uint32_t)result->getDataLong("added");
 			tmp.adminid = result->getDataInt("admin_id");
 			tmp.comment = result->getDataString("comment");
