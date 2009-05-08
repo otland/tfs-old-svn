@@ -325,8 +325,34 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 				outfit.skills[SKILL_AXE] += intValue;
 				outfit.skills[SKILL_DIST] += intValue;
 			}
-
-			//TODO: percents
+			else if(readXMLInteger(configNode, "fistPercent", intValue))
+				outfit.skillsPercent[SKILL_FIST] += intValue;
+			else if(readXMLInteger(configNode, "clubPercent", intValue))
+				outfit.skillsPercent[SKILL_CLUB] += intValue;
+			else if(readXMLInteger(configNode, "swordPercent", intValue))
+				outfit.skillsPercent[SKILL_SWORD] += intValue;
+			else if(readXMLInteger(configNode, "axePercent", intValue))
+				outfit.skillsPercent[SKILL_AXE] += intValue;
+			else if(readXMLInteger(configNode, "distancePercent", intValue) || readXMLInteger(configNode, "distPercent", intValue))
+				outfit.skillsPercent[SKILL_DIST] += intValue;
+			else if(readXMLInteger(configNode, "shieldingPercent", intValue) || readXMLInteger(configNode, "shieldPercent", intValue))
+				outfit.skillsPercent[SKILL_SHIELD] = intValue;
+			else if(readXMLInteger(configNode, "fishingPercent", intValue) || readXMLInteger(configNode, "fishPercent", intValue))
+				outfit.skillsPercent[SKILL_FISH] = intValue;
+			else if(readXMLInteger(configNode, "meleePercent", intValue))
+			{
+				outfit.skillsPercent[SKILL_FIST] += intValue;
+				outfit.skillsPercent[SKILL_CLUB] += intValue;
+				outfit.skillsPercent[SKILL_SWORD] += intValue;
+				outfit.skillsPercent[SKILL_AXE] += intValue;
+			}
+			else if(readXMLInteger(configNode, "weaponPercent", intValue) || readXMLInteger(configNode, "weaponsPercent", intValue))
+			{
+				outfit.skillsPercent[SKILL_CLUB] += intValue;
+				outfit.skillsPercent[SKILL_SWORD] += intValue;
+				outfit.skillsPercent[SKILL_AXE] += intValue;
+				outfit.skillsPercent[SKILL_DIST] += intValue;
+			}
 		}
 		else if(!xmlStrcmp(configNode->name, (const xmlChar*)"stats"))
 		{
@@ -340,12 +366,65 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 				outfit.stats[STAT_LEVEL] = intValue;
 			else if(readXMLInteger(configNode, "magLevel", intValue))
 				outfit.stats[STAT_MAGICLEVEL] = intValue;
-
-			//TODO: percents
+			else if(readXMLInteger(configNode, "maxHealthPercent", intValue))
+				outfit.statsPercent[STAT_MAXHEALTH] = intValue;
+			else if(readXMLInteger(configNode, "maxManaPercent", intValue))
+				outfit.statsPercent[STAT_MAXMANA] = intValue;
+			else if(readXMLInteger(configNode, "soulPercent", intValue))
+				outfit.statsPercent[STAT_SOUL] = intValue;
+			else if(readXMLInteger(configNode, "levelPercent", intValue))
+				outfit.statsPercent[STAT_LEVEL] = intValue;
+			else if(readXMLInteger(configNode, "magLevelPercent", intValue))
+				outfit.statsPercent[STAT_MAGICLEVEL] = intValue;
 		}
 		else if(!xmlStrcmp(configNode->name, (const xmlChar*)"suppress"))
 		{
-			//TODO
+			if(readXMLString(configNode, "poison", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_POISON;
+			else if(readXMLString(configNode, "fire", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_FIRE;
+			else if(readXMLString(configNode, "energy", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_ENERGY;
+			else if(readXMLString(configNode, "physical", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_PHYSICAL;
+			else if(readXMLString(configNode, "haste", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_HASTE;
+			else if(readXMLString(configNode, "paralyze", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_PARALYZE;
+			else if(readXMLString(configNode, "outfit", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_OUTFIT;
+			else if(readXMLString(configNode, "invisible", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_INVISIBLE;
+			else if(readXMLString(configNode, "light", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_LIGHT;
+			else if(readXMLString(configNode, "manaShield", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_MANASHIELD;
+			else if(readXMLString(configNode, "infight", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_INFIGHT;
+			else if(readXMLString(configNode, "drunk", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_DRUNK;
+			else if(readXMLString(configNode, "exhaust", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_EXHAUST;
+			else if(readXMLString(configNode, "regeneration", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_REGENERATION;
+			else if(readXMLString(configNode, "soul", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_SOUL;
+			else if(readXMLString(configNode, "drown", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_DROWN;
+			else if(readXMLString(configNode, "muted", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_MUTED;
+			else if(readXMLString(configNode, "attributes", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_ATTRIBUTES;
+			else if(readXMLString(configNode, "freezing", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_FREEZING;
+			else if(readXMLString(configNode, "dazzled", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_DAZZLED;
+			else if(readXMLString(configNode, "cursed", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_CURSED;
+			else if(readXMLString(configNode, "pacified", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_PACIFIED;
+			else if(readXMLString(configNode, "gamemaster", strValue) && booleanString(strValue))
+				outfit.conditionSuppressions |= CONDITION_GAMEMASTER;
 		}
 
 		configNode = configNode->next;
