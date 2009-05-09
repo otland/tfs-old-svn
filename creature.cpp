@@ -169,11 +169,7 @@ int32_t Creature::getWalkDelay(Direction dir, uint32_t resolution) const
 
 	int64_t res = 0;
 	if(lastStep != 0)
-	{
-		int64_t ct = OTSYS_TIME();
-		int64_t stepDuration = std::ceil(((double)getStepDuration(false))/resolution) * resolution;
-		res = stepDuration - (ct - lastStep) + extraStepDuration;
-	}
+		res = ((int64_t)std::ceil(((double)getStepDuration(false))/resolution) * resolution) - (OTSYS_TIME() - lastStep) + extraStepDuration;
 
 	return int32_t(res * mul);
 }
@@ -1487,7 +1483,7 @@ int32_t Creature::getStepDuration(bool addLastStepCost/* = true*/) const
 	if(!stepSpeed)
 		return 0;
 
-	return ((1000 * Item::items[tile->ground->getID()].speed) / stepSpeed * (addLastStepCost ? lastStepCost : 1);
+	return (1000 * Item::items[tile->ground->getID()].speed) / stepSpeed * (addLastStepCost ? lastStepCost : 1);
 }
 
 int64_t Creature::getEventStepTicks() const
