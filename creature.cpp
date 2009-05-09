@@ -524,7 +524,7 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 		{
 			if(oldPos.z != newPos.z)
 				lastStepCost = 2;
-			 else if(std::abs(newPos.x - oldPos.x) >= 1 && std::abs(newPos.y - oldPos.y) >= 1)
+			else if(std::abs(newPos.x - oldPos.x) >= 1 && std::abs(newPos.y - oldPos.y) >= 1)
 				lastStepCost = 3;
 		}
 		else
