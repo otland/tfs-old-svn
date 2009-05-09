@@ -2007,7 +2007,7 @@ bool Game::playerMove(uint32_t playerId, Direction direction)
 	}
 
 	player->stopWalk();
-	int32_t delay = player->getWalkDelay(direction);
+	int32_t delay = player->getWalkDelay(direction, 50);
 	if(delay > 0)
 	{
 		player->setNextAction(OTSYS_TIME() + player->getStepDuration());

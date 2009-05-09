@@ -161,13 +161,21 @@ int64_t Creature::getSleepTicks() const
 	return stepDuration - (ct - lastStep) + extraStepDuration;
 }
 
-int32_t Creature::getWalkDelay(Direction dir) const
+int32_t Creature::getWalkDelay(Direction dir, uint32_t resolution) const
 {
 	float mul = 1.0f;
 	if(dir == NORTHWEST || dir == NORTHEAST || dir == SOUTHWEST || dir == SOUTHEAST)
-		mul = 1.5f;
+		mul = 3.0f;
 
-	return int32_t(getSleepTicks() * mul);
+	int64_t res = 0;
+	if(lastStep != 0)
+	{
+		int64_t ct = OTSYS_TIME();
+		int64_t stepDuration = std::ceil(((double)getStepDuration(false))/resolution) * resolution;
+		res = stepDuration - (ct - lastStep) + extraStepDuration;
+	}
+
+	return int32_t(res * mul);
 }
 
 void Creature::onThink(uint32_t interval)
@@ -518,8 +526,10 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 		extraStepDuration = 0;
 		if(!teleport)
 		{
-			if(oldPos.z != newPos.z || (std::abs(newPos.x - oldPos.x) >=1 && std::abs(newPos.y - oldPos.y) >= 1))
+			if(oldPos.z != newPos.z)
 				lastStepCost = 2;
+			 else if(std::abs(newPos.x - oldPos.x) >= 1 && std::abs(newPos.y - oldPos.y) >= 1)
+				lastStepCost = 3;
 		}
 		else
 			stopEventWalk();
@@ -1464,7 +1474,7 @@ std::string Creature::getDescription(int32_t lookDistance) const
 	return "a creature";
 }
 
-int32_t Creature::getStepDuration() const
+int32_t Creature::getStepDuration(bool addLastStepCost/* = true*/) const
 {
 	if(isRemoved())
 		return 0;
@@ -1477,7 +1487,7 @@ int32_t Creature::getStepDuration() const
 	if(!stepSpeed)
 		return 0;
 
-	return (1000 * Item::items[tile->ground->getID()].speed) / stepSpeed  * lastStepCost;
+	return ((1000 * Item::items[tile->ground->getID()].speed) / stepSpeed * (addLastStepCost ? lastStepCost : 1);
 }
 
 int64_t Creature::getEventStepTicks() const
