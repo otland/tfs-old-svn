@@ -163,15 +163,14 @@ int64_t Creature::getSleepTicks() const
 
 int32_t Creature::getWalkDelay(Direction dir, uint32_t resolution) const
 {
+	if(!lastStep)
+		return 0;
+
 	float mul = 1.0f;
 	if(dir == NORTHWEST || dir == NORTHEAST || dir == SOUTHWEST || dir == SOUTHEAST)
 		mul = 3.0f;
 
-	int64_t res = 0;
-	if(lastStep != 0)
-		res = ((int64_t)std::ceil(((double)getStepDuration(false))/resolution) * resolution) - (OTSYS_TIME() - lastStep) + extraStepDuration;
-
-	return int32_t(res * mul);
+	return ((int64_t)std::ceil(((double)getStepDuration(false) * mul) / resolution) * resolution) - (OTSYS_TIME() - lastStep) + extraStepDuration;
 }
 
 void Creature::onThink(uint32_t interval)
