@@ -248,6 +248,7 @@ bool ConfigManager::load()
 	m_confNumber[GUILD_PREMIUM_DAYS] = getGlobalNumber("premiumDaysToFormGuild", 0);
 	m_confNumber[PUSH_CREATURE_DELAY] = getGlobalNumber("pushCreatureDelay", 2 * 1000);
 	m_confNumber[DEATH_CONTAINER] = getGlobalNumber("deathContainerId", 1987);
+	m_confBool[PREMIUM_SKIP_WAIT] = getGlobalBool("premiumPlayerSkipWaitList", "no");
 
 	m_loaded = true;
 	return true;

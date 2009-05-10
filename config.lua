@@ -76,6 +76,7 @@
 	replaceKickOnLogin = "yes"
 	forceSlowConnectionsToDisconnect = "no"
 	loginOnlyWithLoginServer = "no"
+	premiumPlayerSkipWaitList = "no"
 
 	-- Database
 	-- NOTE: sqlFile is used only by sqlite database, and sqlKeepAlive by mysql database.

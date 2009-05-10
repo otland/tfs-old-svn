@@ -231,6 +231,7 @@ class ConfigManager
 			CHECK_CORPSE_OWNER,
 			BUFFER_SPELL_FAILURE,
 			CONFIM_OUTDATED_VERSION,
+			PREMIUM_SKIP_WAIT,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

@@ -3496,7 +3496,7 @@ void Player::onAttackedCreature(Creature* target)
 
 	pzLocked = true;
 	if(!isPartner(targetPlayer) && getZone() == target->getZone() &&
-		!Combat::isInPvpZone(this, targetPlayer) && !target->hasAttacked(this))
+		!Combat::isInPvpZone(this, targetPlayer) && !targetPlayer->hasAttacked(this))
 	{
 		addAttacked(targetPlayer);
 		if(targetPlayer->getSkull() == SKULL_NONE && getSkull() == SKULL_NONE
@@ -3581,7 +3581,7 @@ bool Player::onKilledCreature(Creature* target)
 	if(!hasFlag(PlayerFlag_NotGainInFight) && targetPlayer &&
 		getZone() == target->getZone() && !Combat::isInPvpZone(this, targetPlayer))
 	{
-		if(!isPartner(targetPlayer) && !target->hasAttacked(this) && target->getSkull() == SKULL_NONE)
+		if(!isPartner(targetPlayer) && !targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE)
 			addUnjustifiedDead(targetPlayer);
 
 		if(hasCondition(CONDITION_INFIGHT))
