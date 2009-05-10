@@ -346,7 +346,7 @@ uint32_t CreatureEvent::executeLogin(Player* player)
 
 			lua_pushnumber(L, env->addThing(player));
 
-			int32_t result = m_scriptInterface->callFunction(2);
+			int32_t result = m_scriptInterface->callFunction(1);
 			m_scriptInterface->releaseScriptEnv();
 			return (result == LUA_TRUE);
 		}
