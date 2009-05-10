@@ -289,18 +289,42 @@ void Tile::onAddTileItem(Item* item)
 	updateTileFlags(item, false);
 
 	const Position& cylinderMapPos = getPosition();
+	uint32_t index = __getIndexOfThing(item);
 
 	const SpectatorVec& list = g_game.getSpectators(cylinderMapPos);
 	SpectatorVec::const_iterator it;
 
-	uint32_t stackpos = __getIndexOfThing(item);
+	CreatureVector::iterator vit;
+	CreatureVector v;
+	if(creatures && !creatures->empty())
+	{
+		for(vit = creatures->begin(); vit != creatures->end(); ++vit)
+		{
+			if((*vit)->isInGhostMode())
+				v.push_back(*vit);
+		}
+	}
 
 	//send to client
 	Player* tmpPlayer = NULL;
+	int32_t i = 0;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
-			tmpPlayer->sendAddTileItem(this, cylinderMapPos, stackpos, item);
+		{
+			//get the correct index
+			i = index;
+			if(!v.empty())
+			{
+				for(vit = v.begin(); vit != v.end(); ++vit)
+				{
+					if(!tmpPlayer->canSeeGhost(*vit))
+						i--;
+				}
+			}
+
+			tmpPlayer->sendAddTileItem(this, cylinderMapPos, i, item);
+		}
 	}
 
 	//event methods
@@ -473,12 +497,13 @@ void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport/
 
 	//send to client
 	Player* tmpPlayer = NULL;
-	int32_t i = 0;
+	int32_t i = 0, j = 0;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()) && (!creature->isInGhostMode() || tmpPlayer->canSeeGhost(creature)))
 		{
 			i = oldStackPos;
+			j = newStackPos;
 			if(!v.empty())
 			{
 				for(vit = v.begin(); vit != v.end(); ++vit)
@@ -486,12 +511,15 @@ void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport/
 					if(__getIndexOfThing(*vit) < oldStackPos)
 					{
 						if(!tmpPlayer->canSeeGhost(*it))
+						{
 							i--;
+							j--;
+						}
 					}
 				}
 			}
 
-			tmpPlayer->sendCreatureMove(creature, toTile, toPos, newStackPos, this, fromPos, i, teleport);
+			tmpPlayer->sendCreatureMove(creature, toTile, toPos, j, this, fromPos, i, teleport);
 		}
 	}
 

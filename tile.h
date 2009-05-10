@@ -194,7 +194,6 @@ class Tile : public Cylinder
 		virtual const Position& getPosition() const {return tilePos;}
 		const Position& getTilePosition() const {return tilePos;}
 
-		//virtual bool isHouseTile() const {return false;}
 		virtual bool isRemoved() const {return false;}
 
 	private:

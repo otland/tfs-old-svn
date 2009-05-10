@@ -2840,27 +2840,9 @@ void ProtocolGame::AddTileItem(NetworkMessage_ptr msg, const Position& pos, uint
 	if(stackpos >= 10)
 		return;
 
-	//TODO
 	msg->AddByte(0x6A);
 	msg->AddPosition(pos);
-	if(const Tile* tile = item->getTile())
-	{
-		int32_t index = tile->__getIndexOfThing(item);
-		if(tile->creatures)
-		{
-			int32_t i = index;
-			for(CreatureVector::const_iterator it = tile->creatures->begin(); it != tile->creatures->end(); ++it)
-			{
-				if(tile->__getIndexOfThing(*it) < i && (*it)->isInGhostMode() && !player->canSeeGhost(*it))
-					index--;
-			}
-		}
-
-		msg->AddByte(index);
-	}
-	else
-		msg->AddByte(0x00);
-
+	msg->AddByte(stackpos);
 	msg->AddItem(item);
 }
 
@@ -2869,26 +2851,9 @@ void ProtocolGame::AddTileCreature(NetworkMessage_ptr msg, const Position& pos, 
 	if(stackpos >= 10)
 		return;
 
-	//TODO
 	msg->AddByte(0x6A);
 	msg->AddPosition(pos);
-	if(const Tile* tile = creature->getTile())
-	{
-		int32_t index = tile->__getIndexOfThing(creature);
-		if(tile->creatures)
-		{
-			int32_t i = index;
-			for(CreatureVector::const_iterator it = tile->creatures->begin(); it != tile->creatures->end(); ++it)
-			{
-				if(tile->__getIndexOfThing(*it) < i && (*it)->isInGhostMode() && !player->canSeeGhost(*it))
-					index--;
-			}
-		}
-
-		msg->AddByte(index);
-	}
-	else
-		msg->AddByte(0x00);
+	msg->AddByte(stackpos);
 
 	bool known;
 	uint32_t removedKnown;

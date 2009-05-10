@@ -53,8 +53,8 @@ int32_t WaitingList::getTime(int32_t slot)
 bool WaitingList::clientLogin(const Player* player)
 {
 	if(player->hasFlag(PlayerFlag_CanAlwaysLogin) || player->getName() == "Account Manager" || (waitList.empty()
-		&& Status::getInstance()->getPlayersOnline() < Status::getInstance()->getMaxPlayersOnline() ||
-		(g_config.getBool(ConfigManager::PREMIUM_SKIP_WAIT) && player->isPremium()))) //no waiting list and enough room
+		&& Status::getInstance()->getPlayersOnline() < Status::getInstance()->getMaxPlayersOnline()) ||
+		(g_config.getBool(ConfigManager::PREMIUM_SKIP_WAIT) && player->isPremium())) //no waiting list and enough room
 		return true;
 
 	cleanUpList();

@@ -39,8 +39,6 @@ class HouseTile : public Tile
 		virtual void __addThing(Creature* actor, int32_t index, Thing* thing);
 		virtual void __internalAddThing(uint32_t index, Thing* thing);
 
-		//virtual bool isHouseTile() const {return true;}
-
 		House* getHouse() {return house;}
 
 	private:

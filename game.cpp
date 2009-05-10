@@ -816,7 +816,6 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 	getSpectators(list, creature->getPosition(), false, true);
 
 	int32_t newStackPos = creature->getParent()->__getIndexOfThing(creature);
-
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
@@ -833,7 +832,6 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 	}
 
 	creature->getParent()->postAddNotification(NULL, creature, newStackPos);
-
 	addCreatureCheck(creature);
 	creature->onPlacedCreature();
 	return true;
