@@ -70,7 +70,7 @@ class Dispatcher
 			return dispatcher;
 		}
 
-		void addTask(Task* task, bool push_front = false);
+		void addTask(Task* task, bool front = false);
 
 		void stop();
 		void shutdown();

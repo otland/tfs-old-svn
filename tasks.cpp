@@ -88,7 +88,7 @@ OTSYS_THREAD_RETURN Dispatcher::dispatcherThread(void* p)
 	#endif
 }
 
-void Dispatcher::addTask(Task* task, bool push_front/* = false*/)
+void Dispatcher::addTask(Task* task, bool front/* = false*/)
 {
 	bool signal = false;
 	if(Dispatcher::m_threadState == Dispatcher::STATE_RUNNING)
@@ -96,7 +96,7 @@ void Dispatcher::addTask(Task* task, bool push_front/* = false*/)
 		OTSYS_THREAD_LOCK(m_taskLock, "");
 		signal = m_taskList.empty();
 
-		if(push_front)
+		if(front)
 			m_taskList.push_front(task);
 		else
 			m_taskList.push_back(task);
