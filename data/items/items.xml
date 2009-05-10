@@ -20526,7 +20526,7 @@
 	<item id="9534" article="a" name="mechanism"/>
 	<item fromid="9562" toid="9565" article="a" name="large gem"/>
 	<item id="9573" name="corkscrew stairs">
-		<attribute key="floorchange" value="east"/>
+		<attribute key="floorchange" value="north"/>
 	</item>
 	<item id="9574" name="corkscrew stairs">
 		<attribute key="floorchange" value="down"/>
