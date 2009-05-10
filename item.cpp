@@ -1103,7 +1103,7 @@ std::string Item::getNameDescription(const ItemType& it, const Item* item /*= NU
 		}
 	}
 	else
-		s << "an item of type " << it.id << ". Please report it to gamemaster.";
+		s << "an item of type " << it.id << ", please report it to gamemaster";
 
 	return s.str();
 }
