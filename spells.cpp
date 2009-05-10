@@ -787,7 +787,8 @@ bool Spell::playerRuneSpellCheck(Player* player, const Position& toPos)
 				&& tile->creatures && !tile->creatures->empty())
 			{
 				Player* targetPlayer = tile->getTopCreature()->getPlayer();
-				if(targetPlayer && targetPlayer != player && targetPlayer->getSkull() == SKULL_NONE && !Combat::isInPvpZone(player, targetPlayer))
+				if(targetPlayer && targetPlayer != player && targetPlayer->getSkull() == SKULL_NONE
+					&& !Combat::isInPvpZone(player, targetPlayer))
 				{
 					player->sendCancelMessage(RET_TURNSECUREMODETOATTACKUNMARKEDPLAYERS);
 					g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
