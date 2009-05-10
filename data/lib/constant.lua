@@ -627,6 +627,7 @@ PlayerFlag_HasInfiniteStamina = 41
 PlayerFlag_CannotMoveItems = 42
 PlayerFlag_CannotMoveCreatures = 43
 PlayerFlag_CanReportBugs = 44
+PlayerFlag_45 = 45 -- ignore
 
 PlayerCustomFlag_UnusedAndToReplace = 0
 PlayerCustomFlag_CanSeePosition	= 1

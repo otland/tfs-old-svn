@@ -19,6 +19,7 @@ function onSay(cid, words, param, channel)
 		local n = 0
 		local breakline = ""
 		repeat
+			n = n + 1
 			if(str ~= "") then
 				breakline = "\n"
 			end
@@ -44,11 +45,7 @@ function onSay(cid, words, param, channel)
 			end
 
 			str = str .. breakline .. " " .. time .. "  Died at Level " .. level .. " by " .. killed .. "."
-			n = n + 1
-			if(n >= config.displayLimit) then
-				break
-			end
-		until not deaths:next()
+		until not(deaths:next()) or n > config.displayLimit
 		deaths:free()
 	else
 		str = "No deaths recorded."
