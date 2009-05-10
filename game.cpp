@@ -5054,15 +5054,16 @@ Position Game::getClosestFreeTile(Creature* creature, Position pos, bool extende
 	{
 		for(PairVector::iterator it = relList.begin(); it != relList.end(); ++it)
 		{
-			if(Tile* tile = map->getTile(Position((pos.x + it->first), (pos.y + it->second), pos.z)))
-			{
-				ReturnValue ret = tile->__queryAdd(0, player, 1, FLAG_IGNOREBLOCKITEM);
-				if(ret == RET_NOTENOUGHROOM || (ret == RET_NOTPOSSIBLE && !player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere))
-					|| (ret == RET_PLAYERISNOTINVITED && !ignoreHouse && !player->hasFlag(PlayerFlag_CanEditHouses)))
-					continue;
+			Tile* tile = map->getTile(Position((pos.x + it->first), (pos.y + it->second), pos.z));
+			if(!tile || !tile->ground)
+				continue
 
-				return tile->getPosition();
-			}
+			ReturnValue ret = tile->__queryAdd(0, player, 1, FLAG_IGNOREBLOCKITEM);
+			if(ret == RET_NOTENOUGHROOM || (ret == RET_NOTPOSSIBLE && !player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere))
+				|| (ret == RET_PLAYERISNOTINVITED && !ignoreHouse && !player->hasFlag(PlayerFlag_CanEditHouses)))
+				continue;
+
+			return tile->getPosition();
 		}
 	}
 	else
