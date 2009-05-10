@@ -214,15 +214,15 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 			{
 				TRACK_MESSAGE(output);
-				int32_t currentSlot = WaitingList::getInstance()->getClientSlot(player);
+				int32_t slot = WaitingList::getInstance()->getClientSlot(player);
 
 				std::stringstream ss;
 				ss << "Too many players online.\n" << "You are ";
-				if(currentSlot != 0)
+				if(slot != 0)
 				{
 					ss << "at ";
-					if(currentSlot > 0)
-						ss << currentSlot;
+					if(slot > 0)
+						ss << slot;
 					else
 						ss << "unknown";
 
@@ -233,7 +233,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 
 				output->AddByte(0x16);
 				output->AddString(ss.str());
-				output->AddByte(WaitingList::getTime(currentSlot));
+				output->AddByte(WaitingList::getTime(slot));
 				OutputMessagePool::getInstance()->send(output);
 			}
 

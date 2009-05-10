@@ -39,7 +39,7 @@ WaitListIterator WaitingList::findClient(const Player* player, uint32_t& slot)
 	{
 		if((*it)->acc == player->getAccount() && (*it)->ip == player->getIP() &&
 			strcasecmp((*it)->name.c_str(), player->getName().c_str()) == 0)
-				return it;
+			return it;
 
 		++slot;
 	}
@@ -57,8 +57,8 @@ int32_t WaitingList::getTime(int32_t slot)
 		return 20;
 	else if(slot < 50)
 		return 60;
-	else
-		return 120;
+
+	return 120;
 }
 
 int32_t WaitingList::getTimeOut(int32_t slot)
@@ -72,15 +72,12 @@ bool WaitingList::clientLogin(const Player* player)
 	if(player->hasFlag(PlayerFlag_CanAlwaysLogin) || player->getName() == "Account Manager")
 		return true;
 
-	if(waitList.empty() && Status::getInstance()->getPlayersOnline() < Status::getInstance()->getMaxPlayersOnline())
-	{
-		//no waiting list and enough room
+	if(waitList.empty() && Status::getInstance()->getPlayersOnline() < Status::getInstance()->getMaxPlayersOnline()) //no waiting list and enough room
 		return true;
-	}
 
 	cleanUpList();
 
-	uint32_t slot;
+	uint32_t slot = 0;
 	WaitListIterator it = findClient(player, slot);
 	if(it != waitList.end())
 	{
@@ -100,19 +97,18 @@ bool WaitingList::clientLogin(const Player* player)
 	}
 
 	Wait* wait = new Wait();
-
 	if(player->isPremium())
 	{
 		slot = 1;
 		for(WaitListIterator it = waitList.begin(); it != waitList.end(); ++it)
 		{
 			if(!(*it)->premium)
-			{
-				waitList.insert(it, wait);
 				break;
-			}
+
 			++slot;
 		}
+
+		waitList.insert(it, wait);
 	}
 	else
 	{
@@ -130,7 +126,7 @@ bool WaitingList::clientLogin(const Player* player)
 
 int32_t WaitingList::getClientSlot(const Player* player)
 {
-	uint32_t slot;
+	uint32_t slot = 0;
 	WaitListIterator it = findClient(player, slot);
 	if(it != waitList.end())
 		return slot;

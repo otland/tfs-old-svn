@@ -53,7 +53,7 @@ Item* Item::CreateItem(const uint16_t _type, uint16_t _count /*= 1*/)
 		return NULL;
 	}
 
-	if(it.id != 0)
+	if(it.id)
 	{
 		if(it.isDepot())
 			newItem = new Depot(_type);
@@ -106,14 +106,14 @@ ItemAttributes()
 	count = 1;
 
 	const ItemType& it = items[id];
-	if(it.charges != 0)
+	if(it.charges)
 		setCharges(it.charges);
 
 	if(it.isFluidContainer() || it.isSplash())
 		setFluidType(_count);
-	else if(it.stackable && _count != 0)
+	else if(it.stackable && _count)
 		count = _count;
-	else if(it.charges != 0 && _count != 0)
+	else if(it.charges && _count)
 		setCharges(_count);
 
 	loadedFromMap = false;
@@ -153,7 +153,7 @@ void Item::copyAttributes(Item* item)
 
 Item::~Item()
 {
-	if(getUniqueId() != 0)
+	if(getUniqueId())
 		ScriptEnviroment::removeUniqueThing(this);
 }
 
@@ -161,7 +161,7 @@ void Item::setDefaultSubtype()
 {
 	count = 1;
 	const ItemType& it = items[id];
-	if(it.charges != 0)
+	if(it.charges)
 		setCharges(it.charges);
 }
 
@@ -195,7 +195,7 @@ uint16_t Item::getSubType() const
 	if(it.isFluidContainer() || it.isSplash())
 		return getFluidType();
 
-	if(it.charges != 0)
+	if(it.charges)
 		return getCharges();
 
 	return count;
@@ -206,7 +206,7 @@ void Item::setSubType(uint16_t n)
 	const ItemType& it = items[id];
 	if(it.isFluidContainer() || it.isSplash())
 		setFluidType(n);
-	else if(it.charges != 0)
+	else if(it.charges)
 		setCharges(n);
 	else
 		count = n;
@@ -352,7 +352,7 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 			if(!propStream.GET_UCHAR(_scriptProtected))
 				return false;
 
-			setScriptProtected(_scriptProtected != 0);
+			setScriptProtected(_scriptProtected);
 			break;
 		}
 
@@ -689,13 +689,13 @@ bool Item::hasProperty(enum ITEMPROPERTY prop) const
 
 		case IMMOVABLEBLOCKSOLID:
 			if(it.blockSolid && (!it.moveable || (isLoadedFromMap() &&
-				(getUniqueId() != 0 || (getActionId() != 0 && getContainer())))))
+				(getUniqueId() || (getActionId() && getContainer())))))
 				return true;
 			break;
 
 		case IMMOVABLEBLOCKPATH:
 			if(it.blockPathFind && (!it.moveable || (isLoadedFromMap() &&
-				(getUniqueId() != 0 || (getActionId() != 0 && getContainer())))))
+				(getUniqueId() || (getActionId() && getContainer())))))
 				return true;
 			break;
 
@@ -706,7 +706,7 @@ bool Item::hasProperty(enum ITEMPROPERTY prop) const
 
 		case IMMOVABLENOFIELDBLOCKPATH:
 			if(!it.isMagicField() && it.blockPathFind && (!it.moveable || (isLoadedFromMap() &&
-				(getUniqueId() != 0 || (getActionId() != 0 && getContainer())))))
+				(getUniqueId() || (getActionId() && getContainer())))))
 				return true;
 			break;
 
@@ -771,33 +771,32 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 	}
 	else if(it.weaponType != WEAPON_NONE)
 	{
+		s << " (";
+		bool begin = true;
 		if(it.weaponType == WEAPON_DIST && it.ammoType != AMMO_NONE)
 		{
-			s << " (Range:" << int32_t(item ? item->getShootRange() : it.shootRange);
-			if(it.attack != 0 || it.extraAttack != 0 || (item && (item->getAttack() != 0 || item->getExtraAttack() != 0)))
+			begin = false;
+			s << "Range:" << int32_t(item ? item->getShootRange() : it.shootRange);
+			if(it.attack || it.extraAttack || (item && (item->getAttack() || item->getExtraAttack())))
 			{
 				s << ", Atk " << std::showpos << int32_t(item ? item->getAttack() : it.attack);
-				if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
+				if(it.extraAttack || (item && item->getExtraAttack()))
 					s << " " << std::showpos << int32_t(item ? item->getExtraAttack() : it.extraAttack) << std::noshowpos;
 			}
 
 			if(it.hitChance != -1 || (item && item->getHitChance() != -1))
 				s << ", Hit% " << std::showpos << (item ? item->getHitChance() : it.hitChance) << std::noshowpos;
-
-			s << ")";
 		}
 		else if(it.weaponType != WEAPON_AMMO && it.weaponType != WEAPON_WAND)
 		{
-			s << " (";
-			bool begin = true;
-			if(it.attack != 0 || it.extraAttack != 0 || (item && (item->getAttack() != 0 || item->getExtraAttack() != 0)))
+			if(it.attack || it.extraAttack || (item && (item->getAttack() || item->getExtraAttack())))
 			{
 				begin = false;
 				s << "Atk:";
 				if(it.abilities.elementType != COMBAT_NONE && it.decayTo < 1)
 				{
 					s << std::max((int32_t)0, int32_t((item ? item->getAttack() : it.attack) - it.abilities.elementDamage));
-					if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
+					if(it.extraAttack || (item && item->getExtraAttack()))
 						s << " " << std::showpos << int32_t(item ? item->getExtraAttack() : it.extraAttack) << std::noshowpos;
 
 					s << " physical + " << it.abilities.elementDamage << " " << getCombatName(it.abilities.elementType);
@@ -805,87 +804,153 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 				else
 				{
 					s << int32_t(item ? item->getAttack() : it.attack);
-					if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
+					if(it.extraAttack || (item && item->getExtraAttack()))
 						s << " " << std::showpos << int32_t(item ? item->getExtraAttack() : it.extraAttack) << std::noshowpos;
 				}
 			}
 
-			if(it.defense != 0 || it.extraDefense != 0 || (item && (item->getDefense() != 0 || item->getExtraDefense() != 0)))
+			if(it.defense || it.extraDefense || (item && (item->getDefense() || item->getExtraDefense())))
 			{
 				if(!begin)
 					s << ", ";
 
 				begin = false;
 				s << "Def:" << int32_t(item ? item->getDefense() : it.defense);
-				if(it.extraDefense != 0 || (item && item->getExtraDefense() != 0))
+				if(it.extraDefense || (item && item->getExtraDefense()))
 					s << " " << std::showpos << int32_t(item ? item->getExtraDefense() : it.extraDefense) << std::noshowpos;
 			}
-
-			if(it.abilities.stats[STAT_MAGICLEVEL] != 0)
-			{
-				if(!begin)
-					s << ", ";
-
-				begin = false;
-				s << "magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICLEVEL] << std::noshowpos;
-			}
-
-			s << ")";
 		}
-	}
-	else if(it.armor != 0 || (item && item->getArmor() != 0))
-	{
-		s << " (Arm:" << (item ? item->getArmor() : it.armor);
+
 		for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; i++)
 		{
-			if(it.abilities.skills[i] != 0)
+			if(!it.abilities.skills[i])
+				continue;
+
+			if(!begin)
+				s << ", ";
+
+			begin = false;
+			s << getSkillName(i) << " " << std::showpos << (int32_t)it.abilities.skills[i] << std::noshowpos;
+		}
+
+		if(it.abilities.stats[STAT_MAGICLEVEL])
+		{
+			if(!begin)
+				s << ", ";
+
+			begin = false;
+			s << "magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICLEVEL] << std::noshowpos;
+		}
+
+		int32_t show = it.abilities.absorbPercent[COMBAT_FIRST];
+		for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
+		{
+			if(it.abilities.absorbPercent[i] == show)
+				continue;
+
+			show = 0;
+			break;
+		}
+
+		if(!show)
+		{
+			bool tmp = true;
+			for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+			{
+				if(!it.abilities.absorbPercent[i])
+					continue;
+
+				if(tmp)
+				{
+					if(!begin)
+						s << ", ";
+
+					begin = tmp = false;
+					s << "protection ";
+				}
+				else
+					s << ", ";
+
+				s << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities.absorbPercent[i] << std::noshowpos << "%";
+			}
+		}
+		else
+		{
+			if(!begin)
+				s << ", ";
+
+			begin = false;
+			s << "protection all " << std::showpos << show << std::noshowpos << "%";
+		}
+
+		if(it.abilities.speed)
+		{
+			if(!begin)
+				s << ", ";
+
+			begin = false;
+			s << "speed " << std::showpos << (int32_t)(it.abilities.speed / 2) << std::noshowpos;
+		}
+
+		s << ")";
+	}
+	else if(it.armor || (item && item->getArmor()) || it.showAttributes)
+	{
+		int32_t tmp = it.armor;
+		if(item)
+			tmp = item->getArmor();
+
+		if(tmp)
+			s << " (Arm:" << tmp;
+
+		for(uint16_t i = SKILL_FIRST; i <= SKILL_LAST; i++)
+		{
+			if(it.abilities.skills[i])
 				s << ", " << getSkillName(i) << " " << std::showpos << (int32_t)it.abilities.skills[i] << std::noshowpos;
 		}
 
-		if(it.abilities.stats[STAT_MAGICLEVEL] != 0)
+		if(it.abilities.stats[STAT_MAGICLEVEL])
 			s << ", magic level " << std::showpos << (int32_t)it.abilities.stats[STAT_MAGICLEVEL] << std::noshowpos;
 
 		int32_t show = it.abilities.absorbPercent[COMBAT_FIRST];
 		for(uint32_t i = (COMBAT_FIRST + 1); i <= COMBAT_LAST; i++)
 		{
-			if(it.abilities.absorbPercent[i] != show)
-			{
-				show = 0;
-				break;
-			}
+			if(it.abilities.absorbPercent[i] == show)
+				continue;
+
+			show = 0;
+			break;
 		}
 
 		if(!show)
 		{
-			bool begin = true;
+			bool tmp = true;
 			for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
 			{
-				if(it.abilities.absorbPercent[i] != 0)
-				{
-					if(!begin)
-						s << ", ";
-			  		else
-					{
-						begin = false;
-						s << ", protection ";
-					}
+				if(!it.abilities.absorbPercent[i])
+					continue;
 
-					s << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities.absorbPercent[i] << std::noshowpos << "%";
+				if(tmp)
+				{
+					tmp = false;
+					s << ", protection ";
 				}
+				else
+					s << ", ";
+
+				s << getCombatName((CombatType_t)i) << " " << std::showpos << it.abilities.absorbPercent[i] << std::noshowpos << "%";
 			}
 		}
 		else
 			s << ", protection all " << std::showpos << show << std::noshowpos << "%";
 
-		if(it.abilities.speed > 0)
-			s << ", speed " << std::showpos << (it.abilities.speed / 2) << std::noshowpos;
+		if(it.abilities.speed)
+			s << ", speed " << std::showpos << (int32_t)(it.abilities.speed / 2) << std::noshowpos;
 
 		s << ")";
 	}
 	else if(it.isContainer())
 		s << " (Vol:" << (int32_t)it.maxItems << ")";
-	else if(it.abilities.speed > 0)
-		s << " (speed " << std::showpos << (it.abilities.speed / 2) << std::noshowpos << ")";
 	else if(it.isKey())
 		s << " (Key:" << (item ? (int32_t)item->getActionId() : 0) << ")";
 	else if(it.isFluidContainer())
@@ -935,7 +1000,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		else
 			s << "Nothing is written on it";
 	}
-	else if(it.levelDoor != 0 && item && item->getActionId() >= it.levelDoor)
+	else if(it.levelDoor && item && item->getActionId() >= it.levelDoor)
 		s << " for level " << item->getActionId() - it.levelDoor;
 
 	if(it.showCharges)
@@ -962,7 +1027,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 	if(dot)
 		s << ".";
 
-	if(it.wieldInfo != 0)
+	if(it.wieldInfo)
 	{
 		s << std::endl << "It can only be wielded properly by ";
 		if(it.wieldInfo & WIELDINFO_PREMIUM)
@@ -991,7 +1056,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 
 	if(lookDistance <= 1)
 	{
-		double weight = (item == NULL ? it.weight : item->getWeight());
+		double weight = (!item ? it.weight : item->getWeight());
 		if(weight > 0)
 			s << std::endl << getWeightDescription(it, weight);
 	}
@@ -1000,7 +1065,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 	{
 		s << std::endl << "It is temporarily enchanted with " << getCombatName(it.abilities.elementType) << " (";
 		s << std::max((int32_t)0, int32_t((item ? item->getAttack() : it.attack) - it.abilities.elementDamage));
-		if(it.extraAttack != 0 || (item && item->getExtraAttack() != 0))
+		if(it.extraAttack || (item && item->getExtraAttack()))
 			s << " " << std::showpos << int32_t(item ? item->getExtraAttack() : it.extraAttack) << std::noshowpos;
 
 		s << " physical + " << it.abilities.elementDamage << " " << getCombatName(it.abilities.elementType) << " damage).";
@@ -1062,7 +1127,7 @@ std::string Item::getWeightDescription() const
 
 void Item::setUniqueId(uint16_t n)
 {
-	if(getUniqueId() != 0 && getActionId() != 2000)
+	if(getUniqueId() && getActionId() != 2000)
 		return;
 
 	ItemAttributes::setUniqueId(n);
@@ -1074,7 +1139,7 @@ bool Item::canDecay()
 	if(isRemoved())
 		return false;
 
-	if(isLoadedFromMap() && (getUniqueId() != 0 || (getActionId() != 0 && getContainer())))
+	if(isLoadedFromMap() && (getUniqueId() || (getActionId() && getContainer())))
 		return false;
 
 	const ItemType& it = Item::items[id];
@@ -1133,7 +1198,7 @@ bool ItemAttributes::hasAttribute(itemAttrTypes type) const
 void ItemAttributes::removeAttribute(itemAttrTypes type)
 {
 	//check if we have it
-	if((type & m_attributes) != 0)
+	if((type & m_attributes))
 	{
 		//go trough the linked list until find it
 		Attribute* prevAttr = NULL;
@@ -1277,7 +1342,7 @@ ItemAttributes::Attribute* ItemAttributes::getAttrConst(itemAttrTypes type) cons
 		curAttr = curAttr->next;
 	}
 
-	std::cout << "[Warning - ItemAttributes::getAttrConst] (type & m_attributes) != 0 but attribute not found" << std::endl;
+	std::cout << "[Warning - ItemAttributes::getAttrConst] (type & m_attributes) but attribute not found" << std::endl;
 	return NULL;
 }
 
@@ -1302,7 +1367,7 @@ ItemAttributes::Attribute* ItemAttributes::getAttr(itemAttrTypes type)
 		}
 	}
 
-	std::cout << "[Warning - ItemAttributes::getAttr] (type & m_attributes) != 0 but attribute not found" << std::endl;
+	std::cout << "[Warning - ItemAttributes::getAttr] (type & m_attributes) but attribute not found" << std::endl;
 	curAttr = new Attribute(type);
 	addAttr(curAttr);
 	return curAttr;
