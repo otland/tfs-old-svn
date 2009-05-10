@@ -16,6 +16,7 @@
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 #include "tile.h"
+#include "housetile.h"
 #include <iostream>
 
 #include "player.h"
@@ -90,6 +91,27 @@ bool Tile::hasProperty(Item* exclude, enum ITEMPROPERTY prop) const
 	}
 
 	return false;
+}
+
+HouseTile* Tile::getHouseTile()
+{
+	if(isHouseTile())
+		return static_cast<HouseTile*>(this);
+
+	return NULL;
+}
+
+const HouseTile* Tile::getHouseTile() const
+{
+	if(isHouseTile())
+		return static_cast<const HouseTile*>(this);
+
+	return NULL;
+}
+
+bool Tile::isHouseTile() const
+{
+	return hasFlag(TILESTATE_HOUSE);
 }
 
 bool Tile::hasHeight(uint32_t n) const
@@ -271,12 +293,14 @@ void Tile::onAddTileItem(Item* item)
 	const SpectatorVec& list = g_game.getSpectators(cylinderMapPos);
 	SpectatorVec::const_iterator it;
 
+	uint32_t stackpos = __getIndexOfThing(item);
+
 	//send to client
 	Player* tmpPlayer = NULL;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
-			tmpPlayer->sendAddTileItem(this, cylinderMapPos, item);
+			tmpPlayer->sendAddTileItem(this, cylinderMapPos, stackpos, item);
 	}
 
 	//event methods
@@ -467,7 +491,7 @@ void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport/
 				}
 			}
 
-			tmpPlayer->sendCreatureMove(creature, toTile, toPos, this, fromPos, i, teleport);
+			tmpPlayer->sendCreatureMove(creature, toTile, toPos, newStackPos, this, fromPos, i, teleport);
 		}
 	}
 

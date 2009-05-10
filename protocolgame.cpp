@@ -349,7 +349,8 @@ bool ProtocolGame::connect(uint32_t playerId)
 	player->useThing2();
 	player->isConnecting = false;
 	player->client = this;
-	player->client->sendAddCreature(player, false);
+	player->client->sendAddCreature(player, player->getPosition(),
+		player->getTile()->__getIndexOfThing(player), false);
 	player->sendIcons();
 
 	player->lastIP = player->getIP();
@@ -2075,7 +2076,7 @@ void ProtocolGame::sendFYIBox(const std::string& message)
 }
 
 //tile
-void ProtocolGame::sendAddTileItem(const Tile* tile, const Position& pos, const Item* item)
+void ProtocolGame::sendAddTileItem(const Tile* tile, const Position& pos, uint32_t stackpos, const Item* item)
 {
 	if(!canSee(pos))
 		return;
@@ -2084,7 +2085,7 @@ void ProtocolGame::sendAddTileItem(const Tile* tile, const Position& pos, const 
 	if(msg)
 	{
 		TRACK_MESSAGE(msg);
-		AddTileItem(msg, pos, item);
+		AddTileItem(msg, pos, stackpos, item);
 	}
 }
 
@@ -2139,9 +2140,9 @@ void ProtocolGame::sendUpdateTile(const Tile* tile, const Position& pos)
 	}
 }
 
-void ProtocolGame::sendAddCreature(const Creature* creature, bool isLogin)
+void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos, uint32_t stackpos, bool isLogin)
 {
-	if(!canSee(creature->getPosition()))
+	if(!canSee(pos))
 		return;
 
 	NetworkMessage_ptr msg = getOutputBuffer();
@@ -2171,9 +2172,9 @@ void ProtocolGame::sendAddCreature(const Creature* creature, bool isLogin)
 				}
 			}
 
-			AddMapDescription(msg, player->getPosition());
+			AddMapDescription(msg, pos);
 			if(isLogin)
-				AddMagicEffect(msg, player->getPosition(), NM_ME_TELEPORT);
+				AddMagicEffect(msg, pos, NM_ME_TELEPORT);
 
 			AddInventoryItem(msg, SLOT_HEAD, player->getInventoryItem(SLOT_HEAD));
 			AddInventoryItem(msg, SLOT_NECKLACE, player->getInventoryItem(SLOT_NECKLACE));
@@ -2252,9 +2253,9 @@ void ProtocolGame::sendAddCreature(const Creature* creature, bool isLogin)
 		}
 		else
 		{
-			AddTileCreature(msg, creature->getPosition(), creature);
+			AddTileCreature(msg, pos, stackpos, creature);
 			if(isLogin)
-				AddMagicEffect(msg, creature->getPosition(), NM_ME_TELEPORT);
+				AddMagicEffect(msg, pos, NM_ME_TELEPORT);
 		}
 	}
 }
@@ -2273,7 +2274,7 @@ void ProtocolGame::sendRemoveCreature(const Creature* creature, const Position& 
 }
 
 void ProtocolGame::sendMoveCreature(const Creature* creature, const Tile* newTile, const Position& newPos,
-	const Tile* oldTile, const Position& oldPos, uint32_t oldStackpos, bool teleport)
+	uint32_t newStackPos, const Tile* oldTile, const Position& oldPos, uint32_t oldStackpos, bool teleport)
 {
 	if(creature == player)
 	{
@@ -2332,7 +2333,7 @@ void ProtocolGame::sendMoveCreature(const Creature* creature, const Tile* newTil
 		if(teleport || (oldPos.z == 7 && newPos.z >= 8) || oldStackpos >= 10)
 		{
 			sendRemoveCreature(creature, oldPos, oldStackpos, false);
-			sendAddCreature(creature, false);
+			sendAddCreature(creature, newPos, newStackPos, false);
 		}
 		else
 		{
@@ -2350,7 +2351,7 @@ void ProtocolGame::sendMoveCreature(const Creature* creature, const Tile* newTil
 	else if(canSee(oldPos))
 		sendRemoveCreature(creature, oldPos, oldStackpos, false);
 	else if(canSee(creature->getPosition()))
-		sendAddCreature(creature, false);
+		sendAddCreature(creature, newPos, newStackPos, false);
 }
 
 //inventory
@@ -2834,8 +2835,12 @@ void ProtocolGame::AddCreatureLight(NetworkMessage_ptr msg, const Creature* crea
 }
 
 //tile
-void ProtocolGame::AddTileItem(NetworkMessage_ptr msg, const Position& pos, const Item* item)
+void ProtocolGame::AddTileItem(NetworkMessage_ptr msg, const Position& pos, uint32_t stackpos, const Item* item)
 {
+	if(stackpos >= 10)
+		return;
+
+	//TODO
 	msg->AddByte(0x6A);
 	msg->AddPosition(pos);
 	if(const Tile* tile = item->getTile())
@@ -2859,8 +2864,12 @@ void ProtocolGame::AddTileItem(NetworkMessage_ptr msg, const Position& pos, cons
 	msg->AddItem(item);
 }
 
-void ProtocolGame::AddTileCreature(NetworkMessage_ptr msg, const Position& pos, const Creature* creature)
+void ProtocolGame::AddTileCreature(NetworkMessage_ptr msg, const Position& pos, uint32_t stackpos, const Creature* creature)
 {
+	if(stackpos >= 10)
+		return;
+
+	//TODO
 	msg->AddByte(0x6A);
 	msg->AddPosition(pos);
 	if(const Tile* tile = creature->getTile())

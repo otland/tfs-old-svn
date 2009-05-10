@@ -250,7 +250,6 @@ std::string CreatureEvent::getScriptEventParams() const
 	switch(m_type)
 	{
 		case CREATURE_EVENT_LOGIN:
-			return "cid, lastLogin";
 		case CREATURE_EVENT_LOGOUT:
 			return "cid";
 		case CREATURE_EVENT_CHANNEL_JOIN:
@@ -309,7 +308,7 @@ void CreatureEvent::clearEvent()
 
 uint32_t CreatureEvent::executeLogin(Player* player)
 {
-	//onLogin(cid, lastLogin)
+	//onLogin(cid)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
@@ -319,7 +318,6 @@ uint32_t CreatureEvent::executeLogin(Player* player)
 
 			std::stringstream scriptstream;
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
-			scriptstream << "lastLogin = " << player->getLastLoginSaved() << std::endl;
 
 			scriptstream << m_scriptData;
 			int32_t result = LUA_NO_ERROR;
@@ -347,7 +345,6 @@ uint32_t CreatureEvent::executeLogin(Player* player)
 			m_scriptInterface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(player));
-			lua_pushnumber(L, player->getLastLoginSaved());
 
 			int32_t result = m_scriptInterface->callFunction(2);
 			m_scriptInterface->releaseScriptEnv();

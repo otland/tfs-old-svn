@@ -4460,7 +4460,7 @@ int32_t LuaScriptInterface::luaGetHouseFromPos(lua_State* L)
 	if(Tile* tile = g_game.getMap()->getTile(pos))
 	{
 		uint32_t houseId = LUA_ERROR;
-		if(HouseTile* houseTile = dynamic_cast<HouseTile*>(tile))
+		if(HouseTile* houseTile = tile->getHouseTile())
 		{
 			if(House* house = houseTile->getHouse())
 				houseId = house->getHouseId();

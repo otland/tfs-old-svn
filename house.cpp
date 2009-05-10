@@ -182,7 +182,7 @@ bool House::kickPlayer(Player* player, Player* target)
 	if(!target || target->isRemoved())
 		return false;
 
-	HouseTile* houseTile = dynamic_cast<HouseTile*>(target->getTile());
+	HouseTile* houseTile = target->getTile()->getHouseTile();
 	if(!houseTile || houseTile->getHouse() != this)
 		return false;
 
@@ -975,7 +975,7 @@ House* Houses::getHouseByPlayer(Player* player)
 	if(!player || player->isRemoved())
 		return NULL;
 
-	HouseTile* houseTile = dynamic_cast<HouseTile*>(player->getTile());
+	HouseTile* houseTile = player->getTile()->getHouseTile();
 	if(!houseTile)
 		return NULL;
 

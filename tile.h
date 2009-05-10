@@ -63,6 +63,8 @@ enum tileflags_t
 	TILESTATE_NOFIELDBLOCKPATH = 1 << 20
 };
 
+class HouseTile;
+
 class Tile : public Cylinder
 {
 	public:
@@ -97,6 +99,10 @@ class Tile : public Cylinder
 				downItems->clear();
 			}
 		}
+
+		HouseTile* getHouseTile();
+		const HouseTile* getHouseTile() const;
+		bool isHouseTile() const;
 
 		virtual int32_t getThrowRange() const {return 0;}
 		virtual bool isPushable() const {return false;}
@@ -188,7 +194,7 @@ class Tile : public Cylinder
 		virtual const Position& getPosition() const {return tilePos;}
 		const Position& getTilePosition() const {return tilePos;}
 
-		virtual bool isHouseTile() const {return false;}
+		//virtual bool isHouseTile() const {return false;}
 		virtual bool isRemoved() const {return false;}
 
 	private:

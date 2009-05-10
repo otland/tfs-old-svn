@@ -381,7 +381,7 @@ bool TalkAction::buyHouse(Creature* creature, const std::string& cmd, const std:
 		return true;
 	}
 
-	HouseTile* houseTile = dynamic_cast<HouseTile*>(tile);
+	HouseTile* houseTile = tile->getHouseTile();
 	if(!houseTile)
 	{
 		player->sendCancel("You have to be looking at door of the house you would like to buy.");
@@ -660,7 +660,7 @@ bool TalkAction::ghost(Creature* creature, const std::string& cmd, const std::st
 					tmpPlayer->sendMagicEffect(player->getPosition(), NM_ME_POFF);
 				}
 				else
-					tmpPlayer->sendCreatureAppear(player, true);
+					tmpPlayer->sendCreatureAppear(player, player->getPosition(), index, true);
 
 				tmpPlayer->sendUpdateTile(player->getTile(), player->getPosition());
 			}

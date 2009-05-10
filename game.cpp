@@ -811,16 +811,18 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 		ghost = tmpPlayer->isInGhostMode();
 	}
 
-	SpectatorVec list;
 	SpectatorVec::iterator it;
-
+	SpectatorVec list;
 	getSpectators(list, creature->getPosition(), false, true);
+
+	int32_t newStackPos = creature->getParent()->__getIndexOfThing(creature);
+
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
 		{
 			if(!ghost || (*it) == creature || tmpPlayer->canSeeGhost(creature))
-				tmpPlayer->sendCreatureAppear(creature, true);
+				tmpPlayer->sendCreatureAppear(creature, creature->getPosition(), newStackPos, true);
 		}
 	}
 
@@ -830,8 +832,7 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 			(*it)->onCreatureAppear(creature, true);
 	}
 
-	creature->getParent()->postAddNotification(NULL, creature,
-		creature->getParent()->__getIndexOfThing(creature));
+	creature->getParent()->postAddNotification(NULL, creature, newStackPos);
 
 	addCreatureCheck(creature);
 	creature->onPlacedCreature();
