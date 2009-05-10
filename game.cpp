@@ -545,10 +545,10 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 		Thing* thing = NULL;
 		switch(type)
 		{
-			case STACKPOS_MOVE: /*for move operations*/
+			case STACKPOS_MOVE: //for move operations
 			{
 				Item* item = tile->getTopDownItem();
-				if(item && !item->isNotMoveable())
+				if(item && item->isMoveable())
 					thing = item;
 				else
 					thing = tile->getTopCreature();
@@ -556,9 +556,14 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 				break;
 			}
 
-			case STACKPOS_USE: /*use item*/
+			case STACKPOS_USE: //use item
+			{
 				thing = tile->getTopDownItem();
+				if(!thing)
+					thing = ground;
+
 				break;
+			}
 
 			case STACKPOS_USEITEM:
 			{
