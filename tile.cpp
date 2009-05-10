@@ -15,9 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
+#include <iostream>
+
 #include "tile.h"
 #include "housetile.h"
-#include <iostream>
 
 #include "player.h"
 #include "creature.h"
