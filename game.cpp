@@ -797,9 +797,6 @@ bool Game::internalPlaceCreature(Creature* creature, const Position& pos, bool e
 
 bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedPos /*= false*/, bool forced /*= false*/)
 {
-	if(!internalPlaceCreature(creature, pos, extendedPos, forced))
-		return false;
-
 	bool ghost = false;
 	Player* tmpPlayer = NULL;
 	if((tmpPlayer = creature->getPlayer()) && !tmpPlayer->storedConditionList.empty())
@@ -815,6 +812,9 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 		tmpPlayer->storedConditionList.clear();
 		ghost = tmpPlayer->isInGhostMode();
 	}
+
+	if(!internalPlaceCreature(creature, pos, extendedPos, forced))
+		return false;
 
 	SpectatorVec::iterator it;
 	SpectatorVec list;
@@ -1115,7 +1115,7 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Cylinder* fromCylinde
 	int32_t index = 0;
 	Item* toItem = NULL;
 	Cylinder* subCylinder = NULL;
-	
+
 	uint32_t n = 0;
 	while((subCylinder = toCylinder->__queryDestination(index, creature, &toItem, flags)) != toCylinder)
 	{

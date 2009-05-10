@@ -1309,26 +1309,37 @@ bool parseVocationNode(xmlNodePtr vocationNode, VocationMap& vocationMap, String
 				return false;
 			}
 		}
-		else if(readXMLInteger(vocationNode, "id", intValue))
+		else if(readXMLString(vocationNode, "id", strValue))
 		{
-			Vocation* vocation = Vocations::getInstance()->getVocation(intValue);
-			if(vocation && vocation->getName() != "")
+			IntegerVec intVector;
+			if(!parseIntegerVec(strValue, intVector))
 			{
-				vocationId = vocation->getId();
-				strValue = vocation->getName();
-
-				vocationMap[vocationId] = true;
-				int32_t promotedVocation = Vocations::getInstance()->getPromotedVocation(vocationId);
-				if(promotedVocation != -1)
-					vocationMap[promotedVocation] = true;
-			}
-			else
-			{
-				std::stringstream ss;
-				ss << "Wrong vocation id: " << intValue;
-
-				errorStr = ss.str();
+				errorStr = "Invalid vocation id - '" + strValue + "'";
 				return false;
+			}
+
+			size_t size = intVector.size();
+			for(size_t i = 0; i < size; ++i)
+			{
+				Vocation* vocation = Vocations::getInstance()->getVocation(intVector[i]);
+				if(vocation && vocation->getName() != "")
+				{
+					vocationId = vocation->getId();
+					strValue = vocation->getName();
+
+					vocationMap[vocationId] = true;
+					int32_t promotedVocation = Vocations::getInstance()->getPromotedVocation(vocationId);
+					if(promotedVocation != -1)
+						vocationMap[promotedVocation] = true;
+				}
+				else
+				{
+					std::stringstream ss;
+					ss << "Wrong vocation id: " << intVector[i];
+
+					errorStr = ss.str();
+					return false;
+				}
 			}
 		}
 

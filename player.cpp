@@ -2390,29 +2390,29 @@ void Player::kickPlayer(bool displayEffect, bool executeLogout/* = true*/)
 		client->logout(displayEffect, true, executeLogout);
 }
 
-void Player::notifyLogIn(Player* login_player)
+void Player::notifyLogIn(Player* loginPlayer)
 {
 	if(!client)
 		return;
 
-	VIPListSet::iterator it = VIPList.find(login_player->getGUID());
+	VIPListSet::iterator it = VIPList.find(loginPlayer->getGUID());
 	if(it != VIPList.end())
 	{
-		client->sendVIPLogIn(login_player->getGUID());
-		client->sendTextMessage(MSG_STATUS_SMALL, (login_player->getName() + " has logged in."));
+		client->sendVIPLogIn(loginPlayer->getGUID());
+		client->sendTextMessage(MSG_STATUS_SMALL, (loginPlayer->getName() + " has logged in."));
 	}
 }
 
-void Player::notifyLogOut(Player* logout_player)
+void Player::notifyLogOut(Player* logoutPlayer)
 {
 	if(!client)
 		return;
 
-	VIPListSet::iterator it = VIPList.find(logout_player->getGUID());
+	VIPListSet::iterator it = VIPList.find(logoutPlayer->getGUID());
 	if(it != VIPList.end())
 	{
-		client->sendVIPLogOut(logout_player->getGUID());
-		client->sendTextMessage(MSG_STATUS_SMALL, (logout_player->getName() + " has logged out."));
+		client->sendVIPLogOut(logoutPlayer->getGUID());
+		client->sendTextMessage(MSG_STATUS_SMALL, (logoutPlayer->getName() + " has logged out."));
 	}
 }
 
@@ -2426,7 +2426,7 @@ bool Player::removeVIP(uint32_t _guid)
 	return true;
 }
 
-bool Player::addVIP(uint32_t _guid, std::string& name, bool isOnline, bool internal /*=false*/)
+bool Player::addVIP(uint32_t _guid, std::string& name, bool isOnline, bool internal/* = false*/)
 {
 	if(guid == _guid)
 	{
@@ -2436,7 +2436,7 @@ bool Player::addVIP(uint32_t _guid, std::string& name, bool isOnline, bool inter
 		return false;
 	}
 
-	if(VIPList.size() > (group != NULL ? group->getMaxVips(isPremium()) : 20))
+	if(VIPList.size() > (group ? group->getMaxVips(isPremium()) : 20))
 	{
 		if(!internal)
 			sendTextMessage(MSG_STATUS_SMALL, "You cannot add more buddies.");
@@ -2493,24 +2493,22 @@ bool Player::hasCapacity(const Item* item, uint32_t count) const
 	if(hasFlag(PlayerFlag_CannotPickupItem))
 		return false;
 
-	if(!hasFlag(PlayerFlag_HasInfiniteCapacity) && item->getTopParent() != this)
-	{
-		double itemWeight = 0;
-		if(item->isStackable())
-			itemWeight = Item::items[item->getID()].weight * count;
-		else
-			itemWeight = item->getWeight();
+	if(hasFlag(PlayerFlag_HasInfiniteCapacity) || item->getTopParent() == this)
+		return true;
 
-		return (itemWeight < getFreeCapacity());
-	}
+	double itemWeight = 0;
+	if(item->isStackable())
+		itemWeight = Item::items[item->getID()].weight * count;
+	else
+		itemWeight = item->getWeight();
 
-	return true;
+	return (itemWeight < getFreeCapacity());
 }
 
 ReturnValue Player::__queryAdd(int32_t index, const Thing* thing, uint32_t count, uint32_t flags) const
 {
 	const Item* item = thing->getItem();
-	if(item == NULL)
+	if(!item)
 		return RET_NOTPOSSIBLE;
 
 	bool childIsOwner = ((flags & FLAG_CHILDISOWNER) == FLAG_CHILDISOWNER), skipLimit = ((flags & FLAG_NOLIMIT) == FLAG_NOLIMIT);
@@ -2666,7 +2664,7 @@ ReturnValue Player::__queryMaxCount(int32_t index, const Thing* thing, uint32_t 
 	uint32_t flags) const
 {
 	const Item* item = thing->getItem();
-	if(item == NULL)
+	if(!item)
 	{
 		maxQueryCount = 0;
 		return RET_NOTPOSSIBLE;
@@ -2707,7 +2705,7 @@ ReturnValue Player::__queryRemove(const Thing* thing, uint32_t count, uint32_t f
 		return RET_NOTPOSSIBLE;
 
 	const Item* item = thing->getItem();
-	if(item == NULL)
+	if(!item)
 		return RET_NOTPOSSIBLE;
 
 	if(count == 0 || (item->isStackable() && count > item->getItemCount()))
@@ -2831,7 +2829,7 @@ void Player::__addThing(Creature* actor, int32_t index, Thing* thing)
 	}
 
 	Item* item = thing->getItem();
-	if(item == NULL)
+	if(!item)
 	{
 #ifdef __DEBUG__MOVESYS__
 		std::cout << "Failure: [Player::__addThing], " << "player: " << getName() << ", item == NULL" << std::endl;
@@ -2907,7 +2905,7 @@ void Player::__replaceThing(uint32_t index, Thing* thing)
 	}
 
 	Item* item = thing->getItem();
-	if(item == NULL)
+	if(!item)
 	{
 #ifdef __DEBUG__MOVESYS__
 		std::cout << "Failure: [Player::__updateThing], " << "player: " << getName() << ", item == NULL" << std::endl;
@@ -2932,7 +2930,7 @@ void Player::__replaceThing(uint32_t index, Thing* thing)
 void Player::__removeThing(Thing* thing, uint32_t count)
 {
 	Item* item = thing->getItem();
-	if(item == NULL)
+	if(!item)
 	{
 #ifdef __DEBUG__MOVESYS__
 		std::cout << "Failure: [Player::__removeThing], " << "player: " << getName() << ", item == NULL" << std::endl;
@@ -3161,7 +3159,7 @@ void Player::__internalAddThing(uint32_t index, Thing* thing)
 #endif
 
 	Item* item = thing->getItem();
-	if(item == NULL)
+	if(!item)
 	{
 #ifdef __DEBUG__MOVESYS__
 		std::cout << "Failure: [Player::__internalAddThing] item == NULL" << std::endl;
@@ -3303,6 +3301,7 @@ uint64_t Player::getGainedExperience(Creature* attacker, bool useMultiplier/* = 
 
 		uint64_t result = std::max((uint64_t)0, (uint64_t)std::floor(getDamageRatio(attacker) * std::max((double)0,
 			((double)(1 - (((double)a / b))))) * 0.05 * c));
+
 		if(useMultiplier)
 			result = uint64_t((double)result * attackerPlayer->rates[SKILL__LEVEL]);
 

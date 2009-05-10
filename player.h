@@ -380,10 +380,10 @@ class Player : public Creature, public Cylinder
 		}
 
 		//V.I.P. functions
-		void notifyLogIn(Player* player);
-		void notifyLogOut(Player* player);
+		void notifyLogIn(Player* loginPlayer);
+		void notifyLogOut(Player* logoutPlayer);
 		bool removeVIP(uint32_t guid);
-		bool addVIP(uint32_t guid, std::string& name, bool isOnline, bool interal = false);
+		bool addVIP(uint32_t guid, std::string& name, bool isOnline, bool internal = false);
 
 		//follow functions
 		virtual bool setFollowCreature(Creature* creature, bool fullPathSearch = false);

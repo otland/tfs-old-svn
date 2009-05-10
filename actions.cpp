@@ -367,7 +367,7 @@ ReturnValue Actions::canUseFar(const Creature* creature, const Position& toPos, 
 	return RET_NOERROR;
 }
 
-Action* Actions::getAction(const Item* item, ActionType_t type /* = ACTION_ANY */) const
+Action* Actions::getAction(const Item* item, ActionType_t type/* = ACTION_ANY*/) const
 {
 	if(item->getUniqueId() != 0 && (type == ACTION_ANY || type == ACTION_UNIQUEID))
 	{

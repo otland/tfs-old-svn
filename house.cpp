@@ -804,8 +804,8 @@ bool Houses::payRent(Player* player, House* house, time_t _time/* = 0*/)
 		_time = time(NULL);
 
 	if(rentPeriod == RENTPERIOD_NEVER || !house->getHouseOwner() ||
-                house->getPaidUntil() >= _time || !house->getRent())
-                return true;
+		house->getPaidUntil() >= _time || !house->getRent())
+			return true;
 
 	Town* town = Towns::getInstance().getTown(house->getTownId());
 	if(!town)
