@@ -560,7 +560,7 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 			{
 				thing = tile->getTopDownItem();
 				if(!thing)
-					thing = ground;
+					thing = tile->ground;
 
 				break;
 			}
