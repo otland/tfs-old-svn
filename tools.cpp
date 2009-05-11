@@ -1291,7 +1291,7 @@ bool parseVocationNode(xmlNodePtr vocationNode, VocationMap& vocationMap, String
 	if(xmlStrcmp(vocationNode->name,(const xmlChar*)"vocation"))
 		return false;
 
-	int32_t intValue, vocationId = -1;
+	int32_t vocationId = -1;
 	std::string strValue, tmpStrValue;
 	if(readXMLString(vocationNode, "name", strValue))
 	{
