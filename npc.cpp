@@ -1243,10 +1243,12 @@ void Npc::onThink(uint32_t interval)
 		bool closeConversation = false, idleTimeout = false;
 		if(!npcState->isQueued)
 		{
-			if(npcState->prevInteraction == 0)
+			if(!npcState->prevInteraction)
 				npcState->prevInteraction = OTSYS_TIME();
 
-			if(idleTime > 0 && (OTSYS_TIME() - npcState->prevInteraction) > (uint64_t)(idleTime * 1000))
+			if(!queueList.empty() && npcState->isIdle && npcState->respondToText.empty())
+				closeConversation = true;
+			else if(idleTime > 0 && (OTSYS_TIME() - npcState->prevInteraction) > (uint64_t)(idleTime * 1000))
 				idleTimeout = closeConversation = true;
 		}
 
