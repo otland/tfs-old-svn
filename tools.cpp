@@ -1289,7 +1289,7 @@ std::string parseVocationString(StringVec vocStringVec)
 bool parseVocationNode(xmlNodePtr vocationNode, VocationMap& vocationMap, StringVec& vocStringVec, std::string& errorStr)
 {
 	if(xmlStrcmp(vocationNode->name,(const xmlChar*)"vocation"))
-		return false;
+		return true;
 
 	int32_t vocationId = -1;
 	std::string strValue, tmpStrValue;
