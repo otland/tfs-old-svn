@@ -61,22 +61,6 @@
 		1
 			Player has received the first items.
 
-	30011
-		*
-			Player is/was sleeping.
-
-	30012
-		*
-			The X coordinate of the position where the player was sleeping.
-
-	30013
-		*
-			The Y coordinate of the position where the player was sleeping.
-
-	30014
-		*
-			The Z coordinate of the position where the player was sleeping.
-
 	30015
 		-1
 			Annihilator Quest reward is not taken.
