@@ -18721,6 +18721,9 @@
 	<item id="8290" article="a" name="demon oak"/>
 	<item id="8291" article="a" name="demon oak"/>
 	<item id="8292" name="mud"/>
+	<item id="8293" article="a" name="hallowed axe">
+		<attribute key="weight" value="4000"/>
+	</item>
 	<item id="8294" article="a" name="stone wall"/>
 	<item id="8295" article="a" name="stone wall"/>
 	<item id="8298" name="natural soil">
@@ -20318,7 +20321,9 @@
 	<item id="9016"/>
 	<item id="9017"/>
 	<item id="9018"/>
-	<item id="9019"/>
+	<item id="9019" article="a" name="vampire doll">
+		<attribute key="weight" value="940"/>
+	</item>
 	<item id="9020"/>
 	<item id="9021" name="dirt"/>
 	<item id="9022" name="dirt"/>
@@ -21024,6 +21029,18 @@
 	<item id="9971" article="a" name="gold ingot">
 		<attribute key="weight" value="1800"/>
 	</item>
+	<item id="9976" article="a" name="crystal pedestal">
+		<attribute key="weight" value="4000"/>
+	</item>
+	<item id="9977" article="a" name="crystal pedestal">
+		<attribute key="weight" value="4000"/>
+	</item>
+	<item id="9978" article="a" name="crystal pedestal">
+		<attribute key="weight" value="4000"/>
+	</item>
+	<item id="9979" article="a" name="crystal pedestal">
+		<attribute key="weight" value="4000"/>
+	</item>	
 	<item id="9980" article="a" name="crystal of power">
 		<attribute key="description" value="It is said to make you more resistant to weaknesses and to supply you with energy."/>
 		<attribute key="weight" value="850"/>
