@@ -148,6 +148,7 @@ class ConfigManager
 			GUILD_PREMIUM_DAYS,
 			PUSH_CREATURE_DELAY,
 			DEATH_CONTAINER,
+			MAXIMUM_DOOR_LEVEL,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 

@@ -1,3 +1,7 @@
+local config = {
+	maxLevel = getConfigInfo('maximumDoorLevel')
+}
+
 local increasingItems = {[416] = 417, [426] = 425, [446] = 447, [3216] = 3217, [3202] = 3215}
 local decreasingItems = {[417] = 416, [425] = 426, [447] = 446, [3217] = 3217, [3215] = 3202}
 local depots = {2589, 2590, 2591, 2592}
@@ -12,8 +16,8 @@ function onStepIn(cid, item, position, fromPosition)
 		doTransformItem(item.uid, increasingItems[item.itemid])
 	end
 
-	if(item.actionid >= 193 and item.actionid <= 195) then
-		local f = checkCreature[item.actionid - 192]
+	if(item.actionid >= 194 and item.actionid <= 196) then
+		local f = checkCreature[item.actionid - 193]
 		if(f(cid) == TRUE) then
 			doTeleportThing(cid, fromPosition, FALSE)
 			doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
@@ -22,8 +26,8 @@ function onStepIn(cid, item, position, fromPosition)
 		return TRUE
 	end
 
-	if(item.actionid >= 190 and item.actionid <= 192) then
-		local f = checkCreature[item.actionid - 189]
+	if(item.actionid >= 191 and item.actionid <= 193) then
+		local f = checkCreature[item.actionid - 190]
 		if(f(cid) ~= TRUE) then
 			doTeleportThing(cid, fromPosition, FALSE)
 			doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
@@ -92,13 +96,21 @@ function onStepIn(cid, item, position, fromPosition)
 		return TRUE
 	end
 
-	if(item.actionid > 1000) then
+	if(item.actionid >= 1000 and item.actionid <= config.maxLevel) then
 		if(getPlayerLevel(cid) < item.actionid - 1000) then
 			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The tile seems to be protected against unwanted intruders.")
 			doTeleportThing(cid, fromPosition, FALSE)
 			doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
 		end
 
+		return TRUE
+	end
+
+	if(item.actionid ~= 0 and getPlayerStorageValue(cid, item.actionid) <= 0)
+		doTeleportThing(cid, fromPosition, FALSE)
+		doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
+
+		doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The tile seems to be protected against unwanted intruders.")
 		return TRUE
 	end
 

@@ -73,7 +73,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			return TRUE
 		end
 
-		if(item.actionid == 200 or (item.actionid ~= 0 and getPlayerLevel(cid) >= (item.actionid - getItemLevelDoor(item.itemid)))) then
+		if(item.actionid == 190 or (item.actionid ~= 0 and getPlayerLevel(cid) >= (item.actionid - getItemLevelDoor(item.itemid)))) then
 			doTransformItem(item.uid, item.itemid + 1)
 			doTeleportThing(cid, toPosition, TRUE)
 		else
@@ -84,7 +84,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	if(isInArray(specialDoors, item.itemid) == TRUE) then
-		if(item.actionid == 200 or (item.actionid ~= 0 and getPlayerStorageValue(cid, item.actionid) > 0)) then
+		if(item.actionid == 100 or (item.actionid ~= 0 and getPlayerStorageValue(cid, item.actionid) > 0)) then
 			doTransformItem(item.uid, item.itemid + 1)
 			doTeleportThing(cid, toPosition, TRUE)
 		else

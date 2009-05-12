@@ -1000,7 +1000,8 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		else
 			s << "Nothing is written on it";
 	}
-	else if(it.levelDoor && item && item->getActionId() >= it.levelDoor)
+	else if(it.levelDoor && item && item->getActionId() >= it.levelDoor &&
+		item->getActionId() <= (it.levelDoor + g_config.getNumber(ConfigManager::MAXIMUM_DOOR_LEVEL)))
 		s << " for level " << item->getActionId() - it.levelDoor;
 
 	if(it.showCharges)

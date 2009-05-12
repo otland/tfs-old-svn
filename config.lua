@@ -124,6 +124,7 @@
 	timeBetweenExActions = 1000
 	checkCorpseOwner = "yes"
 	hotkeyAimbotEnabled = "yes"
+	maximumDoorLevel = 500
 
 	-- Map
 	-- NOTE: storeTrash costs more memory, but will perform alot faster cleaning.
