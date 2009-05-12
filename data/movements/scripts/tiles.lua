@@ -2,27 +2,107 @@ local increasingItems = {[416] = 417, [426] = 425, [446] = 447, [3216] = 3217, [
 local decreasingItems = {[417] = 416, [425] = 426, [447] = 446, [3217] = 3217, [3215] = 3202}
 local depots = {2589, 2590, 2591, 2592}
 
+local checkCreature = {isPlayer, isMonster, isNpc}
 function onStepIn(cid, item, position, fromPosition)
 	if(not increasingItems[item.itemid]) then
-		return TRUE
+		return FALSE
 	end
 
 	if(isPlayer(cid) ~= TRUE or isPlayerGhost(cid) ~= TRUE) then
 		doTransformItem(item.uid, increasingItems[item.itemid])
 	end
 
+	if(item.actionid >= 193 and item.actionid <= 195) then
+		local f = checkCreature[item.actionid - 192]
+		if(f(cid) == TRUE) then
+			doTeleportThing(cid, fromPosition, FALSE)
+			doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
+		end
+
+		return TRUE
+	end
+
+	if(item.actionid >= 190 and item.actionid <= 192) then
+		local f = checkCreature[item.actionid - 189]
+		if(f(cid) ~= TRUE) then
+			doTeleportThing(cid, fromPosition, FALSE)
+			doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
+		end
+
+		return TRUE
+	end
+
 	if(isPlayer(cid) ~= TRUE) then
 		return TRUE
 	end
 
-	if(item.actionid > 1000 and item.actionid < 3000) then
-		if(getPlayerLevel(cid) < item.actionid - 1000) then
-			local destPos = getCreaturePosition(cid)
-			destPos.z = destPos.z + 1
-			doTeleportThing(cid, destPos, FALSE)
+	if(item.actionid == 189 and isPremium(cid) ~= TRUE) then
+		doTeleportThing(cid, fromPosition, FALSE)
+		doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
+
+		doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The tile seems to be protected against unwanted intruders.")
+		return TRUE
+	end
+
+	local gender = item.actionid - 186
+	if(gender == PLAYERSEX_FEMALE or gender == PLAYERSEX_MALE or gender == PLAYERSEX_GAMEMASTER) then
+		local playerGender = getPlayerSex(cid)
+		if(playerGender ~= gender) then
+			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The tile seems to be protected against unwanted intruders.")
+			doTeleportThing(cid, fromPosition, FALSE)
 			doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
 		end
-	elseif(getTileInfo(position).protection) then
+
+		return TRUE
+	end
+
+	local skull = item.actionid - 180
+	if(skull >= 0 and skull < 6) then
+		local playerSkull = getCreatureSkullType(cid)
+		if(playerSkull ~= skull) then
+			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The tile seems to be protected against unwanted intruders.")
+			doTeleportThing(cid, fromPosition, FALSE)
+			doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
+		end
+
+		return TRUE
+	end
+
+	local group = item.actionid - 150
+	if(group >= 0 and group < 30) then
+		local playerGroup = getPlayerGroupId(cid)
+		if(playerGroup < group) then
+			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The tile seems to be protected against unwanted intruders.")
+			doTeleportThing(cid, fromPosition, FALSE)
+			doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
+		end
+
+		return TRUE
+	end
+
+	local vocation = item.actionid - 100
+	if(vocation >= 0 and vocation < 50) then
+		local playerVocationInfo = getVocationInfo(getPlayerVocation(cid))
+		if(playerVocationInfo.id ~= vocation and playerVocationInfo.fromVocation ~= vocation) then
+			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The tile seems to be protected against unwanted intruders.")
+			doTeleportThing(cid, fromPosition, FALSE)
+			doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
+		end
+
+		return TRUE
+	end
+
+	if(item.actionid > 1000) then
+		if(getPlayerLevel(cid) < item.actionid - 1000) then
+			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The tile seems to be protected against unwanted intruders.")
+			doTeleportThing(cid, fromPosition, FALSE)
+			doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
+		end
+
+		return TRUE
+	end
+
+	if(getTileInfo(position).protection) then
 		local depotPos, depot = getPlayerLookPos(cid), {}
 		depotPos.stackpos = STACKPOS_GROUND
 		while(true) do
@@ -38,18 +118,22 @@ function onStepIn(cid, item, position, fromPosition)
 				break
 			end
 		end
+
+		return TRUE
 	end
 
-	return TRUE
+	return FALSE
 end
 
 function onStepOut(cid, item, position, fromPosition)
 	if(not decreasingItems[item.itemid]) then
-		return TRUE
+		return FALSE
 	end
 
 	if(isPlayer(cid) ~= TRUE or isPlayerGhost(cid) ~= TRUE) then
 		doTransformItem(item.uid, decreasingItems[item.itemid])
+		return TRUE
 	end
-	return TRUE
+
+	return FALSE
 end
