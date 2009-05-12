@@ -304,8 +304,8 @@ void serverMain(void* param)
 		GUI::getInstance()->m_connections = true;
 		#endif
 	}
-
 	#if not defined(WIN32) || defined(__CONSOLE__)
+
 	std::string outPath = g_config.getString(ConfigManager::OUT_LOG), errPath = g_config.getString(ConfigManager::ERROR_LOG);
 	if(outPath.length() < 3)
 		outPath = "";

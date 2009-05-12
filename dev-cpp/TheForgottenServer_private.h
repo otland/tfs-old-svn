@@ -5,12 +5,12 @@
 #define THEFORGOTTENSERVER_PRIVATE_H
 
 /* VERSION DEFINITIONS */
-#define VER_STRING	"0.3.4.1756"
+#define VER_STRING	"0.3.4.1854"
 #define VER_MAJOR	0
 #define VER_MINOR	3
 #define VER_RELEASE	4
-#define VER_BUILD	1756
-#define COMPANY_NAME	""
+#define VER_BUILD	1854
+#define COMPANY_NAME	"OtLand.net"
 #define FILE_VERSION	"0.3.4"
 #define FILE_DESCRIPTION	"The Forgotten Server"
 #define INTERNAL_NAME	"Crying Damson"

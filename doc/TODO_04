@@ -6,7 +6,7 @@
 
 	TODO:
 	* GUI w QT/wxWidgets
-	* Multilanguage (szczególnie RET_* i możliwie wszystko pozostałe)
+	* Multilang (szczególnie RET_* i możliwie wszystko pozostałe)
 	* Manual do komend- przykładowe użycie, możliwe wartości, używane w grze, możliwość deaktywacji w configu- przykład: /man serverinfo, /man /goto, /a man, itd.
 	* Stabilność :D!
 	* Nowy podział plików:

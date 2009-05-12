@@ -23,14 +23,11 @@
 		Assigned to: slawkens
 
 	Patch missing changes from OpenTibia SVN
-		Assigned to: Talaturen, Elf
+		Assigned to: slawkens, Elf
 
 	Finish boost_thread support (Scheduler, Tasks, Main[?])
 		Assigned to: Elf
 
 	Deprecate several hardcoded systems (guild management, experience stages, etc) and rescript them in Lua
 		Assigned to: Elf, KaczooH, slawkens
-
-	Protocol HTTP
-		Assigned to: Talaturen
 ]
