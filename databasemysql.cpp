@@ -190,7 +190,7 @@ bool DatabaseMySQL::connect()
 	{
 		m_connected = false;
 		mysql_close(&m_handle);
-		OTSYS_SLEEP(100);
+		OTSYS_SLEEP(1000);
 	}
 
 	if(!mysql_real_connect(&m_handle, g_config.getString(ConfigManager::SQL_HOST).c_str(), g_config.getString(ConfigManager::SQL_USER).c_str(),

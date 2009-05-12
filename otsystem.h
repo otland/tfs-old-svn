@@ -143,7 +143,7 @@ inline void OTSYS_SLEEP(int t)
 {
 	timespec tv;
 	tv.tv_sec  = t / 1000;
-	tv.tv_nsec = (t % 1000)*1000000;
+	tv.tv_nsec = (t % 1000) * 1000000;
 	nanosleep(&tv, NULL);
 }
 
