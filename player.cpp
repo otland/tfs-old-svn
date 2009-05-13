@@ -3336,7 +3336,6 @@ void Player::stopWalk()
 	if(listWalkDir.empty())
 		return;
 
-	extraStepDuration = getStepDuration();
 	stopEventWalk();
 }
 
