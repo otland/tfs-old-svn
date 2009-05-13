@@ -49,7 +49,7 @@ function onStepIn(cid, item, position, fromPosition)
 	end
 
 	local gender = item.actionid - 186
-	if(gender == PLAYERSEX_FEMALE or gender == PLAYERSEX_MALE or gender == PLAYERSEX_GAMEMASTER) then
+	if(isInArray({PLAYERSEX_FEMALE,  PLAYERSEX_MALE, PLAYERSEX_GAMEMASTER}, gender) == TRUE) then
 		local playerGender = getPlayerSex(cid)
 		if(playerGender ~= gender) then
 			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The tile seems to be protected against unwanted intruders.")

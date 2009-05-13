@@ -181,8 +181,7 @@ bool IOMapSerialize::saveHouseInfo(Map* map)
 bool IOMapSerialize::loadMapRelational(Map* map)
 {
 	Database* db = Database::getInstance();
-	DBQuery query;
-
+	DBQuery query; //lock mutex - do we really need it here?
 	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
 	{
 		//load tile
