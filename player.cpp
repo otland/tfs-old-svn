@@ -1579,10 +1579,9 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 		int32_t ticks = g_config.getNumber(ConfigManager::STAIRHOP_DELAY);
 		if(ticks > 0)
 		{
-			addExhaust(g_config.getNumber(ConfigManager::STAIRHOP_DELAY), 1);
-			addExhaust(g_config.getNumber(ConfigManager::STAIRHOP_DELAY), 3);
-			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_PACIFIED,
-				g_config.getNumber(ConfigManager::STAIRHOP_DELAY)))
+			addExhaust(ticks, 1); // Aggressive spells
+			addExhaust(ticks, 3); // Weapon
+			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_PACIFIED, ticks))
 				addCondition(condition);
 		}
 	}
