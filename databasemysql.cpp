@@ -120,7 +120,10 @@ bool DatabaseMySQL::executeQuery(const std::string &query)
 	}
 
 	if(MYSQL_RES* tmp = mysql_store_result(&m_handle))
+	{
 		mysql_free_result(tmp);
+		tmp = NULL;
+	}
 
 	return state;
 }
