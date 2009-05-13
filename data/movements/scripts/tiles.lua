@@ -106,7 +106,7 @@ function onStepIn(cid, item, position, fromPosition)
 		return TRUE
 	end
 
-	if(item.actionid ~= 0 and getPlayerStorageValue(cid, item.actionid) <= 0)
+	if(item.actionid ~= 0 and getPlayerStorageValue(cid, item.actionid) <= 0) then
 		doTeleportThing(cid, fromPosition, FALSE)
 		doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
 
