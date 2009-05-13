@@ -849,6 +849,7 @@
 		Few more options displayed onLook like ghostMode, decayTo, clientVersion, equipTo (slawkens)
 		New LUA functions: doPlayerSetPzLocked(cid, locked), getCreatureLastPosition(cid), getWaypointsList(),
 			getGroupInfo(id), doPlayerAddFrags(cid, amount) (slawkens)
+		Possibility to update from 0.2.1 (Elf)
 	]
 ]
 
