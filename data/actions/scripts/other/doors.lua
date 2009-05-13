@@ -5,7 +5,7 @@ local function checkStackpos(item, position)
 	position.stackpos = STACKPOS_TOP_FIELD
 	local field = getThingFromPos(position)
 
-	return ((item.uid ~= thing.uid and thing.itemid >= 100) or field.itemid ~= 0)
+	return (item.uid == thing.uid or thing.itemid < 100 or field.itemid == 0)
 end
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
