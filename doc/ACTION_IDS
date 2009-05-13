@@ -21,58 +21,60 @@
 ]
 
 [ IDS
-	Storage depending Special Door
-		ANY
+	[ Doors & Tiles
+		Storage depending Special Door
+			ANY
 
-	Allpass Special Door
-		100
+		Allpass Special Door
+			100
 
-	Vocation depending Level Door & Tile
-		100 -> 149
-			+ Vocation ID
+		Vocation depending Level Door & Tile
+			100 -> 149
+				+ Vocation ID
 
-	Group depending Level Door & Tile
-		150 -> 179
-			+ Group ID
+		Group depending Level Door & Tile
+			150 -> 179
+				+ Group ID
 
-	Skull depending Level Door & Tile
-		180 -> 185
-			+ Skull Type
+		Skull depending Level Door & Tile
+			180 -> 185
+				+ Skull Type
 
-	Gender depending Level Door & Tile
-		186 -> 188
-			+ Gender
+		Gender depending Level Door & Tile
+			186 -> 188
+				+ Gender
 
-	Premium depending Level Door & Tile
-		189
+		Premium depending Level Door & Tile
+			189
 
-	Allpass Level Door
-		190
+		Allpass Level Door
+			190
 
-	Player Tile
-		191
+		Player Tile
+			191
 
-	Monster Tile
-		192
+		Monster Tile
+			192
 
-	NPC Tile
-		193
+		NPC Tile
+			193
 
-	NOT Player Tile
-		194
+		NOT Player Tile
+			194
 
-	NOT Monster Tile
-		195
+		NOT Monster Tile
+			195
 
-	NOT NPC Tile
-		196
+		NOT NPC Tile
+			196
 
-	Level depending Level Door & Tile
-		1000 -> maximumDoorLevel
-			+ Required Level
+		Level depending Level Door & Tile
+			1000 -> maximumDoorLevel
+				+ Required Level
 
-	Storage depending Tile
-		maximumDoorLevel -> INFINITE
+		Storage depending Tile
+			maximumDoorLevel -> INFINITE
+	]
 
 	Quest Reward
 		2000
