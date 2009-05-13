@@ -1,11 +1,11 @@
 local function checkStackpos(item, position)
 	position.stackpos = STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE
-
 	local thing = getThingFromPos(position)
-	position.stackpos = STACKPOS_TOP_FIELD
 
+	position.stackpos = STACKPOS_TOP_FIELD
 	local field = getThingFromPos(position)
-	return (item.uid ~= thing.uid and (thing.itemid >= 100 or field.itemid ~= 0))
+
+	return (item.uid == thing.uid or thing.itemid < 100 or field.itemid == 0)
 end
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
@@ -22,7 +22,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 
 		local gender = item.actionid - 186
-		if(gender == PLAYERSEX_FEMALE or gender == PLAYERSEX_MALE or gender == PLAYERSEX_GAMEMASTER) then
+		if(isInArray({PLAYERSEX_FEMALE,  PLAYERSEX_MALE, PLAYERSEX_GAMEMASTER}, gender)) then
 			local playerGender = getPlayerSex(cid)
 			if(playerGender ~= gender) then
 				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Only the worthy may pass.")
