@@ -471,7 +471,7 @@ class Player : public Creature, public Cylinder
 		virtual void onAttackedCreatureChangeZone(ZoneType_t zone);
 		virtual void onIdleStatus();
 		virtual void onPlacedCreature();
-		virtual void onRemovedCreature();
+		virtual void onRemovedCreature() {}
 
 		virtual void getCreatureLight(LightInfo& light) const;
 		Skulls_t getSkull() const;
@@ -579,7 +579,7 @@ class Player : public Creature, public Cylinder
 		void autoCloseContainers(const Container* container);
 
 		//inventory
-		void onAddInventoryItem(slots_t slot, Item* item);
+		void onAddInventoryItem(slots_t slot, Item* item) {}
 		void onUpdateInventoryItem(slots_t slot, Item* oldItem, const ItemType& oldType,
 			Item* newItem, const ItemType& newType);
 		void onRemoveInventoryItem(slots_t slot, Item* item);

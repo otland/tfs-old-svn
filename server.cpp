@@ -129,23 +129,11 @@ void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::syst
 	else if(error != boost::asio::error::operation_aborted)
 	{
 		PRINT_ASIO_ERROR("Handling");
-		if(m_listenErrors > 99)
-		{
-#ifndef __ENABLE_LISTEN_ERROR__
-			m_listenErrors = 0;
-			std::cout << "[Warning - Server::handle] More than 100 listen errors." << std::endl;
-#else
-			close();
-			std::cout << "[Error - Server::handle] More than 100 listen errors." << std::endl;
-			return;
-#endif
-		}
-
-		m_listenErrors++;
+		close();
 		if(!m_pendingStart)
 		{
 			m_pendingStart = true;
-			Scheduler::getScheduler().addEvent(createSchedulerTask(5000,
+			Scheduler::getScheduler().addEvent(createSchedulerTask(5000, //expensive!
 				boost::bind(&ServicePort::open, this, m_serverPort)));
 		}
 	}

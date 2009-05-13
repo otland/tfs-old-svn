@@ -1276,7 +1276,6 @@ void Player::sendHouseWindow(House* house, uint32_t listId) const
 		client->sendHouseWindow(windowTextId, house, listId, text);
 }
 
-//container
 void Player::sendAddContainerItem(const Container* container, const Item* item)
 {
 	if(!client)
@@ -1587,7 +1586,6 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 	}
 }
 
-//container
 void Player::onAddContainerItem(const Container* container, const Item* item)
 {
 	checkTradeState(item);
@@ -1639,12 +1637,6 @@ void Player::onSendContainer(const Container* container)
 		if(cl->second == container)
 			client->sendContainer(cl->first, container, hasParent);
 	}
-}
-
-//inventory
-void Player::onAddInventoryItem(slots_t slot, Item* item)
-{
-	//
 }
 
 void Player::onUpdateInventoryItem(slots_t slot, Item* oldItem, const ItemType& oldType,
@@ -1846,11 +1838,8 @@ void Player::addManaSpent(uint64_t amount, bool ignoreFlag/* = false*/, bool use
 		return;
 
 	uint64_t currReqMana = vocation->getReqMana(magLevel), nextReqMana = vocation->getReqMana(magLevel + 1);
-	if(currReqMana > nextReqMana)
-	{
-		//player has reached max magic level
+	if(currReqMana > nextReqMana) //player has reached max magic level
 		return;
-	}
 
 	if(useMultiplier)
 		amount = uint64_t((double)amount * rates[SKILL__MAGLEVEL]);
@@ -2877,7 +2866,6 @@ void Player::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
 
 	//send to client
 	sendUpdateInventoryItem((slots_t)index, item, item);
-
 	//event methods
 	onUpdateInventoryItem((slots_t)index, item, oldType, item, newType);
 }
@@ -2918,7 +2906,6 @@ void Player::__replaceThing(uint32_t index, Thing* thing)
 
 	//send to client
 	sendUpdateInventoryItem((slots_t)index, oldItem, item);
-
 	//event methods
 	onUpdateInventoryItem((slots_t)index, oldItem, oldType, item, newType);
 
@@ -2954,7 +2941,6 @@ void Player::__removeThing(Thing* thing, uint32_t count)
 		{
 			//send change to client
 			sendRemoveInventoryItem((slots_t)index, item);
-
 			//event methods
 			onRemoveInventoryItem((slots_t)index, item);
 
@@ -2964,12 +2950,10 @@ void Player::__removeThing(Thing* thing, uint32_t count)
 		else
 		{
 			item->setItemCount(std::max(0, (int32_t)(item->getItemCount() - count)));
-
 			const ItemType& it = Item::items[item->getID()];
 
 			//send change to client
 			sendUpdateInventoryItem((slots_t)index, item, item);
-
 			//event methods
 			onUpdateInventoryItem((slots_t)index, item, it, item, it);
 		}
@@ -2978,7 +2962,6 @@ void Player::__removeThing(Thing* thing, uint32_t count)
 	{
 		//send change to client
 		sendRemoveInventoryItem((slots_t)index, item);
-
 		//event methods
 		onRemoveInventoryItem((slots_t)index, item);
 
@@ -3227,11 +3210,8 @@ bool Player::setAttackedCreature(Creature* creature)
 
 	if(chaseMode == CHASEMODE_FOLLOW && creature)
 	{
-		if(followCreature != creature)
-		{
-			//chase opponent
+		if(followCreature != creature) //chase opponent
 			setFollowCreature(creature);
-		}
 	}
 	else
 		setFollowCreature(NULL);
@@ -3326,11 +3306,8 @@ void Player::setChaseMode(chaseMode_t mode)
 
 	if(chaseMode == CHASEMODE_FOLLOW)
 	{
-		if(!followCreature && attackedCreature)
-		{
-			//chase opponent
+		if(!followCreature && attackedCreature) //chase opponent
 			setFollowCreature(attackedCreature);
-		}
 	}
 	else if(attackedCreature)
 	{
@@ -3533,11 +3510,6 @@ void Player::onPlacedCreature()
 	//scripting event - onLogin
 	if(!g_creatureEvents->playerLogin(this))
 		kickPlayer(true);
-}
-
-void Player::onRemovedCreature()
-{
-	//
 }
 
 void Player::onAttackedCreatureDrainHealth(Creature* target, int32_t points)

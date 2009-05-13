@@ -60,7 +60,6 @@ isInternalRemoved(false)
 
 	lastStep = 0;
 	lastStepCost = 1;
-	extraStepDuration = 0;
 	baseSpeed = 220;
 	varSpeed = 0;
 
@@ -109,7 +108,6 @@ Creature::~Creature()
 	conditions.clear();
 	attackedCreature = NULL;
 	eventsList.clear();
-	//std::cout << "Creature destructor " << this->getID() << std::endl;
 }
 
 bool Creature::canSee(const Position& myPos, const Position& pos, uint32_t viewRangeX, uint32_t viewRangeY)
@@ -158,7 +156,7 @@ int64_t Creature::getSleepTicks() const
 		return 0;
 
 	int64_t ct = OTSYS_TIME(), stepDuration = getStepDuration();
-	return stepDuration - (ct - lastStep) + extraStepDuration;
+	return stepDuration - (ct - lastStep);
 }
 
 int32_t Creature::getWalkDelay(Direction dir, uint32_t resolution) const
@@ -170,7 +168,7 @@ int32_t Creature::getWalkDelay(Direction dir, uint32_t resolution) const
 	if(dir == NORTHWEST || dir == NORTHEAST || dir == SOUTHWEST || dir == SOUTHEAST)
 		mul = 3.0f;
 
-	return ((int64_t)std::ceil(((double)getStepDuration(false) * mul) / resolution) * resolution) - (OTSYS_TIME() - lastStep) + extraStepDuration;
+	return ((int64_t)std::ceil(((double)getStepDuration(false) * mul) / resolution) * resolution) - (OTSYS_TIME() - lastStep);
 }
 
 void Creature::onThink(uint32_t interval)
@@ -450,11 +448,6 @@ void Creature::onRemoveTileItem(const Tile* tile, const Position& pos, uint32_t 
 		updateTileCache(tile, pos);
 }
 
-void Creature::onUpdateTile(const Tile* tile, const Position& pos)
-{
-	//
-}
-
 void Creature::onCreatureAppear(const Creature* creature, bool isLogin)
 {
 	if(creature == this)
@@ -518,7 +511,6 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 	{
 		lastStep = OTSYS_TIME();
 		lastStepCost = 1;
-		extraStepDuration = 0;
 		if(!teleport)
 		{
 			if(oldPos.z != newPos.z)
@@ -675,11 +667,6 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 		else
 			onCreatureDisappear(attackedCreature, false);
 	}
-}
-
-void Creature::onCreatureChangeVisible(const Creature* creature, bool visible)
-{
-	//
 }
 
 bool Creature::onDeath()
@@ -1119,17 +1106,7 @@ void Creature::onAddCondition(ConditionType_t type)
 		removeCondition(CONDITION_PARALYZE);
 }
 
-void Creature::onAddCombatCondition(ConditionType_t type)
-{
-	//
-}
-
-void Creature::onEndCondition(ConditionType_t type)
-{
-	//
-}
-
-void Creature::onTickCondition(ConditionType_t type, bool& _remove)
+void Creature::onTickCondition(ConditionType_t type, int32_t interval, bool& _remove)
 {
 	if(const MagicField* field = getTile()->getFieldItem())
 	{
@@ -1156,16 +1133,6 @@ void Creature::onTickCondition(ConditionType_t type, bool& _remove)
 void Creature::onCombatRemoveCondition(const Creature* attacker, Condition* condition)
 {
 	removeCondition(condition);
-}
-
-void Creature::onAttackedCreature(Creature* target)
-{
-	//
-}
-
-void Creature::onAttacked()
-{
-	//
 }
 
 void Creature::onIdleStatus()
@@ -1233,16 +1200,6 @@ void Creature::onGainSharedExperience(uint64_t gainExp)
 	std::stringstream ss;
 	ss << gainExp;
 	g_game.addAnimatedText(getPosition(), g_config.getNumber(ConfigManager::EXPERIENCE_COLOR), ss.str());
-}
-
-void Creature::onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType)
-{
-	//
-}
-
-void Creature::onBlockHit(BlockType_t blockType)
-{
-	//
 }
 
 void Creature::addSummon(Creature* creature)

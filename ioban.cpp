@@ -218,7 +218,6 @@ bool IOBan::removeNamelock(std::string name) const
 bool IOBan::removeBanishment(uint32_t account) const
 {
 	Database* db = Database::getInstance();
-
 	DBQuery query;
 	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << account << " AND `type` = " << BANTYPE_BANISHMENT;
 	return db->executeQuery(query.str());
@@ -324,7 +323,6 @@ bool IOBan::clearTemporials() const
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-
 	query << "UPDATE `bans` SET `active` = 0 WHERE `expires` <= " << time(NULL) << " AND `expires` >= 0 AND `active` = 1;";
 	return db->executeQuery(query.str());
 }

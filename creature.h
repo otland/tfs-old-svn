@@ -298,20 +298,20 @@ class Creature : public AutoID, virtual public Thing
 
 		//combat event functions
 		virtual void onAddCondition(ConditionType_t type);
-		virtual void onAddCombatCondition(ConditionType_t type);
-		virtual void onEndCondition(ConditionType_t type);
-		virtual void onTickCondition(ConditionType_t type, bool& _remove);
+		virtual void onAddCombatCondition(ConditionType_t type) {}
+		virtual void onEndCondition(ConditionType_t type) {}
+		virtual void onTickCondition(ConditionType_t type, int32_t interval, bool& _remove);
 		virtual void onCombatRemoveCondition(const Creature* attacker, Condition* condition);
-		virtual void onAttackedCreature(Creature* target);
-		virtual void onAttacked();
+		virtual void onAttackedCreature(Creature* target) {}
+		virtual void onAttacked() {}
 		virtual void onAttackedCreatureDrainHealth(Creature* target, int32_t points);
 		virtual void onTargetCreatureGainHealth(Creature* target, int32_t points);
 		virtual void onAttackedCreatureKilled(Creature* target);
 		virtual bool onKilledCreature(Creature* target);
 		virtual void onGainExperience(uint64_t gainExp);
 		virtual void onGainSharedExperience(uint64_t gainExp);
-		virtual void onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType);
-		virtual void onBlockHit(BlockType_t blockType);
+		virtual void onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType) {}
+		virtual void onBlockHit(BlockType_t blockType) {}
 		virtual void onChangeZone(ZoneType_t zone);
 		virtual void onAttackedCreatureChangeZone(ZoneType_t zone);
 		virtual void onIdleStatus();
@@ -330,7 +330,7 @@ class Creature : public AutoID, virtual public Thing
 			const Item* oldItem, const ItemType& oldType, const Item* newItem, const ItemType& newType);
 		virtual void onRemoveTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
 			const ItemType& iType, const Item* item);
-		virtual void onUpdateTile(const Tile* tile, const Position& pos);
+		virtual void onUpdateTile(const Tile* tile, const Position& pos) {}
 
 		virtual void onCreatureAppear(const Creature* creature, bool isLogin);
 		virtual void onCreatureDisappear(const Creature* creature, uint32_t stackpos, bool isLogout);
@@ -346,7 +346,7 @@ class Creature : public AutoID, virtual public Thing
 
 		virtual void onCreatureChangeOutfit(const Creature* creature, const Outfit_t& outfit) {}
 		virtual void onCreatureConvinced(const Creature* convincer, const Creature* creature) {}
-		virtual void onCreatureChangeVisible(const Creature* creature, bool visible);
+		virtual void onCreatureChangeVisible(const Creature* creature, bool visible) {}
 		virtual void onPlacedCreature() {};
 		virtual void onRemovedCreature() {};
 
@@ -412,7 +412,6 @@ class Creature : public AutoID, virtual public Thing
 		int32_t masterRadius;
 		uint64_t lastStep;
 		uint32_t lastStepCost;
-		uint32_t extraStepDuration;
 		uint32_t baseSpeed;
 		int32_t varSpeed;
 		bool skillLoss;

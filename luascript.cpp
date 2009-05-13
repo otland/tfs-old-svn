@@ -9797,9 +9797,7 @@ int32_t LuaScriptInterface::luaGetConfigValue(lua_State* L)
 int32_t LuaScriptInterface::luaDatabaseExecute(lua_State *L)
 {
 	//db.executeQuery(query)
-	//executes the query on the database
-	//Same as Database::getInstance()->executeQuery(query) on C++
-	//returns true if worked, false otherwise, plus prints the SQL error on the console
+	DBQuery query; //lock mutex
 	lua_pushboolean(L, (Database::getInstance()->executeQuery(popString(L)) ? LUA_TRUE : LUA_FALSE));
 	return 1;
 }
@@ -9807,11 +9805,9 @@ int32_t LuaScriptInterface::luaDatabaseExecute(lua_State *L)
 int32_t LuaScriptInterface::luaDatabaseStoreQuery(lua_State *L)
 {
 	//db.storeQuery(query)
-	//executes the query on the database and stores its result
-	//mainly used for SELECT queries
-	//Returns an integer; The internal ID of the stored result
-	//Returns LUA_ERROR if the result could not be stored, plus prints the SQL error on the console
 	ScriptEnviroment* env = getScriptEnv();
+
+	DBQuery query; //lock mutex
 	if(DBResult* res = Database::getInstance()->storeQuery(popString(L)))
 	{
 		lua_pushnumber(L, env->addResult(res));
@@ -9825,7 +9821,6 @@ int32_t LuaScriptInterface::luaDatabaseStoreQuery(lua_State *L)
 int32_t LuaScriptInterface::luaDatabaseEscapeString(lua_State *L)
 {
 	//db.escapeString(str)
-	//Returns the escaped string ready to use on SQL queries
 	lua_pushstring(L, Database::getInstance()->escapeString(popString(L)).c_str());
 	return 1;
 }
@@ -9833,8 +9828,6 @@ int32_t LuaScriptInterface::luaDatabaseEscapeString(lua_State *L)
 int32_t LuaScriptInterface::luaDatabaseEscapeBlob(lua_State *L)
 {
 	//db.escapeBlob(s, length)
-	//returns the escaped BLOB string to use on SQL queries
-	//Used for conditions/item's attributes (un)serialization
 	uint32_t length = popNumber(L);
 	lua_pushstring(L, Database::getInstance()->escapeBlob(popString(L), length).c_str());
 	return 1;
@@ -9858,10 +9851,9 @@ int32_t LuaScriptInterface::luaDatabaseStringComparisonOperator(lua_State *L)
 int32_t LuaScriptInterface::luaResultGetDataInt(lua_State *L)
 {
 	//result.getDataInt(res, s)
-	//returns an integer
 	const std::string& s = popString(L);
-
 	ScriptEnviroment* env = getScriptEnv();
+
 	DBResult* res = env->getResult(popNumber(L));
 	CHECK_RESULT()
 
@@ -9872,10 +9864,9 @@ int32_t LuaScriptInterface::luaResultGetDataInt(lua_State *L)
 int32_t LuaScriptInterface::luaResultGetDataLong(lua_State *L)
 {
 	//result.getDataLong(res, s)
-	//returns a long
 	const std::string& s = popString(L);
-
 	ScriptEnviroment* env = getScriptEnv();
+
 	DBResult* res = env->getResult(popNumber(L));
 	CHECK_RESULT()
 
@@ -9886,10 +9877,9 @@ int32_t LuaScriptInterface::luaResultGetDataLong(lua_State *L)
 int32_t LuaScriptInterface::luaResultGetDataString(lua_State *L)
 {
 	//result.getDataString(res, s)
-	//returns a string
 	const std::string& s = popString(L);
-
 	ScriptEnviroment* env = getScriptEnv();
+
 	DBResult* res = env->getResult(popNumber(L));
 	CHECK_RESULT()
 
@@ -9900,10 +9890,9 @@ int32_t LuaScriptInterface::luaResultGetDataString(lua_State *L)
 int32_t LuaScriptInterface::luaResultGetDataStream(lua_State *L)
 {
 	//result.getDataStream(res, s)
-	//Returns a BLOB string and the length of it
 	const std::string s = popString(L);
-
 	ScriptEnviroment* env = getScriptEnv();
+
 	DBResult* res = env->getResult(popNumber(L));
 	CHECK_RESULT()
 
@@ -9917,10 +9906,8 @@ int32_t LuaScriptInterface::luaResultGetDataStream(lua_State *L)
 int32_t LuaScriptInterface::luaResultNext(lua_State *L)
 {
 	//result.next(res)
-	//Goes to the next result of the stored result
-	//Returns true if the next result exists, false otherwise
-
 	ScriptEnviroment* env = getScriptEnv();
+
 	DBResult* res = env->getResult(popNumber(L));
 	CHECK_RESULT()
 
@@ -9931,10 +9918,9 @@ int32_t LuaScriptInterface::luaResultNext(lua_State *L)
 int32_t LuaScriptInterface::luaResultFree(lua_State *L)
 {
 	//result.free(res)
-	//Frees the memory of the result, and removes it from the server
 	uint32_t rid = popNumber(L);
-
 	ScriptEnviroment* env = getScriptEnv();
+
 	DBResult* res = env->getResult(rid);
 	CHECK_RESULT()
 

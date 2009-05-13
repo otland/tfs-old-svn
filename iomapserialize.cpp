@@ -314,8 +314,9 @@ bool IOMapSerialize::saveMapBinary(Map* map)
 
 bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 {
-	const Position& tilePos = tile->getPosition();
 	DBResult* result;
+
+	const Position& tilePos = tile->getPosition();
 	ItemMap itemMap;
 
 	DBQuery query;

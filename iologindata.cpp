@@ -1446,11 +1446,12 @@ uint32_t IOLoginData::getLastIPByName(std::string name)
 bool IOLoginData::updatePremiumDays()
 {
 	Database* db = Database::getInstance();
+	DBResult* result;
+
 	DBTransaction trans(db);
 	if(!trans.begin())
 		return false;
 
-	DBResult* result;
 	DBQuery query;
 	query << "SELECT `id` FROM `accounts` WHERE `lastday` <= " << time(NULL) - 86400;
 	if((result = db->storeQuery(query.str())))
