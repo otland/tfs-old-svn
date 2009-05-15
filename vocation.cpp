@@ -279,25 +279,27 @@ Vocation::~Vocation()
 
 void Vocation::reset()
 {
+	memset(absorbPercent, 0, sizeof(absorbPercent));
 	needPremium = false;
 	attackable = true;
-	skillMultipliers[6] = 1.1f;
-	manaMultiplier = 4.0;
+	lessLoss = fromVocation = 0;
+	gainHealthAmount = gainManaAmount = 1;
+	gainHealth = gainMana = gainCap = 5;
+	gainHealthTicks = gainManaTicks = 6;
 	soulMax = 100;
 	soulGainTicks = 120;
 	baseSpeed = 220;
 	attackSpeed = 1500;
 	name = description = "";
-	lessLoss = fromVocation = 0;
-	gainHealthAmount = gainManaAmount = 1;
-	gainHealth = gainMana = gainCap = 5;
-	gainHealthTicks = gainManaTicks = 6;
-	for(uint8_t i = 1; i < 6; ++i)
-		skillMultipliers[i] = 2.0f;
 
 	skillMultipliers[0] = 1.5f;
-	memset(absorbPercent, 0, sizeof(absorbPercent));
-	memset(formulaMultipliers, 0, sizeof(formulaMultipliers));
+	skillMultipliers[6] = 1.1f;
+	for(int32_t i = 1; i < 6; i++)
+		skillMultipliers[i] = 2.0f;
+
+	formulaMultipliers[MULTIPLIER_MANA] = 4.0f;
+	for(int32_t i = MULTIPLIER_FIRST; i < MULTIPLIER_LAST; i++)
+		formulaMultipliers[i] = 1.0f;
 }
 
 uint32_t Vocation::getReqSkillTries(int32_t skill, int32_t level)
