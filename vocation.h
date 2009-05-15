@@ -107,8 +107,6 @@ class Vocation
 		uint16_t soulGainTicks, soulMax;
 		uint32_t id, fromVocation, gainHealth, gainHealthTicks, gainHealthAmount, gainMana,
 			gainManaTicks, gainManaAmount, gainCap, baseSpeed, attackSpeed;
-		float manaMultiplier, meleeMultiplier, distanceMultiplier, wandMultiplier, magicMultiplier,
-			magicHealingMultiplier, defenseMultiplier, armorMultiplier;
 		std::string name, description;
 
 		int16_t absorbPercent[COMBAT_LAST + 1];
