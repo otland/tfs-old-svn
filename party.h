@@ -37,6 +37,7 @@ class Party
 
 		Player* getLeader() const {return leader;}
 		void setLeader(Player* _leader) {leader = _leader;}
+		PlayerVector getMembers() {return memberList;}
 
 		void disband();
 		bool invitePlayer(Player* player);

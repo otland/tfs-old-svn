@@ -54,10 +54,8 @@ int32_t TextLogger::overflow(int32_t c)
 	{
 		if(displayDate)
 		{
-			char date[21];
-			formatDate(time(NULL), date);
 			gui.m_logText += "[";
-			gui.m_logText += date;
+			gui.m_logText += formatDate(time(NULL));
 			gui.m_logText += "] ";
 			displayDate = false;
 		}
@@ -72,7 +70,6 @@ int32_t TextLogger::overflow(int32_t c)
 		fclose(file);
 	}
 	#endif
-
 	return(c);
 }
 #endif

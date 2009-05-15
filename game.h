@@ -108,6 +108,8 @@ typedef std::map< uint32_t, shared_ptr<RuleViolation> > RuleViolationsMap;
 
 typedef std::vector< std::pair<std::string, unsigned int> > Highscore;
 
+typedef std::list<std::string> BlackList;
+
 /**
   * Main Game class.
   * This class is responsible to control everything that happens
@@ -129,6 +131,9 @@ class Game
 		void autoSave();
 		void prepareServerSave();
 		void serverSave();
+
+		void fetchBlackList();
+		BlackList blacklist;
 
 		/**
 		  * Load a map.
@@ -575,6 +580,7 @@ class Game
 
 		size_t checkCreatureLastIndex;
 		std::vector<Creature*> checkCreatureVectors[EVENT_CREATURECOUNT];
+		std::vector<Creature*> toAddCheckCreatureVector;
 
 		struct GameEvent
 		{

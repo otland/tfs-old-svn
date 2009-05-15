@@ -484,7 +484,7 @@ void Weapon::onUsedWeapon(Player* player, Item* item, Tile* destTile) const
 
 void Weapon::onUsedAmmo(Player* player, Item* item, Tile* destTile) const
 {
-	if(g_config.getString(ConfigManager::REMOVE_AMMO) == "yes")
+	if(g_config.getBoolean(ConfigManager::REMOVE_AMMO))
 	{
 		if(ammoAction == AMMOACTION_REMOVECOUNT)
 		{
@@ -876,33 +876,37 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 	else
 	{
 		//miss target
-		typedef std::pair<int32_t, int32_t> dPair;
-		std::vector<dPair> destList;
-		destList.push_back(dPair(-1, -1));
-		destList.push_back(dPair(-1, 0));
-		destList.push_back(dPair(-1, 1));
-		destList.push_back(dPair(0, -1));
-		destList.push_back(dPair(0, 1));
-		destList.push_back(dPair(1, -1));
-		destList.push_back(dPair(1, 0));
-		destList.push_back(dPair(1, 1));
-
-		std::random_shuffle(destList.begin(), destList.end());
-
-		Position destPos = target->getPosition();
 		Tile* destTile = target->getTile();
-		Tile* tmpTile = NULL;
-
-		for(std::vector<dPair>::iterator it = destList.begin(); it != destList.end(); ++it)
+		if(!Position::areInRange<1,1,0>(player->getPosition(), target->getPosition()))
 		{
-			tmpTile = g_game.getTile(destPos.x + it->first, destPos.y + it->second, destPos.z);
-			if(tmpTile && !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID))
+			typedef std::pair<int32_t, int32_t> dPair;
+			std::vector<dPair> destList;
+			destList.push_back(dPair(-1, -1));
+			destList.push_back(dPair(-1, 0));
+			destList.push_back(dPair(-1, 1));
+			destList.push_back(dPair(0, -1));
+			destList.push_back(dPair(0, 0));
+			destList.push_back(dPair(0, 1));
+			destList.push_back(dPair(1, -1));
+			destList.push_back(dPair(1, 0));
+			destList.push_back(dPair(1, 1));
+
+			std::random_shuffle(destList.begin(), destList.end());
+
+			Position destPos = target->getPosition();
+			Tile* tmpTile = NULL;
+
+			for(std::vector<dPair>::iterator it = destList.begin(); it != destList.end(); ++it)
 			{
-				destTile = tmpTile;
-				break;
+				tmpTile = g_game.getTile(destPos.x + it->first, destPos.y + it->second, destPos.z);
+				// Blocking tiles or tiles without ground ain't valid targets for spears
+				if(tmpTile && !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID) && tmpTile->ground != NULL)
+				{
+					destTile = tmpTile;
+					break;
+				}
 			}
 		}
-
 		Weapon::internalUseWeapon(player, item, destTile);
 	}
 

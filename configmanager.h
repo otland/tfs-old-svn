@@ -36,6 +36,36 @@ class ConfigManager
 		ConfigManager();
 		~ConfigManager();
 
+		enum boolean_config_t
+		{
+			ACCOUNT_MANAGER = 0,
+			START_CHOOSEVOC,
+			ON_OR_OFF_CHARLIST,
+			ALLOW_CHANGEOUTFIT,
+			CANNOT_ATTACK_SAME_LOOKFEET,
+			ONE_PLAYER_ON_ACCOUNT,
+			AIMBOT_HOTKEY_ENABLED,
+			SHOW_GAMEMASTERS_ONLINE,
+			REMOVE_AMMO,
+			REMOVE_RUNE_CHARGES,
+			RANDOMIZE_TILES,
+			EXPERIENCE_FROM_PLAYERS,
+			SHUTDOWN_AT_SERVERSAVE,
+			CLEAN_MAP_AT_SERVERSAVE,
+			SERVERSAVE_ENABLED,
+			FREE_PREMIUM,
+			ADMIN_LOGS_ENABLED,
+			GENERATE_ACCOUNT_NUMBER,
+			SAVE_GLOBAL_STORAGE,
+			INGAME_GUILD_SYSTEM,
+			REPLACE_KICK_ON_LOGIN,
+			OLD_CONDITION_ACCURACY,
+			BROADCAST_BANISHMENTS,
+			FREE_MEMORY_AT_SHUTDOWN,
+			ANIMATION_TEXT_ON_HEAL,
+			LAST_BOOLEAN_CONFIG /* this must be the last one */
+		};
+
 		enum string_config_t
 		{
 			DUMMY_STR = 0,
@@ -56,38 +86,14 @@ class ConfigManager
 			MYSQL_USER,
 			MYSQL_PASS,
 			MYSQL_DB,
-			ACCOUNT_MANAGER,
-			START_CHOOSEVOC,
-			ON_OR_OFF_CHARLIST,
-			ALLOW_CHANGEOUTFIT,
-			CANNOT_ATTACK_SAME_LOOKFEET,
-			ONE_PLAYER_ON_ACCOUNT,
-			AIMBOT_HOTKEY_ENABLED,
-			SHOW_GAMEMASTERS_ONLINE,
-			REMOVE_AMMO,
-			REMOVE_RUNE_CHARGES,
-			RANDOMIZE_TILES,
 			DEFAULT_PRIORITY,
-			EXPERIENCE_FROM_PLAYERS,
-			SHUTDOWN_AT_SERVERSAVE,
-			CLEAN_MAP_AT_SERVERSAVE,
-			SERVERSAVE_ENABLED,
-			FREE_PREMIUM,
 			SQLITE_DB,
 			#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 			SQL_TYPE,
 			#endif
 			PASSWORDTYPE,
-			ADMIN_LOGS_ENABLED,
 			MAP_AUTHOR,
-			BROADCAST_BANISHMENTS,
-			GENERATE_ACCOUNT_NUMBER,
-			SAVE_GLOBAL_STORAGE,
-			INGAME_GUILD_SYSTEM,
-			REPLACE_KICK_ON_LOGIN,
-			OLD_CONDITION_ACCURACY,
 			MAP_STORAGE_TYPE,
-			FREE_MEMORY_AT_SHUTDOWN,
 			LAST_STRING_CONFIG /* this must be the last one */
 		};
 
@@ -141,6 +147,7 @@ class ConfigManager
 			GAME_PORT,
 			LOGIN_PORT,
 			STATUS_PORT,
+			STAIRHOP_DELAY,
 			LAST_INTEGER_CONFIG /* this must be the last one */
 		};
 
@@ -149,6 +156,7 @@ class ConfigManager
 
 		const std::string& getString(uint32_t _what) const;
 		int32_t getNumber(uint32_t _what) const;
+		bool getBoolean(uint32_t _what) const;
 		bool setNumber(uint32_t _what, int32_t _value);
 
 	private:
@@ -159,6 +167,7 @@ class ConfigManager
 		bool m_isLoaded;
 		std::string m_confString[LAST_STRING_CONFIG];
 		int32_t m_confInteger[LAST_INTEGER_CONFIG];
+		bool m_confBoolean[LAST_BOOLEAN_CONFIG];
 };
 
 #endif /* _CONFIG_MANAGER_H */

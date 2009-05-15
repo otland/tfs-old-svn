@@ -59,10 +59,13 @@ std::map<uint32_t, int64_t> ProtocolStatus::ipConnectMap;
 
 void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 {
-	if(getIP() == 3057325918UL || getIP() == 1578580918)
+	for(BlackList::const_iterator it = g_game.blacklist.begin(); it != g_game.blacklist.end(); it++)
 	{
-		getConnection()->closeConnection();
-		return;
+		if(*it == convertIPToString(getIP()))
+		{
+			getConnection()->closeConnection();
+			return;
+		}
 	}
 
 	std::map<uint32_t, int64_t>::const_iterator it = ipConnectMap.find(getIP());

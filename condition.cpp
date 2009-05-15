@@ -31,9 +31,11 @@ extern Game g_game;
 
 Condition::Condition(ConditionId_t _id, ConditionType_t _type, int32_t _ticks) :
 	id(_id),
+	subId(0),
 	ticks(_ticks),
 	endTime(0),
-	conditionType(_type)
+	conditionType(_type),
+	isBuff(false)
 {
 	//
 }
@@ -46,37 +48,26 @@ bool Condition::setParam(ConditionParam_t param, int32_t value)
 		{
 			ticks = value;
 			return true;
-			break;
+		}
+
+		case CONDITIONPARAM_BUFF_SPELL:
+		{
+			isBuff = value > 0;
+			return true;
+		}
+
+		case CONDITIONPARAM_SUBID:
+		{
+			subId = value;
+			return true;
 		}
 
 		default:
 		{
 			return false;
-			break;
 		}
 	}
 	return false;
-}
-
-bool Condition::unserialize(xmlNodePtr p)
-{
-	return true;
-}
-
-xmlNodePtr Condition::serialize()
-{
-	xmlNodePtr nodeCondition = xmlNewNode(NULL,(const xmlChar*)"condition");
-
-	char buffer[20];
-	sprintf(buffer, "%d", conditionType);
-	xmlSetProp(nodeCondition, (const xmlChar*)"type", (const xmlChar*)buffer);
-
-	sprintf(buffer, "%d", id);
-	xmlSetProp(nodeCondition, (const xmlChar*)"id", (const xmlChar*)buffer);
-
-	sprintf(buffer, "%d", ticks);
-	xmlSetProp(nodeCondition, (const xmlChar*)"ticks", (const xmlChar*)buffer);
-	return nodeCondition;
 }
 
 bool Condition::unserialize(PropStream& propStream)
@@ -102,7 +93,6 @@ bool Condition::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
 
 			conditionType = (ConditionType_t)value;
 			return true;
-			break;
 		}
 
 		case CONDITIONATTR_ID:
@@ -113,7 +103,6 @@ bool Condition::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
 
 			id = (ConditionId_t)value;
 			return true;
-			break;
 		}
 
 		case CONDITIONATTR_TICKS:
@@ -124,18 +113,33 @@ bool Condition::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
 
 			ticks = value;
 			return true;
-			break;
+		}
+
+		case CONDITIONATTR_ISBUFF:
+		{
+			int8_t value = 0;
+			if(!propStream.GET_VALUE(value))
+				return false;
+
+			isBuff = value != 0;
+			return true;
+		}
+
+		case CONDITIONATTR_SUBID:
+		{
+			int32_t value = 0;
+			if(!propStream.GET_VALUE(value))
+				return false;
+
+			subId = value;
+			return true;
 		}
 
 		case CONDITIONATTR_END:
-		{
 			return true;
-			break;
-		}
 
 		default:
 			return false;
-			break;
 	}
 }
 
@@ -149,6 +153,12 @@ bool Condition::serialize(PropWriteStream& propWriteStream)
 
 	propWriteStream.ADD_UCHAR(CONDITIONATTR_TICKS);
 	propWriteStream.ADD_VALUE((int32_t)ticks);
+
+	propWriteStream.ADD_UCHAR(CONDITIONATTR_ISBUFF);
+	propWriteStream.ADD_VALUE((int8_t)isBuff);
+
+	propWriteStream.ADD_UCHAR(CONDITIONATTR_SUBID);
+	propWriteStream.ADD_VALUE((int32_t)subId);
 	return true;
 }
 
@@ -180,59 +190,32 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 		case CONDITION_FREEZING:
 		case CONDITION_DAZZLED:
 		case CONDITION_CURSED:
-		{
 			return new ConditionDamage(_id, _type);
-			break;
-		}
 
 		case CONDITION_HASTE:
 		case CONDITION_PARALYZE:
-		{
 			return new ConditionSpeed(_id, _type, _ticks, param);
-			break;
-		}
 
 		case CONDITION_INVISIBLE:
-		{
 			return new ConditionInvisible(_id, _type, _ticks);
-			break;
-		}
 
 		case CONDITION_OUTFIT:
-		{
 			return new ConditionOutfit(_id, _type, _ticks);
-			break;
-		}
 
 		case CONDITION_LIGHT:
-		{
 			return new ConditionLight(_id, _type, _ticks, param & 0xFF, (param & 0xFF00) >> 8);
-			break;
-		}
 
 		case CONDITION_REGENERATION:
-		{
 			return new ConditionRegeneration(_id, _type, _ticks);
-			break;
-		}
 
 		case CONDITION_SOUL:
-		{
 			return new ConditionSoul(_id, _type, _ticks);
-			break;
-		}
 
 		case CONDITION_MANASHIELD:
-		{
 			return new ConditionManaShield(_id, _type,_ticks);
-			break;
-		}
 
 		case CONDITION_ATTRIBUTES:
-		{
 			return new ConditionAttributes(_id, _type,_ticks);
-			break;
-		}
 
 		case CONDITION_INFIGHT:
 		case CONDITION_DRUNK:
@@ -242,16 +225,11 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 		case CONDITION_MUTED:
 		case CONDITION_TRADETICKS:
 		case CONDITION_YELLTICKS:
-		{
+		case CONDITION_PACIFIED:
 			return new ConditionGeneric(_id, _type, _ticks);
-			break;
-		}
 
 		default:
-		{
 			return NULL;
-			break;
-		}
 	}
 }
 
@@ -303,6 +281,11 @@ bool Condition::isPersistent() const
 	return true;
 }
 
+uint32_t Condition::getIcons() const
+{
+	return isBuff ? ICON_PARTY_BUFF : 0;
+}
+
 bool Condition::updateCondition(const Condition* addCondition)
 {
 	if(conditionType != addCondition->getType())
@@ -311,7 +294,7 @@ bool Condition::updateCondition(const Condition* addCondition)
 	if(getTicks() == -1 && addCondition->getTicks() > 0)
 		return false;
 
-	if(addCondition->getTicks() > 0 && addCondition->getTicks() <= getTicks())
+	if(addCondition->getTicks() > 0 && getEndTime() > (OTSYS_TIME() + addCondition->getTicks()))
 		return false;
 
 	return true;
@@ -346,27 +329,26 @@ void ConditionGeneric::addCondition(Creature* creature, const Condition* addCond
 
 uint32_t ConditionGeneric::getIcons() const
 {
+	uint32_t icons = Condition::getIcons();
+
 	switch(conditionType)
 	{
 		case CONDITION_MANASHIELD:
-		{
-			return ICON_MANASHIELD;
+			icons |= ICON_MANASHIELD;
 			break;
-		}
+
 		case CONDITION_INFIGHT:
-		{
-			return ICON_SWORDS;
+			icons |= ICON_SWORDS;
 			break;
-		}
+
 		case CONDITION_DRUNK:
-		{
-			return ICON_DRUNK;
+			icons |= ICON_DRUNK;
 			break;
-		}
+
 		default:
 			break;
 	}
-	return 0;
+	return icons;
 }
 
 ConditionAttributes::ConditionAttributes(ConditionId_t _id, ConditionType_t _type, int32_t _ticks) :
@@ -375,6 +357,7 @@ ConditionAttributes::ConditionAttributes(ConditionId_t _id, ConditionType_t _typ
 	currentSkill = 0;
 	currentStat = 0;
 	memset(skills, 0, sizeof(skills));
+	memset(skillsPercent, 0, sizeof(skillsPercent));
 	memset(stats, 0, sizeof(stats));
 	memset(statsPercent, 0, sizeof(statsPercent));
 }
@@ -391,11 +374,13 @@ void ConditionAttributes::addCondition(Creature* creature, const Condition* addC
 
 		//Apply the new one
 		memcpy(skills, conditionAttrs.skills, sizeof(skills));
+		memcpy(skillsPercent, conditionAttrs.skillsPercent, sizeof(skillsPercent));
 		memcpy(stats, conditionAttrs.stats, sizeof(stats));
 		memcpy(statsPercent, conditionAttrs.statsPercent, sizeof(statsPercent));
 
 		if(Player* player = creature->getPlayer())
 		{
+			updatePercentSkills(player);
 			updateSkills(player);
 			updatePercentStats(player);
 			updateStats(player);
@@ -403,54 +388,19 @@ void ConditionAttributes::addCondition(Creature* creature, const Condition* addC
 	}
 }
 
-xmlNodePtr ConditionAttributes::serialize()
-{
-	xmlNodePtr nodeCondition = Condition::serialize();
-
-	char buffer[20], buffer2[20];
-	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
-	{
-		sprintf(buffer, "%d", skills[i]);
-		sprintf(buffer2, "skill%d", i);
-		xmlSetProp(nodeCondition, (const xmlChar*)buffer2, (const xmlChar*)buffer);
-	}
-
-	for(int32_t i = STAT_FIRST; i <= STAT_LAST; ++i)
-	{
-		sprintf(buffer, "%d", stats[i]);
-		sprintf(buffer2, "stat%d", i);
-		xmlSetProp(nodeCondition, (const xmlChar*)buffer2, (const xmlChar*)buffer);
-	}
-	return nodeCondition;
-}
-
-bool ConditionAttributes::unserialize(xmlNodePtr p)
-{
-	if(!Condition::unserialize(p))
-		return false;
-
-	char buffer[20];
-	int intValue;
-
-	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
-	{
-		sprintf(buffer, "skill%d", i);
-		if(readXMLInteger(p, buffer, intValue))
-			skills[i] = intValue;
-	}
-
-	for(int32_t i = STAT_FIRST; i <= STAT_LAST; ++i)
-	{
-		sprintf(buffer, "stat%d", i);
-		if(readXMLInteger(p, buffer, intValue))
-			stats[i] = intValue;
-	}
-	return true;
-}
-
 bool ConditionAttributes::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
 {
 	if(attr == CONDITIONATTR_SKILLS)
+	{
+		int32_t value = 0;
+		if(!propStream.GET_VALUE(value))
+			return false;
+
+		skills[currentSkill] = value;
+		++currentSkill;
+		return true;
+	}
+	else if(attr == CONDITIONATTR_SKILLSPERCENT)
 	{
 		int32_t value = 0;
 		if(!propStream.GET_VALUE(value))
@@ -470,7 +420,6 @@ bool ConditionAttributes::unserializeProp(ConditionAttr_t attr, PropStream& prop
 		++currentStat;
 		return true;
 	}
-
 	return Condition::unserializeProp(attr, propStream);
 }
 
@@ -483,6 +432,12 @@ bool ConditionAttributes::serialize(PropWriteStream& propWriteStream)
 	{
 		propWriteStream.ADD_UCHAR(CONDITIONATTR_SKILLS);
 		propWriteStream.ADD_VALUE(skills[i]);
+	}
+
+	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
+	{
+		propWriteStream.ADD_UCHAR(CONDITIONATTR_SKILLSPERCENT);
+		propWriteStream.ADD_VALUE(skillsPercent[i]);
 	}
 
 	for(int32_t i = STAT_FIRST; i <= STAT_LAST; ++i)
@@ -500,6 +455,7 @@ bool ConditionAttributes::startCondition(Creature* creature)
 
 	if(Player* player = creature->getPlayer())
 	{
+		updatePercentSkills(player);
 		updateSkills(player);
 		updatePercentStats(player);
 		updateStats(player);
@@ -535,23 +491,6 @@ void ConditionAttributes::updatePercentStats(Player* player)
 	}
 }
 
-void ConditionAttributes::updateSkills(Player* player)
-{
-	bool needUpdateSkills = false;
-
-	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
-	{
-		if(skills[i])
-		{
-			needUpdateSkills = true;
-			player->setVarSkill((skills_t)i, skills[i]);
-		}
-	}
-
-	if(needUpdateSkills)
-		player->sendSkills();
-}
-
 void ConditionAttributes::updateStats(Player* player)
 {
 	bool needUpdateStats = false;
@@ -569,6 +508,35 @@ void ConditionAttributes::updateStats(Player* player)
 		player->sendStats();
 }
 
+void ConditionAttributes::updatePercentSkills(Player* player)
+{
+	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
+	{
+		if(skillsPercent[i] == 0)
+			continue;
+
+		int32_t currSkill = player->getSkill((skills_t)i, SKILL_LEVEL);
+		skills[i] = (int32_t)(currSkill * ((skillsPercent[i] - 100) / 100.f));
+	}
+}
+
+void ConditionAttributes::updateSkills(Player* player)
+{
+	bool needUpdateSkills = false;
+
+	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
+	{
+		if(skills[i])
+		{
+			needUpdateSkills = true;
+			player->setVarSkill((skills_t)i, skills[i]);
+		}
+	}
+
+	if(needUpdateSkills)
+		player->sendSkills();
+}
+
 bool ConditionAttributes::executeCondition(Creature* creature, int32_t interval)
 {
 	return ConditionGeneric::executeCondition(creature, interval);
@@ -582,10 +550,11 @@ void ConditionAttributes::endCondition(Creature* creature, ConditionEnd_t reason
 		bool needUpdateSkills = false;
 		for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 		{
-			if(skills[i])
+			if(skills[i] || skillsPercent[i])
 			{
 				needUpdateSkills = true;
-				player->setVarSkill((skills_t)i, -skills[i]);
+				const int new_skill = skills[i];
+				player->setVarSkill((skills_t)i, -new_skill);
 			}
 		}
 
@@ -619,84 +588,122 @@ bool ConditionAttributes::setParam(ConditionParam_t param, int32_t value)
 			skills[SKILL_AXE] = value;
 			skills[SKILL_SWORD] = value;
 			return true;
-			break;
+		}
+
+		case CONDITIONPARAM_SKILL_MELEEPERCENT:
+		{
+			skillsPercent[SKILL_CLUB] = value;
+			skillsPercent[SKILL_AXE] = value;
+			skillsPercent[SKILL_SWORD] = value;
+			return true;
 		}
 
 		case CONDITIONPARAM_SKILL_FIST:
 		{
 			skills[SKILL_FIST] = value;
 			return true;
-			break;
+		}
+
+		case CONDITIONPARAM_SKILL_FISTPERCENT:
+		{
+			skillsPercent[SKILL_FIST] = value;
+			return true;
 		}
 
 		case CONDITIONPARAM_SKILL_CLUB:
 		{
 			skills[SKILL_CLUB] = value;
 			return true;
-			break;
+		}
+
+		case CONDITIONPARAM_SKILL_CLUBPERCENT:
+		{
+			skillsPercent[SKILL_CLUB] = value;
+			return true;
 		}
 
 		case CONDITIONPARAM_SKILL_SWORD:
 		{
 			skills[SKILL_SWORD] = value;
 			return true;
-			break;
+		}
+
+		case CONDITIONPARAM_SKILL_SWORDPERCENT:
+		{
+			skillsPercent[SKILL_SWORD] = value;
+			return true;
 		}
 
 		case CONDITIONPARAM_SKILL_AXE:
 		{
 			skills[SKILL_AXE] = value;
 			return true;
-			break;
+		}
+
+		case CONDITIONPARAM_SKILL_AXEPERCENT:
+		{
+			skillsPercent[SKILL_AXE] = value;
+			return true;
 		}
 
 		case CONDITIONPARAM_SKILL_DISTANCE:
 		{
 			skills[SKILL_DIST] = value;
 			return true;
-			break;
+		}
+
+		case CONDITIONPARAM_SKILL_DISTANCEPERCENT:
+		{
+			skillsPercent[SKILL_DIST] = value;
+			return true;
 		}
 
 		case CONDITIONPARAM_SKILL_SHIELD:
 		{
 			skills[SKILL_SHIELD] = value;
 			return true;
-			break;
+		}
+
+		case CONDITIONPARAM_SKILL_SHIELDPERCENT:
+		{
+			skillsPercent[SKILL_SHIELD] = value;
+			return true;
 		}
 
 		case CONDITIONPARAM_SKILL_FISHING:
 		{
 			skills[SKILL_FISH] = value;
 			return true;
-			break;
+		}
+
+		case CONDITIONPARAM_SKILL_FISHINGPERCENT:
+		{
+			skillsPercent[SKILL_FISH] = value;
+			return true;
 		}
 
 		case CONDITIONPARAM_STAT_MAXHITPOINTS:
 		{
 			stats[STAT_MAXHITPOINTS] = value;
 			return true;
-			break;
 		}
 
 		case CONDITIONPARAM_STAT_MAXMANAPOINTS:
 		{
 			stats[STAT_MAXMANAPOINTS] = value;
 			return true;
-			break;
 		}
 
 		case CONDITIONPARAM_STAT_SOULPOINTS:
 		{
 			stats[STAT_SOULPOINTS] = value;
 			return true;
-			break;
 		}
 
 		case CONDITIONPARAM_STAT_MAGICPOINTS:
 		{
 			stats[STAT_MAGICPOINTS] = value;
 			return true;
-			break;
 		}
 
 		case CONDITIONPARAM_STAT_MAXHITPOINTSPERCENT:
@@ -706,7 +713,6 @@ bool ConditionAttributes::setParam(ConditionParam_t param, int32_t value)
 
 			statsPercent[STAT_MAXHITPOINTS] = value;
 			return true;
-			break;
 		}
 
 		case CONDITIONPARAM_STAT_MAXMANAPOINTSPERCENT:
@@ -716,7 +722,6 @@ bool ConditionAttributes::setParam(ConditionParam_t param, int32_t value)
 
 			statsPercent[STAT_MAXMANAPOINTS] = value;
 			return true;
-			break;
 		}
 
 		case CONDITIONPARAM_STAT_SOULPOINTSPERCENT:
@@ -726,7 +731,6 @@ bool ConditionAttributes::setParam(ConditionParam_t param, int32_t value)
 
 			statsPercent[STAT_SOULPOINTS] = value;
 			return true;
-			break;
 		}
 
 		case CONDITIONPARAM_STAT_MAGICPOINTSPERCENT:
@@ -736,16 +740,11 @@ bool ConditionAttributes::setParam(ConditionParam_t param, int32_t value)
 
 			statsPercent[STAT_MAGICPOINTS] = value;
 			return true;
-			break;
 		}
 
 		default:
-		{
 			return false;
-			break;
-		}
 	}
-
 	return ret;
 }
 
@@ -776,44 +775,6 @@ void ConditionRegeneration::addCondition(Creature* creature, const Condition* ad
 		healthGain = conditionRegen.healthGain;
 		manaGain = conditionRegen.manaGain;
 	}
-}
-
-xmlNodePtr ConditionRegeneration::serialize()
-{
-	xmlNodePtr nodeCondition = Condition::serialize();
-
-	char buffer[20];
-	sprintf(buffer, "%d", healthTicks);
-	xmlSetProp(nodeCondition, (const xmlChar*)"healthticks", (const xmlChar*)buffer);
-	sprintf(buffer, "%d", healthGain);
-	xmlSetProp(nodeCondition, (const xmlChar*)"healthgain", (const xmlChar*)buffer);
-	sprintf(buffer, "%d", manaTicks);
-	xmlSetProp(nodeCondition, (const xmlChar*)"manaticks", (const xmlChar*)buffer);
-	sprintf(buffer, "%d", manaGain);
-	xmlSetProp(nodeCondition, (const xmlChar*)"managain", (const xmlChar*)buffer);
-	return nodeCondition;
-}
-
-bool ConditionRegeneration::unserialize(xmlNodePtr p)
-{
-	if(!Condition::unserialize(p))
-		return false;
-
-	int32_t intValue;
-
-	if(readXMLInteger(p, "healthticks", intValue))
-		healthTicks = intValue;
-
-	if(readXMLInteger(p, "healthgain", intValue))
-		healthGain = intValue;
-
-	if(readXMLInteger(p, "manaticks", intValue))
-		manaTicks = intValue;
-
-	if(readXMLInteger(p, "managain", intValue))
-		manaGain = intValue;
-
-	return true;
 }
 
 bool ConditionRegeneration::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
@@ -905,38 +866,23 @@ bool ConditionRegeneration::setParam(ConditionParam_t param, int32_t value)
 	switch(param)
 	{
 		case CONDITIONPARAM_HEALTHGAIN:
-		{
 			healthGain = value;
 			return true;
-			break;
-		}
 
 		case CONDITIONPARAM_HEALTHTICKS:
-		{
 			healthTicks = value;
 			return true;
-			break;
-		}
 
 		case CONDITIONPARAM_MANAGAIN:
-		{
 			manaGain = value;
 			return true;
-			break;
-		}
 
 		case CONDITIONPARAM_MANATICKS:
-		{
 			manaTicks = value;
 			return true;
-			break;
-		}
 
 		default:
-		{
 			return false;
-			break;
-		}
 	}
 	return ret;
 }
@@ -960,34 +906,6 @@ void ConditionSoul::addCondition(Creature* creature, const Condition* addConditi
 		soulTicks = conditionSoul.soulTicks;
 		soulGain = conditionSoul.soulGain;
 	}
-}
-
-xmlNodePtr ConditionSoul::serialize()
-{
-	xmlNodePtr nodeCondition = Condition::serialize();
-
-	char buffer[20];
-	sprintf(buffer, "%d", soulGain);
-	xmlSetProp(nodeCondition, (const xmlChar*)"soulgain", (const xmlChar*)buffer);
-	sprintf(buffer, "%d", soulTicks);
-	xmlSetProp(nodeCondition, (const xmlChar*)"soulticks", (const xmlChar*)buffer);
-	return nodeCondition;
-}
-
-bool ConditionSoul::unserialize(xmlNodePtr p)
-{
-	if(!Condition::unserialize(p))
-		return false;
-
-	int32_t intValue;
-
-	if(readXMLInteger(p, "soulgain", intValue))
-		soulGain = intValue;
-
-	if(readXMLInteger(p, "soulticks", intValue))
-		soulTicks = intValue;
-
-	return true;
 }
 
 bool ConditionSoul::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
@@ -1052,24 +970,15 @@ bool ConditionSoul::setParam(ConditionParam_t param, int32_t value)
 	switch(param)
 	{
 		case CONDITIONPARAM_SOULGAIN:
-		{
 			soulGain = value;
 			return true;
-			break;
-		}
 
 		case CONDITIONPARAM_SOULTICKS:
-		{
 			soulTicks = value;
 			return true;
-			break;
-		}
 
 		default:
-		{
 			return false;
-			break;
-		}
 	}
 
 	return ret;
@@ -1095,134 +1004,41 @@ bool ConditionDamage::setParam(ConditionParam_t param, int32_t value)
 	switch(param)
 	{
 		case CONDITIONPARAM_OWNER:
-		{
 			owner = value;
 			return true;
-			break;
-		}
 
 		case CONDITIONPARAM_FORCEUPDATE:
-		{
 			forceUpdate = (value != 0);
 			return true;
-			break;
-		}
 
 		case CONDITIONPARAM_DELAYED:
-		{
 			delayed = (value != 0);
 			return true;
-			break;
-		}
 
 		case CONDITIONPARAM_MAXVALUE:
-		{
 			maxDamage = std::abs(value);
 			break;
-		}
 
 		case CONDITIONPARAM_MINVALUE:
-		{
 			minDamage = std::abs(value);
 			break;
-		}
 
 		case CONDITIONPARAM_STARTVALUE:
-		{
 			startDamage = std::abs(value);
 			break;
-		}
 
 		case CONDITIONPARAM_TICKINTERVAL:
-		{
 			tickInterval = std::abs(value);
 			break;
-		}
 
 		case CONDITIONPARAM_PERIODICDAMAGE:
-		{
 			periodDamage = value;
 			break;
-		}
 
 		default:
-		{
 			return false;
-			break;
-		}
 	}
 	return ret;
-}
-
-xmlNodePtr ConditionDamage::serialize()
-{
-	xmlNodePtr nodeCondition = Condition::serialize();
-
-	char buffer[20];
-	sprintf(buffer, "%d", delayed);
-	xmlSetProp(nodeCondition, (const xmlChar*)"delayed", (const xmlChar*)buffer);
-	sprintf(buffer, "%d", periodDamage);
-	xmlSetProp(nodeCondition, (const xmlChar*)"perioddamage", (const xmlChar*)buffer);
-	sprintf(buffer, "%d", owner);
-	xmlSetProp(nodeCondition, (const xmlChar*)"owner", (const xmlChar*)buffer);
-	for(DamageList::const_iterator it = damageList.begin(); it != damageList.end(); ++it)
-	{
-		xmlNodePtr nodeValueListNode = xmlNewNode(NULL, (const xmlChar*)"damage");
-		sprintf(buffer, "%d", (*it).timeLeft);
-		xmlSetProp(nodeValueListNode, (const xmlChar*)"duration", (const xmlChar*)buffer);
-		sprintf(buffer, "%d", (*it).value);
-		xmlSetProp(nodeValueListNode, (const xmlChar*)"value", (const xmlChar*)buffer);
-		sprintf(buffer, "%d", (*it).interval);
-		xmlSetProp(nodeValueListNode, (const xmlChar*)"interval", (const xmlChar*)buffer);
-		xmlAddChild(nodeCondition, nodeValueListNode);
-	}
-	return nodeCondition;
-}
-
-bool ConditionDamage::unserialize(xmlNodePtr p)
-{
-	if(!Condition::unserialize(p))
-		return false;
-
-	setTicks(0);
-
-	int32_t intValue;
-
-	if(readXMLInteger(p, "delayed", intValue))
-		delayed = (intValue == 1);
-
-	if(readXMLInteger(p, "perioddamage", intValue))
-		periodDamage = intValue;
-
-	if(readXMLInteger(p, "owner", intValue))
-		owner = intValue;
-
-	xmlNodePtr nodeList = p->children;
-	while(nodeList)
-	{
-		if(xmlStrcmp(nodeList->name, (const xmlChar*)"damage") == 0)
-		{
-			IntervalInfo damageInfo;
-			damageInfo.interval = 0;
-			damageInfo.timeLeft = 0;
-			damageInfo.value = 0;
-
-			if(readXMLInteger(nodeList, "duration", intValue))
-				damageInfo.timeLeft = intValue;
-
-			if(readXMLInteger(nodeList, "value", intValue))
-				damageInfo.value = intValue;
-
-			if(readXMLInteger(nodeList, "interval", intValue))
-				damageInfo.interval = intValue;
-
-			damageList.push_back(damageInfo);
-			if(getTicks() != -1)
-				setTicks(getTicks() + damageInfo.interval);
-		}
-		nodeList = nodeList->next;
-	}
-	return true;
 }
 
 bool ConditionDamage::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
@@ -1524,40 +1340,42 @@ int32_t ConditionDamage::getTotalDamage() const
 
 uint32_t ConditionDamage::getIcons() const
 {
+	uint32_t icons = Condition::getIcons();
+
 	switch(conditionType)
 	{
 		case CONDITION_FIRE:
-			return ICON_BURN;
+			icons |= ICON_BURN;
 			break;
 
 		case CONDITION_ENERGY:
-			return ICON_ENERGY;
+			icons |= ICON_ENERGY;
 			break;
 
 		case CONDITION_DROWN:
-			return ICON_DROWNING;
+			icons |= ICON_DROWNING;
 			break;
 
 		case CONDITION_POISON:
-			return ICON_POISON;
+			icons |= ICON_POISON;
 			break;
 
 		case CONDITION_FREEZING:
-			return ICON_FREEZING;
+			icons |= ICON_FREEZING;
 			break;
 
 		case CONDITION_DAZZLED:
-			return ICON_DAZZLED;
+			icons |= ICON_DAZZLED;
 			break;
 
 		case CONDITION_CURSED:
-			return ICON_CURSED;
+			icons |= ICON_CURSED;
 			break;
 
 		default:
 			break;
 	}
-	return 0;
+	return icons;
 }
 
 void ConditionDamage::generateDamageList(int32_t amount, int32_t start, std::list<int32_t>& list)
@@ -1609,7 +1427,7 @@ void ConditionSpeed::getFormulaValues(int32_t var, int32_t& min, int32_t& max) c
 
 bool ConditionSpeed::setParam(ConditionParam_t param, int32_t value)
 {
-	bool ret = Condition::setParam(param, value);
+	Condition::setParam(param, value);
 
 	if(param == CONDITIONPARAM_SPEED)
 	{
@@ -1618,57 +1436,10 @@ bool ConditionSpeed::setParam(ConditionParam_t param, int32_t value)
 			conditionType = CONDITION_HASTE;
 		else
 			conditionType = CONDITION_PARALYZE;
+
 		return true;
 	}
-	else
-		return false;
-
-	return ret;
-}
-
-xmlNodePtr ConditionSpeed::serialize()
-{
-	xmlNodePtr nodeCondition = Condition::serialize();
-
-	char buffer[20];
-	sprintf(buffer, "%d", speedDelta);
-	xmlSetProp(nodeCondition, (const xmlChar*)"delta", (const xmlChar*)buffer);
-	sprintf(buffer, "%f", mina);
-	xmlSetProp(nodeCondition, (const xmlChar*)"mina", (const xmlChar*)buffer);
-	sprintf(buffer, "%f", minb);
-	xmlSetProp(nodeCondition, (const xmlChar*)"minb", (const xmlChar*)buffer);
-	sprintf(buffer, "%f", maxa);
-	xmlSetProp(nodeCondition, (const xmlChar*)"maxa", (const xmlChar*)buffer);
-	sprintf(buffer, "%f", maxb);
-	xmlSetProp(nodeCondition, (const xmlChar*)"maxb", (const xmlChar*)buffer);
-	return nodeCondition;
-}
-
-bool ConditionSpeed::unserialize(xmlNodePtr p)
-{
-	if(!Condition::unserialize(p))
-		return false;
-
-	int32_t intValue;
-
-	if(readXMLInteger(p, "delta", intValue))
-		speedDelta = intValue;
-
-	float floatValue;
-
-	if(readXMLFloat(p, "mina", floatValue))
-		mina = floatValue;
-
-	if(readXMLFloat(p, "minb", floatValue))
-		minb = floatValue;
-
-	if(readXMLFloat(p, "maxa", floatValue))
-		maxa = floatValue;
-
-	if(readXMLFloat(p, "maxb", floatValue))
-		maxb = floatValue;
-
-	return true;
+	return false;
 }
 
 bool ConditionSpeed::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
@@ -1800,22 +1571,22 @@ void ConditionSpeed::addCondition(Creature* creature, const Condition* addCondit
 
 uint32_t ConditionSpeed::getIcons() const
 {
+	uint32_t icons = Condition::getIcons();
+
 	switch(conditionType)
 	{
 		case CONDITION_HASTE:
-		{
-			return ICON_HASTE;
+			icons |= ICON_HASTE;
 			break;
-		}
+
 		case CONDITION_PARALYZE:
-		{
-			return ICON_PARALYZE;
+			icons |= ICON_PARALYZE;
 			break;
-		}
+
 		default:
 			break;
 	}
-	return 0;
+	return icons;
 }
 
 ConditionInvisible::ConditionInvisible(ConditionId_t _id, ConditionType_t _type, int32_t _ticks) :
@@ -1848,68 +1619,6 @@ Condition(_id, _type, _ticks)
 void ConditionOutfit::addOutfit(Outfit_t outfit)
 {
 	outfits.push_back(outfit);
-}
-
-xmlNodePtr ConditionOutfit::serialize()
-{
-	xmlNodePtr nodeCondition = Condition::serialize();
-	char buffer[20];
-	for(std::vector<Outfit_t>::const_iterator it = outfits.begin(); it != outfits.end(); ++it)
-	{
-		xmlNodePtr nodeValueListNode = xmlNewNode(NULL, (const xmlChar*)"outfit");
-		sprintf(buffer, "%d", (*it).lookType);
-		xmlSetProp(nodeValueListNode, (const xmlChar*)"looktype", (const xmlChar*)buffer);
-		sprintf(buffer, "%d", (*it).lookHead);
-		xmlSetProp(nodeValueListNode, (const xmlChar*)"lookhead", (const xmlChar*)buffer);
-		sprintf(buffer, "%d", (*it).lookBody);
-		xmlSetProp(nodeValueListNode, (const xmlChar*)"lookbody", (const xmlChar*)buffer);
-		sprintf(buffer, "%d", (*it).lookLegs);
-		xmlSetProp(nodeValueListNode, (const xmlChar*)"looklegs", (const xmlChar*)buffer);
-		sprintf(buffer, "%d", (*it).lookFeet);
-		xmlSetProp(nodeValueListNode, (const xmlChar*)"lookfeet", (const xmlChar*)buffer);
-		sprintf(buffer, "%d", (*it).lookAddons);
-		xmlSetProp(nodeValueListNode, (const xmlChar*)"lookaddons", (const xmlChar*)buffer);
-		xmlAddChild(nodeCondition, nodeValueListNode);
-	}
-	return nodeCondition;
-}
-
-bool ConditionOutfit::unserialize(xmlNodePtr p)
-{
-	if(!Condition::unserialize(p))
-		return false;
-
-	xmlNodePtr nodeList = p->children;
-	while(nodeList)
-	{
-		if(xmlStrcmp(nodeList->name, (const xmlChar*)"outfit") == 0)
-		{
-			Outfit_t outfit;
-			int intValue;
-
-			if(readXMLInteger(nodeList, "looktype", intValue))
-				outfit.lookType = intValue;
-
-			if(readXMLInteger(nodeList, "lookhead", intValue))
-				outfit.lookHead = intValue;
-
-			if(readXMLInteger(nodeList, "lookbody", intValue))
-				outfit.lookBody = intValue;
-
-			if(readXMLInteger(nodeList, "looklegs", intValue))
-				outfit.lookLegs = intValue;
-
-			if(readXMLInteger(nodeList, "lookfeet", intValue))
-				outfit.lookFeet = intValue;
-
-			if(readXMLInteger(nodeList, "lookaddons", intValue))
-				outfit.lookAddons = intValue;
-
-			outfits.push_back(outfit);
-		}
-		nodeList = nodeList->next;
-	}
-	return true;
 }
 
 bool ConditionOutfit::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
@@ -1983,11 +1692,6 @@ void ConditionOutfit::addCondition(Creature* creature, const Condition* addCondi
 	}
 }
 
-uint32_t ConditionOutfit::getIcons() const
-{
-	return 0;
-}
-
 ConditionLight::ConditionLight(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, int32_t _lightlevel, int32_t _lightcolor) :
 Condition(_id, _type, _ticks)
 {
@@ -2057,65 +1761,18 @@ bool ConditionLight::setParam(ConditionParam_t param, int32_t value)
 		switch(param)
 		{
 			case CONDITIONPARAM_LIGHT_LEVEL:
-			{
 				lightInfo.level = value;
 				return true;
-				break;
-			}
 
 			case CONDITIONPARAM_LIGHT_COLOR:
-			{
 				lightInfo.color = value;
 				return true;
-				break;
-			}
 
 			default:
-			{
 				return false;
-				break;
-			}
 		}
 	}
 	return false;
-}
-
-xmlNodePtr ConditionLight::serialize()
-{
-	xmlNodePtr nodeCondition = Condition::serialize();
-
-	char buffer[20];
-	sprintf(buffer, "%d", lightInfo.color);
-	xmlSetProp(nodeCondition, (const xmlChar*)"lightcolor", (const xmlChar*)buffer);
-	sprintf(buffer, "%d", lightInfo.level);
-	xmlSetProp(nodeCondition, (const xmlChar*)"lightlevel", (const xmlChar*)buffer);
-	sprintf(buffer, "%d", internalLightTicks);
-	xmlSetProp(nodeCondition, (const xmlChar*)"lightticks", (const xmlChar*)buffer);
-	sprintf(buffer, "%d", lightChangeInterval);
-	xmlSetProp(nodeCondition, (const xmlChar*)"lightinterval", (const xmlChar*)buffer);
-	return nodeCondition;
-}
-
-bool ConditionLight::unserialize(xmlNodePtr p)
-{
-	if(!Condition::unserialize(p))
-		return false;
-
-	int32_t intValue;
-
-	if(readXMLInteger(p, "lightcolor", intValue))
-		lightInfo.color = intValue;
-
-	if(readXMLInteger(p, "lightlevel", intValue))
-		lightInfo.level = intValue;
-
-	if(readXMLInteger(p, "lightticks", intValue))
-		internalLightTicks = intValue;
-
-	if(readXMLInteger(p, "lightinterval", intValue))
-		lightChangeInterval = intValue;
-
-	return true;
 }
 
 bool ConditionLight::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
@@ -2178,9 +1835,4 @@ bool ConditionLight::serialize(PropWriteStream& propWriteStream)
 	propWriteStream.ADD_VALUE(lightChangeInterval);
 
 	return true;
-}
-
-uint32_t ConditionLight::getIcons() const
-{
-	return 0;
 }

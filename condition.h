@@ -26,8 +26,6 @@
 
 #include <list>
 #include <vector>
-#include <libxml/xmlmemory.h>
-#include <libxml/parser.h>
 
 class Creature;
 class Player;
@@ -60,7 +58,8 @@ enum ConditionType_t
 	CONDITION_DAZZLED		= 2097152,
 	CONDITION_CURSED		= 4194304,
 	CONDITION_EXHAUST_COMBAT	= 8388608,
-	CONDITION_EXHAUST_HEAL		= 16777216
+	CONDITION_EXHAUST_HEAL		= 16777216,
+	CONDITION_PACIFIED		= 33554432
 };
 
 enum ConditionEnd_t
@@ -98,6 +97,9 @@ enum ConditionAttr_t
 	CONDITIONATTR_STATS = 23,
 	CONDITIONATTR_OUTFIT = 24,
 	CONDITIONATTR_PERIODDAMAGE = 25,
+	CONDITIONATTR_SKILLSPERCENT = 26,
+	CONDITIONATTR_ISBUFF = 27,
+	CONDITIONATTR_SUBID = 28,
 
 	//reserved for serialization
 	CONDITIONATTR_END      = 254
@@ -120,8 +122,9 @@ class Condition
 		virtual bool executeCondition(Creature* creature, int32_t interval);
 		virtual void endCondition(Creature* creature, ConditionEnd_t reason) = 0;
 		virtual void addCondition(Creature* creature, const Condition* condition) = 0;
-		virtual uint32_t getIcons() const = 0;
-		virtual ConditionId_t getId() const {return id;}
+		virtual uint32_t getIcons() const;
+		ConditionId_t getId() const {return id;}
+		uint32_t getSubId() const {return subId;}
 
 		virtual Condition* clone() const = 0;
 
@@ -136,9 +139,6 @@ class Condition
 		virtual bool setParam(ConditionParam_t param, int32_t value);
 
 		//serialization
-		virtual xmlNodePtr serialize();
-		virtual bool unserialize(xmlNodePtr p);
-
 		bool unserialize(PropStream& propStream);
 		virtual bool serialize(PropWriteStream& propWriteStream);
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
@@ -147,9 +147,11 @@ class Condition
 
 	protected:
 		ConditionId_t id;
+		uint32_t subId;
 		int32_t ticks;
 		int64_t endTime;
 		ConditionType_t conditionType;
+		bool isBuff;
 
 		virtual bool updateCondition(const Condition* addCondition);
 };
@@ -194,22 +196,21 @@ class ConditionAttributes : public ConditionGeneric
 		virtual ConditionAttributes* clone() const { return new ConditionAttributes(*this); }
 
 		//serialization
-		virtual xmlNodePtr serialize();
-		virtual bool unserialize(xmlNodePtr p);
-
 		virtual bool serialize(PropWriteStream& propWriteStream);
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 
 	protected:
 		int32_t skills[SKILL_LAST + 1];
+		int32_t skillsPercent[SKILL_LAST + 1];
 		int32_t stats[STAT_LAST + 1];
 		int32_t statsPercent[STAT_LAST + 1];
 		int32_t currentSkill;
 		int32_t currentStat;
 
 		void updatePercentStats(Player* player);
-		void updateSkills(Player* player);
 		void updateStats(Player* player);
+		void updatePercentSkills(Player* player);
+		void updateSkills(Player* player);
 };
 
 class ConditionRegeneration : public ConditionGeneric
@@ -226,9 +227,6 @@ class ConditionRegeneration : public ConditionGeneric
 		virtual ConditionRegeneration* clone() const { return new ConditionRegeneration(*this); }
 
 		//serialization
-		virtual xmlNodePtr serialize();
-		virtual bool unserialize(xmlNodePtr p);
-
 		virtual bool serialize(PropWriteStream& propWriteStream);
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 
@@ -256,9 +254,6 @@ class ConditionSoul : public ConditionGeneric
 		virtual ConditionSoul* clone() const { return new ConditionSoul(*this); }
 
 		//serialization
-		virtual xmlNodePtr serialize();
-		virtual bool unserialize(xmlNodePtr p);
-
 		virtual bool serialize(PropWriteStream& propWriteStream);
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 
@@ -303,9 +298,6 @@ class ConditionDamage: public Condition
 		int32_t getTotalDamage() const;
 
 		//serialization
-		virtual xmlNodePtr serialize();
-		virtual bool unserialize(xmlNodePtr p);
-
 		virtual bool serialize(PropWriteStream& propWriteStream);
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 
@@ -350,9 +342,6 @@ class ConditionSpeed: public Condition
 		void setFormulaVars(float _mina, float _minb, float _maxa, float _maxb);
 
 		//serialization
-		virtual xmlNodePtr serialize();
-		virtual bool unserialize(xmlNodePtr p);
-
 		virtual bool serialize(PropWriteStream& propWriteStream);
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 
@@ -378,16 +367,12 @@ class ConditionOutfit: public Condition
 		virtual bool executeCondition(Creature* creature, int32_t interval);
 		virtual void endCondition(Creature* creature, ConditionEnd_t reason);
 		virtual void addCondition(Creature* creature, const Condition* condition);
-		virtual uint32_t getIcons() const;
 
 		virtual ConditionOutfit* clone() const { return new ConditionOutfit(*this); }
 
 		void addOutfit(Outfit_t outfit);
 
 		//serialization
-		virtual xmlNodePtr serialize();
-		virtual bool unserialize(xmlNodePtr p);
-
 		virtual bool serialize(PropWriteStream& propWriteStream);
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 
@@ -407,16 +392,12 @@ class ConditionLight: public Condition
 		virtual bool executeCondition(Creature* creature, int32_t interval);
 		virtual void endCondition(Creature* creature, ConditionEnd_t reason);
 		virtual void addCondition(Creature* creature, const Condition* addCondition);
-		virtual uint32_t getIcons() const;
 
 		virtual ConditionLight* clone() const { return new ConditionLight(*this); }
 
 		virtual bool setParam(ConditionParam_t param, int32_t value);
 
 		//serialization
-		virtual xmlNodePtr serialize();
-		virtual bool unserialize(xmlNodePtr p);
-
 		virtual bool serialize(PropWriteStream& propWriteStream);
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 

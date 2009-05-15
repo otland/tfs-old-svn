@@ -70,145 +70,12 @@ uint32_t ProtocolGame::protocolGameCount = 0;
 #endif
 
 // Helping templates to add dispatcher tasks
-template<class T1, class f1, class r>
-void ProtocolGame::addGameTask(r (Game::*f)(f1), T1 p1)
+template<class FunctionType>
+void ProtocolGame::addGameTaskInternal(const FunctionType& func)
 {
 	if(m_now > m_nextTask || m_messageCount < 5)
 	{
-		g_dispatcher.addTask(
-			createTask(boost::bind(f, &g_game, p1)));
-
-		m_nextTask = m_now + ADD_TASK_INTERVAL;
-	}
-	else
-	{
-		m_rejectCount++;
-		//std::cout << "reject task" << std::endl;
-	}
-}
-
-template<class T1, class T2, class f1, class f2, class r>
-void ProtocolGame::addGameTask(r (Game::*f)(f1, f2), T1 p1, T2 p2)
-{
-	if(m_now > m_nextTask || m_messageCount < 5)
-	{
-		g_dispatcher.addTask(
-			createTask(boost::bind(f, &g_game, p1, p2)));
-
-		m_nextTask = m_now + ADD_TASK_INTERVAL;
-	}
-	else
-	{
-		m_rejectCount++;
-		//std::cout << "reject task" << std::endl;
-	}
-}
-
-template<class T1, class T2, class T3,
-class f1, class f2, class f3,
-class r>
-void ProtocolGame::addGameTask(r (Game::*f)(f1, f2, f3), T1 p1, T2 p2, T3 p3)
-{
-	if(m_now > m_nextTask || m_messageCount < 5)
-	{
-		g_dispatcher.addTask(
-			createTask(boost::bind(f, &g_game, p1, p2, p3)));
-
-		m_nextTask = m_now + ADD_TASK_INTERVAL;
-	}
-	else
-	{
-		m_rejectCount++;
-		//std::cout << "reject task" << std::endl;
-	}
-}
-
-template<class T1, class T2, class T3, class T4,
-class f1, class f2, class f3, class f4,
-class r>
-void ProtocolGame::addGameTask(r (Game::*f)(f1, f2, f3, f4), T1 p1, T2 p2, T3 p3, T4 p4)
-{
-	if(m_now > m_nextTask || m_messageCount < 5)
-	{
-		g_dispatcher.addTask(
-			createTask(boost::bind(f, &g_game, p1, p2, p3, p4)));
-
-		m_nextTask = m_now + ADD_TASK_INTERVAL;
-	}
-	else
-	{
-		m_rejectCount++;
-		//std::cout << "reject task" << std::endl;
-	}
-}
-
-template<class T1, class T2, class T3, class T4, class T5,
-class f1, class f2, class f3, class f4, class f5,
-class r>
-void ProtocolGame::addGameTask(r (Game::*f)(f1, f2, f3, f4, f5), T1 p1, T2 p2, T3 p3, T4 p4, T5 p5)
-{
-	if(m_now > m_nextTask || m_messageCount < 5)
-	{
-		g_dispatcher.addTask(
-			createTask(boost::bind(f, &g_game, p1, p2, p3, p4, p5)));
-
-		m_nextTask = m_now + ADD_TASK_INTERVAL;
-	}
-	else
-	{
-		m_rejectCount++;
-		//std::cout << "reject task" << std::endl;
-	}
-}
-
-template<class T1, class T2, class T3, class T4, class T5, class T6,
-class f1, class f2, class f3, class f4, class f5, class f6,
-class r>
-void ProtocolGame::addGameTask(r (Game::*f)(f1, f2, f3, f4, f5, f6), T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6)
-{
-	if(m_now > m_nextTask || m_messageCount < 5)
-	{
-		g_dispatcher.addTask(
-			createTask(boost::bind(f, &g_game, p1, p2, p3, p4, p5, p6)));
-
-		m_nextTask = m_now + ADD_TASK_INTERVAL;
-	}
-	else
-	{
-		m_rejectCount++;
-		//std::cout << "reject task" << std::endl;
-	}
-}
-
-template<class T1, class T2, class T3, class T4, class T5, class T6, class T7,
-class f1, class f2, class f3, class f4, class f5, class f6, class f7,
-class r>
-void ProtocolGame::addGameTask(r (Game::*f)(f1, f2, f3, f4, f5, f6, f7), T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7)
-{
-	if(m_now > m_nextTask || m_messageCount < 5)
-	{
-		g_dispatcher.addTask(
-			createTask(boost::bind(f, &g_game, p1, p2, p3, p4, p5, p6, p7)));
-
-		m_nextTask = m_now + ADD_TASK_INTERVAL;
-	}
-	else
-	{
-		m_rejectCount++;
-		//std::cout << "reject task" << std::endl;
-	}
-}
-
-template<class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8,
-class f1, class f2, class f3, class f4, class f5, class f6, class f7, class f8,
-class r>
-void ProtocolGame::addGameTask(r (Game::*f)(f1, f2, f3, f4, f5, f6, f7, f8), T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8)
-{
-	if(m_now > m_nextTask || m_messageCount < 5)
-	{
-		g_dispatcher.addTask(
-			createTask(boost::bind(f, &g_game, p1, p2, p3, p4, p5, p6, p7, p8)));
-
+		g_dispatcher.addTask(createTask(func));
 		m_nextTask = m_now + ADD_TASK_INTERVAL;
 	}
 	else
@@ -281,9 +148,9 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		player = new Player(name, this);
 
 		bool letNamelockedLogin = true;
-		if(g_bans.isPlayerNamelocked(name) && accnumber > 1)
+		if(IOBan::getInstance()->isPlayerNamelocked(name) && accnumber > 1)
 		{
-			if(g_config.getString(ConfigManager::ACCOUNT_MANAGER) == "yes")
+			if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER))
 			{
 				player->name = "Account Manager";
 				player->namelockedPlayer = name;
@@ -304,7 +171,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			return false;
 		}
 
-		if(player->name == "Account Manager" && accnumber > 1 && !player->accountManager && g_config.getString(ConfigManager::ACCOUNT_MANAGER) == "yes")
+		if(player->name == "Account Manager" && accnumber > 1 && !player->accountManager && g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER))
 		{
 			player->accountManager = true;
 			player->realAccount = accnumber;
@@ -324,7 +191,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			int32_t reason = 0, action = 0;
 			std::string comment = "";
 			bool deletion = false;
-			if(g_bans.getBanInformation(accnumber, bannedBy, banTime, reason, action, comment, deletion))
+			if(IOBan::getInstance()->getBanInformation(accnumber, bannedBy, banTime, reason, action, comment, deletion))
 			{
 				uint64_t timeNow = time(NULL);
 				if((deletion && banTime != 0) || banTime > timeNow)
@@ -335,22 +202,20 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 					else
 						IOLoginData::getInstance()->getNameByGuid(bannedBy, name_);
 
-					char date[16];
-					formatDate2(banTime, date);
 					char buffer[500];
 					sprintf(buffer, "Your account has been %s by:\n%s, for the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s\nYour %s:\n%s.",
-						(deletion ? "deleted" : "banished") ,name_.c_str(),
+						(deletion ? "deleted" : "banished"), name_.c_str(),
 						getReason(reason).c_str(), getAction(action, false).c_str(),
 						comment.c_str(),
 						(deletion ? "account was deleted on" : "banishment will be lifted at"),
-						date);
+						formatDateShort(banTime).c_str());
 					disconnectClient(0x14, buffer);
 					return false;
 				}
 			}
 		}
 
-		if(!letNamelockedLogin || (player->getName() == "Account Manager" && g_config.getString(ConfigManager::ACCOUNT_MANAGER) != "yes"))
+		if(!letNamelockedLogin || (player->getName() == "Account Manager" && !g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER)))
 		{
 			disconnectClient(0x14, "Your character has been namelocked.");
 			return false;
@@ -368,7 +233,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			return false;
 		}
 
-		if(g_config.getString(ConfigManager::ONE_PLAYER_ON_ACCOUNT) == "yes" && player->getAccountType() < ACCOUNT_TYPE_GAMEMASTER && player->getName() != "Account Manager" && g_game.getPlayerByAccount(player->getAccount()))
+		if(g_config.getBoolean(ConfigManager::ONE_PLAYER_ON_ACCOUNT) && player->getAccountType() < ACCOUNT_TYPE_GAMEMASTER && player->getName() != "Account Manager" && g_game.getPlayerByAccount(player->getAccount()))
 		{
 			disconnectClient(0x14, "You may only login with one character\nof your account at the same time.");
 			return false;
@@ -418,7 +283,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 	}
 	else
 	{
-		if(eventConnect != 0)
+		if(eventConnect != 0 || !g_config.getBoolean(ConfigManager::REPLACE_KICK_ON_LOGIN))
 		{
 			//Already trying to connect
 			disconnectClient(0x14, "You are already logged in.");
@@ -553,7 +418,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 	if(!accnumber)
 	{
-		if(g_config.getString(ConfigManager::ACCOUNT_MANAGER) == "yes")
+		if(g_config.getBoolean(ConfigManager::ACCOUNT_MANAGER))
 		{
 			accnumber = 1;
 			password = "1";
@@ -583,7 +448,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	if(g_bans.isIpBanished(getIP()))
+	if(IOBan::getInstance()->isIpBanished(getIP()))
 	{
 		disconnectClient(0x14, "Your IP is banished!");
 		return false;
@@ -922,13 +787,11 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				break;
 
 			case 0xD2: // request outfit
-				if(g_config.getString(ConfigManager::ALLOW_CHANGEOUTFIT) == "yes")
-					parseRequestOutfit(msg);
+				parseRequestOutfit(msg);
 				break;
 
 			case 0xD3: // set outfit
-				if(g_config.getString(ConfigManager::ALLOW_CHANGEOUTFIT) == "yes")
-					parseSetOutfit(msg);
+				parseSetOutfit(msg);
 				break;
 
 			case 0xDC:
@@ -1187,8 +1050,7 @@ bool ProtocolGame::canSee(int32_t x, int32_t y, int32_t z) const
 //********************** Parse methods *******************************//
 void ProtocolGame::parseLogout(NetworkMessage& msg)
 {
-	g_dispatcher.addTask(
-		createTask(boost::bind(&ProtocolGame::logout, this, true, false)));
+	g_dispatcher.addTask(createTask(boost::bind(&ProtocolGame::logout, this, true, false)));
 }
 
 void ProtocolGame::parseCreatePrivateChannel(NetworkMessage& msg)
@@ -1323,11 +1185,17 @@ void ProtocolGame::parseTurn(NetworkMessage& msg, Direction dir)
 
 void ProtocolGame::parseRequestOutfit(NetworkMessage& msg)
 {
+	if(!g_config.getBoolean(ConfigManager::ALLOW_CHANGEOUTFIT))
+		return;
+
 	addGameTask(&Game::playerRequestOutfit, player->getID());
 }
 
 void ProtocolGame::parseSetOutfit(NetworkMessage& msg)
 {
+	if(!g_config.getBoolean(ConfigManager::ALLOW_CHANGEOUTFIT))
+		return;
+
 	uint16_t looktype = msg.GetU16();
 	uint8_t lookhead = msg.GetByte();
 	uint8_t lookbody = msg.GetByte();
@@ -1409,8 +1277,7 @@ void ProtocolGame::parseThrow(NetworkMessage& msg)
 	Position toPos = msg.GetPosition();
 	uint8_t count = msg.GetByte();
 	if(toPos != fromPos)
-		addGameTask(&Game::playerMoveThing, player->getID(), fromPos, spriteId,
-			fromStackpos, toPos, count);
+		addGameTask(&Game::playerMoveThing, player->getID(), fromPos, spriteId, fromStackpos, toPos, count);
 }
 
 void ProtocolGame::parseLookAt(NetworkMessage& msg)
@@ -1545,7 +1412,7 @@ void ProtocolGame::parseAcceptTrade(NetworkMessage& msg)
 void ProtocolGame::parseLookInTrade(NetworkMessage& msg)
 {
 	bool counterOffer = (msg.GetByte() == 0x01);
-	int32_t index = msg.GetByte();
+	uint8_t index = msg.GetByte();
 	addGameTask(&Game::playerLookInTrade, player->getID(), counterOffer, index);
 }
 
@@ -1581,6 +1448,7 @@ void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
 {
 	if(m_debugAssertSent)
 		return;
+
 	m_debugAssertSent = true;
 
 	std::string assertLine = msg.GetString();
@@ -1591,11 +1459,7 @@ void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
 	FILE* file = fopen("client_assertions.txt", "a");
 	if(file)
 	{
-		char bufferDate[32], bufferIp[32];
-		uint64_t tmp = time(NULL);
-		formatIP(getIP(), bufferIp);
-		formatDate(tmp, bufferDate);
-		fprintf(file, "----- %s - %s (%s) -----\n", bufferDate, player->getName().c_str(), bufferIp);
+		fprintf(file, "----- %s - %s (%s) -----\n", formatDate(time(NULL)).c_str(), player->getName().c_str(), convertIPToString(getIP()).c_str());
 		fprintf(file, "%s\n%s\n%s\n%s\n", assertLine.c_str(), date.c_str(), description.c_str(), comment.c_str());
 		fclose(file);
 	}
@@ -2638,11 +2502,7 @@ void ProtocolGame::sendTextWindow(uint32_t windowTextId, Item* item, uint16_t ma
 
 		time_t writtenDate = item->getDate();
 		if(writtenDate > 0)
-		{
-			char date[16];
-			formatDate2(writtenDate, date);
-			msg->AddString(date);
-		}
+			msg->AddString(formatDateShort(writtenDate));
 		else
 			msg->AddString("");
 	}

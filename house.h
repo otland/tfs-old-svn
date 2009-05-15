@@ -75,9 +75,6 @@ class Door : public Item
 		House* getHouse(){return house;}
 
 		//serialization
-		virtual bool unserialize(xmlNodePtr p);
-		virtual xmlNodePtr serialize();
-
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool serializeAttr(PropWriteStream& propWriteStream) const;
 

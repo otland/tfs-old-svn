@@ -174,12 +174,11 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool isInGhostMode() const {return false;}
 
 		int64_t getSleepTicks() const;
-		int32_t getWalkDelay(Direction dir) const;
+		int32_t getWalkDelay(Direction dir, uint32_t resolution) const;
 		int64_t getTimeSinceLastMove() const;
 
-		virtual int64_t getEventStepTicks() const;
-
-		int32_t getStepDuration() const;
+		int64_t getEventStepTicks() const;
+		int32_t getStepDuration(bool addLastStepCost = true) const;
 		virtual int32_t getStepSpeed() const {return getSpeed();}
 		int32_t getSpeed() const {return baseSpeed + varSpeed;}
 		void setSpeed(int32_t varSpeedDelta)
@@ -261,8 +260,7 @@ class Creature : public AutoID, virtual public Thing
 		void removeCondition(ConditionType_t type);
 		void removeCondition(Condition* condition);
 		void removeCondition(const Creature* attacker, ConditionType_t type);
-		Condition* getCondition(ConditionType_t type, ConditionId_t id) const;
-		Condition* getCondition(ConditionType_t type) const;
+		Condition* getCondition(ConditionType_t type, ConditionId_t id, uint32_t subId = 0) const;
 		void executeConditions(uint32_t interval);
 		bool hasCondition(ConditionType_t type) const;
 		virtual bool isImmune(ConditionType_t type) const;
@@ -300,7 +298,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual void onAttackedCreatureDrainHealth(Creature* target, int32_t points);
 		virtual void onTargetCreatureGainHealth(Creature* target, int32_t points);
 		virtual void onAttackedCreatureKilled(Creature* target);
-		virtual void onKilledCreature(Creature* target);
+		virtual void onKilledCreature(Creature* target, bool lastHit = true);
 		virtual void onGainExperience(uint64_t gainExp);
 		virtual void onGainSharedExperience(uint64_t gainExp);
 		virtual void onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType);
@@ -380,7 +378,7 @@ class Creature : public AutoID, virtual public Thing
 		bool isInternalRemoved;
 		bool isMapLoaded;
 		bool isUpdatingPath;
-		size_t checkCreatureVectorIndex;
+		int32_t checkCreatureVectorIndex;
 		int32_t health, healthMax;
 		int32_t mana, manaMax;
 
@@ -392,7 +390,6 @@ class Creature : public AutoID, virtual public Thing
 		int32_t masterRadius;
 		uint64_t lastStep;
 		uint32_t lastStepCost;
-		uint32_t extraStepDuration;
 		uint32_t baseSpeed;
 		int32_t varSpeed;
 		bool skillLoss;

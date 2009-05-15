@@ -50,7 +50,6 @@ extern Chat g_chat;
 extern Vocations g_vocations;
 extern MoveEvents* g_moveEvents;
 extern Weapons* g_weapons;
-extern Ban g_bans;
 extern CreatureEvents* g_creatureEvents;
 #ifndef __CONSOLE__
 extern GUI gui;
@@ -512,6 +511,9 @@ int32_t Player::getDefense() const
 
 	if(vocation->defenseMultipler != 1.0)
 		defenseValue = int32_t(defenseValue * vocation->defenseMultipler);
+
+	if(defenseSkill == 0)
+		return 0;
 
 	return ((int32_t)std::ceil(((float)(defenseSkill * (defenseValue * 0.015)) + (defenseValue * 0.1)) * defenseFactor));
 }
@@ -1555,26 +1557,38 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 {
 	Creature::onCreatureMove(creature, newTile, newPos, oldTile, oldPos, oldStackPos, teleport);
 
-	if(creature == this)
-	{
-		if(tradeState != TRADE_TRANSFER)
-		{
-			//check if we should close trade
-			if(tradeItem)
-			{
-				if(!Position::areInRange<1,1,0>(tradeItem->getPosition(), getPosition()))
-					g_game.internalCloseTrade(this);
-			}
+	if(creature != this)
+		return;
 
-			if(tradePartner)
-			{
-				if(!Position::areInRange<2,2,0>(tradePartner->getPosition(), getPosition()))
-					g_game.internalCloseTrade(this);
-			}
+	if(tradeState != TRADE_TRANSFER)
+	{
+		//check if we should close trade
+		if(tradeItem)
+		{
+			if(!Position::areInRange<1,1,0>(tradeItem->getPosition(), getPosition()))
+				g_game.internalCloseTrade(this);
 		}
 
-		if(getParty())
-			getParty()->updateSharedExperience();
+		if(tradePartner)
+		{
+			if(!Position::areInRange<2,2,0>(tradePartner->getPosition(), getPosition()))
+				g_game.internalCloseTrade(this);
+		}
+	}
+
+	if(getParty())
+		getParty()->updateSharedExperience();
+
+	if(teleport || oldPos.z != newPos.z)
+	{
+		int32_t ticks = g_config.getNumber(ConfigManager::STAIRHOP_DELAY);
+		if(ticks > 0)
+		{
+			addCombatExhaust(ticks);
+			addWeaponExhaust(ticks);
+			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_PACIFIED, ticks, 0))
+				addCondition(condition);
+		}
 	}
 }
 
@@ -3167,6 +3181,9 @@ void Player::doAttacking(uint32_t interval)
 	if(lastAttack == 0)
 		lastAttack = OTSYS_TIME() - getAttackSpeed() - 1;
 
+	if(hasCondition(CONDITION_PACIFIED))
+		return;
+
 	if((OTSYS_TIME() - lastAttack) >= getAttackSpeed())
 	{
 		Item* tool = getWeapon();
@@ -3197,7 +3214,7 @@ void Player::doAttacking(uint32_t interval)
 
 uint64_t Player::getGainedExperience(Creature* attacker) const
 {
-	if(g_config.getString(ConfigManager::EXPERIENCE_FROM_PLAYERS) == "yes")
+	if(g_config.getBoolean(ConfigManager::EXPERIENCE_FROM_PLAYERS))
 	{
 		Player* attackerPlayer = attacker->getPlayer();
 		if(attackerPlayer && attackerPlayer != this && skillLoss)
@@ -3274,10 +3291,7 @@ void Player::onWalkComplete()
 void Player::stopWalk()
 {
 	if(!listWalkDir.empty())
-	{
-		extraStepDuration = getStepDuration();
 		stopEventWalk();
-	}
 }
 
 void Player::getCreatureLight(LightInfo& light) const
@@ -3486,12 +3500,12 @@ void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)
 	}
 }
 
-void Player::onKilledCreature(Creature* target)
+void Player::onKilledCreature(Creature* target, bool lastHit/* = true*/)
 {
 	if(hasFlag(PlayerFlag_NotGenerateLoot))
 		target->setDropLoot(false);
 
-	Creature::onKilledCreature(target);
+	Creature::onKilledCreature(target, lastHit);
 
 	if(Player* targetPlayer = target->getPlayer())
 	{
@@ -3510,7 +3524,7 @@ void Player::onKilledCreature(Creature* target)
 				addUnjustifiedDead(targetPlayer);
 			}
 
-			if(!Combat::isInPvpZone(this, targetPlayer) && hasCondition(CONDITION_INFIGHT))
+			if(lastHit && !Combat::isInPvpZone(this, targetPlayer) && hasCondition(CONDITION_INFIGHT))
 			{
 				pzLocked = true;
 				Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT, g_config.getNumber(ConfigManager::WHITE_SKULL_TIME), 0);
@@ -3765,11 +3779,11 @@ void Player::addUnjustifiedDead(const Player* attacked)
 	{
 		Account account = IOLoginData::getInstance()->loadAccount(accountNumber);
 		if(account.warnings > 3)
-			g_bans.addAccountDeletion(accountNumber, time(NULL), 20, 7, "No comment.", 0);
+			IOBan::getInstance()->addAccountDeletion(accountNumber, time(NULL), 20, 7, "No comment.", 0);
 		else if(account.warnings == 3)
-			g_bans.addAccountBan(accountNumber, time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400), 20, 4, "No comment.", 0);
+			IOBan::getInstance()->addAccountBan(accountNumber, time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400), 20, 4, "No comment.", 0);
 		else
-			g_bans.addAccountBan(accountNumber, time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400), 20, 2, "No comment.", 0);
+			IOBan::getInstance()->addAccountBan(accountNumber, time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400), 20, 2, "No comment.", 0);
 
 		uint32_t playerId = getID();
 		g_game.addMagicEffect(getPosition(), NM_ME_MAGIC_POISON);
@@ -3885,7 +3899,7 @@ void Player::manageAccount(const std::string &text)
 				IOLoginData::getInstance()->getGuidByName(_guid, namelockedPlayer);
 				if(IOLoginData::getInstance()->changeName(_guid, newCharacterName))
 				{
-					g_bans.removePlayerNamelock(_guid);
+					IOBan::getInstance()->removePlayerNamelock(_guid);
 
 					talkState[1] = true;
 					talkState[2] = false;
@@ -4084,7 +4098,7 @@ void Player::manageAccount(const std::string &text)
 		}
 		else if(checkText(text, "yes") && talkState[9])
 		{
-			if(g_config.getString(ConfigManager::START_CHOOSEVOC) == "yes")
+			if(g_config.getBoolean(ConfigManager::START_CHOOSEVOC))
 			{
 				talkState[9] = false;
 				talkState[11] = true;
@@ -4226,7 +4240,7 @@ void Player::manageAccount(const std::string &text)
 		}
 		else if(checkText(text, "yes") && talkState[3])
 		{
-			if(g_config.getString(ConfigManager::GENERATE_ACCOUNT_NUMBER) == "yes")
+			if(g_config.getBoolean(ConfigManager::GENERATE_ACCOUNT_NUMBER))
 			{
 				do
 				{
@@ -4355,8 +4369,9 @@ void Player::resetGuildInformation()
 
 bool Player::isPremium() const
 {
-	if(g_config.getString(ConfigManager::FREE_PREMIUM) == "yes" || hasFlag(PlayerFlag_IsAlwaysPremium))
+	if(g_config.getBoolean(ConfigManager::FREE_PREMIUM) || hasFlag(PlayerFlag_IsAlwaysPremium))
 		return true;
+
 	return premiumDays;
 }
 

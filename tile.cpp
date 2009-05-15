@@ -313,9 +313,6 @@ void Tile::onAddTileItem(Item* item)
 void Tile::onUpdateTileItem(uint32_t index, Item* oldItem,
 	const ItemType& oldType, Item* newItem, const ItemType& newType)
 {
-	updateTileFlags(oldItem, true);
-	updateTileFlags(newItem, false);
-
 	const Position& cylinderMapPos = getPosition();
 
 	const SpectatorVec& list = g_game.getSpectators(cylinderMapPos);
@@ -851,6 +848,8 @@ void Tile::__addThing(int32_t index, Thing* thing)
 				ground->setParent(NULL);
 				g_game.FreeThing(ground);
 				ground = item;
+				updateTileFlags(oldGround, true);
+				updateTileFlags(item, false);
 				onUpdateTileItem(index, oldGround, oldType, item, newType);
 			}
 		}
@@ -967,8 +966,13 @@ void Tile::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
 	const ItemType& oldType = Item::items[item->getID()];
 	const ItemType& newType = Item::items[itemId];
 
+	updateTileFlags(item, true);
+
 	item->setID(itemId);
 	item->setSubType(count);
+
+	updateTileFlags(item, false);
+
 	onUpdateTileItem(index, item, oldType, item, newType);
 }
 
@@ -1054,6 +1058,8 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 	{
 		item->setParent(this);
 
+		updateTileFlags(oldItem, true);
+		updateTileFlags(item, false);
 		const ItemType& oldType = Item::items[oldItem->getID()];
 		const ItemType& newType = Item::items[item->getID()];
 		onUpdateTileItem(index, oldItem, oldType, item, newType);
@@ -1161,7 +1167,9 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 						if(item->isStackable() && count != item->getItemCount())
 						{
 							uint8_t newCount = (uint8_t)std::max((int32_t)0, (int32_t)(item->getItemCount() - count));
+							updateTileFlags(item, true);
 							item->setItemCount(newCount);
+							updateTileFlags(item, false);
 
 							const ItemType& it = Item::items[item->getID()];
 							onUpdateTileItem(index, item, it, item, it);

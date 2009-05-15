@@ -81,7 +81,6 @@ void ServiceManager::stop()
 ServicePort::ServicePort(boost::asio::io_service& io_service) :
 	m_io_service(io_service),
 	m_acceptor(NULL),
-	m_listenErrors(0),
 	m_serverPort(0),
 	m_pendingStart(false)
 {
@@ -169,9 +168,6 @@ void ServicePort::onAccept(boost::asio::ip::tcp::socket* socket, const boost::sy
 	{
 		if(error != boost::asio::error::operation_aborted)
 		{
-			m_listenErrors++;
-			std::cout << "Warning [ServicePort::onAccept] Listen error occurred (total " << m_listenErrors << ")." << std::endl;
-
 			if(!m_pendingStart)
 			{
 				close();

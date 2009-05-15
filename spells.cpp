@@ -2101,7 +2101,7 @@ bool RuneSpell::executeUse(Player* player, Item* item, const PositionEx& posFrom
 		Spell::postCastSpell(player);
 		if(hasCharges && item)
 		{
-			if(g_config.getString(ConfigManager::REMOVE_RUNE_CHARGES) == "yes")
+			if(g_config.getBoolean(ConfigManager::REMOVE_RUNE_CHARGES))
 			{
 				int32_t newCharge = std::max((int32_t)0, ((int32_t)item->getCharges()) - 1);
 				g_game.transformItem(item, item->getID(), newCharge);

@@ -201,7 +201,7 @@ int32_t Items::loadFromOtb(std::string file)
 		std::cout << "Old version detected, a newer version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
 	}
-	else if(Items::dwMinorVersion < CLIENT_VERSION_820)
+	else if(Items::dwMinorVersion < CLIENT_VERSION_842)
 	{
 		std::cout << "A newer version of items.otb is required." << std::endl;
 		return ERROR_INVALID_FORMAT;
@@ -431,6 +431,11 @@ bool Items::loadFromXml()
 										it.type = ITEM_TYPE_KEY;
 									else if(tmpStrValue == "magicfield")
 										it.type = ITEM_TYPE_MAGICFIELD;
+									else if(tmpStrValue == "container")
+									{
+										it.group = ITEM_GROUP_CONTAINER;
+										it.type = ITEM_TYPE_CONTAINER;
+									}
 									else if(tmpStrValue == "depot")
 										it.type = ITEM_TYPE_DEPOT;
 									else if(tmpStrValue == "mailbox")
@@ -600,6 +605,11 @@ bool Items::loadFromXml()
 									else
 										std::cout << "Warning: [Items::loadFromXml] " << "Unknown fluidSource " << strValue << std::endl;
 								}
+							}
+							else if(tmpStrValue == "readable")
+							{
+								if(readXMLInteger(itemAttributesNode, "value", intValue))
+									it.canReadText = (intValue != 0);
 							}
 							else if(tmpStrValue == "writeable")
 							{

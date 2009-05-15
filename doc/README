@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2
+		0.2.2
 
 	Codenamed
 		"Mystic Spirit"
@@ -97,11 +97,11 @@
 
 		Download sourcecode
 			Launch a terminal, and paste in this command:
-				svn co http://svn.otland.net/public/forgottenserver/tags/0.2pl17
+				svn co http://svn.otland.net/public/forgottenserver/tags/0.2.2
 
 		Compiling
 			Launch a terminal, and type this command:
-				cd 0.2pl17/ && make
+				cd 0.2.2/ && make
 
 		Linker eror
 			If you receive a linker error saying something with 'libboost', try pasting the following commands to terminal and then move back to compiling again:
@@ -130,7 +130,7 @@
 [ EXECUTING
 	Linux
 		MySQL
-			Read mysql-help.txt, and then launch a terminal, and paste in this command:
+			Read MYSQL_HELP, and then launch a terminal, and paste in this command:
 				cd ~/forgottenserver/forgottenserver/ && ./TheForgottenServer
 
 		SqLite

@@ -388,7 +388,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 		}
 	}
 
-	if(channelId == 0x00 && g_config.getString(ConfigManager::INGAME_GUILD_SYSTEM) == "yes")
+	if(channelId == 0x00 && g_config.getBoolean(ConfigManager::INGAME_GUILD_SYSTEM))
 	{
 		if(text == "!disband" || text == "!guildonline" || text.substr(0, 7) == "!invite" || text == "!leave" || text.substr(0, 5) == "!kick" || text.substr(0, 7) == "!revoke" || text.substr(0, 7) == "!demote" || text.substr(0, 8) == "!promote" || text.substr(0, 15) == "!passleadership" || text.substr(0, 5) == "!nick" || text.substr(0, 12) == "!setrankname" || text.substr(0, 8) == "!setmotd" || text == "!cleanmotd" || text == "!commands")
 		{

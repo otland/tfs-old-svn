@@ -55,7 +55,6 @@ DBResult::DBResult()
 {
 	m_numFields = 0;
 	m_numRows = 0;
-	/*m_lastNumFields = 0;*/
 }
 
 DBResult::~DBResult()

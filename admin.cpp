@@ -680,7 +680,6 @@ bool AdminProtocolConfig::loadXMLConfig()
 		p = p->next;
 	}
 	xmlFreeDoc(doc);
-
 	return true;
 }
 
@@ -696,13 +695,12 @@ bool AdminProtocolConfig::onlyLocalHost()
 
 bool AdminProtocolConfig::addConnection()
 {
-	if(m_currrentConnections >= m_maxConnections)
-		return false;
-	else
+	if(m_currrentConnections < m_maxConnections)
 	{
 		m_currrentConnections++;
 		return true;
 	}
+	return false;
 }
 
 void AdminProtocolConfig::removeConnection()
@@ -716,33 +714,23 @@ bool AdminProtocolConfig::passwordMatch(std::string& password)
 	//prevent empty password login
 	if(m_password == "")
 		return false;
-	if(password == m_password)
-		return true;
-	else
-		return false;
+
+	return password == m_password;
 }
 
 bool AdminProtocolConfig::allowIP(uint32_t ip)
 {
 	if(m_onlyLocalHost)
 	{
-		if(ip == 0x0100007F) //127.0.0.1
-			return true;
-		else
+		if(ip != 0x0100007F) //127.0.0.1
 		{
-			char str_ip[32];
-			formatIP(ip, str_ip);
-			addLogLine(NULL, LOGTYPE_WARNING, 1, std::string("forbidden connection try from ") + str_ip);
+			addLogLine(NULL, LOGTYPE_WARNING, 1, std::string("forbidden connection try from ") + convertIPToString(ip));
 			return false;
 		}
-	}
-	else
-	{
-		if(!g_bans.isIpDisabled(ip))
-			return true;
 		else
-			return false;
+			return true;
 	}
+	return !g_bans.isIpDisabled(ip);
 }
 
 bool AdminProtocolConfig::requireLogin()
@@ -760,8 +748,10 @@ uint16_t AdminProtocolConfig::getProtocolPolicy()
 	uint16_t policy = 0;
 	if(requireLogin())
 		policy = policy | REQUIRE_LOGIN;
+
 	if(requireEncryption())
 		policy = policy | REQUIRE_ENCRYPTION;
+
 	return policy;
 }
 
@@ -782,7 +772,7 @@ RSA* AdminProtocolConfig::getRSAKey(uint8_t type)
 	{
 		case ENCRYPTION_RSA1024XTEA:
 			return m_key_RSA1024XTEA;
-			break;
+
 		default:
 			return NULL;
 	}
@@ -792,18 +782,13 @@ RSA* AdminProtocolConfig::getRSAKey(uint8_t type)
 
 static void addLogLine(ProtocolAdmin* conn, eLogType type, int level, std::string message)
 {
-	if(g_config.getString(ConfigManager::ADMIN_LOGS_ENABLED) == "yes")
+	if(g_config.getBoolean(ConfigManager::ADMIN_LOGS_ENABLED))
 	{
 		std::string logMsg;
 		if(conn)
-		{
-			uint32_t ip = conn->getIP();
-			char buffer[32];
-			formatIP(ip, buffer);
-			logMsg = buffer;
-			logMsg = "[" + logMsg + "] - ";
-		}
-		logMsg = logMsg + message;
+			logMsg = "[" + convertIPToString(conn->getIP()) + "] - ";
+
+		logMsg += message;
 		LOG_MESSAGE("OTADMIN", type, level, logMsg);
 	}
 }

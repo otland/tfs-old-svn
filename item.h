@@ -29,9 +29,6 @@
 #include <list>
 #include <vector>
 
-#include <libxml/xmlmemory.h>
-#include <libxml/parser.h>
-
 class Creature;
 class Player;
 class Container;
@@ -287,13 +284,9 @@ class Item : virtual public Thing, public ItemAttributes
 		std::string getWeightDescription() const;
 
 		//serialization
-		virtual bool unserialize(xmlNodePtr p);
-		virtual xmlNodePtr serialize();
-
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool unserializeAttr(PropStream& propStream);
 		virtual bool unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream);
-		//virtual bool serializeItemNode();
 
 		virtual bool serializeAttr(PropWriteStream& propWriteStream) const;
 

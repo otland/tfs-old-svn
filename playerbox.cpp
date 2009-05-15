@@ -27,7 +27,6 @@
 
 extern Game g_game;
 extern GUI gui;
-extern Ban g_bans;
 
 HWND PlayerBox::parent = NULL;
 HWND PlayerBox::playerBox = NULL;
@@ -130,7 +129,8 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 							if(player)
 							{
 								if((HWND)lParam == permBan)
-									g_bans.addAccountBan(player->getAccount(), 0xFFFFFFFF, 33, 2, "Permanent banishment", 0);
+									IOBan::getInstance()->addAccountBan(player->getAccount(), 0xFFFFFFFF, 33, 2, "Permanent banishment", 0);
+
 								player->kickPlayer(true);
 							}
 						}

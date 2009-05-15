@@ -171,10 +171,7 @@ void Raids::checkRaids()
 				if(MAX_RAND_RANGE*CHECK_RAIDS_INTERVAL/(*it)->getInterval() >= (uint32_t)random_range(0, MAX_RAND_RANGE))
 				{
 					#ifdef __DEBUG_RAID__
-					char buffer[40];
-					uint64_t tmp = time(NULL);
-					formatDate(tmp, buffer);
-					std::cout << buffer << " [Notice] Raids: Starting raid " << (*it)->getName() << std::endl;
+					std::cout << formatDate(time(NULL)) << " [Notice] Raids: Starting raid " << (*it)->getName() << std::endl;
 					#endif
 					setRunning(*it);
 					(*it)->startRaid();

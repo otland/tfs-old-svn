@@ -62,7 +62,6 @@ Creature::Creature() :
 
 	lastStep = 0;
 	lastStepCost = 1;
-	extraStepDuration = 0;
 	baseSpeed = 220;
 	varSpeed = 0;
 
@@ -85,7 +84,7 @@ Creature::Creature() :
 	blockCount = 0;
 	blockTicks = 0;
 	walkUpdateTicks = 0;
-	checkCreatureVectorIndex = 0;
+	checkCreatureVectorIndex = -1;
 
 	scriptEventsBitField = 0;
 	onIdleStatus();
@@ -168,19 +167,25 @@ int64_t Creature::getSleepTicks() const
 	{
 		int64_t ct = OTSYS_TIME();
 		int64_t stepDuration = getStepDuration();
-		int64_t delay = stepDuration - (ct - lastStep) + extraStepDuration;
+		int64_t delay = stepDuration - (ct - lastStep);
 		return delay;
 	}
 	return 0;
 }
 
-int32_t Creature::getWalkDelay(Direction dir) const
+int32_t Creature::getWalkDelay(Direction dir, uint32_t resolution) const
 {
-	float mul = 1.0f;
-	if(dir == NORTHWEST || dir == NORTHEAST || dir == SOUTHWEST || dir == SOUTHEAST)
-		mul = 1.5f;
+	if(lastStep != 0)
+	{
+		float mul = 1.0f;
+		if(dir == NORTHWEST || dir == NORTHEAST || dir == SOUTHWEST || dir == SOUTHEAST)
+			mul = 3.0f;
 
-	return int32_t(getSleepTicks() * mul);
+		int64_t ct = OTSYS_TIME();
+		int64_t stepDuration = (int64_t)std::ceil(((double)getStepDuration(false) * mul)/resolution) * resolution;
+		return stepDuration - (ct - lastStep);
+	}
+	return 0;
 }
 
 void Creature::onThink(uint32_t interval)
@@ -564,7 +569,6 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 	if(creature == this)
 	{
 		lastStep = OTSYS_TIME();
-		extraStepDuration = 0;
 		lastStepCost = 1;
 		if(!teleport)
 		{
@@ -576,7 +580,7 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 			else if(std::abs(newPos.x - oldPos.x) >=1 && std::abs(newPos.y - oldPos.y) >= 1)
 			{
 				//diagonal extra cost
-				lastStepCost = 2;
+				lastStepCost = 3;
 			}
 		}
 		else
@@ -766,7 +770,7 @@ void Creature::onDeath()
 			bool isNotMostDamageMaster = (_lastHitCreature != mostDamageCreatureMaster);
 			bool isNotSameMaster = lastHitCreatureMaster == NULL || (mostDamageCreatureMaster != lastHitCreatureMaster);
 			if(mostDamageCreature != _lastHitCreature && isNotLastHitMaster && isNotMostDamageMaster && isNotSameMaster)
-				mostDamageCreature->onKilledCreature(this);
+				mostDamageCreature->onKilledCreature(this, false);
 		}
 	}
 
@@ -1190,7 +1194,7 @@ void Creature::onAttackedCreatureKilled(Creature* target)
 	}
 }
 
-void Creature::onKilledCreature(Creature* target)
+void Creature::onKilledCreature(Creature* target, bool lastHit/* = true*/)
 {
 	if(getMaster())
 		getMaster()->onKilledCreature(target);
@@ -1266,7 +1270,7 @@ bool Creature::addCondition(Condition* condition)
 	if(condition == NULL)
 		return false;
 
-	Condition* prevCond = getCondition(condition->getType(), condition->getId());
+	Condition* prevCond = getCondition(condition->getType(), condition->getId(), condition->getSubId());
 	if(prevCond)
 	{
 		prevCond->addCondition(this, condition);
@@ -1358,22 +1362,11 @@ void Creature::removeCondition(Condition* condition)
 	}
 }
 
-Condition* Creature::getCondition(ConditionType_t type, ConditionId_t id) const
+Condition* Creature::getCondition(ConditionType_t type, ConditionId_t id, uint32_t subId/* = 0*/) const
 {
 	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
-		if((*it)->getType() == type && (*it)->getId() == id)
-			return *it;
-	}
-	return NULL;
-}
-
-Condition* Creature::getCondition(ConditionType_t type) const
-{
-	//This one just returns the first one found.
-	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
-	{
-		if((*it)->getType() == type)
+		if((*it)->getType() == type && (*it)->getId() == id && (*it)->getSubId() == subId)
 			return *it;
 	}
 	return NULL;
@@ -1383,9 +1376,6 @@ void Creature::executeConditions(uint32_t interval)
 {
 	for(ConditionList::iterator it = conditions.begin(); it != conditions.end();)
 	{
-		//(*it)->executeCondition(this, newticks);
-		//if((*it)->getTicks() <= 0){
-
 		if(!(*it)->executeCondition(this, interval))
 		{
 			ConditionType_t type = (*it)->getType();
@@ -1415,7 +1405,7 @@ bool Creature::hasCondition(ConditionType_t type) const
 	{
 		if((*it)->getType() == type)
 		{
-			if(g_config.getString(ConfigManager::OLD_CONDITION_ACCURACY) == "yes")
+			if(g_config.getBoolean(ConfigManager::OLD_CONDITION_ACCURACY))
 				return true;
 
 			if((*it)->getEndTime() == 0)
@@ -1456,7 +1446,7 @@ std::string Creature::getDescription(int32_t lookDistance) const
 	return str;
 }
 
-int32_t Creature::getStepDuration() const
+int32_t Creature::getStepDuration(bool addLastStepCost /*= true*/) const
 {
 	if(isRemoved())
 		return 0;
@@ -1471,7 +1461,7 @@ int32_t Creature::getStepDuration() const
 		if(stepSpeed != 0)
 			duration = (1000 * groundSpeed) / stepSpeed;
 	}
-	return duration * lastStepCost;
+	return duration * (addLastStepCost ? lastStepCost : 1);
 }
 
 int64_t Creature::getEventStepTicks() const

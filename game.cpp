@@ -63,7 +63,6 @@ extern Commands commands;
 extern Chat g_chat;
 extern TalkActions* g_talkActions;
 extern Spells* g_spells;
-extern Ban g_bans;
 extern Vocations g_vocations;
 
 Game::Game()
@@ -177,7 +176,7 @@ void Game::setGameState(GameState_t newState)
 
 				saveGameState(false, true);
 
-				if(g_config.getString(ConfigManager::FREE_MEMORY_AT_SHUTDOWN) == "yes")
+				if(g_config.getBoolean(ConfigManager::FREE_MEMORY_AT_SHUTDOWN))
 				{
 					g_dispatcher.addTask(
 						createTask(boost::bind(&Game::shutdown, this)));
@@ -230,7 +229,6 @@ void Game::saveGameState(bool savePlayers, bool shutdown/* = false*/)
 		}
 	}
 
-	g_bans.saveBans();
 	map->saveMap();
 	ScriptEnviroment::saveGameState();
 	stateTime = OTSYS_TIME() + STATE_TIME;
@@ -451,7 +449,7 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 			int32_t subType = -1;
 			if(it.isFluidContainer())
 			{
-				int32_t maxFluidType = sizeof(reverseFluidMap) / sizeof(uint32_t);
+				int32_t maxFluidType = sizeof(reverseFluidMap) / sizeof(uint8_t);
 				if(index < maxFluidType)
 					subType = reverseFluidMap[index];
 			}
@@ -1839,7 +1837,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 
 		newItem->copyAttributes(item);
 
-		ret = internalAddItem(cylinder, newItem, INDEX_WHEREEVER);
+		ret = internalAddItem(cylinder, newItem, INDEX_WHEREEVER, FLAG_NOLIMIT);
 		if(ret != RET_NOERROR)
 		{
 			delete newItem;
@@ -1966,7 +1964,9 @@ bool Game::playerMove(uint32_t playerId, Direction direction)
 	}
 
 	player->stopWalk();
-	int32_t delay = player->getWalkDelay(direction);
+
+	//client works with 50 ms resolution
+	int32_t delay = player->getWalkDelay(direction, 50);
 	if(delay > 0)
 	{
 		player->setNextAction(OTSYS_TIME() + player->getStepDuration());
@@ -2208,7 +2208,7 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, uint8_t f
 	if(!player || player->isRemoved())
 		return false;
 
-	if(isHotkey && g_config.getString(ConfigManager::AIMBOT_HOTKEY_ENABLED) == "no")
+	if(isHotkey && !g_config.getBoolean(ConfigManager::AIMBOT_HOTKEY_ENABLED))
 		return false;
 
 	Thing* thing = internalGetThing(player, fromPos, fromStackPos, fromSpriteId, STACKPOS_USEITEM);
@@ -2301,7 +2301,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, uint8_t stackPo
 	if(!player || player->isRemoved())
 		return false;
 
-	if(isHotkey && g_config.getString(ConfigManager::AIMBOT_HOTKEY_ENABLED) == "no")
+	if(isHotkey && !g_config.getBoolean(ConfigManager::AIMBOT_HOTKEY_ENABLED))
 		return false;
 
 	Thing* thing = internalGetThing(player, pos, stackPos, spriteId, STACKPOS_USEITEM);
@@ -2369,7 +2369,7 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, uin
 	if(!Position::areInRange<7,5,0>(creature->getPosition(), player->getPosition()))
 		return false;
 
-	if(g_config.getString(ConfigManager::AIMBOT_HOTKEY_ENABLED) == "no")
+	if(!g_config.getBoolean(ConfigManager::AIMBOT_HOTKEY_ENABLED))
 	{
 		if(creature->getPlayer() || isHotkey)
 		{
@@ -2985,7 +2985,7 @@ bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t coun
 	uint8_t subType = 0;
 	if(it.isFluidContainer())
 	{
-		int32_t maxFluidType = sizeof(reverseFluidMap) / sizeof(uint32_t);
+		int32_t maxFluidType = sizeof(reverseFluidMap) / sizeof(uint8_t);
 		if(count < maxFluidType)
 			subType = (uint8_t)reverseFluidMap[count];
 	}
@@ -3017,7 +3017,7 @@ bool Game::playerSellItem(uint32_t playerId, uint16_t spriteId, uint8_t count,
 	uint8_t subType = 0;
 	if(it.isFluidContainer())
 	{
-		int32_t maxFluidType = sizeof(reverseFluidMap) / sizeof(uint32_t);
+		int32_t maxFluidType = sizeof(reverseFluidMap) / sizeof(uint8_t);
 		if(count < maxFluidType)
 			subType = (uint8_t)reverseFluidMap[count];
 	}
@@ -3051,7 +3051,7 @@ bool Game::playerLookInShop(uint32_t playerId, uint16_t spriteId, uint8_t count)
 	int32_t subType = 0;
 	if(it.isFluidContainer())
 	{
-		int32_t maxFluidType = sizeof(reverseFluidMap) / sizeof(uint32_t);
+		int32_t maxFluidType = sizeof(reverseFluidMap) / sizeof(uint8_t);
 		if(count < maxFluidType)
 			subType = reverseFluidMap[count];
 	}
@@ -3733,43 +3733,57 @@ void Game::checkCreatureAttack(uint32_t creatureId)
 
 void Game::addCreatureCheck(Creature* creature)
 {
-	if(creature->checkCreatureVectorIndex != 0)
+	if(creature->checkCreatureVectorIndex >= 0)
 		return; //Already in a vector
 
-	int32_t tmp = (checkCreatureLastIndex + 1) % EVENT_CREATURECOUNT;
-	checkCreatureVectors[tmp].push_back(creature);
-	creature->checkCreatureVectorIndex = tmp + 1;
+	toAddCheckCreatureVector.push_back(creature);
+	creature->checkCreatureVectorIndex = 0;
+	creature->useThing2();
 }
 
 void Game::removeCreatureCheck(Creature* creature)
 {
-	if(creature->checkCreatureVectorIndex == 0)
+	if(creature->checkCreatureVectorIndex == -1)
 		return;
 
-	CreatureVector& checkCreatureVector = checkCreatureVectors[creature->checkCreatureVectorIndex - 1];
-	CreatureVector::iterator cit = std::find(checkCreatureVector.begin(), checkCreatureVector.end(), creature);
-	if(cit != checkCreatureVector.end())
-	{
-		std::swap(*cit, checkCreatureVector.back());
-		checkCreatureVector.pop_back();
-	}
-
-	creature->checkCreatureVectorIndex = 0;
+	creature->checkCreatureVectorIndex = -1;
 }
 
 void Game::checkCreatures()
 {
 	g_scheduler.addEvent(createSchedulerTask(EVENT_CHECK_CREATURE_INTERVAL, boost::bind(&Game::checkCreatures, this)));
+
+	Creature* creature;
+	std::vector<Creature*>::iterator it;
+
+	//add any new creatures
+	for(it = toAddCheckCreatureVector.begin(); it != toAddCheckCreatureVector.end();)
+	{
+		creature = (*it);
+		if(creature->checkCreatureVectorIndex != -1)
+		{
+			int next_vector = (checkCreatureLastIndex + 1) % EVENT_CREATURECOUNT;
+			checkCreatureVectors[next_vector].push_back(creature);
+			creature->checkCreatureVectorIndex = next_vector + 1;
+			++it;
+		}
+		else
+		{
+			FreeThing(creature);
+			it = toAddCheckCreatureVector.erase(it);
+		}
+	}
+	toAddCheckCreatureVector.clear();
+
 	checkCreatureLastIndex++;
 	if(checkCreatureLastIndex == EVENT_CREATURECOUNT)
 		checkCreatureLastIndex = 0;
 
 	CreatureVector& checkCreatureVector = checkCreatureVectors[checkCreatureLastIndex];
-	Creature* creature;
-	for(uint32_t i = 0; i < checkCreatureVector.size(); ++i)
+	for(it = checkCreatureVector.begin(); it != checkCreatureVector.end();)
 	{
-		creature = checkCreatureVector[i];
-		if(creature)
+		creature = (*it);
+		if(creature->checkCreatureVectorIndex != -1)
 		{
 			if(creature->getHealth() > 0)
 			{
@@ -3779,6 +3793,13 @@ void Game::checkCreatures()
 			}
 			else
 				creature->onDeath();
+
+			++it;
+		}
+		else
+		{
+			FreeThing(creature);
+			it = checkCreatureVector.erase(it);
 		}
 	}
 	cleanup();
@@ -3936,10 +3957,20 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 		if(target->getHealth() <= 0)
 			return false;
 
-		if(attacker && target && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getString(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) == "yes" && combatType != COMBAT_HEALING)
+		if(attacker && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && combatType != COMBAT_HEALING)
 			return false;
 
 		target->changeHealth(healthChange);
+
+		if(g_config.getBoolean(ConfigManager::ANIMATION_TEXT_ON_HEAL) && !target->getMonster() && !target->isInGhostMode())
+		{
+			const SpectatorVec& list = getSpectators(targetPos);
+			std::stringstream ss;
+			ss << "+" << healthChange;
+			if(combatType != COMBAT_HEALING)
+				addMagicEffect(list, targetPos, NM_ME_MAGIC_ENERGY);
+			addAnimatedText(list, targetPos, TEXTCOLOR_GREEN, ss.str());
+		}
 	}
 	else
 	{
@@ -3950,7 +3981,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			return true;
 		}
 
-		if(attacker && target && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getString(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) == "yes" && combatType != COMBAT_HEALING)
+		if(attacker && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) && combatType != COMBAT_HEALING)
 			return false;
 
 		int32_t damage = -healthChange;
@@ -4111,8 +4142,9 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 
 	if(manaChange > 0)
 	{
-		if(attacker && target && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getString(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) == "yes")
+		if(attacker && target && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET))
 			return false;
+
 		target->changeMana(manaChange);
 	}
 	else
@@ -4123,7 +4155,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			return false;
 		}
 
-		if(attacker && target && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getString(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) == "yes")
+		if(attacker && target && attacker->defaultOutfit.lookFeet == target->defaultOutfit.lookFeet && g_config.getBoolean(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET))
 			return false;
 
 		int32_t manaLoss = std::min(target->getMana(), -manaChange);
@@ -4663,7 +4695,7 @@ void Game::prepareServerSave()
 
 void Game::serverSave()
 {
-	if(g_config.getString(ConfigManager::SHUTDOWN_AT_SERVERSAVE) == "yes")
+	if(g_config.getBoolean(ConfigManager::SHUTDOWN_AT_SERVERSAVE))
 	{
 		//shutdown server
 		g_dispatcher.addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_SHUTDOWN)));
@@ -4674,7 +4706,7 @@ void Game::serverSave()
 		g_dispatcher.addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_CLOSED)));
 
 		//clean map if configured to
-		if(g_config.getString(ConfigManager::CLEAN_MAP_AT_SERVERSAVE) == "yes")
+		if(g_config.getBoolean(ConfigManager::CLEAN_MAP_AT_SERVERSAVE))
 			map->clean();
 
 		//reload highscores
@@ -4898,19 +4930,19 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 	{
 		case 0:
 		{
-			g_bans.addAccountNotation(account.accnumber, time(NULL), banComment, player->getGUID());
-			if(g_bans.getNotationsCount(account.accnumber) > 2)
+			IOBan::getInstance()->addAccountNotation(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
+			if(IOBan::getInstance()->getNotationsCount(account.accnumber) > 2)
 			{
 				account.warnings++;
 				if(account.warnings > 3)
 				{
 					action = 7;
-					g_bans.addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
+					IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
 				}
 				else if(account.warnings == 3)
-					g_bans.addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 				else
-					g_bans.addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, "4 notations received, auto banishment.", player->getGUID());
+					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, "4 notations received, auto banishment.", player->getGUID());
 			}
 			else
 				isNotation = true;
@@ -4919,7 +4951,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 
 		case 1:
 		{
-			g_bans.addPlayerNamelock(guid);
+			IOBan::getInstance()->addPlayerNamelock(guid, time(NULL), reason, action, banComment, player->getGUID());
 			break;
 		}
 
@@ -4928,16 +4960,16 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 			if(account.warnings > 3)
 			{
 				action = 7;
-				g_bans.addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
 			}
 			else
 			{
 				account.warnings++;
 				if(account.warnings == 3)
-					g_bans.addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 				else
-					g_bans.addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
-				g_bans.addPlayerNamelock(guid);
+					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addPlayerNamelock(guid, time(NULL), reason, action, banComment, player->getGUID());
 			}
 			break;
 		}
@@ -4947,12 +4979,12 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 			if(account.warnings < 3)
 			{
 				account.warnings = 3;
-				g_bans.addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 			}
 			else
 			{
 				action = 7;
-				g_bans.addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
 			}
 			break;
 		}
@@ -4962,13 +4994,13 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 			if(account.warnings < 3)
 			{
 				account.warnings = 3;
-				g_bans.addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
-				g_bans.addPlayerNamelock(guid);
+				IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addPlayerNamelock(guid, time(NULL), reason, action, banComment, player->getGUID());
 			}
 			else
 			{
 				action = 7;
-				g_bans.addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
 			}
 			break;
 		}
@@ -4979,24 +5011,24 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 			if(account.warnings > 3)
 			{
 				action = 7;
-				g_bans.addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
+				IOBan::getInstance()->addAccountDeletion(account.accnumber, time(NULL), reason, action, banComment, player->getGUID());
 			}
 			else
 			{
 				if(account.warnings == 3)
-					g_bans.addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::FINAL_BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 				else
-					g_bans.addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
+					IOBan::getInstance()->addAccountBan(account.accnumber, (time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400)), reason, action, banComment, player->getGUID());
 			}
 			break;
 		}
 	}
 
 	char buffer[800];
-	if(g_config.getString(ConfigManager::BROADCAST_BANISHMENTS) == "yes")
+	if(g_config.getBoolean(ConfigManager::BROADCAST_BANISHMENTS))
 	{
 		if(isNotation)
-			sprintf(buffer, "%s has received a notation by %s (%d more to ban).", targetPlayerName.c_str(), player->getName().c_str(), (3 - g_bans.getNotationsCount(account.accnumber)));
+			sprintf(buffer, "%s has received a notation by %s (%d more to ban).", targetPlayerName.c_str(), player->getName().c_str(), (3 - IOBan::getInstance()->getNotationsCount(account.accnumber)));
 		else
 		{
 			if(action == 6)
@@ -5010,7 +5042,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 	else
 	{
 		if(isNotation)
-			sprintf(buffer, "You have taken the action notation against %s (%d more to ban).", targetPlayerName.c_str(), (3 - g_bans.getNotationsCount(account.accnumber)));
+			sprintf(buffer, "You have taken the action notation against %s (%d more to ban).", targetPlayerName.c_str(), (3 - IOBan::getInstance()->getNotationsCount(account.accnumber)));
 		else
 		{
 			if(action == 6)
@@ -5028,7 +5060,7 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 		{
 			uint32_t ip = targetPlayer->lastIP;
 			if(ip > 0)
-				g_bans.addIpBan(ip, 0xFFFFFFFF, (time(NULL) + 86400));
+				IOBan::getInstance()->addIpBan(ip, 0xFFFFFFFF, (time(NULL) + 86400));
 		}
 
 		if(!isNotation)
@@ -5043,11 +5075,11 @@ bool Game::violationWindow(uint32_t playerId, std::string targetPlayerName, int3
 	{
 		uint32_t lastip = IOLoginData::getInstance()->getLastIPByName(targetPlayerName);
 		if(lastip != 0)
-			g_bans.addIpBan(lastip, 0xFFFFFFFF, (time(NULL) + 86400));
+			IOBan::getInstance()->addIpBan(lastip, 0xFFFFFFFF, (time(NULL) + 86400));
 	}
 
 	if(!isNotation)
-		g_bans.removeAccountNotations(account.accnumber);
+		IOBan::getInstance()->removeAccountNotations(account.accnumber);
 
 	IOLoginData::getInstance()->saveAccount(account);
 	return true;
@@ -5258,4 +5290,28 @@ bool Game::playerReportBug(uint32_t playerId, std::string bug)
 
 	player->sendTextMessage(MSG_EVENT_DEFAULT, "Your report has been sent to " + g_config.getString(ConfigManager::SERVER_NAME) + ".");
 	return true;
+}
+
+void Game::fetchBlackList()
+{
+	xmlDocPtr doc = xmlParseFile("http://forgottenserver.otland.net/blacklist.xml");
+	if(doc)
+	{
+		xmlNodePtr p, root = xmlDocGetRootElement(doc);
+		if(!xmlStrcmp(root->name, (const xmlChar*)"blacklist"))
+		{
+			p = root->children;
+			while(p)
+			{
+				if(!xmlStrcmp(p->name, (const xmlChar*)"entry"))
+				{
+					std::string ip;
+					if(readXMLString(p, "ip", ip))
+						blacklist.push_back(ip);
+				}
+				p = p->next;
+			}
+		}
+		xmlFreeDoc(doc);
+	}
 }

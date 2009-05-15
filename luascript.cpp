@@ -42,7 +42,6 @@
 #include "teleport.h"
 #include "ban.h"
 
-extern Ban g_bans;
 extern Game g_game;
 extern Monsters g_monsters;
 extern ConfigManager g_config;
@@ -106,7 +105,7 @@ void ScriptEnviroment::resetEnv()
 
 bool ScriptEnviroment::saveGameState()
 {
-	if(g_config.getString(ConfigManager::SAVE_GLOBAL_STORAGE) != "yes")
+	if(!g_config.getBoolean(ConfigManager::SAVE_GLOBAL_STORAGE))
 		return true;
 
 	Database* db = Database::getInstance();
@@ -137,7 +136,7 @@ bool ScriptEnviroment::saveGameState()
 
 bool ScriptEnviroment::loadGameState()
 {
-	if(g_config.getString(ConfigManager::SAVE_GLOBAL_STORAGE) != "yes")
+	if(!g_config.getBoolean(ConfigManager::SAVE_GLOBAL_STORAGE))
 		return true;
 
 	Database* db = Database::getInstance();
@@ -1186,12 +1185,6 @@ void LuaScriptInterface::registerFunctions()
 	//getOnlinePlayers()
 	lua_register(m_luaState, "getOnlinePlayers", LuaScriptInterface::luaGetOnlinePlayers);
 
-	//isAccountBanned(accId)
-	lua_register(m_luaState, "isAccountBanned", LuaScriptInterface::luaIsAccountBanned);
-
-	//removeAccountBan(accId)
-	lua_register(m_luaState, "removeAccountBan", LuaScriptInterface::luaRemoveAccountBan);
-
 	//getTilePzInfo(pos)
 	//1 is pz. 0 no pz.
 	lua_register(m_luaState, "getTilePzInfo", LuaScriptInterface::luaGetTilePzInfo);
@@ -1275,7 +1268,7 @@ void LuaScriptInterface::registerFunctions()
 	//doCreatureAddHealth(cid, health)
 	lua_register(m_luaState, "doCreatureAddHealth", LuaScriptInterface::luaDoCreatureAddHealth);
 
-	//doPlayerAddMana(cid, mana)
+	//doPlayerAddMana(cid, mana[, animationOnLoss])
 	lua_register(m_luaState, "doPlayerAddMana", LuaScriptInterface::luaDoPlayerAddMana);
 
 	//doPlayerAddManaSpent(cid, mana)
@@ -1398,6 +1391,9 @@ void LuaScriptInterface::registerFunctions()
 	//doSetCreatureDropLoot(cid, doDrop)
 	lua_register(m_luaState, "doSetCreatureDropLoot", LuaScriptInterface::luaDoSetCreatureDropLoot);
 
+	//getPartyMembers(leaderId)
+	lua_register(m_luaState, "getPartyMembers", LuaScriptInterface::luaGetPartyMembers);
+
 	//getCreatureMaster(cid)
 	//returns the creature's master or itself if the creature isn't a summon
 	lua_register(m_luaState, "getCreatureMaster", LuaScriptInterface::luaGetCreatureMaster);
@@ -1414,6 +1410,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//isPlayer(cid)
 	lua_register(m_luaState, "isPlayer", LuaScriptInterface::luaIsPlayer);
+
+	//isValidUID(uid)
+	lua_register(m_luaState, "isValidUID", LuaScriptInterface::luaIsValidUID);
 
 	//isPlayerGhost(cid)
 	lua_register(m_luaState, "isPlayerGhost", LuaScriptInterface::luaIsPlayerGhost);
@@ -2526,7 +2525,13 @@ int32_t LuaScriptInterface::luaDoCreatureAddHealth(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoPlayerAddMana(lua_State* L)
 {
-	//doPlayerAddMana(uid,mana)
+	//doPlayerAddMana(uid, mana[, animationOnLoss])
+	int32_t parameters = lua_gettop(L);
+
+	bool animationOnLoss = true;
+	if(parameters > 2)
+		animationOnLoss = popNumber(L) != 0;
+
 	int32_t manaChange = (int32_t)popNumber(L);
 	uint32_t cid = popNumber(L);
 
@@ -2535,7 +2540,11 @@ int32_t LuaScriptInterface::luaDoPlayerAddMana(lua_State* L)
 	Player* player = env->getPlayerByUID(cid);
 	if(player)
 	{
-		g_game.combatChangeMana(NULL, player, manaChange);
+		if(!animationOnLoss && manaChange < 0)
+			player->changeMana(manaChange);
+		else
+			g_game.combatChangeMana(NULL, player, manaChange);
+
 		lua_pushnumber(L, LUA_NO_ERROR);
 	}
 	else
@@ -2728,7 +2737,9 @@ int32_t LuaScriptInterface::luaDoTileAddItemEx(lua_State* L)
 	Tile* tile = g_game.getTile(pos.x, pos.y, pos.z);
 	if(!tile)
 	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_TILE_NOT_FOUND));
+		std::stringstream ss;
+		ss << pos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
+		reportErrorFunc(ss.str().c_str());
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
 	}
@@ -2808,7 +2819,9 @@ int32_t LuaScriptInterface::luaDoRelocate(lua_State* L)
 	Tile* fromTile = g_game.getTile(fromPos.x, fromPos.y, fromPos.z);
 	if(!fromTile)
 	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_TILE_NOT_FOUND));
+		std::stringstream ss;
+		ss << fromPos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
+		reportErrorFunc(ss.str().c_str());
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
 	}
@@ -2816,7 +2829,9 @@ int32_t LuaScriptInterface::luaDoRelocate(lua_State* L)
 	Tile* toTile = g_game.getTile(toPos.x, toPos.y, toPos.z);
 	if(!toTile)
 	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_TILE_NOT_FOUND));
+		std::stringstream ss;
+		ss << toPos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
+		reportErrorFunc(ss.str().c_str());
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
 	}
@@ -3128,7 +3143,9 @@ int32_t LuaScriptInterface::luaGetThingfromPos(lua_State* L)
 	}
 	else
 	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_TILE_NOT_FOUND));
+		std::stringstream ss;
+		ss << pos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
+		reportErrorFunc(ss.str().c_str());
 		pushThing(L, NULL, 0);
 		return 1;
 	}
@@ -3302,7 +3319,9 @@ int32_t LuaScriptInterface::luaDoCreateItem(lua_State* L)
 	Tile* tile = g_game.getTile(pos.x, pos.y, pos.z);
 	if(!tile)
 	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_TILE_NOT_FOUND));
+		std::stringstream ss;
+		ss << pos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
+		reportErrorFunc(ss.str().c_str());
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
 	}
@@ -3430,7 +3449,9 @@ int32_t LuaScriptInterface::luaDoCreateTeleport(lua_State* L)
 	Tile* tile = g_game.getMap()->getTile(createPos);
 	if(!tile)
 	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_TILE_NOT_FOUND));
+		std::stringstream ss;
+		ss << createPos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
+		reportErrorFunc(ss.str().c_str());
 		lua_pushnumber(L, LUA_ERROR);
 		return 1;
 	}
@@ -3613,7 +3634,9 @@ int32_t LuaScriptInterface::luaGetTilePzInfo(lua_State* L)
 	}
 	else
 	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_TILE_NOT_FOUND));
+		std::stringstream ss;
+		ss << pos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
+		reportErrorFunc(ss.str().c_str());
 		lua_pushnumber(L, LUA_ERROR);
 	}
 	return 1;
@@ -3641,7 +3664,9 @@ int32_t LuaScriptInterface::luaGetTileHouseInfo(lua_State* L)
 	}
 	else
 	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_TILE_NOT_FOUND));
+		std::stringstream ss;
+		ss << pos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
+		reportErrorFunc(ss.str().c_str());
 		lua_pushnumber(L, LUA_ERROR);
 	}
 	return 1;
@@ -4305,7 +4330,9 @@ int32_t LuaScriptInterface::luaQueryTileAddThing(lua_State* L)
 	Tile* tile = g_game.getTile(pos.x, pos.y, pos.z);
 	if(!tile)
 	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_TILE_NOT_FOUND));
+		std::stringstream ss;
+		ss << pos << " " << getErrorDesc(LUA_ERROR_TILE_NOT_FOUND);
+		reportErrorFunc(ss.str().c_str());
 		lua_pushnumber(L, (uint32_t)RET_NOTPOSSIBLE);
 		return 1;
 	}
@@ -5098,7 +5125,7 @@ int32_t LuaScriptInterface::luaDoAreaCombatCondition(lua_State* L)
 		{
 			CombatParams params;
 			params.impactEffect = effect;
-			params.condition = condition;
+			params.conditionList.push_back(condition);
 			Combat::doCombatCondition(creature, pos, area, params);
 
 			lua_pushnumber(L, LUA_NO_ERROR);
@@ -5148,7 +5175,7 @@ int32_t LuaScriptInterface::luaDoTargetCombatCondition(lua_State* L)
 		{
 			CombatParams params;
 			params.impactEffect = effect;
-			params.condition = condition;
+			params.conditionList.push_back(condition);
 			Combat::doCombatCondition(creature, target, params);
 
 			lua_pushnumber(L, LUA_NO_ERROR);
@@ -5914,6 +5941,16 @@ int32_t LuaScriptInterface::luaDoMoveCreature(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
 	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaIsValidUID(lua_State* L)
+{
+	//isValidUID(uid)
+	uint32_t uid = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	lua_pushboolean(L, (env->getThingByUID(uid) ? true : false));
 	return 1;
 }
 
@@ -7195,33 +7232,36 @@ int32_t LuaScriptInterface::luaGetOnlinePlayers(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaRemoveAccountBan(lua_State* L)
+int32_t LuaScriptInterface::luaGetPartyMembers(lua_State* L)
 {
-	//removeAccountBan(accountId)
-	uint32_t accountId = popNumber(L);
-	g_bans.removeAccountBan(accountId);
-	lua_pushnumber(L, LUA_TRUE);
-	return 1;
-}
+	//getPartyMembers(leaderId)
+	uint32_t cid = popNumber(L);
 
-int32_t LuaScriptInterface::luaIsAccountBanned(lua_State* L)
-{
-	//isAccountBanned(accountId)
-	uint32_t accountId = popNumber(L);
-	bool deleted = false;
-	uint32_t bannedBy = 0, banTime = 0;
-	int32_t reason = 0, action = 0;
-	std::string comment = "";
-	if(g_bans.getBanInformation(accountId, bannedBy, banTime, reason, action, comment, deleted))
+	ScriptEnviroment* env = getScriptEnv();
+	Player* player = env->getPlayerByUID(cid);
+	if(player)
 	{
-		if(!deleted)
+		Party* party = player->getParty();
+		if(party)
 		{
-			lua_pushnumber(L, LUA_TRUE);
+			PlayerVector list = party->getMembers();
+			list.push_back(party->getLeader());
+
+			PlayerVector::const_iterator it = list.begin();
+			lua_newtable(L);
+			for(uint32_t i = 1; it != list.end(); ++it, ++i)
+			{
+				lua_pushnumber(L, i);
+				lua_pushnumber(L, (*it)->getID());
+				lua_settable(L, -3);
+			}
 			return 1;
 		}
 	}
+	else
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 
-	lua_pushnumber(L, LUA_FALSE);
+	lua_pushboolean(L, LUA_ERROR);
 	return 1;
 }
 

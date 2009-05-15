@@ -90,9 +90,9 @@ char upchar(char c);
 
 std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end);
 
-void formatDate(time_t time, char* buffer);
-void formatDate2(time_t time, char* buffer);
-void formatIP(uint32_t ip, char* buffer);
+std::string formatDate(time_t time);
+std::string formatDateShort(time_t time);
+std::string convertIPToString(uint32_t ip);
 std::string formatTime(int32_t hours, int32_t minutes);
 
 std::string trimString(std::string& str);

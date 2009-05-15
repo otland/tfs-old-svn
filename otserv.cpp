@@ -344,8 +344,6 @@ void mainLoader(ServiceManager* service_manager)
 	#endif
 
 	g_bans.init();
-	if(!g_bans.loadBans())
-		startupErrorMessage("Unable to load bans!");
 
 	//load vocations
 	std::cout << ">> Loading vocations" << std::endl;
@@ -486,7 +484,8 @@ void mainLoader(ServiceManager* service_manager)
 	if(autoSaveEachMinutes > 0)
 		g_scheduler.addEvent(createSchedulerTask(autoSaveEachMinutes * 1000 * 60, boost::bind(&Game::autoSave, &g_game)));
 
-	if(g_config.getString(ConfigManager::SERVERSAVE_ENABLED) == "yes" && g_config.getNumber(ConfigManager::SERVERSAVE_H) >= 0 && g_config.getNumber(ConfigManager::SERVERSAVE_H) <= 24)
+	if(g_config.getBoolean(ConfigManager::SERVERSAVE_ENABLED) && g_config.getNumber(ConfigManager::SERVERSAVE_H) >= 0 &&
+		g_config.getNumber(ConfigManager::SERVERSAVE_H) <= 24)
 	{
 		int32_t prepareServerSaveHour = g_config.getNumber(ConfigManager::SERVERSAVE_H) - 1;
 		int32_t hoursLeft = 0, minutesLeft = 0, minutesToRemove = 0;
@@ -531,6 +530,8 @@ void mainLoader(ServiceManager* service_manager)
 		if(!ignoreEvent && (hoursLeftInMS + minutesLeftInMS) > 0)
 			g_scheduler.addEvent(createSchedulerTask(hoursLeftInMS + minutesLeftInMS, boost::bind(&Game::prepareServerSave, &g_game)));
 	}
+
+	g_game.fetchBlackList();
 
 	std::cout << ">> All modules has been loaded, server starting up..." << std::endl;
 

@@ -112,41 +112,12 @@ class Ban
 	public:
 		Ban();
 		virtual ~Ban() {}
-		void init();
 
-		bool isIpBanished(uint32_t clientip);
-		bool isPlayerNamelocked(const std::string& name);
+		void init();
+		void addLoginAttempt(uint32_t clientip, bool isSuccess);
 		bool isIpDisabled(uint32_t clientip);
 
-		void addIpBan(uint32_t ip, uint32_t mask, uint64_t time);
-		void addPlayerNamelock(uint32_t playerId);
-		void addAccountBan(uint32_t account, uint64_t time, int32_t reasonId, int32_t actionId, std::string comment, uint32_t bannedBy);
-		void addAccountDeletion(uint32_t account, uint64_t time, int32_t reasonId, int32_t actionId, std::string comment, uint32_t bannedBy);
-		void addAccountNotation(uint32_t account, uint64_t time, std::string comment, uint32_t bannedBy);
-		void addLoginAttempt(uint32_t clientip, bool isSuccess);
-
-		bool getBanInformation(uint32_t account, uint32_t& bannedBy, uint32_t& banTime, int32_t& reason, int32_t& action, std::string& comment, bool& deletion);
-		int32_t getNotationsCount(uint32_t account);
-
-		bool removeAccountBan(uint32_t account);
-		bool removeAccountNotations(uint32_t account);
-		bool removeAccountDeletion(uint32_t account);
-		bool removeIPBan(uint32_t ip);
-		bool removePlayerNamelock(uint32_t guid);
-
-		bool loadBans();
-		bool saveBans();
-
-		const IpBanList& getIpBans();
-		const PlayerNamelockList& getPlayerNamelocks();
-		const AccountBanList& getAccountBans();
-
 	protected:
-		IpBanList ipBanList;
-		PlayerNamelockList playerNamelockList;
-		AccountNotationList accountNotationList;
-		AccountBanList accountBanList;
-		AccountDeletionList accountDeletionList;
 		IpLoginMap ipLoginMap;
 
 		uint32_t loginTimeout;
@@ -154,8 +125,6 @@ class Ban
 		uint32_t retryTimeout;
 
 		OTSYS_THREAD_LOCKVAR banLock;
-
-		friend class IOBan;
 };
 
 class IOBan
@@ -167,8 +136,23 @@ class IOBan
 			return &instance;
 		}
 
-		virtual bool loadBans(Ban& banclass);
-		virtual bool saveBans(const Ban& banclass);
+		bool isIpBanished(uint32_t clientip);
+		bool isPlayerNamelocked(const std::string& name);
+
+		void addIpBan(uint32_t ip, uint32_t mask, uint64_t time);
+		void addPlayerNamelock(uint32_t playerId, uint32_t time, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t bannedBy);
+		void addAccountBan(uint32_t account, uint64_t time, int32_t reasonId, int32_t actionId, std::string comment, uint32_t bannedBy);
+		void addAccountDeletion(uint32_t account, uint64_t time, int32_t reasonId, int32_t actionId, std::string comment, uint32_t bannedBy);
+		void addAccountNotation(uint32_t account, uint64_t time, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t bannedBy);
+
+		bool getBanInformation(uint32_t account, uint32_t& bannedBy, uint32_t& banTime, int32_t& reason, int32_t& action, std::string& comment, bool& deletion);
+		int32_t getNotationsCount(uint32_t account);
+
+		bool removeAccountBan(uint32_t account);
+		bool removeAccountNotations(uint32_t account);
+		bool removeAccountDeletion(uint32_t account);
+		bool removeIPBan(uint32_t ip);
+		bool removePlayerNamelock(uint32_t guid);
 
 	protected:
 		IOBan() {}

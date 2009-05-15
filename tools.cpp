@@ -77,24 +77,15 @@ bool passwordTest(const std::string &plain, std::string &hash)
 	switch(g_config.getNumber(ConfigManager::PASSWORD_TYPE))
 	{
 		case PASSWORD_TYPE_MD5:
-		{
 			std::transform(hash.begin(), hash.end(), hash.begin(), upchar);
 			return transformToMD5(plain, true) == hash;
-			break;
-		}
 
 		case PASSWORD_TYPE_SHA1:
-		{
 			std::transform(hash.begin(), hash.end(), hash.begin(), upchar);
 			return transformToSHA1(plain, true) == hash;
-			break;
-		}
 
 		default:
-		{
 			return plain == hash;
-			break;
-		}
 	}
 	return false;
 }
@@ -155,7 +146,6 @@ bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value)
 		xmlFreeOTSERV(nodeValue);
 		return true;
 	}
-
 	return false;
 }
 
@@ -169,7 +159,6 @@ bool readXMLInteger(xmlNodePtr node, const char* tag, int32_t& value)
 		xmlFreeOTSERV(nodeValue);
 		return true;
 	}
-
 	return false;
 }
 #endif
@@ -183,7 +172,6 @@ bool readXMLInteger64(xmlNodePtr node, const char* tag, uint64_t& value)
 		xmlFreeOTSERV(nodeValue);
 		return true;
 	}
-
 	return false;
 }
 
@@ -196,7 +184,6 @@ bool readXMLFloat(xmlNodePtr node, const char* tag, float& value)
 		xmlFreeOTSERV(nodeValue);
 		return true;
 	}
-
 	return false;
 }
 
@@ -237,7 +224,6 @@ bool readXMLString(xmlNodePtr node, const char* tag, std::string& value)
 		xmlFreeOTSERV(nodeValue);
 		return true;
 	}
-
 	return false;
 }
 
@@ -358,7 +344,7 @@ int32_t random_range(int32_t lowest_number, int32_t highest_number, Distribution
 	}
 	else
 	{
-		float r = 1.f -sqrt((1.f*rand24b())/RAND_MAX24);
+		float r = 1.f - sqrt((1.f * rand24b()) / RAND_MAX24);
 		return lowest_number + (int32_t)((float)range * r);
 	}
 }
@@ -368,6 +354,7 @@ char upchar(char c)
 {
 	if((c >= 97 && c <= 122) || (c <= -1 && c >= -32 ))
 		c -= 32;
+
 	return c;
 }
 
@@ -560,47 +547,53 @@ std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end)
 	std::string tmp;
 	if(it == end)
 		return "";
-	else
+
+	tmp = *it;
+	++it;
+	if(tmp[0] == '"')
 	{
-		tmp = *it;
-		++it;
-		if(tmp[0] == '"')
+		tmp.erase(0, 1);
+		while(it != end && tmp[tmp.length() - 1] != '"')
 		{
-			tmp.erase(0, 1);
-			while(it != end && tmp[tmp.length() - 1] != '"')
-			{
-				tmp += " " + *it;
-				++it;
-			}
-
-			if(tmp.length() > 0 && tmp[tmp.length() - 1] == '"')
-				tmp.erase(tmp.length() - 1);
+			tmp += " " + *it;
+			++it;
 		}
-		return tmp;
+
+		if(tmp.length() > 0 && tmp[tmp.length() - 1] == '"')
+			tmp.erase(tmp.length() - 1);
 	}
+	return tmp;
 }
 
-void formatIP(uint32_t ip, char* buffer/* atleast 17 */)
+std::string convertIPToString(uint32_t ip)
 {
+	char buffer[17];
 	sprintf(buffer, "%d.%d.%d.%d", ip & 0xFF, (ip >> 8) & 0xFF, (ip >> 16) & 0xFF, (ip >> 24));
+	return buffer;
 }
 
-void formatDate(time_t time, char* buffer/* atleast 21 */)
+std::string formatDate(time_t time)
 {
+	char buffer[21];
 	const tm* tms = localtime(&time);
 	if(tms)
-		sprintf(buffer, "%02d/%02d/%04d  %02d:%02d:%02d", tms->tm_mday, tms->tm_mon + 1, tms->tm_year + 1900, tms->tm_hour, tms->tm_min, tms->tm_sec);
+		sprintf(buffer, "%02d/%02d/%04d %02d:%02d:%02d", tms->tm_mday, tms->tm_mon + 1, tms->tm_year + 1900, tms->tm_hour, tms->tm_min, tms->tm_sec);
 	else
-		sprintf(buffer, "UNIX Time : %d", (int)time);
+		sprintf(buffer, "UNIX Time : %d", (int32_t)time);
+
+	return buffer;
 }
 
-void formatDate2(time_t time, char* buffer/* atleast 16 */)
+std::string formatDateShort(time_t time)
 {
+	char buffer[21];
 	const tm* tms = localtime(&time);
 	if(tms)
 		strftime(buffer, 12, "%d %b %Y", tms);
 	else
-		sprintf(buffer, "UNIX Time : %d", (int)time);
+		sprintf(buffer, "UNIX Time : %d", (int32_t)time);
+
+	return buffer;
 }
 
 Direction getDirection(std::string string)

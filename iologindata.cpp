@@ -433,7 +433,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 			player->guildRank = result.getDataString("rank");
 		}
 	}
-	else if(g_config.getString(ConfigManager::INGAME_GUILD_SYSTEM) == "yes")
+	else if(g_config.getBoolean(ConfigManager::INGAME_GUILD_SYSTEM))
 	{
 		query << "SELECT `guild_id` FROM `guild_invites` WHERE `player_id` = " << player->getGUID();
 		if(db->storeQuery(query, result))
@@ -762,7 +762,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	}
 	query << "`lastlogout` = " << player->getLastLogout() << ", ";
 	query << "`blessings` = " << player->blessings;
-	if(g_config.getString(ConfigManager::INGAME_GUILD_SYSTEM) == "yes")
+	if(g_config.getBoolean(ConfigManager::INGAME_GUILD_SYSTEM))
 	{
 		query << ", `guildnick` = '" << Database::escapeString(player->guildNick) << "', ";
 		query << "`rank_id` = " << IOGuild::getInstance()->getRankIdByGuildIdAndLevel(player->getGuildId(), player->getGuildLevel()) << " ";
@@ -854,7 +854,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	if(!query_insert.executeQuery())
 		return false;
 
-	if(g_config.getString(ConfigManager::INGAME_GUILD_SYSTEM) == "yes")
+	if(g_config.getBoolean(ConfigManager::INGAME_GUILD_SYSTEM))
 	{
 		//save guild invites
 		query.reset();
@@ -1141,7 +1141,7 @@ int32_t IOLoginData::getLevel(uint32_t guid)
 
 bool IOLoginData::isPremium(uint32_t guid)
 {
-	if(g_config.getString(ConfigManager::FREE_PREMIUM) == "yes")
+	if(g_config.getBoolean(ConfigManager::FREE_PREMIUM))
 		return true;
 
 	Database* db = Database::getInstance();

@@ -56,7 +56,6 @@ extern ConfigManager g_config;
 extern Actions* g_actions;
 extern Monsters g_monsters;
 extern Npcs g_npcs;
-extern Ban g_bans;
 extern TalkActions* g_talkActions;
 extern MoveEvents* g_moveEvents;
 extern Spells* g_spells;
@@ -64,10 +63,6 @@ extern Weapons* g_weapons;
 extern Game g_game;
 extern Chat g_chat;
 extern CreatureEvents* g_creatureEvents;
-
-extern bool readXMLInteger(xmlNodePtr p, const char *tag, int32_t &value);
-
-#define ipText(a) (uint32_t)a[0] << "." << (uint32_t)a[1] << "." << (uint32_t)a[2] << "." << (uint32_t)a[3]
 
 s_defcommands Commands::defined_commands[] =
 {
@@ -389,7 +384,7 @@ bool Commands::banPlayer(Creature* creature, const std::string& cmd, const std::
 		playerBan->sendTextMessage(MSG_STATUS_CONSOLE_RED, "You have been banned.");
 		uint32_t ip = playerBan->lastIP;
 		if(ip > 0)
-			g_bans.addIpBan(ip, 0xFFFFFFFF, (time(NULL) + 86400));
+			IOBan::getInstance()->addIpBan(ip, 0xFFFFFFFF, (time(NULL) + 86400));
 
 		playerBan->kickPlayer(true);
 		return true;
@@ -719,17 +714,16 @@ bool Commands::getInfo(Creature* creature, const std::string& cmd, const std::st
 			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "You can not get info about this player.");
 			return true;
 		}
-		uint8_t ip[4];
-		*(uint32_t*)&ip = paramPlayer->lastIP;
+
 		std::stringstream info;
-		info << "name:      " << paramPlayer->name << std::endl <<
-			"access:    " << paramPlayer->accessLevel << std::endl <<
-			"level:     " << paramPlayer->level << std::endl <<
-			"maglvl:    " << paramPlayer->magLevel << std::endl <<
-			"speed:     " << paramPlayer->getSpeed() <<std::endl <<
-			"position:  " << paramPlayer->getPosition() << std::endl <<
-			"notations: " << g_bans.getNotationsCount(paramPlayer->getAccount()) << std::endl <<
-			"ip:        " << ipText(ip);
+		info << "name: " << paramPlayer->name << std::endl <<
+			"access: " << paramPlayer->accessLevel << std::endl <<
+			"level: " << paramPlayer->level << std::endl <<
+			"maglvl: " << paramPlayer->magLevel << std::endl <<
+			"speed: " << paramPlayer->getSpeed() <<std::endl <<
+			"position: " << paramPlayer->getPosition() << std::endl <<
+			"notations: " << IOBan::getInstance()->getNotationsCount(paramPlayer->getAccount()) << std::endl <<
+			"ip: " << convertIPToString(paramPlayer->getIP());
 		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, info.str().c_str());
 	}
 	else
@@ -1019,7 +1013,7 @@ bool Commands::whoIsOnline(Creature* creature, const std::string &cmd, const std
 
 		uint32_t i = 0;
 		AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
-		if(g_config.getString(ConfigManager::SHOW_GAMEMASTERS_ONLINE) != "yes")
+		if(!g_config.getBoolean(ConfigManager::SHOW_GAMEMASTERS_ONLINE))
 		{
 			while(it != Player::listPlayer.list.end())
 			{
@@ -1343,21 +1337,38 @@ bool Commands::unban(Creature* creature, const std::string& cmd, const std::stri
 			accountNumber = IOLoginData::getInstance()->getAccountNumberByName(name);
 
 			uint32_t lastIP = IOLoginData::getInstance()->getLastIPByName(name);
-			if(lastIP != 0)
-				removedIPBan = g_bans.removeIPBan(lastIP);
+			if(lastIP != 0 && IOBan::getInstance()->isIpBanished(lastIP))
+				removedIPBan = IOBan::getInstance()->removeIPBan(lastIP);
 		}
 
-		if(g_bans.removeAccountBan(accountNumber))
+		bool banned = false;
+		bool deleted = false;
+		uint32_t bannedBy = 0, banTime = 0;
+		int32_t reason = 0, action = 0;
+		std::string comment = "";
+		if(IOBan::getInstance()->getBanInformation(accountNumber, bannedBy, banTime, reason, action, comment, deleted))
 		{
-			char buffer[70];
-			sprintf(buffer, "%s has been unbanned.", name.c_str());
-			player->sendTextMessage(MSG_INFO_DESCR, buffer);
+			if(!deleted)
+				banned = true;
 		}
-		else if(g_bans.removeAccountDeletion(accountNumber))
+
+		if(banned)
 		{
-			char buffer[70];
-			sprintf(buffer, "%s has been undeleted.", name.c_str());
-			player->sendTextMessage(MSG_INFO_DESCR, buffer);
+			if(IOBan::getInstance()->removeAccountBan(accountNumber))
+			{
+				char buffer[70];
+				sprintf(buffer, "%s has been unbanned.", name.c_str());
+				player->sendTextMessage(MSG_INFO_DESCR, buffer);
+			}
+		}
+		else if(deleted)
+		{
+			if(IOBan::getInstance()->removeAccountDeletion(accountNumber))
+			{
+				char buffer[70];
+				sprintf(buffer, "%s has been undeleted.", name.c_str());
+				player->sendTextMessage(MSG_INFO_DESCR, buffer);
+			}
 		}
 		else if(removedIPBan)
 		{
@@ -1372,7 +1383,8 @@ bool Commands::unban(Creature* creature, const std::string& cmd, const std::stri
 			{
 				uint32_t guid = 0;
 				if(IOLoginData::getInstance()->getGuidByName(guid, name) &&
-					g_bans.removePlayerNamelock(guid))
+					IOBan::getInstance()->isPlayerNamelocked(name) &&
+					IOBan::getInstance()->removePlayerNamelock(guid))
 				{
 					char buffer[85];
 					sprintf(buffer, "Namelock on %s has been lifted.", name.c_str());
@@ -1510,7 +1522,7 @@ bool Commands::ghost(Creature* creature, const std::string& cmd, const std::stri
 				it->second->notifyLogOut(player);
 		}
 
-		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), false);
+		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), player->getLastLoginSaved(), false);
 		player->sendTextMessage(MSG_INFO_DESCR, "You are now invisible.");
 	}
 	else
@@ -1521,7 +1533,7 @@ bool Commands::ghost(Creature* creature, const std::string& cmd, const std::stri
 				it->second->notifyLogIn(player);
 		}
 
-		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), true);
+		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), player->getLastLoginSaved(), true);
 		player->sendTextMessage(MSG_INFO_DESCR, "You are visible again.");
 	}
 	return true;
@@ -1555,10 +1567,8 @@ bool Commands::multiClientCheck(Creature* creature, const std::string& cmd, cons
 
 		if(!playerList.empty())
 		{
-			uint8_t ip[4];
-			*(uint32_t*)&ip = it->second->getIP();
-			text << ipText(ip) << ":\n";
-			text << it->second->getName() << " [" << it->second->getLevel() << "], ";
+			text << convertIPToString(it->second->getIP()) << ":\n"
+			<< it->second->getName() << " [" << it->second->getLevel() << "], ";
 			uint32_t tmp = 0;
 			for(std::list< std::pair<std::string, uint32_t> >::const_iterator p = playerList.begin(); p != playerList.end(); p++)
 			{

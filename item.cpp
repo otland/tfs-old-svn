@@ -103,7 +103,7 @@ Item* Item::CreateItem(PropStream& propStream)
 	if(!propStream.GET_USHORT(_id))
 		return NULL;
 
-	if(g_config.getString(ConfigManager::RANDOMIZE_TILES) == "yes")
+	if(g_config.getBoolean(ConfigManager::RANDOMIZE_TILES))
 	{
 		if(_id == 352 || _id == 353)
 			_id = 351;
@@ -293,126 +293,6 @@ void Item::setSubType(uint16_t n)
 		setCharges(n);
 	else
 		count = n;
-}
-
-bool Item::unserialize(xmlNodePtr nodeItem)
-{
-	int32_t intValue;
-	std::string strValue;
-
-	if(readXMLInteger(nodeItem, "id", intValue))
-		id = intValue;
-	else
-		return false;
-
-	if(readXMLInteger(nodeItem, "count", intValue))
-		setSubType(intValue);
-
-	if(readXMLString(nodeItem, "special_description", strValue))
-		setSpecialDescription(strValue);
-
-	if(readXMLString(nodeItem, "text", strValue))
-		setText(strValue);
-
-	if(readXMLInteger(nodeItem, "written_date", intValue))
-		setDate(intValue);
-
-	if(readXMLString(nodeItem, "writer", strValue))
-		setWriter(strValue);
-
-	if(readXMLInteger(nodeItem, "actionId", intValue))
-		setActionId(intValue);
-
-	if(readXMLInteger(nodeItem, "uniqueId", intValue))
-		setUniqueId(intValue);
-
-	if(readXMLInteger(nodeItem, "duration", intValue))
-	{
-		if(intValue < 0)
-			intValue = 0;
-
-		setDuration(intValue);
-	}
-
-	if(readXMLInteger(nodeItem, "decayState", intValue))
-	{
-		ItemDecayState_t decayState = (ItemDecayState_t)intValue;
-		if(decayState != DECAYING_FALSE)
-			setDecaying(DECAYING_PENDING);
-	}
-	return true;
-}
-
-xmlNodePtr Item::serialize()
-{
-	xmlNodePtr nodeItem = xmlNewNode(NULL,(const xmlChar*)"item");
-	// TODO: Replace stringstream with char
-	std::stringstream ss;
-	ss.str("");
-	ss << getID();
-	xmlSetProp(nodeItem, (const xmlChar*)"id", (const xmlChar*)ss.str().c_str());
-
-	if(hasSubType())
-	{
-		ss.str("");
-		ss << (int32_t)getSubType();
-		xmlSetProp(nodeItem, (const xmlChar*)"count", (const xmlChar*)ss.str().c_str());
-	}
-
-	if(getSpecialDescription() != "")
-	{
-		ss.str("");
-		ss << getSpecialDescription();
-		xmlSetProp(nodeItem, (const xmlChar*)"special_description", (const xmlChar*)ss.str().c_str());
-	}
-
-	if(getText() != "")
-	{
-		ss.str("");
-		ss << getText();
-		xmlSetProp(nodeItem, (const xmlChar*)"text", (const xmlChar*)ss.str().c_str());
-	}
-
-	if(getDate() != 0)
-	{
-		ss.str("");
-		ss << getDate();
-		xmlSetProp(nodeItem, (const xmlChar*)"written_date", (const xmlChar*)ss.str().c_str());
-	}
-
-	if(getWriter() != "")
-	{
-		ss.str("");
-		ss << getWriter();
-		xmlSetProp(nodeItem, (const xmlChar*)"writer", (const xmlChar*)ss.str().c_str());
-	}
-
-	if(!isNotMoveable() /*moveable*/)
-	{
-		if(getActionId() != 0)
-		{
-			ss.str("");
-			ss << getActionId();
-			xmlSetProp(nodeItem, (const xmlChar*)"actionId", (const xmlChar*)ss.str().c_str());
-		}
-	}
-
-	if(hasAttribute(ATTR_ITEM_DURATION))
-	{
-		uint32_t duration = getDuration();
-		ss.str("");
-		ss << duration;
-		xmlSetProp(nodeItem, (const xmlChar*)"duration", (const xmlChar*)ss.str().c_str());
-	}
-
-	uint32_t decayState = getDecaying();
-	if(decayState == DECAYING_TRUE || decayState == DECAYING_PENDING)
-	{
-		ss.str("");
-		ss << decayState;
-		xmlSetProp(nodeItem, (const xmlChar*)"decayState", (const xmlChar*)ss.str().c_str());
-	}
-	return nodeItem;
 }
 
 bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
@@ -902,11 +782,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 					s << item->getWriter() << " wrote";
 					time_t date = item->getDate();
 					if(date > 0)
-					{
-						char buf[16];
-						formatDate2(date, buf);
-						s << " on " << buf;
-					}
+						s << " on " << formatDateShort(date);
 
 					s << ": ";
 				}

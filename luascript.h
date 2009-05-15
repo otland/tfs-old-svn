@@ -367,9 +367,6 @@ class LuaScriptInterface
 		static int32_t luaDoMoveCreature(lua_State* L);
 		static int32_t luaGetHouseTilesSize(lua_State* L);
 
-		static int32_t luaIsAccountBanned(lua_State* L);
-		static int32_t luaRemoveAccountBan(lua_State* L);
-
 		static int32_t luaDoCreatureSay(lua_State* L);
 		static int32_t luaDoPlayerAddSkillTry(lua_State* L);
 		static int32_t luaDoCreatureAddHealth(lua_State* L);
@@ -516,6 +513,7 @@ class LuaScriptInterface
 		static int32_t luaIsContainer(lua_State* L);
 		static int32_t luaIsCorpse(lua_State* L);
 		static int32_t luaIsMoveable(lua_State* L);
+		static int32_t luaIsValidUID(lua_State* L);
 
 		//container
 		static int32_t luaGetContainerSize(lua_State* L);
@@ -606,6 +604,9 @@ class LuaScriptInterface
 
 		static int32_t luaDoSendTutorial(lua_State* L);
 		static int32_t luaDoAddMark(lua_State* L);
+
+		static int32_t luaGetPartyMembers(lua_State* L);
+
 		//
 
 		static int32_t internalGetPlayerInfo(lua_State* L, PlayerInfo_t info);

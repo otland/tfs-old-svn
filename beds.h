@@ -40,9 +40,6 @@ class BedItem : public Item
 		virtual BedItem* getBed() {return this;}
 		virtual const BedItem* getBed() const {return this;}
 
-		virtual bool unserialize(xmlNodePtr p) {return true;}
-		virtual xmlNodePtr serialize(){ return xmlNewNode(NULL,(const xmlChar*)"item");}
-
 		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool serializeAttr(PropWriteStream& propWriteStream) const;
 
