@@ -904,7 +904,7 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 			for(std::vector<std::pair<int32_t, int32_t> >::iterator it = destList.begin(); it != destList.end(); ++it)
 			{
 				if((tmpTile = g_game.getTile(destPos.x + it->first, destPos.y + it->second, destPos.z))
-					&& !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID))
+					&& !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID) && tmpTile->ground)
 				{
 					destTile = tmpTile;
 					break;
