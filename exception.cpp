@@ -144,8 +144,8 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 	_MEMORY_BASIC_INFORMATION mbi;
 
 	std::ostream *outdriver;
-	std::cout << ">> CRASH: Generating report file..." << std::endl;
-	std::ofstream output("report.txt", std::ios_base::app);
+	std::cout << ">> CRASH: Writing report file..." << std::endl;
+	std::ofstream output("data/logs/exceptions.txt", std::ios_base::app);
 	if(output.fail())
 	{
 		outdriver = &std::cout;
@@ -305,7 +305,7 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 		((std::ofstream*)outdriver)->close();
 
 	if(g_config.getBool(ConfigManager::TRACER_BOX))
-		MessageBoxA(NULL, "If you want developers review this crash log, please open a tracker ticket for the software at OtLand.net and attach the report.txt file.", "Error", MB_OK | MB_ICONERROR);
+		MessageBoxA(NULL, "If you want developers review this crash log, please open a tracker ticket for the software at OtLand.net and attach the data/logs/exceptions.txt file.", "Error", MB_OK | MB_ICONERROR);
 
 	std::cout << "> Crash report generated, killing server." << std::endl;
 	exit(1);
@@ -420,8 +420,8 @@ void ExceptionHandler::dumpStack()
 	uint32_t foundRetAddress = 0;
 	_MEMORY_BASIC_INFORMATION mbi;
 
-	std::cout << ">> CRASH: Generating report file..." << std::endl;
-	std::ofstream output("report.txt", std::ios_base::app);
+	std::cout << ">> CRASH: Writing report file..." << std::endl;
+	std::ofstream output("data/logs/exceptions.txt", std::ios_base::app);
 	output.flags(std::ios::hex | std::ios::showbase);
 	time_t rawtime;
 	time(&rawtime);

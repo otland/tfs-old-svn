@@ -1,26 +1,26 @@
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-//////////////////////////////////////////////////////////////////////
-//
-//////////////////////////////////////////////////////////////////////
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+////////////////////////////////////////////////////////////////////////
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-//////////////////////////////////////////////////////////////////////
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////
 
 #ifdef __REMOTE_CONTROL__
-#ifndef __OTSERV_ADMIN_H__
-#define __OTSERV_ADMIN_H__
+#ifndef __ADMIN__
+#define __ADMIN__
+#include "otsystem.h"
+
+#include "player.h"
 // -> server
 // command(1 byte) | size(2 bytes) | parameters(size bytes)
 // commands:
@@ -75,11 +75,6 @@
 //  error
 //		message(string)
 //
-#include "otsystem.h"
-#include "player.h"
-
-class NetworkMessage;
-class RSA;
 
 enum LogType_t
 {
@@ -87,6 +82,26 @@ enum LogType_t
 	LOGTYPE_WARNING,
 	LOGTYPE_ERROR,
 };
+
+class Loggar
+{
+	public:
+		virtual ~Loggar();
+		static Loggar* getInstance()
+		{
+			static Loggar instance;
+			return &instance;
+		}
+
+		void logMessage(const char* channel, LogType_t type, int32_t level, std::string message, const char* func);
+
+	private:
+		Loggar();
+		FILE* m_file;
+};
+
+#define LOG_MESSAGE(channel, type, level, message) \
+	Loggar::getInstance()->logMessage(channel, type, level, message, __OTSERV_PRETTY_FUNCTION__);
 
 enum
 {
@@ -139,25 +154,8 @@ enum
 	ENCRYPTION_RSA1024XTEA = 1,
 };
 
-class Loggar
-{
-	public:
-		virtual ~Loggar();
-		static Loggar* getInstance()
-		{
-			static Loggar instance;
-			return &instance;
-		}
-
-		void logMessage(const char* channel, LogType_t type, int32_t level, std::string message, const char* func);
-
-	private:
-		Loggar();
-		FILE* m_file;
-};
-
-#define LOG_MESSAGE(channel, type, level, message) \
-	Loggar::getInstance()->logMessage(channel, type, level, message, __OTSERV_PRETTY_FUNCTION__);
+class NetworkMessage;
+class RSA;
 
 class Admin
 {
@@ -255,6 +253,5 @@ class ProtocolAdmin : public Protocol
 		ConnectionState_t m_state;
 		uint32_t m_lastCommand, m_startTime;
 };
-
 #endif
 #endif

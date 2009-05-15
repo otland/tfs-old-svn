@@ -1,28 +1,25 @@
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-//////////////////////////////////////////////////////////////////////
-//
-//////////////////////////////////////////////////////////////////////
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+////////////////////////////////////////////////////////////////////////
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-//////////////////////////////////////////////////////////////////////
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////
 
-#ifndef __OTSERV_CREATUREEVENT_H__
-#define __OTSERV_CREATUREEVENT_H__
+#ifndef __CREATUREEVENT__
+#define __CREATUREEVENT__
 #include "baseevents.h"
-#include "enums.h"
 
+#include "enums.h"
 #include "tile.h"
 
 enum CreatureEventType_t
@@ -59,7 +56,6 @@ enum StatsChange_t
 };
 
 class CreatureEvent;
-
 class CreatureEvents : public BaseEvents
 {
 	public:
@@ -88,7 +84,6 @@ class CreatureEvents : public BaseEvents
 };
 
 typedef std::map<uint32_t, Player*> UsersMap;
-
 class CreatureEvent : public Event
 {
 	public:
@@ -135,5 +130,4 @@ class CreatureEvent : public Event
 		std::string m_eventName;
 		CreatureEventType_t m_type;
 };
-
 #endif

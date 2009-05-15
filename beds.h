@@ -1,29 +1,25 @@
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-//////////////////////////////////////////////////////////////////////
-// Beds
-//////////////////////////////////////////////////////////////////////
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+////////////////////////////////////////////////////////////////////////
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-//////////////////////////////////////////////////////////////////////
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////
 
-#ifndef __OTS_BEDS_H__
-#define __OTS_BEDS_H__
+#ifndef __BEDS__
+#define __BEDS__
+
 #include "item.h"
 #include "position.h"
-
-#include <ctime>
 
 class House;
 class Player;
@@ -42,8 +38,8 @@ class BedItem : public Item
 
 		virtual bool canRemove() const {return (house == NULL);}
 
-		uint32_t getSleeper() const {return sleeperGUID;}
-		void setSleeper(uint32_t guid) {sleeperGUID = guid;}
+		uint32_t getSleeper() const {return sleeper;}
+		void setSleeper(uint32_t guid) {sleeper = guid;}
 
 		uint64_t getSleepStart() const {return sleepStart;}
 		void setSleepStart(uint64_t now) {sleepStart = now;}
@@ -61,11 +57,11 @@ class BedItem : public Item
 	protected:
 		void updateAppearance(const Player* player);
 		void regeneratePlayer(Player* player) const;
+
 		void internalSetSleeper(const Player* player);
 		void internalRemoveSleeper();
 
-		uint32_t sleeperGUID;
-		uint64_t sleepStart;
+		uint32_t sleeper, sleepStart;
 		House* house;
 };
 
@@ -73,7 +69,6 @@ class Beds
 {
 	public:
 		virtual ~Beds() {}
-
 		static Beds& getInstance()
 		{
 			static Beds instance;
@@ -85,8 +80,6 @@ class Beds
 
 	protected:
 		Beds() {BedSleepersMap.clear();}
-
 		std::map<uint32_t, BedItem*> BedSleepersMap;
 };
-
 #endif

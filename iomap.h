@@ -1,30 +1,29 @@
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-//////////////////////////////////////////////////////////////////////
-// OTBM map loader
-//////////////////////////////////////////////////////////////////////
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+////////////////////////////////////////////////////////////////////////
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-//////////////////////////////////////////////////////////////////////
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////
 
-#ifndef __OTSERV_IOMAP_H__
-#define __OTSERV_IOMAP_H__
-#include "map.h"
-#include "item.h"
-#include "house.h"
-#include "spawn.h"
+#ifndef __IOMAP__
+#define __IOMAP__
 #include "status.h"
+
+#include "map.h"
+#include "house.h"
+
+#include "spawn.h"
+#include "item.h"
 
 enum OTBM_AttrTypes_t
 {
@@ -73,7 +72,6 @@ enum OTBM_NodeTypes_t
 };
 
 #pragma pack(1)
-
 struct OTBM_root_header
 {
 	uint32_t version;
@@ -97,7 +95,6 @@ struct OTBM_HouseTile_coords
 	uint8_t _x, _y;
 	uint32_t _houseid;
 };
-
 #pragma pack()
 
 class IOMap
@@ -148,5 +145,4 @@ class IOMap
 	protected:
 		std::string errorString;
 };
-
 #endif

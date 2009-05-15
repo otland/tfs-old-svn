@@ -1,29 +1,25 @@
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-//////////////////////////////////////////////////////////////////////
-// Special Tasks which require more arguments than possible
-// with STL functions...
-//////////////////////////////////////////////////////////////////////
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+////////////////////////////////////////////////////////////////////////
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-//////////////////////////////////////////////////////////////////////
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////
 
-#ifndef __OTSERV_TASKS_H__
-#define __OTSERV_TASKS_H__
+#ifndef __TASKS__
+#define __TASKS__
 #include "otsystem.h"
-#include <boost/function.hpp>
 
+#include <boost/function.hpp>
 #define DISPATCHER_TASK_EXPIRATION 2000
 
 class Task
@@ -54,7 +50,6 @@ inline Task* createTask(boost::function<void (void)> f)
 {
 	return new Task(f);
 }
-
 inline Task* createTask(uint32_t expiration, boost::function<void (void)> f)
 {
 	return new Task(expiration, f);

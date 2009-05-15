@@ -1,26 +1,24 @@
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 // OpenTibia - an opensource roleplaying game
-//////////////////////////////////////////////////////////////////////
-// memory allocator
-//////////////////////////////////////////////////////////////////////
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+////////////////////////////////////////////////////////////////////////
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software Foundation,
-// Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-//////////////////////////////////////////////////////////////////////
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+////////////////////////////////////////////////////////////////////////
 
 #ifdef __OTSERV_ALLOCATOR__
-#ifndef __OTSERV_ALLOCATOR_H
-#define __OTSERV_ALLOCATOR_H
+#ifndef __ALLOCATOR__
+#define __ALLOCATOR__
+
 #include "otsystem.h"
 #include <boost/pool/pool.hpp>
 
@@ -89,7 +87,6 @@ void operator delete[](void* p);
 void operator delete(void* p, int32_t dummy);
 void operator delete[](void* p, int32_t dummy);
 #endif
-
 #ifdef __OTSERV_ALLOCATOR_STATS__
 OTSYS_THREAD_RETURN allocatorStatsThread(void* a);
 #endif
@@ -145,7 +142,7 @@ class PoolManager
 
 		void deallocate(void* deletable)
 		{
-			if(deletable == NULL)
+			if(!deletable)
 				return;
 
 			poolTag* const tag = reinterpret_cast<poolTag*>(deletable) - 1U;
@@ -154,7 +151,7 @@ class PoolManager
 			{
 				Pools::iterator it;
 				it = pools.find(tag->poolbytes);
-				//it->second->ordered_free(tag);
+
 				it->second->free(tag);
 				#ifdef __OTSERV_ALLOCATOR_STATS__
 				poolsStats[it->first]->deallocations++;
@@ -176,7 +173,7 @@ class PoolManager
 		{
 			time_t rawtime;
 			time(&rawtime);
-			std::ofstream output("memory_dump.txt", std::ios_base::app);
+			std::ofstream output("data/logs/memory_dump.txt", std::ios_base::app);
 			output << "OTServ Allocator Stats: " << std::ctime(&rawtime);
 			for(PoolsStats::iterator it = poolsStats.begin(); it != poolsStats.end(); ++it)
 			{
@@ -253,18 +250,19 @@ class PoolManager
 
 		typedef std::map<size_t, boost::pool<boost::default_user_allocator_malloc_free >*, std::less<size_t >,
 			dummyallocator<std::pair<const size_t, boost::pool<boost::default_user_allocator_malloc_free>* > > > Pools;
-
 		Pools pools;
+
 		#ifdef __OTSERV_ALLOCATOR_STATS__
 		struct t_PoolStats
 		{
 			int64_t allocations, deallocations, unused;
 		};
+
 		typedef std::map<size_t, t_PoolStats*, std::less<size_t >, dummyallocator<std::pair<const size_t, t_PoolStats* > > > PoolsStats;
 		PoolsStats poolsStats;
+
 		#endif
 		OTSYS_THREAD_LOCKVAR poolLock;
 };
-
 #endif
 #endif

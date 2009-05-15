@@ -15,16 +15,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 
-#ifndef __OTSERV_ACCOUNT_H__
-#define __OTSERV_ACCOUNT_H__
+#ifndef __ACCOUNT__
+#define __ACCOUNT__
 #include "otsystem.h"
 #ifndef __LOGIN_SERVER__
-typedef std::list<std::string> Characters;
 
+typedef std::list<std::string> Characters;
 #else
 #include "gameservers.h"
-
 typedef std::map<std::string, GameServer*> Characters;
+
 #endif
 class Account
 {
@@ -37,5 +37,4 @@ class Account
 		std::string name, password, recoveryKey;
 		Characters charList;
 };
-
 #endif

@@ -54,7 +54,7 @@ bool BedItem::readAttr(AttrTypes_t attr, PropStream& propStream)
 				Beds::getInstance().setBedSleeper(this, _guid);
 			}
 
-			sleeperGUID = _guid;
+			sleeper = _guid;
 			return true;
 		}
 
@@ -77,10 +77,10 @@ bool BedItem::readAttr(AttrTypes_t attr, PropStream& propStream)
 
 bool BedItem::serializeAttr(PropWriteStream& propWriteStream) const
 {
-	if(sleeperGUID != 0)
+	if(sleeper != 0)
 	{
 		propWriteStream.ADD_UCHAR(ATTR_SLEEPERGUID);
-		propWriteStream.ADD_ULONG(sleeperGUID);
+		propWriteStream.ADD_ULONG(sleeper);
 	}
 
 	if(sleepStart != 0)
@@ -111,10 +111,10 @@ bool BedItem::canUse(Player* player)
 	if(player->hasCondition(CONDITION_INFIGHT))
 		return false;
 
-	if(sleeperGUID != 0 && house->getHouseAccessLevel(player) != HOUSE_OWNER)
+	if(sleeper != 0 && house->getHouseAccessLevel(player) != HOUSE_OWNER)
 	{
 		std::string name;
-		if(IOLoginData::getInstance()->getNameByGuid(sleeperGUID, name))
+		if(IOLoginData::getInstance()->getNameByGuid(sleeper, name))
 		{
 			Player* sleeper = new Player(name, NULL);
 			if(IOLoginData::getInstance()->loadPlayer(sleeper, name) && house->getHouseAccessLevel(sleeper) > house->getHouseAccessLevel(player))
@@ -132,7 +132,7 @@ void BedItem::sleep(Player* player)
 	if(!house || !player || player->isRemoved())
 		return;
 
-	if(sleeperGUID != 0)
+	if(sleeper != 0)
 	{
 		if(house->getHouseOwner() != player->getGUID() || Item::items[getID()].transformToFree == 0)
 		{
@@ -167,7 +167,7 @@ void BedItem::wakeUp(Player* player)
 	if(!house)
 		return;
 
-	if(sleeperGUID != 0)
+	if(sleeper != 0)
 	{
 		if(player)
 		{
@@ -177,7 +177,7 @@ void BedItem::wakeUp(Player* player)
 		else
 		{
 			std::string name;
-			if(IOLoginData::getInstance()->getNameByGuid(sleeperGUID, name))
+			if(IOLoginData::getInstance()->getNameByGuid(sleeper, name))
 			{
 				Player* _player = new Player(name, NULL);
 				if(IOLoginData::getInstance()->loadPlayer(_player, name))
@@ -191,7 +191,7 @@ void BedItem::wakeUp(Player* player)
 		}
 	}
 
-	Beds::getInstance().setBedSleeper(NULL, sleeperGUID);
+	Beds::getInstance().setBedSleeper(NULL, sleeper);
 	BedItem* nextBedItem = getNextBedItem();
 
 	internalRemoveSleeper();
