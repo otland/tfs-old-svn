@@ -667,7 +667,10 @@ bool Admin::allowIP(uint32_t ip)
 	if(ip == 0x0100007F) //127.0.0.1
 		return true;
 
-	addLogLine(NULL, LOGTYPE_WARNING, 1, (std::string)"forbidden connection try from ") + convertIPAddress(ip));
+	std::stringstream ss;
+	ss << "forbidden connection try from " << convertIPAddress(ip);
+
+	addLogLine(NULL, LOGTYPE_WARNING, 1, ss.str());
 	return false;
 }
 
@@ -677,10 +680,7 @@ bool Admin::passwordMatch(std::string& password)
 	if(!m_password.length())
 		return false;
 
-	if(password == m_password)
-		return true;
-
-	return false;
+	return password == m_password)
 }
 
 static void addLogLine(ProtocolAdmin* protocol, LogType_t type, int32_t level, std::string message)
