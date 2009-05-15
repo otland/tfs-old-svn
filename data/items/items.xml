@@ -16166,8 +16166,11 @@
 		<attribute key="weaponType" value="axe"/>
 		<attribute key="extradef" value="2"/>
 	</item>
-	<item id="7421" name="">
-		<attribute key="weight" value="0"/>
+	<item id="7421" article="a" name="onyx flail">
+		<attribute key="weight" value="2600"/>
+		<attribute key="defense" value="18"/>
+		<attribute key="attack" value="45"/>
+		<attribute key="weaponType" value="club"/>
 	</item>
 	<item id="7422" name="jade hammer">
 		<attribute key="weight" value="3200"/>
@@ -16573,10 +16576,10 @@
 	<item id="7522" article="a" name="coffin"/>
 	<item id="7523" article="a" name="coffin"/>
 	<item id="7524" article="a" name="coffin">
-		<attribute key="floorchange" value="west"/>
+		<attribute key="floorchange" value="down"/>
 	</item>
 	<item id="7525" article="a" name="coffin">
-		<attribute key="floorchange" value="north"/>
+		<attribute key="floorchange" value="down"/>
 	</item>
 	<item id="7526" article="a" name="dwarven beard">
 		<attribute key="weight" value="1100"/>

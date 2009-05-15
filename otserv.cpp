@@ -440,7 +440,7 @@ ServiceManager* services)
 	else
 		std::cout << ss.str();
 	
-	std::cout << "." << std::endl >> "Fetching blacklist" << std::endl;
+	std::cout << "." << std::endl << ">> Fetching blacklist" << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Fetching blacklist");
 	#endif
