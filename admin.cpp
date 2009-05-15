@@ -680,7 +680,7 @@ bool Admin::passwordMatch(std::string& password)
 	if(!m_password.length())
 		return false;
 
-	return password == m_password)
+	return password == m_password;
 }
 
 static void addLogLine(ProtocolAdmin* protocol, LogType_t type, int32_t level, std::string message)
