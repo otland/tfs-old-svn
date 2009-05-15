@@ -292,12 +292,12 @@ void Vocation::reset()
 	gainHealthAmount = gainManaAmount = 1;
 	gainHealth = gainMana = gainCap = 5;
 	gainHealthTicks = gainManaTicks = 6;
-	meleeMultiplier = distanceMultiplier = wandMultiplier = magicMultiplier = magicHealingMultiplier = defenseMultiplier = armorMultiplier = 1.0;
 	for(uint8_t i = 1; i < 6; ++i)
 		skillMultipliers[i] = 2.0f;
 
 	skillMultipliers[0] = 1.5f;
 	memset(absorbPercent, 0, sizeof(absorbPercent));
+	memset(formulaMultipliers, 0, sizeof(formulaMultipliers));
 }
 
 uint32_t Vocation::getReqSkillTries(int32_t skill, int32_t level)
@@ -310,9 +310,8 @@ uint32_t Vocation::getReqSkillTries(int32_t skill, int32_t level)
 	if(it != cacheSkill[skill].end())
 		return it->second;
 
-	uint32_t tries = (uint32_t)(skillBase[skill] * std::pow((float)skillMultipliers[skill], (float)(level - 11)));
-	skillMap[level] = tries;
-	return tries;
+	skillMap[level] = (uint32_t)(skillBase[skill] * std::pow((float)skillMultipliers[skill], (float)(level - 11)));
+	return skillMap[level];
 }
 
 uint64_t Vocation::getReqMana(uint32_t magLevel)
@@ -321,7 +320,7 @@ uint64_t Vocation::getReqMana(uint32_t magLevel)
 	if(it != cacheMana.end())
 		return it->second;
 
-	uint64_t reqMana = (uint64_t)(400 * pow(manaMultiplier, magLevel-1));
+	uint64_t reqMana = (uint64_t)(400 * pow(formulaMultipliers[MULTIPLIER_MANA], magLevel - 1));
 	if(reqMana % 20 < 10)
 		reqMana = reqMana - (reqMana % 20);
 	else
