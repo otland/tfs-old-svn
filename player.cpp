@@ -3049,11 +3049,11 @@ void Player::postAddNotification(Creature* actor, Thing* thing, int32_t index, c
 
 	if(link == LINK_OWNER || link == LINK_TOPPARENT)
 	{
-		updateItemsLight();
 		updateInventoryWeigth();
 		sendStats();
 	}
 
+	updateItemsLight();
 	if(const Item* item = thing->getItem())
 	{
 		if(const Container* container = item->getContainer())
@@ -3087,11 +3087,11 @@ void Player::postRemoveNotification(Creature* actor, Thing* thing, int32_t index
 
 	if(link == LINK_OWNER || link == LINK_TOPPARENT)
 	{
-		updateItemsLight();
 		updateInventoryWeigth();
 		sendStats();
 	}
 
+	updateItemsLight();
 	if(const Item* item = thing->getItem())
 	{
 		if(const Container* container = item->getContainer())

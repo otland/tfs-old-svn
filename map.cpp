@@ -419,49 +419,39 @@ const SpectatorVec& Map::getSpectators(const Position& centerPos)
 	SpectatorCache::iterator it = spectatorCache.find(centerPos);
 	if(it != spectatorCache.end())
 		return *it->second;
+
+	boost::shared_ptr<SpectatorVec> p(new SpectatorVec());
+	spectatorCache[centerPos] = p;
+	SpectatorVec& list = *p;
+
+	int32_t minRangeX = -maxViewportX, maxRangeX = maxViewportX, minRangeY = -maxViewportY,
+		maxRangeY = maxViewportY, minRangeZ, maxRangeZ;
+	if(centerPos.z > 7)
+	{
+		//underground, 8->15
+		minRangeZ = std::max(centerPos.z - 2, 0);
+		maxRangeZ = std::min(centerPos.z + 2, MAP_MAX_LAYERS - 1);
+	}
+	//above ground
+	else if(centerPos.z == 6)
+	{
+		
+		minRangeZ = 0;
+		maxRangeZ = 8;
+	}
+	else if(centerPos.z == 7)
+	{
+		minRangeZ = 0;
+		maxRangeZ = 9;
+	}
 	else
 	{
-		boost::shared_ptr<SpectatorVec> p(new SpectatorVec());
-		spectatorCache[centerPos] = p;
-		SpectatorVec& list = *p;
-
-		int32_t minRangeX = -maxViewportX;
-		int32_t maxRangeX = maxViewportX;
-		int32_t minRangeY = -maxViewportY;
-		int32_t maxRangeY = maxViewportY;
-
-		int32_t minRangeZ, maxRangeZ;
-		if(centerPos.z > 7)
-		{
-			//underground
-
-			//8->15
-			minRangeZ = std::max(centerPos.z - 2, 0);
-			maxRangeZ = std::min(centerPos.z + 2, MAP_MAX_LAYERS - 1);
-		}
-		//above ground
-		else if(centerPos.z == 6)
-		{
-			minRangeZ = 0;
-			maxRangeZ = 8;
-		}
-		else if(centerPos.z == 7)
-		{
-			minRangeZ = 0;
-			maxRangeZ = 9;
-		}
-		else
-		{
-			minRangeZ = 0;
-			maxRangeZ = 7;
-		}
-
-		getSpectatorsInternal(list, centerPos, false,
-			minRangeX, maxRangeX, minRangeY, maxRangeY,
-			minRangeZ, maxRangeZ);
-
-		return list;
+		minRangeZ = 0;
+		maxRangeZ = 7;
 	}
+
+	getSpectatorsInternal(list, centerPos, false, minRangeX, maxRangeX, minRangeY, maxRangeY, minRangeZ, maxRangeZ);
+	return list;
 }
 
 bool Map::canThrowObjectTo(const Position& fromPos, const Position& toPos, bool checkLineOfSight /*= true*/,
@@ -495,11 +485,7 @@ bool Map::checkSightLine(const Position& fromPos, const Position& toPos) const
 {
 	Position start = fromPos;
 	Position end = toPos;
-
-	int32_t x, y, z;
-	int32_t dx, dy, dz;
-	int32_t sx, sy, sz;
-	int32_t ey, ez;
+	int32_t x, y, z, dx, dy, dz, sx, sy, sz, ey, ez;
 
 	dx = abs(start.x - end.x);
 	dy = abs(start.y - end.y);

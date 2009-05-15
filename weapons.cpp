@@ -883,30 +883,32 @@ bool WeaponDistance::useWeapon(Player* player, Item* item, Creature* target) con
 
 	if(chance < random_range(1, 100))
 	{
-		//miss target
-		typedef std::pair<int32_t, int32_t> tmpPair;
-		std::vector<tmpPair> destList;
-		destList.push_back(tmpPair(-1, -1));
-		destList.push_back(tmpPair(-1, 0));
-		destList.push_back(tmpPair(-1, 1));
-		destList.push_back(tmpPair(0, -1));
-		destList.push_back(tmpPair(0, 1));
-		destList.push_back(tmpPair(1, -1));
-		destList.push_back(tmpPair(1, 0));
-		destList.push_back(tmpPair(1, 1));
-
-		std::random_shuffle(destList.begin(), destList.end());
-		Position destPos = target->getPosition();
-
+		//we failed attack, miss!
 		Tile* destTile = target->getTile();
-		Tile* tmpTile = NULL;
-		for(std::vector<tmpPair>::iterator it = destList.begin(); it != destList.end(); ++it)
+		if(!Position::areInRange<1,1,0>(player->getPosition(), target->getPosition()))
 		{
-			tmpTile = g_game.getTile(destPos.x + it->first, destPos.y + it->second, destPos.z);
-			if(tmpTile && !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID))
+			std::vector<std::pair<int32_t, int32_t> > destList;
+			destList.push_back(std::make_pair(-1, -1));
+			destList.push_back(std::make_pair(-1, 0));
+			destList.push_back(std::make_pair(-1, 1));
+			destList.push_back(std::make_pair(0, -1));
+			destList.push_back(std::make_pair(0, 0));
+			destList.push_back(std::make_pair(0, 1));
+			destList.push_back(std::make_pair(1, -1));
+			destList.push_back(std::make_pair(1, 0));
+			destList.push_back(std::make_pair(1, 1));
+			std::random_shuffle(destList.begin(), destList.end());
+
+			Position destPos = target->getPosition();
+			Tile* tmpTile = NULL;
+			for(std::vector<std::pair<int32_t, int32_t> >::iterator it = destList.begin(); it != destList.end(); ++it)
 			{
-				destTile = tmpTile;
-				break;
+				if((tmpTile = g_game.getTile(destPos.x + it->first, destPos.y + it->second, destPos.z))
+					&& !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID))
+				{
+					destTile = tmpTile;
+					break;
+				}
 			}
 		}
 
