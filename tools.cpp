@@ -448,7 +448,7 @@ bool isValidPassword(std::string text)
 
 bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 {
-	uint32_t textLength = text.length(), lenBeforeSpace = 1/*, lenBeforeQuote = 1*/, lenBeforeDash = 1, repeatedCharacter = 0; //Elf
+	uint32_t textLength = text.length(), lenBeforeSpace = 1, lenBeforeQuote = 1, lenBeforeDash = 1, repeatedCharacter = 0;
 	char lastChar = 32;
 	if(forceUppercaseOnFirstLetter)
 	{
@@ -464,8 +464,7 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 		{
 			lenBeforeSpace++;
 
-			// [START] Elf
-			/*if(text[size] != 39)
+			if(text[size] != 39)
 				lenBeforeQuote++;
 			else
 			{
@@ -473,8 +472,7 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 					return false;
 
 				lenBeforeQuote = 0;
-			}*/
-			// [END] Elf
+			}
 
 			if(text[size] != 45)
 				lenBeforeDash++;
@@ -502,10 +500,10 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 			if(lenBeforeSpace <= 1 || size == textLength - 1 || text[size + 1] == 32)
 				return false;
 
-			lenBeforeSpace = /*lenBeforeQuote = */lenBeforeDash = 0; //Elf
+			lenBeforeSpace = lenBeforeQuote = lenBeforeDash = 0;
 		}
 
-		if(!(isLowercaseLetter(text[size]) || text[size] == 32/* || text[size] == 39*/ || text[size] == 45
+		if(!(isLowercaseLetter(text[size]) || text[size] == 32 || text[size] == 39 || text[size] == 45
 			|| (isUppercaseLetter(text[size]) && text[size - 1] == 32)))
 			return false;
 	}
