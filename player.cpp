@@ -432,8 +432,8 @@ int32_t Player::getArmor() const
 	if(getInventoryItem(SLOT_RING))
 		armor += getInventoryItem(SLOT_RING)->getArmor();
 
-	if(vocation->getArmorMultiplier() != 1.0)
-		return int32_t(armor * vocation->getArmorMultiplier());
+	if(vocation->getMultiplier(MULTIPLIER_ARMOR) != 1.0)
+		return int32_t(armor * vocation->getMultiplier(MULTIPLIER_ARMOR));
 
 	return armor;
 }
@@ -499,8 +499,8 @@ int32_t Player::getDefense() const
 		return 0;
 
 	defenseValue += extraDefense;
-	if(vocation->getDefenseMultiplier() != 1.0)
-		defenseValue = int32_t(defenseValue * vocation->getDefenseMultiplier());
+	if(vocation->getMultiplier(MULTIPLIER_DEFENSE) != 1.0)
+		defenseValue = int32_t(defenseValue * vocation->getMultiplier(MULTIPLIER_DEFENSE));
 
 	return ((int32_t)std::ceil(((float)(defenseSkill * (defenseValue * 0.015)) + (defenseValue * 0.1)) * defenseFactor));
 }

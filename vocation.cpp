@@ -85,7 +85,7 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 		voc->setGainManaAmount(intValue);
 
 	if(readXMLFloat(p, "manamultiplier", floatValue))
-		voc->setManaMultiplier(floatValue);
+		voc->setMultiplier(MULTIPLIER_MANA, floatValue);
 
 	if(readXMLInteger(p, "attackspeed", intValue))
 		voc->setAttackSpeed(intValue);
@@ -131,25 +131,25 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 		else if(!xmlStrcmp(configNode->name, (const xmlChar*)"formula"))
 		{
 			if(readXMLFloat(configNode, "meleeDamage", floatValue))
-				voc->setMeleeMultiplier(floatValue);
+				voc->setMultiplier(MULTIPLIER_DISTANCE, floatValue);
 
 			if(readXMLFloat(configNode, "distDamage", floatValue) || readXMLFloat(configNode, "distanceDamage", floatValue))
-				voc->setDistanceMultiplier(floatValue);
+				voc->setMultiplier(MULTIPLIER_DISTANCE, floatValue);
 
 			if(readXMLFloat(configNode, "wandDamage", floatValue) || readXMLFloat(configNode, "rodDamage", floatValue))
-				voc->setWandMultiplier(floatValue);
+				voc->setMultiplier(MULTIPLIER_WAND, floatValue);
 
 			if(readXMLFloat(configNode, "magDamage", floatValue) || readXMLFloat(configNode, "magicDamage", floatValue))
-				voc->setMagicMultiplier(floatValue);
+				voc->setMultiplier(MULTIPLIER_MAGIC, floatValue);
 
 			if(readXMLFloat(configNode, "magHealingDamage", floatValue) || readXMLFloat(configNode, "magicHealingDamage", floatValue))
-				voc->setMagicHealingMultiplier(floatValue);
+				voc->setMultiplier(MULTIPLIER_MAGICHEALING, floatValue);
 
 			if(readXMLFloat(configNode, "defense", floatValue))
-				voc->setDefenseMultiplier(floatValue);
+				voc->setMultiplier(MULTIPLIER_DEFENSE, floatValue);
 
 			if(readXMLFloat(configNode, "armor", floatValue))
-				voc->setArmorMultiplier(floatValue);
+				voc->setMultiplier(MULTIPLIER_ARMOR, floatValue);
 		}
 		else if(!xmlStrcmp(configNode->name, (const xmlChar*)"absorb"))
 		{

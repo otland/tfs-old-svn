@@ -80,9 +80,9 @@ bool Combat::getMinMaxValues(Creature* creature, Creature* target, int32_t& min,
 				Vocation* vocation = player->getVocation();
 				float multiplier = 1.0f;
 				if(max > 0)
-					multiplier = vocation->getMagicHealingMultiplier();
+					multiplier = vocation->getMultiplier(MULTIPLIER_MAGICHEALING);
 				else
-					multiplier = vocation->getMagicMultiplier();
+					multiplier = vocation->getMultiplier(MULTIPLIER_MAGIC);
 
 				min = (int32_t)(min * multiplier);
 				max = (int32_t)(max * multiplier);
@@ -974,9 +974,9 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 			Vocation* vocation = player->getVocation();
 			float multiplier = 1.0;
 			if(max > 0)
-				multiplier = vocation->getMagicHealingMultiplier();
+				multiplier = vocation->getMultiplier(MULTIPLIER_MAGICHEALING);
 			else
-				multiplier = vocation->getMagicMultiplier();
+				multiplier = vocation->getMultiplier(MULTIPLIER_MAGIC);
 
 			min = (int32_t)(min * multiplier);
 			max = (int32_t)(max * multiplier);

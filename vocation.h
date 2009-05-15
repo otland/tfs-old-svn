@@ -89,22 +89,8 @@ class Vocation
 		int16_t getAbsorbPercent(CombatType_t combat) const {return absorbPercent[combat];}
 		void increaseAbsorbPercent(CombatType_t c, int16_t v) {absorbPercent[c] += v;}
 
-		float getManaMultiplier() const {return manaMultiplier;}
-		void setManaMultiplier(float v) {manaMultiplier = v;}
-		float getMeleeMultiplier() const {return meleeMultiplier;}
-		void setMeleeMultiplier(float v) {meleeMultiplier = v;}
-		float getDistanceMultiplier() const {return distanceMultiplier;}
-		void setDistanceMultiplier(float v) {distanceMultiplier = v;}
-		float getWandMultiplier() const {return wandMultiplier;}
-		void setWandMultiplier(float v) {wandMultiplier = v;}
-		float getMagicMultiplier() const {return magicMultiplier;}
-		void setMagicMultiplier(float v) {magicMultiplier = v;}
-		float getMagicHealingMultiplier() const {return magicHealingMultiplier;}
-		void setMagicHealingMultiplier(float v) {magicHealingMultiplier = v;}
-		float getDefenseMultiplier() const {return defenseMultiplier;}
-		void setDefenseMultiplier(float v) {defenseMultiplier = v;}
-		float getArmorMultiplier() const {return armorMultiplier;}
-		void setArmorMultiplier(float v) {armorMultiplier = v;}
+		float getMultiplier(multiplier_t type) const {return formulaMultipliers[type];}
+		void setMultiplier(multiplier_t type, float v) {formulaMultipliers[type] = v;}
 
 		uint32_t getReqSkillTries(int32_t skill, int32_t level);
 		uint64_t getReqMana(uint32_t magLevel);
@@ -127,6 +113,7 @@ class Vocation
 
 		int16_t absorbPercent[COMBAT_LAST + 1];
 		float skillMultipliers[SKILL_LAST + 1];
+		float formulaMultipliers[MULTIPLIER_LAST + 1];
 };
 
 typedef std::map<uint32_t, Vocation*> VocationsMap;
