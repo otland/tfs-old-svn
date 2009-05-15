@@ -429,15 +429,37 @@ ServiceManager* services)
 	ss << " SQL-QUERIES";
 	#endif
 
-	std::string debug = ss.str();
 	std::cout << ">> Debugging:";
+	#ifndef __CONSOLE__
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Displaying debugged components");
+	#endif
+
+	std::string debug = ss.str();
 	if(debug.empty())
 		std::cout << " nothing";
 	else
 		std::cout << ss.str();
 	
-	std::cout << "." << std::endl;
+	std::cout << "." << std::endl >> "Fetching blacklist" << std::endl;
+	#ifndef __CONSOLE__
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Fetching blacklist");
+	#endif
+	if(!g_game.fetchBlacklist())
+	{
+		#ifndef __CONSOLE__
+		if(MessageBox(GUI::getInstance()->m_mainWindow, "Unable to fetch blacklist! Continue?", "Blacklist", MB_YESNO) == IDNO)
+		#else
+		std::cout << "Unable to fetch blacklist! Continue? (y/N)" << std::endl;
+		char buffer = getchar();
+		if(buffer == 10 || (buffer != 121 && buffer != 89))
+		#endif
+			startupErrorMessage("Unable to fetch blacklist!");
+	}
+
 	std::cout << ">> Checking software version... ";
+	#ifndef __CONSOLE__
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Checking software version");
+	#endif
 	if(xmlDocPtr doc = xmlParseFile(VERSION_CHECK))
 	{
 		xmlNodePtr p, root = xmlDocGetRootElement(doc);

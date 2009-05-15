@@ -140,13 +140,11 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 		if(player)
 			player->sendTextMessage(MSG_STATUS_CONSOLE_RED, words.c_str());
 
-		char buf[21], buffer[100];
-		formatDate(time(NULL), buf);
-
+		char buffer[100];
 		sprintf(buffer, "%s.log", getFilePath(FILE_TYPE_LOG, creature->getName()).c_str());
 		if(FILE* file = fopen(buffer, "a"))
 		{
-			fprintf(file, "[%s] %s\n", buf, words.c_str());
+			fprintf(file, "[%s] %s\n", formatDate().c_str(), words.c_str());
 			fclose(file);
 		}
 	}
@@ -950,12 +948,12 @@ bool TalkAction::showBanishmentInfo(Creature* creature, const std::string& cmd, 
 		else
 			IOLoginData::getInstance()->getNameByGuid(ban.adminid, name, true);
 
-		char date[16], date2[16], buffer[500 + ban.comment.length()];
-		formatDate2(ban.added, date);
-		formatDate2(ban.expires, date2, true);
+		char buffer[500 + ban.comment.length()];
 		sprintf(buffer, "Account has been %s at:\n%s by: %s,\nfor the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.\n%s%s.",
-			(deletion ? "deleted" : "banished"), date, name.c_str(), getReason(ban.reason).c_str(), getAction(ban.action, false).c_str(),
-			ban.comment.c_str(), (deletion ? "Account won't be undeleted" : "Banishment will be lifted at:\n"), (deletion ? "." : date2));
+			(deletion ? "deleted" : "banished"), formatDateShort(ban.added).c_str(), name.c_str(), getReason(ban.reason).c_str(),
+			getAction(ban.action, false).c_str(), ban.comment.c_str(),
+			(deletion ? "Account won't be undeleted" : "Banishment will be lifted at:\n"),
+			(deletion ? "." : formatDateShort(ban.expires, true).c_str()));
 
 		player->sendFYIBox(buffer);
 	}

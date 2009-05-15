@@ -16,6 +16,7 @@
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 #include "resources.h"
+
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
 
@@ -44,15 +45,24 @@ IpConnectMap ProtocolStatus::ipConnectMap;
 
 void ProtocolStatus::onRecvFirstMessage(NetworkMessage& msg)
 {
-	IpConnectMap::const_iterator it = ipConnectMap.find(getIP());
-	if(getIP() == 3057325918UL || getIP() == 1578580918 ||
-		(it != ipConnectMap.end() && OTSYS_TIME() < it->second + g_config.getNumber(ConfigManager::STATUSQUERY_TIMEOUT)))
+	int32_t clientIp = getIP();
+	for(IntegerVec::const_iterator it = g_game.blacklist.begin(); it != g_game.blacklist.end(); ++it)
+	{
+		if((*it) == ip)
+		{
+			getConnection()->close();
+			return;
+		}
+	}
+
+	IpConnectMap::const_iterator it = ipConnectMap.find(clientIp);
+	if(it != ipConnectMap.end() && OTSYS_TIME() < it->second + g_config.getNumber(ConfigManager::STATUSQUERY_TIMEOUT))
 	{
 		getConnection()->close();
 		return;
 	}
 
-	ipConnectMap[getIP()] = OTSYS_TIME();
+	ipConnectMap[clientIp] = OTSYS_TIME();
 	switch(msg.GetByte())
 	{
 		case 0xFF:

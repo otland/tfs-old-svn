@@ -36,15 +36,12 @@ TextLogger::~TextLogger()
 
 int32_t TextLogger::overflow(int32_t c)
 {
-	char buf[21], buffer[85], date[21];
-	formatDate(time(NULL), date);
-
-	formatDate2(time(NULL), buf);
-	sprintf(buffer, "%s%s.log", "data/logs/server/"/*getFilePath(FILE_TYPE_LOG, "server/").c_str()*/, buf);
+	char buffer[85];
+	sprintf(buffer, "data/logs/server/%s.log", formatDateShort().c_str());
 	if(FILE* file = fopen(buffer, "a"))
 	{
 		if(displayDate)
-			fprintf(file, "[%s] ", date);
+			fprintf(file, "[%s] ", formatDate().c_str());
 
 		fprintf(file, "%c", c);
 		fclose(file);
@@ -63,7 +60,7 @@ int32_t TextLogger::overflow(int32_t c)
 		if(displayDate)
 		{
 			GUI::getInstance()->m_logText += "[";
-			GUI::getInstance()->m_logText += date;
+			GUI::getInstance()->m_logText += formatDate().c_str();
 			GUI::getInstance()->m_logText += "] ";
 			displayDate = false;
 		}

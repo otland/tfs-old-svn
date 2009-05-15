@@ -980,11 +980,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 					s << item->getWriter() << " wrote";
 					time_t date = item->getDate();
 					if(date > 0)
-					{
-						char buf[16];
-						formatDate2(date, buf);
-						s << " on " << buf;
-					}
+						s << " on " << formatDate(date);
 
 					s << ": ";
 				}

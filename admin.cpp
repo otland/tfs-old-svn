@@ -38,7 +38,7 @@ Admin* g_admin = NULL;
 
 Loggar::Loggar()
 {
-	m_file = fopen(getFilePath(FILE_TYPE_LOG, "ForgottenAdmin.log").c_str(), "a");
+	m_file = fopen("data/logs/admin.log", "a");
 }
 
 Loggar::~Loggar()
@@ -49,9 +49,7 @@ Loggar::~Loggar()
 
 void Loggar::logMessage(const char* channel, LogType_t type, int32_t level, std::string message, const char* func)
 {
-	char buffer[32];
-	formatDate(time(NULL), buffer);
-	fprintf(m_file, "%s", buffer);
+	fprintf(m_file, "%s", formatDate().c_str());
 	if(channel)
 		fprintf(m_file, " [%s] ", channel);
 
@@ -74,8 +72,7 @@ void Loggar::logMessage(const char* channel, LogType_t type, int32_t level, std:
 			break;
 	}
 
-	fprintf(m_file, " %s:", typeStr.c_str());
-	fprintf(m_file, " %s\n", message.c_str());
+	fprintf(m_file, " %s: %s\n", typeStr.c_str(), message.c_str());
 	fflush(m_file);
 }
 
@@ -664,18 +661,14 @@ RSA* Admin::getRSAKey(uint8_t type)
 
 bool Admin::allowIP(uint32_t ip)
 {
-	if(m_onlyLocalHost)
-	{
-		if(ip == 0x0100007F) //127.0.0.1
-			return true;
-
-		char buffer[32];
-		formatIP(ip, buffer);
-		addLogLine(NULL, LOGTYPE_WARNING, 1, std::string("forbidden connection try from ") + buffer);
-		return false;
-	}
-	else
+	if(!m_onlyLocalHost)
 		return !ConnectionManager::getInstance()->isDisabled(ip, 0xFE);
+
+	if(ip == 0x0100007F) //127.0.0.1
+		return true;
+
+	addLogLine(NULL, LOGTYPE_WARNING, 1, (std::string)"forbidden connection try from ") + convertIPAddress(ip));
+	return false;
 }
 
 bool Admin::passwordMatch(std::string& password)
@@ -697,13 +690,7 @@ static void addLogLine(ProtocolAdmin* protocol, LogType_t type, int32_t level, s
 
 	std::string tmp;
 	if(protocol)
-	{
-		char buffer[32];
-		formatIP(protocol->getIP(), buffer);
-		tmp += "[";
-		tmp += buffer;
-		tmp += "] - ";
-	}
+		tmp += (std::string)"[" + convertIPAddress(protocol->getIP()) + (std::string)"]";
 
 	tmp += message;
 	LOG_MESSAGE("OTADMIN", type, level, tmp);

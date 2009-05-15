@@ -162,12 +162,12 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			else
 				IOLoginData::getInstance()->getNameByGuid(ban.adminid, name_, true);
 
-			char date[16], date2[16], buffer[500 + ban.comment.length()];
-			formatDate2(ban.added, date);
-			formatDate2(ban.expires, date2, true);
+			char buffer[500 + ban.comment.length()];
 			sprintf(buffer, "Your account has been %s at:\n%s by: %s,\nfor the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.\nYour %s%s.",
-				(deletion ? "deleted" : "banished"), date, name_.c_str(), getReason(ban.reason).c_str(), getAction(ban.action, false).c_str(),
-				ban.comment.c_str(), (deletion ? "account won't be undeleted" : "banishment will be lifted at:\n"), (deletion ? "." : date2));
+				(deletion ? "deleted" : "banished"), formatDateShort(ban.added).c_str(), name_.c_str(),
+				getReason(ban.reason).c_str(), getAction(ban.action, false).c_str(), ban.comment.c_str(),
+				(deletion ? "account won't be undeleted" : "banishment will be lifted at:\n"),
+				(deletion ? "." : formatDateShort(ban.expires, true).c_str()));
 
 			disconnectClient(0x14, buffer);
 			return false;
@@ -1414,21 +1414,14 @@ void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
 	if(m_debugAssertSent)
 		return;
 
-	std::string assertLine = msg.GetString();
-	std::string date = msg.GetString();
-	std::string description = msg.GetString();
-	std::string comment = msg.GetString();
-
+	std::string assertLine = msg.GetString(), date = msg.GetString(),
+		description = msg.GetString(), comment = msg.GetString();
 	m_debugAssertSent = true;
-	if(FILE* file = fopen(getFilePath(FILE_TYPE_LOG, "client_assertions.txt").c_str(), "a"))
+	if(FILE* file = fopen(getFilePath(FILE_TYPE_LOG, "assertions.log").c_str(), "a"))
 	{
-		char bufferDate[21], bufferIp[17];
-		time_t tmp = time(NULL);
-		formatIP(getIP(), bufferIp);
-		formatDate(tmp, bufferDate);
-
-		fprintf(file, "----- %s - %s (%s) -----\n", bufferDate, player->getName().c_str(), bufferIp);
-		fprintf(file, "%s\n%s\n%s\n%s\n", assertLine.c_str(), date.c_str(), description.c_str(), comment.c_str());
+		fprintf(file, "----- %s - %s (%s) -----\n%s\n%s\n%s\n%s\n", formatDate().c_str(),
+			player->getName().c_str(), convertIPAddress(getIP()).c_str()
+			assertLine.c_str(), date.c_str(), description.c_str(), comment.c_str());
 		fclose(file);
 	}
 }
@@ -2444,11 +2437,7 @@ void ProtocolGame::sendTextWindow(uint32_t windowTextId, Item* item, uint16_t ma
 
 		time_t writtenDate = item->getDate();
 		if(writtenDate > 0)
-		{
-			char date[16];
-			formatDate2(writtenDate, date);
-			msg->AddString(date);
-		}
+			msg->AddString(formatDate(writtenDate));
 		else
 			msg->AddString("");
 	}

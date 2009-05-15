@@ -106,9 +106,9 @@ Direction getDirectionTo(Position pos1, Position pos2, bool extended = true);
 Direction getReverseDirection(Direction dir);
 Position getNextPosition(Direction direction, Position pos);
 
-void formatDate(time_t time, char* buffer);
-void formatDate2(time_t time, char* buffer, bool detailed = false);
-void formatIP(uint32_t ip, char* buffer);
+std::string formatDate(time_t _time = 0);
+std::string formatDateShort(time_t _time = 0, bool detailed = false);
+std::string formatIP(uint32_t ip);
 std::string formatTime(int32_t hours, int32_t minutes);
 
 MagicEffectClasses getMagicEffect(const std::string& strValue);

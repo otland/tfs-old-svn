@@ -173,8 +173,9 @@ class PoolManager
 		{
 			time_t rawtime;
 			time(&rawtime);
-			std::ofstream output("data/logs/memory_dump.txt", std::ios_base::app);
-			output << "OTServ Allocator Stats: " << std::ctime(&rawtime);
+			std::ofstream output("data/logs/memory_dump.log", std::ios_base::app);
+
+			output << "OTServ Allocator Stats: " << std::ctime(&rawtime) << std::endl;
 			for(PoolsStats::iterator it = poolsStats.begin(); it != poolsStats.end(); ++it)
 			{
 				output << (int32_t)(it->first) << " alloc: " << (int64_t)(it->second->allocations) << " dealloc: ";

@@ -97,6 +97,7 @@ Game::Game()
 
 Game::~Game()
 {
+	blacklist.clear();
 	if(map)
 		delete map;
 }
@@ -3241,9 +3242,7 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 			ss << ".";
 			if(const Player* destPlayer = creature->getPlayer())
 			{
-				char bufferIP[40];
-				formatIP(destPlayer->getIP(), bufferIP);
-				ss << std::endl << "IP: " << bufferIP << ", Client: " << destPlayer->getClientVersion() << ".";
+				ss << std::endl << "IP: " << convertIPAddress(destPlayer->getIP()) << ", Client: " << destPlayer->getClientVersion() << ".";
 				if(destPlayer->isInGhostMode())
 					ss << std::endl << "* Ghost mode *";
 			}
@@ -4964,33 +4963,36 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string targetName, uint
 	if(removeNotations > 1)
 		IOBan::getInstance()->removeNotations(account.number);
 
-	char buffer[800 + comment.length()];
+	std::stringstream ss;
 	if(g_config.getBool(ConfigManager::BROADCAST_BANISHMENTS))
-	{
-		if(action == ACTION_STATEMENT)
-			sprintf(buffer, "%s has taken the action \"%s\" for the statement: \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".",
-				player->getName().c_str(), getAction(action, ipBanishment).c_str(), statement.c_str(), targetName.c_str(),
-				account.warnings, getReason(reason).c_str(), comment.c_str());
-		else
-			sprintf(buffer, "%s has taken the action \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".",
-				player->getName().c_str(), getAction(action, ipBanishment).c_str(), targetName.c_str(),
-				account.warnings, getReason(reason).c_str(), comment.c_str());
-
-		broadcastMessage(buffer, MSG_STATUS_WARNING);
-	}
+		ss << player->getName() << " has";
 	else
-	{
-		if(action == ACTION_STATEMENT)
-			sprintf(buffer, "You have taken the action \"%s\" for the statement: \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".",
-				getAction(action, ipBanishment).c_str(), statement.c_str(), targetName.c_str(), account.warnings,
-				getReason(reason).c_str(), comment.c_str());
-		else
-			sprintf(buffer, "You have taken the action \"%s\" against: %s (Warnings: %d), with reason: \"%s\", and comment: \"%s\".",
-				getAction(action, ipBanishment).c_str(), targetName.c_str(), account.warnings,
-				getReason(reason).c_str(), comment.c_str());
+		ss << "You have";
 
-		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, buffer);
+	ss << " taken the action \"" << getAction(action, ipBanishment) << "\"";
+	switch(action)
+	{
+		case ACTION_NOTATION:
+		{
+			ss << " (" << (g_config.getNumber(ConfigManager::NOTATIONS_TO_BAN) - IOBan::getInstance()->getNotationsCount(
+				account.accnumber)) << " left to banishment)";
+			break;
+		}
+		case ACTION_STATEMENT:
+		{
+			ss << " for the statement: \"" << statement << "\"";
+			break;
+		}
+		default:
+			break;
 	}
+
+	ss << " against: " << targetName << " (Warnings: " << account.warnings << "), with reason: \"" << getReason(
+		reason) << "\", and comment: \"" << comment << "\".";
+	if(g_config.getBool(ConfigManager::BROADCAST_BANISHMENTS))
+		broadcastMessage(ss.str(), MSG_STATUS_WARNING);
+	else
+		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, ss.str());
 
 	if(targetPlayer && removeNotations > 0)
 	{
@@ -5304,6 +5306,33 @@ double Game::getExperienceStage(uint32_t level)
 		return stages[lastStageLevel];
 
 	return stages[level];
+}
+
+bool Game::fetchBlacklist()
+{
+	xmlDocPtr doc = xmlParseFile("http://forgottenserver.otland.net/blacklist.xml");
+	if(!doc)
+		return false;
+
+	xmlNodePtr p, root = xmlDocGetRootElement(doc);
+	if(!xmlStrcmp(root->name, (const xmlChar*)"blacklist"))
+	{
+		p = root->children;
+		while(p)
+		{
+			if(!xmlStrcmp(p->name, (const xmlChar*)"entry"))
+			{
+				std::string ip;
+				if(readXMLString(p, "ip", ip))
+					blacklist.push_back(convertIPAddress(ip));
+			}
+
+			p = p->next;
+		}
+	}
+
+	xmlFreeDoc(doc);
+	return true;
 }
 
 bool Game::loadExperienceStages()

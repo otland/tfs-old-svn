@@ -264,16 +264,16 @@ std::string getLastXMLError()
 bool utf8ToLatin1(char* intext, std::string& outtext)
 {
 	outtext = "";
-
-	if(intext == NULL)
+	if(!intext)
 		return false;
 
 	int32_t inlen  = strlen(intext);
-	if(inlen == 0)
+	if(!inlen)
 		return false;
 
 	int32_t outlen = inlen * 2;
 	uint8_t* outbuf = new uint8_t[outlen];
+
 	int32_t res = UTF8Toisolat1(outbuf, &outlen, (uint8_t*)intext, &inlen);
 	if(res < 0)
 	{
@@ -283,6 +283,7 @@ bool utf8ToLatin1(char* intext, std::string& outtext)
 
 	outbuf[outlen] = '\0';
 	outtext = (char*)outbuf;
+
 	delete[] outbuf;
 	return true;
 }
@@ -291,7 +292,6 @@ StringVec explodeString(const std::string& string, const std::string& separator)
 {
 	StringVec returnVector;
 	size_t start = 0, end = 0;
-
 	while((end = string.find(separator, start)) != std::string::npos)
 	{
 		returnVector.push_back(string.substr(start, end - start));
@@ -336,31 +336,31 @@ float box_muller(float m, float s)
 	// mean m, standard deviation s
 	float x1, x2, w, y1;
 	static float y2;
-	static bool useLast = false;
 
+	static bool useLast = false;
 	if(useLast) // use value from previous call
 	{
 		y1 = y2;
 		useLast = false;
+		return (m + y1 * s);
 	}
-	else
+
+	do
 	{
-		do
-		{
-			double r1 = (((float)(rand()) / RAND_MAX));
-			double r2 = (((float)(rand()) / RAND_MAX));
+		double r1 = (((float)(rand()) / RAND_MAX));
+		double r2 = (((float)(rand()) / RAND_MAX));
 
-			x1 = 2.0 * r1 - 1.0;
-			x2 = 2.0 * r2 - 1.0;
-			w = x1 * x1 + x2 * x2;
-		}
-		while(w >= 1.0);
-
-		w = sqrt((-2.0 * log(w)) / w);
-		y1 = x1 * w;
-		y2 = x2 * w;
-		useLast = true;
+		x1 = 2.0 * r1 - 1.0;
+		x2 = 2.0 * r2 - 1.0;
+		w = x1 * x1 + x2 * x2;
 	}
+	while(w >= 1.0);
+	w = sqrt((-2.0 * log(w)) / w);
+
+	y1 = x1 * w;
+	y2 = x2 * w;
+
+	useLast = true;
 	return (m + y1 * s);
 }
 
@@ -380,17 +380,14 @@ int32_t random_range(int32_t lowestNumber, int32_t highestNumber, DistributionTy
 	{
 		case DISTRO_UNIFORM:
 			return (lowestNumber + ((int32_t)rand24b() % (highestNumber - lowestNumber + 1)));
-			break;
 		case DISTRO_NORMAL:
 			return (lowestNumber + int32_t(float(highestNumber - lowestNumber) * (float)std::min((float)1, std::max((float)0, box_muller(0.5, 0.25)))));
-			break;
 		default:
-		{
-			const float randMax = 16777216;
-			return (lowestNumber + int32_t(float(highestNumber - lowestNumber) * float(1.f - sqrt((1.f * rand24b()) / randMax))));
 			break;
-		}
 	}
+
+	const float randMax = 16777216;
+	return (lowestNumber + int32_t(float(highestNumber - lowestNumber) * float(1.f - sqrt((1.f * rand24b()) / randMax))));
 }
 
 char upchar(char character)
@@ -431,6 +428,7 @@ bool isValidAccountName(std::string text)
 		if(!isLowercaseLetter(text[size]) && !isNumber(text[size]))
 			return false;
 	}
+
 	return true;
 }
 
@@ -444,6 +442,7 @@ bool isValidPassword(std::string text)
 		if(!isLowercaseLetter(text[size]) && !isNumber(text[size]) && !isPasswordCharacter(text[size]))
 			return false;
 	}
+
 	return true;
 }
 
@@ -451,7 +450,6 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 {
 	uint32_t textLength = text.length(), lenBeforeSpace = 1/*, lenBeforeQuote = 1*/, lenBeforeDash = 1, repeatedCharacter = 0; //Elf
 	char lastChar = 32;
-
 	if(forceUppercaseOnFirstLetter)
 	{
 		if(!isUppercaseLetter(text[0]))
@@ -511,6 +509,7 @@ bool isValidName(std::string text, bool forceUppercaseOnFirstLetter/* = true*/)
 			|| (isUppercaseLetter(text[size]) && text[size - 1] == 32)))
 			return false;
 	}
+
 	return true;
 }
 
@@ -522,6 +521,7 @@ bool isNumbers(std::string text)
 		if(!isNumber(text[size]))
 			return false;
 	}
+
 	return true;
 }
 
@@ -535,6 +535,7 @@ std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLenght)
 {
 	std::stringstream key;
 	int32_t i = 0, j = 0, lastNumber = 99, number = 0;
+
 	char character = 0, lastCharacter = 0;
 	bool madeNumber = false, madeCharacter = false;
 	do
@@ -564,14 +565,13 @@ std::string generateRecoveryKey(int32_t fieldCount, int32_t fieldLenght)
 			}
 		}
 		while((!madeCharacter && !madeNumber) ? true : (++j && j < fieldLenght));
-
 		lastCharacter = character = number = j = 0;
+
 		lastNumber = 99;
 		if(i < fieldCount - 1)
 			key << "-";
 	}
 	while(++i && i < fieldCount);
-
 	return key.str();
 }
 
@@ -596,29 +596,43 @@ std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end)
 			tmp += " " + (*it);
 			++it;
 		}
+
 		if(tmp.length() > 0 && tmp[tmp.length() - 1] == '"')
 			tmp.erase(tmp.length() - 1);
 	}
+
 	return tmp;
 }
 
-void formatIP(uint32_t ip, char* buffer/* atleast 17 */)
+std::string convertIPAddress(uint32_t ip)
 {
+	char buffer[17];
 	sprintf(buffer, "%d.%d.%d.%d", ip & 0xFF, (ip >> 8) & 0xFF, (ip >> 16) & 0xFF, (ip >> 24));
+	return buffer;
 }
 
-void formatDate(time_t time, char* buffer/* atleast 21 */)
+std::string formatDate(time_t _time/* = 0*/)
 {
-	const tm* tms = localtime(&time);
+	char buffer[21];
+	if(!_time)
+		_time = time(NULL);
+
+	const tm* tms = localtime(&_time);
 	if(tms)
 		sprintf(buffer, "%02d/%02d/%04d %02d:%02d:%02d", tms->tm_mday, tms->tm_mon + 1, tms->tm_year + 1900, tms->tm_hour, tms->tm_min, tms->tm_sec);
 	else
-		sprintf(buffer, "UNIX Time: %d", (int32_t)time);
+		sprintf(buffer, "UNIX Time: %d", (int32_t)_time);
+
+	return buffer;
 }
 
-void formatDate2(time_t time, char* buffer/* atleast 16 */, bool detailed/* = false*/)
+std::string formatDateShort(time_t _time, bool detailed/* = false*/)
 {
-	const tm* tms = localtime(&time);
+	char buffer[21];
+	if(!_time)
+		_time = time(NULL);
+
+	const tm* tms = localtime(&_time);
 	if(tms)
 	{
 		std::string format = "%d %b %Y";
@@ -628,7 +642,9 @@ void formatDate2(time_t time, char* buffer/* atleast 16 */, bool detailed/* = fa
 		strftime(buffer, 25, format.c_str(), tms);
 	}
 	else
-		sprintf(buffer, "UNIX Time: %d", (int32_t)time);
+		sprintf(buffer, "UNIX Time: %d", (int32_t)_time);
+
+	return buffer;
 }
 
 Skulls_t getSkull(std::string strValue)
