@@ -283,14 +283,15 @@ void Vocation::reset()
 	needPremium = false;
 	attackable = true;
 	lessLoss = fromVocation = 0;
-	gainHealthAmount = gainManaAmount = 1;
-	gainHealth = gainMana = gainCap = 5;
-	gainHealthTicks = gainManaTicks = 6;
 	soulMax = 100;
 	soulGainTicks = 120;
 	baseSpeed = 220;
 	attackSpeed = 1500;
 	name = description = "";
+
+	gainAmount[GAIN_HEALTH] = gainAmount[GAIN_MANA] = 1;
+	gain[GAIN_HEALTH] = gain[GAIN_MANA] = gainCap = 5;
+	gainTicks[GAIN_HEALTH] = gainTicks[GAIN_MANA] = 6;
 
 	skillMultipliers[0] = 1.5f;
 	skillMultipliers[6] = 1.1f;

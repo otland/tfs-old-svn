@@ -119,8 +119,7 @@ class Vocation
 
 		bool attackable, needPremium;
 		uint16_t soulGainTicks, soulMax;
-		uint32_t id, fromVocation, gainHealth, gainHealthTicks, gainHealthAmount, gainMana,
-			gainManaTicks, gainManaAmount, gainCap, baseSpeed, attackSpeed;
+		uint32_t id, fromVocation, gainCap, baseSpeed, attackSpeed;
 		std::string name, description;
 
 		uint32_t gain[GAIN_LAST + 1], gainTicks[GAIN_LAST + 1], gainAmount[GAIN_LAST + 1];
