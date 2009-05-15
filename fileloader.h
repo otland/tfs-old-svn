@@ -24,7 +24,11 @@ typedef NodeStruct* NODE;
 
 struct NodeStruct
 {
-	NodeStruct() {start = propsSize = type = next = child = 0;}
+	NodeStruct()
+	{
+		start = propsSize = type = 0;
+		next = child = 0;
+	}
 	virtual ~NodeStruct() {}
 
 	uint32_t start, propsSize, type;
