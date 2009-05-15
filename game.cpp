@@ -4975,7 +4975,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string targetName, uint
 		case ACTION_NOTATION:
 		{
 			ss << " (" << (g_config.getNumber(ConfigManager::NOTATIONS_TO_BAN) - IOBan::getInstance()->getNotationsCount(
-				account.accnumber)) << " left to banishment)";
+				account.number)) << " left to banishment)";
 			break;
 		}
 		case ACTION_STATEMENT:
@@ -5324,7 +5324,7 @@ bool Game::fetchBlacklist()
 			{
 				std::string ip;
 				if(readXMLString(p, "ip", ip))
-					blacklist.push_back(convertIPAddress(ip));
+					blacklist.push_back(ip);
 			}
 
 			p = p->next;

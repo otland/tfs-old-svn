@@ -167,7 +167,7 @@ bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& tex
 	if(success)
 	{
 		if(m_logged && m_file->is_open())
-			m_file << "[" << formatDate() << "] " << player->getName() << ": " << text << std::endl;
+			*m_file << "[" << formatDate() << "] " << player->getName() << ": " << text << std::endl;
 
 		return true;
 	}

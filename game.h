@@ -553,7 +553,7 @@ class Game
 		bool cancelRuleViolation(Player* player);
 		bool closeRuleViolation(Player* player);
 
-		std::vector<int32_t> blacklist;
+		std::vector<std::string> blacklist;
 		bool fetchBlacklist();
 
 		bool loadExperienceStages();
