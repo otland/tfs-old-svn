@@ -1522,7 +1522,7 @@ bool Commands::ghost(Creature* creature, const std::string& cmd, const std::stri
 				it->second->notifyLogOut(player);
 		}
 
-		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), player->getLastLoginSaved(), false);
+		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), false);
 		player->sendTextMessage(MSG_INFO_DESCR, "You are now invisible.");
 	}
 	else
@@ -1533,7 +1533,7 @@ bool Commands::ghost(Creature* creature, const std::string& cmd, const std::stri
 				it->second->notifyLogIn(player);
 		}
 
-		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), player->getLastLoginSaved(), true);
+		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), true);
 		player->sendTextMessage(MSG_INFO_DESCR, "You are visible again.");
 	}
 	return true;
