@@ -205,10 +205,10 @@ void Player::setVocation(uint32_t vocId)
 	vocation = Vocations::getInstance()->getVocation(vocId);
 	if(Condition* condition = getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT))
 	{
-		condition->setParam(CONDITIONPARAM_HEALTHGAIN, vocation->getHealthGainAmount());
-		condition->setParam(CONDITIONPARAM_HEALTHTICKS, vocation->getHealthGainTicks() * 1000);
-		condition->setParam(CONDITIONPARAM_MANAGAIN, vocation->getManaGainAmount());
-		condition->setParam(CONDITIONPARAM_MANATICKS, vocation->getManaGainTicks() * 1000);
+		condition->setParam(CONDITIONPARAM_HEALTHGAIN, vocation->getGainAmount(GAIN_HEALTH));
+		condition->setParam(CONDITIONPARAM_HEALTHTICKS, vocation->getGainTicks(GAIN_HEALTH) * 1000);
+		condition->setParam(CONDITIONPARAM_MANAGAIN, vocation->getGainAmount(GAIN_MANA));
+		condition->setParam(CONDITIONPARAM_MANATICKS, vocation->getGainTicks(GAIN_MANA) * 1000);
 	}
 
 	soulMax = vocation->getSoulMax();
@@ -1892,10 +1892,10 @@ void Player::addExperience(uint64_t exp)
 	while(experience >= nextLevelExp)
 	{
 		++level;
-		healthMax += vocation->getHealthGain();
-		health += vocation->getHealthGain();
-		manaMax += vocation->getManaGain();
-		mana += vocation->getManaGain();
+		healthMax += vocation->getGain(GAIN_HEALTH);
+		health += vocation->getGain(GAIN_HEALTH);
+		manaMax += vocation->getGain(GAIN_MANA);
+		mana += vocation->getGain(GAIN_MANA);
 		capacity += vocation->getCapGain();
 
 		nextLevelExp = Player::getExpForLevel(level + 1);
@@ -1938,8 +1938,8 @@ void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 	while(level > 1 && experience < Player::getExpForLevel(level))
 	{
 		level--;
-		healthMax = std::max((int32_t)0, (healthMax - (int32_t)vocation->getHealthGain()));
-		manaMax = std::max((int32_t)0, (manaMax - (int32_t)vocation->getManaGain()));
+		healthMax = std::max((int32_t)0, (healthMax - (int32_t)vocation->getGain(GAIN_HEALTH)));
+		manaMax = std::max((int32_t)0, (manaMax - (int32_t)vocation->getGain(GAIN_MANA)));
 		capacity = std::max((double)0, (capacity - (double)vocation->getCapGain()));
 	}
 
@@ -2318,10 +2318,10 @@ void Player::addDefaultRegeneration(uint32_t addTicks)
 		condition->setTicks(condition->getTicks() + addTicks);
 	else if((condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_REGENERATION, addTicks)))
 	{
-		condition->setParam(CONDITIONPARAM_HEALTHGAIN, vocation->getHealthGainAmount());
-		condition->setParam(CONDITIONPARAM_HEALTHTICKS, vocation->getHealthGainTicks() * 1000);
-		condition->setParam(CONDITIONPARAM_MANAGAIN, vocation->getManaGainAmount());
-		condition->setParam(CONDITIONPARAM_MANATICKS, vocation->getManaGainTicks() * 1000);
+		condition->setParam(CONDITIONPARAM_HEALTHGAIN, vocation->getGainAmount(GAIN_HEALTH));
+		condition->setParam(CONDITIONPARAM_HEALTHTICKS, vocation->getGainTicks(GAIN_HEALTH) * 1000);
+		condition->setParam(CONDITIONPARAM_MANAGAIN, vocation->getGainAmount(GAIN_MANA));
+		condition->setParam(CONDITIONPARAM_MANATICKS, vocation->getGainTicks(GAIN_MANA) * 1000);
 		addCondition(condition);
 	}
 }

@@ -8507,12 +8507,12 @@ int32_t LuaScriptInterface::luaGetVocationInfo(lua_State* L)
 	setField(L, "id", voc->getId());
 	setField(L, "name", voc->getName().c_str());
 	setField(L, "description", voc->getDescription().c_str());
-	setField(L, "healthGain", voc->getHealthGain());
-	setField(L, "healthGainTicks", voc->getHealthGainTicks());
-	setField(L, "healthGainAmount", voc->getHealthGainAmount());
-	setField(L, "manaGain", voc->getManaGain());
-	setField(L, "manaGainTicks", voc->getManaGainTicks());
-	setField(L, "manaGainAmount", voc->getManaGainAmount());
+	setField(L, "healthGain", voc->getGain(GAIN_HEALTH));
+	setField(L, "healthGainTicks", voc->getGainTicks(GAIN_HEALTH));
+	setField(L, "healthGainAmount", voc->getGainAmount(GAIN_HEALTH));
+	setField(L, "manaGain", voc->getGain(GAIN_MANA));
+	setField(L, "manaGainTicks", voc->getGainTicks(GAIN_MANA));
+	setField(L, "manaGainAmount", voc->getGainAmount(GAIN_MANA));
 	setField(L, "attackSpeed", voc->getAttackSpeed());
 	setField(L, "baseSpeed", voc->getBaseSpeed());
 	setField(L, "fromVocation", voc->getFromVocation());

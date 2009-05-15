@@ -67,22 +67,22 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 		voc->setGainCap(intValue);
 
 	if(readXMLInteger(p, "gainhp", intValue) || readXMLInteger(p, "gainhealth", intValue))
-		voc->setGainHealth(intValue);
+		voc->setGain(GAIN_HEALTH, intValue);
 
 	if(readXMLInteger(p, "gainmana", intValue))
-		voc->setGainMana(intValue);
+		voc->setGain(GAIN_MANA, intValue);
 
 	if(readXMLInteger(p, "gainhpticks", intValue) || readXMLInteger(p, "gainhealthticks", intValue))
-		voc->setGainHealthTicks(intValue);
+		voc->setGainTicks(GAIN_HEALTH, intValue);
 
 	if(readXMLInteger(p, "gainhpamount", intValue) || readXMLInteger(p, "gainhealthamount", intValue))
-		voc->setGainHealthAmount(intValue);
+		voc->setGainAmount(GAIN_HEALTH, intValue);
 
 	if(readXMLInteger(p, "gainmanaticks", intValue))
-		voc->setGainManaTicks(intValue);
+		voc->setGainTicks(GAIN_MANA, intValue);
 
 	if(readXMLInteger(p, "gainmanaamount", intValue))
-		voc->setGainManaAmount(intValue);
+		voc->setGainAmount(GAIN_MANA, intValue);
 
 	if(readXMLFloat(p, "manamultiplier", floatValue))
 		voc->setMultiplier(MULTIPLIER_MANA, floatValue);

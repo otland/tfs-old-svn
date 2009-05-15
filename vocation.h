@@ -23,6 +23,28 @@
 #include "otsystem.h"
 #include "enums.h"
 
+enum multiplier_t
+{
+	MULTIPLIER_FIRST = 0,
+	MULTIPLIER_MELEE = MULTIPLIER_FIRST,
+	MULTIPLIER_DISTANCE = 1,
+	MULTIPLIER_DEFENSE = 2,
+	MULTIPLIER_ARMOR = 3,
+	MULTIPLIER_MAGIC = 4,
+	MULTIPLIER_MAGICHEALING = 5,
+	MULTIPLIER_WAND = 6,
+	MULTIPLIER_MANA = 7,
+	MULTIPLIER_LAST = MULTIPLIER_MANA
+};
+
+enum gain_t
+{
+	GAIN_FIRST = 0,
+	GAIN_HEALTH = GAIN_FIRST,
+	GAIN_MANA = 1,
+	GAIN_LAST = GAIN_MANA
+};
+
 class Vocation
 {
 	public:
@@ -38,26 +60,18 @@ class Vocation
 
 		const std::string& getName() const {return name;}
 		void setName(const std::string& v) {name = v;}
+
 		const std::string& getDescription() const {return description;}
 		void setDescription(const std::string& v) {description = v;}
 
-		uint32_t getHealthGain() const {return gainHealth;}
-		void setGainHealth(uint32_t v) {gainHealth = v;}
+		uint32_t getGain(gain_t type) const {return gain[type];}
+		void setGain(gain_t type, uint32_t v) {gain[type] = v;}
 
-		uint32_t getHealthGainTicks() const {return gainHealthTicks;}
-		void setGainHealthTicks(uint32_t v) {gainHealthTicks = v;}
+		uint32_t getGainTicks(gain_t type) const {return gainTicks[type];}
+		void setGainTicks(gain_t type, uint32_t v) {gainTicks[type] = v;}
 
-		uint32_t getHealthGainAmount() const {return gainHealthAmount;}
-		void setGainHealthAmount(uint32_t v) {gainHealthAmount = v;}
-
-		uint32_t getManaGain() const {return gainMana;}
-		void setGainMana(uint32_t v) {gainMana = v;}
-
-		uint32_t getManaGainTicks() const {return gainManaTicks;}
-		void setGainManaTicks(uint32_t v) {gainManaTicks = v;}
-
-		uint32_t getManaGainAmount() const {return gainManaAmount;}
-		void setGainManaAmount(uint32_t v) {gainManaAmount = v;}
+		uint32_t getGainAmount(gain_t type) const {return gainAmount[type];}
+		void setGainAmount(gain_t type, uint32_t v) {gainAmount[type] = v;}
 
 		uint16_t getSoulGainTicks() const {return soulGainTicks;}
 		void setSoulGainTicks(uint16_t v) {soulGainTicks = v;}
@@ -87,7 +101,7 @@ class Vocation
 		void setNeedPremium(bool v) {needPremium = v;}
 
 		int16_t getAbsorbPercent(CombatType_t combat) const {return absorbPercent[combat];}
-		void increaseAbsorbPercent(CombatType_t c, int16_t v) {absorbPercent[c] += v;}
+		void increaseAbsorbPercent(CombatType_t combat, int16_t v) {absorbPercent[combat] += v;}
 
 		float getMultiplier(multiplier_t type) const {return formulaMultipliers[type];}
 		void setMultiplier(multiplier_t type, float v) {formulaMultipliers[type] = v;}
@@ -109,6 +123,7 @@ class Vocation
 			gainManaTicks, gainManaAmount, gainCap, baseSpeed, attackSpeed;
 		std::string name, description;
 
+		uint32_t gain[GAIN_LAST + 1], gainTicks[GAIN_LAST + 1], gainAmount[GAIN_LAST + 1];
 		int16_t absorbPercent[COMBAT_LAST + 1];
 		float skillMultipliers[SKILL_LAST + 1];
 		float formulaMultipliers[MULTIPLIER_LAST + 1];
