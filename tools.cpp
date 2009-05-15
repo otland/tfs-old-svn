@@ -602,13 +602,6 @@ std::string parseParams(tokenizer::iterator &it, tokenizer::iterator end)
 	return tmp;
 }
 
-std::string convertIPAddress(uint32_t ip)
-{
-	char buffer[17];
-	sprintf(buffer, "%d.%d.%d.%d", ip & 0xFF, (ip >> 8) & 0xFF, (ip >> 16) & 0xFF, (ip >> 24));
-	return buffer;
-}
-
 std::string formatDate(time_t _time/* = 0*/)
 {
 	char buffer[21];
@@ -642,6 +635,25 @@ std::string formatDateShort(time_t _time, bool detailed/* = false*/)
 	else
 		sprintf(buffer, "UNIX Time: %d", (int32_t)_time);
 
+	return buffer;
+}
+
+std::string formatTime(int32_t hours, int32_t minutes)
+{
+	std::stringstream time;
+	if(hours)
+		time << hours << " " << (hours > 1 ? "hours" : "hour") << (minutes ? " and " : "");
+
+	if(minutes)
+		time << minutes << " " << (minutes > 1 ? "minutes" : "minute");
+
+	return time.str();
+}
+
+std::string convertIPAddress(uint32_t ip)
+{
+	char buffer[17];
+	sprintf(buffer, "%d.%d.%d.%d", ip & 0xFF, (ip >> 8) & 0xFF, (ip >> 16) & 0xFF, (ip >> 24));
 	return buffer;
 }
 
@@ -805,18 +817,6 @@ Position getNextPosition(Direction direction, Position pos)
 	}
 
 	return pos;
-}
-
-std::string formatTime(int32_t hours, int32_t minutes)
-{
-	std::stringstream time;
-	if(hours)
-		time << hours << " " << (hours > 1 ? "hours" : "hour") << (minutes ? " and " : "");
-
-	if(minutes)
-		time << minutes << " " << (minutes > 1 ? "minutes" : "minute");
-
-	return time.str();
 }
 
 struct AmmoTypeNames
