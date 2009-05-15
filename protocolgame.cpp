@@ -1420,7 +1420,7 @@ void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
 	if(FILE* file = fopen(getFilePath(FILE_TYPE_LOG, "assertions.log").c_str(), "a"))
 	{
 		fprintf(file, "----- %s - %s (%s) -----\n%s\n%s\n%s\n%s\n", formatDate().c_str(),
-			player->getName().c_str(), convertIPAddress(getIP()).c_str()
+			player->getName().c_str(), convertIPAddress(getIP()).c_str(),
 			assertLine.c_str(), date.c_str(), description.c_str(), comment.c_str());
 		fclose(file);
 	}
