@@ -140,7 +140,7 @@ void House::updateDoorDescription(std::string name/* = ""*/)
 	if(houseOwner)
 	{
 		if(isGuild())
-			IOGuild::getInstance()->getGuildNameById(houseOwner, name);
+			IOGuild::getInstance()->getGuildNameById(name, houseOwner);
 		else if(name.empty())
 			IOLoginData::getInstance()->getNameByGuid(houseOwner, name);
 
@@ -322,7 +322,7 @@ AccessHouseLevel_t House::getHouseAccessLevel(const Player* player)
 			{
 				case GUILDLEVEL_LEADER:
 					return HOUSE_OWNER;
-				case GUILDLEVEL_VICELEADER:
+				case GUILDLEVEL_VICE:
 					return HOUSE_SUBOWNER;
 				default:
 					return HOUSE_GUEST;

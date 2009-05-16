@@ -60,7 +60,7 @@ class IOGuild
 		uint32_t getGuildId(uint32_t guid);
 		bool setGuildNick(uint32_t guid, std::string guildNick);
 
-		bool swapGuildIdToOwner(uint32_t& ownerId, uint32_t guildId);
+		bool swapGuildIdToOwner(uint32_t& value);
 		bool updateOwnerId(uint32_t guildId, uint32_t guid);
 
 	private:
