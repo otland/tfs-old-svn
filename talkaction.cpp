@@ -420,7 +420,7 @@ bool TalkAction::buyHouse(Creature* creature, const std::string& cmd, const std:
 	{
 		if(!player->getGuildId() || player->getGuildLevel() != GUILDLEVEL_LEADER)
 		{
-			player->sendCancel("You must be a guild owner to purchase a guild hall.");
+			player->sendCancel("You have to be the guild leader to purchase a guild hall.");
 			return true;
 		}
 
@@ -463,16 +463,16 @@ bool TalkAction::sellHouse(Creature* creature, const std::string& cmd, const std
 		return false;
 
 	House* house = Houses::getInstance().getHouseByPlayerId(player->getGUID());
-	if(!house)
+	if(!house && (!player->getGuildId() || !(house = Houses::getInstance().getHouseByGuildId(player->getGuildId()))))
 	{
 		player->sendCancel("You do not own any house.");
 		return true;
 	}
 
-	if(!Houses::getInstance().payRent(player, house))
+	if(house->isGuild() && player->getGuildLevel() != GUILDLEVEL_LEADER)
 	{
-		player->sendCancel("You have to pay the rent first.");
-		return true;
+		player->sendCancel("You have to be the guild leader to sell a guild hall.");
+		return false;
 	}
 
 	Player* tradePartner = NULL;
@@ -489,28 +489,51 @@ bool TalkAction::sellHouse(Creature* creature, const std::string& cmd, const std
 		return true;
 	}
 
-	uint32_t levelToBuyHouse = g_config.getNumber(ConfigManager::LEVEL_TO_BUY_HOUSE);
-	if(tradePartner->getLevel() < levelToBuyHouse)
+	if(!house->isGuild())
 	{
-		char buffer[100];
-		sprintf(buffer, "Trade player has to be at least Level %d to buy house.", levelToBuyHouse);
-		player->sendCancel(buffer);
-		return true;
-	}
+		if(Houses::getInstance().getHouseByPlayerId(tradePartner->getGUID()))
+		{
+			player->sendCancel("Trade player already owns another house.");
+			return true;
+		}
 
-	if(Houses::getInstance().getHouseByPlayerId(tradePartner->getGUID()))
-	{
-		player->sendCancel("Trade player already owns another house.");
-		return true;
-	}
+		uint16_t housesPerAccount = g_config.getNumber(ConfigManager::HOUSES_PER_ACCOUNT);
+		if(housesPerAccount > 0 && Houses::getInstance().getHousesCount(tradePartner->getAccount()) >= housesPerAccount)
+		{
+			char buffer[100];
+			sprintf(buffer, "Trade player has reached limit of %d house%s per account.", housesPerAccount, (housesPerAccount != 1 ? "s" : ""));
+			player->sendCancel(buffer);
+			return true;
+		}
 
-	uint16_t housesPerAccount = g_config.getNumber(ConfigManager::HOUSES_PER_ACCOUNT);
-	if(housesPerAccount > 0 && Houses::getInstance().getHousesCount(tradePartner->getAccount()) >= housesPerAccount)
+		if(!tradePartner->isPremium() && !g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM))
+		{
+			player->sendCancel("Trade player does not have a premium account.");
+			return true;
+		}
+
+		uint32_t levelToBuyHouse = g_config.getNumber(ConfigManager::LEVEL_TO_BUY_HOUSE);
+		if(tradePartner->getLevel() < levelToBuyHouse)
+		{
+			char buffer[100];
+			sprintf(buffer, "Trade player has to be at least Level %d to buy house.", levelToBuyHouse);
+			player->sendCancel(buffer);
+			return true;
+		}
+	}
+	else
 	{
-		char buffer[100];
-		sprintf(buffer, "Trade player has reached limit of %d house%s per account.", housesPerAccount, (housesPerAccount != 1 ? "s" : ""));
-		player->sendCancel(buffer);
-		return true;
+		if(!tradePartner->getGuildId() || tradePartner->getGuildLevel() != GUILDLEVEL_LEADER)
+		{
+			player->sendCancel("Trade player have to be the guild leader.");
+			return true;
+		}
+
+		if(Houses::getInstance().getHouseByGuildId(tradePartner->getGuildId()))
+		{
+			player->sendCancel("Trade player guild already own another house.");
+			return true;
+		}
 	}
 
 	if(!Position::areInRange<3,3,0>(tradePartner->getPosition(), player->getPosition()))
@@ -519,20 +542,15 @@ bool TalkAction::sellHouse(Creature* creature, const std::string& cmd, const std
 		return true;
 	}
 
-	if(!tradePartner->isPremium() && !g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM))
+	if(!Houses::getInstance().payRent(player, house))
 	{
-		player->sendCancel("Trade player does not have a premium account.");
+		player->sendCancel("You have to pay the rent first.");
 		return true;
 	}
 
 	Item* transferItem = HouseTransferItem::createHouseTransferItem(house);
-	if(!transferItem)
-	{
-		player->sendCancel("You cannot trade this house.");
-		return true;
-	}
-
 	player->transferContainer.__addThing(NULL, transferItem);
+
 	player->transferContainer.setParent(player);
 	if(!g_game.internalStartTrade(player, tradePartner, transferItem))
 		transferItem->onTradeEvent(ON_TRADE_CANCEL, player, NULL);
@@ -548,7 +566,7 @@ bool TalkAction::joinGuild(Creature* creature, const std::string& cmd, const std
 
 	std::string param_ = param;
 	trimString(param_);
-	if(player->getGuildId() == 0)
+	if(!player->getGuildId())
 	{
 		uint32_t guildId;
 		if(IOGuild::getInstance()->getGuildIdByName(guildId, param_))

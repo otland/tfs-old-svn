@@ -6,7 +6,8 @@ function onSay(cid, words, param, channel)
 		return true
 	end
 
-	if(getHouseOwner(houseId) ~= getPlayerGUID(cid)) then
+	local owner = getHouseOwner(houseId)
+	if(owner ~= getPlayerGUID(cid) and (owner ~= getPlayerGuildId(cid) or getPlayerGuildLevel(cid) ~= GUILDLEVEL_LEADER)) then
 		doPlayerSendCancel(cid, "You are not the owner of this house.")
 		doSendMagicEffect(getPlayerPosition(cid), CONST_ME_POFF)
 		return true

@@ -407,8 +407,12 @@ HouseTransferItem* HouseTransferItem::createHouseTransferItem(House* house)
 	transferItem->useThing2();
 	transferItem->setID(ITEM_HOUSE_TRANSFER);
 
+	std::string tmp = "house";
+	if(house->isGuild())
+		tmp = "guild hall";
+
 	char buffer[150];
-	sprintf(buffer, "It is a house transfer document for '%s'.", house->getName().c_str());
+	sprintf(buffer, "It is a %s transfer document for '%s'.", tmp.c_str(), house->getName().c_str());
 	transferItem->setSpecialDescription(buffer);
 
 	transferItem->setSubType(1);
@@ -422,7 +426,12 @@ bool HouseTransferItem::onTradeEvent(TradeEvents_t event, Player* owner, Player*
 		case ON_TRADE_TRANSFER:
 		{
 			if(house)
-				house->setHouseOwner(owner->getGUID());
+			{
+				if(!house->isGuild())
+					house->setHouseOwner(owner->getGUID());
+				else
+					house->setHouseOwner(owner->getGuildId());
+			}
 
 			g_game.internalRemoveItem(NULL, this, 1);
 			seller->transferContainer.setParent(NULL);
@@ -433,6 +442,7 @@ bool HouseTransferItem::onTradeEvent(TradeEvents_t event, Player* owner, Player*
 		{
 			owner->transferContainer.setParent(NULL);
 			owner->transferContainer.__removeThing(this, getItemCount());
+
 			g_game.FreeThing(this);
 			break;
 		}
