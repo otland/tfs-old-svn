@@ -65,7 +65,7 @@ bool IOGuild::swapGuildIdToOwner(uint32_t& value)
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	value = result->getDataString("ownerid");
+	value = result->getDataInt("ownerid");
 	result->free();
 	return true;
 }
