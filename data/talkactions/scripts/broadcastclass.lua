@@ -1,15 +1,15 @@
 function onSay(cid, words, param, channel)
-	if(param == "") then
+	if(param == '') then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
-		return TRUE
+		return true
 	end
 
 	local t = string.explode(param, ";")
 	if(not t[2]) then
 		doBroadcastMessage(t[1])
-	elseif(doBroadcastMessage(t[2], MESSAGE_TYPES[t[1]]) == LUA_ERROR) then
+	elseif(not doBroadcastMessage(t[2], MESSAGE_TYPES[t[1]])) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Bad message color type.")
 	end
 
-	return TRUE
+	return true
 end

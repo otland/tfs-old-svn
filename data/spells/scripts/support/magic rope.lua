@@ -5,17 +5,17 @@ function onCastSpell(cid, var)
 	pos.stackpos = 0
 
 	local itemGround = getThingFromPos(pos)
-	if(isInArray(spotsId, itemGround.itemid) == TRUE) then
+	if(isInArray(spotsId, itemGround.itemid)) then
 		local newPos = pos
 		newPos.y = newPos.y + 1
 		newPos.z = newPos.z - 1
 
-		doTeleportThing(cid, newPos, FALSE)
+		doTeleportThing(cid, newPos, false)
 		doSendMagicEffect(pos, CONST_ME_TELEPORT)
-		return LUA_NO_ERROR
+		return true
 	else
 		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 		doSendMagicEffect(pos, CONST_ME_POFF)
-		return LUA_ERROR
+		return false
 	end
 end

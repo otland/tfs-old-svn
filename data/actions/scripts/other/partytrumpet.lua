@@ -3,5 +3,5 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	doCreatureSay(cid, "TOOOOOOT!", TALKTYPE_ORANGE_1)
 	doSendMagicEffect(fromPosition, CONST_ME_SOUND_BLUE)
 	doDecayItem(item.uid)
-	return TRUE
+	return true
 end

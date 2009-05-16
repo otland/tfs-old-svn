@@ -1,9 +1,15 @@
+local config = {
+	daily = "no",
+	level = 100,
+	storage = 30015
+}
+
 local playerPosition =
 {
-	{x = 247, y = 659, z = 13, stackpos = STACKPOS_TOP_CREATURE},
-	{x = 247, y = 660, z = 13, stackpos = STACKPOS_TOP_CREATURE},
-	{x = 247, y = 661, z = 13, stackpos = STACKPOS_TOP_CREATURE},
-	{x = 247, y = 662, z = 13, stackpos = STACKPOS_TOP_CREATURE}
+	{x = 247, y = 659, z = 13},
+	{x = 247, y = 660, z = 13},
+	{x = 247, y = 661, z = 13},
+	{x = 247, y = 662, z = 13}
 }
 
 local newPosition =
@@ -15,40 +21,50 @@ local newPosition =
 }
 
 -- Do not modify the declaration lines below.
-local player = {0, 0, 0, 0}
-local failed = TRUE
+local players = {}
+local failed = true
+config.daily = getBooleanFromString(config.daily)
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if item.itemid == 1945 then
-		for i = 1, 4 do
-			player[i] = getThingfromPos(playerPosition[i])
-			if player[i].itemid > 0 then
-				if isPlayer(player[i].uid) == TRUE then
-					if getPlayerStorageValue(player[i].uid, 30015) == nil then
-						if getPlayerLevel(player[i].uid) >= 100 then
-							failed = FALSE
-						end
-					end
-				end
-			end
-
-			if failed == TRUE then
-				doPlayerSendCancel(cid, "Sorry, not possible.")
-				return TRUE
-			end
-
-			failed = TRUE
+	if(item.itemid == 1946) then
+		if(config.daily) then
+			doPlayerSendCancel(cid, "Sorry, not possible.")
+		else
+			doTransformItem(item.uid, item.itemid - 1)
 		end
 
-		for i = 1, 4 do
-			doSendMagicEffect(playerPosition[i], CONST_ME_POFF)
-			doTeleportThing(player[i].uid, newPosition[i], FALSE)
-			doSendMagicEffect(newPosition[i], CONST_ME_ENERGYAREA)
-		end
-		doTransformItem(item.uid, item.itemid + 1)
-	elseif item.itemid == 1946 then
-		doPlayerSendCancel(cid, "Sorry, not possible.")
+		return true
 	end
 
-	return TRUE
+	if(item.itemid ~= 1945) then
+		return true
+	end
+
+	for i, pos in ipairs(playerPosition) do
+		pos.stackpos = STACKPOS_TOP_CREATURE
+		players[i] = getThingFromPos(playerPosition[i]).uid
+		if(players[i] > 0 and
+			isPlayer(players[i]) and
+			getPlayerStorageValue(players[i].uid, config.storage) == -1 and
+			getPlayerLevel(players[i].uid) >= config.level)
+		then
+			failed = false
+		end
+
+		if(failed) then
+			doPlayerSendCancel(cid, "Sorry, not possible.")
+			return true
+		end
+
+		failed = true
+	end
+
+	for i, pid in ipairs(players) do
+		doSendMagicEffect(playerPosition[i], CONST_ME_POFF)
+		doTeleportThing(pid, newPosition[i], false)
+		doSendMagicEffect(newPosition[i], CONST_ME_ENERGYAREA)
+	end
+
+	doTransformItem(item.uid, item.itemid + 1)
+	return true
 end

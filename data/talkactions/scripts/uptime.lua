@@ -8,5 +8,5 @@ function onSay(cid, words, param, channel)
 	end
 
 	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Uptime: " .. hours .. " hours and " .. minutes .. " minutes.")
-	return TRUE
+	return true
 end

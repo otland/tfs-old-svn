@@ -22,11 +22,11 @@
 		<attack name="earth" interval="2000" chance="18" range="7" min="-45" max="-85">
 			<attribute key="shootEffect" value="poison"/>
 		</attack>
-		<attack name="poisoncondition" interval="3000" chance="20" length="8" spread="0" min="-30" max="-100">      
-			<attribute key="areaEffect" value="smallplants"/>    
+		<attack name="poisoncondition" interval="3000" chance="20" length="8" spread="0" min="-30" max="-100">			
+			<attribute key="areaEffect" value="smallplants"/>		
 		</attack> 
-		<attack name="speed" interval="3000" chance="10" range="7" target="1" duration="30000" speedchange="-600">      
-			<attribute key="areaEffect" value="redshimmer"/>    
+		<attack name="speed" interval="3000" chance="10" range="7" target="1" duration="30000" speedchange="-600">			
+			<attribute key="areaEffect" value="redshimmer"/>		
 		</attack> 
 		<attack name="lifedrain" interval="1000" chance="10" range="7" radius="3" target="0" min="-0" max="-50">
 			<attribute key="areaEffect" value="redshimmer"/>
@@ -62,7 +62,7 @@
 			<inside>
 				<item id="2510" countmax="1" chance1="4000"/> <!-- plate shield -->
 				<item id="2381" chance="3000"/> <!-- halberd -->
-				<item id="2165" chance="1500"/> <!-- stealth ring -->        
+				<item id="2165" chance="1500"/> <!-- stealth ring -->				
 				<item id="8900" chance="300"/> <!-- spellbook of enlightenment -->
 				<item id="2528" chance="200"/> <!-- tower shield -->
 			</inside>

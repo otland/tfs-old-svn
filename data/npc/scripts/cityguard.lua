@@ -6,7 +6,7 @@ local lastAttack = 0
 local followTimeout = 10
 
 local function isSkulled(cid)
-	if(getCreatureSkullType(cid) >= 3 and isPlayerPzLocked(cid) == TRUE) then
+	if(getCreatureSkullType(cid) >= SKULL_WHITE and isPlayerPzLocked(cid)) then
 		return true
 	end
 
@@ -21,7 +21,7 @@ local function goToOrigPos()
 end
 
 local function updateTarget()
-	if(isPlayer(target) == FALSE) then
+	if(not isPlayer(target)) then
 		goToOrigPos()
 	elseif(not isSkulled(target)) then
 		selfSay("Now, behave in the future.")
@@ -33,8 +33,8 @@ local function updateTarget()
 		for i = 1, table.getn(list) do
 			local _target = list[i]
 			if(_target ~= 0) then
-				if(isPlayer(_target) == TRUE and isSkulled(_target)) then
-					if(getTilePzInfo(getCreaturePosition(_target)) == FALSE) then
+				if(isPlayer(_target) and isSkulled(_target)) then
+					if(not getTilePzInfo(getCreaturePosition(_target))) then
 						if(selfFollow(_target)) then
 							target = _target
 							if(target ~= prevTarget) then

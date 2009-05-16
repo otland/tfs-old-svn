@@ -7,5 +7,5 @@ function onSay(cid, words, param, channel)
 	end
 
 	doSendMagicEffect(getCreaturePosition(cid), effect)
-	return TRUE
+	return true
 end

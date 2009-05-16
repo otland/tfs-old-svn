@@ -8,13 +8,11 @@ function onTargetTile(cid, pos)
 	local position = pos
 	position.stackpos = 255
 	local item = getThingfromPos(position)
-	if item.itemid > 0 then
-		if isInArray(CORPSES, item.itemid) == TRUE then
-			doRemoveItem(item.uid,1)
-			local creature = doCreateMonster("Skeleton", pos)
-			doConvinceCreature(cid, creature)
-			doSendMagicEffect(pos, CONST_ME_POFF)
-		end
+	if(item.itemid > 0 and isInArray(CORPSES, item.itemid)) then
+		doRemoveItem(item.uid,1)
+		local creature = doCreateMonster("Skeleton", pos)
+		doConvinceCreature(cid, creature)
+		doSendMagicEffect(pos, CONST_ME_POFF)
 	end
 end
 

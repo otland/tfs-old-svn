@@ -1,16 +1,16 @@
 function onSay(cid, words, param, channel)
-	if(param == "") then
+	if(param == '') then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command requires param.")
-		return TRUE
+		return true
 	end
 
 	local tid = cid
 	local t = string.explode(param, ",")
 	if(t[2]) then
 		tid = getPlayerByNameWildcard(t[2])
-		if(tid == 0 or (isPlayerGhost(tid) == TRUE and getPlayerAccess(tid) > getPlayerAccess(cid))) then
+		if(tid == 0 or (isPlayerGhost(tid) and getPlayerAccess(tid) > getPlayerAccess(cid))) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. t[2] .. " not found.")
-			return TRUE
+			return true
 		end
 	end
 
@@ -19,27 +19,27 @@ function onSay(cid, words, param, channel)
 		tmp = getTownId(tmp)
 		if(tmp == 0) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Town " .. t[1] .. " does not exists.")
-			return TRUE
+			return true
 		end
 	end
 
-	local pos = getTownTemplePosition(tmp, FALSE)
-	if(pos == LUA_ERROR or isInArray({pos.x, pos.y}, 0) == TRUE) then
+	local pos = getTownTemplePosition(tmp, false)
+	if(not pos or isInArray({pos.x, pos.y}, 0)) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Town " .. t[1] .. " does not exists or has invalid temple position.")
-		return TRUE
+		return true
 	end
 
 	pos = getClosestFreeTile(tid, pos)
-	if(pos == LUA_ERROR or isInArray({pos.x, pos.y}, 0) == TRUE) then
+	if(not pos or isInArray({pos.x, pos.y}, 0)) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Destination not reachable.")
-		return TRUE
+		return true
 	end
 
 	tmp = getCreaturePosition(tid)
-	if(doTeleportThing(tid, pos, TRUE) ~= LUA_ERROR and isPlayerGhost(tid) ~= TRUE) then
+	if(doTeleportThing(tid, pos, true) and not isPlayerGhost(tid)) then
 		doSendMagicEffect(tmp, CONST_ME_POFF)
 		doSendMagicEffect(pos, CONST_ME_TELEPORT)
 	end
 
-	return TRUE
+	return true
 end

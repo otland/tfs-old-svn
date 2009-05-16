@@ -1,7 +1,7 @@
 function onSay(cid, words, param, channel)
-	if(param == "") then
+	if(param == '') then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
-		return TRUE
+		return true
 	end
 
 	local ret = getAccountIdByName(param)
@@ -9,14 +9,14 @@ function onSay(cid, words, param, channel)
 		ret = getAccountIdByAccount(param)
 		if(ret == 0) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player or account '" .. param .. "' does not exists.")
-			return TRUE
+			return true
 		end
 	end
 
 	local list = getBanList(BANTYPE_NOTATION, ret)
 	if(type(list) ~= "table" or table.maxn(list) <= 0) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Such account or player does not have any notation.")
-		return TRUE
+		return true
 	end
 
 	ret = "Notations for account " .. ret .. "\n"
@@ -26,5 +26,5 @@ function onSay(cid, words, param, channel)
 	end
 
 	doPlayerPopupFYI(cid, ret)
-	return TRUE
+	return true
 end

@@ -1,7 +1,7 @@
 function onSay(cid, words, param, channel)
-	if(param == "") then
+	if(param == '') then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
-		return TRUE
+		return true
 	end
 
 	local t = string.explode(param, ",")
@@ -17,5 +17,5 @@ function onSay(cid, words, param, channel)
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Typed color has to be between 0 and 256")
 	end
 
-	return TRUE
+	return true
 end

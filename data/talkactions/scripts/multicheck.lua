@@ -1,6 +1,5 @@
 function onSay(cid, words, param, channel)
-	local list = {}
-	local ips = {}
+	local list, ips = {}, {}
 	local players = getPlayersOnline()
 	for i, pid in ipairs(players) do
 		local ip = getPlayerIp(pid)
@@ -25,5 +24,5 @@ function onSay(cid, words, param, channel)
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Currently there aren't any players with same IP address(es).")
 	end
 
-	return TRUE
+	return true
 end

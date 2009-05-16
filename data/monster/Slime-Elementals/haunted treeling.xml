@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <monster name="Haunted Treeling" nameDescription="a haunted treeling" experience="310" speed="260" race="undead" manacost="0">
-	<health now="450" max="450"/>  
+	<health now="450" max="450"/>	
 	<look type="310" corpse="9867"/>
-	<targetchange speed="0" chance="8"/>  
+	<targetchange speed="0" chance="8"/>	
 	<strategy attack="100" defense="0"/>
-	<flags>    
+	<flags>		
 		<flag summonable="0"/>
 		<flag attackable="1"/>
 		<flag hostile="1"/>
@@ -16,19 +16,19 @@
 		<flag targetdistance="1"/>
 		<flag staticattack="90"/>
 		<flag runonhealth="0"/>
-	</flags>  
-	<attacks>    
-		<attack name="melee" interval="2000" chance="100" min="-0" max="-150" range="1"/>    
-		<attack name="manadrain" interval="2000" chance="13" min="-30" max="-90" range="7">       
-			<attribute key="shootEffect" value="death"/>      
-			<attribute key="areaEffect" value="redshimmer"/>    
-		</attack>       
-		<attack name="speed" interval="3000" chance="20" length="8" spread="0" duration="30000" speedchange="-600">      
-			<attribute key="areaEffect" value="smallplants"/>    
+	</flags>	
+	<attacks>		
+		<attack name="melee" interval="2000" chance="100" min="-0" max="-150" range="1"/>		
+		<attack name="manadrain" interval="2000" chance="13" min="-30" max="-90" range="7">			 
+			<attribute key="shootEffect" value="death"/>			
+			<attribute key="areaEffect" value="redshimmer"/>		
+		</attack>			 
+		<attack name="speed" interval="3000" chance="20" length="8" spread="0" duration="30000" speedchange="-600">			
+			<attribute key="areaEffect" value="smallplants"/>		
 		</attack> 
 		<attack name="terra strike" interval="2000" chance="12" min="-0" max="-0"/> 
 		<attack name="stone shower" interval="1000" chance="14" min="-0" max="-90"/> 
-	</attacks>  
+	</attacks>	
 	<defenses armor="50" defense="55"/>
 	<elements>
 		<element firePercent="-15"/>
@@ -38,7 +38,7 @@
 	</elements>
 	<immunities>
 		<immunity earth="1"/>
-	</immunities>   
+	</immunities>	 
 	<loot>
 		<item id="2787" countmax="2" chance1="50000" chancemax="0"/> <!-- white mushroom -->
 		<item id="4860" countmax="1" chance1="50000" chancemax="0"/> <!-- wooden trash -->

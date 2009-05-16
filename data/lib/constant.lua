@@ -1,9 +1,3 @@
-TRUE = true
-FALSE = false
-
-LUA_ERROR = false
-LUA_NO_ERROR = true
-
 NORTH = 0
 EAST = 1
 SOUTH = 2

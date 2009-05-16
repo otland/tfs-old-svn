@@ -24,58 +24,58 @@ local drunk = createConditionObject(CONDITION_DRUNK)
 setConditionParam(drunk, CONDITION_PARAM_TICKS, 60000)
 
 local poison = createConditionObject(CONDITION_POISON)
-setConditionParam(poison, CONDITION_PARAM_DELAYED, TRUE) -- Condition will delay the first damage from when it's added
+setConditionParam(poison, CONDITION_PARAM_DELAYED, true) -- Condition will delay the first damage from when it's added
 setConditionParam(poison, CONDITION_PARAM_MINVALUE, -50) -- Minimum damage the condition can do at total
 setConditionParam(poison, CONDITION_PARAM_MAXVALUE, -120) -- Maximum damage
 setConditionParam(poison, CONDITION_PARAM_STARTVALUE, -5) -- The damage the condition will do on the first hit
 setConditionParam(poison, CONDITION_PARAM_TICKINTERVAL, 4000) -- Delay between damages
-setConditionParam(poison, CONDITION_PARAM_FORCEUPDATE, TRUE) -- Re-update condition when adding it(ie. min/max value)
+setConditionParam(poison, CONDITION_PARAM_FORCEUPDATE, true) -- Re-update condition when adding it(ie. min/max value)
 
 local exhaust = createConditionObject(CONDITION_EXHAUST)
 setConditionParam(exhaust, CONDITION_PARAM_TICKS, (getConfigInfo('timeBetweenExActions') - 100))
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if itemEx.uid == cid then -- Player is using on himself
-		if item.type == TYPE_EMPTY then
+	if(itemEx.uid == cid) then
+		if(item.type == TYPE_EMPTY) then
 			doPlayerSendCancel(cid, "It is empty.")
-			return TRUE
+			return true
 		end
 
-		if item.type == TYPE_MANA_FLUID then
-			if hasCondition(cid, CONDITION_EXHAUST_HEAL) == TRUE then
+		if(item.type == TYPE_MANA_FLUID) then
+			if(hasCondition(cid, CONDITION_EXHAUST_HEAL)) then
 				doPlayerSendDefaultCancel(cid, RETURNVALUE_YOUAREEXHAUSTED)
-				return TRUE
+				return true
 			end
 
-			if doPlayerAddMana(cid, math.random(80, 160)) == LUA_ERROR then
-				return FALSE
+			if(not doPlayerAddMana(cid, math.random(80, 160))) then
+				return false
 			end
 
 			doCreatureSay(cid, "Aaaah...", TALKTYPE_ORANGE_1)
 			doSendMagicEffect(toPosition, CONST_ME_MAGIC_BLUE)
 			doAddCondition(cid, exhaust)
-		elseif item.type == TYPE_LIFE_FLUID then
-			if hasCondition(cid, CONDITION_EXHAUST_HEAL) == TRUE then
+		elseif(item.type == TYPE_LIFE_FLUID) then
+			if(hasCondition(cid, CONDITION_EXHAUST_HEAL)) then
 				doPlayerSendDefaultCancel(cid, RETURNVALUE_YOUAREEXHAUSTED)
-				return TRUE
+				return true
 			end
 
-			if doCreatureAddHealth(cid, math.random(40, 75)) == LUA_ERROR then
-				return FALSE
+			if(not doCreatureAddHealth(cid, math.random(40, 75))) then
+				return false
 			end
 
 			doCreatureSay(cid, "Aaaah...", TALKTYPE_ORANGE_1)
 			doSendMagicEffect(toPosition, CONST_ME_MAGIC_BLUE)
 			doAddCondition(cid, exhaust)
-		elseif isInArray(alcoholDrinks, item.type) == TRUE then
-			if doTargetCombatCondition(0, cid, drunk, CONST_ME_NONE) == LUA_ERROR then
-				return FALSE
+		elseif(isInArray(alcoholDrinks, item.type)) then
+			if(not doTargetCombatCondition(0, cid, drunk, CONST_ME_NONE)) then
+				return false
 			end
 
 			doCreatureSay(cid, "Aaah...", TALKTYPE_ORANGE_1)
-		elseif isInArray(poisonDrinks, item.type) == TRUE then
-			if doTargetCombatCondition(0, cid, poison, CONST_ME_NONE) == LUA_ERROR then
-				return FALSE
+		elseif(isInArray(poisonDrinks, item.type)) then
+			if(not doTargetCombatCondition(0, cid, poison, CONST_ME_NONE)) then
+				return false
 			end
 
 			doCreatureSay(cid, "Urgh!", TALKTYPE_ORANGE_1)
@@ -84,57 +84,55 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 
 		doChangeTypeItem(item.uid, TYPE_EMPTY)
-		return TRUE
+		return true
 	end
 
-	if isCreature(itemEx.uid) == FALSE then
-		if item.type == TYPE_EMPTY then
-			if item.itemid == ITEM_RUM_FLASK and isInArray(DISTILLERY, itemEx.itemid) == TRUE then
-				if itemEx.actionid == DISTILLERY_FULL then
+	if(not isCreature(itemEx.uid)) then
+		if(item.type == TYPE_EMPTY) then
+			if(item.itemid == ITEM_RUM_FLASK and isInArray(DISTILLERY, itemEx.itemid)) then
+				if(itemEx.actionid == DISTILLERY_FULL) then
 					doSetItemSpecialDescription(itemEx.uid, '')
 					doSetItemActionId(itemEx.uid, 0)
 					doChangeTypeItem(item.uid, TYPE_RUM)
 				else
 					doPlayerSendCancel(cid, "You have to process the bunch into the distillery to get rum.")
 				end
-				return TRUE
+				return true
 			end
 
-			if isItemFluidContainer(itemEx.itemid) == TRUE and itemEx.type ~= TYPE_EMPTY then
+			if(isItemFluidContainer(itemEx.itemid) and itemEx.type ~= TYPE_EMPTY) then
 				doChangeTypeItem(item.uid, itemEx.type)
 				doChangeTypeItem(itemEx.uid, TYPE_EMPTY)
-				return TRUE
+				return true
 			end
 
-			if casks[itemEx.itemid] ~= nil then
+			if(casks[itemEx.itemid] ~= nil) then
 				doChangeTypeItem(item.uid, casks[itemEx.itemid])
-				return TRUE
+				return true
 			end
 
 			local fluidEx = getFluidSourceType(itemEx.itemid)
-			if fluidEx ~= LUA_ERROR then
+			if(fluidEx ~= false) then
 				doChangeTypeItem(item.uid, fluidEx)
-				return TRUE
+				return true
 			end
 
 			doPlayerSendCancel(cid, "It is empty.")
-			return TRUE
+			return true
 		end
 
-		if item.type == TYPE_OIL and oilLamps[itemEx.itemid] ~= nil then
+		if(item.type == TYPE_OIL and oilLamps[itemEx.itemid] ~= nil) then
 			doTransformItem(itemEx.uid, oilLamps[itemEx.itemid])
 			doChangeTypeItem(item.uid, TYPE_NONE)
-			return TRUE
+			return true
 		end
 
-		if hasProperty(itemEx.uid, CONST_PROP_BLOCKSOLID) == TRUE then
-			return FALSE
+		if(hasProperty(itemEx.uid, CONST_PROP_BLOCKSOLID)) then
+			return false
 		end
 	end
 
-	local splash = doCreateItem(ITEM_POOL, item.type, toPosition)
-	doDecayItem(splash)
-
+	doDecayItem(doCreateItem(ITEM_POOL, item.type, toPosition))
 	doChangeTypeItem(item.uid, TYPE_EMPTY)
-	return TRUE
+	return true
 end

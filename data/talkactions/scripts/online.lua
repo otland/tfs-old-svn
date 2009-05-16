@@ -6,11 +6,10 @@ function onSay(cid, words, param, channel)
 	local players = getPlayersOnline()
 	local strings = {""}
 
-	local i = 1
-	local position = 1
-	local added = FALSE
+	local i, position = 1, 1
+	local added = false
 	for _, pid in ipairs(players) do
-		if(added == TRUE) then
+		if(added) then
 			if(i > (position * 7)) then
 				strings[position] = strings[position] .. ","
 				position = position + 1
@@ -20,12 +19,12 @@ function onSay(cid, words, param, channel)
 			end
 		end
 
-		if((config.showGamemasters == TRUE or getPlayerCustomFlagValue(cid, PlayerCustomFlag_GamemasterPrivileges) == TRUE or getPlayerCustomFlagValue(pid, PlayerCustomFlag_GamemasterPrivileges) ~= TRUE) and (isPlayerGhost(pid) ~= TRUE or getPlayerAccess(cid) >= getPlayerAccess(pid))) then
+		if((config.showGamemasters or getPlayerCustomFlagValue(cid, PlayerCustomFlag_GamemasterPrivileges) or not getPlayerCustomFlagValue(pid, PlayerCustomFlag_GamemasterPrivileges)) and (not isPlayerGhost(pid) or getPlayerAccess(cid) >= getPlayerAccess(pid))) then
 			strings[position] = strings[position] .. getCreatureName(pid) .. " [" .. getPlayerLevel(pid) .. "]"
 			i = i + 1
-			added = TRUE
+			added = true
 		else
-			added = FALSE
+			added = false
 		end
 	end
 
@@ -38,5 +37,5 @@ function onSay(cid, words, param, channel)
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, str)
 	end
 
-	return TRUE
+	return true
 end

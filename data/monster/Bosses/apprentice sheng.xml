@@ -1,22 +1,22 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <monster name="apprentice sheng" nameDescription="apprentice sheng" race="blood" experience="100" speed="170" manacost="0">
-  <health now="95" max="95"/>
-  <look type="23" head="20" body="30" legs="40" feet="50" corpse="5981"/>
-  <targetchange interval="5000" chance="8"/>
-  <strategy attack="100" defense="0"/>
-  <flags>
-    <flag summonable="0"/>
-    <flag attackable="1"/>
-    <flag hostile="1"/>
-    <flag illusionable="1"/>
-    <flag convinceable="0"/>
-    <flag pushable="0"/>
-    <flag canpushitems="1"/>
-    <flag canpushcreatures="0"/>
-    <flag targetdistance="4"/>
-    <flag staticattack="90"/>
-    <flag runonhealth="0"/>
-  </flags>
+	<health now="95" max="95"/>
+	<look type="23" head="20" body="30" legs="40" feet="50" corpse="5981"/>
+	<targetchange interval="5000" chance="8"/>
+	<strategy attack="100" defense="0"/>
+	<flags>
+		<flag summonable="0"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="1"/>
+		<flag convinceable="0"/>
+		<flag pushable="0"/>
+		<flag canpushitems="1"/>
+		<flag canpushcreatures="0"/>
+		<flag targetdistance="4"/>
+		<flag staticattack="90"/>
+		<flag runonhealth="0"/>
+	</flags>
 	<attacks>
 		<attack name="melee" interval="2000" skill="15" attack="10"/>
 		<attack name="energy" interval="1000" chance="14" range="7" min="-15" max="-25">
@@ -38,7 +38,7 @@
 	<immunities>
 		<immunity energy="1"/>
 	</immunities>
-        <summons maxSummons="2">
+				<summons maxSummons="2">
 		<summon name="hyena" interval="10500" chance="100"/>
 	</summons>
 	<voices interval="5000" chance="10">

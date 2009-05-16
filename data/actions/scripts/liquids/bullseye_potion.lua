@@ -4,14 +4,14 @@ setConditionParam(condition, CONDITION_PARAM_SKILL_DISTANCE, 5)
 setConditionParam(condition, CONDITION_PARAM_SKILL_SHIELD, -10)
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if(isPlayer(itemEx.uid) ~= TRUE) then
-		return TRUE
+	if(not isPlayer(itemEx.uid)) then
+		return true
 	end
 
-	if(doAddCondition(itemEx.uid, condition) ~= LUA_ERROR) then
+	if(doAddCondition(itemEx.uid, condition)) then
 		doSendMagicEffect(getCreaturePosition(itemEx.uid), CONST_ME_MAGIC_RED)
 		doRemoveItem(item.uid)
 	end
 
-	return TRUE
+	return true
 end

@@ -7,5 +7,5 @@ function onLogin(cid)
 	registerCreatureEvent(cid, "Mail")
 	registerCreatureEvent(cid, "GuildMotd")
 	registerCreatureEvent(cid, "PlayerDeath")
-	return TRUE
+	return true
 end

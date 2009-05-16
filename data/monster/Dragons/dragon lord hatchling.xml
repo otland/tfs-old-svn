@@ -59,11 +59,11 @@
 		<item id="2672" countmax="1" chance="5000"/>
 		<item id="2796" countmax="1" chance="3500"/>
 		<item id="2148" countmax="100" chance="100000"/>
-    <item id="1987" chance="100000">
-      <inside>
-        <item id="2148" countmax="20" chance1="100000" chancemax="0"/>
-        <item id="7891" chance="200"/>
-      </inside>
+		<item id="1987" chance="100000">
+			<inside>
+				<item id="2148" countmax="20" chance1="100000" chancemax="0"/>
+				<item id="7891" chance="200"/>
+			</inside>
 	</item>
 	</loot>
 </monster>

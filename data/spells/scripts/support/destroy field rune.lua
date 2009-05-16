@@ -3,15 +3,15 @@ local function doRemoveField(cid, pos)
 	local field = getThingfromPos(pos)
 	local playerPos = getPlayerPosition(cid)
 
-	if(field.uid > 0 and isInArray(FIELDS, field.itemid) == TRUE) then
+	if(field.uid > 0 and isInArray(FIELDS, field.itemid)) then
 		doRemoveItem(field.uid)
 		doSendMagicEffect(pos, CONST_ME_POFF)
-		return LUA_NO_ERROR
+		return true
 	end
 
 	doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 	doSendMagicEffect(playerPos, CONST_ME_POFF)
-	return LUA_ERROR
+	return false
 end
 
 function onCastSpell(cid, var)
@@ -22,5 +22,5 @@ function onCastSpell(cid, var)
 
 	doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 	doSendMagicEffect(getPlayerPosition(cid), CONST_ME_POFF)
-	return LUA_ERROR
+	return false
 end

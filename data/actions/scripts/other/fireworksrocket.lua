@@ -1,5 +1,5 @@
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if fromPosition.x ~= CONTAINER_POSITION then
+	if(fromPosition.x ~= CONTAINER_POSITION) then
 		fireworksEffect = math.random(CONST_ME_FIREWORK_YELLOW, CONST_ME_FIREWORK_BLUE)
 		doSendMagicEffect(fromPosition, fireworksEffect)
 	else
@@ -8,6 +8,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		doCreatureSay(cid, "Ouch! Rather place it on the ground next time.", TALKTYPE_ORANGE_1)
 		doCreatureAddHealth(cid, -10)
 	end
+
 	doRemoveItem(cid, item.uid, 1)
-	return TRUE
+	return true
 end

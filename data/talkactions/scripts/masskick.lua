@@ -1,24 +1,23 @@
 function onSay(cid, words, param, channel)
-	if(param == "") then
+	if(param == '') then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command requires param.")
-		return TRUE
+		return true
 	end
 
 	local t = string.explode(param, ",")
 	if(not t[2]) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Not enough params.")
-		return TRUE
+		return true
 	end
 
-	local multifloor = FALSE
+	local multifloor = false
 	if(t[3]) then
 		multifloor = getBooleanFromString(t[3])
 	end
 
 	local tmp = 0
-	local spectators = getSpectators(getCreaturePosition(cid), t[1], t[2], multifloor)
-	for i, tid in ipairs(spectators) do
-		if(isPlayer(tid) == TRUE and tid ~= cid and getPlayerAccess(tid) < getPlayerAccess(cid)) then
+	for i, tid in ipairs(getSpectators(getCreaturePosition(cid), t[1], t[2], multifloor)) do
+		if(isPlayer(tid) and tid ~= cid and getPlayerAccess(tid) < getPlayerAccess(cid)) then
 			doRemoveCreature(tid)
 			tmp = tmp + 1
 		end
@@ -30,5 +29,5 @@ function onSay(cid, words, param, channel)
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Could not kick any player.")
 	end
 
-	return TRUE
+	return true
 end

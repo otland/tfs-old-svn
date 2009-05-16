@@ -11,6 +11,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			table.insert(t, spell)
 		end
 	end
+
 	table.sort(t, function(a, b) return a.level < b.level end)
 	local prevLevel = -1
 	for i, spell in ipairs(t) do
@@ -24,6 +25,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 		text = text .. line .. "  " .. spell.words .. " - " .. spell.name .. " : " .. spell.mana .. "\n"
 	end
+
 	doShowTextDialog(cid, item.itemid, text)
-	return TRUE
+	return true
 end

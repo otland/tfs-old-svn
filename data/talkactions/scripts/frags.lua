@@ -15,5 +15,5 @@ function onSay(cid, words, param, channel)
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You do not have any unjustified frag.")	
 	end
 
-	return TRUE
+	return true
 end

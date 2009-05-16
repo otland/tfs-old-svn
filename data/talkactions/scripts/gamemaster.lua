@@ -1,5 +1,5 @@
-local ignore = createConditionObject(CONDITION_GAMEMASTER, -1, FALSE, GAMEMASTER_IGNORE)
-local teleport = createConditionObject(CONDITION_GAMEMASTER, -1, FALSE, GAMEMASTER_TELEPORT)
+local ignore = createConditionObject(CONDITION_GAMEMASTER, -1, false, GAMEMASTER_IGNORE)
+local teleport = createConditionObject(CONDITION_GAMEMASTER, -1, false, GAMEMASTER_TELEPORT)
 
 function onSay(cid, words, param, channel)
 	local condition = ignore
@@ -12,7 +12,7 @@ function onSay(cid, words, param, channel)
 	end
 
 	local action = "off"
-	if(getCreatureCondition(cid, CONDITION_GAMEMASTER, subId) ~= TRUE) then
+	if(not getCreatureCondition(cid, CONDITION_GAMEMASTER, subId)) then
 		doAddCondition(cid, condition)
 		action = "on"
 	else
@@ -20,5 +20,5 @@ function onSay(cid, words, param, channel)
 	end
 
 	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You have turned " .. action .. " " .. name .. ".")
-	return TRUE
+	return true
 end

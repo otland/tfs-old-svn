@@ -23,7 +23,7 @@ local function removeFocus(cid)
 end
 local function lookAtFocus()
 	for i, v in pairs(focuses) do
-		if(isPlayer(v) == TRUE) then
+		if(isPlayer(v)) then
 			doNpcSetCreatureFocus(v)
 			return
 		end
@@ -81,7 +81,7 @@ local onSell = function(cid, item, subType, amount, ignoreCap, inBackpacks)
 	if(subType < 1) then
 		subType = -1
 	end
-	if(doPlayerRemoveItem(cid, item, amount, subType) == TRUE) then
+	if(doPlayerRemoveItem(cid, item, amount, subType)) then
 		doPlayerAddMoney(cid, items[item].sellPrice * amount)
 		selfSay("Here you are.", cid)
 	else
@@ -96,7 +96,7 @@ function onCreatureDisappear(cid)
 	if(isFocused(cid)) then
 		selfSay("Hmph!")
 		removeFocus(cid)
-		if(isPlayer(cid) == TRUE) then --Be sure he's online
+		if(isPlayer(cid)) then --Be sure he's online
 			closeShopWindow(cid)
 		end
 	end
@@ -104,14 +104,14 @@ end
 
 function onCreatureSay(cid, type, msg)
 	if((msg == "hi") and not (isFocused(cid))) then
-		selfSay("Welcome, ".. getCreatureName(cid) ..".", cid, TRUE)
+		selfSay("Welcome, ".. getCreatureName(cid) ..".", cid, true)
 		selfSay("Do you want to see my {wares}?", cid)
 		addFocus(cid)
 	elseif((isFocused(cid)) and (msg == "wares" or msg == "trade")) then
 		selfSay("Pretty nice, right?", cid)
 		openShopWindow(cid, itemWindow, onBuy, onSell)
 	elseif((isFocused(cid)) and (msg == "bye" or msg == "goodbye" or msg == "cya")) then
-		selfSay("Goodbye!", cid, TRUE)
+		selfSay("Goodbye!", cid, true)
 		closeShopWindow(cid)
 		removeFocus(cid)
 	end
@@ -131,7 +131,7 @@ end
 
 function onThink()
 	for i, focus in pairs(focuses) do
-		if(isCreature(focus) == FALSE) then
+		if(not isCreature(focus)) then
 			removeFocus(focus)
 		else
 			local distance = getDistanceTo(focus) or -1

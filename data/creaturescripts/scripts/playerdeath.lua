@@ -7,21 +7,21 @@ local config = {
 config.sqlType = config.sqlType == "sqlite" and DATABASE_ENGINE_SQLITE or DATABASE_ENGINE_MYSQL
 
 function onDeath(cid, corpse, lastHitKiller, mostDamageKiller)
-	if(config.deathListEnabled ~= TRUE) then
+	if(not config.deathListEnabled) then
 		return
 	end
 
 	local hitKillerName = "field item"
 	local damageKillerName = ""
-	if(lastHitKiller ~= FALSE) then
-		if(isPlayer(lastHitKiller) == TRUE) then
+	if(lastHitKiller ~= 0) then
+		if(isPlayer(lastHitKiller)) then
 			hitKillerName = getPlayerGUID(lastHitKiller)
 		else
 			hitKillerName = getCreatureName(lastHitKiller)
 		end
 
-		if(mostDamageKiller ~= FALSE and mostDamageKiller ~= lastHitKiller and getCreatureName(mostDamageKiller) ~= getCreatureName(lastHitKiller)) then
-			if(isPlayer(mostDamageKiller) == TRUE) then
+		if(mostDamageKiller ~= 0 and mostDamageKiller ~= lastHitKiller and getCreatureName(mostDamageKiller) ~= getCreatureName(lastHitKiller)) then
+			if(isPlayer(mostDamageKiller)) then
 				damageKillerName = getPlayerGUID(mostDamageKiller)
 			else
 				damageKillerName = getCreatureName(mostDamageKiller)

@@ -455,7 +455,7 @@ if(NpcHandler == nil) then
 				if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 					for cid, talkDelay in pairs(self.talkDelay) do
 						if(talkDelay.time ~= nil and talkDelay.message ~= nil and os.time() >= talkDelay.time) then
-							selfSay(talkDelay.message, cid, talkDelay.publicize and TRUE or FALSE)
+							selfSay(talkDelay.message, cid, talkDelay.publicize and true or false)
 							self.talkDelay[cid] = nil
 						end
 					end
@@ -573,7 +573,7 @@ if(NpcHandler == nil) then
 
 		if(NPCHANDLER_TALKDELAY == TALKDELAY_NONE or shallDelay == false) then
 			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
-				selfSay(message, focus, publicize and TRUE or FALSE)
+				selfSay(message, focus, publicize and true or false)
 				return
 			else
 				selfSay(message)

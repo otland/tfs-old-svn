@@ -27,7 +27,7 @@
 	<element physicalPercent="-12"/>
 	<element icePercent="-10"/>
 	<element deathPercent="-5"/>
-  </elements>
+	</elements>
 <voices interval="5000" chance="10">
 <voice sentence="We are the true sons of the desert!"/>
 <voice sentence="I will leave your remains to the vultures!"/>

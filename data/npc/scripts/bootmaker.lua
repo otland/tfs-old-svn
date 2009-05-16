@@ -20,7 +20,7 @@ function creatureSayCallback(cid, type, msg)
 		talkState[talkUser] = 1
 	elseif(msgcontains(msg, 'yes') and talkState[talkUser] == 1) then
 		if(getPlayerItemCount(cid, 6530) >= 1) then
-			if(doPlayerRemoveMoney(cid, 10000) == TRUE) then
+			if(doPlayerRemoveMoney(cid, 10000)) then
 				doPlayerRemoveItem(cid, 6530, 1)
 				doPlayerAddItem(cid, 2640)
 				selfSay('Here you are.', cid)
@@ -31,7 +31,7 @@ function creatureSayCallback(cid, type, msg)
 			selfSay('Sorry, you don\'t have the item.', cid)
 		end
 		talkState[talkUser] = 0
-	elseif(msgcontains(msg, 'no') and isInArray({1}, talkState[talkUser]) == TRUE) then
+	elseif(msgcontains(msg, 'no') and isInArray({1}, talkState[talkUser])) then
 		talkState[talkUser] = 0
 		selfSay('Ok then.', cid)
 	end

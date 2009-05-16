@@ -10,6 +10,11 @@ CONDITION_PARAM_STAT_MAXMANAPOINTSPERCENT = CONDITION_PARAM_STAT_MAXMANAPERCENT
 CONDITION_PARAM_STAT_SOULPOINTSPERCENT = CONDITION_PARAM_STAT_SOULPERCENT
 CONDITION_PARAM_STAT_MAGICPOINTSPERCENT = CONDITION_PARAM_STAT_MAGICLEVELPERCENT
 
+TRUE = true
+FALSE = false
+LUA_ERROR = false
+LUA_NO_ERROR = true
+
 table.getPos = table.find
 doSetCreatureDropLoot = doCreatureSetDropLoot
 doPlayerSay = doCreatureSay
@@ -59,4 +64,5 @@ getCreatureLookDir = getCreatureLookDirection
 getPlayerLookDir = getCreatureLookDirection
 getPlayerLookDirection = getCreatureLookDirection
 doCreatureSetLookDir = doCreatureSetLookDirection
+getPlayerLookPos = getCreatureLookPosition
 SKILLS = SKILL_NAMES

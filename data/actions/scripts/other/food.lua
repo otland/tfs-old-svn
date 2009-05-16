@@ -1,4 +1,4 @@
-local food =
+local FOODS =
 {
 	[2362] = {8, "Crunch."},
 	[2666] = {15, "Munch."},
@@ -75,17 +75,18 @@ local food =
 }
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if(not food[item.itemid]) then
-		return FALSE
+	local food = FOODS[item.itemid]
+	if(not food) then
+		return false
 	end
 
-	if(getPlayerFood(cid) + food[item.itemid][1]) >= 400 then
+	if((getPlayerFood(cid) + food[1]) >= 400) then
 		doPlayerSendCancel(cid, "You are full.")
-	else
-		doPlayerFeed(cid, food[item.itemid][1] * 4)
-		doCreatureSay(cid, food[item.itemid][2], TALKTYPE_ORANGE_1)
-		doRemoveItem(item.uid, 1)
+		return true
 	end
 
-	return TRUE
+	doPlayerFeed(cid, food[1] * 4)
+	doCreatureSay(cid, food[2], TALKTYPE_ORANGE_1)
+	doRemoveItem(item.uid, 1)
+	return true
 end

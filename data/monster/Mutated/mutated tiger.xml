@@ -19,8 +19,8 @@
 	</flags>
 	<attacks>
 		<attack name="melee" interval="2000" skill="65" attack="65"/>
-		<attack name="physical" interval="3000" chance="20" length="8" spread="3" min="-30" max="-130">      
-			<attribute key="areaEffect" value="redspark"/>    
+		<attack name="physical" interval="3000" chance="20" length="8" spread="3" min="-30" max="-130">			
+			<attribute key="areaEffect" value="redspark"/>		
 		</attack> 	
 	</attacks>
 	<defenses armor="30" defense="30">
@@ -55,7 +55,7 @@
 			<inside>
 				<item id="2509" countmax="1" chance1="4000"/> <!-- steel shield -->
 				<item id="2515" chance="700"/> <!-- guardian shield -->
-				<item id="2168" chance="800"/> <!-- life ring -->        
+				<item id="2168" chance="800"/> <!-- life ring -->				
 				<item id="7454" chance="300"/> <!-- glorius axe -->
 				<item id="7436" chance="200"/> <!-- angelic axe -->
 			</inside>

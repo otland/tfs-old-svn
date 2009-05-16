@@ -76,12 +76,12 @@ if(Modules == nil) then
 			return false
 		end
 
-		if(isPlayerPremiumCallback(cid) or getBooleanFromString(getConfigInfo('premiumForPromotion')) ~= TRUE or not(parameters.premium)) then
+		if(isPlayerPremiumCallback(cid) or not getBooleanFromString(getConfigInfo('premiumForPromotion')) or not(parameters.premium)) then
 			if(getPlayerPromotionLevel(cid) >= parameters.promotion) then
 				npcHandler:say('You are already promoted!', cid)
 			elseif(getPlayerLevel(cid) < parameters.level) then
 				npcHandler:say('I am sorry, but I can only promote you once you have reached level ' .. parameters.level .. '.', cid)
-			elseif(doPlayerRemoveMoney(cid, parameters.cost) ~= TRUE) then
+			elseif(not doPlayerRemoveMoney(cid, parameters.cost)) then
 				npcHandler:say('You do not have enough money!', cid)
 			else
 				setPlayerPromotionLevel(cid, parameters.promotion)
@@ -106,13 +106,13 @@ if(Modules == nil) then
 		end
 
 		if(isPlayerPremiumCallback(cid) or not(parameters.premium)) then
-			if getPlayerLearnedInstantSpell(cid, parameters.spellName) == TRUE then
+			if(getPlayerLearnedInstantSpell(cid, parameters.spellName)) then
 				npcHandler:say('You already know this spell.', cid)
-			elseif getPlayerLevel(cid) < parameters.level then
+			elseif(getPlayerLevel(cid) < parameters.level) then
 				npcHandler:say('You need to obtain a level of ' .. parameters.level .. ' or higher to be able to learn ' .. parameters.spellName .. '.', cid)
-			elseif getPlayerVocation(cid) ~= parameters.vocation and getPlayerVocation(cid) ~= parameters.vocation + 4 and vocation ~= 9 then
+			elseif(getPlayerVocation(cid) ~= parameters.vocation and getPlayerVocation(cid) ~= parameters.vocation + 4 and vocation ~= 9) then
 				npcHandler:say('This spell is not for your vocation', cid)
-			elseif doPlayerRemoveMoney(cid, parameters.price) == FALSE then
+			elseif(not doPlayerRemoveMoney(cid, parameters.price)) then
 				npcHandler:say('You do not have enough money, this spell costs ' .. parameters.price .. ' gold.', cid)
 			else
 				npcHandler:say('You have learned ' .. parameters.spellName .. '.', cid)
@@ -136,7 +136,7 @@ if(Modules == nil) then
 			return false
 		end
 
-		if(isPlayerPremiumCallback(cid) or getBooleanFromString(getConfigInfo('blessingsOnlyPremium')) ~= TRUE or not(parameters.premium)) then
+		if(isPlayerPremiumCallback(cid) or not getBooleanFromString(getConfigInfo('blessingsOnlyPremium')) or not parameters.premium) then
 			local price = parameters.baseCost
 			if(getPlayerLevel(cid) > parameters.startLevel) then
 				price = (price + ((math.min(parameters.endLevel, getPlayerLevel(cid)) - parameters.startLevel) * parameters.levelCost))
@@ -144,7 +144,7 @@ if(Modules == nil) then
 
 			if(getPlayerBlessing(cid, parameters.number)) then
 				npcHandler:say("Gods have already blessed you with this blessing!", cid)
-			elseif doPlayerRemoveMoney(cid, price) == FALSE then
+			elseif(not doPlayerRemoveMoney(cid, price)) then
 				npcHandler:say("You don't have enough money for blessing.", cid)
 			else
 				npcHandler:say("You have been blessed by one of the five gods!", cid)
@@ -171,9 +171,9 @@ if(Modules == nil) then
 		if(isPlayerPremiumCallback(cid) or not(parameters.premium)) then
 			if(parameters.level ~= nil and getPlayerLevel(cid) < parameters.level) then
 				npcHandler:say('You must reach level ' .. parameters.level .. ' before I can let you go there.', cid)
-			elseif(doPlayerRemoveMoney(cid, parameters.cost) ~= TRUE) then
+			elseif(not doPlayerRemoveMoney(cid, parameters.cost)) then
 				npcHandler:say('You do not have enough money!', cid)
-			elseif(isPlayerPzLocked(cid) ~= FALSE) then
+			elseif(isPlayerPzLocked(cid)) then
 				npcHandler:say('Get out of there with this blood.', cid)
 			else
 				doTeleportThing(cid, parameters.destination, 0)
@@ -430,9 +430,9 @@ if(Modules == nil) then
 		local premium = parentParameters.premium
 
 		if(isPlayerPremiumCallback(cid) or parameters.premium ~= true) then
-			if(doPlayerRemoveMoney(cid, cost) ~= TRUE) then
+			if(not doPlayerRemoveMoney(cid, cost)) then
 				npcHandler:say('You do not have enough money!', cid)
-			elseif(isPlayerPzLocked(cid) ~= FALSE) then
+			elseif(isPlayerPzLocked(cid)) then
 				npcHandler:say('Get out of there with this blood.', cid)
 			else
 				npcHandler:say('It was a pleasure doing business with you.', cid)
@@ -475,7 +475,7 @@ if(Modules == nil) then
 		local premium = parameters.premium
 
 		if(isPlayerPremiumCallback(cid) or parameters.premium ~= true) then
-			if(doPlayerRemoveMoney(cid, cost) == TRUE) then
+			if(doPlayerRemoveMoney(cid, cost)) then
 				doTeleportThing(cid, destination, 0)
 				doSendMagicEffect(destination, 10)
 			end
@@ -577,7 +577,7 @@ if(Modules == nil) then
 
 			if(SHOPMODULE_MODE == SHOPMODULE_MODE_TRADE) then
 				if(itemid ~= nil and cost ~= nil) then
-					if((isItemRune(itemid) == TRUE or isItemFluidContainer(itemid) == TRUE) and subType == nil) then
+					if((isItemRune(itemid) or isItemFluidContainer(itemid)) and subType == nil) then
 						print('[Warning] NpcSystem:', 'SubType missing for parameter item:', item)
 					else
 						self:addBuyableItem(nil, itemid, cost, subType, realName)
@@ -587,7 +587,7 @@ if(Modules == nil) then
 				end
 			else
 				if(name ~= nil and itemid ~= nil and cost ~= nil) then
-					if((isItemRune(itemid) == TRUE or isItemFluidContainer(itemid) == TRUE) and subType == nil) then
+					if((isItemRune(itemid) or isItemFluidContainer(itemid)) and subType == nil) then
 						print('[Warning] NpcSystem:', 'SubType missing for parameter item:', item)
 					else
 						local names = {}
@@ -676,7 +676,7 @@ if(Modules == nil) then
 			end
 
 			if(name ~= nil and container ~= nil and itemid ~= nil and cost ~= nil) then
-				if((isItemRune(itemid) == TRUE or isItemFluidContainer(itemid) == TRUE) and subType == nil) then
+				if((isItemRune(itemid) or isItemFluidContainer(itemid)) and subType == nil) then
 					print('[Warning] NpcSystem:', 'SubType missing for parameter item:', item)
 				else
 					local names = {}
@@ -945,7 +945,7 @@ if(Modules == nil) then
 			subType = -1
 		end
 
-		if(doPlayerRemoveItem(cid, itemid, amount, subType) == TRUE) then
+		if(doPlayerRemoveItem(cid, itemid, amount, subType)) then
 			local msg = self.npcHandler:getMessage(MESSAGE_SOLD)
 			msg = self.npcHandler:parseMessage(msg, parseInfo)
 			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, msg)
@@ -1015,7 +1015,7 @@ if(Modules == nil) then
 
 		if(parentParameters.eventType == SHOPMODULE_SELL_ITEM) then
 			local ret = doPlayerSellItem(cid, parentParameters.itemid, module.amount, parentParameters.cost * module.amount)
-			if(ret == LUA_NO_ERROR) then
+			if(ret) then
 				local msg = module.npcHandler:getMessage(MESSAGE_ONSELL)
 				msg = module.npcHandler:parseMessage(msg, parseInfo)
 				module.npcHandler:say(msg, cid)
@@ -1026,7 +1026,7 @@ if(Modules == nil) then
 			end
 		elseif(parentParameters.eventType == SHOPMODULE_BUY_ITEM) then
 			local ret = doPlayerBuyItem(cid, parentParameters.itemid, module.amount, parentParameters.cost * module.amount, parentParameters.subType)
-			if(ret == LUA_NO_ERROR) then
+			if(ret) then
 				if parentParameters.itemid == ITEM_PARCEL then
 					doPlayerBuyItem(cid, ITEM_LABEL, module.amount, 0, parentParameters.subType)
 				end
@@ -1040,7 +1040,7 @@ if(Modules == nil) then
 			end
 		elseif(parentParameters.eventType == SHOPMODULE_BUY_ITEM_CONTAINER) then
 			local ret = doPlayerBuyItemContainer(cid, parentParameters.container, parentParameters.itemid, module.amount, parentParameters.cost * module.amount, parentParameters.subType)
-			if(ret == LUA_NO_ERROR) then
+			if(ret) then
 				local msg = module.npcHandler:getMessage(MESSAGE_ONBUY)
 				msg = module.npcHandler:parseMessage(msg, parseInfo)
 				module.npcHandler:say(msg, cid)

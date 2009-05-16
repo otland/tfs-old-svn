@@ -6,7 +6,7 @@ function onSay(cid, words, param, channel)
 	local target = db.getResult("SELECT `name`, `id` FROM `players` WHERE `name` = " .. db.escapeString(param) .. ";")
 	if(target:getID() == -1) then
 		doPlayerSendCancel(cid, "A player with that name does not exist.")
-		return TRUE
+		return true
 	end
 
 	local targetName = target:getDataString("name")
@@ -52,5 +52,5 @@ function onSay(cid, words, param, channel)
 	end
 
 	doPlayerPopupFYI(cid, "Deathlist for player: " .. targetName .. ".\n\n" .. str)
-	return TRUE
+	return true
 end

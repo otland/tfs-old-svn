@@ -1,5 +1,5 @@
 local combat = createCombatObject()
-setCombatParam(combat, COMBAT_PARAM_TARGETCASTERORTOPMOST, TRUE)
+setCombatParam(combat, COMBAT_PARAM_TARGETCASTERORTOPMOST, true)
 setCombatParam(combat, COMBAT_PARAM_EFFECT, CONST_ME_MAGIC_RED)
 
 local condition = createConditionObject(CONDITION_PARALYZE)

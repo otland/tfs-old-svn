@@ -22,15 +22,15 @@ end
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	local newBed = BEDS[item.itemid]
-	if not newBed or getTileHouseInfo(getCreaturePosition(cid)) == FALSE then
-		return FALSE
+	if(not newBed or not getHouseFromPos(getCreaturePosition(cid))) then
+		return false
 	end
 
 	--TODO
 	--Is it possible in real tibia, to use same modification on current used?
-	if isInArray({newBed[1][1], newBed[2][1]}, itemEx.itemid) == TRUE then
+	if(isInArray({newBed[1][1], newBed[2][1]}, itemEx.itemid)) then
 		doPlayerSendCancel(cid, "You already have this bed modification.")
-		return TRUE
+		return true
 	end
 
 	for kit, bed in pairs(BEDS) do
@@ -45,5 +45,5 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 	end
 
-	return TRUE
+	return true
 end

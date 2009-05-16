@@ -8,30 +8,33 @@ local function checkStackpos(item, position)
 	return (item.uid == thing.uid or thing.itemid < 100 or field.itemid == 0)
 end
 
+function doorEnter(cid, item, toPosition)
+	doTransformItem(item.uid, item.itemid + 1)
+	doTeleportThing(cid, toPosition)
+end
+
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(getItemLevelDoor(item.itemid) > 0) then
 		if(item.actionid == 189) then
-			if(isPremium(cid) ~= TRUE) then
+			if(isPremium(cid) ~= true) then
 				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Only the worthy may pass.")
-				return TRUE
+				return true
 			end
 
-			doTransformItem(item.uid, item.itemid + 1)
-			doTeleportThing(cid, toPosition, TRUE)
-			return TRUE
+			doorEnter(cid, item, toPosition)
+			return true
 		end
 
 		local gender = item.actionid - 186
-		if(isInArray({PLAYERSEX_FEMALE,  PLAYERSEX_MALE, PLAYERSEX_GAMEMASTER}, gender) == TRUE) then
+		if(isInArray({PLAYERSEX_FEMALE,  PLAYERSEX_MALE, PLAYERSEX_GAMEMASTER}, gender)) then
 			local playerGender = getPlayerSex(cid)
 			if(playerGender ~= gender) then
 				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Only the worthy may pass.")
-				return TRUE
+				return true
 			end
 
-			doTransformItem(item.uid, item.itemid + 1)
-			doTeleportThing(cid, toPosition, TRUE)
-			return TRUE
+			doorEnter(cid, item, toPosition)
+			return true
 		end
 
 		local skull = item.actionid - 180
@@ -39,12 +42,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			local playerSkull = getCreatureSkullType(cid)
 			if(playerSkull ~= skull) then
 				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Only the worthy may pass.")
-				return TRUE
+				return true
 			end
 
-			doTransformItem(item.uid, item.itemid + 1)
-			doTeleportThing(cid, toPosition, TRUE)
-			return TRUE
+			doorEnter(cid, item, toPosition)
+			return true
 		end
 
 		local group = item.actionid - 150
@@ -52,12 +54,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			local playerGroup = getPlayerGroupId(cid)
 			if(playerGroup < group) then
 				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Only the worthy may pass.")
-				return TRUE
+				return true
 			end
 
-			doTransformItem(item.uid, item.itemid + 1)
-			doTeleportThing(cid, toPosition, TRUE)
-			return TRUE
+			doorEnter(cid, item, toPosition)
+			return true
 		end
 
 		local vocation = item.actionid - 100
@@ -65,50 +66,47 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			local playerVocationInfo = getVocationInfo(getPlayerVocation(cid))
 			if(playerVocationInfo.id ~= vocation and playerVocationInfo.fromVocation ~= vocation) then
 				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Only the worthy may pass.")
-				return TRUE
+				return true
 			end
 
-			doTransformItem(item.uid, item.itemid + 1)
-			doTeleportThing(cid, toPosition, TRUE)
-			return TRUE
+			doorEnter(cid, item, toPosition)
+			return true
 		end
 
 		if(item.actionid == 190 or (item.actionid ~= 0 and getPlayerLevel(cid) >= (item.actionid - getItemLevelDoor(item.itemid)))) then
-			doTransformItem(item.uid, item.itemid + 1)
-			doTeleportThing(cid, toPosition, TRUE)
+			doorEnter(cid, item, toPosition)
 		else
 			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Only the worthy may pass.")
 		end
 
-		return TRUE
+		return true
 	end
 
-	if(isInArray(specialDoors, item.itemid) == TRUE) then
+	if(isInArray(specialDoors, item.itemid)) then
 		if(item.actionid == 100 or (item.actionid ~= 0 and getPlayerStorageValue(cid, item.actionid) > 0)) then
-			doTransformItem(item.uid, item.itemid + 1)
-			doTeleportThing(cid, toPosition, TRUE)
+			doorEnter(cid, item, toPosition)
 		else
 			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The door seems to be sealed against unwanted intruders.")
 		end
 
-		return TRUE
+		return true
 	end
 
-	if(isInArray(keys, item.itemid) == TRUE) then
+	if(isInArray(keys, item.itemid)) then
 		if(itemEx.actionid > 0) then
 			if(item.actionid == itemEx.actionid and doors[itemEx.itemid] ~= nil) then
 				doTransformItem(itemEx.uid, doors[itemEx.itemid])
-				return TRUE
+				return true
 			end
 
 			doPlayerSendCancel(cid, "The key does not match.")
-			return TRUE
+			return true
 		end
 
-		return FALSE
+		return false
 	end
 
-	if(isInArray(horizontalOpenDoors, item.itemid) == TRUE and checkStackpos(item, fromPosition)) then
+	if(isInArray(horizontalOpenDoors, item.itemid) and checkStackpos(item, fromPosition)) then
 		local newPosition = toPosition
 		newPosition.y = newPosition.y + 1
 		local doorPosition = fromPosition
@@ -118,20 +116,20 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			if(getTileInfo(doorPosition).protection and not getTileInfo(newPosition).protection and doorCreature.uid ~= cid) then
 				doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 			else
-				doTeleportThing(doorCreature.uid, newPosition, TRUE)
-				if(isInArray(closingDoors, item.itemid) ~= TRUE) then
+				doTeleportThing(doorCreature.uid, newPosition)
+				if(not isInArray(closingDoors, item.itemid)) then
 					doTransformItem(item.uid, item.itemid - 1)
 				end
 			end
 
-			return TRUE
+			return true
 		end
 
 		doTransformItem(item.uid, item.itemid - 1)
-		return TRUE
+		return true
 	end
 
-	if(isInArray(verticalOpenDoors, item.itemid) == TRUE and checkStackpos(item, fromPosition)) then
+	if(isInArray(verticalOpenDoors, item.itemid) and checkStackpos(item, fromPosition)) then
 		local newPosition = toPosition
 		newPosition.x = newPosition.x + 1
 		local doorPosition = fromPosition
@@ -141,17 +139,17 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			if(getTileInfo(doorPosition).protection and not getTileInfo(newPosition).protection and doorCreature.uid ~= cid) then
 				doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 			else
-				doTeleportThing(doorCreature.uid, newPosition, TRUE)
-				if(isInArray(closingDoors, item.itemid) ~= TRUE) then
+				doTeleportThing(doorCreature.uid, newPosition)
+				if(not isInArray(closingDoors, item.itemid)) then
 					doTransformItem(item.uid, item.itemid - 1)
 				end
 			end
 
-			return TRUE
+			return true
 		end
 
 		doTransformItem(item.uid, item.itemid - 1)
-		return TRUE
+		return true
 	end
 
 	if(doors[item.itemid] ~= nil and checkStackpos(item, fromPosition)) then
@@ -161,8 +159,8 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "It is locked.")
 		end
 
-		return TRUE
+		return true
 	end
 
-	return FALSE
+	return false
 end

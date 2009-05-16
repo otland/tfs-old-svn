@@ -1,4 +1,4 @@
 function onRaid()
 	doBroadcastMessage("Broadcast from a raid script!")
-	return TRUE
+	return true
 end

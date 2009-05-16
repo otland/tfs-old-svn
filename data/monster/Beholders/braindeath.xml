@@ -47,12 +47,12 @@
 			<attribute key="areaEffect" value="energy"/>
 		</defense>
 	</defenses>
-	  <elements>
-  <element icePercent="13"/>
-  <element physicalPercent="9"/>
-  <element holyPercent="-10"/>
-  <element firePercent="-10"/>
-  </elements>
+		<elements>
+	<element icePercent="13"/>
+	<element physicalPercent="9"/>
+	<element holyPercent="-10"/>
+	<element firePercent="-10"/>
+	</elements>
 	<immunities>
 		<immunity earth="1"/>
 		<immunity death="1"/>

@@ -3,7 +3,7 @@ local config = {
 }
 
 function onSay(cid, words, param, channel)
-	if(isNumber(param) == TRUE) then
+	if(isNumber(param)) then
 		local reportId = tonumber(param)
 		local report = db.getResult("SELECT * FROM `server_reports` WHERE `id` = " .. reportId)
 		if(report:getID() ~= -1) then
@@ -26,5 +26,5 @@ function onSay(cid, words, param, channel)
 		end
 	end
 
-	return TRUE
+	return true
 end

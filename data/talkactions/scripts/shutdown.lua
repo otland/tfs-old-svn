@@ -1,21 +1,21 @@
 local shutdownEvent = 0
 
 function onSay(cid, words, param, channel)
-	if(param == "") then
+	if(param == '') then
 		doSetGameState(GAMESTATE_SHUTDOWN)
-		return TRUE
+		return true
 	end
 
 	if(param:lower() == "stop") then
 		stopEvent(shutdownEvent)
 		shutdownEvent = 0
-		return TRUE
+		return true
 	end
 
 	param = tonumber(param)
 	if(param == nil or param < 0) then
 		doPlayerSendCancel(cid, "Numeric param may not be lower than 0.")
-		return TRUE
+		return true
 	end
 
 	if(shutdownEvent ~= 0) then
@@ -23,7 +23,7 @@ function onSay(cid, words, param, channel)
 	end
 
 	prepareShutdown(math.abs(math.ceil(param)))
-	return TRUE
+	return true
 end
 
 function prepareShutdown(minutes)

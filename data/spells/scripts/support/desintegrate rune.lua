@@ -2,15 +2,15 @@ local function doRemoveObject(cid, pos)
 	pos.stackpos = 255
 	local object = getThingfromPos(pos)
 
-	if(object.uid > 65535 and isCreature(object.uid) == FALSE and isMovable(object.uid) == TRUE and object.actionid == 0 and getTilePzInfo(pos) == FALSE) then
+	if(object.uid > 65535 and not isCreature(object.uid) and isMovable(object.uid) and object.actionid == 0 and not getTilePzInfo(pos)) then
 		doRemoveItem(object.uid)
 		doSendMagicEffect(pos, CONST_ME_BLOCKHIT)
-		return LUA_NO_ERROR
+		return true
 	end
 
 	doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 	doSendMagicEffect(getPlayerPosition(cid), CONST_ME_POFF)
-	return LUA_ERROR
+	return false
 end
 
 function onCastSpell(cid, var)
@@ -21,5 +21,5 @@ function onCastSpell(cid, var)
 
 	doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 	doSendMagicEffect(getPlayerPosition(cid), CONST_ME_POFF)
-	return LUA_ERROR
+	return false
 end

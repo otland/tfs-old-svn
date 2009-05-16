@@ -1,16 +1,16 @@
 function onSay(cid, words, param, channel)
-	if(param == "") then
+	if(param == '') then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Collected " .. doCleanMap() .. " items.")
-		return TRUE
+		return true
 	end
 
 	if(not tonumber(param)) then
 		doPlayerSendCancel(cid, "Command requires numeric param.")
-		return TRUE
+		return true
 	end
 
 	prepareClean(tonumber(param), cid)
-	return TRUE
+	return true
 end
 
 function prepareClean(minutes, cid)

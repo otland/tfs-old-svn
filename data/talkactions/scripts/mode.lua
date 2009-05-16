@@ -5,9 +5,9 @@ local words = {
 }
 
 function onSay(cid, words, param, channel)
-	if(param == "") then
+	if(param == '') then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
-		return TRUE
+		return true
 	end
 
 	local world = getWorldType()
@@ -24,9 +24,9 @@ function onSay(cid, words, param, channel)
 		world = "PVP-Enforced"
 	else
 		doPlayerSendCancel(cid, "Bad gameworld type.")
-		return TRUE
+		return true
 	end
 
 	doBroadcastMessage("Gameworld type set to: " .. world .. ".", MESSAGE_EVENT_ADVANCE)
-	return TRUE
+	return true
 end

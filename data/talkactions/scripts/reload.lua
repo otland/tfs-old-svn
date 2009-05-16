@@ -35,5 +35,5 @@ function onSay(cid, words, param, channel)
 	end
 
 	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, str)
-	return TRUE
+	return true
 end

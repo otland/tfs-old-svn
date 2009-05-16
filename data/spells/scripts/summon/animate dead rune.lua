@@ -2,17 +2,17 @@ local function doTargetCorpse(cid, pos)
 	local getPos = pos
 	getPos.stackpos = 255
 	corpse = getThingfromPos(getPos)
-	if(corpse.uid > 0 and isCreature(corpse.uid) == FALSE and isInArray(CORPSES, corpse.itemid) == TRUE) then
+	if(corpse.uid > 0 and not isCreature(corpse.uid) and isInArray(CORPSES, corpse.itemid)) then
 		doRemoveItem(corpse.uid)
 		local creature = doCreateMonster(cid, "Skeleton", pos)
 		doConvinceCreature(cid, creature)
 		doSendMagicEffect(pos, CONST_ME_MAGIC_BLUE)
-		return LUA_NO_ERROR
+		return true
 	end
 
 	doSendMagicEffect(getPlayerPosition(cid), CONST_ME_POFF)
 	doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
-	return LUA_ERROR
+	return false
 end
 
 function onCastSpell(cid, var)
@@ -23,5 +23,5 @@ function onCastSpell(cid, var)
 
 	doSendMagicEffect(getPlayerPosition(cid), CONST_ME_POFF)
 	doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
-	return LUA_ERROR
+	return false
 end

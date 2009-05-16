@@ -24,8 +24,8 @@
 			<attribute key="areaEffect" value="poff"/>
 		</attack>
 		<attack name="energy strike" interval="2000" chance="25" min="0" max="-30"/>
-		<attack name="speed" interval="3000" chance="10" range="7" target="1" duration="2000" speedchange="-300">      
-			<attribute key="areaEffect" value="redshimmer"/>    
+		<attack name="speed" interval="3000" chance="10" range="7" target="1" duration="2000" speedchange="-300">			
+			<attribute key="areaEffect" value="redshimmer"/>		
 		</attack> 
 	</attacks>
 	<defenses armor="15" defense="20">
@@ -62,7 +62,7 @@
 			<inside>
 				<item id="7762" countmax="1" chance1="700"/> <!-- small enchanted amethyst -->
 				<item id="2177" chance="800"/> <!-- life crystal -->
-				<item id="6324" chance="800"/> <!-- cream cake -->        
+				<item id="6324" chance="800"/> <!-- cream cake -->				
 				<item id="2162" chance="800"/> <!-- magic lightwand -->
 				<item id="2195" chance="200"/> <!-- boh -->
 			</inside>

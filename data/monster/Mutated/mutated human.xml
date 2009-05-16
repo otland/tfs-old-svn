@@ -19,8 +19,8 @@
 	</flags>
 	<attacks>
 		<attack name="melee" interval="2000" min="-0" max="-90" poison="300"/>
-		<attack name="death" interval="3000" chance="20" length="8" spread="3" min="-40" max="-50">      
-			<attribute key="areaEffect" value="poison"/>    
+		<attack name="death" interval="3000" chance="20" length="8" spread="3" min="-40" max="-50">			
+			<attribute key="areaEffect" value="poison"/>		
 		</attack> 	
 	</attacks>
 	<defenses armor="30" defense="30"/>
@@ -57,7 +57,7 @@
 			<inside>
 				<item id="2406" countmax="1" chance1="4000"/> <!-- short sword -->
 				<item id="2376" chance="3000"/> <!-- sword -->
-				<item id="2170" chance="300"/> <!-- silver amulet -->        
+				<item id="2170" chance="300"/> <!-- silver amulet -->				
 				<item id="2161" chance="1500"/> <!-- strange talisman -->
 				<item id="9808" chance="2000"/> <!-- rusty armor -->
 				<item id="7910" chance="700"/> <!-- peanut -->

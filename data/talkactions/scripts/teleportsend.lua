@@ -1,19 +1,19 @@
 function onSay(cid, words, param, channel)
-	if(param == "") then
+	if(param == '') then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command requires param.")
-		return TRUE
+		return true
 	end
 
 	local t = string.explode(param, ";")
 	if(not t[2]) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "No destination specified.")
-		return TRUE
+		return true
 	end
 
 	local pid = getPlayerByNameWildcard(t[1])
-	if(pid == 0 or (isPlayerGhost(pid) == TRUE and getPlayerAccess(pid) > getPlayerAccess(cid))) then
+	if(pid == 0 or (isPlayerGhost(pid) and getPlayerAccess(pid) > getPlayerAccess(cid))) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. t[1] .. " not found.")
-		return TRUE
+		return true
 	end
 
 	local creature = getCreatureByName(t[2])
@@ -22,9 +22,9 @@ function onSay(cid, words, param, channel)
 	local tile = string.explode(t[2], ",")
 	local pos = {x = 0, y = 0, z = 0}
 
-	if(player ~= nil and (isPlayerGhost(player) == FALSE or getPlayerAccess(player) <= getPlayerAccess(cid))) then
+	if(player ~= nil and (not isPlayerGhost(player) or getPlayerAccess(player) <= getPlayerAccess(cid))) then
 		pos = getCreaturePosition(player)
-	elseif(creature ~= nil and (isPlayer(creature) == FALSE or (isPlayerGhost(creature) == FALSE or getPlayerAccess(creature) <= getPlayerAccess(cid)))) then
+	elseif(creature ~= nil and (not isPlayer(creature) or (not isPlayerGhost(creature) or getPlayerAccess(creature) <= getPlayerAccess(cid)))) then
 		pos = getCreaturePosition(creature)
 	elseif(type(waypoint) == 'table' and waypoint.x ~= 0 and waypoint.y ~= 0) then
 		pos = waypoint
@@ -32,25 +32,25 @@ function onSay(cid, words, param, channel)
 		pos = {x = tile[1], y = tile[2], z = tile[3]}
 	else
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Invalid destination specified.")
-		return TRUE
+		return true
 	end
 
-	if(pos == LUA_ERROR or isInArray({pos.x, pos.y}, 0) == TRUE) then
+	if(not pos or isInArray({pos.x, pos.y}, 0)) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Destination not reachable.")
-		return TRUE
+		return true
 	end
 
-	pos = getClosestFreeTile(cid, pos, TRUE)
-	if(pos == LUA_ERROR or isInArray({pos.x, pos.y}, 0) == TRUE) then
+	pos = getClosestFreeTile(cid, pos, true)
+	if(not pos or isInArray({pos.x, pos.y}, 0)) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Cannot perform action.")
-		return TRUE
+		return true
 	end
 
 	local tmp = getCreaturePosition(pid)
-	if(doTeleportThing(pid, pos, TRUE) ~= LUA_ERROR and isPlayerGhost(pid) ~= TRUE) then
+	if(doTeleportThing(pid, pos, true) and not isPlayerGhost(pid)) then
 		doSendMagicEffect(tmp, CONST_ME_POFF)
 		doSendMagicEffect(pos, CONST_ME_TELEPORT)
 	end
 
-	return TRUE
+	return true
 end

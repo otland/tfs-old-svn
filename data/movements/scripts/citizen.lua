@@ -5,5 +5,5 @@ function onStepIn(cid, item, position, fromPosition)
 		doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You are the newest resident of " .. getTownName(townId) .. ".")
 	end
 
-	return TRUE
+	return true
 end

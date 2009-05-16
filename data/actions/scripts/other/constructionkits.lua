@@ -15,8 +15,8 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		doTransformItem(item.uid, CONSTRUCTIONS[item.itemid])
 		doSendMagicEffect(fromPosition, CONST_ME_POFF)
 	else
-		return FALSE
+		return false
 	end
 
-	return TRUE
+	return true
 end

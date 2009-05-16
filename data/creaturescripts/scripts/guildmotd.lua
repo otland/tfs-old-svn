@@ -1,7 +1,7 @@
 function onJoinChannel(cid, channelId, users)
 	if(channelId == CHANNEL_GUILD) then
 		local guildId = getPlayerGuildId(cid)
-		if(guildId ~= LUA_ERROR and guildId ~= 0) then
+		if(guildId ~= false and guildId ~= 0) then
 			local guildMotd = getGuildMotd(guildId)
 			if(guildMotd ~= "") then
 				addEvent(doPlayerSendChannelMessage, 150, cid, "", "Message of the Day: " .. guildMotd, TALKTYPE_CHANNEL_W, CHANNEL_GUILD)
@@ -9,5 +9,5 @@ function onJoinChannel(cid, channelId, users)
 		end
 	end
 
-	return TRUE
+	return true
 end

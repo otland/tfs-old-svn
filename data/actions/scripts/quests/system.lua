@@ -7,15 +7,15 @@ local questsExperience = {
 }
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	if(getPlayerCustomFlagValue(cid, PlayerCustomFlag_GamemasterPrivileges) == TRUE) then
-		return TRUE
+	if(getPlayerCustomFlagValue(cid, PlayerCustomFlag_GamemasterPrivileges)) then
+		return true
 	end
 
 	local storage = specialQuests[item.actionid]
-	if(storage == nil) then
+	if(not storage) then
 		storage = item.uid
 		if(storage > 65535) then
-			return FALSE
+			return false
 		end
 	end
 
@@ -24,9 +24,9 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		local items = {}
 		local reward = 0
 
-		local size = isContainer(item.uid) == TRUE and getContainerSize(item.uid) or 0
+		local size = isContainer(item.uid) and getContainerSize(item.uid) or 0
 		if(size == 0) then
-			reward = doCopyItem(item, FALSE)
+			reward = doCopyItem(item, false)
 		else
 			for i = 0, size do
 				local tmp = getContainerItem(item.uid, i)
@@ -38,14 +38,14 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 		size = table.maxn(items)
 		if(size == 1) then
-			reward = doCopyItem(items[1], TRUE)
+			reward = doCopyItem(items[1], true)
 		end
 
 		if(reward ~= 0) then
 			local ret = getItemDescriptions(reward.uid)
-			if(reward.type > 0 and isItemRune(reward.itemid) == TRUE) then
+			if(reward.type > 0 and isItemRune(reward.itemid)) then
 				result = reward.type .. " charges " .. ret.name
-			elseif(reward.type > 0 and isItemStackable(reward.itemid) == TRUE) then
+			elseif(reward.type > 0 and isItemStackable(reward.itemid)) then
 				result = reward.type .. " " .. ret.plural
 			else
 				result = ret.article .. " " .. ret.name
@@ -53,7 +53,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		else
 			result = ""
 			if(size > 20) then
-				reward = doCopyItem(item, FALSE)
+				reward = doCopyItem(item, false)
 			elseif(size > 8) then
 				reward = getThing(doCreateItemEx(1988, 1))
 			else
@@ -61,7 +61,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			end
 
 			for i = 1, size do
-				local tmp = doCopyItem(items[i], TRUE)
+				local tmp = doCopyItem(items[i], true)
 				if(doAddContainerItemEx(reward.uid, tmp.uid) ~= RETURNVALUE_NOERROR) then
 					print("[Warning] QuestSystem:", "Could not add quest reward")
 				else
@@ -74,9 +74,9 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 					result = result .. ret
 					ret = getItemDescriptions(tmp.uid)
-					if(tmp.type > 0 and isItemRune(tmp.itemid) == TRUE) then
+					if(tmp.type > 0 and isItemRune(tmp.itemid)) then
 						result = result .. tmp.type .. " charges " .. ret.name
-					elseif(tmp.type > 0 and isItemStackable(tmp.itemid) == TRUE) then
+					elseif(tmp.type > 0 and isItemStackable(tmp.itemid)) then
 						result = result .. tmp.type .. " " .. ret.plural
 					else
 						result = result .. ret.article .. " " .. ret.name
@@ -85,7 +85,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			end
 		end
 
-		if(doPlayerAddItemEx(cid, reward.uid, FALSE) ~= RETURNVALUE_NOERROR) then
+		if(doPlayerAddItemEx(cid, reward.uid, false) ~= RETURNVALUE_NOERROR) then
 			result = "You have found a reward weighing " .. getItemWeight(reward.uid) .. " oz. It is too heavy or you have not enough space."
 		else
 			result = "You have found " .. result .. "."
@@ -98,5 +98,5 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, result)
-	return TRUE
+	return true
 end

@@ -28,13 +28,13 @@ local SKINS = {
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(getPlayerLevel(cid) <= 1) then
 		doPlayerSendCancel(cid, "You have to be at least Level 2 to use this tool.")
-		return TRUE
+		return true
 	end
 
 	local skin = SKINS[itemEx.itemid]
-	if(skin == nil) then
+	if(not skin) then
 		doPlayerSendCancel(cid, "Sorry, not possible.")
-		return TRUE
+		return true
 	end
 
 	local random = math.random(1, 100000)
@@ -49,5 +49,5 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	doTransformItem(itemEx.uid, itemEx.itemid + 1)
-	return TRUE
+	return true
 end

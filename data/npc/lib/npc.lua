@@ -36,7 +36,7 @@ function selfMoveToCreature(id)
 end
 
 function getDistanceToCreature(id)
-	if(id == 0 or id == nil) then
+	if(id == nil or id == 0) then
 		selfGotoIdle()
 	end
 
@@ -57,10 +57,10 @@ end
 function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)
 	local amount = amount or 1
 	local subType = subType or 0
-	local ignoreCap = ignoreCap and TRUE or FALSE
+	local ignoreCap = ignoreCap and true or false
 
 	local item = 0
-	if(isItemStackable(itemid) == TRUE) then
+	if(isItemStackable(itemid)) then
 		item = doCreateItemEx(itemid, amount)
 		if(doPlayerAddItemEx(cid, item, ignoreCap) ~= RETURNVALUE_NOERROR) then
 			return 0, 0
@@ -79,7 +79,7 @@ function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, bac
 				doAddContainerItem(item, ITEM_LABEL)
 			end
 
-			if(isInArray({(getContainerCapById(backpack) * b), amount}, i) == TRUE) then
+			if(isInArray({(getContainerCapById(backpack) * b), amount}, i)) then
 				if(doPlayerAddItemEx(cid, container, ignoreCap) ~= RETURNVALUE_NOERROR) then
 					b = b - 1
 					break
@@ -123,11 +123,11 @@ function doPosRemoveItem(_itemid, n, position)
 end
 
 function isPlayerPremiumCallback(cid)
-	return isPremium(cid) == TRUE
+	return isPremium(cid)
 end
 
 function selfSayChannel(cid, message)
-	return selfSay(message, cid, FALSE)
+	return selfSay(message, cid, false)
 end
 
 msgcontains = doMessageCheck

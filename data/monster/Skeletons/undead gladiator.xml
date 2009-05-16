@@ -58,7 +58,7 @@
 			<inside>
 				<item id="3965" chance="4000"/> <!-- hunting spear -->
 				<item id="2419" chance="4000"/> <!-- scimitar -->
-				<item id="2478" chance="3000"/> <!-- brass legs -->        
+				<item id="2478" chance="3000"/> <!-- brass legs -->				
 				<item id="2463" chance="2500"/> <!-- plate armor -->
 				<item id="2200" chance="3000"/> <!-- protection amulet -->
 				<item id="2377" chance="2500"/> <!-- two handed sword -->

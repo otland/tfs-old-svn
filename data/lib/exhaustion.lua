@@ -2,10 +2,10 @@ exhaustion =
 {
 	check = function (cid, storage)
 		if(getPlayerStorageValue(cid, storage) >= os.time(t)) then
-			return TRUE
+			return true
 		end
 
-		return FALSE
+		return false
 	end,
 
 	get = function (cid, storage)
@@ -17,7 +17,7 @@ exhaustion =
 			end
 		end
 
-		return FALSE
+		return false
 	end,
 
 	set = function (cid, storage, time)
@@ -28,9 +28,9 @@ exhaustion =
 		local exhaust = exhaustion.get(cid, storage)
 		if(not exhaust) then
 			exhaustion.set(cid, storage, time)
-			return TRUE
+			return true
 		end
 
-		return FALSE
+		return false
 	end
 }

@@ -1,17 +1,15 @@
-function onSay(cid, words, param, channel)
-	local tmp = getWorldType()
+local worlds = {
+	[WORLD_TYPE_NO_PVP] = "No-PVP",
+	[WORLD_TYPE_PVP] = "PVP",
+	[WORLD_TYPE_PVP_ENFORCED] = "PVP-Enforced"
+}
 
-	local msg = ""	
-	if(tmp == WORLD_TYPE_NO_PVP) then
-		msg = "No-PVP"
-	elseif(tmp == WORLD_TYPE_PVP) then
-		msg = "PVP"
-	elseif(tmp == WORLD_TYPE_PVP_ENFORCED) then
-		msg = "PVP-Enforced"
-	else
-		return TRUE
+function onSay(cid, words, param, channel)
+	local world = worlds[getWorldType()]
+	if(not world) then
+		return true
 	end
-	
-	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "World type is currently set to " .. msg .. ".")
-	return TRUE
+
+	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "World type is currently set to " .. world .. ".")
+	return true
 end

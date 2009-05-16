@@ -117,7 +117,7 @@ function creatureSayCallback(cid, type, msg)
 			setPlayerStorageValue(cid, 30002, 1)
 		end
 		talkState[talkUser] = 0
-	elseif(msgcontains(msg, 'no') and isInArray({1}, talkState[talkUser]) == TRUE) then
+	elseif(msgcontains(msg, 'no') and isInArray({1}, talkState[talkUser])) then
 		selfSay('Ok then.', cid)
 		talkState[talkUser] = 0
 	end

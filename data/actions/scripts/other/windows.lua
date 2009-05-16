@@ -3,7 +3,7 @@ local windows = {[6438] = 6436, [6436] = 6438, [6439] = 6437, [6437] = 6439, [64
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(getHouseFromPos(getPlayerPosition(cid)) ~= 0 and windows[item.itemid] ~= nil) then
 		doTransformItem(item.uid, windows[item.itemid])
-		return TRUE
+		return true
 	end
-	return FALSE
+	return false
 end

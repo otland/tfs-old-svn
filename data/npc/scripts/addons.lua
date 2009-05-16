@@ -18,7 +18,7 @@ function buyAddons(cid, message, keywords, parameters, node)
 	local premium = (parameters.premium ~= nil and parameters.premium)
 
 	if isPlayerPremiumCallback == nil or (isPlayerPremiumCallback(cid) and premium) then
-		if doPlayerRemoveMoney(cid, cost) == TRUE then
+		if doPlayerRemoveMoney(cid, cost) then
 			doPlayerAddAddons(cid, addon)
 			npcHandler:say('There, you are now able to use all addons!', cid)
 		else

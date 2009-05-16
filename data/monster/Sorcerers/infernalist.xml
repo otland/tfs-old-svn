@@ -78,7 +78,7 @@
 			<inside>
 				<item id="7760" countmax="1" chance1="9500"/> <!-- small enchanted ruby -->
 				<item id="9980" chance="1300"/> <!-- crystal of power -->
-				<item id="2167" chance="14500"/> <!-- energy ring -->        
+				<item id="2167" chance="14500"/> <!-- energy ring -->				
 				<item id="2114" chance="1100"/> <!-- piggy bank -->
 				<item id="7410" chance="600"/> <!-- queens sceptre -->
 				<item id="9969" chance="400"/> <!-- black skull -->

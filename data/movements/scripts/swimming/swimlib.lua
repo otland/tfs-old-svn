@@ -9,15 +9,15 @@ local conditions =
 function checkSwim(cid, swimDir, backDir)
 	local posNow = getThingPos(cid)
 
-	if(hasCondition(cid, CONDITION_OUTFIT) == TRUE and getCreatureOutfit(cid).lookType == outfit.lookType) then
+	if(hasCondition(cid, CONDITION_OUTFIT) and getCreatureOutfit(cid).lookType == outfit.lookType) then
 		doMoveCreature(cid, backDir)
 		doRemoveCondition(cid, CONDITION_OUTFIT)
 	elseif(doTileQueryAdd(cid, getPosByDir(posNow, swimDir), 4) ~= RETURNVALUE_NOERROR) then
-		return FALSE
+		return false
 	else
 		-- Remove all bad conditions before swimming
 		for i, v in ipairs(conditions) do
-			if(hasCondition(cid, v) == TRUE) then
+			if(hasCondition(cid, v)) then
 				doRemoveCondition(cid, v)
 			end
 		end
@@ -26,5 +26,5 @@ function checkSwim(cid, swimDir, backDir)
 		doSetCreatureOutfit(cid, outfit, -1)
 		doSendMagicEffect(getThingPos(cid), CONST_ME_WATERSPLASH)
 	end
-	return TRUE
+	return true
 end
