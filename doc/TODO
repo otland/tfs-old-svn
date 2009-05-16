@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3.4
+		0.3.5
 
 	Codenamed
 		Crying Damson
@@ -24,9 +24,6 @@
 
 	Patch missing changes from OpenTibia SVN
 		Assigned to: slawkens, Elf
-
-	Finish boost_thread support (Scheduler, Tasks, Main[?])
-		Assigned to: Elf
 
 	Deprecate several hardcoded systems (guild management, experience stages, etc) and rescript them in Lua
 		Assigned to: Elf, KaczooH, slawkens

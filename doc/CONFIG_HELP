@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.3.4
+		0.3.5
 
 	Codenamed
 		Crying Damson
@@ -455,18 +455,18 @@
 
 		useHouseDataStorage
 			New house data storage system. Performs much faster map saving. (up to 60x faster!)
-			Usage may be found at README
+			If enabled - items will be saved binary in `house_data` table, otherwise `tiles` and `tile_items` will be used.
 			Default: no
 
 		storeTrash
 			Define if trash items should be stored in memory.
 			It costs more memory but will perform a lot faster cleaning.
 			Otherwise, if you disable this option, cleaning will be performed by going through all the tiles
-			and looking for trash. (which of course consumes more CPU resources)
+				and looking for trash. (which of course consumes more CPU resources)
 			Default: yes
 
 		cleanProtectedZones
-			Should protection zone tiles be cleaned at server clean?
+			Should protection zone tiles be cleaned at map cleaning?
 			Default: yes
 
 	*STARTUP
