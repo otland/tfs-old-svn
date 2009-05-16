@@ -615,6 +615,22 @@ uint32_t DatabaseManager::updateDatabase()
 		case 12:
 		{
 			std::cout << "> Updating database to version: 13..." << std::endl;
+			std::string queryList[] = {
+				"ALTER TABLE `accounts` DROP KEY `group_id`;",
+				"ALTER TABLE `players` DROP KEY `group_id`;",
+				"DROP TABLE `groups`;"
+			};
+			for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+				db->executeQuery(queryList[i]);
+
+
+			registerDatabaseConfig("db_version", 13);
+			return 13;
+		}
+
+		case 13:
+		{
+			std::cout << "> Updating database to version: 14..." << std::endl;
 			switch(db->getDatabaseEngine())
 			{
 				case DATABASE_ENGINE_MYSQL:
@@ -650,22 +666,6 @@ uint32_t DatabaseManager::updateDatabase()
 					break;
 				}
 			}
-
-			registerDatabaseConfig("db_version", 13);
-			return 13;
-		}
-
-		case 13:
-		{
-			std::cout << "> Updating database to version: 14..." << std::endl;
-			if(db->
-			std::string queryList[] = {
-				"ALTER TABLE `houses` ADD `doors` INT ;",
-				"ALTER TABLE `players` DROP KEY `group_id`;",
-				"DROP TABLE `groups`;"
-			};
-			for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
-				db->executeQuery(queryList[i]);
 
 			registerDatabaseConfig("db_version", 14);
 			return 14;
