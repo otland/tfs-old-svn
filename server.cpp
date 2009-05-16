@@ -44,41 +44,48 @@ bool ServicePort::add(Service_ptr newService)
 void ServicePort::open(uint16_t port)
 {
 	m_serverPort = port;
-	if(m_pendingStart)
-		m_pendingStart = false;
+	m_pendingStart = false;
+	try
+	{
+		m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
+			boost::asio::ip::address(boost::asio::ip::address_v4(INADDR_ANY)), m_serverPort));
+		accept();
+	}
+	catch(boost::system::system_error& e)
+	{
+		if(m_showError)
+			std::cout << "> ERROR: Couldn't bind socket to port " << m_serverPort
+				<< ": " << e.what() << ", retrieving...";
 
-	m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
-		boost::asio::ip::address(boost::asio::ip::address_v4(INADDR_ANY)), m_serverPort));
-	accept();
+		m_pendingStart = true;
+		Scheduler::getScheduler().addEvent(createSchedulerTask(5000,
+			boost::bind(&ServicePort::open, this, m_serverPort)));
+	}
+
+	m_showError = false;
 }
 
 void ServicePort::close()
 {
-	if(m_acceptor)
+	if(!m_acceptor)
+		return;
+
+	if(m_acceptor->is_open())
 	{
-		if(m_acceptor->is_open())
-		{
-			boost::system::error_code error;
-			m_acceptor->close(error);
-			if(error)
-				PRINT_ASIO_ERROR("Closing listen socket");
-
-		}
-
-		delete m_acceptor;
-		m_acceptor = NULL;
+		boost::system::error_code error;
+		m_acceptor->close(error);
+		if(error)
+			PRINT_ASIO_ERROR("Closing listen socket");
 	}
+
+	delete m_acceptor;
+	m_acceptor = NULL;
 }
 
 void ServicePort::accept()
 {
 	if(!m_acceptor)
-	{
-#ifdef __DEBUG_NET__
-		std::cout << "[Error - ServerPort::accept] NULL m_acceptor." << std::endl;
-#endif
 		return;
-	}
 
 	boost::asio::ip::tcp::socket* socket = new boost::asio::ip::tcp::socket(m_io_service);
 	m_acceptor->async_accept(*socket, boost::bind(
@@ -105,7 +112,7 @@ void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::syst
 			remoteIp = htonl(endpoint.address().to_v4().to_ulong());
 
 		Connection* connection = NULL;
-		if(remoteIp != 0 && ConnectionManager::getInstance()->acceptConnection(remoteIp) &&
+		if(remoteIp && ConnectionManager::getInstance()->acceptConnection(remoteIp) &&
 			(connection = ConnectionManager::getInstance()->createConnection(socket, shared_from_this())))
 		{
 			if(m_services.front()->isSingleSocket())
@@ -117,6 +124,7 @@ void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::syst
 		{
 			boost::system::error_code error;
 			socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+
 			socket->close(error);
 			delete socket;
 		}
@@ -132,8 +140,8 @@ void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::syst
 		close();
 		if(!m_pendingStart)
 		{
-			m_pendingStart = true;
-			Scheduler::getScheduler().addEvent(createSchedulerTask(5000, //expensive!
+			m_pendingStart = m_showError = true;
+			Scheduler::getScheduler().addEvent(createSchedulerTask(5000,
 				boost::bind(&ServicePort::open, this, m_serverPort)));
 		}
 	}

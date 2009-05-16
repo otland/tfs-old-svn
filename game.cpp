@@ -2956,21 +2956,32 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int32_t
 	if(!tradeItem)
 		return false;
 
-	int32_t lookDistance = std::max(std::abs(player->getPosition().x - tradeItem->getPosition().x),
-		std::abs(player->getPosition().y - tradeItem->getPosition().y));
-
 	std::stringstream ss;
 	ss << "You see ";
-	if(index == 0)
+
+	int32_t lookDistance = std::max(std::abs(player->getPosition().x - tradeItem->getPosition().x),
+		std::abs(player->getPosition().y - tradeItem->getPosition().y));
+	if(!index)
 	{
 		ss << tradeItem->getDescription(lookDistance);
 		if(player->hasCustomFlag(PlayerCustomFlag_CanSeeItemDetails))
 		{
-			ss << std::endl << "ItemID: [" << tradeItem->getID() << "].";
+			ss << std::endl << "ItemID: [" << tradeItem->getID() << "]";
 			if(tradeItem->getActionId() > 0)
-				ss << std::endl << "ActionID: [" << tradeItem->getActionId() << "].";
+				ss << ", ActionID: [" << tradeItem->getActionId() << "]";
+
 			if(tradeItem->getUniqueId() > 0)
-				ss << std::endl << "UniqueID: [" << tradeItem->getUniqueId() << "].";
+				ss << ", UniqueID: [" << tradeItem->getUniqueId() << "]";
+
+			ss << ".";
+			const ItemType& it = Item::items[tradeItem->getID()];
+			if(it.transformEquipTo)
+				ss << std::endl << "TransformTo: [" << it.transformEquipTo << "] (onEquip).";
+			else if(it.transformDeEquipTo)
+				ss << std::endl << "TransformTo: [" << it.transformDeEquipTo << "] (onDeEquip).";
+			else if(it.decayTo != -1)
+				ss << std::endl << "DecayTo: [" << it.decayTo << "].";
+
 		}
 
 		player->sendTextMessage(MSG_INFO_DESCR, ss.str());
@@ -2981,43 +2992,50 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int32_t
 	if(!tradeContainer || index > (int32_t)tradeContainer->getItemHoldingCount())
 		return false;
 
-	bool foundItem = false;
-	--index;
-	if(index != 0)
+	std::list<const Container*> listContainer;
+	listContainer.push_back(tradeContainer);
+
+	ItemList::const_iterator it;
+	Container* tmpContainer = NULL;
+	while(listContainer.size() > 0)
 	{
-		--index;
-		for(ContainerIterator it = tradeContainer->begin(); !foundItem && it != tradeContainer->end(); ++it, --index)
+		const Container* container = listContainer.front();
+		listContainer.pop_front();
+		for(it = container->getItems(); it != container->getEnd(); ++it)
 		{
+			if((tmpContainer = (*it)->getContainer()))
+				listContainer.push_back(tmpContainer);
+
+			--index;
 			if(index != 0)
 				continue;
 
-			tradeItem = (*it);
-			foundItem = true;
-			break;
+			ss << (*it)->getDescription(lookDistance);
+			if(player->hasCustomFlag(PlayerCustomFlag_CanSeeItemDetails))
+			{
+				ss << std::endl << "ItemID: [" << (*it)->getID() << "]";
+				if((*it)->getActionId() > 0)
+					ss << ", ActionID: [" << (*it)->getActionId() << "]";
+
+				if((*it)->getUniqueId() > 0)
+					ss << ", UniqueID: [" << (*it)->getUniqueId() << "]";
+
+				ss << ".";
+				const ItemType& it = Item::items[(*it)->getID()];
+				if(it.transformEquipTo)
+					ss << std::endl << "TransformTo: [" << it.transformEquipTo << "] (onEquip).";
+				else if(it.transformDeEquipTo)
+					ss << std::endl << "TransformTo: [" << it.transformDeEquipTo << "] (onDeEquip).";
+				else if(it.decayTo != -1)
+					ss << std::endl << "DecayTo: [" << it.decayTo << "].";
+			}
+
+			player->sendTextMessage(MSG_INFO_DESCR, ss.str());
+			return true;
 		}
 	}
-	else
-	{
-		tradeItem = tradeContainer;
-		foundItem = true;
-	}
 
-	if(foundItem)
-	{
-		ss << tradeItem->getDescription(lookDistance);
-		if(player->hasCustomFlag(PlayerCustomFlag_CanSeeItemDetails))
-		{
-			ss << std::endl << "ItemID: [" << tradeItem->getID() << "].";
-			if(tradeItem->getActionId() > 0)
-				ss << std::endl << "ActionID: [" << tradeItem->getActionId() << "].";
-			if(tradeItem->getUniqueId() > 0)
-				ss << std::endl << "UniqueID: [" << tradeItem->getUniqueId() << "].";
-		}
-
-		player->sendTextMessage(MSG_INFO_DESCR, ss.str());
-	}
-
-	return foundItem;
+	return false;
 }
 
 bool Game::playerCloseTrade(uint32_t playerId)
@@ -3034,8 +3052,8 @@ bool Game::internalCloseTrade(Player* player)
 	Player* tradePartner = player->tradePartner;
 	if((tradePartner && tradePartner->getTradeState() == TRADE_TRANSFER) || player->getTradeState() == TRADE_TRANSFER)
 	{
-		std::cout << "Warning: [Game::playerCloseTrade] TradeState == TRADE_TRANSFER. " <<
-			player->getName() << " " << player->getTradeState() << " , " <<
+		std::cout << "[Warning - Game::internalCloseTrade] TradeState == TRADE_TRANSFER, " <<
+			player->getName() << " " << player->getTradeState() << ", " <<
 			tradePartner->getName() << " " << tradePartner->getTradeState() << std::endl;
 		return true;
 	}
