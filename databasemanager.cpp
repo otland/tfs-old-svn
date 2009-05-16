@@ -615,16 +615,60 @@ uint32_t DatabaseManager::updateDatabase()
 		case 12:
 		{
 			std::cout << "> Updating database to version: 13..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_MYSQL:
+				{
+					std::string queryList[] = {
+						"ALTER TABLE `houses` ADD `doors` INT UNSIGNED NOT NULL DEFAULT 0;",
+						"ALTER TABLE `houses` ADD `beds` INT UNSIGNED NOT NULL DEFAULT 0;",
+						"ALTER TABLE `houses` ADD `guild` TINYINT(1) UNSIGNED NOT NULL DEFAULT FALSE;"
+					};
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+						db->executeQuery(queryList[i]);
+
+					break;
+				}
+
+				case DATABASE_ENGINE_SQLITE:
+				{
+					std::string queryList[] = {
+						"ALTER TABLE `houses` ADD `doors` INTEGER NOT NULL DEFAULT 0;",
+						"ALTER TABLE `houses` ADD `beds` INTEGER NOT NULL DEFAULT 0;",
+						"ALTER TABLE `houses` ADD `guild` BOOLEAN NOT NULL DEFAULT FALSE;"
+					};
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+						db->executeQuery(queryList[i]);
+
+					break;
+				}
+
+				case DATABASE_ENGINE_POSTGRESQL:
+				default:
+				{
+					//TODO
+					break;
+				}
+			}
+
+			registerDatabaseConfig("db_version", 13);
+			return 13;
+		}
+
+		case 13:
+		{
+			std::cout << "> Updating database to version: 14..." << std::endl;
+			if(db->
 			std::string queryList[] = {
-				"ALTER TABLE `accounts` DROP KEY `group_id`;",
+				"ALTER TABLE `houses` ADD `doors` INT ;",
 				"ALTER TABLE `players` DROP KEY `group_id`;",
 				"DROP TABLE `groups`;"
 			};
 			for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
 				db->executeQuery(queryList[i]);
 
-			registerDatabaseConfig("db_version", 13);
-			return 13;
+			registerDatabaseConfig("db_version", 14);
+			return 14;
 		}
 
 		default:

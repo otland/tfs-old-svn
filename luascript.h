@@ -376,7 +376,7 @@ class LuaScriptInterface
 		static int32_t luaDoRemoveConditions(lua_State* L);
 		static int32_t luaDoRemoveCreature(lua_State* L);
 		static int32_t luaDoMoveCreature(lua_State* L);
-		static int32_t luaGetHouseTilesSize(lua_State* L);
+		static int32_t luaGetHouseTilesCount(lua_State* L);
 
 		static int32_t luaDoCreatureSay(lua_State* L);
 

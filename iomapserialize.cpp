@@ -105,16 +105,16 @@ bool IOMapSerialize::saveHouseInfo(Map* map)
 		return false;
 
 	DBInsert query_insert(db);
-	query_insert.setQuery("INSERT INTO `houses` (`id`, `world_id`, `owner`, `paid`, `warnings`, `lastwarning`, `name`, `town`, `size`, `price`, `rent`) VALUES ");
+	query_insert.setQuery("INSERT INTO `houses` (`id`, `world_id`, `owner`, `paid`, `warnings`, `lastwarning`, `name`, `town`, `size`, `price`, `rent`, `doors`, `beds`, `guild`) VALUES ");
 	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
 	{
 		House* house = it->second;
 		query.str("");
 
-		query << house->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << house->getHouseOwner() << ", "
-		<< house->getPaidUntil() << ", " << house->getPayRentWarnings() << ", " << house->getLastWarning() << ", "
+		query << house->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << house->getHouseOwner()
+		<< ", " << house->getPaidUntil() << ", " << house->getPayRentWarnings() << ", "	<< house->getLastWarning() << ", "
 		<< db->escapeString(house->getName()) << ", " << house->getTownId() << ", " << house->getSize() << ", " << house->getPrice()
-		<< ", " << house->getRent();
+		<< ", " << house->getRent() << ", " << house->getDoorsCount() << ", " << house->getBedsCount() << ", " << house->isGuild();
 		if(!query_insert.addRow(query.str()))
 			return false;
 	}

@@ -228,6 +228,7 @@ class ConfigManager
 			BUFFER_SPELL_FAILURE,
 			CONFIM_OUTDATED_VERSION,
 			PREMIUM_SKIP_WAIT,
+			GUILD_HALLS,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

@@ -118,6 +118,7 @@
 	housePriceAsRent = "no"
 	housePriceEachSquare = 1000
 	houseRentPeriod = "never"
+	guildHalls = "no"
 
 	-- Item usage
 	timeBetweenActions = 200

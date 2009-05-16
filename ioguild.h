@@ -23,39 +23,47 @@
 class IOGuild
 {
 	public:
-		IOGuild() {}
 		virtual ~IOGuild() {}
-
 		static IOGuild* getInstance()
 		{
 			static IOGuild instance;
 			return &instance;
 		}
 
+		bool guildExists(uint32_t guildId);
 		bool createGuild(Player* player);
 		bool disbandGuild(uint32_t guild_id);
-		bool updateOwnerId(uint32_t guildId, uint32_t guid);
+
 		std::string getMotd(uint32_t guildId);
 		bool setMotd(uint32_t guildId, std::string newMotd);
 
-		bool guildExists(uint32_t guildId);
-		bool getGuildIdByName(uint32_t& guildId, const std::string& guildName);
+		int8_t getGuildLevel(uint32_t guid);
+		bool setGuildLevel(uint32_t guid, GuildLevel_t level);
+
+		bool invitePlayerToGuild(uint32_t guid, uint32_t guildId);
+		bool revokeGuildInvite(uint32_t guid, uint32_t guildId);
+		bool joinGuild(Player* player, uint32_t guildId, bool creation = false);
 
 		bool rankNameExists(std::string rankName, uint32_t guildId);
 		std::string getRankName(int16_t guildLevel, uint32_t guildId);
-		uint32_t getRankIdByGuildIdAndLevel(uint32_t guildId, uint32_t guildLevel);
-		bool getRankIdByGuildIdAndName(uint32_t &rankId, const std::string& rankName, uint32_t& guildId);
 		bool changeRankName(std::string oldRankName, std::string newRankName, uint32_t guildId);
 
+		bool hasGuild(uint32_t guid);
 		bool isInvitedToGuild(uint32_t guid, uint32_t guildId);
-		bool joinGuild(Player* player, uint32_t guildId, bool creation = false);
-		bool invitePlayerToGuild(uint32_t guid, uint32_t guildId);
-		bool revokeGuildInvite(uint32_t guid, uint32_t guildId);
+
+		bool getGuildIdByName(uint32_t& guildId, const std::string& guildName);
+		bool getGuildNameById(std::string& guildName, uint32_t guildId);
+
+		uint32_t getRankIdByGuildIdAndLevel(uint32_t guildId, uint32_t guildLevel);
+		bool getRankIdByGuildIdAndName(uint32_t &rankId, const std::string& rankName, uint32_t& guildId);
 
 		uint32_t getGuildId(uint32_t guid);
-		int8_t getGuildLevel(uint32_t guid);
-		bool setGuildLevel(uint32_t guid, GuildLevel_t level);
 		bool setGuildNick(uint32_t guid, std::string guildNick);
-		bool hasGuild(uint32_t guildId);
+
+		bool swapGuildIdToOwner(uint32_t& ownerId, uint32_t guildId);
+		bool updateOwnerId(uint32_t guildId, uint32_t guid);
+
+	private:
+		IOGuild() {}
 };
 #endif

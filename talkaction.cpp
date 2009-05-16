@@ -356,21 +356,6 @@ bool TalkAction::buyHouse(Creature* creature, const std::string& cmd, const std:
 	if(!player || !g_config.getBool(ConfigManager::HOUSE_BUY_AND_SELL))
 		return false;
 
-	if(Houses::getInstance().getHouseByPlayerId(player->getGUID()))
-	{
-		player->sendCancel("You already own another house.");
-		return true;
-	}
-
-	uint16_t accountHouses = g_config.getNumber(ConfigManager::HOUSES_PER_ACCOUNT);
-	if(accountHouses > 0 && Houses::getInstance().getHousesCount(player->getAccount()) >= accountHouses)
-	{
-		char buffer[80];
-		sprintf(buffer, "You may own only %d house%s per account.", accountHouses, (accountHouses != 1 ? "s" : ""));
-		player->sendCancel(buffer);
-		return true;
-	}
-
 	const Position& pos = getNextPosition(player->getDirection(), player->getPosition());
 	Tile* tile = g_game.getTile(pos);
 	if(!tile)
@@ -399,24 +384,56 @@ bool TalkAction::buyHouse(Creature* creature, const std::string& cmd, const std:
 		return true;
 	}
 
+	if(!house->isGuild())
+	{
+		if(Houses::getInstance().getHouseByPlayerId(player->getGUID()))
+		{
+			player->sendCancel("You already own another house.");
+			return true;
+		}
+
+		uint16_t accountHouses = g_config.getNumber(ConfigManager::HOUSES_PER_ACCOUNT);
+		if(accountHouses > 0 && Houses::getInstance().getHousesCount(player->getAccount()) >= accountHouses)
+		{
+			char buffer[80];
+			sprintf(buffer, "You may own only %d house%s per account.", accountHouses, (accountHouses != 1 ? "s" : ""));
+			player->sendCancel(buffer);
+			return true;
+		}
+
+		if(g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM) && !player->isPremium())
+		{
+			player->sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
+			return true;
+		}
+
+		uint32_t levelToBuyHouse = g_config.getNumber(ConfigManager::LEVEL_TO_BUY_HOUSE);
+		if(player->getLevel() < levelToBuyHouse)
+		{
+			char buffer[90];
+			sprintf(buffer, "You have to be at least Level %d to buy a house.", levelToBuyHouse);
+			player->sendCancel(buffer);
+			return true;
+		}
+	}
+	else
+	{
+		if(!player->getGuildId() || player->getGuildLevel() != GUILDLEVEL_LEADER)
+		{
+			player->sendCancel("You must be a guild owner to purchase a guild hall.");
+			return true;
+		}
+
+		if(Houses::getInstance().getHouseByGuildId(player->getGuildId()))
+		{
+			player->sendCancel("Your guild own another guild hall.");
+			return true;
+		}
+	}
+
 	if(house->getHouseOwner())
 	{
 		player->sendCancel("This house is already owned by someone else.");
-		return true;
-	}
-
-	if(g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM) && !player->isPremium())
-	{
-		player->sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
-		return true;
-	}
-
-	uint32_t levelToBuyHouse = g_config.getNumber(ConfigManager::LEVEL_TO_BUY_HOUSE);
-	if(player->getLevel() < levelToBuyHouse)
-	{
-		char buffer[90];
-		sprintf(buffer, "You have to be at least Level %d to buy a house.", levelToBuyHouse);
-		player->sendCancel(buffer);
 		return true;
 	}
 
@@ -428,6 +445,9 @@ bool TalkAction::buyHouse(Creature* creature, const std::string& cmd, const std:
 
 	house->setHouseOwner(player->getGUID());
 	std::string ret = "You have successfully bought this house, remember to leave money at ";
+	if(house->isGuild())
+		ret += "guild owner ";
+
 	if(g_config.getBool(ConfigManager::BANK_SYSTEM))
 		ret += "bank or ";
 
@@ -480,7 +500,7 @@ bool TalkAction::sellHouse(Creature* creature, const std::string& cmd, const std
 
 	if(Houses::getInstance().getHouseByPlayerId(tradePartner->getGUID()))
 	{
-		player->sendCancel("Trade player already owns a house.");
+		player->sendCancel("Trade player already owns another house.");
 		return true;
 	}
 

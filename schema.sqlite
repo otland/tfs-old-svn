@@ -4,7 +4,7 @@ CREATE TABLE "server_config" (
 	UNIQUE ("config")
 );
 
-INSERT INTO "server_config" VALUES ('db_version', 13);
+INSERT INTO "server_config" VALUES ('db_version', 14);
 
 CREATE TABLE "server_motd" (
 	"id" INTEGER NOT NULL,
@@ -154,6 +154,9 @@ CREATE TABLE "houses" (
 	"size" INTEGER NOT NULL DEFAULT 0,
 	"price" INTEGER NOT NULL DEFAULT 0,
 	"rent" INTEGER NOT NULL DEFAULT 0,
+	"doors" INTEGER NOT NULL DEFAULT 0,
+	"beds" INTEGER NOT NULL DEFAULT 0,
+	"guild" BOOLEAN NOT NULL DEFAULT FALSE,
 	UNIQUE ("id", "world_id")
 );
 

@@ -34,7 +34,7 @@ CREATE TABLE `server_config`
 	UNIQUE (`config`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `server_config` VALUES ('db_version', 13);
+INSERT INTO `server_config` VALUES ('db_version', 14);
 
 CREATE TABLE `server_motd`
 (
@@ -235,6 +235,9 @@ CREATE TABLE `houses`
 	`size` INT UNSIGNED NOT NULL DEFAULT 0,
 	`price` INT UNSIGNED NOT NULL DEFAULT 0,
 	`rent` INT UNSIGNED NOT NULL DEFAULT 0,
+	`doors` INT UNSIGNED NOT NULL DEFAULT 0,
+	`beds` INT UNSIGNED NOT NULL DEFAULT 0,
+	`guild` TINYINT(1) UNSIGNED NOT NULL DEFAULE FALSE,
 	UNIQUE (`id`, `world_id`)
 ) ENGINE = InnoDB;
 

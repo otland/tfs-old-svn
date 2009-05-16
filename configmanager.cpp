@@ -250,6 +250,7 @@ bool ConfigManager::load()
 	m_confNumber[DEATH_CONTAINER] = getGlobalNumber("deathContainerId", 1987);
 	m_confBool[PREMIUM_SKIP_WAIT] = getGlobalBool("premiumPlayerSkipWaitList", "no");
 	m_confNumber[MAXIMUM_DOOR_LEVEL] = getGlobalNumber("maximumDoorLevel", 500);
+	m_confBool[GUILD_HALLS] = getGlobalBool("guildHalls", "no");
 
 	m_loaded = true;
 	return true;

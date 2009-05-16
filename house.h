@@ -142,8 +142,8 @@ class House
 	public:
 		virtual ~House() {}
 
-		House(uint32_t _houseid);
-		uint32_t getHouseId() const {return houseid;}
+		House(uint32_t _houseId);
+		uint32_t getHouseId() const {return houseId;}
 
 		void setEntryPos(const Position& pos) {posEntry = pos;}
 		const Position& getEntryPosition() const {return posEntry;}
@@ -175,16 +175,20 @@ class House
 		void setSize(uint32_t _size) {size = _size;}
 		uint32_t getSize() const {return size;}
 
+		void setGuild(bool _guild) {guild = _guild;}
+		bool isGuild() const;
+
+		uint32_t getDoorsCount() const {return doorList.size();}
+		uint32_t getBedsCount() const {return bedsList.size();}
+		uint32_t getTilesCount() const {return houseTiles.size();}
+
 		bool canEditAccessList(uint32_t listId, const Player* player);
 		void setAccessList(uint32_t listId, const std::string& textlist, bool teleport = true);
 		bool getAccessList(uint32_t listId, std::string& list) const;
 
-		Door* getDoorByNumber(uint32_t doorId) const;
-		Door* getDoorByPosition(const Position& pos);
-
-		AccessHouseLevel_t getHouseAccessLevel(const Player* player);
-		uint32_t getHouseTileSize() {return houseTiles.size();}
 		bool isInvited(const Player* player);
+		AccessHouseLevel_t getHouseAccessLevel(const Player* player);
+
 		bool kickPlayer(Player* player, Player* target);
 		void updateDoorDescription(std::string name = "");
 		void clean();
@@ -202,14 +206,17 @@ class House
 		HouseTileList::iterator getHouseTileBegin() {return houseTiles.begin();}
 		HouseTileList::iterator getHouseTileEnd() {return houseTiles.end();}
 
+		Door* getDoorByNumber(uint32_t doorId) const;
+		Door* getDoorByPosition(const Position& pos);
+
 	private:
 		bool transferToDepot();
 		void removePlayer(Player* player, bool ignoreRights);
 		void removePlayers(bool ignoreInvites);
 
-		bool isLoaded;
-		uint32_t houseid, houseOwner, rentWarnings, rent, price, townid, size;
+		bool loaded, guild;
 		time_t paidUntil, lastWarning;
+		uint32_t houseId, houseOwner, rentWarnings, rent, price, townid, size;
 		std::string houseName;
 		Position posEntry;
 
@@ -238,9 +245,11 @@ class Houses
 		HouseMap::iterator getHouseBegin() {return houseMap.begin();}
 		HouseMap::iterator getHouseEnd() {return houseMap.end();}
 
-		House* getHouse(uint32_t houseid, bool add = false);
+		House* getHouse(uint32_t houseId, bool add = false);
 		House* getHouseByPlayer(Player* player);
+
 		House* getHouseByPlayerId(uint32_t playerId);
+		House* getHouseByGuildId(uint32_t guildId);
 
 		uint32_t getHousesCount(uint32_t accId);
 

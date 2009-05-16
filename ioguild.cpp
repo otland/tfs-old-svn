@@ -40,6 +40,36 @@ bool IOGuild::getGuildIdByName(uint32_t& guildId, const std::string& guildName)
 	return true;
 }
 
+bool IOGuild::getGuildNameById(std::string& guildName, uint32_t guildId)
+{
+	Database* db = Database::getInstance();
+	DBResult* result;
+
+	DBQuery query;
+	query << "SELECT `name` FROM `guilds` WHERE `id` = " << guildId << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	guildName = result->getDataString("name");
+	result->free();
+	return true;
+}
+
+bool IOGuild::swapGuildIdToOwner(uint32_t& value)
+{
+	Database* db = Database::getInstance();
+	DBResult* result;
+
+	DBQuery query;
+	query << "SELECT `ownerid` FROM `guilds` WHERE `id` = " << value << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	value = result->getDataString("ownerid");
+	result->free();
+	return true;
+}
+
 bool IOGuild::guildExists(uint32_t guildId)
 {
 	Database* db = Database::getInstance();

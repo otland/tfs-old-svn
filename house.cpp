@@ -21,7 +21,9 @@
 
 #include "beds.h"
 #include "town.h"
+
 #include "iologindata.h"
+#include "ioguild.h"
 
 #include "configmanager.h"
 #include "game.h"
@@ -29,12 +31,12 @@
 extern ConfigManager g_config;
 extern Game g_game;
 
-House::House(uint32_t _houseid)
+House::House(uint32_t _houseId)
 {
-	isLoaded = false;
+	loaded = guild = false;
 	houseName = "Forgotten headquarter (Flat 1, Area 42)";
 	posEntry = Position();
-	houseid = _houseid;
+	houseId = _houseId;
 	rent = price = townid = paidUntil = houseOwner = rentWarnings = lastWarning = 0;
 }
 
@@ -54,6 +56,7 @@ void House::addDoor(Door* door)
 {
 	door->useThing2();
 	doorList.push_back(door);
+
 	door->setHouse(this);
 	updateDoorDescription();
 }
@@ -90,7 +93,7 @@ Door* House::getDoorByPosition(const Position& pos)
 	return NULL;
 }
 
-void House::setPrice(uint32_t _price, bool update /*= false*/)
+void House::setPrice(uint32_t _price, bool update/* = false*/)
 {
 	price = _price;
 	if(update && !getHouseOwner())
@@ -99,10 +102,10 @@ void House::setPrice(uint32_t _price, bool update /*= false*/)
 
 void House::setHouseOwner(uint32_t guid, bool _clean/* = true*/)
 {
-	if(isLoaded && houseOwner == guid)
+	if(loaded && houseOwner == guid)
 		return;
 
-	isLoaded = true;
+	loaded = true;
 	if(houseOwner)
 	{
 		if(_clean)
@@ -123,12 +126,22 @@ void House::setHouseOwner(uint32_t guid, bool _clean/* = true*/)
 	setLastWarning(time(NULL)); //so the new owner has one day before he start the payement
 }
 
+bool House::isGuild() const
+{
+	if(!g_config.getBool(ConfigManager::GUILD_HALLS))
+		return false;
+
+	return guild;
+}
+
 void House::updateDoorDescription(std::string name/* = ""*/)
 {
 	char houseDescription[200];
-	if(houseOwner != 0)
+	if(houseOwner)
 	{
-		if(name.empty())
+		if(isGuild())
+			IOGuild::getInstance()->getGuildNameById(houseOwner, name);
+		else if(name.empty())
 			IOLoginData::getInstance()->getNameByGuid(houseOwner, name);
 
 		sprintf(houseDescription, "It belongs to house '%s'. %s owns this house.", houseName.c_str(), name.c_str());
@@ -207,35 +220,42 @@ void House::clean()
 	removePlayers(true);
 	for(HouseBedItemList::iterator bit = bedsList.begin(); bit != bedsList.end(); ++bit)
 	{
-		if((*bit)->getSleeper() != 0)
+		if((*bit)->getSleeper())
 			(*bit)->wakeUp(NULL);
 	}
 }
 
 bool House::transferToDepot()
 {
-	if(townid == 0)
+	if(!townid)
 		return false;
 
 	Player* player = NULL;
 	if(houseOwner)
 	{
-		std::string ownerName;
-		if(IOLoginData::getInstance()->getNameByGuid(houseOwner, ownerName))
-			player = g_game.getPlayerByName(ownerName);
+		uint32_t owner = houseOwner;
+		if(isGuild() && !IOGuild::getInstance()->swapGuildIdToOwner(owner))
+			owner = 0;
 
-		if(!player)
+		if(owner)
 		{
-			player = new Player(ownerName, NULL);
-			if(!IOLoginData::getInstance()->loadPlayer(player, ownerName))
-			{
-				delete player;
-				player = NULL;
-			}
-		}
+			std::string ownerName;
+			if(IOLoginData::getInstance()->getNameByGuid(owner, ownerName))
+				player = g_game.getPlayerByName(ownerName);
 
-		if(player)
-			player->useThing2();
+			if(!player)
+			{
+				player = new Player(ownerName, NULL);
+				if(!IOLoginData::getInstance()->loadPlayer(player, ownerName))
+				{
+					delete player;
+					player = NULL;
+				}
+			}
+
+			if(player)
+				player->useThing2();
+		}
 	}
 
 	Item* item = NULL;
@@ -285,20 +305,38 @@ bool House::isInvited(const Player* player)
 
 AccessHouseLevel_t House::getHouseAccessLevel(const Player* player)
 {
-	if(player)
+	if(!player)
+		return HOUSE_NO_INVITED;
+
+	if(player->hasFlag(PlayerFlag_CanEditHouses))
+		return HOUSE_OWNER;
+
+	if(!houseOwner)
+		return HOUSE_NO_INVITED;
+
+	if(isGuild())
 	{
-		if(player->hasFlag(PlayerFlag_CanEditHouses))
-			return HOUSE_OWNER;
-
-		if(player->getGUID() == houseOwner)
-			return HOUSE_OWNER;
-
-		if(subOwnerList.isInList(player))
-			return HOUSE_SUBOWNER;
-
-		if(guestList.isInList(player))
-			return HOUSE_GUEST;
+		if(player->getGuildId() == houseOwner)
+		{
+			switch(player->getGuildLevel())
+			{
+				case GUILDLEVEL_LEADER:
+					return HOUSE_OWNER;
+				case GUILDLEVEL_VICELEADER:
+					return HOUSE_SUBOWNER;
+				default:
+					return HOUSE_GUEST;
+			}
+		}
 	}
+	else if(player->getGUID() == houseOwner)
+		return HOUSE_OWNER;
+
+	if(subOwnerList.isInList(player))
+		return HOUSE_SUBOWNER;
+
+	if(guestList.isInList(player))
+		return HOUSE_GUEST;
 
 	return HOUSE_NO_INVITED;
 }
@@ -334,9 +372,9 @@ bool House::getAccessList(uint32_t listId, std::string& list) const
 
 	if(Door* door = getDoorByNumber(listId))
 		return door->getAccessList(list);
+
 	#ifdef __DEBUG_HOUSES__
-	else
-		std::cout << "[Failure - House::getAccessList] door == NULL, listId = " << listId <<std::endl;
+	std::cout << "[Failure - House::getAccessList] door == NULL, listId = " << listId <<std::endl;
 	#endif
 	return false;
 }
@@ -477,18 +515,12 @@ bool AccessList::isInList(const Player* player)
 bool AccessList::addPlayer(std::string& name)
 {
 	std::string tmp = name;
-
 	uint32_t guid;
-	if(IOLoginData::getInstance()->getGuidByName(guid, tmp))
-	{
-		if(playerList.find(guid) == playerList.end())
-		{
-			playerList.insert(guid);
-			return true;
-		}
-	}
+	if(!IOLoginData::getInstance()->getGuidByName(guid, tmp) || playerList.find(guid) != playerList.end())
+		return false;
 
-	return false;
+	playerList.insert(guid);
+	return true;
 }
 
 bool AccessList::addGuild(const std::string& guildName, const std::string& rankName)
@@ -498,14 +530,11 @@ bool AccessList::addGuild(const std::string& guildName, const std::string& rankN
 		return false;
 
 	std::string tmp = rankName;
-
 	int32_t rankId;
 	if(!IOGuild::getInstance()->getRankIdByGuildIdAndName((uint32_t&)rankId, tmp, guildId) &&
 		(tmp.find("?") == std::string::npos || tmp.find("!") == std::string::npos ||
 		tmp.find("*") == std::string::npos))
-	{
 		rankId = -1;
-	}
 
 	if(rankId != 0)
 	{
@@ -739,14 +768,14 @@ bool Houses::loadFromXml(std::string filename)
 		if(readXMLInteger(houseNode, "size", intValue))
 			house->setSize(intValue);
 
+		if(readXMLString(houseNode, "guild", strValue))
+			house->setGuild(booleanString(strValue));
+
 		uint32_t rent = 0;
 		if(readXMLInteger(houseNode, "rent", intValue))
 			rent = intValue;
 
-		uint32_t price = 0;
-		for(HouseTileList::iterator it = house->getHouseTileBegin(); it != house->getHouseTileEnd(); it++)
-			price += g_config.getNumber(ConfigManager::HOUSE_PRICE);
-
+		uint32_t price = house->getTilesCount() * g_config.getNumber(ConfigManager::HOUSE_PRICE);
 		if(g_config.getBool(ConfigManager::HOUSE_RENTASPRICE))
 		{
 			uint32_t tmp = rent;
@@ -778,7 +807,7 @@ bool Houses::reloadPrices()
 
 	const uint32_t tilePrice = g_config.getNumber(ConfigManager::HOUSE_PRICE);
 	for(HouseMap::iterator it = houseMap.begin(); it != houseMap.end(); ++it)
-		it->second->setPrice(tilePrice * it->second->getHouseTileSize(), true);
+		it->second->setPrice(tilePrice * it->second->getTilesCount(), true);
 
 	return true;
 }
@@ -856,8 +885,15 @@ bool Houses::payHouse(House* house, time_t _time)
 	if(!town)
 		return false;
 
+	uint32_t owner = house->getHouseOwner();
+	if(house->isGuild() && !IOGuild::getInstance()->swapGuildIdToOwner(owner))
+	{
+		house->setHouseOwner(0);
+		return false;
+	}
+
 	std::string name;
-	if(!IOLoginData::getInstance()->getNameByGuid(house->getHouseOwner(), name))
+	if(!IOLoginData::getInstance()->getNameByGuid(owner, name))
 	{
 		house->setHouseOwner(0);
 		return false;
@@ -869,13 +905,18 @@ bool Houses::payHouse(House* house, time_t _time)
 		player = new Player(name, NULL);
 		if(!IOLoginData::getInstance()->loadPlayer(player, name))
 		{
+			delete player;
+			player = NULL;
+
 			#ifdef __DEBUG_HOUSES__
 			std::cout << "[Failure - Houses::payHouse] Cannot load player: " << name << std::endl;
 			#endif
-			delete player;
 			return false;
 		}
 	}
+
+	if(player)
+		player->useThing2();
 
 	bool paid = payRent(player, house, _time), savePlayer = false;
 	if(!paid && _time >= (house->getLastWarning() + 86400))
@@ -926,9 +967,14 @@ bool Houses::payHouse(House* house, time_t _time)
 						break;
 				}
 
+				std::string tmp = "house";
+				if(house->isGuild())
+					tmp = "guild hall";
+
 				std::stringstream s;
-				s << "Warning!\nThe " << period << " rent of " << house->getRent() << " gold for your house \"" << house->getName();
-				s << "\" has to be paid. Have it within " << (warningsLimit - warnings) << " days or you will lose your house.";
+				s << "Warning!\nThe " << period << " rent of " << house->getRent() << " gold for your " << tmp
+				<< " \"" << house->getName() << "\" has to be paid. Have it within " << (warningsLimit - warnings)
+				<< " days or you will lose your " << tmp << ".";
 
 				letter->setText(s.str().c_str());
 				if(g_game.internalAddItem(NULL, depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)
@@ -944,15 +990,10 @@ bool Houses::payHouse(House* house, time_t _time)
 			house->setHouseOwner(0);
 	}
 
-	if(player->isVirtual())
-	{
-		if(savePlayer)
-			IOLoginData::getInstance()->savePlayer(player);
+	if(player->isVirtual() && savePlayer)
+		IOLoginData::getInstance()->savePlayer(player);
 
-		delete player;
-		player = NULL;
-	}
-
+	g_game.FreeThing(player);
 	return paid;
 }
 
@@ -989,7 +1030,18 @@ House* Houses::getHouseByPlayerId(uint32_t playerId)
 {
 	for(HouseMap::iterator it = houseMap.begin(); it != houseMap.end(); ++it)
 	{
-		if(it->second->getHouseOwner() == playerId)
+		if(!it->second->isGuild() && it->second->getHouseOwner() == playerId)
+			return it->second;
+	}
+
+	return NULL;
+}
+
+House* Houses::getHouseByGuildId(uint32_t guildId)
+{
+	for(HouseMap::iterator it = houseMap.begin(); it != houseMap.end(); ++it)
+	{
+		if(it->second->isGuild() && it->second->getHouseOwner() == guildId)
 			return it->second;
 	}
 

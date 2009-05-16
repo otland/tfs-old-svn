@@ -1220,7 +1220,7 @@ void Npc::onThink(uint32_t interval)
 	{
 		if(now >= (lastVoice + (*it).margin))
 		{
-			if(((uint32_t)MAX_RAND_RANGE * (EVENT_CREATURE_THINK_INTERVAL / 1000)) / (*it).interval >= (uint32_t)random_range(0, MAX_RAND_RANGE))
+			if(MAX_RAND_RANGE / (*it).interval >= (uint32_t)random_range(0, MAX_RAND_RANGE))
 			{
 				doSay((*it).text, NULL, true, (*it).yell);
 				lastVoice = now;
