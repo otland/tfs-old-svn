@@ -82,7 +82,7 @@ class ServicePort : boost::noncopyable, public boost::enable_shared_from_this<Se
 		boost::asio::ip::tcp::acceptor* m_acceptor;
 
 		uint16_t m_serverPort;
-		bool m_pendingStart;
+		bool m_pendingStart, m_showError;
 };
 
 typedef boost::shared_ptr<ServicePort> ServicePort_ptr;
