@@ -855,7 +855,6 @@ ReturnValue Game::placeSummon(Creature* creature, const std::string& name)
 		return RET_NOERROR;
 
 	creature->removeSummon(monster);
-	delete monster;
 	return RET_NOTENOUGHROOM;
 }
 
