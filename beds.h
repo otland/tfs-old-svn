@@ -27,7 +27,7 @@ class Player;
 class BedItem : public Item
 {
 	public:
-		BedItem(uint16_t id): Item(_id), house(NULL) {internalRemoveSleeper();}
+		BedItem(uint16_t _type): Item(_type), house(NULL) {internalRemoveSleeper();}
 		virtual ~BedItem() {};
 
 		virtual BedItem* getBed() {return this;}
