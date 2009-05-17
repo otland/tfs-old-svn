@@ -148,9 +148,8 @@ void Map::setTile(uint16_t x, uint16_t y, uint16_t z, Tile* newTile)
 			leaf->m_leafE = eastLeaf;
 	}
 
+	uint32_t offsetX = x & FLOOR_MASK, offsetY = y & FLOOR_MASK;
 	Floor* floor = leaf->createFloor(z);
-	uint32_t offsetX = x & FLOOR_MASK;
-	uint32_t offsetY = y & FLOOR_MASK;
 	if(!floor->tiles[offsetX][offsetY])
 	{
 		floor->tiles[offsetX][offsetY] = newTile;
@@ -217,28 +216,23 @@ bool Map::placeCreature(const Position& centerPos, Creature* creature, bool exte
 	{
 		for(PairVector::iterator it = relList.begin(); it != relList.end() && !foundTile; ++it)
 		{
-			int32_t dx = it->first * n;
-			int32_t dy = it->second * n;
-
+			int32_t dx = it->first * n, dy = it->second * n;
 			tryPos = centerPos;
+
 			tryPos.x = tryPos.x + dx;
 			tryPos.y = tryPos.y + dy;
-
-			tile = getTile(tryPos);
-			if(!tile || (placeInPz && !tile->hasFlag(TILESTATE_PROTECTIONZONE)))
+			if(!(tile = getTile(tryPos)) || (placeInPz && !tile->hasFlag(TILESTATE_PROTECTIONZONE)))
 				continue;
 
 			if(tile->__queryAdd(0, creature, 1, 0) == RET_NOERROR)
 			{
-				if(extendedPos)
+				if(!extendedPos)
 				{
-					if(isSightClear(centerPos, tryPos, false))
-					{
-						foundTile = true;
-						break;
-					}
+					foundTile = true;
+					break;
 				}
-				else
+
+				if(isSightClear(centerPos, tryPos, false))
 				{
 					foundTile = true;
 					break;
@@ -251,8 +245,9 @@ bool Map::placeCreature(const Position& centerPos, Creature* creature, bool exte
 		return false;
 
 	int32_t index = 0;
-	Item* toItem = NULL;
 	uint32_t flags = 0;
+
+	Item* toItem = NULL;
 	if(Cylinder* toCylinder = tile->__queryDestination(index, creature, &toItem, flags))
 	{
 		toCylinder->__internalAddThing(creature);
@@ -266,13 +261,12 @@ bool Map::placeCreature(const Position& centerPos, Creature* creature, bool exte
 bool Map::removeCreature(Creature* creature)
 {
 	Tile* tile = creature->getTile();
-	if(tile)
-	{
-		tile->qt_node->removeCreature(creature);
-		tile->__removeThing(creature, 0);
-		return true;
-	}
-	return false;
+	if(!tile)
+		return false;
+
+	tile->qt_node->removeCreature(creature);
+	tile->__removeThing(creature, 0);
+	return true;
 }
 
 void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, bool checkForDuplicate,
@@ -592,7 +586,7 @@ const Tile* Map::canWalkTo(const Creature* creature, const Position& pos)
 bool Map::getPathTo(const Creature* creature, const Position& destPos,
 	std::list<Direction>& listDir, int32_t maxSearchDist /*= -1*/)
 {
-	if(canWalkTo(creature, destPos) == NULL)
+	if(!canWalkTo(creature, destPos))
 		return false;
 
 	Position startPos = destPos;
@@ -647,54 +641,53 @@ bool Map::getPathTo(const Creature* creature, const Position& destPos,
 			found = n;
 			break;
 		}
-		else
+
+		for(uint8_t i = 0; i < 8; ++i)
 		{
-			for(uint8_t i = 0; i < 8; ++i)
+			pos.x = n->x + neighbourOrderList[i][0];
+			pos.y = n->y + neighbourOrderList[i][1];
+
+			bool outOfRange = false;
+			if(maxSearchDist != -1 && (std::abs(endPos.x - pos.x) > maxSearchDist ||
+				std::abs(endPos.y - pos.y) > maxSearchDist))
+				outOfRange = true;
+
+			if(!outOfRange && (tile = canWalkTo(creature, pos)))
 			{
-				pos.x = n->x + neighbourOrderList[i][0];
-				pos.y = n->y + neighbourOrderList[i][1];
-
-				bool outOfRange = false;
-				if(maxSearchDist != -1 && (std::abs(endPos.x - pos.x) > maxSearchDist ||
-					std::abs(endPos.y - pos.y) > maxSearchDist))
-					outOfRange = true;
-
-				if(!outOfRange && (tile = canWalkTo(creature, pos)))
+				//The cost (g) for this neighbour
+				int32_t cost = nodes.getMapWalkCost(creature, n, tile, pos),
+					extraCost = nodes.getTileWalkCost(creature, tile),
+					newg = n->g + cost + extraCost;
+				//Check if the node is already in the closed/open list
+				//If it exists and the nodes already on them has a lower cost (g) then we can ignore this neighbour node
+				AStarNode* neighbourNode = nodes.getNodeInList(pos.x, pos.y);
+				if(neighbourNode)
 				{
-					//The cost (g) for this neighbour
-					int32_t cost = nodes.getMapWalkCost(creature, n, tile, pos),
-						extraCost = nodes.getTileWalkCost(creature, tile),
-						newg = n->g + cost + extraCost;
+					if(neighbourNode->g <= newg) //The node on the closed/open list is cheaper than this one
+						continue;
 
-					//Check if the node is already in the closed/open list
-					//If it exists and the nodes already on them has a lower cost (g) then we can ignore this neighbour node
-					AStarNode* neighbourNode = nodes.getNodeInList(pos.x, pos.y);
-					if(neighbourNode)
-					{
-						if(neighbourNode->g > newg) //The node on the closed/open list is not cheaper than this one
-							nodes.openNode(neighbourNode);
-					}
-					else if(!(neighbourNode = nodes.createOpenNode())) //Does not exist in the open/closed list, create a new node
-					{
-						//seems we ran out of nodes
-						listDir.clear();
-						return false;
-					}
-
-					//This node is the best node so far with this state
-					neighbourNode->x = pos.x;
-					neighbourNode->y = pos.y;
-
-					neighbourNode->g = newg;
-					neighbourNode->h = nodes.getEstimatedDistance(neighbourNode->x, neighbourNode->y, endPos.x, endPos.y);
-
-					neighbourNode->f = neighbourNode->g + neighbourNode->h;
-					neighbourNode->parent = n;
+					nodes.openNode(neighbourNode);
 				}
-			}
+				else if(!(neighbourNode = nodes.createOpenNode())) //Does not exist in the open/closed list, create a new node
+				{
+					//seems we ran out of nodes
+					listDir.clear();
+					return false;
+				}
 
-			nodes.closeNode(n);
+				//This node is the best node so far with this state
+				neighbourNode->x = pos.x;
+				neighbourNode->y = pos.y;
+
+				neighbourNode->g = newg;
+				neighbourNode->h = nodes.getEstimatedDistance(neighbourNode->x, neighbourNode->y, endPos.x, endPos.y);
+
+				neighbourNode->f = neighbourNode->g + neighbourNode->h;
+				neighbourNode->parent = n;
+			}
 		}
+
+		nodes.closeNode(n);
 	}
 
 	int32_t prevx = endPos.x, prevy = endPos.y, dx, dy;
@@ -746,8 +739,8 @@ bool Map::getPathMatching(const Creature* creature, std::list<Direction>& dirLis
 	startNode->f = 0;
 	startNode->parent = NULL;
 
-	int32_t bestMatch = 0;
 	dirList.clear();
+	int32_t bestMatch = 0;
 
 	Position pos;
 	pos.z = startPos.z;
@@ -817,8 +810,10 @@ bool Map::getPathMatching(const Creature* creature, std::list<Direction>& dirLis
 				AStarNode* neighbourNode = nodes.getNodeInList(pos.x, pos.y);
 				if(neighbourNode)
 				{
-					if(neighbourNode->f > newf) //The node on the closed/open list is cheaper than this one
-						nodes.openNode(neighbourNode);
+					if(neighbourNode->f <= newf) //The node on the closed/open list is cheaper than this one
+						continue;
+
+					nodes.openNode(neighbourNode);
 				}
 				else if(!(neighbourNode = nodes.createOpenNode())) //Does not exist in the open/closed list, create a new node
 				{
@@ -1026,8 +1021,8 @@ int32_t AStarNodes::getTileWalkCost(const Creature* creature, const Tile* tile)
 int32_t AStarNodes::getEstimatedDistance(uint16_t x, uint16_t y, uint16_t xGoal, uint16_t yGoal)
 {
 	int32_t diagonal = std::min(std::abs(x - xGoal), std::abs(y - yGoal));
-	return MAP_DIAGONALWALKCOST * diagonal + MAP_NORMALWALKCOST * ((std::abs(
-		x - xGoal) + std::abs(y - yGoal)) - 2 * diagonal);
+	return (MAP_DIAGONALWALKCOST * diagonal) + (MAP_NORMALWALKCOST * ((std::abs(
+		x - xGoal) + std::abs(y - yGoal)) - (2 * diagonal)));
 }
 
 //*********** Floor constructor **************
