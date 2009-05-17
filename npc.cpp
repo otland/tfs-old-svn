@@ -1464,21 +1464,21 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 				case ACTION_SELLITEM:
 				{
-					const ItemType& it = Item::items[npcState->itemId];
-					if(it.id != 0)
+					const ItemType& iit = Item::items[npcState->itemId];
+					if(iit.id != 0)
 					{
 						uint32_t moneyCount = (*it).intValue;
 						if((*it).strValue == "|PRICE|")
 							moneyCount = npcState->price * npcState->amount;
 
 						int32_t subType = -1;
-						if(it.hasSubType())
+						if(iit.hasSubType())
 							subType = npcState->subType;
 
-						int32_t itemCount = player->__getItemTypeCount(it.id, subType);
+						int32_t itemCount = player->__getItemTypeCount(iit.id, subType);
 						if(itemCount >= npcState->amount)
 						{
-							g_game.removeItemOfType(player, it.id, npcState->amount, subType);
+							g_game.removeItemOfType(player, iit.id, npcState->amount, subType);
 							g_game.addMoney(player, moneyCount, FLAG_NOLIMIT);
 						}
 					}
@@ -1487,26 +1487,26 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 				case ACTION_BUYITEM:
 				{
-					const ItemType& it = Item::items[npcState->itemId];
-					if(it.id != 0)
+					const ItemType& iit = Item::items[npcState->itemId];
+					if(iit.id != 0)
 					{
 						uint32_t moneyCount = (*it).intValue;
 						if((*it).strValue == "|PRICE|")
 							moneyCount = npcState->price * npcState->amount;
 
 						int32_t subType = -1;
-						if(it.hasSubType())
+						if(iit.hasSubType())
 							subType = npcState->subType;
 
 						if(g_game.getMoney(player) >= moneyCount)
 						{
 							int32_t amount = npcState->amount;
-							if(it.stackable)
+							if(iit.stackable)
 							{
 								while(amount > 0)
 								{
 									int32_t stack = std::min(100, amount);
-									Item* item = Item::CreateItem(it.id, stack);
+									Item* item = Item::CreateItem(iit.id, stack);
 									if(g_game.internalPlayerAddItem(this, player, item) != RET_NOERROR)
 									{
 										delete item;
@@ -1521,7 +1521,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 							{
 								for(int32_t i = 0; i < amount; ++i)
 								{
-									Item* item = Item::CreateItem(it.id, subType);
+									Item* item = Item::CreateItem(iit.id, subType);
 									if(g_game.internalPlayerAddItem(this, player, item) != RET_NOERROR)
 									{
 										delete item;
@@ -1546,11 +1546,11 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 					if((*it).strValue == "|ITEM|")
 						itemId = npcState->itemId;
 
-					const ItemType& it = Item::items[npcState->itemId];
-					if(it.id != 0)
+					const ItemType& iit = Item::items[npcState->itemId];
+					if(iit.id != 0)
 					{
 						int32_t subType = -1;
-						if(it.hasSubType())
+						if(iit.hasSubType())
 							subType = npcState->subType;
 
 						int32_t itemCount = player->__getItemTypeCount(itemId, subType);
@@ -1566,16 +1566,16 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 					if((*it).strValue == "|ITEM|")
 						itemId = npcState->itemId;
 
-					const ItemType& it = Item::items[itemId];
-					if(it.id != 0)
+					const ItemType& iit = Item::items[itemId];
+					if(iit.id != 0)
 					{
 						int32_t subType = -1;
-						if(it.hasSubType())
+						if(iit.hasSubType())
 							subType = npcState->subType;
 
 						for(int32_t i = 0; i < npcState->amount; ++i)
 						{
-							Item* item = Item::CreateItem(it.id, subType);
+							Item* item = Item::CreateItem(iit.id, subType);
 							if(g_game.internalPlayerAddItem(this, player, item) != RET_NOERROR)
 								delete item;
 						}
