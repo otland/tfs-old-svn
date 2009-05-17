@@ -843,7 +843,7 @@ void DatabaseManager::checkTriggers()
 			};
 
 			DBQuery query;
-			for(int32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+			for(int32_t i = 0; i < sizeof(triggerName) / sizeof(std::string); i++)
 			{
 				if(!triggerExists(triggerName[i]))
 				{
@@ -933,7 +933,7 @@ void DatabaseManager::checkTriggers()
 			};
 
 			DBQuery query;
-			for(int32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+			for(int32_t i = 0; i < sizeof(triggerName) / sizeof(std::string); i++)
 			{
 				if(!triggerExists(triggerName[i]))
 				{
