@@ -176,7 +176,7 @@ void Game::loadGameState()
 
 void Game::setGameState(GameState_t newState)
 {
-	if(gameState > GAME_STATE_CLOSED && newState != GAME_STATE_SHUTDOWN)
+	if(gameState == GAME_STATE_SHUTDOWN)
 		return; //this cannot be stopped
 
 	if(gameState != newState)

@@ -122,7 +122,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	if(g_game.getGameState() == GAME_STATE_MAINTAIN)
 	{
-		disconnectClient(0x0A, "Gameworld is under maintenance, please re-connect in a while.");
+		disconnectClient(0x0A, "Server is under maintenance, please re-connect in a while.");
 		return false;
 	}
 
