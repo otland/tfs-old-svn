@@ -851,13 +851,12 @@ ReturnValue Game::placeSummon(Creature* creature, const std::string& name)
 
 	// Place the monster
 	creature->addSummon(monster);
-	if(!placeCreature(monster, creature->getPosition(), true))
-	{
-		creature->removeSummon(monster);
-		return RET_NOTENOUGHROOM;
-	}
+	if(placeCreature(monster, creature->getPosition(), true))
+		return RET_NOERROR;
 
-	return RET_NOERROR;
+	creature->removeSummon(monster);
+	delete monster;
+	return RET_NOTENOUGHROOM;
 }
 
 bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
