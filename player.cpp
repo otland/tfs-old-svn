@@ -3966,7 +3966,7 @@ void Player::manageAccount(const std::string &text)
 				else if(!isValidName(managerString))
 					msg << "That name seems to contain invalid symbols, please choose another name.";
 				else if(IOLoginData::getInstance()->playerExists(managerString, true))
-					msg << "A player with such name already exists, please choose another name.";
+					msg << "A player with that name already exists, please choose another name.";
 				else
 				{
 					std::string tmp = asLowerCaseString(managerString);
@@ -4010,7 +4010,7 @@ void Player::manageAccount(const std::string &text)
 				else
 				{
 					talkState[1] = talkState[2] = false;
-					msg << "A player with that name already exists, please pick another name.";
+					msg << "A player with that name already exists, please choose another name.";
 				}
 			}
 			else
@@ -4151,7 +4151,7 @@ void Player::manageAccount(const std::string &text)
 				else if(!isValidName(managerString))
 					msg << "That name seems to contain invalid symbols, please choose another name.";
 				else if(IOLoginData::getInstance()->playerExists(managerString, true))
-					msg << "A player with such name already exists, please choose another name.";
+					msg << "A player with that name already exists, please choose another name.";
 				else
 				{
 					std::string tmp = asLowerCaseString(managerString);
@@ -4239,7 +4239,7 @@ void Player::manageAccount(const std::string &text)
 					{
 						talkState[6] = true;
 						talkState[9] = false;
-						msg << "A player with this name currently exists, please choose another name.";
+						msg << "A player with that name already exists, please choose another name.";
 					}
 				}
 			}
@@ -4277,7 +4277,7 @@ void Player::manageAccount(const std::string &text)
 				{
 					talkState[6] = true;
 					talkState[9] = false;
-					msg << "A player with this name currently exists, please choose another name.";
+					msg << "A player with that name already exists, please choose another name.";
 				}
 			}
 			else if(checkText(text, "no") && talkState[12])

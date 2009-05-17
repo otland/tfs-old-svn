@@ -176,7 +176,7 @@ void Game::loadGameState()
 
 void Game::setGameState(GameState_t newState)
 {
-	if(gameState == GAME_STATE_SHUTDOWN)
+	if(gameState > GAME_STATE_CLOSED && newState != GAME_STATE_SHUTDOWN)
 		return; //this cannot be stopped
 
 	if(gameState != newState)
@@ -1391,20 +1391,16 @@ ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cyli
 	//check how much we can move
 	uint32_t maxQueryCount = 0;
 	ReturnValue retMaxCount = toCylinder->__queryMaxCount(index, item, count, maxQueryCount, flags);
-
 	if(retMaxCount != RET_NOERROR && maxQueryCount == 0)
 		return retMaxCount;
 
-	uint32_t m = 0;
-	uint32_t n = 0;
-
+	uint32_t m = 0, n = 0;
 	if(item->isStackable())
 		m = std::min((uint32_t)count, maxQueryCount);
 	else
 		m = maxQueryCount;
 
 	Item* moveItem = item;
-
 	//check if we can remove this item
 	ret = fromCylinder->__queryRemove(item, m, flags);
 	if(ret != RET_NOERROR)
@@ -1412,10 +1408,10 @@ ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cyli
 
 	//remove the item
 	int32_t itemIndex = fromCylinder->__getIndexOfThing(item);
-	Item* updateItem = NULL;
 	fromCylinder->__removeThing(item, m);
-	bool isCompleteRemoval = item->isRemoved();
 
+	bool isCompleteRemoval = item->isRemoved();
+	Item* updateItem = NULL;
 	//update item(s)
 	if(item->isStackable())
 	{
@@ -1478,8 +1474,8 @@ ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* i
 		return RET_NOTPOSSIBLE;
 
 	Item* toItem = NULL;
-
 	toCylinder = toCylinder->__queryDestination(index, item, &toItem, flags);
+
 	ReturnValue ret = toCylinder->__queryAdd(index, item, item->getItemCount(), flags);
 	if(ret != RET_NOERROR)
 		return ret;
@@ -1580,7 +1576,7 @@ ReturnValue Game::internalPlayerAddItem(Creature* actor, Player* player, Item* i
 Item* Game::findItemOfType(Cylinder* cylinder, uint16_t itemId,
 	bool depthSearch /*= true*/, int32_t subType /*= -1*/)
 {
-	if(cylinder == NULL)
+	if(!cylinder)
 		return false;
 
 	std::list<Container*> listContainer;
@@ -1767,13 +1763,14 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 		return true;
 
 	typedef std::multimap<int32_t, Item*, std::less<int32_t> > MoneyMultiMap;
+	MoneyMultiMap moneyMap;
+
 	std::list<Container*> listContainer;
 	Container* tmpContainer = NULL;
 
 	Thing* thing = NULL;
 	Item* item = NULL;
-
-	MoneyMultiMap moneyMap;
+	
 	int32_t moneyCount = 0;
 	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex() && money > 0; ++i)
 	{
@@ -1820,15 +1817,15 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 			continue;
 
 		internalRemoveItem(NULL, item);
-		if(mit->first <= money)
-			money -= mit->first;
-		else
+		if(mit->first > money)
 		{
 			// Remove a monetary value from an item
 			int32_t remaind = item->getWorth() - money;
 			addMoney(cylinder, remaind, flags);
 			money = 0;
 		}
+		else
+			money -= mit->first;
 
 		mit->second = NULL;
 	}
@@ -1866,7 +1863,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 		return item;
 
 	Cylinder* cylinder = item->getParent();
-	if(cylinder == NULL)
+	if(!cylinder)
 		return NULL;
 
 	int32_t itemIndex = cylinder->__getIndexOfThing(item);
@@ -1953,7 +1950,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 	else
 		newItem = Item::CreateItem(newId, newCount);
 
-	if(newItem == NULL)
+	if(!newItem)
 	{
 		#ifdef __DEBUG__
 		std::cout << "Error: [Game::transformItem] Item of type " << item->getID() << " transforming into invalid type " << newId << std::endl;
@@ -2051,10 +2048,7 @@ bool Game::playerCreatePrivateChannel(uint32_t playerId)
 		return false;
 
 	ChatChannel* channel = g_chat.createChannel(player, 0xFFFF);
-	if(!channel)
-		return false;
-
-	if(!channel->addUser(player))
+	if(!channel || !channel->addUser(player))
 		return false;
 
 	player->sendCreatePrivateChannel(channel->getId(), channel->getName());
@@ -2324,11 +2318,11 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, int16_t f
 				player->getPosition()) && !Position::areInRange<1,1,0>(fromPos, toPos))
 			{
 				Item* moveItem = NULL;
-				ReturnValue reti = internalMoveItem(player, item->getParent(), player,
+				ReturnValue retTmp = internalMoveItem(player, item->getParent(), player,
 					INDEX_WHEREEVER, item, item->getItemCount(), &moveItem);
-				if(reti != RET_NOERROR)
+				if(retTmp != RET_NOERROR)
 				{
-					player->sendCancelMessage(reti);
+					player->sendCancelMessage(retTmp);
 					return false;
 				}
 
@@ -5868,7 +5862,9 @@ void Game::prepareGlobalSave()
 {
 	if(!globalSaveMessage[0])
 	{
+		setGameState(GAME_STATE_CLOSING);
 		globalSaveMessage[0] = true;
+
 		broadcastMessage("Server is going down for a global save within 5 minutes. Please logout.", MSG_STATUS_WARNING);
 		Scheduler::getScheduler().addEvent(createSchedulerTask(120000, boost::bind(&Game::prepareGlobalSave, this)));
 	}

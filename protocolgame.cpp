@@ -144,7 +144,6 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 
 		player->setOperatingSystem(operatingSystem);
 		player->setClientVersion(version);
-
 		if(gamemasterLogin && !player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) && !player->isAccountManager())
 		{
 			disconnectClient(0x14, "You are not a gamemaster!");
@@ -179,16 +178,19 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			return false;
 		}
 
-		if(g_game.getGameState() == GAME_STATE_CLOSING && !player->hasFlag(PlayerFlag_CanAlwaysLogin))
+		if(!player->hasFlag(PlayerFlag_CanAlwaysLogin))
 		{
-			disconnectClient(0x14, "The game is just going down.\nPlease try again later.");
-			return false;
-		}
+			if(g_game.getGameState() == GAME_STATE_CLOSING)
+			{
+				disconnectClient(0x14, "Gameworld is just going down, please come back later.");
+				return false;
+			}
 
-		if(g_game.getGameState() == GAME_STATE_CLOSED && !player->hasFlag(PlayerFlag_CanAlwaysLogin))
-		{
-			disconnectClient(0x14, "Server is currently closed.\nPlease try again later.");
-			return false;
+			if(g_game.getGameState() == GAME_STATE_CLOSED)
+			{
+				disconnectClient(0x14, "Gameworld is currently closed, please come back later.");
+				return false;
+			}
 		}
 
 		if(g_config.getBool(ConfigManager::ONE_PLAYER_ON_ACCOUNT) && !player->isAccountManager() &&
@@ -403,7 +405,11 @@ void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)
 
 bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 {
-	if(g_game.getGameState() == GAME_STATE_SHUTDOWN)
+	if(
+#ifndef __CONSOLE__
+		!GUI::getInstance()->m_connections ||
+#endif
+		g_game.getGameState() == GAME_STATE_SHUTDOWN)
 	{
 		getConnection()->close();
 		return false;
@@ -446,21 +452,21 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 		}
 	}
 
-	if(g_game.getGameState() == GAME_STATE_STARTUP || g_game.getGlobalSaveMessage(0))
+	if(g_game.getGameState() < GAME_STATE_NORMAL)
 	{
-		disconnectClient(0x14, "Gameworld is starting up. Please wait.");
+		disconnectClient(0x14, "Gameworld is just starting up, please wait.");
 		return false;
 	}
 
 	if(g_game.getGameState() == GAME_STATE_MAINTAIN)
 	{
-		disconnectClient(0x14, "Gameworld is under maintenance. Please re-connect in a while.");
+		disconnectClient(0x14, "Gameworld is under maintenance, please re-connect in a while.");
 		return false;
 	}
 
 	if(ConnectionManager::getInstance()->isDisabled(getIP(), protocolId))
 	{
-		disconnectClient(0x14, "Too many connections attempts from this IP. Try again later.");
+		disconnectClient(0x14, "Too many connections attempts from your IP address, please try again later.");
 		return false;
 	}
 
@@ -472,7 +478,8 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 	std::string accPass;
 	if(((accName.length() && !IOLoginData::getInstance()->getAccountId(accName, accId)) ||
-		!IOLoginData::getInstance()->getPassword(accId, name, accPass) || !passwordTest(password, accPass)) && name != "Account Manager")
+		!IOLoginData::getInstance()->getPassword(accId, name, accPass) || !passwordTest(
+		password, accPass)) && name != "Account Manager")
 	{
 		ConnectionManager::getInstance()->addAttempt(getIP(), protocolId, false);
 		getConnection()->close();
@@ -480,9 +487,8 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	ConnectionManager::getInstance()->addAttempt(getIP(), protocolId, true);
-	Dispatcher::getDispatcher().addTask(
-		createTask(boost::bind(&ProtocolGame::login, this, name, accId, password, operatingSystem, version, gamemasterLogin)));
-
+	Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+		&ProtocolGame::login, this, name, accId, password, operatingSystem, version, gamemasterLogin)));
 	return true;
 }
 

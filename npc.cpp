@@ -2926,8 +2926,8 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 		lua_pushboolean(L, LUA_ERROR);
 		return 1;
 	}
-	lua_pushnil(L);
 
+	lua_pushnil(L);
 	ShopInfoList itemList;
 	while(lua_next(L, -2) != 0)
 	{
@@ -2941,8 +2941,8 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 
 		lua_pop(L, 1);
 	}
-	lua_pop(L, 1);
 
+	lua_pop(L, 1);
 	Player* player = env->getPlayerByUID(popNumber(L));
 	if(!player)
 	{
@@ -2950,9 +2950,10 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 		lua_pushboolean(L, LUA_ERROR);
 		return 1;
 	}
-	player->closeShopWindow();
 
+	player->closeShopWindow();
 	npc->addShopPlayer(player);
+
 	player->setShopOwner(npc, buyCallback, sellCallback, itemList);
 	player->openShopWindow();
 

@@ -103,7 +103,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 			password = "1";
 		else
 		{
-			disconnectClient(0x0A, "Invalid Account Name.");
+			disconnectClient(0x0A, "Invalid account name.");
 			return false;
 		}
 	}
@@ -114,21 +114,21 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	if(g_game.getGameState() == GAME_STATE_STARTUP)
+	if(g_game.getGameState() < GAME_STATE_NORMAL)
 	{
-		disconnectClient(0x0A, "Gameworld is starting up. Please wait.");
+		disconnectClient(0x0A, "Server is just starting up, please wait.");
 		return false;
 	}
 
 	if(g_game.getGameState() == GAME_STATE_MAINTAIN)
 	{
-		disconnectClient(0x0A, "Gameworld is under maintenance. Please re-connect in a while.");
+		disconnectClient(0x0A, "Gameworld is under maintenance, please re-connect in a while.");
 		return false;
 	}
 
 	if(ConnectionManager::getInstance()->isDisabled(clientIP, protocolId))
 	{
-		disconnectClient(0x0A, "Too many connections attempts from this IP. Please try again later.");
+		disconnectClient(0x0A, "Too many connections attempts from your IP address, please try again later.");
 		return false;
 	}
 
@@ -139,7 +139,8 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	}
 
 	Account account;
-	if(IOLoginData::getInstance()->getAccountId(name, id) || (!name.length() && g_config.getBool(ConfigManager::ACCOUNT_MANAGER)))
+	if(IOLoginData::getInstance()->getAccountId(name, id) || (!name.length()
+		&& g_config.getBool(ConfigManager::ACCOUNT_MANAGER)))
 	{
 		account = IOLoginData::getInstance()->loadAccount(id);
 		if(id < 1 || id != account.number || !passwordTest(password, account.password))
@@ -157,7 +158,8 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	IOLoginData::getInstance()->removePremium(account);
 	if(!g_config.getBool(ConfigManager::ACCOUNT_MANAGER) && !account.charList.size())
 	{
-		disconnectClient(0x0A, std::string("This account does not contain any character yet.\nCreate a new character on the " + g_config.getString(ConfigManager::SERVER_NAME) + " website at " + g_config.getString(ConfigManager::URL) + ".").c_str());
+		disconnectClient(0x0A, std::string("This account does not contain any character yet.\nCreate a new character on the "
+			+ g_config.getString(ConfigManager::SERVER_NAME) + " website at " + g_config.getString(ConfigManager::URL) + ".").c_str());
 		return false;
 	}
 
@@ -165,9 +167,8 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 	{
 		TRACK_MESSAGE(output);
-
-		//Add MOTD
 		output->AddByte(0x14);
+
 		char motd[1300];
 		sprintf(motd, "%d\n%s", g_game.getMotdNum(), g_config.getString(ConfigManager::MOTD).c_str());
 		output->AddString(motd);

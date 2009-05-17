@@ -27,7 +27,7 @@ class Player;
 class BedItem : public Item
 {
 	public:
-		BedItem(uint16_t id);
+		BedItem(uint16_t id): Item(_id), house(NULL) {internalRemoveSleeper();}
 		virtual ~BedItem() {};
 
 		virtual BedItem* getBed() {return this;}
@@ -76,7 +76,7 @@ class Beds
 		}
 
 		BedItem* getBedBySleeper(uint32_t guid);
-		void setBedSleeper(BedItem* bed, uint32_t guid);
+		void setBedSleeper(BedItem* bed, uint32_t guid) {BedSleepersMap[guid] = bed;}
 
 	protected:
 		Beds() {BedSleepersMap.clear();}

@@ -155,12 +155,12 @@ void House::updateDoorDescription(std::string name/* = ""*/)
 
 void House::removePlayer(Player* player, bool ignoreRights)
 {
-	if(ignoreRights && player->hasFlag(PlayerFlag_CanEditHouses))
+	if(!ignoreRights && player->hasFlag(PlayerFlag_CanEditHouses))
 		return;
 
 	Position tmp = player->getPosition();
 	Position toPos = g_game.getClosestFreeTile(player, getEntryPosition(), false, false);
-	if(toPos.x != 0 && g_game.internalTeleport(player, toPos, true) == RET_NOERROR && !player->isInGhostMode())
+	if(toPos.x && g_game.internalTeleport(player, toPos, true) == RET_NOERROR && !player->isInGhostMode())
 	{
 		g_game.addMagicEffect(tmp, NM_ME_POFF);
 		g_game.addMagicEffect(player->getPosition(), NM_ME_TELEPORT);
@@ -186,7 +186,7 @@ void House::removePlayers(bool ignoreInvites)
 	if(kickList.size())
 	{
 		for(PlayerVector::iterator it = kickList.begin(); it != kickList.end(); ++it)
-			removePlayer((*it), true);
+			removePlayer((*it), false);
 	}
 }
 
@@ -201,13 +201,13 @@ bool House::kickPlayer(Player* player, Player* target)
 
 	if(player == target)
 	{
-		removePlayer(target, false);
+		removePlayer(target, true);
 		return true;
 	}
 
 	if(getHouseAccessLevel(player) >= getHouseAccessLevel(target))
 	{
-		removePlayer(target, true);
+		removePlayer(target, false);
 		return true;
 	}
 
@@ -252,9 +252,6 @@ bool House::transferToDepot()
 					player = NULL;
 				}
 			}
-
-			if(player)
-				player->useThing2();
 		}
 	}
 
@@ -286,14 +283,16 @@ bool House::transferToDepot()
 			g_game.internalMoveItem(NULL, (*it)->getParent(), depot, INDEX_WHEREEVER, (*it), (*it)->getItemCount(), NULL, FLAG_NOLIMIT);
 
 		if(player->isVirtual())
+		{
 			IOLoginData::getInstance()->savePlayer(player);
-
-		g_game.FreeThing(player);
-		return true;
+			delete player;
+		}
 	}
-
-	for(ItemList::iterator it = moveItemList.begin(); it != moveItemList.end(); ++it)
-		g_game.internalRemoveItem(NULL, (*it), (*it)->getItemCount(), false, FLAG_NOLIMIT);
+	else
+	{
+		for(ItemList::iterator it = moveItemList.begin(); it != moveItemList.end(); ++it)
+			g_game.internalRemoveItem(NULL, (*it), (*it)->getItemCount(), false, FLAG_NOLIMIT);
+	}
 
 	return true;
 }
@@ -646,10 +645,7 @@ void Door::onRemoved()
 
 bool Door::canUse(const Player* player)
 {
-	if(!house)
-		return true;
-
-	if(house->getHouseAccessLevel(player) >= HOUSE_SUBOWNER)
+	if(!house || house->getHouseAccessLevel(player) >= HOUSE_SUBOWNER)
 		return true;
 
 	return accessList->isInList(player);
@@ -657,7 +653,7 @@ bool Door::canUse(const Player* player)
 
 void Door::setHouse(House* _house)
 {
-	if(house != NULL)
+	if(house)
 	{
 		#ifdef __DEBUG_HOUSES__
 		std::cout << "[Warning - Door::setHouse] house != NULL" << std::endl;
@@ -766,7 +762,7 @@ bool Houses::loadFromXml(std::string filename)
 			entryPos.z = intValue;
 
 		house->setEntryPos(entryPos);
-		if(entryPos.x == 0 || entryPos.y == 0)
+		if(!entryPos.x || !entryPos.y)
 		{
 			std::cout << "[Warning - Houses::loadFromXml] House entry not set for: ";
 			std::cout << house->getName() << " (" << houseId << ")" << std::endl;
@@ -915,18 +911,13 @@ bool Houses::payHouse(House* house, time_t _time)
 		player = new Player(name, NULL);
 		if(!IOLoginData::getInstance()->loadPlayer(player, name))
 		{
-			delete player;
-			player = NULL;
-
 			#ifdef __DEBUG_HOUSES__
 			std::cout << "[Failure - Houses::payHouse] Cannot load player: " << name << std::endl;
 			#endif
+			delete player;
 			return false;
 		}
 	}
-
-	if(player)
-		player->useThing2();
 
 	bool paid = payRent(player, house, _time), savePlayer = false;
 	if(!paid && _time >= (house->getLastWarning() + 86400))
@@ -993,17 +984,21 @@ bool Houses::payHouse(House* house, time_t _time)
 					savePlayer = true;
 			}
 
-			house->setPayRentWarnings(warnings++);
+			house->setPayRentWarnings(++warnings);
 			house->setLastWarning(_time);
 		}
 		else
 			house->setHouseOwner(0);
 	}
 
-	if(player->isVirtual() && savePlayer)
-		IOLoginData::getInstance()->savePlayer(player);
+	if(player->isVirtual())
+	{
+		if(savePlayer)
+			IOLoginData::getInstance()->savePlayer(player);
 
-	g_game.FreeThing(player);
+		delete player;
+	}
+
 	return paid;
 }
 
@@ -1016,9 +1011,8 @@ House* Houses::getHouse(uint32_t houseId, bool add/*= false*/)
 	if(!add)
 		return NULL;
 
-	House* house = new House(houseId);
-	houseMap[houseId] = house;
-	return house;
+	houseMap[houseId] = new House(houseId);
+	return houseMap[houseId];
 }
 
 House* Houses::getHouseByPlayer(Player* player)

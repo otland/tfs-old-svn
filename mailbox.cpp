@@ -25,16 +25,6 @@
 #include "game.h"
 extern Game g_game;
 
-Mailbox::Mailbox(uint16_t _type) : Item(_type)
-{
-	//
-}
-
-Mailbox::~Mailbox()
-{
-	//
-}
-
 ReturnValue Mailbox::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 	uint32_t flags) const
 {
@@ -79,21 +69,6 @@ void Mailbox::__addThing(Creature* actor, int32_t index, Thing* thing)
 	}
 }
 
-void Mailbox::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
-{
-	//
-}
-
-void Mailbox::__replaceThing(uint32_t index, Thing* thing)
-{
-	//
-}
-
-void Mailbox::__removeThing(Thing* thing, uint32_t count)
-{
-	//
-}
-
 void Mailbox::postAddNotification(Creature* actor, Thing* thing, int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
 {
 	getParent()->postAddNotification(actor, thing, index, LINK_PARENT);
@@ -106,85 +81,64 @@ void Mailbox::postRemoveNotification(Creature* actor, Thing* thing, int32_t inde
 
 bool Mailbox::sendItem(Creature* actor, Item* item)
 {
-	std::string receiver = "";
 	uint32_t dp = 0;
-
+	std::string receiver;
 	if(!getReceiver(item, receiver, dp))
 		return false;
 
-	/**No need to continue if its still empty**/
-	if(receiver.empty() || dp == 0)
+	if(receiver.empty() || !dp)
 		return false;
 
-	bool tmp = IOLoginData::getInstance()->playerExists(receiver);
-	if(Player* player = g_game.getPlayerByName(receiver))
+	Player* player = g_game.getPlayerByName(receiver);
+	if(!player)
 	{
-		Depot* depot = player->getDepot(dp, true);
-		if(depot && g_game.internalMoveItem(actor, item->getParent(), depot, INDEX_WHEREEVER,
-			item, item->getItemCount(), NULL, FLAG_NOLIMIT) == RET_NOERROR)
+		player = new Player(receiver, NULL);
+		if(!IOLoginData::getInstance()->loadPlayer(player, receiver))
 		{
-			g_game.transformItem(item, item->getID() + 1);
-			bool result = true, opened = (player->getContainerID(depot) != -1);
-			if(Player* tmp = actor->getPlayer())
-			{
-				CreatureEventList mailEvents = tmp->getCreatureEvents(CREATURE_EVENT_MAIL_SEND);
-				for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
-				{
-					if(!(*it)->executeMailSend(tmp, player, item, opened) && result)
-						result = false;
-				}
-
-				mailEvents = player->getCreatureEvents(CREATURE_EVENT_MAIL_RECEIVE);
-				for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
-				{
-					if(!(*it)->executeMailReceive(player, tmp, item, opened) && result)
-						result = false;
-				}
-			}
-
-			return result;
+			delete player;
+			player = NULL;
 		}
 	}
-	else if(tmp)
+
+	if(!player)
+		return false;
+
+	Depot* depot = player->getDepot(dp, true);
+	if(!depot || g_game.internalMoveItem(actor, item->getParent(), depot, INDEX_WHEREEVER,
+		item, item->getItemCount(), NULL, FLAG_NOLIMIT) != RET_NOERROR)
 	{
-		Player* player = new Player(receiver, NULL);
-		if(IOLoginData::getInstance()->loadPlayer(player, receiver))
+		if(player->isVirtual())
+			delete player;
+
+		return false;
+	}
+
+	g_game.transformItem(item, item->getID() + 1);
+	bool result = true, opened = player->getContainerID(depot) != -1;
+	if(Player* tmp = actor->getPlayer())
+	{
+		CreatureEventList mailEvents = tmp->getCreatureEvents(CREATURE_EVENT_MAIL_SEND);
+		for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
 		{
-			Depot* depot = player->getDepot(dp, true);
-			if(depot && g_game.internalMoveItem(actor, item->getParent(), depot, INDEX_WHEREEVER,
-				item, item->getItemCount(), NULL, FLAG_NOLIMIT) == RET_NOERROR)
-			{
-				g_game.transformItem(item, item->getID() + 1);
-				bool result = true;
-				if(Player* tmp = actor->getPlayer())
-				{
-					CreatureEventList mailEvents = tmp->getCreatureEvents(CREATURE_EVENT_MAIL_SEND);
-					for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
-					{
-						if(!(*it)->executeMailSend(tmp, player, item, false) && result)
-							result = false;
-					}
-
-					mailEvents = player->getCreatureEvents(CREATURE_EVENT_MAIL_RECEIVE);
-					for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
-					{
-						if(!(*it)->executeMailReceive(player, tmp, item, false) && result)
-							result = false;
-					}
-				}
-
-				if(IOLoginData::getInstance()->savePlayer(player))
-				{
-					delete player;
-					return result;
-				}
-			}
+			if(!(*it)->executeMailSend(tmp, player, item, opened) && result)
+				result = false;
 		}
 
+		mailEvents = player->getCreatureEvents(CREATURE_EVENT_MAIL_RECEIVE);
+		for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
+		{
+			if(!(*it)->executeMailReceive(player, tmp, item, opened) && result)
+				result = false;
+		}
+	}
+
+	if(player->isVirtual())
+	{
+		IOLoginData::getInstance()->savePlayer(player);
 		delete player;
 	}
 
-	return false;
+	return result;
 }
 
 bool Mailbox::getReceiver(Item* item, std::string& name, uint32_t& dp)
@@ -196,13 +150,12 @@ bool Mailbox::getReceiver(Item* item, std::string& name, uint32_t& dp)
 	{
 		if(Container* parcel = item->getContainer())
 		{
-			for(ItemList::const_iterator cit = parcel->getItems(); cit != parcel->getEnd(); cit++)
+			for(ItemList::const_iterator cit = parcel->getItems(); cit != parcel->getEnd(); ++cit)
 			{
-				if((*cit)->getID() == ITEM_LABEL)
+				if((*cit)->getID() == ITEM_LABEL && !(*cit)->getText().empty())
 				{
 					item = (*cit);
-					if(item->getText() != "")
-						break;
+					break;
 				}
 			}
 		}
@@ -213,21 +166,19 @@ bool Mailbox::getReceiver(Item* item, std::string& name, uint32_t& dp)
 		return false;
 	}
 
-	if(!item || item->getText() == "") /**No label/letter found or its empty.**/
+	if(!item || item->getText().empty()) /**No label/letter found or its empty.**/
 		return false;
 
-	std::string tmp, strTown = "";
 	std::istringstream iss(item->getText(), std::istringstream::in);
+	uint32_t curLine = 0;
 
-	uint32_t curLine = 1;
-	while(getline(iss, tmp, '\n'))
+	std::string tmp, strTown;
+	while(getline(iss, tmp, '\n') && curLine < 2)
 	{
-		if(curLine == 1)
+		if(curLine == 0)
 			name = tmp;
-		else if(curLine == 2)
+		else if(curLine == 1)
 			strTown = tmp;
-		else
-			break;
 
 		++curLine;
 	}

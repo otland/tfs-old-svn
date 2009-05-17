@@ -27,36 +27,37 @@ extern ConfigManager g_config;
 bool DatabaseManager::optimizeTables()
 {
 	Database* db = Database::getInstance();
-	DBResult* result;
-
 	DBQuery query;
 	switch(db->getDatabaseEngine())
 	{
 		case DATABASE_ENGINE_MYSQL:
 		{
 			query << "SELECT `TABLE_NAME` FROM `information_schema`.`tables` WHERE `TABLE_SCHEMA` = " << db->escapeString(g_config.getString(ConfigManager::SQL_DB)) << " AND `DATA_FREE` > 0;";
+			DBResult* result;
 			if(!(result = db->storeQuery(query.str())))
 				break;
 
 			query.str("");
 			do
 			{
-				std::cout << "> Optimizing table: " << result->getDataString("TABLE_NAME") << std::endl;
+				std::cout << "> Optimizing table: " << result->getDataString("TABLE_NAME") << "... ";
 				query << "OPTIMIZE TABLE `" << result->getDataString("TABLE_NAME") << "`;";
-				if(!db->executeQuery(query.str()))
-					std::cout << "WARNING: Optimization failed." << std::endl;
+				if(db->executeQuery(query.str()))
+					std::cout << "[success]" << std::endl;
+				else
+					std::cout << "[failure]" << std::endl;
 
 				query.str("");
 			}
 			while(result->next());
+
 			result->free();
 			return true;
 		}
 
 		case DATABASE_ENGINE_SQLITE:
 		{
-			query << "VACUUM;";
-			if(!db->executeQuery(query.str()))
+			if(!db->executeQuery("VACUUM;"))
 				break;
 
 			std::cout << "> Optimized database." << std::endl;
@@ -65,8 +66,7 @@ bool DatabaseManager::optimizeTables()
 
 		case DATABASE_ENGINE_POSTGRESQL:
 		{
-			query << "VACUUM FULL;";
-			if(!db->executeQuery(query.str()))
+			if(!db->executeQuery("VACUUM FULL;"))
 				break;
 
 			std::cout << "> Optimized database." << std::endl;
@@ -83,8 +83,6 @@ bool DatabaseManager::optimizeTables()
 bool DatabaseManager::triggerExists(std::string trigger)
 {
 	Database* db = Database::getInstance();
-	DBResult* result;
-
 	DBQuery query;
 	switch(db->getDatabaseEngine())
 	{
@@ -104,6 +102,7 @@ bool DatabaseManager::triggerExists(std::string trigger)
 			return false;
 	}
 
+	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -114,8 +113,6 @@ bool DatabaseManager::triggerExists(std::string trigger)
 bool DatabaseManager::tableExists(std::string table)
 {
 	Database* db = Database::getInstance();
-	DBResult* result;
-
 	DBQuery query;
 	switch(db->getDatabaseEngine())
 	{
@@ -135,6 +132,7 @@ bool DatabaseManager::tableExists(std::string table)
 			return false;
 	}
 
+	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -177,16 +175,14 @@ bool DatabaseManager::isDatabaseSetup()
 
 int32_t DatabaseManager::getDatabaseVersion()
 {
-	if(tableExists("server_config"))
-	{
-		int32_t value = 0;
-		if(getDatabaseConfig("db_version", value))
-			return value;
+	if(!tableExists("server_config"))
+		return 0;
 
-		return 1;
-	}
+	int32_t value = 0;
+	if(getDatabaseConfig("db_version", value))
+		return value;
 
-	return 0;
+	return 1;
 }
 
 uint32_t DatabaseManager::updateDatabase()
@@ -681,6 +677,7 @@ uint32_t DatabaseManager::updateDatabase()
 bool DatabaseManager::getDatabaseConfig(std::string config, int32_t &value)
 {
 	value = 0;
+
 	Database* db = Database::getInstance();
 	DBResult* result;
 
@@ -726,21 +723,11 @@ void DatabaseManager::checkPasswordType()
 						return;
 					}
 
-					registerDatabaseConfig("password_type", (int32_t)newValue);
 					Database* db = Database::getInstance();
-
 					DBQuery query;
-					if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL || db->getDatabaseEngine() == DATABASE_ENGINE_POSTGRESQL)
+					if(db->getDatabaseEngine() != DATABASE_ENGINE_MYSQL && db->getDatabaseEngine() != DATABASE_ENGINE_POSTGRESQL)
 					{
-						query << "UPDATE `accounts` SET `password` = md5(`password`);";
-						db->executeQuery(query.str());
-					}
-					else
-					{
-						DBResult* result;
-
-						query << "SELECT `id`, `password` FROM `accounts`;";
-						if((result = db->storeQuery(query.str())))
+						if(DBResult* result = db->storeQuery("SELECT `id`, `password` FROM `accounts`;"))
 						{
 							do
 							{
@@ -751,7 +738,10 @@ void DatabaseManager::checkPasswordType()
 							result->free();
 						}
 					}
+					else
+						db->executeQuery("UPDATE `accounts` SET `password` = md5(`password`);");
 
+					registerDatabaseConfig("password_type", (int32_t)newValue);
 					std::cout << "> All passwords are now MD5 hashed." << std::endl;
 					break;
 				}
@@ -764,21 +754,11 @@ void DatabaseManager::checkPasswordType()
 						return;
 					}
 
-					registerDatabaseConfig("password_type", (int32_t)newValue);
 					Database* db = Database::getInstance();
-
 					DBQuery query;
-					if(db->getDatabaseEngine() == DATABASE_ENGINE_MYSQL || db->getDatabaseEngine() == DATABASE_ENGINE_POSTGRESQL)
+					if(db->getDatabaseEngine() != DATABASE_ENGINE_MYSQL && db->getDatabaseEngine() != DATABASE_ENGINE_POSTGRESQL)
 					{
-						query << "UPDATE `accounts` SET `password` = sha1(`password`);";
-						db->executeQuery(query.str());
-					}
-					else
-					{
-						DBResult* result;
-
-						query << "SELECT `id`, `password` FROM `accounts`;";
-						if((result = db->storeQuery(query.str())))
+						if(DBResult* result = db->storeQuery("SELECT `id`, `password` FROM `accounts`;"))
 						{
 							do
 							{
@@ -789,7 +769,10 @@ void DatabaseManager::checkPasswordType()
 							result->free();
 						}
 					}
+					else
+						db->executeQuery("UPDATE `accounts` SET `password` = sha1(`password`);");
 
+					registerDatabaseConfig("password_type", (int32_t)newValue);
 					std::cout << "> All passwords are now SHA1 hashed." << std::endl;
 					break;
 				}
@@ -841,7 +824,7 @@ void DatabaseManager::checkTriggers()
 	{
 		case DATABASE_ENGINE_MYSQL:
 		{
-			std::string triggerName[5] =
+			std::string triggerName[] =
 			{
 				"ondelete_accounts",
 				"oncreate_guilds",
@@ -850,7 +833,7 @@ void DatabaseManager::checkTriggers()
 				"ondelete_players",
 			};
 
-			std::string triggerStatement[5] =
+			std::string triggerStatement[] =
 			{
 				"CREATE TRIGGER `ondelete_accounts` BEFORE DELETE ON `accounts` FOR EACH ROW BEGIN DELETE FROM `bans` WHERE `type` != 1 AND `type` != 2 AND `value` = OLD.`id`; END;",
 				"CREATE TRIGGER `oncreate_guilds` AFTER INSERT ON `guilds` FOR EACH ROW BEGIN INSERT INTO `guild_ranks` (`name`, `level`, `guild_id`) VALUES ('the Leader', 3, NEW.`id`); INSERT INTO `guild_ranks` (`name`, `level`, `guild_id`) VALUES ('a Vice-Leader', 2, NEW.`id`); INSERT INTO `guild_ranks` (`name`, `level`, `guild_id`) VALUES ('a Member', 1, NEW.`id`); END;",
@@ -859,7 +842,8 @@ void DatabaseManager::checkTriggers()
 				"CREATE TRIGGER `ondelete_players` BEFORE DELETE ON `players` FOR EACH ROW BEGIN DELETE FROM `bans` WHERE `type` = 2 AND `value` = OLD.`id`; UPDATE `houses` SET `owner` = 0 WHERE `owner` = OLD.`id`; END;"
 			};
 
-			for(int32_t i = 0; i < 5; i++)
+			DBQuery query;
+			for(int32_t i = 0; i < i < sizeof(queryList) / sizeof(std::string); i++)
 			{
 				if(!triggerExists(triggerName[i]))
 				{
@@ -873,7 +857,7 @@ void DatabaseManager::checkTriggers()
 
 		case DATABASE_ENGINE_SQLITE:
 		{
-			std::string triggerName[27] =
+			std::string triggerName[] =
 			{
 				"oncreate_guilds",
 				"oncreate_players",
@@ -904,7 +888,7 @@ void DatabaseManager::checkTriggers()
 				"onupdate_player_spells"
 			};
 
-			std::string triggerStatement[27] =
+			std::string triggerStatement[] =
 			{
 				"CREATE TRIGGER \"oncreate_guilds\" AFTER INSERT ON \"guilds\" BEGIN INSERT INTO \"guild_ranks\" (\"name\", \"level\", \"guild_id\") VALUES (\"the Leader\", 3, NEW.\"id\"); INSERT INTO \"guild_ranks\" (\"name\", \"level\", \"guild_id\") VALUES (\"a Vice-Leader\", 2, NEW.\"id\"); INSERT INTO \"guild_ranks\" (\"name\", \"level\", \"guild_id\") VALUES (\"a Member\", 1, NEW.\"id\"); END;",
 
@@ -948,7 +932,8 @@ void DatabaseManager::checkTriggers()
 				"CREATE TRIGGER \"onupdate_player_spells\" BEFORE UPDATE ON \"player_spells\" FOR EACH ROW BEGIN SELECT RAISE(ROLLBACK, 'UPDATE on table \"player_spells\" violates foreign: \"player_id\"') WHERE NEW.\"player_id\" IS NULL OR (SELECT \"id\" FROM \"players\" WHERE \"id\" = NEW.\"player_id\") IS NULL; END;"
 			};
 
-			for(int32_t i = 0; i < 27; i++)
+			DBQuery query;
+			for(int32_t i = 0; i < i < sizeof(queryList) / sizeof(std::string); i++)
 			{
 				if(!triggerExists(triggerName[i]))
 				{

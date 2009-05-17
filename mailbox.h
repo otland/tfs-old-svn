@@ -25,8 +25,8 @@
 class Mailbox : public Item, public Cylinder
 {
 	public:
-		Mailbox(uint16_t _type);
-		virtual ~Mailbox();
+		Mailbox(uint16_t _type): Item(_type) {}
+		virtual ~Mailbox() {}
 
 		virtual Mailbox* getMailbox() {return this;}
 		virtual const Mailbox* getMailbox() const {return this;}
@@ -43,10 +43,10 @@ class Mailbox : public Item, public Cylinder
 		virtual void __addThing(Creature* actor, Thing* thing);
 		virtual void __addThing(Creature* actor, int32_t index, Thing* thing);
 
-		virtual void __updateThing(Thing* thing, uint16_t itemId, uint32_t count);
-		virtual void __replaceThing(uint32_t index, Thing* thing);
+		virtual void __updateThing(Thing* thing, uint16_t itemId, uint32_t count) {}
+		virtual void __replaceThing(uint32_t index, Thing* thing) {}
 
-		virtual void __removeThing(Thing* thing, uint32_t count);
+		virtual void __removeThing(Thing* thing, uint32_t count) {}
 
 		virtual void postAddNotification(Creature* actor, Thing* thing, int32_t index, cylinderlink_t link = LINK_OWNER);
 		virtual void postRemoveNotification(Creature* actor, Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);

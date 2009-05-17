@@ -642,6 +642,7 @@ int32_t LuaScriptInterface::loadFile(const std::string& file, Npc* npc/* = NULL*
 
 	m_loadingFile = file;
 	this->reserveScriptEnv();
+
 	ScriptEnviroment* env = this->getScriptEnv();
 	env->setScriptId(EVENT_ID_LOADING, this);
 	env->setNpc(npc);
@@ -675,8 +676,9 @@ int32_t LuaScriptInterface::loadBuffer(const std::string& text, Npc* npc/* = NUL
 	if(lua_isfunction(m_luaState, -1) == 0)
 		return -1;
 
-	m_loadingFile = "loadBuffer";
+	m_loadingFile = "buffer";
 	this->reserveScriptEnv();
+
 	ScriptEnviroment* env = this->getScriptEnv();
 	env->setScriptId(EVENT_ID_LOADING, this);
 	env->setNpc(npc);

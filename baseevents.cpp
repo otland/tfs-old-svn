@@ -70,7 +70,6 @@ bool BaseEvents::parseEventNode(xmlNodePtr p, std::string scriptsPath)
 			if(event->configureEvent(p))
 			{
 				bool success = false;
-
 				std::string strValue, tmpStrValue;
 				if(readXMLString(p, "event", strValue))
 				{
