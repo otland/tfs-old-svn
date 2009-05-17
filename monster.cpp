@@ -766,11 +766,8 @@ void Monster::onThinkDefense(uint32_t interval)
 			continue;
 		}
 
-		if(defenseTicks % it->speed >= interval)
-		{
-			//already used this spell for this round
+		if(defenseTicks % it->speed >= interval) //already used this spell for this round
 			continue;
-		}
 
 		if((it->chance >= (uint32_t)random_range(1, 100)))
 		{
@@ -808,12 +805,14 @@ void Monster::onThinkDefense(uint32_t interval)
 
 			if((it->chance >= (uint32_t)random_range(1, 100)))
 			{
-				Monster* summon = Monster::createMonster(it->name);
-				if(summon)
+				if(Monster* summon = Monster::createMonster(it->name))
 				{
 					addSummon(summon);
 					if(!g_game.placeCreature(summon, getPosition()))
+					{
 						removeSummon(summon);
+						delete summon;
+					}
 					else
 						g_game.addMagicEffect(getPosition(), NM_ME_MAGIC_ENERGY);
 				}
