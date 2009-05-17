@@ -1025,7 +1025,7 @@ int32_t AStarNodes::getTileWalkCost(const Creature* creature, const Tile* tile)
 
 int32_t AStarNodes::getEstimatedDistance(uint16_t x, uint16_t y, uint16_t xGoal, uint16_t yGoal)
 {
-	int32_t diagonal = std::min(std::abs(x - xGoal), std::abs(y - yGoal)), 
+	int32_t diagonal = std::min(std::abs(x - xGoal), std::abs(y - yGoal));
 	return MAP_DIAGONALWALKCOST * diagonal + MAP_NORMALWALKCOST * ((std::abs(
 		x - xGoal) + std::abs(y - yGoal)) - 2 * diagonal);
 }
