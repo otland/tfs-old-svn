@@ -1626,7 +1626,6 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 						uint32_t n = 0;
 						for(std::list<ListItem>::const_iterator iit = response->prop.itemList.begin(); iit != response->prop.itemList.end(); ++iit)
 						{
-							bool addDel = ;
 							scriptstream << "{id = " << iit->itemId
 								<< ", subType = " << iit->subType
 								<< ", buy = " << iit->buyPrice
@@ -2512,7 +2511,8 @@ int32_t NpcScriptInterface::luaActionFocus(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Npc* npc = env->getNpc())
 	{
-		if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+		Creature* creature = env->getCreatureByUID(popNumber(L));
+		if(creature)
 			npc->hasScriptedFocus = true;
 		else
 			npc->hasScriptedFocus = false;
@@ -2586,8 +2586,10 @@ int32_t NpcScriptInterface::luaActionMoveTo(lua_State* L)
 int32_t NpcScriptInterface::luaActionFollow(lua_State* L)
 {
 	//selfFollow(cid)
+	uint32_t cid = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
-	Player* player = env->getPlayerByUID(popNumber(L));
+
+	Player* player = env->getPlayerByUID(cid);
 	if(cid && !player)
 	{
 		lua_pushboolean(L, false);
