@@ -113,7 +113,7 @@ bool BedItem::canUse(Player* player)
 	bool ret = isBed();
 	Player* _player = new Player(name, NULL);
 	if(IOLoginData::getInstance()->loadPlayer(_player, name))
-		ret = house->getHouseAccessLevel(_player) <= house->getHouseAccessLevel(player))
+		ret = house->getHouseAccessLevel(_player) <= house->getHouseAccessLevel(player);
 
 	delete _player;
 	return ret;
