@@ -131,7 +131,7 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 		else if(!xmlStrcmp(configNode->name, (const xmlChar*)"formula"))
 		{
 			if(readXMLFloat(configNode, "meleeDamage", floatValue))
-				voc->setMultiplier(MULTIPLIER_DISTANCE, floatValue);
+				voc->setMultiplier(MULTIPLIER_MELEE, floatValue);
 
 			if(readXMLFloat(configNode, "distDamage", floatValue) || readXMLFloat(configNode, "distanceDamage", floatValue))
 				voc->setMultiplier(MULTIPLIER_DISTANCE, floatValue);
