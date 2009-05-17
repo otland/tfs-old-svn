@@ -1,16 +1,5 @@
 -- Include the Advanced NPC System
 dofile(getDataDir() .. 'npc/lib/npcsystem/npcsystem.lua')
-msgcontains = doMessageCheck
-moveToPosition = selfMoveTo
-moveToCreature = selfMoveToCreature
-selfMoveToPosition = selfMoveTo
-selfGotoIdle = selfIdle
-doPosRemoveItem = doRemoveItemIdFromPos
-doNpcBuyItem = doPlayerRemoveItem
-doNpcSetCreatureFocus = selfFocus
-getNpcCid = getNpcId
-getDistanceTo = getNpcDistanceTo
-getDistanceToCreature = getNpcDistanceToCreature
 
 function selfIdle()
 	following = false
@@ -152,3 +141,15 @@ function selfGetPosition()
 	local t = getNpcPos()
 	return t.x, t.y, t.z
 end
+
+msgcontains = doMessageCheck
+moveToPosition = selfMoveTo
+moveToCreature = selfMoveToCreature
+selfMoveToPosition = selfMoveTo
+selfGotoIdle = selfIdle
+doPosRemoveItem = doRemoveItemIdFromPos
+doNpcBuyItem = doPlayerRemoveItem
+doNpcSetCreatureFocus = selfFocus
+getNpcCid = getNpcId
+getDistanceTo = getNpcDistanceTo
+getDistanceToCreature = getNpcDistanceToCreature
