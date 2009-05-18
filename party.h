@@ -54,7 +54,7 @@ class Party
 		bool setSharedExperience(Player* player, bool _sharedExpActive);
 		bool isSharedExperienceActive() const {return sharedExpActive;}
 		bool isSharedExperienceEnabled() const {return sharedExpEnabled;}
-		bool canUseSharedExperience(const Player* player, uint32_t highestLevel) const;
+		bool canUseSharedExperience(const Player* player, uint32_t highestLevel = 0) const;
 		void updateSharedExperience();
 
 		void addPlayerHealedMember(Player* player, uint32_t points);

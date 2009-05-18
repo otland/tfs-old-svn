@@ -349,8 +349,18 @@ void Party::shareExperience(uint64_t experience)
 		(*it)->onGainSharedExperience(shareExperience);
 }
 
-bool Party::canUseSharedExperience(const Player* player, uint32_t highestLevel) const
+bool Party::canUseSharedExperience(const Player* player, uint32_t highestLevel/* = 0*/) const
 {
+	if(!highestLevel)
+	{
+		highestLevel = getLeader()->getLevel();
+		for(PlayerVector::const_iterator it = memberList.begin(); it != memberList.end(); ++it)
+		{
+			if((*it)->getLevel() > highestLevel)
+				highestLevel = (*it)->getLevel();
+		}
+	}
+
 	if(player->getLevel() < (uint32_t)std::ceil((double)highestLevel * g_config.getDouble(
 		ConfigManager::PARTY_DIFFERENCE)) || !Position::areInRange(Position(
 		g_config.getNumber(ConfigManager::PARTY_RADIUS_X), g_config.getNumber(
