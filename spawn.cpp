@@ -269,7 +269,10 @@ void Spawns::clear()
 	for(SpawnList::iterator it = spawnList.begin(); it != spawnList.end(); ++it)
 	{
 		if((*it))
+		{
 			delete (*it);
+			(*it) = NULL;
+		}
 	}
 
 	spawnList.clear();

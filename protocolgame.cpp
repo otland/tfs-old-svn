@@ -42,6 +42,10 @@
 #include "configmanager.h"
 #include "game.h"
 
+#ifndef __CONSOLE__
+#include "gui.h"
+#endif
+
 extern Game g_game;
 extern ConfigManager g_config;
 extern Actions actions;
