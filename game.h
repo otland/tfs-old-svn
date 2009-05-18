@@ -473,7 +473,7 @@ class Game
 		bool playerRevokePartyInvitation(uint32_t playerId, uint32_t invitedId);
 		bool playerPassPartyLeadership(uint32_t playerId, uint32_t newLeaderId);
 		bool playerLeaveParty(uint32_t playerId);
-		bool playerEnableSharedPartyExperience(uint32_t playerId, uint8_t sharedExpActive, uint8_t unknown);
+		bool playerSharePartyExperience(uint32_t playerId, bool activate, uint8_t unknown);
 
 		void kickPlayer(uint32_t playerId, bool displayEffect);
 		bool broadcastMessage(const std::string& text, MessageClasses type);

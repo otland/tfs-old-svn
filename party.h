@@ -29,7 +29,7 @@ class Party
 {
 	public:
 		Party(Player* _leader);
-		virtual ~Party();
+		virtual ~Party() {}
 
 		Player* getLeader() const {return leader;}
 		void setLeader(Player* _leader) {leader = _leader;}
@@ -54,7 +54,7 @@ class Party
 		bool setSharedExperience(Player* player, bool _sharedExpActive);
 		bool isSharedExperienceActive() const {return sharedExpActive;}
 		bool isSharedExperienceEnabled() const {return sharedExpEnabled;}
-		bool canUseSharedExperience(const Player* player) const;
+		bool canUseSharedExperience(const Player* player, uint32_t highestLevel) const;
 		void updateSharedExperience();
 
 		void addPlayerHealedMember(Player* player, uint32_t points);
@@ -66,13 +66,13 @@ class Party
 		bool canOpenCorpse(uint32_t ownerId);
 
 	protected:
-		bool sharedExpActive;
-		bool sharedExpEnabled;
+		bool canEnableSharedExperience();
 
-		Player* leader;
 		PlayerVector memberList;
 		PlayerVector inviteList;
 
+		Player* leader;
+		bool sharedExpActive, sharedExpEnabled;
 		struct CountBlock_t
 		{
 			int32_t totalHeal;
@@ -82,8 +82,6 @@ class Party
 
 		typedef std::map<uint32_t, CountBlock_t> CountMap;
 		CountMap pointMap;
-
-		bool canEnableSharedExperience();
 };
 #endif
 

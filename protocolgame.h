@@ -134,7 +134,7 @@ class ProtocolGame : public Protocol
 		void parseRevokePartyInvite(NetworkMessage& msg);
 		void parsePassPartyLeadership(NetworkMessage& msg);
 		void parseLeaveParty(NetworkMessage& msg);
-		void parseEnableSharedPartyExperience(NetworkMessage& msg);
+		void parseSharePartyExperience(NetworkMessage& msg);
 
 		//trade methods
 		void parseRequestTrade(NetworkMessage& msg);

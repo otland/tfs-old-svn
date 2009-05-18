@@ -728,7 +728,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				break;
 
 			case 0xA8: // share exp
-				parseEnableSharedPartyExperience(msg);
+				parseSharePartyExperience(msg);
 				break;
 
 			case 0xAA:
@@ -1467,11 +1467,11 @@ void ProtocolGame::parseLeaveParty(NetworkMessage& msg)
 	addGameTask(&Game::playerLeaveParty, player->getID());
 }
 
-void ProtocolGame::parseEnableSharedPartyExperience(NetworkMessage& msg)
+void ProtocolGame::parseSharePartyExperience(NetworkMessage& msg)
 {
-	uint8_t sharedExpActive = msg.GetByte();
-	uint8_t unknown = msg.GetByte();
-	addGameTask(&Game::playerEnableSharedPartyExperience, player->getID(), sharedExpActive, unknown);
+	bool activate = msg.GetByte();
+	uint8_t unknown = msg.GetByte(); //TODO: find out what is this byte
+	addGameTask(&Game::playerSharePartyExperience, player->getID(), activate, unknown);
 }
 
 void ProtocolGame::parseQuestLog(NetworkMessage& msg)
