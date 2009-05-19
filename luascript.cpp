@@ -4984,7 +4984,6 @@ int32_t LuaScriptInterface::luaSetHouseOwner(lua_State* L)
 		clean = popNumber(L);
 
 	uint32_t owner = popNumber(L);
-
 	if(House* house = Houses::getInstance().getHouse(popNumber(L)))
 	{
 		house->setHouseOwner(owner, clean);

@@ -105,7 +105,9 @@ void House::setHouseOwner(uint32_t guid, bool _clean/* = true*/)
 	if(loaded && houseOwner == guid)
 		return;
 
-	loaded = true;
+	if(!loaded)
+		loaded = true;
+
 	if(houseOwner)
 	{
 		if(_clean)
