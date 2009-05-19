@@ -1,7 +1,11 @@
 local config = {
+	deathAssistCount = getConfigValue('deathAssistCount'),
 	maxDeathRecords = getConfigValue('maxDeathRecords'),
-	deathAssistCount = getConfigValue('deathAssistCount')
+	limit = ""
 }
+if(deathAssistCount > -1) then
+	limit = " LIMIT 0, " .. deathAssistCount + 1
+end
 
 function onSay(cid, words, param, channel)
 	local target = db.getResult("SELECT `name`, `id` FROM `players` WHERE `name` = " .. db.escapeString(param) .. ";")
@@ -18,7 +22,7 @@ function onSay(cid, words, param, channel)
 	local deaths = db.getResult("SELECT `id`, `date`, `level` FROM `player_deaths` WHERE `player_id` = " .. targetId .." ORDER BY `date` DESC LIMIT 0, " .. config.maxDeathRecords)
 	if(deaths:getID() ~= -1) then
 		repeat
-			local killers = db.getResult("SELECT environment_killers.name AS monster_name, players.name AS player_name FROM killers LEFT JOIN environment_killers ON killers.id = environment_killers.kill_id LEFT JOIN player_killers ON killers.id = player_killers.kill_id LEFT JOIN players ON players.id = player_killers.player_id WHERE killers.death_id = " .. deaths:getDataInt("id") .. " ORDER BY killers.final_hit DESC, killers.id ASC LIMIT 0, " .. config.deathAssistCount)
+			local killers = db.getResult("SELECT environment_killers.name AS monster_name, players.name AS player_name FROM killers LEFT JOIN environment_killers ON killers.id = environment_killers.kill_id LEFT JOIN player_killers ON killers.id = player_killers.kill_id LEFT JOIN players ON players.id = player_killers.player_id WHERE killers.death_id = " .. deaths:getDataInt("id") .. " ORDER BY killers.final_hit DESC, killers.id ASC" .. config.limit)
 			if(killers:getID() ~= -1) then
 				if(str ~= "") then
 					str = str .. "\n" .. os.date("%d %B %Y %X ", deaths:getDataLong("date"))
