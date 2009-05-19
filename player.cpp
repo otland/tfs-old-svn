@@ -2277,6 +2277,7 @@ void Player::dropCorpse(DeathList deathList)
 	}
 	else
 	{
+		Creature::dropCorpse(deathList);
 		if(g_config.getBool(ConfigManager::DEATH_LIST))
 		{
 			int32_t size = deathList.size(), tmp = g_config.getNumber(
@@ -2288,10 +2289,8 @@ void Player::dropCorpse(DeathList deathList)
 			tmpList.resize(size, DeathEntry(NULL, -1));
 
 			std::copy(deathList.begin(), deathList.end(), tmpList.begin());
-			IOLoginData::getInstance()->playerDeath(this, deathList);
+			IOLoginData::getInstance()->playerDeath(this, tmpList);
 		}
-
-		Creature::dropCorpse(deathList);
 	}
 }
 
