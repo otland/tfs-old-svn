@@ -1024,8 +1024,7 @@ bool IOLoginData::playerDeath(Player* player, const DeathList& dl)
 	if(!db->executeQuery(query.str()))
 		return false;
 
-	int32_t size = deathList.size(), tmp = g_config.getNumber(
-		ConfigManager::DEATH_ASSISTS) + 1;
+	int32_t size = dl.size(), tmp = g_config.getNumber(ConfigManager::DEATH_ASSISTS) + 1;
 	if(tmp > 1 && size > tmp)
 		size = tmp;
 
