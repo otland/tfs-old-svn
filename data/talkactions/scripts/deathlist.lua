@@ -33,32 +33,36 @@ function onSay(cid, words, param, channel)
 				local count = killers:getRows(false)
 				local i = 0
 				repeat
+					local monster = killers:getDataString("monster_name")
+					if(i == 0 or i == (count - 1)) then
+						monster = string.gsub(monster:gsub("an ", ""), "a ", "")
+					end
+
 					i = i + 1
 					if(killers:getDataString("player_name") ~= "") then
 						if(i == 1) then
-							str = str .. "Killed at level " .. deaths:getDataInt("level")
+							str = str .. "Killed at level " .. deaths:getDataInt("level") .. " by "
 						elseif(i == count) then
-							str = str .. " and"
+							str = str .. " and by "
 						else
-							str = str .. ","
+							str = str .. ", "
 						end
 
-						str = str .. " by "
-						if(killers:getDataString("monster_name") ~= "") then
-							str = str .. killers:getDataString("monster_name") .. " summoned by "
+						if(monster ~= "") then
+							str = str .. monster .. " summoned by "
 						end
 
 						str = str .. killers:getDataString("player_name")
 					else
 						if(i == 1) then
-							str = str .. "Died at level " .. deaths:getDataInt("level")
+							str = str .. "Died at level " .. deaths:getDataInt("level") .. " by "
 						elseif(i == count) then
-							str = str .. " and"
+							str = str .. " and by "
 						else
-							str = str .. ","
+							str = str .. ", "
 						end
 
-						str = str .. " by " .. killers:getDataString("monster_name")
+						str = str .. monster
 					end
 
 					if(i == count) then
