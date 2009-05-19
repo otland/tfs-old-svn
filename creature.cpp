@@ -765,6 +765,9 @@ DeathList Creature::getKillers()
 		bool deny = false;
 		for(DeathList::iterator fit = list.begin(); fit != list.end(); ++fit)
 		{
+			if(fit->isNameKill())
+				continue;
+
 			Creature* tmp = fit->getKillerCreature();
 			if((!mdc->getMaster() || (mdc->getMaster() != tmp && mdc->getMaster() != tmp->getMaster()))
 				&& (mdc->getSummonCount() <= 0 || tmp->getMaster() != mdc))
