@@ -2279,18 +2279,7 @@ void Player::dropCorpse(DeathList deathList)
 	{
 		Creature::dropCorpse(deathList);
 		if(g_config.getBool(ConfigManager::DEATH_LIST))
-		{
-			int32_t size = deathList.size(), tmp = g_config.getNumber(
-				ConfigManager::DEATH_ASSISTS) + 1;
-			if(tmp > 1 && size > tmp)
-				size = tmp;
-
-			DeathList tmpList;
-			tmpList.resize(size, DeathEntry(NULL, -1));
-
-			std::copy(deathList.begin(), deathList.end(), tmpList.begin());
-			IOLoginData::getInstance()->playerDeath(this, tmpList);
-		}
+			IOLoginData::getInstance()->playerDeath(this, deathList);
 	}
 }
 
@@ -2311,6 +2300,32 @@ Item* Player::createCorpse(DeathList deathList)
 	}
 	else
 		ss << deathList[0].getKillerName();
+
+	bool display = false;
+	if(deathList.size() > 1)
+	{
+		if(deathList[0].getKillerType() != deathList[1].getKillerType())
+			display = true;
+		else if(deathList[1].isCreatureKill())
+		{
+			if(deathList[0].getKillerCreature()->getName() != deathList[1].getKillerCreature()->getName())
+				display = true
+		}
+		else if(asLowerCaseString(deathList[0].getKillerName()) != (deathList[1].getKillerName()))
+			display = true;
+	}
+
+	if(display)
+	{
+		if(deathList[1].isCreatureKill())
+		{
+			ss << deathList[1].getKillerCreature()->getNameDescription();
+			if(deathList[1].getKillerCreature()->getMaster())
+				ss << " summoned by " << deathList[1].getKillerCreature()->getMaster()->getNameDescription();
+		}
+		else
+			ss << deathList[1].getKillerName();
+	}
 
 	ss << ".";
 	corpse->setSpecialDescription(ss.str().c_str());

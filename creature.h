@@ -82,10 +82,11 @@ struct DeathEntry
 {
 		DeathEntry(std::string name, int32_t dmg): data(name), damage(dmg) {}
 		DeathEntry(Creature* killer, int32_t dmg): data(killer), damage(dmg) {}
-	
+
 		bool isCreatureKill() const {return data.type() == typeid(Creature*);}
 		bool isNameKill() const {return !isCreatureKill();}
 
+		const std::type_info& getKillerType() const {return data.type();}
 		Creature* getKillerCreature() const {return boost::any_cast<Creature*>(data);}
 		std::string getKillerName() const {return boost::any_cast<std::string>(data);}
 
