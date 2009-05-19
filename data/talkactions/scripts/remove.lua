@@ -5,8 +5,9 @@ function onSay(cid, words, param, channel)
 		amount = tonumber(param)
 	end
 
-	local tmp = {}
-	local toPos = getPlayerLookPos(cid)
+	local tmp = {uid = 0}
+	local toPos = getCreatureLookPosition(cid)
+
 	toPos.stackpos = STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE
 	tmp = getThingFromPos(toPos)
 	if(tmp.uid ~= 0) then

@@ -115,7 +115,7 @@ function onStepIn(cid, item, position, fromPosition)
 	end
 
 	if(getTileInfo(position).protection) then
-		local depotPos, depot = getPlayerLookPos(cid), {}
+		local depotPos, depot = getCreatureLookPosition(cid), {}
 		depotPos.stackpos = STACKPOS_GROUND
 		while(true) do
 			depotPos.stackpos = depotPos.stackpos + 1
