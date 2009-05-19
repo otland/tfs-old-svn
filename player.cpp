@@ -2309,7 +2309,7 @@ Item* Player::createCorpse(DeathList deathList)
 		else if(deathList[1].isCreatureKill())
 		{
 			if(deathList[0].getKillerCreature()->getName() != deathList[1].getKillerCreature()->getName())
-				display = true
+				display = true;
 		}
 		else if(asLowerCaseString(deathList[0].getKillerName()) != (deathList[1].getKillerName()))
 			display = true;
