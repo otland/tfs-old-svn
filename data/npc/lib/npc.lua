@@ -24,11 +24,13 @@ function selfMoveToCreature(id)
 	end
 
 	selfMoveTo(t.x, t.y, t.z)
+	return
 end
 
 function getNpcDistanceToCreature(id)
 	if(not id or id == 0) then
 		selfIdle()
+		return nil
 	end
 
 	local c = getCreaturePosition(id)
@@ -36,7 +38,7 @@ function getNpcDistanceToCreature(id)
 		return nil
 	end
 
-	local s = getCreaturePosition(getNpcCid())
+	local s = getCreaturePosition(getNpcId())
 	if(not s.x or s.x == 0 or s.z ~= c.z) then
 		return nil
 	end

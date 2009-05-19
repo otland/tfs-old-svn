@@ -25,8 +25,6 @@ class Creature;
 class Game;
 class Spawn;
 
-typedef std::list<Creature*> CreatureList;
-
 enum TargetSearchType_t
 {
 	TARGETSEARCH_DEFAULT,
@@ -34,6 +32,7 @@ enum TargetSearchType_t
 	TARGETSEARCH_ATTACKRANGE
 };
 
+typedef std::list<Creature*> CreatureList;
 class Monster : public Creature
 {
 	private:
@@ -147,8 +146,8 @@ class Monster : public Creature
 		void clearTargetList();
 		void clearFriendList();
 
-		virtual bool onDeath(DeathList* deathList = NULL);
-		virtual Item* createCorpse(DeathList* deathList);
+		virtual bool onDeath();
+		virtual Item* createCorpse(DeathList deathList);
 		bool despawn();
 		bool inDespawnRange(const Position& pos);
 

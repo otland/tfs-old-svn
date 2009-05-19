@@ -1143,9 +1143,9 @@ bool Monster::canWalkTo(Position pos, Direction dir)
 	return tile && tile->__queryAdd(0, this, 1, FLAG_PATHFINDING) == RET_NOERROR;
 }
 
-bool Monster::onDeath(DeathList* deathList/* = NULL*/)
+bool Monster::onDeath()
 {
-	if(!Creature::onDeath(deathList))
+	if(!Creature::onDeath())
 		return false;
 
 	setAttackedCreature(NULL);
@@ -1165,18 +1165,15 @@ bool Monster::onDeath(DeathList* deathList/* = NULL*/)
 	return true;
 }
 
-Item* Monster::createCorpse(DeathList* deathList)
+Item* Monster::createCorpse(DeathList deathList)
 {
 	Item* corpse = Creature::createCorpse(deathList);
 	if(!corpse)
 		return NULL;
 
-	if(!deathList)
-		return corpse;
-
-	Creature* owner = deathList->at(1).getKillerCreature();
+	Creature* owner = deathList[1].getKillerCreature();
 	if(!owner)
-		owner = deathList->at(0).getKillerCreature();
+		owner = deathList[0].getKillerCreature();
 
 	if(!owner)
 		return corpse;

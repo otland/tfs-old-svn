@@ -695,19 +695,29 @@ class Player : public Creature, public Cylinder
 
 	protected:
 		void checkTradeState(const Item* item);
-		bool hasCapacity(const Item* item, uint32_t count) const;
+
 		void gainExperience(uint64_t exp);
+		void updateBaseSpeed()
+		{
+			if(!hasFlag(PlayerFlag_SetMaxSpeed))
+				baseSpeed = vocation->getBaseSpeed() + (2 * (level - 1));
+			else
+				baseSpeed = SPEED_MAX;
+		}
 
 		void updateInventoryWeight();
 		void updateInventoryGoods(uint32_t itemId);
+		void updateItemsLight(bool internal = false);
 
 		void setNextWalkActionTask(SchedulerTask* task);
 		void setNextWalkTask(SchedulerTask* task);
 		void setNextActionTask(SchedulerTask* task);
 
-		virtual bool onDeath(DeathList* deathList = NULL);
-		virtual Item* createCorpse(DeathList* deathList);
-		virtual void dropCorpse(DeathList* deathList);
+		virtual bool onDeath();
+		virtual Item* createCorpse(DeathList deathList);
+
+		virtual void dropCorpse(DeathList deathList);
+		virtual void dropLoot(Container* corpse);
 
 		//cylinder implementations
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
@@ -738,6 +748,7 @@ class Player : public Creature, public Cylinder
 		virtual void __internalAddThing(Thing* thing);
 		virtual void __internalAddThing(uint32_t index, Thing* thing);
 
+		uint32_t getVocAttackSpeed() const {return vocation->getAttackSpeed();}
 		virtual int32_t getStepSpeed() const
 		{
 			if(getSpeed() > SPEED_MAX)
@@ -748,13 +759,6 @@ class Player : public Creature, public Cylinder
 
 			return getSpeed();
 		}
-		void updateBaseSpeed()
-		{
-			if(!hasFlag(PlayerFlag_SetMaxSpeed))
-				baseSpeed = vocation->getBaseSpeed() + (2 * (level - 1));
-			else
-				baseSpeed = SPEED_MAX;
-		}
 
 		virtual uint32_t getDamageImmunities() const {return damageImmunities;}
 		virtual uint32_t getConditionImmunities() const {return conditionImmunities;}
@@ -762,13 +766,12 @@ class Player : public Creature, public Cylinder
 
 		virtual uint16_t getLookCorpse() const;
 		virtual uint64_t getLostExperience() const;
+
 		virtual void getPathSearchParams(const Creature* creature, FindPathParams& fpp) const;
 		static uint32_t getPercentLevel(uint64_t count, uint64_t nextLevelCount);
-		uint32_t getVocAttackSpeed() const {return vocation->getAttackSpeed();}
 
-		virtual void dropLoot(Container* corpse);
-		void updateItemsLight(bool internal = false);
 		bool isPromoted(uint32_t pLevel = 1) const {return promotionLevel >= pLevel;}
+		bool hasCapacity(const Item* item, uint32_t count) const;
 
 	private:
 		bool talkState[13];

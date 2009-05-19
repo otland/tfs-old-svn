@@ -316,7 +316,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool challengeCreature(Creature* creature) {return false;}
 		virtual bool convinceCreature(Creature* creature) {return false;}
 
-		virtual bool onDeath(DeathList* deathList = NULL);
+		virtual bool onDeath();
 		virtual uint64_t getGainedExperience(Creature* attacker, bool useMultiplier = true);
 		void addDamagePoints(Creature* attacker, int32_t damagePoints);
 		void addHealPoints(Creature* caster, int32_t healthPoints);
@@ -492,11 +492,11 @@ class Creature : public AutoID, virtual public Thing
 
 		virtual double getDamageRatio(Creature* attacker) const;
 		virtual void getPathSearchParams(const Creature* creature, FindPathParams& fpp) const;
-		DeathList* getKillers();
+		DeathList getKillers();
 
-		virtual Item* createCorpse(DeathList* deathList);
+		virtual Item* createCorpse(DeathList deathList);
 		virtual void dropLoot(Container* corpse) {}
-		virtual void dropCorpse(DeathList* deathList);
+		virtual void dropCorpse(DeathList deathList);
 
 		virtual void doAttacking(uint32_t interval) {}
 		void onCreatureDisappear(const Creature* creature, bool isLogout);

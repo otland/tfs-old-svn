@@ -574,3 +574,91 @@ BEGIN
 	WHERE NEW."player_id" IS NULL
 		OR (SELECT "id" FROM "players" WHERE "id" = NEW."player_id") IS NULL;
 END;
+
+CREATE TRIGGER "oninsert_player_deaths"
+BEFORE INSERT
+ON "player_deaths"
+FOR EACH ROW
+BEGIN
+	SELECT RAISE(ROLLBACK, 'INSERT on table "player_deaths" violates foreign: "player_id"')
+	WHERE NEW."player_id" IS NULL
+		OR (SELECT "id" FROM "players" WHERE "id" = NEW."player_id") IS NULL;
+END;
+
+CREATE TRIGGER "onupdate_player_deaths"
+BEFORE UPDATE
+ON "player_deaths"
+FOR EACH ROW
+BEGIN
+	SELECT RAISE(ROLLBACK, 'UPDATE on table "player_deaths" violates foreign: "player_id"')
+	WHERE NEW."player_id" IS NULL
+		OR (SELECT "id" FROM "players" WHERE "id" = NEW."player_id") IS NULL;
+END;
+
+CREATE TRIGGER "oninsert_killers"
+BEFORE INSERT
+ON "killers"
+FOR EACH ROW
+BEGIN
+	SELECT RAISE(ROLLBACK, 'INSERT on table "killers" violates foreign: "death_id"')
+	WHERE NEW."death_id" IS NULL
+		OR (SELECT "id" FROM "player_deaths" WHERE "id" = NEW."death_id") IS NULL;
+END;
+
+CREATE TRIGGER "onupdate_killers"
+BEFORE UPDATE
+ON "killers"
+FOR EACH ROW
+BEGIN
+	SELECT RAISE(ROLLBACK, 'UPDATE on table "killers" violates foreign: "death_id"')
+	WHERE NEW."death_id" IS NULL
+		OR (SELECT "id" FROM "player_deaths" WHERE "id" = NEW."death_id") IS NULL;
+END;
+
+CREATE TRIGGER "oninsert_environment_killers"
+BEFORE INSERT
+ON "environment_killers"
+FOR EACH ROW
+BEGIN
+	SELECT RAISE(ROLLBACK, 'INSERT on table "enviroment_killers" violates foreign: "kill_id"')
+	WHERE NEW."kill_id" IS NULL
+		OR (SELECT "id" FROM "killers" WHERE "id" = NEW."kill_id") IS NULL;
+END;
+
+CREATE TRIGGER "onupdate_environment_killers"
+BEFORE UPDATE
+ON "environment_killers"
+FOR EACH ROW
+BEGIN
+	SELECT RAISE(ROLLBACK, 'INSERT on table "enviroment_killers" violates foreign: "kill_id"')
+	WHERE NEW."kill_id" IS NULL
+		OR (SELECT "id" FROM "killers" WHERE "id" = NEW."kill_id") IS NULL;
+END;
+
+CREATE TRIGGER "oninsert_player_killers"
+BEFORE INSERT
+ON "player_killers"
+FOR EACH ROW
+BEGIN
+	SELECT RAISE(ROLLBACK, 'INSERT on table "player_killers" violates foreign: "player_id"')
+	WHERE NEW."player_id" IS NULL
+		OR (SELECT "id" FROM "players" WHERE "id" = NEW."player_id") IS NULL;
+	
+	SELECT RAISE(ROLLBACK, 'INSERT on table "player_killers" violates foreign: "kill_id"')
+	WHERE NEW."kill_id" IS NULL
+		OR (SELECT "id" FROM "killers" WHERE "id" = NEW."kill_id") IS NULL;
+END;
+
+CREATE TRIGGER "onupdate_player_killers"
+BEFORE UPDATE
+ON "player_killers"
+FOR EACH ROW
+BEGIN
+	SELECT RAISE(ROLLBACK, 'UPDATE on table "player_killers" violates foreign: "player_id"')
+	WHERE NEW."player_id" IS NULL
+		OR (SELECT "id" FROM "players" WHERE "id" = NEW."player_id") IS NULL;
+		
+	SELECT RAISE(ROLLBACK, 'UPDATE on table "killers" violates foreign: "kill_id"')
+	WHERE NEW."kill_id" IS NULL
+		OR (SELECT "id" FROM "killers" WHERE "id" = NEW."kill_id") IS NULL;
+END;

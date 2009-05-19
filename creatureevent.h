@@ -121,8 +121,8 @@ class CreatureEvent : public Event
 		uint32_t executeAttack(Creature* creature, Creature* target);
 		uint32_t executeCast(Creature* creature, Creature* target = NULL);
 		uint32_t executeKill(Creature* creature, Creature* target);
-		uint32_t executeDeath(Creature* creature, Item* corpse, DeathList* deathList);
-		uint32_t executePrepareDeath(Creature* creature, DeathList* deathList);
+		uint32_t executeDeath(Creature* creature, Item* corpse, DeathList deathList);
+		uint32_t executePrepareDeath(Creature* creature, DeathList deathList);
 		//
 
 	protected:

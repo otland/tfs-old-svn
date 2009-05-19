@@ -66,13 +66,13 @@ class IOLoginData
 		bool validRecoveryKey(uint32_t accountId, const std::string recoveryKey);
 		bool setRecoveryKey(uint32_t accountId, std::string recoveryKey);
 
-		bool createAccount(std::string name, std::string password);
+		uint64_t createAccount(std::string name, std::string password);
 		void removePremium(Account account);
 
 		bool loadPlayer(Player* player, const std::string& name, bool preLoad = false);
 		bool savePlayer(Player* player, bool preSave = true);
 
-		bool playerDeath(Player* player, DeathList* deathList);
+		bool playerDeath(Player* player, const DeathList& dl);
 		bool updateOnlineStatus(uint32_t guid, bool login);
 
 		const Group* getPlayerGroupByAccount(uint32_t accId);

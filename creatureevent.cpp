@@ -1168,7 +1168,7 @@ uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target)
 	}
 }
 
-uint32_t CreatureEvent::executeDeath(Creature* creature, Item* corpse, DeathList* deathList)
+uint32_t CreatureEvent::executeDeath(Creature* creature, Item* corpse, DeathList deathList)
 {
 	//onDeath(cid, corpse, deathList)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -1182,18 +1182,15 @@ uint32_t CreatureEvent::executeDeath(Creature* creature, Item* corpse, DeathList
 
 			env->streamThing(scriptstream, "corpse", corpse, env->addThing(corpse));
 			scriptstream << "deathList = {}" << std::endl;
-			if(deathList)
+			for(DeathList::iterator it = deathList.begin(); it != deathList.end(); ++it)
 			{
-				for(DeathList::iterator it = deathList->begin(); it != deathList->end(); ++it)
-				{
-					scriptstream << "deathList:insert(";
-					if(it->isCreatureKill())
-						scriptstream << env->addThing(it->getKillerCreature());
-					else
-						scriptstream << it->getKillerName();
+				scriptstream << "deathList:insert(";
+				if(it->isCreatureKill())
+					scriptstream << env->addThing(it->getKillerCreature());
+				else
+					scriptstream << it->getKillerName();
 
-					scriptstream << ")" << std::endl;
-				}
+				scriptstream << ")" << std::endl;
 			}
 
 			scriptstream << m_scriptData;
@@ -1225,19 +1222,16 @@ uint32_t CreatureEvent::executeDeath(Creature* creature, Item* corpse, DeathList
 			LuaScriptInterface::pushThing(L, corpse, env->addThing(corpse));
 
 			lua_newtable(L);
-			if(deathList)
+			DeathList::iterator it = deathList.begin();
+			for(int32_t i = 1; it != deathList.end(); ++it, ++i)
 			{
-				DeathList::iterator it = deathList->begin();
-				for(int32_t i = 1; it != deathList->end(); ++it, ++i)
-				{
-					lua_pushnumber(L, i);
-					if(it->isCreatureKill())
-						lua_pushnumber(L, env->addThing(it->getKillerCreature()));
-					else
-						lua_pushstring(L, it->getKillerName().c_str());
+				lua_pushnumber(L, i);
+				if(it->isCreatureKill())
+					lua_pushnumber(L, env->addThing(it->getKillerCreature()));
+				else
+					lua_pushstring(L, it->getKillerName().c_str());
 
-					lua_settable(L, -3);
-				}
+				lua_settable(L, -3);
 			}
 
 			int32_t result = m_scriptInterface->callFunction(3);
@@ -1252,7 +1246,7 @@ uint32_t CreatureEvent::executeDeath(Creature* creature, Item* corpse, DeathList
 	}
 }
 
-uint32_t CreatureEvent::executePrepareDeath(Creature* creature, DeathList* deathList)
+uint32_t CreatureEvent::executePrepareDeath(Creature* creature, DeathList deathList)
 {
 	//onPrepareDeath(cid, lastHitKiller, mostDamageKiller)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -1265,18 +1259,15 @@ uint32_t CreatureEvent::executePrepareDeath(Creature* creature, DeathList* death
 			scriptstream << "cid = " << env->addThing(creature) << std::endl;
 
 			scriptstream << "deathList = {}" << std::endl;
-			if(deathList)
+			for(DeathList::iterator it = deathList.begin(); it != deathList.end(); ++it)
 			{
-				for(DeathList::iterator it = deathList->begin(); it != deathList->end(); ++it)
-				{
-					scriptstream << "deathList:insert(";
-					if(it->isCreatureKill())
-						scriptstream << env->addThing(it->getKillerCreature());
-					else
-						scriptstream << it->getKillerName();
+				scriptstream << "deathList:insert(";
+				if(it->isCreatureKill())
+					scriptstream << env->addThing(it->getKillerCreature());
+				else
+					scriptstream << it->getKillerName();
 
-					scriptstream << ")" << std::endl;
-				}
+				scriptstream << ")" << std::endl;
 			}
 
 			scriptstream << m_scriptData;
@@ -1305,20 +1296,18 @@ uint32_t CreatureEvent::executePrepareDeath(Creature* creature, DeathList* death
 			m_scriptInterface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(creature));
-			lua_newtable(L);
-			if(deathList)
-			{
-				DeathList::iterator it = deathList->begin();
-				for(int32_t i = 1; it != deathList->end(); ++it, ++i)
-				{
-					lua_pushnumber(L, i);
-					if(it->isCreatureKill())
-						lua_pushnumber(L, env->addThing(it->getKillerCreature()));
-					else
-						lua_pushstring(L, it->getKillerName().c_str());
 
-					lua_settable(L, -3);
-				}
+			lua_newtable(L);
+			DeathList::iterator it = deathList.begin();
+			for(int32_t i = 1; it != deathList.end(); ++it, ++i)
+			{
+				lua_pushnumber(L, i);
+				if(it->isCreatureKill())
+					lua_pushnumber(L, env->addThing(it->getKillerCreature()));
+				else
+					lua_pushstring(L, it->getKillerName().c_str());
+
+				lua_settable(L, -3);
 			}
 
 			int32_t result = m_scriptInterface->callFunction(2);

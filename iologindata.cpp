@@ -304,7 +304,7 @@ bool IOLoginData::setRecoveryKey(uint32_t accountId, std::string recoveryKey)
 	return db->executeQuery(query.str());
 }
 
-bool IOLoginData::createAccount(std::string name, std::string password)
+uint64_t IOLoginData::createAccount(std::string name, std::string password)
 {
 	Database* db = Database::getInstance();
 	switch(g_config.getNumber(ConfigManager::PASSWORDTYPE))
@@ -321,7 +321,10 @@ bool IOLoginData::createAccount(std::string name, std::string password)
 
 	DBQuery query;
 	query << "INSERT INTO `accounts` (`id`, `name`, `password`) VALUES (NULL, " << db->escapeString(name) << ", " << db->escapeString(password) << ");";
-	return db->executeQuery(query.str());
+	if(!db->executeQuery(query.str()))
+		return 0;
+
+	return db->getLastInsertId();
 }
 
 void IOLoginData::removePremium(Account account)
@@ -1008,19 +1011,8 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 	return query_insert.execute();
 }
 
-bool IOLoginData::playerDeath(Player* player, DeathList* deathList)
+bool IOLoginData::playerDeath(Player* player, const DeathList& dl)
 {
-	if(g_config.getBool(ConfigManager::DEATH_LIST))
-		return true;
-
-	if(!deathList)
-		return false;
-
-	DeathList dl(*deathList);
-	int32_t assists = g_config.getNumber(ConfigManager::DEATH_ASSISTS);
-	if(assists > 1 && (int32_t)dl.size() > (assists + 1))
-		dl.resize((assists + 1), DeathEntry(NULL, -1));
-
 	Database* db = Database::getInstance();
 	DBTransaction trans(db);
 	if(!trans.begin())
@@ -1033,7 +1025,7 @@ bool IOLoginData::playerDeath(Player* player, DeathList* deathList)
 		return false;
 
 	uint64_t deathId = db->getLastInsertId();
-	for(DeathList::iterator it = dl.begin(); it != dl.end(); ++it)
+	for(DeathList::const_iterator it = dl.begin(); it != dl.end(); ++it)
 	{
 		query.str("");
 		query << "INSERT INTO `killers` (`death_id`, `final_hit`) VALUES (" << deathId

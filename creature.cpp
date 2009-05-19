@@ -40,8 +40,8 @@ extern Game g_game;
 extern ConfigManager g_config;
 extern CreatureEvents* g_creatureEvents;
 
-Creature::Creature() :
-isInternalRemoved(false)
+Creature::Creature():
+	isInternalRemoved(false)
 {
 	id = 0;
 	_tile = NULL;
@@ -668,12 +668,11 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 	}
 }
 
-bool Creature::onDeath(DeathList* deathList/* = NULL*/)
+bool Creature::onDeath()
 {
-	if(!deathList)
-		deathList = getKillers();
-	
+	DeathList deathList = getKillers();
 	bool deny = false;
+
 	CreatureEventList prepareDeathEvents = getCreatureEvents(CREATURE_EVENT_PREPAREDEATH);
 	for(CreatureEventList::iterator it = prepareDeathEvents.begin(); it != prepareDeathEvents.end(); ++it)
 	{
@@ -681,8 +680,8 @@ bool Creature::onDeath(DeathList* deathList/* = NULL*/)
 			deny = true;
 	}
 
-	if(deny || (deathList->at(0).isCreatureKill() && !deathList->at(
-		0).getKillerCreature()->onKilledCreature(this)))
+	if(deny || (deathList[0].isCreatureKill() &&
+		!deathList[0].getKillerCreature()->onKilledCreature(this)))
 		return false;
 
 	Creature* attacker = NULL;
@@ -699,7 +698,7 @@ bool Creature::onDeath(DeathList* deathList/* = NULL*/)
 	return true;
 }
 
-void Creature::dropCorpse(DeathList* deathList)
+void Creature::dropCorpse(DeathList deathList)
 {
 	Item* corpse = createCorpse(deathList);
 	if(Tile* tile = getTile())
@@ -739,18 +738,16 @@ void Creature::dropCorpse(DeathList* deathList)
 	CreatureEventList deathEvents = getCreatureEvents(CREATURE_EVENT_DEATH);
 	for(CreatureEventList::iterator it = deathEvents.begin(); it != deathEvents.end(); ++it)
 		(*it)->executeDeath(this, corpse, deathList);
-
-	delete deathList;
 }
 
-DeathList* Creature::getKillers()
+DeathList Creature::getKillers()
 {
-	DeathList* list = new DeathList;
+	DeathList list;
 	Creature* lhc = g_game.getCreatureByID(lastHitCreature);
 	if(lhc)
-		list->push_back(DeathEntry(lhc, 0));
+		list.push_back(DeathEntry(lhc, 0));
 	else
-		list->push_back(DeathEntry(getCombatName(lastDamageSource), 0));
+		list.push_back(DeathEntry(getCombatName(lastDamageSource), 0));
 
 	CountBlock_t cb;
 	int64_t now = OTSYS_TIME();
@@ -766,7 +763,7 @@ DeathList* Creature::getKillers()
 			continue;
 
 		bool deny = false;
-		for(DeathList::iterator fit = list->begin(); fit != list->end(); ++fit)
+		for(DeathList::iterator fit = list.begin(); fit != list.end(); ++fit)
 		{
 			Creature* tmp = fit->getKillerCreature();
 			if((!mdc->getMaster() || (mdc->getMaster() != tmp && mdc->getMaster() != tmp->getMaster()))
@@ -778,11 +775,11 @@ DeathList* Creature::getKillers()
 		}
 
 		if(!deny)
-			list->push_back(DeathEntry(mdc, cb.total));
+			list.push_back(DeathEntry(mdc, cb.total));
 	}
 
-	if(list->size() > 1)
-		std::sort(list->begin() + 1, list->end(), DeathLessThan());
+	if(list.size() > 1)
+		std::sort(list.begin() + 1, list.end(), DeathLessThan());
 
 	return list;
 }
@@ -796,7 +793,7 @@ bool Creature::hasBeenAttacked(uint32_t attackerId) const
 	return false;
 }
 
-Item* Creature::createCorpse(DeathList* deathList)
+Item* Creature::createCorpse(DeathList deathList)
 {
 	return Item::CreateItem(getLookCorpse());
 }

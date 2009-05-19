@@ -2127,7 +2127,7 @@ uint32_t Player::getIP() const
 	return 0;
 }
 
-bool Player::onDeath(DeathList* deathList/* = NULL*/)
+bool Player::onDeath()
 {
 	Item* preventLoss = NULL;
 	Item* preventDrop = NULL;
@@ -2155,17 +2155,13 @@ bool Player::onDeath(DeathList* deathList/* = NULL*/)
 		}
 	}
 
-	deathList = getKillers();
-	if(!Creature::onDeath(deathList))
+	if(!Creature::onDeath())
 	{
 		if(preventDrop)
 			setDropLoot(LOOT_DROP_FULL);
 
 		return false;
 	}
-
-	if(getZone() != ZONE_PVP)
-		IOLoginData::getInstance()->playerDeath(this, deathList);
 
 	if(preventLoss)
 	{
@@ -2264,7 +2260,7 @@ bool Player::onDeath(DeathList* deathList/* = NULL*/)
 	return true;
 }
 
-void Player::dropCorpse(DeathList* deathList)
+void Player::dropCorpse(DeathList deathList)
 {
 	if(lootDrop == LOOT_DROP_NONE)
 	{
@@ -2278,43 +2274,52 @@ void Player::dropCorpse(DeathList* deathList)
 
 		sendStats();
 		g_game.internalTeleport(this, getTemplePosition(), true);
-
-		delete deathList;
-		onThink(EVENT_CREATURE_THINK_INTERVAL);
 	}
 	else
+	{
+		if(g_config.getBool(ConfigManager::DEATH_LIST))
+		{
+			int32_t size = deathList.size();
+			if(size > g_config.getNumber(ConfigManager::DEATH_ASSISTS))
+				size = g_config.getNumber(ConfigManager::DEATH_ASSISTS);
+
+			DeathList tmpList;
+			tmpList.resize(size, DeathEntry(NULL, -1));
+
+			std::copy(deathList.begin(), deathList.end(), tmpList.begin());
+			IOLoginData::getInstance()->playerDeath(this, deathList);
+		}
+
 		Creature::dropCorpse(deathList);
+	}
 }
 
-Item* Player::createCorpse(DeathList* deathList)
+Item* Player::createCorpse(DeathList deathList)
 {
 	Item* corpse = Creature::createCorpse(deathList);
 	if(!corpse)
 		return NULL;
 
-	if(!deathList)
-		return corpse;
-
 	std::stringstream ss;
 	ss << "You recognize " << getNameDescription() << ". " << (
 		getSex() == PLAYERSEX_FEMALE ? "She" : "He") << " was killed by ";
-	if(deathList->at(0).isCreatureKill())
+	if(deathList[0].isCreatureKill())
 	{
-		ss << deathList->at(0).getKillerCreature()->getNameDescription();
-		if(deathList->at(0).getKillerCreature()->getMaster())
-			ss << " summoned by " << deathList->at(0).getKillerCreature()->getMaster()->getNameDescription();
+		ss << deathList[0].getKillerCreature()->getNameDescription();
+		if(deathList[0].getKillerCreature()->getMaster())
+			ss << " summoned by " << deathList[0].getKillerCreature()->getMaster()->getNameDescription();
 	}
 	else
-		ss << deathList->at(0).getKillerName();
+		ss << deathList[0].getKillerName();
 
-	if(deathList->size() > 1 && (deathList->at(0).isNameKill() || deathList->at(0).getKillerCreature()->getMaster()
-		!= deathList->at(1).getKillerCreature()->getMaster() || asLowerCaseString(
-		deathList->at(0).getKillerCreature()->getNameDescription()) != asLowerCaseString(
-		deathList->at(1).getKillerCreature()->getNameDescription())))
+	if(deathList.size() > 1 && (deathList[0].isNameKill() || deathList[0].getKillerCreature()->getMaster()
+		!= deathList[1].getKillerCreature()->getMaster() || asLowerCaseString(
+		deathList[0].getKillerCreature()->getNameDescription()) != asLowerCaseString(
+		deathList[1].getKillerCreature()->getNameDescription())))
 	{
-		ss << " and by " << deathList->at(1).getKillerCreature()->getNameDescription();
-		if(deathList->at(1).getKillerCreature()->getMaster())
-			ss << " summoned by " << deathList->at(1).getKillerCreature()->getMaster()->getNameDescription();
+		ss << " and by " << deathList[1].getKillerCreature()->getNameDescription();
+		if(deathList[1].getKillerCreature()->getMaster())
+			ss << " summoned by " << deathList[1].getKillerCreature()->getMaster()->getNameDescription();
 	}
 
 	ss << ".";
@@ -4405,9 +4410,21 @@ void Player::manageAccount(const std::string &text)
 					do
 						sprintf(managerChar, "%d%d%d%d%d%d%d", random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9), random_range(2, 9));
 					while(IOLoginData::getInstance()->accountNameExists(managerChar));
-					msg << "Your account has been created, you can login now with name: '" << managerChar << "', and password: '" << managerString << "'! If the account name is too hard to remember, please note it somewhere.";
 
-					IOLoginData::getInstance()->createAccount(managerChar, managerString);
+					uint32_t id = (uint32_t)IOLoginData::getInstance()->createAccount(managerChar, managerString);
+					if(id)
+					{
+						accountManager = MANAGER_ACCOUNT;
+						managerNumber = id;
+
+						talkState[1] = false;
+						msg << "Your account has been created, you may manage it now, but remember your account \
+							name: '" << managerChar << "' and password: '" << managerString << "'! If the \
+							account name is too hard to remember, please note it somewhere.";
+					}
+					else
+						msg << "Your account could not be created, please try again.";
+
 					for(int8_t i = 2; i <= 5; i++)
 						talkState[i] = false;
 				}
@@ -4446,8 +4463,19 @@ void Player::manageAccount(const std::string &text)
 			{
 				if(!IOLoginData::getInstance()->accountNameExists(managerChar))
 				{
-					IOLoginData::getInstance()->createAccount(managerChar, managerString);
-					msg << "Your account has been created, you can login now with name: '" << managerChar << "', and password: '" << managerString << "'!";
+					uint32_t id = (uint32_t)IOLoginData::getInstance()->createAccount(managerChar, managerString);
+					if(id)
+					{
+						accountManager = MANAGER_ACCOUNT;
+						managerNumber = id;
+
+						talkState[1] = false;
+						msg << "Your account has been created, you may manage it now, but remember your account \
+							name: '" << managerChar << "' and password: '" << managerString << "'!";
+					}
+					else
+						msg << "Your account could not be created, please try again.";
+
 					for(int8_t i = 2; i <= 5; i++)
 						talkState[i] = false;
 				}
