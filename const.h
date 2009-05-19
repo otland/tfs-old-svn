@@ -491,6 +491,7 @@ enum PlayerFlags
 	PlayerFlag_CannotMoveCreatures,			//2^43 = 8796093020000
 	PlayerFlag_CanReportBugs,			//2^44 = 17592186040000
 	PlayerFlag_45,	//ignore			//2^45 = 35184272080000	//not used by us
+	PlayerFlag_CannotBeSeen,			//2^46 = 70368744177664 //not implemented yet
 
 	PlayerFlag_LastFlag
 };

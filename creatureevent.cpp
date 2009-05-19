@@ -20,9 +20,8 @@
 #endif
 
 #include "creatureevent.h"
-#include "tools.h"
-
 #include "player.h"
+#include "tools.h"
 
 CreatureEvents::CreatureEvents():
 m_scriptInterface("CreatureScript Interface")
@@ -279,9 +278,9 @@ std::string CreatureEvent::getScriptEventParams() const
 		case CREATURE_EVENT_KILL:
 			return "cid, target";
 		case CREATURE_EVENT_DEATH:
-			return "cid, corpse, lastHitKiller, mostDamageKiller";
+			return "cid, corpse, deathList";
 		case CREATURE_EVENT_PREPAREDEATH:
-			return "cid, lastHitKiller, mostDamageKiller";
+			return "cid, deathList";
 		case CREATURE_EVENT_NONE:
 		default:
 			break;
@@ -315,7 +314,6 @@ uint32_t CreatureEvent::executeLogin(Player* player)
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(player->getPosition());
-
 			std::stringstream scriptstream;
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
 
@@ -343,7 +341,6 @@ uint32_t CreatureEvent::executeLogin(Player* player)
 
 			lua_State* L = m_scriptInterface->getLuaState();
 			m_scriptInterface->pushFunction(m_scriptId);
-
 			lua_pushnumber(L, env->addThing(player));
 
 			int32_t result = m_scriptInterface->callFunction(1);
@@ -367,7 +364,6 @@ uint32_t CreatureEvent::executeLogout(Player* player)
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(player->getPosition());
-
 			std::stringstream scriptstream;
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
 
@@ -395,7 +391,6 @@ uint32_t CreatureEvent::executeLogout(Player* player)
 
 			lua_State* L = m_scriptInterface->getLuaState();
 			m_scriptInterface->pushFunction(m_scriptId);
-
 			lua_pushnumber(L, env->addThing(player));
 
 			int32_t result = m_scriptInterface->callFunction(1);
@@ -419,13 +414,13 @@ uint32_t CreatureEvent::executeChannelJoin(Player* player, uint16_t channelId, U
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(player->getPosition());
-
 			std::stringstream scriptstream;
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
+
 			scriptstream << "channel = " << channelId << std::endl;
 			scriptstream << "users = {}" << std::endl;
 			for(UsersMap::iterator it = usersMap.begin(); it != usersMap.end(); ++it)
-				scriptstream << "table.insert(users, " << env->addThing(it->second) << ")" << std::endl;
+				scriptstream << "users:insert(" << env->addThing(it->second) << ")" << std::endl;
 
 			scriptstream << m_scriptData;
 			int32_t result = LUA_NO_ERROR;
@@ -454,8 +449,8 @@ uint32_t CreatureEvent::executeChannelJoin(Player* player, uint16_t channelId, U
 
 			lua_pushnumber(L, env->addThing(player));
 			lua_pushnumber(L, channelId);
-			UsersMap::iterator it = usersMap.begin();
 
+			UsersMap::iterator it = usersMap.begin();
 			lua_newtable(L);
 			for(int32_t i = 1; it != usersMap.end(); ++it, ++i)
 			{
@@ -485,13 +480,13 @@ uint32_t CreatureEvent::executeChannelLeave(Player* player, uint16_t channelId, 
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(player->getPosition());
-
 			std::stringstream scriptstream;
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
+
 			scriptstream << "channel = " << channelId << std::endl;
 			scriptstream << "users = {}" << std::endl;
 			for(UsersMap::iterator it = usersMap.begin(); it != usersMap.end(); ++it)
-				scriptstream << "table.insert(users, " << env->addThing(it->second) << ")" << std::endl;
+				scriptstream << "users:insert(" << env->addThing(it->second) << ")" << std::endl;
 
 			scriptstream << m_scriptData;
 			int32_t result = LUA_NO_ERROR;
@@ -520,8 +515,8 @@ uint32_t CreatureEvent::executeChannelLeave(Player* player, uint16_t channelId, 
 
 			lua_pushnumber(L, env->addThing(player));
 			lua_pushnumber(L, channelId);
-			UsersMap::iterator it = usersMap.begin();
 
+			UsersMap::iterator it = usersMap.begin();
 			lua_newtable(L);
 			for(int32_t i = 1; it != usersMap.end(); ++it, ++i)
 			{
@@ -551,9 +546,9 @@ uint32_t CreatureEvent::executeAdvance(Player* player, skills_t skill, uint32_t 
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(player->getPosition());
-
 			std::stringstream scriptstream;
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
+
 			scriptstream << "skill = " << skill << std::endl;
 			scriptstream << "oldLevel = " << oldLevel << std::endl;
 			scriptstream << "newLevel = " << newLevel << std::endl;
@@ -585,6 +580,7 @@ uint32_t CreatureEvent::executeAdvance(Player* player, skills_t skill, uint32_t 
 
 			lua_pushnumber(L, env->addThing(player));
 			lua_pushnumber(L, (uint32_t)skill);
+
 			lua_pushnumber(L, oldLevel);
 			lua_pushnumber(L, newLevel);
 
@@ -609,9 +605,9 @@ uint32_t CreatureEvent::executeMailSend(Player* player, Player* receiver, Item* 
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(player->getPosition());
-
 			std::stringstream scriptstream;
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
+
 			scriptstream << "receiver = " << env->addThing(receiver) << std::endl;
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
 			scriptstream << "openBox = " << (openBox ? LUA_TRUE : LUA_FALSE) << std::endl;
@@ -643,6 +639,7 @@ uint32_t CreatureEvent::executeMailSend(Player* player, Player* receiver, Item* 
 
 			lua_pushnumber(L, env->addThing(player));
 			lua_pushnumber(L, env->addThing(receiver));
+
 			LuaScriptInterface::pushThing(L, item, env->addThing(item));
 			lua_pushnumber(L, openBox ? LUA_TRUE : LUA_FALSE);
 
@@ -667,9 +664,9 @@ uint32_t CreatureEvent::executeMailReceive(Player* player, Player* sender, Item*
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(player->getPosition());
-
 			std::stringstream scriptstream;
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
+
 			scriptstream << "sender = " << env->addThing(sender) << std::endl;
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
 			scriptstream << "openBox = " << (openBox ? LUA_TRUE : LUA_FALSE) << std::endl;
@@ -701,6 +698,7 @@ uint32_t CreatureEvent::executeMailReceive(Player* player, Player* sender, Item*
 
 			lua_pushnumber(L, env->addThing(player));
 			lua_pushnumber(L, env->addThing(sender));
+
 			LuaScriptInterface::pushThing(L, item, env->addThing(item));
 			lua_pushnumber(L, openBox ? LUA_TRUE : LUA_FALSE);
 
@@ -725,9 +723,9 @@ uint32_t CreatureEvent::executeLook(Player* player, Thing* thing, const Position
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(player->getPosition());
-
 			std::stringstream scriptstream;
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
+
 			scriptstream << "thing = " << env->addThing(thing) << std::endl;
 			env->streamPosition(scriptstream, "position", position, stackpos);
 			scriptstream << "lookDistance = " << lookDistance << std::endl;
@@ -759,6 +757,7 @@ uint32_t CreatureEvent::executeLook(Player* player, Thing* thing, const Position
 
 			lua_pushnumber(L, env->addThing(player));
 			LuaScriptInterface::pushThing(L, thing, env->addThing(thing));
+
 			LuaScriptInterface::pushPosition(L, position, stackpos);
 			lua_pushnumber(L, lookDistance);
 
@@ -783,8 +782,8 @@ uint32_t CreatureEvent::executeThink(Creature* creature, uint32_t interval)
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
-
 			std::stringstream scriptstream;
+
 			scriptstream << "cid = " << env->addThing(creature) << std::endl;
 			scriptstream << "interval = " << interval << std::endl;
 
@@ -837,10 +836,11 @@ uint32_t CreatureEvent::executeStatsChange(Creature* creature, Creature* attacke
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
-
 			std::stringstream scriptstream;
+
 			scriptstream << "cid = " << env->addThing(creature) << std::endl;
 			scriptstream << "attacker = " << env->addThing(attacker) << std::endl;
+
 			scriptstream << "type = " << (uint32_t)type << std::endl;
 			scriptstream << "combat = " << (uint32_t)combat << std::endl;
 			scriptstream << "value = " << value << std::endl;
@@ -872,6 +872,7 @@ uint32_t CreatureEvent::executeStatsChange(Creature* creature, Creature* attacke
 
 			lua_pushnumber(L, env->addThing(creature));
 			lua_pushnumber(L, env->addThing(attacker));
+
 			lua_pushnumber(L, (uint32_t)type);
 			lua_pushnumber(L, (uint32_t)combat);
 			lua_pushnumber(L, value);
@@ -897,9 +898,9 @@ uint32_t CreatureEvent::executeCombatArea(Creature* creature, Tile* tile, bool i
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
-
 			std::stringstream scriptstream;
 			scriptstream << "cid = " << env->addThing(creature) << std::endl;
+
 			env->streamThing(scriptstream, "tileItem", tile, env->addThing(tile));
 			env->streamPosition(scriptstream, "tilePosition", tile->getPosition(), 0);
 			scriptstream << "isAggressive = " << (isAggressive ? LUA_TRUE : LUA_FALSE) << std::endl;
@@ -931,6 +932,7 @@ uint32_t CreatureEvent::executeCombatArea(Creature* creature, Tile* tile, bool i
 
 			lua_pushnumber(L, env->addThing(creature));
 			LuaScriptInterface::pushThing(L, tile, env->addThing(tile));
+
 			LuaScriptInterface::pushPosition(L, tile->getPosition(), 0);
 			lua_pushnumber(L, isAggressive ? LUA_TRUE : LUA_FALSE);
 
@@ -955,8 +957,8 @@ uint32_t CreatureEvent::executeCombat(Creature* creature, Creature* target)
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
-
 			std::stringstream scriptstream;
+
 			scriptstream << "cid = " << env->addThing(creature) << std::endl;
 			scriptstream << "target = " << env->addThing(target) << std::endl;
 
@@ -1009,8 +1011,8 @@ uint32_t CreatureEvent::executeAttack(Creature* creature, Creature* target)
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
-
 			std::stringstream scriptstream;
+
 			scriptstream << "cid = " << env->addThing(creature) << std::endl;
 			scriptstream << "target = " << env->addThing(target) << std::endl;
 
@@ -1063,8 +1065,8 @@ uint32_t CreatureEvent::executeCast(Creature* creature, Creature* target/* = NUL
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
-
 			std::stringstream scriptstream;
+
 			scriptstream << "cid = " << env->addThing(creature) << std::endl;
 			scriptstream << "target = ";
 			if(target)
@@ -1121,8 +1123,8 @@ uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target)
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
-
 			std::stringstream scriptstream;
+
 			scriptstream << "cid = " << env->addThing(creature) << std::endl;
 			scriptstream << "target = " << env->addThing(target) << std::endl;
 
@@ -1166,21 +1168,33 @@ uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target)
 	}
 }
 
-uint32_t CreatureEvent::executeDeath(Creature* creature, Item* corpse, Creature* lastHitKiller, Creature* mostDamageKiller)
+uint32_t CreatureEvent::executeDeath(Creature* creature, Item* corpse, DeathList* deathList)
 {
-	//onDeath(cid, corpse, lastHitKiller, mostDamageKiller)
+	//onDeath(cid, corpse, deathList)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
-
 			std::stringstream scriptstream;
 			scriptstream << "cid = " << env->addThing(creature) << std::endl;
+
 			env->streamThing(scriptstream, "corpse", corpse, env->addThing(corpse));
-			scriptstream << "lastHitKiller = " << env->addThing(lastHitKiller) << std::endl;
-			scriptstream << "mostDamageKiller = " << env->addThing(mostDamageKiller) << std::endl;
+			scriptstream << "deathList = {}" << std::endl;
+			if(deathList)
+			{
+				for(DeathList::iterator it = deathList->begin(); it != deathList->end(); ++it)
+				{
+					scriptstream << "deathList:insert(";
+					if(it->isCreatureKill())
+						scriptstream << env->addThing(it->getKillerCreature());
+					else
+						scriptstream << it->getKillerName();
+
+					scriptstream << ")" << std::endl;
+				}
+			}
 
 			scriptstream << m_scriptData;
 			int32_t result = LUA_NO_ERROR;
@@ -1209,10 +1223,24 @@ uint32_t CreatureEvent::executeDeath(Creature* creature, Item* corpse, Creature*
 
 			lua_pushnumber(L, env->addThing(creature));
 			LuaScriptInterface::pushThing(L, corpse, env->addThing(corpse));
-			lua_pushnumber(L, env->addThing(lastHitKiller));
-			lua_pushnumber(L, env->addThing(mostDamageKiller));
 
-			int32_t result = m_scriptInterface->callFunction(4);
+			lua_newtable(L);
+			if(deathList)
+			{
+				DeathList::iterator it = deathList->begin();
+				for(int32_t i = 1; it != deathList->end(); ++it, ++i)
+				{
+					lua_pushnumber(L, i);
+					if(it->isCreatureKill())
+						lua_pushnumber(L, env->addThing(it->getKillerCreature()));
+					else
+						lua_pushstring(L, it->getKillerName().c_str());
+
+					lua_settable(L, -3);
+				}
+			}
+
+			int32_t result = m_scriptInterface->callFunction(3);
 			m_scriptInterface->releaseScriptEnv();
 			return (result == LUA_TRUE);
 		}
@@ -1224,7 +1252,7 @@ uint32_t CreatureEvent::executeDeath(Creature* creature, Item* corpse, Creature*
 	}
 }
 
-uint32_t CreatureEvent::executePrepareDeath(Creature* creature, Creature* lastHitKiller, Creature* mostDamageKiller)
+uint32_t CreatureEvent::executePrepareDeath(Creature* creature, DeathList* deathList)
 {
 	//onPrepareDeath(cid, lastHitKiller, mostDamageKiller)
 	if(m_scriptInterface->reserveScriptEnv())
@@ -1233,11 +1261,23 @@ uint32_t CreatureEvent::executePrepareDeath(Creature* creature, Creature* lastHi
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
-
 			std::stringstream scriptstream;
 			scriptstream << "cid = " << env->addThing(creature) << std::endl;
-			scriptstream << "lastHitKiller = " << env->addThing(lastHitKiller) << std::endl;
-			scriptstream << "mostDamageKiller = " << env->addThing(mostDamageKiller) << std::endl;
+
+			scriptstream << "deathList = {}" << std::endl;
+			if(deathList)
+			{
+				for(DeathList::iterator it = deathList->begin(); it != deathList->end(); ++it)
+				{
+					scriptstream << "deathList:insert(";
+					if(it->isCreatureKill())
+						scriptstream << env->addThing(it->getKillerCreature());
+					else
+						scriptstream << it->getKillerName();
+
+					scriptstream << ")" << std::endl;
+				}
+			}
 
 			scriptstream << m_scriptData;
 			int32_t result = LUA_NO_ERROR;
@@ -1265,10 +1305,23 @@ uint32_t CreatureEvent::executePrepareDeath(Creature* creature, Creature* lastHi
 			m_scriptInterface->pushFunction(m_scriptId);
 
 			lua_pushnumber(L, env->addThing(creature));
-			lua_pushnumber(L, env->addThing(lastHitKiller));
-			lua_pushnumber(L, env->addThing(mostDamageKiller));
+			lua_newtable(L);
+			if(deathList)
+			{
+				DeathList::iterator it = deathList->begin();
+				for(int32_t i = 1; it != deathList->end(); ++it, ++i)
+				{
+					lua_pushnumber(L, i);
+					if(it->isCreatureKill())
+						lua_pushnumber(L, env->addThing(it->getKillerCreature()));
+					else
+						lua_pushstring(L, it->getKillerName().c_str());
 
-			int32_t result = m_scriptInterface->callFunction(3);
+					lua_settable(L, -3);
+				}
+			}
+
+			int32_t result = m_scriptInterface->callFunction(2);
 			m_scriptInterface->releaseScriptEnv();
 
 			return (result == LUA_TRUE);
@@ -1290,9 +1343,9 @@ uint32_t CreatureEvent::executeTextEdit(Player* player, Item* item, std::string 
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(player->getPosition());
-
 			std::stringstream scriptstream;
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
+
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
 			scriptstream << "newText = " << newText.c_str() << std::endl;
 
@@ -1346,8 +1399,8 @@ uint32_t CreatureEvent::executeTarget(Creature* creature, Creature* target)
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
-
 			std::stringstream scriptstream;
+
 			scriptstream << "cid = " << env->addThing(creature) << std::endl;
 			scriptstream << "target = " << env->addThing(target) << std::endl;
 
@@ -1400,8 +1453,8 @@ uint32_t CreatureEvent::executeFollow(Creature* creature, Creature* target)
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
-
 			std::stringstream scriptstream;
+
 			scriptstream << "cid = " << env->addThing(creature) << std::endl;
 			scriptstream << "target = " << env->addThing(target) << std::endl;
 

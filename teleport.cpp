@@ -24,14 +24,9 @@
 extern Game g_game;
 
 Teleport::Teleport(uint16_t _type):
-Item(_type)
+	Item(_type)
 {
 	destPos = Position();
-}
-
-Teleport::~Teleport()
-{
-	//
 }
 
 bool Teleport::readAttr(AttrTypes_t attr, PropStream& propStream)
@@ -63,34 +58,6 @@ bool Teleport::serializeAttr(PropWriteStream& propWriteStream) const
 	return ret;
 }
 
-ReturnValue Teleport::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
-	uint32_t flags) const
-{
-	return RET_NOTPOSSIBLE;
-}
-
-ReturnValue Teleport::__queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
-	uint32_t& maxQueryCount, uint32_t flags) const
-{
-	return RET_NOTPOSSIBLE;
-}
-
-ReturnValue Teleport::__queryRemove(const Thing* thing, uint32_t count, uint32_t flags) const
-{
-	return RET_NOERROR;
-}
-
-Cylinder* Teleport::__queryDestination(int32_t& index, const Thing* thing, Item** destItem,
-	uint32_t& flags)
-{
-	return this;
-}
-
-void Teleport::__addThing(Creature* actor, Thing* thing)
-{
-	return __addThing(actor, 0, thing);
-}
-
 void Teleport::__addThing(Creature* actor, int32_t index, Thing* thing)
 {
 	Tile* destTile = g_game.getTile(getDestPos());
@@ -106,27 +73,15 @@ void Teleport::__addThing(Creature* actor, int32_t index, Thing* thing)
 		g_game.internalMoveItem(actor, getTile(), destTile, INDEX_WHEREEVER, item, item->getItemCount(), NULL);
 }
 
-void Teleport::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
+void Teleport::postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
+	int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
 {
-	//
+	getParent()->postAddNotification(actor, thing, oldParent, index, LINK_PARENT);
 }
 
-void Teleport::__replaceThing(uint32_t index, Thing* thing)
+void Teleport::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
+	int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
 {
-	//
-}
-
-void Teleport::__removeThing(Thing* thing, uint32_t count)
-{
-	//
-}
-
-void Teleport::postAddNotification(Creature* actor, Thing* thing, int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
-{
-	getParent()->postAddNotification(actor, thing, index, LINK_PARENT);
-}
-
-void Teleport::postRemoveNotification(Creature* actor, Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
-{
-	getParent()->postRemoveNotification(actor, thing, index, isCompleteRemoval, LINK_PARENT);
+	getParent()->postRemoveNotification(actor, thing, newParent,
+		index, isCompleteRemoval, LINK_PARENT);
 }

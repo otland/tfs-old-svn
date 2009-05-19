@@ -147,8 +147,8 @@ class Monster : public Creature
 		void clearTargetList();
 		void clearFriendList();
 
-		bool onDeath();
-		Item* getCorpse();
+		virtual bool onDeath(DeathList* deathList = NULL);
+		virtual Item* createCorpse(DeathList* deathList);
 		bool despawn();
 		bool inDespawnRange(const Position& pos);
 

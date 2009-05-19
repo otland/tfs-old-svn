@@ -144,6 +144,7 @@ class ConfigManager
 			PUSH_CREATURE_DELAY,
 			DEATH_CONTAINER,
 			MAXIMUM_DOOR_LEVEL,
+			DEATH_ASSISTS,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 
@@ -229,6 +230,7 @@ class ConfigManager
 			CONFIM_OUTDATED_VERSION,
 			PREMIUM_SKIP_WAIT,
 			GUILD_HALLS,
+			DEATH_LIST,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

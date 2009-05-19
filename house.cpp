@@ -774,7 +774,7 @@ bool Houses::loadFromXml(std::string filename)
 		if(readXMLInteger(houseNode, "size", intValue))
 			house->setSize(intValue);
 
-		if(readXMLString(houseNode, "guild", strValue))
+		if(readXMLString(houseNode, "guildhall", strValue))
 			house->setGuild(booleanString(strValue));
 
 		uint32_t rent = 0;

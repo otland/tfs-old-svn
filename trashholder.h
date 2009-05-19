@@ -24,30 +24,33 @@ class TrashHolder : public Item, public Cylinder
 {
 	public:
 		TrashHolder(uint16_t _type, MagicEffectClasses _effect = NM_ME_NONE);
-		virtual ~TrashHolder() {};
+		virtual ~TrashHolder() {}
 
 		virtual TrashHolder* getTrashHolder() {return this;}
 		virtual const TrashHolder* getTrashHolder() const {return this;}
 
 		//cylinder implementations
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
-			uint32_t flags) const;
+			uint32_t flags) const {return RET_NOERROR;}
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
-			uint32_t& maxQueryCount, uint32_t flags) const;
-		virtual ReturnValue __queryRemove(const Thing* thing, uint32_t count, uint32_t flags) const;
+			uint32_t& maxQueryCount, uint32_t flags) const {return RET_NOERROR;}
+		virtual ReturnValue __queryRemove(const Thing* thing, uint32_t count,
+			uint32_t flags) const {return RET_NOTPOSSIBLE;}
 		virtual Cylinder* __queryDestination(int32_t& index, const Thing* thing, Item** destItem,
-			uint32_t& flags);
+			uint32_t& flags) {return this;}
 
-		virtual void __addThing(Creature* actor, Thing* thing);
+		virtual void __addThing(Creature* actor, Thing* thing) {return __addThing(actor, 0, thing);}
 		virtual void __addThing(Creature* actor, int32_t index, Thing* thing);
 
-		virtual void __updateThing(Thing* thing, uint16_t itemId, uint32_t count);
-		virtual void __replaceThing(uint32_t index, Thing* thing);
+		virtual void __updateThing(Thing* thing, uint16_t itemId, uint32_t count) {}
+		virtual void __replaceThing(uint32_t index, Thing* thing) {}
 
-		virtual void __removeThing(Thing* thing, uint32_t count);
+		virtual void __removeThing(Thing* thing, uint32_t count) {}
 
-		virtual void postAddNotification(Creature* actor, Thing* thing, int32_t index, cylinderlink_t link = LINK_OWNER);
-		virtual void postRemoveNotification(Creature* actor, Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
+		virtual void postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
+			int32_t index, cylinderlink_t link = LINK_OWNER);
+		virtual void postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
+			int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
 
 	private:
 		MagicEffectClasses effect;

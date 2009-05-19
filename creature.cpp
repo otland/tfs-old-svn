@@ -77,9 +77,8 @@ isInternalRemoved(false)
 	memset(localMapCache, false, sizeof(localMapCache));
 
 	attackedCreature = NULL;
-	lastHitCreatureId = 0;
-	lastHitCreature = NULL;
-	mostDamageCreature = NULL;
+	lastHitCreature = 0;
+	lastDamageSource = COMBAT_NONE;
 	blockCount = 0;
 	blockTicks = 0;
 	walkUpdateTicks = 0;
@@ -669,67 +668,40 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 	}
 }
 
-bool Creature::onDeath()
+bool Creature::onDeath(DeathList* deathList/* = NULL*/)
 {
-	bool lastHitKiller = false, mostDamageKiller = false;
-	if(getKillers(&lastHitCreature, &mostDamageCreature))
-	{
-		Creature* lastHitCreatureMaster = NULL;
-		if(lastHitCreature)
-		{
-			lastHitCreatureMaster = lastHitCreature->getMaster();
-			lastHitKiller = true;
-		}
-
-		Creature* mostDamageCreatureMaster = NULL;
-		if(mostDamageCreature)
-		{
-			mostDamageCreatureMaster = mostDamageCreature->getMaster();
-			if(mostDamageCreature != lastHitCreature && mostDamageCreature != lastHitCreatureMaster
-				&& lastHitCreature != mostDamageCreatureMaster && (!lastHitCreatureMaster ||
-				mostDamageCreatureMaster != lastHitCreatureMaster))
-				mostDamageKiller = true;
-		}
-	}
-
+	if(!deathList)
+		deathList = getKillers();
+	
 	bool deny = false;
 	CreatureEventList prepareDeathEvents = getCreatureEvents(CREATURE_EVENT_PREPAREDEATH);
 	for(CreatureEventList::iterator it = prepareDeathEvents.begin(); it != prepareDeathEvents.end(); ++it)
 	{
-		if(!(*it)->executePrepareDeath(this, lastHitCreature, mostDamageCreature))
+		if(!(*it)->executePrepareDeath(this, deathList))
 			deny = true;
 	}
 
-	if(deny)
+	if(deny || (deathList->at(0).isCreatureKill() && !deathList->at(
+		0).getKillerCreature()->onKilledCreature(this)))
 		return false;
 
-	if(lastHitKiller && lastHitCreature &&
-		!lastHitCreature->onKilledCreature(this))
-			deny = true;
-
-	if(mostDamageKiller && mostDamageCreature &&
-		!mostDamageCreature->onKilledCreature(this))
-			deny = true;
-
-	if(deny)
-		return false;
-
+	Creature* attacker = NULL;
 	for(CountMap::iterator it = damageMap.begin(); it != damageMap.end(); ++it)
 	{
-		if(Creature* attacker = g_game.getCreatureByID((*it).first))
+		if((attacker = g_game.getCreatureByID(it->first)))
 			attacker->onAttackedCreatureKilled(this);
 	}
 
 	if(getMaster())
 		getMaster()->removeSummon(this);
 
-	dropCorpse();
+	dropCorpse(deathList);
 	return true;
 }
 
-void Creature::dropCorpse()
+void Creature::dropCorpse(DeathList* deathList)
 {
-	Item* corpse = getCorpse();
+	Item* corpse = createCorpse(deathList);
 	if(Tile* tile = getTile())
 	{
 		Item* splash = NULL;
@@ -766,38 +738,65 @@ void Creature::dropCorpse()
 
 	CreatureEventList deathEvents = getCreatureEvents(CREATURE_EVENT_DEATH);
 	for(CreatureEventList::iterator it = deathEvents.begin(); it != deathEvents.end(); ++it)
-		(*it)->executeDeath(this, corpse, lastHitCreature, mostDamageCreature);
+		(*it)->executeDeath(this, corpse, deathList);
+
+	delete deathList;
 }
 
-bool Creature::getKillers(Creature** _lastHitCreature, Creature** _mostDamageCreature)
+DeathList* Creature::getKillers()
 {
-	uint32_t mostDamage = 0;
+	DeathList* list = new DeathList;
+	Creature* lhc = g_game.getCreatureByID(lastHitCreature);
+	if(lhc)
+		list->push_back(DeathEntry(lhc, 0));
+	else
+		list->push_back(DeathEntry(getCombatName(lastDamageSource), 0));
 
 	CountBlock_t cb;
-	for(CountMap::iterator it = damageMap.begin(); it != damageMap.end(); ++it)
+	int64_t now = OTSYS_TIME();
+	for(CountMap::const_iterator it = damageMap.begin(); it != damageMap.end(); ++it)
 	{
 		cb = it->second;
-		if((cb.total > mostDamage && (OTSYS_TIME() - cb.ticks <= g_game.getInFightTicks())))
+		if((now - cb.ticks) > g_game.getInFightTicks())
+			continue;
+
+		Creature* mdc = g_game.getCreatureByID(it->first);
+		if(!mdc || mdc == lhc || (lhc && (mdc->getMaster() == lhc
+			|| lhc->getMaster() == mdc)))
+			continue;
+
+		bool deny = false;
+		for(DeathList::iterator fit = list->begin(); fit != list->end(); ++fit)
 		{
-			if((*_mostDamageCreature = g_game.getCreatureByID((*it).first)))
-				mostDamage = cb.total;
+			Creature* tmp = fit->getKillerCreature();
+			if((!mdc->getMaster() || (mdc->getMaster() != tmp && mdc->getMaster() != tmp->getMaster()))
+				&& (mdc->getSummonCount() <= 0 || tmp->getMaster() != mdc))
+				continue;
+
+			deny = true;
+			break;
 		}
+
+		if(!deny)
+			list->push_back(DeathEntry(mdc, cb.total));
 	}
 
-	*_lastHitCreature = g_game.getCreatureByID(lastHitCreatureId);
-	return (*_lastHitCreature || *_mostDamageCreature);
+	if(list->size() > 1)
+		std::sort(list->begin() + 1, list->end(), DeathLessThan());
+
+	return list;
 }
 
 bool Creature::hasBeenAttacked(uint32_t attackerId) const
 {
 	CountMap::const_iterator it = damageMap.find(attackerId);
-	if(it == damageMap.end())
-		return false;
+	if(it != damageMap.end())
+		return (OTSYS_TIME() - it->second.ticks) <= g_game.getInFightTicks();
 
-	return (OTSYS_TIME() - it->second.ticks <= g_game.getInFightTicks());
+	return false;
 }
 
-Item* Creature::getCorpse()
+Item* Creature::createCorpse(DeathList* deathList)
 {
 	return Item::CreateItem(getLookCorpse());
 }
@@ -837,6 +836,7 @@ void Creature::gainHealth(Creature* caster, int32_t healthGain)
 
 void Creature::drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage)
 {
+	lastDamageSource = combatType;
 	changeHealth(-damage);
 	if(attacker)
 		attacker->onAttackedCreatureDrainHealth(this, damage);
@@ -880,11 +880,13 @@ BlockType_t Creature::blockHit(Creature* attacker, CombatType_t combatType, int3
 
 		if(checkArmor)
 		{
-			int32_t armorValue = getArmor(), minArmorReduction = 0, maxArmorReduction = 0;
+			int32_t armorValue = getArmor(), minArmorReduction = 0,
+				maxArmorReduction = 0;
 			if(armorValue > 1)
 			{
 				minArmorReduction = (int32_t)std::ceil(armorValue * 0.475);
-				maxArmorReduction = (int32_t)std::ceil(((armorValue * 0.475) - 1) + minArmorReduction);
+				maxArmorReduction = (int32_t)std::ceil(
+					((armorValue * 0.475) - 1) + minArmorReduction);
 			}
 			else if(armorValue == 1)
 			{
@@ -1073,7 +1075,7 @@ void Creature::addDamagePoints(Creature* attacker, int32_t damagePoints)
 	}
 
 	if(damagePoints > 0)
-		lastHitCreatureId = attackerId;
+		lastHitCreature = attackerId;
 }
 
 void Creature::addHealPoints(Creature* caster, int32_t healthPoints)

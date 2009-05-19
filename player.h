@@ -663,8 +663,10 @@ class Player : public Creature, public Cylinder
 		void sendCriticalHit() const;
 		uint32_t getAttackSpeed();
 
-		virtual void postAddNotification(Creature* actor, Thing* thing, int32_t index, cylinderlink_t link = LINK_OWNER);
-		virtual void postRemoveNotification(Creature* actor, Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
+		virtual void postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
+			int32_t index, cylinderlink_t link = LINK_OWNER);
+		virtual void postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
+			int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
 
 		void setNextAction(int64_t time) {if(time > nextAction) {nextAction = time;}}
 		bool canDoAction() const {return nextAction <= OTSYS_TIME();}
@@ -696,16 +698,16 @@ class Player : public Creature, public Cylinder
 		bool hasCapacity(const Item* item, uint32_t count) const;
 		void gainExperience(uint64_t exp);
 
-		void updateInventoryWeigth();
+		void updateInventoryWeight();
 		void updateInventoryGoods(uint32_t itemId);
 
 		void setNextWalkActionTask(SchedulerTask* task);
 		void setNextWalkTask(SchedulerTask* task);
 		void setNextActionTask(SchedulerTask* task);
 
-		bool onDeath();
-		virtual void dropCorpse();
-		virtual Item* getCorpse();
+		virtual bool onDeath(DeathList* deathList = NULL);
+		virtual Item* createCorpse(DeathList* deathList);
+		virtual void dropCorpse(DeathList* deathList);
 
 		//cylinder implementations
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
@@ -724,11 +726,14 @@ class Player : public Creature, public Cylinder
 
 		virtual void __removeThing(Thing* thing, uint32_t count);
 
+		virtual Thing* __getThing(uint32_t index) const;
 		virtual int32_t __getIndexOfThing(const Thing* thing) const;
 		virtual int32_t __getFirstIndex() const;
 		virtual int32_t __getLastIndex() const;
-		virtual uint32_t __getItemTypeCount(uint16_t itemId, int32_t subType = -1, bool itemCount = true) const;
-		virtual Thing* __getThing(uint32_t index) const;
+		virtual uint32_t __getItemTypeCount(uint16_t itemId, int32_t subType = -1,
+			bool itemCount = true) const;
+		virtual std::map<uint32_t, uint32_t>& __getAllItemTypeCount(std::map<uint32_t,
+			uint32_t>& countMap, bool itemCount = true) const;
 
 		virtual void __internalAddThing(Thing* thing);
 		virtual void __internalAddThing(uint32_t index, Thing* thing);

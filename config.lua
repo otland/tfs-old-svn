@@ -95,6 +95,7 @@
 
 	-- Deathlist
 	deathListEnabled = "yes"
+	deathAssistCount = 1
 	maxDeathRecords = 5
 
 	-- Guilds

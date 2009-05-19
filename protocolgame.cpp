@@ -1850,6 +1850,7 @@ void ProtocolGame::sendGoods(const std::map<uint32_t, uint32_t>& itemMap)
 	{
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0x7B);
+
 		msg->AddU32(g_game.getMoney(player));
 		msg->AddByte(std::min(itemMap.size(), (size_t)255));
 

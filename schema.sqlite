@@ -4,7 +4,7 @@ CREATE TABLE "server_config" (
 	UNIQUE ("config")
 );
 
-INSERT INTO "server_config" VALUES ('db_version', 14);
+INSERT INTO "server_config" VALUES ('db_version', 15);
 
 CREATE TABLE "server_motd" (
 	"id" INTEGER NOT NULL,
@@ -178,12 +178,33 @@ CREATE TABLE "house_data" (
 );
 
 CREATE TABLE "player_deaths" (
+	"id" INTEGER NOT NULL,
 	"player_id" INTEGER NOT NULL,
-	"time" INTEGER NOT NULL DEFAULT 0,
-	"level" INTEGER NOT NULL DEFAULT 1,
-	"killed_by" VARCHAR(255) NOT NULL DEFAULT '',
-	"altkilled_by" VARCHAR(255) NOT NULL DEFAULT '',
+	"date" INTEGER NOT NULL,
+	"level" INTEGER NOT NULL,
+	PRIMARY KEY ("id"),
 	FOREIGN KEY ("player_id") REFERENCES "players" ("id")
+);
+
+CREATE TABLE "killers" (
+	"id" INTEGER NOT NULL,
+	"death_id" INTEGER NOT NULL,
+	"final_hit" BOOLEAN NOT NULL DEFAULT FALSE,
+	PRIMARY KEY("id"),
+	FOREIGN KEY ("death_id") REFERENCES "player_deaths" ("id")
+);
+
+CREATE TABLE "player_killers" (
+	"kill_id" INTEGER NOT NULL,
+	"player_id" INTEGER NOT NULL,
+	FOREIGN KEY ("kill_id") REFERENCES "killers" ("id"),
+	FOREIGN KEY ("player_id") REFERENCES "players" ("id")
+);
+
+CREATE TABLE `environment_killers` (
+	"kill_id" INTEGER NOT NULL,
+	"name" VARCHAR(255) NOT NULL,
+	FOREIGN KEY ("kill_id") REFERENCES "killers" ("id")
 );
 
 CREATE TABLE "player_depotitems" (

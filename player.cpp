@@ -561,7 +561,7 @@ void Player::sendIcons() const
 	client->sendIcons(icons);
 }
 
-void Player::updateInventoryWeigth()
+void Player::updateInventoryWeight()
 {
 	inventoryWeight = 0.00;
 	if(hasFlag(PlayerFlag_HasInfiniteCapacity))
@@ -583,18 +583,46 @@ void Player::updateInventoryGoods(uint32_t itemId)
 	}
 
 	bool send = false;
-	for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
+	if(shopOffer.size() <= 5)
 	{
-		if((*it).sellPrice > 0 && (*it).itemId == itemId)
+		for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
 		{
-			uint32_t itemCount = __getItemTypeCount((*it).itemId, ((*it).subType ? (*it).subType : -1));
-			if(itemCount > 0)
-				goodsMap[(*it).itemId] = itemCount;
-			else
-				goodsMap.erase((*it).itemId);
+			if(it->sellPrice > -1 && it->itemId == itemId)
+			{
+				uint32_t count = __getItemTypeCount(it->itemId, (it->subType ? it->subType : -1));
+				if(count > 0)
+					goodsMap[it->itemId] = count;
+				else
+					goodsMap.erase(it->itemId);
 
-			if(!send)
-				send = true;
+				if(!send)
+					send = true;
+			}
+		}
+	}
+	else
+	{
+		std::map<uint32_t, uint32_t> tmpMap;
+		__getAllItemTypeCount(tmpMap);
+		for(ShopInfoList::iterator it = shopOffer.begin(); it != shopOffer.end(); ++it)
+		{
+			if(it->sellPrice > -1 && it->itemId == itemId)
+			{
+				int8_t subType = (it->subType ? it->subType : -1);
+				if(subType != -1)
+				{
+					uint32_t count = __getItemTypeCount(it->itemId, subType);
+					if(count > 0)
+						goodsMap[it->itemId] = count;
+					else
+						goodsMap.erase(it->itemId);
+				}
+				else
+					goodsMap[it->itemId] = tmpMap[it->itemId];
+
+				if(!send)
+					send = true;
+			}
 		}
 	}
 
@@ -2099,7 +2127,7 @@ uint32_t Player::getIP() const
 	return 0;
 }
 
-bool Player::onDeath()
+bool Player::onDeath(DeathList* deathList/* = NULL*/)
 {
 	Item* preventLoss = NULL;
 	Item* preventDrop = NULL;
@@ -2127,13 +2155,17 @@ bool Player::onDeath()
 		}
 	}
 
-	if(!Creature::onDeath())
+	deathList = getKillers();
+	if(!Creature::onDeath(deathList))
 	{
 		if(preventDrop)
 			setDropLoot(LOOT_DROP_FULL);
 
 		return false;
 	}
+
+	if(getZone() != ZONE_PVP)
+		IOLoginData::getInstance()->playerDeath(this, deathList);
 
 	if(preventLoss)
 	{
@@ -2232,7 +2264,7 @@ bool Player::onDeath()
 	return true;
 }
 
-void Player::dropCorpse()
+void Player::dropCorpse(DeathList* deathList)
 {
 	if(lootDrop == LOOT_DROP_NONE)
 	{
@@ -2245,51 +2277,48 @@ void Player::dropCorpse()
 		}
 
 		sendStats();
-		onThink(EVENT_CREATURE_THINK_INTERVAL);
 		g_game.internalTeleport(this, getTemplePosition(), true);
+
+		delete deathList;
+		onThink(EVENT_CREATURE_THINK_INTERVAL);
 	}
 	else
-		Creature::dropCorpse();
+		Creature::dropCorpse(deathList);
 }
 
-Item* Player::getCorpse()
+Item* Player::createCorpse(DeathList* deathList)
 {
-	Item* corpse = Creature::getCorpse();
-	if(corpse && corpse->getContainer())
+	Item* corpse = Creature::createCorpse(deathList);
+	if(!corpse)
+		return NULL;
+
+	if(!deathList)
+		return corpse;
+
+	std::stringstream ss;
+	ss << "You recognize " << getNameDescription() << ". " << (
+		getSex() == PLAYERSEX_FEMALE ? "She" : "He") << " was killed by ";
+	if(deathList->at(0).isCreatureKill())
 	{
-		std::stringstream ss;
-		ss << "You recognize " << getNameDescription();
-		if(lastHitCreature || mostDamageCreature)
-			ss << ". " << (getSex() == PLAYERSEX_FEMALE ? "She" : "He") << " was killed by ";
+		ss << deathList->at(0).getKillerCreature()->getNameDescription();
+		if(deathList->at(0).getKillerCreature()->getMaster())
+			ss << " summoned by " << deathList->at(0).getKillerCreature()->getMaster()->getNameDescription();
+	}
+	else
+		ss << deathList->at(0).getKillerName();
 
-		Creature* lastHitCreatureMaster = NULL;
-		Creature* mostDamageCreatureMaster = NULL;
-		if(lastHitCreature)
-		{
-			ss << lastHitCreature->getNameDescription();
-			lastHitCreatureMaster = lastHitCreature->getMaster();
-		}
-
-		if(mostDamageCreature)
-		{
-			mostDamageCreatureMaster = mostDamageCreature->getMaster();
-			bool isNotLastHitMaster = mostDamageCreature != lastHitCreatureMaster;
-			bool isNotMostDamageMaster = lastHitCreature != mostDamageCreatureMaster;
-			bool isNotSameMaster = !lastHitCreatureMaster || (mostDamageCreatureMaster != lastHitCreatureMaster);
-			bool isNotSameName = lastHitCreature && lastHitCreature->getName() != mostDamageCreature->getName();
-			if(mostDamageCreature != lastHitCreature && isNotLastHitMaster && isNotMostDamageMaster && isNotSameMaster && isNotSameName)
-			{
-				if(lastHitCreature)
-					ss << " and by ";
-
-				ss << mostDamageCreature->getNameDescription();
-			}
-		}
-
-		ss << ".";
-		corpse->setSpecialDescription(ss.str().c_str());
+	if(deathList->size() > 1 && (deathList->at(0).isNameKill() || deathList->at(0).getKillerCreature()->getMaster()
+		!= deathList->at(1).getKillerCreature()->getMaster() || asLowerCaseString(
+		deathList->at(0).getKillerCreature()->getNameDescription()) != asLowerCaseString(
+		deathList->at(1).getKillerCreature()->getNameDescription())))
+	{
+		ss << " and by " << deathList->at(1).getKillerCreature()->getNameDescription();
+		if(deathList->at(1).getKillerCreature()->getMaster())
+			ss << " summoned by " << deathList->at(1).getKillerCreature()->getMaster()->getNameDescription();
 	}
 
+	ss << ".";
+	corpse->setSpecialDescription(ss.str().c_str());
 	return corpse;
 }
 
@@ -2970,6 +2999,14 @@ void Player::__removeThing(Thing* thing, uint32_t count)
 	}
 }
 
+Thing* Player::__getThing(uint32_t index) const
+{
+	if(index >= SLOT_FIRST && index < SLOT_LAST)
+		return inventory[index];
+
+	return NULL;
+}
+
 int32_t Player::__getIndexOfThing(const Thing* thing) const
 {
 	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
@@ -2993,73 +3030,81 @@ int32_t Player::__getLastIndex() const
 
 uint32_t Player::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, bool itemCount /*= true*/) const
 {
-	uint32_t count = 0;
-	std::list<const Container*> listContainer;
-	Container* tmpContainer = NULL;
-
 	Item* item = NULL;
-	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; i++)
+	Container* container = NULL;
+
+	uint32_t count = 0;
+	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 	{
-		if((item = inventory[i]))
+		if(!(item = inventory[i]))
+			continue;
+
+		if(item->getID() == itemId)
+			count += Item::countByType(item, subType, itemCount);
+
+		if(!(container = item->getContainer()))
+			continue;
+
+		for(ContainerIterator it = container->begin(), end = container->end(); it != end; ++it)
 		{
-			if(item->getID() == itemId && (subType == -1 || subType == item->getSubType()))
-			{
-				if(itemCount)
-					count += item->getItemCount();
-				else if(item->isRune())
-					count += item->getCharges();
-				else
-					count += item->getItemCount();
-			}
-
-			if((tmpContainer = item->getContainer()))
-				listContainer.push_back(tmpContainer);
-		}
-	}
-
-	ItemList::const_iterator cit;
-	while(listContainer.size() > 0)
-	{
-		const Container* container = listContainer.front();
-		listContainer.pop_front();
-
-		count += container->__getItemTypeCount(itemId, subType, itemCount);
-		for(cit = container->getItems(); cit != container->getEnd(); ++cit)
-		{
-			if((tmpContainer = (*cit)->getContainer()))
-				listContainer.push_back(tmpContainer);
+			if((*it)->getID() == itemId)
+				count += Item::countByType(*it, subType, itemCount);
 		}
 	}
 
 	return count;
+
 }
 
-Thing* Player::__getThing(uint32_t index) const
+std::map<uint32_t, uint32_t>& Player::__getAllItemTypeCount(std::map<uint32_t,
+	uint32_t>& countMap, bool itemCount/* = true*/) const
 {
-	if(index >= SLOT_FIRST && index < SLOT_LAST)
-		return inventory[index];
+	Item* item = NULL;
+	Container* container = NULL;
+	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
+	{
+		if(!(item = inventory[i]))
+			continue;
 
-	return NULL;
+		countMap[item->getID()] += Item::countByType(item, -1, itemCount);
+		if(!(container = item->getContainer()))
+			continue;
+
+		for(ContainerIterator it = container->begin(), end = container->end(); it != end; ++it)
+			countMap[(*it)->getID()] += Item::countByType(*it, -1, itemCount);
+	}
+
+	return countMap;
 }
 
-void Player::postAddNotification(Creature* actor, Thing* thing, int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
+void Player::postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
+	int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
 {
 	if(link == LINK_OWNER) //calling movement scripts
 		g_moveEvents->onPlayerEquip(this, thing->getItem(), (slots_t)index, false);
 
+	bool requireListUpdate = true;
 	if(link == LINK_OWNER || link == LINK_TOPPARENT)
 	{
-		updateInventoryWeigth();
+		if(const Item* item = (oldParent ? oldParent->getItem() : NULL))
+		{
+			assert(item->getContainer() != NULL);
+			requireListUpdate = item->getContainer()->getHoldingPlayer() != this;
+		}
+		else
+			requireListUpdate = oldParent != this;
+
+		updateInventoryWeight();
+		updateItemsLight();
 		sendStats();
 	}
 
-	updateItemsLight();
 	if(const Item* item = thing->getItem())
 	{
 		if(const Container* container = item->getContainer())
 			onSendContainer(container);
 
-		if(link < LINK_NEAR && shopOwner)
+		if(shopOwner && requireListUpdate)
 			updateInventoryGoods(item->getID());
 	}
 	else if(const Creature* creature = thing->getCreature())
@@ -3080,18 +3125,28 @@ void Player::postAddNotification(Creature* actor, Thing* thing, int32_t index, c
 	}
 }
 
-void Player::postRemoveNotification(Creature* actor, Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
+void Player::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
+	int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
 {
 	if(link == LINK_OWNER) //calling movement scripts
 		g_moveEvents->onPlayerDeEquip(this, thing->getItem(), (slots_t)index, isCompleteRemoval);
 
+	bool requireListUpdate = true;
 	if(link == LINK_OWNER || link == LINK_TOPPARENT)
 	{
-		updateInventoryWeigth();
+		if(const Item* item = (newParent ? newParent->getItem() : NULL))
+		{
+			assert(item->getContainer() != NULL);
+			requireListUpdate = item->getContainer()->getHoldingPlayer() != this;
+		}
+		else
+			requireListUpdate = newParent != this;
+
+		updateInventoryWeight();
+		updateItemsLight();
 		sendStats();
 	}
 
-	updateItemsLight();
 	if(const Item* item = thing->getItem())
 	{
 		if(const Container* container = item->getContainer())
@@ -3124,7 +3179,7 @@ void Player::postRemoveNotification(Creature* actor, Thing* thing, int32_t index
 				autoCloseContainers(container);
 		}
 
-		if(link < LINK_NEAR && shopOwner)
+		if(shopOwner && requireListUpdate)
 			updateInventoryGoods(item->getID());
 	}
 }

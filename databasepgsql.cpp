@@ -134,6 +134,25 @@ std::string DatabasePgSQL::escapeBlob(const char *s, uint32_t length)
 	return r;
 }
 
+uint64_t DatabasePgSQL::getLastInsertId()
+{
+	if(!m_connected)
+		return 0;
+
+	PGresult* res = PQexec(m_handle, "SELECT LASTVAL() as last;");
+	ExecStatusType stat = PQresultStatus(res);
+	if(stat != PGRES_COMMAND_OK && stat != PGRES_TUPLES_OK)
+	{
+		std::cout << "PQexec(): " << query << ": " << PQresultErrorMessage(res) << std::endl;
+		PQclear(res);
+		return 0;
+	}
+
+	const uint64_t id = ATOI64(PQgetvalue(res, 0, PQfnumber(res, "last")));
+	PGClear(res);
+	return id;
+}
+
 std::string DatabasePgSQL::_parse(const std::string& s)
 {
 	std::string query = "";

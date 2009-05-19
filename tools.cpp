@@ -828,19 +828,19 @@ struct AmmoTypeNames
 struct MagicEffectNames
 {
 	const char* name;
-	MagicEffectClasses effect;
+	MagicEffectClasses magicEffect;
 };
 
 struct ShootTypeNames
 {
 	const char* name;
-	ShootType_t shoot;
+	ShootType_t shootType;
 };
 
 struct CombatTypeNames
 {
 	const char* name;
-	CombatType_t combat;
+	CombatType_t combatType;
 };
 
 struct AmmoActionNames
@@ -853,6 +853,12 @@ struct FluidTypeNames
 {
 	const char* name;
 	FluidTypes_t fluidType;
+};
+
+struct SkillIdNames
+{
+	const char* name;
+	skills_t skillId;
 };
 
 MagicEffectNames magicEffectNames[] =
@@ -971,7 +977,9 @@ CombatTypeNames combatTypeNames[] =
 	{"fire",		COMBAT_FIREDAMAGE},
 	{"undefined",		COMBAT_UNDEFINEDDAMAGE},
 	{"lifedrain",		COMBAT_LIFEDRAIN},
+	{"life drain",		COMBAT_LIFEDRAIN},
 	{"manadrain",		COMBAT_MANADRAIN},
+	{"mana drain",		COMBAT_MANADRAIN},
 	{"healing",		COMBAT_HEALING},
 	{"drown",		COMBAT_DROWNDAMAGE},
 	{"ice",			COMBAT_ICEDAMAGE},
@@ -982,37 +990,40 @@ CombatTypeNames combatTypeNames[] =
 AmmoTypeNames ammoTypeNames[] =
 {
 	{"spear",		AMMO_SPEAR},
-	{"bolt",		AMMO_BOLT},
 	{"arrow",		AMMO_ARROW},
 	{"poisonarrow",		AMMO_ARROW},
 	{"burstarrow",		AMMO_ARROW},
-	{"throwingstar",	AMMO_THROWINGSTAR},
-	{"throwingknife",	AMMO_THROWINGKNIFE},
+	{"bolt",		AMMO_BOLT},
+	{"powerbolt",		AMMO_BOLT},
 	{"smallstone",		AMMO_STONE},
 	{"largerock",		AMMO_STONE},
+	{"throwingstar",	AMMO_THROWINGSTAR},
+	{"throwingknife",	AMMO_THROWINGKNIFE},
 	{"snowball",		AMMO_SNOWBALL},
-	{"powerbolt",		AMMO_BOLT},
-	{"infernalbolt",	AMMO_BOLT},
 	{"huntingspear",	AMMO_SPEAR},
-	{"enchantedspear",	AMMO_SPEAR},
 	{"royalspear",		AMMO_SPEAR},
+	{"enchantedspear",	AMMO_SPEAR},
 	{"sniperarrow",		AMMO_ARROW},
 	{"onyxarrow",		AMMO_ARROW},
 	{"piercingbolt",	AMMO_BOLT},
-	{"etherealspear",	AMMO_SPEAR},
+	{"infernalbolt",	AMMO_BOLT},
 	{"flasharrow",		AMMO_ARROW},
 	{"flammingarrow",	AMMO_ARROW},
 	{"flamingarrow",	AMMO_ARROW},
 	{"shiverarrow",		AMMO_ARROW},
-	{"eartharrow",		AMMO_ARROW}
+	{"eartharrow",		AMMO_ARROW},
+	{"etherealspear",	AMMO_SPEAR}
 };
 
 AmmoActionNames ammoActionNames[] =
 {
 	{"move",		AMMOACTION_MOVE},
 	{"moveback",		AMMOACTION_MOVEBACK},
+	{"move back",		AMMOACTION_MOVEBACK},
 	{"removecharge",	AMMOACTION_REMOVECHARGE},
-	{"removecount",		AMMOACTION_REMOVECOUNT}
+	{"remove charge",	AMMOACTION_REMOVECHARGE},
+	{"removecount",		AMMOACTION_REMOVECOUNT},
+	{"remove count",	AMMOACTION_REMOVECOUNT}
 };
 
 FluidTypeNames fluidTypeNames[] =
@@ -1029,21 +1040,41 @@ FluidTypeNames fluidTypeNames[] =
 	{"oil",			FLUID_OIL},
 	{"urine",		FLUID_URINE},
 	{"coconutmilk",		FLUID_COCONUTMILK},
+	{"coconut milk",	FLUID_COCONUTMILK},
 	{"wine",		FLUID_WINE},
 	{"mud",			FLUID_MUD},
 	{"fruitjuice",		FLUID_FRUITJUICE},
+	{"fruit juice",		FLUID_FRUITJUICE},
 	{"lava",		FLUID_LAVA},
 	{"rum",			FLUID_RUM},
 	{"swamp",		FLUID_SWAMP}
+};
+
+SkillIdNames skillIdNames[] =
+{
+	{"fist",		SKILL_FIST},
+	{"club",		SKILL_CLUB},
+	{"sword",		SKILL_SWORD},
+	{"axe",			SKILL_AXE},
+	{"distance",		SKILL_DIST},
+	{"dist",		SKILL_DIST},
+	{"shielding",		SKILL_SHIELD},
+	{"shield",		SKILL_SHIELD},
+	{"fishing",		SKILL_FISH},
+	{"fish",		SKILL_FISH},
+	{"level",		SKILL__LEVEL},
+	{"magiclevel",		SKILL__MAGLEVEL},
+	{"magic level",		SKILL__MAGLEVEL}
 };
 
 MagicEffectClasses getMagicEffect(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(magicEffectNames) / sizeof(MagicEffectNames); ++i)
 	{
-		if(strcasecmp(strValue.c_str(), magicEffectNames[i].name) == 0)
-			return magicEffectNames[i].effect;
+		if(!strcasecmp(strValue.c_str(), magicEffectNames[i].name))
+			return magicEffectNames[i].magicEffect;
 	}
+
 	return NM_ME_UNK;
 }
 
@@ -1051,9 +1082,10 @@ ShootType_t getShootType(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(shootTypeNames) / sizeof(ShootTypeNames); ++i)
 	{
-		if(strcasecmp(strValue.c_str(), shootTypeNames[i].name) == 0)
-			return shootTypeNames[i].shoot;
+		if(!strcasecmp(strValue.c_str(), shootTypeNames[i].name))
+			return shootTypeNames[i].shootType;
 	}
+
 	return NM_SHOOT_UNK;
 }
 
@@ -1061,29 +1093,21 @@ CombatType_t getCombatType(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(combatTypeNames) / sizeof(CombatTypeNames); ++i)
 	{
-		if(strcasecmp(strValue.c_str(), combatTypeNames[i].name) == 0)
-			return combatTypeNames[i].combat;
+		if(!strcasecmp(strValue.c_str(), combatTypeNames[i].name))
+			return combatTypeNames[i].combatType;
 	}
-	return COMBAT_NONE;
-}
 
-std::string getCombatName(CombatType_t combatType)
-{
-	for(uint32_t i = 0; i < sizeof(combatTypeNames) / sizeof(CombatTypeNames); ++i)
-	{
-		if(combatTypeNames[i].combat == combatType)
-			return combatTypeNames[i].name;
-	}
-	return "unknown";
+	return COMBAT_NONE;
 }
 
 Ammo_t getAmmoType(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(ammoTypeNames) / sizeof(AmmoTypeNames); ++i)
 	{
-		if(strcasecmp(strValue.c_str(), ammoTypeNames[i].name) == 0)
+		if(!strcasecmp(strValue.c_str(), ammoTypeNames[i].name))
 			return ammoTypeNames[i].ammoType;
 	}
+
 	return AMMO_NONE;
 }
 
@@ -1091,9 +1115,10 @@ AmmoAction_t getAmmoAction(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(ammoActionNames) / sizeof(AmmoActionNames); ++i)
 	{
-		if(strcasecmp(strValue.c_str(), ammoActionNames[i].name) == 0)
+		if(!strcasecmp(strValue.c_str(), ammoActionNames[i].name))
 			return ammoActionNames[i].ammoAction;
 	}
+
 	return AMMOACTION_NONE;
 }
 
@@ -1101,10 +1126,57 @@ FluidTypes_t getFluidType(const std::string& strValue)
 {
 	for(uint32_t i = 0; i < sizeof(fluidTypeNames) / sizeof(FluidTypeNames); ++i)
 	{
-		if(strcasecmp(strValue.c_str(), fluidTypeNames[i].name) == 0)
+		if(!strcasecmp(strValue.c_str(), fluidTypeNames[i].name))
 			return fluidTypeNames[i].fluidType;
 	}
+
 	return FLUID_NONE;
+}
+
+skills_t getSkillId(const std::string& strValue)
+{
+	for(uint32_t i = 0; i < sizeof(skillIdNames) / sizeof(SkillIdNames); ++i)
+	{
+		if(!strcasecmp(strValue.c_str(), skillIdNames[i].name))
+			return skillIdNames[i].skillId;
+	}
+
+	return SKILL_FIST;
+}
+
+std::string getCombatName(CombatType_t combatType)
+{
+	switch(combatType)
+	{
+		case COMBAT_PHYSICALDAMAGE:
+			return "physical";
+		case COMBAT_ENERGYDAMAGE:
+			return "energy";
+		case COMBAT_EARTHDAMAGE:
+			return "earth";
+		case COMBAT_FIREDAMAGE:
+			return "fire";
+		case COMBAT_UNDEFINEDDAMAGE:
+			return "undefined";
+		case COMBAT_LIFEDRAIN:
+			return "life drain";
+		case COMBAT_MANADRAIN:
+			return "mana drain";
+		case COMBAT_HEALING:
+			return "healing";
+		case COMBAT_DROWNDAMAGE:
+			return "drown";
+		case COMBAT_ICEDAMAGE:
+			return "ice";
+		case COMBAT_HOLYDAMAGE:
+			return "holy";
+		case COMBAT_DEATHDAMAGE:
+			return "death";
+		default:
+			break;
+	}
+
+	return "unknown";
 }
 
 std::string getSkillName(uint16_t skillId, bool suffix/* = true*/)
@@ -1159,29 +1231,11 @@ std::string getSkillName(uint16_t skillId, bool suffix/* = true*/)
 			return "magic level";
 		case SKILL__LEVEL:
 			return "level";
+		default:
+			break;
 	}
 
 	return "unknown";
-}
-
-skills_t getSkillId(std::string param)
-{
-	if(param == "fist")
-		return SKILL_FIST;
-	else if(param == "club")
-		return SKILL_CLUB;
-	else if(param == "sword")
-		return SKILL_SWORD;
-	else if(param == "axe")
-		return SKILL_AXE;
-	else if(param == "distance" || param == "dist")
-		return SKILL_DIST;
-	else if(param == "shielding" || param == "shield")
-		return SKILL_SHIELD;
-	else if(param == "fishing" || param == "fish")
-		return SKILL_FISH;
-
-	return SKILL_FIST;
 }
 
 std::string getReason(int32_t reasonId)
@@ -1234,6 +1288,8 @@ std::string getReason(int32_t reasonId)
 			return "Invalid Payment";
 		case 22:
 			return "Spoiling Auction";
+		default:
+			break;
 	}
 
 	return "Unknown Reason";

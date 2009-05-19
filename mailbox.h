@@ -48,8 +48,10 @@ class Mailbox : public Item, public Cylinder
 
 		virtual void __removeThing(Thing* thing, uint32_t count) {}
 
-		virtual void postAddNotification(Creature* actor, Thing* thing, int32_t index, cylinderlink_t link = LINK_OWNER);
-		virtual void postRemoveNotification(Creature* actor, Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
+		virtual void postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
+			int32_t index, cylinderlink_t link = LINK_OWNER);
+		virtual void postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
+			int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
 
 		bool getReceiver(Item* item, std::string& name, uint32_t& dpnum);
 		bool sendItem(Creature* actor, Item* item);

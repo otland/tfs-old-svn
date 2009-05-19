@@ -189,6 +189,25 @@ void Item::setID(uint16_t newid)
 	}
 }
 
+Player* Item::getHoldingPlayer()
+{
+	Cylinder* p = getParent();
+	while(p)
+	{
+		if(p->getCreature())
+			return p->getCreature()->getPlayer();
+
+		p = p->getParent();
+	}
+
+	return NULL;
+}
+
+const Player* Item::getHoldingPlayer() const
+{
+	return const_cast<Item*>(this)->getHoldingPlayer();
+}
+
 uint16_t Item::getSubType() const
 {
 	const ItemType& it = items[getID()];

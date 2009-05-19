@@ -168,6 +168,13 @@ class _Database
 		DATABASE_VIRTUAL std::string escapeBlob(const char* s, uint32_t length) {return "''";}
 
 		/**
+		 * Retrieve id of last inserted row
+		 *
+		 * @return id on success, 0 if last query did not result on any rows with auto_increment keys
+		 */
+		DATABASE_VIRTUAL uint64_t getLastInsertId() {return 0;}
+
+		/**
 		* Resource freeing.
 		*
 		* @param DBResult* resource to be freed

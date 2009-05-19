@@ -20,15 +20,14 @@
 #include "otsystem.h"
 
 #include "templates.h"
+#include <boost/any.hpp>
+
 #include "const.h"
 #include "enums.h"
 
 #include "map.h"
 #include "condition.h"
 #include "creatureevent.h"
-
-typedef std::list<Condition*> ConditionList;
-typedef std::list<CreatureEvent*> CreatureEventList;
 
 enum slots_t
 {
@@ -57,19 +56,6 @@ enum lootDrop_t
 	LOOT_DROP_NONE
 };
 
-struct FindPathParams
-{
-	bool fullPathSearch, clearSight, allowDiagonal, keepDistance;
-	int32_t maxSearchDist, minTargetDist, maxTargetDist;
-
-	FindPathParams()
-	{
-		fullPathSearch = clearSight = allowDiagonal = true;
-		maxSearchDist = minTargetDist = maxTargetDist = -1;
-		keepDistance = false;
-	}
-};
-
 enum ZoneType_t
 {
 	ZONE_PROTECTION,
@@ -79,14 +65,56 @@ enum ZoneType_t
 	ZONE_NORMAL
 };
 
+struct FindPathParams
+{
+	bool fullPathSearch, clearSight, allowDiagonal, keepDistance;
+	int32_t maxSearchDist, minTargetDist, maxTargetDist;
+	FindPathParams()
+	{
+		fullPathSearch = clearSight = allowDiagonal = true;
+		maxSearchDist = minTargetDist = maxTargetDist = -1;
+		keepDistance = false;
+	}
+};
+
+struct DeathLessThan;
+struct DeathEntry
+{
+		DeathEntry(std::string name, int32_t dmg): data(name), damage(dmg) {}
+		DeathEntry(Creature* killer, int32_t dmg): data(killer), damage(dmg) {}
+	
+		bool isCreatureKill() const {return data.type() == typeid(Creature*);}
+		bool isNameKill() const {return !isCreatureKill();}
+
+		Creature* getKillerCreature() const {return boost::any_cast<Creature*>(data);}
+		std::string getKillerName() const {return boost::any_cast<std::string>(data);}
+
+	protected:
+		boost::any data;
+		int32_t damage;
+
+		friend struct DeathLessThan;
+};
+
+struct DeathLessThan
+{
+	bool operator()(const DeathEntry& d1, const DeathEntry& d2) {return d1.damage > d2.damage;}
+};
+
+typedef std::vector<DeathEntry> DeathList;
+typedef std::list<CreatureEvent*> CreatureEventList;
+typedef std::list<Condition*> ConditionList;
+
 class Map;
+class Tile;
 class Thing;
-class Container;
+
 class Player;
 class Monster;
 class Npc;
+
 class Item;
-class Tile;
+class Container;
 
 #define EVENT_CREATURECOUNT 10
 #define EVENT_CREATURE_THINK_INTERVAL 500
@@ -288,7 +316,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool challengeCreature(Creature* creature) {return false;}
 		virtual bool convinceCreature(Creature* creature) {return false;}
 
-		virtual bool onDeath();
+		virtual bool onDeath(DeathList* deathList = NULL);
 		virtual uint64_t getGainedExperience(Creature* attacker, bool useMultiplier = true);
 		void addDamagePoints(Creature* attacker, int32_t damagePoints);
 		void addHealPoints(Creature* caster, int32_t healthPoints);
@@ -434,20 +462,19 @@ class Creature : public AutoID, virtual public Thing
 
 		//combat variables
 		Creature* attackedCreature;
-		Creature* lastHitCreature;
-		Creature* mostDamageCreature;
-
 		struct CountBlock_t
 		{
 			uint32_t total;
 			int64_t ticks, start;
 		};
-		typedef std::map<uint32_t, CountBlock_t> CountMap;
 
+		typedef std::map<uint32_t, CountBlock_t> CountMap;
 		CountMap damageMap;
 		CountMap healMap;
+
 		CreatureEventList eventsList;
-		uint32_t lastHitCreatureId, blockCount, blockTicks, scriptEventsBitField;
+		uint32_t scriptEventsBitField, blockCount, blockTicks, lastHitCreature;
+		CombatType_t lastDamageSource;
 
 		#ifdef __DEBUG__
 		void validateMapCache();
@@ -460,18 +487,19 @@ class Creature : public AutoID, virtual public Thing
 		bool hasEventRegistered(CreatureEventType_t event) const {return (0 != (scriptEventsBitField & ((uint32_t)1 << event)));}
 		virtual bool hasExtraSwing() {return false;}
 
-		void onCreatureDisappear(const Creature* creature, bool isLogout);
-		virtual void dropCorpse();
-		virtual void dropLoot(Container* corpse) {}
-		virtual void doAttacking(uint32_t interval) {}
-
 		virtual uint16_t getLookCorpse() const {return 0;}
 		virtual uint64_t getLostExperience() const {return 0;}
-		virtual double getDamageRatio(Creature* attacker) const;
 
-		bool getKillers(Creature** lastHitCreature, Creature** mostDamageCreature);
-		virtual Item* getCorpse();
+		virtual double getDamageRatio(Creature* attacker) const;
 		virtual void getPathSearchParams(const Creature* creature, FindPathParams& fpp) const;
+		DeathList* getKillers();
+
+		virtual Item* createCorpse(DeathList* deathList);
+		virtual void dropLoot(Container* corpse) {}
+		virtual void dropCorpse(DeathList* deathList);
+
+		virtual void doAttacking(uint32_t interval) {}
+		void onCreatureDisappear(const Creature* creature, bool isLogout);
 
 		friend class Game;
 		friend class Map;

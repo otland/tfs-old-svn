@@ -17,9 +17,9 @@
 
 #ifndef __CREATUREEVENT__
 #define __CREATUREEVENT__
-#include "baseevents.h"
-
 #include "enums.h"
+
+#include "baseevents.h"
 #include "tile.h"
 
 enum CreatureEventType_t
@@ -83,6 +83,9 @@ class CreatureEvents : public BaseEvents
 		CreatureEventList m_creatureEvents;
 };
 
+struct DeathEntry;
+typedef std::vector<DeathEntry> DeathList;
+
 typedef std::map<uint32_t, Player*> UsersMap;
 class CreatureEvent : public Event
 {
@@ -118,8 +121,8 @@ class CreatureEvent : public Event
 		uint32_t executeAttack(Creature* creature, Creature* target);
 		uint32_t executeCast(Creature* creature, Creature* target = NULL);
 		uint32_t executeKill(Creature* creature, Creature* target);
-		uint32_t executeDeath(Creature* creature, Item* corpse, Creature* lastHitKiller, Creature* mostDamageKiller);
-		uint32_t executePrepareDeath(Creature* creature, Creature* lastHitKiller, Creature* mostDamageKiller);
+		uint32_t executeDeath(Creature* creature, Item* corpse, DeathList* deathList);
+		uint32_t executePrepareDeath(Creature* creature, DeathList* deathList);
 		//
 
 	protected:

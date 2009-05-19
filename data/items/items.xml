@@ -10,7 +10,9 @@
 	<item id="194" name="grass"/>
 	<item id="231" name="sand"/>
 	<item id="280" name="grass"/>
-	<item id="293" name="grass"/>
+	<item id="293" name="grass">
+		<attribute key="floorchange" value="down"/>
+	</item>
 	<item id="294" article="a" name="pitfall">
 		<attribute key="floorchange" value="down"/>
 		<attribute key="decayTo" value="293"/>

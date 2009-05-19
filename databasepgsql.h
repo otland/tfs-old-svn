@@ -41,6 +41,7 @@ class DatabasePgSQL : public _Database
 		DATABASE_VIRTUAL std::string escapeString(const std::string& s);
 		DATABASE_VIRTUAL std::string escapeBlob(const char *s, uint32_t length);
 
+		DATABASE_VIRTUAL uint64_t getLastInsertId();
 		DATABASE_VIRTUAL DatabaseEngine_t getDatabaseEngine() {return DATABASE_ENGINE_POSTGRESQL;}
 
 	protected:

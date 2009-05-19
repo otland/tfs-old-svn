@@ -81,14 +81,17 @@ ReturnValue Depot::__queryMaxCount(int32_t index, const Thing* thing, uint32_t c
 	return Container::__queryMaxCount(index, thing, count, maxQueryCount, flags);
 }
 
-void Depot::postAddNotification(Creature* actor, Thing* thing, int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
+void Depot::postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
+	int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
 {
 	if(getParent() != NULL)
-		getParent()->postAddNotification(actor, thing, index, LINK_PARENT);
+		getParent()->postAddNotification(actor, thing, oldParent, index, LINK_PARENT);
 }
 
-void Depot::postRemoveNotification(Creature* actor, Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
+void Depot::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
+	int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
 {
 	if(getParent() != NULL)
-		getParent()->postRemoveNotification(actor, thing, index, isCompleteRemoval, LINK_PARENT);
+		getParent()->postRemoveNotification(actor, thing, newParent,
+			index, isCompleteRemoval, LINK_PARENT);
 }

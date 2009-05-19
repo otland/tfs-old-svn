@@ -267,13 +267,7 @@ void Spawns::clear()
 {
 	started = false;
 	for(SpawnList::iterator it = spawnList.begin(); it != spawnList.end(); ++it)
-	{
-		if((*it))
-		{
-			delete (*it);
-			(*it) = NULL;
-		}
-	}
+		delete (*it);
 
 	spawnList.clear();
 	loaded = false;
@@ -309,11 +303,11 @@ Spawn::~Spawn()
 	Monster* monster = NULL;
 	for(SpawnedMap::iterator it = spawnedMap.begin(); it != spawnedMap.end(); ++it)
 	{
-		monster = it->second;
-		it->second = NULL;
+		if(!(monster = it->second))
+			continue;
 
 		monster->setSpawn(NULL);
-		if(monster->isRemoved())
+		if(!monster->isRemoved())
 			g_game.FreeThing(monster);
 	}
 
@@ -367,8 +361,9 @@ bool Spawn::spawnMonster(uint32_t spawnId, MonsterType* mType, const Position& p
 
 	monster->setSpawn(this);
 	monster->useThing2();
-	monster->setDirection(dir);
+
 	monster->setMasterPos(pos, radius);
+	monster->setDirection(dir);
 
 	spawnedMap.insert(SpawnedPair(spawnId, monster));
 	spawnMap[spawnId].lastSpawn = OTSYS_TIME();

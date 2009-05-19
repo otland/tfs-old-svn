@@ -667,6 +667,101 @@ uint32_t DatabaseManager::updateDatabase()
 			return 14;
 		}
 
+		case 14:
+		{
+			std::cout << "> Updating database to version: 15..." << std::endl;
+			db->executeQuery("DROP TABLE `player_deaths`;"); //no support for moving, sorry!
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_MYSQL:
+				{
+					std::string queryList[] = {
+"CREATE TABLE `player_deaths`\
+(\
+	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,\
+	`player_id` INT UNSIGNED NOT NULL,\
+	`date` INT UNSIGNED NOT NULL,\
+	`level` INT NOT NULL,\
+	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON DELETE CASCADE,\
+	PRIMARY KEY(`id`),\
+	INDEX(`date`)\
+) ENGINE = InnoDB;",
+"CREATE TABLE `killers`\
+(\
+	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,\
+	`death_id` INT UNSIGNED NOT NULL,\
+	`final_hit` TINYINT(1) NOT NULL DEFAULT 1,\
+	PRIMARY KEY(`id`),\
+	FOREIGN KEY (`death_id`) REFERENCES `player_deaths` (`id`) ON DELETE CASCADE\
+) ENGINE = InnoDB;",
+"CREATE TABLE `player_killers`\
+(\
+	`kill_id` INT UNSIGNED NOT NULL,\
+	`player_id` INT UNSIGNED NOT NULL\
+	FOREIGN KEY (`kill_id`) REFERENCES `killers` (`id`) ON DELETE CASCADE,\
+	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON DELETE CASCADE\
+) ENGINE = InnoDB;",
+"CREATE TABLE `environment_killers`\
+(\
+	`kill_id` INT UNSIGNED NOT NULL,\
+	`name` VARCHAR(255) NOT NULL,\
+	FOREIGN KEY (`kill_id`) REFERENCES `killers` (`id`) ON DELETE CASCADE\
+) ENGINE = InnoDB;"
+					};
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+						db->executeQuery(queryList[i]);
+
+					break;
+				}
+
+				case DATABASE_ENGINE_SQLITE:
+				{
+					std::string queryList[] = {
+"CREATE TABLE `player_deaths` (\
+	`id` INTEGER NOT NULL,\
+	`player_id` INTEGER NOT NULL,\
+	`date` INTEGER NOT NULL,\
+	`level` INTEGER NOT NULL,\
+	PRIMARY KEY (`id`),\
+	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`)\
+);",
+"CREATE TABLE `killers` (\
+	`id` INTEGER NOT NULL,\
+	`death_id` INTEGER NOT NULL,\
+	`final_hit` BOOLEAN NOT NULL DEFAULT FALSE,\
+	PRIMARY KEY(`id`),\
+	FOREIGN KEY (`death_id`) REFERENCES `player_deaths` (`id`)\
+);",
+"CREATE TABLE `player_killers` (\
+	`kill_id` INTEGER NOT NULL,\
+	`player_id` INTEGER NOT NULL,\
+	FOREIGN KEY (`kill_id`) REFERENCES `killers` (`id`),\
+	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`)\
+);",
+"CREATE TABLE `environment_killers` (\
+	`kill_id` INTEGER NOT NULL,\
+	`name` VARCHAR(255) NOT NULL,\
+	FOREIGN KEY (`kill_id`) REFERENCES `killers` (`id`)\
+);"
+					};
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+						db->executeQuery(queryList[i]);
+
+					break;
+				}
+
+				case DATABASE_ENGINE_POSTGRESQL:
+				default:
+				{
+					//TODO
+					break;
+				}
+			}
+
+			registerDatabaseConfig("db_version", 15);
+			return 15;
+		}
+
 		default:
 			break;
 	}

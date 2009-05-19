@@ -16,6 +16,9 @@ DROP TABLE IF EXISTS `player_storage`;
 DROP TABLE IF EXISTS `player_viplist`;
 DROP TABLE IF EXISTS `player_spells`;
 DROP TABLE IF EXISTS `player_deaths`;
+DROP TABLE IF EXISTS `killers`;
+DROP TABLE IF EXISTS `environment_killers`;
+DROP TABLE IF EXISTS `player_killers`;
 DROP TABLE IF EXISTS `guild_ranks`;
 DROP TABLE IF EXISTS `guilds`;
 DROP TABLE IF EXISTS `guild_invites`;
@@ -34,7 +37,7 @@ CREATE TABLE `server_config`
 	UNIQUE (`config`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `server_config` VALUES ('db_version', 14);
+INSERT INTO `server_config` VALUES ('db_version', 15);
 
 CREATE TABLE `server_motd`
 (
@@ -243,13 +246,37 @@ CREATE TABLE `houses`
 
 CREATE TABLE `player_deaths`
 (
-	`player_id` INT NOT NULL,
-	`time` BIGINT UNSIGNED NOT NULL DEFAULT 0,
-	`level` INT NOT NULL DEFAULT 1,
-	`killed_by` VARCHAR(255) NOT NULL COMMENT 'last hit killer',
-	`altkilled_by` VARCHAR(255) NOT NULL COMMENT 'most damage killer',
-	KEY (`player_id`),
-	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
+	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`player_id` INT UNSIGNED NOT NULL,
+	`date` INT UNSIGNED NOT NULL,
+	`level` INT NOT NULL,
+	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON DELETE CASCADE,
+	PRIMARY KEY(`id`),
+	INDEX(`date`)
+) ENGINE = InnoDB;
+
+CREATE TABLE `killers`
+(
+	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`death_id` INT UNSIGNED NOT NULL,
+	`final_hit` TINYINT(1) NOT NULL DEFAULT FALSE,
+	PRIMARY KEY(`id`),
+	FOREIGN KEY (`death_id`) REFERENCES `player_deaths` (`id`) ON DELETE CASCADE
+) ENGINE = InnoDB;
+
+CREATE TABLE `player_killers`
+(
+	`kill_id` INT UNSIGNED NOT NULL,
+	`player_id` INT UNSIGNED NOT NULL
+	FOREIGN KEY (`kill_id`) REFERENCES `killers` (`id`) ON DELETE CASCADE,
+	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON DELETE CASCADE
+) ENGINE = InnoDB;
+
+CREATE TABLE `environment_killers`
+(
+	`kill_id` INT UNSIGNED NOT NULL,
+	`name` VARCHAR(255) NOT NULL,
+	FOREIGN KEY (`kill_id`) REFERENCES `killers` (`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `player_depotitems`

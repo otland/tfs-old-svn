@@ -410,6 +410,9 @@ class Item : virtual public Thing, public ItemAttributes
 		uint16_t getItemCount() const {return count;}
 		void setItemCount(uint16_t n) {count = n;}
 
+		Player* getHoldingPlayer();
+		const Player* getHoldingPlayer() const;
+
 		uint16_t getSubType() const;
 		void setSubType(uint16_t n);
 
@@ -435,6 +438,7 @@ class Item : virtual public Thing, public ItemAttributes
 
 		virtual void onRemoved() {}
 		virtual bool onTradeEvent(TradeEvents_t event, Player* owner, Player* seller) {return true;}
+		static uint32_t countByType(const Item* item, int32_t checkType, bool multiCount);
 
 	protected:
 		std::string getWeightDescription(double weight) const {return getWeightDescription(Item::items[id], weight, count);}
@@ -443,4 +447,18 @@ class Item : virtual public Thing, public ItemAttributes
 		uint8_t count;
 		bool loadedFromMap;
 };
+
+inline uint32_t Item::countByType(const Item* item, int32_t checkType, bool multiCount)
+{
+	if(checkType != -1 && checkType != (int32_t)item->getSubType())
+		return 0;
+
+	if(multiCount)
+		return item->getItemCount();
+
+	if(item->isRune())
+		return item->getCharges();
+
+	return item->getItemCount();
+}
 #endif

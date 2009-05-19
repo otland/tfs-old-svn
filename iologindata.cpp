@@ -669,7 +669,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		result->free();
 	}
 
-	player->updateInventoryWeigth();
+	player->updateInventoryWeight();
 	player->updateItemsLight(true);
 	player->updateBaseSpeed();
 	return true;
@@ -1006,6 +1006,78 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 	}
 
 	return query_insert.execute();
+}
+
+bool IOLoginData::playerDeath(Player* player, DeathList* deathList)
+{
+	if(g_config.getBool(ConfigManager::DEATH_LIST))
+		return true;
+
+	if(!deathList)
+		return false;
+
+	DeathList dl(*deathList);
+	int32_t assists = g_config.getNumber(ConfigManager::DEATH_ASSISTS);
+	if(assists > 1 && (int32_t)dl.size() > (assists + 1))
+		dl.resize((assists + 1), DeathEntry(NULL, -1));
+
+	Database* db = Database::getInstance();
+	DBTransaction trans(db);
+	if(!trans.begin())
+		return false;
+
+	DBQuery query;
+	query << "INSERT INTO `player_deaths` (`player_id`, `date`, `level`) VALUES (" << player->getGUID()
+		<< ", " << time(NULL) << ", " << player->getLevel() << ")";
+	if(!db->executeQuery(query.str()))
+		return false;
+
+	uint64_t deathId = db->getLastInsertId();
+	for(DeathList::iterator it = dl.begin(); it != dl.end(); ++it)
+	{
+		query.str("");
+		query << "INSERT INTO `killers` (`death_id`, `final_hit`) VALUES (" << deathId
+			<< ", " << (it == dl.begin()) << ")";
+		if(!db->executeQuery(query.str()))
+			return false;
+
+		uint64_t killId = db->getLastInsertId();
+		std::string name;
+		if(it->isCreatureKill())
+		{
+			Creature* tmp = it->getKillerCreature();
+			Player* player = tmp->getPlayer();
+			if(tmp->getMaster())
+			{
+				player = tmp->getMaster()->getPlayer();
+				name = tmp->getNameDescription();
+			}
+
+			if(player)
+			{
+				query.str("");
+				query << "INSERT INTO `player_killers` (`kill_id`, `player_id`) VALUES ("
+					<< killId << ", " << player->getGUID() << ")";
+				if(!db->executeQuery(query.str()))
+					return false;
+			}
+			else
+				name = tmp->getNameDescription();
+		}
+		else
+			name = it->getKillerName();
+
+		if(name.size() > 0)
+		{
+			query.str("");
+			query << "INSERT INTO `environment_killers` (`kill_id`, `name`) VALUES ("
+				<< killId << ", " << db->escapeString(name) << ")";
+			if(!db->executeQuery(query.str()))
+				return false;
+		}
+	}
+
+	return trans.commit();
 }
 
 bool IOLoginData::updateOnlineStatus(uint32_t guid, bool login)

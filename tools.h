@@ -117,10 +117,10 @@ Ammo_t getAmmoType(const std::string& strValue);
 AmmoAction_t getAmmoAction(const std::string& strValue);
 CombatType_t getCombatType(const std::string& strValue);
 FluidTypes_t getFluidType(const std::string& strValue);
-std::string getCombatName(CombatType_t combatType);
+skills_t getSkillId(const std::string& strValue);
 
-std::string getSkillName(uint16_t skillid, bool suffix = true);
-skills_t getSkillId(std::string param);
+std::string getCombatName(CombatType_t combatType);
+std::string getSkillName(uint16_t skillId, bool suffix = true);
 
 std::string getReason(int32_t reasonId);
 std::string getAction(ViolationAction_t actionId, bool ipBanishment);

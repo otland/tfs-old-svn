@@ -44,6 +44,8 @@ class DatabaseSQLite : public _Database
 		DATABASE_VIRTUAL std::string escapeString(const std::string &s);
 		DATABASE_VIRTUAL std::string escapeBlob(const char* s, uint32_t length);
 
+		DATABASE_VIRTUAL uint64_t getLastInsertId() {return (uint64_t)sqlite3_last_insert_rowid(m_handle);}
+
 		DATABASE_VIRTUAL std::string getStringComparisonOperator() {return "LIKE";}
 		DATABASE_VIRTUAL DatabaseEngine_t getDatabaseEngine() {return DATABASE_ENGINE_SQLITE;}
 

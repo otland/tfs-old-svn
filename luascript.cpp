@@ -887,8 +887,8 @@ int32_t LuaScriptInterface::callFunction(uint32_t nParams)
 {
 	int32_t result = LUA_ERROR, size = lua_gettop(m_luaState), errorIndex = lua_gettop(m_luaState) - nParams;
 	lua_pushcfunction(m_luaState, luaErrorHandler);
-	lua_insert(m_luaState, errorIndex);
 
+	lua_insert(m_luaState, errorIndex);
 	if(lua_pcall(m_luaState, nParams, 1, errorIndex) != 0)
 		LuaScriptInterface::reportError(NULL, std::string(LuaScriptInterface::popString(m_luaState)));
 	else
@@ -905,7 +905,6 @@ void LuaScriptInterface::pushVariant(lua_State* L, const LuaVariant& var)
 {
 	lua_newtable(L);
 	setField(L, "type", var.type);
-
 	switch(var.type)
 	{
 		case VARIANT_NUMBER:
@@ -6312,7 +6311,6 @@ int32_t LuaScriptInterface::luaGetMonsterFriendList(lua_State* L)
 {
 	//getMonsterFriendList(cid)
 	ScriptEnviroment* env = getScriptEnv();
-
 	Creature* creature = env->getCreatureByUID(popNumber(L));
 	if(!creature)
 	{

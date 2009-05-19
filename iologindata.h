@@ -71,6 +71,8 @@ class IOLoginData
 
 		bool loadPlayer(Player* player, const std::string& name, bool preLoad = false);
 		bool savePlayer(Player* player, bool preSave = true);
+
+		bool playerDeath(Player* player, DeathList* deathList);
 		bool updateOnlineStatus(uint32_t guid, bool login);
 
 		const Group* getPlayerGroupByAccount(uint32_t accId);

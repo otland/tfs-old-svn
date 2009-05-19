@@ -528,8 +528,8 @@ void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport/
 	for(it = list.begin(); it != list.end(); ++it)
 		(*it)->onCreatureMove(creature, toTile, toPos, this, fromPos, oldStackPos, teleport);
 
-	postRemoveNotification(NULL, creature, oldStackPos, true);
-	toTile->postAddNotification(NULL, creature, newStackPos);
+	postRemoveNotification(NULL, creature, toCylinder, oldStackPos, true);
+	toTile->postAddNotification(NULL, creature, this, newStackPos);
 }
 
 ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count, uint32_t flags) const
@@ -1334,7 +1334,8 @@ Thing* Tile::__getThing(uint32_t index) const
 	return NULL;
 }
 
-void Tile::postAddNotification(Creature* actor, Thing* thing, int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
+void Tile::postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
+	int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
 {
 	const Position& cylinderMapPos = getPosition();
 	const SpectatorVec& list = g_game.getSpectators(cylinderMapPos);
@@ -1344,7 +1345,7 @@ void Tile::postAddNotification(Creature* actor, Thing* thing, int32_t index, cyl
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
-			tmpPlayer->postAddNotification(actor, thing, index, LINK_NEAR);
+			tmpPlayer->postAddNotification(actor, thing, oldParent, index, LINK_NEAR);
 	}
 
 	//add a reference to this item, it may be deleted after being added (mailbox for example)
@@ -1370,7 +1371,8 @@ void Tile::postAddNotification(Creature* actor, Thing* thing, int32_t index, cyl
 	g_game.FreeThing(thing);
 }
 
-void Tile::postRemoveNotification(Creature* actor, Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
+void Tile::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
+	int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
 {
 	const Position& cylinderMapPos = getPosition();
 	const SpectatorVec& list = g_game.getSpectators(cylinderMapPos);
@@ -1383,7 +1385,8 @@ void Tile::postRemoveNotification(Creature* actor, Thing* thing, int32_t index, 
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
-			tmpPlayer->postRemoveNotification(actor, thing, index, isCompleteRemoval, LINK_NEAR);
+			tmpPlayer->postRemoveNotification(actor, thing, newParent,
+				index, isCompleteRemoval, LINK_NEAR);
 	}
 
 	//calling movement scripts

@@ -837,7 +837,7 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 			(*it)->onCreatureAppear(creature, true);
 	}
 
-	creature->getParent()->postAddNotification(NULL, creature, newStackPos);
+	creature->getParent()->postAddNotification(NULL, creature, NULL, newStackPos);
 	addCreatureCheck(creature);
 	creature->onPlacedCreature();
 	return true;
@@ -885,7 +885,7 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 	for(it = list.begin(); it != list.end(); ++it)
 		(*it)->onCreatureDisappear(creature, index, isLogout);
 
-	creature->getParent()->postRemoveNotification(NULL, creature, index, true);
+	creature->getParent()->postRemoveNotification(NULL, creature, NULL, index, true);
 	creature->setRemoved();
 
 	listCreature.removeList(creature->getID());
@@ -1371,11 +1371,11 @@ ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cyli
 				fromCylinder->__addThing(actor, toItem);
 
 				if(oldToItemIndex != -1)
-					toCylinder->postRemoveNotification(actor, toItem, oldToItemIndex, true);
+					toCylinder->postRemoveNotification(actor, toItem, fromCylinder, oldToItemIndex, true);
 
 				int32_t newToItemIndex = fromCylinder->__getIndexOfThing(toItem);
 				if(newToItemIndex != -1)
-					fromCylinder->postAddNotification(actor, toItem, newToItemIndex);
+					fromCylinder->postAddNotification(actor, toItem, toCylinder, newToItemIndex);
 
 				ret = toCylinder->__queryAdd(index, item, count, flags);
 				toItem = NULL;
@@ -1434,20 +1434,20 @@ ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cyli
 		toCylinder->__addThing(actor, index, moveItem);
 
 	if(itemIndex != -1)
-		fromCylinder->postRemoveNotification(actor, item, itemIndex, isCompleteRemoval);
+		fromCylinder->postRemoveNotification(actor, item, toCylinder, itemIndex, isCompleteRemoval);
 
 	if(moveItem)
 	{
 		int32_t moveItemIndex = toCylinder->__getIndexOfThing(moveItem);
 		if(moveItemIndex != -1)
-			toCylinder->postAddNotification(actor, moveItem, moveItemIndex);
+			toCylinder->postAddNotification(actor, moveItem, fromCylinder, moveItemIndex);
 	}
 
 	if(updateItem)
 	{
 		int32_t updateItemIndex = toCylinder->__getIndexOfThing(updateItem);
 		if(updateItemIndex != -1)
-			toCylinder->postAddNotification(actor, updateItem, updateItemIndex);
+			toCylinder->postAddNotification(actor, updateItem, fromCylinder, updateItemIndex);
 	}
 
 	if(_moveItem)
@@ -1512,13 +1512,13 @@ ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* i
 			toCylinder->__addThing(actor, index, moveItem);
 			int32_t moveItemIndex = toCylinder->__getIndexOfThing(moveItem);
 			if(moveItemIndex != -1)
-				toCylinder->postAddNotification(actor, moveItem, moveItemIndex);
+				toCylinder->postAddNotification(actor, moveItem, NULL, moveItemIndex);
 		}
 		else
 		{
 			int32_t itemIndex = toCylinder->__getIndexOfThing(item);
 			if(itemIndex != -1)
-				toCylinder->postAddNotification(actor, item, itemIndex);
+				toCylinder->postAddNotification(actor, item, NULL, itemIndex);
 		}
 	}
 
@@ -1555,7 +1555,7 @@ ReturnValue Game::internalRemoveItem(Creature* actor, Item* item, int32_t count 
 			FreeThing(item);
 		}
 
-		cylinder->postRemoveNotification(actor, item, index, isCompleteRemoval);
+		cylinder->postRemoveNotification(actor, item, NULL, index, isCompleteRemoval);
 	}
 
 	item->onRemoved();
@@ -1925,7 +1925,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 		uint16_t itemId = item->getID();
 		int32_t count = item->getSubType();
 
-		cylinder->postRemoveNotification(NULL, item, itemIndex, false);
+		cylinder->postRemoveNotification(NULL, item, cylinder, itemIndex, false);
 		if(curType.id != newType.id)
 		{
 			itemId = newId;
@@ -1937,7 +1937,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 			count = newCount;
 
 		cylinder->__updateThing(item, itemId, count);
-		cylinder->postAddNotification(NULL, item, itemIndex);
+		cylinder->postAddNotification(NULL, item, cylinder, itemIndex);
 		return item;
 	}
 
@@ -1957,10 +1957,10 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 	}
 
 	cylinder->__replaceThing(itemIndex, newItem);
-	cylinder->postAddNotification(NULL, newItem, itemIndex);
+	cylinder->postAddNotification(NULL, newItem, cylinder, itemIndex);
 
 	item->setParent(NULL);
-	cylinder->postRemoveNotification(NULL, item, itemIndex, true);
+	cylinder->postRemoveNotification(NULL, item, cylinder, itemIndex, true);
 
 	FreeThing(item);
 	return newItem;

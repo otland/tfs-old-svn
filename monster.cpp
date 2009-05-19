@@ -1143,9 +1143,9 @@ bool Monster::canWalkTo(Position pos, Direction dir)
 	return tile && tile->__queryAdd(0, this, 1, FLAG_PATHFINDING) == RET_NOERROR;
 }
 
-bool Monster::onDeath()
+bool Monster::onDeath(DeathList* deathList/* = NULL*/)
 {
-	if(!Creature::onDeath())
+	if(!Creature::onDeath(deathList))
 		return false;
 
 	setAttackedCreature(NULL);
@@ -1160,24 +1160,35 @@ bool Monster::onDeath()
 	summons.clear();
 	clearTargetList();
 	clearFriendList();
+
 	g_game.removeCreature(this, false);
 	return true;
 }
 
-Item* Monster::getCorpse()
+Item* Monster::createCorpse(DeathList* deathList)
 {
-	Item* corpse = Creature::getCorpse();
-	if(corpse && mostDamageCreature)
-	{
-		uint32_t owner = 0;
-		if(mostDamageCreature->getPlayer())
-			owner = mostDamageCreature->getID();
-		else if(mostDamageCreature->getMaster() && mostDamageCreature->getMaster()->getPlayer())
-			owner = mostDamageCreature->getMaster()->getID();
+	Item* corpse = Creature::createCorpse(deathList);
+	if(!corpse)
+		return NULL;
 
-		if(owner != 0)
-			corpse->setCorpseOwner(owner);
-	}
+	if(!deathList)
+		return corpse;
+
+	Creature* owner = deathList->at(1).getKillerCreature();
+	if(!owner)
+		owner = deathList->at(0).getKillerCreature();
+
+	if(!owner)
+		return corpse;
+
+	uint32_t ownerId = 0;
+	if(owner->getPlayer())
+		ownerId = owner->getID();
+	else if(owner->getMaster() && owner->getMaster()->getPlayer())
+		ownerId = owner->getMaster()->getID();
+
+	if(ownerId)
+		corpse->setCorpseOwner(ownerId);
 
 	return corpse;
 }

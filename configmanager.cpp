@@ -111,6 +111,7 @@ bool ConfigManager::load()
 		m_confNumber[PZ_LOCKED] = getGlobalNumber("pzLocked", 60 * 1000);
 		m_confBool[EXPERIENCE_STAGES] = getGlobalBool("experienceStages", "no");
 		m_confString[DEFAULT_PRIORITY] = getGlobalString("defaultPriority", "high");
+		m_confBool[GUILD_HALLS] = getGlobalBool("guildHalls", "no");
 		#ifndef __LOGIN_SERVER__
 		m_confBool[LOGIN_ONLY_LOGINSERVER] = getGlobalBool("loginOnlyWithLoginServer", "no");
 		#endif
@@ -250,7 +251,8 @@ bool ConfigManager::load()
 	m_confNumber[DEATH_CONTAINER] = getGlobalNumber("deathContainerId", 1987);
 	m_confBool[PREMIUM_SKIP_WAIT] = getGlobalBool("premiumPlayerSkipWaitList", "no");
 	m_confNumber[MAXIMUM_DOOR_LEVEL] = getGlobalNumber("maximumDoorLevel", 500);
-	m_confBool[GUILD_HALLS] = getGlobalBool("guildHalls", "no");
+	m_confBool[DEATH_LIST] = getGlobalBool("deathListEnabled", "yes");
+	m_confNumber[DEATH_ASSISTS] = getGlobalNumber("deathAssistCount", 1);
 
 	m_loaded = true;
 	return true;
