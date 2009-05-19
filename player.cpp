@@ -2279,9 +2279,10 @@ void Player::dropCorpse(DeathList deathList)
 	{
 		if(g_config.getBool(ConfigManager::DEATH_LIST))
 		{
-			int32_t size = deathList.size();
-			if(size > g_config.getNumber(ConfigManager::DEATH_ASSISTS))
-				size = g_config.getNumber(ConfigManager::DEATH_ASSISTS);
+			int32_t size = deathList.size(), tmp = g_config.getNumber(
+				ConfigManager::DEATH_ASSISTS) + 1;
+			if(tmp > 1 && size > tmp)
+				size = tmp;
 
 			DeathList tmpList;
 			tmpList.resize(size, DeathEntry(NULL, -1));
@@ -4284,25 +4285,22 @@ void Player::manageAccount(const std::string &text)
 						}
 					}
 				}
+				else if(!IOLoginData::getInstance()->playerExists(managerString, true))
+				{
+					talkState[1] = true;
+					for(int8_t i = 2; i <= 12; i++)
+						talkState[i] = false;
+
+					if(IOLoginData::getInstance()->createCharacter(managerNumber, managerString, managerNumber2, managerSex))
+						msg << "Your character has been created.";
+					else
+						msg << "Your character couldn't be created, please try again.";
+				}
 				else
 				{
-					if(!IOLoginData::getInstance()->playerExists(managerString, true))
-					{
-						talkState[1] = true;
-						for(int8_t i = 2; i <= 12; i++)
-							talkState[i] = false;
-
-						if(IOLoginData::getInstance()->createCharacter(managerNumber, managerString, managerNumber2, managerSex))
-							msg << "Your character has been created.";
-						else
-							msg << "Your character couldn't be created, please try again.";
-					}
-					else
-					{
-						talkState[6] = true;
-						talkState[9] = false;
-						msg << "A player with that name already exists, please choose another name.";
-					}
+					talkState[6] = true;
+					talkState[9] = false;
+					msg << "A player with that name already exists, please choose another name.";
 				}
 			}
 			else if(talkState[11])
@@ -4420,9 +4418,9 @@ void Player::manageAccount(const std::string &text)
 						managerNumber = id;
 
 						noSwap = talkState[1] = false;
-						msg << "Your account has been created, you may manage it now, but remember your account \
-							name: '" << managerChar << "' and password: '" << managerString << "'! If the \
-							account name is too hard to remember, please note it somewhere.";
+						msg << "Your account has been created, you may manage it now, but remember your account name: '"
+							<< managerChar << "' and password: '" << managerString
+							<< "'! If the account name is too hard to remember, please note it somewhere.";
 					}
 					else
 						msg << "Your account could not be created, please try again.";
@@ -4474,8 +4472,8 @@ void Player::manageAccount(const std::string &text)
 						managerNumber = id;
 
 						noSwap = talkState[1] = false;
-						msg << "Your account has been created, you may manage it now, but remember your account \
-							name: '" << managerChar << "' and password: '" << managerString << "'!";
+						msg << "Your account has been created, you may manage it now, but remember your account name: '"
+							<< managerChar << "' and password: '" << managerString << "'!";
 					}
 					else
 						msg << "Your account could not be created, please try again.";

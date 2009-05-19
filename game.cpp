@@ -507,7 +507,8 @@ Cylinder* Game::internalGetCylinder(Player* player, const Position& pos)
 	return player;
 }
 
-Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index, uint32_t spriteId/*= 0*/, stackposType_t type/*= STACKPOS_NORMAL*/)
+Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index,
+	uint32_t spriteId/*= 0*/, stackposType_t type/*= STACKPOS_NORMAL*/)
 {
 	if(pos.x != 0xFFFF)
 	{
@@ -560,9 +561,6 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 			case STACKPOS_USE: //use item
 			{
 				thing = tile->getTopDownItem();
-				if(!thing)
-					thing = tile->ground; //TODO
-
 				break;
 			}
 
@@ -571,8 +569,9 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 				Item* item = tile->getItemByTopOrder(2);
 				if(!item || !g_actions->hasAction(item))
 				{
-					if(!(thing = tile->getTopDownItem()))
-						thing = tile->getTopTopItem();
+					if(!(thing = tile->getTopDownItem()) &&
+						!(thing = tile->getTopTopItem()))
+						thing = tile->ground;
 				}
 				else
 					thing = item;
@@ -2375,7 +2374,6 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, int16_t stackpo
 
 	if(isHotkey && !g_config.getBool(ConfigManager::AIMBOT_HOTKEY_ENABLED))
 		return false;
-
 	Thing* thing = internalGetThing(player, pos, stackpos, spriteId, STACKPOS_USEITEM);
 	if(!thing)
 	{
