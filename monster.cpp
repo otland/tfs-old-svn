@@ -1171,9 +1171,9 @@ Item* Monster::createCorpse(DeathList deathList)
 	if(!corpse)
 		return NULL;
 
-	Creature* owner = deathList[1].getKillerCreature();
-	if(!owner)
-		owner = deathList[0].getKillerCreature();
+	Creature* owner = deathList[0].getKillerCreature();
+	if(deathList[1] && deathList[1].getKillerCreature())
+		owner = deathList[1].getKillerCreature();
 
 	if(!owner)
 		return corpse;
