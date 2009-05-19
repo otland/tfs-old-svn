@@ -2313,16 +2313,6 @@ Item* Player::createCorpse(DeathList deathList)
 	else
 		ss << deathList[0].getKillerName();
 
-	if(deathList.size() > 1 && (deathList[0].isNameKill() || deathList[0].getKillerCreature()->getMaster()
-		!= deathList[1].getKillerCreature()->getMaster() || asLowerCaseString(
-		deathList[0].getKillerCreature()->getNameDescription()) != asLowerCaseString(
-		deathList[1].getKillerCreature()->getNameDescription())))
-	{
-		ss << " and by " << deathList[1].getKillerCreature()->getNameDescription();
-		if(deathList[1].getKillerCreature()->getMaster())
-			ss << " summoned by " << deathList[1].getKillerCreature()->getMaster()->getNameDescription();
-	}
-
 	ss << ".";
 	corpse->setSpecialDescription(ss.str().c_str());
 	return corpse;
