@@ -4011,6 +4011,8 @@ void Player::manageAccount(const std::string &text)
 {
 	std::stringstream msg;
 	msg << "Account Manager: ";
+
+	bool noSwap = true;
 	switch(accountManager)
 	{
 		case MANAGER_NAMELOCK:
@@ -4417,7 +4419,7 @@ void Player::manageAccount(const std::string &text)
 						accountManager = MANAGER_ACCOUNT;
 						managerNumber = id;
 
-						talkState[1] = false;
+						noSwap = talkState[1] = false;
 						msg << "Your account has been created, you may manage it now, but remember your account \
 							name: '" << managerChar << "' and password: '" << managerString << "'! If the \
 							account name is too hard to remember, please note it somewhere.";
@@ -4451,6 +4453,8 @@ void Player::manageAccount(const std::string &text)
 					msg << "That account name is too long, not more than 25 digits are required. Please select a shorter account name.";
 				else if(!isValidAccountName(tmp))
 					msg << "Your account name contains invalid characters, please choose another one.";
+				else if(asLowerCaseString(tmp) == asLowerCaseString(managerString))
+					msg << "Your account name cannot be same as password, please choose another one.";
 				else
 				{
 					sprintf(managerChar, "%s", tmp.c_str());
@@ -4469,7 +4473,7 @@ void Player::manageAccount(const std::string &text)
 						accountManager = MANAGER_ACCOUNT;
 						managerNumber = id;
 
-						talkState[1] = false;
+						noSwap = talkState[1] = false;
 						msg << "Your account has been created, you may manage it now, but remember your account \
 							name: '" << managerChar << "' and password: '" << managerString << "'!";
 					}
@@ -4538,6 +4542,8 @@ void Player::manageAccount(const std::string &text)
 	}
 
 	sendTextMessage(MSG_STATUS_CONSOLE_BLUE, msg.str().c_str());
+	if(!noSwap)
+		sendTextMessage(MSG_STATUS_CONSOLE_ORANGE, "Hint: Type 'account' to manage your account and if you want to start over then type 'cancel'.");
 }
 
 bool Player::isInvitedToGuild(uint32_t guild_id) const
