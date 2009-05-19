@@ -3,8 +3,8 @@ local config = {
 	maxDeathRecords = getConfigValue('maxDeathRecords'),
 	limit = ""
 }
-if(deathAssistCount > -1) then
-	limit = " LIMIT 0, " .. deathAssistCount + 1
+if(config.deathAssistCount > -1) then
+	config.limit = " LIMIT 0, " .. config.deathAssistCount + 1
 end
 
 function onSay(cid, words, param, channel)
