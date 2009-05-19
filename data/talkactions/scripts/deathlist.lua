@@ -12,28 +12,24 @@ function onSay(cid, words, param, channel)
 
 	local targetName = target:getDataString("name")
 	local targetId = target:getDataInt("id")
-
 	target:free()
-	local str = ""
 
+	local str = ""
 	local deaths = db.getResult("SELECT `id`, `date`, `level` FROM `player_deaths` WHERE `player_id` = " .. targetId .." ORDER BY `date` DESC LIMIT 0, " .. config.maxDeathRecords)
 	if(deaths:getID() ~= -1) then
-		local breakline = ""
 		repeat
 			local killers = db.getResult("SELECT environment_killers.name AS monster_name, players.name AS player_name FROM killers LEFT JOIN environment_killers ON killers.id = environment_killers.kill_id LEFT JOIN player_killers ON killers.id = player_killers.kill_id LEFT JOIN players ON players.id = player_killers.player_id WHERE killers.death_id = " .. deaths:getDataInt("id") .. " ORDER BY killers.final_hit DESC, killers.id ASC LIMIT 0, " .. config.deathAssistCount)
 			if(killers:getID() ~= -1) then
-				local count = killers:getRows(false)
 				if(str ~= "") then
-					breakline = "\n"
+					str = str .. "\n" .. os.date("%d %B %Y %X ", deaths:getDataLong("date"))
+				else
+					str = os.date("%d %B %Y %X ", deaths:getDataLong("date"))
 				end
 
+				local count = killers:getRows(false)
 				local i = 0
 				repeat
 					i = i + 1
-					if(i == 1) then
-						str = str .. breakline .. os.date("%d %B %Y %X ", deaths:getDataLong("date"))
-					end
-
 					if(killers:getDataString("player_name") ~= "") then
 						if(i == 1) then
 							str = str .. "Killed at level " .. deaths:getDataInt("level")
@@ -65,6 +61,7 @@ function onSay(cid, words, param, channel)
 						str = str .. "."
 					end
 				until not(killers:next())
+				killers:free()
 			end
 		until not(deaths:next())
 		deaths:free()
