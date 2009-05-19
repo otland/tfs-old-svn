@@ -160,15 +160,19 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 
 TalkFunction_t TalkAction::definedFunctions[] =
 {
-	{"serverdiag",&serverDiag},
-	{"buyhouse", &buyHouse},
- 	{"sellhouse", &sellHouse},
- 	{"joinguild", &joinGuild},
- 	{"createguild", &createGuild},
-	{"ghost", &ghost},
+	{"housebuy", &houseBuy},
+ 	{"housesell", &houseSell},
+	{"housekick", &houseKick},
+	{"housedoorlist", &houstDoorList},
+	{"houseguestlist", &houseGuestList},
+	{"housesubownerlist", &houseSubOwnerList},
+ 	{"guildjoin", &guildJoin},
+ 	{"guildcreate", &guildCreate},
+	{"thingproporties", &thingProporties},
+	{"banishmentinfo", &banishmentInfo},
+	{"diagnostics",&diagnostics},
 	{"addskill", &addSkill},
-	{"changethingproporties", &changeThingProporties},
-	{"showbanishmentinfo", &showBanishmentInfo}
+	{"ghost", &ghost}
 };
 
 TalkAction::TalkAction(LuaScriptInterface* _interface):
@@ -298,59 +302,7 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, con
 	}
 }
 
-bool TalkAction::serverDiag(Creature* creature, const std::string& cmd, const std::string& param)
-{
-	Player* player = creature->getPlayer();
-	if(!player)
-		return false;
-
-#ifdef __ENABLE_SERVER_DIAGNOSTIC__
-	std::stringstream text;
-	text << "Server diagonostic:\n";
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
-
-	text.str("");
-	text << "World:" << "\n";
-	text << "--------------------\n";
-	text << "Player: " << g_game.getPlayersOnline() << " (" << Player::playerCount << ")\n";
-	text << "Npc: " << g_game.getNpcsOnline() << " (" << Npc::npcCount << ")\n";
-	text << "Monster: " << g_game.getMonstersOnline() << " (" << Monster::monsterCount << ")\n";
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
-
-	text.str("");
-	text << "Protocols:" << "\n";
-	text << "--------------------\n";
-	text << "ProtocolGame: " << ProtocolGame::protocolGameCount << "\n";
-	text << "ProtocolLogin: " << ProtocolLogin::protocolLoginCount << "\n";
-#ifdef __REMOTE_CONTROL__
-	text << "ProtocolAdmin: " << ProtocolAdmin::protocolAdminCount << "\n";
-#endif
-	text << "ProtocolStatus: " << ProtocolStatus::protocolStatusCount << "\n";
-	text << "ProtocolOld: " << ProtocolOld::protocolOldCount << "\n\n";
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
-
-	text.str("");
-	text << "Connections:\n";
-	text << "--------------------\n";
-	text << "Active connections: " << Connection::connectionCount << "\n";
-	text << "Total message pool: " << OutputMessagePool::getInstance()->getTotalMessageCount() << "\n";
-	text << "Auto message pool: " << OutputMessagePool::getInstance()->getAutoMessageCount() << "\n";
-	text << "Free message pool: " << OutputMessagePool::getInstance()->getAvailableMessageCount() << "\n";
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
-
-	text.str("");
-	text << "Libraries:\n";
-	text << "--------------------\n";
-	text << "asio: " << BOOST_ASIO_VERSION << "\n";
-	text << "XML: " << XML_DEFAULT_VERSION << "\n";
-	text << "Lua: " << LUA_VERSION << "\n";
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
-
-#endif
-	return true;
-}
-
-bool TalkAction::buyHouse(Creature* creature, const std::string& cmd, const std::string& param)
+bool TalkAction::houseBuy(Creature* creature, const std::string& cmd, const std::string& param)
 {
 	Player* player = creature->getPlayer();
 	if(!player || !g_config.getBool(ConfigManager::HOUSE_BUY_AND_SELL))
@@ -456,7 +408,7 @@ bool TalkAction::buyHouse(Creature* creature, const std::string& cmd, const std:
 	return true;
 }
 
-bool TalkAction::sellHouse(Creature* creature, const std::string& cmd, const std::string& param)
+bool TalkAction::houseSell(Creature* creature, const std::string& cmd, const std::string& param)
 {
 	Player* player = creature->getPlayer();
 	if(!player || !g_config.getBool(ConfigManager::HOUSE_BUY_AND_SELL))
@@ -558,7 +510,95 @@ bool TalkAction::sellHouse(Creature* creature, const std::string& cmd, const std
 	return true;
 }
 
-bool TalkAction::joinGuild(Creature* creature, const std::string& cmd, const std::string& param)
+bool TalkAction::houseKick(Creature* creature, const std::string& cmd, const std::string& param)
+{
+	Player* targetPlayer = NULL;
+	if(g_game.getPlayerByNameWildcard(param, targetPlayer) != RET_NOERROR)
+		targetPlayer = creature->getPlayer();
+
+	House* house = Houses::getInstance().getHouseByPlayer(targetPlayer);
+	if(house && house->kickPlayer(creature->getPlayer(), targetPlayer))
+		return true;
+
+	g_game.addMagicEffect(creature->getPosition(), NM_ME_POFF);
+	creature->getPlayer()->sendCancelMessage(RET_NOTPOSSIBLE);
+	return false;
+}
+
+bool TalkAction::houseDoorList(Creature* creature, const std::string& cmd, const std::string& param)
+{
+	Player* player = creature->getPlayer();
+	if(!player)
+		return false;
+
+	House* house = Houses::getInstance().getHouseByPlayer(player);
+	if(!house)
+		return false;
+
+	Door* door = house->getDoorByPosition(getNextPosition(player->getDirection(), player->getPosition()));
+	if(door && house->canEditAccessList(door->getDoorId(), player))
+	{
+		player->setEditHouse(house, door->getDoorId());
+		player->sendHouseWindow(house, door->getDoorId());
+	}
+	else
+	{
+		player->sendCancelMessage(RET_NOTPOSSIBLE);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+	}
+
+	return true;
+}
+
+bool TalkAction::houseGuestList(Creature* creature, const std::string& cmd, const std::string& param)
+{
+	Player* player = creature->getPlayer();
+	if(!player)
+		return false;
+
+	House* house = Houses::getInstance().getHouseByPlayer(player);
+	if(!house)
+		return false;
+
+	if(house->canEditAccessList(GUEST_LIST, player))
+	{
+		player->setEditHouse(house, GUEST_LIST);
+		player->sendHouseWindow(house, GUEST_LIST);
+	}
+	else
+	{
+		player->sendCancelMessage(RET_NOTPOSSIBLE);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+	}
+
+	return true;
+}
+
+bool TalkAction::houseSubOwnerList(Creature* creature, const std::string& cmd, const std::string& param)
+{
+	Player* player = creature->getPlayer();
+	if(!player)
+		return false;
+
+	House* house = Houses::getInstance().getHouseByPlayer(player);
+	if(!house)
+		return false;
+
+	if(house->canEditAccessList(SUBOWNER_LIST, player))
+	{
+		player->setEditHouse(house, SUBOWNER_LIST);
+		player->sendHouseWindow(house, SUBOWNER_LIST);
+	}
+	else
+	{
+		player->sendCancelMessage(RET_NOTPOSSIBLE);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+	}
+
+	return true;
+}
+
+bool TalkAction::guildJoin(Creature* creature, const std::string& cmd, const std::string& param)
 {
 	Player* player = creature->getPlayer();
 	if(!player || !g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
@@ -593,7 +633,7 @@ bool TalkAction::joinGuild(Creature* creature, const std::string& cmd, const std
 	return true;
 }
 
-bool TalkAction::createGuild(Creature* creature, const std::string& cmd, const std::string& param)
+bool TalkAction::guildCreate(Creature* creature, const std::string& cmd, const std::string& param)
 {
 	Player* player = creature->getPlayer();
 	if(!player || !g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
@@ -661,128 +701,7 @@ bool TalkAction::createGuild(Creature* creature, const std::string& cmd, const s
 	return true;
 }
 
-bool TalkAction::ghost(Creature* creature, const std::string& cmd, const std::string& param)
-{
-	Player* player = creature->getPlayer();
-	if(!player)
-		return false;
-
-	bool added = true;
-	Condition* condition = NULL;
-	if((condition = player->getCondition(CONDITION_GAMEMASTER, CONDITIONID_DEFAULT, GAMEMASTER_INVISIBLE)))
-	{
-		player->removeCondition(condition);
-		added = false;
-	}
-	else if((condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_GAMEMASTER, -1, 0, false, GAMEMASTER_INVISIBLE)))
-		player->addCondition(condition);
-
-	SpectatorVec list;
-	SpectatorVec::const_iterator it;
-	g_game.getSpectators(list, player->getPosition(), true);
-
-	int32_t index = player->getTopParent()->__getIndexOfThing(player);
-	Player* tmpPlayer = NULL;
-	for(it = list.begin(); it != list.end(); ++it)
-	{
-		if((tmpPlayer = (*it)->getPlayer()))
-		{
-			tmpPlayer->sendCreatureChangeVisible(player, !added);
-			if(tmpPlayer != player && !tmpPlayer->canSeeGhost(player))
-			{
-				if(added)
-				{
-					tmpPlayer->sendCreatureDisappear(player, index, true);
-					tmpPlayer->sendMagicEffect(player->getPosition(), NM_ME_POFF);
-				}
-				else
-					tmpPlayer->sendCreatureAppear(player, player->getPosition(), index, true);
-
-				tmpPlayer->sendUpdateTile(player->getTile(), player->getPosition());
-			}
-		}
-	}
-
-	for(it = list.begin(); it != list.end(); ++it)
-		(*it)->onUpdateTile(player->getTile(), player->getPosition());
-
-	if(added)
-	{
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		{
-			if(!it->second->canSeeGhost(player))
-				it->second->notifyLogOut(player);
-		}
-
-		Status::getInstance()->removePlayer();
-		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), false);
-		player->sendTextMessage(MSG_INFO_DESCR, "You are now invisible.");
-	}
-	else
-	{
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		{
-			if(!it->second->canSeeGhost(player))
-				it->second->notifyLogIn(player);
-		}
-
-		Status::getInstance()->addPlayer();
-		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), true);
-		player->sendTextMessage(MSG_INFO_DESCR, "You are visible again.");
-	}
-
-	return true;
-}
-
-bool TalkAction::addSkill(Creature* creature, const std::string& cmd, const std::string& param)
-{
-	Player* player = creature->getPlayer();
-	if(!player)
-		return false;
-
-	StringVec params = explodeString(param, ",");
-	if(params.size() < 2)
-	{
-		player->sendTextMessage(MSG_STATUS_SMALL, "Command requires at least 2 parameters.");
-		return true;
-	}
-
-	uint32_t amount = 1;
-	if(params.size() > 2)
-	{
-		std::string tmp = params[2];
-		trimString(tmp);
-		amount = (uint32_t)std::max(1, atoi(tmp.c_str()));
-	}
-
-	std::string name = params[0], skill = params[1];
-	trimString(name);
-	trimString(skill);
-
-	Player* target = NULL;
-	ReturnValue ret = g_game.getPlayerByNameWildcard(name, target);
-	if(ret != RET_NOERROR)
-	{
-		player->sendCancelMessage(ret);
-		return true;
-	}
-
-	if(skill[0] == 'l' || skill[0] == 'e')
-		target->addExperience(uint64_t(Player::getExpForLevel(target->getLevel() + amount) - target->getExperience()));
-	else if(skill[0] == 'm')
-		target->addManaSpent((uint64_t)std::ceil(double(target->getVocation()->getReqMana(target->getMagicLevel() +
-			amount) - target->getSpentMana()) / g_config.getDouble(ConfigManager::RATE_MAGIC)), true, false);
-	else
-	{
-		skills_t skillId = getSkillId(skill);
-		target->addSkillAdvance(skillId, (uint32_t)std::ceil(double(target->getVocation()->getReqSkillTries(skillId, (target->getSkill(skillId,
-			SKILL_LEVEL) + amount)) - target->getSkill(skillId, SKILL_TRIES)) / g_config.getDouble(ConfigManager::RATE_SKILL)), false);
-	}
-
-	return true;
-}
-
-bool TalkAction::changeThingProporties(Creature* creature, const std::string& cmd, const std::string& param)
+bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, const std::string& param)
 {
 	Player* player = creature->getPlayer();
 	if(!player)
@@ -963,7 +882,7 @@ bool TalkAction::changeThingProporties(Creature* creature, const std::string& cm
 	return true;
 }
 
-bool TalkAction::showBanishmentInfo(Creature* creature, const std::string& cmd, const std::string& param)
+bool TalkAction::banishmentInfo(Creature* creature, const std::string& cmd, const std::string& param)
 {
 	Player* player = creature->getPlayer();
 	if(!player)
@@ -997,6 +916,179 @@ bool TalkAction::showBanishmentInfo(Creature* creature, const std::string& cmd, 
 	}
 	else
 		player->sendCancel("That player or account is not banished or deleted.");
+
+	return true;
+}
+
+bool TalkAction::diagnostics(Creature* creature, const std::string& cmd, const std::string& param)
+{
+	Player* player = creature->getPlayer();
+	if(!player)
+		return false;
+
+#ifdef __ENABLE_SERVER_DIAGNOSTIC__
+	std::stringstream text;
+	text << "Server diagonostic:\n";
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
+
+	text.str("");
+	text << "World:" << "\n";
+	text << "--------------------\n";
+	text << "Player: " << g_game.getPlayersOnline() << " (" << Player::playerCount << ")\n";
+	text << "Npc: " << g_game.getNpcsOnline() << " (" << Npc::npcCount << ")\n";
+	text << "Monster: " << g_game.getMonstersOnline() << " (" << Monster::monsterCount << ")\n";
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
+
+	text.str("");
+	text << "Protocols:" << "\n";
+	text << "--------------------\n";
+	text << "ProtocolGame: " << ProtocolGame::protocolGameCount << "\n";
+	text << "ProtocolLogin: " << ProtocolLogin::protocolLoginCount << "\n";
+#ifdef __REMOTE_CONTROL__
+	text << "ProtocolAdmin: " << ProtocolAdmin::protocolAdminCount << "\n";
+#endif
+	text << "ProtocolStatus: " << ProtocolStatus::protocolStatusCount << "\n";
+	text << "ProtocolOld: " << ProtocolOld::protocolOldCount << "\n\n";
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
+
+	text.str("");
+	text << "Connections:\n";
+	text << "--------------------\n";
+	text << "Active connections: " << Connection::connectionCount << "\n";
+	text << "Total message pool: " << OutputMessagePool::getInstance()->getTotalMessageCount() << "\n";
+	text << "Auto message pool: " << OutputMessagePool::getInstance()->getAutoMessageCount() << "\n";
+	text << "Free message pool: " << OutputMessagePool::getInstance()->getAvailableMessageCount() << "\n";
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
+
+	text.str("");
+	text << "Libraries:\n";
+	text << "--------------------\n";
+	text << "asio: " << BOOST_ASIO_VERSION << "\n";
+	text << "XML: " << XML_DEFAULT_VERSION << "\n";
+	text << "Lua: " << LUA_VERSION << "\n";
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
+
+#endif
+	return true;
+}
+
+bool TalkAction::addSkill(Creature* creature, const std::string& cmd, const std::string& param)
+{
+	Player* player = creature->getPlayer();
+	if(!player)
+		return false;
+
+	StringVec params = explodeString(param, ",");
+	if(params.size() < 2)
+	{
+		player->sendTextMessage(MSG_STATUS_SMALL, "Command requires at least 2 parameters.");
+		return true;
+	}
+
+	uint32_t amount = 1;
+	if(params.size() > 2)
+	{
+		std::string tmp = params[2];
+		trimString(tmp);
+		amount = (uint32_t)std::max(1, atoi(tmp.c_str()));
+	}
+
+	std::string name = params[0], skill = params[1];
+	trimString(name);
+	trimString(skill);
+
+	Player* target = NULL;
+	ReturnValue ret = g_game.getPlayerByNameWildcard(name, target);
+	if(ret != RET_NOERROR)
+	{
+		player->sendCancelMessage(ret);
+		return true;
+	}
+
+	if(skill[0] == 'l' || skill[0] == 'e')
+		target->addExperience(uint64_t(Player::getExpForLevel(target->getLevel() + amount) - target->getExperience()));
+	else if(skill[0] == 'm')
+		target->addManaSpent((uint64_t)std::ceil(double(target->getVocation()->getReqMana(target->getMagicLevel() +
+			amount) - target->getSpentMana()) / g_config.getDouble(ConfigManager::RATE_MAGIC)), true, false);
+	else
+	{
+		skills_t skillId = getSkillId(skill);
+		target->addSkillAdvance(skillId, (uint32_t)std::ceil(double(target->getVocation()->getReqSkillTries(skillId, (target->getSkill(skillId,
+			SKILL_LEVEL) + amount)) - target->getSkill(skillId, SKILL_TRIES)) / g_config.getDouble(ConfigManager::RATE_SKILL)), false);
+	}
+
+	return true;
+}
+
+bool TalkAction::ghost(Creature* creature, const std::string& cmd, const std::string& param)
+{
+	Player* player = creature->getPlayer();
+	if(!player)
+		return false;
+
+	bool added = true;
+	Condition* condition = NULL;
+	if((condition = player->getCondition(CONDITION_GAMEMASTER, CONDITIONID_DEFAULT, GAMEMASTER_INVISIBLE)))
+	{
+		player->removeCondition(condition);
+		added = false;
+	}
+	else if((condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_GAMEMASTER, -1, 0, false, GAMEMASTER_INVISIBLE)))
+		player->addCondition(condition);
+
+	SpectatorVec list;
+	SpectatorVec::const_iterator it;
+	g_game.getSpectators(list, player->getPosition(), true);
+
+	int32_t index = player->getTopParent()->__getIndexOfThing(player);
+	Player* tmpPlayer = NULL;
+	for(it = list.begin(); it != list.end(); ++it)
+	{
+		if((tmpPlayer = (*it)->getPlayer()))
+		{
+			tmpPlayer->sendCreatureChangeVisible(player, !added);
+			if(tmpPlayer != player && !tmpPlayer->canSeeGhost(player))
+			{
+				if(added)
+				{
+					tmpPlayer->sendCreatureDisappear(player, index, true);
+					tmpPlayer->sendMagicEffect(player->getPosition(), NM_ME_POFF);
+				}
+				else
+					tmpPlayer->sendCreatureAppear(player, player->getPosition(), index, true);
+
+				tmpPlayer->sendUpdateTile(player->getTile(), player->getPosition());
+			}
+		}
+	}
+
+	for(it = list.begin(); it != list.end(); ++it)
+		(*it)->onUpdateTile(player->getTile(), player->getPosition());
+
+	if(added)
+	{
+		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		{
+			if(!it->second->canSeeGhost(player))
+				it->second->notifyLogOut(player);
+		}
+
+		Status::getInstance()->removePlayer();
+		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), false);
+		player->sendTextMessage(MSG_INFO_DESCR, "You are now invisible.");
+	}
+	else
+	{
+		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		{
+			if(!it->second->canSeeGhost(player))
+				it->second->notifyLogIn(player);
+		}
+
+		Status::getInstance()->addPlayer();
+		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), true);
+		player->sendTextMessage(MSG_INFO_DESCR, "You are visible again.");
+	}
 
 	return true;
 }

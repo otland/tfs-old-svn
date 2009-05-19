@@ -57,8 +57,8 @@ class TalkActions : public BaseEvents
 };
 
 typedef bool (TalkFunction)(Creature* creature, const std::string& words, const std::string& param);
-struct TalkFunction_t;
 
+struct TalkFunction_t;
 class TalkAction : public Event
 {
 	public:
@@ -87,15 +87,19 @@ class TalkAction : public Event
 		virtual std::string getScriptEventName() const {return "onSay";}
 		virtual std::string getScriptEventParams() const {return "cid, words, param, channel";}
 
-		static TalkFunction serverDiag;
-		static TalkFunction sellHouse;
-		static TalkFunction buyHouse;
-		static TalkFunction joinGuild;
-		static TalkFunction createGuild;
-		static TalkFunction ghost;
+		static TalkFunction houseBuy;
+		static TalkFunction houseSell;
+		static TalkFunction houseKick;
+		static TalkFunction houseDoorList;
+		static TalkFunction houseGuestList;
+		static TalkFunction houseSubOwnerList;
+		static TalkFunction guildJoin;
+		static TalkFunction guildCreate;
+		static TalkFunction thingProporties;
+		static TalkFunction banishmentInfo;
+		static TalkFunction diagnostics;
 		static TalkFunction addSkill;
-		static TalkFunction changeThingProporties;
-		static TalkFunction showBanishmentInfo;
+		static TalkFunction ghost;
 
 		std::string m_words;
 		TalkActionFilter m_filter;

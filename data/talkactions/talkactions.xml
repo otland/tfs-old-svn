@@ -2,8 +2,8 @@
 <talkactions>
 	<!-- Gods -->
 	<talkaction log="yes" words="/addskill" access="5" event="function" value="addSkill"/>
-	<talkaction log="yes" words="/attr" access="5" event="function" value="changeThingProporties"/>
-	<talkaction log="yes" words="/serverdiag" access="5" event="function" value="serverDiag"/>
+	<talkaction log="yes" words="/attr" access="5" event="function" value="thingProporties"/>
+	<talkaction log="yes" words="/serverdiag" access="5" event="function" value="diagnostics"/>
 	<talkaction log="yes" words="/closeserver" access="5" event="script" value="closeopen.lua"/>
 	<talkaction log="yes" words="/openserver" access="5" event="script" value="closeopen.lua"/>
 	<talkaction log="yes" access="5" words="/shutdown" event="script" value="shutdown.lua"/>
@@ -51,17 +51,21 @@
 	<talkaction log="yes" access="2" words="/b" event="script" value="broadcast.lua"/>
 
 	<!-- Tutors -->
-	<talkaction log="yes" words="/baninfo" access="1" event="function" value="showBanishmentInfo"/>
+	<talkaction log="yes" words="/baninfo" access="1" event="function" value="banishmentInfo"/>
 	<talkaction log="yes" access="1" words="!pos" event="script" value="position.lua"/>
 
 	<!-- Players -->
-	<talkaction words="!buyhouse" event="function" value="buyHouse"/>
-	<talkaction words="!sellhouse" event="function" value="sellHouse"/>
-	<talkaction words="!createguild" event="function" value="createGuild"/>
-	<talkaction words="!joinguild" event="function" value="joinGuild"/>
+	<talkaction words="alana res" event="function" value="houseBuy"/>
+	<talkaction words="alana grav" event="function" value="houseSell"/>
+	<talkaction words="alana sio" event="function" value="houseKick"/>
+	<talkaction words="aleta grav" event="function" value="houseDoorList"/>
+	<talkaction words="aleta sio" event="function" value="houseGuestList"/>
+	<talkaction words="aleta som" event="function" value="houseSubOwnerList"/>
+	<talkaction words="!createguild" event="function" value="guildCreate"/>
+	<talkaction words="!joinguild" event="function" value="guildJoin"/>
 	<talkaction words="!frags" event="script" value="frags.lua"/>
 	<talkaction words="!buypremium" event="script" value="buypremium.lua"/>
-	<talkaction words="!leavehouse" event="script" value="leavehouse.lua"/>
+	<talkaction words="alana som" event="script" value="leavehouse.lua"/>
 	<talkaction words="/online" event="script" value="online.lua"/>
 	<talkaction words="!changender" event="script" value="changender.lua"/>
 	<talkaction words="/uptime" event="script" value="uptime.lua"/>

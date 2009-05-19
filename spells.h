@@ -196,10 +196,6 @@ class InstantSpell : public TalkAction, public Spell
 		virtual std::string getScriptEventName() const {return "onCastSpell";}
 		virtual std::string getScriptEventParams() const {return "cid, var";}
 
-		static InstantSpellFunction HouseGuestList;
-		static InstantSpellFunction HouseSubOwnerList;
-		static InstantSpellFunction HouseDoorList;
-		static InstantSpellFunction HouseKick;
 		static InstantSpellFunction SearchPlayer;
 		static InstantSpellFunction SummonMonster;
 		static InstantSpellFunction Levitate;

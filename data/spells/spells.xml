@@ -574,10 +574,4 @@
 		<vocation name="Sorcerer"/>
 		<vocation name="Master Sorcerer"/>
 	</instant>
-
-	<!-- House Spells -->
-	<instant name="House Guest List" words="aleta sio" selftarget="1" event="function" value="editHouseGuest"/>
-	<instant name="House Subowner List" words="aleta som" selftarget="1" event="function" value="editHouseSubOwner"/>
-	<instant name="House Door List" words="aleta grav" selftarget="1" event="function" value="editHouseDoor"/>
-	<instant name="House Kick" words="alana sio" params="1" event="function" value="houseKick"/>
 </spells>
