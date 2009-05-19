@@ -925,26 +925,8 @@ bool InstantSpell::configureEvent(xmlNodePtr p)
 bool InstantSpell::loadFunction(const std::string& functionName)
 {
 	std::string tmpFunctionName = asLowerCaseString(functionName);
-	if(tmpFunctionName == "edithouseguest")
-	{
-		isAggressive = false;
-		function = HouseGuestList;
-	}
-	else if(tmpFunctionName == "edithousesubowner")
-	{
-		isAggressive = false;
-		function = HouseSubOwnerList;
-	}
-	else if(tmpFunctionName == "edithousedoor")
-	{
-		isAggressive = false;
-		function = HouseDoorList;
-	}
-	else if(tmpFunctionName == "housekick")
-	{
-		isAggressive = false;
-		function = HouseKick;
-	}
+	if(tmpFunctionName == "summonmonster")
+		function = SummonMonster;
 	else if(tmpFunctionName == "searchplayer")
 	{
 		isAggressive = false;
@@ -960,8 +942,6 @@ bool InstantSpell::loadFunction(const std::string& functionName)
 		isAggressive = false;
 		function = Illusion;
 	}
-	else if(tmpFunctionName == "summonmonster")
-		function = SummonMonster;
 	else
 	{
 		std::cout << "[Warning - InstantSpell::loadFunction] Function \"" << functionName << "\" does not exist." << std::endl;

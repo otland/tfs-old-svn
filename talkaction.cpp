@@ -158,23 +158,6 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 	return false;
 }
 
-TalkFunction_t TalkAction::definedFunctions[] =
-{
-	{"housebuy", &houseBuy},
- 	{"housesell", &houseSell},
-	{"housekick", &houseKick},
-	{"housedoorlist", &houstDoorList},
-	{"houseguestlist", &houseGuestList},
-	{"housesubownerlist", &houseSubOwnerList},
- 	{"guildjoin", &guildJoin},
- 	{"guildcreate", &guildCreate},
-	{"thingproporties", &thingProporties},
-	{"banishmentinfo", &banishmentInfo},
-	{"diagnostics",&diagnostics},
-	{"addskill", &addSkill},
-	{"ghost", &ghost}
-};
-
 TalkAction::TalkAction(LuaScriptInterface* _interface):
 Event(_interface)
 {
@@ -229,18 +212,40 @@ bool TalkAction::configureEvent(xmlNodePtr p)
 bool TalkAction::loadFunction(const std::string& functionName)
 {
 	std::string tmpFunctionName = asLowerCaseString(functionName);
-	for(uint32_t i = 0; i < sizeof(definedFunctions) / sizeof(definedFunctions[0]); i++)
+	if(tmpFunctionName == "housebuy")
+		function = houseBuy;
+ 	else if(tmpFunctionName == "housesell")
+		function = houseSell;
+	else if(tmpFunctionName == "housekick")
+		function = houseKick;
+	else if(tmpFunctionName == "housedoorlist")
+		function = houseDoorList;
+	else if(tmpFunctionName == "houseguestlist")
+		function = houseGuestList;
+	else if(tmpFunctionName == "housesubownerlist")
+		function = houseSubOwnerList;
+ 	else if(tmpFunctionName == "guildjoin")
+		function = guildJoin;
+ 	else if(tmpFunctionName == "guildcreate")
+		function = guildCreate;
+	else if(tmpFunctionName == "thingproporties")
+		function = thingProporties;
+	else if(tmpFunctionName == "banishmentinfo")
+		function = banishmentInfo;
+	else if(tmpFunctionName == "diagnostics")
+		function = diagnostics;
+	else if(tmpFunctionName == "addskill")
+		function = addSkill;
+	else if(tmpFunctionName == "ghost")
+		function = ghost;
+	else
 	{
-		if(tmpFunctionName == definedFunctions[i].name)
-		{
-			function = definedFunctions[i].callback;
-			m_scripted = EVENT_SCRIPT_FALSE;
-			return true;
-		}
+		std::cout << "[Warning - TalkAction::loadFunction] Function \"" << functionName << "\" does not exist." << std::endl;
+		return false;
 	}
 
-	std::cout << "[Warning - TalkAction::loadFunction] Function \"" << functionName << "\" does not exist." << std::endl;
-	return false;
+	m_scripted = EVENT_SCRIPT_FALSE;
+	return true;
 }
 
 int32_t TalkAction::executeSay(Creature* creature, const std::string& words, const std::string& param, uint16_t channel)

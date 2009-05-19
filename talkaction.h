@@ -57,8 +57,6 @@ class TalkActions : public BaseEvents
 };
 
 typedef bool (TalkFunction)(Creature* creature, const std::string& words, const std::string& param);
-
-struct TalkFunction_t;
 class TalkAction : public Event
 {
 	public:
@@ -82,8 +80,6 @@ class TalkAction : public Event
 		bool isSensitive() const {return m_sensitive;}
 
 	protected:
-		static TalkFunction_t definedFunctions[];
-
 		virtual std::string getScriptEventName() const {return "onSay";}
 		virtual std::string getScriptEventParams() const {return "cid, words, param, channel";}
 
@@ -107,11 +103,5 @@ class TalkAction : public Event
 		int32_t m_channel;
 		bool m_logged, m_sensitive;
 		StringVec m_exceptions;
-};
-
-struct TalkFunction_t
-{
-	const char* name;
-	TalkFunction* callback;
 };
 #endif
