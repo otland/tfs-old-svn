@@ -3603,29 +3603,34 @@ void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)
 	}
 }
 
-bool Player::onKilledCreature(Creature* target)
+bool Player::onKilledCreature(Creature* target, bool lastHit)
 {
+	if(!Creature::onKilledCreature(target, lastHit))
+		return false;
+
+	if(!lastHit)
+		return true;
+
 	if(hasFlag(PlayerFlag_NotGenerateLoot))
 		target->setDropLoot(LOOT_DROP_NONE);
 
-	if(!Creature::onKilledCreature(target))
-		return false;
+	if(hasFlag(PlayerFlag_NotGainInFight))
+		return true;
 
 	Player* targetPlayer = target->getPlayer();
-	if(!hasFlag(PlayerFlag_NotGainInFight) && targetPlayer &&
-		getZone() == target->getZone() && !Combat::isInPvpZone(this, targetPlayer))
-	{
-		if(!isPartner(targetPlayer) && !targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE)
-			addUnjustifiedDead(targetPlayer);
+	if(!targetPlayer || getZone() != target->getZone() || Combat::isInPvpZone(this, targetPlayer))
+		return true;
 
-		if(hasCondition(CONDITION_INFIGHT))
-		{
-			pzLocked = true;
-			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
-				CONDITION_INFIGHT, g_config.getNumber(ConfigManager::WHITE_SKULL_TIME)))
-				addCondition(condition);
-		}
-	}
+	if(!isPartner(targetPlayer) && !targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE)
+		addUnjustifiedDead(targetPlayer);
+
+	if(!hasCondition(CONDITION_INFIGHT))
+		return true;
+
+	pzLocked = true;
+	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
+		CONDITION_INFIGHT, g_config.getNumber(ConfigManager::WHITE_SKULL_TIME)))
+		addCondition(condition);
 
 	return true;
 }

@@ -681,8 +681,14 @@ bool Creature::onDeath()
 	}
 
 	if(deny || (deathList[0].isCreatureKill() &&
-		!deathList[0].getKillerCreature()->onKilledCreature(this)))
+		!deathList[0].getKillerCreature()->onKilledCreature(this, true)))
 		return false;
+
+	for(DeathList::iterator it = deathList.begin() + 1; it != deathList.end(); ++it)
+	{
+		if(it->isCreatureKill())
+			it->getKillerCreature()->onKilledCreature(this, false);
+	}
 
 	Creature* attacker = NULL;
 	for(CountMap::iterator it = damageMap.begin(); it != damageMap.end(); ++it)
@@ -1162,20 +1168,28 @@ void Creature::onAttackedCreatureKilled(Creature* target)
 		onGainExperience(target->getGainedExperience(this));
 }
 
-bool Creature::onKilledCreature(Creature* target)
+bool Creature::onKilledCreature(Creature* target, bool lastHit)
 {
-	bool ret = true;
+	bool result = true;
 	if(getMaster())
-		ret = getMaster()->onKilledCreature(target);
+		result = getMaster()->onKilledCreature(target, lastHit);
 
 	CreatureEventList killEvents = getCreatureEvents(CREATURE_EVENT_KILL);
-	for(CreatureEventList::iterator it = killEvents.begin(); it != killEvents.end(); ++it)
+	if(lastHit)
 	{
-		if(!(*it)->executeKill(this, target))
-			ret = false;
+		for(CreatureEventList::iterator it = killEvents.begin(); it != killEvents.end(); ++it)
+		{
+			if(!(*it)->executeKill(this, target, true) && result)
+				result = false;
+		}
+	}
+	else
+	{
+		for(CreatureEventList::iterator it = killEvents.begin(); it != killEvents.end(); ++it)
+			(*it)->executeKill(this, target, false);
 	}
 
-	return ret;
+	return result;
 }
 
 void Creature::onGainExperience(uint64_t gainExp)

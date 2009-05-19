@@ -1,5 +1,6 @@
 local config = {
-	displayLimit = 10
+	maxDeathRecords = getConfigValue('maxDeathRecords'),
+	deathAssistCount = getConfigValue('deathAssistCount')
 }
 
 function onSay(cid, words, param, channel)
@@ -10,42 +11,62 @@ function onSay(cid, words, param, channel)
 	end
 
 	local targetName = target:getDataString("name")
-	local targetGUID = target:getDataInt("id")
-	target:free()
+	local targetId = target:getDataInt("id")
 
+	target:free()
 	local str = ""
-	local deaths = db.getResult("SELECT `time`, `level`, `killed_by`, `altkilled_by` FROM `player_deaths` WHERE `player_id` = " .. targetGUID .. " ORDER BY `time` DESC;")
+
+	local deaths = db.getResult("SELECT `id`, `date`, `level` FROM `player_deaths` WHERE `player_id` = " .. targetId .." ORDER BY `date` DESC LIMIT 0, " .. config.maxDeathRecords)
 	if(deaths:getID() ~= -1) then
-		local n = 0
 		local breakline = ""
 		repeat
-			n = n + 1
-			if(str ~= "") then
-				breakline = "\n"
-			end
-
-			local time = os.date("%d %B %Y %X ", deaths:getDataInt("time"))
-			local level = deaths:getDataInt("level")
-			local lastHitKiller = deaths:getDataString("killed_by")
-			local mostDamageKiller = deaths:getDataString("altkilled_by")
-
-			local killed = ""
-			if(tonumber(lastHitKiller)) then
-				killed = getPlayerNameByGUID(tonumber(lastHitKiller))
-			else
-				killed = getArticle(lastHitKiller) .. " " .. string.lower(lastHitKiller)
-			end
-
-			if(mostDamageKiller ~= "") then
-				if(tonumber(mostDamageKiller)) then
-					killed = killed .. " and by " .. getPlayerNameByGUID(tonumber(mostDamageKiller))
-				else
-					killed = killed .. " and by " .. getArticle(mostDamageKiller) .. " " .. string.lower(mostDamageKiller)
+			local killers = db.getResult("SELECT environment_killers.name AS monster_name, players.name AS player_name FROM killers LEFT JOIN environment_killers ON killers.id = environment_killers.kill_id LEFT JOIN player_killers ON killers.id = player_killers.kill_id LEFT JOIN players ON players.id = player_killers.player_id WHERE killers.death_id = " .. deaths:getDataInt("id") .. " ORDER BY killers.final_hit DESC, killers.id ASC LIMIT 0, " .. config.deathAssistCount)
+			if(killers:getID() ~= -1) then
+				local count = killers:getRows(false)
+				if(str ~= "") then
+					breakline = "\n"
 				end
-			end
 
-			str = str .. breakline .. " " .. time .. "  Died at Level " .. level .. " by " .. killed .. "."
-		until not(deaths:next()) or n > config.displayLimit
+				local i = 0
+				repeat
+					i = i + 1
+					if(i == 1) then
+						str = str .. breakline .. os.date("%d %B %Y %X ", deaths:getDataLong("date"))
+					end
+
+					if(killers:getDataString("player_name") ~= "") then
+						if(i == 1) then
+							str = str .. "Killed at level " .. deaths:getDataInt("level")
+						elseif(i == count) then
+							str = str .. " and"
+						else
+							str = str .. ","
+						end
+
+						str = str .. " by "
+						if(killers:getDataString("monster_name") ~= "") then
+							str = str .. killers:getDataString("monster_name") .. " summoned by "
+						end
+
+						str = str .. killers:getDataString("player_name")
+					else
+						if(i == 1) then
+							str = str .. "Died at level " .. deaths:getDataInt("level")
+						elseif(i == count) then
+							str = str .. " and"
+						else
+							str = str .. ","
+						end
+
+						str = str .. " by " .. killers:getDataString("monster_name")
+					end
+
+					if(i == count) then
+						str = str .. "."
+					end
+				until not(killers:next())
+			end
+		until not(deaths:next())
 		deaths:free()
 	else
 		str = "No deaths recorded."

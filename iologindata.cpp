@@ -1030,7 +1030,7 @@ bool IOLoginData::playerDeath(Player* player, const DeathList& dl)
 
 	uint64_t deathId = db->getLastInsertId();
 	DeathList::const_iterator it = dl.begin();
-	for(int32_t i = 0; i < size; ++it, ++i)
+	for(int32_t i = 0; i < size && it != dl.end(); ++it, ++i)
 	{
 		query.str("");
 		query << "INSERT INTO `killers` (`death_id`, `final_hit`) VALUES (" << deathId

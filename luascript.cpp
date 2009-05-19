@@ -8954,6 +8954,7 @@ int32_t LuaScriptInterface::luaDoSetGameState(lua_State* L)
 		std::stringstream ss;
 		ss << id;
 		reportErrorFunc("Gamestate with id " + ss.str() + " not found.");
+
 		lua_pushboolean(L, LUA_ERROR);
 		return 1;
 	}
