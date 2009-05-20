@@ -11,9 +11,10 @@ function onSay(cid, words, param, channel)
 		return true
 	end
 
+	local pid = cid
 	if(t[2]) then
-		cid = getPlayerByNameWildcard(t[2])
-		if(cid == 0 or (isPlayerGhost(pid) and getPlayerAccess(pid) > getPlayerAccess(cid))) then
+		pid = getPlayerByNameWildcard(t[2])
+		if(not cid or (isPlayerGhost(pid) and getPlayerAccess(pid) > getPlayerAccess(cid))) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. t[2] .. " not found.")
 			return true
 		end
@@ -24,8 +25,9 @@ function onSay(cid, words, param, channel)
 		return true
 	end
 
-	local tmp = getCreatureOutfit(cid)
+	local tmp = getCreatureOutfit(pid)
 	tmp.lookType = t[1]
-	doCreatureChangeOutfit(cid, tmp)
+
+	doCreatureChangeOutfit(pid, tmp)
 	return true
 end

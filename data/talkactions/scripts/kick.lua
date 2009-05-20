@@ -5,7 +5,7 @@ function onSay(cid, words, param, channel)
 	end
 
 	local pid = getPlayerByNameWildcard(param)
-	if(pid == 0 or (isPlayerGhost(pid) and getPlayerAccess(pid) > getPlayerAccess(cid))) then
+	if(not pid or (isPlayerGhost(pid) and getPlayerAccess(pid) > getPlayerAccess(cid))) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. param .. " is not currently online.")
 		return true
 	end

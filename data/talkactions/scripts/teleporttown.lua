@@ -8,7 +8,7 @@ function onSay(cid, words, param, channel)
 	local t = string.explode(param, ",")
 	if(t[2]) then
 		tid = getPlayerByNameWildcard(t[2])
-		if(tid == 0 or (isPlayerGhost(tid) and getPlayerAccess(tid) > getPlayerAccess(cid))) then
+		if(not tid or (isPlayerGhost(tid) and getPlayerAccess(tid) > getPlayerAccess(cid))) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. t[2] .. " not found.")
 			return true
 		end
@@ -17,7 +17,7 @@ function onSay(cid, words, param, channel)
 	local tmp = t[1]
 	if(not tonumber(tmp)) then
 		tmp = getTownId(tmp)
-		if(tmp == 0) then
+		if(not tmp) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Town " .. t[1] .. " does not exists.")
 			return true
 		end
