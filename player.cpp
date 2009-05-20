@@ -2301,29 +2301,29 @@ Item* Player::createCorpse(DeathList deathList)
 	else
 		ss << deathList[0].getKillerName();
 
-	bool display = false;
 	if(deathList.size() > 1)
 	{
 		if(deathList[0].getKillerType() != deathList[1].getKillerType())
-			display = true;
+		{
+			if(deathList[1].isCreatureKill())
+			{
+				ss << deathList[1].getKillerCreature()->getNameDescription();
+				if(deathList[1].getKillerCreature()->getMaster())
+					ss << " summoned by " << deathList[1].getKillerCreature()->getMaster()->getNameDescription();
+			}
+			else
+				ss << deathList[1].getKillerName();
+		}
 		else if(deathList[1].isCreatureKill())
 		{
 			if(deathList[0].getKillerCreature()->getName() != deathList[1].getKillerCreature()->getName())
-				display = true;
+			{
+				ss << deathList[1].getKillerCreature()->getNameDescription();
+				if(deathList[1].getKillerCreature()->getMaster())
+					ss << " summoned by " << deathList[1].getKillerCreature()->getMaster()->getNameDescription();
+			}
 		}
-		else if(asLowerCaseString(deathList[0].getKillerName()) != (deathList[1].getKillerName()))
-			display = true;
-	}
-
-	if(display)
-	{
-		if(deathList[1].isCreatureKill())
-		{
-			ss << deathList[1].getKillerCreature()->getNameDescription();
-			if(deathList[1].getKillerCreature()->getMaster())
-				ss << " summoned by " << deathList[1].getKillerCreature()->getMaster()->getNameDescription();
-		}
-		else
+		else if(asLowerCaseString(deathList[0].getKillerName()) != asLowerCaseString(deathList[1].getKillerName())))
 			ss << deathList[1].getKillerName();
 	}
 
