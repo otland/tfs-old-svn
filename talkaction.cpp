@@ -108,8 +108,8 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 		size_t sloc = words.find(" ", ++loc);
 		if(sloc != std::string::npos && sloc >= 0)
 		{
-			cmdstring[TALKFILTER_WORD-SPACED] = cmdstring[TALKFILTER_WORD] + std::string(words, loc, sloc);
-			paramstring[TALKFILTER_WORD-SPACED] = std::string(words, (sloc + 1), (words.size() - --sloc));
+			cmdstring[TALKFILTER_WORD_SPACED] = cmdstring[TALKFILTER_WORD] + std::string(words, loc, sloc);
+			paramstring[TALKFILTER_WORD_SPACED] = std::string(words, (sloc + 1), (words.size() - --sloc));
 		}
 	}
 
@@ -194,7 +194,7 @@ bool TalkAction::configureEvent(xmlNodePtr p)
 		else if(tmpStrValue == "word")
 			m_filter = TALKFILTER_WORD;
 		else if(tmpStrValue == "word-spaced")
-			m_filter = TALKFILTER_WORD-SPACED;
+			m_filter = TALKFILTER_WORD_SPACED;
 		else
 			std::cout << "[Warning - TalkAction::configureEvent] Unknown filter for TalkAction: " << strValue << ", using default." << std::endl;
 	}
