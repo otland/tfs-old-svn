@@ -2323,7 +2323,7 @@ Item* Player::createCorpse(DeathList deathList)
 					ss << " summoned by " << deathList[1].getKillerCreature()->getMaster()->getNameDescription();
 			}
 		}
-		else if(asLowerCaseString(deathList[0].getKillerName()) != asLowerCaseString(deathList[1].getKillerName())))
+		else if(asLowerCaseString(deathList[0].getKillerName()) != asLowerCaseString(deathList[1].getKillerName()))
 			ss << deathList[1].getKillerName();
 	}
 
