@@ -3693,8 +3693,7 @@ void Game::npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, b
 
 bool Game::playerReportRuleViolation(Player* player, const std::string& text)
 {
-	//Do not allow reports on multiclones worlds
-	//Since reports are name-based
+	//Do not allow reports on multiclones worlds since reports are name-based
 	if(g_config.getNumber(ConfigManager::ALLOW_CLONES))
 	{
 		player->sendTextMessage(MSG_INFO_DESCR, "Rule violation reports are disabled.");
@@ -3702,16 +3701,15 @@ bool Game::playerReportRuleViolation(Player* player, const std::string& text)
 	}
 
 	cancelRuleViolation(player);
-	boost::shared_ptr<RuleViolation> rvr(new RuleViolation(player, text, std::time(NULL)));
-
+	boost::shared_ptr<RuleViolation> rvr(new RuleViolation(player, text, time(NULL)));
 	ruleViolations[player->getID()] = rvr;
-	if(ChatChannel* channel = g_chat.getChannelById(CHANNEL_RVR))
-	{
-		channel->talk(player, SPEAK_RVR_CHANNEL, text, rvr->time);
-		return true;
-	}
 
-	return false;
+	ChatChannel* channel = g_chat.getChannelById(CHANNEL_RVR);
+	if(!channel)
+		return false;
+
+	channel->talk(player, SPEAK_RVR_CHANNEL, text, rvr->time);
+	return true;
 }
 
 bool Game::playerContinueReport(Player* player, const std::string& text)
