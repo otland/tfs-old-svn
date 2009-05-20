@@ -3779,7 +3779,7 @@ int32_t LuaScriptInterface::luaDoCreatureSetDropLoot(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetPlayerLossPercent(lua_State *L)
+int32_t LuaScriptInterface::luaGetPlayerLossPercent(lua_State* L)
 {
 	//getPlayerLossPercent(cid, lossType)
 	uint8_t lossType = (uint8_t)popNumber(L);
@@ -3806,7 +3806,7 @@ int32_t LuaScriptInterface::luaGetPlayerLossPercent(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoPlayerSetLossPercent(lua_State *L)
+int32_t LuaScriptInterface::luaDoPlayerSetLossPercent(lua_State* L)
 {
 	//doPlayerSetLossPercent(cid, lossType, newPercent)
 	uint32_t newPercent = popNumber(L);
@@ -4584,7 +4584,7 @@ int32_t LuaScriptInterface::luaDoRemoveCreature(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoPlayerAddMoney(lua_State *L)
+int32_t LuaScriptInterface::luaDoPlayerAddMoney(lua_State* L)
 {
 	//doPlayerAddMoney(cid, money)
 	uint64_t money = popNumber(L);
@@ -4620,7 +4620,7 @@ int32_t LuaScriptInterface::luaDoPlayerRemoveMoney(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoPlayerWithdrawMoney(lua_State *L)
+int32_t LuaScriptInterface::luaDoPlayerWithdrawMoney(lua_State* L)
 {
 	//doPlayerWithdrawMoney(cid, money)
 	uint64_t money = popNumber(L);
@@ -4637,7 +4637,7 @@ int32_t LuaScriptInterface::luaDoPlayerWithdrawMoney(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoPlayerDepositMoney(lua_State *L)
+int32_t LuaScriptInterface::luaDoPlayerDepositMoney(lua_State* L)
 {
 	//doPlayerDepositMoney(cid, money)
 	uint64_t money = popNumber(L);
@@ -4654,7 +4654,7 @@ int32_t LuaScriptInterface::luaDoPlayerDepositMoney(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoPlayerTransferMoneyTo(lua_State *L)
+int32_t LuaScriptInterface::luaDoPlayerTransferMoneyTo(lua_State* L)
 {
 	//doPlayerTransferMoneyTo(cid, target, money)
 	uint64_t money = popNumber(L);
@@ -4956,7 +4956,7 @@ int32_t LuaScriptInterface::luaSetHouseAccessList(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetDepotId(lua_State *L)
+int32_t LuaScriptInterface::luaGetDepotId(lua_State* L)
 {
 	//getDepotId(uid)
     ScriptEnviroment* env = getScriptEnv();
@@ -7172,7 +7172,7 @@ int32_t LuaScriptInterface::luaGetPlayerNameByGUID(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetPlayersByAccountId(lua_State *L)
+int32_t LuaScriptInterface::luaGetPlayersByAccountId(lua_State* L)
 {
 	//getPlayersByAccountId(accId)
 	PlayerVector players = g_game.getPlayersByAccount(popNumber(L));
@@ -7191,7 +7191,7 @@ int32_t LuaScriptInterface::luaGetPlayersByAccountId(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetIpByName(lua_State *L)
+int32_t LuaScriptInterface::luaGetIpByName(lua_State* L)
 {
 	//getIpByName(name)
 	std::string name = popString(L);
@@ -7204,7 +7204,7 @@ int32_t LuaScriptInterface::luaGetIpByName(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetPlayersByIp(lua_State *L)
+int32_t LuaScriptInterface::luaGetPlayersByIp(lua_State* L)
 {
 	//getPlayersByIp(ip[, mask])
 	uint32_t mask = 0xFFFFFFFF;
@@ -7227,7 +7227,7 @@ int32_t LuaScriptInterface::luaGetPlayersByIp(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetAccountIdByName(lua_State *L)
+int32_t LuaScriptInterface::luaGetAccountIdByName(lua_State* L)
 {
 	//getAccountIdByName(name)
 	std::string name = popString(L);
@@ -7240,7 +7240,7 @@ int32_t LuaScriptInterface::luaGetAccountIdByName(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetAccountByName(lua_State *L)
+int32_t LuaScriptInterface::luaGetAccountByName(lua_State* L)
 {
 	//getAccountByName(name)
 	std::string name = popString(L);
@@ -7257,7 +7257,7 @@ int32_t LuaScriptInterface::luaGetAccountByName(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetAccountIdByAccount(lua_State *L)
+int32_t LuaScriptInterface::luaGetAccountIdByAccount(lua_State* L)
 {
 	//getAccountIdByAccount(accName)
 	uint32_t value = 0;
@@ -7266,7 +7266,7 @@ int32_t LuaScriptInterface::luaGetAccountIdByAccount(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetAccountByAccountId(lua_State *L)
+int32_t LuaScriptInterface::luaGetAccountByAccountId(lua_State* L)
 {
 	//getAccountByAccountId(accId)
 	std::string value = 0;
@@ -8607,7 +8607,7 @@ int32_t LuaScriptInterface::luaSetCreatureMaxMana(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetCreatureMaster(lua_State *L)
+int32_t LuaScriptInterface::luaGetCreatureMaster(lua_State* L)
 {
 	//getCreatureMaster(cid)
 	uint32_t cid = popNumber(L);
@@ -8627,7 +8627,7 @@ int32_t LuaScriptInterface::luaGetCreatureMaster(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetCreatureSummons(lua_State *L)
+int32_t LuaScriptInterface::luaGetCreatureSummons(lua_State* L)
 {
 	//getCreatureSummons(cid)
 	ScriptEnviroment* env = getScriptEnv();
@@ -8851,7 +8851,7 @@ int32_t LuaScriptInterface::luaGetTownHouses(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetSpectators(lua_State *L)
+int32_t LuaScriptInterface::luaGetSpectators(lua_State* L)
 {
 	//getSpectators(centerPos, rangex, rangey[, multifloor])
 	bool multifloor = false;
@@ -9058,7 +9058,7 @@ int32_t LuaScriptInterface::luaDoSaveServer(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoCleanHouse(lua_State *L)
+int32_t LuaScriptInterface::luaDoCleanHouse(lua_State* L)
 {
 	//doCleanHouse(houseId)
 	uint32_t houseId = popNumber(L);
@@ -9468,7 +9468,7 @@ int32_t LuaScriptInterface::luaSetItemShootRange(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaIsIpBanished(lua_State *L)
+int32_t LuaScriptInterface::luaIsIpBanished(lua_State* L)
 {
 	//isIpBanished(ip[, mask])
 	uint32_t mask = 0xFFFFFFFF;
@@ -9480,7 +9480,7 @@ int32_t LuaScriptInterface::luaIsIpBanished(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaIsPlayerNamelocked(lua_State *L)
+int32_t LuaScriptInterface::luaIsPlayerNamelocked(lua_State* L)
 {
 	//isPlayerNamelocked(name)
 	lua_pushboolean(L, IOBan::getInstance()->isNamelocked(
@@ -9488,7 +9488,7 @@ int32_t LuaScriptInterface::luaIsPlayerNamelocked(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaIsAccountBanished(lua_State *L)
+int32_t LuaScriptInterface::luaIsAccountBanished(lua_State* L)
 {
 	//isAccountBanished(accId)
 	lua_pushboolean(L, IOBan::getInstance()->isBanished(
@@ -9496,7 +9496,7 @@ int32_t LuaScriptInterface::luaIsAccountBanished(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaIsAccountDeleted(lua_State *L)
+int32_t LuaScriptInterface::luaIsAccountDeleted(lua_State* L)
 {
 	//isAccountDeleted(accId)
 	lua_pushboolean(L, IOBan::getInstance()->isDeleted(
@@ -9504,7 +9504,7 @@ int32_t LuaScriptInterface::luaIsAccountDeleted(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoAddIpBanishment(lua_State *L)
+int32_t LuaScriptInterface::luaDoAddIpBanishment(lua_State* L)
 {
 	//doAddIpBanishment(ip[, mask[, length[, comment[, admin]]]])
 	uint32_t admin = 0, mask = 0xFFFFFFFF, params = lua_gettop(L), length = g_config.getNumber(ConfigManager::IPBANISHMENT_LENGTH);
@@ -9526,7 +9526,7 @@ int32_t LuaScriptInterface::luaDoAddIpBanishment(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoAddNamelock(lua_State *L)
+int32_t LuaScriptInterface::luaDoAddNamelock(lua_State* L)
 {
 	//doAddNamelock(name[, reason[, action[, comment[, admin[, statement]]]]])
 	uint32_t admin = 0, reason = 23, params = lua_gettop(L);
@@ -9552,7 +9552,7 @@ int32_t LuaScriptInterface::luaDoAddNamelock(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoAddBanishment(lua_State *L)
+int32_t LuaScriptInterface::luaDoAddBanishment(lua_State* L)
 {
 	//doAddBanishment(accId[, length[, reason[, action[, comment[, admin[, statement]]]]]])
 	uint32_t admin = 0, reason = 23, params = lua_gettop(L), length = g_config.getNumber(ConfigManager::BAN_LENGTH);
@@ -9581,7 +9581,7 @@ int32_t LuaScriptInterface::luaDoAddBanishment(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoAddDeletion(lua_State *L)
+int32_t LuaScriptInterface::luaDoAddDeletion(lua_State* L)
 {
 	//doAddDeletion(accId[, reason[, action[, comment[, admin[, statement]]]]]])
 	uint32_t admin = 0, reason = 23, params = lua_gettop(L);
@@ -9607,7 +9607,7 @@ int32_t LuaScriptInterface::luaDoAddDeletion(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoAddNotation(lua_State *L)
+int32_t LuaScriptInterface::luaDoAddNotation(lua_State* L)
 {
 	//doAddNotation(accId[, reason[, action[, comment[, admin[, statement]]]]]])
 	uint32_t admin = 0, reason = 23, params = lua_gettop(L);
@@ -9634,7 +9634,7 @@ int32_t LuaScriptInterface::luaDoAddNotation(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoRemoveIpBanishment(lua_State *L)
+int32_t LuaScriptInterface::luaDoRemoveIpBanishment(lua_State* L)
 {
 	//doRemoveIpBanishment(ip[, mask])
 	uint32_t mask = 0xFFFFFFFF;
@@ -9646,7 +9646,7 @@ int32_t LuaScriptInterface::luaDoRemoveIpBanishment(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoRemoveNamelock(lua_State *L)
+int32_t LuaScriptInterface::luaDoRemoveNamelock(lua_State* L)
 {
 	//doRemoveNamelock(name)
 	lua_pushboolean(L, IOBan::getInstance()->removeNamelock(
@@ -9654,7 +9654,7 @@ int32_t LuaScriptInterface::luaDoRemoveNamelock(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoRemoveBanishment(lua_State *L)
+int32_t LuaScriptInterface::luaDoRemoveBanishment(lua_State* L)
 {
 	//doRemoveBanisment(accId)
 	lua_pushboolean(L, IOBan::getInstance()->removeBanishment(
@@ -9662,7 +9662,7 @@ int32_t LuaScriptInterface::luaDoRemoveBanishment(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoRemoveDeletion(lua_State *L)
+int32_t LuaScriptInterface::luaDoRemoveDeletion(lua_State* L)
 {
 	//doRemoveDeletion(accId)
 	lua_pushboolean(L, IOBan::getInstance()->removeDeletion(
@@ -9670,7 +9670,7 @@ int32_t LuaScriptInterface::luaDoRemoveDeletion(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoRemoveNotations(lua_State *L)
+int32_t LuaScriptInterface::luaDoRemoveNotations(lua_State* L)
 {
 	//doRemoveNotations(accId)
 	IOBan::getInstance()->removeNotations((uint32_t)popNumber(L));
@@ -9678,7 +9678,7 @@ int32_t LuaScriptInterface::luaDoRemoveNotations(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetNotationsCount(lua_State *L)
+int32_t LuaScriptInterface::luaGetNotationsCount(lua_State* L)
 {
 	//getNotationsCount(accId)
 	lua_pushnumber(L, IOBan::getInstance()->getNotationsCount(
@@ -9686,7 +9686,7 @@ int32_t LuaScriptInterface::luaGetNotationsCount(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetBanData(lua_State *L)
+int32_t LuaScriptInterface::luaGetBanData(lua_State* L)
 {
 	//getBanData(value)
 	Ban tmp;
@@ -9711,14 +9711,14 @@ int32_t LuaScriptInterface::luaGetBanData(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetBanReason(lua_State *L)
+int32_t LuaScriptInterface::luaGetBanReason(lua_State* L)
 {
 	//getBanReason(id)
 	lua_pushstring(L, getReason((ViolationAction_t)popNumber(L)).c_str());
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetBanAction(lua_State *L)
+int32_t LuaScriptInterface::luaGetBanAction(lua_State* L)
 {
 	//getBanAction(id[, ipBanishment])
 	bool ipBanishment = false;
@@ -9729,7 +9729,7 @@ int32_t LuaScriptInterface::luaGetBanAction(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetBanList(lua_State *L)
+int32_t LuaScriptInterface::luaGetBanList(lua_State* L)
 {
 	//getBanList(type[, value])
 	uint32_t value = 0;
@@ -9797,7 +9797,7 @@ int32_t LuaScriptInterface::luaGetConfigValue(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDatabaseExecute(lua_State *L)
+int32_t LuaScriptInterface::luaDatabaseExecute(lua_State* L)
 {
 	//db.executeQuery(query)
 	DBQuery query; //lock mutex
@@ -9805,7 +9805,7 @@ int32_t LuaScriptInterface::luaDatabaseExecute(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDatabaseStoreQuery(lua_State *L)
+int32_t LuaScriptInterface::luaDatabaseStoreQuery(lua_State* L)
 {
 	//db.storeQuery(query)
 	ScriptEnviroment* env = getScriptEnv();
@@ -9821,14 +9821,14 @@ int32_t LuaScriptInterface::luaDatabaseStoreQuery(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDatabaseEscapeString(lua_State *L)
+int32_t LuaScriptInterface::luaDatabaseEscapeString(lua_State* L)
 {
 	//db.escapeString(str)
 	lua_pushstring(L, Database::getInstance()->escapeString(popString(L)).c_str());
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDatabaseEscapeBlob(lua_State *L)
+int32_t LuaScriptInterface::luaDatabaseEscapeBlob(lua_State* L)
 {
 	//db.escapeBlob(s, length)
 	uint32_t length = popNumber(L);
@@ -9836,14 +9836,14 @@ int32_t LuaScriptInterface::luaDatabaseEscapeBlob(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInerface::luaDatabaseLastInsertId(lua_Statee *L)
+int32_t LuaScriptInterface::luaDatabaseLastInsertId(lua_State* L)
 {
 	//db.lastInsertId()
 	lua_pushnumber(L, Database::getInstance()->getLastInsertId());
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDatabaseStringComparisonOperator(lua_State *L)
+int32_t LuaScriptInterface::luaDatabaseStringComparisonOperator(lua_State* L)
 {
 	//db.stringComparisonOperator()
 	lua_pushstring(L, Database::getInstance()->getStringComparisonOperator().c_str());
@@ -9858,7 +9858,7 @@ int32_t LuaScriptInterface::luaDatabaseStringComparisonOperator(lua_State *L)
 		return 1;\
 	}
 
-int32_t LuaScriptInterface::luaResultGetDataInt(lua_State *L)
+int32_t LuaScriptInterface::luaResultGetDataInt(lua_State* L)
 {
 	//result.getDataInt(res, s)
 	const std::string& s = popString(L);
@@ -9871,7 +9871,7 @@ int32_t LuaScriptInterface::luaResultGetDataInt(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaResultGetDataLong(lua_State *L)
+int32_t LuaScriptInterface::luaResultGetDataLong(lua_State* L)
 {
 	//result.getDataLong(res, s)
 	const std::string& s = popString(L);
@@ -9884,7 +9884,7 @@ int32_t LuaScriptInterface::luaResultGetDataLong(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaResultGetDataString(lua_State *L)
+int32_t LuaScriptInterface::luaResultGetDataString(lua_State* L)
 {
 	//result.getDataString(res, s)
 	const std::string& s = popString(L);
@@ -9897,7 +9897,7 @@ int32_t LuaScriptInterface::luaResultGetDataString(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaResultGetDataStream(lua_State *L)
+int32_t LuaScriptInterface::luaResultGetDataStream(lua_State* L)
 {
 	//result.getDataStream(res, s)
 	const std::string s = popString(L);
@@ -9913,7 +9913,7 @@ int32_t LuaScriptInterface::luaResultGetDataStream(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaResultNext(lua_State *L)
+int32_t LuaScriptInterface::luaResultNext(lua_State* L)
 {
 	//result.next(res)
 	ScriptEnviroment* env = getScriptEnv();
@@ -9925,7 +9925,7 @@ int32_t LuaScriptInterface::luaResultNext(lua_State *L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaResultFree(lua_State *L)
+int32_t LuaScriptInterface::luaResultFree(lua_State* L)
 {
 	//result.free(res)
 	uint32_t rid = popNumber(L);
@@ -9939,14 +9939,14 @@ int32_t LuaScriptInterface::luaResultFree(lua_State *L)
 }
 #undef CHECK_RESULT
 
-int32_t LuaScriptInterface::luaBitNot(lua_State *L)
+int32_t LuaScriptInterface::luaBitNot(lua_State* L)
 {
 	int32_t number = (int32_t)popNumber(L);
 	lua_pushnumber(L, ~number);
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaBitUNot(lua_State *L)
+int32_t LuaScriptInterface::luaBitUNot(lua_State* L)
 {
 	uint32_t number = (uint32_t)popNumber(L);
 	lua_pushnumber(L, ~number);

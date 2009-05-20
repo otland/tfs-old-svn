@@ -428,13 +428,13 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerByNameWildcard(lua_State* L);
 		static int32_t luaGetPlayerGUIDByName(lua_State* L);
 		static int32_t luaGetPlayerNameByGUID(lua_State* L);
-		static int32_t luaGetPlayersByAccountId(lua_State *L);
-		static int32_t luaGetAccountIdByName(lua_State *L);
-		static int32_t luaGetAccountByName(lua_State *L);
-		static int32_t luaGetAccountIdByAccount(lua_State *L);
-		static int32_t luaGetAccountByAccountId(lua_State *L);
-		static int32_t luaGetIpByName(lua_State *L);
-		static int32_t luaGetPlayersByIp(lua_State *L);
+		static int32_t luaGetPlayersByAccountId(lua_State* L);
+		static int32_t luaGetAccountIdByName(lua_State* L);
+		static int32_t luaGetAccountByName(lua_State* L);
+		static int32_t luaGetAccountIdByAccount(lua_State* L);
+		static int32_t luaGetAccountByAccountId(lua_State* L);
+		static int32_t luaGetIpByName(lua_State* L);
+		static int32_t luaGetPlayersByIp(lua_State* L);
 
 		//bans
 		static int32_t luaIsIpBanished(lua_State* L);
@@ -708,7 +708,7 @@ class LuaScriptInterface
 		static int32_t luaGetTownTemplePosition(lua_State* L);
 		static int32_t luaGetTownHouses(lua_State* L);
 
-		static int32_t luaGetSpectators(lua_State *L);
+		static int32_t luaGetSpectators(lua_State* L);
 		static int32_t luaGetGameState(lua_State* L);
 		static int32_t luaDoSetGameState(lua_State* L);
 		static int32_t luaGetPlayersOnline(lua_State* L);
@@ -754,21 +754,21 @@ class LuaScriptInterface
 
 		static int32_t internalGetPlayerInfo(lua_State* L, PlayerInfo_t info);
 
-		static const luaL_Reg luaDatabaseReg[6];
-		static int32_t luaDatabaseExecute(lua_State *L);
-		static int32_t luaDatabaseStoreQuery(lua_State *L);
-		static int32_t luaDatabaseEscapeString(lua_State *L);
-		static int32_t luaDatabaseEscapeBlob(lua_State *L);
-		static int32_t luaDatabaseLastInsertId(lua_State *L);
-		static int32_t luaDatabaseStringComparisonOperator(lua_State *L);
+		static const luaL_Reg luaDatabaseReg[7];
+		static int32_t luaDatabaseExecute(lua_State* L);
+		static int32_t luaDatabaseStoreQuery(lua_State* L);
+		static int32_t luaDatabaseEscapeString(lua_State* L);
+		static int32_t luaDatabaseEscapeBlob(lua_State* L);
+		static int32_t luaDatabaseLastInsertId(lua_State* L);
+		static int32_t luaDatabaseStringComparisonOperator(lua_State* L);
 
 		static const luaL_Reg luaResultReg[7];
-		static int32_t luaResultGetDataInt(lua_State *L);
-		static int32_t luaResultGetDataLong(lua_State *L);
-		static int32_t luaResultGetDataString(lua_State *L);
-		static int32_t luaResultGetDataStream(lua_State *L);
-		static int32_t luaResultNext(lua_State *L);
-		static int32_t luaResultFree(lua_State *L);
+		static int32_t luaResultGetDataInt(lua_State* L);
+		static int32_t luaResultGetDataLong(lua_State* L);
+		static int32_t luaResultGetDataString(lua_State* L);
+		static int32_t luaResultGetDataStream(lua_State* L);
+		static int32_t luaResultNext(lua_State* L);
+		static int32_t luaResultFree(lua_State* L);
 
 		static const luaL_Reg luaBitReg[13];
 		static int32_t luaBitNot(lua_State* L);
