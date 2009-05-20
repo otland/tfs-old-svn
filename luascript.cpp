@@ -2332,6 +2332,9 @@ const luaL_Reg LuaScriptInterface::luaDatabaseReg[] =
 	//db.escapeBlob(s, length)
 	{"escapeBlob", LuaScriptInterface::luaDatabaseEscapeBlob},
 
+	//db.lastInsertId()
+	{"lastInsertId", LuaScriptInterface::luaDatabaseLastInsertId},
+
 	//db.stringComparisonOperator()
 	{"stringComparisonOperator", LuaScriptInterface::luaDatabaseStringComparisonOperator},
 
@@ -9830,6 +9833,13 @@ int32_t LuaScriptInterface::luaDatabaseEscapeBlob(lua_State *L)
 	//db.escapeBlob(s, length)
 	uint32_t length = popNumber(L);
 	lua_pushstring(L, Database::getInstance()->escapeBlob(popString(L), length).c_str());
+	return 1;
+}
+
+int32_t LuaScriptInerface::luaDatabaseLastInsertId(lua_Statee *L)
+{
+	//db.lastInsertId()
+	lua_pushnumber(L, Database::getInstance()->getLastInsertId());
 	return 1;
 }
 

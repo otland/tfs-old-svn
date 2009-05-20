@@ -55,17 +55,17 @@
 	<talkaction log="yes" access="1" words="!pos" event="script" value="position.lua"/>
 
 	<!-- Players -->
-	<talkaction words="alana res" event="function" value="houseBuy"/>
-	<talkaction words="alana grav" event="function" value="houseSell"/>
-	<talkaction words="alana sio" event="function" value="houseKick"/>
-	<talkaction words="aleta grav" event="function" value="houseDoorList"/>
-	<talkaction words="aleta sio" event="function" value="houseGuestList"/>
-	<talkaction words="aleta som" event="function" value="houseSubOwnerList"/>
+	<talkaction words="alana res" filter="word-spaced" event="function" value="houseBuy"/>
+	<talkaction words="alana grav" filter="word-spaced" event="function" value="houseSell"/>
+	<talkaction words="alana sio" filter="word-spaced" event="function" value="houseKick"/>
+	<talkaction words="aleta grav" filter="word-spaced" event="function" value="houseDoorList"/>
+	<talkaction words="aleta sio" filter="word-spaced" event="function" value="houseGuestList"/>
+	<talkaction words="aleta som" filter="word-spaced" event="function" value="houseSubOwnerList"/>
 	<talkaction words="!createguild" event="function" value="guildCreate"/>
 	<talkaction words="!joinguild" event="function" value="guildJoin"/>
 	<talkaction words="!frags" event="script" value="frags.lua"/>
 	<talkaction words="!buypremium" event="script" value="buypremium.lua"/>
-	<talkaction words="alana som" event="script" value="leavehouse.lua"/>
+	<talkaction words="alana som" filter="word-spaced" event="script" value="leavehouse.lua"/>
 	<talkaction words="/online" event="script" value="online.lua"/>
 	<talkaction words="!changender" event="script" value="changender.lua"/>
 	<talkaction words="/uptime" event="script" value="uptime.lua"/>

@@ -759,6 +759,7 @@ class LuaScriptInterface
 		static int32_t luaDatabaseStoreQuery(lua_State *L);
 		static int32_t luaDatabaseEscapeString(lua_State *L);
 		static int32_t luaDatabaseEscapeBlob(lua_State *L);
+		static int32_t luaDatabaseLastInsertId(lua_State *L);
 		static int32_t luaDatabaseStringComparisonOperator(lua_State *L);
 
 		static const luaL_Reg luaResultReg[7];
