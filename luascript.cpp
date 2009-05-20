@@ -4461,27 +4461,30 @@ int32_t LuaScriptInterface::luaGetHouseFromPos(lua_State* L)
 	//getHouseFromPos(pos)
 	PositionEx pos;
 	popPosition(L, pos);
-	if(Tile* tile = g_game.getMap()->getTile(pos))
-	{
-		uint32_t houseId = 0;
-		if(HouseTile* houseTile = tile->getHouseTile())
-		{
-			House* house = houseTile->getHouse();
-			if(!house)
-				continue;
 
-			lua_pushnumber(L, house->getHouseId());
-			return 1;
-		}
-
-		lua_pushboolean(L, LUA_ERROR);
-	}
-	else
+	Tile* tile = g_game.getMap()->getTile(pos);
+	if(!tile)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_TILE_NOT_FOUND));
 		lua_pushboolean(L, LUA_ERROR);
+		return 1;
 	}
 
+	HouseTile* houseTile = tile->getHouseTile();
+	if(!houseTile)
+	{
+		lua_pushboolean(L, LUA_ERROR);
+		return 1;
+	}
+
+	House* house = houseTile->getHouse();
+	if(!house)
+	{
+		lua_pushboolean(L, LUA_ERROR);
+		return 1;
+	}
+
+	lua_pushnumber(L, house->getHouseId());
 	return 1;
 }
 
