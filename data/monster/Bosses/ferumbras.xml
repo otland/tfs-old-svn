@@ -34,7 +34,7 @@
 		<attack name="lifedrain" interval="2000" chance="21" radius="6" target="0" min="-200" max="-450">
 			<attribute key="areaEffect" value="poff"/>
 		</attack>
-		<attack name="strength" interval="3000" chance="20" radius="5" target="0" min="-200" max="-600">
+		<attack name="effect" interval="3000" chance="20" radius="5" target="0" min="-200" max="-600">
 			<attribute key="areaEffect" value="blackspark"/>
 		</attack>
 		<attack name="firecondition" interval="3000" chance="20" range="7" radius="7" target="1" min="-200" max="-800">

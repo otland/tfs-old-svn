@@ -22,7 +22,7 @@
 		<attack name="manadrain" interval="1000" chance="6" radius="5" target="0" min="-150" max="-350">
 			<attribute key="areaEffect" value="poison"/>
 		</attack>
-		<attack name="strength" interval="1000" chance="6" radius="5" target="0">
+		<attack name="effect" interval="1000" chance="6" radius="5" target="0">
 			<attribute key="areaEffect" value="blackspark"/>
 		</attack>
 		<attack name="fire" interval="1000" chance="34" range="7" radius="7" target="1" min="-310" max="-600">
