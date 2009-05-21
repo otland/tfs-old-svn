@@ -181,7 +181,7 @@ void Raids::clear()
 		delete (*it);
 
 	raidList.clear();
-	//ScriptEvent::m_scriptInterface.reInitState();
+	ScriptEvent::m_scriptInterface.reInitState();
 }
 
 bool Raids::reload()
