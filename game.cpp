@@ -806,7 +806,8 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 	{
 		for(ConditionList::iterator it = tmpPlayer->storedConditionList.begin(); it != tmpPlayer->storedConditionList.end(); ++it)
 		{
-			if((*it)->getType() == CONDITION_MUTED && ((*it)->getTicks() - ((time(NULL) - tmpPlayer->getLastLogout()) * 1000)) <= 0)
+			if((*it)->getType() == CONDITION_MUTED && ((*it)->getTicks() - (
+				(time(NULL) - tmpPlayer->getLastLogout()) * 1000)) <= 0)
 				continue;
 
 			tmpPlayer->addCondition(*it);
@@ -826,7 +827,8 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 		if((tmpPlayer = (*it)->getPlayer()))
 		{
 			if(!ghost || (*it) == creature || tmpPlayer->canSeeGhost(creature))
-				tmpPlayer->sendCreatureAppear(creature, creature->getPosition(), newStackPos, true);
+				tmpPlayer->sendCreatureAppear(creature, creature->getPosition(),
+					newStackPos, true);
 		}
 	}
 
@@ -838,6 +840,7 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 
 	creature->getParent()->postAddNotification(NULL, creature, NULL, newStackPos);
 	addCreatureCheck(creature);
+
 	creature->onPlacedCreature();
 	return true;
 }
@@ -3708,7 +3711,9 @@ bool Game::playerReportRuleViolation(Player* player, const std::string& text)
 	if(!channel)
 		return false;
 
-	channel->talk(player, SPEAK_RVR_CHANNEL, text, rvr->time);
+	for(UsersMap::const_iterator it = channel->getUsers().begin(); it != channel->getUsers().end(); ++it)
+		it->second->sendToChannel(player, SPEAK_RVR_CHANNEL, text, CHANNEL_RVR, rvr->time);
+
 	return true;
 }
 
@@ -3724,7 +3729,6 @@ bool Game::playerContinueReport(Player* player, const std::string& text)
 		return false;
 
 	toPlayer->sendCreatureSay(player, SPEAK_RVR_CONTINUE, text);
-
 	player->sendTextMessage(MSG_STATUS_SMALL, "Message sent to Gamemaster.");
 	return true;
 }

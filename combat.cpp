@@ -972,6 +972,7 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 			max = LuaScriptInterface::popNumber(L);
 			min = LuaScriptInterface::popNumber(L);
 			Vocation* vocation = player->getVocation();
+
 			float multiplier = 1.0;
 			if(max > 0)
 				multiplier = vocation->getMultiplier(MULTIPLIER_MAGICHEALING);
@@ -1016,7 +1017,7 @@ void TileCallback::onTileCombat(Creature* creature, Tile* tile) const
 		m_scriptInterface->releaseScriptEnv();
 	}
 	else
-		std::cout << "[Error] Call stack overflow. TileCallback::onTileCombat" << std::endl;
+		std::cout << "[Error - TileCallback::onTileCombat] Call stack overflow." << std::endl;
 }
 
 //**********************************************************

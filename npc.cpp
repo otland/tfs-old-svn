@@ -2508,41 +2508,43 @@ void NpcScriptInterface::registerFunctions()
 int32_t NpcScriptInterface::luaActionFocus(lua_State* L)
 {
 	//selfFocus(cid)
+	uint32_t cid = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
-	if(Npc* npc = env->getNpc())
-	{
-		Creature* creature = env->getCreatureByUID(popNumber(L));
-		if(creature)
-			npc->hasScriptedFocus = true;
-		else
-			npc->hasScriptedFocus = false;
 
-		npc->setCreatureFocus(creature);
-	}
+	Npc* npc = env->getNpc();
+	if(!npc)
+		return 0;
 
+	Creature* creature = env->getCreatureByUID(cid);
+	if(creature)
+		npc->hasScriptedFocus = true;
+	else
+		npc->hasScriptedFocus = false;
+
+	npc->setCreatureFocus(creature);
 	return 0;
 }
 
 int32_t NpcScriptInterface::luaActionSay(lua_State* L)
 {
-	//selfSay(words[[, target], sendToAll])
+	//selfSay(words[[, target], announce])
 	uint32_t parameters = lua_gettop(L), target = 0;
-	bool sendToAll = true;
+	bool announce = true;
 	if(parameters == 3)
 	{
-		sendToAll = (popNumber(L) == LUA_TRUE);
+		announce = popNumber(L);
 		target = popNumber(L);
 	}
 	else if(parameters == 2)
 	{
 		target = popNumber(L);
-		sendToAll = false;
+		announce = false;
 	}
 
 	ScriptEnviroment* env = getScriptEnv();
 	Player* focus = env->getPlayerByUID(target);
 	if(Npc* npc = env->getNpc())
-		npc->doSay((std::string)popString(L), focus, sendToAll);
+		npc->doSay((std::string)popString(L), focus, announce);
 
 	return 0;
 }
@@ -2561,16 +2563,17 @@ int32_t NpcScriptInterface::luaActionTurn(lua_State* L)
 int32_t NpcScriptInterface::luaActionMove(lua_State* L)
 {
 	//selfMove(direction)
+	Direction dir = (Direction)popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 	if(Npc* npc = env->getNpc())
-		npc->doMove((Direction)popNumber(L));
+		npc->doMove();
 
 	return 0;
 }
 
 int32_t NpcScriptInterface::luaActionMoveTo(lua_State* L)
 {
-	//selfMoveTo(x,y,z)
+	//selfMoveTo(x, y, z)
 	Position pos;
 	pos.z = (uint16_t)popNumber(L);
 	pos.y = (uint16_t)popNumber(L);
@@ -2623,8 +2626,8 @@ int32_t NpcScriptInterface::luaGetNpcDistanceTo(lua_State* L)
 {
 	//getNpcDistanceTo(uid)
 	ScriptEnviroment* env = getScriptEnv();
-
 	Npc* npc = env->getNpc();
+
 	Thing* thing = env->getThingByUID(popNumber(L));
 	if(thing && npc)
 	{
@@ -2667,22 +2670,14 @@ int32_t NpcScriptInterface::luaGetNpcState(lua_State* L)
 {
 	//getNpcState(cid)
 	ScriptEnviroment* env = getScriptEnv();
-	const Player* player = env->getPlayerByUID(popNumber(L));
-	if(!player)
-	{
-		lua_pushnil(L);
-		return 1;
-	}
-
 	Npc* npc = env->getNpc();
-	if(!npc)
-	{
-		lua_pushnil(L);
-		return 1;
-	}
 
-	NpcState* state = npc->getState(player);
-	NpcScriptInterface::pushState(L, state);
+	const Player* player = env->getPlayerByUID(popNumber(L));
+	if(player && npc)
+		NpcScriptInterface::pushState(L, npc->getState(player));
+	else
+		lua_pushnil(L);
+
 	return 1;
 }
 
@@ -2690,23 +2685,17 @@ int32_t NpcScriptInterface::luaSetNpcState(lua_State* L)
 {
 	//setNpcState(state, cid)
 	ScriptEnviroment* env = getScriptEnv();
-	const Player* player = env->getPlayerByUID(popNumber(L));
-	if(!player)
-	{
-		lua_pushnil(L);
-		return 1;
-	}
-
 	Npc* npc = env->getNpc();
-	if(!npc)
-	{
-		lua_pushboolean(L, false);
-		return 1;
-	}
 
-	NpcState* state = npc->getState(player);
-	NpcScriptInterface::popState(L, state);
-	lua_pushboolean(L, true);
+	const Player* player = env->getPlayerByUID(popNumber(L));
+	if(player && npc)
+	{
+		NpcScriptInterface::popState(L, npc->getState(player));
+		lua_pushboolean(L, true);
+	}
+	else
+		lua_pushboolean(L, false);
+
 	return 1;
 }
 
@@ -2775,7 +2764,7 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 	if(!npc)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
-		lua_pushboolean(L, LUA_ERROR);
+		lua_pushboolean(L, false);
 		return 1;
 	}
 
@@ -2794,7 +2783,7 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 	if(lua_istable(L, -1) == 0)
 	{
 		reportError(__FUNCTION__, "item list is not a table.");
-		lua_pushboolean(L, LUA_ERROR);
+		lua_pushboolean(L, false);
 		return 1;
 	}
 
@@ -2818,7 +2807,7 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 	if(!player)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushboolean(L, LUA_ERROR);
+		lua_pushboolean(L, false);
 		return 1;
 	}
 
@@ -2828,7 +2817,7 @@ int32_t NpcScriptInterface::luaOpenShopWindow(lua_State* L)
 	player->setShopOwner(npc, buyCallback, sellCallback, itemList);
 	player->openShopWindow();
 
-	lua_pushboolean(L, LUA_NO_ERROR);
+	lua_pushboolean(L, true);
 	return 1;
 }
 
@@ -2841,7 +2830,7 @@ int32_t NpcScriptInterface::luaCloseShopWindow(lua_State* L)
 	if(!player)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushboolean(L, LUA_ERROR);
+		lua_pushboolean(L, false);
 		return 1;
 	}
 
@@ -2849,7 +2838,7 @@ int32_t NpcScriptInterface::luaCloseShopWindow(lua_State* L)
 	if(!npc)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
-		lua_pushboolean(L, LUA_ERROR);
+		lua_pushboolean(L, false);
 		return 1;
 	}
 

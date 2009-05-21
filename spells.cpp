@@ -389,21 +389,21 @@ bool CombatSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
-
 			std::stringstream scriptstream;
+
 			scriptstream << "cid = " << env->addThing(creature) << std::endl;
 			env->streamVariant(scriptstream, "var", var);
 
 			scriptstream << m_scriptData;
-			int32_t result = LUA_NO_ERROR;
+			bool result = true;
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getField(L, "_result");
+				result = m_scriptInterface->getFieldBool(L, "_result");
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return (result == LUA_NO_ERROR);
+			return result;
 		}
 		else
 		{
@@ -415,17 +415,15 @@ bool CombatSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 
 			env->setScriptId(m_scriptId, m_scriptInterface);
 			env->setRealPos(creature->getPosition());
-
 			lua_State* L = m_scriptInterface->getLuaState();
-			m_scriptInterface->pushFunction(m_scriptId);
 
+			m_scriptInterface->pushFunction(m_scriptId);
 			lua_pushnumber(L, env->addThing(creature));
 			m_scriptInterface->pushVariant(L, var);
 
-			int32_t result = m_scriptInterface->callFunction(2);
+			bool result = m_scriptInterface->callFunction(2);
 			m_scriptInterface->releaseScriptEnv();
-
-			return (result != LUA_ERROR);
+			return result;
 		}
 	}
 	else
@@ -1132,21 +1130,21 @@ bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
-
 			std::stringstream scriptstream;
+
 			scriptstream << "cid = " << env->addThing(creature) << std::endl;
 			env->streamVariant(scriptstream, "var", var);
 
 			scriptstream << m_scriptData;
-			int32_t result = LUA_NO_ERROR;
+			bool result = true;
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getField(L, "_result");
+				result = m_scriptInterface->getFieldBool(L, "_result");
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return (result == LUA_NO_ERROR);
+			return result;
 		}
 		else
 		{
@@ -1158,17 +1156,15 @@ bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 
 			env->setScriptId(m_scriptId, m_scriptInterface);
 			env->setRealPos(creature->getPosition());
-
 			lua_State* L = m_scriptInterface->getLuaState();
-			m_scriptInterface->pushFunction(m_scriptId);
 
+			m_scriptInterface->pushFunction(m_scriptId);
 			lua_pushnumber(L, env->addThing(creature));
 			m_scriptInterface->pushVariant(L, var);
 
-			int32_t result = m_scriptInterface->callFunction(2);
+			bool result = m_scriptInterface->callFunction(2);
 			m_scriptInterface->releaseScriptEnv();
-
-			return (result != LUA_ERROR);
+			return result;
 		}
 	}
 	else
@@ -1806,21 +1802,21 @@ bool RuneSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
-
 			std::stringstream scriptstream;
+
 			scriptstream << "cid = " << env->addThing(creature) << std::endl;
 			env->streamVariant(scriptstream, "var", var);
 
 			scriptstream << m_scriptData;
-			int32_t result = LUA_NO_ERROR;
+			bool result = true;
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getField(L, "_result");
+				result = m_scriptInterface->getFieldBool(L, "_result");
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return (result == LUA_NO_ERROR);
+			return result;
 		}
 		else
 		{
@@ -1832,17 +1828,15 @@ bool RuneSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 
 			env->setScriptId(m_scriptId, m_scriptInterface);
 			env->setRealPos(creature->getPosition());
-
 			lua_State* L = m_scriptInterface->getLuaState();
-			m_scriptInterface->pushFunction(m_scriptId);
 
+			m_scriptInterface->pushFunction(m_scriptId);
 			lua_pushnumber(L, env->addThing(creature));
 			m_scriptInterface->pushVariant(L, var);
 
-			int32_t result = m_scriptInterface->callFunction(2);
+			bool result = m_scriptInterface->callFunction(2);
 			m_scriptInterface->releaseScriptEnv();
-
-			return (result != LUA_ERROR);
+			return result;
 		}
 	}
 	else

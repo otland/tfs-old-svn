@@ -31,7 +31,7 @@ extern ConfigManager g_config;
 extern Weapons* g_weapons;
 
 Weapons::Weapons():
-m_scriptInterface("Weapon Interface")
+	m_scriptInterface("Weapon Interface")
 {
 	m_scriptInterface.initState();
 }
@@ -288,42 +288,38 @@ int32_t Weapon::playerWeaponCheck(Player* player, Creature* target) const
 	if(std::max(std::abs(playerPos.x - targetPos.x), std::abs(playerPos.y - targetPos.y)) > range)
 		return 0;
 
-	if(!player->hasFlag(PlayerFlag_IgnoreEquipCheck))
-	{
-		if(!enabled)
-			return 0;
+	if(player->hasFlag(PlayerFlag_IgnoreEquipCheck))
+		return 100;
 
-		if(player->getMana() < getManaCost(player))
-			return 0;
+	if(!enabled)
+		return 0;
 
-		if(player->getPlayerInfo(PLAYERINFO_SOUL) < soul)
-			return 0;
+	if(player->getMana() < getManaCost(player))
+		return 0;
 
-		if(isPremium() && !player->isPremium())
-			return 0;
+	if(player->getPlayerInfo(PLAYERINFO_SOUL) < soul)
+		return 0;
 
-		if(!vocWeaponMap.empty())
-		{
-			if(vocWeaponMap.find(player->getVocationId()) == vocWeaponMap.end())
-				return 0;
-		}
+	if(isPremium() && !player->isPremium())
+		return 0;
 
-		int32_t damageModifier = 100;
-		if(player->getLevel() < getReqLevel())
-			damageModifier = (isWieldedUnproperly() ? damageModifier / 2 : 0);
+	if(!vocWeaponMap.empty() && vocWeaponMap.find(player->getVocationId()) == vocWeaponMap.end())
+		return 0;
 
-		if(player->getMagicLevel() < getReqMagLv())
-			damageModifier = (isWieldedUnproperly() ? damageModifier / 2 : 0);
+	int32_t damageModifier = 100;
+	if(player->getLevel() < getReqLevel())
+		damageModifier = (isWieldedUnproperly() ? damageModifier / 2 : 0);
 
-		return damageModifier;
-	}
-	return 100;
+	if(player->getMagicLevel() < getReqMagLv())
+		damageModifier = (isWieldedUnproperly() ? damageModifier / 2 : 0);
+
+	return damageModifier;
 }
 
 bool Weapon::useWeapon(Player* player, Item* item, Creature* target) const
 {
 	int32_t damageModifier = playerWeaponCheck(player, target);
-	if(damageModifier == 0)
+	if(!damageModifier)
 		return false;
 
 	return internalUseWeapon(player, item, target, damageModifier);
@@ -484,21 +480,21 @@ bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(player->getPosition());
-
 			std::stringstream scriptstream;
+
 			scriptstream << "cid = " << env->addThing(player) << std::endl;
 			env->streamVariant(scriptstream, "var", var);
 
 			scriptstream << m_scriptData;
-			int32_t result = LUA_NO_ERROR;
+			bool result = true;
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getField(L, "_result");
+				result = m_scriptInterface->getFieldBool(L, "_result");
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return (result == LUA_NO_ERROR);
+			return result;
 		}
 		else
 		{
@@ -512,25 +508,24 @@ bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
 			env->setRealPos(player->getPosition());
 
 			lua_State* L = m_scriptInterface->getLuaState();
-
 			m_scriptInterface->pushFunction(m_scriptId);
+
 			lua_pushnumber(L, env->addThing(player));
 			m_scriptInterface->pushVariant(L, var);
 
-			int32_t result = m_scriptInterface->callFunction(2);
+			bool result = m_scriptInterface->callFunction(2);
 			m_scriptInterface->releaseScriptEnv();
-
-			return (result == LUA_NO_ERROR);
+			return result;
 		}
 	}
 	else
 	{
-		std::cout << "[Error] Call stack overflow. Weapon::executeUseWeapon" << std::endl;
+		std::cout << "[Error - Weapon::executeUseWeapon] Call stack overflow" << std::endl;
 		return false;
 	}
 }
 
-WeaponMelee::WeaponMelee(LuaScriptInterface* _interface) :
+WeaponMelee::WeaponMelee(LuaScriptInterface* _interface):
 	Weapon(_interface)
 {
 	elementType = COMBAT_NONE;
@@ -554,7 +549,7 @@ bool WeaponMelee::useWeapon(Player* player, Item* item, Creature* target) const
 	if(!Weapon::useWeapon(player, item, target))
 		return false;
 
-	if(elementDamage != 0 && elementType != COMBAT_NONE)
+	if(elementDamage && elementType != COMBAT_NONE)
 	{
 		CombatParams element;
 		element.combatType = elementType;
@@ -673,7 +668,7 @@ int32_t WeaponMelee::getElementDamage(const Player* player, const Item* item) co
 }
 
 WeaponDistance::WeaponDistance(LuaScriptInterface* _interface):
-Weapon(_interface)
+	Weapon(_interface)
 {
 	hitChance = -1;
 	maxHitChance = 0;
@@ -1001,7 +996,7 @@ bool WeaponDistance::getSkillType(const Player* player, const Item* item,
 }
 
 WeaponWand::WeaponWand(LuaScriptInterface* _interface):
-Weapon(_interface)
+	Weapon(_interface)
 {
 	minChange = 0;
 	maxChange = 0;

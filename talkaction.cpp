@@ -108,7 +108,7 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 		size_t sloc = words.find(" ", ++loc);
 		if(sloc != std::string::npos && sloc >= 0)
 		{
-			cmdstring[TALKFILTER_WORD_SPACED] = cmdstring[TALKFILTER_WORD] + std::string(words, loc, sloc);
+			cmdstring[TALKFILTER_WORD_SPACED] = std::string(words, 0, sloc);
 			paramstring[TALKFILTER_WORD_SPACED] = std::string(words, (sloc + 1), (words.size() - --sloc));
 		}
 	}
@@ -266,23 +266,23 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, con
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(creature->getPosition());
-
 			std::stringstream scriptstream;
 			scriptstream << "cid = " << env->addThing(creature) << std::endl;
+
 			scriptstream << "words = \"" << words << "\"" << std::endl;
 			scriptstream << "param = \"" << param << "\"" << std::endl;
 			scriptstream << "channel = " << channel << std::endl;
 
 			scriptstream << m_scriptData;
-			int32_t result = LUA_TRUE;
+			bool result = true;
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getField(L, "_result");
+				result = m_scriptInterface->getFieldBool(L, "_result");
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return (result == LUA_TRUE);
+			return result;
 		}
 		else
 		{
@@ -297,16 +297,15 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, con
 
 			lua_State* L = m_scriptInterface->getLuaState();
 			m_scriptInterface->pushFunction(m_scriptId);
-
 			lua_pushnumber(L, env->addThing(creature));
+
 			lua_pushstring(L, words.c_str());
 			lua_pushstring(L, param.c_str());
 			lua_pushnumber(L, channel);
 
-			int32_t result = m_scriptInterface->callFunction(4);
+			bool result = m_scriptInterface->callFunction(4);
 			m_scriptInterface->releaseScriptEnv();
-
-			return (result == LUA_TRUE);
+			return result;
 		}
 	}
 	else

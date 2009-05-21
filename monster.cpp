@@ -51,14 +51,15 @@ Monster* Monster::createMonster(const std::string& name)
 	return createMonster(mType);
 }
 
-Monster::Monster(MonsterType* _mtype) :
-Creature()
+Monster::Monster(MonsterType* _mType):
+	Creature()
 {
 	isActivated = false;
 	isMasterInRange = false;
 	teleportToMaster = false;
-	mType = _mtype;
+	mType = _mType;
 	spawn = NULL;
+	raid = NULL;
 	defaultOutfit = mType->outfit;
 	currentOutfit = mType->outfit;
 
@@ -1162,6 +1163,9 @@ bool Monster::onDeath()
 	clearFriendList();
 
 	g_game.removeCreature(this, false);
+	if(raid)
+		raid->unRef();
+
 	return true;
 }
 

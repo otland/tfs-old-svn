@@ -19,6 +19,7 @@
 #define __MONSTER__
 
 #include "monsters.h"
+#include "raids.h"
 #include "tile.h"
 
 class Creature;
@@ -36,7 +37,7 @@ typedef std::list<Creature*> CreatureList;
 class Monster : public Creature
 {
 	private:
-		Monster(MonsterType* mtype);
+		Monster(MonsterType* _mType);
 
 	public:
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -74,7 +75,9 @@ class Monster : public Creature
 		bool isHostile() const {return mType->isHostile;}
 		virtual bool canSeeInvisibility() const {return Creature::isImmune(CONDITION_INVISIBLE);}
 		uint32_t getManaCost() const {return mType->manaCost;}
+
 		void setSpawn(Spawn* _spawn) {spawn = _spawn;}
+		void setRaid(Raid* _raid) {raid = _raid;}
 
 		virtual void onAttackedCreatureDisappear(bool isLogout);
 		virtual void onFollowCreatureDisappear(bool isLogout);
@@ -132,6 +135,8 @@ class Monster : public Creature
 		bool extraMeleeAttack;
 
 		Spawn* spawn;
+		Raid* raid;
+
 		bool isMasterInRange;
 		bool teleportToMaster;
 

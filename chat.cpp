@@ -28,7 +28,7 @@ extern Game g_game;
 extern Chat g_chat;
 
 PrivateChatChannel::PrivateChatChannel(uint16_t id, std::string name, bool logged):
-ChatChannel(id, name, logged), m_owner(0) {}
+	ChatChannel(id, name, logged), m_owner(0) {}
 
 bool PrivateChatChannel::isInvited(const Player* player)
 {
@@ -97,7 +97,7 @@ void PrivateChatChannel::closeChannel()
 }
 
 ChatChannel::ChatChannel(uint16_t id, std::string name, bool logged/* = false*/, uint32_t access/* = 0*/, bool enabled/* = true*/):
-m_name(name), m_logged(logged), m_enabled(enabled), m_id(id), m_access(access)
+	m_name(name), m_logged(logged), m_enabled(enabled), m_id(id), m_access(access)
 {
 	if(logged)
 	{
@@ -144,10 +144,13 @@ bool ChatChannel::removeUser(Player* player)
 	return true;
 }
 
-bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& text, uint32_t _time /*= 0*/)
+bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& text, uint32_t _time/* = 0*/)
 {
+	if(!m_enabled || player->getAccess() < m_access)
+		return false;
+
 	UsersMap::iterator it = m_users.find(player->getID());
-	if(it == m_users.end() || !m_enabled || player->getAccess() < m_access)
+	if(it == m_users.end())
 		return false;
 
 	if((m_id == CHANNEL_TRADE || m_id == CHANNEL_TRADEROOK) && !player->hasFlag(PlayerFlag_CannotBeMuted))
@@ -156,23 +159,13 @@ bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& tex
 			player->addCondition(condition);
 	}
 
-	bool success = false;
 	for(it = m_users.begin(); it != m_users.end(); ++it)
-	{
 		it->second->sendToChannel(player, type, text, m_id, _time);
-		if(!success)
-			success = true;
-	}
 
-	if(success)
-	{
-		if(m_logged && m_file->is_open())
-			*m_file << "[" << formatDate() << "] " << player->getName() << ": " << text << std::endl;
+	if(m_logged && m_file->is_open())
+		*m_file << "[" << formatDate() << "] " << player->getName() << ": " << text << std::endl;
 
-		return true;
-	}
-
-	return false;
+	return true;
 }
 
 Chat::~Chat()

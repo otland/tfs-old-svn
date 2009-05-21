@@ -2,18 +2,18 @@ function onSay(cid, words, param, channel)
 	local houseId = getHouseFromPos(getCreaturePosition(cid))
 	if(not houseId) then
 		doPlayerSendCancel(cid, "You are not inside a house.")
-		doSendMagicEffect(getPlayerPosition(cid), CONST_ME_POFF)
-		return true
+		doSendMagicEffect(getCreaturePosition(cid), CONST_ME_POFF)
+		return false
 	end
 
 	local owner = getHouseOwner(houseId)
 	if(owner ~= getPlayerGUID(cid) and (owner ~= getPlayerGuildId(cid) or getPlayerGuildLevel(cid) ~= GUILDLEVEL_LEADER)) then
 		doPlayerSendCancel(cid, "You are not the owner of this house.")
-		doSendMagicEffect(getPlayerPosition(cid), CONST_ME_POFF)
-		return true
+		doSendMagicEffect(getCreaturePosition(cid), CONST_ME_POFF)
+		return false
 	end
 
 	setHouseOwner(houseId, 0)
-	doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You have successfully left your house.")
-	return true
+	doSendMagicEffect(getCreaturePosition(cid), CONST_ME_MAGIC_BLUE)
+	return false
 end

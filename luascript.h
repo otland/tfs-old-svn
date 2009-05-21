@@ -39,14 +39,6 @@ class Combat;
 class Condition;
 class Npc;
 
-enum LUA_RET_CODE
-{
-	LUA_NO_ERROR = true,
-	LUA_ERROR = false,
-	LUA_TRUE = true,
-	LUA_FALSE = false
-};
-
 enum LuaVariantType_t
 {
 	VARIANT_NONE = 0,

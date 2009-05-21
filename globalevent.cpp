@@ -21,8 +21,8 @@
 #include "globalevent.h"
 #include "tools.h"
 
-GlobalEvents::GlobalEvents() :
-m_scriptInterface("GlobalEvent Interface")
+GlobalEvents::GlobalEvents():
+	m_scriptInterface("GlobalEvent Interface")
 {
 	m_scriptInterface.initState();
 }
@@ -121,19 +121,20 @@ int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution, uin
 		{
 			std::stringstream scriptstream;
 			scriptstream << "interval = " << interval << std::endl;
+
 			scriptstream << "lastExecution = " << lastExecution << std::endl;
 			scriptstream << "thinkInterval = " << thinkInterval << std::endl;
 
 			scriptstream << m_scriptData;
-			int32_t result = LUA_TRUE;
+			bool result = true;
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getField(L, "_result");
+				result = m_scriptInterface->getFieldBool(L, "_result");
 			}
 
 			m_scriptInterface->releaseScriptEnv();
-			return (result == LUA_TRUE);
+			return result;
 		}
 		else
 		{
@@ -144,17 +145,17 @@ int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution, uin
 			#endif
 
 			env->setScriptId(m_scriptId, m_scriptInterface);
-
 			lua_State* L = m_scriptInterface->getLuaState();
 
 			m_scriptInterface->pushFunction(m_scriptId);
 			lua_pushnumber(L, interval);
+
 			lua_pushnumber(L, lastExecution);
 			lua_pushnumber(L, thinkInterval);
 
-			int32_t result = m_scriptInterface->callFunction(3);
+			bool result = m_scriptInterface->callFunction(3);
 			m_scriptInterface->releaseScriptEnv();
-			return (result == LUA_TRUE);
+			return result;
 		}
 	}
 	else
