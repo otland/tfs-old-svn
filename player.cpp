@@ -2290,8 +2290,7 @@ Item* Player::createCorpse(DeathList deathList)
 		return NULL;
 
 	std::stringstream ss;
-	ss << "You recognize " << getNameDescription() << ". " << (
-		getSex() == PLAYERSEX_FEMALE ? "She" : "He") << " was killed by ";
+	ss << "You recognize " << getNameDescription() << ". " << (getSex() == PLAYERSEX_FEMALE ? "She" : "He") << " was killed by ";
 	if(deathList[0].isCreatureKill())
 	{
 		ss << deathList[0].getKillerCreature()->getNameDescription();
@@ -2307,24 +2306,24 @@ Item* Player::createCorpse(DeathList deathList)
 		{
 			if(deathList[1].isCreatureKill())
 			{
-				ss << deathList[1].getKillerCreature()->getNameDescription();
+				ss << " and by " << deathList[1].getKillerCreature()->getNameDescription();
 				if(deathList[1].getKillerCreature()->getMaster())
 					ss << " summoned by " << deathList[1].getKillerCreature()->getMaster()->getNameDescription();
 			}
 			else
-				ss << deathList[1].getKillerName();
+				ss << " and by " << deathList[1].getKillerName();
 		}
 		else if(deathList[1].isCreatureKill())
 		{
 			if(deathList[0].getKillerCreature()->getName() != deathList[1].getKillerCreature()->getName())
 			{
-				ss << deathList[1].getKillerCreature()->getNameDescription();
+				ss << " and by " << deathList[1].getKillerCreature()->getNameDescription();
 				if(deathList[1].getKillerCreature()->getMaster())
 					ss << " summoned by " << deathList[1].getKillerCreature()->getMaster()->getNameDescription();
 			}
 		}
 		else if(asLowerCaseString(deathList[0].getKillerName()) != asLowerCaseString(deathList[1].getKillerName()))
-			ss << deathList[1].getKillerName();
+			ss << " and by " << deathList[1].getKillerName();
 	}
 
 	ss << ".";
