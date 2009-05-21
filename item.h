@@ -24,7 +24,7 @@
 
 #include "thing.h"
 #include "items.h"
-#include "raid.h"
+#include "raids.h"
 
 class Creature;
 class Player;
