@@ -1093,7 +1093,6 @@ bool ConditionDamage::init()
 	if(damageList.empty())
 	{
 		setTicks(0);
-
 		int32_t amount = random_range(minDamage, maxDamage);
 		if(amount != 0)
 		{
@@ -1117,12 +1116,12 @@ bool ConditionDamage::startCondition(Creature* creature)
 	if(!Condition::startCondition(creature) || !init())
 		return false;
 
-	if(!delayed)
-	{
-		int32_t damage = 0;
-		if(getNextDamage(damage))
-			return doDamage(creature, damage);
-	}
+	if(delayed)
+		return true;
+
+	int32_t damage = 0;
+	if(getNextDamage(damage))
+		return doDamage(creature, damage);
 
 	return true;
 }

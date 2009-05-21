@@ -88,13 +88,12 @@ struct CombatParams
 	std::list<const Condition*> conditionList;
 };
 
-typedef bool (*COMBATFUNC)(Creature*, Creature*, const CombatParams&, void*);
-
 struct Combat2Var
 {
 	int32_t minChange, maxChange;
 };
 
+typedef bool (*COMBATFUNC)(Creature*, Creature*, const CombatParams&, void*);
 class MatrixArea
 {
 	public:
@@ -157,7 +156,6 @@ class MatrixArea
 };
 
 typedef std::map<Direction, MatrixArea* > AreaCombatMap;
-
 class AreaCombat
 {
 	public:
