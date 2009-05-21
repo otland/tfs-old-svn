@@ -850,7 +850,7 @@ void Player::dropLoot(Container* corpse)
 		bless--;
 	}
 
-	uint32_t itemLoss = (uint32_t)std::floor((float)(loss + 5) * lossPercent[LOSS_ITEMS] / 1000.);
+	uint32_t itemLoss = (uint32_t)std::floor((double)((loss + 5) * lossPercent[LOSS_ITEMS]) / 1000.);
 	for(uint8_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 	{
 		if(Item* item = inventory[i])
@@ -2092,7 +2092,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 			const ItemType& it = Item::items[item->getID()];
 			if(it.abilities.absorbPercent[combatType] != 0)
 			{
-				blocked += (int32_t)std::ceil((float)damage * it.abilities.absorbPercent[combatType] / 100);
+				blocked += (int32_t)std::ceil((double)(damage * it.abilities.absorbPercent[combatType]) / 100.);
 				if(item->hasCharges())
 					g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
 			}
@@ -2102,11 +2102,11 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 		{
 			uint32_t tmp = Outfits::getInstance()->getOutfitAbsorb(defaultOutfit.lookType, (uint32_t)sex, combatType);
 			if(tmp != 0)
-				blocked += (int32_t)std::ceil((float)damage * tmp / 100);
+				blocked += (int32_t)std::ceil((double)(damage * tmp) / 100.);
 		}
 
-		if(vocation->getAbsorbPercent(combatType) != 0)
-			blocked += (int32_t)std::ceil((float)damage * vocation->getAbsorbPercent(combatType) / 100);
+		if(vocation->getAbsorbPercent(combatType))
+			blocked += (int32_t)std::ceil((double)(damage * vocation->getAbsorbPercent(combatType)) / 100.);
 
 		damage -= blocked;
 		if(damage <= 0)
@@ -2185,7 +2185,7 @@ bool Player::onDeath()
 	{
 		uint64_t lossExperience = getLostExperience();
 		removeExperience(lossExperience, false);
-		float percent = 1.0f - ((float)(experience - lossExperience) / (float)experience);
+		double percent = 1. - ((double)(experience - lossExperience) / experience);
 
 		//Magic level loss
 		uint32_t sumMana = 0;
@@ -2194,7 +2194,7 @@ bool Player::onDeath()
 			sumMana += vocation->getReqMana(i);
 
 		sumMana += manaSpent;
-		lostMana = (uint64_t)std::ceil(sumMana * (percent * (float)lossPercent[LOSS_MANA] / 100.0f));
+		lostMana = (uint64_t)std::ceil(sumMana * ((double)(percent * lossPercent[LOSS_MANA]) / 100.));
 		while(lostMana > manaSpent && magLevel > 0)
 		{
 			lostMana -= manaSpent;
@@ -2218,7 +2218,7 @@ bool Player::onDeath()
 				sumSkillTries += vocation->getReqSkillTries(i, c);
 
 			sumSkillTries += skills[i][SKILL_TRIES];
-			lostSkillTries = (uint32_t)std::ceil(sumSkillTries * (percent * (float)lossPercent[LOSS_SKILLS] / 100.0f));
+			lostSkillTries = (uint32_t)std::ceil(sumSkillTries * ((double)(percent * lossPercent[LOSS_SKILLS]) / 100.));
 			while(lostSkillTries > skills[i][SKILL_TRIES])
 			{
 				lostSkillTries -= skills[i][SKILL_TRIES];
@@ -3953,26 +3953,26 @@ uint64_t Player::getLostExperience() const
 	if(!skillLoss)
 		return 0;
 
-	float percent = (float)(lossPercent[LOSS_EXPERIENCE] - vocation->getLessLoss() - (getBlessings() * g_config.getNumber(
-		ConfigManager::BLESS_REDUCTION))) / 100.0f;
+	double percent = (double)(lossPercent[LOSS_EXPERIENCE] - vocation->getLessLoss() - (getBlessings() * g_config.getNumber(
+		ConfigManager::BLESS_REDUCTION))) / 100.;
 	if(level <= 25)
-		return (uint64_t)std::floor((float)experience * (percent / 10.0f));
+		return (uint64_t)std::floor((double)(experience * percent) / 10.);
 
 	int32_t base = level;
-	float levels = (float)(base + 50) / 100.0f;
+	double levels = (double)(base + 50) / 100.;
 
 	uint64_t lost = 0;
 	while(levels > 1.0f)
 	{
 		lost += (getExpForLevel(base) - getExpForLevel(base - 1));
 		base--;
-		levels -= 1.0f;
+		levels -= 1.;
 	}
 
-	if(levels > 0.0f)
-		lost += (uint64_t)std::floor((float)(getExpForLevel(base) - getExpForLevel(base - 1)) * levels);
+	if(levels > 0.)
+		lost += (uint64_t)std::floor((double)(getExpForLevel(base) - getExpForLevel(base - 1)) * levels);
 
-	return (uint64_t)std::floor((float)lost * percent);
+	return (uint64_t)std::floor((double)(lost * percent));
 }
 
 uint32_t Player::getAttackSpeed()
