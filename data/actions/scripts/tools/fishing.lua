@@ -10,11 +10,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return false
 	end
 
-	if((config.allowFromPz or not getTileInfo(fromPosition).protection) and itemEx.itemid ~= 493 and
-		math.random(1, (100 + (getPlayerSkill(cid, SKILL_FISHING) / 10))) <= getPlayerSkill(cid, SKILL_FISHING) and
+	if((config.allowFromPz or not getTileInfo(getCreaturePosition(cid)).protection) and itemEx.itemid ~= 493 and
+		math.random(1, (100 + (getPlayerSkill(cid, SKILL_FISHING) / 10))) < getPlayerSkill(cid, SKILL_FISHING) and
 		(not config.useWorms or (getPlayerItemCount(cid, ITEM_WORM) > 0 and doPlayerRemoveItem(cid, ITEM_WORM, 1)))) then
 		doPlayerAddItem(cid, ITEM_FISH, 1)
-		doPlayerAddSkillTry(cid, SKILL_FISHING, rateSkill)
+		doPlayerAddSkillTry(cid, SKILL_FISHING, config.rateSkill)
 	end
 
 	doSendMagicEffect(toPosition, CONST_ME_LOSEENERGY)
