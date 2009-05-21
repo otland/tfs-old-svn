@@ -582,6 +582,12 @@ bool ItemSpawnEvent::executeEvent() const
 				std::cout << "[Error - ItemSpawnEvent::executeEvent] Cannot spawn item with id " << m_itemId << std::endl;
 				return false;
 			}
+
+			if(m_raid->usesRef() && m_ref)
+			{
+				newItem->setRaid(m_raid);
+				m_raid->addRef();
+			}
 		}
 	}
 	else
@@ -598,6 +604,12 @@ bool ItemSpawnEvent::executeEvent() const
 		{
 			std::cout << "[Error - ItemSpawnEvent::executeEvent] Cannot spawn item with id " << m_itemId << std::endl;
 			return false;
+		}
+
+		if(m_raid->usesRef() && m_ref)
+		{
+			newItem->setRaid(m_raid);
+			m_raid->addRef();
 		}
 	}
 

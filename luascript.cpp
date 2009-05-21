@@ -1440,6 +1440,9 @@ void LuaScriptInterface::registerFunctions()
 	//doTileQueryAdd(uid, pos[, flags])
 	lua_register(m_luaState, "doTileQueryAdd", LuaScriptInterface::luaDoTileQueryAdd);
 
+	//doItemRaidUnref(uid)
+	lua_register(m_luaState, "doItemRaidUnref", LuaScriptInterface::luaDoItemRaidUnref);
+
 	//getThingPos(uid)
 	lua_register(m_luaState, "getThingPos", LuaScriptInterface::luaGetThingPos);
 
@@ -5327,6 +5330,29 @@ int32_t LuaScriptInterface::luaDoTileQueryAdd(lua_State* L)
 
 	ReturnValue ret = tile->__queryAdd(0, thing, 1, flags);
 	lua_pushnumber(L, (uint32_t)ret);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoItemRaidUnref(lua_State* L)
+{
+	//doItemRaidUnref(uid)
+	ScriptEnviroment* env = getScriptEnv();
+	if(Item* item = env->getItemByUID(popNumber(L)))
+	{
+		if(Raid* raid = item->getRaid())
+		{
+			raid->unRef();
+			item->setRaid(NULL);
+			lua_pushboolean(L, true);
+		}
+		else
+			lua_pushboolean(L, false);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
 	return 1;
 }
 

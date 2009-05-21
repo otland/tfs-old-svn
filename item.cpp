@@ -103,6 +103,7 @@ Item::Item(const uint16_t _type, uint16_t _count/* = 0*/):
 {
 	id = _type;
 	count = 1;
+	raid = NULL;
 
 	const ItemType& it = items[id];
 	if(it.charges)
@@ -120,11 +121,12 @@ Item::Item(const uint16_t _type, uint16_t _count/* = 0*/):
 }
 
 Item::Item(const Item& i):
-Thing(), ItemAttributes()
+	Thing(), ItemAttributes()
 {
-	//std::cout << "Item copy constructor " << this << std::endl;
 	id = i.id;
 	count = i.count;
+	raid = i.raid;
+
 	m_attributes = i.m_attributes;
 	if(i.m_firstAttr)
 		m_firstAttr = new Attribute(*i.m_firstAttr);
@@ -152,6 +154,12 @@ void Item::copyAttributes(Item* item)
 
 Item::~Item()
 {
+	if(raid)
+	{
+		raid->unRef();
+		raid = NULL;
+	}
+
 	if(getUniqueId())
 		ScriptEnviroment::removeUniqueThing(this);
 }

@@ -24,6 +24,7 @@
 
 #include "thing.h"
 #include "items.h"
+#include "raid.h"
 
 class Creature;
 class Player;
@@ -419,6 +420,9 @@ class Item : virtual public Thing, public ItemAttributes
 		bool isLoadedFromMap() const {return loadedFromMap;}
 		void setLoadedFromMap(bool value) {loadedFromMap = value;}
 
+		Raid* getRaid() {return raid;}
+		void setRaid(Raid* _raid) {raid = _raid;}
+
 		void setDefaultSubtype();
 		void setUniqueId(uint16_t n);
 
@@ -445,6 +449,7 @@ class Item : virtual public Thing, public ItemAttributes
 
 		uint16_t id;
 		uint8_t count;
+		Raid* raid;
 		bool loadedFromMap;
 };
 

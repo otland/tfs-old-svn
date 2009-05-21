@@ -476,6 +476,7 @@ class LuaScriptInterface
 		static int32_t luaDoSetItemText(lua_State* L);
 		static int32_t luaDoSetItemSpecialDescription(lua_State* L);
 		static int32_t luaDoSetItemProtection(lua_State* L);
+		static int32_t luaDoItemRaidUnref(lua_State* L);
 
 		//get tile info
 		static int32_t luaGetTileInfo(lua_State* L);
