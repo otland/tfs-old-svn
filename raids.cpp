@@ -253,24 +253,24 @@ bool Raid::loadFromXml(const std::string& _filename)
 	{
 		RaidEvent* event;
 		if(!xmlStrcmp(eventNode->name, (const xmlChar*)"announce"))
-			event = new AnnounceEvent();
+			event = new AnnounceEvent(this, ref);
 		else if(!xmlStrcmp(eventNode->name, (const xmlChar*)"effect"))
-			event = new EffectEvent();
+			event = new EffectEvent(this, ref);
 		else if(!xmlStrcmp(eventNode->name, (const xmlChar*)"itemspawn"))
-			event = new ItemSpawnEvent();
+			event = new ItemSpawnEvent(this, ref);
 		else if(!xmlStrcmp(eventNode->name, (const xmlChar*)"singlespawn"))
-			event = new SingleSpawnEvent();
+			event = new SingleSpawnEvent(this, ref);
 		else if(!xmlStrcmp(eventNode->name, (const xmlChar*)"areaspawn"))
-			event = new AreaSpawnEvent();
+			event = new AreaSpawnEvent(this, ref);
 		else if(!xmlStrcmp(eventNode->name, (const xmlChar*)"script"))
-			event = new ScriptEvent();
+			event = new ScriptEvent(this, ref);
 		else
 		{
 			eventNode = eventNode->next;
 			continue;
 		}
 
-		if(!event->configureRaidEvent(eventNode, this, ref))
+		if(!event->configureRaidEvent(eventNode))
 		{
 			std::cout << "[Error - Raid::loadFromXml] Could not configure raid in file: " << _filename << ", eventNode: " << eventNode->name << std::endl;
 			delete event;
@@ -354,14 +354,12 @@ RaidEvent* Raid::getNextRaidEvent()
 	return NULL;
 }
 
-bool RaidEvent::configureRaidEvent(xmlNodePtr eventNode, Raid* raid, bool ref)
+bool RaidEvent::configureRaidEvent(xmlNodePtr eventNode)
 {
-	m_ref = ref;
 	std::string strValue;
 	if(readXMLString(eventNode, "ref", strValue))
 		m_ref = booleanString(strValue);
 
-	m_raid = raid;
 	int32_t intValue;
 	if(readXMLInteger(eventNode, "delay", intValue))
 		m_delay = std::max((int32_t)m_delay, intValue);
@@ -369,9 +367,9 @@ bool RaidEvent::configureRaidEvent(xmlNodePtr eventNode, Raid* raid, bool ref)
 	return true;
 }
 
-bool AnnounceEvent::configureRaidEvent(xmlNodePtr eventNode, Raid* raid, bool ref)
+bool AnnounceEvent::configureRaidEvent(xmlNodePtr eventNode)
 {
-	if(!RaidEvent::configureRaidEvent(eventNode, raid, ref))
+	if(!RaidEvent::configureRaidEvent(eventNode))
 		return false;
 
 	std::string strValue;
@@ -416,9 +414,9 @@ bool AnnounceEvent::executeEvent() const
 	return true;
 }
 
-bool EffectEvent::configureRaidEvent(xmlNodePtr eventNode, Raid* raid, bool ref)
+bool EffectEvent::configureRaidEvent(xmlNodePtr eventNode)
 {
-	if(!RaidEvent::configureRaidEvent(eventNode, raid, ref))
+	if(!RaidEvent::configureRaidEvent(eventNode))
 		return false;
 
 	int32_t intValue;
@@ -480,9 +478,9 @@ bool EffectEvent::executeEvent() const
 	return true;
 }
 
-bool ItemSpawnEvent::configureRaidEvent(xmlNodePtr eventNode, Raid* raid, bool ref)
+bool ItemSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 {
-	if(!RaidEvent::configureRaidEvent(eventNode, raid, ref))
+	if(!RaidEvent::configureRaidEvent(eventNode))
 		return false;
 
 	int32_t intValue;
@@ -589,9 +587,9 @@ bool ItemSpawnEvent::executeEvent() const
 	return true;
 }
 
-bool SingleSpawnEvent::configureRaidEvent(xmlNodePtr eventNode, Raid* raid, bool ref)
+bool SingleSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 {
-	if(!RaidEvent::configureRaidEvent(eventNode, raid, ref))
+	if(!RaidEvent::configureRaidEvent(eventNode))
 		return false;
 
 	std::string strValue;
@@ -667,9 +665,9 @@ bool SingleSpawnEvent::executeEvent() const
 	return true;
 }
 
-bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode, Raid* raid, bool ref)
+bool AreaSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 {
-	if(!RaidEvent::configureRaidEvent(eventNode, raid, ref))
+	if(!RaidEvent::configureRaidEvent(eventNode))
 		return false;
 
 	int32_t intValue;
@@ -901,15 +899,9 @@ bool AreaSpawnEvent::executeEvent() const
 
 LuaScriptInterface ScriptEvent::m_scriptInterface("Raid Interface");
 
-ScriptEvent::ScriptEvent():
-	Event(&m_scriptInterface)
+bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode)
 {
-	m_scriptInterface.initState();
-}
-
-bool ScriptEvent::configureRaidEvent(xmlNodePtr eventNode, Raid* raid, bool ref)
-{
-	if(!RaidEvent::configureRaidEvent(eventNode, raid, ref))
+	if(!RaidEvent::configureRaidEvent(eventNode))
 		return false;
 
 	std::string scriptsName = Raids::getInstance()->getScriptBaseName();

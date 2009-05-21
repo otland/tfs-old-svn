@@ -139,10 +139,11 @@ class Raid
 class RaidEvent
 {
 	public:
-		RaidEvent(): m_ref(false), m_raid(NULL), m_delay(RAID_MINTICKS) {}
+		RaidEvent(Raid* raid, bool ref): m_delay(RAID_MINTICKS),
+			m_raid(raid), m_ref(ref) {}
 		virtual ~RaidEvent() {}
 
-		virtual bool configureRaidEvent(xmlNodePtr eventNode, Raid* raid, bool ref);
+		virtual bool configureRaidEvent(xmlNodePtr eventNode);
 		virtual bool executeEvent() const {return false;}
 
 		uint32_t getDelay() const {return m_delay;}
@@ -152,18 +153,20 @@ class RaidEvent
 		}
 
 	private:
+		uint32_t m_delay;
+
 		bool m_ref;
 		Raid* m_raid;
-		uint32_t m_delay;
 };
 
 class AnnounceEvent : public RaidEvent
 {
 	public:
-		AnnounceEvent(): m_messageType(MSG_EVENT_ADVANCE) {}
+		AnnounceEvent(Raid* raid, bool ref): RaidEvent(raid, ref),
+			m_messageType(MSG_EVENT_ADVANCE) {}
 		virtual ~AnnounceEvent() {}
 
-		virtual bool configureRaidEvent(xmlNodePtr eventNode, Raid* raid, bool ref);
+		virtual bool configureRaidEvent(xmlNodePtr eventNode);
 		virtual bool executeEvent() const;
 
 	private:
@@ -174,10 +177,11 @@ class AnnounceEvent : public RaidEvent
 class EffectEvent : public RaidEvent
 {
 	public:
-		EffectEvent(): m_effect(NM_ME_NONE) {}
+		EffectEvent(Raid* raid, bool ref): RaidEvent(raid, ref),
+			m_effect(NM_ME_NONE) {}
 		virtual ~EffectEvent() {}
 
-		virtual bool configureRaidEvent(xmlNodePtr eventNode, Raid* raid, bool ref);
+		virtual bool configureRaidEvent(xmlNodePtr eventNode);
 		virtual bool executeEvent() const;
 
 	private:
@@ -188,10 +192,11 @@ class EffectEvent : public RaidEvent
 class ItemSpawnEvent : public RaidEvent
 {
 	public:
-		ItemSpawnEvent(): itemId(0), m_subType(-1) {}
+		ItemSpawnEvent(Raid* raid, bool ref): RaidEvent(raid, ref),
+			itemId(0), m_subType(-1) {}
 		virtual ~ItemSpawnEvent() {}
 
-		virtual bool configureRaidEvent(xmlNodePtr eventNode, Raid* raid, bool ref);
+		virtual bool configureRaidEvent(xmlNodePtr eventNode);
 		virtual bool executeEvent() const;
 
 	private:
@@ -203,10 +208,10 @@ class ItemSpawnEvent : public RaidEvent
 class SingleSpawnEvent : public RaidEvent
 {
 	public:
-		SingleSpawnEvent() {}
+		SingleSpawnEvent(Raid* raid, bool ref): RaidEvent(raid, ref) {}
 		virtual ~SingleSpawnEvent() {}
 
-		virtual bool configureRaidEvent(xmlNodePtr eventNode, Raid* raid, bool ref);
+		virtual bool configureRaidEvent(xmlNodePtr eventNode);
 		virtual bool executeEvent() const;
 
 	private:
@@ -217,10 +222,10 @@ class SingleSpawnEvent : public RaidEvent
 class AreaSpawnEvent : public RaidEvent
 {
 	public:
-		AreaSpawnEvent() {}
+		AreaSpawnEvent(Raid* raid, bool ref): RaidEvent(raid, ref) {}
 		virtual ~AreaSpawnEvent();
 
-		virtual bool configureRaidEvent(xmlNodePtr eventNode, Raid* raid, bool ref);
+		virtual bool configureRaidEvent(xmlNodePtr eventNode);
 		virtual bool executeEvent() const;
 
 		void addMonster(MonsterSpawn* _spawn);
@@ -234,10 +239,11 @@ class AreaSpawnEvent : public RaidEvent
 class ScriptEvent : public RaidEvent, public Event
 {
 	public:
-		ScriptEvent();
+		ScriptEvent(Raid* raid, bool ref): RaidEvent(raid, ref),
+			Event(&m_scriptInterface) {m_scriptInterface.initState();}
 		virtual ~ScriptEvent() {}
 
-		virtual bool configureRaidEvent(xmlNodePtr eventNode, Raid* raid, bool ref);
+		virtual bool configureRaidEvent(xmlNodePtr eventNode);
 		virtual bool executeEvent() const;
 
 		virtual bool configureEvent(xmlNodePtr p) {return false;}
