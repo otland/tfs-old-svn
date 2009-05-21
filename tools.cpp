@@ -228,20 +228,26 @@ bool parseXMLContentString(xmlNodePtr node, std::string& value)
 	std::string compareValue;
 	while(node)
 	{
-		if(!xmlStrcmp(node->name, (const xmlChar*)"text") || node->type == XML_CDATA_SECTION_NODE)
+		if(xmlStrcmp(node->name, (const xmlChar*)"text") && node->type != XML_CDATA_SECTION_NODE)
 		{
-			if(readXMLContentString(node, compareValue))
-			{
-				trim_left(compareValue, "\r");
-				trim_left(compareValue, "\n");
-				trim_left(compareValue, " ");
-				if(compareValue.length() > value.length())
-				{
-					value = compareValue;
-					if(!result)
-						result = true;
-				}
-			}
+			node = node->next;
+			continue;
+		}
+
+		if(!readXMLContentString(node, compareValue))
+		{
+			node = node->next;
+			continue;
+		}
+
+		trim_left(compareValue, "\r");
+		trim_left(compareValue, "\n");
+		trim_left(compareValue, " ");
+		if(compareValue.length() > value.length())
+		{
+			value = compareValue;
+			if(!result)
+				result = true;
 		}
 
 		node = node->next;

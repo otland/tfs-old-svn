@@ -128,12 +128,9 @@ Item* MonsterType::createLootItem(const LootBlock& lootBlock)
 	Item* tmpItem = NULL;
 	if(Item::items[lootBlock.id].stackable)
 	{
-		uint32_t randvalue = Monsters::getLootRandom();
-		if(randvalue < lootBlock.chance)
-		{
-			uint32_t n = randvalue % lootBlock.countmax + 1;
-			tmpItem = Item::CreateItem(lootBlock.id, n);
-		}
+		uint32_t rand = Monsters::getLootRandom();
+		if(rand < lootBlock.chance)
+			tmpItem = Item::CreateItem(lootBlock.id, (rand % lootBlock.countmax + 1));
 	}
 	else
 	{

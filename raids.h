@@ -47,10 +47,11 @@ typedef std::list<Raid*> RaidList;
 typedef std::vector<RaidEvent*> RaidEventVector;
 typedef std::list<MonsterSpawn*> MonsterSpawnList;
 
+#define MAXIMUM_TRIES_PER_MONSTER 10
 #define CHECK_RAIDS_INTERVAL 60
 #define MAX_RAND_RANGE 10000000
-#define RAID_MINTICKS 1000
-#define MAXIMUM_TRIES_PER_MONSTER 10
+#define MAX_ITEM_CHANCE 100000
+#define RAID_MINTICKS 100
 
 class Raids
 {
@@ -104,7 +105,7 @@ class Raid
 		bool loadFromXml(const std::string& _filename);
 
 		bool startRaid();
-		bool resetRaid();
+		bool resetRaid(bool checkExecution);
 
 		bool executeRaidEvent(RaidEvent* raidEvent);
 		void stopEvents();
@@ -119,16 +120,16 @@ class Raid
 		bool isEnabled() const {return enabled;}
 
 		bool usesRef() const {return refType != REF_NONE;}
-		bool hasRef() const {return refCount;}
+		bool hasRef() const {return refCount > 0;}
 
 		void addRef() {++refCount;}
-		void unRef() {--refCount; if(refCount <= 0) resetRaid();}
+		void unRef() {--refCount; if(refCount <= 0) resetRaid(true);}
 
 	private:
 		std::string name;
 		uint32_t interval;
 		uint64_t margin;
-		RefereeType_t refType;
+		RefType_t refType;
 		bool ref, enabled;
 
 		bool loaded;
@@ -140,7 +141,7 @@ class RaidEvent
 {
 	public:
 		RaidEvent(Raid* raid, bool ref): m_delay(RAID_MINTICKS),
-			m_raid(raid), m_ref(ref) {}
+			m_ref(ref), m_raid(raid) {}
 		virtual ~RaidEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
@@ -155,6 +156,7 @@ class RaidEvent
 	private:
 		uint32_t m_delay;
 
+	protected:
 		bool m_ref;
 		Raid* m_raid;
 };
@@ -193,7 +195,7 @@ class ItemSpawnEvent : public RaidEvent
 {
 	public:
 		ItemSpawnEvent(Raid* raid, bool ref): RaidEvent(raid, ref),
-			itemId(0), m_subType(-1) {}
+			m_itemId(0), m_subType(-1), m_chance(MAX_ITEM_CHANCE) {}
 		virtual ~ItemSpawnEvent() {}
 
 		virtual bool configureRaidEvent(xmlNodePtr eventNode);
@@ -202,6 +204,8 @@ class ItemSpawnEvent : public RaidEvent
 	private:
 		int16_t m_itemId;
 		int32_t m_subType;
+
+		uint32_t m_chance;
 		Position m_position;
 };
 

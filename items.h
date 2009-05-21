@@ -18,12 +18,12 @@
 #ifndef __ITEMS__
 #define __ITEMS__
 #include "otsystem.h"
+#include "itemloader.h"
 
 #include "const.h"
 #include "enums.h"
 
 #include "position.h"
-#include "itemloader.h"
 #include <libxml/parser.h>
 
 #define ITEMS 10500

@@ -46,6 +46,7 @@ bool Raids::parseRaidNode(xmlNodePtr raidNode, bool autoPath)
 		return false;
 	}
 
+	std::string name = strValue;
 	if(!readXMLInteger(raidNode, "interval2", intValue) || intValue <= 0)
 	{
 		std::cout << "[Error - Raids::parseRaidNode] interval2 tag missing or divided by 0 for raid " << name << std::endl;
@@ -53,12 +54,12 @@ bool Raids::parseRaidNode(xmlNodePtr raidNode, bool autoPath)
 	}
 
 	uint32_t interval = intValue * 60;
-	std::string name = strValue, file;
+	std::string file;
 	if(readXMLString(raidNode, "file", strValue))
 	{
 		file = strValue;
 		if(autoPath)
-			file = getFilePath(FILE_TYPE_OTHER, "raids/" + file)
+			file = getFilePath(FILE_TYPE_OTHER, "raids/" + file);
 	}
 	else
 	{
@@ -67,7 +68,7 @@ bool Raids::parseRaidNode(xmlNodePtr raidNode, bool autoPath)
 	}
 
 	uint64_t margin;
-	if(readXMLInteger(raidNode, "margin", intValue))
+	if(!readXMLInteger(raidNode, "margin", intValue))
 	{
 		margin = 0;
 		std::cout << "[Warning - Raids::parseRaidNode] margin tag missing for raid " << name << ", using default: " << margin << std::endl;
@@ -76,7 +77,7 @@ bool Raids::parseRaidNode(xmlNodePtr raidNode, bool autoPath)
 		margin = intValue * 60 * 1000;
 
 	RefType_t refType = REF_NONE;
-	if(readXMLString(raidNode, "reftype", strValue))
+	if(readXMLString(raidNode, "reftype", strValue) || readXMLString(raidNode, "refType", strValue))
 	{
 		std::string tmpStrValue = asLowerCaseString(strValue);
 		if(tmpStrValue == "single")
@@ -96,7 +97,7 @@ bool Raids::parseRaidNode(xmlNodePtr raidNode, bool autoPath)
 		enabled = booleanString(strValue);
 
 	Raid* raid = new Raid(name, interval, margin, refType, ref, enabled);
-	if(!raid || !raid->loadFromXml())
+	if(!raid || !raid->loadFromXml(file))
 	{
 		delete raid;
 		std::cout << "[Fatal - Raids::parseEventNode] failed to load raid " << name << std::endl;
@@ -163,9 +164,9 @@ void Raids::checkRaids()
 	uint64_t now = OTSYS_TIME();
 	for(RaidList::iterator it = raidList.begin(); it != raidList.end(); ++it)
 	{
-		if((*it)->isEnabled() && !(*it)->hasRef() && now >= (getLastRaidEnd() + (*it)->getMargin()) &&
-			(MAX_RAND_RANGE * (CHECK_RAIDS_INTERVAL / (*it)->getInterval())) < (uint32_t)random_range(
-			0, MAX_RAND_RANGE) && (*it)->startRaid())
+		if((*it)->isEnabled() && !(*it)->hasRef() && now > (lastRaidEnd + (*it)->getMargin()) &&
+			(MAX_RAND_RANGE * (CHECK_RAIDS_INTERVAL / (*it)->getInterval())) >= (
+			uint32_t)random_range(0, MAX_RAND_RANGE) && (*it)->startRaid())
 			break;
 	}
 }
@@ -173,10 +174,10 @@ void Raids::checkRaids()
 void Raids::clear()
 {
 	Scheduler::getScheduler().stopEvent(checkRaidsEvent);
-	running = NULL;
-
 	checkRaidsEvent = lastRaidEnd = 0;
 	loaded = started = false;
+
+	running = NULL;
 	for(RaidList::iterator it = raidList.begin(); it != raidList.end(); ++it)
 		delete (*it);
 
@@ -212,8 +213,8 @@ Raid::Raid(const std::string& _name, uint32_t _interval, uint64_t _margin,
 	ref = _ref;
 	enabled = _enabled;
 
-	loaded = false;
-	monsters = eventCount = nextEvent = 0;
+	loaded = ref = false;
+	refCount = eventCount = nextEvent = 0;
 }
 
 Raid::~Raid()
@@ -307,34 +308,37 @@ bool Raid::startRaid()
 bool Raid::executeRaidEvent(RaidEvent* raidEvent)
 {
 	if(!raidEvent->executeEvent())
-		return resetRaid();
+		return !resetRaid(false);
 
 	RaidEvent* newRaidEvent = getNextRaidEvent();
 	if(!newRaidEvent)
-		return resetRaid();
+		return !resetRaid(false);
 
 	nextEvent = Scheduler::getScheduler().addEvent(createSchedulerTask(
-		std::max(RAID_MINTICKS, (int32_t)newRaidEvent->getDelay() - raidEvent->getDelay()),
+		std::max(RAID_MINTICKS, (int32_t)(newRaidEvent->getDelay() - raidEvent->getDelay())),
 		boost::bind(&Raid::executeRaidEvent, this, newRaidEvent)));
 	return true;
 }
 
-bool Raid::resetRaid()
+bool Raid::resetRaid(bool checkExecution)
 {
-	if(refCount)
-		stopEvents();
-
-	if(refType == REF_BLOCK)
+	if(checkExecution && nextEvent)
 		return true;
 
-	if(Raids::getInstance()->getRunning())
+	stopEvents();
+	if(refType == REF_BLOCK && refCount > 0)
+		return false;
+
+	if(refType != REF_SINGLE || refCount <= 0)
+		eventCount = 0;
+
+	if(Raids::getInstance()->getRunning() == this)
 	{
 		Raids::getInstance()->setRunning(NULL);
 		Raids::getInstance()->setLastRaidEnd(OTSYS_TIME());
 	}
 
-	eventCount = 0;
-	return false;
+	return true;
 }
 
 void Raid::stopEvents()
@@ -429,10 +433,11 @@ bool EffectEvent::configureRaidEvent(xmlNodePtr eventNode)
 			return false;
 		}
 		else
-			intValue = (int32_t)getMagicEffect(strValue);
+			m_effect = getMagicEffect(strValue);
 	}
+	else
+		m_effect = (MagicEffectClasses)intValue;
 
-	m_effect = (MagicEffectClasses)intValue;
 	if(!readXMLString(eventNode, "pos", strValue))
 	{
 		if(!readXMLInteger(eventNode, "x", intValue))
@@ -474,7 +479,7 @@ bool EffectEvent::configureRaidEvent(xmlNodePtr eventNode)
 
 bool EffectEvent::executeEvent() const
 {
-	g_game.addMagicEffect(m_position, (uint8_t)m_effect);
+	g_game.addMagicEffect(m_position, m_effect);
 	return true;
 }
 
@@ -484,17 +489,26 @@ bool ItemSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 		return false;
 
 	int32_t intValue;
+	std::string strValue;
 	if(!readXMLInteger(eventNode, "id", intValue))
 	{
-		std::cout << "[Error - ItemSpawnEvent::configureRaidEvent] id tag missing for itemspawn event." << std::endl;
-		return false;
+		if(!readXMLString(eventNode, "name", strValue))
+		{
+			std::cout << "[Error - ItemSpawnEvent::configureRaidEvent] id (or name) tag missing for itemspawn event." << std::endl;
+			return false;
+		}
+		else
+			m_itemId = Item::items.getItemIdByName(strValue);
 	}
+	else
+		m_itemId = intValue;
 
-	m_itemId = intValue;
+	if(readXMLInteger(eventNode, "chance", intValue))
+		m_chance = intValue;
+
 	if(readXMLInteger(eventNode, "subType", intValue))
 		m_subType = intValue;
 
-	std::string strValue;
 	if(!readXMLString(eventNode, "pos", strValue))
 	{
 		if(!readXMLInteger(eventNode, "x", intValue))
@@ -536,6 +550,9 @@ bool ItemSpawnEvent::configureRaidEvent(xmlNodePtr eventNode)
 
 bool ItemSpawnEvent::executeEvent() const
 {
+	if(m_chance < (uint32_t)random_range(0, (int32_t)MAX_ITEM_CHANCE))
+		return true;
+
 	Tile* tile = g_game.getTile(m_position);
 	if(!tile)
 	{
@@ -656,10 +673,10 @@ bool SingleSpawnEvent::executeEvent() const
 		return false;
 	}
 
-	if(raid->usesRef() && m_ref)
+	if(m_raid->usesRef() && m_ref)
 	{
-		monster->setRaid(raid);
-		raid->addRef();
+		monster->setRaid(m_raid);
+		m_raid->addRef();
 	}
 
 	return true;
@@ -879,10 +896,10 @@ bool AreaSpawnEvent::executeEvent() const
 					random_range(m_fromPos.y, m_toPos.y), random_range(m_fromPos.z, m_toPos.z))))
 					continue;
 
-				if(raid->usesRef() && m_ref)
+				if(m_raid->usesRef() && m_ref)
 				{
-					monster->setRaid(raid);
-					raid->addRef();
+					monster->setRaid(m_raid);
+					m_raid->addRef();
 				}
 
 				success = true;

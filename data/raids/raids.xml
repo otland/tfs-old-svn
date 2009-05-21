@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <raids>
 	<!--
-		<raid name="Testraid" file="testraid.xml" interval2="30" margin="0"/>
-		executed on average once every 30 minutes
+		executed on average once every 2 minutes
+
+		<raid name="Example" file="example.xml" interval2="2" margin="0" reftype="single" ref="no"/>
+			won't be executed again till Cave Rat gets killed
+
+		<raid name="Example2" file="example.xml" interval2="2" margin="0" reftype="block" ref="no"/>
+			will stay as 'running' until Cave Rat gets killed
 	-->
 </raids>

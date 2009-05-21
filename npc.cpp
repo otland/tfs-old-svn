@@ -2566,7 +2566,7 @@ int32_t NpcScriptInterface::luaActionMove(lua_State* L)
 	Direction dir = (Direction)popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 	if(Npc* npc = env->getNpc())
-		npc->doMove();
+		npc->doMove(dir);
 
 	return 0;
 }
@@ -2690,7 +2690,8 @@ int32_t NpcScriptInterface::luaSetNpcState(lua_State* L)
 	const Player* player = env->getPlayerByUID(popNumber(L));
 	if(player && npc)
 	{
-		NpcScriptInterface::popState(L, npc->getState(player));
+		NpcState* tmp = npc->getState(player);
+		NpcScriptInterface::popState(L, tmp);
 		lua_pushboolean(L, true);
 	}
 	else

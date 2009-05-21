@@ -102,8 +102,14 @@ Monster::~Monster()
 	clearTargetList();
 	clearFriendList();
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
+
 	monsterCount--;
 #endif
+	if(raid)
+	{
+		raid->unRef();
+		raid = NULL;
+	}
 }
 
 void Monster::onAttackedCreatureDisappear(bool isLogout)
@@ -165,7 +171,6 @@ void Monster::onCreatureMove(const Creature* creature, const Tile* newTile, cons
 
 		updateTargetList();
 		activate();
-
 		/*
 		TODO: Optimizations here
 		if(teleport)
@@ -1159,13 +1164,16 @@ bool Monster::onDeath()
 	}
 
 	summons.clear();
+	if(raid)
+	{
+		raid->unRef();
+		raid = NULL;
+	}
+
 	clearTargetList();
 	clearFriendList();
 
 	g_game.removeCreature(this, false);
-	if(raid)
-		raid->unRef();
-
 	return true;
 }
 
