@@ -700,6 +700,8 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 		{
 			//TODO: monster extra strenght
 		}
+		else if(tmpName == "effect")
+			{/*show some effect and bye bye!*/}
 		else
 		{
 			delete combat;
