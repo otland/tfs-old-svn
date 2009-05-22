@@ -372,7 +372,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, ";
 	query << "`health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, ";
 	query << "`lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, ";
-	query << "`lastlogout`, `lastip`, `conditions`, `redskull`, `guildnick`, `rank_id`, `town_id`, ";
+	query << "`lastlogout`, `lastip`, `conditions`, `redskulltime`, `guildnick`, `rank_id`, `town_id`, ";
 	query << "`balance`, `stamina`, `direction`, `loss_experience`, `loss_mana`, `loss_skills`, `loss_containers`, ";
 	query << "`loss_items`, `marriage`, `promotion`, `description` FROM `players` WHERE `name` ";
 	query << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `world_id` = ";
@@ -477,7 +477,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->defaultOutfit.lookAddons = result->getDataInt("lookaddons");
 
 	player->currentOutfit = player->defaultOutfit;
-	player->setRedSkullEnd((time_t)result->getDataInt("redskull"), true);
+	player->setRedSkullEnd((time_t)result->getDataInt("redskulltime"), true);
 
 	player->setLossPercent(LOSS_EXPERIENCE, result->getDataInt("loss_experience"));
 	player->setLossPercent(LOSS_MANA, result->getDataInt("loss_mana"));
@@ -754,6 +754,9 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 	query << "`sex` = " << player->sex << ", ";
 	query << "`balance` = " << player->balance << ", ";
 	query << "`stamina` = " << player->getStamina() << ", ";
+	if(g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
+		query << "`redskulltime` = " << player->getRedSkullEnd() << ", ";
+
 	query << "`promotion` = " << player->promotionLevel << ", ";
 	if(g_config.getBool(ConfigManager::STORE_DIRECTION))
 		query << "`direction` = " << (uint32_t)player->getDirection() << ", ";
@@ -787,8 +790,6 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 	query << "`loss_skills` = " << (uint32_t)player->getLossPercent(LOSS_SKILLS) << ", ";
 	query << "`loss_containers` = " << (uint32_t)player->getLossPercent(LOSS_CONTAINERS) << ", ";
 	query << "`loss_items` = " << (uint32_t)player->getLossPercent(LOSS_ITEMS) << ", ";
-	if(g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
-		query << "`redskull` = " << player->getRedSkullEnd() << ", ";
 
 	query << "`lastlogout` = " << player->getLastLogout() << ", ";
 	if(player->isPremium() || !g_config.getBool(ConfigManager::BLESSING_ONLY_PREMIUM))
@@ -1084,7 +1085,7 @@ bool IOLoginData::updateOnlineStatus(uint32_t guid, bool login)
 		onlineValue++;
 	else if(!g_config.getNumber(ConfigManager::ALLOW_CLONES))
 		onlineValue = 0;
-	else if(onlineValue)
+	else if(onlineValue > 0)
 		onlineValue--;
 
 	query.str("");
@@ -1408,7 +1409,7 @@ bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName,
 	}
 
 	DBQuery query;
-	query << "INSERT INTO `players` (`id`, `name`, `world_id`, `group_id`, `account_id`, `level`, `vocation`, `health`, `healthmax`, `experience`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `maglevel`, `mana`, `manamax`, `manaspent`, `soul`, `town_id`, `posx`, `posy`, `posz`, `conditions`, `cap`, `sex`, `lastlogin`, `lastip`, `redskull`, `save`, `rank_id`, `guildnick`, `lastlogout`, `blessings`, `online`) VALUES (NULL, " << db->escapeString(characterName) << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", 1, " << accountId << ", " << level << ", " << vocationId << ", " << healthMax << ", " << healthMax << ", " << exp << ", 68, 76, 78, 39, " << lookType << ", 0, " << g_config.getNumber(ConfigManager::START_MAGICLEVEL) << ", " << manaMax << ", " << manaMax << ", 0, 100, " << g_config.getNumber(ConfigManager::SPAWNTOWN_ID) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_X) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_Y) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_Z) << ", 0, " << capMax << ", " << sex << ", 0, 0, 0, 1, 0, '', 0, 0, 0)";
+	query << "INSERT INTO `players` (`id`, `name`, `world_id`, `group_id`, `account_id`, `level`, `vocation`, `health`, `healthmax`, `experience`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `maglevel`, `mana`, `manamax`, `manaspent`, `soul`, `town_id`, `posx`, `posy`, `posz`, `conditions`, `cap`, `sex`, `lastlogin`, `lastip`, `redskulltime`, `save`, `rank_id`, `guildnick`, `lastlogout`, `blessings`, `online`) VALUES (NULL, " << db->escapeString(characterName) << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", 1, " << accountId << ", " << level << ", " << vocationId << ", " << healthMax << ", " << healthMax << ", " << exp << ", 68, 76, 78, 39, " << lookType << ", 0, " << g_config.getNumber(ConfigManager::START_MAGICLEVEL) << ", " << manaMax << ", " << manaMax << ", 0, 100, " << g_config.getNumber(ConfigManager::SPAWNTOWN_ID) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_X) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_Y) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_Z) << ", 0, " << capMax << ", " << sex << ", 0, 0, 0, 1, 0, '', 0, 0, 0)";
 	return db->executeQuery(query.str());
 }
 
