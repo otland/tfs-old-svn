@@ -1180,12 +1180,12 @@ void Creature::onAttackedCreatureKilled(Creature* target)
 
 bool Creature::onKilledCreature(Creature* target, bool& value)
 {
-	bool lastHit = !value, result = true;
+	bool tmp = !value;
 	if(getMaster())
 		result = getMaster()->onKilledCreature(target, value);
 
 	CreatureEventList killEvents = getCreatureEvents(CREATURE_EVENT_KILL);
-	if(!lastHit)
+	if(!tmp)
 	{
 		for(CreatureEventList::iterator it = killEvents.begin(); it != killEvents.end(); ++it)
 			(*it)->executeKill(this, target, false);
@@ -1193,10 +1193,11 @@ bool Creature::onKilledCreature(Creature* target, bool& value)
 		return true;
 	}
 
+	tmp = true;
 	for(CreatureEventList::iterator it = killEvents.begin(); it != killEvents.end(); ++it)
 	{
-		if(!(*it)->executeKill(this, target, true) && result)
-			result = false;
+		if(!(*it)->executeKill(this, target, true) && tmp)
+			tmp = false;
 	}
 
 	return result;
