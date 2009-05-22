@@ -787,51 +787,58 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 		if(Item* item = thing->getItem())
 		{
 			tmp = parseParams(cmdit, cmdtokens.end());
-			if(strcasecmp(tmp.c_str(), "description") == 0 || strcasecmp(tmp.c_str(), "desc") == 0)
+			if(!strcasecmp(tmp.c_str(), "description") || !strcasecmp(tmp.c_str(), "desc"))
 				item->setSpecialDescription(parseParams(cmdit, cmdtokens.end()));
-			else if(strcasecmp(tmp.c_str(), "count") == 0 || strcasecmp(tmp.c_str(), "fluidtype") == 0 || strcasecmp(tmp.c_str(), "charges") == 0)
+			else if(!strcasecmp(tmp.c_str(), "count") || !strcasecmp(tmp.c_str(),
+				"fluidtype") || !strcasecmp(tmp.c_str(), "charges"))
 				item->setSubType(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-			else if(strcasecmp(tmp.c_str(), "action") == 0 || strcasecmp(tmp.c_str(), "actionid") == 0 || strcasecmp(tmp.c_str(), "aid") == 0)
+			else if(!strcasecmp(tmp.c_str(), "action") || !strcasecmp(tmp.c_str(),
+				"actionid") || !strcasecmp(tmp.c_str(), "aid"))
 				item->setActionId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-			else if(strcasecmp(tmp.c_str(), "unique") == 0 || strcasecmp(tmp.c_str(), "uniqueid") == 0 || strcasecmp(tmp.c_str(), "uid") == 0)
+			else if(!strcasecmp(tmp.c_str(), "unique") || !strcasecmp(tmp.c_str(),
+				"uniqueid") || !strcasecmp(tmp.c_str(), "uid"))
 				item->setUniqueId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-			else if(strcasecmp(tmp.c_str(), "duration") == 0)
+			else if(!strcasecmp(tmp.c_str(), "duration"))
 				item->setDuration(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-			else if(strcasecmp(tmp.c_str(), "writer") == 0)
+			else if(!strcasecmp(tmp.c_str(), "writer"))
 				item->setWriter(parseParams(cmdit, cmdtokens.end()));
-			else if(strcasecmp(tmp.c_str(), "text") == 0)
+			else if(!strcasecmp(tmp.c_str(), "text"))
 				item->setText(parseParams(cmdit, cmdtokens.end()));
-			else if(strcasecmp(tmp.c_str(), "name") == 0)
+			else if(!strcasecmp(tmp.c_str(), "name"))
 				item->setName(parseParams(cmdit, cmdtokens.end()));
-			else if(strcasecmp(tmp.c_str(), "pluralname") == 0)
+			else if(!strcasecmp(tmp.c_str(), "pluralname"))
 				item->setPluralName(parseParams(cmdit, cmdtokens.end()));
-			else if(strcasecmp(tmp.c_str(), "article") == 0)
+			else if(!strcasecmp(tmp.c_str(), "article"))
 				item->setArticle(parseParams(cmdit, cmdtokens.end()));
-			else if(strcasecmp(tmp.c_str(), "attack") == 0)
+			else if(!strcasecmp(tmp.c_str(), "attack"))
 				item->setAttack(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-			else if(strcasecmp(tmp.c_str(), "extraattack") == 0)
+			else if(!strcasecmp(tmp.c_str(), "extraattack"))
 				item->setExtraAttack(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-			else if(strcasecmp(tmp.c_str(), "defense") == 0)
+			else if(!strcasecmp(tmp.c_str(), "defense"))
 				item->setDefense(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-			else if(strcasecmp(tmp.c_str(), "extradefense") == 0)
+			else if(!strcasecmp(tmp.c_str(), "extradefense"))
 				item->setExtraDefense(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-			else if(strcasecmp(tmp.c_str(), "armor") == 0)
+			else if(!strcasecmp(tmp.c_str(), "armor"))
 				item->setArmor(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-			else if(strcasecmp(tmp.c_str(), "attackspeed") == 0)
+			else if(!strcasecmp(tmp.c_str(), "attackspeed"))
 				item->setAttackSpeed(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-			else if(strcasecmp(tmp.c_str(), "hitchance") == 0)
+			else if(!strcasecmp(tmp.c_str(), "hitchance"))
 				item->setHitChance(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-			else if(strcasecmp(tmp.c_str(), "shootrange") == 0)
+			else if(!strcasecmp(tmp.c_str(), "shootrange"))
 				item->setShootRange(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-			else if(strcasecmp(tmp.c_str(), "depot") == 0 || strcasecmp(tmp.c_str(), "depotid") == 0)
+			else if(!strcasecmp(tmp.c_str(), "depot") || !strcasecmp(tmp.c_str(), "depotid"))
 			{
 				if(item->getContainer() && item->getContainer()->getDepot())
-					item->getContainer()->getDepot()->setDepotId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					item->getContainer()->getDepot()->setDepotId(
+						atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 			}
-			else if(strcasecmp(tmp.c_str(), "destination") == 0 || strcasecmp(tmp.c_str(), "position") == 0 || strcasecmp(tmp.c_str(), "pos") == 0 || strcasecmp(tmp.c_str(), "destpos") == 0) //FIXME
+			else if(!strcasecmp(tmp.c_str(), "destination") || !strcasecmp(tmp.c_str(), "position") ||
+				!strcasecmp(tmp.c_str(), "pos") || !strcasecmp(tmp.c_str(), "destpos")) //FIXME
 			{
 				if(item->getTeleport())
-					item->getTeleport()->setDestPos(Position(atoi(parseParams(cmdit, cmdtokens.end()).c_str()), atoi(parseParams(cmdit, cmdtokens.end()).c_str()), atoi(parseParams(cmdit, cmdtokens.end()).c_str())));
+					item->getTeleport()->setDestPos(Position(atoi(parseParams(cmdit,
+						cmdtokens.end()).c_str()), atoi(parseParams(cmdit, cmdtokens.end()).c_str()),
+						atoi(parseParams(cmdit, cmdtokens.end()).c_str())));
 			}
 			else
 			{
@@ -843,57 +850,57 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 		else if(Creature* _creature = thing->getCreature())
 		{
 			tmp = parseParams(cmdit, cmdtokens.end());
-			if(strcasecmp(tmp.c_str(), "health") == 0)
+			if(!strcasecmp(tmp.c_str(), "health"))
 				_creature->changeHealth(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-			else if(strcasecmp(tmp.c_str(), "maxhealth") == 0)
+			else if(!strcasecmp(tmp.c_str(), "maxhealth"))
 				_creature->changeMaxHealth(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-			else if(strcasecmp(tmp.c_str(), "mana") == 0)
+			else if(!strcasecmp(tmp.c_str(), "mana"))
 				_creature->changeMana(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-			else if(strcasecmp(tmp.c_str(), "maxmana") == 0)
+			else if(!strcasecmp(tmp.c_str(), "maxmana"))
 				_creature->changeMaxMana(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-			else if(strcasecmp(tmp.c_str(), "basespeed") == 0)
+			else if(!strcasecmp(tmp.c_str(), "basespeed"))
 				_creature->setBaseSpeed(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-			else if(strcasecmp(tmp.c_str(), "droploot") == 0)
+			else if(!strcasecmp(tmp.c_str(), "droploot"))
 				_creature->setDropLoot(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()) ? LOOT_DROP_FULL : LOOT_DROP_NONE);
-			else if(strcasecmp(tmp.c_str(), "lossskill") == 0)
+			else if(!strcasecmp(tmp.c_str(), "lossskill"))
 				_creature->setLossSkill(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()));
-			else if(strcasecmp(tmp.c_str(), "cannotmove") == 0)
+			else if(!strcasecmp(tmp.c_str(), "cannotmove"))
 				_creature->setNoMove(booleanString(parseParams(cmdit, cmdtokens.end()).c_str()));
-			else if(strcasecmp(tmp.c_str(), "skull") == 0)
+			else if(!strcasecmp(tmp.c_str(), "skull"))
 			{
 				_creature->setSkull((Skulls_t)atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 				g_game.updateCreatureSkull(_creature);
 			}
 			else if(Player* _player = _creature->getPlayer())
 			{
-				if(strcasecmp(tmp.c_str(), "fyi") == 0)
+				if(!strcasecmp(tmp.c_str(), "fyi"))
 					_player->sendFYIBox(parseParams(cmdit, cmdtokens.end()).c_str());
-				else if(strcasecmp(param.c_str(), "tutorial") == 0)
+				else if(!strcasecmp(param.c_str(), "tutorial"))
 					_player->sendTutorial(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "guildrank") == 0)
+				else if(!strcasecmp(tmp.c_str(), "guildrank"))
 					_player->setGuildRankId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "guildnick") == 0)
+				else if(!strcasecmp(tmp.c_str(), "guildnick"))
 					_player->setGuildNick(parseParams(cmdit, cmdtokens.end()).c_str());
-				else if(strcasecmp(tmp.c_str(), "group") == 0)
+				else if(!strcasecmp(tmp.c_str(), "group"))
 					_player->setGroupId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "vocation") == 0)
+				else if(!strcasecmp(tmp.c_str(), "vocation"))
 					_player->setVocation(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "sex") == 0 || strcasecmp(tmp.c_str(), "gender") == 0)
+				else if(!strcasecmp(tmp.c_str(), "sex") || !strcasecmp(tmp.c_str(), "gender"))
 					_player->setSex((PlayerSex_t)atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "stamina") == 0)
+				else if(!strcasecmp(tmp.c_str(), "stamina"))
 					_player->setStaminaMinutes(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "town") == 0) //FIXME
+				else if(!strcasecmp(tmp.c_str(), "town")) //FIXME
 					_player->setTown(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
-				else if(strcasecmp(tmp.c_str(), "balance") == 0)
+				else if(!strcasecmp(tmp.c_str(), "balance"))
 					_player->balance = atoi(parseParams(cmdit, cmdtokens.end()).c_str());
-				else if(strcasecmp(tmp.c_str(), "marriage") == 0)
+				else if(!strcasecmp(tmp.c_str(), "marriage"))
 					_player->marriage = atoi(parseParams(cmdit, cmdtokens.end()).c_str());
-				else if(strcasecmp(tmp.c_str(), "rates") == 0)
+				else if(!strcasecmp(tmp.c_str(), "rates"))
 					_player->rates[atoi(parseParams(cmdit, cmdtokens.end()).c_str())] = atof(
 						parseParams(cmdit, cmdtokens.end()).c_str());
-				else if(strcasecmp(tmp.c_str(), "resetidle") == 0)
-					_player->resetIdleTime();
-				else if(strcasecmp(tmp.c_str(), "saving") == 0)
+				else if(!strcasecmp(tmp.c_str(), "idle"))
+					_player->setIdleTime(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+				else if(!strcasecmp(tmp.c_str(), "saving"))
 					_player->switchSaving();
 				else
 				{
@@ -943,7 +950,7 @@ bool TalkAction::banishmentInfo(Creature* creature, const std::string& cmd, cons
 	trimString(param_);
 
 	uint32_t accountId = atoi(param_.c_str());
-	if(accountId == 0 && IOLoginData::getInstance()->playerExists(param_, true))
+	if(!accountId && IOLoginData::getInstance()->playerExists(param_, true))
 		accountId = IOLoginData::getInstance()->getAccountIdByName(param_);
 
 	Ban ban;
@@ -951,7 +958,7 @@ bool TalkAction::banishmentInfo(Creature* creature, const std::string& cmd, cons
 	{
 		bool deletion = (ban.type == BANTYPE_DELETION);
 		std::string name = "Automatic ";
-		if(ban.adminid == 0)
+		if(!ban.adminid)
 			name += (deletion ? "deletion" : "banishment");
 		else
 			IOLoginData::getInstance()->getNameByGuid(ban.adminid, name, true);
