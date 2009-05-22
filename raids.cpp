@@ -213,7 +213,7 @@ Raid::Raid(const std::string& _name, uint32_t _interval, uint64_t _margin,
 	ref = _ref;
 	enabled = _enabled;
 
-	loaded = ref = false;
+	loaded = false;
 	refCount = eventCount = nextEvent = 0;
 }
 
