@@ -272,14 +272,6 @@ function doPlayerSetMagicRate(cid, value)
 	return doPlayerSetRate(cid, SKILL__MAGLEVEL, value)
 end
 
-function getPlayerFrags(cid)
-	return math.ceil((getPlayerRedSkullTicks(cid) / getConfigInfo('timeToDecreaseFrags')) + 1)
-end
-
-function doPlayerAddFrags(cid, amount)
-	return doPlayerSetRedSkullTicks(cid, getPlayerRedSkullTicks(cid) + getConfigInfo('timeToDecreaseFrags') * amount)
-end
-
 function getPartyLeader(cid)
 	local party = getPartyMembers(cid)
 	if(type(party) ~= 'table') then
