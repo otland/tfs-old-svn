@@ -385,8 +385,7 @@ ServiceManager* services)
 
 	std::cout << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl;
 	std::cout << "A server developed by Elf, Talaturen, Lithium, Kiper, Kornholijo, KaczooH, slawkens & Macroman." << std::endl;
-	std::cout << "Visit our forum for updates, support and resources: http://otland.net." << std::endl;
-	std::cout << std::endl;
+	std::cout << "Visit our forum for updates, support and resources: http://otland.net." << std::endl << std::endl;
 
 	std::stringstream ss;
 	#ifdef __DEBUG__
@@ -439,86 +438,8 @@ ServiceManager* services)
 		std::cout << " nothing";
 	else
 		std::cout << ss.str();
-	
-	std::cout << "." << std::endl << ">> Fetching blacklist" << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Fetching blacklist");
-	#endif
-	if(!g_game.fetchBlacklist())
-	{
-		#ifndef __CONSOLE__
-		if(MessageBox(GUI::getInstance()->m_mainWindow, "Unable to fetch blacklist! Continue?", "Blacklist", MB_YESNO) == IDNO)
-		#else
-		std::cout << "Unable to fetch blacklist! Continue? (y/N)" << std::endl;
-		char buffer = getchar();
-		if(buffer == 10 || (buffer != 121 && buffer != 89))
-		#endif
-			startupErrorMessage("Unable to fetch blacklist!");
-	}
 
-	std::cout << ">> Checking software version... ";
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Checking software version");
-	#endif
-	if(xmlDocPtr doc = xmlParseFile(VERSION_CHECK))
-	{
-		xmlNodePtr p, root = xmlDocGetRootElement(doc);
-		if(!xmlStrcmp(root->name, (const xmlChar*)"versions"))
-		{
-			p = root->children->next;
-			if(!xmlStrcmp(p->name, (const xmlChar*)"entry"))
-			{
-				std::string version;
-				int32_t patch, build, timestamp;
-
-				bool tmp = false;
-				if(readXMLString(p, "version", version) && version != STATUS_SERVER_VERSION)
-					tmp = true;
-
-				if(readXMLInteger(p, "patch", patch) && patch > VERSION_PATCH)
-					tmp = true;
-
-				if(readXMLInteger(p, "build", build) && build > VERSION_BUILD)
-					tmp = true;
-
-				if(readXMLInteger(p, "timestamp", timestamp) && timestamp > VERSION_TIMESTAMP)
-					tmp = true;
-
-				if(tmp)
-				{
-					std::cout << "outdated, please consider updating!" << std::endl;
-					std::cout << "> Current version information - version: " << STATUS_SERVER_VERSION << ", patch: " << VERSION_PATCH;
-					std::cout << ", build: " << VERSION_BUILD << ", timestamp: " << VERSION_TIMESTAMP << "." << std::endl;
-					std::cout << "> Latest version information - version: " << version << ", patch: " << patch;
-					std::cout << ", build: " << build << ", timestamp: " << timestamp << "." << std::endl;
-					if(g_config.getBool(ConfigManager::CONFIM_OUTDATED_VERSION))
-					{
-						#ifndef __CONSOLE__
-						if(MessageBox(GUI::getInstance()->m_mainWindow, "Continue?", "Outdated software", MB_YESNO) == IDNO)
-						#else
-						std::cout << "Continue? (y/N)" << std::endl;
-	
-						char buffer = getchar();
-						if(buffer == 10 || (buffer != 121 && buffer != 89))
-						#endif
-							startupErrorMessage("Aborted.");
-					}
-				}
-				else
-					std::cout << "up to date!" << std::endl;
-			}
-			else
-				std::cout << "failed checking - malformed entry." << std::endl;
-		}
-		else
-			std::cout << "failed checking - malformed file." << std::endl;
-
-		xmlFreeDoc(doc);
-	}
-	else
-		std::cout << "failed - could not parse remote file (are you connected to the internet?)" << std::endl;
-
-	std::cout << std::endl << ">> Loading config (" << g_config.getString(ConfigManager::CONFIG_FILE) << ")" << std::endl;
+	std::cout << "." << std::endl << ">> Loading config (" << g_config.getString(ConfigManager::CONFIG_FILE) << ")" << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading config");
 	#endif
@@ -583,6 +504,84 @@ ServiceManager* services)
 	{
 		g_config.setNumber(ConfigManager::PASSWORDTYPE, PASSWORD_TYPE_PLAIN);
 		std::cout << "> Using plaintext passwords" << std::endl;
+	}
+	
+	std::cout << ">> Checking software version... ";
+	#ifndef __CONSOLE__
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Checking software version");
+	#endif
+	if(xmlDocPtr doc = xmlParseFile(VERSION_CHECK))
+	{
+		xmlNodePtr p, root = xmlDocGetRootElement(doc);
+		if(!xmlStrcmp(root->name, (const xmlChar*)"versions"))
+		{
+			p = root->children->next;
+			if(!xmlStrcmp(p->name, (const xmlChar*)"entry"))
+			{
+				std::string version;
+				int32_t patch, build, timestamp;
+
+				bool tmp = false;
+				if(readXMLString(p, "version", version) && version != STATUS_SERVER_VERSION)
+					tmp = true;
+
+				if(readXMLInteger(p, "patch", patch) && patch > VERSION_PATCH)
+					tmp = true;
+
+				if(readXMLInteger(p, "build", build) && build > VERSION_BUILD)
+					tmp = true;
+
+				if(readXMLInteger(p, "timestamp", timestamp) && timestamp > VERSION_TIMESTAMP)
+					tmp = true;
+
+				if(tmp)
+				{
+					std::cout << "outdated, please consider updating!" << std::endl;
+					std::cout << "> Current version information - version: " << STATUS_SERVER_VERSION << ", patch: " << VERSION_PATCH;
+					std::cout << ", build: " << VERSION_BUILD << ", timestamp: " << VERSION_TIMESTAMP << "." << std::endl;
+					std::cout << "> Latest version information - version: " << version << ", patch: " << patch;
+					std::cout << ", build: " << build << ", timestamp: " << timestamp << "." << std::endl;
+					if(g_config.getBool(ConfigManager::CONFIM_OUTDATED_VERSION))
+					{
+						#ifndef __CONSOLE__
+						if(MessageBox(GUI::getInstance()->m_mainWindow, "Continue?", "Outdated software", MB_YESNO) == IDNO)
+						#else
+						std::cout << "Continue? (y/N)" << std::endl;
+	
+						char buffer = getchar();
+						if(buffer == 10 || (buffer != 121 && buffer != 89))
+						#endif
+							startupErrorMessage("Aborted.");
+					}
+				}
+				else
+					std::cout << "up to date!" << std::endl;
+			}
+			else
+				std::cout << "failed checking - malformed entry." << std::endl;
+		}
+		else
+			std::cout << "failed checking - malformed file." << std::endl;
+
+		xmlFreeDoc(doc);
+	}
+	else
+		std::cout << "failed - could not parse remote file (are you connected to the internet?)" << std::endl;
+
+	std::cout << ">> Fetching blacklist" << std::endl;
+	#ifndef __CONSOLE__
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Fetching blacklist");
+	#endif
+	if(!g_game.fetchBlacklist())
+	{
+		#ifndef __CONSOLE__
+		if(MessageBox(GUI::getInstance()->m_mainWindow, "Unable to fetch blacklist! Continue?", "Blacklist", MB_YESNO) == IDNO)
+		#else
+		std::cout << "Unable to fetch blacklist! Continue? (y/N)" << std::endl;
+		char buffer = getchar();
+		if(buffer == 10 || (buffer != 121 && buffer != 89))
+		#endif
+			startupErrorMessage("Unable to fetch blacklist!");
 	}
 
 	g_otservRSA = new RSA();
