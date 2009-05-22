@@ -254,9 +254,9 @@ bool ConfigManager::load()
 	m_confNumber[RED_DAILY_LIMIT] = getGlobalNumber("dailyFragsToRedSkull", 3);
 	m_confNumber[RED_WEEKLY_LIMIT] = getGlobalNumber("weeklyFragsToRedSkull", 5);
 	m_confNumber[RED_MONTHLY_LIMIT] = getGlobalNumber("monthlyFragsToRedSkull", 10);
-	m_confNumber[BAN_DAILY_LIMIT] = getGlobalNumber("dailyFragsToBanishment", (m_confNumber[RED_DAILY_LIMIT] * 2));
-	m_confNumber[BAN_WEEKLY_LIMIT] = getGlobalNumber("weeklyFragsToBanishment", (m_confNumber[RED_WEEKLY_LIMIT] * 2));
-	m_confNumber[BAN_MONTHLY_LIMIT] = getGlobalNumber("monthlyFragsToBanishment", (m_confNumber[RED_MONTHLY_LIMIT] * 2));
+	m_confNumber[BAN_DAILY_LIMIT] = getGlobalNumber("dailyFragsToBanishment", m_confNumber[RED_DAILY_LIMIT]);
+	m_confNumber[BAN_WEEKLY_LIMIT] = getGlobalNumber("weeklyFragsToBanishment", m_confNumber[RED_WEEKLY_LIMIT]);
+	m_confNumber[BAN_MONTHLY_LIMIT] = getGlobalNumber("monthlyFragsToBanishment", m_confNumber[RED_MONTHLY_LIMIT]);
 
 	m_loaded = true;
 	return true;

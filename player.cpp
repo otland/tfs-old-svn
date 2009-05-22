@@ -3906,16 +3906,14 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 			tc++; 
 	}
 
-	if(skull != SKULL_RED)
-	{
-		uint32_t d = g_config.getNumber(ConfigManager::RED_DAILY_LIMIT), w = g_config.getNumber(
-			ConfigManager::RED_WEEKLY_LIMIT), m = g_config.getNumber(ConfigManager::RED_MONTHLY_LIMIT);
-		if((d > 0 && tc >= d) || (w > 0 && wc >= w) || (m > 0 && mc >= m))
-			setRedSkullEnd(now + g_config.getNumber(ConfigManager::RED_SKULL_LENGTH), false);
-	}
+	uint32_t d = g_config.getNumber(ConfigManager::RED_DAILY_LIMIT), w = g_config.getNumber(
+		ConfigManager::RED_WEEKLY_LIMIT), m = g_config.getNumber(ConfigManager::RED_MONTHLY_LIMIT);
+	if(skull != SKULL_RED && ((d > 0 && tc >= d) || (w > 0 && wc >= w) || (m > 0 && mc >= m)))
+		setRedSkullEnd(now + g_config.getNumber(ConfigManager::RED_SKULL_LENGTH), false);
 
-	uint32_t d = g_config.getNumber(ConfigManager::BAN_DAILY_LIMIT), w = g_config.getNumber(
-		ConfigManager::BAN_WEEKLY_LIMIT), m = g_config.getNumber(ConfigManager::BAN_MONTHLY_LIMIT);
+	d += g_config.getNumber(ConfigManager::BAN_DAILY_LIMIT);
+	w += g_config.getNumber(ConfigManager::BAN_WEEKLY_LIMIT);
+	m += g_config.getNumber(ConfigManager::BAN_MONTHLY_LIMIT);
 	if((d > 0 && tc >= d) || (w > 0 && wc >= w) || (m > 0 && mc >= m))
 	{
 		int32_t warnings = IOLoginData::getInstance()->loadAccount(accountId, true).warnings;

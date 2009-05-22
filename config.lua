@@ -13,13 +13,15 @@
 	generateAccountNumber = "no"
 
 	-- Unjustified kills
+	-- NOTE: *Banishment variables are >summed up< (dailyFragsToRedSkull +
+	-- dailyFragsToBanishment) with their *RedSkull equivalents.
 	redSkullLength = 30 * 24 * 60 * 60
 	dailyFragsToRedSkull = 3
 	weeklyFragsToRedSkull = 5
 	monthlyFragsToRedSkull = 10
-	dailyFragsToBanishment = dailyFragsToRedSkull * 2
-	weeklyFragsToBanishment = weeklyFragsToRedSkull * 2
-	monthlyFragsToBanishment = monthlyFragsToRedSkull * 2
+	dailyFragsToBanishment = dailyFragsToRedSkull
+	weeklyFragsToBanishment = weeklyFragsToRedSkull
+	monthlyFragsToBanishment = monthlyFragsToRedSkull
 	advancedFragList = "no"
 
 	-- Banishments
