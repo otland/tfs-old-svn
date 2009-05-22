@@ -166,6 +166,7 @@
 	-- NOTE: promptExceptionTracerErrorBox works only with precompiled support feature,
 	-- called "exception tracer" (__EXCEPTION_TRACER__ flag).
 	dataDirectory = "data/"
+	idleWarningTime = 14 * 60 * 1000
 	idleKickTime = 15 * 60 * 1000
 	allowChangeOutfit = "yes"
 	allowChangeColors = "yes"

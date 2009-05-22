@@ -141,7 +141,6 @@ class Player : public Creature, public Cylinder
 		virtual const Player* getPlayer() const {return this;}
 
 		static MuteCountMap muteCountMap;
-		static int32_t maxMessageBuffer;
 
 		virtual const std::string& getName() const {return name;}
 		virtual const std::string& getNameDescription() const {return nameDescription;}
@@ -214,6 +213,7 @@ class Player : public Creature, public Cylinder
 		uint32_t getClientVersion() const {return clientVersion;}
 		void setClientVersion(uint32_t version) {clientVersion = version;}
 
+		bool hasClient() const {return client;}
 		bool isVirtual() const {return (getID() == 0);}
 		void disconnect() {if(client) client->disconnect();}
 		uint32_t getIP() const;
@@ -249,7 +249,8 @@ class Player : public Creature, public Cylinder
 		void switchSaving() {saving = !saving;}
 		bool isSaving() const {return saving;}
 
-		void resetIdleTime() {idleTime = 0;}
+		uint32_t getIdleTime() const {return idleTime;}
+		void setIdleTime(uint32_t amount) {idleTime = amount;}
 		bool checkLoginDelay(uint32_t playerId) const;
 
 		uint32_t getAccount() const {return accountId;}
@@ -807,14 +808,14 @@ class Player : public Creature, public Cylinder
 		int32_t saleCallback;
 		int32_t varSkills[SKILL_LAST + 1];
 		int32_t varStats[STAT_LAST + 1];
-		int32_t MessageBufferCount;
-		int32_t idleTime;
+		int32_t messageBuffer;
 		int32_t bloodHitCount;
 		int32_t shieldBlockCount;
 		int32_t shootRange;
 
 		uint32_t clientVersion;
-		uint32_t MessageBufferTicks;
+		uint32_t messageTicks;
+		uint32_t idleTime;
 		uint32_t internalPing;
 		uint32_t npings;
 		uint32_t accountId;

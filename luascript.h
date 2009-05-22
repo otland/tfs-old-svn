@@ -218,7 +218,9 @@ enum PlayerInfo_t
 	PlayerInfoIp,
 	PlayerInfoRedSkullEnd,
 	PlayerInfoOutfitWindow,
-	PlayerInfoNameDescription
+	PlayerInfoNameDescription,
+	PlayerInfoIdleTime,
+	PlayerInfoClient
 };
 
 enum ErrorCode_t
@@ -403,7 +405,8 @@ class LuaScriptInterface
 		static int32_t luaDoPlayerSetGuildRank(lua_State* L);
 		static int32_t luaDoPlayerSetGuildNick(lua_State* L);
 		static int32_t luaDoPlayerSetSex(lua_State* L);
-		static int32_t luaDoPlayerResetIdleTime(lua_State* L);
+		static int32_t luaDoPlayerSetIdleTime(lua_State* L);
+		static int32_t luaGetPlayerIdleTime(lua_State* L);
 		static int32_t luaDoSetCreatureLight(lua_State* L);
 		static int32_t luaDoCreatureSetLookDir(lua_State* L);
 		static int32_t luaGetCreatureSkullType(lua_State* L);
@@ -470,6 +473,7 @@ class LuaScriptInterface
 		static int32_t luaGetTileThingByPos(lua_State* L);
 		static int32_t luaGetTopCreature(lua_State* L);
 		static int32_t luaHasProperty(lua_State* L);
+		static int32_t luaHasClient(lua_State* L);
 
 		//set item
 		static int32_t luaDoSetItemActionId(lua_State* L);

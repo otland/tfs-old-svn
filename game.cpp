@@ -162,12 +162,6 @@ void Game::start(ServiceManager* servicer)
 
 void Game::loadGameState()
 {
-	maxPlayers = g_config.getNumber(ConfigManager::MAX_PLAYERS);
-	inFightTicks = g_config.getNumber(ConfigManager::PZ_LOCKED);
-	Monster::despawnRange = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRANGE);
-	Monster::despawnRadius = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRADIUS);
-	Player::maxMessageBuffer = g_config.getNumber(ConfigManager::MAX_MESSAGEBUFFER);
-
 	ScriptEnviroment::loadGameState();
 	loadMotd();
 	loadPlayersRecord();
@@ -2022,7 +2016,7 @@ bool Game::playerMove(uint32_t playerId, Direction direction)
 	player->setFollowCreature(NULL);
 	player->onWalk(direction);
 
-	player->resetIdleTime();
+	player->setIdleTime(0);
 	return internalMoveCreature(player, direction) == RET_NOERROR;
 }
 
@@ -2239,6 +2233,7 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 	if(!player || player->isRemoved())
 		return false;
 
+	player->setIdleTime(0);
 	if(player->hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_TELEPORT))
 	{
 		Position pos = player->getPosition();
@@ -2255,12 +2250,9 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 
 		internalCreatureTurn(player, getDirectionTo(player->getPosition(), pos, false));
 		internalTeleport(player, pos, false);
-
-		player->resetIdleTime();
 		return true;
 	}
 
-	player->resetIdleTime();
 	player->setNextWalkTask(NULL);
 	return player->startAutoWalk(listDir);
 }
@@ -2363,8 +2355,8 @@ bool Game::playerUseItemEx(uint32_t playerId, const Position& fromPos, int16_t f
 		return false;
 	}
 
+	player->setIdleTime(0);
 	player->setNextActionTask(NULL);
-	player->resetIdleTime();
 	return g_actions->useItemEx(player, fromPos, toPos, toStackpos, item, isHotkey);
 }
 
@@ -2429,8 +2421,8 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, int16_t stackpo
 		return false;
 	}
 
+	player->setIdleTime(0);
 	player->setNextActionTask(NULL);
-	player->resetIdleTime();
 	return g_actions->useItem(player, pos, index, item);
 }
 
@@ -2506,8 +2498,8 @@ bool Game::playerUseBattleWindow(uint32_t playerId, const Position& fromPos, int
 		return false;
 	}
 
+	player->setIdleTime(0);
 	player->setNextActionTask(NULL);
-	player->resetIdleTime();
 	return g_actions->useItemEx(player, fromPos, creature->getPosition(),
 		creature->getParent()->__getIndexOfThing(creature), item, isHotkey, creatureId);
 }
@@ -2612,7 +2604,7 @@ bool Game::playerRotateItem(uint32_t playerId, const Position& pos, int16_t stac
 	if(newId != 0)
 		transformItem(item, newId);
 
-	player->resetIdleTime();
+	player->setIdleTime(0);
 	return true;
 }
 
@@ -3384,7 +3376,7 @@ bool Game::playerTurn(uint32_t playerId, Direction dir)
 	if(!player || player->isRemoved())
 		return false;
 
-	player->resetIdleTime();
+	player->setIdleTime(0);
 	if(dir != player->getDirection() || !player->hasCustomFlag(PlayerCustomFlag_CanTurnhop))
 		return internalCreatureTurn(player, dir);
 
@@ -3428,7 +3420,7 @@ bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 	if(!player->changeOutfit(outfit))
 		return false;
 
-	player->resetIdleTime();
+	player->setIdleTime(0);
 	if(player->hasCondition(CONDITION_OUTFIT))
 		return true;
 

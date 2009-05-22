@@ -177,7 +177,6 @@ class Game
 
 		void setWorldType(WorldType_t type) {worldType = type;}
 		WorldType_t getWorldType() const {return worldType;}
-		int32_t getInFightTicks() const {return inFightTicks;}
 
 		Cylinder* internalGetCylinder(Player* player, const Position& pos);
 		Thing* internalGetThing(Player* player, const Position& pos, int32_t index,
@@ -612,7 +611,6 @@ class Game
 		int32_t lightLevel, lightHour, lightHourDelta;
 		LightState_t lightState;
 
-		uint32_t maxPlayers, inFightTicks;
 		GameState_t gameState;
 		WorldType_t worldType;
 

@@ -770,7 +770,7 @@ DeathList Creature::getKillers()
 	for(CountMap::const_iterator it = damageMap.begin(); it != damageMap.end(); ++it)
 	{
 		cb = it->second;
-		if((now - cb.ticks) > g_game.getInFightTicks())
+		if((now - cb.ticks) > g_config.getNumber(ConfigManager::PZ_LOCKED))
 			continue;
 
 		Creature* mdc = g_game.getCreatureByID(it->first);
@@ -807,7 +807,7 @@ bool Creature::hasBeenAttacked(uint32_t attackerId) const
 {
 	CountMap::const_iterator it = damageMap.find(attackerId);
 	if(it != damageMap.end())
-		return (OTSYS_TIME() - it->second.ticks) <= g_game.getInFightTicks();
+		return (OTSYS_TIME() - it->second.ticks) <= g_config.getNumber(ConfigManager::PZ_LOCKED);
 
 	return false;
 }

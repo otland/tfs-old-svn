@@ -498,7 +498,7 @@ enum PlayerFlags
 
 enum PlayerCustomFlags
 {
-	PlayerCustomFlag_UnusedAndToReplace = 0,		//2^0 = 1
+	PlayerCustomFlag_AllowIdle = 0,				//2^0 = 1
 	PlayerCustomFlag_CanSeePosition,			//2^1 = 2
 	PlayerCustomFlag_CanSeeItemDetails,			//2^2 = 4
 	PlayerCustomFlag_CanSeeCreatureDetails,			//2^3 = 8

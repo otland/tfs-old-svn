@@ -50,7 +50,6 @@ AutoList<Player> Player::listPlayer;
 uint32_t Player::playerCount = 0;
 #endif
 MuteCountMap Player::muteCountMap;
-int32_t Player::maxMessageBuffer;
 
 Player::Player(const std::string& _name, ProtocolGame *p) :
 Creature(), transferContainer(ITEM_LOCKER1)
@@ -87,8 +86,8 @@ Creature(), transferContainer(ITEM_LOCKER1)
  	lastIP = 0;
 	npings = 0;
 	internalPing = 0;
-	MessageBufferTicks = 0;
-	MessageBufferCount = 0;
+	messageTicks = 0;
+	messageBuffer = 0;
 	nextAction = 0;
 
 	windowTextId = 0;
@@ -1764,30 +1763,12 @@ void Player::onThink(uint32_t interval)
 	Creature::onThink(interval);
 	sendPing(interval);
 
-	MessageBufferTicks += interval;
-	if(MessageBufferTicks >= 1500)
+	messageTicks += interval;
+	if(messageTicks >= 1500)
 	{
-		MessageBufferTicks = 0;
+		messageTicks = 0;
 		addMessageBuffer();
 	}
-
-	if(!getTile()->hasFlag(TILESTATE_NOLOGOUT) && !getNoMove() && !hasFlag(PlayerFlag_NotGainInFight))
-	{
-		idleTime += interval;
-		int32_t kickTime = g_config.getNumber(ConfigManager::IDLE_KICK_TIME);
-		if(idleTime >= (kickTime + 60000))
-			kickPlayer(true);
-		else if(client && idleTime >= kickTime)
-		{
-			char buffer[130];
-			sprintf(buffer, "You have been idle for %d minutes, you will be disconnected in one minute if you are still idle.",
-				(kickTime / 60000));
-			sendTextMessage(MSG_STATUS_WARNING, buffer);
-		}
-	}
-
-	if(redSkullEnd && time(NULL) > redSkullEnd && !hasCondition(CONDITION_INFIGHT))
-		setRedSkullEnd(0, false);
 }
 
 uint32_t Player::isMuted()
@@ -1807,16 +1788,18 @@ uint32_t Player::isMuted()
 
 void Player::addMessageBuffer()
 {
-	if(!hasFlag(PlayerFlag_CannotBeMuted) && Player::maxMessageBuffer != 0 && MessageBufferCount > 0)
-		MessageBufferCount--;
+	if(!hasFlag(PlayerFlag_CannotBeMuted) && g_config.getNumber(
+		ConfigManager::MAX_MESSAGEBUFFER) != 0 && messageBuffer > 0)
+		messageBuffer--;
 }
 
 void Player::removeMessageBuffer()
 {
-	if(!hasFlag(PlayerFlag_CannotBeMuted) && Player::maxMessageBuffer != 0 && MessageBufferCount <= Player::maxMessageBuffer + 1)
+	int32_t maxBuffer = g_config.getNumber(ConfigManager::MAX_MESSAGEBUFFER);
+	if(!hasFlag(PlayerFlag_CannotBeMuted) && maxBuffer != 0 && messageBuffer <= maxBuffer + 1)
 	{
-		MessageBufferCount++;
-		if(MessageBufferCount > Player::maxMessageBuffer)
+		messageBuffer++;
+		if(messageBuffer > maxBuffer)
 		{
 			uint32_t muteCount = 1;
 			MuteCountMap::iterator it = muteCountMap.find(getGUID());
@@ -2343,7 +2326,8 @@ void Player::addInFightTicks(bool pzLock/* = false*/)
 	if(hasFlag(PlayerFlag_NotGainInFight))
 		return;
 
-	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT, g_game.getInFightTicks()))
+	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
+		CONDITION_INFIGHT, g_config.getNumber(ConfigManager::PZ_LOCKED)))
 		addCondition(condition);
 
 	if(pzLock)

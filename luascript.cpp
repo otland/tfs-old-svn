@@ -2050,6 +2050,9 @@ void LuaScriptInterface::registerFunctions()
 	//hasProperty(uid)
 	lua_register(m_luaState, "hasProperty", LuaScriptInterface::luaHasProperty);
 
+	//hasClient(cid)
+	lua_register(m_luaState, "hasClient", LuaScriptInterface::luaHasClient);
+
 	//getItemIdByName(name[, reportError])
 	lua_register(m_luaState, "getItemIdByName", LuaScriptInterface::luaGetItemIdByName);
 
@@ -2149,8 +2152,11 @@ void LuaScriptInterface::registerFunctions()
 	//doCreatureSetNoMove(cid, block)
 	lua_register(m_luaState, "doCreatureSetNoMove", LuaScriptInterface::luaDoCreatureSetNoMove);
 
-	//doPlayerResetIdleTime(cid)
-	lua_register(m_luaState, "doPlayerResetIdleTime", LuaScriptInterface::luaDoPlayerResetIdleTime);
+	//getPlayerIdleTime(cid)
+	lua_register(m_luaState, "getPlayerIdleTime", LuaScriptInterface::luaGetPlayerIdleTime);
+
+	//doPlayerSetIdleTime(cid, amount)
+	lua_register(m_luaState, "doPlayerSetIdleTime", LuaScriptInterface::luaDoPlayerSetIdleTime);
 
 	//getPlayerRates(cid)
 	lua_register(m_luaState, "getPlayerRates", LuaScriptInterface::luaGetPlayerRates);
@@ -2513,6 +2519,12 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 			player->sendOutfitWindow();
 			lua_pushboolean(L, true);
 			return 1;
+		case PlayerInfoIdleTime:
+			value = player->getIdleTime();
+			break;
+		case PlayerInfoClient:
+			lua_pushboolean(L, player->hasClient());
+			return 1;
 		default:
 			reportErrorFunc("Unknown player info - " + info);
 			value = 0;
@@ -2692,6 +2704,16 @@ int32_t LuaScriptInterface::luaGetPlayerRedSkullEnd(lua_State* L)
 int32_t LuaScriptInterface::luaDoPlayerSendOutfitWindow(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoOutfitWindow);
+}
+
+int32_t LuaScriptInterface::luaGetPlayerIdleTime(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoIdleTime);
+}
+
+int32_t LuaScriptInterface::luaHasClient(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoClient);
 }
 //
 
@@ -4446,7 +4468,6 @@ int32_t LuaScriptInterface::luaGetTileInfo(lua_State* L)
 {
 	//getTileInfo(pos)
 	PositionEx pos;
-
 	popPosition(L, pos);
 	if(Tile* tile = g_game.getMap()->getTile(pos))
 	{
@@ -8007,9 +8028,6 @@ int32_t LuaScriptInterface::luaDoCreatureSetLookDir(lua_State* L)
 		}
 
 		g_game.internalCreatureTurn(creature, dir);
-		if(Player* player = creature->getPlayer())
-			player->resetIdleTime();
-
 		lua_pushboolean(L, true);
 	}
 	else
@@ -8690,13 +8708,14 @@ int32_t LuaScriptInterface::luaGetCreatureSummons(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoPlayerResetIdleTime(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerSetIdleTime(lua_State* L)
 {
-	//doPlayerResetIdleTime(cid)
+	//doPlayerSetIdleTime(cid, amount)
+	int64_t amount = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		player->resetIdleTime();
+		player->setIdleTime(amount);
 		lua_pushboolean(L, true);
 	}
 	else

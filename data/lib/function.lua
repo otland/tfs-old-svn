@@ -297,6 +297,10 @@ function isPrivateChannel(channelId)
 	return channelId >= 65535
 end
 
+function doPlayerResetIdleTime(cid)
+	return doPlayerSetIdleTime(cid, 0)
+end
+
 function getBooleanFromString(str)
 	return (str:lower() == "yes" or str:lower() == "true" or (tonumber(str) and tonumber(str) > 0))
 end

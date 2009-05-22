@@ -624,7 +624,7 @@ PlayerFlag_CanReportBugs = 44
 PlayerFlag_45 = 45 -- ignore
 PlayerFlag_CannotBeSeen = 46
 
-PlayerCustomFlag_UnusedAndToReplace = 0
+PlayerCustomFlag_AllowIdle = 0
 PlayerCustomFlag_CanSeePosition	= 1
 PlayerCustomFlag_CanSeeItemDetails = 2
 PlayerCustomFlag_CanSeeCreatureDetails = 3
