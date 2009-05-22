@@ -148,8 +148,6 @@ bool ConfigManager::load()
 	m_confBool[START_CHOOSEVOC] = getGlobalBool("newPlayerChooseVoc", "no");
 	m_confNumber[HOUSE_PRICE] = getGlobalNumber("housePriceEachSquare", 1000);
 	m_confNumber[WHITE_SKULL_TIME] = getGlobalNumber("whiteSkullTime", 15 * 60 * 1000);
-	m_confNumber[KILLS_TO_RED] = getGlobalNumber("killsToRedSkull", 3);
-	m_confNumber[KILLS_TO_BAN] = getGlobalNumber("killsToBan", 5);
 	m_confNumber[HIGHSCORES_TOP] = getGlobalNumber("highscoreDisplayPlayers", 10);
 	m_confNumber[HIGHSCORES_UPDATETIME] = getGlobalNumber("updateHighscoresAfterMinutes", 60);
 	m_confBool[ON_OR_OFF_CHARLIST] = getGlobalBool("displayOnOrOffAtCharlist", "no");
@@ -160,7 +158,7 @@ bool ConfigManager::load()
 	m_confNumber[ACTIONS_DELAY_INTERVAL] = getGlobalNumber("timeBetweenActions", 200);
 	m_confNumber[EX_ACTIONS_DELAY_INTERVAL] = getGlobalNumber("timeBetweenExActions", 1000);
 	m_confNumber[CRITICAL_HIT_CHANCE] = getGlobalNumber("criticalHitChance", 5);
-	m_confNumber[KICK_AFTER_MINUTES] = getGlobalNumber("kickIdlePlayerAfterMinutes", 15);
+	m_confNumber[IDLE_KICK_TIME] = getGlobalNumber("idleKickTime", 15 * 60 * 1000);
 	m_confBool[REMOVE_WEAPON_AMMO] = getGlobalBool("removeWeaponAmmunition", "yes");
 	m_confBool[REMOVE_WEAPON_CHARGES] = getGlobalBool("removeWeaponCharges", "yes");
 	m_confBool[REMOVE_RUNE_CHARGES] = getGlobalBool("removeRuneCharges", "yes");
@@ -184,7 +182,7 @@ bool ConfigManager::load()
 	m_confBool[HOUSE_NEED_PREMIUM] = getGlobalBool("houseNeedPremium", "yes");
 	m_confBool[HOUSE_RENTASPRICE] = getGlobalBool("houseRentAsPrice", "no");
 	m_confBool[HOUSE_PRICEASRENT] = getGlobalBool("housePriceAsRent", "no");
-	m_confNumber[FRAG_TIME] = getGlobalNumber("timeToDecreaseFrags", 24 * 60 * 60 * 1000);
+	m_confNumber[RED_SKULL_LENGTH] = getGlobalNumber("redSkullLength", 30 * 24 * 60 * 60);
 	m_confNumber[MAX_VIOLATIONCOMMENT_SIZE] = getGlobalNumber("maxViolationCommentSize", 60);
 	m_confNumber[NOTATIONS_TO_BAN] = getGlobalNumber("notationsToBan", 3);
 	m_confNumber[WARNINGS_TO_FINALBAN] = getGlobalNumber("warningsToFinalBan", 4);
@@ -253,6 +251,12 @@ bool ConfigManager::load()
 	m_confNumber[MAXIMUM_DOOR_LEVEL] = getGlobalNumber("maximumDoorLevel", 500);
 	m_confBool[DEATH_LIST] = getGlobalBool("deathListEnabled", "yes");
 	m_confNumber[DEATH_ASSISTS] = getGlobalNumber("deathAssistCount", 1);
+	m_confNumber[RED_DAILY_LIMIT] = getGlobalNumber("dailyFragsToRedSkull", 3);
+	m_confNumber[RED_WEEKLY_LIMIT] = getGlobalNumber("weeklyFragsToRedSkull", 5);
+	m_confNumber[RED_MONTHLY_LIMIT] = getGlobalNumber("monthlyFragsToRedSkull", 10);
+	m_confNumber[BAN_DAILY_LIMIT] = getGlobalNumber("dailyFragsToBanishment", (m_confNumber[RED_DAILY_LIMIT] * 2));
+	m_confNumber[BAN_WEEKLY_LIMIT] = getGlobalNumber("weeklyFragsToBanishment", (m_confNumber[RED_WEEKLY_LIMIT] * 2));
+	m_confNumber[BAN_MONTHLY_LIMIT] = getGlobalNumber("monthlyFragsToBanishment", (m_confNumber[RED_MONTHLY_LIMIT] * 2));
 
 	m_loaded = true;
 	return true;

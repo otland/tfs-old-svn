@@ -163,7 +163,7 @@ Creature(), transferContainer(ITEM_LOCKER1)
  	vocation_id = 0;
  	town = 0;
 
-	redSkullTicks = 0;
+	redSkullEnd = 0;
 	setParty(NULL);
 	transferContainer.setParent(NULL);
 
@@ -1774,19 +1774,20 @@ void Player::onThink(uint32_t interval)
 	if(!getTile()->hasFlag(TILESTATE_NOLOGOUT) && !getNoMove() && !hasFlag(PlayerFlag_NotGainInFight))
 	{
 		idleTime += interval;
-		if(idleTime > (g_config.getNumber(ConfigManager::KICK_AFTER_MINUTES) * 60000) + 60000)
+		int32_t kickTime = g_config.getNumber(ConfigManager::IDLE_KICK_TIME);
+		if(idleTime >= (kickTime + 60000))
 			kickPlayer(true);
-		else if(client && idleTime == g_config.getNumber(ConfigManager::KICK_AFTER_MINUTES) * 60000)
+		else if(client && idleTime >= kickTime)
 		{
 			char buffer[130];
 			sprintf(buffer, "You have been idle for %d minutes, you will be disconnected in one minute if you are still idle.",
-				g_config.getNumber(ConfigManager::KICK_AFTER_MINUTES));
+				(kickTime / 60000));
 			sendTextMessage(MSG_STATUS_WARNING, buffer);
 		}
 	}
 
-	if(g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
-		checkRedSkullTicks(interval);
+	if(redSkullEnd && time(NULL) > redSkullEnd && !hasCondition(CONDITION_INFIGHT))
+		setRedSkullEnd(0, false);
 }
 
 uint32_t Player::isMuted()
@@ -3297,10 +3298,8 @@ void Player::doAttacking(uint32_t interval)
 	if(lastAttack == 0)
 		lastAttack = OTSYS_TIME() - getAttackSpeed() - 1;
 
-	if((OTSYS_TIME() - lastAttack) < getAttackSpeed())
-		return;
-
-	if(hasCondition(CONDITION_PACIFIED) && !hasCustomFlag(PlayerCustomFlag_IgnorePacification))
+	if((OTSYS_TIME() - lastAttack) < getAttackSpeed() || (hasCondition(CONDITION_PACIFIED)
+		&& !hasCustomFlag(PlayerCustomFlag_IgnorePacification)))
 		return;
 
 	Item* tool = getWeapon();
@@ -3602,12 +3601,12 @@ void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)
 	}
 }
 
-bool Player::onKilledCreature(Creature* target, bool lastHit)
+bool Player::onKilledCreature(Creature* target, bool& value)
 {
-	if(!Creature::onKilledCreature(target, lastHit))
+	if(!Creature::onKilledCreature(target, value))
 		return false;
 
-	if(!lastHit)
+	if(value)
 		return true;
 
 	if(hasFlag(PlayerFlag_NotGenerateLoot))
@@ -3621,7 +3620,7 @@ bool Player::onKilledCreature(Creature* target, bool lastHit)
 		return true;
 
 	if(!isPartner(targetPlayer) && !targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE)
-		addUnjustifiedDead(targetPlayer);
+		value = addUnjustifiedKill(targetPlayer);
 
 	if(!hasCondition(CONDITION_INFIGHT))
 		return true;
@@ -3852,33 +3851,72 @@ void Player::addAttacked(const Player* attacked)
 		attackedSet.insert(attackedId);
 }
 
-void Player::clearAttacked()
+void Player::setRedSkullEnd(time_t _time, bool login)
 {
-	attackedSet.clear();
+	if(g_game.getWorldType() == WORLD_TYPE_PVP_ENFORCED)
+		return;
+
+	bool requireUpdate = false;
+	if(_time > time(NULL))
+	{
+		requireUpdate = true;
+		setSkull(SKULL_RED);
+	}		
+	else if(skull == SKULL_RED)
+	{
+		requireUpdate = true;
+		setSkull(SKULL_NONE);
+		_time = 0;
+	}
+
+	if(requireUpdate)
+	{
+		redSkullEnd = _time;
+		if(!login)
+			g_game.updateCreatureSkull(this);
+	}
 }
 
-void Player::addUnjustifiedDead(const Player* attacked)
+bool Player::addUnjustifiedKill(const Player* attacked)
 {
 	if(g_game.getWorldType() == WORLD_TYPE_PVP_ENFORCED || attacked == this || hasFlag(
 		PlayerFlag_NotGainInFight) || hasCustomFlag(PlayerCustomFlag_NotGainSkull))
-		return;
+		return false;
 
 	if(client)
 	{
 		char buffer[90];
-		sprintf(buffer, "Warning! The murder of %s was not justified.", attacked->getName().c_str());
+		sprintf(buffer, "Warning! The murder of %s was not justified.",
+			attacked->getName().c_str());
 		client->sendTextMessage(MSG_STATUS_WARNING, buffer);
 	}
 
-	redSkullTicks += g_config.getNumber(ConfigManager::FRAG_TIME);
-	if(g_config.getNumber(ConfigManager::KILLS_TO_RED) != 0 && getSkull() != SKULL_RED &&
-		redSkullTicks >= ((g_config.getNumber(ConfigManager::KILLS_TO_RED) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME)))
+	time_t now = time(NULL), today = (now - 84600), week = (now - (7 * 84600));
+	std::vector<time_t> dateList;
+	IOLoginData::getInstance()->getUnjustifiedDates(guid, dateList, now);
+
+	dateList.push_back(now);
+	uint32_t tc = 0, wc = 0, mc = dateList.size();
+	for(std::vector<time_t>::iterator it = dateList.begin(); it != dateList.end(); ++it)
 	{
-		setSkull(SKULL_RED);
-		g_game.updateCreatureSkull(this);
+		if((*it) > week)
+			wc++;
+
+		if((*it) > today)
+			tc++; 
 	}
-	else if(g_config.getNumber(ConfigManager::KILLS_TO_BAN) != 0 && redSkullTicks >= (g_config.getNumber(
-		ConfigManager::KILLS_TO_BAN) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME))
+
+	if(skull != SKULL_RED)
+	{
+		uint32_t d = g_config.getNumber(ConfigManager::RED_DAILY_LIMIT), w = g_config.getNumber(
+			ConfigManager::RED_WEEKLY_LIMIT), m = g_config.getNumber(ConfigManager::RED_MONTHLY_LIMIT);
+		if((d > 0 && tc >= d) || (w > 0 && wc >= w) || (m > 0 && mc >= m))
+			setRedSkullEnd(now + g_config.getNumber(ConfigManager::RED_SKULL_LENGTH), false);
+	}
+
+	uint32_t d = g_config.getNumber(ConfigManager::BAN_DAILY_LIMIT), w = g_config.getNumber(
+		ConfigManager::BAN_WEEKLY_LIMIT), m = g_config.getNumber(ConfigManager::BAN_MONTHLY_LIMIT);
+	if((d > 0 && tc >= d) || (w > 0 && wc >= w) || (m > 0 && mc >= m))
 	{
 		int32_t warnings = IOLoginData::getInstance()->loadAccount(accountId, true).warnings;
 		bool success = false;
@@ -3897,18 +3935,8 @@ void Player::addUnjustifiedDead(const Player* attacked)
 			Scheduler::getScheduler().addEvent(createSchedulerTask(500, boost::bind(&Game::kickPlayer, &g_game, getID(), false)));
 		}
 	}
-}
 
-void Player::checkRedSkullTicks(int32_t ticks)
-{
-	if((redSkullTicks - ticks) > 0)
-		redSkullTicks -= ticks;
-
-	if(redSkullTicks < 1000 && !hasCondition(CONDITION_INFIGHT) && skull == SKULL_RED)
-	{
-		setSkull(SKULL_NONE);
-		g_game.updateCreatureSkull(this);
-	}
+	return true;
 }
 
 void Player::setPromotionLevel(uint32_t pLevel)

@@ -80,19 +80,25 @@ struct FindPathParams
 struct DeathLessThan;
 struct DeathEntry
 {
-		DeathEntry(std::string name, int32_t dmg): data(name), damage(dmg) {}
-		DeathEntry(Creature* killer, int32_t dmg): data(killer), damage(dmg) {}
+		DeathEntry(std::string name, int32_t dmg):
+			data(name), damage(dmg), unjustified(false) {}
+		DeathEntry(Creature* killer, int32_t dmg):
+			data(killer), damage(dmg), unjustified(false) {}
 
 		bool isCreatureKill() const {return data.type() == typeid(Creature*);}
 		bool isNameKill() const {return !isCreatureKill();}
+		bool isUnjustified() const {return unjustified;}
 
 		const std::type_info& getKillerType() const {return data.type();}
 		Creature* getKillerCreature() const {return boost::any_cast<Creature*>(data);}
 		std::string getKillerName() const {return boost::any_cast<std::string>(data);}
 
+		void setUnjustified(bool v) {unjustified = v;}
+
 	protected:
 		boost::any data;
 		int32_t damage;
+		bool unjustified;
 
 		friend struct DeathLessThan;
 };
@@ -334,7 +340,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual void onAttackedCreatureDrainHealth(Creature* target, int32_t points);
 		virtual void onTargetCreatureGainHealth(Creature* target, int32_t points);
 		virtual void onAttackedCreatureKilled(Creature* target);
-		virtual bool onKilledCreature(Creature* target, bool lastHit);
+		virtual bool onKilledCreature(Creature* target, bool& value);
 		virtual void onGainExperience(uint64_t gainExp);
 		virtual void onGainSharedExperience(uint64_t gainExp);
 		virtual void onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType) {}

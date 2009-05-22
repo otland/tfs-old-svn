@@ -439,6 +439,7 @@ class Player : public Creature, public Cylinder
 		void removeExperience(uint64_t exp, bool updateStats = true);
 		void addManaSpent(uint64_t amount, bool ignoreFlag = false, bool useMultiplier = true);
 		void addSkillAdvance(skills_t skill, uint32_t count, bool useMultiplier = true);
+		bool addUnjustifiedKill(const Player* attacked);
 
 		virtual int32_t getArmor() const;
 		virtual int32_t getDefense() const;
@@ -460,7 +461,7 @@ class Player : public Creature, public Cylinder
 		virtual void onAttacked();
 		virtual void onAttackedCreatureDrainHealth(Creature* target, int32_t points);
 		virtual void onTargetCreatureGainHealth(Creature* target, int32_t points);
-		virtual bool onKilledCreature(Creature* target, bool lastHit);
+		virtual bool onKilledCreature(Creature* target, bool& value);
 		virtual void onGainExperience(uint64_t gainExp);
 		virtual void onGainSharedExperience(uint64_t gainExp);
 		virtual void onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType);
@@ -477,19 +478,16 @@ class Player : public Creature, public Cylinder
 
 		bool hasAttacked(const Player* attacked) const;
 		void addAttacked(const Player* attacked);
-		void clearAttacked();
-		void addUnjustifiedDead(const Player* attacked);
-		void sendCreatureSkull(const Creature* creature) const
-			{if(client) client->sendCreatureSkull(creature);}
+		void clearAttacked() {attackedSet.clear();}
 
-		void checkRedSkullTicks(int32_t ticks);
-		int64_t getRedSkullTicks() const {return redSkullTicks;}
-		void setRedSkullTicks(int64_t amount) {redSkullTicks = amount;}
+		time_t getRedSkullEnd() const {return redSkullEnd;}
+		void setRedSkullEnd(time_t _time, bool login);
 
 		const OutfitListType& getPlayerOutfits();
-		bool canWear(uint32_t _looktype, uint32_t _addons);
 		void addOutfit(uint32_t _looktype, uint32_t _addons);
 		bool remOutfit(uint32_t _looktype, uint32_t _addons);
+
+		bool canWear(uint32_t _looktype, uint32_t _addons);
 		bool canLogout();
 
 		//tile
@@ -600,6 +598,8 @@ class Player : public Creature, public Cylinder
 		void sendHouseWindow(House* house, uint32_t listId) const;
 		void sendOutfitWindow() const
 			{if(client) client->sendOutfitWindow();}
+		void sendCreatureSkull(const Creature* creature) const
+			{if(client) client->sendCreatureSkull(creature);}
 		void sendFYIBox(std::string message)
 			{if(client) client->sendFYIBox(message);}
 		void sendCreatePrivateChannel(uint16_t channelId, const std::string& channelName)
@@ -840,10 +840,10 @@ class Player : public Creature, public Cylinder
 		uint32_t promotionLevel;
 		uint32_t town;
 
+		time_t redSkullEnd;
 		time_t lastLoginSaved;
 		time_t lastLogout;
 		int64_t lastLogin;
-		int64_t redSkullTicks;
 		int64_t nextAction;
 		uint64_t stamina;
 		uint64_t experience;

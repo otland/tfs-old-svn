@@ -2116,11 +2116,11 @@ void LuaScriptInterface::registerFunctions()
 	//doCreatureSetSkullType(cid, skull)
 	lua_register(m_luaState, "doCreatureSetSkullType", LuaScriptInterface::luaDoCreatureSetSkullType);
 
-	//getPlayerRedSkullTicks(cid)
-	lua_register(m_luaState, "getPlayerRedSkullTicks", LuaScriptInterface::luaGetPlayerRedSkullTicks);
+	//getPlayerRedSkullEnd(cid)
+	lua_register(m_luaState, "getPlayerRedSkullEnd", LuaScriptInterface::luaGetPlayerRedSkullEnd);
 
-	//doPlayerSetRedSkullTicks(cid, amount)
-	lua_register(m_luaState, "doPlayerSetRedSkullTicks", LuaScriptInterface::luaDoPlayerSetRedSkullTicks);
+	//doPlayerSetRedSkullEnd(cid, time)
+	lua_register(m_luaState, "doPlayerSetRedSkullEnd", LuaScriptInterface::luaDoPlayerSetRedSkullEnd);
 
 	//getPlayerBalance(cid)
 	lua_register(m_luaState, "getPlayerBalance", LuaScriptInterface::luaGetPlayerBalance);
@@ -2506,8 +2506,8 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 		case PlayerInfoIp:
 			value = player->getIP();
 			break;
-		case PlayerInfoRedSkullTicks:
-			value = player->getRedSkullTicks();
+		case PlayerInfoRedSkullEnd:
+			value = player->getRedSkullEnd();
 			break;
 		case PlayerInfoOutfitWindow:
 			player->sendOutfitWindow();
@@ -2684,9 +2684,9 @@ int32_t LuaScriptInterface::luaGetPlayerIp(lua_State* L)
 	return internalGetPlayerInfo(L, PlayerInfoIp);
 }
 
-int32_t LuaScriptInterface::luaGetPlayerRedSkullTicks(lua_State* L)
+int32_t LuaScriptInterface::luaGetPlayerRedSkullEnd(lua_State* L)
 {
-	return internalGetPlayerInfo(L, PlayerInfoRedSkullTicks);
+	return internalGetPlayerInfo(L, PlayerInfoRedSkullEnd);
 }
 
 int32_t LuaScriptInterface::luaDoPlayerSendOutfitWindow(lua_State* L)
@@ -8024,7 +8024,6 @@ int32_t LuaScriptInterface::luaDoCreatureSetSkullType(lua_State* L)
 {
 	//doCreatureSetSkullType(cid, skull)
 	Skulls_t skull = (Skulls_t)popNumber(L);
-
 	ScriptEnviroment* env = getScriptEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
@@ -8040,15 +8039,14 @@ int32_t LuaScriptInterface::luaDoCreatureSetSkullType(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoPlayerSetRedSkullTicks(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerSetRedSkullEnd(lua_State* L)
 {
-	//doPlayerSetRedSkullTicks(cid, amount)
-	int64_t amount = popNumber(L);
-
+	//doPlayerSetRedSkullEnd(cid, time)
+	time_t _time = (time_t)std::max((int64_t)0, popNumber(L));
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		player->setRedSkullTicks(std::max((int64_t)0, amount));
+		player->setRedSkullEnd(_time, false);
 		lua_pushboolean(L, true);
 	}
 	else

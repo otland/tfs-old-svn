@@ -216,7 +216,7 @@ enum PlayerInfo_t
 	PlayerInfoPzLock,
 	PlayerInfoSaving,
 	PlayerInfoIp,
-	PlayerInfoRedSkullTicks,
+	PlayerInfoRedSkullEnd,
 	PlayerInfoOutfitWindow,
 	PlayerInfoNameDescription
 };
@@ -408,8 +408,8 @@ class LuaScriptInterface
 		static int32_t luaDoCreatureSetLookDir(lua_State* L);
 		static int32_t luaGetCreatureSkullType(lua_State* L);
 		static int32_t luaDoCreatureSetSkullType(lua_State* L);
-		static int32_t luaGetPlayerRedSkullTicks(lua_State* L);
-		static int32_t luaDoPlayerSetRedSkullTicks(lua_State* L);
+		static int32_t luaGetPlayerRedSkullEnd(lua_State* L);
+		static int32_t luaDoPlayerSetRedSkullEnd(lua_State* L);
 		static int32_t luaDoPlayerSwitchSaving(lua_State* L);
 		static int32_t luaDoPlayerSave(lua_State* L);
 		static int32_t luaDoPlayerSendOutfitWindow(lua_State* L);

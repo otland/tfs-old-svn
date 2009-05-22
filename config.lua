@@ -12,6 +12,16 @@
 	newPlayerMagicLevel = 0
 	generateAccountNumber = "no"
 
+	-- Unjustified kills
+	redSkullLength = 30 * 24 * 60 * 60
+	dailyFragsToRedSkull = 3
+	weeklyFragsToRedSkull = 5
+	monthlyFragsToRedSkull = 10
+	dailyFragsToBanishment = dailyFragsToRedSkull * 2
+	weeklyFragsToBanishment = weeklyFragsToRedSkull * 2
+	monthlyFragsToBanishment = monthlyFragsToRedSkull * 2
+	advancedFragList = "no"
+
 	-- Banishments
 	notationsToBan = 3
 	warningsToFinalBan = 4
@@ -20,7 +30,6 @@
 	finalBanLength = 30 * 24 * 60 * 60
 	ipBanishmentLength = 1 * 24 * 60 * 60
 	broadcastBanishments = "yes"
-	killsToBan = 5
 	maxViolationCommentSize = 200
 	autoBanishUnknownBytes = "no"
 
@@ -31,7 +40,6 @@
 	worldType = "pvp"
 	protectionLevel = 1
 	pvpTileIgnoreLevelAndVocationProtection = "yes"
-	killsToRedSkull = 3
 	pzLocked = 60 * 1000
 	criticalHitChance = 7
 	criticalHitMultiplier = 1
@@ -39,7 +47,6 @@
 	removeWeaponAmmunition = "yes"
 	removeWeaponCharges = "yes"
 	removeRuneCharges = "yes"
-	timeToDecreaseFrags = 24 * 60 * 60 * 1000
 	whiteSkullTime = 15 * 60 * 1000
 	noDamageToSameLookfeet = "no"
 	experienceByKillingPlayers = "no"
@@ -147,7 +154,7 @@
 	coresUsed = "-1"
 	optimizeDatabaseAtStartup = "yes"
 	removePremiumOnInit = "yes"
-	confirmOutdatedVersion = "yes"
+	confirmOutdatedVersion = "no"
 
 	-- Muted buffer
 	maxMessageBuffer = 4
@@ -157,7 +164,7 @@
 	-- NOTE: promptExceptionTracerErrorBox works only with precompiled support feature,
 	-- called "exception tracer" (__EXCEPTION_TRACER__ flag).
 	dataDirectory = "data/"
-	kickIdlePlayerAfterMinutes = 15
+	idleKickTime = 15 * 60 * 1000
 	allowChangeOutfit = "yes"
 	allowChangeColors = "yes"
 	allowChangeAddons = "yes"

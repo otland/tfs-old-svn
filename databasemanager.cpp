@@ -762,6 +762,50 @@ uint32_t DatabaseManager::updateDatabase()
 			return 15;
 		}
 
+		case 15:
+		{
+			std::cout << "> Updating database to version: 16..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_MYSQL:
+				{
+					std::string queryList[] = {
+						"ALTER TABLE `players` DROP `redskull`;",
+						"ALTER TABLE `players` CHANGE `redskulltime` `redskulltime` INT NOT NULL DEFAULT 0;",
+						"ALTER TABLE `killers` ADD `unjustified` TINYINT(1) UNSIGNED NOT NULL DEFAULT FALSE;",
+						"UPDATE `players` SET `redskulltime` = 0;"
+					};
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+						db->executeQuery(queryList[i]);
+
+					break;
+				}
+
+				case DATABASE_ENGINE_SQLITE:
+				{
+					std::string queryList[] = {
+						//we cannot DROP redskull, and redskulltime is already INTEGER
+						"ALTER TABLE `killers` ADD `unjustified` BOOLEAN NOT NULL DEFAULT FALSE;",
+						"UPDATE `players` SET `redskulltime` = 0;"
+					};
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+						db->executeQuery(queryList[i]);
+
+					break;
+				}
+
+				case DATABASE_ENGINE_POSTGRESQL:
+				default:
+				{
+					//TODO
+					break;
+				}
+			}
+
+			registerDatabaseConfig("db_version", 16);
+			return 16;
+		}
+
 		default:
 			break;
 	}

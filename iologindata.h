@@ -98,6 +98,7 @@ class IOLoginData
 
 		uint32_t getLevel(uint32_t guid) const;
 		uint32_t getLastIP(uint32_t guid) const;
+		bool getUnjustifiedDates(uint32_t guid, std::vector<time_t>& dateList, time_t _time);
 
 		bool updatePremiumDays();
 		bool resetOnlineStatus();
