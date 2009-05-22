@@ -1200,7 +1200,7 @@ bool Creature::onKilledCreature(Creature* target, bool& value)
 			tmp = false;
 	}
 
-	return result;
+	return tmp;
 }
 
 void Creature::onGainExperience(uint64_t gainExp)
