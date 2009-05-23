@@ -25,25 +25,23 @@
 		http://fightingelf.net/customflags/
 ]
 
-[ Violation Access
-	There are actually 4 access levels to the ingame Violaton Window.
+[ Violation Reasons
+	* All name reasons (4)
+	* All name & statement reasons (6)
+	* All name, statement & cheating reasons (16)
+	* All name, statement, cheating & gamemaster (19)
+	* All name, statement, cheating
+	* All reasons (23)
+]
 
-	1...
-		* All name reasons (4)
-		Overally: 4
-
-	2...
-		* All name reasons (4)
-		* All statement reasons (6)
-		Overally: 10
-
-	3...
-		* All name reasons (4)
-		* All statement reasons (6)
-		* All cheating reasons (9)
-		Overally: 19
-
-	4...
-		* All reasons (23)
-		Overally: 23
+[ Violation Flags
+	* None = 0
+	* Name Report = 1
+	* Notation = 2
+	* Banishment = 4
+	* Name Report + Banishment = 8
+	* Banishment + Final Warning = 16
+	* Name Report + Banishment + Final Warning = 32
+	* Statement Report = 64
+	* IP Banishment = 128
 ]

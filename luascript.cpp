@@ -2128,9 +2128,6 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerBalance(cid)
 	lua_register(m_luaState, "getPlayerBalance", LuaScriptInterface::luaGetPlayerBalance);
 
-	//getPlayerViolationAccess(cid)
-	lua_register(m_luaState, "getPlayerViolationAccess", LuaScriptInterface::luaGetPlayerViolationAccess);
-
 	//getPlayerBlessing(cid, blessing)
 	lua_register(m_luaState, "getPlayerBlessing", LuaScriptInterface::luaGetPlayerBlessing);
 
@@ -2491,9 +2488,6 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 		case PlayerInfoBalance:
 			value = (g_config.getBool(ConfigManager::BANK_SYSTEM) ? player->balance : 0);
 			break;
-		case PlayerInfoViolationAccess:
-			value = player->getViolationAccess();
-			break;
 		case PlayerInfoStamina:
 			value = player->getStaminaMinutes();
 			break;
@@ -2659,11 +2653,6 @@ int32_t LuaScriptInterface::luaGetPlayerPremiumDays(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerBalance(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoBalance);
-}
-
-int32_t LuaScriptInterface::luaGetPlayerViolationAccess(lua_State* L)
-{
-	return internalGetPlayerInfo(L, PlayerInfoViolationAccess);
 }
 
 int32_t LuaScriptInterface::luaGetPlayerStamina(lua_State* L)
@@ -8600,7 +8589,9 @@ int32_t LuaScriptInterface::luaGetGroupInfo(lua_State* L)
 	setField(L, "name", group->getName().c_str());
 	setField(L, "access", group->getAccess());
 	setField(L, "ghostAccess", group->getGhostAccess());
-	setField(L, "violationAccess", group->getViolationAccess());
+	setField(L, "violationReasons", group->getViolationReasons());
+	setField(L, "statementViolationFlags", group->getStatementViolationFlags());
+	setField(L, "nameViolationFlags", group->getNameViolationFlags());
 	setField(L, "depotLimit", group->getDepotLimit(premium));
 	setField(L, "maxVips", group->getMaxVips(premium));
 	setField(L, "outfit", group->getOutfit());

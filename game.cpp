@@ -4773,9 +4773,13 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string targetName, uint
 	if(!player || player->isRemoved())
 		return false;
 
-	uint32_t access = player->getViolationAccess();
-	if((ipBanishment && ((violationNames[access] & Action_IpBan) != Action_IpBan || (violationStatements[access] & Action_IpBan) != Action_IpBan)) ||
-		!(violationNames[access] & (1 << action) || violationStatements[access] & (1 << action)) || reason > violationReasons[access])
+	Group* group = player->getGroup();
+	if(!group)
+		return false;
+
+	uint8_t nameFlags = group->getNameViolationFlags(), statementFlags = group->getStatementViolationFlags();
+	if((ipBanishment && ((nameFlags & 128) != 128 || (statementFlags & 128) != 128)) || !(nameFlags & (1 << action)
+		|| statementFlags & (1 << action)) || reason > group->getViolationReasons()) //128 = IP Banishment
 	{
 		player->sendCancel("You do not have authorization for this action.");
 		return false;

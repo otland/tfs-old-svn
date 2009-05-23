@@ -2161,18 +2161,21 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 			msg->AddByte(0x00);
 			msg->AddByte(player->hasFlag(PlayerFlag_CanReportBugs));
 
-			int16_t access = player->getViolationAccess();
-			if(violationReasons[access] > 0)
+			if(Group* group = player->getGroup())
 			{
-				msg->AddByte(0x0B);
-				for(int32_t i = 0; i <= 22; i++)
+				int32_t reasons = (group->getViolationReasons() + 1);
+				if(reasons > 1)
 				{
-					if(i <= violationReasons[1])
-						msg->AddByte(violationNames[access]);
-					else if(i <= violationReasons[access])
-						msg->AddByte(violationStatements[access]);
-					else
-						msg->AddByte(Action_None);
+					msg->AddByte(0x0B);
+					for(int32_t i = 0; i < 23; i++)
+					{
+						if(i < 4)
+							msg->AddByte(group->getNameViolationFlags());
+						else if(i < reasons)
+							msg->AddByte(group->getStatementViolationFlags());
+						else
+							msg->AddByte(0);
+					}
 				}
 			}
 

@@ -209,7 +209,6 @@ enum PlayerInfo_t
 	PlayerInfoAccount,
 	PlayerInfoPremiumDays,
 	PlayerInfoBalance,
-	PlayerInfoViolationAccess,
 	PlayerInfoStamina,
 	PlayerInfoLossSkill,
 	PlayerInfoMarriage,
@@ -691,7 +690,6 @@ class LuaScriptInterface
 		static int32_t luaRegisterCreatureEvent(lua_State* L);
 
 		static int32_t luaGetPlayerBalance(lua_State* L);
-		static int32_t luaGetPlayerViolationAccess(lua_State* L);
 		static int32_t luaDoPlayerPopupFYI(lua_State* L);
 		static int32_t luaDoPlayerSendTutorial(lua_State* L);
 		static int32_t luaDoPlayerAddMapMark(lua_State* L);
