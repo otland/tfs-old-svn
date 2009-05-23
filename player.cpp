@@ -3766,9 +3766,7 @@ bool Player::changeOutfit(Outfit_t outfit)
 		outfitAttributes = !Outfits::getInstance()->removeAttributes(getID(), defaultOutfit.lookType);
 
 	defaultOutfit = outfit;
-	if(defaultOutfit.lookAddons == OUTFITS_ADDON_BONUS)
-		outfitAttributes = Outfits::getInstance()->addAttributes(getID(), defaultOutfit.lookType);
-
+	outfitAttributes = Outfits::getInstance()->addAttributes(getID(), defaultOutfit.lookType, defaultOutfit.lookAddons);
 	return true;
 }
 

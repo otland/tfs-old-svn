@@ -23,7 +23,15 @@
 
 #define OUTFITS_QUEST_VALUE 1
 #define OUTFITS_MAX_NUMBER 25
-#define OUTFITS_ADDON_BONUS 3
+
+enum AddonRequirement_t
+{
+	REQUIREMENT_NONE = 0,
+	REQUIREMENT_FIRST,
+	REQUIREMENT_SECOND,
+	REQUIREMENT_BOTH,
+	REQUIERMENT_ANY
+}
 
 struct Outfit
 {
@@ -34,16 +42,18 @@ struct Outfit
 		memset(stats, 0 , sizeof(stats));
 		memset(statsPercent, 0, sizeof(statsPercent));
 
+		requirement = REQUIREMENT_BOTH;
 		memset(absorbPercent, 0, sizeof(absorbPercent));
 		premium = manaShield = invisible = regeneration = false;
 		looktype = addons = access = quest = speed = healthGain = healthTicks = manaGain = manaTicks = conditionSuppressions = 0;
 	}
 
 	bool premium, manaShield, invisible, regeneration;
+	AddonRequirement_t requirement;
 	int16_t absorbPercent[COMBAT_LAST + 1];
 
-	uint16_t access;
-	uint32_t looktype, addons, quest;
+	uint16_t access, addons;
+	uint32_t looktype, quest;
 	int32_t skills[SKILL_LAST + 1], skillsPercent[SKILL_LAST + 1], stats[STAT_LAST + 1], statsPercent[STAT_LAST + 1],
 		speed, healthGain, healthTicks, manaGain, manaTicks, conditionSuppressions;
 };
@@ -91,7 +101,7 @@ class Outfits
 		}
 
 		bool addAttributes(uint32_t playerId, uint32_t lookType);
-		bool removeAttributes(uint32_t playerId, uint32_t lookType);
+		bool removeAttributes(uint32_t playerId, uint32_t lookType, uint16_t addons);
 
 		const std::string& getOutfitName(uint32_t lookType) const;
 		int16_t getOutfitAbsorb(uint32_t lookType, uint32_t type, CombatType_t combat);
