@@ -678,11 +678,21 @@ bool Outfits::removeAttributes(uint32_t playerId, uint32_t lookType)
 		return false;
 
 	Outfit* outfit = NULL;
-	const OutfitListType& globalOutfits = getOutfits((uint32_t)player->getSex());
-	for(OutfitListType::const_iterator it = globalOutfits.begin(); it != globalOutfits.end(); ++it)
+	uint32_t size = m_list.size();
+	for(uint32_t i = 0; i < size; ++i)
 	{
-		if((*it)->looktype == lookType)
+		const OutfitListType& femaleOutfits = getOutfits(i);
+		for(OutfitListType::const_iterator it = femaleOutfits.begin(); it != femaleOutfits.end(); ++it)
+		{
+			if((*it)->looktype != lookType)
+				continue;
+
 			outfit = (*it);
+			break;
+		}
+
+		if(outfit)
+			break;
 	}
 
 	if(!outfit || !outfit->looktype)

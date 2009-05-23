@@ -7691,13 +7691,19 @@ int32_t LuaScriptInterface::luaDoCreatureChangeOutfit(lua_State* L)
 	outfit.lookLegs = getField(L, "lookLegs");
 	outfit.lookFeet = getField(L, "lookFeet");
 	outfit.lookAddons = getField(L, "lookAddons");
-	lua_pop(L, 1);
 
+	lua_pop(L, 1);
 	ScriptEnviroment* env = getScriptEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
-		creature->defaultOutfit = outfit;
-		g_game.internalCreatureChangeOutfit(creature, outfit);
+		if(Player* player = creature->getPlayer())
+			player->changeOutfit(outfit, false);
+		else
+			creature->defaultOutfit = outfit;
+
+		if(!creature->hasCondition(CONDITION_OUTFIT))
+			g_game.internalCreatureChangeOutfit(creature, outfit);
+
 		lua_pushboolean(L, true);
 	}
 	else

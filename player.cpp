@@ -3758,9 +3758,9 @@ bool Player::remOutfit(uint32_t _looktype, uint32_t _addons)
 	return m_playerOutfits.remOutfit(outfit);
 }
 
-bool Player::changeOutfit(Outfit_t outfit)
+bool Player::changeOutfit(Outfit_t outfit, bool checkList)
 {
-	if(!m_playerOutfits.isInList(getID(), outfit.lookType, outfit.lookAddons) || !requestedOutfit)
+	if(checkList && (!m_playerOutfits.isInList(getID(), outfit.lookType, outfit.lookAddons) || !requestedOutfit))
 		return false;
 
 	requestedOutfit = false;
