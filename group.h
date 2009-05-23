@@ -27,12 +27,14 @@ class Group
 		Group()
 		{
 			m_name = m_fullName = "";
-			m_access = m_violationAccess = m_outfit = m_depotLimit = m_maxVips = m_flags = m_customFlags = 0;
+			m_access = m_outfit = m_depotLimit = m_maxVips = m_flags = m_customFlags = 0;
+			m_violationReasons = m_nameViolationFlags = m_statementViolationFlags = 0;
 		}
 		Group(uint32_t id): m_id(id)
 		{
 			m_name = m_fullName = "";
-			m_access = m_violationAccess = m_outfit = m_depotLimit = m_maxVips = m_flags = m_customFlags = 0;
+			m_access = m_outfit = m_depotLimit = m_maxVips = m_flags = m_customFlags = 0;
+			m_violationReasons = m_nameViolationFlags = m_statementViolationFlags = 0;
 		}
 
 		std::string getName() const {return m_name;}
