@@ -488,9 +488,9 @@ enum PlayerFlags
 	PlayerFlag_ShowGroupNameInsteadOfVocation,	//2^40 = 1099511627776
 	PlayerFlag_HasInfiniteStamina,			//2^41 = 2199023255552
 	PlayerFlag_CannotMoveItems,			//2^42 = 4398046511104
-	PlayerFlag_CannotMoveCreatures,			//2^43 = 8796093020000
-	PlayerFlag_CanReportBugs,			//2^44 = 17592186040000
-	PlayerFlag_45,	//ignore			//2^45 = 35184272080000	//not used by us
+	PlayerFlag_CannotMoveCreatures,			//2^43 = 8796093022208
+	PlayerFlag_CanReportBugs,			//2^44 = 17592186044416
+	PlayerFlag_45,	//ignore			//2^45 = 35184372088832	//not used by us
 	PlayerFlag_CannotBeSeen,			//2^46 = 70368744177664 //not implemented yet
 
 	PlayerFlag_LastFlag
