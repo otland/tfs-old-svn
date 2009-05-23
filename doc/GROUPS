@@ -36,8 +36,8 @@
 
 [ Violation Flags
 	* None = 0
-	* Name Report = 1
-	* Notation = 2
+	* Notation = 1
+	* Name Report = 2
 	* Banishment = 4
 	* Name Report + Banishment = 8
 	* Banishment + Final Warning = 16
