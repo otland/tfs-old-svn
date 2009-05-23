@@ -448,10 +448,8 @@ void ConditionAttributes::updatePercentSkills(Player* player)
 {
 	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 	{
-		if(skillsPercent[i] == 0)
-			continue;
-
-		skills[i] += (int32_t)(player->getSkill((skills_t)i, SKILL_LEVEL) * ((skillsPercent[i] - 100) / 100.f));
+		if(skillsPercent[i])
+			skills[i] += (int32_t)(player->getSkill((skills_t)i, SKILL_LEVEL) * ((skillsPercent[i] - 100) / 100.f));
 	}
 }
 
@@ -459,30 +457,8 @@ void ConditionAttributes::updatePercentStats(Player* player)
 {
 	for(int32_t i = STAT_FIRST; i <= STAT_LAST; ++i)
 	{
-		if(statsPercent[i] == 0)
-			continue;
-
-		switch(i)
-		{
-			case STAT_MAXHEALTH:
-				stats[i] += (int32_t)(player->getMaxHealth() * ((statsPercent[i] - 100) / 100.f));
-				break;
-
-			case STAT_MAXMANA:
-				stats[i] += (int32_t)(player->getMaxMana() * ((statsPercent[i] - 100) / 100.f));
-				break;
-
-			case STAT_SOUL:
-				stats[i] += (int32_t)(player->getSoul() * ((statsPercent[i] - 100) / 100.f));
-				break;
-
-			case STAT_MAGICLEVEL:
-				stats[i] += (int32_t)(player->getMagicLevel() * ((statsPercent[i] - 100) / 100.f));
-				break;
-
-			default:
-				break;
-		}
+		if(statsPercent[i])
+			stats[i] += (int32_t)(player->getDefaultStats((stats_t)i)  * ((statsPercent[i] - 100) / 100.f));
 	}
 }
 
@@ -491,11 +467,12 @@ void ConditionAttributes::updateSkills(Player* player)
 	bool needUpdateSkills = false;
 	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 	{
-		if(skills[i])
-		{
+		if(!skills[i])
+			continue;
+
+		player->setVarSkill((skills_t)i, skills[i]);
+		if(!needUpdateSkills)
 			needUpdateSkills = true;
-			player->setVarSkill((skills_t)i, skills[i]);
-		}
 	}
 
 	if(needUpdateSkills)
@@ -507,11 +484,12 @@ void ConditionAttributes::updateStats(Player* player)
 	bool needUpdateStats = false;
 	for(int32_t i = STAT_FIRST; i <= STAT_LAST; ++i)
 	{
-		if(stats[i])
-		{
+		if(!stats[i])
+			continue;
+
+		player->setVarStats((stats_t)i, stats[i]);
+		if(!needUpdateStats)
 			needUpdateStats = true;
-			player->setVarStats((stats_t)i, stats[i]);
-		}
 	}
 
 	if(needUpdateStats)

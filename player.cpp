@@ -731,6 +731,7 @@ void Player::setVarStats(stats_t stat, int32_t modifier)
 				Creature::changeHealth(getMaxHealth() - getHealth());
 			else
 				g_game.addCreatureHealth(this);
+
 			break;
 		}
 
@@ -738,6 +739,7 @@ void Player::setVarStats(stats_t stat, int32_t modifier)
 		{
 			if(getMana() > getMaxMana())
 				Creature::changeMana(getMaxMana() - getMana());
+
 			break;
 		}
 
