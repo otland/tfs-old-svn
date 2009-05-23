@@ -215,13 +215,13 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 	{
 		std::string tmpStrValue = asLowerCaseString(strValue);
 		if(tmpStrValue == "none")
-			requirement = REQUIREMENT_NONE;
+			outfit.requirement = REQUIREMENT_NONE;
 		else if(tmpStrValue == "first")
-			requirement = REQUIREMENT_FIRST;
+			outfit.requirement = REQUIREMENT_FIRST;
 		else if(tmpStrValue == "second")
-			requirement = REQUIREMENT_SECOND;
+			outfit.requirement = REQUIREMENT_SECOND;
 		else if(tmpStrValue == "both")
-			requirement = REQUIREMENT_BOTH;
+			outfit.requirement = REQUIREMENT_BOTH;
 		else if(tmpStrValue != "any")
 			std::cout << "[Warning - Outfits::loadFromXml] Unknown requirement tag value, using default (any)" << std::endl;
 	}
@@ -570,7 +570,7 @@ bool Outfits::loadFromXml()
 	return true;
 }
 
-bool Outfits::addAttributes(uint32_t playerId, uint32_t lookType, uint16_t lookAddons)
+bool Outfits::addAttributes(uint32_t playerId, uint32_t lookType, uint16_t addons)
 {
 	Player* player = g_game.getPlayerByID(playerId);
 	if(!player || player->isRemoved())
@@ -580,8 +580,8 @@ bool Outfits::addAttributes(uint32_t playerId, uint32_t lookType, uint16_t lookA
 	const OutfitListType& globalOutfits = getOutfits((uint32_t)player->getSex());
 	for(OutfitListType::const_iterator it = globalOutfits.begin(); it != globalOutfits.end(); ++it)
 	{
-		if((*it)->looktype != lookType || ((*it)->requirement != (AddonRequirement_t)lookAddons
-			&& ((*it)->requirement != REQUIREMENT_ANY || !lookAddons)))
+		if((*it)->looktype != lookType || ((*it)->requirement != (AddonRequirement_t)addons
+			&& ((*it)->requirement != REQUIREMENT_ANY || !addons)))
 			continue;
 
 		outfit = (*it);

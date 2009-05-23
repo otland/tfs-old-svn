@@ -100,15 +100,14 @@ class Outfits
 			return m_maleList;
 		}
 
-		bool addAttributes(uint32_t playerId, uint32_t lookType);
-		bool removeAttributes(uint32_t playerId, uint32_t lookType, uint16_t addons);
+		bool addAttributes(uint32_t playerId, uint32_t lookType, uint16_t addons);
+		bool removeAttributes(uint32_t playerId, uint32_t lookType);
 
 		const std::string& getOutfitName(uint32_t lookType) const;
 		int16_t getOutfitAbsorb(uint32_t lookType, uint32_t type, CombatType_t combat);
 
 	private:
 		Outfits();
-
 		OutfitList m_femaleList, m_maleList;
 
 		typedef std::vector<OutfitList*> OutfitsListVector;
