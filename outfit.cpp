@@ -223,7 +223,7 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 		else if(tmpStrValue == "any")
 			outfit.requirement = REQUIREMENT_ANY;
 		else if(tmpStrValue != "both")
-			std::cout << "[Warning - Outfits::loadFromXml] Unknown requirement tag value, using default (any)" << std::endl;
+			std::cout << "[Warning - Outfits::loadFromXml] Unknown requirement tag value, using default (both)" << std::endl;
 	}
 
 	if(readXMLString(p, "manaShield", strValue))
