@@ -2163,7 +2163,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 
 			if(Group* group = player->getGroup())
 			{
-				int32_t reasons = (group->getViolationReasons() + 1);
+				int32_t reasons = group->getViolationReasons();
 				if(reasons > 1)
 				{
 					msg->AddByte(0x0B);
