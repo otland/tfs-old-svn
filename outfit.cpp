@@ -220,9 +220,9 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 			outfit.requirement = REQUIREMENT_FIRST;
 		else if(tmpStrValue == "second")
 			outfit.requirement = REQUIREMENT_SECOND;
-		else if(tmpStrValue == "both")
-			outfit.requirement = REQUIREMENT_BOTH;
-		else if(tmpStrValue != "any")
+		else if(tmpStrValue == "any")
+			outfit.requirement = REQUIREMENT_ANY;
+		else if(tmpStrValue != "both")
 			std::cout << "[Warning - Outfits::loadFromXml] Unknown requirement tag value, using default (any)" << std::endl;
 	}
 
