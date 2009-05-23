@@ -31,7 +31,7 @@ enum AddonRequirement_t
 	REQUIREMENT_SECOND,
 	REQUIREMENT_BOTH,
 	REQUIERMENT_ANY
-}
+};
 
 struct Outfit
 {
