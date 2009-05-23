@@ -1390,9 +1390,7 @@ void Player::onCreatureAppear(const Creature* creature, bool isLogin)
 		#endif
 	}
 
-	if(defaultOutfit.lookAddons == OUTFITS_ADDON_BONUS)
-		outfitAttributes = Outfits::getInstance()->addAttributes(getID(), defaultOutfit.lookType);
-
+	outfitAttributes = Outfits::getInstance()->addAttributes(getID(), defaultOutfit.lookType, defaultOutfit.lookAddons);
 	if(lastLogout)
 	{
 		int64_t period = (int32_t)time(NULL) - lastLogout;
@@ -2082,7 +2080,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 			}
 		}
 
-		if(defaultOutfit.lookAddons == OUTFITS_ADDON_BONUS)
+		if(outfitAttributes)
 		{
 			uint32_t tmp = Outfits::getInstance()->getOutfitAbsorb(defaultOutfit.lookType, (uint32_t)sex, combatType);
 			if(tmp != 0)

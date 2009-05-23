@@ -1205,14 +1205,14 @@ bool Monster::inDespawnRange(const Position& pos)
 {
 	if(spawn && !mType->isLureable)
 	{
-		uint32_t radius = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRADIUS);
+		int32_t radius = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRADIUS);
 		if(!radius)
 			return false;
 
 		if(!Spawns::getInstance()->isInZone(masterPos, radius, pos))
 			return true;
 
-		uint32_t range = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRADIUS);
+		int32_t range = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRADIUS);
 		if(!range)
 			return false;
 
