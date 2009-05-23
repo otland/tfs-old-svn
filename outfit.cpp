@@ -72,8 +72,8 @@ void OutfitList::addOutfit(const Outfit& outfit)
 
 		for(uint32_t i = STAT_FIRST; i <= STAT_LAST; i++)
 		{
-			newOutfit->stats[(stats_t)i] = outfit.stats[(stats_t)i];
-			newOutfit->statsPercent[(stats_t)i] = outfit.stats[(stats_t)i];
+			newOutfit->stats[i] = outfit.stats[i];
+			newOutfit->statsPercent[i] = outfit.statsPercent[i];
 		}
 
 		m_list.push_back(newOutfit);
