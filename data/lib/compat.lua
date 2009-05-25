@@ -37,6 +37,7 @@ saveData = saveServer
 savePlayers = saveServer
 getPlayerSkill = getPlayerSkillLevel
 getPlayerSkullType = getCreatureSkullType
+getCreatureSkull = getCreatureSkullType
 getAccountNumberByName = getAccountIdByName
 getIPByName = getIpByName
 getPlayersByIP = getPlayersByIp

@@ -1,3 +1,6 @@
+--[[
+	FIXME
+
 Wait = createClass(nil)
 Wait:setAttributes({
 	co = nil
@@ -26,4 +29,4 @@ function Wait:createObject(v)
 	self:continue()
 	return true
 end
-
+]]--
