@@ -9798,7 +9798,10 @@ int32_t LuaScriptInterface::luaGetBanList(lua_State* L)
 int32_t LuaScriptInterface::luaGetExperienceStage(lua_State* L)
 {
 	//getExperienceStage(level[, divider])
-	double divider = popFloatNumber(L);
+	double divider = 1.0f;
+	if(lua_gettop(L) > 1)
+		divider = popFloatNumber(L);
+
 	lua_pushnumber(L, g_game.getExperienceStage(popNumber(L), divider));
 	return 1;
 }
