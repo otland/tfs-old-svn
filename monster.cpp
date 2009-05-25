@@ -1182,11 +1182,7 @@ Item* Monster::createCorpse(DeathList deathList)
 		return NULL;
 
 	Creature* owner = NULL;
-	if(deathList.size() > 1 && deathList[1].isCreatureKill())
-		owner = deathList[1].getKillerCreature();
-
-	if(!owner && (deathList[0].isNameKill() ||
-		!(owner = deathList[0].getKillerCreature())))
+	if((deathList[0].isNameKill() || !(owner = deathList[0].getKillerCreature())))
 		return corpse;
 
 	uint32_t ownerId = 0;
