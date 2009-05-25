@@ -18,9 +18,8 @@
 #ifdef __REMOTE_CONTROL__
 #ifndef __ADMIN__
 #define __ADMIN__
-#include "otsystem.h"
 
-#include "game.h"
+#include "otsystem.h"
 #include "player.h"
 
 // -> server
@@ -210,7 +209,7 @@ class ProtocolAdmin : public Protocol
 		virtual void parsePacket(NetworkMessage& msg);
 		virtual void deleteProtocolTask();
 
-		void adminCommandReload(ReloadInfo_t reload);
+		void adminCommandReload(int8_t reload);
 		void adminCommandPayHouses();
 		void adminCommandKickPlayer(const std::string& name);
 		void adminCommandSetOwner(const std::string& param);

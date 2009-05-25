@@ -19,11 +19,13 @@
 #include <iostream>
 
 #include "admin.h"
+#include "rsa.h"
+
 #include "tools.h"
 #include "textlogger.h"
 
 #include "configmanager.h"
-#include "rsa.h"
+#include "game.h"
 
 #include "connection.h"
 #include "outputmessage.h"
@@ -336,10 +338,10 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 					break;
 				}
 
-				case CMD_RELOAD:
+				case CMD_RELOAD_SCRIPTS:
 				{
-					ReloadInfo_t reload = (ReloadInfo_t)msg.GetByte();
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandPayHouses, this, reload)));
+					int8_t reload = msg.GetByte();
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandReload, this, reload)));
 					break;
 				}
 
@@ -419,13 +421,13 @@ void ProtocolAdmin::deleteProtocolTask()
 	Protocol::deleteProtocolTask();
 }
 
-void ProtocolAdmin::adminCommandReload(ReloadInfo_t reload)
+void ProtocolAdmin::adminCommandReload(int8_t reload)
 {
 	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	if(!output)
 		return;
 
-	g_game.reloadInfo(reload);
+	g_game.reloadInfo((ReloadInfo_t)reload);
 	addLogLine(this, LOGTYPE_EVENT, 1, "reload ok");
 
 	TRACK_MESSAGE(output);
