@@ -15,9 +15,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-
 #include "connection.h"
+
 #include "tools.h"
+#include "textlogger.h"
 
 #include "configmanager.h"
 #include "outputmessage.h"

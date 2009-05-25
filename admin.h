@@ -20,7 +20,9 @@
 #define __ADMIN__
 #include "otsystem.h"
 
+#include "game.h"
 #include "player.h"
+
 // -> server
 // command(1 byte) | size(2 bytes) | parameters(size bytes)
 // commands:
@@ -76,33 +78,6 @@
 //		message(string)
 //
 
-enum LogType_t
-{
-	LOGTYPE_EVENT,
-	LOGTYPE_WARNING,
-	LOGTYPE_ERROR,
-};
-
-class Loggar
-{
-	public:
-		virtual ~Loggar();
-		static Loggar* getInstance()
-		{
-			static Loggar instance;
-			return &instance;
-		}
-
-		void logMessage(const char* channel, LogType_t type, int32_t level, std::string message, const char* func);
-
-	private:
-		Loggar();
-		FILE* m_file;
-};
-
-#define LOG_MESSAGE(channel, type, level, message) \
-	Loggar::getInstance()->logMessage(channel, type, level, message, __OTSERV_PRETTY_FUNCTION__);
-
 enum
 {
 	AP_MSG_LOGIN = 1,
@@ -132,7 +107,7 @@ enum
 	CMD_PAY_HOUSES = 3,
 	CMD_OPEN_SERVER = 4,
 	CMD_SHUTDOWN_SERVER = 5,
-	//CMD_RELOAD_SCRIPTS = 6,
+	CMD_RELOAD_SCRIPTS = 6,
 	//CMD_PLAYER_INFO = 7,
 	//CMD_GETONLINE = 8,
 	CMD_KICK = 9,
@@ -235,6 +210,7 @@ class ProtocolAdmin : public Protocol
 		virtual void parsePacket(NetworkMessage& msg);
 		virtual void deleteProtocolTask();
 
+		void adminCommandReload(ReloadInfo_t reload);
 		void adminCommandPayHouses();
 		void adminCommandKickPlayer(const std::string& name);
 		void adminCommandSetOwner(const std::string& param);

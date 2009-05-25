@@ -14,13 +14,55 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
-#if defined(WIN32) && not defined(__CONSOLE__)
 #include "otpch.h"
 #include "textlogger.h"
 
+#if defined(WIN32) && not defined(__CONSOLE__)
 #include "tools.h"
 #include "gui.h"
+#endif
 
+Loggar::Loggar()
+{
+	m_file = fopen("data/logs/admin.log", "a");
+}
+
+Loggar::~Loggar()
+{
+	if(m_file)
+		fclose(m_file);
+}
+
+void Loggar::logMessage(const char* channel, LogType_t type, int32_t level, std::string message, const char* func)
+{
+	fprintf(m_file, "%s", formatDate().c_str());
+	if(channel)
+		fprintf(m_file, " [%s] ", channel);
+
+	std::string typeStr = "unknown";
+	switch(type)
+	{
+		case LOGTYPE_EVENT:
+			typeStr = "event";
+			break;
+
+		case LOGTYPE_WARNING:
+			typeStr = "warning";
+			break;
+
+		case LOGTYPE_ERROR:
+			typeStr = "error";
+			break;
+
+		default:
+			break;
+	}
+
+	fprintf(m_file, " %s: %s\n", typeStr.c_str(), message.c_str());
+	fflush(m_file);
+}
+
+#if defined(WIN32) && not defined(__CONSOLE__)
 TextLogger::TextLogger()
 {
 	out = std::cerr.rdbuf();

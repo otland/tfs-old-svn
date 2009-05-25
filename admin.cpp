@@ -20,9 +20,9 @@
 
 #include "admin.h"
 #include "tools.h"
+#include "textlogger.h"
 
 #include "configmanager.h"
-#include "game.h"
 #include "rsa.h"
 
 #include "connection.h"
@@ -35,46 +35,6 @@
 extern Game g_game;
 extern ConfigManager g_config;
 Admin* g_admin = NULL;
-
-Loggar::Loggar()
-{
-	m_file = fopen("data/logs/admin.log", "a");
-}
-
-Loggar::~Loggar()
-{
-	if(m_file)
-		fclose(m_file);
-}
-
-void Loggar::logMessage(const char* channel, LogType_t type, int32_t level, std::string message, const char* func)
-{
-	fprintf(m_file, "%s", formatDate().c_str());
-	if(channel)
-		fprintf(m_file, " [%s] ", channel);
-
-	std::string typeStr = "unknown";
-	switch(type)
-	{
-		case LOGTYPE_EVENT:
-			typeStr = "event";
-			break;
-
-		case LOGTYPE_WARNING:
-			typeStr = "warning";
-			break;
-
-		case LOGTYPE_ERROR:
-			typeStr = "error";
-			break;
-
-		default:
-			break;
-	}
-
-	fprintf(m_file, " %s: %s\n", typeStr.c_str(), message.c_str());
-	fflush(m_file);
-}
 
 static void addLogLine(ProtocolAdmin* protocol, LogType_t type, int32_t level, std::string message);
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -376,6 +336,13 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 					break;
 				}
 
+				case CMD_RELOAD:
+				{
+					ReloadInfo_t reload = (ReloadInfo_t)msg.GetByte();
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandPayHouses, this, reload)));
+					break;
+				}
+
 				case CMD_PAY_HOUSES:
 				{
 					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandPayHouses, this)));
@@ -450,6 +417,20 @@ void ProtocolAdmin::deleteProtocolTask()
 	addLogLine(NULL, LOGTYPE_EVENT, 1, "end connection");
 	g_admin->removeConnection();
 	Protocol::deleteProtocolTask();
+}
+
+void ProtocolAdmin::adminCommandReload(ReloadInfo_t reload)
+{
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	if(!output)
+		return;
+
+	g_game.reloadInfo(reload);
+	addLogLine(this, LOGTYPE_EVENT, 1, "reload ok");
+
+	TRACK_MESSAGE(output);
+	output->AddByte(AP_MSG_COMMAND_OK);
+	OutputMessagePool::getInstance()->send(output);
 }
 
 void ProtocolAdmin::adminCommandPayHouses()

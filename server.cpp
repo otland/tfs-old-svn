@@ -23,6 +23,8 @@
 #include "connection.h"
 #include "outputmessage.h"
 
+#include "textlogger.h"
+
 #include "game.h"
 #include "configmanager.h"
 
