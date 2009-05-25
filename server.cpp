@@ -204,7 +204,9 @@ void ServiceManager::run()
 			running = true;
 	}
 	catch(boost::system::system_error& e)
+	{
 		LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
+	}
 }
 
 void ServiceManager::stop()
@@ -216,9 +218,13 @@ void ServiceManager::stop()
 	for(AcceptorsMap::iterator it = m_acceptors.begin(); it != m_acceptors.end(); ++it)
 	{
 		try
+		{
 			m_io_service.post(boost::bind(&ServicePort::close, it->second));
+		}
 		catch(boost::system::system_error& e)
+		{
 			LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
+		}
 	}
 
 	m_acceptors.clear();
