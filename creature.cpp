@@ -1036,12 +1036,12 @@ uint64_t Creature::getGainedExperience(Creature* attacker, bool useMultiplier/* 
 	if(!player && attacker->getMaster())
 		player = attacker->getMaster()->getPlayer();
 
+	if(player->hasFlag(PlayerFlag_NotGainExperience))
+		return 0;
+
 	double baseExperience = getDamageRatio(attacker) * getLostExperience();
 	if(!player)
 		return (uint64_t)std::floor(baseExperience * g_config.getDouble(ConfigManager::RATE_EXPERIENCE));
-
-	if(player->hasFlag(PlayerFlag_NotGainExperience))
-		return 0;
 
 	if(useMultiplier)
 		baseExperience *= player->rates[SKILL__LEVEL];
