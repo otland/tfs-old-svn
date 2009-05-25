@@ -3328,7 +3328,7 @@ uint64_t Player::getGainedExperience(Creature* attacker, bool useMultiplier/* = 
 	*/
 	uint32_t a = (uint32_t)std::floor(attackerLevel * 0.9), b = level;
 	uint64_t c = getExperience(), result = std::max((uint64_t)0, (uint64_t)std::floor(
-		getDamageRatio(attacker) * std::max((double)0, v((double)(1 - (((double)a / b))))) * 0.05 * c));
+		getDamageRatio(attacker) * std::max((double)0, ((double)(1 - (((double)a / b))))) * 0.05 * c));
 	if(useMultiplier)
 		result = uint64_t((double)result * attackerPlayer->rates[SKILL__LEVEL]);
 
