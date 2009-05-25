@@ -17,8 +17,8 @@
 #include "otpch.h"
 #include "textlogger.h"
 
-#if defined(WIN32) && not defined(__CONSOLE__)
 #include "tools.h"
+#if defined(WIN32) && not defined(__CONSOLE__)
 #include "gui.h"
 #endif
 
