@@ -82,6 +82,7 @@ void OutputMessagePool::send(OutputMessage_ptr msg)
 void OutputMessagePool::sendAll()
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_outputPoolLock);
+	OutputMessageList::iterator it;
 	for(it = m_toAddQueue.begin(); it != m_toAddQueue.end();)
 	{
 		//drop messages that are older than 10 seconds
@@ -100,7 +101,7 @@ void OutputMessagePool::sendAll()
 	}
 
 	m_toAddQueue.clear();
-	for(OutputMessageList::iterator it = m_autoSendOutputMessages.begin(); it != m_autoSendOutputMessages.end(); )
+	for(it = m_autoSendOutputMessages.begin(); it != m_autoSendOutputMessages.end(); )
 	{
 		OutputMessage_ptr omsg = (*it);
 		#ifdef __NO_PLAYER_SENDBUFFER__
