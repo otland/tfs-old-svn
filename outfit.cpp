@@ -332,11 +332,11 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 			if(readXMLInteger(configNode, "club", intValue))
 				outfit.skills[SKILL_CLUB] += intValue;
 
-			if(readXMLInteger(configNode, "sword", intValue))
-				outfit.skills[SKILL_SWORD] += intValue;
-
 			if(readXMLInteger(configNode, "axe", intValue))
 				outfit.skills[SKILL_AXE] += intValue;
+
+			if(readXMLInteger(configNode, "sword", intValue))
+				outfit.skills[SKILL_SWORD] += intValue;
 
 			if(readXMLInteger(configNode, "distance", intValue) || readXMLInteger(configNode, "dist", intValue))
 				outfit.skills[SKILL_DIST] += intValue;

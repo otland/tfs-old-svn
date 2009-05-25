@@ -5304,15 +5304,15 @@ std::string Game::getSearchString(const Position fromPos, const Position toPos, 
 	return ss.str();
 }
 
-double Game::getExperienceStage(uint32_t level)
+double Game::getExperienceStage(uint32_t level, double divider/* = 1.*/)
 {
 	if(!g_config.getBool(ConfigManager::EXPERIENCE_STAGES))
-		return g_config.getDouble(ConfigManager::RATE_EXPERIENCE);
+		return g_config.getDouble(ConfigManager::RATE_EXPERIENCE) * divider;
 
 	if(lastStageLevel && level >= lastStageLevel)
-		return stages[lastStageLevel];
+		return stages[lastStageLevel] * divider;
 
-	return stages[level];
+	return stages[level] * divider;
 }
 
 bool Game::fetchBlacklist()

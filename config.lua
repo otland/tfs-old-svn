@@ -51,7 +51,6 @@
 	removeRuneCharges = "yes"
 	whiteSkullTime = 15 * 60 * 1000
 	noDamageToSameLookfeet = "no"
-	experienceByKillingPlayers = "no"
 	showHealingDamage = "no"
 	showHealingDamageForMonsters = "no"
 	fieldOwnershipDuration = 5 * 1000
@@ -63,6 +62,15 @@
 	pushCreatureDelay = 2 * 1000
 	deathContainerId = 1987
 	gainExperienceColor = 215
+
+	-- Experience from players
+	-- NOTE: min~Threshold* set to 0 will disable the minimum threshold:
+	-- player will gain experience from every lower leveled player.
+	-- max~Threshold* set to 0 will disable the maximum threshold:
+	-- player will gain experience from every higher leveled player.
+	experienceByKillingPlayers = "no"
+	minLevelThresholdForKilledPlayer = 0.9
+	maxLevelThresholdForKilledPlayer = 1.1
 
 	-- Connection config
 	worldId = 0

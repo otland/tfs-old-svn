@@ -5749,7 +5749,6 @@ int32_t LuaScriptInterface::luaSetCombatFormula(lua_State* L)
 {
 	//setCombatFormula(combat, type, mina, minb, maxa, maxb)
 	ScriptEnviroment* env = getScriptEnv();
-
 	if(env->getScriptId() != EVENT_ID_LOADING)
 	{
 		reportErrorFunc("This function can only be used while loading the script.");
@@ -5759,9 +5758,7 @@ int32_t LuaScriptInterface::luaSetCombatFormula(lua_State* L)
 
 	double maxb = popFloatNumber(L), maxa = popFloatNumber(L),
 		minb = popFloatNumber(L), mina = popFloatNumber(L);
-
 	formulaType_t type = (formulaType_t)popNumber(L);
-
 	if(Combat* combat = env->getCombatObject(popNumber(L)))
 	{
 		combat->setPlayerCombatValues(type, mina, minb, maxa, maxb);
@@ -8569,10 +8566,11 @@ int32_t LuaScriptInterface::luaGetVocationInfo(lua_State* L)
 	setField(L, "fromVocation", voc->getFromVocation());
 	setField(L, "promotedVocation", Vocations::getInstance()->getPromotedVocation(id));
 	setField(L, "soul", voc->getSoulMax());
-	setField(L, "soulTicks", voc->getSoulGainTicks());
-	setField(L, "capacity", voc->getCapGain());
+	setField(L, "soulTicks", voc->getGainTicks(GAIN_CAPNSOUL));
+	setField(L, "capacity", voc->getGainAmount(GAIN_CAPNSOUL));
 	setFieldBool(L, "attackable", voc->isAttackable());
 	setFieldBool(L, "needPremium", voc->isPremiumNeeded());
+	setFieldDouble(L, "experienceMultiplier", voc->getExperienceMultiplier());
 	return 1;
 }
 
@@ -9799,8 +9797,9 @@ int32_t LuaScriptInterface::luaGetBanList(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetExperienceStage(lua_State* L)
 {
-	//getExperienceStage(level)
-	lua_pushnumber(L, g_game.getExperienceStage(popNumber(L)));
+	//getExperienceStage(level[, divider])
+	double divider = popFloatNumber(L);
+	lua_pushnumber(L, g_game.getExperienceStage(popNumber(L), divider));
 	return 1;
 }
 

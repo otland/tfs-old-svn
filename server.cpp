@@ -29,6 +29,8 @@
 extern Game g_game;
 extern ConfigManager g_config;
 
+bool ServicePort::m_logError = true;
+
 bool ServicePort::add(Service_ptr newService)
 {
 	for(ServiceVec::const_iterator it = m_services.begin(); it != m_services.end(); ++it)
@@ -53,16 +55,16 @@ void ServicePort::open(uint16_t port)
 	}
 	catch(boost::system::system_error& e)
 	{
-		if(m_showError)
-			std::cout << "> ERROR: Couldn't bind socket to port " << m_serverPort
-				<< ": " << e.what() << ", retrieving...";
+		if(m_logError)
+		{
+			LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
+			m_logError = false;
+		}
 
 		m_pendingStart = true;
 		Scheduler::getScheduler().addEvent(createSchedulerTask(5000,
 			boost::bind(&ServicePort::open, this, m_serverPort)));
 	}
-
-	m_showError = false;
 }
 
 void ServicePort::close()
@@ -87,9 +89,20 @@ void ServicePort::accept()
 	if(!m_acceptor)
 		return;
 
-	boost::asio::ip::tcp::socket* socket = new boost::asio::ip::tcp::socket(m_io_service);
-	m_acceptor->async_accept(*socket, boost::bind(
-		&ServicePort::handle, this, socket, boost::asio::placeholders::error));
+	try
+	{
+		boost::asio::ip::tcp::socket* socket = new boost::asio::ip::tcp::socket(m_io_service);
+		m_acceptor->async_accept(*socket, boost::bind(
+			&ServicePort::handle, this, socket, boost::asio::placeholders::error));
+	}
+	catch(boost::system::system_error& e)
+	{
+		if(m_logError)
+		{
+			LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
+			m_logError = false;
+		}
+	}
 }
 
 void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::system::error_code& error)
@@ -113,7 +126,8 @@ void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::syst
 
 		Connection* connection = NULL;
 		if(remoteIp && ConnectionManager::getInstance()->acceptConnection(remoteIp) &&
-			(connection = ConnectionManager::getInstance()->createConnection(socket, shared_from_this())))
+			(connection = ConnectionManager::getInstance()->createConnection(
+			socket, m_io_service, shared_from_this())))
 		{
 			if(m_services.front()->isSingleSocket())
 				connection->handle(m_services.front()->makeProtocol(connection));
@@ -181,8 +195,20 @@ Protocol* ServicePort::makeProtocol(bool checksum, NetworkMessage& msg) const
 void ServiceManager::run()
 {
 	assert(!running);
-	running = true;
-	m_io_service.run();
+	try
+	{
+		m_io_service.run();
+		if(!running)
+			running = true;
+	}
+	catch(boost::system::system_error& e)
+	{
+		if(m_logError)
+		{
+			LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
+			m_logError = false;
+		}
+	}
 }
 
 void ServiceManager::stop()
@@ -192,7 +218,20 @@ void ServiceManager::stop()
 
 	running = false;
 	for(AcceptorsMap::iterator it = m_acceptors.begin(); it != m_acceptors.end(); ++it)
-		m_io_service.post(boost::bind(&ServicePort::close, it->second));
+	{
+		try
+		{
+			m_io_service.post(boost::bind(&ServicePort::close, it->second));
+		}
+		catch(boost::system::system_error& e)
+		{
+			if(m_logError)
+			{
+				LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
+				m_logError = false;
+			}
+		}
+	}
 
 	m_acceptors.clear();
 	OutputMessagePool::getInstance()->stop();

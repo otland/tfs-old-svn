@@ -49,7 +49,7 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 
 	if(!readXMLInteger(p, "id", intValue))
 	{
-		std::cout << "Missing vocation id." << std::endl;
+		std::cout << "[Error - Vocations::parseVocationNode] Missing vocation id." << std::endl;
 		return false;
 	}
 
@@ -64,7 +64,7 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 		voc->setNeedPremium(booleanString(strValue));
 
 	if(readXMLInteger(p, "gaincap", intValue) || readXMLInteger(p, "gaincapacity", intValue))
-		voc->setGainCap(intValue);
+		voc->setGainAmount(GAIN_CAPNSOUL, intValue);
 
 	if(readXMLInteger(p, "gainhp", intValue) || readXMLInteger(p, "gainhealth", intValue))
 		voc->setGain(GAIN_HEALTH, intValue);
@@ -97,7 +97,7 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 		voc->setSoulMax(intValue);
 
 	if(readXMLInteger(p, "gainsoulticks", intValue))
-		voc->setSoulGainTicks(intValue);
+		voc->setGainTicks(GAIN_CAPNSOUL, intValue);
 
 	if(readXMLString(p, "attackable", strValue))
 		voc->setAttackable(booleanString(strValue));
@@ -113,20 +113,37 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 	{
 		if(!xmlStrcmp(configNode->name, (const xmlChar*)"skill"))
 		{
-			uint32_t skillId;
+			if(readXMLFloat(configNode, "fist", floatValue))
+				voc->setSkillMultiplier(SKILL_FIST, floatValue);
+
+			if(readXMLFloat(configNode, "club", floatValue))
+				voc->setSkillMultiplier(SKILL_CLUB, floatValue);
+
+			if(readXMLFloat(configNode, "axe", floatValue))
+				voc->setSkillMultiplier(SKILL_AXE, floatValue);
+
+			if(readXMLFloat(configNode, "sword", floatValue))
+				voc->setSkillMultiplier(SKILL_SWORD, floatValue);
+
+			if(readXMLFloat(configNode, "distance", floatValue) || readXMLFloat(configNode, "dist", floatValue))
+				voc->setSkillMultiplier(SKILL_DIST, floatValue);
+
+			if(readXMLFloat(configNode, "shielding", floatValue) || readXMLFloat(configNode, "shield", floatValue))
+				voc->setSkillMultiplier(SKILL_SHIELD, floatValue);
+
+			if(readXMLFloat(configNode, "fishing", floatValue) || readXMLFloat(configNode, "fish", floatValue))
+				voc->setSkillMultiplier(SKILL_FISH, floatValue);
+
+			if(readXMLFloat(configNode, "experience", floatValue) || readXMLFloat(configNode, "exp", floatValue))
+				voc->setSkillMultiplier(SKILL__LEVEL, floatValue);
+
 			if(readXMLInteger(configNode, "id", intValue))
 			{
-				skillId = intValue;
-				if(skillId < SKILL_FIRST || skillId > SKILL_LAST)
-					std::cout << "No valid skill id. " << skillId << std::endl;
-				else
-				{
-					if(readXMLFloat(configNode, "multiplier", floatValue))
-						voc->setSkillMultiplier((skills_t)skillId, floatValue);
-				}
+				if(intValue < SKILL_FIRST || intValue >= SKILL__LAST)
+					std::cout << "[Error - Vocations::parseVocationNode] No valid skill id (" << skillId << ")." << std::endl;
+				else if(readXMLFloat(configNode, "multiplier", floatValue))
+					voc->setSkillMultiplier((skills_t)intValue, floatValue);
 			}
-			else
-				std::cout << "Missing skill id." << std::endl;
 		}
 		else if(!xmlStrcmp(configNode->name, (const xmlChar*)"formula"))
 		{
@@ -284,13 +301,12 @@ void Vocation::reset()
 	attackable = true;
 	lessLoss = fromVocation = 0;
 	soulMax = 100;
-	soulGainTicks = 120;
 	baseSpeed = 220;
 	attackSpeed = 1500;
 	name = description = "";
 
 	gainAmount[GAIN_HEALTH] = gainAmount[GAIN_MANA] = 1;
-	gain[GAIN_HEALTH] = gain[GAIN_MANA] = gainCap = 5;
+	gain[GAIN_HEALTH] = gain[GAIN_MANA] = 5;
 	gainTicks[GAIN_HEALTH] = gainTicks[GAIN_MANA] = 6;
 
 	skillMultipliers[0] = 1.5f;

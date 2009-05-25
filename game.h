@@ -556,7 +556,7 @@ class Game
 		bool fetchBlacklist();
 
 		bool loadExperienceStages();
-		double getExperienceStage(uint32_t level);
+		double getExperienceStage(uint32_t level, double divider = 1.);
 
 		void setGlobalSaveMessage(int16_t key, bool value) {globalSaveMessage[key] = value;}
 		bool getGlobalSaveMessage(int16_t key) const {return globalSaveMessage[key];}

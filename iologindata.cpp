@@ -1397,14 +1397,14 @@ bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName,
 
 		healthMax += rookVoc->getGain(GAIN_HEALTH) * tmpLevel;
 		manaMax += rookVoc->getGain(GAIN_MANA) * tmpLevel;
-		capMax += rookVoc->getCapGain() * tmpLevel;
+		capMax += rookVoc->getGainAmount(GAIN_CAPNSOUL) * tmpLevel;
 
 		if(level > 8)
 		{
 			tmpLevel = level - 8;
 			healthMax += vocation->getGain(GAIN_HEALTH) * tmpLevel;
 			manaMax += vocation->getGain(GAIN_MANA) * tmpLevel;
-			capMax += vocation->getCapGain() * tmpLevel;
+			capMax += vocation->getGainAmount(GAIN_CAPNSOUL) * tmpLevel;
 		}
 	}
 

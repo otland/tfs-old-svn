@@ -39,9 +39,11 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 	public:
 		virtual ~OutputMessage() {}
 
-		char* getOutputBuffer() {return (char*)&m_MsgBuf[m_outputBufferStart];}
 		Protocol* getProtocol() const {return m_protocol;}
 		Connection* getConnection() const {return m_connection;}
+
+		char* getOutputBuffer() {return (char*)&m_MsgBuf[m_outputBufferStart];}
+		uint64_t getFrame() const {return m_frame;}
 
 		void writeMessageLength() {addHeader((uint16_t)(m_MsgSize));}
 		void addCryptoHeader(bool addChecksum)
@@ -61,6 +63,11 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 			std::ostringstream os;
 			os << /*file << ":" */"line " << line << " " << func;
 			lastUses.push_back(os.str());
+		}
+
+		virtual void clearTrack()
+		{
+			lastUses.clear();
 		}
 
 		void PrintTrace()
@@ -116,7 +123,6 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		OutputMessageState getState() const {return m_state;}
 
 		void setFrame(uint64_t frame) {m_frame = frame;}
-		uint64_t getFrame() const {return m_frame;}
 
 		Protocol* m_protocol;
 		Connection* m_connection;
@@ -138,7 +144,6 @@ class OutputMessagePool
 
 	public:
 		virtual ~OutputMessagePool();
-
 		static OutputMessagePool* getInstance()
 		{
 			static OutputMessagePool instance;
@@ -151,11 +156,14 @@ class OutputMessagePool
 		void sendAll();
 
 		void startExecutionFrame();
+
+		void autoSend(OutputMessage_ptr msg) {m_toAddQueue.push_back(msg);}
 		void stop() {m_shutdown = true;}
 
 		size_t getTotalMessageCount() const {return m_allOutputMessages.size();}
 		size_t getAvailableMessageCount() const {return m_outputMessages.size();}
 		size_t getAutoMessageCount() const {return m_autoSendOutputMessages.size();}
+		size_t getQueuedMessageCount() const {return m_toAddQueue.size();}
 
 	protected:
 		void configureOutputMessage(OutputMessage_ptr msg, Protocol* protocol, bool autosend);
@@ -165,6 +173,7 @@ class OutputMessagePool
 
 		typedef std::list<OutputMessage_ptr> OutputMessageList;
 		OutputMessageList m_autoSendOutputMessages;
+		OutputMessageList m_toAddQueue;
 
 		typedef std::list<OutputMessage*> InternalOutputMessageList;
 		InternalOutputMessageList m_outputMessages;

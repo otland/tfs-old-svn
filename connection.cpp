@@ -28,18 +28,21 @@
 #include "scheduler.h"
 
 extern ConfigManager g_config;
+
+bool Connection::m_logError = true;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t Connection::connectionCount = 0;
 #endif
 
-Connection* ConnectionManager::createConnection(boost::asio::ip::tcp::socket* socket, ServicePort_ptr servicer)
+Connection* ConnectionManager::createConnection(boost::asio::ip::tcp::socket* socket,
+	boost::asio::io_service& io_service, ServicePort_ptr servicer)
 {
 	#ifdef __DEBUG_NET_DETAIL__
 	std::cout << "Creating new connection" << std::endl;
 	#endif
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_connectionManagerLock);
 
-	Connection* connection = new Connection(socket, servicer);
+	Connection* connection = new Connection(socket, io_service, servicer);
 	m_connections.push_back(connection);
 	return connection;
 }
@@ -181,8 +184,22 @@ void Connection::accept()
 {
 	// Read size of the first packet
 	m_pendingRead++;
-	boost::asio::async_read(getHandle(), boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),
-		boost::bind(&Connection::parseHeader, this, boost::asio::placeholders::error));
+	try
+	{
+		m_timer.expires_from_now(boost::posix_time::seconds(10));
+		m_timer.async_wait(boost::bind(&Connection::handleTimeout, this, boost::asio::placeholders::error));
+
+		boost::asio::async_read(getHandle(), boost::asio::buffer(m_msg.getBuffer(), NetworkMessage::header_length),
+			boost::bind(&Connection::parseHeader, this, boost::asio::placeholders::error));
+	}
+	catch(boost::system::system_error& e)
+	{
+		if(m_logError)
+		{
+			LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
+			m_logError = false;
+		}
+	}
 }
 
 void Connection::close()
@@ -211,11 +228,12 @@ bool Connection::send(OutputMessage_ptr msg)
 		return false;
 	}
 
-	if(msg->getProtocol())
-		msg->getProtocol()->onSendMessage(msg);
-
-	if(m_pendingWrite == 0)
+	TRACK_MESSAGE(msg);
+	if(!m_pendingWrite)
 	{
+		if(msg->getProtocol())
+			msg->getProtocol()->onSendMessage(msg);
+
 		#ifdef __DEBUG_NET_DETAIL__
 		std::cout << "Connection::send " << msg->getMessageLength() << std::endl;
 		#endif
@@ -223,13 +241,9 @@ bool Connection::send(OutputMessage_ptr msg)
 	}
 	else
 	{
-		#ifdef __DEBUG_NET__
-		std::cout << "Connection::send Adding to queue " << msg->getMessageLength() << std::endl;
-		#endif
-		m_outputQueue.push_back(msg);
-
-		m_pendingWrite++;
-		if(m_pendingWrite > 500 && g_config.getBool(ConfigManager::FORCE_CLOSE_SLOW_CONNECTION))
+		OutputMessagePool* outputPool = OutputMessagePool::getInstance();
+		outputPool->autoSend(msg);
+		if(m_pendingWrite > 100 && g_config.getBool(ConfigManager::FORCE_CLOSE_SLOW_CONNECTION))
 		{
 			std::cout << "> NOTICE: Forcing slow connection to disconnect" << std::endl;
 			close();
@@ -242,9 +256,21 @@ bool Connection::send(OutputMessage_ptr msg)
 
 void Connection::internalSend(OutputMessage_ptr msg)
 {
+	TRACK_MESSAGE(msg);
 	m_pendingWrite++;
-	boost::asio::async_write(getHandle(), boost::asio::buffer(msg->getOutputBuffer(), msg->getMessageLength()),
-		boost::bind(&Connection::onWrite, this, msg, boost::asio::placeholders::error));
+	try
+	{
+		boost::asio::async_write(getHandle(), boost::asio::buffer(msg->getOutputBuffer(), msg->getMessageLength()),
+			boost::bind(&Connection::onWrite, this, msg, boost::asio::placeholders::error));
+	}
+	catch(boost::system::system_error& e)
+	{
+		if(m_logError)
+		{
+			LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
+			m_logError = false;
+		}
+	}
 }
 
 void Connection::closeConnection()
@@ -286,13 +312,26 @@ void Connection::releaseConnection()
 void Connection::deleteConnection()
 {
 	//dispatcher thread
-	assert(m_refCount == 0);
-	delete this;
+	assert(!m_refCount);
+	try
+	{
+		m_io_service.dispatch(boost::bind(&Connection::onStop, this));
+	}
+	catch(boost::system::system_error& e)
+	{
+		if(m_logError)
+		{
+			LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
+			m_logError = false;
+		}
+	}
 }
 
 void Connection::parseHeader(const boost::system::error_code& error)
 {
 	OTSYS_THREAD_LOCK(m_connectionLock, "");
+	m_timer.cancel();
+
 	m_pendingRead--;
 	if(m_closeState == CLOSE_STATE_CLOSING)
 	{
@@ -385,7 +424,7 @@ bool Connection::write()
 	#ifdef __DEBUG_NET_DETAIL__
 	std::cout << "Connection::write" << std::endl;
 	#endif
-	if(m_pendingWrite == 0 || m_writeError)
+	if(!m_pendingWrite || m_writeError)
 	{
 		if(!m_socketClosed)
 		{
@@ -404,7 +443,7 @@ bool Connection::write()
 				PRINT_ASIO_ERROR("Close");
 		}
 
-		if(m_pendingRead == 0)
+		if(!m_pendingRead)
 		{
 			#ifdef __DEBUG_NET_DETAIL__
 			std::cout << "Deleting Connection" << std::endl;
@@ -425,34 +464,12 @@ void Connection::onWrite(OutputMessage_ptr msg, const boost::system::error_code&
 	std::cout << "onWrite" << std::endl;
 	#endif
 	OTSYS_THREAD_LOCK(m_connectionLock, "");
+	m_pendingWrite--;
 
+	TRACK_MESSAGE(msg);
 	msg.reset();
-	if(!error)
-	{
-		if(m_pendingWrite > 0)
-		{
-			if(!m_outputQueue.empty())
-			{
-				msg = m_outputQueue.front();
-				m_outputQueue.pop_front();
-
-				m_pendingWrite--;
-				internalSend(msg);
-				#ifdef __DEBUG_NET_DETAIL__
-				std::cout << "Connection::onWrite send " << msg->getMessageLength() << std::endl;
-				#endif
-			}
-
-			m_pendingWrite--;
-		}
-		else // Pending operations counter is 0, but we are getting a notification!
-			std::cout << "[Error - Connection::onWrite] Getting unexpected notification!" << std::endl;
-	}
-	else
-	{
-		m_pendingWrite--;
+	if(error)
 		handleWriteError(error);
-	}
 
 	if(m_closeState == CLOSE_STATE_CLOSING)
 	{
@@ -461,6 +478,35 @@ void Connection::onWrite(OutputMessage_ptr msg, const boost::system::error_code&
 
 		return;
 	}
+
+	OTSYS_THREAD_UNLOCK(m_connectionLock, "");
+}
+
+void Connection::onStop()
+{
+	OTSYS_THREAD_LOCK(m_connectionLock, "");
+	m_timer.cancel();
+
+	ConnectionManager::getInstance()->releaseConnection(this);
+	if(m_socket->is_open())
+	{
+		m_socket->cancel();
+		m_socket->close();
+	}
+
+	delete m_socket;
+	OTSYS_THREAD_UNLOCK(m_connectionLock, "");
+	delete this;
+}
+
+void Connection::handleTimeout(const boost::system::error_code& error)
+{
+	if(error)
+		return;
+
+	OTSYS_THREAD_LOCK(m_connectionLock, "");
+	if(m_pendingRead > 0) //cancel all asynchronous operations associated with the socket
+		getHandle().cancel();
 
 	OTSYS_THREAD_UNLOCK(m_connectionLock, "");
 }

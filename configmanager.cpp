@@ -161,7 +161,9 @@ bool ConfigManager::load()
 	m_confBool[REMOVE_WEAPON_AMMO] = getGlobalBool("removeWeaponAmmunition", "yes");
 	m_confBool[REMOVE_WEAPON_CHARGES] = getGlobalBool("removeWeaponCharges", "yes");
 	m_confBool[REMOVE_RUNE_CHARGES] = getGlobalBool("removeRuneCharges", "yes");
-	m_confBool[EXPERIENCE_FROM_PLAYERS] = getGlobalBool("experienceByKillingPlayers", "no");
+	m_confBool[EXPERIENCE_FROM_PLAYERS] = getGlobalBool("experienceFromKilledPlayers", "no");
+	m_confDouble[EFP_MIN_THRESHOLD] = getGlobalDouble("minLevelThresholdForKilledPlayer", 0.9);
+	m_confDouble[EFP_MAX_THRESHOLD] = getGlobalDouble("maxLevelThresholdForKilledPlayer", 1.1);
 	m_confBool[SHUTDOWN_AT_GLOBALSAVE] = getGlobalBool("shutdownAtGlobalSave", "no");
 	m_confBool[CLEAN_MAP_AT_GLOBALSAVE] = getGlobalBool("cleanMapAtGlobalSave", "yes");
 	m_confBool[FREE_PREMIUM] = getGlobalBool("freePremium", "no");

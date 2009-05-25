@@ -1015,6 +1015,7 @@ bool TalkAction::diagnostics(Creature* creature, const std::string& cmd, const s
 	text << "Active connections: " << Connection::connectionCount << "\n";
 	text << "Total message pool: " << OutputMessagePool::getInstance()->getTotalMessageCount() << "\n";
 	text << "Auto message pool: " << OutputMessagePool::getInstance()->getAutoMessageCount() << "\n";
+	text << "Queued message pool: " << OutputMessagePool::getInstance()->getQueuedMessageCount() << "\n";
 	text << "Free message pool: " << OutputMessagePool::getInstance()->getAvailableMessageCount() << "\n";
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
 

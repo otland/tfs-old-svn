@@ -163,6 +163,8 @@ class ConfigManager
 			RATE_STAMINA_THRESHOLD,
 			RATE_STAMINA_ABOVE,
 			RATE_STAMINA_UNDER,
+			EFP_MIN_THRESHOLD,
+			EFP_MAX_THRESHOLD,
 			LAST_DOUBLE_CONFIG /* this must be the last one */
 		};
 

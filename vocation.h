@@ -40,6 +40,7 @@ enum gain_t
 	GAIN_FIRST = 0,
 	GAIN_HEALTH = GAIN_FIRST,
 	GAIN_MANA = 1,
+	GAIN_CAPNSOUL = 2,
 	GAIN_LAST = GAIN_MANA
 };
 
@@ -71,14 +72,8 @@ class Vocation
 		uint32_t getGainAmount(gain_t type) const {return gainAmount[type];}
 		void setGainAmount(gain_t type, uint32_t v) {gainAmount[type] = v;}
 
-		uint16_t getSoulGainTicks() const {return soulGainTicks;}
-		void setSoulGainTicks(uint16_t v) {soulGainTicks = v;}
-
-		uint16_t getSoulMax() const {return std::min((uint32_t)soulMax, (uint32_t)255);}
-		void setSoulMax(uint16_t v) {soulMax = std::min((uint32_t)v, (uint32_t)255);}
-
-		uint32_t getCapGain() const {return gainCap;}
-		void setGainCap(uint32_t v) {gainCap = v;}
+		uint32_t getSoulMax() const {return soulMax;}
+		void setSoulMax(uint32_t v) {soulMax = v;}
 
 		uint32_t getBaseSpeed() const {return baseSpeed;}
 		void setBaseSpeed(uint32_t v) {baseSpeed = v;}
@@ -104,9 +99,11 @@ class Vocation
 		float getMultiplier(multiplier_t type) const {return formulaMultipliers[type];}
 		void setMultiplier(multiplier_t type, float v) {formulaMultipliers[type] = v;}
 
+		double getExperienceMultiplier() const {return skillMultipliers[SKILL__LEVEL];}
+		void setSkillMultiplier(skills_t s, float v) {skillMultipliers[s] = v;}
+
 		uint32_t getReqSkillTries(int32_t skill, int32_t level);
 		uint64_t getReqMana(uint32_t magLevel);
-		void setSkillMultiplier(skills_t s, float v) {skillMultipliers[s] = v;}
 		static uint32_t skillBase[SKILL_LAST + 1];
 
 	private:
@@ -116,13 +113,12 @@ class Vocation
 		cacheMap cacheMana;
 
 		bool attackable, needPremium;
-		uint16_t soulGainTicks, soulMax;
-		uint32_t id, fromVocation, gainCap, baseSpeed, attackSpeed;
+		uint32_t id, fromVocation, baseSpeed, attackSpeed, soulMax;
 		std::string name, description;
 
-		uint32_t gain[GAIN_LAST + 1], gainTicks[GAIN_LAST + 1], gainAmount[GAIN_LAST + 1];
 		int16_t absorbPercent[COMBAT_LAST + 1];
-		float skillMultipliers[SKILL_LAST + 1];
+		uint32_t gain[GAIN_LAST + 1], gainTicks[GAIN_LAST + 1], gainAmount[GAIN_LAST + 1];
+		float skillMultipliers[SKILL__LAST];
 		float formulaMultipliers[MULTIPLIER_LAST + 1];
 };
 

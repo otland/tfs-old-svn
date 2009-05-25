@@ -130,12 +130,15 @@ class NetworkMessage
 		char* getBodyBuffer() {m_ReadPos = 2; return (char*)&m_MsgBuf[header_length];}
 
 		int32_t decodeHeader();
+
 #ifdef __TRACK_NETWORK__
-		virtual void Track(std::string file, long line, std::string func) {};
+		virtual void Track(std::string file, long line, std::string func) {}
+		virtual void clearTrack() {}
 #endif
 
 	protected:
 		inline bool canAdd(int32_t size) {return (size + m_ReadPos < NETWORKMESSAGE_MAXSIZE - 16);}
+
 		uint8_t m_MsgBuf[NETWORKMESSAGE_MAXSIZE];
 		int32_t m_MsgSize, m_ReadPos;
 };

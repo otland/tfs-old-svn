@@ -1910,7 +1910,7 @@ void Player::addExperience(uint64_t exp)
 		health += vocation->getGain(GAIN_HEALTH);
 		manaMax += vocation->getGain(GAIN_MANA);
 		mana += vocation->getGain(GAIN_MANA);
-		capacity += vocation->getCapGain();
+		capacity += vocation->getGainAmount(GAIN_CAPNSOUL);
 
 		nextLevelExp = Player::getExpForLevel(level + 1);
 		if(Player::getExpForLevel(level) > nextLevelExp) //player has reached max level
@@ -1954,7 +1954,7 @@ void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 		level--;
 		healthMax = std::max((int32_t)0, (healthMax - (int32_t)vocation->getGain(GAIN_HEALTH)));
 		manaMax = std::max((int32_t)0, (manaMax - (int32_t)vocation->getGain(GAIN_MANA)));
-		capacity = std::max((double)0, (capacity - (double)vocation->getCapGain()));
+		capacity = std::max((double)0, (capacity - (double)vocation->getGainAmount(GAIN_CAPNSOUL)));
 	}
 
 	if(prevLevel != level)
@@ -3305,38 +3305,35 @@ void Player::doAttacking(uint32_t interval)
 
 uint64_t Player::getGainedExperience(Creature* attacker, bool useMultiplier/* = true*/)
 {
-	if(!g_config.getBool(ConfigManager::EXPERIENCE_FROM_PLAYERS))
+	if(!g_config.getBool(ConfigManager::EXPERIENCE_FROM_PLAYERS) || !skillLoss)
 		return 0;
 
 	Player* attackerPlayer = attacker->getPlayer();
-	if(!attackerPlayer || attackerPlayer == this || !skillLoss)
+	if(!attackerPlayer || attackerPlayer == this)
 		return 0;
 
-	uint32_t a = (uint32_t)std::floor(attackerPlayer->getLevel() * 0.9);
-	if(getLevel() >= a)
-	{
-		/*
-			Formula
-			a = attackers level * 0.9
-			b = victims level
-			c = victims experience
+	uint32_t attackerLevel = attackerPlayer->getLevel(), min = g_config.getDouble(
+		ConfigManager::EFP_MIN_THRESHOLD), max = g_config.getDouble(ConfigManager::EFP_MAX_THRESHOLD);
+	if((min > 0 && level < (uint32_t)std::floor(attackerLevel * min)) || (max > 0 &&
+		level > (uint32_t)std::floor(attackerLevel * max)))
+		return 0;
 
-			result = (1 - (a / b)) * 0.05 * c
-		*/
+	/*
+		Formula
+		a = attackers level * 0.9
+		b = victims level
+		c = victims experience
 
-		uint32_t b = getLevel();
-		uint64_t c = getExperience();
+		result = (1 - (a / b)) * 0.05 * c
+	*/
+	uint32_t a = (uint32_t)std::floor(attackerLevel * 0.9), b = level;
+	uint64_t c = getExperience(), result = std::max((uint64_t)0, (uint64_t)std::floor(
+		getDamageRatio(attacker) * std::max((double)0, v((double)(1 - (((double)a / b))))) * 0.05 * c));
+	if(useMultiplier)
+		result = uint64_t((double)result * attackerPlayer->rates[SKILL__LEVEL]);
 
-		uint64_t result = std::max((uint64_t)0, (uint64_t)std::floor(getDamageRatio(attacker) * std::max((double)0,
-			((double)(1 - (((double)a / b))))) * 0.05 * c));
-
-		if(useMultiplier)
-			result = uint64_t((double)result * attackerPlayer->rates[SKILL__LEVEL]);
-
-		return std::min((uint64_t)getLostExperience(), uint64_t(result * g_game.getExperienceStage(attackerPlayer->getLevel())));
-	}
-
-	return 0;
+	return std::min((uint64_t)getLostExperience(), uint64_t(result * g_game.getExperienceStage(
+		attackerLevel, attackerPlayer->getVocation()->getExperienceMultiplier())));
 }
 
 void Player::onFollowCreature(const Creature* creature)
@@ -3627,10 +3624,12 @@ void Player::gainExperience(uint64_t gainExp)
 	//soul regeneration
 	if(gainExp >= getLevel())
 	{
-		if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SOUL, 4 * 60 * 1000))
+		if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
+			CONDITION_SOUL, 4 * 60 * 1000))
 		{
 			condition->setParam(CONDITIONPARAM_SOULGAIN, 1);
-			condition->setParam(CONDITIONPARAM_SOULTICKS, vocation->getSoulGainTicks() * 1000);
+			condition->setParam(CONDITIONPARAM_SOULTICKS, vocation->getGainTicks(
+				GAIN_CAPNSOUL) * 1000);
 			addCondition(condition);
 		}
 	}

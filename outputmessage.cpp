@@ -82,6 +82,24 @@ void OutputMessagePool::send(OutputMessage_ptr msg)
 void OutputMessagePool::sendAll()
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_outputPoolLock);
+	for(it = m_toAddQueue.begin(); it != m_toAddQueue.end();)
+	{
+		//drop messages that are older than 10 seconds
+		if(OTSYS_TIME() - (*it)->getFrame() > 10000)
+		{
+			if((*it)->getProtocol())
+				(*it)->getProtocol()->onSendMessage(*it);
+
+			it = m_toAddQueue.erase(it);
+			continue;
+		}
+
+		(*it)->setState(OutputMessage::STATE_ALLOCATED);
+		m_autoSendOutputMessages.push_back(*it);
+		++it;
+	}
+
+	m_toAddQueue.clear();
 	for(OutputMessageList::iterator it = m_autoSendOutputMessages.begin(); it != m_autoSendOutputMessages.end(); )
 	{
 		OutputMessage_ptr omsg = (*it);
@@ -132,6 +150,10 @@ void OutputMessagePool::internalReleaseMessage(OutputMessage* msg)
 		std::cout << "[Warning - OutputMessagePool::internalReleaseMessage] connection not found." << std::endl;
 
 	msg->freeMessage();
+#ifdef __TRACK_NETWORK__
+	msg->clearTrack();
+#endif
+
 	OTSYS_THREAD_LOCK(m_outputPoolLock, "");
 	m_outputMessages.push_back(msg);
 	OTSYS_THREAD_UNLOCK(m_outputPoolLock, "");
@@ -149,47 +171,27 @@ OutputMessage_ptr OutputMessagePool::getOutputMessage(Protocol* protocol, bool a
 	if(!protocol->getConnection())
 		return OutputMessage_ptr();
 
-	OutputMessage_ptr omsg;
 	if(m_outputMessages.empty())
 	{
+		OutputMessage* msg = new OutputMessage();
+		m_outputMessages.push_back(msg);
 #ifdef __TRACK_NETWORK__
-		if(m_allOutputMessages.size() >= 5000)
-		{
-			std::cout << "High usage of outputmessages: " << std::endl;
-			m_allOutputMessages.back()->PrintTrace();
-		}
-
-#endif
-		omsg.reset(new OutputMessage, boost::bind(
-			&OutputMessagePool::releaseMessage, this, _1));
-#ifdef __TRACK_NETWORK__
-		m_allOutputMessages.push_back(omsg.get());
+		m_allOutputMessages.push_back(msg);
 #endif
 	}
-	else
-	{
-		omsg.reset(m_outputMessages.back(), boost::bind(
-			&OutputMessagePool::releaseMessage, this, _1));
-#ifdef __TRACK_NETWORK__
-		// Print message trace
-		if(omsg->getState() != OutputMessage::STATE_FREE)
-		{
-			std::cout << "Using allocated message, message trace:" << std::endl;
-			omsg->PrintTrace();
-		}
 
-#else
-		assert(omsg->getState() == OutputMessage::STATE_FREE);
-#endif
-		m_outputMessages.pop_back();
-	}
+	OutputMessage_ptr omsg;
+	omsg.reset(m_outputMessages.back(),
+		boost::bind(&OutputMessagePool::releaseMessage, this, _1));
 
+	m_outputMessages.pop_back();
 	configureOutputMessage(omsg, protocol, autosend);
 	return omsg;
 }
 
 void OutputMessagePool::configureOutputMessage(OutputMessage_ptr msg, Protocol* protocol, bool autosend)
 {
+	TRACK_MESSAGE(msg);
 	msg->Reset();
 	if(autosend)
 	{

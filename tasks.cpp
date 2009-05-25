@@ -124,9 +124,7 @@ void Dispatcher::flush()
 
 		(*task)();
 		delete task;
-
-		outputPool = OutputMessagePool::getInstance();
-		if(outputPool)
+		if((outputPool = OutputMessagePool::getInstance()))
 			outputPool->sendAll();
 
 		g_game.clearSpectatorCache();

@@ -1046,7 +1046,7 @@ uint64_t Creature::getGainedExperience(Creature* attacker, bool useMultiplier/* 
 	if(useMultiplier)
 		baseExperience *= player->rates[SKILL__LEVEL];
 
-	baseExperience *= g_game.getExperienceStage(player->getLevel());
+	baseExperience *= g_game.getExperienceStage(player->getLevel(), player->getVocation()->getExperienceMultiplier());
 	if(!player->hasFlag(PlayerFlag_HasInfiniteStamina))
 	{
 		int64_t totalTime = 0;
