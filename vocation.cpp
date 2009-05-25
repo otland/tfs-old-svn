@@ -311,6 +311,7 @@ void Vocation::reset()
 
 	skillMultipliers[0] = 1.5f;
 	skillMultipliers[6] = 1.1f;
+	skillMultipliers[7] = 1.0f;
 	for(int32_t i = 1; i < 6; i++)
 		skillMultipliers[i] = 2.0f;
 
