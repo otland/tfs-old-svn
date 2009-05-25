@@ -97,8 +97,8 @@ class Connection : boost::noncopyable
 		};
 
 	private:
-		Connection(boost::asio::ip::tcp::socket* socket, boost::asio::io_service& io_service,
-			ServicePort_ptr servicer): m_socket(socket), m_io_service(io_service), m_port(servicer)
+		Connection(boost::asio::ip::tcp::socket* socket, boost::asio::io_service& io_service, ServicePort_ptr servicer):
+			m_timer(io_service), m_socket(socket), m_io_service(io_service), m_port(servicer)
 		{
 			m_protocol = NULL;
 			m_closeState = CLOSE_STATE_NONE;
