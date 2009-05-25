@@ -140,7 +140,7 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 			if(readXMLInteger(configNode, "id", intValue))
 			{
 				if(intValue < SKILL_FIRST || intValue >= SKILL__LAST)
-					std::cout << "[Error - Vocations::parseVocationNode] No valid skill id (" << skillId << ")." << std::endl;
+					std::cout << "[Error - Vocations::parseVocationNode] No valid skill id (" << intValue << ")." << std::endl;
 				else if(readXMLFloat(configNode, "multiplier", floatValue))
 					voc->setSkillMultiplier((skills_t)intValue, floatValue);
 			}
