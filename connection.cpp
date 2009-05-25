@@ -260,10 +260,8 @@ void Connection::internalSend(OutputMessage_ptr msg)
 	TRACK_MESSAGE(msg);
 	m_pendingWrite++;
 	try
-	{
 		boost::asio::async_write(getHandle(), boost::asio::buffer(msg->getOutputBuffer(), msg->getMessageLength()),
 			boost::bind(&Connection::onWrite, this, msg, boost::asio::placeholders::error));
-	}
 	catch(boost::system::system_error& e)
 	{
 		if(m_logError)
@@ -315,9 +313,7 @@ void Connection::deleteConnection()
 	//dispatcher thread
 	assert(!m_refCount);
 	try
-	{
 		m_io_service.dispatch(boost::bind(&Connection::onStop, this));
-	}
 	catch(boost::system::system_error& e)
 	{
 		if(m_logError)

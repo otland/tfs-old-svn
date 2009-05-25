@@ -156,7 +156,7 @@ void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::syst
 		close();
 		if(!m_pendingStart)
 		{
-			m_pendingStart = m_showError = true;
+			m_pendingStart = true;
 			Scheduler::getScheduler().addEvent(createSchedulerTask(5000,
 				boost::bind(&ServicePort::open, this, m_serverPort)));
 		}
@@ -204,13 +204,7 @@ void ServiceManager::run()
 			running = true;
 	}
 	catch(boost::system::system_error& e)
-	{
-		if(m_logError)
-		{
-			LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
-			m_logError = false;
-		}
-	}
+		LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
 }
 
 void ServiceManager::stop()
@@ -222,17 +216,9 @@ void ServiceManager::stop()
 	for(AcceptorsMap::iterator it = m_acceptors.begin(); it != m_acceptors.end(); ++it)
 	{
 		try
-		{
 			m_io_service.post(boost::bind(&ServicePort::close, it->second));
-		}
 		catch(boost::system::system_error& e)
-		{
-			if(m_logError)
-			{
-				LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
-				m_logError = false;
-			}
-		}
+			LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
 	}
 
 	m_acceptors.clear();
