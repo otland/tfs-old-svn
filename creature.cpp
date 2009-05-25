@@ -1036,7 +1036,7 @@ uint64_t Creature::getGainedExperience(Creature* attacker, bool useMultiplier/* 
 	if(!player && attacker->getMaster())
 		player = attacker->getMaster()->getPlayer();
 
-	if(player->hasFlag(PlayerFlag_NotGainExperience))
+	if(player && player->hasFlag(PlayerFlag_NotGainExperience))
 		return 0;
 
 	double baseExperience = getDamageRatio(attacker) * getLostExperience();
