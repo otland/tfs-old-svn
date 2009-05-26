@@ -64,7 +64,7 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 		voc->setNeedPremium(booleanString(strValue));
 
 	if(readXMLInteger(p, "gaincap", intValue) || readXMLInteger(p, "gaincapacity", intValue))
-		voc->setGainAmount(GAIN_CAPNSOUL, intValue);
+		voc->setGainCap(intValue);
 
 	if(readXMLInteger(p, "gainhp", intValue) || readXMLInteger(p, "gainhealth", intValue))
 		voc->setGain(GAIN_HEALTH, intValue);
@@ -94,10 +94,13 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 		voc->setBaseSpeed(intValue);
 
 	if(readXMLInteger(p, "soulmax", intValue))
-		voc->setSoulMax(intValue);
+		voc->setGain(intValue);
+
+	if(readXMLInteger(p, "gainsoulamount", intValue))
+		voc->setGainAmount(GAIN_SOUL, intValue);
 
 	if(readXMLInteger(p, "gainsoulticks", intValue))
-		voc->setGainTicks(GAIN_CAPNSOUL, intValue);
+		voc->setGainTicks(GAIN_SOUL, intValue);
 
 	if(readXMLString(p, "attackable", strValue))
 		voc->setAttackable(booleanString(strValue));
@@ -300,13 +303,14 @@ void Vocation::reset()
 	needPremium = false;
 	attackable = true;
 	lessLoss = fromVocation = 0;
-	soulMax = 100;
+	gain[GAIN_SOUL] = 100;
+	gainTicks[GAIN_SOUL] = 120;
 	baseSpeed = 220;
 	attackSpeed = 1500;
 	name = description = "";
 
-	gainAmount[GAIN_HEALTH] = gainAmount[GAIN_MANA] = 1;
-	gain[GAIN_HEALTH] = gain[GAIN_MANA] = 5;
+	gainAmount[GAIN_HEALTH] = gainAmount[GAIN_MANA] = gainAmount[GAIN_SOUL] = 1;
+	gain[GAIN_HEALTH] = gain[GAIN_MANA] = capGain = 5;
 	gainTicks[GAIN_HEALTH] = gainTicks[GAIN_MANA] = 6;
 
 	skillMultipliers[0] = 1.5f;

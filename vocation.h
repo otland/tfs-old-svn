@@ -40,7 +40,7 @@ enum gain_t
 	GAIN_FIRST = 0,
 	GAIN_HEALTH = GAIN_FIRST,
 	GAIN_MANA = 1,
-	GAIN_CAPNSOUL = 2,
+	GAIN_SOUL = 2,
 	GAIN_LAST = GAIN_MANA
 };
 
@@ -57,11 +57,32 @@ class Vocation
 		uint32_t getId() const {return id;}
 		void setId(int32_t v) {id = v;}
 
+		uint32_t getFromVocation() const {return fromVocation;}
+		void setFromVocation(int32_t v) {fromVocation = v;}
+
 		const std::string& getName() const {return name;}
 		void setName(const std::string& v) {name = v;}
 
 		const std::string& getDescription() const {return description;}
 		void setDescription(const std::string& v) {description = v;}
+
+		bool isAttackable() const {return attackable;}
+		void setAttackable(bool v) {attackable = v;}
+
+		bool isPremiumNeeded() const {return needPremium;}
+		void setNeedPremium(bool v) {needPremium = v;}
+
+		uint32_t getAttackSpeed() const {return attackSpeed;}
+		void setAttackSpeed(uint32_t v) {attackSpeed = v;}
+
+		uint32_t getBaseSpeed() const {return baseSpeed;}
+		void setBaseSpeed(uint32_t v) {baseSpeed = v;}
+
+		int32_t getLessLoss() const {return lessLoss;}
+		void setLessLoss(int32_t v) {lessLoss = v;}
+
+		int32_t getGainCap() const {return capGain;}
+		void setGainCap(int32_t v) {capGain = v;}
 
 		uint32_t getGain(gain_t type) const {return gain[type];}
 		void setGain(gain_t type, uint32_t v) {gain[type] = v;}
@@ -72,32 +93,11 @@ class Vocation
 		uint32_t getGainAmount(gain_t type) const {return gainAmount[type];}
 		void setGainAmount(gain_t type, uint32_t v) {gainAmount[type] = v;}
 
-		uint32_t getSoulMax() const {return soulMax;}
-		void setSoulMax(uint32_t v) {soulMax = v;}
-
-		uint32_t getBaseSpeed() const {return baseSpeed;}
-		void setBaseSpeed(uint32_t v) {baseSpeed = v;}
-
-		uint32_t getAttackSpeed() const {return attackSpeed;}
-		void setAttackSpeed(uint32_t v) {attackSpeed = v;}
-
-		uint32_t getFromVocation() const {return fromVocation;}
-		void setFromVocation(int32_t v) {fromVocation = v;}
-
-		int32_t getLessLoss() const {return lessLoss;}
-		void setLessLoss(int32_t v) {lessLoss = v;}
-
-		bool isAttackable() const {return attackable;}
-		void setAttackable(bool v) {attackable = v;}
-
-		bool isPremiumNeeded() const {return needPremium;}
-		void setNeedPremium(bool v) {needPremium = v;}
+		float getMultiplier(multiplier_t type) const {return formulaMultipliers[type];}
+		void setMultiplier(multiplier_t type, float v) {formulaMultipliers[type] = v;}
 
 		int16_t getAbsorbPercent(CombatType_t combat) const {return absorbPercent[combat];}
 		void increaseAbsorbPercent(CombatType_t combat, int16_t v) {absorbPercent[combat] += v;}
-
-		float getMultiplier(multiplier_t type) const {return formulaMultipliers[type];}
-		void setMultiplier(multiplier_t type, float v) {formulaMultipliers[type] = v;}
 
 		double getExperienceMultiplier() const {return skillMultipliers[SKILL__LEVEL];}
 		void setSkillMultiplier(skills_t s, float v) {skillMultipliers[s] = v;}
@@ -107,13 +107,14 @@ class Vocation
 		static uint32_t skillBase[SKILL_LAST + 1];
 
 	private:
-		int32_t lessLoss;
+
 		typedef std::map<uint32_t, uint32_t> cacheMap;
 		cacheMap cacheSkill[SKILL_LAST + 1];
 		cacheMap cacheMana;
 
 		bool attackable, needPremium;
-		uint32_t id, fromVocation, baseSpeed, attackSpeed, soulMax;
+		int32_t lessLoss, capGain;
+		uint32_t id, fromVocation, baseSpeed, attackSpeed;
 		std::string name, description;
 
 		int16_t absorbPercent[COMBAT_LAST + 1];

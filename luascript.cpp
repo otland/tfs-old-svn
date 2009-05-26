@@ -8565,9 +8565,10 @@ int32_t LuaScriptInterface::luaGetVocationInfo(lua_State* L)
 	setField(L, "baseSpeed", voc->getBaseSpeed());
 	setField(L, "fromVocation", voc->getFromVocation());
 	setField(L, "promotedVocation", Vocations::getInstance()->getPromotedVocation(id));
-	setField(L, "soul", voc->getSoulMax());
-	setField(L, "soulTicks", voc->getGainTicks(GAIN_CAPNSOUL));
-	setField(L, "capacity", voc->getGainAmount(GAIN_CAPNSOUL));
+	setField(L, "soul", voc->getGain(GAIN_SOUL));
+	setField(L, "soulAmount", voc->getGainAmount(GAIN_SOUL));
+	setField(L, "soulTicks", voc->getGainTicks(GAIN_SOUL));
+	setField(L, "capacity", voc->getGainCap());
 	setFieldBool(L, "attackable", voc->isAttackable());
 	setFieldBool(L, "needPremium", voc->isPremiumNeeded());
 	setFieldDouble(L, "experienceMultiplier", voc->getExperienceMultiplier());

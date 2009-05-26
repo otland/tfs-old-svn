@@ -1376,20 +1376,18 @@ bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName,
 	if(playerExists(characterName))
 		return false;
 
-	Database* db = Database::getInstance();
-
 	Vocation* vocation = Vocations::getInstance()->getVocation(vocationId);
 	Vocation* rookVoc = Vocations::getInstance()->getVocation(0);
+
 	uint16_t healthMax = 150, manaMax = 0, capMax = 400, lookType = 136;
 	if(sex == PLAYERSEX_MALE)
 		lookType = 128;
 
-	uint32_t level = g_config.getNumber(ConfigManager::START_LEVEL);
+	uint32_t level = g_config.getNumber(ConfigManager::START_LEVEL), tmpLevel = level - 1;
 	uint64_t exp = 0;
 	if(level > 1)
 		exp = Player::getExpForLevel(level);
 
-	uint32_t tmpLevel = level - 1;
 	if(tmpLevel > 0)
 	{
 		if(tmpLevel > 7)
@@ -1397,18 +1395,19 @@ bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName,
 
 		healthMax += rookVoc->getGain(GAIN_HEALTH) * tmpLevel;
 		manaMax += rookVoc->getGain(GAIN_MANA) * tmpLevel;
-		capMax += rookVoc->getGainAmount(GAIN_CAPNSOUL) * tmpLevel;
-
+		capMax += rookVoc->getGainCap() * tmpLevel;
 		if(level > 8)
 		{
 			tmpLevel = level - 8;
 			healthMax += vocation->getGain(GAIN_HEALTH) * tmpLevel;
 			manaMax += vocation->getGain(GAIN_MANA) * tmpLevel;
-			capMax += vocation->getGainAmount(GAIN_CAPNSOUL) * tmpLevel;
+			capMax += vocation->getGainCap() * tmpLevel;
 		}
 	}
 
+	Database* db = Database::getInstance();
 	DBQuery query;
+
 	query << "INSERT INTO `players` (`id`, `name`, `world_id`, `group_id`, `account_id`, `level`, `vocation`, `health`, `healthmax`, `experience`, `lookbody`, `lookfeet`, `lookhead`, `looklegs`, `looktype`, `lookaddons`, `maglevel`, `mana`, `manamax`, `manaspent`, `soul`, `town_id`, `posx`, `posy`, `posz`, `conditions`, `cap`, `sex`, `lastlogin`, `lastip`, `redskulltime`, `save`, `rank_id`, `guildnick`, `lastlogout`, `blessings`, `online`) VALUES (NULL, " << db->escapeString(characterName) << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", 1, " << accountId << ", " << level << ", " << vocationId << ", " << healthMax << ", " << healthMax << ", " << exp << ", 68, 76, 78, 39, " << lookType << ", 0, " << g_config.getNumber(ConfigManager::START_MAGICLEVEL) << ", " << manaMax << ", " << manaMax << ", 0, 100, " << g_config.getNumber(ConfigManager::SPAWNTOWN_ID) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_X) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_Y) << ", " << g_config.getNumber(ConfigManager::SPAWNPOS_Z) << ", 0, " << capMax << ", " << sex << ", 0, 0, 0, 1, 0, '', 0, 0, 0)";
 	return db->executeQuery(query.str());
 }

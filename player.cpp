@@ -202,15 +202,15 @@ void Player::setVocation(uint32_t vocId)
 {
 	vocation_id = vocId;
 	vocation = Vocations::getInstance()->getVocation(vocId);
+
+	soulMax = vocation->getGain(GAIN_SOUL);
 	if(Condition* condition = getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT))
 	{
 		condition->setParam(CONDITIONPARAM_HEALTHGAIN, vocation->getGainAmount(GAIN_HEALTH));
-		condition->setParam(CONDITIONPARAM_HEALTHTICKS, vocation->getGainTicks(GAIN_HEALTH) * 1000);
+		condition->setParam(CONDITIONPARAM_HEALTHTICKS, (vocation->getGainTicks(GAIN_HEALTH) * 1000));
 		condition->setParam(CONDITIONPARAM_MANAGAIN, vocation->getGainAmount(GAIN_MANA));
-		condition->setParam(CONDITIONPARAM_MANATICKS, vocation->getGainTicks(GAIN_MANA) * 1000);
+		condition->setParam(CONDITIONPARAM_MANATICKS, (vocation->getGainTicks(GAIN_MANA) * 1000));
 	}
-
-	soulMax = vocation->getSoulMax();
 }
 
 bool Player::isPushable() const
@@ -1905,13 +1905,13 @@ void Player::addExperience(uint64_t exp)
 	experience += exp;
 	while(experience >= nextLevelExp)
 	{
-		++level;
 		healthMax += vocation->getGain(GAIN_HEALTH);
 		health += vocation->getGain(GAIN_HEALTH);
 		manaMax += vocation->getGain(GAIN_MANA);
 		mana += vocation->getGain(GAIN_MANA);
-		capacity += vocation->getGainAmount(GAIN_CAPNSOUL);
+		capacity += vocation->getGainCap();
 
+		++level;
 		nextLevelExp = Player::getExpForLevel(level + 1);
 		if(Player::getExpForLevel(level) > nextLevelExp) //player has reached max level
 			break;
@@ -1954,7 +1954,7 @@ void Player::removeExperience(uint64_t exp, bool updateStats/* = true*/)
 		level--;
 		healthMax = std::max((int32_t)0, (healthMax - (int32_t)vocation->getGain(GAIN_HEALTH)));
 		manaMax = std::max((int32_t)0, (manaMax - (int32_t)vocation->getGain(GAIN_MANA)));
-		capacity = std::max((double)0, (capacity - (double)vocation->getGainAmount(GAIN_CAPNSOUL)));
+		capacity = std::max((double)0, (capacity - (double)vocation->getGainCap()));
 	}
 
 	if(prevLevel != level)
@@ -3627,9 +3627,8 @@ void Player::gainExperience(uint64_t gainExp)
 		if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
 			CONDITION_SOUL, 4 * 60 * 1000))
 		{
-			condition->setParam(CONDITIONPARAM_SOULGAIN, 1);
-			condition->setParam(CONDITIONPARAM_SOULTICKS, vocation->getGainTicks(
-				GAIN_CAPNSOUL) * 1000);
+			condition->setParam(CONDITIONPARAM_SOULGAIN, vocation->getGainAmount(GAIN_SOUL));
+			condition->setParam(CONDITIONPARAM_SOULTICKS, (vocation->getGainTicks(GAIN_SOUL) * 1000));
 			addCondition(condition);
 		}
 	}
@@ -3697,7 +3696,7 @@ void Player::changeMana(int32_t manaChange)
 void Player::changeSoul(int32_t soulChange)
 {
 	if(!hasFlag(PlayerFlag_HasInfiniteSoul))
-		soul = std::max((int32_t)0, std::min((int32_t)soulMax, (int32_t)soul + soulChange));
+		soul = std::max(0, std::min((int32_t)soulMax, (int32_t)soul + soulChange));
 
 	sendStats();
 }
@@ -3923,14 +3922,14 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 void Player::setPromotionLevel(uint32_t pLevel)
 {
 	uint32_t tmpLevel = 0, currentVoc = vocation_id;
-	for(uint32_t i = promotionLevel; i < pLevel; i++)
+	for(uint32_t i = promotionLevel; i < pLevel; ++i)
 	{
 		currentVoc = Vocations::getInstance()->getPromotedVocation(currentVoc);
-		if(currentVoc == 0)
+		if(!currentVoc)
 			break;
 
 		tmpLevel++;
-		Vocation *voc = Vocations::getInstance()->getVocation(currentVoc);
+		Vocation* voc = Vocations::getInstance()->getVocation(currentVoc);
 		if(voc->isPremiumNeeded() && !isPremium() && g_config.getBool(ConfigManager::PREMIUM_FOR_PROMOTION))
 			continue;
 
