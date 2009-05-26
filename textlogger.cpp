@@ -24,7 +24,7 @@
 
 Loggar::Loggar()
 {
-	m_file = fopen("data/logs/admin.log", "a");
+	m_file = fopen("data/logs/server/admin.log", "a");
 }
 
 Loggar::~Loggar()
@@ -33,32 +33,35 @@ Loggar::~Loggar()
 		fclose(m_file);
 }
 
-void Loggar::logMessage(const char* channel, LogType_t type, int32_t level, std::string message, const char* func)
+void Loggar::logMessage(const char* func, LogType_t type, std::string message, std::string channel/* = ""*/)
 {
-	fprintf(m_file, "%s", formatDate().c_str());
-	if(channel)
-		fprintf(m_file, " [%s] ", channel);
-
-	std::string typeStr = "unknown";
+	std::string typeStr = "Unknown";
 	switch(type)
 	{
 		case LOGTYPE_EVENT:
-			typeStr = "event";
+			typeStr = "Event";
 			break;
 
+		case LOGTYPE_NOTICE:
+			typeStr = "Notice";
+
 		case LOGTYPE_WARNING:
-			typeStr = "warning";
+			typeStr = "Warning";
 			break;
 
 		case LOGTYPE_ERROR:
-			typeStr = "error";
+			typeStr = "Error";
 			break;
 
 		default:
 			break;
 	}
 
-	fprintf(m_file, " %s: %s\n", typeStr.c_str(), message.c_str());
+	fprintf(m_file, "[%s] (%s - %s) ", formatDate().c_str(), typeStr.c_str(), func);
+	if(!channel.empty())
+		fprintf(m_file, "%s: ", channel.c_str());
+
+	fprintf(m_file, "%s\n", message.c_str());
 	fflush(m_file);
 }
 

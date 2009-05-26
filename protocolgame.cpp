@@ -16,17 +16,20 @@
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 #include "resources.h"
+
 #include <boost/function.hpp>
 #include <iostream>
 
 #include "protocolgame.h"
+#include "textlogger.h"
+
 #include "waitlist.h"
+#include "player.h"
 
 #include "connection.h"
 #include "networkmessage.h"
 #include "outputmessage.h"
 
-#include "player.h"
 #include "iologindata.h"
 #include "ioban.h"
 
@@ -802,11 +805,12 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 
 			default:
 			{
-				bool success = false;
 				if(g_config.getBool(ConfigManager::BAN_UNKNOWN_BYTES))
 				{
 					Account tmp = IOLoginData::getInstance()->loadAccount(player->getAccount(), true);
 					tmp.warnings++;
+
+					bool success = false;
 					if(warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
 						success = IOBan::getInstance()->addDeletion(player->getAccount(), 13, ACTION_DELETION,
 							"Sending unknown packets to the server.", 0);
@@ -819,10 +823,6 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 
 					if(success)
 					{
-						std::cout << "[Notice - ProtocolGame::parsePacket] " << player->getName();
-						std::cout << " has been banished for sending unknown byte (0x" << std::hex;
-						std::cout << (int16_t)recvbyte << std::dec << ")." << std::endl;
-
 						IOLoginData::getInstance()->saveAccount(tmp);
 						player->sendTextMessage(MSG_INFO_DESCR, "You have been banished.");
 
@@ -832,9 +832,9 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 					}
 				}
 
-				if(!success)
-					std::cout << "[Notice - ProtocolGame::parsePacket] " << player->getName() << " has sent unknown byte: 0x" << std::hex << (int16_t)recvbyte << std::dec << "!" << std::endl;
-				
+				std::stringstream s;
+				s << player->getName() << " sent unknown byte: 0x" << std::hex << (int16_t)recvbyte << std::dec;
+				LOG_MESSAGE(LOGTYPE_NOTICE, s.str(), "PLAYER");
 				break;
 			}
 		}

@@ -27,6 +27,7 @@
 enum LogType_t
 {
 	LOGTYPE_EVENT,
+	LOGTYPE_NOTICE,
 	LOGTYPE_WARNING,
 	LOGTYPE_ERROR,
 };
@@ -41,15 +42,15 @@ class Loggar
 			return &instance;
 		}
 
-		void logMessage(const char* channel, LogType_t type, int32_t level, std::string message, const char* func);
+		void logMessage(const char* func, LogType_t type, std::string message, std::string channel = "");
 
 	private:
 		Loggar();
 		FILE* m_file;
 };
 
-#define LOG_MESSAGE(channel, type, level, message) \
-	Loggar::getInstance()->logMessage(channel, type, level, message, __OTSERV_PRETTY_FUNCTION__);
+#define LOG_MESSAGE(type, message, channel) \
+	Loggar::getInstance()->logMessage(__OTSERV_PRETTY_FUNCTION__, type, message, channel);
 
 #if defined(WIN32) && not defined(__CONSOLE__)
 class TextLogger : public std::streambuf

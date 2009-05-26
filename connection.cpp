@@ -197,7 +197,7 @@ void Connection::accept()
 	{
 		if(m_logError)
 		{
-			LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
+			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK");
 			m_logError = false;
 		}
 	}
@@ -268,7 +268,7 @@ void Connection::internalSend(OutputMessage_ptr msg)
 	{
 		if(m_logError)
 		{
-			LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
+			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK");
 			m_logError = false;
 		}
 	}
@@ -322,7 +322,7 @@ void Connection::deleteConnection()
 	{
 		if(m_logError)
 		{
-			LOG_MESSAGE("NETWORK", LOGTYPE_ERROR, 1, e.what());
+			LOG_MESSAGE(LOGTYPE_ERROR, e.what(), "NETWORK");
 			m_logError = false;
 		}
 	}
