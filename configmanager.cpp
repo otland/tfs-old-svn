@@ -94,21 +94,12 @@ bool ConfigManager::load()
 		m_confNumber[MYSQL_WRITE_TIMEOUT] = getGlobalNumber("mysqlWriteTimeout", 10);
 		m_confBool[OPTIMIZE_DB_AT_STARTUP] = getGlobalBool("optimizeDatabaseAtStartup", "yes");
 		m_confString[MAP_NAME] = getGlobalString("mapName", "forgotten");
-		m_confString[MAP_AUTHOR] = getGlobalString("mapAuthor", "Unknown");
 		m_confBool[GLOBALSAVE_ENABLED] = getGlobalBool("globalSaveEnabled", "yes");
 		m_confNumber[GLOBALSAVE_H] = getGlobalNumber("globalSaveHour", 8);
 		m_confString[HOUSE_RENT_PERIOD] = getGlobalString("houseRentPeriod", "monthly");
 		m_confNumber[WORLD_ID] = getGlobalNumber("worldId", 0);
 		m_confBool[RANDOMIZE_TILES] = getGlobalBool("randomizeTiles", "yes");
 		m_confBool[STORE_TRASH] = getGlobalBool("storeTrash", "yes");
-		m_confNumber[LOGIN_TRIES] = getGlobalNumber("loginTries", 3);
-		m_confNumber[RETRY_TIMEOUT] = getGlobalNumber("retryTimeout", 30 * 1000);
-		m_confNumber[LOGIN_TIMEOUT] = getGlobalNumber("loginTimeout", 5 * 1000);
-		m_confNumber[MAX_MESSAGEBUFFER] = getGlobalNumber("maxMessageBuffer", 4);
-		m_confNumber[MAX_PLAYERS] = getGlobalNumber("maxPlayers");
-		m_confNumber[DEFAULT_DESPAWNRANGE] = getGlobalNumber("deSpawnRange", 2);
-		m_confNumber[DEFAULT_DESPAWNRADIUS] = getGlobalNumber("deSpawnRadius", 50);
-		m_confNumber[PZ_LOCKED] = getGlobalNumber("pzLocked", 60 * 1000);
 		m_confBool[EXPERIENCE_STAGES] = getGlobalBool("experienceStages", "no");
 		m_confString[DEFAULT_PRIORITY] = getGlobalString("defaultPriority", "high");
 		m_confBool[GUILD_HALLS] = getGlobalBool("guildHalls", "no");
@@ -119,6 +110,15 @@ bool ConfigManager::load()
 		m_confNumber[PASSWORDTYPE] = PASSWORD_TYPE_PLAIN;
 	}
 
+	m_confString[MAP_AUTHOR] = getGlobalString("mapAuthor", "Unknown");
+	m_confNumber[LOGIN_TRIES] = getGlobalNumber("loginTries", 3);
+	m_confNumber[RETRY_TIMEOUT] = getGlobalNumber("retryTimeout", 30 * 1000);
+	m_confNumber[LOGIN_TIMEOUT] = getGlobalNumber("loginTimeout", 5 * 1000);
+	m_confNumber[MAX_MESSAGEBUFFER] = getGlobalNumber("maxMessageBuffer", 4);
+	m_confNumber[MAX_PLAYERS] = getGlobalNumber("maxPlayers");
+	m_confNumber[DEFAULT_DESPAWNRANGE] = getGlobalNumber("deSpawnRange", 2);
+	m_confNumber[DEFAULT_DESPAWNRADIUS] = getGlobalNumber("deSpawnRadius", 50);
+	m_confNumber[PZ_LOCKED] = getGlobalNumber("pzLocked", 60 * 1000);
 	m_confString[LOGIN_MSG] = getGlobalString("loginMessage", "Welcome to the Forgotten Server!");
 	m_confString[SERVER_NAME] = getGlobalString("serverName");
 	m_confString[OWNER_NAME] = getGlobalString("ownerName");
