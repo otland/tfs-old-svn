@@ -119,8 +119,7 @@ class Vocation
 
 		int16_t absorbPercent[COMBAT_LAST + 1];
 		uint32_t gain[GAIN_LAST + 1], gainTicks[GAIN_LAST + 1], gainAmount[GAIN_LAST + 1];
-		float skillMultipliers[SKILL__LAST];
-		float formulaMultipliers[MULTIPLIER_LAST + 1];
+		float skillMultipliers[SKILL__LAST + 1], formulaMultipliers[MULTIPLIER_LAST + 1];
 };
 
 typedef std::map<uint32_t, Vocation*> VocationsMap;
