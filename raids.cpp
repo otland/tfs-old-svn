@@ -165,7 +165,7 @@ void Raids::checkRaids()
 	for(RaidList::iterator it = raidList.begin(); it != raidList.end(); ++it)
 	{
 		if((*it)->isEnabled() && !(*it)->hasRef() && now > (lastRaidEnd + (*it)->getMargin()) &&
-			(MAX_RAND_RANGE * (CHECK_RAIDS_INTERVAL / (*it)->getInterval())) >= (
+			(MAX_RAND_RANGE * CHECK_RAIDS_INTERVAL / (*it)->getInterval()) >= (
 			uint32_t)random_range(0, MAX_RAND_RANGE) && (*it)->startRaid())
 			break;
 	}
