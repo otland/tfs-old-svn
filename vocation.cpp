@@ -94,7 +94,7 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 		voc->setBaseSpeed(intValue);
 
 	if(readXMLInteger(p, "soulmax", intValue))
-		voc->setGain(intValue);
+		voc->setGain(GAIN_SOUL, intValue);
 
 	if(readXMLInteger(p, "gainsoulamount", intValue))
 		voc->setGainAmount(GAIN_SOUL, intValue);
