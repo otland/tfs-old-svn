@@ -313,10 +313,10 @@ void Vocation::reset()
 	gain[GAIN_HEALTH] = gain[GAIN_MANA] = capGain = 5;
 	gainTicks[GAIN_HEALTH] = gainTicks[GAIN_MANA] = 6;
 
-	skillMultipliers[0] = 1.5f;
-	skillMultipliers[6] = 1.1f;
-	skillMultipliers[7] = 1.0f;
-	for(int32_t i = 1; i < 6; i++)
+	skillMultipliers[SKILL_FIST] = 1.5f;
+	skillMultipliers[SKILL_FISH] = 1.1f;
+	skillMultipliers[SKILL__LEVEL] = 1.0f;
+	for(int32_t i = SKILL_CLUB; i < SKILL_FISH; i++)
 		skillMultipliers[i] = 2.0f;
 
 	formulaMultipliers[MULTIPLIER_MANA] = 4.0f;
@@ -344,7 +344,7 @@ uint64_t Vocation::getReqMana(uint32_t magLevel)
 	if(it != cacheMana.end())
 		return it->second;
 
-	uint64_t reqMana = (uint64_t)(400 * pow(formulaMultipliers[MULTIPLIER_MANA], magLevel - 1));
+	uint64_t reqMana = (uint64_t)(400 * std::pow(formulaMultipliers[MULTIPLIER_MANA], magLevel - 1));
 	if(reqMana % 20 < 10)
 		reqMana = reqMana - (reqMana % 20);
 	else

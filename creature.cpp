@@ -1041,7 +1041,7 @@ uint64_t Creature::getGainedExperience(Creature* attacker, bool useMultiplier/* 
 
 	double baseExperience = getDamageRatio(attacker) * getLostExperience();
 	if(!player)
-		return (uint64_t)std::floor(baseExperience * g_config.getDouble(ConfigManager::RATE_EXPERIENCE));
+		return (uint64_t)baseExperience * g_config.getDouble(ConfigManager::RATE_EXPERIENCE);
 
 	if(useMultiplier)
 		baseExperience *= player->rates[SKILL__LEVEL];
@@ -1068,7 +1068,7 @@ uint64_t Creature::getGainedExperience(Creature* attacker, bool useMultiplier/* 
 	else if(minutes <= 0)
 		baseExperience = 0;
 
-	return (uint64_t)std::floor(baseExperience);
+	return (uint64_t)baseExperience;
 }
 
 void Creature::addDamagePoints(Creature* attacker, int32_t damagePoints)

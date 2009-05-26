@@ -460,7 +460,7 @@ bool Map::checkSightLine(const Position& fromPos, const Position& toPos) const
 	Position end = toPos;
 
 	int32_t x, y, z, dx = std::abs(start.x - end.x), dy = std::abs(start.y - end.y),
-		dz = abs(start.z - end.z), sx, sy, sz, ey, ez, max = dx, dir = 0;
+		dz = std::abs(start.z - end.z), sx, sy, sz, ey, ez, max = dx, dir = 0;
 	if(dy > max)
 	{
 		max = dy;
