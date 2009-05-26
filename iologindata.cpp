@@ -1358,20 +1358,18 @@ bool IOLoginData::changeName(uint32_t guid, std::string newName, std::string old
 	DBQuery query;
 
 	query << "UPDATE `players` SET `name` = " << db->escapeString(newName) << " WHERE `id` = " << guid;
-	if(db->executeQuery(query.str()))
-	{
-		GuidCacheMap::iterator it = guidCacheMap.find(oldName);
-		if(it != guidCacheMap.end())
-		{
-			guidCacheMap.erase(it);
-			guidCacheMap[newName] = guid;
-		}
+	if(!db->executeQuery(query.str()))
+		return false;
 
-		nameCacheMap[guid] = newName;
-		return true;
+	GuidCacheMap::iterator it = guidCacheMap.find(oldName);
+	if(it != guidCacheMap.end())
+	{
+		guidCacheMap.erase(it);
+		guidCacheMap[newName] = guid;
 	}
 
-	return false;
+	nameCacheMap[guid] = newName;
+	return true;
 }
 
 bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName, int32_t vocationId, PlayerSex_t sex)
