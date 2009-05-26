@@ -138,8 +138,8 @@ Creature(), transferContainer(ITEM_LOCKER1)
 
 	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 	{
-		skills[i][SKILL_LEVEL]= 10;
-		skills[i][SKILL_TRIES]= 0;
+		skills[i][SKILL_LEVEL] = 10;
+		skills[i][SKILL_TRIES] = 0;
 		skills[i][SKILL_PERCENT] = 0;
 		rates[i] = 1.0f;
 	}

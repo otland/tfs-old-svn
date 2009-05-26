@@ -547,19 +547,19 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		//now iterate over the skills
 		do
 		{
-			int32_t skillId = result->getDataInt("skillid");
-			if(skillId >= SKILL_FIRST && skillId <= SKILL_LAST)
-			{
-				uint32_t skillLevel = result->getDataInt("value");
-				uint64_t skillCount = result->getDataLong("count");
-				uint64_t nextSkillCount = player->vocation->getReqSkillTries(skillId, skillLevel + 1);
-				if(skillCount > nextSkillCount)
-					skillCount = 0;
+			int16_t skillId = result->getDataInt("skillid");
+			if(skillId < SKILL_FIRST || skillId > SKILL_LAST)
+				continue;
 
-				player->skills[skillId][SKILL_LEVEL] = skillLevel;
-				player->skills[skillId][SKILL_TRIES] = skillCount;
-				player->skills[skillId][SKILL_PERCENT] = Player::getPercentLevel(skillCount, nextSkillCount);
-			}
+			uint32_t skillLevel = result->getDataInt("value");
+			uint64_t nextSkillCount = player->vocation->getReqSkillTries(
+				skillId, skillLevel + 1), skillCount = result->getDataLong("count");
+			if(skillCount > nextSkillCount)
+				skillCount = 0;
+
+			player->skills[skillId][SKILL_LEVEL] = skillLevel;
+			player->skills[skillId][SKILL_TRIES] = skillCount;
+			player->skills[skillId][SKILL_PERCENT] = Player::getPercentLevel(skillCount, nextSkillCount);
 		}
 		while(result->next());
 		result->free();
@@ -813,6 +813,9 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 	// skills
 	for(int32_t i = 0; i <= 6; i++)
 	{
+		if(player->skills[i][SKILL_LEVEL] == 10 && !player->skills[i][SKILL_TRIES])
+			continue;
+
 		query.str("");
 		query << "UPDATE `player_skills` SET `value` = " << player->skills[i][SKILL_LEVEL] << ", `count` = " << player->skills[i][SKILL_TRIES] << " WHERE `player_id` = " << player->getGUID() << " AND `skillid` = " << i;
 		if(!db->executeQuery(query.str()))
