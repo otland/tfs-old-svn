@@ -51,8 +51,8 @@ uint32_t Player::playerCount = 0;
 #endif
 MuteCountMap Player::muteCountMap;
 
-Player::Player(const std::string& _name, ProtocolGame *p) :
-Creature(), transferContainer(ITEM_LOCKER1)
+Player::Player(const std::string& _name, ProtocolGame *p):
+	Creature(), transferContainer(ITEM_LOCKER1)
 {
 	client = p;
 	isConnecting = false;
@@ -238,7 +238,6 @@ std::string Player::getDescription(int32_t lookDistance) const
 			s << " (Level " << level << ")";
 
 		s << ". " << (sex == PLAYERSEX_FEMALE ? "She" : "He");
-
 		if(hasFlag(PlayerFlag_ShowGroupNameInsteadOfVocation))
 			s << " is " << group->getName();
 		else if(vocation_id != 0)
@@ -2235,6 +2234,7 @@ bool Player::onDeath()
 	}
 	else
 	{
+		pzLocked = false;
 		setLossSkill(true);
 		if(preventLoss)
 		{
