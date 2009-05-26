@@ -3898,7 +3898,9 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 	m += g_config.getNumber(ConfigManager::BAN_MONTHLY_LIMIT);
 	if((d > 0 && tc >= d) || (w > 0 && wc >= w) || (m > 0 && mc >= m))
 	{
-		int32_t warnings = IOLoginData::getInstance()->loadAccount(accountId, true).warnings;
+		Account tmp = IOLoginData::getInstance()->loadAccount(accountId, true);
+		tmp.warnings++;
+
 		bool success = false;
 		if(warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
 			success = IOBan::getInstance()->addDeletion(accountId, 20, ACTION_DELETION, "Unjustified player killing.", 0);
@@ -3911,8 +3913,12 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 
 		if(success)
 		{
+			IOLoginData::getInstance()->saveAccount(tmp);
+			sendTextMessage(MSG_INFO_DESCR, "You have been banished.");
+
 			g_game.addMagicEffect(getPosition(), NM_ME_MAGIC_POISON);
-			Scheduler::getScheduler().addEvent(createSchedulerTask(500, boost::bind(&Game::kickPlayer, &g_game, getID(), false)));
+			Scheduler::getScheduler().addEvent(createSchedulerTask(1000, boost::bind(
+				&Game::kickPlayer, &g_game, getID(), false)));
 		}
 	}
 

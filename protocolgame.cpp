@@ -805,7 +805,8 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				bool success = false;
 				if(g_config.getBool(ConfigManager::BAN_UNKNOWN_BYTES))
 				{
-					int32_t warnings = IOLoginData::getInstance()->loadAccount(player->getAccount(), true).warnings;
+					Account tmp = IOLoginData::getInstance()->loadAccount(player->getAccount(), true);
+					tmp.warnings++;
 					if(warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
 						success = IOBan::getInstance()->addDeletion(player->getAccount(), 13, ACTION_DELETION,
 							"Sending unknown packets to the server.", 0);
@@ -817,7 +818,18 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 							ConfigManager::BAN_LENGTH)), 13, ACTION_BANISHMENT, "Sending unknown packets to the server.", 0);
 
 					if(success)
-						std::cout << "[Notice - ProtocolGame::parsePacket] " << player->getName() << " has been banished for sending unknown byte (0x" << std::hex << (int16_t)recvbyte << std::dec << ")." << std::endl;
+					{
+						std::cout << "[Notice - ProtocolGame::parsePacket] " << player->getName();
+						std::cout << " has been banished for sending unknown byte (0x" << std::hex;
+						std::cout << (int16_t)recvbyte << std::dec << ")." << std::endl;
+
+						IOLoginData::getInstance()->saveAccount(tmp);
+						player->sendTextMessage(MSG_INFO_DESCR, "You have been banished.");
+
+						g_game.addMagicEffect(player->getPosition(), NM_ME_MAGIC_POISON);
+						Scheduler::getScheduler().addEvent(createSchedulerTask(1000, boost::bind(
+							&Game::kickPlayer, &g_game, player->getID(), false)));
+					}
 				}
 
 				if(!success)
