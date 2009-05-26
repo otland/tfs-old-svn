@@ -811,10 +811,10 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 					tmp.warnings++;
 
 					bool success = false;
-					if(warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
+					if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
 						success = IOBan::getInstance()->addDeletion(player->getAccount(), 13, ACTION_DELETION,
 							"Sending unknown packets to the server.", 0);
-					else if(warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
+					else if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
 						success = IOBan::getInstance()->addBanishment(player->getAccount(), (time(NULL) + g_config.getNumber(
 							ConfigManager::FINALBAN_LENGTH)), 13, ACTION_BANFINAL, "Sending unknown packets to the server.", 0);
 					else
