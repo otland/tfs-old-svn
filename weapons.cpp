@@ -1027,19 +1027,17 @@ bool WeaponWand::configureWeapon(const ItemType& it)
 
 int32_t WeaponWand::getWeaponDamage(const Player* player, const Creature* target, const Item* item, bool maxDamage /*= false*/) const
 {
+	float multiplier = 1.0f;
+	if(Vocation* vocation = player->getVocation())
+		multiplier = vocation->getMultiplier(MULTIPLIER_WAND);
+
+	int32_t maxValue = (maxChange * multiplier);
 	if(maxDamage)
 	{
 		player->sendCriticalHit();
-		return -maxChange;
+		return -maxValue;
 	}
 
-	int32_t minValue = minChange, maxValue = maxChange;
-	Vocation* vocation = player->getVocation();
-	if(vocation && vocation->getMultiplier(MULTIPLIER_WAND) != 1.0)
-	{
-		minValue = (int32_t)(minValue * vocation->getMultiplier(MULTIPLIER_WAND));
-		maxValue = (int32_t)(maxValue * vocation->getMultiplier(MULTIPLIER_WAND));
-	}
-
+	int32_t minValue = (minChange * multiplier);
 	return random_range(-minValue, -maxValue, DISTRO_NORMAL);
 }

@@ -141,14 +141,16 @@ class Condition
 		bool isPersistent() const {return (ticks > 0 && (id == CONDITIONID_DEFAULT || id != CONDITIONID_COMBAT));}
 
 	protected:
+		virtual bool updateCondition(const Condition* addCondition);
+
 		ConditionId_t id;
 		uint32_t subId;
+
 		int32_t ticks;
 		int64_t endTime;
+
 		ConditionType_t conditionType;
 		bool buff;
-
-		virtual bool updateCondition(const Condition* addCondition);
 };
 
 class ConditionGeneric: public Condition
@@ -194,12 +196,8 @@ class ConditionAttributes : public ConditionGeneric
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 
 	protected:
-		int32_t skills[SKILL_LAST + 1];
-		int32_t stats[STAT_LAST + 1];
-		int32_t skillsPercent[SKILL_LAST + 1];
-		int32_t statsPercent[STAT_LAST + 1];
-		int32_t currentSkill;
-		int32_t currentStat;
+		int32_t skills[SKILL_LAST + 1], stats[STAT_LAST + 1], skillsPercent[SKILL_LAST + 1],
+			statsPercent[STAT_LAST + 1], currentSkill, currentStat;
 
 		void updatePercentSkills(Player* player);
 		void updatePercentStats(Player* player);
@@ -224,13 +222,7 @@ class ConditionRegeneration : public ConditionGeneric
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 
 	protected:
-		uint32_t internalHealthTicks;
-		uint32_t internalManaTicks;
-
-		uint32_t healthTicks;
-		uint32_t manaTicks;
-		uint32_t healthGain;
-		uint32_t manaGain;
+		uint32_t internalHealthTicks, internalManaTicks, healthTicks, manaTicks, healthGain, manaGain;
 };
 
 class ConditionSoul : public ConditionGeneric
@@ -250,9 +242,7 @@ class ConditionSoul : public ConditionGeneric
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 
 	protected:
-		uint32_t internalSoulTicks;
-		uint32_t soulTicks;
-		uint32_t soulGain;
+		uint32_t internalSoulTicks, soulTicks, soulGain;
 };
 
 class ConditionInvisible: public ConditionGeneric
@@ -292,18 +282,11 @@ class ConditionDamage: public Condition
 		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
 
 	protected:
-		int32_t maxDamage;
-		int32_t minDamage;
-		int32_t startDamage;
-		int32_t periodDamage;
-		int32_t periodDamageTick;
-		int32_t tickInterval;
-
-		bool forceUpdate;
-		bool delayed;
-		uint32_t owner;
-
 		bool init();
+
+		bool forceUpdate, delayed;
+		int32_t maxDamage, minDamage, startDamage, periodDamage, periodDamageTick, tickInterval;
+		uint32_t owner;
 
 		typedef std::list<IntervalInfo> DamageList;
 		DamageList damageList;
@@ -339,12 +322,7 @@ class ConditionSpeed: public Condition
 		void getFormulaValues(int32_t var, int32_t& min, int32_t& max) const;
 
 		int32_t speedDelta;
-
-		//formula variables
-		float mina;
-		float minb;
-		float maxa;
-		float maxb;
+		float mina, minb, maxa, maxb;
 };
 
 class ConditionOutfit: public Condition
@@ -368,7 +346,6 @@ class ConditionOutfit: public Condition
 
 	protected:
 		std::vector<Outfit_t> outfits;
-
 		void changeOutfit(Creature* creature, int32_t index = -1);
 };
 
@@ -393,7 +370,6 @@ class ConditionLight: public Condition
 
 	protected:
 		LightInfo lightInfo;
-		uint32_t internalLightTicks;
-		uint32_t lightChangeInterval;
+		uint32_t internalLightTicks, lightChangeInterval;
 };
 #endif

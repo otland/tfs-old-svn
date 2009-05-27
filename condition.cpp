@@ -367,7 +367,6 @@ void ConditionAttributes::addCondition(Creature* creature, const Condition* addC
 		memcpy(skillsPercent, conditionAttrs.skillsPercent, sizeof(skillsPercent));
 		memcpy(stats, conditionAttrs.stats, sizeof(stats));
 		memcpy(statsPercent, conditionAttrs.statsPercent, sizeof(statsPercent));
-
 		if(Player* player = creature->getPlayer())
 		{
 			updatePercentSkills(player);
@@ -388,8 +387,7 @@ bool ConditionAttributes::unserializeProp(ConditionAttr_t attr, PropStream& prop
 			if(!propStream.GET_VALUE(value))
 				return false;
 
-			skills[currentSkill] = value;
-			++currentSkill;
+			skills[currentSkill++] = value;
 			return true;
 		}
 
@@ -399,8 +397,7 @@ bool ConditionAttributes::unserializeProp(ConditionAttr_t attr, PropStream& prop
 			if(!propStream.GET_VALUE(value))
 				return false;
 
-			stats[currentStat] = value;
-			++currentStat;
+			stats[currentStat++] = value;
 			return true;
 		}
 
@@ -1018,16 +1015,8 @@ bool ConditionDamage::updateCondition(const ConditionDamage* addCondition)
 	if(addCondition->doForceUpdate())
 		return true;
 
-	if(getTicks() == -1 && addCondition->getTicks() > 0)
-		return false;
-
-	if(addCondition->getTicks() <= getTicks())
-		return false;
-
-	if(addCondition->getTotalDamage() < getTotalDamage())
-		return false;
-
-	if(addCondition->periodDamage < periodDamage)
+	if(getTicks() == -1 && addCondition->getTicks() > 0 || addCondition->getTicks() <= getTicks() ||
+		addCondition->getTotalDamage() < getTotalDamage() || addCondition->periodDamage < periodDamage)
 		return false;
 
 	return true;
@@ -1035,9 +1024,8 @@ bool ConditionDamage::updateCondition(const ConditionDamage* addCondition)
 
 bool ConditionDamage::addDamage(int32_t rounds, int32_t time, int32_t value)
 {
-	if(rounds == -1)
+	if(rounds == -1) //periodic damage
 	{
-		//periodic damage
 		periodDamage = value;
 		setParam(CONDITIONPARAM_TICKINTERVAL, time);
 		setParam(CONDITIONPARAM_TICKS, -1);
@@ -1086,7 +1074,7 @@ bool ConditionDamage::init()
 		}
 	}
 
-	return (!damageList.empty());
+	return !damageList.empty();
 }
 
 bool ConditionDamage::startCondition(Creature* creature)
@@ -1150,7 +1138,6 @@ bool ConditionDamage::getNextDamage(int32_t& damage)
 	else if(!damageList.empty())
 	{
 		IntervalInfo& damageInfo = damageList.front();
-
 		damage = damageInfo.value;
 		if(getTicks() != -1)
 			damageList.pop_front();
@@ -1193,11 +1180,10 @@ void ConditionDamage::addCondition(Creature* creature, const Condition* addCondi
 			startDamage = conditionDamage.startDamage;
 			tickInterval = conditionDamage.tickInterval;
 			periodDamage = conditionDamage.periodDamage;
-			int32_t nextTimeLeft = tickInterval;
 
-			if(!damageList.empty())
+			int32_t nextTimeLeft = tickInterval;
+			if(!damageList.empty()) //save previous timeLeft
 			{
-				//save previous timeLeft
 				IntervalInfo& damageInfo = damageList.front();
 				nextTimeLeft = damageInfo.timeLeft;
 				damageList.clear();
@@ -1206,9 +1192,8 @@ void ConditionDamage::addCondition(Creature* creature, const Condition* addCondi
 			damageList = conditionDamage.damageList;
 			if(init())
 			{
-				if(!damageList.empty())
+				if(!damageList.empty()) //restore last timeLeft
 				{
-					//restore last timeLeft
 					IntervalInfo& damageInfo = damageList.front();
 					damageInfo.timeLeft = nextTimeLeft;
 				}
@@ -1276,14 +1261,13 @@ Icons_t ConditionDamage::getIcons() const
 
 void ConditionDamage::generateDamageList(int32_t amount, int32_t start, std::list<int32_t>& list)
 {
-	amount = std::abs(amount);
 	int32_t sum = 0, med = 0;
 	float x1, x2;
 
+	amount = std::abs(amount);
 	for(int32_t i = start; i > 0; --i)
 	{
-		int32_t n = start + 1 - i;
-		med = (n * amount) / start;
+		med = ((start + 1 - i) * amount) / start;
 		do
 		{
 			sum += i;
@@ -1451,15 +1435,15 @@ void ConditionSpeed::addCondition(Creature* creature, const Condition* addCondit
 	if(updateCondition(addCondition))
 	{
 		setTicks(addCondition->getTicks());
-
 		const ConditionSpeed& conditionSpeed = static_cast<const ConditionSpeed&>(*addCondition);
-		int32_t oldSpeedDelta = speedDelta;
-		speedDelta = conditionSpeed.speedDelta;
+
 		mina = conditionSpeed.mina;
 		maxa = conditionSpeed.maxa;
 		minb = conditionSpeed.minb;
 		maxb = conditionSpeed.maxb;
 
+		int32_t oldSpeedDelta = speedDelta;
+		speedDelta = conditionSpeed.speedDelta;
 		if(speedDelta == 0)
 		{
 			int32_t min;
@@ -1586,10 +1570,9 @@ void ConditionOutfit::addCondition(Creature* creature, const Condition* addCondi
 	if(updateCondition(addCondition))
 	{
 		setTicks(addCondition->getTicks());
-
 		const ConditionOutfit& conditionOutfit = static_cast<const ConditionOutfit&>(*addCondition);
-		outfits = conditionOutfit.outfits;
 
+		outfits = conditionOutfit.outfits;
 		changeOutfit(creature);
 	}
 }
@@ -1606,6 +1589,7 @@ bool ConditionLight::startCondition(Creature* creature)
 {
 	internalLightTicks = 0;
 	lightChangeInterval = ticks / lightInfo.level;
+
 	creature->setCreatureLight(lightInfo);
 	g_game.changeLight(creature);
 	return Condition::startCondition(creature);
@@ -1616,9 +1600,10 @@ bool ConditionLight::executeCondition(Creature* creature, int32_t interval)
 	internalLightTicks += interval;
 	if(internalLightTicks >= lightChangeInterval)
 	{
-		internalLightTicks = 0;
 		LightInfo creatureLight;
 		creature->getCreatureLight(creatureLight);
+
+		internalLightTicks = 0;
 		if(creatureLight.level > 0)
 		{
 			--creatureLight.level;
@@ -1641,12 +1626,14 @@ void ConditionLight::addCondition(Creature* creature, const Condition* addCondit
 	if(updateCondition(addCondition))
 	{
 		setTicks(addCondition->getTicks());
-
 		const ConditionLight& conditionLight = static_cast<const ConditionLight&>(*addCondition);
+
 		lightInfo.level = conditionLight.lightInfo.level;
 		lightInfo.color = conditionLight.lightInfo.color;
+
 		lightChangeInterval = getTicks() / lightInfo.level;
 		internalLightTicks = 0;
+
 		creature->setCreatureLight(lightInfo);
 		g_game.changeLight(creature);
 	}
@@ -1655,24 +1642,21 @@ void ConditionLight::addCondition(Creature* creature, const Condition* addCondit
 bool ConditionLight::setParam(ConditionParam_t param, int32_t value)
 {
 	bool ret = Condition::setParam(param, value);
-	if(!ret)
+	switch(param)
 	{
-		switch(param)
-		{
-			case CONDITIONPARAM_LIGHT_LEVEL:
-				lightInfo.level = value;
-				return true;
+		case CONDITIONPARAM_LIGHT_LEVEL:
+			lightInfo.level = value;
+			return true;
 
-			case CONDITIONPARAM_LIGHT_COLOR:
-				lightInfo.color = value;
-				return true;
+		case CONDITIONPARAM_LIGHT_COLOR:
+			lightInfo.color = value;
+			return true;
 
-			default:
-				break;
-		}
+		default:
+			break;
 	}
 
-	return false;
+	return ret;
 }
 
 bool ConditionLight::unserializeProp(ConditionAttr_t attr, PropStream& propStream)
