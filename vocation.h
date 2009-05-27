@@ -41,7 +41,7 @@ enum gain_t
 	GAIN_HEALTH = GAIN_FIRST,
 	GAIN_MANA = 1,
 	GAIN_SOUL = 2,
-	GAIN_LAST = GAIN_MANA
+	GAIN_LAST = GAIN_SOUL
 };
 
 class Vocation
