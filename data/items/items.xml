@@ -3192,14 +3192,14 @@
 		<attribute key="decayTo" value="0"/>
 		<attribute key="transformDeEquipTo" value="2213"/>
 		<attribute key="suppressDrunk" value="1"/>
-		<attribute key="duration" value="300"/>
+		<attribute key="duration" value="3600"/>
 		<attribute key="showduration" value="1"/>
 	</item>
 	<item id="2216" article="a" name="ring of healing">
 		<attribute key="weight" value="100"/>
 		<attribute key="decayTo" value="0"/>
 		<attribute key="transformDeEquipTo" value="2214"/>
-		<attribute key="duration" value="480"/>
+		<attribute key="duration" value="450"/>
 		<attribute key="healthGain" value="1"/>
 		<attribute key="healthTicks" value="1000"/>
 		<attribute key="manaGain" value="4"/>
