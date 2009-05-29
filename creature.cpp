@@ -676,7 +676,7 @@ bool Creature::onDeath()
 	CreatureEventList prepareDeathEvents = getCreatureEvents(CREATURE_EVENT_PREPAREDEATH);
 	for(CreatureEventList::iterator it = prepareDeathEvents.begin(); it != prepareDeathEvents.end(); ++it)
 	{
-		if(!(*it)->executePrepareDeath(this, deathList))
+		if(!(*it)->executePrepareDeath(this, deathList) && !deny)
 			deny = true;
 	}
 
@@ -687,17 +687,22 @@ bool Creature::onDeath()
 	if(tmp > 1 && size > tmp)
 		size = tmp;
 
-	DeathList::iterator bit = deathList.begin();
-	for(DeathList::iterator it = bit; i < size && it != deathList.end(); ++it, ++i)
+	for(DeathList::iterator it = deathList.begin(); it != deathList.end(); ++it, ++i)
 	{
 		if(it->isNameKill())
 			continue;
 
-		ReturnValue ret = it->getKillerCreature()->onKilledCreature(this, (it == bit));
-		if(ret == RET_NOTPOSSIBLE && it == bit)
+		uint32_t flags = 0;
+		if(it == deathList.begin())
+			flags |= (uint32_t)KILLFLAG_LASTHIT;
+
+		if(it->isPlayerKill() && i < size)
+			flags |= (uint32_t)KILLFLAG_JUSTIFY;
+
+		if(!it->getKillerCreature()->onKilledCreature(this, flags) && it == bit)
 			return false;
 
-		if(ret == RET_NEEDEXCHANGE)
+		if(hasBitSet((uint32_t)KILLFLAG_UNJUSTIFIED, flags))
 			it->setUnjustified(true);
 	}
 
@@ -1187,25 +1192,28 @@ void Creature::onAttackedCreatureKilled(Creature* target)
 		onGainExperience(target->getGainedExperience(this));
 }
 
-ReturnValue Creature::onKilledCreature(Creature* target, bool lastHit)
+bool Creature::onKilledCreature(Creature* target, uint32_t flags/* = 0*/)
 {
-	ReturnValue ret = RET_NOERROR;
+	bool ret = true;
 	if(getMaster())
-		ret = getMaster()->onKilledCreature(target, false);
+	{
+		flags |= (uint32_t)KILLFLAG_SUMMON;
+		ret = getMaster()->onKilledCreature(target, flags);
+	}
 
 	CreatureEventList killEvents = getCreatureEvents(CREATURE_EVENT_KILL);
-	if(!lastHit)
+	if(!hasBitSet((uint32_t)KILLFLAG_LASTHIT, flags))
 	{
 		for(CreatureEventList::iterator it = killEvents.begin(); it != killEvents.end(); ++it)
 			(*it)->executeKill(this, target, false);
 
-		return RET_NOERROR;
+		return true;
 	}
 
 	for(CreatureEventList::iterator it = killEvents.begin(); it != killEvents.end(); ++it)
 	{
-		if(!(*it)->executeKill(this, target, true) && ret == RET_NOERROR)
-			ret = RET_NOTPOSSIBLE;
+		if(!(*it)->executeKill(this, target, true) && ret)
+			ret = false;
 	}
 
 	return ret;

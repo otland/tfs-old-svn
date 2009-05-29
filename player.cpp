@@ -3608,35 +3608,34 @@ void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)
 	}
 }
 
-ReturnValue Player::onKilledCreature(Creature* target, bool lastHit)
+bool Player::onKilledCreature(Creature* target, uint32_t flags/* = 0*/)
 {
-	if(Creature::onKilledCreature(target, lastHit) == RET_NOTPOSSIBLE)
-		return RET_NOTPOSSIBLE;
+	if(!Creature::onKilledCreature(target, flags))
+		return false;
 
 	if(hasFlag(PlayerFlag_NotGenerateLoot))
 		target->setDropLoot(LOOT_DROP_NONE);
 
-	if(hasFlag(PlayerFlag_NotGainInFight))
-		return RET_NOERROR;
+	if(hasFlag(PlayerFlag_NotGainInFight) || !hasBitSet((uint32_t)KILLFLAG_JUSTIFY, flags))
+		return true;
 
 	Player* targetPlayer = target->getPlayer();
-	if(!targetPlayer || getZone() != target->getZone() || Combat::isInPvpZone(this, targetPlayer))
-		return RET_NOERROR;
-
-	ReturnValue ret = RET_NOERROR;
-	if(!isPartner(targetPlayer) && !targetPlayer->hasAttacked(this) &&
-		target->getSkull() == SKULL_NONE && addUnjustifiedKill(targetPlayer))
-		ret = RET_NEEDEXCHANGE;
+	if(!targetPlayer || Combat::isInPvpZone(this, targetPlayer) || getZone() != target->getZone())
+		return true;
 
 	if(!hasCondition(CONDITION_INFIGHT))
-		return ret;
+		return true;
+
+	if(!isPartner(targetPlayer) && !targetPlayer->hasAttacked(this) &&
+		target->getSkull() == SKULL_NONE && addUnjustifiedKill(targetPlayer))
+		flags |= (uint32_t)KILLFLAG_UNJUSTIFIED;
 
 	pzLocked = true;
 	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
 		CONDITION_INFIGHT, g_config.getNumber(ConfigManager::WHITE_SKULL_TIME)))
 		addCondition(condition);
 
-	return ret;
+	return true;
 }
 
 void Player::gainExperience(uint64_t gainExp)

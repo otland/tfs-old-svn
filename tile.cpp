@@ -163,12 +163,15 @@ std::string Tile::getDescription(int32_t lookDistance) const
 
 Teleport* Tile::getTeleportItem() const
 {
-	if(!hasFlag(TILESTATE_POSITIONCHANGE))
+	if(!hasFlag(TILESTATE_TELEPORT))
 		return NULL;
+
+	if(ground && ground->getTeleport())
+		return ground->getTeleport();
 
 	if(const TileItemVector* items = getItemList())
 	{
-		for(ItemVector::const_iterator it = items->getBeginTopItem(); it != items->getEndTopItem(); ++it)
+		for(ItemVector::const_reverse_iterator it = items->rbegin(); it != items->rend(); ++it)
 		{
 			if((*it)->getTeleport())
 				return (*it)->getTeleport();
@@ -183,9 +186,12 @@ MagicField* Tile::getFieldItem() const
 	if(!hasFlag(TILESTATE_MAGICFIELD))
 		return NULL;
 
+	if(ground && ground->getMagicField())
+		return ground->getMagicField();
+
 	if(const TileItemVector* items = getItemList())
 	{
-		for(ItemVector::const_iterator it = items->getBeginDownItem(); it != items->getEndDownItem(); ++it)
+		for(ItemVector::const_reverse_iterator it = items->rbegin(); it != items->rend(); ++it)
 		{
 			if((*it)->getMagicField())
 				return (*it)->getMagicField();
@@ -197,12 +203,15 @@ MagicField* Tile::getFieldItem() const
 
 TrashHolder* Tile::getTrashHolder() const
 {
+	if(!hasFlag(TILESTATE_TRASHHOLDER))
+		return NULL;
+
 	if(ground && ground->getTrashHolder())
 		return ground->getTrashHolder();
 
 	if(const TileItemVector* items = getItemList())
 	{
-		for(ItemVector::const_iterator it = items->begin(); it != items->end(); ++it)
+		for(ItemVector::const_reverse_iterator it = items->rbegin(); it != items->rend(); ++it)
 		{
 			if((*it)->getTrashHolder())
 				return (*it)->getTrashHolder();
@@ -214,9 +223,15 @@ TrashHolder* Tile::getTrashHolder() const
 
 Mailbox* Tile::getMailbox() const
 {
+	if(!hasFlag(TILESTATE_MAILBOX))
+		return NULL;
+
+	if(ground && ground->getMailbox())
+		return ground->getMailbox();
+
 	if(const TileItemVector* items = getItemList())
 	{
-		for(ItemVector::const_iterator it = items->begin(); it != items->end(); ++it)
+		for(ItemVector::const_reverse_iterator it = items->rbegin(); it != items->rend(); ++it)
 		{
 			if((*it)->getMailbox())
 				return (*it)->getMailbox();
@@ -228,9 +243,15 @@ Mailbox* Tile::getMailbox() const
 
 BedItem* Tile::getBedItem() const
 {
+	if(!hasFlag(TILESTATE_BED))
+		return NULL;
+
+	if(ground && ground->getBed())
+		return ground->getBed();
+
 	if(const TileItemVector* items = getItemList())
 	{
-		for(ItemVector::const_iterator it = items->begin(); it != items->end(); ++it)
+		for(ItemVector::const_reverse_iterator it = items->rbegin(); it != items->rend(); ++it)
 		{
 			if((*it)->getBed())
 				return (*it)->getBed();
@@ -750,37 +771,37 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 	Tile* destTile = NULL;
 	*destItem = NULL;
 
-	uint16_t dx = getTilePosition().x, dy = getTilePosition().y, dz = getTilePosition().z;
+	Position pos = getTilePosition();
 	if(floorChangeDown())
 	{
-		dz++;
-		if(Tile* downTile = g_game.getTile(dx, dy, dz))
+		pos.z++;
+		if(Tile* downTile = g_game.getTile(pos))
 		{
 			if(downTile->floorChange(NORTH))
-				dy++;
+				pos.y++;
 			if(downTile->floorChange(SOUTH))
-				dy--;
+				pos.y--;
 			if(downTile->floorChange(EAST))
-				dx--;
+				pos.x--;
 			if(downTile->floorChange(WEST))
-				dx++;
+				pos.x++;
 
-			destTile = g_game.getTile(dx, dy, dz);
+			destTile = g_game.getTile(pos);
 		}
 	}
 	else if(floorChange())
 	{
-		dz--;
+		pos.z--;
 		if(floorChange(NORTH))
-			dy--;
+			pos.y--;
 		if(floorChange(SOUTH))
-			dy++;
+			pos.y++;
 		if(floorChange(EAST))
-			dx++;
+			pos.x++;
 		if(floorChange(WEST))
-			dx--;
+			pos.x--;
 
-		destTile = g_game.getTile(dx, dy, dz);
+		destTile = g_game.getTile(pos);
 	}
 
 
@@ -1432,53 +1453,22 @@ void Tile::postAddNotification(Creature* actor, Thing* thing, const Cylinder* ol
 		}
 
 		if(Creature* creature = thing->getCreature())
-			g_moveEvents->onCreatureMove(creature, this, true);
+			g_moveEvents->onCreatureMove(actor, creature, this, true);
 
-		bool foundItem = false;
-		if(ground)
+		if(hasFlag(TILESTATE_TELEPORT))
 		{
-			if(ground->getTeleport())
-			{
-				ground->getTeleport()->__addThing(actor, thing);
-				foundItem = true;
-			}
-			else if(ground->getTrashHolder())
-			{
-				ground->getTrashHolder()->__addThing(actor, thing);
-				foundItem = true;
-			}
-			else if(ground->getMailbox())
-			{
-				ground->getMailbox()->__addThing(actor, thing);
-				foundItem = true;
-			}
+			if(Teleport* teleport = getTeleportItem())
+				teleport->__addThing(actor, thing);
 		}
-
-		if(!foundItem)
+		else if(hasFlag(TILESTATE_TRASHHOLDER))
 		{
-			if(const TileItemVector* items = getItemList())
-			{
-				for(ItemVector::const_iterator it = items->begin(); it != items->end(); ++it)
-				{
-					if((*it)->getTeleport())
-					{
-						(*it)->getTeleport()->__addThing(actor, thing);
-						break;
-					}
-
-					if((*it)->getTrashHolder())
-					{
-						(*it)->getTrashHolder()->__addThing(actor, thing);
-						break;
-					}
-
-					if((*it)->getMailbox())
-					{
-						(*it)->getMailbox()->__addThing(actor, thing);
-						break;
-					}
-				}
-			}
+			if(TrashHolder* trashHolder = getTrashHolder())
+				trashHolder->__addThing(actor, thing);
+		}
+		else if(hasFlag(TILESTATE_MAILBOX))
+		{
+			if(Mailbox* mailbox = getMailbox())
+				mailbox->__addThing(actor, thing);
 		}
 	}
 
@@ -1510,7 +1500,7 @@ void Tile::postRemoveNotification(Creature* actor, Thing* thing,  const Cylinder
 	}
 
 	if(Creature* creature = thing->getCreature())
-		g_moveEvents->onCreatureMove(creature, this, false);
+		g_moveEvents->onCreatureMove(actor, creature, this, false);
 }
 
 void Tile::__internalAddThing(Thing* thing)
@@ -1589,21 +1579,25 @@ void Tile::updateTileFlags(Item* item, bool removed)
 				setFlag(TILESTATE_FLOORCHANGE);
 				setFlag(TILESTATE_FLOORCHANGE_DOWN);
 			}
+
 			if(item->floorChangeNorth())
 			{
 				setFlag(TILESTATE_FLOORCHANGE);
 				setFlag(TILESTATE_FLOORCHANGE_NORTH);
 			}
+
 			if(item->floorChangeSouth())
 			{
 				setFlag(TILESTATE_FLOORCHANGE);
 				setFlag(TILESTATE_FLOORCHANGE_SOUTH);
 			}
+
 			if(item->floorChangeEast())
 			{
 				setFlag(TILESTATE_FLOORCHANGE);
 				setFlag(TILESTATE_FLOORCHANGE_EAST);
 			}
+
 			if(item->floorChangeWest())
 			{
 				setFlag(TILESTATE_FLOORCHANGE);
@@ -1612,10 +1606,19 @@ void Tile::updateTileFlags(Item* item, bool removed)
 		}
 
 		if(item->getTeleport())
-			setFlag(TILESTATE_POSITIONCHANGE);
+			setFlag(TILESTATE_TELEPORT);
 
 		if(item->getMagicField())
 			setFlag(TILESTATE_MAGICFIELD);
+
+		if(item->getMailbox())
+			setFlag(TILESTATE_MAILBOX);
+
+		if(item->getTrashHolder())
+			setFlag(TILESTATE_TRASHHOLDER);
+
+		if(item->getBed())
+			setFlag(TILESTATE_BED);
 
 		if(item->hasProperty(BLOCKSOLID))
 			setFlag(TILESTATE_BLOCKSOLID);
@@ -1665,11 +1668,19 @@ void Tile::updateTileFlags(Item* item, bool removed)
 		}
 
 		if(item->getTeleport())
-			resetFlag(TILESTATE_POSITIONCHANGE);
+			resetFlag(TILESTATE_TELEPORT);
 
 		if(item->getMagicField())
 			resetFlag(TILESTATE_MAGICFIELD);
 
+		if(item->getMailbox())
+			resetFlag(TILESTATE_MAILBOX);
+
+		if(item->getTrashHolder())
+			resetFlag(TILESTATE_TRASHHOLDER);
+
+		if(item->getBed())
+			resetFlag(TILESTATE_BED);
 
 		if(item->hasProperty(BLOCKSOLID) && !hasProperty(item, BLOCKSOLID))
 			resetFlag(TILESTATE_BLOCKSOLID);

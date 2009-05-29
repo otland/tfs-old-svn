@@ -463,7 +463,7 @@ class Player : public Creature, public Cylinder
 		virtual void onAttacked();
 		virtual void onAttackedCreatureDrainHealth(Creature* target, int32_t points);
 		virtual void onTargetCreatureGainHealth(Creature* target, int32_t points);
-		virtual ReturnValue onKilledCreature(Creature* target, bool lastHit);
+		virtual bool onKilledCreature(Creature* target, uint32_t flags = 0);
 		virtual void onGainExperience(uint64_t gainExp);
 		virtual void onGainSharedExperience(uint64_t gainExp);
 		virtual void onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType);

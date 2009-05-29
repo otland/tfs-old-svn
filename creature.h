@@ -65,6 +65,15 @@ enum ZoneType_t
 	ZONE_NORMAL
 };
 
+enum killflags_t
+{
+	KILLFLAG_NONE = 0,
+	KILLFLAG_LASTHIT = 1 << 0,
+	KILLFLAG_SUMMON = 1 << 1,
+	KILLFLAG_JUSTIFY = 1 << 2,
+	KILLFLAG_UNJUSTIFIED = 1 << 3
+};
+
 struct FindPathParams
 {
 	bool fullPathSearch, clearSight, allowDiagonal, keepDistance;
@@ -87,12 +96,13 @@ struct DeathEntry
 
 		bool isCreatureKill() const {return data.type() == typeid(Creature*);}
 		bool isNameKill() const {return !isCreatureKill();}
-		bool isUnjustified() const {return unjustified;}
+		bool isPlayerKill() const {return isCreatureKill() && getKillerCreature()->getPlayer();}
 
 		const std::type_info& getKillerType() const {return data.type();}
 		Creature* getKillerCreature() const {return boost::any_cast<Creature*>(data);}
 		std::string getKillerName() const {return boost::any_cast<std::string>(data);}
 
+		bool isUnjustified() const {return unjustified;}
 		void setUnjustified(bool v) {unjustified = v;}
 
 	protected:
@@ -242,9 +252,11 @@ class Creature : public AutoID, virtual public Thing
 			{
 				if(tile->hasFlag(TILESTATE_PROTECTIONZONE))
 					return ZONE_PROTECTION;
-				else if(tile->hasFlag(TILESTATE_NOPVPZONE))
+
+				if(tile->hasFlag(TILESTATE_NOPVPZONE))
 					return ZONE_NOPVP;
-				else if(tile->hasFlag(TILESTATE_PVPZONE))
+
+				if(tile->hasFlag(TILESTATE_PVPZONE))
 					return ZONE_PVP;
 			}
 
@@ -339,7 +351,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual void onAttackedCreatureDrainHealth(Creature* target, int32_t points);
 		virtual void onTargetCreatureGainHealth(Creature* target, int32_t points);
 		virtual void onAttackedCreatureKilled(Creature* target);
-		virtual ReturnValue onKilledCreature(Creature* target, bool lastHit);
+		virtual bool onKilledCreature(Creature* target, uint32_t flags = 0);
 		virtual void onGainExperience(uint64_t gainExp);
 		virtual void onGainSharedExperience(uint64_t gainExp);
 		virtual void onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType) {}
