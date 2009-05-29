@@ -856,7 +856,7 @@ void Player::dropLoot(Container* corpse)
 		if(Item* item = inventory[i])
 		{
 			uint32_t rand = random_range(1, 100);
-			if(getSkull() == SKULL_RED || (item->getContainer() && rand <= loss) || (!item->getContainer() && rand <= itemLoss))
+			if(skull > SKULL_WHITE || (item->getContainer() && rand <= loss) || (!item->getContainer() && rand <= itemLoss))
 			{
 				g_game.internalMoveItem(NULL, this, corpse, INDEX_WHEREEVER, item, item->getItemCount(), 0);
 				sendRemoveInventoryItem((slots_t)i, inventory[(slots_t)i]);
@@ -924,7 +924,13 @@ bool Player::canSee(const Position& pos) const
 
 bool Player::canSeeCreature(const Creature* creature) const
 {
-	return !(creature->isInvisible() && !creature->getPlayer() && !canSeeInvisibility());
+	if(creature == this)
+		return true;
+
+	if(const Player* player = creature->getPlayer())
+		return !player->isInGhostMode() || getGhostAccess() >= player->getGhostAccess();
+
+	return canSeeInvisibility() || !creature->isInvisible();
 }
 
 Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
@@ -1304,6 +1310,19 @@ void Player::sendHouseWindow(House* house, uint32_t listId) const
 		client->sendHouseWindow(windowTextId, house, listId, text);
 }
 
+void Player::sendCreatureChangeVisible(const Creature* creature, bool visible)
+{
+	if(!client)
+		return;
+
+	if(canSeeCreature(creature))
+		client->sendCreatureOutfit(creature, creature->getCurrentOutfit());
+	else if(visible)
+		sendCreatureAppear(creature, creature->getPosition(), false);
+	else
+		sendCreatureDisappear(creature, false);
+}
+
 void Player::sendAddContainerItem(const Container* container, const Item* item)
 {
 	if(!client)
@@ -1340,21 +1359,20 @@ void Player::sendRemoveContainerItem(const Container* container, uint8_t slot, c
 	}
 }
 
-void Player::onUpdateTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
-	const Item* oldItem, const ItemType& oldType, const Item* newItem, const ItemType& newType)
+void Player::onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
+	const ItemType& oldType, const Item* newItem, const ItemType& newType)
 {
-	Creature::onUpdateTileItem(tile, pos, stackpos, oldItem, oldType, newItem, newType);
+	Creature::onUpdateTileItem(tile, pos, oldItem, oldType, newItem, newType);
 	if(oldItem != newItem)
-		onRemoveTileItem(tile, pos, stackpos, oldType, oldItem);
+		onRemoveTileItem(tile, pos, oldType, oldItem);
 
 	if(tradeState != TRADE_TRANSFER && tradeItem && oldItem == tradeItem)
 		g_game.internalCloseTrade(this);
 }
 
-void Player::onRemoveTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
-	const ItemType& iType, const Item* item)
+void Player::onRemoveTileItem(const Tile* tile, const Position& pos, const ItemType& iType, const Item* item)
 {
-	Creature::onRemoveTileItem(tile, pos, stackpos, iType, item);
+	Creature::onRemoveTileItem(tile, pos, iType, item);
 	if(tradeState == TRADE_TRANSFER)
 		return;
 
@@ -1473,9 +1491,9 @@ void Player::onAttackedCreatureChangeZone(ZoneType_t zone)
 	}
 }
 
-void Player::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bool isLogout)
+void Player::onCreatureDisappear(const Creature* creature, bool isLogout)
 {
-	Creature::onCreatureDisappear(creature, stackpos, isLogout);
+	Creature::onCreatureDisappear(creature, isLogout);
 	if(creature != this)
 		return;
 
@@ -1587,9 +1605,9 @@ void Player::onWalk(Direction& dir)
 }
 
 void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
-	const Tile* oldTile, const Position& oldPos, uint32_t oldStackPos, bool teleport)
+	const Tile* oldTile, const Position& oldPos, bool teleport)
 {
-	Creature::onCreatureMove(creature, newTile, newPos, oldTile, oldPos, oldStackPos, teleport);
+	Creature::onCreatureMove(creature, newTile, newPos, oldTile, oldPos, teleport);
 	if(creature != this)
 		return;
 
@@ -2062,6 +2080,10 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 	if(blockType != BLOCK_NONE)
 		return blockType;
 
+	if(vocation->getMultiplier(MULTIPLIER_MAGICDEFENSE) != 1.0 && combatType != COMBAT_NONE &&
+		combatType != COMBAT_PHYSICALDAMAGE && combatType != COMBAT_UNDEFINEDDAMAGE && combatType != COMBAT_DROWNDAMAGE)
+		damage -= (int32_t)std::ceil((double)(damage * vocation->getMultiplier(MULTIPLIER_MAGICDEFENSE)) / 100.);
+
 	if(damage > 0)
 	{
 		int32_t blocked = 0;
@@ -2121,7 +2143,7 @@ bool Player::onDeath()
 		setDropLoot(LOOT_DROP_NONE);
 		setLossSkill(false);
 	}
-	else if(getSkull() != SKULL_RED && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
+	else if(skull < SKULL_RED && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
 	{
 		for(uint8_t i = SLOT_FIRST; ((skillLoss || lootDrop == LOOT_DROP_FULL) && i < SLOT_LAST); ++i)
 		{
@@ -2364,7 +2386,7 @@ void Player::removeList()
 	{
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 		{
-			if((*it).second->canSeeGhost(this))
+			if(!(*it).second->canSeeCreature(this))
 				(*it).second->notifyLogOut(this);
 		}
 	}
@@ -2381,7 +2403,7 @@ void Player::addList()
 	{
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 		{
-			if((*it).second->canSeeGhost(this))
+			if(!(*it).second->canSeeCreature(this))
 				(*it).second->notifyLogIn(this);
 		}
 	}
@@ -3414,13 +3436,13 @@ void Player::updateItemsLight(bool internal /*=false*/)
 	}
 }
 
-void Player::onAddCondition(ConditionType_t type)
+void Player::onAddCondition(ConditionType_t type, bool hadCondition)
 {
-	Creature::onAddCondition(type);
+	Creature::onAddCondition(type, hadCondition);
 	sendIcons();
 }
 
-void Player::onAddCombatCondition(ConditionType_t type)
+void Player::onAddCombatCondition(ConditionType_t type, bool hadCondition)
 {
 	std::string tmp = "";
 	switch(type)
@@ -3454,16 +3476,16 @@ void Player::onAddCombatCondition(ConditionType_t type)
 		sendTextMessage(MSG_STATUS_DEFAULT, "You are " + tmp + ".");
 }
 
-void Player::onEndCondition(ConditionType_t type)
+void Player::onEndCondition(ConditionType_t type, bool lastCondition)
 {
-	Creature::onEndCondition(type);
+	Creature::onEndCondition(type, lastCondition);
 	sendIcons();
 	if(type != CONDITION_INFIGHT)
 		return;
 
 	onIdleStatus();
 	pzLocked = false;
-	if(getSkull() != SKULL_RED)
+	if(skull < SKULL_RED)
 	{
 		clearAttacked();
 		setSkull(SKULL_NONE);
@@ -3514,20 +3536,22 @@ void Player::onAttackedCreature(Creature* target)
 	if(!targetPlayer)
 		return;
 
-	pzLocked = true;
-	if(!isPartner(targetPlayer) && getZone() == target->getZone() &&
-		!Combat::isInPvpZone(this, targetPlayer) && !targetPlayer->hasAttacked(this))
+	if(!Combat::isInPvpZone(this, targetPlayer) && !targetPlayer->hasAttacked(this))
 	{
-		addAttacked(targetPlayer);
-		if(targetPlayer->getSkull() == SKULL_NONE && getSkull() == SKULL_NONE
-			&& !hasCustomFlag(PlayerCustomFlag_NotGainSkull))
+		pzLocked = true;
+		if(getZone() == target->getZone() && !isPartner(targetPlayer))
 		{
-			setSkull(SKULL_WHITE);
-			g_game.updateCreatureSkull(this);
-		}
+			addAttacked(targetPlayer);
+			if(targetPlayer->getSkull() == SKULL_NONE && getSkull() == SKULL_NONE
+				&& !hasCustomFlag(PlayerCustomFlag_NotGainSkull))
+			{
+				setSkull(SKULL_WHITE);
+				g_game.updateCreatureSkull(this);
+			}
 
-		if(getSkull() == SKULL_NONE)
-			targetPlayer->sendCreatureSkull(this);
+			if(getSkull() == SKULL_NONE)
+				targetPlayer->sendCreatureSkull(this);
+		}
 	}
 }
 
@@ -3584,36 +3608,35 @@ void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)
 	}
 }
 
-bool Player::onKilledCreature(Creature* target, bool& value)
+ReturnValue Player::onKilledCreature(Creature* target, bool lastHit)
 {
-	if(!Creature::onKilledCreature(target, value))
-		return false;
-
-	if(value)
-		return true;
+	if(Creature::onKilledCreature(target, lastHit) == RET_NOTPOSSIBLE)
+		return RET_NOTPOSSIBLE;
 
 	if(hasFlag(PlayerFlag_NotGenerateLoot))
 		target->setDropLoot(LOOT_DROP_NONE);
 
 	if(hasFlag(PlayerFlag_NotGainInFight))
-		return true;
+		return RET_NOERROR;
 
 	Player* targetPlayer = target->getPlayer();
 	if(!targetPlayer || getZone() != target->getZone() || Combat::isInPvpZone(this, targetPlayer))
-		return true;
+		return RET_NOERROR;
 
-	if(!isPartner(targetPlayer) && !targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE)
-		value = addUnjustifiedKill(targetPlayer);
+	ReturnValue ret = RET_NOERROR;
+	if(!isPartner(targetPlayer) && !targetPlayer->hasAttacked(this) &&
+		target->getSkull() == SKULL_NONE && addUnjustifiedKill(targetPlayer))
+		ret = RET_NEEDEXCHANGE;
 
 	if(!hasCondition(CONDITION_INFIGHT))
-		return true;
+		return ret;
 
 	pzLocked = true;
 	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
 		CONDITION_INFIGHT, g_config.getNumber(ConfigManager::WHITE_SKULL_TIME)))
 		addCondition(condition);
 
-	return true;
+	return ret;
 }
 
 void Player::gainExperience(uint64_t gainExp)
@@ -3805,7 +3828,7 @@ Skulls_t Player::getSkullClient(const Creature* creature) const
 		if(g_game.getWorldType() != WORLD_TYPE_PVP)
 			return SKULL_NONE;
 
-		if(skull != SKULL_NONE && player->getSkull() != SKULL_RED && player->hasAttacked(this))
+		if(skull != SKULL_NONE && player->getSkull() < SKULL_RED && player->hasAttacked(this))
 			return SKULL_YELLOW;
 
 		if(player->getSkull() == SKULL_NONE && isPartner(player) && g_game.getWorldType() != WORLD_TYPE_NO_PVP)
@@ -3890,7 +3913,7 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 
 	uint32_t d = g_config.getNumber(ConfigManager::RED_DAILY_LIMIT), w = g_config.getNumber(
 		ConfigManager::RED_WEEKLY_LIMIT), m = g_config.getNumber(ConfigManager::RED_MONTHLY_LIMIT);
-	if(skull != SKULL_RED && ((d > 0 && tc >= d) || (w > 0 && wc >= w) || (m > 0 && mc >= m)))
+	if(skull < SKULL_RED && ((d > 0 && tc >= d) || (w > 0 && wc >= w) || (m > 0 && mc >= m)))
 		setRedSkullEnd(now + g_config.getNumber(ConfigManager::RED_SKULL_LENGTH), false);
 
 	d += g_config.getNumber(ConfigManager::BAN_DAILY_LIMIT);

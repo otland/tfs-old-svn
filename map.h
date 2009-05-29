@@ -84,14 +84,10 @@ template<class T> class lessPointer: public std::binary_function<T*, T*, bool>
 		bool operator()(T*& t1, T*& t2) {return *t1 < *t2;}
 };
 
-typedef std::list<Creature*> SpectatorVec;
-typedef std::map<Position, boost::shared_ptr<SpectatorVec> > SpectatorCache;
-
 #define FLOOR_BITS 3
 #define FLOOR_SIZE (1 << FLOOR_BITS)
 #define FLOOR_MASK (FLOOR_SIZE - 1)
 
-typedef std::list<Player*> PlayerList;
 struct Floor
 {
 	Floor();

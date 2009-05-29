@@ -141,7 +141,7 @@ void Combat::getCombatArea(const Position& centerPos, const Position& targetPos,
 		Tile* tile = g_game.getTile(tmpX, tmpY, targetPos.z);
 		if(!tile)
 		{
-			tile = new Tile(tmpX, tmpY, targetPos.z);
+			tile = new StaticTile(tmpX, tmpY, targetPos.z);
 			g_game.setTile(tile);
 		}
 
@@ -283,7 +283,7 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 				isProtected(const_cast<Player*>(attackerPlayer), const_cast<Player*>(targetPlayer))
 				|| (g_config.getBool(ConfigManager::CANNOT_ATTACK_SAME_LOOKFEET) &&
 				attackerPlayer->getDefaultOutfit().lookFeet == targetPlayer->getDefaultOutfit().lookFeet)
-				|| (targetPlayer->isInGhostMode() && !attackerPlayer->canSeeGhost(targetPlayer)))
+				|| !attackerPlayer->canSeeCreature(targetPlayer))
 				return RET_YOUMAYNOTATTACKTHISPLAYER;
 		}
 	}
@@ -529,7 +529,8 @@ bool Combat::CombatHealthFunc(Creature* caster, Creature* target, const CombatPa
 
 	if(healthChange < 0)
 	{
-		if(caster && caster->getPlayer() && target->getPlayer())
+		if(caster && caster->getPlayer() && target->getPlayer()
+			&& target->getPlayer()->getSkull() != SKULL_BLACK)
 			healthChange = healthChange / 2;
 	}
 
@@ -547,7 +548,8 @@ bool Combat::CombatManaFunc(Creature* caster, Creature* target, const CombatPara
 	int32_t manaChange = random_range(var->minChange, var->maxChange, DISTRO_NORMAL);
 	if(manaChange < 0)
 	{
-		if(caster && caster->getPlayer() && target->getPlayer())
+		if(caster && caster->getPlayer() && target->getPlayer()
+			&& target->getPlayer()->getSkull() != SKULL_BLACK)
 			manaChange = manaChange / 2;
 	}
 
@@ -719,43 +721,46 @@ void Combat::CombatFunc(Creature* caster, const Position& pos, const AreaCombat*
 	SpectatorVec list;
 	g_game.getSpectators(list, pos, false, true, maxX + Map::maxViewportX, maxX + Map::maxViewportX,
 		maxY + Map::maxViewportY, maxY + Map::maxViewportY);
+
+	Tile* tile = NULL;
+	CreatureVector* creatures = NULL;
 	for(std::list<Tile*>::iterator it = tileList.begin(); it != tileList.end(); ++it)
 	{
-		if(canDoCombat(caster, (*it), params.isAggressive) == RET_NOERROR)
+		if(!(tile = (*it)) || canDoCombat(caster, (*it), params.isAggressive) != RET_NOERROR)
+			continue;
+
+		bool skip = true;
+		if((creatures = tile->getCreatures()))
 		{
-			bool skip = true;
-			if((*it)->creatures)
+			for(CreatureVector::iterator cit = creatures->begin(), cend = creatures->end(); skip && cit != cend; ++cit)
 			{
-				for(CreatureVector::iterator cit = (*it)->creatures->begin(); skip && cit != (*it)->creatures->end(); ++cit)
+				if(params.targetPlayersOrSummons && !(*cit)->getPlayer() && (!(*cit)->getMaster() || !(*cit)->getMaster()->getPlayer()))
+					continue;
+
+				if(params.targetCasterOrTopMost)
 				{
-					if(params.targetPlayersOrSummons && !(*cit)->getPlayer() && (!(*cit)->getMaster() || !(*cit)->getMaster()->getPlayer()))
-						continue;
-
-					if(params.targetCasterOrTopMost)
+					if(caster && caster->getTile() == tile)
 					{
-						if(caster && caster->getTile() == (*it))
-						{
-							if((*cit) == caster)
-								skip = false;
-						}
-						else if((*cit) == (*it)->getTopCreature())
+						if((*cit) == caster)
 							skip = false;
-
-						if(skip)
-							continue;
 					}
+					else if((*cit) == tile->getTopCreature())
+						skip = false;
 
-					if(!params.isAggressive || (caster != (*cit) && Combat::canDoCombat(caster, (*cit)) == RET_NOERROR))
-					{
-						func(caster, (*cit), params, data);
-						if(params.targetCallback)
-							params.targetCallback->onTargetCombat(caster, (*cit));
-					}
+					if(skip)
+						continue;
+				}
+
+				if(!params.isAggressive || (caster != (*cit) && Combat::canDoCombat(caster, (*cit)) == RET_NOERROR))
+				{
+					func(caster, (*cit), params, data);
+					if(params.targetCallback)
+						params.targetCallback->onTargetCombat(caster, (*cit));
 				}
 			}
-
-			combatTileEffects(list, caster, (*it), params);
 		}
+
+		combatTileEffects(list, caster, tile, params);
 	}
 
 	postCombatEffects(caster, pos, params);
@@ -1099,7 +1104,7 @@ bool AreaCombat::getList(const Position& centerPos, const Position& targetPos, s
 					tile = g_game.getTile(tmpX, tmpY, targetPos.z);
 					if(!tile)
 					{
-						tile = new Tile(tmpX, tmpY, targetPos.z);
+						tile = new StaticTile(tmpX, tmpY, targetPos.z);
 						g_game.setTile(tile);
 					}
 

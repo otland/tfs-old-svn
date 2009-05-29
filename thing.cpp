@@ -24,35 +24,22 @@
 #include "creature.h"
 #include "player.h"
 
-Thing::Thing()
-{
-	parent = NULL;
-	useCount = 0;
-}
-
-
-Thing::~Thing()
-{
-	//
-	//std::cout << "thing destructor " << this << std::endl;
-}
-
 Cylinder* Thing::getTopParent()
 {
 	//tile
-	if(getParent() == NULL)
+	if(!getParent())
 		return dynamic_cast<Cylinder*>(this);
 
 	Cylinder* aux = getParent();
 	Cylinder* prevaux = dynamic_cast<Cylinder*>(this);
-	while(aux->getParent() != NULL){
+	while(aux->getParent())
+	{
 		prevaux = aux;
 		aux = aux->getParent();
 	}
 
-	if(dynamic_cast<Cylinder*>(prevaux)){
+	if(dynamic_cast<Cylinder*>(prevaux))
 		return prevaux;
-	}
 
 	return aux;
 }
@@ -65,15 +52,14 @@ const Cylinder* Thing::getTopParent() const
 
 	const Cylinder* aux = getParent();
 	const Cylinder* prevaux = dynamic_cast<const Cylinder*>(this);
-
-	while(aux->getParent() != NULL){
+	while(aux->getParent())
+	{
 		prevaux = aux;
 		aux = aux->getParent();
 	}
 
-	if(dynamic_cast<const Cylinder*>(prevaux)){
+	if(dynamic_cast<const Cylinder*>(prevaux))
 		return prevaux;
-	}
 
 	return aux;
 }
@@ -81,14 +67,14 @@ const Cylinder* Thing::getTopParent() const
 Tile* Thing::getTile()
 {
 	Cylinder* cylinder = getTopParent();
-	#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 	if(!cylinder)
 	{
-		std::cout << "Failure: [Thing::getTile()],  NULL tile" << std::endl;
+		std::cout << "[Failure - Thing::getTile] NULL tile" << std::endl;
 		DEBUG_REPORT
 		return &(Tile::nullTile);
 	}
-	#endif
+#endif
 
 	//get root cylinder
 	if(cylinder->getParent())
@@ -100,14 +86,14 @@ Tile* Thing::getTile()
 const Tile* Thing::getTile() const
 {
 	const Cylinder* cylinder = getTopParent();
-
-	#ifdef __DEBUG__MOVESYS__
-	if(!cylinder){
-		std::cout << "Failure: [Thing::getTile() const],  NULL tile" << std::endl;
+#ifdef __DEBUG_MOVESYS__
+	if(!cylinder)
+	{
+		std::cout << "[Failure - Thing::getTile] NULL tile" << std::endl;
 		DEBUG_REPORT
 		return &(Tile::nullTile);
 	}
-	#endif
+#endif
 
 	//get root cylinder
 	if(cylinder->getParent())
@@ -116,29 +102,24 @@ const Tile* Thing::getTile() const
 	return dynamic_cast<const Tile*>(cylinder);
 }
 
-const Position& Thing::getPosition() const
+Position Thing::getPosition() const
 {
 	const Tile* tile = getTile();
-	if(tile){
+	if(!tile)
 		return tile->getTilePosition();
-	}
-	else{
-		#ifdef __DEBUG__MOVESYS__
-		std::cout << "Failure: [Thing::getPosition],  NULL tile" << std::endl;
-		DEBUG_REPORT
-		#endif
-		return Tile::nullTile.getTilePosition();
-	}
+
+#ifdef __DEBUG_MOVESYS__
+	std::cout << "[Failure - Thing::getTile] NULL tile" << std::endl;
+	DEBUG_REPORT
+#endif
+	return Tile::nullTile.getTilePosition();
 }
 
 bool Thing::isRemoved() const
 {
-	if(parent == NULL)
+	if(!parent)
 		return true;
 
 	const Cylinder* aux = getParent();
-	if(aux->isRemoved())
-		return true;
-
-	return false;
+	return aux->isRemoved();
 }

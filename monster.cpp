@@ -144,9 +144,9 @@ void Monster::onCreatureAppear(const Creature* creature, bool isLogin)
 		onCreatureEnter(const_cast<Creature*>(creature));
 }
 
-void Monster::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bool isLogout)
+void Monster::onCreatureDisappear(const Creature* creature, bool isLogout)
 {
-	Creature::onCreatureDisappear(creature, stackpos, isLogout);
+	Creature::onCreatureDisappear(creature, isLogout);
 	if(creature == this)
 	{
 		if(spawn)
@@ -159,9 +159,9 @@ void Monster::onCreatureDisappear(const Creature* creature, uint32_t stackpos, b
 }
 
 void Monster::onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
-	const Tile* oldTile, const Position& oldPos, uint32_t oldStackPos, bool teleport)
+	const Tile* oldTile, const Position& oldPos, bool teleport)
 {
-	Creature::onCreatureMove(creature, newTile, newPos, oldTile, oldPos, oldStackPos, teleport);
+	Creature::onCreatureMove(creature, newTile, newPos, oldTile, oldPos, teleport);
 	if(creature == this)
 	{
 		if(isSummon())
@@ -562,8 +562,9 @@ bool Monster::deactivate(bool forced /*= false*/)
 	return !isActivated;
 }
 
-void Monster::onAddCondition(ConditionType_t type)
+void Monster::onAddCondition(ConditionType_t type, bool hadCondition)
 {
+	Creature::onAddCondition(type, hadCondition);
 	//the walkCache need to be updated if the monster becomes "resistent" to the damage, see Tile::__queryAdd()
 	if(type == CONDITION_FIRE || type == CONDITION_ENERGY || type == CONDITION_POISON)
 		updateMapCache();
@@ -571,8 +572,9 @@ void Monster::onAddCondition(ConditionType_t type)
 	activate();
 }
 
-void Monster::onEndCondition(ConditionType_t type)
+void Monster::onEndCondition(ConditionType_t type, bool lastCondition)
 {
+	Creature::onEndCondition(type, lastCondition);
 	//the walkCache need to be updated if the monster loose the "resistent" to the damage, see Tile::__queryAdd()
 	if(type == CONDITION_FIRE || type == CONDITION_ENERGY || type == CONDITION_POISON)
 		updateMapCache();
@@ -889,29 +891,29 @@ bool Monster::pushItem(Item* item, int32_t radius)
 
 void Monster::pushItems(Tile* tile)
 {
-	if(!tile->downItems)
-		return;
-
-	//We cannot use iterators here since we can push the item to another tile
-	//which will invalidate the iterator.
-	//start from the end to minimize the amount of traffic
-	int32_t moveCount = 0, removeCount = 0, downItemSize = tile->downItems->size();
-	for(int32_t i = downItemSize - 1; i >= 0; --i)
+	if(TileItemVector* items = tile->getItemList())
 	{
-		assert(i >= 0 && i < (int32_t)tile->downItems->size());
-		Item* item = tile->downItems->at(i);
-		if(item && item->hasProperty(MOVEABLE) && (item->hasProperty(BLOCKPATH)
-			|| item->hasProperty(BLOCKSOLID)))
+		//We cannot use iterators here since we can push the item to another tile
+		//which will invalidate the iterator.
+		//start from the end to minimize the amount of traffic
+		int32_t moveCount = 0, removeCount = 0, downItemsSize = tile->getDownItemCount();
+		Item* item = NULL;
+		for(int32_t i = downItemsSize - 1; i >= 0; --i)
 		{
-			if(moveCount < 20 && pushItem(item, 1))
-				moveCount++;
-			else if(g_game.internalRemoveItem(this, item) == RET_NOERROR)
-				++removeCount;
+			assert(i >= 0 && i < downItemsSize);
+			if((item = items->at(i)) && item->hasProperty(MOVEABLE) &&
+				(item->hasProperty(BLOCKPATH) || item->hasProperty(BLOCKSOLID)))
+			{
+				if(moveCount < 20 && pushItem(item, 1))
+					moveCount++;
+				else if(g_game.internalRemoveItem(this, item) == RET_NOERROR)
+					++removeCount;
+			}
 		}
-	}
 
-	if(removeCount > 0)
-		g_game.addMagicEffect(tile->getPosition(), NM_ME_POFF);
+		if(removeCount > 0)
+			g_game.addMagicEffect(tile->getPosition(), NM_ME_POFF);
+	}
 }
 
 bool Monster::pushCreature(Creature* creature)
@@ -924,11 +926,12 @@ bool Monster::pushCreature(Creature* creature)
 	dirVector.push_back(EAST);
 
 	std::random_shuffle(dirVector.begin(), dirVector.end());
+	Tile* tile = NULL;
 	for(DirVector::iterator it = dirVector.begin(); it != dirVector.end(); ++it)
 	{
-		Tile* toTile = g_game.getTile(Spells::getCasterPosition(creature, *it));
-		if(toTile && !toTile->hasProperty(BLOCKPATH) && g_game.internalMoveCreature(creature, *it) == RET_NOERROR)
-			return true; //TODO: internalMoveCreature is always returning RET_NOERROR, but creature is really not moved = CRASH
+		if((tile = g_game.getTile(Spells::getCasterPosition(creature, (*it)))) && !tile->hasProperty(
+			BLOCKPATH) && g_game.internalMoveCreature(creature, (*it)) == RET_NOERROR)
+			return true;
 	}
 
 	return false;
@@ -936,30 +939,29 @@ bool Monster::pushCreature(Creature* creature)
 
 void Monster::pushCreatures(Tile* tile)
 {
-	if(!tile || !tile->creatures || tile->creatures->empty())
-		return;
-
-	bool effect = false;
-	Monster* monster = NULL;
-	for(uint32_t i = 0; (tile->creatures && i < tile->creatures->size());)
+	if(CreatureVector* creatures = tile->getCreatures())
 	{
-		if(tile->creatures->at(i) && (monster = tile->creatures->at(
-			i)->getMonster()) && monster->isPushable())
+		bool effect = false;
+		Monster* monster = NULL;
+		for(uint32_t i = 0; i < creatures->size();)
 		{
-			if(pushCreature(monster))
-				continue;
+			if((monster = creatures->at(i)->getMonster()) && monster->isPushable())
+			{
+				if(pushCreature(monster))
+					continue;
 
-			monster->setDropLoot(LOOT_DROP_NONE);
-			monster->changeHealth(-monster->getHealth());
-			if(!effect)
-				effect = true;
+				monster->setDropLoot(LOOT_DROP_NONE);
+				monster->changeHealth(-monster->getHealth());
+				if(!effect)
+					effect = true;
+			}
+
+			++i;
 		}
 
-		++i;
+		if(effect)
+			g_game.addMagicEffect(tile->getPosition(), NM_ME_BLOCKHIT);
 	}
-
-	if(effect)
-		g_game.addMagicEffect(tile->getPosition(), NM_ME_BLOCKHIT);
 }
 
 bool Monster::getNextStep(Direction& dir)
@@ -1144,7 +1146,8 @@ bool Monster::canWalkTo(Position pos, Direction dir)
 		return false;
 
 	Tile* tile = g_game.getTile(pos);
-	return tile && tile->__queryAdd(0, this, 1, FLAG_PATHFINDING) == RET_NOERROR;
+	return tile && !tile->getTopVisibleCreature(this) && tile->__queryAdd(
+		0, this, 1, FLAG_PATHFINDING) == RET_NOERROR;
 }
 
 bool Monster::onDeath()

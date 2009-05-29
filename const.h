@@ -387,7 +387,8 @@ enum Skulls_t
 	SKULL_YELLOW = 1,
 	SKULL_GREEN = 2,
 	SKULL_WHITE = 3,
-	SKULL_RED = 4
+	SKULL_RED = 4,
+	SKULL_BLACK = 5
 };
 
 enum PartyShields_t
@@ -491,7 +492,7 @@ enum PlayerFlags
 	PlayerFlag_CannotMoveCreatures,			//2^43 = 8796093022208
 	PlayerFlag_CanReportBugs,			//2^44 = 17592186044416
 	PlayerFlag_45,	//ignore			//2^45 = 35184372088832	//not used by us
-	PlayerFlag_CannotBeSeen,			//2^46 = 70368744177664 //not implemented yet
+	PlayerFlag_CannotBeSeen,			//2^46 = 70368744177664
 
 	PlayerFlag_LastFlag
 };

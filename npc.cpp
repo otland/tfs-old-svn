@@ -1015,16 +1015,15 @@ void Npc::onAddTileItem(const Tile* tile, const Position& pos, const Item* item)
 	Creature::onAddTileItem(tile, pos, item);
 }
 
-void Npc::onUpdateTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
-	const Item* oldItem, const ItemType& oldType, const Item* newItem, const ItemType& newType)
+void Npc::onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
+	const ItemType& oldType, const Item* newItem, const ItemType& newType)
 {
-	Creature::onUpdateTileItem(tile, pos, stackpos, oldItem, oldType, newItem, newType);
+	Creature::onUpdateTileItem(tile, pos, oldItem, oldType, newItem, newType);
 }
 
-void Npc::onRemoveTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
-	const ItemType& iType, const Item* item)
+void Npc::onRemoveTileItem(const Tile* tile, const Position& pos, const ItemType& iType, const Item* item)
 {
-	Creature::onRemoveTileItem(tile, pos, stackpos, iType, item);
+	Creature::onRemoveTileItem(tile, pos, iType, item);
 }
 
 void Npc::onUpdateTile(const Tile* tile, const Position& pos)
@@ -1058,14 +1057,11 @@ void Npc::onCreatureAppear(const Creature* creature, bool isLogin)
 	}
 }
 
-void Npc::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bool isLogout)
+void Npc::onCreatureDisappear(const Creature* creature, bool isLogout)
 {
-	Creature::onCreatureDisappear(creature, stackpos, isLogout);
-	if(creature == this)
-	{
-		//Close all open shop window's
+	Creature::onCreatureDisappear(creature, isLogout);
+	if(creature == this) //Close all open shop window's
 		closeAllShopWindows();
-	}
 	else if(Player* player = const_cast<Player*>(creature->getPlayer()))
 	{
 		if(m_npcEventHandler)
@@ -1081,9 +1077,9 @@ void Npc::onCreatureDisappear(const Creature* creature, uint32_t stackpos, bool 
 }
 
 void Npc::onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
-		const Tile* oldTile, const Position& oldPos, uint32_t oldStackPos, bool teleport)
+		const Tile* oldTile, const Position& oldPos, bool teleport)
 {
-	Creature::onCreatureMove(creature, newTile, newPos, oldTile, oldPos, oldStackPos, teleport);
+	Creature::onCreatureMove(creature, newTile, newPos, oldTile, oldPos, teleport);
 	if(creature == this)
 	{
 		if(m_npcEventHandler)
@@ -1097,9 +1093,7 @@ void Npc::onCreatureMove(const Creature* creature, const Tile* newTile, const Po
 		NpcState* npcState = getState(player);
 		if(npcState)
 		{
-			bool canSeeNewPos = canSee(newPos);
-			bool canSeeOldPos = canSee(oldPos);
-
+			bool canSeeNewPos = canSee(newPos), canSeeOldPos = canSee(oldPos);
 			if(canSeeNewPos && !canSeeOldPos)
 			{
 				npcState->respondToCreature = player->getID();
@@ -1120,9 +1114,9 @@ void Npc::onCreatureMove(const Creature* creature, const Tile* newTile, const Po
 	}
 }
 
-void Npc::onCreatureTurn(const Creature* creature, uint32_t stackpos)
+void Npc::onCreatureTurn(const Creature* creature)
 {
-	Creature::onCreatureTurn(creature, stackpos);
+	Creature::onCreatureTurn(creature);
 }
 
 void Npc::onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos/* = NULL*/)

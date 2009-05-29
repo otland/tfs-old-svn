@@ -36,12 +36,15 @@
 
 #include "baseevents.h"
 #include "talkaction.h"
-#include "raids.h"
+#include "movement.h"
+
 #include "spells.h"
 #include "combat.h"
 #include "condition.h"
 
 #include "monsters.h"
+#include "raids.h"
+
 #include "configmanager.h"
 #include "game.h"
 
@@ -50,6 +53,7 @@ extern Monsters g_monsters;
 extern ConfigManager g_config;
 extern Spells* g_spells;
 extern TalkActions* g_talkActions;
+extern MoveEvents* g_moveEvents;
 
 enum
 {
@@ -4385,7 +4389,11 @@ int32_t LuaScriptInterface::luaDoSetItemActionId(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Item* item = env->getItemByUID(popNumber(L)))
 	{
+		if(item->getActionId())
+			g_moveEvents->onRemoveTileItem(item->getTile(), item);
+
 		item->setActionId(actionid);
+		g_moveEvents->onAddTileItem(item->getTile(), item);
 		lua_pushboolean(L, true);
 	}
 	else
@@ -5840,7 +5848,7 @@ int32_t LuaScriptInterface::luaDoCombat(lua_State* L)
 		case VARIANT_NUMBER:
 		{
 			Creature* target = g_game.getCreatureByID(var.number);
-			if(!target || (target->isInGhostMode() && (!creature || !creature->canSeeGhost(target))))
+			if(!target || !creature || !creature->canSeeCreature(target))
 			{
 				lua_pushboolean(L, false);
 				return 1;
@@ -5876,7 +5884,7 @@ int32_t LuaScriptInterface::luaDoCombat(lua_State* L)
 		case VARIANT_STRING:
 		{
 			Player* target = g_game.getPlayerByName(var.text);
-			if(!target || (target->isInGhostMode() && !creature->canSeeGhost(target)))
+			if(!target || !creature || !creature->canSeeCreature(target))
 			{
 				lua_pushboolean(L, false);
 				return 1;

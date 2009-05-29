@@ -56,8 +56,15 @@ class MoveEvents : public BaseEvents
 		uint32_t onItemMove(Creature* actor, Item* item, Tile* tile, bool isAdd);
 
 		MoveEvent* getEvent(Item* item, MoveEvent_t eventType);
+		bool hasTileEvent(Item* item);
+
+		void onRemoveTileItem(const Tile* tile, Item* item);
+		void onAddTileItem(const Tile* tile, Item* item);
 
 	protected:
+		Tile* m_lastCacheTile;
+		std::vector<Item*> m_lastCacheItemVector;
+
 		virtual std::string getScriptBaseName() const {return "movements";}
 		virtual void clear();
 
@@ -72,19 +79,19 @@ class MoveEvents : public BaseEvents
 		void registerUniqueID(int32_t uniqueId, MoveEvent_t eventType);
 
 		typedef std::map<int32_t, MoveEventList> MoveListMap;
-		typedef std::map<Position, MoveEventList> MovePosListMap;
 		MoveListMap m_itemIdMap;
 		MoveListMap m_uniqueIdMap;
 		MoveListMap m_actionIdMap;
+
+		typedef std::map<Position, MoveEventList> MovePosListMap;
 		MovePosListMap m_positionMap;
+		void clearMap(MoveListMap& map);
 
 		void addEvent(MoveEvent* moveEvent, int32_t id, MoveListMap& map);
 		MoveEvent* getEvent(Item* item, MoveEvent_t eventType, slots_t slot);
 
 		void addEvent(MoveEvent* moveEvent, Position pos, MovePosListMap& map);
 		MoveEvent* getEvent(Tile* tile, MoveEvent_t eventType);
-
-		void clearMap(MoveListMap& map);
 };
 
 typedef uint32_t (StepFunction)(Creature* creature, Item* item, const Position& pos);

@@ -202,9 +202,6 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool isRemoved() const {return isInternalRemoved;}
 		virtual bool canSeeInvisibility() const {return false;}
 
-		virtual bool isInGhostMode() const {return false;}
-		virtual bool canSeeGhost(const Creature* creature) const {return false;}
-
 		int64_t getSleepTicks() const;
 		int32_t getWalkDelay(Direction dir, uint32_t resolution) const;
 		int64_t getTimeSinceLastMove() const;
@@ -236,7 +233,9 @@ class Creature : public AutoID, virtual public Thing
 		const void setCurrentOutfit(Outfit_t outfit) {currentOutfit = outfit;}
 		const Outfit_t getDefaultOutfit() const {return defaultOutfit;}
 
-		bool isInvisible() const {return hasCondition(CONDITION_INVISIBLE);}
+		bool isInvisible() const {return hasCondition(CONDITION_INVISIBLE, false);}
+		virtual bool isInGhostMode() const {return false;}
+
 		ZoneType_t getZone() const
 		{
 			if(const Tile* tile = getTile())
@@ -330,9 +329,9 @@ class Creature : public AutoID, virtual public Thing
 		bool hasBeenAttacked(uint32_t attackerId) const;
 
 		//combat event functions
-		virtual void onAddCondition(ConditionType_t type);
-		virtual void onAddCombatCondition(ConditionType_t type) {}
-		virtual void onEndCondition(ConditionType_t type) {}
+		virtual void onAddCondition(ConditionType_t type, bool hadCondition);
+		virtual void onAddCombatCondition(ConditionType_t type, bool hadCondition) {}
+		virtual void onEndCondition(ConditionType_t type, bool lastCondition);
 		virtual void onTickCondition(ConditionType_t type, int32_t interval, bool& _remove);
 		virtual void onCombatRemoveCondition(const Creature* attacker, Condition* condition);
 		virtual void onAttackedCreature(Creature* target) {}
@@ -340,7 +339,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual void onAttackedCreatureDrainHealth(Creature* target, int32_t points);
 		virtual void onTargetCreatureGainHealth(Creature* target, int32_t points);
 		virtual void onAttackedCreatureKilled(Creature* target);
-		virtual bool onKilledCreature(Creature* target, bool& value);
+		virtual ReturnValue onKilledCreature(Creature* target, bool lastHit);
 		virtual void onGainExperience(uint64_t gainExp);
 		virtual void onGainSharedExperience(uint64_t gainExp);
 		virtual void onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType) {}
@@ -359,21 +358,20 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool getNextStep(Direction& dir);
 
 		virtual void onAddTileItem(const Tile* tile, const Position& pos, const Item* item);
-		virtual void onUpdateTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
-			const Item* oldItem, const ItemType& oldType, const Item* newItem, const ItemType& newType);
-		virtual void onRemoveTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
-			const ItemType& iType, const Item* item);
+		virtual void onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
+			const ItemType& oldType, const Item* newItem, const ItemType& newType);
+		virtual void onRemoveTileItem(const Tile* tile, const Position& pos, const ItemType& iType, const Item* item);
 		virtual void onUpdateTile(const Tile* tile, const Position& pos) {}
 
 		virtual void onCreatureAppear(const Creature* creature, bool isLogin);
-		virtual void onCreatureDisappear(const Creature* creature, uint32_t stackpos, bool isLogout);
+		virtual void onCreatureDisappear(const Creature* creature, bool isLogout);
 		virtual void onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
-			const Tile* oldTile, const Position& oldPos, uint32_t oldStackPos, bool teleport);
+			const Tile* oldTile, const Position& oldPos, bool teleport);
 
 		virtual void onAttackedCreatureDisappear(bool isLogout) {}
 		virtual void onFollowCreatureDisappear(bool isLogout) {}
 
-		virtual void onCreatureTurn(const Creature* creature, uint32_t stackPos) {}
+		virtual void onCreatureTurn(const Creature* creature) {}
 		virtual void onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text,
 			Position* pos = NULL) {}
 
@@ -410,7 +408,7 @@ class Creature : public AutoID, virtual public Thing
 			Thing::setParent(cylinder);
 		}
 
-		virtual const Position& getPosition() const {return _tile->getTilePosition();}
+		virtual Position getPosition() const {return _tile->getTilePosition();}
 		virtual Tile* getTile() {return _tile;}
 		virtual const Tile* getTile() const {return _tile;}
 		int32_t getWalkCache(const Position& pos) const;
@@ -506,7 +504,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual void dropCorpse(DeathList deathList);
 
 		virtual void doAttacking(uint32_t interval) {}
-		void onCreatureDisappear(const Creature* creature, bool isLogout);
+		void internalCreatureDisappear(const Creature* creature, bool isLogout);
 
 		friend class Game;
 		friend class Map;

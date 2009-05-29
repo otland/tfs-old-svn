@@ -99,6 +99,7 @@ struct OTBM_HouseTile_coords
 
 class IOMap
 {
+	static Tile* createTile(Item*& ground, Item* item, uint16_t px, uint16_t py, uint16_t pz);
 	public:
 		IOMap() {}
 		virtual ~IOMap() {}

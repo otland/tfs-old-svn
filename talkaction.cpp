@@ -769,7 +769,7 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 		return true;
 	}
 
-	Thing* thing = tileInFront->getTopThing();
+	Thing* thing = tileInFront->getTopVisibleThing(creature);
 	if(!thing)
 	{
 		player->sendTextMessage(MSG_STATUS_SMALL, "No object found.");
@@ -1085,68 +1085,57 @@ bool TalkAction::ghost(Creature* creature, const std::string& cmd, const std::st
 	if(!player)
 		return false;
 
-	bool added = true;
+	if(player->hasFlag(PlayerFlag_CannotBeSeen))
+	{
+		player->sendTextMessage(MSG_INFO_DESCR, "Command disabled for players with special, invisibility flag.");
+		return true;
+	}
+
+	SpectatorVec::iterator it;
+	SpectatorVec list = g_game.getSpectators(player->getPosition());
+	Player* tmpPlayer = NULL;
+
 	Condition* condition = NULL;
 	if((condition = player->getCondition(CONDITION_GAMEMASTER, CONDITIONID_DEFAULT, GAMEMASTER_INVISIBLE)))
 	{
+		player->sendTextMessage(MSG_INFO_DESCR, "You are visible again.");
+		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), true);
+
+		Status::getInstance()->addPlayer();
+		for(AutoList<Player>::listiterator pit = Player::listPlayer.list.begin(); pit != Player::listPlayer.list.end(); ++pit)
+		{
+			if(!pit->second->canSeeCreature(player))
+				pit->second->notifyLogIn(player);
+		}
+
+		for(it = list.begin(); it != list.end(); ++it)
+		{
+			if((tmpPlayer = (*it)->getPlayer()) && !tmpPlayer->canSeeCreature(player))
+				tmpPlayer->sendMagicEffect(player->getPosition(), NM_ME_TELEPORT);
+		}
+
 		player->removeCondition(condition);
-		added = false;
+		g_game.internalCreatureChangeVisible(creature, true);
 	}
 	else if((condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_GAMEMASTER, -1, 0, false, GAMEMASTER_INVISIBLE)))
+	{
 		player->addCondition(condition);
-
-	SpectatorVec list;
-	SpectatorVec::const_iterator it;
-	g_game.getSpectators(list, player->getPosition(), true);
-
-	int32_t index = player->getTopParent()->__getIndexOfThing(player);
-	Player* tmpPlayer = NULL;
-	for(it = list.begin(); it != list.end(); ++it)
-	{
-		if((tmpPlayer = (*it)->getPlayer()))
+		g_game.internalCreatureChangeVisible(creature, false);
+		for(it = list.begin(); it != list.end(); ++it)
 		{
-			tmpPlayer->sendCreatureChangeVisible(player, !added);
-			if(tmpPlayer != player && !tmpPlayer->canSeeGhost(player))
-			{
-				if(added)
-				{
-					tmpPlayer->sendCreatureDisappear(player, index, true);
-					tmpPlayer->sendMagicEffect(player->getPosition(), NM_ME_POFF);
-				}
-				else
-					tmpPlayer->sendCreatureAppear(player, player->getPosition(), index, true);
-
-				tmpPlayer->sendUpdateTile(player->getTile(), player->getPosition());
-			}
+			if((tmpPlayer = (*it)->getPlayer()) && !tmpPlayer->canSeeCreature(player))
+				tmpPlayer->sendMagicEffect(player->getPosition(), NM_ME_POFF);
 		}
-	}
 
-	for(it = list.begin(); it != list.end(); ++it)
-		(*it)->onUpdateTile(player->getTile(), player->getPosition());
-
-	if(added)
-	{
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+		for(AutoList<Player>::listiterator pit = Player::listPlayer.list.begin(); pit != Player::listPlayer.list.end(); ++pit)
 		{
-			if(!it->second->canSeeGhost(player))
-				it->second->notifyLogOut(player);
+			if(!pit->second->canSeeCreature(player))
+				pit->second->notifyLogOut(player);
 		}
 
 		Status::getInstance()->removePlayer();
 		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), false);
 		player->sendTextMessage(MSG_INFO_DESCR, "You are now invisible.");
-	}
-	else
-	{
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		{
-			if(!it->second->canSeeGhost(player))
-				it->second->notifyLogIn(player);
-		}
-
-		Status::getInstance()->addPlayer();
-		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), true);
-		player->sendTextMessage(MSG_INFO_DESCR, "You are visible again.");
 	}
 
 	return true;

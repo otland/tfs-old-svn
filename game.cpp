@@ -77,8 +77,7 @@ Game::Game()
 	worldType = WORLD_TYPE_PVP;
 	map = NULL;
 	lastPlayersRecord = lastStageLevel = 0;
-	stateDelay = OTSYS_TIME();
-	for(int8_t i = 0; i < 3; i++)
+	for(int32_t i = 0; i < 3; i++)
 		globalSaveMessage[i] = false;
 
 	OTSYS_THREAD_LOCKVARINIT(AutoID::autoIDLock);
@@ -235,13 +234,7 @@ void Game::setGameState(GameState_t newState)
 			}
 
 			case GAME_STATE_NORMAL:
-				stateDelay = OTSYS_TIME() + STATE_DELAY;
-				break;
-
 			case GAME_STATE_MAINTAIN:
-				stateDelay = 0;
-				break;
-
 			case GAME_STATE_STARTUP:
 			case GAME_STATE_CLOSING:
 			default:
@@ -291,7 +284,7 @@ void Game::cleanMap(uint32_t& count)
 	setGameState(GAME_STATE_MAINTAIN);
 
 	Tile* tile = NULL;
-	Item* item = NULL;
+	TileItemVector* items = NULL;
 
 	int32_t tiles = -1;
 	if(g_config.getBool(ConfigManager::STORE_TRASH))
@@ -305,17 +298,15 @@ void Game::cleanMap(uint32_t& count)
 				if((tile = getTile(*it)))
 				{
 					tile->resetFlag(TILESTATE_TRASHED);
-					if(!tile->hasFlag(TILESTATE_HOUSE))
+					if(!tile->hasFlag(TILESTATE_HOUSE) && (items = tile->getItemList()))
 					{
-						for(uint32_t i = 0; i < tile->getThingCount(); ++i)
+						for(ItemVector::iterator iit = items->begin(), iend = items->end(); iit != iend; ++iit)
 						{
-							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap()
-								&& !item->isNotMoveable() && !item->isScriptProtected())
-							{
-								internalRemoveItem(NULL, item);
-								--i;
-								count++;
-							}
+							if((*iit)->isLoadedFromMap() || (*iit)->isNotMoveable() || (*iit)->isScriptProtected())
+								continue;
+
+							internalRemoveItem(NULL, (*iit));
+							count++;
 						}
 					}
 				}
@@ -331,17 +322,15 @@ void Game::cleanMap(uint32_t& count)
 				if((tile = getTile(*it)))
 				{
 					tile->resetFlag(TILESTATE_TRASHED);
-					if(!tile->hasFlag(TILESTATE_PROTECTIONZONE))
+					if(!tile->hasFlag(TILESTATE_PROTECTIONZONE) && (items = tile->getItemList()))
 					{
-						for(uint32_t i = 0; i < tile->getThingCount(); ++i)
+						for(ItemVector::iterator iit = items->begin(), iend = items->end(); iit != iend; ++iit)
 						{
-							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap()
-								&& !item->isNotMoveable() && !item->isScriptProtected())
-							{
-								internalRemoveItem(NULL, item);
-								--i;
-								count++;
-							}
+							if((*iit)->isLoadedFromMap() || (*iit)->isNotMoveable() || (*iit)->isScriptProtected())
+								continue;
+
+							internalRemoveItem(NULL, (*iit));
+							count++;
 						}
 					}
 				}
@@ -359,17 +348,15 @@ void Game::cleanMap(uint32_t& count)
 			{
 				for(uint32_t x = 1; x <= map->mapWidth; x++)
 				{
-					if((tile = getTile(x, y, (uint32_t)z)) && !tile->hasFlag(TILESTATE_HOUSE))
+					if((tile = getTile(x, y, (uint32_t)z)) && !tile->hasFlag(TILESTATE_HOUSE) && (items = tile->getItemList()))
 					{
-						for(uint32_t i = 0; i < tile->getThingCount(); ++i)
+						for(ItemVector::iterator iit = items->begin(), iend = items->end(); iit != iend; ++iit)
 						{
-							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap()
-								&& !item->isNotMoveable() && !item->isScriptProtected())
-							{
-								internalRemoveItem(NULL, item);
-								--i;
-								count++;
-							}
+							if((*iit)->isLoadedFromMap() || (*iit)->isNotMoveable() || (*iit)->isScriptProtected())
+								continue;
+
+							internalRemoveItem(NULL, (*iit));
+							count++;
 						}
 					}
 				}
@@ -384,17 +371,15 @@ void Game::cleanMap(uint32_t& count)
 			{
 				for(uint32_t x = 1; x <= map->mapWidth; x++)
 				{
-					if((tile = getTile(x, y, (uint32_t)z)) && !tile->hasFlag(TILESTATE_PROTECTIONZONE))
+					if((tile = getTile(x, y, (uint32_t)z)) && !tile->hasFlag(TILESTATE_PROTECTIONZONE) && (items = tile->getItemList()))
 					{
-						for(uint32_t i = 0; i < tile->getThingCount(); ++i)
+						for(ItemVector::iterator iit = items->begin(), iend = items->end(); iit != iend; ++iit)
 						{
-							if((item = tile->__getThing(i)->getItem()) && !item->isLoadedFromMap()
-								&& !item->isNotMoveable() && !item->isScriptProtected())
-							{
-								internalRemoveItem(NULL, item);
-								--i;
-								count++;
-							}
+							if((*iit)->isLoadedFromMap() || (*iit)->isNotMoveable() || (*iit)->isScriptProtected())
+								continue;
+
+							internalRemoveItem(NULL, (*iit));
+							count++;
 						}
 					}
 				}
@@ -439,17 +424,21 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 	}
 
 	Tile* tile = NULL;
+	TileItemVector* items = NULL;
 	Item* item = NULL;
 
-	uint32_t cleaned = 0;
+	uint32_t cleaned = 0, downItemsSize = 0;
 	for(; (*it) != end && (limit != 0 ? (cleaned < limit) : true); ++(*it), ++cleaned)
 	{
-		tile = (*it)->first;
-		if(tile->downItems)
+		if(!(tile = (*it)->first))
+			continue;
+
+		if((items = tile->getItemList()))
 		{
-			for(int32_t i = tile->downItems->size() - 1; i >= 0; --i)
+			downItemsSize = tile->getDownItemCount();
+			for(uint32_t i = downItemsSize - 1; i >= 0; --i)
 			{
-				if((item = tile->downItems->at(i)))
+				if((item = items->at(i)))
 				{
 					#ifndef __DEBUG__
 					internalRemoveItem(NULL, item);
@@ -465,7 +454,7 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 		}
 
 		cleanup();
-		ItemVector list = (*it)->second.list;
+		TileItemVector list = (*it)->second.list;
 		for(ItemVector::reverse_iterator it = list.rbegin(); it != list.rend(); ++it)
 		{
 			Item* item = (*it)->clone();
@@ -512,31 +501,7 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 
 		/*look at*/
 		if(type == STACKPOS_LOOK)
-		{
-			Creature* c;
-			if(!tile->getTopThing() || !(c = tile->getTopThing()->getCreature()))
-				return tile->getTopThing();
-
-			if(!c->isInGhostMode() || player->canSeeGhost(c))
-				return c;
-
-			if(tile->creatures)
-			{
-				for(CreatureVector::iterator it = tile->creatures->begin(); it != tile->creatures->end(); ++it)
-				{
-					if(!(*it)->isInGhostMode() || player->canSeeGhost((*it)))
-						return (*it);
-				}
-			}
-
-			if(tile->getTopDownItem())
-				return tile->getTopDownItem();
-
-			if(tile->getTopTopItem())
-				return tile->getTopTopItem();
-
-			return tile->ground;
-		}
+			return tile->getTopVisibleThing(player);
 
 		Thing* thing = NULL;
 		switch(type)
@@ -547,7 +512,7 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 				if(item && item->isMoveable())
 					thing = item;
 				else
-					thing = tile->getTopCreature();
+					thing = tile->getTopVisibleCreature(player);
 
 				break;
 			}
@@ -794,7 +759,6 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 	if(!internalPlaceCreature(creature, pos, extendedPos, forced))
 		return false;
 
-	bool ghost = false;
 	Player* tmpPlayer = NULL;
 	if((tmpPlayer = creature->getPlayer()) && !tmpPlayer->storedConditionList.empty())
 	{
@@ -808,31 +772,23 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 		}
 
 		tmpPlayer->storedConditionList.clear();
-		ghost = tmpPlayer->isInGhostMode();
 	}
 
 	SpectatorVec::iterator it;
 	SpectatorVec list;
 
 	getSpectators(list, creature->getPosition(), false, true);
-	int32_t newStackPos = creature->getParent()->__getIndexOfThing(creature);
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
-		{
-			if(!ghost || (*it) == creature || tmpPlayer->canSeeGhost(creature))
-				tmpPlayer->sendCreatureAppear(creature, creature->getPosition(),
-					newStackPos, true);
-		}
+			tmpPlayer->sendCreatureAppear(creature, creature->getPosition(), true);
 	}
 
 	for(it = list.begin(); it != list.end(); ++it)
-	{
-		if(!ghost || (*it) == creature || !(*it)->canSeeGhost(creature))
-			(*it)->onCreatureAppear(creature, true);
-	}
+		(*it)->onCreatureAppear(creature, true);
 
-	creature->getParent()->postAddNotification(NULL, creature, NULL, newStackPos);
+	int32_t newIndex = creature->getParent()->__getIndexOfThing(creature);
+	creature->getParent()->postAddNotification(NULL, creature, NULL, newIndex);
 	addCreatureCheck(creature);
 
 	creature->onPlacedCreature();
@@ -865,23 +821,22 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 	SpectatorVec::iterator it;
 	getSpectators(list, creature->getPosition(), false, true);
 
-	int32_t index = cylinder->__getIndexOfThing(creature);
-	if(!map->removeCreature(creature))
-		return false;
-
 	//send to client
 	Player* player = NULL;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
-		if((player = (*it)->getPlayer()))
-			player->sendCreatureDisappear(creature, index, isLogout);
+		if((player = (*it)->getPlayer()) && player->canSeeCreature(creature))
+			player->sendCreatureDisappear(creature, isLogout);
 	}
 
 	//event method
 	for(it = list.begin(); it != list.end(); ++it)
-		(*it)->onCreatureDisappear(creature, index, isLogout);
+		(*it)->onCreatureDisappear(creature, isLogout);
 
-	creature->getParent()->postRemoveNotification(NULL, creature, NULL, index, true);
+	int32_t oldIndex = cylinder->__getIndexOfThing(creature);
+	map->removeCreature(creature);
+
+	creature->getParent()->postRemoveNotification(NULL, creature, NULL, oldIndex, true);
 	creature->setRemoved();
 
 	listCreature.removeList(creature->getID());
@@ -998,8 +953,8 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 	}
 
 	const Position& movingCreaturePos = movingCreature->getPosition();
-	if((!movingCreature->isPushable() && !player->hasFlag(PlayerFlag_CanPushAllCreatures)) ||
-		(movingCreature->isInGhostMode() && !player->canSeeGhost(movingCreature)))
+	if((!movingCreature->isPushable() && !player->hasFlag(PlayerFlag_CanPushAllCreatures))
+		|| !player->canSeeCreature(movingCreature))
 	{
 		player->sendCancelMessage(RET_NOTMOVEABLE);
 		return false;
@@ -3355,7 +3310,7 @@ bool Game::playerRequestAddVip(uint32_t playerId, const std::string& vipName)
 
 	bool online = false;
 	if(Player* target = getPlayerByName(name))
-		online = (!target->isInGhostMode() || player->canSeeGhost(target));
+		online = player->canSeeCreature(target);
 
 	return player->addVIP(guid, name, online);
 }
@@ -3555,9 +3510,9 @@ bool Game::playerSpeakTo(Player* player, SpeakClasses type, const std::string& r
 		return false;
 	}
 
-	bool canSeeGhost = player->canSeeGhost(toPlayer);
-	if(toPlayer->hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_IGNORE) && !player->hasFlag(
-		PlayerFlag_CannotBeMuted) && !canSeeGhost)
+	bool canSee = player->canSeeCreature(toPlayer);
+	if(toPlayer->hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_IGNORE) &&
+		!player->hasFlag(PlayerFlag_CannotBeMuted) && !canSee)
 	{
 		char buffer[70];
 		if(toPlayer->isInGhostMode())
@@ -3574,18 +3529,14 @@ bool Game::playerSpeakTo(Player* player, SpeakClasses type, const std::string& r
 
 	toPlayer->sendCreatureSay(player, type, text);
 	toPlayer->onCreatureSay(player, type, text);
-	if(toPlayer->isInGhostMode() && !canSeeGhost)
+	if(toPlayer->isInGhostMode() && !canSee)
 	{
 		player->sendTextMessage(MSG_STATUS_SMALL, "A player with this name is not online.");
 		return false;
 	}
 
 	char buffer[80];
-	if(type != SPEAK_RVR_ANSWER && player->hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_IGNORE)
-		&& !toPlayer->hasFlag(PlayerFlag_CannotBeMuted) && !toPlayer->canSeeGhost(player))
-			sprintf(buffer, "You're ignoring private messages, so %s will be unable to respond.", toPlayer->getName().c_str());
-	else
-		sprintf(buffer, "Message sent to %s.", toPlayer->getName().c_str());
+	sprintf(buffer, "Message sent to %s.", toPlayer->getName().c_str());
 
 	player->sendTextMessage(MSG_STATUS_SMALL, buffer);
 	return true;
@@ -3743,7 +3694,6 @@ bool Game::internalCreatureTurn(Creature* creature, Direction dir)
 		return false;
 
 	creature->setDirection(dir);
-	int32_t stackpos = creature->getParent()->__getIndexOfThing(creature);
 
 	const SpectatorVec& list = getSpectators(creature->getPosition());
 	SpectatorVec::const_iterator it;
@@ -3753,31 +3703,12 @@ bool Game::internalCreatureTurn(Creature* creature, Direction dir)
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
-		{
-			int32_t i = 0;
-			if(!creature->isInGhostMode() || tmpPlayer->canSeeGhost(creature))
-			{
-				Tile* t = creature->getTile();
-				if(t->creatures)
-				{
-					for(CreatureVector::iterator it = t->creatures->begin(); it != t->creatures->end(); ++it)
-					{
-						if(t->__getIndexOfThing((*it)) < stackpos)
-						{
-							if((*it)->isInGhostMode() && !tmpPlayer->canSeeGhost((*it)))
-								i++;
-						}
-					}
-				}
-			}
-
-			tmpPlayer->sendCreatureTurn(creature, stackpos - i);
-		}
+			tmpPlayer->sendCreatureTurn(creature);
 	}
 
 	//event method
 	for(it = list.begin(); it != list.end(); ++it)
-		(*it)->onCreatureTurn(creature, stackpos);
+		(*it)->onCreatureTurn(creature);
 
 	return true;
 }
@@ -3990,12 +3921,18 @@ void Game::internalCreatureChangeVisible(Creature* creature, bool visible)
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
+		{
 			tmpPlayer->sendCreatureChangeVisible(creature, visible);
+			tmpPlayer->sendUpdateTile(creature->getTile(), creature->getPosition());
+		}
 	}
 
 	//event method
 	for(it = list.begin(); it != list.end(); ++it)
+	{
 		(*it)->onCreatureChangeVisible(creature, visible);
+		(*it)->onUpdateTile(creature->getTile(), creature->getPosition());
+	}
 }
 
 

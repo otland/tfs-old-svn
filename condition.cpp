@@ -1015,7 +1015,7 @@ bool ConditionDamage::updateCondition(const ConditionDamage* addCondition)
 	if(addCondition->doForceUpdate())
 		return true;
 
-	if(getTicks() == -1 && addCondition->getTicks() > 0 || addCondition->getTicks() <= getTicks() ||
+	if((getTicks() == -1 && addCondition->getTicks() > 0) || addCondition->getTicks() <= getTicks() ||
 		addCondition->getTotalDamage() < getTotalDamage() || addCondition->periodDamage < periodDamage)
 		return false;
 
@@ -1487,7 +1487,6 @@ ConditionGeneric(_id, _type, _ticks, _buff, _subId)
 
 bool ConditionInvisible::startCondition(Creature* creature)
 {
-	g_game.internalCreatureChangeVisible(creature, false);
 	return Condition::startCondition(creature);
 }
 

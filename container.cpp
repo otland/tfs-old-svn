@@ -26,14 +26,12 @@ extern Game g_game;
 
 Container::Container(uint16_t _type) : Item(_type)
 {
-	//std::cout << "Container constructor " << this << std::endl;
 	maxSize = items[this->getID()].maxItems;
 	totalWeight = 0.0;
 }
 
 Container::~Container()
 {
-	//std::cout << "Container destructor " << this << std::endl;
 	for(ItemList::iterator cit = itemlist.begin(); cit != itemlist.end(); ++cit)
 	{
 		(*cit)->setParent(NULL);

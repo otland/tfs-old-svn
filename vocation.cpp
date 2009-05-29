@@ -168,6 +168,9 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 			if(readXMLFloat(configNode, "defense", floatValue))
 				voc->setMultiplier(MULTIPLIER_DEFENSE, floatValue);
 
+			if(readXMLFloat(configNode, "magDefense", floatValue) || readXMLFloat(configNode, "magicDefense", floatValue))
+				voc->setMultiplier(MULTIPLIER_MAGICDEFENSE, floatValue);
+
 			if(readXMLFloat(configNode, "armor", floatValue))
 				voc->setMultiplier(MULTIPLIER_ARMOR, floatValue);
 		}
@@ -334,7 +337,7 @@ uint32_t Vocation::getReqSkillTries(int32_t skill, int32_t level)
 	if(it != cacheSkill[skill].end())
 		return it->second;
 
-	skillMap[level] = (uint32_t)(skillBase[skill] * std::pow((float)skillMultipliers[skill], (float)(level - 11)));
+	skillMap[level] = (uint32_t)(skillBase[skill] * std::pow(skillMultipliers[skill], (float)(level - 11)));
 	return skillMap[level];
 }
 
@@ -344,7 +347,7 @@ uint64_t Vocation::getReqMana(uint32_t magLevel)
 	if(it != cacheMana.end())
 		return it->second;
 
-	uint64_t reqMana = (uint64_t)(400 * std::pow(formulaMultipliers[MULTIPLIER_MANA], magLevel - 1));
+	uint64_t reqMana = (uint64_t)(400 * std::pow(formulaMultipliers[MULTIPLIER_MANA], (float)(magLevel - 1)));
 	if(reqMana % 20 < 10)
 		reqMana = reqMana - (reqMana % 20);
 	else

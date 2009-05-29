@@ -174,10 +174,11 @@ void House::removePlayers(bool ignoreInvites)
 	PlayerVector kickList;
 	for(HouseTileList::iterator it = houseTiles.begin(); it != houseTiles.end(); ++it)
 	{
-		if(!(*it)->creatures || (*it)->creatures->empty())
+		CreatureVector* creatures = (*it)->getCreatures();
+		if(!creatures)
 			continue;
 
-		for(CreatureVector::iterator cit = (*it)->creatures->begin(); cit != (*it)->creatures->end(); ++cit)
+		for(CreatureVector::iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
 		{
 			Player* player = (*cit)->getPlayer();
 			if(player && !player->isRemoved() && (ignoreInvites || !isInvited(player)))
@@ -502,13 +503,16 @@ bool AccessList::isInList(const Player* player)
 {
 	std::string name = player->getName();
 	boost::cmatch what;
-
-	std::transform(name.begin(), name.end(), name.begin(), tolower);
-	for(RegExList::iterator it = regExList.begin(); it != regExList.end(); ++it)
+	try
 	{
-		if(boost::regex_match(name.c_str(), what, it->first))
-			return it->second;
+		std::transform(name.begin(), name.end(), name.begin(), tolower);
+		for(RegExList::iterator it = regExList.begin(); it != regExList.end(); ++it)
+		{
+			if(boost::regex_match(name.c_str(), what, it->first))
+				return it->second;
+		}
 	}
+	catch(...) {}
 
 	PlayerList::iterator playerIt = playerList.find(player->getGUID());
 	if(playerIt != playerList.end())

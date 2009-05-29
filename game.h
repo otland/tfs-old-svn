@@ -122,7 +122,7 @@ struct RuleViolation
 
 struct RefreshBlock_t
 {
-	ItemVector list;
+	TileItemVector list;
 	uint64_t lastRefresh;
 };
 
@@ -564,9 +564,6 @@ class Game
 		Map* getMap() {return map;}
 		const Map* getMap() const {return map;}
 
-		int64_t getStateDelay() const {return stateDelay;}
-		void setStateDelay(int64_t _stateDelay) {stateDelay = _stateDelay;}
-
 		int32_t getLightHour() {return lightHour;}
 		void startDecay(Item* item);
 		void npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, bool publicize, bool yell);
@@ -621,7 +618,6 @@ class Game
 		int32_t lastMotdNum;
 		uint32_t lastPlayersRecord;
 		uint32_t checkLightEvent, checkCreatureEvent, checkDecayEvent, saveEvent;
-		int64_t stateDelay;
 		bool globalSaveMessage[2];
 
 		RefreshTiles refreshTiles;

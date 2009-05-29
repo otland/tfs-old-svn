@@ -666,7 +666,9 @@ std::string convertIPAddress(uint32_t ip)
 Skulls_t getSkull(std::string strValue)
 {
 	std::string tmpStrValue = asLowerCaseString(strValue);
-	if(tmpStrValue == "red" || tmpStrValue == "4")
+	if(tmpStrValue == "black" || tmpStrValue == "5")
+		return SKULL_BLACK;
+	else if(tmpStrValue == "red" || tmpStrValue == "4")
 		return SKULL_RED;
 	else if(tmpStrValue == "white" || tmpStrValue == "3")
 		return SKULL_WHITE;

@@ -682,10 +682,10 @@ bool Spell::playerInstantSpellCheck(Player* player, const Position& toPos)
 		}
 		else
 		{
-			Tile* tile = g_game.getTile(toPos.x, toPos.y, toPos.z);
+			Tile* tile = g_game.getTile(toPos);
 			if(!tile)
 			{
-				tile = new Tile(toPos.x, toPos.y, toPos.z);
+				tile = new StaticTile(toPos.x, toPos.y, toPos.z);
 				g_game.setTile(tile);
 			}
 
@@ -697,7 +697,7 @@ bool Spell::playerInstantSpellCheck(Player* player, const Position& toPos)
 				return false;
 			}
 
-			if(blockingCreature && tile->creatures && !tile->creatures->empty())
+			if(blockingCreature && tile->getTopVisibleCreature(player))
 			{
 				player->sendCancelMessage(RET_NOTENOUGHROOM);
 				g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
@@ -761,7 +761,7 @@ bool Spell::playerRuneSpellCheck(Player* player, const Position& toPos)
 				return false;
 			}
 
-			if(blockingCreature && tile->creatures && !tile->creatures->empty())
+			if(blockingCreature && tile->getTopVisibleCreature(player))
 			{
 				player->sendCancelMessage(RET_NOTENOUGHROOM);
 				g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
@@ -774,7 +774,7 @@ bool Spell::playerRuneSpellCheck(Player* player, const Position& toPos)
 				return false;
 			}
 
-			if(needTarget && (!tile->creatures || tile->creatures->empty()))
+			if(needTarget && !tile->getTopVisibleCreature(player))
 			{
 				player->sendCancelMessage(RET_CANONLYUSETHISRUNEONCREATURES);
 				g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
@@ -782,7 +782,7 @@ bool Spell::playerRuneSpellCheck(Player* player, const Position& toPos)
 			}
 
 			if(isAggressive && needTarget && player->getSecureMode() == SECUREMODE_ON
-				&& tile->creatures && !tile->creatures->empty())
+				&& tile->getTopVisibleCreature(player))
 			{
 				Player* targetPlayer = tile->getTopCreature()->getPlayer();
 				if(targetPlayer && targetPlayer != player && targetPlayer->getSkull() == SKULL_NONE
@@ -1051,7 +1051,7 @@ bool InstantSpell::playerCastInstant(Player* player, const std::string& param)
 
 bool InstantSpell::canThrowSpell(const Creature* creature, const Creature* target) const
 {
-	if(target->isInGhostMode() && !creature->canSeeGhost(target))
+	if(!creature->canSeeCreature(target))
 		return false;
 
 	const Position& fromPos = creature->getPosition();

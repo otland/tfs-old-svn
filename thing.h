@@ -96,10 +96,10 @@ class Creature;
 class Thing
 {
 	protected:
-		Thing();
+		Thing(): parent(NULL), useCount(0) {}
 
 	public:
-		virtual ~Thing();
+		virtual ~Thing() {}
 
 		void useThing2() {++useCount;}
 		void releaseThing2()
@@ -122,7 +122,7 @@ class Thing
 		virtual Tile* getTile();
 		virtual const Tile* getTile() const;
 
-		virtual const Position& getPosition() const;
+		virtual Position getPosition() const;
 		virtual int32_t getThrowRange() const = 0;
 		virtual bool isPushable() const = 0;
 

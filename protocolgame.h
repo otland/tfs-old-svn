@@ -191,7 +191,6 @@ class ProtocolGame : public Protocol
 		void sendCancelTarget();
 		void sendCreatureVisible(const Creature* creature, bool visible);
 		void sendCreatureOutfit(const Creature* creature, const Outfit_t& outfit);
-		void sendCreatureInvisible(const Creature* creature);
 		void sendStats();
 		void sendTextMessage(MessageClasses mclass, const std::string& message);
 		void sendReLoginWindow();
