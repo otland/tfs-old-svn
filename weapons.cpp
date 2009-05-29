@@ -1031,13 +1031,13 @@ int32_t WeaponWand::getWeaponDamage(const Player* player, const Creature* target
 	if(Vocation* vocation = player->getVocation())
 		multiplier = vocation->getMultiplier(MULTIPLIER_WAND);
 
-	int32_t maxValue = (maxChange * multiplier);
+	int32_t maxValue = (int32_t)(maxChange * multiplier);
 	if(maxDamage)
 	{
 		player->sendCriticalHit();
 		return -maxValue;
 	}
 
-	int32_t minValue = (minChange * multiplier);
+	int32_t minValue = (int32_t)(minChange * multiplier);
 	return random_range(-minValue, -maxValue, DISTRO_NORMAL);
 }

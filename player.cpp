@@ -3334,8 +3334,8 @@ uint64_t Player::getGainedExperience(Creature* attacker, bool useMultiplier/* = 
 	if(!attackerPlayer || attackerPlayer == this)
 		return 0;
 
-	uint32_t attackerLevel = attackerPlayer->getLevel(), min = g_config.getDouble(
-		ConfigManager::EFP_MIN_THRESHOLD), max = g_config.getDouble(ConfigManager::EFP_MAX_THRESHOLD);
+	uint32_t attackerLevel = attackerPlayer->getLevel(), min = (int32_t)(g_config.getDouble(
+		ConfigManager::EFP_MIN_THRESHOLD)), max = (int32_t)(g_config.getDouble(ConfigManager::EFP_MAX_THRESHOLD));
 	if((min > 0 && level < (uint32_t)std::floor(attackerLevel * min)) || (max > 0 &&
 		level > (uint32_t)std::floor(attackerLevel * max)))
 		return 0;

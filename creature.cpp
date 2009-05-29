@@ -1038,7 +1038,7 @@ uint64_t Creature::getGainedExperience(Creature* attacker, bool useMultiplier/* 
 
 	double baseExperience = getDamageRatio(attacker) * getLostExperience();
 	if(!player)
-		return (uint64_t)baseExperience * g_config.getDouble(ConfigManager::RATE_EXPERIENCE);
+		return (uint64_t)(baseExperience * g_config.getDouble(ConfigManager::RATE_EXPERIENCE));
 
 	if(useMultiplier)
 		baseExperience *= player->rates[SKILL__LEVEL];
