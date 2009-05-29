@@ -683,8 +683,12 @@ bool Creature::onDeath()
 	if(deny)
 		return false;
 
+	int32_t i = 0, size = deathList.size(), tmp = g_config.getNumber(ConfigManager::DEATH_ASSISTS) + 1;
+	if(tmp > 1 && size > tmp)
+		size = tmp;
+
 	DeathList::iterator bit = deathList.begin();
-	for(DeathList::iterator it = bit; it != deathList.end(); ++it)
+	for(DeathList::iterator it = bit; i < size && it != deathList.end(); ++it, ++i)
 	{
 		if(it->isNameKill())
 			continue;
