@@ -3970,17 +3970,15 @@ void Player::setPromotionLevel(uint32_t pLevel)
 	}
 	else if(pLevel < promotionLevel)
 	{
-		uint32_t tmpLevel = 0, currentVoc = vocation_id, checkVoc = vocation_id;
+		uint32_t tmpLevel = 0, currentVoc = vocation_id;
 		for(uint32_t i = pLevel; i < promotionLevel; ++i)
 		{
-			currentVoc = Vocations::getInstance()->getFromVocation(currentVoc);
-			if(currentVoc == checkVoc)
+			Vocation* voc = Vocations::getInstance()->getVocation(currentVoc);
+			if(voc->getFromVocation() == currentVoc)
 				break;
 
-			checkVoc = currentVoc;
 			tmpLevel++;
-
-			Vocation* voc = Vocations::getInstance()->getVocation(currentVoc);
+			currentVoc = voc->getFromVocation();
 			if(voc->isPremiumNeeded() && !isPremium() && g_config.getBool(ConfigManager::PREMIUM_FOR_PROMOTION))
 				continue;
 
