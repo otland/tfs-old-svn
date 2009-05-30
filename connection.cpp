@@ -451,7 +451,8 @@ bool Connection::send(OutputMessage_ptr msg)
 		#endif
 		internalSend(msg);
 	}
-	else{
+	else
+	{
 		#ifdef __DEBUG_NET__
 		std::cout << "Connection::send Adding to queue " << msg->getMessageLength() << std::endl;
 		#endif
