@@ -126,7 +126,7 @@ class Connection : public boost::enable_shared_from_this<Connection>, boost::non
 		}
 
 		bool send(OutputMessage_ptr msg);
-		void onClose();
+		void close();
 
 		void handle(Protocol* protocol);
 		void accept();
@@ -139,7 +139,7 @@ class Connection : public boost::enable_shared_from_this<Connection>, boost::non
 
 	private:
 		void internalSend(OutputMessage_ptr msg);
-		void closeSocket();
+		void internalClose();
 
 		void onWrite(OutputMessage_ptr msg, const boost::system::error_code& error);
 		void onStop();
