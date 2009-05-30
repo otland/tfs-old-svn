@@ -104,8 +104,7 @@ const Tile* Thing::getTile() const
 
 Position Thing::getPosition() const
 {
-	const Tile* tile = getTile();
-	if(!tile)
+	if(const Tile* tile = getTile())
 		return tile->getTilePosition();
 
 #ifdef __DEBUG_MOVESYS__
