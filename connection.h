@@ -139,7 +139,7 @@ class Connection : public boost::enable_shared_from_this<Connection>, boost::non
 
 	private:
 		void internalSend(OutputMessage_ptr msg);
-		void internalClose();
+		void internalClose(bool lock);
 
 		void onWrite(OutputMessage_ptr msg, const boost::system::error_code& error);
 		void onStop();

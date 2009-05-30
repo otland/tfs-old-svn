@@ -200,7 +200,7 @@ void Connection::closeConnection()
 	m_connectionState = CONNECTION_STATE_CLOSING;
 	if(!m_pendingWrite || m_writeError)
 	{
-		internalClose();
+		internalClose(false);
 		releaseConnection();
 		m_connectionState = CONNECTION_STATE_CLOSED;
 	}
@@ -208,11 +208,14 @@ void Connection::closeConnection()
 	OTSYS_THREAD_UNLOCK(m_connectionLock, "");
 }
 
-void Connection::internalClose()
+void Connection::internalClose(bool lock)
 {
 	#ifdef __DEBUG_NET_DETAIL__
 	std::cout << "Connection::internalClose" << std::endl;
 	#endif
+	if(lock)
+		OTSYS_THREAD_LOCK(m_connectionLock, "");
+
 	if(m_socket->is_open())
 	{
 		#ifdef __DEBUG_NET_DETAIL__
@@ -230,6 +233,9 @@ void Connection::internalClose()
 		if(error)
 			PRINT_ASIO_ERROR("Close");
 	}
+
+	if(lock)
+		OTSYS_THREAD_UNLOCK(m_connectionLock, "");
 }
 
 void Connection::releaseConnection()
@@ -513,7 +519,7 @@ void Connection::onWrite(OutputMessage_ptr msg, const boost::system::error_code&
 
 	if(m_connectionState != CONNECTION_STATE_OPEN || m_writeError)
 	{
-		internalClose();
+		internalClose(false);
 		close();
 
 		OTSYS_THREAD_UNLOCK(m_connectionLock, "");
@@ -549,17 +555,14 @@ void Connection::handleReadTimeout(boost::weak_ptr<Connection> weakConnection, c
 	if(error || weakConnection.expired())
 		return;
 
-	OTSYS_THREAD_LOCK(m_connectionLock, "");
 	if(boost::shared_ptr<Connection> connection = weakConnection.lock())
 	{
 		#ifdef __DEBUG_NET_DETAIL__
 		std::cout << "Connection::handleReadTimeout" << std::endl;
 		#endif
-		connection->internalClose();
+		connection->internalClose(true);
 		connection->close();
 	}
-
-	OTSYS_THREAD_UNLOCK(m_connectionLock, "");
 }
 
 void Connection::handleWriteError(const boost::system::error_code& error)
@@ -587,15 +590,12 @@ void Connection::handleWriteTimeout(boost::weak_ptr<Connection> weakConnection, 
 	if(error || weakConnection.expired())
 		return;
 
-	OTSYS_THREAD_LOCK(m_connectionLock, "");
 	if(boost::shared_ptr<Connection> connection = weakConnection.lock())
 	{
 		#ifdef __DEBUG_NET_DETAIL__
 		std::cout << "Connection::handleWriteTimeout" << std::endl;
 		#endif
-		connection->internalClose();
+		connection->internalClose(true);
 		connection->close();
 	}
-
-	OTSYS_THREAD_UNLOCK(m_connectionLock, "");
 }
