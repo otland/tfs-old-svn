@@ -392,7 +392,7 @@ void Connection::parsePacket(const boost::system::error_code& error)
 			m_protocol->setConnection(shared_from_this());
 		}
 		else //skip protocol ID
-			m_msg.SkipByte(1);
+			m_msg.SkipBytes(1);
 
 		m_protocol->onRecvFirstMessage(m_msg);
 	}
@@ -545,7 +545,7 @@ void Connection::handleReadTimeout(boost::weak_ptr<Connection> weakConnection, c
 	if(error || weakConnection.expired())
 		return;
 
-	if(shared_ptr<Connection> connection = weakConnection.lock())
+	if(boost::shared_ptr<Connection> connection = weakConnection.lock())
 	{
 		#ifdef __DEBUG_NET_DETAIL__
 		std::cout << "Connection::handleReadTimeout" << std::endl;
@@ -580,7 +580,7 @@ void Connection::handleWriteTimeout(boost::weak_ptr<Connection> weakConnection, 
 	if(error || weakConnection.expired())
 		return;
 
-	if(shared_ptr<Connection> connection = weakConnection.lock())
+	if(boost::shared_ptr<Connection> connection = weakConnection.lock())
 	{
 		#ifdef __DEBUG_NET_DETAIL__
 		std::cout << "Connection::handleWriteTimeout" << std::endl;
