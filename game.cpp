@@ -899,7 +899,7 @@ bool Game::playerMoveThing(uint32_t playerId, const Position& fromPos,
 }
 
 bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
-	const Position& movingCreatureOrigPos, const Position& toPos)
+	const Position& movingCreaturePos, const Position& toPos)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved() || player->hasFlag(PlayerFlag_CannotMoveCreatures))
@@ -909,7 +909,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 	{
 		uint32_t delay = player->getNextActionTime();
 		SchedulerTask* task = createSchedulerTask(delay, boost::bind(&Game::playerMoveCreature,
-			this, playerId, movingCreatureId, movingCreatureOrigPos, toPos));
+			this, playerId, movingCreatureId, movingCreaturePos, toPos));
 
 		player->setNextActionTask(task);
 		return false;
@@ -923,26 +923,23 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 		return false;
 
 	player->setNextActionTask(NULL);
-	if(!Position::areInRange<1,1,0>(movingCreatureOrigPos, player->getPosition()) && !player->hasCustomFlag(PlayerCustomFlag_CanMoveFromFar))
+	if(!Position::areInRange<1,1,0>(movingCreaturePos, player->getPosition()) && !player->hasCustomFlag(PlayerCustomFlag_CanMoveFromFar))
 	{
 		//need to walk to the creature first before moving it
 		std::list<Direction> listDir;
-		if(getPathToEx(player, movingCreatureOrigPos, listDir, 0, 1, true, true))
+		if(getPathToEx(player, movingCreaturePos, listDir, 0, 1, true, true))
 		{
 			Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 				this, player->getID(), listDir)));
-
 			SchedulerTask* task = createSchedulerTask(1500, boost::bind(&Game::playerMoveCreature, this,
-				playerId, movingCreatureId, movingCreatureOrigPos, toPos));
+				playerId, movingCreatureId, movingCreaturePos, toPos));
 
 			player->setNextWalkActionTask(task);
 			return true;
 		}
-		else
-		{
-			player->sendCancelMessage(RET_THEREISNOWAY);
-			return false;
-		}
+
+		player->sendCancelMessage(RET_THEREISNOWAY);
+		return false;
 	}
 
 	Tile* toTile = map->getTile(toPos);
@@ -976,7 +973,8 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 			player->sendCancelMessage(RET_NOTENOUGHROOM);
 			return false;
 		}
-		else if((movingCreature->getZone() == ZONE_PROTECTION || movingCreature->getZone() == ZONE_NOPVP)
+
+		if((movingCreature->getZone() == ZONE_PROTECTION || movingCreature->getZone() == ZONE_NOPVP)
 			&& !toTile->hasFlag(TILESTATE_NOPVPZONE) && !toTile->hasFlag(TILESTATE_PROTECTIONZONE) &&
 			!player->hasFlag(PlayerFlag_CanPushAllCreatures) && !player->hasFlag(PlayerFlag_IgnoreProtectionZone))
 		{
@@ -985,23 +983,21 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 		}
 	}
 
-	ReturnValue ret = internalMoveCreature(movingCreature, movingCreature->getTile(), toTile);
-	if(ret != RET_NOERROR)
-	{
-		player->sendCancelMessage(ret);
-		return false;
-	}
+	ReturnValue ret = internalMoveCreature(player, movingCreature, movingCreature->getTile(), toTile);
+	if(ret == RET_NOERROR)
+		return true;
 
-	return true;
+	player->sendCancelMessage(ret);
+	return false;
 }
 
-ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, uint32_t flags /*= 0*/)
+ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, uint32_t flags/* = 0*/)
 {
-	creature->setLastPosition(creature->getPosition());
-	Cylinder* fromTile = creature->getTile();
-	Cylinder* toTile = NULL;
-
 	const Position& currentPos = creature->getPosition();
+	creature->setLastPosition(currentPos);
+	Cylinder* fromTile = creature->getTile();
+
+	Cylinder* toTile = NULL;
 	Position destPos = getNextPosition(direction, currentPos);
 	if(direction < SOUTHWEST && creature->getPlayer())
 	{
@@ -1009,7 +1005,7 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 		if(currentPos.z != 8 && creature->getTile()->hasHeight(3))
 		{
 			Tile* tmpTile = map->getTile(currentPos.x, currentPos.y, currentPos.z - 1);
-			if(tmpTile == NULL || (tmpTile->ground == NULL && !tmpTile->hasProperty(BLOCKSOLID)))
+			if(!tmpTile || (!tmpTile->ground && !tmpTile->hasProperty(BLOCKSOLID)))
 			{
 				tmpTile = map->getTile(destPos.x, destPos.y, destPos.z - 1);
 				if(tmpTile && tmpTile->ground && !tmpTile->hasProperty(BLOCKSOLID))
@@ -1023,7 +1019,7 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 		{
 			//try go down
 			Tile* tmpTile = map->getTile(destPos);
-			if(currentPos.z != 7 && (tmpTile == NULL || (tmpTile->ground == NULL && !tmpTile->hasProperty(BLOCKSOLID))))
+			if(currentPos.z != 7 && (!tmpTile || (!tmpTile->ground && !tmpTile->hasProperty(BLOCKSOLID))))
 			{
 				tmpTile = map->getTile(destPos.x, destPos.y, destPos.z + 1);
 				if(tmpTile && tmpTile->hasHeight(3))
@@ -1035,10 +1031,9 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 		}
 	}
 
-	toTile = map->getTile(destPos);
 	ReturnValue ret = RET_NOTPOSSIBLE;
-	if(toTile)
-		ret = internalMoveCreature(creature, fromTile, toTile, flags);
+	if((toTile = map->getTile(destPos)))
+		ret = internalMoveCreature(NULL, creature, fromTile, toTile, flags);
 
 	if(ret != RET_NOERROR)
 	{
@@ -1051,25 +1046,24 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 	return ret;
 }
 
-ReturnValue Game::internalMoveCreature(Creature* creature, Cylinder* fromCylinder, Cylinder* toCylinder, uint32_t flags/*= 0*/)
+ReturnValue Game::internalMoveCreature(Creature* actor, Creature* creature, Cylinder* fromCylinder, Cylinder* toCylinder, uint32_t flags/* = 0*/)
 {
 	//check if we can move the creature to the destination
 	ReturnValue ret = toCylinder->__queryAdd(0, creature, 1, flags);
 	if(ret != RET_NOERROR)
 		return ret;
 
-	fromCylinder->getTile()->moveCreature(creature, toCylinder);
+	fromCylinder->getTile()->moveCreature(actor, creature, toCylinder);
 	if(creature->getParent() != toCylinder)
 		return RET_NOERROR;
 
-	int32_t index = 0;
 	Item* toItem = NULL;
 	Cylinder* subCylinder = NULL;
 
 	uint32_t n = 0;
-	while((subCylinder = toCylinder->__queryDestination(index, creature, &toItem, flags)) != toCylinder)
+	while((subCylinder = toCylinder->__queryDestination(0, creature, &toItem, flags)) != toCylinder)
 	{
-		toCylinder->getTile()->moveCreature(creature, subCylinder);
+		toCylinder->getTile()->moveCreature(actor, creature, subCylinder);
 		toCylinder = subCylinder;
 
 		flags = 0;
@@ -1129,7 +1123,7 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 			toIndex = static_cast<uint8_t>(toPos.y);
 	}
 
-	if(fromCylinder == NULL || toCylinder == NULL || item == NULL || item->getClientID() != spriteId)
+	if(!fromCylinder || !toCylinder || !item || item->getClientID() != spriteId)
 	{
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
 		return false;
@@ -1142,10 +1136,10 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 		return false;
 	}
 
-	const Position& playerPos = player->getPosition();
 	const Position& mapFromPos = fromCylinder->getTile()->getPosition();
 	const Position& mapToPos = toCylinder->getTile()->getPosition();
 
+	const Position& playerPos = player->getPosition();
 	if(playerPos.z > mapFromPos.z && !player->hasCustomFlag(PlayerCustomFlag_CanThrowAnywhere))
 	{
 		player->sendCancelMessage(RET_FIRSTGOUPSTAIRS);
@@ -1166,18 +1160,15 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 		{
 			Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerAutoWalk,
 				this, player->getID(), listDir)));
-
 			SchedulerTask* task = createSchedulerTask(400, boost::bind(&Game::playerMoveItem, this,
 				playerId, fromPos, spriteId, fromStackpos, toPos, count));
 
 			player->setNextWalkActionTask(task);
 			return true;
 		}
-		else
-		{
-			player->sendCancelMessage(RET_THEREISNOWAY);
-			return false;
-		}
+
+		player->sendCancelMessage(RET_THEREISNOWAY);
+		return false;
 	}
 
 	//hangable item specific code
@@ -1217,7 +1208,6 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 			{
 				//need to pickup the item first
 				Item* moveItem = NULL;
-
 				ReturnValue ret = internalMoveItem(player, fromCylinder, player, INDEX_WHEREEVER, item, count, &moveItem);
 				if(ret != RET_NOERROR)
 				{
@@ -1241,19 +1231,17 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 				player->setNextWalkActionTask(task);
 				return true;
 			}
-			else
-			{
-				player->sendCancelMessage(RET_THEREISNOWAY);
-				return false;
-			}
+
+			player->sendCancelMessage(RET_THEREISNOWAY);
+			return false;
 		}
 	}
 
 	if(!player->hasCustomFlag(PlayerCustomFlag_CanThrowAnywhere))
 	{
 		if((std::abs(playerPos.x - mapToPos.x) > item->getThrowRange()) ||
-				(std::abs(playerPos.y - mapToPos.y) > item->getThrowRange()) ||
-				(std::abs(mapFromPos.z - mapToPos.z) * 4 > item->getThrowRange()))
+			(std::abs(playerPos.y - mapToPos.y) > item->getThrowRange()) ||
+			(std::abs(mapFromPos.z - mapToPos.z) * 4 > item->getThrowRange()))
 		{
 			player->sendCancelMessage(RET_DESTINATIONOUTOFREACH);
 			return false;
@@ -1267,12 +1255,11 @@ bool Game::playerMoveItem(uint32_t playerId, const Position& fromPos,
 	}
 
 	ReturnValue ret = internalMoveItem(player, fromCylinder, toCylinder, toIndex, item, count, NULL);
-	if(ret != RET_NOERROR)
-	{
-		player->sendCancelMessage(ret);
-		return false;
-	}
-	return true;
+	if(ret == RET_NOERROR)
+		return true;
+
+	player->sendCancelMessage(ret);
+	return false;
 }
 
 ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cylinder* toCylinder,
@@ -1282,13 +1269,13 @@ ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cyli
 		return RET_NOTPOSSIBLE;
 
 	Item* toItem = NULL;
-	Cylinder* subCylinder;
+	Cylinder* subCylinder = NULL;
+
 	int32_t floor = 0;
 	while((subCylinder = toCylinder->__queryDestination(index, item, &toItem, flags)) != toCylinder)
 	{
 		toCylinder = subCylinder;
 		flags = 0;
-
 		//to prevent infinite loop
 		if(++floor >= MAP_MAX_LAYERS)
 			break;
@@ -1319,8 +1306,8 @@ ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cyli
 			{
 				int32_t oldToItemIndex = toCylinder->__getIndexOfThing(toItem);
 				toCylinder->__removeThing(toItem, toItem->getItemCount());
-				fromCylinder->__addThing(actor, toItem);
 
+				fromCylinder->__addThing(actor, toItem);
 				if(oldToItemIndex != -1)
 					toCylinder->postRemoveNotification(actor, toItem, fromCylinder, oldToItemIndex, true);
 
@@ -1343,11 +1330,9 @@ ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cyli
 	if(retMaxCount != RET_NOERROR && maxQueryCount == 0)
 		return retMaxCount;
 
-	uint32_t m = 0, n = 0;
+	uint32_t m = maxQueryCount, n = 0;
 	if(item->isStackable())
-		m = std::min((uint32_t)count, maxQueryCount);
-	else
-		m = maxQueryCount;
+		m = std::min((uint32_t)count, m);
 
 	Item* moveItem = item;
 	//check if we can remove this item
@@ -1419,7 +1404,7 @@ ReturnValue Game::internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cyli
 ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* item, int32_t index /*= INDEX_WHEREEVER*/,
 	uint32_t flags /*= 0*/, bool test /*= false*/)
 {
-	if(toCylinder == NULL || item == NULL)
+	if(!toCylinder || !item)
 		return RET_NOTPOSSIBLE;
 
 	Item* toItem = NULL;
@@ -1479,7 +1464,7 @@ ReturnValue Game::internalAddItem(Creature* actor, Cylinder* toCylinder, Item* i
 ReturnValue Game::internalRemoveItem(Creature* actor, Item* item, int32_t count /*= -1*/, bool test /*= false*/, uint32_t flags /*= 0*/)
 {
 	Cylinder* cylinder = item->getParent();
-	if(cylinder == NULL)
+	if(!cylinder)
 		return RET_NOTPOSSIBLE;
 
 	if(count == -1)
@@ -1573,7 +1558,7 @@ Item* Game::findItemOfType(Cylinder* cylinder, uint16_t itemId,
 
 bool Game::removeItemOfType(Cylinder* cylinder, uint16_t itemId, int32_t count, int32_t subType /*= -1*/)
 {
-	if(cylinder == NULL || ((int32_t)cylinder->__getItemTypeCount(itemId, subType) < count))
+	if(!cylinder || ((int32_t)cylinder->__getItemTypeCount(itemId, subType) < count))
 		return false;
 
 	if(count <= 0)
@@ -1930,9 +1915,9 @@ ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pu
 		if(Creature* creature = thing->getCreature())
 		{
 			if(Position::areInRange<1,1,0>(creature->getPosition(), newPos) && pushMove)
-				creature->getTile()->moveCreature(creature, toTile, false);
+				creature->getTile()->moveCreature(NULL, creature, toTile, false);
 			else
-				creature->getTile()->moveCreature(creature, toTile, true);
+				creature->getTile()->moveCreature(NULL, creature, toTile, true);
 
 			return RET_NOERROR;
 		}

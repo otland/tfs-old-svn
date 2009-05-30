@@ -1277,7 +1277,7 @@ bool InstantSpell::Levitate(const InstantSpell* spell, Creature* creature, const
 			{
 				tmpTile = g_game.getTile(destPos.x, destPos.y, destPos.z - 1);
 				if(tmpTile && tmpTile->ground && !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID) && !tmpTile->floorChange())
-					ret = g_game.internalMoveCreature(player, player->getTile(), tmpTile, FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE);
+					ret = g_game.internalMoveCreature(NULL, player, player->getTile(), tmpTile, FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE);
 			}
 		}
 	}
@@ -1290,7 +1290,7 @@ bool InstantSpell::Levitate(const InstantSpell* spell, Creature* creature, const
 			{
 				tmpTile = g_game.getTile(destPos.x, destPos.y, destPos.z + 1);
 				if(tmpTile && tmpTile->ground && !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID) && !tmpTile->floorChange())
-					ret = g_game.internalMoveCreature(player, player->getTile(), tmpTile, FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE);
+					ret = g_game.internalMoveCreature(NULL, player, player->getTile(), tmpTile, FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE);
 			}
 		}
 	}

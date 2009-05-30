@@ -50,7 +50,7 @@ class MoveEvents : public BaseEvents
 		MoveEvents();
 		virtual ~MoveEvents();
 
-		uint32_t onCreatureMove(Creature* creature, Tile* tile, bool isStepping);
+		uint32_t onCreatureMove(Creature* actor, Creature* creature, Tile* tile, bool isStepping);
 		uint32_t onPlayerEquip(Player* player, Item* item, slots_t slot, bool isCheck);
 		uint32_t onPlayerDeEquip(Player* player, Item* item, slots_t slot, bool isRemoval);
 		uint32_t onItemMove(Creature* actor, Item* item, Tile* tile, bool isAdd);
@@ -94,8 +94,8 @@ class MoveEvents : public BaseEvents
 		MoveEvent* getEvent(Tile* tile, MoveEvent_t eventType);
 };
 
-typedef uint32_t (StepFunction)(Creature* creature, Item* item, const Position& pos);
-typedef uint32_t (MoveFunction)(Item* item, Item* tileItem, const Position& pos);
+typedef uint32_t (MoveFunction)(Item* item);
+typedef uint32_t (StepFunction)(Creature* creature, Item* item);
 typedef uint32_t (EquipFunction)(MoveEvent* moveEvent, Player* player, Item* item, slots_t slot, bool boolean);
 
 class MoveEvent : public Event
@@ -111,15 +111,14 @@ class MoveEvent : public Event
 		virtual bool configureEvent(xmlNodePtr p);
 		virtual bool loadFunction(const std::string& functionName);
 
-		uint32_t fireStepEvent(Creature* creature, Item* item, const Position& pos);
+		uint32_t fireStepEvent(Creature* actor, Creature* creature, Item* item, const Position& pos);
 		uint32_t fireAddRemItem(Creature* actor, Item* item, Item* tileItem, const Position& pos);
 		uint32_t fireEquip(Player* player, Item* item, slots_t slot, bool boolean);
 
 		//scripting
-		uint32_t executeStep(Creature* creature, Item* item, const Position& pos);
+		uint32_t executeStep(Creature* actor, Creature* creature, Item* item, const Position& pos);
 		uint32_t executeEquip(Player* player, Item* item, slots_t slot);
 		uint32_t executeAddRemItem(Creature* actor, Item* item, Item* tileItem, const Position& pos);
-		uint32_t executeAddRemItemEx(Creature* actor, Item* item, Item* tileItem, const Position& pos);
 
 		uint32_t getWieldInfo() const {return wieldInfo;}
 		uint32_t getSlot() const {return slot;}

@@ -454,11 +454,9 @@ void Tile::onUpdateTile()
 		(*it)->onUpdateTile(this, cylinderMapPos);
 }
 
-void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport /* = false*/)
+void Tile::moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinder, bool teleport /* = false*/)
 {
 	Tile* newTile = toCylinder->getTile();
-	int32_t oldStackPos = __getIndexOfThing(creature);
-
 	SpectatorVec list;
 	SpectatorVec::iterator it;
 
@@ -468,17 +466,18 @@ void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport 
 	Position newPos = newTile->getPosition();
 	g_game.getSpectators(list, newPos, true, true);
 
-	std::vector<uint32_t> oldStackPosVector;
+	std::vector<uint32_t> oldStackposVector;
 	Player* tmpPlayer = NULL;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
-			oldStackPosVector.push_back(getClientIndexOfThing(tmpPlayer, creature));
+			oldStackposVector.push_back(getClientIndexOfThing(tmpPlayer, creature));
 	}
 
+	int32_t oldStackpos = __getIndexOfThing(creature);
 	//remove the creature
 	__removeThing(creature, 0);
-	// Switch the node ownership
+	//switch the node ownership
 	if(qt_node != newTile->qt_node)
 	{
 		qt_node->removeCreature(creature);
@@ -486,8 +485,8 @@ void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport 
 	}
 
 	//add the creature
-	newTile->__addThing(NULL, creature);
-	int32_t newStackPos = newTile->__getIndexOfThing(creature);
+	newTile->__addThing(actor, creature);
+	int32_t newStackpos = newTile->__getIndexOfThing(creature);
 	if(!teleport)
 	{
 		if(oldPos.y > newPos.y)
@@ -505,18 +504,15 @@ void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport 
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
-		{
-			tmpPlayer->sendCreatureMove(creature, newTile, newPos, this, oldPos, oldStackPosVector[i], teleport);
-			++i;
-		}
+			tmpPlayer->sendCreatureMove(creature, newTile, newPos, this, oldPos, oldStackposVector[i++], teleport);
 	}
 
 	//event method
 	for(it = list.begin(); it != list.end(); ++it)
 		(*it)->onCreatureMove(creature, newTile, newPos, this, oldPos, teleport);
 
-	postRemoveNotification(NULL, creature, toCylinder, oldStackPos, true);
-	newTile->postAddNotification(NULL, creature, this, newStackPos);
+	postRemoveNotification(actor, creature, toCylinder, oldStackpos, true);
+	newTile->postAddNotification(actor, creature, this, newStackpos);
 }
 
 ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,

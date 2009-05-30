@@ -292,27 +292,19 @@ class Game
 		uint32_t getMonstersOnline() {return (uint32_t)Monster::listMonster.list.size();}
 		uint32_t getNpcsOnline() {return (uint32_t)Npc::listNpc.list.size();}
 		uint32_t getCreaturesOnline() {return (uint32_t)listCreature.list.size();}
-		uint32_t getLastPlayersRecord() {return lastPlayersRecord;}
 
+		uint32_t getLastPlayersRecord() {return lastPlayersRecord;}
 		void getWorldLightInfo(LightInfo& lightInfo);
 
 		void getSpectators(SpectatorVec& list, const Position& centerPos, bool checkforduplicate = false, bool multifloor = false,
 			int32_t minRangeX = 0, int32_t maxRangeX = 0,
 			int32_t minRangeY = 0, int32_t maxRangeY = 0)
-		{
-			map->getSpectators(list, centerPos, checkforduplicate, multifloor, minRangeX, maxRangeX, minRangeY, maxRangeY);
-		}
-
+			{map->getSpectators(list, centerPos, checkforduplicate, multifloor, minRangeX, maxRangeX, minRangeY, maxRangeY);}
 		const SpectatorVec& getSpectators(const Position& centerPos) {return map->getSpectators(centerPos);}
-
-		void clearSpectatorCache()
-		{
-			if(map)
-				map->clearSpectatorCache();
-		}
+		void clearSpectatorCache() {if(map) map->clearSpectatorCache();}
 
 		ReturnValue internalMoveCreature(Creature* creature, Direction direction, uint32_t flags = 0);
-		ReturnValue internalMoveCreature(Creature* creature, Cylinder* fromCylinder, Cylinder* toCylinder, uint32_t flags = 0);
+		ReturnValue internalMoveCreature(Creature* actor, Creature* creature, Cylinder* fromCylinder, Cylinder* toCylinder, uint32_t flags = 0);
 
 		ReturnValue internalMoveItem(Creature* actor, Cylinder* fromCylinder, Cylinder* toCylinder, int32_t index,
 			Item* item, uint32_t count, Item** _moveItem, uint32_t flags = 0);
