@@ -1,3 +1,5 @@
+local cleanEvent = 0
+
 function onSay(cid, words, param, channel)
 	if(param == '') then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Collected " .. doCleanMap() .. " items.")
@@ -9,13 +11,16 @@ function onSay(cid, words, param, channel)
 		return true
 	end
 
+	stopEvent(cleanEvent)
 	prepareClean(tonumber(param), cid)
 	return true
 end
 
 function prepareClean(minutes, cid)
 	if(minutes == 0) then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Cleaned " .. doCleanMap() .. " items.")
+		if(isPlayer(cid)) then
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Cleaned " .. doCleanMap() .. " items.")
+		end
 		doBroadcastMessage("Game map cleaned.")
 	elseif(minutes > 0) then
 		if minutes == 1 then
@@ -23,6 +28,6 @@ function prepareClean(minutes, cid)
 		else
 			doBroadcastMessage("Game map cleaning in " .. minutes .. " minutes.")
 		end
-		addEvent(prepareClean, 60000, minutes - 1, cid)
+		cleanEvent = addEvent(prepareClean, 60000, minutes - 1, cid)
 	end
 end
