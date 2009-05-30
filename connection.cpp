@@ -230,8 +230,6 @@ void Connection::internalClose()
 		if(error)
 			PRINT_ASIO_ERROR("Close");
 	}
-
-	OTSYS_THREAD_UNLOCK(m_connectionLock, "");
 }
 
 void Connection::releaseConnection()
@@ -551,6 +549,7 @@ void Connection::handleReadTimeout(boost::weak_ptr<Connection> weakConnection, c
 	if(error || weakConnection.expired())
 		return;
 
+	OTSYS_THREAD_LOCK(m_connectionLock, "");
 	if(boost::shared_ptr<Connection> connection = weakConnection.lock())
 	{
 		#ifdef __DEBUG_NET_DETAIL__
@@ -559,6 +558,8 @@ void Connection::handleReadTimeout(boost::weak_ptr<Connection> weakConnection, c
 		connection->internalClose();
 		connection->close();
 	}
+
+	OTSYS_THREAD_UNLOCK(m_connectionLock, "");
 }
 
 void Connection::handleWriteError(const boost::system::error_code& error)
@@ -586,6 +587,7 @@ void Connection::handleWriteTimeout(boost::weak_ptr<Connection> weakConnection, 
 	if(error || weakConnection.expired())
 		return;
 
+	OTSYS_THREAD_LOCK(m_connectionLock, "");
 	if(boost::shared_ptr<Connection> connection = weakConnection.lock())
 	{
 		#ifdef __DEBUG_NET_DETAIL__
@@ -594,4 +596,6 @@ void Connection::handleWriteTimeout(boost::weak_ptr<Connection> weakConnection, 
 		connection->internalClose();
 		connection->close();
 	}
+
+	OTSYS_THREAD_UNLOCK(m_connectionLock, "");
 }
