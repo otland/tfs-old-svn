@@ -359,7 +359,7 @@ void Creature::updateMapCache()
 	const Position& myPos = getPosition();
 	Position pos(0, 0, myPos.z);
 
-	Tile* tile;
+	Tile* tile = NULL;
 	for(int32_t y = -((mapWalkHeight - 1) / 2); y <= ((mapWalkHeight - 1) / 2); ++y)
 	{
 		for(int32_t x = -((mapWalkWidth - 1) / 2); x <= ((mapWalkWidth - 1) / 2); ++x)
@@ -429,11 +429,8 @@ int32_t Creature::getWalkCache(const Position& pos) const
 			if(!localMapCache[y][x])
 				std::cout << "Wrong cache value" << std::endl;
 		}
-		else
-		{
-			if(localMapCache[y][x])
-				std::cout << "Wrong cache value" << std::endl;
-		}
+		else if(localMapCache[y][x])
+			std::cout << "Wrong cache value" << std::endl;
 
 #endif
 		if(localMapCache[y][x])
@@ -532,8 +529,8 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 			for(cit = summons.begin(); cit != summons.end(); ++cit)
 			{
 				const Position pos = (*cit)->getPosition();
-				if((std::abs(pos.z - newPos.z) > 2) ||
-					(std::max(std::abs((newPos.x) - pos.x), std::abs((newPos.y - 1) - pos.y)) > 30))
+				if((std::abs(pos.z - newPos.z) > 2) || (std::max(std::abs((
+					newPos.x) - pos.x), std::abs((newPos.y - 1) - pos.y)) > 30))
 					despawnList.push_back((*cit));
 			}
 
@@ -547,7 +544,7 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 		{
 			if(!teleport && oldPos.z == newPos.z)
 			{
-				Tile* tile;
+				Tile* tile = NULL;
 				const Position& myPos = getPosition();
 				if(oldPos.y > newPos.y) //north
 				{
@@ -696,10 +693,10 @@ bool Creature::onDeath()
 		if(it == deathList.begin())
 			flags |= (uint32_t)KILLFLAG_LASTHIT;
 
-		if(it->isPlayerKill() && i < size)
+		if(it->getKillerCreature()->getPlayer() && i < size)
 			flags |= (uint32_t)KILLFLAG_JUSTIFY;
 
-		if(!it->getKillerCreature()->onKilledCreature(this, flags) && it == bit)
+		if(!it->getKillerCreature()->onKilledCreature(this, flags) && it == deathList.begin())
 			return false;
 
 		if(hasBitSet((uint32_t)KILLFLAG_UNJUSTIFIED, flags))

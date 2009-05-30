@@ -118,6 +118,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 	{
 		player = new Player(name, this);
 		player->useThing2();
+
 		player->setID();
 		if(!IOLoginData::getInstance()->loadPlayer(player, name, true))
 		{
@@ -276,7 +277,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 	{
 		if(_player->client)
 		{
-			if(eventConnect != 0 || !g_config.getBool(ConfigManager::REPLACE_KICK_ON_LOGIN))
+			if(eventConnect || !g_config.getBool(ConfigManager::REPLACE_KICK_ON_LOGIN))
 			{
 				//A task has already been scheduled just bail out (should not be overriden)
 				disconnectClient(0x14, "You are already logged in.");
@@ -286,10 +287,10 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			g_chat.removeUserFromAllChannels(_player);
 			_player->disconnect();
 			_player->isConnecting = true;
+
 			addRef();
 			eventConnect = Scheduler::getScheduler().addEvent(createSchedulerTask(
 				1000, boost::bind(&ProtocolGame::connect, this, _player->getID())));
-
 			return true;
 		}
 
@@ -357,6 +358,7 @@ bool ProtocolGame::connect(uint32_t playerId)
 	player = _player;
 	player->useThing2();
 	player->isConnecting = false;
+
 	player->client = this;
 	player->client->sendAddCreature(player, player->getPosition(),
 		player->getTile()->__getIndexOfThing(player), false);

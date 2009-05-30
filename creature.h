@@ -93,17 +93,15 @@ struct DeathEntry
 			data(name), damage(dmg), unjustified(false) {}
 		DeathEntry(Creature* killer, int32_t dmg):
 			data(killer), damage(dmg), unjustified(false) {}
+		void setUnjustified(bool v) {unjustified = v;}
 
 		bool isCreatureKill() const {return data.type() == typeid(Creature*);}
 		bool isNameKill() const {return !isCreatureKill();}
-		bool isPlayerKill() const {return isCreatureKill() && getKillerCreature()->getPlayer();}
+		bool isUnjustified() const {return unjustified;}
 
 		const std::type_info& getKillerType() const {return data.type();}
 		Creature* getKillerCreature() const {return boost::any_cast<Creature*>(data);}
 		std::string getKillerName() const {return boost::any_cast<std::string>(data);}
-
-		bool isUnjustified() const {return unjustified;}
-		void setUnjustified(bool v) {unjustified = v;}
 
 	protected:
 		boost::any data;

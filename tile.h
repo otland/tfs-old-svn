@@ -171,7 +171,7 @@ class Tile : public Cylinder
 		void setFlag(tileflags_t flag) {m_flags |= (uint32_t)flag;}
 		void resetFlag(tileflags_t flag) {m_flags &= ~(uint32_t)flag;}
 
-		bool positionChange() const {return hasFlag(TILESTATE_POSITIONCHANGE);}
+		bool positionChange() const {return hasFlag(TILESTATE_TELEPORT);}
 		bool floorChange() const {return hasFlag(TILESTATE_FLOORCHANGE);}
 		bool floorChangeDown() const {return hasFlag(TILESTATE_FLOORCHANGE_DOWN);}
 		bool floorChange(Direction direction) const
