@@ -3949,23 +3949,48 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 
 void Player::setPromotionLevel(uint32_t pLevel)
 {
-	uint32_t tmpLevel = 0, currentVoc = vocation_id;
-	for(uint32_t i = promotionLevel; i < pLevel; ++i)
+	if(pLevel > promotionLevel)
 	{
-		currentVoc = Vocations::getInstance()->getPromotedVocation(currentVoc);
-		if(!currentVoc)
-			break;
+		uint32_t tmpLevel = 0, currentVoc = vocation_id;
+		for(uint32_t i = promotionLevel; i < pLevel; ++i)
+		{
+			currentVoc = Vocations::getInstance()->getPromotedVocation(currentVoc);
+			if(!currentVoc)
+				break;
 
-		tmpLevel++;
-		Vocation* voc = Vocations::getInstance()->getVocation(currentVoc);
-		if(voc->isPremiumNeeded() && !isPremium() && g_config.getBool(ConfigManager::PREMIUM_FOR_PROMOTION))
-			continue;
+			tmpLevel++;
+			Vocation* voc = Vocations::getInstance()->getVocation(currentVoc);
+			if(voc->isPremiumNeeded() && !isPremium() && g_config.getBool(ConfigManager::PREMIUM_FOR_PROMOTION))
+				continue;
 
-		vocation_id = currentVoc;
+			vocation_id = currentVoc;
+		}
+
+		promotionLevel += tmpLevel;
+	}
+	else if(pLevel < promotionLevel)
+	{
+		uint32_t tmpLevel = 0, currentVoc = vocation_id, checkVoc = vocation_id;
+		for(uint32_t i = pLevel; i < promotionLevel; ++i)
+		{
+			currentVoc = Vocations::getInstance()->getFromVocation(currentVoc);
+			if(currentVoc == checkVoc)
+				break;
+
+			checkVoc = currentVoc;
+			tmpLevel++;
+
+			Vocation* voc = Vocations::getInstance()->getVocation(currentVoc);
+			if(voc->isPremiumNeeded() && !isPremium() && g_config.getBool(ConfigManager::PREMIUM_FOR_PROMOTION))
+				continue;
+
+			vocation_id = currentVoc;
+		}
+
+		promotionLevel -= tmpLevel;
 	}
 
 	setVocation(vocation_id);
-	promotionLevel += tmpLevel;
 }
 
 uint16_t Player::getBlessings() const
