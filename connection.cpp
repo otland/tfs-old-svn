@@ -224,11 +224,8 @@ void Connection::internalClose()
 
 		boost::system::error_code error;
 		m_socket->shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
-		if(error)
-		{
-			if(error != boost::asio::error::not_connected){
-				PRINT_ASIO_ERROR("Shutdown");
-		}
+		if(error && error != boost::asio::error::not_connected)
+			PRINT_ASIO_ERROR("Shutdown");
 
 		m_socket->close(error);
 		if(error)
