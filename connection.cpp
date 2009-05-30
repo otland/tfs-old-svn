@@ -213,7 +213,6 @@ void Connection::internalClose()
 	#ifdef __DEBUG_NET_DETAIL__
 	std::cout << "Connection::internalClose" << std::endl;
 	#endif
-	OTSYS_THREAD_LOCK(m_connectionLock, "");
 	if(m_socket->is_open())
 	{
 		#ifdef __DEBUG_NET_DETAIL__
@@ -247,9 +246,9 @@ void Connection::releaseConnection()
 void Connection::onStop()
 {
 	OTSYS_THREAD_LOCK(m_connectionLock, "");
-
 	m_readTimer.cancel();
 	m_writeTimer.cancel();
+
 	if(m_socket->is_open())
 	{
 		m_socket->cancel();
@@ -437,13 +436,13 @@ bool Connection::send(OutputMessage_ptr msg)
 
 	if(!m_pendingWrite)
 	{
+		TRACK_MESSAGE(msg);
 		if(msg->getProtocol())
 			msg->getProtocol()->onSendMessage(msg);
 
 		#ifdef __DEBUG_NET_DETAIL__
 		std::cout << "Connection::send " << msg->getMessageLength() << std::endl;
 		#endif
-		TRACK_MESSAGE(msg);
 		internalSend(msg);
 	}
 	else{
@@ -453,6 +452,13 @@ bool Connection::send(OutputMessage_ptr msg)
 		TRACK_MESSAGE(msg);
 		if(OutputMessagePool* outputPool = OutputMessagePool::getInstance())
 			outputPool->autoSend(msg);
+
+		if(m_pendingWrite > 100 && g_config.getBool(ConfigManager::FORCE_CLOSE_SLOW_CONNECTION))
+		{
+			std::cout << "> NOTICE: Forcing slow connection to disconnect" << std::endl;
+			close();
+		}
+
 	}
 	
 	OTSYS_THREAD_UNLOCK(m_connectionLock, "");

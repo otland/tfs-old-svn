@@ -56,6 +56,7 @@ void OutputMessagePool::send(OutputMessage_ptr msg)
 {
 	OTSYS_THREAD_LOCK(m_outputPoolLock, "");
 	OutputMessage::OutputMessageState state = msg->getState();
+
 	OTSYS_THREAD_UNLOCK(m_outputPoolLock, "");
 	if(state == OutputMessage::STATE_ALLOCATED_NO_AUTOSEND)
 	{
