@@ -171,6 +171,30 @@ function getPlayerMasterPos(cid)
 	return getTownTemplePosition(getPlayerTown(cid))
 end
 
+function getHouseOwner(houseId)
+	return getHouseInfo(houseId).owner
+end
+
+function getHouseName(houseId)
+	return getHouseInfo(houseId).name
+end
+
+function getHouseEntry(houseId)
+	return getHouseInfo(houseId).entry
+end
+
+function getHouseRent(houseId)
+	return getHouseInfo(houseId).rent
+end
+
+function getHousePrice(houseId)
+	return getHouseInfo(houseId).price
+end
+
+function getHouseTown(houseId)
+	return getHouseInfo(houseId).town
+end
+
 function getItemNameById(itemid)
 	return getItemDescriptionsById(itemid).name
 end

@@ -868,14 +868,14 @@ void LuaScriptInterface::executeTimerEvent(uint32_t eventIndex)
 int32_t LuaScriptInterface::luaErrorHandler(lua_State* L)
 {
 	lua_getfield(L, LUA_GLOBALSINDEX, "debug");
-	if (!lua_istable(L, -1))
+	if(!lua_istable(L, -1))
 	{
 		lua_pop(L, 1);
 		return 1;
 	}
 
 	lua_getfield(L, -1, "traceback");
-	if (!lua_isfunction(L, -1))
+	if(!lua_isfunction(L, -1))
 	{
 		lua_pop(L, 2);
 		return 1;
@@ -1756,25 +1756,10 @@ void LuaScriptInterface::registerFunctions()
 	//doAddContainerItem(uid, itemid[, count/subType])
 	lua_register(m_luaState, "doAddContainerItem", LuaScriptInterface::luaDoAddContainerItem);
 
-	//getHouseOwner(houseid)
-	lua_register(m_luaState, "getHouseOwner", LuaScriptInterface::luaGetHouseOwner);
+	//getHouseInfo(houseId)
+	lua_register(m_luaState, "getHouseInfo", LuaScriptInterface::luaGetHouseInfo);
 
-	//getHouseName(houseid)
-	lua_register(m_luaState, "getHouseName", LuaScriptInterface::luaGetHouseName);
-
-	//getHouseEntry(houseid)
-	lua_register(m_luaState, "getHouseEntry", LuaScriptInterface::luaGetHouseEntry);
-
-	//getHouseRent(houseid)
-	lua_register(m_luaState, "getHouseRent", LuaScriptInterface::luaGetHouseRent);
-
-	//getHousePrice(houseid)
-	lua_register(m_luaState, "getHousePrice", LuaScriptInterface::luaGetHousePrice);
-
-	//getHouseTown(houseid)
-	lua_register(m_luaState, "getHouseTown", LuaScriptInterface::luaGetHouseTown);
-
-	//getHouseAccessList(houseid, listid)
+	//getHouseAccessList(houseid, listId)
 	lua_register(m_luaState, "getHouseAccessList", LuaScriptInterface::luaGetHouseAccessList);
 
 	//getHouseByPlayerGUID(playerGUID)
@@ -4849,81 +4834,36 @@ int32_t LuaScriptInterface::luaGetPlayerMoney(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetHouseOwner(lua_State* L)
+int32_t LuaScriptInterface::luaGetHouseInfo(lua_State* L)
 {
-	//getHouseOwner(houseid)
-	if(House* house = Houses::getInstance().getHouse(popNumber(L)))
-		lua_pushnumber(L, house->getHouseOwner());
-	else
+	//getHouseInfo(houseId)
+	bool displayError = true;
+	if(lua_gettop(L) > 1)
+		displayError = popNumber(L) == true;
+
+	House* house = Houses::getInstance().getHouse(popNumber(L));
+	if(!house)
 	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_HOUSE_NOT_FOUND));
+		if(displayError)
+			reportErrorFunc(getErrorDesc(LUA_ERROR_HOUSE_NOT_FOUND));
+
 		lua_pushboolean(L, false);
+		return 1;
 	}
-	return 1;
-}
 
-int32_t LuaScriptInterface::luaGetHouseName(lua_State* L)
-{
-	//getHouseName(houseid)
-	if(House* house = Houses::getInstance().getHouse(popNumber(L)))
-		lua_pushstring(L, house->getName().c_str());
-	else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_HOUSE_NOT_FOUND));
-		lua_pushnil(L);
-	}
-	return 1;
-}
+	lua_newtable(L);
+	setField(L, "id", house->getHouseId());
+	setField(L, "name", house->getName().c_str());
+	setField(L, "owner", house->getHouseOwner());
 
-int32_t LuaScriptInterface::luaGetHouseEntry(lua_State* L)
-{
-	//getHouseEntry(houseid)
-	if(House* house = Houses::getInstance().getHouse(popNumber(L)))
-		pushPosition(L, house->getEntryPosition(), 0);
-	else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_HOUSE_NOT_FOUND));
-		lua_pushnil(L);
-	}
-	return 1;
-}
+	lua_pushstring(L, "entry");
+	pushPosition(L, house->getEntryPosition(), 0);
+	lua_settable(L, -3);
 
-int32_t LuaScriptInterface::luaGetHouseRent(lua_State* L)
-{
-	//getHouseRent(houseid)
-	if(House* house = Houses::getInstance().getHouse(popNumber(L)))
-		lua_pushnumber(L, house->getRent());
-	else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_HOUSE_NOT_FOUND));
-		lua_pushnil(L);
-	}
-	return 1;
-}
+	setField(L, "rent", house->getRent());
+	setField(L, "price", house->getPrice());
+	setField(L, "town", house->getTownId());
 
-int32_t LuaScriptInterface::luaGetHousePrice(lua_State* L)
-{
-	//getHousePrice(houseid)
-	if(House* house = Houses::getInstance().getHouse(popNumber(L)))
-		lua_pushnumber(L, house->getPrice());
-	else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_HOUSE_NOT_FOUND));
-		lua_pushnil(L);
-	}
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaGetHouseTown(lua_State* L)
-{
-	//getHouseTown(houseid)
-	if(House* house = Houses::getInstance().getHouse(popNumber(L)))
-		lua_pushnumber(L, house->getTownId());
-	else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_HOUSE_NOT_FOUND));
-		lua_pushnil(L);
-	}
 	return 1;
 }
 

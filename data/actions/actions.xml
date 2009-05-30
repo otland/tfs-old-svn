@@ -87,6 +87,7 @@
 	<action itemid="7158" event="script" value="other/food.lua"/>
 	<action itemid="7159" event="script" value="other/food.lua"/>
 	<action fromid="7372" toid="7377" event="script" value="other/food.lua"/>
+	<action itemid="7909" event="script" value="other/food.lua"/>
 	<action fromid="8838" toid="8845" event="script" value="other/food.lua"/>
 	<action itemid="8847" event="script" value="other/food.lua"/>
 

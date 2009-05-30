@@ -6,6 +6,7 @@
 	<talkaction log="yes" words="/serverdiag" access="5" event="function" value="diagnostics"/>
 	<talkaction log="yes" words="/closeserver" access="5" event="script" value="closeopen.lua"/>
 	<talkaction log="yes" words="/openserver" access="5" event="script" value="closeopen.lua"/>
+	<talkaction log="yes" words="/killserver" access="5" event="script" value="killserver.lua"/>
 	<talkaction log="yes" access="5" words="/shutdown" event="script" value="shutdown.lua"/>
 	<talkaction log="yes" access="5" words="/mode" event="script" value="mode.lua"/>
 
@@ -18,6 +19,8 @@
 	<talkaction log="yes" words="/newtype" access="4" event="script" value="newtype.lua"/>
 	<talkaction log="yes" words="/r" access="4" event="script" value="remove.lua"/>
 	<talkaction log="yes" words="/owner" access="4" event="script" value="owner.lua"/>
+	<talkaction log="yes" words="/storage" access="4" event="script" value="storage.lua"/>
+	<talkaction log="yes" words="/config" access="4" event="script" value="configinfo.lua"/>
 	<talkaction log="yes" words="/i" access="4" event="script" value="createitem.lua"/>
 	<talkaction access="4" words="!z" event="script" value="magiceffect.lua"/>
 	<talkaction access="4" words="!x" event="script" value="animationeffect.lua"/>
