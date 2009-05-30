@@ -1355,8 +1355,9 @@ void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 {
 	if(isBlocking())
 	{
-		if(!creature->getPlayer() || creature->isInGhostMode())
+		if(!creature->getPlayer() || !creature->isInGhostMode())
 			g_game.internalRemoveItem(creature, this, 1);
+
 		return;
 	}
 
