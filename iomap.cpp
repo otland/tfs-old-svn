@@ -61,7 +61,7 @@ typedef uint32_t flags_t;
 
 Tile* IOMap::createTile(Item*& ground, Item* item, uint16_t px, uint16_t py, uint16_t pz)
 {
-	Tile* tile;
+	Tile* tile = NULL;
 	if(ground)
 	{
 		if((item && item->isBlocking()) || ground->isBlocking()) //tile is blocking with possibly some decoration, should be static
@@ -70,7 +70,12 @@ Tile* IOMap::createTile(Item*& ground, Item* item, uint16_t px, uint16_t py, uin
 			tile = new DynamicTile(px, py, pz);
 		
 		tile->__internalAddThing(ground);
-		ground->__startDecaying();
+		if(ground->getDecaying() != DECAYING_TRUE)
+		{
+			ground->__startDecaying();
+			ground->setLoadedFromMap(true);
+		}
+
 		ground = NULL;
 	}
 	else //no ground on this tile, so it will always block
