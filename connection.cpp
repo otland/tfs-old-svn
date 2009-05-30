@@ -370,21 +370,23 @@ void Connection::parsePacket(const boost::system::error_code& error)
 
 	--m_pendingRead;
 	//Check packet checksum
-	uint32_t recvChecksum = m_msg.PeekU32(), checksum = 0;
+	uint32_t length = m_msg.getMessageLength() - m_msg.getReadPos() - 4, recvChecksum = m_msg.PeekU32(), checksum = 0;
+	if(length > 0)
+		checksum = adlerChecksum((uint8_t*)(m_msg.getBuffer() + m_msg.getReadPos() + 4), length);
 
-	int32_t len = m_msg.getMessageLength() - m_msg.getReadPos() - 4;
-	if(len > 0)
-		checksum = adlerChecksum((uint8_t*)(m_msg.getBuffer() + m_msg.getReadPos() + 4), len);
-
-	if(recvChecksum == checksum) //remove the checksum
+	bool checksumEnabled = false;
+	if(recvChecksum == checksum)
+	{
 		m_msg.SkipBytes(4);
+		checksumEnabled = true;
+	}
 
 	if(!m_receivedFirst)
 	{
 		m_receivedFirst = true; //first message received
 		if(!m_protocol) //game protocol has already been created at this point
 		{
-			m_protocol = m_service_port->makeProtocol(recvChecksum == checksum, m_msg);
+			m_protocol = m_service_port->makeProtocol(checksumEnabled, m_msg);
 			if(!m_protocol)
 			{
 				close();
