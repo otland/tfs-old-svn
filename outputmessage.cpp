@@ -19,7 +19,6 @@
 
 #include "outputmessage.h"
 #include "protocol.h"
-#include "connection.h"
 
 //*********** OutputMessagePool ****************//
 
@@ -202,7 +201,7 @@ void OutputMessagePool::configureOutputMessage(OutputMessage_ptr msg, Protocol* 
 	else
 		msg->setState(OutputMessage::STATE_ALLOCATED_NO_AUTOSEND);
 
-	Connection* connection = protocol->getConnection();
+	Connection_ptr connection = protocol->getConnection();
 	assert(connection != NULL);
 
 	msg->setProtocol(protocol);
