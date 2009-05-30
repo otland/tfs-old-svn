@@ -1038,7 +1038,7 @@ uint32_t MoveEvent::fireStepEvent(Creature* actor, Creature* creature, Item* ite
 	if(isScripted())
 		return executeStep(actor, creature, item, pos);
 
-	return stepFunction(actor, creature);
+	return stepFunction(creature, item);
 }
 
 uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item, const Position& pos)

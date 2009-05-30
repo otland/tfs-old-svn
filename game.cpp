@@ -994,10 +994,9 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, uint32_t flags/* = 0*/)
 {
 	const Position& currentPos = creature->getPosition();
-	creature->setLastPosition(currentPos);
 	Cylinder* fromTile = creature->getTile();
-
 	Cylinder* toTile = NULL;
+
 	Position destPos = getNextPosition(direction, currentPos);
 	if(direction < SOUTHWEST && creature->getPlayer())
 	{
@@ -1049,6 +1048,7 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 ReturnValue Game::internalMoveCreature(Creature* actor, Creature* creature, Cylinder* fromCylinder, Cylinder* toCylinder, uint32_t flags/* = 0*/)
 {
 	//check if we can move the creature to the destination
+	creature->setLastPosition(creature->getPosition());
 	ReturnValue ret = toCylinder->__queryAdd(0, creature, 1, flags);
 	if(ret != RET_NOERROR)
 		return ret;
@@ -1060,7 +1060,7 @@ ReturnValue Game::internalMoveCreature(Creature* actor, Creature* creature, Cyli
 	Item* toItem = NULL;
 	Cylinder* subCylinder = NULL;
 
-	uint32_t n = 0; int32_t tmp = 0;
+	int32_t n = 0, tmp = 0;
 	while((subCylinder = toCylinder->__queryDestination(tmp, creature, &toItem, flags)) != toCylinder)
 	{
 		toCylinder->getTile()->moveCreature(actor, creature, subCylinder);
@@ -1914,6 +1914,7 @@ ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pu
 	{
 		if(Creature* creature = thing->getCreature())
 		{
+			creature->setLastPosition(creature->getPosition());
 			if(Position::areInRange<1,1,0>(creature->getPosition(), newPos) && pushMove)
 				creature->getTile()->moveCreature(NULL, creature, toTile, false);
 			else
