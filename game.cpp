@@ -949,7 +949,6 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 		return false;
 	}
 
-	const Position& movingCreaturePos = movingCreature->getPosition();
 	if((!movingCreature->isPushable() && !player->hasFlag(PlayerFlag_CanPushAllCreatures))
 		|| !player->canSeeCreature(movingCreature))
 	{
@@ -958,9 +957,10 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 	}
 
 	//check throw distance
-	if((std::abs(movingCreaturePos.x - toPos.x) > movingCreature->getThrowRange())
-		|| (std::abs(movingCreaturePos.y - toPos.y) > movingCreature->getThrowRange())
-		|| (std::abs(movingCreaturePos.z - toPos.z) * 4 > movingCreature->getThrowRange()))
+	const Position& pos = movingCreature->getPosition();
+	if((std::abs(pos.x - toPos.x) > movingCreature->getThrowRange()) || (std::abs(
+		pos.y - toPos.y) > movingCreature->getThrowRange()) || (std::abs(
+		pos.z - toPos.z) * 4 > movingCreature->getThrowRange()))
 	{
 		player->sendCancelMessage(RET_DESTINATIONOUTOFREACH);
 		return false;
@@ -1060,8 +1060,8 @@ ReturnValue Game::internalMoveCreature(Creature* actor, Creature* creature, Cyli
 	Item* toItem = NULL;
 	Cylinder* subCylinder = NULL;
 
-	uint32_t n = 0;
-	while((subCylinder = toCylinder->__queryDestination(0, creature, &toItem, flags)) != toCylinder)
+	uint32_t n = 0; int32_t tmp = 0;
+	while((subCylinder = toCylinder->__queryDestination(tmp, creature, &toItem, flags)) != toCylinder)
 	{
 		toCylinder->getTile()->moveCreature(actor, creature, subCylinder);
 		toCylinder = subCylinder;
