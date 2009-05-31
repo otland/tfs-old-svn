@@ -1240,7 +1240,7 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 		}
 	}
 
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 	std::cout << "[Failure - Tile::__removeThing] thing not found" << std::endl;
 	DEBUG_REPORT
 #endif
@@ -1255,7 +1255,7 @@ int32_t Tile::getClientIndexOfThing(const Player* player, const Thing* thing) co
 	const TileItemVector* items = getItemList();
 	if(items)
 	{
-		if(thing->getItem())
+		if(thing && thing->getItem())
 		{
 			for(ItemVector::const_iterator it = items->getBeginTopItem(); it != items->getEndTopItem(); ++it)
 			{
@@ -1283,7 +1283,7 @@ int32_t Tile::getClientIndexOfThing(const Player* player, const Thing* thing) co
 
 	if(items)
 	{
-		if(thing->getItem())
+		if(thing && thing->getItem())
 		{
 			for(ItemVector::const_iterator it = items->getBeginDownItem(); it != items->getEndDownItem(); ++it)
 			{

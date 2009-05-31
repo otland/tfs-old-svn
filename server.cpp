@@ -45,20 +45,6 @@ bool ServicePort::add(Service_ptr newService)
 	return true;
 }
 
-void ServicePort::onOpen(boost::weak_ptr<ServicePort> weakService, uint16_t port)
-{
-	if(weakService.expired())
-		return;
-
-	if(ServicePort_ptr service = weakService.lock())
-	{
-		#ifdef __DEBUG_NET_DETAIL__
-		std::cout << "ServicePort::onOpen" << std::endl;
-		#endif
-		service->open(port);
-	}
-}
-
 void ServicePort::open(uint16_t port)
 {
 	m_serverPort = port;
@@ -78,8 +64,8 @@ void ServicePort::open(uint16_t port)
 		}
 
 		m_pendingStart = true;
-		Scheduler::getScheduler().addEvent(createSchedulerTask(5000, boost::bind(&ServicePort::onOpen,
-			boost::weak_ptr<ServicePort>(shared_from_this()), m_serverPort)));
+		Scheduler::getScheduler().addEvent(createSchedulerTask(5000,
+			boost::bind(&ServicePort::open, this, m_serverPort)));
 	}
 }
 
@@ -140,7 +126,7 @@ void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::syst
 		if(!error)
 			remoteIp = htonl(endpoint.address().to_v4().to_ulong());
 
-		Connection_ptr connection;
+		Connection* connection = NULL;
 		if(remoteIp && ConnectionManager::getInstance()->acceptConnection(remoteIp) &&
 			(connection = ConnectionManager::getInstance()->createConnection(
 			socket, m_io_service, shared_from_this())))
@@ -171,8 +157,8 @@ void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::syst
 		if(!m_pendingStart)
 		{
 			m_pendingStart = true;
-			Scheduler::getScheduler().addEvent(createSchedulerTask(5000, boost::bind(&ServicePort::onOpen,
-				boost::weak_ptr<ServicePort>(shared_from_this()), m_serverPort)));
+			Scheduler::getScheduler().addEvent(createSchedulerTask(5000,
+				boost::bind(&ServicePort::open, this, m_serverPort)));
 		}
 	}
 #ifdef __DEBUG_NET__
@@ -202,7 +188,7 @@ Protocol* ServicePort::makeProtocol(bool checksum, NetworkMessage& msg) const
 	for(ServiceVec::const_iterator it = m_services.begin(); it != m_services.end(); ++it)
 	{
 		if((*it)->getProtocolId() == protocolId && ((checksum && (*it)->hasChecksum()) || !(*it)->hasChecksum()))
-			return (*it)->makeProtocol(Connection_ptr());
+			return (*it)->makeProtocol(NULL);
 	}
 
 	return NULL;

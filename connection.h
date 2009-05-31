@@ -20,12 +20,20 @@
 #include "otsystem.h"
 
 #include "networkmessage.h"
-#include <boost/enable_shared_from_this.hpp>
+class Connection;
+class Protocol;
+
+class OutputMessage;
+typedef boost::shared_ptr<OutputMessage>OutputMessage_ptr;
+class ServiceBase;
+typedef boost::shared_ptr<ServiceBase> Service_ptr;
+class ServicePort;
+typedef boost::shared_ptr<ServicePort> ServicePort_ptr;
 
 #ifdef __DEBUG_NET__
 #define PRINT_ASIO_ERROR(desc) \
-	std::cout << "[Error - " << __FUNCTION__ << "] " << desc << "- value: " <<  \
-		error.value() << ", message: " << error.message() << std::endl;
+	std::cout << "[Error - " << __FUNCTION__ << "]: " << desc << " - Value: " <<  \
+		error.value() << " Message: " << error.message() << std::endl;
 #else
 #define PRINT_ASIO_ERROR(desc)
 #endif
@@ -41,13 +49,6 @@ struct ConnectBlock
 	uint64_t startTime, blockTime;
 };
 
-class Connection;
-typedef boost::shared_ptr<Connection> Connection_ptr;
-class ServiceBase;
-typedef boost::shared_ptr<ServiceBase> Service_ptr;
-class ServicePort;
-typedef boost::shared_ptr<ServicePort> ServicePort_ptr;
-
 class ConnectionManager
 {
 	public:
@@ -59,9 +60,9 @@ class ConnectionManager
 			return &instance;
 		}
 
-		Connection_ptr createConnection(boost::asio::ip::tcp::socket* socket,
+		Connection* createConnection(boost::asio::ip::tcp::socket* socket,
 			boost::asio::io_service& io_service, ServicePort_ptr servicer);
-		void releaseConnection(Connection_ptr connection);
+		void releaseConnection(Connection* connection);
 
 		bool isDisabled(uint32_t clientIp, int32_t protocolId);
 		void addAttempt(uint32_t clientIp, int32_t protocolId, bool success);
@@ -78,38 +79,33 @@ class ConnectionManager
 		typedef std::map<uint32_t, ConnectBlock> IpConnectMap;
 		IpConnectMap ipConnectMap;
 
-		std::list<Connection_ptr> m_connections;
+		std::list<Connection*> m_connections;
 		OTSYS_THREAD_LOCKVAR m_connectionManagerLock;
 };
 
-class OutputMessage;
-typedef boost::shared_ptr<OutputMessage>OutputMessage_ptr;
-
-class Protocol;
-class Connection : public boost::enable_shared_from_this<Connection>, boost::noncopyable
+class Connection : boost::noncopyable
 {
 	public:
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t connectionCount;
 #endif
-		enum ConnectionState_t
+		enum
 		{
-			CONNECTION_STATE_OPEN = 0,
-			CONNECTION_STATE_REQUEST_CLOSE = 1,
-			CONNECTION_STATE_CLOSING = 2,
-			CONNECTION_STATE_CLOSED = 3,
+			CLOSE_STATE_NONE = 0,
+			CLOSE_STATE_REQUESTED = 1,
+			CLOSE_STATE_CLOSING = 2
 		};
 
 	private:
-		Connection(boost::asio::ip::tcp::socket* socket, boost::asio::io_service& io_service,
-			ServicePort_ptr servicePort): m_readTimer(io_service), m_writeTimer(io_service),
-			m_socket(socket), m_io_service(io_service), m_service_port(servicePort)
+		Connection(boost::asio::ip::tcp::socket* socket, boost::asio::io_service& io_service, ServicePort_ptr servicer):
+			m_timer(io_service), m_socket(socket), m_io_service(io_service), m_port(servicer)
 		{
-			m_connectionState = CONNECTION_STATE_OPEN;
 			m_protocol = NULL;
+			m_closeState = CLOSE_STATE_NONE;
 			m_refCount = m_pendingWrite = m_pendingRead = 0;
-			m_receivedFirst = m_writeError = m_readError = false;
+			m_receivedFirst = m_socketClosed = m_writeError = m_readError = false;
 
+			OTSYS_THREAD_LOCKVARINIT(m_connectionLock);
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			connectionCount++;
 #endif
@@ -120,59 +116,57 @@ class Connection : public boost::enable_shared_from_this<Connection>, boost::non
 	public:
 		virtual ~Connection()
 		{
+			OTSYS_THREAD_LOCKVARRELEASE(m_connectionLock);
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
+
 			connectionCount--;
 #endif
 		}
 
-		bool send(OutputMessage_ptr msg);
-		void close();
+		boost::asio::ip::tcp::socket& getHandle() {return *m_socket;}
+		uint32_t getIP() const;
 
 		void handle(Protocol* protocol);
 		void accept();
 
-		boost::asio::ip::tcp::socket& getHandle() {return *m_socket;}
-		uint32_t getIP() const;
+		void close();	
+		bool send(OutputMessage_ptr msg);
 
 		int32_t addRef() {return ++m_refCount;}
 		int32_t unRef() {return --m_refCount;}
 
 	private:
 		void internalSend(OutputMessage_ptr msg);
-		void internalClose(bool lock);
 
-		void onWrite(OutputMessage_ptr msg, const boost::system::error_code& error);
-		void onStop();
+		void closeConnection();
+		void releaseConnection();
+		void deleteConnection();
 
 		void parseHeader(const boost::system::error_code& error);
 		void parsePacket(const boost::system::error_code& error);
 
+		bool write();
+		void onWrite(OutputMessage_ptr msg, const boost::system::error_code& error);
+		void onStop();
+
+		void handleTimeout(const boost::system::error_code& error);
 		void handleReadError(const boost::system::error_code& error);
 		void handleWriteError(const boost::system::error_code& error);
 
-		static void handleReadTimeout(boost::weak_ptr<Connection> weakConnection, const boost::system::error_code& error);
-		static void handleWriteTimeout(boost::weak_ptr<Connection> weakConnection, const boost::system::error_code& error);
-
-		void closeConnection();
-		void deleteConnection();
-		void releaseConnection();
-
 		NetworkMessage m_msg;
 		Protocol* m_protocol;
-
-		boost::asio::deadline_timer m_readTimer;
-		boost::asio::deadline_timer m_writeTimer;
+		boost::asio::deadline_timer m_timer;
 
 		boost::asio::ip::tcp::socket* m_socket;
 		boost::asio::io_service& m_io_service;
-		ServicePort_ptr m_service_port;
-
-		bool m_receivedFirst, m_writeError, m_readError;
-		int32_t m_pendingWrite, m_pendingRead;
-		uint32_t m_refCount;
+		ServicePort_ptr m_port;
 
 		static bool m_logError;
-		ConnectionState_t m_connectionState;
+		bool m_receivedFirst, m_socketClosed, m_writeError, m_readError;
+
+		int32_t m_pendingWrite, m_pendingRead;
+		uint32_t m_closeState, m_refCount;
+
 		OTSYS_THREAD_LOCKVAR m_connectionLock;
 };
 #endif

@@ -28,7 +28,7 @@ class ProtocolHTTP : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolHTTPCount;
 #endif
-		ProtocolHTTP(Connection_ptr connection) : Protocol(connection)
+		ProtocolHTTP(Connection* connection) : Protocol(connection)
 		{
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			protocolHTTPCount++;

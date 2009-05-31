@@ -28,7 +28,7 @@ class ProtocolOld : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolOldCount;
 #endif
-		ProtocolOld(Connection_ptr connection): Protocol(connection)
+		ProtocolOld(Connection* connection): Protocol(connection)
 		{
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			protocolOldCount++;
@@ -58,7 +58,7 @@ class ProtocolOld : public Protocol
 class ProtocolOldLogin : public ProtocolOld
 {
 	public:
-		ProtocolOldLogin(Connection_ptr connection) : ProtocolOld(connection) {}
+		ProtocolOldLogin(Connection* connection) : ProtocolOld(connection) {}
 		enum {protocolId = 0x01};
 		static const char* protocolName() {return "old login protocol";}
 };
@@ -66,7 +66,7 @@ class ProtocolOldLogin : public ProtocolOld
 class ProtocolOldGame : public ProtocolOld
 {
 	public:
-		ProtocolOldGame(Connection_ptr connection) : ProtocolOld(connection) {}
+		ProtocolOldGame(Connection* connection) : ProtocolOld(connection) {}
 		enum {protocolId = 0x0A};
 		static const char* protocolName() {return "old game protocol";}
 };

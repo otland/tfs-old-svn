@@ -20,7 +20,6 @@
 #include "otsystem.h"
 
 #include "networkmessage.h"
-#include "connection.h"
 #include "tools.h"
 
 #ifdef __TRACK_NETWORK__
@@ -29,8 +28,9 @@
 #endif
 
 class Protocol;
-#define OUTPUT_POOL_SIZE 100
+class Connection;
 
+#define OUTPUT_POOL_SIZE 100
 class OutputMessage : public NetworkMessage, boost::noncopyable
 {
 	private:
@@ -40,7 +40,7 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		virtual ~OutputMessage() {}
 
 		Protocol* getProtocol() const {return m_protocol;}
-		Connection_ptr getConnection() const {return m_connection;}
+		Connection* getConnection() const {return m_connection;}
 
 		char* getOutputBuffer() {return (char*)&m_MsgBuf[m_outputBufferStart];}
 		uint64_t getFrame() const {return m_frame;}
@@ -103,7 +103,7 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 
 		void freeMessage()
 		{
-			setConnection(Connection_ptr());
+			setConnection(NULL);
 			setProtocol(NULL);
 			m_frame = 0;
 			//allocate enough size for headers:
@@ -117,7 +117,7 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		friend class OutputMessagePool;
 
 		void setProtocol(Protocol* protocol) {m_protocol = protocol;}
-		void setConnection(Connection_ptr connection) {m_connection = connection;}
+		void setConnection(Connection* connection) {m_connection = connection;}
 
 		void setState(OutputMessageState state) {m_state = state;}
 		OutputMessageState getState() const {return m_state;}
@@ -125,7 +125,7 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		void setFrame(uint64_t frame) {m_frame = frame;}
 
 		Protocol* m_protocol;
-		Connection_ptr m_connection;
+		Connection* m_connection;
 
 		OutputMessageState m_state;
 		uint64_t m_frame;

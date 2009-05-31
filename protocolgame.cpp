@@ -337,7 +337,7 @@ bool ProtocolGame::logout(bool displayEffect, bool forced, bool executeLogout/* 
 	if(displayEffect && !player->isInGhostMode())
 		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 
-	if(Connection_ptr connection = getConnection())
+	if(Connection* connection = getConnection())
 		connection->close();
 
 	return g_game.removeCreature(player);

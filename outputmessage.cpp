@@ -19,6 +19,7 @@
 
 #include "outputmessage.h"
 #include "protocol.h"
+#include "connection.h"
 
 //*********** OutputMessagePool ****************//
 
@@ -56,7 +57,6 @@ void OutputMessagePool::send(OutputMessage_ptr msg)
 {
 	OTSYS_THREAD_LOCK(m_outputPoolLock, "");
 	OutputMessage::OutputMessageState state = msg->getState();
-
 	OTSYS_THREAD_UNLOCK(m_outputPoolLock, "");
 	if(state == OutputMessage::STATE_ALLOCATED_NO_AUTOSEND)
 	{
@@ -202,7 +202,7 @@ void OutputMessagePool::configureOutputMessage(OutputMessage_ptr msg, Protocol* 
 	else
 		msg->setState(OutputMessage::STATE_ALLOCATED_NO_AUTOSEND);
 
-	Connection_ptr connection = protocol->getConnection();
+	Connection* connection = protocol->getConnection();
 	assert(connection != NULL);
 
 	msg->setProtocol(protocol);

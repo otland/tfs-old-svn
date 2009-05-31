@@ -391,7 +391,7 @@ ServiceManager* services)
 	#ifdef __DEBUG__
 	ss << " GLOBAL";
 	#endif
-	#ifdef __DEBUG__MOVESYS__
+	#ifdef __DEBUG_MOVESYS__
 	ss << " MOVESYS";
 	#endif
 	#ifdef __DEBUG_CHAT__

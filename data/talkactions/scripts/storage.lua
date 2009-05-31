@@ -12,7 +12,7 @@ function onSay(cid, words, param)
 	end
 
 	if(not t[3]) then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, " [" .. t[1] .. "] [" .. t[2] .. "] = " .. getPlayerStorageValue(tid, t[2]))
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, " [" .. t[1] .. " - " .. t[2] .. "] = " .. getPlayerStorageValue(tid, t[2]))
 	else
 		setPlayerStorageValue(tid, t[2], t[3])
 	end

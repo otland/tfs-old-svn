@@ -2847,7 +2847,7 @@ void Player::__addThing(Creature* actor, int32_t index, Thing* thing)
 {
 	if(index < 0 || index > 11)
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Player::__addThing], " << "player: " << getName() << ", index: " << index << ", index < 0 || index > 11" << std::endl;
 		DEBUG_REPORT
 #endif
@@ -2856,7 +2856,7 @@ void Player::__addThing(Creature* actor, int32_t index, Thing* thing)
 
 	if(index == 0)
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Player::__addThing], " << "player: " << getName() << ", index == 0" << std::endl;
 		DEBUG_REPORT
 #endif
@@ -2866,7 +2866,7 @@ void Player::__addThing(Creature* actor, int32_t index, Thing* thing)
 	Item* item = thing->getItem();
 	if(!item)
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Player::__addThing], " << "player: " << getName() << ", item == NULL" << std::endl;
 		DEBUG_REPORT
 #endif
@@ -2888,7 +2888,7 @@ void Player::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
 	int32_t index = __getIndexOfThing(thing);
 	if(index == -1)
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Player::__updateThing], " << "player: " << getName() << ", index == -1" << std::endl;
 		DEBUG_REPORT
 #endif
@@ -2898,7 +2898,7 @@ void Player::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
 	Item* item = thing->getItem();
 	if(item == NULL)
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Player::__updateThing], " << "player: " << getName() << ", item == NULL" << std::endl;
 		DEBUG_REPORT
 #endif
@@ -2921,7 +2921,7 @@ void Player::__replaceThing(uint32_t index, Thing* thing)
 {
 	if(index < 0 || index > 11)
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Player::__replaceThing], " << "player: " << getName() << ", index: " << index << ",  index < 0 || index > 11" << std::endl;
 		DEBUG_REPORT
 #endif
@@ -2931,7 +2931,7 @@ void Player::__replaceThing(uint32_t index, Thing* thing)
 	Item* oldItem = getInventoryItem((slots_t)index);
 	if(!oldItem)
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Player::__updateThing], " << "player: " << getName() << ", oldItem == NULL" << std::endl;
 		DEBUG_REPORT
 #endif
@@ -2941,7 +2941,7 @@ void Player::__replaceThing(uint32_t index, Thing* thing)
 	Item* item = thing->getItem();
 	if(!item)
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Player::__updateThing], " << "player: " << getName() << ", item == NULL" << std::endl;
 		DEBUG_REPORT
 #endif
@@ -2965,7 +2965,7 @@ void Player::__removeThing(Thing* thing, uint32_t count)
 	Item* item = thing->getItem();
 	if(!item)
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Player::__removeThing], " << "player: " << getName() << ", item == NULL" << std::endl;
 		DEBUG_REPORT
 #endif
@@ -2975,7 +2975,7 @@ void Player::__removeThing(Thing* thing, uint32_t count)
 	int32_t index = __getIndexOfThing(thing);
 	if(index == -1)
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Player::__removeThing], " << "player: " << getName() << ", index == -1" << std::endl;
 		DEBUG_REPORT
 #endif
@@ -3209,14 +3209,14 @@ void Player::__internalAddThing(Thing* thing)
 
 void Player::__internalAddThing(uint32_t index, Thing* thing)
 {
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 	std::cout << "[Player::__internalAddThing] index: " << index << std::endl;
 #endif
 
 	Item* item = thing->getItem();
 	if(!item)
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Player::__internalAddThing] item == NULL" << std::endl;
 #endif
 		return;
@@ -3225,7 +3225,7 @@ void Player::__internalAddThing(uint32_t index, Thing* thing)
 	//index == 0 means we should equip this item at the most appropiate slot
 	if(index == 0)
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Player::__internalAddThing] index == 0" << std::endl;
 		DEBUG_REPORT
 #endif
@@ -3236,7 +3236,7 @@ void Player::__internalAddThing(uint32_t index, Thing* thing)
 	{
 		if(inventory[index])
 		{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 			std::cout << "Warning: [Player::__internalAddThing], player: " << getName() << ", items[index] is not empty." << std::endl;
 			//DEBUG_REPORT
 #endif

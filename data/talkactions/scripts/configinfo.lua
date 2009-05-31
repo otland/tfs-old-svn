@@ -1,13 +1,9 @@
 local HIDDEN = {"passwordType", "sql"}
 
-local function cancelInfo(cid, value)
-	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Config value " .. value .. " doesn't exists.")
-end
-
 function onSay(cid, words, param, channel)
 	for _, str in ipairs(HIDDEN) do
 		if(param:find(str) ~= nil) then
-			cancelInfo(cid, param)
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Config value \"" .. value .. "\" does not exists.")
 			return true
 		end
 	end
@@ -15,9 +11,9 @@ function onSay(cid, words, param, channel)
 	local value = getConfigValue(param)
 	if(value) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, param .. " = " .. value)
-	else
-		cancelInfo(cid, param)
+		return true
 	end
 
+	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Config value \"" .. value .. "\" does not exists.")
 	return true
 end

@@ -181,7 +181,7 @@ class ProtocolAdmin : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolAdminCount;
 #endif
-		ProtocolAdmin(Connection_ptr connection): Protocol(connection)
+		ProtocolAdmin(Connection* connection): Protocol(connection)
 		{
 			m_state = NO_CONNECTED;
 			m_loginTries = m_lastCommand = 0;

@@ -414,7 +414,7 @@ void Container::__addThing(Creature* actor, int32_t index, Thing* thing)
 {
 	if(index >= (int32_t)capacity())
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Container::__addThing], index:" << index << ", index >= capacity()" << std::endl;
 		DEBUG_REPORT
 #endif
@@ -424,14 +424,14 @@ void Container::__addThing(Creature* actor, int32_t index, Thing* thing)
 	Item* item = thing->getItem();
 	if(item == NULL)
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Container::__addThing] item == NULL" << std::endl;
 		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;
 	}
 
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 	if(index != INDEX_WHEREEVER)
 	{
 		if(size() >= capacity())
@@ -460,7 +460,7 @@ void Container::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
 	int32_t index = __getIndexOfThing(thing);
 	if(index == -1)
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Container::__updateThing] index == -1" << std::endl;
 		DEBUG_REPORT
 #endif
@@ -470,7 +470,7 @@ void Container::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
 	Item* item = thing->getItem();
 	if(item == NULL)
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Container::__updateThing] item == NULL" << std::endl;
 		DEBUG_REPORT
 #endif
@@ -499,7 +499,7 @@ void Container::__replaceThing(uint32_t index, Thing* thing)
 	Item* item = thing->getItem();
 	if(item == NULL)
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Container::__replaceThing] item == NULL" << std::endl;
 		DEBUG_REPORT
 #endif
@@ -518,7 +518,7 @@ void Container::__replaceThing(uint32_t index, Thing* thing)
 
 	if(cit == itemlist.end())
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Container::__updateThing] item not found" << std::endl;
 		DEBUG_REPORT
 #endif
@@ -549,7 +549,7 @@ void Container::__removeThing(Thing* thing, uint32_t count)
 	Item* item = thing->getItem();
 	if(item == NULL)
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Container::__removeThing] item == NULL" << std::endl;
 		DEBUG_REPORT
 #endif
@@ -559,7 +559,7 @@ void Container::__removeThing(Thing* thing, uint32_t count)
 	int32_t index = __getIndexOfThing(thing);
 	if(index == -1)
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Container::__removeThing] index == -1" << std::endl;
 		DEBUG_REPORT
 #endif
@@ -569,7 +569,7 @@ void Container::__removeThing(Thing* thing, uint32_t count)
 	ItemList::iterator cit = std::find(itemlist.begin(), itemlist.end(), thing);
 	if(cit == itemlist.end())
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Container::__removeThing] item not found" << std::endl;
 		DEBUG_REPORT
 #endif
@@ -745,7 +745,7 @@ void Container::__internalAddThing(Thing* thing)
 
 void Container::__internalAddThing(uint32_t index, Thing* thing)
 {
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 	std::cout << "[Container::__internalAddThing] index: " << index << std::endl;
 #endif
 	if(!thing)
@@ -754,7 +754,7 @@ void Container::__internalAddThing(uint32_t index, Thing* thing)
 	Item* item = thing->getItem();
 	if(item == NULL)
 	{
-#ifdef __DEBUG__MOVESYS__
+#ifdef __DEBUG_MOVESYS__
 		std::cout << "Failure: [Container::__internalAddThing] item == NULL" << std::endl;
 #endif
 		return;
