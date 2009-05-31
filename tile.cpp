@@ -1361,7 +1361,9 @@ uint32_t Tile::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, boo
 	Thing* thing = NULL;
 	for(uint32_t i = 0; i < getThingCount(); ++i)
 	{
-		thing = __getThing(i);
+		if(!thing = __getThing(i))
+			continue;
+
 		if(const Item* item = thing->getItem())
 		{
 			if(item->getID() == itemId && (subType == -1 || subType == item->getSubType()))
@@ -1397,7 +1399,11 @@ Thing* Tile::__getThing(uint32_t index) const
 	{
 		uint32_t topItemSize = items->getTopItemCount();
 		if(index < topItemSize)
-			return items->at(items->downItemCount + index);
+		{
+			Item* item = items->at(items->downItemCount + index);
+			if(item && !item->isRemoved())
+				return item;
+		}
 
 		index -= topItemSize;
 	}
@@ -1411,7 +1417,11 @@ Thing* Tile::__getThing(uint32_t index) const
 	}
 
 	if(items && index < items->getDownItemCount())
-		return items->at(index);
+	{
+		Item* item = items->at(index);
+		if(item && !item->isRemoved())
+			return item;
+	}
 
 	return NULL;
 }
