@@ -460,6 +460,7 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, Tile* t
 	{
 		m_lastCacheItemVector.push_back(tile->ground);
 		ret &= moveEvent->fireStepEvent(actor, creature, tile->ground, tile->getPosition());
+		return ret;
 	}
 
 	//We can not use iterators here since the scripts can invalidate the iterator
@@ -534,6 +535,7 @@ uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool is
 	{
 		m_lastCacheItemVector.push_back(tile->ground);
 		ret &= moveEvent->fireAddRemItem(actor, item, tile->ground, tile->getPosition());
+		return ret;
 	}
 
 	//We can not use iterators here since the scripts can invalidate the iterator
