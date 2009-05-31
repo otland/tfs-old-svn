@@ -922,14 +922,16 @@ uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, 
 	{
 		if(it.abilities.skills[i])
 		{
-			needUpdateSkills = true;
 			player->setVarSkill((skills_t)i, it.abilities.skills[i]);
+			if(!needUpdateSkills)
+				needUpdateSkills = true;
 		}
 
 		if(it.abilities.skillsPercent[i])
 		{
-			needUpdateSkills = true;
 			player->setVarSkill((skills_t)i, (int32_t)(player->getSkill((skills_t)i, SKILL_LEVEL) * ((it.abilities.skillsPercent[i] - 100) / 100.f)));
+			if(!needUpdateSkills)
+				needUpdateSkills = true;
 		}
 	}
 
@@ -941,14 +943,16 @@ uint32_t MoveEvent::EquipItem(MoveEvent* moveEvent, Player* player, Item* item, 
 	{
 		if(it.abilities.stats[s])
 		{
-			needUpdateStats = true;
 			player->setVarStats((stats_t)s, it.abilities.stats[s]);
+			if(!needUpdateStats)
+				needUpdateStats = true;
 		}
 
 		if(it.abilities.statsPercent[s])
 		{
-			needUpdateStats = true;
 			player->setVarStats((stats_t)s, (int32_t)(player->getDefaultStats((stats_t)s) * ((it.abilities.statsPercent[s] - 100) / 100.f)));
+			if(!needUpdateStats)
+				needUpdateStats = true;
 		}
 	}
 

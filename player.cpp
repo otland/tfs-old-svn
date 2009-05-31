@@ -3127,19 +3127,19 @@ void Player::postAddNotification(Creature* actor, Thing* thing, const Cylinder* 
 	}
 	else if(const Creature* creature = thing->getCreature())
 	{
-		if(creature == this)
-		{
-			typedef std::vector<Container*> Containers;
-			Containers containers;
-			for(ContainerVector::iterator it = containerVec.begin(); it != containerVec.end(); ++it)
-			{
-				if(!Position::areInRange<1,1,0>(it->second->getPosition(), getPosition()))
-					containers.push_back(it->second);
-			}
+		if(creature != this)
+			return;
 
-			for(Containers::const_iterator it = containers.begin(); it != containers.end(); ++it)
-				autoCloseContainers(*it);
+		typedef std::vector<Container*> Containers;
+		Containers containers;
+		for(ContainerVector::iterator it = containerVec.begin(); it != containerVec.end(); ++it)
+		{
+			if(!Position::areInRange<1,1,0>(it->second->getPosition(), getPosition()))
+				containers.push_back(it->second);
 		}
+
+		for(Containers::const_iterator it = containers.begin(); it != containers.end(); ++it)
+			autoCloseContainers(*it);
 	}
 }
 
