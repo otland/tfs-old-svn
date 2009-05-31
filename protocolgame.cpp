@@ -2279,6 +2279,9 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 
 void ProtocolGame::sendRemoveCreature(const Creature* creature, const Position& pos, uint32_t stackpos, bool isLogout)
 {
+	if(!canSee(pos))
+		return;
+
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
@@ -2872,23 +2875,23 @@ void ProtocolGame::AddTileCreature(NetworkMessage_ptr msg, const Position& pos, 
 
 void ProtocolGame::UpdateTileItem(NetworkMessage_ptr msg, const Position& pos, uint32_t stackpos, const Item* item)
 {
-	if(stackpos < 10)
-	{
-		msg->AddByte(0x6B);
-		msg->AddPosition(pos);
-		msg->AddByte(stackpos);
-		msg->AddItem(item);
-	}
+	if(stackpos >= 10)
+		return;
+
+	msg->AddByte(0x6B);
+	msg->AddPosition(pos);
+	msg->AddByte(stackpos);
+	msg->AddItem(item);
 }
 
 void ProtocolGame::RemoveTileItem(NetworkMessage_ptr msg, const Position& pos, uint32_t stackpos)
 {
-	if(stackpos < 10)
-	{
-		msg->AddByte(0x6C);
-		msg->AddPosition(pos);
-		msg->AddByte(stackpos);
-	}
+	if(stackpos >= 10)
+		return;
+
+	msg->AddByte(0x6C);
+	msg->AddPosition(pos);
+	msg->AddByte(stackpos);
 }
 
 void ProtocolGame::MoveUpCreature(NetworkMessage_ptr msg, const Creature* creature,
