@@ -1410,11 +1410,8 @@ Thing* Tile::__getThing(uint32_t index) const
 		index -= (uint32_t)creatures->size();
 	}
 
-	if(items)
-	{
-		if(index < items->getDownItemCount())
-			return items->at(index);
-	}
+	if(items && index < items->getDownItemCount())
+		return items->at(index);
 
 	return NULL;
 }
