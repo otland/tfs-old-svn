@@ -95,9 +95,9 @@ void ScriptEnviroment::resetEnv()
 {
 	m_scriptId = m_callbackId = 0;
 	m_timerEvent = false;
+
 	m_realPos = Position();
 	m_interface = NULL;
-
 	for(std::list<Item*>::iterator it = m_tempItems.begin(); it != m_tempItems.end(); ++it)
 	{
 		if((*it)->getParent() == VirtualCylinder::virtualCylinder)
@@ -121,8 +121,8 @@ bool ScriptEnviroment::saveGameState()
 		return true;
 
 	Database* db = Database::getInstance();
-
 	DBQuery query;
+
 	query << "DELETE FROM `global_storage` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 	if(!db->executeQuery(query.str()))
 		return false;
@@ -137,10 +137,7 @@ bool ScriptEnviroment::saveGameState()
 			return false;
 	}
 
-	if(!query_insert.execute())
-		return false;
-
-	return true;
+	return query_insert.execute();
 }
 
 bool ScriptEnviroment::loadGameState()
@@ -164,7 +161,7 @@ bool ScriptEnviroment::loadGameState()
 
 bool ScriptEnviroment::setCallbackId(int32_t callbackId, LuaScriptInterface* scriptInterface)
 {
-	if(m_callbackId == 0)
+	if(!m_callbackId)
 	{
 		m_callbackId = callbackId;
 		m_interface = scriptInterface;
@@ -190,11 +187,10 @@ void ScriptEnviroment::getEventInfo(int32_t& scriptId, std::string& desc, LuaScr
 void ScriptEnviroment::addUniqueThing(Thing* thing)
 {
 	Item* item = thing->getItem();
-	if(item && item->getUniqueId() != 0)
+	if(item && item->getUniqueId())
 	{
 		int32_t uid = item->getUniqueId();
-		Thing* tmp = m_globalMap[uid];
-		if(tmp)
+		if(m_globalMap[uid])
 		{
 			if(item->getActionId() != 2000)
 				std::cout << "Duplicate uniqueId " << uid << std::endl;
@@ -9807,18 +9803,17 @@ int32_t LuaScriptInterface::luaDatabaseStoreQuery(lua_State* L)
 
 	DBQuery query; //lock mutex
 	if(DBResult* res = Database::getInstance()->storeQuery(popString(L)))
-	{
 		lua_pushnumber(L, env->addResult(res));
-		return 1;
-	}
+	else
+		lua_pushboolean(L, false);
 
-	lua_pushboolean(L, false);
 	return 1;
 }
 
 int32_t LuaScriptInterface::luaDatabaseEscapeString(lua_State* L)
 {
 	//db.escapeString(str)
+	DBQuery query; //lock mutex
 	lua_pushstring(L, Database::getInstance()->escapeString(popString(L)).c_str());
 	return 1;
 }
@@ -9827,6 +9822,8 @@ int32_t LuaScriptInterface::luaDatabaseEscapeBlob(lua_State* L)
 {
 	//db.escapeBlob(s, length)
 	uint32_t length = popNumber(L);
+	DBQuery query; //lock mutex
+
 	lua_pushstring(L, Database::getInstance()->escapeBlob(popString(L), length).c_str());
 	return 1;
 }
@@ -9834,6 +9831,7 @@ int32_t LuaScriptInterface::luaDatabaseEscapeBlob(lua_State* L)
 int32_t LuaScriptInterface::luaDatabaseLastInsertId(lua_State* L)
 {
 	//db.lastInsertId()
+	DBQuery query; //lock mutex
 	lua_pushnumber(L, Database::getInstance()->getLastInsertId());
 	return 1;
 }

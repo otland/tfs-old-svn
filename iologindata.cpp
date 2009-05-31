@@ -699,8 +699,15 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 {
 	if(preSave && player->health <= 0)
 	{
-		player->health = player->healthMax;
-		player->mana = player->manaMax;
+		if(player->getSkull() != SKULL_BLACK)
+		{
+			player->health = player->healthMax;
+			player->mana = player->manaMax;
+		}
+		else
+			player->health = 40; //TODO: configurable
+			player->mana = 0; //TODO: configurable
+		}
 	}
 
 	Database* db = Database::getInstance();
@@ -1009,11 +1016,12 @@ bool IOLoginData::saveItems(const Player* player, const ItemBlockList& itemList,
 bool IOLoginData::playerDeath(Player* player, const DeathList& dl)
 {
 	Database* db = Database::getInstance();
+	DBQuery query;
+
 	DBTransaction trans(db);
 	if(!trans.begin())
 		return false;
 
-	DBQuery query;
 	query << "INSERT INTO `player_deaths` (`player_id`, `date`, `level`) VALUES (" << player->getGUID()
 		<< ", " << time(NULL) << ", " << player->getLevel() << ")";
 	if(!db->executeQuery(query.str()))
@@ -1527,21 +1535,21 @@ bool IOLoginData::getUnjustifiedDates(uint32_t guid, std::vector<time_t>& dateLi
 bool IOLoginData::updatePremiumDays()
 {
 	Database* db = Database::getInstance();
+	DBQuery query;
+
 	DBTransaction trans(db);
 	if(!trans.begin())
 		return false;
 
-	DBQuery query;
-	query << "SELECT `id` FROM `accounts` WHERE `lastday` <= " << time(NULL) - 86400;
-
 	DBResult* result;
-	if((result = db->storeQuery(query.str())))
-	{
-		do
-			removePremium(loadAccount(result->getDataInt("id"), true));
-		while(result->next());
-		result->free();
-	}
+	query << "SELECT `id` FROM `accounts` WHERE `lastday` <= " << time(NULL) - 86400;
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	do
+		removePremium(loadAccount(result->getDataInt("id"), true));
+	while(result->next());
+	result->free();
 
 	query.str("");
 	return trans.commit();
