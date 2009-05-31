@@ -434,8 +434,8 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, Tile* t
 		eventType = MOVE_EVENT_STEP_IN;
 
 	uint32_t ret = 1;
-	MoveEvent* moveEvent = getEvent(tile, eventType);
-	if(moveEvent)
+	MoveEvent* moveEvent = NULL;
+	if((moveEvent = getEvent(tile, eventType)))
 		ret &= moveEvent->fireStepEvent(actor, creature, NULL, tile->getPosition());
 
 	Item* tileItem = NULL;
@@ -466,8 +466,8 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, Tile* t
 	Thing* thing = NULL;
 	for(int32_t i = tile->__getFirstIndex(), j = tile->__getLastIndex(); i < j; ++i)
 	{
-		if((thing = tile->__getThing(i)) && (tileItem = thing->getItem()) &&
-			(moveEvent = getEvent(tileItem, eventType)))
+		Thing* thing = tile->__getThing(i);
+		if(thing && !thing->isRemoved() && (tileItem = thing->getItem()) && (moveEvent = getEvent(tileItem, eventType)))
 		{
 			m_lastCacheItemVector.push_back(tileItem);
 			ret &= moveEvent->fireStepEvent(actor, creature, tileItem, tile->getPosition());
@@ -515,7 +515,7 @@ uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool is
 	if(m_lastCacheTile == tile)
 	{
 		if(m_lastCacheItemVector.empty())
-			return false;
+			return ret;
 
 		//We can not use iterators here since the scripts can invalidate the iterator
 		for(int32_t i = 0, j = m_lastCacheItemVector.size(); i < j; ++i)
@@ -538,11 +538,11 @@ uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool is
 	}
 
 	//We can not use iterators here since the scripts can invalidate the iterator
-	Thing* thing = NULL;
 	for(int32_t i = tile->__getFirstIndex(), j = tile->__getLastIndex(); i < j; ++i)
 	{
-		if((thing = tile->__getThing(i)) && (tileItem = thing->getItem()) && tileItem != item
-			&& (moveEvent = getEvent(tileItem, eventType2)))
+		Thing* thing = tile->__getThing(i);
+		if(thing && !thing->isRemoved() && (tileItem = thing->getItem()) &&
+			tileItem != item && (moveEvent = getEvent(tileItem, eventType2)))
 		{
 			m_lastCacheItemVector.push_back(tileItem);
 			ret &= moveEvent->fireAddRemItem(actor, item, tileItem, tile->getPosition());
