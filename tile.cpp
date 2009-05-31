@@ -341,9 +341,7 @@ Creature* Tile::getTopVisibleCreature(const Creature* creature)
 		for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
 		{
 			if((*cit)->getPlayer() && creature->canSeeCreature(*cit))
-				continue;
-
-			return (*cit);
+				return (*cit);
 		}
 	}
 
@@ -357,9 +355,7 @@ const Creature* Tile::getTopVisibleCreature(const Creature* creature) const
 		for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
 		{
 			if((*cit)->getPlayer() && creature->canSeeCreature(*cit))
-				continue;
-
-			return (*cit);
+				return (*cit);
 		}
 	}
 
@@ -1308,7 +1304,7 @@ int32_t Tile::__getIndexOfThing(const Thing* thing) const
 	const TileItemVector* items = getItemList();
 	if(items)
 	{
-		if(thing->getItem())
+		if(thing && thing->getItem())
 		{
 			for(ItemVector::const_iterator it = items->getBeginTopItem(); it != items->getEndTopItem(); ++it)
 			{
@@ -1333,7 +1329,7 @@ int32_t Tile::__getIndexOfThing(const Thing* thing) const
 
 	if(items)
 	{
-		if(thing->getItem())
+		if(thing && thing->getItem())
 		{
 			for(ItemVector::const_iterator it = items->getBeginDownItem(); it != items->getEndDownItem(); ++it)
 			{
