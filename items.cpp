@@ -18,12 +18,13 @@
 #include <iostream>
 #include <libxml/xmlmemory.h>
 
-#include "configmanager.h"
 #include "items.h"
+#include "condition.h"
 #include "weapons.h"
 
-#include "condition.h"
+#include "configmanager.h"
 #include "spells.h"
+
 extern Spells* g_spells;
 extern ConfigManager g_config;
 
@@ -1597,10 +1598,10 @@ int32_t Items::getItemIdByName(const std::string& name)
 	if(!name.empty())
 	{
 		uint32_t i = 100;
-		ItemType* iType;
+		ItemType* iType = NULL;
 		do
 		{
-			if((iType = items.getElement(i)) && strcasecmp(name.c_str(), iType->name.c_str()) == 0)
+			if((iType = items.getElement(i)) && !strcasecmp(name.c_str(), iType->name.c_str()))
 				return i;
 
 			i++;

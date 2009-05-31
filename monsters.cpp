@@ -1344,10 +1344,15 @@ bool Monsters::loadLootItem(xmlNodePtr node, LootBlock& lootBlock)
 {
 	int32_t intValue;
 	std::string strValue;
-	if(readXMLInteger(node, "id", intValue))
+	if(!readXMLInteger(node, "id", intValue))
+	{
+		if(readXMLString(node, "name", strValue))
+			lootBlock.id = Item::items.getItemIdByName(strValue);
+	}
+	else
 		lootBlock.id = intValue;
 
-	if(lootBlock.id == 0)
+	if(!lootBlock.id)
 		return false;
 
 	if(readXMLInteger(node, "countmax", intValue))
