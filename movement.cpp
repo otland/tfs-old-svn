@@ -445,11 +445,9 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, Tile* t
 			return ret;
 
 		//We can not use iterators here since the scripts can invalidate the iterator
-		int32_t j = m_lastCacheItemVector.size();
-		for(int32_t i = 0; i < j; ++i)
+		for(int32_t i = 0, j = m_lastCacheItemVector.size(); i < j; ++i)
 		{
-			tileItem = m_lastCacheItemVector[i];
-			if((moveEvent = getEvent(tileItem, eventType)))
+			if((tileItem = m_lastCacheItemVector[i]) && (moveEvent = getEvent(tileItem, eventType)))
 				ret &= moveEvent->fireStepEvent(actor, creature, tileItem, tile->getPosition());
 		}
 
@@ -468,7 +466,7 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, Tile* t
 	Thing* thing = NULL;
 	for(int32_t i = tile->__getFirstIndex(), j = tile->__getLastIndex(); i < j; ++i)
 	{
-		if((thing = tile->__getThing(i)) && (tileItem = thing->getItem()) &&
+		if((thing = tile->__getThing(i)) && tileItem = thing->getItem() &&
 			(moveEvent = getEvent(tileItem, eventType)))
 		{
 			m_lastCacheItemVector.push_back(tileItem);
@@ -520,15 +518,12 @@ uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool is
 			return false;
 
 		//We can not use iterators here since the scripts can invalidate the iterator
-		int32_t j = m_lastCacheItemVector.size();
-		for(int32_t i = 0; i < j; ++i)
+		for(int32_t i = 0, j = m_lastCacheItemVector.size(); i < j; ++i)
 		{
-			tileItem = m_lastCacheItemVector[i];
-			if(tileItem != item)
-			{
-				if((moveEvent = getEvent(tileItem, eventType2)))
-					ret &= moveEvent->fireAddRemItem(actor, item, tileItem, tile->getPosition());
-			}
+			if((tileItem = m_lastCacheItemVector[i]) && tileItem != item
+				&& (moveEvent = getEvent(tileItem, eventType2)))
+				ret &= moveEvent->fireAddRemItem(actor, item,
+					tileItem, tile->getPosition());
 		}
 
 		return ret;
@@ -546,7 +541,7 @@ uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool is
 	Thing* thing = NULL;
 	for(int32_t i = tile->__getFirstIndex(), j = tile->__getLastIndex(); i < j; ++i)
 	{
-		if((thing = tile->__getThing(i)) && (tileItem = thing->getItem()) && (tileItem != item)
+		if((thing = tile->__getThing(i)) && (tileItem = thing->getItem()) && tileItem != item
 			&& (moveEvent = getEvent(tileItem, eventType2)))
 		{
 			m_lastCacheItemVector.push_back(tileItem);

@@ -738,7 +738,7 @@ bool Spell::playerRuneSpellCheck(Player* player, const Position& toPos)
 		}
 		else
 		{
-			Tile* tile = g_game.getTile(toPos.x, toPos.y, toPos.z);
+			Tile* tile = g_game.getTile(toPos);
 			if(!tile)
 			{
 				player->sendCancelMessage(RET_NOTPOSSIBLE);
