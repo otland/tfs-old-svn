@@ -705,6 +705,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 			player->mana = player->manaMax;
 		}
 		else
+		{
 			player->health = 40; //TODO: configurable
 			player->mana = 0; //TODO: configurable
 		}
