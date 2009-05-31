@@ -92,11 +92,6 @@ const HouseTile* Tile::getHouseTile() const
 	return NULL;
 }
 
-bool Tile::isHouseTile() const
-{
-	return hasFlag(TILESTATE_HOUSE);
-}
-
 bool Tile::hasHeight(uint32_t n) const
 {
 	uint32_t height = 0;
@@ -812,11 +807,6 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 	return destTile;
 }
 
-void Tile::__addThing(Creature* actor, Thing* thing)
-{
-	__addThing(actor, 0, thing);
-}
-
 void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 {
 	if(Creature* creature = thing->getCreature())
@@ -1345,16 +1335,6 @@ int32_t Tile::__getIndexOfThing(const Thing* thing) const
 	return -1;
 }
 
-int32_t Tile::__getFirstIndex() const
-{
-	return 0;
-}
-
-int32_t Tile::__getLastIndex() const
-{
-	return getThingCount();
-}
-
 uint32_t Tile::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, bool itemCount /*= true*/) const
 {
 	uint32_t count = 0;
@@ -1500,11 +1480,6 @@ void Tile::postRemoveNotification(Creature* actor, Thing* thing,  const Cylinder
 
 	if(Creature* creature = thing->getCreature())
 		g_moveEvents->onCreatureMove(actor, creature, this, false);
-}
-
-void Tile::__internalAddThing(Thing* thing)
-{
-	__internalAddThing(0, thing);
 }
 
 void Tile::__internalAddThing(uint32_t index, Thing* thing)

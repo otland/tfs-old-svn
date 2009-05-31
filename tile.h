@@ -138,7 +138,7 @@ class Tile : public Cylinder
 
 		HouseTile* getHouseTile();
 		const HouseTile* getHouseTile() const;
-		bool isHouseTile() const;
+		bool isHouseTile() const {return hasFlag(TILESTATE_HOUSE);}
 
 		virtual int32_t getThrowRange() const {return 0;}
 		virtual bool isPushable() const {return false;}
@@ -208,7 +208,7 @@ class Tile : public Cylinder
 		virtual Cylinder* __queryDestination(int32_t& index, const Thing* thing, Item** destItem,
 			uint32_t& flags);
 
-		virtual void __addThing(Creature* actor, Thing* thing);
+		virtual void __addThing(Creature* actor, Thing* thing) {__addThing(actor, 0, thing);}
 		virtual void __addThing(Creature* actor, int32_t index, Thing* thing);
 
 		virtual void __updateThing(Thing* thing, uint16_t itemId, uint32_t count);
@@ -217,8 +217,8 @@ class Tile : public Cylinder
 		virtual void __removeThing(Thing* thing, uint32_t count);
 
 		virtual int32_t __getIndexOfThing(const Thing* thing) const;
-		virtual int32_t __getFirstIndex() const;
-		virtual int32_t __getLastIndex() const;
+		virtual int32_t __getFirstIndex() const {return 0;}
+		virtual int32_t __getLastIndex() const {return thingCount;}
 		virtual uint32_t __getItemTypeCount(uint16_t itemId, int32_t subType = -1, bool itemCount = true) const;
 		virtual Thing* __getThing(uint32_t index) const;
 
@@ -227,7 +227,7 @@ class Tile : public Cylinder
 		virtual void postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
 			int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
 
-		virtual void __internalAddThing(Thing* thing);
+		virtual void __internalAddThing(Thing* thing) {__internalAddThing(0, thing);}
 		virtual void __internalAddThing(uint32_t index, Thing* thing);
 
 		virtual Position getPosition() const {return tilePos;}
