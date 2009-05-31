@@ -287,11 +287,11 @@ class StaticTile : public Tile
 
 		TileItemVector* getItemList() {return items;}
 		const TileItemVector* getItemList() const {return items;}
-		TileItemVector* makeItemList() {return (items)? (items) : (items = new TileItemVector);}
+		TileItemVector* makeItemList() {return (items) ? (items) : (items = new TileItemVector);}
 
 		CreatureVector* getCreatures() {return creatures;}
 		const CreatureVector* getCreatures() const {return creatures;}
-		CreatureVector* makeCreatures() {return (creatures)? (creatures) : (creatures = new CreatureVector);}
+		CreatureVector* makeCreatures() {return (creatures) ? (creatures) : (creatures = new CreatureVector);}
 };
 
 inline Tile::Tile(uint16_t x, uint16_t y, uint16_t z): qt_node(NULL),
