@@ -466,7 +466,7 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, Tile* t
 	Thing* thing = NULL;
 	for(int32_t i = tile->__getFirstIndex(), j = tile->__getLastIndex(); i < j; ++i)
 	{
-		if((thing = tile->__getThing(i)) && tileItem = thing->getItem() &&
+		if((thing = tile->__getThing(i)) && (tileItem = thing->getItem()) &&
 			(moveEvent = getEvent(tileItem, eventType)))
 		{
 			m_lastCacheItemVector.push_back(tileItem);
