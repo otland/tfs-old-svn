@@ -491,7 +491,7 @@ Cylinder* Game::internalGetCylinder(Player* player, const Position& pos)
 }
 
 Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index,
-	uint32_t spriteId/*= 0*/, stackposType_t type/*= STACKPOS_NORMAL*/)
+	uint32_t spriteId/*= 0*/, stackposType_t type/* = STACKPOS_NORMAL*/)
 {
 	if(pos.x != 0xFFFF)
 	{
@@ -499,14 +499,13 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 		if(!tile)
 			return NULL;
 
-		/*look at*/
 		if(type == STACKPOS_LOOK)
 			return tile->getTopVisibleThing(player);
 
 		Thing* thing = NULL;
 		switch(type)
 		{
-			case STACKPOS_MOVE: //for move operations
+			case STACKPOS_MOVE:
 			{
 				Item* item = tile->getTopDownItem();
 				if(item && item->isMoveable())
@@ -517,7 +516,7 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 				break;
 			}
 
-			case STACKPOS_USE: //use item
+			case STACKPOS_USE:
 			{
 				thing = tile->getTopDownItem();
 				break;
