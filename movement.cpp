@@ -464,7 +464,7 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, Tile* t
 
 	//We can not use iterators here since the scripts can invalidate the iterator
 	Thing* thing = NULL;
-	for(uint32_t i = 1; i < tile->getThingCount(); ++i)
+	for(uint32_t i = 1; i < tile->getThingCount(); ++i) //already checked the ground
 	{
 		if((thing = tile->__getThing(i)) && (tileItem = thing->getItem())
 			&& (moveEvent = getEvent(tileItem, eventType)))
@@ -538,9 +538,9 @@ uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool is
 		ret &= moveEvent->fireAddRemItem(actor, item, tile->ground, tile->getPosition());
 	}
 
-	//We can not use iterators here since the scripts can invalidate the iterator
+	//we can not use iterators here since the scripts can invalidate the iterator
 	Thing* thing = NULL;
-	for(uint32_t i = 1; i < tile->getThingCount(); ++i)
+	for(uint32_t i = 1; i < tile->getThingCount(); ++i) //already checked the ground
 	{
 		if((thing = tile->__getThing(i)) && (tileItem = thing->getItem()) &&
 			tileItem != item && (moveEvent = getEvent(tileItem, eventType2)))
