@@ -918,7 +918,6 @@ void Monster::pushItems(Tile* tile)
 
 bool Monster::pushCreature(Creature* creature)
 {
-	Position monsterPos = creature->getPosition();
 	DirVector dirVector;
 	dirVector.push_back(NORTH);
 	dirVector.push_back(SOUTH);
@@ -926,6 +925,8 @@ bool Monster::pushCreature(Creature* creature)
 	dirVector.push_back(EAST);
 
 	std::random_shuffle(dirVector.begin(), dirVector.end());
+	Position monsterPos = creature->getPosition();
+
 	Tile* tile = NULL;
 	for(DirVector::iterator it = dirVector.begin(); it != dirVector.end(); ++it)
 	{
@@ -976,11 +977,8 @@ bool Monster::getNextStep(Direction& dir)
 	bool result = false;
 	if((!followCreature || !hasFollowPath) && !isSummon())
 	{
-		if(followCreature || getTimeSinceLastMove() > 1000)
-		{
-			//choose a random direction
+		if(followCreature || getTimeSinceLastMove() > 1000) //choose a random direction
 			result = getRandomStep(getPosition(), dir);
-		}
 	}
 	else if(isSummon() || followCreature)
 	{
@@ -1028,18 +1026,19 @@ bool Monster::getRandomStep(const Position& creaturePos, Direction& dir)
 	std::random_shuffle(dirVector.begin(), dirVector.end());
 	for(DirVector::iterator it = dirVector.begin(); it != dirVector.end(); ++it)
 	{
-		if(canWalkTo(creaturePos, *it))
-		{
-			dir = *it;
-			return true;
-		}
+		if(!canWalkTo(creaturePos, *it))
+			continue;
+
+		dir = *it;
+		return true;
 	}
+
 	return false;
 }
 
 bool Monster::getDanceStep(const Position& creaturePos, Direction& dir,	bool keepAttack /*= true*/, bool keepDistance /*= true*/)
 {
-	assert(attackedCreature != NULL);
+	assert(attackedCreature);
 	bool canDoAttackNow = canUseAttack(creaturePos, attackedCreature);
 	const Position& centerPos = attackedCreature->getPosition();
 
