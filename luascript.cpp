@@ -7651,7 +7651,7 @@ int32_t LuaScriptInterface::luaDoCreatureChangeOutfit(lua_State* L)
 		else
 			creature->defaultOutfit = outfit;
 
-		if(!creature->hasCondition(CONDITION_OUTFIT))
+		if(!creature->hasCondition(CONDITION_OUTFIT, 1))
 			g_game.internalCreatureChangeOutfit(creature, outfit);
 
 		lua_pushboolean(L, true);

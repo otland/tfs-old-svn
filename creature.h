@@ -241,7 +241,7 @@ class Creature : public AutoID, virtual public Thing
 		const void setCurrentOutfit(Outfit_t outfit) {currentOutfit = outfit;}
 		const Outfit_t getDefaultOutfit() const {return defaultOutfit;}
 
-		bool isInvisible() const {return hasCondition(CONDITION_INVISIBLE, false);}
+		bool isInvisible() const {return hasCondition(CONDITION_INVISIBLE, -1, false);}
 		virtual bool isInGhostMode() const {return false;}
 
 		ZoneType_t getZone() const
@@ -309,7 +309,7 @@ class Creature : public AutoID, virtual public Thing
 		void removeConditions(ConditionEnd_t reason, bool onlyPersistent = true);
 		Condition* getCondition(ConditionType_t type, ConditionId_t id, uint32_t subId = 0) const;
 		void executeConditions(uint32_t interval);
-		bool hasCondition(ConditionType_t type, uint32_t subId = 0, bool checkTime = true) const;
+		bool hasCondition(ConditionType_t type, int32_t subId = 0, bool checkTime = true) const;
 		virtual bool isImmune(ConditionType_t type) const;
 		virtual bool isImmune(CombatType_t type) const;
 		virtual bool isSuppress(ConditionType_t type) const;
@@ -341,7 +341,7 @@ class Creature : public AutoID, virtual public Thing
 		//combat event functions
 		virtual void onAddCondition(ConditionType_t type, bool hadCondition);
 		virtual void onAddCombatCondition(ConditionType_t type, bool hadCondition) {}
-		virtual void onEndCondition(ConditionType_t type, bool lastCondition);
+		virtual void onEndCondition(ConditionType_t type);
 		virtual void onTickCondition(ConditionType_t type, int32_t interval, bool& _remove);
 		virtual void onCombatRemoveCondition(const Creature* attacker, Condition* condition);
 		virtual void onAttackedCreature(Creature* target) {}

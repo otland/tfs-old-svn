@@ -3435,9 +3435,9 @@ void Player::onAddCombatCondition(ConditionType_t type, bool hadCondition)
 		sendTextMessage(MSG_STATUS_DEFAULT, "You are " + tmp + ".");
 }
 
-void Player::onEndCondition(ConditionType_t type, bool lastCondition)
+void Player::onEndCondition(ConditionType_t type)
 {
-	Creature::onEndCondition(type, lastCondition);
+	Creature::onEndCondition(type);
 	sendIcons();
 	if(type != CONDITION_INFIGHT)
 		return;

@@ -158,7 +158,7 @@ class Monster : public Creature
 		bool deactivate(bool forced = false);
 
 		virtual void onAddCondition(ConditionType_t type, bool hadCondition);
-		virtual void onEndCondition(ConditionType_t type, bool lastCondition);
+		virtual void onEndCondition(ConditionType_t type);
 		virtual void onCreatureConvinced(const Creature* convincer, const Creature* creature);
 
 		bool canUseAttack(const Position& pos, const Creature* target) const;

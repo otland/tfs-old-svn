@@ -1485,16 +1485,6 @@ ConditionGeneric(_id, _type, _ticks, _buff, _subId)
 	//
 }
 
-bool ConditionInvisible::startCondition(Creature* creature)
-{
-	return Condition::startCondition(creature);
-}
-
-void ConditionInvisible::endCondition(Creature* creature, ConditionEnd_t reason)
-{
-	//
-}
-
 ConditionOutfit::ConditionOutfit(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff, uint32_t _subId):
 Condition(_id, _type, _ticks, _buff, _subId)
 {

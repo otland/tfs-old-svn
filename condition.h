@@ -251,9 +251,6 @@ class ConditionInvisible: public ConditionGeneric
 		ConditionInvisible(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff, uint32_t _subId);
 		virtual ~ConditionInvisible() {}
 
-		virtual bool startCondition(Creature* creature);
-		virtual void endCondition(Creature* creature, ConditionEnd_t reason);
-
 		virtual ConditionInvisible* clone() const {return new ConditionInvisible(*this);}
 };
 

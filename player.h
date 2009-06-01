@@ -457,7 +457,7 @@ class Player : public Creature, public Cylinder
 		//combat event functions
 		virtual void onAddCondition(ConditionType_t type, bool hadCondition);
 		virtual void onAddCombatCondition(ConditionType_t type, bool hadCondition);
-		virtual void onEndCondition(ConditionType_t type, bool lastCondition);
+		virtual void onEndCondition(ConditionType_t type);
 		virtual void onCombatRemoveCondition(const Creature* attacker, Condition* condition);
 		virtual void onAttackedCreature(Creature* target);
 		virtual void onAttacked();

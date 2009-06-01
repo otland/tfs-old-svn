@@ -3373,7 +3373,7 @@ bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 		return false;
 
 	player->setIdleTime(0);
-	if(player->hasCondition(CONDITION_OUTFIT) || player->hasCondition(CONDITION_INVISIBLE)
+	if(player->hasCondition(CONDITION_OUTFIT, -1) || player->hasCondition(CONDITION_INVISIBLE, -1)
 		|| (player->isInGhostMode() && g_config.getBool(ConfigManager::GHOST_INVISIBLE_EFFECT)))
 		return true;
 

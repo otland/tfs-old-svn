@@ -1124,9 +1124,9 @@ void Creature::onAddCondition(ConditionType_t type, bool hadCondition)
 		removeCondition(CONDITION_PARALYZE);
 }
 
-void Creature::onEndCondition(ConditionType_t type, bool lastCondition)
+void Creature::onEndCondition(ConditionType_t type)
 {
-	if(type == CONDITION_INVISIBLE && lastCondition)
+	if(type == CONDITION_INVISIBLE && !hasCondition(condition->getType(), -1, false))
 		g_game.internalCreatureChangeVisible(this, true);
 }
 
@@ -1268,7 +1268,7 @@ bool Creature::addCondition(Condition* condition)
 	if(!condition)
 		return false;
 
-	bool hadCondition = hasCondition(condition->getType(), condition->getSubId(), false);
+	bool hadCondition = hasCondition(condition->getType(), -1, false);
 	if(Condition* previous = getCondition(condition->getType(), condition->getId(), condition->getSubId()))
 	{
 		previous->addCondition(this, condition);
@@ -1289,7 +1289,7 @@ bool Creature::addCondition(Condition* condition)
 
 bool Creature::addCombatCondition(Condition* condition)
 {
-	bool hadCondition = hasCondition(condition->getType(), condition->getSubId(), false);
+	bool hadCondition = hasCondition(condition->getType(), -1, false);
 	//Caution: condition variable could be deleted after the call to addCondition
 	ConditionType_t type = condition->getType();
 	if(!addCondition(condition))
@@ -1313,7 +1313,7 @@ void Creature::removeCondition(ConditionType_t type)
 		it = conditions.erase(it);
 
 		condition->endCondition(this, CONDITIONEND_ABORT);
-		onEndCondition(condition->getType(), !hasCondition(condition->getType(), condition->getSubId(), false));
+		onEndCondition(condition->getType());
 		delete condition;
 	}
 }
@@ -1332,7 +1332,7 @@ void Creature::removeCondition(ConditionType_t type, ConditionId_t id)
 		it = conditions.erase(it);
 
 		condition->endCondition(this, CONDITIONEND_ABORT);
-		onEndCondition(condition->getType(), !hasCondition(condition->getType(), condition->getSubId(), false));
+		onEndCondition(condition->getType());
 		delete condition;
 	}
 }
@@ -1346,7 +1346,7 @@ void Creature::removeCondition(Condition* condition)
 		it = conditions.erase(it);
 
 		condition->endCondition(this, CONDITIONEND_ABORT);
-		onEndCondition(condition->getType(), !hasCondition(condition->getType(), condition->getSubId(), false));
+		onEndCondition(condition->getType());
 		delete condition;
 	}
 }
@@ -1375,7 +1375,7 @@ void Creature::removeConditions(ConditionEnd_t reason, bool onlyPersistent/* = t
 		it = conditions.erase(it);
 
 		condition->endCondition(this, reason);
-		onEndCondition(condition->getType(), !hasCondition(condition->getType(), condition->getSubId(), false));
+		onEndCondition(condition->getType());
 		delete condition;
 	}
 }
@@ -1405,19 +1405,19 @@ void Creature::executeConditions(uint32_t interval)
 		it = conditions.erase(it);
 
 		condition->endCondition(this, CONDITIONEND_TICKS);
-		onEndCondition(condition->getType(), !hasCondition(condition->getType(), condition->getSubId(), false));
+		onEndCondition(condition->getType());
 		delete condition;
 	}
 }
 
-bool Creature::hasCondition(ConditionType_t type, uint32_t subId/* = 0*/, bool checkTime/* = true*/) const
+bool Creature::hasCondition(ConditionType_t type, int32_t subId/* = 0*/, bool checkTime/* = true*/) const
 {
 	if(isSuppress(type))
 		return false;
 
 	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
-		if((*it)->getType() != type || (*it)->getSubId() != subId)
+		if((*it)->getType() != type || (subId != -1 && (*it)->getSubId() != subId))
 			continue;
 
 		return !checkTime || g_config.getBool(ConfigManager::OLD_CONDITION_ACCURACY)
