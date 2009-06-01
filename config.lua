@@ -113,6 +113,7 @@
 	-- Deathlist
 	deathListEnabled = "yes"
 	deathAssistCount = 1
+	deathListRequiredTime = 1 * 60 * 1000
 	maxDeathRecords = 5
 
 	-- Guilds
@@ -240,6 +241,7 @@
 	experienceShareLevelDifference = 2 / 3
 	extraPartyExperienceLimit = 20
 	extraPartyExperiencePercent = 5
+	experienceShareActivity = 2 * 60 * 1000
 
 	-- Global save
 	-- NOTE: globalSaveHour means like 03:00, not that it will save every 3 hours,

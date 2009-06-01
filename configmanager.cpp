@@ -258,10 +258,10 @@ bool ConfigManager::load()
 	m_confNumber[BAN_DAILY_LIMIT] = getGlobalNumber("dailyFragsToBanishment", m_confNumber[RED_DAILY_LIMIT]);
 	m_confNumber[BAN_WEEKLY_LIMIT] = getGlobalNumber("weeklyFragsToBanishment", m_confNumber[RED_WEEKLY_LIMIT]);
 	m_confNumber[BAN_MONTHLY_LIMIT] = getGlobalNumber("monthlyFragsToBanishment", m_confNumber[RED_MONTHLY_LIMIT]);
-	m_confNumber[HEALTH_AFTER_BLACK_SKULLED_DEATH] = getGlobalNumber("hpAfterBlackSkulledDeath", 40);
-	m_confNumber[MANA_AFTER_BLACK_SKULLED_DEATH] = getGlobalNumber("manaAfterBlackSkulledDeath", 0);
-	m_confNumber[SECONDS_NEEDED_TO_APPEAR_ON_DEATHLIST] = getGlobalNumber("secondsNeededToAppearOnDeathlist", 60);
-	m_confNumber[EXPERIENCE_SHARE_AVAILABLE_AFTER] = getGlobalNumber("experienceShareAvailableAfter", 120);	
+	m_confNumber[BLACK_SKULL_DEATH_HEALTH] = getGlobalNumber("blackSkulledDeathHealth", 40);
+	m_confNumber[BLACK_SKULL_DEATH_MANA] = getGlobalNumber("blackSkulledDeathMana", 0);
+	m_confNumber[DEATHLIST_REQUIRED_TIME] = getGlobalNumber("deathListRequiredTime", 1 * 60 * 1000);
+	m_confNumber[EXPERIENCE_SHARE_ACTIVITY] = getGlobalNumber("experienceShareActivity", 2 * 60 * 1000);	
 
 	m_loaded = true;
 	return true;

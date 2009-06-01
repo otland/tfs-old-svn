@@ -758,17 +758,19 @@ DeathList Creature::getKillers()
 {
 	DeathList list;
 	Creature* lhc = NULL;
-	if((lhc = g_game.getCreatureByID(lastHitCreature)))
-		list.push_back(DeathEntry(lhc, 0));
-	else
+	if(!(lhc = g_game.getCreatureByID(lastHitCreature)))
 		list.push_back(DeathEntry(getCombatName(lastDamageSource), 0));
+	else
+		list.push_back(DeathEntry(lhc, 0));
+
+	int32_t requiredTime = g_config.getNumber(ConfigManager::DEATHLIST_REQUIRED_TIME);
+	int64_t now = OTSYS_TIME();
 
 	CountBlock_t cb;
-	int64_t now = OTSYS_TIME();
 	for(CountMap::const_iterator it = damageMap.begin(); it != damageMap.end(); ++it)
 	{
 		cb = it->second;
-		if((now - cb.ticks) > g_config.getNumber(ConfigManager::SECONDS_NEEDED_TO_APPEAR_ON_DEATHLIST) * 1000)
+		if((now - cb.ticks) > requiredTime)
 			continue;
 
 		Creature* mdc = g_game.getCreatureByID(it->first);

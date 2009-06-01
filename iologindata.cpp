@@ -699,18 +699,15 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 {
 	if(preSave && player->health <= 0)
 	{
-		if(player->getSkull() != SKULL_BLACK)
+		if(player->getSkull() == SKULL_BLACK)
 		{
-			player->health = player->healthMax;
-			player->mana = player->manaMax;
+			player->health = g_config.getNumber(ConfigManager::BLACK_SKULL_DEATH_HEALTH);
+			player->mana = g_config.getNumber(ConfigManager::BLACK_SKULL_DEATH_MANA);
 		}
 		else
 		{
-			uint32_t restoreHealth = g_config.getNumber(ConfigManager::HEALTH_AFTER_BLACK_SKULLED_DEATH);
-			player->health = ((restoreHealth <= player->healthMax) ? restoreHealth : player->healthMax);
-
-			uint32_t restoreMana = g_config.getNumber(ConfigManager::MANA_AFTER_BLACK_SKULLED_DEATH);
-			player->health = ((restoreMana <= player->manaMax) ? restoreMana : player->manaMax);
+			player->health = player->healthMax;
+			player->mana = player->manaMax;
 		}
 	}
 
