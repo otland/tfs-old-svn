@@ -1494,7 +1494,7 @@ bool Creature::registerCreatureEvent(const std::string& name)
 		return false;
 
 	if(!hasEventRegistered(event->getEventType())) //wasn't added, so set the bit in the bitfield
-		scriptEventsBitField = scriptEventsBitField | ((uint32_t)1 << event->getEventType());
+		scriptEventsBitField |= ((uint32_t)1 << event->getEventType());
 
 	eventsList.push_back(event);
 	return true;

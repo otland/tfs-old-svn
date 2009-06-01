@@ -3909,6 +3909,7 @@ void Game::internalCreatureChangeOutfit(Creature* creature, const Outfit_t& outf
 
 void Game::internalCreatureChangeVisible(Creature* creature, bool visible)
 {
+	creature->setNoMove(true);
 	const SpectatorVec& list = getSpectators(creature->getPosition());
 	SpectatorVec::const_iterator it;
 
@@ -3917,18 +3918,14 @@ void Game::internalCreatureChangeVisible(Creature* creature, bool visible)
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
-		{
 			tmpPlayer->sendCreatureChangeVisible(creature, visible);
-			tmpPlayer->sendUpdateTile(creature->getTile(), creature->getPosition());
-		}
 	}
 
 	//event method
 	for(it = list.begin(); it != list.end(); ++it)
-	{
 		(*it)->onCreatureChangeVisible(creature, visible);
-		(*it)->onUpdateTile(creature->getTile(), creature->getPosition());
-	}
+
+	creature->setNoMove(false);
 }
 
 

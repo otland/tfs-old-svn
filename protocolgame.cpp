@@ -1018,18 +1018,12 @@ bool ProtocolGame::canSee(uint16_t x, uint16_t y, uint16_t z) const
 	const Position& myPos = player->getPosition();
 	if(myPos.z <= 7)
 	{
-		//we are on ground level or above (7 -> 0)
-		//view is from 7 -> 0
+		//we are on ground level or above (7 -> 0), view is from 7 -> 0
 		if(z > 7)
 			return false;
 	}
-	else if(myPos.z >= 8)
-	{
-		//we are underground (8 -> 15)
-		//view is +/- 2 from the floor we stand on
-		if(std::abs(myPos.z - z) > 2)
-			return false;
-	}
+	else if(myPos.z >= 8 && std::abs(myPos.z - z) > 2) //we are underground (8 -> 15), view is +/- 2 from the floor we stand on
+		return false;
 
 	//negative offset means that the action taken place is on a lower floor than ourself
 	int32_t offsetz = myPos.z - z;
@@ -2358,7 +2352,7 @@ void ProtocolGame::sendMoveCreature(const Creature* creature, const Tile* newTil
 				msg->AddByte(0x6D);
 				msg->AddPosition(oldPos);
 				msg->AddByte(oldStackpos);
-				msg->AddPosition(creature->getPosition());
+				msg->AddPosition(newPos);
 			}
 			else
 			{
