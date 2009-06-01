@@ -868,7 +868,7 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 	{
 		for(CreatureVector::const_iterator cit = creatures->begin(); (cit != creatures->end() && count < 10); ++cit)
 		{
-			if(!player->canSeeCreature(creature))
+			if(!player->canSeeCreature(*cit))
 				continue;
 
 			bool known;
