@@ -1126,7 +1126,7 @@ void Creature::onAddCondition(ConditionType_t type, bool hadCondition)
 
 void Creature::onEndCondition(ConditionType_t type)
 {
-	if(type == CONDITION_INVISIBLE && !hasCondition(condition->getType(), -1, false))
+	if(type == CONDITION_INVISIBLE && !hasCondition(type, -1, false))
 		g_game.internalCreatureChangeVisible(this, true);
 }
 
@@ -1417,7 +1417,7 @@ bool Creature::hasCondition(ConditionType_t type, int32_t subId/* = 0*/, bool ch
 
 	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
-		if((*it)->getType() != type || (subId != -1 && (*it)->getSubId() != subId))
+		if((*it)->getType() != type || (subId != -1 && (*it)->getSubId() != (uint32_t)subId))
 			continue;
 
 		return !checkTime || g_config.getBool(ConfigManager::OLD_CONDITION_ACCURACY)
