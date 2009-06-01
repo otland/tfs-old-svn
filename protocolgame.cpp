@@ -360,8 +360,7 @@ bool ProtocolGame::connect(uint32_t playerId)
 	player->isConnecting = false;
 
 	player->client = this;
-	player->client->sendAddCreature(player, player->getPosition(),
-		player->getTile()->__getIndexOfThing(player), false);
+	player->sendCreatureAppear(player, false);
 	player->sendIcons();
 
 	player->lastIP = player->getIP();
@@ -2347,37 +2346,37 @@ void ProtocolGame::sendMoveCreature(const Creature* creature, const Tile* newTil
 	}
 	else if(canSee(oldPos) && canSee(newPos))
 	{
-		if(player->canSeeCreature(creature))
+		if(!player->canSeeCreature(creature))
+			return;
+
+		NetworkMessage_ptr msg = getOutputBuffer();
+		if(msg)
 		{
-			NetworkMessage_ptr msg = getOutputBuffer();
-			if(msg)
+			TRACK_MESSAGE(msg);
+			if(!teleport && (oldPos.z != 7 || newPos.z < 8) && oldStackpos < 10)
 			{
-				TRACK_MESSAGE(msg);
-				if(!teleport && (oldPos.z != 7 || newPos.z < 8) && oldStackpos < 10)
-				{
-					msg->AddByte(0x6D);
-					msg->AddPosition(oldPos);
-					msg->AddByte(oldStackpos);
-					msg->AddPosition(newPos);
-				}
-				else
-				{
-					RemoveTileItem(msg, oldPos, oldStackpos);
-					AddTileCreature(msg, newPos, newStackpos, creature);
-				}
+				msg->AddByte(0x6D);
+				msg->AddPosition(oldPos);
+				msg->AddByte(oldStackpos);
+				msg->AddPosition(creature->getPosition());
+			}
+			else
+			{
+				RemoveTileItem(msg, oldPos, oldStackpos);
+				AddTileCreature(msg, newPos, newStackpos, creature);
 			}
 		}
 	}
 	else if(canSee(oldPos))
 	{
-		if(player->canSeeCreature(creature))
+		if(!player->canSeeCreature(creature))
+			return;
+
+		NetworkMessage_ptr msg = getOutputBuffer();
+		if(msg)
 		{
-			NetworkMessage_ptr msg = getOutputBuffer();
-			if(msg)
-			{
-				TRACK_MESSAGE(msg);
-				RemoveTileItem(msg, oldPos, oldStackpos);
-			}
+			TRACK_MESSAGE(msg);
+			RemoveTileItem(msg, oldPos, oldStackpos);
 		}
 	}
 	else if(canSee(newPos) && player->canSeeCreature(creature))
@@ -2873,7 +2872,7 @@ void ProtocolGame::AddTileItem(NetworkMessage_ptr msg, const Position& pos, uint
 	msg->AddItem(item);
 }
 
-void ProtocolGame::AddTileCreature(NetworkMessage_ptr msg, const Position& pos, uint32_t stackpos, const Creature* creature)
+void ProtocolGame::(NetworkMessage_ptr msg, const Position& pos, uint32_t stackpos, const Creature* creature)
 {
 	if(stackpos >= 10)
 		return;

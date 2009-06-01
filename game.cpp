@@ -780,7 +780,7 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
-			tmpPlayer->sendCreatureAppear(creature, creature->getPosition(), true);
+			tmpPlayer->sendCreatureAppear(creature, true);
 	}
 
 	for(it = list.begin(); it != list.end(); ++it)
@@ -791,6 +791,7 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 	addCreatureCheck(creature);
 
 	creature->onPlacedCreature();
+	creature->setLastPosition(creature->getPosition());
 	return true;
 }
 
@@ -848,8 +849,8 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 		(*it)->onCreatureDisappear(creature, isLogout);
 
 	creature->getParent()->postRemoveNotification(NULL, creature, NULL, oldIndex, true);
-	creature->setRemoved();
 	removeCreatureCheck(creature);
+	creature->setRemoved();
 
 	listCreature.removeList(creature->getID());
 	creature->removeList();

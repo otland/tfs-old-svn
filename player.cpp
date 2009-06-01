@@ -1268,11 +1268,11 @@ void Player::sendCreatureChangeVisible(const Creature* creature, bool visible)
 		return;
 
 	if(canSeeCreature(creature))
-		client->sendCreatureOutfit(creature, creature->getCurrentOutfit());
-	else if(visible)
-		sendCreatureAppear(creature, creature->getPosition(), false);
-	else
+		sendCreatureChangeOutfit(creature, creature->getCurrentOutfit());
+	else if(!visible)
 		sendCreatureDisappear(creature, creature->getTile()->__getIndexOfThing(creature), false);
+	else
+		sendCreatureAppear(creature, false);
 }
 
 void Player::sendAddContainerItem(const Container* container, const Item* item)
