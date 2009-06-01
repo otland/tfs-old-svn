@@ -8,13 +8,14 @@ function onSay(cid, words, param, channel)
 		end
 	end
 
-	local tmp = getTownName(getPlayerTown(tid))
+	local pos = getPlayerTown(tid)
+	local tmp = getTownName(pos)
 	if(not tmp) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Home town does not exists.")
 		return true
 	end
 
-	local pos = getTownTemplePosition(pos)
+	pos = getTownTemplePosition(pos)
 	if(not pos or isInArray({pos.x, pos.y}, 0)) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Wrong temple position for town " .. tmp .. ".")
 		return true
