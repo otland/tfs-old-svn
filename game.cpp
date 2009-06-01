@@ -3373,7 +3373,8 @@ bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 		return false;
 
 	player->setIdleTime(0);
-	if(player->hasCondition(CONDITION_OUTFIT))
+	if(player->hasCondition(CONDITION_OUTFIT) || player->hasCondition(CONDITION_INVISIBLE)
+		|| (player->isInGhostMode() && g_config.getBool(ConfigManager::GHOST_INVISIBLE_EFFECT)))
 		return true;
 
 	internalCreatureChangeOutfit(player, outfit);
@@ -3909,7 +3910,6 @@ void Game::internalCreatureChangeOutfit(Creature* creature, const Outfit_t& outf
 
 void Game::internalCreatureChangeVisible(Creature* creature, bool visible)
 {
-	creature->setNoMove(true);
 	const SpectatorVec& list = getSpectators(creature->getPosition());
 	SpectatorVec::const_iterator it;
 
@@ -3924,8 +3924,6 @@ void Game::internalCreatureChangeVisible(Creature* creature, bool visible)
 	//event method
 	for(it = list.begin(); it != list.end(); ++it)
 		(*it)->onCreatureChangeVisible(creature, visible);
-
-	creature->setNoMove(false);
 }
 
 

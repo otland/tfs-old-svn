@@ -871,7 +871,7 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 	{
 		for(CreatureVector::const_iterator cit = creatures->begin(); (cit != creatures->end() && count < 10); ++cit)
 		{
-			if(!player->canSeeCreature(*cit))
+			if(!canSee(*cit))
 				continue;
 
 			bool known;
@@ -2272,7 +2272,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 
 void ProtocolGame::sendRemoveCreature(const Creature* creature, const Position& pos, uint32_t stackpos, bool isLogout)
 {
-	if(!canSee(pos))
+	if(!canSee(pos) || !canSee(creature))
 		return;
 
 	NetworkMessage_ptr msg = getOutputBuffer();
@@ -2340,7 +2340,7 @@ void ProtocolGame::sendMoveCreature(const Creature* creature, const Tile* newTil
 	}
 	else if(canSee(oldPos) && canSee(newPos))
 	{
-		if(!player->canSeeCreature(creature))
+		if(!canSee(creature))
 			return;
 
 		NetworkMessage_ptr msg = getOutputBuffer();
@@ -2363,7 +2363,7 @@ void ProtocolGame::sendMoveCreature(const Creature* creature, const Tile* newTil
 	}
 	else if(canSee(oldPos))
 	{
-		if(!player->canSeeCreature(creature))
+		if(!canSee(creature))
 			return;
 
 		NetworkMessage_ptr msg = getOutputBuffer();
@@ -2373,7 +2373,7 @@ void ProtocolGame::sendMoveCreature(const Creature* creature, const Tile* newTil
 			RemoveTileItem(msg, oldPos, oldStackpos);
 		}
 	}
-	else if(canSee(newPos) && player->canSeeCreature(creature))
+	else if(canSee(newPos) && canSee(creature))
 	{
 		NetworkMessage_ptr msg = getOutputBuffer();
 		if(msg)
@@ -2820,7 +2820,7 @@ void ProtocolGame::AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* cre
 		|| !g_config.getBool(ConfigManager::GHOST_INVISIBLE_EFFECT))))
 	{
 		msg->AddU16(outfit.lookType);
-		if(outfit.lookType != 0)
+		if(outfit.lookType)
 		{
 			msg->AddByte(outfit.lookHead);
 			msg->AddByte(outfit.lookBody);
@@ -2828,7 +2828,7 @@ void ProtocolGame::AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* cre
 			msg->AddByte(outfit.lookFeet);
 			msg->AddByte(outfit.lookAddons);
 		}
-		else if(outfit.lookTypeEx != 0)
+		else if(outfit.lookTypeEx)
 			msg->AddItemId(outfit.lookTypeEx);
 		else
 			msg->AddU16(outfit.lookTypeEx);
