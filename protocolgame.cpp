@@ -2272,7 +2272,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 
 void ProtocolGame::sendRemoveCreature(const Creature* creature, const Position& pos, uint32_t stackpos, bool isLogout)
 {
-	if(!canSee(pos) || !canSee(creature))
+	if(!canSee(pos))
 		return;
 
 	NetworkMessage_ptr msg = getOutputBuffer();
