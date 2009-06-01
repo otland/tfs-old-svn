@@ -90,6 +90,8 @@ Creature::Creature():
 
 Creature::~Creature()
 {
+	attackedCreature = NULL;
+	removeConditions(CONDITIONEND_CLEANUP, false);
 	for(std::list<Creature*>::iterator cit = summons.begin(); cit != summons.end(); ++cit)
 	{
 		(*cit)->setAttackedCreature(NULL);
@@ -98,14 +100,7 @@ Creature::~Creature()
 	}
 
 	summons.clear();
-	for(ConditionList::iterator it = conditions.begin(); it != conditions.end(); ++it)
-	{
-		(*it)->endCondition(this, CONDITIONEND_CLEANUP);
-		delete *it;
-	}
-
 	conditions.clear();
-	attackedCreature = NULL;
 	eventsList.clear();
 }
 

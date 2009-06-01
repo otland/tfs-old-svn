@@ -1010,27 +1010,6 @@ bool Npc::canSee(const Position& pos) const
 	return Creature::canSee(getPosition(), pos, Map::maxClientViewportX, Map::maxClientViewportY);
 }
 
-void Npc::onAddTileItem(const Tile* tile, const Position& pos, const Item* item)
-{
-	Creature::onAddTileItem(tile, pos, item);
-}
-
-void Npc::onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
-	const ItemType& oldType, const Item* newItem, const ItemType& newType)
-{
-	Creature::onUpdateTileItem(tile, pos, oldItem, oldType, newItem, newType);
-}
-
-void Npc::onRemoveTileItem(const Tile* tile, const Position& pos, const ItemType& iType, const Item* item)
-{
-	Creature::onRemoveTileItem(tile, pos, iType, item);
-}
-
-void Npc::onUpdateTile(const Tile* tile, const Position& pos)
-{
-	Creature::onUpdateTile(tile, pos);
-}
-
 void Npc::onCreatureAppear(const Creature* creature, bool isLogin)
 {
 	Creature::onCreatureAppear(creature, isLogin);
@@ -1041,9 +1020,12 @@ void Npc::onCreatureAppear(const Creature* creature, bool isLogin)
 	{
 		if(m_npcEventHandler)
 			m_npcEventHandler->onCreatureAppear(creature);
+
+		return;
 	}
+
 	//only players for script events
-	else if(Player* player = const_cast<Player*>(creature->getPlayer()))
+	if(Player* player = const_cast<Player*>(creature->getPlayer()))
 	{
 		if(m_npcEventHandler)
 			m_npcEventHandler->onCreatureAppear(creature);
@@ -1114,11 +1096,6 @@ void Npc::onCreatureMove(const Creature* creature, const Tile* newTile, const Po
 	}
 }
 
-void Npc::onCreatureTurn(const Creature* creature)
-{
-	Creature::onCreatureTurn(creature);
-}
-
 void Npc::onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos/* = NULL*/)
 {
 	if(creature->getID() == this->getID())
@@ -1157,13 +1134,6 @@ void Npc::onPlayerCloseChannel(const Player* player)
 {
 	if(m_npcEventHandler)
 		m_npcEventHandler->onPlayerCloseChannel(player);
-}
-
-void Npc::onCreatureChangeOutfit(const Creature* creature, const Outfit_t& outfit)
-{
-	#ifdef __DEBUG_NPC__
-	std::cout << "Npc::onCreatureChangeOutfit" << std::endl;
-	#endif
 }
 
 void Npc::onPlayerEnter(Player* player, NpcState* state)

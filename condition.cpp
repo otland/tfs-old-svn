@@ -1492,8 +1492,7 @@ bool ConditionInvisible::startCondition(Creature* creature)
 
 void ConditionInvisible::endCondition(Creature* creature, ConditionEnd_t reason)
 {
-	if(!creature->isInvisible())
-		g_game.internalCreatureChangeVisible(creature, true);
+	//
 }
 
 ConditionOutfit::ConditionOutfit(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff, uint32_t _subId):

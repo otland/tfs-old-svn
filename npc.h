@@ -417,34 +417,24 @@ class Npc : public Creature
 		Npc(const std::string& _name);
 		bool loaded;
 
-		virtual void onAddTileItem(const Tile* tile, const Position& pos, const Item* item);
-		virtual void onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
-			const ItemType& oldType, const Item* newItem, const ItemType& newType);
-		virtual void onRemoveTileItem(const Tile* tile, const Position& pos, const ItemType& iType, const Item* item);
-		virtual void onUpdateTile(const Tile* tile, const Position& pos);
-
 		virtual void onCreatureAppear(const Creature* creature, bool isLogin);
 		virtual void onCreatureDisappear(const Creature* creature, bool isLogout);
-		virtual void onCreatureTurn(const Creature* creature);
 		virtual void onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
 			const Tile* oldTile, const Position& oldPos, bool teleport);
-
 		virtual void onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text, Position* pos = NULL);
-		virtual void onCreatureChangeOutfit(const Creature* creature, const Outfit_t& outfit);
-
 		virtual void onThink(uint32_t interval);
-		virtual std::string getDescription(int32_t lookDistance) const {return nameDescription + ".";}
 
 		bool isImmune(CombatType_t type) const {return true;}
 		bool isImmune(ConditionType_t type) const {return true;}
 		virtual bool isAttackable() const {return attackable;}
 
-		bool canWalkTo(const Position& fromPos, Direction dir);
+		virtual std::string getDescription(int32_t lookDistance) const {return nameDescription + ".";}
 		virtual bool getNextStep(Direction& dir);
 		bool getRandomStep(Direction& dir);
 
 		void reset();
 		bool loadFromXml(const std::string& name);
+		bool canWalkTo(const Position& fromPos, Direction dir);
 
 		const NpcResponse* getResponse(const ResponseList& list, const Player* player,
 			NpcState* npcState, const std::string& text, bool exactMatch = false);
