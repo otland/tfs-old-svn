@@ -1906,7 +1906,6 @@ void ProtocolGame::sendCreatureTurn(const Creature* creature, int16_t stackpos)
 	if(stackpos >= 10 || !canSee(creature))
 		return;
 
-
 	NetworkMessage_ptr msg = getOutputBuffer();
 	if(msg)
 	{
