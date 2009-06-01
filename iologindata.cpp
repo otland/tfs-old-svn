@@ -706,8 +706,11 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 		}
 		else
 		{
-			player->health = 40; //TODO: configurable
-			player->mana = 0; //TODO: configurable
+			uint32_t restoreHealth = g_config.getNumber(ConfigManager::HEALTH_AFTER_BLACK_SKULLED_DEATH);
+			player->health = ((restoreHealth <= player->healthMax) ? restoreHealth : player->healthMax);
+
+			uint32_t restoreMana = g_config.getNumber(ConfigManager::MANA_AFTER_BLACK_SKULLED_DEATH);
+			player->health = ((restoreMana <= player->manaMax) ? restoreMana : player->manaMax);
 		}
 	}
 

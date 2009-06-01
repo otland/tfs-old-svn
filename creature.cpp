@@ -773,7 +773,7 @@ DeathList Creature::getKillers()
 	for(CountMap::const_iterator it = damageMap.begin(); it != damageMap.end(); ++it)
 	{
 		cb = it->second;
-		if((now - cb.ticks) > 60 * 1000) //TODO: configurable
+		if((now - cb.ticks) > g_config.getNumber(ConfigManager::SECONDS_NEEDED_TO_APPEAR_ON_DEATHLIST) * 1000)
 			continue;
 
 		Creature* mdc = g_game.getCreatureByID(it->first);

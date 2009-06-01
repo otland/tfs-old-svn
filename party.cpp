@@ -369,7 +369,7 @@ bool Party::canUseSharedExperience(const Player* player, uint32_t highestLevel/*
 		return false;
 
 	CountMap::const_iterator it = pointMap.find(player->getID());
-	return it != pointMap.end() && (OTSYS_TIME() - it->second.ticks) <= (2 * 60 * 1000); //TODO: configurable
+	return it != pointMap.end() && (OTSYS_TIME() - it->second.ticks) <= (g_config.getNumber(ConfigManager::SECONDS_NEEDED_TO_APPEAR_ON_DEATHLIST) * 1000); 
 }
 
 bool Party::canEnableSharedExperience()
