@@ -324,7 +324,7 @@ bool hasBitSet(uint32_t flag, uint32_t flags)
 
 int32_t round(float v)
 {
-	int32_t t = (long)std::floor(v);
+	int32_t t = (int32_t)std::floor(v);
 	if((v - t) > 0.5)
 		return t + 1;
 

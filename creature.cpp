@@ -184,10 +184,10 @@ void Creature::onThink(uint32_t interval)
 		updateMapCache();
 	}
 
-	if(followCreature && getMaster() != followCreature && !canSeeCreature(followCreature))
+	if(followCreature && master != followCreature && !canSeeCreature(followCreature))
 		internalCreatureDisappear(followCreature, false);
 
-	if(attackedCreature && getMaster() != attackedCreature && !canSeeCreature(attackedCreature))
+	if(attackedCreature && master != attackedCreature && !canSeeCreature(attackedCreature))
 		internalCreatureDisappear(attackedCreature, false);
 
 	blockTicks += interval;
@@ -486,8 +486,8 @@ void Creature::onCreatureDisappear(const Creature* creature, bool isLogout)
 	internalCreatureDisappear(creature, true);
 	if(creature == this)
 	{
-		if(getMaster() && !getMaster()->isRemoved())
-			getMaster()->removeSummon(this);
+		if(master && !master->isRemoved())
+			master->removeSummon(this);
 	}
 	else if(isMapLoaded && creature->getPosition().z == getPosition().z)
 		updateTileCache(creature->getTile(), creature->getPosition());
@@ -681,7 +681,7 @@ bool Creature::onDeath()
 		return false;
 
 	int32_t i = 0, size = deathList.size(), tmp = g_config.getNumber(ConfigManager::DEATH_ASSISTS) + 1;
-	if(tmp > 1 && size > tmp)
+	if(tmp > 0 && size > tmp)
 		size = tmp;
 
 	for(DeathList::iterator it = deathList.begin(); it != deathList.end(); ++it, ++i)
@@ -710,8 +710,8 @@ bool Creature::onDeath()
 			attacker->onAttackedCreatureKilled(this);
 	}
 
-	if(getMaster())
-		getMaster()->removeSummon(this);
+	if(master)
+		master->removeSummon(this);
 
 	dropCorpse(deathList);
 	return true;
@@ -762,8 +762,8 @@ void Creature::dropCorpse(DeathList deathList)
 DeathList Creature::getKillers()
 {
 	DeathList list;
-	Creature* lhc = g_game.getCreatureByID(lastHitCreature);
-	if(lhc)
+	Creature* lhc = NULL;
+	if((lhc = g_game.getCreatureByID(lastHitCreature)))
 		list.push_back(DeathEntry(lhc, 0));
 	else
 		list.push_back(DeathEntry(getCombatName(lastDamageSource), 0));
@@ -1189,13 +1189,13 @@ void Creature::onAttackedCreatureKilled(Creature* target)
 		onGainExperience(target->getGainedExperience(this));
 }
 
-bool Creature::onKilledCreature(Creature* target, uint32_t flags/* = 0*/)
+bool Creature::onKilledCreature(Creature* target, uint32_t& flags)
 {
 	bool ret = true;
-	if(getMaster())
+	if(master)
 	{
 		flags |= (uint32_t)KILLFLAG_SUMMON;
-		ret = getMaster()->onKilledCreature(target, flags);
+		ret = master->onKilledCreature(target, flags);
 	}
 
 	CreatureEventList killEvents = getCreatureEvents(CREATURE_EVENT_KILL);
@@ -1221,10 +1221,10 @@ void Creature::onGainExperience(uint64_t gainExp)
 	if(gainExp <= 0)
 		return;
 
-	if(getMaster())
+	if(master)
 	{
 		gainExp = gainExp / 2;
-		getMaster()->onGainExperience(gainExp);
+		master->onGainExperience(gainExp);
 	}
 
 	std::stringstream ss;

@@ -55,81 +55,47 @@ Player::Player(const std::string& _name, ProtocolGame *p):
 	Creature(), transferContainer(ITEM_LOCKER1)
 {
 	client = p;
-	isConnecting = false;
-
 	if(client)
 		client->setPlayer(this);
 
 	name = _name;
 	nameDescription = _name;
-	setVocation(0);
-	promotionLevel = 0;
-	capacity = 400.00;
-	mana = manaMax = manaSpent = 0;
-	soul = 0;
-	soulMax = 100;
-	guildId = guildLevel = 0;
 
-	level = 1;
-	levelPercent = 0;
-	magLevelPercent = 0;
-	magLevel = 0;
-	experience = 0;
+	pzLocked = isConnecting = addAttackSkillPoint = requestedOutfit = false;
+	saving = true;
 
-	damageImmunities = 0;
-	conditionImmunities = 0;
-	conditionSuppressions = 0;
-	groupId = 0;
-	group = NULL;
-	lastLoginSaved = 0;
-	lastLogout = 0;
- 	lastIP = 0;
-	npings = 0;
-	internalPing = 0;
-	messageTicks = 0;
-	messageBuffer = 0;
-	nextAction = 0;
-
-	windowTextId = 0;
-	writeItem = NULL;
-	maxWriteLen = 0;
-
-	editHouse = NULL;
-	editListId = 0;
-
-	shopOwner = NULL;
-	purchaseCallback = -1;
-	saleCallback = -1;
-
-	pzLocked = false;
-	bloodHitCount = 0;
-	shieldBlockCount = 0;
 	lastAttackBlockType = BLOCK_NONE;
-	addAttackSkillPoint = false;
-	lastAttack = 0;
-	shootRange = 1;
-
-	blessings = 0;
-	balance = 0;
-	stamina = STAMINA_MAX;
-	premiumDays = 0;
-
-	idleTime = 0;
-	marriage = 0;
-	rates[SKILL__MAGLEVEL] = rates[SKILL__LEVEL] = 1.0f;
-
 	chaseMode = CHASEMODE_STANDSTILL;
 	fightMode = FIGHTMODE_ATTACK;
-
-	tradePartner = NULL;
 	tradeState = TRADE_NONE;
+	accountManager = MANAGER_NONE;
+
+	promotionLevel = walkTaskEvent = actionTaskEvent = nextStepEvent = bloodHitCount = shieldBlockCount = 0;
+	lastAttack = idleTime = marriage = blessings = balance = premiumDays = mana = manaMax = manaSpent = 0;
+	soul = guildId = guildLevel = levelPercent = magLevelPercent = magLevel = experience = damageImmunities = 0;
+	conditionImmunities = conditionSuppressions = groupId = vocation_id = managerNumber2 = town = redSkullEnd = 0;
+	lastLoginSaved = lastLogout = lastIP = npings = internalPing = messageTicks = messageBuffer = nextAction = 0;
+	editListId = maxWriteLen = windowTextId = 0;
+
+	purchaseCallback = saleCallback = -1;
+	level = shootRange = 1;
+	rates[SKILL__MAGLEVEL] = rates[SKILL__LEVEL] = 1.0f;
+	soulMax = 100;
+	capacity = 400.00;
+	stamina = STAMINA_MAX;
+
+	writeItem = NULL;
+	group = NULL;
+	editHouse = NULL;
+	shopOwner = NULL;
 	tradeItem = NULL;
-
+	tradePartner = NULL;
 	walkTask = NULL;
-	walkTaskEvent = 0;
-	actionTaskEvent = 0;
-	nextStepEvent = 0;
 
+	setVocation(0);
+	setParty(NULL);
+
+	transferContainer.setParent(NULL);
 	for(int32_t i = 0; i < 11; i++)
 	{
 		inventory[i] = NULL;
@@ -139,8 +105,7 @@ Player::Player(const std::string& _name, ProtocolGame *p):
 	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 	{
 		skills[i][SKILL_LEVEL] = 10;
-		skills[i][SKILL_TRIES] = 0;
-		skills[i][SKILL_PERCENT] = 0;
+		skills[i][SKILL_TRIES] = skills[i][SKILL_PERCENT] = 0;
 		rates[i] = 1.0f;
 	}
 
@@ -153,21 +118,8 @@ Player::Player(const std::string& _name, ProtocolGame *p):
 	for(int32_t i = LOSS_FIRST; i <= LOSS_LAST; ++i)
 		lossPercent[i] = 100;
 
-	accountManager = MANAGER_NONE;
-	managerNumber2 = 0;
-	managerString2 = "";
 	for(int8_t i = 0; i <= 13; i++)
 		talkState[i] = false;
-
- 	vocation_id = 0;
- 	town = 0;
-
-	redSkullEnd = 0;
-	setParty(NULL);
-	transferContainer.setParent(NULL);
-
-	requestedOutfit = false;
-	saving = true;
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 
 	playerCount++;
@@ -176,26 +128,26 @@ Player::Player(const std::string& _name, ProtocolGame *p):
 
 Player::~Player()
 {
+#ifdef __ENABLE_SERVER_DIAGNOSTIC__
+	playerCount--;
+#endif
+	setWriteItem(NULL);
 	for(int32_t i = 0; i < 11; i++)
 	{
 		if(inventory[i])
 		{
 			inventory[i]->setParent(NULL);
 			inventory[i]->releaseThing2();
+
 			inventory[i] = NULL;
 			inventoryAbilities[i] = false;
 		}
 	}
 
+	setNextWalkActionTask(NULL);
+	transferContainer.setParent(NULL);
 	for(DepotMap::iterator it = depots.begin(); it != depots.end(); it++)
 		it->second.first->releaseThing2();
-
-	setWriteItem(NULL);
-	setEditHouse(NULL);
-#ifdef __ENABLE_SERVER_DIAGNOSTIC__
-
-	playerCount--;
-#endif
 }
 
 void Player::setVocation(uint32_t vocId)
@@ -1267,7 +1219,7 @@ Item* Player::getWriteItem(uint32_t& _windowTextId, uint16_t& _maxWriteLen)
 	return writeItem;
 }
 
-void Player::setWriteItem(Item* item, uint16_t _maxWriteLen /*= 0*/)
+void Player::setWriteItem(Item* item, uint16_t _maxWriteLen/* = 0*/)
 {
 	windowTextId++;
 	if(writeItem)
@@ -1293,7 +1245,7 @@ House* Player::getEditHouse(uint32_t& _windowTextId, uint32_t& _listId)
 	return editHouse;
 }
 
-void Player::setEditHouse(House* house, uint32_t listId /*= 0*/)
+void Player::setEditHouse(House* house, uint32_t listId/* = 0*/)
 {
 	windowTextId++;
 	editHouse = house;
@@ -1320,7 +1272,7 @@ void Player::sendCreatureChangeVisible(const Creature* creature, bool visible)
 	else if(visible)
 		sendCreatureAppear(creature, creature->getPosition(), false);
 	else
-		sendCreatureDisappear(creature, false);
+		sendCreatureDisappear(creature, creature->getTile()->__getIndexOfThing(creature), false);
 }
 
 void Player::sendAddContainerItem(const Container* container, const Item* item)
@@ -1734,7 +1686,7 @@ void Player::checkTradeState(const Item* item)
 
 void Player::setNextWalkActionTask(SchedulerTask* task)
 {
-	if(walkTaskEvent != 0)
+	if(walkTaskEvent)
 	{
 		Scheduler::getScheduler().stopEvent(walkTaskEvent);
 		walkTaskEvent = 0;
@@ -1742,30 +1694,37 @@ void Player::setNextWalkActionTask(SchedulerTask* task)
 
 	delete walkTask;
 	walkTask = task;
+	setIdleTime(0);
 }
 
 void Player::setNextWalkTask(SchedulerTask* task)
 {
-	if(nextStepEvent != 0)
+	if(nextStepEvent)
 	{
 		Scheduler::getScheduler().stopEvent(nextStepEvent);
 		nextStepEvent = 0;
 	}
 
 	if(task)
+	{
 		nextStepEvent = Scheduler::getScheduler().addEvent(task);
+		setIdleTime(0);
+	}
 }
 
 void Player::setNextActionTask(SchedulerTask* task)
 {
-	if(actionTaskEvent != 0)
+	if(actionTaskEvent)
 	{
 		Scheduler::getScheduler().stopEvent(actionTaskEvent);
 		actionTaskEvent = 0;
 	}
 
 	if(task)
+	{
 		actionTaskEvent = Scheduler::getScheduler().addEvent(task);
+		setIdleTime(0);
+	}
 }
 
 uint32_t Player::getNextActionTime() const
@@ -3608,7 +3567,7 @@ void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)
 	}
 }
 
-bool Player::onKilledCreature(Creature* target, uint32_t flags/* = 0*/)
+bool Player::onKilledCreature(Creature* target, uint32_t& flags)
 {
 	if(!Creature::onKilledCreature(target, flags))
 		return false;

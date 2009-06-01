@@ -2347,33 +2347,48 @@ void ProtocolGame::sendMoveCreature(const Creature* creature, const Tile* newTil
 	}
 	else if(canSee(oldPos) && canSee(newPos))
 	{
-		if(!teleport && (oldPos.z != 7 || newPos.z < 8) && oldStackpos < 10)
+		if(player->canSeeCreature(creature))
 		{
 			NetworkMessage_ptr msg = getOutputBuffer();
 			if(msg)
 			{
 				TRACK_MESSAGE(msg);
-				msg->AddByte(0x6D);
-				msg->AddPosition(oldPos);
-				msg->AddByte(oldStackpos);
-				msg->AddPosition(creature->getPosition());
+				if(!teleport && (oldPos.z != 7 || newPos.z < 8) && oldStackpos < 10)
+				{
+					msg->AddByte(0x6D);
+					msg->AddPosition(oldPos);
+					msg->AddByte(oldStackpos);
+					msg->AddPosition(newPos);
+				}
+				else
+				{
+					RemoveTileItem(msg, oldPos, oldStackpos);
+					AddTileCreature(msg, newPos, newStackpos, creature);
+				}
 			}
-		}
-		else
-		{
-			if(player->canSeeCreature(creature))
-				sendRemoveCreature(creature, oldPos, oldStackpos, false);
-
-			sendAddCreature(creature, newPos, newStackpos, false);
 		}
 	}
 	else if(canSee(oldPos))
 	{
 		if(player->canSeeCreature(creature))
-			sendRemoveCreature(creature, oldPos, oldStackpos, false);
+		{
+			NetworkMessage_ptr msg = getOutputBuffer();
+			if(msg)
+			{
+				TRACK_MESSAGE(msg);
+				RemoveTileItem(msg, oldPos, oldStackpos);
+			}
+		}
 	}
-	else if(canSee(newPos))
-		sendAddCreature(creature, newPos, newStackpos, false);
+	else if(canSee(newPos) && player->canSeeCreature(creature))
+	{
+		NetworkMessage_ptr msg = getOutputBuffer();
+		if(msg)
+		{
+			TRACK_MESSAGE(msg);
+			AddTileCreature(msg, newPos, newStackpos, creature);
+		}
+	}
 }
 
 //inventory

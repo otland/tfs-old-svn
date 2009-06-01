@@ -814,29 +814,42 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 	if(creature->isRemoved())
 		return false;
 
-	Cylinder* cylinder = creature->getTile();
+	Tile* tile = creature->getTile();
 	SpectatorVec list;
 
 	SpectatorVec::iterator it;
-	getSpectators(list, creature->getPosition(), false, true);
+	getSpectators(list, tile->getPosition(), false, true);
 
-	//send to client
 	Player* player = NULL;
+	std::vector<uint32_t> oldStackPosVector;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((player = (*it)->getPlayer()) && player->canSeeCreature(creature))
-			player->sendCreatureDisappear(creature, isLogout);
+			oldStackPosVector.push_back(tile->getClientIndexOfThing(player, creature));
+	}	
+
+	int32_t oldIndex = tile->__getIndexOfThing(creature);
+	if(!map->removeCreature(creature))
+		return false;
+	
+	//send to client
+	uint32_t i = 0;
+	for(it = list.begin(); it != list.end(); ++it)
+	{
+		if(!(player = (*it)->getPlayer()) || !player->canSeeCreature(creature))
+			continue;
+
+		player->sendCreatureDisappear(creature, oldStackPosVector[i], isLogout);
+		++i;
 	}
 
 	//event method
 	for(it = list.begin(); it != list.end(); ++it)
 		(*it)->onCreatureDisappear(creature, isLogout);
 
-	int32_t oldIndex = cylinder->__getIndexOfThing(creature);
-	map->removeCreature(creature);
-
 	creature->getParent()->postRemoveNotification(NULL, creature, NULL, oldIndex, true);
 	creature->setRemoved();
+	removeCreatureCheck(creature);
 
 	listCreature.removeList(creature->getID());
 	creature->removeList();
@@ -846,10 +859,8 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 		removeCreature(*cit);
 	}
 
-	removeCreatureCheck(creature);
-	FreeThing(creature);
-
 	creature->onRemovedCreature();
+	FreeThing(creature);
 	return true;
 }
 
@@ -3679,7 +3690,6 @@ bool Game::internalCreatureTurn(Creature* creature, Direction dir)
 		return false;
 
 	creature->setDirection(dir);
-
 	const SpectatorVec& list = getSpectators(creature->getPosition());
 	SpectatorVec::const_iterator it;
 

@@ -457,7 +457,9 @@ ServiceManager* services)
 		SetProcessAffinityMask(GetCurrentProcess(), mask);
 	}
 
-	CreateMutex(NULL, true, "forgottenserver_" + g_config.getNumber(ConfigManager::WORLD_ID));
+	std::stringstream mutexName;
+	mutexName << "forgottenserver_" << g_config.getNumber(ConfigManager::WORLD_ID);
+	CreateMutex(NULL, FALSE, mutexName.str().c_str());
 	if(GetLastError() == ERROR_ALREADY_EXISTS)
 		startupErrorMessage("Another instance of The Forgotten Server is already running with the same worldId.\nIf you want to run multiple servers, please change the worldId in configuration file.");
 

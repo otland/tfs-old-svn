@@ -1028,13 +1028,12 @@ bool IOLoginData::playerDeath(Player* player, const DeathList& dl)
 	if(!db->executeQuery(query.str()))
 		return false;
 
-	int32_t size = dl.size(), tmp = g_config.getNumber(ConfigManager::DEATH_ASSISTS) + 1;
-	if(tmp > 1 && size > tmp)
+	int32_t i = 0, size = dl.size(), tmp = g_config.getNumber(ConfigManager::DEATH_ASSISTS) + 1;
+	if(tmp > 0 && size > tmp)
 		size = tmp;
 
 	uint64_t deathId = db->getLastInsertId();
-	DeathList::const_iterator it = dl.begin();
-	for(int32_t i = 0; i < size && it != dl.end(); ++it, ++i)
+	for(DeathList::const_iterator it = dl.begin(); i < size && it != dl.end(); ++it, ++i)
 	{
 		query.str("");
 		query << "INSERT INTO `killers` (`death_id`, `final_hit`, `unjustified`) VALUES ("
