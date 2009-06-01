@@ -860,18 +860,15 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 	ItemVector::const_iterator it;
 	if(items)
 	{
-		for(it = items->getBeginTopItem(); (it != items->getEndTopItem() && count < 10); ++it)
-		{
+		for(it = items->getBeginTopItem(); (it != items->getEndTopItem() && count < 10); ++it, ++count)
 			msg->AddItem(*it);
-			count++;
-		}
 	}
 
 	if(creatures)
 	{
 		for(CreatureVector::const_iterator cit = creatures->begin(); (cit != creatures->end() && count < 10); ++cit)
 		{
-			if(!canSee(*cit))
+			if(!player->canSeeCreature(creature))
 				continue;
 
 			bool known;
@@ -885,11 +882,8 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 
 	if(items)
 	{
-		for(it = items->getBeginDownItem(); (it != items->getEndDownItem() && count < 10); ++it)
-		{
+		for(it = items->getBeginDownItem(); (it != items->getEndDownItem() && count < 10); ++it, ++count)
 			msg->AddItem(*it);
-			count++;
-		}
 	}
 }
 
@@ -2340,7 +2334,7 @@ void ProtocolGame::sendMoveCreature(const Creature* creature, const Tile* newTil
 	}
 	else if(canSee(oldPos) && canSee(newPos))
 	{
-		if(!canSee(creature))
+		if(!player->canSeeCreature(creature))
 			return;
 
 		NetworkMessage_ptr msg = getOutputBuffer();
@@ -2363,7 +2357,7 @@ void ProtocolGame::sendMoveCreature(const Creature* creature, const Tile* newTil
 	}
 	else if(canSee(oldPos))
 	{
-		if(!canSee(creature))
+		if(!player->canSeeCreature(creature))
 			return;
 
 		NetworkMessage_ptr msg = getOutputBuffer();
@@ -2373,7 +2367,7 @@ void ProtocolGame::sendMoveCreature(const Creature* creature, const Tile* newTil
 			RemoveTileItem(msg, oldPos, oldStackpos);
 		}
 	}
-	else if(canSee(newPos) && canSee(creature))
+	else if(canSee(newPos) && player->canSeeCreature(creature))
 	{
 		NetworkMessage_ptr msg = getOutputBuffer();
 		if(msg)
