@@ -21,7 +21,7 @@ function onThink(cid, interval)
 			if(diff > 1) then
 				message = message .. diff .. " minutes"
 			else
-				message = message .. " one minute"
+				message = message .. "one minute"
 			end
 
 			message = message .. " if you are still idle"
