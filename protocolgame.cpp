@@ -2872,7 +2872,7 @@ void ProtocolGame::AddTileItem(NetworkMessage_ptr msg, const Position& pos, uint
 	msg->AddItem(item);
 }
 
-void ProtocolGame::(NetworkMessage_ptr msg, const Position& pos, uint32_t stackpos, const Creature* creature)
+void ProtocolGame::AddTileCreature(NetworkMessage_ptr msg, const Position& pos, uint32_t stackpos, const Creature* creature)
 {
 	if(stackpos >= 10)
 		return;

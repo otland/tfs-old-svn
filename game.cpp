@@ -791,7 +791,7 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 	addCreatureCheck(creature);
 
 	creature->onPlacedCreature();
-	creature->setLastPosition(creature->getPosition());
+	creature->setLastPosition(pos);
 	return true;
 }
 
