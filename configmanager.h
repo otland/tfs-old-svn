@@ -240,6 +240,7 @@ class ConfigManager
 			PREMIUM_SKIP_WAIT,
 			GUILD_HALLS,
 			DEATH_LIST,
+			BIND_IP_ONLY,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

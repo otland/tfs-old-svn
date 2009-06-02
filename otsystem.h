@@ -195,5 +195,5 @@ class OTSYS_THREAD_LOCK_CLASS
 #define __OTSERV_PRETTY_FUNCTION__ __FUNCDNAME__
 #endif
 
-typedef std::vector<std::pair<uint32_t, uint32_t> > IPList;
+typedef std::vector<std::pair<uint32_t, uint32_t> > IpList;
 #endif

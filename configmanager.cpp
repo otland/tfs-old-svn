@@ -79,6 +79,7 @@ bool ConfigManager::load()
 		if(m_confString[ERROR_LOG] == "")
 			m_confString[ERROR_LOG] = getGlobalString("errorLogName", "");
 
+		m_confBool[BIND_IP_ONLY] = getGlobalBool("bindOnlyConfiguredIpAddress", "no");
 		m_confBool[TRUNCATE_LOGS] = getGlobalBool("truncateLogsOnStartup", "yes");
 		#ifdef MULTI_SQL_DRIVERS
 		m_confString[SQL_TYPE] = getGlobalString("sqlType", "sqlite");

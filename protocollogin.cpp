@@ -36,7 +36,7 @@
 
 extern RSA* g_otservRSA;
 extern ConfigManager g_config;
-extern IPList serverIPs;
+extern IpList serverIps;
 extern Game g_game;
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -77,7 +77,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	uint32_t clientIP = getConnection()->getIP();
+	uint32_t clientIp = getConnection()->getIP();
 	/*uint16_t operatingSystem = */msg.GetU16();
 	uint16_t version  = msg.GetU16();
 	msg.SkipBytes(12);
@@ -126,13 +126,13 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	if(ConnectionManager::getInstance()->isDisabled(clientIP, protocolId))
+	if(ConnectionManager::getInstance()->isDisabled(clientIp, protocolId))
 	{
 		disconnectClient(0x0A, "Too many connections attempts from your IP address, please try again later.");
 		return false;
 	}
 
-	if(IOBan::getInstance()->isIpBanished(clientIP))
+	if(IOBan::getInstance()->isIpBanished(clientIp))
 	{
 		disconnectClient(0x0A, "Your IP is banished!");
 		return false;
@@ -149,7 +149,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	if(!account.number)
 	{
-		ConnectionManager::getInstance()->addAttempt(clientIP, protocolId, false);
+		ConnectionManager::getInstance()->addAttempt(clientIp, protocolId, false);
 		disconnectClient(0x0A, "Account name or password is not correct.");
 		return false;
 	}
@@ -163,7 +163,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		return false;
 	}
 
-	ConnectionManager::getInstance()->addAttempt(clientIP, protocolId, true);
+	ConnectionManager::getInstance()->addAttempt(clientIp, protocolId, true);
 	if(OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false))
 	{
 		TRACK_MESSAGE(output);
@@ -173,14 +173,14 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		sprintf(motd, "%d\n%s", g_game.getMotdNum(), g_config.getString(ConfigManager::MOTD).c_str());
 		output->AddString(motd);
 
-		uint32_t serverIP = serverIPs[0].first;
-		for(uint32_t i = 0; i < serverIPs.size(); i++)
+		uint32_t serverIp = serverIps[0].first;
+		for(IpList::iterator it = serverIps.begin(); it != serverIps.end(); ++it)
 		{
-			if((serverIPs[i].first & serverIPs[i].second) == (clientIP & serverIPs[i].second))
-			{
-				serverIP = serverIPs[i].first;
-				break;
-			}
+			if((it->first & it->second) != (clientIp & it->second))
+				continue;
+
+			serverIp = it->first;
+			break;
 		}
 
 		//Add char list
@@ -190,7 +190,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 			output->AddByte((uint8_t)account.charList.size() + 1);
 			output->AddString("Account Manager");
 			output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
-			output->AddU32(serverIP);
+			output->AddU32(serverIp);
 			output->AddU16(g_config.getNumber(ConfigManager::GAME_PORT));
 		}
 		else
@@ -210,7 +210,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 			else
 				output->AddString(g_config.getString(ConfigManager::SERVER_NAME));
 
-			output->AddU32(serverIP);
+			output->AddU32(serverIp);
 			output->AddU16(g_config.getNumber(ConfigManager::GAME_PORT));
 			#else
 			if(version < it->second->getVersionMin() || version > it->second->getVersionMax())

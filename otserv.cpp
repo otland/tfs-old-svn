@@ -94,7 +94,7 @@ TextLogger g_logger;
 NOTIFYICONDATA NID;
 #endif
 
-IPList serverIPs;
+IpList serverIps;
 RSA* g_otservRSA = NULL;
 #ifdef __REMOTE_CONTROL__
 extern Admin* g_admin;
@@ -766,7 +766,7 @@ ServiceManager* services)
 
 	std::string ip = g_config.getString(ConfigManager::IP);
 	std::cout << "> Global address: " << ip << std::endl;
-	serverIPs.push_back(std::make_pair(inet_addr("127.0.0.1"), 0xFFFFFFFF));
+	serverIps.push_back(std::make_pair(inet_addr("127.0.0.1"), 0xFFFFFFFF));
 
 	char hostName[128];
 	hostent* host = NULL;
@@ -775,7 +775,7 @@ ServiceManager* services)
 		uint8_t** address = (uint8_t**)host->h_addr_list;
 		while(address[0] != NULL)
 		{
-			serverIPs.push_back(std::make_pair(*(uint32_t*)(*address), 0x0000FFFF));
+			serverIps.push_back(std::make_pair(*(uint32_t*)(*address), 0x0000FFFF));
 			address++;
 		}
 	}
@@ -789,7 +789,7 @@ ServiceManager* services)
 			startupErrorMessage("Cannot resolve " + ip + "!");
 	}
 
-	serverIPs.push_back(std::make_pair(resolvedIp, 0));
+	serverIps.push_back(std::make_pair(resolvedIp, 0));
 	if(Status* status = Status::getInstance())
 	{
 		status->setMaxPlayersOnline(g_config.getNumber(ConfigManager::MAX_PLAYERS));

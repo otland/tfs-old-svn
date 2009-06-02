@@ -353,7 +353,6 @@ const Creature* Tile::getTopVisibleCreature(const Creature* creature) const
 void Tile::onAddTileItem(Item* item)
 {
 	updateTileFlags(item, false);
-
 	const Position& cylinderMapPos = getPosition();
 
 	const SpectatorVec& list = g_game.getSpectators(cylinderMapPos);
@@ -395,10 +394,9 @@ void Tile::onUpdateTileItem(Item* oldItem, const ItemType& oldType, Item* newIte
 void Tile::onRemoveTileItem(const SpectatorVec& list, std::vector<uint32_t>& oldStackposVector, Item* item)
 {
 	updateTileFlags(item, true);
-
 	const Position& cylinderMapPos = getPosition();
-	const ItemType& iType = Item::items[item->getID()];
 
+	const ItemType& iType = Item::items[item->getID()];
 	SpectatorVec::const_iterator it;
 
 	//send to client
@@ -435,7 +433,7 @@ void Tile::onUpdateTile()
 		(*it)->onUpdateTile(this, cylinderMapPos);
 }
 
-void Tile::moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinder, bool teleport /* = false*/)
+void Tile::moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinder, bool teleport/* = false*/)
 {
 	Tile* newTile = toCylinder->getTile();
 	SpectatorVec list;
@@ -484,7 +482,7 @@ void Tile::moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinde
 	int32_t i = 0;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
-		if((tmpPlayer = (*it)->getPlayer()))
+		if((tmpPlayer = (*it)->getPlayer()) && tmpPlayer->canSeeCreature(creature))
 			tmpPlayer->sendCreatureMove(creature, newTile, newPos, this, oldPos, oldStackposVector[i++], teleport);
 	}
 

@@ -51,8 +51,13 @@ void ServicePort::open(uint16_t port)
 	m_pendingStart = false;
 	try
 	{
-		m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
-			boost::asio::ip::address(boost::asio::ip::address_v4(INADDR_ANY)), m_serverPort));
+		if(g_config.getBool(ConfigManager::BIND_IP_ONLY))
+			m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
+				boost::asio::ip::address(boost::asio::ip::address_v4::from_string(
+				g_config.getString(ConfigManager::IP))), m_serverPort));
+		else
+			m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
+				boost::asio::ip::address(boost::asio::ip::address_v4(INADDR_ANY)), m_serverPort));
 		accept();
 	}
 	catch(boost::system::system_error& e)

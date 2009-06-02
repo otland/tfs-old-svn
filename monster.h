@@ -78,7 +78,6 @@ class Monster : public Creature
 		void setRaid(Raid* _raid) {raid = _raid;}
 
 		virtual void onAttackedCreatureDisappear(bool isLogout);
-		virtual void onFollowCreatureDisappear(bool isLogout);
 
 		virtual void onCreatureAppear(const Creature* creature, bool isLogin);
 		virtual void onCreatureDisappear(const Creature* creature, bool isLogout);
@@ -87,7 +86,6 @@ class Monster : public Creature
 
 		virtual void drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage);
 		virtual void changeHealth(int32_t healthChange);
-		virtual void onWalk();
 		virtual bool getNextStep(Direction& dir);
 		virtual void onFollowCreatureComplete(const Creature* creature);
 
