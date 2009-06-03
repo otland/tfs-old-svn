@@ -175,13 +175,6 @@ class _Database
 		DATABASE_VIRTUAL uint64_t getLastInsertId() {return 0;}
 
 		/**
-		* Resource freeing.
-		*
-		* @param DBResult* resource to be freed
-		*/
-		DATABASE_VIRTUAL void freeResult(DBResult* result);
-
-		/**
 		* Get case insensitive string comparison operator
 		*
 		* @return the case insensitive operator

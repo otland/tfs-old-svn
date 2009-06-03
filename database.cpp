@@ -71,17 +71,6 @@ Database* _Database::getInstance()
 	return _instance;
 }
 
-void _Database::freeResult(DBResult* result)
-{
-	if(result)
-	{
-		result->free();
-		result = NULL;
-	}
-	else
-		std::cout << "[Warning - Database::freeResult] Trying to free already freed result." << std::endl;	
-}
-
 DBResult* _Database::verifyResult(DBResult* result)
 {
 	if(!result->next())
