@@ -1204,8 +1204,8 @@ void Player::sendPing(uint32_t interval)
 	{
 		if(!client)
 		{
-			g_creatureEvents->playerLogout(this);
-			g_game.removeCreature(this, true);
+			if(g_creatureEvents->playerLogOut(this))
+				g_game.removeCreature(this, true);
 		}
 		else if(npings > 24)
 			client->logout(true, true);
