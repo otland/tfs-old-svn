@@ -814,15 +814,15 @@ ServiceManager* services)
 
 	services->add<ProtocolGame>(g_config.getNumber(ConfigManager::GAME_PORT));
 	services->add<ProtocolOldGame>(g_config.getNumber(ConfigManager::LOGIN_PORT));
-	std::cout << "> Local ports:" << std::endl;
+	std::cout << "> Local ports: ";
 
 	std::list<uint16_t> ports = services->getPorts();
 	for(std::list<uint16_t>::iterator it = ports.begin(); it != ports.end(); ++it)
 		std::cout << (*it) << "\t";
 
-	std::cout << std::endl << ">> All modules were loaded, server starting up..." << std::endl;
+	std::cout << std::endl << ">> All modules were loaded, server is starting up..." << std::endl;
 	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> All modules were loaded, server starting up...");
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> All modules were loaded, server is starting up...");
 	#endif
 	g_game.setGameState(GAME_STATE_NORMAL);
 
