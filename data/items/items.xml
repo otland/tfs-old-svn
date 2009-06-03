@@ -12319,8 +12319,9 @@
 	<item id="5957" article="a" name="lottery ticket">
 		<attribute key="weight" value="120"/>
 	</item>
-	<item id="5958" article="a" name="parchment">
-		<attribute key="weight" value="200"/>
+	<item id="5958" article="a" name="winning lottery ticket">
+		<attribute key="description" value="You were lucky! Go claim your prize at the potion store in Edron"/>
+		<attribute key="weight" value="120"/>
 	</item>
 	<!-- Item id 5959 is blank -->
 	<item id="5960" article="a" name="dead troll">
@@ -20329,7 +20330,10 @@
 	<item id="9019" article="a" name="vampire doll">
 		<attribute key="weight" value="940"/>
 	</item>
-	<item id="9020"/>
+	<item id="9020" article="a" name="vampire lord token">
+		<attribute key="description" value="It is proof that you have killed a vampire lord."/>
+		<attribute key="weight" value="5"/>
+	</item>
 	<item id="9021" name="dirt"/>
 	<item id="9022" name="dirt"/>
 	<item id="9023" name="dirt"/>
