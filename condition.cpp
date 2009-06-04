@@ -279,10 +279,10 @@ bool Condition::updateCondition(const Condition* addCondition)
 	if(conditionType != addCondition->getType())
 		return false;
 
-	if(getTicks() == -1 && addCondition->getTicks() > 0)
+	if(ticks == -1 && addCondition->getTicks() > 0)
 		return false;
 
-	if(addCondition->getTicks() > 0 && getEndTime() > (OTSYS_TIME() + addCondition->getTicks()))
+	if(addCondition->getTicks() >= 0 && endTime > (OTSYS_TIME() + addCondition->getTicks()))
 		return false;
 
 	return true;

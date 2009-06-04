@@ -1204,8 +1204,8 @@ void Player::sendPing(uint32_t interval)
 	{
 		if(!client)
 		{
-			if(g_creatureEvents->playerLogout(this))
-			g_game.removeCreature(this, true);
+			if(g_creatureEvents->playerLogout(this)) //that will actually cause players to stuck, but as you wish
+				g_game.removeCreature(this, true);
 		}
 		else if(npings > 24)
 			client->logout(true, true);
@@ -1270,7 +1270,7 @@ void Player::sendCreatureChangeVisible(const Creature* creature, bool visible)
 	if((!creature->getPlayer() && canSeeInvisibility()) || (creature->getPlayer() && canSeeCreature(creature)))
 		sendCreatureChangeOutfit(creature, creature->getCurrentOutfit());
 	else if(!visible)
-		sendCreatureDisappear(creature, (creature->getTile()->getClientIndexOfThing(this, creature) + 1), false);
+		sendCreatureDisappear(creature, creature->getTile()->getClientIndexOfThing(this, creature), false);
 	else
 		sendCreatureAppear(creature, false);
 }
@@ -1553,7 +1553,7 @@ void Player::onWalk(Direction& dir)
 {
 	Creature::onWalk(dir);
 	setNextActionTask(NULL);
-	setNextAction(OTSYS_TIME() + getStepDuration());
+	setNextAction(OTSYS_TIME() + getStepDuration(dir));
 }
 
 void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,

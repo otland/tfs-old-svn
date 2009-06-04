@@ -366,7 +366,6 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
 
 					output->AddByte(AP_MSG_COMMAND_OK);
-					getConnection()->close();
 					break;
 				}
 

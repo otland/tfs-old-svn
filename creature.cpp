@@ -150,25 +150,20 @@ int64_t Creature::getTimeSinceLastMove() const
 	return 0x7FFFFFFFFFFFFFFFLL;
 }
 
-int64_t Creature::getSleepTicks() const
+int32_t Creature::getWalkDelay(Direction dir) const
 {
-	if(!lastStep)
-		return 0;
+	if(lastStep)
+		return getStepDuration(dir) - (OTSYS_TIME() - lastStep);
 
-	int64_t ct = OTSYS_TIME(), stepDuration = getStepDuration();
-	return stepDuration - (ct - lastStep);
+	return 0;
 }
 
-int32_t Creature::getWalkDelay(Direction dir, uint32_t resolution) const
+int32_t Creature::getWalkDelay() const
 {
-	if(!lastStep)
-		return 0;
+	if(lastStep)
+		return getStepDuration() - (OTSYS_TIME() - lastStep);
 
-	float mul = 1.0f;
-	if(dir == NORTHWEST || dir == NORTHEAST || dir == SOUTHWEST || dir == SOUTHEAST)
-		mul = 3.0f;
-
-	return ((int64_t)std::ceil(((double)getStepDuration(false) * mul) / resolution) * resolution) - (OTSYS_TIME() - lastStep);
+	return 0;
 }
 
 void Creature::onThink(uint32_t interval)
@@ -240,7 +235,7 @@ void Creature::onAttacking(uint32_t interval)
 
 void Creature::onWalk()
 {
-	if(getSleepTicks() <= 0)
+	if(getWalkDelay() <= 0)
 	{
 		Direction dir;
 		if(getNextStep(dir) && g_game.internalMoveCreature(this, dir, FLAG_IGNOREFIELDDAMAGE) != RET_NOERROR)
@@ -509,10 +504,8 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 		lastStepCost = 1;
 		if(!teleport)
 		{
-			if(oldPos.z != newPos.z)
+			if(oldPos.z != newPos.z || (std::abs(newPos.x - oldPos.x) >= 1 && std::abs(newPos.y - oldPos.y) >= 1))
 				lastStepCost = 2;
-			else if(std::abs(newPos.x - oldPos.x) >= 1 && std::abs(newPos.y - oldPos.y) >= 1)
-				lastStepCost = 3;
 		}
 		else
 			stopEventWalk();
@@ -1449,25 +1442,33 @@ std::string Creature::getDescription(int32_t lookDistance) const
 	return "a creature";
 }
 
-int32_t Creature::getStepDuration(bool addLastStepCost/* = true*/) const
+int32_t Creature::getStepDuration(Direction dir) const
+{
+	if(dir == NORTHWEST || dir == NORTHEAST || dir == SOUTHWEST || dir == SOUTHEAST)
+		return getStepDuration() * 2;
+
+	return getStepDuration();
+}
+
+int32_t Creature::getStepDuration() const
 {
 	if(isRemoved())
-		return 0;
-
-	const Tile* tile = getTile();
-	if(!tile || !tile->ground)
 		return 0;
 
 	uint32_t stepSpeed = getStepSpeed();
 	if(!stepSpeed)
 		return 0;
 
-	return (1000 * Item::items[tile->ground->getID()].speed) / stepSpeed * (addLastStepCost ? lastStepCost : 1);
+	const Tile* tile = getTile();
+	if(!tile || !tile->ground)
+		return 0;
+
+	return ((1000 * Item::items[tile->ground->getID()].speed) / stepSpeed) * lastStepCost;
 }
 
 int64_t Creature::getEventStepTicks() const
 {
-	int64_t ret = getSleepTicks();
+	int64_t ret = getWalkDelay();
 	if(ret > 0)
 		return ret;
 

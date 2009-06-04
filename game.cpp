@@ -1942,7 +1942,7 @@ ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pu
 }
 
 //Implementation of player invoked events
-bool Game::playerMove(uint32_t playerId, Direction direction)
+bool Game::playerMove(uint32_t playerId, Direction dir)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
@@ -1955,21 +1955,22 @@ bool Game::playerMove(uint32_t playerId, Direction direction)
 	}
 
 	player->stopWalk();
-	int32_t delay = player->getWalkDelay(direction, 50);
+	int32_t delay = player->getWalkDelay(dir);
 	if(delay > 0)
 	{
-		player->setNextAction(OTSYS_TIME() + player->getStepDuration());
-		if(SchedulerTask* task = createSchedulerTask(((uint32_t)delay), boost::bind(&Game::playerMove, this, playerId, direction)))
+		player->setNextAction(OTSYS_TIME() + player->getStepDuration(dir));
+		if(SchedulerTask* task = createSchedulerTask(((uint32_t)delay),
+			boost::bind(&Game::playerMove, this, playerId, dir)))
 			player->setNextWalkTask(task);
 
 		return false;
 	}
 
 	player->setFollowCreature(NULL);
-	player->onWalk(direction);
+	player->onWalk(dir);
 
 	player->setIdleTime(0);
-	return internalMoveCreature(player, direction) == RET_NOERROR;
+	return internalMoveCreature(player, dir) == RET_NOERROR;
 }
 
 bool Game::playerBroadcastMessage(Player* player, const std::string& text, SpeakClasses type)

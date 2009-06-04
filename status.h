@@ -40,7 +40,9 @@ class ProtocolStatus : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolStatusCount;
 #endif
-		ProtocolStatus(Connection* connection): Protocol(connection)
+		virtual void onRecvFirstMessage(NetworkMessage& msg);
+
+		ProtocolStatus(Connection_ptr connection): Protocol(connection)
 		{
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			protocolStatusCount++;
@@ -58,11 +60,8 @@ class ProtocolStatus : public Protocol
 		enum {hasChecksum = false};
 		static const char* protocolName() {return "status protocol";}
 
-		virtual void onRecvFirstMessage(NetworkMessage& msg);
-
 	protected:
 		static IpConnectMap ipConnectMap;
-
 		virtual void deleteProtocolTask();
 };
 

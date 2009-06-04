@@ -559,7 +559,11 @@ uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool is
 
 void MoveEvents::onAddTileItem(const Tile* tile, Item* item)
 {
-	if(m_lastCacheTile == tile && hasTileEvent(item))
+	if(m_lastCacheTile != tile)
+		return;
+
+	std::vector<Item*>::iterator it = std::find(m_lastCacheItemVector.begin(), m_lastCacheItemVector.end(), item);
+	if(it == m_lastCacheItemVector.end() && hasTileEvent(item))
 		m_lastCacheItemVector.push_back(item);
 }
 

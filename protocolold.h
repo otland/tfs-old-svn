@@ -28,6 +28,8 @@ class ProtocolOld : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolOldCount;
 #endif
+		virtual void onRecvFirstMessage(NetworkMessage& msg);
+
 		ProtocolOld(Connection* connection): Protocol(connection)
 		{
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -45,20 +47,20 @@ class ProtocolOld : public Protocol
 		enum {isSingleSocket = false};
 		enum {hasChecksum = false};
 
-		virtual void onRecvFirstMessage(NetworkMessage& msg);
-
 	protected:
-		void disconnectClient(uint8_t error, const char* message);
-		bool parseFirstPacket(NetworkMessage& msg);
 		#ifdef __DEBUG_NET_DETAIL__
 		virtual void deleteProtocolTask();
 		#endif
+
+		void disconnectClient(uint8_t error, const char* message);
+		bool parseFirstPacket(NetworkMessage& msg);
 };
 
 class ProtocolOldLogin : public ProtocolOld
 {
 	public:
 		ProtocolOldLogin(Connection* connection) : ProtocolOld(connection) {}
+
 		enum {protocolId = 0x01};
 		static const char* protocolName() {return "old login protocol";}
 };
@@ -67,6 +69,7 @@ class ProtocolOldGame : public ProtocolOld
 {
 	public:
 		ProtocolOldGame(Connection* connection) : ProtocolOld(connection) {}
+
 		enum {protocolId = 0x0A};
 		static const char* protocolName() {return "old game protocol";}
 };

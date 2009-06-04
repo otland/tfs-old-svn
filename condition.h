@@ -124,7 +124,7 @@ class Condition
 		uint32_t getSubId() const {return subId;}
 
 		ConditionType_t getType() const {return conditionType;}
-		int64_t getEndTime() const {return endTime;}
+		int64_t getEndTime() const {return ticks == -1 ? 0 : endTime;}
 		int32_t getTicks() const {return ticks;}
 		void setTicks(int32_t newTicks);
 
