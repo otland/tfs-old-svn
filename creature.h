@@ -210,9 +210,9 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool isRemoved() const {return isInternalRemoved;}
 		virtual bool canSeeInvisibility() const {return false;}
 
-		int32_t getWalkDelay() const;
 		int32_t getWalkDelay(Direction dir) const;
-		int32_t getStepDuration(dir) const;
+		int32_t getWalkDelay() const;
+		int32_t getStepDuration(Direction dir) const;
 		int32_t getStepDuration() const;
 
 		int64_t getEventStepTicks() const;

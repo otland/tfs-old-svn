@@ -147,7 +147,7 @@ void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::syst
 		if(!error)
 			remoteIp = htonl(endpoint.address().to_v4().to_ulong());
 
-		Connection_ptr connection = NULL;
+		Connection_ptr connection;
 		if(remoteIp && ConnectionManager::getInstance()->acceptConnection(remoteIp) &&
 			(connection = ConnectionManager::getInstance()->createConnection(
 			socket, m_io_service, shared_from_this())))
