@@ -8471,6 +8471,8 @@ int32_t LuaScriptInterface::luaGetGroupInfo(lua_State* L)
 	setField(L, "violationReasons", group->getViolationReasons());
 	setField(L, "statementViolationFlags", group->getStatementViolationFlags());
 	setField(L, "nameViolationFlags", group->getNameViolationFlags());
+	setField(L, "flags", group->getFlags());
+	setField(L, "customFlags", group->getCustomFlags());
 	setField(L, "depotLimit", group->getDepotLimit(premium));
 	setField(L, "maxVips", group->getMaxVips(premium));
 	setField(L, "outfit", group->getOutfit());
