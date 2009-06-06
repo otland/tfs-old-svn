@@ -460,15 +460,10 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, Tile* t
 
 	m_lastCacheTile = tile;
 	m_lastCacheItemVector.clear();
-	if(tile->ground && (moveEvent = getEvent(tile->ground, eventType)))
-	{
-		m_lastCacheItemVector.push_back(tile->ground);
-		ret &= moveEvent->fireStepEvent(actor, creature, tile->ground, tile->getPosition());
-	}
 
 	//We can not use iterators here since the scripts can invalidate the iterator
 	Thing* thing = NULL;
-	for(uint32_t i = 1; i < tile->getThingCount(); ++i) //already checked the ground
+	for(int32_t i = tile->__getFirstIndex(); i < j; ++i) //already checked the ground
 	{
 		if((thing = tile->__getThing(i)) && (tileItem = thing->getItem())
 			&& (moveEvent = getEvent(tileItem, eventType)))
@@ -534,17 +529,9 @@ uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool is
 		return ret;
 	}
 
-	m_lastCacheTile = tile;
-	m_lastCacheItemVector.clear();
-	if(tile->ground && tile->ground != item && (moveEvent = getEvent(tile->ground, eventType2)))
-	{
-		m_lastCacheItemVector.push_back(tile->ground);
-		ret &= moveEvent->fireAddRemItem(actor, item, tile->ground, tile->getPosition());
-	}
-
 	//we can not use iterators here since the scripts can invalidate the iterator
 	Thing* thing = NULL;
-	for(uint32_t i = 1; i < tile->getThingCount(); ++i) //already checked the ground
+	for(int32_t i = tile->__getFirstIndex(); i < j; ++i) //already checked the ground
 	{
 		if((thing = tile->__getThing(i)) && (tileItem = thing->getItem()) &&
 			tileItem != item && (moveEvent = getEvent(tileItem, eventType2)))
@@ -572,10 +559,14 @@ void MoveEvents::onRemoveTileItem(const Tile* tile, Item* item)
 	if(m_lastCacheTile != tile)
 		return;
 
-	std::vector<Item*>::iterator it = std::find(m_lastCacheItemVector.begin(),
-		m_lastCacheItemVector.end(), item);
-	if(it != m_lastCacheItemVector.end())
-		m_lastCacheItemVector.erase(it);
+	for(uint32_t i = 0; i < m_lastCacheItemVector.size(); ++i)
+	{
+		if(m_lastCacheItemVector[i] != item)
+			continue;
+
+		m_lastCacheItemVector[i] = NULL;
+		break;
+	}
 }
 
 MoveEvent::MoveEvent(LuaScriptInterface* _interface):

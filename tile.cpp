@@ -838,15 +838,18 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 		else
 		{
 			const ItemType& oldType = Item::items[ground->getID()];
+			int32_t oldGroundIndex = __getIndexOfThing(ground);
 			Item* oldGround = ground;
-			ground->setParent(NULL);
 
+			ground->setParent(NULL);
 			g_game.FreeThing(ground);
 			ground = item;
 
 			updateTileFlags(oldGround, true);
 			updateTileFlags(item, false);
+
 			onUpdateTileItem(oldGround, oldType, item, Item::items[item->getID()]);
+			postRemoveNotification(oldGround, NULL, oldGroundIndex, true);
 		}
 	}
 	else if(item->isAlwaysOnTop())
@@ -860,11 +863,14 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 				{
 					if((*it)->isSplash())
 					{
+						int32_t oldSplashIndex = __getIndexOfThing(*it);
 						Item* oldSplash = *it;
+
 						__removeThing(oldSplash, 1);
 						oldSplash->setParent(NULL);
-
 						g_game.FreeThing(oldSplash);
+
+						postRemoveNotification(oldSplash, NULL, oldSplashIndex, true);
 						break;
 					}
 				}
@@ -913,10 +919,13 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 
 					if(oldField->isReplaceable())
 					{
+						int32_t oldFieldIndex = __getIndexOfThing(*it);
 						__removeThing(oldField, 1);
-						oldField->setParent(NULL);
 
+						oldField->setParent(NULL);
 						g_game.FreeThing(oldField);
+
+						postRemoveNotification(oldField, NULL, oldFieldIndex, true);
 						break;
 					}
 

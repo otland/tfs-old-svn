@@ -4,6 +4,11 @@
 	<movevent type="StepIn" itemid="293" event="script" value="decay.lua"/>
 	<movevent type="StepIn" itemid="461" event="script" value="decay.lua"/>
 
+	<!-- Walkable waters -->
+	<moveevent event="StepIn" itemid="4820" script="swimpool.lua"/>
+	<moveevent event="StepOut" itemid="4820" script="swimpool.lua"/>
+	<moveevent event="AddItem" itemid="4820" tileitem="1" script="swimitem.lua"/>
+
 	<!-- (Depot & Level) tiles -->
 	<movevent type="StepIn" itemid="416" event="script" value="tiles.lua"/>
 	<movevent type="StepOut" itemid="417" event="script" value="tiles.lua"/>
@@ -669,23 +674,4 @@
 		<vocation name="Elder Druid" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="8918" slot="shield" event="function" value="onDeEquipItem"/>
-
-	<!-- Swimming -->
-	<movevent type="StepIn" itemid="4828" event="script" value="swimming/north.lua"/>
-	<movevent type="StepIn" itemid="4829" event="script" value="swimming/east.lua"/>
-	<movevent type="StepIn" itemid="4830" event="script" value="swimming/south.lua"/>
-	<movevent type="StepIn" itemid="4831" event="script" value="swimming/west.lua"/>
-
-	<movevent type="StepIn" itemid="7943" event="script" value="swimming/north.lua"/>
-	<movevent type="StepIn" itemid="7944" event="script" value="swimming/west.lua"/>
-	<movevent type="StepIn" itemid="7945" event="script" value="swimming/south.lua"/>
-	<movevent type="StepIn" itemid="7946" event="script" value="swimming/east.lua"/>
-	<movevent type="StepIn" itemid="7947" event="script" value="swimming/south.lua"/>
-	<movevent type="StepIn" itemid="7948" event="script" value="swimming/south.lua"/>
-	<movevent type="StepIn" itemid="7949" event="script" value="swimming/north.lua"/>
-	<movevent type="StepIn" itemid="7950" event="script" value="swimming/north.lua"/>
-	<movevent type="StepIn" itemid="7951" event="script" value="swimming/south.lua"/>
-	<movevent type="StepIn" itemid="7952" event="script" value="swimming/south.lua"/>
-	<movevent type="StepIn" itemid="7953" event="script" value="swimming/north.lua"/>
-	<movevent type="StepIn" itemid="7954" event="script" value="swimming/north.lua"/>
 </movements>

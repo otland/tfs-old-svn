@@ -189,12 +189,15 @@
 	<action fromid="7904" toid="7907" event="script" value="other/furniturebeds.lua"/>
 
 	<!-- Music, instruments -->
-	<action fromid="2070" toid="2078" event="script" value="other/music.lua"/>
-	<action fromid="2080" toid="2085" event="script" value="other/music.lua"/>
+	<action fromid="2070" toid="2085" event="script" value="other/music.lua"/>
+	<action itemid="2095" event="script" value="other/music.lua"/>
 	<action itemid="2332" event="script" value="other/music.lua"/>
 	<action itemid="2364" event="script" value="other/music.lua"/>
-	<action fromid="2367" toid="2368" event="script" value="other/music.lua"/>
-	<action fromid="2370" toid="2373" event="script" value="other/music.lua"/>
+	<action fromid="2367" toid="2374" event="script" value="other/music.lua"/>
+	<action fromid="3951" toid="3953" event="script" value="musical.lua"/>
+	<action itemid="3957" event="script" value="musical.lua"/>
+	<action itemid="5786" event="script" value="musical.lua"/>
+	<action itemid="6572" event="script" value="musical.lua"/>
 
 	<!-- Teleport (stairs, ladders) -->
 	<action itemid="1369" event="script" value="other/teleport.lua"/>
@@ -256,14 +259,13 @@
 	<action fromid="2050" toid="2055" event="script" value="other/decayto.lua"/>
 
 	<!-- Other -->
-	<action itemid="6578" event="script" value="other/partyhat.lua"/>
 	<action itemid="2114" event="script" value="other/piggybank.lua"/>
 	<action fromid="6570" toid="6571" event="script" value="other/surprisebag.lua"/>
+	<action fromid="5792" toid="5797" event="script" value="other/dice.lua"/>
 	<action itemid="6576" event="script" value="other/fireworksrocket.lua"/>
-	<action itemid="6572" event="script" value="other/partytrumpet.lua"/>
+	<action itemid="6578" event="script" value="other/partyhat.lua"/>
 	<action itemid="2785" event="script" value="other/blueberrybush.lua"/>
 	<action itemid="2579" event="script" value="other/trap.lua"/>
-	<action fromid="5792" toid="5797" event="script" value="other/dice.lua"/>
 	<action itemid="1981" event="buffer"><![CDATA[
 		if(item.actionid >= 150 and item.actionid <= 158) then
 			doShowTextDialog(cid, item.itemid, getHighscoreString((item.actionid - 150)))

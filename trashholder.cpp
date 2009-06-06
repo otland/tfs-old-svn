@@ -29,8 +29,7 @@ TrashHolder::TrashHolder(uint16_t _type, MagicEffectClasses _effect/* = NM_ME_NO
 void TrashHolder::__addThing(Creature* actor, int32_t index, Thing* thing)
 {
 	Item* item = thing->getItem();
-	if(item && item->getID() != ITEM_WATERBALL && item != this
-		&& item->hasProperty(MOVEABLE))
+	if(item && item != this && item->hasProperty(MOVEABLE))
 	{
 		g_game.internalRemoveItem(actor, item);
 		if(effect != NM_ME_NONE)
