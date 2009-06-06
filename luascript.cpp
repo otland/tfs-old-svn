@@ -1764,9 +1764,6 @@ void LuaScriptInterface::registerFunctions()
 	//getHouseFromPos(pos)
 	lua_register(m_luaState, "getHouseFromPos", LuaScriptInterface::luaGetHouseFromPos);
 
-	//getHouseTilesCount(houseid)
-	lua_register(m_luaState, "getHouseTilesCount", LuaScriptInterface::luaGetHouseTilesCount);
-
 	//setHouseAccessList(houseid, listid, listtext)
 	lua_register(m_luaState, "setHouseAccessList", LuaScriptInterface::luaSetHouseAccessList);
 
@@ -4866,19 +4863,6 @@ int32_t LuaScriptInterface::luaGetHouseByPlayerGUID(lua_State* L)
 		lua_pushnumber(L, house->getHouseId());
 	else
 		lua_pushnil(L);
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaGetHouseTilesCount(lua_State* L)
-{
-	//getHouseTilesCount(houseid)
-	if(House* house = Houses::getInstance().getHouse(popNumber(L)))
-		lua_pushnumber(L, house->getTilesCount());
-	else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_HOUSE_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
 	return 1;
 }
 

@@ -195,6 +195,10 @@ function getHouseTown(houseId)
 	return getHouseInfo(houseId).town
 end
 
+function getHouseTilesCount(houseId)
+	return getHouseInfo(houseId).tiles
+end
+
 function getItemNameById(itemid)
 	return getItemDescriptionsById(itemid).name
 end

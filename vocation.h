@@ -108,7 +108,6 @@ class Vocation
 		static uint32_t skillBase[SKILL_LAST + 1];
 
 	private:
-
 		typedef std::map<uint32_t, uint32_t> cacheMap;
 		cacheMap cacheSkill[SKILL_LAST + 1];
 		cacheMap cacheMana;

@@ -59,7 +59,6 @@ void ServicePort::onOpen(boost::weak_ptr<ServicePort> weakService, uint16_t port
 	}
 }
 
-
 void ServicePort::open(uint16_t port)
 {
 	m_serverPort = port;

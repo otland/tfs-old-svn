@@ -370,7 +370,7 @@ bool Party::canUseSharedExperience(const Player* player, uint32_t highestLevel/*
 
 	CountMap::const_iterator it = pointMap.find(player->getID());
 	return it != pointMap.end() && (OTSYS_TIME() - it->second.ticks) <= g_config.getNumber(
-		ConfigManager::EXPERIENCE_SHARE_ACTIVITY); 
+		ConfigManager::EXPERIENCE_SHARE_ACTIVITY);
 }
 
 bool Party::canEnableSharedExperience()

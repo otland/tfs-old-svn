@@ -2055,7 +2055,6 @@ void ProtocolGame::sendCreatureHealth(const Creature* creature)
 		TRACK_MESSAGE(msg);
 		AddCreatureHealth(msg, creature);
 	}
-
 }
 
 void ProtocolGame::sendFYIBox(const std::string& message)

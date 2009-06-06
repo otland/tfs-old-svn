@@ -190,4 +190,3 @@ class OutputMessagePool
 	#define TRACK_MESSAGE(omsg)
 #endif
 #endif
-

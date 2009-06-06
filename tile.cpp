@@ -776,7 +776,6 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 		destTile = g_game.getTile(pos);
 	}
 
-
 	if(!destTile)
 		destTile = this;
 	else
