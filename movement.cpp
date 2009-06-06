@@ -463,6 +463,7 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, Tile* t
 
 	//We can not use iterators here since the scripts can invalidate the iterator
 	Thing* thing = NULL;
+	int32_t j = tile->__getLastIndex();
 	for(int32_t i = tile->__getFirstIndex(); i < j; ++i) //already checked the ground
 	{
 		if((thing = tile->__getThing(i)) && (tileItem = thing->getItem())
@@ -531,6 +532,7 @@ uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool is
 
 	//we can not use iterators here since the scripts can invalidate the iterator
 	Thing* thing = NULL;
+	int32_t j = tile->__getLastIndex();
 	for(int32_t i = tile->__getFirstIndex(); i < j; ++i) //already checked the ground
 	{
 		if((thing = tile->__getThing(i)) && (tileItem = thing->getItem()) &&
