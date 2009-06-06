@@ -4673,25 +4673,10 @@ bool Game::playerReportBug(uint32_t playerId, std::string comment)
 	if(!player->hasFlag(PlayerFlag_CanReportBugs))
 		return false;
 
-	Database* db = Database::getInstance();
-	const Position& pos = player->getPosition();
+	CreatureEventList reportBugEvents = player->getCreatureEvents(CREATURE_EVENT_REPORTBUG);
+	for(CreatureEventList::iterator it = reportBugEvents.begin(); it != reportBugEvents.end(); ++it)
+		(*it)->executeReportBug(player, comment);
 
-	DBQuery query;
-	query << "INSERT INTO `server_reports` (`id`, `world_id`, `player_id`, `posx`, `posy`, `posz`, `timestamp`, `report`) VALUES (NULL, ";
-	query << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << player->getGUID() << ", ";
-	query << pos.x << ", " << pos.y << ", " << pos.z << ", ";
-	query << time(NULL) << ", " << db->escapeString(comment.c_str()) << ");";
-	if(!db->executeQuery(query.str()))
-	{
-		query.str("");
-		player->sendTextMessage(MSG_EVENT_DEFAULT, g_config.getString(
-			ConfigManager::SERVER_NAME) + (std::string)" couldn't save your report, please contact with gamemaster.");
-		return false;
-	}
-
-	query.str("");
-	player->sendTextMessage(MSG_EVENT_DEFAULT, "Your report has been sent to " + g_config.getString(
-		ConfigManager::SERVER_NAME) + (std::string)".");
 	return true;
 }
 

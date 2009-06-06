@@ -9,5 +9,7 @@ function onLogin(cid)
 	registerCreatureEvent(cid, "PlayerDeath")
 	registerCreatureEvent(cid, "Idle")
 	registerCreatureEvent(cid, "SkullCheck")
+	registerCreatureEvent(cid, "TradeEvent")
+	registerCreatureEvent(cid, "ReportBug")
 	return true
 end

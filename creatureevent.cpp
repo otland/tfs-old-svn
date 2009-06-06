@@ -156,6 +156,8 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 		m_type = CREATURE_EVENT_MAIL_SEND;
 	else if(tmpStr == "textedit")
 		m_type = CREATURE_EVENT_TEXTEDIT;
+	else if(tmpStr == "reportbug")
+		m_type = CREATURE_EVENT_REPORTBUG;
 	else if(tmpStr == "receivemail")
 		m_type = CREATURE_EVENT_MAIL_RECEIVE;
 	else if(tmpStr == "look")
@@ -216,6 +218,8 @@ std::string CreatureEvent::getScriptEventName() const
 			return "onReceiveMail";
 		case CREATURE_EVENT_TEXTEDIT:
 			return "onTextEdit";
+		case CREATURE_EVENT_REPORTBUG:
+			return "onReportBug";
 		case CREATURE_EVENT_STATSCHANGE:
 			return "onStatsChange";
 		case CREATURE_EVENT_COMBAT_AREA:
@@ -264,6 +268,8 @@ std::string CreatureEvent::getScriptEventParams() const
 			return "cid, sender, item, openBox";
 		case CREATURE_EVENT_TEXTEDIT:
 			return "cid, item, newText";
+		case CREATURE_EVENT_REPORTBUG:
+			return "cid, comment";
 		case CREATURE_EVENT_THINK:
 			return "cid, interval";
 		case CREATURE_EVENT_STATSCHANGE:
@@ -1378,6 +1384,60 @@ uint32_t CreatureEvent::executeTextEdit(Player* player, Item* item, std::string 
 	else
 	{
 		std::cout << "[Error - CreatureEvent::executeTextEdit] Call stack overflow." << std::endl;
+		return 0;
+	}
+}
+
+uint32_t CreatureEvent::executeReportBug(Player* player, std::string comment)
+{
+	//onReportBug(cid, comment)
+	if(m_scriptInterface->reserveScriptEnv())
+	{
+		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		if(m_scripted == EVENT_SCRIPT_BUFFER)
+		{
+			env->setRealPos(player->getPosition());
+			std::stringstream scriptstream;
+
+			scriptstream << "cid = " << env->addThing(player) << std::endl;
+			scriptstream << "comment = " << comment.c_str() << std::endl;
+
+			scriptstream << m_scriptData;
+			bool result = true;
+			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			{
+				lua_State* L = m_scriptInterface->getLuaState();
+				result = m_scriptInterface->getFieldBool(L, "_result");
+			}
+
+			m_scriptInterface->releaseScriptEnv();
+			return result;
+		}
+		else
+		{
+			#ifdef __DEBUG_LUASCRIPTS__
+			char desc[35];
+			sprintf(desc, "%s", player->getName().c_str());
+			env->setEventDesc(desc);
+			#endif
+
+			env->setScriptId(m_scriptId, m_scriptInterface);
+			env->setRealPos(player->getPosition());
+
+			lua_State* L = m_scriptInterface->getLuaState();
+			m_scriptInterface->pushFunction(m_scriptId);
+
+			lua_pushnumber(L, env->addThing(player));
+			lua_pushstring(L, comment.c_str());
+
+			bool result = m_scriptInterface->callFunction(2);
+			m_scriptInterface->releaseScriptEnv();
+			return result;
+		}
+	}
+	else
+	{
+		std::cout << "[Error - CreatureEvent::executeReportBug] Call stack overflow." << std::endl;
 		return 0;
 	}
 }
