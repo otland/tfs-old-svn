@@ -744,6 +744,9 @@ class LuaScriptInterface
 
 		static int32_t internalGetPlayerInfo(lua_State* L, PlayerInfo_t info);
 
+		static int32_t luaHashMD5(lua_State* L);
+		static int32_t luaHashSHA1(lua_State* L);
+
 		static const luaL_Reg luaDatabaseReg[7];
 		static int32_t luaDatabaseExecute(lua_State* L);
 		static int32_t luaDatabaseStoreQuery(lua_State* L);

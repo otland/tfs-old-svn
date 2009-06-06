@@ -2299,6 +2299,12 @@ void LuaScriptInterface::registerFunctions()
 	//doRefreshMap()
 	lua_register(m_luaState, "doRefreshMap", LuaScriptInterface::luaDoRefreshMap);
 
+	//md5()
+	lua_register(m_luaState, "md5", LuaScriptInterface::luaHashMD5);
+
+	//sha1()
+	lua_register(m_luaState, "sha1", LuaScriptInterface::luaHashSHA1);
+
 	//db table
 	luaL_register(m_luaState, "db", LuaScriptInterface::luaDatabaseReg);
 
@@ -9680,6 +9686,20 @@ int32_t LuaScriptInterface::luaGetConfigValue(lua_State* L)
 {
 	//getConfigValue(key)
 	g_config.getValue(popString(L), L);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaHashMD5(lua_State* L)
+{
+	//md5(string)
+	lua_pushstring(L, transformToMD5(popString(L)).c_str());
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaHashSHA1(lua_State* L)
+{
+	//sha1(string)
+	lua_pushstring(L, transformToSHA1(popString(L)).c_str());
 	return 1;
 }
 
