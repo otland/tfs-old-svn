@@ -646,6 +646,7 @@ PlayerCustomFlag_HideLevel = 18
 PlayerCustomFlag_IgnorePacification = 19
 PlayerCustomFlag_CanStairhop = 20
 PlayerCustomFlag_CanTurnhop = 21
+PlayerCustomFlag_IgnoreHouseRent = 22
 
 maleOutfits = {128, 129, 130, 131, 132, 133, 134, 143, 144, 145, 146, 151, 152, 153, 154, 251, 268, 273, 278, 289, 325}
 femaleOutfits = {136, 137, 138, 139, 140, 141, 142, 147, 148, 149, 150, 155, 156, 157, 158, 252, 269, 270, 279, 288, 324}
