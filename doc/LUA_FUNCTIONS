@@ -121,7 +121,7 @@
 						SKULL_GREEN (2)
 						SKULL_WHITE (3)
 						SKULL_RED (4)
-				
+
 				Example
 					local skullNames = {"Yellow", "Green", "White", "Red"}
 					local creatureSkull = getCreatureSkullType(cid)
@@ -522,9 +522,9 @@
 					doPlayerSendTextMessage(cid,MESSAGE_INFO_DESCR,"Your guild nick is " .. getPlayerGuildNick(cid) .. ".")
 ]
 
-[ "do" functions
+[ "set" functions
 	Introduction
-		These functions usually execute an action.
+		These functions usually changes thing properties.
 
 	List
 		*Creatures
@@ -541,6 +541,15 @@
 
 				Returns
 					Returns true - if creature found and max mana changed, otherwise return false
+
+]
+
+[ "do" functions
+	Introduction
+		These functions usually execute an action.
+
+	List
+		*Creatures
 
 		*Players
 			doPlayerSendCancel(cid, text)
@@ -677,16 +686,9 @@
 	getThingFromPos(pos)
 	getThing(uid)
 	getThingPos(uid)
-	getHouseOwner(houseid)
-	getHouseName(houseid)
-	getHouseEntry(houseid)
-	getHouseRent(houseid)
-	getHousePrice(houseid)
-	getHouseTown(houseid)
 	getHouseAccessList(houseid, listid)
 	getHouseByPlayerGUID(playerGUID)
 	getHouseFromPos(pos)
-	getHouseTilesSize(houseid)
 	getTownId(townName)
 	getTownName(townId)
 	getTownTemplePosition(townId)
@@ -775,7 +777,7 @@
 	doPlayerSetTown(cid, townid)
 	doPlayerSetVocation(cid,voc)
 	doPlayerRemoveItem(cid, itemid, count[, subtype])
-	doPlayerAddExp(cid, exp)
+	doPlayerAddExperience(cid, amount)
 	doPlayerSetGuildId(cid, id)
 	doPlayerSetGuildRank(cid, rank)
 	doPlayerSetGuildNick(cid, nick)
@@ -860,7 +862,7 @@
 	doRemoveDeletion(accId)
 	doRemoveNotations(accId)
 	doSaveServer()
-	doReloadInfo()
+	doReloadInfo(id[, cid])
 	doCleanHouse(houseId)
 	doCleanMap()
 	doRefreshMap()
@@ -906,6 +908,9 @@
 	addEvent(callback, delay, ...)
 	stopEvent(eventid)
 	hasProperty(uid)
+
+	md5(str)
+	sha1(str)
 
 	//db table
 	db.executeQuery(query)
@@ -962,6 +967,7 @@
 	savePlayers = saveServer
 	getPlayerSkill = getPlayerSkillLevel
 	getPlayerSkullType = getCreatureSkullType
+	getCreatureSkull = getCreatureSkullType
 	getAccountNumberByName = getAccountIdByName
 	getIPByName = getIpByName
 	getPlayersByIP = getPlayersByIp
@@ -983,6 +989,14 @@
 	doPlayerSetNoMove = doCreatureSetNoMove
 	getPlayerNoMove = getCreatureNoMove
 	getConfigInfo = getConfigValue
+	doPlayerAddExp = doPlayerAddExperience
+	isInArea = isInRange
+	doPlayerSetSkillRate = doPlayerSetRate
+	getCreatureLookDir = getCreatureLookDirection
+	getPlayerLookDir = getCreatureLookDirection
+	getPlayerLookDirection = getCreatureLookDirection
+	doCreatureSetLookDir = doCreatureSetLookDirection
+	getPlayerLookPos = getCreatureLookPosition
 
 	//lua-made functions
 	doPlayerGiveItem(cid, itemid, amount, subType)
@@ -1004,7 +1018,7 @@
 	isKnight(cid)
 	isRookie(cid)
 	getDirectionTo(pos1, pos2)
-	getPlayerLookPos(cid)
+	getCreatureLookPosition(cid)
 	getPosByDir(fromPosition, direction, size)
 	getPlayerMoney(cid)
 	doPlayerWithdrawAllMoney(cid)
@@ -1016,10 +1030,18 @@
 	isInArea(pos, fromPos, toPos)
 	getExperienceForLevel(lv)
 	doMutePlayer(cid, time)
+	getPlayerGroupName(cid)
 	getPlayerVocationName(cid)
 	getPromotedVocation(vid)
 	doPlayerRemovePremiumDays(cid, days)
 	getPlayerMasterPos(cid)
+	getHouseOwner(houseId)
+	getHouseName(houseId)
+	getHouseEntry(houseId)
+	getHouseRent(houseId)
+	getHousePrice(houseId)
+	getHouseTown(houseId)
+	getHouseTilesCount(houseId)
 	getItemNameById(itemid)
 	getItemPluralNameById(itemid)
 	getItemArticleById(itemid)
@@ -1027,6 +1049,7 @@
 	getItemPluralName(uid)
 	getItemArticle(uid)
 	getItemText(uid)
+	getItemSpecialDescription(uid)
 	getItemWriter(uid)
 	getItemDate(uid)
 	getTilePzInfo(pos)

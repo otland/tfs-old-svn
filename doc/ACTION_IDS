@@ -21,6 +21,10 @@
 ]
 
 [ IDS
+	[ Enchanting
+		You must set actionid 100 on all altars so enchanting will work
+	]
+
 	[ Doors & Tiles
 		Storage depending Special Door
 			ANY

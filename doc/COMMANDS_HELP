@@ -193,6 +193,28 @@
 			/owner none
 			/owner Eternal Oblivion
 
+	/storage
+		Displays or modify player storage.
+
+		Parameters
+			playerName
+			storageKey
+			<optional>newValue
+
+		Examples
+			/storage Eternal Oblivion,30015 (display value of storage 30015)
+			/storage Eternal Oblivion,30015,1 (set value to 1)
+
+	/config
+		Displays config value.
+		Parameters
+			configOption
+
+		Examples
+			/config serverName
+			/config gamePort
+			/config displayCriticalHitNotify
+
 	/i
 		Creates an item.
 		Parameters
