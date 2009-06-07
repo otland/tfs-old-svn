@@ -724,13 +724,6 @@
 	//set*
 	setCreatureMaxHealth(cid, health)
 	setCreatureMaxMana(cid, mana)
-	setPlayerStorageValue(uid, key, newValue) //TODO: from here all bottoms
-	setPlayerGroupId(cid, newGroupId)
-	setPlayerPromotionLevel(cid, level)
-	setPlayerStamina(cid, minutes)
-	setPlayerBalance(cid, balance)
-	setPlayerExtraExpRate(cid, value)
-	setPlayerPartner(cid, guid)
 	setHouseOwner(houseid, ownerGUID)
 	setHouseAccessList(houseid, listid, listtext)
 	setItemName(uid)
@@ -780,6 +773,13 @@
 	doPlayerSetSex(cid, newSex)
 	doPlayerSetTown(cid, townid)
 	doPlayerSetVocation(cid,voc)
+	doPlayerSetStorageValue(uid, key, newValue)
+	doPlayerSetGroupId(cid, newGroupId)
+	doPlayerSetPromotionLevel(cid, level)
+	doPlayerSetStamina(cid, minutes)
+	doPlayerSetBalance(cid, balance)
+	doPlayerSetExtraExpRate(cid, value)
+	doPlayerSetPartner(cid, guid)
 	doPlayerRemoveItem(cid, itemid, count[, subtype])
 	doPlayerAddExperience(cid, amount)
 	doPlayerSetGuildId(cid, id)
@@ -800,8 +800,6 @@
 	doPlayerSendToChannel(cid, targetId, SpeakClasses, message, channel[, time])
 	doPlayerAddMoney(cid, money)
 	doPlayerRemoveMoney(cid, money)
-	doPlayerWithdrawMoney(cid, money)
-	doPlayerDepositMoney(cid, money)
 	doPlayerTransferMoneyTo(cid, target, money)
 	doPlayerPopupFYI(cid, message)
 	doPlayerSendTutorial(cid, id)
@@ -1001,6 +999,12 @@
 	getPlayerLookDirection = getCreatureLookDirection
 	doCreatureSetLookDir = doCreatureSetLookDirection
 	getPlayerLookPos = getCreatureLookPosition
+	setPlayerStamina = doPlayerSetStamina
+	setPlayerPromotionLevel = doPlayerSetPromotionLevel
+	setPlayerGroupId = doPlayerSetGroupId
+	setPlayerPartner = doPlayerSetPartner
+	setPlayerStorageValue = doPlayerSetStorageValue
+	setPlayerBalance = doPlayerSetBalance
 
 	//lua-made functions
 	doPlayerGiveItem(cid, itemid, amount, subType)
@@ -1008,6 +1012,8 @@
 	doPlayerBuyItem(cid, itemid, count, cost, charges)
 	doPlayerBuyItemContainer(cid, containerid, itemid, count, cost, charges)
 	doPlayerSellItem(cid, itemid, count, cost)
+	doPlayerWithdrawMoney(cid, money)
+	doPlayerDepositMoney(cid, money)
 	isInRange(pos, fromPos, toPos)
 	isPremium(cid)
 	getMonthDayEnding(day)
