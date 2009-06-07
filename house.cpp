@@ -409,12 +409,8 @@ HouseTransferItem* HouseTransferItem::createHouseTransferItem(House* house)
 	transferItem->useThing2();
 	transferItem->setID(ITEM_HOUSE_TRANSFER);
 
-	std::string tmp = "house";
-	if(house->isGuild())
-		tmp = "guild hall";
-
 	char buffer[150];
-	sprintf(buffer, "It is a %s transfer document for '%s'.", tmp.c_str(), house->getName().c_str());
+	sprintf(buffer, "It is a %s transfer document for '%s'.", house->isGuild() ? "guild hall" : "house", house->getName().c_str());
 	transferItem->setSpecialDescription(buffer);
 
 	transferItem->setSubType(1);
@@ -926,7 +922,7 @@ bool Houses::payHouse(House* house, time_t _time)
 		}
 	}
 
-	if(!player->isPremium() || !g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM))
+	if(!player->isPremium() && g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM))
 	{
 		house->setHouseOwner(0);
 		return false;
@@ -981,12 +977,8 @@ bool Houses::payHouse(House* house, time_t _time)
 						break;
 				}
 
-				std::string tmp = "house";
-				if(house->isGuild())
-					tmp = "guild hall";
-
 				std::stringstream s;
-				s << "Warning!\nThe " << period << " rent of " << house->getRent() << " gold for your " << tmp
+				s << "Warning!\nThe " << period << " rent of " << house->getRent() << " gold for your " << (house->isGuild() ? "guild hall" : "house")
 				<< " \"" << house->getName() << "\" has to be paid. Have it within " << (warningsLimit - warnings)
 				<< " days or you will lose your " << tmp << ".";
 
