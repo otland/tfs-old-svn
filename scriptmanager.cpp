@@ -119,7 +119,7 @@ bool ScriptingManager::loadMods()
 	int32_t i = 0;
 	for(boost::filesystem::directory_iterator it(modsPath), end; it != end; ++it)
 	{
-		std::string name = it->leaf();
+		std::string name = it->leaf(); //deprecated in newer version of boost, use filename() if compilation fails even if deprecations aren't disabled
 		if(!boost::filesystem::is_directory(it->status()) && name.find(
 			".xml") != std::string::npos && loadFromXml(name))
 		{
