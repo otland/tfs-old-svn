@@ -1377,14 +1377,14 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerPromotionLevel(cid)
 	lua_register(m_luaState, "getPlayerPromotionLevel", LuaScriptInterface::luaGetPlayerPromotionLevel);
 
-	//setPlayerPromotionLevel(cid, level)
-	lua_register(m_luaState, "setPlayerPromotionLevel", LuaScriptInterface::luaSetPlayerPromotionLevel);
+	//doPlayerSetPromotionLevel(cid, level)
+	lua_register(m_luaState, "doPlayerSetPromotionLevel", LuaScriptInterface::luaDoPlayerSetPromotionLevel);
 
 	//getPlayerGroupId(cid)
 	lua_register(m_luaState, "getPlayerGroupId", LuaScriptInterface::luaGetPlayerGroupId);
 
-	//setPlayerGroupId(cid, newGroupId)
-	lua_register(m_luaState, "setPlayerGroupId", LuaScriptInterface::luaSetPlayerGroupId);
+	//doPlayerSetGroupId(cid, newGroupId)
+	lua_register(m_luaState, "doPlayerSetGroupId", LuaScriptInterface::luaDoPlayerSetGroupId);
 
 	//doPlayerSendOutfitWindow(cid)
 	lua_register(m_luaState, "doPlayerSendOutfitWindow", LuaScriptInterface::luaDoPlayerSendOutfitWindow);
@@ -1410,8 +1410,8 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerStorageValue(uid, key)
 	lua_register(m_luaState, "getPlayerStorageValue", LuaScriptInterface::luaGetPlayerStorageValue);
 
-	//setPlayerStorageValue(uid, key, value)
-	lua_register(m_luaState, "setPlayerStorageValue", LuaScriptInterface::luaSetPlayerStorageValue);
+	//doPlayerSetStorageValue(uid, key, value)
+	lua_register(m_luaState, "doPlayerSetStorageValue", LuaScriptInterface::luaDoPlayerSetStorageValue);
 
 	//getGlobalStorageValue(key)
 	lua_register(m_luaState, "getGlobalStorageValue", LuaScriptInterface::luaGetGlobalStorageValue);
@@ -2113,14 +2113,14 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerStamina(cid)
 	lua_register(m_luaState, "getPlayerStamina", LuaScriptInterface::luaGetPlayerStamina);
 
-	//setPlayerStamina(cid, minutes)
-	lua_register(m_luaState, "setPlayerStamina", LuaScriptInterface::luaSetPlayerStamina);
+	//doPlayerSetStamina(cid, minutes)
+	lua_register(m_luaState, "doPlayerSetStamina", LuaScriptInterface::luaDoPlayerSetStamina);
 
 	//doPlayerAddStamina(cid, minutes)
 	lua_register(m_luaState, "doPlayerAddStamina", LuaScriptInterface::luaDoPlayerAddStamina);
 
-	//setPlayerBalance(cid, balance)
-	lua_register(m_luaState, "setPlayerBalance", LuaScriptInterface::luaSetPlayerBalance);
+	//doPlayerSetBalance(cid, balance)
+	lua_register(m_luaState, "doPlayerSetBalance", LuaScriptInterface::luaDoPlayerSetBalance);
 
 	//getCreatureNoMove(cid)
 	lua_register(m_luaState, "getCreatureNoMove", LuaScriptInterface::luaGetCreatureNoMove);
@@ -2152,8 +2152,8 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerPartner(cid)
 	lua_register(m_luaState, "getPlayerPartner", LuaScriptInterface::luaGetPlayerPartner);
 
-	//setPlayerPartner(cid, guid)
-	lua_register(m_luaState, "setPlayerPartner", LuaScriptInterface::luaSetPlayerPartner);
+	//doPlayerSetPartner(cid, guid)
+	lua_register(m_luaState, "doPlayerSetPartner", LuaScriptInterface::luaDoPlayerSetPartner);
 
 	//getPlayerParty(cid)
 	lua_register(m_luaState, "getPlayerParty", LuaScriptInterface::luaGetPlayerParty);
@@ -4317,9 +4317,9 @@ int32_t LuaScriptInterface::luaGetPlayerStorageValue(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaSetPlayerStorageValue(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerSetStorageValue(lua_State* L)
 {
-	//setPlayerStorageValue(cid, key[, value])
+	//doPlayerSetStorageValue(cid, key[, value])
 	std::string value;
 	bool nil = true;
 	if(lua_gettop(L) > 2)
@@ -8153,9 +8153,9 @@ int32_t LuaScriptInterface::luaDoPlayerAddBlessing(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaSetPlayerPromotionLevel(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerSetPromotionLevel(lua_State* L)
 {
-	//setPlayerPromotionLevel(cid, level)
+	//doPlayerSetPromotionLevel(cid, level)
 	uint32_t level = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
@@ -8171,9 +8171,9 @@ int32_t LuaScriptInterface::luaSetPlayerPromotionLevel(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaSetPlayerGroupId(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerSetGroupId(lua_State* L)
 {
-	//setPlayerGroupId(cid, groupId)
+	//doPlayerSetGroupId(cid, groupId)
 	uint32_t groupId = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
@@ -8265,9 +8265,9 @@ int32_t LuaScriptInterface::luaGetCreatureMaxHealth(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaSetPlayerStamina(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerSetStamina(lua_State* L)
 {
-	//setPlayerStamina(cid, minutes)
+	//doPlayerSetStamina(cid, minutes)
 	uint32_t minutes = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
@@ -8303,9 +8303,9 @@ int32_t LuaScriptInterface::luaDoPlayerAddStamina(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaSetPlayerBalance(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerSetBalance(lua_State* L)
 {
-	//setPlayerBalance(cid, balance)
+	//doPlayerSetBalance(cid, balance)
 	uint32_t balance = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
@@ -8322,9 +8322,9 @@ int32_t LuaScriptInterface::luaSetPlayerBalance(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaSetPlayerPartner(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerSetPartner(lua_State* L)
 {
-	//setPlayerPartner(cid, guid)
+	//doPlayerSetPartner(cid, guid)
 	uint32_t guid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();

@@ -398,7 +398,7 @@ class LuaScriptInterface
 		static int32_t luaDoPlayerRemoveItem(lua_State* L);
 		static int32_t luaDoPlayerAddSoul(lua_State* L);
 		static int32_t luaDoPlayerAddStamina(lua_State* L);
-		static int32_t luaSetPlayerStamina(lua_State* L);
+		static int32_t luaDoPlayerSetStamina(lua_State* L);
 		static int32_t luaDoPlayerAddExperience(lua_State* L);
 		static int32_t luaDoPlayerSetGuildId(lua_State* L);
 		static int32_t luaDoPlayerSetGuildRank(lua_State* L);
@@ -555,9 +555,9 @@ class LuaScriptInterface
 		static int32_t luaGetMonsterLootList(lua_State* L);
 
 		static int32_t luaGetPlayerPromotionLevel(lua_State* L);
-		static int32_t luaSetPlayerPromotionLevel(lua_State* L);
+		static int32_t luaDoPlayerSetPromotionLevel(lua_State* L);
 		static int32_t luaGetPlayerGroupId(lua_State* L);
-		static int32_t luaSetPlayerGroupId(lua_State* L);
+		static int32_t luaDoPlayerSetGroupId(lua_State* L);
 
 		static int32_t luaDoPlayerLearnInstantSpell(lua_State* L);
 		static int32_t luaDoPlayerUnlearnInstantSpell(lua_State* L);
@@ -567,13 +567,13 @@ class LuaScriptInterface
 		static int32_t luaGetInstantSpellInfo(lua_State* L);
 
 		static int32_t luaGetPlayerPartner(lua_State* L);
-		static int32_t luaSetPlayerPartner(lua_State* L);
+		static int32_t luaDoPlayerSetPartner(lua_State* L);
 		static int32_t luaGetPlayerParty(lua_State* L);
 		static int32_t luaDoPlayerJoinParty(lua_State* L);
 		static int32_t luaGetPartyMembers(lua_State* L);
 
 		static int32_t luaGetPlayerStorageValue(lua_State* L);
-		static int32_t luaSetPlayerStorageValue(lua_State* L);
+		static int32_t luaDoPlayerSetStorageValue(lua_State* L);
 		static int32_t luaDoPlayerAddBlessing(lua_State* L);
 		static int32_t luaGetPlayerBlessing(lua_State* L);
 
@@ -688,7 +688,7 @@ class LuaScriptInterface
 		static int32_t luaRegisterCreatureEvent(lua_State* L);
 
 		static int32_t luaGetPlayerBalance(lua_State* L);
-		static int32_t luaSetPlayerBalance(lua_State* L);
+		static int32_t luaDoPlayerSetBalance(lua_State* L);
 		static int32_t luaDoPlayerPopupFYI(lua_State* L);
 		static int32_t luaDoPlayerSendTutorial(lua_State* L);
 		static int32_t luaDoPlayerAddMapMark(lua_State* L);
