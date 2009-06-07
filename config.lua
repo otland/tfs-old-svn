@@ -108,7 +108,7 @@
 	sqlFile = "forgottenserver.s3db"
 	sqlKeepAlive = 0
 	mysqlReadTimeout = 10
-	mysqlWriteTImeout = 10
+	mysqlWriteTimeout = 10
 	passwordType = "plain"
 
 	-- Deathlist
