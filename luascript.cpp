@@ -2140,6 +2140,9 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerLastLogin(cid)
 	lua_register(m_luaState, "getPlayerLastLogin", LuaScriptInterface::luaGetPlayerLastLogin);
 
+	//getPlayerLastLoginSaved(cid)
+	lua_register(m_luaState, "getPlayerLastLoginSaved", LuaScriptInterface::luaGetPlayerLastLoginSaved);
+
 	//getPlayerAccountManager(cid)
 	lua_register(m_luaState, "getPlayerAccountManager", LuaScriptInterface::luaGetPlayerAccountManager);
 
@@ -2514,6 +2517,9 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 			lua_pushboolean(L, player->hasClient());
 			return 1;
 		case PlayerInfoLastLogin:
+			value = player->getLastLogin();
+			break;
+		case PlayerInfoLastLoginSaved:
 			value = player->getLastLoginSaved();
 			break;
 		case PlayerInfoAccountManager:
@@ -2708,6 +2714,11 @@ int32_t LuaScriptInterface::luaHasClient(lua_State* L)
 int32_t LuaScriptInterface::luaGetPlayerLastLogin(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoLastLogin);
+}
+
+int32_t LuaScriptInterface::luaGetPlayerLastLoginSaved(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoLastLoginSaved);
 }
 
 int32_t LuaScriptInterface::luaGetPlayerAccountManager(lua_State* L)

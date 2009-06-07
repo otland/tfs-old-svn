@@ -221,6 +221,7 @@ enum PlayerInfo_t
 	PlayerInfoIdleTime,
 	PlayerInfoClient,
 	PlayerInfoLastLogin,
+	PlayerInfoLastLoginSaved,
 	PlayerInfoAccountManager
 };
 
@@ -529,6 +530,7 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerRequiredSkillTries(lua_State* L);
 		static int32_t luaGetPlayerIp(lua_State* L);
 		static int32_t luaGetPlayerLastLogin(lua_State* L);
+		static int32_t luaGetPlayerLastLoginSaved(lua_State* L);
 		static int32_t luaGetPlayerAccountManager(lua_State* L);
 		static int32_t luaGetPlayerAccountId(lua_State* L);
 		static int32_t luaGetPlayerAccount(lua_State* L);

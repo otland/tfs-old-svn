@@ -10,7 +10,7 @@ function onLogin(cid)
 
 	local accountManager = getPlayerAccountManager(cid)
 	if(accountManager == MANAGER_NONE) then
-		local lastLogin, str = getPlayerLastLogin(cid), config.loginMessage
+		local lastLogin, str = getPlayerLastLoginSaved(cid), config.loginMessage
 		if(lastLogin > 0) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_DEFAULT, str)
 			str = "Your last visit was on " .. os.date("%a %b %d %X %Y", lastLogin) .. "."
