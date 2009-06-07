@@ -230,8 +230,6 @@ class Player : public Creature, public Cylinder
 		bool eraseStorageValue(const uint32_t key);
 		void genReservedStorageRange();
 
-		bool withdrawMoney(uint64_t amount);
-		bool depositMoney(uint64_t amount);
 		bool transferMoneyTo(const std::string& name, uint64_t amount);
 
 		inline StorageMap::const_iterator getStorageIteratorBegin() const {return storageMap.begin();}

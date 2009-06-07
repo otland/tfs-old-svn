@@ -4724,42 +4724,17 @@ bool Player::removePartyInvitation(Party* party)
 
 void Player::clearPartyInvitations()
 {
-	if(!invitePartyList.empty())
-	{
-		PartyList list;
-		for(PartyList::iterator it = invitePartyList.begin(); it != invitePartyList.end(); ++it)
-			list.push_back(*it);
+	if(invitePartyList.empty())
+		return;
 
-		invitePartyList.clear();
+	PartyList list;
+	for(PartyList::iterator it = invitePartyList.begin(); it != invitePartyList.end(); ++it)
+		list.push_back(*it);
 
-		for(PartyList::iterator it = list.begin(); it != list.end(); ++it)
-			(*it)->removeInvite(this);
-	}
-}
+	invitePartyList.clear();
 
-bool Player::withdrawMoney(uint64_t amount)
-{
-	if(!g_config.getBool(ConfigManager::BANK_SYSTEM))
-		return false;
-
-	if(amount > balance)
-		return false;
-
-	g_game.addMoney(this, amount);
-	balance -= amount;
-	return true;
-}
-
-bool Player::depositMoney(uint64_t amount)
-{
-	if(!g_config.getBool(ConfigManager::BANK_SYSTEM))
-		return false;
-
-	bool ret = g_game.removeMoney(this, amount);
-	if(ret)
-		balance += amount;
-
-	return ret;
+	for(PartyList::iterator it = list.begin(); it != list.end(); ++it)
+		(*it)->removeInvite(this);
 }
 
 bool Player::transferMoneyTo(const std::string& name, uint64_t amount)

@@ -64,6 +64,33 @@ function doPlayerSellItem(cid, itemid, count, cost)
 	return true
 end
 
+function doPlayerWithdrawMoney(cid, amount)
+	if(not getBooleanFromString(getConfigInfo('bankSystem'))) then
+		return false
+	end
+
+	local balance = getPlayerBalance(cid)
+	if(amount > balance or not doPlayerAddMoney(cid, amount)) then
+		return false
+	end
+
+	doPlayerSetBalance(cid, balance - amount)
+	return true
+end
+
+function doPlayerDepositMoney(cid, amount)
+	if(not getBooleanFromString(getConfigInfo('bankSystem'))) then
+		return false
+	end
+
+	if(not doPlayerRemoveMoney(cid, amount)) then
+		return false
+	end
+
+	doPlayerSetBalance(cid, getPlayerBalance(cid) + amount)
+	return true
+end
+
 function isPremium(cid)
 	return (isPlayer(cid) and (getPlayerPremiumDays(cid) > 0 or getBooleanFromString(getConfigInfo('freePremium'))))
 end

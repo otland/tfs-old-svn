@@ -1549,12 +1549,6 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerRemoveMoney(cid, money)
 	lua_register(m_luaState, "doPlayerRemoveMoney", LuaScriptInterface::luaDoPlayerRemoveMoney);
 
-	//doPlayerWithdrawMoney(cid, money)
-	lua_register(m_luaState, "doPlayerWithdrawMoney", LuaScriptInterface::luaDoPlayerWithdrawMoney);
-
-	//doPlayerDepositMoney(cid, money)
-	lua_register(m_luaState, "doPlayerDepositMoney", LuaScriptInterface::luaDoPlayerDepositMoney);
-
 	//doPlayerTransferMoneyTo(cid, target, money)
 	lua_register(m_luaState, "doPlayerTransferMoneyTo", LuaScriptInterface::luaDoPlayerTransferMoneyTo);
 
@@ -2124,6 +2118,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//doPlayerAddStamina(cid, minutes)
 	lua_register(m_luaState, "doPlayerAddStamina", LuaScriptInterface::luaDoPlayerAddStamina);
+
+	//setPlayerBalance(cid, balance)
+	lua_register(m_luaState, "setPlayerBalance", LuaScriptInterface::luaSetPlayerBalance);
 
 	//getCreatureNoMove(cid)
 	lua_register(m_luaState, "getCreatureNoMove", LuaScriptInterface::luaGetCreatureNoMove);
@@ -2926,8 +2923,7 @@ int32_t LuaScriptInterface::luaGetPlayerLearnedInstantSpell(lua_State* L)
 		return 1;
 	}
 
-	lua_pushboolean(L, player->hasLearnedInstantSpell(spellName) ?
-		true : false);
+	lua_pushboolean(L, player->hasLearnedInstantSpell(spellName));
 	return 1;
 }
 
@@ -3036,8 +3032,7 @@ int32_t LuaScriptInterface::luaDoPlayerRemoveItem(lua_State* L)
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
-		lua_pushboolean(L, g_game.removeItemOfType(player, itemId, count, subType) ?
-			true : false);
+		lua_pushboolean(L, g_game.removeItemOfType(player, itemId, count, subType));
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
@@ -4628,42 +4623,7 @@ int32_t LuaScriptInterface::luaDoPlayerRemoveMoney(lua_State* L)
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
-		lua_pushboolean(L, g_game.removeMoney(player, money) ?
-			true : false);
-	else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaDoPlayerWithdrawMoney(lua_State* L)
-{
-	//doPlayerWithdrawMoney(cid, money)
-	uint64_t money = popNumber(L);
-
-	ScriptEnviroment* env = getScriptEnv();
-	if(Player* player = env->getPlayerByUID(popNumber(L)))
-		lua_pushboolean(L, player->withdrawMoney(money) ?
-			true : false);
-	else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaDoPlayerDepositMoney(lua_State* L)
-{
-	//doPlayerDepositMoney(cid, money)
-	uint64_t money = popNumber(L);
-
-	ScriptEnviroment* env = getScriptEnv();
-	if(Player* player = env->getPlayerByUID(popNumber(L)))
-		lua_pushboolean(L, player->depositMoney(money) ?
-			true : false);
+		lua_pushboolean(L, g_game.removeMoney(player, money));
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
@@ -7819,8 +7779,7 @@ int32_t LuaScriptInterface::luaIsSightClear(lua_State* L)
 	popPosition(L, toPos);
 	popPosition(L, fromPos);
 
-	lua_pushboolean(L, g_game.isSightClear(fromPos, toPos, floorCheck) ?
-		true : false);
+	lua_pushboolean(L, g_game.isSightClear(fromPos, toPos, floorCheck));
 	return 1;
 }
 
@@ -8344,22 +8303,42 @@ int32_t LuaScriptInterface::luaDoPlayerAddStamina(lua_State* L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaSetPlayerBalance(lua_State* L)
+{
+	//setPlayerBalance(cid, balance)
+	uint32_t balance = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	if(Player* player = env->getPlayerByUID(popNumber(L)))
+	{
+		player->balance = balance;
+		lua_pushboolean(L, true);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+	return 1;
+}
+
 int32_t LuaScriptInterface::luaSetPlayerPartner(lua_State* L)
 {
 	//setPlayerPartner(cid, guid)
 	uint32_t guid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	Player* player = env->getPlayerByUID(popNumber(L));
-	if(!player)
+	if(Player* player = env->getPlayerByUID(popNumber(L)))
+	{
+		player->marriage = guid;
+		lua_pushboolean(L, true);
+	}
+	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
-		return 1;
 	}
 
-	player->marriage = guid;
-	lua_pushboolean(L, true);
 	return 1;
 }
 

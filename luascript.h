@@ -391,8 +391,6 @@ class LuaScriptInterface
 		static int32_t luaDoPlayerSendToChannel(lua_State* L);
 		static int32_t luaDoPlayerAddMoney(lua_State* L);
 		static int32_t luaDoPlayerRemoveMoney(lua_State* L);
-		static int32_t luaDoPlayerWithdrawMoney(lua_State* L);
-		static int32_t luaDoPlayerDepositMoney(lua_State* L);
 		static int32_t luaDoPlayerTransferMoneyTo(lua_State* L);
 		static int32_t luaDoPlayerSetPzLocked(lua_State* L);
 		static int32_t luaDoPlayerSetTown(lua_State* L);
@@ -690,6 +688,7 @@ class LuaScriptInterface
 		static int32_t luaRegisterCreatureEvent(lua_State* L);
 
 		static int32_t luaGetPlayerBalance(lua_State* L);
+		static int32_t luaSetPlayerBalance(lua_State* L);
 		static int32_t luaDoPlayerPopupFYI(lua_State* L);
 		static int32_t luaDoPlayerSendTutorial(lua_State* L);
 		static int32_t luaDoPlayerAddMapMark(lua_State* L);
