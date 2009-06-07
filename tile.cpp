@@ -1407,13 +1407,19 @@ void Tile::postAddNotification(Creature* actor, Thing* thing, const Cylinder* ol
 	if(link == LINK_OWNER)
 	{
 		//calling movement scripts
-		if(Item* item = thing->getItem())
+		if(Creature* creature = thing->getCreature())
+		{
+			const Tile* fromTile = NULL;
+			if(oldParent)
+				fromTile = oldParent->getTile();
+
+			g_moveEvents->onCreatureMove(actor, creature, fromTile, this, true);
+		}
+		else if(Item* item = thing->getItem())
 		{
 			g_moveEvents->onAddTileItem(this, item);
 			g_moveEvents->onItemMove(actor, item, this, true);
 		}
-		else if(Creature* creature = thing->getCreature())
-			g_moveEvents->onCreatureMove(actor, creature, this, true);
 
 		if(hasFlag(TILESTATE_TELEPORT))
 		{
@@ -1454,13 +1460,19 @@ void Tile::postRemoveNotification(Creature* actor, Thing* thing,  const Cylinder
 	}
 
 	//calling movement scripts
-	if(Item* item = thing->getItem())
+	if(Creature* creature = thing->getCreature())
+	{
+		const Tile* toTile = NULL;
+		if(newParent)
+			toTile = newParent->getTile();
+
+		g_moveEvents->onCreatureMove(actor, creature, this, toTile, false);
+	}
+	else if(Item* item = thing->getItem())
 	{
 		g_moveEvents->onRemoveTileItem(this, item);
 		g_moveEvents->onItemMove(actor, item, this, false);
 	}
-	else if(Creature* creature = thing->getCreature())
-		g_moveEvents->onCreatureMove(actor, creature, this, false);
 }
 
 void Tile::__internalAddThing(uint32_t index, Thing* thing)

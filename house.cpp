@@ -841,13 +841,10 @@ void Houses::payHouses()
 
 bool Houses::payRent(Player* player, House* house, time_t _time/* = 0*/)
 {
-	if(!_time)
-		_time = time(NULL);
-
 	if(rentPeriod == RENTPERIOD_NEVER || !house->getHouseOwner() ||
 		house->getPaidUntil() >= _time || !house->getRent() ||
 		player->hasCustomFlag(PlayerCustomFlag_IgnoreHouseRent))
-			return true;
+		return true;
 
 	Town* town = Towns::getInstance().getTown(house->getTownId());
 	if(!town)
@@ -864,6 +861,9 @@ bool Houses::payRent(Player* player, House* house, time_t _time/* = 0*/)
 
 	if(!paid)
 		return false;
+
+	if(!_time)
+		_time = time(NULL);
 
 	uint32_t paidUntil = _time;
 	switch(rentPeriod)
@@ -924,6 +924,12 @@ bool Houses::payHouse(House* house, time_t _time)
 			delete player;
 			return false;
 		}
+	}
+
+	if(!player->isPremium() || !g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM))
+	{
+		house->setHouseOwner(0);
+		return false;
 	}
 
 	bool paid = payRent(player, house, _time), savePlayer = false;

@@ -37,7 +37,7 @@
 	<rune name="Animate Dead" id="2316" allowfaruse="1" charges="1" lvl="27" maglv="4" exhaustion="2000" blocktype="solid" event="script" value="summon/animate dead rune.lua"/>
 
 	<!-- Support Runes -->
-	<rune name="Desintegrate" id="2310" allowfaruse="0" charges="3" lvl="21" maglv="4" exhaustion="2000" range="5" event="script" value="support/desintegrate rune.lua"/>
+	<rune name="Desintegrate" id="2310" allowfaruse="0" charges="3" lvl="21" maglv="4" exhaustion="2000" range="1" event="script" value="support/desintegrate rune.lua"/>
 	<rune name="Destroy Field" id="2261" allowfaruse="1" charges="3" lvl="17" maglv="3" exhaustion="1000" aggressive="0" range="5" event="script" value="support/destroy field rune.lua"/>
 	<rune name="Chameleon" id="2291" allowfaruse="1" charges="1" lvl="27" maglv="4" exhaustion="1000" aggressive="0" selftarget="1" blocktype="solid" event="function" value="chameleon"/>
 	<rune name="Magic Wall" id="2293" allowfaruse="1" charges="3" lvl="32" maglv="9" exhaustion="2000" blocktype="all" event="script" value="support/magic wall rune.lua"/>

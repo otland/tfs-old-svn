@@ -417,7 +417,7 @@ class Npc : public Creature
 		Npc(const std::string& _name);
 		bool loaded;
 
-		virtual void onCreatureAppear(const Creature* creature, bool isLogin);
+		virtual void onCreatureAppear(const Creature* creature);
 		virtual void onCreatureDisappear(const Creature* creature, bool isLogout);
 		virtual void onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
 			const Tile* oldTile, const Position& oldPos, bool teleport);

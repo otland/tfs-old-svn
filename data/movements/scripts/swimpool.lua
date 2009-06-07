@@ -1,11 +1,11 @@
 local outfit = {lookType = 267, lookHead = 0, lookBody = 0, lookLegs = 0, lookFeet = 0, lookTypeEx = 0, lookAddons = 0}
 
 function onStepIn(cid, item, toPosition, fromPosition, actor)
-	if(isPlayer(cid)) then
+	if(not isPlayer(cid)) then
 		return true
 	end
 
-	if(getTileItemById(fromPosition, 4820).itemid == 0) then
+	if(fromPosition.x ~= 0 and fromPosition.y ~= 0 and getTileItemById(fromPosition, 4820).itemid == 0) then
 		doSendMagicEffect(getThingPos(cid), CONST_ME_WATERSPLASH)
 	end
 
@@ -15,7 +15,9 @@ function onStepIn(cid, item, toPosition, fromPosition, actor)
 end
 
 function onStepOut(cid, item, toPosition, fromPosition, actor)
-	if(isPlayer(cid)) then
+	if(isPlayer(cid) and getTileItemById(toPosition, 4820).itemid == 0) then
 		doRemoveCondition(cid, CONDITION_OUTFIT)
 	end
+
+	return true
 end

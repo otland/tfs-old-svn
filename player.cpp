@@ -1272,7 +1272,7 @@ void Player::sendCreatureChangeVisible(const Creature* creature, bool visible)
 	else if(!visible)
 		sendCreatureDisappear(creature, creature->getTile()->getClientIndexOfThing(this, creature), false);
 	else
-		sendCreatureAppear(creature, false);
+		sendCreatureAppear(creature);
 }
 
 void Player::sendAddContainerItem(const Container* container, const Item* item)
@@ -1337,10 +1337,10 @@ void Player::onRemoveTileItem(const Tile* tile, const Position& pos, const ItemT
 	}
 }
 
-void Player::onCreatureAppear(const Creature* creature, bool isLogin)
+void Player::onCreatureAppear(const Creature* creature)
 {
-	Creature::onCreatureAppear(creature, isLogin);
-	if(!isLogin || creature != this)
+	Creature::onCreatureAppear(creature);
+	if(creature != this)
 		return;
 
 	Item* item = NULL;
@@ -1455,7 +1455,7 @@ void Player::onCreatureDisappear(const Creature* creature, bool isLogout)
 		lastLogout = time(NULL);
 	}
 
-	if(eventWalk != 0)
+	if(eventWalk)
 		setFollowCreature(NULL);
 
 	if(tradePartner)
@@ -3877,32 +3877,31 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 	d += g_config.getNumber(ConfigManager::BAN_DAILY_LIMIT);
 	w += g_config.getNumber(ConfigManager::BAN_WEEKLY_LIMIT);
 	m += g_config.getNumber(ConfigManager::BAN_MONTHLY_LIMIT);
-	if((d > 0 && tc >= d) || (w > 0 && wc >= w) || (m > 0 && mc >= m))
-	{
-		Account tmp = IOLoginData::getInstance()->loadAccount(accountId, true);
-		tmp.warnings++;
+	if((d <= 0 || tc < d) && (w <= 0 || wc < w) && (m <= 0 || mc < m))
+		return true
 
-		bool success = false;
-		if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
-			success = IOBan::getInstance()->addDeletion(accountId, 20, ACTION_DELETION, "Unjustified player killing.", 0);
-		else if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
-			success = IOBan::getInstance()->addBanishment(accountId, (now + g_config.getNumber(
-				ConfigManager::FINALBAN_LENGTH)), 20, ACTION_BANFINAL, "Unjustified player killing.", 0);
-		else
-			success = IOBan::getInstance()->addBanishment(accountId, (now + g_config.getNumber(
-				ConfigManager::BAN_LENGTH)), 20, ACTION_BANISHMENT, "Unjustified player killing.", 0);
+	Account tmp = IOLoginData::getInstance()->loadAccount(accountId, true);
+	tmp.warnings++;
 
-		if(success)
-		{
-			IOLoginData::getInstance()->saveAccount(tmp);
-			sendTextMessage(MSG_INFO_DESCR, "You have been banished.");
+	bool success = false;
+	if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
+		success = IOBan::getInstance()->addDeletion(tmp.number, 20, ACTION_DELETION, "Unjustified player killing.", 0);
+	else if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
+		success = IOBan::getInstance()->addBanishment(tmp.number, (now + g_config.getNumber(
+			ConfigManager::FINALBAN_LENGTH)), 20, ACTION_BANFINAL, "Unjustified player killing.", 0);
+	else
+		success = IOBan::getInstance()->addBanishment(tmp.number, (now + g_config.getNumber(
+			ConfigManager::BAN_LENGTH)), 20, ACTION_BANISHMENT, "Unjustified player killing.", 0);
 
-			g_game.addMagicEffect(getPosition(), NM_ME_MAGIC_POISON);
-			Scheduler::getScheduler().addEvent(createSchedulerTask(1000, boost::bind(
-				&Game::kickPlayer, &g_game, getID(), false)));
-		}
-	}
+	if(!success)
+		return true
 
+	IOLoginData::getInstance()->saveAccount(tmp);
+	sendTextMessage(MSG_INFO_DESCR, "You have been banished.");
+
+	g_game.addMagicEffect(getPosition(), NM_ME_MAGIC_POISON);
+	Scheduler::getScheduler().addEvent(createSchedulerTask(1000, boost::bind(
+		&Game::kickPlayer, &g_game, getID(), false)));
 	return true;
 }
 

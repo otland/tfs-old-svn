@@ -120,9 +120,9 @@ void Monster::onAttackedCreatureDisappear(bool isLogout)
 	extraMeleeAttack = true;
 }
 
-void Monster::onCreatureAppear(const Creature* creature, bool isLogin)
+void Monster::onCreatureAppear(const Creature* creature)
 {
-	Creature::onCreatureAppear(creature, isLogin);
+	Creature::onCreatureAppear(creature);
 	if(creature == this)
 	{
 		//We just spawned lets look around to see who is there.

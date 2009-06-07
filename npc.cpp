@@ -1010,9 +1010,9 @@ bool Npc::canSee(const Position& pos) const
 	return Creature::canSee(getPosition(), pos, Map::maxClientViewportX, Map::maxClientViewportY);
 }
 
-void Npc::onCreatureAppear(const Creature* creature, bool isLogin)
+void Npc::onCreatureAppear(const Creature* creature)
 {
-	Creature::onCreatureAppear(creature, isLogin);
+	Creature::onCreatureAppear(creature);
 	if(creature == this && walkTicks > 0)
 		addEventWalk();
 

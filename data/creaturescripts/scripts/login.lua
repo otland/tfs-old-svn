@@ -20,16 +20,12 @@ function onLogin(cid)
 		end
 
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_DEFAULT, str)
+	elseif(accountManager == MANAGER_NAMELOCK) then
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, "Hello, it appears that your character has been namelocked, what would you like as your new name?")
+	elseif(accountManager == MANAGER_ACCOUNT) then
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, "Hello, type 'account' to manage your account and if you want to start over then type 'cancel'.")
 	else
-		if(accountManager == MANAGER_NAMELOCK) then
-			str = "Hello, it appears that your character has been namelocked, what would you like as your new name?"
-		elseif(accountManager == MANAGER_ACCOUNT) then
-			str = "Hello, type 'account' to manage your account and if you want to start over then type 'cancel'."
-		elseif(accountManager == MANAGER_NEW) then
-			str = "Hello, type 'account' to create an account or type 'recover' to recover an account."
-		end
-
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, str)
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_ORANGE, "Hello, type 'account' to create an account or type 'recover' to recover an account.")
 	end
 
 	if(not isPlayerGhost(cid)) then

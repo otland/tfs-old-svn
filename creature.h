@@ -374,7 +374,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual void onRemoveTileItem(const Tile* tile, const Position& pos, const ItemType& iType, const Item* item);
 		virtual void onUpdateTile(const Tile* tile, const Position& pos) {}
 
-		virtual void onCreatureAppear(const Creature* creature, bool isLogin);
+		virtual void onCreatureAppear(const Creature* creature);
 		virtual void onCreatureDisappear(const Creature* creature, bool isLogout);
 		virtual void onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
 			const Tile* oldTile, const Position& oldPos, bool teleport);

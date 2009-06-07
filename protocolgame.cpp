@@ -2139,77 +2139,77 @@ void ProtocolGame::sendUpdateTile(const Tile* tile, const Position& pos)
 	}
 }
 
-void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos, uint32_t stackpos, bool isLogin)
+void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos, uint32_t stackpos)
 {
 	if(!canSee(creature))
 		return;
 
 	NetworkMessage_ptr msg = getOutputBuffer();
-	if(msg)
+	if(!msg)
+		return;
+
+	TRACK_MESSAGE(msg);
+	if(creature != player)
 	{
-		TRACK_MESSAGE(msg);
-		if(creature == player)
+		AddTileCreature(msg, pos, stackpos, creature);
+		return;
+	}
+
+	msg->AddByte(0x0A);
+	msg->AddU32(player->getID());
+	msg->AddByte(0x32);
+	msg->AddByte(0x00);
+
+	msg->AddByte(player->hasFlag(PlayerFlag_CanReportBugs));
+	if(Group* group = player->getGroup())
+	{
+		int32_t reasons = group->getViolationReasons();
+		if(reasons > 1)
 		{
-			msg->AddByte(0x0A);
-			msg->AddU32(player->getID());
-			msg->AddByte(0x32);
-			msg->AddByte(0x00);
-
-			msg->AddByte(player->hasFlag(PlayerFlag_CanReportBugs));
-			if(Group* group = player->getGroup())
+			msg->AddByte(0x0B);
+			for(int32_t i = 0; i < 23; i++)
 			{
-				int32_t reasons = group->getViolationReasons();
-				if(reasons > 1)
-				{
-					msg->AddByte(0x0B);
-					for(int32_t i = 0; i < 23; i++)
-					{
-						if(i < 4)
-							msg->AddByte(group->getNameViolationFlags());
-						else if(i < reasons)
-							msg->AddByte(group->getStatementViolationFlags());
-						else
-							msg->AddByte(0);
-					}
-				}
-			}
-
-			AddMapDescription(msg, pos);
-
-			AddInventoryItem(msg, SLOT_HEAD, player->getInventoryItem(SLOT_HEAD));
-			AddInventoryItem(msg, SLOT_NECKLACE, player->getInventoryItem(SLOT_NECKLACE));
-			AddInventoryItem(msg, SLOT_BACKPACK, player->getInventoryItem(SLOT_BACKPACK));
-			AddInventoryItem(msg, SLOT_ARMOR, player->getInventoryItem(SLOT_ARMOR));
-			AddInventoryItem(msg, SLOT_RIGHT, player->getInventoryItem(SLOT_RIGHT));
-			AddInventoryItem(msg, SLOT_LEFT, player->getInventoryItem(SLOT_LEFT));
-			AddInventoryItem(msg, SLOT_LEGS, player->getInventoryItem(SLOT_LEGS));
-			AddInventoryItem(msg, SLOT_FEET, player->getInventoryItem(SLOT_FEET));
-			AddInventoryItem(msg, SLOT_RING, player->getInventoryItem(SLOT_RING));
-			AddInventoryItem(msg, SLOT_AMMO, player->getInventoryItem(SLOT_AMMO));
-
-			AddPlayerStats(msg);
-			AddPlayerSkills(msg);
-
-			//gameworld light-settings
-			LightInfo lightInfo;
-			g_game.getWorldLightInfo(lightInfo);
-			AddWorldLight(msg, lightInfo);
-
-			//player light level
-			AddCreatureLight(msg, creature);
-
-			for(VIPListSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); it++)
-			{
-				std::string vipName;
-				if(IOLoginData::getInstance()->getNameByGuid((*it), vipName))
-				{
-					Player* tmpPlayer = g_game.getPlayerByName(vipName);
-					sendVIP((*it), vipName, (tmpPlayer && player->canSeeCreature(tmpPlayer)));
-				}
+				if(i < 4)
+					msg->AddByte(group->getNameViolationFlags());
+				else if(i < reasons)
+					msg->AddByte(group->getStatementViolationFlags());
+				else
+					msg->AddByte(0);
 			}
 		}
-		else
-			AddTileCreature(msg, pos, stackpos, creature);
+	}
+
+	AddMapDescription(msg, pos);
+
+	AddInventoryItem(msg, SLOT_HEAD, player->getInventoryItem(SLOT_HEAD));
+	AddInventoryItem(msg, SLOT_NECKLACE, player->getInventoryItem(SLOT_NECKLACE));
+	AddInventoryItem(msg, SLOT_BACKPACK, player->getInventoryItem(SLOT_BACKPACK));
+	AddInventoryItem(msg, SLOT_ARMOR, player->getInventoryItem(SLOT_ARMOR));
+	AddInventoryItem(msg, SLOT_RIGHT, player->getInventoryItem(SLOT_RIGHT));
+	AddInventoryItem(msg, SLOT_LEFT, player->getInventoryItem(SLOT_LEFT));
+	AddInventoryItem(msg, SLOT_LEGS, player->getInventoryItem(SLOT_LEGS));
+	AddInventoryItem(msg, SLOT_FEET, player->getInventoryItem(SLOT_FEET));
+	AddInventoryItem(msg, SLOT_RING, player->getInventoryItem(SLOT_RING));
+	AddInventoryItem(msg, SLOT_AMMO, player->getInventoryItem(SLOT_AMMO));
+
+	AddPlayerStats(msg);
+	AddPlayerSkills(msg);
+
+	//gameworld light-settings
+	LightInfo lightInfo;
+	g_game.getWorldLightInfo(lightInfo);
+	AddWorldLight(msg, lightInfo);
+
+	//player light level
+	AddCreatureLight(msg, creature);
+	for(VIPListSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); it++)
+	{
+		std::string vipName;
+		if(IOLoginData::getInstance()->getNameByGuid((*it), vipName))
+		{
+			Player* tmpPlayer = g_game.getPlayerByName(vipName);
+			sendVIP((*it), vipName, (tmpPlayer && player->canSeeCreature(tmpPlayer)));
+		}
 	}
 }
 

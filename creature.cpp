@@ -454,7 +454,7 @@ void Creature::onRemoveTileItem(const Tile* tile, const Position& pos, const Ite
 		updateTileCache(tile, pos);
 }
 
-void Creature::onCreatureAppear(const Creature* creature, bool isLogin)
+void Creature::onCreatureAppear(const Creature* creature)
 {
 	if(creature == this)
 	{
@@ -463,9 +463,6 @@ void Creature::onCreatureAppear(const Creature* creature, bool isLogin)
 			isMapLoaded = true;
 			updateMapCache();
 		}
-
-		if(isLogin)
-			setLastPosition(getPosition());
 	}
 	else if(isMapLoaded && creature->getPosition().z == getPosition().z)
 		updateTileCache(creature->getTile(), creature->getPosition());
@@ -502,6 +499,8 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 	{
 		lastStep = OTSYS_TIME();
 		lastStepCost = 1;
+
+		setLastPosition(oldPos);
 		if(!teleport)
 		{
 			if(oldPos.z != newPos.z || (std::abs(newPos.x - oldPos.x) >= 1 && std::abs(newPos.y - oldPos.y) >= 1))

@@ -780,18 +780,17 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
-			tmpPlayer->sendCreatureAppear(creature, true);
+			tmpPlayer->sendCreatureAppear(creature);
 	}
 
 	for(it = list.begin(); it != list.end(); ++it)
-		(*it)->onCreatureAppear(creature, true);
+		(*it)->onCreatureAppear(creature);
 
-	int32_t newIndex = creature->getParent()->__getIndexOfThing(creature);
-	creature->getParent()->postAddNotification(NULL, creature, NULL, newIndex);
+	creature->setLastPosition(getPosition());
+	creature->getParent()->postAddNotification(NULL, creature, NULL, creature->getParent()->__getIndexOfThing(creature));
 	addCreatureCheck(creature);
 
 	creature->onPlacedCreature();
-	creature->setLastPosition(pos);
 	return true;
 }
 
@@ -1059,7 +1058,6 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 ReturnValue Game::internalMoveCreature(Creature* actor, Creature* creature, Cylinder* fromCylinder, Cylinder* toCylinder, uint32_t flags/* = 0*/)
 {
 	//check if we can move the creature to the destination
-	creature->setLastPosition(creature->getPosition());
 	ReturnValue ret = toCylinder->__queryAdd(0, creature, 1, flags);
 	if(ret != RET_NOERROR)
 		return ret;
@@ -1925,7 +1923,6 @@ ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pu
 	{
 		if(Creature* creature = thing->getCreature())
 		{
-			creature->setLastPosition(creature->getPosition());
 			if(Position::areInRange<1,1,0>(creature->getPosition(), newPos) && pushMove)
 				creature->getTile()->moveCreature(NULL, creature, toTile, false);
 			else
@@ -2190,7 +2187,6 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 	if(player->hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_TELEPORT))
 	{
 		Position pos = player->getPosition();
-		player->setLastPosition(pos);
 		for(std::list<Direction>::iterator it = listDir.begin(); it != listDir.end(); ++it)
 			pos = getNextPosition((*it), pos);
 
@@ -3335,23 +3331,19 @@ bool Game::playerTurn(uint32_t playerId, Direction dir)
 		return internalCreatureTurn(player, dir);
 
 	Position pos = getNextPosition(dir, player->getPosition());
-	if(Tile* tile = map->getTile(pos))
-	{
-		if(!tile->ground)
-			return false;
+	Tile* tile = map->getTile(pos);
+	if(!tile)
+		return false;
 
-		ReturnValue ret = tile->__queryAdd(0, player, 1, FLAG_IGNOREBLOCKITEM);
-		if(ret == RET_NOTENOUGHROOM || (ret == RET_NOTPOSSIBLE && !player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere))
-			|| (ret == RET_PLAYERISNOTINVITED && !player->hasFlag(PlayerFlag_CanEditHouses)))
-		{
-			player->sendCancelMessage(ret);
-			return false;
-		}
+	if(!tile->ground)
+		return false;
 
-		player->setLastPosition(player->getPosition());
+	ReturnValue ret = tile->__queryAdd(0, player, 1, FLAG_IGNOREBLOCKITEM);
+	if(ret != RET_NOTENOUGHROOM && (ret != RET_NOTPOSSIBLE || player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere))
+		&& (ret != RET_PLAYERISNOTINVITED || player->hasFlag(PlayerFlag_CanEditHouses)))
 		return internalTeleport(player, pos, true);
-	}
 
+	player->sendCancelMessage(ret);
 	return false;
 }
 
