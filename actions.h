@@ -49,14 +49,14 @@ class Actions : public BaseEvents
 		ReturnValue canUse(const Player* player, const Position& pos);
 		ReturnValue canUse(const Player* player, const Position& pos, const Item* item);
 		ReturnValue canUseFar(const Creature* creature, const Position& toPos, bool checkLineOfSight);
-		bool hasAction(const Item* item) const {return (getAction(item) != NULL);}
+		bool hasAction(const Item* item) const {return getAction(item);}
 
 	protected:
 		virtual std::string getScriptBaseName() const {return "actions";}
 		virtual void clear();
 
 		virtual Event* getEvent(const std::string& nodeName);
-		virtual bool registerEvent(Event* event, xmlNodePtr p);
+		virtual bool registerEvent(Event* event, xmlNodePtr p, bool override);
 
 		virtual LuaScriptInterface& getScriptInterface() {return m_scriptInterface;}
 		LuaScriptInterface m_scriptInterface;
@@ -88,7 +88,7 @@ class Action : public Event
 	public:
 		Action(const Action* copy);
 		Action(LuaScriptInterface* _interface);
-		virtual ~Action() {};
+		virtual ~Action() {}
 
 		virtual bool configureEvent(xmlNodePtr p);
 		virtual bool loadFunction(const std::string& functionName);
@@ -96,7 +96,6 @@ class Action : public Event
 		//scripting
 		virtual bool executeUse(Player* player, Item* item, const PositionEx& posFrom,
 			const PositionEx& posTo, bool extendedUse, uint32_t creatureId);
-		//
 
 		bool getAllowFarUse() const {return allowFarUse;}
 		void setAllowFarUse(bool v) {allowFarUse = v;}

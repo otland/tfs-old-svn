@@ -744,7 +744,7 @@ class LuaScriptInterface
 		static int32_t luaGetLogsDir(lua_State* L);
 		static int32_t luaGetConfigFile(lua_State* L);
 		static int32_t luaGetConfigValue(lua_State* L);
-		static int32_t luaGetModsList(lua_State* L);
+		static int32_t luaGetModList(lua_State* L);
 
 		static int32_t lualoadmodlib(lua_State* L);
 		static int32_t luaHashMD5(lua_State* L);

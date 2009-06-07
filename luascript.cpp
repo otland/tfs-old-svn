@@ -19,11 +19,9 @@
 #include <iomanip>
 
 #include "luascript.h"
-#include "status.h"
+#include "scriptmanager.h"
 
 #include "player.h"
-#include "vocation.h"
-
 #include "item.h"
 #include "teleport.h"
 
@@ -46,6 +44,8 @@
 #include "raids.h"
 
 #include "configmanager.h"
+#include "vocation.h"
+#include "status.h"
 #include "game.h"
 
 extern Game g_game;
@@ -2266,8 +2266,8 @@ void LuaScriptInterface::registerFunctions()
 	//getConfigValue(key)
 	lua_register(m_luaState, "getConfigValue", LuaScriptInterface::luaGetConfigValue);
 
-	//getModsList()
-	lua_register(m_luaState, "getModsList", LuaScriptInterface::luaGetModsList);
+	//getModList()
+	lua_register(m_luaState, "getModList", LuaScriptInterface::luaGetModList);
 
 	//getHighscoreString(skillId)
 	lua_register(m_luaState, "getHighscoreString", LuaScriptInterface::luaGetHighscoreString);
@@ -9691,14 +9691,12 @@ int32_t LuaScriptInterface::luaGetConfigValue(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetModsList(lua_State* L)
+int32_t LuaScriptInterface::luaGetModList(lua_State* L)
 {
-	//getModsList()
-	ModsMap modsMap = ScriptingManager::getInstance()->getModsMap();
-	ModsMap::iterator it = modsMap.begin();
-
+	//getModList()
+	ModMap::iterator it = ScriptingManager::getInstance()->getFirstMod();
 	lua_newtable(L);
-	for(uint32_t i = 1; it != modsMap.end(); ++it, ++i)
+	for(uint32_t i = 1; it != ScriptingManager::getInstance()->getLastMod(); ++it, ++i)
 	{
 		lua_pushnumber(L, i);
 		lua_createtable(L, 7, 0);
@@ -9723,20 +9721,14 @@ int32_t LuaScriptInterface::lualoadmodlib(lua_State* L)
 	//loadmodlib(libName)
 	std::string name = popString(L);
 	toLowerCaseString(name);
-
-	std::string lib;
-	ModsLibMap modsLibMap = ScriptingManager::getInstance()->getModsLibMap();
-	for(ModsLibMap::iterator it = modsLibMap.begin(); it != modsLibMap.end(); ++it)
+	for(LibMap::iterator it = ScriptingManager::getInstance()->getFirstLib(); it != ScriptingManager::getInstance()->getLastLib(); ++it)
 	{
 		if(asLowerCaseString(it->first) != name)
 			continue;
 
-		lib = it->second.second;
+		luaL_loadstring(L, it->second.second.c_str());
 		break;
 	}
-
-	if(!lib.empty())
-		lua_loadstring(L, lib.c_str());
 
 	return 1;
 }

@@ -3878,7 +3878,7 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 	w += g_config.getNumber(ConfigManager::BAN_WEEKLY_LIMIT);
 	m += g_config.getNumber(ConfigManager::BAN_MONTHLY_LIMIT);
 	if((d <= 0 || tc < d) && (w <= 0 || wc < w) && (m <= 0 || mc < m))
-		return true
+		return true;
 
 	Account tmp = IOLoginData::getInstance()->loadAccount(accountId, true);
 	tmp.warnings++;
@@ -3894,7 +3894,7 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 			ConfigManager::BAN_LENGTH)), 20, ACTION_BANISHMENT, "Unjustified player killing.", 0);
 
 	if(!success)
-		return true
+		return true;
 
 	IOLoginData::getInstance()->saveAccount(tmp);
 	sendTextMessage(MSG_INFO_DESCR, "You have been banished.");

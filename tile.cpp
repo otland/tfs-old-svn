@@ -848,7 +848,7 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 			updateTileFlags(item, false);
 
 			onUpdateTileItem(oldGround, oldType, item, Item::items[item->getID()]);
-			postRemoveNotification(oldGround, NULL, oldGroundIndex, true);
+			postRemoveNotification(actor, oldGround, NULL, oldGroundIndex, true);
 		}
 	}
 	else if(item->isAlwaysOnTop())
@@ -869,7 +869,7 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 						oldSplash->setParent(NULL);
 						g_game.FreeThing(oldSplash);
 
-						postRemoveNotification(oldSplash, NULL, oldSplashIndex, true);
+						postRemoveNotification(actor, oldSplash, NULL, oldSplashIndex, true);
 						break;
 					}
 				}
@@ -924,7 +924,7 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 						oldField->setParent(NULL);
 						g_game.FreeThing(oldField);
 
-						postRemoveNotification(oldField, NULL, oldFieldIndex, true);
+						postRemoveNotification(actor, oldField, NULL, oldFieldIndex, true);
 						break;
 					}
 

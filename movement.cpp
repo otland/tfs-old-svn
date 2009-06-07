@@ -295,7 +295,7 @@ void MoveEvents::addEvent(MoveEvent* moveEvent, int32_t id, MoveListMap& map, bo
 			if(override)
 			{
 				delete *it;
-				it = moveEvent;
+				*it = moveEvent;
 			}
 			else
 				std::cout << "[Warning - MoveEvents::addEvent] Duplicate move event found: " << id << std::endl;
@@ -420,7 +420,7 @@ void MoveEvents::addEvent(MoveEvent* moveEvent, Position pos, MovePosListMap& ma
 		}
 
 		if(add)
-			moveEventList.push_back(moveEvent);
+			it->second.moveEvent[moveEvent->getEventType()].push_back(moveEvent);
 	}
 	else
 	{
@@ -672,7 +672,7 @@ std::string MoveEvent::getScriptEventParams() const
 	{
 		case MOVE_EVENT_STEP_IN:
 		case MOVE_EVENT_STEP_OUT:
-			return "cid, item, position, fromPosition, actor";
+			return "cid, item, position, lastPosition, fromPosition, toPosition, actor";
 
 		case MOVE_EVENT_EQUIP:
 		case MOVE_EVENT_DEEQUIP:
@@ -1072,8 +1072,8 @@ uint32_t MoveEvent::fireStepEvent(Creature* actor, Creature* creature, Item* ite
 
 uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item, const Position& fromPos, const Position& toPos)
 {
-	//onStepIn(cid, item, position, fromPosition, actor)
-	//onStepOut(cid, item, position, fromPosition, actor)
+	//onStepIn(cid, item, position, lastPosition, fromPosition, toPosition, actor)
+	//onStepOut(cid, item, position, lastPosition, fromPosition, toPosition, actor)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
@@ -1084,8 +1084,10 @@ uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item,
 			scriptstream << "cid = " << env->addThing(creature) << std::endl;
 
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
-			env->streamPosition(scriptstream, "position", toPos, 0);
+			env->streamPosition(scriptstream, "position", creature->getPosition(), 0);
+			env->streamPosition(scriptstream, "lastPosition", creature->getLastPosition(), 0);
 			env->streamPosition(scriptstream, "fromPosition", fromPos, 0);
+			env->streamPosition(scriptstream, "toPosition", toPos, 0);
 			scriptstream << "actor = " << env->addThing(actor) << std::endl;
 
 			scriptstream << m_scriptData;
@@ -1115,11 +1117,13 @@ uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item,
 			lua_pushnumber(L, env->addThing(creature));
 
 			LuaScriptInterface::pushThing(L, item, env->addThing(item));
-			LuaScriptInterface::pushPosition(L, toPos, 0);
+			LuaScriptInterface::pushPosition(L, creature->getPosition(), 0);
+			LuaScriptInterface::pushPosition(L, creature->getLastPosition(), 0);
 			LuaScriptInterface::pushPosition(L, fromPos, 0);
+			LuaScriptInterface::pushPosition(L, toPos, 0);
 
 			lua_pushnumber(L, env->addThing(actor));
-			bool result = m_scriptInterface->callFunction(5);
+			bool result = m_scriptInterface->callFunction(7);
 
 			m_scriptInterface->releaseScriptEnv();
 			return result;

@@ -77,7 +77,7 @@ bool Spawns::loadFromXml(const std::string& _filename)
 	spawnNode = root->children;
 	while(spawnNode)
 	{
-		parseSpawnNode(spawnNode, false)
+		parseSpawnNode(spawnNode, false);
 		spawnNode = spawnNode->next;
 	}
 
@@ -112,8 +112,8 @@ bool Spawns::parseSpawnNode(xmlNodePtr p, bool checkDuplicate)
 	}
 	else
 	{
-		StringVec posVec = vectorAtoi(explodeString(",", strValue));
-		if(posVec < 3)
+		IntegerVec posVec = vectorAtoi(explodeString(",", strValue));
+		if(posVec.size() < 3)
 			return false;
 
 		centerPos = Position(posVec[0], posVec[1], posVec[2]);
@@ -128,7 +128,7 @@ bool Spawns::parseSpawnNode(xmlNodePtr p, bool checkDuplicate)
 	{
 		for(SpawnList::iterator it = spawnList.begin(); it != spawnList.end(); ++it)
 		{
-			if((*it)->getPosition == centerPos)
+			if((*it)->getPosition() == centerPos)
 				delete *it;
 		}
 	}
@@ -147,12 +147,12 @@ bool Spawns::parseSpawnNode(xmlNodePtr p, bool checkDuplicate)
 			}
 
 			name = strValue;
-			uint32_t interval = MINSPAWN_INTERVAL / 1000;
+			int32_t interval = MINSPAWN_INTERVAL / 1000;
 			if(readXMLInteger(tmpNode, "spawntime", intValue) || readXMLInteger(tmpNode, "interval", intValue))
 			{
 				if(intValue <= interval)
 				{
-					std::cout << "[Warning - Spawns::loadFromXml] " << name << " " << pos << " spawntime cannot";
+					std::cout << "[Warning - Spawns::loadFromXml] " << name << " " << centerPos << " spawntime cannot";
 					std::cout << " be less than " << interval << " seconds." << std::endl;
 
 					tmpNode = tmpNode->next;
@@ -243,6 +243,8 @@ bool Spawns::parseSpawnNode(xmlNodePtr p, bool checkDuplicate)
 
 		tmpNode = tmpNode->next;
 	}
+
+	return true;
 }
 
 void Spawns::startup()
@@ -268,7 +270,7 @@ void Spawns::clear()
 
 	spawnList.clear();
 	loaded = false;
-	filename("");
+	filename = "";
 }
 
 Spawn::Spawn(const Position& _pos, int32_t _radius)
@@ -407,12 +409,12 @@ void Spawn::checkSpawn()
 				spawnMap[it->first].lastSpawn = OTSYS_TIME();
 
 			it->second->releaseThing2();
-			it = spawnedMap.erase(it);
+			spawnedMap.erase(it++);
 		}
 		else if(!isInSpawnZone(it->second->getPosition()) && it->first)
 		{
 			spawnedMap.insert(SpawnedPair(0, it->second));
-			it = spawnedMap.erase(it);
+			spawnedMap.erase(it++);
 		}
 		else
 			++it;

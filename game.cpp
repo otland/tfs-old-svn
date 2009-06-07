@@ -786,7 +786,7 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 	for(it = list.begin(); it != list.end(); ++it)
 		(*it)->onCreatureAppear(creature);
 
-	creature->setLastPosition(getPosition());
+	creature->setLastPosition(pos);
 	creature->getParent()->postAddNotification(NULL, creature, NULL, creature->getParent()->__getIndexOfThing(creature));
 	addCreatureCheck(creature);
 

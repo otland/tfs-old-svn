@@ -194,10 +194,10 @@
 	<action itemid="2332" event="script" value="other/music.lua"/>
 	<action itemid="2364" event="script" value="other/music.lua"/>
 	<action fromid="2367" toid="2374" event="script" value="other/music.lua"/>
-	<action fromid="3951" toid="3953" event="script" value="musical.lua"/>
-	<action itemid="3957" event="script" value="musical.lua"/>
-	<action itemid="5786" event="script" value="musical.lua"/>
-	<action itemid="6572" event="script" value="musical.lua"/>
+	<action fromid="3951" toid="3953" event="script" value="other/music.lua"/>
+	<action itemid="3957" event="script" value="other/music.lua"/>
+	<action itemid="5786" event="script" value="other/music.lua"/>
+	<action itemid="6572" event="script" value="other/music.lua"/>
 
 	<!-- Teleport (stairs, ladders) -->
 	<action itemid="1369" event="script" value="other/teleport.lua"/>

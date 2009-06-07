@@ -60,7 +60,7 @@ bool Groups::loadFromXml()
 	p = root->children;
 	while(p)
 	{
-		parseGroupNode(p)
+		parseGroupNode(p);
 		p = p->next;
 	}
 

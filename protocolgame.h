@@ -189,7 +189,6 @@ class ProtocolGame : public Protocol
 		void sendCancelWalk();
 		void sendChangeSpeed(const Creature* creature, uint32_t speed);
 		void sendCancelTarget();
-		void sendCreatureVisible(const Creature* creature, bool visible);
 		void sendCreatureOutfit(const Creature* creature, const Outfit_t& outfit);
 		void sendStats();
 		void sendTextMessage(MessageClasses mclass, const std::string& message);
@@ -227,7 +226,7 @@ class ProtocolGame : public Protocol
 		void sendRemoveTileItem(const Tile* tile, const Position& pos, uint32_t stackpos);
 		void sendUpdateTile(const Tile* tile, const Position& pos);
 
-		void sendAddCreature(const Creature* creature, const Position& pos, uint32_t stackpos, bool isLogin);
+		void sendAddCreature(const Creature* creature, const Position& pos, uint32_t stackpos);
 		void sendRemoveCreature(const Creature* creature, const Position& pos, uint32_t stackpos, bool isLogout);
 		void sendMoveCreature(const Creature* creature, const Tile* newTile, const Position& newPos, uint32_t newStackPos,
 			const Tile* oldTile, const Position& oldPos, uint32_t oldStackpos, bool teleport);
@@ -269,7 +268,6 @@ class ProtocolGame : public Protocol
 			std::string text, uint16_t channelId, uint32_t time = 0, Position* pos = NULL);
 		void AddCreatureHealth(NetworkMessage_ptr msg, const Creature* creature);
 		void AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* creature, const Outfit_t& outfit);
-		void AddCreatureInvisible(NetworkMessage_ptr msg, const Creature* creature);
 		void AddPlayerSkills(NetworkMessage_ptr msg);
 		void AddWorldLight(NetworkMessage_ptr msg, const LightInfo& lightInfo);
 		void AddCreatureLight(NetworkMessage_ptr msg, const Creature* creature);

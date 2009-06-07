@@ -19,7 +19,19 @@
 #define __SCRIPTMANAGER__
 #include "otsystem.h"
 
-struct ModBlock;
+struct ModBlock
+{
+	std::string name, description, author, version, contact, file;
+	bool enabled;
+};
+typedef std::map<std::string, ModBlock> ModMap;
+
+struct LibBlock
+{
+	std::string first, second;
+};
+typedef std::map<std::string, LibBlock> LibMap;
+
 class ScriptingManager
 {
 	public:
@@ -38,23 +50,17 @@ class ScriptingManager
 
 		bool loadFromXml(const std::string& file);
 
-		const ModsMap& getModsMap() {return modsMap;}
-		const ModsLibMap& getModsLibMap() {return modsLibMap;}
+		inline LibMap::iterator getFirstLib() {return libMap.begin();}
+		inline LibMap::iterator getLastLib() {return libMap.end();}
+
+		inline ModMap::iterator getFirstMod() {return modMap.begin();}
+		inline ModMap::iterator getLastMod() {return modMap.end();}
 
 	private:
 		ScriptingManager(): modsLoaded(false) {}
 		bool modsLoaded;
 
-		typedef std::map<std::string, std::pair<std::string, std::string> > ModsLibMap;
-		ModsLibMap modsLibMap;
-
-		typedef std::map<std::string, ModBlock> ModsMap;
-		ModsMap modsMap;
-};
-
-struct ModBlock
-{
-	std::string name, description, author, version, contact, file;
-	bool enabled;
+		LibMap libMap;
+		ModMap modMap;
 };
 #endif

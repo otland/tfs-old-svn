@@ -34,7 +34,7 @@ GlobalEvents::~GlobalEvents()
 
 void GlobalEvents::clear()
 {
-	for(GlobalEventList::iterator it = eventsMap.begin(); it != eventsMap.end(); ++it)
+	for(GlobalEventMap::iterator it = eventsMap.begin(); it != eventsMap.end(); ++it)
 		delete it->second;
 
 	eventsMap.clear();
@@ -82,7 +82,7 @@ void GlobalEvents::startup()
 void GlobalEvents::onThink(uint32_t interval)
 {
 	uint32_t timeNow = time(NULL);
-	for(GlobalEventList::iterator it = eventsMap.begin(); it != eventsMap.end(); ++it)
+	for(GlobalEventMap::iterator it = eventsMap.begin(); it != eventsMap.end(); ++it)
 	{
 		if(timeNow > (it->second->getLastExecution() + it->second->getInterval()))
 		{

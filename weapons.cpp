@@ -129,7 +129,7 @@ bool Weapons::registerEvent(Event* event, xmlNodePtr p, bool override)
 	if(!weapon)
 		return false;
 
-	WeaponMap it = weapons.find(weapon->getID());
+	WeaponMap::iterator it = weapons.find(weapon->getID());
 	if(it == weapons.end())
 	{
 		weapons[weapon->getID()] = weapon;

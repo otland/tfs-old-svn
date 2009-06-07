@@ -93,7 +93,7 @@ bool Raids::parseRaidNode(xmlNodePtr raidNode, bool checkDuplicate, FileType_t p
 	if(!raid || !raid->loadFromXml(file))
 	{
 		delete raid;
-		std::cout << "[Fatal - Raids::parseEventNode] failed to load raid " << name << std::endl;
+		std::cout << "[Fatal - Raids::parseRaidNode] failed to load raid " << name << std::endl;
 		return false;
 	}
 

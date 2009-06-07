@@ -18,19 +18,11 @@ function doPlayerGiveItem(cid, itemid, amount, subType)
 end
 
 function doPlayerTakeItem(cid, itemid, amount)
-	if(getPlayerItemCount(cid, itemid) < amount or not doPlayerRemoveItem(cid, itemid, amount)) then
-		return false
-	end
-
-	return true
+	return getPlayerItemCount(cid, itemid) >= amount and doPlayerRemoveItem(cid, itemid, amount))
 end
 
 function doPlayerBuyItem(cid, itemid, count, cost, charges)
-	if(not doPlayerRemoveMoney(cid, cost)) then
-		return false
-	end
-
-	return doPlayerGiveItem(cid, itemid, count, charges)
+	return doPlayerRemoveMoney(cid, cost) and doPlayerGiveItem(cid, itemid, count, charges)
 end
 
 function doPlayerBuyItemContainer(cid, containerid, itemid, count, cost, charges)
@@ -316,8 +308,9 @@ function getPlayerByName(name)
 end
 
 function isPlayerGhost(cid)
-	if(not isPlayer(cid))
+	if(not isPlayer(cid)) then
 		return false
+	end
 
 	return (getCreatureCondition(cid, CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE) or getPlayerFlag(PlayerFlag_CannotBeSeen))
 end

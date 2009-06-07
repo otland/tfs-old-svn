@@ -22,13 +22,6 @@
 #include "luascript.h"
 #include <libxml/parser.h>
 
-enum EventScript_t
-{
-	EVENT_SCRIPT_FALSE,
-	EVENT_SCRIPT_BUFFER,
-	EVENT_SCRIPT_TRUE
-};
-
 class Event;
 class BaseEvents
 {
@@ -54,6 +47,13 @@ class BaseEvents
 		bool m_loaded;
 };
 
+enum EventScript_t
+{
+	EVENT_SCRIPT_FALSE,
+	EVENT_SCRIPT_BUFFER,
+	EVENT_SCRIPT_TRUE
+};
+
 class Event
 {
 	public:
@@ -66,7 +66,7 @@ class Event
 
 		bool loadBuffer(const std::string& scriptFile);
 		bool loadScript(const std::string& scriptBuffer, bool file);
-		virtual bool loadFunction(const std::string& functionName);
+		virtual bool loadFunction(const std::string& functionName) {return false;}
 
 		virtual bool isScripted() const {return m_scripted != EVENT_SCRIPT_FALSE;}
 
@@ -80,7 +80,6 @@ class Event
 		int32_t m_scriptId;
 		std::string m_scriptData;
 };
-
 
 class CallBack
 {

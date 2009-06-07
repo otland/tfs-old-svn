@@ -1,6 +1,6 @@
 local outfit = {lookType = 267, lookHead = 0, lookBody = 0, lookLegs = 0, lookFeet = 0, lookTypeEx = 0, lookAddons = 0}
 
-function onStepIn(cid, item, toPosition, fromPosition, actor)
+function onStepIn(cid, item, position, lastPosition, fromPosition, toPosition, actor)
 	if(not isPlayer(cid)) then
 		return true
 	end
@@ -14,7 +14,7 @@ function onStepIn(cid, item, toPosition, fromPosition, actor)
 	return true
 end
 
-function onStepOut(cid, item, toPosition, fromPosition, actor)
+function onStepOut(cid, item, position, lastPosition, fromPosition, toPosition, actor)
 	if(isPlayer(cid) and getTileItemById(toPosition, 4820).itemid == 0) then
 		doRemoveCondition(cid, CONDITION_OUTFIT)
 	end

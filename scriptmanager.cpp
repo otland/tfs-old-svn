@@ -117,12 +117,15 @@ bool ScriptingManager::loadMods()
 		return false;
 
 	int32_t i = 0;
-	for(boost::filesystem::directory_iterator it(modsPath), end; it != end, ++it, ++i)
+	for(boost::filesystem::directory_iterator it(modsPath), end; it != end; ++it)
 	{
-		std::string name = it->filename();
+		std::string name = it->leaf();
 		if(!boost::filesystem::is_directory(it->status()) && name.find(
 			".xml") != std::string::npos && loadFromXml(name))
+		{
 			std::cout << "Loaded " << name << std::endl;
+			++i;
+		}
 	}
 
 	std::cout << "> " << i << " mods were loaded." << std::endl;
@@ -132,8 +135,8 @@ bool ScriptingManager::loadMods()
 
 void ScriptingManager::clearMods()
 {
-	modsMap.clear();
-	modsLibMap.clear();
+	modMap.clear();
+	libMap.clear();
 }
 
 bool ScriptingManager::reloadMods()
@@ -233,14 +236,18 @@ bool ScriptingManager::loadFromXml(const std::string& file)
 				std::string strLib;
 				if(parseXMLContentString(p->children, strLib))
 				{
-					ModsLibMap::iterator it = modsLibMap.find(strValue);
-					if(it != modsLibMap.end())
+					LibMap::iterator it = libMap.find(strValue);
+					if(it == libMap.end())
 					{
-						std::cout << "[Warning - ScriptingManager::loadFromXml] Duplicated lib in mod " << strValue;
-						std::cout << ", previously declared in " << it->second.first << std::endl;
+						LibBlock lb;
+						lb.first = file;
+						lb.second = strLib;
+
+						libMap[strValue] = lb;
 					}
 					else
-						modsLibMap[strValue] = std::make_pair<mod.file, strLib>;
+						std::cout << "[Warning - ScriptingManager::loadFromXml] Duplicated lib in mod "
+							<< strValue << ", previously declared in " << it->second.first << std::endl;
 				}
 			}
 			else if(!g_actions->parseEventNode(p, scriptsPath, modsLoaded))
@@ -265,7 +272,7 @@ bool ScriptingManager::loadFromXml(const std::string& file)
 		}
 	}
 
-	modsMap[mod.name] = mod;
+	modMap[mod.name] = mod;
 	xmlFreeDoc(doc);
 	return true;
 }

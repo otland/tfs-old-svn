@@ -978,9 +978,10 @@ bool Houses::payHouse(House* house, time_t _time)
 				}
 
 				std::stringstream s;
-				s << "Warning!\nThe " << period << " rent of " << house->getRent() << " gold for your " << (house->isGuild() ? "guild hall" : "house")
-				<< " \"" << house->getName() << "\" has to be paid. Have it within " << (warningsLimit - warnings)
-				<< " days or you will lose your " << tmp << ".";
+				s << "Warning!\nThe " << period << " rent of " << house->getRent() << " gold for your "
+				<< (house->isGuild() ? "guild hall" : "house") << " \"" << house->getName()
+				<< "\" has to be paid. Have it within " << (warningsLimit - warnings)
+				<< " days or you will lose your " << (house->isGuild() ? "guild hall" : "house") << ".";
 
 				letter->setText(s.str().c_str());
 				if(g_game.internalAddItem(NULL, depot, letter, INDEX_WHEREEVER, FLAG_NOLIMIT) != RET_NOERROR)

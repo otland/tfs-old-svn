@@ -128,7 +128,7 @@ bool Spells::registerEvent(Event* event, xmlNodePtr p, bool override)
 {
 	if(InstantSpell* instant = dynamic_cast<InstantSpell*>(event))
 	{
-		InstantsMap it = instants.find(instant->getWords());
+		InstantsMap::iterator it = instants.find(instant->getWords());
 		if(it == instants.end())
 		{
 			instants[instant->getWords()] = instant;
@@ -137,8 +137,8 @@ bool Spells::registerEvent(Event* event, xmlNodePtr p, bool override)
 
 		if(override)
 		{
-			delete *it;
-			it = instant;
+			delete it->second;
+			it->second = instant;
 			return true;
 		}
 
@@ -148,7 +148,7 @@ bool Spells::registerEvent(Event* event, xmlNodePtr p, bool override)
 
 	if(RuneSpell* rune = dynamic_cast<RuneSpell*>(event))
 	{
-		RunesMap it = runes.find(rune->getRuneItemId());
+		RunesMap::iterator it = runes.find(rune->getRuneItemId());
 		if(it == runes.end())
 		{
 			runes[rune->getRuneItemId()] = rune;
@@ -157,8 +157,8 @@ bool Spells::registerEvent(Event* event, xmlNodePtr p, bool override)
 
 		if(override)
 		{
-			delete *it;
-			it = rune;
+			delete it->second;
+			it->second = rune;
 			return true;
 		}
 

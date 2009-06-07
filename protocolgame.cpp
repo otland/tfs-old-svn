@@ -360,7 +360,7 @@ bool ProtocolGame::connect(uint32_t playerId)
 	player->isConnecting = false;
 
 	player->client = this;
-	player->sendCreatureAppear(player, false);
+	player->sendCreatureAppear(player);
 	player->sendIcons();
 
 	player->lastIP = player->getIP();

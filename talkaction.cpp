@@ -72,13 +72,13 @@ Event* TalkActions::getEvent(const std::string& nodeName)
 	return NULL;
 }
 
-bool TalkActions::registerEvent(Event* event, xmlNodePtr p)
+bool TalkActions::registerEvent(Event* event, xmlNodePtr p, bool override)
 {
 	TalkAction* talkAction = dynamic_cast<TalkAction*>(event);
 	if(!talkAction)
 		return false;
 
-	TalkActionsMap it = talksMap.find(talkAction->getWords());
+	TalkActionsMap::iterator it = talksMap.find(talkAction->getWords());
 	if(it == talksMap.end())
 	{
 		talksMap[talkAction->getWords()] = talkAction;
