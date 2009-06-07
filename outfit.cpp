@@ -39,11 +39,11 @@ void OutfitList::addOutfit(const Outfit& outfit)
 {
 	for(OutfitListType::iterator it = m_list.begin(); it != m_list.end(); ++it)
 	{
-		if((*it)->looktype == outfit.looktype)
-		{
-			(*it)->addons = (*it)->addons | outfit.addons;
-			return;
-		}
+		if((*it)->looktype != outfit.looktype)
+			continue;
+
+		(*it)->addons = (*it)->addons | outfit.addons;
+		return;
 	}
 
 	//adding a new outfit
@@ -54,6 +54,7 @@ void OutfitList::addOutfit(const Outfit& outfit)
 		newOutfit->access = outfit.access;
 		newOutfit->quest = outfit.quest;
 		newOutfit->premium = outfit.premium;
+		newOutfit->requirement = outfit.requirement;
 		newOutfit->manaShield = outfit.manaShield;
 		newOutfit->invisible = outfit.invisible;
 		newOutfit->regeneration = outfit.regeneration;
@@ -125,14 +126,11 @@ bool OutfitList::isInList(uint32_t playerId, uint32_t lookType, uint32_t addons)
 			if(((*it)->addons & addons) != addons || ((*git)->premium && !player->isPremium()))
 				return false;
 
-			if((*git)->quest)
-			{
-				std::string value;
-				if(!player->getStorageValue((*git)->quest, value) || atoi(value.c_str()) != OUTFITS_QUEST_VALUE)
-					return false;
-			}
+			if(!(*git)->quest)
+				return true;
 
-			return true;
+			std::string value;
+			return player->getStorageValue((*git)->quest, value) && atoi(value.c_str()) == OUTFITS_QUEST_VALUE;
 		}
 	}
 
