@@ -124,30 +124,46 @@ Event* Spells::getEvent(const std::string& nodeName)
 	return NULL;
 }
 
-bool Spells::registerEvent(Event* event, xmlNodePtr p)
+bool Spells::registerEvent(Event* event, xmlNodePtr p, bool override)
 {
 	if(InstantSpell* instant = dynamic_cast<InstantSpell*>(event))
 	{
-		if(instants.find(instant->getWords()) != instants.end())
+		InstantsMap it = instants.find(instant->getWords());
+		if(it == instants.end())
 		{
-			std::cout << "[Warning - Spells::registerEvent] Duplicate registered instant spell with words: " << instant->getWords() << std::endl;
-			return false;
+			instants[instant->getWords()] = instant;
+			return true;
 		}
 
-		instants[instant->getWords()] = instant;
-		return true;
+		if(override)
+		{
+			delete *it;
+			it = instant;
+			return true;
+		}
+
+		std::cout << "[Warning - Spells::registerEvent] Duplicate registered instant spell with words: " << instant->getWords() << std::endl;
+		return false;
 	}
 
 	if(RuneSpell* rune = dynamic_cast<RuneSpell*>(event))
 	{
-		if(runes.find(rune->getRuneItemId()) != runes.end())
+		RunesMap it = runes.find(rune->getRuneItemId());
+		if(it == runes.end())
 		{
-			std::cout << "[Warning - Spells::registerEvent] Duplicate registered rune with id: " << rune->getRuneItemId() << std::endl;
-			return false;
+			runes[rune->getRuneItemId()] = rune;
+			return true;
 		}
 
-		runes[rune->getRuneItemId()] = rune;
-		return true;
+		if(override)
+		{
+			delete *it;
+			it = rune;
+			return true;
+		}
+
+		std::cout << "[Warning - Spells::registerEvent] Duplicate registered rune with id: " << rune->getRuneItemId() << std::endl;
+		return false;
 	}
 
 	return false;

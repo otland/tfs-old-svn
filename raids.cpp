@@ -18,7 +18,6 @@
 #include "raids.h"
 
 #include "player.h"
-#include "tools.h"
 
 #include "game.h"
 #include "configmanager.h"
@@ -33,7 +32,7 @@ Raids::Raids()
 	lastRaidEnd = checkRaidsEvent = 0;
 }
 
-bool Raids::parseRaidNode(xmlNodePtr raidNode, bool autoPath)
+bool Raids::parseRaidNode(xmlNodePtr raidNode, bool checkDuplicate, FileType_t pathing)
 {
 	if(xmlStrcmp(raidNode->name, (const xmlChar*)"raid"))
 		return false;
@@ -55,24 +54,18 @@ bool Raids::parseRaidNode(xmlNodePtr raidNode, bool autoPath)
 
 	uint32_t interval = intValue * 60;
 	std::string file;
-	if(readXMLString(raidNode, "file", strValue))
+	if(!readXMLString(raidNode, "file", strValue))
 	{
-		file = strValue;
-		if(autoPath)
-			file = getFilePath(FILE_TYPE_OTHER, "raids/" + file);
-	}
-	else
-	{
-		file = "raids/" + name + ".xml";
+		file = name + ".xml";
 		std::cout << "[Warning - Raids::parseRaidNode]: file tag missing for raid " << name << ", using default: " << file << std::endl;
 	}
+	else
+		file = strValue;
 
-	uint64_t margin;
+	file = getFilePath(pathing, "raids/" + file);
+	uint64_t margin = 0;
 	if(!readXMLInteger(raidNode, "margin", intValue))
-	{
-		margin = 0;
 		std::cout << "[Warning - Raids::parseRaidNode] margin tag missing for raid " << name << ", using default: " << margin << std::endl;
-	}
 	else
 		margin = intValue * 60 * 1000;
 
@@ -104,6 +97,15 @@ bool Raids::parseRaidNode(xmlNodePtr raidNode, bool autoPath)
 		return false;
 	}
 
+	if(checkDuplicate)
+	{
+		for(RaidList::iterator it = raidList.begin(); it != raidList.end(); ++it)
+		{
+			if((*it)->getName() == name)
+				delete *it;
+		}
+	}
+
 	raidList.push_back(raid);
 	return true;
 }
@@ -132,7 +134,7 @@ bool Raids::loadFromXml()
 	raidNode = root->children;
 	while(raidNode)
 	{
-		parseRaidNode(raidNode, true);
+		parseRaidNode(raidNode, false, FILE_TYPE_OTHER);
 		raidNode = raidNode->next;
 	}
 

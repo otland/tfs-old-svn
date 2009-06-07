@@ -57,70 +57,72 @@ bool Groups::loadFromXml()
 		return false;
 	}
 
-	std::string strValue;
-	int32_t intValue;
-	int64_t int64Value;
-
 	p = root->children;
 	while(p)
 	{
-		if(xmlStrcmp(p->name, (const xmlChar*)"group"))
-		{
-			p = p->next;
-			continue;
-		}
-
-		if(!readXMLInteger(p, "id", intValue))
-		{
-			std::cout << "Missing group id." << std::endl;
-			p = p->next;
-			continue;
-		}
-
-		Group* group = new Group(intValue);
-		if(readXMLString(p, "name", strValue))
-		{
-			group->setFullName(strValue);
-			group->setName(asLowerCaseString(strValue));
-		}
-
-		if(readXMLInteger64(p, "flags", int64Value))
-			group->setFlags(int64Value);
-
-		if(readXMLInteger64(p, "customFlags", int64Value))
-			group->setCustomFlags(int64Value);
-
-		if(readXMLInteger(p, "access", intValue))
-			group->setAccess(intValue);
-
-		if(readXMLInteger(p, "ghostAccess", intValue))
-			group->setGhostAccess(intValue);
-		else
-			group->setGhostAccess(group->getAccess());
-
-		if(readXMLInteger(p, "violationReasons", intValue))
-			group->setViolationReasons(intValue);
-
-		if(readXMLInteger(p, "nameViolationFlags", intValue))
-			group->setNameViolationFlags(intValue);
-
-		if(readXMLInteger(p, "statementViolationFlags", intValue))
-			group->setStatementViolationFlags(intValue);
-
-		if(readXMLInteger(p, "depotLimit", intValue))
-			group->setDepotLimit(intValue);
-
-		if(readXMLInteger(p, "maxVips", intValue))
-			group->setMaxVips(intValue);
-
-		if(readXMLInteger(p, "outfit", intValue))
-			group->setOutfit(intValue);
-
-		groupsMap[group->getId()] = group;
+		parseGroupNode(p)
 		p = p->next;
 	}
 
 	xmlFreeDoc(doc);
+	return true;
+}
+
+bool Groups::parseGroupNode(xmlNodePtr p)
+{
+	if(xmlStrcmp(p->name, (const xmlChar*)"group"))
+		return false;
+
+	int32_t intValue;
+	if(!readXMLInteger(p, "id", intValue))
+	{
+		std::cout << "[Warning - Groups::parseGroupNode] Missing group id." << std::endl;
+		return false;
+	}
+
+	std::string strValue;
+	int64_t int64Value;
+
+	Group* group = new Group(intValue);
+	if(readXMLString(p, "name", strValue))
+	{
+		group->setFullName(strValue);
+		group->setName(asLowerCaseString(strValue));
+	}
+
+	if(readXMLInteger64(p, "flags", int64Value))
+		group->setFlags(int64Value);
+
+	if(readXMLInteger64(p, "customFlags", int64Value))
+		group->setCustomFlags(int64Value);
+
+	if(readXMLInteger(p, "access", intValue))
+		group->setAccess(intValue);
+
+	if(readXMLInteger(p, "ghostAccess", intValue))
+		group->setGhostAccess(intValue);
+	else
+		group->setGhostAccess(group->getAccess());
+
+	if(readXMLInteger(p, "violationReasons", intValue))
+		group->setViolationReasons(intValue);
+
+	if(readXMLInteger(p, "nameViolationFlags", intValue))
+		group->setNameViolationFlags(intValue);
+
+	if(readXMLInteger(p, "statementViolationFlags", intValue))
+		group->setStatementViolationFlags(intValue);
+
+	if(readXMLInteger(p, "depotLimit", intValue))
+		group->setDepotLimit(intValue);
+
+	if(readXMLInteger(p, "maxVips", intValue))
+		group->setMaxVips(intValue);
+
+	if(readXMLInteger(p, "outfit", intValue))
+		group->setOutfit(intValue);
+
+	groupsMap[group->getId()] = group;
 	return true;
 }
 

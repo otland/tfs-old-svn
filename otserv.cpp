@@ -666,8 +666,15 @@ ServiceManager* services)
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading script systems");
 	#endif
-	if(!ScriptingManager::getInstance()->loadScriptSystems())
+	if(!ScriptingManager::getInstance()->load())
 		startupErrorMessage("");
+
+	std::cout << ">> Loading mods..." << std::endl;
+	#ifndef __CONSOLE__
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading mods...");
+	#endif
+	if(!ScriptingManager::getInstance()->loadMods())
+		startupErrorMessage("Unable to load mods!");
 
 	std::cout << ">> Loading chat channels" << std::endl;
 	#ifndef __CONSOLE__

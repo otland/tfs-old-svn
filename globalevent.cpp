@@ -49,14 +49,28 @@ Event* GlobalEvents::getEvent(const std::string& nodeName)
 	return NULL;
 }
 
-bool GlobalEvents::registerEvent(Event* event, xmlNodePtr p)
+bool GlobalEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 {
 	GlobalEvent* globalEvent = dynamic_cast<GlobalEvent*>(event);
 	if(!globalEvent)
 		return false;
 
-	eventsMap.push_back(std::make_pair(globalEvent->getName(), globalEvent));
-	return true;
+	GlobalEventMap::iterator it = eventsMap.find(globalEvent->getName());
+	if(it == eventsMap.end())
+	{
+		eventsMap[globalEvent->getName()] = globalEvent;
+		return true;
+	}
+
+	if(override)
+	{
+		delete it->second;
+		it->second = globalEvent;
+		return true;
+	}
+
+	std::cout << "[Warning - GlobalEvents::configureEvent] Duplicate registered globalevent with name: " << globalEvent->getName() << std::endl;
+	return false;
 }
 
 void GlobalEvents::startup()
@@ -70,12 +84,12 @@ void GlobalEvents::onThink(uint32_t interval)
 	uint32_t timeNow = time(NULL);
 	for(GlobalEventList::iterator it = eventsMap.begin(); it != eventsMap.end(); ++it)
 	{
-		GlobalEvent* globalEvent = it->second;
-		if(timeNow > (globalEvent->getLastExecution() + globalEvent->getInterval()))
+		if(timeNow > (it->second->getLastExecution() + it->second->getInterval()))
 		{
-			globalEvent->setLastExecution(timeNow);
-			if(!globalEvent->executeThink(globalEvent->getInterval(), timeNow, interval))
-				std::cout << "[Error - GlobalEvents::onThink] Couldn't execute event: " << globalEvent->getName() << std::endl;
+			it->second->setLastExecution(timeNow);
+			if(!it->second->executeThink(it->second->getInterval(), timeNow, interval))
+				std::cout << "[Error - GlobalEvents::onThink] Couldn't execute event: "
+					<< it->second->getName() << std::endl;
 		}
 	}
 

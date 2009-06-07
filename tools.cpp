@@ -1488,13 +1488,15 @@ uint32_t adlerChecksum(uint8_t *data, size_t length)
 
 std::string getFilePath(FileType_t filetype, std::string filename)
 {
-	std::string path = "";
 	#ifdef __FILESYSTEM_HIERARCHY_STANDARD__
-	path = "/usr/share/tfs/";
+	std::string path = "/usr/share/tfs/";
 	#endif
-	path += g_config.getString(ConfigManager::DATA_DIRECTORY);
+	std::string path = g_config.getString(ConfigManager::DATA_DIRECTORY);
 	switch(filetype)
 	{
+		case FILE_TYPE_OTHER:
+			path += filename;
+			break;
 		case FILE_TYPE_XML:
 			path += "XML/" + filename;
 			break;
@@ -1505,9 +1507,15 @@ std::string getFilePath(FileType_t filetype, std::string filename)
 			path = "/var/log/tfs/" + filename;
 			#endif
 			break;
-		case FILE_TYPE_OTHER:
-			path += filename;
+		case FILE_TYPE_MOD:
+		{
+			#ifndef __FILESYSTEM_HIERARCHY_STANDARD__
+			path = "mods/" + filename;
+			#else
+			path = "/etc/tfs/mods/" + filename;
+			#endif
 			break;
+		}
 		case FILE_TYPE_CONFIG:
 		{
 			#if defined(__FILESYSTEM_HIERARCHY_STANDARD__) && defined(__HOMEDIR_CONF__)
@@ -1515,12 +1523,12 @@ std::string getFilePath(FileType_t filetype, std::string filename)
 				path = "~/.tfs/" + filename;
 			else
 				path = "/etc/tfs/" + filename;
-			#elif defined(__FILESYSTEM_HIERARCHY_STANDARD__)
-				path = "/etc/tfs/" + filename;
-			#else
-				path = filename;
-			#endif
 
+			#elif defined(__FILESYSTEM_HIERARCHY_STANDARD__)
+			path = "/etc/tfs/" + filename;
+			#else
+			path = filename;
+			#endif
 			break;
 		}
 		default:

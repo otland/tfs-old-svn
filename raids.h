@@ -17,7 +17,6 @@
 
 #ifndef __RAIDS__
 #define __RAIDS__
-
 #include "otsystem.h"
 #include "const.h"
 
@@ -26,6 +25,7 @@
 
 #include "baseevents.h"
 #include "position.h"
+#include "tools.h"
 
 enum RefType_t
 {
@@ -64,7 +64,7 @@ class Raids
 		}
 
 		bool loadFromXml();
-		bool parseRaidNode(xmlNodePtr raidNode, bool autoPath);
+		bool parseRaidNode(xmlNodePtr raidNode, bool checkDuplicate, FileType_t pathing);
 
 		bool startup();
 		void checkRaids();

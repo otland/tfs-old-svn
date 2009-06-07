@@ -84,18 +84,18 @@ bool OutfitList::remOutfit(const Outfit& outfit)
 {
 	for(OutfitListType::iterator it = m_list.begin(); it != m_list.end(); ++it)
 	{
-		if((*it)->looktype == outfit.looktype)
-		{
-			if(outfit.addons == 0xFF)
-			{
-				delete (*it);
-				m_list.erase(it);
-			}
-			else
-				(*it)->addons = (*it)->addons & (~outfit.addons);
+		if((*it)->looktype != outfit.looktype)
+			continue;
 
-			return true;
+		if(outfit.addons == 0xFF)
+		{
+			delete (*it);
+			m_list.erase(it);
 		}
+		else
+			(*it)->addons = (*it)->addons & (~outfit.addons);
+
+		return true;
 	}
 
 	return false;

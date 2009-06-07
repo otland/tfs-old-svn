@@ -44,7 +44,7 @@ bool Vocations::parseVocationNode(xmlNodePtr p)
 	std::string strValue;
 	int32_t intValue;
 	float floatValue;
-	if(xmlStrcmp(p->name, (const xmlChar*)"vocation") != 0)
+	if(xmlStrcmp(p->name, (const xmlChar*)"vocation"))
 		return false;
 
 	if(!readXMLInteger(p, "id", intValue))

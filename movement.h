@@ -69,7 +69,7 @@ class MoveEvents : public BaseEvents
 		virtual void clear();
 
 		virtual Event* getEvent(const std::string& nodeName);
-		virtual bool registerEvent(Event* event, xmlNodePtr p);
+		virtual bool registerEvent(Event* event, xmlNodePtr p, bool override);
 
 		virtual LuaScriptInterface& getScriptInterface() {return m_scriptInterface;}
 		LuaScriptInterface m_scriptInterface;
@@ -87,10 +87,10 @@ class MoveEvents : public BaseEvents
 		MovePosListMap m_positionMap;
 		void clearMap(MoveListMap& map);
 
-		void addEvent(MoveEvent* moveEvent, int32_t id, MoveListMap& map);
+		void addEvent(MoveEvent* moveEvent, int32_t id, MoveListMap& map, bool override);
 		MoveEvent* getEvent(Item* item, MoveEvent_t eventType, slots_t slot);
 
-		void addEvent(MoveEvent* moveEvent, Position pos, MovePosListMap& map);
+		void addEvent(MoveEvent* moveEvent, Position pos, MovePosListMap& map, bool override);
 		MoveEvent* getEvent(const Tile* tile, MoveEvent_t eventType);
 };
 

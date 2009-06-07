@@ -78,14 +78,22 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p)
 	if(!talkAction)
 		return false;
 
-	if(talksMap.find(talkAction->getWords()) != talksMap.end())
+	TalkActionsMap it = talksMap.find(talkAction->getWords());
+	if(it == talksMap.end())
 	{
-		std::cout << "[Warning - TalkAction::configureEvent] Duplicate registered talkaction with words: " << talkAction->getWords() << std::endl;
-		return false;
+		talksMap[talkAction->getWords()] = talkAction;
+		return true;
 	}
 
-	talksMap[talkAction->getWords()] = talkAction;
-	return true;
+	if(override)
+	{
+		delete it->second;
+		it->second = talkAction;
+		return true;
+	}
+
+	std::cout << "[Warning - TalkAction::configureEvent] Duplicate registered talkaction with words: " << talkAction->getWords() << std::endl;
+	return false;
 }
 
 bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std::string& words, bool ignoreAccess)

@@ -91,7 +91,7 @@ Event* MoveEvents::getEvent(const std::string& nodeName)
 	return NULL;
 }
 
-bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
+bool MoveEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 {
 	MoveEvent* moveEvent = dynamic_cast<MoveEvent*>(event);
 	if(!moveEvent)
@@ -99,21 +99,19 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 
 	std::string strValue, endStrValue;
 	MoveEvent_t eventType = moveEvent->getEventType();
-	if(eventType == MOVE_EVENT_ADD_ITEM || eventType == MOVE_EVENT_REMOVE_ITEM)
+	if((eventType == MOVE_EVENT_ADD_ITEM || eventType == MOVE_EVENT_REMOVE_ITEM) &&
+		readXMLString(p, "tileitem", strValue) && booleanString(strValue))
 	{
-		if(readXMLString(p, "tileitem", strValue) && booleanString(strValue))
+		switch(eventType)
 		{
-			switch(eventType)
-			{
-				case MOVE_EVENT_ADD_ITEM:
-					moveEvent->setEventType(MOVE_EVENT_ADD_ITEM_ITEMTILE);
-					break;
-				case MOVE_EVENT_REMOVE_ITEM:
-					moveEvent->setEventType(MOVE_EVENT_REMOVE_ITEM_ITEMTILE);
-					break;
-				default:
-					break;
-			}
+			case MOVE_EVENT_ADD_ITEM:
+				moveEvent->setEventType(MOVE_EVENT_ADD_ITEM_ITEMTILE);
+				break;
+			case MOVE_EVENT_REMOVE_ITEM:
+				moveEvent->setEventType(MOVE_EVENT_REMOVE_ITEM_ITEMTILE);
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -132,7 +130,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 				continue;
 
 			bool equip = moveEvent->getEventType() == MOVE_EVENT_EQUIP;
-			addEvent(moveEvent, intVector[0], m_itemIdMap);
+			addEvent(moveEvent, intVector[0], m_itemIdMap, override);
 			if(equip)
 			{
 				ItemType& it = Item::items.getItemType(intVector[0]);
@@ -146,7 +144,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 			{
 				while(intVector[0] < intVector[1])
 				{
-					addEvent(new MoveEvent(moveEvent), ++intVector[0], m_itemIdMap);
+					addEvent(new MoveEvent(moveEvent), ++intVector[0], m_itemIdMap, override);
 					if(equip)
 					{
 						ItemType& tit = Item::items.getItemType(intVector[0]);
@@ -159,17 +157,17 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 			}
 		}
 	}
-	else if(readXMLString(p, "fromid", strValue) && readXMLString(p, "toid", endStrValue))
+
+	if(readXMLString(p, "fromid", strValue) && readXMLString(p, "toid", endStrValue))
 	{
 		intVector = vectorAtoi(explodeString(strValue, ";"));
 		endIntVector = vectorAtoi(explodeString(endStrValue, ";"));
 		if(intVector[0] && endIntVector[0] && intVector.size() == endIntVector.size())
 		{
-			size_t size = intVector.size();
-			for(size_t i = 0; i < size; ++i)
+			for(size_t i = 0, size = intVector.size(); i < size; ++i)
 			{
 				bool equip = moveEvent->getEventType() == MOVE_EVENT_EQUIP;
-				addEvent(moveEvent, intVector[i], m_itemIdMap);
+				addEvent(moveEvent, intVector[i], m_itemIdMap, override);
 				if(equip)
 				{
 					ItemType& it = Item::items.getItemType(intVector[i]);
@@ -181,7 +179,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 
 				while(intVector[i] < endIntVector[i])
 				{
-					addEvent(new MoveEvent(moveEvent), ++intVector[i], m_itemIdMap);
+					addEvent(new MoveEvent(moveEvent), ++intVector[i], m_itemIdMap, override);
 					if(equip)
 					{
 						ItemType& tit = Item::items.getItemType(intVector[i]);
@@ -194,9 +192,10 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 			}
 		}
 		else
-			std::cout << "[Warning - MoveEvents::registerEvent] Malformed entry (from: \"" << strValue << "\", to: \"" << endStrValue << "\")" << std::endl;
+			std::cout << "[Warning - MoveEvents::registerEvent] Malformed entry (from item: \"" << strValue << "\", to item: \"" << endStrValue << "\")" << std::endl;
 	}
-	else if(readXMLString(p, "uniqueid", strValue))
+
+	if(readXMLString(p, "uniqueid", strValue))
 	{
 		strVector = explodeString(strValue, ";");
 		for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)
@@ -205,32 +204,33 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 			if(!intVector[0])
 				continue;
 
-			addEvent(moveEvent, intVector[0], m_uniqueIdMap);
+			addEvent(moveEvent, intVector[0], m_uniqueIdMap, override);
 			if(intVector.size() > 1)
 			{
 				while(intVector[0] < intVector[1])
-					addEvent(new MoveEvent(moveEvent), ++intVector[0], m_uniqueIdMap);
+					addEvent(new MoveEvent(moveEvent), ++intVector[0], m_uniqueIdMap, override);
 			}
 		}
 	}
-	else if(readXMLString(p, "fromuid", strValue) && readXMLString(p, "touid", endStrValue))
+
+	if(readXMLString(p, "fromuid", strValue) && readXMLString(p, "touid", endStrValue))
 	{
 		intVector = vectorAtoi(explodeString(strValue, ";"));
 		endIntVector = vectorAtoi(explodeString(endStrValue, ";"));
 		if(intVector[0] && endIntVector[0] && intVector.size() == endIntVector.size())
 		{
-			size_t size = intVector.size();
-			for(size_t i = 0; i < size; ++i)
+			for(size_t i = 0, size = intVector.size(); i < size; ++i)
 			{
-				addEvent(moveEvent, intVector[i], m_uniqueIdMap);
+				addEvent(moveEvent, intVector[i], m_uniqueIdMap, override);
 				while(intVector[i] < endIntVector[i])
-					addEvent(new MoveEvent(moveEvent), ++intVector[i], m_uniqueIdMap);
+					addEvent(new MoveEvent(moveEvent), ++intVector[i], m_uniqueIdMap, override);
 			}
 		}
 		else
-			std::cout << "[Warning - MoveEvents::registerEvent] Malformed entry (from: \"" << strValue << "\", to: \"" << endStrValue << "\")" << std::endl;
+			std::cout << "[Warning - MoveEvents::registerEvent] Malformed entry (from unique: \"" << strValue << "\", to unique: \"" << endStrValue << "\")" << std::endl;
 	}
-	else if(readXMLString(p, "actionid", strValue))
+
+	if(readXMLString(p, "actionid", strValue))
 	{
 		strVector = explodeString(strValue, ";");
 		for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)
@@ -239,75 +239,84 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p)
 			if(!intVector[0])
 				continue;
 
-			addEvent(moveEvent, intVector[0], m_actionIdMap);
+			addEvent(moveEvent, intVector[0], m_actionIdMap, override);
 			if(intVector.size() > 1)
 			{
 				while(intVector[0] < intVector[1])
-					addEvent(new MoveEvent(moveEvent), ++intVector[0], m_actionIdMap);
+					addEvent(new MoveEvent(moveEvent), ++intVector[0], m_actionIdMap, override);
 			}
 		}
 	}
-	else if(readXMLString(p, "fromaid", strValue) && readXMLString(p, "toaid", endStrValue))
+
+	if(readXMLString(p, "fromaid", strValue) && readXMLString(p, "toaid", endStrValue))
 	{
 		intVector = vectorAtoi(explodeString(strValue, ";"));
 		endIntVector = vectorAtoi(explodeString(endStrValue, ";"));
 		if(intVector[0] && endIntVector[0] && intVector.size() == endIntVector.size())
 		{
-			size_t size = intVector.size();
-			for(size_t i = 0; i < size; ++i)
+			for(size_t i = 0, size = intVector.size(); i < size; ++i)
 			{
-				addEvent(moveEvent, intVector[i], m_actionIdMap);
+				addEvent(moveEvent, intVector[i], m_actionIdMap, override);
 				while(intVector[i] < endIntVector[i])
-					addEvent(new MoveEvent(moveEvent), ++intVector[i], m_actionIdMap);
+					addEvent(new MoveEvent(moveEvent), ++intVector[i], m_actionIdMap, override);
 			}
 		}
 		else
-			std::cout << "[Warning - MoveEvents::registerEvent] Malformed entry (from: \"" << strValue << "\", to: \"" << endStrValue << "\")" << std::endl;
+			std::cout << "[Warning - MoveEvents::registerEvent] Malformed entry (from action: \"" << strValue << "\", to action: \"" << endStrValue << "\")" << std::endl;
 	}
-	else if(readXMLString(p, "pos", strValue) || readXMLString(p, "pos", strValue))
+
+	if(readXMLString(p, "pos", strValue) || readXMLString(p, "pos", strValue))
 	{
 		strVector = explodeString(strValue, ";");
 		for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)
 		{
 			intVector = vectorAtoi(explodeString((*it), ","));
 			if(intVector.size() > 2)
-				addEvent(moveEvent, Position(intVector[0], intVector[1], intVector[2]), m_positionMap);
+				addEvent(moveEvent, Position(intVector[0], intVector[1], intVector[2]), m_positionMap, override);
 			else
 				success = false;
 		}
 	}
-	else
-		success = false;
 
 	return success;
 }
 
-void MoveEvents::addEvent(MoveEvent* moveEvent, int32_t id, MoveListMap& map)
+void MoveEvents::addEvent(MoveEvent* moveEvent, int32_t id, MoveListMap& map, bool override)
 {
 	MoveListMap::iterator it = map.find(id);
-	if(it == map.end())
-	{
-		MoveEventList moveEventList;
-		moveEventList.moveEvent[moveEvent->getEventType()].push_back(moveEvent);
-		map[id] = moveEventList;
-	}
-	else
+	if(it != map.end())
 	{
 		EventList& moveEventList = it->second.moveEvent[moveEvent->getEventType()];
 		for(EventList::iterator it = moveEventList.begin(); it != moveEventList.end(); ++it)
 		{
-			if((*it)->getSlot() == moveEvent->getSlot())
+			if((*it)->getSlot() != moveEvent->getSlot())
+				continue;
+
+			if(override)
+			{
+				delete *it;
+				it = moveEvent;
+			}
+			else
 				std::cout << "[Warning - MoveEvents::addEvent] Duplicate move event found: " << id << std::endl;
+
+			return;
 		}
 
 		moveEventList.push_back(moveEvent);
+	}
+	else
+	{
+		MoveEventList moveEventList;
+		moveEventList.moveEvent[moveEvent->getEventType()].push_back(moveEvent);
+		map[id] = moveEventList;
 	}
 }
 
 MoveEvent* MoveEvents::getEvent(Item* item, MoveEvent_t eventType)
 {
 	MoveListMap::iterator it;
-	if(item->getUniqueId() != 0)
+	if(item->getUniqueId())
 	{
 		it = m_uniqueIdMap.find(item->getUniqueId());
 		if(it != m_uniqueIdMap.end())
@@ -318,7 +327,7 @@ MoveEvent* MoveEvents::getEvent(Item* item, MoveEvent_t eventType)
 		}
 	}
 
-	if(item->getActionId() != 0)
+	if(item->getActionId())
 	{
 		it = m_actionIdMap.find(item->getActionId());
 		if(it != m_actionIdMap.end())
@@ -393,22 +402,31 @@ MoveEvent* MoveEvents::getEvent(Item* item, MoveEvent_t eventType, slots_t slot)
 	return NULL;
 }
 
-void MoveEvents::addEvent(MoveEvent* moveEvent, Position pos, MovePosListMap& map)
+void MoveEvents::addEvent(MoveEvent* moveEvent, Position pos, MovePosListMap& map, bool override)
 {
 	MovePosListMap::iterator it = map.find(pos);
-	if(it == map.end())
+	if(it != map.end())
+	{
+		bool add = true;
+		if(!it->second.moveEvent[moveEvent->getEventType()].empty())
+		{
+			if(!override)
+			{
+				std::cout << "[Warning - MoveEvents::addEvent] Duplicate move event found: " << pos << std::endl;
+				add = false;
+			}
+			else
+				it->second.moveEvent[moveEvent->getEventType()].clear();
+		}
+
+		if(add)
+			moveEventList.push_back(moveEvent);
+	}
+	else
 	{
 		MoveEventList moveEventList;
 		moveEventList.moveEvent[moveEvent->getEventType()].push_back(moveEvent);
 		map[pos] = moveEventList;
-	}
-	else
-	{
-		EventList& moveEventList = it->second.moveEvent[moveEvent->getEventType()];
-		if(!moveEventList.empty())
-			std::cout << "[Warning - MoveEvents::addEvent] Duplicate move event found: " << pos << std::endl;
-
-		moveEventList.push_back(moveEvent);
 	}
 }
 

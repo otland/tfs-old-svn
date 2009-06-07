@@ -123,20 +123,28 @@ Event* Weapons::getEvent(const std::string& nodeName)
 	return NULL;
 }
 
-bool Weapons::registerEvent(Event* event, xmlNodePtr p)
+bool Weapons::registerEvent(Event* event, xmlNodePtr p, bool override)
 {
 	Weapon* weapon = dynamic_cast<Weapon*>(event);
 	if(!weapon)
 		return false;
 
-	if(weapons.find(weapon->getID()) != weapons.end())
+	WeaponMap it = weapons.find(weapon->getID());
+	if(it == weapons.end())
 	{
-		std::cout << "[Warning - Weapons::registerEvent] Duplicate registered item with id: " << weapon->getID() << std::endl;
-		return false;
+		weapons[weapon->getID()] = weapon;
+		return true;
 	}
 
-	weapons[weapon->getID()] = weapon;
-	return true;
+	if(override)
+	{
+		delete it->second;
+		it->second = weapon;
+		return true;
+	}
+
+	std::cout << "[Warning - Weapons::registerEvent] Duplicate registered item with id: " << weapon->getID() << std::endl;
+	return false;
 }
 
 int32_t Weapons::getMaxMeleeDamage(int32_t attackSkill, int32_t attackValue)

@@ -54,7 +54,7 @@ Event* CreatureEvents::getEvent(const std::string& nodeName)
 	return NULL;
 }
 
-bool CreatureEvents::registerEvent(Event* event, xmlNodePtr p)
+bool CreatureEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 {
 	CreatureEvent* creatureEvent = dynamic_cast<CreatureEvent*>(event);
 	if(!creatureEvent)
@@ -68,11 +68,12 @@ bool CreatureEvents::registerEvent(Event* event, xmlNodePtr p)
 
 	if(CreatureEvent* oldEvent = getEventByName(creatureEvent->getName(), false))
 	{
-		//if there was an event with the same that is not loaded (happens when realoading), it is reused
-		if(!oldEvent->isLoaded() && oldEvent->getEventType() == creatureEvent->getEventType())
+		//if there was an event with the same type that is not loaded (happens when realoading), it is reused
+		if(oldEvent->getEventType() == creatureEvent->getEventType() && (!oldEvent->isLoaded() || override))
 			oldEvent->copyEvent(creatureEvent);
 
-		return false;
+		delete creatureEvent;
+		return override;
 	}
 
 	//if not, register it normally

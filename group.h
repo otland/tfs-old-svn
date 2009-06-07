@@ -91,8 +91,11 @@ class Groups
 			return &instance;
 		}
 
-		bool reload();
 		bool loadFromXml();
+		bool parseGroupNode(xmlNodePtr p);
+
+		void clear();
+		bool reload();
 
 		Group* getGroup(uint32_t groupId);
 		int32_t getGroupId(const std::string& name);
@@ -101,10 +104,8 @@ class Groups
 		GroupsMap::iterator getLastGroup() {return groupsMap.end();}
 
 	private:
+		Groups() {}
 		GroupsMap groupsMap;
 		static Group defGroup;
-
-		Groups() {}
-		void clear();
 };
 #endif

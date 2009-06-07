@@ -171,7 +171,7 @@ bool Quests::reload()
 	return loadFromXml();
 }
 
-bool Quests::parseQuestNode(xmlNodePtr p)
+bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 {
 	if(xmlStrcmp(p->name, (const xmlChar*)"quest"))
 		return false;
@@ -191,14 +191,14 @@ bool Quests::parseQuestNode(xmlNodePtr p)
 	if(readXMLInteger(p, "startstoragevalue", intValue))
 		startStorageValue = intValue;
 
-	Quest* quest = new Quest(name, ++m_lastId, startStorageId, startStorageValue);
+	Quest* quest = new Quest(name, m_lastId++, startStorageId, startStorageValue);
 	if(!quest)
 		return false;
 
 	xmlNodePtr missionNode = p->children;
 	while(missionNode)
 	{
-		if(xmlStrcmp(missionNode->name, (const xmlChar*)"mission") != 0)
+		if(xmlStrcmp(missionNode->name, (const xmlChar*)"mission"))
 		{
 			missionNode = missionNode->next;
 			continue;
@@ -254,6 +254,15 @@ bool Quests::parseQuestNode(xmlNodePtr p)
 		missionNode = missionNode->next;
 	}
 
+	if(checkDuplicate)
+	{
+		for(QuestsList::iterator it = quests.begin(); it != quests.end(); ++it)
+		{
+			if((*it)->getName() == name)
+				delete *it;
+		}
+	}
+
 	quests.push_back(quest);
 	return true;
 }
@@ -279,7 +288,7 @@ bool Quests::loadFromXml()
 	p = root->children;
 	while(p)
 	{
-		parseQuestNode(p);
+		parseQuestNode(p, false);
 		p = p->next;
 	}
 

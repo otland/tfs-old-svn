@@ -39,13 +39,13 @@ class GlobalEvents : public BaseEvents
 		virtual void clear();
 
 		virtual Event* getEvent(const std::string& nodeName);
-		virtual bool registerEvent(Event* event, xmlNodePtr p);
+		virtual bool registerEvent(Event* event, xmlNodePtr p, bool override);
 
 		virtual LuaScriptInterface& getScriptInterface() {return m_scriptInterface;}
 		LuaScriptInterface m_scriptInterface;
 
-		typedef std::list< std::pair<std::string, GlobalEvent* > > GlobalEventList;
-		GlobalEventList eventsMap;
+		typedef std::map<std::string, GlobalEvent*> GlobalEventMap;
+		GlobalEventMap eventsMap;
 };
 
 class GlobalEvent : public Event

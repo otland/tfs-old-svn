@@ -2266,6 +2266,9 @@ void LuaScriptInterface::registerFunctions()
 	//getConfigValue(key)
 	lua_register(m_luaState, "getConfigValue", LuaScriptInterface::luaGetConfigValue);
 
+	//getModsList()
+	lua_register(m_luaState, "getModsList", LuaScriptInterface::luaGetModsList);
+
 	//getHighscoreString(skillId)
 	lua_register(m_luaState, "getHighscoreString", LuaScriptInterface::luaGetHighscoreString);
 
@@ -2302,10 +2305,13 @@ void LuaScriptInterface::registerFunctions()
 	//doRefreshMap()
 	lua_register(m_luaState, "doRefreshMap", LuaScriptInterface::luaDoRefreshMap);
 
-	//md5()
+	//loadmodlib(libName)
+	lua_register(m_luaState, "loadmodlib", LuaScriptInterface::lualoadmodlib);
+
+	//md5(string)
 	lua_register(m_luaState, "md5", LuaScriptInterface::luaHashMD5);
 
-	//sha1()
+	//sha1(string)
 	lua_register(m_luaState, "sha1", LuaScriptInterface::luaHashSHA1);
 
 	//db table
@@ -8814,7 +8820,7 @@ int32_t LuaScriptInterface::luaGetWaypointsList(lua_State* L)
 	WaypointMap waypointsMap = g_game.getMap()->waypoints.getWaypointsMap();
 	WaypointMap::iterator it = waypointsMap.begin();
 
-	lua_createtable(L, waypointsMap.size(), 0);
+	lua_newtable(L);
 	for(uint32_t i = 1; it != waypointsMap.end(); ++it, ++i)
 	{
 		lua_pushnumber(L, i);
@@ -9682,6 +9688,56 @@ int32_t LuaScriptInterface::luaGetConfigValue(lua_State* L)
 {
 	//getConfigValue(key)
 	g_config.getValue(popString(L), L);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetModsList(lua_State* L)
+{
+	//getModsList()
+	ModsMap modsMap = ScriptingManager::getInstance()->getModsMap();
+	ModsMap::iterator it = modsMap.begin();
+
+	lua_newtable(L);
+	for(uint32_t i = 1; it != modsMap.end(); ++it, ++i)
+	{
+		lua_pushnumber(L, i);
+		lua_createtable(L, 7, 0);
+
+		setField(L, "name", it->first);
+		setField(L, "description", it->second.description);
+		setField(L, "file", it->second.file);
+
+		setField(L, "version", it->second.version);
+		setField(L, "author", it->second.author);
+		setField(L, "contact", it->second.contact);
+
+		setFieldBool(L, "enabled", it->second.enabled);
+		lua_settable(L, -3);
+	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::lualoadmodlib(lua_State* L)
+{
+	//loadmodlib(libName)
+	std::string name = popString(L);
+	toLowerCaseString(name);
+
+	std::string lib;
+	ModsLibMap modsLibMap = ScriptingManager::getInstance()->getModsLibMap();
+	for(ModsLibMap::iterator it = modsLibMap.begin(); it != modsLibMap.end(); ++it)
+	{
+		if(asLowerCaseString(it->first) != name)
+			continue;
+
+		lib = it->second.second;
+		break;
+	}
+
+	if(!lib.empty())
+		lua_loadstring(L, lib.c_str());
+
 	return 1;
 }
 

@@ -52,7 +52,7 @@ bool BaseEvents::loadFromXml()
 	p = root->children;
 	while(p)
 	{
-		parseEventNode(p, scriptsPath);
+		parseEventNode(p, scriptsPath, false);
 		p = p->next;
 	}
 
@@ -61,74 +61,74 @@ bool BaseEvents::loadFromXml()
 	return m_loaded;
 }
 
-bool BaseEvents::parseEventNode(xmlNodePtr p, std::string scriptsPath)
+bool BaseEvents::parseEventNode(xmlNodePtr p, std::string scriptsPath, bool override)
 {
-	if(p->name)
+	Event* event = getEvent((const char*)p->name);
+	if(!event)
+		return false;
+
+	if(!event->configureEvent(p))
 	{
-		if(Event* event = getEvent((const char*)p->name))
-		{
-			if(event->configureEvent(p))
-			{
-				bool success = false;
-				std::string strValue, tmpStrValue;
-				if(readXMLString(p, "event", strValue))
-				{
-					tmpStrValue = asLowerCaseString(strValue);
-					if(tmpStrValue == "script")
-					{
-						bool file = readXMLString(p, "value", strValue);
-						if(file)
-							strValue = scriptsPath + strValue;
-						else
-							parseXMLContentString(p->children, strValue);
-
-						success = event->loadScript(strValue, file);
-					}
-					else if(tmpStrValue == "buffer")
-					{
-						if(!readXMLString(p, "value", strValue))
-							parseXMLContentString(p->children, strValue);
-
-						success = event->loadBuffer(strValue);
-					}
-					else if(tmpStrValue == "function")
-					{
-						if(readXMLString(p, "value", strValue))
-							success = event->loadFunction(strValue);
-					}
-				}
-				else if(readXMLString(p, "script", strValue))
-				{
-					bool file = asLowerCaseString(strValue) != "cdata";
-					if(file)
-						strValue = scriptsPath + strValue;
-					else
-						parseXMLContentString(p->children, strValue);
-
-					success = event->loadScript(strValue, file);
-				}
-				else if(readXMLString(p, "buffer", strValue))
-				{
-					if(asLowerCaseString(strValue) == "cdata")
-						parseXMLContentString(p->children, strValue);
-
-					success = event->loadBuffer(strValue);
-				}
-				else if(readXMLString(p, "function", strValue))
-					success = event->loadFunction(strValue);
-
-				if(success && !registerEvent(event, p))
-					delete event;
-			}
-			else
-			{
-				std::cout << "[Warning - BaseEvents::loadFromXml] Cannot configure event" << std::endl;
-				delete event;
-			}
-		}
+		std::cout << "[Warning - BaseEvents::loadFromXml] Cannot configure event" << std::endl;
+		delete event;
+		return false;
 	}
 
-	return false;
+	bool success = false;
+	std::string strValue, tmpStrValue;
+	if(readXMLString(p, "event", strValue))
+	{
+		tmpStrValue = asLowerCaseString(strValue);
+		if(tmpStrValue == "script")
+		{
+			bool file = readXMLString(p, "value", strValue);
+			if(file)
+				strValue = scriptsPath + strValue;
+			else
+				parseXMLContentString(p->children, strValue);
+
+			success = event->loadScript(strValue, file);
+		}
+		else if(tmpStrValue == "buffer")
+		{
+			if(!readXMLString(p, "value", strValue))
+				parseXMLContentString(p->children, strValue);
+
+			success = event->loadBuffer(strValue);
+		}
+		else if(tmpStrValue == "function")
+		{
+			if(readXMLString(p, "value", strValue))
+				success = event->loadFunction(strValue);
+		}
+	}
+	else if(readXMLString(p, "script", strValue))
+	{
+		bool file = asLowerCaseString(strValue) != "cdata";
+		if(file)
+			strValue = scriptsPath + strValue;
+		else
+			parseXMLContentString(p->children, strValue);
+
+		success = event->loadScript(strValue, file);
+	}
+	else if(readXMLString(p, "buffer", strValue))
+	{
+		if(asLowerCaseString(strValue) == "cdata")
+			parseXMLContentString(p->children, strValue);
+
+		success = event->loadBuffer(strValue);
+	}
+	else if(readXMLString(p, "function", strValue))
+		success = event->loadFunction(strValue);
+
+	if(!override && readXMLString(p, "override", strValue) && booleanString(strValue))
+		override = true;
+
+	if(success && !registerEvent(event, p, override) && (!override || (const char*)p->name != "action"))
+		delete event;
+
+	return success;
 }
 
 bool BaseEvents::reload()
@@ -200,11 +200,6 @@ bool Event::loadBuffer(const std::string& buffer)
 	m_scripted = EVENT_SCRIPT_BUFFER;
 	m_scriptData = buffer;
 	return true;	
-}
-
-bool Event::loadFunction(const std::string& function)
-{
-	return false;
 }
 
 CallBack::CallBack()

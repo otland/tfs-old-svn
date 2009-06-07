@@ -17,19 +17,44 @@
 
 #ifndef __SCRIPTMANAGER__
 #define __SCRIPTMANAGER__
+#include "otsystem.h"
+
+struct ModBlock;
 class ScriptingManager
 {
 	public:
-		bool loadScriptSystems();
-
-		virtual ~ScriptingManager() {}
+		virtual ~ScriptingManager() {clearMods();}
 		static ScriptingManager* getInstance()
 		{
 			static ScriptingManager instance;
 			return &instance;
 		}
 
+		bool load();
+
+		bool loadMods();
+		void clearMods();
+		bool reloadMods();
+
+		bool loadFromXml(const std::string& file);
+
+		const ModsMap& getModsMap() {return modsMap;}
+		const ModsLibMap& getModsLibMap() {return modsLibMap;}
+
 	private:
-		ScriptingManager() {}
+		ScriptingManager(): modsLoaded(false) {}
+		bool modsLoaded;
+
+		typedef std::map<std::string, std::pair<std::string, std::string> > ModsLibMap;
+		ModsLibMap modsLibMap;
+
+		typedef std::map<std::string, ModBlock> ModsMap;
+		ModsMap modsMap;
+};
+
+struct ModBlock
+{
+	std::string name, description, author, version, contact, file;
+	bool enabled;
 };
 #endif
