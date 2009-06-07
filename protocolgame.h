@@ -39,7 +39,7 @@ class ProtocolGame : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolGameCount;
 #endif
-		ProtocolGame(Connection_ptr connection): Protocol(connection)
+		ProtocolGame(Connection* connection): Protocol(connection)
 		{
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 			protocolGameCount++;

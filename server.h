@@ -17,23 +17,21 @@
 
 #ifndef __SERVER__
 #define __SERVER__
-
 #include "otsystem.h"
 #include <boost/enable_shared_from_this.hpp>
 
-class Connection;
-typedef boost::shared_ptr<Connection> Connection_ptr;
 class ServiceBase;
 typedef boost::shared_ptr<ServiceBase> Service_ptr;
 class ServicePort;
 typedef boost::shared_ptr<ServicePort> ServicePort_ptr;
 
+class Connection;
 class Protocol;
-class NetworkMessage;
+
 class ServiceBase : boost::noncopyable
 {
 	public:
-		virtual Protocol* makeProtocol(Connection_ptr connection) const = 0;
+		virtual Protocol* makeProtocol(Connection* connection) const = 0;
 
 		virtual uint8_t getProtocolId() const = 0;
 		virtual bool isSingleSocket() const = 0;
@@ -45,7 +43,7 @@ template <typename ProtocolType>
 class Service : public ServiceBase
 {
 	public:
-		Protocol* makeProtocol(Connection_ptr connection) const {return new ProtocolType(connection);}
+		Protocol* makeProtocol(Connection* connection) const {return new ProtocolType(connection);}
 
 		uint8_t getProtocolId() const {return ProtocolType::protocolId;}
 		bool isSingleSocket() const {return ProtocolType::isSingleSocket;}
@@ -53,6 +51,7 @@ class Service : public ServiceBase
 		const char* getProtocolName() const {return ProtocolType::protocolName();}
 };
 
+class NetworkMessage;
 class ServicePort : boost::noncopyable, public boost::enable_shared_from_this<ServicePort>
 {
 	public:
@@ -89,7 +88,6 @@ class ServicePort : boost::noncopyable, public boost::enable_shared_from_this<Se
 };
 
 typedef boost::shared_ptr<ServicePort> ServicePort_ptr;
-
 class ServiceManager : boost::noncopyable
 {
 	ServiceManager(const ServiceManager&);

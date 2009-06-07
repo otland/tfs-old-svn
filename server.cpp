@@ -146,7 +146,7 @@ void ServicePort::handle(boost::asio::ip::tcp::socket* socket, const boost::syst
 		if(!error)
 			remoteIp = htonl(endpoint.address().to_v4().to_ulong());
 
-		Connection_ptr connection;
+		Connection* connection = NULL;
 		if(remoteIp && ConnectionManager::getInstance()->acceptConnection(remoteIp) &&
 			(connection = ConnectionManager::getInstance()->createConnection(
 			socket, m_io_service, shared_from_this())))
@@ -208,7 +208,7 @@ Protocol* ServicePort::makeProtocol(bool checksum, NetworkMessage& msg) const
 	for(ServiceVec::const_iterator it = m_services.begin(); it != m_services.end(); ++it)
 	{
 		if((*it)->getProtocolId() == protocolId && ((checksum && (*it)->hasChecksum()) || !(*it)->hasChecksum()))
-			return (*it)->makeProtocol(Connection_ptr());
+			return (*it)->makeProtocol(NULL);
 	}
 
 	return NULL;

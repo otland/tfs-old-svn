@@ -202,7 +202,7 @@ void OutputMessagePool::configureOutputMessage(OutputMessage_ptr msg, Protocol* 
 	else
 		msg->setState(OutputMessage::STATE_ALLOCATED_NO_AUTOSEND);
 
-	Connection_ptr connection = protocol->getConnection();
+	Connection* connection = protocol->getConnection();
 	assert(connection);
 
 	msg->setProtocol(protocol);

@@ -181,7 +181,9 @@ class ProtocolAdmin : public Protocol
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 		static uint32_t protocolAdminCount;
 #endif
-		ProtocolAdmin(Connection_ptr connection): Protocol(connection)
+		virtual void onRecvFirstMessage(NetworkMessage& msg);
+
+		ProtocolAdmin(Connection* connection): Protocol(connection)
 		{
 			m_state = NO_CONNECTED;
 			m_loginTries = m_lastCommand = 0;
@@ -190,7 +192,6 @@ class ProtocolAdmin : public Protocol
 			protocolAdminCount++;
 #endif
 		}
-
 		virtual ~ProtocolAdmin()
 		{
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -203,8 +204,6 @@ class ProtocolAdmin : public Protocol
 		enum {hasChecksum = false};
 		static const char* protocolName() {return "admin protocol";}
 
-		virtual void onRecvFirstMessage(NetworkMessage& msg);
-
 	protected:
 		virtual void parsePacket(NetworkMessage& msg);
 		virtual void deleteProtocolTask();
@@ -214,7 +213,7 @@ class ProtocolAdmin : public Protocol
 		void adminCommandKickPlayer(const std::string& name);
 		void adminCommandSetOwner(const std::string& param);
 
-		enum ConnectionState_t
+		enum ProtocolState_t
 		{
 			NO_CONNECTED,
 			ENCRYPTION_NO_SET,
@@ -225,7 +224,7 @@ class ProtocolAdmin : public Protocol
 
 	private:
 		int32_t m_loginTries;
-		ConnectionState_t m_state;
+		ProtocolState_t m_state;
 		uint32_t m_lastCommand, m_startTime;
 };
 #endif
