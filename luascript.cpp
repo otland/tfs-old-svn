@@ -641,9 +641,9 @@ int32_t LuaScriptInterface::loadFile(const std::string& file, Npc* npc/* = NULL*
 		return -1;
 
 	m_loadingFile = file;
-	this->reserveScriptEnv();
+	reserveScriptEnv();
 
-	ScriptEnviroment* env = this->getScriptEnv();
+	ScriptEnviroment* env = getScriptEnv();
 	env->setScriptId(EVENT_ID_LOADING, this);
 	env->setNpc(npc);
 
@@ -651,8 +651,8 @@ int32_t LuaScriptInterface::loadFile(const std::string& file, Npc* npc/* = NULL*
 	ret = lua_pcall(m_luaState, 0, 0, 0);
 	if(ret != 0)
 	{
-		reportError(NULL, std::string(popString(m_luaState)));
-		this->releaseScriptEnv();
+		reportError(NULL, popString(m_luaState));
+		releaseScriptEnv();
 		return -1;
 	}
 
@@ -677,9 +677,9 @@ int32_t LuaScriptInterface::loadBuffer(const std::string& text, Npc* npc/* = NUL
 		return -1;
 
 	m_loadingFile = "buffer";
-	this->reserveScriptEnv();
+	reserveScriptEnv();
 
-	ScriptEnviroment* env = this->getScriptEnv();
+	ScriptEnviroment* env = getScriptEnv();
 	env->setScriptId(EVENT_ID_LOADING, this);
 	env->setNpc(npc);
 
@@ -687,8 +687,8 @@ int32_t LuaScriptInterface::loadBuffer(const std::string& text, Npc* npc/* = NUL
 	ret = lua_pcall(m_luaState, 0, 0, 0);
 	if(ret != 0)
 	{
-		reportError(NULL, std::string(popString(m_luaState)));
-		this->releaseScriptEnv();
+		reportError(NULL, popString(m_luaState));
+		releaseScriptEnv();
 		return -1;
 	}
 
@@ -2306,7 +2306,10 @@ void LuaScriptInterface::registerFunctions()
 	lua_register(m_luaState, "doRefreshMap", LuaScriptInterface::luaDoRefreshMap);
 
 	//loadmodlib(libName)
-	lua_register(m_luaState, "loadmodlib", LuaScriptInterface::lualoadmodlib);
+	lua_register(m_luaState, "loadmodlib", LuaScriptInterface::luaL_loadmodlib);
+
+	//domodlib(libName)
+	lua_register(m_luaState, "domodlib", LuaScriptInterface::luaL_domodlib);
 
 	//md5(string)
 	lua_register(m_luaState, "md5", LuaScriptInterface::luaHashMD5);
@@ -9716,7 +9719,7 @@ int32_t LuaScriptInterface::luaGetModList(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::lualoadmodlib(lua_State* L)
+int32_t LuaScriptInterface::luaL_loadmodlib(lua_State* L)
 {
 	//loadmodlib(libName)
 	std::string name = popString(L);
@@ -9727,6 +9730,24 @@ int32_t LuaScriptInterface::lualoadmodlib(lua_State* L)
 			continue;
 
 		luaL_loadstring(L, it->second.second.c_str());
+		lua_pushvalue(L, -1);
+		break;
+	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaL_domodlib(lua_State* L)
+{
+	//domodlib(libName)
+	std::string name = popString(L);
+	toLowerCaseString(name);
+	for(LibMap::iterator it = ScriptingManager::getInstance()->getFirstLib(); it != ScriptingManager::getInstance()->getLastLib(); ++it)
+	{
+		if(asLowerCaseString(it->first) != name)
+			continue;
+
+		lua_pushboolean(L, !luaL_dostring(L, it->second.second.c_str()));
 		break;
 	}
 

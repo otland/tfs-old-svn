@@ -746,7 +746,9 @@ class LuaScriptInterface
 		static int32_t luaGetConfigValue(lua_State* L);
 		static int32_t luaGetModList(lua_State* L);
 
-		static int32_t lualoadmodlib(lua_State* L);
+		static int32_t luaL_loadmodlib(lua_State* L);
+		static int32_t luaL_domodlib(lua_State* L);
+
 		static int32_t luaHashMD5(lua_State* L);
 		static int32_t luaHashSHA1(lua_State* L);
 		static int32_t internalGetPlayerInfo(lua_State* L, PlayerInfo_t info);
