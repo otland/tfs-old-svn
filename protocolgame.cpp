@@ -2175,8 +2175,6 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 			}
 
 			AddMapDescription(msg, pos);
-			if(isLogin)
-				AddMagicEffect(msg, pos, NM_ME_TELEPORT);
 
 			AddInventoryItem(msg, SLOT_HEAD, player->getInventoryItem(SLOT_HEAD));
 			AddInventoryItem(msg, SLOT_NECKLACE, player->getInventoryItem(SLOT_NECKLACE));
@@ -2199,49 +2197,6 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 
 			//player light level
 			AddCreatureLight(msg, creature);
-			if(isLogin)
-			{
-				std::string tempstring = g_config.getString(ConfigManager::LOGIN_MSG);
-				if(!player->isAccountManager())
-				{
-					if(!player->getLastLoginSaved() > 0)
-					{
-						tempstring += " Please choose your outfit.";
-						sendOutfitWindow();
-					}
-					else
-					{
-						if(tempstring.size())
-							AddTextMessage(msg, MSG_STATUS_DEFAULT, tempstring.c_str());
-
-						tempstring = "Your last visit was on ";
-						time_t lastLogin = player->getLastLoginSaved();
-
-						tempstring += ctime(&lastLogin);
-						tempstring.erase(tempstring.length() - 1);
-						tempstring += ".";
-					}
-
-					AddTextMessage(msg, MSG_STATUS_DEFAULT, tempstring);
-				}
-				else
-				{
-					switch(player->accountManager)
-					{
-						case MANAGER_NAMELOCK:
-							AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, it appears that your character has been namelocked, what would you like as your new name?");
-							break;
-						case MANAGER_ACCOUNT:							
-							AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, type 'account' to manage your account and if you want to start over then type 'cancel'.");
-							break;
-						case MANAGER_NEW:
-							AddTextMessage(msg, MSG_STATUS_CONSOLE_ORANGE, "Hello, type 'account' to create an account or type 'recover' to recover an account.");
-							break;
-						default:
-							break;
-					}
-				}
-			}
 
 			for(VIPListSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); it++)
 			{
@@ -2254,11 +2209,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 			}
 		}
 		else
-		{
 			AddTileCreature(msg, pos, stackpos, creature);
-			if(isLogin)
-				AddMagicEffect(msg, pos, NM_ME_TELEPORT);
-		}
 	}
 }
 

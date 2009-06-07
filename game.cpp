@@ -2322,6 +2322,7 @@ bool Game::playerUseItem(uint32_t playerId, const Position& pos, int16_t stackpo
 
 	if(isHotkey && !g_config.getBool(ConfigManager::AIMBOT_HOTKEY_ENABLED))
 		return false;
+
 	Thing* thing = internalGetThing(player, pos, stackpos, spriteId, STACKPOS_USEITEM);
 	if(!thing)
 	{

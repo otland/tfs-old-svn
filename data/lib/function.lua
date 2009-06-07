@@ -289,7 +289,7 @@ function getPlayerByName(name)
 end
 
 function isPlayerGhost(cid)
-	return isPlayer(cid) and getCreatureCondition(cid, CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE) or false
+	return isPlayer(cid) and (getCreatureCondition(cid, CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE) or getPlayerFlag(PlayerFlag_CannotBeSeen)) or false
 end
 
 function doPlayerSetExperienceRate(cid, value)

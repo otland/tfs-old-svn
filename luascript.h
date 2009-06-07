@@ -219,7 +219,9 @@ enum PlayerInfo_t
 	PlayerInfoOutfitWindow,
 	PlayerInfoNameDescription,
 	PlayerInfoIdleTime,
-	PlayerInfoClient
+	PlayerInfoClient,
+	PlayerInfoLastLogin,
+	PlayerInfoAccountManager
 };
 
 enum ErrorCode_t
@@ -526,6 +528,8 @@ class LuaScriptInterface
 		static int32_t luaGetPlayerRequiredMana(lua_State* L);
 		static int32_t luaGetPlayerRequiredSkillTries(lua_State* L);
 		static int32_t luaGetPlayerIp(lua_State* L);
+		static int32_t luaGetPlayerLastLogin(lua_State* L);
+		static int32_t luaGetPlayerAccountManager(lua_State* L);
 		static int32_t luaGetPlayerAccountId(lua_State* L);
 		static int32_t luaGetPlayerAccount(lua_State* L);
 
@@ -687,10 +691,10 @@ class LuaScriptInterface
 		static int32_t luaDoPlayerPopupFYI(lua_State* L);
 		static int32_t luaDoPlayerSendTutorial(lua_State* L);
 		static int32_t luaDoPlayerAddMapMark(lua_State* L);
-		static int32_t luaDoPlayerAddPremiumDays(lua_State* L);
 		static int32_t luaGetPlayerPremiumDays(lua_State* L);
-		static int32_t luaDoCreatureSetNoMove(lua_State* L);
+		static int32_t luaDoPlayerAddPremiumDays(lua_State* L);
 		static int32_t luaGetCreatureNoMove(lua_State* L);
+		static int32_t luaDoCreatureSetNoMove(lua_State* L);
 
 		static int32_t luaGetTownId(lua_State* L);
 		static int32_t luaGetTownName(lua_State* L);

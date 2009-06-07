@@ -2137,6 +2137,12 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerSetIdleTime(cid, amount)
 	lua_register(m_luaState, "doPlayerSetIdleTime", LuaScriptInterface::luaDoPlayerSetIdleTime);
 
+	//getPlayerLastLogin(cid)
+	lua_register(m_luaState, "getPlayerLastLogin", LuaScriptInterface::luaGetPlayerLastLogin);
+
+	//getPlayerAccountManager(cid)
+	lua_register(m_luaState, "getPlayerAccountManager", LuaScriptInterface::luaGetPlayerAccountManager);
+
 	//getPlayerRates(cid)
 	lua_register(m_luaState, "getPlayerRates", LuaScriptInterface::luaGetPlayerRates);
 
@@ -2507,6 +2513,12 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 		case PlayerInfoClient:
 			lua_pushboolean(L, player->hasClient());
 			return 1;
+		case PlayerInfoLastLogin:
+			value = player->getLastLoginSaved();
+			break;
+		case PlayerInfoAccountManager:
+			value = player->accountManager;
+			break;
 		default:
 			reportErrorFunc("Unknown player info - " + info);
 			value = 0;
@@ -2691,6 +2703,16 @@ int32_t LuaScriptInterface::luaGetPlayerIdleTime(lua_State* L)
 int32_t LuaScriptInterface::luaHasClient(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoClient);
+}
+
+int32_t LuaScriptInterface::luaGetPlayerLastLogin(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoLastLogin);
+}
+
+int32_t LuaScriptInterface::luaGetPlayerAccountManager(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoAccountManager);
 }
 //
 
