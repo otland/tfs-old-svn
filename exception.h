@@ -16,8 +16,8 @@
 ////////////////////////////////////////////////////////////////////////
 
 #ifdef __EXCEPTION_TRACER__
-#ifndef __EXCEPTION__
-#define __EXCEPTION__
+#ifndef __EXCEPTION_H__
+#define __EXCEPTION_H__
 class ExceptionHandler
 {
 	public:
