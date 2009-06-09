@@ -10142,8 +10142,6 @@
 	<item id="4818" name="dirt"/>
 	<item id="4819" name="dirt"/>
 	<item id="4820" name="shallow water">
-		<attribute key="type" value="trashholder"/>
-		<attribute key="effect" value="bluebubble"/>
 		<attribute key="fluidSource" value="water"/>
 		<attribute key="allowpickupable" value="1"/>
 	</item>

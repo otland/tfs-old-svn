@@ -5,9 +5,9 @@
 	<movevent type="StepIn" itemid="461" event="script" value="decay.lua"/>
 
 	<!-- Walkable waters -->
-	<moveevent event="StepIn" itemid="4820" script="swimpool.lua"/>
-	<moveevent event="StepOut" itemid="4820" script="swimpool.lua"/>
-	<moveevent event="AddItem" itemid="4820" tileitem="1" script="swimitem.lua"/>
+	<moveevent type="StepIn" itemid="4820" event="script" value="swimpool.lua"/>
+	<moveevent type="StepOut" itemid="4820" event="script" valuet="swimpool.lua"/>
+	<moveevent type="AddItem" itemid="4820" tileitem="1" event="script" value="swimitem.lua"/>
 
 	<!-- (Depot & Level) tiles -->
 	<movevent type="StepIn" itemid="416" event="script" value="tiles.lua"/>
