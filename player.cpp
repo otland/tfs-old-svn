@@ -1270,10 +1270,7 @@ void Player::sendCreatureChangeVisible(const Creature* creature, bool visible)
 	if((!creature->getPlayer() && canSeeInvisibility()) || (creature->getPlayer() && canSeeCreature(creature)))
 		sendCreatureChangeOutfit(creature, creature->getCurrentOutfit());
 	else if(!visible)
-	{
 		sendCreatureDisappear(creature, creature->getTile()->getClientIndexOfThing(this, creature) + 1, false);
-		sendUpdateTile() //temporial fix for non-disappearing creature
-	}
 	else
 		sendCreatureAppear(creature);
 }
