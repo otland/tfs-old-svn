@@ -312,7 +312,7 @@ function isPlayerGhost(cid)
 		return false
 	end
 
-	return (getCreatureCondition(cid, CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE) or getPlayerFlag(PlayerFlag_CannotBeSeen))
+	return getCreatureCondition(cid, CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE) or getPlayerFlagValue(cid, PlayerFlag_CannotBeSeen)
 end
 
 function doPlayerSetExperienceRate(cid, value)
