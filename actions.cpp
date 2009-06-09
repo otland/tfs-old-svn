@@ -150,6 +150,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 						{
 							std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with id: " << intVector[i] <<
 								", in fromid: " << tmp << " and toid: " << endIntVector[i] << std::endl;
+							intVector[i]++;
 							continue;
 						}
 						else
@@ -221,6 +222,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 						{
 							std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with uid: " << intVector[i] <<
 								", in fromuid: " << tmp << " and touid: " << endIntVector[i] << std::endl;
+							intVector[i]++;
 							continue;
 						}
 						else
@@ -292,6 +294,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 						{
 							std::cout << "[Warning - Actions::registerEvent] Duplicate registered item with aid: " << intVector[i] <<
 								", in fromaid: " << tmp << " and toaid: " << endIntVector[i] << std::endl;
+							intVector[i]++;
 							continue;
 						}
 						else
