@@ -111,7 +111,7 @@ class MoveEvent : public Event
 		virtual bool configureEvent(xmlNodePtr p);
 		virtual bool loadFunction(const std::string& functionName);
 
-		uint32_t fireStepEvent(Creature* actor, Creature* creature, Item* item, const Position& fromPos, const Position& toPos);
+		uint32_t fireStepEvent(Creature* actor, Creature* creature, Item* item, const Position& pos, const Position& fromPos, const Position& toPos);
 		uint32_t fireAddRemItem(Creature* actor, Item* item, Item* tileItem, const Position& pos);
 		uint32_t fireEquip(Player* player, Item* item, slots_t slot, bool boolean);
 
