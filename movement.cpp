@@ -470,7 +470,7 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, const T
 	uint32_t ret = 1;
 	MoveEvent* moveEvent = NULL;
 	if((moveEvent = getEvent(tile, eventType)))
-		ret &= moveEvent->fireStepEvent(actor, creature, NULL, fromPos, toPos);
+		ret &= moveEvent->fireStepEvent(actor, creature, NULL, Position(), fromPos, toPos);
 
 	Item* tileItem = NULL;
 	if(m_lastCacheTile == tile)
@@ -482,7 +482,7 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, const T
 		for(int32_t i = 0, j = m_lastCacheItemVector.size(); i < j; ++i)
 		{
 			if((tileItem = m_lastCacheItemVector[i]) && (moveEvent = getEvent(tileItem, eventType)))
-				ret &= moveEvent->fireStepEvent(actor, creature, tileItem, fromPos, toPos);
+				ret &= moveEvent->fireStepEvent(actor, creature, tileItem, tile->getPosition(), fromPos, toPos);
 		}
 
 		return ret;
@@ -499,7 +499,7 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, const T
 			&& (moveEvent = getEvent(tileItem, eventType)))
 		{
 			m_lastCacheItemVector.push_back(tileItem);
-			ret &= moveEvent->fireStepEvent(actor, creature, tileItem, fromPos, toPos);
+			ret &= moveEvent->fireStepEvent(actor, creature, tileItem, tile->getPosition(), fromPos, toPos);
 		}
 	}
 
@@ -1062,15 +1062,15 @@ uint32_t MoveEvent::DeEquipItem(MoveEvent* moveEvent, Player* player, Item* item
 	return 1;
 }
 
-uint32_t MoveEvent::fireStepEvent(Creature* actor, Creature* creature, Item* item, const Position& fromPos, const Position& toPos)
+uint32_t MoveEvent::fireStepEvent(Creature* actor, Creature* creature, Item* item, const Position& pos, const Position& fromPos, const Position& toPos)
 {
 	if(isScripted())
-		return executeStep(actor, creature, item, fromPos, toPos);
+		return executeStep(actor, creature, item, pos, fromPos, toPos);
 
 	return stepFunction(creature, item);
 }
 
-uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item, const Position& fromPos, const Position& toPos)
+uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item, const Position& pos, const Position& fromPos, const Position& toPos)
 {
 	//onStepIn(cid, item, position, lastPosition, fromPosition, toPosition, actor)
 	//onStepOut(cid, item, position, lastPosition, fromPosition, toPosition, actor)
@@ -1084,7 +1084,7 @@ uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item,
 			scriptstream << "cid = " << env->addThing(creature) << std::endl;
 
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
-			env->streamPosition(scriptstream, "position", creature->getPosition(), 0);
+			env->streamPosition(scriptstream, "position", pos, 0);
 			env->streamPosition(scriptstream, "lastPosition", creature->getLastPosition(), 0);
 			env->streamPosition(scriptstream, "fromPosition", fromPos, 0);
 			env->streamPosition(scriptstream, "toPosition", toPos, 0);
@@ -1117,7 +1117,7 @@ uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item,
 			lua_pushnumber(L, env->addThing(creature));
 
 			LuaScriptInterface::pushThing(L, item, env->addThing(item));
-			LuaScriptInterface::pushPosition(L, creature->getPosition(), 0);
+			LuaScriptInterface::pushPosition(L, pos, 0);
 			LuaScriptInterface::pushPosition(L, creature->getLastPosition(), 0);
 			LuaScriptInterface::pushPosition(L, fromPos, 0);
 			LuaScriptInterface::pushPosition(L, toPos, 0);

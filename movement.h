@@ -116,7 +116,7 @@ class MoveEvent : public Event
 		uint32_t fireEquip(Player* player, Item* item, slots_t slot, bool boolean);
 
 		//scripting
-		uint32_t executeStep(Creature* actor, Creature* creature, Item* item, const Position& fromPos, const Position& toPos);
+		uint32_t executeStep(Creature* actor, Creature* creature, Item* item, const Position& pos, const Position& fromPos, const Position& toPos);
 		uint32_t executeEquip(Player* player, Item* item, slots_t slot);
 		uint32_t executeAddRemItem(Creature* actor, Item* item, Item* tileItem, const Position& pos);
 
