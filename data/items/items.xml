@@ -12319,7 +12319,7 @@
 		<attribute key="weight" value="120"/>
 	</item>
 	<item id="5958" article="a" name="winning lottery ticket">
-		<attribute key="description" value="You were lucky! Go claim your prize at the potion store in Edron"/>
+		<attribute key="description" value="You were lucky! Go claim your prize at the potion store in Edron."/>
 		<attribute key="weight" value="120"/>
 	</item>
 	<!-- Item id 5959 is blank -->
@@ -13218,9 +13218,6 @@
 	</item>
 	<item id="6102" name="deadeye devious' eye patch">
 		<attribute key="weight" value="200"/>
-	</item>
-	<item id="8702" article="a" name="the witches' grimoire">
-		<attribute key="weight" value="1300"/>
 	</item>
 	<item id="6103" article="a" name="unholy book">
 		<attribute key="weight" value="1300"/>
@@ -20475,9 +20472,7 @@
 	<item id="9238" article="a" name="sun clock"/>
 	<item id="9239" article="a" name="vampire bride statue"/>
 	<item id="9240" article="a" name="vampire bride statue"/>
-	<item id="9241" article="a" name="vampire lord statue">
-		<attribute key="description" value="Nothing is written on it."/>
-	</item>
+	<item id="9241" article="a" name="vampire lord statue"/>
 	<item fromid="9252" toid="9262" article="a" name="copper pipes"/>
 	<item id="9267" article="a" name="closed door">
 		<attribute key="type" value="door"/>
@@ -20965,11 +20960,11 @@
 	<item id="9929" article="a" name="flower dress">
 		<attribute key="weight" value="1900"/>
 	</item>
-	<item id="9931" article="a" name="coconut shoes">
-		<attribute key="weight" value="600"/>
-	</item>
 	<item id="9930" article="a" name="rust remover">
 		<attribute key="weight" value="250"/>
+	</item>
+	<item id="9931" article="a" name="coconut shoes">
+		<attribute key="weight" value="600"/>
 	</item>
 	<item id="9932" article="a" name="firewalker boots">
 		<attribute key="description" value="Wearing these boots reduces the damage gotten from fiery ground."/>
