@@ -97,15 +97,15 @@ bool Spawns::parseSpawnNode(xmlNodePtr p, bool checkDuplicate)
 	Position centerPos;
 	if(!readXMLString(p, "centerpos", strValue))
 	{
-		if(readXMLInteger(p, "centerx", intValue))
+		if(!readXMLInteger(p, "centerx", intValue))
 			return false;
 
 		centerPos.x = intValue;
-		if(readXMLInteger(p, "centery", intValue))
+		if(!readXMLInteger(p, "centery", intValue))
 			return false;
 
 		centerPos.y = intValue;
-		if(readXMLInteger(p, "centerz", intValue))
+		if(!readXMLInteger(p, "centerz", intValue))
 			return false;
 
 		centerPos.z = intValue;
