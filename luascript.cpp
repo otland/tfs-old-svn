@@ -747,12 +747,12 @@ const std::string& LuaScriptInterface::getFileById(int32_t scriptId)
 void LuaScriptInterface::reportError(const char* function, const std::string& errorDesc)
 {
 	ScriptEnviroment* env = getScriptEnv();
-	int32_t scriptId;
-	int32_t callbackId;
-	bool timerEvent;
-	std::string eventDesc;
 	LuaScriptInterface* scriptInterface;
 	env->getEventInfo(scriptId, eventDesc, scriptInterface, callbackId, timerEvent);
+
+	int32_t scriptId, callbackId;
+	bool timerEvent;
+	std::string eventDesc;
 
 	std::cout << std::endl << "Lua Script Error: ";
 	if(scriptInterface)
@@ -8058,14 +8058,16 @@ int32_t LuaScriptInterface::luaAddEvent(lua_State* L)
 	for(int32_t i = 0; i < parameters - 2; ++i) //-2 because addEvent needs at least two parameters
 		params.push_back(luaL_ref(L, LUA_REGISTRYINDEX));
 
+	uint32_t delay = std::max((int64_t)SCHEDULER_MINTICKS, popNumber(L));
 	LuaTimerEventDesc eventDesc;
+
 	eventDesc.parameters = params;
 	eventDesc.function = luaL_ref(L, LUA_REGISTRYINDEX);
 	eventDesc.scriptId = env->getScriptId();
 
 	scriptInterface->m_lastEventTimerId++;
 	scriptInterface->m_timerEvents[scriptInterface->m_lastEventTimerId] = eventDesc;
-	Scheduler::getScheduler().addEvent(createSchedulerTask(std::max((int64_t)100, popNumber(L)), boost::bind(
+	Scheduler::getScheduler().addEvent(createSchedulerTask(delay, boost::bind(
 		&LuaScriptInterface::executeTimerEvent, scriptInterface, scriptInterface->m_lastEventTimerId)));
 
 	lua_pushnumber(L, scriptInterface->m_lastEventTimerId);
