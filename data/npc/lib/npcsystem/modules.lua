@@ -132,7 +132,7 @@ if(Modules == nil) then
 			error('StdModule.bless called without any npcHandler instance.')
 		end
 
-		if(not npcHandler:isFocused(cid)) then
+		if(not npcHandler:isFocused(cid) or getWorldType() == WORLD_TYPE_PVP_ENFORCED) then
 			return false
 		end
 
