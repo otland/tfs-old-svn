@@ -171,7 +171,7 @@ bool Spawns::parseSpawnNode(xmlNodePtr p, bool checkDuplicate)
 				placePos.y += intValue;
 
 			if(readXMLInteger(tmpNode, "z", intValue))
-				placePos.z += intValue;
+				placePos.z /*+*/= intValue;
 
 			Direction direction = NORTH;
 			if(readXMLInteger(tmpNode, "direction", intValue))
@@ -210,7 +210,7 @@ bool Spawns::parseSpawnNode(xmlNodePtr p, bool checkDuplicate)
 				placePos.y += intValue;
 
 			if(readXMLInteger(tmpNode, "z", intValue))
-				placePos.z += intValue;
+				placePos.z /*+*/= intValue;
 
 			Direction direction = NORTH;
 			if(readXMLInteger(tmpNode, "direction", intValue))
