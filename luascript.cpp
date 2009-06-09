@@ -746,13 +746,13 @@ const std::string& LuaScriptInterface::getFileById(int32_t scriptId)
 
 void LuaScriptInterface::reportError(const char* function, const std::string& errorDesc)
 {
-	ScriptEnviroment* env = getScriptEnv();
-	LuaScriptInterface* scriptInterface;
-	env->getEventInfo(scriptId, eventDesc, scriptInterface, callbackId, timerEvent);
-
 	int32_t scriptId, callbackId;
 	bool timerEvent;
 	std::string eventDesc;
+
+	LuaScriptInterface* scriptInterface;
+	ScriptEnviroment* env = getScriptEnv();
+	env->getEventInfo(scriptId, eventDesc, scriptInterface, callbackId, timerEvent);
 
 	std::cout << std::endl << "Lua Script Error: ";
 	if(scriptInterface)
