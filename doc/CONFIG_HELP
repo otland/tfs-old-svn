@@ -460,9 +460,9 @@
 
 		storeTrash
 			Define if trash items should be stored in memory.
-			It costs more memory but will perform a lot faster cleaning.
+			It costs more memory but performs a lot faster cleaning.
 			Otherwise, if you disable this option, cleaning will be performed by going through all the tiles
-				and looking for trash. (which of course consumes more CPU resources)
+				and looking for trash. (what consumes much more CPU resources of course)
 			Default: yes
 
 		cleanProtectedZones
@@ -474,6 +474,12 @@
 			Works only on Windows
 			Values: high, higher, realtime
 			Default: high
+
+		coresUsed
+			Specifies a cores of CPU that are used to run TFS
+			Put a cores' numbers, counting from 0 and separate them with command
+			(fe. coresUsed = "0, 1, 2, 3" means you have a quad core 
+				and want TFS to use all of its cores)
 
 		optimizeDatabaseAtStartup
 			Should be database optimized at server startup?
