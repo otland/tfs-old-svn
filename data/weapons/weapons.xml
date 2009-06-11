@@ -191,12 +191,18 @@
 	<melee id="7420" level="70" unproperly="1" event="function" value="default"/>
 	<melee id="7434" level="75" unproperly="1" event="function" value="default"/>
 	<melee id="6553" level="75" unproperly="1" event="function" value="default"/>
+	<melee id="7455" level="80" unproperly="1" event="function" value="default"/>
 	<melee id="7453" level="85" unproperly="1" event="function" value="default">
 		<vocation name="Knight"/>
 	</melee>
 	<melee id="2431" level="90" unproperly="1" event="function" value="default"/>
 	<melee id="2415" level="95" unproperly="1" event="function" value="default">
 		<vocation name="Knight"/>
+	</melee>
+	<melee id="7435" level="85" unproperly="1" event="function" value="default"/>
+	<melee id="7423" level="85" unproperly="1" event="function" value="default">
+		<vocation name="Knight"/>
+		<vocation name="Elite Knight" showInDescription="0"/>
 	</melee>
 	<melee id="8924" level="110" unproperly="1" event="function" value="default"/>
 	<melee id="8925" level="130" unproperly="1" event="function" value="default"/>
@@ -252,6 +258,7 @@
 	<melee id="7430" level="30" unproperly="1" event="function" value="default"/>
 	<melee id="2436" level="30" unproperly="1" event="function" value="default"/>
 	<melee id="7437" level="30" unproperly="1" event="function" value="default"/>
+	<melee id="7424" level="30" unproperly="1" event="function" value="default"/>
 	<melee id="3961" level="35" unproperly="1" event="function" value="default"/>
 	<melee id="2424" level="35" unproperly="1" event="function" value="default"/>
 	<melee id="7452" level="30" unproperly="1" event="function" value="default">
@@ -278,8 +285,9 @@
 	</melee>
 	<melee id="7421" level="65" unproperly="1" event="function" value="default"/>
 	<melee id="2444" level="65" unproperly="1" event="function" value="default"/>
+	<melee id="7421" level="65" unproperly="1" event="function" value="default"/>
 	<melee id="2452" level="70" unproperly="1" event="function" value="default"/>
-	<melee id="7422" level="75" unproperly="1" event="function" value="default"/>
+	<melee id="7422" level="70" unproperly="1" event="function" value="default"/>
 	<melee id="7429" level="75" unproperly="1" event="function" value="default"/>
 	<melee id="2453" level="75" unproperly="1" event="function" value="default"/>
 	<melee id="2437" level="80" unproperly="1" event="function" value="default"/>

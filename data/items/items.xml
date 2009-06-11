@@ -4617,7 +4617,7 @@
 	</item>
 	<item id="2508" article="a" name="native armor">
 		<attribute key="weight" value="5000"/>
-		<attribute key="armor" value="1"/>
+		<attribute key="armor" value="7"/>
 		<attribute key="slotType" value="body"/>
 	</item>
 	<item id="2509" article="a" name="steel shield">
@@ -16088,8 +16088,12 @@
 		<attribute key="weaponType" value="sword"/>
 		<attribute key="extradef" value="1"/>
 	</item>
-	<item id="7409" name="">
-		<attribute key="weight" value="0"/>
+	<item id="7409" article="an" name="imaginary staff">
+		<attribute key="weight" value="7500"/>
+		<attribute key="defense" value="30"/>
+		<attribute key="attack" value="46"/>
+		<attribute key="weaponType" value="club"/>
+		<attribute key="slotType" value="two-handed"/>
 	</item>
 	<item id="7410" article="a" name="queen's sceptre">
 		<attribute key="weight" value="2300"/>
@@ -16167,7 +16171,7 @@
 		<attribute key="weaponType" value="axe"/>
 		<attribute key="extradef" value="2"/>
 	</item>
-	<item id="7421" article="a" name="onyx flail">
+	<item id="7421" name="onyx flail">
 		<attribute key="weight" value="2600"/>
 		<attribute key="defense" value="18"/>
 		<attribute key="attack" value="45"/>
@@ -16180,8 +16184,12 @@
 		<attribute key="weaponType" value="club"/>
 		<attribute key="extradef" value="1"/>		
 	</item>
-	<item id="7423" name="">
-		<attribute key="weight" value="0"/>
+	<item id="7423" article="a" name="Skullcrasher">
+		<attribute key="weight" value="12000"/>
+		<attribute key="defense" value="20"/>
+		<attribute key="attack" value="51"/>
+		<attribute key="weaponType" value="club"/>
+		<attribute key="slotType" value="two-handed"/>
 	</item>
 	<item id="7424" article="a" name="lunar staff">
 		<attribute key="weight" value="3800"/>
@@ -16261,8 +16269,12 @@
 		<attribute key="weaponType" value="axe"/>
 		<attribute key="extradef" value="3"/>
 	</item>
-	<item id="7435" name="">
-		<attribute key="weight" value="0"/>
+	<item id="7435" article="an" name="impaler">
+		<attribute key="weight" value="8200"/>
+		<attribute key="defense" value="25"/>
+		<attribute key="attack" value="49"/>
+		<attribute key="weaponType" value="axe"/>
+		<attribute key="extradef" value="-2"/>
 	</item>
 	<item id="7436" name="angelic axe">
 		<attribute key="weight" value="5600"/>
@@ -16357,8 +16369,12 @@
 		<attribute key="weaponType" value="axe"/>
 		<attribute key="slotType" value="two-handed"/>
 	</item>
-	<item id="7455" name="">
-		<attribute key="weight" value="0"/>
+	<item id="7455" article="a" name="mythril axe">
+		<attribute key="weight" value="5500"/>
+		<attribute key="defense" value="28"/>
+		<attribute key="attack" value="48"/>
+		<attribute key="weaponType" value="axe"/>
+		<attribute key="extradef" value="2"/>
 	</item>
 	<item id="7456" article="a" name="noble axe">
 		<attribute key="weight" value="3800"/>
@@ -19974,7 +19990,13 @@
 		<attribute key="weaponType" value="axe"/>
 		<attribute key="extradef" value="3"/>
 	</item>
-	<item id="8926"/>
+	<item id="8926" article="a" name="demonwing axe">
+		<attribute key="weight" value="12000"/>
+		<attribute key="defense" value="20"/>
+		<attribute key="attack" value="53"/>
+		<attribute key="weaponType" value="axe"/>
+		<attribute key="slotType" value="two-handed"/>
+	</item>
 	<item id="8927" article="a" name="dark trinity mace">
 		<attribute key="weight" value="9900"/>
 		<attribute key="defense" value="32"/>
