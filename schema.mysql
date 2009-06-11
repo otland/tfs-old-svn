@@ -307,7 +307,7 @@ CREATE TABLE `player_items`
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
-REATE TABLE `player_namelocks`
+CREATE TABLE `player_namelocks`
 (
 	`name` VARCHAR(255) NOT NULL,
 	`new_name` VARCHAR(255) NOT NULL,
