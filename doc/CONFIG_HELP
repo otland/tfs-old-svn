@@ -101,6 +101,31 @@
 			It happens mostly when player use unofficial software to play.
 			Default: no
 
+	*UNJUSTIFIED KILLS
+		redSkullLength
+			Default: 30 * 24 * 60 * 60
+
+		dailyFragsToRedSkull
+			Default: 3
+
+		weeklyFragsToRedSkull
+			Default: 5
+
+		monthlyFragsToRedSkull
+			Default: 10
+
+		dailyFragsToBanishment
+			Default: dailyFragsToRedSkull
+
+		weeklyFragsToBanishment
+			Default: weeklyFragsToRedSkull
+
+		monthlyFragsToBanishment
+			Default: monthlyFragsToRedSkull
+
+		advancedFragList
+			Default: no
+
 	*BATTLE
 		worldType
 			Values: pvp, no-pvp, pvp-enforced
@@ -163,17 +188,23 @@
 			It works only for melee attacks.
 			Default: no
 
-		experienceByKillingPlayers
+		experienceFromKilledPlayers
 			System, used in global Tibia, on pvp-enforced servers.
 			Specify if player should receive experience by killing other player.
 			Experience is only received if _killer_ level is lower than _killed_ level.
 			Default: no
 
+		minLevelThresholdForKilledPlayer
+			Default: 0.9
+
+		maxLevelThresholdForKilledPlayer
+			Default: 1.1
+
 		showHealingDamage
 			Display effect with health points gained when creature was healed?
 			Default: no
 
-		showHealingDamageForMonster
+		showHealingDamageForMonsters
 			Should healing effect was also displayed for monsters?
 			Default: yes
 
@@ -224,7 +255,12 @@
 			ip address of a server.
 			Default: 127.0.0.1
 
+		bindOnlyConfiguredIpAddress
+			Default: no
+
 		loginPort
+			Port where login server will listen.
+			Login server means server which responds with character list.
 			Default: 7171
 
 		gamePort
@@ -235,9 +271,11 @@
 			Default: 7172
 
 		adminPort
+			Port where admin protocol will listen.
 			Default: 7171
 
 		statusPort
+			Port where status protocol will listen.
 			Default: 7171
 
 		loginTries
@@ -269,7 +307,7 @@
 			Default: no
 
 		onePlayerOnlinePerAccount
-			If enabled, only one player per account will be able to login.
+			If enabled, only one player per account will be able to be online.
 			Default: yes
 
 		allowClones
@@ -303,6 +341,9 @@
 
 		loginOnlyWithLoginServer
 			Enable it only if you're using multi world system. This is just a game server and you won't enable to get characters list.
+			Default: no
+
+		premiumPlayerSkipWaitList
 			Default: no
 
 	*DATABASE
@@ -357,6 +398,12 @@
 			Should players' deaths be storaged in database?
 			Default: yes
 
+		deathAssistCount
+			Default: 1
+
+		deathListRequiredTime
+			Default: 1 * 60 * 1000
+
 		maxDeathRecords
 			Player deathlist limit.
 			Ignored if deathList is disabled.
@@ -392,6 +439,7 @@
 
 	*HOUSES
 		buyableAndSellableHouses
+			Ingame house system enabled?
 			Default: yes
 
 		houseNeedPremium
@@ -405,6 +453,7 @@
 			Default: yes
 
 		levelToBuyHouse
+			Level needed to buy a house.
 			Default: 1
 
 		housesPerAccount
@@ -432,20 +481,26 @@
 		timeBetweenExActions
 			Default: 1000
 
-		hotkeyAimbotEnabled
-			Should system with attacking via hotkeys and battle window be enabled? (Cipsoft antibot features)
-			Default: yes
-
 		checkCorpseOwner
 			Defines if corpse should be checked for owner before opening.
 			So for first x seconds, only creature killer is able to open it.
 			Default: yes
 
+		hotkeyAimbotEnabled
+			Should system with attacking via hotkeys and battle window be enabled? (Cipsoft antibot features)
+			Default: yes
+
+		maximumDoorLevel
+			Default: 500
+
 	*MAP
 		mapName
+			Map name which server will load.
+			NOTE: if map file is named 'somemap.otbm' then just paste here 'somemap'.
 			Default: forgotten
 
 		mapAuthor
+			Map author. Used by status protocol (ots lists)
 			Default: Unknown
 
 		randomizeTiles
@@ -460,9 +515,9 @@
 
 		storeTrash
 			Define if trash items should be stored in memory.
-			It costs more memory but performs a lot faster cleaning.
+			It costs more memory but will perform a lot faster cleaning.
 			Otherwise, if you disable this option, cleaning will be performed by going through all the tiles
-				and looking for trash. (what consumes much more CPU resources of course)
+				and looking for trash. (which of course consumes more CPU resources)
 			Default: yes
 
 		cleanProtectedZones
@@ -475,11 +530,15 @@
 			Values: high, higher, realtime
 			Default: high
 
+		niceLevel
+			Default: 5
+
 		coresUsed
 			Specifies a cores of CPU that are used to run TFS
 			Put a cores' numbers, counting from 0 and separate them with command
-			(fe. coresUsed = "0, 1, 2, 3" means you have a quad core 
+			(fe. coresUsed = "0, 1, 2, 3" means you have a quad core
 				and want TFS to use all of its cores)
+			Default: -1
 
 		optimizeDatabaseAtStartup
 			Should be database optimized at server startup?
@@ -495,14 +554,18 @@
 			while starting up when current version is not up-to-date
 			and wait for user interaction (yes/no) until continuing start-up.
 			Default: yes
-			
+
+	*MUTED BUFFER
+		maxMessageBuffer
+			Default: 4
+
+		bufferMutedOnSpellFailure
+			Default: no
+
 	*MISCELLANEOUS
 		dataDirectory
 			Directory, from where all data used be server is loaded.
 			Default: data/
-
-		maxMessageBuffer
-			Default: 4
 
 		kickIdlePlayerAfterMinutes
 			Default: 15
@@ -544,6 +607,8 @@
 			Default: no
 
 		emoteSpells
+			If enabled, spells wont be visible in 'Default' channel, but as orange effect.
+			Anti spam feature.
 			Default: no
 
 		gainExperienceColor
@@ -561,11 +626,17 @@
 
 		storePlayerDirection
 			Should players look direction be saved and restored while logging?
-			In global tibia it'ss disabled.
+			In global tibia it's disabled.
 			Default: no
 
 		playerQueryDeepness
 			Default: 2
+
+		blackSkulledDeathHealth
+			Default: 40
+
+		blackSkulledDeathMana
+			Default: 0
 
 	*PREMIUM-RELATED
 		freePremium
@@ -673,20 +744,28 @@
 		extraPartyExperiencePercent
 			Default: 5
 
+		experienceShareActivity
+			Default: 2 * 60 * 1000
+
 	*GLOBAL SAVE
 		NOTE: globalSaveHour means like 03:00, not that it will save every 3 hours,
 		if you want such a system please check out data/globalevents/globalevents.xml.
 
 		globalSaveEnabled
+			Should daily saving system aka global tibia be enabled?
 			Default: no
 
 		globalSaveHour
+			Hour when server will be closed.
 			Default: 8
 
 		shutdownAtGlobalSave
+			Defines if server should be closed at global save.
 			Default: yes
 
 		cleanMapAtGlobalSave
+			Defines if map should be cleaned at global save.
+			NOTE: Its ignored when shutdownAtGlobalSave is enabled.
 			Default: no
 
 	*SPAWNS
@@ -742,7 +821,8 @@
 		NOTE: A kind of logging listed below does not work in GUI version.
 		For such, please compile the software with __GUI_LOGS__ flag.
 
-		runeFile
+		runFile
+			It will save process pid to this file if specified.
 			Default: ""
 
 		outLogName
