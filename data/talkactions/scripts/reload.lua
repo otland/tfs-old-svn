@@ -20,6 +20,7 @@ local reloadInfo = {
 	{RELOAD_TALKACTIONS, "talkactions", "talk actions", "talk", "commands", "talkaction", "talk action"},
 	{RELOAD_VOCATIONS, "vocations", "vocation"},
 	{RELOAD_WEAPONS, "weapons", "weapon"},
+	{RELOAD_MODS, "mods", "modifications"},
 	{RELOAD_ALL, "all", "everything"}
 }
 
