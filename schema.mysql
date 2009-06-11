@@ -11,6 +11,7 @@ DROP TABLE IF EXISTS `bans`;
 DROP TABLE IF EXISTS `house_lists`;
 DROP TABLE IF EXISTS `houses`;
 DROP TABLE IF EXISTS `player_items`;
+DROP TABLE IF EXISTS `player_namelocks`;
 DROP TABLE IF EXISTS `player_skills`;
 DROP TABLE IF EXISTS `player_storage`;
 DROP TABLE IF EXISTS `player_viplist`;
@@ -304,6 +305,13 @@ CREATE TABLE `player_items`
 	KEY (`player_id`),
 	UNIQUE (`player_id`, `sid`),
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
+) ENGINE = InnoDB;
+
+REATE TABLE `player_namelocks`
+(
+	`name` VARCHAR(255) NOT NULL,
+	`new_name` VARCHAR(255) NOT NULL,
+	`date` BIGINT NOT NULL DEFAULT 0
 ) ENGINE = InnoDB;
 
 CREATE TABLE `player_skills`

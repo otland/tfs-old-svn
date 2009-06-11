@@ -17,6 +17,8 @@
 #include "otpch.h"
 #include "mailbox.h"
 
+#include "configmanager.h"
+
 #include "player.h"
 #include "iologindata.h"
 #include "depot.h"
@@ -24,6 +26,7 @@
 
 #include "game.h"
 extern Game g_game;
+extern ConfigManager g_config;
 
 ReturnValue Mailbox::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 	uint32_t flags) const
@@ -189,6 +192,16 @@ bool Mailbox::getReceiver(Item* item, std::string& name, uint32_t& dp)
 	Town* town = Towns::getInstance().getTown(strTown);
 	if(!town)
 		return false;
+
+	IntegerVec disabledTowns = vectorAtoi(explodeString(g_config.getString(ConfigManager::MAILBOX_DISABLED_TOWNS), ","));
+	if(disabledTowns[0] != -1)
+	{
+		for(IntegerVec::iterator it = disabledTowns.begin(); it != disabledTowns.end(); ++it)
+		{
+			if(town->getTownID() == (*it))
+				return false;
+		}
+	}
 
 	dp = town->getTownID();
 	return true;

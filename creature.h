@@ -202,6 +202,9 @@ class Creature : public AutoID, virtual public Thing
 		bool getHideHealth() const {return hideHealth;}
 		void setHideHealth(bool v) {hideHealth = v;}
 
+		SpeakClasses getSpeakType() const {return speakType;}
+		void setSpeakType(SpeakClasses type) {speakType = type;}
+
 		const Position& getMasterPos() const {return masterPos;}
 		void setMasterPos(const Position& pos, uint32_t radius = 1) {masterPos = pos; masterRadius = radius;}
 
@@ -446,6 +449,8 @@ class Creature : public AutoID, virtual public Thing
 		int32_t mana, manaMax;
 
 		bool hideName, hideHealth, cannotMove;
+		SpeakClasses speakType;
+
 		Outfit_t currentOutfit;
 		Outfit_t defaultOutfit;
 

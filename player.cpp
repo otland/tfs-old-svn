@@ -196,6 +196,8 @@ std::string Player::getDescription(int32_t lookDistance) const
 			s << " is " << vocation->getDescription();
 		else
 			s << " has no vocation";
+
+		s << getSpecialDescription();
 	}
 
 	std::string tmp;
@@ -1169,6 +1171,10 @@ void Player::sendCancelMessage(ReturnValue message) const
 
 		case RET_NOPARTYMEMBERSINRANGE:
 			sendCancel("No party members in range.");
+			break;
+
+		case RET_TILEISFULL:
+			sendCancel("You can not add more items on this tile.");
 			break;
 
 		case RET_DONTSHOWMESSAGE:

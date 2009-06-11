@@ -1263,6 +1263,18 @@ void LuaScriptInterface::registerFunctions()
 	//getCreatureMaxMana(cid)
 	lua_register(m_luaState, "getCreatureMaxMana", LuaScriptInterface::luaGetCreatureMaxMana);
 
+	//getCreatureHideHealth(cid)
+	lua_register(m_luaState, "getCreatureHideHealth", LuaScriptInterface::luaGetCreatureHideHealth);
+
+	//doCreatureSetHideHealth(cid, hide)
+	lua_register(m_luaState, "doCreatureSetHideHealth", LuaScriptInterface::luaDoCreatureSetHideHealth);
+
+	//getCreatureSpeakType(cid)
+	lua_register(m_luaState, "getCreatureSpeakType", LuaScriptInterface::luaGetCreatureSpeakType);
+
+	//doCreatureSetSpeakType(cid, type)
+	lua_register(m_luaState, "doCreatureSetSpeakType", LuaScriptInterface::luaDoCreatureSetSpeakType);
+
 	//getCreatureLookDirection(cid)
 	lua_register(m_luaState, "getCreatureLookDirection", LuaScriptInterface::luaGetCreatureLookDirection);
 
@@ -1356,11 +1368,11 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerGUID(cid)
 	lua_register(m_luaState, "getPlayerGUID", LuaScriptInterface::luaGetPlayerGUID);
 
-	//getPlayerNameDescription(cid)
-	lua_register(m_luaState, "getPlayerNameDescription", LuaScriptInterface::luaGetPlayerNameDescription);
+	//getPlayerSpecialDescription(cid)
+	lua_register(m_luaState, "getPlayerSpecialDescription", LuaScriptInterface::luaGetPlayerSpecialDescription);
 
-	//doPlayerSetNameDescription(cid, description)
-	lua_register(m_luaState, "doPlayerSetNameDescription", LuaScriptInterface::luaDoPlayerSetNameDescription);
+	//doPlayerSetSpecialDescription(cid, desc)
+	lua_register(m_luaState, "doPlayerSetSpecialDescription", LuaScriptInterface::luaDoPlayerSetSpecialDescription);
 
 	//getPlayerAccountId(cid)
 	lua_register(m_luaState, "getPlayerAccountId", LuaScriptInterface::luaGetPlayerAccountId);
@@ -1431,7 +1443,7 @@ void LuaScriptInterface::registerFunctions()
 	//getItemRWInfo(uid)
 	lua_register(m_luaState, "getItemRWInfo", LuaScriptInterface::luaGetItemRWInfo);
 
-	//getThingFromPos(pos[, displayError])
+	//getThingFromPos(pos)
 	lua_register(m_luaState, "getThingFromPos", LuaScriptInterface::luaGetThingFromPos);
 
 	//getThing(uid)
@@ -1520,6 +1532,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//setCreatureMaxMana(cid, mana)
 	lua_register(m_luaState, "setCreatureMaxMana", LuaScriptInterface::luaSetCreatureMaxMana);
+
+	//setPlayerMaxCap(cid, cap)
+	lua_register(m_luaState, "setPlayerMaxCap", LuaScriptInterface::luaSetPlayerMaxCap);
 
 	//doPlayerAddSpentMana(cid, amount)
 	lua_register(m_luaState, "doPlayerAddSpentMana", LuaScriptInterface::luaDoPlayerAddSpentMana);
@@ -1725,7 +1740,7 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerGUIDByName(name[, multiworld])
 	lua_register(m_luaState, "getPlayerGUIDByName", LuaScriptInterface::luaGetPlayerGUIDByName);
 
-	//getPlayerNameByGUID(guid[, multiworld])
+	//getPlayerNameByGUID(guid[, multiworld[, displayError]])
 	lua_register(m_luaState, "getPlayerNameByGUID", LuaScriptInterface::luaGetPlayerNameByGUID);
 
 	//registerCreatureEvent(uid, eventName)
@@ -2194,6 +2209,12 @@ void LuaScriptInterface::registerFunctions()
 	//getWaypointsList()
 	lua_register(m_luaState, "getWaypointsList", LuaScriptInterface::luaGetWaypointsList);
 
+	//getTalkActionsList()
+	lua_register(m_luaState, "getTalkActionsList", LuaScriptInterface::luaGetTalkActionsList);
+
+	//getExperienceStagesList()
+	lua_register(m_luaState, "getExperienceStagesList", LuaScriptInterface::luaGetExperienceStagesList);
+
 	//isIpBanished(ip[, mask])
 	lua_register(m_luaState, "isIpBanished", LuaScriptInterface::luaIsIpBanished);
 
@@ -2412,8 +2433,8 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 	Position pos;
 	switch(info)
 	{
-		case PlayerInfoNameDescription:
-			lua_pushstring(L, player->getNameDescription().substr(player->getName().length()).c_str());
+		case PlayerInfoSpecialDescription:
+			lua_pushstring(L, player->getSpecialDescription().c_str());
 			return 1;
 		case PlayerInfoAccess:
 			value = player->getAccess();
@@ -2542,9 +2563,9 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 }
 
 //getPlayer[Info](uid)
-int32_t LuaScriptInterface::luaGetPlayerNameDescription(lua_State* L)
+int32_t LuaScriptInterface::luaGetPlayerSpecialDescription(lua_State* L)
 {
-	return internalGetPlayerInfo(L, PlayerInfoNameDescription);
+	return internalGetPlayerInfo(L, PlayerInfoSpecialDescription);
 }
 
 int32_t LuaScriptInterface::luaGetPlayerFood(lua_State* L)
@@ -2733,15 +2754,15 @@ int32_t LuaScriptInterface::luaGetPlayerAccountManager(lua_State* L)
 }
 //
 
-int32_t LuaScriptInterface::luaDoPlayerSetNameDescription(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerSetSpecialDescription(lua_State* L)
 {
-	//doPlayerSetNameDescription(cid, description)
+	//doPlayerSetSpecialDescription(cid, description)
 	std::string description = popString(L);
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		player->nameDescription = player->getName() + description;
+		player->setSpecialDescription(description);
 		lua_pushboolean(L, true);
 	}
 	else
@@ -3176,8 +3197,7 @@ int32_t LuaScriptInterface::luaDoTeleportThing(lua_State* L)
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(Thing* tmp = env->getThingByUID(popNumber(L)))
-		lua_pushboolean(L, g_game.internalTeleport(tmp, pos, pushMove) == RET_NOERROR ?
-			true : false);
+		lua_pushboolean(L, g_game.internalTeleport(tmp, pos, pushMove) == RET_NOERROR);
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_THING_NOT_FOUND));
@@ -3366,6 +3386,80 @@ int32_t LuaScriptInterface::luaDoPlayerAddSkillTry(lua_State* L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaGetCreatureSpeakType(lua_State* L)
+{
+	//getCreatureSpeakType(uid)
+	ScriptEnviroment* env = getScriptEnv();
+	if(const Creature* creature = env->getCreatureByUID(popNumber(L)))
+		lua_pushnumber(L, (SpeakClasses)creature->getSpeakType());
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoCreatureSetSpeakType(lua_State* L)
+{
+	//doCreatureSetSpeakType(uid, type)
+	SpeakClasses type = (SpeakClasses)popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+	{
+		if(type < SPEAK_CLASS_FIRST || type > SPEAK_CLASS_LAST)
+		{
+			reportErrorFunc("Invalid speak type!");
+			lua_pushboolean(L, false);
+			return 1;
+		}
+
+		creature->setSpeakType(type);
+		lua_pushboolean(L, true);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetCreatureHideHealth(lua_State* L)
+{
+	//getCreatureHideHealth(cid)
+	ScriptEnviroment* env = getScriptEnv();
+
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+		lua_pushboolean(L, creature->getHideHealth());
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoCreatureSetHideHealth(lua_State* L)
+{
+	//doCreatureSetHideHealth(cid, hide)
+	bool hide = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+	{
+		creature->setHideHealth(hide);
+		g_game.addCreatureHealth(creature);
+		lua_pushboolean(L, true);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+	return 1;
+}
 
 int32_t LuaScriptInterface::luaDoCreatureAddHealth(lua_State* L)
 {
@@ -5644,6 +5738,7 @@ int32_t LuaScriptInterface::luaSetCombatFormula(lua_State* L)
 	double maxb = popFloatNumber(L), maxa = popFloatNumber(L),
 		minb = popFloatNumber(L), mina = popFloatNumber(L);
 	formulaType_t type = (formulaType_t)popNumber(L);
+
 	if(Combat* combat = env->getCombatObject(popNumber(L)))
 	{
 		combat->setPlayerCombatValues(type, mina, minb, maxa, maxb);
@@ -5671,6 +5766,7 @@ int32_t LuaScriptInterface::luaSetConditionFormula(lua_State* L)
 
 	double maxb = popFloatNumber(L), maxa = popFloatNumber(L),
 		minb = popFloatNumber(L), mina = popFloatNumber(L);
+
 	if(ConditionSpeed* condition = dynamic_cast<ConditionSpeed*>(env->getConditionObject(popNumber(L))))
 	{
 		condition->setFormulaVars(mina, minb, maxa, maxb);
@@ -6469,6 +6565,52 @@ int32_t LuaScriptInterface::luaGetMonsterLootList(lua_State* L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaGetTalkActionsList(lua_State* L)
+{
+	//getTalkactionsList()
+	TalkActionsMap talksMap = g_talkActions->getTalksMap();
+	TalkActionsMap::iterator it = talksMap.begin();
+
+	lua_newtable(L);
+	for(uint32_t i = 1; it != talksMap.end(); ++it, ++i)
+	{
+		lua_pushnumber(L, i);
+		lua_newtable(L);
+
+		setField(L, "words", it->first);
+		setField(L, "access", it->second->getAccess());
+		setField(L, "log", it->second->isLogged());
+		lua_settable(L, -3);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetExperienceStagesList(lua_State* L)
+{
+	//getExperienceStagesList()
+	if(!g_config.getBool(ConfigManager::EXPERIENCE_STAGES))
+	{
+	    lua_pushboolean(L, false);
+	    return true;
+	}
+
+	StageList stages = g_game.getExperienceStages();
+	StageList::iterator it = stages.begin();
+
+	lua_newtable(L);
+	for(uint32_t i = 1; it != stages.end(); ++it, ++i)
+	{
+		lua_pushnumber(L, i);
+		lua_newtable(L);
+
+		setField(L, "level", it->first);
+		setFieldDouble(L, "multiplier", it->second);
+		lua_settable(L, -3);
+	}
+
+	return 1;
+}
+
 int32_t LuaScriptInterface::luaDoAddCondition(lua_State* L)
 {
 	//doAddCondition(cid, condition)
@@ -6986,8 +7128,7 @@ int32_t LuaScriptInterface::luaIsContainer(lua_State* L)
 {
 	//isContainer(uid)
 	ScriptEnviroment* env = getScriptEnv();
-	lua_pushboolean(L, env->getContainerByUID(popNumber(L)) ?
-		true : false);
+	lua_pushboolean(L, env->getContainerByUID(popNumber(L)) ? true : false);
 	return 1;
 }
 
@@ -8541,6 +8682,25 @@ int32_t LuaScriptInterface::luaSetCreatureMaxMana(lua_State* L)
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaSetPlayerMaxCap(lua_State* L)
+{
+	//setPlayerMaxCap(uid, cap)
+	double cap = popFloatNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	if(Player* player = env->getPlayerByUID(popNumber(L)))
+	{
+		player->setMaxCapacity(cap);
+		lua_pushboolean(L, true);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
 	return 1;

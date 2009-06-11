@@ -66,10 +66,10 @@ inline void Actions::clearMap(ActionUseMap& map)
 
 void Actions::clear()
 {
+	clearMap(useItemMap);
 	clearMap(uniqueItemMap);
 	clearMap(actionItemMap);
 
-	clearMap(useItemMap);
 	m_scriptInterface.reInitState();
 }
 

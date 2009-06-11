@@ -246,6 +246,11 @@
 			Default container player gets after death, when he have empty container slot.
 			Default: 1987
 
+		addManaSpentInPVPZone
+			Should player be able to train magic level in PVP zones?
+			Protection against mana training in PVP Arena, where mana is re-newed when player dies.
+			Default: yes
+
 	*CONNECTION
 		worldId
 			Change only if you want to use multiworld feature.
@@ -524,6 +529,11 @@
 			Should protection zone tiles be cleaned at map cleaning?
 			Default: yes
 
+		mailboxDisabledTowns
+			Town IDs where player can't send parcel/letters.
+			Example "1,5,9"
+			Default: -1 (Means, no towns disabled)
+
 	*STARTUP
 		defaultPriority
 			Works only on Windows
@@ -599,6 +609,11 @@
 			If you disable this, you'll see all ghost gamemasters in normal outfits.
 			Default: no
 
+		ghostModeSpellEffects
+			Display effects while casting spells in ghost mode?
+			If 'no', then no one will see that ghost GM casted a spell.
+			Default: yes
+
 		displaySkillLevelOnAdvance
 			Default: no
 
@@ -636,6 +651,14 @@
 			Default: 40
 
 		blackSkulledDeathMana
+			Default: 0
+
+		maxItemsPerPZTile
+			Maximum items which can be placed on 1 protection zone tile.
+			Default: 0
+
+		maxItemsPerHouseTile
+			Maximum items which can be placed on 1 house tile.
 			Default: 0
 
 	*PREMIUM-RELATED

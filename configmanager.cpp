@@ -120,7 +120,6 @@ bool ConfigManager::load()
 	m_confNumber[DEFAULT_DESPAWNRANGE] = getGlobalNumber("deSpawnRange", 2);
 	m_confNumber[DEFAULT_DESPAWNRADIUS] = getGlobalNumber("deSpawnRadius", 50);
 	m_confNumber[PZ_LOCKED] = getGlobalNumber("pzLocked", 60 * 1000);
-	m_confString[LOGIN_MSG] = getGlobalString("loginMessage", "Welcome to the Forgotten Server!");
 	m_confString[SERVER_NAME] = getGlobalString("serverName");
 	m_confString[OWNER_NAME] = getGlobalString("ownerName");
 	m_confString[OWNER_EMAIL] = getGlobalString("ownerEmail");
@@ -263,6 +262,11 @@ bool ConfigManager::load()
 	m_confNumber[BLACK_SKULL_DEATH_MANA] = getGlobalNumber("blackSkulledDeathMana", 0);
 	m_confNumber[DEATHLIST_REQUIRED_TIME] = getGlobalNumber("deathListRequiredTime", 1 * 60 * 1000);
 	m_confNumber[EXPERIENCE_SHARE_ACTIVITY] = getGlobalNumber("experienceShareActivity", 2 * 60 * 1000);	
+	m_confBool[GHOST_SPELL_EFFECTS] = getGlobalBool("ghostModeSpellEffects", "yes");
+	m_confBool[PVPZONE_ADDMANASPENT] = getGlobalBool("addManaSpentInPVPZone", "no");
+	m_confNumber[ITEMLIMIT_PROTECTIONZONE] = getGlobalNumber("maxItemsPerPZTile", 0);
+	m_confNumber[ITEMLIMIT_HOUSETILE] = getGlobalNumber("maxItemsPerHouseTile", 0);
+	m_confString[MAILBOX_DISABLED_TOWNS] = getGlobalString("mailboxDisabledTowns", "-1");
 
 	m_loaded = true;
 	return true;

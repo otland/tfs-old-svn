@@ -62,13 +62,14 @@
 	pushCreatureDelay = 2 * 1000
 	deathContainerId = 1987
 	gainExperienceColor = 215
+	addManaSpentInPVPZone = "yes"
 
 	-- Experience from players
 	-- NOTE: min~Threshold* set to 0 will disable the minimum threshold:
 	-- player will gain experience from every lower leveled player.
 	-- max~Threshold* set to 0 will disable the maximum threshold:
 	-- player will gain experience from every higher leveled player.
-	experienceByKillingPlayers = "no"
+	experienceFromKilledPlayers = "no"
 	minLevelThresholdForKilledPlayer = 0.9
 	maxLevelThresholdForKilledPlayer = 1.1
 
@@ -156,6 +157,7 @@
 	useHouseDataStorage = "no"
 	storeTrash = "yes"
 	cleanProtectedZones = "yes"
+	mailboxDisabledTowns = "-1"
 
 	-- Startup
 	-- NOTE: defaultPriority works only on Windows and niceLevel on *nix
@@ -185,6 +187,7 @@
 	bankSystem = "yes"
 	saveGlobalStorage = "yes"
 	ghostModeInvisibleEffect = "no"
+	ghostModeSpellEffects = "yes"
 	displaySkillLevelOnAdvance = "no"
 	spellNameInsteadOfWords = "no"
 	emoteSpells = "no"
@@ -192,6 +195,10 @@
 	promptExceptionTracerErrorBox = "yes"
 	storePlayerDirection = "no"
 	playerQueryDeepness = 2
+	blackSkulledDeathHealth = 40
+	blackSkulledDeathMana = 0
+	maxItemsPerPZTile = 0
+	maxItemsPerHouseTile = 0
 
 	-- Premium-related
 	freePremium = "no"
@@ -274,7 +281,7 @@
 	adminLogsEnabled = "no"
 	displayPlayersLogging = "yes"
 	prefixChannelLogs = ""
-	runeFile = ""
+	runFile = ""
 	outLogName = ""
 	errorLogName = ""
 	truncateLogsOnStartup = "no"

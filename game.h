@@ -101,8 +101,9 @@ enum ReloadInfo_t
 	RELOAD_TALKACTIONS = 19,
 	RELOAD_VOCATIONS = 20,
 	RELOAD_WEAPONS = 21,
-	RELOAD_ALL = 22,
-	RELOAD_LAST = RELOAD_WEAPONS
+	RELOAD_MODS = 22,
+	RELOAD_ALL = 23,
+	RELOAD_LAST = RELOAD_MODS
 };
 
 struct RuleViolation
@@ -130,6 +131,7 @@ typedef std::map< uint32_t, shared_ptr<RuleViolation> > RuleViolationsMap;
 typedef std::map<Tile*, RefreshBlock_t> RefreshTiles;
 typedef std::vector< std::pair<std::string, uint32_t> > Highscore;
 typedef std::list<Position> Trash;
+typedef std::map<int32_t, float> StageList;
 
 #define EVENT_LIGHTINTERVAL 10000
 #define EVENT_DECAYINTERVAL 1000
@@ -393,7 +395,7 @@ class Game
 		  * \param text The text to say
 		  * \param pos Appear as sent from different position
 		  */
-		bool internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text, Position* pos = NULL);
+		bool internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text, Position* pos = NULL, bool ghostMode = false);
 
 		bool internalStartTrade(Player* player, Player* partner, Item* tradeItem);
 		bool internalCloseTrade(Player* player);
@@ -549,6 +551,7 @@ class Game
 
 		bool loadExperienceStages();
 		double getExperienceStage(uint32_t level, double divider = 1.);
+		const StageList& getExperienceStages() const {return stages;}
 
 		void setGlobalSaveMessage(int16_t key, bool value) {globalSaveMessage[key] = value;}
 		bool getGlobalSaveMessage(int16_t key) const {return globalSaveMessage[key];}
@@ -615,7 +618,6 @@ class Game
 		RefreshTiles refreshTiles;
 		Trash trash;
 
-		typedef std::map<int32_t, float> StageList;
 		StageList stages;
 		uint32_t lastStageLevel;
 

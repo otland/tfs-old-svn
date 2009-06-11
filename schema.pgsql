@@ -243,6 +243,13 @@ CREATE TABLE "player_items"
 	FOREIGN KEY ("player_id") REFERENCES "players"("id") ON DELETE CASCADE
 );
 
+CREATE TABLE "player_namelocks"
+(
+	"name" VARCHAR(255) NOT NULL,
+	"new_name" VARCHAR(255) NOT NULL,
+	"date" BIGINT NOT NULL
+);
+
 CREATE TABLE "player_skills"
 (
 	"player_id" INT NOT NULL DEFAULT 0,

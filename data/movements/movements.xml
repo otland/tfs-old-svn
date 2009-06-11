@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <movements>
+	<!-- Yalahar stairs -->
+	<movevent type="StepIn" itemid="7924;7925" event="script" value="yalaharstairs.lua"/>
+
 	<!-- Decaying tiles -->
 	<movevent type="StepIn" itemid="293" event="script" value="decay.lua"/>
 	<movevent type="StepIn" itemid="461" event="script" value="decay.lua"/>

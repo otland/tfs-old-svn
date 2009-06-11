@@ -23,8 +23,8 @@
 #include "scheduler.h"
 
 #define GLOBAL_THINK_INTERVAL 1000
-class GlobalEvent;
 
+class GlobalEvent;
 class GlobalEvents : public BaseEvents
 {
 	public:

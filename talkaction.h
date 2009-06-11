@@ -35,6 +35,9 @@ enum TalkActionFilter
 };
 
 class TalkAction;
+
+typedef std::map<std::string, TalkAction*> TalkActionsMap;
+
 class TalkActions : public BaseEvents
 {
 	public:
@@ -42,6 +45,7 @@ class TalkActions : public BaseEvents
 		virtual ~TalkActions();
 
 		bool onPlayerSay(Creature* creature, uint16_t channelId, const std::string& words, bool ignoreAccess);
+		const TalkActionsMap& getTalksMap() const {return talksMap;}
 
 	protected:
 		virtual std::string getScriptBaseName() const {return "talkactions";}
@@ -53,7 +57,6 @@ class TalkActions : public BaseEvents
 		virtual LuaScriptInterface& getScriptInterface() {return m_scriptInterface;}
 		LuaScriptInterface m_scriptInterface;
 
-		typedef std::map<std::string, TalkAction*> TalkActionsMap;
 		TalkActionsMap talksMap;
 };
 

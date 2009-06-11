@@ -770,11 +770,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 		query << "`direction` = " << (uint32_t)player->getDirection() << ", ";
 
 	if(!player->isVirtual())
-	{
-		std::string name = player->getName(), nameDescription = player->getNameDescription();
-		if(!player->isAccountManager() && nameDescription.length() > name.length())
-			query << "`description` = " << db->escapeString(nameDescription.substr(name.length())) << ", ";
-	}
+		query << "`description` = " << db->escapeString(player->getSpecialDescription()) << ", ";
 
 	//serialize conditions
 	PropWriteStream propWriteStream;
@@ -1377,7 +1373,10 @@ bool IOLoginData::changeName(uint32_t guid, std::string newName, std::string old
 	}
 
 	nameCacheMap[guid] = newName;
-	return true;
+
+	query.str("");
+	query << "INSERT INTO `player_namelocks` (`name`, `new_name`, `date`) VALUES (" << db->escapeString(oldName) << ", " << db->escapeString(newName) << ", " << time(NULL) << ")";
+	return db->executeQuery(query.str());
 }
 
 bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName, int32_t vocationId, PlayerSex_t sex)

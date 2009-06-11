@@ -676,6 +676,13 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			}
 		}
 
+		if(hasFlag(TILESTATE_PROTECTIONZONE))
+		{
+			const uint32_t itemLimit = g_config.getNumber(ConfigManager::ITEMLIMIT_PROTECTIONZONE);
+			if(itemLimit && getThingCount() > itemLimit)
+				return RET_TILEISFULL;
+		}
+
 		bool hasHangable = false, supportHangable = false;
 		if(items)
 		{
@@ -746,17 +753,40 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 	Position pos = getTilePosition();
 	if(floorChangeDown())
 	{
+		pos.y--;
 		pos.z++;
-		if(Tile* downTile = g_game.getTile(pos))
+
+		bool skip = true;
+		Tile* downTile = g_game.getTile(pos);
+		if(!downTile || !downTile->floorChange(SOUTH))
 		{
-			if(downTile->floorChange(NORTH))
-				pos.y++;
-			if(downTile->floorChange(SOUTH))
-				pos.y--;
-			if(downTile->floorChange(EAST))
-				pos.x--;
-			if(downTile->floorChange(WEST))
+			pos.y++;
+			pos.x--;
+			downTile = g_game.getTile(pos);
+			if(!downTile || !downTile->floorChange(EAST))
+			{
+				skip = false;
 				pos.x++;
+				downTile = g_game.getTile(pos);
+			}
+		}
+
+		if(downTile)
+		{
+			if(!skip)
+			{
+				if(downTile->floorChange(NORTH))
+					pos.y += 1;
+
+				if(downTile->floorChange(SOUTH))
+					pos.y -= 1;
+
+				if(downTile->floorChange(EAST))
+					pos.x -= 1;
+
+				if(downTile->floorChange(WEST))
+					pos.x += 1;
+			}
 
 			destTile = g_game.getTile(pos);
 		}
@@ -1555,13 +1585,17 @@ void Tile::updateTileFlags(Item* item, bool removed)
 
 			if(item->floorChangeSouth())
 			{
-				setFlag(TILESTATE_FLOORCHANGE);
+				if(item->getID() != ITEM_YALAHAR_STAIRS_SOUTH)
+					setFlag(TILESTATE_FLOORCHANGE);
+
 				setFlag(TILESTATE_FLOORCHANGE_SOUTH);
 			}
 
 			if(item->floorChangeEast())
 			{
-				setFlag(TILESTATE_FLOORCHANGE);
+				if(item->getID() != ITEM_YALAHAR_STAIRS_EAST)
+					setFlag(TILESTATE_FLOORCHANGE);
+
 				setFlag(TILESTATE_FLOORCHANGE_EAST);
 			}
 

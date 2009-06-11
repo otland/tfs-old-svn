@@ -61,10 +61,10 @@ inline void MoveEvents::clearMap(MoveListMap& map)
 
 void MoveEvents::clear()
 {
+	clearMap(m_itemIdMap);
 	clearMap(m_actionIdMap);
 	clearMap(m_uniqueIdMap);
 
-	clearMap(m_itemIdMap);
 	for(MovePosListMap::iterator it = m_positionMap.begin(); it != m_positionMap.end(); ++it)
 	{
 		for(int32_t i = MOVE_EVENT_FIRST; i <= MOVE_EVENT_LAST; ++i)

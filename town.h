@@ -23,24 +23,20 @@
 class Town
 {
 	public:
-		Town(uint32_t _townid)
-		{
-			townid = _townid;
-		}
-
+		Town(uint32_t _townId) {townId = _townId;}
 		virtual ~Town() {}
 
-		const Position& getTemplePosition() const {return posTemple;}
+		const Position& getTemplePosition() const {return templePosition;}
 		const std::string& getName() const {return townName;}
 
-		void setTemplePos(const Position& pos) {posTemple = pos;}
+		void setTemplePos(const Position& pos) {templePosition = pos;}
 		void setName(std::string _townName) {townName = _townName;}
-		uint32_t getTownID() const {return townid;}
+		uint32_t getTownID() const {return townId;}
 
 	private:
-		uint32_t townid;
+		uint32_t townId;
 		std::string townName;
-		Position posTemple;
+		Position templePosition;
 };
 
 typedef std::map<uint32_t, Town*> TownMap;

@@ -19,7 +19,9 @@
 
 #include "house.h"
 #include "game.h"
+#include "configmanager.h"
 
+extern ConfigManager g_config;
 extern Game g_game;
 
 HouseTile::HouseTile(int32_t x, int32_t y, int32_t z, House* _house):
@@ -69,6 +71,12 @@ ReturnValue HouseTile::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 			if(!house->isInvited(player) && !player->hasFlag(PlayerFlag_CanEditHouses))
 				return RET_PLAYERISNOTINVITED;
 		}
+	}
+	else if(thing->getItem())
+	{
+		const uint32_t itemLimit = g_config.getNumber(ConfigManager::ITEMLIMIT_HOUSETILE);
+		if(itemLimit && getThingCount() > itemLimit)
+			return RET_TILEISFULL;
 	}
 
 	return Tile::__queryAdd(index, thing, count, flags);

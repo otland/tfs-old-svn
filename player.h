@@ -289,6 +289,9 @@ class Player : public Creature, public Cylinder
 		uint32_t getTown() const {return town;}
 		void setTown(uint32_t _town) {town = _town;}
 
+		const std::string& getSpecialDescription() const {return specialDescription;}
+		void setSpecialDescription(const std::string& desc) {specialDescription = desc;}
+
 		virtual bool isPushable() const;
 		virtual int32_t getThrowRange() const {return 1;}
 
@@ -296,15 +299,8 @@ class Player : public Creature, public Cylinder
 		void addMessageBuffer();
 		void removeMessageBuffer();
 
-		double getCapacity() const
-		{
-			if(hasFlag(PlayerFlag_CannotPickupItem))
-				return 0.00;
-			else if(hasFlag(PlayerFlag_HasInfiniteCapacity))
-				return 10000.00;
-
-			return capacity;
-		}
+		double getCapacity() const {return capacity;}
+		void setMaxCapacity(double newCapacity) {capacity = newCapacity;}
 
 		double getFreeCapacity() const
 		{
@@ -848,7 +844,7 @@ class Player : public Creature, public Cylinder
 
 		std::string managerString, managerString2;
 		std::string account, password;
-		std::string name, nameDescription;
+		std::string name, nameDescription, specialDescription;
 		std::string guildName, guildRank, guildNick;
 
 		Position loginPosition;

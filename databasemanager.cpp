@@ -324,7 +324,6 @@ uint32_t DatabaseManager::updateDatabase()
 				result->free();
 			}
 
-			
 			db->executeQuery("DELETE FROM `player_storage` WHERE `key` = 30018;");
 			db->executeQuery("ALTER TABLE `accounts` ADD `name` VARCHAR(32) NOT NULL DEFAULT '';");
 			if((result = db->storeQuery("SELECT `id` FROM `accounts`;")))
@@ -804,6 +803,19 @@ uint32_t DatabaseManager::updateDatabase()
 
 			registerDatabaseConfig("db_version", 16);
 			return 16;
+		}
+
+		case 16:
+		{
+			std::cout << "> Updating database to version: 17..." << std::endl;
+
+			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
+				db->executeQuery("CREATE TABLE IF NOT EXISTS `player_namelocks` (`name` VARCHAR(255) NOT NULL, `new_name` VARCHAR(255) NOT NULL, `date` INTEGER NOT NULL);");
+			else
+				db->executeQuery("CREATE TABLE IF NOT EXISTS `player_namelocks` (`name` VARCHAR(255) NOT NULL, `new_name` VARCHAR(255) NOT NULL, `date` BIGINT NOT NULL) ENGINE = InnoDB;");
+
+			registerDatabaseConfig("db_version", 17);
+			return 17;
 		}
 
 		default:

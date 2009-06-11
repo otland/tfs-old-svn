@@ -77,7 +77,7 @@ Game::Game()
 	worldType = WORLD_TYPE_PVP;
 	map = NULL;
 	lastPlayersRecord = lastStageLevel = 0;
-	for(int32_t i = 0; i < 3; i++)
+	for(int8_t i = 0; i < 3; i++)
 		globalSaveMessage[i] = false;
 
 	OTSYS_THREAD_LOCKVARINIT(AutoID::autoIDLock);
@@ -2916,7 +2916,6 @@ bool Game::playerLookInTrade(uint32_t playerId, bool lookAtCounterOffer, int32_t
 				ss << std::endl << "TransformTo: [" << it.transformDeEquipTo << "] (onDeEquip).";
 			else if(it.decayTo != -1)
 				ss << std::endl << "DecayTo: [" << it.decayTo << "].";
-
 		}
 
 		player->sendTextMessage(MSG_INFO_DESCR, ss.str());
@@ -3332,10 +3331,7 @@ bool Game::playerTurn(uint32_t playerId, Direction dir)
 
 	Position pos = getNextPosition(dir, player->getPosition());
 	Tile* tile = map->getTile(pos);
-	if(!tile)
-		return false;
-
-	if(!tile->ground)
+	if(!tile || !tile->ground)
 		return false;
 
 	ReturnValue ret = tile->__queryAdd(0, player, 1, FLAG_IGNOREBLOCKITEM);
@@ -3704,7 +3700,7 @@ bool Game::internalCreatureTurn(Creature* creature, Direction dir)
 	return true;
 }
 
-bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text, Position* pos/* = NULL*/)
+bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text, Position* pos/* = NULL*/, bool ghostMode/* = false*/)
 {
 	Player* player = creature->getPlayer();
 	if(player && player->isAccountManager())
@@ -3735,7 +3731,10 @@ bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std:
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
-			tmpPlayer->sendCreatureSay(creature, type, text, &destPos);
+		{
+			if(!ghostMode || tmpPlayer->canSeeCreature(creature))
+				tmpPlayer->sendCreatureSay(creature, type, text, &destPos);
+		}
 	}
 
 	//event method
@@ -5453,7 +5452,7 @@ int32_t Game::getMotdNum()
 		lastMotdText = g_config.getString(ConfigManager::MOTD);
 
 		DBQuery query;
-		query << "INSERT INTO `server_motd` (`id`, `world_id`, `text`) VALUES (" << lastMotdNum++ << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << db->escapeString(lastMotdText) << ");";
+		query << "INSERT INTO `server_motd` (`id`, `world_id`, `text`) VALUES (" << ++lastMotdNum << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << db->escapeString(lastMotdText) << ");";
 		db->executeQuery(query.str());
 	}
 
@@ -5716,6 +5715,14 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 		}
 
 		case RELOAD_WEAPONS:
+		{
+			//TODO
+			std::cout << "[Notice - Game::reloadInfo] Reload type does not work." << std::endl;
+			done = true;
+			break;
+		}
+
+		case RELOAD_MODS:
 		{
 			//TODO
 			std::cout << "[Notice - Game::reloadInfo] Reload type does not work." << std::endl;

@@ -879,6 +879,8 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 				_creature->setSkull((Skulls_t)atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 				g_game.updateCreatureSkull(_creature);
 			}
+			else if(!strcasecmp(param.c_str(), "speaktype"))
+				_creature->setSpeakType((SpeakClasses)atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 			else if(Player* _player = _creature->getPlayer())
 			{
 				if(!strcasecmp(tmp.c_str(), "fyi"))

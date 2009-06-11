@@ -720,10 +720,14 @@
 	getConfigValue(key)
 	getLogsDir()
 	getDataDir()
+	getWaypointsList()
+	getTalkActionsList()
+	getExperienceStagesList()
 
 	//set*
 	setCreatureMaxHealth(cid, health)
 	setCreatureMaxMana(cid, mana)
+	setCreatureMaxCap(cid, cap)
 	setHouseOwner(houseid, ownerGUID)
 	setHouseAccessList(houseid, listid, listtext)
 	setItemName(uid)

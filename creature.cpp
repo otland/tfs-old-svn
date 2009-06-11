@@ -50,6 +50,7 @@ Creature::Creature():
 	lootDrop = LOOT_DROP_FULL;
 	skillLoss = true;
 	hideName = hideHealth = cannotMove = false;
+	speakType = SPEAK_SAY;
 	skull = SKULL_NONE;
 	partyShield = SHIELD_NONE;
 

@@ -73,4 +73,6 @@ setPlayerGroupId = doPlayerSetGroupId
 setPlayerPartner = doPlayerSetPartner
 setPlayerStorageValue = doPlayerSetStorageValue
 setPlayerBalance = doPlayerSetBalance
+getPlayerNameDescription = getPlayerSpecialDescription
+doPlayerSetNameDescription = doPlayerSetSpecialDescription
 SKILLS = SKILL_NAMES

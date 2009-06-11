@@ -65,6 +65,7 @@ class ConfigManager
 			DATA_DIRECTORY,
 			PREFIX_CHANNEL_LOGS,
 			CORES_USED,
+			MAILBOX_DISABLED_TOWNS,
 			LAST_STRING_CONFIG /* this must be the last one */
 		};
 
@@ -152,6 +153,8 @@ class ConfigManager
 			BLACK_SKULL_DEATH_MANA,
 			DEATHLIST_REQUIRED_TIME,
 			EXPERIENCE_SHARE_ACTIVITY,
+			ITEMLIMIT_PROTECTIONZONE,
+			ITEMLIMIT_HOUSETILE,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 
@@ -241,6 +244,8 @@ class ConfigManager
 			GUILD_HALLS,
 			DEATH_LIST,
 			BIND_IP_ONLY,
+			GHOST_SPELL_EFFECTS,
+			PVPZONE_ADDMANASPENT,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

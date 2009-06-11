@@ -521,8 +521,8 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 		if((interval > 800 && interval / m_messageCount < 25))
 			getConnection()->close();
 	}
-
 	#endif
+
 	uint8_t recvbyte = msg.GetByte();
 	//a dead player cannot performs actions
 	if((player->isRemoved() || player->getHealth() <= 0) && recvbyte != 0x14)
@@ -2706,7 +2706,11 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 		msg->AddU16(0x0000);
 	}
 
-	msg->AddByte(type);
+	if(creature->getSpeakType() != SPEAK_SAY)
+	    msg->AddByte((SpeakClasses)creature->getSpeakType());
+	else
+		msg->AddByte(type);
+
 	switch(type)
 	{
 		case SPEAK_SAY:
