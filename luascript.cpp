@@ -5024,22 +5024,7 @@ int32_t LuaScriptInterface::luaSetHouseOwner(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetWorldType(lua_State* L)
 {
-	//getWorldType()
-	switch(g_game.getWorldType())
-	{
-		case WORLD_TYPE_NO_PVP:
-			lua_pushnumber(L, 1);
-			break;
-		case WORLD_TYPE_PVP:
-			lua_pushnumber(L, 2);
-			break;
-		case WORLD_TYPE_PVP_ENFORCED:
-			lua_pushnumber(L, 3);
-			break;
-		default:
-			lua_pushboolean(L, false);
-			break;
-	}
+	lua_pushnumber(L, g_game.getWorldType);
 	return 1;
 }
 
@@ -5080,8 +5065,7 @@ int32_t LuaScriptInterface::luaGetWorldCreatures(lua_State* L)
 {
 	//getWorldCreatures(type)
 	//0 players, 1 monsters, 2 npcs, 3 all
-	uint32_t type = popNumber(L);
-	uint32_t value;
+	uint32_t type = popNumber(L), value;
 	switch(type)
 	{
 		case 0:
@@ -5118,17 +5102,12 @@ int32_t LuaScriptInterface::luaGetWorldUpTime(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoBroadcastMessage(lua_State* L)
 {
-	//doBroadcastMessage(message, type)
+	//doBroadcastMessage(message[, type = MSG_STATUS_WARNING])
 	uint32_t type = MSG_STATUS_WARNING;
 	if(lua_gettop(L) > 1)
 		type = popNumber(L);
 
-	std::string message = popString(L);
-	if(g_game.broadcastMessage(message, (MessageClasses)type))
-		lua_pushboolean(L, true);
-	else
-		lua_pushboolean(L, false);
-
+	lua_pushboolean(L, g_game.broadcastMessage(popString(L), (MessageClasses)type));
 	return 1;
 }
 
@@ -5143,12 +5122,7 @@ int32_t LuaScriptInterface::luaDoPlayerBroadcastMessage(lua_State* L)
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
-	{
-		if(g_game.playerBroadcastMessage(player, message, (SpeakClasses)type))
-			lua_pushboolean(L, true);
-		else
-			lua_pushboolean(L, false);
-	}
+		lua_pushboolean(L, g_game.playerBroadcastMessage(player, message, (SpeakClasses)type));
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
@@ -5166,7 +5140,7 @@ int32_t LuaScriptInterface::luaGetPlayerLight(lua_State* L)
 		LightInfo lightInfo;
 		player->getCreatureLight(lightInfo);
 		lua_pushnumber(L, lightInfo.level);
-		lua_pushnumber(L, lightInfo.color);//color
+		lua_pushnumber(L, lightInfo.color);
 	}
 	else
 	{
@@ -5323,8 +5297,7 @@ int32_t LuaScriptInterface::luaDoTileQueryAdd(lua_State* L)
 		return 1;
 	}
 
-	ReturnValue ret = tile->__queryAdd(0, thing, 1, flags);
-	lua_pushnumber(L, (uint32_t)ret);
+	lua_pushnumber(L, (uint32_t)tile->__queryAdd(0, thing, 1, flags));
 	return 1;
 }
 
@@ -5931,8 +5904,7 @@ int32_t LuaScriptInterface::luaDoTargetCombatHealth(lua_State* L)
 	uint8_t effect = (uint8_t)popNumber(L);
 	int32_t maxChange = (int32_t)popNumber(L), minChange = (int32_t)popNumber(L);
 	CombatType_t combatType = (CombatType_t)popNumber(L);
-	uint32_t targetCid = popNumber(L);
-	uint32_t cid = popNumber(L);
+	uint32_t targetCid = popNumber(L), cid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
 	Creature* creature = NULL;
