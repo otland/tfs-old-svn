@@ -56,14 +56,14 @@
 		<voice sentence="Freeze!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="80" chance1="100000" chancemax="0"/> --Gold Coins
+		<item id="2148" countmax="80" chance="100000"/> --Gold Coins
 		<item id="7449" chance="1222"/> --Crystal Sword
 		<item id="7441" chance="5555"/> --Ice Cube
 		<item id="7387" chance="1444"/> --Diamond Sceptre
 		<item id="1987" chance="100000"> --Bag
 			<inside>
 				<item id="2423" chance="3333"/> --Clerical Mace
-				<item id="2796" countmax="1" chance1="9999" chancemax="0"/> --Green Mushrooms
+				<item id="2796" countmax="1" chance="9999"/> --Green Mushrooms
 				<item id="2663" chance="1111"/> --Mystic Turban
 				<item id="7459" chance="1000"/> --Ear Muffs
 			</inside>

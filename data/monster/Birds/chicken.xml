@@ -37,9 +37,9 @@
 		<voice sentence="cluck cluck"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="2695" countmax="4" chance1="20000" chancemax="0"/>
-		<item id="3976" countmax="18" chance1="50000" chancemax="0"/>
-		<item id="5890" countmax="1" chance1="5000" chancemax="0"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="2695" countmax="4" chance="20000"/>
+		<item id="3976" countmax="18" chance="50000"/>
+		<item id="5890" countmax="1" chance="5000"/>
 	</loot>
 </monster>

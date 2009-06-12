@@ -45,9 +45,9 @@
 			<immunity energy="1"/>
 		</immunities>
 		<loot>
-			<item id="2148" countmax="44" chance1="100000" chancemax="0"/> -- Gold Coins
-			<item id="7850" countmax="3" chance1="6000" chancemax="0"/> -- Earth Arrow
-			<item id="1294" countmax="9" chance1="9000" chancemax="0"/> -- Small Stones
-			<item id="7732" countmax="2" chance1="1000" chancemax="0"/> -- Seeds
+			<item id="2148" countmax="44" chance="100000"/> -- Gold Coins
+			<item id="7850" countmax="3" chance="6000"/> -- Earth Arrow
+			<item id="1294" countmax="9" chance="9000"/> -- Small Stones
+			<item id="7732" countmax="2" chance="1000"/> -- Seeds
 		</loot>
 	</monster>

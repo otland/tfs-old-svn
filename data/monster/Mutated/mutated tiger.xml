@@ -48,12 +48,12 @@
 		<voice sentence="CHHHHHHHHHHH"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="96" chance1="100000" chancemax="0"/> <!-- gps -->
-		<item id="2666" countmax="4" chance1="100000" chancemax="0"/> <!-- meat -->
+		<item id="2148" countmax="96" chance="100000"/> <!-- gps -->
+		<item id="2666" countmax="4" chance="100000"/> <!-- meat -->
 		<item id="7588" chance="900"/> <!-- shp -->
 		<item id="1987" chance="100000"> <!-- bag -->
 			<inside>
-				<item id="2509" countmax="1" chance1="4000"/> <!-- steel shield -->
+				<item id="2509" countmax="1" chance="4000"/> <!-- steel shield -->
 				<item id="2515" chance="700"/> <!-- guardian shield -->
 				<item id="2168" chance="800"/> <!-- life ring -->				
 				<item id="7454" chance="300"/> <!-- glorius axe -->

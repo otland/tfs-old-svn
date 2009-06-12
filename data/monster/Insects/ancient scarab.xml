@@ -52,7 +52,7 @@
 	</summons>
 	<loot>
 		<item id="2150" countmax="4" chance="1200"/>
-		<item id="2148" countmax="90" chance1="100000" chancemax="0"/>
+		<item id="2148" countmax="90" chance="100000"/>
 		<item id="2162" chance="2500"/>
 		<item id="2463" chance="2222"/>
 		<item id="1987" chance="100000">
@@ -60,7 +60,7 @@
 			<inside>
 				<item id="2148" countmax="22" chance="99900"/>
 				<item id="2135" chance="1428"/>
-				<item id="2159" countmax="4" chance1="555" chancemax="0"/>
+				<item id="2159" countmax="4" chance="555"/>
 				<item id="2142" chance="800"/>
 				<item id="2440" chance="200"/>
 				<item id="2540" countmax="1" chance="500"/>

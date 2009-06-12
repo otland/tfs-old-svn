@@ -50,28 +50,28 @@
 		<voice sentence="YOU WILL BURN!" yell="1"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="100" chance1="100000" chancemax="0"/>
-		<item id="2672" countmax="2" chance1="20000" chancemax="0"/>
+		<item id="2148" countmax="100" chance="100000"/>
+		<item id="2672" countmax="2" chance="20000"/>
 		<item id="2033" chance="1818"/>
 		<item id="1976" chance="3333"/>
 		<item id="2413" chance="5000"/>
 		<item id="2498" chance="588"/>
 		<item id="2492" chance="333"/>
-		<item id="7378" countmax="2" chance1="2000" chancemax="0"/>
-		<item id="2546" countmax="5" chance1="2500" chancemax="0"/>
-		<item id="2547" countmax="10" chance1="2222" chancemax="0"/>
-		<item id="2796" countmax="1" chance1="6666" chancemax="0"/>
-		<item id="5948" countmax="1" chance1="5000" chancemax="0"/>
+		<item id="7378" countmax="2" chance="2000"/>
+		<item id="2546" countmax="5" chance="2500"/>
+		<item id="2547" countmax="10" chance="2222"/>
+		<item id="2796" countmax="1" chance="6666"/>
+		<item id="5948" countmax="1" chance="5000"/>
 		<item id="1987" chance="100000">
 			<inside>
-				<item id="2148" countmax="100" chance1="100000" chancemax="0"/>
-				<item id="2149" countmax="2" chance1="833" chancemax="0"/>
+				<item id="2148" countmax="100" chance="100000"/>
+				<item id="2149" countmax="2" chance="833"/>
 				<item id="2392" chance="1428"/>
-				<item id="2146" countmax="2" chance1="2222" chancemax="0"/>
+				<item id="2146" countmax="2" chance="2222"/>
 				<item id="2528" chance="1333"/>
 				<item id="7402" chance="1033"/>
 				<item id="2414" chance="909"/>
-				<item id="5882" countmax="1" chance1="5000" chancemax="0"/>
+				<item id="5882" countmax="1" chance="5000"/>
 			</inside>
 		</item>
 	</loot>

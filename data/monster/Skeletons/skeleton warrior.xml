@@ -32,13 +32,13 @@
 			<immunity death="1"/>
 	</immunities>
 	<loot>
-			<item id="2148" countmax="15" chance1="90000" chancemax="0"/>
+			<item id="2148" countmax="15" chance="90000"/>
 			<item id="2230" chance="3333"/>
 			<item id="1987" chance="100000">
 		<inside>
 					<item id="2398" chance="10000"/>
 					<item id="2511" chance="5000"/>
-					<item id="2787" countmax="3" chance1="90000" chancemax="0"/>
+					<item id="2787" countmax="3" chance="90000"/>
 					<item id="2230" chance="2789"/>
 		</inside>
 		</item>

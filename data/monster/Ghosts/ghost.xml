@@ -37,14 +37,14 @@
 		<voice sentence="Buuuuuh"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="15" chance1="100000" chancemax="0"/>
+		<item id="2148" countmax="15" chance="100000"/>
 		<item id="2642" chance="10000"/>
 		<item id="2404" chance="10000"/>
-		<item id="5909" countmax="1" chance1="5000" chancemax="0"/>
+		<item id="5909" countmax="1" chance="5000"/>
 		<item id="1987" chance="100000">
 			<inside>
 				<item id="2394" chance="6666"/>
-				<item id="2804" countmax="2" chance1="20000" chancemax="0"/>
+				<item id="2804" countmax="2" chance="20000"/>
 				<item id="2532" chance="1666"/>
 				<item id="2182" chance="1333"/> -- snakebite rod
 				<item id="2165" chance="1538"/>

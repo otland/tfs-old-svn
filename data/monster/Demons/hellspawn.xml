@@ -45,15 +45,15 @@
 		<voice sentence="I'm just a messenger of what's yet to come." yell="1"/>		
 	</voices>	 
 	<loot>
-		<item id="2666" countmax="6" chance1="50000" chancemax="0"/> <!-- meat -->
-		<item id="7368" countmax="2" chance1="5000" chancemax="0"/> <!-- assassin stars -->
-		<item id="6500" countmax="1" chance1="3000" chancemax="0"/> <!-- demonic essence -->
+		<item id="2666" countmax="6" chance="50000"/> <!-- meat -->
+		<item id="7368" countmax="2" chance="5000"/> <!-- assassin stars -->
+		<item id="6500" countmax="1" chance="3000"/> <!-- demonic essence -->
 		<item id="2475" chance="200"/> <!-- warrior helmet -->
-		<item id="2148" countmax="180" chance1="100000" chancemax="0"/> <!-- gps -->
+		<item id="2148" countmax="180" chance="100000"/> <!-- gps -->
 		<item id="1987" chance="100000">
 			<inside>
 				<item id="2394" chance="5000"/> <!-- morning star -->
-				<item id="9970" countmax="4" chance1="1500" chancemax="0"/> <!-- small topaz -->
+				<item id="9970" countmax="4" chance="1500"/> <!-- small topaz -->
 				<item id="2476" chance="200"/> <!-- knight armor -->
 				<item id="2477" chance="200"/> <!-- knight legs -->
 				<item id="7421" chance="200"/> <!-- onyx fail -->

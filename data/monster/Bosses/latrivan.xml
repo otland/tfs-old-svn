@@ -38,14 +38,14 @@
 	<loot>
 		<item id="2148" count="100" chance="100000"/> --Gold
 		<item id="2148" count="50" chance="100000"/> -- Gold
-		<item id="2152" countmax="6" chance1="80000" chancemax="10000"/> --Platinum
-		<item id="2144" countmax="28" chance1="7777"/> --Black Pearls
+		<item id="2152" countmax="6" chance="80000" chancemax="10000"/> --Platinum
+		<item id="2144" countmax="28" chance="7777"/> --Black Pearls
 		<item id="7440" chance="17000"/> --Mastermind potion
 		<item id="2514" chance="4500"/> --mastermind shield
 		<item id="2171" chance="12222"/> --P ammy
 		<item id="1987" chance="100000">
 		<inside>
-			<item id="2151" countmax="13" chance1="6500" chancemax="0"/> --Talons
+			<item id="2151" countmax="13" chance="6500"/> --Talons
 			<item id="2470" chance="6555"/> --Golden Legs
 			<item id="2432" chance="8200"/> --Fire Axe
 		</inside>

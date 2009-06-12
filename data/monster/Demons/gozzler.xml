@@ -47,7 +47,7 @@
 	</voices>
 	<loot>
 		<item id="2015" chance="9000"/> <!-- brown flask -->
-		<item id="2148" countmax="53" chance1="100000" chancemax="0"/> <!-- gps -->
+		<item id="2148" countmax="53" chance="100000"/> <!-- gps -->
 		<item id="2394" chance="7000"/> <!-- morning star -->
 		<item id="2385" chance="7000"/> <!-- sabre -->
 		<item id="2051" chance="15000"/> <!-- torch -->

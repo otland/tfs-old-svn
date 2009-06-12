@@ -33,8 +33,8 @@
 		<immunity drunk="0"/>
 	</immunities>
 	<loot>
-		<item id="2148" countmax="40" chance1="100000" chancemax="0"/>
-		<item id="2399" countmax="1" chance1="10000" chancemax="0"/>
+		<item id="2148" countmax="40" chance="100000"/>
+		<item id="2399" countmax="1" chance="10000"/>
 		<item id="2515" chance="400"/>
 		<item id="2178" chance="1000"/>
 		<item id="2050" chance="10000"/>

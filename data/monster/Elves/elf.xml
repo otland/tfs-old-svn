@@ -39,9 +39,9 @@
 		<voice sentence="Death to the defilers!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="2148" countmax="15" chance1="100000" chancemax="0"/>
-		<item id="2544" countmax="6" chance1="800000" chancemax="0"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="2148" countmax="15" chance="100000"/>
+		<item id="2544" countmax="6" chance="800000"/>
 		<item id="2480" chance="10000"/>
 		<item id="2484" chance="20000"/>
 		<item id="2478" chance="4000"/>
@@ -50,10 +50,10 @@
 		<item id="1987" chance="100000">
 			<inside>
 				<item id="2397" chance="5000"/>
-				<item id="2674" countmax="4" chance1="800000" chancemax="0"/>
+				<item id="2674" countmax="4" chance="800000"/>
 				<item id="2642" chance="9000"/>
 				<item id="2456" chance="6666"/>
-				<item id="5921" countmax="1" chance1="5000" chancemax="0"/>
+				<item id="5921" countmax="1" chance="5000"/>
 			</inside>
 		</item>
 	</loot>

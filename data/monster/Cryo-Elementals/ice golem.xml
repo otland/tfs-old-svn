@@ -48,14 +48,14 @@
 		<voice sentence="Chrr."/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="20" chance1="100000" chancemax="0"/> --Gold Coins
-		<item id="2144" countmax="1" chance1="4200" chancemax="0"/> --Black Pearl
+		<item id="2148" countmax="20" chance="100000"/> --Gold Coins
+		<item id="2144" countmax="1" chance="4200"/> --Black Pearl
 		<item id="7290" chance="3666"/> --Shard
-		<item id="2145" countmax="1" chance1="3333" chancemax="0"/> --Small Diamond
+		<item id="2145" countmax="1" chance="3333"/> --Small Diamond
 		<item id="7441" chance="2222"/> --Ice Cube
 		<item id="1987" chance="100000"> --Bag
 			<inside>
-				<item id="2146" countmax="1" chance1="4200" chancemax="0"/> --Small Sapphire
+				<item id="2146" countmax="1" chance="4200"/> --Small Sapphire
 				<item id="2396" chance="2050"/> --Ice Rapier
 				<item id="2479" chance="2555"/> --Strange Helmet
 				<item id="7449" chance="1999"/> --Crystal Sword

@@ -53,12 +53,12 @@
 		<voice sentence="Praise to my master Urgith!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="40" chance1="100000" chancemax="0"/>
+		<item id="2148" countmax="40" chance="100000"/>
 		<item id="2032" chance="10000"/>
 		<item id="3969" chance="150"/>
 		<item id="2392" chance="220"/>
-		<item id="2804" countmax="2" chance1="20000" chancemax="0"/>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
+		<item id="2804" countmax="2" chance="20000"/>
+		<item id="3976" countmax="10" chance="50000"/>
 		<item id="5809" chance="2500"/>
 		<item id="2186" chance="500"/>
 		<item id="1987" chance="100000">
@@ -70,7 +70,7 @@
 				<item id="2449" countmax="1" chance="19900"/>
 				<item id="2541" chance="7500"/>
 				<item id="2412" chance="10000"/>
-				<item id="2229" countmax="3" chance1="20000" chancemax="0"/>
+				<item id="2229" countmax="3" chance="20000"/>
 				<item id="2747" chance="20000"/>
 				<item id="2436" chance="833"/>
 				<item id="2663" chance="909"/>

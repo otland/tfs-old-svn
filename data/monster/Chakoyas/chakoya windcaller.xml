@@ -45,8 +45,8 @@
 		<voice sentence="Quatu nguraka!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="25" chance1="3333" chancemax="0"/>
+		<item id="2148" countmax="25" chance="3333"/>
 		<item id="7290" chance="2000"/>
-		<item id="7158" countmax="1" chance1="250" chancemax="0"/>
+		<item id="7158" countmax="1" chance="250"/>
 	</loot>
 </monster>

@@ -50,7 +50,7 @@
 	<voice sentence="You will not get my treasure!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="45" chance1="52000" chancemax="0"/>
+		<item id="2148" countmax="45" chance="52000"/>
 		<item id="2655" chance="666"/>
 		<item id="2237" chance="6666"/>
 		<item id="2236" chance="4000"/>

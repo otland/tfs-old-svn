@@ -37,23 +37,23 @@
 		<voice sentence="Tssss!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="2148" countmax="100" chance1="100000" chancemax="0"/>
-		<item id="2148" countmax="25" chance1="100000" chancemax="0"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="2148" countmax="100" chance="100000"/>
+		<item id="2148" countmax="25" chance="100000"/>
 		<item id="2182" chance="450"/>
 		<item id="2425" chance="1428"/>
 		<item id="2381" chance="6666"/>
 		<item id="2457" chance="6666"/>
 		<item id="3974" chance="366"/>
 		<item id="3965" chance="250"/>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="5876" countmax="1" chance1="5000" chancemax="0"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="5876" countmax="1" chance="5000"/>
 		<item id="1987" chance="100000">
 			<inside>
-				<item id="2148" countmax="50" chance1="100000" chancemax="0"/>
-				<item id="2147" countmax="4" chance1="4000" chancemax="0"/>
+				<item id="2148" countmax="50" chance="100000"/>
+				<item id="2147" countmax="4" chance="4000"/>
 				<item id="2654" chance="20000"/>
-				<item id="5881" countmax="1" chance1="5000" chancemax="0"/>
+				<item id="5881" countmax="1" chance="5000"/>
 			</inside>
 		</item>
 	</loot>

@@ -26,8 +26,8 @@
 	<element firePercent="-10"/>
 	</elements>
 	<loot>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="2148" countmax="4" chance1="100000" chancemax="0"/>
-		<item id="2679" countmax="3" chance1="50000" chancemax="0"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="2148" countmax="4" chance="100000"/>
+		<item id="2679" countmax="3" chance="50000"/>
 	</loot>
 </monster>

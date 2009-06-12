@@ -55,7 +55,7 @@
 			<voice sentence="Slurp!"/>
 		</voices>
 	<loot>
-			<item id="2148" countmax="121" chance1="100000" chancemax="0"/>
+			<item id="2148" countmax="121" chance="100000"/>
 			<item id="2647" chance="5000"/>
 			<item id="8872" chance="2000"/>
 			<item id="8912" chance="5000"/>

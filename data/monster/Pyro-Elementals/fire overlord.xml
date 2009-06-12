@@ -48,8 +48,8 @@
 		<immunity invisible="1"/>
 	</immunities>
 	<loot>
-	 <item id="2148" countmax="100" chance1="100000" chancemax="0"/> --Gold Coin
-	 <item id="2152" countmax="4" chance1="8888" chancemax="0"/> --Small Ruby 
+	 <item id="2148" countmax="100" chance="100000"/> --Gold Coin
+	 <item id="2152" countmax="4" chance="8888"/> --Small Ruby 
 	 <item id="8304" chance="2200"/> --Soul Orb
 	 <item id="8877" chance="900"/> --Lavos Armor
 	 <item id="7899" chance="1210"/> --Magma Coat

@@ -33,16 +33,16 @@
 		<voice sentence="Hail Durin!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="2148" countmax="15" chance1="100000" chancemax="0"/>
-		<item id="2543" countmax="10" chance1="20000" chancemax="0"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="2148" countmax="15" chance="100000"/>
+		<item id="2543" countmax="10" chance="20000"/>
 		<item id="2481" chance="10000"/>
 		<item id="2455" chance="10000"/>
 		<item id="2554" chance="3333"/>
 		<item id="2464" chance="20000"/>
 		<item id="2643" chance="25000"/>
 		<item id="2696" chance="15000"/>
-		<item id="7363" countmax="8" chance1="6000" chancemax="0"/>
+		<item id="7363" countmax="8" chance="6000"/>
 		<item id="5880" chance="2500" countmax="2"/>
 		<item id="1987" chance="100000">
 			<inside>

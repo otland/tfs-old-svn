@@ -47,7 +47,7 @@
 	<voice sentence="I must dispose of my masters enemies!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="100" chance1="100000" chancemax="0"/>
+		<item id="2148" countmax="100" chance="100000"/>
 		<item id="2260" chance="400"/>
 		<item id="7620" chance="400"/>
 		<item id="6079" chance="400"/>

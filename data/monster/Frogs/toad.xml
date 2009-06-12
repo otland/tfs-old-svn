@@ -37,9 +37,9 @@
 	<voice sentence="Ribbit!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="12" chance1="60000" chancemax="1321"/>
-		<item id="2666" countmax="2" chance1="12000" chancemax="2120"/>
-		<item id="2667" countmax="1" chance1="10000" chancemax="0"/>
+		<item id="2148" countmax="12" chance="60000" chancemax="1321"/>
+		<item id="2666" countmax="2" chance="12000" chancemax="2120"/>
+		<item id="2667" countmax="1" chance="10000"/>
 		<item id="2398" chance="7500"/>
 		<item id="2382" chance="17000"/>
 		<item id="2391" chance="400"/>

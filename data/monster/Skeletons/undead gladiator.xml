@@ -46,12 +46,12 @@
 		<voice sentence="Another foolish adventurer who tries to beat me."/>	
 	</voices>
 	<loot>
-		<item id="2148" countmax="75" chance1="100000" chancemax="0"/> <!-- gps -->
-		<item id="2148" countmax="75" chance1="100000" chancemax="0"/> <!-- gps -->
-		<item id="2399" countmax="17" chance1="4000"/> <!-- throwing star -->
+		<item id="2148" countmax="75" chance="100000"/> <!-- gps -->
+		<item id="2148" countmax="75" chance="100000"/> <!-- gps -->
+		<item id="2399" countmax="17" chance="4000"/> <!-- throwing star -->
 		<item id="2647" chance="3500"/> <!-- plate legs -->
 		<item id="2465" chance="4000"/> <!-- brass armor -->
-		<item id="2666" countmax="2" chance1="10000"/> <!-- meat -->
+		<item id="2666" countmax="2" chance="10000"/> <!-- meat -->
 		<item id="8872" chance="1500"/> <!-- belted cape -->
 		<item id="2497" chance="800"/> <!-- crusader helmet -->
 		<item id="1987" chance="100000"> <!-- bag -->

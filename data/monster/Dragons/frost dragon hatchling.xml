@@ -42,13 +42,13 @@
 		<voice sentence="Rooawwrr" yell="0"/>
 		<voice sentence="Fchu?" yell="0"/>
 	</voices>
-	<loot capacity="800">
+	<loot>
 		<item id="7618" countmax="1" chance="5000"/>
 		<item id="2672" countmax="1" chance="5000"/>
 		<item id="2148" countmax="26" chance="100000"/>
 		<item id="1987" chance="100000">
 			<inside>
-				<item id="2148" countmax="25" chance1="100000" chancemax="0"/>
+				<item id="2148" countmax="25" chance="100000"/>
 			</inside>
 	</item>
 	</loot>

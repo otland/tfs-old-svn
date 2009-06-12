@@ -67,7 +67,7 @@
 		<voice sentence="He he he!"/>
 	</voices>
 	<loot>
-	 <item id="2148" countmax="79" chance1="100000" chancemax="0"/> --Gold Coins
+	 <item id="2148" countmax="79" chance="100000"/> --Gold Coins
 	 <item id="2050" chance="15000"/> --Torch
 	 <item id="6558" chance="2222"/> --Concentrated Demonic Blood
 	 <item id="2260" chance="18000"/> --Blank Rune
@@ -77,7 +77,7 @@
 	 <item id="1987" chance="100000"> --Bag
 				 <inside>
 				 <item id="2548" chance="20000"/> --Pitchfork
-				 <item id="6529" countmax="5" chance1="5000" chancemax="0"/> --Infernal Bolts
+				 <item id="6529" countmax="5" chance="5000"/> --Infernal Bolts
 				 <item id="2465" chance="6577"/> --Brass Armor
 				 <item id="2185" chance="833" /> -- volcanic rod
 				 <item id="2464" chance="7887"/> --Chain Armor
@@ -85,8 +85,8 @@
 				 <item id="7899" chance="2000"/> --Soul Orb
 				 <item id="7900" chance="2000"/> --Soul Orb
 				 <item id="7891" chance="2000"/> --Soul Orb
-				 <item id="6500" countmax="1" chance1="7777" chancemax="0"/> --Demonic Essence
-				 <item id="2150" countmax="1" chance1="8888" chancemax="0"/> --Small Amethyst
+				 <item id="6500" countmax="1" chance="7777"/> --Demonic Essence
+				 <item id="2150" countmax="1" chance="8888"/> --Small Amethyst
 				 <item id="2165" chance="4555"/> --Stealth Ring
 				 </inside>
 			 </item>

@@ -35,8 +35,8 @@
 	<element icePercent="-25"/>
 	</elements>
 		<loot>
-	 <item id="2148" countmax="100" chance1="100000" chancemax="0"/> --Gold Coin
-	 <item id="2147" countmax="3" chance1="3200" chancemax="0"/> -- Small Ruby
+	 <item id="2148" countmax="100" chance="100000"/> --Gold Coin
+	 <item id="2147" countmax="3" chance="3200"/> -- Small Ruby
 	 <item id="8299" chance="1100"/> --Glimmering Soil
 	 <item id="8921" chance="1800"/> -- Wand of DRaconia
 	 </loot>

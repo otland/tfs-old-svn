@@ -46,8 +46,8 @@
 		<voice sentence="Splipsh Splash"/>
 	</voices>
 	<loot>
-	<loot id="2148" countmax="100" chance1="10000"/> -- Gold
+	<loot id="2148" countmax="100" chance="10000"/> -- Gold
 	<loot id="8302" chance="1900"/> -- Iced Soil
-	<loot id="7839" chance1="1400" countmax="3"/> -- Shiver arrow
+	<loot id="7839" chance="1400" countmax="3"/> -- Shiver arrow
 	</loot>
 	</monster>

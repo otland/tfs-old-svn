@@ -51,16 +51,16 @@
 		<voice sentence="I will study your corpse!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="70" chance1="100000" chancemax="0"/> <!-- gps -->
-		<item id="2148" countmax="50" chance1="100000" chancemax="0"/> <!-- gps -->
-		<item id="2787" countmax="3" chance1="900" /> <!-- white mushroom -->
+		<item id="2148" countmax="70" chance="100000"/> <!-- gps -->
+		<item id="2148" countmax="50" chance="100000"/> <!-- gps -->
+		<item id="2787" countmax="3" chance="900" /> <!-- white mushroom -->
 		<item id="2308" chance="1500"/> <!-- powder herb -->
 		<item id="7620" chance="13500"/> <!-- mp -->
 		<item id="7618" chance="12500"/> <!-- hp -->
-		<item id="2687" countmax="3" chance1="900" /> <!-- cookie -->
+		<item id="2687" countmax="3" chance="900" /> <!-- cookie -->
 		<item id="1987" chance="100000"> <!-- bag -->
 			<inside>
-				<item id="7762" countmax="1" chance1="700"/> <!-- small enchanted amethyst -->
+				<item id="7762" countmax="1" chance="700"/> <!-- small enchanted amethyst -->
 				<item id="2177" chance="800"/> <!-- life crystal -->
 				<item id="6324" chance="800"/> <!-- cream cake -->				
 				<item id="2162" chance="800"/> <!-- magic lightwand -->

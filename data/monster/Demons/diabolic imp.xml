@@ -55,7 +55,7 @@
 		<voice sentence="He he he!"/>
 	</voices>
 	<loot>
-	 <item id="2148" countmax="79" chance1="100000" chancemax="0"/>
+	 <item id="2148" countmax="79" chance="100000"/>
 	 <item id="2050" chance="15000"/>
 	 <item id="6558" chance="2222"/>
 	 <item id="2260" chance="18000"/>
@@ -68,8 +68,8 @@
 			<item id="2185" chance="833"/>
 			<item id="2464" chance="7887"/>
 			<item id="5944" chance="5666"/>
-			<item id="6500" countmax="1" chance1="7777" chancemax="0"/>
-			<item id="2150" countmax="1" chance1="8888" chancemax="0"/>
+			<item id="6500" countmax="1" chance="7777"/>
+			<item id="2150" countmax="1" chance="8888"/>
 			<item id="2165" chance="4555"/>
 		</inside>
 	</item>

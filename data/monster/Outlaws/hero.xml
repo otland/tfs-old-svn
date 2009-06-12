@@ -49,15 +49,15 @@
 	</voices>
 	<loot>
 		<item id="2491" chance="1200"/>
-		<item id="2148" countmax="100" chance1="100000" chancemax="0"/>
+		<item id="2148" countmax="100" chance="100000"/>
 		<item id="2120" chance="20000"/>
 		<item id="1949" chance="10000"/>
 		<item id="2456" chance="10000"/>
 		<item id="2661" chance="12000"/>
 		<item id="2681" chance="10000"/>
 		<item id="2121" chance="6666"/>
-		<item id="2666" countmax="3" chance1="20000" chancemax="0"/>
-		<item id="5911" countmax="1" chance1="5000" chancemax="0"/>
+		<item id="2666" countmax="3" chance="20000"/>
+		<item id="5911" countmax="1" chance="5000"/>
 		<item id="1987" chance="100000">
 			<inside>
 				<item id="2377" chance="1500"/>
@@ -66,7 +66,7 @@
 				<item id="2519" chance="900"/>
 				<item id="2488" chance="800"/>
 				<item id="2071" chance="10000"/>
-				<item id="2544" countmax="13" chance1="20000" chancemax="0"/>
+				<item id="2544" countmax="13" chance="20000"/>
 				<item id="2652" chance="10000"/>
 				<item id="2164" chance="1000"/>
 				<item id="7364" countmax="8" chance="2000"/>

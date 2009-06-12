@@ -56,7 +56,7 @@
 	</summons>
 
 	<loot>
-		<item id="2148" countmax="82" chance1="47831" chancemax="1032"/>
+		<item id="2148" countmax="82" chance="47831" chancemax="1032"/>
 		<item id="2654" chance="5000"/>
 		<item id="2187" chance="1111"/> -- wand of Inferno
 		<item id="5801" chance="909"/>
@@ -69,7 +69,7 @@
 				<item id="2114" chance="1333"/>
 				<item id="6087" chance="1428"/>
 				<item id="5810" chance="555"/>
-				<item id="2146" countmax="2" chance1="1538" chancemax="0"/>
+				<item id="2146" countmax="2" chance="1538"/>
 				<item id="2436" chance="500"/>
 				<item id="2200" chance="1000"/>
 				<item id="5669" chance="400"/>

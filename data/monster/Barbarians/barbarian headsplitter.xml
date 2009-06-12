@@ -42,8 +42,8 @@
 		<voice sentence="Its you or me!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="30" chance1="33333" chancemax="30"/>
-		<item id="2111" countmax="6" chance1="10000" chancemax="0"/>
+		<item id="2148" countmax="30" chance="33333" chancemax="30"/>
+		<item id="2111" countmax="6" chance="10000"/>
 		<item id="2473" chance="10000"/>
 		<item id="7457" chance="10000"/>
 		<item id="2460" chance="10000"/>

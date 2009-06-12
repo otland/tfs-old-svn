@@ -44,8 +44,8 @@
 			<immunity energy="1"/>
 		</immunities>
 		<loot>
-			<item id="2148" countmax="130" chance1="100000" chancemax="0"/> -- Gold Coins
-			<item id="2152" countmax="3" chance1="6000" chancemax="0"/> -- Platinum Coins
+			<item id="2148" countmax="130" chance="100000"/> -- Gold Coins
+			<item id="2152" countmax="3" chance="6000"/> -- Platinum Coins
 			<item id="8305" chance="2200"/> -- Mother Soil
 		</loot>
 	</monster>

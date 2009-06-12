@@ -36,7 +36,7 @@
 		<immunity invisible="0"/>
 	</immunities>
 	<loot>
-		<item id="2148" countmax="40" chance1="100000" chancemax="0"/> --Gold Coin
+		<item id="2148" countmax="40" chance="100000"/> --Gold Coin
 		<item id="2260" chance="10000"/> --Blank Rune
 		<item id="2417" chance="5000"/> --Battle Hammer
 		<item id="2513" chance="1000"/> --Battle Shield

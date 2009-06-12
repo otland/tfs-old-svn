@@ -34,7 +34,7 @@
 		<immunity drunk="0"/>
 		<immunity invisible="1"/>
 	</immunities>
-	<loot capacity="300">
+	<loot>
 		<item id="2148" countmax="10" chance="18000"/>
 		<item id="2669" countmax="1" chance="12000"/>
 	</loot>

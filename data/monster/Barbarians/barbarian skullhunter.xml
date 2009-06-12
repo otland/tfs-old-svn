@@ -39,7 +39,7 @@
 		<voice sentence="Show that you are a worthy opponent."/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="30" chance1="33333" chancemax="30"/>
+		<item id="2148" countmax="30" chance="33333" chancemax="30"/>
 		<item id="2403" chance="10000"/>
 		<item id="2460" chance="10000"/>
 		<item id="2050" chance="10000"/>

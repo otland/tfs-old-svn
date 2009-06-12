@@ -34,11 +34,11 @@
 		</summons>
 		<loot>
 			<item id="6100" chance="100000"/>
-			<item id="2148" countmax="40" chance1="100000" chancemax="0"/>
+			<item id="2148" countmax="40" chance="100000"/>
 			<item id="2476" chance="1200"/>
 			<item id="2387" chance="1500"/>
 			<item id="2463" chance="4000"/>
 			<item id="2145" chance="100000"/>
-			<item id="2320" countmax="1" chance1="100000" chancemax="0"/>
+			<item id="2320" countmax="1" chance="100000"/>
 		 </loot>
 	</monster>

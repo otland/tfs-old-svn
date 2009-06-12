@@ -56,6 +56,6 @@
 	<summon name="Overcharged Energy Elemental" interval="4000" chance="50"/>
 	</summons>
  <loot>
-		<item id="2152" countmax="7" chance1="40000" chancemax="0"/>
+		<item id="2152" countmax="7" chance="40000"/>
  </loot>
 </monster>

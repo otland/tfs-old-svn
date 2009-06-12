@@ -49,10 +49,10 @@
 		<immunity invisible="1"/>
 	</immunities>
 		<loot>
-	 <item id="2148" countmax="100" chance1="100000" chancemax="0"/> --Gold Coin
+	 <item id="2148" countmax="100" chance="100000"/> --Gold Coin
 	 <item id="8303" chance="1500" countmax="2" /> --Energy Soil
 	 <item id="7439" chance="2100"/> --Berserk potion
-	 <item id="2150" countmax="3" chance1="4500" chancemax="0"/> --Small Amethyst
+	 <item id="2150" countmax="3" chance="4500"/> --Small Amethyst
 	 <item id="8920" chance="1000"/> --Wand of Starstorm
 	 </loot>
 	</monster>

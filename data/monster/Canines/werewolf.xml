@@ -45,9 +45,9 @@
 		<voice sentence="HRAAAAAAAAAARRRRRR!" yell="1"/>				
 	</voices>	 
 	<loot>
-		<item id="2148" countmax="96" chance1="100000" chancemax="0"/> <!-- gps -->
-		<item id="2148" countmax="74" chance1="100000" chancemax="0"/> <!-- gps -->
-		<item id="5897" countmax="1" chance1="5000" chancemax="0"/> <!--	wolf paw -->
+		<item id="2148" countmax="96" chance="100000"/> <!-- gps -->
+		<item id="2148" countmax="74" chance="100000"/> <!-- gps -->
+		<item id="5897" countmax="1" chance="5000"/> <!--	wolf paw -->
 		<item id="2805" chance="4000"/> <!-- troll green -->
 		<item id="2647" chance="3000"/> <!-- plate legs -->
 		<item id="8473" chance="2000"/> <!-- uhp -->

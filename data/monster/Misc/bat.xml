@@ -25,10 +25,10 @@
 	<element earthPercent="-20"/>
 	</elements>
 	<loot>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="2671" countmax="2" chance1="100000" chancemax="0"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="2671" countmax="2" chance="100000"/>
 		<item id="2681" chance="20000"/>
-		<item id="5894" countmax="1" chance1="5000" chancemax="0"/>
+		<item id="5894" countmax="1" chance="5000"/>
 	</loot>
 </monster>

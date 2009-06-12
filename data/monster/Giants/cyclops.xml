@@ -35,20 +35,20 @@
 		<voice sentence="Let da mashing begin!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="2148" countmax="80" chance1="100000" chancemax="0"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="2148" countmax="80" chance="100000"/>
 		<item id="2406" chance="33333"/>
 		<item id="2209" chance="2000"/>
 		<item id="2490" chance="4000"/>
 		<item id="2129" chance="6666"/>
-		<item id="2666" countmax="3" chance1="33333" chancemax="0"/>
+		<item id="2666" countmax="3" chance="33333"/>
 		<item id="1987" chance="100000">
 			<inside>
 				<item id="2513" chance="2500"/>
 				<item id="2511" chance="2857"/>
 				<item id="2381" chance="5000"/>
-				<item id="2148" countmax="10" chance1="20000" chancemax="0"/>
-				<item id="2671" countmax="3" chance1="33333" chancemax="0"/>
+				<item id="2148" countmax="10" chance="20000"/>
+				<item id="2671" countmax="3" chance="33333"/>
 			</inside>
 		</item>
 	</loot>

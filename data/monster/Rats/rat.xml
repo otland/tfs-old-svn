@@ -31,8 +31,8 @@
 	<voice sentence="Meep!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="2148" countmax="7" chance1="80000" chancemax="0"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="2148" countmax="7" chance="80000"/>
 		<item id="2696" chance="20000"/>
 	</loot>
 </monster>

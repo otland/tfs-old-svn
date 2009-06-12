@@ -53,7 +53,7 @@
 		<voice sentence="Me other char is highlevel!"/>
 	</voices>
 	<loot>
-	 <item id="2148" countmax="12" chance1="100000" chancemax="0"/> --Gold Coin
+	 <item id="2148" countmax="12" chance="100000"/> --Gold Coin
 	 <item id="2671" chance="50000"/> --Ham
 	 <item id="6570" chance="5538"/> --Blue Surprise Bag
 	 <item id="6571" chance="1538"/> --Red Surprise Bag

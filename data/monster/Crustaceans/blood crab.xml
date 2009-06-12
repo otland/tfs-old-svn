@@ -29,11 +29,11 @@
 	<element energyPercent="5"/>
 	</elements>
 	<loot>
-		<item id="2148" countmax="80" chance1="40000" chancemax="954"/>
-		<item id="2148" countmax="39" chance1="40000" chancemax="954"/>
-		<item id="2667" countmax="2" chance1="4789" chancemax="0"/>
+		<item id="2148" countmax="80" chance="40000" chancemax="954"/>
+		<item id="2148" countmax="39" chance="40000" chancemax="954"/>
+		<item id="2667" countmax="2" chance="4789"/>
 		<item id="2478" chance="6827"/>
 		<item id="2464" chance="5839"/>
-		<item id="2143" countmax="2" chance1="4000" chancemax="0"/>
+		<item id="2143" countmax="2" chance="4000"/>
 	</loot>
 </monster>

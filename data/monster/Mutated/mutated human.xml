@@ -46,16 +46,16 @@
 		<voice sentence="Oh by the gods! What is this... aaaaaargh!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="50" chance1="100000" chancemax="0"/> <!-- gps -->
-		<item id="3976" countmax="3" chance1="10000"/> <!-- worms -->
+		<item id="2148" countmax="50" chance="100000"/> <!-- gps -->
+		<item id="3976" countmax="3" chance="10000"/> <!-- worms -->
 		<item id="2671" chance="900"/> <!-- ham -->
 		<item id="2696" chance="13500"/> <!-- cheese -->
 		<item id="2226" chance="12500"/> <!-- fishbone -->
-		<item id="2484" countmax="1" chance1="3000"/> <!-- studded armor -->
+		<item id="2484" countmax="1" chance="3000"/> <!-- studded armor -->
 		<item id="2801" chance="1500"/> <!-- fern -->
 		<item id="1987" chance="100000"> <!-- bag -->
 			<inside>
-				<item id="2406" countmax="1" chance1="4000"/> <!-- short sword -->
+				<item id="2406" countmax="1" chance="4000"/> <!-- short sword -->
 				<item id="2376" chance="3000"/> <!-- sword -->
 				<item id="2170" chance="300"/> <!-- silver amulet -->				
 				<item id="2161" chance="1500"/> <!-- strange talisman -->

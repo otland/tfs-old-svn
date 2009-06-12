@@ -49,7 +49,7 @@
 	<voice sentence="You advanshed, you advanshed!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="3976" countmax="3" chance1="50000" chancemax="0"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="3976" countmax="3" chance="50000"/>
 	</loot>
 </monster>

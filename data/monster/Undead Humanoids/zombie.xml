@@ -40,8 +40,8 @@
 		<voice sentence="Httt.... hmnnsss..."/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/> <!-- worms -->
-		<item id="2148" countmax="52" chance1="100000" chancemax="0"/> <!-- gps -->
+		<item id="3976" countmax="10" chance="50000"/> <!-- worms -->
+		<item id="2148" countmax="52" chance="100000"/> <!-- gps -->
 		<item id="1987" chance="100000">
 			<inside>
 				<item id="2381" chance="2857"/> <!-- battle hammer -->

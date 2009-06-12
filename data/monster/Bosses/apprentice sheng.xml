@@ -47,8 +47,8 @@
 		<voice sentence="Kaplar!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="2148" countmax="20" chance1="100000" chancemax="0"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="2148" countmax="20" chance="100000"/>
 		<item id="2050" chance="10000"/>
 		<item id="2461" chance="8000"/>
 		<item id="2649" chance="8000"/>
@@ -56,7 +56,7 @@
 		<item id="1987" chance="100000">
 			<inside>
 				<item id="2404" chance="10000"/>
-				<item id="2362" countmax="5" chance1="20000" chancemax="0"/>
+				<item id="2362" countmax="5" chance="20000"/>
 				<item id="2817" chance="10000"/>
 				<item id="2311" chance="2857"/>
 				<item id="7425" chance="1000"/>

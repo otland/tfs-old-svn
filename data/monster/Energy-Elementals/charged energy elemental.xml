@@ -42,8 +42,8 @@
 		<immunity invisible="1"/>
 	</immunities>
 		<loot>
-	 <item id="2148" countmax="100" chance1="100000" chancemax="0"/> --Gold Coin
+	 <item id="2148" countmax="100" chance="100000"/> --Gold Coin
 	 <item id="8303" chance="1500" countmax="2" /> --Energy Soil
-	 <item id="7838" countmax="3" chance1="3200" chancemax="0"/> -- Flash Arrow
+	 <item id="7838" countmax="3" chance="3200"/> -- Flash Arrow
 	 </loot>
 	</monster>

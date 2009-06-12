@@ -29,6 +29,6 @@
 		<voice sentence="Bssssss"/>
 	</voices>
 	<loot>
-		<item id="5902" countmax="1" chance1="5000" chancemax="0"/>
+		<item id="5902" countmax="1" chance="5000"/>
 	</loot>
 </monster>

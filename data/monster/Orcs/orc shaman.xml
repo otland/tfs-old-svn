@@ -49,13 +49,13 @@
 		<summon name="snake" interval="1000" chance="25" max="4"/>
 	</summons>
 	<loot>
-		<item id="2148" countmax="20" chance1="100000" chancemax="0"/>
+		<item id="2148" countmax="20" chance="100000"/>
 		<item id="2401" chance="2222"/>
 		<item id="2458" chance="2222"/>
 		<item id="1987" chance="100000">
 			<inside>
 				<item id="2817" chance="5000"/>
-				<item id="2389" countmax="1" chance1="4000" chancemax="0"/>
+				<item id="2389" countmax="1" chance="4000"/>
 				<item id="2079" chance="3333"/>
 				<item id="2190" chance="1538"/>
 				<item id="2188" chance="1000"/> -- wand of plague

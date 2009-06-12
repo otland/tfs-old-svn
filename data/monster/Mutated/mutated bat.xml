@@ -40,15 +40,15 @@
 	<voices interval="2500" chance="10">
 	</voices>
 	<loot>
-		<item id="2148" countmax="50" chance1="100000" chancemax="0"/> <!-- gps -->
-		<item id="2148" countmax="60" chance1="100000" chancemax="0"/> <!-- gps -->
+		<item id="2148" countmax="50" chance="100000"/> <!-- gps -->
+		<item id="2148" countmax="60" chance="100000"/> <!-- gps -->
 		<item id="2800" chance="13000"/> <!-- star herb -->
-		<item id="5894" countmax="2" chance1="5500"/> <!-- bat wing -->
+		<item id="5894" countmax="2" chance="5500"/> <!-- bat wing -->
 		<item id="1987" chance="100000">
 			<inside>
 				<item id="2513" chance="13500"/> <!-- battle shield -->
-				<item id="2150" countmax="2" chance1="5800"/> <!-- small amethyst -->
-				<item id="2144" countmax="3" chance1="8300"/> <!-- black pearl -->
+				<item id="2150" countmax="2" chance="5800"/> <!-- small amethyst -->
+				<item id="2144" countmax="3" chance="8300"/> <!-- black pearl -->
 				<item id="7386" chance="1300"/> <!-- mercenary sword -->
 				<item id="2165" chance="3250"/> <!-- stealth ring -->
 				<item id="10016" chance="950"/> <!-- batwing hat -->

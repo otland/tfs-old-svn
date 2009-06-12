@@ -29,7 +29,7 @@
 		<voice sentence="Ribbit, ribbit!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="9" chance1="60000" chancemax="1321"/>
-		<item id="3976" countmax="4" chance1="53500" chancemax="2120"/>
+		<item id="2148" countmax="9" chance="60000" chancemax="1321"/>
+		<item id="3976" countmax="4" chance="53500" chancemax="2120"/>
 	</loot>
 </monster>

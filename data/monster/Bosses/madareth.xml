@@ -32,13 +32,13 @@
 		<voice sentence="I am going to play with yourself!" yell="1"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="100" chance1="100000" chancemax="0"/> --Gold
+		<item id="2148" countmax="100" chance="100000"/> --Gold
 		<item id="2514" chance="12650"/> --mastermind shield
 		<item id="2214" chance="8000"/> --Roh
 		<item id="1987" chance="100000">
 		<inside>
 			<item id="2520" chance="7650"/> --Demon shield
-			<item id="2145" chance1="5800"/> --small amethyst
+			<item id="2145" chance="5800"/> --small amethyst
 		</inside>
 		</item>
 	</loot>

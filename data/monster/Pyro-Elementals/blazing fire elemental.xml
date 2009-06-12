@@ -38,7 +38,7 @@
 	<element icePercent="-15"/>
 	</elements>
  <loot>
-	 <item id="2148" countmax="40" chance1="100000" chancemax="0"/> --Gold Coin
+	 <item id="2148" countmax="40" chance="100000"/> --Gold Coin
 	 <item id="8299" chance="900"/> --Glimmering Soil
  </loot>
 </monster>

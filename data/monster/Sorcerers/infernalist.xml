@@ -65,9 +65,9 @@
 		<voice sentence="Feel the heat of battle!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="70" chance1="100000" chancemax="0"/> <!-- gps -->
-		<item id="2148" countmax="44" chance1="100000" chancemax="0"/> <!-- gps -->
-		<item id="8840" countmax="5" chance1="100000"/> <!-- raspberry -->
+		<item id="2148" countmax="70" chance="100000"/> <!-- gps -->
+		<item id="2148" countmax="44" chance="100000"/> <!-- gps -->
+		<item id="8840" countmax="5" chance="100000"/> <!-- raspberry -->
 		<item id="9971" chance="3500"/> <!-- gold ingot -->
 		<item id="7590" chance="13500"/> <!-- gmp -->
 		<item id="7591" chance="12500"/> <!-- ghp -->
@@ -76,7 +76,7 @@
 		<item id="5904" chance="2200"/> <!-- magic sulphur -->
 		<item id="1987" chance="100000"> <!-- bag -->
 			<inside>
-				<item id="7760" countmax="1" chance1="9500"/> <!-- small enchanted ruby -->
+				<item id="7760" countmax="1" chance="9500"/> <!-- small enchanted ruby -->
 				<item id="9980" chance="1300"/> <!-- crystal of power -->
 				<item id="2167" chance="14500"/> <!-- energy ring -->				
 				<item id="2114" chance="1100"/> <!-- piggy bank -->

@@ -63,21 +63,21 @@
 		<voice sentence="Catch me if you can!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="16" chance1="100000" chancemax="0"/> --Gold Coin
-		<item id="2676" countmax="100" chance1="1050" chancemax="0"/> --Banana
-		<item id="6501" countmax="2" chance1="13256" chancemax="0"/> --Gingerbread Man
-		<item id="2675" countmax="3" chance1="13256" chancemax="0"/> --Orange
-		<item id="2687" countmax="5" chance1="13256" chancemax="0"/> --Cookie
-		<item id="2679" countmax="4" chance1="13256" chancemax="0"/> --Cherry
-		<item id="2674" countmax="3" chance1="13256" chancemax="0"/> --Apple
-		<item id="2678" countmax="19" chance1="1050" chancemax="0"/> --Coconut
+		<item id="2148" countmax="16" chance="100000"/> --Gold Coin
+		<item id="2676" countmax="100" chance="1050"/> --Banana
+		<item id="6501" countmax="2" chance="13256"/> --Gingerbread Man
+		<item id="2675" countmax="3" chance="13256"/> --Orange
+		<item id="2687" countmax="5" chance="13256"/> --Cookie
+		<item id="2679" countmax="4" chance="13256"/> --Cherry
+		<item id="2674" countmax="3" chance="13256"/> --Apple
+		<item id="2678" countmax="19" chance="1050"/> --Coconut
 		<item id="1987" chance="100000"> --Bag
 			<inside>
-				<item id="2695" countmax="2" chance1="20000" chancemax="0"/> --Egg
-				<item id="2688" countmax="3" chance1="20000" chancemax="0"/> --Candy Cane
+				<item id="2695" countmax="2" chance="20000"/> --Egg
+				<item id="2688" countmax="3" chance="20000"/> --Candy Cane
 				<item id="6394" chance="20000"/> --Cream Cake
 				<item id="6393" chance="20000"/> --Valentine Cake
-				<item id="2111" countmax="5" chance1="20000" chancemax="0"/> --Snowball
+				<item id="2111" countmax="5" chance="20000"/> --Snowball
 				<item id="6497" chance="100000"/> --Present Bag
 				<item id="6277" chance="20000"/> --Lump of Cake Dough
 			</inside>
@@ -91,8 +91,8 @@
 				<item id="2172" chance="10000"/> --Bronze Amulet
 				<item id="1949" chance="10000"/> --Scroll
 				<item id="2661" chance="10000"/> --Scarf
-				<item id="5890" countmax="5" chance1="20000" chancemax="0"/> --Chicken Feather
-				<item id="5894" countmax="3" chance1="20000" chancemax="0"/> --Bat Wing
+				<item id="5890" countmax="5" chance="20000"/> --Chicken Feather
+				<item id="5894" countmax="3" chance="20000"/> --Bat Wing
 				<item id="5902" chance="10000"/> --Honeycomb
 				<item id="6091" chance="10000"/> --Watch
 				<item id="2551" chance="10000"/> --Broom

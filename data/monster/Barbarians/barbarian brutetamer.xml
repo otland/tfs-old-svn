@@ -61,11 +61,11 @@
 	</voices>
 
 	<loot>
-		<item id="2148" countmax="14" chance1="33333" chancemax="0"/>
-		<item id="2686" countmax="2" chance1="10000" chancemax="0"/>
+		<item id="2148" countmax="14" chance="33333"/>
+		<item id="2686" countmax="2" chance="10000"/>
 		<item id="2464" chance="3333"/>
 		<item id="2401" chance="10000"/>
-		<item id="2671" countmax="3" chance1="2500" chancemax="0"/>
+		<item id="2671" countmax="3" chance="2500"/>
 		<item id="7343" chance="3333"/>
 		<item id="7463" chance="1033"/>
 		<item id="3965" chance="533"/>

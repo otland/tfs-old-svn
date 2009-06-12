@@ -59,7 +59,7 @@
 		<voice sentence="You wil die Begging like the others did" yell="1"/>
 	</voices>
 <loot>
- 	<item id="2148" countmax="100" chance1="100000" chancemax="0"/> -- Gold Coin
+ 	<item id="2148" countmax="100" chance="100000"/> -- Gold Coin
 	<item id="7590" chance="3000"/> -- Great mana potion
 	<item id="7591" chance="3000"/>	-- Great Health potion
 </loot>

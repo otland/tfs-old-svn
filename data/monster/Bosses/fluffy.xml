@@ -49,12 +49,12 @@
 		<voice sentence="Wooof!"/>
 		</voices>
 	<loot>
-	 <item id="2148" countmax="100" chance1="100000" chancemax="0"/> --Gold Coin
-	 <item id="2148" countmax="20" chance1="100000" chancemax="0"/> --Gold Coin
+	 <item id="2148" countmax="100" chance="100000"/> --Gold Coin
+	 <item id="2148" countmax="20" chance="100000"/> --Gold Coin
 	 <item id="5944" chance="5555"/> --Soul Orb
 	 <item id="6570" chance="5538" countmax="4"/> --Blue Surprise Bag
 	 <item id="6571" chance="1538"/> --Red Surprise Bag
-	 <item id="2671" countmax="8" chance1="50000" chancemax="0"/> --Ham
+	 <item id="2671" countmax="8" chance="50000"/> --Ham
 	 <item id="2230" chance="25000"/> --Bone
 	 <item id="6500" chance="7200"/> --Demonic Essence
 	 <item id="1987" chance="100000">

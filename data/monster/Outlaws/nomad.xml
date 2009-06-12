@@ -34,20 +34,20 @@
 <voice sentence="We are swift as the wind of the desert!"/>
 </voices>
 <loot>
-<item id="2148" countmax="20" chance1="100000" chancemax="0"/>
+<item id="2148" countmax="20" chance="100000"/>
 <item id="2465" chance="10000"/>
 <item id="2461" chance="10000"/>
 <item id="2649" chance="10000"/>
-<item id="2671" countmax="2" chance1="20000" chancemax="0"/>
-<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
+<item id="2671" countmax="2" chance="20000"/>
+<item id="3976" countmax="10" chance="50000"/>
 <item id="1987" chance="100000">
 <inside>
 <item id="2456" chance="6666"/>
-<item id="2544" countmax="15" chance1="10000" chancemax="0"/>
-<item id="2546" countmax="5" chance1="10000" chancemax="0"/>
-<item id="2147" countmax="2" chance1="3333" chancemax="0"/>
-<item id="2675" countmax="4" chance1="6666" chancemax="0"/>
-<item id="2690" countmax="4" chance1="6666" chancemax="0"/>
+<item id="2544" countmax="15" chance="10000"/>
+<item id="2546" countmax="5" chance="10000"/>
+<item id="2147" countmax="2" chance="3333"/>
+<item id="2675" countmax="4" chance="6666"/>
+<item id="2690" countmax="4" chance="6666"/>
 <item id="2050" chance="20000"/>
 <item id="2478" chance="3333"/>
 <item id="2652" chance="2222"/>

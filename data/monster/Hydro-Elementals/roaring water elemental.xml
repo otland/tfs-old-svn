@@ -41,9 +41,9 @@
 		<immunity invisible="1"/>
 	</immunities>
 	<loot>
-	<loot id="7839" countmax="3" chance1="6200" chancemax="0"/> -- Shiver Arrows
-	<loot id="2146" countmax="2" chance1="2400" chancemax="0"/> -- Small Sapphire
-	<loot id="2148" countmax="100" chance1="100000" chancemax="0"/> -- Gold
+	<loot id="7839" countmax="3" chance="6200"/> -- Shiver Arrows
+	<loot id="2146" countmax="2" chance="2400"/> -- Small Sapphire
+	<loot id="2148" countmax="100" chance="100000"/> -- Gold
 	<loot id="8302" chance="1700"/> -- Iced Soil
 	<loot id="8911" chance="2000"/> -- Northwind Rod
 	</loot>

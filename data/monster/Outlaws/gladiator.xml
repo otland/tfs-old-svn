@@ -37,9 +37,9 @@
 		<voice sentence="Take this!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="20" chance1="100000" chancemax="0"/> <!-- gp's -->
+		<item id="2148" countmax="20" chance="100000"/> <!-- gp's -->
 		<item id="8872" chance="6000"/> <!-- belted cape -->	
-		<item id="2666" countmax="2" chance1="25000" chancemax="0"/>	<!-- meat -->
+		<item id="2666" countmax="2" chance="25000"/>	<!-- meat -->
 		<item id="2465" chance="9500"/> <!-- nrass armor -->	
 		<item id="1987" chance="100000"> <!-- Bag -->
 			<inside>

@@ -68,19 +68,19 @@
 	</voices>
 	<loot>
 		<item id="2155" countmax="1" chance="100"/>
-		<item id="2148" countmax="60" chance1="100000" chancemax="0"/>
-		<item id="2673" countmax="4" chance1="6666" chancemax="0"/>
+		<item id="2148" countmax="60" chance="100000"/>
+		<item id="2673" countmax="4" chance="6666"/>
 		<item id="2044" chance="10000"/>
 		<item id="1987" chance="100000">
-		<item id="7378" countmax="2" chance1="2000" chancemax="0"/>
+		<item id="7378" countmax="2" chance="2000"/>
 		<item id="2063" chance="20000"/>
 			<inside>
 				<item id="2149" countmax="2" chance="7000"/>
-		<item id="5910" countmax="2" chance1="5000" chancemax="0"/>
+		<item id="5910" countmax="2" chance="5000"/>
 				<item id="7900" chance="500"/> --magma monocle
 				<item id="2663" chance="200"/>
 				<item id="1860" countmax="1" chance="2500"/>
-				<item id="2148" countmax="15" chance1="80000" chancemax="0"/>
+				<item id="2148" countmax="15" chance="80000"/>
 				<item id="2442" chance="2000"/>
 				<item id="2187" chance="1111"/> -- wand of Inferno
 			</inside>

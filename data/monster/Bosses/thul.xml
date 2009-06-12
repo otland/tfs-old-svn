@@ -39,8 +39,8 @@
 	<summon name="massive water elemental" interval="1000" chance="13"/>
 	</summons>
 	<loot>
-		<item id="2148" countmax="90" chance1="100000" chancemax="0"/>
-		<item id="2148" countmax="90" chance1="100000" chancemax="0"/>
-		<item id="5895" countmax="1" chance1="100000" chancemax="0"/>
+		<item id="2148" countmax="90" chance="100000"/>
+		<item id="2148" countmax="90" chance="100000"/>
+		<item id="5895" countmax="1" chance="100000"/>
 	</loot>
 </monster>

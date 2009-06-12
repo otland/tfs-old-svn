@@ -69,7 +69,7 @@
 		<voice sentence="Be prepared for the day my masters will come for you!"/>
 		<voice sentence="SOULS FOR ORSHABAAL!" yell="1"/>
 	</voices>
-	<loot capacity="5000">
+	<loot>
 		<item id="2142" countmax="1" chance="3500"/>
 		<item id="2144" countmax="15" chance="15000"/>
 		<item id="2158" countmax="1" chance="1500"/>

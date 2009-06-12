@@ -40,8 +40,8 @@
 		<voice sentence="CARNAGE!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="71" chance1="100000" chancemax="0"/> --Gold Coins
-		<item id="2671" countmax="1" chance1="33000" chancemax="0"/> --Ham
+		<item id="2148" countmax="71" chance="100000"/> --Gold Coins
+		<item id="2671" countmax="1" chance="33000"/> --Ham
 		<item id="2381" chance="2777"/> --Halberd
 		<item id="2378" chance="2888"/> --Battle Axe
 		<item id="1987" chance="100000"> --Bag
@@ -50,8 +50,8 @@
 					 <item id="2050" chance="11111"/> --Torch
 					 <item id="2464" chance="4444"/> --Chain Armor
 					 <item id="7457" chance="1222"/> --Fur Boots
-					 <item id="5911" countmax="1" chance1="4555" chancemax="0"/> --Red Piece of Cloth
-					 <item id="7290" countmax="1" chance1="3222" chancemax="0"/> --Shard
+					 <item id="5911" countmax="1" chance="4555"/> --Red Piece of Cloth
+					 <item id="7290" countmax="1" chance="3222"/> --Shard
 					 <item id="3962" chance="1688"/> --Beastslayer Axe
 				</inside>
 		 </item>

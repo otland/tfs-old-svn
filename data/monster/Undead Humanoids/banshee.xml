@@ -52,8 +52,8 @@
 		<voice sentence="Feel my gentle kiss of death."/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="40" chance1="100000" chancemax="0"/>
-		<item id="2144" countmax="3" chance1="1000" chancemax="0"/>
+		<item id="2148" countmax="40" chance="100000"/>
+		<item id="2144" countmax="3" chance="1000"/>
 		<item id="2657" chance="5000"/>
 		<item id="2168" chance="1333"/>
 		<item id="2170" chance="2000"/>

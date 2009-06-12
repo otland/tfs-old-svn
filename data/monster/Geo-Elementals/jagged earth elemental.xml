@@ -44,9 +44,9 @@
 		<voice sentence="Stomp STOMP"/>
 	</voices>
 		<loot>
-			<item id="2148" countmax="140" chance1="100000" chancemax="0"/> -- Gold Coin
-			<item id="8298" chance="1800" chancemax="0"/> -- Natural Soil
+			<item id="2148" countmax="140" chance="100000"/> -- Gold Coin
+			<item id="8298" chance="1800"/> -- Natural Soil
 		<item id="5880" chance="2300"/> -- Iron Ore
-			<item id="2149" countmax="2" chance1="2200" chancemax="0"/> -- Small Emeralds
+			<item id="2149" countmax="2" chance="2200"/> -- Small Emeralds
 		</loot>
 	</monster>

@@ -39,8 +39,8 @@
 		<voice sentence="Kiyosa sipaju!"/>
 	</voices>
 	<loot>
-		<item id="2667" countmax="2" chance1="20000" chancemax="0"/>
-		<item id="2148" countmax="20" chance1="20000" chancemax="0"/>
+		<item id="2667" countmax="2" chance="20000"/>
+		<item id="2148" countmax="20" chance="20000"/>
 		<item id="2553" chance="2000"/>
 	</loot>
 </monster>

@@ -36,7 +36,7 @@
 		<voice sentence="Me makking you pulp!"/>
 		<voice sentence="Humy tasy! Hum hum!"/>
 	</voices>
-	<loot capacity="600">
+	<loot>
 		<item id="2513" countmax="1" chance="1500"/>
 		<item id="2490" countmax="1" chance="200"/>
 		<item id="2148" countmax="24" chance="4000"/>

@@ -31,9 +31,9 @@
 		<voice sentence="Me strong! Me ate spinach!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="2148" countmax="12" chance1="100000" chancemax="0"/>
-		<item id="2667" countmax="1" chance1="90000" chancemax="0"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="2148" countmax="12" chance="100000"/>
+		<item id="2667" countmax="1" chance="90000"/>
 		<item id="1987" chance="100000">
 			<inside>
 				<item id="2643" chance="20000"/>

@@ -45,17 +45,17 @@
 	<voice sentence="Your end has come!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="20" chance1="100000" chancemax="0"/>
+		<item id="2148" countmax="20" chance="100000"/>
 		<item id="2439" chance="400"/>
 		<item id="1949" chance="10000"/>
 		<item id="2467" chance="10000"/>
 		<item id="2642" chance="6666"/>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
+		<item id="3976" countmax="10" chance="50000"/>
 		<item id="1987" chance="100000">
 			<inside>
 				<item id="2177" countmax="1" chance="1000"/>
 				<item id="2044" chance="6666"/>
-				<item id="2689" countmax="3" chance1="20000" chancemax="0"/>
+				<item id="2689" countmax="3" chance="20000"/>
 				<item id="2401" chance="3333"/>
 				<item id="2440" chance="100"/>
 				<item id="2166" chance="1428"/>

@@ -30,8 +30,8 @@
 		<voice sentence="Groar"/>
 	</voices>
 	<loot>
-		<item id="2671" countmax="10" chance1="33333" chancemax="0"/>
-		<item id="2666" countmax="15" chance1="33333" chancemax="0"/>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
+		<item id="2671" countmax="10" chance="33333"/>
+		<item id="2666" countmax="15" chance="33333"/>
+		<item id="3976" countmax="10" chance="50000"/>
 	</loot>
 </monster>

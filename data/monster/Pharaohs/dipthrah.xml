@@ -54,25 +54,25 @@
 		<voice sentence="You can't escape death forever."/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="100" chance1="100000" chancemax="0"/>
+		<item id="2148" countmax="100" chance="100000"/>
 		<item id="2176" chance="2000"/>
 		<item id="2424" chance="100"/>
-		<item id="2148" countmax="100" chance1="100000" chancemax="0"/>
+		<item id="2148" countmax="100" chance="100000"/>
 		<item id="1987" chance="100000">
 			<inside>
-				<item id="2148" countmax="70" chance1="100000" chancemax="0"/>
+				<item id="2148" countmax="70" chance="100000"/>
 				<item id="2550" chance="10000"/>
-				<item id="2688" countmax="5" chance1="4000" chancemax="0"/>
+				<item id="2688" countmax="5" chance="4000"/>
 				<item id="2540" chance="333"/>
 				<item id="2539" chance="200"/>
 				<item id="2533" chance="1428"/>
 				<item id="2486" chance="1000"/>
 				<item id="2658" chance="100"/>
 				<item id="2189" chance="500"/>
-				<item id="2147" countmax="2" chance1="4000" chancemax="0"/>
-				<item id="2678" countmax="4" chance1="4000" chancemax="0"/>
-				<item id="2148" countmax="100" chance1="100000" chancemax="0"/>
-				<item id="2690" countmax="4" chance1="4000" chancemax="0"/>
+				<item id="2147" countmax="2" chance="4000"/>
+				<item id="2678" countmax="4" chance="4000"/>
+				<item id="2148" countmax="100" chance="100000"/>
+				<item id="2690" countmax="4" chance="4000"/>
 			</inside>
 		</item>
 	</loot>

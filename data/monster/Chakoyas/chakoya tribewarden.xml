@@ -36,9 +36,9 @@
 		<voice sentence="Si ji jusipa!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="10" chance1="3333" chancemax="0"/>
-		<item id="2671" countmax="1" chance1="10000" chancemax="0"/>
-		<item id="2667" countmax="3" chance1="10000" chancemax="0"/>
+		<item id="2148" countmax="10" chance="3333"/>
+		<item id="2671" countmax="1" chance="10000"/>
+		<item id="2667" countmax="3" chance="10000"/>
 		<item id="2541" chance="333"/>
 		<item id="2398" chance="3000"/>
 		<item id="7381" chance="600"/>

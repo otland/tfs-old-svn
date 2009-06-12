@@ -39,17 +39,17 @@
 		<immunity paralyze="1"/>
 	</immunities>
 	<loot>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="2148" countmax="50" chance1="80000" chancemax="0"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="2148" countmax="50" chance="80000"/>
 		<item id="1987" chance="100000">
 			<inside>
-				<item id="2666" countmax="3" chance1="20000" chancemax="0"/>
-				<item id="2544" countmax="4" chance1="20000" chancemax="0"/>
+				<item id="2666" countmax="3" chance="20000"/>
+				<item id="2544" countmax="4" chance="20000"/>
 				<item id="2439" chance="2500"/>
 				<item id="2442" chance="2500"/>
-				<item id="2159" countmax="1" chance1="1000" chancemax="0"/>
-				<item id="2149" countmax="2" chance1="2000" chancemax="0"/>
-				<item id="2150" countmax="3" chance1="2000" chancemax="0"/>
+				<item id="2159" countmax="1" chance="1000"/>
+				<item id="2149" countmax="2" chance="2000"/>
+				<item id="2150" countmax="3" chance="2000"/>
 			</inside>
 		</item>
 	</loot>

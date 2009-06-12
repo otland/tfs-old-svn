@@ -34,7 +34,7 @@
 	<voices interval="5000" chance="10">
 		<voice sentence="Chchch"/>
 	</voices>
-	<loot capacity="600">
+	<loot>
 		<item id="7909" countmax="1" chance="50"/>
 		<item id="7910" countmax="4" chance="2000"/>
 	</loot>

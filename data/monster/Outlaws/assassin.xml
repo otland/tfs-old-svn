@@ -46,7 +46,7 @@
 		<voice sentence="Feel the hand of death!"/>
 		<voice sentence="You are on my deathlist!"/>
 	</voices>
-	<loot capacity="500">
+	<loot>
 		<item id="2513" countmax="1" chance="1500"/>
 		<item id="2404" countmax="1" chance="4000"/>
 		<item id="2148" countmax="40" chance="80000"/>

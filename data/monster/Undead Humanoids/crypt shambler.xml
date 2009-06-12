@@ -38,13 +38,13 @@
 		<voice sentence="Chhhhhhh!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="2148" countmax="15" chance1="100000" chancemax="0"/>
-		<item id="2671" countmax="2" chance1="33333" chancemax="0"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="2148" countmax="15" chance="100000"/>
+		<item id="2671" countmax="2" chance="33333"/>
 		<item id="1987" chance="100000">
 			<inside>
 				<item id="2377" chance="2857"/>
-				<item id="2399" countmax="2" chance1="33333" chancemax="0"/>
+				<item id="2399" countmax="2" chance="33333"/>
 				<item id="2450" chance="5000"/>
 				<item id="2482" chance="20000"/>
 				<item id="2541" chance="2000"/>

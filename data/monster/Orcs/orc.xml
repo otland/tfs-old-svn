@@ -33,9 +33,9 @@
 		<voice sentence="Prek tars, dekklep zurk."/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="2148" countmax="12" chance1="100000" chancemax="0"/>
-		<item id="2666" countmax="2" chance1="33333" chancemax="0"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="2148" countmax="12" chance="100000"/>
+		<item id="2666" countmax="2" chance="33333"/>
 		<item id="2484" chance="10000"/>
 		<item id="2480" chance="10000"/>
 		<item id="2385" chance="10000"/>

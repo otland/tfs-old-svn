@@ -46,14 +46,14 @@
 			<voice sentence="GROOOOAAAAAAAAR!"/>
 		</voices>
 		<loot>
-			<item id="2672" countmax="3" chance1="9000" chancemax="0"/>
-			<item id="2148" countmax="200" chance1="6000" chancemax="0"/>
+			<item id="2672" countmax="3" chance="9000"/>
+			<item id="2148" countmax="200" chance="6000"/>
 			<item id="2647" chance="1222"/>
 			<item id="8871" chance="1990"/>
-			<item id="2546" countmax="10" chance1="6000" chancemax="0"/>
+			<item id="2546" countmax="10" chance="6000"/>
 			<item id="1987" chance="10000">
 				<inside>
-					<item id="2148" countmax="200" chance1="100000" chancemax="0"/>
+					<item id="2148" countmax="200" chance="100000"/>
 					<item id="7430" chance="1554"/>
 					<item id="7588" chance="5332"/>
 					<item id="8921" chance="3999"/>

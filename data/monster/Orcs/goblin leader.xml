@@ -37,16 +37,16 @@
 		<voice sentence="Goblinkiller! Catch him !!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="7" chance1="50000" chancemax="0"/>
-		<item id="2148" countmax="14" chance1="100000" chancemax="0"/>
+		<item id="3976" countmax="7" chance="50000"/>
+		<item id="2148" countmax="14" chance="100000"/>
 		<item id="2461" chance="10000"/>
 		<item id="2406" chance="10000"/>
 		<item id="2467" chance="10000"/>
 		<item id="1987" chance="100000">
 			<inside>
 				<item id="2559" chance="10000"/>
-				<item id="1294" countmax="4" chance1="20000" chancemax="0"/>
-				<item id="2667" countmax="2" chance1="20000" chancemax="0"/>
+				<item id="1294" countmax="4" chance="20000"/>
+				<item id="2667" countmax="2" chance="20000"/>
 				<item id="2230" chance="10000"/>
 				<item id="2235" chance="10000"/>
 				<item id="2449" chance="10000"/>

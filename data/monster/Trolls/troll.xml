@@ -35,9 +35,9 @@
 		<voice sentence="Hmmm, dogs."/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="2148" countmax="10" chance1="100000" chancemax="0"/>
-		<item id="2389" countmax="1" chance1="33333" chancemax="0"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="2148" countmax="10" chance="100000"/>
+		<item id="2389" countmax="1" chance="33333"/>
 		<item id="2643" chance="10000"/>
 		<item id="2461" chance="20000"/>
 		<item id="2120" chance="23333"/>
@@ -45,7 +45,7 @@
 		<item id="1987" chance="100000">
 			<inside>
 				<item id="2512" chance="6666"/>
-				<item id="2666" countmax="2" chance1="30000" chancemax="0"/>
+				<item id="2666" countmax="2" chance="30000"/>
 				<item id="2380" chance="10000"/>
 				<item id="2170" chance="1428"/>
 				<item id="2448" chance="10000"/>

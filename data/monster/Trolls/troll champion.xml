@@ -32,7 +32,7 @@
 		<voice sentence="Whaaaz up!?"/>
 		<voice sentence="Gruntz!"/>
 	</voices>
-	<loot capacity="200">
+	<loot>
 		<item id="2148" countmax="12" chance="6000"/>
 		<item id="2380" countmax="1" chance="1800"/>
 		<item id="2643" countmax="1" chance="1000"/>

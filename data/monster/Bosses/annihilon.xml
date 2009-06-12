@@ -54,9 +54,9 @@
 		<voice sentence="Annihilation!" yell="1"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="100" chance1="100000" chancemax="0"/>
-		<item id="2148" countmax="50" chance1="100000" chancemax="0"/>
-		<item id="2150" countmax="20" chance1="5515" chancemax="0"/> --Small amethyst
+		<item id="2148" countmax="100" chance="100000"/>
+		<item id="2148" countmax="50" chance="100000"/>
+		<item id="2150" countmax="20" chance="5515"/> --Small amethyst
 		<item id="2520" chance="7000"/> --Fire AXe
 		<item id="1987" chance="100000">
 		<inside>

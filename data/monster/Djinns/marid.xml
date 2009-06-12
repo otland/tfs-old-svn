@@ -71,18 +71,18 @@
 	<loot>
 		<item id="2158" countmax="1" chance="300"/>
 		<item id="1872" countmax="1" chance="2500"/>
-		<item id="2148" countmax="50" chance1="100000" chancemax="0"/>
+		<item id="2148" countmax="50" chance="100000"/>
 		<item id="2442" chance="5000"/>
 		<item id="2183" chance="1000"/> -- tempest rod
-		<item id="5912" countmax="2" chance1="5000" chancemax="0"/>
+		<item id="5912" countmax="2" chance="5000"/>
 		<item id="1987" chance="100000">
 			<inside>
 				<item id="2070" chance="300"/>
 	 			<item id="7900" chance="500"/> --magma monocle
-				<item id="2148" countmax="14" chance1="100000" chancemax="0"/>
-				<item id="2146" countmax="3" chance1="7000" chancemax="0"/>
+				<item id="2148" countmax="14" chance="100000"/>
+				<item id="2146" countmax="3" chance="7000"/>
 				<item id="2063" chance="3333"/>
-				<item id="2677" countmax="4" chance1="20000" chancemax="0"/>
+				<item id="2677" countmax="4" chance="20000"/>
 				<item id="2177" chance="10000"/>
 			</inside>
 		</item>

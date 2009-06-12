@@ -47,7 +47,7 @@
 		<immunity invisible="1"/>
 	</immunities>
 	<loot>
-	 <item id="2148" countmax="100" chance1="100000" chancemax="0"/> --Gold Coin
+	 <item id="2148" countmax="100" chance="100000"/> --Gold Coin
 	 <item id="8300" chance="2500"/> --Flawless Ice Crystal
 	 <item id="8878" chance="1666"/> --Cristalline armor
 	 </loot>

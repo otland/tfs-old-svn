@@ -40,7 +40,7 @@
 	<voice sentence="Plundeeeeer!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="53" chance1="50000" chancemax="0"/>
+		<item id="2148" countmax="53" chance="50000"/>
 		<item id="2483" chance="10000"/>
 		<item id="5918" chance="6666"/>
 		<item id="6095" chance="5000"/>
@@ -52,9 +52,9 @@
 				<item id="2509" chance="4000"/>
 				<item id="5792" chance="3333"/>
 				<item id="2376" chance="6666"/>
-				<item id="6126" countmax="1" chance1="5000" chancemax="0"/>
-				<item id="6098" countmax="1" chance1="5000" chancemax="0"/>
-				<item id="6097" countmax="1" chance1="5000" chancemax="0"/>
+				<item id="6126" countmax="1" chance="5000"/>
+				<item id="6098" countmax="1" chance="5000"/>
+				<item id="6097" countmax="1" chance="5000"/>
 			</inside>
 		</item>
 	</loot>

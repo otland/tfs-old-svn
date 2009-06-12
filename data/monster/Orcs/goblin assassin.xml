@@ -41,14 +41,14 @@
 		<voice sentence="Goblin Powahhh!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="9" chance1="100000" chancemax="0"/>
-		<item id="2667" countmax="1" chance1="20000" chancemax="0"/>
+		<item id="2148" countmax="9" chance="100000"/>
+		<item id="2667" countmax="1" chance="20000"/>
 		<item id="2235" chance="10000"/>
 		<item id="2461" chance="10000"/>
 		<item id="2230" chance="10000"/>
 		<item id="1987" chance="100000">
 		<inside>
-			<item id="1294" countmax="3" chance1="20000" chancemax="0"/>
+			<item id="1294" countmax="3" chance="20000"/>
 			<item id="2449" chance="10000"/>
 			<item id="2406" chance="10000"/>
 			<item id="2559" chance="10000"/>

@@ -32,12 +32,12 @@
 		<voice sentence="Kaplar!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="2148" countmax="20" chance1="100000" chancemax="0"/>
-		<item id="2666" countmax="3" chance1="70000" chancemax="0"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="2148" countmax="20" chance="100000"/>
+		<item id="2666" countmax="3" chance="70000"/>
 		<item id="2387" chance="5000"/>
 		<item id="2649" chance="10000"/>
-		<item id="5878" countmax="1" chance1="5000" chancemax="0"/>
+		<item id="5878" countmax="1" chance="5000"/>
 		<item id="1987" chance="100000">
 			<inside>
 				<item id="2386" chance="6666"/>

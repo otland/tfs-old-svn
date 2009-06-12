@@ -45,9 +45,9 @@
 		<voice sentence="There is a stone in your shoe!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="20" chance1="100000" chancemax="0"/>
-		<item id="2671" countmax="2" chance1="33333" chancemax="0"/>
-		<item id="2666" countmax="3" chance1="33333" chancemax="0"/>
+		<item id="2148" countmax="20" chance="100000"/>
+		<item id="2671" countmax="2" chance="33333"/>
+		<item id="2666" countmax="3" chance="33333"/>
 		<item id="2457" chance="20000"/>
 		<item id="2513" chance="25000"/>
 		<item id="2209" chance="3333"/>
@@ -55,7 +55,7 @@
 		<item id="1987" chance="100000">
 			<inside>
 				<item id="2489" chance="2500"/>
-				<item id="2148" countmax="5" chance1="100000" chancemax="0"/>
+				<item id="2148" countmax="5" chance="100000"/>
 			</inside>
 		</item>
 	</loot>

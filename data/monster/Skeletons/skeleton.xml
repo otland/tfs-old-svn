@@ -27,7 +27,7 @@
 	<element holyPercent="-25"/>
 	</elements>
 	<loot>
-		<item id="2148" countmax="10" chance1="90000" chancemax="0"/>
+		<item id="2148" countmax="10" chance="90000"/>
 		<item id="2480" chance="6666"/>
 		<item id="1987" chance="100000">
 			<inside>

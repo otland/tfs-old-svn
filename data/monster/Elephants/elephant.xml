@@ -34,12 +34,12 @@
 	</voices>
 	<loot>
 		<item id="3973" chance="80"/>
-		<item id="3956" countmax="3" chance1="40000" chancemax="0"/>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="3976" countmax="10" chance1="50000" chancemax="0"/>
-		<item id="2148" countmax="25" chance1="100000" chancemax="0"/>
-		<item id="2671" countmax="10" chance1="33333" chancemax="0"/>
-		<item id="2666" countmax="15" chance1="33333" chancemax="0"/>
-		<item id="2686" countmax="10" chance1="10000" chancemax="0"/>
+		<item id="3956" countmax="3" chance="40000"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="3976" countmax="10" chance="50000"/>
+		<item id="2148" countmax="25" chance="100000"/>
+		<item id="2671" countmax="10" chance="33333"/>
+		<item id="2666" countmax="15" chance="33333"/>
+		<item id="2686" countmax="10" chance="10000"/>
 	</loot>
 </monster>
