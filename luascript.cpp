@@ -1981,13 +1981,13 @@ void LuaScriptInterface::registerFunctions()
 	//getItemWeight(uid[, precise = TRUE])
 	lua_register(m_luaState, "getItemWeight", LuaScriptInterface::luaGetItemWeight);
 
-	//setItemName(uid)
+	//setItemName(uid, name)
 	lua_register(m_luaState, "setItemName", LuaScriptInterface::luaSetItemName);
 
-	//setItemPluralName(uid)
+	//setItemPluralName(uid, pluralName)
 	lua_register(m_luaState, "setItemPluralName", LuaScriptInterface::luaSetItemPluralName);
 
-	//setItemArticle(uid)
+	//setItemArticle(uid, article)
 	lua_register(m_luaState, "setItemArticle", LuaScriptInterface::luaSetItemArticle);
 
 	//getItemAttack(uid)
@@ -1999,7 +1999,7 @@ void LuaScriptInterface::registerFunctions()
 	//getItemExtraAttack(uid)
 	lua_register(m_luaState, "getItemExtraAttack", LuaScriptInterface::luaGetItemExtraAttack);
 
-	//setItemExtraAttack(uid, extraattack)
+	//setItemExtraAttack(uid, extraAttack)
 	lua_register(m_luaState, "setItemExtraAttack", LuaScriptInterface::luaSetItemExtraAttack);
 
 	//getItemDefense(uid)
@@ -2011,7 +2011,7 @@ void LuaScriptInterface::registerFunctions()
 	//getItemExtraDefense(uid)
 	lua_register(m_luaState, "getItemExtraDefense", LuaScriptInterface::luaGetItemExtraDefense);
 
-	//setItemExtraDefense(uid, extradefense)
+	//setItemExtraDefense(uid, extraDefense)
 	lua_register(m_luaState, "setItemExtraDefense", LuaScriptInterface::luaSetItemExtraDefense);
 
 	//getItemArmor(uid)
@@ -2023,7 +2023,7 @@ void LuaScriptInterface::registerFunctions()
 	//getItemAttackSpeed(uid)
 	lua_register(m_luaState, "getItemAttackSpeed", LuaScriptInterface::luaGetItemAttackSpeed);
 
-	//setItemAttackSpeed(uid, attackspeed)
+	//setItemAttackSpeed(uid, attackSpeed)
 	lua_register(m_luaState, "setItemAttackSpeed", LuaScriptInterface::luaSetItemAttackSpeed);
 
 	//getItemHitChance(uid)
@@ -2053,7 +2053,7 @@ void LuaScriptInterface::registerFunctions()
 	//getFluidSourceType(type)
 	lua_register(m_luaState, "getFluidSourceType", LuaScriptInterface::luaGetFluidSourceType);
 
-	//isInArray(array, value)
+	//isInArray(array, value[, lower = true])
 	lua_register(m_luaState, "isInArray", LuaScriptInterface::luaIsInArray);
 
 	//wait(delay)
@@ -2101,7 +2101,7 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerPremiumDays(cid)
 	lua_register(m_luaState, "getPlayerPremiumDays", LuaScriptInterface::luaGetPlayerPremiumDays);
 
-	//doCreatureSetLookDir(cid, dir)
+	//doCreatureSetLookDirection(cid, dir)
 	lua_register(m_luaState, "doCreatureSetLookDirection", LuaScriptInterface::luaDoCreatureSetLookDir);
 
 	//getCreatureSkullType(cid)
@@ -7549,7 +7549,7 @@ int32_t LuaScriptInterface::luaGetFluidSourceType(lua_State* L)
 
 int32_t LuaScriptInterface::luaIsInArray(lua_State* L)
 {
-	//isInArray(array, value[, lower])
+	//isInArray(array, value[, lower = true])
 	bool lower = true;
 	if(lua_gettop(L) > 2)
 		lower = (bool)popNumber(L);
@@ -8016,7 +8016,7 @@ int32_t LuaScriptInterface::luaGetCreatureSkullType(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoCreatureSetLookDir(lua_State* L)
 {
-	//doCreatureSetLookDir(cid, dir)
+	//doCreatureSetLookDirection(cid, dir)
 	Direction dir = (Direction)popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
@@ -9148,6 +9148,7 @@ int32_t LuaScriptInterface::luaDoRefreshMap(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetItemDescriptions(lua_State* L)
 {
+	//getItemDescriptions(uid)
 	ScriptEnviroment* env = getScriptEnv();
 	Item* item = env->getItemByUID(popNumber(L));
 	if(!item)
@@ -9198,6 +9199,7 @@ int32_t LuaScriptInterface::luaGetItemWeight(lua_State* L)
 
 int32_t LuaScriptInterface::luaSetItemName(lua_State* L)
 {
+	//setItemName(uid, name)
 	std::string name = popString(L);
 	ScriptEnviroment* env = getScriptEnv();
 
@@ -9216,6 +9218,7 @@ int32_t LuaScriptInterface::luaSetItemName(lua_State* L)
 
 int32_t LuaScriptInterface::luaSetItemPluralName(lua_State* L)
 {
+	//setItemPluralName(uid, pluralName)
 	std::string pluralName = popString(L);
 	ScriptEnviroment* env = getScriptEnv();
 
@@ -9234,6 +9237,7 @@ int32_t LuaScriptInterface::luaSetItemPluralName(lua_State* L)
 
 int32_t LuaScriptInterface::luaSetItemArticle(lua_State* L)
 {
+	//setItemArticle(uid, article)
 	std::string article = popString(L);
 	ScriptEnviroment* env = getScriptEnv();
 
@@ -9252,6 +9256,7 @@ int32_t LuaScriptInterface::luaSetItemArticle(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetItemAttack(lua_State* L)
 {
+	//getItemAttack(uid)
 	ScriptEnviroment* env = getScriptEnv();
 
 	Item* item = env->getItemByUID(popNumber(L));
@@ -9268,6 +9273,7 @@ int32_t LuaScriptInterface::luaGetItemAttack(lua_State* L)
 
 int32_t LuaScriptInterface::luaSetItemAttack(lua_State* L)
 {
+	//setItemAttack(uid, attack)
 	int32_t value = (int32_t)popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 
@@ -9286,6 +9292,7 @@ int32_t LuaScriptInterface::luaSetItemAttack(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetItemExtraAttack(lua_State* L)
 {
+	//getItemExtraAttack(uid)
 	ScriptEnviroment* env = getScriptEnv();
 
 	Item* item = env->getItemByUID(popNumber(L));
@@ -9302,6 +9309,7 @@ int32_t LuaScriptInterface::luaGetItemExtraAttack(lua_State* L)
 
 int32_t LuaScriptInterface::luaSetItemExtraAttack(lua_State* L)
 {
+	//setItemExtraAttack(uid, attack)
 	int32_t value = (int32_t)popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 
@@ -9320,6 +9328,7 @@ int32_t LuaScriptInterface::luaSetItemExtraAttack(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetItemDefense(lua_State* L)
 {
+	//getItemDefense(uid)
 	ScriptEnviroment* env = getScriptEnv();
 
 	Item* item = env->getItemByUID(popNumber(L));
@@ -9336,6 +9345,7 @@ int32_t LuaScriptInterface::luaGetItemDefense(lua_State* L)
 
 int32_t LuaScriptInterface::luaSetItemDefense(lua_State* L)
 {
+	//setItemDefense(uid, defense)
 	int32_t value = (int32_t)popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 
@@ -9354,6 +9364,7 @@ int32_t LuaScriptInterface::luaSetItemDefense(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetItemExtraDefense(lua_State* L)
 {
+	//getItemExtraDefense(uid)
 	ScriptEnviroment* env = getScriptEnv();
 
 	Item* item = env->getItemByUID(popNumber(L));
@@ -9371,6 +9382,7 @@ int32_t LuaScriptInterface::luaGetItemExtraDefense(lua_State* L)
 
 int32_t LuaScriptInterface::luaSetItemExtraDefense(lua_State* L)
 {
+	//setItemExtraDefense(uid, extraDefense)
 	int32_t value = (int32_t)popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 
@@ -9389,6 +9401,7 @@ int32_t LuaScriptInterface::luaSetItemExtraDefense(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetItemArmor(lua_State* L)
 {
+	//getItemArmor(uid)
 	ScriptEnviroment* env = getScriptEnv();
 
 	Item* item = env->getItemByUID(popNumber(L));
@@ -9405,6 +9418,7 @@ int32_t LuaScriptInterface::luaGetItemArmor(lua_State* L)
 
 int32_t LuaScriptInterface::luaSetItemArmor(lua_State* L)
 {
+	//setItemArmor(uid, armor)
 	int32_t value = (int32_t)popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 
@@ -9423,6 +9437,7 @@ int32_t LuaScriptInterface::luaSetItemArmor(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetItemAttackSpeed(lua_State* L)
 {
+	//getItemAttackSpeed(uid)
 	ScriptEnviroment* env = getScriptEnv();
 
 	Item* item = env->getItemByUID(popNumber(L));
@@ -9439,6 +9454,7 @@ int32_t LuaScriptInterface::luaGetItemAttackSpeed(lua_State* L)
 
 int32_t LuaScriptInterface::luaSetItemAttackSpeed(lua_State* L)
 {
+	//setItemAttackSpeed(uid, attackSpeed)
 	int32_t value = (int32_t)popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 
@@ -9457,6 +9473,7 @@ int32_t LuaScriptInterface::luaSetItemAttackSpeed(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetItemHitChance(lua_State* L)
 {
+	//getItemHitChance(uid)
 	ScriptEnviroment* env = getScriptEnv();
 
 	Item* item = env->getItemByUID(popNumber(L));
@@ -9473,6 +9490,7 @@ int32_t LuaScriptInterface::luaGetItemHitChance(lua_State* L)
 
 int32_t LuaScriptInterface::luaSetItemHitChance(lua_State* L)
 {
+	//setItemHitChance(uid, hitChance)
 	int32_t value = (int32_t)popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 
@@ -9491,6 +9509,7 @@ int32_t LuaScriptInterface::luaSetItemHitChance(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetItemShootRange(lua_State* L)
 {
+	//getItemShootRange(uid)
 	ScriptEnviroment* env = getScriptEnv();
 
 	Item* item = env->getItemByUID(popNumber(L));
@@ -9507,6 +9526,7 @@ int32_t LuaScriptInterface::luaGetItemShootRange(lua_State* L)
 
 int32_t LuaScriptInterface::luaSetItemShootRange(lua_State* L)
 {
+	//setItemShootRange(uid, shootRange)
 	int32_t value = (int32_t)popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 
