@@ -495,12 +495,16 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, const T
 	Thing* thing = NULL;
 	for(int32_t i = tile->__getFirstIndex(), j = tile->__getLastIndex(); i < j; ++i) //already checked the ground
 	{
-		if((thing = tile->__getThing(i)) && (tileItem = thing->getItem())
-			&& (moveEvent = getEvent(tileItem, eventType)))
+		if(!(thing = tile->__getThing(i)) || !(tileItem = thing->getItem()))
+			continue;
+
+		if((moveEvent = getEvent(tileItem, eventType)))
 		{
 			m_lastCacheItemVector.push_back(tileItem);
 			ret &= moveEvent->fireStepEvent(actor, creature, tileItem, tile->getPosition(), fromPos, toPos);
 		}
+		else if(hasTileEvent(tileItem))
+			m_lastCacheItemVector.push_back(tileItem);
 	}
 
 	return ret;
@@ -562,12 +566,16 @@ uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool is
 	Thing* thing = NULL;
 	for(int32_t i = tile->__getFirstIndex(), j = tile->__getLastIndex(); i < j; ++i) //already checked the ground
 	{
-		if((thing = tile->__getThing(i)) && (tileItem = thing->getItem()) &&
-			tileItem != item && (moveEvent = getEvent(tileItem, eventType2)))
+		if(!(thing = tile->__getThing(i)) || !(tileItem = thing->getItem()) || tileItem == item)
+			continue;
+
+		if((moveEvent = getEvent(tileItem, eventType2)))
 		{
 			m_lastCacheItemVector.push_back(tileItem);
 			ret &= moveEvent->fireAddRemItem(actor, item, tileItem, tile->getPosition());
 		}
+		else if(hasTileEvent(tileItem))
+			m_lastCacheItemVector.push_back(tileItem);
 	}
 
 	return ret;
@@ -1081,14 +1089,14 @@ uint32_t MoveEvent::executeStep(Creature* actor, Creature* creature, Item* item,
 		{
 			env->setRealPos(creature->getPosition());
 			std::stringstream scriptstream;
-			scriptstream << "cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
 
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
 			env->streamPosition(scriptstream, "position", pos, 0);
 			env->streamPosition(scriptstream, "lastPosition", creature->getLastPosition(), 0);
 			env->streamPosition(scriptstream, "fromPosition", fromPos, 0);
 			env->streamPosition(scriptstream, "toPosition", toPos, 0);
-			scriptstream << "actor = " << env->addThing(actor) << std::endl;
+			scriptstream << "local actor = " << env->addThing(actor) << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -1156,9 +1164,9 @@ uint32_t MoveEvent::executeEquip(Player* player, Item* item, slots_t slot)
 			env->setRealPos(player->getPosition());
 			std::stringstream scriptstream;
 
-			scriptstream << "cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
-			scriptstream << "slot = " << slot << std::endl;
+			scriptstream << "local slot = " << slot << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -1225,7 +1233,7 @@ uint32_t MoveEvent::executeAddRemItem(Creature* actor, Item* item, Item* tileIte
 			env->streamThing(scriptstream, "tileItem", tileItem, env->addThing(tileItem));
 
 			env->streamPosition(scriptstream, "position", pos, 0);
-			scriptstream << "cid = " << env->addThing(actor) << std::endl;
+			scriptstream << "local cid = " << env->addThing(actor) << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;

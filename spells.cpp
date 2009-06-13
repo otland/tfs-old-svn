@@ -407,7 +407,7 @@ bool CombatSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 			env->setRealPos(creature->getPosition());
 			std::stringstream scriptstream;
 
-			scriptstream << "cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
 			env->streamVariant(scriptstream, "var", var);
 
 			scriptstream << m_scriptData;
@@ -1151,7 +1151,7 @@ bool InstantSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 			env->setRealPos(creature->getPosition());
 			std::stringstream scriptstream;
 
-			scriptstream << "cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
 			env->streamVariant(scriptstream, "var", var);
 
 			scriptstream << m_scriptData;
@@ -1823,7 +1823,7 @@ bool RuneSpell::executeCastSpell(Creature* creature, const LuaVariant& var)
 			env->setRealPos(creature->getPosition());
 			std::stringstream scriptstream;
 
-			scriptstream << "cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
 			env->streamVariant(scriptstream, "var", var);
 
 			scriptstream << m_scriptData;

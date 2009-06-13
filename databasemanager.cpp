@@ -808,11 +808,32 @@ uint32_t DatabaseManager::updateDatabase()
 		case 16:
 		{
 			std::cout << "> Updating database to version: 17..." << std::endl;
-
-			if(db->getDatabaseEngine() == DATABASE_ENGINE_SQLITE)
-				db->executeQuery("CREATE TABLE IF NOT EXISTS `player_namelocks` (`name` VARCHAR(255) NOT NULL, `new_name` VARCHAR(255) NOT NULL, `date` INTEGER NOT NULL);");
-			else
-				db->executeQuery("CREATE TABLE IF NOT EXISTS `player_namelocks` (`name` VARCHAR(255) NOT NULL, `new_name` VARCHAR(255) NOT NULL, `date` BIGINT NOT NULL) ENGINE = InnoDB;");
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_MYSQL:
+					db->executeQuery("CREATE TABLE IF NOT EXISTS `player_namelocks`\
+(\
+	`player_id` INT NOT NULL DEFAULT 0,\
+	`name` VARCHAR(255) NOT NULL,\
+	`new_name` VARCHAR(255) NOT NULL,\
+	`date` BIGINT NOT NULL DEFAULT 0,\
+	KEY (`player_id`),\
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE\
+) ENGINE = InnoDB;");
+					break;
+				case DATABASE_ENGINE_SQLITE:
+					db->executeQuery("CREATE TABLE IF NOT EXISTS `player_namelocks` (\
+	`player_id` INTEGER NOT NULL,\
+	`name` VARCHAR(255) NOT NULL,\
+	`new_name` VARCHAR(255) NOT NULL,\
+	`date` INTEGER NOT NULL DEFAULT 0,\
+	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`)\
+);");
+					break;
+				default:
+					//TODO
+					break;
+			}
 
 			registerDatabaseConfig("db_version", 17);
 			return 17;

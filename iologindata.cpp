@@ -770,7 +770,11 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 		query << "`direction` = " << (uint32_t)player->getDirection() << ", ";
 
 	if(!player->isVirtual())
-		query << "`description` = " << db->escapeString(player->getSpecialDescription()) << ", ";
+	{
+		std::string name = player->getName(), nameDescription = player->getNameDescription();
+		if(!player->isAccountManager() && nameDescription.length() > name.length())
+			query << "`description` = " << db->escapeString(nameDescription.substr(name.length())) << ", ";
+	}
 
 	//serialize conditions
 	PropWriteStream propWriteStream;
@@ -1360,7 +1364,14 @@ bool IOLoginData::changeName(uint32_t guid, std::string newName, std::string old
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
+	
 
+	query << "INSERT INTO `player_namelocks` (`player_id`, `name`, `new_name`, `date`) VALUES ("<< guid << ", "
+		<< db->escapeString(oldName) << ", " << db->escapeString(newName) << ", " << time(NULL) << ")";
+	if(!db->executeQuery(query.str()))
+		return false;
+
+	query.str("");
 	query << "UPDATE `players` SET `name` = " << db->escapeString(newName) << " WHERE `id` = " << guid;
 	if(!db->executeQuery(query.str()))
 		return false;
@@ -1373,10 +1384,7 @@ bool IOLoginData::changeName(uint32_t guid, std::string newName, std::string old
 	}
 
 	nameCacheMap[guid] = newName;
-
-	query.str("");
-	query << "INSERT INTO `player_namelocks` (`name`, `new_name`, `date`) VALUES (" << db->escapeString(oldName) << ", " << db->escapeString(newName) << ", " << time(NULL) << ")";
-	return db->executeQuery(query.str());
+	return true;
 }
 
 bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName, int32_t vocationId, PlayerSex_t sex)

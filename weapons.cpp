@@ -490,7 +490,7 @@ bool Weapon::executeUseWeapon(Player* player, const LuaVariant& var) const
 			env->setRealPos(player->getPosition());
 			std::stringstream scriptstream;
 
-			scriptstream << "cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 			env->streamVariant(scriptstream, "var", var);
 
 			scriptstream << m_scriptData;

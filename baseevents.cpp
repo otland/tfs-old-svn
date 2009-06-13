@@ -24,7 +24,7 @@ bool BaseEvents::loadFromXml()
 {
 	if(m_loaded)
 	{
-		std::cout << "[Error - BaseEvents::loadFromXml] loaded == true" << std::endl;
+		std::cout << "[Error - BaseEvents::loadFromXml] " << scriptsName << " interface already loaded!" << std::endl;
 		return false;
 	}
 

@@ -776,16 +776,16 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 			if(!skip)
 			{
 				if(downTile->floorChange(NORTH))
-					pos.y += 1;
+					pos.y++;
 
 				if(downTile->floorChange(SOUTH))
-					pos.y -= 1;
+					pos.y--;
 
 				if(downTile->floorChange(EAST))
-					pos.x -= 1;
+					pos.x--;
 
 				if(downTile->floorChange(WEST))
-					pos.x += 1;
+					pos.x++;
 			}
 
 			destTile = g_game.getTile(pos);
@@ -858,13 +858,7 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 	item->setParent(this);
 	if(item->isGroundTile())
 	{
-		if(!ground)
-		{
-			ground = item;
-			++thingCount;
-			onAddTileItem(item);
-		}
-		else
+		if(ground)
 		{
 			const ItemType& oldType = Item::items[ground->getID()];
 			int32_t oldGroundIndex = __getIndexOfThing(ground);
@@ -880,6 +874,12 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 			onUpdateTileItem(oldGround, oldType, item, Item::items[item->getID()]);
 			postRemoveNotification(actor, oldGround, NULL, oldGroundIndex, true);
 		}
+		else
+		{
+			ground = item;
+			++thingCount;
+			onAddTileItem(item);
+		}
 	}
 	else if(item->isAlwaysOnTop())
 	{
@@ -890,18 +890,18 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 			{
 				for(ItemVector::iterator it = items->getBeginTopItem(); it != items->getEndTopItem(); ++it)
 				{
-					if((*it)->isSplash())
-					{
-						int32_t oldSplashIndex = __getIndexOfThing(*it);
-						Item* oldSplash = *it;
+					if(!(*it)->isSplash())
+						continue;
 
-						__removeThing(oldSplash, 1);
-						oldSplash->setParent(NULL);
-						g_game.FreeThing(oldSplash);
+					int32_t oldSplashIndex = __getIndexOfThing(*it);
+					Item* oldSplash = *it;
 
-						postRemoveNotification(actor, oldSplash, NULL, oldSplashIndex, true);
-						break;
-					}
+					__removeThing(oldSplash, 1);
+					oldSplash->setParent(NULL);
+					g_game.FreeThing(oldSplash);
+
+					postRemoveNotification(actor, oldSplash, NULL, oldSplashIndex, true);
+					break;
 				}
 			}
 		}
@@ -1539,14 +1539,14 @@ void Tile::__internalAddThing(uint32_t index, Thing* thing)
 		bool isInserted = false;
 		for(ItemVector::iterator it = items->getBeginTopItem(); it != items->getEndTopItem(); ++it)
 		{
-			if(Item::items[(*it)->getID()].alwaysOnTopOrder > Item::items[item->getID()].alwaysOnTopOrder)
-			{
-				items->insert(it, item);
-				++thingCount;
+			if(Item::items[(*it)->getID()].alwaysOnTopOrder <= Item::items[item->getID()].alwaysOnTopOrder)
+				continue;
 
-				isInserted = true;
-				break;
-			}
+			items->insert(it, item);
+			++thingCount;
+
+			isInserted = true;
+			break;
 		}
 
 		if(!isInserted)

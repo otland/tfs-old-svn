@@ -289,9 +289,6 @@ class Player : public Creature, public Cylinder
 		uint32_t getTown() const {return town;}
 		void setTown(uint32_t _town) {town = _town;}
 
-		const std::string& getSpecialDescription() const {return specialDescription;}
-		void setSpecialDescription(const std::string& desc) {specialDescription = desc;}
-
 		virtual bool isPushable() const;
 		virtual int32_t getThrowRange() const {return 1;}
 

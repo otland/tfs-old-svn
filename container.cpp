@@ -451,7 +451,7 @@ void Container::__addThing(Creature* actor, int32_t index, Thing* thing)
 		parentContainer->updateItemWeight(item->getWeight());
 
 	//send change to client
-	if(getParent())
+	if(getParent() && getParent() != VirtualCylinder::virtualCylinder)
 		onAddContainerItem(item);
 }
 

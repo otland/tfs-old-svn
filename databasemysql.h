@@ -22,6 +22,9 @@
 #error "database.h should be included first."
 #endif
 
+#if defined __WINDOWS__ || defined WIN32
+#include <winsock2.h>
+#endif
 #ifdef __MYSQL_ALT_INCLUDE__
 #include <mysql.h>
 #else

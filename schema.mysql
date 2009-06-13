@@ -38,7 +38,7 @@ CREATE TABLE `server_config`
 	UNIQUE (`config`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `server_config` VALUES ('db_version', 16);
+INSERT INTO `server_config` VALUES ('db_version', 17);
 
 CREATE TABLE `server_motd`
 (
@@ -309,9 +309,12 @@ CREATE TABLE `player_items`
 
 CREATE TABLE `player_namelocks`
 (
+	`player_id` INT NOT NULL DEFAULT 0,
 	`name` VARCHAR(255) NOT NULL,
 	`new_name` VARCHAR(255) NOT NULL,
-	`date` BIGINT NOT NULL DEFAULT 0
+	`date` BIGINT NOT NULL DEFAULT 0,
+	KEY (`player_id`),
+	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `player_skills`

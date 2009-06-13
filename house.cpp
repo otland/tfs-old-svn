@@ -838,7 +838,7 @@ void Houses::payHouses()
 bool Houses::payRent(Player* player, House* house, time_t _time/* = 0*/)
 {
 	if(rentPeriod == RENTPERIOD_NEVER || !house->getHouseOwner() ||
-		house->getPaidUntil() >= _time || !house->getRent() ||
+		house->getPaidUntil() > _time || !house->getRent() ||
 		player->hasCustomFlag(PlayerCustomFlag_IgnoreHouseRent))
 		return true;
 
@@ -887,7 +887,7 @@ bool Houses::payRent(Player* player, House* house, time_t _time/* = 0*/)
 bool Houses::payHouse(House* house, time_t _time)
 {
 	if(rentPeriod == RENTPERIOD_NEVER || !house->getHouseOwner() ||
-		house->getPaidUntil() >= _time || !house->getRent())
+		house->getPaidUntil() > _time || !house->getRent())
 		return true;
 
 	Town* town = Towns::getInstance().getTown(house->getTownId());

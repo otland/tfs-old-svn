@@ -43,6 +43,7 @@
 #include "movement.h"
 #include "quests.h"
 #include "raids.h"
+#include "scriptmanager.h"
 #include "spells.h"
 #include "talkaction.h"
 #include "weapons.h"
@@ -77,7 +78,7 @@ Game::Game()
 	worldType = WORLD_TYPE_PVP;
 	map = NULL;
 	lastPlayersRecord = lastStageLevel = 0;
-	for(int8_t i = 0; i < 3; i++)
+	for(int32_t i = 0; i < 3; i++)
 		globalSaveMessage[i] = false;
 
 	OTSYS_THREAD_LOCKVARINIT(AutoID::autoIDLock);
@@ -5615,6 +5616,17 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 			break;
 		}
 
+		case RELOAD_MODS:
+		{
+			std::cout << ">> Reloading mods..." << std::endl;
+			if(ScriptManager::getInstance()->reloadMods())
+				done = true;
+			else
+				std::cout << "[Error - Game::reloadInfo] Failed to reload mods." << std::endl;
+
+			break;
+		}
+
 		case RELOAD_MONSTERS:
 		{
 			if(g_monsters.reload())
@@ -5715,14 +5727,6 @@ bool Game::reloadInfo(ReloadInfo_t reload, uint32_t playerId/* = 0*/)
 		}
 
 		case RELOAD_WEAPONS:
-		{
-			//TODO
-			std::cout << "[Notice - Game::reloadInfo] Reload type does not work." << std::endl;
-			done = true;
-			break;
-		}
-
-		case RELOAD_MODS:
 		{
 			//TODO
 			std::cout << "[Notice - Game::reloadInfo] Reload type does not work." << std::endl;

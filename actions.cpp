@@ -746,7 +746,7 @@ bool Action::executeUse(Player* player, Item* item, const PositionEx& fromPos, c
 			env->setRealPos(player->getPosition());
 			std::stringstream scriptstream;
 
-			scriptstream << "cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
 			env->streamPosition(scriptstream, "fromPosition", fromPos, fromPos.stackpos);
 

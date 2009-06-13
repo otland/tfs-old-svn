@@ -275,11 +275,11 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, con
 		{
 			env->setRealPos(creature->getPosition());
 			std::stringstream scriptstream;
-			scriptstream << "cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
 
-			scriptstream << "words = \"" << words << "\"" << std::endl;
-			scriptstream << "param = \"" << param << "\"" << std::endl;
-			scriptstream << "channel = " << channel << std::endl;
+			scriptstream << "local words = \"" << words << "\"" << std::endl;
+			scriptstream << "local param = \"" << param << "\"" << std::endl;
+			scriptstream << "local channel = " << channel << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;

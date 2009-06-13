@@ -323,7 +323,7 @@ uint32_t CreatureEvent::executeLogin(Player* player)
 		{
 			env->setRealPos(player->getPosition());
 			std::stringstream scriptstream;
-			scriptstream << "cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -373,7 +373,7 @@ uint32_t CreatureEvent::executeLogout(Player* player)
 		{
 			env->setRealPos(player->getPosition());
 			std::stringstream scriptstream;
-			scriptstream << "cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -423,10 +423,10 @@ uint32_t CreatureEvent::executeChannelJoin(Player* player, uint16_t channelId, U
 		{
 			env->setRealPos(player->getPosition());
 			std::stringstream scriptstream;
-			scriptstream << "cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 
-			scriptstream << "channel = " << channelId << std::endl;
-			scriptstream << "users = {}" << std::endl;
+			scriptstream << "local channel = " << channelId << std::endl;
+			scriptstream << "local users = {}" << std::endl;
 			for(UsersMap::iterator it = usersMap.begin(); it != usersMap.end(); ++it)
 				scriptstream << "users:insert(" << env->addThing(it->second) << ")" << std::endl;
 
@@ -489,10 +489,10 @@ uint32_t CreatureEvent::executeChannelLeave(Player* player, uint16_t channelId, 
 		{
 			env->setRealPos(player->getPosition());
 			std::stringstream scriptstream;
-			scriptstream << "cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 
-			scriptstream << "channel = " << channelId << std::endl;
-			scriptstream << "users = {}" << std::endl;
+			scriptstream << "local channel = " << channelId << std::endl;
+			scriptstream << "local users = {}" << std::endl;
 			for(UsersMap::iterator it = usersMap.begin(); it != usersMap.end(); ++it)
 				scriptstream << "users:insert(" << env->addThing(it->second) << ")" << std::endl;
 
@@ -555,11 +555,11 @@ uint32_t CreatureEvent::executeAdvance(Player* player, skills_t skill, uint32_t 
 		{
 			env->setRealPos(player->getPosition());
 			std::stringstream scriptstream;
-			scriptstream << "cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 
-			scriptstream << "skill = " << skill << std::endl;
-			scriptstream << "oldLevel = " << oldLevel << std::endl;
-			scriptstream << "newLevel = " << newLevel << std::endl;
+			scriptstream << "local skill = " << skill << std::endl;
+			scriptstream << "local oldLevel = " << oldLevel << std::endl;
+			scriptstream << "local newLevel = " << newLevel << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -614,11 +614,11 @@ uint32_t CreatureEvent::executeMailSend(Player* player, Player* receiver, Item* 
 		{
 			env->setRealPos(player->getPosition());
 			std::stringstream scriptstream;
-			scriptstream << "cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 
-			scriptstream << "receiver = " << env->addThing(receiver) << std::endl;
+			scriptstream << "local receiver = " << env->addThing(receiver) << std::endl;
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
-			scriptstream << "openBox = " << (openBox ? "true" : "false") << std::endl;
+			scriptstream << "local openBox = " << (openBox ? "true" : "false") << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -673,11 +673,11 @@ uint32_t CreatureEvent::executeMailReceive(Player* player, Player* sender, Item*
 		{
 			env->setRealPos(player->getPosition());
 			std::stringstream scriptstream;
-			scriptstream << "cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 
-			scriptstream << "sender = " << env->addThing(sender) << std::endl;
+			scriptstream << "local sender = " << env->addThing(sender) << std::endl;
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
-			scriptstream << "openBox = " << (openBox ? "true" : "false") << std::endl;
+			scriptstream << "local openBox = " << (openBox ? "true" : "false") << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -732,11 +732,11 @@ uint32_t CreatureEvent::executeLook(Player* player, Thing* thing, const Position
 		{
 			env->setRealPos(player->getPosition());
 			std::stringstream scriptstream;
-			scriptstream << "cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 
-			scriptstream << "thing = " << env->addThing(thing) << std::endl;
+			scriptstream << "local thing = " << env->addThing(thing) << std::endl;
 			env->streamPosition(scriptstream, "position", position, stackpos);
-			scriptstream << "lookDistance = " << lookDistance << std::endl;
+			scriptstream << "local lookDistance = " << lookDistance << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -792,8 +792,8 @@ uint32_t CreatureEvent::executeThink(Creature* creature, uint32_t interval)
 			env->setRealPos(creature->getPosition());
 			std::stringstream scriptstream;
 
-			scriptstream << "cid = " << env->addThing(creature) << std::endl;
-			scriptstream << "interval = " << interval << std::endl;
+			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "local interval = " << interval << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -846,12 +846,12 @@ uint32_t CreatureEvent::executeStatsChange(Creature* creature, Creature* attacke
 			env->setRealPos(creature->getPosition());
 			std::stringstream scriptstream;
 
-			scriptstream << "cid = " << env->addThing(creature) << std::endl;
-			scriptstream << "attacker = " << env->addThing(attacker) << std::endl;
+			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "local attacker = " << env->addThing(attacker) << std::endl;
 
-			scriptstream << "type = " << (uint32_t)type << std::endl;
-			scriptstream << "combat = " << (uint32_t)combat << std::endl;
-			scriptstream << "value = " << value << std::endl;
+			scriptstream << "local type = " << (uint32_t)type << std::endl;
+			scriptstream << "local combat = " << (uint32_t)combat << std::endl;
+			scriptstream << "local value = " << value << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -907,11 +907,11 @@ uint32_t CreatureEvent::executeCombatArea(Creature* creature, Tile* tile, bool i
 		{
 			env->setRealPos(creature->getPosition());
 			std::stringstream scriptstream;
-			scriptstream << "cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
 
 			env->streamThing(scriptstream, "tileItem", tile, env->addThing(tile));
 			env->streamPosition(scriptstream, "tilePosition", tile->getPosition(), 0);
-			scriptstream << "isAggressive = " << (isAggressive ? "true" : "false") << std::endl;
+			scriptstream << "local isAggressive = " << (isAggressive ? "true" : "false") << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -967,8 +967,8 @@ uint32_t CreatureEvent::executeCombat(Creature* creature, Creature* target)
 			env->setRealPos(creature->getPosition());
 			std::stringstream scriptstream;
 
-			scriptstream << "cid = " << env->addThing(creature) << std::endl;
-			scriptstream << "target = " << env->addThing(target) << std::endl;
+			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "local target = " << env->addThing(target) << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -1021,8 +1021,8 @@ uint32_t CreatureEvent::executeAttack(Creature* creature, Creature* target)
 			env->setRealPos(creature->getPosition());
 			std::stringstream scriptstream;
 
-			scriptstream << "cid = " << env->addThing(creature) << std::endl;
-			scriptstream << "target = " << env->addThing(target) << std::endl;
+			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "local target = " << env->addThing(target) << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -1075,8 +1075,8 @@ uint32_t CreatureEvent::executeCast(Creature* creature, Creature* target/* = NUL
 			env->setRealPos(creature->getPosition());
 			std::stringstream scriptstream;
 
-			scriptstream << "cid = " << env->addThing(creature) << std::endl;
-			scriptstream << "target = ";
+			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "local target = ";
 			if(target)
 				scriptstream << env->addThing(target);
 			else
@@ -1132,10 +1132,10 @@ uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target, bool l
 		{
 			env->setRealPos(creature->getPosition());
 			std::stringstream scriptstream;
-			scriptstream << "cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
 
-			scriptstream << "target = " << env->addThing(target) << std::endl;
-			scriptstream << "lastHit = " << (lastHit ? "true" : "false") << std::endl;
+			scriptstream << "local target = " << env->addThing(target) << std::endl;
+			scriptstream << "local lastHit = " << (lastHit ? "true" : "false") << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -1188,10 +1188,10 @@ uint32_t CreatureEvent::executeDeath(Creature* creature, Item* corpse, DeathList
 		{
 			env->setRealPos(creature->getPosition());
 			std::stringstream scriptstream;
-			scriptstream << "cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
 
 			env->streamThing(scriptstream, "corpse", corpse, env->addThing(corpse));
-			scriptstream << "deathList = {}" << std::endl;
+			scriptstream << "local deathList = {}" << std::endl;
 			for(DeathList::iterator it = deathList.begin(); it != deathList.end(); ++it)
 			{
 				scriptstream << "deathList:insert(";
@@ -1266,9 +1266,9 @@ uint32_t CreatureEvent::executePrepareDeath(Creature* creature, DeathList deathL
 		{
 			env->setRealPos(creature->getPosition());
 			std::stringstream scriptstream;
-			scriptstream << "cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
 
-			scriptstream << "deathList = {}" << std::endl;
+			scriptstream << "local deathList = {}" << std::endl;
 			for(DeathList::iterator it = deathList.begin(); it != deathList.end(); ++it)
 			{
 				scriptstream << "deathList:insert(";
@@ -1343,10 +1343,10 @@ uint32_t CreatureEvent::executeTextEdit(Player* player, Item* item, std::string 
 		{
 			env->setRealPos(player->getPosition());
 			std::stringstream scriptstream;
-			scriptstream << "cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
-			scriptstream << "newText = " << newText.c_str() << std::endl;
+			scriptstream << "local newText = " << newText.c_str() << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -1400,8 +1400,8 @@ uint32_t CreatureEvent::executeReportBug(Player* player, std::string comment)
 			env->setRealPos(player->getPosition());
 			std::stringstream scriptstream;
 
-			scriptstream << "cid = " << env->addThing(player) << std::endl;
-			scriptstream << "comment = " << comment.c_str() << std::endl;
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local comment = " << comment.c_str() << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -1454,8 +1454,8 @@ uint32_t CreatureEvent::executeTarget(Creature* creature, Creature* target)
 			env->setRealPos(creature->getPosition());
 			std::stringstream scriptstream;
 
-			scriptstream << "cid = " << env->addThing(creature) << std::endl;
-			scriptstream << "target = " << env->addThing(target) << std::endl;
+			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "local target = " << env->addThing(target) << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -1508,8 +1508,8 @@ uint32_t CreatureEvent::executeFollow(Creature* creature, Creature* target)
 			env->setRealPos(creature->getPosition());
 			std::stringstream scriptstream;
 
-			scriptstream << "cid = " << env->addThing(creature) << std::endl;
-			scriptstream << "target = " << env->addThing(target) << std::endl;
+			scriptstream << "local cid = " << env->addThing(creature) << std::endl;
+			scriptstream << "local target = " << env->addThing(target) << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;

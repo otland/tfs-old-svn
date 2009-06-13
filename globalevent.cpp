@@ -134,10 +134,10 @@ int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution, uin
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			std::stringstream scriptstream;
-			scriptstream << "interval = " << interval << std::endl;
+			scriptstream << "local interval = " << interval << std::endl;
 
-			scriptstream << "lastExecution = " << lastExecution << std::endl;
-			scriptstream << "thinkInterval = " << thinkInterval << std::endl;
+			scriptstream << "local lastExecution = " << lastExecution << std::endl;
+			scriptstream << "local thinkInterval = " << thinkInterval << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;

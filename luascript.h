@@ -217,7 +217,7 @@ enum PlayerInfo_t
 	PlayerInfoIp,
 	PlayerInfoRedSkullEnd,
 	PlayerInfoOutfitWindow,
-	PlayerInfoSpecialDescription,
+	PlayerInfoNameDescription,
 	PlayerInfoIdleTime,
 	PlayerInfoClient,
 	PlayerInfoLastLogin,
@@ -380,7 +380,7 @@ class LuaScriptInterface
 		static int32_t luaDoCreatureAddMana(lua_State* L);
 		static int32_t luaSetCreatureMaxHealth(lua_State* L);
 		static int32_t luaSetCreatureMaxMana(lua_State* L);
-		static int32_t luaSetPlayerMaxCap(lua_State* L);
+		static int32_t luaDoPlayerSetMaxCapacity(lua_State* L);
 		static int32_t luaDoPlayerAddSpentMana(lua_State* L);
 		static int32_t luaDoPlayerAddItem(lua_State* L);
 		static int32_t luaDoPlayerAddItemEx(lua_State* L);
@@ -499,8 +499,8 @@ class LuaScriptInterface
 		static int32_t luaSetHouseAccessList(lua_State* L);
 
 		//get creature info functions
-		static int32_t luaDoPlayerSetSpecialDescription(lua_State* L);
-		static int32_t luaGetPlayerSpecialDescription(lua_State* L);
+		static int32_t luaDoPlayerSetNameDescription(lua_State* L);
+		static int32_t luaGetPlayerNameDescription(lua_State* L);
 		static int32_t luaGetPlayerFood(lua_State* L);
 		static int32_t luaGetPlayerAccess(lua_State* L);
 		static int32_t luaGetPlayerGhostAccess(lua_State* L);
@@ -742,8 +742,8 @@ class LuaScriptInterface
 		static int32_t luaGetItemShootRange(lua_State* L);
 		static int32_t luaSetItemShootRange(lua_State* L);
 
-		static int32_t luaGetTalkActionsList(lua_State* L);
-		static int32_t luaGetExperienceStagesList(lua_State* L);
+		static int32_t luaGetTalkActionList(lua_State* L);
+		static int32_t luaGetExperienceStageList(lua_State* L);
 		static int32_t luaGetWaypointsList(lua_State* L);
 		static int32_t luaGetWaypointPosition(lua_State* L);
 		static int32_t luaDoWaypointAddTemporial(lua_State* L);

@@ -1580,13 +1580,13 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 						std::stringstream scriptstream;
 
 						//attach various variables that could be interesting
-						scriptstream << "cid = " << env->addThing(player) << std::endl;
-						scriptstream << "text = \"" << npcState->respondToText << "\"" << std::endl;
-						scriptstream << "name = \"" << player->getName() << "\"" << std::endl;
-						scriptstream << "idletime = " << idleTime << std::endl;
-						scriptstream << "idleinterval = " << idleInterval << std::endl;
+						scriptstream << "local cid = " << env->addThing(player) << std::endl;
+						scriptstream << "local text = \"" << npcState->respondToText << "\"" << std::endl;
+						scriptstream << "local name = \"" << player->getName() << "\"" << std::endl;
+						scriptstream << "local idletime = " << idleTime << std::endl;
+						scriptstream << "local idleinterval = " << idleInterval << std::endl;
 
-						scriptstream << "itemlist = {" << std::endl;
+						scriptstream << "local itemlist = {" << std::endl;
 						uint32_t n = 0;
 						for(std::list<ListItem>::const_iterator iit = response->prop.itemList.begin(); iit != response->prop.itemList.end(); ++iit)
 						{
@@ -1600,8 +1600,8 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 							if(n != response->prop.itemList.size())
 								scriptstream << "," << std::endl;
 						}
-						scriptstream << "}" << std::endl;
 
+						scriptstream << "}" << std::endl;
 						scriptstream << "_state = {" << std::endl;
 						scriptstream << "topic = " << npcState->topic << ',' << std::endl;
 						scriptstream << "itemid = " << npcState->itemId << ',' << std::endl;
@@ -1619,9 +1619,9 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 						scriptstream << "n2 = " << npcState->scriptVars.n2 << ',' << std::endl;
 						scriptstream << "n3 = " << npcState->scriptVars.n3 << ',' << std::endl;
 
-						scriptstream << "b1 = " << (npcState->scriptVars.b1 ? "true" : "false" ) << ',' << std::endl;
-						scriptstream << "b2 = " << (npcState->scriptVars.b2 ? "true" : "false" ) << ',' << std::endl;
-						scriptstream << "b3 = " << (npcState->scriptVars.b3 ? "true" : "false" ) << ',' << std::endl;
+						scriptstream << "b1 = " << (npcState->scriptVars.b1 ? "true" : "false") << ',' << std::endl;
+						scriptstream << "b2 = " << (npcState->scriptVars.b2 ? "true" : "false") << ',' << std::endl;
+						scriptstream << "b3 = " << (npcState->scriptVars.b3 ? "true" : "false") << ',' << std::endl;
 
 						scriptstream << "s1 = \"" << npcState->scriptVars.s1 << "\"" << ',' << std::endl;
 						scriptstream << "s2 = \"" << npcState->scriptVars.s2 << "\"" << ',' << std::endl;
@@ -1638,8 +1638,10 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 						scriptInterface.releaseScriptEnv();
 					}
+
 					break;
 				}
+
 				default:
 					break;
 			}
