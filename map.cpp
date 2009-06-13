@@ -381,6 +381,9 @@ void Map::getSpectators(SpectatorVec& list, const Position& centerPos,
 	int32_t minRangeX /*= 0*/, int32_t maxRangeX /*= 0*/,
 	int32_t minRangeY /*= 0*/, int32_t maxRangeY /*= 0*/)
 {
+	if(centerPos.z >= MAP_MAX_LAYERS)
+		return;
+
 	bool foundCache = false;
 	bool cacheResult = false;
 	if(minRangeX == 0 && maxRangeX == 0 && minRangeY == 0 && maxRangeY == 0 && multifloor == true && checkforduplicate == false)
@@ -450,6 +453,13 @@ void Map::getSpectators(SpectatorVec& list, const Position& centerPos,
 
 const SpectatorVec& Map::getSpectators(const Position& centerPos)
 {
+	if(centerPos.z >= MAP_MAX_LAYERS)
+	{
+		boost::shared_ptr<SpectatorVec> p(new SpectatorVec());
+		SpectatorVec& list = *p;
+		return list;
+	}
+
 	SpectatorCache::iterator it = spectatorCache.find(centerPos);
 	if(it != spectatorCache.end())
 		return *it->second;
@@ -1138,7 +1148,7 @@ int32_t AStarNodes::getMapWalkCost(const Creature* creature, AStarNode* node,
 int32_t AStarNodes::getTileWalkCost(const Creature* creature, const Tile* tile)
 {
 	int cost = 0;
-	if(tile->getCreatureCount())
+	if(tile->getTopVisibleCreature(creature) != NULL)
 	{
 		//destroy creature cost
 		cost += MAP_NORMALWALKCOST * 3;
@@ -1152,13 +1162,11 @@ int32_t AStarNodes::getTileWalkCost(const Creature* creature, const Tile* tile)
 	return cost;
 }
 
-int AStarNodes::getEstimatedDistance(int32_t x, int32_t y, int32_t xGoal, int32_t yGoal)
+int32_t AStarNodes::getEstimatedDistance(int32_t x, int32_t y, int32_t xGoal, int32_t yGoal)
 {
-	int h_diagonal = std::min(std::abs(x - xGoal), std::abs(y - yGoal));
-	int h_straight = (std::abs(x - xGoal) + std::abs(y - yGoal));
-
+	int32_t h_diagonal = std::min(std::abs(x - xGoal), std::abs(y - yGoal));
+	int32_t h_straight = (std::abs(x - xGoal) + std::abs(y - yGoal));
 	return MAP_DIAGONALWALKCOST * h_diagonal + MAP_NORMALWALKCOST * (h_straight - 2 * h_diagonal);
-	//return (std::abs(x - xGoal) + std::abs(y - yGoal)) * MAP_NORMALWALKCOST;
 }
 
 //*********** Floor constructor **************

@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.2
+		0.2.3
 
 	Codenamed
 		"Mystic Spirit"
@@ -22,23 +22,12 @@
 
 	M...
 		The Forgotten Server.exe
-		config.lua
-		data/
-			global.lua
-			items/
-				items.otb
-				items.xml
 ]
 
 [ Milestone
-	ConfigManager strings which are "yes"/"no" will now be compared as bool instead of string for improved performance.
-	Live queries for bans (still same database structure).
-	Removed Lua functions: isAccountBanned, removeAccountBan.
-	Rewritten status protocol blacklisting code.
-	Most damage killer will no longer receive 15 minutes protection zone lock.
-	Pacified condition (CONDITION_PACIFIED) for stairjump exhaustion and 8.4 spells.
-	New Lua functions: isValidUID(uid), getPartyMembers(leaderId).
-	Third optional parameter for doPlayerAddMana, animationOnLoss (doPlayerAddMana can be used with a negative value for 8.4 spells to remove mana without the animation effect).
-	Protocol 8.42 items.otb compatibility.
-	Code cleanup.
+	Fixed an issue with IP-address banishments.
+	Fixed all client debug errors that could be caused by gamemasters in ghost mode.
+	Fixed the client debug error which occurred when a gamemaster teleported to a tile without ground using /a 1.
+	Idle time will now be reset when a player is using an object or saying something.
+	Code cleanup & optimizations.
 ]

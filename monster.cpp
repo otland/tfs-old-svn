@@ -159,9 +159,9 @@ void Monster::onCreatureDisappear(const Creature* creature, uint32_t stackpos, b
 }
 
 void Monster::onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
-	const Tile* oldTile, const Position& oldPos, uint32_t oldStackPos, bool teleport)
+	const Tile* oldTile, const Position& oldPos, bool teleport)
 {
-	Creature::onCreatureMove(creature, newTile, newPos, oldTile, oldPos, oldStackPos, teleport);
+	Creature::onCreatureMove(creature, newTile, newPos, oldTile, oldPos, teleport);
 
 	if(creature == this)
 	{
@@ -1164,7 +1164,7 @@ bool Monster::canWalkTo(Position pos, Direction dir)
 			return false;
 
 		Tile* tile = g_game.getTile(pos.x, pos.y, pos.z);
-		if(tile && tile->getCreatureCount() == 0 && tile->__queryAdd(0, this, 1, FLAG_PATHFINDING) == RET_NOERROR)
+		if(tile && tile->getTopVisibleCreature(this) == NULL && tile->__queryAdd(0, this, 1, FLAG_PATHFINDING) == RET_NOERROR)
 			return true;
 	}
 	return false;

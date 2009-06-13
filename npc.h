@@ -280,7 +280,7 @@ struct ListItem
 	ListItem()
 	{
 		itemId = 0;
-		subType = 1;
+		subType = -1;
 		sellPrice = 0;
 		buyPrice = 0;
 		keywords = "";
@@ -472,16 +472,16 @@ class Npc : public Creature
 		Npc(const std::string& _name);
 
 		virtual void onAddTileItem(const Tile* tile, const Position& pos, const Item* item);
-		virtual void onUpdateTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
-			const Item* oldItem, const ItemType& oldType, const Item* newItem, const ItemType& newType);
-		virtual void onRemoveTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
-			const ItemType& iType, const Item* item);
+		virtual void onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
+			const ItemType& oldType, const Item* newItem, const ItemType& newType);
+		virtual void onRemoveTileItem(const Tile* tile, const Position& pos, const ItemType& iType,
+			const Item* item);
 		virtual void onUpdateTile(const Tile* tile, const Position& pos);
 
 		virtual void onCreatureAppear(const Creature* creature, bool isLogin);
 		virtual void onCreatureDisappear(const Creature* creature, uint32_t stackpos, bool isLogout);
 		virtual void onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
-			const Tile* oldTile, const Position& oldPos, uint32_t oldStackPos, bool teleport);
+			const Tile* oldTile, const Position& oldPos, bool teleport);
 
 		virtual void onCreatureTurn(const Creature* creature, uint32_t stackpos);
 		virtual void onCreatureSay(const Creature* creature, SpeakClasses type, const std::string& text);

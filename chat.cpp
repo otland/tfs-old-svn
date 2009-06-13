@@ -143,15 +143,8 @@ bool ChatChannel::removeUser(Player* player)
 
 bool ChatChannel::talk(Player* fromPlayer, SpeakClasses type, const std::string& text, uint32_t time /*= 0*/)
 {
-	bool success = false;
-	UsersMap::iterator it;
-
-	if(m_id != 0x03)
-	{
-		UsersMap::const_iterator iter = m_users.find(fromPlayer->getID());
-		if(iter == m_users.end())
-			return false;
-	}
+	if(m_id != 0x03 && m_users.find(fromPlayer->getID()) == m_users.end())
+		return false;
 
 	if(!fromPlayer->hasFlag(PlayerFlag_CannotBeMuted) && (m_id == 0x05 || m_id == 0x07))
 	{
@@ -159,12 +152,10 @@ bool ChatChannel::talk(Player* fromPlayer, SpeakClasses type, const std::string&
 		fromPlayer->addCondition(condition);
 	}
 
-	for(it = m_users.begin(); it != m_users.end(); ++it)
-	{
+	for(UsersMap::iterator it = m_users.begin(); it != m_users.end(); ++it)
 		it->second->sendToChannel(fromPlayer, type, text, getId(), time);
-		success = true;
-	}
-	return success;
+
+	return true;
 }
 
 Chat::Chat()

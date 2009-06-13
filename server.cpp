@@ -215,13 +215,22 @@ void ServicePort::open(uint16_t port)
 	close();
 
 	m_serverPort = port;
-
-	m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
-		boost::asio::ip::address(boost::asio::ip::address_v4(INADDR_ANY)), m_serverPort));
-
-	accept();
-
 	m_pendingStart = false;
+
+	try
+	{
+		m_acceptor = new boost::asio::ip::tcp::acceptor(m_io_service, boost::asio::ip::tcp::endpoint(
+			boost::asio::ip::address(boost::asio::ip::address_v4(INADDR_ANY)), m_serverPort));
+		accept();
+	}
+	catch(boost::system::system_error& e)
+	{
+		std::cout << "[ServicePort::open] Error: " << e.what() << std::endl;
+
+		m_pendingStart = true;
+		g_scheduler.addEvent(createSchedulerTask(15000,
+			boost::bind(&ServicePort::open, this, port)));
+	}
 }
 
 void ServicePort::close()

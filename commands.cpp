@@ -1108,7 +1108,7 @@ bool Commands::removeThing(Creature* creature, const std::string& cmd, const std
 		Tile *removeTile = g_game.getMap()->getTile(pos);
 		if(removeTile != NULL)
 		{
-			Thing *thing = removeTile->getTopThing();
+			Thing *thing = removeTile->getTopVisibleThing(creature);
 			if(thing)
 			{
 				if(Creature *creature = thing->getCreature())
@@ -1489,11 +1489,8 @@ bool Commands::ghost(Creature* creature, const std::string& cmd, const std::stri
 
 	SpectatorVec list;
 	g_game.getSpectators(list, player->getPosition(), true);
+
 	SpectatorVec::const_iterator it;
-
-	Cylinder* cylinder = player->getTopParent();
-	int32_t index = cylinder->__getIndexOfThing(creature);
-
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
@@ -1502,9 +1499,9 @@ bool Commands::ghost(Creature* creature, const std::string& cmd, const std::stri
 			if(tmpPlayer != player && !tmpPlayer->isAccessPlayer())
 			{
 				if(player->isInGhostMode())
-					tmpPlayer->sendCreatureDisappear(player, index, true);
+					tmpPlayer->sendCreatureDisappear(player, player->getTile()->getClientIndexOfThing(tmpPlayer, player), true);
 				else
-					tmpPlayer->sendCreatureAppear(player, creature->getPosition(), creature->getParent()->__getIndexOfThing(creature), true);
+					tmpPlayer->sendCreatureAppear(player, creature->getPosition(), true);
 
 				tmpPlayer->sendUpdateTile(player->getTile(), player->getPosition());
 			}
@@ -1548,7 +1545,9 @@ bool Commands::multiClientCheck(Creature* creature, const std::string& cmd, cons
 	std::list<uint32_t> ipList;
 
 	std::stringstream text;
-	text << "Multiclient Check List:\n";
+	text << "Multiclient Check List:";
+	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
+	text.str("");
 
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
@@ -1576,13 +1575,14 @@ bool Commands::multiClientCheck(Creature* creature, const std::string& cmd, cons
 				if(tmp != playerList.size())
 					text << p->first << " [" << p->second << "], ";
 				else
-					text << p->first << " [" << p->second << "].\n";
+					text << p->first << " [" << p->second << "].";
 			}
 
 			ipList.push_back(it->second->getIP());
 		}
-	}
 
-	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
+		if(text.str() != "")
+			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
+	}
 	return true;
 }

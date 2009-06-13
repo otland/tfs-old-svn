@@ -161,28 +161,24 @@ int64_t Creature::getTimeSinceLastMove() const
 	return 0x7FFFFFFFFFFFFFFFLL;
 }
 
-int64_t Creature::getSleepTicks() const
+int32_t Creature::getWalkDelay(Direction dir) const
 {
 	if(lastStep != 0)
 	{
 		int64_t ct = OTSYS_TIME();
-		int64_t stepDuration = getStepDuration();
-		int64_t delay = stepDuration - (ct - lastStep);
-		return delay;
+		int64_t stepDuration = getStepDuration(dir);
+		return stepDuration - (ct - lastStep);
 	}
 	return 0;
 }
 
-int32_t Creature::getWalkDelay(Direction dir, uint32_t resolution) const
+int32_t Creature::getWalkDelay() const
 {
+	//Used for auto-walking
 	if(lastStep != 0)
 	{
-		float mul = 1.0f;
-		if(dir == NORTHWEST || dir == NORTHEAST || dir == SOUTHWEST || dir == SOUTHEAST)
-			mul = 3.0f;
-
 		int64_t ct = OTSYS_TIME();
-		int64_t stepDuration = (int64_t)std::ceil(((double)getStepDuration(false) * mul)/resolution) * resolution;
+		int64_t stepDuration = getStepDuration() * lastStepCost;
 		return stepDuration - (ct - lastStep);
 	}
 	return 0;
@@ -256,7 +252,7 @@ void Creature::onIdleStatus()
 
 void Creature::onWalk()
 {
-	if(getSleepTicks() <= 0)
+	if(getWalkDelay() <= 0)
 	{
 		Direction dir;
 		if(getNextStep(dir))
@@ -466,8 +462,8 @@ void Creature::onAddTileItem(const Tile* tile, const Position& pos, const Item* 
 	}
 }
 
-void Creature::onUpdateTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
-	const Item* oldItem, const ItemType& oldType, const Item* newItem, const ItemType& newType)
+void Creature::onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
+	const ItemType& oldType, const Item* newItem, const ItemType& newType)
 {
 	if(isMapLoaded)
 	{
@@ -479,8 +475,8 @@ void Creature::onUpdateTileItem(const Tile* tile, const Position& pos, uint32_t 
 	}
 }
 
-void Creature::onRemoveTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
-	const ItemType& iType, const Item* item)
+void Creature::onRemoveTileItem(const Tile* tile, const Position& pos, const ItemType& iType,
+	const Item* item)
 {
 	if(isMapLoaded)
 	{
@@ -564,7 +560,7 @@ void Creature::onAttackedCreatureChangeZone(ZoneType_t zone)
 }
 
 void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
-	const Tile* oldTile, const Position& oldPos, uint32_t oldStackPos, bool teleport)
+	const Tile* oldTile, const Position& oldPos, bool teleport)
 {
 	if(creature == this)
 	{
@@ -580,7 +576,7 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 			else if(std::abs(newPos.x - oldPos.x) >=1 && std::abs(newPos.y - oldPos.y) >= 1)
 			{
 				//diagonal extra cost
-				lastStepCost = 3;
+				lastStepCost = 2;
 			}
 		}
 		else
@@ -1076,7 +1072,7 @@ double Creature::getDamageRatio(Creature* attacker) const
 	return ((double)attackerDamage / totalDamage);
 }
 
-uint64_t Creature::getGainedExperience(Creature* attacker)
+uint64_t Creature::getGainedExperience(Creature* attacker) const
 {
 	uint64_t lostExperience = getLostExperience();
 	return attacker->getPlayer() ? ((uint64_t)std::floor(getDamageRatio(attacker) * lostExperience * g_game.getExperienceStage(attacker->getPlayer()->getLevel()))) : ((uint64_t)std::floor(getDamageRatio(attacker) * lostExperience * g_config.getNumber(ConfigManager::RATE_EXPERIENCE)));
@@ -1446,7 +1442,16 @@ std::string Creature::getDescription(int32_t lookDistance) const
 	return str;
 }
 
-int32_t Creature::getStepDuration(bool addLastStepCost /*= true*/) const
+int32_t Creature::getStepDuration(Direction dir) const
+{
+	int32_t stepDuration = getStepDuration();
+	if(dir == NORTHWEST || dir == NORTHEAST || dir == SOUTHWEST || dir == SOUTHEAST)
+		stepDuration <<= 1;
+
+	return stepDuration;
+}
+
+int32_t Creature::getStepDuration() const
 {
 	if(isRemoved())
 		return 0;
@@ -1461,14 +1466,14 @@ int32_t Creature::getStepDuration(bool addLastStepCost /*= true*/) const
 		if(stepSpeed != 0)
 			duration = (1000 * groundSpeed) / stepSpeed;
 	}
-	return duration * (addLastStepCost ? lastStepCost : 1);
+	return duration;
 }
 
 int64_t Creature::getEventStepTicks() const
 {
-	int64_t ret = getSleepTicks();
+	int64_t ret = getWalkDelay();
 	if(ret <= 0)
-		ret = getStepDuration();
+		ret = getStepDuration() * lastStepCost;
 
 	return ret;
 }

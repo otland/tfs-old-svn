@@ -202,7 +202,6 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 			default:
 				outputPool->releaseMessage(output);
 				getConnection()->closeConnection();
-				addLogLine(this, LOGTYPE_ERROR, 1, "no valid connection state!!!");
 				return;
 		}
 

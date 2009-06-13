@@ -3081,16 +3081,14 @@ int32_t LuaScriptInterface::luaDoDecayItem(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 
 	Item* item = env->getItemByUID(uid);
-	if(item)
+	if(!item)
 	{
-		g_game.startDecay(item);
-		lua_pushnumber(L, LUA_NO_ERROR);
-	}
-	else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
 		lua_pushnumber(L, LUA_ERROR);
+		return 1;
 	}
+
+	g_game.startDecay(item);
+	lua_pushnumber(L, LUA_NO_ERROR);
 	return 1;
 }
 

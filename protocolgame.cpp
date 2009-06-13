@@ -1455,14 +1455,7 @@ void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
 	std::string date = msg.GetString();
 	std::string description = msg.GetString();
 	std::string comment = msg.GetString();
-
-	FILE* file = fopen("client_assertions.txt", "a");
-	if(file)
-	{
-		fprintf(file, "----- %s - %s (%s) -----\n", formatDate(time(NULL)).c_str(), player->getName().c_str(), convertIPToString(getIP()).c_str());
-		fprintf(file, "%s\n%s\n%s\n%s\n", assertLine.c_str(), date.c_str(), description.c_str(), comment.c_str());
-		fclose(file);
-	}
+	addGameTask(&Game::playerDebugAssert, player->getID(), assertLine, date, description, comment);
 }
 
 void ProtocolGame::parseBugReport(NetworkMessage& msg)

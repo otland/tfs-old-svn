@@ -597,7 +597,7 @@ void Player::sendIcons() const
 	}
 }
 
-void Player::updateInventoryWeigth()
+void Player::updateInventoryWeight()
 {
 	if(!hasFlag(PlayerFlag_HasInfiniteCapacity))
 	{
@@ -639,46 +639,46 @@ int32_t Player::getSkill(skills_t skilltype, skillsid_t skillinfo) const
 
 void Player::addSkillAdvance(skills_t skill, uint32_t count)
 {
-        if(count == 0)
-                return;
+	if(count == 0)
+		return;
 
-        if(vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]) > vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
-        {
-                //player has reached max skill
-                return;
-        }
+	if(vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]) > vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
+	{
+		//player has reached max skill
+		return;
+	}
 
-        bool advance = false;
-        count = count * g_config.getNumber(ConfigManager::RATE_SKILL);
-        while(skills[skill][SKILL_TRIES] + count >= vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
-        {
-                count -= vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1) - skills[skill][SKILL_TRIES];
-                skills[skill][SKILL_LEVEL]++;
-                skills[skill][SKILL_TRIES] = 0;
-                skills[skill][SKILL_PERCENT] = 0;
-                char advMsg[50];
-                sprintf(advMsg, "You advanced in %s.", getSkillName(skill).c_str());
-                sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
-                advance = true;
+	bool advance = false;
+	count = count * g_config.getNumber(ConfigManager::RATE_SKILL);
+	while(skills[skill][SKILL_TRIES] + count >= vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
+	{
+		count -= vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1) - skills[skill][SKILL_TRIES];
+		skills[skill][SKILL_LEVEL]++;
+		skills[skill][SKILL_TRIES] = 0;
+		skills[skill][SKILL_PERCENT] = 0;
+		char advMsg[50];
+		sprintf(advMsg, "You advanced in %s.", getSkillName(skill).c_str());
+		sendTextMessage(MSG_EVENT_ADVANCE, advMsg);
+		advance = true;
 
-                if(vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]) > vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
-                {
-                        count = 0;
-                        break;
-                }
-        }
-        skills[skill][SKILL_TRIES] += count;
+		if(vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL]) > vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1))
+		{
+			count = 0;
+			break;
+		}
+	}
+	skills[skill][SKILL_TRIES] += count;
 
-        if(advance)
-                sendSkills();
+	if(advance)
+		sendSkills();
 
-        //update percent
-        uint32_t newPercent = Player::getPercentLevel(skills[skill][SKILL_TRIES], vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1));
-        if(skills[skill][SKILL_PERCENT] != newPercent)
-        {
-                skills[skill][SKILL_PERCENT] = newPercent;
-                sendSkills();
-        }
+	//update percent
+	uint32_t newPercent = Player::getPercentLevel(skills[skill][SKILL_TRIES], vocation->getReqSkillTries(skill, skills[skill][SKILL_LEVEL] + 1));
+	if(skills[skill][SKILL_PERCENT] != newPercent)
+	{
+		skills[skill][SKILL_PERCENT] = newPercent;
+		sendSkills();
+	}
 }
 
 void Player::setVarStats(stats_t stat, int32_t modifier)
@@ -883,8 +883,15 @@ bool Player::canSee(const Position& pos) const
 
 bool Player::canSeeCreature(const Creature* creature) const
 {
-	if(creature->isInvisible() && !creature->getPlayer() && !hasFlag(PlayerFlag_CanSenseInvisibility) && !canSeeInvisibility())
+	if(creature == this)
+		return true;
+
+	if(creature->isInGhostMode() && !accessLevel)
 		return false;
+
+	if(creature->isInvisible() && !creature->getPlayer() && !canSeeInvisibility())
+		return false;
+
 	return true;
 }
 
@@ -1300,13 +1307,13 @@ void Player::onAddTileItem(const Tile* tile, const Position& pos, const Item* it
 	Creature::onAddTileItem(tile, pos, item);
 }
 
-void Player::onUpdateTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
-	const Item* oldItem, const ItemType& oldType, const Item* newItem, const ItemType& newType)
+void Player::onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
+	const ItemType& oldType, const Item* newItem, const ItemType& newType)
 {
-	Creature::onUpdateTileItem(tile, pos, stackpos, oldItem, oldType, newItem, newType);
+	Creature::onUpdateTileItem(tile, pos, oldItem, oldType, newItem, newType);
 
 	if(oldItem != newItem)
-		onRemoveTileItem(tile, pos, stackpos, oldType, oldItem);
+		onRemoveTileItem(tile, pos, oldType, oldItem);
 
 	if(tradeState != TRADE_TRANSFER)
 	{
@@ -1315,10 +1322,10 @@ void Player::onUpdateTileItem(const Tile* tile, const Position& pos, uint32_t st
 	}
 }
 
-void Player::onRemoveTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
-	const ItemType& iType, const Item* item)
+void Player::onRemoveTileItem(const Tile* tile, const Position& pos, const ItemType& iType,
+	const Item* item)
 {
-	Creature::onRemoveTileItem(tile, pos, stackpos, iType, item);
+	Creature::onRemoveTileItem(tile, pos, iType, item);
 
 	if(tradeState != TRADE_TRANSFER)
 	{
@@ -1549,13 +1556,13 @@ void Player::onWalk(Direction& dir)
 {
 	Creature::onWalk(dir);
 	setNextActionTask(NULL);
-	setNextAction(OTSYS_TIME() + getStepDuration());
+	setNextAction(OTSYS_TIME() + getStepDuration(dir));
 }
 
 void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
-	const Tile* oldTile, const Position& oldPos, uint32_t oldStackPos, bool teleport)
+	const Tile* oldTile, const Position& oldPos, bool teleport)
 {
-	Creature::onCreatureMove(creature, newTile, newPos, oldTile, oldPos, oldStackPos, teleport);
+	Creature::onCreatureMove(creature, newTile, newPos, oldTile, oldPos, teleport);
 
 	if(creature != this)
 		return;
@@ -1841,44 +1848,44 @@ void Player::drainMana(Creature* attacker, int32_t manaLoss)
 
 void Player::addManaSpent(uint64_t amount)
 {
-        if(amount != 0 && !hasFlag(PlayerFlag_NotGainMana))
-        {
-                uint64_t currReqMana = vocation->getReqMana(magLevel);
-                uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
-                if(currReqMana > nextReqMana)
-                {
-                        //player has reached max magic level
-                        return;
-                }
+	if(amount != 0 && !hasFlag(PlayerFlag_NotGainMana))
+	{
+		uint64_t currReqMana = vocation->getReqMana(magLevel);
+		uint64_t nextReqMana = vocation->getReqMana(magLevel + 1);
+		if(currReqMana > nextReqMana)
+		{
+			//player has reached max magic level
+			return;
+		}
 
-                amount = amount * g_config.getNumber(ConfigManager::RATE_MAGIC);
-                while(manaSpent + amount >= nextReqMana)
-                {
-                        amount -= nextReqMana - manaSpent;
+		amount = amount * g_config.getNumber(ConfigManager::RATE_MAGIC);
+		while(manaSpent + amount >= nextReqMana)
+		{
+			amount -= nextReqMana - manaSpent;
 
-                        magLevel++;
-                        manaSpent = 0;
-                        char MaglvMsg[50];
-                        sprintf(MaglvMsg, "You advanced to magic level %d.", magLevel);
-                        sendTextMessage(MSG_EVENT_ADVANCE, MaglvMsg);
+			magLevel++;
+			manaSpent = 0;
+			char MaglvMsg[50];
+			sprintf(MaglvMsg, "You advanced to magic level %d.", magLevel);
+			sendTextMessage(MSG_EVENT_ADVANCE, MaglvMsg);
 
-                        currReqMana = nextReqMana;
-                        nextReqMana = vocation->getReqMana(magLevel + 1);
-                        if(currReqMana > nextReqMana)
-                        {
-                                amount = 0;
-                                return;
-                        }
-                }
-                manaSpent += amount;
+			currReqMana = nextReqMana;
+			nextReqMana = vocation->getReqMana(magLevel + 1);
+			if(currReqMana > nextReqMana)
+			{
+				amount = 0;
+				return;
+			}
+		}
+		manaSpent += amount;
 
-                if(nextReqMana > currReqMana)
-                        magLevelPercent = Player::getPercentLevel(manaSpent, nextReqMana);
-                else
-                        magLevelPercent = 0;
+		if(nextReqMana > currReqMana)
+			magLevelPercent = Player::getPercentLevel(manaSpent, nextReqMana);
+		else
+			magLevelPercent = 0;
 
-                sendStats();
-        }
+		sendStats();
+	}
 }
 
 void Player::addExperience(uint64_t exp)
@@ -2907,23 +2914,14 @@ uint32_t Player::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, b
 	std::list<const Container*> listContainer;
 	ItemList::const_iterator cit;
 	Container* tmpContainer = NULL;
-	Item* item = NULL;
+
 	for(int i = SLOT_FIRST; i < SLOT_LAST; i++)
 	{
-		if((item = inventory[i]))
+		Item* item = inventory[i];
+		if(item)
 		{
-			if(item->getID() == itemId && (subType == -1 || subType == item->getSubType()))
-			{
-				if(itemCount)
-					count += item->getItemCount();
-				else
-				{
-					if(item->isRune())
-						count += item->getCharges();
-					else
-						count += item->getItemCount();
-				}
-			}
+			if(item->getID() == itemId)
+				count += Item::countByType(item, subType, itemCount);
 
 			if((tmpContainer = item->getContainer()))
 				listContainer.push_back(tmpContainer);
@@ -2934,7 +2932,9 @@ uint32_t Player::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, b
 	{
 		const Container* container = listContainer.front();
 		listContainer.pop_front();
+
 		count += container->__getItemTypeCount(itemId, subType, itemCount);
+
 		for(cit = container->getItems(); cit != container->getEnd(); ++cit)
 		{
 			if((tmpContainer = (*cit)->getContainer()))
@@ -2952,7 +2952,7 @@ Thing* Player::__getThing(uint32_t index) const
 	return NULL;
 }
 
-void Player::postAddNotification(Thing* thing, int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
+void Player::postAddNotification(Thing* thing, const Cylinder* oldParent, int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
 {
 	if(link == LINK_OWNER)
 	{
@@ -2960,10 +2960,22 @@ void Player::postAddNotification(Thing* thing, int32_t index, cylinderlink_t lin
 		g_moveEvents->onPlayerEquip(this, thing->getItem(), (slots_t)index, false);
 	}
 
+	bool requireListUpdate = true;
 	if(link == LINK_OWNER || link == LINK_TOPPARENT)
 	{
+		const Item* i = (oldParent? oldParent->getItem() : NULL);
+
+		// Check if we owned the old container too, so we don't need to do anything,
+		// as the list was updated in postRemoveNotification
+		assert(i? i->getContainer() != NULL : true);
+
+		if(i)
+			requireListUpdate = i->getContainer()->getHoldingPlayer() != this;
+		else
+			requireListUpdate = oldParent != this;
+
+		updateInventoryWeight();
 		updateItemsLight();
-		updateInventoryWeigth();
 		sendStats();
 	}
 
@@ -2972,7 +2984,7 @@ void Player::postAddNotification(Thing* thing, int32_t index, cylinderlink_t lin
 		if(const Container* container = item->getContainer())
 			onSendContainer(container);
 
-		if(shopOwner)
+		if(shopOwner && requireListUpdate)
 			postUpdateGoods(item->getID());
 	}
 	else if(const Creature* creature = thing->getCreature())
@@ -2993,7 +3005,7 @@ void Player::postAddNotification(Thing* thing, int32_t index, cylinderlink_t lin
 	}
 }
 
-void Player::postRemoveNotification(Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
+void Player::postRemoveNotification(Thing* thing, const Cylinder* newParent, int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
 {
 	if(link == LINK_OWNER)
 	{
@@ -3001,10 +3013,21 @@ void Player::postRemoveNotification(Thing* thing, int32_t index, bool isComplete
 		g_moveEvents->onPlayerDeEquip(this, thing->getItem(), (slots_t)index, isCompleteRemoval);
 	}
 
+	bool requireListUpdate = true;
 	if(link == LINK_OWNER || link == LINK_TOPPARENT)
 	{
+		const Item* i = (newParent? newParent->getItem() : NULL);
+
+		// Check if we owned the old container too, so we don't need to do anything,
+		// as the list was updated in postRemoveNotification
+		assert(i? i->getContainer() != NULL : true);
+		if(i)
+			requireListUpdate = i->getContainer()->getHoldingPlayer() != this;
+		else
+			requireListUpdate = newParent != this;
+
+		updateInventoryWeight();
 		updateItemsLight();
-		updateInventoryWeigth();
 		sendStats();
 	}
 
@@ -3040,7 +3063,7 @@ void Player::postRemoveNotification(Thing* thing, int32_t index, bool isComplete
 				autoCloseContainers(container);
 		}
 
-		if(shopOwner)
+		if(shopOwner && requireListUpdate)
 			postUpdateGoods(item->getID());
 	}
 }
@@ -3337,24 +3360,31 @@ void Player::onAddCombatCondition(ConditionType_t type)
 		case CONDITION_POISON:
 			sendTextMessage(MSG_STATUS_DEFAULT, "You are poisoned.");
 			break;
+
 		case CONDITION_DROWN:
 			sendTextMessage(MSG_STATUS_DEFAULT, "You are drowning.");
 			break;
+
 		case CONDITION_PARALYZE:
 			sendTextMessage(MSG_STATUS_DEFAULT, "You are paralyzed.");
 			break;
+
 		case CONDITION_DRUNK:
 			sendTextMessage(MSG_STATUS_DEFAULT, "You are drunk.");
 			break;
+
 		case CONDITION_CURSED:
 			sendTextMessage(MSG_STATUS_DEFAULT, "You are cursed.");
 			break;
+
 		case CONDITION_FREEZING:
 			sendTextMessage(MSG_STATUS_DEFAULT, "You are freezing.");
 			break;
+
 		case CONDITION_DAZZLED:
 			sendTextMessage(MSG_STATUS_DEFAULT, "You are dazzled.");
 			break;
+
 		default:
 			break;
 	}

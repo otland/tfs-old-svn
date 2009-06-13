@@ -119,7 +119,7 @@ bool IOBan::isIpBanished(uint32_t clientip)
 			if((ip & mask) == (clientip & mask))
 			{
 				uint32_t currentTime = time(NULL);
-				uint32_t time = result.getDataInt("time");
+				uint32_t time = result.getDataInt("time", i);
 				if(time == 0 || currentTime < time)
 					return true;
 			}

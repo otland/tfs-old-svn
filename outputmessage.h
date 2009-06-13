@@ -71,6 +71,7 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 
 		Protocol* getProtocol() { return m_protocol;}
 		Connection* getConnection() { return m_connection;}
+		uint64_t getFrame() const { return m_frame;}
 
 #ifdef __TRACK_NETWORK__
 		void Track(std::string file, int64_t line, std::string func)
@@ -130,7 +131,6 @@ class OutputMessage : public NetworkMessage, boost::noncopyable
 		OutputMessageState getState() const { return m_state;}
 
 		void setFrame(uint64_t frame) { m_frame = frame;}
-		uint64_t getFrame() const { return m_frame;}
 
 		Protocol* m_protocol;
 		Connection* m_connection;
@@ -166,6 +166,7 @@ class OutputMessagePool
 		size_t getTotalMessageCount() const {return m_allOutputMessages.size();}
 		size_t getAvailableMessageCount() const {return m_outputMessages.size();}
 		size_t getAutoMessageCount() const {return m_autoSendOutputMessages.size();}
+		void addToAutoSend(OutputMessage* msg);
 
 	protected:
 		void configureOutputMessage(OutputMessage* msg, Protocol* protocol, bool autosend);
@@ -175,9 +176,9 @@ class OutputMessagePool
 		typedef std::list<OutputMessage*> OutputMessageVector;
 
 		OutputMessageVector m_outputMessages;
-		OutputMessageVector m_autoSendOutputMessages;
-
 		OutputMessageVector m_allOutputMessages;
+		OutputMessageVector m_autoSendOutputMessages;
+		OutputMessageVector m_toAddQueue;
 
 		OTSYS_THREAD_LOCKVAR m_outputPoolLock;
 		uint64_t m_frameTime;

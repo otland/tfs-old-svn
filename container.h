@@ -39,7 +39,7 @@ class Container : public Item, public Cylinder
 		virtual Depot* getDepot() {return NULL;}
 		virtual const Depot* getDepot() const {return NULL;}
 
-		//serialization
+		Attr_ReadValue readAttr(AttrTypes_t attr, PropStream& propStream);
 		bool unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream);
 
 		uint32_t size() const {return (uint32_t)itemlist.size();}
@@ -80,8 +80,8 @@ class Container : public Item, public Cylinder
 		virtual uint32_t __getItemTypeCount(uint16_t itemId, int32_t subType = -1, bool itemCount = true) const;
 		virtual Thing* __getThing(uint32_t index) const;
 
-		virtual void postAddNotification(Thing* thing, int32_t index, cylinderlink_t link = LINK_OWNER);
-		virtual void postRemoveNotification(Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
+		virtual void postAddNotification(Thing* thing, const Cylinder* oldParent, int32_t index, cylinderlink_t link = LINK_OWNER);
+		virtual void postRemoveNotification(Thing* thing, const Cylinder* newParent, int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
 
 		virtual void __internalAddThing(Thing* thing);
 		virtual void __internalAddThing(uint32_t index, Thing* thing);
@@ -100,8 +100,9 @@ class Container : public Item, public Cylinder
 		uint32_t maxSize;
 		double totalWeight;
 		ItemList itemlist;
+		uint32_t serializationCount;
 
-		//friend void Item::setParent(Cylinder* cylinder);
+		friend class IOMapSerialize;
 };
 
 #endif

@@ -23,6 +23,8 @@
 #ifndef __OTSERV_TILE_H__
 #define __OTSERV_TILE_H__
 
+#include <boost/shared_ptr.hpp>
+
 #include "cylinder.h"
 #include "item.h"
 
@@ -35,6 +37,10 @@ class QTreeLeafNode;
 class BedItem;
 
 typedef std::vector<Creature*> CreatureVector;
+typedef std::list<Creature*> SpectatorVec;
+typedef std::list<Player*> PlayerList;
+typedef std::map<Position, boost::shared_ptr<SpectatorVec> > SpectatorCache;
+typedef std::vector<Item*> ItemVector;
 
 enum tileflags_t
 {
@@ -54,18 +60,19 @@ enum tileflags_t
 	TILESTATE_FLOORCHANGE_SOUTH = 1024,
 	TILESTATE_FLOORCHANGE_EAST = 2048,
 	TILESTATE_FLOORCHANGE_WEST = 4096,
-	TILESTATE_POSITIONCHANGE = 8192,
+	TILESTATE_TELEPORT = 8192,
 	TILESTATE_MAGICFIELD = 16384,
-	TILESTATE_BLOCKSOLID = 32768,
-	TILESTATE_BLOCKPATH = 65536,
-	TILESTATE_IMMOVABLEBLOCKSOLID = 131072,
-	TILESTATE_IMMOVABLEBLOCKPATH = 262144,
-	TILESTATE_IMMOVABLENOFIELDBLOCKPATH = 524288,
-	TILESTATE_NOFIELDBLOCKPATH = 1048576,
-	TILESTATE_DYNAMIC_TILE = 2097152
+	TILESTATE_MAILBOX = 32768,
+	TILESTATE_TRASHHOLDER = 65536,
+	TILESTATE_BED = 131072,
+	TILESTATE_BLOCKSOLID = 262144,
+	TILESTATE_BLOCKPATH = 524288,
+	TILESTATE_IMMOVABLEBLOCKSOLID = 1048576,
+	TILESTATE_IMMOVABLEBLOCKPATH = 2097152,
+	TILESTATE_IMMOVABLENOFIELDBLOCKPATH = 4194304,
+	TILESTATE_NOFIELDBLOCKPATH = 8388608,
+	TILESTATE_DYNAMIC_TILE = 16777216
 };
-
-typedef std::vector<Item*> ItemVector;
 
 class TileItemVector
 {
@@ -141,10 +148,13 @@ class Tile : public Cylinder
 		BedItem* getBedItem() const;
 
 		Creature* getTopCreature();
+		const Creature* getTopCreature() const;
+		Creature* getTopVisibleCreature(const Creature* creature);
+		const Creature* getTopVisibleCreature(const Creature* creature) const;
 		Item* getTopTopItem();
 		Item* getTopDownItem();
 		bool isMoveableBlocking() const;
-		Thing* getTopThing();
+		Thing* getTopVisibleThing(const Creature* creature);
 		Item* getItemByTopOrder(int32_t topOrder);
 
 		uint32_t getThingCount() const {return thingCount;}
@@ -161,7 +171,7 @@ class Tile : public Cylinder
 		void setFlag(tileflags_t flag) {m_flags |= (uint32_t)flag;}
 		void resetFlag(tileflags_t flag) {m_flags &= ~(uint32_t)flag;}
 
-		bool positionChange() const {return hasFlag(TILESTATE_POSITIONCHANGE);}
+		bool positionChange() const {return hasFlag(TILESTATE_TELEPORT);}
 		bool floorChange() const {return hasFlag(TILESTATE_FLOORCHANGE);}
 		bool floorChangeDown() const {return hasFlag(TILESTATE_FLOORCHANGE_DOWN);}
 		bool floorChange(Direction direction) const
@@ -170,19 +180,18 @@ class Tile : public Cylinder
 			{
 				case NORTH:
 					return hasFlag(TILESTATE_FLOORCHANGE_NORTH);
-					break;
+
 				case SOUTH:
 					return hasFlag(TILESTATE_FLOORCHANGE_SOUTH);
-					break;
+
 				case EAST:
 					return hasFlag(TILESTATE_FLOORCHANGE_EAST);
-					break;
+
 				case WEST:
 					return hasFlag(TILESTATE_FLOORCHANGE_WEST);
-					break;
+
 				default:
 					return false;
-					break;
 			}
 		}
 		bool hasHeight(uint32_t n) const;
@@ -191,6 +200,7 @@ class Tile : public Cylinder
 		virtual std::string getDescription(int32_t lookDistance) const;
 
 		void moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport = false);
+		int32_t getClientIndexOfThing(const Player* player, const Thing* thing) const;
 
 		//cylinder implementations
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
@@ -215,8 +225,8 @@ class Tile : public Cylinder
 		virtual uint32_t __getItemTypeCount(uint16_t itemId, int32_t subType = -1, bool itemCount = true) const;
 		virtual Thing* __getThing(uint32_t index) const;
 
-		virtual void postAddNotification(Thing* thing, int32_t index, cylinderlink_t link = LINK_OWNER);
-		virtual void postRemoveNotification(Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
+		virtual void postAddNotification(Thing* thing, const Cylinder* oldParent, int32_t index, cylinderlink_t link = LINK_OWNER);
+		virtual void postRemoveNotification(Thing* thing, const Cylinder* newParent, int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
 
 		virtual void __internalAddThing(Thing* thing);
 		virtual void __internalAddThing(uint32_t index, Thing* thing);
@@ -228,9 +238,8 @@ class Tile : public Cylinder
 
 	private:
 		void onAddTileItem(Item* item);
-		void onUpdateTileItem(uint32_t index, Item* oldItem,
-			const ItemType& oldType, Item* newItem, const ItemType& newType);
-		void onRemoveTileItem(uint32_t index, Item* item);
+		void onUpdateTileItem(Item* oldItem, const ItemType& oldType, Item* newItem, const ItemType& newType);
+		void onRemoveTileItem(const SpectatorVec& list, std::vector<uint32_t>& oldStackPosVector, Item* item);
 		void onUpdateTile();
 
 		void updateTileFlags(Item* item, bool removing);

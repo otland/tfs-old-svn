@@ -140,7 +140,7 @@ class Cylinder : virtual public Thing
 		  * \param index is the objects new index value
 		  * \param link holds the relation the object has to the cylinder
 		  */
-		virtual void postAddNotification(Thing* thing, int32_t index, cylinderlink_t link = LINK_OWNER) = 0;
+		virtual void postAddNotification(Thing* thing, const Cylinder* oldParent, int32_t index, cylinderlink_t link = LINK_OWNER) = 0;
 
 		/**
 		  * Is sent after an operation (move/remove) to update internal values
@@ -149,7 +149,7 @@ class Cylinder : virtual public Thing
 		  * \param isCompleteRemoval indicates if the item was completely removed or just partially (stackables)
 		  * \param link holds the relation the object has to the cylinder
 		  */
-		virtual void postRemoveNotification(Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER) = 0;
+		virtual void postRemoveNotification(Thing* thing, const Cylinder* newParent, int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER) = 0;
 
 		/**
 		  * Gets the index of an object
@@ -220,8 +220,8 @@ class VirtualCylinder : public Cylinder
 		virtual void __replaceThing(uint32_t index, Thing* thing) {}
 		virtual void __removeThing(Thing* thing, uint32_t count) {}
 
-		virtual void postAddNotification(Thing* thing, int32_t index, cylinderlink_t link = LINK_OWNER) {}
-		virtual void postRemoveNotification(Thing* thing, int32_t index, bool isCompleteRemoval,
+		virtual void postAddNotification(Thing* thing, const Cylinder* oldParent, int32_t index, cylinderlink_t link = LINK_OWNER) {}
+		virtual void postRemoveNotification(Thing* thing, const Cylinder* newParent, int32_t index, bool isCompleteRemoval,
 			cylinderlink_t link = LINK_OWNER) {}
 
 		virtual bool isPushable() const {return false;}

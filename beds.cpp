@@ -34,7 +34,7 @@ BedItem::BedItem(uint16_t _id) : Item(_id)
 	internalRemoveSleeper();
 }
 
-bool BedItem::readAttr(AttrTypes_t attr, PropStream& propStream)
+Attr_ReadValue BedItem::readAttr(AttrTypes_t attr, PropStream& propStream)
 {
 	switch(attr)
 	{
@@ -42,34 +42,30 @@ bool BedItem::readAttr(AttrTypes_t attr, PropStream& propStream)
 		{
 			uint32_t _guid;
 			if(!propStream.GET_ULONG(_guid))
-				return false;
+				return ATTR_READ_ERROR;
 
 			if(_guid != 0)
 			{
 				std::string name;
-				if(!IOLoginData::getInstance()->getNameByGuid(_guid, name))
-					return false;
-
-				setSpecialDescription(name + " is sleeping there.");
-
-				// update the BedSleepersMap
-				Beds::getInstance().setBedSleeper(this, _guid);
+				if(IOLoginData::getInstance()->getNameByGuid(_guid, name))
+				{
+					setSpecialDescription(name + " is sleeping there.");
+					Beds::getInstance().setBedSleeper(this, _guid);
+				}
 			}
 
 			sleeperGUID = _guid;
-			return true;
-			break;
+			return ATTR_READ_CONTINUE;
 		}
 
 		case ATTR_SLEEPSTART:
 		{
 			uint32_t sleep_start;
 			if(!propStream.GET_ULONG(sleep_start))
-				return false;
+				return ATTR_READ_ERROR;
 
 			sleepStart = (uint64_t)sleep_start;
-			return true;
-			break;
+			return ATTR_READ_CONTINUE;
 		}
 
 		default:

@@ -294,7 +294,7 @@ bool Condition::updateCondition(const Condition* addCondition)
 	if(getTicks() == -1 && addCondition->getTicks() > 0)
 		return false;
 
-	if(addCondition->getTicks() > 0 && getEndTime() > (OTSYS_TIME() + addCondition->getTicks()))
+	if(addCondition->getTicks() >= 0 && getEndTime() > (OTSYS_TIME() + addCondition->getTicks()))
 		return false;
 
 	return true;
@@ -1231,7 +1231,12 @@ bool ConditionDamage::executeCondition(Creature* creature, int32_t interval)
 		}
 
 		if(!bRemove)
+		{
+			if(getTicks() > 0)
+				endTime += interval;
+
 			interval = 0;
+		}
 	}
 
 	return Condition::executeCondition(creature, interval);

@@ -592,7 +592,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 		query.reset();
 
 	player->updateBaseSpeed();
-	player->updateInventoryWeigth();
+	player->updateInventoryWeight();
 	player->updateItemsLight(true);
 
 	return true;

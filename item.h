@@ -106,6 +106,13 @@ enum AttrTypes_t
 	ATTR_CONTAINER_ITEMS = 23
 };
 
+enum Attr_ReadValue
+{
+	ATTR_READ_CONTINUE,
+	ATTR_READ_ERROR,
+	ATTR_READ_END
+};
+
 class ItemAttributes
 {
 	public:
@@ -284,7 +291,7 @@ class Item : virtual public Thing, public ItemAttributes
 		std::string getWeightDescription() const;
 
 		//serialization
-		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
+		virtual Attr_ReadValue readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool unserializeAttr(PropStream& propStream);
 		virtual bool unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream);
 
@@ -296,6 +303,10 @@ class Item : virtual public Thing, public ItemAttributes
 		uint16_t getID() const {return id;}
 		uint16_t getClientID() const {return items[id].clientId;}
 		void setID(uint16_t newid);
+
+		// Returns the player that is holding this item in his inventory
+		Player* getHoldingPlayer();
+		const Player* getHoldingPlayer() const;
 
 		WeaponType_t getWeaponType() const {return items[id].weaponType;}
 		Ammo_t	getAmmoType() const {return items[id].ammoType;}
@@ -350,6 +361,8 @@ class Item : virtual public Thing, public ItemAttributes
 		uint16_t getItemCount() const {return count;}
 		void setItemCount(uint8_t n) {count = n;}
 
+		static uint32_t countByType(const Item* i, int checkType, bool multiCount);
+
 		void setDefaultSubtype();
 		bool hasSubType() const;
 		uint16_t getSubType() const;
@@ -369,7 +382,7 @@ class Item : virtual public Thing, public ItemAttributes
 		virtual bool canRemove() const {return true;}
 		virtual bool canTransform() const {return true;}
 		virtual void onRemoved() {}
-		virtual bool onTradeEvent(TradeEvents_t event, Player* owner){return true;}
+		virtual bool onTradeEvent(TradeEvents_t event, Player* owner) {return true;}
 
 		virtual void __startDecaying();
 
@@ -387,5 +400,20 @@ class Item : virtual public Thing, public ItemAttributes
 };
 
 typedef std::list<Item *> ItemList;
+
+inline uint32_t Item::countByType(const Item* i, int checkType, bool multiCount)
+{
+	if(checkType == -1 || checkType == i->getSubType())
+	{
+		if(multiCount)
+			return i->getItemCount();
+
+		if(i->isRune())
+			return i->getCharges();
+
+		return i->getItemCount();
+	}
+	return 0;
+}
 
 #endif

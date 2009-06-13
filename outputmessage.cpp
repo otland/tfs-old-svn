@@ -108,6 +108,23 @@ void OutputMessagePool::sendAll()
 {
 	OTSYS_THREAD_LOCK_CLASS lockClass(m_outputPoolLock);
 	OutputMessageVector::iterator it;
+
+	for(it = m_toAddQueue.begin(); it != m_toAddQueue.end();)
+	{
+		//drop messages that are older than 10 seconds
+		if(OTSYS_TIME() - (*it)->getFrame() > 10000)
+		{
+			(*it)->getProtocol()->onSendMessage(*it);
+			it = m_toAddQueue.erase(it);
+			continue;
+		}
+
+		(*it)->setState(OutputMessage::STATE_ALLOCATED);
+		m_autoSendOutputMessages.push_back(*it);
+		++it;
+	}
+	m_toAddQueue.clear();
+
 	for(it = m_autoSendOutputMessages.begin(); it != m_autoSendOutputMessages.end(); )
 	{
 		#ifdef __NO_PLAYER_SENDBUFFER__
@@ -222,36 +239,18 @@ OutputMessage* OutputMessagePool::getOutputMessage(Protocol* protocol, bool auto
 	if(protocol->getConnection() == NULL)
 		return NULL;
 
-	OutputMessage* outputmessage;
 	if(m_outputMessages.empty())
 	{
+		OutputMessage* msg = new OutputMessage();
+		m_outputMessages.push_back(msg);
 #ifdef __TRACK_NETWORK__
-		if(m_allOutputMessages.size() >= 5000)
-		{
-			std::cout << "High usage of outputmessages: " << std::endl;
-			m_allOutputMessages.back()->PrintTrace();
-		}
-#endif
-		outputmessage = new OutputMessage;
-#ifdef __TRACK_NETWORK__
-		m_allOutputMessages.push_back(outputmessage);
+		m_allOutputMessages.push_back(msg);
 #endif
 	}
-	else
-	{
-		outputmessage = m_outputMessages.back();
-#ifdef __TRACK_NETWORK__
-		// Print message trace
-		if(outputmessage->getState() != OutputMessage::STATE_FREE)
-		{
-			std::cout << "Using allocated message, message trace:" << std::endl;
-			outputmessage->PrintTrace();
-		}
-#else
-		assert(outputmessage->getState() == OutputMessage::STATE_FREE);
-#endif
-		m_outputMessages.pop_back();
-	}
+
+	OutputMessage* outputmessage;
+	outputmessage = m_outputMessages.back();
+	m_outputMessages.pop_back();
 
 	configureOutputMessage(outputmessage, protocol, autosend);
 	return outputmessage;
@@ -259,6 +258,8 @@ OutputMessage* OutputMessagePool::getOutputMessage(Protocol* protocol, bool auto
 
 void OutputMessagePool::configureOutputMessage(OutputMessage* msg, Protocol* protocol, bool autosend)
 {
+	TRACK_MESSAGE(msg);
+
 	msg->Reset();
 	if(autosend)
 	{
@@ -282,4 +283,9 @@ void OutputMessagePool::configureOutputMessage(OutputMessage* msg, Protocol* pro
 	std::cout << "Adding reference to connection - " << connection << std::endl;
 #endif
 	msg->setFrame(m_frameTime);
+}
+
+void OutputMessagePool::addToAutoSend(OutputMessage* msg)
+{
+	m_toAddQueue.push_back(msg);
 }

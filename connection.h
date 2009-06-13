@@ -164,8 +164,8 @@ class Connection : boost::noncopyable
 		bool m_writeError;
 		bool m_readError;
 
-		int32_t m_pendingWrite;
 		std::list <OutputMessage*> m_outputQueue;
+		int32_t m_pendingWrite;
 		int32_t m_pendingRead;
 		uint32_t m_closeState;
 		uint32_t m_refCount;

@@ -348,11 +348,12 @@ void MoveEvents::addEvent(MoveEvent* moveEvent, Position pos, MovePosListMap& ma
 		std::list<MoveEvent*>& moveEventList = it->second.moveEvent[moveEvent->getEventType()];
 		if(!moveEventList.empty())
 			std::cout << "Warning: [MoveEvents::addEvent] Duplicate move event found: " << pos << std::endl;
+
 		moveEventList.push_back(moveEvent);
 	}
 }
 
-MoveEvent* MoveEvents::getEvent(Tile* tile, MoveEvent_t eventType)
+MoveEvent* MoveEvents::getEvent(const Tile* tile, MoveEvent_t eventType)
 {
 	MovePosListMap::iterator it = m_positionMap.find(tile->getPosition());
 	if(it != m_positionMap.end())
@@ -364,7 +365,7 @@ MoveEvent* MoveEvents::getEvent(Tile* tile, MoveEvent_t eventType)
 	return NULL;
 }
 
-uint32_t MoveEvents::onCreatureMove(Creature* creature, Tile* tile, bool isIn)
+uint32_t MoveEvents::onCreatureMove(Creature* creature, const Tile* tile, bool isIn)
 {
 	MoveEvent_t eventType;
 	if(isIn)
@@ -372,10 +373,14 @@ uint32_t MoveEvents::onCreatureMove(Creature* creature, Tile* tile, bool isIn)
 	else
 		eventType = MOVE_EVENT_STEP_OUT;
 
+	Position pos(0, 0, 0);
+	if(tile)
+		pos = tile->getPosition();
+
 	uint32_t ret = 1;
 	MoveEvent* moveEvent = getEvent(tile, eventType);
 	if(moveEvent)
-		ret = ret & moveEvent->fireStepEvent(creature, NULL, tile->getPosition());
+		ret = ret & moveEvent->fireStepEvent(creature, NULL, pos);
 
 	int32_t j = tile->__getLastIndex();
 	Item* tileItem = NULL;
@@ -386,7 +391,7 @@ uint32_t MoveEvents::onCreatureMove(Creature* creature, Tile* tile, bool isIn)
 		{
 			moveEvent = getEvent(tileItem, eventType);
 			if(moveEvent)
-				ret = ret & moveEvent->fireStepEvent(creature, tileItem, tile->getPosition());
+				ret = ret & moveEvent->fireStepEvent(creature, tileItem, pos);
 		}
 	}
 	return ret;
@@ -493,32 +498,25 @@ std::string MoveEvent::getScriptEventName()
 	{
 		case MOVE_EVENT_STEP_IN:
 			return "onStepIn";
-			break;
 
 		case MOVE_EVENT_STEP_OUT:
 			return "onStepOut";
-			break;
 
 		case MOVE_EVENT_EQUIP:
 			return "onEquip";
-			break;
 
 		case MOVE_EVENT_DEEQUIP:
 			return "onDeEquip";
-			break;
 
 		case MOVE_EVENT_ADD_ITEM:
 			return "onAddItem";
-			break;
 
 		case MOVE_EVENT_REMOVE_ITEM:
 			return "onRemoveItem";
-			break;
 
 		default:
 			std::cout << "Error: [MoveEvent::getScriptEventName()] No valid event type." << std::endl;
 			return "";
-			break;
 	}
 }
 
@@ -698,13 +696,11 @@ void MoveEvent::setEventType(MoveEvent_t type)
 uint32_t MoveEvent::StepInField(Creature* creature, Item* item, const Position& pos)
 {
 	MagicField* field = item->getMagicField();
-
 	if(field)
 	{
 		field->onStepInField(creature);
 		return 1;
 	}
-
 	return LUA_ERROR_ITEM_NOT_FOUND;
 }
 
@@ -930,7 +926,7 @@ uint32_t MoveEvent::executeStep(Creature* creature, Item* item, const Position& 
 		#endif
 
 		env->setScriptId(m_scriptId, m_scriptInterface);
-		env->setRealPos(pos);
+		env->setRealPos(creature->getPosition());
 
 		uint32_t cid = env->addThing(creature);
 		uint32_t itemid = env->addThing(item);
@@ -941,7 +937,7 @@ uint32_t MoveEvent::executeStep(Creature* creature, Item* item, const Position& 
 		lua_pushnumber(L, cid);
 		LuaScriptInterface::pushThing(L, item, itemid);
 		LuaScriptInterface::pushPosition(L, pos, 0);
-		LuaScriptInterface::pushPosition(L, creature->getLastPosition());
+		LuaScriptInterface::pushPosition(L, creature->getLastPosition(), 0);
 
 		int32_t result = m_scriptInterface->callFunction(4);
 		m_scriptInterface->releaseScriptEnv();

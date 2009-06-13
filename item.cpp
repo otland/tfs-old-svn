@@ -284,6 +284,24 @@ uint16_t Item::getSubType() const
 	return count;
 }
 
+Player* Item::getHoldingPlayer()
+{
+	Cylinder* p = getParent();
+	while(p)
+	{
+		if(p->getCreature())
+			return p->getCreature()->getPlayer();
+
+		p = p->getParent();
+	}
+	return NULL;
+}
+
+const Player* Item::getHoldingPlayer() const
+{
+	return const_cast<Item*>(this)->getHoldingPlayer();
+}
+
 void Item::setSubType(uint16_t n)
 {
 	const ItemType& it = items[id];
@@ -295,7 +313,7 @@ void Item::setSubType(uint16_t n)
 		count = n;
 }
 
-bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
+Attr_ReadValue Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 {
 	switch(attr)
 	{
@@ -303,7 +321,7 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		{
 			uint8_t _count = 0;
 			if(!propStream.GET_UCHAR(_count))
-				return false;
+				return ATTR_READ_ERROR;
 
 			setSubType(_count);
 			break;
@@ -313,7 +331,7 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		{
 			uint16_t _actionid = 0;
 			if(!propStream.GET_USHORT(_actionid))
-				return false;
+				return ATTR_READ_ERROR;
 
 			setActionId(_actionid);
 			break;
@@ -322,9 +340,8 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		case ATTR_UNIQUE_ID:
 		{
 			uint16_t _uniqueid;
-			if(!propStream.GET_USHORT(_uniqueid)){
-				return false;
-			}
+			if(!propStream.GET_USHORT(_uniqueid))
+				return ATTR_READ_ERROR;
 
 			setUniqueId(_uniqueid);
 			break;
@@ -334,7 +351,7 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		{
 			std::string _text;
 			if(!propStream.GET_STRING(_text))
-				return false;
+				return ATTR_READ_ERROR;
 
 			setText(_text);
 			break;
@@ -344,7 +361,7 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		{
 			uint32_t _writtenDate;
 			if(!propStream.GET_ULONG(_writtenDate))
-				return false;
+				return ATTR_READ_ERROR;
 
 			setDate(_writtenDate);
 			break;
@@ -354,7 +371,7 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		{
 			std::string _writer;
 			if(!propStream.GET_STRING(_writer))
-				return false;
+				return ATTR_READ_ERROR;
 
 			setWriter(_writer);
 			break;
@@ -364,7 +381,7 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		{
 			std::string _text;
 			if(!propStream.GET_STRING(_text))
-				return false;
+				return ATTR_READ_ERROR;
 
 			setSpecialDescription(_text);
 			break;
@@ -374,7 +391,7 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		{
 			uint8_t _charges = 1;
 			if(!propStream.GET_UCHAR(_charges))
-				return false;
+				return ATTR_READ_ERROR;
 
 			setSubType(_charges);
 			break;
@@ -384,7 +401,7 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		{
 			uint16_t _charges = 1;
 			if(!propStream.GET_USHORT(_charges))
-				return false;
+				return ATTR_READ_ERROR;
 
 			setSubType(_charges);
 			break;
@@ -394,7 +411,7 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		{
 			uint32_t duration = 0;
 			if(!propStream.GET_ULONG(duration))
-				return false;
+				return ATTR_READ_ERROR;
 
 			if(((int32_t)duration) < 0)
 				duration = 0;
@@ -407,7 +424,7 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		{
 			uint8_t state = 0;
 			if(!propStream.GET_UCHAR(state))
-				return false;
+				return ATTR_READ_ERROR;
 
 			if(state != DECAYING_FALSE)
 				setDecaying(DECAYING_PENDING);
@@ -415,7 +432,7 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		}
 
 		//these should be handled through derived classes
-		//If these are called then something has changed in the items.otb since the map was saved
+		//If these are called then something has changed in the items.xml since the map was saved
 		//just read the values
 
 		//Depot class
@@ -423,10 +440,9 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		{
 			uint16_t _depotId;
 			if(!propStream.GET_USHORT(_depotId))
-				return false;
+				return ATTR_READ_ERROR;
 
-			return true;
-			break;
+			return ATTR_READ_CONTINUE;
 		}
 
 		//Door class
@@ -434,10 +450,28 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		{
 			uint8_t _doorId;
 			if(!propStream.GET_UCHAR(_doorId))
-				return false;
+				return ATTR_READ_ERROR;
 
-			return true;
-			break;
+			return ATTR_READ_CONTINUE;
+		}
+
+		//Bed class
+		case ATTR_SLEEPERGUID:
+		{
+			uint32_t _guid;
+			if(!propStream.GET_ULONG(_guid))
+				return ATTR_READ_ERROR;
+
+			return ATTR_READ_CONTINUE;
+		}
+
+		case ATTR_SLEEPSTART:
+		{
+			uint32_t sleep_start;
+			if(!propStream.GET_ULONG(sleep_start))
+				return ATTR_READ_ERROR;
+
+			return ATTR_READ_CONTINUE;
 		}
 
 		//Teleport class
@@ -445,18 +479,25 @@ bool Item::readAttr(AttrTypes_t attr, PropStream& propStream)
 		{
 			TeleportDest* tele_dest;
 			if(!propStream.GET_STRUCT(tele_dest))
-				return false;
+				return ATTR_READ_ERROR;
 
-			return true;
-			break;
+			return ATTR_READ_CONTINUE;
+		}
+
+		//Container class
+		case ATTR_CONTAINER_ITEMS:
+		{
+			uint32_t count;
+			if(!propStream.GET_ULONG(count))
+				return ATTR_READ_ERROR;
+
+			return ATTR_READ_ERROR;
 		}
 
 		default:
-			return false;
-			break;
+			return ATTR_READ_ERROR;
 	}
-
-	return true;
+	return ATTR_READ_CONTINUE;
 }
 
 bool Item::unserializeAttr(PropStream& propStream)
@@ -464,13 +505,11 @@ bool Item::unserializeAttr(PropStream& propStream)
 	uint8_t attr_type;
 	while(propStream.GET_UCHAR(attr_type) && attr_type != 0)
 	{
-		if(!readAttr((AttrTypes_t)attr_type, propStream))
-		{
-			if(attr_type != ATTR_CONTAINER_ITEMS)
-				std::cout << "Failed to unserialize attr_type: " << (AttrTypes_t)attr_type << " for item: " << id << std::endl;
-
+		Attr_ReadValue ret = readAttr((AttrTypes_t)attr_type, propStream);
+		if(ret == ATTR_READ_ERROR)
 			return false;
-		}
+		else if(ret == ATTR_READ_END)
+			return true;
 	}
 	return true;
 }

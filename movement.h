@@ -21,7 +21,6 @@
 #ifndef __MOVEMENT_H__
 #define __MOVEMENT_H__
 
-
 #include "luascript.h"
 #include "baseevents.h"
 #include <map>
@@ -55,7 +54,7 @@ class MoveEvents : public BaseEvents
 		MoveEvents();
 		virtual ~MoveEvents();
 
-		uint32_t onCreatureMove(Creature* creature, Tile* tile, bool isIn);
+		uint32_t onCreatureMove(Creature* creature, const Tile* tile, bool isIn);
 		uint32_t onPlayerEquip(Player* player, Item* item, slots_t slot, bool isCheck);
 		uint32_t onPlayerDeEquip(Player* player, Item* item, slots_t slot, bool isRemoval);
 		uint32_t onItemMove(Item* item, Tile* tile, bool isAdd);
@@ -63,7 +62,7 @@ class MoveEvents : public BaseEvents
 		MoveEvent* getEvent(Item* item, MoveEvent_t eventType);
 
 	protected:
-		typedef std::map<int32_t , MoveEventList> MoveListMap;
+		typedef std::map<int32_t, MoveEventList> MoveListMap;
 		typedef std::map<Position, MoveEventList> MovePosListMap;
 		virtual void clear();
 		virtual LuaScriptInterface& getScriptInterface();
@@ -78,7 +77,7 @@ class MoveEvents : public BaseEvents
 		void addEvent(MoveEvent* moveEvent, int32_t id, MoveListMap& map);
 
 		void addEvent(MoveEvent* moveEvent, Position pos, MovePosListMap& map);
-		MoveEvent* getEvent(Tile* tile, MoveEvent_t eventType);
+		MoveEvent* getEvent(const Tile* tile, MoveEvent_t eventType);
 
 		MoveEvent* getEvent(Item* item, MoveEvent_t eventType, slots_t slot);
 

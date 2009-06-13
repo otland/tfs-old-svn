@@ -72,7 +72,7 @@ void Protocol::onRecvMessage(NetworkMessage& msg)
 
 OutputMessage* Protocol::getOutputBuffer()
 {
-	if(m_outputBuffer)
+	if(m_outputBuffer && m_outputBuffer->getMessageLength() < NETWORKMESSAGE_MAXSIZE - 4096)
 		return m_outputBuffer;
 	else if(m_connection)
 	{

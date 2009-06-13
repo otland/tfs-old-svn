@@ -123,14 +123,16 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 
 				if(item)
 				{
-					if(!item->unserializeAttr(propStream))
-						std::cout << "WARNING: Serialize error in IOMapSerialize::loadTile()" << std::endl;
-
-					if(pid == 0)
+					if(item->unserializeAttr(propStream))
 					{
-						tile->__internalAddThing(item);
-						item->__startDecaying();
+						if(pid == 0)
+						{
+							tile->__internalAddThing(item);
+							item->__startDecaying();
+						}
 					}
+					else
+						std::cout << "WARNING: Serialize error in IOMapSerialize::loadTile()" << std::endl;
 				}
 				else
 					continue;
@@ -167,13 +169,17 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 
 			if(item)
 			{
-				if(!item->unserializeAttr(propStream))
+				if(item->unserializeAttr(propStream))
+				{
+					item = g_game.transformItem(item, type);
+					if(item)
+					{
+						std::pair<Item*, int> myPair(item, pid);
+						itemMap[sid] = myPair;
+					}
+				}
+				else
 					std::cout << "WARNING: Serialize error in IOMapSerialize::loadTile()" << std::endl;
-
-				item = g_game.transformItem(item, type);
-
-				std::pair<Item*, int> myPair(item, pid);
-				itemMap[sid] = myPair;
 			}
 			else
 				std::cout << "WARNING: IOMapSerialize::loadTile(). NULL item at " << tile->getPosition() << ". type = " << type << ", sid = " << sid << ", pid = " << pid << std::endl;
@@ -262,8 +268,8 @@ bool IOMapSerialize::saveTile(Database* db, uint32_t tileId, const Tile* tile)
 		if(!(!item->isNotMoveable() ||
 			item->getDoor() ||
 			(item->getContainer() && item->getContainer()->size() != 0) ||
-			(item->canWriteText())
-			|| item->getBed()))
+			item->canWriteText() ||
+			item->getBed()))
 			continue;
 
 		//only save beds in houses
@@ -383,6 +389,29 @@ bool IOMapSerialize::loadMapBinary(Map* map)
  	return true;
 }
 
+bool IOMapSerialize::loadContainer(PropStream& propStream, Container* container)
+{
+	while(container->serializationCount > 0)
+	{
+		if(!loadItem(propStream, container))
+		{
+			std::cout << "WARNING: Unserialization error for containing item in IOMapSerialize::loadContainer() - " << container->getID() << std::endl;
+			return false;
+		}
+		container->serializationCount--;
+	}
+
+	uint8_t endAttr = 0x00;
+	propStream.GET_UCHAR(endAttr);
+
+	if(endAttr != 0x00)
+	{
+		std::cout << "WARNING: Unserialization error for containing item in IOMapSerialize::loadContainer() - " << container->getID() << std::endl;
+		return false;
+	}
+	return true;
+}
+
 bool IOMapSerialize::loadItem(PropStream& propStream, Cylinder* parent)
 {
 	Item* item = NULL;
@@ -391,64 +420,44 @@ bool IOMapSerialize::loadItem(PropStream& propStream, Cylinder* parent)
 	propStream.GET_USHORT(id);
 
 	const ItemType& iType = Item::items[id];
-	if(iType.moveable)
+	Tile* tile = NULL;
+	if(parent->getParent() == NULL)
+		tile = parent->getTile();
+
+	if(iType.moveable || !tile)
 	{
 		//create a new item
 		item = Item::CreateItem(id);
-
 		if(item)
 		{
-			bool ret = item->unserializeAttr(propStream);
-
-			item = g_game.transformItem(item, id);
-
-			if(!ret)
+			if(item->unserializeAttr(propStream))
 			{
-				// Somewhat ugly hack to inject a custom attribute for container items
-				propStream.SKIP_N(-1);
-				uint8_t prop = 0;
-				propStream.GET_UCHAR(prop);
-				if(prop == ATTR_CONTAINER_ITEMS)
+				Container* container = item->getContainer();
+				if(container && !loadContainer(propStream, container))
 				{
-					Container* container = item->getContainer();
-					uint32_t nitems = 0;
-					propStream.GET_ULONG(nitems);
-					while(nitems > 0)
-					{
-						if(!loadItem(propStream, container))
-						{
-							std::cout << "WARNING: Unserialization error for containing item in IOMapSerialize::loadItem()" << id << std::endl;
-							return false;
-						}
-						--nitems;
-					}
-					ret = item->unserializeAttr(propStream);
+					delete item;
+					return false;
 				}
-			}
 
-			if(!ret)
-				std::cout << "WARNING: Unserialization error in IOMapSerialize::loadItem()" << id << std::endl;
-
-			if(parent)
-			{
-				parent->__internalAddThing(item);
-				item->__startDecaying();
+				if(parent)
+				{
+					parent->__internalAddThing(item);
+					item->__startDecaying();
+				}
+				else
+					delete item;
 			}
 			else
+			{
+				std::cout << "WARNING: Unserialization error in IOMapSerialize::loadItem()" << id << std::endl;
 				delete item;
+				return false;
+			}
 		}
 	}
 	else
 	{
-		// A static item (bed)
-		// find this type in the tile
-		Tile* tile = parent->getTile();
-		if(!tile)
-		{
-			std::cout << "WARNING: Unserialization error in IOMapSerialize::loadItem()" << std::endl;
-			return false;
-		}
-
+		// Stationary items like doors/beds/blackboards/bookcases
 		for(uint32_t i = 0; i < tile->getThingCount(); ++i)
 		{
 			Item* findItem = tile->__getThing(i)->getItem();
@@ -475,44 +484,32 @@ bool IOMapSerialize::loadItem(PropStream& propStream, Cylinder* parent)
 
 		if(item)
 		{
-			bool ret = item->unserializeAttr(propStream);
-
-			item = g_game.transformItem(item, id);
-
-			// Code duplication is bad, fix?
-			if(!ret)
+			if(item->unserializeAttr(propStream))
 			{
-				// Somewhat ugly hack to inject a custom attribute for container items
-				propStream.SKIP_N(-1);
-				uint8_t prop = 0;
-				propStream.GET_UCHAR(prop);
-				if(prop == ATTR_CONTAINER_ITEMS)
-				{
-					Container* container = item->getContainer();
-					uint32_t nitems = 0;
-					propStream.GET_ULONG(nitems);
-					while(nitems > 0)
-					{
-						if(!loadItem(propStream, container))
-						{
-							std::cout << "WARNING: Unserialization error for containing item in IOMapSerialize::loadItem()" << id << std::endl;
-							return false;
-						}
-						--nitems;
-					}
-					ret = item->unserializeAttr(propStream);
-				}
-			}
+				Container* container = item->getContainer();
+				if(container && !loadContainer(propStream, container))
+					return false;
 
-			if(!ret)
+				item = g_game.transformItem(item, id);
+			}
+			else
 				std::cout << "WARNING: Unserialization error in IOMapSerialize::loadItem()" << id << std::endl;
 		}
 		else
 		{
-			// Problems! We need to unserialize the attributes, but we have no item to do it on.
-			// Use a dummy item to unserialize.
-			Item dummy(0);
-			dummy.unserializeAttr(propStream);
+			//The map changed since the last save, just read the attributes
+			Item* dummy = Item::CreateItem(id);
+			if(dummy)
+			{
+				dummy->unserializeAttr(propStream);
+				Container* container = dummy->getContainer();
+				if(container && !loadContainer(propStream, container))
+				{
+					delete dummy;
+					return false;
+				}
+				delete dummy;
+			}
 		}
 	}
 	return true;
@@ -602,12 +599,11 @@ bool IOMapSerialize::saveTile(PropWriteStream& stream, const Tile* tile)
 			continue;
 
 		// Note that these are NEGATED, ie. these are the items that will be saved.
-		if(!(!item->isNotMoveable() || // is Moveable
-				item->getDoor() ||
-				(item->getContainer() && item->getContainer()->size() != 0) || // Static containers that can't be moved
-				item->canWriteText() || // Blackboards needs to be saved too
-				item->getBed()))
+		if(!(!item->isNotMoveable() || item->getDoor() || (item->getContainer() &&
+			item->getContainer()->size() != 0) || item->canWriteText() || item->getBed()))
+		{
 			continue;
+		}
 
 		items.push_back(item);
 	}

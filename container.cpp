@@ -29,8 +29,9 @@ extern Game g_game;
 Container::Container(uint16_t _type) : Item(_type)
 {
 	//std::cout << "Container constructor " << this << std::endl;
-	maxSize = items[this->getID()].maxItems;
+	maxSize = items[_type].maxItems;
 	totalWeight = 0.0;
+	serializationCount = 0;
 }
 
 Container::~Container()
@@ -66,6 +67,26 @@ void Container::addItem(Item* item)
 {
 	itemlist.push_back(item);
 	item->setParent(this);
+}
+
+Attr_ReadValue Container::readAttr(AttrTypes_t attr, PropStream& propStream)
+{
+	switch(attr)
+	{
+		case ATTR_CONTAINER_ITEMS:
+		{
+			uint32_t count;
+			if(!propStream.GET_ULONG(count))
+				return ATTR_READ_ERROR;
+
+			serializationCount = count;
+			return ATTR_READ_END;
+		}
+
+		default:
+			break;
+	}
+	return Item::readAttr(attr, propStream);
 }
 
 bool Container::unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream)
@@ -460,7 +481,7 @@ void Container::__addThing(int32_t index, Thing* thing)
 		parentContainer->updateItemWeight(item->getWeight());
 
 	//send change to client
-	if(getParent())
+	if(getParent() && (getParent() != VirtualCylinder::virtualCylinder))
 		onAddContainerItem(item);
 }
 
@@ -687,41 +708,41 @@ Thing* Container::__getThing(uint32_t index) const
 	return NULL;
 }
 
-void Container::postAddNotification(Thing* thing, int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
+void Container::postAddNotification(Thing* thing, const Cylinder* oldParent, int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
 {
 	Cylinder* topParent = getTopParent();
 
 	if(topParent->getCreature())
-		topParent->postAddNotification(thing, index, LINK_TOPPARENT);
+		topParent->postAddNotification(thing, oldParent, index, LINK_TOPPARENT);
 	else
 	{
 		if(topParent == this)
 		{
 			//let the tile class notify surrounding players
 			if(topParent->getParent())
-				topParent->getParent()->postAddNotification(thing, index, LINK_NEAR);
+				topParent->getParent()->postAddNotification(thing, oldParent, index, LINK_NEAR);
 		}
 		else
-			topParent->postAddNotification(thing, index, LINK_PARENT);
+			topParent->postAddNotification(thing, oldParent, index, LINK_PARENT);
 	}
 }
 
-void Container::postRemoveNotification(Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
+void Container::postRemoveNotification(Thing* thing, const Cylinder* newParent, int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
 {
 	Cylinder* topParent = getTopParent();
 
 	if(topParent->getCreature())
-		topParent->postRemoveNotification(thing, index, isCompleteRemoval, LINK_TOPPARENT);
+		topParent->postRemoveNotification(thing, newParent, index, isCompleteRemoval, LINK_TOPPARENT);
 	else
 	{
 		if(topParent == this)
 		{
 			//let the tile class notify surrounding players
 			if(topParent->getParent())
-				topParent->getParent()->postRemoveNotification(thing, index, isCompleteRemoval, LINK_NEAR);
+				topParent->getParent()->postRemoveNotification(thing, newParent, index, isCompleteRemoval, LINK_NEAR);
 		}
 		else
-			topParent->postRemoveNotification(thing, index, isCompleteRemoval, LINK_PARENT);
+			topParent->postRemoveNotification(thing, newParent, index, isCompleteRemoval, LINK_PARENT);
 	}
 }
 

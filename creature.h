@@ -168,17 +168,18 @@ class Creature : public AutoID, virtual public Thing
 		void setMasterPos(const Position& pos, uint32_t radius = 1) { masterPos = pos; masterRadius = radius;}
 
 		virtual int32_t getThrowRange() const {return 1;}
-		virtual bool isPushable() const {return (getSleepTicks() <= 0);}
+		virtual bool isPushable() const {return (getWalkDelay() <= 0);}
 		virtual bool isRemoved() const {return isInternalRemoved;}
 		virtual bool canSeeInvisibility() const {return false;}
 		virtual bool isInGhostMode() const {return false;}
 
-		int64_t getSleepTicks() const;
-		int32_t getWalkDelay(Direction dir, uint32_t resolution) const;
+		int32_t getWalkDelay(Direction dir) const;
+		int32_t getWalkDelay() const;
 		int64_t getTimeSinceLastMove() const;
 
 		int64_t getEventStepTicks() const;
-		int32_t getStepDuration(bool addLastStepCost = true) const;
+		int32_t getStepDuration(Direction dir) const;
+		int32_t getStepDuration() const;
 		virtual int32_t getStepSpeed() const {return getSpeed();}
 		int32_t getSpeed() const {return baseSpeed + varSpeed;}
 		void setSpeed(int32_t varSpeedDelta)
@@ -282,7 +283,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool convinceCreature(Creature* creature) {return false;}
 
 		virtual void onDeath();
-		virtual uint64_t getGainedExperience(Creature* attacker);
+		virtual uint64_t getGainedExperience(Creature* attacker) const;
 		bool addDamagePoints(Creature* attacker, int32_t damagePoints);
 		void addHealPoints(Creature* caster, int32_t healthPoints);
 		bool hasBeenAttacked(uint32_t attackerId);
@@ -317,16 +318,16 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool getNextStep(Direction& dir);
 
 		virtual void onAddTileItem(const Tile* tile, const Position& pos, const Item* item);
-		virtual void onUpdateTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
-			const Item* oldItem, const ItemType& oldType, const Item* newItem, const ItemType& newType);
-		virtual void onRemoveTileItem(const Tile* tile, const Position& pos, uint32_t stackpos,
-			const ItemType& iType, const Item* item);
+		virtual void onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
+			const ItemType& oldType, const Item* newItem, const ItemType& newType);
+		virtual void onRemoveTileItem(const Tile* tile, const Position& pos, const ItemType& iType,
+			const Item* item);
 		virtual void onUpdateTile(const Tile* tile, const Position& pos);
 
 		virtual void onCreatureAppear(const Creature* creature, bool isLogin);
 		virtual void onCreatureDisappear(const Creature* creature, uint32_t stackpos, bool isLogout);
 		virtual void onCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
-			const Tile* oldTile, const Position& oldPos, uint32_t oldStackPos, bool teleport);
+			const Tile* oldTile, const Position& oldPos, bool teleport);
 
 		virtual void onAttackedCreatureDisappear(bool isLogout) {}
 		virtual void onFollowCreatureDisappear(bool isLogout) {}

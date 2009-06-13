@@ -35,16 +35,16 @@ Depot::~Depot()
 	//
 }
 
-bool Depot::readAttr(AttrTypes_t attr, PropStream& propStream)
+Attr_ReadValue Depot::readAttr(AttrTypes_t attr, PropStream& propStream)
 {
 	if(ATTR_DEPOT_ID == attr)
 	{
 		uint16_t _depotId;
 		if(!propStream.GET_USHORT(_depotId))
-			return false;
+			return ATTR_READ_ERROR;
 
 		setDepotId(_depotId);
-		return true;
+		return ATTR_READ_CONTINUE;
 	}
 	else
 		return Item::readAttr(attr, propStream);
@@ -84,14 +84,14 @@ ReturnValue Depot::__queryMaxCount(int32_t index, const Thing* thing, uint32_t c
 	return Container::__queryMaxCount(index, thing, count, maxQueryCount, flags);
 }
 
-void Depot::postAddNotification(Thing* thing, int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
+void Depot::postAddNotification(Thing* thing, const Cylinder* oldParent, int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
 {
 	if(getParent() != NULL)
-		getParent()->postAddNotification(thing, index, LINK_PARENT);
+		getParent()->postAddNotification(thing, oldParent, index, LINK_PARENT);
 }
 
-void Depot::postRemoveNotification(Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
+void Depot::postRemoveNotification(Thing* thing, const Cylinder* newParent, int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
 {
 	if(getParent() != NULL)
-		getParent()->postRemoveNotification(thing, index, isCompleteRemoval, LINK_PARENT);
+		getParent()->postRemoveNotification(thing, newParent, index, isCompleteRemoval, LINK_PARENT);
 }

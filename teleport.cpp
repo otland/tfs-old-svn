@@ -36,16 +36,16 @@ Teleport::~Teleport()
 	//
 }
 
-bool Teleport::readAttr(AttrTypes_t attr, PropStream& propStream)
+Attr_ReadValue Teleport::readAttr(AttrTypes_t attr, PropStream& propStream)
 {
 	if(ATTR_TELE_DEST == attr)
 	{
 		TeleportDest* tele_dest;
 		if(!propStream.GET_STRUCT(tele_dest))
-			return false;
+			return ATTR_READ_ERROR;
 
 		setDestPos(Position(tele_dest->_x, tele_dest->_y, tele_dest->_z));
-		return true;
+		return ATTR_READ_CONTINUE;
 	}
 	else
 		return Item::readAttr(attr, propStream);
@@ -126,12 +126,12 @@ void Teleport::__removeThing(Thing* thing, uint32_t count)
 	//
 }
 
-void Teleport::postAddNotification(Thing* thing, int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
+void Teleport::postAddNotification(Thing* thing, const Cylinder* oldParent, int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
 {
-	getParent()->postAddNotification(thing, index, LINK_PARENT);
+	getParent()->postAddNotification(thing, oldParent, index, LINK_PARENT);
 }
 
-void Teleport::postRemoveNotification(Thing* thing, int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
+void Teleport::postRemoveNotification(Thing* thing, const Cylinder* newParent, int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
 {
-	getParent()->postRemoveNotification(thing, index, isCompleteRemoval, LINK_PARENT);
+	getParent()->postRemoveNotification(thing, newParent, index, isCompleteRemoval, LINK_PARENT);
 }

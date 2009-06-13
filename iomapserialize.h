@@ -47,6 +47,7 @@ class IOMapSerialize
 
 		bool saveItem(PropWriteStream& stream, const Item* item);
 		bool saveTile(PropWriteStream& stream, const Tile* tile);
+		bool loadContainer(PropStream& propStream, Container* container);
 		bool loadItem(PropStream& propStream, Cylinder* parent);
 		bool saveTile(Database* db, uint32_t tileId, const Tile* tile);
 		bool loadTile(Database& db, Tile* tile);

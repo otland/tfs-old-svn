@@ -23,7 +23,7 @@
 
 #include "definitions.h"
 
-#define NETWORKMESSAGE_MAXSIZE 15360
+#define NETWORKMESSAGE_MAXSIZE 15340
 
 enum MagicEffectClasses
 {
