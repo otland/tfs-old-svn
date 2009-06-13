@@ -45,8 +45,8 @@ class TalkActions : public BaseEvents
 
 		bool onPlayerSay(Creature* creature, uint16_t channelId, const std::string& words, bool ignoreAccess);
 
-		inline TalkActionsMap::iterator getFirstTalk() const {return talksMap.begin();}
-		inline TalkActionsMap::iterator getLastTalk() const {return talksMap.end();}
+		inline TalkActionsMap::const_iterator getFirstTalk() const {return talksMap.begin();}
+		inline TalkActionsMap::const_iterator getLastTalk() const {return talksMap.end();}
 
 	protected:
 		TalkActionsMap talksMap;

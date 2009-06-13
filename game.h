@@ -552,8 +552,8 @@ class Game
 		bool loadExperienceStages();
 		double getExperienceStage(uint32_t level, double divider = 1.);
 
-		inline StageList::iterator getFirstStage() const {return stages.begin();}
-		inline StageList::iterator getLastStage() const {return stages.end();}
+		inline StageList::const_iterator getFirstStage() const {return stages.begin();}
+		inline StageList::const_iterator getLastStage() const {return stages.end();}
 
 		void setGlobalSaveMessage(int16_t key, bool value) {globalSaveMessage[key] = value;}
 		bool getGlobalSaveMessage(int16_t key) const {return globalSaveMessage[key];}

@@ -6540,7 +6540,7 @@ int32_t LuaScriptInterface::luaGetMonsterLootList(lua_State* L)
 int32_t LuaScriptInterface::luaGetTalkActionList(lua_State* L)
 {
 	//getTalkactionList()
-	TalkActionsMap::iterator it = g_talkActions->getFirstTalk();
+	TalkActionsMap::const_iterator it = g_talkActions->getFirstTalk();
 	lua_newtable(L);
 	for(uint32_t i = 1; it != g_talkActions->getLastTalk(); ++it, ++i)
 	{
@@ -6565,7 +6565,7 @@ int32_t LuaScriptInterface::luaGetExperienceStageList(lua_State* L)
 	    return true;
 	}
 
-	StageList::iterator it = g_game.getFirstStage();
+	StageList::const_iterator it = g_game.getFirstStage();
 	lua_newtable(L);
 	for(uint32_t i = 1; it != g_game.getLastStage(); ++it, ++i)
 	{
