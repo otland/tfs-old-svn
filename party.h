@@ -84,4 +84,3 @@ class Party
 		CountMap pointMap;
 };
 #endif
-

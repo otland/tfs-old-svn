@@ -5024,7 +5024,7 @@ int32_t LuaScriptInterface::luaSetHouseOwner(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetWorldType(lua_State* L)
 {
-	lua_pushnumber(L, g_game.getWorldType());
+	lua_pushnumber(L, (uint32_t)g_game.getWorldType());
 	return 1;
 }
 

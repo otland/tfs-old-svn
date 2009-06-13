@@ -2527,10 +2527,9 @@ int32_t NpcScriptInterface::luaActionTurn(lua_State* L)
 int32_t NpcScriptInterface::luaActionMove(lua_State* L)
 {
 	//selfMove(direction)
-	Direction dir = (Direction)popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 	if(Npc* npc = env->getNpc())
-		npc->doMove(dir);
+		npc->doMove((Direction)popNumber(L));
 
 	return 0;
 }
@@ -2614,11 +2613,10 @@ int32_t NpcScriptInterface::luaGetNpcDistanceTo(lua_State* L)
 int32_t NpcScriptInterface::luaGetNpcParameter(lua_State* L)
 {
 	//getNpcParameter(paramKey)
-	std::string paramKey = popString(L);
 	ScriptEnviroment* env = getScriptEnv();
 	if(Npc* npc = env->getNpc())
 	{
-		Npc::ParametersMap::iterator it = npc->m_parameters.find(paramKey);
+		Npc::ParametersMap::iterator it = npc->m_parameters.find(popString(L));
 		if(it != npc->m_parameters.end())
 			lua_pushstring(L, it->second.c_str());
 		else
