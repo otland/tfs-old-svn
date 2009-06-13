@@ -22,13 +22,13 @@
 
 bool BaseEvents::loadFromXml()
 {
+	std::string scriptsName = getScriptBaseName();
 	if(m_loaded)
 	{
 		std::cout << "[Error - BaseEvents::loadFromXml] " << scriptsName << " interface already loaded!" << std::endl;
 		return false;
 	}
 
-	std::string scriptsName = getScriptBaseName();
 	if(getScriptInterface().loadFile(getFilePath(FILE_TYPE_OTHER, std::string(scriptsName + "/lib/" + scriptsName + ".lua"))) == -1)
 		std::cout << "[Warning - BaseEvents::loadFromXml] Cannot load " << scriptsName << "/lib/" << scriptsName << ".lua" << std::endl;
 
