@@ -1135,7 +1135,7 @@ bool Monster::inDespawnRange(const Position& pos)
 	if(!Spawns::getInstance()->isInZone(masterPos, radius, pos))
 		return true;
 
-	int32_t range = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRADIUS);
+	int32_t range = g_config.getNumber(ConfigManager::DEFAULT_DESPAWNRANGE);
 	if(!range)
 		return false;
 
