@@ -196,8 +196,6 @@ std::string Player::getDescription(int32_t lookDistance) const
 			s << " is " << vocation->getDescription();
 		else
 			s << " has no vocation";
-
-		s << getSpecialDescription();
 	}
 
 	std::string tmp;
