@@ -5,14 +5,14 @@
 
 #include "../gui_resources.rc"
 
-A ICON MOVEABLE PURE LOADONCALL DISCARDABLE "TheForgottenServer.ico"
+A ICON MOVEABLE PURE LOADONCALL DISCARDABLE "TheForgottenServer-console.ico"
 
 //
 // TO CHANGE VERSION INFORMATION, EDIT PROJECT OPTIONS...
 //
 1 VERSIONINFO
-FILEVERSION 0,2,2,0
-PRODUCTVERSION 0,2,2,0
+FILEVERSION 0,2,3,0
+PRODUCTVERSION 0,2,3,0
 FILETYPE VFT_APP
 {
   BLOCK "StringFileInfo"
@@ -20,14 +20,14 @@ FILETYPE VFT_APP
 		 BLOCK "040904E4"
 		 {
 			 VALUE "CompanyName", "http://otland.net"
-			 VALUE "FileVersion", "0.2.2"
+			 VALUE "FileVersion", "0.2.3"
 			 VALUE "FileDescription", "The Forgotten Server"
 			 VALUE "InternalName", "Mystic Spirit"
 			 VALUE "LegalCopyright", ""
 			 VALUE "LegalTrademarks", ""
 			 VALUE "OriginalFilename", "The Forgotten Server.exe"
 			 VALUE "ProductName", "The Forgotten Server"
-			 VALUE "ProductVersion", "0.2.2"
+			 VALUE "ProductVersion", "0.2.3"
 		 }
 	 }
   BLOCK "VarFileInfo"
