@@ -1260,7 +1260,7 @@ bool Monster::challengeCreature(Creature* creature)
 bool Monster::convinceCreature(Creature* creature)
 {
 	Player* player = creature->getPlayer();
-	if((player && !player->hasFlag(PlayerFlag_CanConvinceAll) && !mType->isConvinceable))
+	if(player && !player->hasFlag(PlayerFlag_CanConvinceAll) && !mType->isConvinceable)
 		return false;
 
 	Creature* oldMaster = NULL;

@@ -2043,7 +2043,15 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 {
 	BlockType_t blockType = Creature::blockHit(attacker, combatType, damage, checkDefense, checkArmor);
 	if(attacker)
-		sendCreatureSquare(attacker, SQ_COLOR_BLACK);
+	{
+		uint8_t squareColor = SQ_COLOR_BLACK;
+		if(g_config.getBool(ConfigManager::SQUARE_COLOR_RANDOM))
+			squareColor = random_range(0, 255);
+		else
+			squareColor = g_config.getNumber(ConfigManager::SQUARE_COLOR);
+
+		sendCreatureSquare(attacker, (SquareColor_t)squareColor);
+	}
 
 	if(blockType != BLOCK_NONE)
 		return blockType;

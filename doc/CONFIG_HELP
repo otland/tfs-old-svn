@@ -661,6 +661,15 @@
 			Maximum items which can be placed on 1 house tile.
 			Default: 0
 
+		squareColorRandom
+			Randomize square color visible when attacking creature?
+			Default: no
+
+		squareColor
+			Color of square visible when attacking creature.
+			This option is ignored if squareColorRandom is enabled.
+			Default: 0
+
 	*PREMIUM-RELATED
 		freePremium
 			Should all players have free premium accounts?

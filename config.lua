@@ -199,6 +199,8 @@
 	blackSkulledDeathMana = 0
 	maxItemsPerPZTile = 0
 	maxItemsPerHouseTile = 0
+	squareColorRandom = "no"
+	squareColor = 0
 
 	-- Premium-related
 	freePremium = "no"

@@ -267,6 +267,8 @@ bool ConfigManager::load()
 	m_confNumber[ITEMLIMIT_PROTECTIONZONE] = getGlobalNumber("maxItemsPerPZTile", 0);
 	m_confNumber[ITEMLIMIT_HOUSETILE] = getGlobalNumber("maxItemsPerHouseTile", 0);
 	m_confString[MAILBOX_DISABLED_TOWNS] = getGlobalString("mailboxDisabledTowns", "-1");
+	m_confBool[SQUARE_COLOR_RANDOM] = getGlobalBool("squareColorRandom", "no");
+	m_confNumber[SQUARE_COLOR] = getGlobalNumber("squareColor", 0);
 
 	m_loaded = true;
 	return true;
