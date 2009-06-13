@@ -8666,7 +8666,7 @@ int32_t LuaScriptInterface::luaDoPlayerSetMaxCapacity(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		player->setMaxCapacity(cap);
+		player->setCapacity(cap);
 		lua_pushboolean(L, true);
 	}
 	else

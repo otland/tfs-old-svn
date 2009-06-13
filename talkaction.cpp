@@ -910,6 +910,8 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 						parseParams(cmdit, cmdtokens.end()).c_str());
 				else if(!strcasecmp(tmp.c_str(), "idle"))
 					_player->setIdleTime(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+				else if(!strcasecmp(tmp.c_str(), "capacity"))
+					_player->setCapacity(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 				else if(!strcasecmp(tmp.c_str(), "saving"))
 					_player->switchSaving();
 				else

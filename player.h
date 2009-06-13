@@ -297,7 +297,7 @@ class Player : public Creature, public Cylinder
 		void removeMessageBuffer();
 
 		double getCapacity() const {return capacity;}
-		void setMaxCapacity(double newCapacity) {capacity = newCapacity;}
+		void setCapacity(double newCapacity) {capacity = newCapacity;}
 
 		double getFreeCapacity() const
 		{
@@ -841,7 +841,7 @@ class Player : public Creature, public Cylinder
 
 		std::string managerString, managerString2;
 		std::string account, password;
-		std::string name, nameDescription, specialDescription;
+		std::string name, nameDescription;
 		std::string guildName, guildRank, guildNick;
 
 		Position loginPosition;

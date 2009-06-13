@@ -333,6 +333,9 @@ void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, b
 void Map::getSpectators(SpectatorVec& list, const Position& centerPos, bool checkforduplicate /*= false*/, bool multifloor /*= false*/,
 	int32_t minRangeX /*= 0*/, int32_t maxRangeX /*= 0*/, int32_t minRangeY /*= 0*/, int32_t maxRangeY /*= 0*/)
 {
+	if(centerPos.z >= MAP_MAX_LAYERS)
+		return;
+
 	bool foundCache = false, cacheResult = false;
 	if(minRangeX == 0 && maxRangeX == 0 && minRangeY == 0 && maxRangeY == 0 && multifloor == true && checkforduplicate == false)
 	{
@@ -395,6 +398,13 @@ void Map::getSpectators(SpectatorVec& list, const Position& centerPos, bool chec
 
 const SpectatorVec& Map::getSpectators(const Position& centerPos)
 {
+	if(centerPos.z >= MAP_MAX_LAYERS)
+	{
+		boost::shared_ptr<SpectatorVec> p(new SpectatorVec());
+		SpectatorVec& list = *p;
+		return list;
+	}
+
 	SpectatorCache::iterator it = spectatorCache.find(centerPos);
 	if(it != spectatorCache.end())
 		return *it->second;
