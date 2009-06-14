@@ -30,8 +30,10 @@ typedef std::list<Spawn*> SpawnList;
 
 class Spawns
 {
+	private:
+		Spawns();
+
 	public:
-		virtual ~Spawns();
 		static Spawns* getInstance()
 		{
 			static Spawns instance;
@@ -40,9 +42,9 @@ class Spawns
 
 		bool isInZone(const Position& centerPos, int32_t radius, const Position& pos);
 
-		bool loadFromXml(const std::string& _filename);
-		bool parseSpawnNode(xmlNodePtr p, bool checkDuplicate);
+		virtual ~Spawns();
 
+		bool loadFromXml(const std::string& _filename);
 		void startup();
 		void clear();
 
@@ -50,12 +52,9 @@ class Spawns
 		bool isStarted() {return started;}
 
 	private:
-		Spawns();
-		SpawnList spawnList;
-
 		typedef std::list<Npc*> NpcList;
 		NpcList npcList;
-
+		SpawnList spawnList;
 		bool loaded, started;
 		std::string filename;
 };
@@ -79,25 +78,19 @@ class Spawn
 		bool addMonster(const std::string& _name, const Position& _pos, Direction _dir, uint32_t _interval);
 		void removeMonster(Monster* monster);
 
-		Position getPosition() const {return centerPos;}
-		uint32_t getInterval() const {return interval;}
+		uint32_t getInterval() {return interval;}
+		void startup();
 
-		void startEvent();
+		void startSpawnCheck();
 		void stopEvent();
 
-		void startup();
-		bool isInSpawnZone(const Position& pos) {return Spawns::getInstance()->isInZone(centerPos, radius, pos);}
+		bool isInSpawnZone(const Position& pos);
 
 	private:
-		uint32_t interval, checkSpawnEvent;
-
 		Position centerPos;
-		int32_t radius, despawnRange, despawnRadius;
-
-		void checkSpawn();
-		bool spawnMonster(uint32_t spawnId, MonsterType* mType, const Position& pos, Direction dir, bool startup = false);
-
-		bool findPlayer(const Position& pos);
+		int32_t radius;
+		int32_t despawnRange;
+		int32_t despawnRadius;
 
 		//map of creatures in the spawn
 		typedef std::map<uint32_t, spawnBlock_t> SpawnMap;
@@ -107,5 +100,12 @@ class Spawn
 		typedef std::multimap<uint32_t, Monster*, std::less<uint32_t> > SpawnedMap;
 		typedef SpawnedMap::value_type SpawnedPair;
 		SpawnedMap spawnedMap;
+
+		uint32_t interval;
+		uint32_t checkSpawnEvent;
+
+		bool findPlayer(const Position& pos);
+		bool spawnMonster(uint32_t spawnId, MonsterType* mType, const Position& pos, Direction dir, bool startup = false);
+		void checkSpawn();
 };
 #endif
