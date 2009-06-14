@@ -276,7 +276,7 @@ bool Spawns::isInZone(const Position& centerPos, int32_t radius, const Position&
 		(pos.y >= centerPos.y - radius) && (pos.y <= centerPos.y + radius));
 }
 
-void Spawn::startSpawnCheck()
+void Spawn::startEvent()
 {
 	if(checkSpawnEvent == 0)
 		checkSpawnEvent = Scheduler::getScheduler().addEvent(createSchedulerTask(getInterval(), boost::bind(&Spawn::checkSpawn, this)));

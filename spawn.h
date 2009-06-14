@@ -81,7 +81,7 @@ class Spawn
 		uint32_t getInterval() {return interval;}
 		void startup();
 
-		void startSpawnCheck();
+		void startEvent();
 		void stopEvent();
 
 		bool isInSpawnZone(const Position& pos);
