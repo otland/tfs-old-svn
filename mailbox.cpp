@@ -198,7 +198,7 @@ bool Mailbox::getReceiver(Item* item, std::string& name, uint32_t& dp)
 	{
 		for(IntegerVec::iterator it = disabledTowns.begin(); it != disabledTowns.end(); ++it)
 		{
-			if(town->getTownID() == (*it))
+			if(town->getTownID() == (uint32_t)(*it))
 				return false;
 		}
 	}
