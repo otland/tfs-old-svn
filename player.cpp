@@ -1271,7 +1271,8 @@ void Player::sendCreatureChangeVisible(const Creature* creature, bool visible)
 	if(!client)
 		return;
 
-	if((!creature->getPlayer() && canSeeInvisibility()) || (creature->getPlayer() && canSeeCreature(creature)))
+	const Player* player = creature->getPlayer();
+	if(player == this || (!player && canSeeInvisibility()) || (player && getGhostAccess() >= player->getGhostAccess()))
 		sendCreatureChangeOutfit(creature, creature->getCurrentOutfit());
 	else if(!visible)
 		sendCreatureDisappear(creature, creature->getTile()->getClientIndexOfThing(this, creature), false);
