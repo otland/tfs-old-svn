@@ -1274,10 +1274,7 @@ void Player::sendCreatureChangeVisible(const Creature* creature, bool visible)
 	if((!creature->getPlayer() && canSeeInvisibility()) || (creature->getPlayer() && canSeeCreature(creature)))
 		sendCreatureChangeOutfit(creature, creature->getCurrentOutfit());
 	else if(!visible)
-	{
-		sendCreatureDisappear(creature, creature->getTile()->getClientIndexOfThing(this, creature) + 1, false);
-		sendUpdateTile(creature->getTile(), creature->getPosition()); //temporial fix for non-disappearing creature...
-	}
+		sendCreatureDisappear(creature, creature->getTile()->getClientIndexOfThing(this, creature), false);
 	else
 		sendCreatureAppear(creature);
 }
@@ -3469,7 +3466,7 @@ void Player::onCombatRemoveCondition(const Creature* attacker, Condition* condit
 {
 	//Creature::onCombatRemoveCondition(attacker, condition);
 	bool remove = true;
-	if(condition->getId() != 0)
+	if(condition->getId() > 0)
 	{
 		remove = false;
 		//Means the condition is from an item, id == slot

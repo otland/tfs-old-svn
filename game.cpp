@@ -3923,13 +3923,19 @@ void Game::internalCreatureChangeVisible(Creature* creature, bool visible)
 	Player* tmpPlayer = NULL;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
-		if((tmpPlayer = (*it)->getPlayer()))
-			tmpPlayer->sendCreatureChangeVisible(creature, visible);
+		if(!(tmpPlayer = (*it)->getPlayer()))
+			continue;
+
+		tmpPlayer->sendCreatureChangeVisible(creature, visible);
+		tmpPlayer->onUpdateTile(creature->getTile(), creature->getPosition()); //temporial fix...
 	}
 
 	//event method
 	for(it = list.begin(); it != list.end(); ++it)
+	{
 		(*it)->onCreatureChangeVisible(creature, visible);
+		(*it)->onUpdateTile(creature->getTile(), creature->getPosition()); //same as up
+	}
 }
 
 

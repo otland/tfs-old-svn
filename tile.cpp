@@ -1269,12 +1269,11 @@ int32_t Tile::getClientIndexOfThing(const Player* player, const Thing* thing) co
 	{
 		for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
 		{
-			if((*cit) != player && !player->canSeeCreature(*cit))
-				continue;
-
-			++n;
 			if((*cit) == thing)
-				return n;
+				return ++n;
+
+			if(player->canSeeCreature(*cit))
+				++n;
 		}
 	}
 
