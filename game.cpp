@@ -285,7 +285,7 @@ void Game::cleanMap(uint32_t& count)
 	setGameState(GAME_STATE_MAINTAIN);
 
 	Tile* tile = NULL;
-	TileItemVector* items = NULL;
+	Item* item = NULL;
 
 	int32_t tiles = -1;
 	if(g_config.getBool(ConfigManager::STORE_TRASH))
@@ -299,15 +299,18 @@ void Game::cleanMap(uint32_t& count)
 				if((tile = getTile(*it)))
 				{
 					tile->resetFlag(TILESTATE_TRASHED);
-					if(!tile->hasFlag(TILESTATE_HOUSE) && (items = tile->getItemList()))
+					if(!tile->hasFlag(TILESTATE_HOUSE))
 					{
-						for(ItemVector::iterator iit = items->begin(), iend = items->end(); iit != iend; ++iit)
+						for(uint32_t i = 0; i < tile->getThingCount();)
 						{
-							if((*iit)->isLoadedFromMap() || (*iit)->isNotMoveable() || (*iit)->isScriptProtected())
-								continue;
-
-							internalRemoveItem(NULL, (*iit));
-							count++;
+							if((item = tile->__getThing(i)->getItem()) && item->isMoveable()
+								&& !item->isLoadedFromMap() && !item->isScriptProtected())
+							{
+								internalRemoveItem(NULL, item);
+								count++;
+							}
+							else
+								++i;
 						}
 					}
 				}
@@ -323,15 +326,18 @@ void Game::cleanMap(uint32_t& count)
 				if((tile = getTile(*it)))
 				{
 					tile->resetFlag(TILESTATE_TRASHED);
-					if(!tile->hasFlag(TILESTATE_PROTECTIONZONE) && (items = tile->getItemList()))
+					if(!tile->hasFlag(TILESTATE_PROTECTIONZONE))
 					{
-						for(ItemVector::iterator iit = items->begin(), iend = items->end(); iit != iend; ++iit)
+						for(uint32_t i = 0; i < tile->getThingCount();)
 						{
-							if((*iit)->isLoadedFromMap() || (*iit)->isNotMoveable() || (*iit)->isScriptProtected())
-								continue;
-
-							internalRemoveItem(NULL, (*iit));
-							count++;
+							if((item = tile->__getThing(i)->getItem()) && item->isMoveable()
+								&& !item->isLoadedFromMap() && !item->isScriptProtected())
+							{
+								internalRemoveItem(NULL, item);
+								count++;
+							}
+							else
+								++i;
 						}
 					}
 				}
@@ -343,21 +349,24 @@ void Game::cleanMap(uint32_t& count)
 	}
 	else if(g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES))
 	{
-		for(int32_t z = 0; z <= MAP_MAX_LAYERS; z++)
+		for(int32_t z = 0; z < MAP_MAX_LAYERS; z++)
 		{
 			for(uint32_t y = 1; y <= map->mapHeight; y++)
 			{
 				for(uint32_t x = 1; x <= map->mapWidth; x++)
 				{
-					if((tile = getTile(x, y, (uint32_t)z)) && !tile->hasFlag(TILESTATE_HOUSE) && (items = tile->getItemList()))
+					if((tile = getTile(x, y, (unsigned)z)) && !tile->hasFlag(TILESTATE_HOUSE))
 					{
-						for(ItemVector::iterator iit = items->begin(), iend = items->end(); iit != iend; ++iit)
+						for(uint32_t i = 0; i < tile->getThingCount();)
 						{
-							if((*iit)->isLoadedFromMap() || (*iit)->isNotMoveable() || (*iit)->isScriptProtected())
-								continue;
-
-							internalRemoveItem(NULL, (*iit));
-							count++;
+							if((item = tile->__getThing(i)->getItem()) && item->isMoveable()
+								&& !item->isLoadedFromMap() && !item->isScriptProtected())
+							{
+								internalRemoveItem(NULL, item);
+								count++;
+							}
+							else
+								++i;
 						}
 					}
 				}
@@ -366,21 +375,24 @@ void Game::cleanMap(uint32_t& count)
 	}
 	else
 	{
-		for(int32_t z = 0; z <= MAP_MAX_LAYERS; z++)
+		for(int32_t z = 0; z < MAP_MAX_LAYERS; z++)
 		{
 			for(uint32_t y = 1; y <= map->mapHeight; y++)
 			{
 				for(uint32_t x = 1; x <= map->mapWidth; x++)
 				{
-					if((tile = getTile(x, y, (uint32_t)z)) && !tile->hasFlag(TILESTATE_PROTECTIONZONE) && (items = tile->getItemList()))
+					if((tile = getTile(x, y, (unsigned)z)) && !tile->hasFlag(TILESTATE_PROTECTIONZONE))
 					{
-						for(ItemVector::iterator iit = items->begin(), iend = items->end(); iit != iend; ++iit)
+						for(uint32_t i = 0; i < tile->getThingCount();)
 						{
-							if((*iit)->isLoadedFromMap() || (*iit)->isNotMoveable() || (*iit)->isScriptProtected())
-								continue;
-
-							internalRemoveItem(NULL, (*iit));
-							count++;
+							if((item = tile->__getThing(i)->getItem()) && item->isMoveable()
+								&& !item->isLoadedFromMap() && !item->isScriptProtected())
+							{
+								internalRemoveItem(NULL, item);
+								count++;
+							}
+							else
+								++i;
 						}
 					}
 				}
