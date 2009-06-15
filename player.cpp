@@ -1276,7 +1276,7 @@ void Player::sendCreatureChangeVisible(const Creature* creature, bool visible)
 	else if(!visible)
 		sendCreatureDisappear(creature, creature->getTile()->getClientIndexOfThing(this, creature), false);
 	else
-		sendCreatureAppear(creature);
+		sendCreatureAppear(creature, (creature->getTile()->getClientIndexOfThing(this, creature) + 1));
 }
 
 void Player::sendAddContainerItem(const Container* container, const Item* item)

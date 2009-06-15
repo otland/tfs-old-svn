@@ -793,7 +793,7 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
-			tmpPlayer->sendCreatureAppear(creature);
+			tmpPlayer->sendCreatureAppear(creature, creature->getTile()->getClientIndexOfThing(tmpPlayer, creature));
 	}
 
 	for(it = list.begin(); it != list.end(); ++it)
@@ -3923,19 +3923,13 @@ void Game::internalCreatureChangeVisible(Creature* creature, bool visible)
 	Player* tmpPlayer = NULL;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
-		if(!(tmpPlayer = (*it)->getPlayer()))
-			continue;
-
-		tmpPlayer->sendCreatureChangeVisible(creature, visible);
-		tmpPlayer->sendUpdateTile(creature->getTile(), creature->getPosition()); //temporial fix...
+		if((tmpPlayer = (*it)->getPlayer()))
+			tmpPlayer->sendCreatureChangeVisible(creature, visible);
 	}
 
 	//event method
 	for(it = list.begin(); it != list.end(); ++it)
-	{
 		(*it)->onCreatureChangeVisible(creature, visible);
-		(*it)->onUpdateTile(creature->getTile(), creature->getPosition()); //same as up
-	}
 }
 
 

@@ -496,9 +496,8 @@ class Player : public Creature, public Cylinder
 
 		void sendChannelMessage(std::string author, std::string text, SpeakClasses type, uint8_t channel)
 			{if(client) client->sendChannelMessage(author, text, type, channel);}
-		void sendCreatureAppear(const Creature* creature)
-			{if(client) client->sendAddCreature(creature, creature->getPosition(), creature->getTile()->getClientIndexOfThing(
-				this, creature));}
+		void sendCreatureAppear(const Creature* creature, uint32_t stackpos)
+			{if(client) client->sendAddCreature(creature, creature->getPosition(), stackpos);}
 		void sendCreatureDisappear(const Creature* creature, uint32_t stackpos, bool isLogout)
 			{if(client) client->sendRemoveCreature(creature, creature->getPosition(), stackpos, isLogout);}
 		void sendCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
