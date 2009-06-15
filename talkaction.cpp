@@ -1126,8 +1126,8 @@ bool TalkAction::ghost(Creature* creature, const std::string& cmd, const std::st
 				tmpPlayer->sendMagicEffect(player->getPosition(), NM_ME_TELEPORT);
 		}
 
-		g_game.internalCreatureChangeVisible(creature, true);
 		player->removeCondition(condition);
+		g_game.internalCreatureChangeVisible(creature, true);
 	}
 	else if((condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_GAMEMASTER, -1, 0, false, GAMEMASTER_INVISIBLE)))
 	{

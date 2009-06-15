@@ -1121,7 +1121,7 @@ void Creature::onAddCondition(ConditionType_t type, bool hadCondition)
 
 void Creature::onEndCondition(ConditionType_t type)
 {
-	if(type == CONDITION_INVISIBLE && !hasCondition(type, -1, false))
+	if(type == CONDITION_INVISIBLE && !hasCondition(CONDITION_INVISIBLE, -1, false))
 		g_game.internalCreatureChangeVisible(this, true);
 }
 

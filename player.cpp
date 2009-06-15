@@ -882,7 +882,7 @@ bool Player::canSeeCreature(const Creature* creature) const
 	if(const Player* player = creature->getPlayer())
 		return !player->isInGhostMode() || getGhostAccess() >= player->getGhostAccess();
 
-	return canSeeInvisibility() || !creature->isInvisible();
+	return !creature->isInvisible() || canSeeInvisibility();
 }
 
 Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)

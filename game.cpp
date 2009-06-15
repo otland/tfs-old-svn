@@ -3927,7 +3927,7 @@ void Game::internalCreatureChangeVisible(Creature* creature, bool visible)
 			continue;
 
 		tmpPlayer->sendCreatureChangeVisible(creature, visible);
-		tmpPlayer->onUpdateTile(creature->getTile(), creature->getPosition()); //temporial fix...
+		tmpPlayer->sendUpdateTile(creature->getTile(), creature->getPosition()); //temporial fix...
 	}
 
 	//event method
