@@ -1217,13 +1217,13 @@ void Creature::onGainExperience(uint64_t gainExp)
 		master->onGainExperience(gainExp);
 	}
 
-	int8_t color = g_config.getNumber(ConfigManager::EXPERIENCE_COLOR);
+	int16_t color = g_config.getNumber(ConfigManager::EXPERIENCE_COLOR);
 	if(color < 0)
 		color = random_range(0, 255);
 
 	std::stringstream ss;
 	ss << gainExp;
-	g_game.addAnimatedText(getPosition(), color, ss.str());
+	g_game.addAnimatedText(getPosition(), (uint8_t)color, ss.str());
 }
 
 void Creature::onGainSharedExperience(uint64_t gainExp)
@@ -1231,13 +1231,13 @@ void Creature::onGainSharedExperience(uint64_t gainExp)
 	if(gainExp <= 0)
 		return;
 
-	int8_t color = g_config.getNumber(ConfigManager::EXPERIENCE_COLOR);
+	int16_t color = g_config.getNumber(ConfigManager::EXPERIENCE_COLOR);
 	if(color < 0)
 		color = random_range(0, 255);
 
 	std::stringstream ss;
 	ss << gainExp;
-	g_game.addAnimatedText(getPosition(), color, ss.str());
+	g_game.addAnimatedText(getPosition(), (uint8_t)color, ss.str());
 }
 
 void Creature::addSummon(Creature* creature)
