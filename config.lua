@@ -22,6 +22,8 @@
 	dailyFragsToBanishment = dailyFragsToRedSkull
 	weeklyFragsToBanishment = weeklyFragsToRedSkull
 	monthlyFragsToBanishment = monthlyFragsToRedSkull
+	blackSkulledDeathHealth = 40
+	blackSkulledDeathMana = 0
 	advancedFragList = "no"
 
 	-- Banishments
@@ -62,7 +64,8 @@
 	pushCreatureDelay = 2 * 1000
 	deathContainerId = 1987
 	gainExperienceColor = 215
-	addManaSpentInPVPZone = "yes"
+	addManaSpentInPvPZone = "yes"
+	squareColor = 0
 
 	-- Experience from players
 	-- NOTE: min~Threshold* set to 0 will disable the minimum threshold:
@@ -178,29 +181,29 @@
 	-- NOTE: promptExceptionTracerErrorBox works only with precompiled support feature,
 	-- called "exception tracer" (__EXCEPTION_TRACER__ flag).
 	dataDirectory = "data/"
-	idleWarningTime = 14 * 60 * 1000
-	idleKickTime = 15 * 60 * 1000
 	allowChangeOutfit = "yes"
 	allowChangeColors = "yes"
 	allowChangeAddons = "yes"
 	disableOutfitsForPrivilegedPlayers = "no"
 	bankSystem = "yes"
 	saveGlobalStorage = "yes"
-	ghostModeInvisibleEffect = "no"
-	ghostModeSpellEffects = "yes"
 	displaySkillLevelOnAdvance = "no"
 	spellNameInsteadOfWords = "no"
 	emoteSpells = "no"
-	expireReportsAfterReads = 1
 	promptExceptionTracerErrorBox = "yes"
 	storePlayerDirection = "no"
+
+	-- Ghost mode
+	ghostModeInvisibleEffect = "no"
+	ghostModeSpellEffects = "yes"
+
+	-- Limits
+	idleWarningTime = 14 * 60 * 1000
+	idleKickTime = 15 * 60 * 1000
+	expireReportsAfterReads = 1
 	playerQueryDeepness = 2
-	blackSkulledDeathHealth = 40
-	blackSkulledDeathMana = 0
 	maxItemsPerPZTile = 0
 	maxItemsPerHouseTile = 0
-	squareColorRandom = "no"
-	squareColor = 0
 
 	-- Premium-related
 	freePremium = "no"

@@ -247,7 +247,6 @@ class ConfigManager
 			BIND_IP_ONLY,
 			GHOST_SPELL_EFFECTS,
 			PVPZONE_ADDMANASPENT,
-			SQUARE_COLOR_RANDOM,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 
