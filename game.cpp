@@ -793,7 +793,7 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 	for(it = list.begin(); it != list.end(); ++it)
 	{
 		if((tmpPlayer = (*it)->getPlayer()))
-			tmpPlayer->sendCreatureAppear(creature, creature->getTile()->getClientIndexOfThing(tmpPlayer, creature));
+			tmpPlayer->sendCreatureAppear(creature);
 	}
 
 	for(it = list.begin(); it != list.end(); ++it)
