@@ -1217,7 +1217,7 @@ void Creature::onGainExperience(uint64_t gainExp)
 		master->onGainExperience(gainExp);
 	}
 
-	uint8_t color = g_config.getNumber(ConfigManager::EXPERIENCE_COLOR);
+	int8_t color = g_config.getNumber(ConfigManager::EXPERIENCE_COLOR);
 	if(color < 0)
 		color = random_range(0, 255);
 
@@ -1231,7 +1231,7 @@ void Creature::onGainSharedExperience(uint64_t gainExp)
 	if(gainExp <= 0)
 		return;
 
-	uint8_t color = g_config.getNumber(ConfigManager::EXPERIENCE_COLOR);
+	int8_t color = g_config.getNumber(ConfigManager::EXPERIENCE_COLOR);
 	if(color < 0)
 		color = random_range(0, 255);
 

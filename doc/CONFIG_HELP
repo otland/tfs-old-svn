@@ -629,6 +629,7 @@
 		gainExperienceColor
 			Color used when creature gain experience.
 			Values: From 0 to 255.
+			Value will be randomized if you use -1
 			Default: 215
 
 		expireReportsAfterReads
@@ -661,13 +662,9 @@
 			Maximum items which can be placed on 1 house tile.
 			Default: 0
 
-		squareColorRandom
-			Randomize square color visible when attacking creature?
-			Default: no
-
 		squareColor
 			Color of square visible when attacking creature.
-			This option is ignored if squareColorRandom is enabled.
+			Value will be randomized if you use -1
 			Default: 0
 
 	*PREMIUM-RELATED
