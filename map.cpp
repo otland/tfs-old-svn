@@ -75,27 +75,28 @@ bool Map::loadMap(const std::string& identifier)
 bool Map::saveMap()
 {
 	bool saved = false;
-	for(uint32_t tries = 0; tries < 3; tries++)
+	for(uint32_t tries = 0; tries < 3; ++tries)
 	{
-		if(IOMapSerialize.saveMap(this))
-		{
-			saved = true;
-			break;
-		}
+		if(!IOMapSerialize.saveHouseInfo(this))
+			continue;
+
+		saved = true;
+		break;
 	}
 
 	if(!saved)
 		return false;
 
 	saved = false;
-	for(uint32_t tries = 0; tries < 3; tries++)
+	for(uint32_t tries = 0; tries < 3; ++tries)
 	{
-		if(IOMapSerialize.saveHouseInfo(this))
-		{
-			saved = true;
-			break;
-		}
+		if(!IOMapSerialize.saveMap(this))
+			continue;
+
+		saved = true;
+		break;
 	}
+
 	return saved;
 }
 
