@@ -1,4 +1,4 @@
-cd mfunction onAddItem(item, tileItem, position, cid)
+function onAddItem(item, tileItem, position, cid)
 	if(isInArray({7711, 7956}, item.itemid)) then --Waterpolo Ball(s)
 		return true
 	end

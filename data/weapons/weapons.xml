@@ -285,7 +285,6 @@
 	</melee>
 	<melee id="7421" level="65" unproperly="1" event="function" value="default"/>
 	<melee id="2444" level="65" unproperly="1" event="function" value="default"/>
-	<melee id="7421" level="65" unproperly="1" event="function" value="default"/>
 	<melee id="2452" level="70" unproperly="1" event="function" value="default"/>
 	<melee id="7422" level="70" unproperly="1" event="function" value="default"/>
 	<melee id="7429" level="75" unproperly="1" event="function" value="default"/>
