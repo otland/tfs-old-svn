@@ -308,14 +308,11 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 		}
 	}
 
-	if(checkZones)
-	{
-		if(target->getTile()->hasFlag(TILESTATE_NOPVPZONE) || (attacker->getTile()->hasFlag(TILESTATE_NOPVPZONE) &&
-			!target->getTile()->hasFlag(TILESTATE_NOPVPZONE) && !target->getTile()->hasFlag(TILESTATE_PROTECTIONZONE)))
-			return RET_ACTIONNOTPERMITTEDINANOPVPZONE;
-	}
-
-	return RET_NOERROR;
+	return checkZones && (target->getTile()->hasFlag(TILESTATE_NOPVPZONE) ||
+		(attacker->getTile()->hasFlag(TILESTATE_NOPVPZONE)
+		&& !target->getTile()->hasFlag(TILESTATE_NOPVPZONE) &&
+		!target->getTile()->hasFlag(TILESTATE_PROTECTIONZONE)))) ?
+		RET_ACTIONNOTPERMITTEDINANOPVPZONE : RET_NOERROR;
 }
 
 ReturnValue Combat::canTargetCreature(const Player* player, const Creature* target)
@@ -355,16 +352,16 @@ ReturnValue Combat::canTargetCreature(const Player* player, const Creature* targ
 	}
 
 	if(player->hasFlag(PlayerFlag_CannotUseCombat) || !target->isAttackable())
+		return target->getPlayer() ? RET_YOUMAYNOTATTACKTHISPLAYER : RET_YOUMAYNOTATTACKTHISCREATURE;
+
+	if(target->getPlayer() && !Combat::isInPvpZone(player, target) && player->getSkullClient(target->getPlayer()) == SKULL_NONE)
 	{
-		if(target->getPlayer())
+		if(player->getSecureMode() == SECUREMODE_ON)
+			return RET_TURNSECUREMODETOATTACKUNMARKEDPLAYERS;
+
+		if(player->getSkull() == SKULL_BLACK)
 			return RET_YOUMAYNOTATTACKTHISPLAYER;
-
-		return RET_YOUMAYNOTATTACKTHISCREATURE;
 	}
-
-	if(target->getPlayer() && player->getSecureMode() == SECUREMODE_ON && !Combat::isInPvpZone(player, target)
-		&& player->getSkullClient(target->getPlayer()) == SKULL_NONE)
-		return RET_TURNSECUREMODETOATTACKUNMARKEDPLAYERS;
 
 	return Combat::canDoCombat(player, target);
 }

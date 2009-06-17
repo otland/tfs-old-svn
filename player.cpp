@@ -1167,8 +1167,8 @@ void Player::sendCancelMessage(ReturnValue message) const
 			sendCancel("You are not the owner.");
 			break;
 
-		case RET_NOPARTYMEMBERSINRANGE:
-			sendCancel("No party members in range.");
+		case RET_YOUMAYNOTCASTAREAONBLACKSKULL:
+			sendCancel("You may not cast area spells while you have a black skull.");
 			break;
 
 		case RET_TILEISFULL:
@@ -3498,31 +3498,31 @@ void Player::onCombatRemoveCondition(const Creature* attacker, Condition* condit
 void Player::onAttackedCreature(Creature* target)
 {
 	Creature::onAttackedCreature(target);
-	if(target == this || hasFlag(PlayerFlag_NotGainInFight))
+	if(hasFlag(PlayerFlag_NotGainInFight))
 		return;
 
 	addInFightTicks();
-	Player* targetPlayer = target->getPlayer();
-	if(!targetPlayer)
+	if(target == this)
 		return;
 
-	if(!Combat::isInPvpZone(this, targetPlayer) && !targetPlayer->hasAttacked(this))
-	{
-		pzLocked = true;
-		if(getZone() == target->getZone() && !isPartner(targetPlayer))
-		{
-			addAttacked(targetPlayer);
-			if(targetPlayer->getSkull() == SKULL_NONE && getSkull() == SKULL_NONE
-				&& !hasCustomFlag(PlayerCustomFlag_NotGainSkull))
-			{
-				setSkull(SKULL_WHITE);
-				g_game.updateCreatureSkull(this);
-			}
+	Player* targetPlayer = target->getPlayer();
+	if(!targetPlayer || Combat::isInPvpZone(this, targetPlayer) || targetPlayer->hasAttacked(this))
+		return;
 
-			if(getSkull() == SKULL_NONE)
-				targetPlayer->sendCreatureSkull(this);
-		}
+	pzLocked = true;
+	if(getZone() != target->getZone() || isPartner(targetPlayer))
+		return;
+
+	addAttacked(targetPlayer);
+	if(targetPlayer->getSkull() == SKULL_NONE && getSkull() == SKULL_NONE
+		&& !hasCustomFlag(PlayerCustomFlag_NotGainSkull))
+	{
+		setSkull(SKULL_WHITE);
+		g_game.updateCreatureSkull(this);
 	}
+
+	if(getSkull() == SKULL_NONE)
+		targetPlayer->sendCreatureSkull(this);
 }
 
 void Player::onAttacked()
