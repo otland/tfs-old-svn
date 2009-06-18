@@ -668,9 +668,9 @@ bool Creature::onDeath()
 	if(deny)
 		return false;
 
-	int32_t i = 0, size = deathList.size(), tmp = g_config.getNumber(ConfigManager::DEATH_ASSISTS) + 1;
-	if(tmp > 0 && size > tmp)
-		size = tmp;
+	int32_t i = 0, size = deathList.size(), limit = g_config.getNumber(ConfigManager::DEATH_ASSISTS) + 1;
+	if(limit > 0 && size > limit)
+		size = limit;
 
 	Creature* tmp = NULL;
 	CreatureVector justifyVec;
@@ -699,7 +699,7 @@ bool Creature::onDeath()
 			tmp = NULL;
 		}
 
-		if(!attacker->onKilledCreature(this, flags) && lastHit)
+		if(!tmp->onKilledCreature(this, flags) && lastHit)
 			return false;
 
 		if(hasBitSet((uint32_t)KILLFLAG_UNJUSTIFIED, flags))
