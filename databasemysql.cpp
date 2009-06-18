@@ -57,7 +57,6 @@ DatabaseMySQL::DatabaseMySQL()
 
 	if(g_config.getBool(ConfigManager::HOUSE_STORAGE))
 	{
-		DBQuery query; //lock mutex
 		if(DBResult* result = storeQuery("SHOW `variables` LIKE 'max_allowed_packet';"))
 		{
 			if(result->getDataLong("Value") < 16776192)
