@@ -42,132 +42,7 @@ bool IOMapSerialize::saveMap(Map* map)
 	return saveMapRelational(map);
 }
 
-
-bool IOMapSerialize::loadHouseInfo(Map* map)
-{
-	Database* db = Database::getInstance();
-	DBQuery query;
-
-	query << "SELECT * FROM `houses` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
-	DBResult* result;
-	if(!(result = db->storeQuery(query.str())))
-		return false;
-
-	House* house = NULL;
-	do
-	{
-		if(!(house = Houses::getInstance().getHouse(result->getDataInt("id"))))
-			continue;
-
-		house->setHouseOwner(result->getDataInt("owner"));
-		house->setPayRentWarnings(result->getDataInt("warnings"));
-		house->setLastWarning(result->getDataInt("lastwarning"));
-
-		house->setPaidUntil(result->getDataInt("paid"));
-		if(result->getDataInt("clear"))
-			house->setPendingTransfer(true);
-	}
-	while(result->next());
-	result->free();
-
-	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
-	{
-		if(!(house = it->second) || !house->getHouseOwner() || !house->getHouseId())
-			continue;
-
-		query.str("");
-		query << "SELECT `listid`, `list` FROM `house_lists` WHERE `house_id` = " << house->getHouseId();
-		query << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
-		if(!(result = db->storeQuery(query.str())))
-			continue;
-
-		do
-			house->setAccessList(result->getDataInt("listid"), result->getDataString("list"));
-		while(result->next());
-		result->free();
-	}
-
-	query.str("");
-	return true;
-}
-
-bool IOMapSerialize::saveHouseInfo(Map* map)
-{
-	Database* db = Database::getInstance();
-	DBTransaction trans(db);
-	if(!trans.begin())
-		return false;
-
-	DBQuery query;
-	DBInsert queryInsert(db);
-	queryInsert.setQuery("INSERT INTO `house_lists` (`house_id`, `world_id`, `listid`, `list`) VALUES ");
-
-	House* house = NULL;
-	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
-	{
-		if(!(house = it->second))
-			continue;
-
-		query << "UPDATE `houses` SET `owner` = " << house->getHouseOwner() << ", `paid` = "
-			<< house->getPaidUntil() << ", `warnings` = " << house->getPayRentWarnings() << ", `lastwarning` = "
-			<< house->getLastWarning() << ", `clear` = 0 WHERE `id` = " << house->getHouseId() << " AND `world_id` = "
-			<< g_config.getNumber(ConfigManager::WORLD_ID);
-		if(!db->executeQuery(query.str()))
-			return false;
-
-		query.str("");
-		query << "DELETE FROM `house_lists` WHERE `id` = " << house->getHouseId() << " AND `world_id` = "
-			<< g_config.getNumber(ConfigManager::WORLD_ID);
-		if(!db->executeQuery(query.str()))
-			return false;
-
-		std::string listText;
-		if(house->getAccessList(GUEST_LIST, listText) && !listText.empty())
-		{
-			query.str("");
-			query << house->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", "
-			<< GUEST_LIST << ", " << db->escapeString(listText);
-			if(!queryInsert.addRow(query.str()))
-				return false;
-		}
-
-		if(house->getAccessList(SUBOWNER_LIST, listText) && !listText.empty())
-		{
-			query.str("");
-			query << house->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", "
-			<< SUBOWNER_LIST << ", " << db->escapeString(listText);
-			if(!queryInsert.addRow(query.str()))
-				return false;
-		}
-
-		for(HouseDoorList::iterator it = house->getHouseDoorBegin(); it != house->getHouseDoorEnd(); ++it)
-		{
-			const Door* door = (*it);
-			if(!door)
-				continue;
-
-			if(door->getAccessList(listText) && !listText.empty())
-			{
-				query.str("");
-				query << house->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << door->getDoorId()
-				<< ", " << db->escapeString(listText);
-				if(!queryInsert.addRow(query.str()))
-					return false;
-			}
-		}
-
-		if(!query.str().empty())
-		{
-			query.str("");
-			if(!queryInsert.execute())
-				return false;
-		}
-	}
-
-	return trans.commit();
-}
-
-bool IOMapSerialize::synchronizeHouseInfo()
+bool IOMapSerialize::syncHouses()
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
@@ -207,6 +82,124 @@ bool IOMapSerialize::synchronizeHouseInfo()
 	}
 
 	return true;
+}
+
+bool IOMapSerialize::loadHouses()
+{
+	Database* db = Database::getInstance();
+	DBQuery query;
+
+	query << "SELECT * FROM `houses` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	DBResult* result;
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	House* house = NULL;
+	do
+	{
+		if(!(house = Houses::getInstance().getHouse(result->getDataInt("id"))))
+			continue;
+
+		house->setHouseOwner(result->getDataInt("owner"), false, false);
+		house->setPayRentWarnings(result->getDataInt("warnings"));
+		house->setLastWarning(result->getDataInt("lastwarning"));
+
+		house->setPaidUntil(result->getDataInt("paid"));
+		if(result->getDataInt("clear"))
+			house->setPendingTransfer(true);
+	}
+	while(result->next());
+	result->free();
+
+	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
+	{
+		if(!(house = it->second) || !house->getHouseOwner() || !house->getHouseId())
+			continue;
+
+		query.str("");
+		query << "SELECT `listid`, `list` FROM `house_lists` WHERE `house_id` = " << house->getHouseId();
+		query << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+		if(!(result = db->storeQuery(query.str())))
+			continue;
+
+		do
+			house->setAccessList(result->getDataInt("listid"), result->getDataString("list"));
+		while(result->next());
+		result->free();
+	}
+
+	query.str("");
+	return true;
+}
+
+bool IOMapSerialize::saveHouses()
+{
+	Database* db = Database::getInstance();
+	DBTransaction trans(db);
+	if(!trans.begin())
+		return false;
+
+	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
+		saveHouse(db, it->second);
+
+	return trans.commit();
+}
+
+bool IOMapSerialize::saveHouse(Database* db, House* house)
+{
+	DBQuery query;
+	query << "UPDATE `houses` SET `owner` = " << house->getHouseOwner() << ", `paid` = "
+		<< house->getPaidUntil() << ", `warnings` = " << house->getPayRentWarnings() << ", `lastwarning` = "
+		<< house->getLastWarning() << ", `clear` = 0 WHERE `id` = " << house->getHouseId() << " AND `world_id` = "
+		<< g_config.getNumber(ConfigManager::WORLD_ID);
+	if(!db->executeQuery(query.str()))
+		return false;
+
+	query.str("");
+	query << "DELETE FROM `house_lists` WHERE `id` = " << house->getHouseId() << " AND `world_id` = "
+		<< g_config.getNumber(ConfigManager::WORLD_ID);
+	if(!db->executeQuery(query.str()))
+		return false;
+
+	DBInsert queryInsert(db);
+	queryInsert.setQuery("INSERT INTO `house_lists` (`house_id`, `world_id`, `listid`, `list`) VALUES ");
+
+	std::string listText;
+	if(house->getAccessList(GUEST_LIST, listText) && !listText.empty())
+	{
+		query.str("");
+		query << house->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", "
+			<< GUEST_LIST << ", " << db->escapeString(listText);
+		if(!queryInsert.addRow(query.str()))
+			return false;
+	}
+
+	if(house->getAccessList(SUBOWNER_LIST, listText) && !listText.empty())
+	{
+		query.str("");
+		query << house->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", "
+			<< SUBOWNER_LIST << ", " << db->escapeString(listText);
+		if(!queryInsert.addRow(query.str()))
+			return false;
+	}
+
+	for(HouseDoorList::iterator it = house->getHouseDoorBegin(); it != house->getHouseDoorEnd(); ++it)
+	{
+		const Door* door = (*it);
+		if(!door)
+			continue;
+
+		if(door->getAccessList(listText) && !listText.empty())
+		{
+			query.str("");
+			query << house->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << door->getDoorId()
+				<< ", " << db->escapeString(listText);
+			if(!queryInsert.addRow(query.str()))
+				return false;
+		}
+	}
+
+	return query.str().empty() || queryInsert.execute();
 }
 
 bool IOMapSerialize::loadMapRelational(Map* map)
@@ -365,6 +358,7 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 			propStream.GET_USHORT(x);
 			propStream.GET_USHORT(y);
 			propStream.GET_UCHAR(z);
+			Position pos(x, y, (int16_t)z);
 
 			uint32_t itemCount = 0;
 			propStream.GET_ULONG(itemCount);
@@ -383,7 +377,7 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 					}
 				}
 			}
-			else if(Tile* tile = map->getTile(x, y, (int16_t)z))
+			else if(Tile* tile = map->getTile(pos))
 			{
 				while(itemCount--)
 					loadItem(propStream, tile, false);
@@ -391,7 +385,7 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 			else
 			{
 				std::cout << "[Error - IOMapSerialize::loadMapBinary] Unserialization of invalid tile at position ";
-				std::cout << x << "/" << y << "/" << (int16_t)z << std::endl;
+				std::cout << pos << std::endl;
 				break;
 			}
  		}

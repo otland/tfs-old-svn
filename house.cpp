@@ -15,15 +15,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-
 #include "house.h"
-#include "tools.h"
 
+#include "tools.h"
+#include "database.h"
 #include "beds.h"
 #include "town.h"
 
 #include "iologindata.h"
 #include "ioguild.h"
+#include "iomapserialize.h"
 
 #include "configmanager.h"
 #include "game.h"
@@ -100,13 +101,12 @@ void House::setPrice(uint32_t _price, bool update/* = false*/)
 		updateDoorDescription();
 }
 
-void House::setHouseOwner(uint32_t guid, bool _clean/* = true*/)
+void House::setHouseOwner(uint32_t guid, bool _clean, bool _save)
 {
-	if(loaded && houseOwner == guid)
-		return;
-
 	if(!loaded)
 		loaded = true;
+	else if(houseOwner == guid)
+		return;
 
 	if(houseOwner)
 	{
@@ -115,25 +115,32 @@ void House::setHouseOwner(uint32_t guid, bool _clean/* = true*/)
 
 		setAccessList(SUBOWNER_LIST, "", !_clean);
 		setAccessList(GUEST_LIST, "", !_clean);
-		for(HouseDoorList::iterator it = doorList.begin(); it != doorList.end(); ++it)
-			(*it)->setAccessList("");
 
 		houseOwner = rentWarnings = paidUntil = 0;
+		for(HouseDoorList::iterator it = doorList.begin(); it != doorList.end(); ++it)
+			(*it)->setAccessList("");
 	}
 
+	setLastWarning(time(NULL)); //so the new owner has one day before he start the payement
 	if(guid)
 		houseOwner = guid;
 
 	updateDoorDescription();
-	setLastWarning(time(NULL)); //so the new owner has one day before he start the payement
+	if(!_save)
+		return;
+
+	Database* db = Database::getInstance();
+	DBTransaction trans(db);
+	if(!trans.begin())
+		return;
+
+	IOMapSerialize::getInstance()->saveHouse(db, this);
+	trans.commit();
 }
 
 bool House::isGuild() const
 {
-	if(!g_config.getBool(ConfigManager::GUILD_HALLS))
-		return false;
-
-	return guild;
+	return g_config.getBool(ConfigManager::GUILD_HALLS) && guild;
 }
 
 void House::updateDoorDescription(std::string name/* = ""*/)
@@ -412,9 +419,9 @@ bool HouseTransferItem::onTradeEvent(TradeEvents_t event, Player* owner, Player*
 			if(house)
 			{
 				if(!house->isGuild())
-					house->setHouseOwner(owner->getGUID());
+					house->setHouseOwner(owner->getGUID(), true, true);
 				else
-					house->setHouseOwner(owner->getGuildId());
+					house->setHouseOwner(owner->getGuildId(), true, true);
 			}
 
 			g_game.internalRemoveItem(NULL, this, 1);
@@ -786,7 +793,7 @@ bool Houses::loadFromXml(std::string filename)
 		else
 			house->setRent(rent);
 
-		house->setHouseOwner(0);
+		house->setHouseOwner(0, true, false);
 		houseNode = houseNode->next;
 	}
 
@@ -883,14 +890,14 @@ bool Houses::payHouse(House* house, time_t _time)
 	uint32_t owner = house->getHouseOwner();
 	if(house->isGuild() && !IOGuild::getInstance()->swapGuildIdToOwner(owner))
 	{
-		house->setHouseOwner(0);
+		house->setHouseOwner(0, true, true);
 		return false;
 	}
 
 	std::string name;
 	if(!IOLoginData::getInstance()->getNameByGuid(owner, name))
 	{
-		house->setHouseOwner(0);
+		house->setHouseOwner(0, true, true);
 		return false;
 	}
 
@@ -900,7 +907,7 @@ bool Houses::payHouse(House* house, time_t _time)
 
 	if(!player->isPremium() && g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM))
 	{
-		house->setHouseOwner(0);
+		house->setHouseOwner(0, true, true);
 		return false;
 	}
 
@@ -970,7 +977,7 @@ bool Houses::payHouse(House* house, time_t _time)
 			house->setLastWarning(_time);
 		}
 		else
-			house->setHouseOwner(0);
+			house->setHouseOwner(0, true, true);
 	}
 
 	if(player->isVirtual())

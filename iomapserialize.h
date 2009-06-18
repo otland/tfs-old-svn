@@ -25,6 +25,7 @@
 typedef std::map<int32_t, std::pair<Item*, int32_t> > ItemMap;
 typedef std::list<std::pair<Container*, int32_t> > ContainerStackList;
 
+class House;
 class IOMapSerialize
 {
 	public:
@@ -38,10 +39,12 @@ class IOMapSerialize
 		bool loadMap(Map* map);
 		bool saveMap(Map* map);
 
-		bool loadHouseInfo(Map* map);
-		bool saveHouseInfo(Map* map);
+		bool syncHouses();
 
-		bool synchronizeHouseInfo();
+		bool loadHouses();
+		bool saveHouses();
+
+		bool saveHouse(Database* db, House* house);
 
 	protected:
 		IOMapSerialize() {}

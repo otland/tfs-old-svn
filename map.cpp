@@ -66,11 +66,11 @@ bool Map::loadMap(const std::string& identifier)
 	IOMapSerialize* IOLoader = IOMapSerialize::getInstance();
 
 	start = OTSYS_TIME();
-	IOLoader->synchronizeHouseInfo();
+	IOLoader->syncHouses();
 	std::cout << "> Houses synchronization time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 
 	start = OTSYS_TIME();
-	IOLoader->loadHouseInfo(this);
+	IOLoader->loadHouses();
 	std::cout << "> Unserialization time for houses: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 
 	start = OTSYS_TIME();
@@ -85,7 +85,7 @@ bool Map::saveMap()
 	bool saved = false;
 	for(uint32_t tries = 0; tries < 3; ++tries)
 	{
-		if(!IOLoader->saveHouseInfo(this))
+		if(!IOLoader->saveHouses())
 			continue;
 
 		saved = true;

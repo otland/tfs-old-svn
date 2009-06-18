@@ -151,7 +151,7 @@ class House
 		void setName(const std::string& _houseName) {houseName = _houseName;}
 		const std::string& getName() const {return houseName;}
 
-		void setHouseOwner(uint32_t guid, bool _clean = true);
+		void setHouseOwner(uint32_t guid, bool _clean, bool _save);
 		uint32_t getHouseOwner() const {return houseOwner;}
 
 		void setPaidUntil(time_t paid) {paidUntil = paid;}

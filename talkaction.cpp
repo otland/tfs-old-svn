@@ -429,7 +429,7 @@ bool TalkAction::houseBuy(Creature* creature, const std::string& cmd, const std:
 		return false;
 	}
 
-	house->setHouseOwner(player->getGUID());
+	house->setHouseOwner(player->getGUID(), true, true);
 	std::string ret = "You have successfully bought this house, remember to leave money at ";
 	if(house->isGuild())
 		ret += "guild owner ";
