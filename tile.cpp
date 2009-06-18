@@ -1032,7 +1032,7 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 	}
 	
 	TileItemVector* items = getItemList();
-	if(items && !oldItem)
+	if(!oldItem && items)
 	{
 		int32_t topItemSize = getTopItemCount();
 		if(pos < topItemSize)
@@ -1047,22 +1047,25 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 
 		pos -= topItemSize;
 	}
-	
-	if(CreatureVector* creatures = getCreatures())
-	{
-		if(!oldItem && pos < (int32_t)creatures->size())
-		{
-#ifdef __DEBUG_MOVESYS__
-			std::cout << "[Failure - Tile::__updateThing] Update object is a creature" << std::endl;
-			DEBUG_REPORT
-#endif
-			return/* RET_NOTPOSSIBLE*/;
-		}
 
-		pos -= (uint32_t)creatures->size();
+	if(!oldItem)
+	{
+		if(CreatureVector* creatures = getCreatures())
+		{
+			if(pos < (int32_t)creatures->size())
+			{
+#ifdef __DEBUG_MOVESYS__
+				std::cout << "[Failure - Tile::__updateThing] Update object is a creature" << std::endl;
+				DEBUG_REPORT
+#endif
+				return/* RET_NOTPOSSIBLE*/;
+			}
+
+			pos -= (uint32_t)creatures->size();
+		}
 	}
 
-	if(items && !oldItem)
+	if(!oldItem && items)
 	{
 		int32_t downItemSize = getDownItemCount();
 		if(pos < downItemSize)
@@ -1115,13 +1118,13 @@ void Tile::__removeThing(Thing* thing, uint32_t count)
 			creatures->erase(it);
 			--thingCount;
 		}
+#ifdef __DEBUG_MOVESYS__
 		else
 		{
-#ifdef __DEBUG_MOVESYS__
 			std::cout << "[Failure - Tile::__removeThing] creature not found" << std::endl;
 			DEBUG_REPORT
-#endif
 		}
+#endif
 
 		return;
 	}
