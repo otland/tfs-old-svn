@@ -492,33 +492,60 @@ void ProtocolAdmin::adminCommandSetOwner(const std::string& param)
 	if(!output)
 		return;
 
-	TRACK_MESSAGE(output);
-	StringVec params = explodeString(param, ";");
-	std::string houseId = params[0], name = params[1];
+	StringVec params = explodeString(param, ",");
+	for(StringVec::iterator it = params.begin(); it != params.end(); ++it)
+		trimString(*it);
 
-	trimString(houseId);
-	trimString(name);
-	if(House* house = Houses::getInstance().getHouse(atoi(houseId.c_str())))
+	TRACK_MESSAGE(output);
+	int32_t houseId = atoi(params[0].c_str());
+	if(houseId > 0 || params[0] == "0")
 	{
-		uint32_t guid;
-		if(IOLoginData::getInstance()->getGuidByName(guid, name))
+		size_t size = params.size();
+		if(size > 1)
 		{
-			house->setHouseOwner(guid);
-			addLogLine(this, LOGTYPE_EVENT, "set " + name + " as new owner of house with id " + house->getName());
-			output->AddByte(AP_MSG_COMMAND_OK);
+			std::string name = params[1];
+			bool clean = true, save = true;
+			if(size > 2)
+				clean = booleanString(params[2]);
+
+			if(size > 3)
+				save = booleanString(params[3]);
+
+			if(House* house = Houses::getInstance().getHouse(houseId))
+			{
+				uint32_t guid;
+				if(IOLoginData::getInstance()->getGuidByName(guid, name))
+				{
+					house->setHouseOwner(guid, clean, save);
+					addLogLine(this, LOGTYPE_EVENT, "set " + name + " as new owner of house with id " + house->getName());
+					output->AddByte(AP_MSG_COMMAND_OK);
+				}
+				else
+				{
+					addLogLine(this, LOGTYPE_EVENT, "Could not find player with name: " + name);
+					output->AddByte(AP_MSG_COMMAND_FAILED);
+					output->AddString("such player does not exists");
+				}
+			}
+			else
+			{
+				addLogLine(this, LOGTYPE_EVENT, "Could not find house with id: " + houseId);
+				output->AddByte(AP_MSG_COMMAND_FAILED);
+				output->AddString("such house does not exists");
+			}
 		}
 		else
 		{
-			addLogLine(this, LOGTYPE_EVENT, "Could not find player with name: " + name);
+			addLogLine(this, LOGTYPE_EVENT, "Not enough params given, param data: " + param);
 			output->AddByte(AP_MSG_COMMAND_FAILED);
-			output->AddString("such player does not exists");
+			output->AddString("not enough params");
 		}
 	}
 	else
 	{
-		addLogLine(this, LOGTYPE_EVENT, "Could not find house with id: " + houseId);
+		addLogLine(this, LOGTYPE_EVENT, "Specified house id is not a valid one: " + params[0]);
 		output->AddByte(AP_MSG_COMMAND_FAILED);
-		output->AddString("such house does not exists");
+		output->AddString("invalid house id");
 	}
 
 	OutputMessagePool::getInstance()->send(output);
