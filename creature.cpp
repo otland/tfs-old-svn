@@ -680,7 +680,7 @@ bool Creature::onDeath()
 			continue;
 
 		bool lastHit = it == deathList.begin();
-		uint32_t flags = 0;
+		uint32_t flags = KILLFLAG_NONE;
 		if(lastHit)
 			flags |= (uint32_t)KILLFLAG_LASTHIT;
 
