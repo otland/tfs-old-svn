@@ -1357,19 +1357,17 @@ const std::string& ItemAttributes::getStrAttr(itemAttrTypes type) const
 
 void ItemAttributes::setStrAttr(itemAttrTypes type, const std::string& value)
 {
-	if(!validateStrAttrType(type))
+	if(!validateStrAttrType(type) || !value.length())
 		return;
 
-	if(!value.length())
+	Attribute* attr = getAttr(type);
+	if(!attr)
 		return;
 
-	if(Attribute* attr = getAttr(type))
-	{
-		if(attr->value)
-			delete (std::string*)attr->value;
+	if(attr->value)
+		delete (std::string*)attr->value;
 
-		attr->value = (void*)new std::string(value);
-	}
+	attr->value = (void*)new std::string(value);
 }
 
 bool ItemAttributes::hasAttribute(itemAttrTypes type) const
@@ -1401,7 +1399,6 @@ void ItemAttributes::removeAttribute(itemAttrTypes type)
 
 				//remove it from flags
 				m_attributes = m_attributes & ~type;
-
 				//delete string if it is string type
 				if(validateStrAttrType(type))
 					delete (std::string*)curAttr->value;
@@ -1516,7 +1513,7 @@ void ItemAttributes::addAttr(Attribute* attr)
 
 ItemAttributes::Attribute* ItemAttributes::getAttrConst(itemAttrTypes type) const
 {
-	if((type & m_attributes) == 0)
+	if(!(type & m_attributes))
 		return NULL;
 
 	Attribute* curAttr = m_firstAttr;
@@ -1535,26 +1532,25 @@ ItemAttributes::Attribute* ItemAttributes::getAttrConst(itemAttrTypes type) cons
 ItemAttributes::Attribute* ItemAttributes::getAttr(itemAttrTypes type)
 {
 	Attribute* curAttr;
-	if((type & m_attributes) == 0)
+	if(!(type & m_attributes))
 	{
 		curAttr = new Attribute(type);
 		addAttr(curAttr);
 		return curAttr;
 	}
-	else
-	{
-		curAttr = m_firstAttr;
-		while(curAttr)
-		{
-			if(curAttr->type == type)
-				return curAttr;
 
-			curAttr = curAttr->next;
-		}
+	curAttr = m_firstAttr;
+	while(curAttr)
+	{
+		if(curAttr->type == type)
+			return curAttr;
+
+		curAttr = curAttr->next;
 	}
 
 	std::cout << "[Warning - ItemAttributes::getAttr] (type & m_attributes) but attribute not found" << std::endl;
 	curAttr = new Attribute(type);
+
 	addAttr(curAttr);
 	return curAttr;
 }
@@ -1567,10 +1563,10 @@ void ItemAttributes::deleteAttrs(Attribute* attr)
 	if(validateStrAttrType(attr->type))
 		delete (std::string*)attr->value;
 
-	Attribute* next_attr = attr->next;
+	Attribute* nextAttr = attr->next;
 	attr->next = NULL;
-	if(next_attr)
-		deleteAttrs(next_attr);
+	if(nextAttr)
+		deleteAttrs(nextAttr);
 
 	delete attr;
 }

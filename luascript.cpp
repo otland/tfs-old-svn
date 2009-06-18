@@ -1779,7 +1779,7 @@ void LuaScriptInterface::registerFunctions()
 	//getDepotId(uid)
 	lua_register(m_luaState, "getDepotId", LuaScriptInterface::luaGetDepotId);
 
-	//setHouseOwner(houseid, owner[, clean[, save]])
+	//setHouseOwner(houseId, owner[, clean])
 	lua_register(m_luaState, "setHouseOwner", LuaScriptInterface::luaSetHouseOwner);
 
 	//getWorldType()
@@ -4923,7 +4923,7 @@ int32_t LuaScriptInterface::luaGetHouseInfo(lua_State* L)
 	setField(L, "price", house->getPrice());
 	setField(L, "town", house->getTownId());
 	setField(L, "paidUntil", house->getPaidUntil());
-	setField(L, "warnings", house->getPayRentWarnings());
+	setField(L, "warnings", house->getRentWarnings());
 	setField(L, "lastWarning", house->getLastWarning());
 
 	setFieldBool(L, "guildHall", house->isGuild());
@@ -5006,21 +5006,14 @@ int32_t LuaScriptInterface::luaGetDepotId(lua_State* L)
 
 int32_t LuaScriptInterface::luaSetHouseOwner(lua_State* L)
 {
-	//setHouseOwner(houseid, owner[, clean[, save]])
-	uint32_t params = lua_gettop(L);
-	bool save = true, clean = true;
-	if(params > 3)
-		save = popNumber(L);
-
-	if(params > 2)
+	//setHouseOwner(houseId, owner[, clean])
+	bool clean = true;
+	if(lua_gettop(L) > 2)
 		clean = popNumber(L);
 
 	uint32_t owner = popNumber(L);
 	if(House* house = Houses::getInstance().getHouse(popNumber(L)))
-	{
-		house->setHouseOwner(owner, clean, save);
-		lua_pushboolean(L, true);
-	}
+		lua_pushboolean(L, house->setHouseOwnerEx(owner, clean));
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_HOUSE_NOT_FOUND));

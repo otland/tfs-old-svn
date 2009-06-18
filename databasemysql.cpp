@@ -57,13 +57,13 @@ DatabaseMySQL::DatabaseMySQL()
 
 	if(g_config.getBool(ConfigManager::HOUSE_STORAGE))
 	{
-		DBQuery query;
-		if(DBResult* result = storeQuery("SHOW variables LIKE 'max_allowed_packet';"))
+		DBQuery query; //lock mutex
+		if(DBResult* result = storeQuery("SHOW `variables` LIKE 'max_allowed_packet';"))
 		{
-			if(result->getDataInt("Value") < 16777216)
+			if(result->getDataLong("Value") < 16776192)
 			{
-				std::cout << std::endl << "> WARNING: max_allowed_packet might be set to low for binary map storage." << std::endl;
-				std::cout << "Use the following query to raise max_allow_packet: SET GLOBAL max_allowed_packet = 16777216;" << std::endl;
+				std::cout << std::endl << "> WARNING: max_allowed_packet might be set too low for binary map storage." << std::endl;
+				std::cout << "Use the following query to raise max_allow_packet: SET GLOBAL max_allowed_packet = 16776192;" << std::endl;
 			}
 
 			result->free();

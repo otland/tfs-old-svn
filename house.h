@@ -151,7 +151,8 @@ class House
 		void setName(const std::string& _houseName) {houseName = _houseName;}
 		const std::string& getName() const {return houseName;}
 
-		void setHouseOwner(uint32_t guid, bool _clean, bool _save);
+		void setHouseOwner(uint32_t guid);
+		bool setHouseOwnerEx(uint32_t guid, bool transfer);
 		uint32_t getHouseOwner() const {return houseOwner;}
 
 		void setPaidUntil(time_t paid) {paidUntil = paid;}
@@ -166,11 +167,11 @@ class House
 		void setLastWarning(time_t _lastWarning) {lastWarning = _lastWarning;}
 		time_t getLastWarning() {return lastWarning;}
 
-		void setPayRentWarnings(uint32_t warnings) {rentWarnings = warnings;}
-		uint32_t getPayRentWarnings() const {return rentWarnings;}
+		void setRentWarnings(uint32_t warnings) {rentWarnings = warnings;}
+		uint32_t getRentWarnings() const {return rentWarnings;}
 
-		void setTownId(uint32_t _town) {townid = _town;}
-		uint32_t getTownId() const {return townid;}
+		void setTownId(uint32_t _town) {townId = _town;}
+		uint32_t getTownId() const {return townId;}
 
 		void setSize(uint32_t _size) {size = _size;}
 		uint32_t getSize() const {return size;}
@@ -217,9 +218,9 @@ class House
 		void removePlayer(Player* player, bool ignoreRights);
 		void removePlayers(bool ignoreInvites);
 
-		bool loaded, guild, pendingTransfer;
+		bool guild, pendingTransfer;
 		time_t paidUntil, lastWarning;
-		uint32_t houseId, houseOwner, rentWarnings, rent, price, townid, size;
+		uint32_t houseId, houseOwner, rentWarnings, rent, price, townId, size;
 		std::string houseName;
 		Position posEntry;
 
