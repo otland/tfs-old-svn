@@ -711,7 +711,7 @@ Item* Admin::createMail(const std::string xmlData, std::string& name, uint32_t& 
 		if(!Mailbox::getDepotId(strValue, depotId))
 			return false;
 	}
-	else if(!IOLoginData::getInstance()->getDefaultTown(name, depotId)) //use the players default town
+	else if(!IOLoginData::getInstance()->getDefaultTownByName(name, depotId)) //use the players default town
 		return false;
 
 	if(readXMLInteger(root, "id", intValue))
