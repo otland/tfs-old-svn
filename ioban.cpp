@@ -255,7 +255,7 @@ uint32_t IOBan::getNotationsCount(uint32_t account) const
 	return count;
 }
 
-bool IOBan::getData(uint32_t value, Ban& ban, const std::string& ignore = "4") const
+bool IOBan::getData(uint32_t value, Ban& ban, const std::string& ignore/* = "4"*/) const
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
