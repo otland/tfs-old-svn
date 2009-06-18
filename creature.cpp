@@ -692,14 +692,18 @@ bool Creature::onDeath()
 				tmp = it->getKillerCreature()->getMaster();
 		}
 
-		if(tmp && std::find(justifyVec.begin(), justifyVec.end(), tmp) == justifyVec.end())
+		if(tmp)
 		{
-			flags |= (uint32_t)KILLFLAG_JUSTIFY;
-			justifyVec.push_back(tmp);
+			if(std::find(justifyVec.begin(), justifyVec.end(), tmp) == justifyVec.end())
+			{
+				flags |= (uint32_t)KILLFLAG_JUSTIFY;
+				justifyVec.push_back(tmp);
+			}
+
 			tmp = NULL;
 		}
 
-		if(!tmp->onKilledCreature(this, flags) && lastHit)
+		if(!it->getKillerCreature()->onKilledCreature(this, flags) && lastHit)
 			return false;
 
 		if(hasBitSet((uint32_t)KILLFLAG_UNJUSTIFIED, flags))

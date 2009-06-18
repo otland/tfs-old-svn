@@ -157,7 +157,7 @@ bool IOMapSerialize::saveHouse(Database* db, House* house)
 		return false;
 
 	query.str("");
-	query << "DELETE FROM `house_lists` WHERE `id` = " << house->getHouseId() << " AND `world_id` = "
+	query << "DELETE FROM `house_lists` WHERE `house_id` = " << house->getHouseId() << " AND `world_id` = "
 		<< g_config.getNumber(ConfigManager::WORLD_ID);
 	if(!db->executeQuery(query.str()))
 		return false;
