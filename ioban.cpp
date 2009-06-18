@@ -255,14 +255,17 @@ uint32_t IOBan::getNotationsCount(uint32_t account) const
 	return count;
 }
 
-bool IOBan::getData(uint32_t value, Ban& ban) const
+bool IOBan::getData(uint32_t value, Ban& ban, const std::string& ignore = "4") const
 {
 	Database* db = Database::getInstance();
-	DBResult* result;
-
 	DBQuery query;
-	query << "SELECT `id`, `type`, `param`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action`, `statement` ";
-	query << "FROM `bans` WHERE `value` = " << value << " AND `active` = 1 AND (`expires` > " << time(NULL) << " OR `expires` <= 0)";
+
+	query << "SELECT `id`, `type`, `param`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action`, `statement` FROM `bans` WHERE `value` = " << value;
+	if(!ignore.empty())
+		query << " AND `type` NOT IN (" << ignore << ")";
+
+	query << " AND `active` = 1 AND (`expires` > " << time(NULL) << " OR `expires` <= 0)";
+	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 

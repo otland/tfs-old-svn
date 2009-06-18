@@ -159,8 +159,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		}
 
 		Ban ban;
-		if(IOBan::getInstance()->getData(accnumber, ban) && (ban.type == BANTYPE_BANISHMENT ||
-			ban.type == BANTYPE_DELETION) && !player->hasFlag(PlayerFlag_CannotBeBanned))
+		if(IOBan::getInstance()->getData(accnumber, ban) && !player->hasFlag(PlayerFlag_CannotBeBanned))
 		{
 			bool deletion = (ban.type == BANTYPE_DELETION);
 			std::string name_ = "Automatic ";

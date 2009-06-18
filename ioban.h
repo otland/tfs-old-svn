@@ -80,7 +80,7 @@ class IOBan
 		bool removeDeletion(uint32_t account) const;
 		bool removeNotations(uint32_t account) const;
 
-		bool getData(uint32_t value, Ban& ban) const;
+		bool getData(uint32_t value, Ban& ban, const std::string& ignore = "4") const;
 		std::vector<Ban> getList(BanType_t type, uint32_t value = 0);
 		uint32_t getNotationsCount(uint32_t account) const;
 		bool clearTemporials() const;
