@@ -2464,60 +2464,56 @@ void ProtocolGame::sendOutfitWindow()
 		msg->AddByte(0xC8);
 
 		AddCreatureOutfit(msg, player, player->getDefaultOutfit());
-		const OutfitListType& globalOutfits = Outfits::getInstance()->getOutfits(player->getSex());
+		OutfitListType globalOutfits = Outfits::getInstance()->getOutfits(player->getSex());
 		if(!globalOutfits.size())
 			return;
 
-		uint32_t count = std::min((size_t)OUTFITS_MAX_NUMBER, globalOutfits.size());
-		OTSERV_HASH_SET<uint32_t> tmpList;
-
-		OutfitListType::const_iterator git, it;
-		for(git = globalOutfits.begin(); git != globalOutfits.end(); ++git)
+		size_t size = OUTFITS_MAX_NUMBER;
+		IntegerVec tmpList;
+		for(OutfitListType::const_iterator it = globalOutfits.begin(); it != globalOutfits.end() && size > tmpList.size(); ++it)
 		{
-			if((*git)->premium && !player->isPremium())
-				tmpList.insert((*git)->looktype);
-
-			if(player->getAccess() < (*git)->access)
-				tmpList.insert((*git)->looktype);
-
-			if((*git)->quest)
-			{
-				std::string value;
-				if(!player->getStorageValue((*git)->quest, value) || atoi(value.c_str()) != OUTFITS_QUEST_VALUE)
-					tmpList.insert((*git)->looktype);
-			}
-		}
-
-		count -= tmpList.size();
-		if(!count)
-			return;
-
-		msg->AddByte(count);
-		const OutfitListType& playerOutfits = player->getPlayerOutfits();
-		for(git = globalOutfits.begin(); git != globalOutfits.end() && count > 0; ++git)
-		{
-			OTSERV_HASH_SET<uint32_t>::const_iterator tit = tmpList.find((*git)->looktype);
-			if(tit != tmpList.end())
+			if((*it)->premium && !player->isPremium())
 				continue;
 
-			msg->AddU16((*git)->looktype);
-			msg->AddString(Outfits::getInstance()->getOutfitName((*git)->looktype));
+			if(player->getAccess() < (*it)->access)
+				continue;
+
+			if((*it)->quest)
+			{
+				std::string value;
+				if(!player->getStorageValue((*it)->quest, value) || atoi(value.c_str()) != OUTFITS_QUEST_VALUE)
+					continue;
+			}
+
+			tmpList.push_back((*it)->looktype);
+		}
+
+		size = tmpList.size();
+		if(!size)
+			return;
+
+		OutfitListType::const_iterator iit;
+		const OutfitListType& playerOutfits = player->getPlayerOutfits();
+
+		msg->AddByte(size);
+		for(IntegerVec::const_iterator it = tmpList.begin(); it != tmpList.end(); ++it)
+		{
+			msg->AddU16(*it);
+			msg->AddString(Outfits::getInstance()->getOutfitName(*it));
 
 			bool addedAddon = false;
-			for(it = playerOutfits.begin(); it != playerOutfits.end(); ++it)
+			for(iit = playerOutfits.begin(); iit != playerOutfits.end(); ++iit)
 			{
-				if((*it)->looktype == (*git)->looktype)
-				{
-					msg->AddByte((*it)->addons);
-					addedAddon = true;
-					break;
-				}
+				if((*iit)->looktype != uint32_t(*it))
+					continue;
+
+				msg->AddByte((*iit)->addons);
+				addedAddon = true;
+				break;
 			}
 
 			if(!addedAddon)
 				msg->AddByte(0x00);
-
-			count--;
 		}
 
 		player->hasRequestedOutfit(true);
