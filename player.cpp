@@ -1359,12 +1359,7 @@ void Player::onCreatureAppear(const Creature* creature)
 	}
 
 	if(BedItem* bed = Beds::getInstance().getBedBySleeper(getGUID()))
-	{
-		bed->wakeUp(this);
-		#ifdef __DEBUG__
-		std::cout << "Player " << getName() << " waking up." << std::endl;
-		#endif
-	}
+		bed->wakeUp();
 
 	outfitAttributes = Outfits::getInstance()->addAttributes(getID(), defaultOutfit.lookType, defaultOutfit.lookAddons);
 	if(lastLogout)
@@ -4749,25 +4744,12 @@ void Player::clearPartyInvitations()
 
 bool Player::transferMoneyTo(const std::string& name, uint64_t amount)
 {
-	if(!g_config.getBool(ConfigManager::BANK_SYSTEM))
+	if(!g_config.getBool(ConfigManager::BANK_SYSTEM) || amount > balance)
 		return false;
 
-	if(amount > balance)
-		return false;
-
-	Player* target = g_game.getPlayerByName(name);
+	Player* target = g_game.getPlayerByNameEx(name);
 	if(!target)
-	{
-		target = new Player(name, NULL);
-		if(!IOLoginData::getInstance()->loadPlayer(target, name))
-		{
-#ifdef __DEBUG__
-			std::cout << "Failure: [Player::transferMoneyTo], cannot load player: " << name << std::endl;
-#endif
-			delete target;
-			return false;
-		}
-	}
+		return false;
 
 	balance -= amount;
 	target->balance += amount;

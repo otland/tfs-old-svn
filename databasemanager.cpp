@@ -717,18 +717,16 @@ uint32_t DatabaseManager::updateDatabase()
 				{
 					std::string queryList[] = {
 "CREATE TABLE `player_deaths` (\
-	`id` INTEGER NOT NULL,\
+	`id` INTEGER PRIMARY KEY,\
 	`player_id` INTEGER NOT NULL,\
 	`date` INTEGER NOT NULL,\
 	`level` INTEGER NOT NULL,\
-	PRIMARY KEY (`id`),\
 	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`)\
 );",
 "CREATE TABLE `killers` (\
-	`id` INTEGER NOT NULL,\
+	`id` INTEGER PRIMARY KEY,\
 	`death_id` INTEGER NOT NULL,\
 	`final_hit` BOOLEAN NOT NULL DEFAULT FALSE,\
-	PRIMARY KEY(`id`),\
 	FOREIGN KEY (`death_id`) REFERENCES `player_deaths` (`id`)\
 );",
 "CREATE TABLE `player_killers` (\
@@ -820,6 +818,7 @@ uint32_t DatabaseManager::updateDatabase()
 	KEY (`player_id`),\
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE\
 ) ENGINE = InnoDB;");
+
 					break;
 				case DATABASE_ENGINE_SQLITE:
 					db->executeQuery("CREATE TABLE IF NOT EXISTS `player_namelocks` (\
@@ -837,6 +836,58 @@ uint32_t DatabaseManager::updateDatabase()
 
 			registerDatabaseConfig("db_version", 17);
 			return 17;
+		}
+
+		case 17:
+		{
+			std::cout << "> Updating database to version: 18..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_MYSQL:
+				{
+					std::string queryList[] = {
+						"ALTER TABLE `player_depotitems` DROP KEY `player_id`;",
+						"ALTER TABLE `player_depotitems` DROP `depot_id`;",
+						"ALTER TABLE `player_depotitems` ADD KEY (`player_id`);",
+						"ALTER TABLE `house_data` ADD FOREIGN KEY (`house_id`, `world_id`) REFERENCES `houses`(`id`, `world_id`) ON DELETE CASCADE;",
+						"ALTER TABLE `house_lists` ADD FOREIGN KEY (`house_id`, `world_id`) REFERENCES `houses`(`id`, `world_id`) ON DELETE CASCADE;",
+						"ALTER TABLE `guild_invites` ADD FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE;",
+						"ALTER TABLE `guild_invites` ADD FOREIGN KEY (`guild_id`) REFERENCES `guilds`(`id`) ON DELETE CASCADE;",
+						"ALTER TABLE `tiles` ADD `house_id` INT UNSIGNED NOT NULL AFTER `world_id`;",
+						"ALTER TABLE `tiles` ADD FOREIGN KEY (`house_id`, `world_id`) REFERENCES `houses`(`id`, `world_id`) ON DELETE CASCADE;",
+						"ALTER TABLE `houses` ADD `clear` TINYINT(1) UNSIGNED NOT NULL DEFAULT FALSE;"
+					};
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+						db->executeQuery(queryList[i]);
+
+					break;
+				}
+
+				case DATABASE_ENGINE_SQLITE:
+				{
+					std::string queryList[] = {
+						"ALTER TABLE `house_data` ADD FOREIGN KEY (`house_id`, `world_id`) REFERENCES `houses`(`id`, `world_id`);",
+						"ALTER TABLE `house_lists` ADD FOREIGN KEY (`house_id`, `world_id`) REFERENCES `houses`(`id`, `world_id`);",
+						"ALTER TABLE `guild_invites` ADD FOREIGN KEY (`player_id`) REFERENCES `players`(`id`);",
+						"ALTER TABLE `guild_invites` ADD FOREIGN KEY (`guild_id`) REFERENCES `guilds`(`id`);",
+						"ALTER TABLE `tiles` ADD `house_id` INTEGER NOT NULL;",
+						"ALTER TABLE `tiles` ADD FOREIGN KEY (`house_id`, `world_id`) REFERENCES `houses`(`id`, `world_id`);",
+						"ALTER TABLE `houses` ADD `clear` BOOLEAN NOT NULL DEFAULT FALSE;"
+						
+					};
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+						db->executeQuery(queryList[i]);
+
+					break;
+				}
+
+				default:
+					//TODO
+					break;
+			}
+
+			registerDatabaseConfig("db_version", 18);
+			return 18;
 		}
 
 		default:

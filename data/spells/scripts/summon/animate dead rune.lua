@@ -1,11 +1,13 @@
 local function doTargetCorpse(cid, pos)
 	local getPos = pos
 	getPos.stackpos = 255
-	corpse = getThingfromPos(getPos)
-	if(corpse.uid > 0 and not isCreature(corpse.uid) and isInArray(CORPSES, corpse.itemid)) then
+
+	corpse = getThingFromPos(getPos)
+	if(corpse.uid > 0 and isCorpse(corpse.uid) and isMoveable(corpse.uid)) then
 		doRemoveItem(corpse.uid)
 		local creature = doCreateMonster(cid, "Skeleton", pos)
 		doConvinceCreature(cid, creature)
+
 		doSendMagicEffect(pos, CONST_ME_MAGIC_BLUE)
 		return true
 	end
@@ -17,7 +19,7 @@ end
 
 function onCastSpell(cid, var)
 	local pos = variantToPosition(var)
-	if(pos.x ~= 0 and pos.y ~= 0 and pos.z ~= 0) then
+	if(pos.x ~= 0 and pos.y ~= 0) then
 		return doTargetCorpse(cid, pos)
 	end
 

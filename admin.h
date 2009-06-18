@@ -113,7 +113,9 @@ enum
 	//CMD_BAN_MANAGER = 10,
 	//CMD_SERVER_INFO = 11,
 	//CMD_GETHOUSE = 12,
-	CMD_SETOWNER = 13
+	CMD_SAVE_SERVER = 13,
+	CMD_SEND_MAIL = 14,
+	CMD_SETOWNER = 15
 };
 
 
@@ -156,10 +158,12 @@ class Admin
 
 		uint16_t getProtocolPolicy();
 		uint32_t getProtocolOptions();
+
 		RSA* getRSAKey(uint8_t type);
 
+		static Item* createMail(const std::string xmlData, std::string& name, uint32_t& depotId);
 		bool allowIP(uint32_t ip);
-		bool passwordMatch(std::string& password);
+		bool passwordMatch(const std::string& password);
 
 		bool enabled() const {return m_enabled;}
 		bool onlyLocalHost() const {return m_onlyLocalHost;}
@@ -208,10 +212,11 @@ class ProtocolAdmin : public Protocol
 		virtual void parsePacket(NetworkMessage& msg);
 		virtual void deleteProtocolTask();
 
-		void adminCommandReload(int8_t reload);
 		void adminCommandPayHouses();
+		void adminCommandReload(int8_t reload);
 		void adminCommandKickPlayer(const std::string& name);
 		void adminCommandSetOwner(const std::string& param);
+		void adminCommandSendMail(const std::string& xmlData);
 
 		enum ProtocolState_t
 		{

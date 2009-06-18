@@ -29,16 +29,16 @@ Teleport::Teleport(uint16_t _type):
 	destPos = Position();
 }
 
-bool Teleport::readAttr(AttrTypes_t attr, PropStream& propStream)
+Attr_ReadValue Teleport::readAttr(AttrTypes_t attr, PropStream& propStream)
 {
 	if(ATTR_TELE_DEST == attr)
 	{
 		TeleportDest* teleDest;
 		if(!propStream.GET_STRUCT(teleDest))
-			return false;
+			return ATTR_READ_ERROR;
 
 		setDestPos(Position(teleDest->_x, teleDest->_y, teleDest->_z));
-		return true;
+		return ATTR_READ_CONTINUE;
 	}
 
 	return Item::readAttr(attr, propStream);

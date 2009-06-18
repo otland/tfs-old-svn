@@ -106,6 +106,13 @@ enum AttrTypes_t
 	ATTR_SCRIPTPROTECTED = 42
 };
 
+enum Attr_ReadValue
+{
+	ATTR_READ_CONTINUE,
+	ATTR_READ_ERROR,
+	ATTR_READ_END
+};
+
 // from iomap.h
 #pragma pack(1)
 struct TeleportDest
@@ -274,10 +281,14 @@ class ItemAttributes
 class Item : virtual public Thing, public ItemAttributes
 {
 	public:
+		static Items items;
+
 		//Factory member to create item of right type based on type
 		static Item* CreateItem(const uint16_t _type, uint16_t _count = 1);
 		static Item* CreateItem(PropStream& propStream);
-		static Items items;
+
+		static bool loadItem(xmlNodePtr node, Container* parent);
+		static bool loadContainer(xmlNodePtr node, Container* parent);
 
 		// Constructor for items
 		Item(const uint16_t _type, uint16_t _count = 0);
@@ -289,18 +300,25 @@ class Item : virtual public Thing, public ItemAttributes
 
 		virtual Item* getItem() {return this;}
 		virtual const Item* getItem() const {return this;}
+
 		virtual Container* getContainer() {return NULL;}
 		virtual const Container* getContainer() const {return NULL;}
+
 		virtual Teleport* getTeleport() {return NULL;}
 		virtual const Teleport* getTeleport() const {return NULL;}
+
 		virtual TrashHolder* getTrashHolder() {return NULL;}
 		virtual const TrashHolder* getTrashHolder() const {return NULL;}
+
 		virtual Mailbox* getMailbox() {return NULL;}
 		virtual const Mailbox* getMailbox() const {return NULL;}
+
 		virtual Door* getDoor() {return NULL;}
 		virtual const Door* getDoor() const {return NULL;}
+
 		virtual MagicField* getMagicField() {return NULL;}
 		virtual const MagicField* getMagicField() const {return NULL;}
+
 		virtual BedItem* getBed() {return NULL;}
 		virtual const BedItem* getBed() const {return NULL;}
 
@@ -313,7 +331,7 @@ class Item : virtual public Thing, public ItemAttributes
 		std::string getWeightDescription() const;
 
 		//serialization
-		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
+		virtual Attr_ReadValue readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool unserializeAttr(PropStream& propStream);
 		virtual bool serializeAttr(PropWriteStream& propWriteStream) const;
 		virtual bool unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream) {return unserializeAttr(propStream);}

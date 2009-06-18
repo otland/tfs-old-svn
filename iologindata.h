@@ -69,14 +69,13 @@ class IOLoginData
 		uint64_t createAccount(std::string name, std::string password);
 		void removePremium(Account account);
 
+		const Group* getPlayerGroupByAccount(uint32_t accId);
+
 		bool loadPlayer(Player* player, const std::string& name, bool preLoad = false);
 		bool savePlayer(Player* player, bool preSave = true);
 
 		bool playerDeath(Player* player, const DeathList& dl);
 		bool updateOnlineStatus(uint32_t guid, bool login);
-
-		const Group* getPlayerGroupByAccount(uint32_t accId);
-		uint32_t getLastIPByName(std::string name);
 
 		bool hasFlag(const std::string& name, PlayerFlags value);
 		bool hasCustomFlag(const std::string& name, PlayerCustomFlags value);
@@ -84,7 +83,6 @@ class IOLoginData
 		bool hasCustomFlag(PlayerCustomFlags value, uint32_t guid);
 
 		bool isPremium(uint32_t guid);
-		uint32_t getAccountIdByName(std::string name);
 
 		bool playerExists(uint32_t guid, bool multiworld = false, bool checkCache = true);
 		bool playerExists(std::string& name, bool multiworld = false, bool checkCache = true);
@@ -98,7 +96,12 @@ class IOLoginData
 
 		uint32_t getLevel(uint32_t guid) const;
 		uint32_t getLastIP(uint32_t guid) const;
+
+		uint32_t getLastIPByName(const std::string& name) const;
+		uint32_t getAccountIdByName(const std::string& name) const;
+
 		bool getUnjustifiedDates(uint32_t guid, std::vector<time_t>& dateList, time_t _time);
+		bool getDefaultTownByName(const std::string& name, uint32_t& townId);
 
 		bool updatePremiumDays();
 		bool resetOnlineStatus();

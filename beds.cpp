@@ -28,38 +28,38 @@
 extern Game g_game;
 extern ConfigManager g_config;
 
-bool BedItem::readAttr(AttrTypes_t attr, PropStream& propStream)
+Attr_ReadValue BedItem::readAttr(AttrTypes_t attr, PropStream& propStream)
 {
 	switch(attr)
 	{
 		case ATTR_SLEEPERGUID:
 		{
-			uint32_t _guid;
-			if(!propStream.GET_ULONG(_guid))
-				return false;
+			uint32_t _sleeper;
+			if(!propStream.GET_ULONG(_sleeper))
+				return ATTR_READ_ERROR;
 
-			if(_guid != 0)
+			if(_sleeper)
 			{
 				std::string name;
-				if(!IOLoginData::getInstance()->getNameByGuid(_guid, name))
-					return false;
-
-				setSpecialDescription(name + " is sleeping there.");
-				Beds::getInstance().setBedSleeper(this, _guid);
+				if(IOLoginData::getInstance()->getNameByGuid(_sleeper, name))
+				{
+					setSpecialDescription(name + " is sleeping there.");
+					Beds::getInstance().setBedSleeper(this, _sleeper);
+				}
 			}
 
-			sleeper = _guid;
-			return true;
+			sleeper = _sleeper;
+			return ATTR_READ_CONTINUE;
 		}
 
 		case ATTR_SLEEPSTART:
 		{
-			uint32_t sleep_start;
-			if(!propStream.GET_ULONG(sleep_start))
-				return false;
+			uint32_t _sleepStart;
+			if(!propStream.GET_ULONG(_sleepStart))
+				return ATTR_READ_ERROR;
 
-			sleepStart = (uint64_t)sleep_start;
-			return true;
+			sleepStart = (time_t)_sleepStart;
+			return ATTR_READ_CONTINUE;
 		}
 
 		default:
@@ -100,22 +100,17 @@ bool BedItem::canUse(Player* player)
 		ConfigManager::BED_REQUIRE_PREMIUM)) || player->hasCondition(CONDITION_INFIGHT))
 		return false;
 
-	if(!sleeper)
+	if(!sleeper || house->getHouseAccessLevel(player) == HOUSE_OWNER)
 		return isBed();
 
-	if(house->getHouseAccessLevel(player) == HOUSE_OWNER)
+	Player* _player = g_game.getPlayerByGuidEx(sleeper);
+	if(!_player)
 		return isBed();
 
-	std::string name;
-	if(!IOLoginData::getInstance()->getNameByGuid(sleeper, name))
-		return isBed();
+	bool ret = house->getHouseAccessLevel(_player) <= house->getHouseAccessLevel(player);
+	if(_player->isVirtual())
+		delete _player;
 
-	bool ret = isBed();
-	Player* _player = new Player(name, NULL);
-	if(IOLoginData::getInstance()->loadPlayer(_player, name))
-		ret = house->getHouseAccessLevel(_player) <= house->getHouseAccessLevel(player);
-
-	delete _player;
 	return ret;
 }
 
@@ -141,33 +136,32 @@ void BedItem::sleep(Player* player)
 		g_game.addMagicEffect(player->getPosition(), NM_ME_SLEEP);
 		Scheduler::getScheduler().addEvent(createSchedulerTask(SCHEDULER_MINTICKS, boost::bind(&Game::kickPlayer, &g_game, player->getID(), false)));
 	}
-	else if(house->getHouseOwner() == player->getGUID() && Item::items[getID()].transformToFree)
+	else if(Item::items[getID()].transformToFree)
 	{
-		wakeUp(NULL);
+		wakeUp();
 		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 	}
 	else
 		player->sendCancelMessage(RET_NOTPOSSIBLE);
 }
 
-void BedItem::wakeUp(Player* player)
+void BedItem::wakeUp()
 {
 	if(!house)
 		return;
 
-	if(sleeper && !player)
+	if(sleeper)
 	{
-		std::string name;
-		if(IOLoginData::getInstance()->getNameByGuid(sleeper, name))
+		if(Player* player = g_game.getPlayerByGuidEx(sleeper))
 		{
-			Player* _player = new Player(name, NULL);
-			if(IOLoginData::getInstance()->loadPlayer(_player, name))
+			regeneratePlayer(player);
+			if(player->isVirtual())
 			{
-				regeneratePlayer(_player);
-				IOLoginData::getInstance()->savePlayer(_player);
+				IOLoginData::getInstance()->savePlayer(player);
+				delete player;
 			}
-
-			delete _player;
+			else
+				g_game.addCreatureHealth(player);
 		}
 	}
 
@@ -191,22 +185,19 @@ void BedItem::regeneratePlayer(Player* player) const
 		int32_t amount = sleptTime / 30;
 		if(condition->getTicks() != -1)
 		{
-			amount = std::min((condition->getTicks()/1000), sleptTime) / 30;
+			amount = std::min((condition->getTicks() / 1000), sleptTime) / 30;
 			int32_t tmp = condition->getTicks() - (amount * 30000);
-			if(tmp > 0)
-				condition->setTicks(tmp);
-			else
-			{
+			if(tmp <= 0)
 				player->removeCondition(condition);
-				condition = NULL;
-			}
+			else
+				condition->setTicks(tmp);
 		}
 
 		player->changeHealth(amount);
 		player->changeMana(amount);
 	}
 
-	player->changeSoul((int32_t)std::max((float)0, ((float)sleptTime / (60 * 15))));
+	player->changeSoul((int32_t)std::max((float)0, (float)sleptTime / (60 * 15)));
 }
 
 void BedItem::updateAppearance(const Player* player)

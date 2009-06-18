@@ -26,7 +26,8 @@ extern Game g_game;
 
 Container::Container(uint16_t _type) : Item(_type)
 {
-	maxSize = items[this->getID()].maxItems;
+	maxSize = items[_type].maxItems;
+	serializationCount = 0;
 	totalWeight = 0.0;
 }
 
@@ -65,6 +66,27 @@ void Container::addItem(Item* item)
 {
 	itemlist.push_back(item);
 	item->setParent(this);
+}
+
+Attr_ReadValue Container::readAttr(AttrTypes_t attr, PropStream& propStream)
+{
+	switch(attr)
+	{
+		case ATTR_CONTAINER_ITEMS:
+		{
+			uint32_t count;
+			if(!propStream.GET_ULONG(count))
+				return ATTR_READ_ERROR;
+
+			serializationCount = count;
+			return ATTR_READ_END;
+		}
+
+		default:
+			break;
+	}
+
+	return Item::readAttr(attr, propStream);
 }
 
 bool Container::unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream)

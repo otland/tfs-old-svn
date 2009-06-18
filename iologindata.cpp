@@ -1345,21 +1345,6 @@ bool IOLoginData::getGuidByNameEx(uint32_t& guid, bool &specialVip, std::string&
 	return true;
 }
 
-uint32_t IOLoginData::getAccountIdByName(std::string name)
-{
-	Database* db = Database::getInstance();
-	DBQuery query;
-	query << "SELECT `account_id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
-
-	DBResult* result;
-	if(!(result = db->storeQuery(query.str())))
-		return 0;
-
-	const uint32_t accountId = result->getDataInt("account_id");
-	result->free();
-	return accountId;
-}
-
 bool IOLoginData::changeName(uint32_t guid, std::string newName, std::string oldName)
 {
 	Database* db = Database::getInstance();
@@ -1499,12 +1484,12 @@ uint32_t IOLoginData::getLastIP(uint32_t guid) const
 	if(!(result = db->storeQuery(query.str())))
 		return 0;
 
-	uint32_t lastip = result->getDataInt("lastip");
+	const uint32_t ip = result->getDataInt("lastip");
 	result->free();
-	return lastip;
+	return ip;
 }
 
-uint32_t IOLoginData::getLastIPByName(std::string name)
+uint32_t IOLoginData::getLastIPByName(const std::string& name) const
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
@@ -1514,9 +1499,24 @@ uint32_t IOLoginData::getLastIPByName(std::string name)
 	if(!(result = db->storeQuery(query.str())))
 		return 0;
 
-	uint32_t lastip = result->getDataInt("lastip");
+	const uint32_t ip = result->getDataInt("lastip");
 	result->free();
-	return lastip;
+	return ip;
+}
+
+uint32_t IOLoginData::getAccountIdByName(const std::string& name) const
+{
+	Database* db = Database::getInstance();
+	DBQuery query;
+	query << "SELECT `account_id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
+
+	DBResult* result;
+	if(!(result = db->storeQuery(query.str())))
+		return 0;
+
+	const uint32_t accountId = result->getDataInt("account_id");
+	result->free();
+	return accountId;
 }
 
 bool IOLoginData::getUnjustifiedDates(uint32_t guid, std::vector<time_t>& dateList, time_t _time)
@@ -1534,7 +1534,21 @@ bool IOLoginData::getUnjustifiedDates(uint32_t guid, std::vector<time_t>& dateLi
 	do
 		dateList.push_back((time_t)result->getDataInt("date"));
 	while(result->next());
+	result->free();
+	return true;
+}
 
+bool IOLoginData::getDefaultTownByName(const std::string& name, uint32_t& townId)
+{
+	Database* db = Database::getInstance();
+	DBQuery query;
+	query << "SELECT `town_id` FROM `players` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(name) << " AND `deleted` = 0;";
+
+	DBResult* result;
+	if(!(result = db->storeQuery(query.str())))
+		return false;
+
+	townId = result->getDataInt("town_id");
 	result->free();
 	return true;
 }

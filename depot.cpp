@@ -18,29 +18,24 @@
 #include "depot.h"
 #include "tools.h"
 
-Depot::Depot(uint16_t _type) :
-Container(_type)
+Depot::Depot(uint16_t _type):
+	Container(_type)
 {
-	depotId = 0;
 	maxSize = 30;
+	depotId = 0;
 	maxDepotLimit = 1000;
 }
 
-Depot::~Depot()
-{
-	//
-}
-
-bool Depot::readAttr(AttrTypes_t attr, PropStream& propStream)
+Attr_ReadValue Depot::readAttr(AttrTypes_t attr, PropStream& propStream)
 {
 	if(ATTR_DEPOT_ID == attr)
 	{
 		uint16_t _depotId;
 		if(!propStream.GET_USHORT(_depotId))
-			return false;
+			return ATTR_READ_ERROR;
 
 		setDepotId(_depotId);
-		return true;
+		return ATTR_READ_CONTINUE;
 	}
 
 	return Item::readAttr(attr, propStream);

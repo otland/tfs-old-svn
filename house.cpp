@@ -33,7 +33,7 @@ extern Game g_game;
 
 House::House(uint32_t _houseId)
 {
-	loaded = guild = false;
+	loaded = guild = pendingTransfer = false;
 	houseName = "Forgotten headquarter (Flat 1, Area 42)";
 	posEntry = Position();
 	houseId = _houseId;
@@ -224,7 +224,7 @@ void House::clean()
 	for(HouseBedItemList::iterator bit = bedsList.begin(); bit != bedsList.end(); ++bit)
 	{
 		if((*bit)->getSleeper())
-			(*bit)->wakeUp(NULL);
+			(*bit)->wakeUp();
 	}
 }
 
@@ -241,21 +241,7 @@ bool House::transferToDepot()
 			owner = 0;
 
 		if(owner)
-		{
-			std::string ownerName;
-			if(IOLoginData::getInstance()->getNameByGuid(owner, ownerName))
-				player = g_game.getPlayerByName(ownerName);
-
-			if(!player)
-			{
-				player = new Player(ownerName, NULL);
-				if(!IOLoginData::getInstance()->loadPlayer(player, ownerName))
-				{
-					delete player;
-					player = NULL;
-				}
-			}
-		}
+			player = g_game.getPlayerByGuidEx(owner);
 	}
 
 	Item* item = NULL;
@@ -613,16 +599,16 @@ Door::~Door()
 		delete accessList;
 }
 
-bool Door::readAttr(AttrTypes_t attr, PropStream& propStream)
+Attr_ReadValue Door::readAttr(AttrTypes_t attr, PropStream& propStream)
 {
 	if(ATTR_HOUSEDOORID == attr)
 	{
 		uint8_t _doorId = 0;
 		if(!propStream.GET_UCHAR(_doorId))
-			return false;
+			return ATTR_READ_ERROR;
 
 		setDoorId(_doorId);
-		return true;
+		return ATTR_READ_CONTINUE;
 	}
 
 	return Item::readAttr(attr, propStream);
@@ -908,19 +894,9 @@ bool Houses::payHouse(House* house, time_t _time)
 		return false;
 	}
 
-	Player* player = g_game.getPlayerByName(name);
+	Player* player = g_game.getPlayerByNameEx(name);
 	if(!player)
-	{
-		player = new Player(name, NULL);
-		if(!IOLoginData::getInstance()->loadPlayer(player, name))
-		{
-			#ifdef __DEBUG_HOUSES__
-			std::cout << "[Failure - Houses::payHouse] Cannot load player: " << name << std::endl;
-			#endif
-			delete player;
-			return false;
-		}
-	}
+		return false;
 
 	if(!player->isPremium() && g_config.getBool(ConfigManager::HOUSE_NEED_PREMIUM))
 	{

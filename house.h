@@ -97,7 +97,7 @@ class Door : public Item
 		House* getHouse() {return house;}
 
 		//serialization
-		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
+		virtual Attr_ReadValue readAttr(AttrTypes_t attr, PropStream& propStream);
 
 		void setDoorId(uint32_t _doorId){ setIntAttr(ATTR_ITEM_DOORID, (uint32_t)_doorId); }
 		uint32_t getDoorId() const{ return getIntAttr(ATTR_ITEM_DOORID); }
@@ -175,6 +175,9 @@ class House
 		void setSize(uint32_t _size) {size = _size;}
 		uint32_t getSize() const {return size;}
 
+		void setPendingTransfer(bool transfer) {pendingTransfer = transfer;}
+		bool hasPendingTransfer() const {return pendingTransfer;}
+
 		void setGuild(bool _guild) {guild = _guild;}
 		bool isGuild() const;
 
@@ -214,7 +217,7 @@ class House
 		void removePlayer(Player* player, bool ignoreRights);
 		void removePlayers(bool ignoreInvites);
 
-		bool loaded, guild;
+		bool loaded, guild, pendingTransfer;
 		time_t paidUntil, lastWarning;
 		uint32_t houseId, houseOwner, rentWarnings, rent, price, townid, size;
 		std::string houseName;

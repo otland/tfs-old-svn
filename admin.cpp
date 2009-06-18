@@ -32,6 +32,7 @@
 #include "networkmessage.h"
 
 #include "house.h"
+#include "mailbox.h"
 #include "iologindata.h"
 
 extern Game g_game;
@@ -318,12 +319,10 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 			uint8_t command = msg.GetByte();
 			switch(command)
 			{
-				case CMD_BROADCAST:
+				case CMD_SAVE_SERVER:
 				{
-					const std::string param = msg.GetString();
-					addLogLine(this, LOGTYPE_EVENT, "broadcasting: " + param);
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
-						&Game::broadcastMessage, &g_game, param, MSG_STATUS_WARNING)));
+					addLogLine(this, LOGTYPE_EVENT, "saving server");
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::saveGameState, &g_game, true)));
 
 					output->AddByte(AP_MSG_COMMAND_OK);
 					break;
@@ -338,19 +337,6 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 					break;
 				}
 
-				case CMD_RELOAD_SCRIPTS:
-				{
-					int8_t reload = msg.GetByte();
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandReload, this, reload)));
-					break;
-				}
-
-				case CMD_PAY_HOUSES:
-				{
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandPayHouses, this)));
-					break;
-				}
-
 				case CMD_OPEN_SERVER:
 				{
 					addLogLine(this, LOGTYPE_EVENT, "opening server");
@@ -362,26 +348,54 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 
 				case CMD_SHUTDOWN_SERVER:
 				{
-					addLogLine(this, LOGTYPE_EVENT, "starting server shutdown");
+					addLogLine(this, LOGTYPE_EVENT, "shutting down server");
 					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
 
 					output->AddByte(AP_MSG_COMMAND_OK);
 					break;
 				}
 
+				case CMD_PAY_HOUSES:
+				{
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandPayHouses, this)));
+					break;
+				}
+
+				case CMD_RELOAD_SCRIPTS:
+				{
+					const int8_t reload = msg.GetByte();
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandReload, this, reload)));
+					break;
+				}
+
 				case CMD_KICK:
 				{
 					const std::string param = msg.GetString();
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
-						&ProtocolAdmin::adminCommandKickPlayer, this, param)));
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandKickPlayer, this, param)));
 					break;
 				}
 
 				case CMD_SETOWNER:
 				{
 					const std::string param = msg.GetString();
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
-						&ProtocolAdmin::adminCommandSetOwner, this, param)));
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandSetOwner, this, param)));
+					break;
+				}
+
+				case CMD_SEND_MAIL:
+				{
+					const std::string xmlData = msg.GetString();
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandSendMail, this, xmlData)));
+					break;
+				}
+
+				case CMD_BROADCAST:
+				{
+					const std::string param = msg.GetString();
+					addLogLine(this, LOGTYPE_EVENT, "broadcasting: " + param);
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::broadcastMessage, &g_game, param, MSG_STATUS_WARNING)));
+
+					output->AddByte(AP_MSG_COMMAND_OK);
 					break;
 				}
 
@@ -420,20 +434,6 @@ void ProtocolAdmin::deleteProtocolTask()
 	Protocol::deleteProtocolTask();
 }
 
-void ProtocolAdmin::adminCommandReload(int8_t reload)
-{
-	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
-	if(!output)
-		return;
-
-	g_game.reloadInfo((ReloadInfo_t)reload);
-	addLogLine(this, LOGTYPE_EVENT, "reload ok");
-
-	TRACK_MESSAGE(output);
-	output->AddByte(AP_MSG_COMMAND_OK);
-	OutputMessagePool::getInstance()->send(output);
-}
-
 void ProtocolAdmin::adminCommandPayHouses()
 {
 	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
@@ -448,7 +448,21 @@ void ProtocolAdmin::adminCommandPayHouses()
 	OutputMessagePool::getInstance()->send(output);
 }
 
-void ProtocolAdmin::adminCommandKickPlayer(const std::string& name)
+void ProtocolAdmin::adminCommandReload(int8_t reload)
+{
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	if(!output)
+		return;
+
+	g_game.reloadInfo((ReloadInfo_t)reload);
+	addLogLine(this, LOGTYPE_EVENT, "reload ok");
+
+	TRACK_MESSAGE(output);
+	output->AddByte(AP_MSG_COMMAND_OK);
+	OutputMessagePool::getInstance()->send(output);
+}
+
+void ProtocolAdmin::adminCommandKickPlayer(const std::string& param)
 {
 	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	if(!output)
@@ -456,7 +470,7 @@ void ProtocolAdmin::adminCommandKickPlayer(const std::string& name)
 
 	TRACK_MESSAGE(output);
 	Player* player = NULL;
-	if(g_game.getPlayerByNameWildcard(name, player) == RET_NOERROR)
+	if(g_game.getPlayerByNameWildcard(param, player) == RET_NOERROR)
 	{
 		player->kickPlayer(false);
 		addLogLine(this, LOGTYPE_EVENT, "kicked player " + player->getName());
@@ -464,7 +478,7 @@ void ProtocolAdmin::adminCommandKickPlayer(const std::string& name)
 	}
 	else
 	{
-		addLogLine(this, LOGTYPE_EVENT, "Could not kick player: " + name);
+		addLogLine(this, LOGTYPE_EVENT, "failed kicking player " + param);
 		output->AddByte(AP_MSG_COMMAND_FAILED);
 		output->AddString("player is not online");
 	}
@@ -505,6 +519,40 @@ void ProtocolAdmin::adminCommandSetOwner(const std::string& param)
 		addLogLine(this, LOGTYPE_EVENT, "Could not find house with id: " + houseId);
 		output->AddByte(AP_MSG_COMMAND_FAILED);
 		output->AddString("such house does not exists");
+	}
+
+	OutputMessagePool::getInstance()->send(output);
+}
+
+void ProtocolAdmin::adminCommandSendMail(const std::string& xmlData)
+{
+	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
+	if(!output)
+		return;
+
+	std::string name;
+	uint32_t depotId;
+
+	TRACK_MESSAGE(output);
+	if(Item* mailItem = Admin::createMail(xmlData, name, depotId))
+	{
+		if(Mailbox::sendAddressedItem(NULL, name, depotId, mailItem))
+		{
+			addLogLine(this, LOGTYPE_EVENT, "sent mailbox to " + name);
+			output->AddByte(AP_MSG_COMMAND_OK);
+		}
+		else
+		{
+			addLogLine(this, LOGTYPE_EVENT, "failed sending mailbox to " + name);
+			output->AddByte(AP_MSG_COMMAND_FAILED);
+			output->AddString("could not send the box");
+		}
+	}
+	else
+	{
+		addLogLine(this, LOGTYPE_EVENT, "failed parsing mailbox");
+		output->AddByte(AP_MSG_COMMAND_FAILED);
+		output->AddString("could not parse the box");
 	}
 
 	OutputMessagePool::getInstance()->send(output);
@@ -641,6 +689,60 @@ RSA* Admin::getRSAKey(uint8_t type)
 	return NULL;
 }
 
+Item* Admin::createMail(const std::string xmlData, std::string& name, uint32_t& depotId)
+{
+	xmlDocPtr doc = xmlParseMemory(xmlData.c_str(), strlen(xmlData.c_str()));
+	if(!doc)
+		return NULL;
+
+	xmlNodePtr root = xmlDocGetRootElement(doc);
+	if(xmlStrcmp(root->name,(const xmlChar*)"mail"))
+		return NULL;
+
+	int32_t intValue;
+	std::string strValue;
+
+	int32_t itemId = ITEM_PARCEL;
+	if(readXMLString(root, "to", strValue))
+		name = strValue;
+
+	if(readXMLString(root, "town", strValue))
+	{
+		if(!Mailbox::getDepotId(strValue, depotId))
+			return false;
+	}
+	else if(!IOLoginData::getInstance()->getDefaultTown(name, depotId)) //use the players default town
+		return false;
+
+	if(readXMLInteger(root, "id", intValue))
+		itemId = intValue;
+
+	Item* mailItem = Item::CreateItem(itemId);
+	mailItem->setParent(VirtualCylinder::virtualCylinder);
+	if(Container* mailContainer = mailItem->getContainer())
+	{
+		xmlNodePtr node = root->children;
+		while(node)
+		{
+			if(node->type != XML_ELEMENT_NODE)
+			{
+				node = node->next;
+				continue;
+			}
+
+			if(!Item::loadItem(node, mailContainer))
+			{
+				delete mailContainer;
+				return NULL;
+			}
+
+			node = node->next;
+		}
+	}
+
+	return mailItem;
+}
+
 bool Admin::allowIP(uint32_t ip)
 {
 	if(!m_onlyLocalHost)
@@ -656,7 +758,7 @@ bool Admin::allowIP(uint32_t ip)
 	return false;
 }
 
-bool Admin::passwordMatch(std::string& password)
+bool Admin::passwordMatch(const std::string& password)
 {
 	//prevent empty password login
 	if(!m_password.length())

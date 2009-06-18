@@ -38,7 +38,7 @@ CREATE TABLE `server_config`
 	UNIQUE (`config`)
 ) ENGINE = InnoDB;
 
-INSERT INTO `server_config` VALUES ('db_version', 17);
+INSERT INTO `server_config` VALUES ('db_version', 18);
 
 CREATE TABLE `server_motd`
 (
@@ -245,6 +245,7 @@ CREATE TABLE `houses`
 	`doors` INT UNSIGNED NOT NULL DEFAULT 0,
 	`beds` INT UNSIGNED NOT NULL DEFAULT 0,
 	`guild` TINYINT(1) UNSIGNED NOT NULL DEFAULT FALSE,
+	`clear` TINYINT(1) UNSIGNED NOT NULL DEFAULT FALSE,
 	UNIQUE (`id`, `world_id`)
 ) ENGINE = InnoDB;
 
@@ -286,13 +287,12 @@ CREATE TABLE `environment_killers`
 CREATE TABLE `player_depotitems`
 (
 	`player_id` INT NOT NULL,
-	`depot_id` INT NOT NULL DEFAULT 0 COMMENT 'NOT IN USE BY THE SERVER',
 	`sid` INT NOT NULL COMMENT 'any given range, eg. 0-100 is reserved for depot lockers and all above 100 will be normal items inside depots',
 	`pid` INT NOT NULL DEFAULT 0,
 	`itemtype` INT NOT NULL,
 	`count` INT NOT NULL DEFAULT 0,
 	`attributes` BLOB NOT NULL,
-	KEY (`player_id`, `depot_id`), UNIQUE (`player_id`, `sid`),
+	KEY (`player_id`), UNIQUE (`player_id`, `sid`),
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
@@ -358,11 +358,13 @@ CREATE TABLE `tiles`
 (
 	`id` INT UNSIGNED NOT NULL,
 	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+	`house_id` INT UNSIGNED NOT NULL,
 	`x` INT(5) UNSIGNED NOT NULL,
 	`y` INT(5) UNSIGNED NOT NULL,
 	`z` TINYINT(2) UNSIGNED NOT NULL,
 	UNIQUE (`id`, `world_id`),
-	KEY (`x`, `y`, `z`)
+	KEY (`x`, `y`, `z`),
+	FOREIGN KEY (`house_id`, `world_id`) REFERENCES `houses`(`id`, `world_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `tile_items`

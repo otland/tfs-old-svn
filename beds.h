@@ -33,7 +33,7 @@ class BedItem : public Item
 		virtual BedItem* getBed() {return this;}
 		virtual const BedItem* getBed() const {return this;}
 
-		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
+		virtual Attr_ReadValue readAttr(AttrTypes_t attr, PropStream& propStream);
 		virtual bool serializeAttr(PropWriteStream& propWriteStream) const;
 
 		virtual bool canRemove() const {return (house == NULL);}
@@ -50,7 +50,7 @@ class BedItem : public Item
 		bool canUse(Player* player);
 
 		void sleep(Player* player);
-		void wakeUp(Player* player);
+		void wakeUp();
 
 		BedItem* getNextBedItem();
 

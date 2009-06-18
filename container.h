@@ -59,10 +59,13 @@ class Container : public Item, public Cylinder
 
 		virtual Container* getContainer() {return this;}
 		virtual const Container* getContainer() const {return this;}
+
 		virtual Depot* getDepot() {return NULL;}
 		virtual const Depot* getDepot() const {return NULL;}
 
+		Attr_ReadValue readAttr(AttrTypes_t attr, PropStream& propStream);
 		bool unserializeItemNode(FileLoader& f, NODE node, PropStream& propStream);
+
 		std::string getContentDescription() const;
 
 		uint32_t size() const {return (uint32_t)itemlist.size();}
@@ -71,11 +74,13 @@ class Container : public Item, public Cylinder
 
 		ContainerIterator begin();
 		ContainerIterator end();
+
 		ContainerIterator begin() const;
 		ContainerIterator end() const;
 
 		ItemList::const_iterator getItems() const {return itemlist.begin();}
 		ItemList::const_iterator getEnd() const {return itemlist.end();}
+
 		ItemList::const_reverse_iterator getReversedItems() const {return itemlist.rbegin();}
 		ItemList::const_reverse_iterator getReversedEnd() const {return itemlist.rend();}
 
@@ -135,10 +140,11 @@ class Container : public Item, public Cylinder
 		std::stringstream& getContentDescription(std::stringstream& s) const;
 
 	protected:
-		uint32_t maxSize;
+		uint32_t maxSize, serializationCount;
 		double totalWeight;
 
 		ItemList itemlist;
 		friend class ContainerIterator;
+		friend class IOMapSerialize;
 };
 #endif

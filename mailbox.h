@@ -36,11 +36,11 @@ class Mailbox : public Item, public Cylinder
 			uint32_t flags) const;
 		virtual ReturnValue __queryMaxCount(int32_t index, const Thing* thing, uint32_t count,
 			uint32_t& maxQueryCount, uint32_t flags) const;
-		virtual ReturnValue __queryRemove(const Thing* thing, uint32_t count, uint32_t flags) const;
+		virtual ReturnValue __queryRemove(const Thing* thing, uint32_t count, uint32_t flags) const {return RET_NOTPOSSIBLE;}
 		virtual Cylinder* __queryDestination(int32_t& index, const Thing* thing, Item** destItem,
-			uint32_t& flags);
+			uint32_t& flags) {return this;}
 
-		virtual void __addThing(Creature* actor, Thing* thing);
+		virtual void __addThing(Creature* actor, Thing* thing) {__addThing(actor, 0, thing);}
 		virtual void __addThing(Creature* actor, int32_t index, Thing* thing);
 
 		virtual void __updateThing(Thing* thing, uint16_t itemId, uint32_t count) {}
@@ -49,12 +49,18 @@ class Mailbox : public Item, public Cylinder
 		virtual void __removeThing(Thing* thing, uint32_t count) {}
 
 		virtual void postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
-			int32_t index, cylinderlink_t link = LINK_OWNER);
+			int32_t index, cylinderlink_t link = LINK_OWNER)
+			{getParent()->postAddNotification(actor, thing, oldParent, index, LINK_PARENT);}
 		virtual void postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
-			int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER);
+			int32_t index, bool isCompleteRemoval, cylinderlink_t link = LINK_OWNER)
+			{getParent()->postRemoveNotification(actor, thing, newParent, index, isCompleteRemoval, LINK_PARENT);}
 
-		bool getReceiver(Item* item, std::string& name, uint32_t& dpnum);
-		bool sendItem(Creature* actor, Item* item);
-		bool canSend(const Item* item) const {return (item->getID() == ITEM_PARCEL || item->getID() == ITEM_LETTER);}
+		static bool sendItem(Creature* actor, Item* item);
+		static bool sendAddressedItem(Creature* actor, const std::string& name, uint32_t depotId, Item* item);
+
+		static bool getDepotId(const std::string& townString, uint32_t& depotId);
+		static bool getRecipient(Item* item, std::string& name, uint32_t& depotId);
+
+		static bool canSend(const Item* item) {return (item->getID() == ITEM_PARCEL || item->getID() == ITEM_LETTER);}
 };
 #endif

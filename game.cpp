@@ -666,14 +666,73 @@ Creature* Game::getCreatureByName(const std::string& s)
 
 Player* Game::getPlayerByName(const std::string& s)
 {
-	std::string tmp = asLowerCaseString(s);
+	if(s.empty())
+		return NULL;
+
+	std::string ss = asLowerCaseString(s);
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		if(!(*it).second->isRemoved() && tmp == asLowerCaseString((*it).second->getName()))
+		if(!it->second->isRemoved() && asLowerCaseString(it->second->getName()) == ss)
 			return it->second;
 	}
 
-	return NULL; //just in case the player doesnt exist
+	return NULL;
+}
+
+Player* Game::getPlayerByNameEx(const std::string& s)
+{
+	Player* player = getPlayerByName(s);
+	if(player)
+		return player;
+
+	std::string name = s;
+	if(!IOLoginData::getInstance()->playerExists(name))
+		return NULL;
+
+	player = new Player(name, NULL);
+	if(IOLoginData::getInstance()->loadPlayer(player, name))
+		return player;
+
+#ifdef __DEBUG__
+	std::cout << "[Failure - Game::getPlayerByNameEx] Cannot load player: " << name << std::endl;
+#endif
+	delete player;
+	return NULL;
+}
+
+Player* Game::getPlayerByGuid(uint32_t guid)
+{
+	if(!guid)
+		return NULL;
+
+	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	{
+		if(!it->second->isRemoved() && it->second->getGUID() == guid)
+			return it->second;
+	}
+
+	return NULL;
+}
+
+Player* Game::getPlayerByGuidEx(uint32_t guid)
+{
+	Player* player = getPlayerByGuid(guid);
+	if(player)
+		return player;
+
+	std::string name;
+	if(!IOLoginData::getInstance()->getNameByGuid(guid, name))
+		return NULL;
+
+	player = new Player(name, NULL);
+	if(IOLoginData::getInstance()->loadPlayer(player, name))
+		return player;
+
+#ifdef __DEBUG__
+	std::cout << "[Failure - Game::getPlayerByGuidEx] Cannot load player: " << name << std::endl;
+#endif
+	delete player;
+	return NULL;
 }
 
 ReturnValue Game::getPlayerByNameWildcard(const std::string& s, Player*& player)
@@ -692,20 +751,20 @@ ReturnValue Game::getPlayerByNameWildcard(const std::string& s, Player*& player)
 	}
 
 	Player* lastFound = NULL;
-	std::string tmp = asLowerCaseString(s.substr(0, s.length() - 1));
+	std::string name, tmp = asLowerCaseString(s.substr(0, s.length() - 1));
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		if(!(*it).second->isRemoved())
-		{
-			std::string name = asLowerCaseString((*it).second->getName());
-			if(name.substr(0, tmp.length()) == tmp)
-			{
-				if(lastFound)
-					return RET_NAMEISTOOAMBIGUOUS;
+		if(it->second->isRemoved())
+			continue;
 
-				lastFound = (*it).second;
-			}
-		}
+		name = asLowerCaseString(it->second->getName());
+		if(name.substr(0, tmp.length()) != tmp)
+			continue;
+
+		if(lastFound)
+			return RET_NAMEISTOOAMBIGUOUS;
+
+		lastFound = it->second;
 	}
 
 	if(!lastFound)

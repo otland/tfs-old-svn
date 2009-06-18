@@ -17,16 +17,17 @@
 #include "otpch.h"
 #include "mailbox.h"
 
-#include "configmanager.h"
-
 #include "player.h"
 #include "iologindata.h"
+
 #include "depot.h"
 #include "town.h"
 
+#include "configmanager.h"
 #include "game.h"
-extern Game g_game;
+
 extern ConfigManager g_config;
+extern Game g_game;
 
 ReturnValue Mailbox::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 	uint32_t flags) const
@@ -47,22 +48,6 @@ ReturnValue Mailbox::__queryMaxCount(int32_t index, const Thing* thing, uint32_t
 	return RET_NOERROR;
 }
 
-ReturnValue Mailbox::__queryRemove(const Thing* thing, uint32_t count, uint32_t flags) const
-{
-	return RET_NOTPOSSIBLE;
-}
-
-Cylinder* Mailbox::__queryDestination(int32_t& index, const Thing* thing, Item** destItem,
-	uint32_t& flags)
-{
-	return this;
-}
-
-void Mailbox::__addThing(Creature* actor, Thing* thing)
-{
-	return __addThing(actor, 0, thing);
-}
-
 void Mailbox::__addThing(Creature* actor, int32_t index, Thing* thing)
 {
 	if(Item* item = thing->getItem())
@@ -72,44 +57,27 @@ void Mailbox::__addThing(Creature* actor, int32_t index, Thing* thing)
 	}
 }
 
-void Mailbox::postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
-	int32_t index, cylinderlink_t link /*= LINK_OWNER*/)
-{
-	getParent()->postAddNotification(actor, thing, oldParent, index, LINK_PARENT);
-}
-
-void Mailbox::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
-	int32_t index, bool isCompleteRemoval, cylinderlink_t link /*= LINK_OWNER*/)
-{
-	getParent()->postRemoveNotification(actor, thing, newParent,
-		index, isCompleteRemoval, LINK_PARENT);
-}
-
 bool Mailbox::sendItem(Creature* actor, Item* item)
 {
-	uint32_t dp = 0;
-	std::string receiver;
-	if(!getReceiver(item, receiver, dp))
+	uint32_t depotId = 0;
+	std::string name;
+	if(!getRecipient(item, name, depotId))
 		return false;
 
-	if(receiver.empty() || !dp)
+	if(name.empty() || !depotId)
 		return false;
 
-	Player* player = g_game.getPlayerByName(receiver);
-	if(!player)
-	{
-		player = new Player(receiver, NULL);
-		if(!IOLoginData::getInstance()->loadPlayer(player, receiver))
-		{
-			delete player;
-			player = NULL;
-		}
-	}
+	return sendAddressedItem(actor, name, depotId, item);
+}
 
+bool Mailbox::sendAddressedItem(Creature* actor, const std::string& name, uint32_t depotId, Item* item)
+{
+	std::string tmpName = name;
+	Player* player = g_game.getPlayerByNameEx(tmpName);
 	if(!player)
 		return false;
 
-	Depot* depot = player->getDepot(dp, true);
+	Depot* depot = player->getDepot(depotId, true);
 	if(!depot || g_game.internalMoveItem(actor, item->getParent(), depot, INDEX_WHEREEVER,
 		item, item->getItemCount(), NULL, FLAG_NOLIMIT) != RET_NOERROR)
 	{
@@ -121,19 +89,24 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 
 	g_game.transformItem(item, item->getID() + 1);
 	bool result = true, opened = player->getContainerID(depot) != -1;
-	if(Player* tmp = actor->getPlayer())
+
+	Player* tmp = NULL;
+	if(actor)
+		tmp = actor->getPlayer();
+
+	CreatureEventList mailEvents = player->getCreatureEvents(CREATURE_EVENT_MAIL_RECEIVE);
+	for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
 	{
-		CreatureEventList mailEvents = tmp->getCreatureEvents(CREATURE_EVENT_MAIL_SEND);
+		if(!(*it)->executeMailReceive(player, tmp, item, opened) && result)
+			result = false;
+	}
+
+	if(tmp)
+	{
+		mailEvents = tmp->getCreatureEvents(CREATURE_EVENT_MAIL_SEND);
 		for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
 		{
 			if(!(*it)->executeMailSend(tmp, player, item, opened) && result)
-				result = false;
-		}
-
-		mailEvents = player->getCreatureEvents(CREATURE_EVENT_MAIL_RECEIVE);
-		for(CreatureEventList::iterator it = mailEvents.begin(); it != mailEvents.end(); ++it)
-		{
-			if(!(*it)->executeMailReceive(player, tmp, item, opened) && result)
 				result = false;
 		}
 	}
@@ -147,7 +120,27 @@ bool Mailbox::sendItem(Creature* actor, Item* item)
 	return result;
 }
 
-bool Mailbox::getReceiver(Item* item, std::string& name, uint32_t& dp)
+bool Mailbox::getDepotId(const std::string& townString, uint32_t& depotId)
+{
+	Town* town = Towns::getInstance().getTown(townString);
+	if(!town)
+		return false;
+
+	IntegerVec disabledTowns = vectorAtoi(explodeString(g_config.getString(ConfigManager::MAILBOX_DISABLED_TOWNS), ","));
+	if(disabledTowns[0] != -1)
+	{	
+		for(IntegerVec::iterator it = disabledTowns.begin(); it != disabledTowns.end(); ++it)
+		{
+			if(town->getTownID() == uint32_t(*it))
+				return false;
+		}
+	}
+
+	depotId = town->getTownID();
+	return true;
+}
+
+bool Mailbox::getRecipient(Item* item, std::string& name, uint32_t& depotId)
 {
 	if(!item)
 		return false;
@@ -178,31 +171,19 @@ bool Mailbox::getReceiver(Item* item, std::string& name, uint32_t& dp)
 	std::istringstream iss(item->getText(), std::istringstream::in);
 	uint32_t curLine = 0;
 
-	std::string tmp, strTown;
+	std::string tmp, townString;
 	while(getline(iss, tmp, '\n') && curLine < 2)
 	{
 		if(curLine == 0)
 			name = tmp;
 		else if(curLine == 1)
-			strTown = tmp;
+			townString = tmp;
 
 		++curLine;
 	}
 
-	Town* town = Towns::getInstance().getTown(strTown);
-	if(!town)
+	if(townString.empty())
 		return false;
 
-	IntegerVec disabledTowns = vectorAtoi(explodeString(g_config.getString(ConfigManager::MAILBOX_DISABLED_TOWNS), ","));
-	if(disabledTowns[0] != -1)
-	{
-		for(IntegerVec::iterator it = disabledTowns.begin(); it != disabledTowns.end(); ++it)
-		{
-			if(town->getTownID() == (uint32_t)(*it))
-				return false;
-		}
-	}
-
-	dp = town->getTownID();
-	return true;
+	return getDepotId(townString, depotId);
 }

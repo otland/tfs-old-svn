@@ -59,13 +59,14 @@ class Towns
 			return true;
 		}
 
-		Town* getTown(std::string& townname)
+		Town* getTown(const std::string& townname)
 		{
 			for(TownMap::iterator it = townMap.begin(); it != townMap.end(); ++it)
 			{
-				if(strcasecmp(it->second->getName().c_str(), townname.c_str()) == 0)
+				if(!strcasecmp(it->second->getName().c_str(), townname.c_str()))
 					return it->second;
 			}
+
 			return NULL;
 		}
 

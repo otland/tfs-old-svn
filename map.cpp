@@ -30,10 +30,10 @@
 
 #include "iomapserialize.h"
 #include "items.h"
+
 #include "game.h"
 
 extern Game g_game;
-IOMapSerialize IOMapSerialize;
 
 Map::Map()
 {
@@ -56,28 +56,36 @@ bool Map::loadMap(const std::string& identifier)
 	if(!loader->loadSpawns(this))
 		std::cout << "> WARNING: Could not load spawn data." << std::endl;
 
+	std::cout << "> Spawns parsing time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
+	start = OTSYS_TIME();
 	if(!loader->loadHouses(this))
 		std::cout << "> WARNING: Could not load house data." << std::endl;
 
+	std::cout << "> Houses parsing time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 	delete loader;
-	std::cout << "> Data loading time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
-	start = OTSYS_TIME();
+	IOMapSerialize* IOLoader = IOMapSerialize::getInstance();
 
-	IOMapSerialize.loadHouseInfo(this);
+	start = OTSYS_TIME();
+	IOLoader->synchronizeHouseInfo();
+	std::cout << "> Houses synchronization time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
+
+	start = OTSYS_TIME();
+	IOLoader->loadHouseInfo(this);
 	std::cout << "> Unserialization time for houses: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
-	start = OTSYS_TIME();
 
-	IOMapSerialize.loadMap(this);
+	start = OTSYS_TIME();
+	IOLoader->loadMap(this);
 	std::cout << "> Unserialization time for map: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 	return true;
 }
 
 bool Map::saveMap()
 {
+	IOMapSerialize* IOLoader = IOMapSerialize::getInstance();
 	bool saved = false;
 	for(uint32_t tries = 0; tries < 3; ++tries)
 	{
-		if(!IOMapSerialize.saveHouseInfo(this))
+		if(!IOLoader->saveHouseInfo(this))
 			continue;
 
 		saved = true;
@@ -90,7 +98,7 @@ bool Map::saveMap()
 	saved = false;
 	for(uint32_t tries = 0; tries < 3; ++tries)
 	{
-		if(!IOMapSerialize.saveMap(this))
+		if(!IOLoader->saveMap(this))
 			continue;
 
 		saved = true;

@@ -23,17 +23,18 @@ class Depot : public Container
 {
 	public:
 		Depot(uint16_t _type);
-		virtual ~Depot();
+		virtual ~Depot() {}
 
 		virtual Depot* getDepot() {return this;}
 		virtual const Depot* getDepot() const {return this;}
 
 		//serialization
-		virtual bool readAttr(AttrTypes_t attr, PropStream& propStream);
+		virtual Attr_ReadValue readAttr(AttrTypes_t attr, PropStream& propStream);
 
 		uint32_t getDepotId() const {return depotId;}
-		void setMaxDepotLimit(uint32_t maxitems) {maxDepotLimit = maxitems;}
 		void setDepotId(uint32_t id) {depotId = id;}
+
+		void setMaxDepotLimit(uint32_t maxitems) {maxDepotLimit = maxitems;}
 
 		//cylinder implementations
 		virtual ReturnValue __queryAdd(int32_t index, const Thing* thing, uint32_t count,
@@ -51,6 +52,6 @@ class Depot : public Container
 		virtual bool canRemove() const {return false;}
 
 	private:
-		uint32_t maxDepotLimit, depotId;
+		uint32_t depotId, maxDepotLimit;
 };
 #endif

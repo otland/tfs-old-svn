@@ -1317,7 +1317,7 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerRequiredSkillTries(cid, skillId, skillLevel)
 	lua_register(m_luaState, "getPlayerRequiredSkillTries", LuaScriptInterface::luaGetPlayerRequiredSkillTries);
 
-	//getPlayerItemCount(cid, itemid)
+	//getPlayerItemCount(cid, itemid[, subType])
 	lua_register(m_luaState, "getPlayerItemCount", LuaScriptInterface::luaGetPlayerItemCount);
 
 	//getPlayerMoney(cid)
@@ -4862,12 +4862,15 @@ int32_t LuaScriptInterface::luaDoPlayerAddSoul(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetPlayerItemCount(lua_State* L)
 {
-	//getPlayerItemCount(cid,itemid)
-	uint32_t itemId = (uint32_t)popNumber(L);
+	//getPlayerItemCount(cid, itemid[, subType])
+	int32_t subType = -1;
+	if(lua_gettop(L) > 2)
+		subType = popNumber(L);
 
+	uint32_t itemId = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 	if(const Player* player = env->getPlayerByUID(popNumber(L)))
-		lua_pushnumber(L, player->__getItemTypeCount(itemId));
+		lua_pushnumber(L, player->__getItemTypeCount(itemId, subType));
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));

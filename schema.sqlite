@@ -4,7 +4,7 @@ CREATE TABLE "server_config" (
 	UNIQUE ("config")
 );
 
-INSERT INTO "server_config" VALUES ('db_version', 17);
+INSERT INTO "server_config" VALUES ('db_version', 18);
 
 CREATE TABLE "server_motd" (
 	"id" INTEGER NOT NULL,
@@ -130,7 +130,9 @@ CREATE TABLE "guilds" (
 CREATE TABLE "guild_invites" (
 	"player_id" INTEGER NOT NULL,
 	"guild_id" INTEGER NOT NULL,
-	UNIQUE ("player_id", "guild_id")
+	UNIQUE ("player_id", "guild_id"),
+	FOREIGN KEY ("player_id") REFERENCES "players" ("id"),
+	FOREIGN KEY ("guild_id") REFERENCES "guilds" ("id")
 );
 
 CREATE TABLE "guild_ranks" (
@@ -156,6 +158,7 @@ CREATE TABLE "houses" (
 	"doors" INTEGER NOT NULL DEFAULT 0,
 	"beds" INTEGER NOT NULL DEFAULT 0,
 	"guild" BOOLEAN NOT NULL DEFAULT FALSE,
+	"clear" BOOLEAN NOT NULL DEFAULT FALSE,
 	UNIQUE ("id", "world_id")
 );
 
@@ -165,7 +168,7 @@ CREATE TABLE "house_lists" (
 	"listid" INTEGER NOT NULL,
 	"list" TEXT NOT NULL,
 	UNIQUE ("house_id", "world_id", "listid"),
-	FOREIGN KEY ("house_id") REFERENCES "houses" ("id")
+	FOREIGN KEY ("house_id", "world_id") REFERENCES "houses" ("id", "world_id")
 );
 
 CREATE TABLE "house_data" (
@@ -173,24 +176,22 @@ CREATE TABLE "house_data" (
 	"world_id" INTEGER NOT NULL DEFAULT 0,
 	"data" LONGBLOB NOT NULL,
 	UNIQUE ("house_id", "world_id"),
-	FOREIGN KEY ("house_id") REFERENCES "houses" ("id")
+	FOREIGN KEY ("house_id", "world_id") REFERENCES "houses" ("id", "world_id")
 );
 
 CREATE TABLE "player_deaths" (
-	"id" INTEGER NOT NULL,
+	"id" INTEGER PRIMARY KEY,
 	"player_id" INTEGER NOT NULL,
 	"date" INTEGER NOT NULL,
 	"level" INTEGER NOT NULL,
-	PRIMARY KEY ("id"),
 	FOREIGN KEY ("player_id") REFERENCES "players" ("id")
 );
 
 CREATE TABLE "killers" (
-	"id" INTEGER NOT NULL,
+	"id" INTEGER PRIMARY KEY,
 	"death_id" INTEGER NOT NULL,
 	"final_hit" BOOLEAN NOT NULL DEFAULT FALSE,
 	"unjustified" BOOLEAN NOT NULL DEFAULT FALSE,
-	PRIMARY KEY("id"),
 	FOREIGN KEY ("death_id") REFERENCES "player_deaths" ("id")
 );
 
@@ -209,7 +210,6 @@ CREATE TABLE `environment_killers` (
 
 CREATE TABLE "player_depotitems" (
 	"player_id" INTEGER NOT NULL,
-	"depot_id" INTEGER NOT NULL DEFAULT 0,
 	"sid" INTEGER NOT NULL,
 	"pid" INTEGER NOT NULL DEFAULT 0,
 	"itemtype" INTEGER NOT NULL,
@@ -255,10 +255,12 @@ CREATE TABLE "player_viplist" (
 CREATE TABLE "tiles" (
 	"id" INTEGER NOT NULL,
 	"world_id" INTEGER NOT NULL DEFAULT 0,
+	"house_id" INTEGER NOT NULL,
 	"x" INTEGER NOT NULL,
 	"y" INTEGER NOT NULL,
 	"z" INTEGER NOT NULL,
-	UNIQUE ("id", "world_id")
+	UNIQUE ("id", "world_id"),
+	FOREIGN KEY ("house_id", "world_id") REFERENCES "houses" ("id", "world_id")
 );
 
 CREATE TABLE "tile_items" (

@@ -311,7 +311,7 @@ ReturnValue Combat::canDoCombat(const Creature* attacker, const Creature* target
 	return checkZones && (target->getTile()->hasFlag(TILESTATE_NOPVPZONE) ||
 		(attacker->getTile()->hasFlag(TILESTATE_NOPVPZONE)
 		&& !target->getTile()->hasFlag(TILESTATE_NOPVPZONE) &&
-		!target->getTile()->hasFlag(TILESTATE_PROTECTIONZONE)))) ?
+		!target->getTile()->hasFlag(TILESTATE_PROTECTIONZONE))) ?
 		RET_ACTIONNOTPERMITTEDINANOPVPZONE : RET_NOERROR;
 }
 
