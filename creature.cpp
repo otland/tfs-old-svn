@@ -672,30 +672,31 @@ bool Creature::onDeath()
 	if(tmp > 0 && size > tmp)
 		size = tmp;
 
+	Creature* tmp = NULL;
 	for(DeathList::iterator it = deathList.begin(); it != deathList.end(); ++it, ++i)
 	{
-		if(it->isNameKill())
+		if(it->isNameKill() || !(tmp = it->getKillerCreature()) || tmp->isRemoved())
 			continue;
 
+		bool lastHit = it == deathList.begin();
 		uint32_t flags = 0;
-		if(it == deathList.begin())
+		if(lastHit)
 			flags |= (uint32_t)KILLFLAG_LASTHIT;
 
-		if(it->getKillerCreature()->getPlayer() && i < size)
+		if((tmp->getPlayer() || (tmp->getMaster() && tmp->getMaster()->getPlayer())) && i < size)
 			flags |= (uint32_t)KILLFLAG_JUSTIFY;
 
-		if(!it->getKillerCreature()->onKilledCreature(this, flags) && it == deathList.begin())
+		if(!tmp->onKilledCreature(this, flags) && lastHit)
 			return false;
 
 		if(hasBitSet((uint32_t)KILLFLAG_UNJUSTIFIED, flags))
 			it->setUnjustified(true);
 	}
 
-	Creature* attacker = NULL;
 	for(CountMap::iterator it = damageMap.begin(); it != damageMap.end(); ++it)
 	{
-		if((attacker = g_game.getCreatureByID(it->first)))
-			attacker->onAttackedCreatureKilled(this);
+		if((tmp = g_game.getCreatureByID(it->first)))
+			tmp->onAttackedCreatureKilled(this);
 	}
 
 	if(master)
@@ -1183,10 +1184,7 @@ bool Creature::onKilledCreature(Creature* target, uint32_t& flags)
 {
 	bool ret = true;
 	if(master)
-	{
-		flags |= (uint32_t)KILLFLAG_SUMMON;
 		ret = master->onKilledCreature(target, flags);
-	}
 
 	CreatureEventList killEvents = getCreatureEvents(CREATURE_EVENT_KILL);
 	if(!hasBitSet((uint32_t)KILLFLAG_LASTHIT, flags))

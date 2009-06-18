@@ -69,9 +69,8 @@ enum killflags_t
 {
 	KILLFLAG_NONE = 0,
 	KILLFLAG_LASTHIT = 1 << 0,
-	KILLFLAG_SUMMON = 1 << 1,
-	KILLFLAG_JUSTIFY = 1 << 2,
-	KILLFLAG_UNJUSTIFIED = 1 << 3
+	KILLFLAG_JUSTIFY = 1 << 1,
+	KILLFLAG_UNJUSTIFIED = 1 << 2
 };
 
 struct FindPathParams
