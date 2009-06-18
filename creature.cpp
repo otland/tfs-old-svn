@@ -673,9 +673,10 @@ bool Creature::onDeath()
 		size = tmp;
 
 	Creature* tmp = NULL;
+	CreatureVector justifyVec;
 	for(DeathList::iterator it = deathList.begin(); it != deathList.end(); ++it, ++i)
 	{
-		if(it->isNameKill() || !(tmp = it->getKillerCreature()) || tmp->isRemoved())
+		if(it->isNameKill())
 			continue;
 
 		bool lastHit = it == deathList.begin();
@@ -683,10 +684,22 @@ bool Creature::onDeath()
 		if(lastHit)
 			flags |= (uint32_t)KILLFLAG_LASTHIT;
 
-		if((tmp->getPlayer() || (tmp->getMaster() && tmp->getMaster()->getPlayer())) && i < size)
-			flags |= (uint32_t)KILLFLAG_JUSTIFY;
+		if(i < size)
+		{
+			if(it->getKillerCreature()->getPlayer())
+				tmp = it->getKillerCreature();
+			else if(it->getKillerCreature()->getMaster() && it->getKillerCreature()->getMaster()->getPlayer())
+				tmp = it->getKillerCreature()->getMaster();
+		}
 
-		if(!tmp->onKilledCreature(this, flags) && lastHit)
+		if(tmp && std::find(justifyVec.begin(), justifyVec.end(), tmp) == justifyVec.end())
+		{
+			flags |= (uint32_t)KILLFLAG_JUSTIFY;
+			justifyVec.push_back(tmp);
+			tmp = NULL;
+		}
+
+		if(!attacker->onKilledCreature(this, flags) && lastHit)
 			return false;
 
 		if(hasBitSet((uint32_t)KILLFLAG_UNJUSTIFIED, flags))
