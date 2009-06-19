@@ -502,7 +502,7 @@ int32_t FileLoader::loadCacheBlock(uint32_t pos)
 	{
 		for(i = 0; i < CACHE_BLOCKS; i++)
 		{
-			if((long)(abs((long)m_cached_data[i].base - base_pos)) > (long)(2 * m_cache_size))
+			if((long)(std::abs((long)m_cached_data[i].base - base_pos)) > (long)(2 * m_cache_size))
 			{
 				loading_cache = i;
 				break;

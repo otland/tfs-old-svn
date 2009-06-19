@@ -346,7 +346,7 @@ void Map::getSpectators(SpectatorVec& list, const Position& centerPos, bool chec
 		return;
 
 	bool foundCache = false, cacheResult = false;
-	if(minRangeX == 0 && maxRangeX == 0 && minRangeY == 0 && maxRangeY == 0 && multifloor == true && checkforduplicate == false)
+	if(!minRangeX && !maxRangeX && !minRangeY && !maxRangeY && multifloor && !checkforduplicate)
 	{
 		SpectatorCache::iterator it = spectatorCache.find(centerPos);
 		if(it != spectatorCache.end())
@@ -683,9 +683,7 @@ bool Map::getPathTo(const Creature* creature, const Position& destPos,
 				if(neighbourNode)
 				{
 					if(neighbourNode->g <= newg) //The node on the closed/open list is cheaper than this one
-						continue;
-
-					nodes.openNode(neighbourNode);
+						nodes.openNode(neighbourNode);
 				}
 				else if(!(neighbourNode = nodes.createOpenNode())) //Does not exist in the open/closed list, create a new node
 				{
@@ -830,9 +828,7 @@ bool Map::getPathMatching(const Creature* creature, std::list<Direction>& dirLis
 				if(neighbourNode)
 				{
 					if(neighbourNode->f <= newf) //The node on the closed/open list is cheaper than this one
-						continue;
-
-					nodes.openNode(neighbourNode);
+						nodes.openNode(neighbourNode);
 				}
 				else if(!(neighbourNode = nodes.createOpenNode())) //Does not exist in the open/closed list, create a new node
 				{
