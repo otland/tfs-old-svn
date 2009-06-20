@@ -149,6 +149,7 @@ enum ShootType_t
 
 enum SpeakClasses
 {
+	SPEAK_CLASS_NONE	= 0x00,
 	SPEAK_CLASS_FIRST 	= 0x01,
 	SPEAK_SAY		= SPEAK_CLASS_FIRST,
 	SPEAK_WHISPER		= 0x02,

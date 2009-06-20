@@ -1779,7 +1779,7 @@ bool RuneSpell::executeUse(Player* player, Item* item, const PositionEx& posFrom
 	if(isScripted())
 	{
 		LuaVariant var;
-		if(creatureId != 0)
+		if(creatureId && needTarget)
 		{
 			var.type = VARIANT_NUMBER;
 			var.number = creatureId;

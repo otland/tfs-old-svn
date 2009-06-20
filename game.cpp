@@ -2052,7 +2052,7 @@ bool Game::playerBroadcastMessage(Player* player, const std::string& text, Speak
 
 	std::cout << "> " << player->getName() << " broadcasted: \"" << text << "\"." << std::endl;
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		(*it).second->sendCreatureSay(player, type, text);
+		it->second->sendCreatureSay(player, type, text);
 
 	return true;
 }
@@ -3655,46 +3655,6 @@ bool Game::playerSpeakToNpc(Player* player, const std::string& text)
 			(*it)->onCreatureSay(player, SPEAK_PRIVATE_PN, text);
 	}
 	return true;
-}
-
-void Game::npcSpeakToPlayer(Npc* npc, Player* player, const std::string& text, bool publicize, bool yell)
-{
-	if(player != NULL)
-	{
-		player->sendCreatureSay(npc, SPEAK_PRIVATE_NP, text);
-		player->onCreatureSay(npc, SPEAK_PRIVATE_NP, text);
-	}
-
-	if(publicize)
-	{
-		std::string tmp = text;
-		replaceString(tmp, "{", "");
-		replaceString(tmp, "}", "");
-
-		SpectatorVec::iterator it;
-		SpectatorVec list;
-		getSpectators(list, npc->getPosition());
-
-		SpeakClasses type = SPEAK_SAY;
-		if(yell)
-			type = SPEAK_YELL;
-
-		//send to client
-		Player* tmpPlayer = NULL;
-		for(it = list.begin(); it != list.end(); ++it)
-		{
-			tmpPlayer = (*it)->getPlayer();
-			if((tmpPlayer != NULL) && (tmpPlayer != player))
-				tmpPlayer->sendCreatureSay(npc, type, tmp);
-		}
-
-		//event method
-		for(it = list.begin(); it != list.end(); ++it)
-		{
-			if((*it) != player)
-				(*it)->onCreatureSay(npc, type, tmp);
-		}
-	}
 }
 
 bool Game::playerReportRuleViolation(Player* player, const std::string& text)

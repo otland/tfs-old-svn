@@ -56,29 +56,13 @@ extern RSA* g_otservRSA;
 extern CreatureEvents* g_creatureEvents;
 extern Chat g_chat;
 
-#ifdef __SERVER_PROTECTION__
-#error "You should not use __SERVER_PROTECTION__"
-
-#define ADD_TASK_INTERVAL 40
-#define CHECK_TASK_INTERVAL 5000
-#else
-#define ADD_TASK_INTERVAL -1
-#endif
-
 template<class FunctionType>
 void ProtocolGame::addGameTaskInternal(bool droppable, uint32_t delay, const FunctionType& func)
 {
-	if(m_now > m_nextTask || m_messageCount < 5)
-	{
-		if(droppable)
-			Dispatcher::getDispatcher().addTask(createTask(delay, func));
-		else
-			Dispatcher::getDispatcher().addTask(createTask(func));
-
-		m_nextTask = m_now + ADD_TASK_INTERVAL;
-	}
+	if(droppable)
+		Dispatcher::getDispatcher().addTask(createTask(delay, func));
 	else
-		m_rejectCount++;
+		Dispatcher::getDispatcher().addTask(createTask(func));
 }
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
@@ -503,24 +487,6 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 {
 	if(!m_acceptPackets || msg.getMessageLength() <= 0 || !player)
 		return;
-
-	m_now = OTSYS_TIME();
-	#ifdef __SERVER_PROTECTION__
-	int64_t interval = m_now - m_lastTaskCheck;
-	if(interval > CHECK_TASK_INTERVAL)
-	{
-		interval = 0;
-		m_lastTaskCheck = m_now;
-		m_messageCount = 1;
-		m_rejectCount = 0;
-	}
-	else
-	{
-		m_messageCount++;
-		if((interval > 800 && interval / m_messageCount < 25))
-			getConnection()->close();
-	}
-	#endif
 
 	uint8_t recvbyte = msg.GetByte();
 	//a dead player cannot performs actions

@@ -4045,13 +4045,11 @@ int32_t LuaScriptInterface::luaDoDecayItem(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetThingFromPos(lua_State* L)
 {
-	//Consider using getTileItemById/getTileItemByType/getTileThingByPos/getTopCreature instead.
-
 	//getThingFromPos(pos[, displayError])
 	//Note:
-	//	stackpos = 255. Get the top thing(item moveable or creature)
-	//	stackpos = 254. Get MagicFieldtItem
-	//	stackpos = 253. Get the top creature (moveable creature)
+	//	stackpos = 255- top thing (movable item or creature)
+	//	stackpos = 254- magic field
+	//	stackpos = 253- top creature
 
 	bool displayError = true;
 	if(lua_gettop(L) > 1)
@@ -4066,8 +4064,7 @@ int32_t LuaScriptInterface::luaGetThingFromPos(lua_State* L)
 	{
 		if(pos.stackpos == 255)
 		{
-			thing = tile->getTopCreature();
-			if(thing == NULL)
+			if(!(thing = tile->getTopCreature();))
 			{
 				Item* item = tile->getTopDownItem();
 				if(item && !item->isNotMoveable())
@@ -4143,6 +4140,53 @@ int32_t LuaScriptInterface::luaGetTileItemByType(lua_State* L)
 
 	Tile* tile = g_game.getTile(pos);
 	if(!tile)
+	{
+		pushThing(L, NULL, 0);
+		return 1;
+	}
+
+	bool found = true;
+	switch((ItemTypes_t)rType)
+	{
+		case ITEM_TYPE_TELEPORT:
+		{
+			if(!tile->hasFlag(TILESTATE_TELEPORT))
+				found = false;
+
+			break;
+		}
+		case ITEM_TYPE_MAGICFIELD:
+		{
+			if(!tile->hasFlag(TILESTATE_MAGICFIELD))
+				found = false;
+
+			break;
+		}
+		case ITEM_TYPE_MAILBOX:
+		{
+			if(!tile->hasFlag(TILESTATE_MAILBOX))
+				found = false;
+
+			break;
+		}
+		case ITEM_TYPE_TRASHHOLDER:
+		{
+			if(!tile->hasFlag(TILESTATE_TRASHHOLDER))
+				found = false;
+
+			break;
+		}
+		case ITEM_TYPE_BED:
+			if(!tile->hasFlag(TILESTATE_BED))
+				found = false;
+
+			break;
+		}
+		default:
+			break;
+	}
+
+	if(!found)
 	{
 		pushThing(L, NULL, 0);
 		return 1;

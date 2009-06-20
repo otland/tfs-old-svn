@@ -18,6 +18,7 @@
 #ifndef __NPC__
 #define __NPC__
 #include "templates.h"
+#include "const.h"
 
 #include "creature.h"
 #include "luascript.h"
@@ -366,7 +367,8 @@ struct NpcState
 
 struct Voice
 {
-	bool yell;
+	bool randomSpectator;
+	MessageClasses type;
 	uint32_t interval, margin;
 	std::string text;
 };
@@ -399,7 +401,7 @@ class Npc : public Creature
 		virtual const std::string& getName() const {return name;}
 		virtual const std::string& getNameDescription() const {return nameDescription;}
 
-		void doSay(std::string msg, Player* focus = NULL, bool publicize = false, bool yell = false);
+		void doSay(const std::string& text, MessageClasses type, Player* player);
 		void doTurn(Direction dir);
 		void doMove(Direction dir);
 		void doMoveTo(Position pos);

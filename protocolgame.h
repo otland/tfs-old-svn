@@ -45,7 +45,7 @@ class ProtocolGame : public Protocol
 			protocolGameCount++;
 #endif
 			player = NULL;
-			m_nextTask = m_nextPing = m_lastTaskCheck = m_messageCount = m_rejectCount = eventConnect = 0;
+			eventConnect = 0;
 			m_debugAssertSent = m_acceptPackets = false;
 		}
 

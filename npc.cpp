@@ -15,12 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-#include <functional>
-
-#include <iostream>
-#include <fstream>
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
+
+#include <functional>
+#include <iostream>
+#include <fstream>
 
 #include "npc.h"
 #include "tools.h"
@@ -311,10 +311,15 @@ bool Npc::loadFromXml(const std::string& filename)
 					else
 						voice.margin = 0;
 
-					if(readXMLString(q, "yell", strValue))
-						voice.yell = booleanString(strValue);
+					if(readXMLInteger(q, "type", intValue))
+						voice.type = (MessageClasses)intValue;
 					else
-						voice.yell = false;
+						voice.type = SPEAK_SAY;
+
+					if(readXMLString(q, "randomspectator", strValue) || readXMLString(q, "randomSpectator", strValue))
+						voice.randomSpectator = booleanString(strValue);
+					else
+						voice.randomSpectator = false;
 
 					voiceList.push_back(voice);
 				}
@@ -1155,17 +1160,41 @@ void Npc::onThink(uint32_t interval)
 	if(m_npcEventHandler)
 		m_npcEventHandler->onThink();
 
-	int64_t now = OTSYS_TIME();
-	for(VoiceList::iterator it = voiceList.begin(); it != voiceList.end(); ++it)
+	std::list<Player*> list;
+	Player* tmpPlayer = NULL;
+
+	const SpectatorVec& tmpList = g_game.getSpectators(getPosition());
+	if(tmpList.size()) //loop only if there's at least one spectator
 	{
-		if(now >= (lastVoice + (*it).margin))
+		for(SpectatorVec::const_iterator it = tmpList.begin(); it != tmpList.end(); ++it)
 		{
-			if((uint32_t)(MAX_RAND_RANGE / (*it).interval) >= (uint32_t)random_range(0, MAX_RAND_RANGE))
+			if((tmpPlayer = (*it)->getPlayer()) && !tmpPlayer->isRemoved())
+				list.push_back(tmpPlayer);
+		}
+	}
+
+	if(list.size()) //loop only if there's at least one player
+	{
+		int64_t now = OTSYS_TIME();
+		for(VoiceList::iterator it = voiceList.begin(); it != voiceList.end(); ++it)
+		{
+			if(now < (lastVoice + it->margin))
+				continue;
+
+			if((uint32_t)(MAX_RAND_RANGE / it->interval) < (uint32_t)random_range(0, MAX_RAND_RANGE))
+				continue;
+
+			tmpPlayer = NULL;
+			if(it->randomSpectator)
 			{
-				doSay((*it).text, NULL, true, (*it).yell);
-				lastVoice = now;
-				break;
+				int32_t random = random_range(0, (int32_t)list.size());
+				if(random < list.size()) //1 slot chance to make it public
+					tmpPlayer = list[random];
 			}
+
+			doSay(it->text, it->type, tmpPlayer);
+			lastVoice = now;
+			break;
 		}
 	}
 
@@ -1652,10 +1681,10 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 			std::string responseString = formatResponse(player, npcState, response);
 			if(!responseString.empty())
 			{
-				if(response->publicize())
-					g_game.internalCreatureSay(this, SPEAK_SAY, responseString);
+				if(!response->publicize())
+					doSay(responseString, SPEAK_PRIVATE_NP, player);
 				else
-					g_game.npcSpeakToPlayer(this, player, responseString, false, false);
+					doSay(responseString, SPEAK_SAY, NULL);
 			}
 		}
 		else
@@ -1728,9 +1757,21 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 	}
 }
 
-void Npc::doSay(std::string msg, Player* focus/* = NULL*/, bool publicize/* = false*/, bool yell/* = false*/)
+void Npc::doSay(const std::string& text, MessageClasses type, Player* player)
 {
-	g_game.npcSpeakToPlayer(this, focus, msg, publicize, yell);
+	if(!player)
+	{
+		std::string tmp = text;
+		replaceString(tmp, "{", "");
+		replaceString(tmp, "}", "");
+
+		g_game.internalCreatureSay(this, type, tmp);
+	}
+	else
+	{
+		player->sendCreatureSay(this, type, text);
+		player->onCreatureSay(this, type, text);
+	}
 }
 
 void Npc::doTurn(Direction dir)
@@ -2493,25 +2534,38 @@ int32_t NpcScriptInterface::luaActionFocus(lua_State* L)
 
 int32_t NpcScriptInterface::luaActionSay(lua_State* L)
 {
-	//selfSay(words[[, target], announce])
-	uint32_t parameters = lua_gettop(L), target = 0;
-	bool announce = true;
-	if(parameters == 3)
-	{
-		announce = popNumber(L);
+	//selfSay(words[, target[, publicize[, type]]])
+	uint32_t type = SPEAK_CLASS_NONE, params = lua_gettop(L), target = 0;
+	bool publicize = true;
+
+	if(params > 3)
+		type = popNumber(L);
+
+	if(params > 2)
+		publicize = popNumber(L);
+
+	if(params > 1)
 		target = popNumber(L);
-	}
-	else if(parameters == 2)
-	{
-		target = popNumber(L);
-		announce = false;
-	}
 
 	ScriptEnviroment* env = getScriptEnv();
-	Player* focus = env->getPlayerByUID(target);
-	if(Npc* npc = env->getNpc())
-		npc->doSay((std::string)popString(L), focus, announce);
+	Player* player = NULL;
+	if(!publicize)
+		player = env->getPlayerByUID(target);
 
+	Npc* npc = env->getNpc();
+	if(!npc)
+		return 0;
+
+	if(type == SPEAK_CLASS_NONE)
+	{
+		if(player)
+			type = SPEAK_PRIVATE_NP;
+		else
+			type = SPEAK_SAY;
+	}
+
+
+	npc->doSay(popString(L), (MessageClasses)type, player);
 	return 0;
 }
 
