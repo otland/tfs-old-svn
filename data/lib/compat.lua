@@ -74,6 +74,7 @@ setPlayerPartner = doPlayerSetPartner
 setPlayerStorageValue = doPlayerSetStorageValue
 setPlayerBalance = doPlayerSetBalance
 doAddMapMark = doPlayerAddMapMark
+doSendTutorial = doPlayerSendTutorial
 SKILLS = SKILL_NAMES
 
 PlayerFlag_CannotUseCombat = 0
