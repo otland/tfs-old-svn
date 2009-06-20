@@ -73,8 +73,7 @@ setPlayerGroupId = doPlayerSetGroupId
 setPlayerPartner = doPlayerSetPartner
 setPlayerStorageValue = doPlayerSetStorageValue
 setPlayerBalance = doPlayerSetBalance
-getPlayerNameDescription = getPlayerSpecialDescription
-doPlayerSetNameDescription = doPlayerSetSpecialDescription
+doAddMapMark = doPlayerAddMapMark
 SKILLS = SKILL_NAMES
 
 PlayerFlag_CannotUseCombat = 0
