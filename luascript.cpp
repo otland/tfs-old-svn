@@ -4064,7 +4064,7 @@ int32_t LuaScriptInterface::luaGetThingFromPos(lua_State* L)
 	{
 		if(pos.stackpos == 255)
 		{
-			if(!(thing = tile->getTopCreature();))
+			if(!(thing = tile->getTopCreature()))
 			{
 				Item* item = tile->getTopDownItem();
 				if(item && !item->isNotMoveable())
@@ -4177,6 +4177,7 @@ int32_t LuaScriptInterface::luaGetTileItemByType(lua_State* L)
 			break;
 		}
 		case ITEM_TYPE_BED:
+		{
 			if(!tile->hasFlag(TILESTATE_BED))
 				found = false;
 
