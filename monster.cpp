@@ -702,7 +702,9 @@ void Monster::onThinkDefense(uint32_t interval)
 	{
 		if(it->speed > defenseTicks)
 		{
-			resetTicks = false;
+			if(resetTicks)
+				resetTicks = false;
+
 			continue;
 		}
 
@@ -717,42 +719,47 @@ void Monster::onThinkDefense(uint32_t interval)
 		}
 	}
 
-	if(!isSummon() && (int32_t)summons.size() < mType->maxSummons)
+	if(!isSummon())
 	{
-		for(SummonList::iterator it = mType->summonList.begin(); it != mType->summonList.end(); ++it)
+		if(mType->maxSummons < 0 || (int32_t)summons.size() < mType->maxSummons)
 		{
-			if(it->interval > defenseTicks)
+			for(SummonList::iterator it = mType->summonList.begin(); it != mType->summonList.end(); ++it)
 			{
-				resetTicks = false;
-				continue;
-			}
+				if((int32_t)summons.size() >= mType->maxSummons)
+					break;
 
-			if((int32_t)summons.size() >= mType->maxSummons)
-				continue;
-
-			if(defenseTicks % it->interval >= interval)
-				continue;
-
-			uint32_t typeCount = 0;
-			for(CreatureList::iterator cit = summons.begin(); cit != summons.end(); ++cit)
-			{
-				if(!(*cit)->isRemoved() && (*cit)->getMonster() &&
-					(*cit)->getMonster()->getName() == it->name)
-					typeCount++;
-			}
-
-			if(typeCount >= it->amount)
-				continue;
-
-			if((it->chance >= (uint32_t)random_range(1, 100)))
-			{
-				if(Monster* summon = Monster::createMonster(it->name))
+				if(it->interval > defenseTicks)
 				{
-					addSummon(summon);
-					if(!g_game.placeCreature(summon, getPosition()))
-						removeSummon(summon);
-					else
-						g_game.addMagicEffect(getPosition(), NM_ME_MAGIC_ENERGY);
+					if(resetTicks)
+						resetTicks = false;
+
+					continue;
+				}
+
+				if(defenseTicks % it->interval >= interval)
+					continue;
+
+				uint32_t typeCount = 0;
+				for(CreatureList::iterator cit = summons.begin(); cit != summons.end(); ++cit)
+				{
+					if(!(*cit)->isRemoved() && (*cit)->getMonster() &&
+						(*cit)->getMonster()->getName() == it->name)
+						typeCount++;
+				}
+
+				if(typeCount >= it->amount)
+					continue;
+
+				if((it->chance >= (uint32_t)random_range(1, 100)))
+				{
+					if(Monster* summon = Monster::createMonster(it->name))
+					{
+						addSummon(summon);
+						if(g_game.placeCreature(summon, getPosition()))
+							g_game.addMagicEffect(getPosition(), NM_ME_MAGIC_ENERGY);
+						else
+							removeSummon(summon);
+					}
 				}
 			}
 		}

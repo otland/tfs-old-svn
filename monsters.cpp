@@ -43,10 +43,10 @@ void MonsterType::reset()
 	pushable = isAttackable = isHostile = true;
 
 	outfit.lookHead = outfit.lookBody = outfit.lookLegs = outfit.lookFeet = outfit.lookType = outfit.lookTypeEx = outfit.lookAddons = 0;
+	runAwayHealth = manaCost = lightLevel = lightColor = yellSpeedTicks = yellChance = changeTargetSpeed = changeTargetChance = 0;
 	experience = defense = armor = lookCorpse = conditionImmunities = damageImmunities = 0;
-	maxSummons = runAwayHealth = manaCost = lightLevel = lightColor = 0;
-	yellSpeedTicks = yellChance = changeTargetSpeed = changeTargetChance = 0;
 
+	maxSummons = -1;
 	targetDistance = 1;
 	staticAttackChance = 95;
 	health = healthMax = 100;
@@ -1262,9 +1262,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 		else if(!xmlStrcmp(p->name, (const xmlChar*)"summons"))
 		{
 			if(readXMLInteger(p, "maxSummons", intValue))
-				mType->maxSummons = std::min(intValue, 100);
-			else
-				SHOW_XML_WARNING("Missing summons.maxSummons");
+				mType->maxSummons = intValue;
 
 			xmlNodePtr tmpNode = p->children;
 			while(tmpNode)
