@@ -312,7 +312,7 @@ bool Npc::loadFromXml(const std::string& filename)
 						voice.margin = 0;
 
 					if(readXMLInteger(q, "type", intValue))
-						voice.type = (MessageClasses)intValue;
+						voice.type = (SpeakClasses)intValue;
 					else
 						voice.type = SPEAK_SAY;
 
@@ -1160,7 +1160,7 @@ void Npc::onThink(uint32_t interval)
 	if(m_npcEventHandler)
 		m_npcEventHandler->onThink();
 
-	std::list<Player*> list;
+	std::vector<Player*> list;
 	Player* tmpPlayer = NULL;
 
 	const SpectatorVec& tmpList = g_game.getSpectators(getPosition());
@@ -1187,7 +1187,7 @@ void Npc::onThink(uint32_t interval)
 			tmpPlayer = NULL;
 			if(it->randomSpectator)
 			{
-				int32_t random = random_range(0, (int32_t)list.size());
+				size_t random = random_range(0, (int32_t)list.size());
 				if(random < list.size()) //1 slot chance to make it public
 					tmpPlayer = list[random];
 			}
@@ -1757,7 +1757,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 	}
 }
 
-void Npc::doSay(const std::string& text, MessageClasses type, Player* player)
+void Npc::doSay(const std::string& text, SpeakClasses type, Player* player)
 {
 	if(!player)
 	{
@@ -2565,7 +2565,7 @@ int32_t NpcScriptInterface::luaActionSay(lua_State* L)
 	}
 
 
-	npc->doSay(popString(L), (MessageClasses)type, player);
+	npc->doSay(popString(L), (SpeakClasses)type, player);
 	return 0;
 }
 

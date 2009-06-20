@@ -368,7 +368,7 @@ struct NpcState
 struct Voice
 {
 	bool randomSpectator;
-	MessageClasses type;
+	SpeakClasses type;
 	uint32_t interval, margin;
 	std::string text;
 };
@@ -401,7 +401,7 @@ class Npc : public Creature
 		virtual const std::string& getName() const {return name;}
 		virtual const std::string& getNameDescription() const {return nameDescription;}
 
-		void doSay(const std::string& text, MessageClasses type, Player* player);
+		void doSay(const std::string& text, SpeakClasses type, Player* player);
 		void doTurn(Direction dir);
 		void doMove(Direction dir);
 		void doMoveTo(Position pos);
