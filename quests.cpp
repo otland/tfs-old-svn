@@ -34,8 +34,8 @@ Mission::Mission(std::string _missionName, uint32_t _storageId, int32_t _startVa
 
 Mission::~Mission()
 {
-	for(uint32_t it = 0; it != state.size(); it++)
-		delete state[it];
+	for(StateList::iterator it = state.begin(); it != state.end(); ++it)
+		delete (*it)
 
 	state.clear();
 }
@@ -45,12 +45,12 @@ std::string Mission::getDescription(Player* player)
 	for(int32_t i = endValue; i >= startValue; i--)
 	{
 		std::string value;
-		if(player->getStorageValue(storageId, value) && atoi(value.c_str()) == i)
-		{
-			StateList::const_iterator sit = state.find(i);
-			if(sit != state.end())
-				return sit->second->getMissionDescription();
-		}
+		if(!player->getStorageValue(storageId, value) || atoi(value.c_str()) != (checkValue + i))
+			continue;
+
+		StateList::const_iterator sit = state.find(i);
+		if(sit != state.end())
+			return sit->second->getMissionDescription();
 	}
 
 	return "An error has occurred, please contact a gamemaster.";
@@ -62,10 +62,7 @@ bool Mission::isStarted(Player* player) const
 		return false;
 
 	std::string value;
-	if(player->getStorageValue(storageId, value) && atoi(value.c_str()) >= startValue && atoi(value.c_str()) <= endValue)
-		return true;
-
-	return false;
+	return player->getStorageValue(storageId, value) && atoi(value.c_str()) >= startValue && atoi(value.c_str()) <= endValue;
 }
 
 bool Mission::isCompleted(Player* player) const
@@ -74,18 +71,12 @@ bool Mission::isCompleted(Player* player) const
 		return false;
 
 	std::string value;
-	if(player->getStorageValue(storageId, value) && atoi(value.c_str()) >= endValue)
-		return true;
-
-	return false;
+	return player->getStorageValue(storageId, value) && atoi(value.c_str()) >= endValue;
 }
 
 std::string Mission::getName(Player* player)
 {
-	if(isCompleted(player))
-		return missionName + " (completed)";
-
-	return missionName;
+	return isCompleted(player) ? missionName + " (completed)" : missionName;
 }
 
 Quest::Quest(std::string _name, uint16_t _id, uint32_t _startStorageId, int32_t _startStorageValue)
@@ -121,10 +112,7 @@ bool Quest::isStarted(Player* player) const
 		return false;
 
 	std::string value;
-	if(player->getStorageValue(startStorageId, value) && atoi(value.c_str()) >= startStorageValue)
-		return true;
-
-	return false;
+	return player->getStorageValue(startStorageId, value) && atoi(value.c_str()) >= startStorageValue;
 }
 
 uint16_t Quest::getMissionsCount(Player* player)
