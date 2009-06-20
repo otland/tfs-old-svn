@@ -1060,20 +1060,22 @@ uint64_t Creature::getGainedExperience(Creature* attacker, bool useMultiplier/* 
 	baseExperience *= g_game.getExperienceStage(player->getLevel(), player->getVocation()->getExperienceMultiplier());
 	if(!player->hasFlag(PlayerFlag_HasInfiniteStamina))
 	{
-		int64_t totalTime = 0;
 		for(CountMap::const_iterator it = damageMap.begin(); it != damageMap.end(); ++it)
 		{
-			if(it->first == attacker->getID())
-				totalTime += it->second.ticks - it->second.start;
-		}
+			if(it->first != attacker->getID())
+				continue;
 
-		player->removeStamina(totalTime * g_config.getNumber(ConfigManager::RATE_STAMINA_LOSS));
+			player->removeStamina((it->second.ticks - it->second.start) * g_config.getNumber(ConfigManager::RATE_STAMINA_LOSS));
+			break;
+		}
 	}
 
 	int32_t minutes = player->getStaminaMinutes();
-	if(!getPlayer() && minutes >= g_config.getNumber(ConfigManager::STAMINA_LIMIT_TOP) &&
-		(player->isPremium() || !g_config.getNumber(ConfigManager::STAMINA_BONUS_PREMIUM)))
-		baseExperience *= g_config.getDouble(ConfigManager::RATE_STAMINA_ABOVE);
+	if(minutes >= g_config.getNumber(ConfigManager::STAMINA_LIMIT_TOP))
+	{
+		if(player->isPremium() || !g_config.getNumber(ConfigManager::STAMINA_BONUS_PREMIUM))
+			baseExperience *= g_config.getDouble(ConfigManager::RATE_STAMINA_ABOVE);
+	}
 	else if(minutes < (g_config.getNumber(ConfigManager::STAMINA_LIMIT_BOTTOM)) && minutes > 0)
 		baseExperience *= g_config.getDouble(ConfigManager::RATE_STAMINA_UNDER);
 	else if(minutes <= 0)

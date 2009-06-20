@@ -1362,10 +1362,10 @@ void Player::onCreatureAppear(const Creature* creature)
 		bed->wakeUp();
 
 	outfitAttributes = Outfits::getInstance()->addAttributes(getID(), defaultOutfit.lookType, defaultOutfit.lookAddons);
-	if(lastLogout)
+	if(lastLogout && stamina < STAMINA_MAX)
 	{
-		int64_t period = (int32_t)time(NULL) - lastLogout;
-		if(period - 600 > 0)
+		int64_t period = (int32_t)time(NULL) - lastLogout - 600;
+		if(period > 0)
 		{
 			period = (int64_t)std::ceil((double)period * g_config.getDouble(ConfigManager::RATE_STAMINA_GAIN));
 			int64_t rated = stamina + period, tmp = g_config.getNumber(
