@@ -2053,7 +2053,7 @@ bool Game::playerBroadcastMessage(Player* player, SpeakClasses type, const std::
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
 		it->second->sendCreatureSay(player, type, text);
-		it->second->onCreatureSay(player, type, text, pos);
+		//TODO: event handling - onCreatureSay
 	}
 
 	std::cout << "> " << player->getName() << " broadcasted: \"" << text << "\"." << std::endl;
@@ -3771,9 +3771,9 @@ bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std:
 		return true;
 	}
 
-	Position* destPos = &creature->getPosition();
+	Position destPos = creature->getPosition();
 	if(pos)
-		destPos = pos;
+		destPos = (*pos);
 
 	SpectatorVec list;
 	SpectatorVec::const_iterator it;
@@ -3791,7 +3791,7 @@ bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std:
 			getSpectators(list, destPos, false, true, 18, 18, 14, 14);
 	}
 	else
-		list = &listPtr;
+		list = (*listPtr);
 
 	//send to client
 	Player* tmpPlayer = NULL;
@@ -3801,12 +3801,12 @@ bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std:
 			continue;
 
 		if(!ghostMode || tmpPlayer->canSeeCreature(creature))
-			tmpPlayer->sendCreatureSay(creature, type, text, destPos);
+			tmpPlayer->sendCreatureSay(creature, type, text, &destPos);
 	}
 
 	//event method
 	for(it = list.begin(); it != list.end(); ++it)
-		(*it)->onCreatureSay(creature, type, text, destPos);
+		(*it)->onCreatureSay(creature, type, text, &destPos);
 
 	return true;
 }

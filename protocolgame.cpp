@@ -2483,7 +2483,7 @@ void ProtocolGame::sendQuests()
 		msg->AddByte(0xF0);
 
 		msg->AddU16(Quests::getInstance()->getQuestCount(player));
-		for(QuestList::const_iterator it = Quests::getInstance()->getFirstQuest().begin(); it != Quests::getInstance()->getLastQuest().end(); ++it)
+		for(QuestList::const_iterator it = Quests::getInstance()->getFirstQuest(); it != Quests::getInstance()->getLastQuest(); ++it)
 		{
 			if(!(*it)->isStarted(player))
 				continue;
@@ -2505,7 +2505,7 @@ void ProtocolGame::sendQuestInfo(Quest* quest)
 		msg->AddU16(quest->getId());
 
 		msg->AddByte(quest->getMissionCount(player));
-		for(MissionsList::const_iterator it = quest->getFirstMission().begin(); it != quest->getLastMission().end(); ++it)
+		for(MissionList::const_iterator it = quest->getFirstMission(); it != quest->getLastMission(); ++it)
 		{
 			if(!(*it)->isStarted(player))
 				continue;
