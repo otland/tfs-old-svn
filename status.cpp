@@ -164,7 +164,7 @@ std::string Status::getStatusString(bool sendPlayers) const
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 		{
 			if(!it->second->isInGhostMode())
-			        ss << it->second->getName() << "," << it->second->getVocationId() << "," << it->second->getLevel() << ";";
+				ss << it->second->getName() << "," << it->second->getVocationId() << "," << it->second->getLevel() << ";";
 		}
 
 		xmlNodeSetContent(p, (const xmlChar*)ss.str().c_str());
