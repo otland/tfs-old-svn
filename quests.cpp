@@ -35,7 +35,7 @@ Mission::Mission(std::string _missionName, uint32_t _storageId, int32_t _startVa
 Mission::~Mission()
 {
 	for(StateList::iterator it = state.begin(); it != state.end(); ++it)
-		delete (*it)
+		delete it->second;
 
 	state.clear();
 }
