@@ -213,6 +213,7 @@ enum StorageComparision_t
 	STORAGE_LESS,
 	STORAGE_LESSOREQUAL,
 	STORAGE_EQUAL,
+	STORAGE_NOTEQUAL,
 	STORAGE_GREATEROREQUAL,
 	STORAGE_GREATER
 };
@@ -287,9 +288,9 @@ class NpcResponse
 			InteractType_t interactType;
 			ResponseType_t responseType;
 			StorageComparision_t storageComp;
-			int32_t topic, amount, focusStatus, storageId, storageValue;
+			int32_t topic, amount, focusStatus, storageId;
 			uint32_t params;
-			std::string output, knowSpell;
+			std::string output, knowSpell, storageValue;
 			ActionList actionList;
 			std::list<std::string> inputList;
 			std::list<ListItem> itemList;

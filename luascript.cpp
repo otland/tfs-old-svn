@@ -3472,7 +3472,7 @@ int32_t LuaScriptInterface::luaDoCreatureAddHealth(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
-		g_game.combatChangeHealth(healthChange >= 0 ? COMBAT_HEALING : COMBAT_UNDEFINEDDAMAGE,
+		g_game.combatChangeHealth(healthChange < 0 ? COMBAT_UNDEFINEDDAMAGE : COMBAT_HEALING,
 			NULL, creature, healthChange, force);
 		lua_pushboolean(L, true);
 	}

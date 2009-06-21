@@ -531,8 +531,8 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 			if(readXMLInteger(node, "storageId", intValue))
 				prop.storageId = intValue;
 
-			if(readXMLInteger(node, "storageValue", intValue))
-				prop.storageValue = intValue;
+			if(readXMLString(node, "storageValue", strValue))
+				prop.storageValue = strValue;
 
 			uint32_t interactParams = loadParams(node);
 			if(readXMLString(node, "storageComp", strValue))
@@ -540,6 +540,8 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 				std::string tmpStrValue = asLowerCaseString(strValue);
 				if(tmpStrValue == "equal")
 					prop.storageComp = STORAGE_EQUAL;
+				if(tmpStrValue == "notequal")
+					prop.storageComp = STORAGE_NOTEQUAL;
 				if(tmpStrValue == "greaterorequal")
 					prop.storageComp = STORAGE_GREATEROREQUAL;
 				if(tmpStrValue == "greater")
@@ -823,7 +825,15 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 								}
 								else if(tmpStrValue == "storage")
 								{
-									if(readXMLString(subNode, "value", strValue))
+									if(readXMLString(subNode, "time", strValue))
+									{
+										action.actionType = ACTION_SETSTORAGE;
+										std::stringstream s;
+
+										s << time(NULL) + atoi(strValue.c_str());
+										action.strValue = s.str();
+									}
+									else if(readXMLString(subNode, "value", strValue))
 									{
 										action.actionType = ACTION_SETSTORAGE;
 										action.strValue = strValue;
@@ -879,7 +889,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 					for(std::list<std::string>::iterator it = prop.inputList.begin();
 						it != prop.inputList.end(); ++it)
 					{
-						if((*it).find("|list|") != std::string::npos)
+						if(it->find("|list|") != std::string::npos)
 						{
 							hasListKeyword = true;
 							break;
@@ -900,49 +910,49 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 									continue;
 
 								//Replace |LIST| with the keyword in the list
-								replaceString(input, "|list|", (*it).keywords);
+								replaceString(input, "|list|", it->keywords);
 								ResponseAction action;
 
 								action.actionType = ACTION_SETITEM;
-								action.intValue = (*it).itemId;
+								action.intValue = it->itemId;
 								listItemProp.actionList.push_front(action);
 
 								action.actionType = ACTION_SETSELLPRICE;
-								action.intValue = (*it).sellPrice;
+								action.intValue = it->sellPrice;
 								listItemProp.actionList.push_front(action);
 
 								action.actionType = ACTION_SETBUYPRICE;
-								action.intValue = (*it).buyPrice;
+								action.intValue = it->buyPrice;
 								listItemProp.actionList.push_front(action);
 
 								action.actionType = ACTION_SETSUBTYPE;
-								action.intValue = (*it).subType;
+								action.intValue = it->subType;
 								listItemProp.actionList.push_front(action);
 
 								action.actionType = ACTION_SETSUBTYPE;
-								action.intValue = (*it).subType;
+								action.intValue = it->subType;
 								listItemProp.actionList.push_front(action);
 
 								action.actionType = ACTION_SETLISTNAME;
-								if((*it).name.empty())
+								if(it->name.empty())
 								{
-									const ItemType& itemType = Item::items[(*it).itemId];
+									const ItemType& itemType = Item::items[it->itemId];
 									if(itemType.id != 0)
 										action.strValue = itemType.article + " " + itemType.name;
 								}
 								else
-									action.strValue = (*it).name;
+									action.strValue = it->name;
 
 								listItemProp.actionList.push_front(action);
 								action.actionType = ACTION_SETLISTPNAME;
-								if((*it).pluralName.empty())
+								if(it->pluralName.empty())
 								{
-									const ItemType& itemType = Item::items[(*it).itemId];
+									const ItemType& itemType = Item::items[it->itemId];
 									if(itemType.id != 0)
 										action.strValue = itemType.pluralName;
 								}
 								else
-									action.strValue = (*it).pluralName;
+									action.strValue = it->pluralName;
 
 								listItemProp.actionList.push_front(action);
 								ResponseList list;
@@ -1311,54 +1321,51 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 	if(response)
 	{
 		npcState->lastResponse = response;
-		bool resetTopic = true;
-		if(response->getFocusState() == 0)
-			npcState->isIdle = true;
-		else if(response->getFocusState() == 1)
-			npcState->isIdle = false;
+		npcState->isIdle = response->getFocusState() == 0;
 
+		bool resetTopic = true;
 		if(response->getAmount() != -1)
 			npcState->amount = response->getAmount();
 
 		for(ActionList::const_iterator it = response->getFirstAction(); it != response->getEndAction(); ++it)
 		{
-			switch((*it).actionType)
+			switch(it->actionType)
 			{
 				case ACTION_SETTOPIC:
-					npcState->topic = (*it).intValue;
+					npcState->topic = it->intValue;
 					resetTopic = false;
 					break;
 				case ACTION_SETSELLPRICE:
-					npcState->sellPrice = (*it).intValue;
+					npcState->sellPrice = it->intValue;
 					break;
 				case ACTION_SETBUYPRICE:
-					npcState->buyPrice = (*it).intValue;
+					npcState->buyPrice = it->intValue;
 					break;
 				case ACTION_SETITEM:
-					npcState->itemId = (*it).intValue;
+					npcState->itemId = it->intValue;
 					break;
 				case ACTION_SETSUBTYPE:
-					npcState->subType = (*it).intValue;
+					npcState->subType = it->intValue;
 					break;
 				case ACTION_SETEFFECT:
-					g_game.addMagicEffect(player->getPosition(), (*it).intValue);
+					g_game.addMagicEffect(player->getPosition(), it->intValue);
 					break;
 				case ACTION_SETPRICE:
 				{
-					if((*it).strValue == "|SELLPRICE|")
+					if(it->strValue == "|SELLPRICE|")
 						npcState->price = npcState->sellPrice;
-					else if((*it).strValue == "|BUYPRICE|")
+					else if(it->strValue == "|BUYPRICE|")
 						npcState->price = npcState->buyPrice;
 					else
-						npcState->price = (*it).intValue;
+						npcState->price = it->intValue;
 
 					break;
 				}
 
 				case ACTION_SETTELEPORT:
 				{
-					Position teleportTo = (*it).pos;
-					if((*it).strValue == "|TEMPLE|")
+					Position teleportTo = it->pos;
+					if(it->strValue == "|TEMPLE|")
 						teleportTo = player->getTemplePosition();
 
 					g_game.internalTeleport(player, teleportTo, true);
@@ -1367,20 +1374,20 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 				case ACTION_SETIDLE:
 				{
-					npcState->isIdle = ((*it).intValue == 1);
+					npcState->isIdle = (it->intValue == 1);
 					break;
 				}
 
 				case ACTION_SETLEVEL:
 				{
-					if((*it).strValue == "|SPELLLEVEL|")
+					if(it->strValue == "|SPELLLEVEL|")
 					{
 						npcState->level = -1;
 						if(InstantSpell* spell = g_spells->getInstantSpellByName(npcState->spellName))
 							npcState->level = spell->getLevel();
 					}
 					else
-						npcState->level = (*it).intValue;
+						npcState->level = it->intValue;
 
 					break;
 				}
@@ -1388,28 +1395,28 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 				case ACTION_SETSPELL:
 				{
 					npcState->spellName = "";
-					if(g_spells->getInstantSpellByName((*it).strValue))
-						npcState->spellName = (*it).strValue;
+					if(g_spells->getInstantSpellByName(it->strValue))
+						npcState->spellName = it->strValue;
 
 					break;
 				}
 
 				case ACTION_SETLISTNAME:
 				{
-					npcState->listName = (*it).strValue;
+					npcState->listName = it->strValue;
 					break;
 				}
 
 				case ACTION_SETLISTPNAME:
 				{
-					npcState->listPluralName = (*it).strValue;
+					npcState->listPluralName = it->strValue;
 					break;
 				}
 
 				case ACTION_SETAMOUNT:
 				{
-					int32_t amount = (*it).intValue;
-					if((*it).strValue == "|AMOUNT|")
+					int32_t amount = it->intValue;
+					if(it->strValue == "|AMOUNT|")
 						amount = npcState->amount;
 
 					npcState->amount = amount;
@@ -1418,8 +1425,8 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 				case ACTION_TEACHSPELL:
 				{
-					std::string spellName = (*it).strValue;
-					if((*it).strValue == "|SPELL|")
+					std::string spellName = it->strValue;
+					if(it->strValue == "|SPELL|")
 						spellName = npcState->spellName;
 
 					player->learnInstantSpell(spellName);
@@ -1428,8 +1435,8 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 				case ACTION_UNTEACHSPELL:
 				{
-					std::string spellName = (*it).strValue;
-					if((*it).strValue == "|SPELL|")
+					std::string spellName = it->strValue;
+					if(it->strValue == "|SPELL|")
 						spellName = npcState->spellName;
 
 					player->unlearnInstantSpell(spellName);
@@ -1438,8 +1445,8 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 				case ACTION_SETSTORAGE:
 				{
-					if((*it).key > 0)
-						player->addStorageValue((*it).key, (*it).strValue);
+					if(it->key > 0)
+						player->addStorageValue(it->key, it->strValue);
 
 					break;
 				}
@@ -1460,8 +1467,8 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 					const ItemType& iit = Item::items[npcState->itemId];
 					if(iit.id != 0)
 					{
-						uint32_t moneyCount = (*it).intValue;
-						if((*it).strValue == "|PRICE|")
+						uint32_t moneyCount = it->intValue;
+						if(it->strValue == "|PRICE|")
 							moneyCount = npcState->price * npcState->amount;
 
 						int32_t subType = -1;
@@ -1483,8 +1490,8 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 					const ItemType& iit = Item::items[npcState->itemId];
 					if(iit.id != 0)
 					{
-						uint32_t moneyCount = (*it).intValue;
-						if((*it).strValue == "|PRICE|")
+						uint32_t moneyCount = it->intValue;
+						if(it->strValue == "|PRICE|")
 							moneyCount = npcState->price * npcState->amount;
 
 						int32_t subType = -1;
@@ -1524,7 +1531,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 								}
 							}
 
-							if((*it).strValue == "|PRICE|")
+							if(it->strValue == "|PRICE|")
 								moneyCount = npcState->price * amount;
 
 							g_game.removeMoney(player, moneyCount);
@@ -1535,8 +1542,8 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 				case ACTION_TAKEITEM:
 				{
-					int32_t itemId = (*it).intValue;
-					if((*it).strValue == "|ITEM|")
+					int32_t itemId = it->intValue;
+					if(it->strValue == "|ITEM|")
 						itemId = npcState->itemId;
 
 					const ItemType& iit = Item::items[npcState->itemId];
@@ -1555,8 +1562,8 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 
 				case ACTION_GIVEITEM:
 				{
-					int32_t itemId = (*it).intValue;
-					if((*it).strValue == "|ITEM|")
+					int32_t itemId = it->intValue;
+					if(it->strValue == "|ITEM|")
 						itemId = npcState->itemId;
 
 					const ItemType& iit = Item::items[itemId];
@@ -1579,10 +1586,10 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 				case ACTION_TAKEMONEY:
 				{
 					uint32_t moneyCount = 0;
-					if((*it).strValue == "|PRICE|")
+					if(it->strValue == "|PRICE|")
 						moneyCount = npcState->price * npcState->amount;
 					else
-						moneyCount = (*it).intValue;
+						moneyCount = it->intValue;
 
 					g_game.removeMoney(player, moneyCount);
 					break;
@@ -1591,10 +1598,10 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 				case ACTION_GIVEMONEY:
 				{
 					uint32_t moneyCount = 0;
-					if((*it).strValue == "|PRICE|")
+					if(it->strValue == "|PRICE|")
 						moneyCount = npcState->price * npcState->amount;
 					else
-						moneyCount = (*it).intValue;
+						moneyCount = it->intValue;
 
 					g_game.addMoney(player, moneyCount);
 					break;
@@ -1657,7 +1664,7 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 						scriptstream << "s3 = \"" << npcState->scriptVars.s3 << "\"" << std::endl;
 						scriptstream << "}" << std::endl;
 
-						scriptstream << (*it).strValue;
+						scriptstream << it->strValue;
 						if(scriptInterface.loadBuffer(scriptstream.str(), this) != -1)
 						{
 							lua_State* L = scriptInterface.getLuaState();
@@ -1715,15 +1722,15 @@ void Npc::executeResponse(Player* player, NpcState* npcState, const NpcResponse*
 					int32_t paramCount = 0;
 					for(ActionList::const_iterator it = response->getFirstAction(); it != response->getEndAction(); ++it)
 					{
-						if((*it).actionType == ACTION_SCRIPTPARAM)
+						if(it->actionType == ACTION_SCRIPTPARAM)
 						{
-							if((*it).strValue == "|PLAYER|")
+							if(it->strValue == "|PLAYER|")
 								lua_pushnumber(L, env->addThing(player));
-							else if((*it).strValue == "|TEXT|")
+							else if(it->strValue == "|TEXT|")
 								lua_pushstring(L, npcState->respondToText.c_str());
 							else
 							{
-								std::cout << "[Warning - Npc::executeResponse] Unknown script param: " << (*it).strValue << std::endl;
+								std::cout << "[Warning - Npc::executeResponse] Unknown script param: " << it->strValue << std::endl;
 								break;
 							}
 
@@ -2137,47 +2144,61 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 		}
 
 		int32_t storageId = (*it)->getStorageId();
-		if(storageId != -1)
+		std::string value;
+		if(storageId != -1 && player->getStorageValue(storageId, value))
 		{
-			std::string playerStorageValue;
-			int32_t tmp = -1;
-			if(player->getStorageValue(storageId, playerStorageValue))
-				tmp = atoi(playerStorageValue.c_str());
+			std::string storageValue = (*it)->getStorageValue();
+			if(asLowerCaseString(storageValue) == "_time")
+			{
+				std::stringstream s;
+				s << time(NULL);
+				storageValue = s.str();
+			}
 
-			int32_t storageValue = (*it)->getStorageValue();
 			switch((*it)->getStorageComp())
 			{
 				case STORAGE_LESS:
 				{
-					if(tmp >= storageValue)
+					int32_t v1 = atoi(value.c_str()), v2 = atoi(storageValue.c_str());
+					if(v1 >= v2)
 						continue;
 
 					break;
 				}
 				case STORAGE_LESSOREQUAL:
 				{
-					if(tmp > storageValue)
+					int32_t v1 = atoi(value.c_str()), v2 = atoi(storageValue.c_str());
+					if(v1 > v2)
 						continue;
 
 					break;
 				}
 				case STORAGE_EQUAL:
 				{
-					if(tmp != storageValue)
+					if(value != storageValue)
+						continue;
+
+					break;
+				}
+				case STORAGE_NOTEQUAL:
+				{
+					if(value == storageValue)
 						continue;
 
 					break;
 				}
 				case STORAGE_GREATEROREQUAL:
 				{
-					if(tmp < storageValue)
+					int32_t v1 = atoi(value.c_str()), v2 = atoi(storageValue.c_str());
+					if(v1 < v2)
 						continue;
 
 					break;
 				}
 				case STORAGE_GREATER:
 				{
-					if(tmp <= storageValue)
+					int32_t v1 = atoi(value.c_str()), v2 = atoi(storageValue.c_str());
+					if(v1 <= v2)
 						continue;
 
 					break;
