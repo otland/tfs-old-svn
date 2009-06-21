@@ -40,7 +40,7 @@ class Mission
 		bool isStarted(Player* player);
 		bool isCompleted(Player* player);
 
-		const std::string& getName(Player* player) {return (isCompleted(player) ? (name + " (completed)") : name);}
+		std::string getName(Player* player) {return (isCompleted(player) ? (name + " (completed)") : name);}
 		const std::string& getDescription(Player* player);
 
 	private:

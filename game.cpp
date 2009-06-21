@@ -2049,7 +2049,7 @@ bool Game::playerBroadcastMessage(Player* player, SpeakClasses type, const std::
 	if(!player->hasFlag(PlayerFlag_CanBroadcast) || type < SPEAK_CLASS_FIRST || type > SPEAK_CLASS_LAST)
 		return false;
 
-	const Position& pos = player->getPosition();
+	//const Position& pos = player->getPosition();
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
 		it->second->sendCreatureSay(player, type, text);
