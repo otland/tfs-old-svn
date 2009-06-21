@@ -3246,7 +3246,7 @@ int32_t LuaScriptInterface::luaDoCreatureSay(lua_State* L)
 	std::string text = popString(L);
 
 	uid = popNumber(L);
-	if(!pos.x || !pos.y)
+	if(params > 5 && (!pos.x || !pos.y))
 	{
 		reportErrorFunc("Invalid position specified.");
 		lua_pushboolean(L, false);
