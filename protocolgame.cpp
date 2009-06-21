@@ -762,11 +762,11 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				break;
 
 			case 0xF0:
-				parseQuestLog(msg);
+				parseQuests(msg);
 				break;
 
 			case 0xF1:
-				parseQuestLine(msg);
+				parseQuestInfo(msg);
 				break;
 
 			default:
@@ -1451,26 +1451,15 @@ void ProtocolGame::parseSharePartyExperience(NetworkMessage& msg)
 	addGameTask(&Game::playerSharePartyExperience, player->getID(), activate, unknown);
 }
 
-void ProtocolGame::parseQuestLog(NetworkMessage& msg)
+void ProtocolGame::parseQuests(NetworkMessage& msg)
 {
-	NetworkMessage_ptr _msg = getOutputBuffer();
-	if(_msg)
-	{
-		TRACK_MESSAGE(_msg);
-		Quests::getInstance()->getQuestsList(player, _msg);
-	}
+	addGameTask(&Game::playerQuests, player->getID());
 }
 
-void ProtocolGame::parseQuestLine(NetworkMessage& msg)
+void ProtocolGame::parseQuestInfo(NetworkMessage& msg)
 {
-	NetworkMessage_ptr _msg = getOutputBuffer();
-	if(_msg)
-	{
-		TRACK_MESSAGE(_msg);
-		uint16_t quid = msg.GetU16();
-		if(Quest* quest = Quests::getInstance()->getQuestById(quid))
-			quest->getMissionList(player, _msg);
-	}
+	uint16_t questId = msg.GetU16();
+	addGameTask(&Game::playerQuestInfo, player->getID(), questId);
 }
 
 void ProtocolGame::parseViolationWindow(NetworkMessage& msg)
@@ -2482,6 +2471,48 @@ void ProtocolGame::sendOutfitWindow()
 		}
 
 		player->hasRequestedOutfit(true);
+	}
+}
+
+void ProtocolGame::sendQuests()
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
+	{
+		TRACK_MESSAGE(msg);
+		msg->AddByte(0xF0);
+
+		msg->AddU16(Quests::getInstance()->getQuestCount(player));
+		for(QuestList::const_iterator it = Quests::getInstance()->getFirstQuest().begin(); it != Quests::getInstance()->getLastQuest().end(); ++it)
+		{
+			if(!(*it)->isStarted(player))
+				continue;
+
+			msg->AddU16((*it)->getId());
+			msg->AddString((*it)->getName());
+			msg->AddByte((*it)->isCompleted(player));
+		}
+	}
+}
+
+void ProtocolGame::sendQuestInfo(Quest* quest)
+{
+	NetworkMessage_ptr msg = getOutputBuffer();
+	if(msg)
+	{
+		TRACK_MESSAGE(msg);
+		msg->AddByte(0xF1);
+		msg->AddU16(quest->getId());
+
+		msg->AddByte(quest->getMissionCount(player));
+		for(MissionsList::const_iterator it = quest->getFirstMission().begin(); it != quest->getLastMission().end(); ++it)
+		{
+			if(!(*it)->isStarted(player))
+				continue;
+
+			msg->AddString((*it)->getName(player));
+			msg->AddString((*it)->getDescription(player));
+		}
 	}
 }
 

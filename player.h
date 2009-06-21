@@ -43,6 +43,7 @@ class ProtocolGame;
 class Npc;
 class Party;
 class SchedulerTask;
+class Quest;
 
 enum skillsid_t
 {
@@ -580,8 +581,9 @@ class Player : public Creature, public Cylinder
 		void sendDistanceShoot(const Position& from, const Position& to, uint8_t type) const
 			{if(client) client->sendDistanceShoot(from, to, type);}
 		void sendHouseWindow(House* house, uint32_t listId) const;
-		void sendOutfitWindow() const
-			{if(client) client->sendOutfitWindow();}
+		void sendOutfitWindow() const {if(client) client->sendOutfitWindow();}
+		void sendQuests() const {if(client) client->sendQuests();}
+		void sendQuestInfo(Quest* quest) const {if(client) client->sendQuestInfo(quest);}
 		void sendCreatureSkull(const Creature* creature) const
 			{if(client) client->sendCreatureSkull(creature);}
 		void sendFYIBox(std::string message)

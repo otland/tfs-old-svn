@@ -31,6 +31,7 @@ class House;
 class Container;
 class Tile;
 class Connection;
+class Quest;
 
 typedef boost::shared_ptr<NetworkMessage> NetworkMessage_ptr;
 class ProtocolGame : public Protocol
@@ -126,8 +127,8 @@ class ProtocolGame : public Protocol
 		void parsePlayerSale(NetworkMessage& msg);
 		void parseCloseShop(NetworkMessage& msg);
 
-		void parseQuestLog(NetworkMessage& msg);
-		void parseQuestLine(NetworkMessage& msg);
+		void parseQuests(NetworkMessage& msg);
+		void parseQuestInfo(NetworkMessage& msg);
 
 		void parseInviteToParty(NetworkMessage& msg);
 		void parseJoinParty(NetworkMessage& msg);
@@ -209,7 +210,10 @@ class ProtocolGame : public Protocol
 		void sendTextWindow(uint32_t windowTextId, Item* item, uint16_t maxLen, bool canWrite);
 		void sendTextWindow(uint32_t windowTextId, uint32_t itemId, const std::string& text);
 		void sendHouseWindow(uint32_t windowTextId, House* house, uint32_t listId, const std::string& text);
+
 		void sendOutfitWindow();
+		void sendQuests();
+		void sendQuestInfo(Quest* quest);
 
 		void sendVIPLogIn(uint32_t guid);
 		void sendVIPLogOut(uint32_t guid);

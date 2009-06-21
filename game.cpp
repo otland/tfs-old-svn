@@ -15,17 +15,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ////////////////////////////////////////////////////////////////////////
 #include "otpch.h"
-
-#include "configmanager.h"
 #include "game.h"
 
+#include "configmanager.h"
 #ifdef __LOGIN_SERVER__
 #include "gameservers.h"
 #endif
 #include "server.h"
 #include "chat.h"
 
+
+#include "luascript.h"
 #include "creature.h"
+#include "combat.h"
 #include "tile.h"
 
 #include "database.h"
@@ -34,14 +36,15 @@
 #include "ioguild.h"
 
 #include "items.h"
+#include "container.h"
 #include "monsters.h"
-#include "luascript.h"
+
 #include "house.h"
+#include "quests.h"
 
 #include "actions.h"
 #include "globalevent.h"
 #include "movement.h"
-#include "quests.h"
 #include "raids.h"
 #include "scriptmanager.h"
 #include "spells.h"
@@ -51,15 +54,14 @@
 #include "vocation.h"
 #include "group.h"
 
-#include "container.h"
-#include "combat.h"
-
 #include "tasks.h"
 #ifdef __EXCEPTION_TRACER__
 #include "exception.h"
-extern OTSYS_THREAD_LOCKVAR maploadlock;
 #endif
 
+#ifdef __EXCEPTION_TRACER__
+extern OTSYS_THREAD_LOCKVAR maploadlock;
+#endif
 extern ConfigManager g_config;
 extern Actions* g_actions;
 extern Monsters g_monsters;
@@ -3280,6 +3282,30 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 	return true;
 }
 
+bool Game::playerQuests(uint32_t playerId)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	player->sendQuests();
+	return true;
+}
+
+bool Game::playerQuestInfo(uint32_t playerId, uint16_t questId)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return false;
+
+	Quest* quest = Quests::getInstance()->getQuestById(questId);
+	if(!quest)
+		return false;
+
+	player->sendQuestInfo(quest);
+	return true;
+}
+
 bool Game::playerCancelAttackAndFollow(uint32_t playerId)
 {
 	Player* player = getPlayerByID(playerId);
@@ -3288,6 +3314,7 @@ bool Game::playerCancelAttackAndFollow(uint32_t playerId)
 
 	playerSetAttackedCreature(playerId, 0);
 	playerFollowCreature(playerId, 0);
+
 	player->stopWalk();
 	return true;
 }
@@ -3332,11 +3359,11 @@ bool Game::playerFollowCreature(uint32_t playerId, uint32_t creatureId)
 	if(!player || player->isRemoved())
 		return false;
 
-	player->setAttackedCreature(NULL);
 	Creature* followCreature = NULL;
-	if(creatureId != 0)
+	if(creatureId)
 		followCreature = getCreatureByID(creatureId);
 
+	player->setAttackedCreature(NULL);
 	return player->setFollowCreature(followCreature);
 }
 
@@ -3348,6 +3375,7 @@ bool Game::playerSetFightModes(uint32_t playerId, fightMode_t fightMode, chaseMo
 
 	player->setFightMode(fightMode);
 	player->setChaseMode(chaseMode);
+
 	player->setSecureMode(secureMode);
 	return true;
 }
