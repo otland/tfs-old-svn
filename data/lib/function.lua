@@ -307,12 +307,24 @@ function getPlayerByName(name)
 	return isPlayer(cid) and cid or nil
 end
 
+function isPlayer(cid)
+	return isCreature(cid) and cid >= AUTOID_PLAYERS and cid < AUTOID_MONSTERS
+end
+
 function isPlayerGhost(cid)
 	if(not isPlayer(cid)) then
 		return false
 	end
 
 	return getCreatureCondition(cid, CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE) or getPlayerFlagValue(cid, PlayerFlag_CannotBeSeen)
+end
+
+function isMonster(cid)
+	return isCreature(cid) and cid >= AUTOID_MONSTERS and cid < AUTOID_NPCS
+end
+
+function isNpc(cid)
+	return isCreature(cid) and cid >= AUTOID_NPCS
 end
 
 function doPlayerSetExperienceRate(cid, value)

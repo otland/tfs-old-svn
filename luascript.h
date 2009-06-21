@@ -602,11 +602,8 @@ class LuaScriptInterface
 		static int32_t luaGetGuildMotd(lua_State* L);
 
 		//type validation
-		static int32_t luaIsPlayer(lua_State* L);
 		static int32_t luaIsPlayerPzLocked(lua_State* L);
 		static int32_t luaIsPlayerSaving(lua_State* L);
-		static int32_t luaIsMonster(lua_State* L);
-		static int32_t luaIsNpc(lua_State* L);
 		static int32_t luaIsCreature(lua_State* L);
 		static int32_t luaIsContainer(lua_State* L);
 		static int32_t luaIsCorpse(lua_State* L);

@@ -141,6 +141,16 @@ class House
 {
 	public:
 		virtual ~House() {}
+		enum syncflags_t
+		{
+			HOUSE_SYNC_NONE = 0,
+			HOUSE_SYNC_NAME = 1 << 0,
+			HOUSE_SYNC_TOWN = 1 << 1,
+			HOUSE_SYNC_SIZE = 1 << 2,
+			HOUSE_SYNC_GUILD = 1 << 3,
+			HOUSE_SYNC_PRICE = 1 << 4,
+			HOUSE_SYNC_RENT = 1 << 5
+		};
 
 		House(uint32_t _houseId);
 		uint32_t getHouseId() const {return houseId;}
@@ -186,6 +196,9 @@ class House
 		uint32_t getBedsCount() const {return bedsList.size();}
 		uint32_t getTilesCount() const {return houseTiles.size();}
 
+		bool hasSyncFlag(syncflags_t flag) const {return ((syncFlags & (uint32_t)flag) == (uint32_t)flag);}
+		void resetSyncFlag(syncflags_t flag) {syncFlags &= ~(uint32_t)flag;}
+
 		bool canEditAccessList(uint32_t listId, const Player* player);
 		void setAccessList(uint32_t listId, const std::string& textlist, bool teleport = true);
 		bool getAccessList(uint32_t listId, std::string& list) const;
@@ -220,7 +233,7 @@ class House
 
 		bool guild, pendingTransfer;
 		time_t paidUntil, lastWarning;
-		uint32_t houseId, houseOwner, rentWarnings, rent, price, townId, size;
+		uint32_t houseId, houseOwner, rentWarnings, rent, price, townId, size, syncFlags;
 		std::string houseName;
 		Position posEntry;
 

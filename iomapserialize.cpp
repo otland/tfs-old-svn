@@ -58,12 +58,28 @@ bool IOMapSerialize::syncHouses()
 		{
 			result->free();
 			query.str("");
-			query << "UPDATE `houses` SET `name` = " << db->escapeString(house->getName()) << ", `town` = "
-				<< house->getTownId() << ", `size` = " << house->getSize() << ", `price` = "
-				<< house->getPrice() << ", `rent` = " << house->getRent() << ", `doors` = "
-				<< house->getDoorsCount() << ", `beds` = " << house->getBedsCount() << ", `guild` = "
-				<< house->isGuild() << " WHERE `id` = " << house->getHouseId() << " AND `world_id` = "
-				<< g_config.getNumber(ConfigManager::WORLD_ID);
+
+			query << "UPDATE `houses` SET ";
+			if(house->hasSyncFlag(House::HOUSE_SYNC_NAME))
+				query << "`name` = " << db->escapeString(house->getName()) << ", ";
+
+			if(house->hasSyncFlag(House::HOUSE_SYNC_TOWN))
+				query << "`town` = " << house->getTownId() << ", ";
+
+			if(house->hasSyncFlag(House::HOUSE_SYNC_SIZE))
+				query << "`size` = " << house->getSize() << ", ";
+
+			if(house->hasSyncFlag(House::HOUSE_SYNC_PRICE))
+				query << "`price` = " << house->getPrice() << ", ";
+
+			if(house->hasSyncFlag(House::HOUSE_SYNC_RENT))
+				query << "`rent` = " << house->getRent() << ", ";
+
+			query << "`doors` = " << house->getDoorsCount() << ", `beds` = " << house->getBedsCount();
+			if(house->hasSyncFlag(House::HOUSE_SYNC_GUILD))
+				query << ", `guild` = " << house->isGuild();
+
+			query << " WHERE `id` = " << house->getHouseId() << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 		}
 		else
 		{

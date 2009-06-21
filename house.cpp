@@ -39,6 +39,7 @@ House::House(uint32_t _houseId)
 	posEntry = Position();
 	houseId = _houseId;
 	rent = price = townId = paidUntil = houseOwner = rentWarnings = lastWarning = 0;
+	syncFlags = HOUSE_SYNC_NAME | HOUSE_SYNC_TOWN | HOUSE_SYNC_SIZE | HOUSE_SYNC_PRICE | HOUSE_SYNC_RENT | HOUSE_SYNC_GUILD;
 }
 
 void House::addTile(HouseTile* tile)
@@ -752,9 +753,6 @@ bool Houses::loadFromXml(std::string filename)
 			return false;
 		}
 
-		if(readXMLString(houseNode, "name", strValue))
-			house->setName(strValue);
-
 		Position entryPos(0, 0, 0);
 		if(readXMLInteger(houseNode, "entryx", intValue))
 			entryPos.x = intValue;
@@ -772,14 +770,25 @@ bool Houses::loadFromXml(std::string filename)
 			std::cout << house->getName() << " (" << houseId << ")" << std::endl;
 		}
 
+		if(readXMLString(houseNode, "name", strValue))
+			house->setName(strValue);
+		else
+			house->resetSyncFlag(House::HOUSE_SYNC_NAME);
+
 		if(readXMLInteger(houseNode, "townid", intValue))
 			house->setTownId(intValue);
+		else
+			house->resetSyncFlag(House::HOUSE_SYNC_TOWN);
 
 		if(readXMLInteger(houseNode, "size", intValue))
 			house->setSize(intValue);
+		else
+			house->resetSyncFlag(House::HOUSE_SYNC_SIZE);
 
 		if(readXMLString(houseNode, "guildhall", strValue))
 			house->setGuild(booleanString(strValue));
+		else
+			house->resetSyncFlag(House::HOUSE_SYNC_GUILD);
 
 		uint32_t rent = 0;
 		if(readXMLInteger(houseNode, "rent", intValue))

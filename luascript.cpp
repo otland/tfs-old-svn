@@ -1704,20 +1704,11 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerSave(cid)
 	lua_register(m_luaState, "doPlayerSave", LuaScriptInterface::luaDoPlayerSave);
 
-	//isPlayer(cid)
-	lua_register(m_luaState, "isPlayer", LuaScriptInterface::luaIsPlayer);
-
 	//isPlayerPzLocked(cid)
 	lua_register(m_luaState, "isPlayerPzLocked", LuaScriptInterface::luaIsPlayerPzLocked);
 
 	//isPlayerSaving(cid)
 	lua_register(m_luaState, "isPlayerSaving", LuaScriptInterface::luaIsPlayerSaving);
-
-	//isMonster(cid)
-	lua_register(m_luaState, "isMonster", LuaScriptInterface::luaIsMonster);
-
-	//isNpc(cid)
-	lua_register(m_luaState, "isNpc", LuaScriptInterface::luaIsNpc);
 
 	//isCreature(cid)
 	lua_register(m_luaState, "isCreature", LuaScriptInterface::luaIsCreature);
@@ -7098,35 +7089,6 @@ int32_t LuaScriptInterface::luaDoMoveCreature(lua_State* L)
 		lua_pushboolean(L, false);
 	}
 
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaIsPlayer(lua_State* L)
-{
-	//isPlayer(cid)
-	ScriptEnviroment* env = getScriptEnv();
-	lua_pushboolean(L, env->getPlayerByUID(popNumber(L)) ?
-		true : false);
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaIsMonster(lua_State* L)
-{
-	//isMonster(cid)
-	ScriptEnviroment* env = getScriptEnv();
-	Creature* c = env->getCreatureByUID(popNumber(L));
-	lua_pushboolean(L, (c && c->getMonster()) ?
-		true : false);
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaIsNpc(lua_State* L)
-{
-	//isNpc(cid)
-	ScriptEnviroment* env = getScriptEnv();
-	Creature* c = env->getCreatureByUID(popNumber(L));
-	lua_pushboolean(L, (c && c->getNpc()) ?
-		true : false);
 	return 1;
 }
 
