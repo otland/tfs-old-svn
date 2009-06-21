@@ -759,7 +759,7 @@
 	doCreatureSetSkullType(cid, skull)
 	doCreatureSetLookDir(cid, dir)
 	doCreatureChangeOutfit(cid, outfit)
-	doCreatureSay(cid, text, type[, pos])
+	doCreatureSay(uid, text, type[, ghost[, cid[, pos]]])
 	doCreatureSetNoMove(cid, cannotMove)
 	doSetCreatureLight(cid, lightLevel, lightColor, time)
 	doSetCreatureOutfit(cid, outfit, time)
