@@ -258,7 +258,7 @@ class Houses
 
 		void payHouses();
 		bool payHouse(House* house, time_t _time, uint32_t bid);
-		bool payRent(Player* player, House* house, time_t _time = 0, uint32_t bid);
+		bool payRent(Player* player, House* house, uint32_t bid, time_t _time = 0);
 
 		HouseMap::iterator getHouseBegin() {return houseMap.begin();}
 		HouseMap::iterator getHouseEnd() {return houseMap.end();}

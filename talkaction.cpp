@@ -549,7 +549,7 @@ bool TalkAction::houseSell(Creature* creature, const std::string& cmd, const std
 		return false;
 	}
 
-	if(!Houses::getInstance().payRent(player, house))
+	if(!Houses::getInstance().payRent(player, house, 0))
 	{
 		player->sendCancel("You have to pay a pre-rent first.");
 		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);

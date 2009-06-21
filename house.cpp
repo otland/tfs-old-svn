@@ -846,7 +846,7 @@ void Houses::payHouses()
 	std::cout << "> Houses paid in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 }
 
-bool Houses::payRent(Player* player, House* house, time_t _time/* = 0*/, uint32_t bid)
+bool Houses::payRent(Player* player, House* house, uint32_t bid, time_t _time/* = 0*/)
 {
 	if(rentPeriod == RENTPERIOD_NEVER || !house->getHouseOwner() ||
 		house->getPaidUntil() > _time || !house->getRent() ||
@@ -930,7 +930,7 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 		return false;
 	}
 
-	bool paid = payRent(player, house, _time, bid), savePlayer = false;
+	bool paid = payRent(player, house, bid, _time), savePlayer = false;
 	if(!paid && _time >= (house->getLastWarning() + 86400))
 	{
 		uint32_t warningsLimit = 7;
