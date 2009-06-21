@@ -278,7 +278,7 @@ class NpcResponse
 				interactType = INTERACT_TEXT;
 				responseType = RESPONSE_DEFAULT;
 				params = 0;
-				storageId = storageValue = -1;
+				storageId = -1;
 				storageComp = STORAGE_EQUAL;
 				knowSpell = "";
 				publicize = true;
@@ -329,7 +329,7 @@ class NpcResponse
 		int32_t getTopic() const {return prop.topic;}
 		int32_t getFocusState() const {return prop.focusStatus;}
 		int32_t getStorageId() const {return prop.storageId;}
-		int32_t getStorageValue() const {return prop.storageValue;}
+		std::string getStorageValue() const {return prop.storageValue;}
 		ResponseType_t getResponseType() const {return prop.responseType;}
 		InteractType_t getInteractType() const {return prop.interactType;}
 		StorageComparision_t getStorageComp() const {return prop.storageComp;}
