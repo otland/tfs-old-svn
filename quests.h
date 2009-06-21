@@ -22,13 +22,13 @@
 #include "networkmessage.h"
 #include "player.h"
 
-typedef std::map<uint32_t, const std::string&> StateMap;
+typedef std::map<uint32_t, std::string> StateMap;
 class Mission
 {
 	public:
 		Mission(std::string _name, uint32_t _storageId, int32_t _startValue, int32_t _endValue)
 		{
-			name = _missionName;
+			name = _name;
 			endValue = _endValue;
 			startValue = _startValue;
 			storageId = _storageId;
@@ -40,7 +40,7 @@ class Mission
 		bool isStarted(Player* player);
 		bool isCompleted(Player* player);
 
-		const std::string& getName(Player* player) const {return (isCompleted(player) ? (name + " (completed)") : name);}
+		const std::string& getName(Player* player) {return (isCompleted(player) ? (name + " (completed)") : name);}
 		const std::string& getDescription(Player* player);
 
 	private:
@@ -96,7 +96,9 @@ class Quests
 			return &instance;
 		}
 
+		void clear();
 		bool reload();
+
 		bool loadFromXml();
 		bool parseQuestNode(xmlNodePtr p, bool checkDuplicate);
 
