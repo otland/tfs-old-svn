@@ -229,6 +229,19 @@ CREATE TABLE `house_data`
 	FOREIGN KEY (`house_id`, `world_id`) REFERENCES `houses`(`id`, `world_id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
+CREATE TABLE `house_auctions`
+(
+	`house_id` INT UNSIGNED NOT NULL,
+	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+	`player_id` INT NOT NULL,
+	`bid` INT UNSIGNED NOT NULL DEFAULT 0,
+	`limit` INT UNSIGNED NOT NULL DEFAULT 0,
+	`endtime` BIGINT UNSIGNED NOT NULL DEFAULT 0,
+	UNIQUE (`house_id`, `world_id`),
+	FOREIGN KEY (`house_id`, `world_id`) REFERENCES `houses`(`id`, `world_id`) ON DELETE CASCADE,
+	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON DELETE CASCADE
+) ENGINE = InnoDB;
+
 CREATE TABLE `houses`
 (
 	`id` INT UNSIGNED NOT NULL,
@@ -244,6 +257,7 @@ CREATE TABLE `houses`
 	`rent` INT UNSIGNED NOT NULL DEFAULT 0,
 	`doors` INT UNSIGNED NOT NULL DEFAULT 0,
 	`beds` INT UNSIGNED NOT NULL DEFAULT 0,
+	`tiles` INT UNSIGNED NOT NULL DEFAULT 0,
 	`guild` TINYINT(1) UNSIGNED NOT NULL DEFAULT FALSE,
 	`clear` TINYINT(1) UNSIGNED NOT NULL DEFAULT FALSE,
 	UNIQUE (`id`, `world_id`)

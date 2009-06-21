@@ -56,26 +56,22 @@ bool Map::loadMap(const std::string& identifier)
 	if(!loader->loadSpawns(this))
 		std::cout << "> WARNING: Could not load spawn data." << std::endl;
 
-	std::cout << "> Spawns parsing time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
-	start = OTSYS_TIME();
 	if(!loader->loadHouses(this))
 		std::cout << "> WARNING: Could not load house data." << std::endl;
 
-	std::cout << "> Houses parsing time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 	delete loader;
-	IOMapSerialize* IOLoader = IOMapSerialize::getInstance();
-
+	std::cout << "> Data parsing time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 	start = OTSYS_TIME();
-	IOLoader->syncHouses();
+
+	IOMapSerialize::getInstance()->updateHouses();
+	IOMapSerialize::getInstance()->updateAuctions();
 	std::cout << "> Houses synchronization time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 
 	start = OTSYS_TIME();
-	IOLoader->loadHouses();
-	std::cout << "> Unserialization time for houses: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
+	IOMapSerialize::getInstance()->loadHouses();
+	IOMapSerialize::getInstance()->loadMap(this);
 
-	start = OTSYS_TIME();
-	IOLoader->loadMap(this);
-	std::cout << "> Unserialization time for map: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
+	std::cout << "> Content unserialization time: " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 	return true;
 }
 
@@ -683,7 +679,9 @@ bool Map::getPathTo(const Creature* creature, const Position& destPos,
 				if(neighbourNode)
 				{
 					if(neighbourNode->g <= newg) //The node on the closed/open list is cheaper than this one
-						nodes.openNode(neighbourNode);
+						continue;
+
+					nodes.openNode(neighbourNode);
 				}
 				else if(!(neighbourNode = nodes.createOpenNode())) //Does not exist in the open/closed list, create a new node
 				{
@@ -828,7 +826,9 @@ bool Map::getPathMatching(const Creature* creature, std::list<Direction>& dirLis
 				if(neighbourNode)
 				{
 					if(neighbourNode->f <= newf) //The node on the closed/open list is cheaper than this one
-						nodes.openNode(neighbourNode);
+						continue;
+
+					nodes.openNode(neighbourNode);
 				}
 				else if(!(neighbourNode = nodes.createOpenNode())) //Does not exist in the open/closed list, create a new node
 				{

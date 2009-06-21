@@ -372,14 +372,14 @@ ReturnValue Actions::canUseFar(const Creature* creature, const Position& toPos, 
 
 Action* Actions::getAction(const Item* item, ActionType_t type/* = ACTION_ANY*/) const
 {
-	if(item->getUniqueId() != 0 && (type == ACTION_ANY || type == ACTION_UNIQUEID))
+	if(item->getUniqueId() && (type == ACTION_ANY || type == ACTION_UNIQUEID))
 	{
 		ActionUseMap::const_iterator it = uniqueItemMap.find(item->getUniqueId());
 		if(it != uniqueItemMap.end())
 			return it->second;
 	}
 
-	if(item->getActionId() != 0 && (type == ACTION_ANY || type == ACTION_ACTIONID))
+	if(item->getActionId() && (type == ACTION_ANY || type == ACTION_ACTIONID))
 	{
 		ActionUseMap::const_iterator it = actionItemMap.find(item->getActionId());
 		if(it != actionItemMap.end())
@@ -421,8 +421,8 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 		tmp = item->getParent()->__getIndexOfThing(item);
 
 	PositionEx posEx(pos, tmp);
-
 	bool executed = false;
+
 	Action* action = NULL;
 	if((action = getAction(item, ACTION_UNIQUEID)))
 	{
@@ -500,8 +500,7 @@ ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_
 	if(Container* container = item->getContainer())
 	{
 		if(container->getCorpseOwner() && !player->canOpenCorpse(container->getCorpseOwner())
-			&& g_config.getBool(ConfigManager::CHECK_CORPSE_OWNER)
-		)
+			&& g_config.getBool(ConfigManager::CHECK_CORPSE_OWNER))
 			return RET_YOUARENOTTHEOWNER;
 
 		Container* tmpContainer = NULL;
@@ -565,13 +564,11 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 	player->setNextAction(OTSYS_TIME() + g_config.getNumber(ConfigManager::ACTIONS_DELAY_INTERVAL) - SCHEDULER_MINTICKS);
 
 	ReturnValue ret = internalUseItem(player, pos, index, item, 0);
-	if(ret != RET_NOERROR)
-	{
-		player->sendCancelMessage(ret);
-		return false;
-	}
+	if(ret == RET_NOERROR)
+		return true;
 
-	return true;
+	player->sendCancelMessage(ret);
+	return false;
 }
 
 bool Actions::executeUseEx(Action* action, Player* player, Item* item, const PositionEx& fromPosEx,

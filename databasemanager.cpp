@@ -890,6 +890,65 @@ uint32_t DatabaseManager::updateDatabase()
 			return 18;
 		}
 
+		case 18:
+		{
+			std::cout << "> Updating database to version: 19..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_MYSQL:
+				{
+					std::string queryList[] = {
+						"ALTER TABLE `houses` ADD `tiles` INT UNSIGNED NOT NULL DEFAULT 0 AFTER `beds`;",
+						"CREATE TABLE `house_auctions`\
+(\
+	`house_id` INT UNSIGNED NOT NULL,\
+	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,\
+	`player_id` INT NOT NULL,\
+	`bid` INT UNSIGNED NOT NULL DEFAULT 0,\
+	`limit` INT UNSIGNED NOT NULL DEFAULT 0,\
+	`endtime` BIGINT UNSIGNED NOT NULL DEFAULT 0,\
+	UNIQUE (`house_id`, `world_id`),\
+	FOREIGN KEY (`house_id`, `world_id`) REFERENCES `houses`(`id`, `world_id`) ON DELETE CASCADE,\
+	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON DELETE CASCADE\
+) ENGINE = InnoDB;"
+					};
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+						db->executeQuery(queryList[i]);
+
+					break;
+				}
+
+				case DATABASE_ENGINE_SQLITE:
+				{
+					std::string queryList[] = {
+						"ALTER TABLE `houses` ADD `tiles` INTEGER NOT NULL DEFAULT 0;",
+						"CREATE TABLE `house_auctions` (\
+	`house_id` INTEGER NOT NULL,\
+	`world_id` INTEGER NOT NULL DEFAULT 0,\
+	`player_id` INTEGER NOT NULL,\
+	`bid` INTEGER NOT NULL DEFAULT 0,\
+	`limit` INTEGER NOT NULL DEFAULT 0,\
+	`endtime` INTEGER NOT NULL DEFAULT 0,\
+	UNIQUE (`house_id`, `world_id`),\
+	FOREIGN KEY (`house_id`, `world_id`) REFERENCES `houses` (`id`, `world_id`)\
+	FOREIGN KEY (`player_id`) REFERENCES `players` (`id`)\
+);"
+					};
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+						db->executeQuery(queryList[i]);
+
+					break;
+				}
+
+				default:
+					//TODO
+					break;
+			}
+
+			registerDatabaseConfig("db_version", 19);
+			return 19;
+		}
+
 		default:
 			break;
 	}

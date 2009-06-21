@@ -567,11 +567,8 @@ if(NpcHandler == nil) then
 	--	This implements the currently set type of talkdelay.
 	--	shallDelay is a boolean value. If it is false, the message is not delayed. Default value is false.
 	function NpcHandler:say(message, focus, publicize, shallDelay)
-		if(shallDelay == nil) then
-			shallDelay = false
-		end
-
-		if(NPCHANDLER_TALKDELAY == TALKDELAY_NONE or not shallDelay) then
+		local publicize, shallDelay = publicize or false, shallDelay or false
+		if(NPCHANDLER_TALKDELAY == TALKDELAY_NONE or shallDelay == false) then
 			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 				selfSay(message, focus, publicize)
 				return

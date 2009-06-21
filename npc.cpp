@@ -2143,10 +2143,12 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			++matchCount;
 		}
 
-		int32_t storageId = (*it)->getStorageId();
-		std::string value;
-		if(storageId != -1 && player->getStorageValue(storageId, value))
+		if((*it)->getStorageId() != -1)
 		{
+			std::string value;
+			if(!player->getStorageValue((*it)->getStorageId(), value))
+				continue;
+
 			std::string storageValue = (*it)->getStorageValue();
 			if(asLowerCaseString(storageValue) == "_time")
 			{
@@ -2155,57 +2157,49 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 				storageValue = s.str();
 			}
 
+			bool tmp = false;
 			switch((*it)->getStorageComp())
 			{
 				case STORAGE_LESS:
 				{
 					int32_t v1 = atoi(value.c_str()), v2 = atoi(storageValue.c_str());
-					if(v1 >= v2)
-						continue;
-
+					tmp = v1 < v2;
 					break;
 				}
 				case STORAGE_LESSOREQUAL:
 				{
 					int32_t v1 = atoi(value.c_str()), v2 = atoi(storageValue.c_str());
-					if(v1 > v2)
-						continue;
-
+					tmp = v2 > v1;
 					break;
 				}
 				case STORAGE_EQUAL:
 				{
-					if(value != storageValue)
-						continue;
-
+					tmp = value == storageValue;
 					break;
 				}
 				case STORAGE_NOTEQUAL:
 				{
-					if(value == storageValue)
-						continue;
-
+					tmp = value != storageValue;
 					break;
 				}
 				case STORAGE_GREATEROREQUAL:
 				{
 					int32_t v1 = atoi(value.c_str()), v2 = atoi(storageValue.c_str());
-					if(v1 < v2)
-						continue;
-
+					tmp = v2 < v1;
 					break;
 				}
 				case STORAGE_GREATER:
 				{
 					int32_t v1 = atoi(value.c_str()), v2 = atoi(storageValue.c_str());
-					if(v1 <= v2)
-						continue;
-
+					tmp = v1 > v2;
 					break;
 				}
 				default:
 					break;
 			}
+
+			if(!tmp)
+				continue;
 
 			++matchCount;
 		}
@@ -2556,12 +2550,12 @@ int32_t NpcScriptInterface::luaActionFocus(lua_State* L)
 int32_t NpcScriptInterface::luaActionSay(lua_State* L)
 {
 	//selfSay(words[, target[, publicize[, type]]])
-	uint32_t type = SPEAK_CLASS_NONE, params = lua_gettop(L), target = 0;
-	bool publicize = true;
-
+	int32_t params = lua_gettop(L), target = 0;
+	SpeakClasses type = SPEAK_CLASS_NONE;
 	if(params > 3)
-		type = popNumber(L);
+		type = (SpeakClasses)popNumber(L);
 
+	bool publicize = true;
 	if(params > 2)
 		publicize = popNumber(L);
 
@@ -2569,13 +2563,13 @@ int32_t NpcScriptInterface::luaActionSay(lua_State* L)
 		target = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	Player* player = NULL;
-	if(!publicize)
-		player = env->getPlayerByUID(target);
-
 	Npc* npc = env->getNpc();
 	if(!npc)
 		return 0;
+
+	Player* player = NULL;
+	if(!publicize)
+		player = env->getPlayerByUID(target);
 
 	if(type == SPEAK_CLASS_NONE)
 	{

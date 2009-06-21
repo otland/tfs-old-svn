@@ -102,10 +102,10 @@ class Vocation
 
 		double getExperienceMultiplier() const {return skillMultipliers[SKILL__LEVEL];}
 		void setSkillMultiplier(skills_t s, float v) {skillMultipliers[s] = v;}
+		void setSkillBase(skills_t s, uint32_t v) {skillBase[s] = v;}
 
 		uint32_t getReqSkillTries(int32_t skill, int32_t level);
 		uint64_t getReqMana(uint32_t magLevel);
-		static uint32_t skillBase[SKILL_LAST + 1];
 
 	private:
 		typedef std::map<uint32_t, uint32_t> cacheMap;
@@ -118,7 +118,7 @@ class Vocation
 		std::string name, description;
 
 		int16_t absorbPercent[COMBAT_LAST + 1];
-		uint32_t gain[GAIN_LAST + 1], gainTicks[GAIN_LAST + 1], gainAmount[GAIN_LAST + 1];
+		uint32_t gain[GAIN_LAST + 1], gainTicks[GAIN_LAST + 1], gainAmount[GAIN_LAST + 1], skillBase[SKILL_LAST + 1];
 		float skillMultipliers[SKILL__LAST + 1], formulaMultipliers[MULTIPLIER_LAST + 1];
 };
 

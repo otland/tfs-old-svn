@@ -39,9 +39,10 @@ class IOMapSerialize
 		bool loadMap(Map* map);
 		bool saveMap(Map* map);
 
-		bool syncHouses();
+		bool updateAuctions();
 
 		bool loadHouses();
+		bool updateHouses();
 		bool saveHouses();
 
 		bool saveHouse(Database* db, House* house);

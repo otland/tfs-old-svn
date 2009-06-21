@@ -41,7 +41,7 @@ class Mission
 		bool isCompleted(Player* player);
 
 		std::string getName(Player* player) {return (isCompleted(player) ? (name + " (completed)") : name);}
-		const std::string& getDescription(Player* player);
+		std::string getDescription(Player* player);
 
 	private:
 		std::string name;
@@ -110,7 +110,7 @@ class Quests
 		Quest* getQuestById(uint16_t id) const;
 
 	private:
-		Quests() {m_lastId = 0;}
+		Quests() {m_lastId = 1;}
 
 		QuestList quests;
 		uint16_t m_lastId;

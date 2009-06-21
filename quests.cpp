@@ -36,20 +36,25 @@ bool Mission::isCompleted(Player* player)
 	return player->getStorageValue(storageId, value) && atoi(value.c_str()) >= endValue;
 }
 
-const std::string& Mission::getDescription(Player* player)
+std::string Mission::getDescription(Player* player)
 {
-	for(int32_t i = endValue; i >= startValue; i--)
+	std::string value;
+	if(!player->getStorageValue(storageId, value))
+		return "Couldn't retrieve player storage, please report to gamemaster.";
+
+	if(atoi(value.c_str()) >= endValue)
+		return states[endValue];
+
+	for(int32_t i = endValue; i >= startValue; --i)
 	{
-		std::string value;
-		if(!player->getStorageValue(storageId, value) || atoi(value.c_str()) != (startValue + i))
+		if(!player->getStorageValue(storageId, value))
 			continue;
 
-		StateMap::const_iterator sit = states.find(i);
-		if(sit != states.end())
-			return sit->second;
+		if(i == atoi(value.c_str()))
+			return states[i - startValue];
 	}
 
-	return "Error while getting mission \"" + name + "\" description, please contact with gamemaster.";
+	return "Couldn't retrieve mission description, please report to gamemaster.";
 }
 
 Quest::~Quest()
@@ -144,7 +149,7 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 	std::string strValue;
 
 	uint32_t id = m_lastId;
-	if(readXMLInteger(p, "id", intValue))
+	if(readXMLInteger(p, "id", intValue) && id > 0)
 	{
 		id = intValue;
 		if(id > m_lastId)
@@ -156,11 +161,11 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 		name = strValue;
 
 	uint32_t startStorageId = 0;
-	if(readXMLInteger(p, "startstorageid", intValue))
+	if(readXMLInteger(p, "startstorageid", intValue) || readXMLInteger(p, "storageId", intValue))
 		startStorageId = intValue;
 
 	int32_t startStorageValue = 0;
-	if(readXMLInteger(p, "startstoragevalue", intValue))
+	if(readXMLInteger(p, "startstoragevalue", intValue) || readXMLInteger(p, "storageValue", intValue))
 		startStorageValue = intValue;
 
 	Quest* quest = new Quest(name, id, startStorageId, startStorageValue);
@@ -181,14 +186,14 @@ bool Quests::parseQuestNode(xmlNodePtr p, bool checkDuplicate)
 			missionName = strValue;
 
 		uint32_t storageId = 0;
-		if(readXMLInteger(missionNode, "storageid", intValue))
+		if(readXMLInteger(missionNode, "storageid", intValue) || readXMLInteger(p, "storageId", intValue))
 			storageId = intValue;
 
 		int32_t startValue = 0, endValue = 0;
-		if(readXMLInteger(missionNode, "startvalue", intValue))
+		if(readXMLInteger(missionNode, "startvalue", intValue) || readXMLInteger(p, "startValue", intValue))
 			startValue = intValue;
 
-		if(readXMLInteger(missionNode, "endvalue", intValue))
+		if(readXMLInteger(missionNode, "endvalue", intValue) || readXMLInteger(p, "endValue", intValue))
 			endValue = intValue;
 
 		if(Mission* mission = new Mission(missionName, storageId, startValue, endValue))

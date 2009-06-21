@@ -42,63 +42,37 @@ bool IOMapSerialize::saveMap(Map* map)
 	return saveMapRelational(map);
 }
 
-bool IOMapSerialize::syncHouses()
+bool IOMapSerialize::updateAuctions()
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
 
+	time_t now = time(NULL);
+	query << "SELECT `house_id`, `player_id`, `bid` FROM `house_auctions` WHERE `endtime` < " << now;
+
+	DBResult* result;
+	if(!(result = db->storeQuery(query.str())))
+		return true;
+
+	bool success = true;
 	House* house = NULL;
-	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
+	do
 	{
-		if(!(house = it->second))
-			continue;
-
-		query << "SELECT `id` FROM `houses` WHERE `id` = " << house->getHouseId() << " LIMIT 1;";
-		if(DBResult* result = db->storeQuery(query.str()))
-		{
-			result->free();
-			query.str("");
-
-			query << "UPDATE `houses` SET ";
-			if(house->hasSyncFlag(House::HOUSE_SYNC_NAME))
-				query << "`name` = " << db->escapeString(house->getName()) << ", ";
-
-			if(house->hasSyncFlag(House::HOUSE_SYNC_TOWN))
-				query << "`town` = " << house->getTownId() << ", ";
-
-			if(house->hasSyncFlag(House::HOUSE_SYNC_SIZE))
-				query << "`size` = " << house->getSize() << ", ";
-
-			if(house->hasSyncFlag(House::HOUSE_SYNC_PRICE))
-				query << "`price` = " << house->getPrice() << ", ";
-
-			if(house->hasSyncFlag(House::HOUSE_SYNC_RENT))
-				query << "`rent` = " << house->getRent() << ", ";
-
-			query << "`doors` = " << house->getDoorsCount() << ", `beds` = " << house->getBedsCount();
-			if(house->hasSyncFlag(House::HOUSE_SYNC_GUILD))
-				query << ", `guild` = " << house->isGuild();
-
-			query << " WHERE `id` = " << house->getHouseId() << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
-		}
-		else
-		{
-			query.str("");
-			query << "INSERT INTO `houses` (`id`, `world_id`, `owner`, `name`, `town`, `size`, `price`, `rent`, `doors`, `beds`, `guild`) VALUES ("
-				<< house->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", 0, "
-				//we need owner for compatibility reasons (field doesn't have a default value)
-				<< db->escapeString(house->getName()) << ", " << house->getTownId() << ", "
-				<< house->getSize() << ", " << house->getPrice() << ", " << house->getRent() << ", "
-				<< house->getDoorsCount() << ", " << house->getBedsCount() << ", " << house->isGuild() << ")";
-		}
-
-		if(!db->executeQuery(query.str()))
-			return false;
-
 		query.str("");
-	}
+		query << "DELETE FROM `house_auctions` WHERE `house_id` = " << result->getDataInt("house_id");
+		if(!(house = Houses::getInstance().getHouse(result->getDataInt(
+			"house_id"))) || !db->executeQuery(query.str()))
+		{
+			success = false;
+			continue;
+		}
 
-	return true;
+		house->setHouseOwner(result->getDataInt("player_id"));
+		Houses::getInstance().payHouse(house, now, result->getDataInt("bid"));
+	}
+	while(result->next());
+	result->free();
+	return success;
 }
 
 bool IOMapSerialize::loadHouses()
@@ -146,6 +120,67 @@ bool IOMapSerialize::loadHouses()
 	}
 
 	query.str("");
+	return true;
+}
+
+bool IOMapSerialize::updateHouses()
+{
+	Database* db = Database::getInstance();
+	DBQuery query;
+
+	House* house = NULL;
+	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
+	{
+		if(!(house = it->second))
+			continue;
+
+		query << "SELECT `id` FROM `houses` WHERE `id` = " << house->getHouseId() << " LIMIT 1;";
+		if(DBResult* result = db->storeQuery(query.str()))
+		{
+			result->free();
+			query.str("");
+
+			query << "UPDATE `houses` SET ";
+			if(house->hasSyncFlag(House::HOUSE_SYNC_NAME))
+				query << "`name` = " << db->escapeString(house->getName()) << ", ";
+
+			if(house->hasSyncFlag(House::HOUSE_SYNC_TOWN))
+				query << "`town` = " << house->getTownId() << ", ";
+
+			if(house->hasSyncFlag(House::HOUSE_SYNC_SIZE))
+				query << "`size` = " << house->getSize() << ", ";
+
+			if(house->hasSyncFlag(House::HOUSE_SYNC_PRICE))
+				query << "`price` = " << house->getPrice() << ", ";
+
+			if(house->hasSyncFlag(House::HOUSE_SYNC_RENT))
+				query << "`rent` = " << house->getRent() << ", ";
+
+			query << "`doors` = " << house->getDoorsCount() << ", `beds` = "
+				<< house->getBedsCount() << ", `tiles` = " << house->getTilesCount();
+			if(house->hasSyncFlag(House::HOUSE_SYNC_GUILD))
+				query << ", `guild` = " << house->isGuild();
+
+			query << " WHERE `id` = " << house->getHouseId() << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+		}
+		else
+		{
+			query.str("");
+			query << "INSERT INTO `houses` (`id`, `world_id`, `owner`, `name`, `town`, `size`, `price`, `rent`, `doors`, `beds`, `tiles`, `guild`) VALUES ("
+				<< house->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", 0, "
+				//we need owner for compatibility reasons (field doesn't have a default value)
+				<< db->escapeString(house->getName()) << ", " << house->getTownId() << ", "
+				<< house->getSize() << ", " << house->getPrice() << ", " << house->getRent() << ", "
+				<< house->getDoorsCount() << ", " << house->getBedsCount() << ", "
+				<< house->getTilesCount() << ", " << house->isGuild() << ")";
+		}
+
+		if(!db->executeQuery(query.str()))
+			return false;
+
+		query.str("");
+	}
+
 	return true;
 }
 

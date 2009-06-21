@@ -375,6 +375,9 @@ bool Party::canUseSharedExperience(const Player* player, uint32_t highestLevel/*
 
 bool Party::canEnableSharedExperience()
 {
+	if(!memberList.size())
+		return false;
+
 	uint32_t highestLevel = getLeader()->getLevel();
 	for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
 	{

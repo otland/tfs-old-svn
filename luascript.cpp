@@ -31,6 +31,7 @@
 
 #include "iologindata.h"
 #include "ioban.h"
+#include "iomapserialize.h"
 
 #include "baseevents.h"
 #include "talkaction.h"
@@ -203,10 +204,9 @@ void ScriptEnviroment::addUniqueThing(Thing* thing)
 void ScriptEnviroment::removeUniqueThing(Thing* thing)
 {
 	Item* item = thing->getItem();
-	if(item && item->getUniqueId() != 0)
+	if(item && item->getUniqueId())
 	{
-		int32_t uid = item->getUniqueId();
-		ThingMap::iterator it = m_globalMap.find(uid);
+		ThingMap::iterator it = m_globalMap.find(item->getUniqueId());
 		if(it != m_globalMap.end())
 			m_globalMap.erase(it);
 	}
@@ -223,33 +223,30 @@ uint32_t ScriptEnviroment::addThing(Thing* thing)
 			return it->first;
 	}
 
-	uint32_t newUid;
 	if(Creature* creature = thing->getCreature())
-		newUid = creature->getID();
-	else
 	{
-		if(Item* item = thing->getItem())
-		{
-			uint32_t uid = item->getUniqueId();
-			if(uid && item->getTile() == item->getParent())
-			{
-				m_localMap[uid] = thing;
-				return uid;
-			}
-		}
-
-		++m_lastUID;
-		if(m_lastUID < 70000)
-			m_lastUID = 70000;
-
-		while(m_localMap[m_lastUID])
-			++m_lastUID;
-
-		newUid = m_lastUID;
+		m_localMap[creature->getID()] = thing;
+		return creature->getID();
 	}
 
-	m_localMap[newUid] = thing;
-	return newUid;
+	if(Item* item = thing->getItem())
+	{
+		if(item->getUniqueId() && item->getTile() == item->getParent())
+		{
+			m_localMap[item->getUniqueId()] = thing;
+			return item->getUniqueId();
+		}
+	}
+
+	++m_lastUID;
+	if(m_lastUID < 70000)
+		m_lastUID = 70000;
+
+	while(m_localMap[m_lastUID])
+		++m_lastUID;
+
+	m_localMap[m_lastUID] = thing;
+	return m_lastUID;
 }
 
 void ScriptEnviroment::insertThing(uint32_t uid, Thing* thing)
@@ -257,7 +254,7 @@ void ScriptEnviroment::insertThing(uint32_t uid, Thing* thing)
 	if(!m_localMap[uid])
 		m_localMap[uid] = thing;
 	else
-		std::cout << std::endl << "Lua Script Error: Thing uid already taken.";
+		std::cout << "[Error - ScriptEnviroment::insertThing] Thing uid already taken" << std::endl;
 }
 
 Thing* ScriptEnviroment::getThingByUID(uint32_t uid)
@@ -2310,6 +2307,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//doRefreshMap()
 	lua_register(m_luaState, "doRefreshMap", LuaScriptInterface::luaDoRefreshMap);
+
+	//doUpdateHouseAuctions()
+	lua_register(m_luaState, "doUpdateHouseAuctions", LuaScriptInterface::luaDoUpdateHouseAuctions);
 
 	//loadmodlib(libName)
 	lua_register(m_luaState, "loadmodlib", LuaScriptInterface::luaL_loadmodlib);
@@ -9102,6 +9102,13 @@ int32_t LuaScriptInterface::luaDoRefreshMap(lua_State* L)
 {
 	//doRefreshMap()
 	g_game.proceduralRefresh();
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoUpdateHouseAuctions(lua_State* L)
+{
+	//doUpdateHouseAuctions()
+	lua_pushboolean(L, IOMapSerialize::getInstance()->updateAuctions());
 	return 1;
 }
 

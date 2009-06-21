@@ -260,7 +260,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 	{
 		if(_player->client)
 		{
-			if(eventConnect || !g_config.getBool(ConfigManager::REPLACE_KICK_ON_LOGIN))
+			if(m_eventConnect || !g_config.getBool(ConfigManager::REPLACE_KICK_ON_LOGIN))
 			{
 				//A task has already been scheduled just bail out (should not be overriden)
 				disconnectClient(0x14, "You are already logged in.");
@@ -272,7 +272,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			_player->isConnecting = true;
 
 			addRef();
-			eventConnect = Scheduler::getScheduler().addEvent(createSchedulerTask(
+			m_eventConnect = Scheduler::getScheduler().addEvent(createSchedulerTask(
 				1000, boost::bind(&ProtocolGame::connect, this, _player->getID())));
 			return true;
 		}
@@ -329,7 +329,7 @@ bool ProtocolGame::logout(bool displayEffect, bool forced, bool executeLogout/* 
 bool ProtocolGame::connect(uint32_t playerId)
 {
 	unRef();
-	eventConnect = 0;
+	m_eventConnect = 0;
 
 	Player* _player = g_game.getPlayerByID(playerId);
 	if(!_player || _player->isRemoved() || _player->client)
@@ -1065,11 +1065,12 @@ void ProtocolGame::parseCancelMove(NetworkMessage& msg)
 
 void ProtocolGame::parseReceivePing(NetworkMessage& msg)
 {
+	int64_t now = OTSYS_TIME();
 	if(m_now <= m_nextPing)
 		return;
 
 	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerReceivePing, &g_game, player->getID())));
-	m_nextPing = m_now + 2000;
+	m_nextPing = now + 2000;
 }
 
 void ProtocolGame::parseAutoWalk(NetworkMessage& msg)

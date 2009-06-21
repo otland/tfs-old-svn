@@ -257,7 +257,8 @@ class Houses
 		bool reloadPrices();
 
 		void payHouses();
-		bool payRent(Player* player, House* house, time_t _time = 0);
+		bool payHouse(House* house, time_t _time, uint32_t bid);
+		bool payRent(Player* player, House* house, time_t _time = 0, uint32_t bid);
 
 		HouseMap::iterator getHouseBegin() {return houseMap.begin();}
 		HouseMap::iterator getHouseEnd() {return houseMap.end();}
@@ -272,9 +273,10 @@ class Houses
 
 	private:
 		Houses();
-		bool payHouse(House* house, time_t _time);
 
 		HouseMap houseMap;
 		RentPeriod_t rentPeriod;
+
+		friend class IOMapSerialize;
 };
 #endif

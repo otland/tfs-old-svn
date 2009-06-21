@@ -841,12 +841,12 @@ void Houses::payHouses()
 
 	time_t currentTime = time(NULL);
 	for(HouseMap::iterator it = houseMap.begin(); it != houseMap.end(); ++it)
-		payHouse(it->second, currentTime);
+		payHouse(it->second, currentTime, 0);
 
 	std::cout << "> Houses paid in " << (OTSYS_TIME() - start) / (1000.) << " seconds." << std::endl;
 }
 
-bool Houses::payRent(Player* player, House* house, time_t _time/* = 0*/)
+bool Houses::payRent(Player* player, House* house, time_t _time/* = 0*/, uint32_t bid)
 {
 	if(rentPeriod == RENTPERIOD_NEVER || !house->getHouseOwner() ||
 		house->getPaidUntil() > _time || !house->getRent() ||
@@ -858,13 +858,14 @@ bool Houses::payRent(Player* player, House* house, time_t _time/* = 0*/)
 		return false;
 
 	bool paid = false;
-	if(g_config.getBool(ConfigManager::BANK_SYSTEM) && player->balance >= house->getRent())
+	uint32_t amount = house->getRent() + bid;
+	if(g_config.getBool(ConfigManager::BANK_SYSTEM) && player->balance >= amount)
 	{
-		player->balance -= house->getRent();
+		player->balance -= amount;
 		paid = true;
 	}
 	else if(Depot* depot = player->getDepot(town->getTownID(), true))
-		paid = g_game.removeMoney(depot, house->getRent(), FLAG_NOLIMIT);
+		paid = g_game.removeMoney(depot, amount, FLAG_NOLIMIT);
 
 	if(!paid)
 		return false;
@@ -895,7 +896,7 @@ bool Houses::payRent(Player* player, House* house, time_t _time/* = 0*/)
 	return true;
 }
 
-bool Houses::payHouse(House* house, time_t _time)
+bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 {
 	if(rentPeriod == RENTPERIOD_NEVER || !house->getHouseOwner() ||
 		house->getPaidUntil() > _time || !house->getRent())
@@ -929,7 +930,7 @@ bool Houses::payHouse(House* house, time_t _time)
 		return false;
 	}
 
-	bool paid = payRent(player, house, _time), savePlayer = false;
+	bool paid = payRent(player, house, _time, bid), savePlayer = false;
 	if(!paid && _time >= (house->getLastWarning() + 86400))
 	{
 		uint32_t warningsLimit = 7;

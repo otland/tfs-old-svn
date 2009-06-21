@@ -712,6 +712,7 @@ class LuaScriptInterface
 		static int32_t luaDoCleanHouse(lua_State* L);
 		static int32_t luaDoCleanMap(lua_State* L);
 		static int32_t luaDoRefreshMap(lua_State* L);
+		static int32_t luaDoUpdateHouseAuctions(lua_State* L);
 
 		static int32_t luaGetItemDescriptionsById(lua_State* L);
 		static int32_t luaGetItemWeightById(lua_State* L);
