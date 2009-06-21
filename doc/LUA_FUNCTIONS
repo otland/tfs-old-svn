@@ -353,7 +353,7 @@
 							{itemid = 2493, uid = 70001, actionid = 0} (demon helmet, slot = 1)
 
 				Example
-					if getPlayerSlotItem(cid, CONST_SLOT_NECKLACE) == 2173 then  --checking if player have amulet of loss in necklace slot
+					if getPlayerSlotItem(cid, CONST_SLOT_NECKLACE).itemid == 2173 then  --checking if player have amulet of loss in necklace slot
 						doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Ok, you can go.")
 					else
 						doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Sorry, you need amulet of loss to go.")
@@ -396,9 +396,10 @@
 
 				Example
 					local playerPos = getCreaturePosition(cid)
-					if getPlayerSex(cid) then --female
+					local playerSex = getPlayerSex(cid)
+					if playerSex == PLAYERSEX_FEMALE then --female
 						doSendAnimatedText(playerPos, 'GiRl :*:*', TEXTCOLOR_GOLD)
-					elseif getPlayerSex(cid) then --male
+					elseif playerSex == PLAYERSEX_MALE then --male
 						doSendAnimatedText(playerPos, 'Wtf? I aM BoY.', TEXTCOLOR_GOLD)
 					else --hermaphrodite
 						doSendAnimatedText(playerPos, 'Who am I? :(', TEXTCOLOR_GOLD)
@@ -415,7 +416,7 @@
 						false - when checked creature is NPC
 
 				Example
-					doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are player with id: ".. getPlayerGUID(cid))
+					doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "You are player with id: " .. getPlayerGUID(cid))
 
 			getPlayerFlagValue(cid, flag)
 				Info
@@ -458,9 +459,9 @@
 
 				Example
 					local group = getPlayerGroupId(cid)
-					if group == 3 --when God
+					if group == 3 then--when God
 						doPlayerAddItem(cid, 2160, 100) --100 crystal coins
-					elseif group == 2 --when Gamemaster
+					elseif group == 2 then--when Gamemaster
 						doPlayerAddItem(cid, 2160, 50) --50 crystal coins
 					else
 						doPlayerSendCancel(cid, "Sorry, cheats doesnt work for you."
@@ -478,9 +479,9 @@
 				Example
 					local guildId = getPlayerGuildId(cid)
 					if guildId == 21 then
-						doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Welcome in out guild hunting place!")
+						doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Welcome in our guild hunting place!")
 					elseif guildId == 22 then
-						doPlayerSendCancel(cid, "This area is not for your guild")
+						doPlayerSendCancel(cid, "This area is not for your guild!")
 					end
 
 			getPlayerGuildName(cid)
@@ -1010,6 +1011,8 @@
 	setPlayerPartner = doPlayerSetPartner
 	setPlayerStorageValue = doPlayerSetStorageValue
 	setPlayerBalance = doPlayerSetBalance
+	doAddMapMark = doPlayerAddMapMark
+	doSendTutorial = doPlayerSendTutorial
 
 	//lua-made functions
 	doPlayerGiveItem(cid, itemid, amount, subType)
