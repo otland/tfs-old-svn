@@ -1066,7 +1066,7 @@ void ProtocolGame::parseCancelMove(NetworkMessage& msg)
 void ProtocolGame::parseReceivePing(NetworkMessage& msg)
 {
 	int64_t now = OTSYS_TIME();
-	if(m_now <= m_nextPing)
+	if(now <= m_nextPing)
 		return;
 
 	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerReceivePing, &g_game, player->getID())));
