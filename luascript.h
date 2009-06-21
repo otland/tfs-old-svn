@@ -595,8 +595,6 @@ class LuaScriptInterface
 		static int32_t luaGetWorldLight(lua_State* L);
 		static int32_t luaGetWorldCreatures(lua_State* L);
 		static int32_t luaGetWorldUpTime(lua_State* L);
-		static int32_t luaDoBroadcastMessage(lua_State* L);
-		static int32_t luaDoPlayerBroadcastMessage(lua_State* L);
 
 		static int32_t luaGetGuildId(lua_State* L);
 		static int32_t luaGetGuildMotd(lua_State* L);

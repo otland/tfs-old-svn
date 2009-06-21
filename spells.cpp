@@ -77,7 +77,8 @@ ReturnValue Spells::onPlayerSay(Player* player, const std::string& words)
 		type = SPEAK_MONSTER_SAY;
 
 	if(!g_config.getBool(ConfigManager::SPELL_NAME_INSTEAD_WORDS))
-		return g_game.internalCreatureSay(player, type, reWords, NULL, player->isInGhostMode()) ? RET_NOERROR : RET_NOTPOSSIBLE;
+		return g_game.internalCreatureSay(player, type, reWords, player->isInGhostMode()) ?
+			RET_NOERROR : RET_NOTPOSSIBLE;
 
 	std::string ret = instantSpell->getName();
 	if(param.length())
@@ -93,7 +94,8 @@ ReturnValue Spells::onPlayerSay(Player* player, const std::string& words)
 		ret += ": " + param.substr(tmp, rtmp);
 	}
 
-	return g_game.internalCreatureSay(player, type, ret, NULL, player->isInGhostMode()) ? RET_NOERROR : RET_NOTPOSSIBLE;
+	return g_game.internalCreatureSay(player, type, ret, player->isInGhostMode()) ?
+		RET_NOERROR : RET_NOTPOSSIBLE;
 }
 
 void Spells::clear()

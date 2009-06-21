@@ -784,9 +784,9 @@ void Monster::onThinkYell(uint32_t interval)
 
 	const voiceBlock_t& vb = mType->voiceVector[random_range(0, mType->voiceVector.size() - 1)];
 	if(vb.yellText)
-		g_game.internalCreatureSay(this, SPEAK_MONSTER_YELL, vb.text);
+		g_game.internalCreatureSay(this, SPEAK_MONSTER_YELL, vb.text, false);
 	else
-		g_game.internalCreatureSay(this, SPEAK_MONSTER_SAY, vb.text);
+		g_game.internalCreatureSay(this, SPEAK_MONSTER_SAY, vb.text, false);
 }
 
 bool Monster::pushItem(Item* item, int32_t radius)

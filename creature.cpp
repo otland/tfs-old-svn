@@ -278,7 +278,7 @@ void Creature::onWalk(Direction& dir)
 			break;
 	}
 
-	g_game.internalCreatureSay(this, SPEAK_MONSTER_SAY, "Hicks!");
+	g_game.internalCreatureSay(this, SPEAK_MONSTER_SAY, "Hicks!", isInGhostMode());
 }
 
 bool Creature::getNextStep(Direction& dir)

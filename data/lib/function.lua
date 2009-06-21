@@ -356,6 +356,52 @@ function doPlayerResetIdleTime(cid)
 	return doPlayerSetIdleTime(cid, 0)
 end
 
+function doBroadcastMessage(text, class)
+	local class = class or MESSAGE_STATUS_WARNING
+	if(type(class) == 'string') then
+		local className = MESSAGE_TYPES[class]
+		if(className == nil) then
+			return false
+		end
+
+		class = className
+	elseif(class < MESSAGE_FIRST or class > MESSAGE_LAST) then
+		return false
+	end
+
+	local players = getPlayersOnline()
+	for _, pid in ipairs(players) do
+		doPlayerSendTextMessage(pid, class, text)
+	end
+
+	return true
+end
+
+function doPlayerBroadcastMessage(cid, text, class, checkFlag, ghost)
+	local checkFlag, ghost, class = checkFlag or true, ghost or false, class or TALKTYPE_BROADCAST
+	if(checkFlag and not getPlayerFlagValue(cid, PLAYERFLAG_CANBROADCAST)) then
+		return false
+	end
+
+	if(type(class) == 'string') then
+		local className = TALKTYPE_TYPES[class]
+		if(className == nil) then
+			return false
+		end
+
+		class = className
+	elseif(class < TALKTYPE_FIRST or class > TALKTYPE_LAST) then
+		return false
+	end
+
+	local players = getPlayersOnline()
+	for _, pid in ipairs(players) do
+		doCreatureSay(cid, text, class, ghost, pid)
+	end
+
+	return true
+end
+
 function getBooleanFromString(str)
 	return (str:lower() == "yes" or str:lower() == "true" or (tonumber(str) and tonumber(str) > 0))
 end

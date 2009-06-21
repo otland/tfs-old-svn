@@ -684,7 +684,7 @@ bool TalkAction::guildJoin(Creature* creature, const std::string& cmd, const std
 				char buffer[80];
 				sprintf(buffer, "%s has joined the guild.", player->getName().c_str());
 				if(ChatChannel* guildChannel = g_chat.getChannel(player, 0x00))
-					guildChannel->talk(player, SPEAK_CHANNEL_R2, buffer);
+					guildChannel->talk(player, SPEAK_CHANNEL_RA, buffer);
 			}
 			else
 				player->sendCancel("You are not invited to that guild.");

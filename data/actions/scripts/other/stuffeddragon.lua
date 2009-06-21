@@ -8,11 +8,11 @@
 local SOUNDS = {"Fchhhhhh!", "Zchhhhhh!", "Grooaaaaar*cough*", "Aaa... CHOO!", "You... will.... burn!!"}
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	local random = math.random(1, #SOUNDS)
+	local random = math.random(1, table.maxn(SOUNDS))
 	if(fromPosition.x ~= CONTAINER_POSITION) then
-		doCreatureSay(cid, SOUNDS[random], TALKTYPE_ORANGE_1, fromPosition)
+		doCreatureSay(cid, SOUNDS[random], TALKTYPE_MONSTER, false, 0, fromPosition)
 	else
-		doCreatureSay(cid, SOUNDS[random], TALKTYPE_ORANGE_1)
+		doCreatureSay(cid, SOUNDS[random], TALKTYPE_MONSTER)
 	end
 
 	if(random == 5) then -- "You... will.... burn!!"

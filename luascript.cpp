@@ -1494,7 +1494,7 @@ void LuaScriptInterface::registerFunctions()
 	//doTransformItem(uid, newId[, count/subType])
 	lua_register(m_luaState, "doTransformItem", LuaScriptInterface::luaDoTransformItem);
 
-	//doCreatureSay(cid, text, type[, pos])
+	//doCreatureSay(uid, text, type[, ghost[, cid[, pos]]])
 	lua_register(m_luaState, "doCreatureSay", LuaScriptInterface::luaDoCreatureSay);
 
 	//doSendMagicEffect(pos, type[, player])
@@ -1791,12 +1791,6 @@ void LuaScriptInterface::registerFunctions()
 
 	//getWorldUpTime()
 	lua_register(m_luaState, "getWorldUpTime", LuaScriptInterface::luaGetWorldUpTime);
-
-	//doBroadcastMessage(message, type)
-	lua_register(m_luaState, "doBroadcastMessage", LuaScriptInterface::luaDoBroadcastMessage);
-
-	//doPlayerBroadcastMessage(cid, message[, type])
-	lua_register(m_luaState, "doPlayerBroadcastMessage", LuaScriptInterface::luaDoPlayerBroadcastMessage);
 
 	//getGuildId(guildName)
 	lua_register(m_luaState, "getGuildId", LuaScriptInterface::luaGetGuildId);
@@ -3235,39 +3229,57 @@ int32_t LuaScriptInterface::luaDoTransformItem(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoCreatureSay(lua_State* L)
 {
-	//doCreatureSay(uid, text, type[, pos])
-	uint32_t params = lua_gettop(L);
+	//doCreatureSay(uid, text, type[, ghost[, cid[, pos]]])
+	uint32_t params = lua_gettop(L), cid = 0, uid = 0;
 	PositionEx pos;
-	if(params > 3)
+	if(params > 5)
 		popPosition(L, pos);
 
-	uint32_t type = popNumber(L);
+	if(params > 4)
+		cid = popNumber(L);
+
+	bool ghost = false;
+	if(params > 3)
+		ghost = popNumber(L);
+
+	SpeakClasses type = (SpeakClasses)popNumber(L);
 	std::string text = popString(L);
 
-	ScriptEnviroment* env = getScriptEnv();
-	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
+	uid = popNumber(L);
+	if(!pos.x || !pos.y)
 	{
-		if(params >= 4)
-		{
-			if(!pos.x || !pos.y)
-			{
-				reportErrorFunc("Invalid position specified.");
-				lua_pushboolean(L, false);
-				return 1;
-			}
-
-			g_game.internalCreatureSay(creature, (SpeakClasses)type, text, &pos);
-		}
-		else
-			g_game.internalCreatureSay(creature, (SpeakClasses)type, text);
-
-		lua_pushboolean(L, true);
+		reportErrorFunc("Invalid position specified.");
+		lua_pushboolean(L, false);
+		return 1;
 	}
-	else
+
+	ScriptEnviroment* env = getScriptEnv();
+	Creature* creature = env->getCreatureByUID(uid);
+	if(!creature)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
 		lua_pushboolean(L, false);
+		return 1;
 	}
+
+	SpectatorVec list;
+	if(cid)
+	{
+		Creature* target = env->getCreatureByUID(cid);
+		if(!target)
+		{
+			reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
+			lua_pushboolean(L, false);
+			return 1;
+		}
+
+		list.push_back(target);
+	}
+
+	if(params > 3)
+		lua_pushboolean(L, g_game.internalCreatureSay(creature, type, text, ghost, &list, &pos));
+	else
+		lua_pushboolean(L, g_game.internalCreatureSay(creature, type, text, ghost, &list));
 
 	return 1;
 }
@@ -5133,37 +5145,6 @@ int32_t LuaScriptInterface::luaGetWorldUpTime(lua_State* L)
 		uptime = status->getUptime();
 
 	lua_pushnumber(L, uptime);
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaDoBroadcastMessage(lua_State* L)
-{
-	//doBroadcastMessage(message[, type = MSG_STATUS_WARNING])
-	uint32_t type = MSG_STATUS_WARNING;
-	if(lua_gettop(L) > 1)
-		type = popNumber(L);
-
-	lua_pushboolean(L, g_game.broadcastMessage(popString(L), (MessageClasses)type));
-	return 1;
-}
-
-int32_t LuaScriptInterface::luaDoPlayerBroadcastMessage(lua_State* L)
-{
-	//doPlayerBroadcastMessage(cid, message[, type = SPEAK_BROADCAST])
-	uint32_t type = SPEAK_BROADCAST;
-	if(lua_gettop(L) > 2)
-		type = popNumber(L);
-
-	std::string message = popString(L);
-
-	ScriptEnviroment* env = getScriptEnv();
-	if(Player* player = env->getPlayerByUID(popNumber(L)))
-		lua_pushboolean(L, g_game.playerBroadcastMessage(player, message, (SpeakClasses)type));
-	else
-	{
-		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
-		lua_pushboolean(L, false);
-	}
 	return 1;
 }
 

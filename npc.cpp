@@ -1772,7 +1772,7 @@ void Npc::doSay(const std::string& text, SpeakClasses type, Player* player)
 		replaceString(tmp, "{", "");
 		replaceString(tmp, "}", "");
 
-		g_game.internalCreatureSay(this, type, tmp);
+		g_game.internalCreatureSay(this, type, tmp, false);
 	}
 	else
 	{

@@ -1250,8 +1250,8 @@ void ProtocolGame::parseSay(NetworkMessage& msg)
 			break;
 
 		case SPEAK_CHANNEL_Y:
-		case SPEAK_CHANNEL_R1:
-		case SPEAK_CHANNEL_R2:
+		case SPEAK_CHANNEL_RN:
+		case SPEAK_CHANNEL_RA:
 			channelId = msg.GetU16();
 			break;
 
@@ -2674,7 +2674,7 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 	{
 		switch(type)
 		{
-			case SPEAK_CHANNEL_R2:
+			case SPEAK_CHANNEL_RA:
 				msg->AddString("");
 				break;
 			case SPEAK_RVR_ANSWER:
@@ -2723,8 +2723,8 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 		}
 
 		case SPEAK_CHANNEL_Y:
-		case SPEAK_CHANNEL_R1:
-		case SPEAK_CHANNEL_R2:
+		case SPEAK_CHANNEL_RN:
+		case SPEAK_CHANNEL_RA:
 		case SPEAK_CHANNEL_O:
 		case SPEAK_CHANNEL_W:
 			msg->AddU16(channelId);

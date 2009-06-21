@@ -2044,18 +2044,19 @@ bool Game::playerMove(uint32_t playerId, Direction dir)
 	return internalMoveCreature(player, dir) == RET_NOERROR;
 }
 
-bool Game::playerBroadcastMessage(Player* player, const std::string& text, SpeakClasses type)
+bool Game::playerBroadcastMessage(Player* player, SpeakClasses type, const std::string& text)
 {
-	if(!player->hasFlag(PlayerFlag_CanBroadcast))
+	if(!player->hasFlag(PlayerFlag_CanBroadcast) || type < SPEAK_CLASS_FIRST || type > SPEAK_CLASS_LAST)
 		return false;
 
-	if(type < SPEAK_CLASS_FIRST || type > SPEAK_CLASS_LAST)
-		return false;
+	const Position& pos = player->getPosition();
+	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
+	{
+		it->second->sendCreatureSay(player, type, text);
+		it->second->onCreatureSay(player, type, text, pos);
+	}
 
 	std::cout << "> " << player->getName() << " broadcasted: \"" << text << "\"." << std::endl;
-	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		it->second->sendCreatureSay(player, type, text);
-
 	return true;
 }
 
@@ -3488,7 +3489,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 	if(player->isAccountManager())
 	{
 		player->removeMessageBuffer();
-		return internalCreatureSay(player, SPEAK_SAY, text);
+		return internalCreatureSay(player, SPEAK_SAY, text, false);
 	}
 
 	ReturnValue ret = g_spells->onPlayerSay(player, text);
@@ -3505,7 +3506,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 	switch(type)
 	{
 		case SPEAK_SAY:
-			return internalCreatureSay(player, SPEAK_SAY, text);
+			return internalCreatureSay(player, SPEAK_SAY, text, false);
 		case SPEAK_WHISPER:
 			return playerWhisper(player, text);
 		case SPEAK_YELL:
@@ -3516,19 +3517,19 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 			return playerSpeakTo(player, type, receiver, text);
 		case SPEAK_CHANNEL_O:
 		case SPEAK_CHANNEL_Y:
-		case SPEAK_CHANNEL_R1:
-		case SPEAK_CHANNEL_R2:
+		case SPEAK_CHANNEL_RN:
+		case SPEAK_CHANNEL_RA:
 		case SPEAK_CHANNEL_W:
 		{
 			if(playerTalkToChannel(player, type, text, channelId))
 				return true;
 
-			return internalCreatureSay(player, SPEAK_SAY, text);
+			return internalCreatureSay(player, SPEAK_SAY, text, false);
 		}
 		case SPEAK_PRIVATE_PN:
 			return playerSpeakToNpc(player, text);
 		case SPEAK_BROADCAST:
-			return playerBroadcastMessage(player, text, SPEAK_BROADCAST);
+			return playerBroadcastMessage(player, SPEAK_BROADCAST, text);
 		case SPEAK_RVR_CHANNEL:
 			return playerReportRuleViolation(player, text);
 		case SPEAK_RVR_CONTINUE:
@@ -3580,7 +3581,7 @@ bool Game::playerYell(Player* player, const std::string& text)
 				player->addCondition(condition);
 		}
 
-		internalCreatureSay(player, SPEAK_YELL, asUpperCaseString(text));
+		internalCreatureSay(player, SPEAK_YELL, asUpperCaseString(text), false);
 	}
 	else
 		player->sendCancelMessage(RET_YOUAREEXHAUSTED);
@@ -3648,16 +3649,16 @@ bool Game::playerTalkToChannel(Player* player, SpeakClasses type, const std::str
 			break;
 		}
 
-		case SPEAK_CHANNEL_R1:
+		case SPEAK_CHANNEL_RN:
 		{
 			if(!player->hasFlag(PlayerFlag_CanTalkRedChannel))
 				type = SPEAK_CHANNEL_Y;
 			break;
 		}
 
-		case SPEAK_CHANNEL_R2:
+		case SPEAK_CHANNEL_RA:
 		{
-			if(!player->hasFlag(PlayerFlag_CanTalkRedChannel))
+			if(!player->hasFlag(PlayerFlag_CanTalkRedChannelAnonymous))
 				type = SPEAK_CHANNEL_Y;
 			break;
 		}
@@ -3760,7 +3761,8 @@ bool Game::internalCreatureTurn(Creature* creature, Direction dir)
 	return true;
 }
 
-bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text, Position* pos/* = NULL*/, bool ghostMode/* = false*/)
+bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std::string& text,
+	bool ghostMode, SpectatorVec* listPtr/* = NULL*/, Position* pos/* = NULL*/)
 {
 	Player* player = creature->getPlayer();
 	if(player && player->isAccountManager())
@@ -3769,37 +3771,42 @@ bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std:
 		return true;
 	}
 
-	Position destPos = creature->getPosition();
+	Position* destPos = &creature->getPosition();
 	if(pos)
-		destPos = (*pos);
+		destPos = pos;
 
-	// This somewhat complex construct ensures that the cached SpectatorVec
-	// is used if available and if it can be used, else a local vector is
-	// used. (Hopefully the compiler will optimize away the construction of
-	// the temporary when it's not used.
 	SpectatorVec list;
 	SpectatorVec::const_iterator it;
-	if(type == SPEAK_YELL || type == SPEAK_MONSTER_YELL)
-		getSpectators(list, destPos, false, true, 18, 18, 14, 14);
+	if(!listPtr || !listPtr->size())
+	{
+		// This somewhat complex construct ensures that the cached SpectatorVec
+		// is used if available and if it can be used, else a local vector is
+		// used (hopefully the compiler will optimize away the construction of
+		// the temporary when it's not used).
+		if(type != SPEAK_YELL && type != SPEAK_MONSTER_YELL)
+			getSpectators(list, destPos, false, false,
+				Map::maxClientViewportX, Map::maxClientViewportX,
+				Map::maxClientViewportY, Map::maxClientViewportY);
+		else
+			getSpectators(list, destPos, false, true, 18, 18, 14, 14);
+	}
 	else
-		getSpectators(list, destPos, false, false,
-			Map::maxClientViewportX, Map::maxClientViewportX,
-			Map::maxClientViewportY, Map::maxClientViewportY);
+		list = &listPtr;
 
 	//send to client
 	Player* tmpPlayer = NULL;
 	for(it = list.begin(); it != list.end(); ++it)
 	{
-		if((tmpPlayer = (*it)->getPlayer()))
-		{
-			if(!ghostMode || tmpPlayer->canSeeCreature(creature))
-				tmpPlayer->sendCreatureSay(creature, type, text, &destPos);
-		}
+		if(!(tmpPlayer = (*it)->getPlayer()))
+			continue;
+
+		if(!ghostMode || tmpPlayer->canSeeCreature(creature))
+			tmpPlayer->sendCreatureSay(creature, type, text, destPos);
 	}
 
 	//event method
 	for(it = list.begin(); it != list.end(); ++it)
-		(*it)->onCreatureSay(creature, type, text, &destPos);
+		(*it)->onCreatureSay(creature, type, text, destPos);
 
 	return true;
 }
@@ -4998,7 +5005,7 @@ bool Game::broadcastMessage(const std::string& text, MessageClasses type)
 
 	std::cout << "> Broadcasted message: \"" << text << "\"." << std::endl;
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		(*it).second->sendTextMessage(type, text);
+		it->second->sendTextMessage(type, text);
 
 	return true;
 }
