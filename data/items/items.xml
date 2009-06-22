@@ -16182,7 +16182,7 @@
 		<attribute key="defense" value="20"/>
 		<attribute key="attack" value="46"/>
 		<attribute key="weaponType" value="club"/>
-		<attribute key="extradef" value="1"/>		
+		<attribute key="extradef" value="1"/>
 	</item>
 	<item id="7423" article="a" name="Skullcrasher">
 		<attribute key="weight" value="12000"/>
@@ -16225,7 +16225,7 @@
 		<attribute key="defense" value="15"/>
 		<attribute key="attack" value="46"/>
 		<attribute key="weaponType" value="club"/>
-		<attribute key="slotType" value="two-handed"/>		
+		<attribute key="slotType" value="two-handed"/>
 	</item>
 	<item id="7429" article="a" name="blessed sceptre">
 		<attribute key="weight" value="3900"/>
@@ -16281,7 +16281,7 @@
 		<attribute key="defense" value="24"/>
 		<attribute key="attack" value="44"/>
 		<attribute key="weaponType" value="axe"/>
-		<attribute key="slotType" value="two-handed"/>	
+		<attribute key="slotType" value="two-handed"/>
 	</item>
 	<item id="7437" article="a" name="sapphire hammer">
 		<attribute key="weight" value="2100"/>
