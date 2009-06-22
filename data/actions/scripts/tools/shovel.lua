@@ -12,7 +12,10 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		doDecayItem(itemEx.uid)
 	elseif(isInArray(sand, itemEx.itemid)) then
 		local rand = math.random(1, 100)
-		if(rand >= 1 and rand <= 5) then
+		if(itemEx.actionid  == 100 and rand <= 20) then
+			doTransformItem(itemEx.uid, 489)
+			doDecayItem(itemEx.uid)
+		elseif(rand >= 1 and rand <= 5) then
 			doCreateItem(2159, 1, toPosition)
 		elseif(rand > 85) then
 			doSummonCreature("Scarab", toPosition)
