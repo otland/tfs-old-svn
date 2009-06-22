@@ -60,5 +60,5 @@
 	<!-- Group outfits -->
 	<outfit type="0;1;2" looktype="75" enabled="1" name="GM Outfit" access="3"/>
 	<outfit type="0;1;2" looktype="266" enabled="1" name="CM Outfit" access="4"/>
-	<outfit type="0;1;2" looktype="302" enabled="1" name="God" access="5"/>
+	<outfit type="0;1;2" looktype="302" enabled="1" name="God Outfit" access="5"/>
 </outfits>
