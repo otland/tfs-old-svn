@@ -24,7 +24,7 @@ bool Mission::isStarted(Player* player)
 		return false;
 
 	std::string value;
-	return player->getStorageValue(storageId, value) && atoi(value.c_str()) >= startValue && atoi(value.c_str()) <= endValue;
+	return player->getStorageValue(storageId, value) && atoi(value.c_str()) >= startValue;
 }
 
 bool Mission::isCompleted(Player* player)
@@ -43,7 +43,7 @@ std::string Mission::getDescription(Player* player)
 		return "Couldn't retrieve player storage, please report to gamemaster.";
 
 	if(atoi(value.c_str()) >= endValue)
-		return states[endValue];
+		return states.rbegin()->second;
 
 	for(int32_t i = endValue; i >= startValue; --i)
 	{
