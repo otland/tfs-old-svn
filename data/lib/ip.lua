@@ -98,6 +98,6 @@ function doConvertIpToInteger(str)
 	if(index ~= 32) then
 		return 0, 0
 	end
-			
+
 	return ipint, maskint
 end

@@ -427,3 +427,12 @@ function doCopyItem(item, attributes)
 
 	return getThing(ret)
 end
+
+function doRemoveThing(uid)
+	if(isCreature(uid)) then
+		doRemoveCreature(uid)
+	else
+		doRemoveItem(uid)
+	end
+	return TRUE
+end
