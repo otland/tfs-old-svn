@@ -1900,16 +1900,14 @@ bool Npc::canWalkTo(const Position& fromPos, Direction dir)
 	if(!Spawns::getInstance()->isInZone(masterPos, masterRadius, toPos))
 		return false;
 
-	if(Tile* tile = g_game.getTile(toPos.x, toPos.y, toPos.z))
-	{
-		if(floorChange && (tile->floorChange() || tile->positionChange()))
-			return true;
+	Tile* tile = g_game.getTile(toPos);
+	if(!tile)
+		return true;
 
-		if(tile->__queryAdd(0, this, 1, FLAG_PATHFINDING) != RET_NOERROR)
-			return false;
-	}
+	if(floorChange && (tile->floorChange() || tile->positionChange()))
+		return true;
 
-	return true;
+	return tile->__queryAdd(0, this, 1, FLAG_PATHFINDING) == RET_NOERROR;
 }
 
 bool Npc::getRandomStep(Direction& dir)
@@ -1938,40 +1936,33 @@ bool Npc::getRandomStep(Direction& dir)
 
 void Npc::setCreatureFocus(Creature* creature)
 {
-	if(creature)
+	if(!creature)
 	{
-		const Position& creaturePos = creature->getPosition();
-		const Position& myPos = getPosition();
-
-		int32_t dx = myPos.x - creaturePos.x, dy = myPos.y - creaturePos.y;
-		focusCreature = creature->getID();
-
-		Direction dir = SOUTH;
-		float tan = 0;
-		if(dx != 0)
-			tan = dy/dx;
-		else
-			tan = 10;
-
-		if(std::abs(tan) < 1)
-		{
-			if(dx > 0)
-				dir = WEST;
-			else
-				dir = EAST;
-		}
-		else
-		{
-			if(dy > 0)
-				dir = NORTH;
-			else
-				dir = SOUTH;
-		}
-
-		g_game.internalCreatureTurn(this, dir);
-	}
-	else
 		focusCreature = 0;
+		return;
+	}
+
+	const Position& creaturePos = creature->getPosition();
+	const Position& myPos = getPosition();
+	int32_t dx = myPos.x - creaturePos.x, dy = myPos.y - creaturePos.y;
+
+	float tan = 10;
+	if(dx != 0)
+		tan = dy / dx;
+
+	Direction dir = SOUTH;
+	if(std::abs(tan) < 1)
+	{
+		if(dx > 0)
+			dir = WEST;
+		else
+			dir = EAST;
+	}
+	else if(dy > 0)
+		dir = NORTH;
+
+	focusCreature = creature->getID();
+	g_game.internalCreatureTurn(this, dir);
 }
 
 const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* player,
@@ -1979,9 +1970,9 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 {
 	std::string textString = asLowerCaseString(text);
 	StringVec wordList = explodeString(textString, " ");
+	int32_t bestMatchCount = 0, totalMatchCount = 0;
 
 	NpcResponse* response = NULL;
-	int32_t bestMatchCount = 0, totalMatchCount = 0;
 	for(ResponseList::const_iterator it = list.begin(); it != list.end(); ++it)
 	{
 		int32_t matchCount = 0;
@@ -2555,7 +2546,7 @@ int32_t NpcScriptInterface::luaActionSay(lua_State* L)
 	if(params > 3)
 		type = (SpeakClasses)popNumber(L);
 
-	bool publicize = true;
+	bool publicize = false;
 	if(params > 2)
 		publicize = popNumber(L);
 
