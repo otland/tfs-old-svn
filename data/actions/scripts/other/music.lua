@@ -1,10 +1,13 @@
+local HORN = 2079
 local BIRD_CAGE = 2095
 local WOODEN_WHISTLE = 5786
 local DIDGERIDOO = 3952
 local CORNUCOPIA = 2369
 local PARTY_TRUMPET = 6572
 local USED_PARTY_TRUMPET = 6573
-function onUse(cid, item, fromPositionition, itemEx, toPositionition)
+local GREEN_NOTES = {2070, 2071, 2073, 2075, 2076, 2078, 2367, 2374}
+
+function onUse(cid, item, fromPosition, itemEx, toPosition)
 	local random = math.random(1, 5)
 	if(item.itemid == BIRD_CAGE) then
 		doSendMagicEffect(fromPosition, CONST_ME_SOUND_YELLOW)
@@ -39,8 +42,14 @@ function onUse(cid, item, fromPositionition, itemEx, toPositionition)
 		doSendMagicEffect(fromPosition, CONST_ME_SOUND_PURPLE)
 		doSummonCreature("Wolf", pos)
 	else
-		-- TODO: different sounds colors for items
-		doSendMagicEffect(fromPosition, CONST_ME_SOUND_BLUE)
+		local effect = CONST_ME_SOUND_BLUE
+		if(item.itemid == HORN) then
+			effect = CONST_ME_SOUND_PURPLE
+		elseif(isInArray(GREEN_NOTES, item.itemid)) then
+			effect = CONST_ME_SOUND_GREEN
+		end
+
+		doSendMagicEffect(fromPosition, effect)
 	end
 
 	return true
