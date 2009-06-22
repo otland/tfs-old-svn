@@ -430,9 +430,8 @@ end
 
 function doRemoveThing(uid)
 	if(isCreature(uid)) then
-		doRemoveCreature(uid)
-	else
-		doRemoveItem(uid)
+		return doRemoveCreature(uid)
 	end
-	return TRUE
+
+	return doRemoveItem(uid)
 end

@@ -1,14 +1,18 @@
 exhaustion =
 {
 	check = function (cid, storage)
-		if(getPlayerStorageValue(cid, storage) >= os.time(t)) then
-			return true
+		if(getPlayerFlagValue(cid, PlayerFlag_HasNoExhaustion)) then
+			return false
 		end
 
-		return false
+		return getPlayerStorageValue(cid, storage) >= os.time(t)
 	end,
 
 	get = function (cid, storage)
+		if(getPlayerFlagValue(cid, PlayerFlag_HasNoExhaustion)) then
+			return false
+		end
+
 		local exhaust = getPlayerStorageValue(cid, storage)
 		if(exhaust > 0) then
 			local left = exhaust - os.time(t)
