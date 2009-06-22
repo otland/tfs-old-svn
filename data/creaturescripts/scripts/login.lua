@@ -34,7 +34,6 @@ function onLogin(cid)
 
 	registerCreatureEvent(cid, "Mail")
 	registerCreatureEvent(cid, "GuildMotd")
-	registerCreatureEvent(cid, "PlayerDeath")
 	registerCreatureEvent(cid, "Idle")
 	registerCreatureEvent(cid, "SkullCheck")
 	registerCreatureEvent(cid, "ReportBug")
