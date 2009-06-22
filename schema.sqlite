@@ -4,7 +4,7 @@ CREATE TABLE "server_config" (
 	UNIQUE ("config")
 );
 
-INSERT INTO "server_config" VALUES ('db_version', 18);
+INSERT INTO "server_config" VALUES ('db_version', 19);
 
 CREATE TABLE "server_motd" (
 	"id" INTEGER NOT NULL,
