@@ -805,22 +805,21 @@ bool LuaScriptInterface::initState()
 
 bool LuaScriptInterface::closeState()
 {
-	if(m_luaState)
+	if(!m_luaState)
+		return false;
+
+	m_cacheFiles.clear();
+	for(LuaTimerEvents::iterator it = m_timerEvents.begin(); it != m_timerEvents.end(); ++it)
 	{
-		m_cacheFiles.clear();
-		for(LuaTimerEvents::iterator it = m_timerEvents.begin(); it != m_timerEvents.end(); ++it)
-		{
-			for(std::list<int32_t>::iterator lt = it->second.parameters.begin(); lt != it->second.parameters.end(); ++lt)
-				luaL_unref(m_luaState, LUA_REGISTRYINDEX, *lt);
+		for(std::list<int32_t>::iterator lt = it->second.parameters.begin(); lt != it->second.parameters.end(); ++lt)
+			luaL_unref(m_luaState, LUA_REGISTRYINDEX, *lt);
 
-			it->second.parameters.clear();
-			luaL_unref(m_luaState, LUA_REGISTRYINDEX, it->second.function);
-		}
-
-		m_timerEvents.clear();
-		lua_close(m_luaState);
+		it->second.parameters.clear();
+		luaL_unref(m_luaState, LUA_REGISTRYINDEX, it->second.function);
 	}
 
+	m_timerEvents.clear();
+	lua_close(m_luaState);
 	return true;
 }
 
