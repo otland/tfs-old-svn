@@ -8,7 +8,7 @@ local function checkStackpos(item, position)
 	return (item.uid == thing.uid or thing.itemid < 100 or field.itemid == 0)
 end
 
-function doorEnter(cid, item, toPosition)
+local function doorEnter(cid, item, toPosition)
 	doTransformItem(item.uid, item.itemid + 1)
 	doTeleportThing(cid, toPosition)
 end
@@ -16,7 +16,7 @@ end
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(getItemLevelDoor(item.itemid) > 0) then
 		if(item.actionid == 189) then
-			if(isPremium(cid) ~= true) then
+			if(not isPremium(cid)) then
 				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Only the worthy may pass.")
 				return true
 			end
@@ -27,8 +27,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 		local gender = item.actionid - 186
 		if(isInArray({PLAYERSEX_FEMALE,  PLAYERSEX_MALE, PLAYERSEX_GAMEMASTER}, gender)) then
-			local playerGender = getPlayerSex(cid)
-			if(playerGender ~= gender) then
+			if(gender ~= getPlayerSex(cid)) then
 				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Only the worthy may pass.")
 				return true
 			end
@@ -38,9 +37,8 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		end
 
 		local skull = item.actionid - 180
-		if(skull >= 0 and skull < 6) then
-			local playerSkull = getCreatureSkullType(cid)
-			if(playerSkull ~= skull) then
+		if(skull >= SKULL_NONE and skull <= SKULL_BLACK) then
+			if(skull ~= getCreatureSkullType(cid)) then
 				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Only the worthy may pass.")
 				return true
 			end
@@ -51,8 +49,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 
 		local group = item.actionid - 150
 		if(group >= 0 and group < 30) then
-			local playerGroup = getPlayerGroupId(cid)
-			if(playerGroup < group) then
+			if(group > getPlayerGroupId(cid)) then
 				doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "Only the worthy may pass.")
 				return true
 			end

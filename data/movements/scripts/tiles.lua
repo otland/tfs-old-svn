@@ -7,20 +7,27 @@ local decreasingItems = {[417] = 416, [425] = 426, [447] = 446, [3217] = 3216, [
 local depots = {2589, 2590, 2591, 2592}
 
 local checkCreature = {isPlayer, isMonster, isNpc}
+local function pushBack(cid, position, fromPosition, displayMessage)
+	doTeleportThing(cid, fromPosition, false)
+	doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
+	if(displayMessage) then
+		doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The tile seems to be protected against unwanted intruders.")
+	end
+end
+
 function onStepIn(cid, item, position, fromPosition)
 	if(not increasingItems[item.itemid]) then
 		return false
 	end
 
-	if(not isPlayer(cid) or not isPlayerGhost(cid)) then
+	if(not isPlayerGhost(cid)) then
 		doTransformItem(item.uid, increasingItems[item.itemid])
 	end
 
 	if(item.actionid >= 194 and item.actionid <= 196) then
 		local f = checkCreature[item.actionid - 193]
 		if(f(cid)) then
-			doTeleportThing(cid, fromPosition, false)
-			doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
+			pushBack(cid, position, fromPosition, false)
 		end
 
 		return true
@@ -29,8 +36,7 @@ function onStepIn(cid, item, position, fromPosition)
 	if(item.actionid >= 191 and item.actionid <= 193) then
 		local f = checkCreature[item.actionid - 190]
 		if(not f(cid)) then
-			doTeleportThing(cid, fromPosition, false)
-			doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
+			pushBack(cid, position, fromPosition, false)
 		end
 
 		return true
@@ -41,32 +47,23 @@ function onStepIn(cid, item, position, fromPosition)
 	end
 
 	if(item.actionid == 189 and not isPremium(cid)) then
-		doTeleportThing(cid, fromPosition, false)
-		doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
-
-		doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The tile seems to be protected against unwanted intruders.")
+		pushBack(cid, position, fromPosition, true)
 		return true
 	end
 
 	local gender = item.actionid - 186
 	if(isInArray({PLAYERSEX_FEMALE,  PLAYERSEX_MALE, PLAYERSEX_GAMEMASTER}, gender)) then
-		local playerGender = getPlayerSex(cid)
-		if(playerGender ~= gender) then
-			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The tile seems to be protected against unwanted intruders.")
-			doTeleportThing(cid, fromPosition, false)
-			doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
+		if(gender ~= getPlayerSex(cid)) then
+			pushBack(cid, position, fromPosition, true)
 		end
 
 		return true
 	end
 
 	local skull = item.actionid - 180
-	if(skull >= 0 and skull < 6) then
-		local playerSkull = getCreatureSkullType(cid)
-		if(playerSkull ~= skull) then
-			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The tile seems to be protected against unwanted intruders.")
-			doTeleportThing(cid, fromPosition, false)
-			doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
+	if(skull >= SKULL_NONE and skull <= SKULL_BLACK) then
+		if(skull ~= getCreatureSkullType(cid)) then
+			pushBack(cid, position, fromPosition, true)
 		end
 
 		return true
@@ -74,11 +71,8 @@ function onStepIn(cid, item, position, fromPosition)
 
 	local group = item.actionid - 150
 	if(group >= 0 and group < 30) then
-		local playerGroup = getPlayerGroupId(cid)
-		if(playerGroup < group) then
-			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The tile seems to be protected against unwanted intruders.")
-			doTeleportThing(cid, fromPosition, false)
-			doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
+		if(group > getPlayerGroupId(cid)) then
+			pushBack(cid, position, fromPosition, true)
 		end
 
 		return true
@@ -88,9 +82,7 @@ function onStepIn(cid, item, position, fromPosition)
 	if(vocation >= 0 and vocation < 50) then
 		local playerVocationInfo = getVocationInfo(getPlayerVocation(cid))
 		if(playerVocationInfo.id ~= vocation and playerVocationInfo.fromVocation ~= vocation) then
-			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The tile seems to be protected against unwanted intruders.")
-			doTeleportThing(cid, fromPosition, false)
-			doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
+			pushBack(cid, position, fromPosition, true)
 		end
 
 		return true
@@ -98,19 +90,14 @@ function onStepIn(cid, item, position, fromPosition)
 
 	if(item.actionid >= 1000 and item.actionid <= config.maxLevel) then
 		if(getPlayerLevel(cid) < item.actionid - 1000) then
-			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The tile seems to be protected against unwanted intruders.")
-			doTeleportThing(cid, fromPosition, false)
-			doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
+			pushBack(cid, position, fromPosition, true)
 		end
 
 		return true
 	end
 
 	if(item.actionid ~= 0 and getPlayerStorageValue(cid, item.actionid) <= 0) then
-		doTeleportThing(cid, fromPosition, false)
-		doSendMagicEffect(position, CONST_ME_MAGIC_BLUE)
-
-		doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "The tile seems to be protected against unwanted intruders.")
+		pushBack(cid, position, fromPosition, true)
 		return true
 	end
 
