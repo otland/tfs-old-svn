@@ -138,6 +138,25 @@
 				Returns
 					Creature master cid if found, otherwise self cid.
 
+			getCreatureSummons(cid)
+				Info
+					This functions checks for creature summons list.
+
+				Returns
+					false if creature not found, otherwise table with creatures list (NOTE: Can be empty!)
+
+				Example
+					local summons = getCreatureSummons(cid)
+					if(table.maxn(summons) <= 0) then -- no summons
+						doPlayerSendCalcel(cid, "You don't have any summons..")
+						return false
+					end
+
+					-- remove all summons ;)
+					for _, pid in ipairs(summons) do
+						doRemoveCreature(pid)
+					end
+
 			getCreatureOutfit(cid)
 				Info
 					This function checks creature current outfit.
@@ -208,7 +227,7 @@
 
 			getPlayerSkillLevel(cid, skillid)
 				Info
-					This function checks player actually position.
+					This function checks player skill level.
 						Skillid can be:
 							SKILL_FIST (0) = Fist Fighting
 							SKILL_CLUB (1) = Club Fighting
@@ -318,7 +337,7 @@
 					local item = 2393 --Giant Sword
 					local itemweight = getItemWeight(item, 1)
 					if playerCap >= itemweight then
-						doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR,'You have found a giant sword.')
+						doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'You have found a giant sword.')
 						doPlayerAddItem(cid,item)
 					else
 						doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, 'You have found a giant sword weighing ' ..itemweight.. ' oz it\'s too heavy.')
@@ -383,7 +402,6 @@
 						doPlayerSendTextMessage(cid, MESSAGE_EVENT_DEFAULT, "Your depot contains " ..depotItems.. " items.")
 					end
 
-
 			getPlayerSex(cid)
 				Info
 					This function checks player sex.
@@ -393,6 +411,7 @@
 					For example:
 						PLAYERSEX_FEMALE (0) - when player is female
 						PLAYERSEX_MALE (1) - when player is male
+						PLAYERSEX_GAMEMASTER (2) - gamemaster (Means if player have changed their sex to type = 2)
 
 				Example
 					local playerPos = getCreaturePosition(cid)
@@ -575,7 +594,7 @@
 	getCreatureMana(cid)
 	getCreatureMaxMana(cid)
 	getCreatureMaster(cid)
-	getCreatureSummons(cid) //TODO
+	getCreatureSummons(cid)
 	getCreatureOutfit(cid)
 	getCreaturePosition(cid)
 	getCreatureLookDirection(cid)
@@ -587,7 +606,7 @@
 	getCreatureSkullType(cid)
 	getCreatureCondition(cid, condition[, subId]) //TODO
 	getCreatureNoMove(cid) //TODO
-	getMonsterInfo(name) //TODO
+	getMonsterInfo(name)
 	getMonsterHealingSpells(name) //TODO
 	getMonsterAttackSpells(name) //TODO
 	getMonsterLootList(name) //TODO
@@ -691,6 +710,7 @@
 	getThingFromPos(pos)
 	getThing(uid)
 	getThingPos(uid)
+	getHouseInfo(id)
 	getHouseAccessList(houseid, listid)
 	getHouseByPlayerGUID(playerGUID)
 	getHouseFromPos(pos)
@@ -720,16 +740,18 @@
 	getExperienceStage(level)
 	getConfigFile()
 	getConfigValue(key)
+	getModList()
+	loadmodlib(libName)
+	domodlib(libName)
 	getLogsDir()
 	getDataDir()
 	getWaypointsList()
-	getTalkActionsList()
-	getExperienceStagesList()
+	getTalkActionList()
+	getExperienceStageList()
 
 	//set*
 	setCreatureMaxHealth(cid, health)
 	setCreatureMaxMana(cid, mana)
-	setCreatureMaxCap(cid, cap)
 	setHouseOwner(houseid, ownerGUID)
 	setHouseAccessList(houseid, listid, listtext)
 	setItemName(uid)
@@ -759,6 +781,7 @@
 	doCreatureSetDropLoot(cid, doDrop)
 	doCreatureSetSkullType(cid, skull)
 	doCreatureSetLookDir(cid, dir)
+	doPlayerSetMaxCapacity(cid, cap)
 	doCreatureChangeOutfit(cid, outfit)
 	doCreatureSay(uid, text, type[, ghost[, cid[, pos]]])
 	doCreatureSetNoMove(cid, cannotMove)
@@ -926,6 +949,7 @@
 	db.escapeString(str)
 	db.escapeBlob(s, length)
 	db.stringComparisonOperator()
+	db.lastInsertId()
 
 	//result table
 	result.getDataInt(resId, s)

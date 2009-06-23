@@ -72,6 +72,7 @@
 					lossskill
 					cannotmove
 					skull
+					speaktype
 				* Players
 					fyi
 					tutorial
@@ -249,12 +250,25 @@
 
 	!y
 		Displays animated text.
+		Parameters
+			<optional>colorId (0-255)
+			text
+
+		Examples
+			!y Hello
+			!y 50, Hi! Colored text ;-)
 
 	/bc
 		Broadcast.
+		Parameters
+			message
 
 	/mkick
 		Mass kick.
+		Parameters
+			rangeX
+			rangeY
+			<optional>multiFloor
 
 	/ghost
 		Enables/disables ghost mode.
@@ -311,6 +325,15 @@
 			/kick Taifun Devilry
 
 	/send
+		Send player to specified position/waypoint/creature
+		Parameters
+			playerName
+			position/waypoint/creature
+
+		Examples
+			/send GM Tester; 100, 50, 7
+			/send GM Tester, dragon
+			/send GM Tester, GM Someone
 
 	/unban
 		Unbans by account or player name.

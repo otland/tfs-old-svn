@@ -1,4 +1,4 @@
-function onThink(interval, lastExecution)
+function onThink(interval, lastExecution, thinkInterval)
 	doSaveServer()
 	return true
 end

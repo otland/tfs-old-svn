@@ -6,7 +6,7 @@ local config = {
 function onThink(cid, interval)
 	if(getTileInfo(getCreaturePosition(cid)).nologout or getCreatureNoMove(cid) or
 		getPlayerCustomFlagValue(cid, PlayerCustomFlag_AllowIdle)) then
-		return TRUE
+		return true
 	end
 
 	local idleTime = getPlayerIdleTime(cid) + interval
@@ -30,5 +30,5 @@ function onThink(cid, interval)
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_WARNING, message .. ".")
 	end
 
-	return TRUE
+	return true
 end

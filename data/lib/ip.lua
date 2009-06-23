@@ -17,7 +17,7 @@ function doConvertIntegerToIp(int, mask)
 			return b1 .. "." .. b2 .. "." .. b3 .. "." .. b4 .. " : " .. m1 .. "." .. m2 .. "." .. m3 .. "." .. m4
 		end
 	end
-	
+
 	return b1 .. "." .. b2 .. "." .. b3 .. "." .. b4
 end
 
@@ -27,7 +27,7 @@ function doConvertIpToInteger(str)
 		local ipint = 0
 		local maskint = 0
 
-		local index = 24		
+		local index = 24
 		for b in str:gmatch("([x%d]+)%.?") do
 			if(b ~= "x") then
 				if(b:find("x") ~= nil) then
@@ -81,7 +81,7 @@ function doConvertIpToInteger(str)
 	if(index ~= 32) then
 		return 0, 0
 	end
-			
+
 	index = 0
 	for b in maskstring:gmatch("(%d+)%.?") do
 		if(tonumber(b) > 255 or tonumber(b) < 0) then
