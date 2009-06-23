@@ -1,5 +1,17 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <items>
+	<!-- README:
+		We really appreciate if someone could help us
+		with getting real names and attributes
+		of missing items in this file
+
+		Mostly needed are items introduced in last tibia updates
+		starting from 8.2 to 8.5, including floors, walls
+
+		But if you found something wrong with older item we're also waiting for you :)
+
+		You can send your work here: http://otland.net/project.php?projectid=2
+	-->
 	<item id="100" name="void"/>
 	<item id="101" name="earth"/>
 	<item id="103" name="dirt"/>
@@ -18471,40 +18483,10 @@
 	<item id="8018" name="earth"/>
 	<item id="8019" name="earth"/>
 	<item id="8020" name="earth"/>
-	<item id="8021" name=""/>
-	<item id="8022" name="earth"/>
-	<item id="8023" name="earth"/>
-	<item id="8024" name="earth"/>
-	<item id="8025" name="earth"/>
-	<item id="8026" name="earth"/>
-	<item id="8027" name="earth"/>
-	<item id="8028" name="earth"/>
-	<item id="8030" name="earth"/>
-	<item id="8031" name="earth"/>
-	<item id="8032" name="earth"/>
-	<item id="8033" name="sand"/>
-	<item id="8034" name="sand"/>
-	<item id="8035" name="sand"/>
-	<item id="8036" name="sand"/>
-	<item id="8037" name="sand"/>
-	<item id="8038" name="sand"/>
-	<item id="8039" name="sand"/>
-	<item id="8040" name="sand"/>
-	<item id="8041" name="sand"/>
-	<item id="8042" name="sand"/>
-	<item id="8043" name="sand"/>
-	<item id="8044" name="sand"/>
-	<item id="8045" name="sand"/>
-	<item id="8048" name="earth"/>
-	<item id="8049" name="earth"/>
-	<item id="8050" name="earth"/>
-	<item id="8051" name="earth"/>
-	<item id="8052" name="earth"/>
-	<item id="8053" name="earth"/>
-	<item id="8054" name="earth"/>
-	<item id="8055" name="earth"/>
-	<item id="8056" name="earth"/>
-	<item id="8057" name="earth"/>
+	<item fromid="8021" toid="8028" name="rifty earth"/>
+	<item fromid="8030" toid="8032" name="rifty earth"/>
+	<item fromid="8033" toid="8045" name="sand"/>
+	<item fromid="8048" toid="8057" name="earth"/>
 	<item id="8058" name="purple fire"/>
 	<item id="8059" article="a" name="grave"/>
 	<item id="8062" name="poisonous gas"/>
@@ -18862,7 +18844,7 @@
 	<item id="8362" name="earth"/>
 	<item id="8363" name="earth"/>
 	<item id="8364" name="earth"/>
-	<item id="8365" name="earth"/>
+	<item id="8365" name="rifty earth"/>
 	<item id="8366" name="earth"/>
 	<item id="8367" name="earth"/>
 	<item id="8369" name="earth"/>
@@ -20406,6 +20388,7 @@
 	<item id="9066" name="wooden wall"/>
 	<item id="9067" name="wooden floor"/>
 	<item fromid="9068" toid="9072" name="frozen mud"/>
+	<item id="9085" article="a" name="iron construction"/>
 	<item id="9107" article="a" name="dead mutated human">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="10007"/>
@@ -20413,6 +20396,9 @@
 		<attribute key="corpseType" value="blood"/>
 		<attribute key="fluidSource" value="blood"/>
 	</item>
+	<item fromid="9118" toid="9133" article="a" name="stone wall"/>
+	<item fromid="9135" toid="9139" article="a" name="stone wall"/>
+	<item fromid="9142" toid="9143" article="a" name="stone wall"/>
 	<item id="9141" article="a" name="blood crystal ">
 		<attribute key="description" value="It has the power to store magic energy."/>
 		<attribute key="weight" value="890"/>
@@ -20486,6 +20472,7 @@
 	<item id="9182" article="a" name="gate of expertise">
 		<attribute key="type" value="door"/>
 	</item>
+	<item fromid="9224" toid="9232" article="a" name="wooden floor"/>
 	<item id="9235" article="a" name="sun clock"/>
 	<item id="9236" article="a" name="sun clock"/>
 	<item id="9237" article="a" name="sun clock"/>
