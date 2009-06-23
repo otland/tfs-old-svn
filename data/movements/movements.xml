@@ -435,8 +435,7 @@
 		<vocation id="6" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="8819" slot="armor" event="function" value="onDeEquipItem"/>
-	<movevent type="Equip" itemid="8821" slot="armor" level="50" event="function" value="onEquipItem">
-	</movevent>
+	<movevent type="Equip" itemid="8821" slot="armor" level="50" event="function" value="onEquipItem"/>
 	<movevent type="DeEquip" itemid="8821" slot="armor" event="function" value="onDeEquipItem"/>
 	<movevent type="Equip" itemid="8865" slot="armor" level="65" event="function" value="onEquipItem">
 		<vocation id="1"/>

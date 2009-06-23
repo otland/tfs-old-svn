@@ -317,8 +317,10 @@ if(NpcHandler == nil) then
 					local msg = self:getMessage(MESSAGE_FAREWELL)
 					local parseInfo = { [TAG_PLAYERNAME] = getPlayerName(cid) }
 					msg = self:parseMessage(msg, parseInfo)
-					self:say(msg, cid, true)
+
+					self:say(msg, cid)
 					self:releaseFocus(cid)
+					self:say(msg)
 				end
 			end
 		end
@@ -333,16 +335,13 @@ if(NpcHandler == nil) then
 					local msg = self:getMessage(MESSAGE_GREET)
 					local parseInfo = { [TAG_PLAYERNAME] = getCreatureName(cid) }
 					msg = self:parseMessage(msg, parseInfo)
-					self:say(msg, cid, true)
-				else
-					return
+
+					self:say(msg)
+					self:addFocus(cid)
+					self:say(msg, cid)
 				end
-			else
-				return
 			end
 		end
-
-		self:addFocus(cid)
 	end
 
 	-- Handles onCreatureAppear events. If you with to handle this yourself, please use the CALLBACK_CREATURE_APPEAR callback.
@@ -368,20 +367,20 @@ if(NpcHandler == nil) then
 	end
 
 	-- Handles onCreatureSay events. If you with to handle this yourself, please use the CALLBACK_CREATURE_SAY callback.
-	function NpcHandler:onCreatureSay(cid, msgtype, msg)
+	function NpcHandler:onCreatureSay(cid, class, msg)
 		local callback = self:getCallback(CALLBACK_CREATURE_SAY)
-		if(callback == nil or callback(cid, msgtype, msg)) then
-			if(self:processModuleCallback(CALLBACK_CREATURE_SAY, cid, msgtype, msg)) then
+		if(callback == nil or callback(cid, class, msg)) then
+			if(self:processModuleCallback(CALLBACK_CREATURE_SAY, cid, class, msg)) then
 				if(not self:isInRange(cid)) then
 					return
 				end
 
 				if(self.keywordHandler ~= nil) then
-					if(self:isFocused(cid) and (msgtype == TALKTYPE_PRIVATE_PN or NPCHANDLER_CONVBEHAVIOR == CONVERSATION_DEFAULT) or (not self:isFocused(cid))) then
+					if((self:isFocused(cid) and (class == TALKTYPE_PRIVATE_PN or NPCHANDLER_CONVBEHAVIOR == CONVERSATION_DEFAULT)) or not self:isFocused(cid)) then
 						local ret = self.keywordHandler:processMessage(cid, msg)
 						if(not ret) then
 							local callback = self:getCallback(CALLBACK_MESSAGE_DEFAULT)
-							if(callback ~= nil and callback(cid, msgtype, msg)) then
+							if(callback ~= nil and callback(cid, class, msg)) then
 								if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 									self.talkStart[cid] = os.time()
 								else
@@ -405,7 +404,7 @@ if(NpcHandler == nil) then
 	function NpcHandler:onPlayerEndTrade(cid)
 		local callback = self:getCallback(CALLBACK_PLAYER_ENDTRADE)
 		if(callback == nil or callback(cid)) then
-			if(self:processModuleCallback(CALLBACK_PLAYER_ENDTRADE, cid, msgtype, msg)) then
+			if(self:processModuleCallback(CALLBACK_PLAYER_ENDTRADE, cid, class, msg)) then
 				if(self:isFocused(cid)) then
 					local parseInfo = { [TAG_PLAYERNAME] = getPlayerName(cid) }
 					local msg = self:parseMessage(self:getMessage(MESSAGE_ONCLOSESHOP), parseInfo)
@@ -419,7 +418,7 @@ if(NpcHandler == nil) then
 	function NpcHandler:onPlayerCloseChannel(cid)
 		local callback = self:getCallback(CALLBACK_PLAYER_CLOSECHANNEL)
 		if(callback == nil or callback(cid)) then
-			if(self:processModuleCallback(CALLBACK_PLAYER_CLOSECHANNEL, cid, msgtype, msg)) then
+			if(self:processModuleCallback(CALLBACK_PLAYER_CLOSECHANNEL, cid, class, msg)) then
 				if(self:isFocused(cid)) then
 					self:unGreet(cid)
 				end
@@ -455,7 +454,7 @@ if(NpcHandler == nil) then
 				if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
 					for cid, talkDelay in pairs(self.talkDelay) do
 						if(talkDelay.time ~= nil and talkDelay.message ~= nil and os.time() >= talkDelay.time) then
-							selfSay(talkDelay.message, cid, talkDelay.publicize)
+							selfSay(talkDelay.message, cid)
 							self.talkDelay[cid] = nil
 						end
 					end
@@ -537,8 +536,10 @@ if(NpcHandler == nil) then
 						local msg = self:getMessage(MESSAGE_WALKAWAY)
 						local parseInfo = { [TAG_PLAYERNAME] = getPlayerName(cid) }
 						msg = self:parseMessage(msg, parseInfo)
-						self:say(msg, cid, true)
+
+						self:say(msg, cid)
 						self:releaseFocus(cid)
+						self:say(msg)
 					end
 				end
 			end
@@ -566,11 +567,11 @@ if(NpcHandler == nil) then
 	-- Makes the npc represented by this instance of NpcHandler say something.
 	--	This implements the currently set type of talkdelay.
 	--	shallDelay is a boolean value. If it is false, the message is not delayed. Default value is false.
-	function NpcHandler:say(message, focus, publicize, shallDelay)
-		local publicize, shallDelay = publicize or false, shallDelay or false
-		if(NPCHANDLER_TALKDELAY == TALKDELAY_NONE or shallDelay == false) then
+	function NpcHandler:say(message, focus, shallDelay)
+		local shallDelay = shallDelay or false
+		if(NPCHANDLER_TALKDELAY == TALKDELAY_NONE or not shallDelay) then
 			if(NPCHANDLER_CONVBEHAVIOR ~= CONVERSATION_DEFAULT) then
-				selfSay(message, focus, publicize)
+				selfSay(message, focus)
 				return
 			else
 				selfSay(message)
@@ -583,7 +584,6 @@ if(NpcHandler == nil) then
 			self.talkDelay[focus] = {
 				message = message,
 				time = os.time() + self.talkDelayTime,
-				publicize = publicize
 			}
 		else
 			self.talkDelay = {

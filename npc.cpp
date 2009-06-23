@@ -2540,15 +2540,11 @@ int32_t NpcScriptInterface::luaActionFocus(lua_State* L)
 
 int32_t NpcScriptInterface::luaActionSay(lua_State* L)
 {
-	//selfSay(words[, target[, publicize[, type]]])
+	//selfSay(words[, target[, type]])
 	int32_t params = lua_gettop(L), target = 0;
 	SpeakClasses type = SPEAK_CLASS_NONE;
-	if(params > 3)
-		type = (SpeakClasses)popNumber(L);
-
-	bool publicize = false;
 	if(params > 2)
-		publicize = popNumber(L);
+		type = (SpeakClasses)popNumber(L);
 
 	if(params > 1)
 		target = popNumber(L);
@@ -2558,10 +2554,7 @@ int32_t NpcScriptInterface::luaActionSay(lua_State* L)
 	if(!npc)
 		return 0;
 
-	Player* player = NULL;
-	if(!publicize)
-		player = env->getPlayerByUID(target);
-
+	Player* player = env->getPlayerByUID(target);
 	if(type == SPEAK_CLASS_NONE)
 	{
 		if(player)
@@ -2569,7 +2562,6 @@ int32_t NpcScriptInterface::luaActionSay(lua_State* L)
 		else
 			type = SPEAK_SAY;
 	}
-
 
 	npc->doSay(popString(L), (SpeakClasses)type, player);
 	return 0;
