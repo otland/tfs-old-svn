@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <creaturescripts>
 	<event type="login" name="PlayerLogin" event="script" value="login.lua"/>
-	<event type="login" name="FirstItems" event="script" value="firstitems.lua"/>
 
 	<event type="joinchannel" name="GuildMotd" event="script" value="guildmotd.lua"/>
 	<event type="receivemail" name="Mail" event="script" value="mail.lua"/>
