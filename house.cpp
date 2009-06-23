@@ -145,6 +145,7 @@ bool House::setHouseOwnerEx(uint32_t guid, bool transfer)
 	if(!trans.begin())
 		return false;
 
+	DBQuery query; //lock mutex
 	IOMapSerialize::getInstance()->saveHouse(db, this);
 	return trans.commit();
 }
