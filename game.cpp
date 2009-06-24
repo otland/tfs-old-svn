@@ -966,11 +966,12 @@ bool Game::playerMoveThing(uint32_t playerId, const Position& fromPos,
 
 	if(Creature* movingCreature = thing->getCreature())
 	{
-		if(Position::areInRange<1,1,0>(movingCreature->getPosition(), player->getPosition()))
+		uint32_t delay = g_config.getNumber(ConfigManager::PUSH_CREATURE_DELAY);
+		if(Position::areInRange<1,1,0>(movingCreature->getPosition(), player->getPosition()) && delay > 0)
 		{
-			SchedulerTask* task = createSchedulerTask(g_config.getNumber(ConfigManager::PUSH_CREATURE_DELAY),
-				boost::bind(&Game::playerMoveCreature, this,
+			SchedulerTask* task = createSchedulerTask(delay, boost::bind(&Game::playerMoveCreature, this,
 				player->getID(), movingCreature->getID(), movingCreature->getPosition(), toCylinder->getPosition()));
+
 			player->setNextActionTask(task);
 		}
 		else

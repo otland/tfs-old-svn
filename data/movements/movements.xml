@@ -12,6 +12,10 @@
 	<movevent type="StepOut" itemid="4820" event="script" value="swimpool.lua"/>
 	<movevent type="AddItem" itemid="4820" tileitem="1" event="script" value="swimitem.lua"/>
 
+	<!-- Underwater drown -->
+	<movevent type="StepIn" fromid="5405" toid="5410" event="script" value="drown.lua"/>
+	<movevent type="StepOut" fromid="5405" toid="5410" event="script" value="drown.lua"/>
+
 	<!-- (Depot & Level) tiles -->
 	<movevent type="StepIn" itemid="416" event="script" value="tiles.lua"/>
 	<movevent type="StepOut" itemid="417" event="script" value="tiles.lua"/>

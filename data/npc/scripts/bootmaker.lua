@@ -22,7 +22,7 @@ function creatureSayCallback(cid, type, msg)
 		if(getPlayerItemCount(cid, 6530) >= 1) then
 			if(doPlayerRemoveMoney(cid, 10000)) then
 				doPlayerRemoveItem(cid, 6530, 1)
-				doPlayerAddItem(cid, 2640)
+				doPlayerAddItem(cid, 6132)
 				selfSay('Here you are.', cid)
 			else
 				selfSay('Sorry, you don\'t have enough gold.', cid)

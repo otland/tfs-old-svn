@@ -2,7 +2,7 @@ local function doTargetCorpse(cid, pos)
 	local getPos = pos
 	getPos.stackpos = 255
 
-	corpse = getThingFromPos(getPos)
+	local corpse = getThingFromPos(getPos)
 	if(corpse.uid > 0 and isCorpse(corpse.uid) and isMoveable(corpse.uid)) then
 		doRemoveItem(corpse.uid)
 		local creature = doCreateMonster(cid, "Skeleton", pos)

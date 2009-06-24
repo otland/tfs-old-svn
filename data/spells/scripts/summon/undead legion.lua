@@ -2,11 +2,10 @@ function onTargetTile(cid, pos)
 	local getPos = pos
 	getPos.stackpos = 255
 
-	corpse = getThingFromPos(getPos)
+	local corpse = getThingFromPos(getPos)
 	if(corpse.uid > 0 and isCorpse(corpse.uid) and isMoveable(corpse.uid)) then
 		doRemoveItem(corpse.uid)
-		local creature = doCreateMonster(cid, "Skeleton", pos)
-		doConvinceCreature(cid, creature)
+		doConvinceCreature(cid, doCreateMonster(cid, "Skeleton", pos))
 
 		doSendMagicEffect(pos, CONST_ME_MAGIC_BLUE)
 		return true

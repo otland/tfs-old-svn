@@ -18,5 +18,6 @@ keywordHandler:addKeyword({'small'}, StdModule.say, {npcHandler = npcHandler, on
 keywordHandler:addKeyword({'round'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'I sell round blue, round red, round purple and round turquiose pillows.'})
 keywordHandler:addKeyword({'square'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'I sell blue, red, green and yellow pillows.'})
 keywordHandler:addKeyword({'pillows'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'I sell heart, small, sqare and round pillows.'})
+keywordHandler:addKeyword({'beds'}, StdModule.say, {npcHandler = npcHandler, onlyFocus = true, text = 'I sell {green}, {red} and {yellow} {beds} for {5000}gp. I can sell you too standard bed (to remove modification)'})
 
 npcHandler:addModule(FocusModule:new())

@@ -50,14 +50,6 @@
 		<vocation id="6" showInDescription="0"/>
 	</rune>
 
-	<!-- Custom Runes -->
-	<rune name="Polymorph" id="2270" charges="1" maglv="20" exhaustion="2000" blocktype="solid" allowfaruse="1" event="script" value="custom/polymorph.lua"/>
-	<rune name="Combustion" id="2276" charges="1" maglv="20" exhaustion="2000" blocktype="solid" allowfaruse="1" event="script" value="custom/combustion.lua"/>
-	<rune name="Energy Arrow" id="2281" charges="1" maglv="20" exhaustion="2000" blocktype="solid" allowfaruse="1" event="script" value="attack/energy wave.lua"/>
-	<rune name="Magic Prison" id="2272" charges="1" maglv="20" exhaustion="2000" blocktype="solid" allowfaruse="1" event="script" value="custom/magic prison.lua"/>
-	<rune name="Stealth" id="2283" charges="1" maglv="20" exhaustion="2000" blocktype="solid" allowfaruse="1" event="script" value="support/invisible.lua"/>
-	<rune name="Drunkness" id="2267" charges="1" maglv="20" exhaustion="2000" blocktype="solid" allowfaruse="1" event="script" value="custom/drunk.lua"/>
-
 	<!-- Attack Spells -->
 	<instant name="Death Strike" words="exori mort" lvl="16" mana="20" prem="1" range="3" casterTargetOrDirection="1" blockwalls="1" exhaustion="2000" needlearn="0" event="script" value="attack/death strike.lua">
 		<vocation id="1"/>
@@ -568,10 +560,4 @@
 		<vocation id="3"/>
 		<vocation id="7"/>
 	</conjure>
-
-	<!-- Custom Spells -->
-	<instant name="Apocalypse" words="exevo mas lux" lvl="40" manapercent="60" exhaustion="2000" needlearn="0" event="script" value="custom/apocalypse.lua">
-		<vocation id="1"/>
-		<vocation id="5"/>
-	</instant>
 </spells>
