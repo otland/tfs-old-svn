@@ -138,11 +138,12 @@
 	<!-- Canines -->
 	<monster name="Dog" file="Canines/dog.xml"/>
 	<monster name="Hellhound" file="Canines/hellhound.xml"/>
+	<monster name="Husky" file="Canines/husky.xml"/>	
 	<monster name="War wolf" file="Canines/war wolf.xml"/>
 	<monster name="Werewolf" file="Canines/werewolf.xml"/>
 	<monster name="Winter wolf" file="Canines/winter wolf.xml"/>
 	<monster name="Wolf" file="Canines/wolf.xml"/>
-	
+
 	<!-- Chakoyas -->
 	<monster name="Chakoya Toolshaper" file="Chakoyas/chakoya toolshaper.xml"/>
 	<monster name="Chakoya Tribewarden" file="Chakoyas/chakoya tribewarden.xml"/>
@@ -384,7 +385,7 @@
 	<monster name="Blistering Fire Elemental" file="Pyro-Elementals/blistering fire elemental.xml"/>
 	<monster name="Fire Elemental" file="Pyro-Elementals/fire elemental.xml"/>
 	<monster name="Fire Overlord" file="Pyro-Elementals/fire overlord.xml"/>
-	<monster name="Hellfire Fighter" file="Pyro-Elementals/hellfire fighter.xml"/>	
+	<monster name="Hellfire Fighter" file="Pyro-Elementals/hellfire fighter.xml"/>
 	<monster name="Massive Fire Elemental" file="Pyro-Elementals/massive fire elemental.xml"/>
 
 	<!-- Quaras -->
