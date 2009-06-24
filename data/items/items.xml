@@ -495,31 +495,31 @@
 	<item id="1126" article="an" name="archway"/>
 	<item id="1127" article="an" name="archway"/>
 	<item id="1128" article="an" name="ornamented wall"/>
-	<item id="1129" article="an" name="ornamented  wall"/>
-	<item id="1130" article="an" name="ornamented  wall"/>
-	<item id="1131" article="an" name="ornamented  wall"/>
-	<item id="1132" article="an" name="ornamented  wall"/>
-	<item id="1133" article="an" name="ornamented  wall"/>
-	<item id="1134" article="an" name="ornamented  wall"/>
-	<item id="1135" article="an" name="ornamented  wall"/>
-	<item id="1136" article="an" name="ornamented  wall"/>
-	<item id="1137" article="an" name="ornamented  wall"/>
-	<item id="1138" article="an" name="ornamented  wall"/>
-	<item id="1139" article="an" name="ornamented  wall"/>
-	<item id="1140" article="an" name="ornamented  wall"/>
-	<item id="1141" article="an" name="ornamented  wall"/>
-	<item id="1142" article="an" name="ornamented  wall"/>
-	<item id="1143" article="an" name="ornamented  wall"/>
-	<item id="1144" article="an" name="ornamented  wall"/>
-	<item id="1145" article="an" name="ornamented  wall"/>
-	<item id="1146" article="an" name="ornamented  wall"/>
-	<item id="1147" article="an" name="ornamented  wall"/>
-	<item id="1148" article="an" name="ornamented  wall"/>
-	<item id="1149" article="an" name="ornamented  wall"/>
-	<item id="1150" article="an" name="ornamented  wall"/>
-	<item id="1151" article="an" name="ornamented  wall"/>
-	<item id="1152" article="an" name="ornamented  wall"/>
-	<item id="1153" article="an" name="ornamented  wall"/>
+	<item id="1129" article="an" name="ornamented wall"/>
+	<item id="1130" article="an" name="ornamented wall"/>
+	<item id="1131" article="an" name="ornamented wall"/>
+	<item id="1132" article="an" name="ornamented wall"/>
+	<item id="1133" article="an" name="ornamented wall"/>
+	<item id="1134" article="an" name="ornamented wall"/>
+	<item id="1135" article="an" name="ornamented wall"/>
+	<item id="1136" article="an" name="ornamented wall"/>
+	<item id="1137" article="an" name="ornamented wall"/>
+	<item id="1138" article="an" name="ornamented wall"/>
+	<item id="1139" article="an" name="ornamented wall"/>
+	<item id="1140" article="an" name="ornamented wall"/>
+	<item id="1141" article="an" name="ornamented wall"/>
+	<item id="1142" article="an" name="ornamented wall"/>
+	<item id="1143" article="an" name="ornamented wall"/>
+	<item id="1144" article="an" name="ornamented wall"/>
+	<item id="1145" article="an" name="ornamented wall"/>
+	<item id="1146" article="an" name="ornamented wall"/>
+	<item id="1147" article="an" name="ornamented wall"/>
+	<item id="1148" article="an" name="ornamented wall"/>
+	<item id="1149" article="an" name="ornamented wall"/>
+	<item id="1150" article="an" name="ornamented wall"/>
+	<item id="1151" article="an" name="ornamented wall"/>
+	<item id="1152" article="an" name="ornamented wall"/>
+	<item id="1153" article="an" name="ornamented wall"/>
 	<item id="1154" article="a" name="wall fountain">
 		<attribute key="fluidSource" value="water"/>
 	</item>
@@ -15327,10 +15327,10 @@
 	<item id="7160" article="a" name="frozen chest"/>
 	<item id="7161" article="a" name="frozen chest"/>
 	<item id="7162" article="a" name="frozen drawer"/>
-	<item id="7163" article="a" name="frozen chair."/>
-	<item id="7164" article="a" name="frozen chair."/>
-	<item id="7165" article="a" name="frozen chair."/>
-	<item id="7166" article="a" name="frozen chair."/>
+	<item id="7163" article="a" name="frozen chair"/>
+	<item id="7164" article="a" name="frozen chair"/>
+	<item id="7165" article="a" name="frozen chair"/>
+	<item id="7166" article="a" name="frozen chair"/>
 	<item id="7167" article="a" name="frozen pendulum clock"/>
 	<item id="7168" article="a" name="frozen pendulum clock"/>
 	<item id="7169" article="a" name="frozen trough"/>
