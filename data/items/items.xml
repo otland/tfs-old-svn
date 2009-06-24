@@ -20452,7 +20452,7 @@
 		<attribute key="type" value="door"/>
 	</item>
 	<item fromid="9183" toid="9186" article="a" name="stone wall"/>
-	<item fromid="9192" toid="9206" name="iron floor">
+	<item fromid="9192" toid="9206" name="iron floor"/>
 	<item fromid="9224" toid="9232" article="a" name="wooden floor"/>
 	<item id="9235" article="a" name="sun clock"/>
 	<item id="9236" article="a" name="sun clock"/>
@@ -20530,32 +20530,32 @@
 	<item id="9284" article="a" name="gate of expertise">
 		<attribute key="type" value="door"/>
 	</item>
-	<item fromid="9311" toid="9319" name="golden ornament">
+	<item fromid="9311" toid="9319" name="golden ornament"/>
 	<item fromid="9320" toid="9326" article="an" name="archway"/>
 	<item id="9330" name="copper pipes"/>
 	<item fromid="9333" toid="9334" name="slime"/>
 	<item fromid="9337" toid="9340" article="a" name="golden ornament"/>
 	<!-- 9342 is empty -->
-	<item fromid="9343" toid="9346" article="a" name="copper pipes">
-	<item fromid="9347" toid="9348" article="a" name="copper wheel">
-	<item fromid="9349" toid="9350" article="a" name="boiler">
+	<item fromid="9343" toid="9346" article="a" name="copper pipes"/>
+	<item fromid="9347" toid="9348" article="a" name="copper wheel"/>
+	<item fromid="9349" toid="9350" article="a" name="boiler"/>
 	<item fromid="9351" toid="9352" article="a" name="copper pipe"/>
 	<item fromid="9353" toid="9368" article="a" name="golden ornament"/>
-	<item fromid="9387" toid="9392" article="a" name="stone railing">
-	<item fromid="9393" toid="9399" article="a" name="small tower">
-	<item fromid="9405" toid="9414" article="a" name="stone wall">
+	<item fromid="9387" toid="9392" article="a" name="stone railing"/>
+	<item fromid="9393" toid="9399" article="a" name="small tower"/>
+	<item fromid="9405" toid="9414" article="a" name="stone wall"/>
 	<item fromid="9419" toid="9422" article="a" name="stone pile"/>
-	<item fromid="9424" toid="9433" article="a" name="tapestry">
-	<item id="9434" article="a" name="stone wall">
-	<item fromid="9435" toid="9438" article="a" name="heavy wooden chair">
-	<item fromid="9449" toid="9459" article="a" name="tapestry">
-	<item fromid="9471" toid="9486" article="a" name="gate">
+	<item fromid="9424" toid="9433" article="a" name="tapestry"/>
+	<item id="9434" article="a" name="stone wall"/>
+	<item fromid="9435" toid="9438" article="a" name="heavy wooden chair"/>
+	<item fromid="9449" toid="9459" article="a" name="tapestry"/>
+	<item fromid="9471" toid="9486" article="a" name="gate"/>
 	<item id="9531" article="a" name="mechanism"/>
 	<item id="9534" article="a" name="mechanism"/>
 	<item fromid="9562" toid="9565" article="a" name="large gem"/>
 	<item id="9567" name="small gems"/>
 	<item id="9568" name="small gems"/>
-	<item fromid="9569" toid="9570" name="wooden floor">
+	<item fromid="9569" toid="9570" name="wooden floor"/>
 	<item id="9573" name="corkscrew stairs">
 		<attribute key="floorchange" value="north"/>
 	</item>
