@@ -1,6 +1,6 @@
 local config = {
 	removeOnUse = "no",
-	splashable = "yes",
+	splashable = "no",
 	healthMultiplier = 1.0,
 	manaMultiplier = 1.0
 }
