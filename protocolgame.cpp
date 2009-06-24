@@ -1410,7 +1410,7 @@ void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
 		<< description << "\n"
 		<< comment << "\n";
 
-	Loggar::getInstance()->log(ss.str(), LOGFILE_ADMIN);
+	Loggar::getInstance()->log(ss.str(), LOGFILE_CLIENT_ASSERTION);
 }
 
 void ProtocolGame::parseBugReport(NetworkMessage& msg)

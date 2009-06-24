@@ -41,8 +41,7 @@ void GlobalEvents::clear()
 	for(it = serverEventsMap.begin(); it != serverEventsMap.end(); ++it)
 		delete it->second;
 
-	eventsMap.clear();
-	serverEventsMap.clear();
+	eventsMap.clear(), serverEventsMap.clear();
 	m_scriptInterface.reInitState();
 }
 
