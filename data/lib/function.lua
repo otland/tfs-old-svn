@@ -335,6 +335,18 @@ function doPlayerSetMagicRate(cid, value)
 	return doPlayerSetRate(cid, SKILL__MAGLEVEL, value)
 end
 
+function doPlayerAddLevel(cid, amount, round)
+	local newExp = 0
+	local currentLevel = getPlayerLevel(cid)
+	if(amount > 0) then
+		newExp = getExperienceForLevel(currentLevel + amount) - (round and getPlayerExperience(cid) or getExperienceForLevel(currentLevel))
+	else
+		newExp = -((round and getPlayerExperience(cid) or getExperienceForLevel(currentLevel)) - getExperienceForLevel(currentLevel + amount))
+	end
+
+	return doPlayerAddExperience(cid, newExp)
+end
+
 function getPartyLeader(cid)
 	local party = getPartyMembers(cid)
 	if(type(party) ~= 'table') then
