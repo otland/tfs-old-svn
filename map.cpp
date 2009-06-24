@@ -289,7 +289,7 @@ void Map::getSpectatorsInternal(SpectatorVec& list, const Position& centerPos, b
 	QTreeLeafNode* startLeaf = getLeaf(startx1, starty1);
 	QTreeLeafNode* leafS = startLeaf;
 
-	QTreeLeafNode* leafE;	
+	QTreeLeafNode* leafE;
 	for(int32_t ny = starty1; ny <= endy2; ny += FLOOR_SIZE)
 	{
 		leafE = leafS;
@@ -429,7 +429,6 @@ const SpectatorVec& Map::getSpectators(const Position& centerPos)
 	//above ground
 	else if(centerPos.z == 6)
 	{
-		
 		minRangeZ = 0;
 		maxRangeZ = 8;
 	}

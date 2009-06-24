@@ -97,7 +97,8 @@ void GlobalEvents::onThink(uint32_t interval)
 		boost::bind(&GlobalEvents::onThink, this, interval)));
 }
 
-GlobalEvent::GlobalEvent(LuaScriptInterface* _interface) : Event(_interface)
+GlobalEvent::GlobalEvent(LuaScriptInterface* _interface):
+	Event(_interface)
 {
 	m_lastExecution = time(NULL);
 }

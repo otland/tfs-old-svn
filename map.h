@@ -249,7 +249,7 @@ class Map
 
 		uint32_t mapWidth, mapHeight;
 		std::string spawnfile, housefile;
-		StringVec descriptions;		
+		StringVec descriptions;
 
 		SpectatorCache spectatorCache;
 		void clearSpectatorCache() {spectatorCache.clear();}

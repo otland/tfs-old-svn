@@ -900,12 +900,12 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 	{
 		if((player = (*it)->getPlayer()) && player->canSeeCreature(creature))
 			oldStackPosVector.push_back(tile->getClientIndexOfThing(player, creature));
-	}	
+	}
 
 	int32_t oldIndex = tile->__getIndexOfThing(creature);
 	if(!map->removeCreature(creature))
 		return false;
-	
+
 	//send to client
 	uint32_t i = 0;
 	for(it = list.begin(); it != list.end(); ++it)
@@ -1788,7 +1788,7 @@ bool Game::removeMoney(Cylinder* cylinder, int32_t money, uint32_t flags /*= 0*/
 
 	Thing* thing = NULL;
 	Item* item = NULL;
-	
+
 	int32_t moneyCount = 0;
 	for(int32_t i = cylinder->__getFirstIndex(); i < cylinder->__getLastIndex() && money > 0; ++i)
 	{
