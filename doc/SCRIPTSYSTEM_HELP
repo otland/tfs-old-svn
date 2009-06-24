@@ -80,10 +80,13 @@
 		File: globalevents/globalevents.xml
 		Attributes
 			type
-				Not done yet. IGNORE.
+				Server events, script can be executed at server start or shutdown.
+				Values:
+					start, shutdown
 
 			interval
 				Script will be executed every x seconds.
+				Ignored if 'type' specified.
 
 	*MOVEMENTS
 		File: movements/movements.xml

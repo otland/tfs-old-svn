@@ -96,8 +96,8 @@ void PrivateChatChannel::closeChannel()
 		it->second->sendClosePrivate(getId());
 }
 
-ChatChannel::ChatChannel(uint16_t id, std::string name, bool logged/* = false*/, uint32_t access/* = 0*/, bool enabled/* = true*/):
-	m_name(name), m_logged(logged), m_enabled(enabled), m_id(id), m_access(access)
+ChatChannel::ChatChannel(uint16_t id, std::string name, bool logged/* = false*/, uint32_t access/* = 0*/, bool active/* = true*/, bool enabled/* = true*/):
+	m_name(name), m_logged(logged), m_active(active), m_enabled(enabled), m_id(id), m_access(access)
 {
 	if(logged)
 	{
@@ -146,6 +146,12 @@ bool ChatChannel::removeUser(Player* player)
 
 bool ChatChannel::talk(Player* player, SpeakClasses type, const std::string& text, uint32_t _time/* = 0*/)
 {
+	if(!m_active)
+	{
+		player->sendTextMessage(MSG_STATUS_SMALL, "You may not write on this channel.");
+		return true;
+	}
+
 	if(!m_enabled || player->getAccess() < m_access)
 		return false;
 
@@ -232,7 +238,7 @@ bool Chat::loadFromXml()
 bool Chat::parseChannelNode(xmlNodePtr p)
 {
 	std::string strValue, name;
-	bool logged = false, enabled = true;
+	bool logged = false, active = true, enabled = true;
 	int32_t intValue, id = 0, access = 0;
 	if(xmlStrcmp(p->name, (const xmlChar*)"channel"))
 		return false;
@@ -263,6 +269,9 @@ bool Chat::parseChannelNode(xmlNodePtr p)
 	if(readXMLInteger(p, "access", intValue))
 		access = intValue;
 
+	if(readXMLString(p, "active", strValue))
+		active = booleanString(strValue);
+
 	if(readXMLString(p, "enabled", strValue))
 		enabled = booleanString(strValue);
 
@@ -285,7 +294,7 @@ bool Chat::parseChannelNode(xmlNodePtr p)
 
 		default:
 		{
-			if(ChatChannel* newChannel = new ChatChannel(id, name, logged, access, enabled))
+			if(ChatChannel* newChannel = new ChatChannel(id, name, logged, access, active, enabled))
 				m_normalChannels[id] = newChannel;
 
 			break;

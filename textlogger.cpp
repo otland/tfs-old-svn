@@ -22,47 +22,64 @@
 #include "gui.h"
 #endif
 
-Loggar::Loggar()
+void Loggar::open()
 {
-	m_file = fopen("data/logs/server/admin.log", "a");
+	m_files[LOGFILE_ADMIN] = fopen(getFilePath(FILE_TYPE_LOG, "admin.log").c_str(), "a");
+	m_files[LOGFILE_CLIENT_ASSERTION] = fopen(getFilePath(FILE_TYPE_LOG, "client_assertions.log").c_str(), "a");
 }
 
-Loggar::~Loggar()
+void Loggar::close()
 {
-	if(m_file)
-		fclose(m_file);
+	for(uint8_t i = 0; i <= LOGFILE_LAST; i++)
+	{
+		if(m_files[i])
+			fclose(m_files[i]);
+	}
+}
+
+void Loggar::log(std::string output, LogFile_t file)
+{
+	if(!m_files[file])
+		return;
+
+	fprintf(m_files[file], "%s", output.c_str());
+	fflush(m_files[file]);
 }
 
 void Loggar::logMessage(const char* func, LogType_t type, std::string message, std::string channel/* = ""*/)
 {
-	std::string typeStr = "Unknown";
+	std::stringstream ss;
+	ss << "[" << formatDate() << "]"
+		<< " (";
+
 	switch(type)
 	{
 		case LOGTYPE_EVENT:
-			typeStr = "Event";
+			ss << "Event";
 			break;
 
 		case LOGTYPE_NOTICE:
-			typeStr = "Notice";
+			ss << "Notice";
 
 		case LOGTYPE_WARNING:
-			typeStr = "Warning";
+			ss << "Warning";
 			break;
 
 		case LOGTYPE_ERROR:
-			typeStr = "Error";
+			ss << "Error";
 			break;
 
 		default:
 			break;
 	}
 
-	fprintf(m_file, "[%s] (%s - %s) ", formatDate().c_str(), typeStr.c_str(), func);
-	if(!channel.empty())
-		fprintf(m_file, "%s: ", channel.c_str());
+	ss << " - " << func << ") ";
 
-	fprintf(m_file, "%s\n", message.c_str());
-	fflush(m_file);
+	if(!channel.empty())
+		ss << channel << ": ";
+
+	ss << message << "\n";
+	log(ss.str(), LOGFILE_ADMIN);
 }
 
 #if defined(WIN32) && not defined(__CONSOLE__)

@@ -121,6 +121,8 @@ bool BaseEvents::parseEventNode(xmlNodePtr p, std::string scriptsPath, bool over
 	}
 	else if(readXMLString(p, "function", strValue))
 		success = event->loadFunction(strValue);
+	else if(parseXMLContentString(p->children, strValue))
+		success = event->loadScript(strValue, false);
 
 	if(!override && readXMLString(p, "override", strValue) && booleanString(strValue))
 		override = true;
@@ -157,15 +159,18 @@ bool Event::loadScript(const std::string& script, bool file)
 	int32_t result = -1;
 	if(!file)
 	{
-		std::string script_ = script;
+		//let loadBuffer load with all these auto-parameters completion
+		//and still let allow to parse normal string from cdata via loadScript
+		//commented this part temporary
+/*		std::string script_ = script;
 		if(script_.length() < 9 || script_.substr(0, 7) != "function")
 		{
 			std::stringstream scriptstream;
 			scriptstream << "function " << getScriptEventName() << "(" << getScriptEventParams() << ")" << std::endl << script_ << std::endl << "end";
 			script_ = scriptstream.str();
-		}
+		}*/
 
-		result = m_scriptInterface->loadBuffer(script_);
+		result = m_scriptInterface->loadBuffer(script);
 	}
 	else
 		result = m_scriptInterface->loadFile(script);
@@ -199,7 +204,7 @@ bool Event::loadBuffer(const std::string& buffer)
 
 	m_scripted = EVENT_SCRIPT_BUFFER;
 	m_scriptData = buffer;
-	return true;	
+	return true;
 }
 
 CallBack::CallBack()

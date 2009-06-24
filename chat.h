@@ -31,7 +31,7 @@ typedef std::list<uint32_t> InviteList;
 class ChatChannel
 {
 	public:
-		ChatChannel(uint16_t id, std::string name, bool logged = false, uint32_t access = 0, bool enabled = true);
+		ChatChannel(uint16_t id, std::string name, bool logged = false, uint32_t access = 0, bool active = true, bool enabled = true);
 		virtual ~ChatChannel() {}
 
 		const uint16_t getId() {return m_id;}
@@ -42,6 +42,7 @@ class ChatChannel
 
 		uint16_t getAccess() const {return m_access;}
 		bool isLogged() const {return m_logged;}
+		bool isActive() const {return m_active;}
 		bool isEnabled() const {return m_enabled;}
 
 		bool addUser(Player* player);
@@ -52,7 +53,7 @@ class ChatChannel
 	protected:
 		std::string m_name;
 
-		bool m_logged, m_enabled;
+		bool m_logged, m_active, m_enabled;
 		uint16_t m_id, m_access;
 
 		UsersMap m_users;

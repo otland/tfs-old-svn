@@ -191,7 +191,6 @@ void Game::setGameState(GameState_t newState)
 				g_globalEvents->startup();
 
 				IOBan::getInstance()->clearTemporials();
-				IOLoginData::getInstance()->resetOnlineStatus();
 				if(g_config.getBool(ConfigManager::REMOVE_PREMIUM_ON_INIT))
 					IOLoginData::getInstance()->updatePremiumDays();
 				break;
@@ -207,6 +206,7 @@ void Game::setGameState(GameState_t newState)
 					it = Player::listPlayer.list.begin();
 				}
 
+				g_globalEvents->onShutdown();
 				Houses::getInstance().payHouses();
 				saveGameState(false);
 				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, this)));

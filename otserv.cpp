@@ -446,6 +446,8 @@ ServiceManager* services)
 	if(!g_config.load())
 		startupErrorMessage("Unable to load " + g_config.getString(ConfigManager::CONFIG_FILE) + "!");
 
+	Loggar::getInstance()->open();
+
 	IntegerVec cores = vectorAtoi(explodeString(g_config.getString(ConfigManager::CORES_USED), ","));
 	if(cores[0] != -1)
 	{
@@ -669,13 +671,6 @@ ServiceManager* services)
 	if(!ScriptingManager::getInstance()->load())
 		startupErrorMessage("");
 
-	std::cout << ">> Loading mods..." << std::endl;
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading mods...");
-	#endif
-	if(!ScriptingManager::getInstance()->loadMods())
-		startupErrorMessage("Unable to load mods!");
-
 	std::cout << ">> Loading chat channels" << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading chat channels");
@@ -712,6 +707,13 @@ ServiceManager* services)
 		#endif
 			startupErrorMessage("Unable to load monsters!");
 	}
+
+	std::cout << ">> Loading mods..." << std::endl;
+	#ifndef __CONSOLE__
+	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading mods...");
+	#endif
+	if(!ScriptingManager::getInstance()->loadMods())
+		startupErrorMessage("Unable to load mods!");
 
 	std::cout << ">> Loading map and spawns..." << std::endl;
 	#ifndef __CONSOLE__

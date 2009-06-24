@@ -1401,13 +1401,16 @@ void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
 	std::string assertLine = msg.GetString(), date = msg.GetString(),
 		description = msg.GetString(), comment = msg.GetString();
 	m_debugAssertSent = true;
-	if(FILE* file = fopen(getFilePath(FILE_TYPE_LOG, "assertions.log").c_str(), "a"))
-	{
-		fprintf(file, "----- %s - %s (%s) -----\n%s\n%s\n%s\n%s\n", formatDate().c_str(),
-			player->getName().c_str(), convertIPAddress(getIP()).c_str(),
-			assertLine.c_str(), date.c_str(), description.c_str(), comment.c_str());
-		fclose(file);
-	}
+
+	std::stringstream ss;
+	ss << "----- " << formatDate() << " - " << player->getName()
+		<< " (" << convertIPAddress(getIP()) << ") -----\n"
+		<< assertLine << "\n"
+		<< date << "\n"
+		<< description << "\n"
+		<< comment << "\n";
+
+	Loggar::getInstance()->log(ss.str(), LOGFILE_ADMIN);
 }
 
 void ProtocolGame::parseBugReport(NetworkMessage& msg)

@@ -104,7 +104,6 @@ class IOLoginData
 		bool getDefaultTownByName(const std::string& name, uint32_t& townId);
 
 		bool updatePremiumDays();
-		bool resetOnlineStatus();
 		bool resetGuildInformation(uint32_t guid);
 
 	protected:

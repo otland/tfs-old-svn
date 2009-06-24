@@ -20381,7 +20381,7 @@
 		<attribute key="description" value="It has the power to store magic energy."/>
 		<attribute key="weight" value="890"/>
 	</item>
-	<item fromid="9145" toid="9146" name="white marble floor"/>
+	<item fromid="9144" toid="9146" name="white marble floor"/>
 	<item fromid="9159" toid="9164" article="an" name="archway"/>
 	<item id="9165" article="a" name="closed door">
 		<attribute key="type" value="door"/>

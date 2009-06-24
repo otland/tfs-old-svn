@@ -24,6 +24,14 @@
 #include <fstream>
 #endif
 
+enum LogFile_t
+{
+	LOGFILE_FIRST = 0,
+	LOGFILE_ADMIN = LOGFILE_FIRST,
+	LOGFILE_CLIENT_ASSERTION = 1,
+	LOGFILE_LAST = LOGFILE_CLIENT_ASSERTION
+};
+
 enum LogType_t
 {
 	LOGTYPE_EVENT,
@@ -35,18 +43,22 @@ enum LogType_t
 class Loggar
 {
 	public:
-		virtual ~Loggar();
+		virtual ~Loggar() {close();}
 		static Loggar* getInstance()
 		{
 			static Loggar instance;
 			return &instance;
 		}
 
+		void open();
+		void close();
+
+		void log(std::string output, LogFile_t file);
 		void logMessage(const char* func, LogType_t type, std::string message, std::string channel = "");
 
 	private:
-		Loggar();
-		FILE* m_file;
+		Loggar() {}
+		FILE* m_files[LOGFILE_LAST + 1];
 };
 
 #define LOG_MESSAGE(type, message, channel) \
@@ -64,7 +76,11 @@ class TextLogger : public std::streambuf
 
 	protected:
 		int32_t overflow(int32_t c);
+		//time_t m_lastDate;
+
 		bool displayDate;
+		//FILE* m_file;
+		//void init();
 };
 #endif
 #endif

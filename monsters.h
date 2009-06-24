@@ -116,6 +116,8 @@ class Monsters
 		bool reload() {return loadFromXml(true);}
 		bool loadFromXml(bool reloading = false);
 
+		bool loadMonster(const std::string& file, const std::string& monsterName, bool reloading = false);
+
 		MonsterType* getMonsterType(const std::string& name);
 		MonsterType* getMonsterType(uint32_t mid);
 
@@ -126,7 +128,6 @@ class Monsters
 	private:
 		bool loaded;
 
-		bool loadMonster(const std::string& file, const std::string& monster_name, bool reloading = false);
 		bool loadLootContainer(xmlNodePtr, LootBlock&);
 		bool loadLootItem(xmlNodePtr, LootBlock&);
 

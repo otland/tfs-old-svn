@@ -116,8 +116,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 	}
 
 	StringVec strVector;
-	IntegerVec intVector;
-	IntegerVec endIntVector;
+	IntegerVec intVector, endIntVector;
 
 	bool success = true;
 	if(readXMLString(p, "itemid", strValue))

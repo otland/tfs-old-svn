@@ -757,7 +757,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 #define SHOW_XML_WARNING(desc) std::cout << "[Warning - Monsters::loadMonster] " << desc << ". (" << file << ")" << std::endl;
 #define SHOW_XML_ERROR(desc) std::cout << "[Error - Monsters::loadMonster] " << desc << ". (" << file << ")" << std::endl;
 
-bool Monsters::loadMonster(const std::string& file, const std::string& monsterName, bool reloading /*= false*/)
+bool Monsters::loadMonster(const std::string& file, const std::string& monsterName, bool reloading/* = false*/)
 {
 	if(getIdByName(monsterName) != 0 && !reloading)
 	{

@@ -2,4 +2,6 @@
 <globalevents>
 	<globalevent name="save" interval="900" event="script" value="save.lua"/>
 	<globalevent name="clean" interval="7200" event="script" value="clean.lua"/>
+
+	<globalevent name="serverstart" type="start" event="script" value="start.lua"/>
 </globalevents>

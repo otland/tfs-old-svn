@@ -93,7 +93,7 @@ CreatureEvent* CreatureEvents::getEventByName(const std::string& name, bool forc
 	return NULL;
 }
 
-uint32_t CreatureEvents::playerLogin(Player* player)
+bool CreatureEvents::playerLogin(Player* player)
 {
 	//fire global event if is registered
 	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
@@ -105,7 +105,7 @@ uint32_t CreatureEvents::playerLogin(Player* player)
 	return 1;
 }
 
-uint32_t CreatureEvents::playerLogout(Player* player)
+bool CreatureEvents::playerLogout(Player* player)
 {
 	//fire global event if is registered
 	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)

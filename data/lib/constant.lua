@@ -417,6 +417,33 @@ SKILL_FISHING = 6
 SKILL__MAGLEVEL = 7
 SKILL__LEVEL = 8
 
+SKILL_NAMES = {
+	[SKILL_FIST] = "fist fighting",
+	[SKILL_CLUB] = "club fighting",
+	[SKILL_SWORD] = "sword fighting",
+	[SKILL_AXE] = "axe fighting",
+	[SKILL_DISTANCE] = "distance fighting",
+	[SKILL_SHIELD] = "shielding",
+	[SKILL_FISHING] = "fishing",
+	[SKILL__LEVEL] = "level",
+	[SKILL__MAGLEVEL] = "magic level"
+}
+
+SKILL_IDS = {
+	["fist"] = SKILL_FIST,
+	["club"] = SKILL_CLUB,
+	["sword"] = SKILL_SWORD,
+	["axe"] = SKILL_AXE,
+	["distance"] = SKILL_DISTANCE,
+	["dist"] = SKILL_DISTANCE,
+	["shielding"] = SKILL_SHIELD,
+	["shield"] = SKILL_SHIELD,
+	["fishing"] = SKILL_FISHING,
+	["fish"] = SKILL_FISHING,
+	["level"] = SKILL__LEVEL,
+	["magic"] = SKILL__MAGLEVEL
+}
+
 GUILDLEVEL_MEMBER = 1
 GUILDLEVEL_VICE = 2
 GUILDLEVEL_LEADER = 3
@@ -723,16 +750,4 @@ enchantedItems = {
 	[2391] = {7758, 7777, 7868, 7883},
 	[2544] = {7840, 7839, 7850, 7838},
 	[8905] = {8906, 8907, 8909, 8908}
-}
-
-SKILL_NAMES = {
-	[SKILL_FIST] = "fist fighting",
-	[SKILL_CLUB] = "club fighting",
-	[SKILL_SWORD] = "sword fighting",
-	[SKILL_AXE] = "axe fighting",
-	[SKILL_DISTANCE] = "distance fighting",
-	[SKILL_SHIELD] = "shielding",
-	[SKILL_FISHING] = "fishing",
-	[SKILL__LEVEL] = "level",
-	[SKILL__MAGLEVEL] = "magic level"
 }

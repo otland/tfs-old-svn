@@ -64,8 +64,8 @@ class CreatureEvents : public BaseEvents
 		virtual ~CreatureEvents();
 
 		// global events
-		uint32_t playerLogin(Player* player);
-		uint32_t playerLogout(Player* player);
+		bool playerLogin(Player* player);
+		bool playerLogout(Player* player);
 
 		CreatureEvent* getEventByName(const std::string& name, bool forceLoaded = true);
 

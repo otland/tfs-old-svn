@@ -1576,14 +1576,6 @@ bool IOLoginData::updatePremiumDays()
 	return trans.commit();
 }
 
-bool IOLoginData::resetOnlineStatus()
-{
-	Database* db = Database::getInstance();
-	DBQuery query;
-	query << "UPDATE `players` SET `online` = 0 WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
-	return db->executeQuery(query.str());
-}
-
 bool IOLoginData::resetGuildInformation(uint32_t guid)
 {
 	Database* db = Database::getInstance();

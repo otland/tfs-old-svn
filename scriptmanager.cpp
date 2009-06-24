@@ -29,6 +29,7 @@
 #include "globalevent.h"
 #include "weapons.h"
 
+#include "monsters.h"
 #include "spawn.h"
 #include "raids.h"
 #include "group.h"
@@ -54,6 +55,7 @@ GlobalEvents* g_globalEvents = NULL;
 
 extern Chat g_chat;
 extern ConfigManager g_config;
+extern Monsters g_monsters;
 
 bool ScriptingManager::load()
 {
@@ -215,6 +217,15 @@ bool ScriptingManager::loadFromXml(const std::string& file)
 				Spawns::getInstance()->parseSpawnNode(p, modsLoaded);
 			else if(!xmlStrcmp(p->name, (const xmlChar*)"channel"))
 				g_chat.parseChannelNode(p); //TODO: duplicates (channel destructor needs sending self close to users)
+			else if(!xmlStrcmp(p->name, (const xmlChar*)"monster"))
+			{
+				std::string file, name;
+				if(readXMLString(p, "file", file) && readXMLString(p, "name", name))
+				{
+					file = getFilePath(FILE_TYPE_MOD, "monster/" + file);
+					g_monsters.loadMonster(file, name, true);
+				}
+			}
 			else if(!xmlStrcmp(p->name, (const xmlChar*)"item"))
 			{
 				if(readXMLInteger(p, "id", intValue))

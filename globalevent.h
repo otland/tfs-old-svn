@@ -24,6 +24,13 @@
 
 #define GLOBAL_THINK_INTERVAL 1000
 
+enum ServerEvent_t
+{
+	SERVER_EVENT_NONE,
+	SERVER_EVENT_STARTUP,
+	SERVER_EVENT_SHUTDOWN
+};
+
 class GlobalEvent;
 class GlobalEvents : public BaseEvents
 {
@@ -32,6 +39,7 @@ class GlobalEvents : public BaseEvents
 		virtual ~GlobalEvents();
 
 		void startup();
+		void onShutdown();
 		void onThink(uint32_t interval);
 
 	protected:
@@ -45,7 +53,7 @@ class GlobalEvents : public BaseEvents
 		LuaScriptInterface m_scriptInterface;
 
 		typedef std::map<std::string, GlobalEvent*> GlobalEventMap;
-		GlobalEventMap eventsMap;
+		GlobalEventMap eventsMap, serverEventsMap;
 };
 
 class GlobalEvent : public Event
@@ -56,7 +64,9 @@ class GlobalEvent : public Event
 
 		virtual bool configureEvent(xmlNodePtr p);
 		int32_t executeThink(uint32_t interval, uint32_t lastExecution, uint32_t thinkInterval);
+		int32_t executeServerEvent();
 
+		ServerEvent_t getEventType() const {return m_eventType;}
 		std::string getName() const {return m_name;}
 		uint32_t getInterval() const {return m_interval;}
 
@@ -64,12 +74,11 @@ class GlobalEvent : public Event
 		void setLastExecution(uint32_t time) {m_lastExecution = time;}
 
 	protected:
-		virtual std::string getScriptEventName() const {return "onThink";}
-		virtual std::string getScriptEventParams() const {return "interval, lastExecution, thinkInterval";}
+		virtual std::string getScriptEventName() const;
+		virtual std::string getScriptEventParams() const;
 
 		std::string m_name;
-		uint32_t m_interval;
-
-		uint32_t m_lastExecution;
+		uint32_t m_interval, m_lastExecution;
+		ServerEvent_t m_eventType;
 };
 #endif

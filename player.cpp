@@ -3830,7 +3830,7 @@ void Player::setRedSkullEnd(time_t _time, bool login)
 	{
 		requireUpdate = true;
 		setSkull(SKULL_RED);
-	}		
+	}
 	else if(skull == SKULL_RED)
 	{
 		requireUpdate = true;
@@ -3872,7 +3872,7 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 			wc++;
 
 		if((*it) > today)
-			tc++; 
+			tc++;
 	}
 
 	uint32_t d = g_config.getNumber(ConfigManager::RED_DAILY_LIMIT), w = g_config.getNumber(

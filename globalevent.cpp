@@ -34,10 +34,15 @@ GlobalEvents::~GlobalEvents()
 
 void GlobalEvents::clear()
 {
-	for(GlobalEventMap::iterator it = eventsMap.begin(); it != eventsMap.end(); ++it)
+	GlobalEventMap::iterator it;
+	for(it = eventsMap.begin(); it != eventsMap.end(); ++it)
+		delete it->second;
+
+	for(it = serverEventsMap.begin(); it != serverEventsMap.end(); ++it)
 		delete it->second;
 
 	eventsMap.clear();
+	serverEventsMap.clear();
 	m_scriptInterface.reInitState();
 }
 
@@ -55,10 +60,14 @@ bool GlobalEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 	if(!globalEvent)
 		return false;
 
-	GlobalEventMap::iterator it = eventsMap.find(globalEvent->getName());
-	if(it == eventsMap.end())
+	GlobalEventMap* map = &eventsMap;
+	if(globalEvent->getEventType() != SERVER_EVENT_NONE)
+		map = &serverEventsMap;
+
+	GlobalEventMap::iterator it = map->find(globalEvent->getName());
+	if(it == map->end())
 	{
-		eventsMap[globalEvent->getName()] = globalEvent;
+		map->insert(std::make_pair(globalEvent->getName(), globalEvent));
 		return true;
 	}
 
@@ -73,8 +82,23 @@ bool GlobalEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 	return false;
 }
 
+void GlobalEvents::onShutdown()
+{
+	for(GlobalEventMap::iterator it = serverEventsMap.begin(); it != serverEventsMap.end(); ++it)
+	{
+		if(it->second->getEventType() == SERVER_EVENT_SHUTDOWN)
+			it->second->executeServerEvent();
+	}
+}
+
 void GlobalEvents::startup()
 {
+	for(GlobalEventMap::iterator it = serverEventsMap.begin(); it != serverEventsMap.end(); ++it)
+	{
+		if(it->second->getEventType() == SERVER_EVENT_STARTUP)
+			it->second->executeServerEvent();
+	}
+
 	Scheduler::getScheduler().addEvent(createSchedulerTask(GLOBAL_THINK_INTERVAL,
 		boost::bind(&GlobalEvents::onThink, this, GLOBAL_THINK_INTERVAL)));
 }
@@ -114,6 +138,23 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 		return false;
 	}
 
+	m_eventType = SERVER_EVENT_NONE;
+	if(readXMLString(p, "type", strValue))
+	{
+		toLowerCaseString(strValue);
+		if(strValue == "start" || strValue == "load")
+			m_eventType = SERVER_EVENT_STARTUP;
+		else if(strValue == "shutdown")
+			m_eventType = SERVER_EVENT_SHUTDOWN;
+		else
+		{
+			std::cout << "[Error - GlobalEvent::configureEvent] No valid type for globalevent " << strValue << std::endl;
+			return false;
+		}
+
+		return true;
+	}
+
 	int32_t intValue;
 	if(readXMLInteger(p, "interval", intValue))
 		m_interval = intValue;
@@ -124,6 +165,27 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 	}
 
 	return true;
+}
+
+std::string GlobalEvent::getScriptEventName() const
+{
+	switch(m_eventType)
+	{
+		case SERVER_EVENT_STARTUP:
+			return "onServerStart";
+		case SERVER_EVENT_SHUTDOWN:
+			return "onServerShutdown";
+
+		case SERVER_EVENT_NONE:
+		default:
+			return "onThink";
+	}
+}
+
+std::string GlobalEvent::getScriptEventParams() const
+{
+	return getEventType() != SERVER_EVENT_NONE ?
+		"" : "interval, lastExecution, thinkInterval";
 }
 
 int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution, uint32_t thinkInterval)
@@ -176,6 +238,40 @@ int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution, uin
 	else
 	{
 		std::cout << "[Error - GlobalEvent::executeThink] Call stack overflow." << std::endl;
+		return 0;
+	}
+}
+
+int32_t GlobalEvent::executeServerEvent()
+{
+	if(m_scriptInterface->reserveScriptEnv())
+	{
+		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		if(m_scripted == EVENT_SCRIPT_BUFFER)
+		{
+			bool result = true;
+			if(m_scriptInterface->loadBuffer(m_scriptData) != -1)
+			{
+				lua_State* L = m_scriptInterface->getLuaState();
+				result = m_scriptInterface->getFieldBool(L, "_result");
+			}
+
+			m_scriptInterface->releaseScriptEnv();
+			return result;
+		}
+		else
+		{
+			env->setScriptId(m_scriptId, m_scriptInterface);
+			m_scriptInterface->pushFunction(m_scriptId);
+
+			bool result = m_scriptInterface->callFunction(0);
+			m_scriptInterface->releaseScriptEnv();
+			return result;
+		}
+	}
+	else
+	{
+		std::cout << "[Error - GlobalEvent::executeServerEvent] Call stack overflow." << std::endl;
 		return 0;
 	}
 }

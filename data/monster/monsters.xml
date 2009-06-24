@@ -1,5 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <monsters>
+	<!-- README:
+		We really appreciate if someone could help us
+		with getting real monster attributes, loot etc
+
+		[ MISSING MONSTERS (not all listed there)
+			Annelids
+				Rift Worm
+
+			Ape Bosses
+				Hairman The Huge
+
+			Barbarians Bosses
+				Barbaria
+
+			Bio-Elemental Bosses
+				Diseased Bill
+				Diseased Dan
+				Diseased Fred
+				The Plasmother
+
+			Canine Bosses
+				The Big Bad One
+
+			Crustaceans
+				Blood Crab (Underwater)
+
+			Dragon Bosses
+				Pythius the Rotten
+
+			Dwarves
+				Dwarf Henchman
+				Dwarf Miner
+				Dwarf Dispenser
+
+			Giant Bosses
+				Freegoiz
+				Stonecracker
+				The Old Whopper
+
+			Ghosts
+				Dryad
+				Ghostly Apparition
+				Rift Phantom
+				Tormented Ghost
+
+			Orc Bosses
+				Warlord Ruzad
+
+			Quara Bosses
+				Inky
+				Sharptooth
+				Splasher
+
+			Serpents
+				Young Sea Serpent
+
+			Skeletons
+				Dreadbeast
+
+			Traps
+				Deathspawn
+				Hell Hole
+				Kitty
+				Lavahole
+				Magic Pillar
+				Mechanical Fighter
+				Pillar
+
+			Undead Humanoids
+				Rift Scythe
+				Undead Jester
+		]
+
+		You can send your work here: http://otland.net/project.php?projectid=2
+	-->
 	<!-- Amazons -->
 	<monster name="Amazon" file="Amazons/amazon.xml"/>
 	<monster name="Valkyrie" file="Amazons/valkyrie.xml"/>
@@ -75,6 +150,16 @@
 	<monster name="Elder Beholder" file="Beholders/elder beholder.xml"/>
 	<monster name="Gazer" file="Beholders/gazer.xml"/>
 
+	<!-- Bio-Elementals -->
+	<monster name="Bog Raider" file="Bio-Elementals/bog raider.xml"/>
+	<monster name="Carniphila" file="Bio-Elementals/carniphila.xml"/>
+	<monster name="Defiler" file="Bio-Elementals/defiler.xml"/>
+	<monster name="Haunted Treeling" file="Bio-Elementals/haunted treeling.xml"/>
+	<monster name="Slime" file="Bio-Elementals/slime.xml"/>
+	<monster name="Slime Summon" file="Bio-Elementals/slime summon.xml"/>
+	<monster name="Son of Verminor" file="Bio-Elementals/son of verminor.xml"/>
+	<monster name="Spit Nettle" file="Bio-Elementals/spit nettle.xml"/>
+
 	<!-- Birds -->
 	<monster name="Chicken" file="Birds/chicken.xml"/>
 	<monster name="Dire Penguin" file="Birds/dire penguin.xml"/>
@@ -83,6 +168,11 @@
 	<monster name="Penguin" file="Birds/penguin.xml"/>
 	<monster name="Seagull" file="Birds/seagull.xml"/>
 	<monster name="Terror Bird" file="Birds/terror bird.xml"/>
+
+	<!-- Blobs -->
+	<monster name="Acid Blob" file="Blobs/acid blob.xml"/>
+	<monster name="Death Blob" file="Blobs/death blob.xml"/>
+	<monster name="Mercury Blob" file="Blobs/mercury blob.xml"/>
 
 	<!-- Bosses -->
 	<monster name="Annihilon" file="Bosses/annihilon.xml"/>
@@ -103,7 +193,6 @@
 	<monster name="Ghazbaran" file="Bosses/ghazbaran.xml"/>
 	<monster name="Golgordan" file="Bosses/golgordan.xml"/>
 	<monster name="Grorlam" file="Bosses/grorlam.xml"/>
-	<monster name="Grynch Clan Goblin" file="Bosses/grynch clan goblin.xml"/>
 	<monster name="Hellgorak" file="Bosses/hellgorak.xml"/>
 	<monster name="Latrivan" file="Bosses/latrivan.xml"/>
 	<monster name="Lethal Lissy" file="Bosses/lethal lissy.xml"/>
@@ -154,10 +243,7 @@
 	<monster name="Crab" file="Crustaceans/crab.xml"/>
 
 	<!-- Cryo-Elementals -->
-	<monster name="Frost Giant" file="Cryo-Elementals/frost giant.xml"/>
-	<monster name="Frost Giantess" file="Cryo-Elementals/frost giantess.xml"/>
 	<monster name="Ice Golem" file="Cryo-Elementals/ice golem.xml"/>
-	<monster name="Yeti" file="Cryo-Elementals/yeti.xml"/>
 
 	<!-- Cultists -->
 	<monster name="Acolyte of the Cult" file="Cultists/acolyte of the cult.xml"/>
@@ -245,6 +331,7 @@
 	<monster name="Toad" file="Frogs/toad.xml"/>
 
 	<!-- Geo-Elementals -->
+	<monster name="Damaged Worker Golem" file="Geo-Elementals/damaged worker golem.xml"/>
 	<monster name="Earth Elemental" file="Geo-Elementals/earth elemental.xml"/>
 	<monster name="Earth Overlord" file="Geo-Elementals/earth overlord.xml"/>
 	<monster name="Gargoyle" file="Geo-Elementals/gargoyle.xml"/>
@@ -252,6 +339,8 @@
 	<monster name="Jagged Earth Elemental" file="Geo-Elementals/jagged earth elemental.xml"/>
 	<monster name="Massive Earth Elemental" file="Geo-Elementals/massive earth elemental.xml"/>
 	<monster name="Muddy Earth Elemental" file="Geo-Elementals/muddy earth elemental.xml"/>
+	<monster name="War Golem" file="Geo-Elementals/war golem.xml"/>
+	<monster name="Worker Golem" file="Geo-Elementals/worker golem.xml"/>
 
 	<!-- Ghosts -->
 	<monster name="Ghost" file="Ghosts/ghost.xml"/>
@@ -266,6 +355,16 @@
 	<monster name="Cyclops" file="Giants/cyclops.xml"/>
 	<monster name="Cyclops Drone" file="Giants/cyclops drone.xml"/>
 	<monster name="Cyclops Smith" file="Giants/cyclops smith.xml"/>
+	<monster name="Frost Giant" file="Giants/frost giant.xml"/>
+	<monster name="Frost Giantess" file="Giants/frost giantess.xml"/>
+	<monster name="Yeti" file="Giants/yeti.xml"/>
+
+	<!-- Goblins -->
+	<monster name="Goblin" file="Goblins/goblin.xml"/>
+	<monster name="Goblin Assassin" file="Goblins/goblin assassin.xml"/>
+	<monster name="Goblin Leader" file="Goblins/goblin leader.xml"/>
+	<monster name="Goblin Scavenger" file="Goblins/goblin scavenger.xml"/>
+	<monster name="Grynch Clan Goblin" file="Goblins/grynch clan goblin.xml"/>
 
 	<!-- Hydro-Elementals -->
 	<monster name="Ice Overlord" file="Hydro-Elementals/ice overlord.xml"/>
@@ -292,11 +391,6 @@
 	<monster name="Lizard Snakecharmer" file="Lizards/lizard snakecharmer.xml"/>
 	<monster name="Lizard Templar" file="Lizards/lizard templar.xml"/>
 
-	<!-- Machines -->
-	<monster name="Damaged Worker Golem" file="Machines/damaged worker golem.xml"/>
-	<monster name="War Golem" file="Machines/war golem.xml"/>
-	<monster name="Worker Golem" file="Machines/worker golem.xml"/>
-
 	<!-- Minotaurs -->
 	<monster name="Minotaur Archer" file="Minotaurs/minotaur archer.xml"/>
 	<monster name="Minotaur Guard" file="Minotaurs/minotaur guard.xml"/>
@@ -320,7 +414,7 @@
 	<monster name="Dark Monk" file="Monks/dark monk.xml"/>
 	<monster name="Monk" file="Monks/monk.xml"/>
 	<monster name="Training Monk" file="Monks/Training Monk.xml"/>
-	
+
 	<!-- Mutated -->
 	<monster name="Mutated Bat" file="Mutated/mutated bat.xml"/>
 	<monster name="Mutated Human" file="Mutated/mutated human.xml"/>
@@ -332,10 +426,6 @@
 	<monster name="Priestess" file="Necromancers/priestess.xml"/>
 
 	<!-- Orcs -->
-	<monster name="Goblin" file="Orcs/goblin.xml"/>
-	<monster name="Goblin Assassin" file="Orcs/goblin assassin.xml"/>
-	<monster name="Goblin Leader" file="Orcs/goblin leader.xml"/>
-	<monster name="Goblin Scavenger" file="Orcs/goblin scavenger.xml"/>
 	<monster name="Orc Berserker" file="Orcs/orc berserker.xml"/>
 	<monster name="Orc Leader" file="Orcs/orc leader.xml"/>
 	<monster name="Orc Rider" file="Orcs/orc rider.xml"/>
@@ -375,10 +465,6 @@
 	<monster name="Pirate Corsair" file="Pirates/pirate corsair.xml"/>
 	<monster name="Pirate Cutthroat" file="Pirates/pirate cutthroat.xml"/>
 	<monster name="Pirate Marauder" file="Pirates/pirate marauder.xml"/>
-
-	<!-- Plant-Like -->
-	<monster name="Carniphila" file="Plant-Like/carniphila.xml"/>
-	<monster name="Spit Nettle" file="Plant-Like/spit nettle.xml"/>
 
 	<!-- Pyro-Elementals -->
 	<monster name="Blazing Fire Elemental" file="Pyro-Elementals/blazing fire elemental.xml"/>
@@ -431,17 +517,6 @@
 	<monster name="Undead Dragon" file="Skeletons/undead dragon.xml"/>
 	<monster name="Undead Gladiator" file="Skeletons/undead gladiator.xml"/>
 
-	<!-- Slime-Elementals -->
-	<monster name="Acid Blob" file="Slime-Elementals/acid blob.xml"/>
-	<monster name="Bog Raider" file="Slime-Elementals/bog raider.xml"/>
-	<monster name="Death Blob" file="Slime-Elementals/death blob.xml"/>
-	<monster name="Defiler" file="Slime-Elementals/defiler.xml"/>
-	<monster name="Haunted Treeling" file="Slime-Elementals/haunted treeling.xml"/>
-	<monster name="Mercury Blob" file="Slime-Elementals/mercury blob.xml"/>
-	<monster name="Slime Summon" file="Slime-Elementals/slime summon.xml"/>
-	<monster name="Slime" file="Slime-Elementals/slime.xml"/>
-	<monster name="Son of Verminor" file="Slime-Elementals/son of verminor.xml"/>
-
 	<!-- Sorcerers -->
 	<monster name="Dark Apprentice" file="Sorcerers/dark apprentice.xml"/>
 	<monster name="Dark Magician" file="Sorcerers/dark magician.xml"/>
@@ -457,6 +532,7 @@
 
 	<!-- Traps -->
 	<monster name="Deathslicer" file="Traps/deathslicer.xml"/>
+	<monster name="Eye of the Seven" file="Traps/eye of the seven.xml"/>
 	<monster name="Flamethrower" file="Traps/flamethrower.xml"/>
 	<monster name="Magicthrower" file="Traps/magicthrower.xml"/>
 	<monster name="Plaguethrower" file="Traps/plaguethrower.xml"/>
