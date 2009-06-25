@@ -113,7 +113,7 @@
 
 		Examples
 			/shutdown 3 (Shutdown after 3 minutes)
-			/shutdown (Suddenly)
+			/shutdown (Immediately)
 
 	/mode
 		Changes world's pvp type.
@@ -182,7 +182,9 @@
 			/newtype 13, Eternal Oblivion
 
 	/r
-		Removes an item from a tile.
+		Removes an item or a creature from a tile.
+		Notice: Player is a creature so you may use it
+		with players.
 
 	/owner
 		Changes house owner.
@@ -378,7 +380,7 @@
 
 		Examples
 			/clean 5 (Clean after 5 minutes)
-			/clean (Suddenly)
+			/clean (Immediately)
 
 	/reports
 		Displays server reports.
