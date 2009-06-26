@@ -55,13 +55,14 @@
 	<voices interval="5000" chance="10">
 		<voice sentence="Now chhhou shhhee me ... Now chhhou don't!!"/>
 		<voice sentence="Chhhhou are marked ashhh my prey."/>
-	<voice sentence="Psssst, I am over chhhere."/>
+		<voice sentence="Psssst, I am over chhhere."/>
 	</voices>
 	<loot>
 		<item id="2148" countmax="100" chance="100000"/>
 		<item id="2176" chance="2000"/>
 		<item id="2443" chance="450"/>
 		<item id="2148" countmax="100" chance="100000"/>
+		<item id="2352" chance="100000"/>
 		<item id="1987" chance="100000">
 			<inside>
 				<item id="2148" countmax="70" chance="100000"/>

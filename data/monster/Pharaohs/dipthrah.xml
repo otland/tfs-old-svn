@@ -58,6 +58,7 @@
 		<item id="2176" chance="2000"/>
 		<item id="2424" chance="100"/>
 		<item id="2148" countmax="100" chance="100000"/>
+		<item id="2354" chance="100000"/>
 		<item id="1987" chance="100000">
 			<inside>
 				<item id="2148" countmax="70" chance="100000"/>

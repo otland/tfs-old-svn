@@ -76,7 +76,8 @@
 		<item id="2176" chance="2000"/>
 		<item id="2439" chance="1200"/>
 		<item id="2148" countmax="100" chance="100000"/>
-		<item id="1987" chance="100000">
+		<item id="2348" chance="100000"/> 
+		<item id="1987" chance="100000"> -- ancient rune
 			<inside>
 				<item id="2148" countmax="70" chance="100000"/>
 				<item id="2550" chance="10000"/>
