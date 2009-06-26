@@ -71,3 +71,19 @@ function getPosByDir(fromPosition, direction, size)
 
 	return pos
 end
+
+function comparePos(pos, posEx)
+	return pos.x == posEx.x and pos.y == posEx.y and pos.z == posEx.z
+end
+
+function getArea(pos, rangeX, rangeY)
+	local t = {}
+	for i = (pos.x - rangeX), (pos.x + rangeX) do
+		for j = (pos.y - rangeY), (pos.y + rangeY) do
+			table.insert(t, {x = i, y = j, z = pos.z})
+		end
+	end
+
+	return t
+end
+

@@ -48,9 +48,11 @@
 #include "vocation.h"
 #include "status.h"
 #include "game.h"
+#include "chat.h"
 
 extern Game g_game;
 extern Monsters g_monsters;
+extern Chat g_chat;
 extern ConfigManager g_config;
 extern Spells* g_spells;
 extern TalkActions* g_talkActions;
@@ -1370,6 +1372,12 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerSetNameDescription(cid, desc)
 	lua_register(m_luaState, "doPlayerSetNameDescription", LuaScriptInterface::luaDoPlayerSetNameDescription);
 
+	//getPlayerSpecialDescription(cid)
+	lua_register(m_luaState, "getPlayerSpecialDescription", LuaScriptInterface::luaGetPlayerSpecialDescription);
+
+	//doPlayerSetSpecialDescription(cid, desc)
+	lua_register(m_luaState, "doPlayerSetSpecialDescription", LuaScriptInterface::luaDoPlayerSetSpecialDescription);
+
 	//getPlayerAccountId(cid)
 	lua_register(m_luaState, "getPlayerAccountId", LuaScriptInterface::luaGetPlayerAccountId);
 
@@ -1426,6 +1434,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//setGlobalStorageValue(key, value)
 	lua_register(m_luaState, "setGlobalStorageValue", LuaScriptInterface::luaSetGlobalStorageValue);
+
+	//getChannelUsers(channelId)
+	lua_register(m_luaState, "getChannelUsers", LuaScriptInterface::luaGetChannelUsers);
 
 	//getPlayersOnline()
 	lua_register(m_luaState, "getPlayersOnline", LuaScriptInterface::luaGetPlayersOnline);
@@ -2187,8 +2198,8 @@ void LuaScriptInterface::registerFunctions()
 	//getGroupInfo(id)
 	lua_register(m_luaState, "getGroupInfo", LuaScriptInterface::luaGetGroupInfo);
 
-	//getWaypointsList()
-	lua_register(m_luaState, "getWaypointsList", LuaScriptInterface::luaGetWaypointsList);
+	//getWaypointList()
+	lua_register(m_luaState, "getWaypointList", LuaScriptInterface::luaGetWaypointList);
 
 	//getTalkActionList()
 	lua_register(m_luaState, "getTalkActionList", LuaScriptInterface::luaGetTalkActionList);
@@ -2421,6 +2432,9 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 		case PlayerInfoNameDescription:
 			lua_pushstring(L, player->getNameDescription().c_str());
 			return 1;
+		case PlayerInfoSpecialDescription:
+			lua_pushstring(L, player->getSpecialDescription().c_str());
+			return 1;
 		case PlayerInfoAccess:
 			value = player->getAccess();
 			break;
@@ -2551,6 +2565,11 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 int32_t LuaScriptInterface::luaGetPlayerNameDescription(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoNameDescription);
+}
+
+int32_t LuaScriptInterface::luaGetPlayerSpecialDescription(lua_State* L)
+{
+	return internalGetPlayerInfo(L, PlayerInfoSpecialDescription);
 }
 
 int32_t LuaScriptInterface::luaGetPlayerFood(lua_State* L)
@@ -2748,6 +2767,25 @@ int32_t LuaScriptInterface::luaDoPlayerSetNameDescription(lua_State* L)
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
 		player->nameDescription += description;
+		lua_pushboolean(L, true);
+	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoPlayerSetSpecialDescription(lua_State* L)
+{
+	//doPlayerSetSpecialDescription(cid, description)
+	std::string description = popString(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	if(Player* player = env->getPlayerByUID(popNumber(L)))
+	{
+		player->setSpecialDescription(description);
 		lua_pushboolean(L, true);
 	}
 	else
@@ -8592,6 +8630,31 @@ int32_t LuaScriptInterface::luaGetGroupInfo(lua_State* L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaGetChannelUsers(lua_State* L)
+{
+	//getChannelUsers(channelId)
+	ScriptEnviroment* env = getScriptEnv();
+	uint16_t channelId = popNumber(L);
+
+	if(ChatChannel* channel = g_chat.getChannelById(channelId))
+	{
+		UsersMap usersMap = channel->getUsers();
+		UsersMap::iterator it = usersMap.begin();
+
+		lua_newtable(L);
+		for(int32_t i = 1; it != usersMap.end(); ++it, ++i)
+		{
+			lua_pushnumber(L, i);
+			lua_pushnumber(L, env->addThing(it->second));
+			lua_settable(L, -3);
+		}
+	}
+	else
+		lua_pushboolean(L, false);
+
+	return 1;
+}
+
 int32_t LuaScriptInterface::luaGetPlayersOnline(lua_State* L)
 {
 	//getPlayersOnline()
@@ -8938,9 +9001,9 @@ int32_t LuaScriptInterface::luaGetHighscoreString(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaGetWaypointsList(lua_State* L)
+int32_t LuaScriptInterface::luaGetWaypointList(lua_State* L)
 {
-	//getWaypointsList()
+	//getWaypointList()
 	WaypointMap waypointsMap = g_game.getMap()->waypoints.getWaypointsMap();
 	WaypointMap::iterator it = waypointsMap.begin();
 

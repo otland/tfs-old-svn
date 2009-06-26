@@ -60,6 +60,7 @@ Player::Player(const std::string& _name, ProtocolGame *p):
 
 	name = _name;
 	nameDescription = _name;
+	specialDescription = "";
 
 	pzLocked = isConnecting = addAttackSkillPoint = requestedOutfit = false;
 	saving = true;
@@ -196,6 +197,8 @@ std::string Player::getDescription(int32_t lookDistance) const
 			s << " is " << vocation->getDescription();
 		else
 			s << " has no vocation";
+
+		s << getSpecialDescription();
 	}
 
 	std::string tmp;

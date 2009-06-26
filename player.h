@@ -147,6 +147,9 @@ class Player : public Creature, public Cylinder
 		virtual const std::string& getNameDescription() const {return nameDescription;}
 		virtual std::string getDescription(int32_t lookDistance) const;
 
+		const std::string& getSpecialDescription() const {return specialDescription;}
+		void setSpecialDescription(const std::string& desc) {specialDescription = desc;}
+
 		void manageAccount(const std::string& text);
 		bool isAccountManager() const {return (accountManager != MANAGER_NONE);}
 		void kickPlayer(bool displayEffect, bool executeLogout = true);
@@ -842,7 +845,7 @@ class Player : public Creature, public Cylinder
 
 		std::string managerString, managerString2;
 		std::string account, password;
-		std::string name, nameDescription;
+		std::string name, nameDescription, specialDescription;
 		std::string guildName, guildRank, guildNick;
 
 		Position loginPosition;

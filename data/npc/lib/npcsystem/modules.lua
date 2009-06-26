@@ -76,7 +76,7 @@ if(Modules == nil) then
 			return false
 		end
 
-		if(isPlayerPremiumCallback(cid) or not getBooleanFromString(getConfigInfo('premiumForPromotion')) or not(parameters.premium)) then
+		if(isPlayerPremiumCallback(cid) or not getBooleanFromString(getConfigValue('premiumForPromotion')) or not(parameters.premium)) then
 			if(getPlayerPromotionLevel(cid) >= parameters.promotion) then
 				npcHandler:say('You are already promoted!', cid)
 			elseif(getPlayerLevel(cid) < parameters.level) then
@@ -136,7 +136,7 @@ if(Modules == nil) then
 			return false
 		end
 
-		if(isPlayerPremiumCallback(cid) or not getBooleanFromString(getConfigInfo('blessingsOnlyPremium')) or not parameters.premium) then
+		if(isPlayerPremiumCallback(cid) or not getBooleanFromString(getConfigValue('blessingsOnlyPremium')) or not parameters.premium) then
 			local price = parameters.baseCost
 			if(getPlayerLevel(cid) > parameters.startLevel) then
 				price = (price + ((math.min(parameters.endLevel, getPlayerLevel(cid)) - parameters.startLevel) * parameters.levelCost))
@@ -379,7 +379,7 @@ if(Modules == nil) then
 				else
 					print('[Warning] NpcSystem:', 'Unknown parameter found in travel destination parameter.', temp, destination)
 				end
-				i = i+1
+				i = i + 1
 			end
 
 			if(name ~= nil and x ~= nil and y ~= nil and z ~= nil and cost ~= nil) then
@@ -504,7 +504,7 @@ if(Modules == nil) then
 		--local i = 1
 		local maxn = table.maxn(module.destinations)
 		for i, destination in pairs(module.destinations) do
-			msg = msg .. destination
+			msg = msg .. "{" .. destination .. "}"
 			if(i == maxn -1) then
 				msg = msg .. ' and '
 			elseif(i == maxn) then
@@ -895,6 +895,7 @@ if(Modules == nil) then
 			return false
 		end
 
+		local subType = self.npcHandler.shopItems[itemid].subType or 1
 		local a, b = doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)
 		if(a < amount) then
 			local msgId = MESSAGE_NEEDMORESPACE

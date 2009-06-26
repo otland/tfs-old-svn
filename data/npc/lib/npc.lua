@@ -117,7 +117,11 @@ function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, bac
 	return a, 0
 end
 
-function doRemoveItemIdFromPos(id, n, position)
+function isPlayerPremiumCallback(cid)
+	return isPremium(cid)
+end
+
+function doRemoveItemIdFromPos (id, n, position)
 	local thing = getThingFromPos({x = position.x, y = position.y, z = position.z, stackpos = 1})
 	if(thing.itemid == id) then
 		doRemoveItem(thing.uid, n)
@@ -125,10 +129,6 @@ function doRemoveItemIdFromPos(id, n, position)
 	end
 
 	return false
-end
-
-function isPlayerPremiumCallback(cid)
-	return isPremium(cid)
 end
 
 function getNpcName()

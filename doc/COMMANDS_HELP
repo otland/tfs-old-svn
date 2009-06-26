@@ -124,6 +124,11 @@
 		Example
 			/mode nopvp
 
+	/promote & /demote
+		Promote or demote specified player to higher/lower group.
+		Parameters
+			playerName
+
 	/s
 		Summons a monster.
 		Parameters

@@ -336,15 +336,31 @@ function doPlayerSetMagicRate(cid, value)
 end
 
 function doPlayerAddLevel(cid, amount, round)
-	local newExp = 0
-	local currentLevel = getPlayerLevel(cid)
+	local experience, level = 0, getPlayerLevel(cid)
 	if(amount > 0) then
-		newExp = getExperienceForLevel(currentLevel + amount) - (round and getPlayerExperience(cid) or getExperienceForLevel(currentLevel))
+		experience = getExperienceForLevel(level + amount) - (round and getPlayerExperience(cid) or getExperienceForLevel(level))
 	else
-		newExp = -((round and getPlayerExperience(cid) or getExperienceForLevel(currentLevel)) - getExperienceForLevel(currentLevel + amount))
+		experience = -((round and getPlayerExperience(cid) or getExperienceForLevel(level)) - getExperienceForLevel(level + amount))
 	end
 
-	return doPlayerAddExperience(cid, newExp)
+	return doPlayerAddExperience(cid, experience)
+end
+
+function doPlayerAddMagLevel(cid, amount)
+	for i = 1, amount do
+		doPlayerAddSpentMana(cid, (getPlayerRequiredMana(cid, getPlayerMagLevel(cid, true) + 1) - getPlayerSpentMana(cid)) / getConfigInfo('rateMagic'))
+	end
+	return true
+end  
+
+function doPlayerAddSkill(cid, skill, amount, round)
+	if(skill == SKILL__LEVEL) then
+		return doPlayerAddLevel(cid, amount, round)
+	elseif(skill == SKILL__MAGLEVEL) then
+		return doPlayerAddMagLevel(cid, amount)
+	end
+
+	return doPlayerAddSkillTry(cid, skill, (getPlayerRequiredSkillTries(cid, skill, getPlayerSkillLevel(cid, skill) + 1) - getPlayerSkillTries(cid, skill)) / getConfigInfo('rateSkill'))
 end
 
 function getPartyLeader(cid)

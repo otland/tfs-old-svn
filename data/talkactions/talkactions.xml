@@ -6,6 +6,8 @@
 	<talkaction log="yes" words="/serverdiag" access="5" event="function" value="diagnostics"/>
 	<talkaction log="yes" words="/closeserver" access="5" event="script" value="closeopen.lua"/>
 	<talkaction log="yes" words="/openserver" access="5" event="script" value="closeopen.lua"/>
+	<talkaction log="yes" words="/promote" access="5" event="script" value="promote.lua"/>
+	<talkaction log="yes" words="/demote" access="5" event="script" value="promote.lua"/>
 	<talkaction log="yes" access="5" words="/shutdown" event="script" value="shutdown.lua"/>
 	<talkaction log="yes" access="5" words="/mode" event="script" value="mode.lua"/>
 

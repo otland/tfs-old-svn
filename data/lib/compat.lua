@@ -80,6 +80,7 @@ setPlayerStorageValue = doPlayerSetStorageValue
 setPlayerBalance = doPlayerSetBalance
 doAddMapMark = doPlayerAddMapMark
 doSendTutorial = doPlayerSendTutorial
+getWaypointsList = getWaypointList
 SKILLS = SKILL_NAMES
 
 PlayerFlag_CannotUseCombat = 0

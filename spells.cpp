@@ -1308,46 +1308,61 @@ bool InstantSpell::Levitate(const InstantSpell* spell, Creature* creature, const
 		return false;
 
 	const Position& currentPos = creature->getPosition();
-	const Position& destPos = Spells::getCasterPosition(creature, creature->getDirection());
+	Position destPos = Spells::getCasterPosition(creature, creature->getDirection());
 
-	ReturnValue ret = RET_NOTPOSSIBLE;
+	ReturnValue ret = RET_NOERROR;
 	std::string tmpParam = asLowerCaseString(param);
+
+	uint16_t blockedFloor = 7;
+	bool up = false;
 	if(tmpParam == "up")
 	{
-		if(currentPos.z != 8)
-		{
-			Tile* tmpTile = g_game.getTile(currentPos.x, currentPos.y, currentPos.z - 1);
-			if(tmpTile == NULL || (tmpTile->ground == NULL && !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID)))
-			{
-				tmpTile = g_game.getTile(destPos.x, destPos.y, destPos.z - 1);
-				if(tmpTile && tmpTile->ground && !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID) && !tmpTile->floorChange())
-					ret = g_game.internalMoveCreature(NULL, player, player->getTile(), tmpTile, FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE);
-			}
-		}
+		up = true;
+		blockedFloor = 8;
 	}
-	else if(tmpParam == "down")
+	else if(tmpParam != "down")
+		ret = RET_NOTPOSSIBLE;
+
+	if(ret == RET_NOERROR)
 	{
-		if(currentPos.z != 7)
+		ret = RET_NOTPOSSIBLE;
+		if(currentPos.z != blockedFloor)
 		{
-			Tile* tmpTile = g_game.getTile(destPos.x, destPos.y, destPos.z);
-			if(tmpTile == NULL || (tmpTile->ground == NULL && !tmpTile->hasProperty(BLOCKSOLID)))
+			Tile* tmpTile = NULL;
+			if(up)
 			{
-				tmpTile = g_game.getTile(destPos.x, destPos.y, destPos.z + 1);
-				if(tmpTile && tmpTile->ground && !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID) && !tmpTile->floorChange())
-					ret = g_game.internalMoveCreature(NULL, player, player->getTile(), tmpTile, FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE);
+				tmpTile = g_game.getTile(currentPos.x, currentPos.y, currentPos.z - 1);
+				destPos.z--;
+			}
+			else
+			{
+				tmpTile = g_game.getTile(destPos);
+				destPos.z++;
+			}
+
+			if(!tmpTile || (tmpTile->ground == NULL && !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID)))
+			{
+				Tile* tile = player->getTile();
+				tmpTile = g_game.getTile(destPos.x, destPos.y, destPos.z);
+				if(tile && tmpTile && tmpTile->ground
+					&& !tmpTile->hasProperty(IMMOVABLEBLOCKSOLID) && !tmpTile->floorChange()
+					&& tile->hasFlag(TILESTATE_HOUSE) == tmpTile->hasFlag(TILESTATE_HOUSE)
+					&& tile->hasFlag(TILESTATE_PROTECTIONZONE) == tmpTile->hasFlag(TILESTATE_PROTECTIONZONE)
+				)
+						ret = g_game.internalMoveCreature(NULL, player, tile, tmpTile, FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE);
 			}
 		}
 	}
 
 	if(ret == RET_NOERROR)
-		g_game.addMagicEffect(player->getPosition(), NM_ME_TELEPORT);
-	else
 	{
-		player->sendCancelMessage(ret);
-		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_TELEPORT, player->isInGhostMode());
+		return true;
 	}
 
-	return (ret == RET_NOERROR);
+	player->sendCancelMessage(ret);
+	g_game.addMagicEffect(player->getPosition(), NM_ME_POFF, player->isInGhostMode());
+	return false;
 }
 
 bool InstantSpell::Illusion(const InstantSpell* spell, Creature* creature, const std::string& param)

@@ -218,6 +218,7 @@ enum PlayerInfo_t
 	PlayerInfoRedSkullEnd,
 	PlayerInfoOutfitWindow,
 	PlayerInfoNameDescription,
+	PlayerInfoSpecialDescription,
 	PlayerInfoIdleTime,
 	PlayerInfoClient,
 	PlayerInfoLastLogin,
@@ -501,6 +502,8 @@ class LuaScriptInterface
 		//get creature info functions
 		static int32_t luaDoPlayerSetNameDescription(lua_State* L);
 		static int32_t luaGetPlayerNameDescription(lua_State* L);
+		static int32_t luaDoPlayerSetSpecialDescription(lua_State* L);
+		static int32_t luaGetPlayerSpecialDescription(lua_State* L);
 		static int32_t luaGetPlayerFood(lua_State* L);
 		static int32_t luaGetPlayerAccess(lua_State* L);
 		static int32_t luaGetPlayerGhostAccess(lua_State* L);
@@ -705,6 +708,7 @@ class LuaScriptInterface
 		static int32_t luaGetSpectators(lua_State* L);
 		static int32_t luaGetGameState(lua_State* L);
 		static int32_t luaDoSetGameState(lua_State* L);
+		static int32_t luaGetChannelUsers(lua_State* L);
 		static int32_t luaGetPlayersOnline(lua_State* L);
 		static int32_t luaDoExecuteRaid(lua_State* L);
 		static int32_t luaDoReloadInfo(lua_State* L);
@@ -740,7 +744,7 @@ class LuaScriptInterface
 
 		static int32_t luaGetTalkActionList(lua_State* L);
 		static int32_t luaGetExperienceStageList(lua_State* L);
-		static int32_t luaGetWaypointsList(lua_State* L);
+		static int32_t luaGetWaypointList(lua_State* L);
 		static int32_t luaGetWaypointPosition(lua_State* L);
 		static int32_t luaDoWaypointAddTemporial(lua_State* L);
 		static int32_t luaGetDataDir(lua_State* L);

@@ -14,6 +14,11 @@ local function doorEnter(cid, item, toPosition)
 end
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)
+	if(fromPosition.x ~= CONTAINER_POSITION and isPlayerPzLocked(cid) and getTileInfo(fromPosition).protection) then
+		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
+		return TRUE
+	end
+
 	if(getItemLevelDoor(item.itemid) > 0) then
 		if(item.actionid == 189) then
 			if(not isPremium(cid)) then
@@ -110,7 +115,10 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		doorPosition.stackpos = STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE
 		local doorCreature = getThingfromPos(doorPosition)
 		if(doorCreature.itemid ~= 0) then
-			if(getTileInfo(doorPosition).protection and not getTileInfo(newPosition).protection and doorCreature.uid ~= cid) then
+			local pzDoorPosition = getTileInfo(doorPosition).protection
+			local pzNewPosition = getTileInfo(newPosition).protection
+			if((pzDoorPosition and not pzNewPosition and doorCreature.uid ~= cid) or
+				(not pzDoorPosition and pzNewPosition and doorCreature.uid == cid and isPlayerPzLocked(cid) == TRUE)) then
 				doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 			else
 				doTeleportThing(doorCreature.uid, newPosition)
