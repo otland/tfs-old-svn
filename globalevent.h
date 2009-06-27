@@ -39,8 +39,8 @@ class GlobalEvents : public BaseEvents
 		virtual ~GlobalEvents();
 
 		void startup();
-		void onShutdown();
-		void onThink(uint32_t interval);
+		void shutdown();
+		void think(uint32_t interval);
 
 	protected:
 		virtual std::string getScriptBaseName() const {return "globalevents";}

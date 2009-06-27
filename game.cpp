@@ -206,8 +206,9 @@ void Game::setGameState(GameState_t newState)
 					it = Player::listPlayer.list.begin();
 				}
 
-				g_globalEvents->onShutdown();
+				g_globalEvents->shutdown();
 				Houses::getInstance().payHouses();
+
 				saveGameState(false);
 				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, this)));
 

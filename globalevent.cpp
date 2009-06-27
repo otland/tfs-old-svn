@@ -38,10 +38,11 @@ void GlobalEvents::clear()
 	for(it = eventsMap.begin(); it != eventsMap.end(); ++it)
 		delete it->second;
 
+	eventsMap.clear()
 	for(it = serverEventsMap.begin(); it != serverEventsMap.end(); ++it)
 		delete it->second;
 
-	eventsMap.clear(), serverEventsMap.clear();
+	serverEventsMap.clear();
 	m_scriptInterface.reInitState();
 }
 
@@ -81,7 +82,7 @@ bool GlobalEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 	return false;
 }
 
-void GlobalEvents::onShutdown()
+void GlobalEvents::shutdown()
 {
 	for(GlobalEventMap::iterator it = serverEventsMap.begin(); it != serverEventsMap.end(); ++it)
 	{
@@ -99,10 +100,10 @@ void GlobalEvents::startup()
 	}
 
 	Scheduler::getScheduler().addEvent(createSchedulerTask(GLOBAL_THINK_INTERVAL,
-		boost::bind(&GlobalEvents::onThink, this, GLOBAL_THINK_INTERVAL)));
+		boost::bind(&GlobalEvents::think, this, GLOBAL_THINK_INTERVAL)));
 }
 
-void GlobalEvents::onThink(uint32_t interval)
+void GlobalEvents::think(uint32_t interval)
 {
 	uint32_t timeNow = time(NULL);
 	for(GlobalEventMap::iterator it = eventsMap.begin(); it != eventsMap.end(); ++it)
@@ -111,13 +112,13 @@ void GlobalEvents::onThink(uint32_t interval)
 		{
 			it->second->setLastExecution(timeNow);
 			if(!it->second->executeThink(it->second->getInterval(), timeNow, interval))
-				std::cout << "[Error - GlobalEvents::onThink] Couldn't execute event: "
+				std::cout << "[Error - GlobalEvents::think] Couldn't execute event: "
 					<< it->second->getName() << std::endl;
 		}
 	}
 
 	Scheduler::getScheduler().addEvent(createSchedulerTask(interval,
-		boost::bind(&GlobalEvents::onThink, this, interval)));
+		boost::bind(&GlobalEvents::think, this, interval)));
 }
 
 GlobalEvent::GlobalEvent(LuaScriptInterface* _interface):
@@ -171,9 +172,9 @@ std::string GlobalEvent::getScriptEventName() const
 	switch(m_eventType)
 	{
 		case SERVER_EVENT_STARTUP:
-			return "onServerStart";
+			return "onStartup";
 		case SERVER_EVENT_SHUTDOWN:
-			return "onServerShutdown";
+			return "onShutdown";
 
 		case SERVER_EVENT_NONE:
 		default:

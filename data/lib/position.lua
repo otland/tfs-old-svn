@@ -72,7 +72,7 @@ function getPosByDir(fromPosition, direction, size)
 	return pos
 end
 
-function comparePos(pos, posEx)
+function doComparePositions(pos, posEx)
 	return pos.x == posEx.x and pos.y == posEx.y and pos.z == posEx.z
 end
 

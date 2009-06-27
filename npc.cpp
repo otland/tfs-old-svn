@@ -69,11 +69,11 @@ Npc* Npc::createNpc(const std::string& name)
 }
 
 Npc::Npc(const std::string& _name):
-Creature()
+	Creature()
 {
-	m_filename = getFilePath(FILE_TYPE_MOD, "npc/" + _name + ".xml");
+	m_filename = getFilePath(FILE_TYPE_OTHER, "npc/" + _name + ".xml");
 	if(!fileExists(m_filename.c_str()))
-		m_filename = getFilePath(FILE_TYPE_OTHER, "npc/" + _name + ".xml");
+		m_filename = getFilePath(FILE_TYPE_MOD, "npc/" + _name + ".xml");
 
 	m_npcEventHandler = NULL;
 	loaded = false;
