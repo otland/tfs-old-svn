@@ -1507,7 +1507,7 @@ void LuaScriptInterface::registerFunctions()
 	//doSendMagicEffect(pos, type[, player])
 	lua_register(m_luaState, "doSendMagicEffect", LuaScriptInterface::luaDoSendMagicEffect);
 
-	//doSendDistanceShoot(frompos, topos, type)
+	//doSendDistanceShoot(fromPos, toPos, type[, player])
 	lua_register(m_luaState, "doSendDistanceShoot", LuaScriptInterface::luaDoSendDistanceShoot);
 
 	//doChangeTypeItem(uid, newtype)

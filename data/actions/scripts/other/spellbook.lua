@@ -1,6 +1,6 @@
 function onUse(cid, item, fromPosition, itemEx, toPosition)
-	local t, count = {}, getPlayerInstantSpellCount(cid) - 1
-	for i = 0, count do
+	local t = {}
+	for i = 0, getPlayerInstantSpellCount(cid) - 1 do
 		local spell = getPlayerInstantSpellInfo(cid, i)
 		if(spell.level ~= 0) then
 			if(spell.manapercent > 0) then
