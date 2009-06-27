@@ -21,12 +21,21 @@
 ]
 
 [ IDS
-	[ Enchanting
-		You must set actionid 100 on all altars so enchanting will work
-	]
+	[ Actionid 100
+		There are few items, which can have special usage.
+		For example, sand floor can be openable by shovel if you set actionid 100. But withouth actionid it works in normal way.
 
-	[ Desert holes
-		Set actionid 100 on sand if you want to make it openable by shovel
+		Enchanting (Item IDs you can find in 'lib/constant.lua' file - 'enchantingAltars')
+			Set actionid on all altar parts so enchanting will work
+
+		Desert holes (Items: 231, 9059)
+			Openable by shovel (like tombs in global tibia)
+
+		Draw Well (Item: 1369)
+			It will teleport player 1 floor down (like room to the Fibula Dungeo in global tibia)
+
+		Ladders (Items: 1386, 3678, 5543, 8599)
+			Will make them work in rewerted way. So player will be teleported to NORTH, NOT to SOUTH as always
 	]
 
 	[ Doors & Tiles

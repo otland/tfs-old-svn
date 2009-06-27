@@ -7,8 +7,13 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	if(isInArray(UP_FLOORS, item.itemid)) then
-		fromPosition.y = fromPosition.y + 1
 		fromPosition.z = fromPosition.z - 1
+		fromPosition.y = fromPosition.y + 1
+
+		fromPosition.stackpos = STACKPOS_GROUND
+		if(item.actionid == 100 or getThingFromPos(fromPosition).itemid == 0) then
+			fromPosition.y = fromPosition.y - 2
+		end
 	else
 		fromPosition.z = fromPosition.z + 1
 	end
