@@ -25,8 +25,8 @@
 		There are a few items which can have special usage.
 		For example, sand floor can be openable with a shovel if actionid 100 is set (without actionid it works in an ordinary way)
 
-		Enchanting (Item IDs may be found in 'lib/constant.lua' file - 'enchantingAltars')
-			Set actionid on all altar parts so enchanting will work
+		Enchanting (Items IDs may be found in 'lib/constant.lua' file - 'enchantingAltars')
+			Set actionid on all of the altar parts to make the enchanting work
 
 		Desert holes (Items: 231, 9059)
 			Openable with a shovel (like tombs in global Tibia)
