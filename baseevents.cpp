@@ -82,19 +82,19 @@ bool BaseEvents::parseEventNode(xmlNodePtr p, std::string scriptsPath, bool over
 		if(tmpStrValue == "script")
 		{
 			bool file = readXMLString(p, "value", strValue);
-			if(file)
-				strValue = scriptsPath + strValue;
-			else
+			if(!file)
 				parseXMLContentString(p->children, strValue);
+			else
+				strValue = scriptsPath + strValue;
 
-			success = event->loadScript(strValue, file);
+			success = event->checkScript(strValue, file) && event->loadScript(strValue, file);
 		}
 		else if(tmpStrValue == "buffer")
 		{
 			if(!readXMLString(p, "value", strValue))
 				parseXMLContentString(p->children, strValue);
 
-			success = event->loadBuffer(strValue);
+			success = event->checkBuffer(strValue) && event->loadBuffer(strValue);
 		}
 		else if(tmpStrValue == "function")
 		{
@@ -105,24 +105,24 @@ bool BaseEvents::parseEventNode(xmlNodePtr p, std::string scriptsPath, bool over
 	else if(readXMLString(p, "script", strValue))
 	{
 		bool file = asLowerCaseString(strValue) != "cdata";
-		if(file)
-			strValue = scriptsPath + strValue;
-		else
+		if(!file)
 			parseXMLContentString(p->children, strValue);
+		else
+			strValue = scriptsPath + strValue;
 
-		success = event->loadScript(strValue, file);
+		success = event->checkScript(strValue, file) && event->loadScript(strValue, file);
 	}
 	else if(readXMLString(p, "buffer", strValue))
 	{
 		if(asLowerCaseString(strValue) == "cdata")
 			parseXMLContentString(p->children, strValue);
 
-		success = event->loadBuffer(strValue);
+		success = event->checkBuffer(strValue) && event->loadBuffer(strValue);
 	}
 	else if(readXMLString(p, "function", strValue))
 		success = event->loadFunction(strValue);
-	else if(parseXMLContentString(p->children, strValue))
-		success = event->loadScript(strValue, false);
+	else if(parseXMLContentString(p->children, strValue) && event->checkBuffer(strValue))
+		success = event->loadBuffer(strValue);
 
 	if(!override && readXMLString(p, "override", strValue) && booleanString(strValue))
 		override = true;
@@ -146,6 +146,24 @@ Event::Event(const Event* copy)
 	m_scripted = copy->m_scripted;
 	m_scriptId = copy->m_scriptId;
 	m_scriptData = copy->m_scriptData;
+}
+
+bool Event::loadBuffer(const std::string& buffer)
+{
+	if(!m_scriptInterface || m_scriptData != "")
+	{
+		std::cout << "[Error - Event::loadScriptFile] m_scriptInterface == NULL, scriptData != \"\"" << std::endl;
+		return false;
+	}
+
+	m_scripted = EVENT_SCRIPT_BUFFER;
+	m_scriptData = buffer;
+	return true;
+}
+
+bool Event::checkBuffer(const std::string& buffer)
+{
+	return true; //TODO
 }
 
 bool Event::loadScript(const std::string& script, bool file)
@@ -192,17 +210,9 @@ bool Event::loadScript(const std::string& script, bool file)
 	return true;
 }
 
-bool Event::loadBuffer(const std::string& buffer)
+bool Event::checkScript(const std::string& script, bool file)
 {
-	if(!m_scriptInterface || m_scriptData != "")
-	{
-		std::cout << "[Error - Event::loadScriptFile] m_scriptInterface == NULL, scriptData != \"\"" << std::endl;
-		return false;
-	}
-
-	m_scripted = EVENT_SCRIPT_BUFFER;
-	m_scriptData = buffer;
-	return true;
+	return true; //TODO
 }
 
 CallBack::CallBack()

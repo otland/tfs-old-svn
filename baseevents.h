@@ -63,12 +63,15 @@ class Event
 		virtual ~Event() {}
 
 		virtual bool configureEvent(xmlNodePtr p) = 0;
-
-		bool loadBuffer(const std::string& scriptFile);
-		bool loadScript(const std::string& scriptBuffer, bool file);
-		virtual bool loadFunction(const std::string& functionName) {return false;}
-
 		virtual bool isScripted() const {return m_scripted != EVENT_SCRIPT_FALSE;}
+
+		bool loadBuffer(const std::string& buffer);
+		bool checkBuffer(const std::string& buffer);
+
+		bool loadScript(const std::string& script, bool file);
+		bool checkScript(const std::string& script, bool file);
+
+		virtual bool loadFunction(const std::string& functionName) {return false;}
 
 	protected:
 		virtual std::string getScriptEventName() const = 0;

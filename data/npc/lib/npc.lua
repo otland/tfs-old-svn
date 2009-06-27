@@ -117,10 +117,6 @@ function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, bac
 	return a, 0
 end
 
-function isPlayerPremiumCallback(cid)
-	return isPremium(cid)
-end
-
 function doRemoveItemIdFromPos (id, n, position)
 	local thing = getThingFromPos({x = position.x, y = position.y, z = position.z, stackpos = 1})
 	if(thing.itemid == id) then
@@ -149,6 +145,7 @@ moveToPosition = selfMoveTo
 moveToCreature = selfMoveToCreature
 selfMoveToPosition = selfMoveTo
 selfGotoIdle = selfIdle
+isPlayerPremiumCallback = isPremium
 doPosRemoveItem = doRemoveItemIdFromPos
 doNpcBuyItem = doPlayerRemoveItem
 doNpcSetCreatureFocus = selfFocus
