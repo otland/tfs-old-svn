@@ -26,7 +26,7 @@
 			actionid
 			uniqueid
 			itemid
-			fromid,toid
+			fromid, toid
 				Defined in which situations action should be triggered.
 				Execution order: unique, action, id, runeid
 			allowfaruse
@@ -38,6 +38,8 @@
 			function
 				Default hardcoded functions.
 				Values: increaseItemId, deincreaseItemId
+		Function
+			onUse(cid, item, fromPosition, itemEx, toPosition)
 
 	*CREATURESCRIPTS
 		File: creaturescripts/creaturescripts.xml
@@ -83,10 +85,11 @@
 				Server events, script can be executed at server start or shutdown.
 				Values:
 					start, shutdown
-
 			interval
 				Script will be executed every x seconds.
 				Ignored if 'type' specified.
+		Function
+			onThink(interval, lastExecution, thinkInterval)
 
 	*MOVEMENTS
 		File: movements/movements.xml
@@ -126,6 +129,13 @@
 					onRemoveField
 					onEquipItem
 					onDeEquipItem
+		Functions
+			onStepIn(cid, item, position, lastPosition, fromPosition, toPosition, actor)
+			onStepOut(cid, item, position, lastPosition, fromPosition, toPosition, actor)
+			onEquip(cid, item, slot)
+			onDeEquip(cid, item, slot)
+			onAddItem(moveItem, tileItem, position, cid)
+			onRemoveItem(moveItem, tileItem, position, cid)
 
 	*SPELLS
 		File: spells/spells.xml
