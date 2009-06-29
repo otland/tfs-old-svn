@@ -219,8 +219,11 @@ Item::~Item()
 		raid->unRef();
 		raid = NULL;
 	}
+}
 
-	if(getUniqueId())
+void Item::onRemoved()
+{
+	if(getUniqueId() != 0)
 		ScriptEnviroment::removeUniqueThing(this);
 }
 

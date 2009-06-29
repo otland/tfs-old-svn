@@ -458,7 +458,7 @@ class Item : virtual public Thing, public ItemAttributes
 		virtual bool canRemove() const {return true;}
 		virtual bool canTransform() const {return true;}
 
-		virtual void onRemoved() {}
+		virtual void onRemoved();
 		virtual bool onTradeEvent(TradeEvents_t event, Player* owner, Player* seller) {return true;}
 		static uint32_t countByType(const Item* item, int32_t checkType, bool multiCount);
 
