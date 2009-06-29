@@ -69,8 +69,9 @@ bool BaseEvents::parseEventNode(xmlNodePtr p, std::string scriptsPath, bool over
 
 	if(!event->configureEvent(p))
 	{
-		std::cout << "[Warning - BaseEvents::loadFromXml] Cannot configure event" << std::endl;
+		std::cout << "[Warning - BaseEvents::loadFromXml] Cannot configure an event" << std::endl;
 		delete event;
+		event = NULL;
 		return false;
 	}
 
@@ -128,7 +129,11 @@ bool BaseEvents::parseEventNode(xmlNodePtr p, std::string scriptsPath, bool over
 		override = true;
 
 	if(success && !registerEvent(event, p, override))
-		delete event;
+		if(event)
+		{
+			delete event;
+			event = NULL;
+		}
 
 	return success;
 }
