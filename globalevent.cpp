@@ -38,7 +38,7 @@ void GlobalEvents::clear()
 	for(it = eventsMap.begin(); it != eventsMap.end(); ++it)
 		delete it->second;
 
-	eventsMap.clear()
+	eventsMap.clear();
 	for(it = serverEventsMap.begin(); it != serverEventsMap.end(); ++it)
 		delete it->second;
 
