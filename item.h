@@ -293,7 +293,7 @@ class Item : virtual public Thing, public ItemAttributes
 		// Constructor for items
 		Item(const uint16_t _type, uint16_t _count = 0);
 		Item(const Item &i);
-		virtual ~Item();
+		virtual ~Item() {}
 
 		virtual Item* clone() const;
 		virtual void copyAttributes(Item* item);

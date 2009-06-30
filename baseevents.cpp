@@ -128,12 +128,11 @@ bool BaseEvents::parseEventNode(xmlNodePtr p, std::string scriptsPath, bool over
 	if(!override && readXMLString(p, "override", strValue) && booleanString(strValue))
 		override = true;
 
-	if(success && !registerEvent(event, p, override))
-		if(event)
-		{
-			delete event;
-			event = NULL;
-		}
+	if(success && !registerEvent(event, p, override) && event)
+	{
+		delete event;
+		event = NULL;
+	}
 
 	return success;
 }

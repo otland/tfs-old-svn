@@ -212,17 +212,14 @@ void Item::copyAttributes(Item* item)
 	removeAttribute(ATTR_ITEM_DURATION);
 }
 
-Item::~Item()
+void Item::onRemoved()
 {
 	if(raid)
 	{
 		raid->unRef();
 		raid = NULL;
 	}
-}
 
-void Item::onRemoved()
-{
 	if(getUniqueId() != 0)
 		ScriptEnviroment::removeUniqueThing(this);
 }

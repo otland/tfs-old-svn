@@ -464,6 +464,7 @@ bool AccessList::parseList(const std::string& _list)
 {
 	playerList.clear();
 	guildList.clear();
+
 	expressionList.clear();
 	regExList.clear();
 
@@ -477,6 +478,7 @@ bool AccessList::parseList(const std::string& _list)
 	{
 		trimString(line);
 		trim_left(line, "\t");
+
 		trim_right(line, "\t");
 		trimString(line);
 
@@ -513,8 +515,7 @@ bool AccessList::isInList(const Player* player)
 	}
 	catch(...) {}
 
-	PlayerList::iterator playerIt = playerList.find(player->getGUID());
-	if(playerIt != playerList.end())
+	if(playerList.find(player->getGUID()) != playerList.end())
 		return true;
 
 	for(GuildList::iterator git = guildList.begin(); git != guildList.end(); ++git)
@@ -645,7 +646,6 @@ void Door::copyAttributes(Item* item)
 void Door::onRemoved()
 {
 	Item::onRemoved();
-
 	if(house)
 		house->removeDoor(this);
 }
