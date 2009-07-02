@@ -916,7 +916,7 @@ bool Monster::getNextStep(Direction& dir, uint32_t& flags)
 	}
 	else if(isSummon() || followCreature)
 	{
-		result = Creature::getNextStep(dir);
+		result = Creature::getNextStep(dir, flags);
 		if(!result)
 		{
 			//target dancing
@@ -1085,7 +1085,6 @@ bool Monster::onDeath()
 	if(!Creature::onDeath())
 		return false;
 
-	deactivate(true);
 	setAttackedCreature(NULL);
 	for(CreatureList::iterator cit = summons.begin(); cit != summons.end(); ++cit)
 	{
