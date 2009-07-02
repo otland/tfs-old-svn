@@ -1,11 +1,9 @@
 local config = {
-	guildTalksEnabled = asBoolean(getConfigValue('ingameGuildManagement'))
+	guildTalksEnabled = getBooleanFromString(getConfigValue('ingameGuildManagement'))
 }
 
 function onSay(cid, words, param, channel)
-	local playerAccess = getPlayerAccess(cid)
-
-	local t = {}
+	local playerAccess, t = getPlayerAccess(cid), {}
 	for i, talk in ipairs(getTalkActionList()) do
 		if(playerAccess >= talk.access) then
 			local tmp = talk.words:sub(1, 1):trim()
@@ -16,9 +14,7 @@ function onSay(cid, words, param, channel)
 	end
 
 	table.sort(t, function(a, b) return a.access > b.access end)
-	local lastAccess = -1
-
-	local text = ""
+	local lastAccess, text = -1, ""
 	for i, talk in ipairs(t) do
 		local line = ""
 		if(lastAccess ~= talk.access) then
