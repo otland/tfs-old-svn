@@ -321,7 +321,6 @@ class Creature : public AutoID, virtual public Thing
 		virtual uint32_t getConditionSuppressions() const {return 0;}
 		virtual bool isAttackable() const {return true;}
 		virtual bool isAccountManager() const {return false;}
-		bool isIdle() const {return checkCreatureVectorIndex == 0;}
 
 		virtual void changeHealth(int32_t healthChange);
 		void changeMaxHealth(uint32_t healthChange) {healthMax = healthChange;}
@@ -368,7 +367,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual void onThink(uint32_t interval);
 		virtual void onAttacking(uint32_t interval);
 		virtual void onWalk();
-		virtual bool getNextStep(Direction& dir);
+		virtual bool getNextStep(Direction& dir, uint32_t& flags);
 
 		virtual void onAddTileItem(const Tile* tile, const Position& pos, const Item* item);
 		virtual void onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
@@ -442,6 +441,7 @@ class Creature : public AutoID, virtual public Thing
 		bool isInternalRemoved;
 		bool isMapLoaded;
 		bool isUpdatingPath;
+		bool checked;
 
 		int32_t checkCreatureVectorIndex;
 		int32_t health, healthMax;

@@ -191,7 +191,7 @@ class Game
 		  * Get a single tile of the map.
 		  * \returns A pointer to the tile
 		  */
-		Tile* getTile(uint16_t x, uint16_t y, uint16_t z) {return map->getTile(x, y, z);}
+		Tile* getTile(int32_t x, int32_t y, int32_t z) {return map->getTile(x, y, z);}
 		Tile* getTile(const Position& pos) {return map->getTile(pos);}
 
 		/**
@@ -543,7 +543,7 @@ class Game
 		GameState_t getGameState() const {return gameState;}
 		void setGameState(GameState_t newState);
 
-		void saveGameState(bool maintainState);
+		void saveGameState(bool shallow);
 		void loadGameState();
 
 		void cleanMap(uint32_t& count);

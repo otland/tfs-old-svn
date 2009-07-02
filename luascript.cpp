@@ -9132,8 +9132,12 @@ int32_t LuaScriptInterface::luaDoReloadInfo(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoSaveServer(lua_State* L)
 {
-	//doSaveServer()
-	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::saveGameState, &g_game, true)));
+	//doSaveServer([shallow])
+	bool shallow = false;
+	if(lua_gettop(L) > 0)
+		shallow = popNumber(L);
+
+	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::saveGameState, &g_game, shallow)));
 	return 1;
 }
 

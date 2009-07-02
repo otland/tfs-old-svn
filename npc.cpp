@@ -314,10 +314,11 @@ bool Npc::loadFromXml(const std::string& filename)
 					else
 						voice.margin = 0;
 
+					voice.type = SPEAK_SAY;
 					if(readXMLInteger(q, "type", intValue))
 						voice.type = (SpeakClasses)intValue;
-					else
-						voice.type = SPEAK_SAY;
+					else if(readXMLString(q, "yell", strValue) && booleanString(strValue))
+						voice.type = SPEAK_YELL;
 
 					if(readXMLString(q, "randomspectator", strValue) || readXMLString(q, "randomSpectator", strValue))
 						voice.randomSpectator = booleanString(strValue);
@@ -1882,12 +1883,12 @@ void Npc::onPlayerEndTrade(Player* player, int32_t buyCallback,
 		m_npcEventHandler->onPlayerEndTrade(player);
 }
 
-bool Npc::getNextStep(Direction& dir)
+bool Npc::getNextStep(Direction& dir, uint32_t& flags)
 {
-	if(Creature::getNextStep(dir))
+	if(Creature::getNextStep(dir, flags))
 		return true;
 
-	if(walkTicks <= 0 || !isIdle || focusCreature != 0 || getTimeSinceLastMove() < walkTicks)
+	if(walkTicks <= 0 || !isIdle || focusCreature || getTimeSinceLastMove() < walkTicks)
 		return false;
 
 	return getRandomStep(dir);

@@ -432,7 +432,7 @@ class Npc : public Creature
 		virtual bool isAttackable() const {return attackable;}
 
 		virtual std::string getDescription(int32_t lookDistance) const {return nameDescription + ".";}
-		virtual bool getNextStep(Direction& dir);
+		virtual bool getNextStep(Direction& dir, uint32_t& flags);
 		bool getRandomStep(Direction& dir);
 
 		void reset();

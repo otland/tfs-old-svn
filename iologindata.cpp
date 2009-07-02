@@ -695,7 +695,7 @@ void IOLoginData::loadItems(ItemMap& itemMap, DBResult* result)
 	while(result->next());
 }
 
-bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
+bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shallow/* = false*/)
 {
 	if(preSave && player->health <= 0)
 	{
@@ -829,6 +829,9 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/)
 		if(!db->executeQuery(query.str()))
 			return false;
 	}
+
+	if(shallow)
+		return trans.commit();
 
 	// learned spells
 	query.str("");

@@ -168,7 +168,7 @@ void signalHandler(int32_t sig)
 	{
 		case SIGHUP:
 			Dispatcher::getDispatcher().addTask(createTask(
-				boost::bind(&Game::saveGameState, &g_game, true)));
+				boost::bind(&Game::saveGameState, &g_game, false)));
 			break;
 
 		case SIGTRAP:
@@ -1017,7 +1017,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
 						Dispatcher::getDispatcher().addTask(createTask(
-							boost::bind(&Game::saveGameState, &g_game, true)));
+							boost::bind(&Game::saveGameState, &g_game, false)));
 						MessageBox(NULL, "Server has been saved.", "Server save", MB_OK);
 					}
 

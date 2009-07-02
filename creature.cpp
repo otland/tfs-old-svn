@@ -75,6 +75,7 @@ Creature::Creature():
 	forceUpdateFollowPath = false;
 	isMapLoaded = false;
 	isUpdatingPath = false;
+	checked = false;
 	memset(localMapCache, false, sizeof(localMapCache));
 
 	attackedCreature = NULL;
@@ -239,7 +240,8 @@ void Creature::onWalk()
 	if(getWalkDelay() <= 0)
 	{
 		Direction dir;
-		if(getNextStep(dir) && g_game.internalMoveCreature(this, dir, FLAG_IGNOREFIELDDAMAGE) != RET_NOERROR)
+		uint32_t flags = FLAG_IGNOREFIELDDAMAGE;
+		if(getNextStep(dir, flags) && g_game.internalMoveCreature(this, dir, flags) != RET_NOERROR)
 			forceUpdateFollowPath = true;
 	}
 
@@ -281,7 +283,7 @@ void Creature::onWalk(Direction& dir)
 	g_game.internalCreatureSay(this, SPEAK_MONSTER_SAY, "Hicks!", isInGhostMode());
 }
 
-bool Creature::getNextStep(Direction& dir)
+bool Creature::getNextStep(Direction& dir, uint32_t& flags)
 {
 	if(listWalkDir.empty())
 		return false;

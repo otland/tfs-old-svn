@@ -254,11 +254,11 @@ class ProtocolGame : public Protocol
 		void GetTileDescription(const Tile* tile, NetworkMessage_ptr msg);
 
 		// translate a floor to clientreadable format
-		void GetFloorDescription(NetworkMessage_ptr msg, uint16_t x, uint16_t y, uint16_t z,
+		void GetFloorDescription(NetworkMessage_ptr msg, int32_t x, int32_t y, int32_t z,
 			int32_t width, int32_t height, int32_t offset, int32_t& skip);
 
 		// translate a map area to clientreadable format
-		void GetMapDescription(uint16_t x, uint16_t y, uint16_t z,
+		void GetMapDescription(int32_t x, int32_t y, int32_t z,
 			int32_t width, int32_t height, NetworkMessage_ptr msg);
 
 		void AddMapDescription(NetworkMessage_ptr msg, const Position& pos);

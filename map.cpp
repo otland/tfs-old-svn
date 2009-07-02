@@ -104,20 +104,20 @@ bool Map::saveMap()
 	return saved;
 }
 
-Tile* Map::getTile(uint16_t x, uint16_t y, uint16_t z)
+Tile* Map::getTile(int32_t x, int32_t y, int32_t z)
 {
-	if(z < MAP_MAX_LAYERS)
-	{
-		QTreeLeafNode* leaf = QTreeNode::getLeafStatic(&root, x, y);
-		if(leaf)
-		{
-			Floor* floor = leaf->getFloor(z);
-			if(floor)
-				return floor->tiles[x & FLOOR_MASK][y & FLOOR_MASK];
-		}
-	}
+	if(x < 0 || x > 0xFFFF || y < 0 || y > 0xFFFF || z  < 0 || z > MAP_MAX_LAYERS)
+		return NULL;
 
-	return NULL;
+	QTreeLeafNode* leaf = QTreeNode::getLeafStatic(&root, x, y);
+	if(!leaf)
+		return NULL;
+
+	Floor* floor = leaf->getFloor(z);
+	if(!floor)
+		return NULL;
+
+	return floor->tiles[x & FLOOR_MASK][y & FLOOR_MASK];
 }
 
 void Map::setTile(uint16_t x, uint16_t y, uint16_t z, Tile* newTile)

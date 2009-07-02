@@ -320,9 +320,11 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 			switch(command)
 			{
 				case CMD_SAVE_SERVER:
+				case CMD_SHALLOW_SAVE_SERVER:
 				{
 					addLogLine(this, LOGTYPE_EVENT, "saving server");
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::saveGameState, &g_game, true)));
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+						&Game::saveGameState, &g_game, (command == CMD_SHALLOW_SAVE_SERVER))));
 
 					output->AddByte(AP_MSG_COMMAND_OK);
 					break;
@@ -331,7 +333,8 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				case CMD_CLOSE_SERVER:
 				{
 					addLogLine(this, LOGTYPE_EVENT, "closing server");
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+						&Game::setGameState, &g_game, GAME_STATE_CLOSED)));
 
 					output->AddByte(AP_MSG_COMMAND_OK);
 					break;
@@ -340,7 +343,8 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				case CMD_OPEN_SERVER:
 				{
 					addLogLine(this, LOGTYPE_EVENT, "opening server");
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_NORMAL)));
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+						&Game::setGameState, &g_game, GAME_STATE_NORMAL)));
 
 					output->AddByte(AP_MSG_COMMAND_OK);
 					break;
@@ -349,7 +353,8 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				case CMD_SHUTDOWN_SERVER:
 				{
 					addLogLine(this, LOGTYPE_EVENT, "shutting down server");
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+						&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
 
 					output->AddByte(AP_MSG_COMMAND_OK);
 					break;
@@ -357,35 +362,40 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 
 				case CMD_PAY_HOUSES:
 				{
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandPayHouses, this)));
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+						&ProtocolAdmin::adminCommandPayHouses, this)));
 					break;
 				}
 
 				case CMD_RELOAD_SCRIPTS:
 				{
 					const int8_t reload = msg.GetByte();
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandReload, this, reload)));
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+						&ProtocolAdmin::adminCommandReload, this, reload)));
 					break;
 				}
 
 				case CMD_KICK:
 				{
 					const std::string param = msg.GetString();
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandKickPlayer, this, param)));
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+						&ProtocolAdmin::adminCommandKickPlayer, this, param)));
 					break;
 				}
 
 				case CMD_SETOWNER:
 				{
 					const std::string param = msg.GetString();
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandSetOwner, this, param)));
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+						&ProtocolAdmin::adminCommandSetOwner, this, param)));
 					break;
 				}
 
 				case CMD_SEND_MAIL:
 				{
 					const std::string xmlData = msg.GetString();
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolAdmin::adminCommandSendMail, this, xmlData)));
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+						&ProtocolAdmin::adminCommandSendMail, this, xmlData)));
 					break;
 				}
 
@@ -393,7 +403,8 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 				{
 					const std::string param = msg.GetString();
 					addLogLine(this, LOGTYPE_EVENT, "broadcasting: " + param);
-					Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::broadcastMessage, &g_game, param, MSG_STATUS_WARNING)));
+					Dispatcher::getDispatcher().addTask(createTask(boost::bind(
+						&Game::broadcastMessage, &g_game, param, MSG_STATUS_WARNING)));
 
 					output->AddByte(AP_MSG_COMMAND_OK);
 					break;

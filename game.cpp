@@ -247,18 +247,18 @@ void Game::setGameState(GameState_t newState)
 	}
 }
 
-void Game::saveGameState(bool maintainState)
+void Game::saveGameState(bool shallow)
 {
 	std::cout << "> Saving server..." << std::endl;
 	uint64_t start = OTSYS_TIME();
-	if(maintainState)
+	if(gameState == GAME_STATE_NORMAL)
 		setGameState(GAME_STATE_MAINTAIN);
 
 	IOLoginData* io = IOLoginData::getInstance();
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
 		(*it).second->loginPosition = (*it).second->getPosition();
-		io->savePlayer((*it).second, false);
+		io->savePlayer((*it).second, false, shallow);
 	}
 
 	std::string storage = "relational";
@@ -267,7 +267,7 @@ void Game::saveGameState(bool maintainState)
 
 	map->saveMap();
 	ScriptEnviroment::saveGameState();
-	if(maintainState)
+	if(gameState == GAME_STATE_MAINTAIN)
 		setGameState(GAME_STATE_NORMAL);
 
 	std::cout << "> SAVE: Complete in " << (OTSYS_TIME() - start) / (1000.) << " seconds using " << storage << " house storage." << std::endl;
@@ -352,13 +352,13 @@ void Game::cleanMap(uint32_t& count)
 	}
 	else if(g_config.getBool(ConfigManager::CLEAN_PROTECTED_ZONES))
 	{
-		for(int32_t z = 0; z < MAP_MAX_LAYERS; z++)
+		for(int16_t z = 0; z < MAP_MAX_LAYERS; z++)
 		{
-			for(uint32_t y = 1; y <= map->mapHeight; y++)
+			for(uint16_t y = 1; y <= map->mapHeight; y++)
 			{
-				for(uint32_t x = 1; x <= map->mapWidth; x++)
+				for(uint16_t x = 1; x <= map->mapWidth; x++)
 				{
-					if((tile = getTile(x, y, (unsigned)z)) && !tile->hasFlag(TILESTATE_HOUSE))
+					if((tile = getTile(Position(x, y, (unsigned)z))) && !tile->hasFlag(TILESTATE_HOUSE))
 					{
 						for(uint32_t i = 0; i < tile->getThingCount();)
 						{
@@ -378,13 +378,13 @@ void Game::cleanMap(uint32_t& count)
 	}
 	else
 	{
-		for(int32_t z = 0; z < MAP_MAX_LAYERS; z++)
+		for(int16_t z = 0; z < MAP_MAX_LAYERS; z++)
 		{
-			for(uint32_t y = 1; y <= map->mapHeight; y++)
+			for(uint16_t y = 1; y <= map->mapHeight; y++)
 			{
-				for(uint32_t x = 1; x <= map->mapWidth; x++)
+				for(uint16_t x = 1; x <= map->mapWidth; x++)
 				{
-					if((tile = getTile(x, y, (unsigned)z)) && !tile->hasFlag(TILESTATE_PROTECTIONZONE))
+					if((tile = getTile(Position(x, y, (unsigned)z))) && !tile->hasFlag(TILESTATE_PROTECTIONZONE))
 					{
 						for(uint32_t i = 0; i < tile->getThingCount();)
 						{
@@ -494,7 +494,7 @@ void Game::refreshMap(RefreshTiles::iterator* it/* = NULL*/, uint32_t limit/* = 
 Cylinder* Game::internalGetCylinder(Player* player, const Position& pos)
 {
 	if(pos.x != 0xFFFF)
-		return getTile(pos.x, pos.y, pos.z);
+		return getTile(pos);
 
 	//container
 	if(pos.y & 0x40)
@@ -1089,10 +1089,10 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 		//try go up
 		if(currentPos.z != 8 && creature->getTile()->hasHeight(3))
 		{
-			Tile* tmpTile = map->getTile(currentPos.x, currentPos.y, currentPos.z - 1);
+			Tile* tmpTile = map->getTile(Position(currentPos.x, currentPos.y, currentPos.z - 1));
 			if(!tmpTile || (!tmpTile->ground && !tmpTile->hasProperty(BLOCKSOLID)))
 			{
-				tmpTile = map->getTile(destPos.x, destPos.y, destPos.z - 1);
+				tmpTile = map->getTile(Position(destPos.x, destPos.y, destPos.z - 1));
 				if(tmpTile && tmpTile->ground && !tmpTile->hasProperty(BLOCKSOLID))
 				{
 					flags = flags | FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE;
@@ -1106,7 +1106,7 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 			Tile* tmpTile = map->getTile(destPos);
 			if(currentPos.z != 7 && (!tmpTile || (!tmpTile->ground && !tmpTile->hasProperty(BLOCKSOLID))))
 			{
-				tmpTile = map->getTile(destPos.x, destPos.y, destPos.z + 1);
+				tmpTile = map->getTile(Position(destPos.x, destPos.y, destPos.z + 1));
 				if(tmpTile && tmpTile->hasHeight(3))
 				{
 					flags = flags | FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE;
@@ -3864,11 +3864,12 @@ void Game::checkCreatureAttack(uint32_t creatureId)
 
 void Game::addCreatureCheck(Creature* creature)
 {
+	creature->checked = true;
 	if(creature->checkCreatureVectorIndex >= 0) //already in a vector, or about to be added
 		return;
 
 	toAddCheckCreatureVector.push_back(creature);
-	creature->checkCreatureVectorIndex = 1;
+	creature->checkCreatureVectorIndex = random_range(0, EVENT_CREATURECOUNT - 1);
 	creature->useThing2();
 }
 
@@ -3877,7 +3878,7 @@ void Game::removeCreatureCheck(Creature* creature)
 	if(creature->checkCreatureVectorIndex == -1) //not in any vector
 		return;
 
-	creature->checkCreatureVectorIndex = 0;
+	creature->creatureCheck = false;
 }
 
 void Game::checkCreatures()
@@ -3890,18 +3891,16 @@ void Game::checkCreatures()
 	for(it = toAddCheckCreatureVector.begin(); it != toAddCheckCreatureVector.end();) //add any new creatures
 	{
 		creature = (*it);
-		if(creature->checkCreatureVectorIndex == 1)
-		{
-			int32_t nextVector = (checkCreatureLastIndex + 1) % EVENT_CREATURECOUNT;
-			checkCreatureVectors[nextVector].push_back(creature);
-			creature->checkCreatureVectorIndex = nextVector + 2;
-			++it;
-		}
-		else
+		if(!creature->checked)
 		{
 			FreeThing(creature);
 			creature->checkCreatureVectorIndex = -1;
 			it = toAddCheckCreatureVector.erase(it);
+		}
+		else
+		{
+			checkCreatureVectors[creature->checkCreatureVectorIndex].push_back(creature);
+			++it;
 		}
 	}
 
@@ -3914,7 +3913,7 @@ void Game::checkCreatures()
 	for(it = checkCreatureVector.begin(); it != checkCreatureVector.end();)
 	{
 		creature = (*it);
-		if(creature->checkCreatureVectorIndex != 0)
+		if(creature->checked)
 		{
 			if(creature->getHealth() > 0 || !creature->onDeath())
 				creature->onThink(EVENT_CREATURE_THINK_INTERVAL);

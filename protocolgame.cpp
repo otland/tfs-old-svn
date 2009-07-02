@@ -852,14 +852,14 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage_ptr msg)
 	}
 }
 
-void ProtocolGame::GetMapDescription(uint16_t x, uint16_t y, uint16_t z,
+void ProtocolGame::GetMapDescription(int32_t x, int32_t y, int32_t z,
 	int32_t width, int32_t height, NetworkMessage_ptr msg)
 {
 	int32_t skip = -1, startz, endz, zstep = 0;
 	if(z > 7)
 	{
 		startz = z - 2;
-		endz = std::min(MAP_MAX_LAYERS - 1, z + 2);
+		endz = std::min((int32_t)MAP_MAX_LAYERS - 1, z + 2);
 		zstep = 1;
 	}
 	else
@@ -880,7 +880,7 @@ void ProtocolGame::GetMapDescription(uint16_t x, uint16_t y, uint16_t z,
 	}
 }
 
-void ProtocolGame::GetFloorDescription(NetworkMessage_ptr msg, uint16_t x, uint16_t y, uint16_t z,
+void ProtocolGame::GetFloorDescription(NetworkMessage_ptr msg, int32_t x, int32_t y, int32_t z,
 		int32_t width, int32_t height, int32_t offset, int32_t& skip)
 {
 	Tile* tile = NULL;
@@ -888,7 +888,7 @@ void ProtocolGame::GetFloorDescription(NetworkMessage_ptr msg, uint16_t x, uint1
 	{
 		for(int32_t ny = 0; ny < height; ny++)
 		{
-			if((tile = g_game.getTile(x + nx + offset, y + ny + offset, z)))
+			if(!(tile = g_game.getTile(Position(x + nx + offset, y + ny + offset, z))))
 			{
 				if(skip >= 0)
 				{
@@ -901,7 +901,7 @@ void ProtocolGame::GetFloorDescription(NetworkMessage_ptr msg, uint16_t x, uint1
 			}
 			else
 			{
-				skip++;
+				++skip;
 				if(skip == 0xFF)
 				{
 					msg->AddByte(0xFF);
