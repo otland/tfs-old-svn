@@ -528,7 +528,9 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 				g_game.removeCreature((*cit), true);
 		}
 
-		onChangeZone(getZone());
+		if(newTile->getZone() != oldTile->getZone())
+			onChangeZone(getZone());
+
 		//update map cache
 		if(isMapLoaded)
 		{
@@ -648,7 +650,8 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 				Dispatcher::getDispatcher().addTask(createTask(
 					boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
 
-			onAttackedCreatureChangeZone(attackedCreature->getZone());
+			if(newTile->getZone() != oldTile->getZone())
+				onAttackedCreatureChangeZone(attackedCreature->getZone());
 		}
 		else
 			internalCreatureDisappear(attackedCreature, false);

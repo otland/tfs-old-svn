@@ -69,6 +69,15 @@ enum tileflags_t
 	TILESTATE_DYNAMIC_TILE = 1 << 24
 };
 
+enum ZoneType_t
+{
+	ZONE_PROTECTION,
+	ZONE_NOPVP,
+	ZONE_PVP,
+	ZONE_NOLOGOUT,
+	ZONE_NORMAL
+};
+
 class HouseTile;
 class TileItemVector
 {
@@ -191,6 +200,20 @@ class Tile : public Cylinder
 			}
 
 			return false;
+		}
+
+		ZoneType_t getZone() const
+		{
+			if(tile->hasFlag(TILESTATE_PROTECTIONZONE))
+				return ZONE_PROTECTION;
+
+			if(tile->hasFlag(TILESTATE_NOPVPZONE))
+				return ZONE_NOPVP;
+
+			if(tile->hasFlag(TILESTATE_PVPZONE))
+				return ZONE_PVP;
+
+			return ZONE_NORMAL;
 		}
 
 		bool hasHeight(uint32_t n) const;

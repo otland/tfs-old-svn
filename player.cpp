@@ -511,6 +511,12 @@ void Player::sendIcons() const
 			icons |= (*it)->getIcons();
 	}
 
+	/*if(getZone() == ZONE_PROTECTION)
+		icons |= ICON_PROTECTIONZONE;
+
+	if(pzLocked)
+		icons |= ICON_PZ;*/
+
 	client->sendIcons(icons);
 }
 
@@ -1424,6 +1430,7 @@ void Player::onChangeZone(ZoneType_t zone)
 
 	setAttackedCreature(NULL);
 	onAttackedCreatureDisappear(false);
+	sendIcons();
 }
 
 void Player::onAttackedCreatureChangeZone(ZoneType_t zone)
@@ -2318,12 +2325,12 @@ void Player::addInFightTicks(bool pzLock/* = false*/)
 	if(hasFlag(PlayerFlag_NotGainInFight))
 		return;
 
+	if(pzLock)
+		pzLocked = true;
+
 	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
 		CONDITION_INFIGHT, g_config.getNumber(ConfigManager::PZ_LOCKED)))
 		addCondition(condition);
-
-	if(pzLock)
-		pzLocked = true;
 }
 
 void Player::addDefaultRegeneration(uint32_t addTicks)
@@ -3447,12 +3454,13 @@ void Player::onAddCombatCondition(ConditionType_t type, bool hadCondition)
 void Player::onEndCondition(ConditionType_t type)
 {
 	Creature::onEndCondition(type);
-	sendIcons();
 	if(type != CONDITION_INFIGHT)
 		return;
 
-	onIdleStatus();
 	pzLocked = false;
+	sendIcons();
+
+	onIdleStatus();
 	if(skull < SKULL_RED)
 	{
 		clearAttacked();

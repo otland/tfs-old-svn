@@ -56,15 +56,6 @@ enum lootDrop_t
 	LOOT_DROP_NONE
 };
 
-enum ZoneType_t
-{
-	ZONE_PROTECTION,
-	ZONE_NOPVP,
-	ZONE_PVP,
-	ZONE_NOLOGOUT,
-	ZONE_NORMAL
-};
-
 enum killflags_t
 {
 	KILLFLAG_NONE = 0,
@@ -246,23 +237,7 @@ class Creature : public AutoID, virtual public Thing
 
 		bool isInvisible() const {return hasCondition(CONDITION_INVISIBLE, -1, false);}
 		virtual bool isInGhostMode() const {return false;}
-
-		ZoneType_t getZone() const
-		{
-			if(const Tile* tile = getTile())
-			{
-				if(tile->hasFlag(TILESTATE_PROTECTIONZONE))
-					return ZONE_PROTECTION;
-
-				if(tile->hasFlag(TILESTATE_NOPVPZONE))
-					return ZONE_NOPVP;
-
-				if(tile->hasFlag(TILESTATE_PVPZONE))
-					return ZONE_PVP;
-			}
-
-			return ZONE_NORMAL;
-		}
+		ZoneType_t getZone() const {return getTile()->getZone();}
 
 		//walk functions
 		bool startAutoWalk(std::list<Direction>& listDir);
