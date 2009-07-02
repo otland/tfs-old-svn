@@ -30,8 +30,8 @@
 		<attribute key="decayTo" value="293"/>
 		<attribute key="duration" value="300"/>
 	</item>
-	<item fromid="351" toid="354" name="dirt"/>
-	<item id="355" article="a" name="muddy floor">
+	<item fromid="351" toid="353" name="dirt floor"/>
+	<item fromid="354" toid="355" name="muddy floor">
 		<attribute key="fluidSource" value="mud"/>
 	</item>
 	<item fromid="356" toid="367" article="a" name="dirt wall"/>
@@ -1094,8 +1094,8 @@
 	<item id="1478" article="a" name="statue">
 		<attribute key="rotateTo" value="1442"/>
 	</item>
-	<item id="1479" article="a" name="streetlamp"/>
-	<item id="1480" article="a" name="streetlamp"/>
+	<item id="1479" article="a" name="street lamp"/>
+	<item id="1480" article="a" name="street lamp"/>
 	<item id="1481" article="a" name="coal basin"/>
 	<item id="1482" article="a" name="coal basin"/>
 	<item id="1483" article="a" name="coal basin"/>
@@ -2429,10 +2429,7 @@
 	<item id="2036" article="a" name="watch">
 		<attribute key="weight" value="50"/>
 	</item>
-	<item id="2037" article="a" name="wall lamp"/>
-	<item id="2038" article="a" name="wall lamp"/>
-	<item id="2039" article="a" name="wall lamp"/>
-	<item id="2040" article="a" name="wall lamp"/>
+	<item fromid="2037" toid="2040" article="a" name="lit wall lamp"/>
 	<item id="2041" article="a" name="candelabrum">
 		<attribute key="weight" value="500"/>
 		<attribute key="stopduration" value="1"/>
@@ -5374,7 +5371,7 @@
 	<item id="2739" name="wheat"/>
 	<item id="2740" name="moon flowers"/>
 	<item id="2741" article="a" name="moon flower">
-		<attribute key="weight" value="80"/>
+		<attribute key="weight" value="10"/>
 	</item>
 	<item id="2742" article="a" name="white flower"/>
 	<item id="2743" article="a" name="heaven blossom"/>
@@ -8885,9 +8882,9 @@
 	<item id="4151" name="weeds"/>
 	<item fromid="4152" toid="4154" article="a" name="meadow star"/>
 	<item id="4155" article="a" name="tulip"/>
-	<item id="4156" article="a" name="white flower"/>
-	<item id="4157" name="white flowers"/>
-	<item id="4158" name="white flowers"/>
+	<item id="4156" article="a" name="dew kisser flower"/>
+	<item id="4157" name="dew kisser flowers"/>
+	<item id="4158" name="dew kisser flowers"/>
 	<item id="4159" article="a" name="velvet petal"/>
 	<item id="4160" article="a" name="velvet petal"/>
 	<item id="4161" article="a" name="velvet petal"/>
@@ -14199,19 +14196,7 @@
 	</item>
 	<item id="6474" name="planks"/>
 	<item id="6475" name="planks"/>
-	<item id="6476" name="gravel"/>
-	<item id="6477" name="gravel"/>
-	<item id="6478" name="gravel"/>
-	<item id="6479" name="gravel"/>
-	<item id="6480" name="gravel"/>
-	<item id="6481" name="gravel"/>
-	<item id="6482" name="gravel"/>
-	<item id="6483" name="gravel"/>
-	<item id="6484" name="gravel"/>
-	<item id="6485" name="gravel"/>
-	<item id="6486" name="gravel"/>
-	<item id="6487" name="gravel"/>
-	<item id="6488" name="gravel"/>
+	<item fromid="6476" toid="6488" name="debris"/>
 	<item id="6489" article="a" name="christmas branch">
 		<attribute key="weight" value="1800"/>
 	</item>
