@@ -41,6 +41,7 @@ ItemType::ItemType()
 	useable	= false;
 	moveable = true;
 	alwaysOnTop = false;
+	lookThrough = false;
 	alwaysOnTopOrder = 0;
 	pickupable = rotable = false;
 	rotateTo = 0;

@@ -129,7 +129,8 @@ enum itemflags_t
 	FLAG_CANNOTDECAY = 1 << 19,
 	FLAG_ALLOWDISTREAD = 1 << 20,
 	FLAG_UNUSED = 1 << 21,
-	FLAG_CLIENTCHARGES = 1 << 22
+	FLAG_CLIENTCHARGES = 1 << 22,
+	FLAG_LOOKTHROUGH = 1 << 23
 };
 
 #pragma pack(1)

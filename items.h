@@ -110,7 +110,7 @@ class ItemType
 
 		bool stopTime, showCount, clientCharges, stackable, showDuration, showCharges, showAttributes,
 			allowDistRead, canReadText, canWriteText, forceSerialize, isVertical, isHorizontal, isHangable,
-			useable, moveable, pickupable, rotable, replaceable,
+			useable, moveable, pickupable, rotable, replaceable, lookThrough,
 			floorChangeDown, floorChangeNorth, floorChangeSouth, floorChangeEast, floorChangeWest,
 			hasHeight, blockSolid, blockPickupable, blockProjectile, blockPathFind, allowPickupable, alwaysOnTop;
 
