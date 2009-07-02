@@ -545,7 +545,7 @@ ServiceManager* services)
 					std::cout << ", build: " << VERSION_BUILD << ", timestamp: " << VERSION_TIMESTAMP << "." << std::endl;
 					std::cout << "> Latest version information - version: " << version << ", patch: " << patch;
 					std::cout << ", build: " << build << ", timestamp: " << timestamp << "." << std::endl;
-					if(g_config.getBool(ConfigManager::CONFIM_OUTDATED_VERSION))
+					if(g_config.getBool(ConfigManager::CONFIM_OUTDATED_VERSION) && version.find("_SVN") == std::string::npos)
 					{
 						#ifndef __CONSOLE__
 						if(MessageBox(GUI::getInstance()->m_mainWindow, "Continue?", "Outdated software", MB_YESNO) == IDNO)
