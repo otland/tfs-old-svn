@@ -4,7 +4,7 @@ CREATE TABLE "server_config" (
 	UNIQUE ("config")
 );
 
-INSERT INTO "server_config" VALUES ('db_version', 19);
+INSERT INTO "server_config" VALUES ('db_version', 20);
 
 CREATE TABLE "server_motd" (
 	"id" INTEGER NOT NULL,
@@ -84,7 +84,8 @@ CREATE TABLE "players" (
 	"lastlogin" INTEGER NOT NULL DEFAULT 0,
 	"lastip" INTEGER NOT NULL DEFAULT 0,
 	"save" BOOLEAN NOT NULL DEFAULT 1,
-	"redskulltime" INTEGER NOT NULL DEFAULT 0,
+	"skull" INTEGER NOT NULL DEFAULT 0,
+	"skulltime" INTEGER NOT NULL DEFAULT 0,
 	"rank_id" INTEGER NOT NULL,
 	"guildnick" VARCHAR(255) NOT NULL DEFAULT '',
 	"lastlogout" INTEGER NOT NULL DEFAULT 0,
@@ -107,7 +108,7 @@ CREATE TABLE "players" (
 	FOREIGN KEY ("account_id") REFERENCES "accounts" ("id")
 );
 
-INSERT INTO "players" VALUES (1, 'Account Manager', 0, 1, 1, 1, 0, 150, 150, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 50, 50, 7, '', 400, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 201660000, 0, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, '');
+INSERT INTO "players" VALUES (1, 'Account Manager', 0, 1, 1, 1, 0, 150, 150, 0, 0, 0, 0, 0, 110, 0, 0, 0, 0, 0, 0, 0, 50, 50, 7, '', 400, 0, 0, 0, 0, 0, 0, 0, '', 0, 0, 0, 201660000, 0, 100, 100, 100, 100, 100, 0, 0, 0, 0, 0, '');
 
 CREATE TABLE "global_storage" (
 	"key" INTEGER NOT NULL,

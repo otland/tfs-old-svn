@@ -74,7 +74,7 @@ Player::Player(const std::string& _name, ProtocolGame *p):
 	promotionLevel = walkTaskEvent = actionTaskEvent = nextStepEvent = bloodHitCount = shieldBlockCount = 0;
 	lastAttack = idleTime = marriage = blessings = balance = premiumDays = mana = manaMax = manaSpent = 0;
 	soul = guildId = guildLevel = levelPercent = magLevelPercent = magLevel = experience = damageImmunities = 0;
-	conditionImmunities = conditionSuppressions = groupId = vocation_id = managerNumber2 = town = redSkullEnd = 0;
+	conditionImmunities = conditionSuppressions = groupId = vocation_id = managerNumber2 = town = skullEnd = 0;
 	lastLoginSaved = lastLogout = lastIP = npings = internalPing = messageTicks = messageBuffer = nextAction = 0;
 	editListId = maxWriteLen = windowTextId = 0;
 
@@ -3831,7 +3831,7 @@ void Player::addAttacked(const Player* attacked)
 		attackedSet.insert(attackedId);
 }
 
-void Player::setRedSkullEnd(time_t _time, bool login)
+void Player::setSkullEnd(time_t _time, bool login, Skulls_t _skull)
 {
 	if(g_game.getWorldType() == WORLD_TYPE_PVP_ENFORCED)
 		return;
@@ -3840,9 +3840,9 @@ void Player::setRedSkullEnd(time_t _time, bool login)
 	if(_time > time(NULL))
 	{
 		requireUpdate = true;
-		setSkull(SKULL_RED);
+		setSkull(_skull);
 	}
-	else if(skull == SKULL_RED)
+	else if(skull == _skull)
 	{
 		requireUpdate = true;
 		setSkull(SKULL_NONE);
@@ -3851,7 +3851,7 @@ void Player::setRedSkullEnd(time_t _time, bool login)
 
 	if(requireUpdate)
 	{
-		redSkullEnd = _time;
+		skullEnd = _time;
 		if(!login)
 			g_game.updateCreatureSkull(this);
 	}
@@ -3889,36 +3889,48 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 	uint32_t d = g_config.getNumber(ConfigManager::RED_DAILY_LIMIT), w = g_config.getNumber(
 		ConfigManager::RED_WEEKLY_LIMIT), m = g_config.getNumber(ConfigManager::RED_MONTHLY_LIMIT);
 	if(skull < SKULL_RED && ((d > 0 && tc >= d) || (w > 0 && wc >= w) || (m > 0 && mc >= m)))
-		setRedSkullEnd(now + g_config.getNumber(ConfigManager::RED_SKULL_LENGTH), false);
+		setSkullEnd(now + g_config.getNumber(ConfigManager::RED_SKULL_LENGTH), false, SKULL_RED);
 
-	d += g_config.getNumber(ConfigManager::BAN_DAILY_LIMIT);
-	w += g_config.getNumber(ConfigManager::BAN_WEEKLY_LIMIT);
-	m += g_config.getNumber(ConfigManager::BAN_MONTHLY_LIMIT);
-	if((d <= 0 || tc < d) && (w <= 0 || wc < w) && (m <= 0 || mc < m))
-		return true;
+	if(!g_config.getNumber(ConfigManager::USE_BLACK_SKULL))
+	{
+		d += g_config.getNumber(ConfigManager::BAN_DAILY_LIMIT);
+		w += g_config.getNumber(ConfigManager::BAN_WEEKLY_LIMIT);
+		m += g_config.getNumber(ConfigManager::BAN_MONTHLY_LIMIT);
+		if((d <= 0 || tc < d) && (w <= 0 || wc < w) && (m <= 0 || mc < m))
+			return true;
 
-	Account tmp = IOLoginData::getInstance()->loadAccount(accountId, true);
-	tmp.warnings++;
+		Account tmp = IOLoginData::getInstance()->loadAccount(accountId, true);
+		tmp.warnings++;
 
-	bool success = false;
-	if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
-		success = IOBan::getInstance()->addDeletion(tmp.number, 20, ACTION_DELETION, "Unjustified player killing.", 0);
-	else if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
-		success = IOBan::getInstance()->addBanishment(tmp.number, (now + g_config.getNumber(
-			ConfigManager::FINALBAN_LENGTH)), 20, ACTION_BANFINAL, "Unjustified player killing.", 0);
+		bool success = false;
+		if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
+			success = IOBan::getInstance()->addDeletion(tmp.number, 20, ACTION_DELETION, "Unjustified player killing.", 0);
+		else if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
+			success = IOBan::getInstance()->addBanishment(tmp.number, (now + g_config.getNumber(
+				ConfigManager::FINALBAN_LENGTH)), 20, ACTION_BANFINAL, "Unjustified player killing.", 0);
+		else
+			success = IOBan::getInstance()->addBanishment(tmp.number, (now + g_config.getNumber(
+				ConfigManager::BAN_LENGTH)), 20, ACTION_BANISHMENT, "Unjustified player killing.", 0);
+
+		if(!success)
+			return true;
+
+		IOLoginData::getInstance()->saveAccount(tmp);
+		sendTextMessage(MSG_INFO_DESCR, "You have been banished.");
+		g_game.addMagicEffect(getPosition(), NM_ME_MAGIC_POISON);
+
+		Scheduler::getScheduler().addEvent(createSchedulerTask(1000, boost::bind(
+			&Game::kickPlayer, &g_game, getID(), false)));
+	}
 	else
-		success = IOBan::getInstance()->addBanishment(tmp.number, (now + g_config.getNumber(
-			ConfigManager::BAN_LENGTH)), 20, ACTION_BANISHMENT, "Unjustified player killing.", 0);
+	{
+		d += g_config.getNumber(ConfigManager::BLACK_DAILY_LIMIT);
+		w += g_config.getNumber(ConfigManager::BLACK_WEEKLY_LIMIT);
+		m += g_config.getNumber(ConfigManager::BLACK_MONTHLY_LIMIT);
+		if(skull < SKULL_BLACK && ((d > 0 && tc >= d) || (w > 0 && wc >= w) || (m > 0 && mc >= m)))
+			setSkullEnd(now + g_config.getNumber(ConfigManager::BLACK_SKULL_LENGTH), false, SKULL_BLACK);
+	}
 
-	if(!success)
-		return true;
-
-	IOLoginData::getInstance()->saveAccount(tmp);
-	sendTextMessage(MSG_INFO_DESCR, "You have been banished.");
-
-	g_game.addMagicEffect(getPosition(), NM_ME_MAGIC_POISON);
-	Scheduler::getScheduler().addEvent(createSchedulerTask(1000, boost::bind(
-		&Game::kickPlayer, &g_game, getID(), false)));
 	return true;
 }
 

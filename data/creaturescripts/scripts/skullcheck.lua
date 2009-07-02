@@ -1,6 +1,6 @@
 function onThink(cid, interval)
-	local redSkull = getPlayerRedSkullEnd(cid)
-	if(redSkull > 0 and getCreatureSkull(cid) == SKULL_RED and os.time() > redSkull and not getCreatureCondition(cid, CONDITION_INFIGHT)) then
-		doPlayerSetRedSkullEnd(cid, 0)
+	local skull, skullEnd = getCreatureSkull(cid), getPlayerRedSkullEnd(cid)
+	if(skullEnd > 0 and skull > SKULL_WHITE and os.time() > skullEnd and not getCreatureCondition(cid, CONDITION_INFIGHT)) then
+		doPlayerSetRedSkullEnd(cid, 0, skull)
 	end
 end

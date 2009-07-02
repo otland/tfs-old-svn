@@ -476,8 +476,8 @@ class Player : public Creature, public Cylinder
 		void addAttacked(const Player* attacked);
 		void clearAttacked() {attackedSet.clear();}
 
-		time_t getRedSkullEnd() const {return redSkullEnd;}
-		void setRedSkullEnd(time_t _time, bool login);
+		time_t getSkullEnd() const {return skullEnd;}
+		void setSkullEnd(time_t _time, bool login, Skulls_t _skull);
 
 		const OutfitListType& getPlayerOutfits();
 		void addOutfit(uint32_t _looktype, uint32_t _addons);
@@ -829,7 +829,7 @@ class Player : public Creature, public Cylinder
 		uint32_t promotionLevel;
 		uint32_t town;
 
-		time_t redSkullEnd;
+		time_t skullEnd;
 		time_t lastLoginSaved;
 		time_t lastLogout;
 		int64_t lastLogin;

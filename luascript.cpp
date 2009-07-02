@@ -2102,11 +2102,11 @@ void LuaScriptInterface::registerFunctions()
 	//doCreatureSetSkullType(cid, skull)
 	lua_register(m_luaState, "doCreatureSetSkullType", LuaScriptInterface::luaDoCreatureSetSkullType);
 
-	//getPlayerRedSkullEnd(cid)
-	lua_register(m_luaState, "getPlayerRedSkullEnd", LuaScriptInterface::luaGetPlayerRedSkullEnd);
+	//getPlayerSkullEnd(cid)
+	lua_register(m_luaState, "getPlayerSkullEnd", LuaScriptInterface::luaGetPlayerSkullEnd);
 
-	//doPlayerSetRedSkullEnd(cid, time)
-	lua_register(m_luaState, "doPlayerSetRedSkullEnd", LuaScriptInterface::luaDoPlayerSetRedSkullEnd);
+	//doPlayerSetSkullEnd(cid, time, type)
+	lua_register(m_luaState, "doPlayerSetSkullEnd", LuaScriptInterface::luaDoPlayerSetSkullEnd);
 
 	//getPlayerBalance(cid)
 	lua_register(m_luaState, "getPlayerBalance", LuaScriptInterface::luaGetPlayerBalance);
@@ -2529,8 +2529,8 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 		case PlayerInfoIp:
 			value = player->getIP();
 			break;
-		case PlayerInfoRedSkullEnd:
-			value = player->getRedSkullEnd();
+		case PlayerInfoSkullEnd:
+			value = player->getSkullEnd();
 			break;
 		case PlayerInfoOutfitWindow:
 			player->sendOutfitWindow();
@@ -2722,9 +2722,9 @@ int32_t LuaScriptInterface::luaGetPlayerIp(lua_State* L)
 	return internalGetPlayerInfo(L, PlayerInfoIp);
 }
 
-int32_t LuaScriptInterface::luaGetPlayerRedSkullEnd(lua_State* L)
+int32_t LuaScriptInterface::luaGetPlayerSkullEnd(lua_State* L)
 {
-	return internalGetPlayerInfo(L, PlayerInfoRedSkullEnd);
+	return internalGetPlayerInfo(L, PlayerInfoSkullEnd);
 }
 
 int32_t LuaScriptInterface::luaDoPlayerSendOutfitWindow(lua_State* L)
@@ -8055,14 +8055,16 @@ int32_t LuaScriptInterface::luaDoCreatureSetSkullType(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoPlayerSetRedSkullEnd(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerSetSkullEnd(lua_State* L)
 {
-	//doPlayerSetRedSkullEnd(cid, time)
+	//doPlayerSetSkullEnd(cid, time, type)
+	Skulls_t _skull = (Skulls_t)popNumber(L);
 	time_t _time = (time_t)std::max((int64_t)0, popNumber(L));
+
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		player->setRedSkullEnd(_time, false);
+		player->setSkullEnd(_time, false, _skull);
 		lua_pushboolean(L, true);
 	}
 	else

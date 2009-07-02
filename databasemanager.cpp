@@ -949,6 +949,46 @@ uint32_t DatabaseManager::updateDatabase()
 			return 19;
 		}
 
+		case 19:
+		{
+			std::cout << "> Updating database to version: 20..." << std::endl;
+			switch(db->getDatabaseEngine())
+			{
+				case DATABASE_ENGINE_MYSQL:
+				{
+					std::string queryList[] = {
+						"ALTER TABLE `players` CHANGE `redskulltime` `skulltime` INT NOT NULL DEFAULT 0;",
+						"ALTER TABLE `players` ADD `skull` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `save`;"
+					};
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+						db->executeQuery(queryList[i]);
+
+					break;
+				}
+
+				case DATABASE_ENGINE_SQLITE:
+				{
+					std::string queryList[] = {
+						"ALTER TABLE `players` ADD `skulltime` INTEGER NOT NULL DEFAULT 0;",
+						"ALTER TABLE `players` ADD `skull` INTEGER NOT NULL DEFAULT 0;",
+						"UPDATE `players` SET `skulltime` = `redskulltime`, `redskulltime` = 0;"
+					};
+					for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+						db->executeQuery(queryList[i]);
+
+					break;
+				}
+
+				default:
+					//TODO
+					break;
+			}
+
+
+			registerDatabaseConfig("db_version", 20);
+			return 20;
+		}
+
 		default:
 			break;
 	}

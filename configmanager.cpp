@@ -184,6 +184,7 @@ bool ConfigManager::load()
 	m_confBool[HOUSE_RENTASPRICE] = getGlobalBool("houseRentAsPrice", "no");
 	m_confBool[HOUSE_PRICEASRENT] = getGlobalBool("housePriceAsRent", "no");
 	m_confNumber[RED_SKULL_LENGTH] = getGlobalNumber("redSkullLength", 30 * 24 * 60 * 60);
+	m_confNumber[BLACK_SKULL_LENGTH] = getGlobalNumber("blackSkullLength", 45 * 24 * 60 * 60);
 	m_confNumber[MAX_VIOLATIONCOMMENT_SIZE] = getGlobalNumber("maxViolationCommentSize", 60);
 	m_confNumber[NOTATIONS_TO_BAN] = getGlobalNumber("notationsToBan", 3);
 	m_confNumber[WARNINGS_TO_FINALBAN] = getGlobalNumber("warningsToFinalBan", 4);
@@ -255,6 +256,9 @@ bool ConfigManager::load()
 	m_confNumber[RED_DAILY_LIMIT] = getGlobalNumber("dailyFragsToRedSkull", 3);
 	m_confNumber[RED_WEEKLY_LIMIT] = getGlobalNumber("weeklyFragsToRedSkull", 5);
 	m_confNumber[RED_MONTHLY_LIMIT] = getGlobalNumber("monthlyFragsToRedSkull", 10);
+	m_confNumber[BLACK_DAILY_LIMIT] = getGlobalNumber("dailyFragsToBlackSkull", m_confNumber[RED_DAILY_LIMIT]);
+	m_confNumber[BLACK_WEEKLY_LIMIT] = getGlobalNumber("weeklyFragsToBlackSkull", m_confNumber[RED_WEEKLY_LIMIT]);
+	m_confNumber[BLACK_MONTHLY_LIMIT] = getGlobalNumber("monthlyFragsToBlackSkull", m_confNumber[RED_MONTHLY_LIMIT]);
 	m_confNumber[BAN_DAILY_LIMIT] = getGlobalNumber("dailyFragsToBanishment", m_confNumber[RED_DAILY_LIMIT]);
 	m_confNumber[BAN_WEEKLY_LIMIT] = getGlobalNumber("weeklyFragsToBanishment", m_confNumber[RED_WEEKLY_LIMIT]);
 	m_confNumber[BAN_MONTHLY_LIMIT] = getGlobalNumber("monthlyFragsToBanishment", m_confNumber[RED_MONTHLY_LIMIT]);
@@ -268,6 +272,7 @@ bool ConfigManager::load()
 	m_confNumber[ITEMLIMIT_HOUSETILE] = getGlobalNumber("maxItemsPerHouseTile", 0);
 	m_confString[MAILBOX_DISABLED_TOWNS] = getGlobalString("mailboxDisabledTowns", "-1");
 	m_confNumber[SQUARE_COLOR] = getGlobalNumber("squareColor", 0);
+	m_confBool[USE_BLACK_SKULL] = getGlobalBool("useBlackSkull", "no");
 
 	m_loaded = true;
 	return true;
