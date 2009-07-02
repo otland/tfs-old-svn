@@ -204,13 +204,13 @@ class Tile : public Cylinder
 
 		ZoneType_t getZone() const
 		{
-			if(tile->hasFlag(TILESTATE_PROTECTIONZONE))
+			if(hasFlag(TILESTATE_PROTECTIONZONE))
 				return ZONE_PROTECTION;
 
-			if(tile->hasFlag(TILESTATE_NOPVPZONE))
+			if(hasFlag(TILESTATE_NOPVPZONE))
 				return ZONE_NOPVP;
 
-			if(tile->hasFlag(TILESTATE_PVPZONE))
+			if(hasFlag(TILESTATE_PVPZONE))
 				return ZONE_PVP;
 
 			return ZONE_NORMAL;
