@@ -3878,7 +3878,7 @@ void Game::removeCreatureCheck(Creature* creature)
 	if(creature->checkCreatureVectorIndex == -1) //not in any vector
 		return;
 
-	creature->creatureCheck = false;
+	creature->checked = false;
 }
 
 void Game::checkCreatures()
