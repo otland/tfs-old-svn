@@ -37,7 +37,7 @@ class Party
 
 		bool passLeadership(Player* player);
 		void disband();
-		bool disband() {return (memberList.empty() && inviteList.empty());}
+		bool canDisband() {return memberList.empty() && inviteList.empty();}
 
 		bool invitePlayer(Player* player);
 		void revokeInvitation(Player* player);

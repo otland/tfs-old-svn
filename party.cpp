@@ -112,7 +112,7 @@ bool Party::leave(Player* player)
 	sprintf(buffer, "%s has left the party.", player->getName().c_str());
 
 	broadcastMessage(MSG_INFO_DESCR, buffer);
-	if(missingLeader || disband())
+	if(missingLeader || canDisband())
 		disband();
 
 	return true;
@@ -182,7 +182,7 @@ bool Party::removeInvite(Player* player)
 	player->sendPlayerPartyIcons(getLeader());
 
 	player->removePartyInvitation(this);
-	if(disband())
+	if(canDisband())
 		disband();
 
 	return true;
