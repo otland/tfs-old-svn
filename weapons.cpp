@@ -348,7 +348,7 @@ bool Weapon::useFist(Player* player, Creature* target)
 	if(random_range(1, 100) <= g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE))
 	{
 		maxDamage = std::pow(maxDamage, g_config.getDouble(ConfigManager::CRITICAL_HIT_MUL));
-		player->sendCriticalHit();
+		player->sendCritical();
 	}
 
 	Vocation* vocation = player->getVocation();
@@ -642,7 +642,7 @@ int32_t WeaponMelee::getWeaponDamage(const Player* player, const Creature* targe
 	if(random_range(1, 100) <= g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE))
 	{
 		maxValue = std::pow(maxValue, g_config.getDouble(ConfigManager::CRITICAL_HIT_MUL));
-		player->sendCriticalHit();
+		player->sendCritical();
 	}
 
 	Vocation* vocation = player->getVocation();
@@ -665,7 +665,7 @@ int32_t WeaponMelee::getElementDamage(const Player* player, const Item* item) co
 	if(random_range(1, 100) <= g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE))
 	{
 		maxValue = std::pow(maxValue, g_config.getDouble(ConfigManager::CRITICAL_HIT_MUL));
-		player->sendCriticalHit();
+		player->sendCritical();
 	}
 
 	Vocation* vocation = player->getVocation();
@@ -953,7 +953,7 @@ int32_t WeaponDistance::getWeaponDamage(const Player* player, const Creature* ta
 	if(random_range(1, 100) <= g_config.getNumber(ConfigManager::CRITICAL_HIT_CHANCE))
 	{
 		maxValue = std::pow(maxValue, g_config.getDouble(ConfigManager::CRITICAL_HIT_MUL));
-		player->sendCriticalHit();
+		player->sendCritical();
 	}
 
 	Vocation* vocation = player->getVocation();
@@ -1042,7 +1042,7 @@ int32_t WeaponWand::getWeaponDamage(const Player* player, const Creature* target
 	int32_t maxValue = (int32_t)(maxChange * multiplier);
 	if(maxDamage)
 	{
-		player->sendCriticalHit();
+		player->sendCritical();
 		return -maxValue;
 	}
 
