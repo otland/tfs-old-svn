@@ -888,7 +888,7 @@ void ProtocolGame::GetFloorDescription(NetworkMessage_ptr msg, int32_t x, int32_
 	{
 		for(int32_t ny = 0; ny < height; ny++)
 		{
-			if(!(tile = g_game.getTile(Position(x + nx + offset, y + ny + offset, z))))
+			if((tile = g_game.getTile(Position(x + nx + offset, y + ny + offset, z))))
 			{
 				if(skip >= 0)
 				{
