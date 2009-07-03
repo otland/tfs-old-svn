@@ -3864,18 +3864,19 @@ void Game::checkCreatureAttack(uint32_t creatureId)
 
 void Game::addCreatureCheck(Creature* creature)
 {
-	creature->checked = true;
-	if(creature->checkCreatureVectorIndex >= 0) //already in a vector, or about to be added
+	if(creature->checkVector >= 0) //already in a vector, or about to be added
 		return;
 
 	toAddCheckCreatureVector.push_back(creature);
-	creature->checkCreatureVectorIndex = random_range(0, EVENT_CREATURECOUNT - 1);
+	creature->checkVector = random_range(0, EVENT_CREATURECOUNT - 1);
+
 	creature->useThing2();
+	creature->checked = true;
 }
 
 void Game::removeCreatureCheck(Creature* creature)
 {
-	if(creature->checkCreatureVectorIndex == -1) //not in any vector
+	if(creature->checkVector == -1) //not in any vector
 		return;
 
 	creature->checked = false;
@@ -3894,12 +3895,12 @@ void Game::checkCreatures()
 		if(!creature->checked)
 		{
 			FreeThing(creature);
-			creature->checkCreatureVectorIndex = -1;
+			creature->checkVector = -1;
 			it = toAddCheckCreatureVector.erase(it);
 		}
 		else
 		{
-			checkCreatureVectors[creature->checkCreatureVectorIndex].push_back(creature);
+			checkCreatureVectors[creature->checkVector].push_back(creature);
 			++it;
 		}
 	}
@@ -3923,7 +3924,7 @@ void Game::checkCreatures()
 		else
 		{
 			FreeThing(creature);
-			creature->checkCreatureVectorIndex = -1;
+			creature->checkVector = -1;
 			it = checkCreatureVector.erase(it);
 		}
 	}

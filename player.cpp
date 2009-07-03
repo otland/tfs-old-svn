@@ -3560,16 +3560,14 @@ void Player::onPlacedCreature()
 void Player::onAttackedCreatureDrainHealth(Creature* target, int32_t points)
 {
 	Creature::onAttackedCreatureDrainHealth(target, points);
-	if(party && target && !target->getPlayer() && (!target->getMaster() || !target->getMaster()->getPlayer()))
-	{
-		Monster* monster = target->getMonster();
-		if(monster && monster->isHostile()) //We have fulfilled a requirement for shared experience
+	if(party && target && (!target->getMaster() || !target->getMaster()->getPlayer())
+		&& target->getMonster() && target->getMonster()->isHostile()) //We have fulfilled a requirement for shared experience
 			getParty()->addPlayerDamageMonster(this, points);
 	}
 
 	char buffer[100];
 	sprintf(buffer, "You deal %d damage to %s.", points, target->getName().c_str());
-	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
+	sendTextMessage(MSG_STATUS_DEFAULT, buffer);
 }
 
 void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)
@@ -4807,7 +4805,7 @@ void Player::sendLoot(const std::string& monster, const ItemVector& items) const
 		s << "none";
 
 	s << ".";
-	sendTextMessage(MSG_EVENT_DEFAULT, s.str().c_str());
+	sendTextMessage(MSG_INFO_DESCR, s.str().c_str());
 }
 
 void Player::sendCritical() const

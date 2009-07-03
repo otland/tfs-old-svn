@@ -40,8 +40,7 @@ extern Game g_game;
 extern ConfigManager g_config;
 extern CreatureEvents* g_creatureEvents;
 
-Creature::Creature():
-	isInternalRemoved(false)
+Creature::Creature()
 {
 	id = 0;
 	_tile = NULL;
@@ -71,6 +70,7 @@ Creature::Creature():
 
 	followCreature = NULL;
 	hasFollowPath = false;
+	removed = false;
 	eventWalk = 0;
 	forceUpdateFollowPath = false;
 	isMapLoaded = false;
@@ -84,7 +84,7 @@ Creature::Creature():
 	blockCount = 0;
 	blockTicks = 0;
 	walkUpdateTicks = 0;
-	checkCreatureVectorIndex = -1;
+	checkVector = -1;
 
 	scriptEventsBitField = 0;
 	onIdleStatus();

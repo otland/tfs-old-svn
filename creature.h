@@ -172,7 +172,7 @@ class Creature : public AutoID, virtual public Thing
 			if(this->id == 0)
 				this->id = auto_id | this->idRange();
 		}
-		void setRemoved() {isInternalRemoved = true;}
+		void setRemoved() {removed = true;}
 		void getPathToFollowCreature();
 
 		virtual uint32_t idRange() = 0;
@@ -200,7 +200,7 @@ class Creature : public AutoID, virtual public Thing
 
 		virtual int32_t getThrowRange() const {return 1;}
 		virtual bool isPushable() const {return (getWalkDelay() <= 0);}
-		virtual bool isRemoved() const {return isInternalRemoved;}
+		virtual bool isRemoved() const {return removed;}
 		virtual bool canSeeInvisibility() const {return false;}
 
 		int32_t getWalkDelay(Direction dir) const;
@@ -413,12 +413,12 @@ class Creature : public AutoID, virtual public Thing
 
 		Tile* _tile;
 		uint32_t id;
-		bool isInternalRemoved;
+		bool removed;
 		bool isMapLoaded;
 		bool isUpdatingPath;
 		bool checked;
 
-		int32_t checkCreatureVectorIndex;
+		int32_t checkVector;
 		int32_t health, healthMax;
 		int32_t mana, manaMax;
 
