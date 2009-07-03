@@ -3562,8 +3562,7 @@ void Player::onAttackedCreatureDrainHealth(Creature* target, int32_t points)
 	Creature::onAttackedCreatureDrainHealth(target, points);
 	if(party && target && (!target->getMaster() || !target->getMaster()->getPlayer())
 		&& target->getMonster() && target->getMonster()->isHostile()) //We have fulfilled a requirement for shared experience
-			getParty()->addPlayerDamageMonster(this, points);
-	}
+		getParty()->addPlayerDamageMonster(this, points);
 
 	char buffer[100];
 	sprintf(buffer, "You deal %d damage to %s.", points, target->getName().c_str());
