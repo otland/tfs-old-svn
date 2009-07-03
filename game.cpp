@@ -3864,12 +3864,12 @@ void Game::checkCreatureAttack(uint32_t creatureId)
 
 void Game::addCreatureCheck(Creature* creature)
 {
-	//creature->checked = true;
+	creature->checked = true;
 	if(creature->checkVector >= 0) //already in a vector, or about to be added
 		return;
 
 	toAddCheckCreatureVector.push_back(creature);
-	creature->checkVector = 0;//random_range(0, EVENT_CREATURECOUNT - 1);
+	creature->checkVector = random_range(0, EVENT_CREATURECOUNT - 1);
 	creature->useThing2();
 }
 
@@ -3878,45 +3878,41 @@ void Game::removeCreatureCheck(Creature* creature)
 	if(creature->checkVector == -1) //not in any vector
 		return;
 
-	creature->checkVector = -1;//creature->checked = false;
+	creature->checked = false;
 }
 
 void Game::checkCreatures()
 {
-	checkCreatureLastIndex++;
-	int32_t nextVector = checkCreatureLastIndex % EVENT_CREATURECOUNT;
 	Scheduler::getScheduler().addEvent(createSchedulerTask(
 		EVENT_CHECK_CREATURE_INTERVAL, boost::bind(&Game::checkCreatures, this)));
+	checkCreatureLastIndex++;
+	if(checkCreatureLastIndex == EVENT_CREATURECOUNT)
+		checkCreatureLastIndex = 0;
 
 	Creature* creature = NULL;
 	std::vector<Creature*>::iterator it;
 	for(it = toAddCheckCreatureVector.begin(); it != toAddCheckCreatureVector.end();) //add any new creatures
 	{
 		creature = (*it);
-		if(creature->checkVector != -1)//if(creature->checked)
+		if(creature->checked)
 		{
-			//checkCreatureVectors[creature->checkVector].push_back(creature);
-			checkCreatureVectors[nextVector].push_back(creature);
-			creature->checkVector = nextVector + 1;
+			checkCreatureVectors[creature->checkVector].push_back(creature);
 			++it;
 		}
 		else
 		{
-			//creature->checkVector = -1;
+			creature->checkVector = -1;
 			FreeThing(creature);
 			it = toAddCheckCreatureVector.erase(it);
 		}
 	}
 
 	toAddCheckCreatureVector.clear();
-	if(checkCreatureLastIndex == EVENT_CREATURECOUNT)
-		checkCreatureLastIndex = 0;
-
 	std::vector<Creature*>& checkCreatureVector = checkCreatureVectors[checkCreatureLastIndex];
 	for(it = checkCreatureVector.begin(); it != checkCreatureVector.end();)
 	{
 		creature = (*it);
-		if(creature->checkVector != -1)//if(creature->checked)
+		if(creature->checked)
 		{
 			if(creature->getHealth() > 0 || !creature->onDeath())
 				creature->onThink(EVENT_CREATURE_THINK_INTERVAL);
@@ -3925,7 +3921,7 @@ void Game::checkCreatures()
 		}
 		else
 		{
-			//creature->checkVector = -1;
+			creature->checkVector = -1;
 			FreeThing(creature);
 			it = checkCreatureVector.erase(it);
 		}
