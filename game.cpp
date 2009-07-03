@@ -3884,6 +3884,7 @@ void Game::removeCreatureCheck(Creature* creature)
 void Game::checkCreatures()
 {
 	checkCreatureLastIndex++;
+	int32_t nextVector = checkCreatureLastIndex % EVENT_CREATURECOUNT;
 	Scheduler::getScheduler().addEvent(createSchedulerTask(
 		EVENT_CHECK_CREATURE_INTERVAL, boost::bind(&Game::checkCreatures, this)));
 
@@ -3895,7 +3896,6 @@ void Game::checkCreatures()
 		if(creature->checkVector != -1)//if(creature->checked)
 		{
 			//checkCreatureVectors[creature->checkVector].push_back(creature);
-			int32_t nextVector = (checkCreatureLastIndex + 1) % EVENT_CREATURECOUNT;
 			checkCreatureVectors[nextVector].push_back(creature);
 			creature->checkVector = nextVector + 1;
 			++it;
