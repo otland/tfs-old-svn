@@ -3864,14 +3864,13 @@ void Game::checkCreatureAttack(uint32_t creatureId)
 
 void Game::addCreatureCheck(Creature* creature)
 {
+	//creature->checked = true;
 	if(creature->checkVector >= 0) //already in a vector, or about to be added
 		return;
 
 	toAddCheckCreatureVector.push_back(creature);
-	creature->checkVector = random_range(0, EVENT_CREATURECOUNT - 1);
-
+	creature->checkVector = 0;//random_range(0, EVENT_CREATURECOUNT - 1);
 	creature->useThing2();
-	creature->checked = true;
 }
 
 void Game::removeCreatureCheck(Creature* creature)
@@ -3879,7 +3878,7 @@ void Game::removeCreatureCheck(Creature* creature)
 	if(creature->checkVector == -1) //not in any vector
 		return;
 
-	creature->checked = false;
+	creature->checkVector = -1;//creature->checked = false;
 }
 
 void Game::checkCreatures()
@@ -3892,14 +3891,17 @@ void Game::checkCreatures()
 	for(it = toAddCheckCreatureVector.begin(); it != toAddCheckCreatureVector.end();) //add any new creatures
 	{
 		creature = (*it);
-		if(creature->checked)
+		if(creature->checkCreatureVectorIndex != -1)//if(creature->checked)
 		{
-			checkCreatureVectors[creature->checkVector].push_back(creature);
+			//checkCreatureVectors[creature->checkVector].push_back(creature);
+			int32_t nextVector = (checkCreatureLastIndex + 1) % EVENT_CREATURECOUNT;
+			checkCreatureVectors[nextVector].push_back(creature);
+			creature->checkCreatureVectorIndex = nextVector + 1;
 			++it;
 		}
 		else
 		{
-			creature->checkVector = -1;
+			//creature->checkVector = -1;
 			FreeThing(creature);
 			it = toAddCheckCreatureVector.erase(it);
 		}
@@ -3914,7 +3916,7 @@ void Game::checkCreatures()
 	for(it = checkCreatureVector.begin(); it != checkCreatureVector.end();)
 	{
 		creature = (*it);
-		if(creature->checked)
+		if(creature->checkCreatureVectorIndex != -1)//if(creature->checked)
 		{
 			if(creature->getHealth() > 0 || !creature->onDeath())
 				creature->onThink(EVENT_CREATURE_THINK_INTERVAL);
@@ -3923,7 +3925,7 @@ void Game::checkCreatures()
 		}
 		else
 		{
-			creature->checkVector = -1;
+			//creature->checkVector = -1;
 			FreeThing(creature);
 			it = checkCreatureVector.erase(it);
 		}
