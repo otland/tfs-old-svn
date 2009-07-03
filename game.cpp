@@ -3891,12 +3891,12 @@ void Game::checkCreatures()
 	for(it = toAddCheckCreatureVector.begin(); it != toAddCheckCreatureVector.end();) //add any new creatures
 	{
 		creature = (*it);
-		if(creature->checkCreatureVectorIndex != -1)//if(creature->checked)
+		if(creature->checkVector != -1)//if(creature->checked)
 		{
 			//checkCreatureVectors[creature->checkVector].push_back(creature);
 			int32_t nextVector = (checkCreatureLastIndex + 1) % EVENT_CREATURECOUNT;
 			checkCreatureVectors[nextVector].push_back(creature);
-			creature->checkCreatureVectorIndex = nextVector + 1;
+			creature->checkVector = nextVector + 1;
 			++it;
 		}
 		else
@@ -3916,7 +3916,7 @@ void Game::checkCreatures()
 	for(it = checkCreatureVector.begin(); it != checkCreatureVector.end();)
 	{
 		creature = (*it);
-		if(creature->checkCreatureVectorIndex != -1)//if(creature->checked)
+		if(creature->checkVector != -1)//if(creature->checked)
 		{
 			if(creature->getHealth() > 0 || !creature->onDeath())
 				creature->onThink(EVENT_CREATURE_THINK_INTERVAL);
