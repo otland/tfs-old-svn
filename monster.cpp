@@ -1096,6 +1096,7 @@ bool Monster::onDeath()
 	if(!Creature::onDeath())
 		return false;
 
+	setIdle(true);
 	setAttackedCreature(NULL);
 	for(CreatureList::iterator cit = summons.begin(); cit != summons.end(); ++cit)
 	{
@@ -1113,8 +1114,6 @@ bool Monster::onDeath()
 
 	clearTargetList();
 	clearFriendList();
-
-	setIdle(true);
 	return true;
 }
 

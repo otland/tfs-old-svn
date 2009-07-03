@@ -3883,11 +3883,12 @@ void Game::removeCreatureCheck(Creature* creature)
 
 void Game::checkCreatures()
 {
-	Creature* creature;
-	std::vector<Creature*>::iterator it;
-
+	checkCreatureLastIndex++;
 	Scheduler::getScheduler().addEvent(createSchedulerTask(
 		EVENT_CHECK_CREATURE_INTERVAL, boost::bind(&Game::checkCreatures, this)));
+
+	Creature* creature = NULL;
+	std::vector<Creature*>::iterator it;
 	for(it = toAddCheckCreatureVector.begin(); it != toAddCheckCreatureVector.end();) //add any new creatures
 	{
 		creature = (*it);
@@ -3908,7 +3909,6 @@ void Game::checkCreatures()
 	}
 
 	toAddCheckCreatureVector.clear();
-	checkCreatureLastIndex++;
 	if(checkCreatureLastIndex == EVENT_CREATURECOUNT)
 		checkCreatureLastIndex = 0;
 
