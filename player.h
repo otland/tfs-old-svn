@@ -648,7 +648,7 @@ class Player : public Creature, public Cylinder
 			{if (client) client->sendAddMarker(pos, markType, desc);}
 
 		void sendCritical() const;
-		void sendLoot() const;
+		void sendLoot(const std::string& monster, const ItemVector& items) const
 
 		void receivePing() {if(npings > 0) npings--;}
 		virtual void onThink(uint32_t interval);
