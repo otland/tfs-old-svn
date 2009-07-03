@@ -3892,16 +3892,16 @@ void Game::checkCreatures()
 	for(it = toAddCheckCreatureVector.begin(); it != toAddCheckCreatureVector.end();) //add any new creatures
 	{
 		creature = (*it);
-		if(!creature->checked)
-		{
-			FreeThing(creature);
-			creature->checkVector = -1;
-			it = toAddCheckCreatureVector.erase(it);
-		}
-		else
+		if(creature->checked)
 		{
 			checkCreatureVectors[creature->checkVector].push_back(creature);
 			++it;
+		}
+		else
+		{
+			creature->checkVector = -1;
+			FreeThing(creature);
+			it = toAddCheckCreatureVector.erase(it);
 		}
 	}
 
@@ -3923,8 +3923,8 @@ void Game::checkCreatures()
 		}
 		else
 		{
-			FreeThing(creature);
 			creature->checkVector = -1;
+			FreeThing(creature);
 			it = checkCreatureVector.erase(it);
 		}
 	}
