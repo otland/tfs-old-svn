@@ -4668,7 +4668,7 @@ bool Game::playerJoinParty(uint32_t playerId, uint32_t leaderId)
 		return false;
 
 	if(!player->getParty())
-		return leader->getParty()->joinParty(player);
+		return leader->getParty()->join(player);
 
 	player->sendTextMessage(MSG_INFO_DESCR, "You are already in a party.");
 	return false;
@@ -4698,7 +4698,7 @@ bool Game::playerPassPartyLeadership(uint32_t playerId, uint32_t newLeaderId)
 	if(!newLeader || newLeader->isRemoved() || !player->isPartner(newLeader))
 		return false;
 
-	return player->getParty()->passPartyLeadership(newLeader);
+	return player->getParty()->passLeadership(newLeader);
 }
 
 bool Game::playerLeaveParty(uint32_t playerId)
@@ -4710,7 +4710,7 @@ bool Game::playerLeaveParty(uint32_t playerId)
 	if(!player->getParty() || player->hasCondition(CONDITION_INFIGHT))
 		return false;
 
-	return player->getParty()->leaveParty(player);
+	return player->getParty()->leave(player);
 }
 
 bool Game::playerSharePartyExperience(uint32_t playerId, bool activate, uint8_t unknown)

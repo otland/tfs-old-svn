@@ -78,6 +78,7 @@ class Monster : public Creature
 		void setRaid(Raid* _raid) {raid = _raid;}
 
 		virtual void onAttackedCreatureDisappear(bool isLogout);
+		virtual void onAttackedCreatureDrainHealth(Creature* target, int32_t points);
 
 		virtual void onCreatureAppear(const Creature* creature);
 		virtual void onCreatureDisappear(const Creature* creature, bool isLogout);

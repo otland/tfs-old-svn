@@ -120,6 +120,17 @@ void Monster::onAttackedCreatureDisappear(bool isLogout)
 	extraMeleeAttack = true;
 }
 
+void Monster::onAttackedCreatureDrainHealth(Creature* target, int32_t points)
+{
+	Creature::onAttackedCreatureDrainHealth(target, points);
+	if(!master || !master->getPlayer())
+		return;
+
+	char buffer[100];
+	sprintf(buffer, "Your %s deals %d damage to %s.", mType->name.c_str(), points, target->getName().c_str());
+	master->getPlayer()->sendTextMessage(MSG_EVENT_DEFAULT, buffer);
+}
+
 void Monster::onCreatureAppear(const Creature* creature)
 {
 	Creature::onCreatureAppear(creature);

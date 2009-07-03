@@ -35,20 +35,20 @@ class Party
 		void setLeader(Player* _leader) {leader = _leader;}
 		PlayerVector getMembers() {return memberList;}
 
-		bool passPartyLeadership(Player* player);
+		bool passLeadership(Player* player);
 		void disband();
-		bool disbandParty() {return (memberList.empty() && inviteList.empty());}
+		bool disband() {return (memberList.empty() && inviteList.empty());}
 
 		bool invitePlayer(Player* player);
 		void revokeInvitation(Player* player);
 		bool removeInvite(Player* player);
-		bool joinParty(Player* player);
-		bool leaveParty(Player* player);
+		bool join(Player* player);
+		bool leave(Player* player);
 
-		void updateAllPartyIcons();
-		void updatePartyIcons(Player* player);
-		void broadcastPartyMessage(MessageClasses messageClass, const std::string& text, bool sendToInvitations = false);
-		void broadcastPartyLoot(const std::string& monster, const ItemVector& items);
+		void updateAllIcons();
+		void updateIcons(Player* player);
+		void broadcastMessage(MessageClasses messageClass, const std::string& text, bool sendToInvitations = false);
+		void broadcastLoot(const std::string& monster, const ItemVector& items);
 
 		void shareExperience(uint64_t experience);
 		bool setSharedExperience(Player* player, bool _sharedExpActive);

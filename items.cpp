@@ -243,6 +243,13 @@ int32_t Items::loadFromOtb(std::string file)
 		iType->moveable = hasBitSet(FLAG_MOVEABLE, flags);
 		iType->stackable = hasBitSet(FLAG_STACKABLE, flags);
 
+		//not longer saved in otb_version >= 3 	 
+		iType->floorChangeDown = hasBitSet(FLAG_FLOORCHANGEDOWN, flags); 	 
+		iType->floorChangeNorth = hasBitSet(FLAG_FLOORCHANGENORTH, flags); 	 
+		iType->floorChangeEast = hasBitSet(FLAG_FLOORCHANGEEAST, flags); 	 
+		iType->floorChangeSouth = hasBitSet(FLAG_FLOORCHANGESOUTH, flags); 	 
+		iType->floorChangeWest = hasBitSet(FLAG_FLOORCHANGEWEST, flags);
+
 		iType->alwaysOnTop = hasBitSet(FLAG_ALWAYSONTOP, flags);
 		iType->isVertical = hasBitSet(FLAG_VERTICAL, flags);
 		iType->isHorizontal = hasBitSet(FLAG_HORIZONTAL, flags);

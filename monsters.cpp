@@ -115,12 +115,16 @@ void MonsterType::createLoot(Container* corpse)
 
 	corpse->__startDecaying();
 	uint32_t ownerId = corpse->getCorpseOwner();
-	if(ownerId)
-	{
-		Player* owner = NULL;
-		if((owner = g_game.getPlayerByID(ownerId)) && owner->getParty())
-			owner->getParty()->broadcastPartyLoot(nameDescription, itemVector);
-	}
+	if(!ownerId)
+		return;
+
+	Player* owner = g_game.getPlayerByID(ownerId);
+	if(!owner)
+		return;
+
+	owner->sendLoot(nameDescription, itemVector);
+	if(owner->getParty())
+		owner->getParty()->broadcastLoot(nameDescription, itemVector);
 }
 
 Item* MonsterType::createLootItem(const LootBlock& lootBlock)

@@ -1473,7 +1473,7 @@ void Player::onCreatureDisappear(const Creature* creature, bool isLogout)
 
 	clearPartyInvitations();
 	if(getParty())
-		getParty()->leaveParty(this);
+		getParty()->leave(this);
 
 	g_game.cancelRuleViolation(this);
 	if(hasFlag(PlayerFlag_CanAnswerRuleViolations))
@@ -3560,12 +3560,16 @@ void Player::onPlacedCreature()
 void Player::onAttackedCreatureDrainHealth(Creature* target, int32_t points)
 {
 	Creature::onAttackedCreatureDrainHealth(target, points);
-	if(getParty() && target && !target->getPlayer() && (!target->getMaster() || !target->getMaster()->getPlayer()))
+	if(party && target && !target->getPlayer() && (!target->getMaster() || !target->getMaster()->getPlayer()))
 	{
-		Monster* tmpMonster = target->getMonster();
-		if(tmpMonster && tmpMonster->isHostile()) //We have fulfilled a requirement for shared experience
+		Monster* monster = target->getMonster();
+		if(monster && monster->isHostile()) //We have fulfilled a requirement for shared experience
 			getParty()->addPlayerDamageMonster(this, points);
 	}
+
+	char buffer[100];
+	sprintf(buffer, "You deal %d damage to %s.", points, target->getName().c_str());
+	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
 }
 
 void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)
@@ -4785,7 +4789,28 @@ bool Player::transferMoneyTo(const std::string& name, uint64_t amount)
 	return true;
 }
 
-void Player::sendCriticalHit() const
+void Player::sendLoot(const std::string& monster, const ItemVector& items) const
+{
+	std::string monster_ = asLowerCaseString(monster);
+	std::stringstream s;
+	s << "Loot of " << monster_ << ": ";
+	if(items.size())
+	{
+		for(ItemVector::const_reverse_iterator rit = items.rbegin(); rit != items.rend(); ++rit)
+		{
+			s << (*rit)->getNameDescription();
+			if((*rit) != items.front())
+				s << ", ";
+		}
+	}
+	else
+		s << "none";
+
+	s << ".";
+	sendTextMessage(MSG_EVENT_DEFAULT, s.str().c_str());
+}
+
+void Player::sendCritical() const
 {
 	if(g_config.getBool(ConfigManager::DISPLAY_CRITICAL_HIT))
 		g_game.addAnimatedText(getPosition(), TEXTCOLOR_DARKRED, "CRITICAL!");

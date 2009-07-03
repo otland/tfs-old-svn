@@ -1091,7 +1091,10 @@ uint64_t Creature::getGainedExperience(Creature* attacker, bool useMultiplier/* 
 
 void Creature::addDamagePoints(Creature* attacker, int32_t damagePoints)
 {
-	uint32_t attackerId = (attacker ? attacker->getID() : 0);
+	uint32_t attackerId = 0;
+	if(attacker)
+		attackerId = attacker->getID();
+
 	CountMap::iterator it = damageMap.find(attackerId);
 	if(it == damageMap.end())
 	{
@@ -1117,7 +1120,10 @@ void Creature::addHealPoints(Creature* caster, int32_t healthPoints)
 	if(healthPoints <= 0)
 		return;
 
-	uint32_t casterId = (caster ? caster->getID() : 0);
+	uint32_t casterId = 0;
+	if(caster)
+		casterId = caster->getID();
+
 	CountMap::iterator it = healMap.find(casterId);
 	if(it == healMap.end())
 	{

@@ -71,6 +71,8 @@ ReturnValue HouseTile::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 			if(!house->isInvited(player) && !player->hasFlag(PlayerFlag_CanEditHouses))
 				return RET_PLAYERISNOTINVITED;
 		}
+		else
+			return RET_NOTPOSSIBLE;
 	}
 	else if(thing->getItem())
 	{

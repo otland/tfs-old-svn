@@ -647,9 +647,11 @@ class Player : public Creature, public Cylinder
 		void sendAddMarker(const Position& pos, MapMarks_t markType, const std::string& desc)
 			{if (client) client->sendAddMarker(pos, markType, desc);}
 
+		void sendCritical() const;
+		void sendLoot() const;
+
 		void receivePing() {if(npings > 0) npings--;}
 		virtual void onThink(uint32_t interval);
-		void sendCriticalHit() const;
 		uint32_t getAttackSpeed();
 
 		virtual void postAddNotification(Creature* actor, Thing* thing, const Cylinder* oldParent,
