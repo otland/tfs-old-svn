@@ -1114,6 +1114,8 @@ bool Monster::onDeath()
 
 	clearTargetList();
 	clearFriendList();
+
+	g_game.removeCreature(this, false);
 	return true;
 }
 
