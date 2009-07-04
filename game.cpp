@@ -3970,7 +3970,7 @@ void Game::internalCreatureChangeOutfit(Creature* creature, const Outfit_t& outf
 	}
 }
 
-void Game::internalCreatureChangeVisible(Creature* creature, bool visible)
+void Game::internalCreatureChangeVisible(Creature* creature, Visible_t visible)
 {
 	const SpectatorVec& list = getSpectators(creature->getPosition());
 	SpectatorVec::const_iterator it;

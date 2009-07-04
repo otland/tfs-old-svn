@@ -1133,12 +1133,12 @@ bool TalkAction::ghost(Creature* creature, const std::string& cmd, const std::st
 		}
 
 		player->removeCondition(condition);
-		g_game.internalCreatureChangeVisible(creature, true);
+		g_game.internalCreatureChangeVisible(creature, VISIBLE_GHOST_APPEAR);
 	}
 	else if((condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_GAMEMASTER, -1, 0, false, GAMEMASTER_INVISIBLE)))
 	{
 		player->addCondition(condition);
-		g_game.internalCreatureChangeVisible(creature, false);
+		g_game.internalCreatureChangeVisible(creature, VISIBLE_GHOST_DISAPPEAR);
 		for(it = list.begin(); it != list.end(); ++it)
 		{
 			if((tmpPlayer = (*it)->getPlayer()) && !tmpPlayer->canSeeCreature(player))

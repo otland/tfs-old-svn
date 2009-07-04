@@ -536,7 +536,7 @@ class Game
 		void changeLight(const Creature* creature);
 		void changeSpeed(Creature* creature, int32_t varSpeedDelta);
 		void internalCreatureChangeOutfit(Creature* creature, const Outfit_t& oufit);
-		void internalCreatureChangeVisible(Creature* creature, bool visible);
+		void internalCreatureChangeVisible(Creature* creature, Visible_t visible);
 		void updateCreatureSkull(Creature* creature);
 		void sendPublicSquare(Player* sender, SquareColor_t color);
 

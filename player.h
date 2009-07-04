@@ -517,7 +517,7 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendCreatureSquare(creature, color);}
 		void sendCreatureChangeOutfit(const Creature* creature, const Outfit_t& outfit)
 			{if(client) client->sendCreatureOutfit(creature, outfit);}
-		void sendCreatureChangeVisible(const Creature* creature, bool visible);
+		void sendCreatureChangeVisible(const Creature* creature, Visible_t visible);
 		void sendCreatureLight(const Creature* creature)
 			{if(client) client->sendCreatureLight(creature);}
 		void sendCreatureShield(const Creature* creature)

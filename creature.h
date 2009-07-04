@@ -64,6 +64,15 @@ enum killflags_t
 	KILLFLAG_UNJUSTIFIED = 1 << 2
 };
 
+enum Visible_t
+{
+	VISIBLE_NONE = 0,
+	VISIBLE_APPEAR = 1,
+	VISIBLE_DISAPPEAR = 2,
+	VISIBLE_GHOST_APPEAR = 3,
+	VISIBLE_GHOST_DISAPPEAR = 4
+};
+
 struct FindPathParams
 {
 	bool fullPathSearch, clearSight, allowDiagonal, keepDistance;
@@ -364,7 +373,7 @@ class Creature : public AutoID, virtual public Thing
 
 		virtual void onCreatureChangeOutfit(const Creature* creature, const Outfit_t& outfit) {}
 		virtual void onCreatureConvinced(const Creature* convincer, const Creature* creature) {}
-		virtual void onCreatureChangeVisible(const Creature* creature, bool visible) {}
+		virtual void onCreatureChangeVisible(const Creature* creature, Visible_t visible) {}
 		virtual void onPlacedCreature() {};
 		virtual void onRemovedCreature() {};
 

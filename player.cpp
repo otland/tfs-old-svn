@@ -1275,15 +1275,16 @@ void Player::sendHouseWindow(House* house, uint32_t listId) const
 		client->sendHouseWindow(windowTextId, house, listId, text);
 }
 
-void Player::sendCreatureChangeVisible(const Creature* creature, bool visible)
+void Player::sendCreatureChangeVisible(const Creature* creature, Visible_t visible)
 {
 	if(!client)
 		return;
 
 	const Player* player = creature->getPlayer();
-	if(player == this || (!player && canSeeInvisibility()) || (player && getGhostAccess() >= player->getGhostAccess()))
+	if(player == this || (player && (visible < VISIBLE_GHOST_APPEAR || getGhostAccess() >= player->getGhostAccess()))
+		|| (!player && canSeeInvisibility()))
 		sendCreatureChangeOutfit(creature, creature->getCurrentOutfit());
-	else if(!visible)
+	else if(visible == VISIBLE_DISAPPEAR || visible == VISIBLE_GHOST_DISAPPEAR)
 		sendCreatureDisappear(creature, creature->getTile()->getClientIndexOfThing(this, creature), false);
 	else
 		sendCreatureAppear(creature);
