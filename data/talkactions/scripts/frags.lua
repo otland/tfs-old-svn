@@ -59,9 +59,9 @@ function onSay(cid, words, param, channel)
 			result = result .. "\n"
 		end
 
-		local redSkull = getPlayerRedSkullEnd(cid)
-		if(redSkull > 0) then
-			result = result .. "\nYour skull will expire at " .. os.date("%d %B %Y %X", redSkull)
+		local skullEnd = getPlayerSkullEnd(cid)
+		if(skullEnd > 0) then
+			result = result .. "\nYour " .. (getCreatureSkullType(cid) == SKULL_RED and "red" or "black") .. " skull will expire at " .. os.date("%d %B %Y %X", skullEnd)
 		end
 
 		doPlayerPopupFYI(cid, result)
@@ -71,9 +71,9 @@ function onSay(cid, words, param, channel)
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Last frag at " .. os.date("%d %B %Y %X", contents.day[1].date) .. " on level " .. contents.day[1].level .. " (" .. contents.day[1].name .. ").")
 		end
 
-		local redSkull = getPlayerRedSkullEnd(cid)
-		if(redSkull > 0) then
-			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Your skull will expire at " .. os.date("%d %B %Y %X", redSkull))
+		local skullEnd = getPlayerSkullEnd(cid)
+		if(skullEnd > 0) then
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Your " .. (getCreatureSkullType(cid) == SKULL_RED and "red" or "black") .. " skull will expire at " .. os.date("%d %B %Y %X", skullEnd))
 		end
 	end
 
