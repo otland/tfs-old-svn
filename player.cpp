@@ -3893,7 +3893,7 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 	if(skull < SKULL_RED && ((d > 0 && tc >= d) || (w > 0 && wc >= w) || (m > 0 && mc >= m)))
 		setSkullEnd(now + g_config.getNumber(ConfigManager::RED_SKULL_LENGTH), false, SKULL_RED);
 
-	if(!g_config.getNumber(ConfigManager::USE_BLACK_SKULL))
+	if(!g_config.getBool(ConfigManager::USE_BLACK_SKULL))
 	{
 		d += g_config.getNumber(ConfigManager::BAN_DAILY_LIMIT);
 		w += g_config.getNumber(ConfigManager::BAN_WEEKLY_LIMIT);
