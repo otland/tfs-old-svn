@@ -478,7 +478,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 
 	player->currentOutfit = player->defaultOutfit;
 	Skulls_t skull = SKULL_RED;
-	if(g_config.getNumber(ConfigManager::USE_BLACK_SKULL))
+	if(g_config.getBool(ConfigManager::USE_BLACK_SKULL))
 		skull = (Skulls_t)result->getDataInt("skull");
 
 	player->setSkullEnd((time_t)result->getDataInt("skulltime"), true, skull);
@@ -767,7 +767,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	if(g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
 	{
 		Skulls_t skull = SKULL_RED;
-		if(g_config.getNumber(ConfigManager::USE_BLACK_SKULL))
+		if(g_config.getBool(ConfigManager::USE_BLACK_SKULL))
 			skull = player->getSkull();
 
 		query << "`skull` = " << skull << ", ";
