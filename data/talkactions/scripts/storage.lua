@@ -6,7 +6,7 @@ function onSay(cid, words, param)
 	end
 
 	local tid = getPlayerByNameWildcard(t[1])
-	if(not tid or (isPlayerGhost(tid) and getPlayerAccess(tid) > getPlayerAccess(cid))) then
+	if(not tid or (isPlayerGhost(tid) and getPlayerGhostAccess(tid) > getPlayerGhostAccess(cid))) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. param .. " not found.")
 		return true
 	end

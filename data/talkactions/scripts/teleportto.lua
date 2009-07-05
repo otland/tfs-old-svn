@@ -10,9 +10,9 @@ function onSay(cid, words, param, channel)
 	local tile = string.explode(param, ",")
 	local pos = {x = 0, y = 0, z = 0}
 
-	if(player ~= nil and (not isPlayerGhost(player) or getPlayerAccess(player) <= getPlayerAccess(cid))) then
+	if(player ~= nil and (not isPlayerGhost(player) or getPlayerGhostAccess(player) <= getPlayerGhostAccess(cid))) then
 		pos = getCreaturePosition(player)
-	elseif(creature ~= nil and (not isPlayer(creature) or (not isPlayerGhost(creature) or getPlayerAccess(creature) <= getPlayerAccess(cid)))) then
+	elseif(creature ~= nil and (not isPlayer(creature) or (not isPlayerGhost(creature) or getPlayerGhostAccess(creature) <= getPlayerGhostAccess(cid)))) then
 		pos = getCreaturePosition(creature)
 	elseif(type(waypoint) == 'table' and waypoint.x ~= 0 and waypoint.y ~= 0) then
 		pos = waypoint

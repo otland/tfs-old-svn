@@ -4,7 +4,17 @@ function onSay(cid, words, param, channel)
 		func = doCreateNpc
 	end
 
-	local position = getCreaturePosition(cid)
+	local pid = cid
+	local t = string.explode(param, ",")
+	if(t[2]) then
+		pid = getPlayerByNameWildcard(t[2])
+		if(not pid) then
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. t[2] .. " not found.")
+			return true
+		end
+	end
+
+	local position = getCreaturePosition(pid)
 	local effect = CONST_ME_MAGIC_RED
 	local ret = func(param, position, false)
 	if(tonumber(ret) == nil) then

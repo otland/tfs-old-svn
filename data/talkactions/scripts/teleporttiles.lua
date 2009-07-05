@@ -1,11 +1,11 @@
 function onSay(cid, words, param, channel)
 	local t = {}
-	if(param ~= "") then
+	if(param ~= '') then
 		t = string.explode(param, ",")
 	end
 
 	local n = tonumber(t[1])
-	if(n == nil) then
+	if(not n) then
 		n = 1
 	end
 

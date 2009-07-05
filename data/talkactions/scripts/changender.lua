@@ -18,12 +18,7 @@ function onSay(cid, words, param, channel)
 		doPlayerAddPremiumDays(cid, -config.costPremiumDays)
 	end
 
-	if(getPlayerSex(cid) == PLAYERSEX_FEMALE) then
-		doPlayerSetSex(cid, PLAYERSEX_MALE)
-	else
-		doPlayerSetSex(cid, PLAYERSEX_FEMALE)
-	end
-
+	doPlayerSetSex(cid, getPlayerSex(cid) == PLAYERSEX_FEMALE and PLAYERSEX_MALE or PLAYERSEX_FEMALE)
 	doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You have changed your gender and lost " .. config.costPremiumDays .. " days of premium time.")
 	doSendMagicEffect(getCreaturePosition(cid), CONST_ME_MAGIC_RED)
 	return true

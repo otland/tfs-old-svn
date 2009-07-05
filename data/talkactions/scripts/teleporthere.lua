@@ -13,7 +13,7 @@ function onSay(cid, words, param, channel)
 		end
 	end
 
-	if(isPlayer(target) and isPlayerGhost(target) and getPlayerAccess(target) > getPlayerAccess(cid)) then
+	if(isPlayerGhost(target) and getPlayerGhostAccess(target) > getPlayerGhostAccess(cid)) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Creature not found.")
 		return true
 	end

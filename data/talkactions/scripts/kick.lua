@@ -1,16 +1,21 @@
 function onSay(cid, words, param, channel)
+	local pid = 0
 	if(param == '') then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
-		return true
+		pid = getCreatureTarget(cid)
+		if(pid == 0) then
+			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
+			return true
+		end
+	else
+		pid = getPlayerByNameWildcard(param)
 	end
 
-	local pid = getPlayerByNameWildcard(param)
-	if(not pid or (isPlayerGhost(pid) and getPlayerAccess(pid) > getPlayerAccess(cid))) then
+	if(not pid or (isPlayerGhost(pid) and getPlayerGhostAccess(pid) > getPlayerGhostAccess(cid))) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. param .. " is not currently online.")
 		return true
 	end
 
-	if(getPlayerAccess(pid) >= getPlayerAccess(cid)) then
+	if(isPlayer(pid) and getPlayerAccess(pid) >= getPlayerAccess(cid)) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You cannot kick this player.")
 		return true
 	end

@@ -9,7 +9,6 @@
 		9 - always acts as Help channel + clientsided message
 		65535 - DO NOT CHANGE THE ID, only "name" and "logged" tags available
 	 -->
-
 	<channel id="1" name="Staff" access="3"/>
 	<channel id="2" name="Counselor" access="1"/>
 	<channel id="3" name="Rule Violations" logged="yes"/>
@@ -19,6 +18,6 @@
 	<channel id="7" name="Trade-Rookgaard"/>
 	<channel id="8" name="Party"/>
 	<channel id="9" name="Help" logged="yes"/>
-	<!-- <channel id="10" name="My Custom Channel"/> -->
+	<!-- <channel id="10" active="yes" name="My Custom Channel"/> -->
 	<channel id="65535" name="Private Chat Channel"/>
 </channels>

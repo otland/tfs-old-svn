@@ -12,12 +12,6 @@ function onSay(cid, words, param, channel)
 		pos.z = pos.z + n
 	end
 
-	pos.stackpos = STACKPOS_GROUND
-	if(getTileThingByPos(pos).uid == 0) then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You cannot teleport there.")
-		return true
-	end
-
 	pos = getClosestFreeTile(cid, pos, false, false)
 	if(not pos or isInArray({pos.x, pos.y}, 0)) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Destination not reachable.")

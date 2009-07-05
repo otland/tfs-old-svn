@@ -23,7 +23,7 @@ function prepareClean(minutes, cid)
 		end
 		doBroadcastMessage("Game map cleaned.")
 	elseif(minutes > 0) then
-		if minutes == 1 then
+		if(minutes == 1) then
 			doBroadcastMessage("Game map cleaning in " .. minutes .. " minute, please pick up all your items.")
 		else
 			doBroadcastMessage("Game map cleaning in " .. minutes .. " minutes.")

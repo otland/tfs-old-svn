@@ -74,9 +74,9 @@
 			onCombat(cid, target)
 			onAttack(cid, target)
 			onCast(cid, target)
-			onKill(cid, target)
-			onDeath(cid, corpse, lastHitKiller, mostDamageKiller)
-			onPrepareDeath(cid, lastHitKiller, mostDamageKiller)
+			onKill(cid, target, lastHit)
+			onDeath(cid, corpse, deathList)
+			onPrepareDeath(cid, deathList)
 
 	*GLOBALEVENTS
 		File: globalevents/globalevents.xml
