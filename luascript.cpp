@@ -1597,6 +1597,9 @@ void LuaScriptInterface::registerFunctions()
 	//Moves all moveable objects from pos to posTo
 	lua_register(m_luaState, "doRelocate", LuaScriptInterface::luaDoRelocate);
 
+	//doCleanTile(pos, removeLoadedFromMap = false)
+	lua_register(m_luaState, "doCleanTile", LuaScriptInterface::luaDoCleanTile);
+
 	//doCreateTeleport(itemid, topos, createpos)
 	lua_register(m_luaState, "doCreateTeleport", LuaScriptInterface::luaDoCreateTeleport);
 
@@ -1732,7 +1735,7 @@ void LuaScriptInterface::registerFunctions()
 	//getCreatureByName(name)
 	lua_register(m_luaState, "getCreatureByName", LuaScriptInterface::luaGetCreatureByName);
 
-	//getPlayerByNameWildcard(name~)
+	//getPlayerByNameWildcard(name~[, ret])
 	lua_register(m_luaState, "getPlayerByNameWildcard", LuaScriptInterface::luaGetPlayerByNameWildcard);
 
 	//getPlayerGUIDByName(name[, multiworld])
@@ -3774,6 +3777,41 @@ int32_t LuaScriptInterface::luaDoRelocate(lua_State* L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaDoCleanTile(lua_State* L)
+{
+	//doCleanTile(pos, removeLoadedFromMap = false)
+	//Remove all items / creatures (not players!) from tile
+	bool removeLoadedFromMap = false;
+	if(lua_gettop(L) > 1)
+		removeLoadedFromMap = popNumber(L);
+
+	PositionEx pos;
+	popPosition(L, pos);
+
+	Tile* tile = g_game.getTile(pos);
+	if(!tile)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_TILE_NOT_FOUND));
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
+	for(int32_t i = tile->getThingCount() - 1; i >= 1; --i) //ignore ground
+	{
+		if(Thing* thing = tile->__getThing(i))
+		{
+			if(Item* item = thing->getItem())
+			{
+				if(!item->isLoadedFromMap() || removeLoadedFromMap)
+					g_game.internalRemoveItem(NULL, item);
+			}
+		}
+	}
+
+	lua_pushboolean(L, true);
+	return 1;
+}
+
 int32_t LuaScriptInterface::luaDoPlayerSendTextMessage(lua_State* L)
 {
 	//doPlayerSendTextMessage(cid, MessageClasses, message)
@@ -5256,7 +5294,7 @@ int32_t LuaScriptInterface::luaGetPlayerSlotItem(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetPlayerWeapon(lua_State* L)
 {
-	//getPlayerWeapon(cid[, ignoreAmmo = FALSE])
+	//getPlayerWeapon(cid[, ignoreAmmo = false])
 	bool ignoreAmmo = false;
 	if(lua_gettop(L) > 1)
 		ignoreAmmo = popNumber(L);
@@ -6876,8 +6914,7 @@ int32_t LuaScriptInterface::luaSetMonsterOutfit(lua_State* L)
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
-		lua_pushboolean(L, Spell::CreateIllusion(creature, name, time) == RET_NOERROR ?
-			true : false);
+		lua_pushboolean(L, Spell::CreateIllusion(creature, name, time) == RET_NOERROR);
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -6894,8 +6931,7 @@ int32_t LuaScriptInterface::luaSetItemOutfit(lua_State* L)
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
-		lua_pushboolean(L, Spell::CreateIllusion(creature, item, time) == RET_NOERROR ?
-			true : false);
+		lua_pushboolean(L, Spell::CreateIllusion(creature, item, time) == RET_NOERROR);
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -7169,12 +7205,18 @@ int32_t LuaScriptInterface::luaGetCreatureByName(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetPlayerByNameWildcard(lua_State* L)
 {
-	//getPlayerByNameWildcard(name~)
+	//getPlayerByNameWildcard(name~[, ret])
 	Player* player = NULL;
+	bool pushRet = false;
+	if(lua_gettop(L) > 1)
+		pushRet = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-	if(g_game.getPlayerByNameWildcard(popString(L), player) == RET_NOERROR)
+	ReturnValue ret = g_game.getPlayerByNameWildcard(popString(L), player);
+	if(ret == RET_NOERROR)
 		lua_pushnumber(L, env->addThing(player));
+	else if(pushRet)
+		lua_pushnumber(L, ret);
 	else
 		lua_pushnil(L);
 

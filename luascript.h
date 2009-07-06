@@ -388,6 +388,7 @@ class LuaScriptInterface
 		static int32_t luaDoTileAddItemEx(lua_State* L);
 		static int32_t luaDoAddContainerItemEx(lua_State* L);
 		static int32_t luaDoRelocate(lua_State* L);
+		static int32_t luaDoCleanTile(lua_State* L);
 		static int32_t luaDoPlayerSendTextMessage(lua_State* L);
 		static int32_t luaDoPlayerSendChannelMessage(lua_State* L);
 		static int32_t luaDoPlayerSendToChannel(lua_State* L);

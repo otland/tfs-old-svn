@@ -174,7 +174,7 @@ class InstantSpell : public TalkAction, public Spell
 {
 	public:
 		InstantSpell(LuaScriptInterface* _interface);
-		virtual ~InstantSpell();
+		virtual ~InstantSpell() {}
 
 		virtual bool configureEvent(xmlNodePtr p);
 		virtual bool loadFunction(const std::string& functionName);
@@ -216,7 +216,7 @@ class ConjureSpell : public InstantSpell
 {
 	public:
 		ConjureSpell(LuaScriptInterface* _interface);
-		virtual ~ConjureSpell();
+		virtual ~ConjureSpell() {}
 
 		virtual bool configureEvent(xmlNodePtr p);
 		virtual bool loadFunction(const std::string& functionName);
@@ -254,7 +254,7 @@ class RuneSpell : public Action, public Spell
 {
 	public:
 		RuneSpell(LuaScriptInterface* _interface);
-		virtual ~RuneSpell();
+		virtual ~RuneSpell() {}
 
 		virtual bool configureEvent(xmlNodePtr p);
 		virtual bool loadFunction(const std::string& functionName);

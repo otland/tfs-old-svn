@@ -374,8 +374,8 @@ class Creature : public AutoID, virtual public Thing
 		virtual void onCreatureChangeOutfit(const Creature* creature, const Outfit_t& outfit) {}
 		virtual void onCreatureConvinced(const Creature* convincer, const Creature* creature) {}
 		virtual void onCreatureChangeVisible(const Creature* creature, Visible_t visible) {}
-		virtual void onPlacedCreature() {};
-		virtual void onRemovedCreature() {};
+		virtual void onPlacedCreature() {}
+		virtual void onRemovedCreature() {}
 
 		virtual WeaponType_t getWeaponType() {return WEAPON_NONE;}
 		virtual bool getCombatValues(int32_t& min, int32_t& max) {return false;}

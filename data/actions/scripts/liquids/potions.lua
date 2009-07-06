@@ -1,6 +1,7 @@
 local config = {
 	removeOnUse = "no",
 	splashable = "no",
+	realAnimation = "no", -- make text effect visible only for players in range 1x1
 	healthMultiplier = 1.0,
 	manaMultiplier = 1.0
 }
@@ -49,7 +50,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		return true
 	end
 
-	if(((potion.vocations and not isInArray(potion.vocations, getPlayerVocation(cid))) or (potion.level and getPlayerLevel(cid) < potion.level)) and
+	if(((potion.level and getPlayerLevel(cid) < potion.level) or (potion.vocations and not isInArray(potion.vocations, getPlayerVocation(cid)))) and
 		not getPlayerCustomFlagValue(cid, PlayerCustomFlag_GamemasterPrivileges))
 	then
 		doCreatureSay(itemEx.uid, "Only " .. potion.vocStr .. (potion.level and (" of level " .. potion.level) or "") .. " or above may drink this fluid.", TALKTYPE_ORANGE_1)
@@ -67,7 +68,15 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	doSendMagicEffect(getThingPos(itemEx.uid), CONST_ME_MAGIC_BLUE)
-	doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1)
+	if(not realAnimation) then
+		doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1)
+	else
+		for i, tid in ipairs(getSpectators(getCreaturePosition(cid), 1, 1)) do
+			if(isPlayer(tid)) then
+				doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1, false, tid)
+			end
+		end
+	end
 
 	doAddCondition(cid, exhaust)
 	if(not potion.empty or config.removeOnUse) then

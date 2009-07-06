@@ -1426,11 +1426,11 @@ void Player::onFollowCreatureDisappear(bool isLogout)
 
 void Player::onChangeZone(ZoneType_t zone)
 {
-	if(!attackedCreature || zone != ZONE_PROTECTION || hasFlag(PlayerFlag_IgnoreProtectionZone))
-		return;
-
-	setAttackedCreature(NULL);
-	onAttackedCreatureDisappear(false);
+	if(attackedCreature && zone == ZONE_PROTECTION && !hasFlag(PlayerFlag_IgnoreProtectionZone))
+	{
+		setAttackedCreature(NULL);
+		onAttackedCreatureDisappear(false);
+	}
 	sendIcons();
 }
 

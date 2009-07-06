@@ -257,6 +257,7 @@
 	<action fromid="2044" toid="2045" event="script" value="other/decayto.lua"/>
 	<action fromid="2047" toid="2048" event="script" value="other/decayto.lua"/>
 	<action fromid="2050" toid="2055" event="script" value="other/decayto.lua"/>
+	<action fromid="9976" toid="9979" event="script" value="other/decayto.lua"/>
 
 	<!-- Other -->
 	<action itemid="2114" event="script" value="other/piggybank.lua"/>
@@ -266,13 +267,6 @@
 	<action itemid="6578" event="script" value="other/partyhat.lua"/>
 	<action itemid="2785" event="script" value="other/blueberrybush.lua"/>
 	<action itemid="2579" event="script" value="other/trap.lua"/>
-	<action itemid="1981" event="buffer"><![CDATA[
-		if(item.actionid >= 150 and item.actionid <= 158) then
-			doShowTextDialog(cid, item.itemid, getHighscoreString((item.actionid - 150)))
-		else
-			_result = false
-		end
-	]]></action>
 
 	<action itemid="5791" event="script" value="other/stuffeddragon.lua"/>
 	<action itemid="6566" event="script" value="other/stuffeddragon.lua"/>

@@ -87,7 +87,8 @@ TextLogger::TextLogger()
 {
 	out = std::cerr.rdbuf();
 	err = std::cout.rdbuf();
-	displayDate = true;
+	m_displayDate = true;
+	m_cache = "";
 }
 
 TextLogger::~TextLogger()
@@ -98,36 +99,34 @@ TextLogger::~TextLogger()
 
 int32_t TextLogger::overflow(int32_t c)
 {
-	char buffer[85];
-	sprintf(buffer, "data/logs/server/%s.log", formatDateShort().c_str());
-	if(FILE* file = fopen(buffer, "a"))
-	{
-		if(displayDate)
-			fprintf(file, "[%s] ", formatDate().c_str());
-
-		fprintf(file, "%c", c);
-		fclose(file);
-	}
-
 	if(c == '\n')
 	{
 		GUI::getInstance()->m_logText += "\r\n";
 		SendMessage(GetDlgItem(GUI::getInstance()->m_mainWindow, ID_LOG), WM_SETTEXT, 0, (LPARAM)GUI::getInstance()->m_logText.c_str());
 		GUI::getInstance()->m_lineCount++;
 		SendMessage(GUI::getInstance()->m_logWindow, EM_LINESCROLL, 0, GUI::getInstance()->m_lineCount);
-		displayDate = true;
+
+		char buffer[85];
+		sprintf(buffer, "logs/server/%s.log", formatDateShort().c_str());
+		if(FILE* file = fopen(buffer, "a"))
+		{
+			fprintf(file, "[%s] %s\n", formatDate().c_str(), m_cache.c_str());
+			fclose(file);
+			m_cache = "";
+		}
+
+		m_displayDate = true;
 	}
 	else
 	{
-		if(displayDate)
+		if(m_displayDate)
 		{
-			GUI::getInstance()->m_logText += "[";
-			GUI::getInstance()->m_logText += formatDate().c_str();
-			GUI::getInstance()->m_logText += "] ";
-			displayDate = false;
+			GUI::getInstance()->m_logText += std::string("[" + formatDate() +"] ").c_str();
+			m_displayDate = false;
 		}
 
 		GUI::getInstance()->m_logText += (char)c;
+		m_cache += c;
 	}
 
 	return c;

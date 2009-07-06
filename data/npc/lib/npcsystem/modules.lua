@@ -168,19 +168,19 @@ if(Modules == nil) then
 			return false
 		end
 
-		if(isPlayerPremiumCallback(cid) or not(parameters.premium)) then
-			if(parameters.level ~= nil and getPlayerLevel(cid) < parameters.level) then
-				npcHandler:say('You must reach level ' .. parameters.level .. ' before I can let you go there.', cid)
-			elseif(not doPlayerRemoveMoney(cid, parameters.cost)) then
-				npcHandler:say('You do not have enough money!', cid)
-			elseif(isPlayerPzLocked(cid)) then
-				npcHandler:say('Get out of there with this blood.', cid)
-			else
-				doTeleportThing(cid, parameters.destination, 0)
-				doSendMagicEffect(parameters.destination, 10)
-			end
-		else
+		if(parameters.premium and not isPlayerPremiumCallback(cid)) then
 			npcHandler:say('I can only allow premium players to travel with me.', cid)
+		elseif(parameters.level ~= nil and getPlayerLevel(cid) < parameters.level) then
+			npcHandler:say('You must reach level ' .. parameters.level .. ' before I can let you go there.', cid)
+		elseif(parameters.storage ~= nil and getPlayerStorageValue(cid, parameters.storage) <= 0) then
+			npcHandler:say(parameters.storageInfo or 'You may not travel here.', cid)
+		elseif(not doPlayerRemoveMoney(cid, parameters.cost)) then
+			npcHandler:say('You do not have enough money!', cid)
+		elseif(isPlayerPzLocked(cid)) then
+			npcHandler:say('Get out of there with this blood.', cid)
+		else
+			doTeleportThing(cid, parameters.destination, 0)
+			doSendMagicEffect(parameters.destination, 10)
 		end
 
 		npcHandler:resetNpc()

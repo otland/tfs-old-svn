@@ -18,7 +18,7 @@ function onSay(cid, words, param, channel)
 		return true
 	end
 
-	local pos = getClosestFreeTile(target, getCreaturePosition(cid))
+	local pos = getClosestFreeTile(target, getCreaturePosition(cid), false, false)
 	if(not pos or isInArray({pos.x, pos.y}, 0)) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Cannot perform action.")
 		return true

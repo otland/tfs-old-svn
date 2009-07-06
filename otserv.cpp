@@ -428,18 +428,18 @@ ServiceManager* services)
 	ss << " SQL-QUERIES";
 	#endif
 
-	std::cout << ">> Debugging:";
-	#ifndef __CONSOLE__
-	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Displaying debugged components");
-	#endif
-
 	std::string debug = ss.str();
-	if(debug.empty())
-		std::cout << " nothing";
-	else
-		std::cout << ss.str();
+	if(!debug.empty())
+	{
+		std::cout << ">> Debugging:";
+		#ifndef __CONSOLE__
+		SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Displaying debugged components");
+		#endif
 
-	std::cout << "." << std::endl << ">> Loading config (" << g_config.getString(ConfigManager::CONFIG_FILE) << ")" << std::endl;
+		std::cout << debug << "." << std::endl;
+	}
+
+	std::cout << ">> Loading config (" << g_config.getString(ConfigManager::CONFIG_FILE) << ")" << std::endl;
 	#ifndef __CONSOLE__
 	SendMessage(GUI::getInstance()->m_statusBar, WM_SETTEXT, 0, (LPARAM)">> Loading config");
 	#endif

@@ -81,7 +81,7 @@ class NpcEventsHandler
 {
 	public:
 		NpcEventsHandler(Npc* npc);
-		virtual ~NpcEventsHandler() {};
+		virtual ~NpcEventsHandler() {}
 
 		virtual void onCreatureAppear(const Creature* creature) {}
 		virtual void onCreatureDisappear(const Creature* creature) {}
@@ -106,7 +106,7 @@ class NpcScript : public NpcEventsHandler
 {
 	public:
 		NpcScript(std::string file, Npc* npc);
-		virtual ~NpcScript() {};
+		virtual ~NpcScript() {}
 
 		virtual void onCreatureAppear(const Creature* creature);
 		virtual void onCreatureDisappear(const Creature* creature);
@@ -123,7 +123,7 @@ class NpcScript : public NpcEventsHandler
 
 	private:
 		NpcScriptInterface* m_scriptInterface;
-		int32_t m_onCreatureAppear, m_onCreatureDisappear, m_onCreatureMove, m_onCreatureSay, 
+		int32_t m_onCreatureAppear, m_onCreatureDisappear, m_onCreatureMove, m_onCreatureSay,
 			m_onPlayerCloseChannel, m_onPlayerEndTrade, m_onThink;
 };
 

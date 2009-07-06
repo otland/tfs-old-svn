@@ -1038,7 +1038,7 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 
 		--pos;
 	}
-	
+
 	TileItemVector* items = getItemList();
 	if(!oldItem && items)
 	{
@@ -1258,6 +1258,12 @@ int32_t Tile::getClientIndexOfThing(const Player* player, const Thing* thing) co
 {
 	if(ground && ground == thing)
 		return 0;
+
+	if(const Item* item = thing->getItem())
+	{
+		if(item->isGroundTile())
+			return 0;
+	}
 
 	int32_t n = 0;
 	const TileItemVector* items = getItemList();

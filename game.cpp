@@ -3502,7 +3502,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 	if(ret == RET_NEEDEXCHANGE)
 		return true;
 
-	if(g_talkActions->onPlayerSay(player, channelId, text, false))
+	if(g_talkActions->onPlayerSay(player, type == SPEAK_SAY ? CHANNEL_DEFAULT : channelId, text, false))
 		return true;
 
 	switch(type)
@@ -4807,7 +4807,12 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string targetName, uint
 	}
 
 	Account account = IOLoginData::getInstance()->loadAccount(accountId, true);
-	int16_t removeNotations = 2; //2 - remove notations & kick, 1 - kick, 0 - nothing
+	enum {
+		NOTHING,
+		KICK,
+		NOTATION_KICK //remove notations & kick
+	} notationAction = NOTATION_KICK;
+
 	switch(action)
 	{
 		case ACTION_NOTATION:
@@ -4835,7 +4840,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string targetName, uint
 				}
 			}
 			else
-				removeNotations = 0;
+				notationAction = NOTHING;
 
 			break;
 		}
@@ -4843,7 +4848,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string targetName, uint
 		case ACTION_NAMEREPORT:
 		{
 			IOBan::getInstance()->addNamelock(guid, reason, action, comment, player->getGUID(), statement);
-			removeNotations = 1;
+			notationAction = KICK;
 			break;
 		}
 
@@ -4942,7 +4947,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string targetName, uint
 		IOBan::getInstance()->addIpBanishment(ip, (time(NULL) + g_config.getNumber(ConfigManager::IPBANISHMENT_LENGTH)),
 			comment, player->getGUID(), 0xFFFFFFFF);
 
-	if(removeNotations > 1)
+	if(notationAction == NOTATION_KICK)
 		IOBan::getInstance()->removeNotations(account.number);
 
 	std::stringstream ss;
@@ -4976,10 +4981,10 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string targetName, uint
 	else
 		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, ss.str());
 
-	if(targetPlayer && removeNotations > 0)
+	if(targetPlayer && notationAction > NOTHING)
 	{
 		char buffer[30];
-		sprintf(buffer, "You have been %s.", (removeNotations > 1 ? "banished" : "namelocked"));
+		sprintf(buffer, "You have been %s.", (notationAction > KICK ? "banished" : "namelocked"));
 		targetPlayer->sendTextMessage(MSG_INFO_DESCR, buffer);
 
 		addMagicEffect(targetPlayer->getPosition(), NM_ME_MAGIC_POISON);

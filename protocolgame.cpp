@@ -249,6 +249,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			}
 		}
 
+		player->sendIcons();
 		player->lastIP = player->getIP();
 		player->lastLogin = OTSYS_TIME();
 		player->lastLoginSaved = std::max(time(NULL), player->lastLoginSaved + 1);

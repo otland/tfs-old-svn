@@ -931,11 +931,6 @@ InstantSpell::InstantSpell(LuaScriptInterface* _interface) : TalkAction(_interfa
 	function = NULL;
 }
 
-InstantSpell::~InstantSpell()
-{
-	//
-}
-
 bool InstantSpell::configureEvent(xmlNodePtr p)
 {
 	if(!Spell::configureSpell(p))
@@ -1413,11 +1408,6 @@ InstantSpell(_interface)
 	conjureReagentId = 0;
 }
 
-ConjureSpell::~ConjureSpell()
-{
-	//
-}
-
 bool ConjureSpell::configureEvent(xmlNodePtr p)
 {
 	if(!InstantSpell::configureEvent(p))
@@ -1461,7 +1451,7 @@ bool ConjureSpell::loadFunction(const std::string& functionName)
 }
 
 ReturnValue ConjureSpell::internalConjureItem(Player* player, uint32_t conjureId, uint32_t conjureCount,
-	bool transform /*= false*/, uint32_t reagentId /*= 0*/, slots_t slot /*= SLOT_WHEREVER*/, bool test /*= false*/)
+	bool transform/* = false*/, uint32_t reagentId/* = 0*/, slots_t slot/* = SLOT_WHEREVER*/, bool test/* = false*/)
 {
 	if(!transform)
 	{
@@ -1475,29 +1465,28 @@ ReturnValue ConjureSpell::internalConjureItem(Player* player, uint32_t conjureId
 
 		return ret;
 	}
-	else if(reagentId != 0)
+
+	if(!reagentId)
+		return RET_NOTPOSSIBLE;
+
+	Item* item = player->getInventoryItem(slot);
+	if(item && item->getID() == reagentId)
 	{
-		Item* item = player->getInventoryItem(slot);
-		if(item && item->getID() == reagentId)
-		{
-			if(item->isStackable() && item->getItemCount() != 1)
-				return RET_YOUNEEDTOSPLITYOURSPEARS;
+		if(item->isStackable() && item->getItemCount() != 1)
+			return RET_YOUNEEDTOSPLITYOURSPEARS;
 
-			if(test)
-				return RET_NOERROR;
-
-			Item* newItem = g_game.transformItem(item, conjureId, conjureCount);
-			if(!newItem)
-				return RET_NOTPOSSIBLE;
-
-			g_game.startDecay(newItem);
+		if(test)
 			return RET_NOERROR;
-		}
 
-		return RET_YOUNEEDAMAGICITEMTOCASTSPELL;
+		Item* newItem = g_game.transformItem(item, conjureId, conjureCount);
+		if(!newItem)
+			return RET_NOTPOSSIBLE;
+
+		g_game.startDecay(newItem);
+		return RET_NOERROR;
 	}
 
-	return RET_NOTPOSSIBLE;
+	return RET_YOUNEEDAMAGICITEMTOCASTSPELL;
 }
 
 bool ConjureSpell::ConjureItem(const ConjureSpell* spell, Creature* creature, const std::string& param)
@@ -1618,11 +1607,6 @@ Action(_interface)
 	runeId = 0;
 	function = NULL;
 	hasCharges = allowFarUse = true;
-}
-
-RuneSpell::~RuneSpell()
-{
-	//
 }
 
 bool RuneSpell::configureEvent(xmlNodePtr p)

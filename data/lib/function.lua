@@ -377,7 +377,7 @@ function isInParty(cid)
 end
 
 function isPrivateChannel(channelId)
-	return channelId >= 65535
+	return channelId >= CHANNEL_PRIVATE
 end
 
 function doPlayerResetIdleTime(cid)

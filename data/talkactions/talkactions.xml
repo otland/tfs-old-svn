@@ -69,9 +69,7 @@
 	<talkaction words="!createguild" event="function" value="guildCreate"/>
 	<talkaction words="!joinguild" event="function" value="guildJoin"/>
 	<talkaction words="!frags" event="script" value="frags.lua"/>
-	<talkaction words="!buypremium" event="script" value="buypremium.lua"/>
 	<talkaction words="!online" event="script" value="online.lua"/>
-	<talkaction words="!changender" event="script" value="changender.lua"/>
 	<talkaction words="!uptime" event="script" value="uptime.lua"/>
 	<talkaction words="!deathlist" event="script" value="deathlist.lua"/>
 	<talkaction words="!pvp" event="script" value="pvp.lua"/>

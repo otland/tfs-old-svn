@@ -28,7 +28,7 @@ class BedItem : public Item
 {
 	public:
 		BedItem(uint16_t _type): Item(_type), house(NULL) {internalRemoveSleeper();}
-		virtual ~BedItem() {};
+		virtual ~BedItem() {}
 
 		virtual BedItem* getBed() {return this;}
 		virtual const BedItem* getBed() const {return this;}

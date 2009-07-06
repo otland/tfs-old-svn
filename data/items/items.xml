@@ -20446,6 +20446,7 @@
 	<item id="9239" article="a" name="vampire bride statue"/>
 	<item id="9240" article="a" name="vampire bride statue"/>
 	<item id="9241" article="a" name="vampire lord statue"/>
+	<item fromid="9249" toid="9250" name="golden ornament"/>
 	<item fromid="9252" toid="9262" name="copper pipes"/>
 	<item id="9267" article="a" name="closed door">
 		<attribute key="type" value="door"/>
@@ -20515,7 +20516,7 @@
 	<item id="9284" article="a" name="gate of expertise">
 		<attribute key="type" value="door"/>
 	</item>
-	<item fromid="9311" toid="9319" name="golden ornament"/>
+	<item fromid="9307" toid="9319" name="golden ornament"/>
 	<item fromid="9320" toid="9326" article="an" name="archway"/>
 	<item id="9330" name="copper pipes"/>
 	<item fromid="9333" toid="9334" name="slime"/>
@@ -21098,16 +21099,24 @@
 	</item>
 	<item id="9976" article="a" name="crystal pedestal">
 		<attribute key="weight" value="4000"/>
+		<attribute key="decayTo" value="9977"/>
+		<attribute key="duration" value="15"/>
 	</item>
 	<item id="9977" article="a" name="crystal pedestal">
 		<attribute key="weight" value="4000"/>
+		<attribute key="decayTo" value="9978"/>
+		<attribute key="duration" value="10"/>
 	</item>
 	<item id="9978" article="a" name="crystal pedestal">
 		<attribute key="weight" value="4000"/>
+		<attribute key="decayTo" value="9979"/>
+		<attribute key="duration" value="11"/>
 	</item>
 	<item id="9979" article="a" name="crystal pedestal">
 		<attribute key="weight" value="4000"/>
-	</item>	
+		<attribute key="decayTo" value="9976"/>
+		<attribute key="duration" value="9"/>
+	</item>
 	<item id="9980" article="a" name="crystal of power">
 		<attribute key="description" value="It is said to make you more resistant to weaknesses and to supply you with energy."/>
 		<attribute key="weight" value="850"/>

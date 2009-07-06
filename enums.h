@@ -53,8 +53,8 @@ enum OperatingSystem_t
 enum Channels_t
 {
 	CHANNEL_GUILD = 0x00,
-	CHANNEL_STAFF = 0x01,
-	CHANNEL_COUNSELOR = 0x02,
+	//CHANNEL_STAFF = 0x01,
+	//CHANNEL_COUNSELOR = 0x02,
 	CHANNEL_RVR = 0x03,
 	CHANNEL_GAMECHAT = 0x04,
 	CHANNEL_TRADE = 0x05,
@@ -62,6 +62,7 @@ enum Channels_t
 	CHANNEL_TRADEROOK = 0x07,
 	CHANNEL_PARTY = 0x08,
 	CHANNEL_HELP = 0x09,
+	CHANNEL_DEFAULT = 0xFFFF - 1, //internal usage only, there is no such channel but it means that message was writen on default channel
 	CHANNEL_PRIVATE = 0xFFFF
 };
 

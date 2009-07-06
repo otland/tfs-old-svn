@@ -68,8 +68,8 @@ class Event
 		bool loadBuffer(const std::string& buffer);
 		bool checkBuffer(const std::string& buffer);
 
-		bool loadScript(const std::string& script, bool file);
-		bool checkScript(const std::string& script, bool file);
+		bool loadScript(const std::string& script, bool file, bool autoComplete = true);
+		bool checkScript(const std::string& script, bool file, bool autoComplete = true);
 
 		virtual bool loadFunction(const std::string& functionName) {return false;}
 
@@ -88,7 +88,7 @@ class CallBack
 {
 	public:
 		CallBack();
-		virtual ~CallBack() {};
+		virtual ~CallBack() {}
 
 		bool loadCallBack(LuaScriptInterface* _interface, std::string name);
 
