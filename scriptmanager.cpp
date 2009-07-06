@@ -124,9 +124,10 @@ bool ScriptingManager::loadMods()
 		std::string name = it->leaf(); //deprecated in newer version of boost, use filename() if compilation fails even if deprecations aren't disabled
 		if(!boost::filesystem::is_directory(it->status()) && name.find(".xml") != std::string::npos)
 		{
+			bool enabled;
 			std::cout << "Loading " << name << "...";
-			if(loadFromXml(name))
-				std::cout << " done.";
+			if(loadFromXml(name, enabled))
+				std::cout << " done." << (!enabled ? " (disabled)" : "");
 			else
 				std::cout << " failed!";
 
@@ -152,7 +153,7 @@ bool ScriptingManager::reloadMods()
 	return loadMods();
 }
 
-bool ScriptingManager::loadFromXml(const std::string& file)
+bool ScriptingManager::loadFromXml(const std::string& file, bool& enabled)
 {
 	std::string modPath = getFilePath(FILE_TYPE_MOD, file);
 	xmlDocPtr doc = xmlParseFile(modPath.c_str());
@@ -288,6 +289,7 @@ bool ScriptingManager::loadFromXml(const std::string& file)
 		}
 	}
 
+	enabled = mod.enabled;
 	modMap[mod.name] = mod;
 	xmlFreeDoc(doc);
 	return true;

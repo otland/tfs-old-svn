@@ -62,7 +62,7 @@ enum Channels_t
 	CHANNEL_TRADEROOK = 0x07,
 	CHANNEL_PARTY = 0x08,
 	CHANNEL_HELP = 0x09,
-	CHANNEL_DEFAULT = 0xFFFF - 1, //internal usage only, there is no such channel but it means that message was writen on default channel
+	CHANNEL_DEFAULT = 0xFFFE, //internal usage only, there is no such channel
 	CHANNEL_PRIVATE = 0xFFFF
 };
 

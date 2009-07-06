@@ -48,7 +48,7 @@ class ScriptingManager
 		void clearMods();
 		bool reloadMods();
 
-		bool loadFromXml(const std::string& file);
+		bool loadFromXml(const std::string& file, bool& enabled);
 
 		inline LibMap::iterator getFirstLib() {return libMap.begin();}
 		inline LibMap::iterator getLastLib() {return libMap.end();}
