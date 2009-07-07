@@ -186,7 +186,7 @@ class Map
 		  * Get a single tile.
 		  * \returns A pointer to that tile.
 		  */
-		Tile* getTile(uint16_t x, uint16_t y, uint16_t z);
+		Tile* getTile(int32_t x, int32_t y, int32_t z);
 		Tile* getTile(const Position& pos);
 
 		uint32_t clean();

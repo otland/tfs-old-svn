@@ -717,6 +717,7 @@ void Door::copyAttributes(Item* item)
 
 void Door::onRemoved()
 {
+	Item::onRemoved();
 	if(house)
 		house->removeDoor(this);
 }

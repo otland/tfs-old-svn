@@ -85,7 +85,6 @@ typedef std::list<spellBlock_t> SpellList;
 typedef std::vector<voiceBlock_t> VoiceVector;
 typedef std::list<std::string> MonsterScriptList;
 typedef std::map<CombatType_t, int32_t> ElementMap;
-typedef std::vector<Item*> ItemVector;
 
 class MonsterType
 {
@@ -144,7 +143,7 @@ class MonsterType
 		MonsterScriptList scriptList;
 
 		void createLoot(Container* corpse);
-		void createLootContainer(Container* parent, const LootBlock& lootblock, ItemVector& itemVector);
+		void createLootContainer(Container* parent, const LootBlock& lootblock);
 		Item* createLootItem(const LootBlock& lootblock);
 };
 

@@ -248,12 +248,12 @@ class ProtocolGame : public Protocol
 		void GetTileDescription(const Tile* tile, NetworkMessage* msg);
 
 		// translate a floor to clientreadable format
-		void GetFloorDescription(NetworkMessage* msg, int x, int y, int z,
-			int width, int height, int offset, int& skip);
+		void GetFloorDescription(NetworkMessage* msg, int32_t x, int32_t y, int32_t z,
+			int32_t width, int32_t height, int32_t offset, int32_t& skip);
 
 		// translate a map area to clientreadable format
-		void GetMapDescription(uint16_t x, uint16_t y, uint8_t z,
-			uint16_t width, uint16_t height, NetworkMessage* msg);
+		void GetMapDescription(int32_t x, int32_t y, int32_t z,
+			int32_t width, int32_t height, NetworkMessage* msg);
 
 		void AddMapDescription(NetworkMessage* msg, const Position& pos);
 		void AddTextMessage(NetworkMessage* msg,MessageClasses mclass, const std::string& message);
@@ -307,13 +307,8 @@ class ProtocolGame : public Protocol
 
 		Player* player;
 
-		int64_t m_now;
-		int64_t m_nextTask;
 		int64_t m_nextPing;
 
-		int64_t m_lastTaskCheck;
-		int32_t m_messageCount;
-		int32_t m_rejectCount;
 		uint32_t eventConnect;
 
 		bool m_debugAssertSent;

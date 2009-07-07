@@ -229,6 +229,7 @@ enum PlayerInfo_t{
 	PlayerInfoGUID,
 	PlayerInfoPremiumDays,
 	PlayerInfoSkullType,
+	PlayerInfoPzLock,
 	PlayerInfoGhostStatus
 };
 
@@ -508,9 +509,11 @@ class LuaScriptInterface
 
 		//type validation
 		static int32_t luaIsPlayer(lua_State* L);
+		static int32_t luaIsPlayerPzLocked(lua_State* L);
 		static int32_t luaIsPlayerGhost(lua_State* L);
 		static int32_t luaIsCreature(lua_State* L);
 		static int32_t luaIsContainer(lua_State* L);
+		static int32_t luaIsDepot(lua_State* L);
 		static int32_t luaIsCorpse(lua_State* L);
 		static int32_t luaIsMoveable(lua_State* L);
 		static int32_t luaIsValidUID(lua_State* L);

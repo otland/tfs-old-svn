@@ -198,14 +198,14 @@ bool Npc::loadFromXml(const std::string& filename)
 		if(readXMLInteger(root, "attackable", intValue))
 			attackable = (intValue != 0);
 
-		if(readXMLInteger(root, "walkinterval", intValue))
-			walkTicks = intValue;
-
 		if(readXMLInteger(root, "autowalk", intValue))
 		{
 			std::cout << "[Notice - Npc::Npc] NPC Name: " << name << " - autowalk has been deprecated, use walkinterval." << std::endl;
 			walkTicks = 2000;
 		}
+
+		if(readXMLInteger(root, "walkinterval", intValue))
+			walkTicks = intValue;
 
 		if(readXMLInteger(root, "floorchange", intValue))
 			floorChange = (intValue != 0);
@@ -1800,9 +1800,9 @@ void Npc::onPlayerEndTrade(Player* player, int32_t buyCallback,
 		m_npcEventHandler->onPlayerEndTrade(player);
 }
 
-bool Npc::getNextStep(Direction& dir)
+bool Npc::getNextStep(Direction& dir, uint32_t& flags)
 {
-	if(Creature::getNextStep(dir))
+	if(Creature::getNextStep(dir, flags))
 		return true;
 
 	if(walkTicks <= 0)

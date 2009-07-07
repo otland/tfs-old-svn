@@ -85,7 +85,7 @@ Creature::Creature() :
 	blockTicks = 0;
 	walkUpdateTicks = 0;
 	checkCreatureVectorIndex = -1;
-
+	creatureCheck = false;
 	scriptEventsBitField = 0;
 	onIdleStatus();
 }
@@ -255,9 +255,10 @@ void Creature::onWalk()
 	if(getWalkDelay() <= 0)
 	{
 		Direction dir;
-		if(getNextStep(dir))
+		uint32_t flags = FLAG_IGNOREFIELDDAMAGE;
+		if(getNextStep(dir, flags))
 		{
-			if(g_game.internalMoveCreature(this, dir, FLAG_IGNOREFIELDDAMAGE) != RET_NOERROR)
+			if(g_game.internalMoveCreature(this, dir, flags) != RET_NOERROR)
 				forceUpdateFollowPath = true;
 		}
 	}
@@ -294,7 +295,7 @@ void Creature::onWalk(Direction& dir)
 	}
 }
 
-bool Creature::getNextStep(Direction& dir)
+bool Creature::getNextStep(Direction& dir, uint32_t& flags)
 {
 	if(!listWalkDir.empty())
 	{
@@ -601,7 +602,8 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 				g_game.removeCreature((*cit), true);
 		}
 
-		onChangeZone(getZone());
+		if(newTile->getZone() != oldTile->getZone())
+			onChangeZone(getZone());
 
 		//update map cache
 		if(isMapLoaded)
@@ -735,7 +737,9 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 				g_dispatcher.addTask(createTask(
 					boost::bind(&Game::checkCreatureAttack, &g_game, getID())));
 			}
-			onAttackedCreatureChangeZone(attackedCreature->getZone());
+
+			if(newTile->getZone() != oldTile->getZone())
+				onAttackedCreatureChangeZone(attackedCreature->getZone());
 		}
 	}
 }
@@ -1174,6 +1178,12 @@ void Creature::onAttacked()
 void Creature::onAttackedCreatureDrainHealth(Creature* target, int32_t points)
 {
 	target->addDamagePoints(this, points);
+	if(getMaster() && getMaster()->getPlayer())
+	{
+		std::stringstream ss;
+		ss << "Your " << asLowerCaseString(getName()) << " deals " << points << " to " << target->getNameDescription() << ".";
+		getMaster()->getPlayer()->sendTextMessage(MSG_EVENT_DEFAULT, ss.str());
+	}
 }
 
 void Creature::onTargetCreatureGainHealth(Creature* target, int32_t points)

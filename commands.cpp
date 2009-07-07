@@ -281,6 +281,7 @@ bool Commands::placeNpc(Creature* creature, const std::string& cmd, const std::s
 	if(g_game.placeCreature(npc, creature->getPosition()))
 	{
 		g_game.addMagicEffect(creature->getPosition(), NM_ME_MAGIC_BLOOD);
+		npc->setMasterPos(npc->getPosition());
 		return true;
 	}
 	else
@@ -715,6 +716,7 @@ bool Commands::getInfo(Creature* creature, const std::string& cmd, const std::st
 			return true;
 		}
 
+		Account account = IOLoginData::getInstance()->loadAccount(paramPlayer->getAccount());
 		std::stringstream info;
 		info << "name: " << paramPlayer->name << std::endl <<
 			"access: " << paramPlayer->accessLevel << std::endl <<
@@ -723,7 +725,8 @@ bool Commands::getInfo(Creature* creature, const std::string& cmd, const std::st
 			"speed: " << paramPlayer->getSpeed() <<std::endl <<
 			"position: " << paramPlayer->getPosition() << std::endl <<
 			"notations: " << IOBan::getInstance()->getNotationsCount(paramPlayer->getAccount()) << std::endl <<
-			"ip: " << convertIPToString(paramPlayer->getIP());
+			"warnings: " << account.warnings << std::endl <<
+			"ip: " << convertIPToString(paramPlayer->getIP()) << std::endl;
 		player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, info.str().c_str());
 	}
 	else
@@ -1149,16 +1152,16 @@ bool Commands::removeThing(Creature* creature, const std::string& cmd, const std
 bool Commands::newType(Creature* creature, const std::string& cmd, const std::string& param)
 {
 	Player* player = creature->getPlayer();
-	int32_t lookType = atoi(param.c_str());
 	if(player)
 	{
-		if(lookType < 0 || lookType == 1 || lookType == 135 || (lookType > 160 && lookType < 192) || lookType > 326)
-			player->sendTextMessage(MSG_STATUS_SMALL, "This looktype does not exist.");
-		else
+		int32_t lookType = atoi(param.c_str());
+		if(lookType >= 0 && lookType != 1 && lookType != 135 && (lookType <= 160 || lookType >= 192) && lookType <= 333)
 		{
 			g_game.internalCreatureChangeOutfit(creature, (const Outfit_t&)lookType);
 			return true;
 		}
+		else
+			player->sendTextMessage(MSG_STATUS_SMALL, "This looktype does not exist.");
 	}
 	return false;
 }
@@ -1286,7 +1289,7 @@ bool Commands::createGuild(Creature* creature, const std::string& cmd, const std
 						uint32_t guildId;
 						if(!IOGuild::getInstance()->getGuildIdByName(guildId, param))
 						{
-							if(player->level > 7)
+							if(player->level > (uint32_t)g_config.getNumber(ConfigManager::LEVEL_TO_CREATE_GUILD))
 							{
 								if(player->isPremium())
 								{
@@ -1302,7 +1305,11 @@ bool Commands::createGuild(Creature* creature, const std::string& cmd, const std
 									player->sendCancelMessage(RET_YOUNEEDPREMIUMACCOUNT);
 							}
 							else
-								player->sendCancel("You have to be atleast Level 8 to form a guild.");
+							{
+								std::stringstream ss;
+								ss << "You have to be atleast Level " << g_config.getNumber(ConfigManager::LEVEL_TO_CREATE_GUILD) << " to form a guild.";
+								player->sendCancel(ss.str());
+							}
 						}
 						else
 							player->sendCancel("There is already a guild with that name.");
@@ -1521,6 +1528,7 @@ bool Commands::ghost(Creature* creature, const std::string& cmd, const std::stri
 
 		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), false);
 		player->sendTextMessage(MSG_INFO_DESCR, "You are now invisible.");
+		g_game.addMagicEffect(creature->getPosition(), NM_ME_YALAHARIGHOST);
 	}
 	else
 	{
@@ -1532,6 +1540,9 @@ bool Commands::ghost(Creature* creature, const std::string& cmd, const std::stri
 
 		IOLoginData::getInstance()->updateOnlineStatus(player->getGUID(), true);
 		player->sendTextMessage(MSG_INFO_DESCR, "You are visible again.");
+		Position pos = creature->getPosition();
+		pos.x += 1;
+		g_game.addMagicEffect(pos, 67);
 	}
 	return true;
 }
@@ -1582,7 +1593,10 @@ bool Commands::multiClientCheck(Creature* creature, const std::string& cmd, cons
 		}
 
 		if(text.str() != "")
+		{
 			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
+			text.str("");
+		}
 	}
 	return true;
 }

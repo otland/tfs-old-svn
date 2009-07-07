@@ -229,8 +229,7 @@ void Item::copyAttributes(Item* item)
 
 Item::~Item()
 {
-	if(getUniqueId() != 0)
-		ScriptEnviroment::removeUniqueThing(this);
+	//std::cout << "Item destructor " << this << std::endl;
 }
 
 void Item::setDefaultSubtype()
@@ -240,6 +239,12 @@ void Item::setDefaultSubtype()
 	count = 1;
 	if(it.charges != 0)
 		setCharges(it.charges);
+}
+
+void Item::onRemoved()
+{
+	if(getUniqueId() != 0)
+		ScriptEnviroment::removeUniqueThing(this);
 }
 
 void Item::setID(uint16_t newid)
@@ -670,7 +675,8 @@ double Item::getWeight() const
 	return items[id].weight;
 }
 
-std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const Item* item /*= NULL*/, int32_t subType /*= -1*/, bool addArticle /*= true*/)
+std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
+	const Item* item /*= NULL*/, int32_t subType /*= -1*/, bool addArticle /*= true*/)
 {
 	std::stringstream s;
 	s << getNameDescription(it, item, subType, addArticle);

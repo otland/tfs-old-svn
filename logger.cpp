@@ -26,7 +26,9 @@
 
 Logger::Logger()
 {
-	m_file = fopen("data/logs/OTAdminLog.txt", "a");
+	m_file = fopen("data/logs/otadmin.log", "a");
+	if(!m_file)
+		m_file = stderr;
 }
 
 Logger::~Logger()

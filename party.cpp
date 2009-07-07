@@ -297,28 +297,13 @@ void Party::broadcastPartyMessage(MessageClasses msgClass, const std::string& ms
 	}
 }
 
-void Party::broadcastPartyLoot(const std::string& monster, const ItemVector& items)
+void Party::broadcastPartyLoot(const std::string& loot)
 {
-	std::stringstream s;
-	s << "Loot of " << monster << ": ";
-	if(items.size())
-	{
-		for(ItemVector::const_reverse_iterator rit = items.rbegin(); rit != items.rend(); ++rit)
-		{
-			s << (*rit)->getNameDescription();
-			if((*rit) != items.front())
-				s << ", ";
-		}
-	}
-	else
-		s << "none";
-
-	s << ".";
-	getLeader()->sendChannelMessage("", s.str().c_str(), SPEAK_CHANNEL_W, 0x08);
+	getLeader()->sendChannelMessage("", loot, SPEAK_CHANNEL_W, 0x08);
 	if(!memberList.empty())
 	{
 		for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
-			(*it)->sendChannelMessage("", s.str().c_str(), SPEAK_CHANNEL_W, 0x08);
+			(*it)->sendChannelMessage("", loot, SPEAK_CHANNEL_W, 0x08);
 	}
 }
 

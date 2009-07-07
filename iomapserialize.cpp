@@ -86,7 +86,7 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 
 	query << "SELECT `id` FROM `tiles` WHERE `x` = " << tilePos.x
 		<< " AND `y` = " << tilePos.y
-		<< " AND `z` = " << tilePos.z;
+		<< " AND `z` = " << tilePos.z << ";";
 
 	DBResult result;
 	if(!db.storeQuery(query, result) || result.getNumRows() != 1)
@@ -97,7 +97,7 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 	query.str("");
 	query << "SELECT * FROM `tile_items` WHERE `tile_id` = "
 		<< tileId
-		<< " ORDER BY `sid` DESC";
+		<< " ORDER BY `sid` DESC;";
 	if(db.storeQuery(query, result) && (result.getNumRows() > 0))
 	{
 		Item* item = NULL;
@@ -143,7 +143,6 @@ bool IOMapSerialize::loadTile(Database& db, Tile* tile)
 				for(uint32_t i = 0; i < tile->getThingCount(); ++i)
 				{
 					Item* findItem = tile->__getThing(i)->getItem();
-
 					if(!findItem)
 						continue;
 
@@ -227,6 +226,7 @@ bool IOMapSerialize::saveMapRelational(Map* map)
 	query << "DELETE FROM `tiles`;";
 	if(!db->executeQuery(query))
 		return false;
+
 	uint32_t tileId = 0;
 	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
 	{
@@ -376,7 +376,7 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 				Tile* tile = map->getTile(x, y, z);
 				if(!tile)
 				{
-					std::cout << "ERROR: Unserialization of invalid tile in IOMapSerialize::loadTile()" << std::endl;
+					std::cout << "ERROR: Unserialization of invalid tile in IOMapSerialize::loadTile(), at position: [X: " << x << ", Y: " << y << ", Z: " << z << "]." << std::endl;
 					break;
 				}
 
@@ -401,7 +401,7 @@ bool IOMapSerialize::loadContainer(PropStream& propStream, Container* container)
 		container->serializationCount--;
 	}
 
-	uint8_t endAttr = 0x00;
+	uint8_t endAttr = 0;
 	propStream.GET_UCHAR(endAttr);
 
 	if(endAttr != 0x00)
@@ -461,7 +461,6 @@ bool IOMapSerialize::loadItem(PropStream& propStream, Cylinder* parent)
 		for(uint32_t i = 0; i < tile->getThingCount(); ++i)
 		{
 			Item* findItem = tile->__getThing(i)->getItem();
-
 			if(!findItem)
 				continue;
 

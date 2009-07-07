@@ -163,6 +163,8 @@
 	<action fromid="6450" toid="6473" script="other/windows.lua"/>
 	<action fromid="6788" toid="6791" script="other/windows.lua"/>
 	<action fromid="7025" toid="7032" script="other/windows.lua"/>
+	<action fromid="10264" toid="10267" script="other/windows.lua" />
+	<action fromid="10488" toid="10491" script="other/windows.lua" />
 	<action fromid="1209" toid="1214" script="other/doors.lua"/>
 	<action fromid="1219" toid="1262" script="other/doors.lua"/>
 	<action fromid="1539" toid="1542" script="other/doors.lua"/>
@@ -183,6 +185,9 @@
 	<action fromid="7054" toid="7057" script="other/doors.lua"/>
 	<action fromid="8541" toid="8558" script="other/doors.lua"/>
 	<action fromid="9165" toid="9184" script="other/doors.lua"/>
-	<action fromid="9267" toid="9186" script="other/doors.lua"/>
+	<action fromid="9267" toid="9284" script="other/doors.lua"/>
+	<action itemid="10032" script="other/doors.lua" />
+	<action fromid="10268" toid="10285" script="other/doors.lua" />
+	<action fromid="10468" toid="10486" script="other/doors.lua" />
 	<action itemid="1981" function="highscoreBook"/>
 </actions>

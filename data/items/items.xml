@@ -20873,6 +20873,530 @@
 		<attribute key="magicpoints" value="1"/>
 	</item>
 	<item id="10017" article="a" name="football"/>
+	<item id="10032" article="a" name="key">
+		<attribute key="type" value="key"/>
+		<attribute key="weight" value="100"/>
+	</item>
+	<item id="10038" article="a" name="crucible">
+	</item>
+	<item id="10039" article="a" name="bellow">
+	</item>
+	<item id="10040" article="a" name="bellow">
+	</item>
+	<item id="10041" article="a" name="crucible">
+	</item>
+	<item id="10042" article="a" name="crucible">
+	</item>
+	<item id="10043" article="a" name="crucible">
+	</item>
+	<item id="10176" article="" name="dirt">
+	</item>
+	<item id="10177" article="a" name="limestone wall">
+	</item>
+	<item id="10178" article="a" name="limestone wall">
+	</item>
+	<item id="10179" article="a" name="limestone wall">
+	</item>
+	<item id="10180" article="a" name="limestone wall">
+	</item>
+	<item id="10181" article="a" name="limestone wall">
+	</item>
+	<item id="10182" article="a" name="limestone wall">
+	</item>
+	<item id="10183" article="a" name="limestone wall">
+	</item>
+	<item id="10184" article="a" name="limestone wall">
+	</item>
+	<item id="10185" article="a" name="limestone wall">
+	</item>
+	<item id="10186" article="a" name="limestone wall">
+	</item>
+	<item id="10187" article="a" name="limestone wall">
+	</item>
+	<item id="10188" article="a" name="broken limestone wall">
+	</item>
+	<item id="10189" article="a" name="broken limestone wall">
+	</item>
+	<item id="10190" article="a" name="limestone railing">
+	</item>
+	<item id="10191" article="a" name="limestone railing">
+	</item>
+	<item id="10192" article="a" name="stone wall">
+	</item>
+	<item id="10193" article="a" name="stone wall">
+	</item>
+	<item id="10194" article="a" name="limestone railing">
+	</item>
+	<item id="10195" article="a" name="stone wall">
+	</item>
+	<item id="10196" article="a" name="stone wall">
+	</item>
+	<item id="10197" article="a" name="limestone railing">
+	</item>
+	<item id="10198" article="a" name="limestone pillar">
+	</item>
+	<item id="10199" article="a" name="limestone pillar">
+	</item>
+	<item id="10200" article="a" name="limestone pillar">
+	</item>
+	<item id="10201" article="a" name="limestone pillar">
+	</item>
+	<item id="10202" article="a" name="limestone pillar">
+	</item>
+	<item id="10203" article="a" name="limestone pillar">
+	</item>
+	<item id="10204" article="a" name="limestone wall">
+	</item>
+	<item id="10205" article="a" name="limestone wall">
+	</item>
+	<item id="10206" article="a" name="limestone wall">
+	</item>
+	<item id="10207" article="a" name="limestone wall">
+	</item>
+	<item id="10209" article="a" name="Carlin banner">
+	</item>
+	<item id="10210" article="a" name="limestone wall">
+	</item>
+	<item id="10211" article="a" name="limestone wall">
+	</item>
+	<item id="10212" article="a" name="limestone wall">
+	</item>
+	<item id="10213" article="a" name="limestone pedestal">
+	</item>
+	<item id="10214" article="a" name="limestone pedestal">
+	</item>
+	<item id="10215" article="a" name="limestone pedestal">
+	</item>
+	<item id="10216" article="a" name="limestone pedestal">
+	</item>
+	<item id="10217" article="a" name="limestone pedestal">
+	</item>
+	<item id="10226" article="a" name="framework wall">
+	</item>
+	<item id="10227" article="a" name="framework wall">
+	</item>
+	<item id="10228" article="a" name="framework wall">
+	</item>
+	<item id="10229" article="a" name="framework wall">
+	</item>
+	<item id="10230" article="a" name="framework wall">
+	</item>
+	<item id="10231" article="a" name="framework wall">
+	</item>
+	<item id="10232" article="a" name="framework wall">
+	</item>
+	<item id="10233" article="a" name="framework wall">
+	</item>
+	<item id="10234" article="a" name="framework wall">
+	</item>
+	<item id="10235" article="a" name="framework wall">
+	</item>
+	<item id="10236" article="a" name="framework wall">
+	</item>
+	<item id="10237" article="a" name="framework wall">
+	</item>
+	<item id="10238" article="a" name="framework wall">
+	</item>
+	<item id="10239" article="a" name="framework wall">
+	</item>
+	<item id="10240" article="a" name="framework wall">
+	</item>
+	<item id="10241" article="a" name="framework wall">
+	</item>
+	<item id="10242" article="a" name="framework wall">
+	</item>
+	<item id="10243" article="a" name="framework wall">
+	</item>
+	<item id="10244" article="a" name="framework wall">
+	</item>
+	<item id="10245" article="a" name="framework wall">
+	</item>
+	<item id="10246" article="a" name="framework wall">
+	</item>
+	<item id="10247" article="a" name="framework wall">
+	</item>
+	<item id="10248" article="a" name="framework wall">
+	</item>
+	<item id="10249" article="a" name="stone wall">
+	</item>
+	<item id="10250" article="a" name="stone wall">
+	</item>
+	<item id="10251" article="a" name="stone wall">
+	</item>
+	<item id="10252" article="a" name="stone wall">
+	</item>
+	<item id="10253" article="a" name="stone wall">
+	</item>
+	<item id="10254" article="a" name="stone wall">
+	</item>
+	<item id="10255" article="a" name="stone wall">
+	</item>
+	<item id="10256" article="a" name="stone wall">
+	</item>
+	<item id="10257" article="a" name="stone wall">
+	</item>
+	<item id="10258" article="a" name="stone wall">
+	</item>
+	<item id="10259" article="a" name="stone wall">
+	</item>
+	<item id="10260" article="a" name="stone wall">
+	</item>
+	<item id="10261" article="a" name="stone wall">
+	</item>
+	<item id="10264" article="a" name="framework window">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10265" article="a" name="framework window">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10266" article="a" name="framework window">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10267" article="a" name="framework window">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10268" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="description" value="It is locked."/>
+	</item>
+	<item id="10269" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10270" article="an" name="open door">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10271" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="description" value="It is locked."/>
+	</item>
+	<item id="10272" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10273" article="an" name="open door">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10274" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10275" article="an" name="open door">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10276" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10277" article="an" name="open door">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10278" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10279" article="an" name="open door">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10280" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10281" article="an" name="open door">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10282" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10283" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10284" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10285" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10325" article="a" name="roof">
+	</item>
+	<item id="10326" article="a" name="roof">
+	</item>
+	<item id="10327" article="a" name="roof">
+	</item>
+	<item id="10328" article="a" name="roof">
+	</item>
+	<item id="10329" article="a" name="roof">
+	</item>
+	<item id="10330" article="a" name="roof">
+	</item>
+	<item id="10331" article="a" name="roof">
+	</item>
+	<item id="10332" article="a" name="roof">
+	</item>
+	<item id="10333" article="a" name="roof">
+	</item>
+	<item id="10334" article="a" name="roof">
+	</item>
+	<item id="10335" article="a" name="roof">
+	</item>
+	<item id="10336" article="a" name="roof">
+	</item>
+	<item id="10337" article="a" name="roof">
+	</item>
+	<item id="10338" article="a" name="roof">
+	</item>
+	<item id="10339" article="a" name="roof">
+	</item>
+	<item id="10340" article="a" name="roof">
+	</item>
+	<item id="10344" article="a" name="stone ledge">
+	</item>
+	<item id="10345" article="a" name="pillar">
+	</item>
+	<item id="10346" article="a" name="pillar">
+	</item>
+	<item id="10349" article="a" name="statue">
+	</item>
+	<item id="10350" article="a" name="statue">
+	</item>
+	<item id="10351" article="a" name="statue">
+	</item>
+	<item id="10352" article="a" name="statue">
+	</item>
+	<item id="10353" article="a" name="statue">
+	</item>
+	<item id="10354" article="a" name="statue">
+	</item>
+	<item id="10355" article="a" name="statue of Fafnar">
+	</item>
+	<item id="10356" article="a" name="statue of Fafnar">
+	</item>
+	<item id="10365" article="a" name="goddess statue">
+	</item>
+	<item id="10366" article="a" name="goddess statue">
+	</item>
+	<item id="10367" article="a" name="goddess statue">
+	</item>
+	<item id="10368" article="a" name="goddess statue">
+	</item>
+	<item id="10369" article="a" name="sun emblem">
+	</item>
+	<item id="10370" article="a" name="sun emblem">
+	</item>
+	<item id="10371" article="a" name="sun emblem">
+	</item>
+	<item id="10372" article="a" name="sun emblem">
+	</item>
+	<item id="10383" article="a" name="Carlin banner">
+	</item>
+	<item id="10393" article="a" name="Carlin banner">
+	</item>
+	<item id="10398" article="" name="pavement">
+	</item>
+	<item id="10399" article="" name="pavement">
+	</item>
+	<item id="10400" article="" name="pavement">
+	</item>
+	<item id="10401" article="" name="pavement">
+	</item>
+	<item id="10402" article="" name="pavement">
+	</item>
+	<item id="10403" article="" name="pavement">
+	</item>
+	<item id="10404" article="" name="pavement">
+	</item>
+	<item id="10405" article="a" name="wooden floor">
+	</item>
+	<item id="10406" article="a" name="wooden floor">
+	</item>
+	<item id="10407" article="a" name="wooden floor">
+	</item>
+	<item id="10408" article="a" name="wooden floor">
+	</item>
+	<item id="10409" article="a" name="wooden floor">
+	</item>
+	<item id="10410" article="a" name="wooden floor">
+	</item>
+	<item id="10411" article="a" name="wooden floor">
+	</item>
+	<item id="10412" article="a" name="wooden floor">
+	</item>
+	<item id="10413" article="a" name="wooden floor">
+	</item>
+	<item id="10414" article="a" name="wooden floor">
+	</item>
+	<item id="10415" article="a" name="wooden floor">
+	</item>
+	<item id="10416" article="a" name="wooden floor">
+	</item>
+	<item id="10417" article="" name="pavement">
+	</item>
+	<item id="10418" article="" name="pavement">
+	</item>
+	<item id="10419" article="" name="pavement">
+	</item>
+	<item id="10420" article="" name="pavement">
+	</item>
+	<item id="10421" article="" name="pavement">
+	</item>
+	<item id="10422" article="" name="pavement">
+	</item>
+	<item id="10423" article="" name="pavement">
+	</item>
+	<item id="10424" article="" name="pavement">
+	</item>
+	<item id="10425" article="" name="pavement">
+	</item>
+	<item id="10426" article="" name="pavement">
+	</item>
+	<item id="10427" article="" name="pavement">
+	</item>
+	<item id="10428" article="" name="pavement">
+	</item>
+	<item id="10429" article="a" name="Carlin shield">
+	</item>
+	<item id="10430" article="a" name="Carlin shield">
+	</item>
+	<item id="10431" article="a" name="serpent shield">
+	</item>
+	<item id="10432" article="a" name="serpent shield">
+	</item>
+	<item id="10433" article="a" name="stone ledge">
+	</item>
+	<item id="10434" article="a" name="stone ledge">
+	</item>
+	<item id="10435" article="a" name="stone wall">
+	</item>
+	<item id="10436" article="a" name="stone pedestal">
+	</item>
+	<item id="10437" article="a" name="stone pedestal">
+	</item>
+	<item id="10438" article="a" name="stone pedestal">
+	</item>
+	<item id="10439" article="a" name="stone pedestal">
+	</item>
+	<item id="10440" article="a" name="stone pedestal">
+	</item>
+	<item id="10441" article="" name="sand">
+	</item>
+	<item id="10442" article="" name="sand">
+	</item>
+	<item id="10443" article="" name="sand">
+	</item>
+	<item id="10444" article="" name="sand">
+	</item>
+	<item id="10445" article="" name="sand">
+	</item>
+	<item id="10446" article="" name="sand">
+	</item>
+	<item id="10447" article="" name="sand">
+	</item>
+	<item id="10448" article="" name="sand">
+	</item>
+	<item id="10468" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="description" value="It is locked."/>
+	</item>
+	<item id="10469" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10470" article="an" name="open door">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10471" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10472" article="an" name="open door">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10473" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10474" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10475" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10476" article="an" name="open door">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10477" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+		<attribute key="description" value="It is locked."/>
+	</item>
+	<item id="10478" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10479" article="an" name="open door">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10480" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10481" article="an" name="open door">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10482" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10483" article="a" name="gate of expertise">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10484" article="a" name="closed door">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10485" article="an" name="open door">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10486" article="a" name="limestone window">
+	</item>
+	<item id="10487" article="a" name="limestone window">
+	</item>
+	<item id="10488" article="a" name="limestone window">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10489" article="a" name="limestone window">
+		<attribute key="type" value="door"/>
+		<attribute key="blockprojectile" value="1"/>
+	</item>
+	<item id="10490" article="a" name="limestone window">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10491" article="a" name="limestone window">
+		<attribute key="type" value="door"/>
+	</item>
+	<item id="10492" article="" name="pavement">
+	</item>
+	<item id="10493" article="" name="pavement">
+	</item>
+	<item id="10494" article="" name="pavement">
+	</item>
+	<item id="10495" article="" name="pavement">
+	</item>
+	<item id="10496" article="" name="pavement">
+	</item>
+	<item id="10497" article="" name="pavement">
+	</item>
+	<item id="10498" article="" name="pavement">
+	</item>
 	<item id="20001" name="water"/>
 	<item id="20002" name="blood"/>
 	<item id="20003" name="beer"/>

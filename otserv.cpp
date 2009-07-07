@@ -613,6 +613,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 			OTSYS_CREATE_THREAD(serverMain, hwnd);
 			break;
 		}
+
 		case WM_SIZE:
 		{
 			if(wParam == SIZE_MINIMIZED)
@@ -638,7 +639,9 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 			}
 			break;
 		}
+
 		case WM_COMMAND:
+		{
 			switch(LOWORD(wParam))
 			{
 				case ID_TRAY_HIDE:
@@ -656,6 +659,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						gui.m_minimized = true;
 					}
 					break;
+
 				case ID_MENU_GAME_BROADCAST:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -663,6 +667,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							g_game.broadcastMessage(iBox.Text, MSG_STATUS_WARNING);
 					}
 					break;
+
 				case ID_MENU_GAME_RELOAD_ACTIONS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -672,6 +677,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload actions." << std::endl;
 					}
 					break;
+
 				case ID_MENU_GAME_RELOAD_CREATUREEVENTS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -681,6 +687,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload creature events." << std::endl;
 					}
 					break;
+
 				case ID_MENU_GAME_RELOAD_COMMANDS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -690,6 +697,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload commands." << std::endl;
 					}
 					break;
+
 				case ID_MENU_GAME_RELOAD_CONFIG:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -699,6 +707,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload config." << std::endl;
 					}
 					break;
+
 				case ID_MENU_GAME_RELOAD_HIGHSCORES:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -708,6 +717,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload highscores." << std::endl;
 					}
 					break;
+
 				case ID_MENU_GAME_RELOAD_MONSTERS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -717,6 +727,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload monsters." << std::endl;
 					}
 					break;
+
 				case ID_MENU_GAME_RELOAD_MOVEMENTS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -726,6 +737,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload movements." << std::endl;
 					}
 					break;
+
 				case ID_MENU_GAME_RELOAD_NPCS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -733,6 +745,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						std::cout << "Reloaded npcs." << std::endl;
 					}
 					break;
+
 				case ID_MENU_GAME_RELOAD_QUESTS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -742,6 +755,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload quests." << std::endl;
 					}
 					break;
+
 				case ID_MENU_GAME_RELOAD_RAIDS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -751,6 +765,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload raids." << std::endl;
 					}
 					break;
+
 				case ID_MENU_GAME_RELOAD_SPELLS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -760,6 +775,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload spells." << std::endl;
 					}
 					break;
+
 				case ID_MENU_GAME_RELOAD_TALKACTIONS:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -769,6 +785,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload talkactions." << std::endl;
 					}
 					break;
+
 				case ID_MENU_GAME_RELOAD_RELOADALL:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -831,6 +848,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 							std::cout << "Failed to reload monsters." << std::endl;
 					}
 					break;
+
 				case ID_MENU_GAME_WORLDTYPE_PVP:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -838,6 +856,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						std::cout << "WorldType set to 'PVP'." << std::endl;
 					}
 					break;
+
 				case ID_MENU_GAME_WORLDTYPE_NOPVP:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -845,6 +864,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						std::cout << "WorldType set to 'Non PVP'." << std::endl;
 					}
 					break;
+
 				case ID_MENU_GAME_WORLDTYPE_PVPENFORCED:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -852,6 +872,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						std::cout << "WorldType set to 'PVP Enforced'." << std::endl;
 					}
 					break;
+
 				case ID_MENU_FILE_CLEARLOG:
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
@@ -862,6 +883,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						std::cout << "Visit our forum for updates, support and resources: http://otland.net/." << std::endl << std::endl;
 					}
 					break;
+
 				case ID_MENU_GAME_ACCEPT:
 					if(g_game.getGameState() != GAME_STATE_STARTUP && !gui.m_connections)
 					{
@@ -869,6 +891,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						ModifyMenu(GetMenu(hwnd), ID_MENU_GAME_ACCEPT, MF_STRING, ID_MENU_GAME_REJECT, "&Reject Connections");
 					}
 					break;
+
 				case ID_MENU_GAME_REJECT:
 					if(g_game.getGameState() != GAME_STATE_STARTUP && gui.m_connections)
 					{
@@ -876,6 +899,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						ModifyMenu(GetMenu(hwnd), ID_MENU_GAME_REJECT, MF_STRING, ID_MENU_GAME_ACCEPT, "&Accept Connections");
 					}
 					break;
+
 				case ID_TRAY_SHUTDOWN:
 				case ID_MENU_FILE_SHUTDOWN:
 					if(MessageBoxA(hwnd, "Are you sure you want to shutdown the server?", "Shutdown", MB_YESNO) == IDYES)
@@ -885,6 +909,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						Shell_NotifyIcon(NIM_DELETE, &NID);
 					}
 					break;
+
 				case ID_MENU_GAME_PLAYERS_LIST:
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP && gui.m_connections)
@@ -897,28 +922,33 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					}
 				}
 				break;
+
 				case ID_MENU_GAME_PLAYERS_SAVE:
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
 					{
 						g_dispatcher.addTask(
-							createTask(boost::bind(&Game::saveGameState, &g_game, true, false)));
+							createTask(boost::bind(&Game::saveGameState, &g_game)));
 						MessageBoxA(NULL, "The players online has been saved.", "Save players", MB_OK);
 					}
 				}
 				break;
 			}
+		}
 		break;
+
 		case WM_CLOSE:
 		case WM_DESTROY:
+		{
 			if(MessageBoxA(hwnd, "Are you sure you want to shutdown the server?", "Shutdown", MB_YESNO) == IDYES)
 			{
 				g_dispatcher.addTask(
 					createTask(boost::bind(&Game::setGameState, &g_game, GAME_STATE_SHUTDOWN)));
 				Shell_NotifyIcon(NIM_DELETE, &NID);
 			}
-			break;
+		}
 		break;
+
 		case WM_USER + 1: // tray icon messages
 		{
 			switch(lParam)
@@ -929,7 +959,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					GetCursorPos(&mp);
 					TrackPopupMenu(GetSubMenu(gui.m_trayMenu, 0), 0, mp.x, mp.y, 0, hwnd, 0);
 				}
-					break;
+				break;
+
 				case WM_LBUTTONUP: // left click
 				{
 					if(gui.m_minimized)
@@ -940,13 +971,13 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						gui.m_minimized = false;
 					}
 				}
-					break;
+				break;
 			}
 		}
 		break;
+
 		default:
 			return DefWindowProc(hwnd, message, wParam, lParam);
-			break;
 	}
 	return 0;
 }

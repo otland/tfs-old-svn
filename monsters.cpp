@@ -131,7 +131,6 @@ uint32_t Monsters::getLootRandom()
 
 void MonsterType::createLoot(Container* corpse)
 {
-	ItemVector itemVector;
 	for(LootItems::const_iterator it = lootItems.begin(); it != lootItems.end() && (corpse->capacity() - corpse->size() > 0); it++)
 	{
 		Item* tmpItem = createLootItem(*it);
@@ -140,28 +139,31 @@ void MonsterType::createLoot(Container* corpse)
 			//check containers
 			if(Container* container = tmpItem->getContainer())
 			{
-				createLootContainer(container, *it, itemVector);
+				createLootContainer(container, *it);
 				if(container->size() == 0)
 					delete container;
 				else
 					corpse->__internalAddThing(tmpItem);
 			}
 			else
-			{
 				corpse->__internalAddThing(tmpItem);
-				itemVector.push_back(tmpItem);
-			}
 		}
 	}
 
 	corpse->__startDecaying();
 
 	uint32_t ownerId = corpse->getCorpseOwner();
-	if(ownerId && itemVector.size())
+	if(ownerId)
 	{
-		Player* owner = NULL;
-		if((owner = g_game.getPlayerByID(ownerId)) && owner->getParty())
-			owner->getParty()->broadcastPartyLoot(name, itemVector);
+		Player* owner = g_game.getPlayerByID(ownerId);
+		if(owner)
+		{
+			std::stringstream ss;
+			ss << "Loot of " << nameDescription << ": " << corpse->getContentDescription() << ".";
+			owner->sendTextMessage(MSG_INFO_DESCR, ss.str());
+			if(owner->getParty())
+				owner->getParty()->broadcastPartyLoot(ss.str());
+		}
 	}
 }
 
@@ -200,7 +202,7 @@ Item* MonsterType::createLootItem(const LootBlock& lootBlock)
 	return NULL;
 }
 
-void MonsterType::createLootContainer(Container* parent, const LootBlock& lootblock, ItemVector& itemVector)
+void MonsterType::createLootContainer(Container* parent, const LootBlock& lootblock)
 {
 	if(parent->size() < parent->capacity())
 	{
@@ -212,17 +214,14 @@ void MonsterType::createLootContainer(Container* parent, const LootBlock& lootbl
 			{
 				if(Container* container = tmpItem->getContainer())
 				{
-					createLootContainer(container, *it, itemVector);
+					createLootContainer(container, *it);
 					if(container->size() == 0)
 						delete container;
 					else
 						parent->__internalAddThing(container);
 				}
 				else
-				{
 					parent->__internalAddThing(tmpItem);
-					itemVector.push_back(tmpItem);
-				}
 			}
 		}
 	}

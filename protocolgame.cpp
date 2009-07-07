@@ -61,39 +61,18 @@ Chat g_chat;
 uint32_t ProtocolGame::protocolGameCount = 0;
 #endif
 
-#ifdef __SERVER_PROTECTION__
-#error "You should not use __SERVER_PROTECTION__"
-#define ADD_TASK_INTERVAL 40
-#define CHECK_TASK_INTERVAL 5000
-#else
-#define ADD_TASK_INTERVAL -1
-#endif
-
 // Helping templates to add dispatcher tasks
 template<class FunctionType>
 void ProtocolGame::addGameTaskInternal(const FunctionType& func)
 {
-	if(m_now > m_nextTask || m_messageCount < 5)
-	{
-		g_dispatcher.addTask(createTask(func));
-		m_nextTask = m_now + ADD_TASK_INTERVAL;
-	}
-	else
-	{
-		m_rejectCount++;
-		//std::cout << "reject task" << std::endl;
-	}
+	g_dispatcher.addTask(createTask(func));
 }
 
 ProtocolGame::ProtocolGame(Connection* connection) :
 	Protocol(connection)
 {
 	player = NULL;
-	m_nextTask = 0;
 	m_nextPing = 0;
-	m_lastTaskCheck = 0;
-	m_messageCount = 0;
-	m_rejectCount = 0;
 	m_debugAssertSent = false;
 	m_acceptPackets = false;
 	eventConnect = 0;
@@ -143,7 +122,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 {
 	//dispatcher thread
 	Player* _player = g_game.getPlayerByName(name);
-	if(!_player || g_config.getNumber(ConfigManager::ALLOW_CLONES) || name == "Account Manager")
+	if(!_player || g_config.getBoolean(ConfigManager::ALLOW_CLONES) || name == "Account Manager")
 	{
 		player = new Player(name, this);
 
@@ -410,9 +389,9 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 	msg.SkipBytes(3);
 
-	if(version < 842)
+	if(version < 850)
 	{
-		disconnectClient(0x0A, "Only clients with protocol 8.42 allowed!");
+		disconnectClient(0x0A, "Only clients with protocol 8.5 allowed!");
 		return false;
 	}
 
@@ -527,24 +506,6 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 {
 	if(!m_acceptPackets || msg.getMessageLength() <= 0 || !player)
 		return;
-
-	m_now = OTSYS_TIME();
-	#ifdef __SERVER_PROTECTION__
-	int64_t interval = m_now - m_lastTaskCheck;
-	if(interval > CHECK_TASK_INTERVAL)
-	{
-		interval = 0;
-		m_lastTaskCheck = m_now;
-		m_messageCount = 1;
-		m_rejectCount = 0;
-	}
-	else
-	{
-		m_messageCount++;
-		if((interval > 800 && interval / m_messageCount < 25))
-			getConnection()->closeConnection();
-	}
-	#endif
 
 	uint8_t recvbyte = msg.GetByte();
 	//a dead player can not performs actions
@@ -880,15 +841,15 @@ void ProtocolGame::GetTileDescription(const Tile* tile, NetworkMessage* msg)
 	}
 }
 
-void ProtocolGame::GetMapDescription(uint16_t x, uint16_t y, unsigned char z,
-	uint16_t width, uint16_t height, NetworkMessage* msg)
+void ProtocolGame::GetMapDescription(int32_t x, int32_t y, int32_t z,
+	int32_t width, int32_t height, NetworkMessage* msg)
 {
 	int32_t skip = -1;
 	int32_t startz, endz, zstep = 0;
 	if(z > 7)
 	{
 		startz = z - 2;
-		endz = std::min(MAP_MAX_LAYERS - 1, z + 2);
+		endz = std::min((int32_t)MAP_MAX_LAYERS - 1, (int32_t)z + 2);
 		zstep = 1;
 	}
 	else
@@ -912,7 +873,8 @@ void ProtocolGame::GetMapDescription(uint16_t x, uint16_t y, unsigned char z,
 	#endif
 }
 
-void ProtocolGame::GetFloorDescription(NetworkMessage* msg, int32_t x, int32_t y, int32_t z, int32_t width, int32_t height, int32_t offset, int& skip)
+void ProtocolGame::GetFloorDescription(NetworkMessage* msg, int32_t x, int32_t y, int32_t z,
+	int32_t width, int32_t height, int32_t offset, int32_t& skip)
 {
 	Tile* tile;
 	for(int32_t nx = 0; nx < width; nx++)
@@ -1122,11 +1084,12 @@ void ProtocolGame::parseCancelMove(NetworkMessage& msg)
 
 void ProtocolGame::parseReceivePing(NetworkMessage& msg)
 {
-	if(m_now > m_nextPing)
+	int64_t now = OTSYS_TIME();
+	if(now > m_nextPing)
 	{
 		g_dispatcher.addTask(
 			createTask(boost::bind(&Game::playerReceivePing, &g_game, player->getID())));
-		m_nextPing = m_now + 2000;
+		m_nextPing = now + 2000;
 	}
 }
 
@@ -2088,7 +2051,7 @@ void ProtocolGame::sendDistanceShoot(const Position& from, const Position& to, u
 
 void ProtocolGame::sendMagicEffect(const Position& pos, uint8_t type)
 {
-	if(canSee(pos) && type <= 66)
+	if(canSee(pos) && type <= 67)
 	{
 		NetworkMessage* msg = getOutputBuffer();
 		if(msg)
@@ -2222,7 +2185,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 				if(violationReasons[player->getAccountType()] > 0)
 				{
 					msg->AddByte(0x0B);
-					for(int32_t i = 0; i <= 22; i++)
+					for(int32_t i = 0; i < 20; i++)
 					{
 						if(i <= violationReasons[player->getAccountType()])
 							msg->AddByte(violationActions[player->getAccountType()]);
@@ -2552,36 +2515,53 @@ void ProtocolGame::sendOutfitWindow()
 			return;
 
 		OutfitListType::const_iterator it, it_;
-		for(it = global_outfits.begin(); it != global_outfits.end(); ++it)
+		if(!player->isAccessPlayer())
 		{
-			if((*it)->premium && !player->isPremium())
-				count_outfits--;
+			for(it = global_outfits.begin(); it != global_outfits.end(); ++it)
+			{
+				if((*it)->premium && !player->isPremium())
+					count_outfits--;
+			}
 		}
-
 		msg->AddByte(count_outfits);
 
-		bool addedAddon;
-		const OutfitListType& player_outfits = player->getPlayerOutfits();
-		for(it = global_outfits.begin(); it != global_outfits.end() && (count_outfits > 0); ++it)
+		if(player->isAccessPlayer())
 		{
-			if(((*it)->premium && player->isPremium()) || !(*it)->premium)
+			for(it = global_outfits.begin(); it != global_outfits.end() && (count_outfits > 0); ++it)
 			{
-				addedAddon = false;
 				msg->AddU16((*it)->looktype);
 				msg->AddString(Outfits::getInstance()->getOutfitName((*it)->looktype));
-				//TODO: Try to avoid using loop to get addons
-				for(it_ = player_outfits.begin(); it_ != player_outfits.end(); ++it_)
-				{
-					if((*it_)->looktype == (*it)->looktype)
-					{
-						msg->AddByte((*it_)->addons);
-						addedAddon = true;
-						break;
-					}
-				}
-				if(!addedAddon)
-					msg->AddByte(0x00);
+				msg->AddByte(0x03);
 				count_outfits--;
+			}
+		}
+		else
+		{
+			bool addedAddon;
+			const OutfitListType& player_outfits = player->getPlayerOutfits();
+			for(it = global_outfits.begin(); it != global_outfits.end() && (count_outfits > 0); ++it)
+			{
+				if(((*it)->premium && player->isPremium()) || !(*it)->premium)
+				{
+					addedAddon = false;
+					msg->AddU16((*it)->looktype);
+					msg->AddString(Outfits::getInstance()->getOutfitName((*it)->looktype));
+					//TODO: Try to avoid using loop to get addons
+					for(it_ = player_outfits.begin(); it_ != player_outfits.end(); ++it_)
+					{
+						if((*it_)->looktype == (*it)->looktype)
+						{
+							msg->AddByte((*it_)->addons);
+							addedAddon = true;
+							break;
+						}
+					}
+
+					if(!addedAddon)
+						msg->AddByte(0x00);
+
+					count_outfits--;
+				}
 			}
 		}
 		player->hasRequestedOutfit(true);
@@ -2688,7 +2668,7 @@ void ProtocolGame::AddCreature(NetworkMessage* msg, const Creature* creature, bo
 
 	LightInfo lightInfo;
 	creature->getCreatureLight(lightInfo);
-	msg->AddByte((player->isAccessPlayer() ? 0xFF : lightInfo.level));
+	msg->AddByte(player->isAccessPlayer() ? 0xFF : lightInfo.level);
 	msg->AddByte(lightInfo.color);
 
 	msg->AddU16(creature->getStepSpeed());

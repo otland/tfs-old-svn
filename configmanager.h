@@ -63,6 +63,8 @@ class ConfigManager
 			BROADCAST_BANISHMENTS,
 			FREE_MEMORY_AT_SHUTDOWN,
 			ANIMATION_TEXT_ON_HEAL,
+			ENABLE_RULE_VIOLATION_REPORTS,
+			ALLOW_CLONES,
 			LAST_BOOLEAN_CONFIG /* this must be the last one */
 		};
 
@@ -107,7 +109,6 @@ class ConfigManager
 			PZ_LOCKED,
 			DEFAULT_DESPAWNRANGE,
 			DEFAULT_DESPAWNRADIUS,
-			ALLOW_CLONES,
 			RATE_EXPERIENCE,
 			RATE_SKILL,
 			RATE_LOOT,
@@ -148,6 +149,7 @@ class ConfigManager
 			LOGIN_PORT,
 			STATUS_PORT,
 			STAIRHOP_DELAY,
+			LEVEL_TO_CREATE_GUILD,
 			LAST_INTEGER_CONFIG /* this must be the last one */
 		};
 

@@ -85,7 +85,7 @@
 	mapStorageType = "relational"
 
 	-- Messaging
-	enableRuleViolationReports = "yes"
+	enableRuleViolationReports = "no"
 	maxMessageBuffer = 4
 
 	-- MySQL

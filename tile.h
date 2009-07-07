@@ -46,7 +46,7 @@ enum tileflags_t
 {
 	TILESTATE_NONE = 0,
 	TILESTATE_PROTECTIONZONE = 1,
-	TILESTATE_DEPRICATED_HOUSE = 2,
+	TILESTATE_DEPRECATED_HOUSE = 2,
 	TILESTATE_NOPVPZONE = 4,
 	TILESTATE_NOLOGOUT = 8,
 	TILESTATE_PVPZONE = 16,
@@ -72,6 +72,15 @@ enum tileflags_t
 	TILESTATE_IMMOVABLENOFIELDBLOCKPATH = 4194304,
 	TILESTATE_NOFIELDBLOCKPATH = 8388608,
 	TILESTATE_DYNAMIC_TILE = 16777216
+};
+
+enum ZoneType_t
+{
+	ZONE_PROTECTION,
+	ZONE_NOPVP,
+	ZONE_PVP,
+	ZONE_NOLOGOUT,
+	ZONE_NORMAL
 };
 
 class TileItemVector
@@ -194,6 +203,19 @@ class Tile : public Cylinder
 					return false;
 			}
 		}
+
+		ZoneType_t getZone() const
+		{
+			if(hasFlag(TILESTATE_PROTECTIONZONE))
+				return ZONE_PROTECTION;
+			else if(hasFlag(TILESTATE_NOPVPZONE))
+				return ZONE_NOPVP;
+			else if(hasFlag(TILESTATE_PVPZONE))
+				return ZONE_PVP;
+			else
+				return ZONE_NORMAL;
+		}
+
 		bool hasHeight(uint32_t n) const;
 		uint32_t getHeight() const;
 

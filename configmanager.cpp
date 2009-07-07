@@ -100,6 +100,8 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confBoolean[REPLACE_KICK_ON_LOGIN] = (getGlobalString(L, "replaceKickOnLogin", "yes") == "yes");
 	m_confBoolean[OLD_CONDITION_ACCURACY] = (getGlobalString(L, "oldConditionAccuracy", "no") == "yes");
 	m_confBoolean[ANIMATION_TEXT_ON_HEAL] = (getGlobalString(L, "animationTextOnHeal", "yes") == "yes");
+	m_confBoolean[ENABLE_RULE_VIOLATION_REPORTS] = (getGlobalString(L, "enableRuleViolationReports", "no") == "yes");
+	m_confBoolean[ALLOW_CLONES] = getGlobalNumber(L, "allowClones", 0);
 
 	m_confString[DEFAULT_PRIORITY] = getGlobalString(L, "defaultPriority", "high");
 	m_confString[MAP_STORAGE_TYPE] = getGlobalString(L, "mapStorageType", "relational");
@@ -119,7 +121,6 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confInteger[PZ_LOCKED] = getGlobalNumber(L, "pzLocked", 0);
 	m_confInteger[DEFAULT_DESPAWNRANGE] = getGlobalNumber(L, "deSpawnRange", 2);
 	m_confInteger[DEFAULT_DESPAWNRADIUS] = getGlobalNumber(L, "deSpawnRadius", 50);
-	m_confInteger[ALLOW_CLONES] = getGlobalNumber(L, "allowClones", 0);
 	m_confInteger[RATE_EXPERIENCE] = getGlobalNumber(L, "rateExp", 1);
 	m_confInteger[RATE_SKILL] = getGlobalNumber(L, "rateSkill", 1);
 	m_confInteger[RATE_LOOT] = getGlobalNumber(L, "rateLoot", 1);
@@ -151,6 +152,7 @@ bool ConfigManager::loadFile(const std::string& _filename)
 	m_confInteger[AUTO_SAVE_EACH_MINUTES] = getGlobalNumber(L, "autoSaveEachMinutes", 0);
 	m_confInteger[STAIRHOP_DELAY] = getGlobalNumber(L, "stairJumpExhaustion", 2000);
 	m_confInteger[ALTERNATIVE_EXHAUST] = getGlobalNumber(L, "alternativeExhaust", 1000);
+	m_confInteger[LEVEL_TO_CREATE_GUILD] = getGlobalNumber(L, "levelToCreateGuild", 8);
 	m_isLoaded = true;
 
 	lua_close(L);

@@ -137,7 +137,7 @@ class ItemType
 		bool isMailbox() const {return (type == ITEM_TYPE_MAILBOX);}
 		bool isTrashHolder() const {return (type == ITEM_TYPE_TRASHHOLDER);}
 		bool isBed() const {return (type == ITEM_TYPE_BED);}
-		bool isLevelDoor() const {return id == 1227 || id == 1229 || id == 1245 || id == 1247 || id == 1259 || id == 1261 || id == 3540 || id == 3549 || id == 5103 || id == 5112 || id == 5121 || id == 5130 || id == 5292 || id == 5294 || id == 6206 || id == 6208 || id == 6263 || id == 6265 || id == 6896 || id == 6905 || id == 7038 || id == 7047 || id == 8555 || id == 8557 || id == 9179 || id == 9181 || id == 9281 || id == 9283;}
+		bool isLevelDoor() const {return id == 1227 || id == 1229 || id == 1245 || id == 1247 || id == 1259 || id == 1261 || id == 3540 || id == 3549 || id == 5103 || id == 5112 || id == 5121 || id == 5130 || id == 5292 || id == 5294 || id == 6206 || id == 6208 || id == 6263 || id == 6265 || id == 6896 || id == 6905 || id == 7038 || id == 7047 || id == 8555 || id == 8557 || id == 9179 || id == 9181 || id == 9281 || id == 9283 || id == 10282 || id == 10284 || id == 10473 || id == 10482;}
 		bool hasSubType() const {return (isFluidContainer() || isSplash() || stackable || charges != 0);}
 		bool isRune() const {return clientCharges;}
 
@@ -169,6 +169,7 @@ class ItemType
 		bool isHangable;
 		bool allowDistRead;
 		bool clientCharges;
+		bool lookThrough;
 		uint16_t speed;
 		int32_t decayTo;
 		uint32_t decayTime;

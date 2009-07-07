@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.3
+		0.2.4
 
 	Codenamed
 		"Mystic Spirit"
@@ -36,7 +36,9 @@
 		C++ Programmer
 		Lua Scripter
 		Data Directory Manager
+]
 
+[ INACTIVE DEVELOPERS
 	Kiper
 		Founder
 		C++ Programmer
@@ -97,11 +99,11 @@
 
 		Download sourcecode
 			Launch a terminal, and paste in this command:
-				svn co http://svn.otland.net/public/forgottenserver/tags/0.2.2
+				svn co http://svn.otland.net/public/forgottenserver/tags/0.2.4
 
 		Compiling
 			Launch a terminal, and type this command:
-				cd 0.2.2/ && make
+				cd 0.2.4/ && make
 
 		Linker eror
 			If you receive a linker error saying something with 'libboost', try pasting the following commands to terminal and then move back to compiling again:

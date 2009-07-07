@@ -335,7 +335,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 								if(isHouseTile && !item->isNotMoveable())
 								{
-									std::cout << "Warning: [OTBM loader] Moveable item in house id = " << house->getHouseId() << " Item type = " << item->getID() << std::endl;
+									std::cout << "Warning: [OTBM loader] Moveable item with ID: " << item->getID() << ", in house: " << house->getHouseId() << ", at position [x: " << px << ", y: " << py << ", z: " << pz << "]." << std::endl;
 									delete item;
 									item = NULL;
 								}
@@ -395,7 +395,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 							{
 								if(isHouseTile && !item->isNotMoveable())
 								{
-									std::cout << "Warning: [OTBM loader] Moveable item in house id = " << house->getHouseId() << " Item type = " << item->getID() << std::endl;
+									std::cout << "Warning: [OTBM loader] Moveable item with ID: " << item->getID() << ", in house: " << house->getHouseId() << ", at position [x: " << px << ", y: " << py << ", z: " << pz << "]." << std::endl;
 									delete item;
 								}
 								else

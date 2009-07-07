@@ -76,15 +76,6 @@ struct FindPathParams
 	}
 };
 
-enum ZoneType_t
-{
-	ZONE_PROTECTION,
-	ZONE_NOPVP,
-	ZONE_PVP,
-	ZONE_NOLOGOUT,
-	ZONE_NORMAL
-};
-
 class Map;
 class Thing;
 class Container;
@@ -204,18 +195,7 @@ class Creature : public AutoID, virtual public Thing
 		const void setCurrentOutfit(Outfit_t outfit) {currentOutfit = outfit;}
 		const Outfit_t getDefaultOutfit() const {return defaultOutfit;}
 		bool isInvisible() const {return hasCondition(CONDITION_INVISIBLE);}
-		ZoneType_t getZone() const
-		{
-			const Tile* tile = getTile();
-			if(tile->hasFlag(TILESTATE_PROTECTIONZONE))
-				return ZONE_PROTECTION;
-			else if(tile->hasFlag(TILESTATE_NOPVPZONE))
-				return ZONE_NOPVP;
-			else if(tile->hasFlag(TILESTATE_PVPZONE))
-				return ZONE_PVP;
-			else
-				return ZONE_NORMAL;
-		}
+		ZoneType_t getZone() const {return getTile()->getZone();}
 
 		//walk functions
 		bool startAutoWalk(std::list<Direction>& listDir);
@@ -271,7 +251,6 @@ class Creature : public AutoID, virtual public Thing
 		virtual uint32_t getConditionImmunities() const {return 0;}
 		virtual uint32_t getConditionSuppressions() const {return 0;}
 		virtual bool isAttackable() const {return true;}
-		bool isIdle() const {return checkCreatureVectorIndex == 0;}
 
 		virtual void changeHealth(int32_t healthChange);
 		virtual void changeMana(int32_t manaChange);
@@ -315,7 +294,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual void onThink(uint32_t interval);
 		virtual void onAttacking(uint32_t interval);
 		virtual void onWalk();
-		virtual bool getNextStep(Direction& dir);
+		virtual bool getNextStep(Direction& dir, uint32_t& flags);
 
 		virtual void onAddTileItem(const Tile* tile, const Position& pos, const Item* item);
 		virtual void onUpdateTileItem(const Tile* tile, const Position& pos, const Item* oldItem,
@@ -379,7 +358,12 @@ class Creature : public AutoID, virtual public Thing
 		bool isInternalRemoved;
 		bool isMapLoaded;
 		bool isUpdatingPath;
+
+		// The creature onThink event vector this creature belongs to
+		// -1 represents that the creature isn't in any vector
 		int32_t checkCreatureVectorIndex;
+		bool creatureCheck;
+
 		int32_t health, healthMax;
 		int32_t mana, manaMax;
 

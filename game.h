@@ -169,7 +169,8 @@ class Game
 		  * Get a single tile of the map.
 		  * \returns A pointer to the tile
 		*/
-		Tile* getTile(uint32_t x, uint32_t y, uint32_t z);
+		Tile* getTile(int32_t x, int32_t y, int32_t z);
+		Tile* getTile(const Position& pos);
 
 		/**
 		  * Set a single tile of the map, position is read from this tile
@@ -392,6 +393,7 @@ class Game
 		void checkPlayersRecord();
 
 		void sendGuildMotd(uint32_t playerId, uint32_t guildId);
+		void sendRVRDisabled(uint32_t playerId);
 		void kickPlayer(uint32_t playerId, bool displayEffect);
 		bool playerReportBug(uint32_t playerId, std::string bug);
 		bool playerDebugAssert(uint32_t playerId, std::string assertLine, std::string date, std::string description, std::string comment);
@@ -496,7 +498,7 @@ class Game
 
 		GameState_t getGameState();
 		void setGameState(GameState_t newState);
-		void saveGameState(bool savePlayers, bool shutdown = false);
+		void saveGameState();
 		void loadGameState();
 		void refreshMap();
 

@@ -173,8 +173,10 @@ void Game::setGameState(GameState_t newState)
 				}
 
 				Houses::getInstance().payHouses();
+				saveGameState();
 
-				saveGameState(false, true);
+				if(service_manager)
+					service_manager->stop();
 
 				if(g_config.getBoolean(ConfigManager::FREE_MEMORY_AT_SHUTDOWN))
 				{
@@ -203,8 +205,7 @@ void Game::setGameState(GameState_t newState)
 				}
 
 				Houses::getInstance().payHouses();
-				g_dispatcher.addTask(
-					createTask(boost::bind(&Game::saveGameState, this, false, false)));
+				saveGameState();
 				break;
 			}
 
@@ -214,29 +215,25 @@ void Game::setGameState(GameState_t newState)
 	}
 }
 
-void Game::saveGameState(bool savePlayers, bool shutdown/* = false*/)
+void Game::saveGameState()
 {
-	setGameState(GAME_STATE_MAINTAIN);
+	if(gameState == GAME_STATE_NORMAL)
+		setGameState(GAME_STATE_MAINTAIN);
 
 	stateTime = 0;
 	std::cout << "Saving server..." << std::endl;
-	if(savePlayers)
+	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-		{
-			(*it).second->loginPosition = (*it).second->getPosition();
-			IOLoginData::getInstance()->savePlayer((*it).second, false);
-		}
+		(*it).second->loginPosition = (*it).second->getPosition();
+		IOLoginData::getInstance()->savePlayer((*it).second, false);
 	}
 
 	map->saveMap();
 	ScriptEnviroment::saveGameState();
 	stateTime = OTSYS_TIME() + STATE_TIME;
 
-	if(shutdown && service_manager)
-		service_manager->stop();
-
-	setGameState(GAME_STATE_NORMAL);
+	if(gameState == GAME_STATE_MAINTAIN)
+		setGameState(GAME_STATE_NORMAL);
 }
 
 void Game::loadGameState()
@@ -359,10 +356,10 @@ Thing* Game::internalGetThing(Player* player, const Position& pos, int32_t index
 					//then down items
 					thing = tile->getTopDownItem();
 					if(thing == NULL)
-					{
-						//then last we check items with topOrder 3 (doors etc)
-						thing = tile->getTopTopItem();
-					}
+						thing = tile->getTopTopItem(); //then last we check items with topOrder 3 (doors etc)
+
+					if(thing == NULL)
+						thing = tile->ground;
 				}
 			}
 			else if(type == STACKPOS_USE)
@@ -469,9 +466,14 @@ void Game::setTile(Tile* newTile)
 	return map->setTile(newTile->getPosition(), newTile);
 }
 
-Tile* Game::getTile(uint32_t x, uint32_t y, uint32_t z)
+Tile* Game::getTile(int32_t x, int32_t y, int32_t z)
 {
 	return map->getTile(x, y, z);
+}
+
+Tile* Game::getTile(const Position& pos)
+{
+	return map->getTile(pos);
 }
 
 QTreeLeafNode* Game::getLeaf(uint32_t x, uint32_t y)
@@ -868,7 +870,7 @@ bool Game::playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
 		}
 	}
 
-	Tile* toTile = map->getTile(toPos);
+	Tile* toTile = getTile(toPos);
 	const Position& movingCreaturePos = movingCreature->getPosition();
 
 	if(!toTile)
@@ -948,10 +950,10 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 		//try go up
 		if(currentPos.z != 8 && creature->getTile()->hasHeight(3))
 		{
-			Tile* tmpTile = map->getTile(currentPos.x, currentPos.y, currentPos.z - 1);
+			Tile* tmpTile = getTile(currentPos.x, currentPos.y, currentPos.z - 1);
 			if(tmpTile == NULL || (tmpTile->ground == NULL && !tmpTile->hasProperty(BLOCKSOLID)))
 			{
-				tmpTile = map->getTile(destPos.x, destPos.y, destPos.z - 1);
+				tmpTile = getTile(destPos.x, destPos.y, destPos.z - 1);
 				if(tmpTile && tmpTile->ground && !tmpTile->hasProperty(BLOCKSOLID))
 				{
 					flags = flags | FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE;
@@ -962,10 +964,10 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 		else
 		{
 			//try go down
-			Tile* tmpTile = map->getTile(destPos);
+			Tile* tmpTile = getTile(destPos);
 			if(currentPos.z != 7 && (tmpTile == NULL || (tmpTile->ground == NULL && !tmpTile->hasProperty(BLOCKSOLID))))
 			{
-				tmpTile = map->getTile(destPos.x, destPos.y, destPos.z + 1);
+				tmpTile = getTile(destPos.x, destPos.y, destPos.z + 1);
 				if(tmpTile && tmpTile->hasHeight(3))
 				{
 					flags = flags | FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE;
@@ -975,7 +977,7 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 		}
 	}
 
-	toTile = map->getTile(destPos);
+	toTile = getTile(destPos);
 	ReturnValue ret = RET_NOTPOSSIBLE;
 	if(toTile != NULL)
 		ret = internalMoveCreature(creature, fromTile, toTile, flags);
@@ -1917,6 +1919,10 @@ ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pu
 	{
 		if(Creature* creature = thing->getCreature())
 		{
+			ReturnValue ret = toTile->__queryAdd(0, creature, 1, FLAG_NOLIMIT);
+			if(ret != RET_NOERROR)
+				return ret;
+
 			if(pushMove && Position::areInRange<1,1,0>(creature->getPosition(), newPos) && toTile->ground)
 				creature->getTile()->moveCreature(creature, toTile, false);
 			else
@@ -2041,10 +2047,13 @@ bool Game::playerOpenChannel(uint32_t playerId, uint16_t channelId)
 	if(!channel)
 		return false;
 
-	if(channel->getId() == 0x03)
+	if(channel->getId() == 0x03 && g_config.getBoolean(ConfigManager::ENABLE_RULE_VIOLATION_REPORTS))
+	{
 		player->sendRuleViolationsChannel(channel->getId());
-	else
-		player->sendChannel(channel->getId(), channel->getName());
+		return true;
+	}
+
+	player->sendChannel(channel->getId(), channel->getName());
 	return true;
 }
 
@@ -2064,15 +2073,21 @@ bool Game::playerOpenPrivateChannel(uint32_t playerId, std::string& receiver)
 	if(!player || player->isRemoved())
 		return false;
 
-	if(IOLoginData::getInstance()->playerExists(receiver))
-		player->sendOpenPrivateChannel(receiver);
-	else
+	if(!IOLoginData::getInstance()->playerExists(receiver))
+	{
 		player->sendCancel("A player with this name does not exist.");
+		return true;
+	}
+
+	player->sendOpenPrivateChannel(receiver);
 	return true;
 }
 
 bool Game::playerProcessRuleViolation(uint32_t playerId, const std::string& name)
 {
+	if(!g_config.getBoolean(ConfigManager::ENABLE_RULE_VIOLATION_REPORTS))
+		return false;
+
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
@@ -2109,6 +2124,9 @@ bool Game::playerProcessRuleViolation(uint32_t playerId, const std::string& name
 
 bool Game::playerCloseRuleViolation(uint32_t playerId, const std::string& name)
 {
+	if(!g_config.getBoolean(ConfigManager::ENABLE_RULE_VIOLATION_REPORTS))
+		return false;
+
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
@@ -2122,6 +2140,9 @@ bool Game::playerCloseRuleViolation(uint32_t playerId, const std::string& name)
 
 bool Game::playerCancelRuleViolation(uint32_t playerId)
 {
+	if(!g_config.getBoolean(ConfigManager::ENABLE_RULE_VIOLATION_REPORTS))
+		return false;
+
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
 		return false;
@@ -3291,7 +3312,12 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 		case SPEAK_CHANNEL_R1:
 		case SPEAK_CHANNEL_R2:
 		case SPEAK_CHANNEL_W:
-			return playerTalkToChannel(player, type, text, channelId);
+		{
+			if(playerTalkToChannel(player, type, text, channelId))
+				return true;
+			else
+				return playerSay(playerId, 0, SPEAK_SAY, receiver, text);
+		}
 
 		case SPEAK_PRIVATE_PN:
 			return playerSpeakToNpc(player, text);
@@ -3459,9 +3485,7 @@ bool Game::playerTalkToChannel(Player* player, SpeakClasses type, const std::str
 		default:
 			break;
 	}
-
-	g_chat.talkToChannel(player, type, text, channelId);
-	return true;
+	return g_chat.talkToChannel(player, type, text, channelId);
 }
 
 bool Game::playerSpeakToNpc(Player* player, const std::string& text)
@@ -3517,9 +3541,9 @@ bool Game::playerReportRuleViolation(Player* player, const std::string& text)
 {
 	//Do not allow reports on multiclones worlds
 	//Since reports are name-based
-	if(g_config.getNumber(ConfigManager::ALLOW_CLONES))
+	if(g_config.getBoolean(ConfigManager::ALLOW_CLONES) || !g_config.getBoolean(ConfigManager::ENABLE_RULE_VIOLATION_REPORTS))
 	{
-		player->sendTextMessage(MSG_INFO_DESCR, "Rule violation reports are disabled.");
+		player->sendTextMessage(MSG_INFO_DESCR, "Rule Violation Reports are disabled.");
 		return false;
 	}
 
@@ -3544,6 +3568,9 @@ bool Game::playerReportRuleViolation(Player* player, const std::string& text)
 
 bool Game::playerContinueReport(Player* player, const std::string& text)
 {
+	if(!g_config.getBoolean(ConfigManager::ENABLE_RULE_VIOLATION_REPORTS))
+		return false;
+
 	RuleViolationsMap::iterator it = ruleViolations.find(player->getID());
 	if(it == ruleViolations.end())
 		return false;
@@ -3688,11 +3715,12 @@ void Game::checkCreatureAttack(uint32_t creatureId)
 
 void Game::addCreatureCheck(Creature* creature)
 {
+	creature->creatureCheck = true;
 	if(creature->checkCreatureVectorIndex >= 0)
 		return; //Already in a vector
 
 	toAddCheckCreatureVector.push_back(creature);
-	creature->checkCreatureVectorIndex = 0;
+	creature->checkCreatureVectorIndex = random_range(0, EVENT_CREATURECOUNT - 1);
 	creature->useThing2();
 }
 
@@ -3701,7 +3729,7 @@ void Game::removeCreatureCheck(Creature* creature)
 	if(creature->checkCreatureVectorIndex == -1)
 		return;
 
-	creature->checkCreatureVectorIndex = -1;
+	creature->creatureCheck = false;
 }
 
 void Game::checkCreatures()
@@ -3715,16 +3743,15 @@ void Game::checkCreatures()
 	for(it = toAddCheckCreatureVector.begin(); it != toAddCheckCreatureVector.end();)
 	{
 		creature = (*it);
-		if(creature->checkCreatureVectorIndex != -1)
+		if(creature->creatureCheck)
 		{
-			int next_vector = (checkCreatureLastIndex + 1) % EVENT_CREATURECOUNT;
-			checkCreatureVectors[next_vector].push_back(creature);
-			creature->checkCreatureVectorIndex = next_vector + 1;
+			checkCreatureVectors[creature->checkCreatureVectorIndex].push_back(creature);
 			++it;
 		}
 		else
 		{
 			FreeThing(creature);
+			creature->checkCreatureVectorIndex = -1;
 			it = toAddCheckCreatureVector.erase(it);
 		}
 	}
@@ -3738,7 +3765,7 @@ void Game::checkCreatures()
 	for(it = checkCreatureVector.begin(); it != checkCreatureVector.end();)
 	{
 		creature = (*it);
-		if(creature->checkCreatureVectorIndex != -1)
+		if(creature->creatureCheck)
 		{
 			if(creature->getHealth() > 0)
 			{
@@ -3754,6 +3781,7 @@ void Game::checkCreatures()
 		else
 		{
 			FreeThing(creature);
+			creature->checkCreatureVectorIndex = -1;
 			it = checkCreatureVector.erase(it);
 		}
 	}
@@ -4357,6 +4385,9 @@ void Game::getWorldLightInfo(LightInfo& lightInfo)
 
 bool Game::cancelRuleViolation(Player* player)
 {
+	if(!g_config.getBoolean(ConfigManager::ENABLE_RULE_VIOLATION_REPORTS))
+		return false;
+
 	RuleViolationsMap::iterator it = ruleViolations.find(player->getID());
 	if(it == ruleViolations.end())
 		return false;
@@ -4388,6 +4419,9 @@ bool Game::cancelRuleViolation(Player* player)
 
 bool Game::closeRuleViolation(Player* player)
 {
+	if(!g_config.getBoolean(ConfigManager::ENABLE_RULE_VIOLATION_REPORTS))
+		return false;
+
 	RuleViolationsMap::iterator it = ruleViolations.find(player->getID());
 	if(it == ruleViolations.end())
 		return false;
@@ -4441,8 +4475,6 @@ void Game::shutdown()
 	std::cout << ".";
 	cleanup();
 	std::cout << ".";
-	if(service_manager)
-		service_manager->stop();
 
 	std::cout << " done." << std::endl;
 	exit(1);
@@ -4623,7 +4655,7 @@ void Game::removePremium(Account account)
 void Game::autoSave()
 {
 	g_dispatcher.addTask(
-		createTask(boost::bind(&Game::saveGameState, this, true, false)));
+		createTask(boost::bind(&Game::saveGameState, this)));
 	g_scheduler.addEvent(createSchedulerTask(g_config.getNumber(ConfigManager::AUTO_SAVE_EACH_MINUTES) * 1000 * 60, boost::bind(&Game::autoSave, this)));
 }
 
@@ -5221,6 +5253,15 @@ void Game::sendGuildMotd(uint32_t playerId, uint32_t guildId)
 		return;
 
 	player->sendChannelMessage("Message of the Day", IOGuild::getInstance()->getMotd(guildId), SPEAK_CHANNEL_R1, 0x00);
+}
+
+void Game::sendRVRDisabled(uint32_t playerId)
+{
+	Player* player = getPlayerByID(playerId);
+	if(!player || player->isRemoved())
+		return;
+
+	player->sendChannelMessage("Rule Violation Reports", "This feature is disabled.", SPEAK_CHANNEL_R1, 0x03);
 }
 
 void Game::kickPlayer(uint32_t playerId, bool displayEffect)

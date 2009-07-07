@@ -75,7 +75,7 @@ class IOLoginData
 		bool playerExists(uint32_t guid);
 		int32_t getLevel(uint32_t guid);
 		bool isPremium(uint32_t guid);
-		bool resetGuildInformation(uint32_t guid);
+		bool leaveGuild(uint32_t guid);
 		bool changeName(uint32_t guid, std::string newName);
 		uint32_t getAccountNumberByName(std::string name);
 		bool createCharacter(uint32_t accountNumber, std::string characterName, int32_t vocationId, PlayerSex_t sex);
@@ -83,6 +83,7 @@ class IOLoginData
 		bool addStorageValue(uint32_t guid, uint32_t storageKey, uint32_t storageValue);
 		const PlayerGroup* getPlayerGroup(uint32_t groupid);
 		uint32_t getLastIPByName(std::string name);
+		bool hasGuild(uint32_t guid);
 
 	protected:
 		bool storeNameByGuid(Database &mysql, uint32_t guid);

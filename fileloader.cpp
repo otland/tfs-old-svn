@@ -362,7 +362,7 @@ inline bool FileLoader::readByte(int32_t &value)
 	return false;
 }
 
-inline bool FileLoader::readBytes(uint8_t* buffer, int32_t size, int32_t pos)
+inline bool FileLoader::readBytes(uint8_t* buffer, uint32_t size, int32_t pos)
 {
 	if(m_use_cache)
 	{

@@ -89,6 +89,14 @@
 	<movevent event="StepOut" itemid="9280" script="closingdoor.lua"/>
 	<movevent event="StepOut" itemid="9282" script="closingdoor.lua"/>
 	<movevent event="StepOut" itemid="9284" script="closingdoor.lua"/>
+	<movevent event="StepOut" itemid="10279" script="closingdoor.lua"/>
+	<movevent event="StepOut" itemid="10281" script="closingdoor.lua"/>
+	<movevent event="StepOut" itemid="10283" script="closingdoor.lua"/>
+	<movevent event="StepOut" itemid="10285" script="closingdoor.lua"/>
+	<movevent event="StepOut" itemid="10474" script="closingdoor.lua"/>
+	<movevent event="StepOut" itemid="10476" script="closingdoor.lua"/>
+	<movevent event="StepOut" itemid="10483" script="closingdoor.lua"/>
+	<movevent event="StepOut" itemid="10485" script="closingdoor.lua"/>
 
 	<!-- Snow footprint tiles -->
 	<movevent event="StepOut" itemid="670" script="snow.lua"/>

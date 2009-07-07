@@ -197,7 +197,7 @@ class Player : public Creature, public Cylinder
 		const std::string& getNamelockedPlayer() const {return namelockedPlayer;}
 
 		bool isInvitedToGuild(uint32_t guild_id) const;
-		void resetGuildInformation();
+		void leaveGuild();
 
 		void setFlags(uint64_t flags){groupFlags = flags;}
 		bool hasFlag(PlayerFlags value) const {return (0 != (groupFlags & ((uint64_t)1 << value)));}
@@ -542,7 +542,7 @@ class Player : public Creature, public Cylinder
 
 		void sendAnimatedText(const Position& pos, unsigned char color, std::string text) const
 			{if(client) client->sendAnimatedText(pos,color,text);}
-		void sendCancel(const char* msg) const
+		void sendCancel(const std::string& msg) const
 			{if(client) client->sendCancel(msg);}
 		void sendCancelMessage(ReturnValue message) const;
 		void sendCancelTarget() const

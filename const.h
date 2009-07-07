@@ -304,7 +304,9 @@ enum Icons_t
 	ICON_FREEZING = 512,
 	ICON_DAZZLED = 1024,
 	ICON_CURSED = 2048,
-	ICON_PARTY_BUFF = 4096
+	ICON_PARTY_BUFF = 4096,
+	ICON_REDSWORDS = 8192,
+	ICON_PIGEON = 16384
 };
 
 enum WeaponType_t
@@ -354,7 +356,9 @@ enum Skulls_t
 	SKULL_YELLOW = 1,
 	SKULL_GREEN = 2,
 	SKULL_WHITE = 3,
-	SKULL_RED = 4
+	SKULL_RED = 4,
+	SKULL_BLACK = 5,
+	SKULL_LAST = SKULL_BLACK
 };
 
 enum PartyShields_t
@@ -531,7 +535,7 @@ const int violationReasons[6] =
 	 * god
 	 * all reasons
 	 */
-	22,
+	20,
 };
 
 //Reserved player storage key ranges
