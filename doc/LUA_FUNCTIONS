@@ -281,14 +281,14 @@
 
 				Example
 					local playerVoc = getPlayerVocation(cid)
-					if playerVoc == 1 or playerVoc == 5 then --If Vocation is Sorcerer or Master Sorcerer then weapon = Wand
-						weapon == 2190 --Wand of vortex
-					elseif playerVoc == 2 or playerVoc == 6 then --If Voc == Druid or Elder Druid then weapon = Rod
-						weapon == 2182 --Snakebite Rod
-					elseif playerVoc == 3 or playerVoc == 7 then --If Voc == Paladin or Royal Paladin then weapon = Spear
-						weapon == 2389 --Spear
-					elseif playerVoc == 4 or playerVoc == 8 then --If Voc == Knight or Elite Knight then weapon = Sword
-						weapon == 2412 --Katana
+					if playerVoc == 1 then --If Vocation is Sorcerer or Master Sorcerer then weapon = Wand
+						weapon = 2190 --Wand of vortex
+					elseif playerVoc == 2 then --If Voc == Druid or Elder Druid then weapon = Rod
+						weapon = 2182 --Snakebite Rod
+					elseif playerVoc == 3 then --If Voc == Paladin or Royal Paladin then weapon = Spear
+						weapon== 2389 --Spear
+					elseif playerVoc == 4 then --If Voc == Knight or Elite Knight then weapon = Sword
+						weapon = 2412 --Katana
 					end
 					doPlayerAddItem(cid, weapon)
 
