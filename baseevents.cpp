@@ -122,8 +122,8 @@ bool BaseEvents::parseEventNode(xmlNodePtr p, std::string scriptsPath, bool over
 	}
 	else if(readXMLString(p, "function", strValue))
 		success = event->loadFunction(strValue);
-	else if(parseXMLContentString(p->children, strValue) && event->checkScript(strValue, false, false))
-		success = event->loadScript(strValue, false, false);
+	else if(parseXMLContentString(p->children, strValue) && event->checkBuffer(strValue, false))
+		success = event->loadBuffer(strValue, false);
 
 	if(!override && readXMLString(p, "override", strValue) && booleanString(strValue))
 		override = true;
@@ -170,7 +170,7 @@ bool Event::checkBuffer(const std::string& buffer)
 	return true; //TODO
 }
 
-bool Event::loadScript(const std::string& script, bool file, bool autoComplete/* = true*/)
+bool Event::loadScript(const std::string& script, bool file)
 {
 	if(!m_scriptInterface || m_scriptId != 0)
 	{
@@ -181,21 +181,16 @@ bool Event::loadScript(const std::string& script, bool file, bool autoComplete/*
 	int32_t result = -1;
 	if(!file)
 	{
-		if(autoComplete)
+		std::string script_ = script;
+		trimString(script_);
+		if(script_.substr(0, 7) != "function")
 		{
-			std::string script_ = script;
-			trimString(script_);
-			if(script_.substr(0, 7) != "function")
-			{
-				std::stringstream scriptstream;
-				scriptstream << "function " << getScriptEventName() << "(" << getScriptEventParams() << ")" << std::endl << script_ << std::endl << "end";
-				script_ = scriptstream.str();
-			}
-
-			result = m_scriptInterface->loadBuffer(script_);
+			std::stringstream scriptstream;
+			scriptstream << "function " << getScriptEventName() << "(" << getScriptEventParams() << ")" << std::endl << script_ << std::endl << "end";
+			script_ = scriptstream.str();
 		}
-		else
-			result = m_scriptInterface->loadBuffer(script);
+
+		result = m_scriptInterface->loadBuffer(script_);
 	}
 	else
 		result = m_scriptInterface->loadFile(script);
@@ -219,7 +214,7 @@ bool Event::loadScript(const std::string& script, bool file, bool autoComplete/*
 	return true;
 }
 
-bool Event::checkScript(const std::string& script, bool file, bool autoComplete/* = true*/)
+bool Event::checkScript(const std::string& script, bool file)
 {
 	return true; //TODO
 }

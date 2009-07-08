@@ -127,7 +127,13 @@ bool ScriptingManager::loadMods()
 			bool enabled;
 			std::cout << "Loading " << name << "...";
 			if(loadFromXml(name, enabled))
-				std::cout << " done." << (!enabled ? " (disabled)" : "");
+			{
+				std::cout << " done";
+				if(!enabled) 
+					std::cout << ", but disabled";
+
+				std::cout << ".";
+			}
 			else
 				std::cout << " failed!";
 

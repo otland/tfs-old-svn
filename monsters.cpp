@@ -700,7 +700,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			if(Condition* condition = getDamageCondition(conditionType, maxDamage, minDamage, startDamage, tickInterval))
 				combat->setCondition(condition);
 		}
-		else if(tmpName == "strength" || tmpName == "strenght")
+		else if(tmpName == "strength")
 		{
 			//TODO: monster extra strength
 		}
