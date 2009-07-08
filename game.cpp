@@ -4343,7 +4343,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			if(deny)
 				return false;
 
-			target->drainMana(attacker, combatType, manaLoss);
+			target->drainMana(attacker, COMBAT_MANADRAIN, manaLoss);
 			char buffer[20];
 			sprintf(buffer, "%d", manaLoss);
 
