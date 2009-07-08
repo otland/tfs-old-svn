@@ -16,46 +16,35 @@
 ]
 
 [ CREDITS
-	First of all, credits to the developers of this project, found in the
-	DEVELOPERS part of this file.
+	First of all, credits goes to the following OpenTibia developers for the server
+	code base (SourceForge.net usernames, in alphabetical order):
+		acidgame, davidbarreda, jiddo, mips_act, nfries88, otserv_simone, piterb,
+		primer13r, remere, shivoc, smygflik, snack, tliffrag, wrzasq.
 
-	This server is based on the OpenTibia project, credits for our server
-	base to the OpenTibia developers listed here:
-		http://sourceforge.net/project/memberlist.php?group_id=32523
+	The rest of the credits goes to following The Forgotten Server developers:
+		Talaturen
+			Project Manager
+			C++ Programmer
+			Lua Scripter
+			Data Directory Manager
+			Founder
+
+		Kornholijo
+			C++ Programmer
+
+		Elf
+			C++ Programmer
+
+		Lithium (inactive)
+			Data Directory Manager
+
+		Jonern (inactive)
+			Lua Scripter
 ]
 
 [ LICENSE
 	This project is licensed under GPLv3, you should have received a copy
 	of this license with this project.
-]
-
-[ DEVELOPERS
-	Talaturen
-		Founder
-		Project Manager
-		C++ Programmer
-		Lua Scripter
-		Data Directory Manager
-]
-
-[ INACTIVE DEVELOPERS
-	Kiper
-		Founder
-		C++ Programmer
-
-	Kornholijo
-		C++ Programmer
-		PHP Programmer
-
-	Elf
-		C++ Programmer
-		Lua Scripter
-
-	Lithium
-		Data Directory Manager
-
-	Jonern
-		Lua Scripter
 ]
 
 [ FORUM
@@ -93,9 +82,10 @@
 					sudo g++ boost_asio_1_2_0/libs/system/src/error_code.cpp -c -o /usr/lib/libboost_system.a
 
 			sudo: command not found
-				If you're running Debian it's possible that you don't have sudo,
-				if that's the case then you can run 'su' and you will have root
-				access. Then execute the commands without 'sudo' in the beginning.
+				If you're running Debian it's possible that you don't
+				have sudo, if that's the case then you can run 'su' and
+				you will have root access. Then execute the commands
+				without 'sudo' in the beginning.
 
 		Download sourcecode
 			Launch a terminal, and paste in this command:
@@ -106,33 +96,39 @@
 				cd 0.2.4/ && make
 
 		Linker eror
-			If you receive a linker error saying something with 'libboost', try pasting the following commands to terminal and then move back to compiling again:
+			If you receive a linker error saying something with 'libboost',
+			try pasting the following commands to terminal and then move back
+			to compiling again:
 				ln /usr/lib/libboost_regex-mt.so /usr/lib/libboost_regex.so && ln /usr/lib/libboost_regex-mt.a /usr/lib/libboost_regex.a && ln /usr/lib/libboost_thread-mt.so /usr/lib/libboost_thread.so && ln /usr/lib/libboost_thread-mt.a /usr/lib/libboost_thread.a
 
 	Windows
 		Dev-Cpp
-			Download TheForgottenDev-Cpp and the sources from:
+			Download The Forgotten Dev-Cpp and the sources from:
 				http://otland.net/showthread.php?t=1024
 
-			Extract them anywhere and then run devcpp.exe, press on the menuitem
-			"File -> Open Project or File" and choose C:\path\to\sources\dev-cpp\TheForgottenServer.dev.
+			Extract them anywhere and then run devcpp.exe, press on the
+			menuitem "File -> Open Project or File" and choose:
+				C:\path\to\source_code\dev-cpp\TheForgottenServer.dev.
 
-			At this point Dev-Cpp should be running with the project, now you can press
-			"Execute -> Rebuild All", if there is any error, then report it here:
-				http://otland.net/showthread.php?t=379
+			At this point Dev-Cpp should be running with the project,
+			now you can hit:
+				"Execute -> Rebuild All".
 
-			After it get compiled, copy TheForgottenServer.exe from C:\path\to\sources\dev-cpp to directory above (C:\path\to\sources)
+			After it get compiled, copy TheForgottenServer.exe from:
+				C:\path\to\sources\dev-cpp to directory above (C:\path\to\source_code)
 ]
 
 [ CONFIGURING
-	Launch config.lua with your favorite text editor and start configuring it,
-	incase there are other things you would like to configure then go over to the data directory.
+	Open config.lua with your favorite text editor and start configuring it,
+	incase there are other things you would like to configure then go over
+	to the data directory.
 ]
 
 [ EXECUTING
 	Linux
 		MySQL
-			Read MYSQL_HELP, and then launch a terminal, and paste in this command:
+			Read MYSQL_HELP, and then launch a terminal, and paste in
+			this command:
 				cd ~/forgottenserver/forgottenserver/ && ./TheForgottenServer
 
 		SqLite
@@ -141,10 +137,10 @@
 
 	Windows
 		MySQL
-			Read MYSQL_HELP and then move the exe file to the directory where you have
-			config.lua and data directory and execute it.
+			Read MYSQL_HELP and then move the exe file to the directory
+			where you have config.lua and data directory and execute it.
 
 		SqLite
-			Move the exe file to the directory where you have config.lua and data directory
-			and execute it.
+			Move the exe file to the directory where you have config.lua
+			and data directory and execute it.
 ]
