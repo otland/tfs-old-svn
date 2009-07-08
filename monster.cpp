@@ -110,25 +110,27 @@ Monster::~Monster()
 	}
 }
 
+void Monster::onAttackedCreature(Creature* target)
+{
+	Creature::onAttackedCreature(target);
+	if(isSummon())
+		getMaster()->onSummonAttackedCreature(this, target);
+}
+
 void Monster::onAttackedCreatureDisappear(bool isLogout)
 {
 #ifdef __DEBUG__
 	std::cout << "Attacked creature disappeared." << std::endl;
-
 #endif
 	attackTicks = 0;
 	extraMeleeAttack = true;
 }
 
-void Monster::onAttackedCreatureDrainHealth(Creature* target, int32_t points)
+void Monster::onAttackedCreatureDrain(Creature* target, int32_t points)
 {
-	Creature::onAttackedCreatureDrainHealth(target, points);
-	if(!master || !master->getPlayer())
-		return;
-
-	char buffer[100];
-	sprintf(buffer, "Your %s deals %d damage to %s.", mType->name.c_str(), points, target->getName().c_str());
-	master->getPlayer()->sendTextMessage(MSG_EVENT_DEFAULT, buffer);
+	Creature::onAttackedCreatureDrain(target, points);
+	if(isSummon())
+		getMaster()->onSummonAttackedCreatureDrain(this, target, points);
 }
 
 void Monster::onCreatureAppear(const Creature* creature)

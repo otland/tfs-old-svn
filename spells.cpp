@@ -1259,6 +1259,13 @@ bool InstantSpell::SummonMonster(const InstantSpell* spell, Creature* creature, 
 	int32_t manaCost = mType->manaCost;
 	if(!player->hasFlag(PlayerFlag_CanSummonAll))
 	{
+		if(player->getSkull() == SKULL_BLACK)
+		{
+			player->sendCancelMessage(RET_NOTPOSSIBLE);
+			g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+			return false;
+		}
+
 		if(!mType->isSummonable)
 		{
 			player->sendCancelMessage(RET_NOTPOSSIBLE);
@@ -1384,23 +1391,16 @@ bool InstantSpell::canCast(const Player* player) const
 	if(player->hasFlag(PlayerFlag_CannotUseSpells))
 		return false;
 
-	if(player->hasFlag(PlayerFlag_IgnoreSpellCheck))
+	if(player->hasFlag(PlayerFlag_IgnoreSpellCheck) || (!isLearnable() && (vocSpellMap.empty()
+		|| vocSpellMap.find(player->getVocationId()) != vocSpellMap.end())))
 		return true;
 
-	if(isLearnable())
-	{
-		if(player->hasLearnedInstantSpell(getName()))
-			return true;
-	}
-	else if(vocSpellMap.empty() || vocSpellMap.find(player->getVocationId()) != vocSpellMap.end())
-		return true;
-
-	return false;
+	return player->hasLearnedInstantSpell(getName());
 }
 
 
-ConjureSpell::ConjureSpell(LuaScriptInterface* _interface) :
-InstantSpell(_interface)
+ConjureSpell::ConjureSpell(LuaScriptInterface* _interface):
+	InstantSpell(_interface)
 {
 	isAggressive = false;
 	conjureId = 0;
@@ -1560,7 +1560,7 @@ bool ConjureSpell::ConjureFood(const ConjureSpell* spell, Creature* creature, co
 	if(!player)
 		return false;
 
-	uint32_t foodType[8] =
+	static uint32_t foodType[8] =
 	{
 		ITEM_MEAT,
 		ITEM_HAM,
@@ -1701,7 +1701,14 @@ bool RuneSpell::Convince(const RuneSpell* spell, Creature* creature, Item* item,
 
 	if(!player->hasFlag(PlayerFlag_CanConvinceAll))
 	{
-		if(player->getSummonCount() >= 2)
+		if(player->getSkull() == SKULL_BLACK)
+		{
+			player->sendCancelMessage(RET_NOTPOSSIBLE);
+			g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+			return false;
+		}
+
+		if(player->getSummonCount() >= g_config.getNumber(ConfigManager::MAX_PLAYER_SUMMONS))
 		{
 			player->sendCancelMessage(RET_NOTPOSSIBLE);
 			g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);

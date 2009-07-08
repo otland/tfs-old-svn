@@ -4137,7 +4137,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 					if(deny)
 						return false;
 
-					target->drainMana(attacker, manaDamage);
+					target->drainMana(attacker, combatType, manaDamage);
 					char buffer[20];
 					sprintf(buffer, "%d", manaDamage);
 
@@ -4343,7 +4343,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			if(deny)
 				return false;
 
-			target->drainMana(attacker, manaLoss);
+			target->drainMana(attacker, combatType, manaLoss);
 			char buffer[20];
 			sprintf(buffer, "%d", manaLoss);
 

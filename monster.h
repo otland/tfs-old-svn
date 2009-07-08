@@ -77,8 +77,9 @@ class Monster : public Creature
 		void setSpawn(Spawn* _spawn) {spawn = _spawn;}
 		void setRaid(Raid* _raid) {raid = _raid;}
 
+		virtual void onAttackedCreature(Creature* target);
 		virtual void onAttackedCreatureDisappear(bool isLogout);
-		virtual void onAttackedCreatureDrainHealth(Creature* target, int32_t points);
+		virtual void onAttackedCreatureDrain(Creature* target, int32_t points);
 
 		virtual void onCreatureAppear(const Creature* creature);
 		virtual void onCreatureDisappear(const Creature* creature, bool isLogout);
@@ -110,7 +111,7 @@ class Monster : public Creature
 		bool isTarget(Creature* creature);
 		bool isFleeing() const {return getHealth() <= mType->runAwayHealth;}
 
-		BlockType_t blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
+		virtual BlockType_t blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
 			bool checkDefense = false, bool checkArmor = false);
 
 	private:

@@ -869,15 +869,21 @@ void Creature::gainHealth(Creature* caster, int32_t healthGain)
 void Creature::drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage)
 {
 	lastDamageSource = combatType;
+	onAttacked();
+
 	changeHealth(-damage);
 	if(attacker)
 		attacker->onAttackedCreatureDrainHealth(this, damage);
 }
 
-void Creature::drainMana(Creature* attacker, int32_t manaLoss)
+void Creature::drainMana(Creature* attacker, CombatType_t combatType, int32_t damage)
 {
+	lastDamageSource = combatType;
 	onAttacked();
-	changeMana(-manaLoss);
+
+	changeMana(-damage);
+	if(attacker)
+		attacker->onAttackedCreatureDrainMana(this, damage);
 }
 
 BlockType_t Creature::blockHit(Creature* attacker, CombatType_t combatType, int32_t& damage,
@@ -1195,6 +1201,16 @@ void Creature::onIdleStatus()
 }
 
 void Creature::onAttackedCreatureDrainHealth(Creature* target, int32_t points)
+{
+	onAttackedCreatureDrain(target, points);
+}
+
+void Creature::onAttackedCreatureDrainMana(Creature* target, int32_t points)
+{
+	onAttackedCreatureDrain(target, points);
+}
+
+void Creature::onAttackedCreatureDrain(Creature* target, int32_t points)
 {
 	target->addDamagePoints(this, points);
 }

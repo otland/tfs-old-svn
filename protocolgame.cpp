@@ -2126,7 +2126,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 		if(reasons > 1)
 		{
 			msg->AddByte(0x0B);
-			for(int32_t i = 0; i < 23; i++)
+			for(int32_t i = 0; i < 23; i++) //8.5 = 20
 			{
 				if(i < 4)
 					msg->AddByte(group->getNameViolationFlags());

@@ -122,8 +122,8 @@ bool BaseEvents::parseEventNode(xmlNodePtr p, std::string scriptsPath, bool over
 	}
 	else if(readXMLString(p, "function", strValue))
 		success = event->loadFunction(strValue);
-	else if(parseXMLContentString(p->children, strValue) && event->checkBuffer(strValue, false))
-		success = event->loadBuffer(strValue, false);
+	else if(parseXMLContentString(p->children, strValue) && event->checkBuffer(strValue))
+		success = event->loadBuffer(strValue);
 
 	if(!override && readXMLString(p, "override", strValue) && booleanString(strValue))
 		override = true;

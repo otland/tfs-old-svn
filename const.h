@@ -88,11 +88,12 @@ enum MagicEffectClasses
 	NM_ME_STEPSVERTICAL	= 0x40, //64
 	NM_ME_YALAHARIGHOST	= 0x41, //65
 	NM_ME_BATS		= 0x42, //66
-	NM_ME_LAST = NM_ME_BATS,
+	NM_ME_SMOKE		= 0x43, //67
+	NM_ME_LAST = NM_ME_SMOKE,
 
 	//for internal use, dont send to client
-	NM_ME_NONE             = 0xFF,
-	NM_ME_UNK              = 0xFFFF
+	NM_ME_NONE		= 0xFF,
+	NM_ME_UNK		= 0xFFFF
 };
 
 enum ShootType_t
@@ -526,7 +527,7 @@ enum PlayerCustomFlags
 	PlayerCustomFlag_IgnoreLoginDelay,			//2^19 = 524288
 	PlayerCustomFlag_CanStairhop,				//2^20 = 1048576
 	PlayerCustomFlag_CanTurnhop,				//2^21 = 2097152
-	PlayerCustomFlag_IgnoreHouseRent,		//2^22 = 4194304
+	PlayerCustomFlag_IgnoreHouseRent,			//2^22 = 4194304
 
 	PlayerCustomFlag_LastFlag
 };

@@ -1820,14 +1820,14 @@ void Player::drainHealth(Creature* attacker, CombatType_t combatType, int32_t da
 	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
 }
 
-void Player::drainMana(Creature* attacker, int32_t manaLoss)
+void Player::drainMana(Creature* attacker, CombatType_t combatType, int32_t damage)
 {
-	Creature::drainMana(attacker, manaLoss);
+	Creature::drainMana(attacker, combatType, damage);
 	char buffer[150];
 	if(attacker)
-		sprintf(buffer, "You lose %d mana blocking an attack by %s.", manaLoss, attacker->getNameDescription().c_str());
+		sprintf(buffer, "You lose %d mana blocking an attack by %s.", damage, attacker->getNameDescription().c_str());
 	else
-		sprintf(buffer, "You lose %d mana.", manaLoss);
+		sprintf(buffer, "You lose %d mana.", damage);
 
 	sendStats();
 	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
@@ -3533,6 +3533,12 @@ void Player::onAttackedCreature(Creature* target)
 		targetPlayer->sendCreatureSkull(this);
 }
 
+void Player::onSummonAttackedCreature(Creature* summon, Creature* target)
+{
+	Creature::onSummonAttackedCreature(summon, target);
+	onAttackedCreature(target);
+}
+
 void Player::onAttacked()
 {
 	Creature::onAttacked();
@@ -3559,16 +3565,25 @@ void Player::onPlacedCreature()
 		kickPlayer(true);
 }
 
-void Player::onAttackedCreatureDrainHealth(Creature* target, int32_t points)
+void Player::onAttackedCreatureDrain(Creature* target, int32_t points)
 {
-	Creature::onAttackedCreatureDrainHealth(target, points);
+	Creature::onAttackedCreatureDrain(target, points);
 	if(party && target && (!target->getMaster() || !target->getMaster()->getPlayer())
-		&& target->getMonster() && target->getMonster()->isHostile()) //We have fulfilled a requirement for shared experience
+		&& target->getMonster() && target->getMonster()->isHostile()) //we have fulfilled a requirement for shared experience
 		getParty()->addPlayerDamageMonster(this, points);
 
 	char buffer[100];
 	sprintf(buffer, "You deal %d damage to %s.", points, target->getName().c_str());
 	sendTextMessage(MSG_STATUS_DEFAULT, buffer);
+}
+
+void Player::onSummonAttackedCreatureDrain(Creature* summon, Creature* target, int32_t points)
+{
+	Creature::onSummonAttackedCreatureDrain(summon, target, points);
+
+	char buffer[100];
+	sprintf(buffer, "Your %s deals %d damage to %s.", summon->getName().c_str(), points, target->getName().c_str());
+	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
 }
 
 void Player::onTargetCreatureGainHealth(Creature* target, int32_t points)

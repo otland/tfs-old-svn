@@ -275,7 +275,9 @@ class Creature : public AutoID, virtual public Thing
 		void setMaster(Creature* creature) {master = creature;}
 		Creature* getMaster() {return master;}
 		const Creature* getMaster() const {return master;}
+		Player* getPlayerMaster() const {return (isPlayerSummon() ? master->getPlayer() : NULL);}
 		bool isSummon() const {return master != NULL;}
+		bool isPlayerSummon() const {return master && master->getPlayer();}
 
 		virtual void addSummon(Creature* creature);
 		virtual void removeSummon(const Creature* creature);
@@ -311,9 +313,9 @@ class Creature : public AutoID, virtual public Thing
 		virtual void changeMana(int32_t manaChange);
 		void changeMaxMana(uint32_t manaChange) {manaMax = manaChange;}
 
-		virtual void gainHealth(Creature* caster, int32_t healthGain);
+		virtual void gainHealth(Creature* caster, int32_t amount);
 		virtual void drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage);
-		virtual void drainMana(Creature* attacker, int32_t manaLoss);
+		virtual void drainMana(Creature* attacker, CombatType_t combatType, int32_t damage);
 
 		virtual bool challengeCreature(Creature* creature) {return false;}
 		virtual bool convinceCreature(Creature* creature) {return false;}
@@ -331,8 +333,14 @@ class Creature : public AutoID, virtual public Thing
 		virtual void onTickCondition(ConditionType_t type, int32_t interval, bool& _remove);
 		virtual void onCombatRemoveCondition(const Creature* attacker, Condition* condition);
 		virtual void onAttackedCreature(Creature* target) {}
+		virtual void onSummonAttackedCreature(Creature* summon, Creature* target) {}
 		virtual void onAttacked() {}
 		virtual void onAttackedCreatureDrainHealth(Creature* target, int32_t points);
+		virtual void onSummonAttackedCreatureDrainHealth(Creature* summon, Creature* target, int32_t points) {}
+		virtual void onAttackedCreatureDrainMana(Creature* target, int32_t points);
+		virtual void onSummonAttackedCreatureDrainMana(Creature* summon, Creature* target, int32_t points) {}
+		virtual void onAttackedCreatureDrain(Creature* target, int32_t points);
+		virtual void onSummonAttackedCreatureDrain(Creature* summon, Creature* target, int32_t points) {}
 		virtual void onTargetCreatureGainHealth(Creature* target, int32_t points);
 		virtual void onAttackedCreatureKilled(Creature* target);
 		virtual bool onKilledCreature(Creature* target, uint32_t& flags);

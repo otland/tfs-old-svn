@@ -158,7 +158,7 @@ int32_t Weapons::getMaxWeaponDamage(int32_t level, int32_t attackSkill, int32_t 
 }
 
 Weapon::Weapon(LuaScriptInterface* _interface):
-Event(_interface)
+	Event(_interface)
 {
 	id = 0;
 	level = 0;
@@ -170,6 +170,7 @@ Event(_interface)
 	premium = false;
 	enabled = true;
 	wieldUnproperly = false;
+	swing = true;
 	ammoAction = AMMOACTION_NONE;
 	params.blockedByArmor = true;
 	params.blockedByShield = true;
@@ -185,7 +186,6 @@ bool Weapon::configureEvent(xmlNodePtr p)
 {
 	int32_t intValue, wieldInfo = 0;
 	std::string strValue;
-
 	if(!readXMLInteger(p, "id", intValue))
 	{
 		std::cout << "Error: [Weapon::configureEvent] Weapon without id." << std::endl;
@@ -219,24 +219,28 @@ bool Weapon::configureEvent(xmlNodePtr p)
 	if(readXMLInteger(p, "exhaust", intValue) || readXMLInteger(p, "exhaustion", intValue))
 		exhaustion = intValue;
 
-	if(readXMLInteger(p, "prem", intValue) || readXMLInteger(p, "premium", intValue))
+	if(readXMLString(p, "prem", strValue) || readXMLString(p, "premium", strValue))
 	{
-		premium = (intValue == 1);
+		premium = booleanString(strValue);
 		if(premium)
 			wieldInfo |= WIELDINFO_PREMIUM;
 	}
 
-	if(readXMLInteger(p, "enabled", intValue))
-		enabled = (intValue == 1);
+	if(readXMLString(p, "enabled", strValue))
+		enabled = booleanString(strValue);
 
-	if(readXMLInteger(p, "unproperly", intValue))
-		wieldUnproperly = (intValue == 1);
+	if(readXMLString(p, "unproperly", strValue))
+		wieldUnproperly = booleanString(strValue);
+
+	if(readXMLString(p, "swing", strValue))
+		swing = booleanString(strValue);
 
 	if(readXMLString(p, "type", strValue))
 		params.combatType = getCombatType(strValue);
 
-	std::string error = "";
+	std::string error;
 	StringVec vocStringVec;
+
 	xmlNodePtr vocationNode = p->children;
 	while(vocationNode)
 	{
@@ -249,7 +253,7 @@ bool Weapon::configureEvent(xmlNodePtr p)
 	if(!vocWeaponMap.empty())
 		wieldInfo |= WIELDINFO_VOCREQ;
 
-	if(wieldInfo != 0)
+	if(wieldInfo)
 	{
 		ItemType& it = Item::items.getItemType(id);
 		it.wieldInfo = wieldInfo;
@@ -679,56 +683,21 @@ WeaponDistance::WeaponDistance(LuaScriptInterface* _interface):
 	Weapon(_interface)
 {
 	hitChance = -1;
-	maxHitChance = 0;
-	breakChance = 0;
-	ammoAttackValue = 0;
-	params.blockedByShield = false;
+	maxHitChance = breakChance = ammoAttackValue = 0;
+	swing = params.blockedByShield = false;
 }
 
 bool WeaponDistance::configureEvent(xmlNodePtr p)
 {
-	if(!Weapon::configureEvent(p))
-		return false;
-
-	const ItemType& it = Item::items[id];
-	if(it.ammoType != AMMO_NONE)
-	{
-		//hit chance on two-handed weapons is limited to 90%
-		maxHitChance = 90;
-	}
-	else
-	{
-		//one-handed is set to 75%
-		maxHitChance = 75;
-	}
-
-	if(it.hitChance != -1)
-		hitChance = it.hitChance;
-
-	if(it.maxHitChance != -1)
-		maxHitChance = it.maxHitChance;
-
-	if(it.breakChance != -1)
-		breakChance = it.breakChance;
-
-	if(it.ammoAction != AMMOACTION_NONE)
-		ammoAction = it.ammoAction;
-
-	return true;
+	return Weapon::configureEvent(p);
 }
 
 bool WeaponDistance::configureWeapon(const ItemType& it)
 {
-	if(it.ammoType != AMMO_NONE)
-	{
-		//hit chance on two-handed weapons is limited to 90%
+	if(it.ammoType != AMMO_NONE) //hit chance on two-handed weapons is limited to 90%
 		maxHitChance = 90;
-	}
-	else
-	{
-		//one-handed is set to 75%
+	else //one-handed is set to 75%
 		maxHitChance = 75;
-	}
 
 	if(it.hitChance > 0)
 		hitChance = it.hitChance;
@@ -744,7 +713,6 @@ bool WeaponDistance::configureWeapon(const ItemType& it)
 
 	params.distanceEffect = it.shootType;
 	ammoAttackValue = it.attack;
-
 	return Weapon::configureWeapon(it);
 }
 

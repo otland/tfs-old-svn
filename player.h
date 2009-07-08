@@ -429,7 +429,7 @@ class Player : public Creature, public Cylinder
 		void getShieldAndWeapon(const Item* &shield, const Item* &weapon) const;
 
 		virtual void drainHealth(Creature* attacker, CombatType_t combatType, int32_t damage);
-		virtual void drainMana(Creature* attacker, int32_t manaLoss);
+		virtual void drainMana(Creature* attacker, CombatType_t combatType, int32_t damage);
 
 		void addExperience(uint64_t exp);
 		void removeExperience(uint64_t exp, bool updateStats = true);
@@ -454,8 +454,10 @@ class Player : public Creature, public Cylinder
 		virtual void onEndCondition(ConditionType_t type);
 		virtual void onCombatRemoveCondition(const Creature* attacker, Condition* condition);
 		virtual void onAttackedCreature(Creature* target);
+		virtual void onSummonAttackedCreature(Creature* summon, Creature* target);
 		virtual void onAttacked();
-		virtual void onAttackedCreatureDrainHealth(Creature* target, int32_t points);
+		virtual void onAttackedCreatureDrain(Creature* target, int32_t points);
+		virtual void onSummonAttackedCreatureDrain(Creature* summon, Creature* target, int32_t points);
 		virtual void onTargetCreatureGainHealth(Creature* target, int32_t points);
 		virtual bool onKilledCreature(Creature* target, uint32_t& flags);
 		virtual void onGainExperience(uint64_t gainExp);
@@ -646,8 +648,8 @@ class Player : public Creature, public Cylinder
 			{if(client) client->sendTutorial(tutorialId);}
 		void sendAddMarker(const Position& pos, MapMarks_t markType, const std::string& desc)
 			{if (client) client->sendAddMarker(pos, markType, desc);}
-
 		void sendCritical() const;
+
 		void receivePing() {if(npings > 0) npings--;}
 		virtual void onThink(uint32_t interval);
 		uint32_t getAttackSpeed();
