@@ -1,13 +1,15 @@
 local config = {
 	removeOnUse = "no",
 	splashable = "no",
-	realAnimation = "no", -- make text effect visible only for players in range 1x1
+	realAnimation = "no", --make text effect visible only for players in range 1x1
 	healthMultiplier = 1.0,
 	manaMultiplier = 1.0
 }
 
 config.removeOnUse = getBooleanFromString(config.removeOnUse)
 config.splashable = getBooleanFromString(config.splashable)
+config.realAnimation = getBooleanFromString(config.realAnimation)
+
 local POTIONS = {
 	[8704] = {empty = 7636, splash = 2, health = {50, 100}}, -- small health potion
 	[7618] = {empty = 7636, splash = 2, health = {100, 200}}, -- health potion
@@ -71,11 +73,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(not realAnimation) then
 		doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1)
 	else
-		for i, tid in ipairs(getSpectators(getCreaturePosition(cid), 1, 1)) do
-			if(isPlayer(tid)) then
-				doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1, false, tid)
-			end
-		end
+		doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1, false, itemEx.uid)
 	end
 
 	doAddCondition(cid, exhaust)
