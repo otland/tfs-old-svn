@@ -434,7 +434,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 				if(xmlDocPtr doc = xmlParseFile(getFilePath(FILE_TYPE_OTHER, "npc/lib/" + strValue).c_str()))
 				{
 					xmlNodePtr root = xmlDocGetRootElement(doc);
-					if(xmlStrcmp(root->name,(const xmlChar*)"interaction"))
+					if(!xmlStrcmp(root->name,(const xmlChar*)"interaction"))
 					{
 						ResponseList includedResponses = loadInteraction(root->children);
 						_responseList.insert(_responseList.end(), includedResponses.begin(), includedResponses.end());
@@ -451,7 +451,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 				}
 			}
 		}
-		else if(xmlStrcmp(node->name, (const xmlChar*)"itemlist") == 0)
+		else if(!xmlStrcmp(node->name, (const xmlChar*)"itemlist"))
 		{
 			if(readXMLString(node, "listid", strValue))
 			{
@@ -464,7 +464,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 					xmlNodePtr tmpNode = node->children;
 					while(tmpNode)
 					{
-						if(xmlStrcmp(tmpNode->name, (const xmlChar*)"item") == 0)
+						if(!xmlStrcmp(tmpNode->name, (const xmlChar*)"item"))
 						{
 							ListItem li;
 							if(!readXMLInteger(tmpNode, "id", intValue))
@@ -510,7 +510,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 					std::cout << "[Warning - Npc::loadInteraction] NPC Name: " << name << " - Duplicate listId found: " << strValue << std::endl;
 			}
 		}
-		else if(xmlStrcmp(node->name, (const xmlChar*)"interact") == 0)
+		else if(!xmlStrcmp(node->name, (const xmlChar*)"interact"))
 		{
 			NpcResponse::ResponseProperties prop;
 			prop.publicize = defaultPublic;
@@ -559,13 +559,13 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 			xmlNodePtr tmpNode = node->children;
 			while(tmpNode)
 			{
-				if(xmlStrcmp(tmpNode->name, (const xmlChar*)"keywords") == 0)
+				if(!xmlStrcmp(tmpNode->name, (const xmlChar*)"keywords"))
 				{
 					//alternative input keywords
 					xmlNodePtr altKeyNode = tmpNode->children;
 					while(altKeyNode)
 					{
-						if(xmlStrcmp(altKeyNode->name, (const xmlChar*)"text") == 0)
+						if(!xmlStrcmp(altKeyNode->name, (const xmlChar*)"text"))
 						{
 							if(readXMLContentString(altKeyNode, strValue))
 								prop.inputList.push_back(asLowerCaseString(strValue));
@@ -573,12 +573,12 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 						altKeyNode = altKeyNode->next;
 					}
 				}
-				else if(xmlStrcmp(tmpNode->name, (const xmlChar*)"list") == 0)
+				else if(!xmlStrcmp(tmpNode->name, (const xmlChar*)"list"))
 				{
 					xmlNodePtr listNode = tmpNode->children;
 					while(listNode)
 					{
-						if(xmlStrcmp(listNode->name, (const xmlChar*)"text") == 0)
+						if(!xmlStrcmp(listNode->name, (const xmlChar*)"text"))
 						{
 							if(readXMLContentString(listNode, strValue))
 							{
@@ -600,7 +600,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 			tmpNode = node->children;
 			while(tmpNode)
 			{
-				if(xmlStrcmp(tmpNode->name, (const xmlChar*)"response") == 0)
+				if(!xmlStrcmp(tmpNode->name, (const xmlChar*)"response"))
 				{
 					prop.output = prop.knowSpell = "";
 					prop.params = interactParams | loadParams(tmpNode);
@@ -636,7 +636,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 					xmlNodePtr subNode = tmpNode->children;
 					while(subNode)
 					{
-						if(xmlStrcmp(subNode->name, (const xmlChar*)"action") == 0)
+						if(!xmlStrcmp(subNode->name, (const xmlChar*)"action"))
 						{
 							ResponseAction action;
 							if(readXMLString(subNode, "name", strValue))
@@ -875,7 +875,7 @@ ResponseList Npc::loadInteraction(xmlNodePtr node)
 							if(action.actionType != ACTION_NONE)
 								prop.actionList.push_back(action);
 						}
-						else if(xmlStrcmp(subNode->name, (const xmlChar*)"interact") == 0)
+						else if(!xmlStrcmp(subNode->name, (const xmlChar*)"interact"))
 						{
 							if(subResponseList.empty())
 							{
