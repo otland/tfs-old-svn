@@ -47,9 +47,7 @@ ItemType::ItemType()
 	rotateTo = 0;
 	hasHeight = forceSerialize = false;
 
-	floorChangeDown = true;
-	floorChangeNorth = floorChangeSouth = floorChangeEast = floorChangeWest = false;
-
+	floorChangeDown = floorChangeNorth = floorChangeSouth = floorChangeEast = floorChangeWest = false;
 	blockSolid = blockProjectile = blockPathFind = allowPickupable = false;
 
 	wieldInfo = 0;
@@ -242,13 +240,6 @@ int32_t Items::loadFromOtb(std::string file)
 		iType->pickupable = hasBitSet(FLAG_PICKUPABLE, flags);
 		iType->moveable = hasBitSet(FLAG_MOVEABLE, flags);
 		iType->stackable = hasBitSet(FLAG_STACKABLE, flags);
-
-		//not longer saved in otb_version >= 3
-		iType->floorChangeDown = hasBitSet(FLAG_FLOORCHANGEDOWN, flags);
-		iType->floorChangeNorth = hasBitSet(FLAG_FLOORCHANGENORTH, flags);
-		iType->floorChangeEast = hasBitSet(FLAG_FLOORCHANGEEAST, flags);
-		iType->floorChangeSouth = hasBitSet(FLAG_FLOORCHANGESOUTH, flags);
-		iType->floorChangeWest = hasBitSet(FLAG_FLOORCHANGEWEST, flags);
 
 		iType->alwaysOnTop = hasBitSet(FLAG_ALWAYSONTOP, flags);
 		iType->isVertical = hasBitSet(FLAG_VERTICAL, flags);

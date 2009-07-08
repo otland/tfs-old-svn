@@ -275,29 +275,20 @@ void Party::broadcastMessage(MessageClasses messageClass, const std::string& tex
 	}
 }
 
-void Party::broadcastLoot(const std::string& monster, const ItemVector& items)
+void Party::broadcastLoot(const std::string& text, bool sendToInvitations/* = false*/)
 {
-	std::string monster_ = asLowerCaseString(monster);
-	std::stringstream s;
-	s << "Loot of " << monster_ << ": ";
-	if(items.size())
-	{
-		for(ItemVector::const_reverse_iterator rit = items.rbegin(); rit != items.rend(); ++rit)
-		{
-			s << (*rit)->getNameDescription();
-			if((*rit) != items.front())
-				s << ", ";
-		}
-	}
-	else
-		s << "none";
-
-	s << ".";
-	getLeader()->sendChannelMessage("", s.str().c_str(), SPEAK_CHANNEL_W, CHANNEL_PARTY);
+	PlayerVector::iterator it;
 	if(!memberList.empty())
 	{
-		for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
-			(*it)->sendChannelMessage("", s.str().c_str(), SPEAK_CHANNEL_W, CHANNEL_PARTY);
+		for(it = memberList.begin(); it != memberList.end(); ++it)
+			(*it)->sendChannelMessage("", text.c_str(), SPEAK_CHANNEL_W, CHANNEL_PARTY);
+	}
+
+	getLeader()->sendChannelMessage("", text.c_str(), SPEAK_CHANNEL_W, CHANNEL_PARTY);
+	if(sendToInvitations && !inviteList.empty())
+	{
+		for(it = inviteList.begin(); it != inviteList.end(); ++it)
+			(*it)->sendChannelMessage("", text.c_str(), SPEAK_CHANNEL_W, CHANNEL_PARTY);
 	}
 }
 

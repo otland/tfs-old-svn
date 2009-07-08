@@ -3517,6 +3517,7 @@ void Player::onAttackedCreature(Creature* target)
 		return;
 
 	pzLocked = true;
+	sendIcons();
 	if(getZone() != target->getZone() || isPartner(targetPlayer))
 		return;
 
@@ -3901,26 +3902,12 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 		if((d <= 0 || tc < d) && (w <= 0 || wc < w) && (m <= 0 || mc < m))
 			return true;
 
-		Account tmp = IOLoginData::getInstance()->loadAccount(accountId, true);
-		tmp.warnings++;
-
-		bool success = false;
-		if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
-			success = IOBan::getInstance()->addDeletion(tmp.number, 20, ACTION_DELETION, "Unjustified player killing.", 0);
-		else if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
-			success = IOBan::getInstance()->addBanishment(tmp.number, (now + g_config.getNumber(
-				ConfigManager::FINALBAN_LENGTH)), 20, ACTION_BANFINAL, "Unjustified player killing.", 0);
-		else
-			success = IOBan::getInstance()->addBanishment(tmp.number, (now + g_config.getNumber(
-				ConfigManager::BAN_LENGTH)), 20, ACTION_BANISHMENT, "Unjustified player killing.", 0);
-
-		if(!success)
+		if(!IOBan::getInstance()->addBanishment(tmp.number, (now + g_config.getNumber(
+			ConfigManager::BAN_LENGTH)), 20, ACTION_BANISHMENT, "Unjustified player killing.", 0))
 			return true;
 
-		IOLoginData::getInstance()->saveAccount(tmp);
 		sendTextMessage(MSG_INFO_DESCR, "You have been banished.");
 		g_game.addMagicEffect(getPosition(), NM_ME_MAGIC_POISON);
-
 		Scheduler::getScheduler().addEvent(createSchedulerTask(1000, boost::bind(
 			&Game::kickPlayer, &g_game, getID(), false)));
 	}
@@ -4785,27 +4772,6 @@ bool Player::transferMoneyTo(const std::string& name, uint64_t amount)
 	}
 
 	return true;
-}
-
-void Player::sendLoot(const std::string& monster, const ItemVector& items) const
-{
-	std::string monster_ = asLowerCaseString(monster);
-	std::stringstream s;
-	s << "Loot of " << monster_ << ": ";
-	if(items.size())
-	{
-		for(ItemVector::const_reverse_iterator rit = items.rbegin(); rit != items.rend(); ++rit)
-		{
-			s << (*rit)->getNameDescription();
-			if((*rit) != items.front())
-				s << ", ";
-		}
-	}
-	else
-		s << "none";
-
-	s << ".";
-	sendTextMessage(MSG_INFO_DESCR, s.str().c_str());
 }
 
 void Player::sendCritical() const

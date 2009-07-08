@@ -90,14 +90,13 @@ uint32_t Monsters::getLootRandom()
 
 void MonsterType::createLoot(Container* corpse)
 {
-	ItemVector itemVector;
 	for(LootItems::const_iterator it = lootItems.begin(); it != lootItems.end() && (corpse->capacity() - corpse->size() > 0); it++)
 	{
 		if(Item* tmpItem = createLootItem(*it))
 		{
 			if(Container* container = tmpItem->getContainer())
 			{
-				if(createLootContainer(container, (*it), itemVector))
+				if(createLootContainer(container, (*it)))
 				{
 					corpse->__internalAddThing(tmpItem);
 					itemVector.push_back(tmpItem);
@@ -106,10 +105,7 @@ void MonsterType::createLoot(Container* corpse)
 					delete container;
 			}
 			else
-			{
 				corpse->__internalAddThing(tmpItem);
-				itemVector.push_back(tmpItem);
-			}
 		}
 	}
 
@@ -122,9 +118,12 @@ void MonsterType::createLoot(Container* corpse)
 	if(!owner)
 		return;
 
-	owner->sendLoot(nameDescription, itemVector);
+	std::stringstream ss;
+	ss << "Loot of " << nameDescription << ": " << corpse->getContentDescription() << ".";
+
+	owner->sendTextMessage(MSG_INFO_DESCR, ss.str());
 	if(owner->getParty())
-		owner->getParty()->broadcastLoot(nameDescription, itemVector);
+		owner->getParty()->broadcastPartyLoot(ss.str());
 }
 
 Item* MonsterType::createLootItem(const LootBlock& lootBlock)
@@ -162,7 +161,7 @@ Item* MonsterType::createLootItem(const LootBlock& lootBlock)
 	return NULL;
 }
 
-bool MonsterType::createLootContainer(Container* parent, const LootBlock& lootblock, ItemVector& itemVector)
+bool MonsterType::createLootContainer(Container* parent, const LootBlock& lootblock)
 {
 	LootItems::const_iterator it = lootblock.childLoot.begin();
 	if(it == lootblock.childLoot.end())
@@ -174,7 +173,7 @@ bool MonsterType::createLootContainer(Container* parent, const LootBlock& lootbl
 		{
 			if(Container* container = tmpItem->getContainer())
 			{
-				if(createLootContainer(container, (*it), itemVector))
+				if(createLootContainer(container, (*it)))
 				{
 					parent->__internalAddThing(container);
 					itemVector.push_back(tmpItem);
@@ -183,10 +182,7 @@ bool MonsterType::createLootContainer(Container* parent, const LootBlock& lootbl
 					delete container;
 			}
 			else
-			{
 				parent->__internalAddThing(tmpItem);
-				itemVector.push_back(tmpItem);
-			}
 		}
 	}
 

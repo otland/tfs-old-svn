@@ -3526,7 +3526,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 			if(playerTalkToChannel(player, type, text, channelId))
 				return true;
 
-			return internalCreatureSay(player, SPEAK_SAY, text, false);
+			return playerSay(playerId, 0, SPEAK_SAY, receiver, text);
 		}
 		case SPEAK_PRIVATE_PN:
 			return playerSpeakToNpc(player, text);
