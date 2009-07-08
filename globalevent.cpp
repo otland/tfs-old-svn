@@ -131,24 +131,23 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 {
 	std::string strValue;
 	if(readXMLString(p, "name", strValue))
-		m_name = strValue;
-	else
 	{
 		std::cout << "[Error - GlobalEvent::configureEvent] No name for GlobalEvent." << std::endl;
 		return false;
 	}
 
+	m_name = strValue;
 	m_eventType = SERVER_EVENT_NONE;
 	if(readXMLString(p, "type", strValue))
 	{
-		toLowerCaseString(strValue);
-		if(strValue == "start" || strValue == "load")
+		std::string tmpStrValue = asLowerCaseString(strValue);
+		if(tmpStrValue == "startup" || tmpStrValue == "start" || tmpStrValue == "load")
 			m_eventType = SERVER_EVENT_STARTUP;
-		else if(strValue == "shutdown")
+		else if(tmpStrValue == "shutdown" || tmpStrValue == "quit" || tmpStrValue == "exit")
 			m_eventType = SERVER_EVENT_SHUTDOWN;
 		else
 		{
-			std::cout << "[Error - GlobalEvent::configureEvent] No valid type for globalevent " << strValue << std::endl;
+			std::cout << "[Error - GlobalEvent::configureEvent] No valid type \"" << strValue << "\" for globalevent with name " << m_name << std::endl;
 			return false;
 		}
 
@@ -156,14 +155,13 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 	}
 
 	int32_t intValue;
-	if(readXMLInteger(p, "interval", intValue))
-		m_interval = intValue;
-	else
+	if(!readXMLInteger(p, "interval", intValue))
 	{
-		std::cout << "[Error - GlobalEvent::configureEvent] No interval for GlobalEvent." << std::endl;
+		std::cout << "[Error - GlobalEvent::configureEvent] No interval for globalevent with name " << m_name << std::endl;
 		return false;
 	}
 
+	m_interval = intValue;
 	return true;
 }
 
