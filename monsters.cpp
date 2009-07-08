@@ -97,10 +97,7 @@ void MonsterType::createLoot(Container* corpse)
 			if(Container* container = tmpItem->getContainer())
 			{
 				if(createLootContainer(container, (*it)))
-				{
 					corpse->__internalAddThing(tmpItem);
-					itemVector.push_back(tmpItem);
-				}
 				else
 					delete container;
 			}
@@ -123,7 +120,7 @@ void MonsterType::createLoot(Container* corpse)
 
 	owner->sendTextMessage(MSG_INFO_DESCR, ss.str());
 	if(owner->getParty())
-		owner->getParty()->broadcastPartyLoot(ss.str());
+		owner->getParty()->broadcastLoot(ss.str());
 }
 
 Item* MonsterType::createLootItem(const LootBlock& lootBlock)
@@ -174,10 +171,7 @@ bool MonsterType::createLootContainer(Container* parent, const LootBlock& lootbl
 			if(Container* container = tmpItem->getContainer())
 			{
 				if(createLootContainer(container, (*it)))
-				{
 					parent->__internalAddThing(container);
-					itemVector.push_back(tmpItem);
-				}
 				else
 					delete container;
 			}
