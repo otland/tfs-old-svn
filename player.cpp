@@ -3917,7 +3917,7 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 		if((d <= 0 || tc < d) && (w <= 0 || wc < w) && (m <= 0 || mc < m))
 			return true;
 
-		if(!IOBan::getInstance()->addBanishment(tmp.number, (now + g_config.getNumber(
+		if(!IOBan::getInstance()->addBanishment(accountId, (now + g_config.getNumber(
 			ConfigManager::BAN_LENGTH)), 20, ACTION_BANISHMENT, "Unjustified player killing.", 0))
 			return true;
 
