@@ -104,7 +104,7 @@ bool IOMapSerialize::loadHouses()
 
 	for(HouseMap::iterator it = Houses::getInstance().getHouseBegin(); it != Houses::getInstance().getHouseEnd(); ++it)
 	{
-		if(!(house = it->second) || !house->getHouseOwner() || !house->getHouseId())
+		if(!(house = it->second) || !house->getHouseId() || !house->getHouseOwner())
 			continue;
 
 		query.str("");
@@ -134,7 +134,8 @@ bool IOMapSerialize::updateHouses()
 		if(!(house = it->second))
 			continue;
 
-		query << "SELECT `id` FROM `houses` WHERE `id` = " << house->getHouseId() << " LIMIT 1;";
+		query << "SELECT `id` FROM `houses` WHERE `id` = " << house->getHouseId() << " AND `world_id` = "
+			<< g_config.getNumber(ConfigManager::WORLD_ID) << " LIMIT 1;";
 		if(DBResult* result = db->storeQuery(query.str()))
 		{
 			result->free();
@@ -161,7 +162,8 @@ bool IOMapSerialize::updateHouses()
 			if(house->hasSyncFlag(House::HOUSE_SYNC_GUILD))
 				query << ", `guild` = " << house->isGuild();
 
-			query << " WHERE `id` = " << house->getHouseId() << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+			query << " WHERE `id` = " << house->getHouseId() << " AND `world_id` = "
+				<< g_config.getNumber(ConfigManager::WORLD_ID);
 		}
 		else
 		{
@@ -244,8 +246,8 @@ bool IOMapSerialize::saveHouse(Database* db, House* house)
 		if(door->getAccessList(listText) && !listText.empty())
 		{
 			query.str("");
-			query << house->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << door->getDoorId()
-				<< ", " << db->escapeString(listText);
+			query << house->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", "
+				<< door->getDoorId() << ", " << db->escapeString(listText);
 			if(!queryInsert.addRow(query.str()))
 				return false;
 		}
@@ -266,7 +268,8 @@ bool IOMapSerialize::loadMapRelational(Map* map)
 			continue;
 
 		query.str("");
-		query << "SELECT * FROM `tiles` WHERE `house_id` = " << house->getHouseId();
+		query << "SELECT * FROM `tiles` WHERE `house_id` = " << house->getHouseId() <<
+			" AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 		if(DBResult* result = db->storeQuery(query.str()))
 		{
 			do
@@ -475,7 +478,8 @@ bool IOMapSerialize::saveMapBinary(Map* map)
 		const char* attributes = stream.getStream(attributesSize);
 
 		query.str("");
-		query << it->second->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << db->escapeBlob(attributes, attributesSize);
+		query << it->second->getHouseId() << ", " << g_config.getNumber(ConfigManager::WORLD_ID)
+			<< ", " << db->escapeBlob(attributes, attributesSize);
 		if(!stmt.addRow(query))
 			return false;
  	}

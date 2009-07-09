@@ -202,7 +202,7 @@ void Game::setGameState(GameState_t newState)
 				AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
 				while(it != Player::listPlayer.list.end())
 				{
-					(*it).second->kickPlayer(true);
+					it->second->kickPlayer(true);
 					it = Player::listPlayer.list.begin();
 				}
 
@@ -223,9 +223,9 @@ void Game::setGameState(GameState_t newState)
 				AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
 				while(it != Player::listPlayer.list.end())
 				{
-					if(!(*it).second->hasFlag(PlayerFlag_CanAlwaysLogin))
+					if(!it->second->hasFlag(PlayerFlag_CanAlwaysLogin))
 					{
-						(*it).second->kickPlayer(true);
+						it->second->kickPlayer(true);
 						it = Player::listPlayer.list.begin();
 					}
 					else
@@ -257,8 +257,8 @@ void Game::saveGameState(bool shallow)
 	IOLoginData* io = IOLoginData::getInstance();
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		(*it).second->loginPosition = (*it).second->getPosition();
-		io->savePlayer((*it).second, false, shallow);
+		it->second->loginPosition = it->second->getPosition();
+		io->savePlayer(it->second, false, shallow);
 	}
 
 	std::string storage = "relational";
@@ -633,8 +633,8 @@ Creature* Game::getCreatureByID(uint32_t id)
 	AutoList<Creature>::listiterator it = listCreature.list.find(id);
 	if(it != listCreature.list.end())
 	{
-		if(!(*it).second->isRemoved())
-			return (*it).second;
+		if(!it->second->isRemoved())
+			return it->second;
 	}
 
 	return NULL; //just in case the player doesnt exist
@@ -648,8 +648,8 @@ Player* Game::getPlayerByID(uint32_t id)
 	AutoList<Player>::listiterator it = Player::listPlayer.list.find(id);
 	if(it != Player::listPlayer.list.end())
 	{
-		if(!(*it).second->isRemoved())
-			return (*it).second;
+		if(!it->second->isRemoved())
+			return it->second;
 	}
 
 	return NULL; //just in case the player doesnt exist
@@ -660,7 +660,7 @@ Creature* Game::getCreatureByName(const std::string& s)
 	std::string tmp = asLowerCaseString(s);
 	for(AutoList<Creature>::listiterator it = listCreature.list.begin(); it != listCreature.list.end(); ++it)
 	{
-		if(!(*it).second->isRemoved() && tmp == asLowerCaseString((*it).second->getName()))
+		if(!it->second->isRemoved() && tmp == asLowerCaseString(it->second->getName()))
 			return it->second;
 	}
 
@@ -4564,7 +4564,7 @@ void Game::checkLight()
 		LightInfo lightInfo;
 		getWorldLightInfo(lightInfo);
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-			(*it).second->sendWorldLight(lightInfo);
+			it->second->sendWorldLight(lightInfo);
 	}
 }
 
