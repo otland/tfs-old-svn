@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <monster name="braindeath" nameDescription="a braindeath" race="undead" experience="895" speed="270" manacost="0">
 	<health now="1225" max="1225"/>
-	<look type="256" corpse="6037"/>
+	<look type="256" corpse="7256"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
