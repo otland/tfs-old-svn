@@ -130,7 +130,7 @@ GlobalEvent::GlobalEvent(LuaScriptInterface* _interface):
 bool GlobalEvent::configureEvent(xmlNodePtr p)
 {
 	std::string strValue;
-	if(readXMLString(p, "name", strValue))
+	if(!readXMLString(p, "name", strValue))
 	{
 		std::cout << "[Error - GlobalEvent::configureEvent] No name for a globalevent." << std::endl;
 		return false;
