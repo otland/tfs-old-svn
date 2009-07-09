@@ -23,8 +23,6 @@
 
 #include "player.h"
 
-typedef std::list<uint32_t> GuildWarList;
-
 class IOGuild
 {
 	public:
