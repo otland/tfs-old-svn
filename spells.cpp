@@ -1708,7 +1708,7 @@ bool RuneSpell::Convince(const RuneSpell* spell, Creature* creature, Item* item,
 			return false;
 		}
 
-		if(player->getSummonCount() >= g_config.getNumber(ConfigManager::MAX_PLAYER_SUMMONS))
+		if((int32_t)player->getSummonCount() >= g_config.getNumber(ConfigManager::MAX_PLAYER_SUMMONS))
 		{
 			player->sendCancelMessage(RET_NOTPOSSIBLE);
 			g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
@@ -1733,7 +1733,6 @@ bool RuneSpell::Convince(const RuneSpell* spell, Creature* creature, Item* item,
 	}
 
 	int32_t manaCost = 0;
-
 	if(convinceCreature->getMonster())
 		manaCost = convinceCreature->getMonster()->getManaCost();
 
