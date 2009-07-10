@@ -1292,6 +1292,7 @@ std::string getReason(int32_t reasonId)
 			return "Destructive Behaviour";
 		case 20:
 			return "Excessive Unjustified Player Killing";
+		//8.5 - to remove
 		case 21:
 			return "Invalid Payment";
 		case 22:

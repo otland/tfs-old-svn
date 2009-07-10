@@ -53,7 +53,10 @@ class Loggar
 		void open();
 		void close();
 
-		void log(std::string output, LogFile_t file);
+		void log(std::string output, LogFile_t file, bool newLine = true);
+		void log(std::string file, std::string output, bool newLine = true);
+		void internalLog(FILE* file, std::string output, bool newLine = true);
+
 		void logMessage(const char* func, LogType_t type, std::string message, std::string channel = "");
 
 	private:

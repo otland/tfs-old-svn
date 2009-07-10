@@ -1,7 +1,7 @@
 local config = {
 	removeOnUse = "no",
 	splashable = "no",
-	realAnimation = "no", --make text effect visible only for players in range 1x1
+	realAnimation = "no", -- make text effect visible only for players in range 1x1
 	healthMultiplier = 1.0,
 	manaMultiplier = 1.0
 }
@@ -73,7 +73,11 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(not realAnimation) then
 		doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1)
 	else
-		doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1, false, itemEx.uid)
+		for i, tid in ipairs(getSpectators(getCreaturePosition(cid), 1, 1)) do
+			if(isPlayer(tid)) then
+				doCreatureSay(itemEx.uid, "Aaaah...", TALKTYPE_ORANGE_1, false, tid)
+			end
+		end
 	end
 
 	doAddCondition(cid, exhaust)

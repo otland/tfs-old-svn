@@ -31,7 +31,7 @@ bool IOGuild::getGuildIdByName(uint32_t& guildId, const std::string& guildName)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `guilds` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(guildName) << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	query << "SELECT `id` FROM `guilds` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(guildName) << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -46,7 +46,7 @@ bool IOGuild::getGuildNameById(std::string& guildName, uint32_t guildId)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `name` FROM `guilds` WHERE `id` = " << guildId << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	query << "SELECT `name` FROM `guilds` WHERE `id` = " << guildId << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -61,7 +61,7 @@ bool IOGuild::swapGuildIdToOwner(uint32_t& value)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `ownerid` FROM `guilds` WHERE `id` = " << value << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	query << "SELECT `ownerid` FROM `guilds` WHERE `id` = " << value << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -76,7 +76,7 @@ bool IOGuild::guildExists(uint32_t guildId)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `guilds` WHERE `id` = " << guildId << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	query << "SELECT `id` FROM `guilds` WHERE `id` = " << guildId << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -90,7 +90,7 @@ bool IOGuild::getRankIdByGuildIdAndName(uint32_t &rankId, const std::string& ran
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `name` " << db->getStringComparisonOperator() << " " << db->escapeString(rankName);
+	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `name` " << db->getStringComparisonOperator() << " " << db->escapeString(rankName) << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -105,7 +105,7 @@ uint32_t IOGuild::getRankIdByGuildIdAndLevel(uint32_t guildId, uint32_t guildLev
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `guild_ranks` WHERE `level` = " << guildLevel << " AND `guild_id` = " << guildId;
+	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `level` = " << guildLevel << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return 0;
 
@@ -120,7 +120,7 @@ std::string IOGuild::getRankName(int16_t guildLevel, uint32_t guildId)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `name` FROM `guild_ranks` WHERE `level` = " << guildLevel << " AND `guild_id` = " << guildId;
+	query << "SELECT `name` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `level` = " << guildLevel << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return "";
 
@@ -135,7 +135,7 @@ bool IOGuild::rankNameExists(std::string rankName, uint32_t guildId)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `name` " << db->getStringComparisonOperator() << " " << db->escapeString(rankName);
+	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `name` " << db->getStringComparisonOperator() << " " << db->escapeString(rankName) << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -149,7 +149,7 @@ bool IOGuild::changeRankName(std::string oldRankName, std::string newRankName, u
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `guild_ranks` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(oldRankName) << " AND `guild_id` = " << guildId;
+	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `name` " << db->getStringComparisonOperator() << " " << db->escapeString(oldRankName) << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -157,7 +157,7 @@ bool IOGuild::changeRankName(std::string oldRankName, std::string newRankName, u
 	result->free();
 
 	query.str("");
-	query << "UPDATE `guild_ranks` SET `name` = " << db->escapeString(newRankName) << " WHERE `id` = " << rankId << " AND `guild_id` = " << guildId;
+	query << "UPDATE `guild_ranks` SET `name` = " << db->escapeString(newRankName) << " WHERE `id` = " << rankId << " AND `guild_id` = " << guildId << " LIMIT 1;";
 	if(!db->executeQuery(query.str()))
 		return false;
 
@@ -181,7 +181,7 @@ bool IOGuild::createGuild(Player* player)
 		return false;
 
 	query.str("");
-	query << "SELECT `id` FROM `guilds` WHERE `ownerid` = " << player->getGUID();
+	query << "SELECT `id` FROM `guilds` WHERE `ownerid` = " << player->getGUID() << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -196,7 +196,7 @@ bool IOGuild::joinGuild(Player* player, uint32_t guildId, bool creation/* = fals
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id`, `name` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `level` = " << (creation ? "3" : "1");
+	query << "SELECT `id`, `name` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `level` = " << (creation ? "3" : "1") << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -208,16 +208,16 @@ bool IOGuild::joinGuild(Player* player, uint32_t guildId, bool creation/* = fals
 	if(!creation)
 	{
 		query.str("");
-		query << "SELECT `name` as `guildname` FROM `guilds` WHERE `id` = " << guildId;
+		query << "SELECT `name` FROM `guilds` WHERE `id` = " << guildId << " LIMIT 1;";
 		if(!(result = db->storeQuery(query.str())))
 			return false;
 
-		guildName = result->getDataString("guildname");
+		guildName = result->getDataString("name");
 		result->free();
 	}
 
 	query.str("");
-	query << "UPDATE `players` SET `rank_id` = " << rankId << " WHERE `id` = " << player->getGUID() << ";";
+	query << "UPDATE `players` SET `rank_id` = " << rankId << " WHERE `id` = " << player->getGUID() << " LIMIT 1;";
 	if(!db->executeQuery(query.str()))
 		return false;
 
@@ -241,28 +241,28 @@ bool IOGuild::disbandGuild(uint32_t guildId)
 	Database* db = Database::getInstance();
 
 	DBQuery query;
-	query << "UPDATE `players` SET `rank_id` = '' AND `guildnick` = '' WHERE `rank_id` = " << getRankIdByGuildIdAndLevel(guildId, 3) << " OR rank_id = " << getRankIdByGuildIdAndLevel(guildId, 2) << " OR rank_id = " << getRankIdByGuildIdAndLevel(guildId, 1);
+	query << "UPDATE `players` SET `rank_id` = '' AND `guildnick` = '' WHERE `rank_id` = " << getRankIdByGuildIdAndLevel(guildId, 3) << " OR rank_id = " << getRankIdByGuildIdAndLevel(guildId, 2) << " OR rank_id = " << getRankIdByGuildIdAndLevel(guildId, 1) << ";";
 	if(!db->executeQuery(query.str()))
 		return false;
 
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
 		if((*it).second->getGuildId() == guildId)
-			(*it).second->resetGuildInformation();
+			(*it).second->leaveGuild();
 	}
 
 	query.str("");
-	query << "DELETE FROM `guilds` WHERE `id` = " << guildId;
+	query << "DELETE FROM `guilds` WHERE `id` = " << guildId << " LIMIT 1;";
 	if(!db->executeQuery(query.str()))
 		return false;
 
 	query.str("");
-	query << "DELETE FROM `guild_invites` WHERE `guild_id` = " << guildId;
+	query << "DELETE FROM `guild_invites` WHERE `guild_id` = " << guildId << ";";
 	if(!db->executeQuery(query.str()))
 		return false;
 
 	query.str("");
-	query << "DELETE FROM `guild_ranks` WHERE `guild_id` = " << guildId;
+	query << "DELETE FROM `guild_ranks` WHERE `guild_id` = " << guildId << ";";
 	return db->executeQuery(query.str());
 }
 
@@ -272,13 +272,13 @@ bool IOGuild::hasGuild(uint32_t guid)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `rank_id` FROM `players` WHERE `id` = " << guid;
+	query << "SELECT `rank_id` FROM `players` WHERE `id` = " << guid << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
 	const uint32_t rankId = result->getDataInt("rank_id");
 	result->free();
-	return (rankId != 0);
+	return rankId != 0;
 }
 
 bool IOGuild::isInvitedToGuild(uint32_t guid, uint32_t guildId)
@@ -287,7 +287,7 @@ bool IOGuild::isInvitedToGuild(uint32_t guid, uint32_t guildId)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `player_id`, `guild_id` FROM `guild_invites` WHERE `player_id` = " << guid << " AND `guild_id`= " << guildId;
+	query << "SELECT `player_id`, `guild_id` FROM `guild_invites` WHERE `player_id` = " << guid << " AND `guild_id`= " << guildId << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -307,7 +307,7 @@ bool IOGuild::revokeGuildInvite(uint32_t guid, uint32_t guildId)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "DELETE FROM `guild_invites` WHERE `player_id` = " << guid << " AND `guild_id` = " << guildId;
+	query << "DELETE FROM `guild_invites` WHERE `player_id` = " << guid << " AND `guild_id` = " << guildId << ";";
 	return db->executeQuery(query.str());
 }
 
@@ -317,7 +317,7 @@ uint32_t IOGuild::getGuildId(uint32_t guid)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `guild_ranks`.`guild_id` FROM `players`, `guild_ranks` WHERE `guild_ranks`.`id`=`players`.`rank_id` AND `players`.`id` = " << guid;
+	query << "SELECT `guild_ranks`.`guild_id` FROM `players`, `guild_ranks` WHERE `players`.`id` = " << guid << " AND `guild_ranks`.`id`=`players`.`rank_id` LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return 0;
 
@@ -332,7 +332,7 @@ int8_t IOGuild::getGuildLevel(uint32_t guid)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `guild_ranks`.`level` FROM `players`, `guild_ranks` WHERE `guild_ranks`.`id`=`players`.`rank_id` AND `players`.`id` = " << guid;
+	query << "SELECT `guild_ranks`.`level` FROM `players`, `guild_ranks` WHERE `players`.`id` = " << guid << " AND `guild_ranks`.`id`=`players`.`rank_id` LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return 0;
 
@@ -347,7 +347,7 @@ bool IOGuild::setGuildLevel(uint32_t guid, GuildLevel_t level)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << getGuildId(guid) << " AND `level` = " << level;
+	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << getGuildId(guid) << " AND `level` = " << level << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -361,7 +361,7 @@ bool IOGuild::updateOwnerId(uint32_t guildId, uint32_t guid)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `guilds` SET `ownerid` = " << guid << " WHERE `id` = " << guildId;
+	query << "UPDATE `guilds` SET `ownerid` = " << guid << " WHERE `id` = " << guildId << " LIMIT 1;";
 	return db->executeQuery(query.str());
 }
 
@@ -369,7 +369,7 @@ bool IOGuild::setGuildNick(uint32_t guid, std::string guildNick)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `players` SET `guildnick` = " << db->escapeString(guildNick) << " WHERE `id` = " << guid;
+	query << "UPDATE `players` SET `guildnick` = " << db->escapeString(guildNick) << " WHERE `id` = " << guid << " LIMIT 1;";
 	return db->executeQuery(query.str());
 }
 
@@ -377,7 +377,7 @@ bool IOGuild::setMotd(uint32_t guildId, std::string newMotd)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `guilds` SET `motd` = " << db->escapeString(newMotd) << " WHERE `id` = " << guildId;
+	query << "UPDATE `guilds` SET `motd` = " << db->escapeString(newMotd) << " WHERE `id` = " << guildId << " LIMIT 1;";
 	return db->executeQuery(query.str());
 }
 
@@ -387,7 +387,7 @@ std::string IOGuild::getMotd(uint32_t guildId)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `motd` FROM `guilds` WHERE `id` = " << guildId;
+	query << "SELECT `motd` FROM `guilds` WHERE `id` = " << guildId << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return "";
 

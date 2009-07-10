@@ -573,7 +573,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 		{
 			sprintf(buffer, "%s has left the guild.", player->getName().c_str());
 			channel->talk(player, SPEAK_CHANNEL_W, buffer);
-			player->resetGuildInformation();
+			player->leaveGuild();
 		}
 		else
 			player->sendCancel("You cannot leave your guild because you are the leader of it, you have to pass the leadership to another member of your guild or disband the guild.");
@@ -721,7 +721,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 								{
 									sprintf(buffer, "%s has been kicked from the guild by %s.", paramPlayer->getName().c_str(), player->getName().c_str());
 									channel->talk(player, SPEAK_CHANNEL_W, buffer);
-									paramPlayer->resetGuildInformation();
+									paramPlayer->leaveGuild();
 								}
 								else
 									player->sendCancel("You may only kick players with a guild rank below your.");

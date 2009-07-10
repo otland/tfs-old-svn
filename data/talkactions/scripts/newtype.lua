@@ -14,13 +14,13 @@ function onSay(cid, words, param, channel)
 	local pid = cid
 	if(t[2]) then
 		pid = getPlayerByNameWildcard(t[2])
-		if(not cid or (isPlayerGhost(pid) and getPlayerAccess(pid) > getPlayerAccess(cid))) then
+		if(not pid or (isPlayerGhost(pid) and getPlayerGhostAccess(pid) > getPlayerGhostAccess(cid))) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Player " .. t[2] .. " not found.")
 			return true
 		end
 	end
 
-	if(t[1] < 0 or t[1] == 1 or t[1] == 135 or (t[1] > 160 and t[1] < 192) or t[1] > 326) then
+	if(t[1] <= 1 or t[1] == 135 or (t[1] > 160 and t[1] < 192) or t[1] > 333) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Such outfit does not exist.")
 		return true
 	end

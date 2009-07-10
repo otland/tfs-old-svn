@@ -3691,7 +3691,7 @@ bool Game::playerSpeakToNpc(Player* player, const std::string& text)
 bool Game::playerReportRuleViolation(Player* player, const std::string& text)
 {
 	//Do not allow reports on multiclones worlds since reports are name-based
-	if(g_config.getNumber(ConfigManager::ALLOW_CLONES))
+	if(g_config.getBool(ConfigManager::ALLOW_CLONES))
 	{
 		player->sendTextMessage(MSG_INFO_DESCR, "Rule violation reports are disabled.");
 		return false;
@@ -5474,12 +5474,12 @@ Highscore Game::getHighscore(uint16_t skill)
 	DBResult* result;
 
 	DBQuery query;
-	if(skill >= 7)
+	if(skill >= SKILL__MAGLEVEL)
 	{
-		if(skill == 7)
-			query << "SELECT `maglevel`, `name` FROM `players` ORDER BY `maglevel` DESC, `manaspent` DESC LIMIT " << g_config.getNumber(ConfigManager::HIGHSCORES_TOP);
+		if(skill == SKILL__MAGLEVEL)
+			query << "SELECT `maglevel`, `name` FROM `players` ORDER BY `maglevel` DESC, `manaspent` DESC LIMIT " << g_config.getNumber(ConfigManager::HIGHSCORES_TOP) << ";";
 		else
-			query << "SELECT `level`, `name` FROM `players` ORDER BY `level` DESC, `experience` DESC LIMIT " << g_config.getNumber(ConfigManager::HIGHSCORES_TOP);
+			query << "SELECT `level`, `name` FROM `players` ORDER BY `level` DESC, `experience` DESC LIMIT " << g_config.getNumber(ConfigManager::HIGHSCORES_TOP) << ";";
 
 		if(!(result = db->storeQuery(query.str())))
 			return hs;
@@ -5487,7 +5487,7 @@ Highscore Game::getHighscore(uint16_t skill)
 		do
 		{
 			uint32_t level;
-			if(skill == 7)
+			if(skill == SKILL__MAGLEVEL)
 				level = result->getDataInt("maglevel");
 			else
 				level = result->getDataInt("level");
@@ -5501,7 +5501,7 @@ Highscore Game::getHighscore(uint16_t skill)
 	}
 	else
 	{
-		query << "SELECT `player_skills`.`value`, `players`.`name` FROM `player_skills`,`players` WHERE `player_skills`.`skillid`=" << skill << " AND `player_skills`.`player_id`=`players`.`id` ORDER BY `player_skills`.`value` DESC, `player_skills`.`count` DESC LIMIT " << g_config.getNumber(ConfigManager::HIGHSCORES_TOP);
+		query << "SELECT `player_skills`.`value`, `players`.`name` FROM `player_skills`,`players` WHERE `player_skills`.`skillid`=" << skill << " AND `player_skills`.`player_id`=`players`.`id` ORDER BY `player_skills`.`value` DESC, `player_skills`.`count` DESC LIMIT " << g_config.getNumber(ConfigManager::HIGHSCORES_TOP) << ";";
 		if(!(result = db->storeQuery(query.str())))
 			return hs;
 
@@ -5538,7 +5538,7 @@ void Game::loadMotd()
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "SELECT `id`, `text` FROM `server_motd` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " ORDER BY `id` DESC LIMIT 1";
+	query << "SELECT `id`, `text` FROM `server_motd` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " ORDER BY `id` DESC LIMIT 1;";
 	if(DBResult* result = db->storeQuery(query.str()))
 	{
 		lastMotdNum = result->getDataInt("id");
@@ -5574,7 +5574,7 @@ void Game::loadPlayersRecord()
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "SELECT `record` FROM `server_record` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " ORDER BY `timestamp` DESC LIMIT 1";
+	query << "SELECT `record` FROM `server_record` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " ORDER BY `timestamp` DESC LIMIT 1;";
 	if(DBResult* result = db->storeQuery(query.str()))
 	{
 		lastPlayersRecord = result->getDataInt("record");

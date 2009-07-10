@@ -163,6 +163,8 @@
 	<action itemid="9828" event="function" value="decreaseItemId"/>
 	<action itemid="9973" event="function" value="increaseItemId"/>
 	<action itemid="9974" event="function" value="decreaseItemId"/>
+	<action itemid="10044" event="function" value="increaseItemId"/>
+	<action itemid="10045" event="function" value="decreaseItemId"/>
 
 	<!-- Spellbooks -->
 	<action itemid="2175" event="script" value="other/spellbook.lua"/>
@@ -200,13 +202,14 @@
 	<action itemid="6572" event="script" value="other/music.lua"/>
 
 	<!-- Teleport (stairs, ladders) -->
+	<action itemid="430" event="script" value="other/teleport.lua"/>
 	<action itemid="1369" event="script" value="other/teleport.lua"/>
 	<action itemid="1386" event="script" value="other/teleport.lua"/>
 	<action itemid="3678" event="script" value="other/teleport.lua"/>
 	<action itemid="5543" event="script" value="other/teleport.lua"/>
 	<action itemid="8580" event="script" value="other/teleport.lua"/>
 	<action itemid="8599" event="script" value="other/teleport.lua"/>
-	<action itemid="430" event="script" value="other/teleport.lua"/>
+	<action itemid="10035" event="script" value="other/teleport.lua"/>
 
 	<!-- Destroy -->
 	<action fromid="2376" toid="2404" event="script" value="other/destroy.lua"/>
@@ -223,6 +226,8 @@
 	<action fromid="6450" toid="6473" event="script" value="other/windows.lua"/>
 	<action fromid="6788" toid="6791" event="script" value="other/windows.lua"/>
 	<action fromid="7025" toid="7032" event="script" value="other/windows.lua"/>
+	<action fromid="10264" toid="10267" event="script" value="other/windows.lua"/>
+	<action fromid="10488" toid="10491" event="script" value="other/windows.lua"/>
 
 	<!-- Doors -->
 	<action fromid="1209" toid="1214" event="script" value="other/doors.lua"/>
@@ -245,7 +250,11 @@
 	<action fromid="7054" toid="7057" event="script" value="other/doors.lua"/>
 	<action fromid="8541" toid="8558" event="script" value="other/doors.lua"/>
 	<action fromid="9165" toid="9184" event="script" value="other/doors.lua"/>
-	<action fromid="9267" toid="9286" event="script" value="other/doors.lua"/>
+	<action fromid="9267" toid="9284" event="script" value="other/doors.lua"/>
+	<action itemid="10032" event="script" value="other/doors.lua"/>
+	<action itemid="10091" event="script" value="other/doors.lua"/>
+	<action fromid="10268" toid="10285" event="script" value="other/doors.lua"/>
+	<action fromid="10468" toid="10486" event="script" value="other/doors.lua"/>
 
 	<!-- Watch -->
 	<action itemid="2036" event="script" value="other/watch.lua"/>

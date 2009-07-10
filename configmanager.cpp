@@ -126,7 +126,7 @@ bool ConfigManager::load()
 	m_confString[URL] = getGlobalString("url");
 	m_confString[LOCATION] = getGlobalString("location");
 	m_confString[MOTD] = getGlobalString("motd");
-	m_confNumber[ALLOW_CLONES] = getGlobalNumber("allowClones", 0);
+	m_confBool[ALLOW_CLONES] = getGlobalBool("allowClones", "no");
 	m_confDouble[RATE_EXPERIENCE] = getGlobalDouble("rateExperience", 1.0f);
 	m_confDouble[RATE_SKILL] = getGlobalDouble("rateSkill", 1.0f);
 	m_confDouble[RATE_MAGIC] = getGlobalDouble("rateMagic", 1.0f);
@@ -265,7 +265,7 @@ bool ConfigManager::load()
 	m_confNumber[BLACK_SKULL_DEATH_HEALTH] = getGlobalNumber("blackSkulledDeathHealth", 40);
 	m_confNumber[BLACK_SKULL_DEATH_MANA] = getGlobalNumber("blackSkulledDeathMana", 0);
 	m_confNumber[DEATHLIST_REQUIRED_TIME] = getGlobalNumber("deathListRequiredTime", 1 * 60 * 1000);
-	m_confNumber[EXPERIENCE_SHARE_ACTIVITY] = getGlobalNumber("experienceShareActivity", 2 * 60 * 1000);	
+	m_confNumber[EXPERIENCE_SHARE_ACTIVITY] = getGlobalNumber("experienceShareActivity", 2 * 60 * 1000);
 	m_confBool[GHOST_SPELL_EFFECTS] = getGlobalBool("ghostModeSpellEffects", "yes");
 	m_confBool[PVPZONE_ADDMANASPENT] = getGlobalBool("addManaSpentInPvPZone", "no");
 	m_confNumber[ITEMLIMIT_PROTECTIONZONE] = getGlobalNumber("maxItemsPerPZTile", 0);

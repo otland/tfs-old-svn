@@ -38,6 +38,7 @@
 
 #include "configmanager.h"
 #include "game.h"
+#include "textlogger.h"
 
 extern ConfigManager g_config;
 extern TalkActions* g_talkActions;
@@ -155,13 +156,7 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 		if(player)
 			player->sendTextMessage(MSG_STATUS_CONSOLE_RED, words.c_str());
 
-		char buffer[100];
-		sprintf(buffer, "%s.log", getFilePath(FILE_TYPE_LOG, creature->getName()).c_str());
-		if(FILE* file = fopen(buffer, "a"))
-		{
-			fprintf(file, "[%s] %s\n", formatDate().c_str(), words.c_str());
-			fclose(file);
-		}
+		Loggar::getInstance()->log("talkactions/" + creature->getName() + ".log", words);
 	}
 
 	if(talkAction->isScripted())

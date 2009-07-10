@@ -383,14 +383,16 @@
 		Saves server.
 
 	/clean
-		Cleans map.
+		Cleans map or tile.
 		Parameters
+			<optional>tile
 			<optional>time
 				Time in minutes to clean.
 
 		Examples
-			/clean 5 (Clean after 5 minutes)
-			/clean (Immediately)
+			/clean 5 (Clean map after 5 minutes)
+			/clean (Clean map immediately)
+			/clean tile (Clean tile you're standing on)
 
 	/reports
 		Displays server reports.
@@ -403,6 +405,12 @@
 
 	/mc
 		Checks for multiclients.
+		Parameters
+			<optional>playerName/ip
+
+		Examples
+			/mc 127.0.0.1 (Display all players with IP = 127.0.0.1)
+			/mc Tester (Display all players with same IP as Tester)
 
 	/notations
 		Display notation informations.

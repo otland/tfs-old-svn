@@ -562,6 +562,7 @@ class LuaScriptInterface
 		static int32_t luaGetMonsterHealingSpells(lua_State* L);
 		static int32_t luaGetMonsterAttackSpells(lua_State* L);
 		static int32_t luaGetMonsterLootList(lua_State* L);
+		static int32_t luaGetMonsterSummonList(lua_State* L);
 
 		static int32_t luaGetPlayerPromotionLevel(lua_State* L);
 		static int32_t luaDoPlayerSetPromotionLevel(lua_State* L);
@@ -759,6 +760,7 @@ class LuaScriptInterface
 
 		static int32_t luaHashMD5(lua_State* L);
 		static int32_t luaHashSHA1(lua_State* L);
+		static int32_t luaDoPrint(lua_State* L);
 		static int32_t internalGetPlayerInfo(lua_State* L, PlayerInfo_t info);
 
 		static const luaL_Reg luaDatabaseReg[7];

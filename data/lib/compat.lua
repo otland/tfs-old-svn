@@ -82,6 +82,7 @@ doAddMapMark = doPlayerAddMapMark
 doSendTutorial = doPlayerSendTutorial
 getWaypointsList = getWaypointList
 SKILLS = SKILL_NAMES
+print = doPrint
 
 PlayerFlag_CannotUseCombat = 0
 PlayerFlag_CannotAttackPlayer = 1

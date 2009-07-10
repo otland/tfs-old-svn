@@ -98,7 +98,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 {
 	//dispatcher thread
 	Player* _player = g_game.getPlayerByName(name);
-	if(!_player || name == "Account Manager" || g_config.getNumber(ConfigManager::ALLOW_CLONES) != 0)
+	if(!_player || name == "Account Manager" || g_config.getBool(ConfigManager::ALLOW_CLONES))
 	{
 		player = new Player(name, this);
 		player->useThing2();
@@ -799,9 +799,14 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 					}
 				}
 
-				std::stringstream s;
-				s << player->getName() << " sent unknown byte: 0x" << std::hex << (int16_t)recvbyte << std::dec;
+				std::stringstream hex, s;
+				hex << std::hex << (int16_t)recvbyte << std::dec;
+
+				s << player->getName() << " sent unknown byte: 0x" << hex;
 				LOG_MESSAGE(LOGTYPE_NOTICE, s.str(), "PLAYER");
+
+				Loggar::getInstance()->log(getFilePath(FILE_TYPE_LOG, "bots/" + player->getName() + ".log").c_str(),
+					"[" + formatDate() + "] Received unknown byte - 0x " + hex.str());
 				break;
 			}
 		}
@@ -1262,6 +1267,15 @@ void ProtocolGame::parseSay(NetworkMessage& msg)
 	}
 
 	const std::string text = msg.GetString();
+	if(text.length() > 255) //client limit
+	{
+		std::stringstream s;
+		s << text.length();
+
+		Loggar::getInstance()->log("bots/" + player->getName() + ".log", "Attempt to send message with size " + s.str() + " - client is limited to 255 characters.");
+		return;
+	}
+
 	addGameTaskTimed(DISPATCHER_TASK_EXPIRATION, &Game::playerSay, player->getID(), channelId, type, receiver, text);
 }
 

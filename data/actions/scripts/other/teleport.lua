@@ -1,4 +1,4 @@
-local UP_FLOORS = {1386, 3678, 5543, 8599}
+local UP_FLOORS = {1386, 3678, 5543, 8599, 10035}
 local DRAW_WELL = 1369
 
 function onUse(cid, item, fromPosition, itemEx, toPosition)

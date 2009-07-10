@@ -104,6 +104,14 @@
 	<movevent type="StepOut" itemid="9280" event="script" value="closingdoor.lua"/>
 	<movevent type="StepOut" itemid="9282" event="script" value="closingdoor.lua"/>
 	<movevent type="StepOut" itemid="9284" event="script" value="closingdoor.lua"/>
+	<movevent type="StepOut" itemid="10279" event="script" value="closingdoor.lua"/>
+	<movevent type="StepOut" itemid="10281" event="script" value="closingdoor.lua"/>
+	<movevent type="StepOut" itemid="10283" event="script" value="closingdoor.lua"/>
+	<movevent type="StepOut" itemid="10285" event="script" value="closingdoor.lua"/>
+	<movevent type="StepOut" itemid="10474" event="script" value="closingdoor.lua"/>
+	<movevent type="StepOut" itemid="10476" event="script" value="closingdoor.lua"/>
+	<movevent type="StepOut" itemid="10483" event="script" value="closingdoor.lua"/>
+	<movevent type="StepOut" itemid="10485" event="script" value="closingdoor.lua"/>
 
 	<!-- Snow footprint tiles -->
 	<movevent type="StepOut" itemid="670" event="script" value="snow.lua"/>

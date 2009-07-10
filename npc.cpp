@@ -199,14 +199,14 @@ bool Npc::loadFromXml(const std::string& filename)
 	if(readXMLString(root, "attackable", strValue))
 		attackable = booleanString(strValue);
 
-	if(readXMLInteger(root, "walkinterval", intValue))
-		walkTicks = intValue;
-
 	if(readXMLInteger(root, "autowalk", intValue))
 	{
 		std::cout << "[Notice - Npc::Npc] NPC Name: " << name << " - autowalk has been deprecated, use walkinterval." << std::endl;
 		walkTicks = 2000;
 	}
+
+	if(readXMLInteger(root, "walkinterval", intValue))
+		walkTicks = intValue;
 
 	if(readXMLString(root, "floorchange", strValue))
 		floorChange = booleanString(strValue);

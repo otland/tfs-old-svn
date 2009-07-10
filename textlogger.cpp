@@ -37,13 +37,35 @@ void Loggar::close()
 	}
 }
 
-void Loggar::log(std::string output, LogFile_t file)
+void Loggar::log(std::string output, LogFile_t file, bool newLine /*= true*/)
 {
 	if(!m_files[file])
 		return;
 
-	fprintf(m_files[file], "%s", output.c_str());
+	internalLog(m_files[file], output, newLine);
 	fflush(m_files[file]);
+}
+
+void Loggar::log(std::string file, std::string output, bool newLine /*= true*/)
+{
+	file = getFilePath(FILE_TYPE_LOG, file);
+	FILE* f = fopen(file.c_str(), "a");
+	if(!f)
+		return;
+
+	internalLog(f, "[" + formatDate() + "] " + output, newLine);
+	fclose(f);
+}
+
+void Loggar::internalLog(FILE* file, std::string output, bool newLine /*= true*/)
+{
+	if(!file)
+		return;
+
+	if(newLine)
+		output += "\n";
+
+	fprintf(file, "%s", output.c_str());
 }
 
 void Loggar::logMessage(const char* func, LogType_t type, std::string message, std::string channel/* = ""*/)
@@ -78,7 +100,7 @@ void Loggar::logMessage(const char* func, LogType_t type, std::string message, s
 	if(!channel.empty())
 		ss << channel << ": ";
 
-	ss << message << "\n";
+	ss << message;
 	log(ss.str(), LOGFILE_ADMIN);
 }
 

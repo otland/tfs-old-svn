@@ -126,7 +126,7 @@ bool ScriptEnviroment::saveGameState()
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "DELETE FROM `global_storage` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	query << "DELETE FROM `global_storage` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << ";";
 	if(!db->executeQuery(query.str()))
 		return false;
 
@@ -149,7 +149,7 @@ bool ScriptEnviroment::loadGameState()
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `key`, `value` FROM `global_storage` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
+	query << "SELECT `key`, `value` FROM `global_storage` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << ";";
 	if((result = db->storeQuery(query.str())))
 	{
 		do
@@ -1639,6 +1639,9 @@ void LuaScriptInterface::registerFunctions()
 	//getMonsterLootList(name)
 	lua_register(m_luaState, "getMonsterLootList", LuaScriptInterface::luaGetMonsterLootList);
 
+	//getMonsterSummonList(name)
+	lua_register(m_luaState, "getMonsterSummonList", LuaScriptInterface::luaGetMonsterSummonList);
+
 	//doAddCondition(cid, condition)
 	lua_register(m_luaState, "doAddCondition", LuaScriptInterface::luaDoAddCondition);
 
@@ -1711,7 +1714,7 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerSwitchSaving(cid)
 	lua_register(m_luaState, "doPlayerSwitchSaving", LuaScriptInterface::luaDoPlayerSwitchSaving);
 
-	//doPlayerSave(cid)
+	//doPlayerSave(cid[, shallow = false])
 	lua_register(m_luaState, "doPlayerSave", LuaScriptInterface::luaDoPlayerSave);
 
 	//isPlayerPzLocked(cid)
@@ -2335,6 +2338,9 @@ void LuaScriptInterface::registerFunctions()
 
 	//sha1(string)
 	lua_register(m_luaState, "sha1", LuaScriptInterface::luaHashSHA1);
+
+	//doPrint(text)
+	lua_register(m_luaState, "doPrint", LuaScriptInterface::luaDoPrint);
 
 	//db table
 	luaL_register(m_luaState, "db", LuaScriptInterface::luaDatabaseReg);
@@ -3780,7 +3786,7 @@ int32_t LuaScriptInterface::luaDoRelocate(lua_State* L)
 int32_t LuaScriptInterface::luaDoCleanTile(lua_State* L)
 {
 	//doCleanTile(pos, removeLoadedFromMap = false)
-	//Remove all items / creatures (not players!) from tile
+	//Remove all items from tile, ignore creatures
 	bool removeLoadedFromMap = false;
 	if(lua_gettop(L) > 1)
 		removeLoadedFromMap = popNumber(L);
@@ -6630,6 +6636,27 @@ int32_t LuaScriptInterface::luaGetMonsterLootList(lua_State* L)
 	return 1;
 }
 
+int32_t LuaScriptInterface::luaGetMonsterSummonList(lua_State* L)
+{
+	//getMonsterSummonList(name)
+	const MonsterType* mType = g_monsters.getMonsterType(popString(L));
+	SummonList::const_iterator it = mType->summonList.begin();
+
+	lua_newtable(L);
+	for(uint32_t i = 1; it != mType->summonList.end(); ++it, ++i)
+	{
+		lua_pushnumber(L, i);
+		lua_newtable(L);
+
+		setField(L, "name", (*it).name);
+		setField(L, "chance", (*it).chance);
+		setField(L, "interval", (*it).interval);
+		setField(L, "amount", (*it).amount);
+		lua_settable(L, -3);
+	}
+	return 1;
+}
+
 int32_t LuaScriptInterface::luaGetTalkActionList(lua_State* L)
 {
 	//getTalkactionList()
@@ -7856,9 +7883,9 @@ int32_t LuaScriptInterface::luaDoPlayerAddPremiumDays(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		Account account = IOLoginData::getInstance()->loadAccount(player->getAccount());
 		if(player->premiumDays < 65535)
 		{
+			Account account = IOLoginData::getInstance()->loadAccount(player->getAccount());
 			if(days < 0)
 			{
 				account.premiumDays = std::max((uint32_t)0, uint32_t(account.premiumDays + (int32_t)days));
@@ -8926,10 +8953,14 @@ int32_t LuaScriptInterface::luaDoPlayerSwitchSaving(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoPlayerSave(lua_State* L)
 {
-	//doPlayerSave(cid)
+	//doPlayerSave(cid[, shallow = false])
+	bool shallow = false;
+	if(lua_gettop(L) > 1)
+		shallow = popNumber(L);
+
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
-		lua_pushboolean(L, IOLoginData::getInstance()->savePlayer(player, false));
+		lua_pushboolean(L, IOLoginData::getInstance()->savePlayer(player, false, shallow));
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
@@ -10024,6 +10055,13 @@ int32_t LuaScriptInterface::luaHashSHA1(lua_State* L)
 {
 	//sha1(string)
 	lua_pushstring(L, transformToSHA1(popString(L)).c_str());
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoPrint(lua_State* L)
+{
+	std::cout << popString(L) << std::endl;
+	lua_pushboolean(L, true);
 	return 1;
 }
 

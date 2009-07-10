@@ -610,6 +610,7 @@
 	getMonsterHealingSpells(name) //TODO
 	getMonsterAttackSpells(name) //TODO
 	getMonsterLootList(name) //TODO
+	getMonsterSummonList(name) //TODO
 	getMonsterTargetList(cid) //TODO
 	getMonsterFriendList(cid) //TODO
 	getPlayerByNameWildcard(name~) //TODO
@@ -823,8 +824,8 @@
 	doPlayerAddSkillTry(cid, skillid, n)
 	doPlayerAddSpentMana(cid, amount)
 	doPlayerAddSoul(cid, soul)
-	doPlayerAddItem(uid, itemid[, count/subtype[, canDropOnMap]])
-	doPlayerAddItemEx(cid, uid[, canDropOnMap])
+	doPlayerAddItem(uid, itemid[, count/subtype[, canDropOnMap = true]])
+	doPlayerAddItemEx(cid, uid[, canDropOnMap = false])
 	doPlayerSendTextMessage(cid, MessageClasses, message)
 	doPlayerSendChannelMessage(cid, author, message, SpeakClasses, channel)
 	doPlayerSendToChannel(cid, targetId, SpeakClasses, message, channel[, time])
@@ -846,6 +847,7 @@
 	doPlayerSetRate(cid, type, value)
 	doPlayerJoinParty(cid, lid)
 	doPlayerSendOutfitWindow(cid)
+	doPlayerSave(cid[, shallow = false])
 	doCreateItem(itemid, type/count, pos)
 	doCreateItemEx(itemid[, count/subtype])
 	doAddContainerItemEx(uid, virtuid)
@@ -873,7 +875,7 @@
 	doAreaCombatDispel(cid, pos, area, type, effect)
 	doTargetCombatDispel(cid, target, type, effect)
 	doCombat(cid, combat, param)
-	doTeleportThing(cid, newpos[, pushmove])
+	doTeleportThing(cid, newpos[, pushmove = true])
 	doCreateTeleport(itemid, topos, createpos)
 	doSendMagicEffect(pos, type[, player])
 	doSendDistanceShoot(frompos, topos, type[, player])

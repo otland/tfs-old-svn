@@ -101,3 +101,17 @@ function doConvertIpToInteger(str)
 
 	return ipint, maskint
 end
+
+function doRevertIp(str)
+	local i, ip = 4, {}
+	for b in str:gmatch("(%d+).?") do
+		ip[i] = b
+		i = i - 1
+	end
+
+	if(not ip[1] or not ip[2] or not ip[3] or not ip[4]) then
+		return nil
+	end
+
+	return ip[1] .. "." .. ip[2] .. "." .. ip[3] .. "." .. ip[4]
+end

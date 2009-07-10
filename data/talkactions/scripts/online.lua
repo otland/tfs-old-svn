@@ -1,5 +1,5 @@
 local config = {
-	showGamemasters = getBooleanFromString(getConfigInfo('displayGamemastersWithOnlineCommand'))
+	showGamemasters = getBooleanFromString(getConfigValue('displayGamemastersWithOnlineCommand'))
 }
 
 function onSay(cid, words, param, channel)

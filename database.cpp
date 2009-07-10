@@ -116,7 +116,7 @@ bool DBInsert::addRow(const std::string& row)
 			m_buf = "(" + row + ")";
 		}
 		else
-				m_buf += ",(" + row + ")";
+			m_buf += ",(" + row + ")";
 
 		return true;
 	}

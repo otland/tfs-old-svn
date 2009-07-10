@@ -194,7 +194,7 @@ bool IOBan::removeIpBanishment(uint32_t ip, uint32_t mask/* = 0xFFFFFFFF*/) cons
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << ip << " AND `param` = " << mask << " AND `type` = " << BANTYPE_IP_BANISHMENT;
+	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << ip << " AND `param` = " << mask << " AND `type` = " << BANTYPE_IP_BANISHMENT << ";";
 	return db->executeQuery(query.str());
 }
 
@@ -202,7 +202,7 @@ bool IOBan::removeNamelock(uint32_t guid) const
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << guid << " AND `type` = " << BANTYPE_NAMELOCK;
+	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << guid << " AND `type` = " << BANTYPE_NAMELOCK << ";";
 	return db->executeQuery(query.str());
 }
 
@@ -219,7 +219,7 @@ bool IOBan::removeBanishment(uint32_t account) const
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << account << " AND `type` = " << BANTYPE_BANISHMENT;
+	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << account << " AND `type` = " << BANTYPE_BANISHMENT << ";";
 	return db->executeQuery(query.str());
 }
 
@@ -227,7 +227,7 @@ bool IOBan::removeDeletion(uint32_t account) const
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << account << " AND `type` = " << BANTYPE_DELETION;
+	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << account << " AND `type` = " << BANTYPE_DELETION << ";";
 	return db->executeQuery(query.str());
 }
 
@@ -235,7 +235,7 @@ bool IOBan::removeNotations(uint32_t account) const
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << account << " AND `type` = " << BANTYPE_NOTATION;
+	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << account << " AND `type` = " << BANTYPE_NOTATION << ";";
 	return db->executeQuery(query.str());
 }
 
@@ -246,7 +246,7 @@ uint32_t IOBan::getNotationsCount(uint32_t account) const
 
 	DBQuery query;
 	query << "SELECT COUNT(`id`) AS `count` FROM `bans` WHERE `value` = " << account << " AND `type` = ";
-	query << BANTYPE_NOTATION << " AND `active` = 1";
+	query << BANTYPE_NOTATION << " AND `active` = 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return 0;
 
@@ -264,7 +264,7 @@ bool IOBan::getData(uint32_t value, Ban& ban, const std::string& ignore/* = "4"*
 	if(!ignore.empty())
 		query << " AND `type` NOT IN (" << ignore << ")";
 
-	query << " AND `active` = 1 AND (`expires` > " << time(NULL) << " OR `expires` <= 0)";
+	query << " AND `active` = 1 AND (`expires` > " << time(NULL) << " OR `expires` <= 0);";
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -295,7 +295,7 @@ BansVec IOBan::getList(BanType_t type, uint32_t value/* = 0*/)
 	if(value > 0)
 		query << "`value` = " << value << " AND ";
 
-	query << "`type` = " << type << " AND `active` = 1 AND (`expires` > " << time(NULL) << " OR `expires` <= 0)";
+	query << "`type` = " << type << " AND `active` = 1 AND (`expires` > " << time(NULL) << " OR `expires` <= 0);";
 	BansVec data;
 	if((result = db->storeQuery(query.str())))
 	{

@@ -504,13 +504,14 @@ void Player::sendIcons() const
 	if(!client)
 		return;
 
-	int32_t icons = 0;
+	uint32_t icons = 0;
 	for(ConditionList::const_iterator it = conditions.begin(); it != conditions.end(); ++it)
 	{
 		if(!isSuppress((*it)->getType()))
 			icons |= (*it)->getIcons();
 	}
 
+	//8.5
 	/*if(getZone() == ZONE_PROTECTION)
 		icons |= ICON_PROTECTIONZONE;
 
@@ -3516,8 +3517,12 @@ void Player::onAttackedCreature(Creature* target)
 	if(!targetPlayer || Combat::isInPvpZone(this, targetPlayer) || targetPlayer->hasAttacked(this))
 		return;
 
-	pzLocked = true;
-	sendIcons();
+	if(!pzLocked)
+	{
+		pzLocked = true;
+		sendIcons();
+	}
+
 	if(getZone() != target->getZone() || isPartner(targetPlayer))
 		return;
 
@@ -4612,15 +4617,11 @@ bool Player::isInvitedToGuild(uint32_t guild_id) const
 	return false;
 }
 
-void Player::resetGuildInformation()
+void Player::leaveGuild()
 {
-	sendClosePrivate(0x00);
-	guildId = 0;
-	guildName = "";
-	guildRank = "";
-	guildRankId = 0;
-	guildNick = "";
-	guildLevel = 0;
+	sendClosePrivate(CHANNEL_GUILD);
+	guildId = guildRankId = guildLevel = 0;
+	guildName = guildRank = guildNick = "";
 }
 
 bool Player::isPremium() const

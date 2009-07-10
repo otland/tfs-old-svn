@@ -11,6 +11,7 @@ local ITEM_IDS = {
 	[2053] = 2051,
 	[2054] = 2055,
 	[2054] = 2055,
+	-- crystal pedestals
 	[9976] = 9977,
 	[9977] = 9978,
 	[9978] = 9979,
@@ -23,6 +24,10 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	doTransformItem(item.uid, ITEM_IDS[item.itemid])
+	if(item.itemid >= 9976 and item.itemid <= 9979) then
+		return true -- temporary for pedestals (It cant be decayed, because it have few ids, which override last decay item after use)
+	end
+
 	doDecayItem(item.uid)
 	return true
 end

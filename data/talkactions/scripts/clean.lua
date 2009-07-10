@@ -6,6 +6,17 @@ function onSay(cid, words, param, channel)
 		return true
 	end
 
+	if(param == 'tile') then
+		local removeLoadedFromMap = false
+		local t = string.explode(param, ",")
+		if(t[2]) then
+			removeLoadedFromMap = getBooleanFromString(t[2])
+		end
+
+		doCleanTile(getCreaturePosition(cid), removeLoadedFromMap)
+		return true
+	end
+
 	if(not tonumber(param)) then
 		doPlayerSendCancel(cid, "Command requires numeric param.")
 		return true
