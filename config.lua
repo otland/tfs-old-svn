@@ -97,7 +97,7 @@
 	motd = "Welcome to the Forgotten Server!"
 	displayOnOrOffAtCharlist = "no"
 	onePlayerOnlinePerAccount = "yes"
-	allowClones = 0
+	allowClones = "no"
 	serverName = "Forgotten"
 	loginMessage = "Welcome to the Forgotten Server!"
 	statusTimeout = 5 * 60 * 1000

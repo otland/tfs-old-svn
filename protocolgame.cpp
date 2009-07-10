@@ -806,7 +806,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				LOG_MESSAGE(LOGTYPE_NOTICE, s.str(), "PLAYER");
 
 				Loggar::getInstance()->log(getFilePath(FILE_TYPE_LOG, "bots/" + player->getName() + ".log").c_str(),
-					"[" + formatDate() + "] Received unknown byte - 0x " + hex.str());
+					"[" + formatDate() + "] Received unknown byte - 0x" + hex.str());
 				break;
 			}
 		}

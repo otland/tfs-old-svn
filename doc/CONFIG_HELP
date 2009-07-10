@@ -316,11 +316,10 @@
 			Default: yes
 
 		allowClones
-			How many clients can login on one character.
+			Allow multiple client logins on one character.
 			Mostly used on pvp-enfo servers where you have a few characters
 				and all of them are able to login on one character, e.g 'Master Sorcerer'
-			0 to disable clones.
-			Default: 0
+			Default: no
 
 		serverName
 			Default: Forgotten
