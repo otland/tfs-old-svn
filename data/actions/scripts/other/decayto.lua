@@ -24,10 +24,6 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	end
 
 	doTransformItem(item.uid, ITEM_IDS[item.itemid])
-	if(item.itemid >= 9976 and item.itemid <= 9979) then
-		return true -- temporary for pedestals (It cant be decayed, because it have few ids, which override last decay item after use)
-	end
-
 	doDecayItem(item.uid)
 	return true
 end
