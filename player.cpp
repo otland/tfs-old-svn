@@ -511,12 +511,11 @@ void Player::sendIcons() const
 			icons |= (*it)->getIcons();
 	}
 
-	//8.5
-	/*if(getZone() == ZONE_PROTECTION)
+	if(getZone() == ZONE_PROTECTION)
 		icons |= ICON_PROTECTIONZONE;
 
 	if(pzLocked)
-		icons |= ICON_PZ;*/
+		icons |= ICON_PZ;
 
 	client->sendIcons(icons);
 }

@@ -249,7 +249,6 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			}
 		}
 
-		player->sendIcons();
 		player->lastIP = player->getIP();
 		player->lastLogin = OTSYS_TIME();
 		player->lastLoginSaved = std::max(time(NULL), player->lastLoginSaved + 1);
@@ -345,7 +344,6 @@ bool ProtocolGame::connect(uint32_t playerId)
 
 	player->client = this;
 	player->sendCreatureAppear(player);
-	player->sendIcons();
 
 	player->lastIP = player->getIP();
 	player->lastLogin = OTSYS_TIME();
@@ -2140,7 +2138,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 		if(reasons > 1)
 		{
 			msg->AddByte(0x0B);
-			for(int32_t i = 0; i < 23; i++) //8.5 = 20
+			for(int32_t i = 0; i < 20; i++)
 			{
 				if(i < 4)
 					msg->AddByte(group->getNameViolationFlags());
@@ -2175,6 +2173,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 
 	//player light level
 	AddCreatureLight(msg, creature);
+	player->sendIcons();
 	for(VIPListSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); it++)
 	{
 		std::string vipName;

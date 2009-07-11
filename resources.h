@@ -72,14 +72,14 @@
 	#define ID_MENU_RELOAD_ALL 236
 #endif
 
-#define CLIENT_VERSION_MIN 841
-#define CLIENT_VERSION_MAX 842
-#define CLIENT_VERSION_STRING "Only clients with protocol 8.41 or 8.42 allowed!"
+#define CLIENT_VERSION_MIN 850
+#define CLIENT_VERSION_MAX 850
+#define CLIENT_VERSION_STRING "Only clients with protocol 8.5 allowed!"
 
 #define STATUS_SERVER_NAME "The Forgotten Server"
 #define STATUS_SERVER_VERSION "0.3.5_SVN"
 #define STATUS_SERVER_CODENAME "Crying Damson"
-#define STATUS_SERVER_PROTOCOL "8.42"
+#define STATUS_SERVER_PROTOCOL "8.5"
 
 #define VERSION_CHECK "http://forgottenserver.otland.net/version.xml"
 #define VERSION_PATCH 0

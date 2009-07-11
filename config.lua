@@ -16,6 +16,7 @@
 	-- NOTE: *Banishment and *BlackSkull variables are >summed up<
 	-- (dailyFragsToRedSkull + dailyFragsToBanishment) with their
 	-- *RedSkull equivalents.
+	-- Auto banishing works only if useBlackSkull set to negative.
 	redSkullLength = 30 * 24 * 60 * 60
 	blackSkullLength = 45 * 24 * 60 * 60
 	dailyFragsToRedSkull = 3
@@ -29,7 +30,7 @@
 	monthlyFragsToBanishment = monthlyFragsToRedSkull
 	blackSkulledDeathHealth = 40
 	blackSkulledDeathMana = 0
-	useBlackSkull = "no"
+	useBlackSkull = "yes"
 	advancedFragList = "no"
 
 	-- Banishments
