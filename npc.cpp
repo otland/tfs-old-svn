@@ -2525,14 +2525,13 @@ void NpcScriptInterface::registerFunctions()
 int32_t NpcScriptInterface::luaActionFocus(lua_State* L)
 {
 	//selfFocus(cid)
-	uint32_t cid = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 
 	Npc* npc = env->getNpc();
 	if(!npc)
 		return 0;
 
-	Creature* creature = env->getCreatureByUID(cid);
+	Creature* creature = env->getCreatureByUID(popNumber(L));
 	if(creature)
 		npc->hasScriptedFocus = true;
 	else
@@ -2574,10 +2573,9 @@ int32_t NpcScriptInterface::luaActionSay(lua_State* L)
 int32_t NpcScriptInterface::luaActionTurn(lua_State* L)
 {
 	//selfTurn(direction)
-	Direction dir = (Direction)popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 	if(Npc* npc = env->getNpc())
-		npc->doTurn(dir);
+		npc->doTurn((Direction)popNumber(L));
 
 	return 0;
 }
@@ -2910,7 +2908,7 @@ void NpcScript::onCreatureAppear(const Creature* creature)
 	if(m_onCreatureAppear == -1)
 		return;
 
-	//onCreatureAppear(creature)
+	//onCreatureAppear(cid)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
@@ -2941,7 +2939,7 @@ void NpcScript::onCreatureDisappear(const Creature* creature)
 	if(m_onCreatureDisappear == -1)
 		return;
 
-	//onCreatureDisappear(id)
+	//onCreatureDisappear(cid)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
@@ -2972,7 +2970,7 @@ void NpcScript::onCreatureMove(const Creature* creature, const Position& oldPos,
 	if(m_onCreatureMove == -1)
 		return;
 
-	//onCreatureMove(creature, oldPos, newPos)
+	//onCreatureMove(cid, oldPos, newPos)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();

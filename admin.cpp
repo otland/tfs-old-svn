@@ -815,7 +815,9 @@ static void addLogLine(ProtocolAdmin* protocol, LogType_t type, std::string mess
 	if(!g_config.getBool(ConfigManager::ADMIN_LOGS_ENABLED))
 		return;
 
-	message += " @" + convertIPAddress(protocol->getIP());
+	if(protocol)
+		message += " @" + convertIPAddress(protocol->getIP());
+
 	LOG_MESSAGE(type, message, "ADMIN");
 }
 #endif
