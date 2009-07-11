@@ -306,8 +306,7 @@ void Game::cleanMap(uint32_t& count)
 					{
 						for(uint32_t i = 0; i < tile->getThingCount();)
 						{
-							item = tile->__getThing(i)->getItem();
-							if(item && item->isMoveable()
+							if((item = tile->__getThing(i)->getItem()) && item->isMoveable()
 								&& !item->isLoadedFromMap() && !item->isScriptProtected())
 							{
 								internalRemoveItem(NULL, item);
@@ -334,8 +333,7 @@ void Game::cleanMap(uint32_t& count)
 					{
 						for(uint32_t i = 0; i < tile->getThingCount();)
 						{
-							item = tile->__getThing(i)->getItem();
-							if(item && item->isMoveable()
+							if((item = tile->__getThing(i)->getItem()) && item->isMoveable()
 								&& !item->isLoadedFromMap() && !item->isScriptProtected())
 							{
 								internalRemoveItem(NULL, item);
@@ -364,8 +362,7 @@ void Game::cleanMap(uint32_t& count)
 					{
 						for(uint32_t i = 0; i < tile->getThingCount();)
 						{
-							item = tile->__getThing(i)->getItem();
-							if(item && item->isMoveable()
+							if((item = tile->__getThing(i)->getItem()) && item->isMoveable()
 								&& !item->isLoadedFromMap() && !item->isScriptProtected())
 							{
 								internalRemoveItem(NULL, item);
@@ -391,8 +388,7 @@ void Game::cleanMap(uint32_t& count)
 					{
 						for(uint32_t i = 0; i < tile->getThingCount();)
 						{
-							item = tile->__getThing(i)->getItem();
-							if(item && item->isMoveable()
+							if((item = tile->__getThing(i)->getItem()) && item->isMoveable()
 								&& !item->isLoadedFromMap() && !item->isScriptProtected())
 							{
 								internalRemoveItem(NULL, item);
