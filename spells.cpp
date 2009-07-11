@@ -228,8 +228,7 @@ uint32_t Spells::getInstantSpellCount(const Player* player)
 	uint32_t count = 0;
 	for(InstantsMap::iterator it = instants.begin(); it != instants.end(); ++it)
 	{
-		InstantSpell* instantSpell = it->second;
-		if(instantSpell->canCast(player))
+		if(it->second->canCast(player))
 			++count;
 	}
 
@@ -592,10 +591,10 @@ bool Spell::playerSpellCheck(Player* player) const
 			return false;
 		}
 
-		if(player->hasCondition(CONDITION_EXHAUST, 1))
+		if(player->hasCondition(CONDITION_EXHAUST, EXHAUST_COMBAT))
 			exhausted = true;
 	}
-	else if(player->hasCondition(CONDITION_EXHAUST, 2))
+	else if(player->hasCondition(CONDITION_EXHAUST, EXHAUST_HEALING))
 		exhausted = true;
 
 	if(exhausted && !player->hasFlag(PlayerFlag_HasNoExhaustion))
@@ -845,7 +844,7 @@ void Spell::postCastSpell(Player* player, bool finishedCast /*= true*/, bool pay
 	if(finishedCast)
 	{
 		if(!player->hasFlag(PlayerFlag_HasNoExhaustion) && exhaustion > 0)
-			player->addExhaust(exhaustion, (isAggressive ? 1 : 2));
+			player->addExhaust(exhaustion, isAggressive ? EXHAUST_COMBAT : EXHAUST_HEALING);
 
 		if(isAggressive && !player->hasFlag(PlayerFlag_NotGainInFight))
 			player->addInFightTicks();

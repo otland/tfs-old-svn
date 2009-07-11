@@ -425,7 +425,7 @@ void Weapon::onUsedWeapon(Player* player, Item* item, Tile* destTile) const
 	}
 
 	if(!player->hasFlag(PlayerFlag_HasNoExhaustion) && exhaustion > 0)
-		player->addExhaust(exhaustion, 3);
+		player->addExhaust(exhaustion, EXHAUST_WEAPON);
 
 	int32_t manaCost = getManaCost(player);
 	if(manaCost > 0)

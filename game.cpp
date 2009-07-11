@@ -3480,10 +3480,11 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 	if(!player || player->isRemoved())
 		return false;
 
-	if(player->isMuted())
+	uint32_t muted = player->getMuted();
+	if(muted > 0)
 	{
 		char buffer[75];
-		sprintf(buffer, "You are still muted for %d seconds.", player->isMuted());
+		sprintf(buffer, "You are still muted for %d seconds.", muted);
 		player->sendTextMessage(MSG_STATUS_SMALL, buffer);
 		return false;
 	}
@@ -3575,19 +3576,19 @@ bool Game::playerYell(Player* player, const std::string& text)
 		return true;
 	}
 
-	if(!player->hasCondition(CONDITION_MUTED, 1))
+	if(player->hasCondition(CONDITION_MUTED, 1))
 	{
-		if(!player->hasFlag(PlayerFlag_CannotBeMuted))
-		{
-			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_MUTED, 30000, 0, false, 1))
-				player->addCondition(condition);
-		}
-
-		internalCreatureSay(player, SPEAK_YELL, asUpperCaseString(text), false);
-	}
-	else
 		player->sendCancelMessage(RET_YOUAREEXHAUSTED);
+		return true;
+	}
 
+	if(!player->hasFlag(PlayerFlag_CannotBeMuted))
+	{
+		if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_MUTED, 30000, 0, false, 1))
+			player->addCondition(condition);
+	}
+
+	internalCreatureSay(player, SPEAK_YELL, asUpperCaseString(text), false);
 	return true;
 }
 

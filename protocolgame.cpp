@@ -2138,7 +2138,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 		if(reasons > 1)
 		{
 			msg->AddByte(0x0B);
-			for(int32_t i = 0; i < 20; i++)
+			for(int32_t i = 0; i < 20; ++i)
 			{
 				if(i < 4)
 					msg->AddByte(group->getNameViolationFlags());
@@ -2152,16 +2152,8 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 
 	AddMapDescription(msg, pos);
 
-	AddInventoryItem(msg, SLOT_HEAD, player->getInventoryItem(SLOT_HEAD));
-	AddInventoryItem(msg, SLOT_NECKLACE, player->getInventoryItem(SLOT_NECKLACE));
-	AddInventoryItem(msg, SLOT_BACKPACK, player->getInventoryItem(SLOT_BACKPACK));
-	AddInventoryItem(msg, SLOT_ARMOR, player->getInventoryItem(SLOT_ARMOR));
-	AddInventoryItem(msg, SLOT_RIGHT, player->getInventoryItem(SLOT_RIGHT));
-	AddInventoryItem(msg, SLOT_LEFT, player->getInventoryItem(SLOT_LEFT));
-	AddInventoryItem(msg, SLOT_LEGS, player->getInventoryItem(SLOT_LEGS));
-	AddInventoryItem(msg, SLOT_FEET, player->getInventoryItem(SLOT_FEET));
-	AddInventoryItem(msg, SLOT_RING, player->getInventoryItem(SLOT_RING));
-	AddInventoryItem(msg, SLOT_AMMO, player->getInventoryItem(SLOT_AMMO));
+	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
+		AddInventoryItem(msg, (slots_t)i, player->getInventoryItem((slots_t)i));
 
 	AddPlayerStats(msg);
 	AddPlayerSkills(msg);

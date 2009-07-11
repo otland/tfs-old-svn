@@ -792,10 +792,10 @@ bool Player::canOpenCorpse(uint32_t ownerId)
 
 uint16_t Player::getLookCorpse() const
 {
-	if(sex != 0)
-		return ITEM_MALE_CORPSE;
+	if(sex == PLAYERSEX_FEMALE)
+		ITEM_FEMALE_CORPSE;
 
-	return ITEM_FEMALE_CORPSE;
+	return ITEM_MALE_CORPSE;
 }
 
 void Player::dropLoot(Container* corpse)
@@ -1587,8 +1587,8 @@ void Player::onCreatureMove(const Creature* creature, const Tile* newTile, const
 		int32_t ticks = g_config.getNumber(ConfigManager::STAIRHOP_DELAY);
 		if(ticks > 0)
 		{
-			addExhaust(ticks, 1); // Aggressive spells
-			addExhaust(ticks, 3); // Weapon
+			addExhaust(ticks, EXHAUST_COMBAT); // Aggressive spells
+			addExhaust(ticks, EXHAUST_WEAPON);
 			if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_PACIFIED, ticks))
 				addCondition(condition);
 		}
@@ -1760,7 +1760,7 @@ void Player::onThink(uint32_t interval)
 	}
 }
 
-uint32_t Player::isMuted()
+uint32_t Player::getMuted()
 {
 	if(hasFlag(PlayerFlag_CannotBeMuted))
 		return 0;
@@ -1787,8 +1787,7 @@ void Player::removeMessageBuffer()
 	int32_t maxBuffer = g_config.getNumber(ConfigManager::MAX_MESSAGEBUFFER);
 	if(!hasFlag(PlayerFlag_CannotBeMuted) && maxBuffer != 0 && messageBuffer <= maxBuffer + 1)
 	{
-		messageBuffer++;
-		if(messageBuffer > maxBuffer)
+		if(++messageBuffer > maxBuffer)
 		{
 			uint32_t muteCount = 1;
 			MuteCountMap::iterator it = muteCountMap.find(getGUID());
@@ -2315,7 +2314,7 @@ Item* Player::createCorpse(DeathList deathList)
 	return corpse;
 }
 
-void Player::addExhaust(uint32_t ticks, uint32_t type)
+void Player::addExhaust(uint32_t ticks, Exhaust_t type)
 {
 	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_EXHAUST, ticks, 0, false, type))
 		addCondition(condition);
@@ -3294,7 +3293,7 @@ void Player::doAttacking(uint32_t interval)
 			SchedulerTask* task = createSchedulerTask(getNextActionTime(), boost::bind(&Game::checkCreatureAttack, &g_game, getID()));
 			setNextActionTask(task);
 		}
-		else if((!hasCondition(CONDITION_EXHAUST, 3) || !weapon->hasExhaustion()) && weapon->useWeapon(this, tool, attackedCreature))
+		else if((!hasCondition(CONDITION_EXHAUST, EXHAUST_WEAPON) || !weapon->hasExhaustion()) && weapon->useWeapon(this, tool, attackedCreature))
 			lastAttack = OTSYS_TIME();
 	}
 	else if(Weapon::useFist(this, attackedCreature))

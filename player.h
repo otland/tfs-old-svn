@@ -115,6 +115,14 @@ enum GamemasterCondition_t
 	GAMEMASTER_TELEPORT = 2
 };
 
+enum Exhaust_t
+{
+	EXHAUST_OTHER = 0,
+	EXHAUST_COMBAT = 1,
+	EXHAUST_HEALING = 2,
+	EXHAUST_WEAPON = 3
+};
+
 typedef std::set<uint32_t> VIPListSet;
 typedef std::vector<std::pair<uint32_t, Container*> > ContainerVector;
 typedef std::map<uint32_t, std::pair<Depot*, bool> > DepotMap;
@@ -295,7 +303,7 @@ class Player : public Creature, public Cylinder
 		virtual bool isPushable() const;
 		virtual int32_t getThrowRange() const {return 1;}
 
-		uint32_t isMuted();
+		uint32_t getMuted();
 		void addMessageBuffer();
 		void removeMessageBuffer();
 
@@ -442,7 +450,7 @@ class Player : public Creature, public Cylinder
 		virtual float getAttackFactor() const;
 		virtual float getDefenseFactor() const;
 
-		void addExhaust(uint32_t ticks, uint32_t type);
+		void addExhaust(uint32_t ticks, Exhaust_t type);
 		void addInFightTicks(bool pzLock = false);
 		void addDefaultRegeneration(uint32_t addTicks);
 
