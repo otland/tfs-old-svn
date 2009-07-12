@@ -16,7 +16,7 @@ end
 function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(fromPosition.x ~= CONTAINER_POSITION and isPlayerPzLocked(cid) and getTileInfo(fromPosition).protection) then
 		doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
-		return TRUE
+		return true
 	end
 
 	if(getItemLevelDoor(item.itemid) > 0) then
@@ -118,7 +118,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 			local pzDoorPosition = getTileInfo(doorPosition).protection
 			local pzNewPosition = getTileInfo(newPosition).protection
 			if((pzDoorPosition and not pzNewPosition and doorCreature.uid ~= cid) or
-				(not pzDoorPosition and pzNewPosition and doorCreature.uid == cid and isPlayerPzLocked(cid) == TRUE)) then
+				(not pzDoorPosition and pzNewPosition and doorCreature.uid == cid and isPlayerPzLocked(cid))) then
 				doPlayerSendDefaultCancel(cid, RETURNVALUE_NOTPOSSIBLE)
 			else
 				doTeleportThing(doorCreature.uid, newPosition)

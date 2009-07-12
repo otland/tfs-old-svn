@@ -3753,7 +3753,7 @@ const OutfitListType& Player::getPlayerOutfits()
 
 bool Player::canWear(uint32_t _looktype, uint32_t _addons)
 {
-	return m_playerOutfits.isInList(getID(), _looktype, _addons);
+	return m_playerOutfits.isInList(getID(), _looktype, hasCustomFlag(PlayerCustomFlag_CanWearAllAddons) ? 0 : _addons);
 }
 
 bool Player::canLogout()
@@ -3803,7 +3803,7 @@ bool Player::remOutfit(uint32_t _looktype, uint32_t _addons)
 
 bool Player::changeOutfit(Outfit_t outfit, bool checkList)
 {
-	if(checkList && (!m_playerOutfits.isInList(getID(), outfit.lookType, outfit.lookAddons) || !requestedOutfit))
+	if(checkList && (!canWear(outfit.lookType, outfit.lookAddons) || !requestedOutfit))
 		return false;
 
 	requestedOutfit = false;

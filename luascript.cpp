@@ -4890,7 +4890,11 @@ int32_t LuaScriptInterface::luaDoPlayerSetPzLocked(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		player->setPzLocked(locked);
+		if(player->isPzLocked() != locked)
+		{
+			player->setPzLocked(locked);
+			sendIcons();
+		}
 		lua_pushboolean(L, true);
 	}
 	else

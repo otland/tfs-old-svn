@@ -9,7 +9,7 @@ function onStepIn(cid, item, position, lastPosition, fromPosition, toPosition)
 			position.x = position.x - 1
 		end
 
-		doTeleportThing(cid, position, FALSE)
+		doTeleportThing(cid, position, false)
 		return
 	end
 
@@ -22,6 +22,6 @@ function onStepIn(cid, item, position, lastPosition, fromPosition, toPosition)
 		direction = EAST
 	end
 
-	doTeleportThing(cid, position, FALSE)
+	doTeleportThing(cid, position, false)
 	doCreatureSetLookDir(cid, direction)
 end

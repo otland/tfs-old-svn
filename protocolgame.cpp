@@ -2460,24 +2460,30 @@ void ProtocolGame::sendOutfitWindow()
 		const OutfitListType& playerOutfits = player->getPlayerOutfits();
 
 		msg->AddByte(size);
+		bool allAddons = player->hasCustomFlag(PlayerCustomFlag_CanWearAllAddons);
 		for(IntegerVec::const_iterator it = tmpList.begin(); it != tmpList.end(); ++it)
 		{
 			msg->AddU16(*it);
 			msg->AddString(Outfits::getInstance()->getOutfitName(*it));
 
-			bool addedAddon = false;
-			for(iit = playerOutfits.begin(); iit != playerOutfits.end(); ++iit)
+			if(!allAddons)
 			{
-				if((*iit)->looktype != uint32_t(*it))
-					continue;
+				bool addedAddon = false;
+				for(iit = playerOutfits.begin(); iit != playerOutfits.end(); ++iit)
+				{
+					if((*iit)->looktype != uint32_t(*it))
+						continue;
 
-				msg->AddByte((*iit)->addons);
-				addedAddon = true;
-				break;
+					msg->AddByte((*iit)->addons);
+					addedAddon = true;
+					break;
+				}
+
+				if(!addedAddon)
+					msg->AddByte(0x00);
 			}
-
-			if(!addedAddon)
-				msg->AddByte(0x00);
+			else
+				msg->AddByte(0x03);
 		}
 
 		player->hasRequestedOutfit(true);
