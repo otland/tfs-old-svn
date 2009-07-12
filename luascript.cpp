@@ -4895,6 +4895,7 @@ int32_t LuaScriptInterface::luaDoPlayerSetPzLocked(lua_State* L)
 			player->setPzLocked(locked);
 			player->sendIcons();
 		}
+
 		lua_pushboolean(L, true);
 	}
 	else

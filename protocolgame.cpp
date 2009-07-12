@@ -2460,30 +2460,36 @@ void ProtocolGame::sendOutfitWindow()
 		const OutfitListType& playerOutfits = player->getPlayerOutfits();
 
 		msg->AddByte(size);
-		bool allAddons = player->hasCustomFlag(PlayerCustomFlag_CanWearAllAddons);
-		for(IntegerVec::const_iterator it = tmpList.begin(); it != tmpList.end(); ++it)
+		if(player->hasCustomFlag(PlayerCustomFlag_CanWearAllAddons))
 		{
-			msg->AddU16(*it);
-			msg->AddString(Outfits::getInstance()->getOutfitName(*it));
-
-			if(!allAddons)
+			for(IntegerVec::const_iterator it = tmpList.begin(); it != tmpList.end(); ++it)
 			{
-				bool addedAddon = false;
+				msg->AddU16(*it);
+				msg->AddString(Outfits::getInstance()->getOutfitName(*it));
+				msg->AddByte(0x03);
+			}
+		}
+		else
+		{
+			for(IntegerVec::const_iterator it = tmpList.begin(); it != tmpList.end(); ++it)
+			{
+				msg->AddU16(*it);
+				msg->AddString(Outfits::getInstance()->getOutfitName(*it));
+
+				bool added = false;
 				for(iit = playerOutfits.begin(); iit != playerOutfits.end(); ++iit)
 				{
 					if((*iit)->looktype != uint32_t(*it))
 						continue;
 
 					msg->AddByte((*iit)->addons);
-					addedAddon = true;
+					added = true;
 					break;
 				}
 
-				if(!addedAddon)
+				if(!added)
 					msg->AddByte(0x00);
 			}
-			else
-				msg->AddByte(0x03);
 		}
 
 		player->hasRequestedOutfit(true);
