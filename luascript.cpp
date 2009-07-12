@@ -4893,7 +4893,7 @@ int32_t LuaScriptInterface::luaDoPlayerSetPzLocked(lua_State* L)
 		if(player->isPzLocked() != locked)
 		{
 			player->setPzLocked(locked);
-			sendIcons();
+			player->sendIcons();
 		}
 		lua_pushboolean(L, true);
 	}
