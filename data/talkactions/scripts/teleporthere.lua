@@ -5,9 +5,9 @@ function onSay(cid, words, param, channel)
 	end
 
 	local target = getPlayerByNameWildcard(param)
-	if(target == 0) then
+	if(not target) then
 		target = getCreatureByName(param)
-		if(target == 0) then
+		if(not target) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Creature not found.")
 			return true
 		end

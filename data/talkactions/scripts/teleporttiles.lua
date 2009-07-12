@@ -18,14 +18,7 @@ function onSay(cid, words, param, channel)
 		end
 	end
 
-	local pos = getPosByDir(getCreaturePosition(pid), getCreatureLookDirection(pid), n)
-	pos.stackpos = STACKPOS_GROUND
-	if(getTileThingByPos(pos).uid == 0) then
-		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "You cannot teleport there.")
-		return true
-	end
-
-	pos = getClosestFreeTile(pid, pos, false, false)
+	local pos = getClosestFreeTile(pid, getPosByDir(getCreaturePosition(pid), getCreatureLookDirection(pid), n), false, false)
 	if(not pos or isInArray({pos.x, pos.y}, 0)) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Destination not reachable.")
 		return true
