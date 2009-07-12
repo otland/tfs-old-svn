@@ -793,7 +793,7 @@ bool Player::canOpenCorpse(uint32_t ownerId)
 uint16_t Player::getLookCorpse() const
 {
 	if(sex == PLAYERSEX_FEMALE)
-		ITEM_FEMALE_CORPSE;
+		return ITEM_FEMALE_CORPSE;
 
 	return ITEM_MALE_CORPSE;
 }
@@ -3419,29 +3419,55 @@ void Player::onAddCondition(ConditionType_t type, bool hadCondition)
 
 void Player::onAddCombatCondition(ConditionType_t type, bool hadCondition)
 {
-	std::string tmp = "";
+	std::string tmp;
 	switch(type)
 	{
+		//client hardcoded
+		case CONDITION_FIRE:
+			tmp = "burning";
+			break;
 		case CONDITION_POISON:
 			tmp = "poisoned";
 			break;
-		case CONDITION_DROWN:
-			tmp = "drowning";
-			break;
-		case CONDITION_PARALYZE:
-			tmp = "paralyzed";
-			break;
-		case CONDITION_DRUNK:
-			tmp = "drunk";
-			break;
-		case CONDITION_CURSED:
-			tmp = "cursed";
+		case CONDITION_ENERGY:
+			tmp = "electrified";
 			break;
 		case CONDITION_FREEZING:
 			tmp = "freezing";
 			break;
 		case CONDITION_DAZZLED:
 			tmp = "dazzled";
+			break;
+		case CONDITION_CURSED:
+			tmp = "cursed";
+			break;
+		case CONDITION_DROWN:
+			tmp = "drowning";
+			break;
+		case CONDITION_DRUNK:
+			tmp = "drunk";
+			break;
+		case CONDITION_MAGICSHIELD:
+			tmp = "protected by a magic shield";
+			break;
+		case CONDITION_PARALYZE:
+			tmp = "paralyzed";
+			break;
+		case CONDITION_HASTE:
+			tmp = "hasted";
+			break;
+		case CONDITION_ATTRIBUTES:
+			tmp = "strengthened";
+			break;
+		//tfs only
+		case CONDITION_MUTED:
+			tmp = "muted";
+			break;
+		case CONDITION_EXHAUST:
+			tmp = "exhausted";
+			break;
+		case CONDITION_PACIFIED:
+			tmp = "pacified";
 			break;
 		default:
 			break;
