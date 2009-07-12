@@ -20679,7 +20679,7 @@
 		<attribute key="slotType" value="head"/>
 		<attribute key="magiclevelpoints" value="2"/>
 	</item>
-	<item id="9779" article="an" name="crystal column"/>
+	<item id="9779" article="a" name="crystal column"/>
 	<item id="9801" article="a" name="dead worker golem">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="9802"/>
