@@ -3447,7 +3447,7 @@ void Player::onAddCombatCondition(ConditionType_t type, bool hadCondition)
 		case CONDITION_DRUNK:
 			tmp = "drunk";
 			break;
-		case CONDITION_MAGICSHIELD:
+		case CONDITION_MANASHIELD:
 			tmp = "protected by a magic shield";
 			break;
 		case CONDITION_PARALYZE:
@@ -3458,16 +3458,6 @@ void Player::onAddCombatCondition(ConditionType_t type, bool hadCondition)
 			break;
 		case CONDITION_ATTRIBUTES:
 			tmp = "strengthened";
-			break;
-		//tfs only
-		case CONDITION_MUTED:
-			tmp = "muted";
-			break;
-		case CONDITION_EXHAUST:
-			tmp = "exhausted";
-			break;
-		case CONDITION_PACIFIED:
-			tmp = "pacified";
 			break;
 		default:
 			break;
