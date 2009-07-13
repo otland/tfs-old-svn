@@ -2442,7 +2442,7 @@
 		<attribute key="decayTo" value="2043"/>
 		<attribute key="duration" value="180"/>
 	</item>
-	<item id="2043" article="a" name="candelabrum">
+	<item id="2043" article="a" name="used candelabrum">
 		<attribute key="weight" value="300"/>
 	</item>
 	<item id="2044" article="a" name="lamp">
@@ -5421,13 +5421,13 @@
 	<item id="2770" article="a" name="branch"/>
 	<item id="2771" article="a" name="swamp plant"/>
 	<item id="2772" article="a" name="swamp plant"/>
-	<item id="2773" article="a" name="swamp plant"/>
+	<item id="2773" article="a" name="mud whip"/>
 	<item id="2774" article="a" name="swamp plant"/>
-	<item id="2775" article="a" name="swamp plant"/>
+	<item id="2775" article="a" name="swamp lilly"/>
 	<item id="2776" article="a" name="swamp plant"/>
-	<item id="2777" article="a" name="swamp plant"/>
+	<item id="2777" article="a" name="bog fingers plant"/>
 	<item id="2778" article="a" name="swamp plant"/>
-	<item id="2779" article="a" name="swamp plant"/>
+	<item id="2779" article="a" name="frog leaf"/>
 	<item id="2780" article="a" name="swamp plant"/>
 	<item id="2781" name="jungle grass">
 		<attribute key="decayTo" value="2782"/>
@@ -8001,11 +8001,11 @@
 	<item id="3607" article="a" name="stone"/>
 	<item id="3608" article="a" name="stone"/>
 	<item id="3609" article="a" name="stone"/>
-	<item id="3610" article="a" name="stone"/>
-	<item id="3611" article="a" name="stone"/>
-	<item id="3612" article="a" name="stone"/>
-	<item id="3613" article="a" name="stone"/>
-	<item id="3614" article="a" name="stone"/>
+	<item id="3610" article="a" name="stones"/>
+	<item id="3611" article="a" name="stones"/>
+	<item id="3612" article="a" name="stones"/>
+	<item id="3613" article="a" name="stones"/>
+	<item id="3614" article="a" name="stones"/>
 	<item id="3615" article="a" name="stone"/>
 	<item id="3616" article="a" name="stone"/>
 	<item id="3617" article="a" name="stone"/>
@@ -8023,10 +8023,10 @@
 	<item id="3629" article="a" name="stone"/>
 	<item id="3630" article="a" name="stone"/>
 	<item id="3631" article="a" name="stone"/>
-	<item id="3632" article="a" name="stone"/>
-	<item id="3633" article="a" name="stone"/>
-	<item id="3634" article="a" name="stone"/>
-	<item id="3635" article="a" name="stone"/>
+	<item id="3632" article="a" name="mossy stone"/>
+	<item id="3633" article="a" name="mossy stone"/>
+	<item id="3634" article="a" name="mossy stone"/>
+	<item id="3635" article="a" name="mossy stone"/>
 	<item id="3636" article="a" name="stone"/>
 	<item id="3637" article="a" name="stone"/>
 	<item id="3638" article="a" name="stone"/>
@@ -8372,7 +8372,9 @@
 	<item id="3869" article="a" name="cloth wall"/>
 	<item id="3870" article="a" name="cloth wall"/>
 	<item id="3871" article="a" name="pile of chopped wood"/>
-	<item id="3872" article="a" name="block of wood"/>
+	<item id="3872" article="a" name="block of wood">
+		<attribute key="description" value="It's a lumberjack's working place."/>
+	</item>
 	<item id="3873" name="some pieces of wood"/>
 	<item id="3874" article="a" name="fishing net"/>
 	<item id="3875" article="a" name="fishing net"/>
