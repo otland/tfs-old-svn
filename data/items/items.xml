@@ -35,7 +35,7 @@
 		<attribute key="fluidSource" value="mud"/>
 	</item>
 	<item fromid="356" toid="367" article="a" name="dirt wall"/>
-	<item id="368" name="ground"/>
+	<item id="368" name="earth ground"/>
 	<item id="369" article="a" name="trapdoor">
 		<attribute key="floorchange" value="down"/>
 	</item>
@@ -2429,7 +2429,10 @@
 	<item id="2036" article="a" name="watch">
 		<attribute key="weight" value="50"/>
 	</item>
-	<item fromid="2037" toid="2040" article="a" name="lit wall lamp"/>
+	<item id="2037" article="a" name="wall lamp"/>
+	<item id="2038" article="a" name="lit wall lamp"/>
+	<item id="2039" article="a" name="wall lamp"/>
+	<item id="2040" article="a" name="lit wall lamp"/>
 	<item id="2041" article="a" name="candelabrum">
 		<attribute key="weight" value="500"/>
 		<attribute key="stopduration" value="1"/>
@@ -2505,10 +2508,10 @@
 		<attribute key="decayTo" value="2041"/>
 		<attribute key="duration" value="180"/>
 	</item>
-	<item id="2058" article="a" name="wall torch"/>
-	<item id="2059" article="a" name="wall torch"/>
-	<item id="2060" article="a" name="wall torch"/>
-	<item id="2061" article="a" name="wall torch"/>
+	<item id="2058" article="a" name="torch bearer"/>
+	<item id="2059" article="a" name="lit torch bearer"/>
+	<item id="2060" article="a" name="torch bearer"/>
+	<item id="2061" article="a" name="lit torch bearer"/>
 	<item id="2062" article="a" name="small oil lamp">
 		<attribute key="weight" value="100"/>
 		<attribute key="decayTo" value="0"/>
@@ -7444,19 +7447,19 @@
 	<item id="3138" article="a" name="stairway">
 		<attribute key="floorchange" value="down"/>
 	</item>
-	<item id="3139" name="wooden flooring"/>
-	<item id="3140" name="wooden flooring"/>
-	<item id="3141" name="wooden flooring"/>
-	<item id="3142" name="wooden flooring"/>
-	<item id="3143" name="wooden flooring"/>
-	<item id="3144" name="wooden flooring"/>
-	<item id="3145" name="wooden flooring"/>
-	<item id="3146" name="wooden flooring"/>
-	<item id="3147" name="wooden flooring"/>
-	<item id="3148" name="wooden flooring"/>
-	<item id="3149" name="wooden flooring"/>
-	<item id="3150" name="wooden flooring"/>
-	<item id="3151" name="wooden flooring"/>
+	<item id="3139" name="wooden floor"/>
+	<item id="3140" name="wooden floor"/>
+	<item id="3141" name="wooden floor"/>
+	<item id="3142" name="wooden floor"/>
+	<item id="3143" name="wooden floor"/>
+	<item id="3144" name="wooden floor"/>
+	<item id="3145" name="wooden floor"/>
+	<item id="3146" name="wooden floor"/>
+	<item id="3147" name="wooden floor"/>
+	<item id="3148" name="wooden floor"/>
+	<item id="3149" name="wooden floor"/>
+	<item id="3150" name="wooden floor"/>
+	<item id="3151" name="wooden floor"/>
 	<item id="3152" name="stone floor"/>
 	<item id="3153" name="stone floor"/>
 	<item id="3154" name="stone floor"/>
@@ -7474,19 +7477,19 @@
 	<item id="3166" article="a" name="strange carving"/>
 	<item id="3167" article="a" name="strange carving"/>
 	<item id="3168" article="a" name="strange carving"/>
-	<item id="3169" article="a" name="strange carving"/>
+	<item id="3169" article="a" name="carved stone tile"/>
 	<item id="3170" article="a" name="strange carving"/>
 	<item id="3171" article="a" name="strange carving"/>
 	<item id="3172" article="a" name="strange carving"/>
-	<item id="3173" article="a" name="strange carving"/>
-	<item id="3174" article="a" name="strange carving"/>
-	<item id="3175" article="a" name="strange carving"/>
-	<item id="3176" article="a" name="strange carving"/>
-	<item id="3177" article="a" name="strange carving"/>
-	<item id="3178" article="a" name="strange carving"/>
-	<item id="3179" article="a" name="strange carving"/>
-	<item id="3180" article="a" name="strange carving"/>
-	<item id="3181" article="a" name="strange carving"/>
+	<item id="3173" name="ornamented floor"/>
+	<item id="3174" name="ornamented floor"/>
+	<item id="3175" name="ornamented floor"/>
+	<item id="3176" name="ornamented floor"/>
+	<item id="3177" article="a" name="carved stone tile"/>
+	<item id="3178" name="ornamented floor"/>
+	<item id="3179" name="ornamented floor"/>
+	<item id="3180" name="ornamented floor"/>
+	<item id="3181" name="ornamented floor"/>
 	<item id="3182" article="a" name="strange carving"/>
 	<item id="3183" article="a" name="strange carving"/>
 	<item id="3184" article="a" name="strange carving"/>
@@ -7975,16 +7978,16 @@
 	<item id="3572" article="a" name="waterfall"/>
 	<item id="3573" article="a" name="waterfall"/>
 	<item id="3574" article="a" name="waterfall"/>
-	<item id="3587" article="a" name="boat"/>
-	<item id="3588" article="a" name="boat"/>
-	<item id="3589" article="a" name="boat"/>
-	<item id="3590" article="a" name="boat"/>
-	<item id="3591" article="a" name="boat"/>
-	<item id="3592" article="a" name="boat"/>
-	<item id="3593" article="a" name="boat"/>
-	<item id="3594" article="a" name="boat"/>
-	<item id="3595" article="a" name="boat"/>
-	<item id="3596" article="a" name="boat"/>
+	<item id="3587" article="a" name="small boat"/>
+	<item id="3588" article="a" name="small boat"/>
+	<item id="3589" article="a" name="small boat"/>
+	<item id="3590" article="a" name="small boat"/>
+	<item id="3591" article="a" name="small boat"/>
+	<item id="3592" article="a" name="small boat"/>
+	<item id="3593" article="a" name="small boat"/>
+	<item id="3594" article="a" name="small boat"/>
+	<item id="3595" article="a" name="small boat"/>
+	<item id="3596" article="a" name="small boat"/>
 	<item id="3597" article="a" name="sail"/>
 	<item id="3598" article="a" name="sail"/>
 	<item id="3599" article="a" name="paddle"/>
@@ -11113,9 +11116,9 @@
 	<item id="5399" article="a" name="plant"/>
 	<item id="5400" article="a" name="window"/>
 	<item id="5401" article="a" name="window"/>
-	<item id="5402" article="a" name="wooden lamp"/>
-	<item id="5403" article="a" name="wooden lamp"/>
-	<item id="5404" article="a" name="wooden lamp"/>
+	<item id="5402" article="a" name="bamboo lamp"/>
+	<item id="5403" article="a" name="bamboo lamp"/>
+	<item id="5404" article="a" name="bamboo lamp"/>
 	<item id="5405" name="shallow water"/>
 	<item id="5406" name="shallow water"/>
 	<item id="5407" name="shallow water"/>
@@ -11449,14 +11452,14 @@
 	<item id="5554" article="a" name="firefly"/>
 	<item id="5555" name="hay"/>
 	<item id="5556" name="hay"/>
-	<item id="5557" name="plants"/>
-	<item id="5558" name="plants"/>
-	<item id="5559" name="plants"/>
-	<item id="5560" name="plants"/>
-	<item id="5561" name="plants"/>
-	<item id="5562" name="plants"/>
-	<item id="5563" name="plants"/>
-	<item id="5564" name="plants"/>
+	<item id="5557" article="a" name="mossy wall"/>
+	<item id="5558" article="a" name="mossy wall"/>
+	<item id="5559" article="a" name="mossy wall"/>
+	<item id="5560" article="a" name="mossy wall"/>
+	<item id="5561" name="small branches"/>
+	<item id="5562" name="small branches"/>
+	<item id="5563" article="a" name="slimy wall"/>
+	<item id="5564" article="a" name="slimy wall"/>
 	<item id="5565" article="a" name="slain skeleton">
 		<attribute key="weight" value="40000"/>
 		<attribute key="containerSize" value="10"/>
@@ -11539,12 +11542,12 @@
 	</item>
 	<item id="5617" article="a" name="pirate emblem"/>
 	<item id="5618" article="a" name="pirate emblem"/>
-	<item id="5619" name="rocks"/>
-	<item id="5620" name="rocks"/>
-	<item id="5621" name="rocks"/>
-	<item id="5622" name="rocks"/>
-	<item id="5623" name="rocks"/>
-	<item id="5624" name="rocks"/>
+	<item id="5619" name="rubble"/>
+	<item id="5620" name="rubble"/>
+	<item id="5621" name="rubble"/>
+	<item id="5622" name="rubble"/>
+	<item id="5623" name="rubble"/>
+	<item id="5624" name="rubble"/>
 	<item id="5625" article="a" name="dead tortoise">
 		<attribute key="weight" value="1500"/>
 		<attribute key="containerSize" value="10"/>
@@ -11833,9 +11836,9 @@
 		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
-	<item id="5768" name="wooden flooring"/>
-	<item id="5769" name="wooden flooring"/>
-	<item id="5770" name="wooden flooring"/>
+	<item id="5768" article="a" name="drawbridge"/>
+	<item id="5769" article="a" name="drawbridge"/>
+	<item id="5770" article="a" name="drawbridge"/>
 	<item id="5771" name="metal fittings"/>
 	<item id="5772" name="metal fittings"/>
 	<item id="5773" name="metal fittings"/>
@@ -11857,8 +11860,8 @@
 	</item>
 	<item id="5787" article="a" name="target"/>
 	<item id="5788" article="a" name="target"/>
-	<item id="5789" article="an" name="axe on a target"/>
-	<item id="5790" article="an" name="axe on a target"/>
+	<item id="5789" article="a" name="stuck axe"/>
+	<item id="5790" article="a" name="stuck axe"/>
 	<item id="5791" article="a" name="stuffed dragon">
 		<attribute key="weight" value="850"/>
 	</item>
@@ -11886,9 +11889,7 @@
 	<item id="5799" article="a" name="golden figurine">
 		<attribute key="weight" value="1500"/>
 	</item>
-	<item id="5800" article="a" name="fishermans rope"> <!-- This isn't a real item -->
-		<attribute key="weight" value="2500"/>
-	</item>
+	<item id="5800" article="a" name="grappling hook"/>
 	<item id="5801" article="a" name="key ring">
 		<attribute key="weight" value="50"/>
 		<attribute key="containerSize" value="20"/>
@@ -13979,19 +13980,19 @@
 		<attribute key="description" value="It is a kit for a mirror."/>
 		<attribute key="weight" value="2500"/>
 	</item>
-	<item id="6374" name="gravel"/>
-	<item id="6375" name="gravel"/>
-	<item id="6376" name="gravel"/>
-	<item id="6377" name="gravel"/>
-	<item id="6378" name="gravel"/>
-	<item id="6379" name="gravel"/>
-	<item id="6380" name="gravel"/>
-	<item id="6381" name="gravel"/>
-	<item id="6382" name="gravel"/>
-	<item id="6383" name="gravel"/>
-	<item id="6384" name="gravel"/>
-	<item id="6385" name="gravel"/>
-	<item id="6386" name="gravel"/>
+	<item id="6374" name="debris"/>
+	<item id="6375" name="debris"/>
+	<item id="6376" name="debris"/>
+	<item id="6377" name="debris"/>
+	<item id="6378" name="debris"/>
+	<item id="6379" name="debris"/>
+	<item id="6380" name="debris"/>
+	<item id="6381" name="debris"/>
+	<item id="6382" name="debris"/>
+	<item id="6383" name="debris"/>
+	<item id="6384" name="debris"/>
+	<item id="6385" name="debris"/>
+	<item id="6386" name="debris"/>
 	<item id="6387" article="a" name="birthday card">
 		<attribute key="weight" value="0"/>
 		<attribute key="writeable" value="1"/>
@@ -15025,7 +15026,7 @@
 	<item id="6983" article="a" name="rope"/>
 	<item id="6984" name="fish"/>
 	<item id="6985" name="fish"/>
-	<item id="6986" article="a" name="fence"/>
+	<item id="6986" article="a" name="pillar"/>
 	<item id="6987" article="a" name="wooden dragon"/>
 	<item id="6988" article="a" name="wooden dragon"/>
 	<item id="6989" article="a" name="wooden bull"/>
@@ -17626,7 +17627,7 @@
 		<attribute key="maleTransformTo" value="7798"/>
 		<attribute key="femaleTransformTo" value="7810"/>
 	</item>
-	<item id="7823" article="a" name="fire statue"/>
+	<item id="7823" article="an" name="obsidian statue"/>
 	<item id="7824" article="a" name="dragon statue"/>
 	<item id="7825" article="a" name="monk statue"/>
 	<item id="7826" article="a" name="sea monster statue"/>
@@ -18765,15 +18766,15 @@
 	</item>
 	<item id="8324" article="a" name="sand dune"/>
 	<item id="8325" article="a" name="sand dune"/>
-	<item id="8326" name="dry grass"/>
-	<item id="8327" name="dry grass"/>
-	<item id="8328" name="dry grass"/>
-	<item id="8329" name="dry grass"/>
-	<item id="8330" name="dry grass"/>
-	<item id="8331" name="dry grass"/>
-	<item id="8332" name="dry grass"/>
-	<item id="8333" name="dry grass"/>
-	<item id="8334" name="dry grass"/>
+	<item id="8326" name="dried grass"/>
+	<item id="8327" name="dried grass"/>
+	<item id="8328" name="dried grass"/>
+	<item id="8329" name="dried grass"/>
+	<item id="8330" name="dried grass"/>
+	<item id="8331" name="dried grass"/>
+	<item id="8332" name="dried grass"/>
+	<item id="8333" name="dried grass"/>
+	<item id="8334" name="dried grass"/>
 	<item id="8335" name="sand"/>
 	<item id="8336" name="sand"/>
 	<item id="8337" name="sand"/>
@@ -18786,20 +18787,20 @@
 	<item id="8344" name="sand"/>
 	<item id="8345" name="sand"/>
 	<item id="8346" name="sand"/>
-	<item id="8347" name="dry grass"/>
-	<item id="8348" name="dry grass"/>
-	<item id="8349" name="dry grass"/>
-	<item id="8350" name="dry grass"/>
-	<item id="8351" name="dry grass"/>
-	<item id="8352" name="dry grass"/>
-	<item id="8353" name="dry grass"/>
-	<item id="8354" name="dry grass"/>
-	<item id="8355" name="dry grass"/>
-	<item id="8356" name="dry grass"/>
-	<item id="8357" name="dry grass"/>
-	<item id="8358" name="dry grass"/>
-	<item id="8359" name="dry grass"/>
-	<item id="8360" name="dry grass"/>
+	<item id="8347" name="dried grass"/>
+	<item id="8348" name="dried grass"/>
+	<item id="8349" name="dried grass"/>
+	<item id="8350" name="dried grass"/>
+	<item id="8351" name="dried grass"/>
+	<item id="8352" name="dried grass"/>
+	<item id="8353" name="dried grass"/>
+	<item id="8354" name="dried grass"/>
+	<item id="8355" name="dried grass"/>
+	<item id="8356" name="dried grass"/>
+	<item id="8357" name="dried grass"/>
+	<item id="8358" name="dried grass"/>
+	<item id="8359" name="dried grass"/>
+	<item id="8360" name="dried grass"/>
 	<item id="8362" name="earth"/>
 	<item id="8363" name="earth"/>
 	<item id="8364" name="earth"/>
@@ -18872,15 +18873,15 @@
 	<item id="8420" article="a" name="knight statue"/>
 	<item id="8421" article="a" name="knight statue"/>
 	<item id="8422" article="a" name="druid statue"/>
-	<item id="8423" name="cracked earth"/>
+	<item id="8423" name="brown pavement"/>
 	<item id="8424" name="earth"/>
-	<item id="8425" name="cracked earth"/>
-	<item id="8426" name="cracked earth"/>
-	<item id="8427" name="cracked earth"/>
-	<item id="8428" name="cracked earth"/>
-	<item id="8429" name="cracked earth"/>
-	<item id="8430" name="cracked earth"/>
-	<item id="8431" name="cracked earth"/>
+	<item id="8425" name="brown pavement"/>
+	<item id="8426" name="brown pavement"/>
+	<item id="8427" name="brown pavement"/>
+	<item id="8428" name="brown pavement"/>
+	<item id="8429" name="brown pavement"/>
+	<item id="8430" name="brown pavement"/>
+	<item id="8431" name="brown pavement"/>
 	<item id="8432" name="earth"/>
 	<item id="8433" name="earth"/>
 	<item id="8434" name="earth"/>
@@ -20206,7 +20207,7 @@
 		<attribute key="duration" value="500"/>
 		<attribute key="corpseType" value="fire"/>
 	</item>
-	<item id="8970" article="a" name="piano"/>
+	<item id="8970" name="Santiago's piano"/>
 	<item id="8971" article="a" name="gland">
 		<attribute key="description" value="It is the pheromone gland of a rotworm queen."/>
 		<attribute key="weight" value="50"/>
