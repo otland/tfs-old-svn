@@ -998,6 +998,8 @@ bool InstantSpell::playerCastInstant(Player* player, const std::string& param)
 	{
 		var.type = VARIANT_NUMBER;
 		var.number = player->getID();
+		if(!playerInstantSpellCheck(player, player))
+			return false;
 	}
 	else if(needTarget || casterTargetOrDirection)
 	{
@@ -1054,6 +1056,8 @@ bool InstantSpell::playerCastInstant(Player* player, const std::string& param)
 
 			var.type = VARIANT_NUMBER;
 			var.number = target->getID();
+			if(!playerInstantSpellCheck(player, target))
+				return false;
 		}
 		else
 		{

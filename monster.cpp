@@ -1100,22 +1100,15 @@ bool Monster::onDeath()
 
 	setIdle(true);
 	setAttackedCreature(NULL);
-	for(CreatureList::iterator cit = summons.begin(); cit != summons.end(); ++cit)
-	{
-		(*cit)->changeHealth(-(*cit)->getHealth());
-		(*cit)->setMaster(NULL);
-		(*cit)->releaseThing2();
-	}
+	destroySummons();
 
-	summons.clear();
+	clearTargetList();
+	clearFriendList();
 	if(raid)
 	{
 		raid->unRef();
 		raid = NULL;
 	}
-
-	clearTargetList();
-	clearFriendList();
 
 	g_game.removeCreature(this, false);
 	return true;
@@ -1297,17 +1290,9 @@ bool Monster::convinceCreature(Creature* creature)
 
 	setFollowCreature(NULL);
 	setAttackedCreature(NULL);
+	destroySummons();
 
 	creature->addSummon(this);
-	//destroy summons
-	for(CreatureList::iterator cit = summons.begin(); cit != summons.end(); ++cit)
-	{
-		(*cit)->changeHealth(-(*cit)->getHealth());
-		(*cit)->setMaster(NULL);
-		(*cit)->releaseThing2();
-	}
-
-	summons.clear();
 	updateTargetList();
 	updateIdleStatus();
 

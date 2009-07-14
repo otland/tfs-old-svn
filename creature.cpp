@@ -1291,23 +1291,32 @@ void Creature::addSummon(Creature* creature)
 
 	creature->setMaster(this);
 	creature->useThing2();
-
 	summons.push_back(creature);
 }
 
 void Creature::removeSummon(const Creature* creature)
 {
-	std::list<Creature*>::iterator cit = std::find(summons.begin(), summons.end(), creature);
-	if(cit != summons.end())
+	std::list<Creature*>::iterator it = std::find(summons.begin(), summons.end(), creature);
+	if(it != summons.end())
 	{
-		(*cit)->setDropLoot(LOOT_DROP_NONE);
-		(*cit)->setLossSkill(false);
-
-		(*cit)->setMaster(NULL);
-		(*cit)->releaseThing2();
-
-		summons.erase(cit);
+		(*it)->setMaster(NULL);
+		(*it)->releaseThing2();
+		summons.erase(it);
 	}
+}
+
+void Creature::destroySummons()
+{
+	for(std::list<Creature*>::iterator it = summons.begin(); it != summons.end(); ++it)
+	{
+		(*it)->setAttackedCreature(NULL);
+		(*it)->changeHealth(-(*it)->getHealth());
+
+		(*it)->setMaster(NULL);
+		(*it)->releaseThing2();
+	}
+
+	summons.clear();
 }
 
 bool Creature::addCondition(Condition* condition)

@@ -3951,7 +3951,11 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 		w += g_config.getNumber(ConfigManager::BLACK_WEEKLY_LIMIT);
 		m += g_config.getNumber(ConfigManager::BLACK_MONTHLY_LIMIT);
 		if(skull < SKULL_BLACK && ((d > 0 && tc >= d) || (w > 0 && wc >= w) || (m > 0 && mc >= m)))
+		{
 			setSkullEnd(now + g_config.getNumber(ConfigManager::BLACK_SKULL_LENGTH), false, SKULL_BLACK);
+			setAttackedCreature(NULL);
+			destroySummons();
+		}
 	}
 
 	return true;

@@ -282,6 +282,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual void addSummon(Creature* creature);
 		virtual void removeSummon(const Creature* creature);
 		const std::list<Creature*>& getSummons() {return summons;}
+		void destroySummons();
 		uint32_t getSummonCount() const {return summons.size();}
 
 		virtual int32_t getArmor() const {return 0;}

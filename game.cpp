@@ -922,17 +922,13 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 	for(it = list.begin(); it != list.end(); ++it)
 		(*it)->onCreatureDisappear(creature, isLogout);
 
+	creature->destroySummons();
 	creature->getParent()->postRemoveNotification(NULL, creature, NULL, oldIndex, true);
-	removeCreatureCheck(creature);
 	creature->setRemoved();
 
+	removeCreatureCheck(creature);
 	listCreature.removeList(creature->getID());
 	creature->removeList();
-	for(std::list<Creature*>::iterator cit = creature->summons.begin(); cit != creature->summons.end(); ++cit)
-	{
-		(*cit)->setLossSkill(false);
-		removeCreature(*cit);
-	}
 
 	creature->onRemovedCreature();
 	FreeThing(creature);
