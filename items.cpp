@@ -1021,12 +1021,12 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.abilities.skills[SKILL_FIST] = intValue;
 			}
-			else if(tmpStrValue == "maxhealthpoints")
+			else if(tmpStrValue == "maxhealthpoints" || tmpStrValue == "maxhitpoints")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.abilities.stats[STAT_MAXHEALTH] = intValue;
 			}
-			else if(tmpStrValue == "maxhealthpercent")
+			else if(tmpStrValue == "maxhealthpercent" || tmpStrValue == "maxhitpointspercent")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.abilities.statsPercent[STAT_MAXHEALTH] = intValue;
@@ -1036,7 +1036,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.abilities.stats[STAT_MAXMANA] = intValue;
 			}
-			else if(tmpStrValue == "maxmanapercent")
+			else if(tmpStrValue == "maxmanapercent" || tmpStrValue == "maxmanapointspercent")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.abilities.statsPercent[STAT_MAXMANA] = intValue;
@@ -1046,17 +1046,17 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.abilities.stats[STAT_SOUL] = intValue;
 			}
-			else if(tmpStrValue == "soulpercent")
+			else if(tmpStrValue == "soulpercent" || tmpStrValue == "soulpointspercent")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.abilities.statsPercent[STAT_SOUL] = intValue;
 			}
-			else if(tmpStrValue == "magiclevelpoints")
+			else if(tmpStrValue == "magiclevelpoints" || "magicpoints")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.abilities.stats[STAT_MAGICLEVEL] = intValue;
 			}
-			else if(tmpStrValue == "magiclevelpercent")
+			else if(tmpStrValue == "magiclevelpercent" || tmpStrValue == "magicpointspercent")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.abilities.statsPercent[STAT_MAGICLEVEL] = intValue;
