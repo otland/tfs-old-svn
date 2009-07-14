@@ -18,6 +18,20 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		fromPosition.z = fromPosition.z + 1
 	end
 
+	local pos, dir = getCreaturePosition(cid), SOUTH
+	if(pos.x < fromPosition.x) then
+		dir = EAST
+	elseif(pos.x == fromPosition.x) then
+		if(pos.y == fromPosition.y) then
+			dir = getCreatureLookDirection(cid)
+		elseif(pos.y > fromPosition.y) then
+			dir = NORTH
+		end
+	elseif(pos.x > fromPosition.x) then
+		dir = WEST
+	end
+
 	doTeleportThing(cid, fromPosition, false)
+	doCreatureSetLookDirection(cid, dir)
 	return true
 end

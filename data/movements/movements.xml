@@ -7,10 +7,11 @@
 	<movevent type="StepIn" itemid="293" event="script" value="decay.lua"/>
 	<movevent type="StepIn" itemid="461" event="script" value="decay.lua"/>
 
-	<!-- Walkable waters -->
+	<!-- Swimming -->
 	<movevent type="StepIn" itemid="4820" event="script" value="swimpool.lua"/>
 	<movevent type="StepOut" itemid="4820" event="script" value="swimpool.lua"/>
-	<movevent type="AddItem" itemid="4820" tileitem="1" event="script" value="swimitem.lua"/>
+	<movevent type="StepIn" itemid="4828-4831" event="script" value="swimming.lua"/>
+	<movevent type="StepIn" itemid="7943-7954" event="script" value="swimming.lua"/>
 
 	<!-- Underwater drown -->
 	<movevent type="StepIn" fromid="5405" toid="5410" event="script" value="drown.lua"/>

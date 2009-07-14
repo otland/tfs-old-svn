@@ -116,7 +116,7 @@ bool ScriptingManager::loadMods()
 {
 	boost::filesystem::path modsPath(getFilePath(FILE_TYPE_MOD, ""));
 	if(!boost::filesystem::exists(modsPath))
-		return false;
+		return true; //silently ignore
 
 	int32_t i = 0;
 	for(boost::filesystem::directory_iterator it(modsPath), end; it != end; ++it)
@@ -129,7 +129,7 @@ bool ScriptingManager::loadMods()
 			if(loadFromXml(name, enabled))
 			{
 				std::cout << " done";
-				if(!enabled) 
+				if(!enabled)
 					std::cout << ", but disabled";
 
 				std::cout << ".";

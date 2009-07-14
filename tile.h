@@ -216,6 +216,7 @@ class Tile : public Cylinder
 			return ZONE_NORMAL;
 		}
 
+		bool isSwimmingPool(bool checkPz = true) const;
 		bool hasHeight(uint32_t n) const;
 		virtual std::string getDescription(int32_t lookDistance) const;
 

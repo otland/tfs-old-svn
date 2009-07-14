@@ -119,6 +119,15 @@ bool Tile::hasHeight(uint32_t n) const
 	return false;
 }
 
+bool Tile::isSwimmingPool(bool checkPz /*= true*/) const
+{
+	if(TrashHolder* trashHolder = getTrashHolder())
+		return trashHolder->getEffect() == NM_ME_LOSE_ENERGY && (!checkPz ||
+			getZone() == ZONE_PROTECTION || getZone() == ZONE_NOPVP);
+
+	return false;
+}
+
 uint32_t Tile::getCreatureCount() const
 {
 	if(const CreatureVector* creatures = getCreatures())
@@ -821,8 +830,7 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 
 	if(destTile)
 	{
-		Thing* destThing = destTile->getTopDownItem();
-		if(destThing)
+		if(Thing* destThing = destTile->getTopDownItem())
 			*destItem = destThing->getItem();
 	}
 
@@ -974,6 +982,9 @@ void Tile::__addThing(Creature* actor, int32_t index, Thing* thing)
 			}
 		}
 
+		if(item->getID() == ITEM_WATERBALL_SPLASH && !hasFlag(TILESTATE_TRASHHOLDER))
+			item->setID(ITEM_WATERBALL);
+
 		items = makeItemList();
 		items->insert(items->getBeginDownItem(), item);
 
@@ -1020,7 +1031,7 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 	if(!item)
 	{
 #ifdef __DEBUG_MOVESYS__
-		std::cout << "[Failure - Tile::__updateThing] item == NULL" << std::endl;
+		std::cout << "[Failure - Tile::__replaceThing] item == NULL" << std::endl;
 		DEBUG_REPORT
 #endif
 		return/* RET_NOTPOSSIBLE*/;
@@ -1063,7 +1074,7 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 			if(pos < (int32_t)creatures->size())
 			{
 #ifdef __DEBUG_MOVESYS__
-				std::cout << "[Failure - Tile::__updateThing] Update object is a creature" << std::endl;
+				std::cout << "[Failure - Tile::__replaceThing] Update object is a creature" << std::endl;
 				DEBUG_REPORT
 #endif
 				return/* RET_NOTPOSSIBLE*/;
@@ -1100,7 +1111,7 @@ void Tile::__replaceThing(uint32_t index, Thing* thing)
 	}
 
 #ifdef __DEBUG_MOVESYS__
-	std::cout << "[Failure - Tile::__updateThing] Update object not found" << std::endl;
+	std::cout << "[Failure - Tile::__replaceThing] Update object not found" << std::endl;
 	DEBUG_REPORT
 #endif
 }

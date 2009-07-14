@@ -1908,6 +1908,9 @@ bool Npc::canWalkTo(const Position& fromPos, Direction dir)
 	if(!tile)
 		return true;
 
+	if(getTile()->isSwimmingPool() != tile->isSwimmingPool()) // prevent npc entering/exiting to swimming pool
+		return false;
+
 	if(floorChange && (tile->floorChange() || tile->positionChange()))
 		return true;
 
