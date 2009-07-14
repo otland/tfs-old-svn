@@ -685,7 +685,7 @@ bool Spell::playerInstantSpellCheck(Player* player, Creature* creature)
 	if(!playerSpellCheck(player))
 		return false;
 
-	const Position& toPos = target->getPosition();
+	const Position& toPos = creature->getPosition();
 	const Position& playerPos = player->getPosition();
 	if(playerPos.z > toPos.z)
 	{
