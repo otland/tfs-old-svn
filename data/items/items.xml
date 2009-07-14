@@ -21262,29 +21262,29 @@
 	<!-- 10124 - 10142 trophies & medals -->
 	<item id="10143" article="a" name="cherry blossom tree"/>
    <item id="10150" article="a" name="cocktail glass">
-/t/t<attribute key="weight" value="2000"/>
-/t</item>
-/t<item id="10151" article="a" name="golem part">
-/t/t<attribute key="weight" value="35"/>
-/t</item>
-/t<item id="10153" article="a" name="golem disassembler">
-/t/t<attribue key="description" value="It looks suspiciously similar to a crowbar."/>
-/t/t<attribute key="weight" value="1500"/>
-/t</item>
+		<attribute key="weight" value="2000"/>
+	</item>
+	<item id="10151" article="a" name="golem part">
+		<attribute key="weight" value="35"/>
+	</item>
+	<item id="10153" article="a" name="golem disassembler">
+		<attribue key="description" value="It looks suspiciously similar to a crowbar."/>
+		<attribute key="weight" value="1500"/>
+	</item>
 	<!-- 10154 blank -->
 	<item id="10156" article="a" name="dark essence" plural="dark essences">
-/t/t<attribute key="weight" value="260"/>
-/t</item>
+		<attribute key="weight" value="260"/>
+	</item>
 	<!-- 10163 blank -->
-/t<item id="10165" article="a" name="golem blueprint">
-/t/t<attribute key="weight" value="120"/>
-/t</item>
-/t<item id="10169" article="a" name="elemental crystal">
-/t/t<attribute key="weight" value="320"/>
-/t</item>
-/t<item id="10173" article="a" name="golem head">
-/t/t<attribute key="weight" value="3000"/>
-/t</item>
+	<item id="10165" article="a" name="golem blueprint">
+		<attribute key="weight" value="120"/>
+	</item>
+	<item id="10169" article="a" name="elemental crystal">
+		<attribute key="weight" value="320"/>
+	</item>
+	<item id="10173" article="a" name="golem head">
+		<attribute key="weight" value="3000"/>
+	</item>
 	<item id="10176" name="dirt"/>
 	<item id="10177" article="a" name="limestone wall"/>
 	<item id="10178" article="a" name="limestone wall"/>
@@ -21326,45 +21326,45 @@
 	<item id="10215" article="a" name="limestone pedestal"/>
 	<item id="10216" article="a" name="limestone pedestal"/>
 	<item id="10217" article="a" name="limestone pedestal"/>
-/t<item id="10218" article="a" name="new amulet">
-/t/t<attribute key="weight" value="700"/>
-/t/t<attribute key="slotType" value="necklace"/>
-/t</item>
-/t<item id="10219" article="a" name="sacred tree amulet">
-/t/t<attribute key="description" value="It can only be wielded properly by players of level 80 or higher.
+	<item id="10218" article="a" name="new amulet">
+		<attribute key="weight" value="700"/>
+		<attribute key="slotType" value="necklace"/>
+	</item>
+	<item id="10219" article="a" name="sacred tree amulet">
+		<attribute key="description" value="It can only be wielded properly by players of level 80 or higher.
 Its leaves stretch out to cover your whole body if you receive earth damage."/>
-/t/t<attribute key="weight" value="700"/>
-/t/t<attribute key="slotType" value="necklace"/>
-/t/t<attribute key="charges" value="5"/>
-/t/t<attribute key="showcharges" value="1"/>
-/t/t<attribute key="absorbPercentPhysical" value="60"/>
-/t/t<attribute key="absorbPercentEarth" value="40"/>
-/t</item>
-/t<item id="10220" article="a" name="leviathan's amulet">
-/t/t<attribute key="description" value="It can only be wielded properly by players of level 80 or higher."/>
-/t/t<attribute key="weight" value="700"/>
-/t/t<attribute key="slotType" value="necklace"/>
-/t/t<attribute key="charges" value="5"/>
-/t/t<attribute key="showcharges" value="1"/>
-/t/t<attribute key="absorbPercentPhysical" value="60"/>
-/t/t<attribute key="absorbPercentIce" value="40"/>
-/t</item>
-/t<item id="10221" article="a" name="shockwave amulet">
-/t/t<attribute key="description" value="It can only be wielded properly by players of level 80 or higher.
+		<attribute key="weight" value="700"/>
+		<attribute key="slotType" value="necklace"/>
+		<attribute key="charges" value="5"/>
+		<attribute key="showcharges" value="1"/>
+		<attribute key="absorbPercentPhysical" value="60"/>
+		<attribute key="absorbPercentEarth" value="40"/>
+	</item>
+	<item id="10220" article="a" name="leviathan's amulet">
+		<attribute key="description" value="It can only be wielded properly by players of level 80 or higher."/>
+		<attribute key="weight" value="700"/>
+		<attribute key="slotType" value="necklace"/>
+		<attribute key="charges" value="5"/>
+		<attribute key="showcharges" value="1"/>
+		<attribute key="absorbPercentPhysical" value="60"/>
+		<attribute key="absorbPercentIce" value="40"/>
+	</item>
+	<item id="10221" article="a" name="shockwave amulet">
+		<attribute key="description" value="It can only be wielded properly by players of level 80 or higher.
 It tickles your neck in a rather pleasant way and absorbs loads of damage."/>
-/t/t<attribute key="weight" value="700"/>
-/t/t<attribute key="slotType" value="necklace"/>
-/t/t<attribute key="charges" value="5"/>
-/t/t<attribute key="showcharges" value="1"/>
-/t/t<attribute key="absorbPercentPhysical" value="60"/>
-/t/t<attribute key="absorbPercentEnergy" value="40"/>
-/t</item>
-/t<item id="10223" article="a" name="mechanical fishing rod">
-/t/t<attribute key="weight" value="920"/>
-/t</item>
-/t<item id="10224" article="a" name="mechanical fish">
-/t/t<attribute key="weight" value="750"/>
-/t</item>
+		<attribute key="weight" value="700"/>
+		<attribute key="slotType" value="necklace"/>
+		<attribute key="charges" value="5"/>
+		<attribute key="showcharges" value="1"/>
+		<attribute key="absorbPercentPhysical" value="60"/>
+		<attribute key="absorbPercentEnergy" value="40"/>
+	</item>
+	<item id="10223" article="a" name="mechanical fishing rod">
+		<attribute key="weight" value="920"/>
+	</item>
+	<item id="10224" article="a" name="mechanical fish">
+		<attribute key="weight" value="750"/>
+	</item>
 	<item id="10226" article="a" name="framework wall"/>
 	<item id="10227" article="a" name="framework wall"/>
 	<item id="10228" article="a" name="framework wall"/>
@@ -21483,39 +21483,39 @@ It tickles your neck in a rather pleasant way and absorbs loads of damage."/>
 	<item id="10285" article="a" name="gate of expertise">
 		<attribute key="type" value="door"/>
 	</item>
-/t<item id="10291" article="a" name="odd hat">
-/t/t<attribute key="description" value="It has to be one of the fabled helmets of light."/>
-/t/t<attribute key="weight" value="700"/>
-/t/t<attribute key="armor" value="5"/>
-/t/t<attribute key="slotType" value="head"/>
-/t</item>
-/t<item id="10293" article="a" name="stale bread of ancientness">
-/t/t<attribute key="description" value="This bread is so old that it has become unbreakable and a formidable weapon."/>
-/t/t<attribute key="weight" value="500"/>
-/t/t<attribute key="defense" value="8"/>
-/t/t<attribute key="attack" value="18"/>
-/t/t<attribute key="weaponType" value="club"/>
-/t</item>
-/t<item id="10296" article="a" name="heavy metal t-shirt">
-/t/t<attribute key="description" value="Oddly enough it is not made of metal at all, but years without washing grant it added protection."/>
-/t/t<attribute key="weight" value="800"/>
-/t</item>
-/t<item id="10298" article="a" name="helmet of ultimate terror">
-/t/t<attribute key="description" value="There is evil inside."/>
-/t/t<attribute key="weight" value="1250"/>
-/t/t<attribute key="armor" value="3"/>
-/t/t<attribute key="slotType" value="head"/>
-/t</item>
-/t<item id="10309" article="a" name="claw of the noxious spawn">
-/t/t<attribue key="description" value="It's like a glove and you can't wear a ring on it. You are not sure if you should really put it on."/>
-/t/t<attribute key="weight" value="500"/>
-/t</item>
-/t<item id="10316" article="a" name="mighty helm of green sparks">
-/t/t<attribute key="description" value="This helmet spawns green stars. Awesome."/>
-/t/t<attribute key="weight" value="4600"/>
-/t/t<attribute key="armor" value="6"/>
-/t/t<attribute key="slotType" value="head"/>
-/t</item>
+	<item id="10291" article="a" name="odd hat">
+		<attribute key="description" value="It has to be one of the fabled helmets of light."/>
+		<attribute key="weight" value="700"/>
+		<attribute key="armor" value="5"/>
+		<attribute key="slotType" value="head"/>
+	</item>
+	<item id="10293" article="a" name="stale bread of ancientness">
+	<attribute key="description" value="This bread is so old that it has become unbreakable and a formidable weapon."/>
+		<attribute key="weight" value="500"/>
+		<attribute key="defense" value="8"/>
+		<attribute key="attack" value="18"/>
+		<attribute key="weaponType" value="club"/>
+	</item>
+	<item id="10296" article="a" name="heavy metal t-shirt">
+		<attribute key="description" value="Oddly enough it is not made of metal at all, but years without washing grant it added protection."/>
+		<attribute key="weight" value="800"/>
+	</item>
+	<item id="10298" article="a" name="helmet of ultimate terror">
+		<attribute key="description" value="There is evil inside."/>
+		<attribute key="weight" value="1250"/>
+		<attribute key="armor" value="3"/>
+		<attribute key="slotType" value="head"/>
+	</item>
+	<item id="10309" article="a" name="claw of the noxious spawn">
+		<attribue key="description" value="It's like a glove and you can't wear a ring on it. You are not sure if you should really put it on."/>
+		<attribute key="weight" value="500"/>
+	</item>
+	<item id="10316" article="a" name="mighty helm of green sparks">
+		<attribute key="description" value="This helmet spawns green stars. Awesome."/>
+		<attribute key="weight" value="4600"/>
+		<attribute key="armor" value="6"/>
+		<attribute key="slotType" value="head"/>
+	</item>
 	<item id="10325" article="a" name="roof"/>
 	<item id="10326" article="a" name="roof"/>
 	<item id="10327" article="a" name="roof"/>
@@ -21604,13 +21604,13 @@ It tickles your neck in a rather pleasant way and absorbs loads of damage."/>
 	<item id="10446" name="sand"/>
 	<item id="10447" name="sand"/>
 	<item id="10448" name="sand"/>
-/t<item id="10454" article="a" name="Headache Pill">
-/t/t<attribute key="weight" value="20"/>
-/t</item>
-/t<item id="10455" article="an" name="pigeon trophy">
-/t/t<attribute key="description" value="It's a symbol of peace handed out by Tibia ML."/>
-/t/t<attribute key="weight" value="500"/>
-/t</item>
+	<item id="10454" article="a" name="Headache Pill">
+		<attribute key="weight" value="20"/>
+	</item>
+	<item id="10455" article="an" name="pigeon trophy">
+		<attribute key="description" value="It's a symbol of peace handed out by Tibia ML."/>
+		<attribute key="weight" value="500"/>
+	</item>
 	<item id="10468" article="a" name="closed door">
 		<attribute key="type" value="door"/>
 		<attribute key="blockprojectile" value="1"/>
@@ -21696,32 +21696,32 @@ It tickles your neck in a rather pleasant way and absorbs loads of damage."/>
 	<item id="10491" article="a" name="limestone window">
 		<attribute key="type" value="door"/>
 	</item>
-/t<item id="10502" article="a" name=" engraved wedding ring">
-/t/t<attribute key="weight" value="40"/>
-/t/t<attribute key="slotType" value="ring"/>
-/t</item>
-/t<item id="10503" article="a" name="wedding outfit box">
-/t/t<attribute key="weight" value="2500"/>
-/t</item>
+	<item id="10502" article="a" name=" engraved wedding ring">
+		<attribute key="weight" value="40"/>
+		<attribute key="slotType" value="ring"/>
+	</item>
+	<item id="10503" article="a" name="wedding outfit box">
+		<attribute key="weight" value="2500"/>
+	</item>
 	<item id="10510" article="a" name="broken wedding ring">
-/t/t<attribue key="description" value="It is a memory of a lost love."/>
-/t/t<attribute key="weight" value="40"/>
-/t/t<attribute key="slotType" value="ring"/>
-/t</item>
-/t<item id="10511" name="squeezing gear of girlpower">
-/t/t<attribue key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is."/>
-/t/t<attribute key="weight" value="300"/>
-/t</item>
+		<attribue key="description" value="It is a memory of a lost love."/>
+		<attribute key="weight" value="40"/>
+		<attribute key="slotType" value="ring"/>
+	</item>
+	<item id="10511" name="squeezing gear of girlpower">
+		<attribue key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is."/>
+		<attribute key="weight" value="300"/>
+	</item>
 	<!-- 10511 - 10512: Sneaky Stabber of Eliteness -->
 	<!-- 10513 - 10514: Squeezing Gear of Girlpower -->
-/t<item id="10513" name="sneaky stabber of eliteness">
-/t/t<attribue key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is."/>
-/t/t<attribute key="weight" value="300"/>
-/t</item>
-/t<item id="10515" name="whacking driller of fate">
-/t/t<attribue key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is."/>
-/t/t<attribute key="weight" value="300"/>
-/t</item>
+	<item id="10513" name="sneaky stabber of eliteness">
+		<attribue key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is."/>
+		<attribute key="weight" value="300"/>
+	</item>
+	<item id="10515" name="whacking driller of fate">
+		<attribue key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is."/>
+		<attribute key="weight" value="300"/>
+	</item>
 	<!-- 10515 - 10516: Whacking Driller of Fate -->
 	<item id="10518" article="a" name="demon backpack">
 		<attribute key="weight" value="1800"/>
@@ -21749,41 +21749,41 @@ It tickles your neck in a rather pleasant way and absorbs loads of damage."/>
 		<attribute key="slotType" value="backpack"/>
 	</item>
    <item id="10523" article="a" name="egg of the many">
-/t/t<attribute key="weight" value="5000"/>
-/t</item>
-/t<item id="10529" article="a" name="sea serpent trophy">
-/t/t<attribute key="weight" value="500"/>
-/t</item>
-/t<item id="10530" article="a" name="the famous golden bug">
-/t/t<attribue key="description" value="It's given to skilled discoverers of extra nasty bugs and to great scholars writing useful reports."/>
-/t/t<attribute key="weight" value="1250"/>
-/t/t<attribute key="writeable" value="1"/>
-/t/t<attribute key="maxTextLen" value="64"/>
-/t</item>
-/t<item id="10531" article="a" name="midnight shard">
-/t/t<attribue key="description" value="You read: Lucius might be interested in those shards."/>
-/t/t<attribute key="weight" value="300"/>
-/t</item>
-/t<item id="10532" article="a" name="telescope">
-/t/t<attribute key="rotateTo" value="2584"/>
-/t</item>
-/t<item id="10533" article="a" name="telescope">
-/t/t<attribute key="rotateTo" value="2582"/>
-/t</item>
-/t<item id="10534" article="a" name="telescope">
-/t/t<attribute key="rotateTo" value="2583"/>
-/t</item>
-/t<item id="10535" article="a" name="telescope">
-/t/t<attribute key="rotateTo" value="2581"/>
-/t</item>
-/t<item id="10542" article="a" name="golden lightbearer's trophy">
-/t/t<attribue key="description" value="You read: Player helped to keep the fire basins burning and is one of the lightbearers of 2009"/>
-/t/t<attribute key="weight" value="900"/>
-/t</item>
-/t<item id="10543" article="a" name="silver lightbearer's trophy">
-/t/t<attribue key="description" value="You read: Player helped to keep the fire basins burning and is one of the lightbearers of 2009"/>
-/t/t<attribute key="weight" value="900"/>
-/t</item>
+		<attribute key="weight" value="5000"/>
+	</item>
+	<item id="10529" article="a" name="sea serpent trophy">
+		<attribute key="weight" value="500"/>
+	</item>
+	<item id="10530" article="a" name="the famous golden bug">
+		<attribue key="description" value="It's given to skilled discoverers of extra nasty bugs and to great scholars writing useful reports."/>
+		<attribute key="weight" value="1250"/>
+		<attribute key="writeable" value="1"/>
+		<attribute key="maxTextLen" value="64"/>
+	</item>
+	<item id="10531" article="a" name="midnight shard">
+		<attribue key="description" value="You read: Lucius might be interested in those shards."/>
+		<attribute key="weight" value="300"/>
+	</item>
+	<item id="10532" article="a" name="telescope">
+		<attribute key="rotateTo" value="2584"/>
+	</item>
+	<item id="10533" article="a" name="telescope">
+		<attribute key="rotateTo" value="2582"/>
+	</item>
+	<item id="10534" article="a" name="telescope">
+		<attribute key="rotateTo" value="2583"/>
+	</item>
+	<item id="10535" article="a" name="telescope">
+		<attribute key="rotateTo" value="2581"/>
+	</item>
+	<item id="10542" article="a" name="golden lightbearer's trophy">
+		<attribue key="description" value="You read: Player helped to keep the fire basins burning and is one of the lightbearers of 2009"/>
+		<attribute key="weight" value="900"/>
+	</item>
+	<item id="10543" article="a" name="silver lightbearer's trophy">
+		<attribue key="description" value="You read: Player helped to keep the fire basins burning and is one of the lightbearers of 2009"/>
+		<attribute key="weight" value="900"/>
+	</item>
 	<item id="10492" name="pavement"/>
 	<item id="10493" name="pavement"/>
 	<item id="10494" name="pavement"/>
