@@ -5146,7 +5146,7 @@
 	<item id="2639" article="a" name="tic-tac-toe token" plural="tic-tac-toe tokens">
 		<attribute key="weight" value="500"/>
 	</item>
-	<item id="2640" name="soft boots">
+	<item id="2640" article="a" name="pair of soft boots">
 		<attribute key="weight" value="800"/>
 		<attribute key="slotType" value="feet"/>
 		<attribute key="decayTo" value="10021"/>
@@ -13352,7 +13352,7 @@
 		<attribute key="defense" value="26"/>
 		<attribute key="weaponType" value="shield"/>
 	</item>
-	<item id="6132" name="soft boots">
+	<item id="6132" article="a" name="pair of soft boots">
 		<attribute key="weight" value="800"/>
 		<attribute key="slotType" value="feet"/>
 		<attribute key="transformEquipTo" value="2640"/>
@@ -14391,7 +14391,7 @@
 		<attribute key="shootType" value="infernalbolt"/>
 		<attribute key="ammoAction" value="removecount"/>
 	</item>
-	<item id="6530" article="an" name="old worn soft boots">
+	<item id="6530" article="a" name="pair of old worn soft boots">
 		<attribute key="description" value="Someone specialised in shoes might be able to repair them for you."/>
 		<attribute key="weight" value="800"/>
 	</item>
@@ -21294,7 +21294,7 @@
 	<item id="10020" article="a" name="dragon claw">
 		<attribute key="weight" value="1250"/>
 	</item>
-	<item id="10021" article="a" name="worn soft boots">
+	<item id="10021" article="a" name="pair of worn soft boots">
 		<attribute key="description" value="Someone specialised in shoes might be able to repair them for you."/>
 		<attribute key="weight" value="800"/>
 	</item>
