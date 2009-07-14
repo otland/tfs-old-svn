@@ -680,8 +680,100 @@ bool Spell::playerSpellCheck(Player* player) const
 	return true;
 }
 
+bool Spell::playerInstantSpellCheck(Player* player, Creature* creature)
+{
+	if(!playerSpellCheck(player))
+		return false;
+
+	const Position& toPos = target->getPosition();
+	const Position& playerPos = player->getPosition();
+	if(playerPos.z > toPos.z)
+	{
+		player->sendCancelMessage(RET_FIRSTGOUPSTAIRS);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		return false;
+	}
+
+	if(playerPos.z < toPos.z)
+	{
+		player->sendCancelMessage(RET_FIRSTGODOWNSTAIRS);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		return false;
+	}
+
+	Tile* tile = g_game.getTile(toPos);
+	if(!tile)
+	{
+		tile = new StaticTile(toPos.x, toPos.y, toPos.z);
+		g_game.setTile(tile);
+	}
+
+	ReturnValue ret;
+	if((ret = Combat::canDoCombat(player, tile, isAggressive)) != RET_NOERROR)
+	{
+		player->sendCancelMessage(ret);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		return false;
+	}
+
+	if(blockingCreature && creature)
+	{
+		player->sendCancelMessage(RET_NOTENOUGHROOM);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		return false;
+	}
+
+	if(blockingSolid && tile->hasProperty(BLOCKSOLID))
+	{
+		player->sendCancelMessage(RET_NOTENOUGHROOM);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		return false;
+	}
+
+	if(!needTarget)
+	{
+		if(!isAggressive || player->getSkull() != SKULL_BLACK)
+			return true;
+
+		player->sendCancelMessage(RET_YOUMAYNOTCASTAREAONBLACKSKULL);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		return false;
+	}
+
+	if(!creature)
+	{
+		player->sendCancelMessage(RET_NOTPOSSIBLE);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		return false;
+	}
+
+	Player* targetPlayer = creature->getPlayer();
+	if(!isAggressive || !targetPlayer || Combat::isInPvpZone(player, targetPlayer)
+		|| player->getSkullClient(targetPlayer) != SKULL_NONE)
+		return true;
+
+	if(player->getSecureMode() == SECUREMODE_ON)
+	{
+		player->sendCancelMessage(RET_TURNSECUREMODETOATTACKUNMARKEDPLAYERS);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		return false;
+	}
+
+	if(player->getSkull() == SKULL_BLACK)
+	{
+		player->sendCancelMessage(RET_YOUMAYNOTATTACKTHISPLAYER);
+		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
+		return false;
+	}
+
+	return true;
+}
+
 bool Spell::playerInstantSpellCheck(Player* player, const Position& toPos)
 {
+	if(!playerSpellCheck(player))
+		return false;
+
 	if(toPos.x == 0xFFFF)
 		return true;
 
@@ -729,7 +821,7 @@ bool Spell::playerInstantSpellCheck(Player* player, const Position& toPos)
 		return false;
 	}
 
-	if(player->getSkull() == SKULL_BLACK && isAggressive && range == -1)
+	if(player->getSkull() == SKULL_BLACK && isAggressive && range == -1) //-1 is (usually?) an area spell
 	{
 		player->sendCancelMessage(RET_YOUMAYNOTCASTAREAONBLACKSKULL);
 		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
@@ -990,9 +1082,6 @@ bool InstantSpell::loadFunction(const std::string& functionName)
 
 bool InstantSpell::playerCastInstant(Player* player, const std::string& param)
 {
-	if(!playerSpellCheck(player))
-		return false;
-
 	LuaVariant var;
 	if(selfTarget)
 	{
@@ -1071,6 +1160,8 @@ bool InstantSpell::playerCastInstant(Player* player, const std::string& param)
 	{
 		var.type = VARIANT_STRING;
 		var.text = param;
+		if(!playerSpellCheck(player))
+			return false;
 	}
 	else
 	{

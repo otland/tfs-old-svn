@@ -140,6 +140,7 @@ class Spell : public BaseSpell
 
 	protected:
 		bool playerSpellCheck(Player* player) const;
+		bool playerInstantSpellCheck(Player* player, Creature* creature);
 		bool playerInstantSpellCheck(Player* player, const Position& toPos);
 		bool playerRuneSpellCheck(Player* player, const Position& toPos);
 
