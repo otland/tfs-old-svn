@@ -14328,7 +14328,7 @@
 		<attribute key="shootType" value="infernalbolt"/>
 		<attribute key="ammoAction" value="removecount"/>
 	</item>
-	<item id="6530" name="old worn soft boots">
+	<item id="6530" article="an" name="old worn soft boots">
 		<attribute key="description" value="Someone specialised in shoes might be able to repair them for you."/>
 		<attribute key="weight" value="800"/>
 	</item>
@@ -20986,7 +20986,6 @@
 		<attribute key="description" value="Wearing these boots reduces the damage gotten from fiery ground."/>
 		<attribute key="weight" value="950"/>
 		<attribute key="armor" value="2"/>
-
 		<attribute key="slotType" value="feet"/>
 		<attribute key="absorbPercentFire" value="90"/>
 		<attribute key="transformEquipTo" value="9932"/>
@@ -21230,7 +21229,7 @@
 	<item id="10020" article="a" name="dragon claw">
 		<attribute key="weight" value="1250"/>
 	</item>
-	<item id="10021" name="worn soft boots">
+	<item id="10021" article="a" name="worn soft boots">
 		<attribute key="description" value="Someone specialised in shoes might be able to repair them for you."/>
 		<attribute key="weight" value="800"/>
 	</item>
@@ -21491,7 +21490,7 @@
 		<attribute key="slotType" value="head"/>
 	</item>
 	<item id="10293" article="a" name="stale bread of ancientness">
-	<attribute key="description" value="This bread is so old that it has become unbreakable and a formidable weapon."/>
+		<attribute key="description" value="This bread is so old that it has become unbreakable and a formidable weapon."/>
 		<attribute key="weight" value="500"/>
 		<attribute key="defense" value="8"/>
 		<attribute key="attack" value="18"/>
@@ -21500,6 +21499,8 @@
 	<item id="10296" article="a" name="heavy metal t-shirt">
 		<attribute key="description" value="Oddly enough it is not made of metal at all, but years without washing grant it added protection."/>
 		<attribute key="weight" value="800"/>
+		<attribute key="armor" value="6"/>
+		<attribute key="slotType" value="body"/>
 	</item>
 	<item id="10298" article="a" name="helmet of ultimate terror">
 		<attribute key="description" value="There is evil inside."/>

@@ -3245,11 +3245,10 @@ int32_t LuaScriptInterface::luaDoTransformItem(lua_State* L)
 	if(lua_gettop(L) > 2)
 		count = popNumber(L);
 
-	uint16_t toId = (uint16_t)popNumber(L);
+	uint16_t newId = (uint16_t)popNumber(L);
 	uint32_t uid = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
-
 	Item* item = env->getItemByUID(uid);
 	if(!item)
 	{
@@ -3258,12 +3257,11 @@ int32_t LuaScriptInterface::luaDoTransformItem(lua_State* L)
 		return 1;
 	}
 
-	const ItemType& it = Item::items[toId];
+	const ItemType& it = Item::items[newId];
 	if(it.stackable && count > 100)
 		count = 100;
 
-	Item* newItem = g_game.transformItem(item, toId, count);
-
+	Item* newItem = g_game.transformItem(item, newId, count);
 	if(item->isRemoved())
 		env->removeItemByUID(uid);
 

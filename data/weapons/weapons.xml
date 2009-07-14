@@ -247,7 +247,7 @@
 		<vocation id="4"/>
 	</melee>
 
-	<!--Clubs -->
+	<!-- Clubs -->
 	<melee id="2423" level="20" unproperly="1" event="function" value="default"/>
 	<melee id="7381" level="20" unproperly="1" event="function" value="default"/>
 	<melee id="7425" level="20" unproperly="1" event="function" value="default"/>

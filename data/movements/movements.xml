@@ -264,6 +264,8 @@
 		<vocation id="6" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="7890" slot="necklace" event="function" value="onDeEquipItem"/>
+	<movevent type="Equip" fromid="10018" toid="10021" slot="necklace" level="80" event="function" value="onEquipItem"/>
+	<movevent type="DeEquip" fromid="10018" toid="10021" slot="necklace" event="function" value="onDeEquipItem"/>
 
 	<!-- Rings -->
 	<movevent type="Equip" itemid="2164" slot="ring" event="function" value="onEquipItem"/>

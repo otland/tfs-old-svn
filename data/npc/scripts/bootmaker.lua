@@ -21,8 +21,16 @@ function creatureSayCallback(cid, type, msg)
 	elseif(msgcontains(msg, 'yes') and talkState[talkUser] == 1) then
 		if(getPlayerItemCount(cid, 6530) >= 1) then
 			if(doPlayerRemoveMoney(cid, 10000)) then
-				doPlayerRemoveItem(cid, 6530, 1)
-				doPlayerAddItem(cid, 6132)
+				local item = getPlayerItemById(cid, false, 6530)
+				doTransformItem(item.uid, 6132)
+				selfSay('Here you are.', cid)
+			else
+				selfSay('Sorry, you don\'t have enough gold.', cid)
+			end
+		elseif(getPlayerItemCount(cid, 10021) >= 1) then
+			if(doPlayerRemoveMoney(cid, 10000)) then
+				local item = getPlayerItemById(cid, false, 6530)
+				doTransformItem(item.uid, 6132)
 				selfSay('Here you are.', cid)
 			else
 				selfSay('Sorry, you don\'t have enough gold.', cid)
