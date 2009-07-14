@@ -697,6 +697,6 @@
 	<movevent type="DeEquip" itemid="8918" slot="shield" event="function" value="onDeEquipItem"/>
 
 	<!-- Other -->
-	<movevent type="Equip" itemid="10011" slot="ammo" event="function" value="onEquipItem"/>
-	<movevent type="DeEquip" itemid="10011" slot="ammo" event="function" value="onDeEquipItem"/>
+	<movevent type="Equip" itemid="9956" slot="pickupable" event="function" value="onEquipItem"/>
+	<movevent type="DeEquip" itemid="9956" slot="pickupable" event="function" value="onDeEquipItem"/>
 </movements>

@@ -21048,6 +21048,15 @@
 		<attribute key="description" value="This crest seems important. You shouldn't lose it."/>
 		<attribute key="weight" value="500"/>
 	</item>
+	<item id="9956" article="a" name="magical torch">
+		<attribute key="description" value="You have a day to light all important locations before the torch stops burning."/>
+		<attribute key="weight" value="1500"/>
+		<attribute key="defense" value="25"/>
+		<attribute key="speed" value="50"/>
+		<attribute key="decayTo" value="0"/>
+		<attribute key="duration" value="3600"/>
+		<attribute key="showduration" value="1"/>
+	</item>
 	<item id="9960" article="a" name="slain death blob">
 		<attribute key="containerSize" value="10"/>
 		<attribute key="decayTo" value="9963"/>
@@ -21207,12 +21216,6 @@
 		<attribute key="duration" value="600"/>
 		<attribute key="corpseType" value="blood"/>
 	</item>
-	<item id="10011" article="a" name="magical torch">
-		<attribute key="description" value="You have a day to light all important locations before the torch stops burning."/>
-		<attribute key="weight" value="1500"/>
-		<attribute key="defense" value="25"/>
-		<attribute key="speed" value="50"/>
-	</item>
 	<item id="10015"> <!-- FIXME: article & name -->
 		<attribute key="containerSize" value="0"/>
 		<attribute key="decayTo" value="0"/>
@@ -21236,7 +21239,7 @@
 		<attribute key="description" value="They can be recharged with an enchanted ruby."/>
 		<attribute key="weight" value="950"/>
 	</item>
-	<item id="10032" article="a" name="key">
+	<item id="10032" article="a" name="purple key">
 		<attribute key="type" value="key"/>
 		<attribute key="weight" value="100"/>
 	</item>
@@ -21254,7 +21257,7 @@
 	<item id="10066" article="a" name="dark essence">
 		<attribute key="weight" value="260"/>
 	</item>
-	<item id="10091" article="a" name="key">
+	<item id="10091" article="a" name="crystal key">
 		<attribute key="type" value="key"/>
 		<attribute key="weight" value="100"/>
 	</item>

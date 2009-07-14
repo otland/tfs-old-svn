@@ -735,11 +735,11 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 					slot = SLOTP_BACKPACK;
 				else if(tmpStrValue == "armor")
 					slot = SLOTP_ARMOR;
-				else if(tmpStrValue == "right-hand")
-					slot = SLOTP_RIGHT;
 				else if(tmpStrValue == "left-hand")
 					slot = SLOTP_LEFT;
-				else if(tmpStrValue == "two-handed")
+				else if(tmpStrValue == "right-hand")
+					slot = SLOTP_RIGHT;
+				else if(tmpStrValue == "hands" || tmpStrValue == "two-handed")
 					slot = SLOTP_TWO_HAND;
 				else if(tmpStrValue == "hand" || tmpStrValue == "shield")
 					slot = SLOTP_RIGHT | SLOTP_LEFT;
@@ -749,8 +749,10 @@ bool MoveEvent::configureEvent(xmlNodePtr p)
 					slot = SLOTP_FEET;
 				else if(tmpStrValue == "ring")
 					slot = SLOTP_RING;
-				else if(tmpStrValue == "ammo")
+				else if(tmpStrValue == "ammo" || tmpStrValue == "ammunition")
 					slot = SLOTP_AMMO;
+				else if(tmpStrValue == "pickupable")
+					slot = SLOTP_RIGHT | SLOTP_LEFT | SLOTP_AMMO;
 				else
 					std::cout << "[Warning - MoveEvent::configureMoveEvent] Unknown slot type \"" << strValue << "\"" << std::endl;
 			}
