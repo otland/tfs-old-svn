@@ -1,3 +1,5 @@
+local outfit = {lookType = 267, lookHead = 0, lookBody = 0, lookLegs = 0, lookFeet = 0, lookTypeEx = 0, lookAddons = 0}
+
 local BORDERS = {
 	[7943] = {x = 0, y = -2, back = SOUTH},
 	[7944] = {x = -2, y = 0, back = EAST},
@@ -28,19 +30,13 @@ function onStepIn(cid, item, position, fromPosition)
 		return false
 	end
 
-	return checkSwim(cid, border.x, border.y, border.back)
-end
-
-local outfit = {lookType = 267, lookHead = 0, lookBody = 0, lookLegs = 0, lookFeet = 0, lookTypeEx = 0, lookAddons = 0}
-
-function checkSwim(cid, x, y, backDir)
 	local pos = getCreaturePosition(cid)
 	newPos = pos
-	newPos.x = pos.x + x
-	newPos.y = pos.y + y
+	newPos.x = pos.x + border.x
+	newPos.y = pos.y + border.y
 
 	if(hasCondition(cid, CONDITION_OUTFIT) and getCreatureOutfit(cid).lookType == outfit.lookType) then
-		doMoveCreature(cid, backDir)
+		doMoveCreature(cid, border.back)
 		doRemoveCondition(cid, CONDITION_OUTFIT)
 	else
 		if(queryTileAddThing(cid, pos, 4) ~= RETURNVALUE_NOERROR) then
