@@ -21126,11 +21126,11 @@
 		<attribute key="description" value="It is said to make you more resistant to weaknesses and to supply you with energy."/>
 		<attribute key="weight" value="850"/>
 	</item>
-	 <item id="9992" article="a" name="rotworm stew">
+	<item id="9992" article="a" name="rotworm stew">
 		<attribue key="description" value="It's hot, beefy and delicious. The perfect food for knights."/>
 		<attribute key="weight" value="1200"/>
 	</item>
-	  <item id="9993" article="a" name="hydra tongue salad">
+	<item id="9993" article="a" name="hydra tongue salad">
 		<attribue key="description" value="Though the hydra tongue is commonly considered a pest plant it tastes surprisingly aromatic."/>
 		<attribute key="weight" value="550"/>
 	</item>
