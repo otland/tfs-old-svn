@@ -695,4 +695,8 @@
 		<vocation id="6" showInDescription="0"/>
 	</movevent>
 	<movevent type="DeEquip" itemid="8918" slot="shield" event="function" value="onDeEquipItem"/>
+
+	<!-- Other -->
+	<movevent type="Equip" itemid="10011" slot="ammo" event="function" value="onEquipItem"/>
+	<movevent type="DeEquip" itemid="10011" slot="ammo" event="function" value="onDeEquipItem"/>
 </movements>

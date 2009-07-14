@@ -21211,7 +21211,6 @@
 		<attribute key="description" value="You have a day to light all important locations before the torch stops burning."/>
 		<attribute key="weight" value="1500"/>
 		<attribute key="defense" value="25"/>
-		<attribute key="weaponType" value="ammunition"/>
 		<attribute key="speed" value="50"/>
 	</item>
 	<item id="10015"> <!-- FIXME: article & name -->
