@@ -5335,6 +5335,7 @@
 	</item>
 	<item id="2681" name="grapes">
 		<attribute key="weight" value="250"/>
+		<attribute key="showcount" value="0"/>
 	</item>
 	<item id="2682" article="a" name="melon">
 		<attribute key="weight" value="950"/>
