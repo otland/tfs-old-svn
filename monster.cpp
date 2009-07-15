@@ -318,7 +318,9 @@ bool Monster::doTeleportToMaster()
 
 void Monster::onCreatureLeave(Creature* creature)
 {
-	//std::cout << "onCreatureLeave - " << creature->getName() << std::endl;
+#ifdef __DEBUG__
+	std::cout << "onCreatureLeave - " << creature->getName() << std::endl;
+#endif	
 	if(isSummon() && getMaster() == creature)
 	{
 		if(!g_config.getBool(ConfigManager::TELEPORT_SUMMONS) && (!getMaster()->getPlayer()
