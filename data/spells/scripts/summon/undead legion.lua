@@ -1,6 +1,6 @@
 function onTargetTile(cid, pos)
 	local getPos = pos
-	getPos.stackpos = 255
+	getPos.stackpos = STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE
 
 	local corpse = getThingFromPos(getPos)
 	if(corpse.uid > 0 and isCorpse(corpse.uid) and isMoveable(corpse.uid) and getCreatureSkullType(cid) ~= SKULL_BLACK) then

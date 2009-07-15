@@ -1255,7 +1255,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 		}
 		else if(!xmlStrcmp(p->name, (const xmlChar*)"summons"))
 		{
-			if(readXMLInteger(p, "maxSummons", intValue))
+			if(readXMLInteger(p, "maxSummons", intValue) || readXMLInteger(p, "max", intValue))
 				mType->maxSummons = intValue;
 
 			xmlNodePtr tmpNode = p->children;
