@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <monster name="The Halloween Hare" nameDescription="The Halloween Hare" race="blood" experience="0" speed="150" manacost="0">
 	<health now="2000" max="2000"/>
-	<look type="74" head="0" body="0" legs="0" feet="0"/>
+	<look type="74"/>
 	<targetchange interval="2000" chance="95"/>
 	<strategy attack="0" defense="0"/>
 	<flags>
-	<flag summonable="0"/>
-	<flag attackable="1"/>
-	<flag hostile="1"/>
-	<flag illusionable="0"/>
-	<flag convinceable="0"/>
-	<flag pushable="0"/>
-	<flag canpushitems="1"/>
-	<flag canpushcreatures="0"/>
-	<flag targetdistance="2"/>
-	<flag staticattack="10"/>
-	<flag runonhealth="0"/>
+		<flag summonable="0"/>
+		<flag attackable="1"/>
+		<flag hostile="1"/>
+		<flag illusionable="0"/>
+		<flag convinceable="0"/>
+		<flag pushable="0"/>
+		<flag canpushitems="1"/>
+		<flag canpushcreatures="0"/>
+		<flag targetdistance="2"/>
+		<flag staticattack="10"/>
+		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
 		<attack name="melee" interval="2000" skill="0" attack="0"/>
@@ -71,15 +71,15 @@
 		</defense>
 	</defenses>
 	<immunities>
-	<immunity name="physical"/>
-	<immunity name="energy"/>
-	<immunity name="fire"/>
-	<immunity name="poison"/>
-	<immunity name="drown"/>
-	<immunity name="lifedrain"/>
-	<immunity name="paralyze"/>
-	<immunity name="outfit"/>
-	<immunity name="drunk"/>
-	<immunity name="invisible"/>
+		<immunity name="physical"/>
+		<immunity name="energy"/>
+		<immunity name="fire"/>
+		<immunity name="poison"/>
+		<immunity name="drown"/>
+		<immunity name="lifedrain"/>
+		<immunity name="paralyze"/>
+		<immunity name="outfit"/>
+		<immunity name="drunk"/>
+		<immunity name="invisible"/>
 	</immunities>
 </monster>

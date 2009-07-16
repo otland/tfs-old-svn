@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <monster name="enlightened of the cult" nameDescription="a enlightened of the cult" race="blood" experience="500" speed="220" manacost="0">
 	<health now="700" max="700"/>
-	<look type="193" head="0" body="0" legs="0" feet="0" corpse="6080"/>
+	<look type="193" corpse="6080"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -56,9 +56,9 @@
 	</summons>
 
 	<loot>
-		<item id="2148" countmax="82" chance="47831" chancemax="1032"/>
+		<item id="2148" countmax="82" chance="47831"/>
 		<item id="2654" chance="5000"/>
-		<item id="2187" chance="1111"/> -- wand of Inferno
+		<item id="2187" chance="1111"/><!-- wand of inferno -->
 		<item id="5801" chance="909"/>
 		<item id="2167" chance="1000"/>
 		<item id="2171" chance="909"/>

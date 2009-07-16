@@ -26,7 +26,7 @@
 		<attack name="death" interval="2000" chance="20" range="2" target="1" min="-0" max="-125">
 			<attribute key="areaEffect" value="mortarea"/>
 			<attribute key="shootEffect" value="suddendeath"/>
-		</attack>		
+		</attack>
 	</attacks>
 	<defenses armor="20" defense="20">
 		<defense name="speed" interval="1000" chance="19" speedchange="460" duration="8000">
@@ -48,24 +48,24 @@
 		<immunity invisible="1"/>
 	</immunities>
 	<voices interval="7500" chance="20">
-		<voice sentence="Weeeheeheee!"/>	
+		<voice sentence="Weeeheeheee!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="70" chance="100000"/> <!-- gps -->
-		<item id="2148" countmax="70" chance="100000"/> <!-- gps -->
-		<item id="2152" chance="25000" countmax="3"/> <!-- platinum coin -->
-		<item id="2666" chance="20000" countmax="4"/> <!-- meat -->
-		<item id="6300" chance="7300"/> <!-- death ring -->	
-		<item id="2671" chance="40000" countmax="2"/> <!-- ham -->
-		<item id="2230" chance="37500"/> <!-- bone -->
-		<item id="6574" chance="1300"/> <!-- bar of chocolate -->
-		<item id="6500" chance="6500" countmax="1"/> <!-- demonic essence -->
+		<item id="2148" countmax="70" chance="100000"/><!-- gold coin -->
+		<item id="2148" countmax="70" chance="100000"/><!-- gold coin -->
+		<item id="2152" chance="25000" countmax="3"/><!-- platinum coin -->
+		<item id="2666" chance="20000" countmax="4"/><!-- meat -->
+		<item id="6300" chance="7300"/><!-- death ring -->	
+		<item id="2671" chance="40000" countmax="2"/><!-- ham -->
+		<item id="2230" chance="37500"/><!-- bone -->
+		<item id="6574" chance="1300"/><!-- bar of chocolate -->
+		<item id="6500" chance="6500" countmax="1"/><!-- demonic essence -->
 		<item id="1987" chance="100000">
 			<inside>
-				<item id="2387" chance="8800"/> <!-- double axe -->
-				<item id="2491" chance="3000"/> <!-- crown helmet -->
-				<item id="8871" chance="3400"/> <!-- focus cape -->
-				<item id="7451" chance="1100"/> <!-- shadow sceptre -->
+				<item id="2387" chance="8800"/><!-- double axe -->
+				<item id="2491" chance="3000"/><!-- crown helmet -->
+				<item id="8871" chance="3400"/><!-- focus cape -->
+				<item id="7451" chance="1100"/><!-- shadow sceptre -->
 			</inside>
 		</item>
 	</loot>

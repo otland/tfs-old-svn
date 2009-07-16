@@ -18,13 +18,13 @@
 		<flag runonhealth="0"/>
 	</flags>
 	<attacks>
-	<attack name="melee" interval="2000" min="-0" max="-600"/>
-			<attack name="physical" interval="3000" chance="17" range="7" min="-60" max="-600">
-		<attribute key="shootEffect" value="throwingknife"/>
-			</attack>
-	<attack name="physical" interval="3000" chance="17" length="4" spread="3" min="-0" max="-0">
-		<attribute key="areaEffect" value="purplenote"/>
-	</attack>
+		<attack name="melee" interval="2000" min="-0" max="-600"/>
+		<attack name="physical" interval="3000" chance="17" range="7" min="-60" max="-600">
+			<attribute key="shootEffect" value="throwingknife"/>
+		</attack>
+		<attack name="physical" interval="3000" chance="17" length="4" spread="3" min="-0" max="-0">
+			<attribute key="areaEffect" value="purplenote"/>
+		</attack>
 	</attacks>
 	<defenses armor="25" defense="35">
 		<defense name="healing" interval="1000" chance="50" min="75" max="125">
@@ -32,35 +32,35 @@
 		</defense>
 	</defenses>
 	<elements>
-	<element firePercent="100"/>
-	<element earthPercent="50"/>
-	<element energyPercent="40"/>
-	<element deathPercent="35"/>
-	<element icePercent="-20"/>
-	<element holyPercent="-17"/>
+		<element firePercent="100"/>
+		<element earthPercent="50"/>
+		<element energyPercent="40"/>
+		<element deathPercent="35"/>
+		<element icePercent="-20"/>
+		<element holyPercent="-17"/>
 	</elements>
 	<immunities>
-	<immunity invisible="1"/>
+		<immunity invisible="1"/>
 	</immunities>
 	<voices interval="3000" chance="30">
 		<voice sentence="You like it, don't you?"/>
 		<voice sentence="IahaEhheAie!"/>
 	</voices>
 	<loot>
-	<item id="2148" countmax="76" chance="100000"/>
-	<item id="2671" countmax="5" chance="33333"/>
-	<item id="2470" chance="2000"/>
-	<item id="6300" chance="2066"/>
-	<item id="1987" chance="100000">
-		<inside>
-			<item id="2513" chance="9999"/>
-			<item id="6500" countmax="3" chance="4555"/>
-			<item id="2557" chance="12000"/>
-			<item id="2558" chance="11000"/>
-			<item id="5944" chance="5555"/>
-			<item id="5801" chance="1800"/>
-			<item id="5480" chance="1666"/>
-		</inside>
-	</item>
+		<item id="2148" countmax="76" chance="100000"/>
+		<item id="2671" countmax="5" chance="33333"/>
+		<item id="2470" chance="2000"/>
+		<item id="6300" chance="2066"/>
+		<item id="1987" chance="100000">
+			<inside>
+				<item id="2513" chance="9999"/>
+				<item id="6500" countmax="3" chance="4555"/>
+				<item id="2557" chance="12000"/>
+				<item id="2558" chance="11000"/>
+				<item id="5944" chance="5555"/>
+				<item id="5801" chance="1800"/>
+				<item id="5480" chance="1666"/>
+			</inside>
+		</item>
 	</loot>
 </monster>

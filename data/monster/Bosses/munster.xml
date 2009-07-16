@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 	<monster name="munster" nameDescription="a munster" race="blood" experience="23" speed="200" manacost="250">
 		<health now="58" max="58"/>
-		<look type="56" head="20" body="30" legs="40" feet="50" corpse="2813"/>
+		<look type="56" corpse="2813"/>
 		<targetchange interval="60000" chance="0"/>
 		<strategy attack="100" defense="0"/>
 		<flags>

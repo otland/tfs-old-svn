@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<monster name="cobra" namedescription="a cobra" race="blood" experience="30" speed="170" manacost="275">
+<monster name="Cobra" namedescription="a cobra" race="blood" experience="30" speed="170" manacost="275">
 	<health now="65" max="65"/>
-	<look type="81" head="20" body="30" legs="40" feet="50" corpse="3007"/>
+	<look type="81" corpse="3007"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -25,18 +25,18 @@
 	</attacks>
 	<defenses armor="1" defense="4"/>
 	<elements>
-	<element earthPercent="100"/>
-	<element firePercent="-18"/>
+		<element earthPercent="100"/>
+		<element firePercent="-18"/>
 	</elements>
 	<immunities>
-	<immunity drunk="1"/>
+		<immunity drunk="1"/>
 	</immunities>
 	<voices interval="5000" chance="10">
 		<voice sentence="Zzzzzz"/>
-	<voice sentence="Fsssss"/>
+		<voice sentence="Fsssss"/>
 	</voices>
 	<loot>
-		<item id="2220" chance="33333"/>
-		<item id="2230" chance="20000"/>
+		<item id="2220" chance="33333"/><!-- dirty fur -->
+		<item id="2230" chance="20000"/><!-- bone -->
 	</loot>
 </monster>

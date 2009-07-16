@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="warlock" nameDescription="a warlock" race="blood" experience="4000" speed="220" manacost="0">
+<monster name="Warlock" nameDescription="a warlock" race="blood" experience="4000" speed="220" manacost="0">
 	<health now="3500" max="3500"/>
 	<look type="130" head="19" body="71" legs="128" feet="128" addons="1" corpse="6080"/>
 	<targetchange interval="5000" chance="30"/>
@@ -44,17 +44,17 @@
 		<defense name="healing" interval="1000" chance="25" min="60" max="100">
 			<attribute key="areaEffect" value="blueshimmer"/>
 		</defense>
-		<defense name="invisible" interval="5000" chance="50" duration="5000"> --each 7 sec invi duration 5 sec
+		<defense name="invisible" interval="5000" chance="50" duration="5000">
 			<attribute key="areaEffect" value="redshimmer"/>
 		</defense>
 	</defenses>
 	<elements>
-	<element firePercent="100"/>
-	<element energyPercent="100"/>
-	<element icePercent="100"/>
-	<element earthPercent="90"/>
-	<element holyPercent="-25"/>
-	<element physicalPercent="-33"/>
+		<element firePercent="100"/>
+		<element energyPercent="100"/>
+		<element icePercent="100"/>
+		<element earthPercent="90"/>
+		<element holyPercent="-25"/>
+		<element physicalPercent="-33"/>
 	</elements>
 	<immunities>
 		<immunity paralyze="1"/>
@@ -69,29 +69,29 @@
 		<voice sentence="We don't like intruders!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="100" chance="100000"/>
-		<item id="1986" chance="400"/>
-		<item id="2600" chance="10000"/>
-		<item id="2124" chance="1000"/>
-		<item id="2689" countmax="1" chance="11000"/>
-		<item id="7368" countmax="4" chance="1200"/>
-		<item id="2167" chance="3000"/>
-		<item id="2114" chance="1400"/>
-		<item id="2151" countmax="2" chance="1100"/>
-		<item id="1987" chance="100000">
+		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
+		<item id="1986" chance="400"/><!-- red tome -->
+		<item id="2600" chance="10000"/><!-- inkwell -->
+		<item id="2124" chance="1000"/><!-- crystal ring -->
+		<item id="2689" countmax="1" chance="11000"/><!-- bread -->
+		<item id="7368" countmax="4" chance="1200"/><!--  -->
+		<item id="2167" chance="3000"/><!-- assassin star -->
+		<item id="2114" chance="1400"/><!-- piggy bank -->
+		<item id="2151" countmax="2" chance="1100"/><!-- talon -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2148" countmax="50" chance="80000"/>
-				<item id="2146" countmax="2" chance="1400"/>
-				<item id="2178" countmax="1" chance="2500"/>
-				<item id="2679" countmax="4" chance="20000"/>
-				<item id="2047" chance="15000"/>
-				<item id="2411" chance="5000"/>
-				<item id="2792" countmax="5" chance="6666"/>
-				<item id="2793" countmax="2" chance="6666"/>
-				<item id="2656" chance="2000"/>
-				<item id="2466" chance="588"/>
-				<item id="2436" chance="1428"/>
-				<item id="2123" chance="500"/>
+				<item id="2148" countmax="50" chance="80000"/><!-- gold coin -->
+				<item id="2146" countmax="2" chance="1400"/><!-- small sapphire -->
+				<item id="2178" countmax="1" chance="2500"/><!-- mind stone -->
+				<item id="2679" countmax="4" chance="20000"/><!-- cherry -->
+				<item id="2047" chance="15000"/><!-- candlestick -->
+				<item id="2411" chance="5000"/><!-- poison dagger -->
+				<item id="2792" countmax="5" chance="6666"/><!-- dark mushroom -->
+				<item id="2793" countmax="2" chance="6666"/><!-- mushrooms -->
+				<item id="2656" chance="2000"/><!-- blue robe -->
+				<item id="2466" chance="588"/><!-- golden armor -->
+				<item id="2436" chance="1428"/><!-- skull staff -->
+				<item id="2123" chance="500"/><!-- ring of the sky -->
 			</inside>
 		</item>
 	</loot>

@@ -18,22 +18,9 @@
 		<flag targetdistance="6"/>
 		<flag runonhealth="0"/>
 	</flags>
-	<attacks>
-	</attacks>
 	<defenses armor="6" defense="7"/>
-	<immunities>
-		<immunity physical="0"/>
-		<immunity energy="0"/>
-		<immunity fire="0"/>
-		<immunity poison="0"/>
-		<immunity lifedrain="0"/>
-		<immunity paralyze="0"/>
-		<immunity outfit="0"/>
-		<immunity drunk="0"/>
-		<immunity invisible="0"/>
-	</immunities>
 	<loot>
-		<item id="2362" countmax="1" chance="65000"/> --Carrot
-		<item id="2666" countmax="2" chance="65000"/> --Meat
+		<item id="2362" countmax="1" chance="65000"/><!-- carrot of doom -->
+		<item id="2666" countmax="2" chance="65000"/><!-- meat -->
 	</loot>
 </monster>

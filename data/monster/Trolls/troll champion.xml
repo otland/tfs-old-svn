@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="troll champion" nameDescription="a troll champion" race="blood" experience="30" speed="120" manacost="340">
+<monster name="Troll Champion" nameDescription="a troll champion" race="blood" experience="30" speed="120" manacost="340">
 	<health now="75" max="75"/>
-	<look type="281" head="0" body="0" legs="0" feet="0" corpse="7926"/>
+	<look type="281" corpse="7926"/>
 	<targetchange interval="2000" chance="0"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -33,14 +33,14 @@
 		<voice sentence="Gruntz!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="12" chance="6000"/>
-		<item id="2380" countmax="1" chance="1800"/>
-		<item id="2643" countmax="1" chance="1000"/>
-		<item id="2461" countmax="1" chance="1000"/>
-		<item id="2666" countmax="1" chance="1500"/>
-		<item id="2120" countmax="1" chance="8000"/>
-		<item id="2389" countmax="1" chance="2000"/>
-		<item id="2448" countmax="1" chance="5000"/>
-		<item id="2512" countmax="1" chance="1500"/>
+		<item id="2148" countmax="12" chance="6000"/><!-- gold coin -->
+		<item id="2380" chance="1800"/><!-- hand axe -->
+		<item id="2643" chance="1000"/><!-- leather boots -->
+		<item id="2461" chance="1000"/><!-- leather helmet -->
+		<item id="2666" chance="1500"/><!-- meat -->
+		<item id="2120" chance="8000"/><!-- rope -->
+		<item id="2389" countmax="1" chance="2000"/><!-- spear -->
+		<item id="2448" chance="5000"/><!-- studded club -->
+		<item id="2512" chance="1500"/><!-- wooden shield -->
 	</loot>
 </monster>

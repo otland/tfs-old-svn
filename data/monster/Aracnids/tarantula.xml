@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="tarantula" nameDescription="a tarantula" race="VENOM" experience="310" speed="280" manacost="485">
+<monster name="Tarantula" nameDescription="a tarantula" race="venom" experience="120" speed="280" manacost="485">
 	<health now="225" max="225"/>
-	<look type="219" head="20" body="30" legs="40" feet="50" corpse="6060"/>
+	<look type="219" corpse="6060"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -30,21 +30,25 @@
 		</defense>
 	</defenses>
 	<elements>
-	<element earthPercent="100"/>
-	<element energyPercent="10"/>
-	<element firePercent="-15"/>
-	<element icePercent="-10"/>
+		<element earthPercent="100"/>
+		<element energyPercent="10"/>
+		<element firePercent="-15"/>
+		<element icePercent="-10"/>
 	</elements>
 	<immunities>
 		<immunity outfit="1"/>
 		<immunity drunk="1"/>
 	</immunities>
 	<loot>
-		<item id="2148" countmax="100" chance="100000"/>
-		<item id="2148" countmax="25" chance="100000"/>
-		<item id="2478" chance="20000"/>
-		<item id="2463" chance="2500"/>
-		<item id="2476" chance="100"/>
-		<item id="3976" countmax="10" chance="50000"/>
+		<item id="2148" countmax="40" chance="92000"/><!-- gold coin -->
+		<item id="2478" chance="20000"/><!-- brass legs -->
+		<item id="2510" chance="17000"/><!-- plate shield -->
+		<item id="2457" chance="7300"/><!-- steel helmet -->
+		<item id="2463" chance="300"/><!-- plate armor -->
+		<item id="1987" chance="100000"><!-- bag -->
+			<inside>
+				<item id="2169" chance="2500"/><!-- time ring -->
+			</inside>
+		</item>
 	</loot>
 </monster>

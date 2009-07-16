@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Panda" nameDescription="a panda" race="blood" experience="23" speed="240" manacost="300">
 	<health now="80" max="80"/>
-	<look type="123" head="20" body="30" legs="40" feet="50" corpse="6049"/>
+	<look type="123" corpse="6049"/>
 	<targetchange interval="2000" chance="0"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -23,15 +23,15 @@
 	<defenses armor="8" defense="8"/>
 	<elements>
 		<element earthPercent="100"/>
-	<element firePercent="-4"/>
+		<element firePercent="-4"/>
 	</elements>
 	<voices interval="5000" chance="10">
 		<voice sentence="Grrrr"/>
 		<voice sentence="Groar"/>
 	</voices>
 	<loot>
-		<item id="2671" countmax="10" chance="33333"/>
-		<item id="2666" countmax="15" chance="33333"/>
-		<item id="3976" countmax="10" chance="50000"/>
+		<item id="2671" countmax="10" chance="33333"/><!-- ham -->
+		<item id="2666" countmax="15" chance="33333"/><!-- meat -->
+		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
 	</loot>
 </monster>

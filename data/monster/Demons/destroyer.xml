@@ -29,13 +29,13 @@
 		</defense>
 	</defenses>
 	<elements>
-	<element energyPercent="100"/>
-	<element firePercent="45"/>
-	<element physicalPercent="20"/>
-	<element earthPercent="20"/>
-	<element deathPercent="20"/>
-	<element icePercent="-15"/>
-	<element holyPercent="-10"/>
+		<element energyPercent="100"/>
+		<element firePercent="45"/>
+		<element physicalPercent="20"/>
+		<element earthPercent="20"/>
+		<element deathPercent="20"/>
+		<element icePercent="-15"/>
+		<element holyPercent="-10"/>
 	</elements>
 	<immunities>
 		<immunity paralyze="1"/>
@@ -46,19 +46,19 @@
 		<voice sentence="It's a good day to destroy!"/>
 	</voices>
 	<loot>
-	<item id="2148" countmax="82" chance="100000"/>
-	<item id="2645" chance="2222"/>
-	<item id="2152" countmax="3" chance="200000"/>
-	<item id="2393" chance="660"/>
-	<item id="5741" chance="1000"/>
-	<item id="2666" countmax="5" chance="30000"/>
-	<item id="1987" chance="100000">
-		<inside>
-			<item id="2463" chance="6666"/>
-			<item id="2416" chance="9999"/>
-			<item id="2489" chance="2500"/>
-			<item id="2150" countmax="2" chance="7500"/>
-		</inside>
-	</item>
+		<item id="2148" countmax="82" chance="100000"/>
+		<item id="2645" chance="2222"/>
+		<item id="2152" countmax="3" chance="200000"/>
+		<item id="2393" chance="660"/>
+		<item id="5741" chance="1000"/>
+		<item id="2666" countmax="5" chance="30000"/>
+		<item id="1987" chance="100000">
+			<inside>
+				<item id="2463" chance="6666"/>
+				<item id="2416" chance="9999"/>
+				<item id="2489" chance="2500"/>
+				<item id="2150" countmax="2" chance="7500"/>
+			</inside>
+		</item>
 	</loot>
 </monster>

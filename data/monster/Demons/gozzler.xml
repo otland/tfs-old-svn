@@ -46,19 +46,19 @@
 		<voice sentence="I'll bite you! Nyehehehehe!"/>
 	</voices>
 	<loot>
-		<item id="2015" chance="9000"/> <!-- brown flask -->
-		<item id="2148" countmax="53" chance="100000"/> <!-- gps -->
-		<item id="2394" chance="7000"/> <!-- morning star -->
-		<item id="2385" chance="7000"/> <!-- sabre -->
-		<item id="2051" chance="15000"/> <!-- torch -->
-		<item id="2510" chance="9000"/> <!-- plate shield -->
+		<item id="2015" chance="9000"/><!-- brown flask -->
+		<item id="2148" countmax="53" chance="100000"/><!-- gold coin -->
+		<item id="2394" chance="7000"/><!-- morning star -->
+		<item id="2385" chance="7000"/><!-- sabre -->
+		<item id="2051" chance="15000"/><!-- torch -->
+		<item id="2510" chance="9000"/><!-- plate shield -->
 		<item id="1987" chance="100000">
 			<inside>
-				<item id="2378" chance="1500"/> <!--battle axe -->
-				<item id="2409" chance="1500"/> <!-- serpent sword -->
-				<item id="2423" chance="1500"/> <!-- clerical mace -->
-				<item id="2213" chance="400"/> <!-- dwarven ring -->
-				<item id="2146" chance="300"/> <!-- small sapphire -->
+				<item id="2378" chance="1500"/><!-- battle axe -->
+				<item id="2409" chance="1500"/><!-- serpent sword -->
+				<item id="2423" chance="1500"/><!-- clerical mace -->
+				<item id="2213" chance="400"/><!-- dwarven ring -->
+				<item id="2146" chance="300"/><!-- small sapphire -->
 			</inside>
 		</item>
 	</loot>

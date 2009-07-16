@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="demon skeleton" nameDescription="a demon skeleton" race="undead" experience="240" speed="230" manacost="620">
+<monster name="Demon Skeleton" nameDescription="a demon skeleton" race="undead" experience="240" speed="230" manacost="620">
 	<health now="400" max="400"/>
-	<look type="37" head="20" body="30" legs="40" feet="50" corpse="5963"/>
+	<look type="37" corpse="5963"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -23,27 +23,27 @@
 	</attacks>
 	<defenses armor="25" defense="25"/>
 	<elements>
-	<element firePercent="100"/>
-	<element deathPercent="100"/>
-	<element earthPercent="100"/>
-	<element holyPercent="-25"/>
+		<element firePercent="100"/>
+		<element deathPercent="100"/>
+		<element earthPercent="100"/>
+		<element holyPercent="-25"/>
 	</elements>
 	<immunities>
 		<immunity paralyze="1"/>
 		<immunity drunk="0"/>
 	</immunities>
 	<loot>
-		<item id="2148" countmax="40" chance="100000"/>
-		<item id="2399" countmax="1" chance="10000"/>
-		<item id="2515" chance="400"/>
-		<item id="2178" chance="1000"/>
-		<item id="2050" chance="10000"/>
-		<item id="1987" chance="100000">
+		<item id="2148" countmax="40" chance="100000"/><!-- gold coin -->
+		<item id="2399" countmax="1" chance="10000"/><!-- throwing star -->
+		<item id="2515" chance="400"/><!-- guardian shield -->
+		<item id="2178" chance="1000"/><!-- mind stone -->
+		<item id="2050" chance="10000"/><!-- torch -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2417" chance="5000"/>
-				<item id="2482" chance="2857"/>
-				<item id="2194" chance="700"/>
-				<item id="2398" chance="10000"/>
+				<item id="2417" chance="5000"/><!-- battle hammer -->
+				<item id="2482" chance="2857"/><!-- studded helmet -->
+				<item id="2194" chance="700"/><!-- mysterious fetish -->
+				<item id="2398" chance="10000"/><!-- mace -->
 			</inside>
 		</item>
 	</loot>

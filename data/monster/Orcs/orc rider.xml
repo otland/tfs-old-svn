@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="orc rider" nameDescription="a orc rider" race="blood" experience="110" speed="340" manacost="0">
+<monster name="Orc Rider" nameDescription="a orc rider" race="blood" experience="110" speed="340" manacost="0">
 	<health now="180" max="180"/>
-	<look type="4" head="20" body="30" legs="40" feet="50" corpse="6010"/>
+	<look type="4" corpse="6010"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -26,30 +26,30 @@
 		</defense>
 	</defenses>
 	<elements>
-	<element energyPercent="20"/>
-	<element holyPercent="10"/>
-	<element earthPercent="-10"/>
-	<element deathPercent="-5"/>
+		<element energyPercent="20"/>
+		<element holyPercent="10"/>
+		<element earthPercent="-10"/>
+		<element deathPercent="-5"/>
 	</elements>
 	<voices interval="5000" chance="10">
 		<voice sentence="Grrrrrrr"/>
 		<voice sentence="Orc arga Huummmak!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="20" chance="100000"/>
-		<item id="2666" countmax="3" chance="50000"/>
-		<item id="2129" chance="10000"/>
-		<item id="1988" chance="20000">
+		<item id="2148" countmax="20" chance="100000"/><!-- gold coin -->
+		<item id="2666" countmax="3" chance="50000"/><!-- meat -->
+		<item id="2129" chance="10000"/><!-- wolf tooth chain -->
+		<item id="1988" chance="20000"><!-- backpack -->
 			<inside>
-				<item id="2148" countmax="1" chance="20000"/>
+				<item id="2148" countmax="1" chance="20000"/><!-- gold coin -->
 			</inside>
 		</item>
-		<item id="1987" chance="100000">
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2428" chance="2500"/>
-				<item id="2480" chance="10000"/>
-				<item id="2425" chance="2000"/>
-				<item id="2513" chance="6666"/>
+				<item id="2428" chance="2500"/><!-- orcish axe -->
+				<item id="2480" chance="10000"/><!-- legion helmet -->
+				<item id="2425" chance="2000"/><!-- obsidian lance -->
+				<item id="2513" chance="6666"/><!-- battle shield -->
 			</inside>
 		</item>
 	</loot>

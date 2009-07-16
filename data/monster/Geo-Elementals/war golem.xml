@@ -27,7 +27,7 @@
 		</attack>
 		<attack name="outfit" interval="1000" chance="9" range="7" monster="skeleton" duration="5000">
 			<attribute key="areaeffect" value="blueshimmer"/>
-		</attack>		
+		</attack>
 	</attacks>
 	<defenses armor="40" defense="45">
 		<defense name="speed" interval="1000" chance="7" speedchange="290" duration="4000">
@@ -62,16 +62,16 @@
 		<voice sentence="Rrrtttarrrttarrrtta"/>		
 	</voices>
 	<loot>
-		<item id="8309" countmax="5" chance="50000"/> <!-- nails -->
-		<item id="2148" countmax="170" chance="100000"/> <!-- gps -->
-		<item id="1987" chance="100000">
+		<item id="8309" countmax="5" chance="50000"/><!-- nails -->
+		<item id="2148" countmax="170" chance="100000"/><!-- gold coin -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="7893" chance="400"/> <!-- lightning boots -->
-				<item id="9980" chance="300"/> <!-- crystal of power -->
-				<item id="2645" chance="400"/> <!-- steel boots -->
-				<item id="5880" chance="20000"/> <!-- iron ore -->
-				<item id="7403" chance="250"/> <!-- berserker -->
-				<item id="7422" chance="250"/> <!-- jade hammer -->
+				<item id="7893" chance="400"/><!-- lightning boots -->
+				<item id="9980" chance="300"/><!-- crystal of power -->
+				<item id="2645" chance="400"/><!-- steel boots -->
+				<item id="5880" chance="20000"/><!-- iron ore -->
+				<item id="7403" chance="250"/><!-- berserker -->
+				<item id="7422" chance="250"/><!-- jade hammer -->
 			</inside>
 		</item>
 	</loot>

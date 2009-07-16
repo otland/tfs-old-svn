@@ -17,17 +17,15 @@
 		<flag targetdistance="4"/>
 		<flag runonhealth="0"/>
 	</flags>
-<attacks>
+	<attacks>
 		<attack name="melee" interval="2000" skill="40" attack="40"/>
-
 		<attack name="lifedrain" interval="2000" chance="34" radius="1" target="0" min="-50" max="-250">
 			<attribute key="areaEffect" value="poison"/>
 		</attack>
-
 		<attack name="drunk" interval="1000" chance="15" range="7" radius="1" target="1">
 			<attribute key="areaEffect" value="redshimmer"/>
 		</attack>
-</attacks>
+	</attacks>
 	<defenses armor="20" defense="20">
 		<defense name="healing" interval="1000" chance="25" min="50" max="70">
 			<attribute key="areaEffect" value="blueshimmer"/>
@@ -37,11 +35,11 @@
 		</defense>
 	</defenses>
 	<elements>
-	<element holyPercent="30"/>
-	<element earthPercent="15"/>
-	<element icePercent="15"/>
-	<element energyPercent="-6"/>
-	<element deathPercent="-5"/>
+		<element holyPercent="30"/>
+		<element earthPercent="15"/>
+		<element icePercent="15"/>
+		<element energyPercent="-6"/>
+		<element deathPercent="-5"/>
 	</elements>
 	<immunities>
 		<immunity invisible="1"/>
@@ -63,7 +61,7 @@
 				<item id="7426" chance="933"/>
 				<item id="6087" chance="1428"/>
 				<item id="5801" chance="909"/>
-				<item id="2183" chance="1000"/> -- tempest rod
+				<item id="2183" chance="1000"/><!-- tempest rod -->
 			</inside>
 		</item>
 	</loot>

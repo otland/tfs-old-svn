@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="scorpion" nameDescription="a scorpion" race="VENOM" experience="45" speed="150" manacost="310">
+<monster name="Scorpion" nameDescription="a scorpion" race="venom" experience="45" speed="150" manacost="310">
 	<health now="45" max="45"/>
-	<look type="43" head="20" body="30" legs="40" feet="50" corpse="5988"/>
+	<look type="43" corpse="5988"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -22,15 +22,9 @@
 	</attacks>
 	<defenses armor="10" defense="5"/>
 	<elements>
-	<element earthPercent="100"/>
-	<element firePercent="-10"/>
-	<element icePercent="-5"/>
+		<element earthPercent="100"/>
+		<element energyPercent="20"/>
+		<element firePercent="-10"/>
+		<element icePercent="-5"/>
 	</elements>
-	<immunities>
-		<immunity lifedrain="0"/>
-		<immunity paralyze="0"/>
-		<immunity outfit="0"/>
-		<immunity drunk="0"/>
-		<immunity invisible="0"/>
-	</immunities>
 </monster>

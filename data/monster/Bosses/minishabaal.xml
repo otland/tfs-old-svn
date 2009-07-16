@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="minishabaal" nameDescription="Minishabaal" race="blood" experience="4000" speed="700" manacost="0">
+<monster name="Minishabaal" nameDescription="minishabaal" race="blood" experience="4000" speed="700" manacost="0">
 	<health now="3500" max="3500"/>
 	<look type="237" corpse="6364"/>
 	<targetchange interval="5000" chance="8"/>
@@ -67,24 +67,23 @@
 		<voice sentence="Muahaha!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="20" chance="100000"/>
-		<item id="2150" countmax="2" chance="1428"/> --Small Amethyst
+		<item id="2148" countmax="20" chance="100000"/><!-- gold coin -->
+		<item id="2150" countmax="2" chance="1428"/><!-- small amethyst -->
 		<item id="2548" chance="2857"/>
 		<item id="2432" chance="666"/>
 		<item id="5944" chance="909"/>
-		<item id="2520" chance="200"/> --demon shield
-		<item id="6500" countmax="2" chance="1000"/> --Demonic Essence
-		<item id="2470" chance="180"/> --golden legs
-
-		<item id="1987" chance="100000">
+		<item id="2520" chance="200"/><!-- demon shield -->
+		<item id="6500" countmax="2" chance="1000"/><!-- demonic essence -->
+		<item id="2470" chance="180"/><!-- golden legs -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-		<item id="2148" countmax="20" chance="100000"/>
-		<item id="5944" chance="909"/>
-		<item id="2488" chance="800"/>
-		<item id="2515" chance="1333"/>
-		<item id="2136" chance="909"/>
-		<item id="2542" chance="500"/> --plasma shield
+				<item id="2148" countmax="20" chance="100000"/>
+				<item id="5944" chance="909"/>
+				<item id="2488" chance="800"/>
+				<item id="2515" chance="1333"/>
+				<item id="2136" chance="909"/>
+				<item id="2542" chance="500"/><!-- plasma shield -->
 			</inside>
-	</item>
- </loot>
+		</item>
+	</loot>
 </monster>

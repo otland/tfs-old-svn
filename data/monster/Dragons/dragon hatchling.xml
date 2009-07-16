@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="dragon hatchling" nameDescription="a dragon hatchling" race="blood" experience="185" speed="170" manacost="0">
+<monster name="Dragon Hatchling" nameDescription="a dragon hatchling" race="blood" experience="185" speed="170" manacost="0">
 	<health now="380" max="380"/>
-	<look type="271" head="0" body="0" legs="0" feet="0" corpse="7621"/>
+	<look type="271" corpse="7621"/>
 	<targetchange interval="2000" chance="5"/>
 	<strategy attack="70" defense="10"/>
 	<flags>
@@ -45,13 +45,13 @@
 		<voice sentence="Rooawwrr"/>
 	</voices>
 	<loot>
-		<item id="7618" countmax="1" chance="5000"/>
-		<item id="2672" countmax="1" chance="5000"/>
-		<item id="2148" countmax="26" chance="100000"/>
-		<item id="1987" chance="100000">
+		<item id="7618" countmax="1" chance="5000"/><!-- health potion -->
+		<item id="2672" countmax="1" chance="5000"/><!-- dragon ham -->
+		<item id="2148" countmax="26" chance="100000"/><!-- gold coin -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2148" countmax="25" chance="100000"/>
+				<item id="2148" countmax="25" chance="100000"/><!-- gold coin -->
 			</inside>
-	</item>
+		</item>
 	</loot>
 </monster>

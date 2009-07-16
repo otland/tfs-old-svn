@@ -35,16 +35,16 @@
 		<defense name="speed" interval="1000" chance="40" speedchange="450" duration="40000">
 			<attribute key="areaEffect" value="redshimmer"/>
 		</defense>
-		<defense name="invisible" interval="4000" chance="50" duration="4000"> --each 4 sec invi duration 4 sec
+		<defense name="invisible" interval="4000" chance="50" duration="4000">
 			<attribute key="areaEffect" value="redshimmer"/>
 		</defense>
 	</defenses>
 	<elements>
-	<element firePercent="100"/>
-	<element earthPercent="30"/>
-	<element deathPercent="25"/>
-	<element icePercent="-25"/>
-	<element holyPercent="-12"/>
+		<element firePercent="100"/>
+		<element earthPercent="30"/>
+		<element deathPercent="25"/>
+		<element icePercent="-25"/>
+		<element holyPercent="-12"/>
 	</elements>
 	<immunities>
 		<immunity paralyze="1"/>
@@ -55,23 +55,23 @@
 		<voice sentence="He he he!"/>
 	</voices>
 	<loot>
-	 <item id="2148" countmax="79" chance="100000"/>
-	 <item id="2050" chance="15000"/>
-	 <item id="6558" chance="2222"/>
-	 <item id="2260" chance="18000"/>
-	 <item id="6300" chance="999"/>
-	 <item id="2465" chance="6577"/>
-	 <item id="1987" chance="100000">
-		<inside>
-			<item id="2548" chance="20000"/>
-			<item id="2465" chance="6577"/>
-			<item id="2185" chance="833"/>
-			<item id="2464" chance="7887"/>
-			<item id="5944" chance="5666"/>
-			<item id="6500" countmax="1" chance="7777"/>
-			<item id="2150" countmax="1" chance="8888"/>
-			<item id="2165" chance="4555"/>
-		</inside>
-	</item>
+		<item id="2148" countmax="79" chance="100000"/>
+		<item id="2050" chance="15000"/>
+		<item id="6558" chance="2222"/>
+		<item id="2260" chance="18000"/>
+		<item id="6300" chance="999"/>
+		<item id="2465" chance="6577"/>
+		<item id="1987" chance="100000">
+			<inside>
+				<item id="2548" chance="20000"/>
+				<item id="2465" chance="6577"/>
+				<item id="2185" chance="833"/>
+				<item id="2464" chance="7887"/>
+				<item id="5944" chance="5666"/>
+				<item id="6500" countmax="1" chance="7777"/>
+				<item id="2150" countmax="1" chance="8888"/>
+				<item id="2165" chance="4555"/>
+			</inside>
+		</item>
 	</loot>
 </monster>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="the abomination" nameDescription="the abomination" race="venom" experience="25000" speed="340" manacost="0">
+<monster name="The Abomination" nameDescription="the abomination" race="venom" experience="25000" speed="340" manacost="0">
 	<health now="38050" max="38050"/>
 	<look type="238" corpse="6532"/>
 	<targetchange interval="5000" chance="8"/>
@@ -53,9 +53,9 @@
 		<voice sentence="Blubb"/>
 	</voices>
 	<loot>
-	 <item id="2148" countmax="100" chance="100000"/> --Gold Coins
-	 <item id="2152" countmax="3" chance="10000"/> --Platinum Coin
-	 <item id="6500" countmax="1" chance="2857"/> --Demonic Essence
-	 <item id="5944" chance="2500"/> --Soul Orb
- </loot>
+		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
+		<item id="2152" countmax="3" chance="10000"/><!-- platinum coin -->
+		<item id="6500" countmax="1" chance="2857"/><!-- demonic essence -->
+		<item id="5944" chance="2500"/><!-- soul orb -->
+	</loot>
 </monster>

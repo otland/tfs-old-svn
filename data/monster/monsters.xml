@@ -407,7 +407,7 @@
 	<!-- Monks -->
 	<monster name="Dark Monk" file="Monks/dark monk.xml"/>
 	<monster name="Monk" file="Monks/monk.xml"/>
-	<monster name="Training Monk" file="Monks/Training Monk.xml"/>
+	<monster name="Training Monk" file="Monks/training monk.xml"/>
 
 	<!-- Mutated -->
 	<monster name="Mutated Bat" file="Mutated/mutated bat.xml"/>

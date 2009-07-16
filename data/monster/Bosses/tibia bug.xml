@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <monster name="Tibia Bug" namedescription="a Tibia Bug" race="venom" experience="50" speed="240" manacost="250">
 	<health now="270" max="270"/>
-	<look type="45" head="20" body="30" legs="40" feet="50" corpse="5990"/>
+	<look type="45" corpse="5990"/>
 	<targetchange interval="2000" chance="0"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -48,8 +48,8 @@
 		<voice sentence="You are bugged ... by me!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="11" chance="100000"/> <!-- Gold Coin -->
-		<item id="6570" chance="5538"/> <!-- Blue Surprise Bag -->
-		<item id="6571" chance="1538"/> <!-- Red Surprise Bag -->
+		<item id="2148" countmax="11" chance="100000"/><!-- Gold Coin -->
+		<item id="6570" chance="5538"/><!-- Blue Surprise Bag -->
+		<item id="6571" chance="1538"/><!-- Red Surprise Bag -->
 	</loot>
 </monster>

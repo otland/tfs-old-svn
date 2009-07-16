@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="efreet" nameDescription="an efreet" race="blood" experience="325" speed="270" manacost="0">
+<monster name="Efreet" nameDescription="an efreet" race="blood" experience="325" speed="270" manacost="0">
 	<health now="550" max="550"/>
-	<look type="103" head="20" body="30" legs="40" feet="50" corpse="6032"/>
+	<look type="103" corpse="6032"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -48,12 +48,12 @@
 		</defense>
 	</defenses>
 	<elements>
-	<element firePercent="90"/>
-	<element energyPercent="60"/>
-	<element earthPercent="40"/>
-	<element deathPercent="30"/>
-	<element icePercent="-10"/>
-	<element holyPercent="-10"/>
+		<element firePercent="90"/>
+		<element energyPercent="60"/>
+		<element earthPercent="40"/>
+		<element deathPercent="30"/>
+		<element icePercent="-10"/>
+		<element holyPercent="-10"/>
 	</elements>
 	<immunities>
 		<immunity paralyze="1"/>
@@ -67,22 +67,22 @@
 		<voice sentence="Good wishes are for fairytales"/>
 	</voices>
 	<loot>
-		<item id="2155" countmax="1" chance="100"/>
-		<item id="2148" countmax="60" chance="100000"/>
-		<item id="2673" countmax="4" chance="6666"/>
-		<item id="2044" chance="10000"/>
-		<item id="1987" chance="100000">
-		<item id="7378" countmax="2" chance="2000"/>
-		<item id="2063" chance="20000"/>
+		<item id="2155" countmax="1" chance="100"/><!-- green gem -->
+		<item id="2148" countmax="60" chance="100000"/><!-- gold coin -->
+		<item id="2673" countmax="4" chance="6666"/><!-- pear -->
+		<item id="2044" chance="10000"/><!-- lamp -->
+		<item id="7378" countmax="2" chance="2000"/><!-- royal spear -->
+		<item id="2063" chance="20000"/><!-- small oil lamp -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2149" countmax="2" chance="7000"/>
-		<item id="5910" countmax="2" chance="5000"/>
-				<item id="7900" chance="500"/> --magma monocle
-				<item id="2663" chance="200"/>
-				<item id="1860" countmax="1" chance="2500"/>
-				<item id="2148" countmax="15" chance="80000"/>
-				<item id="2442" chance="2000"/>
-				<item id="2187" chance="1111"/> -- wand of Inferno
+				<item id="2149" countmax="2" chance="7000"/><!-- small emerald -->
+				<item id="5910" countmax="2" chance="5000"/><!-- green piece of cloth -->
+				<item id="7900" chance="500"/><!-- magma monocle -->
+				<item id="2663" chance="200"/><!-- mystic turban -->
+				<item id="1860" countmax="1" chance="2500"/><!-- green tapestry -->
+				<item id="2148" countmax="15" chance="80000"/><!-- gold coin -->
+				<item id="2442" chance="2000"/><!-- heavy machete -->
+				<item id="2187" chance="1111"/><!-- wand of inferno -->
 			</inside>
 		</item>
 	</loot>

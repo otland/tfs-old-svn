@@ -35,18 +35,18 @@
 		<voice sentence="Wanna buy roses??"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="9" chance="30000"/> <!-- gold -->
-		<item id="2666" countmax="3" chance="19000"/> <!-- meat -->
-		<item id="2237" chance="40000"/> <!-- dirty cape -->
-		<item id="2744" chance="21000"/> <!-- bed rose -->
-		<item id="2370" chance="13000"/> <!-- lute -->
-		<item id="1987" chance="100000">
+		<item id="2148" countmax="9" chance="30000"/><!-- gold coin -->
+		<item id="2666" countmax="3" chance="19000"/><!-- meat -->
+		<item id="2237" chance="40000"/><!-- dirty cape -->
+		<item id="2744" chance="21000"/><!-- bed rose -->
+		<item id="2370" chance="13000"/><!-- lute -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2690" countmax="1" chance="11290"/> <!-- roll -->
-				<item id="2567" chance="33000"/> <!-- wooden spoon -->
-				<item id="9808" chance="2500"/> <!-- rusty armor -->
-				<item id="1681" chance="5500"/> <!-- blue pillow -->
-				<item id="2213" chance="1500"/> <!-- dwarven ring -->
+				<item id="2690" countmax="1" chance="11290"/><!-- roll -->
+				<item id="2567" chance="33000"/><!-- wooden spoon -->
+				<item id="9808" chance="2500"/><!-- rusty armor -->
+				<item id="1681" chance="5500"/><!-- blue pillow -->
+				<item id="2213" chance="1500"/><!-- dwarven ring -->
 			</inside>
 		</item>
 	</loot>

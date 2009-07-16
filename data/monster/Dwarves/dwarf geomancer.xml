@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="dwarf geomancer" nameDescription="a dwarf geomancer" race="blood" experience="245" speed="200" manacost="0">
+<monster name="Dwarf Geomancer" nameDescription="a dwarf geomancer" race="blood" experience="245" speed="200" manacost="0">
 	<health now="380" max="380"/>
-	<look type="66" head="20" body="30" legs="40" feet="50" corpse="6015"/>
+	<look type="66" corpse="6015"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -34,12 +34,12 @@
 		</defense>
 	</defenses>
 	<elements>
-	<element earthPercent="80"/>
-	<element firePercent="60"/>
-	<element energyPercent="10"/>
-	<element holyPercent="10"/>
-	<element icePercent="-10"/>
-	<element deathPercent="-5"/>
+		<element earthPercent="80"/>
+		<element firePercent="60"/>
+		<element energyPercent="10"/>
+		<element holyPercent="10"/>
+		<element icePercent="-10"/>
+		<element deathPercent="-5"/>
 	</elements>
 	<immunities>
 		<immunity invisible="1"/>
@@ -50,15 +50,15 @@
 		<voice sentence="Dust to dust."/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="20" chance="100000"/>
-		<item id="2673" countmax="3" chance="6666"/>
-		<item id="2260" chance="4000"/>
-		<item id="2649" chance="10000"/>
-		<item id="2643" chance="20000"/>
-		<item id="1987" chance="100000">
+		<item id="2148" countmax="20" chance="100000"/><!-- gold coin -->
+		<item id="2673" countmax="3" chance="6666"/><!-- pear -->
+		<item id="2260" chance="4000"/><!-- blank rune -->
+		<item id="2649" chance="10000"/><!-- leather legs -->
+		<item id="2643" chance="20000"/><!-- leather boots -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2162" chance="2500"/>
-				<item id="2787" countmax="3" chance="20000"/>
+				<item id="2162" chance="2500"/><!-- magic lightwand -->
+				<item id="2787" countmax="3" chance="20000"/><!-- white mushroom -->
 			</inside>
 		</item>
 	</loot>

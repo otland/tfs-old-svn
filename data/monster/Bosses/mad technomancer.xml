@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <monster name="mad technomancer" nameDescription="mad technomancer" race="blood" experience="55" speed="200" manacost="0">
 	<health now="1000" max="1000"/>
-	<look type="66" head="20" body="30" legs="40" feet="50" corpse="6015"/>
+	<look type="66" corpse="6015"/>
 	<targetchange interval="500" chance="25"/>
 	<strategy attack="100" defense="0"/>
 	<flags>

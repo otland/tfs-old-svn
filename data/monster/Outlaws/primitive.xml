@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-	<monster name="Primitive" nameDescription="a Primitive" race="blood" experience="45" speed="300" manacost="0">
+<monster name="Primitive" nameDescription="a Primitive" race="blood" experience="45" speed="300" manacost="0">
 	<health now="200" max="200"/>
 	<look type="143" head="1" body="1" legs="1" feet="1" corpse="6080"/>
 	<targetchange interval="5000" chance="8"/>
@@ -29,7 +29,7 @@
 		<attack name="outfit" interval="1000" chance="2" radius="4" target="0" monster="primitive" duration="10000">
 			<attribute key="areaEffect" value="bluebubble"/>
 		</attack>
-</attacks>
+	</attacks>
 	<defenses armor="20" defense="25"/>
 	<immunities>
 		<immunity physical="0"/>
@@ -59,13 +59,13 @@
 		<voice sentence="We'll be back!"/>
 	</voices>
 	<loot>
-		<item id="2148" chance="100000" countmax="10"/> <!-- Gold Coin -->
-		<item id="2484" chance="50000"/> <!-- Studded Armor -->
-		<item id="2482" chance="50000"/> <!-- Studded Helmet -->
-		<item id="2526" chance="1538"/> <!-- Studded Shield -->
-		<item id="2385" chance="2000"/> <!-- Sabre -->
-		<item id="2386" chance="2000"/> <!-- Axe -->
-		<item id="6570" chance="5538"/> <!-- Blue Surprise Bag -->
-		<item id="6571" chance="1538"/> <!-- Red Surprise Bag -->
+		<item id="2148" countmax="10" chance="100000"/><!-- gold coin -->
+		<item id="2484" chance="50000"/><!-- studded armor -->
+		<item id="2482" chance="50000"/><!-- studded helmet -->
+		<item id="2526" chance="1538"/><!-- studded shield -->
+		<item id="2385" chance="2000"/><!-- sabre -->
+		<item id="2386" chance="2000"/><!-- axe -->
+		<item id="6570" chance="5538"/><!-- blue surprise bag -->
+		<item id="6571" chance="1538"/><!-- red surprise bag -->
 	</loot>
 </monster>

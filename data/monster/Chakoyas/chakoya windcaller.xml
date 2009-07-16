@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-	<monster name="Chakoya Windcaller" tp="1" nameDescription="a Chakoya Windcaller" race="blood" experience="48" speed="270" manacost="305">
+	<monster name="chakoya windcaller" nameDescription="a chakoya windcaller" race="blood" experience="48" speed="270" manacost="305">
 	<health now="84" max="84"/>
-	<look type="260" head="0" body="0" legs="0" feet="0" corpse="7320"/>
+	<look type="260" corpse="7320"/>
 	<targetchange interval="60000" chance="0"/>
 	<strategy attack="100" defense="0"/>
 	<flags>

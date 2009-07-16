@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="serpent spawn" nameDescription="a serpent spawn" race="VENOM" experience="2350" speed="240" manacost="0">
+<monster name="Serpent Spawn" nameDescription="a serpent spawn" race="venom" experience="2350" speed="240" manacost="0">
 	<health now="3000" max="3000"/>
-	<look type="220" head="20" body="30" legs="40" feet="50" corpse="4323"/>
+	<look type="220" corpse="4323"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -49,10 +49,10 @@
 		</defense>
 	</defenses>
 	<elements>
-	<element earthPercent="100"/>
-	<element icePercent="30"/>
-	<element firePercent="-6"/>
-	<element energyPercent="-10"/>
+		<element earthPercent="100"/>
+		<element icePercent="30"/>
+		<element firePercent="-6"/>
+		<element energyPercent="-10"/>
 	</elements>
 	<immunities>
 		<immunity paralyze="1"/>
@@ -65,30 +65,29 @@
 		<voice sentence="I bring your deathhh, mortalssss"/>
 	</voices>
 	<loot>
-		<item id="2182" chance="1333"/> -- snakebite rod
-		<item id="2195" chance="800"/>
-		<item id="3976" countmax="10" chance="50000"/>
-		<item id="2148" countmax="50" chance="100000"/>
-		<item id="2476" chance="500"/> --knight armor
-		<item id="1976" countmax="1" chance="9000"/>
-		<item id="3971" countmax="1" chance="2000"/>
-		<item id="2492" countmax="1" chance="200"/>
-		<item id="2167" countmax="1" chance="3000"/>
-		<item id="2392" countmax="1" chance="300"/>
-
-		<item id="1987" chance="100000">
+		<item id="2182" chance="1333"/><!-- snakebite rod -->
+		<item id="2195" chance="800"/><!-- boots of haste -->
+		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
+		<item id="2148" countmax="50" chance="100000"/><!-- gold coin -->
+		<item id="2476" chance="500"/><!-- knight armor -->
+		<item id="1976" chance="9000"/><!-- gemmed book -->
+		<item id="3971" chance="2000"/><!-- charmer tiara -->
+		<item id="2492" chance="200"/><!-- dragon scale mail -->
+		<item id="2167" chance="3000"/><!-- energy ring -->
+		<item id="2392" chance="300"/><!-- fire sword -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-		<item id="2148" countmax="100" chance="100000"/>
-		<item id="2033" countmax="1" chance="3000"/>
-		<item id="2182" countmax="1" chance="1000"/>
-		<item id="2796" countmax="1" chance="18000"/>
-		<item id="2177" countmax="1" chance="800"/>
-		<item id="2168" countmax="1" chance="3000"/>
-		<item id="2547" countmax="1" chance="6000"/>
-		<item id="2498" countmax="1" chance="100"/>
-		<item id="2146" countmax="1" chance="6000"/>
-		<item id="2479" countmax="1" chance="600"/>
-		<item id="2528" countmax="1" chance="400"/>
+				<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
+				<item id="2033" chance="3000"/><!-- golden mug -->
+				<item id="2182" chance="1000"/><!-- snakebite rod -->
+				<item id="2796" countmax="1" chance="18000"/><!-- green mushroom -->
+				<item id="2177" chance="800"/><!-- life crystal -->
+				<item id="2168" chance="3000"/><!-- life ring -->
+				<item id="2547" chance="6000"/><!-- power bolt -->
+				<item id="2498" chance="100"/><!-- royal helmet -->
+				<item id="2146" countmax="1" chance="6000"/><!-- small sapphire -->
+				<item id="2479" chance="600"/><!-- strange helmet -->
+				<item id="2528" chance="400"/><!-- tower shield -->
 			</inside>
 		</item>
 	</loot>

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="spit nettle" nameDescription="a spit nettle" race="venom" experience="20" speed="0" manacost="0">
+<monster name="Spit Nettle" nameDescription="a spit nettle" race="venom" experience="20" speed="0" manacost="0">
 	<health now="150" max="150"/>
-	<look type="221" head="20" body="30" legs="40" feet="50" corpse="6062"/>
+	<look type="221" corpse="6062"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -28,15 +28,13 @@
 		</defense>
 	</defenses>
 	<elements>
-	<element earthPercent="100"/>
-	<element energyPercent="100"/>
-	<element icePercent="10"/>
-	<element firePercent="-10"/>
+		<element earthPercent="100"/>
+		<element energyPercent="100"/>
+		<element icePercent="10"/>
+		<element firePercent="-10"/>
 	</elements>
 	<immunities>
 		<immunity paralyze="1"/>
 		<immunity invisible="1"/>
 	</immunities>
-	<loot>
-	</loot>
 </monster>

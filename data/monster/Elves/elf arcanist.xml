@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="elf arcanist" nameDescription="a elf arcanist" race="blood" experience="175" speed="230" manacost="0">
+<monster name="Elf Arcanist" nameDescription="a elf arcanist" race="blood" experience="175" speed="230" manacost="0">
 	<health now="220" max="220"/>
-	<look type="63" head="20" body="30" legs="40" feet="50" corpse="6011"/>
+	<look type="63" corpse="6011"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -36,10 +36,10 @@
 		</defense>
 	</defenses>
 	<elements>
-	<element firePercent="50"/>
-	<element energyPercent="45"/>
-	<element deathPercent="30"/>
-	<element holyPercent="-11"/>
+		<element firePercent="50"/>
+		<element energyPercent="45"/>
+		<element deathPercent="30"/>
+		<element holyPercent="-11"/>
 	</elements>
 	<immunities>
 		<immunity invisible="1"/>
@@ -52,29 +52,29 @@
 		<voice sentence="Vihil Ealuel!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/>
-		<item id="2148" countmax="20" chance="100000"/>
-		<item id="1949" chance="10000"/>
-		<item id="2578" chance="5000"/>
-		<item id="2260" chance="4000"/>
-		<item id="2401" chance="3000"/>
-		<item id="2642" chance="20000"/>
-		<item id="2682" chance="6666"/>
-		<item id="2802" countmax="1" chance="10000"/>
-		<item id="2600" chance="33333"/>
-		<item id="2177" chance="2857"/>
-		<item id="2689" countmax="3" chance="20000"/>
-		<item id="5922" countmax="1" chance="5000"/>
-		<item id="1987" chance="100000">
+		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
+		<item id="2148" countmax="20" chance="100000"/><!-- gold coin -->
+		<item id="1949" chance="10000"/><!-- scroll -->
+		<item id="2578" chance="5000"/><!-- closed trap -->
+		<item id="2260" chance="4000"/><!-- blank rune -->
+		<item id="2401" chance="3000"/><!-- staff -->
+		<item id="2642" chance="20000"/><!-- sandals -->
+		<item id="2682" chance="6666"/><!-- melon -->
+		<item id="2802" countmax="1" chance="10000"/><!-- sling herb -->
+		<item id="2600" chance="33333"/><!-- inkwell -->
+		<item id="2177" chance="2857"/><!-- life crystal -->
+		<item id="2689" countmax="3" chance="20000"/><!-- bread -->
+		<item id="5922" countmax="1" chance="5000"/><!-- holy orchid -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2189" chance="1333"/> -- wand of cosmic energy
-				<item id="2652" chance="5000"/>
-				<item id="2544" countmax="10" chance="20000"/>
-				<item id="2456" chance="10000"/>
-				<item id="2032" chance="4000"/>
-				<item id="2062" chance="2857"/>
-				<item id="2125" chance="1818"/>
-				<item id="2154" chance="1333"/>
+				<item id="2189" chance="1333"/><!-- wand of cosmic energy -->
+				<item id="2652" chance="5000"/><!-- green tunic -->
+				<item id="2544" countmax="10" chance="20000"/><!-- arrow -->
+				<item id="2456" chance="10000"/><!-- bow -->
+				<item id="2032" chance="4000"/><!-- bowl -->
+				<item id="2062" chance="2857"/><!-- small oil lamp -->
+				<item id="2125" chance="1818"/><!-- crystal necklace -->
+				<item id="2154" chance="1333"/><!-- yellow gem -->
 			</inside>
 		</item>
 	</loot>

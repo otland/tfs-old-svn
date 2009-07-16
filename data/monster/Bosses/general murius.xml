@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <monster name="general murius" nameDescription="the general Murius" race="blood" experience="300" speed="240" manacost="0">
 	<health now="550" max="550"/>
-	<look type="202" head="20" body="30" legs="40" feet="50" corpse="5983"/>
+	<look type="202" corpse="5983"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>

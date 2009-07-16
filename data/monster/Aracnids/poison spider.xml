@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="poison spider" nameDescription="a poison spider" race="VENOM" experience="22" speed="160" manacost="270">
+<monster name="Poison Spider" nameDescription="a poison spider" race="venom" experience="22" speed="160" manacost="270">
 	<health now="26" max="26"/>
-	<look type="36"	corpse="5974"/>
+	<look type="36" corpse="5974"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -33,6 +33,6 @@
 		<immunity invisible="0"/>
 	</immunities>
 	<loot>
-		<item id="2148" countmax="10" chance="80000"/>
+		<item id="2148" countmax="4" chance="37000"/><!-- gold coin -->
 	</loot>
 </monster>

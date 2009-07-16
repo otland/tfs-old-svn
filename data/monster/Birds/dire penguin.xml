@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
- <monster name="Dire Penguin" nameDescription="Dire Penguin" race="blood" experience="120" speed="156" manacost="0">
+<monster name="Dire Penguin" nameDescription="dire penguin" race="blood" experience="120" speed="156" manacost="0">
 	<health now="173" max="173"/>
-	<look type="250" head="0" body="0" legs="0" feet="0" corpse="7334"/>
+	<look type="250" corpse="7334"/>
 	<targetchange interval="2000" chance="0"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -24,10 +24,6 @@
 		</attack>
 	</attacks>
 	<immunities>
-		<immunity physical="0"/>
-		<immunity energy="0"/>
-		<immunity fire="0"/>
-		<immunity poison="0"/>
 		<immunity lifedrain="1"/>
 		<immunity paralyze="1"/>
 		<immunity outfit="1"/>
@@ -35,7 +31,7 @@
 		<immunity invisible="1"/>
 	</immunities>
 	<loot>
-		<item id="2148" countmax="10" chance="18000"/>
-		<item id="2669" countmax="1" chance="12000"/>
+		<item id="2148" countmax="10" chance="18000"/><!-- gold coin -->
+		<item id="2669" countmax="1" chance="12000"/><!-- northern pike -->
 	</loot>
 </monster>

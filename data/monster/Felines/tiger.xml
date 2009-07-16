@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="tiger" nameDescription="a tiger" race="blood" experience="40" speed="240" manacost="420">
+<monster name="Tiger" nameDescription="a tiger" race="blood" experience="40" speed="240" manacost="420">
 	<health now="75" max="75"/>
-	<look type="125" head="20" body="30" legs="40" feet="50" corpse="6051"/>
+	<look type="125" corpse="6051"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -26,13 +26,13 @@
 		</defense>
 	</defenses>
 	<elements>
-	<element deathPercent="-10"/>
-	<element icePercent="-8"/>
+		<element deathPercent="-10"/>
+		<element icePercent="-8"/>
 	</elements>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/>
-		<item id="2671" countmax="2" chance="33333"/>
-		<item id="2666" countmax="3" chance="33333"/>
-		<item id="3976" countmax="10" chance="50000"/>
+		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
+		<item id="2671" countmax="2" chance="33333"/><!-- ham -->
+		<item id="2666" countmax="3" chance="33333"/><!-- meat -->
+		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
 	</loot>
 </monster>

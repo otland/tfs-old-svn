@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="stone golem" nameDescription="a stone golem" race="blood" experience="280" speed="180" manacost="590">
+<monster name="Stone Golem" nameDescription="a stone golem" race="blood" experience="280" speed="180" manacost="590">
 	<health now="270" max="270"/>
-	<look type="67" head="20" body="30" legs="40" feet="50" corpse="6005"/>
+	<look type="67" corpse="6005"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -22,27 +22,27 @@
 	</attacks>
 	<defenses armor="10" defense="18"/>
 	<elements>
-	<element earthPercent="100"/>
-	<element physicalPercent="22"/>
-	<element firePercent="20"/>
-	<element energyPercent="13"/>
-	<element deathPercent="10"/>
-	<element icePercent="-10"/>
+		<element earthPercent="100"/>
+		<element physicalPercent="22"/>
+		<element firePercent="20"/>
+		<element energyPercent="13"/>
+		<element deathPercent="10"/>
+		<element icePercent="-10"/>
 	</elements>
 	<immunities>
 		<immunity paralyze="1"/>
 	</immunities>
 	<loot>
-		<item id="2148" countmax="20" chance="100000"/>
-		<item id="2483" chance="10000"/>
-		<item id="5880" chance="2500" countmax="2"/> -- iron ore
-		<item id="1987" chance="100000">
+		<item id="2148" countmax="20" chance="100000"/><!-- gold coin -->
+		<item id="2483" chance="10000"/><!-- scale armor -->
+		<item id="5880" countmax="2" chance="2500"/><!-- iron ore -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="1295" chance="10000"/>
-				<item id="1294" countmax="5" chance="20000"/>
-				<item id="2395" chance="2500"/>
-				<item id="2050" chance="20000"/>
-				<item id="2580" chance="5000"/>
+				<item id="1295" chance="10000"/><!-- stone -->
+				<item id="1294" countmax="5" chance="20000"/><!-- small stone -->
+				<item id="2395" chance="2500"/><!-- carlin sword -->
+				<item id="2050" chance="20000"/><!-- torch -->
+				<item id="2580" chance="5000"/><!-- fishing rod -->
 			</inside>
 		</item>
 	</loot>

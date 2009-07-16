@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="spectre" nameDescription="a spectre" race="undead" experience="2100" speed="250" manacost="0">
+<monster name="Spectre" nameDescription="a spectre" race="undead" experience="2100" speed="250" manacost="0">
 	<health now="1350" max="1350"/>
 	<look type="235" head="20" corpse="6348"/>
 	<targetchange interval="5000" chance="8"/>
@@ -28,7 +28,7 @@
 		</attack>
 		<attack name="manadrain" interval="3000" chance="25" range="7" min="-10" max="-400">
 			<attribute key="areaEffect" value="redshimmer"/>
-	</attack>
+		</attack>
 	</attacks>
 	<defenses armor="25" defense="20">
 		<defense name="healing" interval="1000" chance="50" min="75" max="125">
@@ -36,12 +36,12 @@
 		</defense>
 	</defenses>
 	<elements>
-	<element earthPercent="100"/>
-	<element deathPercent="100"/>
-	<element physicalPercent="60"/>
-	<element icePercent="55"/>
-	<element firePercent="-23"/>
-	<element energyPercent="-20"/>
+		<element earthPercent="100"/>
+		<element deathPercent="100"/>
+		<element physicalPercent="60"/>
+		<element icePercent="55"/>
+		<element firePercent="-23"/>
+		<element energyPercent="-20"/>
 	</elements>
 	<immunities>
 		<immunity paralyze="1"/>
@@ -51,25 +51,25 @@
 		<voice sentence="Revenge ... is so ... sweet!"/>
 		<voice sentence="Life...force! Feed me your... lifeforce!"/>
 	</voices>
-<loot>
-<item id="2148" chance="100000" countmax="100"/> -- gold coin
-<item id="2148" chance="100000" countmax="100"/> -- gold coin
-<item id="2148" chance="100000" countmax="100"/> -- gold coin
-<item id="2152" chance="33333" countmax="3"/> -- platinum coin
-<item id="2260" chance="6667"/> -- blank rune
-<item id="2260" chance="3333"/> -- blank rune
-<item id="5909" chance="2222" countmax="1"/> -- white piece of cloth
-<item id="2134" chance="2857"/> -- silver brooch
-<item id="2642" chance="5000"/> -- sandals
-<item id="2071" chance="1818"/> -- lyre
-<item id="1987" chance="100000"> -- bag
-<inside>
-	<item id="2189" chance="1333"/> -- wand of cosmic energy
-	<item id="6500" chance="2857" countmax="1"/> -- demonic essence
-	<item id="5944" chance="1429" countmax="1"/> -- soul orb
-	<item id="6300" chance="1000"/> -- death ring
-	<item id="2136" chance="909"/> -- demonbone amulet
-</inside>
-</item>
-</loot>
+	<loot>
+		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
+		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
+		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
+		<item id="2152" countmax="3" chance="33333"/><!-- platinum coin -->
+		<item id="2260" chance="6667"/><!-- blank rune -->
+		<item id="2260" chance="3333"/><!-- blank rune -->
+		<item id="5909" countmax="1" chance="2222"/><!-- white piece of cloth -->
+		<item id="2134" chance="2857"/><!-- silver brooch -->
+		<item id="2642" chance="5000"/><!-- sandals -->
+		<item id="2071" chance="1818"/><!-- lyre -->
+		<item id="1987" chance="100000"><!-- bag -->
+			<inside>
+				<item id="2189" chance="1333"/><!-- wand of cosmic energy -->
+				<item id="6500" countmax="1" chance="2857"/><!-- demonic essence -->
+				<item id="5944" countmax="1" chance="1429"/><!-- soul orb -->
+				<item id="6300" chance="1000"/><!-- death ring -->
+				<item id="2136" chance="909"/><!--demonbone amulet -->
+			</inside>
+		</item>
+	</loot>
 </monster>

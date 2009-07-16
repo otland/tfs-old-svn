@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="dark apprentice" nameDescription="a dark apprentice" race="blood" experience="100" speed="220" manacost="0">
+<monster name="Dark Apprentice" nameDescription="a dark apprentice" race="blood" experience="100" speed="220" manacost="0">
 	<health now="225" max="225"/>
 	<look type="134" head="78" body="88" legs="0" feet="88" addons="1" corpse="6080"/>
 	<targetchange interval="5000" chance="30"/>
 	<strategy attack="100" defense="0"/>
-	 <flags>
+	<flags>
 		<flag summonable="0"/>
 		<flag attackable="1"/>
 		<flag hostile="1"/>
@@ -30,7 +30,7 @@
 		<defense name="healing" interval="1000" chance="25" min="60" max="100">
 			<attribute key="areaEffect" value="blueshimmer"/>
 		</defense>
-		<defense name="invisible" interval="5000" chance="50" duration="5000"> --each 7 sec invi duration 5 sec
+		<defense name="invisible" interval="5000" chance="50" duration="5000">
 			<attribute key="areaEffect" value="redshimmer"/>
 		</defense>
 	</defenses>
@@ -44,13 +44,13 @@
 		<voice sentence="Outch!"/>
 		<voice sentence="Oops, I did it again."/>
 		<voice sentence="From the spirits that I called Sir, deliver me!"/>
-	<voice sentence="I must dispose of my masters enemies!"/>
+		<voice sentence="I must dispose of my masters enemies!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="100" chance="100000"/>
-		<item id="2260" chance="400"/>
-		<item id="7620" chance="400"/>
-		<item id="6079" chance="400"/>
-		<item id="2188" chance="100"/>
+		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
+		<item id="2260" chance="400"/><!-- blank rune -->
+		<item id="7620" chance="400"/><!-- mana potion -->
+		<item id="6079" chance="400"/><!-- dead frog -->
+		<item id="2188" chance="100"/><!-- wand of decay -->
 	</loot>
 </monster>

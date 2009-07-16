@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-	<monster name="Chakoya Toolshaper" tp="1" nameDescription="a Chakoya Toolshaper" race="blood" experience="40" speed="270" manacost="0">
+	<monster name="chakoya toolshaper" nameDescription="a chakoya toolshaper" race="blood" experience="40" speed="270" manacost="0">
 	<health now="80" max="80"/>
-	<look type="259" head="0" body="0" legs="0" feet="0" corpse="7320"/>
+	<look type="259" corpse="7320"/>
 	<targetchange interval="60000" chance="0"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -20,9 +20,9 @@
 	</flags>
 	<attacks>
 		<attack name="melee" interval="2000" min="-0" max="-35"/>
-	<attack name="physical" interval="1000" chance="34" range="7" radius="3" target="1" min="-5" max="-15">
-		<attribute key="shootEffect" value="snowball"/>
-	</attack>
+		<attack name="physical" interval="1000" chance="34" range="7" radius="3" target="1" min="-5" max="-15">
+			<attribute key="shootEffect" value="snowball"/>
+		</attack>
 	</attacks>
 	<defenses armor="30" defense="30"/>
 	<elements>
@@ -40,7 +40,7 @@
 	</voices>
 	<loot>
 		<item id="2667" countmax="2" chance="20000"/>
-		<item id="2148" countmax="20" chance="20000"/>
+		<item id="2148" countmax="20" chance="20000"/><!-- gold coin -->
 		<item id="2553" chance="2000"/>
 	</loot>
 </monster>

@@ -22,7 +22,7 @@
 		<attack name="lifedrain" interval="2000" chance="20" range="1" min="-0" max="-150">
 			<attribute key="areaEffect" value="redshimmer"/>
 		</attack>
-			<attack name="physical" interval="2000" chance="8" range="7" min="-0" max="-150">
+		<attack name="physical" interval="2000" chance="8" range="7" min="-0" max="-150">
 			<attribute key="shootEffect" value="suddendeath"/>
 			<attribute key="areaEffect" value="mortarea"/>
 		</attack>
@@ -49,18 +49,18 @@
 		<voice sentence="Enjoy the pain - I know you love it."/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="84" chance="100000"/> <!-- gps -->
-		<item id="7588" chance="8000"/> <!-- strong health potion -->
-		<item id="7589" chance="8000"/> <!-- strong mana potion -->
-		<item id="2145" chance="6000"/> <!-- small diamond -->
-		<item id="2127" chance="5000"/> <!-- esmerald blange -->
-		<item id="1987" chance="100000">
+		<item id="2148" countmax="84" chance="100000"/><!-- gold coin -->
+		<item id="7588" chance="8000"/><!-- strong health potion -->
+		<item id="7589" chance="8000"/><!-- strong mana potion -->
+		<item id="2145" chance="6000"/><!-- small diamond -->
+		<item id="2127" chance="5000"/><!-- esmerald blange -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2186" chance="2000"/> <!-- moonlight rod -->
-				<item id="9837" chance="2000"/> <!-- velvet tapestry -->
-				<item id="5670" chance="1200"/> <!-- voodo skull -->
-				<item id="9808" chance="1200"/> <!-- rusty armor -->
-				<item id="2195" chance="300"/> <!-- boots of haste -->
+				<item id="2186" chance="2000"/><!-- moonlight rod -->
+				<item id="9837" chance="2000"/><!-- velvet tapestry -->
+				<item id="5670" chance="1200"/><!-- voodo skull -->
+				<item id="9808" chance="1200"/><!-- rusty armor -->
+				<item id="2195" chance="300"/><!-- boots of haste -->
 			</inside>
 		</item>
 	</loot>

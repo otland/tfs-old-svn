@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="phantasm" nameDescription="a phantasm" race="undead" experience="3300" speed="280" manacost="0">
+<monster name="Phantasm" nameDescription="a phantasm" race="undead" experience="3300" speed="280" manacost="0">
 	<health now="3950" max="3950"/>
 	<look type="241" head="20" corpse="6344"/>
 	<targetchange interval="5000" chance="8"/>
@@ -28,7 +28,7 @@
 		</attack>
 		<attack name="manadrain" interval="3000" chance="25" range="7" min="-100" max="-300">
 			<attribute key="areaEffect" value="redshimmer"/>
-	</attack>
+		</attack>
 	</attacks>
 	<defenses armor="25" defense="20">
 		<defense name="healing" interval="1000" chance="50" min="75" max="125">
@@ -36,13 +36,13 @@
 		</defense>
 	</defenses>
 	<elements>
-	<element deathPercent="100"/>
-	<element physicalPercent="100"/>
-	<element earthPercent="70"/>
-	<element icePercent="70"/>
-	<element holyPercent="-25"/>
-	<element firePercent="-24"/>
-	<element icePercent="-22"/>
+		<element deathPercent="100"/>
+		<element physicalPercent="100"/>
+		<element earthPercent="70"/>
+		<element icePercent="70"/>
+		<element holyPercent="-25"/>
+		<element firePercent="-24"/>
+		<element icePercent="-22"/>
 	</elements>
 	<immunities>
 		<immunity paralyze="1"/>
@@ -54,8 +54,7 @@
 		<voice sentence="Its nothing but a dream!"/>
 		<voice sentence="Give in!"/>
 	</voices>
-
 	<loot>
-		<item id="2148" countmax="20" chance="100000"/>
- </loot>
+		<item id="2148" countmax="20" chance="100000"/><!-- gold coin -->
+	</loot>
 </monster>

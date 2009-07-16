@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="zugurosh" nameDescription="zugurosh" race="fire" experience="10000" speed="340" manacost="0">
+<monster name="Zugurosh" nameDescription="zugurosh" race="fire" experience="10000" speed="340" manacost="0">
 	<health now="95000" max="95000"/>
 	<look type="12" head="2" body="35" legs="57" feet="91" corpse="6068"/>
 	<targetchange interval="5000" chance="15"/>
@@ -57,24 +57,24 @@
 		<voice sentence="I sense your strength fading!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="100" chance="100000"/>
-		<item id="2148" countmax="50" chance="100000"/>
-		<item id="6300" chance="7777"/> --death ring
-		<item id="2195" chance="4444" /> -- Boh
-		<item id="2393" chance="3000"/> -- Giant sword
-		<item id="2432" chance="5555"/> -- Fire Axe
-		<item id="2402" chance="10000"/> --Silver dagger
-		<item id="2477" chance="6666" /> --Knight legs
-		<item id="1987" chance="100000">
-		<inside>
-			<item id="2151" countmax="11" chance="6000"/>
-			<item id="2462" chance="9700"/>
-			<item id="2149" countmax="3" chance="1428"/>
-			<item id="2171" chance="2333"/>
-			<item id="2158" chance="4444"/> --Blue gem
-			<item id="2470" chance="6500"/> --Golden legs
-			<item id="2520" chance="9999"/> --Demon shield
-		</inside>
+		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
+		<item id="2148" countmax="50" chance="100000"/><!-- gold coin -->
+		<item id="6300" chance="7777"/><!-- death ring -->
+		<item id="2195" chance="4444"/><!-- boots of haste -->
+		<item id="2393" chance="3000"/><!-- giant sword -->
+		<item id="2432" chance="5555"/><!-- fire axe -->
+		<item id="2402" chance="10000"/><!-- silver dagger -->
+		<item id="2477" chance="6666"/><!-- knight legs -->
+		<item id="1987" chance="100000"><!-- bag -->
+			<inside>
+				<item id="2151" countmax="11" chance="6000"/>
+				<item id="2462" chance="9700"/>
+				<item id="2149" countmax="3" chance="1428"/>
+				<item id="2171" chance="2333"/>
+				<item id="2158" chance="4444"/><!-- blue gem -->
+				<item id="2470" chance="6500"/><!-- golden legs -->
+				<item id="2520" chance="9999"/><!-- demon shield -->
+			</inside>
 		</item>
 	</loot>
 </monster>

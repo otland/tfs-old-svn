@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <monster name="Fallen Mooh'tah Master Ghar" nameDescription="fallen mooh'tah master ghar" race="blood" experience="4400" speed="190">
 	<health now="8000" max="8000"/>
-	<look type="29" head="20" body="30" legs="40" feet="50" corpse="7349"/>
+	<look type="29" corpse="7349"/>
 	<targetchange interval="2000" chance="5"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -9,7 +9,6 @@
 		<flag canpushitems="1"/>
 		<flag staticattack="78"/>
 	</flags>
-
 	<attacks>
 		<attack name="melee" interval="2000" min="-200" max="-460"/>
 		<attack name="fire" interval="6000" chance="30" min="-80" max="-300" length="8" spread="3">
@@ -30,8 +29,6 @@
 		</attack>
 	</attacks>
 	<defenses armor="30" defense="33"/>
-	<elements>
-	</elements>
 	<immunities>
 		<immunity invisible="1"/>
 	</immunities>

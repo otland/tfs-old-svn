@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<monster name="black sheep" namedescription="a black sheep" race="blood" experience="0" speed="200" manacost="250">
+<monster name="Black Sheep" namedescription="a black sheep" race="blood" experience="0" speed="200" manacost="250">
 	<health now="20" max="20"/>
-	<look type="13" head="20" body="30" legs="40" feet="50" corpse="5994"/>
+	<look type="13" corpse="5994"/>
 	<targetchange interval="2000" chance="20"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -36,7 +36,7 @@
 		<voice sentence="Maeh"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/>
-		<item id="2666" countmax="5" chance="100000"/>
+		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
+		<item id="2666" countmax="5" chance="100000"/><!-- meat -->
 	</loot>
 </monster>

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="elf scout" nameDescription="a elf scout" race="blood" experience="75" speed="225" manacost="360">
+<monster name="Elf Scout" nameDescription="a elf scout" race="blood" experience="75" speed="225" manacost="360">
 	<health now="160" max="160"/>
-	<look type="64" head="20" body="30" legs="40" feet="50" corpse="6012"/>
+	<look type="64" corpse="6012"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -25,8 +25,8 @@
 	</attacks>
 	<defenses armor="7" defense="18"/>
 	<elements>
-	<element holyPercent="30"/>
-	<element deathPercent="-10"/>
+		<element holyPercent="30"/>
+		<element deathPercent="-10"/>
 	</elements>
 	<immunities>
 		<immunity invisible="1"/>
@@ -39,18 +39,18 @@
 		<voice sentence="Your existence will end here!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/>
-		<item id="2148" countmax="10" chance="100000"/>
-		<item id="2544" countmax="10" chance="50000"/>
-		<item id="2484" chance="10000"/>
-		<item id="2456" chance="10000"/>
-		<item id="2681" chance="20000"/>
-		<item id="1987" chance="6666">
+		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
+		<item id="2148" countmax="10" chance="100000"/><!-- gold coin -->
+		<item id="2544" countmax="10" chance="50000"/><!-- arrow -->
+		<item id="2484" chance="10000"/><!-- studded armor -->
+		<item id="2456" chance="10000"/><!-- bow -->
+		<item id="2681" chance="20000"/><!-- grapes -->
+		<item id="1987" chance="6666"><!-- bag -->
 			<inside>
-				<item id="2148" countmax="5" chance="80000"/>
-				<item id="2642" chance="5500"/>
-				<item id="2397" chance="4000"/>
-				<item id="5921" countmax="1" chance="5000"/>
+				<item id="2148" countmax="5" chance="80000"/><!-- gold coin -->
+				<item id="2642" chance="5500"/><!-- sandals -->
+				<item id="2397" chance="4000"/><!-- longsword -->
+				<item id="5921" countmax="1" chance="5000"/><!-- heaven blossom -->
 			</inside>
 		</item>
 	</loot>

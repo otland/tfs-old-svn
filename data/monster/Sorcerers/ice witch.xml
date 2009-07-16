@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <monster name="Ice Witch" nameDescription="an ice witch" race="blood" experience="580" speed="188" manacost="0">
-	<health now="540" max="540"/>
+	<health now="650" max="650"/>
 	<look type="149" head="0" body="47" legs="105" feet="105" addons="0" corpse="6081"/>
 	<targetchange interval="2000" chance="5"/>
 	<strategy attack="100" defense="0"/>
@@ -21,8 +21,8 @@
 	<attacks>
 		<attack name="melee" interval="2000" skill="45" attack="30"/>
 		<attack name="outfit" interval="1000" chance="10" range="7" item="7172" duration="8000">
-			 <attribute key="areaEffect" value="blueshimmer"/>
-		 </attack>
+			<attribute key="areaEffect" value="blueshimmer"/>
+		</attack>
 		<attack name="lifedrain" interval="2000" chance="13" length="8" spread="3" min="-60" max="-120">
 			<attribute key="areaEffect" value="poff"/>
 		</attack>
@@ -39,12 +39,12 @@
 		</defense>
 	</defenses>
 	<elements>
-	<element icePercent="100"/>
-	<element firePercent="50"/>
-	<element earthPercent="40"/>
-	<element holyPercent="26"/>
-	<element energyPercent="-10"/>
-	<element deathPercent="-10"/>
+		<element icePercent="100"/>
+		<element firePercent="50"/>
+		<element earthPercent="40"/>
+		<element holyPercent="26"/>
+		<element energyPercent="-10"/>
+		<element deathPercent="-10"/>
 	</elements>
 	<immunities>
 		<immunity paralyze="1"/>
@@ -56,16 +56,16 @@
 		<voice sentence="Freeze!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="80" chance="100000"/> --Gold Coins
-		<item id="7449" chance="1222"/> --Crystal Sword
-		<item id="7441" chance="5555"/> --Ice Cube
-		<item id="7387" chance="1444"/> --Diamond Sceptre
-		<item id="1987" chance="100000"> --Bag
+		<item id="2148" countmax="80" chance="100000"/><!-- gold coin -->
+		<item id="7449" chance="1222"/><!-- crystal sword -->
+		<item id="7441" chance="5555"/><!-- ice cube -->
+		<item id="7387" chance="1444"/><!-- diamond sceptre -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2423" chance="3333"/> --Clerical Mace
-				<item id="2796" countmax="1" chance="9999"/> --Green Mushrooms
-				<item id="2663" chance="1111"/> --Mystic Turban
-				<item id="7459" chance="1000"/> --Ear Muffs
+				<item id="2423" chance="3333"/><!-- clerical mace -->
+				<item id="2796" countmax="1" chance="9999"/><!-- green mushroom -->
+				<item id="2663" chance="1111"/><!-- mystic turban -->
+				<item id="7459" chance="1000"/><!-- ear muffs -->
 			</inside>
 		</item>
 	</loot>

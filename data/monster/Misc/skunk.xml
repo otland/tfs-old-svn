@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="skunk" nameDescription="a skunk" race="blood" experience="3" speed="120" manacost="200">
+<monster name="Skunk" nameDescription="a skunk" race="blood" experience="3" speed="120" manacost="200">
 	<health now="20" max="20"/>
-	<look type="106" head="20" body="30" legs="40" feet="50" corpse="6035"/>
+	<look type="106" corpse="6035"/>
 	<targetchange interval="2000" chance="0"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -24,19 +24,8 @@
 		</attack>
 	</attacks>
 	<defenses armor="1" defense="5"/>
-	<immunities>
-		<immunity physical="0"/>
-		<immunity energy="0"/>
-		<immunity fire="0"/>
-		<immunity poison="1"/>
-		<immunity lifedrain="0"/>
-		<immunity paralyze="0"/>
-		<immunity outfit="0"/>
-		<immunity drunk="0"/>
-		<immunity invisible="0"/>
-	</immunities>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/>
-		<item id="2671" countmax="1" chance="50000" chancemax="1"/>
+		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
+		<item id="2671" chance="50000"/><!-- ham -->
 	</loot>
 </monster>

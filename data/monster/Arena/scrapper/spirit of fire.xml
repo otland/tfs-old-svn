@@ -19,7 +19,6 @@
 	</flags>
 	<attacks>
 		<attack name="melee" interval="2000" min="-100" max="-330"/>
-
 		<attack name="firefield" interval="1000" chance="15" range="7" radius="4" target="1">
 			<attribute key="shootEffect" value="fire"/>
 		</attack>
@@ -27,17 +26,16 @@
 			<attribute key="shootEffect" value="fire"/>
 		</attack>
 	</attacks>
-	<defenses armor="25" defense="25">
-	</defenses>
+	<defenses armor="25" defense="25"/>
 	<elements>
-	<element firePercent="100"/>
-	<element energyPercent="20"/>
-	<element icePercent="-13"/>
+		<element firePercent="100"/>
+		<element energyPercent="20"/>
+		<element icePercent="-13"/>
 	</elements>
 	<immunities>
 		<immunity invisible="1"/>
 	</immunities>
 	<voices interval="5000" chance="6">
-	<voice sentence="Feel the heat."/>
+		<voice sentence="Feel the heat."/>
 	</voices>
 </monster>

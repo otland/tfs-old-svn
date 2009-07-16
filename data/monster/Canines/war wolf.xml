@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <monster name="war wolf" nameDescription="a war wolf" race="blood" experience="55" speed="200" manacost="0">
 	<health now="140" max="140"/>
-	<look type="3" head="20" body="30" legs="40" feet="50" corpse="6009"/>
+	<look type="3" corpse="6009"/>
 	<targetchange interval="2000" chance="0"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -22,10 +22,10 @@
 	</attacks>
 	<defenses armor="10" defense="16"/>
 	<elements>
-	<element earthPercent="20"/>
-	<element holyPercent="10"/>
-	<element icePercent="-10"/>
-	<element deathPercent="-5"/>
+		<element earthPercent="20"/>
+		<element holyPercent="10"/>
+		<element icePercent="-10"/>
+		<element deathPercent="-5"/>
 	</elements>
 	<voices interval="5000" chance="10">
 		<voice sentence="Grrrrrrr"/>

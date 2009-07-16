@@ -19,16 +19,16 @@
 	<attacks>
 		<attack name="melee" interval="2000" max="-15"/>
 		<attack name="drunk" interval="5000" chance="15" duration="10000">
-		<attribute key="shootEffect" value="poison"/>
-		<attriubte key="shootEffect" value="poison"/>
+			<attribute key="shootEffect" value="poison"/>
+			<attriubte key="shootEffect" value="poison"/>
 		</attack>
 		<attack name="physical" interval="1000" chance="9" range="6" min="-15" max="-25">
-		<attribute key="shootEffect" value="throwingknife"/>
+			<attribute key="shootEffect" value="throwingknife"/>
 		</attack>
 	</attacks>
 	<defenses armor="1">
 		<defense name="invisible" interval="7500" chance="10" duration="5000">
-		<attribute key="areaEffect" value="blueshimmer"/>
+			<attribute key="areaEffect" value="blueshimmer"/>
 		</defense>
 	</defenses>
 	<elements>
@@ -41,19 +41,19 @@
 		<voice sentence="Goblin Powahhh!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="9" chance="100000"/>
-		<item id="2667" countmax="1" chance="20000"/>
-		<item id="2235" chance="10000"/>
-		<item id="2461" chance="10000"/>
-		<item id="2230" chance="10000"/>
-		<item id="1987" chance="100000">
-		<inside>
-			<item id="1294" countmax="3" chance="20000"/>
-			<item id="2449" chance="10000"/>
-			<item id="2406" chance="10000"/>
-			<item id="2559" chance="10000"/>
-			<item id="2379" chance="10000"/>
-		</inside>
+		<item id="2148" countmax="9" chance="100000"/><!-- gold coin -->
+		<item id="2667" countmax="1" chance="20000"/><!-- fish -->
+		<item id="2235" chance="10000"/><!-- moldy cheese -->
+		<item id="2461" chance="10000"/><!-- leather helmet -->
+		<item id="2230" chance="10000"/><!-- bone -->
+		<item id="1987" chance="100000"><!-- bag -->
+			<inside>
+				<item id="1294" countmax="3" chance="20000"/><!-- small stone -->
+				<item id="2449" chance="10000"/><!-- bone club -->
+				<item id="2406" chance="10000"/><!-- short sword -->
+				<item id="2559" chance="10000"/><!-- small axe -->
+				<item id="2379" chance="10000"/><!-- dagger -->
+			</inside>
 		</item>
 	</loot>
 </monster>

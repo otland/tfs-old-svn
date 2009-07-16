@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="rat" nameDescription="a rat" race="blood" experience="5" speed="134" manacost="200">
+<monster name="Rat" nameDescription="a rat" race="blood" experience="5" speed="134" manacost="200">
 	<health now="20" max="20"/>
-	<look type="21" head="20" body="30" legs="40" feet="50" corpse="5964"/>
+	<look type="21" corpse="5964"/>
 	<targetchange interval="2000" chance="0"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -31,8 +31,8 @@
 		<voice sentence="Meep!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/>
-		<item id="2148" countmax="7" chance="80000"/>
-		<item id="2696" chance="20000"/>
+		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
+		<item id="2148" countmax="7" chance="80000"/><!-- gold coin -->
+		<item id="2696" chance="20000"/><!-- cheese -->
 	</loot>
 </monster>

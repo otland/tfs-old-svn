@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="fire elemental" nameDescription="a fire elemental" race="fire" experience="220" speed="200" manacost="690">
+<monster name="Fire Elemental" nameDescription="a fire elemental" race="fire" experience="220" speed="200" manacost="690">
 	<health now="280" max="280"/>
 	<look type="49" corpse="1492"/>
 	<targetchange interval="5000" chance="8"/>
@@ -29,9 +29,9 @@
 	</attacks>
 	<defenses armor="18" defense="20"/>
 	<elements>
-	<element firePercent="100"/>
-	<element deathPercent="100"/>
-	<element icePercent="-25"/>
+		<element firePercent="100"/>
+		<element deathPercent="100"/>
+		<element icePercent="-25"/>
 	</elements>
 	<immunities>
 		<immunity paralyze="1"/>

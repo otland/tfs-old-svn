@@ -56,7 +56,7 @@
 		<immunity invisible="1"/>
 	</immunities>
 	<summons maxSummons="1">
-		<summon name="fire elemental" interval="1000" chance="13" />
+		<summon name="fire elemental" interval="1000" chance="13"/>
 	</summons>
 	<voices interval="5000" chance="10">
 		<voice sentence="Nothing will remain but your scorched bones!"/>
@@ -65,25 +65,25 @@
 		<voice sentence="Feel the heat of battle!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="70" chance="100000"/> <!-- gps -->
-		<item id="2148" countmax="44" chance="100000"/> <!-- gps -->
-		<item id="8840" countmax="5" chance="100000"/> <!-- raspberry -->
-		<item id="9971" chance="3500"/> <!-- gold ingot -->
-		<item id="7590" chance="13500"/> <!-- gmp -->
-		<item id="7591" chance="12500"/> <!-- ghp -->
-		<item id="7891" chance="1500"/> <!-- magma boots -->
-		<item id="2195" chance="800"/> <!-- boh -->
-		<item id="5904" chance="2200"/> <!-- magic sulphur -->
-		<item id="1987" chance="100000"> <!-- bag -->
+		<item id="2148" countmax="70" chance="100000"/><!-- gold coin -->
+		<item id="2148" countmax="44" chance="100000"/><!-- gold coin -->
+		<item id="8840" countmax="5" chance="100000"/><!-- raspberry -->
+		<item id="9971" chance="3500"/><!-- gold ingot -->
+		<item id="7590" chance="13500"/><!-- great mana potion -->
+		<item id="7591" chance="12500"/><!-- great health potion -->
+		<item id="7891" chance="1500"/><!-- magma boots -->
+		<item id="2195" chance="800"/><!-- boots of haste -->
+		<item id="5904" chance="2200"/><!-- magic sulphur -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="7760" countmax="1" chance="9500"/> <!-- small enchanted ruby -->
-				<item id="9980" chance="1300"/> <!-- crystal of power -->
-				<item id="2167" chance="14500"/> <!-- energy ring -->				
-				<item id="2114" chance="1100"/> <!-- piggy bank -->
-				<item id="7410" chance="600"/> <!-- queens sceptre -->
-				<item id="9969" chance="400"/> <!-- black skull -->
-				<item id="2436" chance="5000"/> <!-- skull staff -->
-				<item id="8902" chance="1300"/> <!-- spellbook of mind control -->
+				<item id="7760" countmax="1" chance="9500"/><!-- small enchanted ruby -->
+				<item id="9980" chance="1300"/><!-- crystal of power -->
+				<item id="2167" chance="14500"/><!-- energy ring -->
+				<item id="2114" chance="1100"/><!-- piggy bank -->
+				<item id="7410" chance="600"/><!-- queens sceptre -->
+				<item id="9969" chance="400"/><!-- black skull -->
+				<item id="2436" chance="5000"/><!-- skull staff -->
+				<item id="8902" chance="1300"/><!-- spellbook of mind control -->
 			</inside>
 		</item>
 	</loot>

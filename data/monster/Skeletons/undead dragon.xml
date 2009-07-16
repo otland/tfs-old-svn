@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="undead dragon" nameDescription="a undead dragon" race="undead" experience="7200" speed="300" manacost="0">
+<monster name="Undead Dragon" nameDescription="a undead dragon" race="undead" experience="7200" speed="300" manacost="0">
 	<health now="8350" max="8350"/>
 	<look type="231" corpse="6306"/>
 	<targetchange interval="5000" chance="8"/>
@@ -48,15 +48,14 @@
 			<attribute key="areaEffect" value="poff"/>
 		</attack>
 	</attacks>
-	<defenses armor="5" defense="35">
-	</defenses>
+	<defenses armor="5" defense="35"/>
 	<elements>
-	<element deathPercent="100"/>
-	<element earthPercent="100"/>
-	<element firePercent="100"/>
-	<element physicalPercent="10"/>
-	<element icePercent="8"/>
-	<element holyPercent="-20"/>
+		<element deathPercent="100"/>
+		<element earthPercent="100"/>
+		<element firePercent="100"/>
+		<element physicalPercent="10"/>
+		<element icePercent="8"/>
+		<element holyPercent="-20"/>
 	</elements>
 	<immunities>
 		<immunity paralyze="1"/>
@@ -64,25 +63,25 @@
 	</immunities>
 	<voices interval="5000" chance="10">
 		<voice sentence="FEEEED MY ETERNAL HUNGER!" yell="1"/>
-	<voice sentence="I SENSE LIFE" yell="1"/>
+		<voice sentence="I SENSE LIFE" yell="1"/>
 	</voices>
-<loot>
-<item id="2148" chance="100000" countmax="100"/> -- gold coin
-<item id="2152" chance="25000" countmax="3"/> -- platinum coin
-<item id="2236" chance="15000"/> -- torn book
-<item id="2413" chance="20000"/> -- broad sword
-<item id="2413" chance="3000"/> -- golden armor
-<item id="2413" chance="8000"/> -- knight armor
-<item id="2413" chance="800"/> -- dragon scale mail
-<item id="2413" chance="1000"/> -- war axe
-<item id="2413" chance="4000"/> -- underworld rod
-<item id="1987" chance="100000"> -- bag
-<inside>
-	<item id="6500" chance="1818" countmax="1"/> -- demonic essence
-	<item id="5944" chance="1538" countmax="1"/> -- soul orb
-	<item id="2413" chance="4000"/> -- hardened bone
-	<item id="2547" chance="4000" countmax="15"/> -- power bolt
-</inside>
-</item>
-</loot>
+	<loot>
+		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
+		<item id="2152" countmax="3" chance="25000"/><!-- platinum coin -->
+		<item id="2236" chance="15000"/><!-- torn book -->
+		<item id="2413" chance="20000"/><!-- broad sword -->
+		<item id="2413" chance="3000"/><!-- golden armor -->
+		<item id="2413" chance="8000"/><!-- knight armor -->
+		<item id="2413" chance="800"/><!-- dragon scale mail -->
+		<item id="2413" chance="1000"/><!-- war axe -->
+		<item id="2413" chance="4000"/><!-- underworld rod -->
+		<item id="1987" chance="100000"><!-- bag -->
+			<inside>
+				<item id="6500" countmax="1" chance="1818"/><!-- demonic essence -->
+				<item id="5944" countmax="1" chance="1538"/><!-- soul orb -->
+				<item id="2413" chance="4000"/><!-- hardened bone -->
+				<item id="2547" countmax="15" chance="4000"/><!-- power bolt -->
+			</inside>
+		</item>
+	</loot>
 </monster>

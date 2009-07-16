@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <monster name="necropharus" nameDescription="Necropharus" race="blood" experience="700" speed="240" manacost="0">
 	<health now="750" max="750"/>
-	<look type="209" head="20" body="30" legs="40" feet="50" corpse="6080"/>
+	<look type="209" corpse="6080"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -63,10 +63,10 @@
 		<item id="2186" chance="500"/>
 		<item id="1987" chance="100000">
 			<inside>
-			 <item id="2483" countmax="1" chance="8500"/>
-			 <item id="2796" countmax="1" chance="22500"/>
-			 <item id="2231" countmax="1" chance="6000"/>
-			 <item id="2230" countmax="1" chance="30000"/>
+				<item id="2483" countmax="1" chance="8500"/>
+				<item id="2796" countmax="1" chance="22500"/>
+				<item id="2231" countmax="1" chance="6000"/>
+				<item id="2230" countmax="1" chance="30000"/>
 				<item id="2449" countmax="1" chance="19900"/>
 				<item id="2541" chance="7500"/>
 				<item id="2412" chance="10000"/>

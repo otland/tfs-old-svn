@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="cave rat" nameDescription="a cave rat" race="blood" experience="10" speed="150" manacost="250">
+<monster name="Cave Rat" nameDescription="a cave rat" race="blood" experience="10" speed="150" manacost="250">
 	<health now="30" max="30"/>
-	<look type="56" head="20" body="30" legs="40" feet="50" corpse="5964"/>
+	<look type="56" corpse="5964"/>
 	<targetchange interval="2000" chance="0"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -22,15 +22,15 @@
 	</attacks>
 	<defenses armor="1" defense="3"/>
 	<elements>
-	<element firePercent="-13"/>
+		<element firePercent="-13"/>
 	</elements>
 	<voices interval="5000" chance="10">
 		<voice sentence="Meeeeep!"/>
 		<voice sentence="Meep!"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/>
-		<item id="2148" countmax="6" chance="100000"/>
-		<item id="2696" chance="20000"/>
+		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
+		<item id="2148" countmax="6" chance="100000"/><!-- gold coin -->
+		<item id="2696" chance="20000"/><!-- cheese -->
 	</loot>
 </monster>

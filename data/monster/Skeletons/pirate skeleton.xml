@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="pirate skeleton" nameDescription="a pirate skeleton" race="UNDEAD" experience="85" speed="230" manacost="0">
+<monster name="Pirate Skeleton" nameDescription="a pirate skeleton" race="undead" experience="85" speed="230" manacost="0">
 	<health now="190" max="190"/>
-	<look type="195" head="0" body="0" legs="0" feet="0" corpse="6070"/>
+	<look type="195" corpse="6070"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -17,23 +17,23 @@
 		<flag targetdistance="1"/>
 		<flag runonhealth="20"/>
 	</flags>
-<attacks>
+	<attacks>
 		<attack name="melee" interval="2000" min="-10" max="-80"/>
-</attacks>
+	</attacks>
 	<defenses armor="18" defense="19"/>
 	<elements>
-	<element deathPercent="100"/>
-	<element holyPercent="-20"/>
+		<element deathPercent="100"/>
+		<element holyPercent="-20"/>
 	</elements>
 	<loot>
-		<item id="2148" countmax="25" chance="40000" chancemax="108"/>
-		<item id="2229" countmax="2" chance="9727"/>
-		<item id="2231" chance="4000"/>
-		<item id="6095" chance="5000"/>
-		<item id="5927" chance="100000">
+		<item id="2148" countmax="25" chance="40000"/><!-- gold coin -->
+		<item id="2229" countmax="2" chance="9727"/><!-- skull -->
+		<item id="2231" chance="4000"/><!-- big bone -->
+		<item id="6095" chance="5000"/><!-- pirate shirt -->
+		<item id="5927" chance="100000"><!-- pirate bag -->
 			<inside>
-				<item id="2376" chance="18402"/>
-				<item id="2449" chance="8491"/>
+				<item id="2376" chance="18402"/><!-- sword -->
+				<item id="2449" chance="8491"/><!-- bone club -->
 			</inside>
 		</item>
 	</loot>

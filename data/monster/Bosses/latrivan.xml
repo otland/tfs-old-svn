@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="latrivan" nameDescription="latrivan" race="fire" experience="10000" speed="340" manacost="0">
+<monster name="latrivan" nameDescription="a latrivan" race="fire" experience="10000" speed="340" manacost="0">
 	<health now="40000" max="40000"/>
 	<look type="12" head="120" body="128" legs="121" feet="111" corpse="6068"/>
 	<targetchange interval="5000" chance="8"/>
@@ -36,19 +36,19 @@
 		<voice sentence="I might reward you for killing my brother ~ with a swift dead!" yell="1"/>
 	</voices>
 	<loot>
-		<item id="2148" count="100" chance="100000"/> --Gold
-		<item id="2148" count="50" chance="100000"/> -- Gold
-		<item id="2152" countmax="6" chance="80000" chancemax="10000"/> --Platinum
-		<item id="2144" countmax="28" chance="7777"/> --Black Pearls
-		<item id="7440" chance="17000"/> --Mastermind potion
-		<item id="2514" chance="4500"/> --mastermind shield
-		<item id="2171" chance="12222"/> --P ammy
-		<item id="1987" chance="100000">
-		<inside>
-			<item id="2151" countmax="13" chance="6500"/> --Talons
-			<item id="2470" chance="6555"/> --Golden Legs
-			<item id="2432" chance="8200"/> --Fire Axe
-		</inside>
+		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
+		<item id="2148" countmax="50" chance="100000"/><!-- gold coin -->
+		<item id="2152" countmax="6" chance="80000"/><!-- platinum coin -->
+		<item id="2144" countmax="28" chance="7777"/><!-- black pearl -->
+		<item id="7440" chance="17000"/><!-- mastermind potion -->
+		<item id="2514" chance="4500"/><!-- mastermind shield -->
+		<item id="2171" chance="12222"/><!-- platinum amulet -->
+		<item id="1987" chance="100000"><!-- bag -->
+			<inside>
+				<item id="2151" countmax="13" chance="6500"/><!-- talon -->
+				<item id="2470" chance="6555"/><!-- golden legs -->
+				<item id="2432" chance="8200"/><!-- fire axe -->
+			</inside>
 		</item>
 	</loot>
 </monster>

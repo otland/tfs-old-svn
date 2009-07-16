@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="orc" nameDescription="a orc" race="blood" experience="25" speed="150" manacost="300">
+<monster name="Orc" nameDescription="a orc" race="blood" experience="25" speed="150" manacost="300">
 	<health now="70" max="70"/>
-	<look type="5" head="0" body="0" legs="0" feet="0" corpse="5966"/>
+	<look type="5" corpse="5966"/>
 	<targetchange interval="2000" chance="0"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -22,10 +22,10 @@
 	</attacks>
 	<defenses armor="4" defense="8"/>
 	<elements>
-	<element energyPercent="20"/>
-	<element holyPercent="10"/>
-	<element earthPercent="-20"/>
-	<element deathPercent="-5"/>
+		<element energyPercent="20"/>
+		<element holyPercent="10"/>
+		<element earthPercent="-20"/>
+		<element deathPercent="-5"/>
 	</elements>
 	<voices interval="5000" chance="10">
 		<voice sentence="Grak brrretz!"/>
@@ -33,16 +33,16 @@
 		<voice sentence="Prek tars, dekklep zurk."/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/>
-		<item id="2148" countmax="12" chance="100000"/>
-		<item id="2666" countmax="2" chance="33333"/>
-		<item id="2484" chance="10000"/>
-		<item id="2480" chance="10000"/>
-		<item id="2385" chance="10000"/>
-		<item id="1987" chance="100000">
+		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
+		<item id="2148" countmax="12" chance="100000"/><!-- gold coin -->
+		<item id="2666" countmax="2" chance="33333"/><!-- meat -->
+		<item id="2484" chance="10000"/><!-- studded armor -->
+		<item id="2480" chance="10000"/><!-- legion helmet -->
+		<item id="2385" chance="10000"/><!-- sabre -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2526" chance="10000"/>
-				<item id="2386" chance="10000"/>
+				<item id="2526" chance="10000"/><!-- studded shield -->
+				<item id="2386" chance="10000"/><!-- axe -->
 			</inside>
 		</item>
 	</loot>

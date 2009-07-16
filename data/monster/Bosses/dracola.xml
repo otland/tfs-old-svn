@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
- <monster name="dracola" nameDescription="a dracola" race="undead" experience="7750" speed="410" manacost="0">
+<monster name="dracola" nameDescription="a dracola" race="undead" experience="7750" speed="410" manacost="0">
 	<health now="15850" max="15850"/>
-	<look type="231" head="0" body="0" legs="0" feet="0" corpse="6307"/>
+	<look type="231" corpse="6307"/>
 	<targetchange interval="2000" chance="5"/>
 	<strategy attack="100" defense="0"/>
 	<flags>

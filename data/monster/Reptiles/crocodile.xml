@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="crocodile" nameDescription="a crocodile" race="blood" experience="40" speed="240" manacost="350">
+<monster name="Crocodile" nameDescription="a crocodile" race="blood" experience="40" speed="240" manacost="350">
 	<health now="105" max="105"/>
-	<look type="119" head="20" body="30" legs="40" feet="50" corpse="6046"/>
+	<look type="119" corpse="6046"/>
 	<targetchange interval="5000" chance="8"/>
 	<strategy attack="100" defense="0"/>
 	<flags>
@@ -22,18 +22,18 @@
 	</attacks>
 	<defenses armor="13" defense="5"/>
 	<elements>
-	<element earthPercent="25"/>
-	<element icePercent="18"/>
-	<element energyPercent="-6"/>
-	<element firePercent="-10"/>
-	<element physicalPercent="-14"/>
+		<element earthPercent="25"/>
+		<element icePercent="18"/>
+		<element energyPercent="-6"/>
+		<element firePercent="-10"/>
+		<element physicalPercent="-14"/>
 	</elements>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/>
-		<item id="2148" countmax="100" chance="100000"/>
-		<item id="3982" chance="4000"/>
-		<item id="3982" chance="1333"/>
-		<item id="3983" chance="200"/>
-		<item id="3976" countmax="10" chance="50000"/>
+		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
+		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
+		<item id="3982" chance="4000"/><!-- crocodile boots -->
+		<item id="3982" chance="1333"/><!-- crocodile boots -->
+		<item id="3983" chance="200"/><!-- bast skirt -->
+		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
 	</loot>
 </monster>
