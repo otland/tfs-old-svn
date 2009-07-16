@@ -24,13 +24,13 @@
 		<defense name="healing" interval="1000" chance="25" min="100" max="195">
 			<attribute key="areaEffect" value="blueshimmer"/>
 		</defense>
-			<defense name="outfit" interval="1500" chance="40" monster="Energy Overlord" duration="3000">
+		<defense name="outfit" interval="1500" chance="40" monster="Energy Overlord" duration="3000">
 			<attribute key="areaEffect" value="blueshimmer"/>
 		</defense>
 		<defense name="outfit" interval="1500" chance="40" monster="Fire Overlord" duration="3000">
 			<attribute key="areaEffect" value="blueshimmer"/>
 		</defense>
-			<defense name="outfit" interval="1500" chance="40" monster="Earth Overlord" duration="3000">
+		<defense name="outfit" interval="1500" chance="40" monster="Earth Overlord" duration="3000">
 			<attribute key="areaEffect" value="blueshimmer"/>
 		</defense>
 		<defense name="outfit" interval="1500" chance="40" monster="Ice Overlord" duration="3000">
@@ -56,6 +56,6 @@
 		<summon name="Overcharged Energy Elemental" interval="4000" chance="50"/>
 	</summons>
 	<loot>
-		<item id="2152" countmax="7" chance="40000"/>
+		<item id="2152" countmax="7" chance="40000"/><!-- platinum coin -->
 	</loot>
 </monster>

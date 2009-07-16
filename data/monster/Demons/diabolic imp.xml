@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="diabolic imp" nameDescription="a diabolic imp" race="blood" experience="1950" speed="360" manacost="0">
+<monster name="Diabolic Imp" nameDescription="a diabolic imp" race="blood" experience="1950" speed="360" manacost="0">
 	<health now="1950" max="1950"/>
 	<look type="237" corpse="6364"/>
 	<targetchange interval="5000" chance="8"/>
@@ -51,26 +51,26 @@
 		<immunity invisible="1"/>
 	</immunities>
 	<voices interval="5000" chance="10">
-	<voice sentence="Muahaha!"/>
+		<voice sentence="Muahaha!"/>
 		<voice sentence="He he he!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="79" chance="100000"/>
-		<item id="2050" chance="15000"/>
-		<item id="6558" chance="2222"/>
-		<item id="2260" chance="18000"/>
-		<item id="6300" chance="999"/>
-		<item id="2465" chance="6577"/>
-		<item id="1987" chance="100000">
+		<item id="2148" countmax="79" chance="100000"/><!-- gold coin -->
+		<item id="2050" chance="15000"/><!-- torch -->
+		<item id="6558" chance="2222"/><!-- concentrated demonic blood -->
+		<item id="2260" chance="18000"/><!-- blank rune -->
+		<item id="6300" chance="999"/><!-- death ring -->
+		<item id="2465" chance="6577"/><!-- brass armor -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2548" chance="20000"/>
-				<item id="2465" chance="6577"/>
-				<item id="2185" chance="833"/>
-				<item id="2464" chance="7887"/>
-				<item id="5944" chance="5666"/>
-				<item id="6500" countmax="1" chance="7777"/>
-				<item id="2150" countmax="1" chance="8888"/>
-				<item id="2165" chance="4555"/>
+				<item id="2548" chance="20000"/><!-- pitch fork -->
+				<item id="2465" chance="6577"/><!-- brass armor -->
+				<item id="2185" chance="833"/><!-- necrotic rod -->
+				<item id="2464" chance="7887"/><!-- chain armor -->
+				<item id="5944" chance="5666"/><!-- soul orb -->
+				<item id="6500" countmax="1" chance="7777"/><!-- demonic essence -->
+				<item id="2150" countmax="1" chance="8888"/><!-- small amethyst -->
+				<item id="2165" chance="4555"/><!-- stealth ring -->
 			</inside>
 		</item>
 	</loot>

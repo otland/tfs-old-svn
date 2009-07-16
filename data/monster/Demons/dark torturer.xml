@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="dark torturer" nameDescription="a dark torturer" race="blood" experience="3500" speed="250" manacost="0">
+<monster name="Dark Torturer" nameDescription="a dark torturer" race="blood" experience="3500" speed="250" manacost="0">
 	<health now="7350" max="7350"/>
 	<look type="234" corpse="6328"/>
 	<targetchange interval="5000" chance="8"/>
@@ -47,19 +47,19 @@
 		<voice sentence="IahaEhheAie!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="76" chance="100000"/>
-		<item id="2671" countmax="5" chance="33333"/>
-		<item id="2470" chance="2000"/>
-		<item id="6300" chance="2066"/>
-		<item id="1987" chance="100000">
+		<item id="2148" countmax="76" chance="100000"/><!-- gold coin -->
+		<item id="2671" countmax="5" chance="33333"/><!-- ham -->
+		<item id="2470" chance="2000"/><!-- golden legs -->
+		<item id="6300" chance="2066"/><!-- death ring -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2513" chance="9999"/>
-				<item id="6500" countmax="3" chance="4555"/>
-				<item id="2557" chance="12000"/>
-				<item id="2558" chance="11000"/>
-				<item id="5944" chance="5555"/>
-				<item id="5801" chance="1800"/>
-				<item id="5480" chance="1666"/>
+				<item id="2513" chance="9999"/><!-- battle shield -->
+				<item id="6500" countmax="3" chance="4555"/><!-- demonic essence -->
+				<item id="2557" chance="12000"/><!-- carpenter hammer -->
+				<item id="2558" chance="11000"/><!-- saw -->
+				<item id="5944" chance="5555"/><!-- soul orb -->
+				<item id="5801" chance="1800"/><!-- key ring -->
+				<item id="5480" chance="1666"/><!-- cat's paw -->
 			</inside>
 		</item>
 	</loot>

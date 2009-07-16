@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="mad technomancer" nameDescription="mad technomancer" race="blood" experience="55" speed="200" manacost="0">
+<monster name="Mad Technomancer" nameDescription="mad technomancer" race="blood" experience="55" speed="200" manacost="0">
 	<health now="1000" max="1000"/>
 	<look type="66" corpse="6015"/>
 	<targetchange interval="500" chance="25"/>
@@ -50,6 +50,6 @@
 		<voice sentence="Gentlemen, you can't fight here! This is the War Room!"/>
 	</voices>
 	<loot>
-		<item id="7699" chance="1000000"/>
+		<item id="7699" chance="1000000"/><!-- beard -->
 	</loot>
 </monster>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="fury" nameDescription="a fury" race="blood" experience="4000" speed="460" manacost="0">
+<monster name="Fury" nameDescription="a fury" race="blood" experience="4000" speed="460" manacost="0">
 	<health now="4100" max="4100"/>
 	<look type="149" head="94" body="77" legs="96" feet="0" addons="3" corpse="6081"/>
 	<targetchange interval="5000" chance="8"/>
@@ -54,22 +54,22 @@
 	<voices interval="3000" chance="30">
 		<voice sentence="Ahhhhrrrr!"/>
 		<voice sentence="Waaaaah!"/>
-	<voice sentence="Carnage!"/>
+		<voice sentence="Carnage!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="83" chance="100000"/>
-		<item id="2645" chance="400"/>
-		<item id="6558" countmax="3" chance="5555"/>
-		<item id="2666" countmax="1" chance="25000"/>
-		<item id="6500" countmax="1" chance="2500"/>
-		<item id="5944" chance="8888"/>
-		<item id="1987" chance="100000">
+		<item id="2148" countmax="83" chance="100000"/><!-- gold coin -->
+		<item id="2645" chance="400"/><!-- steel boots -->
+		<item id="6558" countmax="3" chance="5555"/><!-- concentrated demonic blood -->
+		<item id="2666" countmax="1" chance="25000"/><!-- meat -->
+		<item id="6500" countmax="1" chance="2500"/><!-- demonic essence -->
+		<item id="5944" chance="8888"/><!-- soul orb -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2487" chance="600"/>
-				<item id="2181" chance="1333"/>
-				<item id="2143" countmax="1" chance="12000"/>
-				<item id="2156" chance="1900"/>
-				<item id="5911" chance="1800"/>
+				<item id="2487" chance="600"/><!-- crown armor -->
+				<item id="2181" chance="1333"/><!-- terra rod -->
+				<item id="2143" countmax="1" chance="12000"/><!-- white pearl -->
+				<item id="2156" chance="1900"/><!-- red gem -->
+				<item id="5911" chance="1800"/><!-- red piece of cloth -->
 			</inside>
 		</item>
 	</loot>

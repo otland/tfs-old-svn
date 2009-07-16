@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="the count" nameDescription="the count" race="undead" experience="1750" speed="370" manacost="0">
+<monster name="The Count" nameDescription="the count" race="undead" experience="1750" speed="370" manacost="0">
 	<health now="4600" max="4600"/>
 	<look type="287" corpse="8937"/>
 	<targetchange interval="5000" chance="10"/>
@@ -19,9 +19,9 @@
 	</flags>
 	<attacks>
 		<attack name="melee" interval="2000" skill="130" attack="135"/>
-	<attack name="lifedrain" interval="1000" chance="9" target="0" radius="4" min="0" max="-300">
-		<attribute key="areaEffect" value="smallclouds"/>
-	</attack>
+		<attack name="lifedrain" interval="1000" chance="9" target="0" radius="4" min="0" max="-300">
+			<attribute key="areaEffect" value="smallclouds"/>
+		</attack>
 	</attacks>
 	<defenses armor="30" defense="30">
 		<defense name="healing" interval="1000" chance="25" min="100" max="195">
@@ -41,11 +41,11 @@
 		<immunity invisible="1"/>
 	</immunities>
 		<summons maxSummons="1">
-		<summon name="banshee" interval="4000" chance="50"/>
+		<summon name="Banshee" interval="4000" chance="50"/>
 	</summons>
 	<loot>
-		<item id="2148" countmax="98" chance="40000"/>	-- gold coin
-		<item id="8752" chance="100000"/>	-- The ring of the count
-		<item id="2391" chance="2300"/>				-- war hammer
+		<item id="2148" countmax="98" chance="40000"/><!-- gold coin -->
+		<item id="8752" chance="100000"/><!-- the ring of the count -->
+		<item id="2391" chance="2300"/><!-- war hammer -->
 	</loot>
 </monster>

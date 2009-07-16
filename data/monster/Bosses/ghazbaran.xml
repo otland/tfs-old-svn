@@ -19,8 +19,8 @@
 	</flags>
 	<attacks>
 		<attack name="melee" interval="2000" min="-500" max="-2191"/>
-	<attack name="melee" interval="2000" chance="40" range="7" radius="6" target="0" min="-250" max="-500">
-		<attribute key="areaEffect" value="blackspark"/>
+		<attack name="melee" interval="2000" chance="40" range="7" radius="6" target="0" min="-250" max="-500">
+			<attribute key="areaEffect" value="blackspark"/>
 		</attack>
 		<attack name="melee" interval="3000" chance="34" range="7" radius="1" target="1" min="-120" max="-500">
 			<attribute key="shootEffect" value="whirlwindsword"/>
@@ -30,16 +30,16 @@
 			<attribute key="areaEffect" value="mortarea"/>
 		</attack>
 		<attack name="physical" interval="3000" chance="20" range="14" radius="5" target="0" min="-200" max="-480">
-		<attribute key="areaEffect" value="poff"/>
+			<attribute key="areaEffect" value="poff"/>
 		</attack>
 		<attack name="physical" interval="4000" chance="15" range="7" radius="13" target="0" min="-100" max="-650">
-		<attribute key="areaEffect" value="yellowspark"/>
+			<attribute key="areaEffect" value="yellowspark"/>
 		</attack>
 		<attack name="physical" interval="4000" chance="18" radius="14" target="0" min="-200" max="-600">
-		<attribute key="areaEffect" value="bluebubble"/>
+			<attribute key="areaEffect" value="bluebubble"/>
 		</attack>
 		<attack name="melee" interval="3000" chance="15" range="7" radius="4" target="0" min="-200" max="-750">
-		<attribute key="areaEffect" value="energyarea"/>
+			<attribute key="areaEffect" value="energyarea"/>
 		</attack>
 	</attacks>
 	<defenses armor="55" defense="65">
@@ -62,7 +62,7 @@
 		<immunity invisible="1"/>
 	</immunities>
 	<summons maxSummons="3">
-		<summon name="deathslicer" interval="4000" chance="20"/>
+		<summon name="Deathslicer" interval="4000" chance="20"/>
 	</summons>
 	<voices interval="5000" chance="30">
 		<voice sentence="COME HERE AND DIE!"/>
@@ -72,16 +72,16 @@
 		<voice sentence="FLAWLESS VICTORY!"/>
 	</voices>
 	<loot>
-	<item id="2160" chance="100000" countmax="12"/>
-	<item id="2514" chance="18000"/>
-	<item id="6300" chance="12000"/>
-	<item id="5943" chance="7000"/>
-	<item id="2003" chance="100000">
-		<inside>
-		<item id="7431" chance="6000"/>
-		<item id="2393" chance="60000"/>
-		<item id="2195" chance="14033"/>
-		</inside>
-	</item>
+		<item id="2160" countmax="12" chance="100000"/><!-- crystal coin -->
+		<item id="2514" chance="18000"/><!-- mastermind shield -->
+		<item id="6300" chance="12000"/><!-- death ring -->
+		<item id="5943" chance="7000"/><!-- Morgaroth's heart -->
+		<item id="2003" chance="100000"><!-- grey backpack -->
+			<inside>
+				<item id="7431" chance="6000"/><!-- demonbone -->
+				<item id="2393" chance="60000"/><!-- giant sword -->
+				<item id="2195" chance="14033"/><!-- boots of haste -->
+			</inside>
+		</item>
 	</loot>
 </monster>

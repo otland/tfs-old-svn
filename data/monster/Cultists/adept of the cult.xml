@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="adept of the cult" nameDescription="an adept of the cult" race="blood" experience="400" speed="210" manacost="0">
+<monster name="Adept of the Cult" nameDescription="an adept of the cult" race="blood" experience="400" speed="210" manacost="0">
 	<health now="430" max="430"/>
 	<look type="194" head="114" body="94" legs="94" feet="57" corpse="6080"/>
 	<targetchange interval="5000" chance="8"/>
@@ -48,20 +48,20 @@
 		<summon name="Ghoul" interval="2000" chance="10000"/>
 	</summons>
 	<loot>
-		<item id="2148" countmax="47" chance="100000"/>
-		<item id="2147" countmax="2" chance="4000"/>
-		<item id="2169" chance="1000"/>
-		<item id="2169" chance="2222"/>
-		<item id="2423" chance="3333"/>
-		<item id="2655" chance="1428"/>
-		<item id="7451" chance="828"/>
-		<item id="1987" chance="100000">
+		<item id="2148" countmax="47" chance="100000"/><!-- gold coin -->
+		<item id="2147" countmax="2" chance="4000"/><!-- small ruby -->
+		<item id="2169" chance="1000"/><!-- time ring -->
+		<item id="2169" chance="2222"/><!-- time ring -->
+		<item id="2423" chance="3333"/><!-- clerical mace -->
+		<item id="2655" chance="1428"/><!-- red robe -->
+		<item id="7451" chance="828"/><!-- shadow sceptre -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="5810" chance="555"/>
-				<item id="7426" chance="933"/>
-				<item id="6087" chance="1428"/>
-				<item id="5801" chance="909"/>
-				<item id="2183" chance="1000"/><!-- tempest rod -->
+				<item id="5810" chance="555"/><!-- pirate voodoo doll -->
+				<item id="7426" chance="933"/><!-- amber staff -->
+				<item id="6087" chance="1428"/><!-- music sheet -->
+				<item id="5801" chance="909"/><!-- key ring -->
+				<item id="2183" chance="1000"/><!-- hailstorm rod -->
 			</inside>
 		</item>
 	</loot>

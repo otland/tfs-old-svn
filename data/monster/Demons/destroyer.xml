@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="destroyer" nameDescription="a destroyer" race="blood" experience="2000" speed="270" manacost="0">
+<monster name="Destroyer" nameDescription="a destroyer" race="blood" experience="2000" speed="270" manacost="0">
 	<health now="3700" max="3700"/>
 	<look type="236" corpse="6320"/>
 	<targetchange interval="5000" chance="8"/>
@@ -46,18 +46,18 @@
 		<voice sentence="It's a good day to destroy!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="82" chance="100000"/>
-		<item id="2645" chance="2222"/>
-		<item id="2152" countmax="3" chance="200000"/>
-		<item id="2393" chance="660"/>
-		<item id="5741" chance="1000"/>
-		<item id="2666" countmax="5" chance="30000"/>
-		<item id="1987" chance="100000">
+		<item id="2148" countmax="82" chance="100000"/><!-- gold coin -->
+		<item id="2645" chance="2222"/><!-- steel boots -->
+		<item id="2152" countmax="3" chance="200000"/><!-- platinum coin -->
+		<item id="2393" chance="660"/><!-- giant sword -->
+		<item id="5741" chance="1000"/><!-- skull helmet -->
+		<item id="2666" countmax="5" chance="30000"/><!-- meat -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2463" chance="6666"/>
-				<item id="2416" chance="9999"/>
-				<item id="2489" chance="2500"/>
-				<item id="2150" countmax="2" chance="7500"/>
+				<item id="2463" chance="6666"/><!-- plate armor -->
+				<item id="2416" chance="9999"/><!-- crowbar -->
+				<item id="2489" chance="2500"/><!-- dark armor -->
+				<item id="2150" countmax="2" chance="7500"/><!-- small amethyst -->
 			</inside>
 		</item>
 	</loot>

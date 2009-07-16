@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="man in the cave" nameDescription="man in the cave" race="blood" experience="555" speed="210" manacost="0">
+<monster name="Man in the Cave" nameDescription="man in the cave" race="blood" experience="555" speed="210" manacost="0">
 	<health now="485" max="485"/>
 	<look type="128" head="95" body="116" legs="95" feet="114" addons="2" corpse="6080"/>
 	<targetchange interval="5000" chance="8"/>
@@ -24,7 +24,7 @@
 		</attack>
 		<attack name="lifedrain" interval="1000" chance="100" range="1" min="-20" max="-30">
 			<attribute key="areaEffect" value="redshimmer"/>
-	</attack>
+		</attack>
 	</attacks>
 	<defenses armor="14" defense="10"/>
 	<immunities>
@@ -41,26 +41,26 @@
 	<voices interval="2000" chance="5">
 		<voice sentence="THE MONKS ARE MINE" yell="1"/>
 		<voice sentence="I will rope you up! All of you!"/>
-	<voice sentence="You have been roped up!"/>
-	<voice sentence="A MIC to rule them all!"/>
+		<voice sentence="You have been roped up!"/>
+		<voice sentence="A MIC to rule them all!"/>
 	</voices>
-		<summons maxSummons="2">
-			<summon name="Monk" interval="2000" chance="20" max="1"/>
-		</summons>
+	<summons maxSummons="2">
+		<summon name="Monk" interval="2000" chance="20" max="1"/>
+	</summons>
 	<loot>
-		<item id="2148" countmax="27" chance="100000"/>
-		<item id="2120" chance="20000"/>
-		<item id="2120" chance="6666"/>
-		<item id="2120" chance="3333"/>
-		<item id="2691" chance="4000"/>
-		<item id="5913" chance="2000"/>
-		<item id="1987" chance="100000">
+		<item id="2148" countmax="27" chance="100000"/><!-- gold coin -->
+		<item id="2120" chance="20000"/><!-- rope -->
+		<item id="2120" chance="6666"/><!-- rope -->
+		<item id="2120" chance="3333"/><!-- rope -->
+		<item id="2691" chance="4000"/><!-- brown bread -->
+		<item id="5913" chance="2000"/><!-- brown piece of cloth -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="7290" chance="4000"/>
-				<item id="7463" chance="6666"/>
-				<item id="7386" chance="6666"/>
-				<item id="7458" chance="1000"/>
-				<item id="2173" chance="500"/>
+				<item id="7290" chance="4000"/><!-- shard -->
+				<item id="7463" chance="6666"/><!-- mammoth fur cape -->
+				<item id="7386" chance="6666"/><!-- mercenary sword -->
+				<item id="7458" chance="1000"/><!-- fur cap -->
+				<item id="2173" chance="500"/><!-- amulet of loss -->
 			</inside>
 		</item>
 	</loot>

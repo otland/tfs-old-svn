@@ -60,7 +60,7 @@
 		<item id="2402" chance="10000"/><!-- silver dagger -->
 		<item id="2477" chance="6666"/><!-- knight legs -->
 		<item id="2164" chance="7300"/><!-- might ring -->
-		<item id="1987" chance="100000">
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
 				<item id="2150" countmax="17" chance="6000"/><!-- small amethyst -->
 				<item id="2462" chance="9700"/><!-- devil helmet -->

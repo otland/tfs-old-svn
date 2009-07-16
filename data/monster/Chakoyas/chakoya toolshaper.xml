@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-	<monster name="chakoya toolshaper" nameDescription="a chakoya toolshaper" race="blood" experience="40" speed="270" manacost="0">
+<monster name="Chakoya Toolshaper" nameDescription="a chakoya toolshaper" race="blood" experience="40" speed="270" manacost="0">
 	<health now="80" max="80"/>
 	<look type="259" corpse="7320"/>
 	<targetchange interval="60000" chance="0"/>
@@ -39,8 +39,8 @@
 		<voice sentence="Kiyosa sipaju!"/>
 	</voices>
 	<loot>
-		<item id="2667" countmax="2" chance="20000"/>
+		<item id="2667" countmax="2" chance="20000"/><!-- fish -->
 		<item id="2148" countmax="20" chance="20000"/><!-- gold coin -->
-		<item id="2553" chance="2000"/>
+		<item id="2553" chance="2000"/><!-- pick -->
 	</loot>
 </monster>

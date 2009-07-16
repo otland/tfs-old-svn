@@ -30,8 +30,7 @@
 			<attribute key="areaEffect" value="blackspark"/>
 		</attack>
 	</attacks>
-	<defenses armor="25" defense="26">
-	</defenses>
+	<defenses armor="25" defense="26"/>
 	<elements>
 		<element icePercent="100"/>
 		<element firePercent="100"/>

@@ -53,14 +53,14 @@
 	<loot>
 		<item id="2148" countmax="70" chance="100000"/><!-- gold coin -->
 		<item id="2148" countmax="70" chance="100000"/><!-- gold coin -->
-		<item id="2152" chance="25000" countmax="3"/><!-- platinum coin -->
-		<item id="2666" chance="20000" countmax="4"/><!-- meat -->
-		<item id="6300" chance="7300"/><!-- death ring -->	
-		<item id="2671" chance="40000" countmax="2"/><!-- ham -->
+		<item id="2152" countmax="3" chance="25000"/><!-- platinum coin -->
+		<item id="2666" countmax="4" chance="20000"/><!-- meat -->
+		<item id="6300" chance="7300"/><!-- death ring -->
+		<item id="2671" countmax="2" chance="40000"/><!-- ham -->
 		<item id="2230" chance="37500"/><!-- bone -->
 		<item id="6574" chance="1300"/><!-- bar of chocolate -->
-		<item id="6500" chance="6500" countmax="1"/><!-- demonic essence -->
-		<item id="1987" chance="100000">
+		<item id="6500" countmax="1" chance="6500"/><!-- demonic essence -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
 				<item id="2387" chance="8800"/><!-- double axe -->
 				<item id="2491" chance="3000"/><!-- crown helmet -->

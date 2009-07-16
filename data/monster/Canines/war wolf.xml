@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="war wolf" nameDescription="a war wolf" race="blood" experience="55" speed="200" manacost="0">
+<monster name="War Wolf" nameDescription="a war wolf" race="blood" experience="55" speed="200" manacost="0">
 	<health now="140" max="140"/>
 	<look type="3" corpse="6009"/>
 	<targetchange interval="2000" chance="0"/>
@@ -32,8 +32,8 @@
 		<voice sentence="Yoooohhuuuu!" yell="1"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/>
-		<item id="2671" countmax="5" chance="33333"/>
-		<item id="5897" countmax="1" chance="6666"/>
+		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
+		<item id="2671" countmax="5" chance="33333"/><!-- ham -->
+		<item id="5897" countmax="1" chance="6666"/><!-- wolf paw -->
 	</loot>
 </monster>

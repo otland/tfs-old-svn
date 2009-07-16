@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="fire devil" nameDescription="a fire devil" race="blood" experience="110" speed="190" manacost="530">
+<monster name="Fire Devil" nameDescription="a fire devil" race="blood" experience="110" speed="190" manacost="530">
 	<health now="200" max="200"/>
 	<look type="40" corpse="5985"/>
 	<targetchange interval="5000" chance="8"/>
@@ -43,21 +43,21 @@
 		<voice sentence="Hell, oh hell!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="20" chance="100000"/>
-		<item id="2666" countmax="3" chance="33333"/>
-		<item id="2185" chance="833"/>
-		<item id="2050" chance="20000"/>
-		<item id="2419" chance="10000"/>
-		<item id="2387" chance="5000"/>
-		<item id="2568" chance="15000"/>
-		<item id="1987" chance="100000">
+		<item id="2148" countmax="20" chance="100000"/><!-- gold coin -->
+		<item id="2666" countmax="3" chance="33333"/><!-- meat -->
+		<item id="2185" chance="833"/><!-- necrotic rod -->
+		<item id="2050" chance="20000"/><!-- torch -->
+		<item id="2419" chance="10000"/><!-- scimitar -->
+		<item id="2387" chance="5000"/><!-- double axe -->
+		<item id="2568" chance="15000"/><!-- cleaver -->
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
-				<item id="2187" chance="1000"/>
-				<item id="2515" chance="2857"/>
-				<item id="2260" chance="6666"/>
-				<item id="2691" countmax="2" chance="20000"/>
-				<item id="2150" countmax="2" chance="1666"/>
-				<item id="2191" chance="833"/>
+				<item id="2187" chance="1000"/><!-- wand of inferno -->
+				<item id="2515" chance="2857"/><!-- guardian shield -->
+				<item id="2260" chance="6666"/><!-- blank rune -->
+				<item id="2691" countmax="2" chance="20000"/><!-- brown bread -->
+				<item id="2150" countmax="2" chance="1666"/><!-- small amethyst -->
+				<item id="2191" chance="833"/><!-- wand of dragonbreath -->
 			</inside>
 		</item>
 	</loot>

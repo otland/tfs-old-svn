@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="werewolf" nameDescription="a werewolf" experience="1450" speed="320" race="blood" manacost="0">
+<monster name="Werewolf" nameDescription="a werewolf" experience="1450" speed="320" race="blood" manacost="0">
 	<health now="1955" max="1955"/>
 	<strategy attack="100" defense="0"/>
 	<targetchange speed="0" chance="8"/>
@@ -43,7 +43,7 @@
 	<voices speed="5000" chance="10">
 		<voice sentence="BLOOD!" yell="1"/>
 		<voice sentence="HRAAAAAAAAAARRRRRR!" yell="1"/>
-	</voices>	 
+	</voices>
 	<loot>
 		<item id="2148" countmax="96" chance="100000"/><!-- gold coin -->
 		<item id="2148" countmax="74" chance="100000"/><!-- gold coin -->

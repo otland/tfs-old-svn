@@ -48,8 +48,8 @@
 		<voice sentence="You are bugged ... by me!"/>
 	</voices>
 	<loot>
-		<item id="2148" countmax="11" chance="100000"/><!-- Gold Coin -->
-		<item id="6570" chance="5538"/><!-- Blue Surprise Bag -->
-		<item id="6571" chance="1538"/><!-- Red Surprise Bag -->
+		<item id="2148" countmax="11" chance="100000"/><!-- gold coin -->
+		<item id="6570" chance="5538"/><!-- blue surprise bag -->
+		<item id="6571" chance="1538"/><!-- red surprise bag -->
 	</loot>
 </monster>

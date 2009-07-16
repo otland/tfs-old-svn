@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<monster name="hellhound" nameDescription="a hellhound" race="blood" experience="6800" speed="310" manacost="0">
+<monster name="Hellhound" nameDescription="a hellhound" race="blood" experience="6800" speed="310" manacost="0">
 	<health now="7500" max="7500"/>
 	<look type="240" corpse="6332"/>
 	<targetchange interval="5000" chance="8"/>
@@ -66,7 +66,7 @@
 				<item id="2430" chance="2857"/><!-- knight axe -->
 				<item id="2383" chance="2500"/><!-- spike sword -->
 				<item id="2410" countmax="11" chance="15000"/><!-- throwing knife -->
-				<item id="6558" countmax="2" chance="8888"/><!-- concentrated Demonic blood -->
+				<item id="6558" countmax="2" chance="8888"/><!-- concentrated demonic blood -->
 				<item id="6553" chance="1600"/><!-- ruthless axe -->
 			</inside>
 		</item>

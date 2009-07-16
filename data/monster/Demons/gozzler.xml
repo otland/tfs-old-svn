@@ -52,7 +52,7 @@
 		<item id="2385" chance="7000"/><!-- sabre -->
 		<item id="2051" chance="15000"/><!-- torch -->
 		<item id="2510" chance="9000"/><!-- plate shield -->
-		<item id="1987" chance="100000">
+		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
 				<item id="2378" chance="1500"/><!-- battle axe -->
 				<item id="2409" chance="1500"/><!-- serpent sword -->

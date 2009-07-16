@@ -32,8 +32,7 @@
 			<attribute key="areaEffect" value="bluebubble"/>
 		</attack>
 	</attacks>
-	<defenses armor="25" defense="35">
-	</defenses>
+	<defenses armor="25" defense="35"/>
 	<immunities>
 		<immunity physical="0"/>
 		<immunity energy="0"/>
