@@ -380,11 +380,7 @@ uint64_t Vocation::getReqMana(uint32_t magLevel)
 	if(it != cacheMana.end())
 		return it->second;
 
-	uint64_t reqMana = (uint64_t)(400 * std::pow(formulaMultipliers[MULTIPLIER_MANA], (float)(magLevel - 1)));
-	if(reqMana % 20 < 10)
-		reqMana -= reqMana % 20;
-	else
-		reqMana -= (reqMana % 20) + 20;
+	uint64_t reqMana = (uint64_t)(1600 * std::pow(formulaMultipliers[MULTIPLIER_MANA], (float)(magLevel - 1)));
 
 	cacheMana[magLevel] = reqMana;
 	return reqMana;
