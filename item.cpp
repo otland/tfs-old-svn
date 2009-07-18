@@ -42,7 +42,6 @@ extern ConfigManager g_config;
 Items Item::items;
 Item* Item::CreateItem(const uint16_t _type, uint16_t _count/* = 1*/)
 {
-	Item* newItem = NULL;
 	const ItemType& it = Item::items[_type];
 	if(it.group == ITEM_GROUP_DEPRECATED)
 	{
@@ -52,40 +51,40 @@ Item* Item::CreateItem(const uint16_t _type, uint16_t _count/* = 1*/)
 		return NULL;
 	}
 
-	if(it.id)
-	{
-		if(it.isDepot())
-			newItem = new Depot(_type);
-		else if(it.isContainer())
-			newItem = new Container(_type);
-		else if(it.isTeleport())
-			newItem = new Teleport(_type);
-		else if(it.isMagicField())
-			newItem = new MagicField(_type);
-		else if(it.isDoor())
-			newItem = new Door(_type);
-		else if(it.isTrashHolder())
-			newItem = new TrashHolder(_type, it.magicEffect);
-		else if(it.isMailbox())
-			newItem = new Mailbox(_type);
-		else if(it.isBed())
-			newItem = new BedItem(_type);
-		else if(it.id >= 2210 && it.id <= 2212)
-			newItem = new Item(_type - 3, _count);
-		else if(it.id == 2215 || it.id == 2216)
-			newItem = new Item(_type - 2, _count);
-		else if(it.id >= 2202 && it.id <= 2206)
-			newItem = new Item(_type - 37, _count);
-		else if(it.id == 2640)
-			newItem = new Item(6132, _count);
-		else if(it.id == 6301)
-			newItem = new Item(6300, _count);
-		else
-			newItem = new Item(_type, _count);
+	if(!it.id)
+		return NULL;
 
-		newItem->useThing2();
-	}
+	Item* newItem = NULL;
+	if(it.isDepot())
+		newItem = new Depot(_type);
+	else if(it.isContainer())
+		newItem = new Container(_type);
+	else if(it.isTeleport())
+		newItem = new Teleport(_type);
+	else if(it.isMagicField())
+		newItem = new MagicField(_type);
+	else if(it.isDoor())
+		newItem = new Door(_type);
+	else if(it.isTrashHolder())
+		newItem = new TrashHolder(_type, it.magicEffect);
+	else if(it.isMailbox())
+		newItem = new Mailbox(_type);
+	else if(it.isBed())
+		newItem = new BedItem(_type);
+	else if(it.id >= 2210 && it.id <= 2212)
+		newItem = new Item(_type - 3, _count);
+	else if(it.id == 2215 || it.id == 2216)
+		newItem = new Item(_type - 2, _count);
+	else if(it.id >= 2202 && it.id <= 2206)
+		newItem = new Item(_type - 37, _count);
+	else if(it.id == 2640)
+		newItem = new Item(6132, _count);
+	else if(it.id == 6301)
+		newItem = new Item(6300, _count);
+	else
+		newItem = new Item(_type, _count);
 
+	newItem->useThing2();
 	return newItem;
 }
 

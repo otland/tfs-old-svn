@@ -1103,12 +1103,12 @@ bool Monster::onDeath()
 	if(!Creature::onDeath())
 		return false;
 
-	setIdle(true);
-	setAttackedCreature(NULL);
 	destroySummons();
-
 	clearTargetList();
 	clearFriendList();
+
+	setAttackedCreature(NULL);
+	setIdle(true);
 	if(raid)
 	{
 		raid->unRef();
@@ -1124,6 +1124,9 @@ Item* Monster::createCorpse(DeathList deathList)
 	Item* corpse = Creature::createCorpse(deathList);
 	if(!corpse)
 		return NULL;
+
+	if(mType->corpseUnique)
+		corpse->setUniqueId(mType->corpseUnique);
 
 	Creature* owner = NULL;
 	if((deathList[0].isNameKill() || !(owner = deathList[0].getKillerCreature())))

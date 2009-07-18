@@ -3550,6 +3550,7 @@ void Player::onAttackedCreature(Creature* target)
 		{
 			setSkull(SKULL_WHITE);
 			g_game.updateCreatureSkull(this);
+		}
 	}
 }
 
