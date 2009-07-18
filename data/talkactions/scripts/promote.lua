@@ -20,8 +20,8 @@ function onSay(cid, words, param, channel)
 		g = -1
 	end
 
-	local newGroupId = getPlayerGroupId(pid) + g
-	if(not setPlayerGroupId(pid, newGroupId)) then
+	local newId = getPlayerGroupId(pid) + g
+	if(newId <= 0 or not setPlayerGroupId(pid, newId)) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Cannot perform action.")
 		return true
 	end
