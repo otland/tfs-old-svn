@@ -117,10 +117,10 @@ void MonsterType::createLoot(Container* corpse)
 
 	std::stringstream ss;
 	ss << "Loot of " << nameDescription << ": " << corpse->getContentDescription() << ".";
-
-	owner->sendTextMessage(MSG_INFO_DESCR, ss.str());
 	if(owner->getParty())
-		owner->getParty()->broadcastLoot(ss.str());
+		owner->getParty()->broadcastMessage(MSG_INFO_DESCR, ss.str());
+	else
+		owner->sendTextMessage(MSG_INFO_DESCR, ss.str());
 }
 
 Item* MonsterType::createLootItem(const LootBlock& lootBlock)

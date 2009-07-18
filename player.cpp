@@ -3528,7 +3528,8 @@ void Player::onAttackedCreature(Creature* target)
 		return;
 
 	Player* targetPlayer = target->getPlayer();
-	if(!targetPlayer || Combat::isInPvpZone(this, targetPlayer) || targetPlayer->hasAttacked(this))
+	if(!targetPlayer || Combat::isInPvpZone(this, targetPlayer) ||
+		isPartner(targetPlayer) || targetPlayer->hasAttacked(this))
 		return;
 
 	if(!pzLocked)
@@ -3537,19 +3538,19 @@ void Player::onAttackedCreature(Creature* target)
 		sendIcons();
 	}
 
-	if(getZone() != target->getZone() || isPartner(targetPlayer))
+	addAttacked(targetPlayer);
+	if(getZone() != target->getZone())
 		return;
 
-	addAttacked(targetPlayer);
-	if(targetPlayer->getSkull() == SKULL_NONE && getSkull() == SKULL_NONE
-		&& !hasCustomFlag(PlayerCustomFlag_NotGainSkull))
-	{
-		setSkull(SKULL_WHITE);
-		g_game.updateCreatureSkull(this);
-	}
-
 	if(getSkull() == SKULL_NONE)
-		targetPlayer->sendCreatureSkull(this);
+	{
+		if(targetPlayer->getSkull() != SKULL_NONE)
+			targetPlayer->sendCreatureSkull(this);
+		else if(!hasCustomFlag(PlayerCustomFlag_NotGainSkull))
+		{
+			setSkull(SKULL_WHITE);
+			g_game.updateCreatureSkull(this);
+	}
 }
 
 void Player::onSummonAttackedCreature(Creature* summon, Creature* target)
@@ -3639,8 +3640,10 @@ bool Player::onKilledCreature(Creature* target, uint32_t& flags)
 	if(!hasCondition(CONDITION_INFIGHT))
 		return true;
 
-	if(!isPartner(targetPlayer) && !targetPlayer->hasAttacked(this) &&
-		target->getSkull() == SKULL_NONE && addUnjustifiedKill(targetPlayer))
+	if(isPartner(targetPlayer))
+		return true;
+
+	if(target->getSkullClient() == SKULL_NONE && addUnjustifiedKill(targetPlayer))
 		flags |= (uint32_t)KILLFLAG_UNJUSTIFIED;
 
 	pzLocked = true;
@@ -3852,10 +3855,8 @@ Skulls_t Player::getSkullClient(const Creature* creature) const
 
 bool Player::hasAttacked(const Player* attacked) const
 {
-	if(hasFlag(PlayerFlag_NotGainInFight) || !attacked)
-		return false;
-
-	return attackedSet.find(attacked->getID()) != attackedSet.end();
+	return !hasFlag(PlayerFlag_NotGainInFight) && !attacked && attacked != this
+		&& attackedSet.find(attacked->getID()) != attackedSet.end();
 }
 
 void Player::addAttacked(const Player* attacked)

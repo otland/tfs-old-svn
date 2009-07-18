@@ -48,7 +48,6 @@ class Party
 		void updateAllIcons();
 		void updateIcons(Player* player);
 		void broadcastMessage(MessageClasses messageClass, const std::string& text, bool sendToInvitations = false);
-		void broadcastLoot(const std::string& text, bool sendToInvitations = false);
 
 		void shareExperience(uint64_t experience);
 		bool setSharedExperience(Player* player, bool _sharedExpActive);

@@ -19,8 +19,9 @@ BORDERS[4828] = BORDERS[7943]
 BORDERS[4829] = BORDERS[7946]
 BORDERS[4830] = BORDERS[7945]
 BORDERS[4831] = BORDERS[7944]
+-- TODO: add rest (8) of borders? and remove swimpool.lua
 
-function onStepIn(cid, item, position, fromPosition)
+function onStepIn(cid, item, position, lastPosition, fromPosition, toPosition, actor)
 	if(not isPlayer(cid)) then
 		return true
 	end
@@ -30,7 +31,7 @@ function onStepIn(cid, item, position, fromPosition)
 		return false
 	end
 
-	local pos = getCreaturePosition(cid)
+	local pos, newPos = getCreaturePosition(cid), {}
 	newPos = pos
 	newPos.x = pos.x + border.x
 	newPos.y = pos.y + border.y
@@ -39,7 +40,7 @@ function onStepIn(cid, item, position, fromPosition)
 		doMoveCreature(cid, border.back)
 		doRemoveCondition(cid, CONDITION_OUTFIT)
 	else
-		if(queryTileAddThing(cid, pos, 4) ~= RETURNVALUE_NOERROR) then
+		if(doTileQueryAdd(cid, pos, 4) ~= RETURNVALUE_NOERROR) then
 			return false
 		end
 

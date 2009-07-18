@@ -275,23 +275,6 @@ void Party::broadcastMessage(MessageClasses messageClass, const std::string& tex
 	}
 }
 
-void Party::broadcastLoot(const std::string& text, bool sendToInvitations/* = false*/)
-{
-	PlayerVector::iterator it;
-	if(!memberList.empty())
-	{
-		for(it = memberList.begin(); it != memberList.end(); ++it)
-			(*it)->sendChannelMessage("", text.c_str(), SPEAK_CHANNEL_W, CHANNEL_PARTY);
-	}
-
-	getLeader()->sendChannelMessage("", text.c_str(), SPEAK_CHANNEL_W, CHANNEL_PARTY);
-	if(sendToInvitations && !inviteList.empty())
-	{
-		for(it = inviteList.begin(); it != inviteList.end(); ++it)
-			(*it)->sendChannelMessage("", text.c_str(), SPEAK_CHANNEL_W, CHANNEL_PARTY);
-	}
-}
-
 void Party::updateSharedExperience()
 {
 	if(!sharedExpActive)
