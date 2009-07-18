@@ -31,7 +31,7 @@ void TrashHolder::__addThing(Creature* actor, int32_t index, Thing* thing)
 {
 	if(Item* item = thing->getItem())
 	{
-		if(item == this || !item->hasProperty(MOVEABLE))
+		if(item == this || item->isNotMoveable())
 			return;
 
 		if(getTile()->isSwimmingPool())
@@ -50,19 +50,15 @@ void TrashHolder::__addThing(Creature* actor, int32_t index, Thing* thing)
 		if(effect != NM_ME_NONE)
 			g_game.addMagicEffect(getPosition(), effect);
 	}
-	else if(getTile()->isSwimmingPool(false))
+	else if(getTile()->isSwimmingPool(false) && thing->getCreature())
 	{
-		if(Creature* creature = thing->getCreature())
+		Player* player = thing->getCreature()->getPlayer();
+		if(player && player->getPosition() == player->getLastPosition())
 		{
-			if(Player* player = creature->getPlayer())
-			{
-				if(player->getPosition() == player->getLastPosition()) //player just logged in swimming pool
-				{
-					Outfit_t outfit;
-					outfit.lookType = 267;
-					Spell::CreateIllusion(player, outfit, -1);
-				}
-			}
+			//player just logged in swimming pool
+			static Outfit_t outfit;
+			outfit.lookType = 267;
+			Spell::CreateIllusion(player, outfit, -1);
 		}
 	}
 }

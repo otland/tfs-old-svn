@@ -3524,11 +3524,12 @@ void Player::onAttackedCreature(Creature* target)
 		return;
 
 	addInFightTicks();
-	if(target == this)
+	Player* targetPlayer = target->getPlayer();
+	if(!targetPlayer)
 		return;
 
-	Player* targetPlayer = target->getPlayer();
-	if(!targetPlayer || Combat::isInPvpZone(this, targetPlayer) ||
+	addAttacked(targetPlayer);
+	if(target == this || Combat::isInPvpZone(this, targetPlayer) ||
 		isPartner(targetPlayer) || targetPlayer->hasAttacked(this))
 		return;
 
@@ -3538,7 +3539,6 @@ void Player::onAttackedCreature(Creature* target)
 		sendIcons();
 	}
 
-	addAttacked(targetPlayer);
 	if(getZone() != target->getZone())
 		return;
 
@@ -3644,7 +3644,8 @@ bool Player::onKilledCreature(Creature* target, uint32_t& flags)
 	if(isPartner(targetPlayer))
 		return true;
 
-	if(target->getSkullClient() == SKULL_NONE && addUnjustifiedKill(targetPlayer))
+	if(!targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE
+		&& addUnjustifiedKill(targetPlayer))
 		flags |= (uint32_t)KILLFLAG_UNJUSTIFIED;
 
 	pzLocked = true;
@@ -3856,13 +3857,13 @@ Skulls_t Player::getSkullClient(const Creature* creature) const
 
 bool Player::hasAttacked(const Player* attacked) const
 {
-	return !hasFlag(PlayerFlag_NotGainInFight) && !attacked && attacked != this
-		&& attackedSet.find(attacked->getID()) != attackedSet.end();
+	return !hasFlag(PlayerFlag_NotGainInFight) && !attacked &&
+		attackedSet.find(attacked->getID()) != attackedSet.end();
 }
 
 void Player::addAttacked(const Player* attacked)
 {
-	if(hasFlag(PlayerFlag_NotGainInFight) || !attacked || attacked == this)
+	if(hasFlag(PlayerFlag_NotGainInFight) || !attacked)
 		return;
 
 	uint32_t attackedId = attacked->getID();
