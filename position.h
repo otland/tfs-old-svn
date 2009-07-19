@@ -21,6 +21,8 @@
 #ifndef __OTSERV_POS_H
 #define __OTSERV_POS_H
 
+#include "definitions.h"
+
 #include <stdlib.h>
 #include <cmath>
 #include <iostream>
@@ -34,7 +36,9 @@ enum Direction
 	SOUTHWEST = 4,
 	SOUTHEAST = 5,
 	NORTHWEST = 6,
-	NORTHEAST = 7
+	NORTHEAST = 7,
+	SOUTH_ALT = 8,
+	EAST_ALT = 9
 };
 
 class Position
@@ -48,6 +52,7 @@ class Position
 		{
 			if(std::abs(float(p1.x - p2.x)) > deltax || std::abs(float(p1.y - p2.y)) > deltay || std::abs(float(p1.z - p2.z)) > deltaz)
 				return false;
+
 			return true;
 		}
 
@@ -56,13 +61,14 @@ class Position
 		{
 			if(std::abs(float(p1.x - p2.x)) > deltax || std::abs(float(p1.y - p2.y)) > deltay)
 				return false;
+
 			return true;
 		}
 
-		Position(uint16_t _x, uint16_t _y, uint16_t _z)
+		Position(int32_t _x, int32_t _y, int32_t _z)
 		: x(_x), y(_y), z(_z) {}
 
-		uint16_t x, y, z;
+		int32_t x, y, z;
 
 		bool operator<(const Position& p) const
 		{
@@ -118,10 +124,10 @@ class PositionEx : public Position
 		PositionEx(){}
 		~PositionEx(){}
 
-		PositionEx(uint16_t _x, uint16_t _y, uint16_t _z, int32_t _stackpos)
+		PositionEx(int32_t _x, int32_t _y, int32_t _z, int32_t _stackpos)
 		: Position(_x,_y,_z), stackpos(_stackpos) {}
 
-		PositionEx(uint16_t _x, uint16_t _y, uint16_t _z)
+		PositionEx(int32_t _x, int32_t _y, int32_t _z)
 		: Position(_x,_y,_z), stackpos(0) {}
 
 		PositionEx(const Position& p)

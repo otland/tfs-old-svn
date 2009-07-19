@@ -38,26 +38,36 @@ std::ostream& operator<<(std::ostream& os, const Direction& dir)
 		case NORTH:
 			os << "North";
 			break;
+
 		case EAST:
 			os << "East";
 			break;
+
 		case WEST:
 			os << "West";
 			break;
+
 		case SOUTH:
 			os << "South";
 			break;
+
 		case SOUTHWEST:
 			os << "South-West";
 			break;
+
 		case SOUTHEAST:
 			os << "South-East";
 			break;
+
 		case NORTHWEST:
 			os << "North-West";
 			break;
+
 		case NORTHEAST:
 			os << "North-East";
+			break;
+
+		default:
 			break;
 	}
 	return os;

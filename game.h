@@ -364,7 +364,7 @@ class Game
 		  * Teleports an object to another position
 		  * \param thing is the object to teleport
 		  * \param newPos is the new position
-		  * \param pushMove should player be pushed if newPos is 1 sqm away
+		  * \param pushMove force teleport if false
 		  * \param flags optional flags to modify default behavior
 		  * \returns true if the teleportation was successful
 		  */

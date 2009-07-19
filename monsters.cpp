@@ -160,9 +160,10 @@ void MonsterType::createLoot(Container* corpse)
 		{
 			std::stringstream ss;
 			ss << "Loot of " << nameDescription << ": " << corpse->getContentDescription() << ".";
-			owner->sendTextMessage(MSG_INFO_DESCR, ss.str());
 			if(owner->getParty())
 				owner->getParty()->broadcastPartyLoot(ss.str());
+			else
+				owner->sendTextMessage(MSG_INFO_DESCR, ss.str());
 		}
 	}
 }
@@ -810,6 +811,8 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monster_n
 				mType->race = RACE_UNDEAD;
 			else if(tmpStrValue == "fire" || atoi(strValue.c_str()) == 4)
 				mType->race = RACE_FIRE;
+			else if(tmpStrValue == "energy" || atoi(strValue.c_str()) == 5)
+				mType->race = RACE_ENERGY;
 			else
 				SHOW_XML_WARNING("Unknown race type " << strValue);
 		}

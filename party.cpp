@@ -299,11 +299,11 @@ void Party::broadcastPartyMessage(MessageClasses msgClass, const std::string& ms
 
 void Party::broadcastPartyLoot(const std::string& loot)
 {
-	getLeader()->sendChannelMessage("", loot, SPEAK_CHANNEL_W, 0x08);
+	getLeader()->sendTextMessage(MSG_INFO_DESCR, loot);
 	if(!memberList.empty())
 	{
 		for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
-			(*it)->sendChannelMessage("", loot, SPEAK_CHANNEL_W, 0x08);
+			(*it)->sendTextMessage(MSG_INFO_DESCR, loot);
 	}
 }
 

@@ -1670,7 +1670,7 @@ void LuaScriptInterface::registerFunctions()
 	//getItemWeight(itemid, count, <optional: default: 1> precise)
 	lua_register(m_luaState, "getItemWeight", LuaScriptInterface::luaGetItemWeight);
 
-	//hasProperty(uid)
+	//hasProperty(uid, prop)
 	lua_register(m_luaState, "hasProperty", LuaScriptInterface::luaHasProperty);
 
 	//getItemIdByName(name)
@@ -2314,9 +2314,9 @@ int32_t LuaScriptInterface::luaDoTeleportThing(lua_State* L)
 	//doTeleportThing(cid, newpos, <optional> pushmove)
 	int32_t parameters = lua_gettop(L);
 
-	bool pushMove = true;
+	bool pushMovement = true;
 	if(parameters > 2)
-		pushMove = popNumber(L) == 1;
+		pushMovement = popNumber(L) == 1;
 
 	PositionEx pos;
 	popPosition(L, pos);
@@ -2327,7 +2327,7 @@ int32_t LuaScriptInterface::luaDoTeleportThing(lua_State* L)
 	Thing* tmp = env->getThingByUID(uid);
 	if(tmp)
 	{
-		if(g_game.internalTeleport(tmp, pos, pushMove) == RET_NOERROR)
+		if(g_game.internalTeleport(tmp, pos, pushMovement) == RET_NOERROR)
 			lua_pushnumber(L, LUA_NO_ERROR);
 		else
 			lua_pushnumber(L, LUA_ERROR);
@@ -2859,7 +2859,7 @@ int32_t LuaScriptInterface::luaDoRelocate(lua_State* L)
 						g_game.internalTeleport(item, toPos, false, FLAG_IGNORENOTMOVEABLE);
 				}
 				else if(Creature* creature = thing->getCreature())
-					g_game.internalTeleport(creature, toPos, true);
+					g_game.internalTeleport(creature, toPos);
 			}
 		}
 	}

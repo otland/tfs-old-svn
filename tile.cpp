@@ -451,13 +451,17 @@ void Tile::onUpdateTile()
 		(*it)->onUpdateTile(this, cylinderMapPos);
 }
 
-void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport /* = false*/)
+void Tile::moveCreature(Creature* creature, Cylinder* toCylinder, bool forceTeleport/* = false*/)
 {
 	Tile* newTile = toCylinder->getTile();
 	int32_t oldStackPos = __getIndexOfThing(creature);
 
 	Position oldPos = getPosition();
 	Position newPos = newTile->getPosition();
+
+	bool teleport = false;
+	if(forceTeleport || !newTile->ground || !Position::areInRange<1,1,0>(oldPos, newPos))
+		teleport = true;
 
 	Player* tmpPlayer = NULL;
 	SpectatorVec list;
@@ -796,22 +800,41 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 		int dx = getTilePosition().x;
 		int dy = getTilePosition().y;
 		int dz = getTilePosition().z + 1;
-		Tile* downTile = g_game.getTile(dx, dy, dz);
-		if(downTile)
+
+		Tile* southDownTile = g_game.getTile(dx, dy - 1, dz);
+		if(southDownTile && southDownTile->floorChange(SOUTH_ALT))
 		{
-			if(downTile->floorChange(NORTH))
-				dy += 1;
-
-			if(downTile->floorChange(SOUTH))
-				dy -= 1;
-
-			if(downTile->floorChange(EAST))
-				dx -= 1;
-
-			if(downTile->floorChange(WEST))
-				dx += 1;
-
+			dy -= 2;
 			destTile = g_game.getTile(dx, dy, dz);
+		}
+		else
+		{
+			Tile* eastDownTile = g_game.getTile(dx - 1, dy, dz);
+			if(eastDownTile && eastDownTile->floorChange(EAST_ALT))
+			{
+				dx -= 2;
+				destTile = g_game.getTile(dx, dy, dz);
+			}
+			else
+			{
+				Tile* downTile = g_game.getTile(dx, dy, dz);
+				if(downTile)
+				{
+					if(downTile->floorChange(NORTH))
+						dy += 1;
+
+					if(downTile->floorChange(SOUTH))
+						dy -= 1;
+
+					if(downTile->floorChange(EAST))
+						dx -= 1;
+
+					if(downTile->floorChange(WEST))
+						dx += 1;
+
+					destTile = g_game.getTile(dx, dy, dz);
+				}
+			}
 		}
 	}
 	else if(floorChange())
@@ -831,6 +854,12 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 
 		if(floorChange(WEST))
 			dx -= 1;
+
+		if(floorChange(SOUTH_ALT))
+			dy += 2;
+
+		if(floorChange(EAST_ALT))
+			dx += 2;
 
 		destTile = g_game.getTile(dx, dy, dz);
 	}
@@ -1653,6 +1682,18 @@ void Tile::updateTileFlags(Item* item, bool removing)
 				setFlag(TILESTATE_FLOORCHANGE);
 				setFlag(TILESTATE_FLOORCHANGE_WEST);
 			}
+
+			if(item->floorChangeSouthAlt())
+			{
+				setFlag(TILESTATE_FLOORCHANGE);
+				setFlag(TILESTATE_FLOORCHANGE_SOUTH_ALT);
+			}
+
+			if(item->floorChangeEastAlt())
+			{
+				setFlag(TILESTATE_FLOORCHANGE);
+				setFlag(TILESTATE_FLOORCHANGE_EAST_ALT);
+			}
 		}
 
 		if(item->hasProperty(IMMOVABLEBLOCKSOLID))
@@ -1715,6 +1756,18 @@ void Tile::updateTileFlags(Item* item, bool removing)
 		{
 			resetFlag(TILESTATE_FLOORCHANGE);
 			resetFlag(TILESTATE_FLOORCHANGE_WEST);
+		}
+
+		if(item->floorChangeSouthAlt())
+		{
+			resetFlag(TILESTATE_FLOORCHANGE);
+			resetFlag(TILESTATE_FLOORCHANGE_SOUTH_ALT);
+		}
+
+		if(item->floorChangeEastAlt())
+		{
+			resetFlag(TILESTATE_FLOORCHANGE);
+			resetFlag(TILESTATE_FLOORCHANGE_EAST_ALT);
 		}
 
 		if(item->hasProperty(BLOCKSOLID) && !hasProperty(item, BLOCKSOLID))

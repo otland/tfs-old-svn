@@ -186,6 +186,9 @@ void Game::setGameState(GameState_t newState)
 					g_scheduler.stop();
 					g_dispatcher.stop();
 				}
+				else
+					exit(1);
+
 				break;
 			}
 
@@ -1907,7 +1910,7 @@ Item* Game::transformItem(Item* item, uint16_t newId, int32_t newCount /*= -1*/)
 	return NULL;
 }
 
-ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pushMove /*= true*/, uint32_t flags /*= 0*/)
+ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pushMove/* = true*/, uint32_t flags /*= 0*/)
 {
 	if(newPos == thing->getPosition())
 		return RET_NOERROR;
@@ -1923,10 +1926,7 @@ ReturnValue Game::internalTeleport(Thing* thing, const Position& newPos, bool pu
 			if(ret != RET_NOERROR)
 				return ret;
 
-			if(pushMove && Position::areInRange<1,1,0>(creature->getPosition(), newPos) && toTile->ground)
-				creature->getTile()->moveCreature(creature, toTile, false);
-			else
-				creature->getTile()->moveCreature(creature, toTile, true);
+			creature->getTile()->moveCreature(creature, toTile, !pushMove);
 			return RET_NOERROR;
 		}
 		else if(Item* item = thing->getItem())
@@ -4035,7 +4035,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 								textColor = TEXTCOLOR_ORANGE;
 								hitEffect = NM_ME_DRAW_BLOOD;
 								break;
-								
+
 							case RACE_ENERGY:
 								textColor = TEXTCOLOR_PURPLE;
 								hitEffect = NM_ME_ENERGY_DAMAGE;
@@ -4083,7 +4083,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 
 					case COMBAT_ICEDAMAGE:
 					{
-						textColor = TEXTCOLOR_LIGHTBLUE;
+						textColor = TEXTCOLOR_SKYBLUE;
 						hitEffect = NM_ME_ICEATTACK;
 						break;
 					}

@@ -205,7 +205,9 @@ class ItemType
 		bool floorChangeDown;
 		bool floorChangeNorth;
 		bool floorChangeSouth;
+		bool floorChangeSouthAlt;
 		bool floorChangeEast;
+		bool floorChangeEastAlt;
 		bool floorChangeWest;
 		bool hasHeight;
 

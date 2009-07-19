@@ -138,6 +138,7 @@ class IOBan
 
 		bool isIpBanished(uint32_t clientip);
 		bool isPlayerNamelocked(const std::string& name);
+		bool isAccountBanned(uint32_t account);
 
 		void addIpBan(uint32_t ip, uint32_t mask, uint64_t time);
 		void addPlayerNamelock(uint32_t playerId, uint32_t time, uint32_t reasonId, uint32_t actionId, std::string comment, uint32_t bannedBy);

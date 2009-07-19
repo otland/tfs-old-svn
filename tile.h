@@ -71,7 +71,9 @@ enum tileflags_t
 	TILESTATE_IMMOVABLEBLOCKPATH = 2097152,
 	TILESTATE_IMMOVABLENOFIELDBLOCKPATH = 4194304,
 	TILESTATE_NOFIELDBLOCKPATH = 8388608,
-	TILESTATE_DYNAMIC_TILE = 16777216
+	TILESTATE_DYNAMIC_TILE = 16777216,
+	TILESTATE_FLOORCHANGE_SOUTH_ALT = 33554432,
+	TILESTATE_FLOORCHANGE_EAST_ALT = 67108864
 };
 
 enum ZoneType_t
@@ -199,6 +201,12 @@ class Tile : public Cylinder
 				case WEST:
 					return hasFlag(TILESTATE_FLOORCHANGE_WEST);
 
+				case SOUTH_ALT:
+					return hasFlag(TILESTATE_FLOORCHANGE_SOUTH_ALT);
+
+				case EAST_ALT:
+					return hasFlag(TILESTATE_FLOORCHANGE_EAST_ALT);
+
 				default:
 					return false;
 			}
@@ -221,7 +229,7 @@ class Tile : public Cylinder
 
 		virtual std::string getDescription(int32_t lookDistance) const;
 
-		void moveCreature(Creature* creature, Cylinder* toCylinder, bool teleport = false);
+		void moveCreature(Creature* creature, Cylinder* toCylinder, bool forceTeleport = false);
 		int32_t getClientIndexOfThing(const Player* player, const Thing* thing) const;
 
 		//cylinder implementations

@@ -405,7 +405,7 @@ bool Commands::teleportMasterPos(Creature* creature, const std::string& cmd, con
 		{
 			if(newPosition.x == 0)
 				player->sendCancel("You can not teleport there.");
-			else if(g_game.internalTeleport(creature, newPosition, true) == RET_NOERROR)
+			else if(g_game.internalTeleport(creature, newPosition) == RET_NOERROR)
 			{
 				g_game.addMagicEffect(oldPosition, NM_ME_POFF, player->isInGhostMode());
 				g_game.addMagicEffect(newPosition, NM_ME_TELEPORT, player->isInGhostMode());
@@ -433,7 +433,7 @@ bool Commands::teleportHere(Creature* creature, const std::string& cmd, const st
 				sprintf(buffer, "You can not teleport %s to you.", paramCreature->getName().c_str());
 				player->sendCancel(buffer);
 			}
-			else if(g_game.internalTeleport(paramCreature, newPosition, true) == RET_NOERROR)
+			else if(g_game.internalTeleport(paramCreature, newPosition) == RET_NOERROR)
 			{
 				g_game.addMagicEffect(oldPosition, NM_ME_POFF, paramCreature->isInGhostMode());
 				g_game.addMagicEffect(newPosition, NM_ME_TELEPORT, paramCreature->isInGhostMode());
@@ -654,7 +654,7 @@ bool Commands::teleportToTown(Creature* creature, const std::string& cmd, const 
 		{
 			if(newPosition.x == 0)
 				player->sendCancel("You can not teleport there.");
-			else if(g_game.internalTeleport(player, newPosition, true) == RET_NOERROR)
+			else if(g_game.internalTeleport(player, newPosition) == RET_NOERROR)
 			{
 				g_game.addMagicEffect(oldPosition, NM_ME_POFF, player->isInGhostMode());
 				g_game.addMagicEffect(newPosition, NM_ME_TELEPORT, player->isInGhostMode());
@@ -680,7 +680,7 @@ bool Commands::teleportTo(Creature* creature, const std::string& cmd, const std:
 		Position newPosition = g_game.getClosestFreeTile(player, 0, paramCreature->getPosition(), true);
 		if(newPosition.x > 0)
 		{
-			if(g_game.internalTeleport(player, newPosition, true) == RET_NOERROR)
+			if(g_game.internalTeleport(player, newPosition) == RET_NOERROR)
 			{
 				bool ghostMode = false;
 				if(player->isInGhostMode() || paramCreature->isInGhostMode())
@@ -785,7 +785,7 @@ bool Commands::teleportNTiles(Creature* creature, const std::string& cmd, const 
 			Position newPosition = g_game.getClosestFreeTile(player, 0, newPos, true);
 			if(newPosition.x == 0)
 				player->sendCancel("You can not teleport there.");
-			else if(g_game.internalTeleport(player, newPosition, true) == RET_NOERROR)
+			else if(g_game.internalTeleport(player, newPosition) == RET_NOERROR)
 			{
 				if(ntiles != 1)
 				{
@@ -1078,7 +1078,7 @@ bool Commands::changeFloor(Creature* creature, const std::string &cmd, const std
 	if(newPosition.x != 0)
 	{
 		Position oldPosition = player->getPosition();
-		if(g_game.internalTeleport(creature, newPosition, true) == RET_NOERROR)
+		if(g_game.internalTeleport(creature, newPosition) == RET_NOERROR)
 		{
 			g_game.addMagicEffect(oldPosition, NM_ME_POFF, creature->isInGhostMode());
 			g_game.addMagicEffect(player->getPosition(), NM_ME_TELEPORT, creature->isInGhostMode());
@@ -1542,7 +1542,7 @@ bool Commands::ghost(Creature* creature, const std::string& cmd, const std::stri
 		player->sendTextMessage(MSG_INFO_DESCR, "You are visible again.");
 		Position pos = creature->getPosition();
 		pos.x += 1;
-		g_game.addMagicEffect(pos, 67);
+		g_game.addMagicEffect(pos, NM_ME_SMOKE);
 	}
 	return true;
 }

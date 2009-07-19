@@ -54,7 +54,9 @@ ItemType::ItemType()
 	floorChangeDown = false;
 	floorChangeNorth = false;
 	floorChangeSouth = false;
+	floorChangeSouthAlt = false;
 	floorChangeEast = false;
+	floorChangeEastAlt = false;
 	floorChangeWest = false;
 
 	blockSolid = false;
@@ -528,10 +530,14 @@ bool Items::loadFromXml()
 										it.floorChangeNorth = true;
 									else if(tmpStrValue == "south")
 										it.floorChangeSouth = true;
+									else if(tmpStrValue == "southalt")
+										it.floorChangeSouthAlt = true;
 									else if(tmpStrValue == "west")
 										it.floorChangeWest = true;
 									else if(tmpStrValue == "east")
 										it.floorChangeEast = true;
+									else if(tmpStrValue == "eastalt")
+										it.floorChangeEastAlt = true;
 								}
 							}
 							else if(tmpStrValue == "corpsetype")
@@ -548,6 +554,8 @@ bool Items::loadFromXml()
 										it.corpseType = RACE_UNDEAD;
 									else if(tmpStrValue == "fire")
 										it.corpseType = RACE_FIRE;
+									else if(tmpStrValue == "energy")
+										it.corpseType = RACE_ENERGY;
 									else
 										std::cout << "Warning: [Items::loadFromXml] " << "Unknown corpseType " << strValue << std::endl;
 								}

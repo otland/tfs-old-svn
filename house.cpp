@@ -170,7 +170,7 @@ bool House::kickPlayer(Player* player, const std::string& name)
 			if(getHouseAccessLevel(player) >= getHouseAccessLevel(kickingPlayer) && !kickingPlayer->hasFlag(PlayerFlag_CanEditHouses))
 			{
 				Position oldPosition = kickingPlayer->getPosition();
-				if(g_game.internalTeleport(kickingPlayer, getEntryPosition(), true) == RET_NOERROR)
+				if(g_game.internalTeleport(kickingPlayer, getEntryPosition()) == RET_NOERROR)
 				{
 					g_game.addMagicEffect(oldPosition, NM_ME_POFF);
 					g_game.addMagicEffect(getEntryPosition(), NM_ME_TELEPORT);
@@ -225,7 +225,7 @@ void House::setAccessList(uint32_t listId, const std::string& textlist)
 	KickPlayerList::iterator itkick;
 	for(itkick = kickList.begin(); itkick != kickList.end(); ++itkick)
 	{
-		if(g_game.internalTeleport(*itkick, getEntryPosition(), true) == RET_NOERROR)
+		if(g_game.internalTeleport(*itkick, getEntryPosition()) == RET_NOERROR)
 			g_game.addMagicEffect(getEntryPosition(), NM_ME_TELEPORT);
 	}
 }
@@ -837,7 +837,7 @@ bool Houses::payHouses()
 	for(HouseMap::iterator it = houseMap.begin(); it != houseMap.end(); ++it)
 	{
 		House* house = it->second;
-		if(house->getHouseOwner() != 0 && house->getPaidUntil() < currentTime && house->getRent() != 0)
+		if(house->getHouseOwner() != 0)
 		{
 			uint32_t ownerid = house->getHouseOwner();
 			Town* town = Towns::getInstance().getTown(house->getTownId());
@@ -885,7 +885,7 @@ bool Houses::payHouses()
 				//get money from depot
 				if(g_game.removeMoney(depot, housePrice, FLAG_NOLIMIT))
 				{
-					uint32_t paidUntil = currentTime;
+					time_t paidUntil = currentTime;
 					switch(rentPeriod)
 					{
 						case RENTPERIOD_DAILY:

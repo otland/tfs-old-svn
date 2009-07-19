@@ -350,7 +350,9 @@ class Item : virtual public Thing, public ItemAttributes
 		bool floorChangeDown() const {return items[id].floorChangeDown;}
 		bool floorChangeNorth() const {return items[id].floorChangeNorth;}
 		bool floorChangeSouth() const {return items[id].floorChangeSouth;}
+		bool floorChangeSouthAlt() const {return items[id].floorChangeSouthAlt;}
 		bool floorChangeEast() const {return items[id].floorChangeEast;}
+		bool floorChangeEastAlt() const {return items[id].floorChangeEastAlt;}
 		bool floorChangeWest() const {return items[id].floorChangeWest;}
 
 		const std::string& getName() const {return items[id].name;}

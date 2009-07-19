@@ -3824,7 +3824,8 @@ void Player::addUnjustifiedDead(const Player* attacked)
 		setSkull(SKULL_RED);
 		g_game.updateCreatureSkull(this);
 	}
-	else if(g_config.getNumber(ConfigManager::KILLS_TO_BAN) != 0 && redSkullTicks >= (g_config.getNumber(ConfigManager::KILLS_TO_BAN) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME))
+	else if(g_config.getNumber(ConfigManager::KILLS_TO_BAN) != 0 && redSkullTicks >= (g_config.getNumber(ConfigManager::KILLS_TO_BAN) - 1) * g_config.getNumber(ConfigManager::FRAG_TIME)
+		&& !IOBan::getInstance()->isAccountBanned(accountNumber))
 	{
 		IOBan::getInstance()->addAccountBan(accountNumber, time(NULL) + (g_config.getNumber(ConfigManager::BAN_DAYS) * 86400), 20, 2, "No comment.", 0);
 

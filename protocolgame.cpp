@@ -304,7 +304,6 @@ bool ProtocolGame::connect(uint32_t playerId)
 	player->client = this;
 	player->client->sendAddCreature(player, player->getPosition(),
 		player->getTile()->__getIndexOfThing(player), false);
-	player->sendIcons();
 	player->lastIP = player->getIP();
 	player->lastLoginSaved = std::max(time(NULL), player->lastLoginSaved + 1);
 	m_acceptPackets = true;
@@ -1275,6 +1274,9 @@ void ProtocolGame::parseSay(NetworkMessage& msg)
 	}
 
 	const std::string text = msg.GetString();
+	if(text.length() > 255)
+		return;
+
 	addGameTask(&Game::playerSay, player->getID(), channelId, type, receiver, text);
 }
 
@@ -2263,6 +2265,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 						sendVIP((*it), vip_name, (tmpPlayer && (!tmpPlayer->isInGhostMode() || player->isAccessPlayer())));
 					}
 				}
+				player->sendIcons();
 			}
 			else
 			{

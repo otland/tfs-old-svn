@@ -19,8 +19,11 @@
 //////////////////////////////////////////////////////////////////////
 #include "otpch.h"
 
+#define NOMINMAX
+
 #include <string>
 #include <iostream>
+#include <cmath>
 
 #include "networkmessage.h"
 

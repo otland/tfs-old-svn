@@ -800,12 +800,6 @@ void Creature::dropCorpse()
 			splash = Item::CreateItem(ITEM_FULLSPLASH, FLUID_BLOOD);
 			break;
 
-		case RACE_UNDEAD:
-			break;
-
-		case RACE_FIRE:
-			break;
-
 		default:
 			break;
 	}
