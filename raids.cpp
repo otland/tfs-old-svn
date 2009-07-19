@@ -57,7 +57,7 @@ bool Raids::parseRaidNode(xmlNodePtr raidNode, bool checkDuplicate, FileType_t p
 	if(!readXMLString(raidNode, "file", strValue))
 	{
 		file = name + ".xml";
-		std::cout << "[Warning - Raids::parseRaidNode]: file tag missing for raid " << name << ", using default: " << file << std::endl;
+		std::cout << "[Warning - Raids::parseRaidNode] file tag missing for raid " << name << ", using default: " << file << std::endl;
 	}
 	else
 		file = strValue;

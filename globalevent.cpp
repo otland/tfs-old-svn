@@ -20,6 +20,7 @@
 
 #include "globalevent.h"
 #include "tools.h"
+#include "player.h"
 
 GlobalEvents::GlobalEvents():
 	m_scriptInterface("GlobalEvent Interface")
@@ -82,22 +83,9 @@ bool GlobalEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 	return false;
 }
 
-void GlobalEvents::shutdown()
-{
-	for(GlobalEventMap::iterator it = serverEventsMap.begin(); it != serverEventsMap.end(); ++it)
-	{
-		if(it->second->getEventType() == SERVER_EVENT_SHUTDOWN)
-			it->second->executeServerEvent();
-	}
-}
-
 void GlobalEvents::startup()
 {
-	for(GlobalEventMap::iterator it = serverEventsMap.begin(); it != serverEventsMap.end(); ++it)
-	{
-		if(it->second->getEventType() == SERVER_EVENT_STARTUP)
-			it->second->executeServerEvent();
-	}
+	execute(SERVER_EVENT_STARTUP);
 
 	Scheduler::getScheduler().addEvent(createSchedulerTask(GLOBAL_THINK_INTERVAL,
 		boost::bind(&GlobalEvents::think, this, GLOBAL_THINK_INTERVAL)));
@@ -119,6 +107,27 @@ void GlobalEvents::think(uint32_t interval)
 
 	Scheduler::getScheduler().addEvent(createSchedulerTask(interval,
 		boost::bind(&GlobalEvents::think, this, interval)));
+}
+
+void GlobalEvents::execute(ServerEvent_t type)
+{
+	for(GlobalEventMap::iterator it = serverEventsMap.begin(); it != serverEventsMap.end(); ++it)
+	{
+		if(it->second->getEventType() == type)
+			it->second->executeServerEvent();
+	}
+}
+
+GlobalEventMap GlobalEvents::getServerEvents(ServerEvent_t type)
+{
+	GlobalEventMap ret;
+	for(GlobalEventMap::iterator it = serverEventsMap.begin(); it != serverEventsMap.end(); ++it)
+	{
+		if(it->second->getEventType() == type)
+			ret[it->first] = it->second;
+	}
+
+	return ret;
 }
 
 GlobalEvent::GlobalEvent(LuaScriptInterface* _interface):
@@ -145,6 +154,8 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 			m_eventType = SERVER_EVENT_STARTUP;
 		else if(tmpStrValue == "shutdown" || tmpStrValue == "quit" || tmpStrValue == "exit")
 			m_eventType = SERVER_EVENT_SHUTDOWN;
+		else if(tmpStrValue == "record" || tmpStrValue="playersrecord")
+			m_eventType = SERVER_EVENT_RECORD;
 		else
 		{
 			std::cout << "[Error - GlobalEvent::configureEvent] No valid type \"" << strValue << "\" for globalevent with name " << m_name << std::endl;
@@ -173,6 +184,8 @@ std::string GlobalEvent::getScriptEventName() const
 			return "onStartup";
 		case SERVER_EVENT_SHUTDOWN:
 			return "onShutdown";
+		case SERVER_EVENT_RECORD:
+			return "onPlayersRecord";
 
 		case SERVER_EVENT_NONE:
 		default:
@@ -182,8 +195,21 @@ std::string GlobalEvent::getScriptEventName() const
 
 std::string GlobalEvent::getScriptEventParams() const
 {
-	return getEventType() != SERVER_EVENT_NONE ?
-		"" : "interval, lastExecution, thinkInterval";
+	switch(m_eventType)
+	{
+		case SERVER_EVENT_STARTUP:
+		case SERVER_EVENT_SHUTDOWN:
+			return "";
+
+		case SERVER_EVENT_RECORD:
+			return "new, old, cid";
+
+		case SERVER_EVENT_NONE:
+			return "interval, lastExecution, thinkInterval"";
+
+		default:
+			""
+	}
 }
 
 int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution, uint32_t thinkInterval)
@@ -236,6 +262,58 @@ int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution, uin
 	else
 	{
 		std::cout << "[Error - GlobalEvent::executeThink] Call stack overflow." << std::endl;
+		return 0;
+	}
+}
+
+int32_t GlobalEvent::executeRecord(uint32_t newRecord, uint32_t oldRecord, Player* player)
+{
+	//onPlayersRecord(new, old, cid)
+	if(m_scriptInterface->reserveScriptEnv())
+	{
+		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		if(m_scripted == EVENT_SCRIPT_BUFFER)
+		{
+			std::stringstream scriptstream;
+			scriptstream << "local new = " << newRecord << std::endl;
+			scriptstream << "local old = " << oldRecord << std::endl;
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
+
+			scriptstream << m_scriptData;
+			bool result = true;
+			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			{
+				lua_State* L = m_scriptInterface->getLuaState();
+				result = m_scriptInterface->getFieldBool(L, "_result");
+			}
+
+			m_scriptInterface->releaseScriptEnv();
+			return result;
+		}
+		else
+		{
+			#ifdef __DEBUG_LUASCRIPTS__
+			char desc[125];
+			sprintf(desc, "%s - %i (%i)", getName().c_str(), interval, lastExecution);
+			env->setEventDesc(desc);
+			#endif
+
+			env->setScriptId(m_scriptId, m_scriptInterface);
+			lua_State* L = m_scriptInterface->getLuaState();
+
+			m_scriptInterface->pushFunction(m_scriptId);
+			lua_pushnumber(L, newRecord);
+			lua_pushnumber(L, oldRecord);
+			lua_pushnumber(L, env->addThing(player));
+
+			bool result = m_scriptInterface->callFunction(3);
+			m_scriptInterface->releaseScriptEnv();
+			return result;
+		}
+	}
+	else
+	{
+		std::cout << "[Error - GlobalEvent::executeRecord] Call stack overflow." << std::endl;
 		return 0;
 	}
 }

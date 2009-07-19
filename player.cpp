@@ -1399,7 +1399,7 @@ void Player::onCreatureAppear(const Creature* creature)
 		}
 	}
 
-	g_game.checkPlayersRecord();
+	g_game.checkPlayersRecord(this);
 	if(!isInGhostMode())
 		IOLoginData::getInstance()->updateOnlineStatus(guid, true);
 

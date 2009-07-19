@@ -21800,12 +21800,12 @@
 		<attribute key="containerSize" value="20"/>
 		<attribute key="slotType" value="backpack"/>
 	</item>
-	<item id="10519" article="a" name="orange backpack">
+	<item id="10519" article="an" name="orange backpack">
 		<attribute key="weight" value="1800"/>
 		<attribute key="containerSize" value="20"/>
 		<attribute key="slotType" value="backpack"/>
 	</item>
-	<item id="10520" article="a" name="orange bag">
+	<item id="10520" article="an" name="orange bag">
 		<attribute key="weight" value="800"/>
 		<attribute key="containerSize" value="8"/>
 		<attribute key="slotType" value="backpack"/>

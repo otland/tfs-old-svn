@@ -509,7 +509,7 @@ class Game
 		int32_t getMotdNum();
 		void loadMotd();
 		void loadPlayersRecord();
-		void checkPlayersRecord();
+		void checkPlayersRecord(Player* player);
 
 		bool reloadInfo(ReloadInfo_t reload, uint32_t playerId = 0);
 		void cleanup();

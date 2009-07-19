@@ -96,8 +96,8 @@ void PrivateChatChannel::closeChannel()
 		it->second->sendClosePrivate(getId());
 }
 
-ChatChannel::ChatChannel(uint16_t id, std::string name, bool logged/* = false*/, uint32_t access/* = 0*/, bool active/* = true*/, bool enabled/* = true*/):
-	m_name(name), m_logged(logged), m_active(active), m_enabled(enabled), m_id(id), m_access(access)
+ChatChannel::ChatChannel(uint16_t id, std::string name, bool logged/* = false*/, uint32_t access/* = 0*/, bool active/* = true*/, bool enabled/* = true*/, VocationMap* vocationMap/* = NULL*/):
+	m_name(name), m_logged(logged), m_active(active), m_enabled(enabled), m_id(id), m_access(access), m_vocationMap(vocationMap)
 {
 	if(logged)
 	{
@@ -275,6 +275,23 @@ bool Chat::parseChannelNode(xmlNodePtr p)
 	if(readXMLString(p, "enabled", strValue))
 		enabled = booleanString(strValue);
 
+	std::string error;
+	StringVec vocStringVec;
+
+	VocationMap tmpVocationMap;
+	xmlNodePtr vocationNode = p->children;
+	while(vocationNode)
+	{
+		if(!parseVocationNode(vocationNode, tmpVocationMap, vocStringVec, error))
+			std::cout << "[Warning - Chat::loadFromXml] " << error << std::endl;
+
+		vocationNode = vocationNode->next;
+	}
+
+	VocationMap* vocationMap = NULL;
+	if(!tmpVocationMap.empty())
+		vocationMap = new VocationMap(tmpVocationMap);
+
 	switch(intValue)
 	{
 		case CHANNEL_PARTY:
@@ -294,7 +311,7 @@ bool Chat::parseChannelNode(xmlNodePtr p)
 
 		default:
 		{
-			if(ChatChannel* newChannel = new ChatChannel(id, name, logged, access, active, enabled))
+			if(ChatChannel* newChannel = new ChatChannel(id, name, logged, access, active, enabled, vocationMap))
 				m_normalChannels[id] = newChannel;
 
 			break;
@@ -1081,7 +1098,8 @@ ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 		std::cout << "Chat::getChannel - found normal channel" << std::endl;
 		#endif
 		ChatChannel* tmpChannel = nit->second;
-		if(!tmpChannel || !tmpChannel->isEnabled() || player->getAccess() < tmpChannel->getAccess())
+		if(!tmpChannel || !tmpChannel->isEnabled() || player->getAccess() < tmpChannel->getAccess()
+			|| (!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) && !tmpChannel->isVocationAllowed(player->getVocationId())))
 		{
 			#ifdef __DEBUG_CHAT__
 			std::cout << "Chat::getChannel - cannot access normal channel" << std::endl;
@@ -1089,35 +1107,8 @@ ChatChannel* Chat::getChannel(Player* player, uint16_t channelId)
 			return NULL;
 		}
 
-		switch(channelId)
-		{
-			case CHANNEL_RVR:
-			{
-				if(!player->hasFlag(PlayerFlag_CanAnswerRuleViolations))
-					return NULL;
-
-				break;
-			}
-
-			case CHANNEL_TRADE:
-			{
-				if(!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) && player->getVocationId() == 0)
-					return NULL;
-
-				break;
-			}
-
-			case CHANNEL_TRADEROOK:
-			{
-				if(!player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) && player->getVocationId() != 0)
-					return NULL;
-
-				break;
-			}
-
-			default:
-				break;
-		}
+		if(channelId == CHANNEL_RVR && !player->hasFlag(PlayerFlag_CanAnswerRuleViolations))
+			return NULL;
 
 		#ifdef __DEBUG_CHAT__
 		std::cout << "Chat::getChannel - endpoint return" << std::endl;

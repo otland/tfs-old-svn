@@ -206,7 +206,7 @@ void Game::setGameState(GameState_t newState)
 					it = Player::listPlayer.list.begin();
 				}
 
-				g_globalEvents->shutdown();
+				g_globalEvents->execute(SERVER_EVENT_SHUTDOWN);
 				Houses::getInstance().payHouses();
 
 				saveGameState(false);
@@ -5549,20 +5549,17 @@ void Game::loadMotd()
 	lastMotdNum = random_range(5, 500);
 }
 
-void Game::checkPlayersRecord()
+void Game::checkPlayersRecord(Player* player)
 {
 	if(getPlayersOnline() > lastPlayersRecord)
 	{
-		lastPlayersRecord = getPlayersOnline();
-		Database* db = Database::getInstance();
+		uint32_t newPlayersRecord = getPlayersOnline();
 
-		DBQuery query;
-		query << "INSERT INTO `server_record` (`record`, `world_id`, `timestamp`) VALUES (" << lastPlayersRecord << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << time(NULL) << ");";
-		db->executeQuery(query.str());
+		GlobalEventMap advanceEvents = g_globalEvents->getServerEvents(SERVER_EVENT_RECORD);
+		for(GlobalEventMap::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
+			it->second->executeRecord(newPlayersRecord, lastPlayersRecord, player);
 
-		char buffer[50];
-		sprintf(buffer, "New record: %d players are logged in.", lastPlayersRecord);
-		broadcastMessage(buffer, MSG_STATUS_DEFAULT);
+		lastPlayersRecord = newPlayersRecord;
 	}
 }
 

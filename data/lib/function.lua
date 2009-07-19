@@ -276,7 +276,7 @@ function getTileZoneInfo(pos)
 end
 
 function debugPrint(text)
-	return io.stdout:write(text)
+	return print(text)
 end
 
 function doShutdown()
@@ -402,6 +402,7 @@ function doBroadcastMessage(text, class)
 		doPlayerSendTextMessage(pid, class, text)
 	end
 
+	print("> Broadcasted message: \"" .. text .. "\".")
 	return true
 end
 

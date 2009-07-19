@@ -28,10 +28,13 @@ enum ServerEvent_t
 {
 	SERVER_EVENT_NONE,
 	SERVER_EVENT_STARTUP,
-	SERVER_EVENT_SHUTDOWN
+	SERVER_EVENT_SHUTDOWN,
+	SERVER_EVENT_RECORD
 };
 
 class GlobalEvent;
+typedef std::map<std::string, GlobalEvent*> GlobalEventMap;
+
 class GlobalEvents : public BaseEvents
 {
 	public:
@@ -39,8 +42,10 @@ class GlobalEvents : public BaseEvents
 		virtual ~GlobalEvents();
 
 		void startup();
-		void shutdown();
 		void think(uint32_t interval);
+		void execute(ServerEvent_t type);
+
+		GlobalEventMap getServerEvents(ServerEvent_t type);
 
 	protected:
 		virtual std::string getScriptBaseName() const {return "globalevents";}
@@ -52,7 +57,6 @@ class GlobalEvents : public BaseEvents
 		virtual LuaScriptInterface& getScriptInterface() {return m_scriptInterface;}
 		LuaScriptInterface m_scriptInterface;
 
-		typedef std::map<std::string, GlobalEvent*> GlobalEventMap;
 		GlobalEventMap eventsMap, serverEventsMap;
 };
 
@@ -65,6 +69,7 @@ class GlobalEvent : public Event
 		virtual bool configureEvent(xmlNodePtr p);
 		int32_t executeThink(uint32_t interval, uint32_t lastExecution, uint32_t thinkInterval);
 		int32_t executeServerEvent();
+		int32_t executeRecord(uint32_t newRecord, uint32_t oldRecord, Player* player);
 
 		ServerEvent_t getEventType() const {return m_eventType;}
 		std::string getName() const {return m_name;}

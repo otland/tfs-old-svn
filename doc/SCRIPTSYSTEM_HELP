@@ -82,14 +82,19 @@
 		File: globalevents/globalevents.xml
 		Attributes
 			type
-				Server events, script can be executed at server start or shutdown.
+				Server events, script can be executed at server start, shutdown or players record.
 				Values:
-					start, shutdown
+					start
+					shutdown
+					record
 			interval
 				Script will be executed every x seconds.
 				Ignored if 'type' specified.
-		Function
+		Functions
 			onThink(interval, lastExecution, thinkInterval)
+			onStartup()
+			onShutdown()
+			onPlayersRecord(new, old, cid)
 
 	*MOVEMENTS
 		File: movements/movements.xml
