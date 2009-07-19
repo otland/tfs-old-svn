@@ -2966,8 +2966,8 @@ bool Game::internalCloseTrade(Player* player)
 	return true;
 }
 
-bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t count,
-	uint8_t amount)
+bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t count, uint8_t amount,
+	bool ignoreCap/* = false*/, bool inBackpacks/* = false*/)
 {
 	Player* player = getPlayerByID(playerId);
 	if(player == NULL || player->isRemoved())
@@ -2994,7 +2994,7 @@ bool Game::playerPurchaseItem(uint32_t playerId, uint16_t spriteId, uint8_t coun
 	else
 		subType = count;
 
-	merchant->onPlayerTrade(player, SHOPEVENT_BUY, onBuy, it.id, subType, amount);
+	merchant->onPlayerTrade(player, SHOPEVENT_BUY, onBuy, it.id, subType, amount, ignoreCap, inBackpacks);
 	return true;
 }
 
@@ -4034,6 +4034,11 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 							case RACE_FIRE:
 								textColor = TEXTCOLOR_ORANGE;
 								hitEffect = NM_ME_DRAW_BLOOD;
+								break;
+								
+							case RACE_ENERGY:
+								textColor = TEXTCOLOR_PURPLE;
+								hitEffect = NM_ME_ENERGY_DAMAGE;
 								break;
 
 							default:
