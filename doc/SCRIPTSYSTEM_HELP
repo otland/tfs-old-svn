@@ -94,7 +94,7 @@
 			onThink(interval, lastExecution, thinkInterval)
 			onStartup()
 			onShutdown()
-			onPlayersRecord(new, old, cid)
+			onRecord(current, old, cid)
 
 	*MOVEMENTS
 		File: movements/movements.xml

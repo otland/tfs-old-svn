@@ -69,7 +69,7 @@ class GlobalEvent : public Event
 		virtual bool configureEvent(xmlNodePtr p);
 		int32_t executeThink(uint32_t interval, uint32_t lastExecution, uint32_t thinkInterval);
 		int32_t executeServerEvent();
-		int32_t executeRecord(uint32_t newRecord, uint32_t oldRecord, Player* player);
+		int32_t executeRecord(uint32_t current, uint32_t old, Player* player);
 
 		ServerEvent_t getEventType() const {return m_eventType;}
 		std::string getName() const {return m_name;}

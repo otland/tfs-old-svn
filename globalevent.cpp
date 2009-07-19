@@ -197,18 +197,16 @@ std::string GlobalEvent::getScriptEventParams() const
 {
 	switch(m_eventType)
 	{
-		case SERVER_EVENT_STARTUP:
-		case SERVER_EVENT_SHUTDOWN:
-			return "";
-
 		case SERVER_EVENT_RECORD:
-			return "new, old, cid";
+			return "current, old, cid";
 
 		case SERVER_EVENT_NONE:
 			return "interval, lastExecution, thinkInterval"";
 
+		case SERVER_EVENT_STARTUP:
+		case SERVER_EVENT_SHUTDOWN:
 		default:
-			""
+			return "";
 	}
 }
 
@@ -266,16 +264,16 @@ int32_t GlobalEvent::executeThink(uint32_t interval, uint32_t lastExecution, uin
 	}
 }
 
-int32_t GlobalEvent::executeRecord(uint32_t newRecord, uint32_t oldRecord, Player* player)
+int32_t GlobalEvent::executeRecord(uint32_t current, uint32_t old, Player* player)
 {
-	//onPlayersRecord(new, old, cid)
+	//onRecord(current, old, cid)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			std::stringstream scriptstream;
-			scriptstream << "local new = " << newRecord << std::endl;
+			scriptstream << "local current = " << newRecord << std::endl;
 			scriptstream << "local old = " << oldRecord << std::endl;
 			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 
