@@ -154,7 +154,7 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 			m_eventType = SERVER_EVENT_STARTUP;
 		else if(tmpStrValue == "shutdown" || tmpStrValue == "quit" || tmpStrValue == "exit")
 			m_eventType = SERVER_EVENT_SHUTDOWN;
-		else if(tmpStrValue == "record" || tmpStrValue="playersrecord")
+		else if(tmpStrValue == "record" || tmpStrValue == "playersrecord")
 			m_eventType = SERVER_EVENT_RECORD;
 		else
 		{
@@ -201,7 +201,7 @@ std::string GlobalEvent::getScriptEventParams() const
 			return "current, old, cid";
 
 		case SERVER_EVENT_NONE:
-			return "interval, lastExecution, thinkInterval"";
+			return "interval, lastExecution, thinkInterval";
 
 		case SERVER_EVENT_STARTUP:
 		case SERVER_EVENT_SHUTDOWN:

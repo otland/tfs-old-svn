@@ -1,5 +1,5 @@
 local config = {
-	expireReportsAfterReads = getConfigInfo('expireReportsAfterReads')
+	expireReportsAfterReads = getConfigValue('expireReportsAfterReads')
 }
 
 function onSay(cid, words, param, channel)
@@ -8,7 +8,7 @@ function onSay(cid, words, param, channel)
 		local report = db.getResult("SELECT * FROM `server_reports` WHERE `id` = " .. reportId)
 		if(report:getID() ~= -1) then
 			db.executeQuery("UPDATE `server_reports` SET `reads` = `reads` + 1 WHERE `id` = " .. reportId)
-			doPlayerPopupFYI(cid, "Report no. " .. reportId .. "\n\nName: " .. getPlayerNameByGUID(report:getDataInt("player_id")) .. "\nPosition: [X: " .. report:getDataInt("posx") .. " | Y: " .. report:getDataInt("posy") .. " | Z: " .. report:getDataInt("posz") .. "]\nDate: " .. os.date("%c", report:getDataInt("timestamp")) .. "\nReport:\n" .. report:getDataString("report"))
+			doPlayerPopupFYI(cid, "Report no. " .. reportId .. "\n\nName: " .. getPlayerNameByGUID(report:getDataInt("player_id"), true, false) .. "\nPosition: [X: " .. report:getDataInt("posx") .. " | Y: " .. report:getDataInt("posy") .. " | Z: " .. report:getDataInt("posz") .. "]\nDate: " .. os.date("%c", report:getDataInt("timestamp")) .. "\nReport:\n" .. report:getDataString("report"))
 			report:free()
 		else
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Report with no. " .. reportId .. " does not exists.")
@@ -18,7 +18,7 @@ function onSay(cid, words, param, channel)
 		if(list:getID() ~= -1) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "New reports:")
 			repeat
-				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, list:getDataInt("id") .. ", by " .. getPlayerNameByGUID(list:getDataInt("player_id")) .. ".")
+				doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, list:getDataInt("id") .. ", by " .. getPlayerNameByGUID(list:getDataInt("player_id"), true, false) .. ".")
 			until not list:next()
 			list:free()
 		else

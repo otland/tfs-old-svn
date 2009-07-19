@@ -1,13 +1,18 @@
 function onSay(cid, words, param, channel)
+	local toPos = getCreatureLookPosition(cid)
+	if(isInArray({"full", "all"}, param:lower())) then
+		doCleanTile(toPos, false)
+		doSendMagicEffect(toPos, CONST_ME_MAGIC_RED)
+		return true
+	end
+
 	local amount = 1
 	param = tonumber(param)
 	if(param) then
-		amount = tonumber(param)
+		amount = param
 	end
 
-	local toPos = getCreatureLookPosition(cid)
 	toPos.stackpos = STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE
-
 	local tmp = getThingFromPos(toPos)
 	if(tmp.uid ~= 0) then
 		if(isCreature(tmp.uid)) then

@@ -25,6 +25,11 @@ local reloadInfo = {
 }
 
 function onSay(cid, words, param, channel)
+	if(param == '') then
+		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Command param required.")
+		return true
+	end
+
 	param = param:lower()
 	local str = "Reload type not found."
 	for _, v in ipairs(reloadInfo) do
