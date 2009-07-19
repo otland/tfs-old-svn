@@ -323,6 +323,20 @@ void escape_string(std::string & s)
 }
 #endif
 
+std::string _Database::getUpdateQueryLimit()
+{
+	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
+	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_MYSQL)
+		return " LIMIT 1";
+	else
+		return "";
+	#elif defined __USE_MYSQL__
+	return " LIMIT 1";
+	#elif defined __USE_SQLITE__
+	return "";
+	#endif
+}
+
 std::string _Database::escapeString(const std::string &s)
 {
 	#if defined __USE_MYSQL__ && defined __USE_SQLITE__

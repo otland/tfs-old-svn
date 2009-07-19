@@ -157,13 +157,13 @@ bool IOGuild::changeRankName(std::string oldRankName, std::string newRankName, u
 
 	#if defined __USE_MYSQL__ && defined __USE_SQLITE__
 	if(g_config.getNumber(ConfigManager::SQLTYPE) == SQL_TYPE_SQLITE)
-		query << "UPDATE `guild_ranks` SET `name` = '" << Database::escapeString(newRankName) << "' WHERE `name` LIKE '" << Database::escapePatternString(oldRankName) << "' AND `guild_id` = " << guildId << " LIMIT 1;";
+		query << "UPDATE `guild_ranks` SET `name` = '" << Database::escapeString(newRankName) << "' WHERE `name` LIKE '" << Database::escapePatternString(oldRankName) << "' AND `guild_id` = " << guildId << db->getUpdateQueryLimit() << ";";
 	else
-		query << "UPDATE `guild_ranks` SET `name` = '" << Database::escapeString(newRankName) << "' WHERE `name` = '" << Database::escapeString(oldRankName) << "' AND `guild_id` = " << guildId << " LIMIT 1;";
+		query << "UPDATE `guild_ranks` SET `name` = '" << Database::escapeString(newRankName) << "' WHERE `name` = '" << Database::escapeString(oldRankName) << "' AND `guild_id` = " << guildId << db->getUpdateQueryLimit() << ";";
 	#elif defined __USE_SQLITE__
-	query << "UPDATE `guild_ranks` SET `name` = '" << Database::escapeString(newRankName) << "' WHERE `name` LIKE '" << Database::escapePatternString(oldRankName) << "' AND `guild_id` = " << guildId << " LIMIT 1;";
+	query << "UPDATE `guild_ranks` SET `name` = '" << Database::escapeString(newRankName) << "' WHERE `name` LIKE '" << Database::escapePatternString(oldRankName) << "' AND `guild_id` = " << guildId << db->getUpdateQueryLimit() << ";";
 	#elif defined __USE_MYSQL__
-	query << "UPDATE `guild_ranks` SET `name` = '" << Database::escapeString(newRankName) << "' WHERE `name` = '" << Database::escapeString(oldRankName) << "' AND `guild_id` = " << guildId << " LIMIT 1;";
+	query << "UPDATE `guild_ranks` SET `name` = '" << Database::escapeString(newRankName) << "' WHERE `name` = '" << Database::escapeString(oldRankName) << "' AND `guild_id` = " << guildId << db->getUpdateQueryLimit() << ";";
 	#endif
 	if(!db->executeQuery(query))
 		return false;
@@ -214,7 +214,7 @@ bool IOGuild::joinGuild(Player* player, uint32_t guildId)
 
 	player->setGuildRank(result.getDataString("name"));
 	player->setGuildId(guildId);
-	query << "UPDATE `players` SET `rank_id` = " << result.getDataInt("id") << " WHERE `id` = " << player->getGUID() << " LIMIT 1;";
+	query << "UPDATE `players` SET `rank_id` = " << result.getDataInt("id") << " WHERE `id` = " << player->getGUID() << db->getUpdateQueryLimit() << ";";
 	if(!db->executeQuery(query))
 		return false;
 
@@ -342,7 +342,7 @@ bool IOGuild::setGuildLevel(uint32_t guid, GuildLevel_t level)
 	if(!db->storeQuery(query, result))
 		return false;
 
-	query << "UPDATE `players` SET `rank_id` = " << result.getDataInt("id") << " WHERE `id` = " << guid << " LIMIT 1;";
+	query << "UPDATE `players` SET `rank_id` = " << result.getDataInt("id") << " WHERE `id` = " << guid << db->getUpdateQueryLimit() << ";";
 	return db->executeQuery(query);
 }
 
@@ -353,7 +353,7 @@ bool IOGuild::updateOwnerId(uint32_t guildId, uint32_t guid)
 		return false;
 
 	DBQuery query;
-	query << "UPDATE `guilds` SET `ownerid` = " << guid << " WHERE `id` = " << guildId << " LIMIT 1;";
+	query << "UPDATE `guilds` SET `ownerid` = " << guid << " WHERE `id` = " << guildId << db->getUpdateQueryLimit() << ";";
 	return db->executeQuery(query);
 }
 
@@ -364,7 +364,7 @@ bool IOGuild::setGuildNick(uint32_t guid, std::string guildNick)
 		return false;
 
 	DBQuery query;
-	query << "UPDATE `players` SET `guildnick` = '" << Database::escapeString(guildNick) << "' WHERE `id` = " << guid << " LIMIT 1;";
+	query << "UPDATE `players` SET `guildnick` = '" << Database::escapeString(guildNick) << "' WHERE `id` = " << guid << db->getUpdateQueryLimit() << ";";
 	return db->executeQuery(query);
 }
 
@@ -375,7 +375,7 @@ bool IOGuild::setMotd(uint32_t guildId, std::string newMotd)
 		return false;
 
 	DBQuery query;
-	query << "UPDATE `guilds` SET `motd` = '" << Database::escapeString(newMotd) << "' WHERE `id` = " << guildId << " LIMIT 1;";
+	query << "UPDATE `guilds` SET `motd` = '" << Database::escapeString(newMotd) << "' WHERE `id` = " << guildId << db->getUpdateQueryLimit() << ";";
 	return db->executeQuery(query);
 }
 

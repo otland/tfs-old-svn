@@ -85,7 +85,7 @@ bool IOLoginData::saveAccount(Account acc)
 		return false;
 
 	DBQuery query;
-	query << "UPDATE `accounts` SET `premdays` = " << acc.premiumDays << ", `warnings` = " << acc.warnings << ", `lastday` = " << acc.lastDay << " WHERE `id` = " << acc.accnumber << " LIMIT 1;";
+	query << "UPDATE `accounts` SET `premdays` = " << acc.premiumDays << ", `warnings` = " << acc.warnings << ", `lastday` = " << acc.lastDay << " WHERE `id` = " << acc.accnumber << db->getUpdateQueryLimit() << ";";
 	return db->executeQuery(query);
 }
 
@@ -157,7 +157,7 @@ bool IOLoginData::setRecoveryKey(uint32_t accountNumber, std::string recoveryKey
 		return false;
 
 	DBQuery query;
-	query << "UPDATE `accounts` SET `key` = '" << Database::escapeString(recoveryKey) << "' WHERE `id` = " << accountNumber << " LIMIT 1;";
+	query << "UPDATE `accounts` SET `key` = '" << Database::escapeString(recoveryKey) << "' WHERE `id` = " << accountNumber << db->getUpdateQueryLimit() << ";";
 	return db->executeQuery(query);
 }
 
@@ -195,7 +195,7 @@ bool IOLoginData::setNewPassword(uint32_t accountId, std::string newPassword)
 		newPassword = transformToSHA1(newPassword);
 
 	DBQuery query;
-	query << "UPDATE `accounts` SET `password` = '" << Database::escapeString(newPassword) << "' WHERE `id` = " << accountId << " LIMIT 1;";
+	query << "UPDATE `accounts` SET `password` = '" << Database::escapeString(newPassword) << "' WHERE `id` = " << accountId << db->getUpdateQueryLimit() << ";";
 	return db->executeQuery(query);
 }
 
@@ -258,7 +258,7 @@ bool IOLoginData::resetOnlineStatus()
 		return false;
 
 	DBQuery query;
-	query << "UPDATE `players` SET `online` = 0";
+	query << "UPDATE `players` SET `online` = 0;";
 	return db->executeQuery(query);
 }
 
@@ -285,7 +285,7 @@ bool IOLoginData::updateOnlineStatus(uint32_t guid, bool login)
 			onlineValue--;
 	}
 
-	query << "UPDATE `players` SET `online` = " << onlineValue << " WHERE `id` = " << guid << " LIMIT 1;";
+	query << "UPDATE `players` SET `online` = " << onlineValue << " WHERE `id` = " << guid << db->getUpdateQueryLimit() << ";";
 	return db->executeQuery(query);
 }
 
@@ -603,7 +603,6 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool prelo
 	player->updateBaseSpeed();
 	player->updateInventoryWeight();
 	player->updateItemsLight(true);
-
 	return true;
 }
 
@@ -691,7 +690,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	if(result.getDataInt("save") == 0)
 	{
 		query.str("");
-		query << "UPDATE `players` SET `lastlogin` = " << player->lastLoginSaved << ", `lastip` = " << player->lastIP << " WHERE `id` = " << player->getGUID() << " LIMIT 1;";
+		query << "UPDATE `players` SET `lastlogin` = " << player->lastLoginSaved << ", `lastip` = " << player->lastIP << " WHERE `id` = " << player->getGUID() << db->getUpdateQueryLimit() << ";";
 
 		DBTransaction trans(db);
 		if(!trans.start())
@@ -786,7 +785,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave)
 	// skills
 	for(int32_t i = 0; i <= 6; i++)
 	{
-		query << "UPDATE `player_skills` SET `value` = " << player->skills[i][SKILL_LEVEL] << ", `count` = " << player->skills[i][SKILL_TRIES] << " WHERE `player_id` = " << player->getGUID() << " AND `skillid` = " << i << " LIMIT 1;";
+		query << "UPDATE `player_skills` SET `value` = " << player->skills[i][SKILL_LEVEL] << ", `count` = " << player->skills[i][SKILL_TRIES] << " WHERE `player_id` = " << player->getGUID() << " AND `skillid` = " << i << db->getUpdateQueryLimit() << ";";
 		if(!db->executeQuery(query))
 			return false;
 
@@ -1178,7 +1177,7 @@ bool IOLoginData::leaveGuild(uint32_t guid)
 		return false;
 
 	DBQuery query;
-	query << "UPDATE `players` SET `rank_id` = 0, `guildnick` = '' WHERE `id` = " << guid << " LIMIT 1;";
+	query << "UPDATE `players` SET `rank_id` = 0, `guildnick` = '' WHERE `id` = " << guid << db->getUpdateQueryLimit() << ";";
 	return db->executeQuery(query);
 }
 
@@ -1189,7 +1188,7 @@ bool IOLoginData::changeName(uint32_t guid, std::string newName)
 		return false;
 
 	DBQuery query;
-	query << "UPDATE `players` SET `name` = '" << Database::escapeString(newName) << "' WHERE `id` = " << guid << " LIMIT 1;";
+	query << "UPDATE `players` SET `name` = '" << Database::escapeString(newName) << "' WHERE `id` = " << guid << db->getUpdateQueryLimit() << ";";
 	if(db->executeQuery(query))
 	{
 		nameCacheMap[guid] = newName;
@@ -1350,7 +1349,7 @@ bool IOLoginData::addStorageValue(uint32_t guid, uint32_t storageKey, uint32_t s
 
 	query << "SELECT `key` FROM `player_storage` WHERE `player_id` = " << guid << " AND `key` = " << storageKey << " LIMIT 1;";
 	if(db->storeQuery(query, result))
-		query << "UPDATE `player_storage` SET `value` = " << storageValue << " WHERE `player_id` = " << guid << " AND `key` = " << storageKey << " LIMIT 1;";
+		query << "UPDATE `player_storage` SET `value` = " << storageValue << " WHERE `player_id` = " << guid << " AND `key` = " << storageKey << db->getUpdateQueryLimit() << ";";
 	else
 	{
 		query.reset();
