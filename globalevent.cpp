@@ -273,8 +273,8 @@ int32_t GlobalEvent::executeRecord(uint32_t current, uint32_t old, Player* playe
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			std::stringstream scriptstream;
-			scriptstream << "local current = " << newRecord << std::endl;
-			scriptstream << "local old = " << oldRecord << std::endl;
+			scriptstream << "local current = " << current << std::endl;
+			scriptstream << "local old = " << old << std::endl;
 			scriptstream << "local cid = " << env->addThing(player) << std::endl;
 
 			scriptstream << m_scriptData;
@@ -300,8 +300,8 @@ int32_t GlobalEvent::executeRecord(uint32_t current, uint32_t old, Player* playe
 			lua_State* L = m_scriptInterface->getLuaState();
 
 			m_scriptInterface->pushFunction(m_scriptId);
-			lua_pushnumber(L, newRecord);
-			lua_pushnumber(L, oldRecord);
+			lua_pushnumber(L, current);
+			lua_pushnumber(L, old);
 			lua_pushnumber(L, env->addThing(player));
 
 			bool result = m_scriptInterface->callFunction(3);
