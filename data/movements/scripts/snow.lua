@@ -1,5 +1,5 @@
 function onStepOut(cid, item, position, fromPosition)
-	if(isPlayerGhost(cid)) then
+	if(not doComparePositions(fromPosition, position) or isPlayerGhost(cid)) then
 		return true
 	end
 
