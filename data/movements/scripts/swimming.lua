@@ -19,7 +19,6 @@ BORDERS[4828] = BORDERS[7943]
 BORDERS[4829] = BORDERS[7946]
 BORDERS[4830] = BORDERS[7945]
 BORDERS[4831] = BORDERS[7944]
--- TODO: add rest (8) of borders? and remove swimpool.lua
 
 function onStepIn(cid, item, position, lastPosition, fromPosition, toPosition, actor)
 	if(not isPlayer(cid)) then

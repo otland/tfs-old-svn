@@ -5,8 +5,6 @@
 	<movevent type="StepIn" itemid="461" event="script" value="decay.lua"/>
 
 	<!-- Swimming -->
-	<movevent type="StepIn" itemid="4820" event="script" value="swimpool.lua"/>
-	<movevent type="StepOut" itemid="4820" event="script" value="swimpool.lua"/>
 	<movevent type="StepIn" itemid="4828-4831" event="script" value="swimming.lua"/>
 	<movevent type="StepIn" itemid="7943-7954" event="script" value="swimming.lua"/>
 
