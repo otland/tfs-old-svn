@@ -291,9 +291,13 @@ bool Chat::parseChannelNode(xmlNodePtr p)
 				std::cout << "[Warning - Chat::parseChannelNode] Using reserved muted condition sub id (" << conditionId << ")" << std::endl;
 		}
 
-		condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_MUTED, tmp, 0, false, conditionId);
-		if(readXMLInteger(p, "conditionMessage", strValue))
-			conditionMessage = strValue;
+		if((condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_MUTED, tmp, 0, false, conditionId)))
+		{
+			if(readXMLInteger(p, "conditionMessage", strValue))
+				conditionMessage = strValue;
+		}
+		else
+			conditionId = -1;
 	}
 
 	StringVec vocStringVec;
