@@ -27,7 +27,7 @@ extern ConfigManager g_config;
 extern Game g_game;
 extern Chat g_chat;
 
-uint16_t ChatChannel::staticFlags = 3; //3 = enabled & active;
+uint16_t ChatChannel::staticFlags = CHANNELFLAG_ENABLED | CHANNELFLAG_ACTIVE;
 
 PrivateChatChannel::PrivateChatChannel(uint16_t id, std::string name, uint16_t flags):
 	ChatChannel(id, name, flags), m_owner(0) {}

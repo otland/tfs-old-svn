@@ -28,7 +28,7 @@ typedef std::list<LootBlock> LootItems;
 
 struct LootBlock
 {
-	std::list<uint16_t> ids;
+	std::vector<uint16_t> ids;
 	uint16_t count;
 	int32_t subType, actionId, uniqueId;
 	uint32_t chance;

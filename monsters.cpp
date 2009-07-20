@@ -1338,7 +1338,6 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 
 bool Monsters::loadLoot(xmlNodePtr node, LootBlock& lootBlock)
 {
-	int32_t intValue;
 	std::string strValue;
 	if(!readXMLString(node, "id", strValue) && !readXMLString(node, "ids", strValue))
 	{
@@ -1347,9 +1346,13 @@ bool Monsters::loadLoot(xmlNodePtr node, LootBlock& lootBlock)
 			StringVec names = explodeString(strValue, ";");
 			for(StringVec::iterator it = names.begin(); it != names.end(); ++it)
 			{
-				intValue = Item::items.getItemIdByName(strValue);
-				if(intValue > 0)
-					lootBlock.ids.push_back(intValue);
+				uint16_t tmp = Item::items.getItemIdByName(strValue);
+				if(!tmp)
+					continue;
+
+				lootBlock.ids.push_back(tmp);
+				if(Item::items[tmp].isContainer())
+					loadChildLoot(node, lootBlock);
 			}
 		}
 	}
@@ -1358,12 +1361,17 @@ bool Monsters::loadLoot(xmlNodePtr node, LootBlock& lootBlock)
 		IntegerVec idsVec;
 		parseIntegerVec(strValue, idsVec);
 		for(IntegerVec::iterator it = idsVec.begin(); it != idsVec.end(); ++it)
+		{
 			lootBlock.ids.push_back(*it);
+			if(Item::items[(*it)].isContainer())
+				loadChildLoot(node, lootBlock);
+		}
 	}
 
 	if(lootBlock.ids.empty())
 		return false;
 
+	int32_t intValue;
 	if(readXMLInteger(node, "count", intValue) || readXMLInteger(node, "countmax", intValue))
 		lootBlock.count = std::min(100, intValue);
 	else
@@ -1387,10 +1395,6 @@ bool Monsters::loadLoot(xmlNodePtr node, LootBlock& lootBlock)
 
 	if(readXMLString(node, "text", strValue))
 		lootBlock.text = strValue;
-
-
-	if(Item::items[lootBlock.id].isContainer())
-		loadChildLoot(node, lootBlock);
 
 	return true;
 }
