@@ -57,6 +57,23 @@ enum ItemTypes_t
 	ITEM_TYPE_LAST
 };
 
+enum FloorChange_t
+{
+	CHANGE_DOWN = 0,
+	CHANGE_FIRST = 1,
+	CHANGE_NORTH = CHANGE_FIRST,
+	CHANGE_EAST = 2,
+	CHANGE_SOUTH = 3,
+	CHANGE_WEST = 4,
+	CHANGE_FIRST_EX = 5,
+	CHANGE_NORTH_EX = CHANGE_FIRST_EX,
+	CHANGE_EAST_EX = 6,
+	CHANGE_SOUTH_EX = 7,
+	CHANGE_WEST_EX = 8,
+	CHANGE_NONE = 9,
+	CHANGE_LAST = CHANGE_NONE
+};
+
 struct Abilities
 {
 	Abilities()
@@ -81,7 +98,6 @@ struct Abilities
 };
 
 class Condition;
-
 class ItemType
 {
 	private:
@@ -106,13 +122,13 @@ class ItemType
 		bool isBed() const {return (type == ITEM_TYPE_BED);}
 
 		bool isRune() const {return clientCharges;}
-		bool hasSubType() const {return (isFluidContainer() || isSplash() || stackable || charges != 0);}
+		bool hasSubType() const {return (isFluidContainer() || isSplash() || stackable || charges);}
 
 		bool stopTime, showCount, clientCharges, stackable, showDuration, showCharges, showAttributes,
 			allowDistRead, canReadText, canWriteText, forceSerialize, isVertical, isHorizontal, isHangable,
 			useable, moveable, pickupable, rotable, replaceable, lookThrough,
-			floorChangeDown, floorChangeNorth, floorChangeSouth, floorChangeEast, floorChangeWest,
-			hasHeight, blockSolid, blockPickupable, blockProjectile, blockPathFind, allowPickupable, alwaysOnTop;
+			hasHeight, blockSolid, blockPickupable, blockProjectile, blockPathFind, allowPickupable, alwaysOnTop,
+			floorChange[CHANGE_LAST];
 
 		MagicEffectClasses magicEffect;
 		FluidTypes_t fluidSource;

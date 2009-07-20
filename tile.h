@@ -55,18 +55,22 @@ enum tileflags_t
 	TILESTATE_FLOORCHANGE_SOUTH = 1 << 10,
 	TILESTATE_FLOORCHANGE_EAST = 1 << 11,
 	TILESTATE_FLOORCHANGE_WEST = 1 << 12,
-	TILESTATE_TELEPORT = 1 << 13,
-	TILESTATE_MAGICFIELD = 1 << 14,
-	TILESTATE_MAILBOX = 1 << 15,
-	TILESTATE_TRASHHOLDER = 1 << 16,
-	TILESTATE_BED = 1 << 17,
-	TILESTATE_BLOCKSOLID = 1 << 18,
-	TILESTATE_BLOCKPATH = 1 << 19,
-	TILESTATE_IMMOVABLEBLOCKSOLID = 1 << 20,
-	TILESTATE_IMMOVABLEBLOCKPATH = 1 << 21,
-	TILESTATE_IMMOVABLENOFIELDBLOCKPATH = 1 << 22,
-	TILESTATE_NOFIELDBLOCKPATH = 1 << 23,
-	TILESTATE_DYNAMIC_TILE = 1 << 24
+	TILESTATE_FLOORCHANGE_NORTH_EX = 1 << 13,
+	TILESTATE_FLOORCHANGE_SOUTH_EX = 1 << 14,
+	TILESTATE_FLOORCHANGE_EAST_EX = 1 << 15,
+	TILESTATE_FLOORCHANGE_WEST_EX = 1 << 16,
+	TILESTATE_TELEPORT = 1 << 17,
+	TILESTATE_MAGICFIELD = 1 << 18,
+	TILESTATE_MAILBOX = 1 << 19,
+	TILESTATE_TRASHHOLDER = 1 << 20,
+	TILESTATE_BED = 1 << 21,
+	TILESTATE_BLOCKSOLID = 1 << 22,
+	TILESTATE_BLOCKPATH = 1 << 23,
+	TILESTATE_IMMOVABLEBLOCKSOLID = 1 << 24,
+	TILESTATE_IMMOVABLEBLOCKPATH = 1 << 25,
+	TILESTATE_IMMOVABLENOFIELDBLOCKPATH = 1 << 26,
+	TILESTATE_NOFIELDBLOCKPATH = 1 << 27,
+	TILESTATE_DYNAMIC_TILE = 1 << 28
 };
 
 enum ZoneType_t
@@ -181,20 +185,30 @@ class Tile : public Cylinder
 		void resetFlag(tileflags_t flag) {m_flags &= ~(uint32_t)flag;}
 
 		bool positionChange() const {return hasFlag(TILESTATE_TELEPORT);}
-		bool floorChange() const {return hasFlag(TILESTATE_FLOORCHANGE);}
-		bool floorChangeDown() const {return hasFlag(TILESTATE_FLOORCHANGE_DOWN);}
-		bool floorChange(Direction direction) const
+		bool floorChange(FloorChange_t change = CHANGE_NONE) const
 		{
-			switch(direction)
+			switch(change)
 			{
-				case NORTH:
+				case CHANGE_DOWN:
+					return hasFlag(TILESTATE_FLOORCHANGE_DOWN);
+				case CHANGE_NORTH:
 					return hasFlag(TILESTATE_FLOORCHANGE_NORTH);
-				case SOUTH:
+				case CHANGE_SOUTH:
 					return hasFlag(TILESTATE_FLOORCHANGE_SOUTH);
-				case EAST:
+				case CHANGE_EAST:
 					return hasFlag(TILESTATE_FLOORCHANGE_EAST);
-				case WEST:
+				case CHANGE_WEST:
 					return hasFlag(TILESTATE_FLOORCHANGE_WEST);
+				case CHANGE_NORTH_EX:
+					return hasFlag(TILESTATE_FLOORCHANGE_NORTH_EX);
+				case CHANGE_SOUTH_EX:
+					return hasFlag(TILESTATE_FLOORCHANGE_SOUTH_EX);
+				case CHANGE_EAST_EX:
+					return hasFlag(TILESTATE_FLOORCHANGE_EAST_EX);
+				case CHANGE_WEST_EX:
+					return hasFlag(TILESTATE_FLOORCHANGE_WEST_EX);
+				case CHANGE_NONE:
+					return hasFlag(TILESTATE_FLOORCHANGE);
 				default:
 					break;
 			}
@@ -220,7 +234,7 @@ class Tile : public Cylinder
 		bool hasHeight(uint32_t n) const;
 		virtual std::string getDescription(int32_t lookDistance) const;
 
-		void moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinder, bool teleport = false);
+		void moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinder, bool forceTeleport = false);
 		int32_t getClientIndexOfThing(const Player* player, const Thing* thing) const;
 
 		//cylinder implementations

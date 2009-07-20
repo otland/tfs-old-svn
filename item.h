@@ -419,12 +419,7 @@ class Item : virtual public Thing, public ItemAttributes
 		bool isWeapon() const {return (items[id].weaponType != WEAPON_NONE);}
 		bool isReadable() const {return items[id].canReadText;}
 
-		bool floorChangeDown() const {return items[id].floorChangeDown;}
-		bool floorChangeNorth() const {return items[id].floorChangeNorth;}
-		bool floorChangeSouth() const {return items[id].floorChangeSouth;}
-		bool floorChangeEast() const {return items[id].floorChangeEast;}
-		bool floorChangeWest() const {return items[id].floorChangeWest;}
-		bool floorChange() const {return floorChangeDown() || floorChangeNorth() || floorChangeSouth() || floorChangeEast() || floorChangeWest();}
+		bool floorChange(FloorChange_t change = CHANGE_NONE) const;
 
 		uint16_t getItemCount() const {return count;}
 		void setItemCount(uint16_t n) {count = n;}

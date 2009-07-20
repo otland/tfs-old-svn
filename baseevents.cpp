@@ -181,9 +181,9 @@ bool Event::loadScript(const std::string& script, bool file)
 	int32_t result = -1;
 	if(!file)
 	{
-		std::string script_ = script;
+		std::string script_ = script, tmp = "function " + getScriptEventName();
 		trimString(script_);
-		if(script_.substr(0, 7) != "function")
+		if(script_.find(tmp) == std::string::npos)
 		{
 			std::stringstream scriptstream;
 			scriptstream << "function " << getScriptEventName() << "(" << getScriptEventParams() << ")" << std::endl << script_ << std::endl << "end";

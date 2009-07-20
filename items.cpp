@@ -34,21 +34,13 @@ uint32_t Items::dwBuildNumber = 0;
 
 ItemType::ItemType()
 {
-	article = "";
 	group = ITEM_GROUP_NONE;
 	type = ITEM_TYPE_NONE;
-	stackable = false;
-	useable	= false;
-	moveable = true;
-	alwaysOnTop = false;
-	lookThrough = false;
-	alwaysOnTopOrder = 0;
-	pickupable = rotable = false;
-	rotateTo = 0;
-	hasHeight = forceSerialize = false;
-
-	floorChangeDown = floorChangeNorth = floorChangeSouth = floorChangeEast = floorChangeWest = false;
+	stackable = useable = alwaysOnTop = lookThrough = pickupable = rotable = hasHeight = forceSerialize = false;
 	blockSolid = blockProjectile = blockPathFind = allowPickupable = false;
+	moveable = true;
+	alwaysOnTopOrder = 0;
+	rotateTo = 0;
 
 	wieldInfo = 0;
 	minReqLevel = 0;
@@ -104,6 +96,9 @@ ItemType::ItemType()
 	transformToOnUse[PLAYERSEX_FEMALE] = 0;
 	transformToFree = 0;
 	levelDoor = 0;
+
+	for(int32_t i = CHANGE_FIRST; i < CHANGE_LAST; ++i)
+		floorChange[i] = false;
 }
 
 ItemType::~ItemType()
@@ -650,15 +645,23 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				{
 					tmpStrValue = asLowerCaseString(strValue);
 					if(tmpStrValue == "down")
-						it.floorChangeDown = true;
+						it.floorChange[CHANGE_DOWN] = true;
 					else if(tmpStrValue == "north")
-						it.floorChangeNorth = true;
+						it.floorChange[CHANGE_NORTH] = true;
 					else if(tmpStrValue == "south")
-						it.floorChangeSouth = true;
+						it.floorChange[CHANGE_SOUTH] = true;
 					else if(tmpStrValue == "west")
-						it.floorChangeWest = true;
+						it.floorChange[CHANGE_WEST] = true;
 					else if(tmpStrValue == "east")
-						it.floorChangeEast = true;
+						it.floorChange[CHANGE_EAST] = true;
+					else if(tmpStrValue == "northex")
+						it.floorChange[CHANGE_NORTH_EX] = true;
+					else if(tmpStrValue == "southex")
+						it.floorChange[CHANGE_SOUTH_EX] = true;
+					else if(tmpStrValue == "westex")
+						it.floorChange[CHANGE_WEST_EX] = true;
+					else if(tmpStrValue == "eastex")
+						it.floorChange[CHANGE_EAST_EX] = true;
 				}
 			}
 			else if(tmpStrValue == "corpsetype")

@@ -1430,17 +1430,14 @@ bool parseIntegerVec(std::string str, IntegerVec& intVector)
 	for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)
 	{
 		tmpIntVector = vectorAtoi(explodeString((*it), "-"));
-		if(!tmpIntVector[0] && tmpIntVector[0] != 0)
+		if(!tmpIntVector[0] && it->substr(0, 1) != "0")
 			continue;
 
 		intVector.push_back(tmpIntVector[0]);
 		if(tmpIntVector.size() > 1)
 		{
 			while(tmpIntVector[0] < tmpIntVector[1])
-			{
-				tmpIntVector[0]++;
-				intVector.push_back(tmpIntVector[0]);
-			}
+				intVector.push_back(++tmpIntVector[0]);
 		}
 	}
 

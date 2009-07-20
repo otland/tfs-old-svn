@@ -450,7 +450,7 @@ void Tile::onUpdateTile()
 		(*it)->onUpdateTile(this, cylinderMapPos);
 }
 
-void Tile::moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinder, bool teleport/* = false*/)
+void Tile::moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinder, bool forceTeleport/* = false*/)
 {
 	Tile* newTile = toCylinder->getTile();
 	SpectatorVec list;
@@ -461,6 +461,10 @@ void Tile::moveCreature(Creature* actor, Creature* creature, Cylinder* toCylinde
 
 	Position newPos = newTile->getPosition();
 	g_game.getSpectators(list, newPos, true, true);
+
+	bool teleport = false;
+	if(forceTeleport || !newTile->ground || !Position::areInRange<1,1,0>(oldPos, newPos))
+		teleport = true;
 
 	std::vector<uint32_t> oldStackposVector;
 	Player* tmpPlayer = NULL;
@@ -768,57 +772,98 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 	*destItem = NULL;
 
 	Position pos = getTilePosition();
-	if(floorChangeDown())
+	if(floorChange(CHANGE_DOWN))
 	{
-		pos.y--;
 		pos.z++;
-
-		bool skip = true;
-		Tile* downTile = g_game.getTile(pos);
-		if(!downTile || !downTile->floorChange(SOUTH))
+		Tile* destTileEx = NULL;
+		for(int32_t i = CHANGE_FIRST_EX; i < CHANGE_LAST; ++i)
 		{
-			pos.y++;
-			pos.x--;
-			downTile = g_game.getTile(pos);
-			if(!downTile || !downTile->floorChange(EAST))
+			destTileEx = NULL;
+			Position posEx = pos;
+			switch(i)
 			{
-				skip = false;
-				pos.x++;
-				downTile = g_game.getTile(pos);
+				case CHANGE_NORTH_EX:
+					posEx.y++;
+					if((destTileEx = g_game.getTile(posEx)))
+						posEx.y++;
+
+					break;
+				case CHANGE_SOUTH_EX:
+					posEx.y--;
+					if((destTileEx = g_game.getTile(posEx)))
+						posEx.y--;
+
+					break;
+				case CHANGE_EAST_EX:
+					posEx.x++;
+					if((destTileEx = g_game.getTile(posEx)))
+						posEx.x--;
+
+					break;
+				case CHANGE_WEST_EX:
+					posEx.x--;
+					if((destTileEx = g_game.getTile(posEx)))
+						posEx.x++;
+
+					break;
+				default:
+					break;
+			}
+
+			if(destTileEx)
+			{
+				destTile = g_game.getTile(posEx);
+				destTileEx = NULL;
+				break;
 			}
 		}
 
-		if(downTile)
+		if(!destTile)
 		{
-			if(!skip)
+			if(Tile* downTile = g_game.getTile(pos))
 			{
-				if(downTile->floorChange(NORTH))
+				if(downTile->floorChange(CHANGE_NORTH))
 					pos.y++;
 
-				if(downTile->floorChange(SOUTH))
+				if(downTile->floorChange(CHANGE_SOUTH))
 					pos.y--;
 
-				if(downTile->floorChange(EAST))
+				if(downTile->floorChange(CHANGE_EAST))
 					pos.x--;
 
-				if(downTile->floorChange(WEST))
+				if(downTile->floorChange(CHANGE_WEST))
 					pos.x++;
-			}
 
-			destTile = g_game.getTile(pos);
+				destTile = g_game.getTile(pos);
+			}
 		}
 	}
 	else if(floorChange())
 	{
 		pos.z--;
-		if(floorChange(NORTH))
+		if(floorChange(CHANGE_NORTH))
 			pos.y--;
-		if(floorChange(SOUTH))
+
+		if(floorChange(CHANGE_SOUTH))
 			pos.y++;
-		if(floorChange(EAST))
+
+		if(floorChange(CHANGE_EAST))
 			pos.x++;
-		if(floorChange(WEST))
+
+		if(floorChange(CHANGE_WEST))
 			pos.x--;
+
+		if(floorChange(CHANGE_NORTH_EX))
+			pos.y -= 2;
+
+		if(floorChange(CHANGE_SOUTH_EX))
+			pos.y += 2;
+
+		if(floorChange(CHANGE_EAST_EX))
+			pos.x += 2;
+
+		if(floorChange(CHANGE_WEST_EX))
+			pos.x -= 2;
 
 		destTile = g_game.getTile(pos);
 	}
@@ -826,7 +871,7 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 	if(!destTile)
 		destTile = this;
 	else
-		flags |= FLAG_NOLIMIT; //Will ignore that there is blocking items/creatures
+		flags |= FLAG_NOLIMIT; //will ignore that there is blocking items/creatures
 
 	if(destTile)
 	{
@@ -1598,38 +1643,58 @@ void Tile::updateTileFlags(Item* item, bool removed)
 	{
 		if(!hasFlag(TILESTATE_FLOORCHANGE))
 		{
-			if(item->floorChangeDown())
+			if(item->floorChange(CHANGE_DOWN))
 			{
 				setFlag(TILESTATE_FLOORCHANGE);
 				setFlag(TILESTATE_FLOORCHANGE_DOWN);
 			}
 
-			if(item->floorChangeNorth())
+			if(item->floorChange(CHANGE_NORTH))
 			{
 				setFlag(TILESTATE_FLOORCHANGE);
 				setFlag(TILESTATE_FLOORCHANGE_NORTH);
 			}
 
-			if(item->floorChangeSouth())
+			if(item->floorChange(CHANGE_SOUTH))
 			{
-				if(item->getID() != ITEM_YALAHAR_STAIRS_SOUTH)
-					setFlag(TILESTATE_FLOORCHANGE);
-
+				setFlag(TILESTATE_FLOORCHANGE);
 				setFlag(TILESTATE_FLOORCHANGE_SOUTH);
 			}
 
-			if(item->floorChangeEast())
+			if(item->floorChange(CHANGE_EAST))
 			{
-				if(item->getID() != ITEM_YALAHAR_STAIRS_EAST)
-					setFlag(TILESTATE_FLOORCHANGE);
-
+				setFlag(TILESTATE_FLOORCHANGE);
 				setFlag(TILESTATE_FLOORCHANGE_EAST);
 			}
 
-			if(item->floorChangeWest())
+			if(item->floorChange(CHANGE_WEST))
 			{
 				setFlag(TILESTATE_FLOORCHANGE);
 				setFlag(TILESTATE_FLOORCHANGE_WEST);
+			}
+
+			if(item->floorChange(CHANGE_NORTH_EX))
+			{
+				setFlag(TILESTATE_FLOORCHANGE);
+				setFlag(TILESTATE_FLOORCHANGE_NORTH_EX);
+			}
+
+			if(item->floorChange(CHANGE_SOUTH_EX))
+			{
+				setFlag(TILESTATE_FLOORCHANGE);
+				setFlag(TILESTATE_FLOORCHANGE_SOUTH_EX);
+			}
+
+			if(item->floorChange(CHANGE_EAST_EX))
+			{
+				setFlag(TILESTATE_FLOORCHANGE);
+				setFlag(TILESTATE_FLOORCHANGE_EAST_EX);
+			}
+
+			if(item->floorChange(CHANGE_WEST_EX))
+			{
+				setFlag(TILESTATE_FLOORCHANGE);
+				setFlag(TILESTATE_FLOORCHANGE_WEST_EX);
 			}
 		}
 
@@ -1665,34 +1730,58 @@ void Tile::updateTileFlags(Item* item, bool removed)
 	}
 	else
 	{
-		if(item->floorChangeDown())
+		if(item->floorChange(CHANGE_DOWN))
 		{
 			resetFlag(TILESTATE_FLOORCHANGE);
 			resetFlag(TILESTATE_FLOORCHANGE_DOWN);
 		}
 
-		if(item->floorChangeNorth())
+		if(item->floorChange(CHANGE_NORTH))
 		{
 			resetFlag(TILESTATE_FLOORCHANGE);
 			resetFlag(TILESTATE_FLOORCHANGE_NORTH);
 		}
 
-		if(item->floorChangeSouth())
+		if(item->floorChange(CHANGE_SOUTH))
 		{
 			resetFlag(TILESTATE_FLOORCHANGE);
 			resetFlag(TILESTATE_FLOORCHANGE_SOUTH);
 		}
 
-		if(item->floorChangeEast())
+		if(item->floorChange(CHANGE_EAST))
 		{
 			resetFlag(TILESTATE_FLOORCHANGE);
 			resetFlag(TILESTATE_FLOORCHANGE_EAST);
 		}
 
-		if(item->floorChangeWest())
+		if(item->floorChange(CHANGE_WEST))
 		{
 			resetFlag(TILESTATE_FLOORCHANGE);
 			resetFlag(TILESTATE_FLOORCHANGE_WEST);
+		}
+
+		if(item->floorChange(CHANGE_NORTH_EX))
+		{
+			resetFlag(TILESTATE_FLOORCHANGE);
+			resetFlag(TILESTATE_FLOORCHANGE_NORTH_EX);
+		}
+
+		if(item->floorChange(CHANGE_SOUTH_EX))
+		{
+			resetFlag(TILESTATE_FLOORCHANGE);
+			resetFlag(TILESTATE_FLOORCHANGE_SOUTH_EX);
+		}
+
+		if(item->floorChange(CHANGE_EAST_EX))
+		{
+			resetFlag(TILESTATE_FLOORCHANGE);
+			resetFlag(TILESTATE_FLOORCHANGE_EAST_EX);
+		}
+
+		if(item->floorChange(CHANGE_WEST_EX))
+		{
+			resetFlag(TILESTATE_FLOORCHANGE);
+			resetFlag(TILESTATE_FLOORCHANGE_WEST_EX);
 		}
 
 		if(item->getTeleport())

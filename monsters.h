@@ -17,8 +17,9 @@
 
 #ifndef __MONSTERS__
 #define __MONSTERS__
-#include "creature.h"
+#include "otsystem.h"
 
+#include "creature.h"
 #define MAX_LOOTCHANCE 100000
 #define MAX_STATICWALK 100
 
@@ -27,7 +28,8 @@ typedef std::list<LootBlock> LootItems;
 
 struct LootBlock
 {
-	uint16_t id, countmax;
+	std::list<uint16_t> ids;
+	uint16_t count;
 	int32_t subType, actionId, uniqueId;
 	uint32_t chance;
 	std::string text;
@@ -35,9 +37,8 @@ struct LootBlock
 
 	LootBlock()
 	{
-		id = countmax = chance = 0;
+		count = chance = 0;
 		subType = actionId = uniqueId = -1;
-		text = "";
 	}
 };
 
@@ -77,9 +78,9 @@ class MonsterType
 
 		void reset();
 
-		void createLoot(Container* corpse);
-		bool createLootContainer(Container* parent, const LootBlock& lootblock);
-		Item* createLootItem(const LootBlock& lootblock);
+		void dropLoot(Container* corpse);
+		Item* createLoot(const LootBlock& lootBlock);
+		bool createChildLoot(Container* parent, const LootBlock& lootBlock);
 
 		bool isSummonable, isIllusionable, isConvinceable, isAttackable, isHostile, isLureable,
 			canPushItems, canPushCreatures, pushable, hideName, hideHealth;
@@ -122,14 +123,14 @@ class Monsters
 		MonsterType* getMonsterType(uint32_t mid);
 
 		uint32_t getIdByName(const std::string& name);
-		bool isLoaded(){return loaded;}
-		static uint32_t getLootRandom();
+		bool isLoaded() const {return loaded;}
+		static uint16_t getLootRandom();
 
 	private:
 		bool loaded;
 
-		bool loadLootContainer(xmlNodePtr, LootBlock&);
-		bool loadLootItem(xmlNodePtr, LootBlock&);
+		bool loadLoot(xmlNodePtr, LootBlock&);
+		bool loadChildLoot(xmlNodePtr, LootBlock&);
 
 		ConditionDamage* getDamageCondition(ConditionType_t conditionType,
 			int32_t maxDamage, int32_t minDamage, int32_t startDamage, uint32_t tickInterval);

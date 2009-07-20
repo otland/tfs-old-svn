@@ -84,20 +84,21 @@ void MonsterType::reset()
 	elementMap.clear();
 }
 
-uint32_t Monsters::getLootRandom()
+uint16_t Monsters::getLootRandom()
 {
-	return (uint32_t)std::ceil((double)random_range(0, MAX_LOOTCHANCE) / g_config.getDouble(ConfigManager::RATE_LOOT));
+	return (uint16_t)std::ceil((double)random_range(0, MAX_LOOTCHANCE) / g_config.getDouble(ConfigManager::RATE_LOOT));
 }
 
-void MonsterType::createLoot(Container* corpse)
+void MonsterType::dropLoot(Container* corpse)
 {
-	for(LootItems::const_iterator it = lootItems.begin(); it != lootItems.end() && (corpse->capacity() - corpse->size() > 0); it++)
+	Item* tmpItem = NULL;
+	for(LootItems::const_iterator it = lootItems.begin(); it != lootItems.end() && !corpse->full(); ++it)
 	{
-		if(Item* tmpItem = createLootItem(*it))
+		if((tmpItem = createLoot(*it)))
 		{
 			if(Container* container = tmpItem->getContainer())
 			{
-				if(createLootContainer(container, (*it)))
+				if(createChildLoot(container, (*it)))
 					corpse->__internalAddThing(tmpItem);
 				else
 					delete container;
@@ -124,54 +125,53 @@ void MonsterType::createLoot(Container* corpse)
 		owner->sendTextMessage(MSG_INFO_DESCR, ss.str());
 }
 
-Item* MonsterType::createLootItem(const LootBlock& lootBlock)
+Item* MonsterType::createLoot(const LootBlock& lootBlock)
 {
+	uint16_t item = lootBlock.ids[0], random = Monsters::getLootRandom();
+	if(lootBlock.ids.size() > 1)
+		item = lootBlock.ids[random_range((size_t)0, lootBlock.ids.size() - 1)];
+
 	Item* tmpItem = NULL;
-	if(Item::items[lootBlock.id].stackable)
+	if(Item::items[item].stackable)
 	{
-		uint32_t rand = Monsters::getLootRandom();
-		if(rand < lootBlock.chance)
-			tmpItem = Item::CreateItem(lootBlock.id, (rand % lootBlock.countmax + 1));
+		if(random < lootBlock.chance)
+			tmpItem = Item::CreateItem(item, (random % lootBlock.count + 1));
 	}
-	else
-	{
-		if(Monsters::getLootRandom() < lootBlock.chance)
-			tmpItem = Item::CreateItem(lootBlock.id, 0);
-	}
+	else if(random < lootBlock.chance)
+		tmpItem = Item::CreateItem(item, 0);
 
-	if(tmpItem)
-	{
-		if(lootBlock.subType != -1)
-			tmpItem->setSubType(lootBlock.subType);
+	if(!tmpItem)
+		return NULL;
 
-		if(lootBlock.actionId != -1)
-			tmpItem->setActionId(lootBlock.actionId);
+	if(lootBlock.subType != -1)
+		tmpItem->setSubType(lootBlock.subType);
 
-		if(lootBlock.uniqueId != -1)
-			tmpItem->setUniqueId(lootBlock.uniqueId);
+	if(lootBlock.actionId != -1)
+		tmpItem->setActionId(lootBlock.actionId);
 
-		if(lootBlock.text != "")
-			tmpItem->setText(lootBlock.text);
+	if(lootBlock.uniqueId != -1)
+		tmpItem->setUniqueId(lootBlock.uniqueId);
 
-		return tmpItem;
-	}
+	if(lootBlock.text.length())
+		tmpItem->setText(lootBlock.text);
 
-	return NULL;
+	return tmpItem;
 }
 
-bool MonsterType::createLootContainer(Container* parent, const LootBlock& lootblock)
+bool MonsterType::createChildLoot(Container* parent, const LootBlock& lootBlock)
 {
-	LootItems::const_iterator it = lootblock.childLoot.begin();
-	if(it == lootblock.childLoot.end())
+	LootItems::const_iterator it = lootBlock.childLoot.begin();
+	if(it == lootBlock.childLoot.end())
 		return true;
 
-	for(; it != lootblock.childLoot.end() && parent->size() < parent->capacity(); ++it)
+	Item* tmpItem = NULL;
+	for(; it != lootBlock.childLoot.end() && !parent->full(); ++it)
 	{
-		if(Item* tmpItem = createLootItem((*it)))
+		if((tmpItem = createLoot(*it)))
 		{
 			if(Container* container = tmpItem->getContainer())
 			{
-				if(createLootContainer(container, (*it)))
+				if(createChildLoot(container, (*it)))
 					parent->__internalAddThing(container);
 				else
 					delete container;
@@ -181,7 +181,7 @@ bool MonsterType::createLootContainer(Container* parent, const LootBlock& lootbl
 		}
 	}
 
-	return parent->size() != 0;
+	return !parent->empty();
 }
 
 bool Monsters::loadFromXml(bool reloading /*= false*/)
@@ -754,7 +754,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 
 bool Monsters::loadMonster(const std::string& file, const std::string& monsterName, bool reloading/* = false*/)
 {
-	if(getIdByName(monsterName) != 0 && !reloading)
+	if(getIdByName(monsterName) && !reloading)
 	{
 		std::cout << "[Warning - Monsters::loadMonster] Duplicate registered monster with name: " << monsterName << std::endl;
 		return true;
@@ -1212,9 +1212,9 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 					continue;
 				}
 
-				LootBlock lootBlock;
-				if(loadLootItem(tmpNode, lootBlock))
-					mType->lootItems.push_back(lootBlock);
+				LootBlock rootBlock;
+				if(loadLoot(tmpNode, rootBlock))
+					mType->lootItems.push_back(rootBlock);
 				else
 					SHOW_XML_WARNING("Cant load loot");
 
@@ -1336,89 +1336,81 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 	return false;
 }
 
-bool Monsters::loadLootItem(xmlNodePtr node, LootBlock& lootBlock)
+bool Monsters::loadLoot(xmlNodePtr node, LootBlock& lootBlock)
 {
 	int32_t intValue;
 	std::string strValue;
-	if(!readXMLInteger(node, "id", intValue))
+	if(!readXMLString(node, "id", strValue) && !readXMLString(node, "ids", strValue))
 	{
-		if(readXMLString(node, "name", strValue))
-			lootBlock.id = Item::items.getItemIdByName(strValue);
+		if(readXMLString(node, "name", strValue) || readXMLString(node, "names", strValue))
+		{
+			StringVec names = explodeString(strValue, ";");
+			for(StringVec::iterator it = names.begin(); it != names.end(); ++it)
+			{
+				intValue = Item::items.getItemIdByName(strValue);
+				if(intValue > 0)
+					lootBlock.ids.push_back(intValue);
+			}
+		}
 	}
 	else
-		lootBlock.id = intValue;
+	{
+		IntegerVec idsVec;
+		parseIntegerVec(strValue, idsVec);
+		for(IntegerVec::iterator it = idsVec.begin(); it != idsVec.end(); ++it)
+			lootBlock.ids.push_back(*it);
+	}
 
-	if(!lootBlock.id)
+	if(lootBlock.ids.empty())
 		return false;
 
-	if(readXMLInteger(node, "countmax", intValue))
-	{
-		lootBlock.countmax = intValue;
-		if(lootBlock.countmax > 100)
-			lootBlock.countmax = 100;
-	}
+	if(readXMLInteger(node, "count", intValue) || readXMLInteger(node, "countmax", intValue))
+		lootBlock.count = std::min(100, intValue);
 	else
-		lootBlock.countmax = 1;
+		lootBlock.count = 1;
 
 	if(readXMLInteger(node, "chance", intValue) || readXMLInteger(node, "chance1", intValue))
-	{
-		lootBlock.chance = intValue;
-		if(lootBlock.chance > MAX_LOOTCHANCE)
-			lootBlock.chance = MAX_LOOTCHANCE;
-	}
+		lootBlock.chance = std::min(MAX_LOOTCHANCE, intValue);
 	else
 		lootBlock.chance = MAX_LOOTCHANCE;
 
-	if(Item::items[lootBlock.id].isContainer())
-		loadLootContainer(node, lootBlock);
-
-	//optional
 	if(readXMLInteger(node, "subtype", intValue) || readXMLInteger(node, "subType", intValue))
 		lootBlock.subType = intValue;
 
 	if(readXMLInteger(node, "actionId", intValue) || readXMLInteger(node, "actionid", intValue)
 		|| readXMLInteger(node, "aid", intValue))
-			lootBlock.actionId = intValue;
+		lootBlock.actionId = intValue;
 
 	if(readXMLInteger(node, "uniqueId", intValue) || readXMLInteger(node, "uniqueid", intValue)
 		|| readXMLInteger(node, "uid", intValue))
-			lootBlock.uniqueId = intValue;
+		lootBlock.uniqueId = intValue;
 
 	if(readXMLString(node, "text", strValue))
 		lootBlock.text = strValue;
 
+
+	if(Item::items[lootBlock.id].isContainer())
+		loadChildLoot(node, lootBlock);
+
 	return true;
 }
 
-bool Monsters::loadLootContainer(xmlNodePtr node, LootBlock& lBlock)
+bool Monsters::loadChildLoot(xmlNodePtr node, LootBlock& parentBlock)
 {
-	if(node == NULL)
+	if(!node)
 		return false;
 
-	xmlNodePtr p, tmpNode = node->children;
-	if(tmpNode == NULL)
-		return false;
-
-	while(tmpNode)
+	xmlNodePtr p = node->children;
+	while(p)
 	{
-		if(!xmlStrcmp(tmpNode->name, (const xmlChar*)"inside"))
-		{
-			p = tmpNode->children;
-			while(p)
-			{
-				LootBlock lootBlock;
-				if(loadLootItem(p, lootBlock))
-					lBlock.childLoot.push_back(lootBlock);
-				p = p->next;
-			}
+		LootBlock childBlock;
+		if(loadLoot(p, childBlock))
+			parentBlock.childLoot.push_back(childBlock);
 
-			return true;
-		}
-
-		tmpNode = tmpNode->next;
+		p = p->next;
 	}
 
-	return false;
+	return true;
 }
 
 MonsterType* Monsters::getMonsterType(const std::string& name)

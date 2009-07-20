@@ -213,7 +213,7 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 			return new ConditionSoul(_id, _type, _ticks, _buff, _subId);
 
 		case CONDITION_MANASHIELD:
-			return new ConditionManaShield(_id, _type,_ticks, _buff, _subId);
+			return new ConditionManaShield(_id, _type, _ticks, _buff, _subId);
 
 		case CONDITION_ATTRIBUTES:
 			return new ConditionAttributes(_id, _type, _ticks, _buff, _subId);
