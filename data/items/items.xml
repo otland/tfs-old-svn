@@ -10556,10 +10556,10 @@
 	<item id="5007" article="a" name="ship cabin wall"/>
 	<item id="5008" article="a" name="ship cabin wall"/>
 	<item id="5009" article="a" name="metal wall"/>
-	<item id="5010" article="an" name="oriental wall"/>
-	<item id="5011" article="an" name="oriental wall"/>
-	<item id="5012" article="a" name="burning wall"/>
-	<item id="5013" article="a" name="burning wall"/>
+	<item id="5010" article="an" name="ornamented wall"/>
+	<item id="5011" article="an" name="ornamented wall"/>
+	<item id="5012" article="a" name="lava wall"/>
+	<item id="5013" article="a" name="lava wall"/>
 	<item id="5014" article="an" name="exotic butterfly">
 		<attribute key="weight" value="100"/>
 	</item>
@@ -10618,13 +10618,13 @@
 	<item id="5058" article="a" name="stone cobra head"/>
 	<item id="5059" article="a" name="stone cobra head"/>
 	<item id="5060" article="a" name="stone cobra head"/>
-	<item id="5061" article="a" name="burning wall"/>
-	<item id="5062" article="a" name="burning wall"/>
-	<item id="5063" article="a" name="burning wall"/>
-	<item id="5064" article="a" name="burning wall"/>
-	<item id="5065" article="a" name="burning wall"/>
-	<item id="5066" article="a" name="burning wall"/>
-	<item id="5067" article="a" name="burning wall"/>
+	<item id="5061" article="a" name="lava wall"/>
+	<item id="5062" article="a" name="lava wall"/>
+	<item id="5063" article="a" name="lava wall"/>
+	<item id="5064" article="a" name="lava wall"/>
+	<item id="5065" article="a" name="lava wall"/>
+	<item id="5066" article="a" name="lava wall"/>
+	<item id="5067" article="a" name="lava wall"/>
 	<item id="5068" name="electric sparks"/>
 	<item id="5069" name="electric sparks"/>
 	<item id="5070" name="electric sparks"/>
@@ -13626,8 +13626,8 @@
 	<item id="6284" article="a" name="brick wall"/>
 	<item id="6285" name="cracks"/>
 	<item id="6286" name="cracks"/>
-	<item id="6289" article="a" name="burning wall"/>
-	<item id="6290" article="a" name="burning wall"/>
+	<item id="6289" article="a" name="lava wall"/>
+	<item id="6290" article="a" name="lava wall"/>
 	<item id="6291" name="cracks"/>
 	<item id="6292" name="cracks"/>
 	<item id="6293" name="cracks"/>
@@ -14286,7 +14286,7 @@
 		<attribute key="weight" value="1000"/>
 	</item>
 	<item id="6500" name="demonic essence">
-		<attribue key="description" value="Someone might be interested in trading this."/>
+		<attribute key="description" value="Someone might be interested in trading this."/>
 		<attribute key="weight" value="100"/>
 		<attribute key="showcount" value="0"/>
 	</item>
@@ -18578,7 +18578,7 @@
 	<item id="8170" article="a" name="trapdoor">
 		<attribute key="floorchange" value="down"/>
 	</item>
-	<item id="8174" article="a" name="burning wall"/>
+	<item id="8174" article="a" name="lava wall"/>
 	<item id="8175" article="a" name="staw mat">
 		<attribute key="description" value="Someone is sleeping there."/>
 	</item>
@@ -19250,7 +19250,7 @@
 	<item id="8616" article="a" name="dwarven statue"/>
 	<item id="8625" article="a" name="dwarven statue"/>
 	<item id="8626" article="a" name="dwarven statue"/>
-	<item id="8631" article="a" name="burning wall"/>
+	<item id="8631" article="a" name="lava wall"/>
 	<item id="8632" article="a" name="whirlpool"/>
 	<item id="8633" article="a" name="large crystal"/>
 	<item id="8634" article="a" name="large crystal"/>
@@ -21200,19 +21200,19 @@
 		<attribute key="weight" value="850"/>
 	</item>
 	<item id="9992" article="a" name="rotworm stew">
-		<attribue key="description" value="It's hot, beefy and delicious. The perfect food for knights."/>
+		<attribute key="description" value="It's hot, beefy and delicious. The perfect food for knights."/>
 		<attribute key="weight" value="1200"/>
 	</item>
 	<item id="9993" article="a" name="hydra tongue salad">
-		<attribue key="description" value="Though the hydra tongue is commonly considered a pest plant it tastes surprisingly aromatic."/>
+		<attribute key="description" value="Though the hydra tongue is commonly considered a pest plant it tastes surprisingly aromatic."/>
 		<attribute key="weight" value="550"/>
 	</item>
 	<item id="9994" article="a" name="roasted dragon wings">
-		<attribue key="description" value="You know why it's called 'dragon' when you feel the fire in your throat."/>
+		<attribute key="description" value="You know why it's called 'dragon' when you feel the fire in your throat."/>
 		<attribute key="weight" value="850"/>
 	</item>
 	<item id="9995" article="a" name="fried tropical terrorbird">
-		<attribue key="description" value="It's the ideal snack for a beach barbecue."/>
+		<attribute key="description" value="It's the ideal snack for a beach barbecue."/>
 		<attribute key="weight" value="780"/>
 	</item>
 	<item id="9996" article="a" name="banana chocolate shake">
@@ -21220,23 +21220,23 @@
 		<attribute key="weight" value="300"/>
 	</item>
 	<item id="9997" article="a" name="veggie casserole">
-		<attribue key="description" value="This one would be quite healthy if it wasn't for all the melted cheese on top."/>
+		<attribute key="description" value="This one would be quite healthy if it wasn't for all the melted cheese on top."/>
 		<attribute key="weight" value="1100"/>
 	</item>
 	<item id="9998" article="a" name="filled jalapeño peppers">
-		<attribue key="description" value="The creamy cheese makes a great combination with spicy peppers."/>
+		<attribute key="description" value="The creamy cheese makes a great combination with spicy peppers."/>
 		<attribute key="weight" value="650"/>
 	</item>
 	<item id="9999" article="a" name="blessed steak">
-		<attribue key="description" value="It's nicely decorated with plums and pumpkin."/>
+		<attribute key="description" value="It's nicely decorated with plums and pumpkin."/>
 		<attribute key="weight" value="950"/>
 	</item>
 	<item id="10000" article="a" name="carrot cake">
-		<attribue key="description" value="This spicy-sweet cake will probably put you into a sugar rush."/>
+		<attribute key="description" value="This spicy-sweet cake will probably put you into a sugar rush."/>
 		<attribute key="weight" value="680"/>
 	</item>
 	<item id="10001" article="a" name="northern fishburger">
-		<attribue key="description" value="It's only suited for those who like maritime food."/>
+		<attribute key="description" value="It's only suited for those who like maritime food."/>
 		<attribute key="weight" value="460"/>
 	</item>	
 	<item id="10002" article="a" name="dead war golem">
@@ -21339,7 +21339,7 @@
 		<attribute key="weight" value="35"/>
 	</item>
 	<item id="10153" article="a" name="golem disassembler">
-		<attribue key="description" value="It looks suspiciously similar to a crowbar."/>
+		<attribute key="description" value="It looks suspiciously similar to a crowbar."/>
 		<attribute key="weight" value="1500"/>
 	</item>
 	<!-- 10154 blank -->
@@ -21579,7 +21579,7 @@
 		<attribute key="slotType" value="head"/>
 	</item>
 	<item id="10309" article="a" name="claw of the noxious spawn">
-		<attribue key="description" value="It's like a glove and you can't wear a ring on it. You are not sure if you should really put it on."/>
+		<attribute key="description" value="It's like a glove and you can't wear a ring on it. You are not sure if you should really put it on."/>
 		<attribute key="weight" value="500"/>
 	</item>
 	<item id="10316" article="a" name="mighty helm of green sparks">
@@ -21776,22 +21776,22 @@
 		<attribute key="weight" value="2500"/>
 	</item>
 	<item id="10510" article="a" name="broken wedding ring">
-		<attribue key="description" value="It is a memory of a lost love."/>
+		<attribute key="description" value="It is a memory of a lost love."/>
 		<attribute key="weight" value="40"/>
 		<attribute key="slotType" value="ring"/>
 	</item>
 	<item id="10511" name="squeezing gear of girlpower">
-		<attribue key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is."/>
+		<attribute key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is."/>
 		<attribute key="weight" value="300"/>
 	</item>
 	<!-- 10511 - 10512: Sneaky Stabber of Eliteness -->
 	<!-- 10513 - 10514: Squeezing Gear of Girlpower -->
 	<item id="10513" name="sneaky stabber of eliteness">
-		<attribue key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is."/>
+		<attribute key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is."/>
 		<attribute key="weight" value="300"/>
 	</item>
 	<item id="10515" name="whacking driller of fate">
-		<attribue key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is."/>
+		<attribute key="description" value="This nifty gadget can be used for many vital and less vital purposes. If it's not jammed, that is."/>
 		<attribute key="weight" value="300"/>
 	</item>
 	<!-- 10515 - 10516: Whacking Driller of Fate -->
@@ -21827,13 +21827,13 @@
 		<attribute key="weight" value="500"/>
 	</item>
 	<item id="10530" article="a" name="the famous golden bug">
-		<attribue key="description" value="It's given to skilled discoverers of extra nasty bugs and to great scholars writing useful reports."/>
+		<attribute key="description" value="It's given to skilled discoverers of extra nasty bugs and to great scholars writing useful reports."/>
 		<attribute key="weight" value="1250"/>
 		<attribute key="writeable" value="1"/>
 		<attribute key="maxTextLen" value="64"/>
 	</item>
 	<item id="10531" article="a" name="midnight shard">
-		<attribue key="description" value="You read: Lucius might be interested in those shards."/>
+		<attribute key="description" value="You read: Lucius might be interested in those shards."/>
 		<attribute key="weight" value="300"/>
 	</item>
 	<item id="10532" article="a" name="telescope">
@@ -21849,11 +21849,11 @@
 		<attribute key="rotateTo" value="2581"/>
 	</item>
 	<item id="10542" article="a" name="golden lightbearer's trophy">
-		<attribue key="description" value="You read: Player helped to keep the fire basins burning and is one of the lightbearers of 2009"/>
+		<attribute key="description" value="You read: Player helped to keep the fire basins burning and is one of the lightbearers of 2009"/>
 		<attribute key="weight" value="900"/>
 	</item>
 	<item id="10543" article="a" name="silver lightbearer's trophy">
-		<attribue key="description" value="You read: Player helped to keep the fire basins burning and is one of the lightbearers of 2009"/>
+		<attribute key="description" value="You read: Player helped to keep the fire basins burning and is one of the lightbearers of 2009"/>
 		<attribute key="weight" value="900"/>
 	</item>
 	<item id="10492" name="pavement"/>
