@@ -185,7 +185,7 @@ std::string GlobalEvent::getScriptEventName() const
 		case SERVER_EVENT_SHUTDOWN:
 			return "onShutdown";
 		case SERVER_EVENT_RECORD:
-			return "onPlayersRecord";
+			return "onRecord";
 
 		case SERVER_EVENT_NONE:
 		default:
