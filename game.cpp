@@ -3448,6 +3448,9 @@ bool Game::playerRequestOutfit(uint32_t playerId)
 	if(!player || player->isRemoved())
 		return false;
 
+	if(player->isInvisible())
+		return false;
+
 	player->sendOutfitWindow();
 	return true;
 }
