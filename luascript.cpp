@@ -2372,6 +2372,9 @@ const luaL_Reg LuaScriptInterface::luaDatabaseReg[] =
 	//db.stringComparisonOperator()
 	{"stringComparisonOperator", LuaScriptInterface::luaDatabaseStringComparisonOperator},
 
+	//db.updateQueryLimitOperator
+	{"updateQueryLimitOperator", LuaScriptInterface::luaDatabaseUpdateQueryLimitOperator},
+
 	{NULL,NULL}
 };
 
@@ -6549,8 +6552,13 @@ int32_t LuaScriptInterface::luaGetMonsterHealingSpells(lua_State* L)
 {
 	//getMonsterHealingSpells(name)
 	const MonsterType* mType = g_monsters.getMonsterType(popString(L));
-	SpellList::const_iterator it = mType->spellDefenseList.begin();
+	if(!mType)
+	{
+		lua_pushboolean(L, false);
+		return 1;
+	}
 
+	SpellList::const_iterator it = mType->spellDefenseList.begin();
 	lua_newtable(L);
 	for(uint32_t i = 1; it != mType->spellDefenseList.end(); ++it, ++i)
 	{
@@ -6573,8 +6581,13 @@ int32_t LuaScriptInterface::luaGetMonsterAttackSpells(lua_State* L)
 {
 	//getMonsterAttackSpells(name)
 	const MonsterType* mType = g_monsters.getMonsterType(popString(L));
-	SpellList::const_iterator it = mType->spellAttackList.begin();
+	if(!mType)
+	{
+		lua_pushboolean(L, false);
+		return 1;
+	}
 
+	SpellList::const_iterator it = mType->spellAttackList.begin();
 	lua_newtable(L);
 	for(uint32_t i = 1; it != mType->spellAttackList.end(); ++it, ++i)
 	{
@@ -6597,38 +6610,64 @@ int32_t LuaScriptInterface::luaGetMonsterLootList(lua_State* L)
 {
 	//getMonsterLootList(name)
 	const MonsterType* mType = g_monsters.getMonsterType(popString(L));
-	LootItems::const_iterator it = mType->lootItems.begin();
+	if(!mType)
+	{
+		lua_pushboolean(L, false);
+		return 1;
+	}
 
+	LootItems::const_iterator it = mType->lootItems.begin();
 	lua_newtable(L);
 	for(uint32_t i = 1; it != mType->lootItems.end(); ++it, ++i)
 	{
 		lua_pushnumber(L, i);
 		lua_newtable(L);
 
-		setField(L, "id", (*it).id);
-		setField(L, "countMax", (*it).countmax);
-		setField(L, "chance", (*it).chance);
-		setField(L, "subType", (*it).subType);
-		setField(L, "actionId", (*it).actionId);
-		setField(L, "uniqueId", (*it).uniqueId);
-		setField(L, "text", (*it).text);
-		if((*it).childLoot.size() > 0)
+		std::vector<uint16_t> ids = it->ids;
+		std::stringstream tmp;
+
+		tmp << ids[0];
+		if(ids.size() > 1)
 		{
-			LootItems::const_iterator cit = (*it).childLoot.begin();
+			tmp.clear();
+			for(std::vector<uint16_t>::iterator lit = ids.begin(); lit != ids.end(); ++lit)
+				tmp << ";" << (*lit);
+		}
+
+		setField(L, "id", tmp.str());
+		setField(L, "countMax", it->count);
+		setField(L, "chance", it->chance);
+		setField(L, "subType", it->subType);
+		setField(L, "actionId", it->actionId);
+		setField(L, "uniqueId", it->uniqueId);
+		setField(L, "text", it->text);
+		if(it->childLoot.size() > 0)
+		{
+			LootItems::const_iterator cit = it->childLoot.begin();
 
 			lua_newtable(L);
-			for(uint32_t j = 1; cit != (*it).childLoot.end(); ++cit, ++j)
+			for(uint32_t j = 1; cit != it->childLoot.end(); ++cit, ++j)
 			{
 				lua_pushnumber(L, j);
 				lua_newtable(L);
 
-				setField(L, "id", (*cit).id);
-				setField(L, "countMax", (*cit).countmax);
-				setField(L, "chance", (*cit).chance);
-				setField(L, "subType", (*cit).subType);
-				setField(L, "actionId", (*cit).actionId);
-				setField(L, "uniqueId", (*cit).uniqueId);
-				setField(L, "text", (*cit).text);
+				tmp.clear();
+				ids = cit->ids;
+				tmp << ids[0];
+				if(ids.size() > 1)
+				{
+					tmp.clear();
+					for(std::vector<uint16_t>::iterator lit = ids.begin(); lit != ids.end(); ++lit)
+						tmp << ";" << (*lit);
+				}
+
+				setField(L, "id", tmp.str());
+				setField(L, "countMax", cit->count);
+				setField(L, "chance", cit->chance);
+				setField(L, "subType", cit->subType);
+				setField(L, "actionId", cit->actionId);
+				setField(L, "uniqueId", cit->uniqueId);
+				setField(L, "text", cit->text);
 				lua_settable(L, -3);
 			}
 		}
@@ -6643,8 +6682,13 @@ int32_t LuaScriptInterface::luaGetMonsterSummonList(lua_State* L)
 {
 	//getMonsterSummonList(name)
 	const MonsterType* mType = g_monsters.getMonsterType(popString(L));
-	SummonList::const_iterator it = mType->summonList.begin();
+	if(!mType)
+	{
+		lua_pushboolean(L, false);
+		return 1;
+	}
 
+	SummonList::const_iterator it = mType->summonList.begin();
 	lua_newtable(L);
 	for(uint32_t i = 1; it != mType->summonList.end(); ++it, ++i)
 	{
@@ -10120,6 +10164,13 @@ int32_t LuaScriptInterface::luaDatabaseStringComparisonOperator(lua_State* L)
 {
 	//db.stringComparisonOperator()
 	lua_pushstring(L, Database::getInstance()->getStringComparisonOperator().c_str());
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDatabaseUpdateQueryLimitOperator(lua_State* L)
+{
+	//db.updateQueryLimitOperator()
+	lua_pushstring(L, Database::getInstance()->getUpdateQueryLimitOperator().c_str());
 	return 1;
 }
 

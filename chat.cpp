@@ -293,7 +293,7 @@ bool Chat::parseChannelNode(xmlNodePtr p)
 
 		if((condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_MUTED, tmp, 0, false, conditionId)))
 		{
-			if(readXMLInteger(p, "conditionMessage", strValue))
+			if(readXMLString(p, "conditionMessage", strValue))
 				conditionMessage = strValue;
 		}
 		else

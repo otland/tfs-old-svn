@@ -1339,24 +1339,7 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 bool Monsters::loadLoot(xmlNodePtr node, LootBlock& lootBlock)
 {
 	std::string strValue;
-	if(!readXMLString(node, "id", strValue) && !readXMLString(node, "ids", strValue))
-	{
-		if(readXMLString(node, "name", strValue) || readXMLString(node, "names", strValue))
-		{
-			StringVec names = explodeString(strValue, ";");
-			for(StringVec::iterator it = names.begin(); it != names.end(); ++it)
-			{
-				uint16_t tmp = Item::items.getItemIdByName(strValue);
-				if(!tmp)
-					continue;
-
-				lootBlock.ids.push_back(tmp);
-				if(Item::items[tmp].isContainer())
-					loadChildLoot(node, lootBlock);
-			}
-		}
-	}
-	else
+	if(readXMLString(node, "id", strValue) || readXMLString(node, "ids", strValue))
 	{
 		IntegerVec idsVec;
 		parseIntegerVec(strValue, idsVec);
@@ -1364,6 +1347,20 @@ bool Monsters::loadLoot(xmlNodePtr node, LootBlock& lootBlock)
 		{
 			lootBlock.ids.push_back(*it);
 			if(Item::items[(*it)].isContainer())
+				loadChildLoot(node, lootBlock);
+		}
+	}
+	else if(readXMLString(node, "name", strValue) || readXMLString(node, "names", strValue))
+	{
+		StringVec names = explodeString(strValue, ";");
+		for(StringVec::iterator it = names.begin(); it != names.end(); ++it)
+		{
+			uint16_t tmp = Item::items.getItemIdByName(strValue);
+			if(!tmp)
+				continue;
+
+			lootBlock.ids.push_back(tmp);
+			if(Item::items[tmp].isContainer())
 				loadChildLoot(node, lootBlock);
 		}
 	}

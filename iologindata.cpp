@@ -98,7 +98,7 @@ bool IOLoginData::saveAccount(Account acc)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `accounts` SET `premdays` = " << acc.premiumDays << ", `warnings` = " << acc.warnings << ", `lastday` = " << acc.lastDay << " WHERE `id` = " << acc.number << " LIMIT 1;";
+	query << "UPDATE `accounts` SET `premdays` = " << acc.premiumDays << ", `warnings` = " << acc.warnings << ", `lastday` = " << acc.lastDay << " WHERE `id` = " << acc.number << db->getUpdateQueryLimitOperator() << ";";
 	return db->executeQuery(query.str());
 }
 
@@ -277,7 +277,7 @@ bool IOLoginData::setNewPassword(uint32_t accountId, std::string newPassword)
 	}
 
 	DBQuery query;
-	query << "UPDATE `accounts` SET `password` = " << db->escapeString(newPassword) << " WHERE `id` = " << accountId << " LIMIT 1;";
+	query << "UPDATE `accounts` SET `password` = " << db->escapeString(newPassword) << " WHERE `id` = " << accountId << db->getUpdateQueryLimitOperator() << ";";
 	return db->executeQuery(query.str());
 }
 
@@ -300,7 +300,7 @@ bool IOLoginData::setRecoveryKey(uint32_t accountId, std::string recoveryKey)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `accounts` SET `key` = " << db->escapeString(recoveryKey) << " WHERE `id` = " << accountId << " LIMIT 1;";
+	query << "UPDATE `accounts` SET `key` = " << db->escapeString(recoveryKey) << " WHERE `id` = " << accountId << db->getUpdateQueryLimitOperator() << ";";
 	return db->executeQuery(query.str());
 }
 
@@ -830,12 +830,8 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	// skills
 	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 	{
-		// what if player skill was downgraded to level 10? We must override it everytime perhaps;)?
-		//if(player->skills[i][SKILL_LEVEL] == 10 && !player->skills[i][SKILL_TRIES])
-		//	continue;
-
 		query.str("");
-		query << "UPDATE `player_skills` SET `value` = " << player->skills[i][SKILL_LEVEL] << ", `count` = " << player->skills[i][SKILL_TRIES] << " WHERE `player_id` = " << player->getGUID() << " AND `skillid` = " << i << " LIMIT 1;";
+		query << "UPDATE `player_skills` SET `value` = " << player->skills[i][SKILL_LEVEL] << ", `count` = " << player->skills[i][SKILL_TRIES] << " WHERE `player_id` = " << player->getGUID() << " AND `skillid` = " << i << db->getUpdateQueryLimitOperator() << ";";
 		if(!db->executeQuery(query.str()))
 			return false;
 	}
@@ -1117,7 +1113,7 @@ bool IOLoginData::updateOnlineStatus(uint32_t guid, bool login)
 			onlineValue--;
 	}
 
-	query << "UPDATE `players` SET `online` = " << onlineValue << " WHERE `id` = " << guid << " LIMIT 1;";
+	query << "UPDATE `players` SET `online` = " << onlineValue << " WHERE `id` = " << guid << db->getUpdateQueryLimitOperator() << ";";
 	return db->executeQuery(query.str());
 }
 
@@ -1377,7 +1373,7 @@ bool IOLoginData::changeName(uint32_t guid, std::string newName, std::string old
 		return false;
 
 	query.str("");
-	query << "UPDATE `players` SET `name` = " << db->escapeString(newName) << " WHERE `id` = " << guid << " LIMIT 1;";
+	query << "UPDATE `players` SET `name` = " << db->escapeString(newName) << " WHERE `id` = " << guid << db->getUpdateQueryLimitOperator() << ";";
 	if(!db->executeQuery(query.str()))
 		return false;
 
@@ -1457,7 +1453,7 @@ DeleteCharacter_t IOLoginData::deleteCharacter(uint32_t accountId, const std::st
 		return DELETE_LEADER;
 
 	query.str("");
-	query << "UPDATE `players` SET `deleted` = 1 WHERE `id` = " << id << " LIMIT 1;";
+	query << "UPDATE `players` SET `deleted` = 1 WHERE `id` = " << id << db->getUpdateQueryLimitOperator() << ";";
 	if(!db->executeQuery(query.str()))
 		return DELETE_INTERNAL;
 
@@ -1600,6 +1596,6 @@ bool IOLoginData::resetGuildInformation(uint32_t guid)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `players` SET `rank_id` = 0, `guildnick` = '' WHERE `id` = " << guid << " AND `deleted` = 0 LIMIT 1;";
+	query << "UPDATE `players` SET `rank_id` = 0, `guildnick` = '' WHERE `id` = " << guid << " AND `deleted` = 0" << db->getUpdateQueryLimitOperator() << ";";
 	return db->executeQuery(query.str());
 }

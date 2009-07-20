@@ -763,13 +763,14 @@ class LuaScriptInterface
 		static int32_t luaDoPrint(lua_State* L);
 		static int32_t internalGetPlayerInfo(lua_State* L, PlayerInfo_t info);
 
-		static const luaL_Reg luaDatabaseReg[7];
+		static const luaL_Reg luaDatabaseReg[8];
 		static int32_t luaDatabaseExecute(lua_State* L);
 		static int32_t luaDatabaseStoreQuery(lua_State* L);
 		static int32_t luaDatabaseEscapeString(lua_State* L);
 		static int32_t luaDatabaseEscapeBlob(lua_State* L);
 		static int32_t luaDatabaseLastInsertId(lua_State* L);
 		static int32_t luaDatabaseStringComparisonOperator(lua_State* L);
+		static int32_t luaDatabaseUpdateQueryLimitOperator(lua_State* L);
 
 		static const luaL_Reg luaResultReg[7];
 		static int32_t luaResultGetDataInt(lua_State* L);

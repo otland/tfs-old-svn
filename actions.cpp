@@ -680,10 +680,10 @@ Event(copy)
 bool Action::configureEvent(xmlNodePtr p)
 {
 	std::string strValue;
-	if(readXMLString(p, "allowfaruse", strValue))
+	if(readXMLString(p, "allowfaruse", strValue) || readXMLString(p, "allowFarUse", strValue))
 		setAllowFarUse(booleanString(strValue));
 
-	if(readXMLString(p, "blockwalls", strValue))
+	if(readXMLString(p, "blockwalls", strValue) || readXMLString(p, "blockWalls", strValue))
 		setCheckLineOfSight(booleanString(strValue));
 
 	return true;
