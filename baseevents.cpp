@@ -186,7 +186,7 @@ bool Event::loadScript(const std::string& script, bool file)
 		if(script_.find(tmp) == std::string::npos)
 		{
 			std::stringstream scriptstream;
-			scriptstream << "function " << getScriptEventName() << "(" << getScriptEventParams() << ")" << std::endl << script_ << std::endl << "end";
+			scriptstream << tmp << "(" << getScriptEventParams() << ")" << std::endl << script_ << std::endl << "end";
 			script_ = scriptstream.str();
 		}
 

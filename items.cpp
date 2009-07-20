@@ -509,6 +509,9 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 	}
 
 	ItemType& it = Item::items.getItemType(id);
+	if(!it.name.empty() && (!readXMLString(itemNode, "override", strValue) || !booleanString(strValue)))
+		std::cout << "[Warning - Items::loadFromXml] Duplicate registered item with id " << id << std::endl;
+
 	if(readXMLString(itemNode, "name", strValue))
 		it.name = strValue;
 
