@@ -244,13 +244,13 @@ bool Chat::parseChannelNode(xmlNodePtr p)
 	}
 
 	uint16_t id = intValue;
-	if(m_normalChannels.find(id) != m_normalChannels.end())
+	std::string strValue;
+	if(m_normalChannels.find(id) != m_normalChannels.end() && (!readXMLString(p, "override", strValue) || !booleanString(strValue)))
 	{
 		std::cout << "[Warning - Chat::loadFromXml] Duplicated channel with id: " << id << "." << std::endl;
 		return false;
 	}
 
-	std::string strValue;
 	if(!readXMLString(p, "name", strValue))
 	{
 		std::cout << "[Warning - Chat::loadFromXml] Missing name for channel with id: " << id << "." << std::endl;
@@ -313,6 +313,10 @@ bool Chat::parseChannelNode(xmlNodePtr p)
 		tmpNode = tmpNode->next;
 	}
 
+	VocationMap* vocationMap = NULL;
+	if(!vocMap.empty())
+		vocationMap = new VocationMap(vocMap);
+
 	switch(id)
 	{
 		case CHANNEL_PARTY:
@@ -332,7 +336,7 @@ bool Chat::parseChannelNode(xmlNodePtr p)
 		default:
 		{
 			if(ChatChannel* newChannel = new ChatChannel(id, name, flags, access, level,
-				condition, conditionId, conditionMessage, &vocMap))
+				condition, conditionId, conditionMessage, vocationMap))
 				m_normalChannels[id] = newChannel;
 
 			break;
