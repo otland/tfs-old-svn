@@ -810,7 +810,7 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 					break;
 			}
 
-			if(destTileEx)
+			if(destTileEx && destTileEx->floorChange((FloorChange_t)i))
 			{
 				destTile = g_game.getTile(posEx);
 				destTileEx = NULL;
