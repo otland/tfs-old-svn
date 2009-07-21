@@ -1450,7 +1450,7 @@ void LuaScriptInterface::registerFunctions()
 	//getItemRWInfo(uid)
 	lua_register(m_luaState, "getItemRWInfo", LuaScriptInterface::luaGetItemRWInfo);
 
-	//getThingFromPos(pos)
+	//getThingFromPos(pos[, displayError = true])
 	lua_register(m_luaState, "getThingFromPos", LuaScriptInterface::luaGetThingFromPos);
 
 	//getThing(uid)
@@ -4131,7 +4131,7 @@ int32_t LuaScriptInterface::luaDoDecayItem(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetThingFromPos(lua_State* L)
 {
-	//getThingFromPos(pos[, displayError])
+	//getThingFromPos(pos[, displayError = true])
 	//Note:
 	//	stackpos = 255- top thing (movable item or creature)
 	//	stackpos = 254- magic field

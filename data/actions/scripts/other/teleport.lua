@@ -11,7 +11,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		fromPosition.y = fromPosition.y + 1
 
 		fromPosition.stackpos = STACKPOS_GROUND
-		if(item.actionid == 100 or getThingFromPos(fromPosition).itemid == 0) then
+		if(item.actionid == 100 or getThingFromPos(fromPosition, false).itemid == 0) then
 			fromPosition.y = fromPosition.y - 2
 		end
 	else
