@@ -130,6 +130,10 @@
 		Parameters
 			playerName
 
+		Examples
+			/promote Tester
+			/demote Tester
+
 	/s
 		Summons a monster.
 		Parameters
@@ -195,16 +199,25 @@
 		Removes an item or a creature from a tile.
 		Notice: Player is a creature so you may use it
 		with players.
+		Parameters
+			<otional>amount/all
+
+		Examples
+			/r all (Removes all items from tile)
+			/r 3 (Removes first 3 items from tile)
 
 	/owner
 		Changes house owner.
 		Parameters
 			newOwnerName
 				Values: player name, or 'none/nobody/0' (Clear owner)
+			<optional>clean (Default: yes)
 
 		Examples
+			/owner Eternal Oblivion,no (Change owner without cleaning house)
+			/owner Eternal Oblivion,yes (Change owner and clean house)
+			/owner Eternal Oblivion (Same as above)
 			/owner none
-			/owner Eternal Oblivion
 
 	/storage
 		Displays or modify player storage.
@@ -271,16 +284,25 @@
 			!y 50, Hi! Colored text ;-)
 
 	/bc
-		Broadcast.
+		Broadcast message in color.
 		Parameters
+			<optional>color (Default: red)
+				Values: advance/event/white/orange/info/green/small/blue/red/warning/status
 			message
+
+		Examples:
+			/bc green;Hello!
+			/bc Hiho 
 
 	/mkick
 		Mass kick.
 		Parameters
 			rangeX
 			rangeY
-			<optional>multiFloor
+			<optional>multiFloor (Default: no)
+
+		Example
+			/mkick 3,3 (Kick all players on same floor in 3x3 range)
 
 	/ghost
 		Enables/disables ghost mode.
@@ -323,10 +345,14 @@
 
 	/a
 		Teleports you n tiles forward (direction same as looking at).
+		Parameters
+			<optional> n (Default: 1)
+			<optional>playerName
+
 		Examples
 			/a 3
 			/a
-			/a 58
+			/a 28, GM Tester
 
 	/kick
 		Kicks a creature. If you leave param blank - will try to kick your target creature if selected.
@@ -409,6 +435,7 @@
 			<optional>playerName/ip
 
 		Examples
+			/mc (Check for all MC-players)
 			/mc 127.0.0.1 (Display all players with IP = 127.0.0.1)
 			/mc Tester (Display all players with same IP as Tester)
 
@@ -446,25 +473,21 @@
 		Displays player's current position.
 
 	!createguild
+		Works only in ingameGuildManagement is enabled.
 		Creates a guild.
 		Parameters
 			guildName
 
 	!joinguild
+		Works only in ingameGuildManagement is enabled.
 		Joins you to a guild once you have been invited to it.
 
 	!frags
 		Display a numer of your unjustificated kills (frags) and a time
 		for one to decrease.
 
-	!buypremium
-		Buys a premium.
-
 	!online
 		Displays a list of online players.
-
-	!changender
-		Changes your gender to opposite one.
 
 	!uptime
 		Displayes an uptime of a server.

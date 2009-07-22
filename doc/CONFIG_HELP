@@ -64,6 +64,53 @@
 		generateAccountNumber
 			Default: yes
 
+	*UNJUSTIFIED KILLS
+		redSkullLength
+			Default: 30 * 24 * 60 * 60
+
+		blackSkullLength
+			Default: 45 * 24 * 60 * 60
+
+		dailyFragsToRedSkull
+			Default: 3
+
+		weeklyFragsToRedSkull
+			Default: 5
+
+		monthlyFragsToRedSkull
+			Default: 10
+
+		dailyFragsToBlackSkull
+			Default: dailyFragsToRedSkull
+
+		weeklyFragsToBlackSkull
+			Default: weeklyFragsToRedSkull
+
+		monthlyFragsToBlackSkull
+			Default: monthlyFragsToRedSkull
+
+		dailyFragsToBanishment
+			Default: dailyFragsToRedSkull
+
+		weeklyFragsToBanishment
+			Default: weeklyFragsToRedSkull
+
+		monthlyFragsToBanishment
+			Default: monthlyFragsToRedSkull
+
+		blackSkulledDeathHealth
+			Default: 40
+
+		blackSkulledDeathMana
+			Default: 0
+
+		useBlackSkull
+			New feature from 8.5. If you'll use it, player won't be banished but instead they receive black skull which block some actions.
+			Default: yes
+
+		advancedFragList
+			Default: no
+
 	*BANISHMENTS
 		notationsToBan
 			Amount of notations to receive by player to be banned automatically.
@@ -89,41 +136,12 @@
 			Specify if every banishment should be broadcasted (red message).
 			Default: yes
 
-		killsToBan
-			Amount of kills to receive by player to be banned automatically.
-			Default: 5
-
 		maxViolationCommentSize
 			Default: 200
 
 		autoBanishUnknownBytes
 			Specify if player should be banned automatically in case his client send unknown byte to server.
 			It happens mostly when player use unofficial software to play.
-			Default: no
-
-	*UNJUSTIFIED KILLS
-		redSkullLength
-			Default: 30 * 24 * 60 * 60
-
-		dailyFragsToRedSkull
-			Default: 3
-
-		weeklyFragsToRedSkull
-			Default: 5
-
-		monthlyFragsToRedSkull
-			Default: 10
-
-		dailyFragsToBanishment
-			Default: dailyFragsToRedSkull
-
-		weeklyFragsToBanishment
-			Default: weeklyFragsToRedSkull
-
-		monthlyFragsToBanishment
-			Default: monthlyFragsToRedSkull
-
-		advancedFragList
 			Default: no
 
 	*BATTLE
@@ -142,10 +160,6 @@
 				Some of them have lower level than protectionLevel - they're able to fight.
 				Some of them have protected vocation (E.q. none vocation) - they're able to fight.
 			Default: yes
-
-		killsToRedSkull
-			After how many unjustified kills player gains red skull.
-			Default: 3
 
 		pzLocked
 			Time needed to wait after attacking a player.
@@ -175,10 +189,6 @@
 			Should rune charges be removed when using? No, means that they will have infinite charges.
 			Default: yes
 
-		timeToDecreaseFrags
-			In miliseconds.
-			Default: 24 * 60 * 60 * 1000 (24 hours)
-
 		whiteSkullTime
 			In miliseconds.
 			Default: 15 * 60 * 1000 (15 minutes)
@@ -187,18 +197,6 @@
 			If enabled, players with same outfit feet color will be unable to attack themselfes.
 			It works only for melee attacks.
 			Default: no
-
-		experienceFromKilledPlayers
-			System, used in global Tibia, on pvp-enforced servers.
-			Specify if player should receive experience by killing other player.
-			Experience is only received if _killer_ level is lower than _killed_ level.
-			Default: no
-
-		minLevelThresholdForKilledPlayer
-			Default: 0.9
-
-		maxLevelThresholdForKilledPlayer
-			Default: 1.1
 
 		showHealingDamage
 			Display effect with health points gained when creature was healed?
@@ -246,10 +244,34 @@
 			Default container player gets after death, when he have empty container slot.
 			Default: 1987
 
+		gainExperienceColor
+			Color used when creature gain experience.
+			Values: From 0 to 255.
+			Value will be randomized if you use -1
+			Default: 215
+
 		addManaSpentInPVPZone
 			Should player be able to train magic level in PVP zones?
 			Protection against mana training in PVP Arena, where mana is re-newed when player dies.
 			Default: yes
+
+		squareColor
+			Color of square visible when attacking creature.
+			Value will be randomized if you use -1
+			Default: 0
+
+	*EXPERIENCE FROM PLAYERS
+		experienceFromKilledPlayers
+			System, used in global Tibia, on pvp-enforced servers.
+			Specify if player should receive experience by killing other player.
+			Experience is only received if _killer_ level is lower than _killed_ level.
+			Default: no
+
+		minLevelThresholdForKilledPlayer
+			Default: 0.9
+
+		maxLevelThresholdForKilledPlayer
+			Default: 1.1
 
 	*CONNECTION
 		worldId
@@ -402,11 +424,11 @@
 			Should players' deaths be storaged in database?
 			Default: yes
 
-		deathAssistCount
-			Default: 1
-
 		deathListRequiredTime
 			Default: 1 * 60 * 1000
+
+		deathAssistCount
+			Default: 20
 
 		maxDeathRecords
 			Player deathlist limit.
@@ -477,6 +499,11 @@
 		houseRentPeriod
 			Values: yearly, monthly, weekly, daily, never
 			Default: never
+
+		guildHalls
+			Use guild halls system, allowing to buy guild hall only bu guild leader. All members will be auto invited.
+				You can mark house as guild hall in map editor.
+			Default: no
 
 	*ITEM USAGE
 		timeBetweenActions
@@ -576,9 +603,6 @@
 			Directory, from where all data used be server is loaded.
 			Default: data/
 
-		kickIdlePlayerAfterMinutes
-			Default: 15
-
 		allowChangeOutfit
 			Should player's be able to change their outfits?
 			Default: yes
@@ -603,16 +627,6 @@
 		saveGlobalStorage
 			Default: yes
 
-		ghostModeInvisibleEffect
-			Should invisible gamemaster be visible to other gamemasters with invisible effect? (Like, utana vid spell)
-			If you disable this, you'll see all ghost gamemasters in normal outfits.
-			Default: no
-
-		ghostModeSpellEffects
-			Display effects while casting spells in ghost mode?
-			If 'no', then no one will see that ghost GM casted a spell.
-			Default: yes
-
 		displaySkillLevelOnAdvance
 			Default: no
 
@@ -624,15 +638,6 @@
 			If enabled, spells wont be visible in 'Default' channel, but as orange effect.
 			Anti spam feature.
 			Default: no
-
-		gainExperienceColor
-			Color used when creature gain experience.
-			Values: From 0 to 255.
-			Value will be randomized if you use -1
-			Default: 215
-
-		expireReportsAfterReads
-			Default: 1
 
 		promptExceptionTracerErrorBox
 			Works only on Windows with precompiled support feature,
@@ -652,14 +657,29 @@
 					+ you can enable/disable it individually for each monster by using <flag lootmessage="yes/no"/>
 			Default: 2
 
+	*GHOST MODE
+		ghostModeInvisibleEffect
+			Should invisible gamemaster be visible to other gamemasters with invisible effect? (Like, utana vid spell)
+			If you disable this, you'll see all ghost gamemasters in normal outfits.
+			Default: no
+
+		ghostModeSpellEffects
+			Display effects while casting spells in ghost mode?
+			If 'no', then no one will see that ghost GM casted a spell.
+			Default: yes
+
+	*LIMITS
+		idleWarningTime
+			Default: 14 * 60 * 1000
+
+		idleKickTime
+			Default:15 * 60 * 1000
+
+		expireReportsAfterReads
+			Default: 1
+
 		playerQueryDeepness
 			Default: 2
-
-		blackSkulledDeathHealth
-			Default: 40
-
-		blackSkulledDeathMana
-			Default: 0
 
 		maxItemsPerPZTile
 			Maximum items which can be placed on 1 protection zone tile.
@@ -667,11 +687,6 @@
 
 		maxItemsPerHouseTile
 			Maximum items which can be placed on 1 house tile.
-			Default: 0
-
-		squareColor
-			Color of square visible when attacking creature.
-			Value will be randomized if you use -1
 			Default: 0
 
 	*PREMIUM-RELATED
@@ -840,6 +855,7 @@
 		displayGamemastersWithOnlineCommand
 			Should online gamemasters be displayed when using /online command?
 			Default: no
+
 	*LOGS
 		displayPlayersLogging
 			Should message in console be displayed everytime player logs in/out?

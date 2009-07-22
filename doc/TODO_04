@@ -12,6 +12,7 @@
 	* Stabilność :D!
 	* Nowy podział plików:
 		* configs/
+			* database/main.lua
 			* config.lua/.xml
 			* Przeniesione data/XML/
 		* logs/
@@ -22,20 +23,15 @@
 			* talkactions/
 			* chat/
 			* server/
-		* mods/
-			Miejsce dla modów- wszystkie nowe modyfikacje, skrypty, itp tutaj, bo bezsensowne jest obecne pieprzenie się z 32894732893 plikami, by coś dodać.
-			Przykłady:
-				http://wklej.to/w4SP
-				http://wklej.to/aHnl
 		* world/
 			data/world/ - łatwiejsza podmiana data/
-		* languages/
+		* langs/
 			Tłumaczenia: polish.lua, english.lua, etc
-		* schemas/
-			mysql.sql, sqlite.sql, postgresql.sql
 		* data/
 			Po staremu prócz world/, XML/ i logs/
-		* doc/
+		* docs/
+			* schemas/
+				mysql.sql, sqlite.sql, postgresql.sql
 		* TheForgottenServer.exe
 		* forgottenserver.s3db
 ]

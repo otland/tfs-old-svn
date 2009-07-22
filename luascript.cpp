@@ -1489,10 +1489,10 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerSendDefaultCancel(cid, ReturnValue)
 	lua_register(m_luaState, "doPlayerSendDefaultCancel", LuaScriptInterface::luaDoSendDefaultCancel);
 
-	//getSearchString(fromPosition, toPosition[, fromIsCreature[, toIsCreature]])
+	//getSearchString(fromPosition, toPosition[, fromIsCreature = false[, toIsCreature = false]])
 	lua_register(m_luaState, "getSearchString", LuaScriptInterface::luaGetSearchString);
 
-	//getClosestFreeTile(cid, targetpos[, extended[, ignoreHouse]])
+	//getClosestFreeTile(cid, targetpos[, extended = false[, ignoreHouse = true]])
 	lua_register(m_luaState, "getClosestFreeTile", LuaScriptInterface::luaGetClosestFreeTile);
 
 	//doTeleportThing(cid, newpos[, pushmove])
@@ -1501,7 +1501,7 @@ void LuaScriptInterface::registerFunctions()
 	//doTransformItem(uid, newId[, count/subType])
 	lua_register(m_luaState, "doTransformItem", LuaScriptInterface::luaDoTransformItem);
 
-	//doCreatureSay(uid, text, type[, ghost[, cid[, pos]]])
+	//doCreatureSay(uid, text, type[, ghost = false[, cid = 0[, pos]]])
 	lua_register(m_luaState, "doCreatureSay", LuaScriptInterface::luaDoCreatureSay);
 
 	//doSendMagicEffect(pos, type[, player])
@@ -3165,7 +3165,7 @@ int32_t LuaScriptInterface::luaDoSendDefaultCancel(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetSearchString(lua_State* L)
 {
-	//getSearchString(fromPosition, toPosition[, fromIsCreature[, toIsCreature]])
+	//getSearchString(fromPosition, toPosition[, fromIsCreature = false[, toIsCreature = false]])
 	PositionEx toPos, fromPos;
 	bool toIsCreature = false, fromIsCreature = false;
 
@@ -3191,7 +3191,7 @@ int32_t LuaScriptInterface::luaGetSearchString(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetClosestFreeTile(lua_State* L)
 {
-	//getClosestFreeTile(cid, targetPos[, extended[, ignoreHouse]])
+	//getClosestFreeTile(cid, targetPos[, extended = false[, ignoreHouse = true]])
 	uint32_t params = lua_gettop(L);
 	bool ignoreHouse = true, extended = false;
 	if(params > 3)
@@ -3277,7 +3277,7 @@ int32_t LuaScriptInterface::luaDoTransformItem(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoCreatureSay(lua_State* L)
 {
-	//doCreatureSay(uid, text, type[, ghost[, cid[, pos]]])
+	//doCreatureSay(uid, text, type[, ghost = false[, cid = 0[, pos]]])
 	uint32_t params = lua_gettop(L), cid = 0, uid = 0;
 	PositionEx pos;
 	if(params > 5)
