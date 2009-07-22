@@ -159,6 +159,7 @@ class ConfigManager
 			ITEMLIMIT_PROTECTIONZONE,
 			ITEMLIMIT_HOUSETILE,
 			SQUARE_COLOR,
+			LOOT_MESSAGE,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 
