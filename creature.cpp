@@ -209,12 +209,9 @@ void Creature::onThink(uint32_t interval)
 	onAttacking(interval);
 	executeConditions(interval);
 
-	if(!isRemoved())
-	{
-		CreatureEventList thinkEvents = getCreatureEvents(CREATURE_EVENT_THINK);
-		for(CreatureEventList::iterator it = thinkEvents.begin(); it != thinkEvents.end(); ++it)
-			(*it)->executeThink(this, interval);
-	}
+	CreatureEventList thinkEvents = getCreatureEvents(CREATURE_EVENT_THINK);
+	for(CreatureEventList::iterator it = thinkEvents.begin(); it != thinkEvents.end(); ++it)
+		(*it)->executeThink(this, interval);
 }
 
 void Creature::onAttacking(uint32_t interval)
