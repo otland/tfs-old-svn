@@ -61,7 +61,7 @@
 			Now that we have a database created it is time to import
 			all tables and triggers, closedown the MySQL commandline
 			cd (change directory) to TheForgottenServer one, and type:
-				mysql -uroot -p theforgottenserver < schema.mysql
+				mysql -uroot -p theforgottenserver < schamas/mysql.sql
 
 			If you changed database name then also remember to change
 			'theforgottenserver' to your database name there.
@@ -109,7 +109,7 @@
 			Enter your database and press on 'Import'.
 
 		#6
-			Use the 'File to import' part, select schema.mysql and press on 'Go'.
+			Use the 'File to import' part, select mysql.sql and press on 'Go'.
 
 		#7
 			Now you should have a MySQL server with TheForgottenServer

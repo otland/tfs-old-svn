@@ -194,7 +194,7 @@ uint32_t DatabaseManager::updateDatabase()
 
 	if(version < 6 && db->getDatabaseEngine() == DATABASE_ENGINE_POSTGRESQL)
 	{
-		std::cout << "> WARNING: Couldn't update database - PostgreSQL support available since version 6, please use latest schema.pgsql." << std::endl;
+		std::cout << "> WARNING: Couldn't update database - PostgreSQL support available since version 6, please use latest pgsql.sql schema." << std::endl;
 		registerDatabaseConfig("db_version", 6);
 		return 6;
 	}

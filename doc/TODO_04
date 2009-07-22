@@ -30,8 +30,6 @@
 		* data/
 			Po staremu prócz world/, XML/ i logs/
 		* docs/
-			* schemas/
-				mysql.sql, sqlite.sql, postgresql.sql
 		* TheForgottenServer.exe
 		* forgottenserver.s3db
 ]

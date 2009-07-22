@@ -608,7 +608,7 @@ ServiceManager* services)
 	{
 		std::cout << ">> Running Database Manager" << std::endl;
 		if(!DatabaseManager::getInstance()->isDatabaseSetup())
-			startupErrorMessage("The database you specified in config.lua is empty, please import schema.<dbengine> to the database (if you are using MySQL, please read doc/MYSQL_HELP for more information).");
+			startupErrorMessage("The database you specified in config.lua is empty, please import schemas/<dbengine>.sql to the database (if you are using MySQL, please read doc/MYSQL_HELP for more information).");
 		else
 		{
 			uint32_t version = 0;

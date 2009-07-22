@@ -46,6 +46,7 @@
 		<item id="1949" chance="10000"/><!-- scroll -->
 		<item id="2467" chance="10000"/><!-- leather armor -->
 		<item id="2642" chance="6666"/><!-- sandals -->
+		<item id="2193" chance="1200"/><!-- ankh -->
 		<item id="1987" chance="100000"><!-- bag -->
 			<inside>
 				<item id="2044" chance="6666"/><!-- lamp -->
