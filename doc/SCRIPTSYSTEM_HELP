@@ -50,6 +50,7 @@
 					login, logout
 					advance, statschange
 					sendmail, receivemail
+					traderequest, tradeaccept
 					joinchannel, leavechannel
 					look, think, textedit, reportbug
 					target, follow
@@ -62,6 +63,8 @@
 			onStatsChange(cid, attacker, type, combat, value)
 			onSendMail(cid, receiver, item, openBox)
 			onReceiveMail(cid, sender, item, openBox)
+			onTradeRequest(cid, target, item)
+			onTradeAccept(cid, target, item, targetItem)
 			onJoinChannel(cid, channel, users)
 			onLeaveChannel (cid, channel, users)
 			onLook(cid, thing, position, lookDistance)

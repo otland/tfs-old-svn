@@ -33,6 +33,8 @@ enum CreatureEventType_t
 	CREATURE_EVENT_LOOK,
 	CREATURE_EVENT_MAIL_SEND,
 	CREATURE_EVENT_MAIL_RECEIVE,
+	CREATURE_EVENT_TRADE_REQUEST,
+	CREATURE_EVENT_TRADE_ACCEPT,
 	CREATURE_EVENT_TEXTEDIT,
 	CREATURE_EVENT_REPORTBUG,
 	CREATURE_EVENT_THINK,
@@ -112,6 +114,8 @@ class CreatureEvent : public Event
 		uint32_t executeLook(Player* player, Thing* thing, const Position& position, int16_t stackpos, int32_t lookDistance);
 		uint32_t executeMailSend(Player* player, Player* receiver, Item* item, bool openBox);
 		uint32_t executeMailReceive(Player* player, Player* sender, Item* item, bool openBox);
+		uint32_t executeTradeRequest(Player* player, Player* target, Item* item);
+		uint32_t executeTradeAccept(Player* player, Player* target, Item* item, Item* targetItem);
 		uint32_t executeTextEdit(Player* player, Item* item, std::string newText);
 		uint32_t executeReportBug(Player* player, std::string comment);
 		uint32_t executeThink(Creature* creature, uint32_t interval);

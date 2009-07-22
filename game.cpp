@@ -2792,11 +2792,24 @@ bool Game::playerRequestTrade(uint32_t playerId, const Position& pos, int16_t st
 	}
 
 	Container* tradeContainer = tradeItem->getContainer();
-	if(!tradeContainer || tradeContainer->getItemHoldingCount() + 1 < 101)
-		return internalStartTrade(player, tradePartner, tradeItem);
+	if(tradeContainer && tradeContainer->getItemHoldingCount() + 1 > 100)
+	{
+		player->sendTextMessage(MSG_INFO_DESCR, "You cannot trade more than 100 items.");
+		return false;
+	}
 
-	player->sendTextMessage(MSG_INFO_DESCR, "You cannot trade more than 100 items.");
-	return false;
+	bool deny = false;
+	CreatureEventList tradeEvents = player->getCreatureEvents(CREATURE_EVENT_TRADE_REQUEST);
+	for(CreatureEventList::iterator it = tradeEvents.begin(); it != tradeEvents.end(); ++it)
+	{
+		if(!(*it)->executeTradeRequest(player, tradePartner, tradeItem))
+			deny = true;
+	}
+
+	if(deny)
+		return false;
+
+	return internalStartTrade(player, tradePartner, tradeItem);
 }
 
 bool Game::internalStartTrade(Player* player, Player* tradePartner, Item* tradeItem)
@@ -2854,6 +2867,17 @@ bool Game::playerAcceptTrade(uint32_t playerId)
 
 	Item* tradeItem1 = player->tradeItem;
 	Item* tradeItem2 = tradePartner->tradeItem;
+
+	bool deny = false;
+	CreatureEventList tradeEvents = player->getCreatureEvents(CREATURE_EVENT_TRADE_ACCEPT);
+	for(CreatureEventList::iterator it = tradeEvents.begin(); it != tradeEvents.end(); ++it)
+	{
+		if(!(*it)->executeTradeAccept(player, tradePartner, tradeItem1, tradeItem2))
+			deny = true;
+	}
+
+	if(deny)
+		return false;
 
 	player->setTradeState(TRADE_TRANSFER);
 	tradePartner->setTradeState(TRADE_TRANSFER);

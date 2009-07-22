@@ -644,6 +644,14 @@
 			In global tibia it's disabled.
 			Default: no
 
+		monsterLootMessage
+			Defines how green message with loot in the middle of screen should be displayed.
+				-1 - disable this message
+				0 - enable only in party
+				1 - both, if party available show there, otherwise send to player (global Tibia)
+					+ you can enable/disable it individually for each monster by using <flag lootmessage="yes/no"/>
+			Default: 2
+
 		playerQueryDeepness
 			Default: 2
 

@@ -90,6 +90,7 @@ class MonsterType
 		Skulls_t skull;
 		PartyShields_t partyShield;
 
+		int8_t lootMessage;
 		int32_t defense, armor, health, healthMax, baseSpeed, lookCorpse, corpseUnique, maxSummons,
 			targetDistance, runAwayHealth, conditionImmunities, damageImmunities, lightLevel,
 			lightColor, changeTargetSpeed, changeTargetChance;

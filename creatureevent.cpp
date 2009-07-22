@@ -155,12 +155,16 @@ bool CreatureEvent::configureEvent(xmlNodePtr p)
 		m_type = CREATURE_EVENT_ADVANCE;
 	else if(tmpStr == "sendmail")
 		m_type = CREATURE_EVENT_MAIL_SEND;
+	else if(tmpStr == "receivemail")
+		m_type = CREATURE_EVENT_MAIL_RECEIVE;
+	else if(tmpStr == "traderequest")
+		m_type = CREATURE_EVENT_TRADE_REQUEST;
+	else if(tmpStr == "tradeaccept")
+		m_type = CREATURE_EVENT_TRADE_ACCEPT;
 	else if(tmpStr == "textedit")
 		m_type = CREATURE_EVENT_TEXTEDIT;
 	else if(tmpStr == "reportbug")
 		m_type = CREATURE_EVENT_REPORTBUG;
-	else if(tmpStr == "receivemail")
-		m_type = CREATURE_EVENT_MAIL_RECEIVE;
 	else if(tmpStr == "look")
 		m_type = CREATURE_EVENT_LOOK;
 	else if(tmpStr == "think")
@@ -217,6 +221,10 @@ std::string CreatureEvent::getScriptEventName() const
 			return "onSendMail";
 		case CREATURE_EVENT_MAIL_RECEIVE:
 			return "onReceiveMail";
+		case CREATURE_EVENT_TRADE_REQUEST:
+			return "onTradeRequest";
+		case CREATURE_EVENT_TRADE_ACCEPT:
+			return "onTradeAccept";
 		case CREATURE_EVENT_TEXTEDIT:
 			return "onTextEdit";
 		case CREATURE_EVENT_REPORTBUG:
@@ -267,6 +275,9 @@ std::string CreatureEvent::getScriptEventParams() const
 			return "cid, receiver, item, openBox";
 		case CREATURE_EVENT_MAIL_RECEIVE:
 			return "cid, sender, item, openBox";
+		case CREATURE_EVENT_TRADE_REQUEST:
+		case CREATURE_EVENT_TRADE_ACCEPT:
+			return "cid, target, item";
 		case CREATURE_EVENT_TEXTEDIT:
 			return "cid, item, newText";
 		case CREATURE_EVENT_REPORTBUG:
@@ -718,6 +729,119 @@ uint32_t CreatureEvent::executeMailReceive(Player* player, Player* sender, Item*
 	else
 	{
 		std::cout << "[Error - CreatureEvent::executeMailReceive] Call stack overflow." << std::endl;
+		return 0;
+	}
+}
+
+uint32_t CreatureEvent::executeTradeRequest(Player* player, Player* target, Item* item)
+{
+	//onTradeRequest(cid, target, item)
+	if(m_scriptInterface->reserveScriptEnv())
+	{
+		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		if(m_scripted == EVENT_SCRIPT_BUFFER)
+		{
+			env->setRealPos(player->getPosition());
+
+			std::stringstream scriptstream;
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local target = " << env->addThing(target) << std::endl;
+			env->streamThing(scriptstream, "item", item, env->addThing(item));
+
+			scriptstream << m_scriptData;
+			bool result = true;
+			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			{
+				lua_State* L = m_scriptInterface->getLuaState();
+				result = m_scriptInterface->getFieldBool(L, "_result");
+			}
+
+			m_scriptInterface->releaseScriptEnv();
+			return result;
+		}
+		else
+		{
+			#ifdef __DEBUG_LUASCRIPTS__
+			char desc[35];
+			sprintf(desc, "%s", player->getName().c_str());
+			env->setEventDesc(desc);
+			#endif
+
+			env->setScriptId(m_scriptId, m_scriptInterface);
+			env->setRealPos(player->getPosition());
+
+			lua_State* L = m_scriptInterface->getLuaState();
+			m_scriptInterface->pushFunction(m_scriptId);
+
+			lua_pushnumber(L, env->addThing(player));
+			lua_pushnumber(L, env->addThing(target));
+			LuaScriptInterface::pushThing(L, item, env->addThing(item));
+
+			bool result = m_scriptInterface->callFunction(3);
+			m_scriptInterface->releaseScriptEnv();
+			return result;
+		}
+	}
+	else
+	{
+		std::cout << "[Error - CreatureEvent::executeTradeRequest] Call stack overflow." << std::endl;
+		return 0;
+	}
+}
+
+uint32_t CreatureEvent::executeTradeAccept(Player* player, Player* target, Item* item, Item* targetItem)
+{
+	//onTradeAccept(cid, target, item, targetItem)
+	if(m_scriptInterface->reserveScriptEnv())
+	{
+		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
+		if(m_scripted == EVENT_SCRIPT_BUFFER)
+		{
+			env->setRealPos(player->getPosition());
+
+			std::stringstream scriptstream;
+			scriptstream << "local cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local target = " << env->addThing(target) << std::endl;
+			env->streamThing(scriptstream, "item", item, env->addThing(item));
+
+			scriptstream << m_scriptData;
+			bool result = true;
+			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
+			{
+				lua_State* L = m_scriptInterface->getLuaState();
+				result = m_scriptInterface->getFieldBool(L, "_result");
+			}
+
+			m_scriptInterface->releaseScriptEnv();
+			return result;
+		}
+		else
+		{
+			#ifdef __DEBUG_LUASCRIPTS__
+			char desc[35];
+			sprintf(desc, "%s", player->getName().c_str());
+			env->setEventDesc(desc);
+			#endif
+
+			env->setScriptId(m_scriptId, m_scriptInterface);
+			env->setRealPos(player->getPosition());
+
+			lua_State* L = m_scriptInterface->getLuaState();
+			m_scriptInterface->pushFunction(m_scriptId);
+
+			lua_pushnumber(L, env->addThing(player));
+			lua_pushnumber(L, env->addThing(target));
+			LuaScriptInterface::pushThing(L, item, env->addThing(item));
+			LuaScriptInterface::pushThing(L, targetItem, env->addThing(targetItem));
+
+			bool result = m_scriptInterface->callFunction(4);
+			m_scriptInterface->releaseScriptEnv();
+			return result;
+		}
+	}
+	else
+	{
+		std::cout << "[Error - CreatureEvent::executeTradeAccept] Call stack overflow." << std::endl;
 		return 0;
 	}
 }

@@ -46,7 +46,7 @@ void MonsterType::reset()
 	runAwayHealth = manaCost = lightLevel = lightColor = yellSpeedTicks = yellChance = changeTargetSpeed = changeTargetChance = 0;
 	experience = defense = armor = lookCorpse = corpseUnique = conditionImmunities = damageImmunities = 0;
 
-	maxSummons = -1;
+	maxSummons = lootMessage = -1;
 	targetDistance = 1;
 	staticAttackChance = 95;
 	health = healthMax = 100;
@@ -117,11 +117,15 @@ void MonsterType::dropLoot(Container* corpse)
 	if(!owner)
 		return;
 
+	int32_t configLootMessage = g_config.getNumber(ConfigManager::LOOT_MESSAGE);
+	if((configLootMessage == -1 && lootMessage <= 0) || !lootMessage)
+		return;
+
 	std::stringstream ss;
 	ss << "Loot of " << nameDescription << ": " << corpse->getContentDescription() << ".";
-	if(owner->getParty())
+	if(owner->getParty() && configLootMessage >= 0)
 		owner->getParty()->broadcastMessage(MSG_INFO_DESCR, ss.str());
-	else
+	else if(configLootMessage)
 		owner->sendTextMessage(MSG_INFO_DESCR, ss.str());
 }
 
@@ -152,7 +156,7 @@ Item* MonsterType::createLoot(const LootBlock& lootBlock)
 	if(lootBlock.uniqueId != -1)
 		tmpItem->setUniqueId(lootBlock.uniqueId);
 
-	if(lootBlock.text.length())
+	if(!lootBlock.text.empty())
 		tmpItem->setText(lootBlock.text);
 
 	return tmpItem;
@@ -907,6 +911,9 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 					if(readXMLString(tmpNode, "hidehealth", strValue))
 						mType->hideHealth = booleanString(strValue);
 
+					if(readXMLString(tmpNode, "lootmessage", strValue))
+						mType->lootMessage = booleanString(strValue);
+
 					if(readXMLInteger(tmpNode, "staticattack", intValue))
 					{
 						if(intValue < 0 || intValue > 100)
@@ -1401,9 +1408,25 @@ bool Monsters::loadChildLoot(xmlNodePtr node, LootBlock& parentBlock)
 	if(!node)
 		return false;
 
-	xmlNodePtr p = node->children;
+	xmlNodePtr p = node->children, insideNode;
 	while(p)
 	{
+		if(!xmlStrcmp(p->name, (const xmlChar*)"inside"))
+		{
+			insideNode = p->children;
+			while(insideNode)
+			{
+				LootBlock childBlock;
+				if(loadLoot(insideNode, childBlock))
+					parentBlock.childLoot.push_back(childBlock);
+
+				insideNode = insideNode->next;
+			}
+
+			p = p->next;
+			continue;
+		}
+
 		LootBlock childBlock;
 		if(loadLoot(p, childBlock))
 			parentBlock.childLoot.push_back(childBlock);

@@ -187,6 +187,7 @@
 	-- Miscellaneous
 	-- NOTE: promptExceptionTracerErrorBox works only with precompiled support feature,
 	-- called "exception tracer" (__EXCEPTION_TRACER__ flag).
+	-- monsterLootMessage -1 to disable, 0 - only party, 1 - party or player (global Tibia)
 	dataDirectory = "data/"
 	allowChangeOutfit = "yes"
 	allowChangeColors = "yes"
@@ -199,6 +200,7 @@
 	emoteSpells = "no"
 	promptExceptionTracerErrorBox = "yes"
 	storePlayerDirection = "no"
+	monsterLootMessage = 1
 
 	-- Ghost mode
 	ghostModeInvisibleEffect = "no"

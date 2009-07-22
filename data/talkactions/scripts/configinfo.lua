@@ -14,6 +14,6 @@ function onSay(cid, words, param, channel)
 		return true
 	end
 
-	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Config value \"" .. value .. "\" does not exists.")
+	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Config value \"" .. param .. "\" does not exists.")
 	return true
 end
