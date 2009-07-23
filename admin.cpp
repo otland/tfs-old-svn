@@ -33,7 +33,7 @@
 
 #include "logger.h"
 
-static void addLogLine(ProtocolAdmin* conn, eLogType type, int level, std::string message);
+static void addLogLine(ProtocolAdmin* conn, log_type type, int level, std::string message);
 
 extern Game g_game;
 extern ConfigManager g_config;
@@ -779,7 +779,7 @@ RSA* AdminProtocolConfig::getRSAKey(uint8_t type)
 
 /////////////////////////////////////////////
 
-static void addLogLine(ProtocolAdmin* conn, eLogType type, int level, std::string message)
+static void addLogLine(ProtocolAdmin* conn, log_type type, int level, std::string message)
 {
 	if(g_config.getBoolean(ConfigManager::ADMIN_LOGS_ENABLED))
 	{

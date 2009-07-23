@@ -1,18 +1,30 @@
-CFLAGS = -I. -I/usr/include/libxml2 -I/usr/include/lua5.1 -Werror -Wall -O1
+TFS = forgottenserver
 
-LIBLINK = -L/usr/lib -lxml2 -lpthread -llua5.1 -lgmp -lmysqlclient -lboost_regex -lsqlite3 -llua5.1-sql-mysql -llua5.1-sql-sqlite -ldl -lboost_system
+INCLUDEDIRS = -I. -I/usr/include/libxml2 \
+		-I /usr/include/lua5.1
 
-FLAGS = -D_THREAD_SAFE -D_REENTRANT -D__NO_HOMEDIR_CONF__ -D__USE_MYSQL__ -D__USE_SQLITE__ -D__ENABLE_SERVER_DIAGNOSTIC__
+LIBDIRS =
 
-OBJ = account.o actions.o admin.o allocator.o ban.o baseevents.o beds.o creature.o creatureevent.o chat.o combat.o commands.o condition.o configmanager.o connection.o container.o cylinder.o database.o databasemysql.o databasesqlite.o depot.o exception.o fileloader.o game.o gui.o house.o housetile.o ioguild.o iologindata.o iomap.o iomapserialize.o inputbox.o item.o items.o logger.o luascript.o mailbox.o map.o md5.o monster.o monsters.o movement.o networkmessage.o npc.o otserv.o outfit.o outputmessage.o party.o player.o playerbox.o position.o protocol.o protocolgame.o protocollogin.o protocolold.o quests.o raids.o rsa.o scheduler.o scriptmanager.o server.o sha1.o spawn.o spells.o status.o talkaction.o tasks.o teleport.o textlogger.o thing.o tile.o tools.o trashholder.o vocation.o waitlist.o weapons.o 
+FLAGS = -D_THREAD_SAFE -D_REENTRANT -D__NO_HOMEDIR_CONF__  -D__ENABLE_SERVER_DIAGNOSTIC__ -D__USE_MYSQL__
 
-all: forgottenserver
+CXXFLAGS = $(INCLUDEDIRS) $(FLAGS) -Werror -Wall -O0 -ggdb
+CXX = g++
+
+LIBS = -lxml2 -lpthread -llua5.1 -lgmp -lmysqlclient -lboost_regex -llua5.1-sql-mysql -ldl -lboost_system
+
+LDFLAGS = $(LIBDIRS) $(LIBS)
+
+CXXSOURCES = account.cpp actions.cpp admin.cpp allocator.cpp ban.cpp baseevents.cpp beds.cpp creature.cpp creatureevent.cpp chat.cpp combat.cpp commands.cpp condition.cpp configmanager.cpp connection.cpp container.cpp cylinder.cpp database.cpp depot.cpp exception.cpp fileloader.cpp game.cpp gui.cpp house.cpp housetile.cpp ioguild.cpp iologindata.cpp iomap.cpp iomapserialize.cpp inputbox.cpp item.cpp items.cpp logger.cpp luascript.cpp mailbox.cpp map.cpp md5.cpp monster.cpp monsters.cpp movement.cpp networkmessage.cpp npc.cpp otserv.cpp outfit.cpp outputmessage.cpp party.cpp player.cpp playerbox.cpp position.cpp protocol.cpp protocolgame.cpp protocollogin.cpp protocolold.cpp quests.cpp raids.cpp rsa.cpp scheduler.cpp scriptmanager.cpp server.cpp sha1.cpp spawn.cpp spells.cpp status.cpp talkaction.cpp tasks.cpp teleport.cpp textlogger.cpp thing.cpp tile.cpp tools.cpp trashholder.cpp vocation.cpp waitlist.cpp weapons.cpp databasemysql.cpp
+
+CXXOBJECTS = $(CXXSOURCES:.cpp=.o)
+
+all: $(TFS)
 
 clean:
-	rm -rf *.o
+	$(RM) $(CXXOBJECTS)
 
-forgottenserver: $(OBJ)
-	g++ $(CFLAGS) $(FLAGS) -o ./TheForgottenServer $(OBJ) $(LIBLINK)
+$(TFS): $(CXXOBJECTS)
+	$(CXX) $(CXXFLAGS) -o $@ $(CXXOBJECTS) $(LDFLAGS)
 
-    %.o:%.cpp
-	g++ $(CFLAGS) $(FLAGS) -c $+
+.cpp.o:
+	$(CXX) $(CXXFLAGS) -c $<

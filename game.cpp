@@ -3938,6 +3938,40 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creature* target, int32_t healthChange)
 {
 	const Position& targetPos = target->getPosition();
+
+	int32_t added = 0;
+
+	if (attacker && attacker->getPlayer())
+	{
+		Player* attackerPlayer = attacker->getPlayer();
+		std::stringstream ss;
+
+		for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
+		{
+			if(!attackerPlayer->isItemAbilityEnabled((slots_t)slot))
+				continue;
+
+			Item* item = attackerPlayer->getInventoryItem((slots_t)slot);
+
+			if(!item)
+				continue;
+
+			const ItemType& it = Item::items[item->getID()];
+			if(it.abilities.inflictPercent[combatType] != 0)
+			{
+				added += (int32_t)std::ceil((float)healthChange * it.abilities.inflictPercent[combatType] / 100);
+
+				if(item->hasCharges())
+					transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
+			}
+		}
+
+		ss << "CT " << combatType << " original " << healthChange << " added " << added;
+		attackerPlayer->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, ss.str());
+
+		healthChange += added;
+	}
+
 	if(healthChange > 0)
 	{
 		if(target->getHealth() <= 0)

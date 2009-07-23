@@ -848,6 +848,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 	if(it.showCharges)
 		s << " that has " << subType << " charge" << (subType != 1 ? "s" : "") << " left";
 
+
 	if(it.showDuration)
 	{
 		if(item && item->hasAttribute(ATTR_ITEM_DURATION))
@@ -867,6 +868,29 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance,
 	}
 
 	s << ".";
+
+	bool beginInflict = true;
+	for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
+	{
+		if(it.abilities.inflictPercent[i] != 0)
+		{
+			if(beginInflict)
+			{
+				s << " (Output: ";
+				beginInflict = false;
+			}
+			else
+			{
+				s << ", ";
+			}
+
+			s << getCombatName((CombatType_t)i) << " by " << std::showpos << it.abilities.inflictPercent[i] << std::noshowpos << "%";
+		}
+	}
+
+	if (!beginInflict)
+		s << ") ";
+
 	if(it.wieldInfo != 0)
 	{
 		s << std::endl << "It can only be wielded properly by ";

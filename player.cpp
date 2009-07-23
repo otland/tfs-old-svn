@@ -2038,6 +2038,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 	if(damage > 0)
 	{
 		int32_t blocked = 0;
+
 		for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
 		{
 			if(!isItemAbilityEnabled((slots_t)slot))
@@ -2057,6 +2058,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 		}
 
 		damage -= blocked;
+
 		if(damage <= 0)
 		{
 			damage = 0;
@@ -2264,6 +2266,7 @@ void Player::addInFightTicks(bool pzlock /*= false*/)
 		pzLocked = true;
 
 	Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT, g_game.getInFightTicks(), 0);
+
 	addCondition(condition);
 }
 

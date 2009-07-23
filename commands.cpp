@@ -632,8 +632,16 @@ bool Commands::reloadInfo(Creature* creature, const std::string& cmd, const std:
 			g_talkActions->reload();
 			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded talk actions.");
 		}
+		else if(tmpParam == "items")
+		{
+
+			Item::items.reload();
+			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reloaded items.");
+		}
 		else
+		{
 			player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, "Reload type not found.");
+		}
 	}
 	return true;
 }

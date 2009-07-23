@@ -42,7 +42,7 @@
 #include <string>
 #include <map>
 
-enum eLogType
+enum log_type
 {
 	LOGTYPE_EVENT,
 	LOGTYPE_WARNING,
@@ -52,11 +52,13 @@ enum eLogType
 class Logger {
 public:
 	~Logger();
-	static Logger* getInstance(){
+	static Logger* getInstance()
+	{
 		static Logger instance;
 		return &instance;
 	}
-	void logMessage(const char* channel, eLogType type, int32_t level, std::string message, const char* func);
+
+	void logMessage(const char* channel, log_type type, int32_t level, std::string message, const char* func);
 private:
 	FILE* m_file;
 	Logger();
