@@ -1322,6 +1322,9 @@ int32_t Tile::getClientIndexOfThing(const Player* player, const Thing* thing) co
 	}
 
 	int32_t n = 0;
+	if(!ground)
+		n--;
+
 	const TileItemVector* items = getItemList();
 	if(items)
 	{
