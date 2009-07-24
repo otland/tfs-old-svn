@@ -830,9 +830,6 @@ bool Game::internalPlaceCreature(Creature* creature, const Position& pos, bool e
 
 bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedPos /*= false*/, bool forced /*= false*/)
 {
-	if(!internalPlaceCreature(creature, pos, extendedPos, forced))
-		return false;
-
 	Player* tmpPlayer = NULL;
 	if((tmpPlayer = creature->getPlayer()) && !tmpPlayer->storedConditionList.empty())
 	{
@@ -847,6 +844,9 @@ bool Game::placeCreature(Creature* creature, const Position& pos, bool extendedP
 
 		tmpPlayer->storedConditionList.clear();
 	}
+
+	if(!internalPlaceCreature(creature, pos, extendedPos, forced))
+		return false;
 
 	SpectatorVec::iterator it;
 	SpectatorVec list;

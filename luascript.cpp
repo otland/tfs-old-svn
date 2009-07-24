@@ -6717,6 +6717,7 @@ int32_t LuaScriptInterface::luaGetTalkActionList(lua_State* L)
 		setField(L, "words", it->first);
 		setField(L, "access", it->second->getAccess());
 		setFieldBool(L, "log", it->second->isLogged());
+		setFieldBool(L, "hide", it->second->isHidden());
 		setField(L, "channel", it->second->getChannel());
 		lua_settable(L, -3);
 	}

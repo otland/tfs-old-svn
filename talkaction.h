@@ -82,6 +82,7 @@ class TalkAction : public Event
 		int32_t getChannel() const {return m_channel;}
 
 		bool isLogged() const {return m_logged;}
+		bool isHidden() const {return m_hidden;}
 		bool isSensitive() const {return m_sensitive;}
 
 	protected:
@@ -106,7 +107,7 @@ class TalkAction : public Event
 		TalkActionFilter m_filter;
 		uint32_t m_access;
 		int32_t m_channel;
-		bool m_logged, m_sensitive;
+		bool m_logged, m_hidden, m_sensitive;
 		StringVec m_exceptions;
 };
 #endif

@@ -175,6 +175,7 @@ Event(_interface)
 	m_access = 0;
 	m_channel = -1;
 	m_logged = false;
+	m_hidden = false;
 	m_sensitive = true;
 }
 
@@ -211,6 +212,9 @@ bool TalkAction::configureEvent(xmlNodePtr p)
 
 	if(readXMLString(p, "log", strValue) || readXMLString(p, "logged", strValue))
 		m_logged = booleanString(strValue);
+
+	if(readXMLString(p, "hide", strValue) || readXMLString(p, "hidden", strValue))
+		m_hidden = booleanString(strValue);
 
 	if(readXMLString(p, "case-sensitive", strValue) || readXMLString(p, "casesensitive", strValue) || readXMLString(p, "sensitive", strValue))
 		m_sensitive = booleanString(strValue);

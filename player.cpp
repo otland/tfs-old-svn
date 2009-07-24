@@ -2355,14 +2355,14 @@ void Player::removeList()
 	if(!isInGhostMode())
 	{
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-			(*it).second->notifyLogOut(this);
+			it->second->notifyLogOut(this);
 	}
 	else
 	{
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 		{
-			if(!(*it).second->canSeeCreature(this))
-				(*it).second->notifyLogOut(this);
+			if(it->second->canSeeCreature(this))
+				it->second->notifyLogOut(this);
 		}
 	}
 }
@@ -2372,14 +2372,14 @@ void Player::addList()
 	if(!isInGhostMode())
 	{
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
-			(*it).second->notifyLogIn(this);
+			it->second->notifyLogIn(this);
 	}
 	else
 	{
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 		{
-			if(!(*it).second->canSeeCreature(this))
-				(*it).second->notifyLogIn(this);
+			if(it->second->canSeeCreature(this))
+				it->second->notifyLogIn(this);
 		}
 	}
 
@@ -3414,7 +3414,8 @@ void Player::updateItemsLight(bool internal /*=false*/)
 void Player::onAddCondition(ConditionType_t type, bool hadCondition)
 {
 	Creature::onAddCondition(type, hadCondition);
-	sendIcons();
+	if(getLastPosition().x && type != CONDITION_GAMEMASTER) // don't send if player have just logged in (its already done in protocolgame), or condition have no icons
+		sendIcons();
 }
 
 void Player::onAddCombatCondition(ConditionType_t type, bool hadCondition)
