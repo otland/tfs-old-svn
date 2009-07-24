@@ -29,7 +29,7 @@ function creatureSayCallback(cid, type, msg)
 			end
 		elseif(getPlayerItemCount(cid, 10021) >= 1) then
 			if(doPlayerRemoveMoney(cid, 10000)) then
-				local item = getPlayerItemById(cid, true, 6530)
+				local item = getPlayerItemById(cid, true, 10021)
 				doTransformItem(item.uid, 6132)
 				selfSay('Here you are.', cid)
 			else
