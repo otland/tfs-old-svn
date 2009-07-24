@@ -24,5 +24,6 @@
 
 		doAddContainerItem(doPlayerAddItem(cid, 1987, 1), 2674, 1)
 		setPlayerStorageValue(cid, config.storage, 1)
+		_result = true
 	]]></event>
 </mod>
