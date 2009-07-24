@@ -121,9 +121,10 @@
 						SKULL_GREEN (2)
 						SKULL_WHITE (3)
 						SKULL_RED (4)
+						SKULL_BLACK (5)
 
 				Example
-					local skullNames = {"Yellow", "Green", "White", "Red"}
+					local skullNames = {"Yellow", "Green", "White", "Red", "Black"}
 					local creatureSkull = getCreatureSkullType(cid)
 					if creatureSkull ~= SKULL_NONE then
 						doPlayerSendTextMessage(cid, "Your current skull color is " .. skullNames[creatureSkull] .. ".")

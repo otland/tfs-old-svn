@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mod name="First Items" version="1.0" author="The Forgotten Server" contact="otland.net" enabled="yes">
 	<config name="firstitems_config"><![CDATA[
-		local config = {
+		config = {
 			storage = 30001,
 			firstItems = {2050, 2382}
 		}
