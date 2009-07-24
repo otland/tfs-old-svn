@@ -1,3 +1,4 @@
+local DISTILLERY = {5513, 5514, 5469, 5470}
 local ITEM_RUM_FLASK = 5553
 local ITEM_POOL = 2016
 
@@ -90,7 +91,7 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 	if(not isCreature(itemEx.uid)) then
 		if(item.type == TYPE_EMPTY) then
 			if(item.itemid == ITEM_RUM_FLASK and isInArray(DISTILLERY, itemEx.itemid)) then
-				if(itemEx.actionid == DISTILLERY_FULL) then
+				if(itemEx.actionid == 100) then
 					doSetItemSpecialDescription(itemEx.uid, '')
 					doSetItemActionId(itemEx.uid, 0)
 					doChangeTypeItem(item.uid, TYPE_RUM)

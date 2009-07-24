@@ -11,6 +11,7 @@ local function executeSave(seconds)
 
 	if(seconds == 120 or seconds == 30) then
 		doBroadcastMessage("Full server save within " .. seconds .. " seconds, please stay in safe place!")
+	end
 
 	seconds = seconds - 30
 	if(seconds >= 0) then
