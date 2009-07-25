@@ -3622,11 +3622,11 @@ bool Game::playerSpeakTo(Player* player, SpeakClasses type, const std::string& r
 	}
 
 	bool canSee = player->canSeeCreature(toPlayer);
-	if(toPlayer->hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_IGNORE) &&
-		!player->hasFlag(PlayerFlag_CannotBeMuted) && !canSee)
+	if(toPlayer->hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_IGNORE)
+		&& !player->hasFlag(PlayerFlag_CannotBeMuted))
 	{
 		char buffer[70];
-		if(toPlayer->isGhost())
+		if(!canSee)
 			sprintf(buffer, "A player with this name is not online.");
 		else
 			sprintf(buffer, "Sorry, %s is currently ignoring private messages.", toPlayer->getName().c_str());
@@ -3640,7 +3640,7 @@ bool Game::playerSpeakTo(Player* player, SpeakClasses type, const std::string& r
 
 	toPlayer->sendCreatureSay(player, type, text);
 	toPlayer->onCreatureSay(player, type, text);
-	if(toPlayer->isGhost() && !canSee)
+	if(!canSee)
 	{
 		player->sendTextMessage(MSG_STATUS_SMALL, "A player with this name is not online.");
 		return false;
@@ -3648,7 +3648,6 @@ bool Game::playerSpeakTo(Player* player, SpeakClasses type, const std::string& r
 
 	char buffer[80];
 	sprintf(buffer, "Message sent to %s.", toPlayer->getName().c_str());
-
 	player->sendTextMessage(MSG_STATUS_SMALL, buffer);
 	return true;
 }
