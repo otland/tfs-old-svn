@@ -101,8 +101,9 @@ void PrivateChatChannel::closeChannel()
 ChatChannel::ChatChannel(uint16_t id, const std::string& name, uint16_t flags, uint32_t access/* = 0*/,
 	uint32_t level/* = 1*/, Condition* condition/* = NULL*/, int32_t conditionId/* = -1*/,
 	const std::string& conditionMessage/* = ""*/, VocationMap* vocationMap/* = NULL*/):
-	m_id(id), m_name(name), m_flags(flags), m_access(access), m_level(level), m_condition(condition),
-		m_conditionId(conditionId), m_conditionMessage(conditionMessage), m_vocationMap(vocationMap)
+	m_id(id), m_flags(flags), m_conditionId(conditionId), m_access(access), m_level(level),
+		m_name(name), m_conditionMessage(conditionMessage), m_condition(condition),
+		m_vocationMap(vocationMap)
 {
 	if(hasFlag(CHANNELFLAG_LOGGED))
 	{
