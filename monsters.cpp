@@ -46,7 +46,7 @@ void MonsterType::reset()
 	runAwayHealth = manaCost = lightLevel = lightColor = yellSpeedTicks = yellChance = changeTargetSpeed = changeTargetChance = 0;
 	experience = defense = armor = lookCorpse = corpseUnique = conditionImmunities = damageImmunities = 0;
 
-	maxSummons = lootMessage = -1;
+	maxSummons = -1;
 	targetDistance = 1;
 	staticAttackChance = 95;
 	health = healthMax = 100;
@@ -55,24 +55,25 @@ void MonsterType::reset()
 	race = RACE_BLOOD;
 	skull = SKULL_NONE;
 	partyShield = SHIELD_NONE;
+	lootMessage = LOOTMSG_IGNORE;
 
 	for(SpellList::iterator it = spellAttackList.begin(); it != spellAttackList.end(); ++it)
 	{
-		if(it->combatSpell)
-		{
-			delete it->spell;
-			it->spell = NULL;
-		}
+		if(!it->combatSpell)
+			continue;
+
+		delete it->spell;
+		it->spell = NULL;
 	}
 
 	spellAttackList.clear();
 	for(SpellList::iterator it = spellDefenseList.begin(); it != spellDefenseList.end(); ++it)
 	{
-		if(it->combatSpell)
-		{
-			delete it->spell;
-			it->spell = NULL;
-		}
+		if(!it->combatSpell)
+			continue;
+
+		delete it->spell;
+		it->spell = NULL;
 	}
 
 	spellDefenseList.clear();
@@ -117,15 +118,18 @@ void MonsterType::dropLoot(Container* corpse)
 	if(!owner)
 		return;
 
-	int32_t configLootMessage = g_config.getNumber(ConfigManager::LOOT_MESSAGE);
-	if((configLootMessage == -1 && lootMessage <= 0) || !lootMessage)
+	LootMessage_t message = lootMessage;
+	if(message == LOOTMSG_IGNORE)
+		message = (LootMessage_t)g_config.getNumber(ConfigManager::LOOT_MESSAGE);
+
+	if(message < LOOTMSG_PLAYER)
 		return;
 
 	std::stringstream ss;
 	ss << "Loot of " << nameDescription << ": " << corpse->getContentDescription() << ".";
-	if(owner->getParty() && configLootMessage >= 0)
+	if(owner->getParty() && message > LOOTMSG_PLAYER)
 		owner->getParty()->broadcastMessage(MSG_INFO_DESCR, ss.str());
-	else if(configLootMessage)
+	else if(message == LOOTMSG_PLAYER || message == LOOTMSG_BOTH)
 		owner->sendTextMessage(MSG_INFO_DESCR, ss.str());
 }
 
@@ -911,8 +915,8 @@ bool Monsters::loadMonster(const std::string& file, const std::string& monsterNa
 					if(readXMLString(tmpNode, "hidehealth", strValue))
 						mType->hideHealth = booleanString(strValue);
 
-					if(readXMLString(tmpNode, "lootmessage", strValue))
-						mType->lootMessage = booleanString(strValue);
+					if(readXMLInteger(tmpNode, "lootmessage", intValue))
+						mType->lootMessage = (LootMessage_t)intValue;
 
 					if(readXMLInteger(tmpNode, "staticattack", intValue))
 					{

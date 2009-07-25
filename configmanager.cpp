@@ -273,7 +273,7 @@ bool ConfigManager::load()
 	m_confString[MAILBOX_DISABLED_TOWNS] = getGlobalString("mailboxDisabledTowns", "-1");
 	m_confNumber[SQUARE_COLOR] = getGlobalNumber("squareColor", 0);
 	m_confBool[USE_BLACK_SKULL] = getGlobalBool("useBlackSkull", "no");
-	m_confNumber[LOOT_MESSAGE] = getGlobalNumber("monsterLootMessage", 1);
+	m_confNumber[LOOT_MESSAGE] = getGlobalNumber("monsterLootMessage", 3);
 
 	m_loaded = true;
 	return true;

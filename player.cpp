@@ -889,7 +889,7 @@ bool Player::canSeeCreature(const Creature* creature) const
 		return true;
 
 	if(const Player* player = creature->getPlayer())
-		return !player->isInGhostMode() || getGhostAccess() >= player->getGhostAccess();
+		return !player->isGhost() || getGhostAccess() >= player->getGhostAccess();
 
 	return !creature->isInvisible() || canSeeInvisibility();
 }
@@ -1400,7 +1400,7 @@ void Player::onCreatureAppear(const Creature* creature)
 	}
 
 	g_game.checkPlayersRecord(this);
-	if(!isInGhostMode())
+	if(!isGhost())
 		IOLoginData::getInstance()->updateOnlineStatus(guid, true);
 
 	#ifndef __CONSOLE__
@@ -1491,7 +1491,7 @@ void Player::onCreatureDisappear(const Creature* creature, bool isLogout)
 	}
 
 	g_chat.removeUserFromAllChannels(this);
-	if(!isInGhostMode())
+	if(!isGhost())
 		IOLoginData::getInstance()->updateOnlineStatus(guid, false);
 
 	#ifndef __CONSOLE__
@@ -2235,6 +2235,7 @@ bool Player::onDeath()
 		setLossSkill(true);
 		if(preventLoss)
 		{
+			loginPosition = masterPos;
 			sendReLoginWindow();
 			g_game.removeCreature(this, false);
 		}
@@ -2352,7 +2353,7 @@ void Player::removeList()
 {
 	Status::getInstance()->removePlayer();
 	listPlayer.removeList(getID());
-	if(!isInGhostMode())
+	if(!isGhost())
 	{
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 			it->second->notifyLogOut(this);
@@ -2369,7 +2370,7 @@ void Player::removeList()
 
 void Player::addList()
 {
-	if(!isInGhostMode())
+	if(!isGhost())
 	{
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 			it->second->notifyLogIn(this);

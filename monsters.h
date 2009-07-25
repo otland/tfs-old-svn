@@ -26,6 +26,15 @@
 struct LootBlock;
 typedef std::list<LootBlock> LootItems;
 
+enum LootMessage_t
+{
+	LOOTMSG_IGNORE = -1,
+	LOOTMSG_NONE = 0,
+	LOOTMSG_PLAYER = 1,
+	LOOTMSG_PARTY = 2,
+	LOOTMSG_BOTH = 3
+};
+
 struct LootBlock
 {
 	std::vector<uint16_t> ids;
@@ -89,8 +98,8 @@ class MonsterType
 		RaceType_t race;
 		Skulls_t skull;
 		PartyShields_t partyShield;
+		LootMessage_t lootMessage;
 
-		int8_t lootMessage;
 		int32_t defense, armor, health, healthMax, baseSpeed, lookCorpse, corpseUnique, maxSummons,
 			targetDistance, runAwayHealth, conditionImmunities, damageImmunities, lightLevel,
 			lightColor, changeTargetSpeed, changeTargetChance;

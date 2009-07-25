@@ -651,7 +651,7 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 		params.tileCallback->onTileCombat(caster, tile);
 
 	if(params.impactEffect != NM_ME_NONE &&
-		(!caster || !caster->isInGhostMode() || g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
+		(!caster || !caster->isGhost() || g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS)))
 		g_game.addMagicEffect(list, tile->getPosition(), params.impactEffect);
 }
 
@@ -806,7 +806,7 @@ void Combat::doCombatHealth(Creature* caster, Creature* target, int32_t minChang
 
 		CombatHealthFunc(caster, target, params, (void*)&var);
 
-		bool display = (!caster || !caster->isInGhostMode() || g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS));
+		bool display = (!caster || !caster->isGhost() || g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS));
 		if(params.impactEffect != NM_ME_NONE && display)
 			g_game.addMagicEffect(target->getPosition(), params.impactEffect);
 
@@ -837,7 +837,7 @@ void Combat::doCombatMana(Creature* caster, Creature* target, int32_t minChange,
 		if(params.targetCallback)
 			params.targetCallback->onTargetCombat(caster, target);
 
-		bool display = (!caster || !caster->isInGhostMode() || g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS));
+		bool display = (!caster || !caster->isGhost() || g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS));
 		if(params.impactEffect != NM_ME_NONE && display)
 			g_game.addMagicEffect(target->getPosition(), params.impactEffect);
 
@@ -870,7 +870,7 @@ void Combat::doCombatCondition(Creature* caster, Creature* target, const CombatP
 		if(params.targetCallback)
 			params.targetCallback->onTargetCombat(caster, target);
 
-		bool display = (!caster || !caster->isInGhostMode() || g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS));
+		bool display = (!caster || !caster->isGhost() || g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS));
 		if(params.impactEffect != NM_ME_NONE && display)
 			g_game.addMagicEffect(target->getPosition(), params.impactEffect);
 
@@ -893,7 +893,7 @@ void Combat::doCombatDispel(Creature* caster, Creature* target, const CombatPara
 		if(params.targetCallback)
 			params.targetCallback->onTargetCombat(caster, target);
 
-		bool display = (!caster || !caster->isInGhostMode() || g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS));
+		bool display = (!caster || !caster->isGhost() || g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS));
 		if(params.impactEffect != NM_ME_NONE && display)
 			g_game.addMagicEffect(target->getPosition(), params.impactEffect);
 
@@ -912,7 +912,7 @@ void Combat::doCombatDefault(Creature* caster, Creature* target, const CombatPar
 		if(params.targetCallback)
 			params.targetCallback->onTargetCombat(caster, target);
 
-		bool display = (!caster || !caster->isInGhostMode() || g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS));
+		bool display = (!caster || !caster->isGhost() || g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS));
 		if(params.impactEffect != NM_ME_NONE && display)
 			g_game.addMagicEffect(target->getPosition(), params.impactEffect);
 
@@ -1359,7 +1359,7 @@ void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 {
 	if(isBlocking())
 	{
-		if(!creature->getPlayer() || !creature->isInGhostMode())
+		if(!creature->getPlayer() || !creature->isGhost())
 			g_game.internalRemoveItem(creature, this, 1);
 
 		return;

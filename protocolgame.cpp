@@ -317,7 +317,7 @@ bool ProtocolGame::logout(bool displayEffect, bool forced, bool executeLogout/* 
 	if(player->isRemoved() || player->getHealth() <= 0)
 		displayEffect = false;
 
-	if(displayEffect && !player->isInGhostMode())
+	if(displayEffect && !player->isGhost())
 		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 
 	if(Connection* connection = getConnection())
@@ -2777,7 +2777,7 @@ void ProtocolGame::AddCreatureHealth(NetworkMessage_ptr msg,const Creature* crea
 
 void ProtocolGame::AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* creature, const Outfit_t& outfit)
 {
-	if(!creature->getPlayer() || (!creature->isInvisible() && (!creature->isInGhostMode()
+	if(!creature->getPlayer() || (!creature->isInvisible() && (!creature->isGhost()
 		|| !g_config.getBool(ConfigManager::GHOST_INVISIBLE_EFFECT))))
 	{
 		msg->AddU16(outfit.lookType);

@@ -252,7 +252,7 @@ class Player : public Creature, public Cylinder
 		void setGroup(Group* newGroup);
 		Group* getGroup() const {return group;}
 
-		bool isInGhostMode() const {return hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE) || hasFlag(PlayerFlag_CannotBeSeen);}
+		bool isGhost() const {return hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE) || hasFlag(PlayerFlag_CannotBeSeen);}
 
 		void switchSaving() {saving = !saving;}
 		bool isSaving() const {return saving;}

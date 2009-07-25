@@ -163,7 +163,7 @@ std::string Status::getStatusString(bool sendPlayers) const
 		std::stringstream ss;
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 		{
-			if(!it->second->isInGhostMode())
+			if(!it->second->isGhost())
 				ss << it->second->getName() << "," << it->second->getVocationId() << "," << it->second->getLevel() << ";";
 		}
 
@@ -266,7 +266,7 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		std::list<std::pair<std::string, uint32_t> > players;
 		for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 		{
-			if(!it->second->isInGhostMode())
+			if(!it->second->isGhost())
 				players.push_back(std::make_pair(it->second->getName(), it->second->getLevel()));
 		}
 
@@ -284,7 +284,7 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		const std::string name = msg.GetString();
 
 		Player* p = NULL;
-		if(g_game.getPlayerByNameWildcard(name, p) == RET_NOERROR && !p->isInGhostMode())
+		if(g_game.getPlayerByNameWildcard(name, p) == RET_NOERROR && !p->isGhost())
 			output->AddByte(0x01);
 		else
 			output->AddByte(0x00);

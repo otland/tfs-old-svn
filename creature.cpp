@@ -138,7 +138,7 @@ bool Creature::canSeeCreature(const Creature* creature) const
 	if(creature == this)
 		return true;
 
-	if(creature->getPlayer() && creature->getPlayer()->isInGhostMode())
+	if(creature->getPlayer() && creature->getPlayer()->isGhost())
 		return false;
 
 	return canSeeInvisibility() || !creature->isInvisible();
@@ -280,7 +280,7 @@ void Creature::onWalk(Direction& dir)
 			break;
 	}
 
-	g_game.internalCreatureSay(this, SPEAK_MONSTER_SAY, "Hicks!", isInGhostMode());
+	g_game.internalCreatureSay(this, SPEAK_MONSTER_SAY, "Hicks!", isGhost());
 }
 
 bool Creature::getNextStep(Direction& dir, uint32_t& flags)

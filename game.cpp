@@ -3292,7 +3292,7 @@ bool Game::playerLookAt(uint32_t playerId, const Position& pos, uint16_t spriteI
 			if(const Player* destPlayer = creature->getPlayer())
 			{
 				ss << std::endl << "IP: " << convertIPAddress(destPlayer->getIP()) << ", Client: " << destPlayer->getClientVersion() << ".";
-				if(destPlayer->isInGhostMode())
+				if(destPlayer->isGhost())
 					ss << std::endl << "* Ghost mode *";
 			}
 		}
@@ -3472,9 +3472,6 @@ bool Game::playerRequestOutfit(uint32_t playerId)
 	if(!player || player->isRemoved())
 		return false;
 
-	if(player->isInvisible())
-		return false;
-
 	player->sendOutfitWindow();
 	return true;
 }
@@ -3489,8 +3486,7 @@ bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 		return false;
 
 	player->setIdleTime(0);
-	if(player->hasCondition(CONDITION_OUTFIT, -1) || player->hasCondition(CONDITION_INVISIBLE, -1)
-		|| (player->isInGhostMode() && g_config.getBool(ConfigManager::GHOST_INVISIBLE_EFFECT)))
+	if(player->hasCondition(CONDITION_OUTFIT, -1))
 		return true;
 
 	internalCreatureChangeOutfit(player, outfit);
@@ -3630,7 +3626,7 @@ bool Game::playerSpeakTo(Player* player, SpeakClasses type, const std::string& r
 		!player->hasFlag(PlayerFlag_CannotBeMuted) && !canSee)
 	{
 		char buffer[70];
-		if(toPlayer->isInGhostMode())
+		if(toPlayer->isGhost())
 			sprintf(buffer, "A player with this name is not online.");
 		else
 			sprintf(buffer, "Sorry, %s is currently ignoring private messages.", toPlayer->getName().c_str());
@@ -3644,7 +3640,7 @@ bool Game::playerSpeakTo(Player* player, SpeakClasses type, const std::string& r
 
 	toPlayer->sendCreatureSay(player, type, text);
 	toPlayer->onCreatureSay(player, type, text);
-	if(toPlayer->isInGhostMode() && !canSee)
+	if(toPlayer->isGhost() && !canSee)
 	{
 		player->sendTextMessage(MSG_STATUS_SMALL, "A player with this name is not online.");
 		return false;
@@ -3974,12 +3970,13 @@ void Game::changeSpeed(Creature* creature, int32_t varSpeedDelta)
 
 void Game::internalCreatureChangeOutfit(Creature* creature, const Outfit_t& outfit)
 {
-	creature->setCurrentOutfit(outfit);
-	if(!creature->isInvisible())
-	{
-		const SpectatorVec& list = getSpectators(creature->getPosition());
-		SpectatorVec::const_iterator it;
+	const SpectatorVec& list = getSpectators(creature->getPosition());
+	SpectatorVec::const_iterator it;
 
+	creature->setCurrentOutfit(outfit);
+	if(!creature->isInvisible() && (!creature->isGhost() ||
+		!g_config.getBool(ConfigManager::GHOST_INVISIBLE_EFFECT)))
+	{
 		//send to client
 		Player* tmpPlayer = NULL;
 		for(it = list.begin(); it != list.end(); ++it)
@@ -3987,11 +3984,11 @@ void Game::internalCreatureChangeOutfit(Creature* creature, const Outfit_t& outf
 			if((tmpPlayer = (*it)->getPlayer()))
 				tmpPlayer->sendCreatureChangeOutfit(creature, outfit);
 		}
-
-		//event method
-		for(it = list.begin(); it != list.end(); ++it)
-			(*it)->onCreatureChangeOutfit(creature, outfit);
 	}
+
+	//event method
+	for(it = list.begin(); it != list.end(); ++it)
+		(*it)->onCreatureChangeOutfit(creature, outfit);
 }
 
 void Game::internalCreatureChangeVisible(Creature* creature, Visible_t visible)
@@ -4036,7 +4033,7 @@ bool Game::combatBlockHit(CombatType_t combatType, Creature* attacker, Creature*
 	const SpectatorVec& list = getSpectators(targetPos);
 	if(!target->isAttackable() || Combat::canDoCombat(attacker, target) != RET_NOERROR)
 	{
-		addMagicEffect(list, targetPos, NM_ME_POFF, target->isInGhostMode());
+		addMagicEffect(list, targetPos, NM_ME_POFF, target->isGhost());
 		return true;
 	}
 
@@ -4119,7 +4116,7 @@ bool Game::combatChangeHealth(CombatType_t combatType, Creature* attacker, Creat
 			return false;
 
 		target->gainHealth(attacker, healthChange);
-		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isInGhostMode() &&
+		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isGhost() &&
 			(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_MONSTER) || !target->getMonster()))
 		{
 			char buffer[20];
@@ -4327,7 +4324,7 @@ bool Game::combatChangeMana(Creature* attacker, Creature* target, int32_t manaCh
 			return false;
 
 		target->changeMana(manaChange);
-		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isInGhostMode() &&
+		if(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE) && !target->isGhost() &&
 			(g_config.getBool(ConfigManager::SHOW_HEALING_DAMAGE_MONSTER) || !target->getMonster()))
 		{
 			char buffer[20];

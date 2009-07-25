@@ -245,7 +245,7 @@ class Creature : public AutoID, virtual public Thing
 		const Outfit_t getDefaultOutfit() const {return defaultOutfit;}
 
 		bool isInvisible() const {return hasCondition(CONDITION_INVISIBLE, -1, false);}
-		virtual bool isInGhostMode() const {return false;}
+		virtual bool isGhost() const {return false;}
 		ZoneType_t getZone() const {return getTile()->getZone();}
 
 		//walk functions

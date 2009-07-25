@@ -77,7 +77,7 @@ ReturnValue Spells::onPlayerSay(Player* player, const std::string& words)
 		type = SPEAK_MONSTER_SAY;
 
 	if(!g_config.getBool(ConfigManager::SPELL_NAME_INSTEAD_WORDS))
-		return g_game.internalCreatureSay(player, type, reWords, player->isInGhostMode()) ?
+		return g_game.internalCreatureSay(player, type, reWords, player->isGhost()) ?
 			RET_NOERROR : RET_NOTPOSSIBLE;
 
 	std::string ret = instantSpell->getName();
@@ -94,7 +94,7 @@ ReturnValue Spells::onPlayerSay(Player* player, const std::string& words)
 		ret += ": " + param.substr(tmp, rtmp);
 	}
 
-	return g_game.internalCreatureSay(player, type, ret, player->isInGhostMode()) ?
+	return g_game.internalCreatureSay(player, type, ret, player->isGhost()) ?
 		RET_NOERROR : RET_NOTPOSSIBLE;
 }
 
@@ -1452,12 +1452,12 @@ bool InstantSpell::Levitate(const InstantSpell* spell, Creature* creature, const
 
 	if(ret == RET_NOERROR)
 	{
-		g_game.addMagicEffect(player->getPosition(), NM_ME_TELEPORT, player->isInGhostMode());
+		g_game.addMagicEffect(player->getPosition(), NM_ME_TELEPORT, player->isGhost());
 		return true;
 	}
 
 	player->sendCancelMessage(ret);
-	g_game.addMagicEffect(player->getPosition(), NM_ME_POFF, player->isInGhostMode());
+	g_game.addMagicEffect(player->getPosition(), NM_ME_POFF, player->isGhost());
 	return false;
 }
 
