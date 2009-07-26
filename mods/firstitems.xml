@@ -14,7 +14,7 @@
 				return true
 			end
 
-			for _, id in ipairse(config.items) do
+			for _, id in ipairs(config.items) do
 				doPlayerAddItem(cid, id, 1)
 			end
 
