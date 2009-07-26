@@ -14,7 +14,7 @@ function onSay(cid, words, param, channel)
 	end
 
 	table.sort(t, function(a, b) return a.access > b.access end)
-	local lastAccess, text = -1, ""
+	local lastAccess, str = -1, ""
 	for i, talk in ipairs(t) do
 		local line = ""
 		if(lastAccess ~= talk.access) then
@@ -23,9 +23,9 @@ function onSay(cid, words, param, channel)
 			end
 			lastAccess = talk.access
 		end
-		text = text .. line .. talk.words .. "\n"
+		str = str .. line .. talk.words .. "\n"
 	end
 
-	doShowTextDialog(cid, 2160, text)
+	doShowTextDialog(cid, 2160, str)
 	return true
 end

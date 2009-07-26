@@ -7,4 +7,5 @@
 			_result = false
 		end
 	]]></action>
+	<item id="1981" article="a" name="highscore book" override="yes"/>
 </mod>

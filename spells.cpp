@@ -1096,12 +1096,12 @@ bool InstantSpell::playerCastInstant(Player* player, const std::string& param)
 		bool useDirection = false;
 		if(hasParam)
 		{
-			Player* target_ = NULL;
-			ReturnValue ret = g_game.getPlayerByNameWildcard(param, target_);
+			Player* targetPlayer = NULL;
+			ReturnValue ret = g_game.getPlayerByNameWildcard(param, targetPlayer);
 
-			target = target_;
+			target = targetPlayer;
 			if(limitRange && target && !Position::areInRange(Position(limitRange, limitRange, 0), target->getPosition(), player->getPosition()))
-	    			useDirection = true;
+				useDirection = true;
 
 			if((!target || target->getHealth() <= 0) && !useDirection)
 			{
@@ -1119,7 +1119,7 @@ bool InstantSpell::playerCastInstant(Player* player, const std::string& param)
 		{
 			target = player->getAttackedCreature();
 			if(limitRange && target && !Position::areInRange(Position(limitRange, limitRange, 0), target->getPosition(), player->getPosition()))
-	    			useDirection = true;
+				useDirection = true;
 
 			if((!target || target->getHealth() <= 0) && !useDirection)
 			{
@@ -1136,9 +1136,10 @@ bool InstantSpell::playerCastInstant(Player* player, const std::string& param)
 
 		if(!useDirection)
 		{
-			if(!canThrowSpell(player, target))
+			bool canSee = player->canSeeCreature(target);
+			if(!canSee || !canThrowSpell(player, target))
 			{
-				player->sendCancelMessage(RET_CREATUREISNOTREACHABLE);
+				player->sendCancelMessage(canSee ? RET_CREATUREISNOTREACHABLE : RET_PLAYERWITHTHISNAMEISNOTONLINE);
 				g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);
 				return false;
 			}
@@ -1184,9 +1185,6 @@ bool InstantSpell::playerCastInstant(Player* player, const std::string& param)
 
 bool InstantSpell::canThrowSpell(const Creature* creature, const Creature* target) const
 {
-	if(!creature->canSeeCreature(target))
-		return false;
-
 	const Position& fromPos = creature->getPosition();
 	const Position& toPos = target->getPosition();
 	return (!(fromPos.z != toPos.z || (range == -1 && !g_game.canThrowObjectTo(fromPos, toPos, checkLineOfSight))
@@ -1204,7 +1202,7 @@ bool InstantSpell::castSpell(Creature* creature)
 		Creature* target = creature->getAttackedCreature();
 		if(target && target->getHealth() > 0)
 		{
-			if(!canThrowSpell(creature, target))
+			if(!creature->canSeeCreature(target) || !canThrowSpell(creature, target))
 				return false;
 
 			var.type = VARIANT_NUMBER;

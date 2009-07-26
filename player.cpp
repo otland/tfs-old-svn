@@ -4788,7 +4788,6 @@ void Player::clearPartyInvitations()
 		list.push_back(*it);
 
 	invitePartyList.clear();
-
 	for(PartyList::iterator it = list.begin(); it != list.end(); ++it)
 		(*it)->removeInvite(this);
 }

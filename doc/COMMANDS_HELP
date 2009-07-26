@@ -439,6 +439,9 @@
 			/mc 127.0.0.1 (Display all players with IP = 127.0.0.1)
 			/mc Tester (Display all players with same IP as Tester)
 
+	/waypoints
+		Displays map waypoints.
+
 	/notations
 		Display notation informations.
 		Parameters
@@ -507,4 +510,7 @@
 
 	!serverinfo
 		Displays server information such as experience rate and loot rate.
+
+	/commands
+		Displays all available commands for your access.
 ]

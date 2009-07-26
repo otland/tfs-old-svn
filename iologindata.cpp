@@ -1041,9 +1041,24 @@ bool IOLoginData::playerDeath(Player* player, const DeathList& dl)
 	if(tmp > 0 && size > tmp)
 		size = tmp;
 
+	std::list<std::string> uniqueCreatures;
 	uint64_t deathId = db->getLastInsertId();
 	for(DeathList::const_iterator it = dl.begin(); i < size && it != dl.end(); ++it, ++i)
 	{
+		Creature* creature = NULL;
+		bool isCreatureKill = it->isCreatureKill();
+		if(isCreatureKill)
+		{
+			creature = it->getKillerCreature();
+			if(!creature->getPlayer())
+			{
+				if(std::find(uniqueCreatures.begin(), uniqueCreatures.end(), creature->getName()) != uniqueCreatures.end())
+					break;
+
+				uniqueCreatures.push_back(creature->getName());
+			}
+		}
+
 		query.str("");
 		query << "INSERT INTO `killers` (`death_id`, `final_hit`, `unjustified`) VALUES ("
 			<< deathId << ", " << (it == dl.begin()) << ", " << it->isUnjustified() << ")";
@@ -1052,14 +1067,13 @@ bool IOLoginData::playerDeath(Player* player, const DeathList& dl)
 
 		uint64_t killId = db->getLastInsertId();
 		std::string name;
-		if(it->isCreatureKill())
+		if(isCreatureKill)
 		{
-			Creature* tmp = it->getKillerCreature();
-			Player* player = tmp->getPlayer();
-			if(tmp->getMaster())
+			Player* player = creature->getPlayer();
+			if(creature->getMaster())
 			{
-				player = tmp->getMaster()->getPlayer();
-				name = tmp->getNameDescription();
+				player = creature->getMaster()->getPlayer();
+				name = creature->getNameDescription();
 			}
 
 			if(player)
@@ -1071,7 +1085,7 @@ bool IOLoginData::playerDeath(Player* player, const DeathList& dl)
 					return false;
 			}
 			else
-				name = tmp->getNameDescription();
+				name = creature->getNameDescription();
 		}
 		else
 			name = it->getKillerName();
