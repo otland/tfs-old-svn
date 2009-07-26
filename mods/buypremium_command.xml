@@ -7,7 +7,7 @@
 			maxDays = 360
 		}
 	]]></config>
-	<talkaction words="!buypremium" event="buffer"><![CDATA[
+	<talkaction words="!buypremium; !pacc" event="buffer"><![CDATA[
 		domodlib('buypremium_config')
 		if(getPlayerPremiumDays(cid) > config.maxDays) then
 			doPlayerSendTextMessage(cid, MESSAGE_INFO_DESCR, "You can not buy more than " .. config.days + config.maxDays .. " days of Premium Account.")

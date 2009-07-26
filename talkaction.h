@@ -65,6 +65,7 @@ typedef bool (TalkFunction)(Creature* creature, const std::string& words, const 
 class TalkAction : public Event
 {
 	public:
+		TalkAction(const TalkAction* copy);
 		TalkAction(LuaScriptInterface* _interface);
 		virtual ~TalkAction() {}
 

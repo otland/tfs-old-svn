@@ -3,27 +3,30 @@
 	<config name="firstitems_config"><![CDATA[
 		config = {
 			storage = 30001,
-			firstItems = {2050, 2382}
+			items = {2050, 2382}
 		}
 	]]></config>
-	<event type="login" name="FirstItems" event="buffer"><![CDATA[
+	<event type="login" name="FirstItems" event="script"><![CDATA[
 		domodlib('firstitems_config')
-		if(getPlayerStorageValue(cid, config.storage) > 0) then
-			return
-		end
 
-		for i = 1, table.maxn(config.firstItems) do
-			doPlayerAddItem(cid, config.firstItems[i], 1)
-		end
+		function onLogin(cid)
+			if(getPlayerStorageValue(cid, config.storage) > 0) then
+				return true
+			end
 
-		if(getPlayerSex(cid) == PLAYERSEX_FEMALE) then
-			doPlayerAddItem(cid, 2651, 1)
-		else
-			doPlayerAddItem(cid, 2650, 1)
-		end
+			for _, id in ipairse(config.items) do
+				doPlayerAddItem(cid, id, 1)
+			end
 
-		doAddContainerItem(doPlayerAddItem(cid, 1987, 1), 2674, 1)
-		setPlayerStorageValue(cid, config.storage, 1)
-		_result = true
+			if(getPlayerSex(cid) == PLAYERSEX_FEMALE) then
+				doPlayerAddItem(cid, 2651, 1)
+			else
+				doPlayerAddItem(cid, 2650, 1)
+			end
+
+			doAddContainerItem(doPlayerAddItem(cid, 1987, 1), 2674, 1)
+			setPlayerStorageValue(cid, config.storage, 1)
+			return true
+		end
 	]]></event>
 </mod>

@@ -9190,7 +9190,7 @@ int32_t LuaScriptInterface::luaDoSetGameState(lua_State* L)
 int32_t LuaScriptInterface::luaDoCreatureExecuteTalkAction(lua_State* L)
 {
 	//doCreatureExecuteTalkAction(cid, text[, ignoreAccess[, channelId]])
-	uint32_t params = lua_gettop(L), channelId = 0;
+	uint32_t params = lua_gettop(L), channelId = CHANNEL_DEFAULT;
 	if(params > 3)
 		channelId = popNumber(L);
 

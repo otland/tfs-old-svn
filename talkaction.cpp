@@ -79,22 +79,33 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p, bool override)
 	if(!talkAction)
 		return false;
 
-	TalkActionsMap::iterator it = talksMap.find(talkAction->getWords());
-	if(it == talksMap.end())
+	bool success = true;
+	std::string sep;
+	if(!readXMLString(p, "separator", sep))
+		sep = ";";
+
+	StringVec strVector = explodeString(talkAction->getWords(), sep);
+	for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)
 	{
-		talksMap[talkAction->getWords()] = talkAction;
-		return true;
+		std::string trimmed = trimString((*it));
+		TalkActionsMap::iterator tit = talksMap.find(trimmed);
+		if(tit != talksMap.end())
+		{
+			if(!override)
+			{
+				std::cout << "[Warning - TalkAction::configureEvent] Duplicate registered talkaction with words: " << trimmed << std::endl;
+				success = false;
+			}
+			else
+				delete tit->second;
+		}
+
+		if(success)
+			talksMap[trimmed] = new TalkAction(talkAction);
 	}
 
-	if(override)
-	{
-		delete it->second;
-		it->second = talkAction;
-		return true;
-	}
-
-	std::cout << "[Warning - TalkAction::configureEvent] Duplicate registered talkaction with words: " << talkAction->getWords() << std::endl;
-	return false;
+	delete talkAction;
+	return success;
 }
 
 bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std::string& words, bool ignoreAccess)
@@ -177,6 +188,17 @@ Event(_interface)
 	m_logged = false;
 	m_hidden = false;
 	m_sensitive = true;
+}
+
+TalkAction::TalkAction(const TalkAction* copy):
+Event(copy)
+{
+	m_filter = copy->m_filter;
+	m_access = copy->m_access;
+	m_channel = copy->m_channel;
+	m_logged = copy->m_logged;
+	m_hidden = copy->m_hidden;
+	m_sensitive = copy->m_sensitive;
 }
 
 bool TalkAction::configureEvent(xmlNodePtr p)

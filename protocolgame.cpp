@@ -2638,7 +2638,7 @@ void ProtocolGame::AddCreature(NetworkMessage_ptr msg, const Creature* creature,
 
 	LightInfo lightInfo;
 	creature->getCreatureLight(lightInfo);
-	msg->AddByte((player->hasCustomFlag(PlayerCustomFlag_HasFullLight) ? 0xFF : lightInfo.level));
+	msg->AddByte(player->hasCustomFlag(PlayerCustomFlag_HasFullLight) ? 0xFF : lightInfo.level);
 	msg->AddByte(lightInfo.color);
 
 	msg->AddU16(creature->getStepSpeed());
