@@ -274,7 +274,7 @@ EXCEPTION_DISPOSITION __cdecl _SEHHandler(struct _EXCEPTION_RECORD *ExceptionRec
 
 		if(esp - stackstart < 20 || nparameters < 10 || std::abs(esp - next_ret) < 10 || frame_param_counter < 8)
 		{
-			*outdriver  << (uint32_t)esp << " | ";
+			*outdriver << (uint32_t)esp << " | ";
 			printPointer(outdriver,stack_val);
 			if(esp == next_ret)
 				*outdriver << " \\\\\\\\\\\\ stack frame //////";
@@ -465,7 +465,7 @@ void ExceptionHandler::dumpStack()
 
 		if(esp - stackstart < 20 || nparameters < 10 || std::abs(esp - next_ret) < 10 || frame_param_counter < 8)
 		{
-			output  << (uint32_t)esp << " | ";
+			output << (uint32_t)esp << " | ";
 			printPointer(&output, stack_val);
 			if(esp == next_ret)
 				output << " \\\\\\\\\\\\ stack frame //////";

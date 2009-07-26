@@ -469,9 +469,9 @@ ServiceManager* services)
 	if(defaultPriority == "realtime")
 		SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
 	else if(defaultPriority == "high")
-  	 	SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
-  	else if(defaultPriority == "higher")
-  		SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
+		SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
+	else if(defaultPriority == "higher")
+		SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS);
 
 	#else
 		cpu_set_t mask;
@@ -1396,8 +1396,8 @@ int32_t WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 	wincl.lpfnWndProc = WindowProcedure;
 	wincl.style = CS_DBLCLKS;
 	wincl.cbSize = sizeof(WNDCLASSEX);
-	wincl.hIcon  = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(ID_ICON));
-	wincl.hIconSm  = (HICON)LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(ID_ICON), IMAGE_ICON, 16, 16, 0);
+	wincl.hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(ID_ICON));
+	wincl.hIconSm = (HICON)LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(ID_ICON), IMAGE_ICON, 16, 16, 0);
 	wincl.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wincl.lpszMenuName = MAKEINTRESOURCE(ID_MENU);
 	wincl.cbClsExtra = 0;

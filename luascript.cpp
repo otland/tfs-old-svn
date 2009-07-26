@@ -893,7 +893,7 @@ int32_t LuaScriptInterface::callFunction(uint32_t nParams)
 		result = (int32_t)LuaScriptInterface::popBoolean(m_luaState);
 
 	lua_remove(m_luaState, errorIndex);
-	if((lua_gettop(m_luaState) + (int32_t)nParams  + 1) != size)
+	if((lua_gettop(m_luaState) + (int32_t)nParams + 1) != size)
 		LuaScriptInterface::reportError(NULL, "Stack size changed!");
 
 	return result;
@@ -5476,7 +5476,7 @@ bool LuaScriptInterface::getArea(lua_State* L, std::list<uint32_t>& list, uint32
 {
 	rows = 0;
 	uint32_t i = 0, j = 0;
-	lua_pushnil(L);  //first key //
+	lua_pushnil(L); //first key
 
 	while(lua_next(L, -2) != 0)
 	{
@@ -5485,14 +5485,14 @@ bool LuaScriptInterface::getArea(lua_State* L, std::list<uint32_t>& list, uint32
 		{
 			list.push_back((uint32_t)lua_tonumber(L, -1));
 
-			lua_pop(L, 1);  //removes `value'; keeps `key' for next iteration //
+			lua_pop(L, 1); //removes `value'; keeps `key' for next iteration //
 			j++;
 		}
 
 		++rows;
 
 		j = 0;
-		lua_pop(L, 1);  //removes `value'; keeps `key' for next iteration //
+		lua_pop(L, 1); //removes `value'; keeps `key' for next iteration //
 		i++;
 	}
 
@@ -6729,8 +6729,8 @@ int32_t LuaScriptInterface::luaGetExperienceStageList(lua_State* L)
 	//getExperienceStageList()
 	if(!g_config.getBool(ConfigManager::EXPERIENCE_STAGES))
 	{
-	    lua_pushboolean(L, false);
-	    return true;
+		lua_pushboolean(L, false);
+		return true;
 	}
 
 	StageList::const_iterator it = g_game.getFirstStage();

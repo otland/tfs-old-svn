@@ -79,7 +79,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 
 	uint32_t clientIp = getConnection()->getIP();
 	/*uint16_t operatingSystem = */msg.GetU16();
-	uint16_t version  = msg.GetU16();
+	uint16_t version = msg.GetU16();
 	msg.SkipBytes(12);
 
 	if(!RSA_decrypt(g_otservRSA, msg))

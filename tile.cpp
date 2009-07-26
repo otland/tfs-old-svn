@@ -1547,7 +1547,7 @@ void Tile::postAddNotification(Creature* actor, Thing* thing, const Cylinder* ol
 	g_game.FreeThing(thing);
 }
 
-void Tile::postRemoveNotification(Creature* actor, Thing* thing,  const Cylinder* newParent,
+void Tile::postRemoveNotification(Creature* actor, Thing* thing, const Cylinder* newParent,
 	int32_t index, bool isCompleteRemoval, cylinderlink_t link/* = LINK_OWNER*/)
 {
 	const Position& cylinderMapPos = getPosition();

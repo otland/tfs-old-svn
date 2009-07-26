@@ -248,7 +248,7 @@ void Status::getInfo(uint32_t requestedInfo, OutputMessage_ptr output, NetworkMe
 		output->AddU32(g_game.getLastPlayersRecord());
 	}
 
-  	if(requestedInfo & REQUEST_SERVER_MAP_INFO)
+	if(requestedInfo & REQUEST_SERVER_MAP_INFO)
 	{
 		output->AddByte(0x30);
 		output->AddString(m_mapName.c_str());

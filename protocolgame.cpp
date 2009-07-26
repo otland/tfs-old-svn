@@ -2721,7 +2721,7 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 	}
 
 	if(creature->getSpeakType() != SPEAK_SAY)
-	    msg->AddByte((SpeakClasses)creature->getSpeakType());
+		msg->AddByte((SpeakClasses)creature->getSpeakType());
 	else
 		msg->AddByte(type);
 

@@ -708,7 +708,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 		else
 		{
 			delete combat;
-			std::cout << "[Error - Monsters::deserializeSpell] " << description <<  " - Unknown spell name: " << name << std::endl;
+			std::cout << "[Error - Monsters::deserializeSpell] " << description << " - Unknown spell name: " << name << std::endl;
 			return false;
 		}
 

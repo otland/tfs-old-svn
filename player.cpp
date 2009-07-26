@@ -2898,7 +2898,7 @@ void Player::__replaceThing(uint32_t index, Thing* thing)
 	if(index < 0 || index > 11)
 	{
 #ifdef __DEBUG_MOVESYS__
-		std::cout << "Failure: [Player::__replaceThing], " << "player: " << getName() << ", index: " << index << ",  index < 0 || index > 11" << std::endl;
+		std::cout << "Failure: [Player::__replaceThing], " << "player: " << getName() << ", index: " << index << ", index < 0 || index > 11" << std::endl;
 		DEBUG_REPORT
 #endif
 		return /*RET_NOTPOSSIBLE*/;

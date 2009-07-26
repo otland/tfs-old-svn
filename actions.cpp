@@ -390,7 +390,7 @@ Action* Actions::getAction(const Item* item, ActionType_t type/* = ACTION_ANY*/)
 	{
 		ActionUseMap::const_iterator it = useItemMap.find(item->getID());
 		if(it != useItemMap.end())
-	   		return it->second;
+			return it->second;
 	}
 
 	if(type == ACTION_ANY || type == ACTION_RUNEID)

@@ -553,13 +553,13 @@ bool Map::checkSightLine(const Position& fromPos, const Position& toPos) const
 		ez += dz;
 		if(2 * ey >= dx)
 		{
-			y  += sy;
+			y += sy;
 			ey -= dx;
 		}
 
 		if(2 * ez >= dx)
 		{
-			z  += sz;
+			z += sz;
 			ez -= dx;
 		}
 	}

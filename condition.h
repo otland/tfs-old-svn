@@ -98,7 +98,7 @@ enum ConditionAttr_t
 	CONDITIONATTR_SUBID = 27,
 
 	//reserved for serialization
-	CONDITIONATTR_END      = 254
+	CONDITIONATTR_END = 254
 };
 
 struct IntervalInfo
