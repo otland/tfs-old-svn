@@ -175,6 +175,8 @@
 			exception
 				List of players, who can't use this talkaction.
 				Example: "GM John;GM 2;Maatt"
+			hide
+				Defines if talkaction should be hidden from displaying it when using /commands
 		Function: onSay(cid, words, param, channel)
 
 	*WEAPONS

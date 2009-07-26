@@ -477,7 +477,7 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, const T
 		if(m_lastCacheItemVector.empty())
 			return ret;
 
-		//We can not use iterators here since the scripts can invalidate the iterator
+		//We cannot use iterators here since the scripts can invalidate the iterator
 		for(int32_t i = 0, j = m_lastCacheItemVector.size(); i < j; ++i)
 		{
 			if((tileItem = m_lastCacheItemVector[i]) && (moveEvent = getEvent(tileItem, eventType)))
@@ -490,7 +490,7 @@ uint32_t MoveEvents::onCreatureMove(Creature* actor, Creature* creature, const T
 	m_lastCacheTile = tile;
 	m_lastCacheItemVector.clear();
 
-	//We can not use iterators here since the scripts can invalidate the iterator
+	//We cannot use iterators here since the scripts can invalidate the iterator
 	Thing* thing = NULL;
 	for(int32_t i = tile->__getFirstIndex(), j = tile->__getLastIndex(); i < j; ++i) //already checked the ground
 	{
@@ -549,7 +549,7 @@ uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool is
 		if(m_lastCacheItemVector.empty())
 			return ret;
 
-		//We can not use iterators here since the scripts can invalidate the iterator
+		//We cannot use iterators here since the scripts can invalidate the iterator
 		for(int32_t i = 0, j = m_lastCacheItemVector.size(); i < j; ++i)
 		{
 			if((tileItem = m_lastCacheItemVector[i]) && tileItem != item
@@ -561,7 +561,7 @@ uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool is
 		return ret;
 	}
 
-	//we can not use iterators here since the scripts can invalidate the iterator
+	//we cannot use iterators here since the scripts can invalidate the iterator
 	Thing* thing = NULL;
 	for(int32_t i = tile->__getFirstIndex(), j = tile->__getLastIndex(); i < j; ++i) //already checked the ground
 	{
