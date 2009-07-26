@@ -35,8 +35,7 @@ class Protocol : boost::noncopyable
 			m_connection = connection;
 			m_refCount = 0;
 
-			m_rawMessages = m_encryptionEnabled = false;
-			m_checksumEnabled = true;
+			m_rawMessages = m_encryptionEnabled = m_checksumEnabled = false;
 			for(int8_t i = 0; i < 4; ++i)
 				m_key[i] = 0;
 		}
