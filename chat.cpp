@@ -555,7 +555,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 						player->sendCancel("A player with that name is not invited to your guild.");
 						return true;
 					}
-o
+
 					std::stringstream ss;
 					ss << player->getName() << " has revoked your invite to " << (player->getSex() == PLAYERSEX_FEMALE ? "her" : "his") << " guild.";
 					paramPlayer->sendTextMessage(MSG_INFO_DESCR, ss.str());
