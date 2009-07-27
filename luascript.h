@@ -314,7 +314,7 @@ class LuaScriptInterface
 		static bool popBoolean(lua_State* L);
 		static int64_t popNumber(lua_State* L);
 		static double popFloatNumber(lua_State* L);
-		static const char* popString(lua_State* L);
+		static std::string popString(lua_State* L);
 		static int32_t popCallback(lua_State* L);
 
 		static int32_t getField(lua_State* L, const char* key);
@@ -443,16 +443,17 @@ class LuaScriptInterface
 		static int32_t luaIsAccountBanished(lua_State* L);
 		static int32_t luaIsAccountDeleted(lua_State* L);
 		static int32_t luaDoAddIpBanishment(lua_State* L);
-		static int32_t luaDoAddNamelock(lua_State* L);
-		static int32_t luaDoAddBanishment(lua_State* L);
-		static int32_t luaDoAddDeletion(lua_State* L);
+		static int32_t luaDoAddPlayerBanishment(lua_State* L);
+		static int32_t luaDoAddAccountBanishment(lua_State* L);
 		static int32_t luaDoAddNotation(lua_State* L);
+		static int32_t luaDoAddStatement(lua_State* L);
 		static int32_t luaDoRemoveIpBanishment(lua_State* L);
-		static int32_t luaDoRemoveNamelock(lua_State* L);
-		static int32_t luaDoRemoveBanishment(lua_State* L);
-		static int32_t luaDoRemoveDeletion(lua_State* L);
+		static int32_t luaDoRemovePlayerBanishment(lua_State* L);
+		static int32_t luaDoRemoveAccountBanishment(lua_State* L);
 		static int32_t luaDoRemoveNotations(lua_State* L);
+		static int32_t luaDoRemoveStatements(lua_State* L);
 		static int32_t luaGetNotationsCount(lua_State* L);
+		static int32_t luaGetStatementsCount(lua_State* L);
 		static int32_t luaGetBanData(lua_State* L);
 		static int32_t luaGetBanReason(lua_State* L);
 		static int32_t luaGetBanAction(lua_State* L);

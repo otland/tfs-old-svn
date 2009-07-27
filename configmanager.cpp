@@ -120,6 +120,7 @@ bool ConfigManager::load()
 	m_confNumber[DEFAULT_DESPAWNRANGE] = getGlobalNumber("deSpawnRange", 2);
 	m_confNumber[DEFAULT_DESPAWNRADIUS] = getGlobalNumber("deSpawnRadius", 50);
 	m_confNumber[PZ_LOCKED] = getGlobalNumber("pzLocked", 60 * 1000);
+	m_confNumber[HUNTING_DURATION] = getGlobalNumber("huntingDuration", 60 * 1000);
 	m_confString[SERVER_NAME] = getGlobalString("serverName");
 	m_confString[OWNER_NAME] = getGlobalString("ownerName");
 	m_confString[OWNER_EMAIL] = getGlobalString("ownerEmail");
@@ -161,7 +162,7 @@ bool ConfigManager::load()
 	m_confBool[REMOVE_WEAPON_AMMO] = getGlobalBool("removeWeaponAmmunition", "yes");
 	m_confBool[REMOVE_WEAPON_CHARGES] = getGlobalBool("removeWeaponCharges", "yes");
 	m_confBool[REMOVE_RUNE_CHARGES] = getGlobalBool("removeRuneCharges", "yes");
-	m_confBool[EXPERIENCE_FROM_PLAYERS] = getGlobalBool("experienceFromKilledPlayers", "no");
+	m_confDouble[RATE_PVP_EXPERIENCE] = getGlobalDouble("rateExperienceFromPlayers", 1.0);
 	m_confDouble[EFP_MIN_THRESHOLD] = getGlobalDouble("minLevelThresholdForKilledPlayer", 0.9);
 	m_confDouble[EFP_MAX_THRESHOLD] = getGlobalDouble("maxLevelThresholdForKilledPlayer", 1.1);
 	m_confBool[SHUTDOWN_AT_GLOBALSAVE] = getGlobalBool("shutdownAtGlobalSave", "no");
@@ -274,6 +275,7 @@ bool ConfigManager::load()
 	m_confNumber[SQUARE_COLOR] = getGlobalNumber("squareColor", 0);
 	m_confBool[USE_BLACK_SKULL] = getGlobalBool("useBlackSkull", "no");
 	m_confNumber[LOOT_MESSAGE] = getGlobalNumber("monsterLootMessage", 3);
+	m_confNumber[NAME_REPORT_TYPE] = getGlobalNumber("violationNameReportActionType", 2);
 
 	m_loaded = true;
 	return true;

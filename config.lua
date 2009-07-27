@@ -34,6 +34,7 @@
 	advancedFragList = "no"
 
 	-- Banishments
+	-- violationNameReportActionType 1 = just a report, 2 = name lock, 3 = player banishment
 	notationsToBan = 3
 	warningsToFinalBan = 4
 	warningsToDeletion = 5
@@ -42,6 +43,7 @@
 	ipBanishmentLength = 1 * 24 * 60 * 60
 	broadcastBanishments = "yes"
 	maxViolationCommentSize = 200
+	violationNameReportActionType = 2
 	autoBanishUnknownBytes = "no"
 
 	-- Battle
@@ -52,6 +54,7 @@
 	protectionLevel = 1
 	pvpTileIgnoreLevelAndVocationProtection = "yes"
 	pzLocked = 60 * 1000
+	huntingDuration = 60 * 1000
 	criticalHitChance = 7
 	criticalHitMultiplier = 1
 	displayCriticalHitNotify = "no"
@@ -73,15 +76,6 @@
 	gainExperienceColor = 215
 	addManaSpentInPvPZone = "yes"
 	squareColor = 0
-
-	-- Experience from players
-	-- NOTE: min~Threshold* set to 0 will disable the minimum threshold:
-	-- player will gain experience from every lower leveled player.
-	-- max~Threshold* set to 0 will disable the maximum threshold:
-	-- player will gain experience from every higher leveled player.
-	experienceFromKilledPlayers = "no"
-	minLevelThresholdForKilledPlayer = 0.9
-	maxLevelThresholdForKilledPlayer = 1.1
 
 	-- Connection config
 	worldId = 0
@@ -228,12 +222,22 @@
 
 	-- Rates
 	-- NOTE: experienceStages configuration is located in data/XML/stages.xml.
+	-- rateExperienceFromPlayers 0 to disable.
 	experienceStages = "no"
 	rateExperience = 5.0
+	rateExperienceFromPlayers = 1.0
 	rateSkill = 3.0
 	rateMagic = 3.0
 	rateLoot = 2.0
 	rateSpawn = 1
+
+	-- Experience from players
+	-- NOTE: min~Threshold* set to 0 will disable the minimum threshold:
+	-- player will gain experience from every lower leveled player.
+	-- max~Threshold* set to 0 will disable the maximum threshold:
+	-- player will gain experience from every higher leveled player.
+	minLevelThresholdForKilledPlayer = 0.9
+	maxLevelThresholdForKilledPlayer = 1.1
 
 	-- Stamina
 	-- NOTE: Stamina is stored in miliseconds, so seconds are multiplied by 1000.

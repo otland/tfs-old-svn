@@ -989,6 +989,21 @@ uint32_t DatabaseManager::updateDatabase()
 			return 20;
 		}
 
+		case 20:
+		{
+			std::cout << "> Updating database to version: 21..." << std::endl;
+			std::string queryList[] = {
+				"UPDATE `bans` SET `type` = 3 WHERE `type` = 5;",
+				"UPDATE `bans` SET `param` = 2 WHERE `type` = 2;",
+				"UPDATE `bans` SET `param` = 0 WHERE `type` IN (3,4);"
+			};
+			for(uint32_t i = 0; i < sizeof(queryList) / sizeof(std::string); i++)
+				db->executeQuery(queryList[i]);
+
+			registerDatabaseConfig("db_version", 21);
+			return 21;
+		}
+
 		default:
 			break;
 	}

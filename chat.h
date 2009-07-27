@@ -18,14 +18,14 @@
 #ifndef __CHAT__
 #define __CHAT__
 #include "otsystem.h"
-
 #include <fstream>
-#include "const.h"
 
+#include "const.h"
 #include "party.h"
 class Player;
 
 typedef std::map<uint32_t, Player*> UsersMap;
+typedef std::map<uint32_t, std::string> StatementMap;
 typedef std::list<uint32_t> InviteList;
 
 enum ChannelFlags_t
@@ -139,6 +139,9 @@ class Chat
 		ChannelList getChannelList(Player* player);
 
 		PrivateChatChannel* getPrivateChannel(Player* player);
+
+		static uint32_t statement;
+		static StatementMap statementMap;
 
 	private:
 		void clear();

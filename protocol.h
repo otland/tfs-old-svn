@@ -71,6 +71,7 @@ class Protocol : boost::noncopyable
 
 		void XTEA_encrypt(OutputMessage& msg);
 		bool XTEA_decrypt(NetworkMessage& msg);
+		bool RSA_decrypt(NetworkMessage& msg);
 		bool RSA_decrypt(RSA* rsa, NetworkMessage& msg);
 
 		virtual void releaseProtocol();

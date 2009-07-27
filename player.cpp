@@ -3301,9 +3301,13 @@ void Player::doAttacking(uint32_t interval)
 		lastAttack = OTSYS_TIME();
 }
 
-uint64_t Player::getGainedExperience(Creature* attacker, bool useMultiplier/* = true*/)
+uint64_t Player::getGainedExperience(Creature* attacker)
 {
-	if(!g_config.getBool(ConfigManager::EXPERIENCE_FROM_PLAYERS) || !skillLoss)
+	if(!skillLoss)
+		return 0;
+
+	double rate = g_config.getNumber(ConfigManager::RATE_PVP_EXPERIENCE)
+	if(rate <= 0)
 		return 0;
 
 	Player* attackerPlayer = attacker->getPlayer();
@@ -3323,15 +3327,12 @@ uint64_t Player::getGainedExperience(Creature* attacker, bool useMultiplier/* = 
 		c = victims experience
 
 		result = (1 - (a / b)) * 0.05 * c
+		Not affected by special multipliers(!)
 	*/
 	uint32_t a = (uint32_t)std::floor(attackerLevel * 0.9), b = level;
-	uint64_t c = getExperience(), result = std::max((uint64_t)0, (uint64_t)std::floor(getDamageRatio(
-		attacker) * std::max((double)0, ((double)(1 - (((double)a / b))))) * 0.05 * c));
-	if(useMultiplier)
-		result = uint64_t((double)result * attackerPlayer->rates[SKILL__LEVEL]);
-
-	return std::min((uint64_t)getLostExperience(), (uint64_t)(result * g_game.getExperienceStage(
-		(uint32_t)attackerLevel, attackerPlayer->getVocation()->getExperienceMultiplier())));
+	uint64_t c = getExperience();
+	return (uint64_t)((double)std::max((uint64_t)0, (uint64_t)std::floor(getDamageRatio(
+		attacker) * std::max((double)0, ((double)(1 - (((double)a / b))))) * 0.05 * c)) * rate);
 }
 
 void Player::onFollowCreature(const Creature* creature)
@@ -3519,6 +3520,13 @@ void Player::onCombatRemoveCondition(const Creature* attacker, Condition* condit
 	}
 }
 
+void Player::onTickCondition(ConditionType_t type, int32_t interval, bool& _remove)
+{
+	Creature::onTickCondition(type, interval, _remove);
+	if(type == CONDITION_HUNTING)
+		removeStamina(interval * g_config.getNumber(ConfigManager::RATE_STAMINA_LOSS));
+}
+
 void Player::onAttackedCreature(Creature* target)
 {
 	Creature::onAttackedCreature(target);
@@ -3633,17 +3641,18 @@ bool Player::onKilledCreature(Creature* target, uint32_t& flags)
 	if(hasFlag(PlayerFlag_NotGenerateLoot))
 		target->setDropLoot(LOOT_DROP_NONE);
 
+	Condition* condition = NULL;
+	if(target->getMonster() && !target->isPlayerSummon() && !hasFlag(PlayerFlag_HasInfiniteStamina)
+		&& (condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_HUNTING,
+		g_config.getNumber(ConfigManager::HUNTING_DURATION))))
+		addCondition(condition);
+
 	if(hasFlag(PlayerFlag_NotGainInFight) || !hasBitSet((uint32_t)KILLFLAG_JUSTIFY, flags))
 		return true;
 
 	Player* targetPlayer = target->getPlayer();
-	if(!targetPlayer || Combat::isInPvpZone(this, targetPlayer) || getZone() != target->getZone())
-		return true;
-
-	if(!hasCondition(CONDITION_INFIGHT))
-		return true;
-
-	if(isPartner(targetPlayer))
+	if(!targetPlayer || Combat::isInPvpZone(this, targetPlayer) || getZone() != target->getZone()
+		|| !hasCondition(CONDITION_INFIGHT) || isPartner(targetPlayer))
 		return true;
 
 	if(!targetPlayer->hasAttacked(this) && target->getSkull() == SKULL_NONE
@@ -3651,69 +3660,93 @@ bool Player::onKilledCreature(Creature* target, uint32_t& flags)
 		flags |= (uint32_t)KILLFLAG_UNJUSTIFIED;
 
 	pzLocked = true;
-	if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
-		CONDITION_INFIGHT, g_config.getNumber(ConfigManager::WHITE_SKULL_TIME)))
+	if((condition = Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_INFIGHT,
+		g_config.getNumber(ConfigManager::WHITE_SKULL_TIME))))
 		addCondition(condition);
 
 	return true;
 }
 
-void Player::gainExperience(uint64_t gainExp)
+bool Player::gainExperience(double& gainExp, bool fromMonster)
 {
-	if(hasFlag(PlayerFlag_NotGainExperience) || !gainExp)
-		return;
+	if(!rateExperience(gainExp, fromMonster))
+		return false;
 
 	//soul regeneration
-	if(gainExp >= getLevel())
+	if(gainExp >= level)
 	{
-		if(Condition* condition = Condition::createCondition(CONDITIONID_DEFAULT,
-			CONDITION_SOUL, 4 * 60 * 1000))
+		if(Condition* condition = Condition::createCondition(
+			CONDITIONID_DEFAULT, CONDITION_SOUL, 4 * 60 * 1000))
 		{
-			condition->setParam(CONDITIONPARAM_SOULGAIN, vocation->getGainAmount(GAIN_SOUL));
-			condition->setParam(CONDITIONPARAM_SOULTICKS, (vocation->getGainTicks(GAIN_SOUL) * 1000));
+			condition->setParam(CONDITIONPARAM_SOULGAIN,
+				vocation->getGainAmount(GAIN_SOUL));
+			condition->setParam(CONDITIONPARAM_SOULTICKS,
+				(vocation->getGainTicks(GAIN_SOUL) * 1000));
 			addCondition(condition);
 		}
 	}
 
-	addExperience(gainExp);
+	addExperience((uint64_t)gainExp);
+	return true;
 }
 
-void Player::onGainExperience(uint64_t gainExp)
+bool Player::rateExperience(double& gainExp, bool fromMonster)
 {
-	if(hasFlag(PlayerFlag_NotGainExperience))
-		gainExp = 0;
+	if(hasFlag(PlayerFlag_NotGainExperience) || gainExp <= 0)
+		return false;
 
-	Party* party = getParty();
-	if(party && party->isSharedExperienceActive() && party->isSharedExperienceEnabled())
+	if(!fromMonster)
+		return true;
+
+	gainExp *= rates[SKILL__LEVEL] * g_game.getExperienceStage(level,
+		vocation->getExperienceMultiplier()));
+	if(!hasFlag(PlayerFlag_HasInfiniteStamina))
 	{
-		party->shareExperience(gainExp);
-		gainExp = 0; //We will get a share of the experience through the sharing mechanism
+		int32_t minutes = getStaminaMinutes();
+		if(minutes >= g_config.getNumber(ConfigManager::STAMINA_LIMIT_TOP))
+		{
+			if(isPremium() || !g_config.getNumber(ConfigManager::STAMINA_BONUS_PREMIUM))
+				gainExp *= g_config.getDouble(ConfigManager::RATE_STAMINA_ABOVE);
+		}
+		else if(minutes < (g_config.getNumber(ConfigManager::STAMINA_LIMIT_BOTTOM)) && minutes > 0)
+			gainExp *= g_config.getDouble(ConfigManager::RATE_STAMINA_UNDER);
+		else if(minutes <= 0)
+			gainExp = 0;
+	}
+	else if(isPremium() || !g_config.getNumber(ConfigManager::STAMINA_BONUS_PREMIUM))
+		gainExp *= g_config.getDouble(ConfigManager::RATE_STAMINA_ABOVE);
+
+	return true;
+}
+
+void Player::onGainExperience(double& gainExp, bool fromMonster, bool multiplied)
+{
+	Party* party = getParty();
+	if(party && party->isSharedExperienceEnabled() && party->isSharedExperienceActive())
+	{
+		party->shareExperience(gainExp, fromMonster, multiplied);
+		rateExperience(gainExp, fromMonster);
+		return; //we will get a share of the experience through the sharing mechanism
 	}
 
-	Creature::onGainExperience(gainExp);
-	gainExperience(gainExp);
+	if(gainExperience(gainExp, fromMonster))
+		Creature::onGainExperience(gainExp, fromMonster, true);
 }
 
-void Player::onGainSharedExperience(uint64_t gainExp)
+void Player::onGainSharedExperience(double& gainExp, bool fromMonster, bool multiplied)
 {
-	Creature::onGainSharedExperience(gainExp);
-	gainExperience(gainExp);
+	if(gainExperience(gainExp, fromMonster))
+		Creature::onGainSharedExperience(gainExp, fromMonster, true);
 }
 
 bool Player::isImmune(CombatType_t type) const
 {
-	if(hasCustomFlag(PlayerCustomFlag_IsImmune))
-		return true;
-
-	return Creature::isImmune(type);
+	return hasCustomFlag(PlayerCustomFlag_IsImmune) || Creature::isImmune(type);
 }
 
 bool Player::isImmune(ConditionType_t type) const
 {
-	if(hasCustomFlag(PlayerCustomFlag_IsImmune))
-		return true;
-
-	return Creature::isImmune(type);
+	return hasCustomFlag(PlayerCustomFlag_IsImmune) || Creature::isImmune(type);
 }
 
 bool Player::isAttackable() const
@@ -3941,8 +3974,8 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 		if((d <= 0 || tc < d) && (w <= 0 || wc < w) && (m <= 0 || mc < m))
 			return true;
 
-		if(!IOBan::getInstance()->addBanishment(accountId, (now + g_config.getNumber(
-			ConfigManager::BAN_LENGTH)), 20, ACTION_BANISHMENT, "Unjustified player killing.", 0))
+		if(!IOBan::getInstance()->addAccountBanishment(accountId, (now + g_config.getNumber(
+			ConfigManager::BAN_LENGTH)), 20, ACTION_BANISHMENT, "Unjustified player killing.", 0, player->getID()))
 			return true;
 
 		sendTextMessage(MSG_INFO_DESCR, "You have been banished.");
@@ -4069,12 +4102,12 @@ void Player::learnInstantSpell(const std::string& name)
 
 void Player::unlearnInstantSpell(const std::string& name)
 {
-	if(hasLearnedInstantSpell(name))
-	{
-		LearnedInstantSpellList::iterator it = std::find(learnedInstantSpellList.begin(), learnedInstantSpellList.end(), name);
-		if(it != learnedInstantSpellList.end())
-			learnedInstantSpellList.erase(it);
-	}
+	if(!hasLearnedInstantSpell(name))
+		return;
+
+	LearnedInstantSpellList::iterator it = std::find(learnedInstantSpellList.begin(), learnedInstantSpellList.end(), name);
+	if(it != learnedInstantSpellList.end())
+		learnedInstantSpellList.erase(it);
 }
 
 bool Player::hasLearnedInstantSpell(const std::string& name) const
@@ -4087,7 +4120,7 @@ bool Player::hasLearnedInstantSpell(const std::string& name) const
 
 	for(LearnedInstantSpellList::const_iterator it = learnedInstantSpellList.begin(); it != learnedInstantSpellList.end(); ++it)
 	{
-		if(strcasecmp((*it).c_str(), name.c_str()) == 0)
+		if(!strcasecmp((*it).c_str(), name.c_str()))
 			return true;
 	}
 
@@ -4141,7 +4174,7 @@ void Player::manageAccount(const std::string &text)
 					uint32_t tmp;
 					if(IOLoginData::getInstance()->getGuidByName(tmp, managerString2) &&
 						IOLoginData::getInstance()->changeName(tmp, managerString, managerString2) &&
-						IOBan::getInstance()->removeNamelock(tmp))
+						IOBan::getInstance()->removePlayerBanishment(tmp, PLAYERBAN_LOCK))
 					{
 						if(House* house = Houses::getInstance().getHouseByPlayerId(tmp))
 							house->updateDoorDescription(managerString);
@@ -4630,11 +4663,11 @@ void Player::manageAccount(const std::string &text)
 		sendTextMessage(MSG_STATUS_CONSOLE_ORANGE, "Hint: Type 'account' to manage your account and if you want to start over then type 'cancel'.");
 }
 
-bool Player::isInvitedToGuild(uint32_t guild_id) const
+bool Player::isInvitedToGuild(uint32_t guildId) const
 {
 	for(InvitedToGuildsList::const_iterator it = invitedToGuildsList.begin(); it != invitedToGuildsList.end(); ++it)
 	{
-		if((*it) == guild_id)
+		if((*it) == guildId)
 			return true;
 	}
 	return false;

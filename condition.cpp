@@ -218,6 +218,7 @@ Condition* Condition::createCondition(ConditionId_t _id, ConditionType_t _type, 
 		case CONDITION_ATTRIBUTES:
 			return new ConditionAttributes(_id, _type, _ticks, _buff, _subId);
 
+		case CONDITION_HUNTING:
 		case CONDITION_INFIGHT:
 		case CONDITION_MUTED:
 		case CONDITION_EXHAUST:

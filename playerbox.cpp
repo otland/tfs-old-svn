@@ -87,6 +87,7 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			int32_t playersOnline = g_game.getPlayersOnline();
 			char playersOnlineBuffer[50];
 			sprintf(playersOnlineBuffer, "%d player%s online", playersOnline, (playersOnline != 1 ? "s" : ""));
+
 			m_hInst = GetModuleHandle(NULL);
 			permBan = CreateWindowEx(0, "button", "Ban permamently", WS_VISIBLE | WS_CHILD | WS_TABSTOP, 5, 35, 115, 25, hWnd, NULL, m_hInst, NULL);
 			kick = CreateWindowEx(0, "button", "Kick", WS_VISIBLE | WS_CHILD | WS_TABSTOP, 125, 35, 90, 25, hWnd, NULL, m_hInst, NULL);
@@ -96,6 +97,7 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 			SendMessage(kick, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
 			SendMessage(list, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
 			SendMessage(online, WM_SETFONT, (WPARAM)GUI::getInstance()->m_font, 0);
+
 			AutoList<Player>::listiterator it;
 			for(it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 				SendMessage(list, CB_ADDSTRING, 0, (LPARAM)(*it).second->getName().c_str());
@@ -117,9 +119,11 @@ LRESULT CALLBACK PlayerBox::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
 						if(MessageBox(hWnd, buffer, "Player management", MB_YESNO) == IDYES)
 						{
 							if((HWND)lParam == permBan)
-								IOBan::getInstance()->addDeletion(player->getAccount(), 23, ACTION_DELETION, "Permament banishment.", 0);
+								IOBan::getInstance()->addPlayerBanishment(player->getID(), 21, ACTION_DELETION, "Permament banishment.", 0, PLAYERBAN_BANISHMENT);
 
-							g_game.kickPlayer(player->getID(), true);
+							g_game.addMagicEffect(player->getPosition(), NM_ME_MAGIC_POISON);
+							Scheduler::getScheduler().addEvent(createSchedulerTask(1000, boost::bind(
+								&Game::kickPlayer, &g_game, player->getID(), false)));
 						}
 					}
 					else

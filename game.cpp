@@ -3472,9 +3472,6 @@ bool Game::playerRequestOutfit(uint32_t playerId)
 	if(!player || player->isRemoved())
 		return false;
 
-	if(player->isInvisible())
-		return false;
-
 	player->sendOutfitWindow();
 	return true;
 }
@@ -3972,20 +3969,16 @@ void Game::changeSpeed(Creature* creature, int32_t varSpeedDelta)
 
 void Game::internalCreatureChangeOutfit(Creature* creature, const Outfit_t& outfit)
 {
+	creature->setCurrentOutfit(outfit);
 	const SpectatorVec& list = getSpectators(creature->getPosition());
 	SpectatorVec::const_iterator it;
 
-	creature->setCurrentOutfit(outfit);
-	if(!creature->isInvisible() && (!creature->isGhost() ||
-		!g_config.getBool(ConfigManager::GHOST_INVISIBLE_EFFECT)))
+	//send to client
+	Player* tmpPlayer = NULL;
+	for(it = list.begin(); it != list.end(); ++it)
 	{
-		//send to client
-		Player* tmpPlayer = NULL;
-		for(it = list.begin(); it != list.end(); ++it)
-		{
-			if((tmpPlayer = (*it)->getPlayer()))
-				tmpPlayer->sendCreatureChangeOutfit(creature, outfit);
-		}
+		if((tmpPlayer = (*it)->getPlayer()))
+			tmpPlayer->sendCreatureChangeOutfit(creature, outfit);
 	}
 
 	//event method
@@ -4764,8 +4757,8 @@ bool Game::playerReportBug(uint32_t playerId, std::string comment)
 	return true;
 }
 
-bool Game::playerViolationWindow(uint32_t playerId, std::string targetName, uint8_t reason, ViolationAction_t action,
-		std::string comment, std::string statement, uint16_t channelId, bool ipBanishment)
+bool Game::playerViolationWindow(uint32_t playerId, const std::string& targetName, uint8_t reason,
+	ViolationAction_t action, const std::string& comment, uint32_t statementId, uint16_t channelId, bool ipBanishment)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
@@ -4830,147 +4823,141 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string targetName, uint
 	}
 
 	Account account = IOLoginData::getInstance()->loadAccount(accountId, true);
-	enum {
-		NOTHING,
-		KICK,
-		NOTATION_KICK //remove notations & kick
-	} notationAction = NOTATION_KICK;
+	std::string statement;
 
+	enum {
+		NONE,
+		KICK,
+		FULL_KICK,
+	} kickAction = FULL_KICK;
 	switch(action)
 	{
-		case ACTION_NOTATION:
+		case ACTION_STATEMENT:
 		{
-			IOBan::getInstance()->addNotation(account.number, reason, action, comment, player->getGUID(), statement);
-			if(IOBan::getInstance()->getNotationsCount(account.number) >= (uint32_t)g_config.getNumber(ConfigManager::NOTATIONS_TO_BAN))
+			StatementMap::iterator it = Chat::statementMap.find(statementId);
+			if(it == Chat::statementMap.end())
 			{
-				account.warnings++;
-				if(account.warnings >= (g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION)))
-				{
-					action = ACTION_DELETION;
-					IOBan::getInstance()->addDeletion(account.number, reason, action, comment, player->getGUID(), statement);
-				}
-				else if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
-				{
-					if(!IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(
-						ConfigManager::FINALBAN_LENGTH)), reason, action, comment, player->getGUID(), statement))
-						account.warnings--;
-				}
-				else
-				{
-					if(!IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(
-						ConfigManager::BAN_LENGTH)), reason, action, comment, player->getGUID(), statement))
-						account.warnings--;
-				}
+				player->sendCancel("Statement has been already reported.");
+				return false;
 			}
-			else
-				notationAction = NOTHING;
 
+			statement = it->second;
+			IOBan::getInstance()->addStatement(guid, reason, comment,
+				player->getGUID(), channelId, statement);
+			Chat::statementMap.erase(it);
+
+			kickAction = NONE;
 			break;
 		}
 
 		case ACTION_NAMEREPORT:
 		{
-			IOBan::getInstance()->addNamelock(guid, reason, action, comment, player->getGUID(), statement);
-			notationAction = KICK;
+			int64_t banTime = -1;
+			PlayerBan_t tmp = (PlayerBan_t)g_config.getBool(ConfigManager::NAME_REPORT_TYPE);
+			if(tmp == PLAYERBAN_BANISHMENT)
+				banTime = time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH);
+
+			if(!IOBan::getInstance()->addPlayerBanishment(guid, banTime, reason, action,
+				comment, player->getGUID(), tmp))
+			{
+				player->sendCancel("Player has been already reported.");
+				return false;
+			}
+			else if(tmp == PLAYERBAN_BANISHMENT)
+				account.warnings++;
+
+			kickAction = tmp;
 			break;
 		}
 
+		case ACTION_NOTATION:
+		{
+			if(!IOBan::getInstance()->addNotation(account.number, reason,
+				comment, player->getGUID(), guid))
+			{
+				player->sendCancel("Unable to perform action.");
+				return false;
+			}
+
+			if(IOBan::getInstance()->getNotationsCount(account.number) < (uint32_t)
+				g_config.getNumber(ConfigManager::NOTATIONS_TO_BAN))
+			{
+				kickAction = NONE;
+				break;
+			}
+		}
+
+		case ACTION_BANISHMENT:
 		case ACTION_BANREPORT:
 		{
+			bool deny = action != ACTION_BANREPORT;
+			int64_t banTime = -1;
 			if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
-			{
 				action = ACTION_DELETION;
-				IOBan::getInstance()->addDeletion(account.number, reason, action, comment, player->getGUID(), statement);
-			}
+			else if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
+				banTime = time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH);
 			else
+				banTime = time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH);
+
+			if(!IOBan::getInstance()->addAccountBanishment(account.number, banTime, reason, action,
+				comment, player->getGUID(), guid))
 			{
-				account.warnings++;
-				if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
-				{
-					if(!IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(
-						ConfigManager::FINALBAN_LENGTH)), reason, action, comment, player->getGUID(), statement))
-						account.warnings--;
-				}
-				else
-				{
-					if(!IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(
-						ConfigManager::BAN_LENGTH)), reason, action, comment, player->getGUID(), statement))
-						account.warnings--;
-				}
-
-				IOBan::getInstance()->addNamelock(guid, reason, action, comment, player->getGUID(), statement);
+				player->sendCancel("Account is already banned.");
+				return false;
 			}
+			else if(action != ACTION_DELETION)
+				account.warnings++;
 
+			if(deny)
+				break;
+
+			banTime = -1;
+			PlayerBan_t tmp = (PlayerBan_t)g_config.getBool(ConfigManager::NAME_REPORT_TYPE);
+			if(tmp == PLAYERBAN_BANISHMENT)
+				banTime = time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH);
+
+			IOBan::getInstance()->addPlayerBanishment(guid, banTime, reason, action, comment,
+				player->getGUID(), tmp);
 			break;
 		}
 
 		case ACTION_BANFINAL:
-		{
-			if(account.warnings++ >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
-			{
-				action = ACTION_DELETION;
-				if(!IOBan::getInstance()->addDeletion(account.number, reason, action, comment, player->getGUID(), statement))
-					account.warnings--;
-			}
-			else if(IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(
-				ConfigManager::FINALBAN_LENGTH)), reason, action, comment, player->getGUID(), statement))
-				account.warnings = g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION) - 1;
-
-			break;
-		}
-
 		case ACTION_BANREPORTFINAL:
 		{
-			if(account.warnings++ >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
-			{
-				action = ACTION_DELETION;
-				if(!IOBan::getInstance()->addDeletion(account.number, reason, action, comment, player->getGUID(), statement))
-					account.warnings--;
-			}
-			else
-			{
-				if(IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(
-					ConfigManager::FINALBAN_LENGTH)), reason, action, comment, player->getGUID(), statement))
-					account.warnings = g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION) - 1;
-
-				IOBan::getInstance()->addNamelock(guid, reason, action, comment, player->getGUID(), statement);
-			}
-
-			break;
-		}
-
-		case ACTION_STATEMENT:
-			// this is not banishment, and shouldn't perform default action
-			break;
-
-		case ACTION_BANISHMENT:
-		default:
-		{
-			account.warnings++;
+			bool allow = action == ACTION_BANREPORTFINAL;
+			int64_t banTime = -1;
 			if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
-			{
 				action = ACTION_DELETION;
-				IOBan::getInstance()->addDeletion(account.number, reason, action, comment, player->getGUID(), statement);
-			}
-			else if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
+			else
+				banTime = time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH);
+
+			if(!IOBan::getInstance()->addAccountBanishment(account.number, banTime, reason, action,
+				comment, player->getGUID(), guid))
 			{
-				if(!IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(
-					ConfigManager::FINALBAN_LENGTH)), reason, action, comment, player->getGUID(), statement))
-					account.warnings--;
+				player->sendCancel("Account is already banned.");
+				return false;
 			}
-			else if(!IOBan::getInstance()->addBanishment(account.number, (time(NULL) + g_config.getNumber(
-				ConfigManager::BAN_LENGTH)), reason, action, comment, player->getGUID(), statement))
-				account.warnings--;
+			else if(action != ACTION_DELETION)
+				account.warnings++;
+
+			if(allow)
+				IOBan::getInstance()->addPlayerBanishment(guid, -1, reason, action, comment,
+					player->getGUID(), (PlayerBan_t)g_config.getBool(
+					ConfigManager::NAME_REPORT_TYPE));
 
 			break;
 		}
+
+		default:
+			// these just shouldn't occur in rvw
+			return;
 	}
 
-	if(ipBanishment && ip > 0)
-		IOBan::getInstance()->addIpBanishment(ip, (time(NULL) + g_config.getNumber(ConfigManager::IPBANISHMENT_LENGTH)),
-			comment, player->getGUID(), 0xFFFFFFFF);
+	if(ipBanishment && ip)
+		IOBan::getInstance()->addIpBanishment(ip, (time(NULL) + g_config.getNumber(
+			ConfigManager::IPBANISHMENT_LENGTH)), reason, comment, player->getGUID(), 0xFFFFFFFF);
 
-	if(notationAction == NOTATION_KICK)
+	if(kickAction == FULL_KICK)
 		IOBan::getInstance()->removeNotations(account.number);
 
 	std::stringstream ss;
@@ -5004,10 +4991,10 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string targetName, uint
 	else
 		player->sendTextMessage(MSG_STATUS_CONSOLE_RED, ss.str());
 
-	if(targetPlayer && notationAction > NOTHING)
+	if(targetPlayer && kickAction > NONE)
 	{
 		char buffer[30];
-		sprintf(buffer, "You have been %s.", (notationAction > KICK ? "banished" : "namelocked"));
+		sprintf(buffer, "You have been %s.", (kickAction > KICK ? "banished" : "namelocked"));
 		targetPlayer->sendTextMessage(MSG_INFO_DESCR, buffer);
 
 		addMagicEffect(targetPlayer->getPosition(), NM_ME_MAGIC_POISON);

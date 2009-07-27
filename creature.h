@@ -208,7 +208,7 @@ class Creature : public AutoID, virtual public Thing
 		void setMasterPos(const Position& pos, uint32_t radius = 1) {masterPos = pos; masterRadius = radius;}
 
 		virtual int32_t getThrowRange() const {return 1;}
-		virtual bool isPushable() const {return (getWalkDelay() <= 0);}
+		virtual bool isPushable() const {return getWalkDelay() <= 0;}
 		virtual bool isRemoved() const {return removed;}
 		virtual bool canSeeInvisibility() const {return false;}
 
@@ -275,7 +275,7 @@ class Creature : public AutoID, virtual public Thing
 		void setMaster(Creature* creature) {master = creature;}
 		Creature* getMaster() {return master;}
 		const Creature* getMaster() const {return master;}
-		Player* getPlayerMaster() const {return (isPlayerSummon() ? master->getPlayer() : NULL);}
+		Player* getPlayerMaster() const {return isPlayerSummon() ? master->getPlayer() : NULL;}
 		bool isSummon() const {return master != NULL;}
 		bool isPlayerSummon() const {return master && master->getPlayer();}
 
@@ -322,7 +322,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool convinceCreature(Creature* creature) {return false;}
 
 		virtual bool onDeath();
-		virtual uint64_t getGainedExperience(Creature* attacker, bool useMultiplier = true);
+		virtual double getGainedExperience(Creature* attacker) const {return getDamageRatio(attacker) * (double)getLostExperience();}
 		void addDamagePoints(Creature* attacker, int32_t damagePoints);
 		void addHealPoints(Creature* caster, int32_t healthPoints);
 		bool hasBeenAttacked(uint32_t attackerId) const;
@@ -345,8 +345,8 @@ class Creature : public AutoID, virtual public Thing
 		virtual void onTargetCreatureGainHealth(Creature* target, int32_t points);
 		virtual void onAttackedCreatureKilled(Creature* target);
 		virtual bool onKilledCreature(Creature* target, uint32_t& flags);
-		virtual void onGainExperience(uint64_t gainExp);
-		virtual void onGainSharedExperience(uint64_t gainExp);
+		virtual void onGainExperience(double& gainExp, bool fromMonster, bool multiplied);
+		virtual void onGainSharedExperience(double& gainExp, bool fromMonster, bool multiplied);
 		virtual void onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType) {}
 		virtual void onBlockHit(BlockType_t blockType) {}
 		virtual void onChangeZone(ZoneType_t zone);

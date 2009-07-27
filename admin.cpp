@@ -85,6 +85,12 @@ void ProtocolAdmin::onRecvFirstMessage(NetworkMessage& msg)
 
 void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 {
+	if(g_game.getGameState() == GAME_STATE_SHUTDOWN)
+	{
+		getConnection()->closeConnection();
+		return;
+	}
+
 	uint8_t recvbyte = msg.GetByte();
 	OutputMessage_ptr output = OutputMessagePool::getInstance()->getOutputMessage(this, false);
 	if(!output)

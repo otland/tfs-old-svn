@@ -49,7 +49,7 @@ Creature::Creature()
 	lootDrop = LOOT_DROP_FULL;
 	skillLoss = true;
 	hideName = hideHealth = cannotMove = false;
-	speakType = SPEAK_SAY;
+	speakType = SPEAK_CLASS_NONE;
 	skull = SKULL_NONE;
 	partyShield = SHIELD_NONE;
 
@@ -790,8 +790,7 @@ DeathList Creature::getKillers()
 			continue;
 
 		Creature* mdc = g_game.getCreatureByID(it->first);
-		if(!mdc || mdc == lhc || (lhc && (mdc->getMaster() == lhc
-			|| lhc->getMaster() == mdc)))
+		if(!mdc || mdc == lhc || (lhc && (mdc->getMaster() == lhc || lhc->getMaster() == mdc)))
 			continue;
 
 		bool deny = false;
@@ -801,7 +800,8 @@ DeathList Creature::getKillers()
 				continue;
 
 			Creature* tmp = fit->getKillerCreature();
-			if((!mdc->getMaster() || (mdc->getMaster() != tmp && mdc->getMaster() != tmp->getMaster()))
+			if(!(mdc->getName() == tmp->getName() && mdc->getMaster() == tmp->getMaster()) &&
+				(!mdc->getMaster() || (mdc->getMaster() != tmp && mdc->getMaster() != tmp->getMaster()))
 				&& (mdc->getSummonCount() <= 0 || tmp->getMaster() != mdc))
 				continue;
 
@@ -1041,7 +1041,7 @@ bool Creature::setFollowCreature(Creature* creature, bool fullPathSearch /*= fal
 
 double Creature::getDamageRatio(Creature* attacker) const
 {
-	int32_t totalDamage = 0, attackerDamage = 0;
+	double totalDamage = 0, attackerDamage = 0;
 	for(CountMap::const_iterator it = damageMap.begin(); it != damageMap.end(); ++it)
 	{
 		totalDamage += it->second.total;
@@ -1049,50 +1049,7 @@ double Creature::getDamageRatio(Creature* attacker) const
 			attackerDamage += it->second.total;
 	}
 
-	return ((double)attackerDamage / totalDamage);
-}
-
-uint64_t Creature::getGainedExperience(Creature* attacker, bool useMultiplier/* = true*/)
-{
-	Player* player = attacker->getPlayer();
-	if(!player && attacker->getMaster())
-		player = attacker->getMaster()->getPlayer();
-
-	if(player && player->hasFlag(PlayerFlag_NotGainExperience))
-		return 0;
-
-	double baseExperience = getDamageRatio(attacker) * getLostExperience();
-	if(!player)
-		return (uint64_t)(baseExperience * g_config.getDouble(ConfigManager::RATE_EXPERIENCE));
-
-	if(useMultiplier)
-		baseExperience *= player->rates[SKILL__LEVEL];
-
-	baseExperience *= g_game.getExperienceStage(player->getLevel(), player->getVocation()->getExperienceMultiplier());
-	if(!player->hasFlag(PlayerFlag_HasInfiniteStamina))
-	{
-		for(CountMap::const_iterator it = damageMap.begin(); it != damageMap.end(); ++it)
-		{
-			if(it->first != attacker->getID())
-				continue;
-
-			player->removeStamina((it->second.ticks - it->second.start) * g_config.getNumber(ConfigManager::RATE_STAMINA_LOSS));
-			break;
-		}
-	}
-
-	int32_t minutes = player->getStaminaMinutes();
-	if(minutes >= g_config.getNumber(ConfigManager::STAMINA_LIMIT_TOP))
-	{
-		if(player->isPremium() || !g_config.getNumber(ConfigManager::STAMINA_BONUS_PREMIUM))
-			baseExperience *= g_config.getDouble(ConfigManager::RATE_STAMINA_ABOVE);
-	}
-	else if(minutes < (g_config.getNumber(ConfigManager::STAMINA_LIMIT_BOTTOM)) && minutes > 0)
-		baseExperience *= g_config.getDouble(ConfigManager::RATE_STAMINA_UNDER);
-	else if(minutes <= 0)
-		baseExperience = 0;
-
-	return (uint64_t)baseExperience;
+	return attackerDamage / totalDamage;
 }
 
 void Creature::addDamagePoints(Creature* attacker, int32_t damagePoints)
@@ -1169,16 +1126,16 @@ void Creature::onTickCondition(ConditionType_t type, int32_t interval, bool& _re
 		switch(type)
 		{
 			case CONDITION_FIRE:
-				_remove = (field->getCombatType() != COMBAT_FIREDAMAGE);
+				_remove = field->getCombatType() != COMBAT_FIREDAMAGE;
 				break;
 			case CONDITION_ENERGY:
-				_remove = (field->getCombatType() != COMBAT_ENERGYDAMAGE);
+				_remove = field->getCombatType() != COMBAT_ENERGYDAMAGE;
 				break;
 			case CONDITION_POISON:
-				_remove = (field->getCombatType() != COMBAT_EARTHDAMAGE);
+				_remove = field->getCombatType() != COMBAT_EARTHDAMAGE;
 				break;
 			case CONDITION_DROWN:
-				_remove = (field->getCombatType() != COMBAT_DROWNDAMAGE);
+				_remove = field->getCombatType() != COMBAT_DROWNDAMAGE;
 				break;
 			default:
 				break;
@@ -1222,8 +1179,11 @@ void Creature::onTargetCreatureGainHealth(Creature* target, int32_t points)
 
 void Creature::onAttackedCreatureKilled(Creature* target)
 {
-	if(target != this)
-		onGainExperience(target->getGainedExperience(this));
+	if(target == this)
+		return;
+
+	double gainExp = target->getGainedExperience(this);
+	onGainExperience(gainExp, !target->getPlayer(), false);
 }
 
 bool Creature::onKilledCreature(Creature* target, uint32_t& flags)
@@ -1250,7 +1210,7 @@ bool Creature::onKilledCreature(Creature* target, uint32_t& flags)
 	return ret;
 }
 
-void Creature::onGainExperience(uint64_t gainExp)
+void Creature::onGainExperience(double& gainExp, bool fromMonster, bool multiplied)
 {
 	if(gainExp <= 0)
 		return;
@@ -1258,29 +1218,39 @@ void Creature::onGainExperience(uint64_t gainExp)
 	if(master)
 	{
 		gainExp = gainExp / 2;
-		master->onGainExperience(gainExp);
+		master->onGainExperience(gainExp, fromMonster, multiplied);
 	}
+	else if(!multiplied)
+		gainExp *= g_config.getDouble(ConfigManager::RATE_EXPERIENCE);
 
 	int16_t color = g_config.getNumber(ConfigManager::EXPERIENCE_COLOR);
 	if(color < 0)
 		color = random_range(0, 255);
 
 	std::stringstream ss;
-	ss << gainExp;
+	ss << (uint64_t)gainExp;
 	g_game.addAnimatedText(getPosition(), (uint8_t)color, ss.str());
 }
 
-void Creature::onGainSharedExperience(uint64_t gainExp)
+void Creature::onGainSharedExperience(double& gainExp, bool fromMonster, bool multiplied)
 {
 	if(gainExp <= 0)
 		return;
 
+	if(master)
+	{
+		gainExp = gainExp / 2;
+		master->onGainSharedExperience(gainExp, fromMonster, multiplied);
+	}
+	else if(!multiplied)
+		gainExp *= g_config.getDouble(ConfigManager::RATE_EXPERIENCE);
+
 	int16_t color = g_config.getNumber(ConfigManager::EXPERIENCE_COLOR);
 	if(color < 0)
 		color = random_range(0, 255);
 
 	std::stringstream ss;
-	ss << gainExp;
+	ss << (uint64_t)gainExp;
 	g_game.addAnimatedText(getPosition(), (uint8_t)color, ss.str());
 }
 

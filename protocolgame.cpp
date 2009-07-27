@@ -52,7 +52,6 @@
 extern Game g_game;
 extern ConfigManager g_config;
 extern Actions actions;
-extern RSA* g_otservRSA;
 extern CreatureEvents* g_creatureEvents;
 extern Chat g_chat;
 
@@ -94,7 +93,7 @@ void ProtocolGame::deleteProtocolTask()
 }
 
 bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std::string& password,
-	OperatingSystem_t operatingSystem, uint32_t version, bool gamemasterLogin)
+	OperatingSystem_t operatingSystem, uint16_t version, bool gamemasterLogin)
 {
 	//dispatcher thread
 	Player* _player = g_game.getPlayerByName(name);
@@ -110,8 +109,32 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			return false;
 		}
 
-		bool isNamelocked = false;
-		if(IOBan::getInstance()->isNamelocked(player->getGUID()) && accnumber != 1)
+		Ban ban;
+		ban.value = player->getID();
+		ban.param = PLAYERBAN_BANISHMENT;
+
+		ban.type = BAN_PLAYER;
+		if(IOBan::getInstance()->getData(ban) && !player->hasFlag(PlayerFlag_CannotBeBanned))
+		{
+			bool deletion = ban.expires < 0;
+			std::string name_ = "Automatic ";
+			if(ban.adminId == 0)
+				name_ += (deletion ? "deletion" : "banishment");
+			else
+				IOLoginData::getInstance()->getNameByGuid(ban.adminId, name_, true);
+
+			char buffer[500 + ban.comment.length()];
+			sprintf(buffer, "Your character has been %s at:\n%s by: %s,\nfor the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.\nYour %s%s.",
+				(deletion ? "deleted" : "banished"), formatDateShort(ban.added).c_str(), name_.c_str(),
+				getReason(ban.reason).c_str(), getAction(ban.action, false).c_str(), ban.comment.c_str(),
+				(deletion ? "character won't be undeleted" : "banishment will be lifted at:\n"),
+				(deletion ? "." : formatDateShort(ban.expires, true).c_str()));
+
+			disconnectClient(0x14, buffer);
+			return false;
+		}
+
+		if(IOBan::getInstance()->isPlayerBanished(player->getGUID(), PLAYERBAN_LOCK) && accnumber != 1)
 		{
 			if(g_config.getBool(ConfigManager::NAMELOCK_MANAGER))
 			{
@@ -121,7 +144,10 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 				player->managerString2 = name;
 			}
 			else
-				isNamelocked = true;
+			{
+				disconnectClient(0x14, "Your character has been namelocked.");
+				return false;
+			}
 		}
 		else if(player->getName() == "Account Manager" && g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
 		{
@@ -134,38 +160,9 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 				player->accountManager = MANAGER_NEW;
 		}
 
-		player->setOperatingSystem(operatingSystem);
-		player->setClientVersion(version);
 		if(gamemasterLogin && !player->hasCustomFlag(PlayerCustomFlag_GamemasterPrivileges) && !player->isAccountManager())
 		{
 			disconnectClient(0x14, "You are not a gamemaster!");
-			return false;
-		}
-
-		Ban ban;
-		if(IOBan::getInstance()->getData(accnumber, ban) && !player->hasFlag(PlayerFlag_CannotBeBanned))
-		{
-			bool deletion = (ban.type == BANTYPE_DELETION);
-			std::string name_ = "Automatic ";
-			if(ban.adminid == 0)
-				name_ += (deletion ? "deletion" : "banishment");
-			else
-				IOLoginData::getInstance()->getNameByGuid(ban.adminid, name_, true);
-
-			char buffer[500 + ban.comment.length()];
-			sprintf(buffer, "Your account has been %s at:\n%s by: %s,\nfor the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.\nYour %s%s.",
-				(deletion ? "deleted" : "banished"), formatDateShort(ban.added).c_str(), name_.c_str(),
-				getReason(ban.reason).c_str(), getAction(ban.action, false).c_str(), ban.comment.c_str(),
-				(deletion ? "account won't be undeleted" : "banishment will be lifted at:\n"),
-				(deletion ? "." : formatDateShort(ban.expires, true).c_str()));
-
-			disconnectClient(0x14, buffer);
-			return false;
-		}
-
-		if(isNamelocked)
-		{
-			disconnectClient(0x14, "Your character has been namelocked.");
 			return false;
 		}
 
@@ -249,6 +246,9 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 			}
 		}
 
+		player->setOperatingSystem(operatingSystem);
+		player->setClientVersion(version);
+
 		player->lastIP = player->getIP();
 		player->lastLogin = OTSYS_TIME();
 		player->lastLoginSaved = std::max(time(NULL), player->lastLoginSaved + 1);
@@ -256,32 +256,27 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 		m_acceptPackets = true;
 		return true;
 	}
-	else
+	else if(_player->client)
 	{
-		if(_player->client)
+		if(m_eventConnect || !g_config.getBool(ConfigManager::REPLACE_KICK_ON_LOGIN))
 		{
-			if(m_eventConnect || !g_config.getBool(ConfigManager::REPLACE_KICK_ON_LOGIN))
-			{
-				//A task has already been scheduled just bail out (should not be overriden)
-				disconnectClient(0x14, "You are already logged in.");
-				return false;
-			}
-
-			g_chat.removeUserFromAllChannels(_player);
-			_player->disconnect();
-			_player->isConnecting = true;
-
-			addRef();
-			m_eventConnect = Scheduler::getScheduler().addEvent(createSchedulerTask(
-				1000, boost::bind(&ProtocolGame::connect, this, _player->getID())));
-			return true;
+			//A task has already been scheduled just bail out (should not be overriden)
+			disconnectClient(0x14, "You are already logged in.");
+			return false;
 		}
 
+		g_chat.removeUserFromAllChannels(_player);
+		_player->disconnect();
+		_player->isConnecting = true;
+
 		addRef();
-		return connect(_player->getID());
+		m_eventConnect = Scheduler::getScheduler().addEvent(createSchedulerTask(
+			1000, boost::bind(&ProtocolGame::connect, this, _player->getID(), operatingSystem, version)));
+		return true;
 	}
 
-	return false;
+	addRef();
+	return connect(_player->getID(), operatingSystem, version);
 }
 
 bool ProtocolGame::logout(bool displayEffect, bool forced, bool executeLogout/* = true*/)
@@ -307,14 +302,14 @@ bool ProtocolGame::logout(bool displayEffect, bool forced, bool executeLogout/* 
 				return false;
 			}
 
-			if(executeLogout && !g_creatureEvents->playerLogout(player) && !flag) //Let the script handle the error message
+			if(executeLogout && !g_creatureEvents->playerLogout(player) && !flag) //let the script handle the error message
 				return false;
 		}
 		else if(executeLogout)
 			g_creatureEvents->playerLogout(player);
 	}
 
-	if(player->isRemoved() || player->getHealth() <= 0)
+	if(player->isRemoved())
 		displayEffect = false;
 
 	if(displayEffect && !player->isGhost())
@@ -326,7 +321,7 @@ bool ProtocolGame::logout(bool displayEffect, bool forced, bool executeLogout/* 
 	return g_game.removeCreature(player);
 }
 
-bool ProtocolGame::connect(uint32_t playerId)
+bool ProtocolGame::connect(uint32_t playerId, OperatingSystem_t operatingSystem, uint16_t version)
 {
 	unRef();
 	m_eventConnect = 0;
@@ -344,6 +339,9 @@ bool ProtocolGame::connect(uint32_t playerId)
 
 	player->client = this;
 	player->sendCreatureAppear(player);
+
+	player->setOperatingSystem(operatingSystem);
+	player->setClientVersion(version);
 
 	player->lastIP = player->getIP();
 	player->lastLogin = OTSYS_TIME();
@@ -407,7 +405,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 	OperatingSystem_t operatingSystem = (OperatingSystem_t)msg.GetU16();
 	uint16_t version = msg.GetU16();
-	if(!RSA_decrypt(g_otservRSA, msg))
+	if(!RSA_decrypt(msg))
 	{
 		getConnection()->close();
 		return false;
@@ -427,19 +425,19 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 	if(version < CLIENT_VERSION_MIN || version > CLIENT_VERSION_MAX)
 	{
-		disconnectClient(0x0A, CLIENT_VERSION_STRING);
+		disconnectClient(0x14, CLIENT_VERSION_STRING);
 		return false;
 	}
 
 	if(!accName.length())
 	{
-		if(g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
-			password = "1";
-		else
+		if(!g_config.getBool(ConfigManager::ACCOUNT_MANAGER))
 		{
-			disconnectClient(0x14, "You must enter your account name.");
+			disconnectClient(0x14, "Invalid account name.");
 			return false;
 		}
+		else
+			password = "1";
 	}
 
 	if(g_game.getGameState() < GAME_STATE_NORMAL)
@@ -472,7 +470,31 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 		password, accPass)) && name != "Account Manager")
 	{
 		ConnectionManager::getInstance()->addAttempt(getIP(), protocolId, false);
-		getConnection()->close();
+		disconnectClient(0x14, "Account name or password is not correct.");
+		return false;
+	}
+
+	Ban ban;
+	ban.value = accId;
+
+	ban.type = BAN_ACCOUNT;
+	if(IOBan::getInstance()->getData(ban) && !IOLoginData::getInstance()->hasFlag(accId, PlayerFlag_CannotBeBanned))
+	{
+		bool deletion = ban.expires < 0;
+		std::string name_ = "Automatic ";
+		if(ban.adminId == 0)
+			name_ += (deletion ? "deletion" : "banishment");
+		else
+			IOLoginData::getInstance()->getNameByGuid(ban.adminId, name_, true);
+
+		char buffer[500 + ban.comment.length()];
+		sprintf(buffer, "Your account has been %s at:\n%s by: %s,\nfor the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.\nYour %s%s.",
+			(deletion ? "deleted" : "banished"), formatDateShort(ban.added).c_str(), name_.c_str(),
+			getReason(ban.reason).c_str(), getAction(ban.action, false).c_str(), ban.comment.c_str(),
+			(deletion ? "account won't be undeleted" : "banishment will be lifted at:\n"),
+			(deletion ? "." : formatDateShort(ban.expires, true).c_str()));
+
+		disconnectClient(0x14, buffer);
 		return false;
 	}
 
@@ -484,12 +506,13 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 
 void ProtocolGame::parsePacket(NetworkMessage &msg)
 {
-	if(!m_acceptPackets || msg.getMessageLength() <= 0 || !player)
+	if(!player || !m_acceptPackets || g_game.getGameState() == GAME_STATE_SHUTDOWN
+		|| msg.getMessageLength() <= 0)
 		return;
 
 	uint8_t recvbyte = msg.GetByte();
 	//a dead player cannot performs actions
-	if((player->isRemoved() || player->getHealth() <= 0) && recvbyte != 0x14)
+	if(player->isRemoved() && recvbyte != 0x14)
 		return;
 
 	if(player->isAccountManager())
@@ -772,22 +795,24 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 			{
 				if(g_config.getBool(ConfigManager::BAN_UNKNOWN_BYTES))
 				{
+					int64_t banTime = -1;
+					ViolationAction_t action = ACTION_BANISHMENT;
+
 					Account tmp = IOLoginData::getInstance()->loadAccount(player->getAccount(), true);
-					tmp.warnings++;
-
-					bool success = false;
 					if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
-						success = IOBan::getInstance()->addDeletion(player->getAccount(), 13, ACTION_DELETION,
-							"Sending unknown packets to the server.", 0);
+						action = ACTION_DELETION;
 					else if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
-						success = IOBan::getInstance()->addBanishment(player->getAccount(), (time(NULL) + g_config.getNumber(
-							ConfigManager::FINALBAN_LENGTH)), 13, ACTION_BANFINAL, "Sending unknown packets to the server.", 0);
-					else
-						success = IOBan::getInstance()->addBanishment(player->getAccount(), (time(NULL) + g_config.getNumber(
-							ConfigManager::BAN_LENGTH)), 13, ACTION_BANISHMENT, "Sending unknown packets to the server.", 0);
-
-					if(success)
 					{
+						banTime = time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH);
+						action = ACTION_BANFINAL;
+					}
+					else
+						banTime = time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH);
+
+					if(IOBan::getInstance()->addAccountBanishment(tmp.number, banTime, 13, action,
+						"Sending unknown packets to the server.", 0, player->getID()))
+					{
+						tmp.warnings++;
 						IOLoginData::getInstance()->saveAccount(tmp);
 						player->sendTextMessage(MSG_INFO_DESCR, "You have been banished.");
 
@@ -1485,10 +1510,10 @@ void ProtocolGame::parseViolationWindow(NetworkMessage& msg)
 	uint8_t reason = msg.GetByte();
 	ViolationAction_t action = (ViolationAction_t)msg.GetByte();
 	std::string comment = msg.GetString();
-	std::string statement = msg.GetString();
+	uint32_t statementId = msg.GetU32(); //reverse these two?
 	uint16_t channelId = msg.GetU16();
 	bool ipBanishment = msg.GetByte();
-	addGameTask(&Game::playerViolationWindow, player->getID(), target, reason, action, comment, statement, channelId, ipBanishment);
+	addGameTask(&Game::playerViolationWindow, player->getID(), target, reason, action, comment, statementId, channelId, ipBanishment);
 }
 
 //********************** Send methods *******************************//
@@ -2691,9 +2716,20 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 	std::string text, uint16_t channelId, uint32_t time/*= 0*/, Position* pos/* = NULL*/)
 {
 	msg->AddByte(0xAA);
-	msg->AddU32(0x00000000);
 	if(creature)
 	{
+		const Player* speaker = creature->getPlayer();
+		if(speaker)
+		{
+			msg->AddU32(++Chat::statement);
+			Chat::statementMap[Chat::statement] = text;
+		}
+		else
+			msg->AddU32(0x00000000);
+
+		if(creature->getSpeakType() != SPEAK_CLASS_NONE)
+			type = creature->getSpeakType();
+
 		switch(type)
 		{
 			case SPEAK_CHANNEL_RA:
@@ -2703,12 +2739,13 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 				msg->AddString("Gamemaster");
 				break;
 			default:
-				msg->AddString(creature->getHideName() ? "" : creature->getName());
+				msg->AddString(!creature->getHideName() ? creature->getName() : "");
 				break;
 		}
 
 		const Player* speaker = creature->getPlayer();
-		if(speaker && type != SPEAK_RVR_ANSWER && !speaker->isAccountManager() && !speaker->hasCustomFlag(PlayerCustomFlag_HideLevel))
+		if(speaker && type != SPEAK_RVR_ANSWER && !speaker->isAccountManager()
+			&& !speaker->hasCustomFlag(PlayerCustomFlag_HideLevel))
 			msg->AddU16(speaker->getPlayerInfo(PLAYERINFO_LEVEL));
 		else
 			msg->AddU16(0x0000);
@@ -2716,15 +2753,12 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 	}
 	else
 	{
+		msg->AddU32(0x00000000);
 		msg->AddString("");
 		msg->AddU16(0x0000);
 	}
 
-	if(creature->getSpeakType() != SPEAK_SAY)
-		msg->AddByte((SpeakClasses)creature->getSpeakType());
-	else
-		msg->AddByte(type);
-
+	msg->AddByte(type);
 	switch(type)
 	{
 		case SPEAK_SAY:

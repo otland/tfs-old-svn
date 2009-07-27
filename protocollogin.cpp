@@ -34,10 +34,10 @@
 #include "configmanager.h"
 #include "game.h"
 
-extern RSA* g_otservRSA;
 extern ConfigManager g_config;
-extern IpList serverIps;
 extern Game g_game;
+
+extern IpList serverIps;
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t ProtocolLogin::protocolLoginCount = 0;
@@ -82,7 +82,7 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 	uint16_t version = msg.GetU16();
 	msg.SkipBytes(12);
 
-	if(!RSA_decrypt(g_otservRSA, msg))
+	if(!RSA_decrypt(msg))
 	{
 		getConnection()->close();
 		return false;
@@ -153,6 +153,31 @@ bool ProtocolLogin::parseFirstPacket(NetworkMessage& msg)
 		disconnectClient(0x0A, "Account name or password is not correct.");
 		return false;
 	}
+
+	Ban ban;
+	ban.value = account.number;
+
+	ban.type = BAN_ACCOUNT;
+	if(IOBan::getInstance()->getData(ban) && !IOLoginData::getInstance()->hasFlag(account.number, PlayerFlag_CannotBeBanned))
+	{
+		bool deletion = ban.expires < 0;
+		std::string name_ = "Automatic ";
+		if(ban.adminId == 0)
+			name_ += (deletion ? "deletion" : "banishment");
+		else
+			IOLoginData::getInstance()->getNameByGuid(ban.adminId, name_, true);
+
+		char buffer[500 + ban.comment.length()];
+		sprintf(buffer, "Your account has been %s at:\n%s by: %s,\nfor the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.\nYour %s%s.",
+			(deletion ? "deleted" : "banished"), formatDateShort(ban.added).c_str(), name_.c_str(),
+			getReason(ban.reason).c_str(), getAction(ban.action, false).c_str(), ban.comment.c_str(),
+			(deletion ? "account won't be undeleted" : "banishment will be lifted at:\n"),
+			(deletion ? "." : formatDateShort(ban.expires, true).c_str()));
+
+		disconnectClient(0x0A, buffer);
+		return false;
+	}
+
 
 	//Remove premium days
 	IOLoginData::getInstance()->removePremium(account);

@@ -985,35 +985,69 @@ bool TalkAction::banishmentInfo(Creature* creature, const std::string& cmd, cons
 	if(!player)
 		return false;
 
-	std::string param_ = param;
-	trimString(param_);
-
-	uint32_t accountId = atoi(param_.c_str());
-	if(!accountId && IOLoginData::getInstance()->playerExists(param_, true))
-		accountId = IOLoginData::getInstance()->getAccountIdByName(param_);
+	StringVec params = explodeString(param, ",");
+	params[2] = "Account";
+	trimString(params[0]);
 
 	Ban ban;
-	if(IOBan::getInstance()->getData(accountId, ban) && (ban.type == BANTYPE_BANISHMENT || ban.type == BANTYPE_DELETION))
+	ban.type = BAN_ACCOUNT;
+	if(params[1])
 	{
-		bool deletion = (ban.type == BANTYPE_DELETION);
-		std::string name = "Automatic ";
-		if(!ban.adminid)
-			name += (deletion ? "deletion" : "banishment");
+		trimString(params[1]);
+		if(params[0].substr(0, 1) == 'p')
+		{
+			tmp = "Character";
+			ban.type = BAN_PLAYER;
+			ban.param = PLAYERBAN_BANISHMENT;
+
+			ban.value = atoi(params[1].c_str());
+			if(!ban.value)
+				IOLoginData::getInstance()->getGuidByName(ban.value, params[1], true);
+		}
 		else
-			IOLoginData::getInstance()->getNameByGuid(ban.adminid, name, true);
-
-		char buffer[500 + ban.comment.length()];
-		sprintf(buffer, "Account has been %s at:\n%s by: %s,\nfor the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.\n%s%s.",
-			(deletion ? "deleted" : "banished"), formatDateShort(ban.added).c_str(), name.c_str(), getReason(ban.reason).c_str(),
-			getAction(ban.action, false).c_str(), ban.comment.c_str(),
-			(deletion ? "Account won't be undeleted" : "Banishment will be lifted at:\n"),
-			(deletion ? "." : formatDateShort(ban.expires, true).c_str()));
-
-		player->sendFYIBox(buffer);
+		{
+			ban.value = atoi(params[1].c_str());
+			if(!ban.value)
+				IOLoginData::getInstance()->getAccountId(params[1], ban.value);
+		}
 	}
 	else
-		player->sendCancel("That player or account is not banished or deleted.");
+	{
+		ban.value = atoi(params[0].c_str());
+		if(!ban.value)
+			IOLoginData::getInstance()->getAccountId(params[0], ban.value);
+	}
 
+	if(!ban.value)
+	{
+		params[3] = asLowerCaseString(params[2]);
+		player->sendCancel("Invalid " + params[3] + (std::string)" name or id.");
+		return true;
+	}
+
+	if(!IOBan::getInstance()->getData(ban))
+	{
+		player->sendCancel("That player or account is not banished or deleted.");
+		return true;
+	}
+
+	bool deletion = ban.expires < 0;
+	params[3] = "Automatic ";
+	if(!ban.adminId)
+		params[3] += (deletion ? "deletion" : "banishment");
+	else
+		IOLoginData::getInstance()->getNameByGuid(ban.adminId, params[4], true);
+
+	params[4] = "Banishment will be lifted at:\n";
+	if(deletion)
+		params[4] = params[2] + (std::string)" won't be undeleted";
+
+	char buffer[500 + ban.comment.length()];
+	sprintf(buffer, "%s has been %s at:\n%s by: %s,\nfor the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.\n%s%s.",
+		params[2].c_str(), (deletion ? "deleted" : "banished"), formatDateShort(ban.added).c_str(), name.c_str(), getReason(ban.reason).c_str(),
+		getAction(ban.action, false).c_str(), ban.comment.c_str(), params[4].c_str(), (deletion ? "." : formatDateShort(ban.expires, true).c_str()));
+
+	player->sendFYIBox(buffer);
 	return true;
 }
 

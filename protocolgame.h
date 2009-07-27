@@ -64,7 +64,7 @@ class ProtocolGame : public Protocol
 		static const char* protocolName() {return "game protocol";}
 
 		bool login(const std::string& name, uint32_t accnumber, const std::string& password,
-			OperatingSystem_t operatingSystem, uint32_t version, bool gamemasterLogin);
+			OperatingSystem_t operatingSystem, uint16_t version, bool gamemasterLogin);
 		bool logout(bool displayEffect, bool forced, bool executeLogout = true);
 
 		void setPlayer(Player* p);
@@ -75,7 +75,7 @@ class ProtocolGame : public Protocol
 		std::list<uint32_t> knownCreatureList;
 		void checkCreatureAsKnown(uint32_t id, bool& known, uint32_t& removedKnown);
 
-		bool connect(uint32_t playerId);
+		bool connect(uint32_t playerId, OperatingSystem_t operatingSystem, uint16_t version);
 		void disconnect();
 
 		virtual void releaseProtocol();

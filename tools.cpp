@@ -1301,7 +1301,7 @@ std::string getReason(int32_t reasonId)
 
 std::string getAction(ViolationAction_t actionId, bool ipBanishment)
 {
-	std::string action;
+	std::string action = "Unknown";
 	switch(actionId)
 	{
 		case ACTION_NOTATION:
@@ -1309,6 +1309,9 @@ std::string getAction(ViolationAction_t actionId, bool ipBanishment)
 			break;
 		case ACTION_NAMEREPORT:
 			action = "Name Report";
+			break;
+		case ACTION_BANISHMENT:
+			action = "Banishment";
 			break;
 		case ACTION_BANREPORT:
 			action = "Name Report + Banishment";
@@ -1322,12 +1325,20 @@ std::string getAction(ViolationAction_t actionId, bool ipBanishment)
 		case ACTION_STATEMENT:
 			action = "Statement Report";
 			break;
+		//internal use
 		case ACTION_DELETION:
 			action = "Deletion";
 			break;
-		case ACTION_BANISHMENT:
+		case ACTION_NAMELOCK:
+			action = "Name Lock";
+			break;
+		case ACTION_BANLOCK:
+			action = "Name Lock + Banishment";
+			break;
+		case ACTION_BANLOCKFINAL:
+			action = "Name Lock + Banishment + Final Warning";
+			break;
 		default:
-			action = "Banishment";
 			break;
 	}
 

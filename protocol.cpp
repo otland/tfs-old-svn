@@ -20,11 +20,13 @@
 #endif
 
 #include "protocol.h"
-#include "rsa.h"
+#include "scheduler.h"
 
 #include "connection.h"
 #include "outputmessage.h"
-#include "scheduler.h"
+
+#include "rsa.h"
+extern RSA g_RSA;
 
 void Protocol::onSendMessage(OutputMessage_ptr msg)
 {
@@ -181,6 +183,11 @@ bool Protocol::XTEA_decrypt(NetworkMessage& msg)
 	return true;
 }
 
+bool Protocol::RSA_decrypt(NetworkMessage& msg)
+{
+	return RSA_decrypt(&g_RSA, msg);
+}
+
 bool Protocol::RSA_decrypt(RSA* rsa, NetworkMessage& msg)
 {
 	if(msg.getMessageLength() - msg.getReadPos() != 128)
@@ -190,13 +197,11 @@ bool Protocol::RSA_decrypt(RSA* rsa, NetworkMessage& msg)
 	}
 
 	rsa->decrypt((char*)(msg.getBuffer() + msg.getReadPos()), 128);
-	if(msg.GetByte() != 0)
-	{
-		std::cout << "[Warning - Protocol::RSA_decrypt] First byte != 0" << std::endl;
-		return false;
-	}
+	if(!msg.GetByte())
+		return true;
 
-	return true;
+	std::cout << "[Warning - Protocol::RSA_decrypt] First byte != 0" << std::endl;
+	return false;
 }
 
 uint32_t Protocol::getIP() const

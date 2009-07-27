@@ -454,13 +454,14 @@ class Player : public Creature, public Cylinder
 		void addInFightTicks(bool pzLock = false);
 		void addDefaultRegeneration(uint32_t addTicks);
 
-		virtual uint64_t getGainedExperience(Creature* attacker, bool useMultiplier = true);
+		virtual uint64_t getGainedExperience(Creature* attacker);
 
 		//combat event functions
 		virtual void onAddCondition(ConditionType_t type, bool hadCondition);
 		virtual void onAddCombatCondition(ConditionType_t type, bool hadCondition);
 		virtual void onEndCondition(ConditionType_t type);
 		virtual void onCombatRemoveCondition(const Creature* attacker, Condition* condition);
+		virtual void onTickCondition(ConditionType_t type, int32_t interval, bool& _remove);
 		virtual void onAttackedCreature(Creature* target);
 		virtual void onSummonAttackedCreature(Creature* summon, Creature* target);
 		virtual void onAttacked();
@@ -468,8 +469,8 @@ class Player : public Creature, public Cylinder
 		virtual void onSummonAttackedCreatureDrain(Creature* summon, Creature* target, int32_t points);
 		virtual void onTargetCreatureGainHealth(Creature* target, int32_t points);
 		virtual bool onKilledCreature(Creature* target, uint32_t& flags);
-		virtual void onGainExperience(uint64_t gainExp);
-		virtual void onGainSharedExperience(uint64_t gainExp);
+		virtual void onGainExperience(double& gainExp, bool fromMonster, bool multiplied);
+		virtual void onGainSharedExperience(double& gainExp, bool fromMonster, bool multiplied);
 		virtual void onAttackedCreatureBlockHit(Creature* target, BlockType_t blockType);
 		virtual void onBlockHit(BlockType_t blockType);
 		virtual void onChangeZone(ZoneType_t zone);
@@ -695,7 +696,8 @@ class Player : public Creature, public Cylinder
 	protected:
 		void checkTradeState(const Item* item);
 
-		void gainExperience(uint64_t exp);
+		bool gainExperience(double& gainExp, bool fromMonster);
+		bool rateExperience(double& gainExp, bool fromMonster);
 		void updateBaseSpeed()
 		{
 			if(!hasFlag(PlayerFlag_SetMaxSpeed))
