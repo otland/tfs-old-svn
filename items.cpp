@@ -130,7 +130,7 @@ ItemType::~ItemType()
 	delete condition;
 }
 
-Items::Items()//: items(35000)
+Items::Items()
 {
 	this->items = new Array<ItemType*>(16000);
 }
@@ -142,7 +142,6 @@ Items::~Items()
 
 void Items::clear()
 {
-//	this->items.clear();
 	if(this->items)
 		this->items->reset();
 }
@@ -163,12 +162,8 @@ bool Items::reload()
 
 	this->items->reset();
 
-	//this->items.clear();
-
 	loadFromOtb("data/items/items.otb");
-
 	return loadFromXml();
-	//return false;
 }
 
 int32_t Items::loadFromOtb(std::string file)
@@ -380,15 +375,10 @@ int32_t Items::loadFromOtb(std::string file)
 
 bool Items::loadFromXml()
 {
-	/*
-	* TODO: error handling
-	*/
-
 	std::string filename = "data/items/items.xml";
 
 	xmlDocPtr doc = xmlParseFile(filename.c_str());
 
-//	int32_t intValue;
 	std::string strValue;
 	std::string endString;
 
@@ -396,12 +386,9 @@ bool Items::loadFromXml()
 	std::vector<int> endVector;
 
 	if(!doc)
-	{
 		return false;
-	}
 
 	xmlNodePtr root = xmlDocGetRootElement(doc);
-
 	if(xmlStrcmp(root->name,(const xmlChar*)"items") != 0)
 	{
 		xmlFreeDoc(doc);
@@ -416,39 +403,31 @@ bool Items::loadFromXml()
 			if(readXMLString(itemNode, "id", strValue))
 			{
 				intVector = vectorAtoi(explodeString(strValue, ";"));
-
 				size_t vec_size = intVector.size();
 				for(size_t i = 0; i < vec_size; i++)
-				{
 					this->parseItemNode(itemNode, intVector[i]);
-				}
 			}
-			else if (readXMLString(itemNode, "fromid", strValue) && readXMLString(itemNode, "toid", endString))
+			else if(readXMLString(itemNode, "fromid", strValue) && readXMLString(itemNode, "toid", endString))
 			{
 				intVector = vectorAtoi(explodeString(strValue, ";"));
 				endVector = vectorAtoi(explodeString(endString, ";"));
 
-				if (intVector.size() > 0 && intVector.size() == endVector.size())
+				if(intVector.size() > 0 && intVector.size() == endVector.size())
 				{
 					size_t vec_size = intVector.size();
-					for (size_t i = 0; i < vec_size; i++)
+					for(size_t i = 0; i < vec_size; i++)
 					{
-						while (intVector[i] < endVector[i])
-						{
+						while(intVector[i] < endVector[i])
 							parseItemNode(itemNode, intVector[i]++);
-						}
 					}
 				}
 			}
 			else
-			{
 				std::cout << "Warning: [Items::loadFromXml] - No itemid found" << std::endl;
-			}
 		}
 		itemNode = itemNode->next;
 	}
 	xmlFreeDoc(doc);
-
 
 	//Lets do some checks...
 	for(uint32_t i = 0; i < items->size(); ++i)
@@ -461,7 +440,9 @@ bool Items::loadFromXml()
 		//check bed items
 		if((it->transformToFree != 0 || it->transformToOnUse[PLAYERSEX_FEMALE] != 0 
 				|| it->transformToOnUse[PLAYERSEX_MALE] != 0) && it->type != ITEM_TYPE_BED)
+		{
 			std::cout << "Warning: [Items::loadFromXml] Item " << it->id << " is not set as a bed-type." << std::endl;
+		}
 	}
 	return true;
 }
@@ -1093,98 +1074,6 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 					it.abilities.absorbPercent[COMBAT_UNDEFINEDDAMAGE] += intValue;
 			}
-		       /**/
-			else if(tmpStrValue == "increasepercentall")
-			{
-				if(readXMLInteger(itemAttributesNode, "value", intValue))
-				{
-					for(uint32_t i = COMBAT_FIRST; i <= COMBAT_LAST; i++)
-						it.abilities.inflictPercent[i] += intValue;
-				}
-			}
-			else if(tmpStrValue == "increasepercentelements")
-			{
-				if(readXMLInteger(itemAttributesNode, "value", intValue))
-				{
-					it.abilities.inflictPercent[COMBAT_ENERGYDAMAGE] += intValue;
-					it.abilities.inflictPercent[COMBAT_FIREDAMAGE] += intValue;
-					it.abilities.inflictPercent[COMBAT_EARTHDAMAGE] += intValue;
-					it.abilities.inflictPercent[COMBAT_ICEDAMAGE] += intValue;
-				}
-			}
-			else if(tmpStrValue == "increasepercentmagic")
-			{
-				if(readXMLInteger(itemAttributesNode, "value", intValue))
-				{
-					it.abilities.inflictPercent[COMBAT_ENERGYDAMAGE] += intValue;
-					it.abilities.inflictPercent[COMBAT_FIREDAMAGE] += intValue;
-					it.abilities.inflictPercent[COMBAT_EARTHDAMAGE] += intValue;
-					it.abilities.inflictPercent[COMBAT_ICEDAMAGE] += intValue;
-					it.abilities.inflictPercent[COMBAT_HOLYDAMAGE] += intValue;
-					it.abilities.inflictPercent[COMBAT_DEATHDAMAGE] += intValue;
-				}
-			}
-			else if(tmpStrValue == "increasepercentenergy")
-			{
-				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.inflictPercent[COMBAT_ENERGYDAMAGE] += intValue;
-			}
-			else if(tmpStrValue == "increasepercentfire")
-			{
-				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.inflictPercent[COMBAT_FIREDAMAGE] += intValue;
-			}
-			else if(tmpStrValue == "increasepercentpoison" || tmpStrValue == "increasepercentearth")
-			{
-				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.inflictPercent[COMBAT_EARTHDAMAGE] += intValue;
-			}
-			else if(tmpStrValue == "increasepercentice")
-			{
-				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.inflictPercent[COMBAT_ICEDAMAGE] += intValue;
-			}
-			else if(tmpStrValue == "increasepercentholy")
-			{
-				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.inflictPercent[COMBAT_HOLYDAMAGE] += intValue;
-			}
-			else if(tmpStrValue == "increasepercentdeath")
-			{
-				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.inflictPercent[COMBAT_DEATHDAMAGE] += intValue;
-			}
-			else if(tmpStrValue == "increasepercentlifedrain")
-			{
-				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.inflictPercent[COMBAT_LIFEDRAIN] += intValue;
-			}
-			else if(tmpStrValue == "increasepercentmanadrain")
-			{
-				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.inflictPercent[COMBAT_MANADRAIN] += intValue;
-			}
-			else if(tmpStrValue == "increasepercentdrown")
-			{
-				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.inflictPercent[COMBAT_DROWNDAMAGE] += intValue;
-			}
-			else if(tmpStrValue == "increasepercentphysical")
-			{
-				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.inflictPercent[COMBAT_PHYSICALDAMAGE] += intValue;
-			}
-			else if(tmpStrValue == "increasepercenthealing")
-			{
-				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.inflictPercent[COMBAT_HEALING] += intValue;
-			}
-			else if(tmpStrValue == "increasepercentundefined")
-			{
-				if(readXMLInteger(itemAttributesNode, "value", intValue))
-					it.abilities.inflictPercent[COMBAT_UNDEFINEDDAMAGE] += intValue;
-			}
-			/**/
 			else if(tmpStrValue == "suppressdrunk")
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
@@ -1268,9 +1157,7 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 					}
 					*/
 					else
-					{
 						std::cout << "Warning: [Items::loadFromXml] " << "Unknown field value " << strValue << std::endl;
-					}
 
 					if(combatType != COMBAT_NONE)
 					{
@@ -1296,17 +1183,13 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 								if(tmpStrValue == "count")
 								{
 									if(readXMLInteger(fieldAttributesNode, "value", intValue))
-									{
 										intValue = std::max(1, intValue);
-									}
 								}
 
 								if(tmpStrValue == "start")
 								{
 									if(readXMLInteger(fieldAttributesNode, "value", intValue))
-									{
 										intValue = std::max(0, intValue);
-									}
 								}
 
 								if(tmpStrValue == "damage")
@@ -1319,9 +1202,8 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 											std::list<int32_t> damageList;
 											ConditionDamage::generateDamageList(damage, start, damageList);
 
-											for(std::list<int32_t>::iterator it = damageList.begin(); it != damageList.end(); ++it){
+											for(std::list<int32_t>::iterator it = damageList.begin(); it != damageList.end(); ++it)
 												conditionDamage->addDamage(1, ticks, -*it);
-											}
 
 											start = 0;
 										}
@@ -1411,9 +1293,7 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				}
 			}
 			else
-			{
 				std::cout << "Warning: [Items::loadFromXml] Unknown key value " << strValue << std::endl;
-			}
 		}
 		itemAttributesNode = itemAttributesNode->next;
 	}
@@ -1427,33 +1307,24 @@ bool Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 ItemType& Items::getItemType(int32_t id)
 {
 	ItemType* iType = items->getElement(id);
-
-	if(iType){
+	if(iType)
 		return *iType;
-	}
-	else{
-		static ItemType dummyItemType; // use this for invalid ids
 
-		#ifdef __DEBUG__
-		std::cout << "WARNING! unknown itemtypeid " << id << ". using defaults." << std::endl;
-		#endif
-		return dummyItemType;
-	}
+	#ifdef __DEBUG__
+	std::cout << "WARNING! unknown itemtypeid " << id << ". using defaults." << std::endl;
+	#endif
+	static ItemType dummyItemType; // use this for invalid ids
+	return dummyItemType;
 }
 
 const ItemType& Items::getItemType(int32_t id) const
 {
-
 	ItemType* iType = items->getElement(id);
 	if(iType)
-	{
 		return *iType;
-	}
-	else
-	{
-		static ItemType dummyItemType; // use this for invalid ids
-		return dummyItemType;
-	}
+
+	static ItemType dummyItemType; // use this for invalid ids
+	return dummyItemType;
 }
 
 const ItemType& Items::getItemIdByClientId(int32_t spriteId) const

@@ -71,8 +71,6 @@ struct Abilities
 		memset(stats, 0 , sizeof(stats));
 		memset(statsPercent, 0, sizeof(statsPercent));
 
-		memset(inflictPercent, 0, sizeof(inflictPercent));
-
 		speed = 0;
 		manaShield = false;
 		invisible = false;
@@ -96,8 +94,6 @@ struct Abilities
 
 	//damage abilities modifiers
 	int16_t absorbPercent[COMBAT_LAST + 1];
-	int16_t inflictPercent[COMBAT_LAST + 1];
-	
 
 	//stats modifiers
 	int32_t stats[STAT_LAST + 1];
@@ -347,7 +343,7 @@ void Array<A>::addElement(A a, uint32_t pos)
 template<typename A>
 void Array<A>::reset()
 {
-	for(uint32_t i =0; i<m_size; i++)
+	for(uint32_t i = 0; i < m_size; i++)
 	{
 		delete m_data[i];
 		m_data[i] = NULL;
