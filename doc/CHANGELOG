@@ -3,7 +3,7 @@
 		The Forgotten Server
 
 	Version
-		0.2.4
+		0.2.5
 
 	Codenamed
 		"Mystic Spirit"
@@ -20,53 +20,35 @@
 	M = Modified.
 	A = Added.
 
-	M...
-		config.lua
-		The Forgotten Server.exe
-		data/
-			global.lua
-			actions/
-				actions.xml
-				scripts/
-					other/
-						windows.lua
-
-			items/
-				items.otb
-				items.xml
-
-			movements/
-				movements.xml
-
-			XML/
-				outfits.xml
+	M The Forgotten Server.exe
+	M data/global.lua
+	M data/items/items.otb
+	M data/items/items.xml
+	M data/spells/spells.xml
+	A data/spells/scripts/party/enchant.lua
+	A data/spells/scripts/party/heal.lua
+	A data/spells/scripts/party/protect.lua
+	A data/spells/scripts/party/train.lua
+	A data/spells/scripts/support/blood rage.lua
+	A data/spells/scripts/support/charge.lua
+	A data/spells/scripts/support/protector.lua
+	A data/spells/scripts/support/sharpshooter.lua
+	A data/spells/scripts/support/swift foot.lua
 ]
 
 [ Milestone
-	Changed from char array to stringstream in several areas in the code for security reasons.
-	Rewrote guild commands code, not so deep code nesting anymore and a lot of bugs were fixed.
-	Possibility to disable rule violation reports code again, due to possible crashes.
-	/info command will now display account warnings.
-	Extended /newtype looktype range for new 8.5 looktypes.
-	New effects for /ghost command.
-	Fixed a major bug with multiclient check command.
-	Query destination improvements, will now access deeper containers.
-	Server save code improvements.
-	Performance improvements to queries which only fetches a single row (this only applies to queries where the filter isn't unique).
-	Optimized online status updating code.
-	Free premium code fixes.
-	Improved error messages during map load, most of them will now print the position.
-	New Lua functions: isPlayerPzLocked(cid), isDepot(uid)
-	Code cleanup and fixes to Lua functions: doPlayerAddPremiumDays and doPlayerRemovePremiumDays.
-	Fixed a bug with monsters which would cause summons to freeze if a player changed floor during its death delay.
-	NPC walkinterval value will no longer be overwritten by deprecated autowalk.
-	Players with access level will now be able to wear all outfits with all available addons.
-	Excessive Unjustified Killing doesn't give any account warning, so it shouldn't be giving account deletion either if player has enough warnings for that.
-	Protocol 8.5 support:
-		New icons: pigeon (protection zone) & red swords (protection zone-lock).
-		Loot message.
-		Dealt damage message.
-		New looktypes (including wedding outfits).
-		New objects.
-		New doors & windows.
+	Fixed a bug which would cause player to receive multiple banishments for unjustified player killing.
+	Fixed a bug where icons would not be updated properly on login.
+	Corrected text color values, and added a predefined text color for sky blue which is used for ice damage (TEXTCOLOR_SKYBLUE).
+	Added energy race for monsters (RACE_ENERGY).
+	Added the missing spells from protocol 8.4.
+	Players in a party will now receive the green loot message centered in the screen instead of the message in party channel.
+	Messages containing more than 255 characters are now being ignored due to client debug error.
+	Support for 'Yalahar'-stairs, with southalt and eastalt floorchange attribute key in items.xml.
+	Added support for inBackpacks and ignoreCapacity in the source-code, the Lua NPC-system still has to be updated.
+	Minor update to items.otb to be compatible with the recent changes in the client data file.
+	Cleanup teleport and movement related code.
+	Fixed crash during shutdown when not freeing memory (we can't let dispatcher and scheduler threads work when calling exit in the main thread).
+	Fixed a crash with the guild command !revoke.
+	Fixed SQLite errors.
 ]
