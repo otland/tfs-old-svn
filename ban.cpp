@@ -321,7 +321,7 @@ bool IOBan::removeAccountBan(uint32_t account)
 		return false;
 
 	DBQuery query;
-	query << "UPDATE `bans` SET `time` = " << time(NULL) << " WHERE `type` = " << BAN_ACCOUNT << " AND `account` = " << account << " AND `time` > " << time(NULL) << " LIMIT 1;";
+	query << "UPDATE `bans` SET `time` = " << time(NULL) << " WHERE `type` = " << BAN_ACCOUNT << " AND `account` = " << account << " AND `time` > " << time(NULL) << db->getUpdateQueryLimit() << ";";
 	if(!db->executeQuery(query))
 		return false;
 

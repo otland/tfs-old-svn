@@ -27,7 +27,6 @@
 #include "game.h"
 
 extern Game g_game;
-extern RSA* g_otservRSA;
 
 #ifdef __ENABLE_SERVER_DIAGNOSTIC__
 uint32_t ProtocolOld::protocolOldCount = 0;
@@ -69,7 +68,7 @@ bool ProtocolOld::parseFirstPacket(NetworkMessage& msg)
 	if(version <= 760)
 		disconnectClient(0x0A, "Only clients with protocol 8.5 allowed!");
 
-	if(!RSA_decrypt(g_otservRSA, msg))
+	if(!RSA_decrypt(msg))
 	{
 		getConnection()->closeConnection();
 		return false;

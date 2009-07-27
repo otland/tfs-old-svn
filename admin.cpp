@@ -117,6 +117,12 @@ void ProtocolAdmin::deleteProtocolTask()
 
 void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 {
+	if(g_game.getGameState() == GAME_STATE_SHUTDOWN)
+	{
+		getConnection()->closeConnection();
+		return;
+	}
+
 	uint8_t recvbyte = msg.GetByte();
 
 	OutputMessagePool* outputPool = OutputMessagePool::getInstance();

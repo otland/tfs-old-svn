@@ -52,11 +52,6 @@
 #include "ioguild.h"
 #include "quests.h"
 
-#ifdef __EXCEPTION_TRACER__
-#include "exception.h"
-extern OTSYS_THREAD_LOCKVAR maploadlock;
-#endif
-
 extern ConfigManager g_config;
 extern Actions* g_actions;
 extern Commands commands;
@@ -187,8 +182,11 @@ void Game::setGameState(GameState_t newState)
 					g_dispatcher.stop();
 				}
 				else
+				{
+					g_scheduler.shutdown();
+					g_dispatcher.shutdown();
 					exit(1);
-
+				}
 				break;
 			}
 

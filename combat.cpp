@@ -945,7 +945,7 @@ void Combat::doCombatDefault(Creature* caster, Creature* target, const CombatPar
 	}
 }
 
-//**********************************************************
+//**********************************************************//
 
 void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, bool useCharges) const
 {
@@ -1010,7 +1010,7 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 
 		int32_t size0 = lua_gettop(L);
 		if(lua_pcall(L, parameters, 2 /*nReturnValues*/, 0) != 0)
-			LuaScriptInterface::reportError(NULL, std::string(LuaScriptInterface::popString(L)));
+			LuaScriptInterface::reportError(NULL, LuaScriptInterface::popString(L));
 		else
 		{
 			max = LuaScriptInterface::popNumber(L);
@@ -1030,7 +1030,7 @@ void ValueCallback::getMinMaxValues(Player* player, int32_t& min, int32_t& max, 
 	}
 }
 
-//**********************************************************
+//**********************************************************//
 
 void TileCallback::onTileCombat(Creature* creature, Tile* tile) const
 {
@@ -1063,7 +1063,7 @@ void TileCallback::onTileCombat(Creature* creature, Tile* tile) const
 	}
 }
 
-//**********************************************************
+//**********************************************************//
 
 void TargetCallback::onTargetCombat(Creature* creature, Creature* target) const
 {
@@ -1088,7 +1088,7 @@ void TargetCallback::onTargetCombat(Creature* creature, Creature* target) const
 
 		int32_t size0 = lua_gettop(L);
 		if(lua_pcall(L, 2, 0 /*nReturnValues*/, 0) != 0)
-			LuaScriptInterface::reportError(NULL, std::string(LuaScriptInterface::popString(L)));
+			LuaScriptInterface::reportError(NULL, LuaScriptInterface::popString(L));
 
 		if((lua_gettop(L) + 2 /*nParams*/  + 1) != size0)
 			LuaScriptInterface::reportError(NULL, "Stack size changed!");
@@ -1103,7 +1103,7 @@ void TargetCallback::onTargetCombat(Creature* creature, Creature* target) const
 	}
 }
 
-//**********************************************************
+//**********************************************************//
 
 void AreaCombat::clear()
 {
@@ -1415,7 +1415,7 @@ void AreaCombat::setupExtArea(const std::list<uint32_t>& list, uint32_t rows)
 	areas[SOUTHEAST] = seArea;
 }
 
-//**********************************************************
+//**********************************************************//
 
 void MagicField::onStepInField(Creature* creature)
 {

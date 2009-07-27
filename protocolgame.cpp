@@ -52,7 +52,6 @@
 extern Game g_game;
 extern ConfigManager g_config;
 extern Actions actions;
-extern RSA* g_otservRSA;
 extern Ban g_bans;
 extern CreatureEvents* g_creatureEvents;
 Chat g_chat;
@@ -367,7 +366,7 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 	uint16_t clientos = msg.GetU16();
 	uint16_t version = msg.GetU16();
 
-	if(!RSA_decrypt(g_otservRSA, msg))
+	if(!RSA_decrypt(msg))
 	{
 		getConnection()->closeConnection();
 		return false;
@@ -503,7 +502,7 @@ void ProtocolGame::disconnect()
 
 void ProtocolGame::parsePacket(NetworkMessage &msg)
 {
-	if(!m_acceptPackets || msg.getMessageLength() <= 0 || !player)
+	if(!player || !m_acceptPackets || g_game.getGameState() == GAME_STATE_SHUTDOWN || msg.getMessageLength() <= 0)
 		return;
 
 	uint8_t recvbyte = msg.GetByte();
@@ -2729,7 +2728,7 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creatur
 		return;
 
 	msg->AddByte(0xAA);
-	msg->AddU32(0x00000000);
+	msg->AddU32(0x00);
 
 	//Do not add name for anonymous channel talk
 	if(type != SPEAK_CHANNEL_R2)
@@ -2748,10 +2747,10 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage* msg, const Creature* creatur
 		if(type != SPEAK_RVR_ANSWER && speaker->getName() != "Account Manager")
 			msg->AddU16(speaker->getPlayerInfo(PLAYERINFO_LEVEL));
 		else
-			msg->AddU16(0x0000);
+			msg->AddU16(0x00);
 	}
 	else
-		msg->AddU16(0x0000);
+		msg->AddU16(0x00);
 
 	msg->AddByte(type);
 	switch(type)
