@@ -79,13 +79,13 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p, bool override)
 	if(!talkAction)
 		return false;
 
-	std::string tmp = ";";
-	readXMLString(p, "seperator", tmp);
-	if(tmp.empty())
-		tmp = ";";
+	std::string sep = ";";
+	readXMLString(p, "separator", sep);
+	if(sep.empty())
+		sep = ";";
 
 	bool success = true;
-	StringVec strVector = explodeString(talkAction->getWords(), tmp);
+	StringVec strVector = explodeString(talkAction->getWords(), sep);
 	for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)
 	{
 		trimString(*it);
