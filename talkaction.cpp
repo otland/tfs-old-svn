@@ -79,21 +79,22 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p, bool override)
 	if(!talkAction)
 		return false;
 
-	bool success = true;
-	std::string sep;
-	if(!readXMLString(p, "separator", sep))
-		sep = ";";
+	std::string tmp = ";";
+	readXMLString(p, "seperator", tmp);
+	if(tmp.empty())
+		tmp = ";";
 
-	StringVec strVector = explodeString(talkAction->getWords(), sep);
+	bool success = true;
+	StringVec strVector = explodeString(talkAction->getWords(), tmp);
 	for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)
 	{
-		std::string trimmed = trimString((*it));
-		TalkActionsMap::iterator tit = talksMap.find(trimmed);
+		trimString(*it);
+		TalkActionsMap::iterator tit = talksMap.find(*it);
 		if(tit != talksMap.end())
 		{
 			if(!override)
 			{
-				std::cout << "[Warning - TalkAction::configureEvent] Duplicate registered talkaction with words: " << trimmed << std::endl;
+				std::cout << "[Warning - TalkAction::configureEvent] Duplicate registered talkaction with words: " << (*it) << std::endl;
 				success = false;
 			}
 			else
@@ -101,7 +102,7 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p, bool override)
 		}
 
 		if(success)
-			talksMap[trimmed] = new TalkAction(talkAction);
+			talksMap[(*it)] = new TalkAction(talkAction);
 	}
 
 	delete talkAction;

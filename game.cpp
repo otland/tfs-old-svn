@@ -53,15 +53,8 @@
 
 #include "vocation.h"
 #include "group.h"
-
 #include "tasks.h"
-#ifdef __EXCEPTION_TRACER__
-#include "exception.h"
-#endif
 
-#ifdef __EXCEPTION_TRACER__
-extern OTSYS_THREAD_LOCKVAR maploadlock;
-#endif
 extern ConfigManager g_config;
 extern Actions* g_actions;
 extern Monsters g_monsters;
