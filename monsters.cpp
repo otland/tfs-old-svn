@@ -495,18 +495,11 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 				CONDITIONID_COMBAT, conditionType, duration)))
 			{
 				condition->setFormulaVars((speedChange / 1000.), 0, (speedChange / 1000.), 0);
-				combat->setCondition(condition);
-
-				combat->setParam(COMBATPARAM_AGGRESSIVE, aggressive);
 				if(outfit)
-				{
-					if(ConditionOutfit* subCondition = dynamic_cast<ConditionOutfit*>(Condition::createCondition(
-						CONDITIONID_COMBAT, CONDITION_OUTFIT, duration)))
-					{
-						condition->addOutfit(outfit);
-						combat->setCondition(condition);
-					}
-				}
+					condition->addOutfit(outfit);
+
+				combat->setCondition(condition);
+				combat->setParam(COMBATPARAM_AGGRESSIVE, aggressive);
 			}
 		}
 		else if(tmpName == "outfit")
