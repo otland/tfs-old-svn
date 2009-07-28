@@ -896,7 +896,7 @@ bool Player::canSeeCreature(const Creature* creature) const
 
 bool Player::canWalkthrough(const Creature* creature) const
 {
-	if(creature->isGhost() || creature->isWalkable())
+	if(Creature::canWalkthrough(creature))
 		return true;
 
 	const Player* player = creature->getPlayer();
