@@ -2340,8 +2340,8 @@ void LuaScriptInterface::registerFunctions()
 	//sha1(string)
 	lua_register(m_luaState, "sha1", LuaScriptInterface::luaHashSHA1);
 
-	//doPrint(text)
-	lua_register(m_luaState, "doPrint", LuaScriptInterface::luaDoPrint);
+	//print(text)
+	lua_register(m_luaState, "print", LuaScriptInterface::luaPrint);
 
 	//db table
 	luaL_register(m_luaState, "db", LuaScriptInterface::luaDatabaseReg);
@@ -2370,11 +2370,11 @@ const luaL_Reg LuaScriptInterface::luaDatabaseReg[] =
 	//db.lastInsertId()
 	{"lastInsertId", LuaScriptInterface::luaDatabaseLastInsertId},
 
-	//db.stringComparisonOperator()
-	{"stringComparisonOperator", LuaScriptInterface::luaDatabaseStringComparisonOperator},
+	//db.stringComparison()
+	{"stringComparison", LuaScriptInterface::luaDatabaseStringComparison},
 
-	//db.updateQueryLimitOperator
-	{"updateQueryLimitOperator", LuaScriptInterface::luaDatabaseUpdateQueryLimitOperator},
+	//db.updateLimiter()
+	{"updateLimiter", LuaScriptInterface::luaDatabaseUpdateLimiter},
 
 	{NULL,NULL}
 };
@@ -10144,7 +10144,7 @@ int32_t LuaScriptInterface::luaHashSHA1(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoPrint(lua_State* L)
+int32_t LuaScriptInterface::luaPrint(lua_State* L)
 {
 	std::cout << popString(L) << std::endl;
 	return 1;
@@ -10198,16 +10198,16 @@ int32_t LuaScriptInterface::luaDatabaseLastInsertId(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDatabaseStringComparisonOperator(lua_State* L)
+int32_t LuaScriptInterface::luaDatabaseStringComparison(lua_State* L)
 {
-	//db.stringComparisonOperator()
-	lua_pushstring(L, Database::getInstance()->getStringComparisonOperator().c_str());
+	//db.stringComparison()
+	lua_pushstring(L, Database::getInstance()->getStringComparison().c_str());
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDatabaseUpdateQueryLimitOperator(lua_State* L)
+int32_t LuaScriptInterface::luaDatabaseUpdateLimiter(lua_State* L)
 {
-	//db.updateQueryLimitOperator()
+	//db.updateLimiter()
 	lua_pushstring(L, Database::getInstance()->getUpdateLimiter().c_str());
 	return 1;
 }

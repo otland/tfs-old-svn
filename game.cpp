@@ -2262,8 +2262,8 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 			return false;
 		}
 
-		internalTeleport(player, pos, false);
 		internalCreatureTurn(player, getDirectionTo(player->getPosition(), pos, false));
+		internalTeleport(player, pos, false);
 		return true;
 	}
 

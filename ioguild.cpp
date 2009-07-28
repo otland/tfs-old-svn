@@ -31,7 +31,7 @@ bool IOGuild::getGuildIdByName(uint32_t& guildId, const std::string& guildName)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `guilds` WHERE `name` " << db->getStringComparisonOperator() << " " << db->escapeString(guildName) << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " LIMIT 1;";
+	query << "SELECT `id` FROM `guilds` WHERE `name` " << db->getStringComparison() << " " << db->escapeString(guildName) << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -90,7 +90,7 @@ bool IOGuild::getRankIdByGuildIdAndName(uint32_t &rankId, const std::string& ran
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `name` " << db->getStringComparisonOperator() << " " << db->escapeString(rankName) << " LIMIT 1;";
+	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `name` " << db->getStringComparison() << " " << db->escapeString(rankName) << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -135,7 +135,7 @@ bool IOGuild::rankNameExists(std::string rankName, uint32_t guildId)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `name` " << db->getStringComparisonOperator() << " " << db->escapeString(rankName) << " LIMIT 1;";
+	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `name` " << db->getStringComparison() << " " << db->escapeString(rankName) << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -149,7 +149,7 @@ bool IOGuild::changeRankName(std::string oldRankName, std::string newRankName, u
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `name` " << db->getStringComparisonOperator() << " " << db->escapeString(oldRankName) << " LIMIT 1;";
+	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `name` " << db->getStringComparison() << " " << db->escapeString(oldRankName) << " LIMIT 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 

@@ -179,7 +179,7 @@ class _Database
 		*
 		* @return the case insensitive operator
 		*/
-		DATABASE_VIRTUAL std::string getStringComparisonOperator() {return "=";}
+		DATABASE_VIRTUAL std::string getStringComparison() {return "=";}
 		DATABASE_VIRTUAL std::string getUpdateLimiter() {return " LIMIT 1";}
 
 		/**

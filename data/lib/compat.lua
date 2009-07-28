@@ -21,6 +21,8 @@ CONDITION_PARAM_STAT_MAXMANAPOINTSPERCENT = CONDITION_PARAM_STAT_MAXMANAPERCENT
 CONDITION_PARAM_STAT_SOULPOINTSPERCENT = CONDITION_PARAM_STAT_SOULPERCENT
 CONDITION_PARAM_STAT_MAGICPOINTSPERCENT = CONDITION_PARAM_STAT_MAGICLEVELPERCENT
 
+SKILLS = SKILL_NAMES
+
 table.getPos = table.find
 doSetCreatureDropLoot = doCreatureSetDropLoot
 doPlayerSay = doCreatureSay
@@ -81,8 +83,8 @@ setPlayerBalance = doPlayerSetBalance
 doAddMapMark = doPlayerAddMapMark
 doSendTutorial = doPlayerSendTutorial
 getWaypointsList = getWaypointList
-SKILLS = SKILL_NAMES
-print = doPrint
+db.updateQueryLimitOperator = db.updateLimiter
+db.stringComparisonOperator = db.stringComparison
 
 PlayerFlag_CannotUseCombat = 0
 PlayerFlag_CannotAttackPlayer = 1
