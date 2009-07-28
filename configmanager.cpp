@@ -276,6 +276,7 @@ bool ConfigManager::load()
 	m_confBool[USE_BLACK_SKULL] = getGlobalBool("useBlackSkull", "no");
 	m_confNumber[LOOT_MESSAGE] = getGlobalNumber("monsterLootMessage", 3);
 	m_confNumber[NAME_REPORT_TYPE] = getGlobalNumber("violationNameReportActionType", 2);
+	m_confBool[PROTECTED_WALKABLE] = getGlobalBool("walkthroughProtected", "no");
 
 	m_loaded = true;
 	return true;

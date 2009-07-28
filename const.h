@@ -531,6 +531,7 @@ enum PlayerCustomFlags
 	PlayerCustomFlag_CanTurnhop,				//2^21 = 2097152
 	PlayerCustomFlag_IgnoreHouseRent,			//2^22 = 4194304
 	PlayerCustomFlag_CanWearAllAddons,			//2^23 = 8388608
+	PlayerCustomFlag_IsWalkable,				//2^24 = 16777216
 
 	PlayerCustomFlag_LastFlag
 };

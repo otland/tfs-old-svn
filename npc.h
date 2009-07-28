@@ -393,6 +393,9 @@ class Npc : public Creature
 		void addList() {listNpc.addList(this);}
 
 		virtual bool isPushable() const {return false;}
+		virtual bool isAttackable() const {return attackable;}
+		virtual bool isWalkable() const {return walkable;}
+
 		virtual bool canSee(const Position& pos) const;
 
 		bool isLoaded() {return loaded;}
@@ -429,7 +432,6 @@ class Npc : public Creature
 
 		bool isImmune(CombatType_t type) const {return true;}
 		bool isImmune(ConditionType_t type) const {return true;}
-		virtual bool isAttackable() const {return attackable;}
 
 		virtual std::string getDescription(int32_t lookDistance) const {return nameDescription + ".";}
 		virtual bool getNextStep(Direction& dir, uint32_t& flags);
@@ -470,7 +472,7 @@ class Npc : public Creature
 		uint32_t walkTicks;
 		std::string name, nameDescription, m_filename;
 		int32_t talkRadius, idleTime, idleInterval, focusCreature;
-		bool floorChange, attackable, isIdle, hasBusyReply, hasScriptedFocus, defaultPublic;
+		bool floorChange, attackable, walkable, isIdle, hasBusyReply, hasScriptedFocus, defaultPublic;
 		int64_t lastVoice;
 
 		typedef std::list<Player*> ShopPlayerList;

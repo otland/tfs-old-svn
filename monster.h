@@ -71,6 +71,7 @@ class Monster : public Creature
 		bool canPushItems() const {return mType->canPushItems;}
 		bool canPushCreatures() const {return mType->canPushCreatures;}
 		bool isHostile() const {return mType->isHostile;}
+		virtual bool isWalkable() const {return mType->isWalkable;}
 		virtual bool canSeeInvisibility() const {return Creature::isImmune(CONDITION_INVISIBLE);}
 		uint32_t getManaCost() const {return mType->manaCost;}
 

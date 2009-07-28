@@ -894,6 +894,20 @@ bool Player::canSeeCreature(const Creature* creature) const
 	return !creature->isInvisible() || canSeeInvisibility();
 }
 
+bool Player::canWalkthrough(const Creature* creature) const
+{
+	if(creature->isGhost() || creature->isWalkable())
+		return true;
+
+	const Player* player = creature->getPlayer();
+	if(!player)
+		return false;
+
+	int32_t protection = g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
+	return g_config.getBool(ConfigManager::PROTECTED_WALKABLE) &&
+		level >= protection && player->getLevel() < protection;
+}
+
 Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
 {
 	DepotMap::iterator it = depots.find(depotId);

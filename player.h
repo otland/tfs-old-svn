@@ -252,7 +252,8 @@ class Player : public Creature, public Cylinder
 		void setGroup(Group* newGroup);
 		Group* getGroup() const {return group;}
 
-		bool isGhost() const {return hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE) || hasFlag(PlayerFlag_CannotBeSeen);}
+		virtual bool isGhost() const {return hasCondition(CONDITION_GAMEMASTER, GAMEMASTER_INVISIBLE) || hasFlag(PlayerFlag_CannotBeSeen);}
+		virtual bool isWalkable() const {return hasCustomFlag(PlayerCustomFlag_IsWalkable);}
 
 		void switchSaving() {saving = !saving;}
 		bool isSaving() const {return saving;}
@@ -345,6 +346,8 @@ class Player : public Creature, public Cylinder
 
 		virtual bool canSee(const Position& pos) const;
 		virtual bool canSeeCreature(const Creature* creature) const;
+		virtual bool canWalkthrough(const Creature* creature) const;
+
 		virtual bool canSeeInvisibility() const {return hasFlag(PlayerFlag_CanSenseInvisibility);}
 
 		virtual RaceType_t getRace() const {return RACE_BLOOD;}

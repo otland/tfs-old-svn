@@ -199,6 +199,9 @@ bool Npc::loadFromXml(const std::string& filename)
 	if(readXMLString(root, "attackable", strValue))
 		attackable = booleanString(strValue);
 
+	if(readXMLString(root, "walkable", strValue))
+		walkable = booleanString(strValue);
+
 	if(readXMLInteger(root, "autowalk", intValue))
 	{
 		std::cout << "[Notice - Npc::Npc] NPC Name: " << name << " - autowalk has been deprecated, use walkinterval." << std::endl;

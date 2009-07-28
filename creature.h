@@ -191,6 +191,7 @@ class Creature : public AutoID, virtual public Thing
 
 		virtual bool canSee(const Position& pos) const;
 		virtual bool canSeeCreature(const Creature* creature) const;
+		virtual bool canWalkthrough(const Creature* creature) const {return false;}
 
 		virtual RaceType_t getRace() const {return RACE_NONE;}
 		Direction getDirection() const {return direction;}
@@ -246,6 +247,8 @@ class Creature : public AutoID, virtual public Thing
 
 		bool isInvisible() const {return hasCondition(CONDITION_INVISIBLE, -1, false);}
 		virtual bool isGhost() const {return false;}
+		virtual bool isWalkable() const {return false;}
+
 		ZoneType_t getZone() const {return getTile()->getZone();}
 
 		//walk functions

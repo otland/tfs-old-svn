@@ -546,16 +546,16 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			{
 				if(creatures)
 				{
-					Creature* creature;
+					Creature* tmp = NULL;
 					for(uint32_t i = 0; i < creatures->size(); ++i)
 					{
-						creature = creatures->at(i);
-						if(creature->getPlayer() && creature->getPlayer()->isGhost())
+						tmp = creatures->at(i);
+						if(creature->canWalkthrough(tmp))
 							continue;
 
-						if(!creature->getMonster() || !creature->isPushable() ||
-							(creature->getMonster()->isSummon() &&
-							creature->getMonster()->getMaster()->getPlayer()))
+						if(!tmp->getMonster() || !tmp->isPushable() ||
+							(tmp->getMonster()->isSummon() &&
+							tmp->getMonster()->isPlayerSummon()))
 							return RET_NOTPOSSIBLE;
 					}
 				}
@@ -564,7 +564,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			{
 				for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
 				{
-					if(!(*cit)->getPlayer() || !(*cit)->getPlayer()->isGhost())
+					if(!creature->canWalkthrough(*cit))
 						return RET_NOTENOUGHROOM;
 				}
 			}
@@ -606,7 +606,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 			{
 				for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
 				{
-					if(!(*cit)->getPlayer() || !(*cit)->getPlayer()->isGhost())
+					if(!creature->canWalkthrough(*cit))
 						return RET_NOTENOUGHROOM; //RET_NOTPOSSIBLE
 				}
 			}
@@ -630,7 +630,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 		{
 			for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
 			{
-				if(!(*cit)->getPlayer() || !(*cit)->getPlayer()->isGhost())
+				if(!creature->canWalkthrough(*cit))
 					return RET_NOTENOUGHROOM;
 			}
 		}
@@ -692,7 +692,7 @@ ReturnValue Tile::__queryAdd(int32_t index, const Thing* thing, uint32_t count,
 		{
 			for(CreatureVector::const_iterator cit = creatures->begin(); cit != creatures->end(); ++cit)
 			{
-				if(!(*cit)->getPlayer() || !(*cit)->getPlayer()->isGhost())
+				if(!(*cit)->isGhost())
 					return RET_NOTENOUGHROOM;
 			}
 		}
