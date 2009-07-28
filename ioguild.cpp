@@ -157,7 +157,7 @@ bool IOGuild::changeRankName(std::string oldRankName, std::string newRankName, u
 	result->free();
 
 	query.str("");
-	query << "UPDATE `guild_ranks` SET `name` = " << db->escapeString(newRankName) << " WHERE `id` = " << rankId << " AND `guild_id` = " << guildId << db->getUpdateQueryLimitOperator() << ";";
+	query << "UPDATE `guild_ranks` SET `name` = " << db->escapeString(newRankName) << " WHERE `id` = " << rankId << " AND `guild_id` = " << guildId << db->getUpdateLimiter();
 	if(!db->executeQuery(query.str()))
 		return false;
 
@@ -217,7 +217,7 @@ bool IOGuild::joinGuild(Player* player, uint32_t guildId, bool creation/* = fals
 	}
 
 	query.str("");
-	query << "UPDATE `players` SET `rank_id` = " << rankId << " WHERE `id` = " << player->getGUID() << db->getUpdateQueryLimitOperator() << ";";
+	query << "UPDATE `players` SET `rank_id` = " << rankId << " WHERE `id` = " << player->getGUID() << db->getUpdateLimiter();
 	if(!db->executeQuery(query.str()))
 		return false;
 
@@ -241,7 +241,7 @@ bool IOGuild::disbandGuild(uint32_t guildId)
 	Database* db = Database::getInstance();
 
 	DBQuery query;
-	query << "UPDATE `players` SET `rank_id` = '' AND `guildnick` = '' WHERE `rank_id` = " << getRankIdByGuildIdAndLevel(guildId, 3) << " OR rank_id = " << getRankIdByGuildIdAndLevel(guildId, 2) << " OR rank_id = " << getRankIdByGuildIdAndLevel(guildId, 1) << ";";
+	query << "UPDATE `players` SET `rank_id` = '' AND `guildnick` = '' WHERE `rank_id` = " << getRankIdByGuildIdAndLevel(guildId, 3) << " OR rank_id = " << getRankIdByGuildIdAndLevel(guildId, 2) << " OR rank_id = " << getRankIdByGuildIdAndLevel(guildId, 1);
 	if(!db->executeQuery(query.str()))
 		return false;
 
@@ -352,7 +352,7 @@ bool IOGuild::setGuildLevel(uint32_t guid, GuildLevel_t level)
 		return false;
 
 	query.str("");
-	query << "UPDATE `players` SET `rank_id` = " << result->getDataInt("id") << " WHERE `id` = " << guid;
+	query << "UPDATE `players` SET `rank_id` = " << result->getDataInt("id") << " WHERE `id` = " << guid << db->getUpdateLimiter();
 	result->free();
 	return db->executeQuery(query.str());
 }
@@ -361,7 +361,7 @@ bool IOGuild::updateOwnerId(uint32_t guildId, uint32_t guid)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `guilds` SET `ownerid` = " << guid << " WHERE `id` = " << guildId << db->getUpdateQueryLimitOperator() << ";";
+	query << "UPDATE `guilds` SET `ownerid` = " << guid << " WHERE `id` = " << guildId << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }
 
@@ -369,7 +369,7 @@ bool IOGuild::setGuildNick(uint32_t guid, std::string guildNick)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `players` SET `guildnick` = " << db->escapeString(guildNick) << " WHERE `id` = " << guid << db->getUpdateQueryLimitOperator() << ";";
+	query << "UPDATE `players` SET `guildnick` = " << db->escapeString(guildNick) << " WHERE `id` = " << guid << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }
 
@@ -377,7 +377,7 @@ bool IOGuild::setMotd(uint32_t guildId, std::string newMotd)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `guilds` SET `motd` = " << db->escapeString(newMotd) << " WHERE `id` = " << guildId << db->getUpdateQueryLimitOperator() << ";";
+	query << "UPDATE `guilds` SET `motd` = " << db->escapeString(newMotd) << " WHERE `id` = " << guildId << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }
 

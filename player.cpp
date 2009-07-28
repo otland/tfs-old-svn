@@ -1385,14 +1385,14 @@ void Player::onCreatureAppear(const Creature* creature)
 			else
 				rated = 0;
 
-			addStamina(period - rated);
+			useStamina(period - rated);
 			if(rated > 0)
 			{
 				tmp = (int64_t)std::ceil((double)rated / g_config.getDouble(ConfigManager::RATE_STAMINA_THRESHOLD));
 				if(stamina + tmp > STAMINA_MAX)
 					tmp = STAMINA_MAX;
 
-				addStamina(tmp);
+				useStamina(tmp);
 			}
 
 			sendStats();
@@ -3306,7 +3306,7 @@ uint64_t Player::getGainedExperience(Creature* attacker)
 	if(!skillLoss)
 		return 0;
 
-	double rate = g_config.getNumber(ConfigManager::RATE_PVP_EXPERIENCE)
+	double rate = g_config.getNumber(ConfigManager::RATE_PVP_EXPERIENCE);
 	if(rate <= 0)
 		return 0;
 
@@ -3524,7 +3524,7 @@ void Player::onTickCondition(ConditionType_t type, int32_t interval, bool& _remo
 {
 	Creature::onTickCondition(type, interval, _remove);
 	if(type == CONDITION_HUNTING)
-		removeStamina(interval * g_config.getNumber(ConfigManager::RATE_STAMINA_LOSS));
+		useStamina(-(interval * g_config.getNumber(ConfigManager::RATE_STAMINA_LOSS)));
 }
 
 void Player::onAttackedCreature(Creature* target)
@@ -3699,7 +3699,7 @@ bool Player::rateExperience(double& gainExp, bool fromMonster)
 		return true;
 
 	gainExp *= rates[SKILL__LEVEL] * g_game.getExperienceStage(level,
-		vocation->getExperienceMultiplier()));
+		vocation->getExperienceMultiplier());
 	if(!hasFlag(PlayerFlag_HasInfiniteStamina))
 	{
 		int32_t minutes = getStaminaMinutes();
@@ -3975,7 +3975,7 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 			return true;
 
 		if(!IOBan::getInstance()->addAccountBanishment(accountId, (now + g_config.getNumber(
-			ConfigManager::BAN_LENGTH)), 20, ACTION_BANISHMENT, "Unjustified player killing.", 0, player->getID()))
+			ConfigManager::BAN_LENGTH)), 20, ACTION_BANISHMENT, "Unjustified player killing.", 0, getID()))
 			return true;
 
 		sendTextMessage(MSG_INFO_DESCR, "You have been banished.");

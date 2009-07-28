@@ -280,15 +280,11 @@ class Player : public Creature, public Cylinder
 		PlayerSex_t getSex() const {return sex;}
 		void setSex(PlayerSex_t);
 
-		uint64_t getStamina() const {return hasFlag(PlayerFlag_HasInfiniteStamina)
-			? STAMINA_MAX : stamina;}
-		void setStamina(uint64_t _stamina) {stamina = std::min(
-			(uint64_t)STAMINA_MAX, _stamina);}
-		uint32_t getStaminaMinutes() const {return (uint32_t)getStamina() / STAMINA_MULTIPLIER;}
-		void setStaminaMinutes(uint32_t _stamina) {setStamina(_stamina * STAMINA_MULTIPLIER);}
-		void addStamina(int64_t value) {stamina = std::min((int64_t)STAMINA_MAX,
-			(int64_t)std::max((int64_t)0, int64_t(stamina + value)));}
-		void removeStamina(int64_t value) {addStamina(-value);}
+		uint64_t getStamina() const {return hasFlag(PlayerFlag_HasInfiniteStamina) ? STAMINA_MAX : stamina;}
+		void setStamina(uint64_t value) {stamina = std::min((uint64_t)STAMINA_MAX, (uint64_t)std::max((uint64_t)0, value));}
+		uint32_t getStaminaMinutes() const {return (uint32_t)(getStamina() / (uint64_t)STAMINA_MULTIPLIER);}
+		void setStaminaMinutes(uint32_t value) {setStamina((uint64_t)(value * STAMINA_MULTIPLIER));}
+		void useStamina(int64_t value) {stamina = std::min((int64_t)STAMINA_MAX, (int64_t)std::max((int64_t)0, ((int64_t)stamina + value)));}
 		uint64_t getSpentStamina() {return (uint64_t)STAMINA_MAX - stamina;}
 
 		int64_t getLastLogin() const {return lastLogin;}

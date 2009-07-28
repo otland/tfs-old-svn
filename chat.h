@@ -22,12 +22,8 @@
 
 #include "const.h"
 #include "party.h"
+
 class Player;
-
-typedef std::map<uint32_t, Player*> UsersMap;
-typedef std::map<uint32_t, std::string> StatementMap;
-typedef std::list<uint32_t> InviteList;
-
 enum ChannelFlags_t
 {
 	CHANNELFLAG_NONE = 0,
@@ -35,6 +31,9 @@ enum ChannelFlags_t
 	CHANNELFLAG_ACTIVE = 1 << 1,
 	CHANNELFLAG_LOGGED = 1 << 2,
 };
+
+typedef std::map<uint32_t, Player*> UsersMap;
+typedef std::list<uint32_t> InviteList;
 
 class ChatChannel
 {
@@ -112,11 +111,12 @@ class PrivateChatChannel : public ChatChannel
 };
 
 typedef std::list<ChatChannel*> ChannelList;
+typedef std::map<uint32_t, std::string> StatementMap;
 
 class Chat
 {
 	public:
-		Chat(): dummyPrivate(NULL), partyName("Party") {}
+		Chat(): statement(0), dummyPrivate(NULL), partyName("Party") {}
 		virtual ~Chat();
 
 		bool reload();
@@ -140,8 +140,8 @@ class Chat
 
 		PrivateChatChannel* getPrivateChannel(Player* player);
 
-		static uint32_t statement;
-		static StatementMap statementMap;
+		uint32_t statement;
+		StatementMap statementMap;
 
 	private:
 		void clear();

@@ -439,9 +439,8 @@ class LuaScriptInterface
 
 		//bans
 		static int32_t luaIsIpBanished(lua_State* L);
-		static int32_t luaIsPlayerNamelocked(lua_State* L);
+		static int32_t luaIsPlayerBanished(lua_State* L);
 		static int32_t luaIsAccountBanished(lua_State* L);
-		static int32_t luaIsAccountDeleted(lua_State* L);
 		static int32_t luaDoAddIpBanishment(lua_State* L);
 		static int32_t luaDoAddPlayerBanishment(lua_State* L);
 		static int32_t luaDoAddAccountBanishment(lua_State* L);

@@ -468,36 +468,45 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			combat->setParam(COMBATPARAM_COMBATTYPE, COMBAT_UNDEFINEDDAMAGE);
 		else if(tmpName == "speed")
 		{
-			int32_t speedChange = 0, duration = 10000, aggressive = 2;
+			int32_t outfit = 0, speedChange = 0, aggressive = 2, duration = 10000;
 			if(readXMLInteger(node, "duration", intValue))
 				duration = intValue;
 
 			if(readXMLInteger(node, "self", intValue))
-				aggressive = (intValue == 1);
+				aggressive = intValue;
 
 			if(readXMLInteger(node, "speedchange", intValue))
 				speedChange = std::max(-1000, intValue); //cant be slower than 100%
 
-			ConditionType_t conditionType;
+			if(readXMLInteger(node, "outfit", intValue))
+				outfit = intValue;
+
+			ConditionType_t conditionType = CONDITION_PARALYZE;
 			if(speedChange > 0)
 			{
 				conditionType = CONDITION_HASTE;
 				if(aggressive == 2)
 					aggressive = 0;
 			}
-			else
-			{
-				conditionType = CONDITION_PARALYZE;
-				if(aggressive == 2)
-					aggressive = 1;
-			}
+			else if(aggressive == 2)
+				aggressive = 1;
 
-			combat->setParam(COMBATPARAM_AGGRESSIVE, aggressive);
 			if(ConditionSpeed* condition = dynamic_cast<ConditionSpeed*>(Condition::createCondition(
 				CONDITIONID_COMBAT, conditionType, duration)))
 			{
 				condition->setFormulaVars((speedChange / 1000.), 0, (speedChange / 1000.), 0);
 				combat->setCondition(condition);
+
+				combat->setParam(COMBATPARAM_AGGRESSIVE, aggressive);
+				if(outfit)
+				{
+					if(ConditionOutfit* subCondition = dynamic_cast<ConditionOutfit*>(Condition::createCondition(
+						CONDITIONID_COMBAT, CONDITION_OUTFIT, duration)))
+					{
+						condition->addOutfit(outfit);
+						combat->setCondition(condition);
+					}
+				}
 			}
 		}
 		else if(tmpName == "outfit")

@@ -2721,8 +2721,8 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 		const Player* speaker = creature->getPlayer();
 		if(speaker)
 		{
-			msg->AddU32(++Chat::statement);
-			Chat::statementMap[Chat::statement] = text;
+			msg->AddU32(++g_chat.statement);
+			g_chat.statementMap[g_chat.statement] = text;
 		}
 		else
 			msg->AddU32(0x00000000);
@@ -2743,7 +2743,6 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 				break;
 		}
 
-		const Player* speaker = creature->getPlayer();
 		if(speaker && type != SPEAK_RVR_ANSWER && !speaker->isAccountManager()
 			&& !speaker->hasCustomFlag(PlayerCustomFlag_HideLevel))
 			msg->AddU16(speaker->getPlayerInfo(PLAYERINFO_LEVEL));

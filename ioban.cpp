@@ -42,7 +42,7 @@ bool IOBan::isIpBanished(uint32_t ip, uint32_t mask/* = 0xFFFFFFFF*/) const
 		{
 			int32_t expires = result->getDataLong("expires");
 			if(expires > 0 && expires <= (int32_t)time(NULL))
-				removeIpAccountBanishment(value, param);
+				removeIpBanishment(value, param);
 			else if(!ret)
 				ret = true;
 		}
@@ -58,7 +58,7 @@ bool IOBan::isPlayerBanished(uint32_t playerId, PlayerBan_t type) const
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `bans` WHERE `type` = " << BAN_PLAYER << " AND `value` = " << guid << " AND `param` = " << type << " AND `active` = 1;";
+	query << "SELECT `id` FROM `bans` WHERE `type` = " << BAN_PLAYER << " AND `value` = " << playerId << " AND `param` = " << type << " AND `active` = 1;";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -193,7 +193,7 @@ bool IOBan::removeIpBanishment(uint32_t ip, uint32_t mask/* = 0xFFFFFFFF*/) cons
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << ip << " AND `param` = " << mask << " AND `type` = " << BAN_IP << ";";
+	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << ip << " AND `param` = " << mask << " AND `type` = " << BAN_IP << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }
 
@@ -202,7 +202,7 @@ bool IOBan::removePlayerBanishment(uint32_t guid, PlayerBan_t type) const
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << guid << " AND `param` = " << type << " AND `type` = " << BAN_PLAYER << ";";
+	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << guid << " AND `param` = " << type << " AND `type` = " << BAN_PLAYER << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }
 
@@ -218,7 +218,7 @@ bool IOBan::removeAccountBanishment(uint32_t account, uint32_t playerId/* = 0*/)
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << account;
+	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << account << db->getUpdateLimiter();
 	if(playerId > 0)
 		query << " AND `param` = " << playerId;
 
@@ -231,7 +231,7 @@ bool IOBan::removeNotations(uint32_t account, uint32_t playerId/* = 0*/) const
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << account;
+	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << account << db->getUpdateLimiter();
 	if(playerId > 0)
 		query << " AND `param` = " << playerId;
 
@@ -244,7 +244,7 @@ bool IOBan::removeStatements(uint32_t playerId, int16_t channelId/* = -1*/) cons
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << playerId;
+	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << playerId << db->getUpdateLimiter();
 	if(channelId >= 0)
 		query << " AND `param` = " << channelId;
 
@@ -360,7 +360,7 @@ BansVec IOBan::getList(Ban_t type, uint32_t value/* = 0*/, uint32_t param/* = 0*
 		do
 		{
 			tmp.id = result->getDataInt("id");
-			tmp.type = result->getDataInt("type");
+			tmp.type = (Ban_t)result->getDataInt("type");
 			tmp.value = result->getDataInt("value");
 			tmp.param = result->getDataInt("param");
 			tmp.expires = result->getDataLong("expires");
@@ -384,6 +384,6 @@ bool IOBan::clearTemporials() const
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "UPDATE `bans` SET `active` = 0 WHERE `expires` <= " << time(NULL) << " AND `expires` >= 0 AND `active` = 1;";
+	query << "UPDATE `bans` SET `active` = 0 WHERE `expires` <= " << time(NULL) << " AND `expires` >= 0 AND `active` = 1" << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }

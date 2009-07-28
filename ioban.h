@@ -99,7 +99,7 @@ class IOBan
 		bool removeStatements(std::string name, int16_t channelId = -1) const;
 
 		bool getData(Ban& ban) const;
-		std::vector<Ban> getList(BanType_t type, uint32_t value = 0, uint32_t param = 0);
+		std::vector<Ban> getList(Ban_t type, uint32_t value = 0, uint32_t param = 0);
 
 		uint32_t getNotationsCount(uint32_t account, uint32_t playerId = 0) const;
 		uint32_t getStatementsCount(uint32_t playerId, int16_t channelId = -1) const;

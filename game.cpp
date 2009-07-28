@@ -24,7 +24,6 @@
 #include "server.h"
 #include "chat.h"
 
-
 #include "luascript.h"
 #include "creature.h"
 #include "combat.h"
@@ -2257,14 +2256,14 @@ bool Game::playerAutoWalk(uint32_t playerId, std::list<Direction>& listDir)
 			pos = getNextPosition((*it), pos);
 
 		pos = getClosestFreeTile(player, pos, true, false);
-		if(pos.x == 0)
+		if(!pos.x || !pos.y)
 		{
 			player->sendCancelWalk();
 			return false;
 		}
 
-		internalCreatureTurn(player, getDirectionTo(player->getPosition(), pos, false));
 		internalTeleport(player, pos, false);
+		internalCreatureTurn(player, getDirectionTo(player->getPosition(), pos, false));
 		return true;
 	}
 
@@ -3441,15 +3440,21 @@ bool Game::playerTurn(uint32_t playerId, Direction dir)
 	if(!player || player->isRemoved())
 		return false;
 
-	player->setIdleTime(0);
-	if(dir != player->getDirection() || !player->hasCustomFlag(PlayerCustomFlag_CanTurnhop))
-		return internalCreatureTurn(player, dir);
+	if(internalCreatureTurn(player, dir))
+	{
+		player->setIdleTime(0);
+		return true;
+	}
+
+	if(player->getDirection() != dir || !player->hasCustomFlag(PlayerCustomFlag_CanTurnhop))
+		return false;
 
 	Position pos = getNextPosition(dir, player->getPosition());
 	Tile* tile = map->getTile(pos);
 	if(!tile || !tile->ground)
 		return false;
 
+	player->setIdleTime(0);
 	ReturnValue ret = tile->__queryAdd(0, player, 1, FLAG_IGNOREBLOCKITEM);
 	if(ret != RET_NOTENOUGHROOM && (ret != RET_NOTPOSSIBLE || player->hasCustomFlag(PlayerCustomFlag_CanMoveAnywhere))
 		&& (ret != RET_PLAYERISNOTINVITED || player->hasFlag(PlayerFlag_CanEditHouses)))
@@ -3753,7 +3758,15 @@ bool Game::isSightClear(const Position& fromPos, const Position& toPos, bool flo
 
 bool Game::internalCreatureTurn(Creature* creature, Direction dir)
 {
-	if(creature->getDirection() == dir)
+	bool deny = false;
+	CreatureEventList directionEvents = creature->getCreatureEvents(CREATURE_EVENT_DIRECTION);
+	for(CreatureEventList::iterator it = directionEvents.begin(); it != directionEvents.end(); ++it)
+	{
+		if(!(*it)->executeDirection(creature, creature->getDirection(), dir) && !deny)
+			deny = true;
+	}
+
+	if(deny || creature->getDirection() == dir)
 		return false;
 
 	creature->setDirection(dir);
@@ -4750,7 +4763,7 @@ bool Game::playerReportBug(uint32_t playerId, std::string comment)
 	return true;
 }
 
-bool Game::playerViolationWindow(uint32_t playerId, const std::string& targetName, uint8_t reason,
+bool Game::playerViolationWindow(uint32_t playerId, const std::string& name, uint8_t reason,
 	ViolationAction_t action, const std::string& comment, uint32_t statementId, uint16_t channelId, bool ipBanishment)
 {
 	Player* player = getPlayerByID(playerId);
@@ -4778,11 +4791,9 @@ bool Game::playerViolationWindow(uint32_t playerId, const std::string& targetNam
 		return false;
 	}
 
-	//Statements cannot be this long, player has most likely faked the message.
-	if(statement.size() > 300)
-		return false;
-
 	uint32_t guid = 0;
+	std::string targetName = name;
+
 	toLowerCaseString(targetName);
 	if(!IOLoginData::getInstance()->getGuidByName(guid, targetName) || targetName == "account manager")
 	{
@@ -4818,7 +4829,7 @@ bool Game::playerViolationWindow(uint32_t playerId, const std::string& targetNam
 	Account account = IOLoginData::getInstance()->loadAccount(accountId, true);
 	std::string statement;
 
-	enum {
+	enum KickAction {
 		NONE,
 		KICK,
 		FULL_KICK,
@@ -4827,8 +4838,8 @@ bool Game::playerViolationWindow(uint32_t playerId, const std::string& targetNam
 	{
 		case ACTION_STATEMENT:
 		{
-			StatementMap::iterator it = Chat::statementMap.find(statementId);
-			if(it == Chat::statementMap.end())
+			StatementMap::iterator it = g_chat.statementMap.find(statementId);
+			if(it == g_chat.statementMap.end())
 			{
 				player->sendCancel("Statement has been already reported.");
 				return false;
@@ -4837,7 +4848,7 @@ bool Game::playerViolationWindow(uint32_t playerId, const std::string& targetNam
 			statement = it->second;
 			IOBan::getInstance()->addStatement(guid, reason, comment,
 				player->getGUID(), channelId, statement);
-			Chat::statementMap.erase(it);
+			g_chat.statementMap.erase(it);
 
 			kickAction = NONE;
 			break;
@@ -4859,7 +4870,7 @@ bool Game::playerViolationWindow(uint32_t playerId, const std::string& targetNam
 			else if(tmp == PLAYERBAN_BANISHMENT)
 				account.warnings++;
 
-			kickAction = tmp;
+			kickAction = (KickAction)tmp;
 			break;
 		}
 
@@ -4943,7 +4954,7 @@ bool Game::playerViolationWindow(uint32_t playerId, const std::string& targetNam
 
 		default:
 			// these just shouldn't occur in rvw
-			return;
+			return false;
 	}
 
 	if(ipBanishment && ip)

@@ -1414,7 +1414,7 @@ bool ConditionSpeed::serialize(PropWriteStream& propWriteStream)
 
 bool ConditionSpeed::startCondition(Creature* creature)
 {
-	if(speedDelta == 0)
+	if(!speedDelta)
 	{
 		int32_t min, max;
 		getFormulaValues(creature->getBaseSpeed(), min, max);

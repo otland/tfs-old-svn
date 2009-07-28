@@ -162,7 +162,7 @@ bool IOMapSerialize::updateHouses()
 				query << ", `guild` = " << house->isGuild();
 
 			query << " WHERE `id` = " << house->getHouseId() << " AND `world_id` = "
-				<< g_config.getNumber(ConfigManager::WORLD_ID) << " LIMIT 1;";
+				<< g_config.getNumber(ConfigManager::WORLD_ID) << db->getUpdateLimiter();
 		}
 		else
 		{
@@ -204,7 +204,7 @@ bool IOMapSerialize::saveHouse(Database* db, House* house)
 	query << "UPDATE `houses` SET `owner` = " << house->getHouseOwner() << ", `paid` = "
 		<< house->getPaidUntil() << ", `warnings` = " << house->getRentWarnings() << ", `lastwarning` = "
 		<< house->getLastWarning() << ", `clear` = 0 WHERE `id` = " << house->getHouseId() << " AND `world_id` = "
-		<< g_config.getNumber(ConfigManager::WORLD_ID) << " LIMIT 1;";
+		<< g_config.getNumber(ConfigManager::WORLD_ID) << db->getUpdateLimiter();
 	if(!db->executeQuery(query.str()))
 		return false;
 
