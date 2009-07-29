@@ -97,7 +97,6 @@ enum ConditionAttr_t
 	CONDITIONATTR_PERIODDAMAGE = 25,
 	CONDITIONATTR_BUFF = 26,
 	CONDITIONATTR_SUBID = 27,
-	CONDITIONATTR_DEFAULT_OUTFIT = 28,
 
 	//reserved for serialization
 	CONDITIONATTR_END = 254
@@ -292,6 +291,30 @@ class ConditionDamage: public Condition
 		DamageList damageList;
 };
 
+class ConditionOutfit: public Condition
+{
+	public:
+		ConditionOutfit(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff, uint32_t _subId);
+		virtual ~ConditionOutfit() {}
+
+		virtual bool startCondition(Creature* creature);
+		virtual void endCondition(Creature* creature, ConditionEnd_t reason);
+		virtual void addCondition(Creature* creature, const Condition* condition);
+
+		virtual ConditionOutfit* clone() const {return new ConditionOutfit(*this);}
+
+		void addOutfit(Outfit_t _outfit) {outfits.push_back(_outfit);}
+		void setOutfits(std::vector<Outfit_t> _outfits) {outfits = _outfits;}
+
+		//serialization
+		virtual bool serialize(PropWriteStream& propWriteStream);
+		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
+
+	protected:
+		void changeOutfit(Creature* creature, int32_t index = -1);
+		std::vector<Outfit_t> outfits;
+};
+
 class ConditionSpeed: public ConditionOutfit
 {
 	public:
@@ -299,7 +322,6 @@ class ConditionSpeed: public ConditionOutfit
 		virtual ~ConditionSpeed() {}
 
 		virtual bool startCondition(Creature* creature);
-		virtual bool executeCondition(Creature* creature, int32_t interval);
 		virtual void endCondition(Creature* creature, ConditionEnd_t reason);
 		virtual void addCondition(Creature* creature, const Condition* condition);
 
@@ -320,32 +342,6 @@ class ConditionSpeed: public ConditionOutfit
 
 		int32_t speedDelta;
 		float mina, minb, maxa, maxb;
-};
-
-class ConditionOutfit: public Condition
-{
-	public:
-		ConditionOutfit(ConditionId_t _id, ConditionType_t _type, int32_t _ticks, bool _buff, uint32_t _subId);
-		virtual ~ConditionOutfit() {}
-
-		virtual bool startCondition(Creature* creature);
-		virtual bool executeCondition(Creature* creature, int32_t interval);
-		virtual void endCondition(Creature* creature, ConditionEnd_t reason);
-		virtual void addCondition(Creature* creature, const Condition* condition);
-
-		virtual ConditionOutfit* clone() const {return new ConditionOutfit(*this);}
-
-		void addOutfit(Outfit_t outfit) {outfits.push_back(outfit);}
-
-		//serialization
-		virtual bool serialize(PropWriteStream& propWriteStream);
-		virtual bool unserializeProp(ConditionAttr_t attr, PropStream& propStream);
-
-	protected:
-		void changeOutfit(Creature* creature, int32_t index = -1);
-
-		std::vector<Outfit_t> outfits;
-		Outfit_t defaultOutfit;
 };
 
 class ConditionLight: public Condition

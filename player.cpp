@@ -901,9 +901,13 @@ bool Player::canWalkthrough(const Creature* creature) const
 
 	const Player* player = creature->getPlayer();
 	if(!player)
-		return false;
+		return hasCustomFlag(PlayerCustomFlag_CanWalkthroughUnits);
 
-	int32_t protection = g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
+	if(hasCustomFlag(PlayerCustomFlag_CanWalkthroughUnits) && !player->hasCustomFlag(
+		PlayerCustomFlag_CanWalkthroughUnits))
+		return true;
+
+	uint32_t protection = g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
 	return g_config.getBool(ConfigManager::PROTECTED_WALKABLE) &&
 		level >= protection && player->getLevel() < protection;
 }

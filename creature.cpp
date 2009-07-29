@@ -135,13 +135,7 @@ bool Creature::canSee(const Position& pos) const
 
 bool Creature::canSeeCreature(const Creature* creature) const
 {
-	if(creature == this)
-		return true;
-
-	if(creature->getPlayer() && creature->getPlayer()->isGhost())
-		return false;
-
-	return canSeeInvisibility() || !creature->isInvisible();
+	return creature == this || (!creature->isGhost() && (!creature->isInvisible() || canSeeInvisibility()));
 }
 
 int64_t Creature::getTimeSinceLastMove() const

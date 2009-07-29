@@ -1482,15 +1482,6 @@ bool ConditionOutfit::unserializeProp(ConditionAttr_t attr, PropStream& propStre
 			return true;
 		}
 
-		case CONDITIONATTR_DEFAULT_OUTFIT:
-		{
-			if(!propStream.GET_VALUE(outfit))
-				return false;
-
-			defaultOutfit = outfit;
-			return true;
-		}
-
 		default:
 			break;
 	}
@@ -1503,8 +1494,6 @@ bool ConditionOutfit::serialize(PropWriteStream& propWriteStream)
 	if(!Condition::serialize(propWriteStream))
 		return false;
 
-	propWriteStream.ADD_UCHAR(CONDITIONATTR_DEFAULT_OUTFIT);
-	propWriteStream.ADD_VALUE(defaultOutfit);
 	for(std::vector<Outfit_t>::const_iterator it = outfits.begin(); it != outfits.end(); ++it)
 	{
 		propWriteStream.ADD_UCHAR(CONDITIONATTR_OUTFIT);
@@ -1528,14 +1517,13 @@ void ConditionOutfit::changeOutfit(Creature* creature, int32_t index/* = -1*/)
 	if(index == -1)
 		index = random_range(0, outfits.size() - 1);
 
-	defaultOutfit = creature->getCurrentOutfit();
 	g_game.internalCreatureChangeOutfit(creature, outfits[index]);
 }
 
 void ConditionOutfit::endCondition(Creature* creature, ConditionEnd_t reason)
 {
 	if(!outfits.empty())
-		g_game.internalCreatureChangeOutfit(creature, defaultOutfit);
+		g_game.internalCreatureChangeOutfit(creature, creature->getDefaultOutfit());
 }
 
 void ConditionOutfit::addCondition(Creature* creature, const Condition* addCondition)

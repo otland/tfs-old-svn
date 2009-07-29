@@ -262,11 +262,8 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 {
 	sb.chance = 100;
 	sb.speed = 2000;
-	sb.range = 0;
-	sb.minCombatValue = 0;
-	sb.maxCombatValue = 0;
-	sb.combatSpell = false;
-	sb.isMelee = false;
+	sb.range = sb.minCombatValue = sb.maxCombatValue = 0;
+	sb.combatSpell = sb.isMelee = false;
 
 	std::string name = "", scriptName = "";
 	bool isScripted = false;
@@ -290,7 +287,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 
 	if(readXMLInteger(node, "range", intValue))
 	{
-		if(intValue < 0 )
+		if(intValue < 0)
 			intValue = 0;
 
 		if(intValue > Map::maxViewportX * 2)
@@ -468,35 +465,79 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			combat->setParam(COMBATPARAM_COMBATTYPE, COMBAT_UNDEFINEDDAMAGE);
 		else if(tmpName == "speed")
 		{
-			int32_t outfit = 0, speedChange = 0, aggressive = 2, duration = 10000;
+			int32_t speedChange = 0, duration = 10000;
 			if(readXMLInteger(node, "duration", intValue))
 				duration = intValue;
 
+			enum Aggressive {
+				NO,
+				YES,
+				AUTO
+			} aggressive = AUTO;
 			if(readXMLInteger(node, "self", intValue))
-				aggressive = intValue;
+				aggressive = (Aggressive)intValue;
 
 			if(readXMLInteger(node, "speedchange", intValue))
 				speedChange = std::max(-1000, intValue); //cant be slower than 100%
 
-			if(readXMLInteger(node, "outfit", intValue))
-				outfit = intValue;
+			std::vector<Outfit_t> outfits;
+			for(xmlNodePtr tmpNode = node->children; tmpNode; tmpNode = tmpNode->next)
+			{
+				if(xmlStrcmp(tmpNode->name,(const xmlChar*)"outfit"))
+					continue;
+
+				if(readXMLInteger(tmpNode, "type", intValue))
+				{
+					Outfit_t outfit;
+					outfit.lookType = intValue;
+					if(readXMLInteger(tmpNode, "head", intValue))
+						outfit.lookHead = intValue;
+
+					if(readXMLInteger(tmpNode, "body", intValue))
+						outfit.lookBody = intValue;
+
+					if(readXMLInteger(tmpNode, "legs", intValue))
+						outfit.lookLegs = intValue;
+
+					if(readXMLInteger(tmpNode, "feet", intValue))
+						outfit.lookFeet = intValue;
+
+					if(readXMLInteger(tmpNode, "addons", intValue))
+						outfit.lookAddons = intValue;
+
+					outfits.push_back(outfit);
+				}
+
+				if(readXMLInteger(tmpNode, "typeex", intValue) || readXMLInteger(tmpNode, "item", intValue))
+				{
+					Outfit_t outfit;
+					outfit.lookTypeEx = intValue;
+					outfits.push_back(outfit);
+				}
+
+				if(readXMLString(tmpNode, "monster", strValue))
+				{
+					if(MonsterType* mType = g_monsters.getMonsterType(strValue))
+						outfits.push_back(mType->outfit);
+				}
+			}
 
 			ConditionType_t conditionType = CONDITION_PARALYZE;
 			if(speedChange > 0)
 			{
 				conditionType = CONDITION_HASTE;
-				if(aggressive == 2)
-					aggressive = 0;
+				if(aggressive == AUTO)
+					aggressive = NO;
 			}
-			else if(aggressive == 2)
-				aggressive = 1;
+			else if(aggressive == AUTO)
+				aggressive = YES;
 
 			if(ConditionSpeed* condition = dynamic_cast<ConditionSpeed*>(Condition::createCondition(
 				CONDITIONID_COMBAT, conditionType, duration)))
 			{
 				condition->setFormulaVars((speedChange / 1000.), 0, (speedChange / 1000.), 0);
-				if(outfit)
-					condition->addOutfit(outfit);
+				if(!outfits.empty())
+					condition->setOutfits(outfits);
 
 				combat->setCondition(condition);
 				combat->setParam(COMBATPARAM_AGGRESSIVE, aggressive);
@@ -504,37 +545,102 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 		}
 		else if(tmpName == "outfit")
 		{
-			int32_t duration = 10000;
-			if(readXMLInteger(node, "duration", intValue))
-				duration = intValue;
-
-			bool aggressive = false;
-			if(readXMLInteger(node, "self", intValue))
-				aggressive = intValue;
-
-			if(readXMLString(node, "monster", strValue))
+			std::vector<Outfit_t> outfits;
+			for(xmlNodePtr tmpNode = node->children; tmpNode; tmpNode = tmpNode->next)
 			{
-				if(MonsterType* mType = g_monsters.getMonsterType(strValue))
+				if(xmlStrcmp(tmpNode->name,(const xmlChar*)"outfit"))
+					continue;
+
+				if(readXMLInteger(tmpNode, "type", intValue))
 				{
-					if(ConditionOutfit* condition = dynamic_cast<ConditionOutfit*>(Condition::createCondition(
-						CONDITIONID_COMBAT, CONDITION_OUTFIT, duration)))
-					{
-						condition->addOutfit(mType->outfit);
-						combat->setParam(COMBATPARAM_AGGRESSIVE, aggressive);
-						combat->setCondition(condition);
-					}
+					Outfit_t outfit;
+					outfit.lookType = intValue;
+					if(readXMLInteger(tmpNode, "head", intValue))
+						outfit.lookHead = intValue;
+
+					if(readXMLInteger(tmpNode, "body", intValue))
+						outfit.lookBody = intValue;
+
+					if(readXMLInteger(tmpNode, "legs", intValue))
+						outfit.lookLegs = intValue;
+
+					if(readXMLInteger(tmpNode, "feet", intValue))
+						outfit.lookFeet = intValue;
+
+					if(readXMLInteger(tmpNode, "addons", intValue))
+						outfit.lookAddons = intValue;
+
+					outfits.push_back(outfit);
+				}
+
+				if(readXMLInteger(tmpNode, "typeex", intValue) || readXMLInteger(tmpNode, "item", intValue))
+				{
+					Outfit_t outfit;
+					outfit.lookTypeEx = intValue;
+					outfits.push_back(outfit);
+				}
+
+				if(readXMLString(tmpNode, "monster", strValue))
+				{
+					if(MonsterType* mType = g_monsters.getMonsterType(strValue))
+						outfits.push_back(mType->outfit);
 				}
 			}
-			else if(readXMLInteger(node, "item", intValue))
+
+			if(outfits.empty())
 			{
-				static Outfit_t outfit;
-				outfit.lookTypeEx = intValue;
+				if(readXMLInteger(node, "type", intValue))
+				{
+					Outfit_t outfit;
+					outfit.lookType = intValue;
+					if(readXMLInteger(node, "head", intValue))
+						outfit.lookHead = intValue;
+
+					if(readXMLInteger(node, "body", intValue))
+						outfit.lookBody = intValue;
+
+					if(readXMLInteger(node, "legs", intValue))
+						outfit.lookLegs = intValue;
+
+					if(readXMLInteger(node, "feet", intValue))
+						outfit.lookFeet = intValue;
+
+					if(readXMLInteger(node, "addons", intValue))
+						outfit.lookAddons = intValue;
+
+					outfits.push_back(outfit);
+				}
+
+				if(readXMLInteger(node, "typeex", intValue) || readXMLInteger(node, "item", intValue))
+				{
+					Outfit_t outfit;
+					outfit.lookTypeEx = intValue;
+					outfits.push_back(outfit);
+				}
+
+				if(readXMLString(node, "monster", strValue))
+				{
+					if(MonsterType* mType = g_monsters.getMonsterType(strValue))
+						outfits.push_back(mType->outfit);
+				}
+			}
+
+			if(!outfits.empty())
+			{
+				int32_t duration = 10000;
+				if(readXMLInteger(node, "duration", intValue))
+					duration = intValue;
+
+				bool aggressive = false;
+				if(readXMLInteger(node, "self", intValue))
+					aggressive = intValue;
+
 				if(ConditionOutfit* condition = dynamic_cast<ConditionOutfit*>(Condition::createCondition(
 					CONDITIONID_COMBAT, CONDITION_OUTFIT, duration)))
 				{
-					condition->addOutfit(outfit);
-					combat->setParam(COMBATPARAM_AGGRESSIVE, aggressive);
+					condition->setOutfits(outfits);
 					combat->setCondition(condition);
+					combat->setParam(COMBATPARAM_AGGRESSIVE, aggressive);
 				}
 			}
 		}
