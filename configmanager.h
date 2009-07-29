@@ -255,7 +255,7 @@ class ConfigManager
 			GHOST_SPELL_EFFECTS,
 			PVPZONE_ADDMANASPENT,
 			USE_BLACK_SKULL,
-			PROTECTED_WALKABLE,
+			ALLOW_FIGHTBACK,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

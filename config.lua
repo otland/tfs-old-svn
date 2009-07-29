@@ -47,14 +47,11 @@
 	autoBanishUnknownBytes = "no"
 
 	-- Battle
-	-- NOTE: walkthroughProtected allows players to walk through
-	-- protected players.
-	-- showHealingDamageForMonsters inheritates from showHealingDamage.
+	-- NOTE: showHealingDamageForMonsters inheritates from showHealingDamage.
 	-- loginProtectionPeriod is the famous Tibia anti-magebomb system.
 	-- deathLostPercent set to nil enables manual mode.
 	worldType = "pvp"
 	protectionLevel = 1
-	walkthroughProtected = "no"
 	pvpTileIgnoreLevelAndVocationProtection = "yes"
 	pzLocked = 60 * 1000
 	huntingDuration = 60 * 1000
@@ -79,6 +76,7 @@
 	gainExperienceColor = 215
 	addManaSpentInPvPZone = "yes"
 	squareColor = 0
+	allowFightback = "yes"
 
 	-- Connection config
 	worldId = 0

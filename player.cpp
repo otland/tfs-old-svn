@@ -896,20 +896,13 @@ bool Player::canSeeCreature(const Creature* creature) const
 
 bool Player::canWalkthrough(const Creature* creature) const
 {
-	if(Creature::canWalkthrough(creature))
-		return true;
+	if(creature == this)
+		return false;
 
-	const Player* player = creature->getPlayer();
-	if(!player)
-		return hasCustomFlag(PlayerCustomFlag_CanWalkthroughUnits);
+	if(const Player* player = creature->getPlayer())
+		return player->isGhost() && getGhostAccess() < player->getGhostAccess();
 
-	if(hasCustomFlag(PlayerCustomFlag_CanWalkthroughUnits) && !player->hasCustomFlag(
-		PlayerCustomFlag_CanWalkthroughUnits))
-		return true;
-
-	uint32_t protection = g_config.getNumber(ConfigManager::PROTECTION_LEVEL);
-	return g_config.getBool(ConfigManager::PROTECTED_WALKABLE) &&
-		level >= protection && player->getLevel() < protection;
+	return false;
 }
 
 Depot* Player::getDepot(uint32_t depotId, bool autoCreateDepot)
@@ -3557,8 +3550,8 @@ void Player::onAttackedCreature(Creature* target)
 		return;
 
 	addAttacked(targetPlayer);
-	if(target == this || Combat::isInPvpZone(this, targetPlayer) ||
-		isPartner(targetPlayer) || targetPlayer->hasAttacked(this))
+	if(target == this || Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer) &&
+		(g_config.getBool(ConfigManager::ALLOW_FIGHTBACK) && targetPlayer->hasAttacked(this))
 		return;
 
 	if(!pzLocked)
