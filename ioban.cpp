@@ -30,7 +30,7 @@ bool IOBan::isIpBanished(uint32_t ip, uint32_t mask/* = 0xFFFFFFFF*/) const
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id`, `value`, `param`, `expires` FROM `bans` WHERE `type` = " << BAN_IP << " AND `active` = 1;";
+	query << "SELECT `id`, `value`, `param`, `expires` FROM `bans` WHERE `type` = " << BAN_IP << " AND `active` = 1";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -58,7 +58,7 @@ bool IOBan::isPlayerBanished(uint32_t playerId, PlayerBan_t type) const
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id` FROM `bans` WHERE `type` = " << BAN_PLAYER << " AND `value` = " << playerId << " AND `param` = " << type << " AND `active` = 1;";
+	query << "SELECT `id` FROM `bans` WHERE `type` = " << BAN_PLAYER << " AND `value` = " << playerId << " AND `param` = " << type << " AND `active` = 1 LIMIT 1";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -83,7 +83,7 @@ bool IOBan::isAccountBanished(uint32_t account, uint32_t playerId/* = 0*/) const
 	if(playerId > 0)
 		query << " AND `param` = " << playerId;
 
-	query << " AND `active` = 1;";
+	query << " AND `active` = 1 LIMIT 1";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -107,7 +107,7 @@ bool IOBan::addIpBanishment(uint32_t ip, int64_t banTime, uint32_t reasonId,
 
 	query << "INSERT INTO `bans` (`id`, `type`, `value`, `param`, `expires`, `added`, `admin_id`, `comment`, `reason`, `statement`) ";
 	query << "VALUES (NULL, " << BAN_IP << ", " << ip << ", " << mask << ", " << banTime << ", " << time(NULL) << ", " << gamemaster;
-	query << ", " << db->escapeString(comment.c_str()) << ", " << reasonId << ", " << db->escapeString(statement.c_str()) << ");";
+	query << ", " << db->escapeString(comment.c_str()) << ", " << reasonId << ", " << db->escapeString(statement.c_str()) << ")";
 	return db->executeQuery(query.str());
 }
 
@@ -122,7 +122,7 @@ bool IOBan::addPlayerBanishment(uint32_t playerId, int64_t banTime, uint32_t rea
 
 	query << "INSERT INTO `bans` (`id`, `type`, `value`, `param`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action`, `statement`) ";
 	query << "VALUES (NULL, " << BAN_PLAYER << ", " << playerId << ", " << type << ", " << banTime << ", " << time(NULL) << ", " << gamemaster;
-	query << ", " << db->escapeString(comment.c_str()) << ", " << reasonId << ", " << actionId << ", " << db->escapeString(statement.c_str()) << ");";
+	query << ", " << db->escapeString(comment.c_str()) << ", " << reasonId << ", " << actionId << ", " << db->escapeString(statement.c_str()) << ")";
 	return db->executeQuery(query.str());
 }
 
@@ -145,7 +145,7 @@ bool IOBan::addAccountBanishment(uint32_t account, int64_t banTime, uint32_t rea
 
 	query << "INSERT INTO `bans` (`id`, `type`, `value`, `param`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action`, `statement`) ";
 	query << "VALUES (NULL, " << BAN_ACCOUNT << ", " << account << ", " << playerId << ", " << banTime << ", " << time(NULL) << ", " << gamemaster;
-	query << ", " << db->escapeString(comment.c_str()) << ", " << reasonId << ", " << actionId << ", " << db->escapeString(statement.c_str()) << ");";
+	query << ", " << db->escapeString(comment.c_str()) << ", " << reasonId << ", " << actionId << ", " << db->escapeString(statement.c_str()) << ")";
 	return db->executeQuery(query.str());
 }
 
@@ -157,7 +157,7 @@ bool IOBan::addNotation(uint32_t account, uint32_t reasonId,
 
 	query << "INSERT INTO `bans` (`id`, `type`, `value`, `param`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action`, `statement`) ";
 	query << "VALUES (NULL, " << BAN_NOTATION << ", " << account << ", " << playerId << ", '-1', " << time(NULL) << ", " << gamemaster;
-	query << ", " << db->escapeString(comment.c_str()) << ", " << reasonId << ", " << db->escapeString(statement.c_str()) << ");";
+	query << ", " << db->escapeString(comment.c_str()) << ", " << reasonId << ", " << db->escapeString(statement.c_str()) << ")";
 	return db->executeQuery(query.str());
 }
 
@@ -176,7 +176,7 @@ bool IOBan::addStatement(uint32_t playerId, uint32_t reasonId,
 		query << ", " << channelId;
 
 	query << ", '-1', " << time(NULL) << ", " << gamemaster << ", " << db->escapeString(comment.c_str());
-	query << ", " << reasonId << ", " << db->escapeString(statement.c_str()) << ");";
+	query << ", " << reasonId << ", " << db->escapeString(statement.c_str()) << ")";
 	return db->executeQuery(query.str());
 }
 
@@ -222,7 +222,7 @@ bool IOBan::removeAccountBanishment(uint32_t account, uint32_t playerId/* = 0*/)
 	if(playerId > 0)
 		query << " AND `param` = " << playerId;
 
-	query << " AND `type` = " << BAN_ACCOUNT << ";";
+	query << " AND `type` = " << BAN_ACCOUNT;
 	return db->executeQuery(query.str());
 }
 
@@ -235,7 +235,7 @@ bool IOBan::removeNotations(uint32_t account, uint32_t playerId/* = 0*/) const
 	if(playerId > 0)
 		query << " AND `param` = " << playerId;
 
-	query << " AND `type` = " << BAN_NOTATION << ";";
+	query << " AND `type` = " << BAN_NOTATION;
 	return db->executeQuery(query.str());
 }
 
@@ -248,7 +248,7 @@ bool IOBan::removeStatements(uint32_t playerId, int16_t channelId/* = -1*/) cons
 	if(channelId >= 0)
 		query << " AND `param` = " << channelId;
 
-	query << " AND `type` = " << BAN_STATEMENT << ";";
+	query << " AND `type` = " << BAN_STATEMENT;
 	return db->executeQuery(query.str());
 }
 
@@ -269,7 +269,7 @@ uint32_t IOBan::getNotationsCount(uint32_t account, uint32_t playerId/* = 0*/) c
 	if(playerId > 0)
 		query << " AND `param` = " << playerId;
 
-	query << " AND `type` = " << BAN_NOTATION << " AND `active` = 1;";
+	query << " AND `type` = " << BAN_NOTATION << " AND `active` = 1";
 	if(!(result = db->storeQuery(query.str())))
 		return 0;
 
@@ -288,7 +288,7 @@ uint32_t IOBan::getStatementsCount(uint32_t playerId, int16_t channelId/* = -1*/
 	if(channelId >= 0)
 		query << " AND `param` = " << channelId;
 
-	query << " AND `type` = " << BAN_STATEMENT << " AND `active` = 1;";
+	query << " AND `type` = " << BAN_STATEMENT << " AND `active` = 1";
 	if(!(result = db->storeQuery(query.str())))
 		return 0;
 
@@ -318,7 +318,7 @@ bool IOBan::getData(Ban& ban) const
 	if(ban.type != BAN_NONE)
 		query << " AND `type` = " << ban.type;
 
-	query << " AND `active` = 1 AND (`expires` > " << time(NULL) << " OR `expires` <= 0);";
+	query << " AND `active` = 1 AND (`expires` > " << time(NULL) << " OR `expires` <= 0) LIMIT 1";
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -352,7 +352,7 @@ BansVec IOBan::getList(Ban_t type, uint32_t value/* = 0*/, uint32_t param/* = 0*
 	if(param)
 		query << "`param` = " << param << " AND ";
 
-	query << "`type` = " << type << " AND `active` = 1 AND (`expires` > " << time(NULL) << " OR `expires` <= 0);";
+	query << "`type` = " << type << " AND `active` = 1 AND (`expires` > " << time(NULL) << " OR `expires` <= 0)";
 	BansVec data;
 	if((result = db->storeQuery(query.str())))
 	{

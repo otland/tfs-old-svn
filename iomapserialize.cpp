@@ -48,7 +48,7 @@ bool IOMapSerialize::updateAuctions()
 	DBQuery query;
 
 	time_t now = time(NULL);
-	query << "SELECT `house_id`, `player_id`, `bid` FROM `house_auctions` WHERE `endtime` < " << now << ";";
+	query << "SELECT `house_id`, `player_id`, `bid` FROM `house_auctions` WHERE `endtime` < " << now;
 
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
@@ -80,7 +80,7 @@ bool IOMapSerialize::loadHouses()
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "SELECT * FROM `houses` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << ";";
+	query << "SELECT * FROM `houses` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 	DBResult* result;
 	if(!(result = db->storeQuery(query.str())))
 		return false;
@@ -109,7 +109,7 @@ bool IOMapSerialize::loadHouses()
 
 		query.str("");
 		query << "SELECT `listid`, `list` FROM `house_lists` WHERE `house_id` = " << house->getHouseId();
-		query << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << ";";
+		query << " AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 		if(!(result = db->storeQuery(query.str())))
 			continue;
 
@@ -134,7 +134,7 @@ bool IOMapSerialize::updateHouses()
 			continue;
 
 		query << "SELECT `id` FROM `houses` WHERE `id` = " << house->getHouseId() << " AND `world_id` = "
-			<< g_config.getNumber(ConfigManager::WORLD_ID) << " LIMIT 1;";
+			<< g_config.getNumber(ConfigManager::WORLD_ID) << " LIMIT 1";
 		if(DBResult* result = db->storeQuery(query.str()))
 		{
 			result->free();
@@ -173,7 +173,7 @@ bool IOMapSerialize::updateHouses()
 				<< db->escapeString(house->getName()) << ", " << house->getTownId() << ", "
 				<< house->getSize() << ", " << house->getPrice() << ", " << house->getRent() << ", "
 				<< house->getDoorsCount() << ", " << house->getBedsCount() << ", "
-				<< house->getTilesCount() << ", " << house->isGuild() << ");";
+				<< house->getTilesCount() << ", " << house->isGuild() << ")";
 		}
 
 		if(!db->executeQuery(query.str()))
@@ -210,7 +210,7 @@ bool IOMapSerialize::saveHouse(Database* db, House* house)
 
 	query.str("");
 	query << "DELETE FROM `house_lists` WHERE `house_id` = " << house->getHouseId() << " AND `world_id` = "
-		<< g_config.getNumber(ConfigManager::WORLD_ID) << ";";
+		<< g_config.getNumber(ConfigManager::WORLD_ID);
 	if(!db->executeQuery(query.str()))
 		return false;
 
@@ -268,13 +268,14 @@ bool IOMapSerialize::loadMapRelational(Map* map)
 
 		query.str("");
 		query << "SELECT * FROM `tiles` WHERE `house_id` = " << house->getHouseId() <<
-			" AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << ";";
+			" AND `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 		if(DBResult* result = db->storeQuery(query.str()))
 		{
 			do
 			{
 				query.str("");
-				query << "SELECT * FROM `tile_items` WHERE `tile_id` = " << result->getDataInt("id") << " ORDER BY `sid` DESC;";
+				query << "SELECT * FROM `tile_items` WHERE `tile_id` = " << result->getDataInt("id") << " AND `world_id` = "
+					<< g_config.getNumber(ConfigManager::WORLD_ID) << " ORDER BY `sid` DESC";
 				if(DBResult* itemsResult = db->storeQuery(query.str()))
 				{
 					if(house->hasPendingTransfer())
@@ -316,11 +317,13 @@ bool IOMapSerialize::loadMapRelational(Map* map)
 			{
 				query.str("");
 				query << "SELECT `id` FROM `tiles` WHERE `x` = " << (*it)->getPosition().x << " AND `y` = "
-					<< (*it)->getPosition().y << " AND `z` = " << (*it)->getPosition().z << ";";
+					<< (*it)->getPosition().y << " AND `z` = " << (*it)->getPosition().z << " AND `world_id` = "
+					<< g_config.getNumber(ConfigManager::WORLD_ID) << " LIMIT 1";
 				if(DBResult* result = db->storeQuery(query.str()))
 				{
 					query.str("");
-					query << "SELECT * FROM `tile_items` WHERE `tile_id` = " << result->getDataInt("id") << " ORDER BY `sid` DESC;";
+					query << "SELECT * FROM `tile_items` WHERE `tile_id` = " << result->getDataInt("id") << " AND `world_id` = "
+						<< g_config.getNumber(ConfigManager::WORLD_ID) << " ORDER BY `sid` DESC";
 					if(DBResult* itemsResult = db->storeQuery(query.str()))
 					{
 						if(house->hasPendingTransfer())
@@ -361,12 +364,12 @@ bool IOMapSerialize::saveMapRelational(Map* map)
 
 	//clear old tile data
 	DBQuery query;
-	query << "DELETE FROM `tile_items` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << ";";
+	query << "DELETE FROM `tile_items` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 	if(!db->executeQuery(query.str()))
 		return false;
 
 	query.str("");
-	query << "DELETE FROM `tiles` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << ";";
+	query << "DELETE FROM `tiles` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 	if(!db->executeQuery(query.str()))
 		return false;
 
@@ -388,7 +391,7 @@ bool IOMapSerialize::loadMapBinary(Map* map)
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `house_id`, `data` FROM `house_data` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << ";";
+	query << "SELECT `house_id`, `data` FROM `house_data` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
@@ -635,7 +638,7 @@ bool IOMapSerialize::saveItems(Database* db, uint32_t& tileId, uint32_t houseId,
 			const Position& tilePosition = tile->getPosition();
 			query << "INSERT INTO `tiles` (`id`, `world_id`, `house_id`, `x`, `y`, `z`) VALUES ("
 			<< tileId << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << houseId << ", "
-			<< tilePosition.x << ", " << tilePosition.y << ", " << tilePosition.z << ");";
+			<< tilePosition.x << ", " << tilePosition.y << ", " << tilePosition.z << ")";
 			if(!db->executeQuery(query.str()))
 				return false;
 

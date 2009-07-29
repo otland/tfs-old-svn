@@ -5493,9 +5493,9 @@ Highscore Game::getHighscore(uint16_t skill)
 	if(skill >= SKILL__MAGLEVEL)
 	{
 		if(skill == SKILL__MAGLEVEL)
-			query << "SELECT `maglevel`, `name` FROM `players` ORDER BY `maglevel` DESC, `manaspent` DESC LIMIT " << g_config.getNumber(ConfigManager::HIGHSCORES_TOP) << ";";
+			query << "SELECT `maglevel`, `name` FROM `players` ORDER BY `maglevel` DESC, `manaspent` DESC LIMIT " << g_config.getNumber(ConfigManager::HIGHSCORES_TOP);
 		else
-			query << "SELECT `level`, `name` FROM `players` ORDER BY `level` DESC, `experience` DESC LIMIT " << g_config.getNumber(ConfigManager::HIGHSCORES_TOP) << ";";
+			query << "SELECT `level`, `name` FROM `players` ORDER BY `level` DESC, `experience` DESC LIMIT " << g_config.getNumber(ConfigManager::HIGHSCORES_TOP);
 
 		if(!(result = db->storeQuery(query.str())))
 			return hs;
@@ -5517,7 +5517,7 @@ Highscore Game::getHighscore(uint16_t skill)
 	}
 	else
 	{
-		query << "SELECT `player_skills`.`value`, `players`.`name` FROM `player_skills`,`players` WHERE `player_skills`.`skillid`=" << skill << " AND `player_skills`.`player_id`=`players`.`id` ORDER BY `player_skills`.`value` DESC, `player_skills`.`count` DESC LIMIT " << g_config.getNumber(ConfigManager::HIGHSCORES_TOP) << ";";
+		query << "SELECT `player_skills`.`value`, `players`.`name` FROM `player_skills`,`players` WHERE `player_skills`.`skillid`=" << skill << " AND `player_skills`.`player_id`=`players`.`id` ORDER BY `player_skills`.`value` DESC, `player_skills`.`count` DESC LIMIT " << g_config.getNumber(ConfigManager::HIGHSCORES_TOP);
 		if(!(result = db->storeQuery(query.str())))
 			return hs;
 
@@ -5542,7 +5542,7 @@ int32_t Game::getMotdNum()
 		lastMotdText = g_config.getString(ConfigManager::MOTD);
 
 		DBQuery query;
-		query << "INSERT INTO `server_motd` (`id`, `world_id`, `text`) VALUES (" << ++lastMotdNum << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << db->escapeString(lastMotdText) << ");";
+		query << "INSERT INTO `server_motd` (`id`, `world_id`, `text`) VALUES (" << ++lastMotdNum << ", " << g_config.getNumber(ConfigManager::WORLD_ID) << ", " << db->escapeString(lastMotdText) << ")";
 		db->executeQuery(query.str());
 	}
 
@@ -5554,7 +5554,7 @@ void Game::loadMotd()
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "SELECT `id`, `text` FROM `server_motd` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " ORDER BY `id` DESC LIMIT 1;";
+	query << "SELECT `id`, `text` FROM `server_motd` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " ORDER BY `id` DESC LIMIT 1";
 	if(DBResult* result = db->storeQuery(query.str()))
 	{
 		lastMotdNum = result->getDataInt("id");
@@ -5587,7 +5587,7 @@ void Game::loadPlayersRecord()
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "SELECT `record` FROM `server_record` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " ORDER BY `timestamp` DESC LIMIT 1;";
+	query << "SELECT `record` FROM `server_record` WHERE `world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID) << " ORDER BY `timestamp` DESC LIMIT 1";
 	if(DBResult* result = db->storeQuery(query.str()))
 	{
 		lastPlayersRecord = result->getDataInt("record");
