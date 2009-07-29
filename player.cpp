@@ -3550,7 +3550,7 @@ void Player::onAttackedCreature(Creature* target)
 		return;
 
 	addAttacked(targetPlayer);
-	if(target == this || Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer) &&
+	if(target == this || Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer) ||
 		(g_config.getBool(ConfigManager::ALLOW_FIGHTBACK) && targetPlayer->hasAttacked(this))
 		return;
 
