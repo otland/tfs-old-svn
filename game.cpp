@@ -226,7 +226,6 @@ void Game::setGameState(GameState_t newState)
 						++it;
 				}
 
-				Houses::getInstance().payHouses();
 				saveGameState(false);
 				break;
 			}
@@ -5900,6 +5899,8 @@ void Game::globalSave()
 		cleanMap(dummy);
 	}
 
+	//pay houses
+	Houses::getInstance().payHouses();
 	//clear temporial and expired bans
 	IOBan::getInstance()->clearTemporials();
 	//remove premium days globally if configured to
