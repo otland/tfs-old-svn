@@ -196,10 +196,8 @@ void Game::setGameState(GameState_t newState)
 			case GAME_STATE_SHUTDOWN:
 			{
 				g_globalEvents->execute(SERVER_EVENT_SHUTDOWN);
-
-				//kick all players that are still online
 				AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
-				while(it != Player::listPlayer.list.end())
+				while(it != Player::listPlayer.list.end()) //kick all players that are still online
 				{
 					it->second->kickPlayer(true);
 					it = Player::listPlayer.list.begin();
@@ -207,8 +205,8 @@ void Game::setGameState(GameState_t newState)
 
 				Houses::getInstance().payHouses();
 				saveGameState(false);
-
 				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, this)));
+
 				Scheduler::getScheduler().stop();
 				Dispatcher::getDispatcher().stop();
 				break;
@@ -216,9 +214,8 @@ void Game::setGameState(GameState_t newState)
 
 			case GAME_STATE_CLOSED:
 			{
-				//kick all players who not allowed to stay
 				AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
-				while(it != Player::listPlayer.list.end())
+				while(it != Player::listPlayer.list.end()) //kick all players who not allowed to stay
 				{
 					if(!it->second->hasFlag(PlayerFlag_CanAlwaysLogin))
 					{
@@ -229,6 +226,7 @@ void Game::setGameState(GameState_t newState)
 						++it;
 				}
 
+				Houses::getInstance().payHouses();
 				saveGameState(false);
 				break;
 			}
@@ -5890,42 +5888,34 @@ void Game::globalSave()
 	{
 		//shutdown server
 		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_SHUTDOWN)));
+		return;
 	}
-	else
+
+	//close server
+	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_CLOSED)));
+	//clean map if configured to
+	if(g_config.getBool(ConfigManager::CLEAN_MAP_AT_GLOBALSAVE))
 	{
-		//close server
-		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_CLOSED)));
-
-		//pay houses
-		Houses::getInstance().payHouses();
-
-		//clean map if configured to
-		if(g_config.getBool(ConfigManager::CLEAN_MAP_AT_GLOBALSAVE))
-		{
-			uint32_t dummy;
-			cleanMap(dummy);
-		}
-
-		//clear temporial and expired bans
-		IOBan::getInstance()->clearTemporials();
-
-		//remove premium days globally if configured to
-		if(g_config.getBool(ConfigManager::REMOVE_PREMIUM_ON_INIT))
-			IOLoginData::getInstance()->updatePremiumDays();
-
-		//reload everything
-		reloadInfo(RELOAD_ALL);
-
-		//reset variables
-		for(int16_t i = 0; i < 3; i++)
-			setGlobalSaveMessage(i, false);
-
-		//prepare for next global save after 24 hours
-		Scheduler::getScheduler().addEvent(createSchedulerTask(86100000, boost::bind(&Game::prepareGlobalSave, this)));
-
-		//open server
-		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_NORMAL)));
+		uint32_t dummy;
+		cleanMap(dummy);
 	}
+
+	//clear temporial and expired bans
+	IOBan::getInstance()->clearTemporials();
+	//remove premium days globally if configured to
+	if(g_config.getBool(ConfigManager::REMOVE_PREMIUM_ON_INIT))
+		IOLoginData::getInstance()->updatePremiumDays();
+
+	//reload everything
+	reloadInfo(RELOAD_ALL);
+	//reset variables
+	for(int16_t i = 0; i < 3; i++)
+		setGlobalSaveMessage(i, false);
+
+	//prepare for next global save after 24 hours
+	Scheduler::getScheduler().addEvent(createSchedulerTask(86100000, boost::bind(&Game::prepareGlobalSave, this)));
+	//open server
+	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_NORMAL)));
 }
 
 void Game::shutdown()

@@ -1141,8 +1141,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 					break;
 				}
-				#endif
 
+				#endif
 				case ID_MENU_RELOAD_GLOBALEVENTS:
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)

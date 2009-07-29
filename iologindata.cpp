@@ -98,7 +98,7 @@ bool IOLoginData::saveAccount(Account acc)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `accounts` SET `premdays` = " << acc.premiumDays << ", `warnings` = " << acc.warnings << ", `lastday` = " << acc.lastDay << " WHERE `id` = " << acc.number << db->getUpdateLimiter() << ";";
+	query << "UPDATE `accounts` SET `premdays` = " << acc.premiumDays << ", `warnings` = " << acc.warnings << ", `lastday` = " << acc.lastDay << " WHERE `id` = " << acc.number << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }
 
@@ -277,7 +277,7 @@ bool IOLoginData::setNewPassword(uint32_t accountId, std::string newPassword)
 	}
 
 	DBQuery query;
-	query << "UPDATE `accounts` SET `password` = " << db->escapeString(newPassword) << " WHERE `id` = " << accountId << db->getUpdateLimiter() << ";";
+	query << "UPDATE `accounts` SET `password` = " << db->escapeString(newPassword) << " WHERE `id` = " << accountId << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }
 
@@ -300,7 +300,7 @@ bool IOLoginData::setRecoveryKey(uint32_t accountId, std::string recoveryKey)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `accounts` SET `key` = " << db->escapeString(recoveryKey) << " WHERE `id` = " << accountId << db->getUpdateLimiter() << ";";
+	query << "UPDATE `accounts` SET `key` = " << db->escapeString(recoveryKey) << " WHERE `id` = " << accountId << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }
 
@@ -732,7 +732,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	query << "UPDATE `players` SET `lastlogin` = " << player->lastLoginSaved << ", `lastip` = " << player->lastIP;
 	if(!save || !player->isSaving())
 	{
-		query << " WHERE `id` = " << player->getGUID() << db->getUpdateLimiter() << ";";
+		query << " WHERE `id` = " << player->getGUID() << db->getUpdateLimiter();
 		if(!db->executeQuery(query.str()))
 			return false;
 
@@ -823,7 +823,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	for(uint32_t i = 0; i <= player->promotionLevel; ++i)
 		tmpVoc = Vocations::getInstance()->getVocation(tmpVoc->getFromVocation());
 
-	query << "`vocation` = " << tmpVoc->getId() << " WHERE `id` = " << player->getGUID() << db->getUpdateLimiter() << ";";
+	query << "`vocation` = " << tmpVoc->getId() << " WHERE `id` = " << player->getGUID() << db->getUpdateLimiter();
 	if(!db->executeQuery(query.str()))
 		return false;
 
@@ -831,7 +831,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	for(int32_t i = SKILL_FIRST; i <= SKILL_LAST; ++i)
 	{
 		query.str("");
-		query << "UPDATE `player_skills` SET `value` = " << player->skills[i][SKILL_LEVEL] << ", `count` = " << player->skills[i][SKILL_TRIES] << " WHERE `player_id` = " << player->getGUID() << " AND `skillid` = " << i << db->getUpdateLimiter() << ";";
+		query << "UPDATE `player_skills` SET `value` = " << player->skills[i][SKILL_LEVEL] << ", `count` = " << player->skills[i][SKILL_TRIES] << " WHERE `player_id` = " << player->getGUID() << " AND `skillid` = " << i << db->getUpdateLimiter();
 		if(!db->executeQuery(query.str()))
 			return false;
 	}
@@ -1114,7 +1114,7 @@ bool IOLoginData::updateOnlineStatus(uint32_t guid, bool login)
 			onlineValue--;
 	}
 
-	query << "UPDATE `players` SET `online` = " << onlineValue << " WHERE `id` = " << guid << db->getUpdateLimiter() << ";";
+	query << "UPDATE `players` SET `online` = " << onlineValue << " WHERE `id` = " << guid << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }
 
@@ -1374,7 +1374,7 @@ bool IOLoginData::changeName(uint32_t guid, std::string newName, std::string old
 		return false;
 
 	query.str("");
-	query << "UPDATE `players` SET `name` = " << db->escapeString(newName) << " WHERE `id` = " << guid << db->getUpdateLimiter() << ";";
+	query << "UPDATE `players` SET `name` = " << db->escapeString(newName) << " WHERE `id` = " << guid << db->getUpdateLimiter();
 	if(!db->executeQuery(query.str()))
 		return false;
 
@@ -1454,7 +1454,7 @@ DeleteCharacter_t IOLoginData::deleteCharacter(uint32_t accountId, const std::st
 		return DELETE_LEADER;
 
 	query.str("");
-	query << "UPDATE `players` SET `deleted` = 1 WHERE `id` = " << id << db->getUpdateLimiter() << ";";
+	query << "UPDATE `players` SET `deleted` = 1 WHERE `id` = " << id << db->getUpdateLimiter();
 	if(!db->executeQuery(query.str()))
 		return DELETE_INTERNAL;
 
@@ -1597,6 +1597,6 @@ bool IOLoginData::resetGuildInformation(uint32_t guid)
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "UPDATE `players` SET `rank_id` = 0, `guildnick` = '' WHERE `id` = " << guid << " AND `deleted` = 0" << db->getUpdateLimiter() << ";";
+	query << "UPDATE `players` SET `rank_id` = 0, `guildnick` = '' WHERE `id` = " << guid << " AND `deleted` = 0" << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }
