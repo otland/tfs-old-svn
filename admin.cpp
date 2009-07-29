@@ -87,7 +87,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 {
 	if(g_game.getGameState() == GAME_STATE_SHUTDOWN)
 	{
-		getConnection()->closeConnection();
+		getConnection()->close();
 		return;
 	}
 

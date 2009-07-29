@@ -1141,8 +1141,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
 					break;
 				}
-
 				#endif
+
 				case ID_MENU_RELOAD_GLOBALEVENTS:
 				{
 					if(g_game.getGameState() != GAME_STATE_STARTUP)
@@ -1193,6 +1193,17 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 					{
 						if(g_game.reloadInfo(RELOAD_ITEMS))
 							std::cout << "Reloaded items." << std::endl;
+					}
+
+					break;
+				}
+
+				case ID_MENU_RELOAD_MODS:
+				{
+					if(g_game.getGameState() != GAME_STATE_STARTUP)
+					{
+						if(g_game.reloadInfo(RELOAD_MODS))
+							std::cout << "Reloaded mods." << std::endl;
 					}
 
 					break;

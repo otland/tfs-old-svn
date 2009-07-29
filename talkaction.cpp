@@ -79,9 +79,8 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p, bool override)
 	if(!talkAction)
 		return false;
 
-	std::string sep = ";";
-	readXMLString(p, "separator", sep);
-	if(sep.empty())
+	std::string sep;
+	if(!readXMLString(p, "separator", sep))
 		sep = ";";
 
 	bool success = true;

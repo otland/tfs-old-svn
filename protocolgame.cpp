@@ -436,8 +436,8 @@ bool ProtocolGame::parseFirstPacket(NetworkMessage& msg)
 			disconnectClient(0x14, "Invalid account name.");
 			return false;
 		}
-		else
-			password = "1";
+
+		password = "1";
 	}
 
 	if(g_game.getGameState() < GAME_STATE_NORMAL)
@@ -2725,7 +2725,7 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 			g_chat.statementMap[g_chat.statement] = text;
 		}
 		else
-			msg->AddU32(0x00000000);
+			msg->AddU32(0x00);
 
 		if(creature->getSpeakType() != SPEAK_CLASS_NONE)
 			type = creature->getSpeakType();
@@ -2747,14 +2747,14 @@ void ProtocolGame::AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* crea
 			&& !speaker->hasCustomFlag(PlayerCustomFlag_HideLevel))
 			msg->AddU16(speaker->getPlayerInfo(PLAYERINFO_LEVEL));
 		else
-			msg->AddU16(0x0000);
+			msg->AddU16(0x00);
 
 	}
 	else
 	{
-		msg->AddU32(0x00000000);
+		msg->AddU32(0x00);
 		msg->AddString("");
-		msg->AddU16(0x0000);
+		msg->AddU16(0x00);
 	}
 
 	msg->AddByte(type);

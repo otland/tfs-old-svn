@@ -39,7 +39,7 @@ Party::Party(Player* _leader)
 
 void Party::disband()
 {
-	getLeader()->sendClosePrivate(0x08);
+	getLeader()->sendClosePrivate(CHANNEL_PARTY);
 	getLeader()->setParty(NULL);
 	getLeader()->sendTextMessage(MSG_INFO_DESCR, "Your party has been disbanded.");
 	getLeader()->sendPlayerPartyIcons(getLeader());
@@ -54,7 +54,7 @@ void Party::disband()
 	inviteList.clear();
 	for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
 	{
-		(*it)->sendClosePrivate(0x08);
+		(*it)->sendClosePrivate(CHANNEL_PARTY);
 		(*it)->setParty(NULL);
 		(*it)->sendTextMessage(MSG_INFO_DESCR, "Your party has been disbanded.");
 		(*it)->sendPlayerPartyIcons((*it));
@@ -99,7 +99,7 @@ bool Party::leave(Player* player)
 		inviteList.erase(it);
 
 	player->setParty(NULL);
-	player->sendClosePrivate(0x08);
+	player->sendClosePrivate(CHANNEL_PARTY);
 
 	player->sendTextMessage(MSG_INFO_DESCR, "You have left the party.");
 	player->sendPlayerPartyIcons(player);

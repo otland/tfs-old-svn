@@ -68,7 +68,7 @@ Tile* IOMap::createTile(Item*& ground, Item* item, uint16_t px, uint16_t py, uin
 			tile = new StaticTile(px, py, pz);
 		else //tile is not blocking with possibly multiple items, use dynamic
 			tile = new DynamicTile(px, py, pz);
-		
+
 		tile->__internalAddThing(ground);
 		if(ground->getDecaying() != DECAYING_TRUE)
 		{
@@ -353,7 +353,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 									return false;
 								}
 
-								if(house && !item->isNotMoveable())
+								if(house && item->isMoveable())
 								{
 									std::cout << "[Warning - IOMap::loadMap] Movable item in house: " << house->getHouseId();
 									std::cout << ", item type: " << item->getID() << ", at position " << px << "/" << py << "/";
@@ -418,7 +418,7 @@ bool IOMap::loadMap(Map* map, const std::string& identifier)
 
 							if(item->unserializeItemNode(f, nodeItem, propStream))
 							{
-								if(house && !item->isNotMoveable())
+								if(house && item->isMoveable())
 								{
 									std::cout << "[Warning - IOMap::loadMap] Movable item in house: ";
 									std::cout << house->getHouseId() << ", item type: " << item->getID();

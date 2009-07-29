@@ -54,6 +54,11 @@
 #include "group.h"
 #include "tasks.h"
 
+#ifdef __EXCEPTION_TRACER__
+#include "exception.h"
+extern OTSYS_THREAD_LOCKVAR maploadlock;
+#endif
+
 extern ConfigManager g_config;
 extern Actions* g_actions;
 extern Monsters g_monsters;
@@ -190,6 +195,8 @@ void Game::setGameState(GameState_t newState)
 
 			case GAME_STATE_SHUTDOWN:
 			{
+				g_globalEvents->execute(SERVER_EVENT_SHUTDOWN);
+
 				//kick all players that are still online
 				AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
 				while(it != Player::listPlayer.list.end())
@@ -198,12 +205,10 @@ void Game::setGameState(GameState_t newState)
 					it = Player::listPlayer.list.begin();
 				}
 
-				g_globalEvents->execute(SERVER_EVENT_SHUTDOWN);
 				Houses::getInstance().payHouses();
-
 				saveGameState(false);
-				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, this)));
 
+				Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::shutdown, this)));
 				Scheduler::getScheduler().stop();
 				Dispatcher::getDispatcher().stop();
 				break;
@@ -224,7 +229,6 @@ void Game::setGameState(GameState_t newState)
 						++it;
 				}
 
-				Houses::getInstance().payHouses();
 				saveGameState(false);
 				break;
 			}
@@ -5891,6 +5895,9 @@ void Game::globalSave()
 	{
 		//close server
 		Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::setGameState, this, GAME_STATE_CLOSED)));
+
+		//pay houses
+		Houses::getInstance().payHouses();
 
 		//clean map if configured to
 		if(g_config.getBool(ConfigManager::CLEAN_MAP_AT_GLOBALSAVE))

@@ -732,7 +732,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	query << "UPDATE `players` SET `lastlogin` = " << player->lastLoginSaved << ", `lastip` = " << player->lastIP;
 	if(!save || !player->isSaving())
 	{
-		query << " WHERE `id` = " << player->getGUID() << db->getUpdateLimiter();
+		query << " WHERE `id` = " << player->getGUID() << db->getUpdateLimiter() << ";";
 		if(!db->executeQuery(query.str()))
 			return false;
 
@@ -823,7 +823,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	for(uint32_t i = 0; i <= player->promotionLevel; ++i)
 		tmpVoc = Vocations::getInstance()->getVocation(tmpVoc->getFromVocation());
 
-	query << "`vocation` = " << tmpVoc->getId() << " WHERE `id` = " << player->getGUID() << db->getUpdateLimiter();
+	query << "`vocation` = " << tmpVoc->getId() << " WHERE `id` = " << player->getGUID() << db->getUpdateLimiter() << ";";
 	if(!db->executeQuery(query.str()))
 		return false;
 

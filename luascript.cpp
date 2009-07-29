@@ -10123,7 +10123,11 @@ int32_t LuaScriptInterface::luaL_domodlib(lua_State* L)
 		if(asLowerCaseString(it->first) != name)
 			continue;
 
-		lua_pushboolean(L, !luaL_dostring(L, it->second.second.c_str()));
+		int32_t ret = luaL_dostring(L, it->second.second.c_str());
+		if(ret != 0)
+			reportError(NULL, popString(L));
+
+		lua_pushboolean(L, !ret);
 		break;
 	}
 
@@ -10147,6 +10151,7 @@ int32_t LuaScriptInterface::luaHashSHA1(lua_State* L)
 int32_t LuaScriptInterface::luaPrint(lua_State* L)
 {
 	std::cout << popString(L) << std::endl;
+	lua_pushboolean(L, true);
 	return 1;
 }
 
