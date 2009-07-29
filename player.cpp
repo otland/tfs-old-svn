@@ -3910,7 +3910,7 @@ Skulls_t Player::getSkullClient(const Creature* creature) const
 
 bool Player::hasAttacked(const Player* attacked) const
 {
-	return !hasFlag(PlayerFlag_NotGainInFight) && !attacked &&
+	return !hasFlag(PlayerFlag_NotGainInFight) && attacked &&
 		attackedSet.find(attacked->getID()) != attackedSet.end();
 }
 

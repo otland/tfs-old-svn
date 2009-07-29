@@ -10125,7 +10125,7 @@ int32_t LuaScriptInterface::luaL_domodlib(lua_State* L)
 
 		bool ret = luaL_dostring(L, it->second.second.c_str());
 		if(ret)
-			reportErrorFunc(NULL, popString(L));
+			reportError(NULL, popString(L));
 
 		lua_pushboolean(L, !ret);
 		break;
