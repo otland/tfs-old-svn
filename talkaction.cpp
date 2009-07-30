@@ -83,29 +83,25 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p, bool override)
 	if(readXMLString(p, "separator", sep) && sep.empty())
 		sep = ";";
 
-	bool success = true;
 	StringVec strVector = explodeString(talkAction->getWords(), sep);
 	for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)
 	{
 		trimString(*it);
-		TalkActionsMap::iterator tit = talksMap.find(*it);
-		if(tit != talksMap.end())
+		if(talksMap.find(*it) != talksMap.end())
 		{
 			if(!override)
 			{
 				std::cout << "[Warning - TalkAction::configureEvent] Duplicate registered talkaction with words: " << (*it) << std::endl;
-				success = false;
+				continue;
 			}
 			else
-				delete tit->second;
+				delete talksMap[(*it)];
 		}
 
-		if(success)
-			talksMap[(*it)] = new TalkAction(talkAction);
+		talksMap[(*it)] = talkAction;
 	}
 
-	delete talkAction;
-	return success;
+	return true;
 }
 
 bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std::string& words, bool ignoreAccess)
