@@ -3317,7 +3317,7 @@ uint64_t Player::getGainedExperience(Creature* attacker)
 	if(!skillLoss)
 		return 0;
 
-	double rate = g_config.getNumber(ConfigManager::RATE_PVP_EXPERIENCE);
+	double rate = g_config.getDouble(ConfigManager::RATE_PVP_EXPERIENCE);
 	if(rate <= 0)
 		return 0;
 
