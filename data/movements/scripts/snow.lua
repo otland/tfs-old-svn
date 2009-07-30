@@ -2,7 +2,7 @@ local TILE_SNOW = 670
 local TILE_FOOTPRINT_I = 6594
 local TILE_FOOTPRINT_II = 6598
 
-function onStepIn(cid, item, pos)
+function onStepIn(cid, item, position, lastPosition, fromPosition, toPosition, actor)
 	if(isPlayerGhost(cid)) then
 		return true
 	end
