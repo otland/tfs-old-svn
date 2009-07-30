@@ -1,19 +1,21 @@
-function onStepOut(cid, item, position, lastPosition, fromPosition, toPosition, actor)
+local TILE_SNOW = 670
+local TILE_FOOTPRINT_I = 6594
+local TILE_FOOTPRINT_II = 6598
+
+function onStepIn(cid, item, pos)
 	if(isPlayerGhost(cid)) then
 		return true
 	end
 
-	addEvent(transformBack, 10000, position, item.itemid)
-	if(item.itemid == 670) then
-		doTransformItem(item.uid, 6594)
+	if(item.itemid == TILE_SNOW) then
+		doTransformItem(item.uid, TILE_FOOTPRINT_I)
+		doDecayItem(item.uid)
+	elseif(item.itemid == TILE_FOOTPRINT_I) then
+		doTransformItem(item.uid, TILE_FOOTPRINT_II)
+		doDecayItem(item.uid)
 	else
-		doTransformItem(item.uid, item.itemid + 15)
+		doTransformItem(item.uid, TILE_FOOTPRINT_I)
 	end
 
 	return true
-end
-
-function transformBack(position, itemid)
-	position.stackpos = 0
-	doTransformItem(getThingFromPos(position).uid, itemid)
 end
