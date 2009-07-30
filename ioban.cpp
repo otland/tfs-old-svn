@@ -155,7 +155,7 @@ bool IOBan::addNotation(uint32_t account, uint32_t reasonId,
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "INSERT INTO `bans` (`id`, `type`, `value`, `param`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action`, `statement`) ";
+	query << "INSERT INTO `bans` (`id`, `type`, `value`, `param`, `expires`, `added`, `admin_id`, `comment`, `reason`, `statement`) ";
 	query << "VALUES (NULL, " << BAN_NOTATION << ", " << account << ", " << playerId << ", '-1', " << time(NULL) << ", " << gamemaster;
 	query << ", " << db->escapeString(comment.c_str()) << ", " << reasonId << ", " << db->escapeString(statement.c_str()) << ")";
 	return db->executeQuery(query.str());
@@ -171,7 +171,7 @@ bool IOBan::addStatement(uint32_t playerId, uint32_t reasonId,
 	if(channelId >= 0)
 		query << "`param`, ";
 
-	query << "`expires`, `added`, `admin_id`, `comment`, `reason`, `action`, `statement`) VALUES (NULL, " << BAN_STATEMENT << ", " << playerId;
+	query << "`expires`, `added`, `admin_id`, `comment`, `reason`, `statement`) VALUES (NULL, " << BAN_STATEMENT << ", " << playerId;
 	if(channelId >= 0)
 		query << ", " << channelId;
 
