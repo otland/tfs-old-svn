@@ -275,10 +275,6 @@ function getTileZoneInfo(pos)
 	return 0
 end
 
-function debugPrint(text)
-	return print(text)
-end
-
 function doShutdown()
 	return doSetGameState(GAMESTATE_SHUTDOWN)
 end
@@ -428,6 +424,7 @@ function doPlayerBroadcastMessage(cid, text, class, checkFlag, ghost)
 		doCreatureSay(cid, text, class, ghost, pid)
 	end
 
+	print("> " .. getCreatureName(cid) .. " broadcasted message: \"" .. text .. "\".")
 	return true
 end
 
