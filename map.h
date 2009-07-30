@@ -279,8 +279,10 @@ inline void QTreeLeafNode::addCreature(Creature* c)
 inline void QTreeLeafNode::removeCreature(Creature* c)
 {
 	CreatureVector::iterator it = std::find(creatureList.begin(), creatureList.end(), c);
-	assert(it != creatureList.end());
-	std::swap(*it, creatureList.back());
-	creatureList.pop_back();
+	//assert(it != creatureList.end());
+	if(it == creatureList.end())
+		creatureList.erase(*it);
+	else
+		std::cout << c->getName() << std::endl;
 }
 #endif
