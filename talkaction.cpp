@@ -178,6 +178,7 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 TalkAction::TalkAction(LuaScriptInterface* _interface):
 Event(_interface)
 {
+	function = NULL;
 	m_filter = TALKFILTER_WORD;
 	m_access = 0;
 	m_channel = -1;
@@ -189,6 +190,7 @@ Event(_interface)
 TalkAction::TalkAction(const TalkAction* copy):
 Event(copy)
 {
+	function = copy->function;
 	m_filter = copy->m_filter;
 	m_access = copy->m_access;
 	m_channel = copy->m_channel;
