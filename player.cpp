@@ -3312,13 +3312,13 @@ void Player::doAttacking(uint32_t interval)
 		lastAttack = OTSYS_TIME();
 }
 
-uint64_t Player::getGainedExperience(Creature* attacker)
+double Player::getGainedExperience(Creature* attacker) const
 {
 	if(!skillLoss)
 		return 0;
 
 	double rate = g_config.getDouble(ConfigManager::RATE_PVP_EXPERIENCE);
-	if(rate <= 0.0f)
+	if(rate <= 0)
 		return 0;
 
 	Player* attackerPlayer = attacker->getPlayer();
@@ -3342,8 +3342,8 @@ uint64_t Player::getGainedExperience(Creature* attacker)
 	*/
 	uint32_t a = (uint32_t)std::floor(attackerLevel * 0.9), b = level;
 	uint64_t c = getExperience();
-	return (uint64_t)((double)std::max((uint64_t)0, (uint64_t)std::floor(getDamageRatio(
-		attacker) * std::max((double)0, ((double)(1 - (((double)a / b))))) * 0.05 * c)) * rate);
+	return (double)std::max((uint64_t)0, (uint64_t)std::floor(getDamageRatio(attacker)
+		* std::max((double)0, ((double)(1 - (((double)a / b))))) * 0.05 * c)) * rate;
 }
 
 void Player::onFollowCreature(const Creature* creature)
