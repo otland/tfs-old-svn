@@ -2259,7 +2259,7 @@ void LuaScriptInterface::registerFunctions()
 	//getStatementsCount(name/guid[, channelId])
 	lua_register(m_luaState, "getStatementsCount", LuaScriptInterface::luaGetStatementsCount);
 
-	//getBanData(value[, param[, type]])
+	//getBanData(value[, type[, param]])
 	lua_register(m_luaState, "getBanData", LuaScriptInterface::luaGetBanData);
 
 	//getBanReason(id)
@@ -9945,14 +9945,14 @@ int32_t LuaScriptInterface::luaGetStatementsCount(lua_State* L)
 
 int32_t LuaScriptInterface::luaGetBanData(lua_State* L)
 {
-	//getBanData(value[, param[, type]])
+	//getBanData(value[, type[, param]])
 	Ban tmp;
 	uint32_t params = lua_gettop(L);
 	if(params > 2)
-		tmp.type = (Ban_t)popNumber(L);
+		tmp.param = popNumber(L);
 
 	if(params > 1)
-		tmp.param = popNumber(L);
+		tmp.type = (Ban_t)popNumber(L);
 
 	tmp.value = popNumber(L);
 	if(!IOBan::getInstance()->getData(tmp))
