@@ -1135,14 +1135,14 @@ Item* Monster::createCorpse(DeathList deathList)
 	if(deathList.size() > 1)
 		ownerEntry = deathList[1];
 
-	Creature* owner = owner = ownerEntry.getKillerCreature();
+	Creature* owner = ownerEntry.getKillerCreature();
 	if(!owner)
 		return corpse;
 
 	uint32_t ownerId = 0;
 	if(owner->getPlayer())
 		ownerId = owner->getID();
-	else if(owner->getMaster() && owner->getMaster()->getPlayer())
+	else if(owner->getMaster() && owner->getPlayerMaster())
 		ownerId = owner->getMaster()->getID();
 
 	if(ownerId)
