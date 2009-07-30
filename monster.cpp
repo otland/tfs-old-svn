@@ -320,7 +320,7 @@ void Monster::onCreatureLeave(Creature* creature)
 {
 #ifdef __DEBUG__
 	std::cout << "onCreatureLeave - " << creature->getName() << std::endl;
-#endif	
+#endif
 	if(isSummon() && getMaster() == creature)
 	{
 		if(!g_config.getBool(ConfigManager::TELEPORT_SUMMONS) && (!getMaster()->getPlayer()
@@ -1128,8 +1128,15 @@ Item* Monster::createCorpse(DeathList deathList)
 	if(mType->corpseUnique)
 		corpse->setUniqueId(mType->corpseUnique);
 
-	Creature* owner = NULL;
-	if((deathList[0].isNameKill() || !(owner = deathList[0].getKillerCreature())))
+	DeathEntry ownerEntry = deathList[0];
+	if(ownerEntry.isNameKill())
+		return corpse;
+
+	if(deathList.size() > 1)
+		ownerEntry = deathList[1];
+
+	Creature* owner = owner = ownerEntry.getKillerCreature();
+	if(!owner)
 		return corpse;
 
 	uint32_t ownerId = 0;
