@@ -59,9 +59,6 @@
 			Skeletons
 				Dreadbeast
 
-			Sorcerers
-				Medusa
-
 			Traps
 				Deathspawn
 				Hell Hole
@@ -519,6 +516,7 @@
 	<monster name="Ice Witch" file="Sorcerers/ice witch.xml"/>
 	<monster name="Infernalist" file="Sorcerers/infernalist.xml"/>
 	<monster name="Mad Scientist" file="Sorcerers/mad scientist.xml"/>
+	<monster name="Medusa" file="Sorcerers/medusa.xml"/>
 	<monster name="Warlock" file="Sorcerers/warlock.xml"/>
 	<monster name="Witch" file="Sorcerers/witch.xml"/>
 

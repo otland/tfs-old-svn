@@ -927,7 +927,17 @@ MagicEffectNames magicEffectNames[] =
 	{"watersplash",		NM_ME_WATERSPLASH},
 	{"plantattack",		NM_ME_PLANTATTACK},
 	{"tutorialarrow",	NM_ME_TUTORIALARROW},
-	{"tutorialsquare",	NM_ME_TUTORIALSQUARE}
+	{"tutorialsquare",	NM_ME_TUTORIALSQUARE},
+	{"mirrorhorizontal",	NM_ME_MIRRORHORIZONTAL},
+	{"mirrorvertical",	NM_ME_MIRRORVERTICAL},
+	{"skullhorizontal",	NM_ME_SKULLHORIZONTAL},
+	{"skullvertical",	NM_ME_SKULLVERTICAL},
+	{"assassin",		NM_ME_ASSASSIN},
+	{"stepshorizontal",	NM_ME_STEPSHORIZONTAL},
+	{"bloodysteps",		NM_ME_BLOODYSTEPS},
+	{"stepsvertical",	NM_ME_STEPSVERTICAL},
+	{"yalaharighost",	NM_ME_YALAHARIGHOST},
+	{"smoke",		NM_ME_SMOKE}
 };
 
 ShootTypeNames shootTypeNames[] =
