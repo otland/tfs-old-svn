@@ -1,5 +1,5 @@
-function onStepOut(cid, item, position, fromPosition)
-	if(not doComparePositions(fromPosition, position) or isPlayerGhost(cid)) then
+function onStepOut(cid, item, position, lastPosition, fromPosition, toPosition, actor)
+	if(isPlayerGhost(cid)) then
 		return true
 	end
 
@@ -9,11 +9,11 @@ function onStepOut(cid, item, position, fromPosition)
 	else
 		doTransformItem(item.uid, item.itemid + 15)
 	end
+
 	return true
 end
 
-function transformBack(position, oldItemID)
+function transformBack(position, itemid)
 	position.stackpos = 0
-	doTransformItem(getThingFromPos(position).uid, oldItemID)
-	return true
+	doTransformItem(getThingFromPos(position).uid, itemid)
 end
