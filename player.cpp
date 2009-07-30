@@ -3318,7 +3318,7 @@ uint64_t Player::getGainedExperience(Creature* attacker)
 		return 0;
 
 	double rate = g_config.getDouble(ConfigManager::RATE_PVP_EXPERIENCE);
-	if(rate <= 0)
+	if(rate <= 0.0f)
 		return 0;
 
 	Player* attackerPlayer = attacker->getPlayer();

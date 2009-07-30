@@ -162,9 +162,9 @@ bool ConfigManager::load()
 	m_confBool[REMOVE_WEAPON_AMMO] = getGlobalBool("removeWeaponAmmunition", "yes");
 	m_confBool[REMOVE_WEAPON_CHARGES] = getGlobalBool("removeWeaponCharges", "yes");
 	m_confBool[REMOVE_RUNE_CHARGES] = getGlobalBool("removeRuneCharges", "yes");
-	m_confDouble[RATE_PVP_EXPERIENCE] = getGlobalDouble("rateExperienceFromPlayers", 1.0);
-	m_confDouble[EFP_MIN_THRESHOLD] = getGlobalDouble("minLevelThresholdForKilledPlayer", 0.9);
-	m_confDouble[EFP_MAX_THRESHOLD] = getGlobalDouble("maxLevelThresholdForKilledPlayer", 1.1);
+	m_confDouble[RATE_PVP_EXPERIENCE] = getGlobalDouble("rateExperienceFromPlayers", 0.0f);
+	m_confDouble[EFP_MIN_THRESHOLD] = getGlobalDouble("minLevelThresholdForKilledPlayer", 0.9f);
+	m_confDouble[EFP_MAX_THRESHOLD] = getGlobalDouble("maxLevelThresholdForKilledPlayer", 1.1f);
 	m_confBool[SHUTDOWN_AT_GLOBALSAVE] = getGlobalBool("shutdownAtGlobalSave", "no");
 	m_confBool[CLEAN_MAP_AT_GLOBALSAVE] = getGlobalBool("cleanMapAtGlobalSave", "yes");
 	m_confBool[FREE_PREMIUM] = getGlobalBool("freePremium", "no");
@@ -222,11 +222,11 @@ bool ConfigManager::load()
 	m_confNumber[LOGIN_PROTECTION] = getGlobalNumber("loginProtectionPeriod", 10 * 1000);
 	m_confBool[STORE_DIRECTION] = getGlobalBool("storePlayerDirection", "no");
 	m_confNumber[PLAYER_DEEPNESS] = getGlobalNumber("playerQueryDeepness", 1);
-	m_confDouble[CRITICAL_HIT_MUL] = getGlobalDouble("criticalHitMultiplier", 1);
+	m_confDouble[CRITICAL_HIT_MUL] = getGlobalDouble("criticalHitMultiplier", 1.0f);
 	m_confNumber[STAIRHOP_DELAY] = getGlobalNumber("stairhopDelay", 2 * 1000);
 	m_confNumber[RATE_STAMINA_LOSS] = getGlobalNumber("rateStaminaLoss", 1);
-	m_confDouble[RATE_STAMINA_GAIN] = getGlobalDouble("rateStaminaGain", 1000 / 3);
-	m_confDouble[RATE_STAMINA_THRESHOLD] = getGlobalDouble("rateStaminaThresholdGain", 4);
+	m_confDouble[RATE_STAMINA_GAIN] = getGlobalDouble("rateStaminaGain", double(1000 / 3));
+	m_confDouble[RATE_STAMINA_THRESHOLD] = getGlobalDouble("rateStaminaThresholdGain", 4.0f);
 	m_confDouble[RATE_STAMINA_ABOVE] = getGlobalDouble("rateStaminaAboveNormal", 1.5f);
 	m_confDouble[RATE_STAMINA_UNDER] = getGlobalDouble("rateStaminaUnderNormal", 0.5f);
 	m_confNumber[STAMINA_LIMIT_TOP] = getGlobalNumber("staminaRatingLimitTop", 41 * 60);
