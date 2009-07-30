@@ -309,7 +309,7 @@ int32_t Weapon::playerWeaponCheck(Player* player, Creature* target) const
 	if(player->getMana() < getManaCost(player))
 		return 0;
 
-	if(player->getPlayerInfo(PLAYERINFO_SOUL) < soul)
+	if(player->getSoul() < soul)
 		return 0;
 
 	if(isPremium() && !player->isPremium())

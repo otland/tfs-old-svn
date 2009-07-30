@@ -712,14 +712,14 @@ int32_t Player::getDefaultStats(stats_t stat)
 {
 	switch(stat)
 	{
+		case STAT_MAGICLEVEL:
+			return getMagicLevel() - getVarStats(STAT_MAGICLEVEL);
 		case STAT_MAXHEALTH:
 			return getMaxHealth() - getVarStats(STAT_MAXHEALTH);
 		case STAT_MAXMANA:
 			return getMaxMana() - getVarStats(STAT_MAXMANA);
 		case STAT_SOUL:
 			return getSoul() - getVarStats(STAT_SOUL);
-		case STAT_MAGICLEVEL:
-			return getMagicLevel() - getVarStats(STAT_MAGICLEVEL);
 		default:
 			break;
 	}
@@ -3782,7 +3782,7 @@ void Player::changeMana(int32_t manaChange)
 void Player::changeSoul(int32_t soulChange)
 {
 	if(!hasFlag(PlayerFlag_HasInfiniteSoul))
-		soul = std::max(0, std::min((int32_t)soulMax, (int32_t)soul + soulChange));
+		soul = std::min((int32_t)soulMax, (int32_t)soul + soulChange);
 
 	sendStats();
 }

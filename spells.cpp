@@ -634,7 +634,7 @@ bool Spell::playerSpellCheck(Player* player) const
 		return false;
 	}
 
-	if(player->getPlayerInfo(PLAYERINFO_SOUL) < soul && !player->hasFlag(PlayerFlag_HasInfiniteSoul))
+	if(player->getSoul() < soul && !player->hasFlag(PlayerFlag_HasInfiniteSoul))
 	{
 		player->sendCancelMessage(RET_NOTENOUGHSOUL);
 		g_game.addMagicEffect(player->getPosition(), NM_ME_POFF);

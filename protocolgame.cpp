@@ -2685,9 +2685,9 @@ void ProtocolGame::AddPlayerStats(NetworkMessage_ptr msg)
 
 	msg->AddU16(player->getPlayerInfo(PLAYERINFO_LEVEL));
 	msg->AddByte(player->getPlayerInfo(PLAYERINFO_LEVELPERCENT));
-	msg->AddU16(player->getMana());
+	msg->AddU16(player->getPlayerInfo(PLAYERINFO_MANA));
 	msg->AddU16(player->getPlayerInfo(PLAYERINFO_MAXMANA));
-	msg->AddByte(player->getMagicLevel());
+	msg->AddByte(player->getPlayerInfo(PLAYERINFO_MAGICLEVEL));
 	msg->AddByte(player->getPlayerInfo(PLAYERINFO_MAGICLEVELPERCENT));
 	msg->AddByte(player->getPlayerInfo(PLAYERINFO_SOUL));
 	msg->AddU16(player->getStaminaMinutes());
