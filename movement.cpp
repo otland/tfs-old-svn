@@ -53,6 +53,8 @@ inline void MoveEvents::clearMap(MoveListMap& map)
 			EventList& moveEventList = it->second.moveEvent[i];
 			for(EventList::iterator it = moveEventList.begin(); it != moveEventList.end(); ++it)
 				delete (*it);
+
+			moveEventList.clear();
 		}
 	}
 
@@ -72,6 +74,8 @@ void MoveEvents::clear()
 			EventList& moveEventList = it->second.moveEvent[i];
 			for(EventList::iterator it = moveEventList.begin(); it != moveEventList.end(); ++it)
 				delete (*it);
+
+			moveEventList.clear();
 		}
 	}
 

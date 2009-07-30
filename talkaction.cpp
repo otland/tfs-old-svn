@@ -59,7 +59,10 @@ TalkActions::~TalkActions()
 void TalkActions::clear()
 {
 	for(TalkActionsMap::iterator it = talksMap.begin(); it != talksMap.end(); ++it)
-		delete it->second;
+	{
+		if(it->second)
+			delete it->second;
+	}
 
 	talksMap.clear();
 	m_scriptInterface.reInitState();
