@@ -987,7 +987,7 @@ bool TalkAction::banishmentInfo(Creature* creature, const std::string& cmd, cons
 		return false;
 
 	StringVec params = explodeString(param, ",");
-	params[2] = "Account";
+	std::string what = "Account";
 	trimString(params[0]);
 
 	Ban ban;
@@ -997,7 +997,7 @@ bool TalkAction::banishmentInfo(Creature* creature, const std::string& cmd, cons
 		trimString(params[1]);
 		if(params[0].substr(0, 1) == "p")
 		{
-			params[2] = "Character";
+			what = "Character";
 			ban.type = BAN_PLAYER;
 			ban.param = PLAYERBAN_BANISHMENT;
 
@@ -1021,8 +1021,8 @@ bool TalkAction::banishmentInfo(Creature* creature, const std::string& cmd, cons
 
 	if(!ban.value)
 	{
-		params[3] = asLowerCaseString(params[2]);
-		player->sendCancel("Invalid " + params[3] + (std::string)" name or id.");
+		toLowerCaseString(what);
+		player->sendCancel("Invalid " + what + (std::string)" name or id.");
 		return true;
 	}
 
@@ -1033,20 +1033,20 @@ bool TalkAction::banishmentInfo(Creature* creature, const std::string& cmd, cons
 	}
 
 	bool deletion = ban.expires < 0;
-	params[3] = "Automatic ";
+	std::string admin = "Automatic ";
 	if(!ban.adminId)
-		params[3] += (deletion ? "deletion" : "banishment");
+		admin += (deletion ? "deletion" : "banishment");
 	else
-		IOLoginData::getInstance()->getNameByGuid(ban.adminId, params[4], true);
+		IOLoginData::getInstance()->getNameByGuid(ban.adminId, admin, true);
 
-	params[4] = "Banishment will be lifted at:\n";
+	std::string end = "Banishment will be lifted at:\n";
 	if(deletion)
-		params[4] = params[2] + (std::string)" won't be undeleted";
+		end = what + (std::string)" won't be undeleted";
 
 	char buffer[500 + ban.comment.length()];
 	sprintf(buffer, "%s has been %s at:\n%s by: %s,\nfor the following reason:\n%s.\nThe action taken was:\n%s.\nThe comment given was:\n%s.\n%s%s.",
-		params[2].c_str(), (deletion ? "deleted" : "banished"), formatDateShort(ban.added).c_str(), params[3].c_str(), getReason(ban.reason).c_str(),
-		getAction(ban.action, false).c_str(), ban.comment.c_str(), params[4].c_str(), (deletion ? "." : formatDateShort(ban.expires, true).c_str()));
+		what.c_str(), (deletion ? "deleted" : "banished"), formatDateShort(ban.added).c_str(), admin.c_str(), getReason(ban.reason).c_str(),
+		getAction(ban.action, false).c_str(), ban.comment.c_str(), end.c_str(), (deletion ? "." : formatDateShort(ban.expires, true).c_str()));
 
 	player->sendFYIBox(buffer);
 	return true;
