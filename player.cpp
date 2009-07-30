@@ -3551,7 +3551,7 @@ void Player::onAttackedCreature(Creature* target)
 
 	addAttacked(targetPlayer);
 	if(target == this || Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer) ||
-		(g_config.getBool(ConfigManager::ALLOW_FIGHTBACK) && targetPlayer->hasAttacked(this))
+		(g_config.getBool(ConfigManager::ALLOW_FIGHTBACK) && targetPlayer->hasAttacked(this)))
 		return;
 
 	if(!pzLocked)
