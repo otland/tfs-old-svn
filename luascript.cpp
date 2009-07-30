@@ -1065,9 +1065,9 @@ double LuaScriptInterface::popFloatNumber(lua_State* L)
 
 std::string LuaScriptInterface::popString(lua_State* L)
 {
-	lua_pop(L, 1);
-	std::string str = lua_tostring(L, 0);
-	if(str.empty())
+	lua_pop(L,1);
+	const char* str = lua_tostring(L, 0);
+	if(!str || !strlen(str))
 		return "";
 
 	return str;
