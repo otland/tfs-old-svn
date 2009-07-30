@@ -4,8 +4,7 @@ function onSay(cid, words, param, channel)
 		n = math.max(0, tonumber(param))
 	end
 
-	local pos = getCreaturePosition(cid)
-	local tmp = pos
+	local tmp, pos = getCreaturePosition(cid), getCreaturePosition(cid)
 	if(words:sub(2, 2) == "u") then
 		pos.z = pos.z - n
 	else
