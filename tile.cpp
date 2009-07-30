@@ -1062,12 +1062,14 @@ void Tile::__updateThing(Thing* thing, uint16_t itemId, uint32_t count)
 	}
 
 	//Need to update it here too since the old and new item is the same
+	uint16_t oldId = item->getID();
 	updateTileFlags(item, true);
+
 	item->setID(itemId);
 	item->setSubType(count);
 
 	updateTileFlags(item, false);
-	onUpdateTileItem(item, Item::items[item->getID()], item, Item::items[itemId]);
+	onUpdateTileItem(item, Item::items[oldId], item, Item::items[itemId]);
 }
 
 void Tile::__replaceThing(uint32_t index, Thing* thing)
