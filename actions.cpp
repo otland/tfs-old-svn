@@ -129,7 +129,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 					delete useItemMap[intVector[i]];
 			}
 
-			useItemMap[intVector[i]] = new Action(action);
+			useItemMap[intVector[i]] = action;
 		}
 	}
 
@@ -157,7 +157,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 							delete useItemMap[intVector[i]];
 					}
 
-					useItemMap[intVector[i]++] = new Action(action);
+					useItemMap[intVector[i]++] = action;
 				}
 			}
 		}
@@ -201,7 +201,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 					delete uniqueItemMap[intVector[i]];
 			}
 
-			uniqueItemMap[intVector[i]] = new Action(action);
+			uniqueItemMap[intVector[i]] = action;
 		}
 	}
 
@@ -229,7 +229,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 							delete uniqueItemMap[intVector[i]];
 					}
 
-					uniqueItemMap[intVector[i]++] = new Action(action);
+					uniqueItemMap[intVector[i]++] = action;
 				}
 			}
 		}
@@ -273,7 +273,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 					delete actionItemMap[intVector[i]];
 			}
 
-			actionItemMap[intVector[i]] = new Action(action);
+			actionItemMap[intVector[i]] = action;
 		}
 	}
 
@@ -301,7 +301,7 @@ bool Actions::registerEvent(Event* event, xmlNodePtr p, bool override)
 							delete actionItemMap[intVector[i]];
 					}
 
-					actionItemMap[intVector[i]++] = new Action(action);
+					actionItemMap[intVector[i]++] = action;
 				}
 			}
 		}

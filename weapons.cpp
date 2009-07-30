@@ -115,9 +115,11 @@ Event* Weapons::getEvent(const std::string& nodeName)
 	std::string tmpNodeName = asLowerCaseString(nodeName);
 	if(tmpNodeName == "melee")
 		return new WeaponMelee(&m_scriptInterface);
-	else if(tmpNodeName == "distance" || tmpNodeName == "ammunition")
+
+	if(tmpNodeName == "distance" || tmpNodeName == "ammunition")
 		return new WeaponDistance(&m_scriptInterface);
-	else if(tmpNodeName == "wand" || tmpNodeName == "rod")
+
+	if(tmpNodeName == "wand" || tmpNodeName == "rod")
 		return new WeaponWand(&m_scriptInterface);
 
 	return NULL;

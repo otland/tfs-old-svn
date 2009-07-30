@@ -143,7 +143,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 			{
 				while(intVector[0] < intVector[1])
 				{
-					addEvent(new MoveEvent(moveEvent), ++intVector[0], m_itemIdMap, override);
+					addEvent(moveEvent, ++intVector[0], m_itemIdMap, override);
 					if(equip)
 					{
 						ItemType& tit = Item::items.getItemType(intVector[0]);
@@ -178,7 +178,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 
 				while(intVector[i] < endIntVector[i])
 				{
-					addEvent(new MoveEvent(moveEvent), ++intVector[i], m_itemIdMap, override);
+					addEvent(moveEvent, ++intVector[i], m_itemIdMap, override);
 					if(equip)
 					{
 						ItemType& tit = Item::items.getItemType(intVector[i]);
@@ -207,7 +207,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 			if(intVector.size() > 1)
 			{
 				while(intVector[0] < intVector[1])
-					addEvent(new MoveEvent(moveEvent), ++intVector[0], m_uniqueIdMap, override);
+					addEvent(moveEvent, ++intVector[0], m_uniqueIdMap, override);
 			}
 		}
 	}
@@ -222,7 +222,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 			{
 				addEvent(moveEvent, intVector[i], m_uniqueIdMap, override);
 				while(intVector[i] < endIntVector[i])
-					addEvent(new MoveEvent(moveEvent), ++intVector[i], m_uniqueIdMap, override);
+					addEvent(moveEvent, ++intVector[i], m_uniqueIdMap, override);
 			}
 		}
 		else
@@ -242,7 +242,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 			if(intVector.size() > 1)
 			{
 				while(intVector[0] < intVector[1])
-					addEvent(new MoveEvent(moveEvent), ++intVector[0], m_actionIdMap, override);
+					addEvent(moveEvent, ++intVector[0], m_actionIdMap, override);
 			}
 		}
 	}
@@ -257,7 +257,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 			{
 				addEvent(moveEvent, intVector[i], m_actionIdMap, override);
 				while(intVector[i] < endIntVector[i])
-					addEvent(new MoveEvent(moveEvent), ++intVector[i], m_actionIdMap, override);
+					addEvent(moveEvent, ++intVector[i], m_actionIdMap, override);
 			}
 		}
 		else
