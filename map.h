@@ -284,5 +284,8 @@ inline void QTreeLeafNode::removeCreature(Creature* c)
 		creatureList.erase(*it);
 	else
 		std::cout << c->getName() << std::endl;
+
+	std::swap(*it, creatureList.end());
+	creatureList.pop_back();
 }
 #endif
