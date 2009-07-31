@@ -1075,33 +1075,24 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 	Position destPos = getNextPosition(direction, currentPos);
 	if(direction < SOUTHWEST && creature->getPlayer())
 	{
-		//try go up
-		if(currentPos.z != 8 && creature->getTile()->hasHeight(3))
+		Tile* tmpTile = NULL;
+		if(currentPos.z != 8 && creature->getTile()->hasHeight(3)) //try go up
 		{
-			Tile* tmpTile = map->getTile(Position(currentPos.x, currentPos.y, currentPos.z - 1));
-			if(!tmpTile || (!tmpTile->ground && !tmpTile->hasProperty(BLOCKSOLID)))
+			if((!(tmpTile = map->getTile(Position(currentPos.x, currentPos.y, currentPos.z - 1)))
+				|| (!tmpTile->ground && !tmpTile->hasProperty(BLOCKSOLID))) &&
+				(tmpTile = map->getTile(Position(destPos.x, destPos.y, destPos.z - 1)))
+				&& tmpTile->ground && !tmpTile->hasProperty(BLOCKSOLID))
 			{
-				tmpTile = map->getTile(Position(destPos.x, destPos.y, destPos.z - 1));
-				if(tmpTile && tmpTile->ground && !tmpTile->hasProperty(BLOCKSOLID))
-				{
-					flags = flags | FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE;
-					destPos.z--;
-				}
+				flags = flags | FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE;
+				destPos.z--;
 			}
 		}
-		else
+		else if(currentPos.z != 7 && (!(tmpTile = map->getTile(destPos)) || (!tmpTile->ground &&
+			!tmpTile->hasProperty(BLOCKSOLID))) && (tmpTile = map->getTile(Position(
+			destPos.x, destPos.y, destPos.z + 1))) && tmpTile->hasHeight(3)) //try go down
 		{
-			//try go down
-			Tile* tmpTile = map->getTile(destPos);
-			if(currentPos.z != 7 && (!tmpTile || (!tmpTile->ground && !tmpTile->hasProperty(BLOCKSOLID))))
-			{
-				tmpTile = map->getTile(Position(destPos.x, destPos.y, destPos.z + 1));
-				if(tmpTile && tmpTile->hasHeight(3))
-				{
-					flags = flags | FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE;
-					destPos.z++;
-				}
-			}
+			flags = flags | FLAG_IGNOREBLOCKITEM | FLAG_IGNOREBLOCKCREATURE;
+			destPos.z++;
 		}
 	}
 
@@ -1117,6 +1108,7 @@ ReturnValue Game::internalMoveCreature(Creature* creature, Direction direction, 
 			player->sendCancelWalk();
 		}
 	}
+
 	return ret;
 }
 
