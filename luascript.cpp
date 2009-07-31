@@ -3608,8 +3608,10 @@ int32_t LuaScriptInterface::luaDoPlayerAddItem(lua_State* L)
 	}
 
 	const ItemType& it = Item::items[itemId];
-	int32_t itemCount = count;
-	if(params < 5 && it.hasSubType())
+	int32_t itemCount = 1;
+	if(params > 4)
+		itemCount = count;
+	else if(it.hasSubType())
 	{
 		if(it.stackable)
 			itemCount = (int32_t)std::ceil((float)count / 100);
@@ -4373,7 +4375,7 @@ int32_t LuaScriptInterface::luaDoCreateItem(lua_State* L)
 	}
 
 	const ItemType& it = Item::items[itemId];
-	int32_t itemCount = count, subType = 1;
+	int32_t itemCount = 1, subType = 1;
 	if(it.hasSubType())
 	{
 		if(it.stackable)
@@ -4381,6 +4383,8 @@ int32_t LuaScriptInterface::luaDoCreateItem(lua_State* L)
 
 		subType = count;
 	}
+	else
+		itemCount = count;
 
 	while(itemCount > 0)
 	{
@@ -7559,7 +7563,7 @@ int32_t LuaScriptInterface::luaDoAddContainerItem(lua_State* L)
 	}
 
 	const ItemType& it = Item::items[itemId];
-	int32_t itemCount = count, subType = 1;
+	int32_t itemCount = 1, subType = 1;
 	if(it.hasSubType())
 	{
 		if(it.stackable)
@@ -7567,6 +7571,8 @@ int32_t LuaScriptInterface::luaDoAddContainerItem(lua_State* L)
 
 		subType = count;
 	}
+	else
+		itemCount = count;
 
 	while(itemCount > 0)
 	{
