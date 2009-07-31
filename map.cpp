@@ -1145,13 +1145,3 @@ Floor* QTreeLeafNode::createFloor(uint16_t z)
 
 	return m_array[z];
 }
-
-void QTreeLeafNode::removeCreature(Creature* c)
-{
-	CreatureVector::iterator it = std::find(creatureList.begin(), creatureList.end(), c);
-	//assert(it != creatureList.end());
-	if(it == creatureList.end())
-		creatureList.erase(it);
-	else
-		std::cout << c->getName() << std::endl;
-}

@@ -775,47 +775,45 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 	if(floorChange(CHANGE_DOWN))
 	{
 		pos.z++;
-		Tile* destTileEx = NULL;
 		for(int32_t i = CHANGE_FIRST_EX; i < CHANGE_LAST; ++i)
 		{
-			destTileEx = NULL;
-			Position posEx = pos;
+			Position tmpPos = pos;
+			Tile* tmpTile = NULL;
 			switch(i)
 			{
 				case CHANGE_NORTH_EX:
-					posEx.y++;
-					if((destTileEx = g_game.getTile(posEx)))
-						posEx.y++;
+					tmpPos.y++;
+					if((tmpTile = g_game.getTile(tmpPos)))
+						tmpPos.y++;
 
 					break;
 				case CHANGE_SOUTH_EX:
-					posEx.y--;
-					if((destTileEx = g_game.getTile(posEx)))
-						posEx.y--;
+					tmpPos.y--;
+					if((tmpTile = g_game.getTile(tmpPos)))
+						tmpPos.y--;
 
 					break;
 				case CHANGE_EAST_EX:
-					posEx.x++;
-					if((destTileEx = g_game.getTile(posEx)))
-						posEx.x--;
+					tmpPos.x++;
+					if((tmpTile = g_game.getTile(tmpPos)))
+						tmpPos.x--;
 
 					break;
 				case CHANGE_WEST_EX:
-					posEx.x--;
-					if((destTileEx = g_game.getTile(posEx)))
-						posEx.x++;
+					tmpPos.x--;
+					if((tmpTile = g_game.getTile(tmpPos)))
+						tmpPos.x++;
 
 					break;
 				default:
 					break;
 			}
 
-			if(destTileEx && destTileEx->floorChange((FloorChange_t)i))
-			{
-				destTile = g_game.getTile(posEx);
-				destTileEx = NULL;
-				break;
-			}
+			if(!tmpTile || !tmpTile->floorChange((FloorChange_t)i))
+				continue;
+
+			destTile = g_game.getTile(tmpPos);
+			break;
 		}
 
 		if(!destTile)

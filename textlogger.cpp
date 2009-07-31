@@ -82,6 +82,7 @@ void Loggar::logMessage(const char* func, LogType_t type, std::string message, s
 
 		case LOGTYPE_NOTICE:
 			ss << "Notice";
+			break;
 
 		case LOGTYPE_WARNING:
 			ss << "Warning";
