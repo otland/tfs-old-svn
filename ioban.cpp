@@ -193,7 +193,8 @@ bool IOBan::removeIpBanishment(uint32_t ip, uint32_t mask/* = 0xFFFFFFFF*/) cons
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << ip << " AND `param` = " << mask << " AND `type` = " << BAN_IP << db->getUpdateLimiter();
+	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << ip << " AND `param` = " << mask
+		<< " AND `type` = " << BAN_IP << " AND `active` = 1" << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }
 
@@ -202,7 +203,8 @@ bool IOBan::removePlayerBanishment(uint32_t guid, PlayerBan_t type) const
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << guid << " AND `param` = " << type << " AND `type` = " << BAN_PLAYER << db->getUpdateLimiter();
+	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << guid << " AND `param` = " << type
+		<< " AND `type` = " << BAN_PLAYER << " AND `active` = 1" << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }
 
@@ -222,7 +224,7 @@ bool IOBan::removeAccountBanishment(uint32_t account, uint32_t playerId/* = 0*/)
 	if(playerId > 0)
 		query << " AND `param` = " << playerId;
 
-	query << " AND `type` = " << BAN_ACCOUNT << db->getUpdateLimiter();
+	query << " AND `type` = " << BAN_ACCOUNT << " AND `active` = 1" << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }
 
@@ -235,7 +237,7 @@ bool IOBan::removeNotations(uint32_t account, uint32_t playerId/* = 0*/) const
 	if(playerId > 0)
 		query << " AND `param` = " << playerId;
 
-	query << " AND `type` = " << BAN_NOTATION << db->getUpdateLimiter();
+	query << " AND `type` = " << BAN_NOTATION << " AND `active` = 1";
 	return db->executeQuery(query.str());
 }
 
@@ -248,7 +250,7 @@ bool IOBan::removeStatements(uint32_t playerId, int16_t channelId/* = -1*/) cons
 	if(channelId >= 0)
 		query << " AND `param` = " << channelId;
 
-	query << " AND `type` = " << BAN_STATEMENT << db->getUpdateLimiter();
+	query << " AND `type` = " << BAN_STATEMENT << " AND `active` = 1";
 	return db->executeQuery(query.str());
 }
 
