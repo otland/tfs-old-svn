@@ -758,17 +758,17 @@ if(Modules == nil) then
 	--	names = A table containing one or more strings of alternative names to this item. Used only for old buy/sell system.
 	--	itemid = The itemid of the buyable item
 	--	cost = The price of one single item
-	--	subType - The subType of each rune or fluidcontainer item. Can be left out if it is not a rune/fluidcontainer. Default value is 0.
+	--	subType - The subType of each rune or fluidcontainer item. Can be left out if it is not a rune/fluidcontainer. Default value is 1.
 	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemNameById will be used)
 	function ShopModule:addBuyableItem(names, itemid, cost, subType, realName)
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
 			if(self.npcHandler.shopItems[itemid] == nil) then
-				self.npcHandler.shopItems[itemid] = {buyPrice = -1, sellPrice = -1, subType = 0, realName = ""}
+				self.npcHandler.shopItems[itemid] = {buyPrice = -1, sellPrice = -1, subType = 1, realName = ""}
 			end
 
 			self.npcHandler.shopItems[itemid].buyPrice = cost
 			self.npcHandler.shopItems[itemid].realName = realName or getItemNameById(itemid)
-			self.npcHandler.shopItems[itemid].subType = subType or 0
+			self.npcHandler.shopItems[itemid].subType = subType or 1
 		end
 
 		if(names ~= nil and SHOPMODULE_MODE ~= SHOPMODULE_MODE_TRADE) then
@@ -797,7 +797,7 @@ if(Modules == nil) then
 	--	container = Backpack, bag or any other itemid of container where bought items will be stored
 	--	itemid = The itemid of the buyable item
 	--	cost = The price of one single item
-	--	subType - The subType of each rune or fluidcontainer item. Can be left out if it is not a rune/fluidcontainer. Default value is 0.
+	--	subType - The subType of each rune or fluidcontainer item. Can be left out if it is not a rune/fluidcontainer. Default value is 1.
 	--	realName - The real, full name for the item. Will be used as ITEMNAME in MESSAGE_ONBUY and MESSAGE_ONSELL if defined. Default value is nil (getItemNameById will be used)
 	function ShopModule:addBuyableItemContainer(names, container, itemid, cost, subType, realName)
 		if(names ~= nil) then
@@ -830,7 +830,7 @@ if(Modules == nil) then
 	function ShopModule:addSellableItem(names, itemid, cost, realName)
 		if(SHOPMODULE_MODE ~= SHOPMODULE_MODE_TALK) then
 			if(self.npcHandler.shopItems[itemid] == nil) then
-				self.npcHandler.shopItems[itemid] = {buyPrice = -1, sellPrice = -1, subType = 0, realName = ""}
+				self.npcHandler.shopItems[itemid] = {buyPrice = -1, sellPrice = -1, subType = 1, realName = ""}
 			end
 
 			self.npcHandler.shopItems[itemid].sellPrice = cost

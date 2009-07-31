@@ -61,7 +61,7 @@ end
 
 function doNpcSellItem(cid, itemid, amount, subType, ignoreCap, inBackpacks, backpack)
 	local amount = amount or 1
-	local subType = subType or 0
+	local subType = subType or 1
 	local ignoreCap = ignoreCap and true or false
 
 	local item = 0
