@@ -1510,10 +1510,10 @@ void ProtocolGame::parseViolationWindow(NetworkMessage& msg)
 	uint8_t reason = msg.GetByte();
 	ViolationAction_t action = (ViolationAction_t)msg.GetByte();
 	std::string comment = msg.GetString();
-	uint32_t statementId = msg.GetU32(); //reverse these two?
-	uint16_t channelId = msg.GetU16();
+	std::string statement = msg.GetString();
+	uint32_t statementId = (uint32_t)msg.GetU16();
 	bool ipBanishment = msg.GetByte();
-	addGameTask(&Game::playerViolationWindow, player->getID(), target, reason, action, comment, statementId, channelId, ipBanishment);
+	addGameTask(&Game::playerViolationWindow, player->getID(), target, reason, action, comment, statement, statementId, ipBanishment);
 }
 
 //********************** Send methods *******************************//

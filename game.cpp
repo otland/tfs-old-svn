@@ -4756,8 +4756,8 @@ bool Game::playerReportBug(uint32_t playerId, std::string comment)
 	return true;
 }
 
-bool Game::playerViolationWindow(uint32_t playerId, const std::string& name, uint8_t reason,
-	ViolationAction_t action, const std::string& comment, uint32_t statementId, uint16_t channelId, bool ipBanishment)
+bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t reason, ViolationAction_t action,
+	const std::string& comment, std::string statement, uint32_t statementId, bool ipBanishment)
 {
 	Player* player = getPlayerByID(playerId);
 	if(!player || player->isRemoved())
@@ -4785,17 +4785,15 @@ bool Game::playerViolationWindow(uint32_t playerId, const std::string& name, uin
 	}
 
 	uint32_t guid = 0;
-	std::string targetName = name;
-
-	toLowerCaseString(targetName);
-	if(!IOLoginData::getInstance()->getGuidByName(guid, targetName) || targetName == "account manager")
+	toLowerCaseString(name);
+	if(!IOLoginData::getInstance()->getGuidByName(guid, name) || name == "account manager")
 	{
 		player->sendCancel("A player with this name does not exist.");
 		return false;
 	}
 
 	uint32_t accountId = 0, ip = 0;
-	Player* targetPlayer = getPlayerByName(targetName);
+	Player* targetPlayer = getPlayerByName(name);
 	if(targetPlayer)
 	{
 		if(targetPlayer->hasFlag(PlayerFlag_CannotBeBanned))
@@ -4815,13 +4813,11 @@ bool Game::playerViolationWindow(uint32_t playerId, const std::string& name, uin
 			return false;
 		}
 
-		accountId = IOLoginData::getInstance()->getAccountIdByName(targetName);
+		accountId = IOLoginData::getInstance()->getAccountIdByName(name);
 		ip = IOLoginData::getInstance()->getLastIP(guid);
 	}
 
 	Account account = IOLoginData::getInstance()->loadAccount(accountId, true);
-	std::string statement;
-
 	enum KickAction {
 		NONE,
 		KICK,
@@ -4838,9 +4834,8 @@ bool Game::playerViolationWindow(uint32_t playerId, const std::string& name, uin
 				return false;
 			}
 
-			statement = it->second;
 			IOBan::getInstance()->addStatement(guid, reason, comment,
-				player->getGUID(), channelId, statement);
+				player->getGUID(), -1, statement);
 			g_chat.statementMap.erase(it);
 
 			kickAction = NONE;
@@ -4981,7 +4976,7 @@ bool Game::playerViolationWindow(uint32_t playerId, const std::string& name, uin
 			break;
 	}
 
-	ss << " against: " << targetName << " (Warnings: " << account.warnings << "), with reason: \"" << getReason(
+	ss << " against: " << name << " (Warnings: " << account.warnings << "), with reason: \"" << getReason(
 		reason) << "\", and comment: \"" << comment << "\".";
 	if(g_config.getBool(ConfigManager::BROADCAST_BANISHMENTS))
 		broadcastMessage(ss.str(), MSG_STATUS_WARNING);
