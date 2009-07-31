@@ -87,6 +87,7 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p, bool override)
 	for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)
 	{
 		trimString(*it);
+		talkAction->setWords(*it);
 		if(talksMap.find(*it) != talksMap.end())
 		{
 			if(!override)
@@ -170,8 +171,8 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 	if(talkAction->isScripted())
 		return talkAction->executeSay(creature, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()], channelId);
 
-	if(talkAction->function)
-		return talkAction->function(creature, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]);
+	if(TalkFunction* function = talkAction->getFunction())
+		return function(creature, cmdstring[talkAction->getFilter()], paramstring[talkAction->getFilter()]);
 
 	return false;
 }
@@ -179,25 +180,26 @@ bool TalkActions::onPlayerSay(Creature* creature, uint16_t channelId, const std:
 TalkAction::TalkAction(LuaScriptInterface* _interface):
 Event(_interface)
 {
-	function = NULL;
+	m_function = NULL;
 	m_filter = TALKFILTER_WORD;
 	m_access = 0;
 	m_channel = -1;
-	m_logged = false;
-	m_hidden = false;
+	m_logged = m_hidden = false;
 	m_sensitive = true;
 }
 
 TalkAction::TalkAction(const TalkAction* copy):
 Event(copy)
 {
-	function = copy->function;
+	m_words = copy->m_words;
+	m_function = copy->m_function;
 	m_filter = copy->m_filter;
 	m_access = copy->m_access;
 	m_channel = copy->m_channel;
 	m_logged = copy->m_logged;
 	m_hidden = copy->m_hidden;
 	m_sensitive = copy->m_sensitive;
+	m_exceptions = copy->m_exceptions;
 }
 
 bool TalkAction::configureEvent(xmlNodePtr p)

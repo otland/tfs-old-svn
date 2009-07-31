@@ -73,14 +73,16 @@ class TalkAction : public Event
 		virtual bool loadFunction(const std::string& functionName);
 
 		int32_t executeSay(Creature* creature, const std::string& words, const std::string& param, uint16_t channel);
-		TalkFunction* function;
 
 		std::string getWords() const {return m_words;}
-		TalkActionFilter getFilter() const {return m_filter;}
+		void setWords(const std::string& words) {m_words = words;}
 
+		TalkActionFilter getFilter() const {return m_filter;}
 		uint32_t getAccess() const {return m_access;}
-		StringVec getExceptions() {return m_exceptions;}
 		int32_t getChannel() const {return m_channel;}
+
+		StringVec getExceptions() {return m_exceptions;}
+		TalkFunction* getFunction() {return m_function;}
 
 		bool isLogged() const {return m_logged;}
 		bool isHidden() const {return m_hidden;}
@@ -105,6 +107,7 @@ class TalkAction : public Event
 		static TalkFunction ghost;
 
 		std::string m_words;
+		TalkFunction* m_function;
 		TalkActionFilter m_filter;
 		uint32_t m_access;
 		int32_t m_channel;
