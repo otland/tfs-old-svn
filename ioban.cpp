@@ -218,11 +218,11 @@ bool IOBan::removeAccountBanishment(uint32_t account, uint32_t playerId/* = 0*/)
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << account << db->getUpdateLimiter();
+	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << account;
 	if(playerId > 0)
 		query << " AND `param` = " << playerId;
 
-	query << " AND `type` = " << BAN_ACCOUNT;
+	query << " AND `type` = " << BAN_ACCOUNT << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }
 
@@ -231,11 +231,11 @@ bool IOBan::removeNotations(uint32_t account, uint32_t playerId/* = 0*/) const
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << account << db->getUpdateLimiter();
+	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << account;
 	if(playerId > 0)
 		query << " AND `param` = " << playerId;
 
-	query << " AND `type` = " << BAN_NOTATION;
+	query << " AND `type` = " << BAN_NOTATION << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }
 
@@ -244,11 +244,11 @@ bool IOBan::removeStatements(uint32_t playerId, int16_t channelId/* = -1*/) cons
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << playerId << db->getUpdateLimiter();
+	query << "UPDATE `bans` SET `active` = 0 WHERE `value` = " << playerId;
 	if(channelId >= 0)
 		query << " AND `param` = " << channelId;
 
-	query << " AND `type` = " << BAN_STATEMENT;
+	query << " AND `type` = " << BAN_STATEMENT << db->getUpdateLimiter();
 	return db->executeQuery(query.str());
 }
 
@@ -311,7 +311,7 @@ bool IOBan::getData(Ban& ban) const
 	Database* db = Database::getInstance();
 	DBQuery query;
 
-	query << "SELECT `id`, `type`, `param`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action`, `statement` FROM `bans` WHERE `value` = " << ban.value;
+	query << "SELECT * FROM `bans` WHERE `value` = " << ban.value;
 	if(ban.param)
 		query << " AND `param` = " << ban.param;
 
@@ -345,7 +345,7 @@ BansVec IOBan::getList(Ban_t type, uint32_t value/* = 0*/, uint32_t param/* = 0*
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id`, `value`, `param`, `expires`, `added`, `admin_id`, `comment`, `reason`, `action`, `statement` FROM `bans` WHERE ";
+	query << "SELECT * FROM `bans` WHERE ";
 	if(value)
 		query << "`value` = " << value << " AND ";
 
