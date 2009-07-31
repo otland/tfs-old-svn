@@ -59,13 +59,7 @@ TalkActions::~TalkActions()
 void TalkActions::clear()
 {
 	for(TalkActionsMap::iterator it = talksMap.begin(); it != talksMap.end(); ++it)
-	{
-		if(!it->second)
-			continue;
-
 		delete it->second;
-		it->second = NULL;
-	}
 
 	talksMap.clear();
 	m_scriptInterface.reInitState();
@@ -104,9 +98,10 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p, bool override)
 				delete talksMap[(*it)];
 		}
 
-		talksMap[(*it)] = talkAction;
+		talksMap[(*it)] = new TalkAction(talkAction);
 	}
 
+	delete talkAction;
 	return true;
 }
 
