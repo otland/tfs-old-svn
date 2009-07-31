@@ -782,15 +782,15 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 			switch(i)
 			{
 				case CHANGE_NORTH_EX:
-					tmpPos.y++;
-					if((tmpTile = g_game.getTile(tmpPos)))
-						tmpPos.y++;
-
-					break;
-				case CHANGE_SOUTH_EX:
 					tmpPos.y--;
 					if((tmpTile = g_game.getTile(tmpPos)))
 						tmpPos.y--;
+
+					break;
+				case CHANGE_SOUTH_EX:
+					tmpPos.y++;
+					if((tmpTile = g_game.getTile(tmpPos)))
+						tmpPos.y++;
 
 					break;
 				case CHANGE_EAST_EX:
