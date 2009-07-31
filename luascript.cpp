@@ -4359,7 +4359,7 @@ int32_t LuaScriptInterface::luaDoCreateItem(lua_State* L)
 	PositionEx pos;
 	popPosition(L, pos);
 
-	uint32_t count = 0;
+	uint32_t count = 1;
 	if(lua_gettop(L) > 1)
 		count = popNumber(L);
 
