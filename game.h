@@ -435,9 +435,9 @@ class Game
 		//Implementation of player invoked events
 		bool playerBroadcastMessage(Player* player, SpeakClasses type, const std::string& text);
 		bool playerReportBug(uint32_t playerId, std::string bug);
-		bool playerViolationWindow(uint32_t playerId, const std::string& targetName, uint8_t reason,
-			ViolationAction_t action, const std::string& comment, uint32_t statementId,
-			uint16_t channelId, bool ipBanishment);
+		bool playerViolationWindow(uint32_t playerId, std::string name, uint8_t reason,
+			ViolationAction_t action, const std::string& comment, std::string statement,
+			uint32_t statementId, bool ipBanishment);
 		bool playerMoveThing(uint32_t playerId, const Position& fromPos, uint16_t spriteId,
 			int16_t fromStackpos, const Position& toPos, uint8_t count);
 		bool playerMoveCreature(uint32_t playerId, uint32_t movingCreatureId,
