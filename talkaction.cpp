@@ -60,8 +60,11 @@ void TalkActions::clear()
 {
 	for(TalkActionsMap::iterator it = talksMap.begin(); it != talksMap.end(); ++it)
 	{
-		if(it->second)
-			delete it->second;
+		if(!it->second)
+			continue;
+
+		delete it->second;
+		it->second = NULL;
 	}
 
 	talksMap.clear();

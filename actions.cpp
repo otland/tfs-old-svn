@@ -60,8 +60,11 @@ inline void Actions::clearMap(ActionUseMap& map)
 {
 	for(ActionUseMap::iterator it = map.begin(); it != map.end(); ++it)
 	{
-		if(it->second)
-			delete it->second;
+		if(!it->second)
+			continue;
+
+		delete it->second;
+		it->second = NULL;
 	}
 
 	map.clear();
