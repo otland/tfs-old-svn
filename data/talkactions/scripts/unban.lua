@@ -39,13 +39,13 @@ function onSay(cid, words, param, channel)
 		return true
 	end
 
-	ban = getBanData(tmp, BAN_PLAYER, PLAYERBAN_LOCK)
-	if(ban and doRemovePlayerBanishment(tmp, PLAYERBAN_LOCK)) then
+	ban = getBanData(guid, BAN_PLAYER, PLAYERBAN_LOCK)
+	if(ban and doRemovePlayerBanishment(guid, PLAYERBAN_LOCK)) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Namelock from " .. param .. " has been removed.")
 	end
 
-	ban = getBanData(tmp, BAN_PLAYER, PLAYERBAN_BANISHMENT)
-	if(ban and doRemovePlayerBanishment(tmp, PLAYERBAN_BANISHMENT)) then
+	ban = getBanData(guid, BAN_PLAYER, PLAYERBAN_BANISHMENT)
+	if(ban and doRemovePlayerBanishment(guid, PLAYERBAN_BANISHMENT)) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, param .. " has been " .. (ban.expires == -1 and "undeleted" or "unbanned") .. ".")
 	end
 
