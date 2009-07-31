@@ -100,10 +100,10 @@ bool CreatureEvents::playerLogin(Player* player)
 	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 	{
 		if(it->second->getEventType() == CREATURE_EVENT_LOGIN && !it->second->executeLogin(player))
-			return 0;
+			return false;
 	}
 
-	return 1;
+	return true;
 }
 
 bool CreatureEvents::playerLogout(Player* player)
@@ -112,10 +112,10 @@ bool CreatureEvents::playerLogout(Player* player)
 	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 	{
 		if(it->second->getEventType() == CREATURE_EVENT_LOGOUT && !it->second->executeLogout(player))
-			return 0;
+			return false;
 	}
 
-	return 1;
+	return true;
 }
 
 /////////////////////////////////////

@@ -86,4 +86,3 @@ function getArea(pos, rangeX, rangeY)
 
 	return t
 end
-
