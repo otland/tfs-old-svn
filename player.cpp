@@ -3732,7 +3732,6 @@ bool Player::rateExperience(double& gainExp, bool fromMonster)
 
 void Player::onGainExperience(double& gainExp, bool fromMonster, bool multiplied)
 {
-	Party* party = getParty();
 	if(party && party->isSharedExperienceEnabled() && party->isSharedExperienceActive())
 	{
 		party->shareExperience(gainExp, fromMonster, multiplied);

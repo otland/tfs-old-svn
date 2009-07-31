@@ -323,7 +323,7 @@ void Party::shareExperience(double experience, bool fromMonster, bool multiplied
 	for(PlayerVector::iterator it = memberList.begin(); it != memberList.end(); ++it)
 	{
 		tmpExperience = shareExperience;
-		(*it)->onGainSharedExperience(shareExperience, fromMonster, multiplied);
+		(*it)->onGainSharedExperience(tmpExperience, fromMonster, multiplied);
 	}
 }
 
