@@ -252,31 +252,31 @@ bool TalkAction::loadFunction(const std::string& functionName)
 {
 	std::string tmpFunctionName = asLowerCaseString(functionName);
 	if(tmpFunctionName == "housebuy")
-		function = houseBuy;
+		m_function = houseBuy;
  	else if(tmpFunctionName == "housesell")
-		function = houseSell;
+		m_function = houseSell;
 	else if(tmpFunctionName == "housekick")
-		function = houseKick;
+		m_function = houseKick;
 	else if(tmpFunctionName == "housedoorlist")
-		function = houseDoorList;
+		m_function = houseDoorList;
 	else if(tmpFunctionName == "houseguestlist")
-		function = houseGuestList;
+		m_function = houseGuestList;
 	else if(tmpFunctionName == "housesubownerlist")
-		function = houseSubOwnerList;
+		m_function = houseSubOwnerList;
  	else if(tmpFunctionName == "guildjoin")
-		function = guildJoin;
+		m_function = guildJoin;
  	else if(tmpFunctionName == "guildcreate")
-		function = guildCreate;
+		m_function = guildCreate;
 	else if(tmpFunctionName == "thingproporties")
-		function = thingProporties;
+		m_function = thingProporties;
 	else if(tmpFunctionName == "banishmentinfo")
-		function = banishmentInfo;
+		m_function = banishmentInfo;
 	else if(tmpFunctionName == "diagnostics")
-		function = diagnostics;
+		m_function = diagnostics;
 	else if(tmpFunctionName == "addskill")
-		function = addSkill;
+		m_function = addSkill;
 	else if(tmpFunctionName == "ghost")
-		function = ghost;
+		m_function = ghost;
 	else
 	{
 		std::cout << "[Warning - TalkAction::loadFunction] Function \"" << functionName << "\" does not exist." << std::endl;
