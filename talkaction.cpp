@@ -79,8 +79,8 @@ bool TalkActions::registerEvent(Event* event, xmlNodePtr p, bool override)
 	if(!talkAction)
 		return false;
 
-	std::string sep = ";";
-	if(readXMLString(p, "separator", sep) && sep.empty())
+	std::string sep;
+	if(!readXMLString(p, "separator", sep) || sep.empty())
 		sep = ";";
 
 	StringVec strVector = explodeString(talkAction->getWords(), sep);
