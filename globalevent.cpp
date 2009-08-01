@@ -33,17 +33,21 @@ GlobalEvents::~GlobalEvents()
 	clear();
 }
 
-void GlobalEvents::clear()
+void GlobalEvents::clearMap(GlobalEventMap& map)
 {
 	GlobalEventMap::iterator it;
-	for(it = eventsMap.begin(); it != eventsMap.end(); ++it)
+	for(it = map.begin(); it != map.end(); ++it)
 		delete it->second;
 
-	eventsMap.clear();
-	for(it = serverEventsMap.begin(); it != serverEventsMap.end(); ++it)
-		delete it->second;
+	map.clear();
+}
 
-	serverEventsMap.clear();
+void GlobalEvents::clear()
+{
+	clearMap(eventsMap);
+	clearMap(serverEventsMap);
+	clearMap(timerEventsMap);
+
 	m_scriptInterface.reInitState();
 }
 
@@ -62,7 +66,9 @@ bool GlobalEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 		return false;
 
 	GlobalEventMap* map = &eventsMap;
-	if(globalEvent->getEventType() != SERVER_EVENT_NONE)
+	if(globalEvent->getEventType() == SERVER_EVENT_TIMER)
+		map = &timerEventsMap;
+	else if(globalEvent->getEventType() != SERVER_EVENT_NONE)
 		map = &serverEventsMap;
 
 	GlobalEventMap::iterator it = map->find(globalEvent->getName());
@@ -87,8 +93,34 @@ void GlobalEvents::startup()
 {
 	execute(SERVER_EVENT_STARTUP);
 
+	time_t timeNow = time(NULL);
+	tm* ts = localtime(&timeNow);
+
+	Scheduler::getScheduler().addEvent(createSchedulerTask((60 - ts->tm_sec) * 1000,
+		boost::bind(&GlobalEvents::timer, this)));
+
 	Scheduler::getScheduler().addEvent(createSchedulerTask(GLOBAL_THINK_INTERVAL,
 		boost::bind(&GlobalEvents::think, this, GLOBAL_THINK_INTERVAL)));
+}
+
+void GlobalEvents::timer()
+{
+	time_t timeNow = time(NULL);
+	tm* ts = localtime(&timeNow);
+
+	uint32_t hour = (uint32_t)ts->tm_hour, minute = (uint32_t)ts->tm_min;
+	for(GlobalEventMap::iterator it = timerEventsMap.begin(); it != timerEventsMap.end(); ++it)
+	{
+		if(hour == it->second->getHour() && minute == it->second->getMinute())
+		{
+			if(!it->second->executeEvent())
+				std::cout << "[Error - GlobalEvents::timer] Couldn't execute event: "
+					<< it->second->getName() << std::endl;
+		}
+	}
+
+	Scheduler::getScheduler().addEvent(createSchedulerTask(TIMER_THINK_INTERVAL,
+		boost::bind(&GlobalEvents::timer, this)));
 }
 
 void GlobalEvents::think(uint32_t interval)
@@ -114,7 +146,7 @@ void GlobalEvents::execute(ServerEvent_t type)
 	for(GlobalEventMap::iterator it = serverEventsMap.begin(); it != serverEventsMap.end(); ++it)
 	{
 		if(it->second->getEventType() == type)
-			it->second->executeServerEvent();
+			it->second->executeEvent();
 	}
 }
 
@@ -138,6 +170,8 @@ GlobalEvent::GlobalEvent(LuaScriptInterface* _interface):
 
 bool GlobalEvent::configureEvent(xmlNodePtr p)
 {
+	m_hour = m_minute = 0;
+
 	std::string strValue;
 	if(!readXMLString(p, "name", strValue))
 	{
@@ -165,6 +199,20 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 		return true;
 	}
 
+	if(readXMLString(p, "time", strValue) || readXMLString(p, "at", strValue))
+	{
+		IntegerVec params = vectorAtoi(explodeString(strValue, ":"));
+		if(params.size() < 2 || params[0] > 24 || params[1] > 60)
+		{
+			std::cout << "[Error - GlobalEvent::configureEvent] No valid time \"" << strValue << "\" for globalevent with name " << m_name << std::endl;
+			return false;
+		}
+
+		m_hour = params[0], m_minute = params[1];
+		m_eventType = SERVER_EVENT_TIMER;
+		return true;
+	}
+
 	int32_t intValue;
 	if(!readXMLInteger(p, "interval", intValue))
 	{
@@ -186,6 +234,8 @@ std::string GlobalEvent::getScriptEventName() const
 			return "onShutdown";
 		case SERVER_EVENT_RECORD:
 			return "onRecord";
+		case SERVER_EVENT_TIMER:
+			return "onTimer";
 
 		case SERVER_EVENT_NONE:
 		default:
@@ -203,8 +253,6 @@ std::string GlobalEvent::getScriptEventParams() const
 		case SERVER_EVENT_NONE:
 			return "interval, lastExecution, thinkInterval";
 
-		case SERVER_EVENT_STARTUP:
-		case SERVER_EVENT_SHUTDOWN:
 		default:
 			return "";
 	}
@@ -316,7 +364,7 @@ int32_t GlobalEvent::executeRecord(uint32_t current, uint32_t old, Player* playe
 	}
 }
 
-int32_t GlobalEvent::executeServerEvent()
+int32_t GlobalEvent::executeEvent()
 {
 	if(m_scriptInterface->reserveScriptEnv())
 	{
@@ -345,7 +393,7 @@ int32_t GlobalEvent::executeServerEvent()
 	}
 	else
 	{
-		std::cout << "[Error - GlobalEvent::executeServerEvent] Call stack overflow." << std::endl;
+		std::cout << "[Error - GlobalEvent::executeEvent] Call stack overflow." << std::endl;
 		return 0;
 	}
 }

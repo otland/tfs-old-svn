@@ -93,6 +93,9 @@
 			interval
 				Script will be executed every x seconds.
 				Ignored if 'type' specified.
+			time
+				Script will be executed at specified time.
+				For example: '12:00'
 		Functions
 			onThink(interval, lastExecution, thinkInterval)
 			onStartup()
@@ -156,6 +159,8 @@
 		Attributes
 			words
 				Words used to execute this talkaction.
+				Can be separated by semicolon, fe. words="/a; /b",
+					or using own separator, fe. words="/a, /b" separator=","
 			access
 				Access required.
 			channel
@@ -169,14 +174,14 @@
 			log
 				Defines if talkaction should be logged.
 				Default: no
+			hide
+				Defines if talkaction should be hidden from displaying it when using /commands
 			case-sensitive
 				Defines if talkaction should be case sensitive. Is 'no' - then /command will be same as /CoMmAnD
 				Default: yes
 			exception
 				List of players, who can't use this talkaction.
 				Example: "GM John;GM 2;Maatt"
-			hide
-				Defines if talkaction should be hidden from displaying it when using /commands
 		Function: onSay(cid, words, param, channel)
 
 	*WEAPONS

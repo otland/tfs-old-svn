@@ -168,21 +168,8 @@ bool Spawns::parseSpawnNode(xmlNodePtr p, bool checkDuplicate)
 				placePos.z /*+*/= intValue;
 
 			Direction direction = NORTH;
-			if(readXMLInteger(tmpNode, "direction", intValue))
-			{
-				switch(intValue)
-				{
-					case 1:
-						direction = EAST;
-						break;
-					case 2:
-						direction = SOUTH;
-						break;
-					case 3:
-						direction = WEST;
-						break;
-				}
-			}
+			if(readXMLInteger(tmpNode, "direction", intValue) && direction >= EAST && direction <= WEST)
+				direction = (Direction)intValue;
 
 			spawn->addMonster(name, placePos, direction, interval);
 		}
@@ -207,21 +194,8 @@ bool Spawns::parseSpawnNode(xmlNodePtr p, bool checkDuplicate)
 				placePos.z /*+*/= intValue;
 
 			Direction direction = NORTH;
-			if(readXMLInteger(tmpNode, "direction", intValue))
-			{
-				switch(intValue)
-				{
-					case 1:
-						direction = EAST;
-						break;
-					case 2:
-						direction = SOUTH;
-						break;
-					case 3:
-						direction = WEST;
-						break;
-				}
-			}
+			if(readXMLInteger(tmpNode, "direction", intValue) && direction >= EAST && direction <= WEST)
+				direction = (Direction)intValue;
 
 			Npc* npc = Npc::createNpc(name);
 			if(!npc)

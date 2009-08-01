@@ -3604,7 +3604,7 @@ void Player::onPlacedCreature()
 {
 	//scripting event - onLogin
 	if(!g_creatureEvents->playerLogin(this))
-		kickPlayer(true);
+		kickPlayer(true, false);
 }
 
 void Player::onAttackedCreatureDrain(Creature* target, int32_t points)

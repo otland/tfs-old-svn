@@ -128,9 +128,9 @@ void MonsterType::dropLoot(Container* corpse)
 	std::stringstream ss;
 	ss << "Loot of " << nameDescription << ": " << corpse->getContentDescription() << ".";
 	if(owner->getParty() && message > LOOTMSG_PLAYER)
-		owner->getParty()->broadcastMessage(MSG_INFO_DESCR, ss.str());
+		owner->getParty()->broadcastMessage((MessageClasses)g_config.getNumber(ConfigManager::LOOT_MESSAGE_TYPE), ss.str());
 	else if(message == LOOTMSG_PLAYER || message == LOOTMSG_BOTH)
-		owner->sendTextMessage(MSG_INFO_DESCR, ss.str());
+		owner->sendTextMessage((MessageClasses)g_config.getNumber(ConfigManager::LOOT_MESSAGE_TYPE), ss.str());
 }
 
 Item* MonsterType::createLoot(const LootBlock& lootBlock)

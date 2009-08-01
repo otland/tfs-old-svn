@@ -23,10 +23,13 @@
 #include "scheduler.h"
 
 #define GLOBAL_THINK_INTERVAL 1000
+#define TIMER_THINK_INTERVAL 60000
 
 enum ServerEvent_t
 {
 	SERVER_EVENT_NONE,
+	SERVER_EVENT_TIMER,
+
 	SERVER_EVENT_STARTUP,
 	SERVER_EVENT_SHUTDOWN,
 	SERVER_EVENT_RECORD
@@ -42,10 +45,12 @@ class GlobalEvents : public BaseEvents
 		virtual ~GlobalEvents();
 
 		void startup();
+		void timer();
 		void think(uint32_t interval);
 		void execute(ServerEvent_t type);
 
 		GlobalEventMap getServerEvents(ServerEvent_t type);
+		void clearMap(GlobalEventMap& map);
 
 	protected:
 		virtual std::string getScriptBaseName() const {return "globalevents";}
@@ -57,7 +62,7 @@ class GlobalEvents : public BaseEvents
 		virtual LuaScriptInterface& getScriptInterface() {return m_scriptInterface;}
 		LuaScriptInterface m_scriptInterface;
 
-		GlobalEventMap eventsMap, serverEventsMap;
+		GlobalEventMap eventsMap, serverEventsMap, timerEventsMap;
 };
 
 class GlobalEvent : public Event
@@ -68,12 +73,15 @@ class GlobalEvent : public Event
 
 		virtual bool configureEvent(xmlNodePtr p);
 		int32_t executeThink(uint32_t interval, uint32_t lastExecution, uint32_t thinkInterval);
-		int32_t executeServerEvent();
 		int32_t executeRecord(uint32_t current, uint32_t old, Player* player);
+		int32_t executeEvent();
 
 		ServerEvent_t getEventType() const {return m_eventType;}
 		std::string getName() const {return m_name;}
 		uint32_t getInterval() const {return m_interval;}
+
+		uint32_t getHour() const {return m_hour;}
+		uint32_t getMinute() const {return m_minute;}
 
 		uint32_t getLastExecution() const {return m_lastExecution;}
 		void setLastExecution(uint32_t time) {m_lastExecution = time;}
@@ -83,7 +91,7 @@ class GlobalEvent : public Event
 		virtual std::string getScriptEventParams() const;
 
 		std::string m_name;
-		uint32_t m_interval, m_lastExecution;
+		uint32_t m_interval, m_lastExecution, m_hour, m_minute;
 		ServerEvent_t m_eventType;
 };
 #endif

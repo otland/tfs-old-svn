@@ -592,8 +592,10 @@
 	//get*
 	getCreatureHealth(cid)
 	getCreatureMaxHealth(cid)
+	getCreatureHideHealth(cid)
 	getCreatureMana(cid)
 	getCreatureMaxMana(cid)
+	getCreatureSpeakType(cid)
 	getCreatureMaster(cid)
 	getCreatureSummons(cid)
 	getCreatureOutfit(cid)
@@ -614,24 +616,25 @@
 	getMonsterSummonList(name) //TODO
 	getMonsterTargetList(cid) //TODO
 	getMonsterFriendList(cid) //TODO
-	getPlayerByNameWildcard(name~) //TODO
+	getPlayerByNameWildcard(name~[, ret = false]) //TODO
 	getPlayerLossSkill(cid) //TODO
 	getPlayerLossPercent(cid, lossType) //TODO
-	getPlayerGUIDByName(name[, multiworld]) //TODO
-	getPlayerNameByGUID(guid[, multiworld]) //TODO
+	getPlayerGUIDByName(name[, multiworld = false]) //TODO
+	getPlayerNameByGUID(guid[, multiworld = false[, displayError = true]]) //TODO
 	getPlayerFood(cid)
 	getPlayerLevel(cid)
 	getPlayerExperience(cid)
-	getPlayerMagLevel(cid[, ignoreBuffs]) //TODO
+	getPlayerMagLevel(cid[, ignoreBuffs = false]) //TODO
 	getPlayerSpentMana(cid) //TODO
 	getPlayerAccess(cid)
-	getPlayerSkillLevel(cid, skillid)
-	getPlayerSkillTries(cid, skillid) //TODO
+	getPlayerGhostAccess(cid)
+	getPlayerSkillLevel(cid, skillId)
+	getPlayerSkillTries(cid, skillId) //TODO
 	getPlayerTown(cid)
 	getPlayerVocation(cid)
 	getPlayerRequiredMana(cid, magicLevel) //TODO
 	getPlayerRequiredSkillTries(cid, skillId, skillLevel) //TODO
-	getPlayerItemCount(cid, itemid)
+	getPlayerItemCount(cid, itemid[, subType = -1])
 	getPlayerSoul(cid)
 	getPlayerAccountId(cid) //TODO
 	getPlayerAccount(cid) //TODO
@@ -639,8 +642,8 @@
 	getPlayerFreeCap(cid)
 	getPlayerLight(cid)
 	getPlayerSlotItem(cid, slot)
-	getPlayerWeapon(cid[, ignoreAmmo]) //TODO
-	getPlayerItemById(cid, deepSearch, itemId[, subType]) //TODO
+	getPlayerWeapon(cid[, ignoreAmmo = false]) //TODO
+	getPlayerItemById(cid, deepSearch, itemId[, subType = -1]) //TODO
 	getPlayerDepotItems(cid, depotid)
 	getPlayerGuildId(cid)
 	getPlayerGuildName(cid)
@@ -665,7 +668,7 @@
 	getPlayerPremiumDays(cid)
 	getPlayerBalance(cid)
 	getPlayerMoney(cid)
-	getPlayerRedSkullTicks(cid)
+	getPlayerSkullTicks(cid, type)
 	getPlayerRates(cid)
 	getPlayerLastLogin(cid)
 	getPlayerLastLoginSaved(cid)
@@ -695,7 +698,7 @@
 	getItemAttackSpeed(uid)
 	getItemHitChance(uid)
 	getItemShootRange(uid)
-	getItemIdByName(name[, reportError])
+	getItemIdByName(name[, displayError = true])
 	getItemLevelDoor(itemid)
 	getItemWeaponType(uid)
 	getFluidSourceType(type)
@@ -704,7 +707,7 @@
 	getContainerCapById(itemid)
 	getContainerItem(uid, slot)
 	getDepotId(uid)
-	getTileItemById(pos, itemId[, subType])
+	getTileItemById(pos, itemId[, subType = -1])
 	getTileItemByType(pos, type)
 	getTileThingByPos(pos)
 	getTileInfo(pos)
@@ -730,7 +733,7 @@
 	getVocationInfo(id)
 	getGuildId(guildName)
 	getGuildMotd(guildId)
-	getSpectators(centerPos, rangex, rangey, multifloor)
+	getSpectators(centerPos, rangex, rangey[, multifloor = false])
 	getSearchString(fromPosition, toPosition[, fromIsCreature = false[, toIsCreature = false]])
 	getWaypointPosition(name)
 	getGameState()
@@ -783,14 +786,15 @@
 	doCreatureAddMana(cid, mana)
 	doCreatureSetDropLoot(cid, doDrop)
 	doCreatureSetSkullType(cid, skull)
-	doCreatureSetLookDir(cid, dir)
+	doCreatureSetSpeakType
+	doCreatureSetLookDirection(cid, dir)
 	doPlayerSetMaxCapacity(cid, cap)
 	doCreatureChangeOutfit(cid, outfit)
 	doCreatureSay(uid, text, type[, ghost = false[, cid = 0[, pos]]])
 	doCreatureSetNoMove(cid, cannotMove)
 	doSetCreatureLight(cid, lightLevel, lightColor, time)
 	doSetCreatureOutfit(cid, outfit, time)
-	doRemoveCreature(cid)
+	doRemoveCreature(cid[, executeLogout = true])
 	doMoveCreature(cid, direction)
 	doConvinceCreature(cid, target)
 	doChallengeCreature(cid, target)

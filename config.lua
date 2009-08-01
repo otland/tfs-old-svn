@@ -226,7 +226,7 @@
 	-- rateExperienceFromPlayers 0 to disable.
 	experienceStages = "no"
 	rateExperience = 5.0
-	rateExperienceFromPlayers = 1.0
+	rateExperienceFromPlayers = 0
 	rateSkill = 3.0
 	rateMagic = 3.0
 	rateLoot = 2.0

@@ -268,7 +268,7 @@ bool MoveEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 			std::cout << "[Warning - MoveEvents::registerEvent] Malformed entry (from action: \"" << strValue << "\", to action: \"" << endStrValue << "\")" << std::endl;
 	}
 
-	if(readXMLString(p, "pos", strValue) || readXMLString(p, "pos", strValue))
+	if(readXMLString(p, "pos", strValue) || readXMLString(p, "position", strValue))
 	{
 		strVector = explodeString(strValue, ";");
 		for(StringVec::iterator it = strVector.begin(); it != strVector.end(); ++it)

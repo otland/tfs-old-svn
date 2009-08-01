@@ -161,6 +161,7 @@ class ConfigManager
 			ITEMLIMIT_HOUSETILE,
 			SQUARE_COLOR,
 			LOOT_MESSAGE,
+			LOOT_MESSAGE_TYPE,
 			NAME_REPORT_TYPE,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};

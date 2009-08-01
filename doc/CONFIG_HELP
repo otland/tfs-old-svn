@@ -139,6 +139,10 @@
 		maxViolationCommentSize
 			Default: 200
 
+		violationNameReportActionType
+			1 = just a report, 2 = name lock, 3 = player banishment
+			Default: 2
+
 		autoBanishUnknownBytes
 			Specify if player should be banned automatically in case his client send unknown byte to server.
 			It happens mostly when player use unofficial software to play.
@@ -165,6 +169,10 @@
 			Time needed to wait after attacking a player.
 			In miliseconds.
 			Default: 60 * 1000 (60 seconds)
+
+		huntingDuration
+			In miliseconds.
+			Default: 60 * 1000
 
 		criticalHitChance
 			Chance in percent to inflict a critical hit.
@@ -260,18 +268,9 @@
 			Value will be randomized if you use -1
 			Default: 0
 
-	*EXPERIENCE FROM PLAYERS
-		experienceFromKilledPlayers
-			System, used in global Tibia, on pvp-enforced servers.
-			Specify if player should receive experience by killing other player.
-			Experience is only received if _killer_ level is lower than _killed_ level.
-			Default: no
-
-		minLevelThresholdForKilledPlayer
-			Default: 0.9
-
-		maxLevelThresholdForKilledPlayer
-			Default: 1.1
+		allowFightback
+			System introduced in 8.5, if you enable it then players who defend themselves from the attacks of other players do not get a protection zone block.
+			Default: yes
 
 	*CONNECTION
 		worldId
@@ -651,11 +650,17 @@
 
 		monsterLootMessage
 			Defines how green message with loot in the middle of screen should be displayed.
-				-1 - disable this message
-				0 - enable only in party
-				1 - both, if party available show there, otherwise send to player (global Tibia)
+				0 - disable this message
+				1 - enable only in party
+				2 - enable only for player
+				3 - both, if party available show there, otherwise send to player (global Tibia)
 					+ you can enable/disable it individually for each monster by using <flag lootmessage="yes/no"/>
-			Default: 2
+			Default: 3
+
+		monsterLootMessageType
+			Type/id(color) of loot message.
+			You can use values from 18 to 27.
+			Default: 25 (green)
 
 	*GHOST MODE
 		ghostModeInvisibleEffect
@@ -724,6 +729,13 @@
 			This option is ignored, if experienceStages are enabled.
 			Default: 5.0
 
+		rateExperienceFromPlayers
+			System, used in global Tibia, on pvp-enforced servers.
+			Specify how much experience should player gain by killing other players.
+			Experience is only received if _killer_ level is lower than _killed_ level.
+			0 to disable.
+			Default: 0
+
 		rateSkill
 			Default: 3.0
 
@@ -736,6 +748,13 @@
 
 		rateSpawn
 			Default: 1
+
+	*EXPERIENCE FROM PLAYERS
+		minLevelThresholdForKilledPlayer
+			Default: 0.9
+
+		maxLevelThresholdForKilledPlayer
+			Default: 1.1
 
 	*STAMINA
 		NOTE: Stamina is stored in miliseconds so you must multiply seconds by 1000.
