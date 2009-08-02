@@ -3484,19 +3484,20 @@ void Player::onAddCombatCondition(ConditionType_t type, bool hadCondition)
 void Player::onEndCondition(ConditionType_t type)
 {
 	Creature::onEndCondition(type);
-	if(type != CONDITION_INFIGHT)
-		return;
-
-	pzLocked = false;
-	sendIcons();
-
-	onIdleStatus();
-	if(skull < SKULL_RED)
+	if(type == CONDITION_INFIGHT)
 	{
-		clearAttacked();
-		setSkull(SKULL_NONE);
-		g_game.updateCreatureSkull(this);
+		pzLocked = false;
+		onIdleStatus();
+
+		if(skull < SKULL_RED)
+		{
+			clearAttacked();
+			setSkull(SKULL_NONE);
+			g_game.updateCreatureSkull(this);
+		}
 	}
+
+	sendIcons();
 }
 
 void Player::onCombatRemoveCondition(const Creature* attacker, Condition* condition)
