@@ -202,7 +202,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 	}
 
 	std::string tmp;
-	if(IOLoginData::getInstance()->getNameByGuid(marriage, tmp))
+	if(marriage && IOLoginData::getInstance()->getNameByGuid(marriage, tmp))
 	{
 		s << ", ";
 		if(vocation_id == 0)
