@@ -1016,7 +1016,7 @@ bool TalkAction::banishmentInfo(Creature* creature, const std::string& cmd, cons
 			{
 				IOLoginData::getInstance()->getAccountId(params[1], ban.value);
 				if(!ban.value)
-					ban.value = IOLoginData::getInstance()->getAccountIdByName(params[0]);
+					ban.value = IOLoginData::getInstance()->getAccountIdByName(params[1]);
 			}
 		}
 	}
