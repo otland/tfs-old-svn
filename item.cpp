@@ -260,7 +260,7 @@ bool Item::floorChange(FloorChange_t change/* = CHANGE_NONE*/) const
 	if(change < CHANGE_NONE)
 		return Item::items[id].floorChange[change];
 
-	for(int32_t i = CHANGE_FIRST; i < CHANGE_LAST; ++i)
+	for(int32_t i = CHANGE_PRE_FIRST; i < CHANGE_LAST; ++i)
 	{
 		if(Item::items[id].floorChange[i])
 			return true;

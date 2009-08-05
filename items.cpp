@@ -97,7 +97,7 @@ ItemType::ItemType()
 	transformToFree = 0;
 	levelDoor = 0;
 
-	for(int32_t i = CHANGE_FIRST; i < CHANGE_LAST; ++i)
+	for(int32_t i = CHANGE_PRE_FIRST; i < CHANGE_LAST; ++i)
 		floorChange[i] = false;
 }
 
