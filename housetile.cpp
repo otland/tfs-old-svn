@@ -68,7 +68,7 @@ ReturnValue HouseTile::__queryAdd(int32_t index, const Thing* thing, uint32_t co
 	{
 		if(const Player* player = creature->getPlayer())
 		{
-			if(!house->isInvited(player) && !player->hasFlag(PlayerFlag_CanEditHouses))
+			if(!house->isInvited(player))
 				return RET_PLAYERISNOTINVITED;
 		}
 		else
