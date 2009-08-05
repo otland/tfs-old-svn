@@ -120,7 +120,7 @@
 	-- Deathlist
 	deathListEnabled = "yes"
 	deathListRequiredTime = 1 * 60 * 1000
-	deathAssistCount = 20
+	deathAssistCount = 19
 	maxDeathRecords = 5
 
 	-- Guilds
