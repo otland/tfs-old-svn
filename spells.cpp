@@ -962,10 +962,10 @@ void Spell::postCastSpell(Player* player, uint32_t manaCost, uint32_t soulCost) 
 
 int32_t Spell::getManaCost(const Player* player) const
 {
-	if(mana != 0)
+	if(mana)
 		return mana;
 
-	if(player && manaPercent != 0)
+	if(player && manaPercent)
 		return (int32_t)std::floor(double(player->getMaxMana() * manaPercent) / 100);
 
 	return 0;
@@ -974,7 +974,6 @@ int32_t Spell::getManaCost(const Player* player) const
 ReturnValue Spell::CreateIllusion(Creature* creature, const Outfit_t outfit, int32_t time)
 {
 	ConditionOutfit* outfitCondition = new ConditionOutfit(CONDITIONID_COMBAT, CONDITION_OUTFIT, time, false, 0);
-
 	if(!outfitCondition)
 		return RET_NOTPOSSIBLE;
 
@@ -986,11 +985,11 @@ ReturnValue Spell::CreateIllusion(Creature* creature, const Outfit_t outfit, int
 ReturnValue Spell::CreateIllusion(Creature* creature, const std::string& name, int32_t time)
 {
 	uint32_t mId = g_monsters.getIdByName(name);
-	if(mId == 0)
+	if(!mId)
 		return RET_CREATUREDOESNOTEXIST;
 
 	const MonsterType* mType = g_monsters.getMonsterType(mId);
-	if(mType == NULL)
+	if(!mType)
 		return RET_CREATUREDOESNOTEXIST;
 
 	Player* player = creature->getPlayer();
@@ -1003,12 +1002,11 @@ ReturnValue Spell::CreateIllusion(Creature* creature, const std::string& name, i
 ReturnValue Spell::CreateIllusion(Creature* creature, uint32_t itemId, int32_t time)
 {
 	const ItemType& it = Item::items[itemId];
-	if(it.id == 0)
+	if(!it.id)
 		return RET_NOTPOSSIBLE;
 
 	Outfit_t outfit;
 	outfit.lookTypeEx = itemId;
-
 	return CreateIllusion(creature, outfit, time);
 }
 
