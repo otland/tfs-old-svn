@@ -2474,6 +2474,7 @@ void ProtocolGame::sendOutfitWindow()
 				}
 			}
 			else
+			{
 	 			for(int32_t i = 0; it != outfitList.end() && i < OUTFITS_MAX_NUMBER; ++it, ++i)
 				{
 	 				msg->AddU16(it->lookType);
