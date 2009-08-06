@@ -15,13 +15,18 @@
 		http://otland.net/
 ]
 
+[ BUGS
+	Reload not working on certain conditions
+		Assigned to: Elf
+]
+
 [ TASKS
 	Finish documentation as its incomplete
 		Assigned to: KaczooH
 
 	Patch missing changes from OpenTibia SVN
-		Assigned to: slawkens, Elf
+		Assigned to: Elf, slawkens
 
-	Deprecate several hardcoded systems (guild management, experience stages, etc) and rescript them in Lua
-		Assigned to: Elf, KaczooH, slawkens
+	Deprecate several hardcoded systems (guild management, etc) and rescript them in Lua
+		Assigned to: slawkens, Elf
 ]

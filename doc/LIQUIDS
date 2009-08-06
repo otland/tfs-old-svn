@@ -24,8 +24,11 @@
 	11	oil			BROWN
 	19	mud			BROWN
 	27	rum			BROWN
+	35	tea			BROWN
+	43	mead			BROWN
 
 	4	slime			GREEN
+	28	swamp			GREEN
 
 	5	lemonade		YELLOW
 	13	urine			YELLOW

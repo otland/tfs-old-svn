@@ -589,6 +589,10 @@
 ]
 
 [ LIST
+	[ Note
+		There are few latest missing...
+	]
+
 	//get*
 	getCreatureHealth(cid)
 	getCreatureMaxHealth(cid)
