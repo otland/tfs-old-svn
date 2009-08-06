@@ -264,7 +264,6 @@ class Player : public Creature, public Cylinder
 		uint32_t getAccount() const {return accountId;}
 		std::string getAccountName() const {return account;}
 		uint16_t getAccess() const {return group ? group->getAccess() : 0;}
-		uint16_t getAccessLevel() const {return getAccess();}
 		uint16_t getGhostAccess() const {return group ? group->getGhostAccess() : 0;}
 		bool isPremium() const;
 
@@ -277,8 +276,8 @@ class Player : public Creature, public Cylinder
 
 		uint32_t getVocationId() const {return vocation_id;}
 		void setVocation(uint32_t vocId);
-		PlayerSex_t getSex() const {return sex;}
-		void setSex(PlayerSex_t);
+		uint16_t getSex(bool full) const {return full ? sex : sex % 2;}
+		void setSex(uint16_t);
 
 		uint64_t getStamina() const {return hasFlag(PlayerFlag_HasInfiniteStamina) ? STAMINA_MAX : stamina;}
 		void setStamina(uint64_t value) {stamina = std::min((uint64_t)STAMINA_MAX, (uint64_t)std::max((uint64_t)0, value));}
@@ -488,11 +487,10 @@ class Player : public Creature, public Cylinder
 		time_t getSkullEnd() const {return skullEnd;}
 		void setSkullEnd(time_t _time, bool login, Skulls_t _skull);
 
-		const OutfitListType& getPlayerOutfits();
-		void addOutfit(uint32_t _looktype, uint32_t _addons);
-		bool remOutfit(uint32_t _looktype, uint32_t _addons);
+		bool addOutfit(uint32_t outfitId, uint32_t addons);
+		bool removeOutfit(uint32_t outfitId, uint32_t addons);
 
-		bool canWear(uint32_t _looktype, uint32_t _addons);
+		bool canWearOutfit(uint32_t outfitId, uint32_t addons);
 		bool canLogout();
 
 		//tile
@@ -782,10 +780,10 @@ class Player : public Creature, public Cylinder
 		bool outfitAttributes;
 		bool addAttackSkillPoint;
 
-		PlayerSex_t sex;
+		uint16_t sex;
 		OperatingSystem_t operatingSystem;
 		AccountManager_t accountManager;
-		PlayerSex_t managerSex;
+		uint16_t managerSex;
 		BlockType_t lastAttackBlockType;
 		chaseMode_t chaseMode;
 		fightMode_t fightMode;
@@ -877,7 +875,7 @@ class Player : public Creature, public Cylinder
 		AttackedSet attackedSet;
 		ShopInfoList shopOffer;
 		PartyList invitePartyList;
-		OutfitList m_playerOutfits;
+		OutfitMap outfits;
 		LearnedInstantSpellList learnedInstantSpellList;
 		StorageMap storageMap;
 		std::map<uint32_t, uint32_t> goodsMap;

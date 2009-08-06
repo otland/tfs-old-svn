@@ -409,7 +409,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	}
 
 	player->nameDescription += result->getDataString("description");
-	player->setSex((PlayerSex_t)result->getDataInt("sex"));
+	player->setSex(result->getDataInt("sex"));
 	if(g_config.getBool(ConfigManager::STORE_DIRECTION))
 		player->setDirection((Direction)result->getDataInt("direction"));
 
@@ -466,7 +466,29 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->manaSpent = manaSpent;
 	player->magLevelPercent = Player::getPercentLevel(player->manaSpent, nextManaCount);
 	if(!group || !group->getOutfit())
+	{
 		player->defaultOutfit.lookType = result->getDataInt("looktype");
+		uint32_t outfitId = Outfits::getInstance()->getOutfitId(player->defaultOutfit.lookType);
+
+		bool wearable = true;
+		if(outfitId > 0)
+		{
+			Outfit outfit;
+			wearable = Outfits::getInstance()->getOutfit(outfitId, player->getSex(true), outfit);
+			if(wearable && player->defaultOutfit.lookType != outfit.lookType)
+				player->defaultOutfit.lookType = outfit.lookType;
+		}
+
+		if(!wearable) //Just pick the first default outfit we can find
+		{
+			const OutfitMap& defaultOutfits = Outfits::getInstance()->getOutfits(player->getSex(true));
+			if(!defaultOutfits.empty())
+			{
+				Outfit newOutfit = (*defaultOutfits.begin()).second;
+				player->defaultOutfit.lookType = newOutfit.lookType;
+			}
+		}
+	}
 	else
 		player->defaultOutfit.lookType = group->getOutfit();
 
@@ -1389,7 +1411,7 @@ bool IOLoginData::changeName(uint32_t guid, std::string newName, std::string old
 	return true;
 }
 
-bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName, int32_t vocationId, PlayerSex_t sex)
+bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName, int32_t vocationId, uint16_t sex)
 {
 	if(playerExists(characterName))
 		return false;
@@ -1398,7 +1420,7 @@ bool IOLoginData::createCharacter(uint32_t accountId, std::string characterName,
 	Vocation* rookVoc = Vocations::getInstance()->getVocation(0);
 
 	uint16_t healthMax = 150, manaMax = 0, capMax = 400, lookType = 136;
-	if(sex == PLAYERSEX_MALE)
+	if(sex % 2)
 		lookType = 128;
 
 	uint32_t level = g_config.getNumber(ConfigManager::START_LEVEL), tmpLevel = level - 1;

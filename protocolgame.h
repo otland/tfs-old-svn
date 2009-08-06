@@ -271,7 +271,7 @@ class ProtocolGame : public Protocol
 		void AddCreatureSpeak(NetworkMessage_ptr msg, const Creature* creature, SpeakClasses type,
 			std::string text, uint16_t channelId, uint32_t time = 0, Position* pos = NULL);
 		void AddCreatureHealth(NetworkMessage_ptr msg, const Creature* creature);
-		void AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* creature, const Outfit_t& outfit);
+		void AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* creature, const Outfit_t& outfit, bool outfitWindow = false);
 		void AddPlayerSkills(NetworkMessage_ptr msg);
 		void AddWorldLight(NetworkMessage_ptr msg, const LightInfo& lightInfo);
 		void AddCreatureLight(NetworkMessage_ptr msg, const Creature* creature);

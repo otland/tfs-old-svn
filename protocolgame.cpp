@@ -2451,70 +2451,32 @@ void ProtocolGame::sendOutfitWindow()
 	{
 		TRACK_MESSAGE(msg);
 		msg->AddByte(0xC8);
+		AddCreatureOutfit(msg, player, player->getDefaultOutfit(), true);
 
-		AddCreatureOutfit(msg, player, player->getDefaultOutfit());
-		OutfitListType globalOutfits = Outfits::getInstance()->getOutfits(player->getSex());
-		if(!globalOutfits.size())
-			return;
-
-		size_t size = OUTFITS_MAX_NUMBER;
-		IntegerVec tmpList;
-		for(OutfitListType::const_iterator it = globalOutfits.begin(); it != globalOutfits.end() && size > tmpList.size(); ++it)
+		std::list<Outfit> outfitList;
+		for(OutfitMap::iterator it = player->outfits.begin(); it != player->outfits.end(); ++it)
 		{
-			if((*it)->premium && !player->isPremium())
-				continue;
-
-			if(player->getAccess() < (*it)->access)
-				continue;
-
-			if((*it)->quest)
-			{
-				std::string value;
-				if(!player->getStorageValue((*it)->quest, value) || atoi(value.c_str()) != OUTFITS_QUEST_VALUE)
-					continue;
-			}
-
-			tmpList.push_back((*it)->looktype);
+			if(player->canWearOutfit(it->first, it->second.addons))
+				outfitList.push_back(it->second);
 		}
 
-		size = tmpList.size();
-		if(!size)
-			return;
-
-		OutfitListType::const_iterator iit;
-		const OutfitListType& playerOutfits = player->getPlayerOutfits();
-
-		msg->AddByte(size);
-		if(player->hasCustomFlag(PlayerCustomFlag_CanWearAllAddons))
+ 		if(outfitList.size())
 		{
-			for(IntegerVec::const_iterator it = tmpList.begin(); it != tmpList.end(); ++it)
+			msg->AddByte((size_t)std::min((size_t)OUTFITS_MAX_NUMBER, outfitList.size()));
+			std::list<Outfit>::iterator it = outfitList.begin();
+ 			for(int32_t i = 0; it != outfitList.end() && i < OUTFITS_MAX_NUMBER; ++it, ++i)
 			{
-				msg->AddU16(*it);
-				msg->AddString(Outfits::getInstance()->getOutfitName(*it));
-				msg->AddByte(0x03);
-			}
+ 				msg->AddU16(it->lookType);
+				msg->AddString(it->name);
+ 				msg->AddByte(it->addons);
+ 			}
 		}
 		else
 		{
-			for(IntegerVec::const_iterator it = tmpList.begin(); it != tmpList.end(); ++it)
-			{
-				msg->AddU16(*it);
-				msg->AddString(Outfits::getInstance()->getOutfitName(*it));
-
-				bool added = false;
-				for(iit = playerOutfits.begin(); iit != playerOutfits.end(); ++iit)
-				{
-					if((*iit)->looktype != uint32_t(*it))
-						continue;
-
-					msg->AddByte((*iit)->addons);
-					added = true;
-					break;
-				}
-
-				if(!added)
-					msg->AddByte(0x00);
-			}
+			msg->AddByte(1);
+			msg->AddU16(player->getDefaultOutfit().lookType);
+			msg->AddString("Outfit");
+			msg->AddByte(player->getDefaultOutfit().lookAddons);
 		}
 
 		player->hasRequestedOutfit(true);
@@ -2808,9 +2770,9 @@ void ProtocolGame::AddCreatureHealth(NetworkMessage_ptr msg,const Creature* crea
 		msg->AddByte(0x00);
 }
 
-void ProtocolGame::AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* creature, const Outfit_t& outfit)
+void ProtocolGame::AddCreatureOutfit(NetworkMessage_ptr msg, const Creature* creature, const Outfit_t& outfit, bool outfitWindow/* = false*/)
 {
-	if(!creature->getPlayer() || (!creature->isInvisible() && (!creature->isGhost()
+	if(outfitWindow || !creature->getPlayer() || (!creature->isInvisible() && (!creature->isGhost()
 		|| !g_config.getBool(ConfigManager::GHOST_INVISIBLE_EFFECT))))
 	{
 		msg->AddU16(outfit.lookType);

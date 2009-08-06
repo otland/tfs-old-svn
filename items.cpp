@@ -92,8 +92,8 @@ ItemType::ItemType()
 	worth = 0;
 
 	bedPartnerDir = NORTH;
-	transformToOnUse[PLAYERSEX_MALE] = 0;
 	transformToOnUse[PLAYERSEX_FEMALE] = 0;
+	transformToOnUse[PLAYERSEX_MALE] = 0;
 	transformToFree = 0;
 	levelDoor = 0;
 
@@ -1484,10 +1484,10 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				{
 					it.transformToOnUse[PLAYERSEX_MALE] = intValue;
 					ItemType& ot = getItemType(intValue);
-					if(ot.transformToFree == 0)
+					if(!ot.transformToFree)
 						ot.transformToFree = it.id;
 
-					if(it.transformToOnUse[PLAYERSEX_FEMALE] == 0)
+					if(!it.transformToOnUse[PLAYERSEX_FEMALE])
 						it.transformToOnUse[PLAYERSEX_FEMALE] = intValue;
 				}
 			}
@@ -1497,10 +1497,10 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 				{
 					it.transformToOnUse[PLAYERSEX_FEMALE] = intValue;
 					ItemType& ot = getItemType(intValue);
-					if(ot.transformToFree == 0)
+					if(!ot.transformToFree)
 						ot.transformToFree = it.id;
 
-					if(it.transformToOnUse[PLAYERSEX_MALE] == 0)
+					if(!it.transformToOnUse[PLAYERSEX_MALE])
 						it.transformToOnUse[PLAYERSEX_MALE] = intValue;
 				}
 			}

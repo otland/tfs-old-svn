@@ -1369,9 +1369,6 @@ void LuaScriptInterface::registerFunctions()
 	//getPlayerGuildLevel(cid)
 	lua_register(m_luaState, "getPlayerGuildLevel", LuaScriptInterface::luaGetPlayerGuildLevel);
 
-	//getPlayerSex(cid)
-	lua_register(m_luaState, "getPlayerSex", LuaScriptInterface::luaGetPlayerSex);
-
 	//getPlayerGUID(cid)
 	lua_register(m_luaState, "getPlayerGUID", LuaScriptInterface::luaGetPlayerGUID);
 
@@ -1691,11 +1688,17 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerSetGuildNick(cid, nick)
 	lua_register(m_luaState, "doPlayerSetGuildNick", LuaScriptInterface::luaDoPlayerSetGuildNick);
 
-	//doPlayerAddOutfit(cid,looktype,addons)
+	//doPlayerAddOutfit(cid, looktype, addon)
 	lua_register(m_luaState, "doPlayerAddOutfit", LuaScriptInterface::luaDoPlayerAddOutfit);
 
-	//doPlayerRemoveOutfit(cid,looktype,addons)
+	//doPlayerRemoveOutfit(cid, looktype[, addon = 0])
 	lua_register(m_luaState, "doPlayerRemoveOutfit", LuaScriptInterface::luaDoPlayerRemoveOutfit);
+
+	//doPlayerAddOutfitId(cid, outfitId, addon)
+	lua_register(m_luaState, "doPlayerAddOutfitId", LuaScriptInterface::luaDoPlayerAddOutfitId);
+
+	//doPlayerRemoveOutfitId(cid, outfitId[, addon = 0])
+	lua_register(m_luaState, "doPlayerRemoveOutfitId", LuaScriptInterface::luaDoPlayerRemoveOutfitId);
 
 	//canPlayerWearOutfit(cid, looktype, addons)
 	lua_register(m_luaState, "canPlayerWearOutfit", LuaScriptInterface::luaCanPlayerWearOutfit);
@@ -1821,7 +1824,7 @@ void LuaScriptInterface::registerFunctions()
 	//getGuildMotd(guildId)
 	lua_register(m_luaState, "getGuildMotd", LuaScriptInterface::luaGetGuildMotd);
 
-	//getPlayerSex(cid)
+	//getPlayerSex(cid[, full = false])
 	lua_register(m_luaState, "getPlayerSex", LuaScriptInterface::luaGetPlayerSex);
 
 	//doPlayerSetSex(cid, newSex)
@@ -2524,9 +2527,6 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 		case PlayerInfoGuildNick:
 			lua_pushstring(L, player->getGuildNick().c_str());
 			return 1;
-		case PlayerInfoSex:
-			value = player->getSex();
-			break;
 		case PlayerInfoGroupId:
 			value = player->getGroupId();
 			break;
@@ -2669,11 +2669,6 @@ int32_t LuaScriptInterface::luaGetPlayerGuildNick(lua_State* L)
 	return internalGetPlayerInfo(L, PlayerInfoGuildNick);
 }
 
-int32_t LuaScriptInterface::luaGetPlayerSex(lua_State* L)
-{
-	return internalGetPlayerInfo(L, PlayerInfoSex);
-}
-
 int32_t LuaScriptInterface::luaGetPlayerTown(lua_State* L)
 {
 	return internalGetPlayerInfo(L, PlayerInfoTown);
@@ -2779,6 +2774,26 @@ int32_t LuaScriptInterface::luaGetPlayerAccountManager(lua_State* L)
 	return internalGetPlayerInfo(L, PlayerInfoAccountManager);
 }
 //
+
+int32_t LuaScriptInterface::luaGetPlayerSex(lua_State* L)
+{
+	//getPlayerSex(cid[, full = false])
+	bool full = false;
+	if(lua_gettop(L) > 1)
+		full = popNumber(L);
+
+	ScriptEnviroment* env = getScriptEnv();
+	Player* player = env->getPlayerByUID((uint32_t)popNumber(L));
+	if(!player)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushnil(L);
+	}
+	else
+		lua_pushnumber(L, player->getSex(full));
+
+	return 1;
+}
 
 int32_t LuaScriptInterface::luaDoPlayerSetNameDescription(lua_State* L)
 {
@@ -4943,13 +4958,13 @@ int32_t LuaScriptInterface::luaDoPlayerSetVocation(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoPlayerSetSex(lua_State* L)
 {
-	//doPlayerSetSex(cid,voc)
+	//doPlayerSetSex(cid, sex)
 	uint32_t newSex = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		player->setSex((PlayerSex_t)newSex);
+		player->setSex(newSex);
 		lua_pushboolean(L, true);
 	}
 	else
@@ -5513,11 +5528,10 @@ int32_t LuaScriptInterface::luaCreateCombatArea(lua_State* L)
 	if(lua_gettop(L) > 1)
 	{
 		//has extra parameter with diagonal area information
-
 		uint32_t rowsExtArea;
 		std::list<uint32_t> listExtArea;
-		getArea(L, listExtArea, rowsExtArea);
 
+		getArea(L, listExtArea, rowsExtArea);
 		/*setup all possible rotations*/
 		area->setupExtArea(listExtArea, rowsExtArea);
 	}
@@ -7739,41 +7753,99 @@ int32_t LuaScriptInterface::luaIsInArray(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoPlayerAddOutfit(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerAddOutfit(lua_State *L)
 {
+	//Consider using doPlayerAddOutfitId instead
 	//doPlayerAddOutfit(cid, looktype, addon)
-	uint32_t addon = popNumber(L), looktype = popNumber(L);
-
+	uint32_t addon = popNumber(L), lookType = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
-	if(Player* player = env->getPlayerByUID(popNumber(L)))
-	{
-		player->addOutfit(looktype, addon);
-		lua_pushboolean(L, true);
-	}
-	else
+
+	Player* player = env->getPlayerByUID((uint32_t)popNumber(L));
+	if(!player)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
+		return 1;
 	}
+
+	Outfit outfit;
+	if(Outfits::getInstance()->getOutfit(lookType, outfit))
+	{
+		lua_pushboolean(L, player->addOutfit(outfit.outfitId, addon));
+		return 1;
+	}
+
+	lua_pushboolean(L, false);
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoPlayerRemoveOutfit(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerRemoveOutfit(lua_State *L)
 {
-	//doPlayerRemoveOutfit(cid, looktype, addon)
-	uint32_t addon = popNumber(L), looktype = popNumber(L);
+	//Consider using doPlayerRemoveOutfitId instead
+	//doPlayerRemoveOutfit(cid, looktype[, addon = 0])
+	uint32_t addon = 0xFF;
+	if(lua_gettop(L) > 2)
+		addon = popNumber(L);
 
+	uint32_t lookType = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
-	if(Player* player = env->getPlayerByUID(popNumber(L)))
-	{
-		player->remOutfit(looktype, addon);
-		lua_pushboolean(L, true);
-	}
-	else
+
+	Player* player = env->getPlayerByUID((uint32_t)popNumber(L));
+	if(!player)
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
+		return 1;
 	}
+
+	Outfit outfit;
+	if(Outfits::getInstance()->getOutfit(lookType, outfit))
+	{
+		lua_pushboolean(L, player->removeOutfit(outfit.outfitId, addon));
+		return 1;
+	}
+
+	lua_pushboolean(L, false);
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoPlayerAddOutfitId(lua_State *L)
+{
+	//doPlayerAddOutfitId(cid, outfitId, addon)
+	uint32_t addon = popNumber(L), outfitId = popNumber(L);
+	ScriptEnviroment* env = getScriptEnv();
+
+	Player* player = env->getPlayerByUID((uint32_t)popNumber(L));
+	if(!player)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
+	lua_pushboolean(L, player->addOutfit(outfitId, addon));
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaDoPlayerRemoveOutfitId(lua_State *L)
+{
+	//doPlayerRemoveOutfitId(cid, outfitId[, addon = 0])
+	uint32_t addon = 0xFF;
+	if(lua_gettop(L) > 2)
+		addon = popNumber(L);
+
+	uint32_t outfitId = popNumber(L);
+	ScriptEnviroment* env = getScriptEnv();
+
+	Player* player = env->getPlayerByUID((uint32_t)popNumber(L));
+	if(!player)
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
+		lua_pushboolean(L, false);
+		return 1;
+	}
+
+	lua_pushboolean(L, player->removeOutfit(outfitId, addon));
 	return 1;
 }
 
@@ -7785,7 +7857,7 @@ int32_t LuaScriptInterface::luaCanPlayerWearOutfit(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		lua_pushboolean(L, player->canWear(looktype, addon));
+		lua_pushboolean(L, player->canWearOutfit(looktype, addon));
 		return 1;
 	}
 

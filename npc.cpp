@@ -1994,7 +1994,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 			uint32_t params = (*it)->getParams();
 			if(hasBitSet(RESPOND_MALE, params))
 			{
-				if(!player->getSex() == PLAYERSEX_MALE)
+				if(!player->getSex(false))
 					continue;
 
 				++matchCount;
@@ -2002,7 +2002,7 @@ const NpcResponse* Npc::getResponse(const ResponseList& list, const Player* play
 
 			if(hasBitSet(RESPOND_FEMALE, params))
 			{
-				if(!player->getSex() == PLAYERSEX_FEMALE)
+				if(player->getSex(false))
 					continue;
 
 				++matchCount;

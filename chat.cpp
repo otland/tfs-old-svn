@@ -67,15 +67,13 @@ void PrivateChatChannel::invitePlayer(Player* player, Player* invitePlayer)
 	if(player == invitePlayer || !addInvited(invitePlayer))
 		return;
 
-	std::string msg = player->getName();
-	msg += " invites you to ";
-	msg += (player->getSex() == PLAYERSEX_FEMALE ? "her" : "his");
-	msg += " private chat channel.";
-	invitePlayer->sendTextMessage(MSG_INFO_DESCR, msg.c_str());
+	std::stringstream msg;
+	msg << player->getName() << " invites you to " << (player->getSex(false) ? "his" : "her") << " private chat channel.";
+	invitePlayer->sendTextMessage(MSG_INFO_DESCR, msg.str().c_str());
 
-	msg = invitePlayer->getName();
-	msg += " has been invited.";
-	player->sendTextMessage(MSG_INFO_DESCR, msg.c_str());
+	msg.str("");
+	msg << invitePlayer->getName() << " has been invited.";
+	player->sendTextMessage(MSG_INFO_DESCR, msg.str().c_str());
 }
 
 void PrivateChatChannel::excludePlayer(Player* player, Player* excludePlayer)
@@ -647,7 +645,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 						InvitedToGuildsList::iterator it = std::find(paramPlayer->invitedToGuildsList.begin(),paramPlayer->invitedToGuildsList.end(), player->getGuildId());
 						if(it != paramPlayer->invitedToGuildsList.end())
 						{
-							sprintf(buffer, "%s has revoked your invite to %s guild.", player->getName().c_str(), (player->getSex() == PLAYERSEX_FEMALE ? "her" : "his"));
+							sprintf(buffer, "%s has revoked your invite to %s guild.", player->getName().c_str(), (player->getSex(false) ? "his" : "her"));
 							paramPlayer->sendTextMessage(MSG_INFO_DESCR, buffer);
 							sprintf(buffer, "%s has revoked the guildinvite of %s.", player->getName().c_str(), paramPlayer->getName().c_str());
 							channel->talk(player, SPEAK_CHANNEL_W, buffer);
@@ -891,7 +889,7 @@ bool Chat::talkToChannel(Player* player, SpeakClasses type, const std::string& t
 											if(player != paramPlayer)
 												sprintf(buffer, "%s has set the guildnick of %s to \"%s\".", player->getName().c_str(), paramPlayer->getName().c_str(), param2.c_str());
 											else
-												sprintf(buffer, "%s has set %s guildnick to \"%s\".", player->getName().c_str(), (player->getSex() == PLAYERSEX_FEMALE ? "her" : "his"), param2.c_str());
+												sprintf(buffer, "%s has set %s guildnick to \"%s\".", player->getName().c_str(), (player->getSex(false) ? "his" : "her"), param2.c_str());
 											channel->talk(player, SPEAK_CHANNEL_W, buffer);
 										}
 										else

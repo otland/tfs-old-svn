@@ -91,7 +91,7 @@ class IOLoginData
 		bool getGuidByNameEx(uint32_t& guid, bool& specialVip, std::string& name);
 
 		bool changeName(uint32_t guid, std::string newName, std::string oldName);
-		bool createCharacter(uint32_t accountId, std::string characterName, int32_t vocationId, PlayerSex_t sex);
+		bool createCharacter(uint32_t accountId, std::string characterName, int32_t vocationId, uint16_t sex);
 		DeleteCharacter_t deleteCharacter(uint32_t accountId, const std::string characterName);
 
 		uint32_t getLevel(uint32_t guid) const;

@@ -202,7 +202,6 @@ enum PlayerInfo_t
 	PlayerInfoGuildRank,
 	PlayerInfoGuildLevel,
 	PlayerInfoGuildNick,
-	PlayerInfoSex,
 	PlayerInfoGroupId,
 	PlayerInfoGUID,
 	PlayerInfoAccountId,
@@ -592,6 +591,8 @@ class LuaScriptInterface
 
 		static int32_t luaDoPlayerAddOutfit(lua_State* L);
 		static int32_t luaDoPlayerRemoveOutfit(lua_State* L);
+		static int32_t luaDoPlayerAddOutfitId(lua_State* L);
+		static int32_t luaDoPlayerRemoveOutfitId(lua_State* L);
 		static int32_t luaCanPlayerWearOutfit(lua_State* L);
 
 		static int32_t luaGetWorldType(lua_State* L);

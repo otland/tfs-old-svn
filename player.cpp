@@ -190,7 +190,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 		if(!hasCustomFlag(PlayerCustomFlag_HideLevel))
 			s << " (Level " << level << ")";
 
-		s << ". " << (sex == PLAYERSEX_FEMALE ? "She" : "He");
+		s << ". " << (sex % 2 ? "He" : "She");
 		if(hasFlag(PlayerFlag_ShowGroupNameInsteadOfVocation))
 			s << " is " << group->getName();
 		else if(vocation_id != 0)
@@ -215,7 +215,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 			s << " ";
 		}
 
-		s << (sex == PLAYERSEX_FEMALE ? "wife" : "husband") << " of " << tmp;
+		s << (sex % 2 ? "husband" : "wife") << " of " << tmp;
 	}
 
 	s << ".";
@@ -224,7 +224,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 		if(lookDistance == -1)
 			s << " You are ";
 		else
-			s << " " << (sex == PLAYERSEX_FEMALE ? "She" : "He") << " is ";
+			s << " " << (sex % 2 ? "He" : "She") << " is ";
 
 		s << (guildRank.length() ? guildRank : "a member")<< " of the " << guildName;
 		if(guildNick.length())
@@ -792,10 +792,10 @@ bool Player::canOpenCorpse(uint32_t ownerId)
 
 uint16_t Player::getLookCorpse() const
 {
-	if(sex == PLAYERSEX_FEMALE)
-		return ITEM_FEMALE_CORPSE;
+	if(sex % 2)
+		return ITEM_MALE_CORPSE;
 
-	return ITEM_MALE_CORPSE;
+	return ITEM_FEMALE_CORPSE;
 }
 
 void Player::dropLoot(Container* corpse)
@@ -847,22 +847,28 @@ bool Player::addStorageValue(const uint32_t key, const std::string& value)
 		return true;
 	}
 
-	if(!IS_IN_KEYRANGE(key, OUTFITS_RANGE))
+	if(IS_IN_KEYRANGE(key, OUTFITS_RANGE))
 	{
-		std::cout << "[Warning - Player::addStorageValue]: Unknown reserved key: " << key << " for player: " << getName() << std::endl;
-		return false;
+		uint32_t lookType = atoi(value.c_str()) >> 16;
+		uint32_t addons = atoi(value.c_str()) & 0xFF;
+		if(addons < 4)
+			return addOutfit(lookType, addons);
+		else
+			std::cout << "[Warning - Player::addStorageValue]: Invalid addons value key: " << key
+				<< ", value: " << value << " for player: " << getName() << std::endl;
 	}
-
-	Outfit outfit;
-	outfit.looktype = atoi(value.c_str()) >> 16;
-	outfit.addons = atoi(value.c_str()) & 0xFF;
-	if(outfit.addons <= 3)
+	else if(IS_IN_KEYRANGE(key, OUTFITSID_RANGE))
 	{
-		m_playerOutfits.addOutfit(outfit);
-		return true;
+		uint32_t outfitId = atoi(value.c_str()) >> 16;
+		uint32_t addons = atoi(value.c_str()) & 0xFF;
+		if(addons < 4)
+			return addOutfit(outfitId, addons);
+		else
+			std::cout << "[Warning - Player::addStorageValue]: Invalid addons value key: " << key
+				<< ", value: " << value << " for player: " << getName() << std::endl;
 	}
 	else
-		std::cout << "[Warning - Player::addStorageValue]: Invalid addons value key: " << key << ", value: " << value << " for player: " << getName() << std::endl;
+		std::cout << "[Warning - Player::addStorageValue]: Unknown reserved key: " << key << " for player: " << getName() << std::endl;
 
 	return false;
 }
@@ -1382,7 +1388,10 @@ void Player::onCreatureAppear(const Creature* creature)
 	if(BedItem* bed = Beds::getInstance().getBedBySleeper(getGUID()))
 		bed->wakeUp();
 
-	outfitAttributes = Outfits::getInstance()->addAttributes(getID(), defaultOutfit.lookType, defaultOutfit.lookAddons);
+	Outfit outfit;
+	if(Outfits::getInstance()->getOutfit(defaultOutfit.lookType, outfit))
+		outfitAttributes = Outfits::getInstance()->addAttributes(getID(), outfit.outfitId, sex, defaultOutfit.lookAddons);
+
 	if(lastLogout && stamina < STAMINA_MAX)
 	{
 		int64_t period = (int32_t)time(NULL) - lastLogout - 600;
@@ -2093,7 +2102,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 
 		if(outfitAttributes)
 		{
-			uint32_t tmp = Outfits::getInstance()->getOutfitAbsorb(defaultOutfit.lookType, (uint32_t)sex, combatType);
+			uint32_t tmp = Outfits::getInstance()->getOutfitAbsorb(defaultOutfit.lookType, sex, combatType);
 			if(tmp != 0)
 				blocked += (int32_t)std::ceil((double)(damage * tmp) / 100.);
 		}
@@ -2285,7 +2294,7 @@ Item* Player::createCorpse(DeathList deathList)
 		return NULL;
 
 	std::stringstream ss;
-	ss << "You recognize " << getNameDescription() << ". " << (getSex() == PLAYERSEX_FEMALE ? "She" : "He") << " was killed by ";
+	ss << "You recognize " << getNameDescription() << ". " << (sex % 2 ? "He" : "She") << " was killed by ";
 	if(deathList[0].isCreatureKill())
 	{
 		ss << deathList[0].getKillerCreature()->getNameDescription();
@@ -3524,7 +3533,10 @@ void Player::onCombatRemoveCondition(const Creature* attacker, Condition* condit
 		{
 			uint32_t delay = getNextActionTime();
 			delay -= (delay % EVENT_CREATURE_THINK_INTERVAL);
-			condition->setTicks(delay);
+			if(delay < 0)
+				removeCondition(condition);
+			else
+				condition->setTicks(delay);
 		}
 		else
 			removeCondition(condition);
@@ -3792,92 +3804,117 @@ void Player::changeSoul(int32_t soulChange)
 	sendStats();
 }
 
-const OutfitListType& Player::getPlayerOutfits()
-{
-	return m_playerOutfits.getOutfits();
-}
-
-bool Player::canWear(uint32_t _looktype, uint32_t _addons)
-{
-	return m_playerOutfits.isInList(getID(), _looktype, hasCustomFlag(PlayerCustomFlag_CanWearAllAddons) ? 0 : _addons);
-}
-
 bool Player::canLogout()
 {
 	return !isConnecting && !hasCondition(CONDITION_INFIGHT) && !getTile()->hasFlag(TILESTATE_NOLOGOUT);
 }
 
-void Player::genReservedStorageRange()
-{
-	uint32_t baseKey = PSTRG_OUTFITS_RANGE_START + 1;
-	const OutfitListType& outfits = m_playerOutfits.getOutfits();
-
-	const OutfitList& globalOutfits = Outfits::getInstance()->getOutfitList(sex);
-	for(OutfitListType::const_iterator it = outfits.begin(); it != outfits.end(); ++it)
-	{
-		if(globalOutfits.isInList(getID(), (*it)->looktype, (*it)->addons))
-			continue;
-
-		std::stringstream ss;
-		ss << (int64_t((*it)->looktype << 16) | ((*it)->addons & 0xFF));
-		storageMap[baseKey] = ss.str();
-
-		baseKey++;
-		if(baseKey > PSTRG_OUTFITS_RANGE_START + PSTRG_OUTFITS_RANGE_SIZE)
-		{
-			std::cout << "[Warning - Player::genReservedStorageRange] Player " << getName() << " with more than 500 outfits!." << std::endl;
-			break;
-		}
-	}
-}
-
-void Player::addOutfit(uint32_t _looktype, uint32_t _addons)
-{
-	Outfit outfit;
-	outfit.looktype = _looktype;
-	outfit.addons = _addons;
-	m_playerOutfits.addOutfit(outfit);
-}
-
-bool Player::remOutfit(uint32_t _looktype, uint32_t _addons)
-{
-	Outfit outfit;
-	outfit.looktype = _looktype;
-	outfit.addons = _addons;
-	return m_playerOutfits.remOutfit(outfit);
-}
-
 bool Player::changeOutfit(Outfit_t outfit, bool checkList)
 {
-	if(checkList && (!canWear(outfit.lookType, outfit.lookAddons) || !requestedOutfit))
+	uint32_t outfitId = Outfits::getInstance()->getOutfitId(outfit.lookType);
+	if(checkList && (!canWearOutfit(outfitId, outfit.lookAddons) || !requestedOutfit))
 		return false;
 
 	requestedOutfit = false;
 	if(outfitAttributes)
-		outfitAttributes = !Outfits::getInstance()->removeAttributes(getID(), defaultOutfit.lookType);
+		outfitAttributes = !Outfits::getInstance()->removeAttributes(getID(), outfitId, sex);
 
 	defaultOutfit = outfit;
-	outfitAttributes = Outfits::getInstance()->addAttributes(getID(), defaultOutfit.lookType, defaultOutfit.lookAddons);
+	outfitAttributes = Outfits::getInstance()->addAttributes(getID(), outfitId, sex, defaultOutfit.lookAddons);
 	return true;
 }
 
-void Player::setSex(PlayerSex_t newSex)
+bool Player::canWearOutfit(uint32_t outfitId, uint32_t addons)
 {
-	sex = newSex;
-	if(Outfits* outfits = Outfits::getInstance())
-	{
-		const OutfitListType& globalOutfits = outfits->getOutfits(sex);
-		Outfit outfit;
-		for(OutfitListType::const_iterator it = globalOutfits.begin(); it != globalOutfits.end(); ++it)
-		{
-			outfit.looktype = (*it)->looktype;
-			outfit.addons = (*it)->addons;
-			outfit.access = (*it)->access;
-			outfit.quest = (*it)->quest;
-			outfit.premium = (*it)->premium;
+	OutfitMap::iterator it = outfits.find(outfitId);
+	if(it == outfits.end() || (it->second.isPremium && !isPremium()) || getAccess()
+		< it->second.accessLevel || (it->second.addons & addons) != addons)
+		return false;
 
-			m_playerOutfits.addOutfit(outfit);
+	if(!it->second.storageId)
+		return true;
+
+	std::string value;
+	return getStorageValue(it->second.storageId, value) && value == it->second.storageValue;
+}
+
+bool Player::addOutfit(uint32_t outfitId, uint32_t addons)
+{
+	const OutfitMap::iterator& it = outfits.find(outfitId);
+	if(it != outfits.end())
+	{
+		outfits[outfitId - 1].addons = it->second.addons | addons;
+		return true;
+	}
+
+	Outfit outfit;
+	if(!Outfits::getInstance()->getOutfit(outfitId, sex, outfit))
+		return false;
+
+	outfit.addons |= addons;
+	outfits[outfitId - 1] = outfit;
+	return true;
+}
+
+bool Player::removeOutfit(uint32_t outfitId, uint32_t addons)
+{
+	const OutfitMap::iterator& it = outfits.find(outfitId);
+	if(it == outfits.end())
+		return false;
+
+	if(addons == 0xFF) //remove outfit
+		outfits.erase(it);
+	else //remove addons
+		outfits[outfitId - 1].addons = it->second.addons & (~addons);
+
+	return true;
+}
+
+void Player::genReservedStorageRange()
+{
+	uint32_t baseKey = PSTRG_OUTFITSID_RANGE_START + 1;
+	const OutfitMap& defaultOutfits = Outfits::getInstance()->getOutfits(sex);
+	for(OutfitMap::const_iterator it = outfits.begin(); it != outfits.end(); ++it)
+	{
+		OutfitMap::const_iterator dit = defaultOutfits.find(it->first);
+		if(dit == defaultOutfits.end() || !it->second.isDefault || (dit->second.addons
+			& it->second.addons) == it->second.addons)
+			continue;
+
+		std::stringstream ss;
+		ss << ((it->first << 16) | (it->second.addons & 0xFF));
+		storageMap[baseKey] = ss.str();
+
+		baseKey++;
+		if(baseKey <= PSTRG_OUTFITSID_RANGE_START + PSTRG_OUTFITSID_RANGE_SIZE)
+			continue;
+
+		std::cout << "[Warning - Player::genReservedStorageRange] Player " << getName() << " with more than 500 outfits!" << std::endl;
+		break;
+	}
+}
+
+void Player::setSex(uint16_t newSex)
+{
+	if(sex == newSex)
+		return;
+
+	sex = newSex;
+	const OutfitMap& defaultOutfits = Outfits::getInstance()->getOutfits(sex);
+	for(OutfitMap::const_iterator it = defaultOutfits.begin(); it != defaultOutfits.end(); ++it)
+	{
+		if(!it->second.isDefault || (it->second.isPremium && !isPremium())
+			|| getAccess() < it->second.accessLevel)
+			continue;
+
+		if(it->second.storageId)
+		{
+			std::string value;
+			if(!getStorageValue(it->second.storageId, value) || value != it->second.storageValue)
+				continue;
 		}
+
+		addOutfit(it->first, it->second.addons);
 	}
 }
 
@@ -4382,12 +4419,12 @@ void Player::manageAccount(const std::string &text)
 				if(checkText(text, "female"))
 				{
 					msg << "A female, are you sure?";
-					managerSex = PLAYERSEX_FEMALE;
+					managerSex = 0;
 				}
 				else
 				{
 					msg << "A male, are you sure?";
-					managerSex = PLAYERSEX_MALE;
+					managerSex = 1;
 				}
 			}
 			else if(checkText(text, "no") && talkState[9])

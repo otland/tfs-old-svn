@@ -924,7 +924,7 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 				else if(!strcasecmp(tmp.c_str(), "vocation"))
 					_player->setVocation(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 				else if(!strcasecmp(tmp.c_str(), "sex") || !strcasecmp(tmp.c_str(), "gender"))
-					_player->setSex((PlayerSex_t)atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					_player->setSex(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 				else if(!strcasecmp(tmp.c_str(), "stamina"))
 					_player->setStaminaMinutes(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 				else if(!strcasecmp(tmp.c_str(), "town")) //FIXME
