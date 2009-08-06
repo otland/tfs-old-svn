@@ -18,13 +18,13 @@
 [ ABOUT
 	Helpful queries for your database.
 
-	1. Enter into your phpmyadmin and click "SQL".
+	1. Open your database manager and click "SQL".
 	2. Paste query there.
 	3. Click "Execute"!
 
 	WARNING
 		Use only while server is OFFLINE!
-		Oh and be careful while using them!
+		Oh, and be careful while using them!
 
 	Credits for few queries, taken from otland
 		Jester, Jonern
@@ -50,4 +50,8 @@
 	Delete inactive players
 	In this example below level 50, 20 days of inactivity
 		DELETE FROM `players` WHERE `level` < 50 AND `lastlogin` < UNIX_TIMESTAMP() - 20 * 24 * 60 * 60  
+]
+
+[ SQLite Note
+	Replace all ` to " in the queries listed above.
 ]

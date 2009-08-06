@@ -5,11 +5,11 @@
 #define THEFORGOTTENSERVER_PRIVATE_H
 
 /* VERSION DEFINITIONS */
-#define VER_STRING	"0.3.5.2548"
+#define VER_STRING	"0.3.5.2550"
 #define VER_MAJOR	0
 #define VER_MINOR	3
 #define VER_RELEASE	5
-#define VER_BUILD	2548
+#define VER_BUILD	2550
 #define COMPANY_NAME	"OtLand.net"
 #define FILE_VERSION	"0.3.5"
 #define FILE_DESCRIPTION	"The Forgotten Server"

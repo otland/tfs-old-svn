@@ -161,8 +161,10 @@
 		Attributes
 			words
 				Words used to execute this talkaction.
-				Can be separated by semicolon, fe. words="/a; /b",
+				Can be separated by a semicolon, fe. words="/a; /b",
 					or using own separator, fe. words="/a, /b" separator=","
+			seperator
+				Read "words".
 			access
 				Access required.
 			channel
