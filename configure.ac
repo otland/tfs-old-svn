@@ -1,5 +1,5 @@
 AC_PREREQ([2.50])
-AC_INIT([TheForgottenServer], [0.3.4])
+AC_INIT([TheForgottenServer], [0.3.5])
 AM_INIT_AUTOMAKE([1.10 foreign])
 AC_CONFIG_SRCDIR([account.h])
 AM_CONFIG_HEADER([config.h])
@@ -233,7 +233,7 @@ AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
 
 echo
-#echo The Forgotten Server 0.3.4
+#echo The Forgotten Server 0.3.5
 echo $PACKAGE $VERSION
 echo
 echo Server diagnostics.......... : $serverDiag
