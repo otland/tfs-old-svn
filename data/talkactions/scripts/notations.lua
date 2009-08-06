@@ -13,7 +13,7 @@ function onSay(cid, words, param, channel)
 		end
 	end
 
-	local list = getBanList(BANTYPE_NOTATION, ret)
+	local list = getBanList(BAN_NOTATION, ret)
 	if(type(list) ~= "table" or table.maxn(list) <= 0) then
 		doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Such account or player does not have any notation.")
 		return true
