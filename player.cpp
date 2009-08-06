@@ -852,7 +852,11 @@ bool Player::addStorageValue(const uint32_t key, const std::string& value)
 		uint32_t lookType = atoi(value.c_str()) >> 16;
 		uint32_t addons = atoi(value.c_str()) & 0xFF;
 		if(addons < 4)
-			return addOutfit(lookType, addons);
+		{
+			Outfit outfit;
+			if(Outfits::getInstance()->getOutfit(lookType, outfit))
+				return addOutfit(outfit.outfitId, addons);
+		}
 		else
 			std::cout << "[Warning - Player::addStorageValue]: Invalid addons value key: " << key
 				<< ", value: " << value << " for player: " << getName() << std::endl;
