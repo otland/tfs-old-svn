@@ -4877,6 +4877,8 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 				kickAction = NONE;
 				break;
 			}
+
+			action = ACTION_BANSIHMENT;
 		}
 
 		case ACTION_BANISHMENT:
