@@ -3881,7 +3881,7 @@ void Player::genReservedStorageRange()
 	for(OutfitMap::const_iterator it = outfits.begin(); it != outfits.end(); ++it)
 	{
 		OutfitMap::const_iterator dit = defaultOutfits.find(it->first);
-		if(dit == defaultOutfits.end() || !it->second.isDefault || (dit->second.addons
+		if(dit == defaultOutfits.end() || (dit->second.isDefault && (dit->second.addons
 			& it->second.addons) == it->second.addons)
 			continue;
 
@@ -3907,18 +3907,8 @@ void Player::setSex(uint16_t newSex)
 	const OutfitMap& defaultOutfits = Outfits::getInstance()->getOutfits(sex);
 	for(OutfitMap::const_iterator it = defaultOutfits.begin(); it != defaultOutfits.end(); ++it)
 	{
-		if(!it->second.isDefault || (it->second.isPremium && !isPremium())
-			|| getAccess() < it->second.accessLevel)
-			continue;
-
-		if(it->second.storageId)
-		{
-			std::string value;
-			if(!getStorageValue(it->second.storageId, value) || value != it->second.storageValue)
-				continue;
-		}
-
-		addOutfit(it->first, it->second.addons);
+		if(it->second.isDefault)
+			addOutfit(it->first, it->second.addons);
 	}
 }
 
