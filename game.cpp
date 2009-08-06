@@ -4819,9 +4819,9 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 
 	Account account = IOLoginData::getInstance()->loadAccount(accountId, true);
 	enum KickAction {
-		NONE,
-		KICK,
-		FULL_KICK,
+		NONE = 1,
+		KICK = 2,
+		FULL_KICK = 3,
 	} kickAction = FULL_KICK;
 	switch(action)
 	{
@@ -4845,7 +4845,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 		case ACTION_NAMEREPORT:
 		{
 			int64_t banTime = -1;
-			PlayerBan_t tmp = (PlayerBan_t)g_config.getBool(ConfigManager::NAME_REPORT_TYPE);
+			PlayerBan_t tmp = (PlayerBan_t)g_config.getNumber(ConfigManager::NAME_REPORT_TYPE);
 			if(tmp == PLAYERBAN_BANISHMENT)
 				banTime = time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH);
 
@@ -4904,7 +4904,7 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 				break;
 
 			banTime = -1;
-			PlayerBan_t tmp = (PlayerBan_t)g_config.getBool(ConfigManager::NAME_REPORT_TYPE);
+			PlayerBan_t tmp = (PlayerBan_t)g_config.getNumber(ConfigManager::NAME_REPORT_TYPE);
 			if(tmp == PLAYERBAN_BANISHMENT)
 				banTime = time(NULL) + g_config.getNumber(ConfigManager::FINALBAN_LENGTH);
 
@@ -4930,11 +4930,11 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 				return false;
 			}
 			else if(action != ACTION_DELETION)
-				account.warnings++;
+				account.warnings += g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN);
 
 			if(allow)
 				IOBan::getInstance()->addPlayerBanishment(guid, -1, reason, action, comment,
-					player->getGUID(), (PlayerBan_t)g_config.getBool(
+					player->getGUID(), (PlayerBan_t)g_config.getNumber(
 					ConfigManager::NAME_REPORT_TYPE));
 
 			break;
