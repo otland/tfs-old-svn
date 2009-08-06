@@ -3882,7 +3882,7 @@ void Player::genReservedStorageRange()
 	{
 		OutfitMap::const_iterator dit = defaultOutfits.find(it->first);
 		if(dit == defaultOutfits.end() || (dit->second.isDefault && (dit->second.addons
-			& it->second.addons) == it->second.addons)
+			& it->second.addons) == it->second.addons))
 			continue;
 
 		std::stringstream ss;
