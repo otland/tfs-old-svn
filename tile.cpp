@@ -826,8 +826,14 @@ Cylinder* Tile::__queryDestination(int32_t& index, const Thing* thing, Item** de
 					if(downTile->floorChange(SOUTH))
 						dy -= 1;
 
+					if(downTile->floorChange(SOUTH_ALT))
+						dy -= 2;
+
 					if(downTile->floorChange(EAST))
 						dx -= 1;
+
+					if(downTile->floorChange(EAST_ALT))
+						dx -= 2;
 
 					if(downTile->floorChange(WEST))
 						dx += 1;
