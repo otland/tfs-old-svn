@@ -1604,7 +1604,7 @@ void LuaScriptInterface::registerFunctions()
 	//Moves all moveable objects from pos to posTo
 	lua_register(m_luaState, "doRelocate", LuaScriptInterface::luaDoRelocate);
 
-	//doCleanTile(pos, removeLoadedFromMap = false)
+	//doCleanTile(pos, forceMapLoaded = false)
 	lua_register(m_luaState, "doCleanTile", LuaScriptInterface::luaDoCleanTile);
 
 	//doCreateTeleport(itemid, topos, createpos)
@@ -3800,11 +3800,11 @@ int32_t LuaScriptInterface::luaDoRelocate(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoCleanTile(lua_State* L)
 {
-	//doCleanTile(pos, removeLoadedFromMap = false)
+	//doCleanTile(pos, forceMapLoaded = false)
 	//Remove all items from tile, ignore creatures
-	bool removeLoadedFromMap = false;
+	bool forceMapLoaded = false;
 	if(lua_gettop(L) > 1)
-		removeLoadedFromMap = popNumber(L);
+		forceMapLoaded = popNumber(L);
 
 	PositionEx pos;
 	popPosition(L, pos);
@@ -3823,7 +3823,7 @@ int32_t LuaScriptInterface::luaDoCleanTile(lua_State* L)
 		{
 			if(Item* item = thing->getItem())
 			{
-				if(!item->isLoadedFromMap() || removeLoadedFromMap)
+				if(!item->isLoadedFromMap() || forceMapLoaded)
 					g_game.internalRemoveItem(NULL, item);
 			}
 		}

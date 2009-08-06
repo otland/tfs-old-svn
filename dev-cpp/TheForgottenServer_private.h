@@ -5,19 +5,19 @@
 #define THEFORGOTTENSERVER_PRIVATE_H
 
 /* VERSION DEFINITIONS */
-#define VER_STRING	"0.3.4.1879"
+#define VER_STRING	"0.3.5.2548"
 #define VER_MAJOR	0
 #define VER_MINOR	3
-#define VER_RELEASE	4
-#define VER_BUILD	1879
+#define VER_RELEASE	5
+#define VER_BUILD	2548
 #define COMPANY_NAME	"OtLand.net"
-#define FILE_VERSION	"0.3.4"
+#define FILE_VERSION	"0.3.5"
 #define FILE_DESCRIPTION	"The Forgotten Server"
 #define INTERNAL_NAME	"Crying Damson"
 #define LEGAL_COPYRIGHT	""
 #define LEGAL_TRADEMARKS	""
-#define ORIGINAL_FILENAME	"TheForgottenServer.exe"
+#define ORIGINAL_FILENAME	"Crying Damson.exe"
 #define PRODUCT_NAME	"The Forgotten Server"
-#define PRODUCT_VERSION	"0.3.4"
+#define PRODUCT_VERSION	"0.3.5"
 
 #endif /*THEFORGOTTENSERVER_PRIVATE_H*/

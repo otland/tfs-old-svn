@@ -688,9 +688,24 @@
 			//
 		]
 	]
+	[ 0.3.5
+		[ Note
+			We just had no time to finish this, as there are just too many of these files...
+		]
+
+		[ A...
+			//
+		]
+		[ M...
+			//
+		]
+		[ D...
+			//
+		]
+	]
 ]
 
-[ Milestone
+[ Milestones
 	[ 0.3.1
 		[ Note
 			Some of the features were added to Mystic Spirit (0.2) due popularity of them.
@@ -852,54 +867,60 @@
 		Possibility to update from 0.2.1 (Elf)
 	]
 	[ 0.3.5
-		Full protocol 8.5 support (Elf, Talaturen, OpenTibia SVN)
+		Full protocol 8.5 support (Elf, OpenTibia SVN, Talaturen)
 		Modifications system 'aka mods & moved custom things there (Elf, slawkens)
-		Guildhall support (Elf, OpenTibia SVN)
-		New deathlist, working like Cipsoft one (Elf, OpenTibia SVN)
+		Guildhall support (Elf)
+		New deathlist, working like Cipbia one (Elf, OpenTibia SVN)
 		Rewritten frags handling- now it works same as in Cipbia! (Elf)
-		Updated most of items and monsters (slawkens, Kaczooh, Elf)
+		Updated most of items and monsters (slawkens, KaczooH, Elf)
 		New talkactions: /commands, /wp, /storage, /config, /promote & /demote. More info about usage in doc/COMMANDS_HELP (slawkens) 
-		You can now declare more talkactions, separating them by COMMA, fe. (words="/a; /b; /c"),
-			or using own separator, fe. words="/a, /b, /c" separator="," (slawkens, Elf)
+		You can now declare more talkactions, separating them by semicolon, fe. (words="/a; /b; /c"),
+			or using own separator, fe. comma: words="/a, /b, /c" separator="," (slawkens, Elf)
 		'hide' parameter for talkactions, preventing displaying talkaction in /commands (slawkens)
-		New lua functions: getChannelUsers(id), getMonsterSummonList(name), doCleanPosition(pos, removeLoadedFromMap),
+		New lua functions: getChannelUsers(id), getMonsterSummonList(name), doCleanPosition(pos, forceMapLoaded),
 			doPlayerSetMaxCapacity(cid, cap), getPlayerSpecialDescription(cid), doPlayerSetSpecialDescription(cid, desc),
 			doItemRaidUnref(uid), getHouseInfo(houseId), hasClient(cid), doPlayerSetBalance(cid, balance),
-			getPlayerIdleTime(cid), doPlayerSetIdleTime(cid, amount), getPlayerLastLogin(cid), getPlayerLastLoginSaved(cid), getPlayerAccountManager(cid)
-			getCreatureHideHealth(cid), doCreatureSetHideHealth(cid, hide), getCreatureSpeakType(cid), doCreatureSetSpeakType(cid, speakType)
-			getTalkactionList(), getExperienceStageList(),
-			getModList(), loadmodlib/domodlib(libName), md5/sha1(str), db.lastInsertId()
-			doPlayerAddLevel, doPlayerAddMagicLevel, doPlayerAddSkill (slawkens, Elf)
-		New creatureevents: onTradeRequest(cid, target, item), onTradeAccept(cid, target, item, targetItem), onReportBug(cid, comment), onDirection(cid, old, current)
-			more info in doc/SCRIPTSYSTEM_HELP (slawkens, Elf)
+			getPlayerIdleTime(cid), doPlayerSetIdleTime(cid, amount), getPlayerLastLogin(cid), getPlayerLastLoginSaved(cid),
+			getPlayerAccountManager(cid), getCreatureHideHealth(cid), doCreatureSetHideHealth(cid, hide),
+			getCreatureSpeakType(cid), doCreatureSetSpeakType(cid, speakType), getTalkactionList(), getExperienceStageList(),
+			getModList(), loadmodlib(libName), domodlib(libName), md5/sha1(str), db.lastInsertId(), doPlayerAddLevel(cid, amount),
+			doPlayerAddMagicLevel(cid, amount), doPlayerAddSkill(cid, skill, amount), doPlayerAddOutfitId(cid, outfitId, addon),
+			doPlayerAddOutfitId(cid, outfitId, addon) (slawkens, Elf)
+		New creatureevents: onTradeRequest(cid, target, item), onTradeAccept(cid, target, item, targetItem), onReportBug(cid, comment),
+			onDirection(cid, old, current), more info in doc/SCRIPTSYSTEM_HELP (slawkens, Elf)
 		New configurables: red & black skull things, advancedFragList, violationNameReportActionType, huntingDuration,
-			addManaSpentInPvPZone, squareColor, allowFightback, bindOnlyConfiguredIpAddress, deathListRequiredTime, deathAssistCount
-			guildHalls, mailboxDisabledTowns, monsterLootMessage, monsterLootMessageType, ghostModeSpellEffects,
-			maxItemsPerPZTile, maxItemsPerHouseTile,
-			rateExperienceFromPlayers, minLevelThresholdForKilledPlayer, maxLevelThresholdForKilledPlayer, experienceShareActivity (Elf, slawkens)
-		New globalevent options: 'type' & 'time' (Can be executed at server start/load/record, or specified time). Examples in globalevents.xml, more info in doc/SCRIPTSYSTEM_HELP. (slawkens)
-		New flags & custom flags: PlayerFlag_CannotBeSeen, PlayerCustomFlag_AllowIdle, PlayerCustomFlag_IgnoreHouseRent, PlayerCustomFlag_CanWearAllAddons (Elf, slawkens, OpenTibia SVN)
-		New monster attributes: skills & outfit conditions; flags: walkable, lootmessage; corpse: corpseUniqueId (Elf, slawkens)
-		More channels.xml possibilities, you can choose vocations, set exhaustion/level and more! (Elf, slawkens)
-		Monster reorganization & update (Not all yet tho.) (slawkens)
+			addManaSpentInPvPZone, squareColor, allowFightback, bindOnlyConfiguredIpAddress, deathListRequiredTime,
+			deathAssistCount, guildHalls, mailboxDisabledTowns, monsterLootMessage, monsterLootMessageType,
+			ghostModeSpellEffects, maxItemsPerPZTile, maxItemsPerHouseTile, rateExperienceFromPlayers,
+			minLevelThresholdForKilledPlayer, maxLevelThresholdForKilledPlayer, experienceShareActivity (Elf, slawkens)
+		New globalevent options: 'type' & 'time' (Can be executed at server start/shutdown/record, or specified time),
+			more info in doc/SCRIPTSYSTEM_HELP. (slawkens)
+		New flags & custom flags: PlayerFlag_CannotBeSeen, PlayerCustomFlag_AllowIdle, PlayerCustomFlag_IgnoreHouseRent,
+			PlayerCustomFlag_CanWearAllAddons (Elf, slawkens, OpenTibia SVN)
+		Modified existing monster attacks (especially outfit & speed ones) (Elf)
+		New monster attributes- flags: walkable, lootmessage; look: corpseUniqueId (Elf, slawkens)
+		More channels.xml configurability, you can choose vocations, set exhaustion/level and more! (Elf, slawkens)
+		Monster reorganization & update (Not all though) (slawkens)
 		Improved banishments system (Elf)
-		Patched & fixed stamina (Elf, OpenTibia SVN)
-		Talkaction improvements and new possiblities, more info in COMMANDS_HELP (slawkens)
-		Patched much missing changes from OpenTibia SVN (Elf, slawkens, Kaczooh)
+		Rewrote Rule Violation Window (Elf)
+		Patched & fixed how stamina works (Elf, OpenTibia SVN)
+		Talkactions improvements, more info in COMMANDS_HELP (slawkens)
+		Patched much missing changes from OpenTibia SVN (Elf, slawkens, KaczooH)
 		Houses are now saved when owner changes (Elf)
 		Player namelock history saving in database (slawkens, Elf)
-		Full working Yalahar stairs (Talaturen, Elf)
+		Full working Yalahar stairs (Elf, Talaturen)
 		Full swimming system & waterball (slawkens)
 		OTAdmin new commands support: mail, shallow save, reload (OpenTibia SVN, Elf)
-		Invisible monster is not send to client anymore (OpenTibia SVN)
+		Invisible monster is not sent to client anymore (OpenTibia SVN)
 		Anti-dash (OpenTibia SVN)
-		Dropped much hardcoded things to lua (Elf, slawkens)
-		House actions system, possiblity to use website interface for selling houses  (house_actions table) (OpenTibia SVN, Elf)
-		Saving bot actions to /logs/bots for each players. For example bot can send message longer than 255 characters. (slawkens)
-		New raid possiblities, with item spawning and more (Elf)
+		Dropped much code to Lua (Elf, slawkens)
+		Houses auctions system, possiblity to use website interface for selling houses (house_actions table) (OpenTibia SVN, Elf)
+		Saving bot actions to /logs/bots for each players. For example bot can send message longer than 255 characters (slawkens)
+		New raid events- item spawning & disappearing and more (Elf)
 		Actor for move creature (Elf)
 		Some additions to NPC system (Elf)
 		New doc: SQL_QUERIES (slawkens)
+		Updated license on all CPP/H files headers (Elf)
 	]
 ]
 
@@ -939,7 +960,8 @@
 		Integer return values of Lua functions, use booleans instead
 	]
 	[ 0.3.5
-		LuaFunctions: getHouse*(houseId) (getHouseName, getHouseRent etc) - use getHouseInfo(houseId).name/owner/entry/rent/price/town etc
+		LuaFunctions: getHouse*(houseId) (getHouseName, getHouseRent etc) - use getHouseInfo(houseId).name/owner/entry/rent/price/town, etc
+		LuaConstants: All are listed in compat.lua, though
 	]
 ]
 
@@ -1056,30 +1078,31 @@
 	]
 	[ 0.3.5
 		NPC voices (Elf)
-		Some not working vocation attributes (Elf)
+		Some vocation attributes not working or working unproperly (Elf)
 		Account name cannot be same as password anymore (Elf)
-		Not property working admin protocol (slawkens, OpenTibia SVN)
-		Ghost GM deleting m walls (slawkens)
-		Fixed bug which allowed players to see if there is gamemaster in ghost mode on screen. (Fe. exura sio "God) (slawkens)
-		Only player with proper access will see that ghost GM has logged in (slawkens)
-		Player deaths by monsters will be now unique (Elf, slawkens)
-		Fixed levitate spell so it now can't be abused for pz (slawkens)
-		Doors PZ bug fix (Allowing player enter protection zone with pzLock) (slawkens)
-		Fixed _result returning in scripting buffer (Elf)
-		Fixed fields to deal damage when re-stepping (Elf)
-		Fixed yellow skull to be displayed when player deals damage to self (http://tibia.wikia.com/wiki/Skull_System#Yellow_Skull) (Elf)
-		Fixed sqlite queries issues (Elf, slawkens)
-		Magic level counting (OpenTibia SVN, Kaczooh)
+		Admin protocol connections being rejected (slawkens, OpenTibia SVN)
+		Ghost player deleting magic walls (slawkens)
+		Players able to see if there is a gamemaster in ghost mode through exiva or exura sio (slawkens)
+		Players being informed that a Gamemaster logged in, though he is on ghost (slawkens)
+		Player deaths by monsters not unique (Elf, slawkens)
+		Levitate abusable for PZ (slawkens)
+		Doors allowing player enter a protection zone with pzLock (slawkens)
+		Not working _result returning in scripting buffer (Elf)
+		Fields not dealing damage when re-stepping (Elf)
+		Yellow skull not being sent when damaging self (http://tibia.wikia.com/wiki/Skull_System#Yellow_Skull) (Elf)
+		SQLite queries issues (Elf, slawkens)
+		Magic level formula (OpenTibia SVN, KaczooH)
 		Memory leaks (Elf)
-		From now you can remove item actionid by using doSetItemActionId(uid, 0) (slawkens)
-		Not working 'print' function on GUI (slawkens, Elf)
-		Fixed bug which allowed player to login on chest (And take rewards if you have rewards behind chests) (slawkens)
-		Fixed bug with windows being able to open outside house (Now only GMs can do it) (slawkens)
-		Ghost GM won't show effect while casting spells (configurable) (slawkens)
+		Queries optimization (Talaturen)
+		No possibility to remove item actionid through Lua scripting interface- use doSetItemActionId(uid, 0) now (slawkens)
+		'print' Lua function not logged to GUI (slawkens, Elf)
+		Possibility to login on chest and take rewards if there are rewards behind chests on map (slawkens)
+		Windows being able to open outside house- now only Gamemasters can do it (slawkens)
+		Ghost Gamemaster showing effect(s) while casting spells- configurable (slawkens)
 		Ghost debugging players (OpenTibia SVN, Elf)
 		Promotion downgrading (Elf)
 		Some console errors.. (slawkens)
 
-			and more more .. (Should be really stable & bug free!)
+			and more more ... (Should be really stable & bug free!)
 	]
 ]
