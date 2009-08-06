@@ -39,47 +39,48 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 		return false;
 	}
 
-	Outfit outfit;
-	outfit.outfitId = intValue;
+	Outfit newOutfit;
+	newOutfit.outfitId = intValue;
 
 	std::string name, strValue;
 	if(readXMLString(p, "default", strValue))
-		outfit.isDefault = booleanString(strValue);
+		newOutfit.isDefault = booleanString(strValue);
 
 	if(!readXMLString(p, "name", strValue))
 	{
 		std::stringstream ss;
-		ss << "Outfit #" << outfit.outfitId;
+		ss << "Outfit #" << newOutfit.outfitId;
 		ss >> name;
 	}
 	else
 		name = strValue;
 
 	if(readXMLInteger(p, "access", intValue))
-		outfit.accessLevel = intValue;
+		newOutfit.accessLevel = intValue;
 
 	if(readXMLInteger(p, "quest", intValue))
 	{
-		outfit.storageId = intValue;
-		outfit.storageValue = "1";
+		newOutfit.storageId = intValue;
+		newOutfit.storageValue = "1";
 	}
 	else
 	{
 		if(readXMLInteger(p, "storageId", intValue))
-			outfit.storageId = intValue;
+			newOutfit.storageId = intValue;
 
 		if(readXMLString(p, "storageValue", strValue))
-			outfit.storageValue = strValue;
+			newOutfit.storageValue = strValue;
 	}
 
 	if(readXMLString(p, "premium", strValue))
-		outfit.isPremium = booleanString(strValue);
+		newOutfit.isPremium = booleanString(strValue);
 
 	for(xmlNodePtr listNode = p->children; listNode != NULL; listNode = listNode->next)
 	{
 		if(xmlStrcmp(listNode->name, (const xmlChar*)"list"))
 			continue;
 
+		Outfit outfit = newOutfit;
 		if(!readXMLInteger(listNode, "looktype", intValue) && !readXMLInteger(listNode, "lookType", intValue))
 		{
 			std::cout << "[Error - Outfits::praseOutfitNode] Missing looktype for an outfit with id " << outfit.outfitId << std::endl;
