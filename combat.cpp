@@ -606,8 +606,8 @@ void Combat::combatTileEffects(const SpectatorVec& list, Creature* caster, Tile*
 		{
 			if(caster->getPlayer())
 				player = caster->getPlayer();
-			else if(caster->isSummon() && caster->getMaster()->getPlayer())
-				player = caster->getMaster()->getPlayer();
+			else if(caster->isPlayerSummon())
+				player = caster->getPlayerMaster();
 		}
 
 		uint32_t itemId = params.itemId;
@@ -1357,11 +1357,9 @@ void AreaCombat::setupExtArea(const std::list<uint32_t>& list, uint32_t rows)
 
 void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 {
-	if(isBlocking())
+	if(isBlocking() && (!creature->getPlayer() || !creature->isGhost()))
 	{
-		if(!creature->getPlayer() || !creature->isGhost())
-			g_game.internalRemoveItem(creature, this, 1);
-
+		g_game.internalRemoveItem(creature, this, 1);
 		return;
 	}
 
@@ -1372,15 +1370,15 @@ void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 	if(!it.condition)
 		return;
 
-	Condition* conditionCopy = it.condition->clone();
+	Condition* condition = it.condition->clone();
 	uint32_t ownerId = getOwner();
 	if(ownerId && !getTile()->hasFlag(TILESTATE_PVPZONE))
 	{
 		if(Creature* owner = g_game.getCreatureByID(ownerId))
 		{
 			bool harmful = true;
-			if((g_game.getWorldType() == WORLD_TYPE_NO_PVP || getTile()->hasFlag(TILESTATE_NOPVPZONE)) &&
-				(owner->getPlayer() || (owner->isSummon() && owner->getMaster()->getPlayer())))
+			if((g_game.getWorldType() == WORLD_TYPE_NO_PVP || getTile()->hasFlag(TILESTATE_NOPVPZONE))
+				&& (owner->getPlayer() || owner->isPlayerSummon()))
 				harmful = false;
 			else if(Player* targetPlayer = creature->getPlayer())
 			{
@@ -1390,9 +1388,9 @@ void MagicField::onStepInField(Creature* creature, bool purposeful/* = true*/)
 
 			if(!harmful || (OTSYS_TIME() - createTime) <= (uint32_t)g_config.getNumber(
 				ConfigManager::FIELD_OWNERSHIP) || creature->hasBeenAttacked(ownerId))
-				conditionCopy->setParam(CONDITIONPARAM_OWNER, ownerId);
+				condition->setParam(CONDITIONPARAM_OWNER, ownerId);
 		}
 	}
 
-	creature->addCondition(conditionCopy);
+	creature->addCondition(condition);
 }

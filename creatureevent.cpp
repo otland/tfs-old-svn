@@ -348,7 +348,7 @@ uint32_t CreatureEvent::executeLogin(Player* player)
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -398,7 +398,7 @@ uint32_t CreatureEvent::executeLogout(Player* player)
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -453,7 +453,7 @@ uint32_t CreatureEvent::executeChannelJoin(Player* player, uint16_t channelId, U
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -519,7 +519,7 @@ uint32_t CreatureEvent::executeChannelLeave(Player* player, uint16_t channelId, 
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -584,7 +584,7 @@ uint32_t CreatureEvent::executeAdvance(Player* player, skills_t skill, uint32_t 
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -643,7 +643,7 @@ uint32_t CreatureEvent::executeMailSend(Player* player, Player* receiver, Item* 
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -702,7 +702,7 @@ uint32_t CreatureEvent::executeMailReceive(Player* player, Player* sender, Item*
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -760,7 +760,7 @@ uint32_t CreatureEvent::executeTradeRequest(Player* player, Player* target, Item
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -816,7 +816,7 @@ uint32_t CreatureEvent::executeTradeAccept(Player* player, Player* target, Item*
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -874,7 +874,7 @@ uint32_t CreatureEvent::executeLook(Player* player, Thing* thing, const Position
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -932,7 +932,7 @@ uint32_t CreatureEvent::executeDirection(Creature* creature, Direction old, Dire
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -987,7 +987,7 @@ uint32_t CreatureEvent::executeThink(Creature* creature, uint32_t interval)
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -1045,7 +1045,7 @@ uint32_t CreatureEvent::executeStatsChange(Creature* creature, Creature* attacke
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -1105,7 +1105,7 @@ uint32_t CreatureEvent::executeCombatArea(Creature* creature, Tile* tile, bool i
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -1162,7 +1162,7 @@ uint32_t CreatureEvent::executeCombat(Creature* creature, Creature* target)
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -1216,7 +1216,7 @@ uint32_t CreatureEvent::executeAttack(Creature* creature, Creature* target)
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -1274,7 +1274,7 @@ uint32_t CreatureEvent::executeCast(Creature* creature, Creature* target/* = NUL
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -1329,7 +1329,7 @@ uint32_t CreatureEvent::executeKill(Creature* creature, Creature* target, bool l
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -1395,7 +1395,7 @@ uint32_t CreatureEvent::executeDeath(Creature* creature, Item* corpse, DeathList
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -1472,7 +1472,7 @@ uint32_t CreatureEvent::executePrepareDeath(Creature* creature, DeathList deathL
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -1540,7 +1540,7 @@ uint32_t CreatureEvent::executeTextEdit(Player* player, Item* item, std::string 
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -1595,7 +1595,7 @@ uint32_t CreatureEvent::executeReportBug(Player* player, std::string comment)
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -1649,7 +1649,7 @@ uint32_t CreatureEvent::executeTarget(Creature* creature, Creature* target)
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();
@@ -1703,7 +1703,7 @@ uint32_t CreatureEvent::executeFollow(Creature* creature, Creature* target)
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();

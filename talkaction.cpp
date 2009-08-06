@@ -308,7 +308,7 @@ int32_t TalkAction::executeSay(Creature* creature, const std::string& words, con
 			if(m_scriptInterface->loadBuffer(scriptstream.str()) != -1)
 			{
 				lua_State* L = m_scriptInterface->getLuaState();
-				result = m_scriptInterface->getFieldBool(L, "_result");
+				result = m_scriptInterface->getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface->releaseScriptEnv();

@@ -972,7 +972,7 @@ bool ScriptEvent::executeEvent() const
 			if(m_scriptInterface.loadBuffer(m_scriptData) != -1)
 			{
 				lua_State* L = m_scriptInterface.getLuaState();
-				result = m_scriptInterface.getFieldBool(L, "_result");
+				result = m_scriptInterface.getGlobalBool(L, "_result", true);
 			}
 
 			m_scriptInterface.releaseScriptEnv();

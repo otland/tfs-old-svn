@@ -3486,15 +3486,14 @@ void Player::onEndCondition(ConditionType_t type)
 	Creature::onEndCondition(type);
 	if(type == CONDITION_INFIGHT)
 	{
-		pzLocked = false;
 		onIdleStatus();
+		clearAttacked();
 
+		pzLocked = false;
 		if(skull < SKULL_RED)
-		{
-			clearAttacked();
 			setSkull(SKULL_NONE);
-			g_game.updateCreatureSkull(this);
-		}
+
+		g_game.updateCreatureSkull(this);
 	}
 
 	sendIcons();
@@ -3551,8 +3550,14 @@ void Player::onAttackedCreature(Creature* target)
 		return;
 
 	addAttacked(targetPlayer);
-	if(target == this || Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer) ||
-		(g_config.getBool(ConfigManager::ALLOW_FIGHTBACK) && targetPlayer->hasAttacked(this)))
+	if(targetPlayer == this && targetPlayer->getZone() != ZONE_PVP)
+	{
+		targetPlayer->sendCreatureSkull(this);
+		return;
+	}
+
+	if(Combat::isInPvpZone(this, targetPlayer) || isPartner(targetPlayer) || (g_config.getBool(
+		ConfigManager::ALLOW_FIGHTBACK) && targetPlayer->hasAttacked(this)))
 		return;
 
 	if(!pzLocked)
@@ -3891,7 +3896,7 @@ Skulls_t Player::getSkullClient(const Creature* creature) const
 		if(g_game.getWorldType() != WORLD_TYPE_PVP)
 			return SKULL_NONE;
 
-		if(skull != SKULL_NONE && player->getSkull() < SKULL_RED && player->hasAttacked(this))
+		if((player == this || (skull != SKULL_NONE && player->getSkull() < SKULL_RED)) && player->hasAttacked(this))
 			return SKULL_YELLOW;
 
 		if(player->getSkull() == SKULL_NONE && isPartner(player) && g_game.getWorldType() != WORLD_TYPE_NO_PVP)

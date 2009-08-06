@@ -1131,7 +1131,7 @@ bool LuaScriptInterface::getFieldBool(lua_State* L, const char* key)
 	bool result;
 	lua_pushstring(L, key);
 	lua_gettable(L, -2); // get table[key]
-	result = (lua_toboolean(L, -1) == 1);
+	result = lua_toboolean(L, -1);
 	lua_pop(L, 1); // remove number and key
 	return result;
 }
@@ -1146,7 +1146,7 @@ std::string LuaScriptInterface::getFieldString(lua_State* L, const char* key)
 	return result;
 }
 
-std::string LuaScriptInterface::getGlobalString(lua_State* L, const std::string& _identifier, const std::string& _default /*= ""*/)
+std::string LuaScriptInterface::getGlobalString(lua_State* L, const std::string& _identifier, const std::string& _default/* = ""*/)
 {
 	lua_getglobal(L, _identifier.c_str());
 	if(!lua_isstring(L, -1))
@@ -1162,17 +1162,26 @@ std::string LuaScriptInterface::getGlobalString(lua_State* L, const std::string&
 	return ret;
 }
 
-bool LuaScriptInterface::getGlobalBool(lua_State* L, const std::string& _identifier, const std::string& _default /*= "no"*/)
+bool LuaScriptInterface::getGlobalBool(lua_State* L, const std::string& _identifier, bool _default/* = false*/)
 {
-	return booleanString(LuaScriptInterface::getGlobalString(L, _identifier, _default));
+	lua_getglobal(L, _identifier.c_str());
+	if(!lua_isboolean(L, -1))
+	{
+		lua_pop(L, 1);
+		return booleanString(LuaScriptInterface::getGlobalString(L, _identifier, _default ? "yes" : "no"));
+	}
+
+	bool val = lua_toboolean(L, -1);
+	lua_pop(L, 1);
+	return val;
 }
 
-int32_t LuaScriptInterface::getGlobalNumber(lua_State* L, const std::string& _identifier, const int32_t _default /*= 0*/)
+int32_t LuaScriptInterface::getGlobalNumber(lua_State* L, const std::string& _identifier, const int32_t _default/* = 0*/)
 {
 	return (int32_t)LuaScriptInterface::getGlobalDouble(L, _identifier, _default);
 }
 
-double LuaScriptInterface::getGlobalDouble(lua_State* L, const std::string& _identifier, const double _default /*= 0*/)
+double LuaScriptInterface::getGlobalDouble(lua_State* L, const std::string& _identifier, const double _default/* = 0*/)
 {
 	lua_getglobal(L, _identifier.c_str());
 	if(!lua_isnumber(L, -1))
@@ -1181,7 +1190,7 @@ double LuaScriptInterface::getGlobalDouble(lua_State* L, const std::string& _ide
 		return _default;
 	}
 
-	double val = (double)lua_tonumber(L, -1);
+	double val = lua_tonumber(L, -1);
 	lua_pop(L, 1);
 	return val;
 }

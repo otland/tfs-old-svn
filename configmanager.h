@@ -279,7 +279,7 @@ class ConfigManager
 		{
 			return LuaScriptInterface::getGlobalString(L, _identifier, _default);
 		}
-		bool getGlobalBool(const std::string& _identifier, const std::string& _default = "no")
+		bool getGlobalBool(const std::string& _identifier, bool _default = false)
 		{
 			return LuaScriptInterface::getGlobalBool(L, _identifier, _default);
 		}

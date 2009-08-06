@@ -888,11 +888,11 @@ bool ConditionDamage::setParam(ConditionParam_t param, int32_t value)
 			return true;
 
 		case CONDITIONPARAM_FORCEUPDATE:
-			forceUpdate = (value != 0);
+			forceUpdate = value;
 			return true;
 
 		case CONDITIONPARAM_DELAYED:
-			delayed = (value != 0);
+			delayed = value;
 			return true;
 
 		case CONDITIONPARAM_MAXVALUE:
@@ -993,7 +993,7 @@ bool ConditionDamage::serialize(PropWriteStream& propWriteStream)
 	for(DamageList::const_iterator it = damageList.begin(); it != damageList.end(); ++it)
 	{
 		propWriteStream.ADD_UCHAR(CONDITIONATTR_INTERVALDATA);
-		propWriteStream.ADD_VALUE((*it));
+		propWriteStream.ADD_VALUE(*it);
 	}
 
 	return true;
@@ -1001,9 +1001,22 @@ bool ConditionDamage::serialize(PropWriteStream& propWriteStream)
 
 bool ConditionDamage::updateCondition(const ConditionDamage* addCondition)
 {
-	return addCondition->doForceUpdate() || ((getTicks() != -1 || addCondition->getTicks() < 1) &&
-		addCondition->getTicks() > getTicks() && addCondition->getTotalDamage() >= getTotalDamage()
-		&& addCondition->periodDamage >= periodDamage);
+	if(addCondition->doForceUpdate())
+		return true;
+
+	if(getTicks() == -1 && addCondition->getTicks() > 0)
+		return false;
+
+	if(addCondition->getTicks() <= getTicks())
+		return false;
+
+	if(addCondition->getTotalDamage() < getTotalDamage())
+		return false;
+
+	if(addCondition->periodDamage < periodDamage)
+		return false;
+
+	return true;
 }
 
 bool ConditionDamage::addDamage(int32_t rounds, int32_t time, int32_t value)
@@ -1041,23 +1054,23 @@ bool ConditionDamage::init()
 	if(periodDamage)
 		return true;
 
-	if(damageList.empty())
-	{
-		setTicks(0);
-		int32_t amount = random_range(minDamage, maxDamage);
-		if(amount != 0)
-		{
-			if(startDamage > maxDamage)
-				startDamage = maxDamage;
-			else if(startDamage == 0)
-				startDamage = std::max((int32_t)1, (int32_t)std::ceil(((float)amount / 20.0)));
+	if(!damageList.empty())
+		return true;
 
-			std::list<int32_t> list;
-			ConditionDamage::generateDamageList(amount, startDamage, list);
-			for(std::list<int32_t>::iterator it = list.begin(); it != list.end(); ++it)
-				addDamage(1, tickInterval, -*it);
-		}
-	}
+	setTicks(0);
+	int32_t amount = random_range(minDamage, maxDamage);
+	if(!amount)
+		return false;
+
+	if(startDamage > maxDamage)
+		startDamage = maxDamage;
+	else if(!startDamage)
+		startDamage = std::max((int32_t)1, (int32_t)std::ceil(((float)amount / 20.0)));
+
+	std::list<int32_t> list;
+	ConditionDamage::generateDamageList(amount, startDamage, list);
+	for(std::list<int32_t>::iterator it = list.begin(); it != list.end(); ++it)
+		addDamage(1, tickInterval, -(*it));
 
 	return !damageList.empty();
 }
@@ -1076,7 +1089,7 @@ bool ConditionDamage::startCondition(Creature* creature)
 
 bool ConditionDamage::executeCondition(Creature* creature, int32_t interval)
 {
-	if(periodDamage != 0)
+	if(periodDamage)
 	{
 		periodDamageTick += interval;
 		if(periodDamageTick >= tickInterval)
@@ -1087,11 +1100,11 @@ bool ConditionDamage::executeCondition(Creature* creature, int32_t interval)
 	}
 	else if(!damageList.empty())
 	{
-		IntervalInfo& damageInfo = damageList.front();
-		damageInfo.timeLeft -= interval;
-
 		bool remove = getTicks() != -1;
 		creature->onTickCondition(getType(), interval, remove);
+
+		IntervalInfo& damageInfo = damageList.front();
+		damageInfo.timeLeft -= interval;
 		if(damageInfo.timeLeft <= 0)
 		{
 			int32_t damage = damageInfo.value;
@@ -1105,9 +1118,10 @@ bool ConditionDamage::executeCondition(Creature* creature, int32_t interval)
 
 		if(!remove)
 		{
-			interval = 0;
 			if(getTicks() > 0)
 				endTime += interval;
+
+			interval = 0;
 		}
 	}
 
@@ -1116,7 +1130,7 @@ bool ConditionDamage::executeCondition(Creature* creature, int32_t interval)
 
 bool ConditionDamage::getNextDamage(int32_t& damage)
 {
-	if(periodDamage != 0)
+	if(periodDamage)
 	{
 		damage = periodDamage;
 		return true;
@@ -1146,18 +1160,13 @@ bool ConditionDamage::doDamage(Creature* creature, int32_t damage)
 	return g_game.combatChangeHealth(combatType, attacker, creature, damage);
 }
 
-void ConditionDamage::endCondition(Creature* creature, ConditionEnd_t reason)
-{
-	//
-}
-
 void ConditionDamage::addCondition(Creature* creature, const Condition* addCondition)
 {
 	if(addCondition->getType() != conditionType)
 		return;
 
 	const ConditionDamage& conditionDamage = static_cast<const ConditionDamage&>(*addCondition);
-	if(updateCondition(&conditionDamage))
+	if(!updateCondition(&conditionDamage))
 		return;
 
 	setTicks(addCondition->getTicks());
