@@ -48,7 +48,7 @@
 				Event type
 				Values:
 					login, logout
-					advance, statschange
+					advance, statschange, direction
 					sendmail, receivemail
 					traderequest, tradeaccept
 					joinchannel, leavechannel
@@ -61,6 +61,7 @@
 			onLogout(cid)
 			onAdvance(cid, skill, oldLevel, newLevel)
 			onStatsChange(cid, attacker, type, combat, value)
+			onDirection(cid, old, current)
 			onSendMail(cid, receiver, item, openBox)
 			onReceiveMail(cid, sender, item, openBox)
 			onTradeRequest(cid, target, item)
@@ -101,6 +102,7 @@
 			onStartup()
 			onShutdown()
 			onRecord(current, old, cid)
+			onTimer()
 
 	*MOVEMENTS
 		File: movements/movements.xml

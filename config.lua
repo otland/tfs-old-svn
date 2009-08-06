@@ -196,6 +196,7 @@
 	promptExceptionTracerErrorBox = "yes"
 	storePlayerDirection = "no"
 	monsterLootMessage = 3
+	monsterLootMessageType = 25
 
 	-- Ghost mode
 	ghostModeInvisibleEffect = "no"
