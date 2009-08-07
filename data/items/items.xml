@@ -21745,11 +21745,11 @@
 		<attribute key="rotateTo" value="2581"/>
 	</item>
 	<item id="10542" article="a" name="golden lightbearer's trophy">
-		<attribute key="description" value="You read: Player helped to keep the fire basins burning and is one of the lightbearers of 2009"/>
+		<attribute key="description" value="You read: |PLAYERNAME| helped to keep the fire basins burning and is one of the lightbearers of |YEAR|"/>
 		<attribute key="weight" value="900"/>
 	</item>
 	<item id="10543" article="a" name="silver lightbearer's trophy">
-		<attribute key="description" value="You read: Player helped to keep the fire basins burning and is one of the lightbearers of 2009"/>
+		<attribute key="description" value="You read: |PLAYERNAME| helped to keep the fire basins burning and is one of the lightbearers of |YEAR|"/>
 		<attribute key="weight" value="900"/>
 	</item>
 	<item id="10492" name="pavement"/>

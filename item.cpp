@@ -1283,7 +1283,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			std::string tmp = "You";
 			if(item)
 			{
-				if(Player* player = item->getHoldingPlayer())
+				if(const Player* player = item->getHoldingPlayer())
 					tmp = player->getName();
 			}
 
@@ -1320,7 +1320,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 			replaceString(str, "|MONTH|", ss.str());
 
 			ss.str("");
-			ss << (ts->year + 1900);
+			ss << (ts->tm_year + 1900);
 			replaceString(str, "|YEAR|", ss.str());
 
 			ss.str("");
