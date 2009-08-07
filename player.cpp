@@ -3637,7 +3637,7 @@ void Player::onAttackedCreatureDrain(Creature* target, int32_t points)
 		getParty()->addPlayerDamageMonster(this, points);
 
 	char buffer[100];
-	sprintf(buffer, "You deal %d damage to %s.", points, target->getName().c_str());
+	sprintf(buffer, "You deal %d damage to %s.", points, target->getNameDescription().c_str());
 	sendTextMessage(MSG_STATUS_DEFAULT, buffer);
 }
 
@@ -3646,7 +3646,7 @@ void Player::onSummonAttackedCreatureDrain(Creature* summon, Creature* target, i
 	Creature::onSummonAttackedCreatureDrain(summon, target, points);
 
 	char buffer[100];
-	sprintf(buffer, "Your %s deals %d damage to %s.", summon->getName().c_str(), points, target->getName().c_str());
+	sprintf(buffer, "Your %s deals %d damage to %s.", summon->getName().c_str(), points, target->getNameDescription().c_str());
 	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
 }
 

@@ -131,6 +131,15 @@ bool argumentsHandler(StringVec args)
 			"\t\t\t\tthis file.\n";
 			return false;
 		}
+		else if((*it) == "--version")
+		{
+			std::cout << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl;
+			std::cout << "Compiled " << __TIME__ << ", " << __DATE__ << "." << std::endl;
+			std::cout << "A server developed by Elf, Talaturen, Lithium, Kiper, Kornholijo, KaczooH, slawkens & Macroman." << std::endl;
+			std::cout << "Visit our forum for updates, support and resources: http://otland.net." << std::endl << std::endl;
+			//TODO std::cout << "Compiled with " << _____-_______ << std::endl;
+			return false;
+		}
 
 		tmp = explodeString((*it), "=");
 		if(tmp[0] == "--config")
