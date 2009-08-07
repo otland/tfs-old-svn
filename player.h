@@ -276,7 +276,7 @@ class Player : public Creature, public Cylinder
 
 		uint32_t getVocationId() const {return vocation_id;}
 		void setVocation(uint32_t vocId);
-		uint16_t getSex(bool full) const {return full ? sex : sex % 2;}
+		uint16_t getSex(bool full) const {return (full ? sex : (sex % 2));}
 		void setSex(uint16_t);
 
 		uint64_t getStamina() const {return hasFlag(PlayerFlag_HasInfiniteStamina) ? STAMINA_MAX : stamina;}

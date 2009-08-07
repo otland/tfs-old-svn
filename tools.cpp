@@ -88,14 +88,14 @@ bool passwordTest(const std::string &plain, std::string &hash)
 	return false;
 }
 
-void replaceString(std::string& str, const std::string sought, const std::string replacement)
+void replaceString(std::string& text, const std::string key, const std::string value)
 {
-	size_t pos = 0, start = 0, soughtLen = sought.length(), replaceLen = replacement.length();
-	while((pos = str.find(sought, start)) != std::string::npos)
-	{
-		str = str.substr(0, pos) + replacement + str.substr(pos + soughtLen);
-		start = pos + replaceLen;
-	}
+	if(value.find(key) != std::string::npos) //don't allow infinite loops
+		return;
+
+	for(std::string::size_type keyStart = text.find(key); keyStart
+		!= std::string::npos; keyStart = text.find(key))
+		text.replace(keyStart, key.size(), value);
 }
 
 void trim_right(std::string& source, const std::string& t)

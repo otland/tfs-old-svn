@@ -1275,7 +1275,14 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 	else if(!it.description.empty() && lookDistance <= 1)
 		s << std::endl << it.description;
 
-	return s.str();
+	std::string ss = s.str();
+	if(ss.find("|PLAYERNAME|") != std::string::npos)
+		{/* TODO */}
+
+	if(ss.find("|YEAR|") != std::string::npos)
+		{/* TODO */}
+
+	return ss;
 }
 
 std::string Item::getNameDescription(const ItemType& it, const Item* item/* = NULL*/, int32_t subType/* = -1*/, bool addArticle/* = true*/)
