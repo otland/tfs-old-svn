@@ -482,7 +482,7 @@ bool AccessList::parseList(const std::string& _list)
 		trim_right(line, "\t");
 		trimString(line);
 
-		std::transform(line.begin(), line.end(), line.begin(), tolower);
+		toLowerCaseString(line);
 		if(line.substr(0, 1) == "#" || line.length() > 100)
 			continue;
 
@@ -506,7 +506,7 @@ bool AccessList::isInList(const Player* player)
 	boost::cmatch what;
 	try
 	{
-		std::transform(name.begin(), name.end(), name.begin(), tolower);
+		toLowerCaseString(name);
 		for(RegExList::iterator it = regExList.begin(); it != regExList.end(); ++it)
 		{
 			if(boost::regex_match(name.c_str(), what, it->first))

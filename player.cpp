@@ -3844,32 +3844,29 @@ bool Player::canWearOutfit(uint32_t outfitId, uint32_t addons)
 
 bool Player::addOutfit(uint32_t outfitId, uint32_t addons)
 {
-	const OutfitMap::iterator& it = outfits.find(outfitId);
-	if(it != outfits.end())
-	{
-		outfits[outfitId - 1].addons = it->second.addons | addons;
-		return true;
-	}
-
 	Outfit outfit;
 	if(!Outfits::getInstance()->getOutfit(outfitId, sex, outfit))
 		return false;
 
+	OutfitMap::iterator it = outfits.find(outfitId);
+	if(it != outfits.end())
+		outfit.addons |= it->second.addons;
+
 	outfit.addons |= addons;
-	outfits[outfitId - 1] = outfit;
+	outfits[outfitId] = outfit;
 	return true;
 }
 
 bool Player::removeOutfit(uint32_t outfitId, uint32_t addons)
 {
-	const OutfitMap::iterator& it = outfits.find(outfitId);
+	OutfitMap::iterator it = outfits.find(outfitId);
 	if(it == outfits.end())
 		return false;
 
 	if(addons == 0xFF) //remove outfit
 		outfits.erase(it);
 	else //remove addons
-		outfits[outfitId - 1].addons = it->second.addons & (~addons);
+		outfits[outfitId].addons = it->second.addons & (~addons);
 
 	return true;
 }
@@ -3900,9 +3897,6 @@ void Player::genReservedStorageRange()
 
 void Player::setSex(uint16_t newSex)
 {
-	if(sex == newSex)
-		return;
-
 	sex = newSex;
 	const OutfitMap& defaultOutfits = Outfits::getInstance()->getOutfits(sex);
 	for(OutfitMap::const_iterator it = defaultOutfits.begin(); it != defaultOutfits.end(); ++it)
