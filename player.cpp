@@ -3821,7 +3821,10 @@ bool Player::changeOutfit(Outfit_t outfit, bool checkList)
 
 	requestedOutfit = false;
 	if(outfitAttributes)
-		outfitAttributes = !Outfits::getInstance()->removeAttributes(getID(), outfitId, sex);
+	{
+		uint32_t oldId = Outfits::getInstance()->getOutfitId(defaultOutfit.lookType);
+		outfitAttributes = !Outfits::getInstance()->removeAttributes(getID(), oldId, sex);
+	}
 
 	defaultOutfit = outfit;
 	outfitAttributes = Outfits::getInstance()->addAttributes(getID(), outfitId, sex, defaultOutfit.lookAddons);
