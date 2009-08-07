@@ -4407,12 +4407,12 @@ void Player::manageAccount(const std::string &text)
 				if(checkText(text, "female"))
 				{
 					msg << "A female, are you sure?";
-					managerSex = 0;
+					managerSex = PLAYERSEX_FEMALE;
 				}
 				else
 				{
 					msg << "A male, are you sure?";
-					managerSex = 1;
+					managerSex = PLAYERSEX_MALE;
 				}
 			}
 			else if(checkText(text, "no") && talkState[9])
@@ -4451,7 +4451,7 @@ void Player::manageAccount(const std::string &text)
 					for(int8_t i = 2; i <= 12; i++)
 						talkState[i] = false;
 
-					if(IOLoginData::getInstance()->createCharacter(managerNumber, managerString, managerNumber2, managerSex))
+					if(IOLoginData::getInstance()->createCharacter(managerNumber, managerString, managerNumber2, (uint16_t)managerSex))
 						msg << "Your character has been created.";
 					else
 						msg << "Your character couldn't be created, please try again.";
@@ -4488,7 +4488,7 @@ void Player::manageAccount(const std::string &text)
 					for(int8_t i = 2; i <= 12; i++)
 						talkState[i] = false;
 
-					if(IOLoginData::getInstance()->createCharacter(managerNumber, managerString, managerNumber2, managerSex))
+					if(IOLoginData::getInstance()->createCharacter(managerNumber, managerString, managerNumber2, (uint16_t)managerSex))
 						msg << "Your character has been created.";
 					else
 						msg << "Your character couldn't be created, please try again.";
