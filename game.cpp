@@ -3477,10 +3477,9 @@ bool Game::playerChangeOutfit(uint32_t playerId, Outfit_t outfit)
 		return false;
 
 	player->setIdleTime(0);
-	if(player->hasCondition(CONDITION_OUTFIT, -1))
-		return true;
+	if(!player->hasCondition(CONDITION_OUTFIT, -1))
+		internalCreatureChangeOutfit(player, outfit);
 
-	internalCreatureChangeOutfit(player, outfit);
 	return true;
 }
 
