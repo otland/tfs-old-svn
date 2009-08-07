@@ -1024,7 +1024,11 @@ bool TalkAction::banishmentInfo(Creature* creature, const std::string& cmd, cons
 	{
 		ban.value = atoi(params[0].c_str());
 		if(!ban.value)
+		{
 			IOLoginData::getInstance()->getAccountId(params[0], ban.value);
+			if(!ban.value)
+				ban.value = IOLoginData::getInstance()->getAccountIdByName(params[0]);
+		}
 	}
 
 	if(!ban.value)
