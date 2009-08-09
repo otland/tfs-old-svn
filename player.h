@@ -780,10 +780,9 @@ class Player : public Creature, public Cylinder
 		bool outfitAttributes;
 		bool addAttackSkillPoint;
 
-		uint16_t sex;
 		OperatingSystem_t operatingSystem;
 		AccountManager_t accountManager;
-		uint16_t managerSex;
+		PlayerSex_t managerSex;
 		BlockType_t lastAttackBlockType;
 		chaseMode_t chaseMode;
 		fightMode_t fightMode;
@@ -793,6 +792,7 @@ class Player : public Creature, public Cylinder
 		int8_t guildLevel;
 		int16_t blessings;
 		uint16_t maxWriteLen;
+		uint16_t sex;
 
 		int32_t premiumDays;
 		int32_t soul;

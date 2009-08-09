@@ -1078,39 +1078,42 @@ bool TalkAction::diagnostics(Creature* creature, const std::string& cmd, const s
 	text.str("");
 	text << "World:" << "\n";
 	text << "--------------------\n";
-	text << "Player: " << g_game.getPlayersOnline() << " (" << Player::playerCount << ")\n";
-	text << "Npc: " << g_game.getNpcsOnline() << " (" << Npc::npcCount << ")\n";
-	text << "Monster: " << g_game.getMonstersOnline() << " (" << Monster::monsterCount << ")\n";
+	text << "Player: " << g_game.getPlayersOnline() << " (" << Player::playerCount << ")" << std::endl;
+	text << "Npc: " << g_game.getNpcsOnline() << " (" << Npc::npcCount << ")" << std::endl;
+	text << "Monster: " << g_game.getMonstersOnline() << " (" << Monster::monsterCount << ")" << std::endl << std::endl;
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
 
 	text.str("");
 	text << "Protocols:" << "\n";
 	text << "--------------------\n";
-	text << "ProtocolGame: " << ProtocolGame::protocolGameCount << "\n";
-	text << "ProtocolLogin: " << ProtocolLogin::protocolLoginCount << "\n";
+	text << "ProtocolGame: " << ProtocolGame::protocolGameCount << std::endl;
+	text << "ProtocolLogin: " << ProtocolLogin::protocolLoginCount << std::endl;
 #ifdef __REMOTE_CONTROL__
-	text << "ProtocolAdmin: " << ProtocolAdmin::protocolAdminCount << "\n";
+	text << "ProtocolAdmin: " << ProtocolAdmin::protocolAdminCount << std::endl;
 #endif
-	text << "ProtocolStatus: " << ProtocolStatus::protocolStatusCount << "\n";
-	text << "ProtocolOld: " << ProtocolOld::protocolOldCount << "\n\n";
+	text << "ProtocolStatus: " << ProtocolStatus::protocolStatusCount << std::endl;
+	text << "ProtocolOld: " << ProtocolOld::protocolOldCount << std::endl << std::endl;
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
 
 	text.str("");
 	text << "Connections:\n";
 	text << "--------------------\n";
 	text << "Active connections: " << Connection::connectionCount << "\n";
-	text << "Total message pool: " << OutputMessagePool::getInstance()->getTotalMessageCount() << "\n";
-	text << "Auto message pool: " << OutputMessagePool::getInstance()->getAutoMessageCount() << "\n";
-	text << "Queued message pool: " << OutputMessagePool::getInstance()->getQueuedMessageCount() << "\n";
-	text << "Free message pool: " << OutputMessagePool::getInstance()->getAvailableMessageCount() << "\n";
+	text << "Total message pool: " << OutputMessagePool::getInstance()->getTotalMessageCount() << std::endl;
+	text << "Auto message pool: " << OutputMessagePool::getInstance()->getAutoMessageCount() << std::endl;
+	text << "Queued message pool: " << OutputMessagePool::getInstance()->getQueuedMessageCount() << std::endl;
+	text << "Free message pool: " << OutputMessagePool::getInstance()->getAvailableMessageCount() << std::endl << std::endl;
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
 
 	text.str("");
 	text << "Libraries:\n";
 	text << "--------------------\n";
-	text << "asio: " << BOOST_ASIO_VERSION << "\n";
-	text << "XML: " << XML_DEFAULT_VERSION << "\n";
-	text << "Lua: " << LUA_VERSION << "\n";
+	text << "Platform: " << BOOST_PLATFORM << std::endl;
+	text << "Compiler: " << BOOST_COMPILER << std::endl;
+	text << "Boost: " << BOOST_VERSION << std::endl;
+	text << "ASIO: " << BOOST_ASIO_VERSION << std::endl;
+	text << "XML: " << XML_DEFAULT_VERSION << std::endl;
+	text << "Lua: " << LUA_VERSION << std::endl;
 	player->sendTextMessage(MSG_STATUS_CONSOLE_BLUE, text.str().c_str());
 
 #endif

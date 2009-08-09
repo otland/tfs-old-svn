@@ -3637,7 +3637,7 @@ void Player::onAttackedCreatureDrain(Creature* target, int32_t points)
 		getParty()->addPlayerDamageMonster(this, points);
 
 	char buffer[100];
-	sprintf(buffer, "You deal %d damage to %s.", points, target->getName().c_str());
+	sprintf(buffer, "You deal %d damage to %s.", points, target->getNameDescription().c_str());
 	sendTextMessage(MSG_STATUS_DEFAULT, buffer);
 }
 
@@ -3646,7 +3646,7 @@ void Player::onSummonAttackedCreatureDrain(Creature* summon, Creature* target, i
 	Creature::onSummonAttackedCreatureDrain(summon, target, points);
 
 	char buffer[100];
-	sprintf(buffer, "Your %s deals %d damage to %s.", summon->getName().c_str(), points, target->getName().c_str());
+	sprintf(buffer, "Your %s deals %d damage to %s.", summon->getName().c_str(), points, target->getNameDescription().c_str());
 	sendTextMessage(MSG_EVENT_DEFAULT, buffer);
 }
 
@@ -3821,7 +3821,10 @@ bool Player::changeOutfit(Outfit_t outfit, bool checkList)
 
 	requestedOutfit = false;
 	if(outfitAttributes)
-		outfitAttributes = !Outfits::getInstance()->removeAttributes(getID(), outfitId, sex);
+	{
+		uint32_t oldId = Outfits::getInstance()->getOutfitId(defaultOutfit.lookType);
+		outfitAttributes = !Outfits::getInstance()->removeAttributes(getID(), oldId, sex);
+	}
 
 	defaultOutfit = outfit;
 	outfitAttributes = Outfits::getInstance()->addAttributes(getID(), outfitId, sex, defaultOutfit.lookAddons);
@@ -4407,12 +4410,12 @@ void Player::manageAccount(const std::string &text)
 				if(checkText(text, "female"))
 				{
 					msg << "A female, are you sure?";
-					managerSex = 0;
+					managerSex = PLAYERSEX_FEMALE;
 				}
 				else
 				{
 					msg << "A male, are you sure?";
-					managerSex = 1;
+					managerSex = PLAYERSEX_MALE;
 				}
 			}
 			else if(checkText(text, "no") && talkState[9])
@@ -4451,7 +4454,7 @@ void Player::manageAccount(const std::string &text)
 					for(int8_t i = 2; i <= 12; i++)
 						talkState[i] = false;
 
-					if(IOLoginData::getInstance()->createCharacter(managerNumber, managerString, managerNumber2, managerSex))
+					if(IOLoginData::getInstance()->createCharacter(managerNumber, managerString, managerNumber2, (uint16_t)managerSex))
 						msg << "Your character has been created.";
 					else
 						msg << "Your character couldn't be created, please try again.";
@@ -4488,7 +4491,7 @@ void Player::manageAccount(const std::string &text)
 					for(int8_t i = 2; i <= 12; i++)
 						talkState[i] = false;
 
-					if(IOLoginData::getInstance()->createCharacter(managerNumber, managerString, managerNumber2, managerSex))
+					if(IOLoginData::getInstance()->createCharacter(managerNumber, managerString, managerNumber2, (uint16_t)managerSex))
 						msg << "Your character has been created.";
 					else
 						msg << "Your character couldn't be created, please try again.";

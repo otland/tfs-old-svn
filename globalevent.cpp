@@ -44,9 +44,9 @@ void GlobalEvents::clearMap(GlobalEventMap& map)
 
 void GlobalEvents::clear()
 {
-	clearMap(eventsMap);
-	clearMap(serverEventsMap);
-	clearMap(timerEventsMap);
+	clearMap(thinkMap);
+	clearMap(serverMap);
+	clearMap(timerMap);
 
 	m_scriptInterface.reInitState();
 }
@@ -65,11 +65,11 @@ bool GlobalEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 	if(!globalEvent)
 		return false;
 
-	GlobalEventMap* map = &eventsMap;
-	if(globalEvent->getEventType() == SERVER_EVENT_TIMER)
-		map = &timerEventsMap;
-	else if(globalEvent->getEventType() != SERVER_EVENT_NONE)
-		map = &serverEventsMap;
+	GlobalEventMap* map = &thinkMap;
+	if(globalEvent->getEventType() == GLOBAL_EVENT_TIMER)
+		map = &timerMap;
+	else if(globalEvent->getEventType() != GLOBAL_EVENT_NONE)
+		map = &serverMap;
 
 	GlobalEventMap::iterator it = map->find(globalEvent->getName());
 	if(it == map->end())
@@ -91,87 +91,105 @@ bool GlobalEvents::registerEvent(Event* event, xmlNodePtr p, bool override)
 
 void GlobalEvents::startup()
 {
-	execute(SERVER_EVENT_STARTUP);
+	time_t now = time(NULL);
+	tm* ts = localtime(&now);
+	now = std::max(1, (int32_t)(60 - ts->tm_sec)) * 1000;
 
-	time_t timeNow = time(NULL);
-	tm* ts = localtime(&timeNow);
-
-	Scheduler::getScheduler().addEvent(createSchedulerTask((60 - ts->tm_sec) * 1000,
+	execute(GLOBAL_EVENT_STARTUP);
+	Scheduler::getScheduler().addEvent(createSchedulerTask((int32_t)now,
 		boost::bind(&GlobalEvents::timer, this)));
-
 	Scheduler::getScheduler().addEvent(createSchedulerTask(GLOBAL_THINK_INTERVAL,
 		boost::bind(&GlobalEvents::think, this, GLOBAL_THINK_INTERVAL)));
 }
 
 void GlobalEvents::timer()
 {
-	time_t timeNow = time(NULL);
-	tm* ts = localtime(&timeNow);
+	time_t now = time(NULL);
+	tm* ts = localtime(&now);
 
 	uint32_t hour = (uint32_t)ts->tm_hour, minute = (uint32_t)ts->tm_min;
-	for(GlobalEventMap::iterator it = timerEventsMap.begin(); it != timerEventsMap.end(); ++it)
+	for(GlobalEventMap::iterator it = timerMap.begin(); it != timerMap.end(); ++it)
 	{
-		if(hour == it->second->getHour() && minute == it->second->getMinute())
-		{
-			if(!it->second->executeEvent())
-				std::cout << "[Error - GlobalEvents::timer] Couldn't execute event: "
-					<< it->second->getName() << std::endl;
-		}
+		if(hour != it->second->getHour() || minute != it->second->getMinute())
+			continue;
+
+		if(!it->second->executeEvent())
+			std::cout << "[Error - GlobalEvents::timer] Couldn't execute event: "
+				<< it->second->getName() << std::endl;
 	}
 
-	Scheduler::getScheduler().addEvent(createSchedulerTask(TIMER_THINK_INTERVAL,
+	now = std::max(1, (int32_t)(60 - ts->tm_sec)) * 1000;
+	Scheduler::getScheduler().addEvent(createSchedulerTask((int32_t)now,
 		boost::bind(&GlobalEvents::timer, this)));
 }
 
 void GlobalEvents::think(uint32_t interval)
 {
-	uint32_t timeNow = time(NULL);
-	for(GlobalEventMap::iterator it = eventsMap.begin(); it != eventsMap.end(); ++it)
+	time_t now = time(NULL);
+	for(GlobalEventMap::iterator it = thinkMap.begin(); it != thinkMap.end(); ++it)
 	{
-		if(timeNow > (it->second->getLastExecution() + it->second->getInterval()))
-		{
-			it->second->setLastExecution(timeNow);
-			if(!it->second->executeThink(it->second->getInterval(), timeNow, interval))
-				std::cout << "[Error - GlobalEvents::think] Couldn't execute event: "
-					<< it->second->getName() << std::endl;
-		}
+		if(now <= (it->second->getLastExecution() + it->second->getInterval()))
+			continue;
+
+		it->second->setLastExecution(now);
+		if(!it->second->executeThink(it->second->getInterval(), now, interval))
+			std::cout << "[Error - GlobalEvents::think] Couldn't execute event: "
+				<< it->second->getName() << std::endl;
 	}
 
 	Scheduler::getScheduler().addEvent(createSchedulerTask(interval,
 		boost::bind(&GlobalEvents::think, this, interval)));
 }
 
-void GlobalEvents::execute(ServerEvent_t type)
+void GlobalEvents::execute(GlobalEvent_t type)
 {
-	for(GlobalEventMap::iterator it = serverEventsMap.begin(); it != serverEventsMap.end(); ++it)
+	for(GlobalEventMap::iterator it = serverMap.begin(); it != serverMap.end(); ++it)
 	{
 		if(it->second->getEventType() == type)
 			it->second->executeEvent();
 	}
 }
 
-GlobalEventMap GlobalEvents::getServerEvents(ServerEvent_t type)
+GlobalEventMap GlobalEvents::getEventMap(GlobalEvent_t type)
 {
-	GlobalEventMap ret;
-	for(GlobalEventMap::iterator it = serverEventsMap.begin(); it != serverEventsMap.end(); ++it)
+	switch(type)
 	{
-		if(it->second->getEventType() == type)
-			ret[it->first] = it->second;
+		case GLOBAL_EVENT_NONE:
+			return thinkMap;
+
+		case GLOBAL_EVENT_TIMER:
+			return timerMap;
+
+		case GLOBAL_EVENT_STARTUP:
+		case GLOBAL_EVENT_SHUTDOWN:
+		case GLOBAL_EVENT_RECORD:
+		{
+			GlobalEventMap retMap;
+			for(GlobalEventMap::iterator it = serverMap.begin(); it != serverMap.end(); ++it)
+			{
+				if(it->second->getEventType() == type)
+					retMap[it->first] = it->second;
+			}
+
+			return retMap;
+		}
+
+		default:
+			break;
 	}
 
-	return ret;
+	return GlobalEventMap();
 }
 
 GlobalEvent::GlobalEvent(LuaScriptInterface* _interface):
 	Event(_interface)
 {
 	m_lastExecution = time(NULL);
+	m_hour = m_minute = 0;
 }
 
 bool GlobalEvent::configureEvent(xmlNodePtr p)
 {
-	m_hour = m_minute = 0;
-
 	std::string strValue;
 	if(!readXMLString(p, "name", strValue))
 	{
@@ -180,16 +198,16 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 	}
 
 	m_name = strValue;
-	m_eventType = SERVER_EVENT_NONE;
+	m_eventType = GLOBAL_EVENT_NONE;
 	if(readXMLString(p, "type", strValue))
 	{
 		std::string tmpStrValue = asLowerCaseString(strValue);
 		if(tmpStrValue == "startup" || tmpStrValue == "start" || tmpStrValue == "load")
-			m_eventType = SERVER_EVENT_STARTUP;
+			m_eventType = GLOBAL_EVENT_STARTUP;
 		else if(tmpStrValue == "shutdown" || tmpStrValue == "quit" || tmpStrValue == "exit")
-			m_eventType = SERVER_EVENT_SHUTDOWN;
+			m_eventType = GLOBAL_EVENT_SHUTDOWN;
 		else if(tmpStrValue == "record" || tmpStrValue == "playersrecord")
-			m_eventType = SERVER_EVENT_RECORD;
+			m_eventType = GLOBAL_EVENT_RECORD;
 		else
 		{
 			std::cout << "[Error - GlobalEvent::configureEvent] No valid type \"" << strValue << "\" for globalevent with name " << m_name << std::endl;
@@ -198,46 +216,45 @@ bool GlobalEvent::configureEvent(xmlNodePtr p)
 
 		return true;
 	}
-
-	if(readXMLString(p, "time", strValue) || readXMLString(p, "at", strValue))
+	else if(readXMLString(p, "time", strValue) || readXMLString(p, "at", strValue))
 	{
 		IntegerVec params = vectorAtoi(explodeString(strValue, ":"));
-		if(params.size() < 2 || params[0] > 24 || params[1] > 60)
+		if(params.size() < 2 || params[0] > 23 || params[0] < 0 || params[1] > 59 || params[1] < 0)
 		{
 			std::cout << "[Error - GlobalEvent::configureEvent] No valid time \"" << strValue << "\" for globalevent with name " << m_name << std::endl;
 			return false;
 		}
 
 		m_hour = params[0], m_minute = params[1];
-		m_eventType = SERVER_EVENT_TIMER;
+		m_eventType = GLOBAL_EVENT_TIMER;
 		return true;
 	}
-
-	int32_t intValue;
-	if(!readXMLInteger(p, "interval", intValue))
+	else
 	{
-		std::cout << "[Error - GlobalEvent::configureEvent] No interval for globalevent with name " << m_name << std::endl;
-		return false;
+		int32_t intValue;
+		if(readXMLInteger(p, "interval", intValue))
+		{
+			m_interval = intValue;
+			return true;
+		}
 	}
 
-	m_interval = intValue;
-	return true;
+	std::cout << "[Error - GlobalEvent::configureEvent] No interval for globalevent with name " << m_name << std::endl;
+	return false;
 }
 
 std::string GlobalEvent::getScriptEventName() const
 {
 	switch(m_eventType)
 	{
-		case SERVER_EVENT_STARTUP:
+		case GLOBAL_EVENT_STARTUP:
 			return "onStartup";
-		case SERVER_EVENT_SHUTDOWN:
+		case GLOBAL_EVENT_SHUTDOWN:
 			return "onShutdown";
-		case SERVER_EVENT_RECORD:
+		case GLOBAL_EVENT_RECORD:
 			return "onRecord";
-		case SERVER_EVENT_TIMER:
+		case GLOBAL_EVENT_TIMER:
 			return "onTimer";
-
-		case SERVER_EVENT_NONE:
 		default:
 			return "onThink";
 	}
@@ -247,10 +264,10 @@ std::string GlobalEvent::getScriptEventParams() const
 {
 	switch(m_eventType)
 	{
-		case SERVER_EVENT_RECORD:
+		case GLOBAL_EVENT_RECORD:
 			return "current, old, cid";
 
-		case SERVER_EVENT_NONE:
+		case GLOBAL_EVENT_NONE:
 			return "interval, lastExecution, thinkInterval";
 
 		default:

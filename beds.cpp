@@ -206,12 +206,11 @@ void BedItem::updateAppearance(const Player* player)
 	if(it.type != ITEM_TYPE_BED)
 		return;
 
-	uint16_t sex = player->getSex(false);
-	if(player && it.transformToOnUse[sex])
+	if(player && it.transformToOnUse[player->getSex(false)])
 	{
-		const ItemType& newType = Item::items[it.transformToOnUse[sex]];
+		const ItemType& newType = Item::items[it.transformToOnUse[player->getSex(false)]];
 		if(newType.type == ITEM_TYPE_BED)
-			g_game.transformItem(this, it.transformToOnUse[sex]);
+			g_game.transformItem(this, it.transformToOnUse[player->getSex(false)]);
 	}
 	else if(it.transformToFree)
 	{

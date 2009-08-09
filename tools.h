@@ -52,7 +52,7 @@ std::string transformToMD5(std::string plainText, bool upperCase = false);
 std::string transformToSHA1(std::string plainText, bool upperCase = false);
 bool passwordTest(const std::string &plain, std::string &hash);
 
-void replaceString(std::string& str, const std::string sought, const std::string replacement);
+void replaceString(std::string& text, const std::string key, const std::string value);
 void trim_right(std::string& source, const std::string& t);
 void trim_left(std::string& source, const std::string& t);
 void toLowerCaseString(std::string& source);

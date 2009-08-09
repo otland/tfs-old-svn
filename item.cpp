@@ -1270,11 +1270,77 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		s << " physical + " << it.abilities.elementDamage << " " << getCombatName(it.abilities.elementType) << " damage).";
 	}
 
+	std::string str;
 	if(item && !item->getSpecialDescription().empty())
-		s << std::endl << item->getSpecialDescription().c_str();
+		str = item->getSpecialDescription();
 	else if(!it.description.empty() && lookDistance <= 1)
-		s << std::endl << it.description;
+		str = it.description;
 
+	if(!str.empty())
+	{
+		if(str.find("|PLAYERNAME|") != std::string::npos)
+		{
+			std::string tmp = "You";
+			if(item)
+			{
+				if(const Player* player = item->getHoldingPlayer())
+					tmp = player->getName();
+			}
+
+			replaceString(str, "|PLAYERNAME|", tmp);
+		}
+
+		if(str.find("|TIME|") != std::string::npos || str.find("|DATE|") != std::string::npos || str.find(
+			"|DAY|") != std::string::npos || str.find("|MONTH|") != std::string::npos || str.find(
+			"|YEAR|") != std::string::npos || str.find("|HOUR|") != std::string::npos || str.find(
+			"|MINUTES|") != std::string::npos || str.find("|SECONDS|") != std::string::npos ||
+			str.find("|WEEKDAY|") != std::string::npos || str.find("|YEARDAY|") != std::string::npos)
+		{
+			time_t now = time(NULL);
+			tm* ts = localtime(&now);
+
+			std::stringstream ss;
+			ss << ts->tm_sec;
+			replaceString(str, "|SECONDS|", ss.str());
+
+			ss.str("");
+			ss << ts->tm_min;
+			replaceString(str, "|MINUTES|", ss.str());
+
+			ss.str("");
+			ss << ts->tm_hour;
+			replaceString(str, "|HOUR|", ss.str());
+
+			ss.str("");
+			ss << ts->tm_mday;
+			replaceString(str, "|DAY|", ss.str());
+
+			ss.str("");
+			ss << (ts->tm_mon + 1);
+			replaceString(str, "|MONTH|", ss.str());
+
+			ss.str("");
+			ss << (ts->tm_year + 1900);
+			replaceString(str, "|YEAR|", ss.str());
+
+			ss.str("");
+			ss << ts->tm_wday;
+			replaceString(str, "|WEEKDAY|", ss.str());
+
+			ss.str("");
+			ss << ts->tm_yday;
+			replaceString(str, "|YEARDAY|", ss.str());
+
+			ss.str("");
+			ss << ts->tm_hour << ":" << ts->tm_min << ":" << ts->tm_sec;
+			replaceString(str, "|TIME|", ss.str());
+
+			ss.str("");
+			replaceString(str, "|DATE|", formatDateShort(now, true));
+		}
+	}
+
+	s << std::endl << str;
 	return s.str();
 }
 

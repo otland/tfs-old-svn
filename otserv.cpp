@@ -132,6 +132,15 @@ bool argumentsHandler(StringVec args)
 			return false;
 		}
 
+		if((*it) == "--version")
+		{
+			std::cout << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")\n"
+			"Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << ".\n"
+			"A server developed by Elf, slawkens, Talaturen, Lithium, KaczooH, Kiper, Kornholijo.\n"
+			"Visit our forum for updates, support and resources: http://otland.net.\n";
+			return false;
+		}
+
 		tmp = explodeString((*it), "=");
 		if(tmp[0] == "--config")
 			g_config.setString(ConfigManager::CONFIG_FILE, tmp[1]);
@@ -385,7 +394,8 @@ ServiceManager* services)
 	#endif
 
 	std::cout << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl;
-	std::cout << "A server developed by Elf, Talaturen, Lithium, Kiper, Kornholijo, KaczooH, slawkens & Macroman." << std::endl;
+	std::cout << "Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << "." << std::endl;
+	std::cout << "A server developed by Elf, slawkens, Talaturen, KaczooH, Lithium, Kiper, Kornholijo." << std::endl;
 	std::cout << "Visit our forum for updates, support and resources: http://otland.net." << std::endl << std::endl;
 
 	std::stringstream ss;
@@ -947,7 +957,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 						GUI::getInstance()->m_logText = "";
 						GUI::getInstance()->m_lineCount = 0;
 						std::cout << STATUS_SERVER_NAME << ", version " << STATUS_SERVER_VERSION << " (" << STATUS_SERVER_CODENAME << ")" << std::endl;
-						std::cout << "A server developed by Elf, Talaturen, Lithium, Kiper, Kornholijo, KaczooH, slawkens & Macroman." << std::endl;
+						std::cout << "Compiled with " << BOOST_COMPILER << " at " << __DATE__ << ", " << __TIME__ << "." << std::endl;
+						std::cout << "A server developed by Elf, slawkens, Talaturen, Lithium, KaczooH, Kiper, Kornholijo." << std::endl;
 						std::cout << "Visit our forum for updates, support and resources: http://otland.net." << std::endl;
 						std::cout << std::endl;
 					}

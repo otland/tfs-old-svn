@@ -195,7 +195,7 @@ void Game::setGameState(GameState_t newState)
 
 			case GAME_STATE_SHUTDOWN:
 			{
-				g_globalEvents->execute(SERVER_EVENT_SHUTDOWN);
+				g_globalEvents->execute(GLOBAL_EVENT_SHUTDOWN);
 				AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
 				while(it != Player::listPlayer.list.end()) //kick all players that are still online
 				{
@@ -5560,12 +5560,11 @@ void Game::checkPlayersRecord(Player* player)
 	if(getPlayersOnline() > lastPlayersRecord)
 	{
 		uint32_t newPlayersRecord = getPlayersOnline();
-
-		GlobalEventMap advanceEvents = g_globalEvents->getServerEvents(SERVER_EVENT_RECORD);
-		for(GlobalEventMap::iterator it = advanceEvents.begin(); it != advanceEvents.end(); ++it)
-			it->second->executeRecord(newPlayersRecord, lastPlayersRecord, player);
-
 		lastPlayersRecord = newPlayersRecord;
+
+		GlobalEventMap recordEvents = g_globalEvents->getEventMap(GLOBAL_EVENT_RECORD);
+		for(GlobalEventMap::iterator it = recordEvents.begin(); it != recordEvents.end(); ++it)
+			it->second->executeRecord(newPlayersRecord, lastPlayersRecord, player);
 	}
 }
 
