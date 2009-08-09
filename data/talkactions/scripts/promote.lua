@@ -26,7 +26,7 @@ function onSay(cid, words, param, channel)
 		return true
 	end
 
-	local str = "been " .. (g == 1 and "promoted" or "demoted") .. " to " .. getGroupInfo(newGroupId).name .. "."
+	local str = "been " .. (g == 1 and "promoted" or "demoted") .. " to " .. getGroupInfo(newId).name .. "."
 	doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, param .. " has " .. str)
 	doPlayerSendTextMessage(pid, MESSAGE_EVENT_ADVANCE, "You have " .. str)
 	return true
