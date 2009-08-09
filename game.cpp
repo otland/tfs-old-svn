@@ -5560,11 +5560,11 @@ void Game::checkPlayersRecord(Player* player)
 	if(getPlayersOnline() > lastPlayersRecord)
 	{
 		uint32_t newPlayersRecord = getPlayersOnline();
-		lastPlayersRecord = newPlayersRecord;
-
 		GlobalEventMap recordEvents = g_globalEvents->getEventMap(GLOBAL_EVENT_RECORD);
 		for(GlobalEventMap::iterator it = recordEvents.begin(); it != recordEvents.end(); ++it)
 			it->second->executeRecord(newPlayersRecord, lastPlayersRecord, player);
+
+		lastPlayersRecord = newPlayersRecord;
 	}
 }
 
