@@ -17,10 +17,6 @@
 #include "otpch.h"
 #include <iostream>
 
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-
 #include "networkmessage.h"
 #include "position.h"
 #include "rsa.h"

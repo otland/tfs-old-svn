@@ -97,11 +97,10 @@
 		#define OTSERV_HASH_MAP __gnu_cxx::hash_map
 		#define OTSERV_HASH_SET __gnu_cxx::hash_set
 	#endif
+
 	#include <assert.h>
 	#define ATOI64 atoll
 #else
-	#define _WIN32_WINNT 0x0500
-
 	#ifndef NOMINMAX
 		#define NOMINMAX
 	#endif
