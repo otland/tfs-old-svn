@@ -83,7 +83,7 @@
 #define STATUS_SERVER_PROTOCOL "8.5"
 
 #define VERSION_CHECK "http://forgottenserver.otland.net/version.xml"
-#define VERSION_PATCH 0
+#define VERSION_PATCH 1
 #define VERSION_TIMESTAMP 1249584126
-#define VERSION_BUILD 2564
+#define VERSION_BUILD 2576
 #define VERSION_DATABASE 21
