@@ -3348,7 +3348,7 @@ int32_t LuaScriptInterface::luaDoCreatureSay(lua_State* L)
 		list.push_back(target);
 	}
 
-	if(params > 3)
+	if(params > 5)
 		lua_pushboolean(L, g_game.internalCreatureSay(creature, type, text, ghost, &list, &pos));
 	else
 		lua_pushboolean(L, g_game.internalCreatureSay(creature, type, text, ghost, &list));
