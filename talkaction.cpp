@@ -17,6 +17,9 @@
 #include "otpch.h"
 #include "talkaction.h"
 
+#include <boost/config.hpp>
+#include <boost/version.hpp>
+
 #include "iologindata.h"
 #include "ioban.h"
 

@@ -23,6 +23,7 @@
 #ifndef WIN32
 #include <unistd.h>
 #endif
+#include <boost/config.hpp>
 
 #include "server.h"
 #ifdef __LOGIN_SERVER__
