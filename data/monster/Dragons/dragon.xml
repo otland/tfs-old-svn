@@ -47,8 +47,7 @@
 		<voice sentence="FCHHHHH" yell="1"/>
 	</voices>
 	<loot>
-		<item id="3976" countmax="10" chance="50000"/><!-- worm -->
-		<item id="2672" countmax="2" chance="20000"/><!-- dragon ham -->
+		<item id="2672" countmax="2" chance="45000"/><!-- dragon ham -->
 		<item id="2148" countmax="100" chance="100000"/><!-- gold coin -->
 		<item id="2398" chance="20000"/><!-- mace -->
 		<item id="2455" chance="6666"/><!-- crossbow -->
@@ -58,7 +57,7 @@
 		<item id="2647" chance="2222"/><!-- plate legs -->
 		<item id="2457" chance="3333"/><!-- steel helmet -->
 		<item id="2387" chance="4000"/><!-- double axe -->
-		<item id="7430" chance="4000"/><!-- dragonbone staff -->
+		<item id="7430" chance="400"/><!-- dragonbone staff -->
 		<item id="2397" chance="5000"/><!-- longsword -->
 		<item id="2546" countmax="10" chance="4000"/><!-- burst arrow -->
 		<item id="5877" countmax="1" chance="4000"/><!-- green dragon leather -->
