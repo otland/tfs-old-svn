@@ -3937,7 +3937,7 @@
 		<attribute key="weaponType" value="distance"/>
 		<attribute key="shootType" value="spear"/>
 		<attribute key="range" value="5"/>
-		<attribute key="breakChance" value="10"/>
+		<attribute key="breakChance" value="3"/>
 		<attribute key="ammoAction" value="moveback"/>
 	</item>
 	<item id="2390" article="a" name="magic longsword">
@@ -8603,7 +8603,7 @@
 		<attribute key="weaponType" value="distance"/>
 		<attribute key="shootType" value="huntingspear"/>
 		<attribute key="range" value="5"/>
-		<attribute key="breakChance" value="10"/>
+		<attribute key="breakChance" value="6"/>
 		<attribute key="ammoAction" value="moveback"/>
 	</item>
 	<item id="3966" article="a" name="banana staff">
@@ -15848,7 +15848,7 @@
 		<attribute key="weaponType" value="distance"/>
 		<attribute key="shootType" value="royalspear"/>
 		<attribute key="range" value="5"/>
-		<attribute key="breakChance" value="10"/>
+		<attribute key="breakChance" value="2"/>
 		<attribute key="ammoAction" value="moveback"/>
 	</item>
 	<item id="7379" name="brutetamer's staff">
