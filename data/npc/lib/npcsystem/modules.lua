@@ -307,7 +307,7 @@ if(Modules == nil) then
 				print('[Warning] NpcSystem:', 'No keywords found for keyword set #' .. n .. '. Skipping...')
 			end
 
-			n = n+1
+			n = n + 1
 		end
 	end
 

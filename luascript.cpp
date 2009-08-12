@@ -1507,7 +1507,7 @@ void LuaScriptInterface::registerFunctions()
 	//doTransformItem(uid, newId[, count/subType])
 	lua_register(m_luaState, "doTransformItem", LuaScriptInterface::luaDoTransformItem);
 
-	//doCreatureSay(uid, text, type[, ghost = false[, cid = 0[, pos]]])
+	//doCreatureSay(uid, text[, type = SPEAK_SAY[, ghost = false[, cid = 0[, pos]]]])
 	lua_register(m_luaState, "doCreatureSay", LuaScriptInterface::luaDoCreatureSay);
 
 	//doSendMagicEffect(pos, type[, player])
@@ -1604,16 +1604,16 @@ void LuaScriptInterface::registerFunctions()
 	//Moves all moveable objects from pos to posTo
 	lua_register(m_luaState, "doRelocate", LuaScriptInterface::luaDoRelocate);
 
-	//doCleanTile(pos, forceMapLoaded = false)
+	//doCleanTile(pos[, forceMapLoaded = false])
 	lua_register(m_luaState, "doCleanTile", LuaScriptInterface::luaDoCleanTile);
 
 	//doCreateTeleport(itemid, topos, createpos)
 	lua_register(m_luaState, "doCreateTeleport", LuaScriptInterface::luaDoCreateTeleport);
 
-	//doCreateMonster(name, pos[, displayError])
+	//doCreateMonster(name, pos[, displayError = true])
 	lua_register(m_luaState, "doCreateMonster", LuaScriptInterface::luaDoCreateMonster);
 
-	//doCreateNpc(name, pos[, displayError])
+	//doCreateNpc(name, pos[, displayError = true])
 	lua_register(m_luaState, "doCreateNpc", LuaScriptInterface::luaDoCreateNpc);
 
 	//doSummonMonster(cid, name)
@@ -3301,7 +3301,7 @@ int32_t LuaScriptInterface::luaDoTransformItem(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoCreatureSay(lua_State* L)
 {
-	//doCreatureSay(uid, text, type[, ghost = false[, cid = 0[, pos]]])
+	//doCreatureSay(uid, text[, type = SPEAK_SAY[, ghost = false[, cid = 0[, pos]]]])
 	uint32_t params = lua_gettop(L), cid = 0, uid = 0;
 	PositionEx pos;
 	if(params > 5)
@@ -3314,7 +3314,10 @@ int32_t LuaScriptInterface::luaDoCreatureSay(lua_State* L)
 	if(params > 3)
 		ghost = popNumber(L);
 
-	SpeakClasses type = (SpeakClasses)popNumber(L);
+	SpeakClasses type = SPEAK_SAY;
+	if(params > 2)
+		type = (SpeakClasses)popNumber(L);
+
 	std::string text = popString(L);
 
 	uid = popNumber(L);

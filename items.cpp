@@ -731,7 +731,7 @@ void Items::parseItemNode(xmlNodePtr itemNode, uint32_t id)
 			{
 				if(readXMLInteger(itemAttributesNode, "value", intValue))
 				{
-					if(moneyMap.find(intValue) != moneyMap.end())
+					if(moneyMap.find(intValue) != moneyMap.end() && (!readXMLString(itemNode, "override", strValue) || !booleanString(strValue)))
 						std::cout << "[Warning - Items::loadFromXml] Duplicated money item " << id << " with worth " << intValue << "!" << std::endl;
 					else
 					{
