@@ -1658,12 +1658,14 @@ bool ConjureSpell::ConjureFood(const ConjureSpell* spell, Creature* creature, co
 		ITEM_APPLE,
 		ITEM_BREAD,
 		ITEM_CHEESE,
-		ITEM_ROLL,
-		ITEM_BREAD
+		ITEM_ROLL
 	};
 
 	if(internalConjureItem(player, foodType[random_range(0, 7)], 1) == RET_NOERROR)
 	{
+		if(random_range(0, 100) > 50)
+			internalConjureItem(player, foodType[random_range(0, 7)], 1);
+
 		spell->postCastSpell(player);
 		g_game.addMagicEffect(player->getPosition(), NM_ME_MAGIC_POISON);
 		return true;
