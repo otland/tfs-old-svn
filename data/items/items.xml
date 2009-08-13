@@ -4649,8 +4649,9 @@
 	</item>
 	<item id="2504" name="dwarven legs">
 		<attribute key="weight" value="4000"/>
-		<attribute key="armor" value="6"/>
+		<attribute key="armor" value="7"/>
 		<attribute key="slotType" value="legs"/>
+		<attribute key="absorbPercentPhysical" value="3"/>
 	</item>
 	<item id="2505" article="an" name="elven armor">
 		<attribute key="weight" value="11400"/>
