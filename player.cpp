@@ -3834,8 +3834,8 @@ bool Player::changeOutfit(Outfit_t outfit, bool checkList)
 bool Player::canWearOutfit(uint32_t outfitId, uint32_t addons)
 {
 	OutfitMap::iterator it = outfits.find(outfitId);
-	if(it == outfits.end() || (it->second.isPremium && !isPremium()) || getAccess()
-		< it->second.accessLevel || (it->second.addons & addons) != addons)
+	if(it == outfits.end() || (it->second.isPremium && !isPremium()) || getAccess() < it->second.accessLevel
+		|| ((it->second.addons & addons) != addons && !hasCustomFlag(PlayerCustomFlag_CanWearAllAddons)))
 		return false;
 
 	if(!it->second.storageId)
