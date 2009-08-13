@@ -35,7 +35,7 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 	int32_t intValue;
 	if(!readXMLInteger(p, "id", intValue))
 	{
-		std::cout << "[Error - Outfits::praseOutfitNode] Missing outfit id, skipping" << std::endl;
+		std::cout << "[Error - Outfits::parseOutfitNode] Missing outfit id, skipping" << std::endl;
 		return false;
 	}
 
@@ -83,14 +83,14 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 		Outfit outfit = newOutfit;
 		if(!readXMLInteger(listNode, "looktype", intValue) && !readXMLInteger(listNode, "lookType", intValue))
 		{
-			std::cout << "[Error - Outfits::praseOutfitNode] Missing looktype for an outfit with id " << outfit.outfitId << std::endl;
+			std::cout << "[Error - Outfits::parseOutfitNode] Missing looktype for an outfit with id " << outfit.outfitId << std::endl;
 			continue;
 		}
 
 		outfit.lookType = intValue;
 		if(!readXMLString(listNode, "gender", strValue) && !readXMLString(listNode, "type", strValue) && !readXMLString(listNode, "sex", strValue))
 		{
-			std::cout << "[Error - Outfits::praseOutfitNode] Missing gender(s) for an outfit with id " << outfit.outfitId
+			std::cout << "[Error - Outfits::parseOutfitNode] Missing gender(s) for an outfit with id " << outfit.outfitId
 				<< " and looktype " << outfit.lookType << std::endl;
 			continue;
 		}
@@ -98,7 +98,7 @@ bool Outfits::parseOutfitNode(xmlNodePtr p)
 		IntegerVec intVector;
 		if(!parseIntegerVec(strValue, intVector))
 		{
-			std::cout << "[Error - Outfits::praseOutfitNode] Invalid gender(s) for an outfit with id " << outfit.outfitId
+			std::cout << "[Error - Outfits::parseOutfitNode] Invalid gender(s) for an outfit with id " << outfit.outfitId
 				<< " and looktype " << outfit.lookType << std::endl;
 			continue;
 		}
