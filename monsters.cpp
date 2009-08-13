@@ -304,11 +304,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 		sb.maxCombatValue = intValue;
 		//normalize values
 		if(std::abs(sb.minCombatValue) > std::abs(sb.maxCombatValue))
-		{
-			int32_t value = sb.maxCombatValue;
-			sb.maxCombatValue = sb.minCombatValue;
-			sb.minCombatValue = value;
-		}
+			std::swap(sb.minCombatValue, sb, maxCombatValue);
 	}
 
 	if((sb.spell = g_spells->getSpellByName(name)))
