@@ -7,8 +7,7 @@ function onSay(cid, words, param, channel)
 	end
 
 	if(param == 'tile') then
-		local removeLoadedFromMap = false
-		local t = string.explode(param, ",")
+		local removeLoadedFromMap, t = false, string.explode(param, ",")
 		if(t[2]) then
 			removeLoadedFromMap = getBooleanFromString(t[2])
 		end
@@ -32,6 +31,7 @@ function prepareClean(minutes, cid)
 		if(isPlayer(cid)) then
 			doPlayerSendTextMessage(cid, MESSAGE_STATUS_CONSOLE_BLUE, "Cleaned " .. doCleanMap() .. " items.")
 		end
+
 		doBroadcastMessage("Game map cleaned.")
 	elseif(minutes > 0) then
 		if(minutes == 1) then
@@ -39,6 +39,7 @@ function prepareClean(minutes, cid)
 		else
 			doBroadcastMessage("Game map cleaning in " .. minutes .. " minutes.")
 		end
+
 		cleanEvent = addEvent(prepareClean, 60000, minutes - 1, cid)
 	end
 end
