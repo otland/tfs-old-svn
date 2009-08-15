@@ -163,7 +163,7 @@
 				Words used to execute this talkaction.
 				Can be separated by a semicolon, fe. words="/a; /b",
 					or using own separator, fe. words="/a, /b" separator=","
-			seperator
+			separator
 				Read "words".
 			access
 				Access required.
@@ -174,7 +174,7 @@
 				E.q
 					If you use 'quotation' - you will need to write /goto "PlayerName
 					If you use 'word' - you will need to write /goto PlayerName
-				Values: quotation/word
+				Values: quotation/word/word-spaced
 			log
 				Defines if talkaction should be logged.
 				Default: no
