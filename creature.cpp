@@ -725,43 +725,46 @@ bool Creature::onDeath()
 void Creature::dropCorpse(DeathList deathList)
 {
 	Item* corpse = createCorpse(deathList);
-	if(Tile* tile = getTile())
-	{
-		Item* splash = NULL;
-		switch(getRace())
-		{
-			case RACE_VENOM:
-				splash = Item::CreateItem(ITEM_FULLSPLASH, FLUID_GREEN);
-				break;
-
-			case RACE_BLOOD:
-				splash = Item::CreateItem(ITEM_FULLSPLASH, FLUID_BLOOD);
-				break;
-
-			case RACE_UNDEAD:
-			case RACE_FIRE:
-			case RACE_ENERGY:
-			default:
-				break;
-		}
-
-		if(splash)
-		{
-			g_game.internalAddItem(NULL, tile, splash, INDEX_WHEREEVER, FLAG_NOLIMIT);
-			g_game.startDecay(splash);
-		}
-
-		if(corpse)
-		{
-			g_game.internalAddItem(NULL, tile, corpse, INDEX_WHEREEVER, FLAG_NOLIMIT);
-			dropLoot(corpse->getContainer());
-			g_game.startDecay(corpse);
-		}
-	}
+	bool deny = false;
 
 	CreatureEventList deathEvents = getCreatureEvents(CREATURE_EVENT_DEATH);
 	for(CreatureEventList::iterator it = deathEvents.begin(); it != deathEvents.end(); ++it)
-		(*it)->executeDeath(this, corpse, deathList);
+	{
+		if(!(*it)->executeDeath(this, corpse, deathList) && !deny)
+			deny = true;
+	}
+
+	if(deny || !corpse)
+		return;
+
+	Tile* tile = getTile();
+	if(!tile)
+		return;
+
+	Item* splash = NULL;
+	switch(getRace())
+	{
+		case RACE_VENOM:
+			splash = Item::CreateItem(ITEM_FULLSPLASH, FLUID_GREEN);
+			break;
+
+		case RACE_BLOOD:
+			splash = Item::CreateItem(ITEM_FULLSPLASH, FLUID_BLOOD);
+			break;
+
+		default:
+			break;
+	}
+
+	if(splash)
+	{
+		g_game.internalAddItem(NULL, tile, splash, INDEX_WHEREEVER, FLAG_NOLIMIT);
+		g_game.startDecay(splash);
+	}
+
+	g_game.internalAddItem(NULL, tile, corpse, INDEX_WHEREEVER, FLAG_NOLIMIT);
+	dropLoot(corpse->getContainer());
+	g_game.startDecay(corpse);
 }
 
 DeathList Creature::getKillers()

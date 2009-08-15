@@ -1132,9 +1132,6 @@ Item* Monster::createCorpse(DeathList deathList)
 	if(ownerEntry.isNameKill())
 		return corpse;
 
-	if(deathList.size() > 1)
-		ownerEntry = deathList[1];
-
 	Creature* owner = ownerEntry.getKillerCreature();
 	if(!owner)
 		return corpse;
