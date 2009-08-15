@@ -291,9 +291,9 @@
 	<monster name="Dwarf" file="Dwarves/dwarf.xml"/>
 
 	<!-- Dworcs -->
-	<monster name="Dworc fleshhunter" file="Dworcs/dworc fleshhunter.xml"/>
-	<monster name="Dworc venomsniper" file="Dworcs/dworc venomsniper.xml"/>
-	<monster name="Dworc voodoomaster" file="Dworcs/dworc voodoomaster.xml"/>
+	<monster name="Dworc Fleshhunter" file="Dworcs/dworc fleshhunter.xml"/>
+	<monster name="Dworc Venomsniper" file="Dworcs/dworc venomsniper.xml"/>
+	<monster name="Dworc Voodoomaster" file="Dworcs/dworc voodoomaster.xml"/>
 
 	<!-- Elephants -->
 	<monster name="Elephant" file="Elephants/elephant.xml"/>
