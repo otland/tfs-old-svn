@@ -2153,8 +2153,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 
 	msg->AddByte(0x0A);
 	msg->AddU32(player->getID());
-	msg->AddByte(0x32);
-	msg->AddByte(0x00);
+	msg->AddU16(0x32);
 
 	msg->AddByte(player->hasFlag(PlayerFlag_CanReportBugs));
 	if(Group* group = player->getGroup())
@@ -2176,7 +2175,6 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 	}
 
 	AddMapDescription(msg, pos);
-
 	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 		AddInventoryItem(msg, (slots_t)i, player->getInventoryItem((slots_t)i));
 

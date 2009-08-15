@@ -50,11 +50,12 @@ ReturnValue Mailbox::__queryMaxCount(int32_t index, const Thing* thing, uint32_t
 
 void Mailbox::__addThing(Creature* actor, int32_t index, Thing* thing)
 {
-	if(Item* item = thing->getItem())
-	{
-		if(canSend(item))
-			sendItem(actor, item);
-	}
+	Item* item = thing->getItem();
+	if(!item)
+		return;
+
+	if(canSend(item))
+		sendItem(actor, item);
 }
 
 bool Mailbox::sendItem(Creature* actor, Item* item)
@@ -182,8 +183,10 @@ bool Mailbox::getRecipient(Item* item, std::string& name, uint32_t& depotId)
 		++curLine;
 	}
 
+	trimString(name);
 	if(townString.empty())
 		return false;
 
+	trimString(townString);
 	return getDepotId(townString, depotId);
 }

@@ -521,7 +521,7 @@ bool Map::checkSightLine(const Position& fromPos, const Position& toPos) const
 	y = start.y;
 	z = start.z;
 
-	int32_t lastrx = x, lastry = y, lastrz = z;
+	int32_t lastrx = 0, lastry = 0, lastrz = 0;
 	for(; x != end.x + sx; x += sx)
 	{
 		int32_t rx, ry, rz;
@@ -538,7 +538,14 @@ bool Map::checkSightLine(const Position& fromPos, const Position& toPos) const
 				break;
 		}
 
-		if((toPos.x != rx || toPos.y != ry || toPos.z != rz) && (fromPos.x != rx || fromPos.y != ry || fromPos.z != rz))
+		if(!lastrx && !lastry && !lastrz)
+		{
+			lastrx = rx;
+			lastry = ry;
+			lastrz = rz;
+		}
+
+		if(lastrz != rz || ((toPos.x != rx || toPos.y != ry || toPos.z != rz) && (fromPos.x != rx || fromPos.y != ry || fromPos.z != rz)))
 		{
 			if(lastrz != rz && const_cast<Map*>(this)->getTile(lastrx, lastry, std::min(lastrz, rz)))
 				return false;

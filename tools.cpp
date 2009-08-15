@@ -937,6 +937,7 @@ MagicEffectNames magicEffectNames[] =
 	{"bloodysteps",		NM_ME_BLOODYSTEPS},
 	{"stepsvertical",	NM_ME_STEPSVERTICAL},
 	{"yalaharighost",	NM_ME_YALAHARIGHOST},
+	{"bats",		NM_ME_BATS},
 	{"smoke",		NM_ME_SMOKE}
 };
 

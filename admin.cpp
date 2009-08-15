@@ -430,6 +430,9 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 			output->AddByte(AP_MSG_PING_OK);
 			break;
 
+		case AP_MSG_KEEP_ALIVE:
+			break;
+
 		default:
 		{
 			output->AddByte(AP_MSG_ERROR);
