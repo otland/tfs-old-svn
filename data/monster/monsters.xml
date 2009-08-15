@@ -281,7 +281,6 @@
 	<monster name="Dragon Hatchling" file="Dragons/dragon hatchling.xml"/>
 	<monster name="Frost Dragon" file="Dragons/frost dragon.xml"/>
 	<monster name="Frost Dragon Hatchling" file="Dragons/frost dragon hatchling.xml"/>
-	<monster name="Hydra" file="Dragons/hydra.xml"/>
 	<monster name="Wyrm" file="Dragons/wyrm.xml"/>
 
 	<!-- Dwarves -->
@@ -384,6 +383,7 @@
 	<monster name="Lizard Sentinel" file="Lizards/lizard sentinel.xml"/>
 	<monster name="Lizard Snakecharmer" file="Lizards/lizard snakecharmer.xml"/>
 	<monster name="Lizard Templar" file="Lizards/lizard templar.xml"/>
+	<monster name="Wyvern" file="Lizards/wyvern.xml"/>
 
 	<!-- Minotaurs -->
 	<monster name="Minotaur Archer" file="Minotaurs/minotaur archer.xml"/>
@@ -485,12 +485,14 @@
 	<monster name="Rat" file="Rats/rat.xml"/>
 
 	<!-- Reptiles -->
-	<monster name="Cobra" file="Reptiles/cobra.xml"/>
 	<monster name="Crocodile" file="Reptiles/crocodile.xml"/>
+	<monster name="Hydra" file="Reptiles/hydra.xml"/>
+
+	<!-- Serpents -->
+	<monster name="Cobra" file="Reptiles/cobra.xml"/>
 	<monster name="Sea Serpent" file="Reptiles/sea serpent.xml"/>
 	<monster name="Serpent Spawn" file="Reptiles/serpent spawn.xml"/>
 	<monster name="Snake" file="Reptiles/snake.xml"/>
-	<monster name="Wyvern" file="Reptiles/wyvern.xml"/>
 
 	<!-- Sheeps -->
 	<monster name="Black Sheep" file="Sheeps/black sheep.xml"/>
