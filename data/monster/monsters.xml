@@ -489,10 +489,10 @@
 	<monster name="Hydra" file="Reptiles/hydra.xml"/>
 
 	<!-- Serpents -->
-	<monster name="Cobra" file="Reptiles/cobra.xml"/>
-	<monster name="Sea Serpent" file="Reptiles/sea serpent.xml"/>
-	<monster name="Serpent Spawn" file="Reptiles/serpent spawn.xml"/>
-	<monster name="Snake" file="Reptiles/snake.xml"/>
+	<monster name="Cobra" file="Serpents/cobra.xml"/>
+	<monster name="Sea Serpent" file="Serpents/sea serpent.xml"/>
+	<monster name="Serpent Spawn" file="Serpents/serpent spawn.xml"/>
+	<monster name="Snake" file="Serpents/snake.xml"/>
 
 	<!-- Sheeps -->
 	<monster name="Black Sheep" file="Sheeps/black sheep.xml"/>
