@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<monster name="Sea Serpent" nameDescription="a sea serpent" race="blood" experience="2300" speed="658" manacost="390">
+<monster name="Sea Serpent" nameDescription="a sea serpent" race="blood" experience="2300" speed="658" manacost="0">
 	<health now="3200" max="3200"/>
 	<look type="275" corpse="8307"/>
 	<targetchange interval="2000" chance="50"/>
@@ -14,10 +14,10 @@
 		<flag canpushitems="1"/>
 		<flag canpushcreatures="1"/>
 		<flag targetdistance="0"/>
-		<flag runonhealth="300"/>
+		<flag runonhealth="320"/>
 	</flags>
 	<attacks>
-	<attack name="melee" interval="2000" skill="75" attack="70"/>
+		<attack name="melee" interval="2000" skill="75" attack="70"/>
 		<attack name="earth" interval="1000" chance="8" length="9" spread="3" min="-60" max="-275">
 			<attribute key="areaEffect" value="bigplants"/>
 		</attack>
@@ -37,6 +37,7 @@
 		<immunity ice="1"/>
 		<immunity paralyze="1"/>
 		<immunity invisible="1"/>
+		<immunity drown="1"/>
 	</immunities>
 	<voices interval="3000" chance="200">
 		<voice sentence="CHHHRRRR"/>
