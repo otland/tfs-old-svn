@@ -4885,6 +4885,8 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 		{
 			bool deny = action != ACTION_BANREPORT;
 			int64_t banTime = -1;
+
+			account.warnings++;
 			if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
 				action = ACTION_DELETION;
 			else if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
@@ -4895,11 +4897,10 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 			if(!IOBan::getInstance()->addAccountBanishment(account.number, banTime, reason, action,
 				comment, player->getGUID(), guid))
 			{
+				account.warnings--;
 				player->sendCancel("Account is already banned.");
 				return false;
 			}
-			else if(action != ACTION_DELETION)
-				account.warnings++;
 
 			if(deny)
 				break;
@@ -4919,6 +4920,8 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 		{
 			bool allow = action == ACTION_BANREPORTFINAL;
 			int64_t banTime = -1;
+
+			account.warnings++;
 			if(account.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
 				action = ACTION_DELETION;
 			else
@@ -4927,11 +4930,13 @@ bool Game::playerViolationWindow(uint32_t playerId, std::string name, uint8_t re
 			if(!IOBan::getInstance()->addAccountBanishment(account.number, banTime, reason, action,
 				comment, player->getGUID(), guid))
 			{
+				account.warnings--;
 				player->sendCancel("Account is already banned.");
 				return false;
 			}
-			else if(action != ACTION_DELETION)
-				account.warnings += g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN);
+
+			if(action != ACTION_DELETION)
+				account.warnings += (g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN) - 1);
 
 			if(allow)
 				IOBan::getInstance()->addPlayerBanishment(guid, -1, reason, action, comment,
