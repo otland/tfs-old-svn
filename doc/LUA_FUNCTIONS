@@ -20,7 +20,7 @@
 	You can read a short instruction for all of them;
 		how to use them, what they return and see an usage examples.
 
-	If some function parameters is in bracket ([]) - it means this parameters are optional
+	If some function parameters are in bracket ([]) - it means that these are optional
 	E.g.
 		doPlayerAddItem(uid, itemid[, count/subtype[, canDropOnMap]])
 		Means that count/subtype + canDropOnMap parameters can but don't have to be specified
@@ -890,7 +890,7 @@
 	doSendDistanceShoot(frompos, topos, type[, player])
 	doSendAnimatedText(pos, text, color[, player])
 	doShowTextDialog(cid, itemid, text)
-	doRelocate(pos, toPos)
+	doRelocate(pos, toPos[, creatures = true])
 	doBroadcastMessage(message, type)
 	doWaypointAddTemporial(name, pos)
 	doSetGameState(stateId)

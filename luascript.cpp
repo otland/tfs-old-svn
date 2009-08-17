@@ -1600,7 +1600,7 @@ void LuaScriptInterface::registerFunctions()
 	//doAddContainerItemEx(uid, virtuid)
 	lua_register(m_luaState, "doAddContainerItemEx", LuaScriptInterface::luaDoAddContainerItemEx);
 
-	//doRelocate(pos, posTo)
+	//doRelocate(pos, posTo[, creatures = true])
 	//Moves all moveable objects from pos to posTo
 	lua_register(m_luaState, "doRelocate", LuaScriptInterface::luaDoRelocate);
 
@@ -3686,7 +3686,7 @@ int32_t LuaScriptInterface::luaDoPlayerAddItem(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoPlayerAddItemEx(lua_State* L)
 {
-	//doPlayerAddItemEx(cid, uid[, canDropOnMap = FALSE])
+	//doPlayerAddItemEx(cid, uid[, canDropOnMap = false])
 	bool canDropOnMap = false;
 	if(lua_gettop(L) > 2)
 		canDropOnMap = popNumber(L);
@@ -3752,8 +3752,12 @@ int32_t LuaScriptInterface::luaDoTileAddItemEx(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoRelocate(lua_State* L)
 {
-	//doRelocate(pos, posTo)
+	//doRelocate(pos, posTo[, creatures = true])
 	//Moves all moveable objects from pos to posTo
+
+	bool creatures = true;
+	if(lua_gettop(L) > 2)
+		creatures = popNumber(L);
 
 	PositionEx toPos;
 	popPosition(L, toPos);
@@ -3779,8 +3783,7 @@ int32_t LuaScriptInterface::luaDoRelocate(lua_State* L)
 
 	if(fromTile != toTile)
 	{
-		int32_t thingCount = fromTile->getThingCount();
-		for(int32_t i = thingCount - 1; i >= 0; --i)
+		for(int32_t i = fromTile->getThingCount() - 1; i >= 0; --i)
 		{
 			Thing* thing = fromTile->__getThing(i);
 			if(thing)
@@ -3791,8 +3794,12 @@ int32_t LuaScriptInterface::luaDoRelocate(lua_State* L)
 					if(!it.isGroundTile() && !it.alwaysOnTop && !it.isMagicField())
 						g_game.internalTeleport(item, toPos, false, FLAG_IGNORENOTMOVEABLE);
 				}
-				else if(Creature* creature = thing->getCreature())
-					g_game.internalTeleport(creature, toPos, true);
+				else if(creatures)
+				{
+					Creature* creature = thing->getCreature();
+					if(creature)
+						g_game.internalTeleport(creature, toPos, true);
+				}
 			}
 		}
 	}
