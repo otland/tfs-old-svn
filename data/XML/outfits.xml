@@ -142,14 +142,14 @@
 	</outfit>
 
 	<outfit id="31" access="3" premium="yes">
-		<list gender="2;3" lookType="75" name="Gamemaster"/>
+		<list gender="0-3" lookType="75" name="Gamemaster"/>
 	</outfit>
 
 	<outfit id="32" access="4" premium="yes">
-		<list gender="2;3" lookType="266" name="Community Manager"/>
+		<list gender="0-3" lookType="266" name="Community Manager"/>
 	</outfit>
 
 	<outfit id="33" access="5" premium="yes">
-		<list gender="2;3" lookType="302" name="God"/>
+		<list gender="0-3" lookType="302" name="God"/>
 	</outfit>
 </outfits>
