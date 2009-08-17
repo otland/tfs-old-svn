@@ -1650,7 +1650,7 @@ bool ConjureSpell::ConjureFood(const ConjureSpell* spell, Creature* creature, co
 	if(!player)
 		return false;
 
-	static uint32_t foodType[8] =
+	static uint32_t foodType[] =
 	{
 		ITEM_MEAT,
 		ITEM_HAM,
@@ -1661,10 +1661,10 @@ bool ConjureSpell::ConjureFood(const ConjureSpell* spell, Creature* creature, co
 		ITEM_ROLL
 	};
 
-	if(internalConjureItem(player, foodType[random_range(0, 7)], 1) == RET_NOERROR)
+	if(internalConjureItem(player, foodType[random_range(0, (sizeof(foodType) / sizeof(uint32_t)) - 1)], 1) == RET_NOERROR)
 	{
 		if(random_range(0, 100) > 50)
-			internalConjureItem(player, foodType[random_range(0, 7)], 1);
+			internalConjureItem(player, foodType[random_range(0, (sizeof(foodType) / sizeof(uint32_t)) - 1)], 1);
 
 		spell->postCastSpell(player);
 		g_game.addMagicEffect(player->getPosition(), NM_ME_MAGIC_POISON);
