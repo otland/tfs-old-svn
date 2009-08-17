@@ -43,12 +43,15 @@ function onStepIn(cid, item, position, lastPosition, fromPosition, toPosition, a
 			return false
 		end
 
-		doRemoveConditions(cid, true)
-
-		doSendMagicEffect(pos, CONST_ME_POFF)
+		local tmp = getCreaturePosition(cid)
 		doTeleportThing(cid, newPos)
-		doSendMagicEffect(pos, CONST_ME_WATERSPLASH)
 
+		if(not isPlayerGhost(cid)) then
+			doSendMagicEffect(tmp, CONST_ME_POFF)
+			doSendMagicEffect(newPos, CONST_ME_WATERSPLASH)
+		end
+
+		doRemoveConditions(cid, true)
 		doSetCreatureOutfit(cid, outfit, -1)
 	end
 
