@@ -278,6 +278,7 @@ bool ConfigManager::load()
 	m_confNumber[LOOT_MESSAGE_TYPE] = getGlobalNumber("monsterLootMessageType", 25);
 	m_confNumber[NAME_REPORT_TYPE] = getGlobalNumber("violationNameReportActionType", 2);
 	m_confBool[ALLOW_FIGHTBACK] = getGlobalBool("allowFightback", true);
+	m_confNumber[HOUSE_CLEAN_OLD] = getGlobalNumber("houseCleanOld", 0);
 
 	m_loaded = true;
 	return true;

@@ -144,6 +144,7 @@
 	housePriceAsRent = "no"
 	housePriceEachSquare = 1000
 	houseRentPeriod = "never"
+	houseCleanOld = 0
 	guildHalls = "no"
 
 	-- Item usage

@@ -163,6 +163,7 @@ class ConfigManager
 			LOOT_MESSAGE,
 			LOOT_MESSAGE_TYPE,
 			NAME_REPORT_TYPE,
+			HOUSE_CLEAN_OLD,
 			LAST_NUMBER_CONFIG /* this must be the last one */
 		};
 

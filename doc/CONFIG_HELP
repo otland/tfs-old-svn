@@ -499,6 +499,11 @@
 			Values: yearly, monthly, weekly, daily, never
 			Default: never
 
+		houseCleanOld
+			Defines if houses should be auto cleaned when player is inactive (Not logging in specified amount of time)
+			In seconds, 0 to disable.
+			Default: 0
+
 		guildHalls
 			Use guild halls system, allowing to buy guild hall only bu guild leader. All members will be auto invited.
 				You can mark house as guild hall in map editor.

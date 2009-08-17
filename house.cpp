@@ -932,6 +932,13 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 		return false;
 	}
 
+	uint32_t cleanOld = g_config.getNumber(ConfigManager::HOUSE_CLEAN_OLD);
+	if(cleanOld && _time - cleanOld >= player->getLastLoginSaved())
+	{
+		house->setHouseOwnerEx(0, true);
+		return false;
+	}
+
 	bool paid = payRent(player, house, bid, _time), savePlayer = false;
 	if(!paid && _time >= (house->getLastWarning() + 86400))
 	{
