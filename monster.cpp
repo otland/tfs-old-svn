@@ -184,10 +184,9 @@ void Monster::onCreatureMove(const Creature* creature, const Tile* newTile, cons
 			onCreatureLeave(const_cast<Creature*>(creature));
 
 		if(isSummon() && getMaster() == creature && canSeeNewPos) //Turn the summon on again
-		{
 			isMasterInRange = true;
-			updateIdleStatus();
-		}
+		
+		updateIdleStatus();
 
 		if(!followCreature && !isSummon() && isOpponent(creature)) //we have no target lets try pick this one
 			selectTarget(const_cast<Creature*>(creature));
@@ -265,10 +264,10 @@ void Monster::onCreatureFound(Creature* creature, bool pushFront /*= false*/)
 				targetList.push_front(creature);
 			else
 				targetList.push_back(creature);
-
-			updateIdleStatus();
 		}
 	}
+
+	updateIdleStatus();
 }
 
 void Monster::onCreatureEnter(Creature* creature)
