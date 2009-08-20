@@ -724,7 +724,6 @@ bool Creature::onDeath()
 	}
 
 	dropCorpse(deathList);
-
 	if(master)
 		master->removeSummon(this);
 

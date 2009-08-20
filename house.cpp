@@ -932,8 +932,8 @@ bool Houses::payHouse(House* house, time_t _time, uint32_t bid)
 		return false;
 	}
 
-	uint32_t cleanOld = g_config.getNumber(ConfigManager::HOUSE_CLEAN_OLD);
-	if(cleanOld && _time - cleanOld >= player->getLastLoginSaved())
+	uint32_t loginClean = g_config.getNumber(ConfigManager::HOUSE_CLEAN_OLD);
+	if(loginClean && (_time - loginClean) >= player->getLastLoginSaved())
 	{
 		house->setHouseOwnerEx(0, true);
 		return false;
