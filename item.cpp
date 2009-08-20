@@ -1279,7 +1279,6 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 	if(str.empty())
 		return s.str();
 
-	s << std::endl << str;
 	if(str.find("|PLAYERNAME|") != std::string::npos)
 	{
 		std::string tmp = "You";
@@ -1341,6 +1340,7 @@ std::string Item::getDescription(const ItemType& it, int32_t lookDistance, const
 		replaceString(str, "|DATE|", formatDateShort(now, true));
 	}
 
+	s << std::endl << str;
 	return s.str();
 }
 
