@@ -18,7 +18,10 @@ function onUse(cid, item, fromPosition, itemEx, toPosition)
 		elseif(rand >= 1 and rand <= 5) then
 			doCreateItem(2159, 1, toPosition)
 		elseif(rand > 85) then
-			doSummonCreature("Scarab", toPosition)
+			local tile = getTileInfo(toPosition)
+			if(not tile.protection) then
+				doSummonCreature("Scarab", toPosition)
+			end
 		end
 
 		doSendMagicEffect(toPosition, CONST_ME_POFF)
