@@ -779,7 +779,7 @@ bool Monsters::deserializeSpell(xmlNodePtr node, spellBlock_t& sb, const std::st
 			}
 			else if(tmpName == "dazzlecondition")
 			{
-				conditionType = CONDITION_CURSED;
+				conditionType = CONDITION_DAZZLED;
 				tickInterval = 10000;
 			}
 			else if(tmpName == "drowncondition")
