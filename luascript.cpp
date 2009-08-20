@@ -4751,7 +4751,7 @@ int32_t LuaScriptInterface::luaGetHouseFromPos(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoCreateMonster(lua_State* L)
 {
-	//doCreateMonster(name, pos[, displayError])
+	//doCreateMonster(name, pos[, displayError = true])
 	bool displayError = true;
 	if(lua_gettop(L) > 2)
 		displayError = popNumber(L);
@@ -4787,7 +4787,7 @@ int32_t LuaScriptInterface::luaDoCreateMonster(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoCreateNpc(lua_State* L)
 {
-	//doCreateNpc(name, pos[, displayError])
+	//doCreateNpc(name, pos[, displayError = true])
 	bool displayError = true;
 	if(lua_gettop(L) > 2)
 		displayError = popNumber(L);
