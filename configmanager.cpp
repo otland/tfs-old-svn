@@ -191,6 +191,7 @@ bool ConfigManager::load()
 	m_confNumber[WARNINGS_TO_FINALBAN] = getGlobalNumber("warningsToFinalBan", 4);
 	m_confNumber[WARNINGS_TO_DELETION] = getGlobalNumber("warningsToDeletion", 5);
 	m_confNumber[BAN_LENGTH] = getGlobalNumber("banLength", 7 * 24 * 60 * 60);
+	m_confNumber[KILLS_BAN_LENGTH] = getGlobalNumber("killsBanLength", 7 * 24 * 60 * 60);
 	m_confNumber[FINALBAN_LENGTH] = getGlobalNumber("finalBanLength", 30 * 24 * 60 * 60);
 	m_confNumber[IPBANISHMENT_LENGTH] = getGlobalNumber("ipBanishmentLength", 1 * 24 * 60 * 60);
 	m_confBool[BANK_SYSTEM] = getGlobalBool("bankSystem", true);

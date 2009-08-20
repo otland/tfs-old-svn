@@ -126,6 +126,11 @@
 			Ban length in seconds.
 			Default: 7 * 24 * 60 * 60 (7 days)
 
+		killsBanLength
+			Ban length for unjustified player killing.
+			Works only if useBlackSkull option is disabled.
+			Default: 7 * 24 * 60 * 60 (7 days)
+
 		finalBanLength
 			Default: 30 * 24 * 60 * 60 (30 days)
 

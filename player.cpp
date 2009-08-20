@@ -4019,7 +4019,7 @@ bool Player::addUnjustifiedKill(const Player* attacked)
 			return true;
 
 		if(!IOBan::getInstance()->addAccountBanishment(accountId, (now + g_config.getNumber(
-			ConfigManager::BAN_LENGTH)), 20, ACTION_BANISHMENT, "Unjustified player killing.", 0, getID()))
+			ConfigManager::KILLS_BAN_LENGTH)), 20, ACTION_BANISHMENT, "Unjustified player killing.", 0, getID()))
 			return true;
 
 		sendTextMessage(MSG_INFO_DESCR, "You have been banished.");

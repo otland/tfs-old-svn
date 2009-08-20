@@ -35,10 +35,12 @@
 
 	-- Banishments
 	-- violationNameReportActionType 1 = just a report, 2 = name lock, 3 = player banishment
+	-- killsBanLength works only if useBlackSkull option is disabled.
 	notationsToBan = 3
 	warningsToFinalBan = 4
 	warningsToDeletion = 5
 	banLength = 7 * 24 * 60 * 60
+	killsBanLength = 7 * 24 * 60 * 60
 	finalBanLength = 30 * 24 * 60 * 60
 	ipBanishmentLength = 1 * 24 * 60 * 60
 	broadcastBanishments = "yes"
