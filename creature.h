@@ -188,7 +188,6 @@ class Creature : public AutoID, virtual public Thing
 		uint32_t getID() const {return id;}
 		virtual void removeList() = 0;
 		virtual void addList() = 0;
-		virtual void onRemoved();
 
 		virtual bool canSee(const Position& pos) const;
 		virtual bool canSeeCreature(const Creature* creature) const;
@@ -388,7 +387,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual void onCreatureConvinced(const Creature* convincer, const Creature* creature) {}
 		virtual void onCreatureChangeVisible(const Creature* creature, Visible_t visible) {}
 		virtual void onPlacedCreature() {}
-		virtual void onRemovedCreature() {}
+		virtual void onRemovedCreature();
 
 		virtual WeaponType_t getWeaponType() {return WEAPON_NONE;}
 		virtual bool getCombatValues(int32_t& min, int32_t& max) {return false;}

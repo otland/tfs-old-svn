@@ -468,21 +468,18 @@ void Creature::onCreatureAppear(const Creature* creature)
 void Creature::onCreatureDisappear(const Creature* creature, bool isLogout)
 {
 	internalCreatureDisappear(creature, true);
-	if(creature == this)
-	{
-		//
-	}
-	else if(isMapLoaded && creature->getPosition().z == getPosition().z)
+	if(creature != this && isMapLoaded && creature->getPosition().z == getPosition().z)
 		updateTileCache(creature->getTile(), creature->getPosition());
 }
 
-void Creature::onRemoved()
+void Creature::onRemovedCreature()
 {
+	destroySummons();
+	if(master && !master->isRemoved())
+		master->removeSummon(this);
+
 	removeList();
 	setRemoved();
-
-	if(getMaster() && !getMaster()->isRemoved())
-		getMaster()->removeSummon(this);
 }
 
 void Creature::onChangeZone(ZoneType_t zone)

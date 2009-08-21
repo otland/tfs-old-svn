@@ -474,7 +474,6 @@ class Player : public Creature, public Cylinder
 		virtual void onAttackedCreatureChangeZone(ZoneType_t zone);
 		virtual void onIdleStatus();
 		virtual void onPlacedCreature();
-		virtual void onRemovedCreature() {}
 
 		virtual void getCreatureLight(LightInfo& light) const;
 		Skulls_t getSkull() const;
