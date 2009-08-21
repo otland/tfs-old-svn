@@ -311,7 +311,7 @@ if(NpcHandler == nil) then
 		end
 
 		local callback = self:getCallback(CALLBACK_FAREWELL)
-		if(callback == nil or callback()) then
+		if(callback == nil or callback(cid)) then
 			if(self:processModuleCallback(CALLBACK_FAREWELL)) then
 				if(self.queue == nil or not self.queue:greetNext()) then
 					local msg = self:getMessage(MESSAGE_FAREWELL)
@@ -530,7 +530,7 @@ if(NpcHandler == nil) then
 	function NpcHandler:onWalkAway(cid)
 		if(self:isFocused(cid)) then
 			local callback = self:getCallback(CALLBACK_CREATURE_DISAPPEAR)
-			if(callback == nil or callback()) then
+			if(callback == nil or callback(cid)) then
 				if(self:processModuleCallback(CALLBACK_CREATURE_DISAPPEAR, cid)) then
 					if(self.queue == nil or not self.queue:greetNext()) then
 						local msg = self:getMessage(MESSAGE_WALKAWAY)
