@@ -6551,6 +6551,7 @@ int32_t LuaScriptInterface::luaGetMonsterInfo(lua_State* L)
 
 	lua_newtable(L);
 	setField(L, "name", mType->name.c_str());
+	setField(L, "description", mType->nameDescription.c_str());
 	setField(L, "experience", mType->experience);
 	setField(L, "health", mType->health);
 	setField(L, "healthMax", mType->healthMax);
