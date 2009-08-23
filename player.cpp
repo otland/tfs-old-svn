@@ -1768,7 +1768,7 @@ void Player::onThink(uint32_t interval)
 				g_game.removeCreature(this, true);
 		}
 		else if(timeNow - lastPong >= 60000)
-			client->logout(true);
+			client->logout(true, true);
 	}
 
 	messageTicks += interval;
