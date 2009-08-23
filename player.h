@@ -160,7 +160,7 @@ class Player : public Creature, public Cylinder
 
 		void manageAccount(const std::string& text);
 		bool isAccountManager() const {return (accountManager != MANAGER_NONE);}
-		void kickPlayer(bool displayEffect, bool forceLogout = true);
+		void kickPlayer(bool displayEffect, bool forceLogout);
 
 		void setGUID(uint32_t _guid) {guid = _guid;}
 		uint32_t getGUID() const {return guid;}

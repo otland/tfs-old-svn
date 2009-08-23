@@ -117,7 +117,7 @@ bool CreatureEvents::playerLogout(Player* player, bool forceLogout)
 			result = false;
 	}
 
-	return result;
+	return forceLogout || result;
 }
 
 /////////////////////////////////////
