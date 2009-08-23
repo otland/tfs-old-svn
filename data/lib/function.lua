@@ -280,11 +280,7 @@ function doShutdown()
 end
 
 function doSummonCreature(name, pos, displayError)
-	if(not displayError) then
-		displayError = true
-	end
-
-	local cid = doCreateMonster(name, pos, displayError)
+	local displayError, cid = displayError or true, doCreateMonster(name, pos, displayError)
 	if(not cid) then
 		cid = doCreateNpc(name, pos, displayError)
 	end
