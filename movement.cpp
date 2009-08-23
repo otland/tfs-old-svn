@@ -565,6 +565,9 @@ uint32_t MoveEvents::onItemMove(Creature* actor, Item* item, Tile* tile, bool is
 		return ret;
 	}
 
+	m_lastCacheTile = tile;
+	m_lastCacheItemVector.clear();
+
 	//we cannot use iterators here since the scripts can invalidate the iterator
 	Thing* thing = NULL;
 	for(int32_t i = tile->__getFirstIndex(), j = tile->__getLastIndex(); i < j; ++i) //already checked the ground
