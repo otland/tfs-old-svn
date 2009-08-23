@@ -46,7 +46,7 @@ class ProtocolGame : public Protocol
 			protocolGameCount++;
 #endif
 			player = NULL;
-			m_nextPing = m_eventConnect = 0;
+			m_eventConnect = 0;
 			m_debugAssertSent = m_acceptPackets = false;
 		}
 
@@ -65,7 +65,7 @@ class ProtocolGame : public Protocol
 
 		bool login(const std::string& name, uint32_t accnumber, const std::string& password,
 			OperatingSystem_t operatingSystem, uint16_t version, bool gamemasterLogin);
-		bool logout(bool displayEffect, bool forced, bool executeLogout = true);
+		bool logout(bool displayEffect, bool forceLogout);
 
 		void setPlayer(Player* p);
 
@@ -231,7 +231,7 @@ class ProtocolGame : public Protocol
 		void sendUpdateTile(const Tile* tile, const Position& pos);
 
 		void sendAddCreature(const Creature* creature, const Position& pos, uint32_t stackpos);
-		void sendRemoveCreature(const Creature* creature, const Position& pos, uint32_t stackpos, bool isLogout);
+		void sendRemoveCreature(const Creature* creature, const Position& pos, uint32_t stackpos);
 		void sendMoveCreature(const Creature* creature, const Tile* newTile, const Position& newPos, uint32_t newStackPos,
 			const Tile* oldTile, const Position& oldPos, uint32_t oldStackpos, bool teleport);
 
@@ -311,7 +311,7 @@ class ProtocolGame : public Protocol
 		friend class Player;
 		Player* player;
 
-		uint32_t m_nextPing, m_eventConnect;
+		uint32_t m_eventConnect;
 		bool m_debugAssertSent, m_acceptPackets;
 };
 #endif

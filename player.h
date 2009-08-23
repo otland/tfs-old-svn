@@ -160,7 +160,7 @@ class Player : public Creature, public Cylinder
 
 		void manageAccount(const std::string& text);
 		bool isAccountManager() const {return (accountManager != MANAGER_NONE);}
-		void kickPlayer(bool displayEffect, bool executeLogout = true);
+		void kickPlayer(bool displayEffect, bool forceLogout = true);
 
 		void setGUID(uint32_t _guid) {guid = _guid;}
 		uint32_t getGUID() const {return guid;}
@@ -508,8 +508,8 @@ class Player : public Creature, public Cylinder
 		void sendCreatureAppear(const Creature* creature)
 			{if(client) client->sendAddCreature(creature, creature->getPosition(), creature->getTile()->getClientIndexOfThing(
 				this, creature));}
-		void sendCreatureDisappear(const Creature* creature, uint32_t stackpos, bool isLogout)
-			{if(client) client->sendRemoveCreature(creature, creature->getPosition(), stackpos, isLogout);}
+		void sendCreatureDisappear(const Creature* creature, uint32_t stackpos)
+			{if(client) client->sendRemoveCreature(creature, creature->getPosition(), stackpos);}
 		void sendCreatureMove(const Creature* creature, const Tile* newTile, const Position& newPos,
 			const Tile* oldTile, const Position& oldPos, uint32_t oldStackpos, bool teleport)
 			{if(client) client->sendMoveCreature(creature, newTile, newPos, newTile->getClientIndexOfThing(
@@ -604,7 +604,6 @@ class Player : public Creature, public Cylinder
 		void sendIcons() const;
 		void sendMagicEffect(const Position& pos, uint8_t type) const
 			{if(client) client->sendMagicEffect(pos, type);}
-		void sendPing(uint32_t interval);
 		void sendStats();
 		void sendSkills() const
 			{if(client) client->sendSkills();}
@@ -654,7 +653,7 @@ class Player : public Creature, public Cylinder
 			{if (client) client->sendAddMarker(pos, markType, desc);}
 		void sendCritical() const;
 
-		void receivePing() {if(npings > 0) npings--;}
+		void receivePing() {lastPong = OTSYS_TIME();}
 		virtual void onThink(uint32_t interval);
 		uint32_t getAttackSpeed();
 
@@ -811,8 +810,6 @@ class Player : public Creature, public Cylinder
 		uint32_t clientVersion;
 		uint32_t messageTicks;
 		uint32_t idleTime;
-		uint32_t internalPing;
-		uint32_t npings;
 		uint32_t accountId;
 		uint32_t lastIP;
 		uint32_t level;
@@ -840,6 +837,8 @@ class Player : public Creature, public Cylinder
 		time_t lastLoginSaved;
 		time_t lastLogout;
 		int64_t lastLogin;
+		int64_t lastPong;
+		int64_t lastPing;
 		int64_t nextAction;
 		uint64_t stamina;
 		uint64_t experience;

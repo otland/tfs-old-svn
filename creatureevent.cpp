@@ -97,25 +97,27 @@ CreatureEvent* CreatureEvents::getEventByName(const std::string& name, bool forc
 bool CreatureEvents::playerLogin(Player* player)
 {
 	//fire global event if is registered
+	bool result = true;
 	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 	{
-		if(it->second->getEventType() == CREATURE_EVENT_LOGIN && !it->second->executeLogin(player))
-			return false;
+		if(it->second->getEventType() == CREATURE_EVENT_LOGIN && !it->second->executeLogin(player) && result)
+			result = false;
 	}
 
-	return true;
+	return result;
 }
 
-bool CreatureEvents::playerLogout(Player* player)
+bool CreatureEvents::playerLogout(Player* player, bool forceLogout)
 {
 	//fire global event if is registered
+	bool result = true;
 	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 	{
-		if(it->second->getEventType() == CREATURE_EVENT_LOGOUT && !it->second->executeLogout(player))
-			return false;
+		if(it->second->getEventType() == CREATURE_EVENT_LOGOUT && !it->second->executeLogout(player, forceLogout) && result)
+			result = false;
 	}
 
-	return true;
+	return result;
 }
 
 /////////////////////////////////////
@@ -267,8 +269,9 @@ std::string CreatureEvent::getScriptEventParams() const
 	switch(m_type)
 	{
 		case CREATURE_EVENT_LOGIN:
-		case CREATURE_EVENT_LOGOUT:
 			return "cid";
+		case CREATURE_EVENT_LOGOUT:
+			return "cid, forceLogout";
 		case CREATURE_EVENT_CHANNEL_JOIN:
 		case CREATURE_EVENT_CHANNEL_LEAVE:
 			return "cid, channel, users";
@@ -381,9 +384,9 @@ uint32_t CreatureEvent::executeLogin(Player* player)
 	}
 }
 
-uint32_t CreatureEvent::executeLogout(Player* player)
+uint32_t CreatureEvent::executeLogout(Player* player, bool forceLogout)
 {
-	//onLogout(cid)
+	//onLogout(cid, forceLogout)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
@@ -391,7 +394,9 @@ uint32_t CreatureEvent::executeLogout(Player* player)
 		{
 			env->setRealPos(player->getPosition());
 			std::stringstream scriptstream;
+
 			scriptstream << "local cid = " << env->addThing(player) << std::endl;
+			scriptstream << "local forceLogout = " << (forceLogout ? "true" : "false") << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -417,7 +422,9 @@ uint32_t CreatureEvent::executeLogout(Player* player)
 
 			lua_State* L = m_scriptInterface->getLuaState();
 			m_scriptInterface->pushFunction(m_scriptId);
+
 			lua_pushnumber(L, env->addThing(player));
+			lua_pushboolean(L, forceLogout);
 
 			bool result = m_scriptInterface->callFunction(1);
 			m_scriptInterface->releaseScriptEnv();
@@ -749,9 +756,9 @@ uint32_t CreatureEvent::executeTradeRequest(Player* player, Player* target, Item
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(player->getPosition());
-
 			std::stringstream scriptstream;
 			scriptstream << "local cid = " << env->addThing(player) << std::endl;
+
 			scriptstream << "local target = " << env->addThing(target) << std::endl;
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
 
@@ -805,9 +812,9 @@ uint32_t CreatureEvent::executeTradeAccept(Player* player, Player* target, Item*
 		if(m_scripted == EVENT_SCRIPT_BUFFER)
 		{
 			env->setRealPos(player->getPosition());
-
 			std::stringstream scriptstream;
 			scriptstream << "local cid = " << env->addThing(player) << std::endl;
+
 			scriptstream << "local target = " << env->addThing(target) << std::endl;
 			env->streamThing(scriptstream, "item", item, env->addThing(item));
 

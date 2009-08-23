@@ -68,7 +68,7 @@ class CreatureEvents : public BaseEvents
 
 		// global events
 		bool playerLogin(Player* player);
-		bool playerLogout(Player* player);
+		bool playerLogout(Player* player, bool forceLogout);
 
 		CreatureEvent* getEventByName(const std::string& name, bool forceLoaded = true);
 
@@ -108,7 +108,7 @@ class CreatureEvent : public Event
 
 		//scripting
 		uint32_t executeLogin(Player* player);
-		uint32_t executeLogout(Player* player);
+		uint32_t executeLogout(Player* player, bool forceLogout);
 		uint32_t executeChannelJoin(Player* player, uint16_t channelId, UsersMap usersMap);
 		uint32_t executeChannelLeave(Player* player, uint16_t channelId, UsersMap usersMap);
 		uint32_t executeAdvance(Player* player, skills_t skill, uint32_t oldLevel, uint32_t newLevel);

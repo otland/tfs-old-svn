@@ -279,7 +279,7 @@ bool ProtocolGame::login(const std::string& name, uint32_t accnumber, const std:
 	return connect(_player->getID(), operatingSystem, version);
 }
 
-bool ProtocolGame::logout(bool displayEffect, bool forced, bool executeLogout/* = true*/)
+bool ProtocolGame::logout(bool displayEffect, bool forceLogout)
 {
 	//dispatcher thread
 	if(!player)
@@ -287,7 +287,7 @@ bool ProtocolGame::logout(bool displayEffect, bool forced, bool executeLogout/* 
 
 	if(!player->isRemoved())
 	{
-		if(!forced)
+		if(!forceLogout)
 		{
 			bool flag = IOLoginData::getInstance()->hasCustomFlag(player->getAccount(), PlayerCustomFlag_CanLogoutAnytime);
 			if(player->getTile()->hasFlag(TILESTATE_NOLOGOUT) && !flag)
@@ -302,14 +302,13 @@ bool ProtocolGame::logout(bool displayEffect, bool forced, bool executeLogout/* 
 				return false;
 			}
 
-			if(executeLogout && !g_creatureEvents->playerLogout(player) && !flag) //let the script handle the error message
+			if(!g_creatureEvents->playerLogout(player, false) && !flag) //let the script handle the error message
 				return false;
 		}
-		else if(executeLogout)
-			g_creatureEvents->playerLogout(player);
+		else if(!g_creatureEvents->playerLogout(player, true))
+			return false;
 	}
-
-	if(player->isRemoved())
+	else
 		displayEffect = false;
 
 	if(displayEffect && !player->isGhost())
@@ -1022,7 +1021,7 @@ bool ProtocolGame::canSee(uint16_t x, uint16_t y, uint16_t z) const
 //********************** Parse methods *******************************//
 void ProtocolGame::parseLogout(NetworkMessage& msg)
 {
-	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolGame::logout, this, true, false, true)));
+	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&ProtocolGame::logout, this, true, false)));
 }
 
 void ProtocolGame::parseCreatePrivateChannel(NetworkMessage& msg)
@@ -1094,12 +1093,7 @@ void ProtocolGame::parseCancelMove(NetworkMessage& msg)
 
 void ProtocolGame::parseReceivePing(NetworkMessage& msg)
 {
-	int64_t now = OTSYS_TIME();
-	if(now <= m_nextPing)
-		return;
-
-	Dispatcher::getDispatcher().addTask(createTask(boost::bind(&Game::playerReceivePing, &g_game, player->getID())));
-	m_nextPing = now + 2000;
+	addGameTask(&Game::playerReceivePing, player->getID());
 }
 
 void ProtocolGame::parseAutoWalk(NetworkMessage& msg)
@@ -2200,7 +2194,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 	}
 }
 
-void ProtocolGame::sendRemoveCreature(const Creature* creature, const Position& pos, uint32_t stackpos, bool isLogout)
+void ProtocolGame::sendRemoveCreature(const Creature* creature, const Position& pos, uint32_t stackpos)
 {
 	if(!canSee(pos))
 		return;

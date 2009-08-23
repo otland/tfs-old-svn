@@ -492,13 +492,13 @@ void ProtocolAdmin::adminCommandKickPlayer(const std::string& param)
 	Player* player = NULL;
 	if(g_game.getPlayerByNameWildcard(param, player) == RET_NOERROR)
 	{
-		player->kickPlayer(false);
-		addLogLine(this, LOGTYPE_EVENT, "kicked player " + player->getName());
+		Scheduler::getScheduler().addEvent(createSchedulerTask(SCHEDULER_MINTICKS, boost::bind(&Game::kickPlayer, &g_game, player->getID(), false)));
+		addLogLine(this, LOGTYPE_EVENT, "kicking player " + player->getName());
 		output->AddByte(AP_MSG_COMMAND_OK);
 	}
 	else
 	{
-		addLogLine(this, LOGTYPE_EVENT, "failed kicking player " + param);
+		addLogLine(this, LOGTYPE_EVENT, "failed setting kick for player " + param);
 		output->AddByte(AP_MSG_COMMAND_FAILED);
 		output->AddString("player is not online");
 	}

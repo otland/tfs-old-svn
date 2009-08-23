@@ -75,7 +75,7 @@ Player::Player(const std::string& _name, ProtocolGame *p):
 	lastAttack = idleTime = marriage = blessings = balance = premiumDays = mana = manaMax = manaSpent = 0;
 	soul = guildId = guildLevel = levelPercent = magLevelPercent = magLevel = experience = damageImmunities = 0;
 	conditionImmunities = conditionSuppressions = groupId = vocation_id = managerNumber2 = town = skullEnd = 0;
-	lastLoginSaved = lastLogout = lastIP = npings = internalPing = messageTicks = messageBuffer = nextAction = 0;
+	lastLoginSaved = lastLogout = lastIP = messageTicks = messageBuffer = nextAction = 0;
 	editListId = maxWriteLen = windowTextId = 0;
 
 	purchaseCallback = saleCallback = -1;
@@ -84,6 +84,7 @@ Player::Player(const std::string& _name, ProtocolGame *p):
 	soulMax = 100;
 	capacity = 400.00;
 	stamina = STAMINA_MAX;
+	lastPing = lastPong = OTSYS_TIME();
 
 	writeItem = NULL;
 	group = NULL;
@@ -1221,31 +1222,6 @@ void Player::sendStats()
 		client->sendStats();
 }
 
-void Player::sendPing(uint32_t interval)
-{
-	internalPing += interval;
-	if(internalPing >= 5000) //1 ping each 5 seconds
-	{
-		internalPing = 0;
-		npings++;
-		if(client)
-			client->sendPing();
-		else if(g_config.getBool(ConfigManager::STOP_ATTACK_AT_EXIT))
-			setAttackedCreature(NULL);
-	}
-
-	if(canLogout())
-	{
-		if(!client)
-		{
-			if(g_creatureEvents->playerLogout(this)) //that will actually cause players to stuck, but as you wish
-				g_game.removeCreature(this, true);
-		}
-		else if(npings > 24)
-			client->logout(true, true);
-	}
-}
-
 Item* Player::getWriteItem(uint32_t& _windowTextId, uint16_t& _maxWriteLen)
 {
 	_windowTextId = windowTextId;
@@ -1306,7 +1282,7 @@ void Player::sendCreatureChangeVisible(const Creature* creature, Visible_t visib
 		|| (!player && canSeeInvisibility()))
 		sendCreatureChangeOutfit(creature, creature->getCurrentOutfit());
 	else if(visible == VISIBLE_DISAPPEAR || visible == VISIBLE_GHOST_DISAPPEAR)
-		sendCreatureDisappear(creature, creature->getTile()->getClientIndexOfThing(this, creature), false);
+		sendCreatureDisappear(creature, creature->getTile()->getClientIndexOfThing(this, creature));
 	else
 		sendCreatureAppear(creature);
 }
@@ -1774,7 +1750,26 @@ uint32_t Player::getNextActionTime() const
 void Player::onThink(uint32_t interval)
 {
 	Creature::onThink(interval);
-	sendPing(interval);
+	int64_t timeNow = OTSYS_TIME();
+	if(timeNow - lastPing >= 5000)
+	{
+		lastPing = timeNow;
+		if(client)
+			client->sendPing();
+		else if(g_config.getBool(ConfigManager::STOP_ATTACK_AT_EXIT))
+			setAttackedCreature(NULL);
+	}
+
+	if(canLogout())
+	{
+		if(!client)
+		{
+			if(g_creatureEvents->playerLogout(this, true))
+				g_game.removeCreature(this, true);
+		}
+		else if(timeNow - lastPong >= 60000)
+			client->logout(true);
+	}
 
 	messageTicks += interval;
 	if(messageTicks >= 1500)
@@ -2412,17 +2407,15 @@ void Player::addList()
 	Status::getInstance()->addPlayer();
 }
 
-void Player::kickPlayer(bool displayEffect, bool executeLogout/* = true*/)
+void Player::kickPlayer(bool displayEffect, bool forceLogout)
 {
 	if(!client)
 	{
-		if(executeLogout)
-			g_creatureEvents->playerLogout(this);
-
-		g_game.removeCreature(this);
+		if(g_creatureEvents->playerLogout(this, forceLogout))
+			g_game.removeCreature(this);
 	}
 	else
-		client->logout(displayEffect, true, executeLogout);
+		client->logout(displayEffect, forceLogout);
 }
 
 void Player::notifyLogIn(Player* loginPlayer)
@@ -3626,7 +3619,7 @@ void Player::onPlacedCreature()
 {
 	//scripting event - onLogin
 	if(!g_creatureEvents->playerLogin(this))
-		kickPlayer(true, false);
+		kickPlayer(true, true);
 }
 
 void Player::onAttackedCreatureDrain(Creature* target, int32_t points)

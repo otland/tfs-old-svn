@@ -199,7 +199,7 @@ void Game::setGameState(GameState_t newState)
 				AutoList<Player>::listiterator it = Player::listPlayer.list.begin();
 				while(it != Player::listPlayer.list.end()) //kick all players that are still online
 				{
-					it->second->kickPlayer(true);
+					it->second->kickPlayer(true, true);
 					it = Player::listPlayer.list.begin();
 				}
 
@@ -219,7 +219,7 @@ void Game::setGameState(GameState_t newState)
 				{
 					if(!it->second->hasFlag(PlayerFlag_CanAlwaysLogin))
 					{
-						it->second->kickPlayer(true);
+						it->second->kickPlayer(true, true);
 						it = Player::listPlayer.list.begin();
 					}
 					else
@@ -907,7 +907,7 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 		if(!(player = (*it)->getPlayer()) || !player->canSeeCreature(creature))
 			continue;
 
-		player->sendCreatureDisappear(creature, oldStackPosVector[i], isLogout);
+		player->sendCreatureDisappear(creature, oldStackPosVector[i]);
 		++i;
 	}
 
@@ -3485,7 +3485,23 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 	if(!player || player->isRemoved())
 		return false;
 
-	uint32_t muted = player->getMuted();
+	int32_t muted = player->getMuted();
+	switch(type)
+	{
+		case SPEAK_CHANNEL_Y:
+		{
+			if(channelId == CHANNEL_GUILD || g_chat.isPrivateChannel(channelId))
+				muted = -1;
+
+			break;
+		}
+		case SPEAK_PRIVATE_PN:
+			muted = -1;
+			break;
+		default:
+			break;
+	}
+
 	if(muted > 0)
 	{
 		char buffer[75];
@@ -3500,16 +3516,23 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 		return internalCreatureSay(player, SPEAK_SAY, text, false);
 	}
 
-	ReturnValue ret = g_spells->onPlayerSay(player, text);
-	if(ret == RET_NOERROR || (ret == RET_NEEDEXCHANGE && !g_config.getBool(ConfigManager::BUFFER_SPELL_FAILURE)))
-		return true;
-
-	player->removeMessageBuffer();
-	if(ret == RET_NEEDEXCHANGE)
-		return true;
-
 	if(g_talkActions->onPlayerSay(player, type == SPEAK_SAY ? CHANNEL_DEFAULT : channelId, text, false))
 		return true;
+
+	if(muted >= 0)
+	{
+		ReturnValue ret = RET_NOERROR;
+		if(!muted)
+		{
+			ret = g_spells->onPlayerSay(player, text);
+			if(ret == RET_NOERROR || (ret == RET_NEEDEXCHANGE && !g_config.getBool(ConfigManager::BUFFER_SPELL_FAILURE)))
+				return true;
+		}
+
+		player->removeMessageBuffer();
+		if(ret == RET_NEEDEXCHANGE)
+			return true;
+	}
 
 	switch(type)
 	{
@@ -5006,7 +5029,7 @@ void Game::kickPlayer(uint32_t playerId, bool displayEffect)
 	if(!player || player->isRemoved())
 		return;
 
-	player->kickPlayer(displayEffect);
+	player->kickPlayer(displayEffect, true);
 }
 
 bool Game::broadcastMessage(const std::string& text, MessageClasses type)

@@ -1658,7 +1658,7 @@ void LuaScriptInterface::registerFunctions()
 	//doRemoveConditions(cid[, onlyPersistent])
 	lua_register(m_luaState, "doRemoveConditions", LuaScriptInterface::luaDoRemoveConditions);
 
-	//doRemoveCreature(cid[, executeLogout = true])
+	//doRemoveCreature(cid[, forceLogout = true])
 	lua_register(m_luaState, "doRemoveCreature", LuaScriptInterface::luaDoRemoveCreature);
 
 	//doMoveCreature(cid, direction)
@@ -4823,16 +4823,16 @@ int32_t LuaScriptInterface::luaDoCreateNpc(lua_State* L)
 
 int32_t LuaScriptInterface::luaDoRemoveCreature(lua_State* L)
 {
-	//doRemoveCreature(cid[, executeLogout = true])
-	bool executeLogout = true;
+	//doRemoveCreature(cid[, forceLogout = true])
+	bool forceLogout = true;
 	if(lua_gettop(L) > 1)
-		executeLogout = popNumber(L);
+		forceLogout = popNumber(L);
 
 	ScriptEnviroment* env = getScriptEnv();
 	if(Creature* creature = env->getCreatureByUID(popNumber(L)))
 	{
 		if(Player* player = creature->getPlayer())
-			player->kickPlayer(true, executeLogout); //Players will get kicked without restrictions
+			player->kickPlayer(true, forceLogout); //Players will get kicked without restrictions
 		else
 			g_game.removeCreature(creature); //Monsters/NPCs will get removed
 
