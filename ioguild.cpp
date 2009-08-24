@@ -136,7 +136,7 @@ bool IOGuild::getRankEx(uint32_t& id, std::string& name, uint32_t guild, GuildLe
 	return true;
 }
 
-std::string IOGuild::getRankByLevel(uint32_t guild, GuildLevel_t level)
+std::string IOGuild::getRank(uint32_t guild, GuildLevel_t level)
 {
 	Database* db = Database::getInstance();
 	DBResult* result;

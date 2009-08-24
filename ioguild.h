@@ -44,7 +44,7 @@ class IOGuild
 		bool revokeInvite(uint32_t guild, uint32_t guid);
 		bool joinGuild(Player* player, uint32_t guildId, bool creation = false);
 
-		std::string getRankByLevel(uint32_t guild, GuildLevel_t level);
+		std::string getRank(uint32_t guild, GuildLevel_t level);
 		bool changeRank(uint32_t guild, const std::string& oldName, const std::string& newName);
 
 		bool hasGuild(uint32_t guid);
