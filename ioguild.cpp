@@ -171,8 +171,8 @@ bool IOGuild::changeRank(uint32_t guild, const std::string& oldName, const std::
 
 	for(AutoList<Player>::listiterator it = Player::listPlayer.list.begin(); it != Player::listPlayer.list.end(); ++it)
 	{
-		if(it->second->getRankId() == rankId)
-			it->second->setGuildRank(newName);
+		if(it->second->getRankId() == id)
+			it->second->setRankName(newName);
 	}
 
 	return true;
@@ -204,12 +204,11 @@ bool IOGuild::joinGuild(Player* player, uint32_t guildId, bool creation/* = fals
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `id`, `name` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `level` = " << (creation ? "3" : "1") << " LIMIT 1";
+	query << "SELECT `id` FROM `guild_ranks` WHERE `guild_id` = " << guildId << " AND `level` = " << (creation ? "3" : "1") << " LIMIT 1";
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
 	const uint32_t rankId = result->getDataInt("id");
-	const std::string rankName = result->getDataString("name");
 	result->free();
 
 	std::string guildName;
@@ -236,7 +235,7 @@ bool IOGuild::joinGuild(Player* player, uint32_t guildId, bool creation/* = fals
 	else
 		level = GUILDLEVEL_LEADER;
 
-	player->setGuildLevel(level);
+	player->setGuildLevel(level, rankId);
 	player->invitedToGuildsList.clear();
 	return true;
 }
@@ -246,7 +245,7 @@ bool IOGuild::disbandGuild(uint32_t guildId)
 	Database* db = Database::getInstance();
 
 	DBQuery query;
-	query << "UPDATE `players` SET `rank_id` = '' AND `guildnick` = '' WHERE `rank_id` = " << getRankIdByGuildIdAndLevel(guildId, 3) << " OR rank_id = " << getRankIdByGuildIdAndLevel(guildId, 2) << " OR rank_id = " << getRankIdByGuildIdAndLevel(guildId, 1);
+	query << "UPDATE `players` SET `rank_id` = '' AND `guildnick` = '' WHERE `rank_id` = " << getRankIdByLevel(guildId, GUILDLEVEL_LEADER) << " OR rank_id = " << getRankIdByLevel(guildId, GUILDLEVEL_VICELEADER) << " OR rank_id = " << getRankIdByLevel(guildId, GUILDLEVEL_MEMBER);
 	if(!db->executeQuery(query.str()))
 		return false;
 
@@ -281,7 +280,7 @@ bool IOGuild::hasGuild(uint32_t guid)
 	if(!(result = db->storeQuery(query.str())))
 		return false;
 
-	const bool result = result->getDataInt("rank_id") != 0;
+	bool result = result->getDataInt("rank_id") != 0;
 	result->free();
 	return result;
 }
@@ -331,7 +330,7 @@ uint32_t IOGuild::getGuildId(uint32_t guid)
 	return guildId;
 }
 
-int8_t IOGuild::getGuildLevel(uint32_t guid)
+GuildLevel_t IOGuild::getGuildLevel(uint32_t guid)
 {
 	Database* db = Database::getInstance();
 	DBResult* result;
