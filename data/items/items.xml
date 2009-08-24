@@ -4857,7 +4857,7 @@
 		<attribute key="weight" value="80"/>
 		<attribute key="slotType" value="ammo"/>
 		<attribute key="attack" value="30"/>
-		<attribute key="hitChance" value="80"/>
+		<attribute key="maxHitChance" value="90"/>
 		<attribute key="weaponType" value="ammunition"/>
 		<attribute key="ammoType" value="bolt"/>
 		<attribute key="shootType" value="bolt"/>
@@ -4867,7 +4867,7 @@
 		<attribute key="weight" value="70"/>
 		<attribute key="slotType" value="ammo"/>
 		<attribute key="attack" value="25"/>
-		<attribute key="hitChance" value="90"/>
+		<attribute key="maxHitChance" value="90"/>
 		<attribute key="weaponType" value="ammunition"/>
 		<attribute key="ammoType" value="arrow"/>
 		<attribute key="shootType" value="arrow"/>
@@ -4877,7 +4877,7 @@
 		<attribute key="weight" value="80"/>
 		<attribute key="slotType" value="ammo"/>
 		<attribute key="attack" value="22"/>
-		<attribute key="hitChance" value="80"/>
+		<attribute key="maxHitChance" value="90"/>
 		<attribute key="weaponType" value="ammunition"/>
 		<attribute key="ammoType" value="arrow"/>
 		<attribute key="shootType" value="poisonarrow"/>
@@ -4887,7 +4887,7 @@
 		<attribute key="weight" value="90"/>
 		<attribute key="slotType" value="ammo"/>
 		<attribute key="attack" value="28"/>
-		<attribute key="hitChance" value="80"/>
+		<attribute key="hitChance" value="100"/>
 		<attribute key="weaponType" value="ammunition"/>
 		<attribute key="ammoType" value="arrow"/>
 		<attribute key="shootType" value="burstarrow"/>
@@ -4897,6 +4897,7 @@
 		<attribute key="weight" value="80"/>
 		<attribute key="slotType" value="ammo"/>
 		<attribute key="attack" value="40"/>
+		<attribute key="maxHitChance" value="90"/>
 		<attribute key="weaponType" value="ammunition"/>
 		<attribute key="ammoType" value="bolt"/>
 		<attribute key="shootType" value="powerbolt"/>
@@ -14271,6 +14272,7 @@
 		<attribute key="weight" value="90"/>
 		<attribute key="slotType" value="ammo"/>
 		<attribute key="attack" value="43"/>
+		<attribute key="maxHitChance" value="90"/>
 		<attribute key="weaponType" value="ammunition"/>
 		<attribute key="ammoType" value="bolt"/>
 		<attribute key="shootType" value="infernalbolt"/>
@@ -15691,6 +15693,7 @@
 		<attribute key="weight" value="80"/>
 		<attribute key="slotType" value="ammo"/>
 		<attribute key="attack" value="33"/>
+		<attribute key="maxHitChance" value="90"/>
 		<attribute key="weaponType" value="ammunition"/>
 		<attribute key="ammoType" value="bolt"/>
 		<attribute key="shootType" value="piercingbolt"/>
@@ -15700,16 +15703,17 @@
 		<attribute key="weight" value="70"/>
 		<attribute key="slotType" value="ammo"/>
 		<attribute key="attack" value="28"/>
+		<attribute key="maxHitChance" value="100"/>
 		<attribute key="weaponType" value="ammunition"/>
 		<attribute key="ammoType" value="arrow"/>
 		<attribute key="shootType" value="sniperarrow"/>
-		<attribute key="maxHitChance" value="100"/>
 		<attribute key="ammoAction" value="removecount"/>
 	</item>
 	<item id="7365" article="an" name="onyx arrow" plural="onyx arrows">
 		<attribute key="weight" value="70"/>
 		<attribute key="slotType" value="ammo"/>
 		<attribute key="attack" value="38"/>
+		<attribute key="maxHitChance" value="90"/>
 		<attribute key="weaponType" value="ammunition"/>
 		<attribute key="ammoType" value="arrow"/>
 		<attribute key="shootType" value="onyxarrow"/>
@@ -17541,7 +17545,7 @@
 		<attribute key="weight" value="70"/>
 		<attribute key="slotType" value="ammo"/>
 		<attribute key="attack" value="25"/>
-		<attribute key="hitChance" value="90"/>
+		<attribute key="maxHitChance" value="90"/>
 		<attribute key="weaponType" value="ammunition"/>
 		<attribute key="ammoType" value="arrow"/>
 		<attribute key="ammoAction" value="removecount"/>
@@ -17551,7 +17555,7 @@
 		<attribute key="weight" value="70"/>
 		<attribute key="slotType" value="ammo"/>
 		<attribute key="attack" value="25"/>
-		<attribute key="hitChance" value="90"/>
+		<attribute key="maxHitChance" value="90"/>
 		<attribute key="weaponType" value="ammunition"/>
 		<attribute key="ammoType" value="arrow"/>
 		<attribute key="ammoAction" value="removecount"/>
@@ -17561,7 +17565,7 @@
 		<attribute key="weight" value="70"/>
 		<attribute key="slotType" value="ammo"/>
 		<attribute key="attack" value="25"/>
-		<attribute key="hitChance" value="90"/>
+		<attribute key="maxHitChance" value="90"/>
 		<attribute key="weaponType" value="ammunition"/>
 		<attribute key="ammoType" value="arrow"/>
 		<attribute key="ammoAction" value="removecount"/>
@@ -17609,7 +17613,7 @@
 		<attribute key="weight" value="70"/>
 		<attribute key="slotType" value="ammo"/>
 		<attribute key="attack" value="25"/>
-		<attribute key="hitChance" value="90"/>
+		<attribute key="maxHitChance" value="90"/>
 		<attribute key="weaponType" value="ammunition"/>
 		<attribute key="ammoType" value="arrow"/>
 		<attribute key="ammoAction" value="removecount"/>
