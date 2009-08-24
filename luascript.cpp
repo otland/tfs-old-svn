@@ -7184,7 +7184,7 @@ int32_t LuaScriptInterface::luaDoPlayerSetGuildLevel(lua_State* L)
 	if(lua_gettop(L) > 2)
 		rank = popNumber(L);
 
-	GuildLevel_t level = popNumber(L);
+	GuildLevel_t level = (GuildLevel_t)popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 		lua_pushboolean(L, player->setGuildLevel(level, rank));
