@@ -919,7 +919,7 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 				else if(!strcasecmp(param.c_str(), "tutorial"))
 					_player->sendTutorial(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 				else if(!strcasecmp(tmp.c_str(), "guildlevel"))
-					_player->setGuildLevel(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					_player->setGuildLevel((GuildLevel_t)atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 				else if(!strcasecmp(tmp.c_str(), "guildrank"))
 					_player->setRankId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 				else if(!strcasecmp(tmp.c_str(), "guildnick"))
