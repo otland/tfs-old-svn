@@ -340,7 +340,7 @@ GuildLevel_t IOGuild::getGuildLevel(uint32_t guid)
 	if(!(result = db->storeQuery(query.str())))
 		return 0;
 
-	const uin32_t level = result->getDataInt("level");
+	const uint32_t level = result->getDataInt("level");
 	result->free();
 	return (GuildLevel_t)level;
 }
