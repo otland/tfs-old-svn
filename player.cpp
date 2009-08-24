@@ -70,10 +70,11 @@ Player::Player(const std::string& _name, ProtocolGame *p):
 	fightMode = FIGHTMODE_ATTACK;
 	tradeState = TRADE_NONE;
 	accountManager = MANAGER_NONE;
+	guildLevel = GUILDLEVEL_NONE;
 
 	promotionLevel = walkTaskEvent = actionTaskEvent = nextStepEvent = bloodHitCount = shieldBlockCount = 0;
 	lastAttack = idleTime = marriage = blessings = balance = premiumDays = mana = manaMax = manaSpent = 0;
-	soul = guildId = guildLevel = levelPercent = magLevelPercent = magLevel = experience = damageImmunities = 0;
+	soul = guildId = levelPercent = magLevelPercent = magLevel = experience = damageImmunities = 0;
 	conditionImmunities = conditionSuppressions = groupId = vocation_id = managerNumber2 = town = skullEnd = 0;
 	lastLoginSaved = lastLogout = lastIP = messageTicks = messageBuffer = nextAction = 0;
 	editListId = maxWriteLen = windowTextId = rankId = 0;
@@ -4710,7 +4711,8 @@ bool Player::isGuildInvited(uint32_t guildId) const
 void Player::leaveGuild()
 {
 	sendClosePrivate(CHANNEL_GUILD);
-	guildId = rankId = guildLevel = 0;
+	guildLevel = GUILDLEVEL_NONE;
+	guildId = rankId = 0;
 	guildName = rankName = guildNick = "";
 }
 
