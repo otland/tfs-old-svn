@@ -701,7 +701,7 @@ bool TalkAction::guildJoin(Creature* creature, const std::string& cmd, const std
 		uint32_t guildId;
 		if(IOGuild::getInstance()->getGuildId(guildId, param_))
 		{
-			if(player->isInvitedToGuild(guildId))
+			if(player->isGuildInvited(guildId))
 			{
 				IOGuild::getInstance()->joinGuild(player, guildId);
 				player->sendTextMessage(MSG_INFO_DESCR, "You have joined the guild.");
@@ -918,8 +918,10 @@ bool TalkAction::thingProporties(Creature* creature, const std::string& cmd, con
 					_player->sendFYIBox(parseParams(cmdit, cmdtokens.end()).c_str());
 				else if(!strcasecmp(param.c_str(), "tutorial"))
 					_player->sendTutorial(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+				else if(!strcasecmp(tmp.c_str(), "guildlevel"))
+					_player->setGuildLevel(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 				else if(!strcasecmp(tmp.c_str(), "guildrank"))
-					_player->setGuildRankId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
+					_player->setRankId(atoi(parseParams(cmdit, cmdtokens.end()).c_str()));
 				else if(!strcasecmp(tmp.c_str(), "guildnick"))
 					_player->setGuildNick(parseParams(cmdit, cmdtokens.end()).c_str());
 				else if(!strcasecmp(tmp.c_str(), "group"))
