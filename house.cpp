@@ -164,7 +164,7 @@ void House::updateDoorDescription(std::string name/* = ""*/)
 	if(houseOwner)
 	{
 		if(isGuild())
-			IOGuild::getInstance()->getGuildNameById(name, houseOwner);
+			IOGuild::getInstance()->getGuildById(name, houseOwner);
 		else if(name.empty())
 			IOLoginData::getInstance()->getNameByGuid(houseOwner, name);
 
@@ -520,7 +520,7 @@ bool AccessList::isInList(const Player* player)
 
 	for(GuildList::iterator git = guildList.begin(); git != guildList.end(); ++git)
 	{
-		if(git->first == player->getGuildId() && ((uint32_t)git->second == player->getGuildRankId() || git->second == -1))
+		if(git->first == player->getGuildId() && ((uint32_t)git->second == player->getRankId() || git->second == -1))
 			return true;
 	}
 
@@ -541,29 +541,25 @@ bool AccessList::addPlayer(std::string& name)
 bool AccessList::addGuild(const std::string& guildName, const std::string& rankName)
 {
 	uint32_t guildId;
-	if(!IOGuild::getInstance()->getGuildIdByName(guildId, guildName))
+	if(!IOGuild::getInstance()->getGuildId(guildId, guildName))
 		return false;
 
 	std::string tmp = rankName;
-	int32_t rankId;
-	if(!IOGuild::getInstance()->getRankIdByGuildIdAndName((uint32_t&)rankId, tmp, guildId) &&
-		(tmp.find("?") == std::string::npos || tmp.find("!") == std::string::npos ||
-		tmp.find("*") == std::string::npos))
+	int32_t rankId = IOGuild::getInstance()->getRankIdByName(guildId, tmp);
+	if(!rankId && (tmp.find("?") == std::string::npos || tmp.find("!") == std::string::npos || tmp.find("*") == std::string::npos))
 		rankId = -1;
 
-	if(rankId != 0)
-	{
-		for(GuildList::iterator git = guildList.begin(); git != guildList.end(); ++git)
-		{
-			if(git->first == guildId && git->second == rankId)
-				return true;
-		}
+	if(!rankId)
+		return false;
 
-		guildList.push_back(std::make_pair(guildId, rankId));
-		return true;
+	for(GuildList::iterator git = guildList.begin(); git != guildList.end(); ++git)
+	{
+		if(git->first == guildId && git->second == rankId)
+			return true;
 	}
 
-	return false;
+	guildList.push_back(std::make_pair(guildId, rankId));
+	return true;
 }
 
 bool AccessList::addExpression(const std::string& expression)

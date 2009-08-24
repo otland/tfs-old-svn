@@ -1682,8 +1682,8 @@ void LuaScriptInterface::registerFunctions()
 	//doPlayerSetGuildId(cid, id)
 	lua_register(m_luaState, "doPlayerSetGuildId", LuaScriptInterface::luaDoPlayerSetGuildId);
 
-	//doPlayerSetGuildRank(cid, rank)
-	lua_register(m_luaState, "doPlayerSetGuildRank", LuaScriptInterface::luaDoPlayerSetGuildRank);
+	//doPlayerSetGuildLevel(cid, level[, rank])
+	lua_register(m_luaState, "doPlayerSetGuildLevel", LuaScriptInterface::luaDoPlayerSetGuildLevel);
 
 	//doPlayerSetGuildNick(cid, nick)
 	lua_register(m_luaState, "doPlayerSetGuildNick", LuaScriptInterface::luaDoPlayerSetGuildNick);
@@ -2519,10 +2519,10 @@ int32_t LuaScriptInterface::internalGetPlayerInfo(lua_State* L, PlayerInfo_t inf
 			lua_pushstring(L, player->getGuildName().c_str());
 			return 1;
 		case PlayerInfoGuildRankId:
-			value = player->getGuildRankId();
+			value = player->getRankId();
 			break;
 		case PlayerInfoGuildRank:
-			lua_pushstring(L, player->getGuildRank().c_str());
+			lua_pushstring(L, player->getRankName().c_str());
 			return 1;
 		case PlayerInfoGuildLevel:
 			value = player->getGuildLevel();
@@ -7154,12 +7154,20 @@ int32_t LuaScriptInterface::luaDoPlayerSetGuildId(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
 	{
-		if(player->guildId == 0)
+		if(player->guildId)
 		{
-			if(IOGuild::getInstance()->guildExists(id))
-				IOGuild::getInstance()->joinGuild(player, id);
+			player->leaveGuild();
+			if(!id)
+				lua_pushboolean(L, true);
+			else if(IOGuild::getInstance()->guildExists(id))
+				lua_pushboolean(L, IOGuild::getInstance()->joinGuild(player, id));
+			else
+				lua_pushboolean(L, false);
 		}
-		lua_pushboolean(L, true);
+		else if(id && IOGuild::getInstance()->guildExists(id))
+			lua_pushboolean(L, IOGuild::getInstance()->joinGuild(player, id));
+		else
+			lua_pushboolean(L, false);
 	}
 	else
 	{
@@ -7169,22 +7177,23 @@ int32_t LuaScriptInterface::luaDoPlayerSetGuildId(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaDoPlayerSetGuildRank(lua_State* L)
+int32_t LuaScriptInterface::luaDoPlayerSetGuildLevel(lua_State* L)
 {
-	//doPlayerSetGuildRank(cid, rank)
-	std::string rank = popString(L);
+	//doPlayerSetGuildLevel(cid, level[, rank])
+	uint32_t rank = 0;
+	if(lua_gettop(L) > 2)
+		rank = popNumber(L);
 
+	GuildLevel_t level = popNumber(L);
 	ScriptEnviroment* env = getScriptEnv();
 	if(Player* player = env->getPlayerByUID(popNumber(L)))
-	{
-		player->setGuildRank(rank);
-		lua_pushboolean(L, true);
-	}
+		lua_pushboolean(L, player->setGuildLevel(level, rank));
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -7204,6 +7213,7 @@ int32_t LuaScriptInterface::luaDoPlayerSetGuildNick(lua_State* L)
 		reportErrorFunc(getErrorDesc(LUA_ERROR_PLAYER_NOT_FOUND));
 		lua_pushboolean(L, false);
 	}
+
 	return 1;
 }
 
@@ -7211,7 +7221,7 @@ int32_t LuaScriptInterface::luaGetGuildId(lua_State* L)
 {
 	//getGuildId(guildName)
 	uint32_t guildId;
-	if(IOGuild::getInstance()->getGuildIdByName(guildId, popString(L)))
+	if(IOGuild::getInstance()->getGuildId(guildId, popString(L)))
 		lua_pushnumber(L, guildId);
 	else
 		lua_pushboolean(L, false);

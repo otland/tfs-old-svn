@@ -699,7 +699,7 @@ bool TalkAction::guildJoin(Creature* creature, const std::string& cmd, const std
 	if(!player->getGuildId())
 	{
 		uint32_t guildId;
-		if(IOGuild::getInstance()->getGuildIdByName(guildId, param_))
+		if(IOGuild::getInstance()->getGuildId(guildId, param_))
 		{
 			if(player->isInvitedToGuild(guildId))
 			{
@@ -758,7 +758,7 @@ bool TalkAction::guildCreate(Creature* creature, const std::string& cmd, const s
 	}
 
 	uint32_t guildId;
-	if(IOGuild::getInstance()->getGuildIdByName(guildId, param_))
+	if(IOGuild::getInstance()->getGuildId(guildId, param_))
 	{
 		player->sendCancel("There is already a guild with that name.");
 		return true;

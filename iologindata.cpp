@@ -838,7 +838,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	if(g_config.getBool(ConfigManager::INGAME_GUILD_MANAGEMENT))
 	{
 		query << "`guildnick` = " << db->escapeString(player->guildNick) << ", ";
-		query << "`rank_id` = " << IOGuild::getInstance()->getRankIdByGuildIdAndLevel(player->getGuildId(), player->getGuildLevel()) << ", ";
+		query << "`rank_id` = " << IOGuild::getInstance()->getRankIdByLevel(player->getGuildId(), player->getGuildLevel()) << ", ";
 	}
 
 	Vocation* tmpVoc = player->vocation;

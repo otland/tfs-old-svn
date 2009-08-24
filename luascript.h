@@ -403,7 +403,7 @@ class LuaScriptInterface
 		static int32_t luaDoPlayerSetStamina(lua_State* L);
 		static int32_t luaDoPlayerAddExperience(lua_State* L);
 		static int32_t luaDoPlayerSetGuildId(lua_State* L);
-		static int32_t luaDoPlayerSetGuildRank(lua_State* L);
+		static int32_t luaDoPlayerSetGuildLevel(lua_State* L);
 		static int32_t luaDoPlayerSetGuildNick(lua_State* L);
 		static int32_t luaDoPlayerSetSex(lua_State* L);
 		static int32_t luaDoPlayerSetIdleTime(lua_State* L);

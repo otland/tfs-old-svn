@@ -196,19 +196,22 @@ class Player : public Creature, public Cylinder
 		void clearPartyInvitations();
 
 		uint32_t getGuildId() const {return guildId;}
-		void setGuildId(uint32_t newGuildId) {guildId = newGuildId;}
-		uint32_t getGuildRankId() const {return guildRankId;}
-		void setGuildRankId(uint32_t newRankId) {guildRankId = newRankId;}
-		int8_t getGuildLevel() const {return guildLevel;}
-		void setGuildLevel(GuildLevel_t newGuildLevel);
-		const std::string& getGuildName() const {return guildName;}
-		void setGuildName(const std::string& guildname) {guildName = guildname;}
-		const std::string& getGuildRank() const {return guildRank;}
-		void setGuildRank(const std::string& rank) {guildRank = rank;}
-		const std::string& getGuildNick() const {return guildNick;}
-		void setGuildNick(const std::string& nick) {guildNick = nick;}
+		void setGuildId(uint32_t newId) {guildId = newId;}
+		uint32_t getRankId() const {return rankId;}
+		void setRankId(uint32_t newId) {rankId = newId;}
 
-		bool isInvitedToGuild(uint32_t guild_id) const;
+		GuildLevel_t getGuildLevel() const {return guildLevel;}
+		bool setGuildLevel(GuildLevel_t newLevel, uint32_t rank = 0);
+
+		const std::string& getGuildName() const {return guildName;}
+		void setGuildName(const std::string& newName) {guildName = newName;}
+		const std::string& getRankName() const {return rankName;}
+		void setRankName(const std::string& newName) {rankName = newName;}
+
+		const std::string& getGuildNick() const {return guildNick;}
+		void setGuildNick(const std::string& newNick) {guildNick = newNick;}
+
+		bool isGuildInvited(uint32_t guildId) const;
 		void leaveGuild();
 
 		void setFlags(uint64_t flags) {if(group) group->setFlags(flags);}
@@ -829,7 +832,7 @@ class Player : public Creature, public Cylinder
 		uint32_t editListId;
 		uint32_t windowTextId;
 		uint32_t guildId;
-		uint32_t guildRankId;
+		uint32_t rankId;
 		uint32_t promotionLevel;
 		uint32_t town;
 
@@ -852,7 +855,7 @@ class Player : public Creature, public Cylinder
 		std::string managerString, managerString2;
 		std::string account, password;
 		std::string name, nameDescription, specialDescription;
-		std::string guildName, guildRank, guildNick;
+		std::string guildName, rankName, guildNick;
 
 		Position loginPosition;
 		LightInfo itemsLight;

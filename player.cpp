@@ -76,7 +76,7 @@ Player::Player(const std::string& _name, ProtocolGame *p):
 	soul = guildId = guildLevel = levelPercent = magLevelPercent = magLevel = experience = damageImmunities = 0;
 	conditionImmunities = conditionSuppressions = groupId = vocation_id = managerNumber2 = town = skullEnd = 0;
 	lastLoginSaved = lastLogout = lastIP = messageTicks = messageBuffer = nextAction = 0;
-	editListId = maxWriteLen = windowTextId = 0;
+	editListId = maxWriteLen = windowTextId = rankId = 0;
 
 	purchaseCallback = saleCallback = -1;
 	level = shootRange = 1;
@@ -227,8 +227,8 @@ std::string Player::getDescription(int32_t lookDistance) const
 		else
 			s << " " << (sex % 2 ? "He" : "She") << " is ";
 
-		s << (guildRank.length() ? guildRank : "a member")<< " of the " << guildName;
-		if(guildNick.length())
+		s << (rankName.empty() ? "a member" : rankName)<< " of the " << guildName;
+		if(!guildNick.empty())
 			s << " (" << guildNick << ")";
 
 		s << ".";
@@ -4696,21 +4696,22 @@ void Player::manageAccount(const std::string &text)
 		sendTextMessage(MSG_STATUS_CONSOLE_ORANGE, "Hint: Type 'account' to manage your account and if you want to start over then type 'cancel'.");
 }
 
-bool Player::isInvitedToGuild(uint32_t guildId) const
+bool Player::isGuildInvited(uint32_t guildId) const
 {
 	for(InvitedToGuildsList::const_iterator it = invitedToGuildsList.begin(); it != invitedToGuildsList.end(); ++it)
 	{
 		if((*it) == guildId)
 			return true;
 	}
+
 	return false;
 }
 
 void Player::leaveGuild()
 {
 	sendClosePrivate(CHANNEL_GUILD);
-	guildId = guildRankId = guildLevel = 0;
-	guildName = guildRank = guildNick = "";
+	guildId = rankId = guildLevel = 0;
+	guildName = rankName = guildNick = "";
 }
 
 bool Player::isPremium() const
@@ -4721,10 +4722,15 @@ bool Player::isPremium() const
 	return premiumDays;
 }
 
-void Player::setGuildLevel(GuildLevel_t newGuildLevel)
+bool Player::setGuildLevel(GuildLevel_t newLevel, uint32_t rank/* = 0*/)
 {
-	guildLevel = newGuildLevel;
-	setGuildRank(IOGuild::getInstance()->getRankName(guildLevel, guildId));
+	std::string name;
+	if(!IOGuild::getInstance()->getRankEx(rank, name, guildId, newLevel))
+		return false;
+
+	guildLevel = newLevel;
+	rankName = name;
+	rankId = rank;
 }
 
 void Player::setGroupId(int32_t newId)
