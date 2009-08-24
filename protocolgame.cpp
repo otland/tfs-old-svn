@@ -289,21 +289,25 @@ bool ProtocolGame::logout(bool displayEffect, bool forceLogout)
 	{
 		if(!forceLogout)
 		{
-			bool flag = IOLoginData::getInstance()->hasCustomFlag(player->getAccount(), PlayerCustomFlag_CanLogoutAnytime);
-			if(player->getTile()->hasFlag(TILESTATE_NOLOGOUT) && !flag)
+			if(!IOLoginData::getInstance()->hasCustomFlag(player->getAccount(), PlayerCustomFlag_CanLogoutAnytime))
 			{
-				player->sendCancelMessage(RET_YOUCANNOTLOGOUTHERE);
-				return false;
-			}
+				if(player->getTile()->hasFlag(TILESTATE_NOLOGOUT))
+				{
+					player->sendCancelMessage(RET_YOUCANNOTLOGOUTHERE);
+					return false;
+				}
 
-			if(player->hasCondition(CONDITION_INFIGHT) && !flag)
-			{
-				player->sendCancelMessage(RET_YOUMAYNOTLOGOUTDURINGAFIGHT);
-				return false;
-			}
+				if(player->hasCondition(CONDITION_INFIGHT))
+				{
+					player->sendCancelMessage(RET_YOUMAYNOTLOGOUTDURINGAFIGHT);
+					return false;
+				}
 
-			if(!g_creatureEvents->playerLogout(player, false) && !flag) //let the script handle the error message
-				return false;
+				if(!g_creatureEvents->playerLogout(player, false)) //let the script handle the error message
+					return false;
+			}
+			else
+				g_creatureEvents->playerLogout(player, false);
 		}
 		else if(!g_creatureEvents->playerLogout(player, true))
 			return false;
