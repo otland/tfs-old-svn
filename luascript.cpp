@@ -1751,6 +1751,9 @@ void LuaScriptInterface::registerFunctions()
 	//getCreatureByName(name)
 	lua_register(m_luaState, "getCreatureByName", LuaScriptInterface::luaGetCreatureByName);
 
+	//getPlayerByGUID(guid)
+	lua_register(m_luaState, "getPlayerByGUID", LuaScriptInterface::luaGetPlayerByGUID);
+
 	//getPlayerByNameWildcard(name~[, ret = false])
 	lua_register(m_luaState, "getPlayerByNameWildcard", LuaScriptInterface::luaGetPlayerByNameWildcard);
 
@@ -7300,6 +7303,18 @@ int32_t LuaScriptInterface::luaGetCreatureByName(lua_State* L)
 	ScriptEnviroment* env = getScriptEnv();
 	if(Creature* creature = g_game.getCreatureByName(popString(L)))
 		lua_pushnumber(L, env->addThing(creature));
+	else
+		lua_pushnil(L);
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetPlayerByGUID(lua_State* L)
+{
+	//getPlayerByGUID(guid)
+	ScriptEnviroment* env = getScriptEnv();
+	if(Player* player = g_game.getPlayerByGuid(popNumber(L)))
+		lua_pushnumber(L, env->addThing(player));
 	else
 		lua_pushnil(L);
 

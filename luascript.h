@@ -425,6 +425,7 @@ class LuaScriptInterface
 
 		//queries
 		static int32_t luaGetCreatureByName(lua_State* L);
+		static int32_t luaGetPlayerByGUID(lua_State* L);
 		static int32_t luaGetPlayerByNameWildcard(lua_State* L);
 		static int32_t luaGetPlayerGUIDByName(lua_State* L);
 		static int32_t luaGetPlayerNameByGUID(lua_State* L);
