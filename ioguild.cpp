@@ -136,13 +136,13 @@ bool IOGuild::getRankEx(uint32_t& id, std::string& name, uint32_t guild, GuildLe
 	return true;
 }
 
-std::string IOGuild::getRank(uint32_t guild, GuildLevel_t level)
+std::string IOGuild::getRank(uint32_t guid)
 {
 	Database* db = Database::getInstance();
 	DBResult* result;
 
 	DBQuery query;
-	query << "SELECT `name` FROM `guild_ranks` WHERE `guild_id` = " << guild << " AND `level` = " << level << " LIMIT 1";
+	query << "SELECT `guild_ranks`.`name` FROM `players`, `guild_ranks` WHERE `players`.`id` = " << guid << " AND `guild_ranks`.`id` = `players`.`rank_id` LIMIT 1";
 	if(!(result = db->storeQuery(query.str())))
 		return "";
 

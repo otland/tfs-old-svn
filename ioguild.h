@@ -37,14 +37,14 @@ class IOGuild
 		std::string getMotd(uint32_t guild);
 		bool setMotd(uint32_t guild, const std::string& newMessage);
 
-		int8_t getGuildLevel(uint32_t guid);
+		GuildLevel_t getGuildLevel(uint32_t guid);
 		bool setGuildLevel(uint32_t guid, GuildLevel_t level);
 
 		bool invitePlayer(uint32_t gulid, uint32_t guid);
 		bool revokeInvite(uint32_t guild, uint32_t guid);
 		bool joinGuild(Player* player, uint32_t guildId, bool creation = false);
 
-		std::string getRank(uint32_t guild, GuildLevel_t level);
+		std::string getRank(uint32_t guid);
 		bool changeRank(uint32_t guild, const std::string& oldName, const std::string& newName);
 
 		bool hasGuild(uint32_t guid);
