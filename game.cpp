@@ -3485,30 +3485,14 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 	if(!player || player->isRemoved())
 		return false;
 
-	int32_t muted = player->getMuted();
+	int32_t muteTime = 0;
+	bool muted = player->isMuted(channelId, type, muteTime);
 	if(muted)
 	{
-		switch(type)
-		{
-			case SPEAK_CHANNEL_Y:
-			{
-				if(channelId == CHANNEL_GUILD || g_chat.isPrivateChannel(channelId))
-				{
-					muted = -1;
-					break;
-				}
-			}
-			default:
-			{
-				char buffer[75];
-				sprintf(buffer, "You are still muted for %d seconds.", muted);
-				player->sendTextMessage(MSG_STATUS_SMALL, buffer);
-				return false;
-			}
-			case SPEAK_PRIVATE_PN:
-				muted = -1;
-				break;
-		}
+		char buffer[75];
+		sprintf(buffer, "You are still muted for %d seconds.", muteTime);
+		player->sendTextMessage(MSG_STATUS_SMALL, buffer);
+		return false;
 	}
 
 	if(player->isAccountManager())
@@ -3520,19 +3504,20 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 	if(g_talkActions->onPlayerSay(player, type == SPEAK_SAY ? CHANNEL_DEFAULT : channelId, text, false))
 		return true;
 
-	ReturnValue ret = RET_NOERROR;
 	if(!muted)
 	{
-		ret = g_spells->onPlayerSay(player, text);
-		if(ret == RET_NOERROR || (ret == RET_NEEDEXCHANGE && !g_config.getBool(ConfigManager::BUFFER_SPELL_FAILURE)))
+		ReturnValue ret = RET_NOERROR;
+		if(!muteTime)
+		{
+			ret = g_spells->onPlayerSay(player, text);
+			if(ret == RET_NOERROR || (ret == RET_NEEDEXCHANGE && !g_config.getBool(ConfigManager::BUFFER_SPELL_FAILURE)))
+				return true;
+		}
+
+		player->removeMessageBuffer();
+		if(ret == RET_NEEDEXCHANGE)
 			return true;
 	}
-
-	if(muted >= 0)
-		player->removeMessageBuffer();
-
-	if(ret == RET_NEEDEXCHANGE)
-		return true;
 
 	switch(type)
 	{
@@ -3925,40 +3910,28 @@ void Game::checkCreatures()
 	if(checkCreatureLastIndex == EVENT_CREATURECOUNT)
 		checkCreatureLastIndex = 0;
 
-	Creature* creature = NULL;
 	std::vector<Creature*>::iterator it;
-	for(it = toAddCheckCreatureVector.begin(); it != toAddCheckCreatureVector.end();) //add any new creatures
-	{
-		creature = (*it);
-		if(creature->checked)
-		{
-			checkCreatureVectors[creature->checkVector].push_back(creature);
-			++it;
-		}
-		else
-		{
-			creature->checkVector = -1;
-			FreeThing(creature);
-			it = toAddCheckCreatureVector.erase(it);
-		}
-	}
+	for(it = toAddCheckCreatureVector.begin(); it != toAddCheckCreatureVector.end(); ++it)
+		checkCreatureVectors[creature->checkVector].push_back(*it);
 
 	toAddCheckCreatureVector.clear();
 	std::vector<Creature*>& checkCreatureVector = checkCreatureVectors[checkCreatureLastIndex];
 	for(it = checkCreatureVector.begin(); it != checkCreatureVector.end();)
 	{
-		creature = (*it);
-		if(creature->checked)
+		if((*it)->checked)
 		{
-			if(creature->getHealth() > 0 || !creature->onDeath())
-				creature->onThink(EVENT_CREATURE_THINK_INTERVAL);
+			if((*it)->getHealth() > 0 || !(*it)->onDeath(false))
+				(*it)->onThink(EVENT_CREATURE_THINK_INTERVAL);
 
 			++it;
 		}
 		else
 		{
-			creature->checkVector = -1;
-			FreeThing(creature);
+			(*it)->checkVector = -1;
+			if((*it)->getHealth() < 1)
+				(*it)->onDeath(true);
+
+			FreeThing(*it);
 			it = checkCreatureVector.erase(it);
 		}
 	}

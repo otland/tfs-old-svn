@@ -1099,9 +1099,9 @@ bool Monster::canWalkTo(Position pos, Direction dir)
 		0, this, 1, FLAG_PATHFINDING) == RET_NOERROR;
 }
 
-bool Monster::onDeath()
+bool Monster::onDeath(bool forced)
 {
-	if(!Creature::onDeath())
+	if(!Creature::onDeath(forced))
 		return false;
 
 	destroySummons();

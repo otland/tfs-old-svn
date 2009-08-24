@@ -324,7 +324,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool challengeCreature(Creature* creature) {return false;}
 		virtual bool convinceCreature(Creature* creature) {return false;}
 
-		virtual bool onDeath();
+		virtual bool onDeath(bool forced);
 		virtual double getGainedExperience(Creature* attacker) const {return getDamageRatio(attacker) * (double)getLostExperience();}
 		void addDamagePoints(Creature* attacker, int32_t damagePoints);
 		void addHealPoints(Creature* caster, int32_t healthPoints);

@@ -657,7 +657,7 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 	}
 }
 
-bool Creature::onDeath()
+bool Creature::onDeath(bool forced)
 {
 	DeathList deathList = getKillers();
 	bool deny = false;
@@ -665,11 +665,11 @@ bool Creature::onDeath()
 	CreatureEventList prepareDeathEvents = getCreatureEvents(CREATURE_EVENT_PREPAREDEATH);
 	for(CreatureEventList::iterator it = prepareDeathEvents.begin(); it != prepareDeathEvents.end(); ++it)
 	{
-		if(!(*it)->executePrepareDeath(this, deathList) && !deny)
+		if(!(*it)->executePrepareDeath(this, deathList, forced) && !deny)
 			deny = true;
 	}
 
-	if(deny)
+	if(deny && !forced)
 		return false;
 
 	int32_t i = 0, size = deathList.size(), limit = g_config.getNumber(ConfigManager::DEATH_ASSISTS) + 1;

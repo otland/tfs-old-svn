@@ -298,7 +298,7 @@ class Player : public Creature, public Cylinder
 		virtual bool isPushable() const;
 		virtual int32_t getThrowRange() const {return 1;}
 
-		uint32_t getMuted();
+		bool isMuted(uint16_t channelId, SpeakClasses type, uint32_t& time);
 		void addMessageBuffer();
 		void removeMessageBuffer();
 
@@ -708,7 +708,7 @@ class Player : public Creature, public Cylinder
 		void setNextWalkTask(SchedulerTask* task);
 		void setNextActionTask(SchedulerTask* task);
 
-		virtual bool onDeath();
+		virtual bool onDeath(bool forced);
 		virtual Item* createCorpse(DeathList deathList);
 
 		virtual void dropCorpse(DeathList deathList);

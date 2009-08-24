@@ -1779,10 +1779,11 @@ void Player::onThink(uint32_t interval)
 	}
 }
 
-uint32_t Player::getMuted()
+bool Player::isMuted(uint16_t channelId, SpeakClasses type, uint32_t& time)
 {
+	time = 0;
 	if(hasFlag(PlayerFlag_CannotBeMuted))
-		return 0;
+		return false;
 
 	int32_t muteTicks = 0;
 	for(ConditionList::iterator it = conditions.begin(); it != conditions.end(); ++it)
@@ -1791,7 +1792,8 @@ uint32_t Player::getMuted()
 			muteTicks = (*it)->getTicks();
 	}
 
-	return ((uint32_t)muteTicks / 1000);
+	time = (uint32_t)muteTicks / 1000;
+	return time > 0 && type != SPEAK_PRIVATE_PN && (type != SPEAK_CHANNEL_Y || (channelId != CHANNEL_GUILD && !g_chat.isPrivateChannel(channelId)));
 }
 
 void Player::addMessageBuffer()
@@ -2128,7 +2130,7 @@ uint32_t Player::getIP() const
 	return 0;
 }
 
-bool Player::onDeath()
+bool Player::onDeath(bool forced)
 {
 	Item* preventLoss = NULL;
 	Item* preventDrop = NULL;
@@ -2156,7 +2158,7 @@ bool Player::onDeath()
 		}
 	}
 
-	if(!Creature::onDeath())
+	if(!Creature::onDeath(forced))
 	{
 		if(preventDrop)
 			setDropLoot(LOOT_DROP_FULL);
