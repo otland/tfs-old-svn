@@ -703,10 +703,9 @@ void Combat::CombatFunc(Creature* caster, const Position& pos, const AreaCombat*
 	else
 		getCombatArea(pos, pos, area, tileList);
 
-	/*Combat2Var* var = (Combat2Var*)data;
-	//TODO: make it configurable?
-	int32_t change = random_range(var->minChange, var->maxChange, DISTRO_NORMAL);
-	var->minChange = var->maxChange = change;*/
+	Combat2Var* var = (Combat2Var*)data;
+	if(var) //TODO: make it configurable?
+		var->minChange = var->maxChange = random_range(var->minChange, var->maxChange, DISTRO_NORMAL);
 
 	uint32_t maxX = 0, maxY = 0, diff;
 	//calculate the max viewable range
