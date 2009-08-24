@@ -703,10 +703,10 @@ void Combat::CombatFunc(Creature* caster, const Position& pos, const AreaCombat*
 	else
 		getCombatArea(pos, pos, area, tileList);
 
-	Combat2Var* var = (Combat2Var*)data;
+	/*Combat2Var* var = (Combat2Var*)data;
 	//TODO: make it configurable?
 	int32_t change = random_range(var->minChange, var->maxChange, DISTRO_NORMAL);
-	var->minChange = var->maxChange = change;
+	var->minChange = var->maxChange = change;*/
 
 	uint32_t maxX = 0, maxY = 0, diff;
 	//calculate the max viewable range
@@ -755,7 +755,7 @@ void Combat::CombatFunc(Creature* caster, const Position& pos, const AreaCombat*
 
 				if(!params.isAggressive || (caster != (*cit) && Combat::canDoCombat(caster, (*cit)) == RET_NOERROR))
 				{
-					func(caster, (*cit), params, (void*)var);
+					func(caster, (*cit), params, data);//(void*)var);
 					if(params.targetCallback)
 						params.targetCallback->onTargetCombat(caster, (*cit));
 				}
