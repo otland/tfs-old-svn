@@ -3486,28 +3486,29 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 		return false;
 
 	int32_t muted = player->getMuted();
-	switch(type)
+	if(muted)
 	{
-		case SPEAK_CHANNEL_Y:
+		switch(type)
 		{
-			if(channelId == CHANNEL_GUILD || g_chat.isPrivateChannel(channelId))
+			case SPEAK_CHANNEL_Y:
+			{
+				if(channelId == CHANNEL_GUILD || g_chat.isPrivateChannel(channelId))
+				{
+					muted = -1;
+					break;
+				}
+			}
+			default:
+			{
+				char buffer[75];
+				sprintf(buffer, "You are still muted for %d seconds.", muted);
+				player->sendTextMessage(MSG_STATUS_SMALL, buffer);
+				return false;
+			}
+			case SPEAK_PRIVATE_PN:
 				muted = -1;
-
-			break;
+				break;
 		}
-		case SPEAK_PRIVATE_PN:
-			muted = -1;
-			break;
-		default:
-			break;
-	}
-
-	if(muted > 0)
-	{
-		char buffer[75];
-		sprintf(buffer, "You are still muted for %d seconds.", muted);
-		player->sendTextMessage(MSG_STATUS_SMALL, buffer);
-		return false;
 	}
 
 	if(player->isAccountManager())
@@ -3519,20 +3520,19 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 	if(g_talkActions->onPlayerSay(player, type == SPEAK_SAY ? CHANNEL_DEFAULT : channelId, text, false))
 		return true;
 
-	if(muted >= 0)
+	ReturnValue ret = RET_NOERROR;
+	if(!muted)
 	{
-		ReturnValue ret = RET_NOERROR;
-		if(!muted)
-		{
-			ret = g_spells->onPlayerSay(player, text);
-			if(ret == RET_NOERROR || (ret == RET_NEEDEXCHANGE && !g_config.getBool(ConfigManager::BUFFER_SPELL_FAILURE)))
-				return true;
-		}
-
-		player->removeMessageBuffer();
-		if(ret == RET_NEEDEXCHANGE)
+		ret = g_spells->onPlayerSay(player, text);
+		if(ret == RET_NOERROR || (ret == RET_NEEDEXCHANGE && !g_config.getBool(ConfigManager::BUFFER_SPELL_FAILURE)))
 			return true;
 	}
+
+	if(muted >= 0)
+		player->removeMessageBuffer();
+
+	if(ret == RET_NEEDEXCHANGE)
+		return true;
 
 	switch(type)
 	{
