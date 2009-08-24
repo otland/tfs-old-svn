@@ -789,8 +789,8 @@ class Player : public Creature, public Cylinder
 		fightMode_t fightMode;
 		secureMode_t secureMode;
 		tradestate_t tradeState;
+		GuildLevel_t guildLevel;
 
-		int8_t guildLevel;
 		int16_t blessings;
 		uint16_t maxWriteLen;
 		uint16_t sex;
