@@ -703,7 +703,7 @@ void Combat::CombatFunc(Creature* caster, const Position& pos, const AreaCombat*
 	else
 		getCombatArea(pos, pos, area, tileList);
 
-	Combat2Var var* = (Combat2Var*)data;
+	Combat2Var* var = (Combat2Var*)data;
 	//TODO: make it configurable?
 	int32_t change = random_range(var->minChange, var->maxChange, DISTRO_NORMAL);
 	var->minChange = var->maxChange = change;
