@@ -338,11 +338,11 @@ GuildLevel_t IOGuild::getGuildLevel(uint32_t guid)
 	DBQuery query;
 	query << "SELECT `guild_ranks`.`level` FROM `players`, `guild_ranks` WHERE `players`.`id` = " << guid << " AND `guild_ranks`.`id` = `players`.`rank_id` LIMIT 1";
 	if(!(result = db->storeQuery(query.str())))
-		return 0;
+		return GUILDLEVEL_NONE;
 
-	const uint32_t level = result->getDataInt("level");
+	const GuildLevel_t level = (GuildLevel_t)result->getDataInt("level");
 	result->free();
-	return (GuildLevel_t)level;
+	return level;
 }
 
 bool IOGuild::setGuildLevel(uint32_t guid, GuildLevel_t level)
