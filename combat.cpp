@@ -703,6 +703,11 @@ void Combat::CombatFunc(Creature* caster, const Position& pos, const AreaCombat*
 	else
 		getCombatArea(pos, pos, area, tileList);
 
+	Combat2Var var* = (Combat2Var*)data;
+	//TODO: make it configurable?
+	int32_t change = random_range(var->minChange, var->maxChange, DISTRO_NORMAL);
+	var->minChange = var->maxChange = change;
+
 	uint32_t maxX = 0, maxY = 0, diff;
 	//calculate the max viewable range
 	for(std::list<Tile*>::iterator it = tileList.begin(); it != tileList.end(); ++it)
@@ -721,18 +726,17 @@ void Combat::CombatFunc(Creature* caster, const Position& pos, const AreaCombat*
 		maxY + Map::maxViewportY, maxY + Map::maxViewportY);
 
 	Tile* tile = NULL;
-	CreatureVector* creatures = NULL;
 	for(std::list<Tile*>::iterator it = tileList.begin(); it != tileList.end(); ++it)
 	{
 		if(!(tile = (*it)) || canDoCombat(caster, (*it), params.isAggressive) != RET_NOERROR)
 			continue;
 
 		bool skip = true;
-		if((creatures = tile->getCreatures()))
+		if(CreatureVector* creatures = tile->getCreatures())
 		{
 			for(CreatureVector::iterator cit = creatures->begin(), cend = creatures->end(); skip && cit != cend; ++cit)
 			{
-				if(params.targetPlayersOrSummons && !(*cit)->getPlayer() && (!(*cit)->getMaster() || !(*cit)->getMaster()->getPlayer()))
+				if(params.targetPlayersOrSummons && !(*cit)->getPlayer() && !(*cit)->isPlayerSummon())
 					continue;
 
 				if(params.targetCasterOrTopMost)
@@ -751,7 +755,7 @@ void Combat::CombatFunc(Creature* caster, const Position& pos, const AreaCombat*
 
 				if(!params.isAggressive || (caster != (*cit) && Combat::canDoCombat(caster, (*cit)) == RET_NOERROR))
 				{
-					func(caster, (*cit), params, data);
+					func(caster, (*cit), params, (void*)&var);
 					if(params.targetCallback)
 						params.targetCallback->onTargetCombat(caster, (*cit));
 				}
@@ -805,6 +809,8 @@ void Combat::doCombatHealth(Creature* caster, Creature* target, int32_t minChang
 		var.maxChange = maxChange;
 
 		CombatHealthFunc(caster, target, params, (void*)&var);
+		if(params.targetCallback)
+			params.targetCallback->onTargetCombat(caster, target);
 
 		bool display = (!caster || !caster->isGhost() || g_config.getBool(ConfigManager::GHOST_SPELL_EFFECTS));
 		if(params.impactEffect != NM_ME_NONE && display)
@@ -821,7 +827,6 @@ void Combat::doCombatHealth(Creature* caster, const Position& pos, const AreaCom
 	Combat2Var var;
 	var.minChange = minChange;
 	var.maxChange = maxChange;
-
 	CombatFunc(caster, pos, area, params, CombatHealthFunc, (void*)&var);
 }
 
@@ -852,7 +857,6 @@ void Combat::doCombatMana(Creature* caster, const Position& pos, const AreaComba
 	Combat2Var var;
 	var.minChange = minChange;
 	var.maxChange = maxChange;
-
 	CombatFunc(caster, pos, area, params, CombatManaFunc, (void*)&var);
 }
 
