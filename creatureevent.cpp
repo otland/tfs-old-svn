@@ -97,25 +97,27 @@ CreatureEvent* CreatureEvents::getEventByName(const std::string& name, bool forc
 bool CreatureEvents::playerLogin(Player* player)
 {
 	//fire global event if is registered
+	bool result = true;
 	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 	{
-		if(it->second->getEventType() == CREATURE_EVENT_LOGIN && !it->second->executeLogin(player))
-			return false;
+		if(it->second->getEventType() == CREATURE_EVENT_LOGIN && !it->second->executeLogin(player) && result)
+			result = false;
 	}
 
-	return true;
+	return result;
 }
 
 bool CreatureEvents::playerLogout(Player* player, bool forceLogout)
 {
 	//fire global event if is registered
+	bool result = true;
 	for(CreatureEventList::iterator it = m_creatureEvents.begin(); it != m_creatureEvents.end(); ++it)
 	{
-		if(it->second->getEventType() == CREATURE_EVENT_LOGOUT && !it->second->executeLogout(player, forceLogout))
-			return forceLogout;
+		if(it->second->getEventType() == CREATURE_EVENT_LOGOUT && !it->second->executeLogout(player, forceLogout) && result)
+			result = false;
 	}
 
-	return true;
+	return forceLogout || result;
 }
 
 /////////////////////////////////////
@@ -424,7 +426,7 @@ uint32_t CreatureEvent::executeLogout(Player* player, bool forceLogout)
 			lua_pushnumber(L, env->addThing(player));
 			lua_pushboolean(L, forceLogout);
 
-			bool result = m_scriptInterface->callFunction(1);
+			bool result = m_scriptInterface->callFunction(2);
 			m_scriptInterface->releaseScriptEnv();
 			return result;
 		}
