@@ -2425,10 +2425,7 @@ void Player::notifyLogIn(Player* loginPlayer)
 
 	VIPListSet::iterator it = VIPList.find(loginPlayer->getGUID());
 	if(it != VIPList.end())
-	{
 		client->sendVIPLogIn(loginPlayer->getGUID());
-		client->sendTextMessage(MSG_STATUS_SMALL, (loginPlayer->getName() + " has logged in."));
-	}
 }
 
 void Player::notifyLogOut(Player* logoutPlayer)
@@ -2438,10 +2435,7 @@ void Player::notifyLogOut(Player* logoutPlayer)
 
 	VIPListSet::iterator it = VIPList.find(logoutPlayer->getGUID());
 	if(it != VIPList.end())
-	{
 		client->sendVIPLogOut(logoutPlayer->getGUID());
-		client->sendTextMessage(MSG_STATUS_SMALL, (logoutPlayer->getName() + " has logged out."));
-	}
 }
 
 bool Player::removeVIP(uint32_t _guid)
