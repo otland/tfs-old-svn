@@ -3485,7 +3485,7 @@ bool Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type, c
 	if(!player || player->isRemoved())
 		return false;
 
-	int32_t muteTime = 0;
+	uint32_t muteTime = 0;
 	bool muted = player->isMuted(channelId, type, muteTime);
 	if(muted)
 	{
@@ -3912,7 +3912,7 @@ void Game::checkCreatures()
 
 	std::vector<Creature*>::iterator it;
 	for(it = toAddCheckCreatureVector.begin(); it != toAddCheckCreatureVector.end(); ++it)
-		checkCreatureVectors[creature->checkVector].push_back(*it);
+		checkCreatureVectors[(*it)->checkVector].push_back(*it);
 
 	toAddCheckCreatureVector.clear();
 	std::vector<Creature*>& checkCreatureVector = checkCreatureVectors[checkCreatureLastIndex];
