@@ -532,10 +532,10 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 		if((result = db->storeQuery(query.str())))
 		{
 			player->guildName = result->getDataString("guildname");
-			player->guildLevel = result->getDataInt("level");
+			player->guildLevel = (GuildLevel_t)result->getDataInt("level");
 			player->guildId = result->getDataInt("guildid");
-			player->guildRank = result->getDataString("rank");
-			player->guildRankId = rankId;
+			player->rankName = result->getDataString("rank");
+			player->rankId = rankId;
 			player->guildNick = nick;
 
 			result->free();
