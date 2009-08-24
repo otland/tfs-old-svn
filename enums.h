@@ -39,6 +39,7 @@ enum PasswordType_t
 
 enum GuildLevel_t
 {
+	GUILDLEVEL_NONE = 0,
 	GUILDLEVEL_MEMBER = 1,
 	GUILDLEVEL_VICE = 2,
 	GUILDLEVEL_LEADER = 3
