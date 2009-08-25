@@ -71,6 +71,7 @@ Creature::Creature()
 	followCreature = NULL;
 	hasFollowPath = false;
 	removed = false;
+	dead = false;
 	eventWalk = 0;
 	forceUpdateFollowPath = false;
 	isMapLoaded = false;
@@ -657,7 +658,7 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 	}
 }
 
-bool Creature::onDeath(bool forced)
+bool Creature::onDeath()
 {
 	DeathList deathList = getKillers();
 	bool deny = false;
@@ -665,12 +666,15 @@ bool Creature::onDeath(bool forced)
 	CreatureEventList prepareDeathEvents = getCreatureEvents(CREATURE_EVENT_PREPAREDEATH);
 	for(CreatureEventList::iterator it = prepareDeathEvents.begin(); it != prepareDeathEvents.end(); ++it)
 	{
-		if(!(*it)->executePrepareDeath(this, deathList, forced) && !deny)
+		if(!(*it)->executePrepareDeath(this, deathList, dead) && !deny)
 			deny = true;
 	}
 
-	if(deny && !forced)
+	if(deny)
 		return false;
+
+	if(dead)
+		return true;
 
 	int32_t i = 0, size = deathList.size(), limit = g_config.getNumber(ConfigManager::DEATH_ASSISTS) + 1;
 	if(limit > 0 && size > limit)
@@ -724,6 +728,7 @@ bool Creature::onDeath(bool forced)
 	if(master)
 		master->removeSummon(this);
 
+	dead = true;
 	return true;
 }
 

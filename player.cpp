@@ -240,7 +240,7 @@ std::string Player::getDescription(int32_t lookDistance) const
 
 Item* Player::getInventoryItem(slots_t slot) const
 {
-	if(slot > SLOT_WHEREEVER && slot < SLOT_LAST)
+	if(slot >= SLOT_FIRST && slot <= SLOT_LAST)
 		return inventory[slot];
 
 	if(slot == SLOT_HAND)
@@ -265,7 +265,7 @@ Item* Player::getEquippedItem(slots_t slot) const
 			break;
 	}
 
-	return slot == item->getWieldPosition() ? item : NULL;
+	return item->getWieldPosition() == slot ? item : NULL;
 }
 
 void Player::setConditionSuppressions(uint32_t conditions, bool remove)
@@ -528,7 +528,7 @@ void Player::updateInventoryWeight()
 	if(hasFlag(PlayerFlag_HasInfiniteCapacity))
 		return;
 
-	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
+	for(int32_t i = SLOT_FIRST; i <= SLOT_LAST; ++i)
 	{
 		if(Item* item = getInventoryItem((slots_t)i))
 			inventoryWeight += item->getWeight();
@@ -814,7 +814,7 @@ void Player::dropLoot(Container* corpse)
 	}
 
 	uint32_t itemLoss = (uint32_t)std::floor((double)((loss + 5) * lossPercent[LOSS_ITEMS]) / 1000.);
-	for(uint8_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
+	for(uint8_t i = SLOT_FIRST; i <= SLOT_LAST; ++i)
 	{
 		if(Item* item = inventory[i])
 		{
@@ -1357,7 +1357,7 @@ void Player::onCreatureAppear(const Creature* creature)
 		return;
 
 	Item* item = NULL;
-	for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
+	for(int32_t slot = SLOT_FIRST; slot <= SLOT_LAST; ++slot)
 	{
 		if(!(item = getInventoryItem((slots_t)slot)))
 			continue;
@@ -2084,7 +2084,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 	if(damage > 0)
 	{
 		int32_t blocked = 0;
-		for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
+		for(int32_t slot = SLOT_FIRST; slot <= SLOT_LAST; ++slot)
 		{
 			if(!isItemAbilityEnabled((slots_t)slot))
 				continue;
@@ -2131,7 +2131,7 @@ uint32_t Player::getIP() const
 	return 0;
 }
 
-bool Player::onDeath(bool forced)
+bool Player::onDeath()
 {
 	Item* preventLoss = NULL;
 	Item* preventDrop = NULL;
@@ -2142,24 +2142,28 @@ bool Player::onDeath(bool forced)
 	}
 	else if(skull < SKULL_RED && g_game.getWorldType() != WORLD_TYPE_PVP_ENFORCED)
 	{
-		for(uint8_t i = SLOT_FIRST; ((skillLoss || lootDrop == LOOT_DROP_FULL) && i < SLOT_LAST); ++i)
+		for(uint8_t i = SLOT_FIRST; ((skillLoss || lootDrop == LOOT_DROP_FULL) && i <= SLOT_LAST); ++i)
 		{
-			if(Item* item = getInventoryItem((slots_t)i))
-			{
-				const ItemType& it = Item::items[item->getID()];
-				if(lootDrop == LOOT_DROP_FULL && it.abilities.preventDrop)
-				{
-					setDropLoot(LOOT_DROP_PREVENT);
-					preventDrop = item;
-				}
+			if(!isItemAbilityEnabled((slots_t)i))
+				continue;
 
-				if(skillLoss && !preventLoss && it.abilities.preventLoss)
-					preventLoss = item;
+			Item* item = getInventoryItem((slots_t)i);
+			if(!item)
+				continue;
+
+			const ItemType& it = Item::items[item->getID()];
+			if(lootDrop == LOOT_DROP_FULL && it.abilities.preventDrop)
+			{
+				setDropLoot(LOOT_DROP_PREVENT);
+				preventDrop = item;
 			}
+
+			if(skillLoss && !preventLoss && it.abilities.preventLoss)
+				preventLoss = item;
 		}
 	}
 
-	if(!Creature::onDeath(forced))
+	if(!Creature::onDeath())
 	{
 		if(preventDrop)
 			setDropLoot(LOOT_DROP_FULL);
@@ -2753,7 +2757,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 			return this;
 
 		//find a appropiate slot
-		for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
+		for(int32_t i = SLOT_FIRST; i <= SLOT_LAST; ++i)
 		{
 			if(!inventory[i] && __queryAdd(i, item, item->getItemCount(), 0) == RET_NOERROR)
 			{
@@ -2764,7 +2768,7 @@ Cylinder* Player::__queryDestination(int32_t& index, const Thing* thing, Item** 
 
 		//try containers
 		std::list<std::pair<Container*, int32_t> > deepList;
-		for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
+		for(int32_t i = SLOT_FIRST; i <= SLOT_LAST; ++i)
 		{
 			if(inventory[i] == tradeItem)
 				continue;
@@ -3009,7 +3013,7 @@ void Player::__removeThing(Thing* thing, uint32_t count)
 
 Thing* Player::__getThing(uint32_t index) const
 {
-	if(index >= SLOT_FIRST && index < SLOT_LAST)
+	if(index >= SLOT_FIRST && index <= SLOT_LAST)
 		return inventory[index];
 
 	return NULL;
@@ -3017,7 +3021,7 @@ Thing* Player::__getThing(uint32_t index) const
 
 int32_t Player::__getIndexOfThing(const Thing* thing) const
 {
-	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
+	for(int32_t i = SLOT_FIRST; i <= SLOT_LAST; ++i)
 	{
 		if(inventory[i] == thing)
 			return i;
@@ -3042,7 +3046,7 @@ uint32_t Player::__getItemTypeCount(uint16_t itemId, int32_t subType /*= -1*/, b
 	Container* container = NULL;
 
 	uint32_t count = 0;
-	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
+	for(int32_t i = SLOT_FIRST; i <= SLOT_LAST; ++i)
 	{
 		if(!(item = inventory[i]))
 			continue;
@@ -3069,7 +3073,7 @@ std::map<uint32_t, uint32_t>& Player::__getAllItemTypeCount(std::map<uint32_t,
 {
 	Item* item = NULL;
 	Container* container = NULL;
-	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
+	for(int32_t i = SLOT_FIRST; i <= SLOT_LAST; ++i)
 	{
 		if(!(item = inventory[i]))
 			continue;
@@ -3410,7 +3414,7 @@ void Player::updateItemsLight(bool internal /*=false*/)
 {
 	LightInfo maxLight;
 	LightInfo curLight;
-	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
+	for(int32_t i = SLOT_FIRST; i <= SLOT_LAST; ++i)
 	{
 		if(Item* item = getInventoryItem((slots_t)i))
 		{

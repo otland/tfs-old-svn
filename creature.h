@@ -43,10 +43,9 @@ enum slots_t
 	SLOT_FEET = 8,
 	SLOT_RING = 9,
 	SLOT_AMMO = 10,
-	SLOT_DEPOT = 11,
-	SLOT_HAND = 12,
+	SLOT_HAND = 11,
 	SLOT_TWO_HAND = SLOT_HAND,
-	SLOT_LAST = SLOT_DEPOT
+	SLOT_LAST = SLOT_AMMO
 };
 
 enum lootDrop_t
@@ -324,7 +323,7 @@ class Creature : public AutoID, virtual public Thing
 		virtual bool challengeCreature(Creature* creature) {return false;}
 		virtual bool convinceCreature(Creature* creature) {return false;}
 
-		virtual bool onDeath(bool forced);
+		virtual bool onDeath();
 		virtual double getGainedExperience(Creature* attacker) const {return getDamageRatio(attacker) * (double)getLostExperience();}
 		void addDamagePoints(Creature* attacker, int32_t damagePoints);
 		void addHealPoints(Creature* caster, int32_t healthPoints);
@@ -435,6 +434,7 @@ class Creature : public AutoID, virtual public Thing
 		Tile* _tile;
 		uint32_t id;
 		bool removed;
+		bool dead;
 		bool isMapLoaded;
 		bool isUpdatingPath;
 		bool checked;

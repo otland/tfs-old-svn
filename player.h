@@ -711,7 +711,7 @@ class Player : public Creature, public Cylinder
 		void setNextWalkTask(SchedulerTask* task);
 		void setNextActionTask(SchedulerTask* task);
 
-		virtual bool onDeath(bool forced);
+		virtual bool onDeath();
 		virtual Item* createCorpse(DeathList deathList);
 
 		virtual void dropCorpse(DeathList deathList);

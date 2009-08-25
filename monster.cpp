@@ -1099,16 +1099,14 @@ bool Monster::canWalkTo(Position pos, Direction dir)
 		0, this, 1, FLAG_PATHFINDING) == RET_NOERROR;
 }
 
-bool Monster::onDeath(bool forced)
+bool Monster::onDeath()
 {
 	if(!Creature::onDeath(forced))
 		return false;
 
-	destroySummons();
 	clearTargetList();
 	clearFriendList();
 
-	setAttackedCreature(NULL);
 	setIdle(true);
 	if(raid)
 	{
@@ -1116,6 +1114,7 @@ bool Monster::onDeath(bool forced)
 		raid = NULL;
 	}
 
+	setAttackedCreature(NULL);
 	g_game.removeCreature(this, false);
 	return true;
 }

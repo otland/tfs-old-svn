@@ -916,11 +916,11 @@ bool Game::removeCreature(Creature* creature, bool isLogout /*= true*/)
 		(*it)->onCreatureDisappear(creature, isLogout);
 
 	creature->getParent()->postRemoveNotification(NULL, creature, NULL, oldIndex, true);
-	removeCreatureCheck(creature);
+	listCreature.removeList(creature->getID());
 	creature->onRemovedCreature();
 
-	listCreature.removeList(creature->getID());
 	FreeThing(creature);
+	removeCreatureCheck(creature);
 	return true;
 }
 

@@ -150,7 +150,7 @@ class Monster : public Creature
 		void clearTargetList();
 		void clearFriendList();
 
-		virtual bool onDeath(bool forced);
+		virtual bool onDeath();
 		virtual Item* createCorpse(DeathList deathList);
 		bool despawn();
 		bool inDespawnRange(const Position& pos);
