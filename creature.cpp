@@ -660,6 +660,9 @@ void Creature::onCreatureMove(const Creature* creature, const Tile* newTile, con
 
 bool Creature::onDeath()
 {
+	if(dead)
+		return true;
+
 	DeathList deathList = getKillers();
 	bool deny = false;
 
@@ -672,9 +675,6 @@ bool Creature::onDeath()
 
 	if(deny)
 		return false;
-
-	if(dead)
-		return true;
 
 	int32_t i = 0, size = deathList.size(), limit = g_config.getNumber(ConfigManager::DEATH_ASSISTS) + 1;
 	if(limit > 0 && size > limit)
@@ -744,7 +744,7 @@ void Creature::dropCorpse(DeathList deathList)
 			deny = true;
 	}
 
-	if(deny || !corpse)
+	if(!corpse || deny)
 		return;
 
 	Tile* tile = getTile();
