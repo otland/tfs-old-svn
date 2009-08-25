@@ -3151,9 +3151,15 @@ void Player::postRemoveNotification(Creature* actor, Thing* thing, const Cylinde
 		{
 			assert(item->getContainer() != NULL);
 			requireListUpdate = item->getContainer()->getHoldingPlayer() != this;
+			if(!requireListUpdate && thing->getParent() == this)
+				requireListUpdate = !requireListUpdate;
 		}
 		else
+		{
 			requireListUpdate = newParent != this;
+			if(!requireListUpdate && thing->getParent() != this)
+				requireListUpdate = !requireListUpdate;
+		}
 
 		updateInventoryWeight();
 		updateItemsLight();
