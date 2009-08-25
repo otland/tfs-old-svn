@@ -175,19 +175,23 @@ if(Modules == nil) then
 			return false
 		end
 
+		local storage, pzLocked = parameters.storageValue or (EMPTY_STORAGE + 1), parameters.allowLocked or false
 		if(parameters.premium and not isPlayerPremiumCallback(cid)) then
 			npcHandler:say('I can only allow premium players to travel with me.', cid)
 		elseif(parameters.level ~= nil and getPlayerLevel(cid) < parameters.level) then
 			npcHandler:say('You must reach level ' .. parameters.level .. ' before I can let you go there.', cid)
-		elseif(parameters.storage ~= nil and getPlayerStorageValue(cid, parameters.storage) <= 0) then
-			npcHandler:say(parameters.storageInfo or 'You may not travel here.', cid)
+		elseif(parameters.storageId ~= nil and getPlayerStorageValue(cid, parameters.storageId) < storage) then
+			npcHandler:say(parameters.storageInfo or 'You may not travel there!', cid)
+		elseif(not pzLocked and isPlayerPzLocked(cid)) then
+			npcHandler:say('Get out of there with this blood!', cid)
 		elseif(not doPlayerRemoveMoney(cid, parameters.cost)) then
-			npcHandler:say('You do not have enough money!', cid)
-		elseif(isPlayerPzLocked(cid)) then
-			npcHandler:say('Get out of there with this blood.', cid)
+			npcHandler:say('You do not have enough money.', cid)
 		else
-			doTeleportThing(cid, parameters.destination, 0)
-			doSendMagicEffect(parameters.destination, 10)
+			npcHandler:say('It was a pleasure doing business with you.', cid)
+			npcHandler:releaseFocus(cid)
+
+			doTeleportThing(cid, parameters.destination, false)
+			doSendMagicEffect(parameters.destination, CONST_ME_TELEPORT)
 		end
 
 		npcHandler:resetNpc()
@@ -362,7 +366,7 @@ if(Modules == nil) then
 
 	function TravelModule:parseDestinations(data)
 		for destination in string.gmatch(data, '[^;]+') do
-			local i, name, pos, cost, premium = 1, nil, {x = nil, y = nil, z = nil}, nil, false
+			local i, name, pos, cost, premium, level, storage = 1, nil, {x = nil, y = nil, z = nil}, nil, false
 			for tmp in string.gmatch(destination, '[^,]+') do
 				if(i == 1) then
 					name = tmp
@@ -437,10 +441,10 @@ if(Modules == nil) then
 					doTeleportThing(cid, parent.destination, true)
 					doSendMagicEffect(parent.destination, CONST_ME_TELEPORT)
 				else
-					npcHandler:say('You do not have enough money!', cid)
+					npcHandler:say('You do not have enough money.', cid)
 				end
 			else
-				npcHandler:say('Get out of there with this blood.', cid)
+				npcHandler:say('Get out of there with this blood!', cid)
 			end
 		else
 			npcHandler:say('I can only allow premium players to travel there.', cid)
