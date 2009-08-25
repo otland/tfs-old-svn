@@ -2173,7 +2173,7 @@ void ProtocolGame::sendAddCreature(const Creature* creature, const Position& pos
 	}
 
 	AddMapDescription(msg, pos);
-	for(int32_t i = SLOT_FIRST; i <= SLOT_LAST; ++i)
+	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
 		AddInventoryItem(msg, (slots_t)i, player->getInventoryItem((slots_t)i));
 
 	AddPlayerStats(msg);

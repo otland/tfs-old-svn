@@ -894,7 +894,7 @@ void Combat::doCombatDispel(Creature* caster, const Position& pos, const AreaCom
 void Combat::doCombatDispel(Creature* caster, Creature* target, const CombatParams& params)
 {
 	if(params.isAggressive && (caster == target || Combat::canDoCombat(caster, target) != RET_NOERROR))
-		continue;
+		return;
 
 	CombatDispelFunc(caster, target, params, NULL);
 	if(params.targetCallback)
@@ -911,7 +911,7 @@ void Combat::doCombatDispel(Creature* caster, Creature* target, const CombatPara
 void Combat::doCombatDefault(Creature* caster, Creature* target, const CombatParams& params)
 {
 	if(params.isAggressive && (caster == target || Combat::canDoCombat(caster, target) != RET_NOERROR))
-		continue;
+		return;
 
 	const SpectatorVec& list = g_game.getSpectators(target->getTile()->getPosition());
 	CombatNullFunc(caster, target, params, NULL);
