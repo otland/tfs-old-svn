@@ -4737,6 +4737,7 @@ bool Player::setGuildLevel(GuildLevel_t newLevel, uint32_t rank/* = 0*/)
 	guildLevel = newLevel;
 	rankName = name;
 	rankId = rank;
+	return true;
 }
 
 void Player::setGroupId(int32_t newId)
