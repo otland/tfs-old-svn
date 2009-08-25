@@ -8,9 +8,24 @@ function doPlayerGiveItem(cid, itemid, amount, subType)
 	else
 		for i = 1, amount do
 			item = doCreateItemEx(itemid, subType)
-			if(doPlayerAddItemEx(cid, item, true) ~= RETURNVALUE_NOERROR) then
+		if(doPlayerAddItemEx(cid, item, true) ~= RETURNVALUE_NOERROR) then
 				return false
 			end
+		end
+	end
+
+	return true
+end
+
+function doPlayerGiveItemContainer(cid, containerid, itemid, amount, subType)
+	for i = 1, amount do
+		local container = doCreateItemEx(containerid, 1)
+		for x = 1, getContainerCapById(containerid) do
+			doAddContainerItem(container, itemid, subType)
+		end
+
+		if(doPlayerAddItemEx(cid, container, true) ~= RETURNVALUE_NOERROR) then
+			return false
 		end
 	end
 
@@ -26,22 +41,7 @@ function doPlayerBuyItem(cid, itemid, count, cost, charges)
 end
 
 function doPlayerBuyItemContainer(cid, containerid, itemid, count, cost, charges)
-	if(not doPlayerRemoveMoney(cid, cost)) then
-		return false
-	end
-
-	for i = 1, count do
-		local container = doCreateItemEx(containerid, 1)
-		for x = 1, getContainerCapById(containerid) do
-			doAddContainerItem(container, itemid, charges)
-		end
-
-		if(doPlayerAddItemEx(cid, container, true) ~= RETURNVALUE_NOERROR) then
-			return false
-		end
-	end
-
-	return true
+	return doPlayerRemoveMoney(cid, cost) and doPlayerGiveItemContainer(cid, containerid, itemid, count, charges)
 end
 
 function doPlayerSellItem(cid, itemid, count, cost)
@@ -429,7 +429,8 @@ function doPlayerBroadcastMessage(cid, text, class, checkFlag, ghost)
 end
 
 function getBooleanFromString(str)
-	return (str:lower() == "yes" or str:lower() == "true" or (tonumber(str) and tonumber(str) > 0))
+	local str = string.lower(tostring(str))
+	return (str == "yes" or str == "true" or (tonumber(str) and tonumber(str) > 0))
 end
 
 function doCopyItem(item, attributes)

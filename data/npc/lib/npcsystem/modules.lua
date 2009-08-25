@@ -27,8 +27,15 @@ if(Modules == nil) then
 	SHOPMODULE_MODE_TRADE = 2 -- Trade window system introduced in Tibia 8.2
 	SHOPMODULE_MODE_BOTH = 3 -- Both working at one time
 
-	-- Used shop mode
+	-- Used in shop mode
 	SHOPMODULE_MODE = SHOPMODULE_MODE_BOTH
+
+	-- Constants used for outfit giving mode
+	OUTFITMODULE_FUNCTION_OLD = doPlayerAddOutfit -- Gives outfit through look type
+	OUTFITMODULE_FUNCTION_NEW = doPlayerAddOutfitId -- Gives outfit through outfit id
+
+	-- Used in outfit module
+	OUTFITMODULE_FUNCTION = OUTFITMODULE_FUNCTION_NEW
 
 	Modules = {
 		parseableModules = {}
@@ -335,6 +342,7 @@ if(Modules == nil) then
 		self.npcHandler = handler
 		self.yesNode = KeywordNode:new(SHOP_YESWORD, TravelModule.onConfirm, {module = self})
 		self.noNode = KeywordNode:new(SHOP_NOWORD, TravelModule.onDecline, {module = self})
+
 		self.destinations = {}
 		return true
 	end
@@ -354,58 +362,51 @@ if(Modules == nil) then
 
 	function TravelModule:parseDestinations(data)
 		for destination in string.gmatch(data, '[^;]+') do
-			local i = 1
-
-			local name = nil
-			local x = nil
-			local y = nil
-			local z = nil
-			local cost = nil
-			local premium = false
-
-			for temp in string.gmatch(destination, '[^,]+') do
+			local i, name, pos, cost, premium = 1, nil, {x = nil, y = nil, z = nil}, nil, false
+			for tmp in string.gmatch(destination, '[^,]+') do
 				if(i == 1) then
-					name = temp
+					name = tmp
 				elseif(i == 2) then
-					x = tonumber(temp)
+					pos.x = tonumber(tmp)
 				elseif(i == 3) then
-					y = tonumber(temp)
+					pos.y = tonumber(tmp)
 				elseif(i == 4) then
-					z = tonumber(temp)
+					pos.z = tonumber(tmp)
 				elseif(i == 5) then
-					cost = tonumber(temp)
+					cost = tonumber(tmp)
 				elseif(i == 6) then
-					premium = temp == 'true'
+					premium = getBooleanFromString(tostring(tmp))
 				else
-					print('[Warning] NpcSystem:', 'Unknown parameter found in travel destination parameter.', temp, destination)
+					print('[Warning] NpcSystem:', 'Unknown parameter found in travel destination parameter.', tmp, destination)
 				end
+
 				i = i + 1
 			end
 
-			if(name ~= nil and x ~= nil and y ~= nil and z ~= nil and cost ~= nil) then
-				self:addDestination(name, {x=x, y=y, z=z}, cost, premium)
+			if(name ~= nil and pos.x ~= nil and pos.y ~= nil and pos.z ~= nil and cost ~= nil) then
+				self:addDestination(name, pos, cost, premium)
 			else
-				print('[Warning] NpcSystem:', 'Parameter(s) missing for travel destination:', name, x, y, z, cost, premium)
+				print('[Warning] NpcSystem:', 'Parameter(s) missing for travel destination:', name, pos, cost, premium)
 			end
 		end
 	end
 
 	function TravelModule:addDestination(name, position, price, premium)
 		table.insert(self.destinations, name)
-
 		local parameters = {
 			cost = price,
 			destination = position,
 			premium = premium,
 			module = self
 		}
-		local keywords = {}
+
+		local keywords, bringwords = {}, {}
 		table.insert(keywords, name)
 
-		local keywords2 = {}
-		table.insert(keywords2, 'bring me to ' .. name)
+		table.insert(bringwords, 'bring me to ' .. name)
+		self.npcHandler.keywordHandler:addKeyword(bringwords, TravelModule.bring, parameters)
+
 		local node = self.npcHandler.keywordHandler:addKeyword(keywords, TravelModule.travel, parameters)
-		self.npcHandler.keywordHandler:addKeyword(keywords2, TravelModule.bringMeTo, parameters)
 		node:addChildKeywordNode(self.yesNode)
 		node:addChildKeywordNode(self.noNode)
 	end
@@ -416,15 +417,8 @@ if(Modules == nil) then
 			return false
 		end
 
-		local npcHandler = module.npcHandler
-
-		local cost = parameters.cost
-		local destination = parameters.destination
-		local premium = parameters.premium
-
-		module.npcHandler:say('Do you want to travel to ' .. keywords[1] .. ' for ' .. cost .. ' gold coins?', cid)
+		module.npcHandler:say('Do you want to travel to ' .. keywords[1] .. ' for ' .. parameters.cost .. ' gold coins?', cid)
 		return true
-
 	end
 
 	function TravelModule.onConfirm(cid, message, keywords, parameters, node)
@@ -433,23 +427,20 @@ if(Modules == nil) then
 			return false
 		end
 
-		local npcHandler = module.npcHandler
+		local parent = node:getParent():getParameters()
+		if(isPlayerPremiumCallback(cid) or not parent.premium) then
+			if(not isPlayerPzLocked(cid)) then
+				if(doPlayerRemoveMoney(cid, parent.cost)) then
+					module.npcHandler:say('It was a pleasure doing business with you.', cid)
+					module.npcHandler:releaseFocus(cid)
 
-		local parentParameters = node:getParent():getParameters()
-		local cost = parentParameters.cost
-		local destination = parentParameters.destination
-		local premium = parentParameters.premium
-
-		if(isPlayerPremiumCallback(cid) or parameters.premium ~= true) then
-			if(not doPlayerRemoveMoney(cid, cost)) then
-				npcHandler:say('You do not have enough money!', cid)
-			elseif(isPlayerPzLocked(cid)) then
-				npcHandler:say('Get out of there with this blood.', cid)
+					doTeleportThing(cid, parent.destination, true)
+					doSendMagicEffect(parent.destination, CONST_ME_TELEPORT)
+				else
+					npcHandler:say('You do not have enough money!', cid)
+				end
 			else
-				npcHandler:say('It was a pleasure doing business with you.', cid)
-				npcHandler:releaseFocus(cid)
-				doTeleportThing(cid, destination, 0)
-				doSendMagicEffect(destination, 10)
+				npcHandler:say('Get out of there with this blood.', cid)
 			end
 		else
 			npcHandler:say('I can only allow premium players to travel there.', cid)
@@ -465,32 +456,26 @@ if(Modules == nil) then
 		if(not module.npcHandler:isFocused(cid)) then
 			return false
 		end
-		local parentParameters = node:getParent():getParameters()
-		local parseInfo = {
-			[TAG_PLAYERNAME] = getCreatureName(cid),
-		}
-		local msg = module.npcHandler:parseMessage(module.npcHandler:getMessage(MESSAGE_DECLINE), parseInfo)
-		module.npcHandler:say(msg, cid)
+
+		module.npcHandler:say(module.npcHandler:parseMessage(module.npcHandler:getMessage(MESSAGE_DECLINE), {[TAG_PLAYERNAME] = getCreatureName(cid)}), cid)
 		module.npcHandler:resetNpc()
 		return true
 	end
 
-	function TravelModule.bringMeTo(cid, message, keywords, parameters, node)
+	function TravelModule.bring(cid, message, keywords, parameters, node)
 		local module = parameters.module
 		if(not module.npcHandler:isFocused(cid)) then
 			return false
 		end
 
-		local cost = parameters.cost
-		local destination = parameters.destination
-		local premium = parameters.premium
-
-		if(isPlayerPremiumCallback(cid) or parameters.premium ~= true) then
-			if(doPlayerRemoveMoney(cid, cost)) then
-				doTeleportThing(cid, destination, 0)
-				doSendMagicEffect(destination, 10)
+		if(isPlayerPremiumCallback(cid) or not parameters.premium) then
+			if(not isPlayerPzLocked(cid) and doPlayerRemoveMoney(cid, parameters.cost)) then
+				doTeleportThing(cid, parameters.destination, false)
+				doSendMagicEffect(parameters.destination, CONST_ME_TELEPORT)
 			end
 		end
+
+		npcHandler:releaseFocus(cid)
 		return true
 	end
 
@@ -500,22 +485,235 @@ if(Modules == nil) then
 			return false
 		end
 
-		local msg = 'I can bring you to '
-		--local i = 1
-		local maxn = table.maxn(module.destinations)
-		for i, destination in pairs(module.destinations) do
-			msg = msg .. "{" .. destination .. "}"
-			if(i == maxn -1) then
-				msg = msg .. ' and '
-			elseif(i == maxn) then
-				msg = msg .. '.'
+		local msg = nil
+		for _, destination in ipairs(module.destinations) do
+			if(msg ~= nil) then
+				msg = msg .. ", "
 			else
-				msg = msg .. ', '
+				msg = ""
 			end
-			i = i + 1
+
+			msg = msg .. "{" .. destination .. "}"
 		end
 
-		module.npcHandler:say(msg, cid)
+		module.npcHandler:say(msg .. ".", cid)
+		module.npcHandler:resetNpc()
+		return true
+	end
+
+	OutfitModule = {
+		npcHandler = nil,
+		outfits = nil,
+		yesNode = nil,
+		noNode = nil,
+	}
+	-- Add it to the parseable module list.
+	Modules.parseableModules['module_outfit'] = OutfitModule
+
+	function OutfitModule:new()
+		local obj = {}
+		setmetatable(obj, self)
+		self.__index = self
+		return obj
+	end
+
+	function OutfitModule:init(handler)
+		self.npcHandler = handler
+		self.yesNode = KeywordNode:new(SHOP_YESWORD, OutfitModule.onConfirm, {module = self})
+		self.noNode = KeywordNode:new(SHOP_NOWORD, OutfitModule.onDecline, {module = self})
+
+		self.outfits = {}
+		return true
+	end
+
+	-- Parses all known parameters.
+	function OutfitModule:parseParameters()
+		local ret = NpcSystem.getParameter('outfits')
+		if(ret ~= nil) then
+			self:parseKeywords(ret)
+			self.npcHandler.keywordHandler:addKeyword({'outfit'}, OutfitModule.listOutfits, {module = self})
+			self.npcHandler.keywordHandler:addKeyword({'addon'}, OutfitModule.listOutfits, {module = self})
+		end
+	end
+
+	function OutfitModule:parseKeywords(data)
+		local n = 1
+		for outfits in string.gmatch(data, '[^;]+') do
+			local i, keywords = 1, {}
+			for tmp in string.gmatch(outfits, '[^,]+') do
+				table.insert(keywords, tmp)
+				i = i + 1
+			end
+
+			if(i ~= 1) then
+				local reply = NpcSystem.getParameter('outfit' .. n)
+				if(reply ~= nil) then
+					self:parseList(keywords, ret)
+				else
+					print('[Warning] NpcSystem:', 'Missing \'outfit' .. n .. '\' parameter, skipping...')
+				end
+			else
+				print('[Warning] NpcSystem:', 'No keywords found for outfit set #' .. n .. ', skipping...')
+			end
+
+			n = n + 1
+		end
+	end
+
+	function OutfitModule:parseList(keywords, data)
+		local outfit, items = nil, {}
+		for list in string.gmatch(data, '[^;]+') do
+			local a, b, c, d, e, f = nil, nil, nil, nil, nil, 1
+			for tmp in string.gmatch(list, '[^,]+') do
+				local warn = nil
+				if(f == 1) then
+					a = tonumber(tmp)
+				elseif(f == 2) then
+					b = tonumber(tmp)
+				elseif(f == 3) then
+					c = tmp
+				elseif(f == 4) then
+					d = tmp
+				elseif(outfit == nil and f == 5) then
+					e = tonumber(tmp)
+				else
+					print('[Warning] NpcSystem:', 'Unknown parameter found in outfit list.', tmp, list)
+				end
+
+				f = f + 1
+			end
+
+			if(outfit == nil) then
+				outfit = {a, b, getBooleanFromString(c), d, e}
+			elseif(a ~= nil and b ~= nil and c ~= nil) then
+				items[a] = {b, (d ~= nil and d or -1), c}
+			else
+				print('[Warning] NpcSystem:', 'Missing parameter(s) for outfit items.', a, b, c, d, e, f)
+			end
+		end
+
+		local tmp = true
+		for i = 1, 4 do
+			if(outfit[i] == nil) then
+				tmp = false
+				break
+			end
+		end
+
+		if(tmp and table.maxn(items) > 1) then
+			self:addOutfit(keywords, outfit, items)
+		else
+			print('[Warning] NpcSystem:', 'Invalid outfit, addon or empty items pool for outfit.', data)
+		end
+	end
+
+	function OutfitModule:addOutfit(keywords, outfit, items)
+		table.insert(self.outfits, keywords[1])
+		local parameters = {
+			outfit = outfit[1],
+			addon = outfit[2],
+			premium = outfit[3],
+			storageId = outfit[4],
+			storageValue = outfit[5],
+			requirement = items,
+			module = self
+		}
+
+		local node = self.npcHandler.keywordHandler:addKeyword(keywords, OutfitModule.obtain, parameters)
+		node:addChildKeywordNode(self.yesNode)
+		node:addChildKeywordNode(self.noNode)
+	end
+
+	function OutfitModule.obtain(cid, message, keywords, parameters, node)
+		local module = parameters.module
+		if(not module.npcHandler:isFocused(cid)) then
+			return false
+		end
+
+		local items = nil
+		for k, v in pairs(parameters.requirement) do
+			if(items ~= nil) then
+				items = items .. ", "
+			else
+				items = ""
+			end
+
+			items = items .. v[1] .. ' ' .. v[3]
+		end
+	
+		module.npcHandler:say('Do you want ' .. keywords[1] .. ' ' .. (addon ~= 0 and "addon" or "outfit") .. ' for ' .. items .. '?', cid)
+		return true
+
+	end
+
+	function OutfitModule.onConfirm(cid, message, keywords, parameters, node)
+		local module = parameters.module
+		if(not module.npcHandler:isFocused(cid)) then
+			return false
+		end
+
+		local parent = node:getParent():getParameters()
+		if(isPlayerPremiumCallback(cid) or not parent.premium) then
+			local storage, data = parent.storageValue or (STORAGE_EMPTY + 1), getPlayerStorageValue(cid, parent.storageId)
+			if(data < storage) then
+				local found = true
+				for k, v in pairs(parameters.requierment) do
+					if(getPlayerItemCount(cid, k, v[2]) < v[1]) then
+						found = false
+						break
+					end
+				end
+
+				if(found) then
+					for k, v in pairs(parameters.requierment) do
+						doPlayerRemoveItem(cid, k, v[1], v[2])
+					end
+
+					module.npcHandler:say('It was a pleasure to trade with you.', cid)
+					OUTFITMODULE_FUNCTION(cid, parent.outfit, parent.addon)
+					doPlayerSetStorageValue(cid, parent.storageId, storage)
+				end
+			else
+				module.npcHandler:say('Sorry, but you alrady have this outfit!', cid)
+			end
+		else
+			module.npcHandler:say('Sorry, I trade outfits only to premium players!', cid)
+		end
+
+		module.npcHandler:resetNpc()
+		return true
+	end
+
+	-- onDecline keyword callback function. Generally called when the player sais 'no' after wanting to buy an item.
+	function OutfitModule.onDecline(cid, message, keywords, parameters, node)
+		local module = parameters.module
+		if(not module.npcHandler:isFocused(cid)) then
+			return false
+		end
+
+		module.npcHandler:say(module.npcHandler:parseMessage(module.npcHandler:getMessage(MESSAGE_DECLINE), {[TAG_PLAYERNAME] = getCreatureName(cid)}), cid)
+		module.npcHandler:resetNpc()
+		return true
+	end
+
+	function OutfitModule.listOutfits(cid, message, keywords, parameters, node)
+		local module = parameters.module
+		if(not module.npcHandler:isFocused(cid)) then
+			return false
+		end
+
+		local msg = nil
+		for _, outfit in ipairs(module.outfits) do
+			if(msg ~= nil) then
+				msg = msg .. ", "
+			else
+				msg = "I can trade to you "
+			end
+
+			msg = msg .. "{" .. outfit .. "}"
+		end
+
+		module.npcHandler:say(msg .. ".", cid)
 		module.npcHandler:resetNpc()
 		return true
 	end
