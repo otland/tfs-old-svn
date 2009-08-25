@@ -681,7 +681,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	//load vip
 	query.str("");
 	if(!g_config.getBool(ConfigManager::VIPLIST_PER_PLAYER))
-		query << "SELECT `player_id` AS `vip` FROM `account_viplist` WHERE `account_id` = " << acc.number;
+		query << "SELECT `t`.`player_id` AS `vip` FROM `account_viplist` t LEFT JOIN `players` c ON `t`.`player_id` = `c`.`id` WHERE `t`.`account_id` = " << acc.number << " AND `c`.`world_id` = " << g_config.getNumber(ConfigManager::WORLD_ID);
 	else
 		query << "SELECT `vip_id` AS `vip` FROM `player_viplist` WHERE `player_id` = " << player->getGUID();
 
@@ -979,7 +979,7 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	if(!g_config.getBool(ConfigManager::VIPLIST_PER_PLAYER))
 	{
 		query_insert.setQuery("INSERT INTO `account_viplist` (`account_id`, `player_id`) VALUES ");
-		key = player->getAccountId();
+		key = player->getAccount();
 	}
 	else
 		query_insert.setQuery("INSERT INTO `player_viplist` (`player_id`, `vip_id`) VALUES ");

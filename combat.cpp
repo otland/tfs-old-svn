@@ -433,6 +433,10 @@ bool Combat::setParam(CombatParam_t param, uint32_t value)
 			params.targetPlayersOrSummons = (value != 0);
 			return true;
 
+		case COMBATPARAM_DIFFERENTAREADAMAGE:
+			params.differentAreaDamage = (value != 0);
+			return true;
+
 		case COMBATPARAM_CREATEITEM:
 			params.itemId = value;
 			return true;
@@ -707,7 +711,8 @@ void Combat::CombatFunc(Creature* caster, const Position& pos, const AreaCombat*
 	else
 		getCombatArea(pos, pos, area, tileList);
 
-	if(Combat2Var* var = (Combat2Var*)data)
+	Combat2Var* var = (Combat2Var*)data;
+	if(var && !params.differentAreaDamage)
 		var->change = random_range(var->minChange, var->maxChange, DISTRO_NORMAL);
 
 	uint32_t maxX = 0, maxY = 0, diff;
