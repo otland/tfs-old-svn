@@ -669,7 +669,7 @@ bool Creature::onDeath()
 	CreatureEventList prepareDeathEvents = getCreatureEvents(CREATURE_EVENT_PREPAREDEATH);
 	for(CreatureEventList::iterator it = prepareDeathEvents.begin(); it != prepareDeathEvents.end(); ++it)
 	{
-		if(!(*it)->executePrepareDeath(this, deathList, dead) && !deny)
+		if(!(*it)->executePrepareDeath(this, deathList) && !deny)
 			deny = true;
 	}
 

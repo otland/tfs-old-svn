@@ -309,7 +309,7 @@ std::string CreatureEvent::getScriptEventParams() const
 		case CREATURE_EVENT_DEATH:
 			return "cid, corpse, deathList";
 		case CREATURE_EVENT_PREPAREDEATH:
-			return "cid, deathList, forced";
+			return "cid, deathList";
 		case CREATURE_EVENT_NONE:
 		default:
 			break;
@@ -1450,9 +1450,9 @@ uint32_t CreatureEvent::executeDeath(Creature* creature, Item* corpse, DeathList
 	}
 }
 
-uint32_t CreatureEvent::executePrepareDeath(Creature* creature, DeathList deathList, bool forced)
+uint32_t CreatureEvent::executePrepareDeath(Creature* creature, DeathList deathList)
 {
-	//onPrepareDeath(cid, deathList, forced)
+	//onPrepareDeath(cid, deathList)
 	if(m_scriptInterface->reserveScriptEnv())
 	{
 		ScriptEnviroment* env = m_scriptInterface->getScriptEnv();
@@ -1473,8 +1473,6 @@ uint32_t CreatureEvent::executePrepareDeath(Creature* creature, DeathList deathL
 
 				scriptstream << ")" << std::endl;
 			}
-
-			scriptstream << "local forced = " << (forced ? "true" : "false") << std::endl;
 
 			scriptstream << m_scriptData;
 			bool result = true;
@@ -1516,9 +1514,7 @@ uint32_t CreatureEvent::executePrepareDeath(Creature* creature, DeathList deathL
 				lua_settable(L, -3);
 			}
 
-			lua_pushboolean(L, forced);
-
-			bool result = m_scriptInterface->callFunction(3);
+			bool result = m_scriptInterface->callFunction(2);
 			m_scriptInterface->releaseScriptEnv();
 
 			return result;
