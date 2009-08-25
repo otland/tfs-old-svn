@@ -259,6 +259,7 @@ class ConfigManager
 			PVPZONE_ADDMANASPENT,
 			USE_BLACK_SKULL,
 			ALLOW_FIGHTBACK,
+			VIPLIST_PER_PLAYER,
 			LAST_BOOL_CONFIG /* this must be the last one */
 		};
 

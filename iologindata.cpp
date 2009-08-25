@@ -369,7 +369,7 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 {
 	Database* db = Database::getInstance();
 	DBQuery query;
-	query << "SELECT `id`, `account_id`, `group_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, ";
+	query << "SELECT `id`, `account_id`, `group_id`, `world_id`, `sex`, `vocation`, `experience`, `level`, `maglevel`, ";
 	query << "`health`, `healthmax`, `blessings`, `mana`, `manamax`, `manaspent`, `soul`, `lookbody`, `lookfeet`, ";
 	query << "`lookhead`, `looklegs`, `looktype`, `lookaddons`, `posx`, `posy`, `posz`, `cap`, `lastlogin`, ";
 	query << "`lastlogout`, `lastip`, `conditions`, `skull`, `skulltime`, `guildnick`, `rank_id`, `town_id`, ";
@@ -517,8 +517,9 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 	player->loginPosition = Position(result->getDataInt("posx"), result->getDataInt("posy"), result->getDataInt("posz"));
 	player->lastLoginSaved = result->getDataLong("lastlogin");
 	player->lastLogout = result->getDataLong("lastlogout");
+
 	Position loginPos = player->loginPosition;
-	if(loginPos.x == 0 && loginPos.y == 0 && loginPos.z == 0)
+	if(!loginPos.x || !loginPos.y)
 		player->loginPosition = player->masterPos;
 
 	const uint32_t rankId = result->getDataInt("rank_id");
@@ -679,15 +680,19 @@ bool IOLoginData::loadPlayer(Player* player, const std::string& name, bool preLo
 
 	//load vip
 	query.str("");
-	query << "SELECT `vip_id` FROM `player_viplist` WHERE `player_id` = " << player->getGUID();
+	if(!g_config.getBool(ConfigManager::VIPLIST_PER_PLAYER))
+		query << "SELECT `player_id` AS `vip` FROM `account_viplist` WHERE `account_id` = " << acc.number;
+	else
+		query << "SELECT `vip_id` AS `vip` FROM `player_viplist` WHERE `player_id` = " << player->getGUID();
+
 	if((result = db->storeQuery(query.str())))
 	{
+		std::string dummy;
 		do
 		{
-			uint32_t vid = result->getDataInt("vip_id");
-			std::string vname;
+			uint32_t vid = result->getDataInt("vip");
 			if(storeNameByGuid(vid))
-				player->addVIP(vid, vname, false, true);
+				player->addVIP(vid, dummy, false, true);
 		}
 		while(result->next());
 		result->free();
@@ -970,15 +975,23 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 	if(!db->executeQuery(query.str()))
 		return false;
 
-	query_insert.setQuery("INSERT INTO `player_viplist` (`player_id`, `vip_id`) VALUES ");
+	uint32_t key = player->getGUID();
+	if(!g_config.getBool(ConfigManager::VIPLIST_PER_PLAYER))
+	{
+		query_insert.setQuery("INSERT INTO `account_viplist` (`account_id`, `player_id`) VALUES ");
+		key = player->getAccountId();
+	}
+	else
+		query_insert.setQuery("INSERT INTO `player_viplist` (`player_id`, `vip_id`) VALUES ");
+
 	for(VIPListSet::iterator it = player->VIPList.begin(); it != player->VIPList.end(); it++)
 	{
-		if(playerExists(*it, false, false))
-		{
-			sprintf(buffer, "%d, %d", player->getGUID(), *it);
-			if(!query_insert.addRow(buffer))
-				return false;
-		}
+		if(!playerExists(*it, false, false))
+			continue;
+
+		sprintf(buffer, "%d, %d", key, *it);
+		if(!query_insert.addRow(buffer))
+			return false;
 	}
 
 	if(!query_insert.execute())

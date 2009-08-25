@@ -200,6 +200,7 @@
 	storePlayerDirection = "no"
 	monsterLootMessage = 3
 	monsterLootMessageType = 25
+	separateViplistPerCharacter = "no"
 
 	-- Ghost mode
 	ghostModeInvisibleEffect = "no"

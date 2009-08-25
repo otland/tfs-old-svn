@@ -4,7 +4,7 @@ CREATE TABLE "server_config" (
 	UNIQUE ("config")
 );
 
-INSERT INTO "server_config" VALUES ('db_version', 21);
+INSERT INTO "server_config" VALUES ('db_version', 22);
 
 CREATE TABLE "server_motd" (
 	"id" INTEGER NOT NULL,
@@ -48,6 +48,14 @@ CREATE TABLE "accounts" (
 	"warnings" INTEGER NOT NULL DEFAULT 0,
 	"group_id" INTEGER NOT NULL DEFAULT 1,
 	UNIQUE ("name")
+);
+
+CREATE TABLE "account_viplist" (
+	"account_id" INTEGER NOT NULL,
+	"player_id" INTEGER NOT NULL,
+	UNIQUE ("account_id", "player_id"),
+	FOREIGN KEY "account_id" REFERENCES "accounts" ("id"),
+	FOREIGN KEY "player_id" REFERENCES "players" ("id")
 );
 
 INSERT INTO "accounts" VALUES (1, '1', '1', 65535, 0, '', '0', 0, 0, 1);
@@ -216,7 +224,7 @@ CREATE TABLE "player_killers" (
 	FOREIGN KEY ("player_id") REFERENCES "players" ("id")
 );
 
-CREATE TABLE `environment_killers` (
+CREATE TABLE "environment_killers" (
 	"kill_id" INTEGER NOT NULL,
 	"name" VARCHAR(255) NOT NULL,
 	FOREIGN KEY ("kill_id") REFERENCES "killers" ("id")
@@ -349,7 +357,8 @@ ON "accounts"
 FOR EACH ROW
 BEGIN
 	DELETE FROM "players" WHERE "account_id" = OLD."id";
-	DELETE FROM "bans" WHERE "type" NOT IN (1, 2) AND "value" = OLD."id";
+	DELETE FROM "account_viplist" WHERE "account_id" = OLD."id";
+	DELETE FROM "bans" WHERE "type" IN (3, 4) AND "value" = OLD."id";
 END;
 
 CREATE TRIGGER "ondelete_players"
@@ -360,13 +369,17 @@ BEGIN
 	SELECT RAISE(ROLLBACK, 'DELETE on table "players" violates foreign: "ownerid" from table "guilds"')
 	WHERE (SELECT "id" FROM "guilds" WHERE "ownerid" = OLD."id") IS NOT NULL;
 
+	DELETE FROM "account_viplist" WHERE "player_id" = OLD."id";
 	DELETE FROM "player_viplist" WHERE "player_id" = OLD."id" OR "vip_id" = OLD."id";
 	DELETE FROM "player_storage" WHERE "player_id" = OLD."id";
 	DELETE FROM "player_skills" WHERE "player_id" = OLD."id";
 	DELETE FROM "player_items" WHERE "player_id" = OLD."id";
 	DELETE FROM "player_depotitems" WHERE "player_id" = OLD."id";
 	DELETE FROM "player_spells" WHERE "player_id" = OLD."id";
-	DELETE FROM "bans" WHERE "type" = 2 AND "value" = OLD."id";
+	DELETE FROM "player_killers" WHERE "player_id" = OLD."id";
+	DELETE FROM "player_deaths" WHERE "player_id" = OLD."id";
+	DELETE FROM "guild_invites" WHERE "player_id" = OLD."id";
+	DELETE FROM "bans" WHERE "type" IN (2, 5) AND "value" = OLD."id";
 	UPDATE "houses" SET "owner" = 0 WHERE "owner" = OLD."id";
 END;
 
@@ -377,6 +390,7 @@ FOR EACH ROW
 BEGIN
 	UPDATE "players" SET "guildnick" = '', "rank_id" = 0 WHERE "rank_id" IN (SELECT "id" FROM "guild_ranks" WHERE "guild_id" = OLD."id");
 	DELETE FROM "guild_ranks" WHERE "guild_id" = OLD."id";
+	DELETE FROM "guild_invites" WHERE "guild_id" = OLD."id";
 END;
 
 CREATE TRIGGER "oninsert_players"
@@ -557,6 +571,30 @@ BEGIN
 	SELECT RAISE(ROLLBACK, 'UPDATE on table "player_viplist" violates foreign: "vip_id"')
 	WHERE NEW."vip_id" IS NULL
 		OR (SELECT "id" FROM "players" WHERE "id" = NEW."vip_id") IS NULL;
+END;
+
+CREATE TRIGGER "oninsert_account_viplist"
+BEFORE INSERT
+ON "account_viplist"
+FOR EACH ROW
+BEGIN
+	SELECT RAISE(ROLLBACK, 'INSERT on table "account_viplist" violates foreign: "account_id"')
+	WHERE NEW."account_id" IS NULL
+		OR (SELECT "id" FROM "accounts" WHERE "id" = NEW."account_id") IS NULL;
+
+	SELECT RAISE(ROLLBACK, 'INSERT on table "account_viplist" violates foreign: "player_id"')
+	WHERE NEW."player_id" IS NULL
+		OR (SELECT "id" FROM "players" WHERE "id" = NEW."player_id") IS NULL;
+END;
+
+CREATE TRIGGER "onupdate_account_viplist"
+BEFORE UPDATE
+ON "account_viplist"
+FOR EACH ROW
+BEGIN
+	SELECT RAISE(ROLLBACK, 'UPDATE on table "account_viplist" violates foreign: "player_id"')
+	WHERE NEW."player_id" IS NULL
+		OR (SELECT "id" FROM "players" WHERE "id" = NEW."player_id") IS NULL;
 END;
 
 CREATE TRIGGER "oninsert_tile_items"
