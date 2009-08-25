@@ -374,18 +374,11 @@ int32_t Player::getWeaponSkill(const Item* item) const
 int32_t Player::getArmor() const
 {
 	int32_t armor = 0;
-	if(getInventoryItem(SLOT_HEAD))
-		armor += getInventoryItem(SLOT_HEAD)->getArmor();
-	if(getInventoryItem(SLOT_NECKLACE))
-		armor += getInventoryItem(SLOT_NECKLACE)->getArmor();
-	if(getInventoryItem(SLOT_ARMOR))
-		armor += getInventoryItem(SLOT_ARMOR)->getArmor();
-	if(getInventoryItem(SLOT_LEGS))
-		armor += getInventoryItem(SLOT_LEGS)->getArmor();
-	if(getInventoryItem(SLOT_FEET))
-		armor += getInventoryItem(SLOT_FEET)->getArmor();
-	if(getInventoryItem(SLOT_RING))
-		armor += getInventoryItem(SLOT_RING)->getArmor();
+	for(int32_t i = SLOT_FIRST; i < SLOT_LAST; ++i)
+	{
+		if(Item* item = getInventoryItem((slots_t)i))
+			armor += item->getArmor();
+	}
 
 	if(vocation->getMultiplier(MULTIPLIER_ARMOR) != 1.0)
 		return int32_t(armor * vocation->getMultiplier(MULTIPLIER_ARMOR));
@@ -433,6 +426,7 @@ int32_t Player::getDefense() const
 
 	const Item* weapon = NULL;
 	const Item* shield = NULL;
+
 	getShieldAndWeapon(shield, weapon);
 	if(weapon)
 	{
@@ -487,7 +481,7 @@ float Player::getDefenseFactor() const
 
 		case FIGHTMODE_DEFENSE:
 		{
-			if((OTSYS_TIME() - lastAttack) < const_cast<Player*>(this)->getAttackSpeed()) //Attacking will cause us to get into normal defense
+			if((OTSYS_TIME() - lastAttack) < const_cast<Player*>(this)->getAttackSpeed()) //attacking will cause us to get into normal defense
 				return 1.0f;
 
 			return 2.0f;
@@ -2276,7 +2270,6 @@ void Player::dropCorpse(DeathList deathList)
 	if(lootDrop == LOOT_DROP_NONE)
 	{
 		setDropLoot(LOOT_DROP_FULL);
-		onIdleStatus();
 		if(health <= 0)
 		{
 			health = healthMax;
@@ -2284,6 +2277,9 @@ void Player::dropCorpse(DeathList deathList)
 		}
 
 		sendStats();
+		sendIcons();
+
+		onIdleStatus();
 		g_game.internalTeleport(this, getTemplePosition(), true);
 	}
 	else
