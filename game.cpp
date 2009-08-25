@@ -3920,7 +3920,7 @@ void Game::checkCreatures()
 	{
 		if((*it)->checked)
 		{
-			if((*it)->getHealth() > 0 || !(*it)->onDeath(false))
+			if((*it)->getHealth() > 0 || !(*it)->onDeath())
 				(*it)->onThink(EVENT_CREATURE_THINK_INTERVAL);
 
 			++it;
@@ -3929,7 +3929,7 @@ void Game::checkCreatures()
 		{
 			(*it)->checkVector = -1;
 			if((*it)->getHealth() < 1)
-				(*it)->onDeath(true);
+				(*it)->onDeath();
 
 			FreeThing(*it);
 			it = checkCreatureVector.erase(it);
