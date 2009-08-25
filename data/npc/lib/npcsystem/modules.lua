@@ -120,7 +120,7 @@ if(Modules == nil) then
 			elseif(getPlayerVocation(cid) ~= parameters.vocation and getPlayerVocation(cid) ~= parameters.vocation + 4 and vocation ~= 9) then
 				npcHandler:say('This spell is not for your vocation', cid)
 			elseif(not doPlayerRemoveMoney(cid, parameters.price)) then
-				npcHandler:say('You do not have enough money, this spell costs ' .. parameters.price .. ' gold.', cid)
+				npcHandler:say('You do not have enough money, this spell costs ' .. parameters.price .. ' gold coins.', cid)
 			else
 				npcHandler:say('You have learned ' .. parameters.spellName .. '.', cid)
 				playerLearnInstantSpell(cid, parameters.spellName)
