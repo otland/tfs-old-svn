@@ -1490,7 +1490,7 @@ int32_t Creature::getStepDuration(Direction dir) const
 
 int32_t Creature::getStepDuration() const
 {
-	if(isRemoved())
+	if(removed)
 		return 0;
 
 	uint32_t stepSpeed = getStepSpeed();
