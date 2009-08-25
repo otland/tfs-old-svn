@@ -90,7 +90,8 @@ struct CombatParams
 
 struct Combat2Var
 {
-	int32_t minChange, maxChange;
+	int32_t minChange, maxChange, change;
+	Combat2Var() {minChange = maxChange = change = 0;}
 };
 
 typedef bool (*COMBATFUNC)(Creature*, Creature*, const CombatParams&, void*);
