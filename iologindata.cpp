@@ -971,7 +971,11 @@ bool IOLoginData::savePlayer(Player* player, bool preSave/* = true*/, bool shall
 
 	//save vip list
 	query.str("");
-	query << "DELETE FROM `player_viplist` WHERE `player_id` = " << player->getGUID();
+	if(!g_config.getBool(ConfigManager::VIPLIST_PER_PLAYER))
+		query << "DELETE FROM `account_viplist` WHERE `account_id` = " << player->getAccount();
+	else
+		query << "DELETE FROM `player_viplist` WHERE `player_id` = " << player->getGUID();
+
 	if(!db->executeQuery(query.str()))
 		return false;
 
