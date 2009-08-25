@@ -70,7 +70,7 @@ if(Modules == nil) then
 	end
 
 	--Usage:
-		-- local node1 = keywordHandler:addKeyword({'promot'}, StdModule.say, {npcHandler = npcHandler, text = 'I can promote you for 20000 gold coins. Do you want me to promote you?'})
+		-- local node1 = keywordHandler:addKeyword({'promot'}, StdModule.say, {npcHandler = npcHandler, text = 'I can promote you for 20000 brozne coins. Do you want me to promote you?'})
 		-- 		node1:addChildKeyword({'yes'}, StdModule.promotePlayer, {npcHandler = npcHandler, cost = 20000, promotion = 1, level = 20}, text = 'Congratulations! You are now promoted.')
 		-- 		node1:addChildKeyword({'no'}, StdModule.say, {npcHandler = npcHandler, text = 'Alright then, come back when you are ready.'}, reset = true)
 	function StdModule.promotePlayer(cid, message, keywords, parameters, node)
@@ -120,7 +120,7 @@ if(Modules == nil) then
 			elseif(getPlayerVocation(cid) ~= parameters.vocation and getPlayerVocation(cid) ~= parameters.vocation + 4 and vocation ~= 9) then
 				npcHandler:say('This spell is not for your vocation', cid)
 			elseif(not doPlayerRemoveMoney(cid, parameters.price)) then
-				npcHandler:say('You do not have enough money, this spell costs ' .. parameters.price .. ' gold coins.', cid)
+				npcHandler:say('You do not have enough money, this spell costs ' .. parameters.price .. ' bronze coins.', cid)
 			else
 				npcHandler:say('You have learned ' .. parameters.spellName .. '.', cid)
 				playerLearnInstantSpell(cid, parameters.spellName)
@@ -356,11 +356,7 @@ if(Modules == nil) then
 		local ret = NpcSystem.getParameter('travel_destinations')
 		if(ret ~= nil) then
 			self:parseDestinations(ret)
-
-			self.npcHandler.keywordHandler:addKeyword({'destination'}, TravelModule.listDestinations, {module = self})
-			self.npcHandler.keywordHandler:addKeyword({'where'}, TravelModule.listDestinations, {module = self})
-			self.npcHandler.keywordHandler:addKeyword({'travel'}, TravelModule.listDestinations, {module = self})
-
+			self.npcHandler.keywordHandler:addKeyword({'destination', 'list', 'where', 'travel'}, TravelModule.listDestinations, {module = self})
 		end
 	end
 
@@ -379,7 +375,7 @@ if(Modules == nil) then
 				elseif(i == 5) then
 					cost = tonumber(tmp)
 				elseif(i == 6) then
-					premium = getBooleanFromString(tostring(tmp))
+					premium = getBooleanFromString(tmp)
 				else
 					print('[Warning] NpcSystem:', 'Unknown parameter found in travel destination parameter.', tmp, destination)
 				end
@@ -421,7 +417,7 @@ if(Modules == nil) then
 			return false
 		end
 
-		module.npcHandler:say('Do you want to travel to ' .. keywords[1] .. ' for ' .. parameters.cost .. ' gold coins?', cid)
+		module.npcHandler:say('Do you want to travel to ' .. keywords[1] .. ' for ' .. parameters.cost .. ' bronze coins?', cid)
 		return true
 	end
 
@@ -535,23 +531,22 @@ if(Modules == nil) then
 		local ret = NpcSystem.getParameter('outfits')
 		if(ret ~= nil) then
 			self:parseKeywords(ret)
-			self.npcHandler.keywordHandler:addKeyword({'outfit'}, OutfitModule.listOutfits, {module = self})
-			self.npcHandler.keywordHandler:addKeyword({'addon'}, OutfitModule.listOutfits, {module = self})
+			self.npcHandler.keywordHandler:addKeyword({'outfits', 'addons'}, OutfitModule.listOutfits, {module = self})
 		end
 	end
 
 	function OutfitModule:parseKeywords(data)
 		local n = 1
-		for outfits in string.gmatch(data, '[^;]+') do
+		for outfit in string.gmatch(data, '[^;]+') do
 			local i, keywords = 1, {}
-			for tmp in string.gmatch(outfits, '[^,]+') do
+			for tmp in string.gmatch(outfit, '[^,]+') do
 				table.insert(keywords, tmp)
 				i = i + 1
 			end
 
 			if(i ~= 1) then
-				local reply = NpcSystem.getParameter('outfit' .. n)
-				if(reply ~= nil) then
+				local ret = NpcSystem.getParameter('outfit' .. n)
+				if(ret ~= nil) then
 					self:parseList(keywords, ret)
 				else
 					print('[Warning] NpcSystem:', 'Missing \'outfit' .. n .. '\' parameter, skipping...')
@@ -588,7 +583,7 @@ if(Modules == nil) then
 			end
 
 			if(outfit == nil) then
-				outfit = {a, b, getBooleanFromString(c), d, e}
+				outfit = {a, b, c, d, e}
 			elseif(a ~= nil and b ~= nil and c ~= nil) then
 				items[a] = {b, (d ~= nil and d or -1), c}
 			else
@@ -596,18 +591,20 @@ if(Modules == nil) then
 			end
 		end
 
-		local tmp = true
-		for i = 1, 4 do
-			if(outfit[i] == nil) then
-				tmp = false
-				break
+		if(type(outfit) == 'table') then
+			local tmp = true
+			for i = 1, 4 do
+				if(outfit[i] == nil) then
+					tmp = false
+					break
+				end
 			end
-		end
 
-		if(tmp and table.maxn(items) > 1) then
-			self:addOutfit(keywords, outfit, items)
-		else
-			print('[Warning] NpcSystem:', 'Invalid outfit, addon or empty items pool for outfit.', data)
+			if(tmp and table.maxn(items) > 1) then
+				self:addOutfit(keywords, outfit, items)
+			else
+				print('[Warning] NpcSystem:', 'Invalid outfit, addon or empty items pool.', data)
+			end
 		end
 	end
 
@@ -616,10 +613,10 @@ if(Modules == nil) then
 		local parameters = {
 			outfit = outfit[1],
 			addon = outfit[2],
-			premium = outfit[3],
+			premium = getBooleanFromString(outfit[3]),
 			storageId = outfit[4],
 			storageValue = outfit[5],
-			requirement = items,
+			items = items,
 			module = self
 		}
 
@@ -635,7 +632,7 @@ if(Modules == nil) then
 		end
 
 		local items = nil
-		for k, v in pairs(parameters.requirement) do
+		for k, v in pairs(parameters.items) do
 			if(items ~= nil) then
 				items = items .. ", "
 			else
@@ -661,7 +658,7 @@ if(Modules == nil) then
 			local storage, data = parent.storageValue or (STORAGE_EMPTY + 1), getPlayerStorageValue(cid, parent.storageId)
 			if(data < storage) then
 				local found = true
-				for k, v in pairs(parameters.requierment) do
+				for k, v in pairs(parent.items) do
 					if(getPlayerItemCount(cid, k, v[2]) < v[1]) then
 						found = false
 						break
@@ -669,19 +666,21 @@ if(Modules == nil) then
 				end
 
 				if(found) then
-					for k, v in pairs(parameters.requierment) do
+					for k, v in pairs(parent.items) do
 						doPlayerRemoveItem(cid, k, v[1], v[2])
 					end
 
 					module.npcHandler:say('It was a pleasure to trade with you.', cid)
 					OUTFITMODULE_FUNCTION(cid, parent.outfit, parent.addon)
 					doPlayerSetStorageValue(cid, parent.storageId, storage)
+				else
+					module.npcHandler:say('You don\'t have these items!', cid)
 				end
 			else
-				module.npcHandler:say('Sorry, but you alrady have this outfit!', cid)
+				module.npcHandler:say('Sorry, but you alrady have this outfit.', cid)
 			end
 		else
-			module.npcHandler:say('Sorry, I trade outfits only to premium players!', cid)
+			module.npcHandler:say('Sorry, I trade outfits only to premium players.', cid)
 		end
 
 		module.npcHandler:resetNpc()
@@ -707,14 +706,18 @@ if(Modules == nil) then
 		end
 
 		local msg = nil
-		for _, outfit in ipairs(module.outfits) do
-			if(msg ~= nil) then
-				msg = msg .. ", "
-			else
-				msg = "I can trade to you "
-			end
+		if(table.maxn(module.outfits) > 0) then
+			for _, outfit in ipairs(module.outfits) do
+				if(msg ~= nil) then
+					msg = msg .. ", "
+				else
+					msg = "I can trade to you "
+				end
 
-			msg = msg .. "{" .. outfit .. "}"
+				msg = msg .. "{" .. outfit .. "}"
+			end
+		else
+			msg = "Sorry, I have no offer right now."
 		end
 
 		module.npcHandler:say(msg .. ".", cid)
