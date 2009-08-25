@@ -1101,7 +1101,7 @@ bool Monster::canWalkTo(Position pos, Direction dir)
 
 bool Monster::onDeath()
 {
-	if(!Creature::onDeath(forced))
+	if(!Creature::onDeath())
 		return false;
 
 	clearTargetList();
