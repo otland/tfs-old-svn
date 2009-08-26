@@ -328,7 +328,7 @@ if(Modules == nil) then
 
 	TravelModule = {
 		npcHandler = nil,
-		destinations = {},
+		destinations = nil,
 		yesNode = nil,
 		noNode = nil,
 	}
@@ -346,6 +346,8 @@ if(Modules == nil) then
 		self.npcHandler = handler
 		self.yesNode = KeywordNode:new(SHOP_YESWORD, TravelModule.onConfirm, {module = self})
 		self.noNode = KeywordNode:new(SHOP_NOWORD, TravelModule.onDecline, {module = self})
+
+		self.destinations = {}
 	end
 
 	-- Parses all known parameters.
@@ -353,7 +355,9 @@ if(Modules == nil) then
 		local ret = NpcSystem.getParameter('travel_destinations')
 		if(ret ~= nil) then
 			self:parseDestinations(ret)
-			self.npcHandler.keywordHandler:addKeyword({'destination', 'list', 'where', 'travel'}, TravelModule.listDestinations, {module = self})
+			for _, word in ipairs({'destination', 'list', 'where', 'travel'}) do
+				self.npcHandler.keywordHandler:addKeyword({word}, TravelModule.listDestinations, {module = self})
+			end
 		end
 	end
 
@@ -501,7 +505,7 @@ if(Modules == nil) then
 
 	OutfitModule = {
 		npcHandler = nil,
-		outfits = {},
+		outfits = nil,
 		yesNode = nil,
 		noNode = nil,
 	}
@@ -523,6 +527,8 @@ if(Modules == nil) then
 		self.npcHandler = handler
 		self.yesNode = KeywordNode:new(SHOP_YESWORD, OutfitModule.onConfirm, {module = self})
 		self.noNode = KeywordNode:new(SHOP_NOWORD, OutfitModule.onDecline, {module = self})
+
+		self.outfits = {}
 	end
 
 	-- Parses all known parameters.
@@ -530,7 +536,9 @@ if(Modules == nil) then
 		local ret = NpcSystem.getParameter('outfits')
 		if(ret ~= nil) then
 			self:parseKeywords(ret)
-			self.npcHandler.keywordHandler:addKeyword({'outfits', 'addons'}, OutfitModule.listOutfits, {module = self})
+			for _, word in ipairs({'outfits', 'addons'}) do
+				self.npcHandler.keywordHandler:addKeyword({word}, OutfitModule.listOutfits, {module = self})
+			end
 		end
 	end
 
