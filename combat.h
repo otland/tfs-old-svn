@@ -323,6 +323,7 @@ class MagicField : public Item
 			const ItemType& it = items[getID()];
 			return it.combatType;
 		}
+
 		void onStepInField(Creature* creature, bool purposeful = true);
 
 	private:

@@ -470,6 +470,7 @@ class LuaScriptInterface
 		//get item info
 		static int32_t luaGetItemWeaponType(lua_State* L);
 		static int32_t luaGetItemRWInfo(lua_State* L);
+		static int32_t luaGetItemOwner(lua_State* L);
 		static int32_t luaGetItemProtection(lua_State* L);
 		static int32_t luaGetThingFromPos(lua_State* L);
 		static int32_t luaGetThing(lua_State* L);

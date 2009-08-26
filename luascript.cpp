@@ -1456,6 +1456,9 @@ void LuaScriptInterface::registerFunctions()
 	//getItemRWInfo(uid)
 	lua_register(m_luaState, "getItemRWInfo", LuaScriptInterface::luaGetItemRWInfo);
 
+	//getItemOwner(uid)
+	lua_register(m_luaState, "getItemOwner", LuaScriptInterface::luaGetItemOwner);
+
 	//getThingFromPos(pos[, displayError = true])
 	lua_register(m_luaState, "getThingFromPos", LuaScriptInterface::luaGetThingFromPos);
 
@@ -4132,6 +4135,21 @@ int32_t LuaScriptInterface::luaGetItemRWInfo(lua_State* L)
 
 		lua_pushnumber(L, flags);
 	}
+	else
+	{
+		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
+		lua_pushboolean(L, false);
+	}
+
+	return 1;
+}
+
+int32_t LuaScriptInterface::luaGetItemOwner(lua_State* L)
+{
+	//getItemOwner(uid)
+	ScriptEnviroment* env = getScriptEnv();
+	if(const Item* item = env->getItemByUID(popNumber(L)))
+		lua_pushnumber(L, item->getOwner());
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
