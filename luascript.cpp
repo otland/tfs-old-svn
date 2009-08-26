@@ -10292,7 +10292,9 @@ int32_t LuaScriptInterface::luaHashSHA1(lua_State* L)
 
 int32_t LuaScriptInterface::luaPrint(lua_State* L)
 {
-	std::cout << popString(L) << std::endl;
+	for(int32_t i = 0, params = lua_gettop(L); i < params; ++i)
+		std::cout << popString(L) << std::endl;
+
 	lua_pushnil(L);
 	return 1;
 }
