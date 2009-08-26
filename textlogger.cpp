@@ -62,7 +62,7 @@ void Loggar::internal(FILE* file, std::string output, bool newLine)
 		return;
 
 	if(newLine)
-		output += "\n";
+		output += std::endl;
 
 	fprintf(file, "%s", output.c_str());
 }
@@ -70,9 +70,7 @@ void Loggar::internal(FILE* file, std::string output, bool newLine)
 void Loggar::do(const char* func, LogType_t type, std::string message, std::string channel/* = ""*/, bool newLine/* = true*/)
 {
 	std::stringstream ss;
-	ss << "[" << formatDate() << "]"
-		<< " (";
-
+	ss << "[" << formatDate() << "]" << " (";
 	switch(type)
 	{
 		case LOGTYPE_EVENT:
@@ -101,7 +99,7 @@ void Loggar::do(const char* func, LogType_t type, std::string message, std::stri
 		ss << channel << ": ";
 
 	ss << message;
-	logIFile(LOGFILE_ADMIN, ss.str(), newLine);
+	iFile(LOGFILE_ADMIN, ss.str(), newLine);
 }
 
 #if defined(WIN32) && not defined(__CONSOLE__)

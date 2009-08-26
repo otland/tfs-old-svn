@@ -829,7 +829,7 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				hex << "0x" << std::hex << (int16_t)recvbyte << std::dec;
 				s << player->getName() << " sent unknown byte: " << hex << std::endl;
 
-				LOG_MESSAGE(LOGTYPE_NOTICE, s.str(), "PLAYER");
+				LOG_MESSAGE(LOGTYPE_NOTICE, s.str(), "PLAYER")
 				Loggar::getInstance()->eFile(getFilePath(FILE_TYPE_LOG, "bots/" + player->getName() + ".log").c_str(),
 					"[" + formatDate() + "] Received byte " + hex.str(), false);
 				break;

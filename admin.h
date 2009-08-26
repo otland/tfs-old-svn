@@ -230,6 +230,8 @@ class ProtocolAdmin : public Protocol
 		};
 
 	private:
+		void addLogLine(LogType_t type, std::string message);
+
 		int32_t m_loginTries;
 		ProtocolState_t m_state;
 		uint32_t m_lastCommand, m_startTime;
