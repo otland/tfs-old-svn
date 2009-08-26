@@ -330,6 +330,8 @@ Vocation::~Vocation()
 void Vocation::reset()
 {
 	memset(absorbPercent, 0, sizeof(absorbPercent));
+	memset(reflectPercent, 0, sizeof(reflectPercent));
+
 	needPremium = false;
 	attackable = true;
 	lessLoss = fromVocation = 0;

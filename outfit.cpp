@@ -659,3 +659,18 @@ int16_t Outfits::getOutfitAbsorb(uint32_t lookType, uint16_t sex, CombatType_t c
 
 	return 0;
 }
+
+int16_t Outfits::getOutfitReflect(uint32_t lookType, uint16_t sex, CombatType_t combat)
+{
+	OutfitMap map = outfitsMap[sex];
+	if(!map.size())
+		return 0;
+
+	for(OutfitMap::iterator it = map.begin(); it != map.end(); ++it)
+	{
+		if(it->second.lookType == lookType)
+			return it->second.reflectPercent[combat];
+	}
+
+	return 0;
+}

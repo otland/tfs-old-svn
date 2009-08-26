@@ -100,6 +100,9 @@ class Vocation
 		int16_t getAbsorbPercent(CombatType_t combat) const {return absorbPercent[combat];}
 		void increaseAbsorbPercent(CombatType_t combat, int16_t v) {absorbPercent[combat] += v;}
 
+		int16_t getReflectPercent(CombatType_t combat) const {return reflectPercent[combat];}
+		void increaseReflectPercent(CombatType_t combat, int16_t v) {reflectPercent[combat] += v;}
+
 		double getExperienceMultiplier() const {return skillMultipliers[SKILL__LEVEL];}
 		void setSkillMultiplier(skills_t s, float v) {skillMultipliers[s] = v;}
 		void setSkillBase(skills_t s, uint32_t v) {skillBase[s] = v;}
@@ -117,7 +120,7 @@ class Vocation
 		uint32_t id, fromVocation, baseSpeed, attackSpeed;
 		std::string name, description;
 
-		int16_t absorbPercent[COMBAT_LAST + 1];
+		int16_t absorbPercent[COMBAT_LAST + 1], reflectPercent[COMBAT_LAST + 1];
 		uint32_t gain[GAIN_LAST + 1], gainTicks[GAIN_LAST + 1], gainAmount[GAIN_LAST + 1], skillBase[SKILL_LAST + 1];
 		float skillMultipliers[SKILL__LAST + 1], formulaMultipliers[MULTIPLIER_LAST + 1];
 };

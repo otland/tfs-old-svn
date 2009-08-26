@@ -2078,7 +2078,7 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 
 	if(damage > 0)
 	{
-		int32_t blocked = 0;
+		int32_t blocked = 0, reflected = 0;
 		for(int32_t slot = SLOT_FIRST; slot < SLOT_LAST; ++slot)
 		{
 			if(!isItemAbilityEnabled((slots_t)slot))
@@ -2089,10 +2089,17 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 				continue;
 
 			const ItemType& it = Item::items[item->getID()];
-			if(it.abilities.absorbPercent[combatType] != 0)
+			if(it.abilities.absorbPercent[combatType])
 			{
 				blocked += (int32_t)std::ceil((double)(damage * it.abilities.absorbPercent[combatType]) / 100.);
 				if(item->hasCharges())
+					g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
+			}
+
+			if(it.abilities.reflectPercent[combatType])
+			{
+				reflected += (int32_t)std::ceil((double)(damage * it.abilities.reflectPercent[combatType]) / 100.);
+				if(item->hasCharges() && !it.abilities.absorbPercent[combatType])
 					g_game.transformItem(item, item->getID(), std::max((int32_t)0, (int32_t)item->getCharges() - 1));
 			}
 		}
@@ -2100,18 +2107,34 @@ BlockType_t Player::blockHit(Creature* attacker, CombatType_t combatType, int32_
 		if(outfitAttributes)
 		{
 			uint32_t tmp = Outfits::getInstance()->getOutfitAbsorb(defaultOutfit.lookType, sex, combatType);
-			if(tmp != 0)
+			if(tmp)
 				blocked += (int32_t)std::ceil((double)(damage * tmp) / 100.);
+
+			tmp = Outfits::getIntance()->getOutfitReflect(defaultOutfit.lookType, sex, combatType);
+			if(tmp)
+				reflected += (int32_t)std::ceil((double)(damage * tmp) / 100.);
 		}
 
 		if(vocation->getAbsorbPercent(combatType))
 			blocked += (int32_t)std::ceil((double)(damage * vocation->getAbsorbPercent(combatType)) / 100.);
+
+		if(vocation->getReflectPercent(combatType))
+			reflected += (int32_t)std::ceil((double)(damage * vocation->getReflectPercent(combatType)) / 100.);
 
 		damage -= blocked;
 		if(damage <= 0)
 		{
 			damage = 0;
 			blockType = BLOCK_DEFENSE;
+		}
+
+		if(reflected)
+		{
+			CombatType_t reflectType = combatType;
+			if(reflected <= 0)
+				reflectType = COMBAT_HEALING;
+
+			g_game.combatChangeHealth(reflectType, NULL, attacker, -reflected);
 		}
 	}
 
