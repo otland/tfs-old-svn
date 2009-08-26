@@ -567,9 +567,9 @@ if(Modules == nil) then
 			for tmp in string.gmatch(list, '[^,]+') do
 				local warn = nil
 				if(g == 1) then
-					a = tmp
+					a = tonumber(tmp)
 				elseif(g == 2) then
-					b = tmp
+					b = tonumber(tmp)
 				elseif(g == 3) then
 					c = tmp
 				elseif(g == 4) then
@@ -592,15 +592,15 @@ if(Modules == nil) then
 				end
 			end
 
-			local tb, td, tmp = tonumber(b), -1, tonumber(d)
-			if(tmp ~= nil) then
-				td = tmp
-			end
-
 			if(outfit == nil) then
-				outfit = {a, b, c, d, e, f}
-			elseif(a ~= nil and tb ~= nil and c ~= nil) then
-				items[a] = {tb, td, c}
+				outfit = {a, b, getBooleanFromString(c), tonumber(d), e, f}
+			elseif(a ~= nil and b ~= nil and c ~= nil) then
+				local tmp = tonumber(d)
+				if(tmp == nil) then
+					tmp = -1
+				end
+
+				items[a] = {b, tmp, c}
 			else
 				print('[Warning] NpcSystem:', 'Missing parameter(s) for outfit items.', a, b, c, d, e, f)
 			end
@@ -615,7 +615,7 @@ if(Modules == nil) then
 				end
 			end
 
-			if(tmp and table.maxn(items) > 1) then
+			if(tmp and table.maxn(items) > 0) then
 				self:addOutfit(keywords, outfit, items)
 			else
 				print('[Warning] NpcSystem:', 'Invalid outfit, addon or empty items pool.', data)
@@ -628,7 +628,7 @@ if(Modules == nil) then
 		local parameters = {
 			outfit = outfit[1],
 			addon = outfit[2],
-			premium = getBooleanFromString(outfit[3]),
+			premium = outfit[3],
 			storageId = outfit[4],
 			storageValue = outfit[6],
 			gender = nil,
@@ -668,11 +668,7 @@ if(Modules == nil) then
 				items = items .. v[1] .. " "
 			end
 
-			if(k == "money") then
-				items = items .. "money"
-			elseif(tonumber(k) ~= nil) then
-				items = items .. v[3]
-			end
+			items = items .. v[3]
 		end
 	
 		module.npcHandler:say('Do you want ' .. keywords[1] .. ' ' .. (addon ~= 0 and "addon" or "outfit") .. ' for ' .. items .. '?', cid)
@@ -693,7 +689,7 @@ if(Modules == nil) then
 				if(data < storage) then
 					local found = true
 					for k, v in pairs(parent.items) do
-						if((k ~= "money" and tonumber(k) == nil) or (k == "money" and getPlayerMoney(cid) < v[1]) or (tonumber(k) ~= nil and getPlayerItemCount(cid, k, v[2]) < v[1])) then
+						if((k == 0 and getPlayerMoney(cid) < v[1]) or k == 0 or getPlayerItemCount(cid, k, v[2]) < v[1]) then
 							found = false
 							break
 						end
@@ -701,9 +697,9 @@ if(Modules == nil) then
 
 					if(found) then
 						for k, v in pairs(parent.items) do
-							if(k == "money") then
+							if(k == 0) then
 								doPlayerRemoveMoney(cid, v[1])
-							elseif(tonumber(k) ~= nil) then
+							else
 								doPlayerRemoveItem(cid, k, v[1], v[2])
 							end
 						end
