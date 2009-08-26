@@ -4154,6 +4154,7 @@ int32_t LuaScriptInterface::luaGetItemOwner(lua_State* L)
 			lua_pushnumber(L, env->addThing(creature));
 		else
 			lua_pushnumber(L, 0);
+	}
 	else
 	{
 		reportErrorFunc(getErrorDesc(LUA_ERROR_ITEM_NOT_FOUND));
