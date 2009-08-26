@@ -53,19 +53,20 @@ class Loggar
 		void open();
 		void close();
 
-		void log(std::string output, LogFile_t file, bool newLine = true);
-		void log(std::string file, std::string output, bool newLine = true);
-		void internalLog(FILE* file, std::string output, bool newLine = true);
+		void iFile(LogFile_t file, std::string output, bool newLine);
+		void eFile(std::string file, std::string output, bool newLine);
 
-		void logMessage(const char* func, LogType_t type, std::string message, std::string channel = "");
+		void do(const char* func, LogType_t type, std::string message, std::string channel = "", bool newLine = true);
 
 	private:
 		Loggar() {}
+		void internal(FILE* file, std::string output, bool newLine);
+
 		FILE* m_files[LOGFILE_LAST + 1];
 };
 
 #define LOG_MESSAGE(type, message, channel) \
-	Loggar::getInstance()->logMessage(__OTSERV_PRETTY_FUNCTION__, type, message, channel);
+	Loggar::getInstance()->do(__OTSERV_PRETTY_FUNCTION__, type, message, channel);
 
 #if defined(WIN32) && not defined(__CONSOLE__)
 class TextLogger : public std::streambuf

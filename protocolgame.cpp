@@ -800,8 +800,9 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				{
 					int64_t banTime = -1;
 					ViolationAction_t action = ACTION_BANISHMENT;
-
 					Account tmp = IOLoginData::getInstance()->loadAccount(player->getAccount(), true);
+
+					tmp.warnings++;
 					if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_DELETION))
 						action = ACTION_DELETION;
 					else if(tmp.warnings >= g_config.getNumber(ConfigManager::WARNINGS_TO_FINALBAN))
@@ -813,9 +814,8 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 						banTime = time(NULL) + g_config.getNumber(ConfigManager::BAN_LENGTH);
 
 					if(IOBan::getInstance()->addAccountBanishment(tmp.number, banTime, 13, action,
-						"Sending unknown packets to the server.", 0, player->getID()))
+						"Sending unknown packets to the server.", 0, player->getGUID()))
 					{
-						tmp.warnings++;
 						IOLoginData::getInstance()->saveAccount(tmp);
 						player->sendTextMessage(MSG_INFO_DESCR, "You have been banished.");
 
@@ -826,13 +826,12 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
 				}
 
 				std::stringstream hex, s;
-				hex << std::hex << (int16_t)recvbyte << std::dec;
+				hex << "0x" << std::hex << (int16_t)recvbyte << std::dec;
+				s << player->getName() << " sent unknown byte: " << hex << std::endl;
 
-				s << player->getName() << " sent unknown byte: 0x" << hex;
 				LOG_MESSAGE(LOGTYPE_NOTICE, s.str(), "PLAYER");
-
-				Loggar::getInstance()->log(getFilePath(FILE_TYPE_LOG, "bots/" + player->getName() + ".log").c_str(),
-					"[" + formatDate() + "] Received unknown byte - 0x" + hex.str());
+				Loggar::getInstance()->eFile(getFilePath(FILE_TYPE_LOG, "bots/" + player->getName() + ".log").c_str(),
+					"[" + formatDate() + "] Received byte " + hex.str(), false);
 				break;
 			}
 		}
@@ -1293,7 +1292,7 @@ void ProtocolGame::parseSay(NetworkMessage& msg)
 		std::stringstream s;
 		s << text.length();
 
-		Loggar::getInstance()->log("bots/" + player->getName() + ".log", "Attempt to send message with size " + s.str() + " - client is limited to 255 characters.");
+		Loggar::getInstance()->eFile("bots/" + player->getName() + ".log", "Attempt to send message with size " + s.str() + " - client is limited to 255 characters.", true);
 		return;
 	}
 
@@ -1444,9 +1443,9 @@ void ProtocolGame::parseDebugAssert(NetworkMessage& msg)
 		<< assertLine << "\n"
 		<< date << "\n"
 		<< description << "\n"
-		<< comment << "\n";
+		<< comment << "\n\n";
 
-	Loggar::getInstance()->log(ss.str(), LOGFILE_CLIENT_ASSERTION);
+	Loggar::getInstance()->iFile(ss.str(), LOGFILE_CLIENT_ASSERTION, false);
 }
 
 void ProtocolGame::parseBugReport(NetworkMessage& msg)
