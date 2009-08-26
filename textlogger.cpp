@@ -67,7 +67,7 @@ void Loggar::internal(FILE* file, std::string output, bool newLine)
 	fprintf(file, "%s", output.c_str());
 }
 
-void Loggar::do(const char* func, LogType_t type, std::string message, std::string channel/* = ""*/, bool newLine/* = true*/)
+void Loggar::log(const char* func, LogType_t type, std::string message, std::string channel/* = ""*/, bool newLine/* = true*/)
 {
 	std::stringstream ss;
 	ss << "[" << formatDate() << "]" << " (";

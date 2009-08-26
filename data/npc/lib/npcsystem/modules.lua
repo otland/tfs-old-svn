@@ -563,37 +563,23 @@ if(Modules == nil) then
 	function OutfitModule:parseList(keywords, data)
 		local outfit, items = nil, {}
 		for list in string.gmatch(data, '[^;]+') do
-			local a, b, c, d, e, f, g = nil, nil, nil, nil, nil, nil, 1
+			local a, b, c, d, e = nil, nil, nil, nil, 1
 			for tmp in string.gmatch(list, '[^,]+') do
-				local warn = nil
-				if(g == 1) then
+				if(e == 1) then
 					a = tonumber(tmp)
-				elseif(g == 2) then
+				elseif(e == 2) then
 					b = tonumber(tmp)
-				elseif(g == 3) then
+				elseif(e == 3) then
 					c = tmp
-				elseif(g == 4) then
+				elseif(e == 4) then
 					d = tmp
-				elseif(outfit == nil) then
-					if(g == 5) then
-						e = tmp
-					elseif(g == 6) then
-						f = tonumber(tmp)
-					else
-						warn = "outfit"
-					end
 				else
-					warn = "item"
-				end
-
-				g = g + 1
-				if(warn ~= nil) then
-					print('[Warning] NpcSystem:', 'Unknown parameter found in outfit list while parsing ' .. warn .. '.', tmp, list)
+					print('[Warning] NpcSystem:', 'Unknown parameter found in outfit list while parsing ' .. (outfit == nil and 'outfit' or 'item') .. '.', tmp, list)
 				end
 			end
 
 			if(outfit == nil) then
-				outfit = {a, b, getBooleanFromString(c), tonumber(d), e, f}
+				outfit = {a, b, getBooleanFromString(c), d}
 			elseif(a ~= nil and b ~= nil and c ~= nil) then
 				local tmp = tonumber(d)
 				if(tmp == nil) then
@@ -602,13 +588,13 @@ if(Modules == nil) then
 
 				items[a] = {b, tmp, c}
 			else
-				print('[Warning] NpcSystem:', 'Missing parameter(s) for outfit items.', a, b, c, d, e, f)
+				print('[Warning] NpcSystem:', 'Missing parameter(s) for outfit items.', a, b, c, d)
 			end
 		end
 
 		if(type(outfit) == 'table') then
 			local tmp = true
-			for i = 1, 4 do
+			for i = 1, 2 do
 				if(outfit[i] == nil) then
 					tmp = false
 					break
@@ -629,14 +615,12 @@ if(Modules == nil) then
 			outfit = outfit[1],
 			addon = outfit[2],
 			premium = outfit[3],
-			storageId = outfit[4],
-			storageValue = outfit[6],
 			gender = nil,
 			items = items,
 			module = self
 		}
 
-		if(outfit[5] ~= nil) then
+		if(outfit[4] ~= nil) then
 			local tmp = string.lower(tostring(outfit[5]))
 			if(tmp == 'male' or tmp == '1') then
 				parameters.gender = 1
@@ -684,10 +668,9 @@ if(Modules == nil) then
 
 		local parent = node:getParent():getParameters()
 		if(isPlayerPremiumCallback(cid) or not parent.premium) then
-			if(parent.addons == 0 or canPlayerWearOutfitId(parent.outfit, 0)) then
-				if(parent.gender == nil or parent.gender == getPlayerSex(cid)) then
-					local storage, data = parent.storageValue or (EMPTY_STORAGE + 1), getPlayerStorageValue(cid, parent.storageId)
-					if(data < storage) then
+			if(not canPlayerWearOutfitId(parent.outfit, parent.addons)) then
+				if(parent.addons == 0 or canPlayerWearOutfitId(parent.outfit, 0)) then
+					if(parent.gender == nil or parent.gender == getPlayerSex(cid)) then
 						local found = true
 						for k, v in pairs(parent.items) do
 							if((k == 0 and getPlayerMoney(cid) < v[1]) or k == 0 or getPlayerItemCount(cid, k, v[2]) < v[1]) then
@@ -715,10 +698,10 @@ if(Modules == nil) then
 						module.npcHandler:say('Sorry, this ' .. (parent.addons == 0 and 'outfit' or 'addon') .. ' is not for your gender.', cid)
 					end
 				else
-					module.npcHandler:say('You alrady have this ' .. (parent.addons == 0 and 'outfit' or 'addon') .. '!', cid)
+					module.npcHandler:say('I will not dress you with addon of outfit you cannot wear!', cid)
 				end
 			else
-				module.npcHandler:say('I will not dress you into addon of outfit you cannot wear!', cid)
+				module.npcHandler:say('You alrady have this ' .. (parent.addons == 0 and 'outfit' or 'addon') .. '!', cid)
 			end
 		else
 			module.npcHandler:say('Sorry, I dress only premium players.', cid)

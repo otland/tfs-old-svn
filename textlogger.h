@@ -56,7 +56,7 @@ class Loggar
 		void iFile(LogFile_t file, std::string output, bool newLine);
 		void eFile(std::string file, std::string output, bool newLine);
 
-		void do(const char* func, LogType_t type, std::string message, std::string channel = "", bool newLine = true);
+		void log(const char* func, LogType_t type, std::string message, std::string channel = "", bool newLine = true);
 
 	private:
 		Loggar() {}
@@ -66,7 +66,7 @@ class Loggar
 };
 
 #define LOG_MESSAGE(type, message, channel) \
-	Loggar::getInstance()->do(__OTSERV_PRETTY_FUNCTION__, type, message, channel);
+	Loggar::getInstance()->log(__OTSERV_PRETTY_FUNCTION__, type, message, channel);
 
 #if defined(WIN32) && not defined(__CONSOLE__)
 class TextLogger : public std::streambuf
