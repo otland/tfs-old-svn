@@ -437,16 +437,16 @@ if(Modules == nil) then
 					doTeleportThing(cid, parent.destination, true)
 					doSendMagicEffect(parent.destination, CONST_ME_TELEPORT)
 				else
-					npcHandler:say('You do not have enough money.', cid)
+					module.npcHandler:say('You do not have enough money.', cid)
 				end
 			else
-				npcHandler:say('Get out of there with this blood!', cid)
+				module.npcHandler:say('Get out of there with this blood!', cid)
 			end
 		else
-			npcHandler:say('I can only allow premium players to travel there.', cid)
+			modulenpcHandler:say('I can only allow premium players to travel there.', cid)
 		end
 
-		npcHandler:resetNpc()
+		module.npcHandler:resetNpc()
 		return true
 	end
 
@@ -468,14 +468,15 @@ if(Modules == nil) then
 			return false
 		end
 
-		if(isPlayerPremiumCallback(cid) or not parameters.premium) then
-			if(not isPlayerPzLocked(cid) and doPlayerRemoveMoney(cid, parameters.cost)) then
-				doTeleportThing(cid, parameters.destination, false)
-				doSendMagicEffect(parameters.destination, CONST_ME_TELEPORT)
-			end
+		if((isPlayerPremiumCallback(cid) or not parameters.premium) and not isPlayerPzLocked(cid) and doPlayerRemoveMoney(cid, parameters.cost)) then
+			module.npcHandler:say('Sure!', cid)
+			module.npcHandler:releaseFocus(cid)
+
+			doTeleportThing(cid, parameters.destination, false)
+			doSendMagicEffect(parameters.destination, CONST_ME_TELEPORT)
 		end
 
-		npcHandler:releaseFocus(cid)
+		module.npcHandler:releaseFocus(cid)
 		return true
 	end
 
@@ -692,7 +693,7 @@ if(Modules == nil) then
 				if(data < storage) then
 					local found = true
 					for k, v in pairs(parent.items) do
-						if((k ~= "money" and tonumber(k) == nil) or (k == "money" and getPlayerMoney(cid) < v[1]) or (tonumber(k) ~= nil and getPlayerItemCount(cid, k, v[2]) < v[1]) then
+						if((k ~= "money" and tonumber(k) == nil) or (k == "money" and getPlayerMoney(cid) < v[1]) or (tonumber(k) ~= nil and getPlayerItemCount(cid, k, v[2]) < v[1])) then
 							found = false
 							break
 						end
