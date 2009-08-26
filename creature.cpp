@@ -479,8 +479,8 @@ void Creature::onRemovedCreature()
 	if(master && !master->isRemoved())
 		master->removeSummon(this);
 
-	removeList();
 	setRemoved();
+	removeList();
 }
 
 void Creature::onChangeZone(ZoneType_t zone)
@@ -725,9 +725,6 @@ bool Creature::onDeath()
 	}
 
 	dropCorpse(deathList);
-	if(master)
-		master->removeSummon(this);
-
 	dead = true;
 	return true;
 }

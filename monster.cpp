@@ -1108,14 +1108,14 @@ bool Monster::onDeath()
 	clearFriendList();
 
 	setIdle(true);
-	if(raid)
-	{
-		raid->unRef();
-		raid = NULL;
-	}
-
 	setAttackedCreature(NULL);
+
 	g_game.removeCreature(this, false);
+	if(!raid)
+		return true;
+
+	raid->unRef();
+	raid = NULL;
 	return true;
 }
 
