@@ -448,7 +448,7 @@ void ProtocolAdmin::parsePacket(NetworkMessage& msg)
 
 void ProtocolAdmin::deleteProtocolTask()
 {
-	addLogLine(LOGTYPE_EVENT, "end connection")
+	addLogLine(LOGTYPE_EVENT, "end connection");
 	g_admin->removeConnection();
 	Protocol::deleteProtocolTask();
 }

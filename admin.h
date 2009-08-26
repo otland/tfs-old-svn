@@ -20,6 +20,7 @@
 #define __ADMIN__
 
 #include "otsystem.h"
+#include "textlogger.h"
 #include "player.h"
 
 // -> server
