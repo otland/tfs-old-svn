@@ -591,15 +591,15 @@ if(Modules == nil) then
 				end
 			end
 
-			local ta, tb, td = tonumber(a), tonumber(b), -1
-			if(tonumber(d) ~= d) then
-				td = d
+			local tb, td, tmp = tonumber(b), -1, tonumber(d)
+			if(tmp ~= nil) then
+				td = tmp
 			end
 
 			if(outfit == nil) then
 				outfit = {a, b, c, d, e, f}
-			elseif(a ~= nil and b ~= nil and c ~= nil) then
-				items[ta] = {tb, td, c}
+			elseif(a ~= nil and tb ~= nil and c ~= nil) then
+				items[a] = {tb, td, c}
 			else
 				print('[Warning] NpcSystem:', 'Missing parameter(s) for outfit items.', a, b, c, d, e, f)
 			end
@@ -667,7 +667,11 @@ if(Modules == nil) then
 				items = items .. v[1] .. " "
 			end
 
-			items = items .. v[3]
+			if(k == "money") then
+				items = items .. "money"
+			elseif(tonumber(k) ~= nil) then
+				items = items .. v[3]
+			end
 		end
 	
 		module.npcHandler:say('Do you want ' .. keywords[1] .. ' ' .. (addon ~= 0 and "addon" or "outfit") .. ' for ' .. items .. '?', cid)
@@ -688,7 +692,7 @@ if(Modules == nil) then
 				if(data < storage) then
 					local found = true
 					for k, v in pairs(parent.items) do
-						if(getPlayerItemCount(cid, k, v[2]) < v[1]) then
+						if((k ~= "money" and tonumber(k) == nil) or (k == "money" and getPlayerMoney(cid) < v[1]) or (tonumber(k) ~= nil and getPlayerItemCount(cid, k, v[2]) < v[1]) then
 							found = false
 							break
 						end
@@ -696,7 +700,11 @@ if(Modules == nil) then
 
 					if(found) then
 						for k, v in pairs(parent.items) do
-							doPlayerRemoveItem(cid, k, v[1], v[2])
+							if(k == "money") then
+								doPlayerRemoveMoney(cid, v[1])
+							elseif(tonumber(k) ~= nil) then
+								doPlayerRemoveItem(cid, k, v[1], v[2])
+							end
 						end
 
 						module.npcHandler:say('It was a pleasure to trade with you.', cid)
