@@ -52,7 +52,7 @@ CREATE TABLE `account_viplist`
 	`account_id` INT NOT NULL,
 	`world_id` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
 	`player_id` INT NOT NULL,
-	KEY (`account_id`), KEY (`player_id`), UNIQUE (`account_id`, `player_id`),
+	KEY (`account_id`), KEY (`player_id`), KEY (`world_id`), UNIQUE (`account_id`, `player_id`),
 	FOREIGN KEY (`account_id`) REFERENCES `accounts`(`id`) ON DELETE CASCADE,
 	FOREIGN KEY (`player_id`) REFERENCES `players`(`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
