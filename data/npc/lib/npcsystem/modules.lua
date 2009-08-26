@@ -743,13 +743,13 @@ if(Modules == nil) then
 				if(msg ~= nil) then
 					msg = msg .. ", "
 				else
-					msg = "I can trade to you "
+					msg = "I can dress you into "
 				end
 
 				msg = msg .. "{" .. outfit .. "}"
 			end
 		else
-			msg = "Sorry, I have no offer right now."
+			msg = "Sorry, I have nothing to offer right now."
 		end
 
 		module.npcHandler:say(msg .. ".", cid)
