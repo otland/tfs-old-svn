@@ -62,7 +62,7 @@ void Loggar::internal(FILE* file, std::string output, bool newLine)
 		return;
 
 	if(newLine)
-		output += std::endl;
+		output += "\n";
 
 	fprintf(file, "%s", output.c_str());
 }
