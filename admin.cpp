@@ -806,7 +806,7 @@ bool Admin::allowIP(uint32_t ip)
 		return false;
 
 	std::string tmp = "ADMIN" + convertIPAddress(ip);
-	LOG_MESSAGE(LOGTYPE_EVENT, "forbidden connection try", tmp)
+	LOG_MESSAGE(LOGTYPE_EVENT, "forbidden connection try", tmp);
 	return false;
 }
 
@@ -824,7 +824,7 @@ void ProtocolAdmin::addLogLine(LogType_t type, std::string message)
 	if(!g_config.getBool(ConfigManager::ADMIN_LOGS_ENABLED))
 		return;
 
-	std::string tmp = "ADMIN" + convertIPAddress(protocol->getIP());
-	LOG_MESSAGE(type, message, tmp)
+	std::string tmp = "ADMIN" + convertIPAddress(getIP());
+	LOG_MESSAGE(type, message, tmp);
 }
 #endif

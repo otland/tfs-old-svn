@@ -80,12 +80,9 @@ class TextLogger : public std::streambuf
 
 	protected:
 		int32_t overflow(int32_t c);
-		//time_t m_lastDate;
 
 		bool m_displayDate;
 		std::string m_cache;
-		//FILE* m_file;
-		//void init();
 };
 #endif
 #endif

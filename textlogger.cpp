@@ -108,7 +108,6 @@ TextLogger::TextLogger()
 	out = std::cerr.rdbuf();
 	err = std::cout.rdbuf();
 	m_displayDate = true;
-	m_cache = "";
 }
 
 TextLogger::~TextLogger()
@@ -123,6 +122,7 @@ int32_t TextLogger::overflow(int32_t c)
 	{
 		GUI::getInstance()->m_logText += "\r\n";
 		SendMessage(GetDlgItem(GUI::getInstance()->m_mainWindow, ID_LOG), WM_SETTEXT, 0, (LPARAM)GUI::getInstance()->m_logText.c_str());
+
 		GUI::getInstance()->m_lineCount++;
 		SendMessage(GUI::getInstance()->m_logWindow, EM_LINESCROLL, 0, GUI::getInstance()->m_lineCount);
 
