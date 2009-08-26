@@ -595,6 +595,7 @@ class LuaScriptInterface
 		static int32_t luaDoPlayerAddOutfitId(lua_State* L);
 		static int32_t luaDoPlayerRemoveOutfitId(lua_State* L);
 		static int32_t luaCanPlayerWearOutfit(lua_State* L);
+		static int32_t luaCanPlayerWearOutfitId(lua_State* L);
 
 		static int32_t luaGetWorldType(lua_State* L);
 		static int32_t luaSetWorldType(lua_State* L);

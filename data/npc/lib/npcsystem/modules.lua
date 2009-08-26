@@ -684,40 +684,44 @@ if(Modules == nil) then
 
 		local parent = node:getParent():getParameters()
 		if(isPlayerPremiumCallback(cid) or not parent.premium) then
-			if(parent.gender == nil or parent.gender == getPlayerSex(cid)) then
-				local storage, data = parent.storageValue or (EMPTY_STORAGE + 1), getPlayerStorageValue(cid, parent.storageId)
-				if(data < storage) then
-					local found = true
-					for k, v in pairs(parent.items) do
-						if((k == 0 and getPlayerMoney(cid) < v[1]) or k == 0 or getPlayerItemCount(cid, k, v[2]) < v[1]) then
-							found = false
-							break
-						end
-					end
-
-					if(found) then
+			if(parent.addons == 0 or canPlayerWearOutfitId(parent.outfit, 0)) then
+				if(parent.gender == nil or parent.gender == getPlayerSex(cid)) then
+					local storage, data = parent.storageValue or (EMPTY_STORAGE + 1), getPlayerStorageValue(cid, parent.storageId)
+					if(data < storage) then
+						local found = true
 						for k, v in pairs(parent.items) do
-							if(k == 0) then
-								doPlayerRemoveMoney(cid, v[1])
-							else
-								doPlayerRemoveItem(cid, k, v[1], v[2])
+							if((k == 0 and getPlayerMoney(cid) < v[1]) or k == 0 or getPlayerItemCount(cid, k, v[2]) < v[1]) then
+								found = false
+								break
 							end
 						end
 
-						module.npcHandler:say('It was a pleasure to trade with you.', cid)
-						OUTFITMODULE_FUNCTION(cid, parent.outfit, parent.addon)
-						doPlayerSetStorageValue(cid, parent.storageId, storage)
+						if(found) then
+							for k, v in pairs(parent.items) do
+								if(k == 0) then
+									doPlayerRemoveMoney(cid, v[1])
+								else
+									doPlayerRemoveItem(cid, k, v[1], v[2])
+								end
+							end
+
+							module.npcHandler:say('It was a pleasure to dress you.', cid)
+							OUTFITMODULE_FUNCTION(cid, parent.outfit, parent.addon)
+							doPlayerSetStorageValue(cid, parent.storageId, storage)
+						else
+							module.npcHandler:say('You don\'t have these items!', cid)
+						end
 					else
-						module.npcHandler:say('You don\'t have these items!', cid)
+						module.npcHandler:say('Sorry, this ' .. (parent.addons == 0 and 'outfit' or 'addon') .. ' is not for your gender.', cid)
 					end
 				else
-					module.npcHandler:say('Sorry, this addon is not for your gender.', cid)
+					module.npcHandler:say('You alrady have this ' .. (parent.addons == 0 and 'outfit' or 'addon') .. '!', cid)
 				end
 			else
-				module.npcHandler:say('Sorry, but you alrady have this outfit.', cid)
+				module.npcHandler:say('I will not dress you into addon of outfit you cannot wear!', cid)
 			end
 		else
-			module.npcHandler:say('Sorry, I trade outfits only to premium players.', cid)
+			module.npcHandler:say('Sorry, I dress only premium players.', cid)
 		end
 
 		module.npcHandler:resetNpc()
