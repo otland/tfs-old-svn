@@ -2267,6 +2267,7 @@ bool Player::onDeath()
 		if(!inventory[SLOT_BACKPACK])
 			__internalAddThing(SLOT_BACKPACK, Item::CreateItem(g_config.getNumber(ConfigManager::DEATH_CONTAINER)));
 
+		sendIcons();
 		sendStats();
 		sendSkills();
 
@@ -2301,7 +2302,6 @@ void Player::dropCorpse(DeathList deathList)
 
 		sendStats();
 		sendIcons();
-
 		onIdleStatus();
 		g_game.internalTeleport(this, getTemplePosition(), true);
 	}
